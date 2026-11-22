@@ -1888,8 +1888,9 @@ left outside the EEPROM mirror.
     cache that stage A missed.
   - Stage A's comments were corrected: the expected firing revolutions lookup is a signed axis read at the literal 2,
     not a step lookup, and the fuel metering PWM unit is open (see the leads).
-- **Stage C (2aa86ed, labels, types):** the last 42 HARD scalars. 39 of them sit in the 0x40xxxx block, which is a ROM copy
-  (RAM = ROM + 0x39a3e6), and the code writes none of the 42.
+- **Stage C (2aa86ed, labels, types):** the last 42 HARD scalars. All 42 sit in RAM 0x3feed0-0x40a048, a copy of
+  ROM 0x64aea-0x6fc62 (RAM = ROM + 0x39a3e6: all 22717 words of the running dump match; stage C's "never written"
+  rested on a name regex and is now that measurement).
   - 39 are renamed from their code use, 11 of them also from their e2m record.
   - 3 only lose the `_cal` and are marked unverified.
   - The supervisor chip block was J1939-named: `supervisor_register_148` / `152` / `158` / `164` settings, the word[4]
@@ -1899,8 +1900,11 @@ left outside the EEPROM mirror.
     fuel_rpm_compensated_offset clamps, and the `protection_fuel_demand_snapshot_*` rows are the pedal substitutes.
 - **Proof:** every stage matches `prove_caches.py`'s canonical form for each function the type changes leave alone.
   `statement_diff.py` shows 0 differing statements in the 3 + 5 functions those changes touch.
-- **firmware/CLAUDE.md (factual refresh):** the "~1352 HARD" sentence now says the HARD list is empty, that the
-  0x40xxxx block is a ROM copy, and that 258 MISSING remain.
+- **Width and sign:** each of the 32 rows named from an e2m record matches the record's size (2 bytes). The one
+  signed record, Expected_Firing_Revs_X_Axis, is the lookup's signed axis (flags 1); tables stay `word[N]` because
+  they are passed as `word *`.
+- **firmware/CLAUDE.md (factual refresh):** the "~1352 HARD" sentence now says the HARD list is empty, gives the
+  ROM copy's measured range, and says 258 MISSING remain.
 - **Leads:**
   - The fuel metering PWM frequency: e2m 80C2 says Hz at 1.0 per count, but TPU-B's 3.2 us tick makes it
     value / 16 Hz. Scope the output on the bench.
@@ -1911,6 +1915,10 @@ left outside the EEPROM mirror.
   - `safety_fuel_limit_*` and the commanded-throttle addend resolve no e2m record (the parameter ID table dump holds
     1441 of 1886 records).
   - `engine_retarder_torque_cached_axis_offset`'s phantom `in_r6` data argument.
+  - `fuel_rpm_compensated_offset_upper_limit` / `_lower_limit` render under `(short)` casts: `i16` candidates.
+  - `audit_cal_suffixes.py` calls RAM 0x3feed0-0x40a048 WORKING_RAM; it is the ROM copy.
+  - `fuel_rpm_compensated_offset_upper_limit` / `_lower_limit` render under `(short)` casts: `i16` candidates.
+  - `audit_cal_suffixes.py` calls RAM 0x3feed0-0x40a048 WORKING_RAM; it is the ROM copy.
   - The `auditing-cal-suffixes` skill still says "~1352 HARD"; the list is empty now.
 
 ## Leads (not in this PR)

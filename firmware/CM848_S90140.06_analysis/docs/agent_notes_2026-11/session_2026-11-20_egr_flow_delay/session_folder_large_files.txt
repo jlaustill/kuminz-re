@@ -164,6 +164,7 @@
   200663 build_r39a.log
   200663 build_r39b.log
   200663 build_r39c.log
+  200663 build_r39_fix.log
    23475 cm848_runCruiseAndRoadSpeedGovernor_round16.asm
  1071916 e2m_audit_round16a.csv
  1072739 e2m_audit_round17a.csv
