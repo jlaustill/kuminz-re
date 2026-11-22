@@ -1274,6 +1274,17 @@ Scripts are in `session_folder/round22/`.
   - New rows: the shutdown channel recorded at power-up (`lha`), and the derate table's cache at the engine speed.
   - The configuration flags are documented bit by bit in their field comment. They are not a clean bitfield: most
     tests go through a whole word copy, with combined masks.
+- **Stage B (eb3bc7e, label-only + comments, after the review):**
+  - `cm848_isEngineProtectionInputMoreExtreme` (was `protection_condition_eval`) and
+    `cm848_interpolateEngineProtectionSeverity` (was `threshold_value_interpolate`), now read rather than inferred.
+  - The second derate cache is `fault_derate_fuel_limit_by_engine_speed_cached_axis_offset_2`, by the cache rule
+    (the table base + `_2`, as with the retarder torque caches).
+  - Two of stage A's comments went beyond the code read, and are corrected:
+    - the torque curve plate: only the clamp-mask path keeps the minimum; the priority path sets the five fuelings;
+    - the configuration flags' 0x4 / 0x8 / 0xc / 0x40: 0x4 also tracks the maximum, 0x8 the minimum, and 0x40
+      also picks the fueling severity in the fault derate fuel limit.
+  - `hpcr_initializeEngineProtection` is called only from `cm848_applicationMain`, so the "boot / restart" plates
+    hold.
 - **Closed leads:**
   - `function_definitions.csv`'s `int` maps to unsigned `dword` on purpose (`int32_t` is the signed one), and its
     `short` is an unsigned word, unlike the struct importer's. The importer says so in a comment and reports unknown
@@ -1282,8 +1293,16 @@ Scripts are in `session_folder/round22/`.
     shape but an unsigned value (the engine speed), so it stays a type of its own.
   - `DAT_0040a78c` only ever gets 0 (four `sth`, no load), so it stays unnamed.
 - **Methods:** the scratch raw scanner (`raw_addr_scan.py`) accepted any `lis` of the base register in its 8-word
-  window, not the nearest one, so it reported false hits (0x51f884 reads 0x40bd4e, not 0x3fbd4e). It never hid one.
-  Fixed in `session_folder/round22/`; the round 19 control and the ANC range give the same counts.
+  window, not the nearest one, so it reported false hits (0x51f884 reads 0x40bd4e, not 0x3fbd4e). The round 22
+  copy has two modes:
+  - the default: the nearest `lis` decides, for counting real accesses;
+  - `--permissive`: the old rule. It over-reports, but it cannot miss an access whose base comes from two paths
+    with different `lis` values, so it is the one for "no access" claims.
+  Both give the round 19 control's 3 and the ANC range's 0.
+- **Round 22 leads:**
+  - `DAT_0040a78c` only ever gets 0; a name needs a reader.
+  - The words next to the module that belong to other code: `DAT_003fbd20`-`26` (the emission level cap, the timer
+    registers, the not-to-exceed zone) and `DAT_003fbd50`-`58` (`cm848_updateGeneralEngineProtection`).
 
 ## Leads (not in this PR)
 

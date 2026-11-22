@@ -491,6 +491,7 @@ state enum, the flag bytes.**
 **Round 22 (the relayed "keep going" again): the engine protection leftovers.**
 - **Stage A (14be183, label-only):** the module's boot / restart resets, the shutdown override detector's words, the
   fault derate's J1939 torque curve adjustment (PGN 65251), two new rows, and the configuration flags documented.
+- **Stage B (eb3bc7e, label-only, review):** the two helpers it had only seen as calls, the second derate cache by the cache rule, and two comments corrected.
 
 ## Test plan
 
@@ -583,7 +584,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
-- [x] Round 22: stage A is EQUIVALENT (12 names).
+- [x] Round 22: stages A and B are EQUIVALENT (12 and 3 names).
 - [x] Round 21: stages A and B pass a layout / containment / artifact gate (A was piloted first); stage C is EQUIVALENT; stage D builds CM550 and CM848 identical before and after, and its positive control shows both new paths; stage E's gate passes (the five readers, no casts left).
 - [x] Round 20: stages A, C and E are EQUIVALENT; stages B, D and F pass the mask normalizer (the count gate: per word and mask, old masked reads = new field reads; pieces 464 -> 464).
 - [x] Round 19: stages A, C and D are EQUIVALENT; stage B's enum proof shows only the substitutions (plus the cache's two users).

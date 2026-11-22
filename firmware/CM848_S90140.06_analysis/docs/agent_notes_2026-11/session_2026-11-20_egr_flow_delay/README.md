@@ -367,5 +367,7 @@ Hand work on the round 7 lead.
 ## Round 22: the engine protection leftovers (`session_folder/round22/`)
 
 - **Stage A:** `worklist_r22a.py`, `apply_r22a2.py` (the two new rows and the configuration flags comment).
-  **Closing:** `apply_r22_closing.py`. `raw_addr_scan.py` is the fixed scanner (the nearest `lis` decides).
+  **Stage B:** `worklist_r22b.py`, `apply_r22b2.py` (the two comments). **Closing:** `apply_r22_closing.py`,
+  `apply_r22_closing2.py`. `raw_addr_scan.py` is the fixed scanner: the nearest `lis` decides, and `--permissive`
+  keeps the old rule for "no access" claims.
 

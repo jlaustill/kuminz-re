@@ -1,0 +1,12 @@
+cm848: round 22 closing after the review - docs, the session archive, verify
+
+- task 046, the round 22 section:
+  - stage B;
+  - the scanner note: two modes, the nearest lis for counting and --permissive for "no access" claims;
+  - a leads list: DAT_0040a78c, and the neighbouring modules' unnamed words.
+- PR body: stage B, the test line.
+- README.
+- The session archive: stage B's scripts, the two-mode scanner, the build and verify logs, the PR body copy.
+- verify: two builds byte-identical.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
