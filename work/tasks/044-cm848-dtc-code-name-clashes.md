@@ -109,6 +109,8 @@ prints such updates as pieces. See the note in `firmware/CLAUDE.md`.
 
 - `engine_protection_timerStateMachine_init` / `engine_coldStart_protection_stateMachine` read and write
   `end_of_line_test_settings_cal.test_flags_2`. They are probably end-of-line test steps, not protection.
+  Resolved by PR #53 round 13: they are steps 0 and 1 of the end-of-line test sequence
+  (`cm848_runEndOfLineTestStartStep` / `cm848_runEndOfLineOutputTestStep`).
 - Suggested enums: the transmission temperature rationality state and the output speed sensor check states.
 - The misfire response polarity needs a running-engine dump.
 - `fault_setters.py` misses setters that write through a temporary (fault 777).

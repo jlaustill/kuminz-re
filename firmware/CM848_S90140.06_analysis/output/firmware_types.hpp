@@ -1370,7 +1370,7 @@ struct transmission_shift_strategy_flags_t {
     uint8_t anti_hunt_flags;  /* e2m 8C19 +C anti-hunt / detent flags (RE_AH_Boost_1_2 / RE_AH_Boost_2_3 / RE_Anti_Hunt / RE_Detent / RE_Detent_2_3 / RE_Rollstest): bit 7 = the anti-hunt 1-2 boost and bit 6 = the 2-3 boost (cm848_selectGovernorPressureNormal), bit 4 = throttle past the detent (transmission_throttle_detent_set_threshold) */
     uint8_t output_shaft_speed_flags;  /* e2m 8C19 +D RE_OSS_Too_Slow (Indicates output shaft speed too slow): no access found */
     uint8_t actuator_test_flags;  /* e2m 8C19 +E RE_Act_Test_Running (Indicates service tool request for trans solenoid test): bit 0, set and cleared by cm848_sciCommand19OutputTestCallback */
-    uint8_t service_test_request_flags;  /* e2m 8C19 +F RE_Cmd25_3_4_Shift / RE_Cmd25_Gov_Press / RE_Cmd25_TCC (service tool requests to test the OD solenoid / the pressure control / the lockup solenoid): bits 0-2; set by cm848_sciCommand37Callback; the shift and lockup logic skip their work while any is set */
+    uint8_t service_test_request_flags;  /* e2m 8C19 +F RE_Cmd25_3_4_Shift / RE_Cmd25_Gov_Press / RE_Cmd25_TCC (service tool requests to test the OD solenoid / the pressure control / the lockup solenoid): bits 0-2; set by cm848_sciCommand37Callback; the shift and lockup logic skip their work while any is set - bit 0 is set by all three tests (the governor pressure solenoid under test control: test 0x14 drives it and 0x15 / 0x16 hold it at its minimum duty) / bit 1 = the converter clutch solenoid test (0x15 / output 18) / bit 2 = the overdrive solenoid test (0x16 / output 17); cm848_expireSciCommand37Tests clears bit 0 / bits 0-1 / bits 0 and 2 at each test's timeout (round 13) */
     uint8_t reserved_06;  /* Reserved */
     uint8_t limp_home_and_temperature_flags;  /* e2m 8C19 +11 RE_Governor_3rd_Gear_Default / RE_Trans_Temp_Initial_Obtained (limp-home 3rd gear mode / the first transmission temperature reading obtained): cm848_selectTransmissionTemperatureInUse / cm848_resetTransmissionTemperatureValidation, cm848_controlGovernorPressureSolenoid, cm848_calibrateGovernorPressureSensorOffset */
 };
@@ -2704,16 +2704,16 @@ struct pci_controller_command_word_t {
 };
 
 struct end_of_line_test_settings_t {
-    uint8_t test_results_1;  /* Chrysler in-plant test results 1 (SCI id 0x77) */
+    uint8_t test_results_1;  /* Chrysler in-plant test results 1 (SCI id 0x77) - bits 2-3 read by cm848_runEndOfLineFinalResultStep: bit 3 set = the plant tester's verdict is pending / bit 2 set = fail (clear = pass) */
     uint8_t test_results_3;  /* Test results 3 */
-    uint8_t final_test_results_1;  /* Final test results 1 */
+    uint8_t final_test_results_1;  /* Final test results 1 - bit 3: cm848_runEndOfLineTestStartStep goes to the final result step when no test is pending */
     uint8_t final_test_results_2;  /* Final test results 2 */
     uint16_t field_mode_register;  /* e2m Field Mode register (0xFFFF in the dumps) */
-    uint8_t test_flags_1;  /* Test flags 1 */
-    uint8_t test_flags_2;  /* Test flags 2 */
-    uint8_t test_flags_3;  /* Test flags 3 */
-    uint8_t test_flags_4;  /* Test flags 4 */
-    uint8_t test_flags_5;  /* Test flags 5 (bit 0x10 holds the end-of-line misfire test) */
+    uint8_t test_flags_1;  /* Test flags 1 ($CC) - cleared to 0 by cm848_runEndOfLineTestStartStep */
+    uint8_t test_flags_2;  /* Test flags 2 ($CD): bit 3 = the output tests pending (cleared at the end of the output test step) / bit 4 = the output tests not passed (cleared when no DTC is stored) / bits 5 and 7 = the lift pump test not passed (cleared without P0629 / P0628); the start step keeps only bits 3-5 and 7 */
+    uint8_t test_flags_3;  /* Test flags 3 ($CE): bit 5 = the alternator test pending (cleared after the test); the start step keeps only bit 5 */
+    uint8_t test_flags_4;  /* Test flags 4 ($CF): bit 0 = the alternator test not passed (cleared on a pass and when end_of_line_test_enable_flags bit 5 is clear); the start step keeps only bit 0 */
+    uint8_t test_flags_5;  /* Test flags 5 (bit 0x10 holds the end-of-line misfire test) ($D0): bit 0 = the intake air heater test pending / bit 1 = it has not passed / bit 4 = the misfire test pending / bit 5 = it has not passed (bits 0-1 and 4-5 are cleared when enable bit 0 / 1 is clear); the start step clears bits 2-3 */
     uint8_t final_test_reserved_1;  /* Final test reserved byte */
     uint8_t maximum_miles;  /* Max miles for the in-plant mode (32 in the dumps) */
     uint8_t reserved_13;  /* Reserved */

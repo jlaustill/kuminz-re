@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 17:47:22 MST 2026
+// Generated: Sat Nov 21 17:57:50 MST 2026
 
 
 //
@@ -9952,17 +9952,17 @@ void cm848_calculateAllSpeedGovernorThrottleReference(void)
 {
   uint uVar1;
   
-  governor_speed_lower_limit = governor_speed_error_high;
+  governor_speed_lower_limit = all_speed_governor_minimum_reference_speed;
   if (governor_speed_lower_limit_enable_flag != 0) {
     governor_speed_lower_limit = governor_speed_limit_active - governor_speed_lower_limit_offset_cal
     ;
   }
   uVar1 = (uint)fuel_demand_control_t_0040a57a.calculated;
-  speed_request_base = governor_speed_error_low;
+  speed_request_base = all_speed_governor_maximum_reference_speed;
   if ((uVar1 != 400) && (speed_request_base = governor_speed_lower_limit, uVar1 != 0)) {
     speed_request_base =
-         (short)((uVar1 * ((uint)governor_speed_error_low - (uint)governor_speed_lower_limit)) / 400
-                ) + governor_speed_lower_limit;
+         (short)((uVar1 * ((uint)all_speed_governor_maximum_reference_speed -
+                          (uint)governor_speed_lower_limit)) / 400) + governor_speed_lower_limit;
   }
   speed_request_unfiltered = speed_request_base;
   governor_rpm_actual = engine_speed_state.filtered_engine_speed;
@@ -10071,7 +10071,7 @@ void cm848_selectVariableSpeedGovernorMode(int previous_engine_operating_mode)
 {
   if ((engine_operating_mode == FUELING_STATE_NOT_SELECTED) &&
      (variable_speed_governor_selected_flag == 1)) {
-    cm848_blendGovernorTuningSets();
+    cm848_blendAllSpeedGovernorReferenceSpeeds();
     engine_operating_mode = FUELING_STATE_VARIABLE_SPEED_GOVERNOR;
     cm848_calculateAllSpeedGovernorThrottleReference();
     cm848_emptyStubFunction6();
@@ -21938,8 +21938,8 @@ void cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling(j1939_rx_msg_t *rx_m
 
 /* Builds the J1939 (Jcomm) engine configuration torque curve of PGN 65251, e2m block 1102: the
    speeds, fuelings and indicated percent torques at points 1-5. A mode index is formed from the
-   situation: +4 when governor_speed_limit_output is outside the low speed governor idle band
-   (governor_output_t_0040aec2.idle_reference_speed plus or minus
+   situation: +4 when low_speed_governor_base_reference_speed_cal is outside the low speed governor
+   idle band (governor_output_t_0040aec2.idle_reference_speed plus or minus
    low_speed_governor_reference_speed_delta), +2 for an altitude derate or an air fuel control
    derate with a fault in bits 8 / 9 of fault_detected_bits_0_to_15
    (torque_derate_fuel_source_code), +1 when the engine speed limit source
@@ -21967,11 +21967,12 @@ void cm848_updateJ1939EngineConfigurationTorqueCurve(void)
   int unaff_r30;
   int iVar2;
   
-  if (((int)(uint)governor_speed_limit_output <
+  if (((int)(uint)low_speed_governor_base_reference_speed_cal <
        (int)((uint)governor_output_t_0040aec2.idle_reference_speed -
             (uint)low_speed_governor_reference_speed_delta)) ||
      ((uint)governor_output_t_0040aec2.idle_reference_speed +
-      (uint)low_speed_governor_reference_speed_delta < (uint)governor_speed_limit_output)) {
+      (uint)low_speed_governor_reference_speed_delta <
+      (uint)low_speed_governor_base_reference_speed_cal)) {
     iVar2 = 4;
   }
   else {
@@ -28109,12 +28110,12 @@ void cm848_calculateProtectionSpeedLimits(void)
           ((switch_input_state_bits.switches_0_to_7 & 4) != 0)))) ||
         (fuel_demand_control_t_0040a57a.accelerator_off_idle != 0)))) ||
       ((vehicle_speed != 0 ||
-       (wVar1 = governor_speed_limit_floor_b, governor_speed_limit_floor_a != 0xe5c1)))) &&
-     (wVar1 = governor_speed_limit_floor,
+       (wVar1 = sci_set_engine_speed_request, sci_set_engine_speed_request_key != 0xe5c1)))) &&
+     (wVar1 = low_speed_governor_service_speed_floor,
      high_pressure_safety_valve_test_state != SERVICE_TOOL_TEST_RUNNING)) {
     wVar1 = 0;
   }
-  governor_speed_limit_floor = wVar1;
+  low_speed_governor_service_speed_floor = wVar1;
   if (high_pressure_safety_valve_test_request_flag == 0) {
     high_pressure_safety_valve_test_state = SERVICE_TOOL_TEST_NOT_RUN;
   }
@@ -28130,7 +28131,7 @@ void cm848_calculateProtectionSpeedLimits(void)
     high_pressure_safety_valve_test_state = SERVICE_TOOL_TEST_ABORTED;
   }
   else {
-    governor_speed_limit_floor = high_pressure_safety_valve_test_engine_speed_setpoint;
+    low_speed_governor_service_speed_floor = high_pressure_safety_valve_test_engine_speed_setpoint;
     high_pressure_safety_valve_test_state = SERVICE_TOOL_TEST_RUNNING;
   }
   governor_speed_setpoint_snapshot = governor_output_t_0040aec2.idle_speed_barometric_ramped;
@@ -28152,9 +28153,9 @@ void cm848_calculateProtectionSpeedLimits(void)
     thermal_governor_cal_b = 0;
   }
   else {
-    governor_speed_limit_active = governor_speed_limit_output;
+    governor_speed_limit_active = low_speed_governor_base_reference_speed_cal;
     governor_output_t_0040aec2.governor_output = 5;
-    if (governor_speed_limit_output < governor_speed_limit_cal) {
+    if (low_speed_governor_base_reference_speed_cal < governor_speed_limit_cal) {
       governor_speed_limit_active = governor_speed_limit_cal;
       governor_output_t_0040aec2.governor_output = 0;
       thermal_governor_cal_a = 0;
@@ -28192,8 +28193,8 @@ void cm848_calculateProtectionSpeedLimits(void)
       thermal_governor_cal_a = 0;
       thermal_governor_cal_b = 0;
     }
-    if (governor_speed_limit_active < governor_speed_limit_floor) {
-      governor_speed_limit_active = governor_speed_limit_floor;
+    if (governor_speed_limit_active < low_speed_governor_service_speed_floor) {
+      governor_speed_limit_active = low_speed_governor_service_speed_floor;
       governor_output_t_0040aec2.governor_output = 0xb;
       thermal_governor_cal_a = 0;
       thermal_governor_cal_b = 0;
@@ -28204,8 +28205,8 @@ void cm848_calculateProtectionSpeedLimits(void)
       thermal_governor_cal_b = thermal_governor_b_cal;
       governor_speed_limit_active = governor_speed_limit_dynamic;
     }
-    if (governor_speed_limit_exceeded_flag._2_2_ != governor_speed_limit_output) {
-      governor_speed_limit_active = governor_speed_limit_output;
+    if (governor_speed_limit_exceeded_flag._2_2_ != low_speed_governor_base_reference_speed_cal) {
+      governor_speed_limit_active = low_speed_governor_base_reference_speed_cal;
       governor_output_t_0040aec2.governor_output = 5;
     }
   }
@@ -28362,7 +28363,7 @@ void cm848_initGovernorStateVariables(void)
   governor_speed_debounce_timer = 0;
   governor_protection_phase_a_flag = 0;
   governor_protection_phase_b_flag = 0;
-  governor_speed_limit_exceeded_flag._2_2_ = governor_speed_limit_output;
+  governor_speed_limit_exceeded_flag._2_2_ = low_speed_governor_base_reference_speed_cal;
   j1939_powertrain_control_state.tsc1_override_control_mode = TSC1_OVERRIDE_OFF;
   governor_output_t_0040aec2.governor_output = 5;
   governor_output_state_prev = 5;
@@ -29753,19 +29754,27 @@ void cm848_updateNotSafeToProgramFlag(void)
 
 
 //
-// Function: cm848_blendGovernorTuningSets @ 0x0002bf6c
+// Function: cm848_blendAllSpeedGovernorReferenceSpeeds @ 0x0002bf6c
 //
 
-/* Selects governor_tuning_set_blend_weight (0 = the governor_speed_error_*_working set, 128 = the
-   _b set) from drivetrain_ratio through the six-entry tables at ROM 0x5a9c4 (ratio x 2048
-   breakpoints 1843 / 2458 / 3482 / 6144 / 10240 / 40960) and 0x5a9d2 (weights, all 128 in this
-   ROM), or uses governor_tuning_set_default_blend_weight_cal when governor_system_config_flags mask
-   0x08 is set, then writes governor_speed_error_high / _low as the weighted blend of the two sets
-   ((w x b + (128 - w) x working) >> 7). It runs only when its entry conditions hold (computed fuel
-   demand below friction_fuel_adjustment_for_coolant_temperature plus a deadband, or the high idle
-   override reset) (was cm848_calculateRpmLimitsFromProtection). */
+/* Blends the all-speed governor's 0 % / 100 % throttle reference speeds (e2m ASG_Minimum /
+   ASG_Maximum, sets 1 and 2) into all_speed_governor_minimum_reference_speed /
+   _maximum_reference_speed. The weight governor_tuning_set_blend_weight (0 = set 1, 128 = set 2)
+   comes from drivetrain_ratio through the six-entry tables at ROM 0x5a9c4 / 0x5a9d2 (all 128 in
+   this ROM), or from governor_tuning_set_default_blend_weight_cal (e2m 1387 +8 ASG_Droop_Flag_Trim
+   'select droop source') when governor_system_config_flags bit 0x08 is set. It runs only when the
+   computed fuel demand is 0 and the final fueling is below the friction fuel plus a deadband, or at
+   the high idle override reset (was cm848_blendGovernorTuningSets) | earlier note: Selects
+   governor_tuning_set_blend_weight (0 = the governor_speed_error_*_working set, 128 = the _b set)
+   from drivetrain_ratio through the six-entry tables at ROM 0x5a9c4 (ratio x 2048 breakpoints 1843
+   / 2458 / 3482 / 6144 / 10240 / 40960) and 0x5a9d2 (weights, all 128 in this ROM), or uses
+   governor_tuning_set_default_blend_weight_cal when governor_system_config_flags mask 0x08 is set,
+   then writes all_speed_governor_minimum_reference_speed / _low as the weighted blend of the two
+   sets ((w x b + (128 - w) x working) >> 7). It runs only when its entry conditions hold (computed
+   fuel demand below friction_fuel_adjustment_for_coolant_temperature plus a deadband, or the high
+   idle override reset) (was cm848_calculateRpmLimitsFromProtection). */
 
-void cm848_blendGovernorTuningSets(void)
+void cm848_blendAllSpeedGovernorReferenceSpeeds(void)
 
 {
   word wVar1;
@@ -29793,20 +29802,20 @@ void cm848_blendGovernorTuningSets(void)
     governor_tuning_set_blend_weight = wVar1;
     uVar2 = (uint)governor_tuning_set_blend_weight;
     if (uVar2 == 0) {
-      governor_speed_error_high = governor_speed_error_high_working;
-      governor_speed_error_low = governor_speed_error_low_working;
+      all_speed_governor_minimum_reference_speed = all_speed_governor_minimum_reference_speed_1_cal;
+      all_speed_governor_maximum_reference_speed = all_speed_governor_maximum_reference_speed_1_cal;
     }
     else if (uVar2 == 0x80) {
-      governor_speed_error_high = governor_speed_error_high_b;
-      governor_speed_error_low = governor_speed_error_low_b;
+      all_speed_governor_minimum_reference_speed = all_speed_governor_minimum_reference_speed_2_cal;
+      all_speed_governor_maximum_reference_speed = all_speed_governor_maximum_reference_speed_2_cal;
     }
     else {
-      governor_speed_error_high =
-           (short)(uVar2 * governor_speed_error_high_b >> 7) +
-           (short)((0x80 - uVar2) * (uint)governor_speed_error_high_working >> 7);
-      governor_speed_error_low =
-           (short)(uVar2 * governor_speed_error_low_b >> 7) +
-           (short)((0x80 - uVar2) * (uint)governor_speed_error_low_working >> 7);
+      all_speed_governor_minimum_reference_speed =
+           (short)(uVar2 * all_speed_governor_minimum_reference_speed_2_cal >> 7) +
+           (short)((0x80 - uVar2) * (uint)all_speed_governor_minimum_reference_speed_1_cal >> 7);
+      all_speed_governor_maximum_reference_speed =
+           (short)(uVar2 * all_speed_governor_maximum_reference_speed_2_cal >> 7) +
+           (short)((0x80 - uVar2) * (uint)all_speed_governor_maximum_reference_speed_1_cal >> 7);
     }
   }
   return;
@@ -47307,13 +47316,15 @@ LAB_00046214:
            governor_speed_error_prescaled +
            ((int)uVar8 >> 0xc) + (uint)((int)uVar8 < 0 && (uVar8 & 0xfff) != 0);
       uVar8 = governor_speed_error_prescaled + iVar11;
-      if ((int)uVar8 < (int)((uint)governor_speed_error_high * 8)) {
-        governor_speed_error_input = governor_speed_error_high;
-        governor_speed_error_prescaled = (uint)governor_speed_error_high * 8 - iVar11;
+      if ((int)uVar8 < (int)((uint)all_speed_governor_minimum_reference_speed * 8)) {
+        governor_speed_error_input = all_speed_governor_minimum_reference_speed;
+        governor_speed_error_prescaled =
+             (uint)all_speed_governor_minimum_reference_speed * 8 - iVar11;
       }
-      else if ((int)((uint)governor_speed_error_low * 8) < (int)uVar8) {
-        governor_speed_error_input = governor_speed_error_low;
-        governor_speed_error_prescaled = (uint)governor_speed_error_low * 8 - iVar11;
+      else if ((int)((uint)all_speed_governor_maximum_reference_speed * 8) < (int)uVar8) {
+        governor_speed_error_input = all_speed_governor_maximum_reference_speed;
+        governor_speed_error_prescaled =
+             (uint)all_speed_governor_maximum_reference_speed * 8 - iVar11;
       }
       else {
         governor_speed_error_input =
@@ -47322,21 +47333,22 @@ LAB_00046214:
     }
     else {
       uVar8 = (uint)average_engine_speed;
-      if (uVar8 < governor_speed_error_high) {
-        governor_speed_error_input = governor_speed_error_high;
-        governor_speed_error_prescaled = (uint)governor_speed_error_high << 3;
+      if (uVar8 < all_speed_governor_minimum_reference_speed) {
+        governor_speed_error_input = all_speed_governor_minimum_reference_speed;
+        governor_speed_error_prescaled = (uint)all_speed_governor_minimum_reference_speed << 3;
       }
-      else if (governor_speed_error_low < uVar8) {
-        governor_speed_error_input = governor_speed_error_low;
-        governor_speed_error_prescaled = (uint)governor_speed_error_low << 3;
+      else if (all_speed_governor_maximum_reference_speed < uVar8) {
+        governor_speed_error_input = all_speed_governor_maximum_reference_speed;
+        governor_speed_error_prescaled = (uint)all_speed_governor_maximum_reference_speed << 3;
       }
       else {
         governor_speed_error_input = average_engine_speed;
         governor_speed_error_prescaled = uVar8 << 3;
       }
     }
-    uVar8 = (((uint)governor_speed_error_input - (uint)governor_speed_error_high) * 400) /
-            ((uint)governor_speed_error_low - (uint)governor_speed_error_high) & 0xffff;
+    uVar8 = (((uint)governor_speed_error_input - (uint)all_speed_governor_minimum_reference_speed) *
+            400) / ((uint)all_speed_governor_maximum_reference_speed -
+                   (uint)all_speed_governor_minimum_reference_speed) & 0xffff;
   }
   if ((cruise_control_engaged_flag == 0) && (power_take_off_governor_active_flag == 0)) {
     governor_fuel_integral_accumulator = 0;
@@ -47458,8 +47470,8 @@ LAB_0004662c:
 void cm848_initRpmSetpointFilters(void)
 
 {
-  governor_speed_error_input = governor_speed_error_high_working;
-  governor_speed_error_prescaled = (uint)governor_speed_error_high_working << 3;
+  governor_speed_error_input = all_speed_governor_minimum_reference_speed_1_cal;
+  governor_speed_error_prescaled = (uint)all_speed_governor_minimum_reference_speed_1_cal << 3;
   governor_pid_init_state_a = 2;
   governor_pid_init_state_b = 2;
   governor_pid_init_state_c = 2;
@@ -80114,11 +80126,11 @@ byte * cm848_sciLookupEepromSettingAddress(int param_1,uint param_2)
     break;
   case 0xf3:
     uVar2 = 0;
-    pbVar1 = (byte *)&governor_speed_limit_output;
+    pbVar1 = (byte *)&low_speed_governor_base_reference_speed_cal;
     goto LAB_0051d5a4;
   case 0xf4:
     uVar2 = 1;
-    pbVar1 = (byte *)&governor_speed_limit_output;
+    pbVar1 = (byte *)&low_speed_governor_base_reference_speed_cal;
     goto LAB_0051d5a4;
   case 0xf5:
     iVar3 = 0;
@@ -80334,7 +80346,7 @@ void phaseGroupB_ControlDispatchers(void)
 {
   cm848_updateSciOutputTests();
   cm848_countdown_timer_update();
-  governor_speedLimitFloor_decrement();
+  cm848_expireSciSetEngineSpeedRequest();
   cm848_sciDecrementKeyRetryDelay();
   return;
 }
@@ -82418,18 +82430,22 @@ void cm848_sciCommand25Handler(void)
 
 
 //
-// Function: governor_speedLimitFloor_decrement @ 0x00520684
+// Function: cm848_expireSciSetEngineSpeedRequest @ 0x00520684
 //
 
-void governor_speedLimitFloor_decrement(void)
+/* Counts down sci_set_engine_speed_request_timeout_count; at 0 it clears
+   sci_set_engine_speed_request and its key, ending the service tool's SCI command 0x19 'SET RPM'
+   request (was governor_speedLimitFloor_decrement) */
+
+void cm848_expireSciSetEngineSpeedRequest(void)
 
 {
-  if (governor_speed_limit_floor_countdown == 0) {
-    governor_speed_limit_floor_a = 0;
-    governor_speed_limit_floor_b = 0;
+  if (sci_set_engine_speed_request_timeout_count == 0) {
+    sci_set_engine_speed_request_key = 0;
+    sci_set_engine_speed_request = 0;
   }
   else {
-    governor_speed_limit_floor_countdown = governor_speed_limit_floor_countdown - 1;
+    sci_set_engine_speed_request_timeout_count = sci_set_engine_speed_request_timeout_count - 1;
   }
   return;
 }
@@ -82447,9 +82463,9 @@ void governor_speedLimitFloor_decrement(void)
 void cm848_sciCommand25Callback(void)
 
 {
-  governor_speed_limit_floor_b = (ushort)*(byte *)sci_buffer_cursor << 6;
-  governor_speed_limit_floor_a = 0xe5c1;
-  governor_speed_limit_floor_countdown = 0x48;
+  sci_set_engine_speed_request = (ushort)*(byte *)sci_buffer_cursor << 6;
+  sci_set_engine_speed_request_key = 0xe5c1;
+  sci_set_engine_speed_request_timeout_count = 0x48;
   sci_next_byte_handler = cm848_dispatchSciCommand;
   cm848_sciCancelCallbackTimeout();
   cm848_sciStartTransmit();
@@ -82670,9 +82686,15 @@ void cm848_sciCommand37Handler(void)
 // Function: cm848_sciCommand37Callback @ 0x00520b14
 //
 
-/* next-byte callback for SCI command 0x25 (37) installed by cm848_sciCommand37Handler (0x520ad8) -
-   works on DAT_003fcf60 - reached only via sci_next_byte_handler - not a dead function |
-   registration-table-sweep reviewed 2026-11-13 */
+/* next-byte callback for SCI command 0x25 (37) installed by cm848_sciCommand37Handler (0x520ad8):
+   the SCI command 0x25 service tool tests (DRB 25-xx). It collects two request bytes
+   (sci_command_37_test_number / sci_command_37_requested_state, counted in
+   sci_command_37_received_byte_count) and starts or stops one test: 0x11 alternator field /
+   0x14-0x16 the 48RE governor pressure / converter clutch / overdrive solenoids / 0x17 a 48RE
+   anti-hunt request / 0x24 lift pump / 0x25 cylinder contribution (DRB 25-25) / 0x26 high pressure
+   safety valve (DRB 25-26) / 5-10 injector 1-6 cutout; 0 ends every test. Each test sets a timeout
+   that cm848_expireSciCommand37Tests counts down - reached only via sci_next_byte_handler - not a
+   dead function | registration-table-sweep reviewed 2026-11-13 */
 
 void cm848_sciCommand37Callback(void)
 
@@ -88977,10 +88999,10 @@ void cm848_initializeFuelPressureSetpointState(void)
 //
 
 /* Third rail pressure governor monitor, switched off in this calibration (byte 0x409aa0 = 0): when
-   the engine speed is within 160 counts (20 rpm) of governor_speed_limit_output with the vehicle
-   stopped, engine_state ENGINE_STATE_RUNNING, coolant 180-205 F and no injector, rail pressure or
-   related fault, it debounces (80 net passes) fuel_pressure_governor_demand above 283 and sets
-   fault 57 (P1221), clearing it when the count returns to 0. (was
+   the engine speed is within 160 counts (20 rpm) of low_speed_governor_base_reference_speed_cal
+   with the vehicle stopped, engine_state ENGINE_STATE_RUNNING, coolant 180-205 F and no injector,
+   rail pressure or related fault, it debounces (80 net passes) fuel_pressure_governor_demand above
+   283 and sets fault 57 (P1221), clearing it when the count returns to 0. (was
    engine_camTiming_speedWindow_update; not cam timing) */
 
 void cm848_checkFuelPressureGovernorDemandAtGovernedSpeed(void)
@@ -88995,9 +89017,9 @@ void cm848_checkFuelPressureGovernorDemandAtGovernedSpeed(void)
        fuel_pressure_governed_speed_check_enable_override_value;
   if (fuel_pressure_governed_speed_check_enable_override == 0) {
     if (((uint)average_engine_speed <
-         (uint)governor_speed_limit_output +
+         (uint)low_speed_governor_base_reference_speed_cal +
          (uint)fuel_pressure_monitor_governed_speed_window_halfwidth) &&
-       ((int)((uint)governor_speed_limit_output -
+       ((int)((uint)low_speed_governor_base_reference_speed_cal -
              (uint)fuel_pressure_monitor_governed_speed_window_halfwidth) <
         (int)(uint)average_engine_speed)) {
       fuel_pressure_governed_speed_check_speed_in_window_flag = true;
@@ -89321,9 +89343,9 @@ void cm848_monitorFuelMeteringFeedbackAgainstGovernorDemand(void)
   wVar2 = fuel_pressure_governor_demand_residual_override;
   if (fuel_pressure_governor_demand_residual_override == 0) {
     if (((((uint)average_engine_speed <
-           (uint)governor_speed_limit_output +
+           (uint)low_speed_governor_base_reference_speed_cal +
            (uint)fuel_pressure_monitor_governed_speed_window_halfwidth) &&
-         ((int)((uint)governor_speed_limit_output -
+         ((int)((uint)low_speed_governor_base_reference_speed_cal -
                (uint)fuel_pressure_monitor_governed_speed_window_halfwidth) <
           (int)(uint)average_engine_speed)) && (vehicle_speed_copy == 0)) &&
        (vehicle_speed_sensor_ok_flag != 0)) {

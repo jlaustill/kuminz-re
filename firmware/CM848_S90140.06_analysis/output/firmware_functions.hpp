@@ -669,7 +669,7 @@ void cm848_initializePowerTakeOffThrottleOverride(void);  // @ 0x0002bd38
 void cm848_buildPgn65264PowerTakeOffInformationMessage(void);  // @ 0x0002bd58
 void cm848_initializePgn65264PowerTakeOffInformationBuffer(void);  // @ 0x0002bed4
 void cm848_updateNotSafeToProgramFlag(void);  // @ 0x0002bf44
-void cm848_blendGovernorTuningSets(void);  // @ 0x0002bf6c
+void cm848_blendAllSpeedGovernorReferenceSpeeds(void);  // @ 0x0002bf6c
 void cm848_emptyStubFunction6(void);  // @ 0x0002c0fc
 void cm848_initProtectionLimitVariables(void);  // @ 0x0002c100
 void cm848_applySwitchSelectedEngineSpeedLimit(void);  // @ 0x0002c114
@@ -1723,7 +1723,7 @@ void cm848_sciCommand20Callback(void);  // @ 0x0051f0b8
 void cm848_sciCommand23ClearDiagnostics(void);  // @ 0x005204f8
 void cm848_countdown_timer_update(void);  // @ 0x0052061c
 void cm848_sciCommand25Handler(void);  // @ 0x00520654
-void governor_speedLimitFloor_decrement(void);  // @ 0x00520684
+void cm848_expireSciSetEngineSpeedRequest(void);  // @ 0x00520684
 void cm848_sciCommand25Callback(void);  // @ 0x005206c4
 void cm848_sciCommand26Handler(void);  // @ 0x0052072c
 void cm848_sciCommand26Callback(void);  // @ 0x0052075c
