@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 02:18:23 MST 2026
+// Generated: Sun Nov 22 02:24:35 MST 2026
 
 
 //
@@ -1777,10 +1777,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word qadc_a_pqa2_sample;
-  word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
+  word qadc_a_pqa2_sample;
+  word direction_register_value;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -58151,7 +58151,7 @@ void cm848_applicationMain(void)
   sensorChannelTypeB_update_axis4();
   governor_fuel_mode_initialization();
   hpcr_cbdInitFilterState();
-  hpcr_initFuelTemperatureSensorChannel();
+  hpcr_initializeEngineProtection();
   cm848_initializeAirConditioningClutchControl();
   cm848_initCruiseSwitchChannel();
   cm848_initFuelLevelFilter();
@@ -65986,7 +65986,7 @@ void fault_initBitwiseTimerMask(void)
    sets the derate outputs to their defaults (engine_speed_limit_fault_derate =
    engine_speed_limit_default_cal, fault_derate_fuel_limit = fuel_demand_maximum, flags 0, state 3);
    otherwise it runs the cold start trigger and one derate task per call selected by
-   governor_faultDerate_task_index (0 event counters, 1 trigger latch clear and channel iteration, 2
+   engine_protection_task_index (0 event counters, 1 trigger latch clear and channel iteration, 2
    cm848_calculateFaultDerateFuelLimit, 3 cm848_calculateFaultDerateEngineSpeedLimit and channel
    processing). (was cm848_resetGovernorStartupReadyFlag) */
 
@@ -66002,28 +66002,28 @@ void cm848_runFaultDerateScheduler(void)
   }
   else {
     cm848_examineEngineProtectionBeforeCranking();
-    if (governor_faultDerate_task_index < 3) {
-      if (governor_faultDerate_task_index == 2) {
+    if (engine_protection_task_index < 3) {
+      if (engine_protection_task_index == 2) {
         cm848_calculateFaultDerateFuelLimit();
       }
-      else if (governor_faultDerate_task_index == 0) {
-        governor_fault_eventCounter_update();
+      else if (engine_protection_task_index == 0) {
+        cm848_countEngineProtectionOverLimitDurations();
       }
-      else if (governor_faultDerate_task_index == 1) {
+      else if (engine_protection_task_index == 1) {
         cm848_latchEngineProtectionShutdownOverride();
-        governor_fault_derateCalc_channelIter();
+        cm848_updateEngineProtectionRestartSeverity();
       }
     }
-    else if (governor_faultDerate_task_index == 3) {
+    else if (engine_protection_task_index == 3) {
       cm848_calculateFaultDerateEngineSpeedLimit();
-      governor_fault_channelProcess_mainLoop();
+      cm848_logEngineProtectionChannelFaults();
     }
-    else if (governor_faultDerate_task_index == 4) {
+    else if (engine_protection_task_index == 4) {
       cm848_updateEngineProtectionShutdown();
     }
-    governor_faultDerate_task_index = governor_faultDerate_task_index + 1;
-    if (4 < governor_faultDerate_task_index) {
-      governor_faultDerate_task_index = 0;
+    engine_protection_task_index = engine_protection_task_index + 1;
+    if (4 < engine_protection_task_index) {
+      engine_protection_task_index = 0;
     }
   }
   return;
@@ -66032,10 +66032,14 @@ void cm848_runFaultDerateScheduler(void)
 
 
 //
-// Function: threshold_adjustment_ramp @ 0x00507d50
+// Function: cm848_rampEngineProtectionSeverityIndex @ 0x00507d50
 //
 
-word threshold_adjustment_ramp
+/* Returns the channel's fueling (is_engine_speed 0) or engine speed severity index after one ramp
+   step: plus the ramp rate (capped at 0x100) while the over-limit duration is past the derate start
+   duration, else minus it (floored at 0) (was threshold_adjustment_ramp) */
+
+word cm848_rampEngineProtectionSeverityIndex
                (engine_protection_channel_configuration_t *configuration,
                engine_protection_channel_state_t *state,engine_protection_channel_history_t *history
                ,dword is_engine_speed)
@@ -66101,10 +66105,16 @@ undefined2 threshold_value_interpolate(int param_1,int param_2,short param_3)
 
 
 //
-// Function: hpcr_initFuelTemperatureSensorChannel @ 0x00507e20
+// Function: hpcr_initializeEngineProtection @ 0x00507e20
 //
 
-void hpcr_initFuelTemperatureSensorChannel(void)
+/* Initializes the engine protection module: points the fuel temperature channel's state at its
+   input (fuel_temperature_sensor_filtered), thresholds and fault logs, resets the fault derate
+   limits, the start sequence, the protection mode state and the sensor channel data, and sets
+   engine_protection_task_index to 0 (it is not a sensor channel initializer) (was
+   hpcr_initFuelTemperatureSensorChannel) */
+
+void hpcr_initializeEngineProtection(void)
 
 {
   fuel_temperature_engine_protection_state.input_pointer = &fuel_temperature_sensor_filtered;
@@ -66127,17 +66137,22 @@ void hpcr_initFuelTemperatureSensorChannel(void)
   cm848_completeEngineStartSequence();
   exception_resetProtectionModeState();
   cm848_initSensorChannelDataStructures();
-  governor_faultDerate_task_index = 0;
+  engine_protection_task_index = 0;
   return;
 }
 
 
 
 //
-// Function: protection_threshold_check @ 0x00507ebc
+// Function: cm848_isEngineProtectionInputPastThreshold @ 0x00507ebc
 //
 
-sword protection_threshold_check
+/* 1 when the channel's input is past the threshold picked by is_engine_speed and threshold_select
+   (the minimum / maximum or lower limit pointer, the shutdown duration threshold, the shutdown
+   severity threshold), compared below or above by configuration flag 0x4; a switch input
+   (configuration flags 0x30) tests its masked bit instead (was protection_threshold_check) */
+
+sword cm848_isEngineProtectionInputPastThreshold
                 (engine_protection_channel_configuration_t *configuration,
                 engine_protection_channel_state_t *state,dword is_engine_speed,
                 dword threshold_select)
@@ -66219,10 +66234,15 @@ LAB_00507ff8:
 
 
 //
-// Function: governor_fault_eventCounter_update @ 0x0050802c
+// Function: cm848_countEngineProtectionOverLimitDurations @ 0x0050802c
 //
 
-void governor_fault_eventCounter_update(void)
+/* Per channel, while its errors are allowed: counts the fueling duration (configuration flags
+   0x101) and the engine speed duration (0x402) up by one while the input is past its threshold
+   (saturating), 0 otherwise; both are 0 while the errors are not allowed (was
+   governor_fault_eventCounter_update) */
+
+void cm848_countEngineProtectionOverLimitDurations(void)
 
 {
   ushort uVar1;
@@ -66246,7 +66266,7 @@ LAB_00508104:
     else {
       uVar1 = configuration->configuration_flags;
       if ((uVar1 & 0x101) != 0) {
-        sVar2 = protection_threshold_check(configuration,state,0,0);
+        sVar2 = cm848_isEngineProtectionInputPastThreshold(configuration,state,0,0);
         if (sVar2 == 0) {
           wVar3 = 0;
         }
@@ -66258,7 +66278,7 @@ LAB_00508104:
       }
 LAB_005080b8:
       if ((uVar1 & 0x402) != 0) {
-        sVar2 = protection_threshold_check(configuration,state,1,0);
+        sVar2 = cm848_isEngineProtectionInputPastThreshold(configuration,state,1,0);
         if (sVar2 == 0) goto LAB_00508100;
         if (state->engine_speed_duration == 0xffff) goto LAB_00508108;
         wVar3 = state->engine_speed_duration + 1;
@@ -66289,9 +66309,9 @@ LAB_00508108:
    engine_protection_shutdown_count_cal has reached the ROM limit DAT_0005c2f4 (e2m 10B9 +0
    Shutdown_Max_Limit, 'max number of shutdowns before restart is not allowed') and its shutdown and
    restart enable bits are set in the per channel enable words (e2m 106B +12, EEPROM 0x12a: bits 130
-   + 4n and 131 + 4n). If a threshold of that channel is still exceeded (protection_threshold_check
-   at 0x507ebc, for the thresholds selected by the masks 0x1 and 0x2 of the channel's configuration
-   flags) it sets the channel's state precrank_error
+   + 4n and 131 + 4n). If a threshold of that channel is still exceeded
+   (cm848_isEngineProtectionInputPastThreshold at 0x507ebc, for the thresholds selected by the masks
+   0x1 and 0x2 of the channel's configuration flags) it sets the channel's state precrank_error
    (fuel_temperature_engine_protection_state.precrank_error) (e2m 1152 +18
    Fuel_Temperature_Precrank_Error) and engine_protection_precrank_shutdown_command_flag, which
    cm848_updateEngineProtectionShutdown (0x508898) turns into engine_shutdown_command_flag. Called
@@ -66330,14 +66350,14 @@ void cm848_examineEngineProtectionBeforeCranking(void)
           )) {
       uVar1 = configuration->configuration_flags;
       if (((uVar1 & 1) != 0) &&
-         (sVar4 = protection_threshold_check
+         (sVar4 = cm848_isEngineProtectionInputPastThreshold
                             (configuration,&fuel_temperature_engine_protection_state + iVar5,0,0),
          sVar4 != 0)) {
         (&fuel_temperature_engine_protection_state)[iVar5].precrank_error = 1;
         engine_protection_precrank_shutdown_command_flag = 1;
       }
       if (((uVar1 & 2) != 0) &&
-         (sVar4 = protection_threshold_check
+         (sVar4 = cm848_isEngineProtectionInputPastThreshold
                             (configuration,&fuel_temperature_engine_protection_state + iVar5,1,0),
          sVar4 != 0)) {
         (&fuel_temperature_engine_protection_state)[iVar5].precrank_error = 1;
@@ -66365,10 +66385,15 @@ void cm848_initSensorChannelDataStructures(void)
 
 
 //
-// Function: protection_threshold_update @ 0x0050832c
+// Function: cm848_updateEngineProtectionRestartSeverityIndexes @ 0x0050832c
 //
 
-void protection_threshold_update
+/* Sets the channel's restart severity indexes: with configuration flag 0x1 the fueling one is 0
+   while the input is inside its threshold, else 0x100 (flag 0x40) or the input interpolated between
+   the minimum and maximum thresholds; with flag 0x2 the engine speed one is 0 or 0x100 (was
+   protection_threshold_update) */
+
+void cm848_updateEngineProtectionRestartSeverityIndexes
                (engine_protection_channel_configuration_t *configuration,
                engine_protection_channel_state_t *state,engine_protection_channel_history_t *history
                )
@@ -66380,7 +66405,7 @@ void protection_threshold_update
   
   uVar1 = configuration->configuration_flags;
   if ((uVar1 & 1) != 0) {
-    sVar2 = protection_threshold_check(configuration,state,0,0);
+    sVar2 = cm848_isEngineProtectionInputPastThreshold(configuration,state,0,0);
     if (sVar2 == 0) {
       wVar3 = 0;
     }
@@ -66396,7 +66421,7 @@ void protection_threshold_update
     history->fueling_restart_severity_index = wVar3;
   }
   if ((uVar1 & 2) != 0) {
-    sVar2 = protection_threshold_check(configuration,state,1,0);
+    sVar2 = cm848_isEngineProtectionInputPastThreshold(configuration,state,1,0);
     if (sVar2 == 0) {
       wVar3 = 0;
     }
@@ -66411,10 +66436,16 @@ void protection_threshold_update
 
 
 //
-// Function: protection_state_transition @ 0x00508408
+// Function: cm848_checkEngineProtectionRestartLimitation @ 0x00508408
 //
 
-void protection_state_transition
+/* Channel 4 only (this build has channel 0 alone; the e2m names the restart limitation after oil
+   pressure): once engine_protection_shutdown_count_cal reaches the limit and the channel's errors
+   are allowed, raises the restart limitation shutdown approaching flag while the fueling duration
+   runs, takes an override request (clears the duration, starts the override lamp), and commands the
+   shutdown once the duration passes the shutdown warning time (was protection_state_transition) */
+
+void cm848_checkEngineProtectionRestartLimitation
                (dword channel_index,engine_protection_channel_state_t *state,
                engine_protection_channel_configuration_t *configuration)
 
@@ -66427,7 +66458,7 @@ void protection_state_transition
     engine_protection_restart_limitation_shutdown_approaching_flag = (word)bVar1;
     if ((bVar1) && (engine_protection_shutdown_override_request_flag == 1)) {
       state->fueling_duration = 0;
-      DAT_0040a78b = 1;
+      engine_protection_shutdown_override_lamp_flag = 1;
       DAT_0040a78c = 0;
     }
     engine_protection_restart_limitation_shutdown_command_flag =
@@ -66439,10 +66470,15 @@ void protection_state_transition
 
 
 //
-// Function: governor_fault_derateCalc_channelIter @ 0x005084b4
+// Function: cm848_updateEngineProtectionRestartSeverity @ 0x005084b4
 //
 
-void governor_fault_derateCalc_channelIter(void)
+/* With the engine protection shutdown and restart enabled and a shutdown channel recorded, updates
+   that channel's restart severity indexes and checks its restart limitation while its shutdown and
+   restart enables are set (bits 130 + 4n / 131 + 4n of the algorithm enable flags); every other
+   channel's restart indexes are 0 (was governor_fault_derateCalc_channelIter) */
+
+void cm848_updateEngineProtectionRestartSeverity(void)
 
 {
   engine_protection_channel_configuration_t *configuration;
@@ -66468,8 +66504,8 @@ void governor_fault_derateCalc_channelIter(void)
          (iVar1 = (int)(uVar2 + 3) >> 4,
          ((uint)(&algorithm_enable_flags_0_cal)[iVar1] & 1 << (uVar2 + 3 + iVar1 * -0x10 & 0x3f)) !=
          0)) {
-        protection_threshold_update(configuration,state,history);
-        protection_state_transition(channel_index,state,configuration);
+        cm848_updateEngineProtectionRestartSeverityIndexes(configuration,state,history);
+        cm848_checkEngineProtectionRestartLimitation(channel_index,state,configuration);
       }
       else {
         history->fueling_restart_severity_index = 0;
@@ -66526,7 +66562,7 @@ void cm848_calculateFaultDerateEngineSpeedLimit(void)
         uVar3 = 0;
       }
       else {
-        wVar2 = threshold_adjustment_ramp(configuration,state,history,1);
+        wVar2 = cm848_rampEngineProtectionSeverityIndex(configuration,state,history,1);
         uVar3 = (uint)wVar2;
         if (((uint)wVar2 < (uint)history->engine_speed_restart_severity_index) &&
            (((uint)(&algorithm_enable_flags_0_cal)[iVar4] & 1 << (uVar7 + iVar4 * -0x10 & 0x3f)) ==
@@ -66566,7 +66602,7 @@ void cm848_calculateFaultDerateEngineSpeedLimit(void)
    coefficient WORD_0005c2f2) to engine_speed_limit_default_cal, and
    engine_speed_limit_fault_derate_span to the default minus
    engine_speed_limit_fault_derate_full_severity (19200 = 2400 rpm). Called with
-   cm848_resetFaultDerateFuelLimit by hpcr_initFuelTemperatureSensorChannel;
+   cm848_resetFaultDerateFuelLimit by hpcr_initializeEngineProtection;
    cm848_calculateFaultDerateEngineSpeedLimit updates the same filter state. (was
    engine_torqueLimit_workingState_init) */
 
@@ -66584,10 +66620,14 @@ void cm848_initializeFaultDerateEngineSpeedLimit(void)
 
 
 //
-// Function: protection_event_timestamp @ 0x00508834
+// Function: cm848_countEngineProtectionShutdownTime @ 0x00508834
 //
 
-void protection_event_timestamp
+/* Counts the channel's fueling (is_engine_speed 0) or engine speed shutdown time up by one
+   (saturating at 0xFFFF); in the engine start pass it also sets the matching start warning time to
+   the configuration's shutdown delay (was protection_event_timestamp) */
+
+void cm848_countEngineProtectionShutdownTime
                (engine_protection_channel_configuration_t *configuration,
                engine_protection_channel_state_t *state,dword is_engine_speed)
 
@@ -66602,7 +66642,7 @@ void protection_event_timestamp
   else if (state->engine_speed_shutdown_time_count != 0xffff) {
     state->engine_speed_shutdown_time_count = state->engine_speed_shutdown_time_count + 1;
   }
-  if (governor_faultDerate_engine_start_flag != 0) {
+  if (engine_protection_engine_start_flag != 0) {
     if (is_engine_speed == 0) {
       iVar1 = 0x1e;
     }
@@ -66624,26 +66664,26 @@ void protection_event_timestamp
    algorithm_enable_flags_2_cal, e2m 106B +6 Engine_Protection_Shutdown_Enable, clear in this
    calibration: 15888 = 0x3e10 in the RAM dump): the last of the five tasks of
    cm848_runFaultDerateScheduler (0x507c44). With the engine STOPPED it clears
-   governor_faultDerate_latch; with the shutdown disabled, or in SHUTDOWN or STOPPED, it clears
-   engine_protection_shutdown_approaching_flag, the two shutdown time counts
+   engine_protection_shutdown_latch; with the shutdown disabled, or in SHUTDOWN or STOPPED, it
+   clears engine_protection_shutdown_approaching_flag, the two shutdown time counts
    (fuel_temperature_engine_protection_state.fueling_shutdown_time_count /
    engine_speed_shutdown_time_count) and the override latch
    engine_protection_shutdown_override_request_flag. Otherwise, unless the latch
-   governor_faultDerate_latch is set, it goes through the channels whose shutdown enable bit is set
-   (bit 130 + 4n of the e2m 106B +12 enable words): it counts the time over each of the channel's
-   two thresholds (protection_event_timestamp, 0x508834; e2m 1152 +1A / +1C), keeps the longest in
-   governor_faultDerate_peak_value, sets engine_protection_shutdown_approaching_flag (e2m 10B1 +14
-   Shutdown_Approaching) when a time passes its start warning time, and sets
-   engine_shutdown_command_flag (10B1 +12 Shutdown, 'turn off all solenoids') when it passes the
-   warning time plus the channel's shutdown delay, recording the channel in
-   engine_protection_shutdown_active_channel_cal. An override request (the latch
+   engine_protection_shutdown_latch is set, it goes through the channels whose shutdown enable bit
+   is set (bit 130 + 4n of the e2m 106B +12 enable words): it counts the time over each of the
+   channel's two thresholds (cm848_countEngineProtectionShutdownTime, 0x508834; e2m 1152 +1A / +1C),
+   keeps the longest in engine_protection_longest_shutdown_time_count, sets
+   engine_protection_shutdown_approaching_flag (e2m 10B1 +14 Shutdown_Approaching) when a time
+   passes its start warning time, and sets engine_shutdown_command_flag (10B1 +12 Shutdown, 'turn
+   off all solenoids') when it passes the warning time plus the channel's shutdown delay, recording
+   the channel in engine_protection_shutdown_active_channel_cal. An override request (the latch
    engine_protection_shutdown_override_request_flag) sets the time back to the warning time and
    starts the override lamp flag at 0x40a78b (e2m 10B1 +19 EPF_Shutdown_Override_Lamp_Flag). The
    restart results engine_protection_precrank_shutdown_command_flag and
    engine_protection_restart_limitation_shutdown_command_flag (10B1 +0
    Restart_Oil_Pressure_Shutdown) also force the shutdown. Each shutdown increments
    engine_protection_shutdown_total_cal and, for the same channel,
-   engine_protection_shutdown_count_cal, and is held in governor_faultDerate_latch. It ends by
+   engine_protection_shutdown_count_cal, and is held in engine_protection_shutdown_latch. It ends by
    setting engine_protection_timer_state (e2m 10B1 +1E J1939_EP_Timer_State): 3 when the shutdown is
    disabled, 1 while a timer runs or the approach flag is set, otherwise 0. (was
    governor_faultDerate_mainLoop_update) */
@@ -66661,29 +66701,30 @@ void cm848_updateEngineProtectionShutdown(void)
   engine_protection_channel_state_t *state;
   
   if (engine_state == ENGINE_STATE_STOPPED) {
-    governor_faultDerate_latch = 0;
+    engine_protection_shutdown_latch = 0;
   }
   if (((algorithm_enable_flags_2_cal.engine_protection_shutdown_enable == 0) ||
       (engine_state == ENGINE_STATE_SHUTDOWN)) || (engine_state == ENGINE_STATE_STOPPED)) {
     engine_protection_shutdown_approaching_flag = 0;
     fuel_temperature_engine_protection_state.fueling_shutdown_time_count = 0;
     fuel_temperature_engine_protection_state.engine_speed_shutdown_time_count = 0;
-    governor_faultDerate_peak_value = 0;
+    engine_protection_longest_shutdown_time_count = 0;
     engine_protection_shutdown_override_request_flag = 0;
   }
-  else if (governor_faultDerate_latch == 0) {
+  else if (engine_protection_shutdown_latch == 0) {
     engine_protection_shutdown_approaching_flag = 0;
     configuration = &fuel_temperature_engine_protection_configuration;
     state = &fuel_temperature_engine_protection_state;
     uVar5 = 0x82;
     uVar6 = 0;
-    if ((governor_faultDerate_prev_rpm == 0) && (engine_speed_state.filtered_engine_speed != 0)) {
-      governor_faultDerate_engine_start_flag = 1;
+    if ((engine_protection_previous_engine_speed == 0) &&
+       (engine_speed_state.filtered_engine_speed != 0)) {
+      engine_protection_engine_start_flag = 1;
     }
     else {
-      governor_faultDerate_engine_start_flag = 0;
+      engine_protection_engine_start_flag = 0;
     }
-    governor_faultDerate_peak_value = 0;
+    engine_protection_longest_shutdown_time_count = 0;
     do {
       uVar1 = configuration->configuration_flags;
       if (((uint)(&algorithm_enable_flags_0_cal)[(int)uVar5 >> 4] &
@@ -66705,7 +66746,7 @@ LAB_00508c1c:
         }
         else {
           if ((uVar1 & 0x100) == 0) {
-            sVar4 = protection_threshold_check(configuration,state,0,3);
+            sVar4 = cm848_isEngineProtectionInputPastThreshold(configuration,state,0,3);
             if (sVar4 != 0) goto LAB_00508a7c;
 LAB_00508a90:
             state->fueling_shutdown_time_count = 0;
@@ -66715,18 +66756,18 @@ LAB_00508a90:
             if ((int)(uint)state->fueling_duration <=
                 (int)(short)configuration->fueling_shutdown_duration_threshold) goto LAB_00508a90;
 LAB_00508a7c:
-            protection_event_timestamp(configuration,state,0);
+            cm848_countEngineProtectionShutdownTime(configuration,state,0);
           }
           uVar2 = state->fueling_shutdown_time_count;
-          if ((uint)governor_faultDerate_peak_value < (uint)uVar2) {
-            governor_faultDerate_peak_value = uVar2;
+          if ((uint)engine_protection_longest_shutdown_time_count < (uint)uVar2) {
+            engine_protection_longest_shutdown_time_count = uVar2;
           }
           uVar3 = state->fueling_start_warning_time;
           if (((uint)uVar3 < (uint)uVar2) &&
              (engine_protection_shutdown_approaching_flag = 1,
              engine_protection_shutdown_override_request_flag != 0)) {
             state->fueling_shutdown_time_count = uVar3;
-            DAT_0040a78b = 1;
+            engine_protection_shutdown_override_lamp_flag = 1;
             DAT_0040a78c = 0;
           }
           if ((uint)uVar3 + (uint)configuration->shutdown_warning_time <
@@ -66737,7 +66778,7 @@ LAB_00508a7c:
         }
         if (((uVar1 & 0xc00) == 0) || (state->errors_allowed == 0)) goto LAB_00508c1c;
         if ((uVar1 & 0x400) == 0) {
-          sVar4 = protection_threshold_check(configuration,state,1,3);
+          sVar4 = cm848_isEngineProtectionInputPastThreshold(configuration,state,1,3);
           if (sVar4 != 0) goto LAB_00508b78;
 LAB_00508b8c:
           state->engine_speed_shutdown_time_count = 0;
@@ -66748,18 +66789,18 @@ LAB_00508b8c:
               (int)(short)configuration->engine_speed_shutdown_duration_threshold)
           goto LAB_00508b8c;
 LAB_00508b78:
-          protection_event_timestamp(configuration,state,1);
+          cm848_countEngineProtectionShutdownTime(configuration,state,1);
         }
         uVar1 = state->engine_speed_shutdown_time_count;
-        if ((uint)governor_faultDerate_peak_value < (uint)uVar1) {
-          governor_faultDerate_peak_value = uVar1;
+        if ((uint)engine_protection_longest_shutdown_time_count < (uint)uVar1) {
+          engine_protection_longest_shutdown_time_count = uVar1;
         }
         uVar2 = state->engine_speed_start_warning_time;
         if (((uint)uVar2 < (uint)uVar1) &&
            (engine_protection_shutdown_approaching_flag = 1,
            engine_protection_shutdown_override_request_flag != 0)) {
           state->engine_speed_shutdown_time_count = uVar2;
-          DAT_0040a78b = 1;
+          engine_protection_shutdown_override_lamp_flag = 1;
           DAT_0040a78c = 0;
         }
         if ((uint)uVar2 + (uint)configuration->shutdown_warning_time <
@@ -66795,17 +66836,17 @@ LAB_00508b78:
         engine_protection_shutdown_count_cal = 1;
       }
     }
-    governor_faultDerate_latch = engine_shutdown_command_flag;
+    engine_protection_shutdown_latch = engine_shutdown_command_flag;
   }
   else {
     engine_shutdown_command_flag = 1;
   }
-  governor_faultDerate_prev_rpm = engine_speed_state.filtered_engine_speed;
+  engine_protection_previous_engine_speed = engine_speed_state.filtered_engine_speed;
   if (algorithm_enable_flags_2_cal.engine_protection_shutdown_enable == 0) {
     engine_protection_timer_state = 3;
   }
   else if ((engine_protection_shutdown_approaching_flag == 0) &&
-          (governor_faultDerate_peak_value == 0)) {
+          (engine_protection_longest_shutdown_time_count == 0)) {
     engine_protection_timer_state = 0;
   }
   else {
@@ -66826,12 +66867,12 @@ void cm848_completeEngineStartSequence(void)
   engine_protection_shutdown_approaching_flag = 0;
   engine_shutdown_command_flag = 0;
   DAT_003fbd3a = engine_protection_shutdown_active_channel_cal;
-  governor_faultDerate_latch = 0;
-  governor_faultDerate_prev_rpm = 0;
+  engine_protection_shutdown_latch = 0;
+  engine_protection_previous_engine_speed = 0;
   fuel_temperature_engine_protection_state.fueling_shutdown_time_count = 0;
   fuel_temperature_engine_protection_state.engine_speed_shutdown_time_count = 0;
   engine_protection_shutdown_override_request_flag = 0;
-  DAT_0040a78b = 0;
+  engine_protection_shutdown_override_lamp_flag = 0;
   DAT_0040a78c = 0;
   engine_protection_timer_state = 0;
   return;
@@ -66880,8 +66921,8 @@ void cm848_detectEngineProtectionShutdownOverrideRequest(void)
    EPF_Shutdown_Override_Flag) and clears the pending flag. cm848_updateEngineProtectionShutdown
    (0x508898) consumes the latch: it sets the shutdown timers back to their warning time, starts the
    override lamp flag and clears the latch at the end of its channel loop. Called by
-   cm848_runFaultDerateScheduler (0x507c44) in task 1, before governor_fault_derateCalc_channelIter.
-   (was governor_derateTrigger_latch_clear) */
+   cm848_runFaultDerateScheduler (0x507c44) in task 1, before
+   cm848_updateEngineProtectionRestartSeverity. (was governor_derateTrigger_latch_clear) */
 
 void cm848_latchEngineProtectionShutdownOverride(void)
 
@@ -66930,10 +66971,15 @@ undefined4 protection_condition_eval(int param_1,int param_2,uint param_3)
 
 
 //
-// Function: fault_snapshot_capture @ 0x00508f64
+// Function: cm848_recordEngineProtectionFaultLogEntry @ 0x00508f64
 //
 
-void fault_snapshot_capture(int param_1)
+/* For the current channel's fueling (0) or engine speed (1) fault: opens the log entry at the
+   history's log index the first time (occurrence time = key_on_hour_meter, extreme value 0x8000 /
+   0x7fff, duration 0), sets the fault's detected bit, tracks the extreme value, and copies the
+   entry into the channel state (was fault_snapshot_capture) */
+
+void cm848_recordEngineProtectionFaultLogEntry(int param_1)
 
 {
   ushort uVar1;
@@ -66947,23 +66993,23 @@ void fault_snapshot_capture(int param_1)
   engine_protection_fault_log_entry_t *peVar9;
   
   if (param_1 == 0) {
-    uVar1 = PTR_engine_startup_inhibit_cal_003fbd4a->fueling_fault_log_index;
-    uVar2 = fault_channel_config_ptr->fueling_fault_index;
-    peVar9 = fault_channel_state_ptr->fueling_fault_log_pointer;
+    uVar1 = engine_protection_current_history->fueling_fault_log_index;
+    uVar2 = engine_protection_current_configuration->fueling_fault_index;
+    peVar9 = engine_protection_current_state->fueling_fault_log_pointer;
     iVar4 = 0x16;
   }
   else {
-    uVar1 = PTR_engine_startup_inhibit_cal_003fbd4a->engine_speed_fault_log_index;
-    uVar2 = fault_channel_config_ptr->engine_speed_fault_index;
-    peVar9 = fault_channel_state_ptr->engine_speed_fault_log_pointer;
+    uVar1 = engine_protection_current_history->engine_speed_fault_log_index;
+    uVar2 = engine_protection_current_configuration->engine_speed_fault_index;
+    peVar9 = engine_protection_current_state->engine_speed_fault_log_pointer;
     iVar4 = 0x1a;
   }
-  psVar6 = (short *)((int)&PTR_engine_startup_inhibit_cal_003fbd4a->fueling_severity_index + iVar4);
+  psVar6 = (short *)((int)&engine_protection_current_history->fueling_severity_index + iVar4);
   if (*psVar6 == 0) {
     *psVar6 = 1;
     peVar9[uVar1].occurrence_time = key_on_hour_meter;
     peVar9[uVar1].duration = 0;
-    if ((fault_channel_config_ptr->configuration_flags & 8) == 0) {
+    if ((engine_protection_current_configuration->configuration_flags & 8) == 0) {
       sVar5 = -0x8000;
     }
     else {
@@ -66974,12 +67020,12 @@ void fault_snapshot_capture(int param_1)
   (&system_status_flags_t_003fe974.fault_detected_bits_0_to_15)[(int)(uint)uVar2 >> 4] =
        (&system_status_flags_t_003fe974.fault_detected_bits_0_to_15)[(int)(uint)uVar2 >> 4] |
        (ushort)(1 << (uVar2 & 0xf));
-  peVar3 = fault_channel_state_ptr;
-  if ((fault_channel_config_ptr->configuration_flags & 0xc) != 0) {
-    iVar4 = (int)(short)*fault_channel_state_ptr->input_pointer;
+  peVar3 = engine_protection_current_state;
+  if ((engine_protection_current_configuration->configuration_flags & 0xc) != 0) {
+    iVar4 = (int)(short)*engine_protection_current_state->input_pointer;
     sVar5 = protection_condition_eval
                       (iVar4,(int)peVar9[uVar1].extreme_value,
-                       fault_channel_config_ptr->configuration_flags);
+                       engine_protection_current_configuration->configuration_flags);
     if (sVar5 != 0) {
       peVar9[uVar1].extreme_value = (short)iVar4;
     }
@@ -67000,10 +67046,15 @@ void fault_snapshot_capture(int param_1)
 
 
 //
-// Function: fault_event_timing_snapshot @ 0x005090fc
+// Function: cm848_closeEngineProtectionFaultLogEntry @ 0x005090fc
 //
 
-void fault_event_timing_snapshot(int param_1)
+/* For the current channel's fueling (0) or engine speed (1) fault: once the fault's active bit is
+   set, clears the detected and active bits and, if an entry is open, writes its duration
+   (key_on_hour_meter - occurrence time), copies it into the channel state and advances the log
+   index % 5 (was fault_event_timing_snapshot) */
+
+void cm848_closeEngineProtectionFaultLogEntry(int param_1)
 
 {
   ushort uVar1;
@@ -67015,18 +67066,18 @@ void fault_event_timing_snapshot(int param_1)
   word *pwVar7;
   
   if (param_1 == 0) {
-    pwVar7 = &PTR_engine_startup_inhibit_cal_003fbd4a->fueling_fault_log_index;
-    uVar1 = fault_channel_config_ptr->fueling_fault_index;
-    peVar6 = fault_channel_state_ptr->fueling_fault_log_pointer;
+    pwVar7 = &engine_protection_current_history->fueling_fault_log_index;
+    uVar1 = engine_protection_current_configuration->fueling_fault_index;
+    peVar6 = engine_protection_current_state->fueling_fault_log_pointer;
     iVar2 = 0x16;
   }
   else {
-    pwVar7 = &PTR_engine_startup_inhibit_cal_003fbd4a->engine_speed_fault_log_index;
-    uVar1 = fault_channel_config_ptr->engine_speed_fault_index;
-    peVar6 = fault_channel_state_ptr->engine_speed_fault_log_pointer;
+    pwVar7 = &engine_protection_current_history->engine_speed_fault_log_index;
+    uVar1 = engine_protection_current_configuration->engine_speed_fault_index;
+    peVar6 = engine_protection_current_state->engine_speed_fault_log_pointer;
     iVar2 = 0x1a;
   }
-  psVar5 = (short *)((int)&PTR_engine_startup_inhibit_cal_003fbd4a->fueling_severity_index + iVar2);
+  psVar5 = (short *)((int)&engine_protection_current_history->fueling_severity_index + iVar2);
   iVar2 = (int)(uint)uVar1 >> 4;
   if (((uint)(&fault_active_status_array)[iVar2] & 1 << (uVar1 & 0xf)) != 0) {
     (&system_status_flags_t_003fe974.fault_detected_bits_0_to_15)[iVar2] =
@@ -67043,7 +67094,7 @@ void fault_event_timing_snapshot(int param_1)
       else {
         iVar2 = 0x36;
       }
-      pdVar4 = (dword *)((int)&fault_channel_state_ptr->input_pointer + iVar2);
+      pdVar4 = (dword *)((int)&engine_protection_current_state->input_pointer + iVar2);
       dVar3 = *(dword *)&peVar6[*pwVar7].extreme_value;
       *pdVar4 = peVar6[*pwVar7].occurrence_time;
       pdVar4[1] = dVar3;
@@ -67058,10 +67109,15 @@ void fault_event_timing_snapshot(int param_1)
 
 
 //
-// Function: governor_fault_channelProcess_mainLoop @ 0x00509278
+// Function: cm848_logEngineProtectionChannelFaults @ 0x00509278
 //
 
-void governor_fault_channelProcess_mainLoop(void)
+/* Per channel: arms the errors-allowed timer (the start monitor engine speed and time), then, while
+   the errors are allowed, treats a fueling / engine speed fault as active when the precrank error,
+   the severity index or the shutdown time count says so, counts its elapsed time and opens its
+   fault log entry, or closes the entry (was governor_fault_channelProcess_mainLoop) */
+
+void cm848_logEngineProtectionChannelFaults(void)
 
 {
   ushort uVar1;
@@ -67074,27 +67130,27 @@ void governor_fault_channelProcess_mainLoop(void)
   undefined4 uVar8;
   engine_protection_channel_history_t *peVar9;
   
-  fault_channel_config_ptr = &fuel_temperature_engine_protection_configuration;
-  fault_channel_state_ptr = &fuel_temperature_engine_protection_state;
-  PTR_engine_startup_inhibit_cal_003fbd4a = &fuel_temperature_engine_protection_history_cal;
+  engine_protection_current_configuration = &fuel_temperature_engine_protection_configuration;
+  engine_protection_current_state = &fuel_temperature_engine_protection_state;
+  engine_protection_current_history = &fuel_temperature_engine_protection_history_cal;
   do {
-    peVar4 = fault_channel_state_ptr;
-    peVar3 = fault_channel_config_ptr;
-    uVar1 = fault_channel_config_ptr->configuration_flags;
-    if ((fault_channel_config_ptr->start_monitor_engine_speed == 0) &&
-       (fault_channel_config_ptr->start_monitor_time == 0)) {
+    peVar4 = engine_protection_current_state;
+    peVar3 = engine_protection_current_configuration;
+    uVar1 = engine_protection_current_configuration->configuration_flags;
+    if ((engine_protection_current_configuration->start_monitor_engine_speed == 0) &&
+       (engine_protection_current_configuration->start_monitor_time == 0)) {
 LAB_0050935c:
       peVar4->errors_allowed = 1;
     }
     else {
-      if (fault_channel_config_ptr->start_monitor_engine_speed <
+      if (engine_protection_current_configuration->start_monitor_engine_speed <
           engine_speed_state.filtered_engine_speed) {
         wVar6 = 1;
 LAB_00509328:
         peVar4->errors_allowed_timer_running = wVar6;
       }
       else if (engine_speed_state.filtered_engine_speed == 0) {
-        fault_channel_state_ptr->errors_allowed = 0;
+        engine_protection_current_state->errors_allowed = 0;
         peVar4->errors_allowed_timer = 0;
         wVar6 = 0;
         goto LAB_00509328;
@@ -67107,16 +67163,16 @@ LAB_00509328:
     bVar7 = false;
     bVar2 = false;
     if (peVar4->errors_allowed == 0) {
-      fault_event_timing_snapshot(0);
-      fault_event_timing_snapshot(1);
+      cm848_closeEngineProtectionFaultLogEntry(0);
+      cm848_closeEngineProtectionFaultLogEntry(1);
     }
     else {
       if (peVar4->precrank_error == 0) {
-        if ((PTR_engine_startup_inhibit_cal_003fbd4a->fueling_severity_index != 0) ||
+        if ((engine_protection_current_history->fueling_severity_index != 0) ||
            (peVar4->fueling_shutdown_time_count != 0)) {
           bVar7 = true;
         }
-        if ((PTR_engine_startup_inhibit_cal_003fbd4a->engine_speed_severity_index != 0) ||
+        if ((engine_protection_current_history->engine_speed_severity_index != 0) ||
            (peVar4->engine_speed_shutdown_time_count != 0)) goto LAB_005093c4;
       }
       else {
@@ -67126,49 +67182,50 @@ LAB_005093c4:
       }
       if ((uVar1 & 0x1000) == 0) {
         if (bVar7) {
-          PTR_engine_startup_inhibit_cal_003fbd4a->fueling_fault_elapsed_time =
-               PTR_engine_startup_inhibit_cal_003fbd4a->fueling_fault_elapsed_time + 1;
-          fault_snapshot_capture(0);
+          engine_protection_current_history->fueling_fault_elapsed_time =
+               engine_protection_current_history->fueling_fault_elapsed_time + 1;
+          cm848_recordEngineProtectionFaultLogEntry(0);
         }
         else {
-          fault_event_timing_snapshot(0);
+          cm848_closeEngineProtectionFaultLogEntry(0);
         }
         if (!bVar2) {
           uVar8 = 1;
           goto LAB_0050946c;
         }
-        PTR_engine_startup_inhibit_cal_003fbd4a->engine_speed_fault_elapsed_time =
-             PTR_engine_startup_inhibit_cal_003fbd4a->engine_speed_fault_elapsed_time + 1;
-        fault_snapshot_capture(1);
+        engine_protection_current_history->engine_speed_fault_elapsed_time =
+             engine_protection_current_history->engine_speed_fault_elapsed_time + 1;
+        cm848_recordEngineProtectionFaultLogEntry(1);
       }
       else if ((bVar2) || (bVar7)) {
-        PTR_engine_startup_inhibit_cal_003fbd4a->fueling_fault_elapsed_time =
-             PTR_engine_startup_inhibit_cal_003fbd4a->fueling_fault_elapsed_time + 1;
-        fault_snapshot_capture(0);
+        engine_protection_current_history->fueling_fault_elapsed_time =
+             engine_protection_current_history->fueling_fault_elapsed_time + 1;
+        cm848_recordEngineProtectionFaultLogEntry(0);
       }
       else {
         uVar8 = 0;
 LAB_0050946c:
-        fault_event_timing_snapshot(uVar8);
+        cm848_closeEngineProtectionFaultLogEntry(uVar8);
       }
       if ((uVar1 & 0xc) != 0) {
-        wVar6 = *fault_channel_state_ptr->input_pointer;
-        peVar9 = PTR_engine_startup_inhibit_cal_003fbd4a;
+        wVar6 = *engine_protection_current_state->input_pointer;
+        peVar9 = engine_protection_current_history;
         sVar5 = protection_condition_eval
-                          ((int)(short)wVar6,
-                           (int)PTR_engine_startup_inhibit_cal_003fbd4a->input_extremity,uVar1);
+                          ((int)(short)wVar6,(int)engine_protection_current_history->input_extremity
+                           ,uVar1);
         if (sVar5 != 0) {
           peVar9->input_extremity = wVar6;
           peVar9->input_extremity_time = key_on_hour_meter;
         }
       }
     }
-    fault_channel_config_ptr = fault_channel_config_ptr + 1;
-    fault_channel_state_ptr = fault_channel_state_ptr + 1;
-    PTR_engine_startup_inhibit_cal_003fbd4a = PTR_engine_startup_inhibit_cal_003fbd4a + 1;
+    engine_protection_current_configuration = engine_protection_current_configuration + 1;
+    engine_protection_current_state = engine_protection_current_state + 1;
+    engine_protection_current_history = engine_protection_current_history + 1;
     if ((engine_protection_channel_configuration_t *)
         ((int)&fuel_temperature_engine_protection_configuration.
-               engine_speed_shutdown_severity_threshold + 1) < fault_channel_config_ptr) {
+               engine_speed_shutdown_severity_threshold + 1) <
+        engine_protection_current_configuration) {
       return;
     }
   } while( true );
@@ -67251,7 +67308,7 @@ void cm848_calculateFaultDerateFuelLimit(void)
           }
         }
         else {
-          wVar2 = threshold_adjustment_ramp(configuration,state,history,0);
+          wVar2 = cm848_rampEngineProtectionSeverityIndex(configuration,state,history,0);
           uVar1 = (uint)wVar2;
         }
         if (((uVar1 & 0xffff) < (uint)history->fueling_restart_severity_index) &&
@@ -67306,7 +67363,7 @@ void cm848_calculateFaultDerateFuelLimit(void)
 /* Resets the fault derate fuel limit: fault_derate_ramp_times_256 to 0, its lookup state
    DAT_003fbd4e to 2, fault_derate_fuel_limit to the no-limit value fuel_demand_maximum (5888) and
    fault_derate_active_flag to 0. Called with cm848_initializeFaultDerateEngineSpeedLimit by
-   hpcr_initFuelTemperatureSensorChannel. (was engine_protection_torqueLimit_reset) */
+   hpcr_initializeEngineProtection. (was engine_protection_torqueLimit_reset) */
 
 void cm848_resetFaultDerateFuelLimit(void)
 

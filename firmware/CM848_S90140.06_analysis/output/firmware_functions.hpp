@@ -1407,28 +1407,28 @@ void engine_protection_derateParam_priorityApply(void);  // @ 0x00507858
 void governor_calculateIntegratorRpmOutput(void);  // @ 0x00507a20
 void fault_initBitwiseTimerMask(void);  // @ 0x00507c1c
 void cm848_runFaultDerateScheduler(void);  // @ 0x00507c44
-word threshold_adjustment_ramp (engine_protection_channel_configuration_t *configuration, engine_protection_channel_state_t *state,engine_protection_channel_history_t *history ,dword is_engine_speed);  // @ 0x00507d50
+word cm848_rampEngineProtectionSeverityIndex (engine_protection_channel_configuration_t *configuration, engine_protection_channel_state_t *state,engine_protection_channel_history_t *history ,dword is_engine_speed);  // @ 0x00507d50
 undefined2 threshold_value_interpolate(int param_1,int param_2,short param_3);  // @ 0x00507dc0
-void hpcr_initFuelTemperatureSensorChannel(void);  // @ 0x00507e20
-sword protection_threshold_check (engine_protection_channel_configuration_t *configuration, engine_protection_channel_state_t *state,dword is_engine_speed, dword threshold_select);  // @ 0x00507ebc
-void governor_fault_eventCounter_update(void);  // @ 0x0050802c
+void hpcr_initializeEngineProtection(void);  // @ 0x00507e20
+sword cm848_isEngineProtectionInputPastThreshold (engine_protection_channel_configuration_t *configuration, engine_protection_channel_state_t *state,dword is_engine_speed, dword threshold_select);  // @ 0x00507ebc
+void cm848_countEngineProtectionOverLimitDurations(void);  // @ 0x0050802c
 void cm848_examineEngineProtectionBeforeCranking(void);  // @ 0x00508130
 void cm848_initSensorChannelDataStructures(void);  // @ 0x005082f0
-void protection_threshold_update (engine_protection_channel_configuration_t *configuration, engine_protection_channel_state_t *state,engine_protection_channel_history_t *history );  // @ 0x0050832c
-void protection_state_transition (dword channel_index,engine_protection_channel_state_t *state, engine_protection_channel_configuration_t *configuration);  // @ 0x00508408
-void governor_fault_derateCalc_channelIter(void);  // @ 0x005084b4
+void cm848_updateEngineProtectionRestartSeverityIndexes (engine_protection_channel_configuration_t *configuration, engine_protection_channel_state_t *state,engine_protection_channel_history_t *history );  // @ 0x0050832c
+void cm848_checkEngineProtectionRestartLimitation (dword channel_index,engine_protection_channel_state_t *state, engine_protection_channel_configuration_t *configuration);  // @ 0x00508408
+void cm848_updateEngineProtectionRestartSeverity(void);  // @ 0x005084b4
 void cm848_calculateFaultDerateEngineSpeedLimit(void);  // @ 0x0050860c
 void cm848_initializeFaultDerateEngineSpeedLimit(void);  // @ 0x005087e4
-void protection_event_timestamp (engine_protection_channel_configuration_t *configuration, engine_protection_channel_state_t *state,dword is_engine_speed);  // @ 0x00508834
+void cm848_countEngineProtectionShutdownTime (engine_protection_channel_configuration_t *configuration, engine_protection_channel_state_t *state,dword is_engine_speed);  // @ 0x00508834
 void cm848_updateEngineProtectionShutdown(void);  // @ 0x00508898
 void cm848_completeEngineStartSequence(void);  // @ 0x00508de8
 void cm848_detectEngineProtectionShutdownOverrideRequest(void);  // @ 0x00508e78
 void cm848_latchEngineProtectionShutdownOverride(void);  // @ 0x00508ee0
 void exception_resetProtectionModeState(void);  // @ 0x00508f0c
 undefined4 protection_condition_eval(int param_1,int param_2,uint param_3);  // @ 0x00508f24
-void fault_snapshot_capture(int param_1);  // @ 0x00508f64
-void fault_event_timing_snapshot(int param_1);  // @ 0x005090fc
-void governor_fault_channelProcess_mainLoop(void);  // @ 0x00509278
+void cm848_recordEngineProtectionFaultLogEntry(int param_1);  // @ 0x00508f64
+void cm848_closeEngineProtectionFaultLogEntry(int param_1);  // @ 0x005090fc
+void cm848_logEngineProtectionChannelFaults(void);  // @ 0x00509278
 void cm848_applyFaultDerateFuelLimit(void);  // @ 0x00509510
 void cm848_calculateFaultDerateFuelLimit(void);  // @ 0x00509540
 void cm848_resetFaultDerateFuelLimit(void);  // @ 0x00509814

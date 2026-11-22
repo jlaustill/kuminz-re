@@ -2034,8 +2034,9 @@ extern word tachometer_minimum_engine_speed;  // 0x003fb9aa
 extern ema_filter_state_t boost_pressure_timing_filter_state;  // 0x003fb9ea
 extern ema_filter_state_t exhaust_pressure_estimate_filter_state;  // 0x003fbce2
 extern ema_filter_state_t egr_valve_position_command_diagnostic_filter_state;  // 0x003fbd10
-extern engine_protection_channel_configuration_t* fault_channel_config_ptr;  // 0x003fbd42
-extern engine_protection_channel_state_t* fault_channel_state_ptr;  // 0x003fbd46
+extern engine_protection_channel_configuration_t* engine_protection_current_configuration;  // 0x003fbd42
+extern engine_protection_channel_state_t* engine_protection_current_state;  // 0x003fbd46
+extern engine_protection_channel_history_t* engine_protection_current_history;  // 0x003fbd4a
 extern void * j1939_tp_rx_session_status_ptr;  // 0x003fbd80
 extern void * j1939_tp_rx_session_tx_buf_ptr;  // 0x003fbd8c
 extern dword j1939_multiframe_tx_status_ptr;  // 0x003fbdd3
@@ -6098,8 +6099,8 @@ extern word data_collector_trigger_input_line_cal;  // 0x003fddbe
 extern word data_collector_trigger_count_cal;  // 0x003fddc0
 extern word data_collector_address_table_byte_count_cal;  // 0x003fddc2
 extern dword data_collector_address_table_cal[32];  // 0x003fddc4
-extern word governor_faultDerate_task_index;  // 0x003fbd2c
-extern word governor_faultDerate_peak_value;  // 0x003fbd3e
+extern word engine_protection_task_index;  // 0x003fbd2c
+extern word engine_protection_longest_shutdown_time_count;  // 0x003fbd3e
 extern word cruise_coast_accelerate_hold_countdown;  // 0x003fcd92
 extern CRUISE_SWITCH_REQUEST cruise_switch_request_working_previous;  // 0x003fcdaa
 extern word cruise_steady_state_debounce_counter;  // 0x003fcdae
@@ -6689,9 +6690,9 @@ extern word emission_level_cap_before_rate_limit;  // 0x003fba28
 extern word data_collector_multiple_countdown;  // 0x003fbcb0
 extern word data_collector_sample_capacity;  // 0x003fbcb6
 extern word data_collector_trigger_input_previous_flag;  // 0x003fbcb8
-extern word governor_faultDerate_prev_rpm;  // 0x003fbd36
-extern word governor_faultDerate_latch;  // 0x003fbd38
-extern word governor_faultDerate_engine_start_flag;  // 0x003fbd3c
+extern word engine_protection_previous_engine_speed;  // 0x003fbd36
+extern word engine_protection_shutdown_latch;  // 0x003fbd38
+extern word engine_protection_engine_start_flag;  // 0x003fbd3c
 extern word engine_protection_shutdown_total_cal;  // 0x003fdfbc
 extern TSC1_OVERRIDE_MODE j1939_monitor_engine_override_control_mode_previous;  // 0x003fbd6c
 extern TSC1_OVERRIDE_MODE j1939_monitor_retarder_override_control_mode_previous;  // 0x003fbd6e
@@ -7923,3 +7924,4 @@ extern word water_in_fuel_key_on_heal_threshold;  // 0x004077f2
 extern word water_in_fuel_maximum_wet_reading;  // 0x004077f4
 extern word general_engine_protection_emission_level_cap_when_active;  // 0x00406fb2
 extern engine_protection_channel_state_t fuel_temperature_engine_protection_state;  // 0x0040a734
+extern byte engine_protection_shutdown_override_lamp_flag;  // 0x0040a78b

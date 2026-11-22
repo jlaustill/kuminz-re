@@ -2928,12 +2928,12 @@ struct algorithm_enable_flags_1_t {
 };
 
 struct algorithm_enable_flags_2_t {
-    uint16_t engine_protection_shutdown_enable : 1;  /* bit 0: e2m Engine_Protection_Shutdown_Enable (0x1): '[EPSOEN] BIT 0 OF 0-15. ENABLE SHUTDOWN ALGORITHM.'; read by cm848_examineEngineProtectionBeforeCranking, governor_fault_derateCalc_channelIter, cm848_updateEngineProtectionShutdown; clear on this truck */
+    uint16_t engine_protection_shutdown_enable : 1;  /* bit 0: e2m Engine_Protection_Shutdown_Enable (0x1): '[EPSOEN] BIT 0 OF 0-15. ENABLE SHUTDOWN ALGORITHM.'; read by cm848_examineEngineProtectionBeforeCranking, cm848_updateEngineProtectionRestartSeverity, cm848_updateEngineProtectionShutdown; clear on this truck */
     uint16_t reserved_bit_1 : 1;  /* bit 1: no e2m record (0x2); no reader in this build; clear on this truck */
     uint16_t reserved_bit_2 : 1;  /* bit 2: no e2m record (0x4); no reader in this build; clear on this truck */
     uint16_t reserved_bit_3 : 1;  /* bit 3: no e2m record (0x8); no reader in this build; clear on this truck */
     uint16_t engine_protection_enable : 1;  /* bit 4: e2m Engine_Protection_Enable (0x10): '[EPEN] BIT 4 OF 0-15. ENGINE PROTECTION FEATURES ENABLE PARAMETER.'; read by cm848_runFaultDerateScheduler, cm848_examineEngineProtectionBeforeCranking; set on this truck */
-    uint16_t engine_protection_restart_enable : 1;  /* bit 5: e2m Engine_Protection_Restart_Enable (0x20): '[EPRYEN] BIT 5 OF 0-15. ENABLE RESTART ALGORITHM.'; read by cm848_examineEngineProtectionBeforeCranking, governor_fault_derateCalc_channelIter; clear on this truck */
+    uint16_t engine_protection_restart_enable : 1;  /* bit 5: e2m Engine_Protection_Restart_Enable (0x20): '[EPRYEN] BIT 5 OF 0-15. ENABLE RESTART ALGORITHM.'; read by cm848_examineEngineProtectionBeforeCranking, cm848_updateEngineProtectionRestartSeverity; clear on this truck */
     uint16_t engine_retarder_clutch_deactivation_enable : 1;  /* bit 6: e2m EB_Clutch_Enable (0x40): '[EBCHDBEN] BIT 6 OF 0-15. CALIBRATION INDICATOR USED TO ENABLE ENGINE BRAKE DEACTIVATION'; read by cm848_updateEngineRetarderAllowedState; clear on this truck */
     uint16_t j1922_monitor_enable : 1;  /* bit 7: e2m J1922_Monitor_Enable (0x80): '[JC22MRSW] J1922 Monitor Enable 0 = disable monitor algorithm 1 = enable monitor algori'; no reader in this build; clear on this truck */
     uint16_t j1922_monitor_clear_enable : 1;  /* bit 8: e2m J1922_Monitor_Clear_Enable (0x100): '[JC22CCSW] Bit 1 of Bits 0:15 J1922 Monitor Clear Enable 0 = don't clear J1922 control fla'; no reader in this build; clear on this truck */
@@ -3415,9 +3415,9 @@ struct switch_input_state_t {
 };
 
 struct engine_protection_fault_log_entry_t {
-    uint32_t occurrence_time;  /* +0: key_on_hour_meter when the fault became active (fault_snapshot_capture); e2m 1152 +2E EPF_Input_Source_0_Fueling_Fault_Occurrence_Time (0.2 s) names the copy in the channel state */
+    uint32_t occurrence_time;  /* +0: key_on_hour_meter when the fault became active (cm848_recordEngineProtectionFaultLogEntry); e2m 1152 +2E EPF_Input_Source_0_Fueling_Fault_Occurrence_Time (0.2 s) names the copy in the channel state */
     int16_t extreme_value;  /* +4: the input's extreme while the fault is active: starts at 0x8000, or 0x7fff while configuration flag 0x8 is set, and with configuration flags 0xc it takes the input whenever protection_condition_eval(input, value, flags) is nonzero (the code reads it as a signed short); e2m 1152 +32 EPF_Input_Source_0_Fueling_Fault_Log_Value */
-    uint16_t duration;  /* +6: 0 while the fault is active, then key_on_hour_meter - occurrence_time when it clears (fault_event_timing_snapshot); e2m 1152 +34 EPF_Input_Source_0_Fueling_Fault_Log_Duration (0.2 s) */
+    uint16_t duration;  /* +6: 0 while the fault is active, then key_on_hour_meter - occurrence_time when it clears (cm848_closeEngineProtectionFaultLogEntry); e2m 1152 +34 EPF_Input_Source_0_Fueling_Fault_Log_Duration (0.2 s) */
 };
 
 struct engine_protection_channel_configuration_t {
