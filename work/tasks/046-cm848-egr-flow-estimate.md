@@ -1583,6 +1583,37 @@ fault bitfields and the firmware/CLAUDE.md J1939 note. Scripts are in `session_f
   - From the earlier rounds: TouCAN B's base, the "Can2" mailbox writer's name, the boot kernel transport's message
     parameter, `diag_clear_flags_t`.
 
+## Done, round 28 (2026-11-22, same PR): the sensor-present flags, the boot CAN ring state
+
+A peer relay started the round; the leads come from rounds 25-27. Scripts are in `session_folder/round28/`.
+- **Stage A (0ec3474, label-only):**
+  - Three e2m flag records whose row names had turned into readings of their effect:
+    - `absolute_boost_pressure_sensor_present_flag` (11D5 +4, was `boost_is_gauge_pressure_flag`). Set,
+      `cm848_calculateBoostPressure` subtracts the barometric reference; clear, the sensor's reading is the boost.
+      The result is gauge boost either way; the old comment read the clear case as absolute.
+    - `barometric_pressure_sensor_present_flag` (11D5 +2, was `boost_uses_barometric_pressure_flag`).
+    - `two_speed_axle_switch_present_cal` (1180 +E Rear_Axle_Ratio_Switch_Present, was `two_speed_axle_enable_cal`).
+    - `present_flags.py` scanned every table-resolved `*_Present` / `*_Installed` record; these were the only three
+      whose row dropped the word.
+  - `cm848_writeBootKernelCanTxMailbox` (was `cm848_writeCan2ControllerTxMailbox`): the boot kernel image's
+    byte-for-byte copy of `cm848_writeCanControllerTxMailbox`. Both write TouCAN A (the round 25 lead).
+  - `can_ring_state_t` / `boot_can_ring_state` (were `can_tx_ring_t` / `j1939_can_ring_buf`): the boot ROM and
+    kernel CAN driver's transmit and receive rings. Only boot-side code uses it.
+    - Its pointer fields are spelled out.
+    - Five stale name-only rows inside it (`qadc_a_ccw_*`, `qadc_a_queue*_wrap_flag`) became dotted rows.
+- **Stage B (c65bdd0, types):**
+  - `_pad16` became `transmit_ring_full_flag` / `receive_ring_full_flag` / `reserved_18`.
+  - Full prototypes for the two mailbox writers (`can_module`, `mailbox_number`, `frame_words`). Two call sites
+    that rendered with two arguments now show the frame they send: the kernel's
+    `mpc555_manageCan1TransmitBuffer` and the application's `mpc555_processJ1939TxBufferSend`.
+  - The proof: 9 functions differ after the flag tokens. Each matches its old statements with the temps
+    anonymized, apart from the frame argument (`diff_flag_users_r28b.py`).
+- **Checked and closed:**
+  - The 11D5 air fuel control slew rates are already dwords (the wave 15 lead).
+  - TouCAN B has no code users, so nothing can prove its base.
+- **Still open:** the boot kernel transport's message parameter. Typing it `diagnostic_response_message_t *` needs
+  the six callers of `cm848_sendDiagServiceResponse` read for what they pass.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

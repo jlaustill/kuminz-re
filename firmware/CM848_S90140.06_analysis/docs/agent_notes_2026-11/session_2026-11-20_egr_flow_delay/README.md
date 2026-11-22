@@ -408,3 +408,9 @@ Hand work on the round 7 lead.
 - **Stage C:** `spec_r27c.py`, `apply_r27c.py`.
 - **Stage B:** `fault_bit_names.py` -> `fault_field_names.py` (the names, the expansions and their evidence), `fault_setters_r27.py`, `bitfield_words.py` (flat, the layout kept) / `bitfield_words_nested.py` (rejected), `fault_render_census.py`, `piece_contexts.py`, `per_word_tradeoff.py`, `prove_fault_bitfields.py` + `diff_function_r27b.py` (the mask-exact proof).
 - **Closing:** `apply_r27_closing.py`.
+
+## Round 28: the sensor-present flags, the boot CAN ring state (`session_folder/round28/`)
+
+- **Stage A:** `present_flags.py` (the e2m flag scan), `worklist_r28a.py`, `spec_r28a.py`, `dotted_rows_r28a.py`.
+- **Stage B:** `apply_r28b.py`, `tokens_r28b.json`, `diff_flag_users_r28b.py` (the statement check).
+- **Closing:** `apply_r28_closing.py`.

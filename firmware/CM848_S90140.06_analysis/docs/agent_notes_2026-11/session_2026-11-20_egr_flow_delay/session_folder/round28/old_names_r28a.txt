@@ -1,0 +1,11 @@
+boost_is_gauge_pressure_flag
+boost_uses_barometric_pressure_flag
+two_speed_axle_enable_cal
+j1939_can_ring_buf
+cm848_writeCan2ControllerTxMailbox
+can_tx_ring_t
+j1939_tx_write_ptr
+j1939_tx_read_ptr
+can_rx_write_ptr
+can_rx_read_ptr
+toucan_mb_ptr

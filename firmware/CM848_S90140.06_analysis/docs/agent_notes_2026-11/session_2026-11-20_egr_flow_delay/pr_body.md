@@ -533,6 +533,12 @@ state enum, the flag bytes.**
 - **Stage B (2eb75f6, types):** one bitfield per fault in `fault_bit_words_t` words 1-49 (301 e2m names, the rest
   `fault_<n>`). 780 bit-name references (656 tests, 108 writes, 16 other); 943 piece tokens, 856 of them on
   set / clear writes.
+**Round 28 (the round 25-27 leads).**
+- **Stage A (0ec3474, label-only):** three sensor-present flags named from e2m: the absolute boost sensor flag read
+  backwards, plus the barometric sensor and the two-speed axle switch. The boot kernel's copy of the CAN transmit
+  mailbox writer (the old "Can2" was not a second controller). The boot CAN ring state struct and its fields.
+- **Stage B (c65bdd0, types):** the ring's two full flags split out of `_pad16`; full prototypes for the mailbox
+  writers, so two calls that hid their frame argument show it.
 
 ## Test plan
 
@@ -625,6 +631,8 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 28: stage A is EQUIVALENT; stage B's 9 differing functions match statement by statement apart from the
+  frame argument.
 - [x] Round 27: stages A and C are EQUIVALENT; stage B passes the mask-exact proof (1964 functions identical, 4
   structural differences read by hand).
 - [x] Round 26: stage A is EQUIVALENT.
