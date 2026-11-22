@@ -1949,9 +1949,9 @@ void cm848_initWaterInFuelDistanceMonitor(void);  // @ 0x005379b4
 void cm848_monitorWaterInFuelDistance(void);  // @ 0x005379d8
 void cm848_mainLoopDispatcher(void);  // @ 0x00537acc
 undefined4 sensorChannelConditionValidator(int param_1);  // @ 0x00537b50
-void diag_faultMatch_outputCheck_update (uint param_1,uint param_2,uint param_3,uint param_4,byte *param_5,byte *param_6, byte *param_7,byte *param_8,ushort *param_9);  // @ 0x00537c64
-void cm848_mainLoopMonitor(void);  // @ 0x00538278
-void cm848_initSensorCalibration(void);  // @ 0x00538748
+void cm848_checkDiscreteOutputReadBack (dword logical_output,dword read_back_line,dword high_fault_bit,dword low_fault_bit, byte *on_mismatch_count,byte *off_mismatch_count,byte *high_fault_recovery_count, byte *low_fault_recovery_count,word *retry_count);  // @ 0x00537c64
+void cm848_monitorDiscreteOutputReadBack(void);  // @ 0x00538278
+void cm848_initializeDiscreteOutputReadBackChecks(void);  // @ 0x00538748
 void cm848_clearWorkingRam(void);  // @ 0x00538974
 void cm848_initializeRamRefresh(void);  // @ 0x005389c4
 void cm848_refreshRamCalibration(void);  // @ 0x00538a84

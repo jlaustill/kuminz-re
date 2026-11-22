@@ -2109,8 +2109,6 @@ extern undefined end_of_line_test_second_divider_pass_count;  // 0x003fd1ad
 extern undefined end_of_line_test_time_since_engine_start;  // 0x003fd1ae
 extern undefined end_of_line_test_output_number;  // 0x003fd1ba
 extern word fuel_pressure_sensor_pre_start_high_sample_count;  // 0x003fd1d8
-extern byte BYTE_003fd284;  // 0x003fd284
-extern byte BYTE_003fd298;  // 0x003fd298
 extern void * sensor_cal_rom_read_ptr;  // 0x003fd2d4
 extern void * sensor_cal_ram_write_ptr;  // 0x003fd2d8
 extern byte eeprom_mirror;  // 0x003fd482
@@ -6293,7 +6291,7 @@ extern byte fuel_level_low_distance_check_pass_count;  // 0x003fd1cc
 extern byte fuel_level_low_distance_check_disabled_flag;  // 0x003fd1cd
 extern word fuel_level_low_distance_check_start_delay_count;  // 0x003fd1d0
 extern byte fuel_pressure_setpoint_not_reached_monitor_active_flag;  // 0x003fd264
-extern byte fault_match_scan_cycle_count;  // 0x003fd27e
+extern byte discrete_output_read_back_pass_count;  // 0x003fd27e
 extern byte j1939_data_log_handler_count;  // 0x003fd47a
 extern engine_overspeed_event_t engine_overspeed_log_cal[5];  // 0x003fdfde
 extern word j1939_control_session_history_next_entry_cal;  // 0x003feb8a
@@ -6946,7 +6944,7 @@ extern word fuel_quantity_limit_rail_pressure_shortfall_locked_flag;  // 0x003fc
 extern word sci_set_engine_speed_request_timeout_count;  // 0x003fcf5e
 extern byte lifetime_distance_8_mile_record_index;  // 0x003fcfb2
 extern byte immobilizer_seed_counter;  // 0x003fcfdb
-extern word crank_counter_mainloop_prev;  // 0x003fd293
+extern word ignition_key_off_count_previous;  // 0x003fd293
 extern algorithm_enable_flags_28_t algorithm_enable_flags_28_cal;  // 0x003fd5d4
 extern word sensor_validation_startup_accumulator;  // 0x003fdb88
 extern word switch_input_2_hardware_line_cal;  // 0x003fdb92
@@ -7896,6 +7894,28 @@ extern int16_t engine_protection_power_up_shutdown_channel;  // 0x003fbd3a
 extern word fault_derate_fuel_limit_by_engine_speed_cached_axis_offset;  // 0x003fbd4e
 extern word watchdog_fueling_coolant_duration_adjustment;  // 0x003fce30
 extern word watchdog_coolant_duration_adjustment_cached_axis_offset;  // 0x003fce32
+extern discrete_output_read_back_counters_t air_conditioning_output_read_back_check;  // 0x003fd27f
+extern discrete_output_read_back_counters_t engine_brake_1_output_read_back_check;  // 0x003fd283
+extern discrete_output_read_back_counters_t intake_air_heater_1_output_read_back_check;  // 0x003fd287
+extern discrete_output_read_back_counters_t intake_air_heater_2_output_read_back_check;  // 0x003fd28b
+extern discrete_output_read_back_counters_t lift_pump_output_read_back_check;  // 0x003fd28f
+extern word air_conditioning_output_read_back_retry_count;  // 0x003fd295
+extern word engine_brake_1_output_read_back_retry_count;  // 0x003fd297
+extern word intake_air_heater_1_output_read_back_retry_count;  // 0x003fd299
+extern word intake_air_heater_2_output_read_back_retry_count;  // 0x003fd29b
+extern word lift_pump_output_read_back_retry_count;  // 0x003fd29d
+extern discrete_output_read_back_counters_t transmission_relay_output_read_back_check;  // 0x003fd29f
+extern word transmission_relay_output_read_back_retry_count;  // 0x003fd2a3
+extern discrete_output_read_back_counters_t transmission_overdrive_output_read_back_check;  // 0x003fd2a5
+extern word transmission_overdrive_output_read_back_retry_count;  // 0x003fd2a9
+extern discrete_output_read_back_counters_t transmission_torque_converter_clutch_output_read_back_check;  // 0x003fd2ab
+extern word transmission_torque_converter_clutch_output_read_back_retry_count;  // 0x003fd2af
+extern discrete_output_read_back_counters_t cruise_vent_output_read_back_check;  // 0x003fd2b1
+extern word cruise_vent_output_read_back_retry_count;  // 0x003fd2b5
+extern discrete_output_read_back_counters_t cruise_vacuum_output_read_back_check;  // 0x003fd2b7
+extern word cruise_vacuum_output_read_back_retry_count;  // 0x003fd2bb
+extern discrete_output_read_back_counters_t cruise_servo_supply_output_read_back_check;  // 0x003fd2bd
+extern word cruise_servo_supply_output_read_back_retry_count;  // 0x003fd2c1
 extern word algorithm_enable_flags_table_length_cal;  // 0x003fd59a
 extern word algorithm_enable_flags_7_cal;  // 0x003fd5aa
 extern word algorithm_enable_flags_8_cal;  // 0x003fd5ac

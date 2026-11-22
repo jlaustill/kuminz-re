@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 10:55:03 MST 2026
+// Generated: Sun Nov 22 11:25:39 MST 2026
 
 
 //
@@ -6094,9 +6094,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
-  byte prescaler_count;
   dword runtime_value;
   word counter_value;
+  byte prescaler_count;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -7406,7 +7406,7 @@ void main_loop(void)
     cm848_periodicTaskSet_sensors2();
     cm848_periodicTaskGroup13_calibration2();
     cm848_periodicTaskGroup26_calibration8();
-    cm848_mainLoopMonitor();
+    cm848_monitorDiscreteOutputReadBack();
     main_loop_scheduler_phase = 2;
     break;
   case 2:
@@ -58631,7 +58631,7 @@ void cm848_applicationMain(void)
   cm848_initializeFuelPressureSensorPlausibilityState();
   cm848_initProtectionFilterLimits();
   cm848_initializeFuelPressureGovernorMonitorState();
-  cm848_initSensorCalibration();
+  cm848_initializeDiscreteOutputReadBackChecks();
   cm848_initialization_step_2();
   cm848_resetEngineProtectionShutdownState();
   cm848_resetEngineProtectionPrecrankState();
@@ -58678,7 +58678,7 @@ void cm848_restartApplicationWithoutReset(void)
   ushort uVar1;
   undefined4 uVar2;
   
-  cm848_initSensorCalibration();
+  cm848_initializeDiscreteOutputReadBackChecks();
   cm848_initialization_step_2();
   cm848_resetEngineProtectionShutdownState();
   cm848_resetEngineProtectionPrecrankState();
@@ -97862,12 +97862,21 @@ undefined4 sensorChannelConditionValidator(int param_1)
 
 
 //
-// Function: diag_faultMatch_outputCheck_update @ 0x00537c64
+// Function: cm848_checkDiscreteOutputReadBack @ 0x00537c64
 //
 
-void diag_faultMatch_outputCheck_update
-               (uint param_1,uint param_2,uint param_3,uint param_4,byte *param_5,byte *param_6,
-               byte *param_7,byte *param_8,ushort *param_9)
+/* The read-back check of one discrete output: when the read-back line disagrees with the commanded
+   logical output it debounces (commanded on, reads off: on_mismatch_count, then up to
+   auxiliary_driver_toggle_count_limit retries of the output in retry_count, then the high fault
+   bit; commanded off, reads on: off_mismatch_count, then the low fault bit); while they agree a
+   registered fault clears after its recovery count. Outputs 19 / 20 (the cruise vent / vacuum
+   solenoids) use the cruise thresholds and the vacuum throttle actuator state (was
+   diag_faultMatch_outputCheck_update) */
+
+void cm848_checkDiscreteOutputReadBack
+               (dword logical_output,dword read_back_line,dword high_fault_bit,dword low_fault_bit,
+               byte *on_mismatch_count,byte *off_mismatch_count,byte *high_fault_recovery_count,
+               byte *low_fault_recovery_count,word *retry_count)
 
 {
   byte bVar1;
@@ -97877,158 +97886,167 @@ void diag_faultMatch_outputCheck_update
   int iVar5;
   int iVar6;
   
-  if ((&switch_input_hardware_line_cal)[param_2] == 0 ||
-      (&protection_event_output_line_cal)[param_1] == 0) {
+  if ((&switch_input_hardware_line_cal)[read_back_line] == 0 ||
+      (&protection_event_output_line_cal)[logical_output] == 0) {
     return;
   }
   uVar4 = (uint)switch_input_sample_bits
-                [((int)param_2 >> 3) + (uint)((int)param_2 < 0 && (param_2 & 7) != 0)] &
-          1 << (param_2 + (((int)param_2 >> 3) + (uint)((int)param_2 < 0 && (param_2 & 7) != 0)) *
-                          -8 & 0x3f);
+                [((int)read_back_line >> 3) +
+                 (uint)((int)read_back_line < 0 && (read_back_line & 7) != 0)] &
+          1 << (read_back_line +
+                (((int)read_back_line >> 3) +
+                (uint)((int)read_back_line < 0 && (read_back_line & 7) != 0)) * -8 & 0x3f);
   uVar3 = (uint)(&logical_output_request_snapshot)
-                [((int)param_1 >> 3) + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)] &
-          1 << (param_1 + (((int)param_1 >> 3) + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) *
-                          -8 & 0x3f);
-  iVar5 = (int)param_4 >> 4;
-  iVar6 = (int)param_3 >> 4;
+                [((int)logical_output >> 3) +
+                 (uint)((int)logical_output < 0 && (logical_output & 7) != 0)] &
+          1 << (logical_output +
+                (((int)logical_output >> 3) +
+                (uint)((int)logical_output < 0 && (logical_output & 7) != 0)) * -8 & 0x3f);
+  iVar5 = (int)low_fault_bit >> 4;
+  iVar6 = (int)high_fault_bit >> 4;
   if ((uVar4 != 0) != (uVar3 != 0)) {
     if (uVar4 == 0) {
-      if ((param_1 != 0x13) && (param_1 != 0x14)) {
-        if (*param_5 < auxiliary_driver_fault_match_debounce_threshold) {
-          *param_5 = *param_5 + 1;
+      if ((logical_output != 0x13) && (logical_output != 0x14)) {
+        if (*on_mismatch_count < auxiliary_driver_fault_match_debounce_threshold) {
+          *on_mismatch_count = *on_mismatch_count + 1;
         }
-        else if (*param_9 < auxiliary_driver_toggle_count_limit) {
-          *param_9 = *param_9 + 1;
-          cm848_clearLogicalOutputRequest(param_1 & 0xffff,0);
-          *param_5 = 0;
+        else if (*retry_count < auxiliary_driver_toggle_count_limit) {
+          *retry_count = *retry_count + 1;
+          cm848_clearLogicalOutputRequest(logical_output & 0xffff,0);
+          *on_mismatch_count = 0;
         }
         else {
           (&fault_detected_cal.faults_0_to_15)[iVar6] =
-               (&fault_detected_cal.faults_0_to_15)[iVar6] | (ushort)(1 << (param_3 & 0xf));
+               (&fault_detected_cal.faults_0_to_15)[iVar6] | (ushort)(1 << (high_fault_bit & 0xf));
         }
-        *param_7 = 0;
+        *high_fault_recovery_count = 0;
         return;
       }
-      if (*param_5 < cruise_driver_fault_match_debounce_threshold) {
+      if (*on_mismatch_count < cruise_driver_fault_match_debounce_threshold) {
         if ((vacuum_throttle_actuator_disabled_flag == 0) &&
            (logical_output_request_bits_16_to_23.cruise_servo_supply_request != 0)) {
-          *param_5 = *param_5 + 1;
+          *on_mismatch_count = *on_mismatch_count + 1;
         }
       }
       else {
-        uVar2 = *param_9;
+        uVar2 = *retry_count;
         if ((uVar2 < cruise_driver_fault_match_debounce_threshold) &&
            (logical_output_request_bits_16_to_23.cruise_servo_supply_request != 0)) {
           if (vacuum_throttle_actuator_disabled_flag == 0) {
-            *param_9 = uVar2 + 1;
+            *retry_count = uVar2 + 1;
           }
-          cm848_clearLogicalOutputRequest(param_1 & 0xffff,0);
-          *param_5 = 0;
+          cm848_clearLogicalOutputRequest(logical_output & 0xffff,0);
+          *on_mismatch_count = 0;
         }
         else if ((vacuum_throttle_actuator_disabled_flag != 0) &&
                 (cruise_driver_fault_match_debounce_threshold <= uVar2)) {
           (&fault_detected_cal.faults_0_to_15)[iVar6] =
-               (&fault_detected_cal.faults_0_to_15)[iVar6] | (ushort)(1 << (param_3 & 0xf));
+               (&fault_detected_cal.faults_0_to_15)[iVar6] | (ushort)(1 << (high_fault_bit & 0xf));
         }
       }
-      *param_7 = 0;
+      *high_fault_recovery_count = 0;
       return;
     }
-    if ((param_1 != 0x13) && (param_1 != 0x14)) {
-      if (*param_6 < auxiliary_driver_fault_match_debounce_threshold) {
-        *param_6 = *param_6 + 1;
+    if ((logical_output != 0x13) && (logical_output != 0x14)) {
+      if (*off_mismatch_count < auxiliary_driver_fault_match_debounce_threshold) {
+        *off_mismatch_count = *off_mismatch_count + 1;
       }
       else {
         (&fault_detected_cal.faults_0_to_15)[iVar5] =
-             (&fault_detected_cal.faults_0_to_15)[iVar5] | (ushort)(1 << (param_4 & 0xf));
+             (&fault_detected_cal.faults_0_to_15)[iVar5] | (ushort)(1 << (low_fault_bit & 0xf));
       }
-      *param_8 = 0;
+      *low_fault_recovery_count = 0;
       return;
     }
-    bVar1 = *param_6;
+    bVar1 = *off_mismatch_count;
     if (bVar1 < cruise_driver_fault_match_debounce_threshold) {
       if ((vacuum_throttle_actuator_disabled_flag == 0) &&
          (logical_output_request_bits_16_to_23.cruise_servo_supply_request != 0)) {
-        *param_6 = bVar1 + 1;
+        *off_mismatch_count = bVar1 + 1;
       }
     }
     else if ((vacuum_throttle_actuator_disabled_flag != 0) &&
             (cruise_driver_fault_match_debounce_threshold <= bVar1)) {
       (&fault_detected_cal.faults_0_to_15)[iVar5] =
-           (&fault_detected_cal.faults_0_to_15)[iVar5] | (ushort)(1 << (param_4 & 0xf));
+           (&fault_detected_cal.faults_0_to_15)[iVar5] | (ushort)(1 << (low_fault_bit & 0xf));
     }
-    *param_8 = 0;
+    *low_fault_recovery_count = 0;
     return;
   }
-  if ((param_1 == 0x13) || (param_1 == 0x14)) {
+  if ((logical_output == 0x13) || (logical_output == 0x14)) {
     if (uVar3 == 0) {
-      if (((uint)(&fault_registered_cal.faults_0_to_15)[iVar5] & 1 << (param_4 & 0xf)) == 0)
+      if (((uint)(&fault_registered_cal.faults_0_to_15)[iVar5] & 1 << (low_fault_bit & 0xf)) == 0)
       goto LAB_0053825c;
-      if (cruise_driver_fault_active_recovery_threshold <= *param_8) {
+      if (cruise_driver_fault_active_recovery_threshold <= *low_fault_recovery_count) {
         (&fault_detected_cal.faults_0_to_15)[iVar5] =
-             (&fault_detected_cal.faults_0_to_15)[iVar5] & ~(ushort)(1 << (param_4 & 0xf));
+             (&fault_detected_cal.faults_0_to_15)[iVar5] & ~(ushort)(1 << (low_fault_bit & 0xf));
         (&fault_registered_cal.faults_0_to_15)[iVar5] =
-             (&fault_registered_cal.faults_0_to_15)[iVar5] & ~(ushort)(1 << (param_4 & 0xf));
+             (&fault_registered_cal.faults_0_to_15)[iVar5] & ~(ushort)(1 << (low_fault_bit & 0xf));
         goto LAB_0053825c;
       }
       goto LAB_00538208;
     }
-    if (((uint)(&fault_registered_cal.faults_0_to_15)[iVar6] & 1 << (param_3 & 0xf)) == 0)
+    if (((uint)(&fault_registered_cal.faults_0_to_15)[iVar6] & 1 << (high_fault_bit & 0xf)) == 0)
     goto LAB_005381b4;
-    if (cruise_driver_fault_active_recovery_threshold <= *param_7) {
+    if (cruise_driver_fault_active_recovery_threshold <= *high_fault_recovery_count) {
       (&fault_detected_cal.faults_0_to_15)[iVar6] =
-           (&fault_detected_cal.faults_0_to_15)[iVar6] & ~(ushort)(1 << (param_3 & 0xf));
+           (&fault_detected_cal.faults_0_to_15)[iVar6] & ~(ushort)(1 << (high_fault_bit & 0xf));
       (&fault_registered_cal.faults_0_to_15)[iVar6] =
-           (&fault_registered_cal.faults_0_to_15)[iVar6] & ~(ushort)(1 << (param_3 & 0xf));
+           (&fault_registered_cal.faults_0_to_15)[iVar6] & ~(ushort)(1 << (high_fault_bit & 0xf));
       goto LAB_005381b4;
     }
   }
   else {
     if (uVar3 == 0) {
-      if (((uint)(&fault_registered_cal.faults_0_to_15)[iVar5] & 1 << (param_4 & 0xf)) == 0)
+      if (((uint)(&fault_registered_cal.faults_0_to_15)[iVar5] & 1 << (low_fault_bit & 0xf)) == 0)
       goto LAB_0053825c;
-      if (auxiliary_driver_fault_active_recovery_threshold <= *param_8) {
+      if (auxiliary_driver_fault_active_recovery_threshold <= *low_fault_recovery_count) {
         (&fault_detected_cal.faults_0_to_15)[iVar5] =
-             (&fault_detected_cal.faults_0_to_15)[iVar5] & ~(ushort)(1 << (param_4 & 0xf));
+             (&fault_detected_cal.faults_0_to_15)[iVar5] & ~(ushort)(1 << (low_fault_bit & 0xf));
         (&fault_registered_cal.faults_0_to_15)[iVar5] =
-             (&fault_registered_cal.faults_0_to_15)[iVar5] & ~(ushort)(1 << (param_4 & 0xf));
+             (&fault_registered_cal.faults_0_to_15)[iVar5] & ~(ushort)(1 << (low_fault_bit & 0xf));
         goto LAB_0053825c;
       }
 LAB_00538208:
-      *param_8 = *param_8 + 1;
+      *low_fault_recovery_count = *low_fault_recovery_count + 1;
 LAB_0053825c:
-      *param_6 = 0;
+      *off_mismatch_count = 0;
       return;
     }
-    if (((uint)(&fault_registered_cal.faults_0_to_15)[iVar6] & 1 << (param_3 & 0xf)) == 0)
+    if (((uint)(&fault_registered_cal.faults_0_to_15)[iVar6] & 1 << (high_fault_bit & 0xf)) == 0)
     goto LAB_005381b4;
-    if (auxiliary_driver_fault_active_recovery_threshold <= *param_7) {
+    if (auxiliary_driver_fault_active_recovery_threshold <= *high_fault_recovery_count) {
       (&fault_detected_cal.faults_0_to_15)[iVar6] =
-           (&fault_detected_cal.faults_0_to_15)[iVar6] & ~(ushort)(1 << (param_3 & 0xf));
+           (&fault_detected_cal.faults_0_to_15)[iVar6] & ~(ushort)(1 << (high_fault_bit & 0xf));
       (&fault_registered_cal.faults_0_to_15)[iVar6] =
-           (&fault_registered_cal.faults_0_to_15)[iVar6] & ~(ushort)(1 << (param_3 & 0xf));
+           (&fault_registered_cal.faults_0_to_15)[iVar6] & ~(ushort)(1 << (high_fault_bit & 0xf));
       goto LAB_005381b4;
     }
   }
-  *param_7 = *param_7 + 1;
+  *high_fault_recovery_count = *high_fault_recovery_count + 1;
 LAB_005381b4:
-  *param_5 = 0;
-  *param_9 = 0;
+  *on_mismatch_count = 0;
+  *retry_count = 0;
   return;
 }
 
 
 
 //
-// Function: cm848_mainLoopMonitor @ 0x00538278
+// Function: cm848_monitorDiscreteOutputReadBack @ 0x00538278
 //
 
-void cm848_mainLoopMonitor(void)
+/* Runs cm848_checkDiscreteOutputReadBack for 11 discrete outputs (A/C, engine brake 1, intake air
+   heaters 1 / 2, lift pump, transmission relay / overdrive / converter clutch, cruise vent / vacuum
+   / servo supply) every fifth pass with the key on; at a key-off it turns the heater and lift pump
+   outputs off (was cm848_mainLoopMonitor) */
+
+void cm848_monitorDiscreteOutputReadBack(void)
 
 {
   word wVar1;
   
-  if ((crank_counter_mainloop_prev < ignition_key_off_count) ||
+  if ((ignition_key_off_count_previous < ignition_key_off_count) ||
      (supervisor_register_36_bit_1_low_held_flag != 0)) {
     wVar1 = mios_mdasm30.SCRD;
     if (((wVar1 & 0x8000) != 0) && (supervisor_register_36_bit_1_low_flag == 0)) {
@@ -98044,65 +98062,102 @@ void cm848_mainLoopMonitor(void)
         cm848_clearLogicalOutputAndDriveLine(0x35);
         cm848_setLogicalOutputRequest(0x35,0);
       }
-      fault_match_scan_cycle_count = 0;
-      crank_counter_mainloop_prev = ignition_key_off_count;
+      discrete_output_read_back_pass_count = 0;
+      ignition_key_off_count_previous = ignition_key_off_count;
     }
   }
   else {
-    crank_counter_mainloop_prev = ignition_key_off_count;
-    fault_match_scan_cycle_count = fault_match_scan_cycle_count + 1;
-    if (((4 < fault_match_scan_cycle_count) &&
-        (fault_match_scan_cycle_count = 0, (switch_input_sample_bits[0] & 1) != 0)) &&
+    ignition_key_off_count_previous = ignition_key_off_count;
+    discrete_output_read_back_pass_count = discrete_output_read_back_pass_count + 1;
+    if (((4 < discrete_output_read_back_pass_count) &&
+        (discrete_output_read_back_pass_count = 0, (switch_input_sample_bits[0] & 1) != 0)) &&
        (logical_output_request_bits_48_to_55.driver_asic_shutoff_request == 0)) {
       if (diag_clear_flags_t_003fedfc._0_2_ != 0) {
-        diag_faultMatch_outputCheck_update
-                  (0x26,6,0x173,0x174,&DAT_003fd27f,&DAT_003fd280,&DAT_003fd281,&DAT_003fd282,
-                   &DAT_003fd295);
+        cm848_checkDiscreteOutputReadBack
+                  (0x26,6,0x173,0x174,&air_conditioning_output_read_back_check.on_mismatch_count,
+                   &air_conditioning_output_read_back_check.off_mismatch_count,
+                   &air_conditioning_output_read_back_check.high_fault_recovery_count,
+                   &air_conditioning_output_read_back_check.low_fault_recovery_count,
+                   &air_conditioning_output_read_back_retry_count);
       }
       if (switch_input_state_bits.exhaust_brake_switch != 0) {
         protection_b_fault_active_flag = 1;
       }
       if (protection_b_fault_active_flag != 0) {
-        diag_faultMatch_outputCheck_update
-                  (0xb,5,0x29,0x2a,&DAT_003fd283,&BYTE_003fd284,&DAT_003fd285,&DAT_003fd286,
-                   &DAT_003fd297);
+        cm848_checkDiscreteOutputReadBack
+                  (0xb,5,0x29,0x2a,&engine_brake_1_output_read_back_check.on_mismatch_count,
+                   &engine_brake_1_output_read_back_check.off_mismatch_count,
+                   &engine_brake_1_output_read_back_check.high_fault_recovery_count,
+                   &engine_brake_1_output_read_back_check.low_fault_recovery_count,
+                   &engine_brake_1_output_read_back_retry_count);
       }
-      diag_faultMatch_outputCheck_update
-                (0x2b,9,0x127,0x126,&DAT_003fd287,&DAT_003fd288,&DAT_003fd289,&DAT_003fd28a,
-                 &DAT_003fd299);
-      diag_faultMatch_outputCheck_update
-                (0x2c,10,0x129,0x128,&DAT_003fd28b,&DAT_003fd28c,&DAT_003fd28d,&DAT_003fd28e,
-                 &DAT_003fd29b);
-      diag_faultMatch_outputCheck_update
-                (0x35,1,0x182,0x183,&DAT_003fd28f,&DAT_003fd290,&DAT_003fd291,&DAT_003fd292,
-                 &DAT_003fd29d);
-      diag_faultMatch_outputCheck_update
-                (0x10,0x16,0x88,0x89,&DAT_003fd29f,&DAT_003fd2a0,&DAT_003fd2a1,&DAT_003fd2a2,
-                 &DAT_003fd2a3);
+      cm848_checkDiscreteOutputReadBack
+                (0x2b,9,0x127,0x126,&intake_air_heater_1_output_read_back_check.on_mismatch_count,
+                 &intake_air_heater_1_output_read_back_check.off_mismatch_count,
+                 &intake_air_heater_1_output_read_back_check.high_fault_recovery_count,
+                 &intake_air_heater_1_output_read_back_check.low_fault_recovery_count,
+                 &intake_air_heater_1_output_read_back_retry_count);
+      cm848_checkDiscreteOutputReadBack
+                (0x2c,10,0x129,0x128,&intake_air_heater_2_output_read_back_check.on_mismatch_count,
+                 &intake_air_heater_2_output_read_back_check.off_mismatch_count,
+                 &intake_air_heater_2_output_read_back_check.high_fault_recovery_count,
+                 &intake_air_heater_2_output_read_back_check.low_fault_recovery_count,
+                 &intake_air_heater_2_output_read_back_retry_count);
+      cm848_checkDiscreteOutputReadBack
+                (0x35,1,0x182,0x183,&lift_pump_output_read_back_check.on_mismatch_count,
+                 &lift_pump_output_read_back_check.off_mismatch_count,
+                 &lift_pump_output_read_back_check.high_fault_recovery_count,
+                 &lift_pump_output_read_back_check.low_fault_recovery_count,
+                 &lift_pump_output_read_back_retry_count);
+      cm848_checkDiscreteOutputReadBack
+                (0x10,0x16,0x88,0x89,&transmission_relay_output_read_back_check.on_mismatch_count,
+                 &transmission_relay_output_read_back_check.off_mismatch_count,
+                 &transmission_relay_output_read_back_check.high_fault_recovery_count,
+                 &transmission_relay_output_read_back_check.low_fault_recovery_count,
+                 &transmission_relay_output_read_back_retry_count);
       if (logical_output_request_bits_16_to_23.transmission_relay_request != 0) {
-        diag_faultMatch_outputCheck_update
-                  (0x11,0x17,0x8a,0x8b,&DAT_003fd2a5,&DAT_003fd2a6,&DAT_003fd2a7,&DAT_003fd2a8,
-                   &DAT_003fd2a9);
+        cm848_checkDiscreteOutputReadBack
+                  (0x11,0x17,0x8a,0x8b,
+                   &transmission_overdrive_output_read_back_check.on_mismatch_count,
+                   &transmission_overdrive_output_read_back_check.off_mismatch_count,
+                   &transmission_overdrive_output_read_back_check.high_fault_recovery_count,
+                   &transmission_overdrive_output_read_back_check.low_fault_recovery_count,
+                   &transmission_overdrive_output_read_back_retry_count);
       }
       if (logical_output_request_bits_16_to_23.transmission_relay_request != 0) {
-        diag_faultMatch_outputCheck_update
-                  (0x12,0x18,0x8c,0x8d,&DAT_003fd2ab,&DAT_003fd2ac,&DAT_003fd2ad,&DAT_003fd2ae,
-                   &DAT_003fd2af);
+        cm848_checkDiscreteOutputReadBack
+                  (0x12,0x18,0x8c,0x8d,
+                   &transmission_torque_converter_clutch_output_read_back_check.on_mismatch_count,
+                   &transmission_torque_converter_clutch_output_read_back_check.off_mismatch_count,
+                   &transmission_torque_converter_clutch_output_read_back_check.
+                    high_fault_recovery_count,
+                   &transmission_torque_converter_clutch_output_read_back_check.
+                    low_fault_recovery_count,
+                   &transmission_torque_converter_clutch_output_read_back_retry_count);
       }
       if ((switch_input_state_bits.brake_switch == 0) && (cruise_control_switches_learned_flag != 0)
          ) {
-        diag_faultMatch_outputCheck_update
-                  (0x15,0x1c,0x92,0x93,&DAT_003fd2bd,&DAT_003fd2be,&DAT_003fd2bf,&DAT_003fd2c0,
-                   &DAT_003fd2c1);
+        cm848_checkDiscreteOutputReadBack
+                  (0x15,0x1c,0x92,0x93,&cruise_servo_supply_output_read_back_check.on_mismatch_count
+                   ,&cruise_servo_supply_output_read_back_check.off_mismatch_count,
+                   &cruise_servo_supply_output_read_back_check.high_fault_recovery_count,
+                   &cruise_servo_supply_output_read_back_check.low_fault_recovery_count,
+                   &cruise_servo_supply_output_read_back_retry_count);
       }
       if ((switch_input_state_bits.brake_switch == 0) && (cruise_control_switches_learned_flag != 0)
          ) {
-        diag_faultMatch_outputCheck_update
-                  (0x13,0x19,0x8e,0x8f,&DAT_003fd2b1,&DAT_003fd2b2,&DAT_003fd2b3,&DAT_003fd2b4,
-                   &DAT_003fd2b5);
-        diag_faultMatch_outputCheck_update
-                  (0x14,0x1b,0x90,0x91,&DAT_003fd2b7,&DAT_003fd2b8,&DAT_003fd2b9,&DAT_003fd2ba,
-                   &DAT_003fd2bb);
+        cm848_checkDiscreteOutputReadBack
+                  (0x13,0x19,0x8e,0x8f,&cruise_vent_output_read_back_check.on_mismatch_count,
+                   &cruise_vent_output_read_back_check.off_mismatch_count,
+                   &cruise_vent_output_read_back_check.high_fault_recovery_count,
+                   &cruise_vent_output_read_back_check.low_fault_recovery_count,
+                   &cruise_vent_output_read_back_retry_count);
+        cm848_checkDiscreteOutputReadBack
+                  (0x14,0x1b,0x90,0x91,&cruise_vacuum_output_read_back_check.on_mismatch_count,
+                   &cruise_vacuum_output_read_back_check.off_mismatch_count,
+                   &cruise_vacuum_output_read_back_check.high_fault_recovery_count,
+                   &cruise_vacuum_output_read_back_check.low_fault_recovery_count,
+                   &cruise_vacuum_output_read_back_retry_count);
       }
     }
   }
@@ -98112,39 +98167,39 @@ void cm848_mainLoopMonitor(void)
 
 
 //
-// Function: cm848_initSensorCalibration @ 0x00538748
+// Function: cm848_initializeDiscreteOutputReadBackChecks @ 0x00538748
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Clears the 11 outputs' read-back counters and retry counts (was cm848_initSensorCalibration) */
 
-void cm848_initSensorCalibration(void)
+void cm848_initializeDiscreteOutputReadBackChecks(void)
 
 {
-  DAT_003fd280 = 0;
-  DAT_003fd27f = 0;
-  DAT_003fd282 = 0;
-  DAT_003fd281 = 0;
-  DAT_003fd295 = 0;
-  DAT_003fd283 = 0;
-  BYTE_003fd284 = 0;
-  DAT_003fd285 = 0;
-  DAT_003fd286 = 0;
-  _DAT_003fd297 = 0;
-  DAT_003fd287 = 0;
-  DAT_003fd288 = 0;
-  DAT_003fd289 = 0;
-  DAT_003fd28a = 0;
-  DAT_003fd299 = 0;
-  DAT_003fd28b = 0;
-  DAT_003fd28c = 0;
-  DAT_003fd28d = 0;
-  DAT_003fd28e = 0;
-  DAT_003fd29b = 0;
-  DAT_003fd28f = 0;
-  DAT_003fd290 = 0;
-  DAT_003fd291 = 0;
-  DAT_003fd292 = 0;
-  DAT_003fd29d = 0;
+  air_conditioning_output_read_back_check.off_mismatch_count = 0;
+  air_conditioning_output_read_back_check.on_mismatch_count = 0;
+  air_conditioning_output_read_back_check.low_fault_recovery_count = 0;
+  air_conditioning_output_read_back_check.high_fault_recovery_count = 0;
+  air_conditioning_output_read_back_retry_count = 0;
+  engine_brake_1_output_read_back_check.on_mismatch_count = 0;
+  engine_brake_1_output_read_back_check.off_mismatch_count = 0;
+  engine_brake_1_output_read_back_check.high_fault_recovery_count = 0;
+  engine_brake_1_output_read_back_check.low_fault_recovery_count = 0;
+  engine_brake_1_output_read_back_retry_count = 0;
+  intake_air_heater_1_output_read_back_check.on_mismatch_count = 0;
+  intake_air_heater_1_output_read_back_check.off_mismatch_count = 0;
+  intake_air_heater_1_output_read_back_check.high_fault_recovery_count = 0;
+  intake_air_heater_1_output_read_back_check.low_fault_recovery_count = 0;
+  intake_air_heater_1_output_read_back_retry_count = 0;
+  intake_air_heater_2_output_read_back_check.on_mismatch_count = 0;
+  intake_air_heater_2_output_read_back_check.off_mismatch_count = 0;
+  intake_air_heater_2_output_read_back_check.high_fault_recovery_count = 0;
+  intake_air_heater_2_output_read_back_check.low_fault_recovery_count = 0;
+  intake_air_heater_2_output_read_back_retry_count = 0;
+  lift_pump_output_read_back_check.on_mismatch_count = 0;
+  lift_pump_output_read_back_check.off_mismatch_count = 0;
+  lift_pump_output_read_back_check.high_fault_recovery_count = 0;
+  lift_pump_output_read_back_check.low_fault_recovery_count = 0;
+  lift_pump_output_read_back_retry_count = 0;
   if (fault_detected_cal.power_off_without_ignition_off_error == 0) {
     if (fault_registered_cal.transmission_variable_force_solenoid_battery_driver_low_control_error
         != 0) {

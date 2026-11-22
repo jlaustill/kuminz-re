@@ -492,3 +492,13 @@ function_address,function_name,param_index,name,type,comment
 0x00053b28,cm848_writeCanControllerTxMailbox,0,can_module,undefined4,The TouCAN module registers (callers pass &toucan_a); buffer n - 1 starts at +0x70 + 16 x n (the application's copy; PR #53 round 28)
 0x00053b28,cm848_writeCanControllerTxMailbox,1,mailbox_number,int,The message buffer number + 1 (callers pass their mailbox index & 0xff)
 0x00053b28,cm848_writeCanControllerTxMailbox,2,frame_words,word*,The frame: identifier high / low and data bytes 0-7 (6 halfwords)
+# The discrete output read-back check (PR #53 round 32)
+0x00537c64,cm848_checkDiscreteOutputReadBack,0,logical_output,int,the logical output the check reads back
+0x00537c64,cm848_checkDiscreteOutputReadBack,1,read_back_line,int,the switch input line wired to the output's read-back
+0x00537c64,cm848_checkDiscreteOutputReadBack,2,high_fault_bit,int,set after the retries when commanded on but reads off
+0x00537c64,cm848_checkDiscreteOutputReadBack,3,low_fault_bit,int,set when commanded off but reads on
+0x00537c64,cm848_checkDiscreteOutputReadBack,4,on_mismatch_count,byte*,discrete_output_read_back_counters_t field
+0x00537c64,cm848_checkDiscreteOutputReadBack,5,off_mismatch_count,byte*,discrete_output_read_back_counters_t field
+0x00537c64,cm848_checkDiscreteOutputReadBack,6,high_fault_recovery_count,byte*,discrete_output_read_back_counters_t field
+0x00537c64,cm848_checkDiscreteOutputReadBack,7,low_fault_recovery_count,byte*,discrete_output_read_back_counters_t field
+0x00537c64,cm848_checkDiscreteOutputReadBack,8,retry_count,word*,the output's retry count

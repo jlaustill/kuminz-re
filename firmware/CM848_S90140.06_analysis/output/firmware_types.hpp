@@ -1388,6 +1388,7 @@ typedef struct engine_protection_channel_configuration_t engine_protection_chann
 typedef struct engine_protection_channel_state_t engine_protection_channel_state_t;
 typedef struct engine_protection_channel_history_t engine_protection_channel_history_t;
 typedef struct j1939_pgn65251_payload_t j1939_pgn65251_payload_t;
+typedef struct discrete_output_read_back_counters_t discrete_output_read_back_counters_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -1674,8 +1675,8 @@ struct fault_bit_words_t {
     uint16_t cruise_vent_driver_low_control_error : 1;  /* bit 15: fault 143: e2m 1036 Cruise_Vent_Driver_Low_Control_Error/Fan_Clutch_Control_Driver2_Low_Control_Error (P0587); the P0587 alternative of Cruise_Vent_Driver_Low_Control_Error/Fan_Clutch_Control_Driver2_Low_Control_Error */
     uint16_t cruise_vacuum_driver_high_control_error : 1;  /* bit 0: word faults_144_to_159 (e2m 1036 +12 System_Error_Status_09) bit 0 = fault 144: e2m 1036 Cruise_Vacuum_Driver_High_Control_Error/Maintenance_Lamp_Driver_High_Control_Error (P0584); the P0584 alternative of Cruise_Vacuum_Driver_High_Control_Error/Maintenance_Lamp_Driver_High_Control_Error */
     uint16_t cruise_vacuum_driver_low_control_error : 1;  /* bit 1: fault 145: e2m 1036 Cruise_Vacuum_Driver_Low_Control_Error/Maintenance_Lamp_Driver_Low_Control_Error (P0583); the P0583 alternative of Cruise_Vacuum_Driver_Low_Control_Error/Maintenance_Lamp_Driver_Low_Control_Error */
-    uint16_t fault_146 : 1;  /* bit 2: fault 146: e2m 1036 Cruise_SC_Source_Driver_High_Control_Error (P0596); e2m Cruise_SC_Source_Driver_High_Control_Error has an abbreviation the code does not resolve (sc) */
-    uint16_t fault_147 : 1;  /* bit 3: fault 147: e2m 1036 Cruise_SC_Source_Driver_Low_Control_Error (P0595); e2m Cruise_SC_Source_Driver_Low_Control_Error has an abbreviation the code does not resolve (sc) */
+    uint16_t cruise_servo_supply_driver_high_control_error : 1;  /* bit 2: logical output 21 (logical_output_request_bits_16_to_23_t.cruise_servo_supply_request; e2m 1577 Cruise_SC_Source_Driver) is checked with this bit by cm848_checkDiscreteOutputReadBack (was fault_146; PR #53 round 32) | fault 146: e2m 1036 Cruise_SC_Source_Driver_High_Control_Error (P0596); e2m Cruise_SC_Source_Driver_High_Control_Error has an abbreviation the code does not resolve (sc) */
+    uint16_t cruise_servo_supply_driver_low_control_error : 1;  /* bit 3: logical output 21 (logical_output_request_bits_16_to_23_t.cruise_servo_supply_request; e2m 1577 Cruise_SC_Source_Driver) is checked with this bit by cm848_checkDiscreteOutputReadBack (was fault_147; PR #53 round 32) | fault 147: e2m 1036 Cruise_SC_Source_Driver_Low_Control_Error (P0595); e2m Cruise_SC_Source_Driver_Low_Control_Error has an abbreviation the code does not resolve (sc) */
     uint16_t transmission_park_neutral_switch_error : 1;  /* bit 4: fault 148: e2m 1036 Transmission_Park_Neutral_Switch_Error (P0850) */
     uint16_t transmission_governor_pressure_rationality_error : 1;  /* bit 5: fault 149: e2m 1036 RE_Governor_Pressure_Rationality_Error (P1762) */
     uint16_t ambient_air_temperature_high_error : 1;  /* bit 6: fault 150: e2m 1036 Ambient_Air_Temperature_High_Error (P0073) */
@@ -3496,12 +3497,12 @@ struct monitor_condition_bits_t {
 };
 
 struct logical_output_request_bits_16_to_23_t {
-    uint8_t transmission_relay_request : 1;  /* bit 0: e2m 1577 +2 0x01 Transmission_VFS_Battery_Driver (12A7 +0x10 Transmission_VFS_Battery_Driver_Priority): the battery feed of the transmission solenoids. output 16 = the transmission control relay (mask 1). cm848_mainLoopMonitor checks output 16 with diag_faultMatch_outputCheck_update(0x10,0x16,0x88,0x89,...): faults 136 / 137 = P0883 / P0882 'TCM power input signal high / low' (the relay output voltage), and fault 137 sets the e2m 8C19 bit RE_Trans_Relay_Circuit_Open ('transmission power relay is open-circuit'). cm848_updateTransmissionRelayRequest requests it (cm848_setLogicalOutputRequest(0x10,0)) only while the engine is not stopped and none of the relay / solenoid circuit limp bits is set. The solenoid diagnostics (the governor pressure solenoid read-back debounce in cm848_debounceOutputReadBackFaults, the output checks of outputs 17 / 18) and the governor pressure monitors run only while it is set (was reserved_bit_0) | earlier note: guess (not proven, so reserved): a transmission solenoid enable request; the old note said transmission relay */
+    uint8_t transmission_relay_request : 1;  /* bit 0: e2m 1577 +2 0x01 Transmission_VFS_Battery_Driver (12A7 +0x10 Transmission_VFS_Battery_Driver_Priority): the battery feed of the transmission solenoids. output 16 = the transmission control relay (mask 1). cm848_monitorDiscreteOutputReadBack checks output 16 with cm848_checkDiscreteOutputReadBack(0x10,0x16,0x88,0x89,...): faults 136 / 137 = P0883 / P0882 'TCM power input signal high / low' (the relay output voltage), and fault 137 sets the e2m 8C19 bit RE_Trans_Relay_Circuit_Open ('transmission power relay is open-circuit'). cm848_updateTransmissionRelayRequest requests it (cm848_setLogicalOutputRequest(0x10,0)) only while the engine is not stopped and none of the relay / solenoid circuit limp bits is set. The solenoid diagnostics (the governor pressure solenoid read-back debounce in cm848_debounceOutputReadBackFaults, the output checks of outputs 17 / 18) and the governor pressure monitors run only while it is set (was reserved_bit_0) | earlier note: guess (not proven, so reserved): a transmission solenoid enable request; the old note said transmission relay */
     uint8_t overdrive_solenoid_request : 1;  /* bit 1: e2m 1577 +2 0x02 Transmission_Overdrive_Driver. output 17 (mask 2). cm848_processOverdriveSwitchAndShift sets it with cm848_setLogicalOutputRequest(0x11,0) together with transmission_3_4_transition_timer and clears it on the overdrive release; read with mask 2 in cm848_monitorConverterClutchAndOverdrivePerformance and cm848_determineCurrentGearAndLockupInhibit. */
     uint8_t converter_clutch_solenoid_request : 1;  /* bit 2: e2m 1577 +2 0x04 Transmission_TCC_Driver. output 18 (mask 4, about 30 uses). cm848_applyConverterLockupSchedule sets it (cm848_setLogicalOutputRequest(0x12,0)); cm848_applyConverterUnlockConditions, cm848_applyConverterUnlockConditionsLowRange and cm848_processOverdriveSwitchAndShift clear it (cm848_clearLogicalOutputRequest(0x12,0)). */
     uint8_t cruise_vent_solenoid_request : 1;  /* bit 3: e2m 1577 +2 0x08 Cruise_Vent_Driver. output 19 (mask 8): cm848_setLogicalOutputRequest(0x13,...) in cm848_controlCruiseVacuumServo (decompile line 41596); wave 2 identified requests 19 / 20 / 21 as cruise vent / vacuum / servo supply. No direct read of this mask. */
     uint8_t cruise_vacuum_solenoid_request : 1;  /* bit 4: e2m 1577 +2 0x10 Cruise_Vacuum_Driver. output 20 (mask 0x10): cm848_setLogicalOutputRequest(0x14,...) in cm848_controlCruiseVacuumServo (decompile line 41602). No direct read of this mask. */
-    uint8_t cruise_servo_supply_request : 1;  /* bit 5: e2m 1577 +2 0x20 Cruise_SC_Source_Driver. output 21 (mask 0x20): cm848_setLogicalOutputRequest(0x15,...) in cm848_controlCruiseVacuumServo (decompile line 41584); mask 0x20 is read by cm848_deriveSecondBrakeSwitchSignal and diag_faultMatch_outputCheck_update (the supply runs through the brake switch). */
+    uint8_t cruise_servo_supply_request : 1;  /* bit 5: e2m 1577 +2 0x20 Cruise_SC_Source_Driver. output 21 (mask 0x20): cm848_setLogicalOutputRequest(0x15,...) in cm848_controlCruiseVacuumServo (decompile line 41584); mask 0x20 is read by cm848_deriveSecondBrakeSwitchSignal and cm848_checkDiscreteOutputReadBack (the supply runs through the brake switch). */
     uint8_t reserved_bit_6 : 1;  /* bit 6: output 22 (mask 0x40): e2m 1577 +2 CORS_Makeup_Valve_Driver; no direct read or write found */
     uint8_t reserved_bit_7 : 1;  /* bit 7: output 23 (mask 0x80): e2m 1577 +2 Fan_Clutch_Control_Driver1; no direct read or write found */
 };
@@ -4258,4 +4259,11 @@ struct j1939_pgn65251_payload_t {
     uint8_t requested_speed_control_range_upper_limit;  /* SPN 536 (10 rpm per bit) */
     uint8_t requested_torque_control_range_lower_limit;  /* SPN 537; +125 offset (0x7d = 0 %) */
     uint8_t requested_torque_control_range_upper_limit;  /* SPN 538; +125 offset */
+};
+
+struct discrete_output_read_back_counters_t {
+    uint8_t on_mismatch_count;  /* commanded on but reads off: passes */
+    uint8_t off_mismatch_count;  /* commanded off but reads on: passes before the low fault bit sets */
+    uint8_t high_fault_recovery_count;  /* passes with the read-back agreeing while the high fault is registered; it clears at the recovery threshold */
+    uint8_t low_fault_recovery_count;  /* the same for the low fault */
 };
