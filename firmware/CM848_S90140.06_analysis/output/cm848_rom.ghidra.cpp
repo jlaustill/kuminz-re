@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 01:02:45 MST 2026
+// Generated: Sun Nov 22 01:07:30 MST 2026
 
 
 //
@@ -37497,10 +37497,14 @@ void cm848_calculateColdDeltaFuel(void)
 
 
 //
-// Function: mpc555_initFuelDemandOffsetFilter @ 0x0003744c
+// Function: cm848_initializeColdDeltaFuelLookupCache @ 0x0003744c
 //
 
-void mpc555_initFuelDemandOffsetFilter(void)
+/* Sets both words of cold_delta_fuel_cached_axis_offsets to 2 (the first segment): the 2-D lookup
+   cache of cm848_calculateColdDeltaFuel (e2m 8AA2 Cold_Delta_Fuel_Table); it touches no filter (was
+   mpc555_initFuelDemandOffsetFilter) */
+
+void cm848_initializeColdDeltaFuelLookupCache(void)
 
 {
   cold_delta_fuel_cached_axis_offsets[0] = 2;
@@ -58191,7 +58195,7 @@ void cm848_applicationMain(void)
   cm848_initCanHardware();
   cm848_armIntakeAirHeaterPerformanceTest();
   cm848_initializeBoostPressureMonitors();
-  mpc555_initFuelDemandOffsetFilter();
+  cm848_initializeColdDeltaFuelLookupCache();
   cm848_initOverboostMonitor();
   cm848_initVehicleSpeedCalculation();
   cm848_initializeEndOfLineTestSequence();

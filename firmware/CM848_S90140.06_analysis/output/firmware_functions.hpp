@@ -797,7 +797,7 @@ void cm848_initSupervisorRegister162ReadJob(void);  // @ 0x00037270
 void cm848_initSupervisorConfigurationWriteJob(void);  // @ 0x000372c0
 void cm848_initSupervisorChip(void);  // @ 0x00037334
 void cm848_calculateColdDeltaFuel(void);  // @ 0x000373b0
-void mpc555_initFuelDemandOffsetFilter(void);  // @ 0x0003744c
+void cm848_initializeColdDeltaFuelLookupCache(void);  // @ 0x0003744c
 void cm848_onSerialOutputDriverReply(void);  // @ 0x00037464
 void cm848_initSerialOutputDriverJob(void);  // @ 0x000374b8
 void cm848_queueSerialOutputDriverWrite(void);  // @ 0x00037580
