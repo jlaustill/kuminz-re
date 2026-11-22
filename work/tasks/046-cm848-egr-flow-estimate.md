@@ -807,7 +807,7 @@ Scripts are in `session_folder/round13/`.
     - 0x11 alternator field, 0x14-0x16 the 48RE solenoids, 0x24 lift pump.
     - 0x25 cylinder contribution (DRB 25-25 CylinderPerformanceTest, e2m 8C74).
     - 0x26 high pressure safety valve (DRB 25-26, e2m 8C76 / 8C77 / 8022 +1E).
-    - 5-10 cut out injectors 1-6.
+    - 5-10 cut out firing-order slots 1-6 (cylinders 1 / 5 / 3 / 6 / 2 / 4): the fault cutout's bank masks 0x55 / 0xaa only fit firing order.
   - **`BYTE_003fd1ac`** is `end_of_line_test_seconds_since_engine_start`. It is time-shared with the boot kernel, and its
     boot calls keep their call override.
   - **The alternator verdict** takes the present voltage minus the snapshot in 16 bits (`subf` / `clrlwi`), so any fall
@@ -841,7 +841,12 @@ Scripts are in `session_folder/round13/`.
     - The source code `governor_output_t.governor_output` needs an enum with every value 0-12 proved; 7 and 8 are
       stored in the ramp function.
   - **The injector cutout markers** at 0x3fcf64 are a `word[8]` array candidate (the cancel loop reads them with
-    `lhz`).
+    `lhz`). The request bytes at 0x3fcf61-62 are the callback's receive buffer (stored at 0x3fcf61 + count).
+  - **The ASG leftovers:** `governor_tuning_set_blend_weight` (its default is e2m 1387 +8 ASG_Droop_Flag_Trim, a
+    droop-source select), `governor_speed_lower_limit*`, `governor_speed_error_input` / `_prescaled` and the
+    unread set 3 (0008 +3C / +3E).
+  - **`cm848_setLogicalOutputRequest()`** renders with no arguments in `cm848_setEndOfLineTestOutputRequest`,
+    while its SCI callers show two: check its prototype row.
   - **The 47 '+N' offcut-label rows** in `global_variables.csv` are legacy export rows; some carry stale base names.
   - **e2m 1981 +0 `EOL_Alternator_Test_State`** (0x3fee9a) has no access in either bank.
   - **`cm848_validateWriteAuth`'s local declaration order** flips between builds of different CSVs. The DECL pattern

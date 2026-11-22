@@ -1,0 +1,464 @@
+firmware/CM848_S90140.06_analysis/output/global_variables.csv:2532: ...0x003fdcf7,governor_speed_limit_output+1,,
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/proposed_names_wave3.csv:9: ...0x003fd1bc,cold_start_battery_voltage_baseline_a,word,battery voltage baseline
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/proposed_names_wave3.csv:10: ...0x003fd1be,cold_start_battery_voltage_baseline_b,word,battery voltage baseline
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/proposed_names_wave3.csv:11: ...0x003fd1c6,cold_start_battery_diag_suppress_done_flag,byte,one-shot battery diag-su
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/proposed_names_wave3.csv:13: ...0x003fd1c9,cold_start_battery_voltage_snapshot,word,battery voltage baseline
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:12: ...void cm848_initialization_group21_state_cont(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:15: ...  BYTE_003fd1ac = (code)0x0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:21: ...  protection_state_machine_step = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:22: ...  cold_start_protection_state = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:23: ...  cold_start_protection_branch_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:24: ...  cold_start_protection_cycle_counter = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:25: ...  cold_start_protection_sub_state = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:26: ...  cold_start_battery_timer_a = 0xffff;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:27: ...  cold_start_battery_timer_b = 0xffff;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:34: ...// Function: engine_protection_timerStateMachine_init @ 0x0052f030
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:87: ...// Function: engine_coldStart_batteryVoltage_monitor @ 0x0052f5d4
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:93: ...undefined4 engine_coldStart_batteryVoltage_monitor(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:109: ...      if (DAT_000642f0 < BYTE_003fd1ac) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:110: ...        if (protection_mode_b_override_flag == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:112: ...          protection_mode_b_override_flag = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:114: ...        if (DAT_000642ee < BYTE_003fd1ac) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:120: ...          protection_mode_b_override_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:148: ...// Function: engine_protection_timerBitCheck_dispatch @ 0x0052f770
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:152: ...void fault_event_queue_set_active(int param_1,undefined2 param_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:165: ...// Function: fault_event_queue_clear_active @ 0x0052f9d8
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:169: ...void fault_event_queue_clear_active(ushort param_1)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:186: ...// Function: engine_coldStart_protection_stateMachine @ 0x0052fa34
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:201: ...      BYTE_003fd1ac = (code)0x0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:210: ...        BYTE_003fd1ac = (code)((char)BYTE_003fd1ac 
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:210: ...        BYTE_003fd1ac = (code)((char)BYTE_003fd1ac + '\x01');
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:213: ...    switch(protection_state_machine_step) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:215: ...      protection_state_machine_step = engine_protection_timerStat
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:215: ...      protection_state_machine_step = engine_protection_timerStateMachine_init();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:218: ...      protection_state_machine_step = engine_coldStart_protection
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:218: ...      protection_state_machine_step = engine_coldStart_protection_stateMachine();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:221: ...      protection_state_machine_step = diag_camSync_deviation_chec
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:221: ...      protection_state_machine_step = diag_camSync_deviation_check();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:224: ...      protection_state_machine_step = engine_coldStart_batteryVol
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:224: ...      protection_state_machine_step = engine_coldStart_batteryVoltage_monitor();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:227: ...      protection_state_machine_step = engine_camSync_sampleRatio_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:230: ...      protection_state_machine_step = engine_protection_timerStat
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:233: ...      protection_state_machine_step = engine_protection_timerBitC
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:233: ...      protection_state_machine_step = engine_protection_timerBitCheck_dispatch();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:239: ...    protection_state_machine_step = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:242: ...    BYTE_003fd1ac = (code)0x0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:245: ...    cold_start_protection_state = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:246: ...    cold_start_protection_branch_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:247: ...    cold_start_protection_timer_countdown = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:248: ...    cold_start_protection_cycle_counter = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:249: ...    cold_start_protection_sub_state = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:250: ...    cold_start_battery_timer_a = 0xffff;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:251: ...    cold_start_battery_timer_b = 0xffff;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_106.txt:261: ...// Function: cm848_initialization_group25_state @ 0x00530288
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_105.txt:135: ...// Function: cm848_initialization_group21_state_cont @ 0x0052ef90
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:11: ...void protectionVoltageTimeoutControl(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:14: ...  if ((protection_voltage_active_timeout_count != 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:15: ...     (protection_voltage_active_timeout_count = protection_voltage_active_t
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:15: ...     (protection_voltage_active_timeout_count = protection_voltage_active_timeout_count - 1,
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:16: ...     protection_voltage_active_timeout_count == 0)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:17: ...    protection_voltage_active_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:19: ...  if ((protection_crank_fault_severity_timeout_count != 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:20: ...     ((protection_crank_fault_severity_timeout_count =
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:21: ...            protection_crank_fault_severity_timeout_count - 1,
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:22: ...      protection_crank_fault_severity_timeout_count == 0 || (cold_start_phase != 
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:26: ...    protection_crank_fault_severity_timeout_count = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:28: ...  if ((protection_cylinder_diag_timeout_count != 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:29: ...     ((protection_cylinder_diag_timeout_count = protection_cylinder_diag_ti
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:29: ...     ((protection_cylinder_diag_timeout_count = protection_cylinder_diag_timeout_count - 1,
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:30: ...      protection_cylinder_diag_timeout_count == 0 || (engine_sync_confirma
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:31: ...    cylinder_diag_active_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:32: ...    protection_cylinder_diag_timeout_count = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:34: ...  if ((protection_speed_limit_enable_timeout_count != 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:35: ...     ((protection_speed_limit_enable_timeout_count = protection_speed_limit_enab
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:35: ...  ((protection_speed_limit_enable_timeout_count = protection_speed_limit_enable_timeout_count - 1
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:36: ...      , protection_speed_limit_enable_timeout_count == 0 || (governor_speed_limit
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:36: ...tection_speed_limit_enable_timeout_count == 0 || (governor_speed_limit_mode == 2)))) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:37: ...    governor_speed_limit_enable_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_87.txt:63: ...// Function: initProtectionVoltageTimer @ 0x005216cc
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_123.txt:369: ...    pbVar1 = (byte *)&governor_speed_limit_output;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_123.txt:373: ...    pbVar1 = (byte *)&governor_speed_limit_output;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_123.txt:423: ...undefined4 engine_protection_timerStateMachine_init(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_123.txt:489: ...// Function: diag_camSync_deviation_check @ 0x0052f250
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_86.txt:9: ...void governor_speedLimitFloor_decrement(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_86.txt:13: ...    governor_speed_limit_floor_a = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_86.txt:14: ...    governor_speed_limit_floor_b = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_86.txt:25: ...// Function: protectionVoltageTimeoutControl @ 0x00521474
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_85.txt:21: ...// Function: governor_speedLimitFloor_decrement @ 0x00520684
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:10: ...undefined4 diag_camSync_deviation_check(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:48: ...void sensor_battery_voltage_decrement(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:51: ...  if ((cold_start_battery_timer_a != 0xffff) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:52: ...     (cold_start_battery_timer_a = cold_start_battery_timer_a 
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:52: ...     (cold_start_battery_timer_a = cold_start_battery_timer_a - 1, cold_start_battery_timer
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:52: ...battery_timer_a = cold_start_battery_timer_a - 1, cold_start_battery_timer_a == 0))
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:56: ...  if ((cold_start_battery_timer_b != 0xffff) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:57: ...     (cold_start_battery_timer_b = cold_start_battery_timer_b 
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:57: ...     (cold_start_battery_timer_b = cold_start_battery_timer_b - 1, cold_start_battery_timer
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:57: ...battery_timer_b = cold_start_battery_timer_b - 1, cold_start_battery_timer_b == 0))
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:67: ...// Function: fault_event_check_conflict @ 0x0052f938
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:71: ...undefined2 engine_coldStart_protection_stateMachine(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:83: ...    sensor_battery_voltage_decrement();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:88: ...    fault_event_queue_clear_active(0x35);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:89: ...    fault_event_queue_clear_active(4);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:90: ...    fault_event_queue_clear_active(0x26);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:91: ...    fault_event_queue_clear_active(0x2b);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:92: ...    fault_event_queue_clear_active(0x2c);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:95: ...    protection_voltage_active_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:96: ...    cold_start_protection_state = 8;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:102: ...  if ((byte)(cold_start_protection_cycle_counter + 1) < 2) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:103: ...    cold_start_protection_cycle_counter = cold_start_protection_cycle
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:103: ...    cold_start_protection_cycle_counter = cold_start_protection_cycle_counter + 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:106: ...  cold_start_protection_cycle_counter = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:107: ...  switch(cold_start_protection_state) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:115: ...      protection_voltage_active_flag = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:121: ...    cold_start_protection_state = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:125: ...      cold_start_protection_cycle_counter = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:128: ...    if (cold_start_protection_branch_flag != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:129: ...      if (cold_start_protection_timer_countdown != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:130: ...        cold_start_protection_cycle_counter = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:131: ...        cold_start_protection_timer_countdown = cold_start_protection_timer
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:131: ...        cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:134: ...      cold_start_protection_timer_countdown = cold_start_protection_timer
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:134: ...      cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:135: ...      fault_event_queue_clear_active(0x35);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:136: ...      cold_start_protection_timer_countdown = DAT_000642e6;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:137: ...      cold_start_protection_branch_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:138: ...      cold_start_protection_state = 3;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:152: ...    if (cold_start_protection_timer_countdown != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:153: ...      cold_start_protection_cycle_counter = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:154: ...      cold_start_protection_timer_countdown = cold_start_protection_timer
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:154: ...      cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:157: ...    cold_start_protection_timer_countdown = cold_start_protection_timer
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:157: ...    cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:158: ...    fault_event_queue_set_active(0x35,5);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:162: ...    if (cold_start_protection_branch_flag != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:163: ...      wVar4 = cold_start_protection_timer_countdown - 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:164: ...      if (cold_start_protection_timer_countdown == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:165: ...        cold_start_protection_timer_countdown = wVar4;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:167: ...          fault_event_queue_clear_active(4);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:170: ...          fault_event_queue_clear_active(0x26);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:172: ...        cold_start_protection_state = 4;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:173: ...        cold_start_protection_timer_countdown = DAT_000642e6;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:174: ...        protection_voltage_active_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:179: ...      cold_start_protection_cycle_counter = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:180: ...      cold_start_protection_timer_countdown = wVar4;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:183: ...    wVar4 = cold_start_protection_timer_countdown - 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:184: ...    if (cold_start_protection_timer_countdown != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:185: ...      cold_start_protection_cycle_counter = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:186: ...      cold_start_protection_timer_countdown = wVar4;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:189: ...    cold_start_protection_timer_countdown = wVar4;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:191: ...      fault_event_queue_set_active(4,5);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:195: ...      fault_event_queue_set_active(0x26,5);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:199: ...    cold_start_protection_branch_flag = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:200: ...    cold_start_protection_timer_countdown = wVar4;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:203: ...    wVar4 = cold_start_protection_timer_countdown - 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:204: ...    bVar1 = cold_start_protection_timer_countdown == 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:205: ...    cold_start_protection_timer_countdown = wVar4;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:208: ...      cold_start_battery_timer_a = DAT_000642ea;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:209: ...      fault_event_queue_set_active(0x2b,5);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:210: ...      cold_start_protection_timer_countdown = DAT_000642e4;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:211: ...      cold_start_protection_state = 5;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:215: ...    bVar1 = cold_start_protection_timer_countdown == 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:216: ...    cold_start_protection_timer_countdown = cold_start_protection_timer
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:216: ...    cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:218: ...      cold_start_protection_timer_countdown = DAT_000642e6;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:219: ...      fault_event_queue_clear_active(0x2b);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:220: ...      cold_start_protection_state = 6;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:224: ...    bVar1 = cold_start_protection_timer_countdown == 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:225: ...    cold_start_protection_timer_countdown = cold_start_protection_timer
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:225: ...    cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:227: ...      cold_start_protection_timer_countdown = DAT_000642e4;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:229: ...      fault_event_queue_set_active(0x2c,5);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:230: ...      cold_start_battery_timer_b = DAT_000642ea;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:231: ...      cold_start_protection_state = 7;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:235: ...    if (cold_start_protection_timer_countdown != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:236: ...      cold_start_protection_cycle_counter = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:237: ...      cold_start_protection_timer_countdown = cold_start_protection_timer
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:237: ...      cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:240: ...    cold_start_protection_timer_countdown = cold_start_protection_timer
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:240: ...    cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:241: ...    fault_event_queue_clear_active(0x2c);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:243: ...    cold_start_protection_state = 8;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_107.txt:245: ...    sVar3 = fault_event_check_conflict(0x100);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/proposed_names_wave2.csv:56: ...0x003fcf7c,protection_throttle_output_timeout_count,word,countdown clearing throt
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/proposed_names_wave2.csv:57: ...0x003fcf7e,protection_load_derate_output_timeout_count,word,countdown clearing load-
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/proposed_names_wave2.csv:58: ...0x003fcf80,protection_engine_protection_output_timeout_count,word,countdown clearing engin
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/proposed_names_wave4.csv:31: ...0x003fcf5e,governor_speed_limit_floor_countdown,word,countdown clearing gover
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:816: ...undefined2 engine_coldStart_protection_stateMachine(void)
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:827: ...    sensor_battery_voltage_decrement();
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:832: ...    fault_event_queue_clear_active(0x35);
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:833: ...    fault_event_queue_clear_active(4);
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:834: ...    fault_event_queue_clear_active(0x26);
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:835: ...    fault_event_queue_clear_active(0x2b);
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:836: ...    fault_event_queue_clear_active(0x2c);
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:839: ...    protection_voltage_active_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:859: ...      protection_voltage_active_flag = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:879: ...      fault_event_queue_clear_active(0x35);
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:902: ...    fault_event_queue_set_active(0x35,5);
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:911: ...          fault_event_queue_clear_active(4);
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:914: ...          fault_event_queue_clear_active(0x26);
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:918: ...        protection_voltage_active_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:935: ...      fault_event_queue_set_active(4,5);
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:939: ...      fault_event_queue_set_active(0x26,5);
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:953: ...      fault_event_queue_set_active(0x2b,5);
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:963: ...      fault_event_queue_clear_active(0x2b);
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:973: ...      fault_event_queue_set_active(0x2c,5);
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:985: ...    fault_event_queue_clear_active(0x2c);
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_02.txt:989: ...    sVar3 = fault_event_check_conflict(0x100);
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_03.txt:439: ...// Function: engine_coldStart_batteryVoltage_monitor @ 0x0052f5d4
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_03.txt:445: ...void cm848_initialization_group25_state(void)
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_07.txt:117: ...// Function: cm848_initialization_group21_state_cont @ 0x0052ef90
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_62.txt:60: ...    if (((((uint)speed_setpoint_raw < (uint)governor_speed_limit_output + (uint)DAT_00409ad2) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_62.txt:61: ...         ((int)((uint)governor_speed_limit_output - (uint)DAT_00409ad2) <
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_59.txt:36: ...  if (governor_speed_limit_mode == 1) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_60.txt:19: ...    if (((uint)speed_setpoint_raw < (uint)governor_speed_limit_output + (uint)DAT_00409ad2) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_60.txt:20: ...       ((int)((uint)governor_speed_limit_output - (uint)DAT_00409ad2) <
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_10.txt:2481: ...// Function: cm848_initialization_group21_state_cont @ 0x0052ef90
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_10.txt:2485: ...undefined4 fault_event_check_conflict(int param_1)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_10.txt:2504: ...// Function: fault_event_queue_set_active @ 0x0052f994
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveA.csv:13: ...0x003fd1b4,cold_start_protection_timer_countdown,word,countdown gating cold-st
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveA.csv:17: ...0x003fd1b0,cold_start_protection_sub_state,word,inner sub-step of protec
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveA.csv:17: ...start_protection_sub_state,word,inner sub-step of protection_state_machine_step
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveA.csv:18: ...0x003fd1b1,cold_start_protection_cycle_counter,word,2-call debounce before a
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveA.csv:19: ...0x003fd1b2,cold_start_protection_state,word,cold-start battery volta
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveA.csv:20: ...0x003fd1c4,protection_state_machine_step,word,outer protection FSM dis
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveA.csv:22: ...0x003fd1c0,cold_start_battery_timer_a,word,battery voltage delta-sa
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveA.csv:23: ...0x003fd1c2,cold_start_battery_timer_b,word,battery voltage delta-sa
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveA.csv:25: ...0x003fd1b3,cold_start_protection_branch_flag,word,0/1 selects set-fault vs
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveC.csv:71: ...0x003fcf74,protection_voltage_active_timeout_count,word,countdown clearing prote
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveC.csv:71: ...tage_active_timeout_count,word,countdown clearing protection_voltage_active_flag
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveC.csv:72: ...0x003fcf76,protection_crank_fault_severity_timeout_count,word,countdown resetting cran
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveC.csv:73: ...0x003fcf78,protection_cylinder_diag_timeout_count,word,countdown clearing cylin
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveC.csv:73: ...linder_diag_timeout_count,word,countdown clearing cylinder_diag_active_flag
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveC.csv:74: ...0x003fcf7a,protection_speed_limit_enable_timeout_count,word,countdown clearing gover
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveC.csv:74: ...imit_enable_timeout_count,word,countdown clearing governor_speed_limit_enable_flag
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:709: ...    pbVar1 = (byte *)&governor_speed_limit_output;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:713: ...    pbVar1 = (byte *)&governor_speed_limit_output;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:826: ...void cm848_initialization_group21_state_cont(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:829: ...  BYTE_003fd1ac = (code)0x0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:848: ...// Function: engine_protection_timerStateMachine_init @ 0x0052f030
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:852: ...undefined4 engine_protection_timerStateMachine_init(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:917: ...// Function: diag_camSync_deviation_check @ 0x0052f250
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:921: ...undefined4 diag_camSync_deviation_check(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:971: ...    if (((DAT_003fd942 & 0x20) == 0) || ((byte)BYTE_003fd1ac <= (byte)DAT_003fd947)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:981: ...      if ((byte)DAT_003fd946 < (byte)BYTE_003fd1ac) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1054: ...// Function: engine_coldStart_batteryVoltage_monitor @ 0x0052f5d4
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1060: ...undefined4 engine_coldStart_batteryVoltage_monitor(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1076: ...      if (DAT_000642f0 < BYTE_003fd1ac) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1077: ...        if (protection_mode_b_override_flag == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1079: ...          protection_mode_b_override_flag = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1081: ...        if (DAT_000642ee < BYTE_003fd1ac) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1087: ...          protection_mode_b_override_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1115: ...// Function: engine_protection_timerBitCheck_dispatch @ 0x0052f770
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1119: ...undefined4 engine_protection_timerBitCheck_dispatch(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1159: ...// Function: sensor_battery_voltage_decrement @ 0x0052f89c
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1163: ...undefined2 engine_coldStart_protection_stateMachine(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1174: ...    sensor_battery_voltage_decrement();
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1179: ...    fault_event_queue_clear_active(0x35);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1180: ...    fault_event_queue_clear_active(4);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1181: ...    fault_event_queue_clear_active(0x26);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1182: ...    fault_event_queue_clear_active(0x2b);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1183: ...    fault_event_queue_clear_active(0x2c);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1186: ...    protection_voltage_active_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1206: ...      protection_voltage_active_flag = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1226: ...      fault_event_queue_clear_active(0x35);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1249: ...    fault_event_queue_set_active(0x35,5);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1258: ...          fault_event_queue_clear_active(4);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1261: ...          fault_event_queue_clear_active(0x26);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1265: ...        protection_voltage_active_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1282: ...      fault_event_queue_set_active(4,5);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1286: ...      fault_event_queue_set_active(0x26,5);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1300: ...      fault_event_queue_set_active(0x2b,5);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1310: ...      fault_event_queue_clear_active(0x2b);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1320: ...      fault_event_queue_set_active(0x2c,5);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1332: ...    fault_event_queue_clear_active(0x2c);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1336: ...    sVar3 = fault_event_check_conflict(0x100);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1378: ...      BYTE_003fd1ac = (code)0x0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1387: ...        BYTE_003fd1ac = (code)((char)BYTE_003fd1ac 
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1387: ...        BYTE_003fd1ac = (code)((char)BYTE_003fd1ac + '\x01');
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1392: ...      DAT_003fd1c4 = engine_protection_timerStateMachine_init();
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1395: ...      DAT_003fd1c4 = engine_coldStart_protection_stateMachine();
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1398: ...      DAT_003fd1c4 = diag_camSync_deviation_check();
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1401: ...      DAT_003fd1c4 = engine_coldStart_batteryVoltage_monitor();
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1410: ...      DAT_003fd1c4 = engine_protection_timerBitCheck_dispatch();
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1419: ...    BYTE_003fd1ac = (code)0x0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_52.txt:1438: ...// Function: cm848_initialization_group25_state @ 0x00530288
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_82.txt:330: ...// Function: cm848_initialization_group21_state_cont @ 0x0052ef90
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_83.txt:119: ...// Function: cm848_initialization_group21_state_cont @ 0x0052ef90
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_61.txt:12: ...void protectionVoltageTimeoutControl(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_61.txt:16: ...    protection_voltage_active_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_61.txt:29: ...    cylinder_diag_active_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_61.txt:33: ...3fcf7a = DAT_003fcf7a + -1, DAT_003fcf7a == 0 || (governor_speed_limit_mode == 2)))) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_61.txt:34: ...    governor_speed_limit_enable_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_61.txt:60: ...// Function: initProtectionVoltageTimer @ 0x005216cc
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_61.txt:64: ...void initProtectionVoltageTimer(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:377: ...    pbVar1 = (byte *)&governor_speed_limit_output;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:381: ...    pbVar1 = (byte *)&governor_speed_limit_output;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:431: ...void cm848_initialization_group21_state_cont(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:434: ...  BYTE_003fd1ac = (code)0x0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:453: ...// Function: engine_protection_timerStateMachine_init @ 0x0052f030
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:469: ...    if (((DAT_003fd942 & 0x20) == 0) || ((byte)BYTE_003fd1ac <= (byte)DAT_003fd947)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:479: ...      if ((byte)DAT_003fd946 < (byte)BYTE_003fd1ac) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:505: ...undefined4 engine_protection_timerBitCheck_dispatch(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:545: ...// Function: sensor_battery_voltage_decrement @ 0x0052f89c
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:549: ...void sensor_battery_voltage_decrement(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:564: ...// Function: fault_event_check_conflict @ 0x0052f938
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:568: ...undefined2 engine_coldStart_protection_stateMachine(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:579: ...    sensor_battery_voltage_decrement();
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:584: ...    fault_event_queue_clear_active(0x35);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:585: ...    fault_event_queue_clear_active(4);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:586: ...    fault_event_queue_clear_active(0x26);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:587: ...    fault_event_queue_clear_active(0x2b);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:588: ...    fault_event_queue_clear_active(0x2c);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:591: ...    protection_voltage_active_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:611: ...      protection_voltage_active_flag = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:631: ...      fault_event_queue_clear_active(0x35);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:654: ...    fault_event_queue_set_active(0x35,5);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:663: ...          fault_event_queue_clear_active(4);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:666: ...          fault_event_queue_clear_active(0x26);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:670: ...        protection_voltage_active_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:687: ...      fault_event_queue_set_active(4,5);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:691: ...      fault_event_queue_set_active(0x26,5);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:705: ...      fault_event_queue_set_active(0x2b,5);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:715: ...      fault_event_queue_clear_active(0x2b);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:725: ...      fault_event_queue_set_active(0x2c,5);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:737: ...    fault_event_queue_clear_active(0x2c);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:741: ...    sVar3 = fault_event_check_conflict(0x100);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:783: ...      BYTE_003fd1ac = (code)0x0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:792: ...        BYTE_003fd1ac = (code)((char)BYTE_003fd1ac 
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:792: ...        BYTE_003fd1ac = (code)((char)BYTE_003fd1ac + '\x01');
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:797: ...      DAT_003fd1c4 = engine_protection_timerStateMachine_init();
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:800: ...      DAT_003fd1c4 = engine_coldStart_protection_stateMachine();
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:803: ...      DAT_003fd1c4 = diag_camSync_deviation_check();
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:806: ...      DAT_003fd1c4 = engine_coldStart_batteryVoltage_monitor();
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:815: ...      DAT_003fd1c4 = engine_protection_timerBitCheck_dispatch();
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:824: ...    BYTE_003fd1ac = (code)0x0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_84.txt:843: ...// Function: cm848_initialization_group25_state @ 0x00530288
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_76.txt:37: ...  if (governor_speed_limit_mode == 1) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/proposed_names_wave1.csv:10: ...0x003fd1b6,protection_active_fault_severity_snapshot,word,saved severity of active
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/proposed_names_wave1.csv:11: ...0x003fd1b8,protection_active_fault_severity_param,word,severity param stored at
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_157.txt:373: ...    pbVar1 = (byte *)&governor_speed_limit_output;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_157.txt:377: ...    pbVar1 = (byte *)&governor_speed_limit_output;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_157.txt:447: ...undefined4 engine_protection_timerStateMachine_init(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_157.txt:513: ...// Function: diag_camSync_deviation_check @ 0x0052f250
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_157.txt:525: ...    cold_start_protection_sub_state = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_157.txt:530: ...       ((byte)BYTE_003fd1ac <= cbd_warmup_cycle_threshold
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_157.txt:531: ...      cold_start_protection_sub_state = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_157.txt:533: ...    else if (cold_start_protection_sub_state == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_157.txt:534: ...      cold_start_protection_sub_state = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_157.txt:537: ...      if (cold_start_protection_sub_state == 1) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_157.txt:538: ...        cold_start_protection_sub_state = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_157.txt:540: ...      if ((byte)DAT_003fd946 < (byte)BYTE_003fd1ac) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:11: ...void cm848_initialization_group21_state_cont(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:14: ...  BYTE_003fd1ac = (code)0x0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:20: ...  protection_state_machine_step = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:21: ...  cold_start_protection_state = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:22: ...  cold_start_protection_branch_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:23: ...  cold_start_protection_cycle_counter = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:24: ...  cold_start_protection_sub_state = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:25: ...  cold_start_battery_timer_a = 0xffff;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:26: ...  cold_start_battery_timer_b = 0xffff;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:33: ...// Function: engine_protection_timerStateMachine_init @ 0x0052f030
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:37: ...void fault_event_queue_set_active(int param_1,undefined2 param_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:50: ...// Function: fault_event_queue_clear_active @ 0x0052f9d8
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:54: ...void fault_event_queue_clear_active(ushort param_1)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:71: ...// Function: engine_coldStart_protection_stateMachine @ 0x0052fa34
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:86: ...      BYTE_003fd1ac = (code)0x0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:95: ...        BYTE_003fd1ac = (code)((char)BYTE_003fd1ac 
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:95: ...        BYTE_003fd1ac = (code)((char)BYTE_003fd1ac + '\x01');
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:98: ...    switch(protection_state_machine_step) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:100: ...      protection_state_machine_step = engine_protection_timerStat
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:100: ...      protection_state_machine_step = engine_protection_timerStateMachine_init();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:103: ...      protection_state_machine_step = engine_coldStart_protection
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:103: ...      protection_state_machine_step = engine_coldStart_protection_stateMachine();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:106: ...      protection_state_machine_step = diag_camSync_deviation_chec
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:106: ...      protection_state_machine_step = diag_camSync_deviation_check();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:109: ...      protection_state_machine_step = engine_coldStart_batteryVol
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:109: ...      protection_state_machine_step = engine_coldStart_batteryVoltage_monitor();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:112: ...      protection_state_machine_step = engine_camSync_sampleRatio_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:115: ...      protection_state_machine_step = engine_protection_timerStat
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:118: ...      protection_state_machine_step = engine_protection_timerBitC
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:118: ...      protection_state_machine_step = engine_protection_timerBitCheck_dispatch();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:124: ...    protection_state_machine_step = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:127: ...    BYTE_003fd1ac = (code)0x0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:130: ...    cold_start_protection_state = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:131: ...    cold_start_protection_branch_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:132: ...    cold_start_protection_timer_countdown = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:133: ...    cold_start_protection_cycle_counter = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:134: ...    cold_start_protection_sub_state = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:135: ...    cold_start_battery_timer_a = 0xffff;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:136: ...    cold_start_battery_timer_b = 0xffff;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:137: ...    cold_start_battery_diag_suppress_done_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_177.txt:146: ...// Function: cm848_initialization_group25_state @ 0x00530288
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_174.txt:208: ...           (uint)governor_speed_limit_output + (uint)cam_timing_governor_s
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_174.txt:209: ...         ((int)((uint)governor_speed_limit_output - (uint)cam_timing_governor_s
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_160.txt:21: ...// Function: governor_speedLimitFloor_decrement @ 0x00520684
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_86.txt:20: ...  bVar1 = cylinder_diag_active_flag;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_86.txt:21: ...  if (cylinder_diag_active_flag == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_86.txt:36: ...    if ((cylinder_diag_active_flag != 0) && (DAT_003fb596 == '\0
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_173.txt:41: ...  if (governor_speed_limit_mode == 1) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_64.txt:62: ...           (uint)governor_speed_limit_output + (uint)cam_timing_governor_s
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_64.txt:63: ...         ((int)((uint)governor_speed_limit_output - (uint)cam_timing_governor_s
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:11: ...void protectionVoltageTimeoutControl(void)
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:14: ...  if ((protection_voltage_active_timeout_count != 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:15: ...     (protection_voltage_active_timeout_count = protection_voltage_active_t
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:15: ...     (protection_voltage_active_timeout_count = protection_voltage_active_timeout_count - 1,
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:16: ...     protection_voltage_active_timeout_count == 0)) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:17: ...    protection_voltage_active_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:19: ...  if ((protection_crank_fault_severity_timeout_count != 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:20: ...     ((protection_crank_fault_severity_timeout_count =
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:21: ...            protection_crank_fault_severity_timeout_count - 1,
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:22: ...      protection_crank_fault_severity_timeout_count == 0 || (cold_start_phase != 
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:26: ...    protection_crank_fault_severity_timeout_count = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:28: ...  if ((protection_cylinder_diag_timeout_count != 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:29: ...     ((protection_cylinder_diag_timeout_count = protection_cylinder_diag_ti
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:29: ...     ((protection_cylinder_diag_timeout_count = protection_cylinder_diag_timeout_count - 1,
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:30: ...      protection_cylinder_diag_timeout_count == 0 || (engine_sync_confirma
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:31: ...    cylinder_diag_active_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:32: ...    protection_cylinder_diag_timeout_count = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:34: ...  if ((protection_speed_limit_enable_timeout_count != 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:35: ...     ((protection_speed_limit_enable_timeout_count = protection_speed_limit_enab
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:35: ...  ((protection_speed_limit_enable_timeout_count = protection_speed_limit_enable_timeout_count - 1
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:36: ...      , protection_speed_limit_enable_timeout_count == 0 || (governor_speed_limit
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:36: ...tection_speed_limit_enable_timeout_count == 0 || (governor_speed_limit_mode == 2)))) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:37: ...    governor_speed_limit_enable_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:39: ...  if ((protection_throttle_output_timeout_count != 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:40: ...     (protection_throttle_output_timeout_count = protection_throttle_output_
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:40: ...     (protection_throttle_output_timeout_count = protection_throttle_output_timeout_count - 1,
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:41: ...     protection_throttle_output_timeout_count == 0)) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:45: ...  if ((protection_load_derate_output_timeout_count != 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:46: ...     (protection_load_derate_output_timeout_count = protection_load_derate_outp
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:46: ...   (protection_load_derate_output_timeout_count = protection_load_derate_output_timeout_count - 1,
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:47: ...     protection_load_derate_output_timeout_count == 0)) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:54: ...  if ((protection_engine_protection_output_timeout_count != 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:55: ...     (protection_engine_protection_output_timeout_count =
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:56: ...           protection_engine_protection_output_timeout_count - 1,
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:57: ...     protection_engine_protection_output_timeout_count == 0)) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_122.txt:70: ...// Function: initProtectionVoltageTimer @ 0x005216cc
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_63.txt:201: ...           (uint)governor_speed_limit_output + (uint)cam_timing_governor_s
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_63.txt:202: ...         ((int)((uint)governor_speed_limit_output - (uint)cam_timing_governor_s
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_101.txt:198: ...// Function: engine_coldStart_batteryVoltage_monitor @ 0x0052f5d4
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_62.txt:33: ...         (uint)governor_speed_limit_output + (uint)cam_timing_governor_s
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_62.txt:34: ...       ((int)((uint)governor_speed_limit_output - (uint)cam_timing_governor_s
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_62.txt:289: ...           (uint)governor_speed_limit_output + (uint)cam_timing_governor_s
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_62.txt:290: ...         ((int)((uint)governor_speed_limit_output - (uint)cam_timing_governor_s
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_61.txt:40: ...  if (governor_speed_limit_mode == 1) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_68.txt:119: ...// Function: cm848_initialization_group21_state_cont @ 0x0052ef90
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_78.txt:61: ...    if (((((uint)speed_setpoint_raw < (uint)governor_speed_limit_output + (uint)DAT_00409ad2) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_78.txt:62: ...         ((int)((uint)governor_speed_limit_output - (uint)DAT_00409ad2) <
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_25.txt:39: ...  if (governor_speed_limit_mode == 1) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_26.txt:33: ...    if (((uint)speed_setpoint_raw < (uint)governor_speed_limit_output + (uint)DAT_00409ad2) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_26.txt:34: ...       ((int)((uint)governor_speed_limit_output - (uint)DAT_00409ad2) <
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_26.txt:286: ...    if (((((uint)speed_setpoint_raw < (uint)governor_speed_limit_output + (uint)DAT_00409ad2) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_26.txt:287: ...         ((int)((uint)governor_speed_limit_output - (uint)DAT_00409ad2) <
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_14.txt:248: ...// Function: engine_coldStart_batteryVoltage_monitor @ 0x0052f5d4
+work/tasks/046-cm848-egr-flow-estimate.md:660: ...  - **The end-of-line test sequencer** `engine_coldStart_protection_stateMachine` (0x52fa34) and its
+work/tasks/046-cm848-egr-flow-estimate.md:661: ...    `cold_start_protection_*` words, `fault_event_queue_clear_active` and `protection_voltage_acti
+work/tasks/046-cm848-egr-flow-estimate.md:661: ...n_*` words, `fault_event_queue_clear_active` and `protection_voltage_active_flag`.
+work/tasks/046-cm848-egr-flow-estimate.md:806: ...    `protectionVoltageTimeoutControl`) ends each one at its timeou
+work/tasks/046-cm848-egr-flow-estimate.md:811: ...  - **`BYTE_003fd1ac`** is `end_of_line_test_secon
+work/tasks/025-cm848-naming-wave-followups.md:116: ...ed by diag_iat_protection_stateMachine_update and engine_protection_timerStateMachine_init (cm848_runEndOfLineTestStartS
+work/tasks/025-cm848-naming-wave-followups.md:126: ...en by diag_iat_protection_stateMachine_update and engine_protection_timerStateMachine_init (now cm848_runEndOfLineTestSt
+work/tasks/044-cm848-dtc-code-name-clashes.md:110: ...- `engine_protection_timerStateMachine_init` / `engine_coldStart_protecti
+work/tasks/044-cm848-dtc-code-name-clashes.md:110: ...- `engine_protection_timerStateMachine_init` / `engine_coldStart_protection_stateMachine` read and write
+work/tasks/042-table-campaign-rename-leads.md:146: ...9aa0 = 0); when enabled, with engine speed within governor_speed_limit_output (low_speed_governor_base_refe

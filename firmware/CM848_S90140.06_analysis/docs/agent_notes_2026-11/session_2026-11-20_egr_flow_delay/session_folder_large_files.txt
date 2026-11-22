@@ -72,6 +72,7 @@
   200828 build_r13a.log
   200824 build_r13b.log
   200825 build_r13c.log
+  200826 build_r13d.log
  3544401 stage2.cpp
   402904 verify.log
   402089 verify2.log

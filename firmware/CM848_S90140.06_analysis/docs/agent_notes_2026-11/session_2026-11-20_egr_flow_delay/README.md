@@ -288,6 +288,7 @@ Hand work on the round 7 lead.
   `check_enum_proof2.py` that normalizes byte-sized enum types to `byte`.
 - **Stage C:** `worklist_r13c.py`, `apply_r13c_comments.py` (the bit maps, the cutout correction) and
   `apply_r13c_docs.py`.
+- **Stage D:** `apply_r13d_cutout.py` (tests 5-10 cut out firing-order slots; three task 046 leads).
 - **Audits:** `refresh_diff_offline.py` checks a committed stage's reference refresh between two commits.
   `keyed_refresh_audit_refs.py` is the same audit pinned to two commits.
 - **Logs:** the round 13 build logs and the final verify log are in the large-files tarball.

@@ -401,6 +401,8 @@ state enum, the flag bytes.**
   - the LSG base reference speed and the ASG minimum / maximum reference speeds from e2m block 0008. The old names
     called the minimum 'high'.
   - the bit maps in the comments.
+- **Stage D (comments, after a review):** SCI 0x25 tests 5-10 cut out firing-order slots 1-6 (cylinders 1 / 5 / 3 /
+  6 / 2 / 4), not injectors 1-6. The fault cutout's bank masks 0x55 / 0xaa only fit firing order.
 
 ## Test plan
 
@@ -492,6 +494,7 @@ state enum, the flag bytes.**
   - stages A and C are label-only (stage A: one function's local declarations reorder, sorted lines identical;
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
+  - stage D (comments) is EQUIVALENT;
   - the thunk stage still makes 19 thunks and 13 call overrides.
 - [x] `./analyze.sh verify`: the two builds are byte-identical.
 - [x] `lookup_tables.py` is clean (920 / 920 typed).

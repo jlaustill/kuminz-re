@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 17:57:50 MST 2026
+// Generated: Sat Nov 21 18:13:16 MST 2026
 
 
 //
@@ -82692,9 +82692,10 @@ void cm848_sciCommand37Handler(void)
    sci_command_37_received_byte_count) and starts or stops one test: 0x11 alternator field /
    0x14-0x16 the 48RE governor pressure / converter clutch / overdrive solenoids / 0x17 a 48RE
    anti-hunt request / 0x24 lift pump / 0x25 cylinder contribution (DRB 25-25) / 0x26 high pressure
-   safety valve (DRB 25-26) / 5-10 injector 1-6 cutout; 0 ends every test. Each test sets a timeout
-   that cm848_expireSciCommand37Tests counts down - reached only via sci_next_byte_handler - not a
-   dead function | registration-table-sweep reviewed 2026-11-13 */
+   safety valve (DRB 25-26) / 5-10 cutout of firing-order slots 1-6 (cylinders 1 / 5 / 3 / 6 / 2 /
+   4); 0 ends every test. Each test sets a timeout that cm848_expireSciCommand37Tests counts down -
+   reached only via sci_next_byte_handler - not a dead function | registration-table-sweep reviewed
+   2026-11-13 */
 
 void cm848_sciCommand37Callback(void)
 
