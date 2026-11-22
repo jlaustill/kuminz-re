@@ -5493,7 +5493,7 @@ extern dword crank_preliminary_sync_time_ticks;  // 0x0040b7fc
 extern dword cam_have_sync_time_ticks;  // 0x0040b800
 extern dword crank_have_sync_time_ticks;  // 0x0040b804
 extern int16_t fuel_pressure_start_undershoot;  // 0x0040b808
-extern engine_crank_state_t engine_crank_state_t_0040b80a;  // 0x0040b80a
+extern cam_crank_sync_state_t cam_crank_sync_state;  // 0x0040b80a
 extern word all_speed_governor_equivalent_throttle;  // 0x0040b812
 extern word injection_quantity_auxiliary_map_blend;  // 0x0040b814
 extern word injection_quantity_auxiliary_limit_unscaled;  // 0x0040b816

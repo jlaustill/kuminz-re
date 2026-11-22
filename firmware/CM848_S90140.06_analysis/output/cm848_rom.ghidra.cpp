@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 05:31:12 MST 2026
+// Generated: Sun Nov 22 05:36:34 MST 2026
 
 
 //
@@ -45738,7 +45738,7 @@ void hpcr_cbdFillAccelerationBuffers(void)
   int iVar3;
   
   if ((cbd_enable_flag == 1) || (misfire_monitor_speed_buffer_enable_flag == 1)) {
-    if (engine_crank_state_t_0040b80a.run_state == 4) {
+    if (cam_crank_sync_state.crank_sync_state == 4) {
       bVar1 = cylinder_balance_start_tooth;
       if (misfire_monitor_speed_buffer_enable_flag == 1) {
         bVar1 = misfire_monitor_speed_buffer_start_tooth;
@@ -46098,7 +46098,7 @@ LAB_000434f0:
   if ((((misfire_monitor_cylinder_balance_suspend_flag != 0) ||
        (cylinder_balance_compensation_enable_cal != 1)) ||
       ((bool)cylinder_balance_stop_compensation_flag)) ||
-     (((engine_crank_state_t_0040b80a.run_state != 4 || (crank_state_debounce_timer != 0)) ||
+     (((cam_crank_sync_state.crank_sync_state != 4 || (crank_state_debounce_timer != 0)) ||
       ((cylinder_trim_learn_maximum_vehicle_speed < vehicle_speed ||
        (((short)sensor_readings_t_0040baf2.coolant_temp <=
          cylinder_balance_coolant_temperature_threshold ||
@@ -46398,11 +46398,11 @@ void mpc555_resetEngineTimingAccumulators(void)
   injection_fuel_quantity_snapshot_previous = 0;
   engine_speed_filter_state.accumulator = 0;
   engine_speed_filter_state.coefficient = &engine_speed_filter_coefficient;
-  engine_crank_state_t_0040b80a.start_counter = 0;
-  engine_crank_state_t_0040b80a.cranking_flag = 0;
+  cam_crank_sync_state.cam_sync_error_count = 0;
+  cam_crank_sync_state.crank_sync_error_count = 0;
   crank_preliminary_sync_count = crank_preliminary_sync_evaluation_count;
-  engine_crank_state_t_0040b80a.crank_state = 0;
-  engine_crank_state_t_0040b80a.run_state = 0;
+  cam_crank_sync_state.cam_sync_state = 0;
+  cam_crank_sync_state.crank_sync_state = 0;
   average_pulse_period = 0xffffffff;
   average_pulse_period_backup = 0xffffffff;
   engine_speed_state.engine_speed = 0;
@@ -46567,8 +46567,8 @@ void cm848_updateEngineSpeedFromCrankSignal(void)
          system_status_flags_t_003fe974.fault_detected_bits_80_to_95 | 0x2000;
     crank_sync_event_count = (word)backup_consecutive_error_threshold;
   }
-  if (engine_crank_state_t_0040b80a.cranking_flag < crank_sync_error_count_limit) {
-    if (engine_crank_state_t_0040b80a.cranking_flag == 0) {
+  if (cam_crank_sync_state.crank_sync_error_count < crank_sync_error_count_limit) {
+    if (cam_crank_sync_state.crank_sync_error_count == 0) {
       system_status_flags_t_003fe974.fault_detected_bits_112_to_127 =
            system_status_flags_t_003fe974.fault_detected_bits_112_to_127 & 0xefff;
       fault_registered_bits_112_to_127 = fault_registered_bits_112_to_127 & 0xefff;
@@ -46577,10 +46577,10 @@ void cm848_updateEngineSpeedFromCrankSignal(void)
   else {
     system_status_flags_t_003fe974.fault_detected_bits_112_to_127 =
          system_status_flags_t_003fe974.fault_detected_bits_112_to_127 | 0x1000;
-    engine_crank_state_t_0040b80a.cranking_flag = crank_sync_error_count_limit;
+    cam_crank_sync_state.crank_sync_error_count = crank_sync_error_count_limit;
   }
-  if (engine_crank_state_t_0040b80a.start_counter < cam_sync_error_count_limit) {
-    if (engine_crank_state_t_0040b80a.start_counter == 0) {
+  if (cam_crank_sync_state.cam_sync_error_count < cam_sync_error_count_limit) {
+    if (cam_crank_sync_state.cam_sync_error_count == 0) {
       system_status_flags_t_003fe974.fault_detected_bits_0_to_15 =
            system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 0xffdf;
       fault_active_status_array = fault_active_status_array & 0xffdf;
@@ -46589,7 +46589,7 @@ void cm848_updateEngineSpeedFromCrankSignal(void)
   else {
     system_status_flags_t_003fe974.fault_detected_bits_0_to_15 =
          system_status_flags_t_003fe974.fault_detected_bits_0_to_15 | 0x20;
-    engine_crank_state_t_0040b80a.start_counter = cam_sync_error_count_limit;
+    cam_crank_sync_state.cam_sync_error_count = cam_sync_error_count_limit;
   }
   if (cam_crank_mismatch_count < cam_crank_mismatch_count_limit) {
     if (cam_crank_mismatch_count == 0) {
@@ -46621,15 +46621,15 @@ void cm848_updateEngineSpeedFromCrankSignal(void)
     engine_speed_from_backup_sensor_flag = 1;
   }
   else {
-    if ((crank_period_countdown != 0) || (engine_crank_state_t_0040b80a.crank_state != 4)) {
-      if (2 < (short)engine_crank_state_t_0040b80a.run_state) {
+    if ((crank_period_countdown != 0) || (cam_crank_sync_state.cam_sync_state != 4)) {
+      if (2 < (short)cam_crank_sync_state.crank_sync_state) {
 LAB_00044754:
         engine_speed_from_backup_sensor_flag = 0;
         goto LAB_00044774;
       }
-      if (engine_crank_state_t_0040b80a.crank_state != 4) {
-        if (engine_crank_state_t_0040b80a.run_state == 1) goto LAB_00044754;
-        if (engine_crank_state_t_0040b80a.crank_state != 1) {
+      if (cam_crank_sync_state.cam_sync_state != 4) {
+        if (cam_crank_sync_state.crank_sync_state == 1) goto LAB_00044754;
+        if (cam_crank_sync_state.cam_sync_state != 1) {
           engine_speed_from_backup_sensor_flag = 0;
           goto LAB_00044774;
         }
@@ -46722,16 +46722,20 @@ LAB_00044854:
 
 
 //
-// Function: cm848_setEngineRunState3 @ 0x00044aa4
+// Function: cm848_setCrankPreliminarySyncFromCam @ 0x00044aa4
 //
 
-void cm848_setEngineRunState3(void)
+/* The cam signal handler's crank_sync_state = 3: snapshots average_pulse_period and restarts
+   crank_preliminary_sync_count; no speed limp home change, no dispatch (was
+   cm848_setEngineRunState3) */
+
+void cm848_setCrankPreliminarySyncFromCam(void)
 
 {
   crank_period_prev_snapshot = average_pulse_period;
   injection_fuel_quantity_snapshot_previous = 0;
   crank_preliminary_sync_count = crank_preliminary_sync_evaluation_count;
-  engine_crank_state_t_0040b80a.run_state = 3;
+  cam_crank_sync_state.crank_sync_state = 3;
   return;
 }
 
@@ -46841,17 +46845,20 @@ void engine_injectionTiming_crankSyncDispatch(void)
 
 
 //
-// Function: cm848_setEngineCrankState1 @ 0x00044cc8
+// Function: cm848_enterCamSyncLost @ 0x00044cc8
 //
 
-/* Crank state transition handler: sets engine_crank_state.crank_state to 1 and, when
-   engine_speed_limp_home_active_flag is 1 (speed limp home), calls cm848_exitSpeedLimpHome and
-   re-runs engine_injectionTiming_crankSyncDispatch. */
+/* Cam sync lost (from mpc555_handleCamSignalInterrupt): cam_sync_state = 1; when speed limp home is
+   active it ends it (cm848_exitSpeedLimpHome) and re-runs engine_injectionTiming_crankSyncDispatch
+   (was cm848_setEngineCrankState1) | earlier note: Crank state transition handler: sets
+   cam_crank_sync_state.cam_sync_state to 1 and, when engine_speed_limp_home_active_flag is 1 (speed
+   limp home), calls cm848_exitSpeedLimpHome and re-runs engine_injectionTiming_crankSyncDispatch.
+    */
 
-void cm848_setEngineCrankState1(void)
+void cm848_enterCamSyncLost(void)
 
 {
-  engine_crank_state_t_0040b80a.crank_state = 1;
+  cam_crank_sync_state.cam_sync_state = 1;
   if (engine_speed_limp_home_active_flag == 1) {
     cm848_exitSpeedLimpHome();
     engine_injectionTiming_crankSyncDispatch();
@@ -46862,19 +46869,22 @@ void cm848_setEngineCrankState1(void)
 
 
 //
-// Function: cm848_setEngineRunState1 @ 0x00044d20
+// Function: cm848_enterCrankSyncLost @ 0x00044d20
 //
 
-/* Run state transition handler: sets engine_crank_state.run_state to 1 and, when speed limp home is
-   not active and crank_state is 4, calls cm848_enterSpeedLimpHome (backup speed input) and re-runs
+/* Crank sync lost (from mpc555_updateCrankSyncState): crank_sync_state = 1; with the cam in sync
+   (cam_sync_state 4) and speed limp home not active, enters speed limp home
+   (cm848_enterSpeedLimpHome) and re-runs engine_injectionTiming_crankSyncDispatch (was
+   cm848_setEngineRunState1) | earlier note: Run state transition handler: sets
+   cam_crank_sync_state.crank_sync_state to 1 and, when speed limp home is not active and
+   cam_sync_state is 4, calls cm848_enterSpeedLimpHome (backup speed input) and re-runs
    engine_injectionTiming_crankSyncDispatch. */
 
-void cm848_setEngineRunState1(void)
+void cm848_enterCrankSyncLost(void)
 
 {
-  engine_crank_state_t_0040b80a.run_state = 1;
-  if ((engine_speed_limp_home_active_flag == 0) && (engine_crank_state_t_0040b80a.crank_state == 4))
-  {
+  cam_crank_sync_state.crank_sync_state = 1;
+  if ((engine_speed_limp_home_active_flag == 0) && (cam_crank_sync_state.cam_sync_state == 4)) {
     cm848_enterSpeedLimpHome();
     engine_injectionTiming_crankSyncDispatch();
   }
@@ -46884,15 +46894,20 @@ void cm848_setEngineRunState1(void)
 
 
 //
-// Function: cm848_engineRunState4Handler @ 0x00044d70
+// Function: cm848_enterCrankInSync @ 0x00044d70
 //
 
-void cm848_engineRunState4Handler(void)
+/* crank_sync_state = 4 (in sync) when crank sync lost recovers through the cam
+   (mpc555_updateCrankSyncState): ends speed limp home, re-runs
+   engine_injectionTiming_crankSyncDispatch and latches crank_have_sync_time_ticks the first time
+   (was cm848_engineRunState4Handler) */
+
+void cm848_enterCrankInSync(void)
 
 {
   int iVar1;
   
-  engine_crank_state_t_0040b80a.run_state = 4;
+  cam_crank_sync_state.crank_sync_state = 4;
   cm848_exitSpeedLimpHome();
   engine_injectionTiming_crankSyncDispatch();
   if (crank_have_sync_time_ticks == 0) {
@@ -46905,20 +46920,23 @@ void cm848_engineRunState4Handler(void)
 
 
 //
-// Function: cm848_engineRunState3Handler @ 0x00044dd0
+// Function: cm848_reenterCrankPreliminarySync @ 0x00044dd0
 //
 
-/* Run state 3 transition handler: snapshots average_pulse_period into crank_period_prev_snapshot,
-   restarts crank_preliminary_sync_count from its calibration, sets run_state to 3, leaves speed
-   limp home if it is active and re-runs engine_injectionTiming_crankSyncDispatch. */
+/* crank_sync_state = 3 again after crank sync was lost with no usable cam
+   (mpc555_updateCrankSyncState in state 1): cm848_enterCrankPreliminarySync without the time latch
+   (was cm848_engineRunState3Handler) | earlier note: Run state 3 transition handler: snapshots
+   average_pulse_period into crank_period_prev_snapshot, restarts crank_preliminary_sync_count from
+   its calibration, sets crank_sync_state to 3, leaves speed limp home if it is active and re-runs
+   engine_injectionTiming_crankSyncDispatch. */
 
-void cm848_engineRunState3Handler(void)
+void cm848_reenterCrankPreliminarySync(void)
 
 {
   crank_period_prev_snapshot = average_pulse_period;
   injection_fuel_quantity_snapshot_previous = 0;
   crank_preliminary_sync_count = crank_preliminary_sync_evaluation_count;
-  engine_crank_state_t_0040b80a.run_state = 3;
+  cam_crank_sync_state.crank_sync_state = 3;
   if (engine_speed_limp_home_active_flag == 1) {
     cm848_exitSpeedLimpHome();
   }
@@ -46929,21 +46947,23 @@ void cm848_engineRunState3Handler(void)
 
 
 //
-// Function: cm848_engineRunState4Conditional @ 0x00044e3c
+// Function: cm848_setCrankInSyncFromCam @ 0x00044e3c
 //
 
-/* Run state 4 transition handler: sets run_state to 4, leaves speed limp home (and re-runs
+/* The cam signal handler's other crank_sync_state = 4: ends speed limp home and re-runs
+   engine_injectionTiming_crankSyncDispatch only when speed limp home is active; latches
+   crank_have_sync_time_ticks the first time (was cm848_engineRunState4Conditional) | earlier note:
+   Run state 4 transition handler: sets crank_sync_state to 4, leaves speed limp home (and re-runs
    engine_injectionTiming_crankSyncDispatch) only if it is active, and latches
    crank_have_sync_time_ticks = TBLr - first_speed_interrupt_time_ticks the first time it is 0.
-   cm848_engineRunState4Handler and ...Handler2 do the same but leave speed limp home
-   unconditionally. */
+   cm848_enterCrankInSync and ...Handler2 do the same but leave speed limp home unconditionally. */
 
-void cm848_engineRunState4Conditional(void)
+void cm848_setCrankInSyncFromCam(void)
 
 {
   int iVar1;
   
-  engine_crank_state_t_0040b80a.run_state = 4;
+  cam_crank_sync_state.crank_sync_state = 4;
   if (engine_speed_limp_home_active_flag == 1) {
     cm848_exitSpeedLimpHome();
     engine_injectionTiming_crankSyncDispatch();
@@ -46958,15 +46978,18 @@ void cm848_engineRunState4Conditional(void)
 
 
 //
-// Function: cm848_engineRunState4Handler2 @ 0x00044eac
+// Function: cm848_enterCrankInSyncFromCam @ 0x00044eac
 //
 
-void cm848_engineRunState4Handler2(void)
+/* The cam signal handler's crank_sync_state = 4: the same body as cm848_enterCrankInSync (was
+   cm848_engineRunState4Handler2) */
+
+void cm848_enterCrankInSyncFromCam(void)
 
 {
   int iVar1;
   
-  engine_crank_state_t_0040b80a.run_state = 4;
+  cam_crank_sync_state.crank_sync_state = 4;
   cm848_exitSpeedLimpHome();
   engine_injectionTiming_crankSyncDispatch();
   if (crank_have_sync_time_ticks == 0) {
@@ -46979,17 +47002,23 @@ void cm848_engineRunState4Handler2(void)
 
 
 //
-// Function: cm848_engineRunState3HandlerWithTimebaseCapture @ 0x00044f0c
+// Function: cm848_enterCrankPreliminarySync @ 0x00044f0c
 //
 
-/* Crank run state 3 transition handler: the same steps as cm848_engineRunState3Handler (snapshot
-   average_pulse_period into crank_period_prev_snapshot, restart crank_preliminary_sync_count from
-   its calibration, run_state = 3, leave speed limp home if it is active, re-run
+/* crank_sync_state = 3 (preliminary sync) from start sync (mpc555_updateCrankSyncState) and from
+   hpcr_processEngineSyncPulses: snapshots average_pulse_period, restarts
+   crank_preliminary_sync_count from crank_preliminary_sync_evaluation_count, ends speed limp home
+   when it is active, re-runs engine_injectionTiming_crankSyncDispatch and latches
+   crank_preliminary_sync_time_ticks the first time (was
+   cm848_engineRunState3HandlerWithTimebaseCapture) | earlier note: Crank run state 3 transition
+   handler: the same steps as cm848_reenterCrankPreliminarySync (snapshot average_pulse_period into
+   crank_period_prev_snapshot, restart crank_preliminary_sync_count from its calibration,
+   crank_sync_state = 3, leave speed limp home if it is active, re-run
    engine_injectionTiming_crankSyncDispatch) and additionally latches
    crank_preliminary_sync_time_ticks = TBLr - first_speed_interrupt_time_ticks the first time it is
    0. No protection logic. (was cm848_protectionOverrideEvaluator) */
 
-void cm848_engineRunState3HandlerWithTimebaseCapture(void)
+void cm848_enterCrankPreliminarySync(void)
 
 {
   int iVar1;
@@ -46997,7 +47026,7 @@ void cm848_engineRunState3HandlerWithTimebaseCapture(void)
   crank_period_prev_snapshot = average_pulse_period;
   injection_fuel_quantity_snapshot_previous = 0;
   crank_preliminary_sync_count = crank_preliminary_sync_evaluation_count;
-  engine_crank_state_t_0040b80a.run_state = 3;
+  cam_crank_sync_state.crank_sync_state = 3;
   if (engine_speed_limp_home_active_flag == 1) {
     cm848_exitSpeedLimpHome();
   }
@@ -47102,7 +47131,7 @@ LAB_00045154:
        engine_speed_state.main_speed_pulse_count_between_vss_pulses + 1;
   hpcr_cbdFillAccelerationBuffers();
   wVar2 = crank_speed_count;
-  if ((engine_crank_state_t_0040b80a.run_state == 2) &&
+  if ((cam_crank_sync_state.crank_sync_state == 2) &&
      (wVar3 = crank_speed_count + 1, wVar2 = wVar3, wVar3 == crank_tooth_position_target)) {
     wVar2 = tpu_a_ch0_param0.PARAM0;
     uVar6 = -((short)wVar2 >> 0xf);
@@ -47123,7 +47152,7 @@ LAB_00045154:
           crank_resync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
           crank_resync_count = crank_resync_count + 1;
         }
-        cm848_engineRunState3HandlerWithTimebaseCapture();
+        cm848_enterCrankPreliminarySync();
         crank_preliminary_sync_count =
              lookupTableInterpolation
                        (&crank_timing_init_state_c,2,engine_event_countdown_axis_cal,
@@ -47139,14 +47168,14 @@ LAB_00045154:
             crank_resync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
             crank_resync_count = crank_resync_count + 1;
           }
-          cm848_engineRunState3HandlerWithTimebaseCapture();
+          cm848_enterCrankPreliminarySync();
           wVar2 = crank_speed_count;
         }
       }
     }
   }
   crank_speed_count = wVar2;
-  if ((engine_crank_state_t_0040b80a.run_state == 3) && (tpu_ch3_param3_snapshot == 0)) {
+  if ((cam_crank_sync_state.crank_sync_state == 3) && (tpu_ch3_param3_snapshot == 0)) {
     uVar4 = (primary_period_rpm_conversion_factor / average_pulse_period -
             primary_period_rpm_conversion_factor / crank_period_prev_snapshot) *
             (primary_period_rpm_conversion_factor / average_pulse_period +
@@ -47165,7 +47194,7 @@ LAB_00045154:
     }
     injection_fuel_quantity_snapshot_previous = injection_fuel_quantity_snapshot;
   }
-  if ((engine_crank_state_t_0040b80a.run_state == 3) &&
+  if ((cam_crank_sync_state.crank_sync_state == 3) &&
      ((short)fuel_pressure_sensor < fuel_pressure_start_undershoot)) {
     fuel_pressure_start_undershoot = fuel_pressure_sensor;
   }
@@ -47176,14 +47205,23 @@ LAB_00045154:
 
 
 //
-// Function: mpc555_updateEngineRunState @ 0x00045478
+// Function: mpc555_updateCrankSyncState @ 0x00045478
 //
 
-/* TPU-A channel 0 interrupt handler - reached via tpu_a_channel_interrupt_handler_table
-   (mpc555_tpuAInterruptDispatcher 0x55de4) - no direct caller in the decompile - runs the crank
-   run-state machine engine_crank_state_t.run_state 0-4 from tpu_a_ch0_param0 */
+/* TPU-A channel 0 interrupt handler (tpu_a_channel_interrupt_handler_table; no direct caller): runs
+   the crank sync state machine cam_crank_sync_state.crank_sync_state from the channel's status - 0
+   no sync -> 2 start sync (start_sync_count up to crank_sync_attempt_limit) -> 3 preliminary sync
+   (crank_preliminary_sync_count, then enough firing detections) -> 4 in sync
+   (crank_have_sync_time_ticks, speed limp home ends); 1 = crank sync lost, back to 4 through the
+   cam when the cam is in sync with enough good cam pulses, else to 3. It also counts
+   crank_sync_error_count and, while the cam is not in sync above
+   engine_position_sensor_error_detection_minimum_engine_speed, cam_sync_error_count (was
+   mpc555_updateEngineRunState) | earlier note: TPU-A channel 0 interrupt handler - reached via
+   tpu_a_channel_interrupt_handler_table (mpc555_tpuAInterruptDispatcher 0x55de4) - no direct caller
+   in the decompile - runs the crank run-state machine cam_crank_sync_state_t.crank_sync_state 0-4
+   from tpu_a_ch0_param0 */
 
-void mpc555_updateEngineRunState(void)
+void mpc555_updateCrankSyncState(void)
 
 {
   int iVar1;
@@ -47195,53 +47233,52 @@ void mpc555_updateEngineRunState(void)
   wVar3 = tpu_a_ch0_param0.PARAM4;
   uVar2 = wVar3 >> 8;
   wVar3 = tpu_a_ch0_param0.PARAM4;
-  if (((uVar2 == 0) || ((uVar2 & 0x40) != 0)) || (engine_crank_state_t_0040b80a.run_state == 0)) {
-    if (((uVar2 & 0x40) == 0) || (engine_crank_state_t_0040b80a.run_state == 0)) {
-      if ((engine_crank_state_t_0040b80a.cranking_flag != 0) && (uVar2 == 0)) {
-        engine_crank_state_t_0040b80a.cranking_flag =
-             engine_crank_state_t_0040b80a.cranking_flag - 1;
+  if (((uVar2 == 0) || ((uVar2 & 0x40) != 0)) || (cam_crank_sync_state.crank_sync_state == 0)) {
+    if (((uVar2 & 0x40) == 0) || (cam_crank_sync_state.crank_sync_state == 0)) {
+      if ((cam_crank_sync_state.crank_sync_error_count != 0) && (uVar2 == 0)) {
+        cam_crank_sync_state.crank_sync_error_count =
+             cam_crank_sync_state.crank_sync_error_count - 1;
       }
-      if ((engine_crank_state_t_0040b80a.crank_state != 4) &&
+      if ((cam_crank_sync_state.cam_sync_state != 4) &&
          (engine_position_sensor_error_detection_minimum_engine_speed < average_engine_speed)) {
-        engine_crank_state_t_0040b80a.start_counter =
-             engine_crank_state_t_0040b80a.start_counter + 1;
+        cam_crank_sync_state.cam_sync_error_count = cam_crank_sync_state.cam_sync_error_count + 1;
       }
-      if (engine_crank_state_t_0040b80a.run_state == 0) {
+      if (cam_crank_sync_state.crank_sync_state == 0) {
         wVar3 = TPUA_CH14_PARAM0.PARAM7;
         TPUA_CH14_PARAM0.PARAM7 = wVar3 & 0xff00 | (ushort)crank_sync_tooth;
         wVar3 = tpu_a_ch0_param0.PARAM4;
         tpu_a_ch0_param0.PARAM4 = wVar3 & 0xff;
         cam_crank_plausibility_count_1 = 0;
         cam_crank_plausibility_count_2 = 0;
-        engine_crank_state_t_0040b80a.run_state = 2;
+        cam_crank_sync_state.crank_sync_state = 2;
         start_sync_count = 0;
         crank_speed_count = 0;
       }
-      else if (engine_crank_state_t_0040b80a.run_state == 1) {
-        if ((engine_crank_state_t_0040b80a.crank_state == 4) &&
+      else if (cam_crank_sync_state.crank_sync_state == 1) {
+        if ((cam_crank_sync_state.cam_sync_state == 4) &&
            (crank_recovery_minimum_good_cam_pulse_count < cam_crank_plausibility_count_2)) {
-          cm848_engineRunState4Handler();
+          cm848_enterCrankInSync();
         }
         else {
-          cm848_engineRunState3Handler();
+          cm848_reenterCrankPreliminarySync();
         }
       }
-      else if (engine_crank_state_t_0040b80a.run_state == 2) {
+      else if (cam_crank_sync_state.crank_sync_state == 2) {
         cam_crank_plausibility_count_1 = 0;
         crank_speed_count = 0;
         start_sync_count = start_sync_count + 1;
         if (crank_sync_attempt_limit <= start_sync_count) {
           crank_preliminary_sync_count = crank_preliminary_sync_evaluation_count;
-          cm848_engineRunState3HandlerWithTimebaseCapture();
+          cm848_enterCrankPreliminarySync();
         }
       }
-      else if (engine_crank_state_t_0040b80a.run_state == 3) {
+      else if (cam_crank_sync_state.crank_sync_state == 3) {
         if (crank_preliminary_sync_count != 0) {
           crank_preliminary_sync_count = crank_preliminary_sync_count - 1;
         }
         if (crank_preliminary_sync_count == 0) {
           if (crank_preliminary_sync_firing_detection_threshold <= firing_detection_count) {
-            engine_crank_state_t_0040b80a.run_state = 4;
+            cam_crank_sync_state.crank_sync_state = 4;
             cm848_exitSpeedLimpHome();
             if (crank_have_sync_time_ticks == 0) {
               iVar1 = TBLr;
@@ -47262,20 +47299,20 @@ void mpc555_updateEngineRunState(void)
       }
     }
     else {
-      engine_crank_state_t_0040b80a.run_state = 0;
+      cam_crank_sync_state.crank_sync_state = 0;
     }
   }
   else {
     if (engine_position_sensor_error_detection_minimum_engine_speed < average_engine_speed) {
-      engine_crank_state_t_0040b80a.cranking_flag = engine_crank_state_t_0040b80a.cranking_flag + 1;
+      cam_crank_sync_state.crank_sync_error_count = cam_crank_sync_state.crank_sync_error_count + 1;
     }
-    if ((engine_crank_state_t_0040b80a.run_state == 2) &&
-       (engine_crank_state_t_0040b80a.crank_state != 4)) {
+    if ((cam_crank_sync_state.crank_sync_state == 2) && (cam_crank_sync_state.cam_sync_state != 4))
+    {
       wVar3 = tpu_a_ch0_param0.PARAM4;
       tpu_a_ch0_param0.PARAM4 = wVar3 & 0xff;
     }
     else {
-      cm848_setEngineRunState1();
+      cm848_enterCrankSyncLost();
     }
   }
   return;
@@ -47298,10 +47335,11 @@ void mpc555_updateEngineRunState(void)
    Pulse_Period_Table_Backup, index backup_period_capture_index = +3E Next_Table_Position_Backup)
    and sums it into average_pulse_period_backup (+6 Average_Pulse_Period_Backup) and
    engine_speed_state_t.backup_speed_period_sum_between_vss_pulses / _sample_count (the backup
-   accumulator +24 and counter +2A). It runs the cam sync state engine_crank_state_t.crank_state
-   (e2m 819C +2 Cam_Sync_State; here 0 NO / 1 LOST / 4 HAVE, driven by the channel status byte), the
-   pattern machine from tpu_a_ch1_param2: start_counter (819C +0 Cam_Sync_Error_Count) rises while
-   LOST above engine_position_sensor_error_detection_minimum_engine_speed and falls while HAVE, and
+   accumulator +24 and counter +2A). It runs the cam sync state
+   cam_crank_sync_state_t.cam_sync_state (e2m 819C +2 Cam_Sync_State; here 0 NO / 1 LOST / 4 HAVE,
+   driven by the channel status byte), the pattern machine from tpu_a_ch1_param2:
+   cam_sync_error_count (819C +0 Cam_Sync_Error_Count) rises while LOST above
+   engine_position_sensor_error_detection_minimum_engine_speed and falls while HAVE, and
    cam_have_sync_time_ticks (819B +72 Cam_Have_Sync_Time) is stored once at HAVE. It compares the
    crank tooth number of the cam pulse (cam_to_crank_tooth_number from TPUA_CH3_PARAM2, 819B +E
    Cam_2_Crank_Tooth_Number) with crank_tooth_pattern_table (Cam_2_Crank_Position_Array, 2 x
@@ -47362,33 +47400,33 @@ void mpc555_handleCamSignalInterrupt(void)
          engine_speed_state.backup_speed_pulse_count_between_vss_pulses + 1;
     crank_tooth_counter_zero_flag = false;
   }
-  if (engine_crank_state_t_0040b80a.crank_state == 0) {
+  if (cam_crank_sync_state.cam_sync_state == 0) {
     if (uVar2 == 0) {
-      engine_crank_state_t_0040b80a.crank_state = 4;
+      cam_crank_sync_state.cam_sync_state = 4;
     }
     else if ((uVar2 & 0x40) == 0) {
 LAB_00045970:
-      engine_crank_state_t_0040b80a.crank_state = 1;
+      cam_crank_sync_state.cam_sync_state = 1;
     }
   }
-  else if (engine_crank_state_t_0040b80a.crank_state == 1) {
+  else if (cam_crank_sync_state.cam_sync_state == 1) {
     if (uVar2 == 0) {
-      engine_crank_state_t_0040b80a.crank_state = 4;
+      cam_crank_sync_state.cam_sync_state = 4;
     }
     else if ((uVar2 & 0x40) != 0) {
-      engine_crank_state_t_0040b80a.crank_state = 0;
+      cam_crank_sync_state.cam_sync_state = 0;
     }
   }
-  else if (engine_crank_state_t_0040b80a.crank_state == 4) {
+  else if (cam_crank_sync_state.cam_sync_state == 4) {
     if ((uVar2 & 0x40) == 0) {
       if (uVar2 != 0) goto LAB_00045970;
     }
     else {
-      engine_crank_state_t_0040b80a.crank_state = 0;
+      cam_crank_sync_state.cam_sync_state = 0;
     }
   }
-  if (engine_crank_state_t_0040b80a.crank_state == 0) {
-    if (engine_crank_state_t_0040b80a.run_state != 0) {
+  if (cam_crank_sync_state.cam_sync_state == 0) {
+    if (cam_crank_sync_state.crank_sync_state != 0) {
       cVar6 = '\0';
       uVar5 = 0;
       if (crank_tooth_pattern_size != 0) {
@@ -47408,9 +47446,9 @@ LAB_00045970:
         cam_crank_plausibility_count_1 = cam_crank_plausibility_count_1 + 1;
         cam_crank_plausibility_count_2 = cam_crank_plausibility_count_2 + 1;
         if (((((bool)crank_tooth_counter_zero_flag) && (engine_speed_limp_home_active_flag == 0)) &&
-            (((engine_crank_state_t_0040b80a.run_state == 3 &&
+            (((cam_crank_sync_state.crank_sync_state == 3 &&
               (crank_preliminary_resync_cam_tooth_threshold < cam_crank_plausibility_count_2)) ||
-             ((engine_crank_state_t_0040b80a.run_state == 1 &&
+             ((cam_crank_sync_state.crank_sync_state == 1 &&
               (crank_lost_resync_cam_tooth_threshold < cam_crank_plausibility_count_2)))))) &&
            (firing_detection_count == 0)) {
           wVar3 = tpu_a_ch0_param0.PARAM0;
@@ -47420,7 +47458,7 @@ LAB_00045970:
             iVar1 = TBLr;
             crank_resync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
             crank_resync_count = crank_resync_count + 1;
-            if (engine_crank_state_t_0040b80a.run_state == 3) {
+            if (cam_crank_sync_state.crank_sync_state == 3) {
               engine_injectionTiming_crankSyncDispatch();
             }
           }
@@ -47429,24 +47467,24 @@ LAB_00045970:
     }
     goto LAB_00045ea0;
   }
-  if (engine_crank_state_t_0040b80a.crank_state == 1) {
+  if (cam_crank_sync_state.cam_sync_state == 1) {
     if (engine_position_sensor_error_detection_minimum_engine_speed < average_engine_speed) {
-      engine_crank_state_t_0040b80a.start_counter = engine_crank_state_t_0040b80a.start_counter + 1;
+      cam_crank_sync_state.cam_sync_error_count = cam_crank_sync_state.cam_sync_error_count + 1;
     }
-    cm848_setEngineCrankState1();
+    cm848_enterCamSyncLost();
     goto LAB_00045ea0;
   }
-  if (engine_crank_state_t_0040b80a.crank_state != 4) goto LAB_00045ea0;
-  if (engine_crank_state_t_0040b80a.start_counter != 0) {
-    engine_crank_state_t_0040b80a.start_counter = engine_crank_state_t_0040b80a.start_counter - 1;
+  if (cam_crank_sync_state.cam_sync_state != 4) goto LAB_00045ea0;
+  if (cam_crank_sync_state.cam_sync_error_count != 0) {
+    cam_crank_sync_state.cam_sync_error_count = cam_crank_sync_state.cam_sync_error_count - 1;
   }
   if (cam_have_sync_time_ticks == 0) {
     iVar1 = TBLr;
     cam_have_sync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
   }
-  if (engine_crank_state_t_0040b80a.run_state != 4) {
-    if ((engine_crank_state_t_0040b80a.run_state == 2) ||
-       (engine_crank_state_t_0040b80a.run_state == 3)) {
+  if (cam_crank_sync_state.crank_sync_state != 4) {
+    if ((cam_crank_sync_state.crank_sync_state == 2) || (cam_crank_sync_state.crank_sync_state == 3)
+       ) {
       uVar5 = (uint)cam_to_crank_tooth_number;
       if (((&crank_tooth_pattern_table)[uVar9] == uVar5) ||
          ((uint)(&crank_tooth_pattern_table)[uVar9] == uVar5 - 1)) {
@@ -47465,23 +47503,23 @@ LAB_00045970:
       }
       if ((crank_tooth_counter_zero_flag != 0) &&
          (cam_crank_plausibility_count_2 == cam_wheel_pulse_count)) {
-        if (engine_crank_state_t_0040b80a.run_state == 2) {
-          cm848_engineRunState4Handler2();
+        if (cam_crank_sync_state.crank_sync_state == 2) {
+          cm848_enterCrankInSyncFromCam();
         }
         else {
-          cm848_engineRunState4Conditional();
+          cm848_setCrankInSyncFromCam();
         }
       }
     }
-    else if ((engine_crank_state_t_0040b80a.run_state == 0) ||
-            (engine_crank_state_t_0040b80a.run_state == 1)) {
+    else if ((cam_crank_sync_state.crank_sync_state == 0) ||
+            (cam_crank_sync_state.crank_sync_state == 1)) {
       if (engine_position_sensor_error_detection_minimum_engine_speed < average_engine_speed) {
-        engine_crank_state_t_0040b80a.cranking_flag =
-             engine_crank_state_t_0040b80a.cranking_flag + 1;
+        cam_crank_sync_state.crank_sync_error_count =
+             cam_crank_sync_state.crank_sync_error_count + 1;
       }
       if ((engine_speed_limp_home_active_flag == 0) &&
          (crank_sync_error_count_speed_limp_home_threshold <
-          engine_crank_state_t_0040b80a.cranking_flag)) {
+          cam_crank_sync_state.crank_sync_error_count)) {
         cm848_enterSpeedLimpHome();
         engine_injectionTiming_crankSyncDispatch();
       }
@@ -47515,7 +47553,7 @@ LAB_00045c84:
   }
   if (crank_sync_phase_counter_threshold_cal < crank_sync_phase_counter._0_2_) {
     crank_sync_phase_counter._0_2_ = 0;
-    cm848_setEngineRunState3();
+    cm848_setCrankPreliminarySyncFromCam();
   }
 LAB_00045ea0:
   if (crank_tooth_counter_zero_flag != 0) {
@@ -50314,8 +50352,7 @@ void cm848_countFuelPressureSensorCodeChanges(void)
 void cm848_filterFuelPressureFeedback(void)
 
 {
-  if ((engine_crank_state_t_0040b80a.run_state == 4) ||
-     (engine_crank_state_t_0040b80a.crank_state == 4)) {
+  if ((cam_crank_sync_state.crank_sync_state == 4) || (cam_crank_sync_state.cam_sync_state == 4)) {
     if (fuel_pressure_feedback_source_select == 0) {
       fuel_pressure_feedback_filtered =
            cm848_signedFirstOrderFilter
@@ -50380,8 +50417,7 @@ void cm848_sampleFuelPressureSensor(void)
 {
   uint uVar1;
   
-  if ((engine_state != ENGINE_STATE_ENGINE_BRAKE) &&
-     (engine_crank_state_t_0040b80a.crank_state != 4)) {
+  if ((engine_state != ENGINE_STATE_ENGINE_BRAKE) && (cam_crank_sync_state.cam_sync_state != 4)) {
     fuel_pressure_sensor = fuel_pressure_sensor_raw_substitute;
     if ((adc_forced_reading_enable_bits_cal[2] & 4) == 0) {
       if (qadc_channel_index_table[0x22] < 0x81) {

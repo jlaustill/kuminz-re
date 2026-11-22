@@ -1207,7 +1207,7 @@ typedef struct commanded_throttle_state_t commanded_throttle_state_t;
 typedef struct transmission_control_flags_t transmission_control_flags_t;
 typedef struct transmission_shift_strategy_flags_t transmission_shift_strategy_flags_t;
 typedef struct transmission_pressure_state_t transmission_pressure_state_t;
-typedef struct engine_crank_state_t engine_crank_state_t;
+typedef struct cam_crank_sync_state_t cam_crank_sync_state_t;
 typedef struct fuel_pressure_governor_state_t fuel_pressure_governor_state_t;
 typedef struct engine_speed_state_t engine_speed_state_t;
 typedef struct sensor_readings_t sensor_readings_t;
@@ -1460,11 +1460,11 @@ struct transmission_pressure_state_t {
     uint16_t anti_hunt_2_3_boost_timer;  /* e2m 8C17 +6 RE_AH_Timer_2_3 ('Controls duration of boost press for AH 2-3 upshift'): reloaded from transmission_anti_hunt_2_3_boost_time (was state2_timer) */
 };
 
-struct engine_crank_state_t {
-    uint16_t start_counter;  /* Engine start attempt counter */
-    uint16_t crank_state;  /* Cranking state machine value */
-    uint16_t cranking_flag;  /* Engine currently cranking flag (1=cranking) */
-    uint16_t run_state;  /* Engine run state written by mpc555_updateEngineRunState - a different variable from engine_operating_mode */
+struct cam_crank_sync_state_t {
+    uint16_t cam_sync_error_count;  /* e2m 819C +0 Cam_Sync_Error_Count 'TOTAL NUMBER OF SYNC LOSSES': +1 per crank signal interrupt while cam_sync_state is not 4 above engine_position_sensor_error_detection_minimum_engine_speed (mpc555_updateCrankSyncState); cm848_updateEngineSpeedFromCrankSignal compares it with cam_sync_error_count_limit. No engine start counter (was start_counter) | earlier note: Engine start attempt counter */
+    uint16_t cam_sync_state;  /* e2m 819C +2 Cam_Sync_State: the cam signal handler's state, 4 = in sync, 1 = lost (cm848_enterCamSyncLost); the e2m value labels (0 no sync / 1 have sync / 2 lost on cam / 3 start sync) do not match this firmware's numbering. No crank state (was crank_state) | earlier note: Cranking state machine value */
+    uint16_t crank_sync_error_count;  /* e2m 819C +4 Crank_Sync_Error_Count 'Incremented 6/cam when crank not synched' (CNTS): counted up and down by mpc555_updateCrankSyncState from the TPU-A channel 0 status; cm848_updateEngineSpeedFromCrankSignal compares it with crank_sync_error_count_limit. No cranking flag (was cranking_flag) | earlier note: Engine currently cranking flag (1=cranking) */
+    uint16_t crank_sync_state;  /* e2m 819C +6 Crank_Sync_State: 0 no sync / 2 start sync / 3 preliminary sync / 4 in sync / 1 lost (mpc555_updateCrankSyncState and its setters); the e2m value labels (0 no sync / 1 have sync / 2 lost on crank / 3 start sync) do not match this firmware's numbering. State 4 gates the cylinder balance and the fuel pressure feedback filter. No engine run state (was run_state) | earlier note: Engine run state written by mpc555_updateEngineRunState - a different variable from engine_operating_mode */
 };
 
 struct fuel_pressure_governor_state_t {
