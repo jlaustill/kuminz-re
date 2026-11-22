@@ -772,7 +772,16 @@ Scripts are in `session_folder/round12/`.
     battery correction. The 11.45 column-5 order does not reach this layout, so it could not be walked.
   - **Also:** their lookup caches (the `engine_sync_init_state_*` words), the coil temperature ready / preset-done
     flags, and the two filters. ROM words lose the `_cal` suffix.
-- **Closing:** the function's plate no longer calls its names older guesses.
+- **Stage C (5698e89, label-only, after a review):** stage B's scan printed only 420 of the function's 757
+  lines.
+  - **The current integrator preset table** (e2m 8B49 / 8B4A `HPCR_Current_Integrator_Preset_*`, by the coil
+    temperature, presetting `fuel_metering_feedback_trim_integrator`) and its cache.
+  - **The rest:** the three derivative gain scaling caches and `fuel_metering_coil_resistance_raw`.
+  - **The plate:** its second early return is the service tool's fuel control test, not a cranking value. The
+    full 8B3C +8 / +C text confirms the tool override names, and the selector code proves that 5 is the coil
+    temperature.
+  - **Stale text** in enums.csv, function_definitions.csv row 14, work/todo.md and these leads.
+- **Closing:** the function's plate no longer calls its names older guesses (a full scan finds none).
 - **Round 12 leads:**
   - **The fault status records** (`fault_status_array` / `fault_status_word_array`, 170 x 3 bytes from 0x3feb92)
     would be a packed record array, but the range overlaps the reflash kernel's data-transfer rows from 0x3fec7a

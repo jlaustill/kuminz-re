@@ -383,6 +383,9 @@ state enum, the flag bytes.**
   - **The pump tables:** duty to current, the start / hot start duty presets, the duty pre-control map (the
     feed-forward), the maximum duty, and the battery correction.
   - **Also:** their caches and the coil temperature flags. The ROM tables lose `_cal`.
+- **Stage C (5698e89, label-only, after a review):** the current integrator preset table (e2m 8B49 / 8B4A) and the
+  last caches. Stage B had scanned only part of the function. Also the plate (the tool override, not a cranking
+  value) and stale text.
 
 ## Test plan
 

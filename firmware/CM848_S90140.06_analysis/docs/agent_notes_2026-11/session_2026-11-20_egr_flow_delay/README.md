@@ -277,5 +277,6 @@ Hand work on the round 7 lead.
   - `array_normalize.py` is the proof helper (it maps each array back to its old labels).
 - **Stage B:** `worklist_r12b.py`, the 43 `HPCR_*` names. `apply_r12_plate.py` updates the function's plate in the
   closing.
+- **Stage C:** `apply_r12c.py` (the remaining names, the plate, the stale text).
 - **Logs:** the round 12 build logs (with 12A's first attempt) are in the large-files tarball.
 - **Commit messages:** `commit_r12*.txt`.
