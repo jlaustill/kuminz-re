@@ -822,20 +822,20 @@ address,name,type,comment
 0x003028a9,keyon_duration_counter.last_write_addr,,
 0x003028ad,qadc_a_result_ch28,,
 0x003028b1,qadc_a_result_ch30,,
-0x00302903,qadc_a_queue_status_1,byte,
-0x00302904,qadc_a_active_channel_id,byte,
+0x00302903,boot_j1939_transport_transmit_active,byte,1 while the boot kernel's connection mode (RTS / CTS) transmit session runs: mpc555_sendJ1939TransportRequestToSend sets it / the end of message acknowledge and abort handlers and the data sender's timeout clear it (the twin of j1939_multiframe_tx_active) (was qadc_a_queue_status_1; PR #53 round 35)
+0x00302904,boot_j1939_transport_transmit_destination_address,byte,the session's destination address (the message identifier's PDU specific byte); the clear to send / end of message acknowledge / abort handlers match replies against it (the twin of j1939_multiframe_tx_destination_address) (was qadc_a_active_channel_id; PR #53 round 35)
 0x00302905,boot_j1939_transport_transmit_session,j1939_transport_transmit_session_t,The boot reflash kernel's outbound J1939 transport session (j1939_transport_transmit_session_t): mpc555_sendJ1939TransportRequestToSend opens it (TP.CM request-to-send), mpc555_handleJ1939TransportClearToSend records each granted window and mpc555_sendJ1939TransportDataPackets sends up to 15 TP.DT frames per call (was j1939_tp_queue_t_00302905)
-0x00302907,qadc_a_queue_status_2,,
-0x00302908,qadc_a_range_start,,
-0x00302909,qadc_a_queue_ptr,,
-0x0030290a,qadc_a_queue_count_1,,
-0x0030290b,qadc_a_queue_count_2,,
+0x00302907,boot_j1939_transport_transmit_session.total_packet_count,,(was qadc_a_queue_status_2: a stale flat row inside the struct; PR #53 round 35)
+0x00302908,boot_j1939_transport_transmit_session.next_packet_number,,(was qadc_a_range_start: a stale flat row inside the struct; PR #53 round 35)
+0x00302909,boot_j1939_transport_transmit_session.granted_packet_count,,(was qadc_a_queue_ptr: a stale flat row inside the struct; PR #53 round 35)
+0x0030290a,boot_j1939_transport_transmit_session.frame_queue_status,,(was qadc_a_queue_count_1: a stale flat row inside the struct; PR #53 round 35)
+0x0030290b,boot_j1939_transport_transmit_session.message_size,,(was qadc_a_queue_count_2: a stale flat row inside the struct; PR #53 round 35)
 0x0030290d,boot_j1939_transport_transmit_session.message_data_pointer,,
-0x00302911,qadc_a_queue_ctrl_1,,
-0x00302915,qadc_a_queue_ctrl_2,,
+0x00302911,boot_j1939_transport_transmit_session.session_status_pointer,,(was qadc_a_queue_ctrl_1: a stale flat row inside the struct; PR #53 round 35)
+0x00302915,boot_j1939_transport_transmit_session.timeout_timer,,(was qadc_a_queue_ctrl_2: a stale flat row inside the struct; PR #53 round 35)
 0x00302917,boot_j1939_transport_transmit_session.frame_can_id,,
 0x0030291b,boot_j1939_transport_transmit_session.frame_data_length,,
-0x0030291d,qadc_a_queue_ctrl_3,,
+0x0030291d,boot_j1939_transport_transmit_session.transmit_frame_pointer,,(was qadc_a_queue_ctrl_3: a stale flat row inside the struct; PR #53 round 35)
 0x00302925,qadc_a_pause_status,byte,
 0x00302926,qadc_a_pause_ctrl,byte,
 0x00302927,j1939_tp_pause_state,j1939_tp_pause_t,

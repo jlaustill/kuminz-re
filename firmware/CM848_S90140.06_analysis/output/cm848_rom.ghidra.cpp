@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 13:00:16 MST 2026
+// Generated: Sun Nov 22 13:11:22 MST 2026
 
 
 //
@@ -4486,10 +4486,10 @@ void mpc555_sendJ1939TransportRequestToSend
   bVar2 = *(byte *)puVar1;
   bVar3 = *(byte *)((int)&msg_header->can_id + 2);
   if ((bVar2 < 0xf0) && (bVar3 != 0xff)) {
-    bVar4 = qadc_a_queue_status_1;
+    bVar4 = boot_j1939_transport_transmit_active;
     if (bVar4 == 0) {
-      qadc_a_queue_status_1 = 1;
-      qadc_a_active_channel_id = bVar3;
+      boot_j1939_transport_transmit_active = 1;
+      boot_j1939_transport_transmit_destination_address = bVar3;
       boot_j1939_transport_transmit_session.transported_pgn = *puVar1 & 0xff00;
       boot_j1939_transport_transmit_session.message_size = msg_header->data_length;
       boot_j1939_transport_transmit_session.total_packet_count =
@@ -4529,7 +4529,7 @@ void mpc555_sendJ1939TransportRequestToSend
       else {
         pbVar6 = boot_j1939_transport_transmit_session.session_status_pointer;
         *pbVar6 = bVar2;
-        qadc_a_queue_status_1 = 0;
+        boot_j1939_transport_transmit_active = 0;
       }
     }
     else {
@@ -4563,8 +4563,9 @@ void mpc555_handleJ1939TransportClearToSend(byte request_type,byte connection_id
   iVar4 = CONCAT31(in_register_0000000c,request_type);
   bVar1 = *(byte *)(*(int *)(iVar4 + 6) + 2);
   local_18 = (ushort)*(byte *)(*(int *)(iVar4 + 6) + 6) << 8;
-  bVar2 = qadc_a_queue_status_1;
-  if ((bVar2 == 1) && (bVar2 = qadc_a_active_channel_id, bVar2 == *(byte *)(iVar4 + 3))) {
+  bVar2 = boot_j1939_transport_transmit_active;
+  if ((bVar2 == 1) &&
+     (bVar2 = boot_j1939_transport_transmit_destination_address, bVar2 == *(byte *)(iVar4 + 3))) {
     bVar2 = boot_j1939_transport_transmit_session.total_packet_count;
     if (((uint)bVar1 <= (uint)bVar2) &&
        (wVar3 = boot_j1939_transport_transmit_session.transported_pgn, local_18 == wVar3)) {
@@ -4896,14 +4897,15 @@ void mpc555_handleJ1939TransportEndOfMessageAcknowledge(j1939_rx_msg_t *rx_msg)
   byte *pbVar3;
   word local_10;
   
-  bVar1 = qadc_a_queue_status_1;
-  if ((bVar1 == 1) && (bVar1 = qadc_a_active_channel_id, bVar1 == rx_msg->source_address)) {
+  bVar1 = boot_j1939_transport_transmit_active;
+  if ((bVar1 == 1) &&
+     (bVar1 = boot_j1939_transport_transmit_destination_address, bVar1 == rx_msg->source_address)) {
     local_10 = (ushort)rx_msg->data_pointer[6] << 8;
     wVar2 = boot_j1939_transport_transmit_session.transported_pgn;
     if (local_10 == wVar2) {
       pbVar3 = boot_j1939_transport_transmit_session.session_status_pointer;
       *pbVar3 = 9;
-      qadc_a_queue_status_1 = 0;
+      boot_j1939_transport_transmit_active = 0;
     }
   }
   return;
@@ -4928,12 +4930,13 @@ void mpc555_handleJ1939TransportAbort(int param_1)
   undefined2 local_10;
   
   local_10 = (ushort)*(byte *)(*(int *)(param_1 + 6) + 6) << 8;
-  bVar1 = qadc_a_queue_status_1;
-  if (((bVar1 == 1) && (bVar1 = qadc_a_active_channel_id, bVar1 == *(byte *)(param_1 + 3))) &&
-     (wVar2 = boot_j1939_transport_transmit_session.transported_pgn, local_10 == wVar2)) {
+  bVar1 = boot_j1939_transport_transmit_active;
+  if (((bVar1 == 1) &&
+      (bVar1 = boot_j1939_transport_transmit_destination_address, bVar1 == *(byte *)(param_1 + 3)))
+     && (wVar2 = boot_j1939_transport_transmit_session.transported_pgn, local_10 == wVar2)) {
     pbVar3 = boot_j1939_transport_transmit_session.session_status_pointer;
     *pbVar3 = 10;
-    qadc_a_queue_status_1 = 0;
+    boot_j1939_transport_transmit_active = 0;
   }
   else {
     bVar1 = qadc_a_pause_status;
@@ -5013,7 +5016,7 @@ void mpc555_sendJ1939TransportDataPackets(void *queue_entry)
 LAB_00006458:
       pbVar12 = boot_j1939_transport_transmit_session.session_status_pointer;
       *pbVar12 = bVar11;
-      qadc_a_queue_status_1 = 0;
+      boot_j1939_transport_transmit_active = 0;
     }
     else {
       boot_j1939_transport_transmit_session.timeout_timer = wVar3 - 1;
@@ -5120,7 +5123,7 @@ void mpc555_serviceJ1939TransportSessions(byte connection_id)
   byte bVar1;
   undefined3 in_register_0000000c;
   
-  bVar1 = qadc_a_queue_status_1;
+  bVar1 = boot_j1939_transport_transmit_active;
   if (bVar1 == 1) {
     mpc555_sendJ1939TransportDataPackets((void *)CONCAT31(in_register_0000000c,connection_id));
   }
