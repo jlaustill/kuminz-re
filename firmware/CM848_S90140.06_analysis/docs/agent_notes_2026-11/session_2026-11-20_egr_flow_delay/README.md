@@ -339,3 +339,8 @@ Hand work on the round 7 lead.
   (through apply_hand_worklist.py) and `apply_r18b_enums.py`. **Stage C:** `apply_r18c.py`. **Closing:**
   `fix_retired_prose_r18.py`, `apply_r18_closing.py`.
 
+## Round 19: tables, sources and the ANC pass-through (`session_folder/round19/`)
+
+- **Stage A:** `worklist_r19a.py`. **Stage B:** `apply_r19b.py`, with `source_values.py` (the values each source word
+  stores and compares). **Stage C:** `worklist_r19c.py`. **Closing:** `apply_r19_closing.py`.
+

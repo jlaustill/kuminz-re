@@ -1,0 +1,15 @@
+cm848: round 19 stage A - the main timing cranking map, the ambient humidity table, the altitude cache (label-only)
+
+Tables named by the ECU's parameter ID table:
+- injection_timing_main_cranking_x_axis / _y_axis / _grid (were injection_timing_main_cold_start_*): e2m 8091 /
+  8092 / 8093 Main_SOI_Cranking_Speed_Axis / _Cool_Temp_Axis / _SOI_Axis, the 'Main SOI Cranking Map' that
+  cm848_calculateMainInjectionTiming reads while cranking (source CRANK), and its cache words.
+- ambient_relative_humidity_x_axis / _y_axis / _grid (were boost_fuel_rpm_blend_scale_*): e2m 1A98 / 1A99 / 1A9A
+  C_AMB_Humidity_Speed_Axis / _Fuel_Axis / _Table, which give ambient_relative_humidity (1921 +14).
+- altitude_from_barometric_pressure_cached_axis_offset (was governor_adjustment_input_table_row_count, a 'dims'
+  name for the altitude lookup's cache).
+
+Proof: reverse_names.py --ignore-comments --canonical-code-labels prints EQUIVALENT; the renamed rows match their
+e2m sizes. Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

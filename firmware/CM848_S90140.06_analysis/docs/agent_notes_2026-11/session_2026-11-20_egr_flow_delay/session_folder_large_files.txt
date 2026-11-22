@@ -91,10 +91,14 @@
   200904 build_r18b.log
   200905 build_r18c.log
   200902 build_r18d.log
+  200906 build_r19a.log
+  200907 build_r19b.log
+  200903 build_r19c.log
    23475 cm848_runCruiseAndRoadSpeedGovernor_round16.asm
  1071916 e2m_audit_round16a.csv
  1072739 e2m_audit_round17a.csv
  1072859 e2m_audit_round18b.csv
+ 1072915 e2m_audit_round19a.csv
  3544401 stage2.cpp
   402904 verify.log
   402089 verify2.log
@@ -121,3 +125,4 @@
   402093 verify_round16.log
   402082 verify_round17.log
   402126 verify_round18.log
+  402131 verify_round19.log

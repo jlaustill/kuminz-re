@@ -1,0 +1,33 @@
+=== mpc555_miosSetChannelPwmDuty (lines 58470-58508, 32 non-blank)
+58470: // Function: mpc555_miosSetChannelPwmDuty @ 0x00054ec4
+58471: //
+58473: /* Sets an MDASM channel's PWM duty (1/256 % per count; 25600 = 100 %) by writing the AR:BR compare
+58474:    pair as one word: 0 % = 0x0000:0x7fff / 100 % and above = 0x7fff:0x8000 / otherwise AR = 0x7fff
+58475:    and BR = (0xffff - ML) x duty / 25600 + (ML & 0x7fff) where ML is the shared MMCSM22 modulus
+58476:    latch (the counter runs from ML up to 0xffff). Output channel driver table slot +12 for
+58477:    MDASM11-15 / 27-31. Was mpc555_miosReadChannelStatus (it reads nothing back) |
+58478:    review-function-readability reviewed 2026-11-13 - Readability High Accuracy Confidence High */
+58480: void mpc555_miosSetChannelPwmDuty(mios_mdasm_t *channel_registers,word duty)
+58482: {
+58483:   undefined4 compare_register_pair;
+58484:   word modulus_start_value;
+58485:   word modulus_period_value;
+58487:   if (duty < 0x6400) {
+58488:     if (duty == 0) {
+58489:       compare_register_pair = 0x7fff;
+58490:     }
+58491:     else {
+58492:       modulus_start_value = mios_mmcsm22.ML;
+58493:       modulus_period_value = mios_mmcsm22.ML;
+58494:       compare_register_pair =
+58495:            CONCAT22(0x7fff,(short)(((0xffff - modulus_period_value & 0xffff) * (uint)duty) / 0x6400)
+58496:                            + (modulus_start_value & 0x7fff));
+58497:     }
+58498:   }
+58499:   else {
+58500:     compare_register_pair = 0x7fff8000;
+58501:   }
+58502:   channel_registers->AR_BR = compare_register_pair;
+58503:   return;
+58504: }
+58508: //

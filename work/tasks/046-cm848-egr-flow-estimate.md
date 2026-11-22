@@ -1068,14 +1068,40 @@ Scripts are in `session_folder/round18/`.
   'floor / governor-limit minimum / working minimum / cold-start map' words.
 - **Round 18 leads:**
   - **The cranking timing map** is e2m 105E +4 `Crank_4D_Timing`, but its tables keep
-    `injection_timing_main_cold_start_*`.
+    `injection_timing_main_cold_start_*`. (Done in round 19: the map is e2m 8091-8093 `Main_SOI_Cranking_*`; 105E +4
+    is the crank routine's own 4D timing output, which only its initializer writes.)
   - **Two more 'row count' caches:** `governor_adjustment_input_table_row_count` (0x3fb9da) and
-    `boost_fuel_rpm_blend_table_row_count` (0x3fb9f2) look like lookup caches named as table dimensions.
+    `boost_fuel_rpm_blend_table_row_count` (0x3fb9f2) look like lookup caches named as table dimensions. (Done in
+    round 19.)
   - **`cm848_storeFuelDemandPreviousValues`** copies the off-nominal compensated reference (1711 +8 `CBO_SOI_Ref`)
     into `ANC_SOI` (10A4 +14) and two kernel-window words (0x3fa700 / 0x3fa702), with source 25 (e2m `CBR_SOI`). The
-    ANC stage (e2m 10A4) has no names yet, and the function name is wrong.
+    ANC stage (e2m 10A4) has no names yet, and the function name is wrong. (Done in round 19.)
   - **`fuel_demand_offset_correction`** is added to the altitude derate limit (`protection_feature_flags` bit 0x80)
     and to the retarder's idle / PTO fueling limits; its source is unread.
+
+## Done, round 19 (2026-11-21, same PR; the relayed "keep going" again): tables, sources and the ANC pass-through
+
+Scripts are in `session_folder/round19/`.
+- **Stage A (2327679, label-only):** tables named by the parameter ID table.
+  - The main timing cranking map is e2m 8091-8093 `Main_SOI_Cranking_*` (was `injection_timing_main_cold_start_*`).
+  - The ambient humidity table is e2m 1A98-1A9A `C_AMB_Humidity_*` (was `boost_fuel_rpm_blend_scale_*`), the table
+    behind `ambient_relative_humidity`.
+  - The altitude lookup's cache was named as a table dimension.
+- **Stage B (e3bc815, types):**
+  - `SENSOR_VALUE_SOURCE` (PRIMARY / BACKUP / DEFAULT) goes on eleven source words. Eleven e2m `*_Source` records
+    share the value list '0=PRIMARY, 1=BACKUP, 2=DEFAULT', and the code stores and compares only those values.
+    `barometric_altitude_source` (1921 +12) gets a row.
+  - The humidity table's cache is `word[2]`.
+- **Stage C (label-only): the ANC pass-through.**
+  - The ANC timing stage (e2m 10A4, enables in 106B +8) is compiled out: its RAM words have no access.
+  - `cm848_passCompensatedTimingToCombustionLimits` (was `cm848_storeFuelDemandPreviousValues`) copies the
+    off-nominal compensated reference into `injection_timing_combustion_limits_input`. That word was
+    `injection_timing_compensated_reference_previous`; it is 10A4 +14 `ANC_SOI`, 'input to CBL'.
+  - The function also sets source 25 (COMBUSTION_REFERENCE). The combustion limits step reads the word.
+  - 'ANC' is not spelled out in the e2m, so the names use the role.
+- **Round 19 leads:**
+  - **The source enum's reach:** other `*_Source` words may use the same 0 / 1 / 2 coding without the e2m list (for
+    example `egr_flow_source`). Check each one's stores before typing it.
 
 ## Leads (not in this PR)
 

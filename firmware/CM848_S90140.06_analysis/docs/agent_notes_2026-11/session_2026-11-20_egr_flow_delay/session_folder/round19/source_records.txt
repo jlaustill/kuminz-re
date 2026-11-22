@@ -1,0 +1,11 @@
+Air_Press_Source,1A11,0002
+Altitude_Source,1921,0012
+Ambient_Air_Press_Source,1921,0004
+Battery_Volt_Source,19BA,0002
+Charge_Press_Source,1A2D,0002
+Charge_Tmptr_Source,18D9,000A
+Coolant_Tmptr_Source,19C2,0002
+EGR_Orifice_Tmptr_Source,19CA,0002
+EGR_Position_Source,179D,0008
+Exhaust_Press_Source,1A5D,0002
+VGT_Position_Source,19D2,0002

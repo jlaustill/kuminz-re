@@ -454,6 +454,13 @@ state enum, the flag bytes.**
 - **Stage D (label-only, after the review):** one prefix rule for the main timing (`injection_timing_main_*` for
   its inputs and limits), the misfire limit's table, the power-up timing source, and the plates' retired words.
 
+**Round 19 (the relayed "keep going" again): tables, sources and the ANC pass-through.**
+- **Stage A (2327679, label-only):** the main timing cranking map (e2m 8091-8093), the ambient humidity table (1A98-1A9A)
+  and the altitude cache, from the parameter ID table.
+- **Stage B (e3bc815, types):** `SENSOR_VALUE_SOURCE` on the eleven words whose e2m records share the PRIMARY / BACKUP /
+  DEFAULT list, and the humidity cache as `word[2]`.
+- **Stage C (label-only):** the compiled-out ANC stage's pass-through into the combustion limits input.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -545,6 +552,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 19: stages A and C are EQUIVALENT; stage B's enum proof shows only the substitutions (plus the cache's two users).
 - [x] Round 18: stages B and D are EQUIVALENT; stage A's cast-normalized diff and stage C's diff show only the intended effects.
 - [x] Round 17: stage A is EQUIVALENT (30 names); stage B's enum proof shows 0 functions differing beyond the substitutions; stage C's type diff is reviewed with a mask normalizer.
 - [x] Round 16: stage A is EQUIVALENT (109 names); B and C are type diffs reviewed function by function (C with a mask-normalized cast diff); every renamed row's width matches its e2m size.
@@ -573,8 +581,8 @@ state enum, the flag bytes.**
   - the fault derate scheduler words and the 11D5 air fuel control rows;
   - the TPU injection bytes and the A/C class-B coolant flags.
   The full list is in task 046.
-- **Open after round 18:**
-  - the ANC timing stage (e2m 10A4), the droop word at 0x40aedc (task 046);
+- **Open after round 19:**
+  - the droop word at 0x40aedc and the task 046 leads;
   - the fault status records (a packed record array, but the range is time-shared RAM);
   - e2m 8C80 (TVA) / 8C2D;
   - the SCI high-speed table words;
