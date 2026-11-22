@@ -1844,13 +1844,13 @@ extern word cruise_mode_transition_flag;  // 0x003fb538
 extern word cruise_speed_reference_active;  // 0x003fb53a
 extern word engine_retarder_command_percent_previous;  // 0x003fb53c
 extern word engine_retarder_command_percent_previous_2;  // 0x003fb53e
-extern word engine_retarder_request_age_counter;  // 0x003fb540
+extern word engine_retarder_command_age_counter;  // 0x003fb540
 extern word engine_retarder_output_level_percent_previous;  // 0x003fb542
 extern word engine_retarder_release_pending_flag;  // 0x003fb544
 extern word engine_retarder_release_counter;  // 0x003fb546
 extern word service_brake_release_delay_counter;  // 0x003fb548
 extern word engine_retarder_fueling_below_threshold_pass_counter;  // 0x003fb54a
-extern word engine_retarder_request_on_delay_counter;  // 0x003fb54c
+extern word engine_retarder_output_on_delay_counter;  // 0x003fb54c
 extern word torque_converter_lockup_disengaged_flag;  // 0x003fb54e
 extern dword engine_retarder_shift_hold_counter;  // 0x003fb554
 extern word engine_retarder_output_request_bit_previous;  // 0x003fb558
@@ -3804,7 +3804,7 @@ extern word engine_retarder_idle_maximum_fueling;  // 0x00408eb8
 extern word engine_retarder_power_take_off_maximum_fueling;  // 0x00408eba
 extern word engine_retarder_power_take_off_maximum_reference_speed;  // 0x00408ebc
 extern int16_t engine_retarder_idle_power_take_off_maximum_coolant_temperature;  // 0x00408ebe
-extern word engine_retarder_request_on_delay_passes;  // 0x00408ec0
+extern word engine_retarder_output_on_delay_passes;  // 0x00408ec0
 extern engine_retarder_brake_type_t engine_retarder_brake_type;  // 0x00408ec2
 extern word engine_retarder_dual_brake_maximum_engine_speed;  // 0x00408ec4
 extern int16_t low_speed_governor_gear_breakpoint_1;  // 0x00408ec6

@@ -986,7 +986,7 @@ Scripts are in `session_folder/round17/`.
 - **The records:** the parameter ID table places e2m 1070 (RAM 0x40a352), 1071 (ROM 0x408e9a), 1192 (EEPROM) and the
   117D retarder words. Each was checked against the seven steps of `cm848_processEngineRetarderRequest`. The 20
   renamed rows with records match their e2m sizes, apart from the 0x40a35c dword, which stage C splits.
-- **The vocabulary is the e2m's, and it fits the code exactly:**
+- **The vocabulary is the e2m's, and it fits the code:**
   - The **override command** is the TSC1 request: source 1 (J1939 override) or 6 (no override).
   - The **non-override command** is the lowest of the cruise permission (2), the operator switch selection (3) and
     the TSC1 limit (4). It restarts at 101 (none) each pass the allowed state is 2.
@@ -999,8 +999,11 @@ Scripts are in `session_folder/round17/`.
     are not mass-renamed.
   - 'Driver' in these names is the human: the pedal / clutch / brake conditions. The e2m's hardware-driver words take
     'output' names (`EB_Driver_Level` is `engine_retarder_output_level_percent`).
-  - e2m 1070 +10 / +20 (a 0-255 switch sum, a 1/8192 fraction) do not explain the code's 0 / 100 values, so
-    `engine_retarder_switch_percent` / `_2` keep their code-derived names.
+  - e2m 1070 +10 / +20 and 117D +6 (a 0-255 switch sum, a 1/8192 fraction, a 0-3 switch status) do not explain
+    the code's 0 / 100 values, so `engine_retarder_switch_percent` / `_2` and
+    `engine_retarder_selection_percent_fault_masked` keep their code-derived names.
+  - 'Request' stays only where the code means a request: the TSC1 requests and the request chain
+    (`cm848_processEngineRetarderRequest`). Stage D moved the counters next to the command and the output level.
 - **Stage A (9d4ddaf, label-only):** 28 globals, 2 functions and 1 field (EQUIVALENT, 30 names).
   - The seven other plates of the chain are rewritten in these words. They called the extended idle condition 'the
     road speed limit'.
@@ -1014,14 +1017,22 @@ Scripts are in `session_folder/round17/`.
   `check_enum_proof3.py`: 0 functions differ beyond the substitutions.
 - **Stage C (833d573, types):** `engine_retarder_brake_type_t` (bit 0 exhaust brake, bit 1 VG brake; a ROM word read only with
   masks), and the 0x40a35c dword is now the word `engine_retarder_immediate_brake_flag` (one `sth` per store).
+- **Stage D (label-only, after the review):**
+  - `engine_retarder_command_age_counter`, `engine_retarder_output_on_delay_counter` / `_passes` (were
+    `engine_retarder_request_*`).
+  - `algorithm_enable_flags_41_t` bit 0 is `engine_retarder_extended_idle_enable` (was
+    `engine_retarder_speed_limit_enable`). The old name came from the extended idle flag's old name,
+    `governor_speed_limit_active_flag`; e2m 1496 +A is `LSG_Extended_Idle_Status`. With the flag and the bit set,
+    the selection is 100 and the allowed state 2, while the active flag stays 0: the exhaust brake runs at
+    extended idle (a warm-up use) without reporting braking.
 - **Round 17 leads:**
   - **The service tool test points** (1070 +1A / +1C) are never written in this build, so their 1 / 2 / 3 codes are
     read from the code alone. They do not use the SPN 695 numbering: there 1 is speed control.
   - **`fuel_demand_offset_correction`** is added to the idle / PTO fueling limits, and its role is unread.
   - **The engage delay** by engine speed (1071 +C / +12 / +14) is written but has no effect: the shift block clears the
     inhibit flag first. It may be a 11.46 change.
-  - **`algorithm_enable_flags_41_t.engine_retarder_speed_limit_enable`** forces the retarder selection to 100 during
-    extended idle, a warm-up use. The bit's name and the e2m record for it are still open.
+  - **`algorithm_enable_flags_41_t.engine_retarder_extended_idle_enable`** has no e2m record yet (named from the
+    code in stage D).
 
 ## Leads (not in this PR)
 

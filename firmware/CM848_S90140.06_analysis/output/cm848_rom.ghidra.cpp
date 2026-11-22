@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 22:08:40 MST 2026
+// Generated: Sat Nov 21 22:22:49 MST 2026
 
 
 //
@@ -44597,7 +44597,7 @@ void cm848_updateEngineRetarderAllowedState(void)
     engine_retarder_driver_inhibit_flag = true;
   }
   if ((low_speed_governor_extended_idle_active_flag == 0) ||
-     (algorithm_enable_flags_41_cal.engine_retarder_speed_limit_enable == 0)) {
+     (algorithm_enable_flags_41_cal.engine_retarder_extended_idle_enable == 0)) {
     if (((engine_retarder_command_percent == 0) && (!(bool)engine_retarder_enter_condition_flag)) ||
        ((engine_retarder_command_percent != 0 && ((bool)engine_retarder_exit_condition_flag)))) {
       engine_retarder_allowed_state = ENGINE_RETARDER_ALLOWED_NONE;
@@ -44654,7 +44654,7 @@ void cm848_calculateEngineRetarderSelectionPercent(void)
   if ((((fault_feature_config_flags & 1) == 0) &&
       (engine_retarder_selection_percent = engine_retarder_switch_percent,
       low_speed_governor_extended_idle_active_flag != 0)) &&
-     (algorithm_enable_flags_41_cal.engine_retarder_speed_limit_enable != 0)) {
+     (algorithm_enable_flags_41_cal.engine_retarder_extended_idle_enable != 0)) {
     engine_retarder_selection_percent = 100;
   }
   engine_retarder_selection_percent_fault_masked = engine_retarder_selection_percent;
@@ -44808,12 +44808,12 @@ void cm848_updateEngineRetarderActiveState(void)
     bVar1 = true;
   }
   if ((engine_retarder_command_percent == 0) || (engine_retarder_command_percent_previous != 0)) {
-    if (engine_retarder_request_age_counter != 0xffff) {
-      engine_retarder_request_age_counter = engine_retarder_request_age_counter + 1;
+    if (engine_retarder_command_age_counter != 0xffff) {
+      engine_retarder_command_age_counter = engine_retarder_command_age_counter + 1;
     }
   }
   else {
-    engine_retarder_request_age_counter = 0;
+    engine_retarder_command_age_counter = 0;
   }
   if (engine_retarder_maximum_fueling < final_fueling) {
     engine_retarder_fueling_below_threshold_pass_counter = 0;
@@ -44852,7 +44852,7 @@ void cm848_updateEngineRetarderActiveState(void)
       engine_retarder_engage_inhibit_flag = 0;
     }
     else if ((bVar1) &&
-            (engine_retarder_boost_sensor_fault_hold_passes < engine_retarder_request_age_counter))
+            (engine_retarder_boost_sensor_fault_hold_passes < engine_retarder_command_age_counter))
     {
       engine_retarder_engage_inhibit_flag = 0;
     }
@@ -44862,7 +44862,7 @@ void cm848_updateEngineRetarderActiveState(void)
   }
   if (engine_retarder_command_percent != 0) {
     if ((low_speed_governor_extended_idle_active_flag == 0) ||
-       (algorithm_enable_flags_41_cal.engine_retarder_speed_limit_enable == 0)) {
+       (algorithm_enable_flags_41_cal.engine_retarder_extended_idle_enable == 0)) {
       engine_retarder_active_flag = 1;
     }
     else {
@@ -44919,7 +44919,7 @@ void cm848_updateEngineRetarderActiveState(void)
 /* Turns the command level into the brake outputs: engine_retarder_output_level_percent takes
    engine_retarder_command_percent unless the engage inhibit flag holds it. Below 50 % it clears the
    exhaust brake output (logical output 11, engine_retarder_brake_type bit 0) and the VG brake flag
-   (bit 1); at 50 % or more for engine_retarder_request_on_delay_passes passes it sets them. With
+   (bit 1); at 50 % or more for engine_retarder_output_on_delay_passes passes it sets them. With
    both brake types the exhaust brake output is cleared above
    engine_retarder_dual_brake_maximum_engine_speed, and it is cleared while fault bit 101 is
    detected. Also saves the previous output level and the switch percent copy (was
@@ -44943,12 +44943,12 @@ void cm848_driveEngineRetarderOutput(void)
     if (engine_retarder_brake_type.variable_geometry_turbocharger_brake != 0) {
       variable_geometry_turbocharger_brake_active_flag = 0;
     }
-    engine_retarder_request_on_delay_counter = 0;
+    engine_retarder_output_on_delay_counter = 0;
   }
   else {
-    engine_retarder_request_on_delay_counter = engine_retarder_request_on_delay_counter + 1;
+    engine_retarder_output_on_delay_counter = engine_retarder_output_on_delay_counter + 1;
   }
-  if ((engine_retarder_request_on_delay_counter < engine_retarder_request_on_delay_passes) ||
+  if ((engine_retarder_output_on_delay_counter < engine_retarder_output_on_delay_passes) ||
      (engine_retarder_output_level_percent < 0x32)) goto LAB_00042130;
   if ((engine_retarder_brake_type.exhaust_brake == 0) ||
      (engine_retarder_brake_type.variable_geometry_turbocharger_brake == 0)) {
@@ -44968,7 +44968,7 @@ LAB_00042100:
       cm848_setLogicalOutputRequest(0xb,0);
     }
   }
-  engine_retarder_request_on_delay_counter = engine_retarder_request_on_delay_passes;
+  engine_retarder_output_on_delay_counter = engine_retarder_output_on_delay_passes;
 LAB_00042130:
   if ((system_status_flags_t_003fe974.fault_detected_bits_96_to_111 & 0x20) != 0) {
     cm848_clearLogicalOutputRequest(0xb,0);
@@ -45030,7 +45030,7 @@ void cm848_initializeEngineRetarderRequestState(void)
   engine_retarder_engage_inhibit_flag = 0;
   engine_retarder_command_percent_previous = 0;
   engine_retarder_command_percent_previous_2 = 0;
-  engine_retarder_request_age_counter = 0;
+  engine_retarder_command_age_counter = 0;
   engine_retarder_output_level_percent_previous = 0;
   engine_retarder_release_pending_flag = 0;
   engine_retarder_release_counter = 0;
