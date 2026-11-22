@@ -1322,7 +1322,6 @@ typedef struct system_initialization_flags_t system_initialization_flags_t;
 typedef struct eeprom_xfer_state_t eeprom_xfer_state_t;
 typedef struct eeprom_block_tracking_t eeprom_block_tracking_t;
 typedef struct j1939_transport_transmit_session_t j1939_transport_transmit_session_t;
-typedef struct j1939_tp_pause_t j1939_tp_pause_t;
 typedef struct diagnostic_response_message_t diagnostic_response_message_t;
 typedef struct boot_state_t boot_state_t;
 typedef struct mios_mpiosm_t mios_mpiosm_t;
@@ -1393,6 +1392,7 @@ typedef struct j1939_pgn65249_payload_t j1939_pgn65249_payload_t;
 typedef struct j1939_pgn65259_payload_t j1939_pgn65259_payload_t;
 typedef struct j1939_pgn65242_payload_t j1939_pgn65242_payload_t;
 typedef struct j1939_broadcast_transmit_session_t j1939_broadcast_transmit_session_t;
+typedef struct j1939_transport_receive_session_t j1939_transport_receive_session_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -3330,7 +3330,7 @@ struct eeprom_xfer_state_t {
 
 struct eeprom_block_tracking_t {
     uint16_t watchdog_counter;  /* Transfer watchdog counter (reset each block) */
-    uint8_t _pad2;  /* Reserved */
+    uint8_t failed_write_authorization_count;  /* cm848_validateWriteAuth's count of failed write authorizations: at 0x11 every check fails / a matching token resets it / a mismatch adds 1 (was _pad2; PR #53 round 35) */
     uint32_t last_write_addr;  /* Previous block write address for continuity validation */
     uint32_t block_start_addr;  /* Start address of current EEPROM transfer range */
     uint16_t block_count;  /* Completed transfer block count (max 9) */
@@ -3349,15 +3349,6 @@ struct j1939_transport_transmit_session_t {
     uint32_t frame_can_id;  /* The CAN identifier of the next frame: the message's with PDU format 0xEC (TP.CM, PGN 60416) for the request-to-send, then 0xEB (TP.DT, PGN 60160) (was can_header) | earlier note: CAN frame header word (PGN 0xEC00 RTS or 0xEB00 DT) */
     uint16_t frame_data_length;  /* Data bytes of the next frame: 8, or what is left for the last data packet (was packet_size) | earlier note: Bytes in current CTS packet grant (max 8) */
     byte* transmit_frame_pointer;  /* The frame assembly buffer the senders fill (0x30306D) (was tx_buf_ptr) | earlier note: Pointer to CAN TX assembly buffer (0x30306D) */
-};
-
-struct j1939_tp_pause_t {
-    uint16_t pause_pgn;  /* J1939 DataRequest session PGN (0xEF00) */
-    uint16_t _pad2;  /* Reserved */
-    uint16_t pause_timer;  /* Pause session countdown (0x70 init / 0x19 per packet) */
-    uint32_t pause_data;  /* First dword of DataRequest CAN frame copy */
-    uint16_t data_count;  /* Number of QADC data items in DataRequest */
-    uint32_t rx_buf_ptr;  /* Pointer to CAN RX data assembly buffer (0x303075) */
 };
 
 struct diagnostic_response_message_t {
@@ -4335,4 +4326,16 @@ struct j1939_broadcast_transmit_session_t {
     uint16_t frame_data_length;  /* data bytes of the next frame: 8 / the last packet's */
     byte* transmit_frame_pointer;  /* the frame assembly buffer (j1939_broadcast_transmit_frame_buffer_0 / _1; cm848_initializeJ1939Transport) */
     uint8_t unused[4];  /* no access found in the application transport (the records are 32 bytes apart) */
+};
+
+struct j1939_transport_receive_session_t {
+    uint8_t active;  /* 1 while a message is being received: the request to send handler sets it / the last data packet / an abort / the timeout clear it */
+    uint8_t total_packet_count;  /* the request to send's packet count (TP.CM byte 4) */
+    uint16_t transported_pgn;  /* the transported PGN's PDU format byte in the high byte (TP.CM byte 7; only 0xef00 = PGN 61184 is accepted) */
+    uint8_t next_packet_number;  /* the sequence number the next data packet must carry: 1 at the request to send */
+    uint8_t granted_packet_count;  /* the packets left in the window this ECU's clear to send granted (at most 5 in the application) */
+    uint16_t timeout_timer;  /* counted down while the session waits: 0x70 at the request to send */
+    uint32_t request_to_send_can_id;  /* the request to send's CAN identifier (its source address byte is matched against the data packets and aborts) */
+    uint16_t message_size;  /* the message size in bytes (TP.CM bytes 2-3; the application takes at most 0x6a4) */
+    byte* receive_buffer_pointer;  /* where the next packet's data goes: reset to the receive buffer (boot 0x303075 / application 0x3fbe09) and advanced per byte */
 };

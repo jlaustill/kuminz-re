@@ -836,16 +836,16 @@ address,name,type,comment
 0x00302917,boot_j1939_transport_transmit_session.frame_can_id,,
 0x0030291b,boot_j1939_transport_transmit_session.frame_data_length,,
 0x0030291d,boot_j1939_transport_transmit_session.transmit_frame_pointer,,(was qadc_a_queue_ctrl_3: a stale flat row inside the struct; PR #53 round 35)
-0x00302925,qadc_a_pause_status,byte,
-0x00302926,qadc_a_pause_ctrl,byte,
-0x00302927,j1939_tp_pause_state,j1939_tp_pause_t,
-0x00302929,qadc_a_queue_intr,,
-0x0030292a,qadc_a_ccw_idx,,
-0x0030292b,qadc_a_result_idx,,
-0x0030292d,qadc_diag_service_request_buf,,
-0x00302930,qadc_a_paused_channel_id,,
-0x00302931,qadc_a_completion_flag,,
-0x00302933,qadc_a_queue_flags.rx_buf_ptr,,
+0x00302925,boot_j1939_transport_receive_session,j1939_transport_receive_session_t,the boot reflash kernel's J1939 transport receive session (PGN 61184 messages from the service tool): the twin of j1939_transport_receive_session (was qadc_a_pause_status; PR #53 round 35)
+0x00302926,boot_j1939_transport_receive_session.total_packet_count,,(was qadc_a_pause_ctrl; PR #53 round 35)
+0x00302927,boot_j1939_transport_receive_session.transported_pgn,,(was j1939_tp_pause_state; PR #53 round 35)
+0x00302929,boot_j1939_transport_receive_session.next_packet_number,,(was qadc_a_queue_intr; PR #53 round 35)
+0x0030292a,boot_j1939_transport_receive_session.granted_packet_count,,(was qadc_a_ccw_idx; PR #53 round 35)
+0x0030292b,boot_j1939_transport_receive_session.timeout_timer,,(was qadc_a_result_idx; PR #53 round 35)
+0x0030292d,boot_j1939_transport_receive_session.request_to_send_can_id,,(was qadc_diag_service_request_buf; PR #53 round 35)
+0x00302930,boot_j1939_transport_receive_session.request_to_send_can_id,,byte 3: the source address (was qadc_a_paused_channel_id; PR #53 round 35)
+0x00302931,boot_j1939_transport_receive_session.message_size,,(was qadc_a_completion_flag; PR #53 round 35)
+0x00302933,boot_j1939_transport_receive_session.receive_buffer_pointer,,(was qadc_a_queue_flags.rx_buf_ptr; PR #53 round 35)
 0x00303047,diagnostic_transport_response_message,diagnostic_response_message_t,The boot reflash kernel's multi-frame diagnostic response: cm848_allocateDiagnosticResponseBuffer returns it for replies of 9 bytes or more while the high nibble of diagnostic_transport_response_status is 0 (data at 0x30293f, sent through the J1939 transport) (PR #53 round 25)
 0x00303055,diagnostic_transport_response_status,byte,Status byte of diagnostic_transport_response_message (its status_pointer points here): the allocator hands the message out only while the high nibble is 0; the J1939 transport writes 0x12 / 6 (was diag_buffer_b_status) (PR #53 round 25)
 0x00303056,diagnostic_single_frame_response_message,diagnostic_response_message_t,The boot reflash kernel's single-frame diagnostic response: cm848_allocateDiagnosticResponseBuffer returns it for replies under 9 bytes (data at 0x303065) (PR #53 round 25)
@@ -2155,7 +2155,7 @@ address,name,type,comment
 0x003fbd8c,j1939_broadcast_transmit_sessions[0].transmit_frame_pointer,,(was j1939_tp_rx_session_tx_buf_ptr; PR #53 round 34) | earlier note: J1939 TP RX session response TX buffer pointer
 0x003fbdd3,j1939_transport_transmit_session.session_status_pointer,,(was j1939_multiframe_tx_status_ptr; PR #53 round 34) | earlier note: ptr to TX session state byte (was PTR_DAT)
 0x003fbddf,j1939_transport_transmit_session.transmit_frame_pointer,,(was j1939_multiframe_tx_buf_ptr; PR #53 round 34) | earlier note: ptr to CAN TX assembly buffer (was PTR_DAT)
-0x003fbdfd,j1939_multiframe_rx_data_buf_ptr,pointer,RX data assembly buffer pointer
+0x003fbdfd,j1939_transport_receive_session.receive_buffer_pointer,,(was j1939_multiframe_rx_data_buf_ptr; PR #53 round 35) | earlier note: RX data assembly buffer pointer
 0x003fc094,,byte,
 0x003fc0d8,,byte,
 0x003fc4b3,,pointer,
@@ -6585,12 +6585,12 @@ address,name,type,comment
 0x003fbdcc,j1939_transport_transmit_session.frame_queue_status,,(was j1939_multiframe_tx_send_result; PR #53 round 34) | earlier note: CAN-layer TX result slot (0=ok)
 0x003fbdcd,j1939_transport_transmit_session.message_size,,(was j1939_multiframe_tx_total_bytes; PR #53 round 34) | earlier note: total data bytes for bulk TX session
 0x003fbdd7,j1939_transport_transmit_session.timeout_timer,,(was j1939_multiframe_tx_cts_timeout; PR #53 round 34) | earlier note: CTS-wait timeout counter (init 0x37)
-0x003fbdef,j1939_multiframe_rx_active,byte,inbound multi-frame RX session active
-0x003fbdf0,j1939_multiframe_rx_total_packets,byte,total DT packet count from RTS
-0x003fbdf1,j1939_multiframe_rx_pgn,word,session PGN from inbound RTS frame
-0x003fbdf3,j1939_multiframe_rx_next_sequence,byte,expected next DT sequence number
-0x003fbdf4,j1939_multiframe_rx_packets_in_window,byte,CTS window remaining count
-0x003fbdf5,j1939_multiframe_rx_timeout,word,RX session timeout counter (init 0x70)
+0x003fbdef,j1939_transport_receive_session,j1939_transport_receive_session_t,the application J1939 transport's receive session (PGN 61184 messages up to 1700 bytes: j1939_transport_handleRequestToSend / _handleDataPacket / _timeout_decrement): the twin of boot_j1939_transport_receive_session (was j1939_multiframe_rx_active; PR #53 round 35) | earlier note: inbound multi-frame RX session active
+0x003fbdf0,j1939_transport_receive_session.total_packet_count,,(was j1939_multiframe_rx_total_packets; PR #53 round 35) | earlier note: total DT packet count from RTS
+0x003fbdf1,j1939_transport_receive_session.transported_pgn,,(was j1939_multiframe_rx_pgn; PR #53 round 35) | earlier note: session PGN from inbound RTS frame
+0x003fbdf3,j1939_transport_receive_session.next_packet_number,,(was j1939_multiframe_rx_next_sequence; PR #53 round 35) | earlier note: expected next DT sequence number
+0x003fbdf4,j1939_transport_receive_session.granted_packet_count,,(was j1939_multiframe_rx_packets_in_window; PR #53 round 35) | earlier note: CTS window remaining count
+0x003fbdf5,j1939_transport_receive_session.timeout_timer,,(was j1939_multiframe_rx_timeout; PR #53 round 35) | earlier note: RX session timeout counter (init 0x70)
 0x003fccf0,variable_geometry_turbocharger_control_diagnostic_enable_counter,word,code: counts passes of the diagnostic enable flag up to the enable time (reset to 0 when the flag drops). Time-shared window (0x3F9800-0x3FDB30): xref_addr.py lists no access below 0x7F60, and scans of the boot ROM 0x0-0x7F5F (load / store / addi / ori with the low halfword of the address; 32-bit words equal to it) find none. (was protection_speedTracking_ramp_step_counter) | earlier note: ramp step counter for protection speed tracking
 0x003fccf2,variable_geometry_turbocharger_control_diagnostic_fault_counter,word,code: position control fault counter: + increment while the error condition is present and the count is enabled, - decrement otherwise, held while the count is not enabled, forced to 0 by variable_geometry_turbocharger_control_fault_counter_clear_cal; clamped at the fail threshold. Time-shared window (0x3F9800-0x3FDB30): xref_addr.py lists no access below 0x7F60, and scans of the boot ROM ... (was protection_speedTracking_speed_error_ramp) | earlier note: accumulated speed-error ramp value
 0x003fcd7a,j1939_tsc1_active_duration_counter,word,TSC1 active/timeout duration counter
@@ -6735,8 +6735,8 @@ address,name,type,comment
 0x003fbd5e,j1939_input_timeout_bitmap,dword,Bit N = J1939 input N's message timed out (was fault_reason_bitmap)
 0x003fbd62,j1939_pedal_input_timeout_bitmap,dword,Bits 6 / 7 = the accelerator J1939 inputs lost their message (was fault_count_bitmap)
 0x003fbd70,j1939_monitor_engine_control_data_link_previous,CONTROL_NETWORK,cm848_trackJ1939ControlSessions' copy of j1939_powertrain_control_state.tsc1_controlling_data_link from its last pass (1 = J1939: a session to close) (was etc1_active_state_transition_snapshot) | earlier note: snapshot of TSC1 tsc1_controlling_data_link for transition detect
-0x003fbdf7,j1939_multiframe_rx_rts_can_header,dword,CAN header of inbound RTS frame (SA validation)
-0x003fbdfb,j1939_multiframe_rx_total_bytes,word,total message size from inbound RTS frame
+0x003fbdf7,j1939_transport_receive_session.request_to_send_can_id,,(was j1939_multiframe_rx_rts_can_header; PR #53 round 35) | earlier note: CAN header of inbound RTS frame (SA validation)
+0x003fbdfb,j1939_transport_receive_session.message_size,,(was j1939_multiframe_rx_total_bytes; PR #53 round 35) | earlier note: total message size from inbound RTS frame
 0x003fcbe6,pedal_fault_mode_fuel_demand_limit_previous,word,cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit (cpp 66389+): the slewed limit (falls by at most pedal_fault_mode_fuel_demand_limit_decrease_rate per call); xref_addr.py (name-based): this function and fuel_demand_periodSnapshot_save only; time-shared window: no boot-ROM user listed, immediate scan of 0..0x7F5F for 0xcbe6: 0 hits. (was governor_fuel_demand_limit_prev) | earlier note: prev-cycle floor for aux torque fuel demand limit
 0x003fcbf2,remote_throttle_transition_verified_flag,word,1 once the remote throttle switch is on and the remote pedal has come down to the calculated commanded throttle (cm848_verifyRemoteThrottleTransition); with transition verification enabled the remote throttle claim needs it; cleared at boot by cm848_initializeRemoteThrottle; no rate limit (was fuel_demand_rate_limit_active_flag) | earlier note: rate-limited demand exceeds governor output 0/1
 0x003fcdc8,coolant_overheat_debounce_count,word,coolant overheat entry debounce (engine_coolant_overheat_check)
@@ -8363,6 +8363,7 @@ address,name,type,comment
 0x0006430c,obd_battery_voltage_post_crank_lockout_reload,word,ROM word = 100: reload value of obd_battery_voltage_post_crank_lockout_count while engine_state is 1 or 2 (lhz at 0x531748); e2m OBD_Post_Crank_Time_Limit 0x0116090A. (new row 2026-11-18)
 0x00064428,intake_air_heater_performance_test_recovery_sample_delay_ticks,word,e2m 162A +4 IAH_Grid_Off_Voltage_Check_Delay 'Delay between grid-off and taking voltage sample': loaded into intake_air_heater_performance_test_delay_ticks when state 2 ends (the preheat is over) and the test moves to state 3, the recovery after the heater turns off (lhz @ 0x532880); 2 in ROM (PR #53 round 24)
 0x0030306d,boot_j1939_transport_transmit_frame_buffer,byte[8],the boot reflash kernel's J1939 transport frame assembly buffer: mpc555_initDiagResponseHandlers points boot_j1939_transport_transmit_session.transmit_frame_pointer here (8 bytes after the single-frame response data at 0x303065; PR #53 round 34)
+0x00303075,boot_j1939_transport_receive_buffer,byte,the first byte of the boot kernel's J1939 transport receive buffer (boot_j1939_transport_receive_session.receive_buffer_pointer starts here; PR #53 round 35)
 0x003fa83e,j1939_pgn65251_transmit_status,byte,the status byte of j1939_pgn65251_tx_message (its status_pointer target): the send result (0 queued / 1 zero length / 4 CAN transmit queue full) or a transport session code: a broadcast (BAM) session 0x10 announced / 0x11 sending / 5 complete / 2 already active for that source address; a destination-specific (RTS / CTS) session 0x12 started / 0x13 sending / 9 complete / 10 aborted / 6 clear to send timeout / 7 send failed / 8 busy; 3 source address not ours (0x1x = a session in progress); cm848_sendPgn65251EngineConfiguration1Message rebuilds the payload only while its 0xf0 nibble is clear (no transport session still sending it) (PR #53 round 33)
 0x003faa9a,j1939_pgn56320_transmit_status,byte,the status byte of j1939_pgn56320_tx_message (its status_pointer target): the send result (0 queued / 1 zero length / 4 CAN transmit queue full) or a transport session code: a broadcast (BAM) session 0x10 announced / 0x11 sending / 5 complete / 2 already active for that source address; a destination-specific (RTS / CTS) session 0x12 started / 0x13 sending / 9 complete / 10 aborted / 6 clear to send timeout / 7 send failed / 8 busy; 3 source address not ours (0x1x = a session in progress) (PR #53 round 33)
 0x003faab2,j1939_pgn59392_transmit_status,byte,the status byte of j1939_pgn59392_tx_message (its status_pointer target): the send result (0 queued / 1 zero length / 4 CAN transmit queue full) or a transport session code: a broadcast (BAM) session 0x10 announced / 0x11 sending / 5 complete / 2 already active for that source address; a destination-specific (RTS / CTS) session 0x12 started / 0x13 sending / 9 complete / 10 aborted / 6 clear to send timeout / 7 send failed / 8 busy; 3 source address not ours (0x1x = a session in progress) (PR #53 round 33)
@@ -8403,6 +8404,7 @@ address,name,type,comment
 0x003fbdb4,j1939_broadcast_transmit_frame_buffer_0,byte[8],the frame assembly buffer of j1939_broadcast_transmit_sessions[0] (cm848_initializeJ1939Transport points its transmit_frame_pointer here; PR #53 round 34)
 0x003fbdbc,j1939_broadcast_transmit_frame_buffer_1,byte[8],the frame assembly buffer of j1939_broadcast_transmit_sessions[1] (PR #53 round 34)
 0x003fbde7,j1939_transport_transmit_frame_buffer,byte[8],the frame assembly buffer of j1939_transport_transmit_session (cm848_initializeJ1939Transport points its transmit_frame_pointer here; PR #53 round 34)
+0x003fbe09,j1939_transport_receive_buffer,byte,the first byte of the application's J1939 transport receive buffer (up to 1700 bytes: it runs over the kernel image copy; j1939_transport_receive_session.receive_buffer_pointer starts here; PR #53 round 35)
 0x003fce30,watchdog_fueling_coolant_duration_adjustment,word,watchdog_coolant_duration_adjustment_values at coolant_temperature_sensor_filtered: the on-time allowance added to watchdog_fueling_duration_threshold (sth @ 0x516cd4) (PR #53 round 30)
 0x003fce32,watchdog_coolant_duration_adjustment_cached_axis_offset,word,The lookup cache of the watchdog coolant allowance table (cm848_initializeWatchdogFueling sets 2; sth @ 0x516e48) (PR #53 round 30)
 0x003fd27f,air_conditioning_output_read_back_check,discrete_output_read_back_counters_t,logical output 38 (read-back line 6; faults 371 / 372): its read-back check counters (cm848_checkDiscreteOutputReadBack) (PR #53 round 32)

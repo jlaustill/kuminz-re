@@ -780,15 +780,7 @@ extern undefined qadc_a_result_ch30;  // 0x003028b1
 extern byte boot_j1939_transport_transmit_active;  // 0x00302903
 extern byte boot_j1939_transport_transmit_destination_address;  // 0x00302904
 extern j1939_transport_transmit_session_t boot_j1939_transport_transmit_session;  // 0x00302905
-extern byte qadc_a_pause_status;  // 0x00302925
-extern byte qadc_a_pause_ctrl;  // 0x00302926
-extern j1939_tp_pause_t j1939_tp_pause_state;  // 0x00302927
-extern undefined qadc_a_queue_intr;  // 0x00302929
-extern undefined qadc_a_ccw_idx;  // 0x0030292a
-extern undefined qadc_a_result_idx;  // 0x0030292b
-extern undefined qadc_diag_service_request_buf;  // 0x0030292d
-extern undefined qadc_a_paused_channel_id;  // 0x00302930
-extern undefined qadc_a_completion_flag;  // 0x00302931
+extern j1939_transport_receive_session_t boot_j1939_transport_receive_session;  // 0x00302925
 extern diagnostic_response_message_t diagnostic_transport_response_message;  // 0x00303047
 extern byte diagnostic_transport_response_status;  // 0x00303055
 extern diagnostic_response_message_t diagnostic_single_frame_response_message;  // 0x00303056
@@ -2018,7 +2010,6 @@ extern ema_filter_state_t egr_valve_position_command_diagnostic_filter_state;  /
 extern engine_protection_channel_configuration_t* engine_protection_current_configuration;  // 0x003fbd42
 extern engine_protection_channel_state_t* engine_protection_current_state;  // 0x003fbd46
 extern engine_protection_channel_history_t* engine_protection_current_history;  // 0x003fbd4a
-extern void * j1939_multiframe_rx_data_buf_ptr;  // 0x003fbdfd
 extern ema_filter_state_t turbocharger_speed_filter_state;  // 0x003fcc08
 extern ema_filter_state_t variable_geometry_turbocharger_position_command_diagnostic_filter_state;  // 0x003fcce8
 extern ema_filter_state_t variable_geometry_turbocharger_motor_mean_squared_current_filter_state;  // 0x003fccf6
@@ -6106,12 +6097,7 @@ extern word exhaust_pressure_sensor_linearization_values[12];  // 0x003fefa2
 extern sensor_channel_config_t accelerator_pedal_sensor_config;  // 0x003fefba
 extern byte j1939_broadcast_no_packet_delay_flag;  // 0x003fbdc4
 extern byte j1939_multiframe_tx_active;  // 0x003fbdc5
-extern byte j1939_multiframe_rx_active;  // 0x003fbdef
-extern byte j1939_multiframe_rx_total_packets;  // 0x003fbdf0
-extern word j1939_multiframe_rx_pgn;  // 0x003fbdf1
-extern byte j1939_multiframe_rx_next_sequence;  // 0x003fbdf3
-extern byte j1939_multiframe_rx_packets_in_window;  // 0x003fbdf4
-extern word j1939_multiframe_rx_timeout;  // 0x003fbdf5
+extern j1939_transport_receive_session_t j1939_transport_receive_session;  // 0x003fbdef
 extern word variable_geometry_turbocharger_control_diagnostic_enable_counter;  // 0x003fccf0
 extern word variable_geometry_turbocharger_control_diagnostic_fault_counter;  // 0x003fccf2
 extern word j1939_tsc1_active_duration_counter;  // 0x003fcd7a
@@ -6252,8 +6238,6 @@ extern dword j1939_input_data_error_bitmap;  // 0x003fbd5a
 extern dword j1939_input_timeout_bitmap;  // 0x003fbd5e
 extern dword j1939_pedal_input_timeout_bitmap;  // 0x003fbd62
 extern CONTROL_NETWORK j1939_monitor_engine_control_data_link_previous;  // 0x003fbd70
-extern dword j1939_multiframe_rx_rts_can_header;  // 0x003fbdf7
-extern word j1939_multiframe_rx_total_bytes;  // 0x003fbdfb
 extern word pedal_fault_mode_fuel_demand_limit_previous;  // 0x003fcbe6
 extern word remote_throttle_transition_verified_flag;  // 0x003fcbf2
 extern word coolant_overheat_debounce_count;  // 0x003fcdc8
@@ -7862,6 +7846,7 @@ extern word general_diagnostic_battery_voltage_in_range_high_limit;  // 0x000643
 extern word obd_battery_voltage_post_crank_lockout_reload;  // 0x0006430c
 extern word intake_air_heater_performance_test_recovery_sample_delay_ticks;  // 0x00064428
 extern byte boot_j1939_transport_transmit_frame_buffer[8];  // 0x0030306d
+extern byte boot_j1939_transport_receive_buffer;  // 0x00303075
 extern byte j1939_pgn65251_transmit_status;  // 0x003fa83e
 extern byte j1939_pgn56320_transmit_status;  // 0x003faa9a
 extern byte j1939_pgn59392_transmit_status;  // 0x003faab2
@@ -7902,6 +7887,7 @@ extern word fault_derate_fuel_limit_by_engine_speed_cached_axis_offset;  // 0x00
 extern byte j1939_broadcast_transmit_frame_buffer_0[8];  // 0x003fbdb4
 extern byte j1939_broadcast_transmit_frame_buffer_1[8];  // 0x003fbdbc
 extern byte j1939_transport_transmit_frame_buffer[8];  // 0x003fbde7
+extern byte j1939_transport_receive_buffer;  // 0x003fbe09
 extern word watchdog_fueling_coolant_duration_adjustment;  // 0x003fce30
 extern word watchdog_coolant_duration_adjustment_cached_axis_offset;  // 0x003fce32
 extern discrete_output_read_back_counters_t air_conditioning_output_read_back_check;  // 0x003fd27f

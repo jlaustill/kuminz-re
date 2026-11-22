@@ -2076,7 +2076,7 @@ eeprom_xfer_state_t,0x00302878,transfer_timer,word,2,Transfer timeout countdown 
 # Note: last_write_addr and block_start_addr are UNALIGNED dwords (packed struct)
 # =============================================================================
 eeprom_block_tracking_t,0x003028a6,watchdog_counter,word,2,Transfer watchdog counter (reset each block),,verified
-eeprom_block_tracking_t,0x003028a6,_pad2,byte,1,Reserved,,verified
+eeprom_block_tracking_t,0x003028a6,failed_write_authorization_count,byte,1,cm848_validateWriteAuth's count of failed write authorizations: at 0x11 every check fails / a matching token resets it / a mismatch adds 1 (was _pad2; PR #53 round 35),,verified
 eeprom_block_tracking_t,0x003028a6,last_write_addr,dword,4,Previous block write address for continuity validation,,verified
 eeprom_block_tracking_t,0x003028a6,block_start_addr,dword,4,Start address of current EEPROM transfer range,,verified
 eeprom_block_tracking_t,0x003028a6,block_count,word,2,Completed transfer block count (max 9),,verified
@@ -2114,12 +2114,6 @@ j1939_transport_transmit_session_t,0x003fbdc7,,,,the application transport's ins
 # data_count: number of QADC data items requested
 # rx_buf_ptr: pointer to CAN RX data assembly buffer (initialized to 0x303075)
 # =============================================================================
-j1939_tp_pause_t,0x00302927,pause_pgn,word,2,J1939 DataRequest session PGN (0xEF00),,verified
-j1939_tp_pause_t,0x00302927,_pad2,word,2,Reserved,,verified
-j1939_tp_pause_t,0x00302927,pause_timer,word,2,Pause session countdown (0x70 init / 0x19 per packet),,verified
-j1939_tp_pause_t,0x00302927,pause_data,dword,4,First dword of DataRequest CAN frame copy,,verified
-j1939_tp_pause_t,0x00302927,data_count,word,2,Number of QADC data items in DataRequest,,verified
-j1939_tp_pause_t,0x00302927,rx_buf_ptr,dword,4,Pointer to CAN RX data assembly buffer (0x303075),,verified
 # =============================================================================
 # Diagnostic buffer B control state @ 0x30304B
 # Handles large diagnostic service requests (service count >= 9)
@@ -3046,3 +3040,13 @@ j1939_broadcast_transmit_session_t,,frame_can_id,dword,4,the CAN identifier of t
 j1939_broadcast_transmit_session_t,,frame_data_length,word,2,data bytes of the next frame: 8 / the last packet's,,verified
 j1939_broadcast_transmit_session_t,,transmit_frame_pointer,byte*,4,the frame assembly buffer (j1939_broadcast_transmit_frame_buffer_0 / _1; cm848_initializeJ1939Transport),,verified
 j1939_broadcast_transmit_session_t,,unused,byte,4,no access found in the application transport (the records are 32 bytes apart),,verified
+# j1939_transport_receive_session_t: one J1939 transport connection mode receive session (18 bytes; type-only template - the instances are boot_j1939_transport_receive_session and j1939_transport_receive_session in global_variables.csv; PR #53 round 35)
+j1939_transport_receive_session_t,,active,byte,1,1 while a message is being received: the request to send handler sets it / the last data packet / an abort / the timeout clear it,,verified
+j1939_transport_receive_session_t,,total_packet_count,byte,1,the request to send's packet count (TP.CM byte 4),,verified
+j1939_transport_receive_session_t,,transported_pgn,word,2,the transported PGN's PDU format byte in the high byte (TP.CM byte 7; only 0xef00 = PGN 61184 is accepted),,verified
+j1939_transport_receive_session_t,,next_packet_number,byte,1,the sequence number the next data packet must carry: 1 at the request to send,,verified
+j1939_transport_receive_session_t,,granted_packet_count,byte,1,the packets left in the window this ECU's clear to send granted (at most 5 in the application),,verified
+j1939_transport_receive_session_t,,timeout_timer,word,2,counted down while the session waits: 0x70 at the request to send,,verified
+j1939_transport_receive_session_t,,request_to_send_can_id,dword,4,the request to send's CAN identifier (its source address byte is matched against the data packets and aborts),,verified
+j1939_transport_receive_session_t,,message_size,word,2,the message size in bytes (TP.CM bytes 2-3; the application takes at most 0x6a4),,verified
+j1939_transport_receive_session_t,,receive_buffer_pointer,byte*,4,where the next packet's data goes: reset to the receive buffer (boot 0x303075 / application 0x3fbe09) and advanced per byte,,verified
