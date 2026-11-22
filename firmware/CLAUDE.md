@@ -604,7 +604,7 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   thermal model and current estimate in Bank 2 - all `variable_geometry_turbocharger_*`); the `fuel_ema_coeff_*` /
   `injection_timing_compensation_*` words are the high speed governor's speed-error PID (`high_speed_governor_*`, dump:
   P 2062 + I 117 + D 0 = 2179); the engine speed limit chain (`selectEngineSpeedLimit`, the park / neutral exit
-  limit, the fault derate limit) and a cruise vehicle speed limit (`cm848_calculateFaultCruiseSpeedLimit`); the
+  limit, the fault derate limit) and a cruise vehicle speed limit (`cm848_calculateMaximumRoadSpeeds`); the
   combustion maps (20 `word[304]` grids reached through pointer words), the mass flows (`fuel_mass_flow`,
   `charge_mass_flow_filtered`, `egr_mass_flow_delayed_filtered`), `compressor_inlet_density`, `injection_quantity_oxygen_limit`.
 - **Wave 7:** the VGT loop's twin is the EGR valve position servo (`egr_valve_*`): feedback = sensor channel 75 (the
@@ -764,11 +764,11 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     `check_enum_proof.py`) finds any OR render after an enum change.
   - The dword at 0x3fb526 was two words: `governor_fuel_demand_working_mode_prev` (`sth` @ 0x40474) and
     `cruise_resume_active_flag_previous` (`lhz` @ 0x4064c / `sth` @ 0x406b8).
-  - The `(int)(short)` temporary compare in `cm848_presetCruiseAndVehicleSpeedLimitGovernor` still renders as a number.
+  - The `(int)(short)` temporary compare in `cm848_presetCruiseAndRoadSpeedGovernor` still renders as a number.
   - **The arbitration functions (stage 3, renamed from `*Protection*` names):**
     - user fueling: `cm848_selectPowerTakeOffOrUserFueling`, then `cm848_calculateCruiseControlFueling` /
       `cm848_selectCruiseOrUserFueling`;
-    - limiting governors: `cm848_calculateVehicleSpeedLimitFueling` (on `vehicle_speed_rise_limited`),
+    - limiting governors: `cm848_calculateRoadSpeedGovernorFueling` (on `vehicle_speed_rise_limited`),
       `cm848_runLowSpeedGovernor` / `cm848_limitLowSpeedGovernorFueling`, and `cm848_arbitrateGovernedFueling`;
     - derate chain: `cm848_initializeFuelLimitChains`,
       `cm848_calculateMaximumFuelCurve` (was `cm848_processActiveFaultList`), `cm848_applyTsc1TorqueLimit`, `cm848_applyFaultDerateFuelLimit` and

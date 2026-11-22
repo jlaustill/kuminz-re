@@ -888,8 +888,8 @@ void cm848_requestPowerDownDelayWhileVehicleMoving(void);  // @ 0x0003e210
 void cm848_initVehicleSpeedCalculation(void);  // @ 0x0003e230
 void cm848_calculateParkNeutralExitEngineSpeedLimit(void);  // @ 0x0003e2bc
 void cm848_initializeParkNeutralExitEngineSpeedLimit(void);  // @ 0x0003e400
-void cm848_calculateFaultCruiseSpeedLimit(void);  // @ 0x0003e42c
-void cm848_initializeFaultCruiseSpeedLimit(void);  // @ 0x0003e520
+void cm848_calculateMaximumRoadSpeeds(void);  // @ 0x0003e42c
+void cm848_initializeMaximumRoadSpeeds(void);  // @ 0x0003e520
 void cm848_sciResetReceiveState(void);  // @ 0x0003e578
 void cm848_dispatchSciInterrupt(void);  // @ 0x0003e5ac
 void cm848_sciCommand35Handler(void);  // @ 0x0003e5f0
@@ -926,16 +926,16 @@ void cm848_claimAcceleratorInterlockThrottleOverride(void);  // @ 0x000403e4
 void cm848_arbitrateGovernedFueling(void);  // @ 0x0004043c
 void cm848_initFuelFilterCoefficients(void);  // @ 0x00040828
 void cm848_calculateRiseLimitedVehicleSpeed(void);  // @ 0x00040844
-uint cm848_calculateProtectionFuelLimit(uint param_1,uint param_2);  // @ 0x0004091c
-void cm848_protectionFuelRateStep(int param_1);  // @ 0x00040938
-void cm848_protectionFuelRateRamp(int param_1);  // @ 0x00040978
+uint cm848_minimumSignedWord(uint param_1,uint param_2);  // @ 0x0004091c
+void cm848_decreaseCruiseSpeedCommand(int param_1);  // @ 0x00040938
+void cm848_increaseCruiseSpeedCommand(int param_1);  // @ 0x00040978
 void cm848_cruiseSpeedCommandStateMachine(void);  // @ 0x000409b0
-void cm848_initFuelRateFromCapability(void);  // @ 0x00040d40
-void cm848_validateFuelRateTarget(void);  // @ 0x00040d74
+void cm848_saveCruiseSetSpeedForPowerDown(void);  // @ 0x00040d40
+void cm848_restoreSavedCruiseSetSpeed(void);  // @ 0x00040d74
 void cm848_snapshotHighSpeedGovernorFueling(void);  // @ 0x00040dd4
 void cm848_limitLowSpeedGovernorFueling(void);  // @ 0x00040de8
 void cm848_calculateCruiseControlFueling(void);  // @ 0x00040e4c
-void cm848_calculateVehicleSpeedLimitFueling(void);  // @ 0x00040f80
+void cm848_calculateRoadSpeedGovernorFueling(void);  // @ 0x00040f80
 void cm848_selectCruiseOrUserFueling(void);  // @ 0x000411b0
 void cm848_updateEngineRetarderEnableState(void);  // @ 0x00041368
 void cm848_calculateEngineRetarderSelectionPercent(void);  // @ 0x00041938
@@ -1289,7 +1289,7 @@ uint cm848_saturatingDivision16(uint param_1,uint param_2);  // @ 0x000563e8
 sword cm848_signedFirstOrderFilter(int value,ema_filter_state_t *filter_state);  // @ 0x0005644c
 int cm848_secondOrderFilter(short param_1,undefined4 *param_2);  // @ 0x000564c0
 dword exponentialMovingAverage(dword value,ema_filter_state_t *filter_state);  // @ 0x00056594
-undefined4 cm848_interpolateTableLinearStep(int param_1,undefined4 *param_2);  // @ 0x00056608
+undefined4 cm848_secondOrderFilterUnsigned(int param_1,undefined4 *param_2);  // @ 0x00056608
 word cm848_dualAxisTableInterpolation (word *cached_axis_offsets,word x_input,word *x_axis,word y_input,word *y_axis, word *z_data,dword flags);  // @ 0x000566cc
 undefined4 cm848_ringBufferWriteByte(int *param_1,undefined1 param_2);  // @ 0x00056c80
 void cm848_ringBufferInit(int *param_1,int param_2,int param_3);  // @ 0x00056d38
@@ -1783,17 +1783,17 @@ void cm848_verifyCalibrationAndCodeCrc(void);  // @ 0x00524360
 void cm848_calculateEngineRetarderCruisePermissionPercent(void);  // @ 0x00524594
 void cm848_limitEngineRetarderPercentToCruisePermission(void);  // @ 0x005246b0
 void cm848_initializeEngineRetarderCruisePermissionFilter(void);  // @ 0x005246e0
-void cm848_selectCruiseControlGainZone(int param_1);  // @ 0x0052470c
-void governor_cruise_speedReference_update(void);  // @ 0x00524aec
-undefined2 governor_cruise_rampRate_calc(int param_1,int param_2);  // @ 0x00524c6c
-uint governor_cruise_tableLimit_calc (int param_1,word *param_2,word param_3,word *param_4,word param_5,word *param_6, word *param_7,dword param_8);  // @ 0x00524d34
-uint governor_cruise_rampScale_calc(int param_1,uint param_2,uint param_3);  // @ 0x00524dd0
-void cm848_initializeCruiseControlDroopGains(void);  // @ 0x00524df4
-void cm848_calculateCruisePidRateGainScale(void);  // @ 0x005250c0
-int governor_cruise_speedError_torqueAdj(void);  // @ 0x00525134
-void cm848_presetCruiseAndVehicleSpeedLimitGovernor(void);  // @ 0x005251e4
-void cm848_runCruiseAndVehicleSpeedLimitGovernor(void);  // @ 0x00525504
-void initCruiseConfirmFlags(void);  // @ 0x00525de4
+void cm848_selectCruiseGovernorGainSet(int param_1);  // @ 0x0052470c
+void cm848_updateCruiseAndRoadSpeedGovernorDroops(void);  // @ 0x00524aec
+undefined2 cm848_calculateEngineSpeedAtVehicleSpeed(int param_1,int param_2);  // @ 0x00524c6c
+uint cm848_calculateTopDroopGain (int param_1,word *param_2,word param_3,word *param_4,word param_5,word *param_6, word *param_7,dword param_8);  // @ 0x00524d34
+uint cm848_calculateBottomDroopGain(int param_1,uint param_2,uint param_3);  // @ 0x00524dd0
+void cm848_initializeCruiseAndRoadSpeedGovernorDroops(void);  // @ 0x00524df4
+void cm848_calculateCruiseGovernorSpeedErrorGain(void);  // @ 0x005250c0
+int cm848_calculateCruiseGovernorEngineSpeedError(void);  // @ 0x00525134
+void cm848_presetCruiseAndRoadSpeedGovernor(void);  // @ 0x005251e4
+void cm848_runCruiseAndRoadSpeedGovernor(void);  // @ 0x00525504
+void cm848_initializeCruiseGovernorFilters(void);  // @ 0x00525de4
 void cm848_updateDrivetrainRatio(void);  // @ 0x00525e54
 void cm848_initializeDrivetrainRatio(void);  // @ 0x005263a8
 void cm848_calculateDrivetrainRatioFromGearRatio(void);  // @ 0x00526414

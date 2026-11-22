@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 19:46:03 MST 2026
+// Generated: Sat Nov 21 20:46:11 MST 2026
 
 
 //
@@ -6882,7 +6882,7 @@ void cm848_periodicTaskSet_protection(void)
 void cm848_periodicTaskSet_timing(void)
 
 {
-  cm848_calculateFaultCruiseSpeedLimit();
+  cm848_calculateMaximumRoadSpeeds();
   cm848_processSensorTemperatureData();
   cm848_cruiseSpeedCommandStateMachine();
   return;
@@ -6898,7 +6898,7 @@ void cm848_periodicTaskSet_outputs(void)
 
 {
   cm848_updateDrivetrainRatio();
-  cm848_runCruiseAndVehicleSpeedLimitGovernor();
+  cm848_runCruiseAndRoadSpeedGovernor();
   cm848_updateInjectorDriverBoosterCapacitor1VoltageChannel();
   return;
 }
@@ -8769,7 +8769,7 @@ int calculateAlphaFuelRateResult(void)
 
 /* Alpha on governor result (e2m 104A +A Alpha_Governor, '[APGVAP] result of On Governor'): returns
    1 while the engine is on a speed governor, that is final_fueling_state is
-   FUELING_STATE_VEHICLE_SPEED_LIMIT or cruise_control_engaged_flag is 1, else 0. Called by
+   FUELING_STATE_ROAD_SPEED_GOVERNOR or cruise_control_engaged_flag is 1, else 0. Called by
    calculateAlphaBase when bit 0x2000 of governor_fault_status_flags (algorithm enable flags word 0)
    is set; the result is stored in alpha_on_governor_result (0x40a172) and a 1 lets alpha_base ramp
    toward 1.0. Shared name with CM550 0xc496 (the same function). (was
@@ -8780,7 +8780,7 @@ undefined4 calculateAlphaOnGovernorResult(void)
 {
   undefined4 uVar1;
   
-  if ((final_fueling_state == FUELING_STATE_VEHICLE_SPEED_LIMIT) ||
+  if ((final_fueling_state == FUELING_STATE_ROAD_SPEED_GOVERNOR) ||
      (cruise_control_engaged_flag == 1)) {
     uVar1 = 1;
   }
@@ -21725,7 +21725,7 @@ void cm848_calculateDriverDemandPercentTorque(void)
          (wVar1 = adjusted_user_fueling,
          adjusted_user_fueling_state != FUELING_STATE_ACCELERATOR_PEDAL_FAULT)) &&
         ((wVar1 = adjusted_user_fueling,
-         adjusted_user_fueling_state != FUELING_STATE_VEHICLE_SPEED_LIMIT &&
+         adjusted_user_fueling_state != FUELING_STATE_ROAD_SPEED_GOVERNOR &&
          (wVar1 = adjusted_user_fueling, adjusted_user_fueling_state != FUELING_STATE_POWER_TAKE_OFF
          )))) && ((wVar1 = wVar2,
                   adjusted_user_fueling_state != FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE &&
@@ -24736,12 +24736,12 @@ void j1939HandlePgn65261CruiseControlSetup(void)
 
 {
   if (((j1939_governor_feature_cal & 0x80) == 0) ||
-     (&DAT_00009e00 < (undefined *)(uint)j1939_cruise_speed_setpoint)) {
+     (&DAT_00009e00 < (undefined *)(uint)maximum_road_speed)) {
     j1939_ccss_tx_payload_t_003fab0a.max_vehicle_speed_limit = 0xff;
   }
   else {
     j1939_ccss_tx_payload_t_003fab0a.max_vehicle_speed_limit =
-         (byte)((uint)((int)(uint)j1939_cruise_speed_setpoint * 0xa1) / 100 >> 8);
+         (byte)((uint)((int)(uint)maximum_road_speed * 0xa1) / 100 >> 8);
   }
   if ((j1939_governor_feature_cal & 0x40) == 0) {
     j1939_ccss_tx_payload_t_003fab0a.cruise_high_set_limit_speed = 0xff;
@@ -38459,8 +38459,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  byte all_transmits_overdue;
   ushort receive_interval;
+  byte all_transmits_overdue;
   
   all_transmits_overdue = 1;
   if ((engine_feature_enable_flags_cal & 0x40) != 0) {
@@ -42356,24 +42356,25 @@ void cm848_initializeParkNeutralExitEngineSpeedLimit(void)
 
 
 //
-// Function: cm848_calculateFaultCruiseSpeedLimit @ 0x0003e42c
+// Function: cm848_calculateMaximumRoadSpeeds @ 0x0003e42c
 //
 
 /* While fault_reaction_request_bits is nonzero, ramps fault_vehicle_speed_limit down from the
    vehicle speed at the first pass by fault_vehicle_speed_limit_ramp_step to
-   fault_vehicle_speed_limit_floor (cruise_speed_setpoint_default when no reaction is requested);
-   cruise_speed_limit_working is the lower of that and cruise_speed_setpoint_default and lowers
-   cruise_maximum_road_speed_cal to it when cruise_speed_clamp_enable is set. (was
-   cm848_calculateTorqueCurveValue) */
+   fault_vehicle_speed_limit_floor (else it is maximum_road_speed_trim_cal);
+   road_speed_governor_reference_speed = the lower of that and maximum_road_speed_trim_cal;
+   cruise_maximum_road_speed_cal = cruise_maximum_road_speed_trim_cal, or the lower
+   road_speed_governor_reference_speed while cruise_maximum_road_speed_clamp_enable is set (was
+   cm848_calculateFaultCruiseSpeedLimit) */
 
-void cm848_calculateFaultCruiseSpeedLimit(void)
+void cm848_calculateMaximumRoadSpeeds(void)
 
 {
   uint uVar1;
   word wVar2;
   
   if (fault_reaction_request_bits == 0) {
-    uVar1 = (uint)cruise_speed_setpoint_default;
+    uVar1 = (uint)maximum_road_speed_trim_cal;
   }
   else {
     if (fault_reaction_request_bits_previous == 0) {
@@ -42385,15 +42386,15 @@ void cm848_calculateFaultCruiseSpeedLimit(void)
     }
   }
   fault_vehicle_speed_limit = (word)uVar1;
-  cruise_speed_limit_working = cruise_speed_setpoint_default;
-  if ((uVar1 & 0xffff) < (uint)cruise_speed_setpoint_default) {
-    cruise_speed_limit_working = (word)uVar1;
+  road_speed_governor_reference_speed = maximum_road_speed_trim_cal;
+  if ((uVar1 & 0xffff) < (uint)maximum_road_speed_trim_cal) {
+    road_speed_governor_reference_speed = (word)uVar1;
   }
-  cruise_speed_limit_prev = cruise_speed_limit_working;
-  wVar2 = cruise_speed_high_limit_default;
-  if ((cruise_speed_clamp_enable != 0) &&
-     (cruise_speed_limit_working < cruise_maximum_road_speed_cal)) {
-    wVar2 = cruise_speed_limit_working;
+  road_speed_governor_reference_speed_copy = road_speed_governor_reference_speed;
+  wVar2 = cruise_maximum_road_speed_trim_cal;
+  if ((cruise_maximum_road_speed_clamp_enable != 0) &&
+     (road_speed_governor_reference_speed < cruise_maximum_road_speed_cal)) {
+    wVar2 = road_speed_governor_reference_speed;
   }
   cruise_maximum_road_speed_cal = wVar2;
   fault_reaction_request_bits_previous = fault_reaction_request_bits;
@@ -42403,22 +42404,25 @@ void cm848_calculateFaultCruiseSpeedLimit(void)
 
 
 //
-// Function: cm848_initializeFaultCruiseSpeedLimit @ 0x0003e520
+// Function: cm848_initializeMaximumRoadSpeeds @ 0x0003e520
 //
 
-/* Resets the fault cruise speed limit: cruise_speed_limit_working, j1939_cruise_speed_setpoint and
-   the 0x40b5c0 copy to cruise_speed_setpoint_default, cruise_maximum_road_speed_cal to its default,
-   drivetrain_gear_range to 1 and the previous fault reaction request to 0. (was
-   cm848_initTorqueCurveState) */
+/* Power-up: road_speed_governor_reference_speed, maximum_road_speed and the 0x40b5c0 copy =
+   maximum_road_speed_trim_cal, cruise_maximum_road_speed_cal = cruise_maximum_road_speed_trim_cal,
+   drivetrain_gear_range = top gear, the previous fault reaction request = 0 (was
+   cm848_initializeFaultCruiseSpeedLimit) | earlier note: Resets the fault cruise speed limit:
+   road_speed_governor_reference_speed, maximum_road_speed and the 0x40b5c0 copy to
+   maximum_road_speed_trim_cal, cruise_maximum_road_speed_cal to its default, drivetrain_gear_range
+   to 1 and the previous fault reaction request to 0. (was cm848_initTorqueCurveState) */
 
-void cm848_initializeFaultCruiseSpeedLimit(void)
+void cm848_initializeMaximumRoadSpeeds(void)
 
 {
-  cruise_speed_limit_working = cruise_speed_setpoint_default;
+  road_speed_governor_reference_speed = maximum_road_speed_trim_cal;
   drivetrain_gear_range = DRIVETRAIN_GEAR_RANGE_TOP_GEAR;
-  j1939_cruise_speed_setpoint = cruise_speed_setpoint_default;
-  cruise_maximum_road_speed_cal = cruise_speed_high_limit_default;
-  DAT_0040b5c0 = cruise_speed_setpoint_default;
+  maximum_road_speed = maximum_road_speed_trim_cal;
+  cruise_maximum_road_speed_cal = cruise_maximum_road_speed_trim_cal;
+  DAT_0040b5c0 = maximum_road_speed_trim_cal;
   fault_reaction_request_bits_previous = 0;
   return;
 }
@@ -43802,9 +43806,9 @@ void cm848_claimAcceleratorInterlockThrottleOverride(void)
 /* Sets adjusted_user_fueling and its state adjusted_user_fueling_state (the Cummins FSGVFLST
    governed fueling state): the smallest of the user fueling governor_fuel_demand_working (state
    governor_fuel_demand_working_mode), high_speed_governor_fueling_snapshot (12) and
-   vehicle_speed_limit_fueling (10), then the low speed governor (11) as a max select at or below
-   its speed (low_speed_governor_fueling); starts cm848_presetCruiseAndVehicleSpeedLimitGovernor on
-   the first pass of 9 / 10 and latches low_speed_governor_active_flag in 11 (was
+   road_speed_governor_fueling (10), then the low speed governor (11) as a max select at or below
+   its speed (low_speed_governor_fueling); starts cm848_presetCruiseAndRoadSpeedGovernor on the
+   first pass of 9 / 10 and latches low_speed_governor_active_flag in 11 (was
    cm848_processProtectionRampControl) */
 
 void cm848_arbitrateGovernedFueling(void)
@@ -43818,28 +43822,28 @@ void cm848_arbitrateGovernedFueling(void)
   cm848_snapshotHighSpeedGovernorFueling();
   cm848_limitLowSpeedGovernorFueling();
   cm848_calculateCruiseControlFueling();
-  cm848_calculateVehicleSpeedLimitFueling();
+  cm848_calculateRoadSpeedGovernorFueling();
   cm848_selectCruiseOrUserFueling();
   if ((high_speed_governor_fueling_snapshot <= governor_fuel_demand_working) ||
      (FVar1 = governor_fuel_demand_working_mode,
-     vehicle_speed_limit_fueling < governor_fuel_demand_working)) {
-    if ((vehicle_speed_limit_fueling < governor_fuel_demand_working) ||
+     road_speed_governor_fueling < governor_fuel_demand_working)) {
+    if ((road_speed_governor_fueling < governor_fuel_demand_working) ||
        (governor_fuel_demand_working < high_speed_governor_fueling_snapshot)) {
       if ((governor_fuel_demand_working < high_speed_governor_fueling_snapshot) &&
-         (vehicle_speed_limit_fueling < governor_fuel_demand_working)) {
+         (road_speed_governor_fueling < governor_fuel_demand_working)) {
         if ((final_fueling <= governor_fuel_demand_working) ||
            (FVar1 = governor_fuel_demand_working_mode,
            operating_mode_governor_output.mode_code != governor_fuel_demand_working_mode)) {
-          FVar1 = FUELING_STATE_VEHICLE_SPEED_LIMIT;
+          FVar1 = FUELING_STATE_ROAD_SPEED_GOVERNOR;
         }
       }
       else {
         FVar1 = adjusted_user_fueling_state;
         if ((high_speed_governor_fueling_snapshot <= governor_fuel_demand_working) &&
-           (vehicle_speed_limit_fueling < governor_fuel_demand_working)) {
-          if ((high_speed_governor_fueling_snapshot <= vehicle_speed_limit_fueling) ||
+           (road_speed_governor_fueling < governor_fuel_demand_working)) {
+          if ((high_speed_governor_fueling_snapshot <= road_speed_governor_fueling) ||
              (high_speed_governor_fueling_snapshot < adjusted_user_fueling)) goto LAB_00040548;
-          FVar1 = FUELING_STATE_VEHICLE_SPEED_LIMIT;
+          FVar1 = FUELING_STATE_ROAD_SPEED_GOVERNOR;
         }
       }
     }
@@ -43865,11 +43869,11 @@ LAB_00040548:
     adjusted_user_fueling_state = FUELING_STATE_LOW_SPEED_GOVERNOR;
   }
   if ((adjusted_user_fueling_state == FUELING_STATE_CRUISE_CONTROL) ||
-     (adjusted_user_fueling_state == FUELING_STATE_VEHICLE_SPEED_LIMIT)) {
+     (adjusted_user_fueling_state == FUELING_STATE_ROAD_SPEED_GOVERNOR)) {
     if ((governor_fuel_demand_mode_prev != FUELING_STATE_CRUISE_CONTROL) &&
-       ((governor_fuel_demand_mode_prev != FUELING_STATE_VEHICLE_SPEED_LIMIT &&
+       ((governor_fuel_demand_mode_prev != FUELING_STATE_ROAD_SPEED_GOVERNOR &&
         (cruise_resume_active_flag_previous == 0)))) {
-      cm848_presetCruiseAndVehicleSpeedLimitGovernor();
+      cm848_presetCruiseAndRoadSpeedGovernor();
     }
     goto LAB_000406b0;
   }
@@ -43947,9 +43951,9 @@ void cm848_initFuelFilterCoefficients(void)
 //
 
 /* Sets vehicle_speed_rise_limited: vehicle_speed, or (cruise_feedback_uses_road_speed_flag_cal 0)
-   engine speed over the drivetrain ratio terms engine_speed_to_vss_ratio /
-   drivetrain_ratio_user_filtered, with each rise limited to cruise_speed_setpoint_adj_offset_cal
-   per pass; the speed the cruise control and vehicle speed limit fueling work on (was
+   engine speed over the drivetrain ratio terms engine_speed_to_vehicle_speed_ratio /
+   drivetrain_ratio_user_filtered, with each rise limited to cruise_road_speed_maximum_change per
+   pass; the speed the cruise control and vehicle speed limit fueling work on (was
    cm848_calculateFuelRateFromRpm) */
 
 void cm848_calculateRiseLimitedVehicleSpeed(void)
@@ -43958,7 +43962,7 @@ void cm848_calculateRiseLimitedVehicleSpeed(void)
   uint uVar1;
   
   uVar1 = ((uint)tire_revolutions_per_mile_cal * (uint)rear_axle_ratio) / 0x3c & 0x7fff;
-  engine_speed_to_vss_ratio = (word)uVar1;
+  engine_speed_to_vehicle_speed_ratio = (word)uVar1;
   if (cruise_feedback_uses_road_speed_flag_cal == 0) {
     uVar1 = ((uint)engine_speed_state.filtered_engine_speed << 0x10) /
             (uVar1 * drivetrain_ratio_user_filtered >> 9) >> 2;
@@ -43971,10 +43975,9 @@ void cm848_calculateRiseLimitedVehicleSpeed(void)
   }
   vehicle_speed_rise_limited = (word)uVar1;
   if (((uint)vehicle_speed_rise_limited_prev < (uVar1 & 0xffff)) &&
-     ((int)(uint)cruise_speed_setpoint_adj_offset_cal <
+     ((int)(uint)cruise_road_speed_maximum_change <
       (int)((uVar1 & 0xffff) - (uint)vehicle_speed_rise_limited_prev))) {
-    vehicle_speed_rise_limited =
-         vehicle_speed_rise_limited_prev + cruise_speed_setpoint_adj_offset_cal;
+    vehicle_speed_rise_limited = vehicle_speed_rise_limited_prev + cruise_road_speed_maximum_change;
   }
   vehicle_speed_rise_limited_prev = vehicle_speed_rise_limited;
   return;
@@ -43983,10 +43986,13 @@ void cm848_calculateRiseLimitedVehicleSpeed(void)
 
 
 //
-// Function: cm848_calculateProtectionFuelLimit @ 0x0004091c
+// Function: cm848_minimumSignedWord @ 0x0004091c
 //
 
-uint cm848_calculateProtectionFuelLimit(uint param_1,uint param_2)
+/* Returns the lower of its two arguments (a signed compare), as a word (was
+   cm848_calculateProtectionFuelLimit) */
+
+uint cm848_minimumSignedWord(uint param_1,uint param_2)
 
 {
   if ((int)param_1 < (int)param_2) {
@@ -43998,18 +44004,21 @@ uint cm848_calculateProtectionFuelLimit(uint param_1,uint param_2)
 
 
 //
-// Function: cm848_protectionFuelRateStep @ 0x00040938
+// Function: cm848_decreaseCruiseSpeedCommand @ 0x00040938
 //
 
-void cm848_protectionFuelRateStep(int param_1)
+/* Takes the step from cruise_speed_command, not below cruise_minimum_coast_speed (COAST:
+   cruise_coast_ramp, BUMP DOWN: cruise_bump_down_step) (was cm848_protectionFuelRateStep) */
+
+void cm848_decreaseCruiseSpeedCommand(int param_1)
 
 {
   uint uVar1;
   
   if (((int)(uint)cruise_speed_command < param_1) ||
      (uVar1 = (uint)cruise_speed_command - param_1, cruise_speed_command = (word)uVar1,
-     (uVar1 & 0xffff) < (uint)cruise_speed_command_min_cal)) {
-    cruise_speed_command = cruise_speed_command_min_cal;
+     (uVar1 & 0xffff) < (uint)cruise_minimum_coast_speed)) {
+    cruise_speed_command = cruise_minimum_coast_speed;
   }
   return;
 }
@@ -44017,10 +44026,13 @@ void cm848_protectionFuelRateStep(int param_1)
 
 
 //
-// Function: cm848_protectionFuelRateRamp @ 0x00040978
+// Function: cm848_increaseCruiseSpeedCommand @ 0x00040978
 //
 
-void cm848_protectionFuelRateRamp(int param_1)
+/* Adds the step to cruise_speed_command, at most up to cruise_maximum_road_speed_cal (ACCELERATE:
+   cruise_accelerate_ramp, BUMP UP: cruise_bump_up_step) (was cm848_protectionFuelRateRamp) */
+
+void cm848_increaseCruiseSpeedCommand(int param_1)
 
 {
   word wVar1;
@@ -44041,8 +44053,8 @@ void cm848_protectionFuelRateRamp(int param_1)
 
 /* Applies the CRUISE_CONTROL_STATE (cruise_control_state) to cruise_speed_command:
    CRUISE_SET(1)=latch setpoint+override; CRUISE_RESUME(2)=restore target;
-   CRUISE_DECELERATE/ACCEL(3-6)=fuel-rate step/ramp; CRUISE_ACTIVE_HOLD(7);
-   CRUISE_STANDBY(8)/CRUISE_OFF(0)=clear override. State values map to SAE J1939 SPN527. */
+   CRUISE_COAST/ACCEL(3-6)=fuel-rate step/ramp; CRUISE_HOLD(7); CRUISE_CANCEL(8)/CRUISE_OFF(0)=clear
+   override. State values map to SAE J1939 SPN527. */
 
 void cm848_cruiseSpeedCommandStateMachine(void)
 
@@ -44060,36 +44072,36 @@ void cm848_cruiseSpeedCommandStateMachine(void)
   case 0:
     cruise_control_engaged_flag = 0;
     cruise_resume_active_flag = 0;
-    cruise_set_speed_valid_flag = 0;
+    cruise_resume_speed_valid_flag = 0;
     return;
   case 1:
     pwVar5 = &cruise_maximum_road_speed_cal;
-    pwVar4 = &cruise_speed_target_working;
+    pwVar4 = &cruise_resume_speed;
     uVar3 = (uint)vehicle_speed_rise_limited;
-    cruise_speed_command = cm848_calculateProtectionFuelLimit(uVar3,cruise_maximum_road_speed_cal);
+    cruise_speed_command = cm848_minimumSignedWord(uVar3,cruise_maximum_road_speed_cal);
     *pwVar4 = cruise_speed_command;
-    if ((int)(uint)*pwVar5 < (int)(uVar3 + cruise_speed_margin_cal)) {
+    if ((int)(uint)*pwVar5 < (int)(uVar3 + cruise_bump_up_step)) {
       cruise_speed_command = *pwVar5;
       *pwVar4 = cruise_speed_command;
     }
     cruise_control_engaged_flag = 1;
-    cruise_set_speed_valid_flag = 1;
-    cruise_confirm_flag_b = 1;
+    cruise_resume_speed_valid_flag = 1;
+    cruise_reference_rate_limit_preset_flag = 1;
     break;
   case 2:
     cruise_control_engaged_flag = 1;
-    cruise_speed_command = cruise_speed_target_working;
+    cruise_speed_command = cruise_resume_speed;
     cruise_resume_active_flag = 1;
-    cruise_confirm_flag_a = 1;
+    cruise_governor_external_reset_flag = 1;
     break;
   case 3:
-    cm848_protectionFuelRateStep(protection_fuel_rate_step_a_param_cal);
+    cm848_decreaseCruiseSpeedCommand(cruise_coast_ramp);
     break;
   case 4:
-    cm848_protectionFuelRateRamp(protection_fuel_rate_ramp_param_cal);
+    cm848_increaseCruiseSpeedCommand(cruise_accelerate_ramp);
     break;
   case 5:
-    cm848_protectionFuelRateStep(protection_fuel_rate_step_b_param_cal);
+    cm848_decreaseCruiseSpeedCommand(cruise_bump_down_step);
     break;
   case 6:
     if ((((final_fueling_state == FUELING_STATE_CRUISE_CONTROL) ||
@@ -44103,9 +44115,9 @@ void cm848_cruiseSpeedCommandStateMachine(void)
          ((adjusted_user_fueling_state == FUELING_STATE_VARIABLE_SPEED_GOVERNOR ||
           ((adjusted_user_fueling_state == FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE ||
            (adjusted_user_fueling_state == FUELING_STATE_CRUISE_CONTROL)))))) &&
-        ((uint)cruise_speed_command <
-         (uint)vehicle_speed_rise_limited + (uint)cruise_speed_margin_cal)))) {
-      cm848_protectionFuelRateRamp(cruise_speed_margin_cal);
+        ((uint)cruise_speed_command < (uint)vehicle_speed_rise_limited + (uint)cruise_bump_up_step))
+       )) {
+      cm848_increaseCruiseSpeedCommand(cruise_bump_up_step);
     }
     break;
   case 7:
@@ -44116,56 +44128,59 @@ void cm848_cruiseSpeedCommandStateMachine(void)
     return;
   }
   wVar2 = cruise_speed_command;
-  if ((iVar6 == 3) || (cruise_speed_mode_prev != CRUISE_DECELERATE)) {
+  if ((iVar6 == 3) || (cruise_speed_command_previous_state != CRUISE_COAST)) {
     if ((iVar6 != 4) &&
-       ((cruise_speed_mode_prev == CRUISE_ACCELERATE &&
-        (wVar2 = cruise_speed_target_working,
-        cruise_speed_target_working < vehicle_speed_rise_limited)))) {
-      wVar2 = cm848_calculateProtectionFuelLimit
-                        (vehicle_speed_rise_limited,cruise_maximum_road_speed_cal);
+       ((cruise_speed_command_previous_state == CRUISE_ACCELERATE &&
+        (wVar2 = cruise_resume_speed, cruise_resume_speed < vehicle_speed_rise_limited)))) {
+      wVar2 = cm848_minimumSignedWord(vehicle_speed_rise_limited,cruise_maximum_road_speed_cal);
     }
   }
   else {
-    wVar2 = cruise_speed_target_working;
-    if ((vehicle_speed_rise_limited < cruise_speed_target_working) &&
-       (wVar2 = vehicle_speed_rise_limited, vehicle_speed_rise_limited < cruise_speed_min_cal)) {
+    wVar2 = cruise_resume_speed;
+    if ((vehicle_speed_rise_limited < cruise_resume_speed) &&
+       (wVar2 = vehicle_speed_rise_limited, vehicle_speed_rise_limited < cruise_minimum_set_speed))
+    {
       cruise_control_engaged_flag = 0;
       wVar2 = cruise_speed_command;
     }
   }
   cruise_speed_command = wVar2;
   if ((iVar6 == 7) &&
-     (cruise_speed_target_working = cruise_speed_command,
+     (cruise_resume_speed = cruise_speed_command,
      cruise_maximum_road_speed_cal < cruise_speed_command)) {
-    cruise_speed_target_working = cruise_maximum_road_speed_cal;
+    cruise_resume_speed = cruise_maximum_road_speed_cal;
   }
-  if ((cruise_maximum_road_speed_cal < cruise_speed_target_working) ||
-     (cruise_speed_target_working < cruise_speed_min_cal)) {
-    cruise_set_speed_valid_flag = 0;
+  if ((cruise_maximum_road_speed_cal < cruise_resume_speed) ||
+     (cruise_resume_speed < cruise_minimum_set_speed)) {
+    cruise_resume_speed_valid_flag = 0;
   }
   else {
-    cruise_set_speed_valid_flag = 1;
+    cruise_resume_speed_valid_flag = 1;
   }
   if ((cruise_control_engaged_flag != 1) ||
      (((iVar6 != 2 && (iVar6 != 7)) || (cruise_speed_command <= vehicle_speed_rise_limited)))) {
     cruise_resume_active_flag = 0;
   }
-  cruise_speed_mode_prev = CVar1;
+  cruise_speed_command_previous_state = CVar1;
   return;
 }
 
 
 
 //
-// Function: cm848_initFuelRateFromCapability @ 0x00040d40
+// Function: cm848_saveCruiseSetSpeedForPowerDown @ 0x00040d40
 //
 
-void cm848_initFuelRateFromCapability(void)
+/* On the power-down path (before cm848_runPowerDownSequence): cruise_saved_set_speed_cal =
+   cruise_speed_command, or 0 while j1939_governor_feature_cal bit 0x8000 is clear (was
+   cm848_initFuelRateFromCapability) */
+
+void cm848_saveCruiseSetSpeedForPowerDown(void)
 
 {
-  cruise_speed_cmd_working = cruise_speed_command;
+  cruise_saved_set_speed_cal = cruise_speed_command;
   if ((j1939_governor_feature_cal & 0x8000) == 0) {
-    cruise_speed_cmd_working = 0;
+    cruise_saved_set_speed_cal = 0;
   }
   return;
 }
@@ -44173,18 +44188,22 @@ void cm848_initFuelRateFromCapability(void)
 
 
 //
-// Function: cm848_validateFuelRateTarget @ 0x00040d74
+// Function: cm848_restoreSavedCruiseSetSpeed @ 0x00040d74
 //
 
-void cm848_validateFuelRateTarget(void)
+/* Power-up (cm848_applicationMain): when cruise_saved_set_speed_cal is between
+   cruise_minimum_set_speed and cruise_maximum_road_speed_cal it becomes cruise_speed_command and
+   cruise_resume_speed (valid flag set) (was cm848_validateFuelRateTarget) */
+
+void cm848_restoreSavedCruiseSetSpeed(void)
 
 {
-  cruise_speed_mode_prev = CRUISE_OFF;
-  if ((cruise_speed_min_cal <= cruise_speed_cmd_working) &&
-     (cruise_speed_cmd_working <= cruise_maximum_road_speed_cal)) {
-    cruise_set_speed_valid_flag = 1;
-    cruise_speed_command = cruise_speed_cmd_working;
-    cruise_speed_target_working = cruise_speed_cmd_working;
+  cruise_speed_command_previous_state = CRUISE_OFF;
+  if ((cruise_minimum_set_speed <= cruise_saved_set_speed_cal) &&
+     (cruise_saved_set_speed_cal <= cruise_maximum_road_speed_cal)) {
+    cruise_resume_speed_valid_flag = 1;
+    cruise_speed_command = cruise_saved_set_speed_cal;
+    cruise_resume_speed = cruise_saved_set_speed_cal;
   }
   return;
 }
@@ -44297,18 +44316,23 @@ LAB_00040f7c:
 
 
 //
-// Function: cm848_calculateVehicleSpeedLimitFueling @ 0x00040f80
+// Function: cm848_calculateRoadSpeedGovernorFueling @ 0x00040f80
 //
 
 /* WARNING: Removing unreachable block (ram,0x00041198) */
-/* Sets vehicle_speed_limit_fueling (FUELING_STATE_VEHICLE_SPEED_LIMIT when it wins the
-   arbitration): from the error between vehicle_speed_rise_limited and cruise_speed_limit_working
-   through vehicle_speed_limit_fueling_bottom_droop_gain / _d (5888 = no limit while
-   j1939_governor_feature_cal bit 0x80 is clear, fault 29 (P0500 vehicle speed sensor) is set or
-   TSC1 controls the engine); capped at adjusted_user_fueling + 58 while the limit governs (was
-   cm848_processProtectionRampTimer) */
+/* Sets road_speed_governor_fueling (FUELING_STATE_ROAD_SPEED_GOVERNOR when it wins the arbitration)
+   from the error between vehicle_speed_rise_limited and road_speed_governor_reference_speed through
+   the RSG droop gains / offsets (0x1700 = no limit while j1939_governor_feature_cal bit 0x80 is
+   clear, fault 29 (P0500 vehicle speed sensor) is set or TSC1 controls the engine); capped at
+   adjusted_user_fueling + 58 while it governs (was cm848_calculateVehicleSpeedLimitFueling) |
+   earlier note: Sets road_speed_governor_fueling (FUELING_STATE_ROAD_SPEED_GOVERNOR when it wins
+   the arbitration): from the error between vehicle_speed_rise_limited and
+   road_speed_governor_reference_speed through road_speed_governor_fueling_bottom_droop_gain / _d
+   (5888 = no limit while j1939_governor_feature_cal bit 0x80 is clear, fault 29 (P0500 vehicle
+   speed sensor) is set or TSC1 controls the engine); capped at adjusted_user_fueling + 58 while the
+   limit governs (was cm848_processProtectionRampTimer) */
 
-void cm848_calculateVehicleSpeedLimitFueling(void)
+void cm848_calculateRoadSpeedGovernorFueling(void)
 
 {
   uint uVar1;
@@ -44319,39 +44343,39 @@ void cm848_calculateVehicleSpeedLimitFueling(void)
        ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x2000) != 0)) ||
       (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_SPEED_CONTROL)) ||
      (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_TORQUE_CONTROL)) {
-    vehicle_speed_limit_fueling = 0x1700;
+    road_speed_governor_fueling = 0x1700;
     return;
   }
   if (((j1939_governor_feature_cal & 0x100) == 0) ||
      (drivetrain_gear_range == DRIVETRAIN_GEAR_RANGE_TOP_GEAR)) {
     uVar1 = (uint)vehicle_speed_rise_limited;
-    uVar2 = (uint)cruise_speed_limit_working;
+    uVar2 = (uint)road_speed_governor_reference_speed;
     if (uVar2 < uVar1) {
-      if (vehicle_speed_limit_fueling_bottom_droop_gain != 0) {
+      if (road_speed_governor_fueling_bottom_droop_gain != 0) {
         cruise_mode_transition_flag = 1;
-        cruise_speed_reference_active = vehicle_speed_limit_fueling_bottom_droop_gain;
+        cruise_speed_reference_active = road_speed_governor_fueling_bottom_droop_gain;
         cruise_speed_deviation = (uVar1 - uVar2) * 0x400;
         goto LAB_000410d0;
       }
-      vehicle_speed_limit_fueling = 0;
+      road_speed_governor_fueling = 0;
     }
     else {
-      if (vehicle_speed_limit_fueling_top_droop_gain != 0) {
+      if (road_speed_governor_fueling_top_droop_gain != 0) {
         cruise_mode_transition_flag = 0;
-        cruise_speed_reference_active = vehicle_speed_limit_fueling_top_droop_gain;
+        cruise_speed_reference_active = road_speed_governor_fueling_top_droop_gain;
         cruise_speed_deviation = (uVar2 - uVar1) * 0x400;
         goto LAB_000410d0;
       }
-      vehicle_speed_limit_fueling = 0x1700;
+      road_speed_governor_fueling = 0x1700;
     }
     cruise_speed_reference_active = 0;
   }
   else {
-    if (cruise_speed_limit_working < vehicle_speed_rise_limited) {
-      vehicle_speed_limit_fueling = 0;
+    if (road_speed_governor_reference_speed < vehicle_speed_rise_limited) {
+      road_speed_governor_fueling = 0;
     }
     else {
-      vehicle_speed_limit_fueling = 0x1700;
+      road_speed_governor_fueling = 0x1700;
     }
     cruise_speed_reference_active = 0;
   }
@@ -44359,10 +44383,10 @@ LAB_000410d0:
   if (cruise_speed_reference_active != 0) {
     uVar1 = cruise_speed_deviation / cruise_speed_reference_active;
     if (cruise_mode_transition_flag == 0) {
-      cruise_speed_deviation = uVar1 + vehicle_speed_limit_fueling_top_droop_offset;
+      cruise_speed_deviation = uVar1 + road_speed_governor_fueling_top_droop_offset;
     }
     else {
-      cruise_speed_deviation = vehicle_speed_limit_fueling_bottom_droop_offset - uVar1;
+      cruise_speed_deviation = road_speed_governor_fueling_bottom_droop_offset - uVar1;
     }
     if ((int)cruise_speed_deviation < 0x1701) {
       dVar3 = cruise_speed_deviation;
@@ -44373,15 +44397,15 @@ LAB_000410d0:
     else {
       dVar3 = 0x1700;
     }
-    vehicle_speed_limit_fueling = (word)dVar3;
+    road_speed_governor_fueling = (word)dVar3;
   }
-  if ((adjusted_user_fueling_state == FUELING_STATE_VEHICLE_SPEED_LIMIT) &&
-     (adjusted_user_fueling + 0x3a < (uint)vehicle_speed_limit_fueling)) {
+  if ((adjusted_user_fueling_state == FUELING_STATE_ROAD_SPEED_GOVERNOR) &&
+     (adjusted_user_fueling + 0x3a < (uint)road_speed_governor_fueling)) {
     if (adjusted_user_fueling + 0x3a < 0x1701) {
-      vehicle_speed_limit_fueling = adjusted_user_fueling + 0x3a;
+      road_speed_governor_fueling = adjusted_user_fueling + 0x3a;
     }
     else {
-      vehicle_speed_limit_fueling = 0x1700;
+      road_speed_governor_fueling = 0x1700;
     }
   }
   return;
@@ -44406,7 +44430,7 @@ void cm848_selectCruiseOrUserFueling(void)
   ushort uVar1;
   uint uVar2;
   
-  uVar2 = ((uint)cruise_speed_margin_cal * (uint)cruise_speed_margin_scale_cal >> 8) +
+  uVar2 = ((uint)cruise_bump_up_step * (uint)cruise_bump_up_step_margin_scale >> 8) +
           (uint)vehicle_speed_rise_limited;
   if (0xffff < uVar2) {
     uVar2 = 0xffff;
@@ -44420,8 +44444,8 @@ void cm848_selectCruiseOrUserFueling(void)
   if ((((cruise_control_engaged_flag == 0) ||
        ((((uVar1 < operating_mode_governor_output.fuel_demand &&
           (governor_override_fuel_threshold_cal < fuel_demand_control_t_0040a57a.calculated)) &&
-         ((cruise_speed_command != cruise_speed_limit_working ||
-          (cruise_control_fueling != vehicle_speed_limit_fueling)))) ||
+         ((cruise_speed_command != road_speed_governor_reference_speed ||
+          (cruise_control_fueling != road_speed_governor_fueling)))) ||
         ((operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_SPEED_CONTROL ||
          (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_TORQUE_CONTROL)))))) ||
       (operating_mode_governor_output.mode_code == FUELING_STATE_UNIDENTIFIED_37)) ||
@@ -45258,7 +45282,7 @@ void cm848_inhibitLowSpeedGovernorAggressiveGains(void)
    Called every pass of cm848_periodicTaskSet_auxiliaryControl. Inputs: two_speed_axle_enable_cal,
    switch 31, the two ratio records. Output: rear_axle_ratio (read by
    cm848_selectLowSpeedGovernorGearGainSet, cm848_calculateRiseLimitedVehicleSpeed and
-   cm848_calculateCruisePidRateGainScale). 453 = 3.54 in the dump for all three words;
+   cm848_calculateCruiseGovernorSpeedErrorGain). 453 = 3.54 in the dump for all three words;
    two_speed_axle_enable_cal is 0 there. (was cm848_applyProtectionControlLimit) */
 
 void cm848_selectTwoSpeedRearAxleRatio(void)
@@ -58022,8 +58046,8 @@ void cm848_applicationMain(void)
   cm848_resetDataCollector();
   cm848_emptyStubFunction();
   cm848_initializeEngineRetarderCruisePermissionFilter();
-  cm848_initializeCruiseControlDroopGains();
-  cm848_validateFuelRateTarget();
+  cm848_initializeCruiseAndRoadSpeedGovernorDroops();
+  cm848_restoreSavedCruiseSetSpeed();
   cm848_initializeEngineRetarderRequestState();
   cm848_initializeDrivetrainRatio();
   cm848_saveOutputShaftSpeed();
@@ -58064,7 +58088,7 @@ void cm848_applicationMain(void)
   cm848_initIntakeAirHeaterControl();
   cm848_initializeFuelDemandAndLimitInterpolationStates();
   cm848_initEngineRpmFilterPointers();
-  initCruiseConfirmFlags();
+  cm848_initializeCruiseGovernorFilters();
   cm848_initTemperatureTrimCoeff();
   cm848_initSensorLookupTable5();
   cm848_initializeLowSpeedGovernorReferenceSpeed();
@@ -58160,7 +58184,7 @@ void cm848_applicationMain(void)
   cm848_sensorChannel5_process();
   initGovernorFlagsAux();
   initMessageBufferPointers();
-  cm848_initializeFaultCruiseSpeedLimit();
+  cm848_initializeMaximumRoadSpeeds();
   cm848_initSensorLookupTable3();
   cm848_initSensorLookupTable2();
   cm848_initSensorLookupTableInit1();
@@ -58258,7 +58282,7 @@ void cm848_applicationMain(void)
   cm848_removeHealedFaults();
   cm848_clearMilForHealedFaults();
   protection_accumulator_update();
-  cm848_initFuelRateFromCapability();
+  cm848_saveCruiseSetSpeedForPowerDown();
   cm848_initCommunication();
   cm848_runPowerDownSequence();
   return;
@@ -58305,7 +58329,7 @@ void cm848_restartApplicationWithoutReset(void)
   cm848_removeHealedFaults();
   cm848_clearMilForHealedFaults();
   protection_accumulator_update();
-  cm848_initFuelRateFromCapability();
+  cm848_saveCruiseSetSpeedForPowerDown();
   cm848_initCommunication();
   cm848_runPowerDownSequence();
   return;
@@ -58412,8 +58436,8 @@ void mpc555_miosSetChannelPwmDuty(mios_mdasm_t *channel_registers,word duty)
 
 {
   undefined4 compare_register_pair;
-  word modulus_start_value;
   word modulus_period_value;
+  word modulus_start_value;
   
   if (duty < 0x6400) {
     if (duty == 0) {
@@ -59641,10 +59665,16 @@ dword exponentialMovingAverage(dword value,ema_filter_state_t *filter_state)
 
 
 //
-// Function: cm848_interpolateTableLinearStep @ 0x00056608
+// Function: cm848_secondOrderFilterUnsigned @ 0x00056608
 //
 
-undefined4 cm848_interpolateTableLinearStep(int param_1,undefined4 *param_2)
+/* A second order filter on an unsigned input with 32-bit products: output = (c1 x input << 16 - c3
+   x output_previous + (c3 - c1 + 0x10000) x output) >> 16 into its record (coefficient pointers +0
+   / +4, outputs +8 / +C). Its return value is (output >> 16) & 0xffff after output was already
+   shifted down 16 (asm 0x56640 / 0x5664c), so it returns 0 in this build
+   (cruise_governor_filtered_road_speed) (was cm848_interpolateTableLinearStep) */
+
+undefined4 cm848_secondOrderFilterUnsigned(int param_1,undefined4 *param_2)
 
 {
   ushort uVar1;
@@ -73573,7 +73603,7 @@ void governor_fuel_mode_initialization(void)
 //
 
 /* Cruise switch-request state 2 (COAST button - confirmed live 2026-06-12) -> CRUISE_CONTROL_STATE:
-   returns CRUISE_DECELERATE(3)/CRUISE_DECELERATE_2(5) via the holdoff countdown. Was
+   returns CRUISE_COAST(3)/CRUISE_BUMP_DOWN(5) via the holdoff countdown. Was
    governor_cruiseOverride_state2_handler. */
 
 int governor_cruise_coastButton_handler(void)
@@ -73586,7 +73616,7 @@ int governor_cruise_coastButton_handler(void)
     if ((cruise_switch_request_working_previous == CRUISE_SWITCH_COAST) ||
        (cruise_switch_request != CRUISE_SWITCH_COAST)) {
       if (cruise_coast_accelerate_hold_countdown == 0) {
-        CVar1 = CRUISE_DECELERATE;
+        CVar1 = CRUISE_COAST;
       }
       else {
         cruise_coast_accelerate_hold_countdown = cruise_coast_accelerate_hold_countdown - 1;
@@ -73594,7 +73624,7 @@ int governor_cruise_coastButton_handler(void)
     }
     else {
       cruise_coast_accelerate_hold_countdown = cruise_coast_accelerate_hold_time;
-      CVar1 = CRUISE_DECELERATE_2;
+      CVar1 = CRUISE_BUMP_DOWN;
     }
   }
   return (int)(short)CVar1;
@@ -73644,8 +73674,8 @@ int cm848_updateCruiseControlOnOffToggle(void)
 // Function: governor_cruise_baseState_get @ 0x00512724
 //
 
-/* Base CRUISE_CONTROL_STATE from override/enable flags: CRUISE_ACTIVE_HOLD(7) if override active;
-   else CRUISE_STANDBY(8) if cruise_set_speed_valid_flag set; else CRUISE_OFF(0). This is the FIRST
+/* Base CRUISE_CONTROL_STATE from override/enable flags: CRUISE_HOLD(7) if override active; else
+   CRUISE_CANCEL(8) if cruise_resume_speed_valid_flag set; else CRUISE_OFF(0). This is the FIRST
    write to cruise_control_state each cycle in cm848_cruiseControlPeriodicUpdate before the button
    handlers may overwrite it. Was governor_fuelMode_state_get. */
 
@@ -73655,7 +73685,7 @@ undefined4 governor_cruise_baseState_get(void)
   undefined4 uVar1;
   
   if (cruise_control_engaged_flag == 0) {
-    if (cruise_set_speed_valid_flag == 0) {
+    if (cruise_resume_speed_valid_flag == 0) {
       uVar1 = 0;
     }
     else {
@@ -73733,8 +73763,8 @@ void cm848_integrateCruiseRpmRatioChange(void)
 //
 
 /* Cruise switch-request state 4 (RESUME/ACCEL button) -> CRUISE_CONTROL_STATE: override-off with
-   fuel-enable set returns CRUISE_RESUME(2); held returns
-   CRUISE_ACCELERATE(4)/CRUISE_ACCELERATE_2(6). Was governor_cruiseOverride_state4_handler. */
+   fuel-enable set returns CRUISE_RESUME(2); held returns CRUISE_ACCELERATE(4)/CRUISE_BUMP_UP(6).
+   Was governor_cruiseOverride_state4_handler. */
 
 int governor_cruise_resumeButton_handler(void)
 
@@ -73743,7 +73773,7 @@ int governor_cruise_resumeButton_handler(void)
   
   CVar1 = cruise_control_state;
   if (cruise_control_engaged_flag == 0) {
-    if (cruise_set_speed_valid_flag != 0) {
+    if (cruise_resume_speed_valid_flag != 0) {
       CVar1 = CRUISE_RESUME;
       cruise_coast_accelerate_hold_countdown = cruise_coast_accelerate_hold_time;
     }
@@ -73759,7 +73789,7 @@ int governor_cruise_resumeButton_handler(void)
   }
   else {
     cruise_coast_accelerate_hold_countdown = cruise_coast_accelerate_hold_time;
-    CVar1 = CRUISE_ACCELERATE_2;
+    CVar1 = CRUISE_BUMP_UP;
   }
   return (int)(short)CVar1;
 }
@@ -73771,9 +73801,9 @@ int governor_cruise_resumeButton_handler(void)
 //
 
 /* Cruise switch-request state 3 (SET/COAST button) -> CRUISE_CONTROL_STATE: rising edge (state_b==3
-   && prev!=3) with vehicle_speed_rise_limited>=cruise_speed_min_cal returns CRUISE_SET(1) to LATCH
-   the setpoint; held returns CRUISE_DECELERATE(3). Was governor_cruiseOverride_state3_handler. NOTE
-   the SET capture only runs when cm848_updateCruiseControlDeniedStatus()==0. */
+   && prev!=3) with vehicle_speed_rise_limited>=cruise_minimum_set_speed returns CRUISE_SET(1) to
+   LATCH the setpoint; held returns CRUISE_COAST(3). Was governor_cruiseOverride_state3_handler.
+   NOTE the SET capture only runs when cm848_updateCruiseControlDeniedStatus()==0. */
 
 int governor_cruise_setButton_handler(void)
 
@@ -73785,14 +73815,14 @@ int governor_cruise_setButton_handler(void)
      (cruise_switch_request != CRUISE_SWITCH_SET)) {
     if (cruise_control_engaged_flag == 1) {
       if (cruise_coast_accelerate_hold_countdown == 0) {
-        CVar1 = CRUISE_DECELERATE;
+        CVar1 = CRUISE_COAST;
       }
       else {
         cruise_coast_accelerate_hold_countdown = cruise_coast_accelerate_hold_countdown - 1;
       }
     }
   }
-  else if (cruise_speed_min_cal <= vehicle_speed_rise_limited) {
+  else if (cruise_minimum_set_speed <= vehicle_speed_rise_limited) {
     CVar1 = CRUISE_SET;
     cruise_coast_accelerate_hold_countdown = cruise_coast_accelerate_hold_time;
   }
@@ -74016,7 +74046,7 @@ undefined4 governor_cruise_engage_check(void)
 //
 
 /* Returns the CRUISE_CONTROL_STATE used when the button-override path is inhibited:
-   CRUISE_STANDBY(8) if all engage conditions hold AND cruise_set_speed_valid_flag!=0 else
+   CRUISE_CANCEL(8) if all engage conditions hold AND cruise_resume_speed_valid_flag!=0 else
    CRUISE_OFF(0). Legacy name governor_cruise_disengage_check was misleading - it is a state getter
    not a boolean check. */
 
@@ -74034,7 +74064,7 @@ undefined4 governor_cruise_standbyState_get(void)
           ((fault_detected_bits_384_to_399 & 0x400) != 0)))))) ||
        ((fault_detected_bits_384_to_399 & 0x800) != 0)))) ||
      (((governor_cycle_active_flag != 0 && (governor_cruise_cycle_inhibit_enable == 1)) ||
-      (cruise_set_speed_valid_flag == 0)))) {
+      (cruise_resume_speed_valid_flag == 0)))) {
     uVar1 = 0;
   }
   else {
@@ -74113,19 +74143,19 @@ LAB_005130dc:
     goto LAB_00513168;
   case CRUISE_RESUME:
     goto LAB_00513154;
-  case CRUISE_DECELERATE:
+  case CRUISE_COAST:
     goto LAB_00513134;
   case CRUISE_ACCELERATE:
     goto LAB_0051313c;
-  case CRUISE_DECELERATE_2:
+  case CRUISE_BUMP_DOWN:
 LAB_00513134:
     ccvs1_cruise_control_state = 3;
     goto LAB_00513168;
-  case CRUISE_ACCELERATE_2:
+  case CRUISE_BUMP_UP:
 LAB_0051313c:
     ccvs1_cruise_control_state = 2;
     goto LAB_00513168;
-  case CRUISE_ACTIVE_HOLD:
+  case CRUISE_HOLD:
     if (cruise_resume_active_flag == 0) {
       ccvs1_cruise_control_state = 1;
       goto LAB_00513168;
@@ -74133,11 +74163,11 @@ LAB_0051313c:
 LAB_00513154:
     ccvs1_cruise_control_state = 4;
     goto LAB_00513168;
-  case CRUISE_STANDBY:
+  case CRUISE_CANCEL:
   }
   ccvs1_cruise_control_state = 0;
 LAB_00513168:
-  if (((ccvs1_cruise_control_state != 0) && (cruise_fuel_demand_hold < all_speed_governor_fueling))
+  if (((ccvs1_cruise_control_state != 0) && (cruise_governor_fueling < all_speed_governor_fueling))
      && (adjusted_user_fueling_state != FUELING_STATE_CRUISE_CONTROL)) {
     ccvs1_cruise_control_state = 6;
   }
@@ -81786,13 +81816,13 @@ int cm848_encodeCruiseControlStatusByte(void)
   case 0xc:
     iVar1 = 4;
   }
-  if (cruise_control_state == CRUISE_DECELERATE) {
+  if (cruise_control_state == CRUISE_COAST) {
     iVar1 = 0xb;
   }
   else if (cruise_control_state == CRUISE_ACCELERATE) {
     iVar1 = 10;
   }
-  else if (cruise_control_state == CRUISE_ACTIVE_HOLD) {
+  else if (cruise_control_state == CRUISE_HOLD) {
     iVar1 = 9;
   }
   switch(cruise_control_last_cutout_reason) {
@@ -85455,14 +85485,18 @@ void cm848_initializeEngineRetarderCruisePermissionFilter(void)
 
 
 //
-// Function: cm848_selectCruiseControlGainZone @ 0x0052470c
+// Function: cm848_selectCruiseGovernorGainSet @ 0x0052470c
 //
 
-/* Computes the cruise droop speed error delta and picks the cruise gain zone
-   (cruise_speed_zone_code, with hysteresis on the zone thresholds) and its PID gains into
+/* Looks up cruise_governor_gear_ratio_gain, sets cruise_droops_allowed_flag and
+   cruise_droop_speed_error_delta, picks gain set 1 / 2 / 3 from the speed error after droop and the
+   filtered fueling (with hysteresis) and loads its gains into cruise_pid_*_gain; a set change
+   raises cruise_governor_bumpless_transfer_flag (was cm848_selectCruiseControlGainZone) | earlier
+   note: Computes the cruise droop speed error delta and picks the cruise gain zone
+   (cruise_governor_gain_set_number, with hysteresis on the zone thresholds) and its PID gains into
    cruise_pid_kp / ki / kd / rate gain working (was governor_cruise_setpoint_calc) */
 
-void cm848_selectCruiseControlGainZone(int param_1)
+void cm848_selectCruiseGovernorGainSet(int param_1)
 
 {
   uint uVar1;
@@ -85473,18 +85507,18 @@ void cm848_selectCruiseControlGainZone(int param_1)
   uint uVar5;
   word wStack_e;
   
-  cruise_zone_transition_flag = 0;
+  cruise_governor_bumpless_transfer_flag = 0;
   if ((adjusted_user_fueling_state == FUELING_STATE_CRUISE_CONTROL) ||
-     (adjusted_user_fueling_state == FUELING_STATE_VEHICLE_SPEED_LIMIT)) {
-    cruise_pid_rate_gain_working =
+     (adjusted_user_fueling_state == FUELING_STATE_ROAD_SPEED_GOVERNOR)) {
+    cruise_governor_gear_ratio_gain =
          lookupTableInterpolation
-                   (&DAT_003fcffe,drivetrain_ratio_user_filtered,WORD_ARRAY_00408e30,
-                    WORD_ARRAY_00408e3e,0);
+                   (&DAT_003fcffe,drivetrain_ratio_user_filtered,
+                    cruise_governor_gear_ratio_gain_axis,cruise_governor_gear_ratio_gain_values,0);
   }
   if (adjusted_user_fueling_state == FUELING_STATE_CRUISE_CONTROL) {
-    if ((((cruise_control_state == CRUISE_SET) || (cruise_control_state == CRUISE_DECELERATE)) ||
+    if ((((cruise_control_state == CRUISE_SET) || (cruise_control_state == CRUISE_COAST)) ||
         (cruise_control_state == CRUISE_RESUME)) || (cruise_control_state == CRUISE_ACCELERATE)) {
-      cruise_deadband_active_flag = 0;
+      cruise_droops_allowed_flag = 0;
     }
     else {
       if (cruise_speed_command < vehicle_speed_rise_limited) {
@@ -85493,20 +85527,20 @@ void cm848_selectCruiseControlGainZone(int param_1)
       else {
         uVar2 = cruise_speed_command - vehicle_speed_rise_limited;
       }
-      if (((uVar2 < cruise_deadband_vehicle_speed_tolerance) &&
+      if (((uVar2 < cruise_droops_allowed_speed_tolerance) &&
           (param_1 <= (int)(uint)cruise_top_droop_offset)) &&
          ((int)(uint)cruise_bottom_droop_offset <= param_1)) {
-        cruise_deadband_active_flag = 1;
+        cruise_droops_allowed_flag = 1;
       }
     }
   }
   if ((adjusted_user_fueling_state != FUELING_STATE_CRUISE_CONTROL) &&
-     (adjusted_user_fueling_state != FUELING_STATE_VEHICLE_SPEED_LIMIT)) {
+     (adjusted_user_fueling_state != FUELING_STATE_ROAD_SPEED_GOVERNOR)) {
     return;
   }
-  if (((cruise_deadband_active_flag == 0) &&
+  if (((cruise_droops_allowed_flag == 0) &&
       (adjusted_user_fueling_state == FUELING_STATE_CRUISE_CONTROL)) ||
-     ((adjusted_user_fueling_state == FUELING_STATE_VEHICLE_SPEED_LIMIT &&
+     ((adjusted_user_fueling_state == FUELING_STATE_ROAD_SPEED_GOVERNOR &&
       (((j1939_governor_feature_cal & 0x100) != 0 &&
        (drivetrain_gear_range != DRIVETRAIN_GEAR_RANGE_TOP_GEAR)))))) {
 LAB_00524934:
@@ -85535,61 +85569,69 @@ LAB_0052492c:
     cruise_droop_speed_error_delta = cruise_droop_speed_error_delta_minimum;
     if (cruise_droop_speed_error_delta_minimum <= (short)wStack_e) goto LAB_0052492c;
   }
-  uVar3 = (uint)governor_cruise_speed_error_net;
+  uVar3 = (uint)cruise_governor_speed_error_after_droop;
   uVar4 = uVar3;
   if ((int)uVar3 < 0) {
     uVar4 = -uVar3;
   }
   uVar1 = (uint)final_fueling;
-  uVar5 = (uint)cruise_bottom_droop_offset + (uint)cruise_zone_fuel_demand_hysteresis;
+  uVar5 = (uint)cruise_bottom_droop_offset +
+          (uint)cruise_governor_gain_set_bottom_droop_offset_hysteresis;
   if (uVar1 < uVar5) {
     if ((int)uVar3 <=
-        (int)((uint)cruise_zone_3_speed_error_threshold + (uint)cruise_zone_boundary_hysteresis))
-    goto LAB_005249d4;
+        (int)((uint)cruise_governor_gain_set_3_speed_error_threshold +
+             (uint)cruise_governor_gain_set_speed_error_hysteresis)) goto LAB_005249d4;
   }
   else if ((uVar4 & 0xffff) <=
-           (uint)cruise_zone_2_speed_error_threshold + (uint)cruise_zone_boundary_hysteresis)
-  goto LAB_005249d4;
-  cruise_speed_zone_code = 2;
+           (uint)cruise_governor_gain_set_2_speed_error_threshold +
+           (uint)cruise_governor_gain_set_speed_error_hysteresis) goto LAB_005249d4;
+  cruise_governor_gain_set_number = 2;
 LAB_005249d4:
   if ((uVar5 <= uVar1) &&
      ((int)(uVar4 & 0xffff) <
-      (int)((uint)cruise_zone_2_speed_error_threshold - (uint)cruise_zone_boundary_hysteresis))) {
-    cruise_speed_zone_code = 1;
+      (int)((uint)cruise_governor_gain_set_2_speed_error_threshold -
+           (uint)cruise_governor_gain_set_speed_error_hysteresis))) {
+    cruise_governor_gain_set_number = 1;
   }
   if ((uVar1 <= cruise_bottom_droop_offset) &&
      ((int)uVar3 <
-      (int)((uint)cruise_zone_3_speed_error_threshold - (uint)cruise_zone_boundary_hysteresis))) {
-    cruise_speed_zone_code = 3;
+      (int)((uint)cruise_governor_gain_set_3_speed_error_threshold -
+           (uint)cruise_governor_gain_set_speed_error_hysteresis))) {
+    cruise_governor_gain_set_number = 3;
   }
-  if (cruise_speed_zone_code == 1) {
-    governor_cruise_zone_table_ptr = (undefined *)&cruise_zone_1_proportional_gain;
+  if (cruise_governor_gain_set_number == 1) {
+    cruise_governor_gain_set_pointer = (undefined *)&cruise_zone_1_proportional_gain;
   }
-  else if (cruise_speed_zone_code == 2) {
-    governor_cruise_zone_table_ptr = (undefined *)&cruise_zone_2_proportional_gain;
+  else if (cruise_governor_gain_set_number == 2) {
+    cruise_governor_gain_set_pointer = (undefined *)&cruise_zone_2_proportional_gain;
   }
-  else if (cruise_speed_zone_code == 3) {
-    governor_cruise_zone_table_ptr = (undefined *)&cruise_zone_3_proportional_gain;
+  else if (cruise_governor_gain_set_number == 3) {
+    cruise_governor_gain_set_pointer = (undefined *)&cruise_zone_3_proportional_gain;
   }
-  if (DAT_003fcffa != cruise_speed_zone_code) {
-    cruise_zone_transition_flag = 1;
+  if (DAT_003fcffa != cruise_governor_gain_set_number) {
+    cruise_governor_bumpless_transfer_flag = 1;
   }
-  cruise_pid_kp_working = *(sword *)governor_cruise_zone_table_ptr;
-  cruise_pid_rate_integral_gain_working = *(sword *)(governor_cruise_zone_table_ptr + 6);
-  cruise_pid_ki_working = *(sword *)(governor_cruise_zone_table_ptr + 2);
-  cruise_pid_kd_working = *(sword *)(governor_cruise_zone_table_ptr + 4);
+  cruise_pid_proportional_gain = *(sword *)cruise_governor_gain_set_pointer;
+  cruise_pid_integral_acceleration_gain = *(sword *)(cruise_governor_gain_set_pointer + 6);
+  cruise_pid_integral_gain = *(sword *)(cruise_governor_gain_set_pointer + 2);
+  cruise_pid_derivative_gain = *(sword *)(cruise_governor_gain_set_pointer + 4);
   DAT_003fcffc = (short)uVar4;
-  DAT_003fcffa = cruise_speed_zone_code;
+  DAT_003fcffa = cruise_governor_gain_set_number;
   return;
 }
 
 
 
 //
-// Function: governor_cruise_speedReference_update @ 0x00524aec
+// Function: cm848_updateCruiseAndRoadSpeedGovernorDroops @ 0x00524aec
 //
 
-void governor_cruise_speedReference_update(void)
+/* Passes the droop gains / offsets to the cruise and road speed governor fueling: the top droop
+   gains for the selected rear axle ratio (two-speed axle), the cruise ones only while droops are
+   allowed and cruise is engaged, and the top droop offset for the electronic smart power tau state
+   (or from the peak fueling with programmable power) (was governor_cruise_speedReference_update) */
+
+void cm848_updateCruiseAndRoadSpeedGovernorDroops(void)
 
 {
   if ((vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_INDUCTIVE) &&
@@ -85604,9 +85646,9 @@ void governor_cruise_speedReference_update(void)
       road_speed_governor_top_droop_gain = DAT_003fcff6;
     }
   }
-  vehicle_speed_limit_fueling_bottom_droop_gain = road_speed_governor_bottom_droop_gain;
-  vehicle_speed_limit_fueling_top_droop_gain = road_speed_governor_top_droop_gain;
-  if ((cruise_deadband_active_flag == 1) && (cruise_control_engaged_flag == 1)) {
+  road_speed_governor_fueling_bottom_droop_gain = road_speed_governor_bottom_droop_gain;
+  road_speed_governor_fueling_top_droop_gain = road_speed_governor_top_droop_gain;
+  if ((cruise_droops_allowed_flag == 1) && (cruise_control_engaged_flag == 1)) {
     cruise_control_fueling_top_droop_gain = cruise_top_droop_gain;
     cruise_control_fueling_bottom_droop_gain = cruise_bottom_droop_gain;
   }
@@ -85615,34 +85657,38 @@ void governor_cruise_speedReference_update(void)
     cruise_control_fueling_bottom_droop_gain = 0;
   }
   if (algorithm_enable_flags_18_cal.programmable_power_enable == 0) {
-    vehicle_speed_limit_fueling_top_droop_offset = cruise_speed_offset_default;
-    if (((cruise_speed_offset_mode != 0) &&
-        (vehicle_speed_limit_fueling_top_droop_offset = cruise_top_droop_offset_intermediate_tau,
-        cruise_speed_offset_mode != 1)) &&
-       (vehicle_speed_limit_fueling_top_droop_offset = cruise_top_droop_offset_tau_1,
-       cruise_speed_offset_mode != 2)) {
+    road_speed_governor_fueling_top_droop_offset = cruise_top_droop_offset_tau_0;
+    if (((electronic_smart_power_tau_state != 0) &&
+        (road_speed_governor_fueling_top_droop_offset = cruise_top_droop_offset_intermediate_tau,
+        electronic_smart_power_tau_state != 1)) &&
+       (road_speed_governor_fueling_top_droop_offset = cruise_top_droop_offset_tau_1,
+       electronic_smart_power_tau_state != 2)) {
       cruise_control_fueling_top_droop_offset = cruise_top_droop_offset;
-      vehicle_speed_limit_fueling_top_droop_offset = cruise_top_droop_offset;
+      road_speed_governor_fueling_top_droop_offset = cruise_top_droop_offset;
       return;
     }
   }
   else {
-    vehicle_speed_limit_fueling_top_droop_offset =
+    road_speed_governor_fueling_top_droop_offset =
          (word)(((uint)current_horsepower_peak_fueling_cal *
                 (uint)cruise_top_droop_offset_peak_fueling_percent_times_256) / 0x6400);
   }
-  cruise_top_droop_offset = vehicle_speed_limit_fueling_top_droop_offset;
-  cruise_control_fueling_top_droop_offset = vehicle_speed_limit_fueling_top_droop_offset;
+  cruise_top_droop_offset = road_speed_governor_fueling_top_droop_offset;
+  cruise_control_fueling_top_droop_offset = road_speed_governor_fueling_top_droop_offset;
   return;
 }
 
 
 
 //
-// Function: governor_cruise_rampRate_calc @ 0x00524c6c
+// Function: cm848_calculateEngineSpeedAtVehicleSpeed @ 0x00524c6c
 //
 
-undefined2 governor_cruise_rampRate_calc(int param_1,int param_2)
+/* The engine speed (1/8 rpm, clamped to 8000..36000 = 1000..4500 rpm) at vehicle speed argument 1
+   with rear axle ratio argument 2 in top gear (tire_revolutions_per_mile_cal x top_gear_ratio_cal /
+   60) (was governor_cruise_rampRate_calc) */
+
+undefined2 cm848_calculateEngineSpeedAtVehicleSpeed(int param_1,int param_2)
 
 {
   int iVar1;
@@ -85676,10 +85722,14 @@ undefined2 governor_cruise_rampRate_calc(int param_1,int param_2)
 
 
 //
-// Function: governor_cruise_tableLimit_calc @ 0x00524d34
+// Function: cm848_calculateTopDroopGain @ 0x00524d34
 //
 
-uint governor_cruise_tableLimit_calc
+/* A top droop gain: the droop width << 10 / (the 4D transient fueling at 100 % throttle and the
+   given engine speed - cruise_top_droop_offset_tau_0), capped at 0x22c8; 0 when that fueling is not
+   above the offset (was governor_cruise_tableLimit_calc) */
+
+uint cm848_calculateTopDroopGain
                (int param_1,word *param_2,word param_3,word *param_4,word param_5,word *param_6,
                word *param_7,dword param_8)
 
@@ -85690,9 +85740,10 @@ uint governor_cruise_tableLimit_calc
   local_8[0] = cm848_dualAxisTableInterpolation
                          (param_2,param_3,param_4,param_5,param_6,param_7,param_8);
   cm848_clampFuelDemandToValidRange(local_8);
-  if (cruise_speed_offset_default < local_8[0]) {
-    if ((uint)(param_1 << 10) < (uint)(ushort)(local_8[0] - cruise_speed_offset_default) * 0x22c8) {
-      uVar1 = (uint)(param_1 << 10) / (uint)(ushort)(local_8[0] - cruise_speed_offset_default);
+  if (cruise_top_droop_offset_tau_0 < local_8[0]) {
+    if ((uint)(param_1 << 10) < (uint)(ushort)(local_8[0] - cruise_top_droop_offset_tau_0) * 0x22c8)
+    {
+      uVar1 = (uint)(param_1 << 10) / (uint)(ushort)(local_8[0] - cruise_top_droop_offset_tau_0);
     }
     else {
       uVar1 = 0x22c8;
@@ -85708,10 +85759,13 @@ uint governor_cruise_tableLimit_calc
 
 
 //
-// Function: governor_cruise_rampScale_calc @ 0x00524dd0
+// Function: cm848_calculateBottomDroopGain @ 0x00524dd0
 //
 
-uint governor_cruise_rampScale_calc(int param_1,uint param_2,uint param_3)
+/* A bottom droop gain: the droop width << 10 / the fueling span, or 0x22c8 when width << 10 is not
+   below the span x 0x22c8 (was governor_cruise_rampScale_calc) */
+
+uint cm848_calculateBottomDroopGain(int param_1,uint param_2,uint param_3)
 
 {
   uint uVar1;
@@ -85728,14 +85782,17 @@ uint governor_cruise_rampScale_calc(int param_1,uint param_2,uint param_3)
 
 
 //
-// Function: cm848_initializeCruiseControlDroopGains @ 0x00524df4
+// Function: cm848_initializeCruiseAndRoadSpeedGovernorDroops @ 0x00524df4
 //
 
-/* Boot pass (cm848_applicationMain): the power-up cruise and road speed governor droop gains and
-   offsets (e2m 1187), the zone code and the deadband / zone transition flags (was
-   governorCruiseStateMachine) */
+/* Power-up (cm848_applicationMain): the cruise and road speed governor top droop gains for both
+   rear axle ratios (4D fueling at cruise_droop_reference_speed - the droop width), the bottom droop
+   gains, the droop gains / offsets passed to the fueling, gain set 1 and the droop / bumpless flags
+   (was cm848_initializeCruiseControlDroopGains) | earlier note: Boot pass (cm848_applicationMain):
+   the power-up cruise and road speed governor droop gains and offsets (e2m 1187), the zone code and
+   the deadband / zone transition flags (was governorCruiseStateMachine) */
 
-void cm848_initializeCruiseControlDroopGains(void)
+void cm848_initializeCruiseAndRoadSpeedGovernorDroops(void)
 
 {
   word wVar1;
@@ -85747,26 +85804,26 @@ void cm848_initializeCruiseControlDroopGains(void)
   undefined2 local_2e;
   
   DAT_003fcffe = 2;
-  cruise_zone_transition_flag = 0;
+  cruise_governor_bumpless_transfer_flag = 0;
   cruise_droop_speed_error_delta = 0;
-  cruise_deadband_active_flag = 0;
-  cruise_speed_zone_code = 1;
+  cruise_droops_allowed_flag = 0;
+  cruise_governor_gain_set_number = 1;
   local_30 = 2;
   local_2e = 2;
-  uVar2 = governor_cruise_rampRate_calc
+  uVar2 = cm848_calculateEngineSpeedAtVehicleSpeed
                     (cruise_droop_reference_speed - cruise_top_droop_width_cal,
                      rear_axle_ratio_low_cal);
   cruise_top_droop_gain_for_rear_axle_ratio_low =
-       governor_cruise_tableLimit_calc
+       cm848_calculateTopDroopGain
                  (cruise_top_droop_width_cal,&local_30,uVar2,
                   four_dimensional_fueling_transient_x_axis,400,
                   four_dimensional_fueling_transient_y_axis,four_dimensional_fueling_transient_grid,
                   4);
-  uVar2 = governor_cruise_rampRate_calc
+  uVar2 = cm848_calculateEngineSpeedAtVehicleSpeed
                     (cruise_droop_reference_speed - road_speed_governor_top_droop_width_cal,
                      rear_axle_ratio_low_cal);
   road_speed_governor_top_droop_gain_for_rear_axle_ratio_low =
-       governor_cruise_tableLimit_calc
+       cm848_calculateTopDroopGain
                  (road_speed_governor_top_droop_width_cal,&local_30,uVar2,
                   four_dimensional_fueling_transient_x_axis,400,
                   four_dimensional_fueling_transient_y_axis,four_dimensional_fueling_transient_grid,
@@ -85775,44 +85832,44 @@ void cm848_initializeCruiseControlDroopGains(void)
     cruise_top_droop_gain = cruise_top_droop_gain_for_rear_axle_ratio_low;
     road_speed_governor_top_droop_gain = road_speed_governor_top_droop_gain_for_rear_axle_ratio_low;
   }
-  uVar2 = governor_cruise_rampRate_calc
+  uVar2 = cm848_calculateEngineSpeedAtVehicleSpeed
                     (cruise_droop_reference_speed - cruise_top_droop_width_cal,
                      rear_axle_ratio_high_cal);
-  DAT_003fcff2 = governor_cruise_tableLimit_calc
+  DAT_003fcff2 = cm848_calculateTopDroopGain
                            (cruise_top_droop_width_cal,&local_30,uVar2,
                             four_dimensional_fueling_transient_x_axis,400,
                             four_dimensional_fueling_transient_y_axis,
                             four_dimensional_fueling_transient_grid,4);
-  uVar2 = governor_cruise_rampRate_calc
+  uVar2 = cm848_calculateEngineSpeedAtVehicleSpeed
                     (cruise_droop_reference_speed - road_speed_governor_top_droop_width_cal,
                      rear_axle_ratio_high_cal);
-  DAT_003fcff6 = governor_cruise_tableLimit_calc
+  DAT_003fcff6 = cm848_calculateTopDroopGain
                            (road_speed_governor_top_droop_width_cal,&local_30,uVar2,
                             four_dimensional_fueling_transient_x_axis,400,
                             four_dimensional_fueling_transient_y_axis,
                             four_dimensional_fueling_transient_grid,4);
   wVar1 = cruise_bottom_droop_offset;
-  if ((uint)governor_cruise_fuel_demand_min < (uint)cruise_bottom_droop_offset) {
-    uVar4 = (uint)cruise_bottom_droop_offset - (uint)governor_cruise_fuel_demand_min;
+  if ((uint)cruise_governor_no_fuel_fueling < (uint)cruise_bottom_droop_offset) {
+    uVar4 = (uint)cruise_bottom_droop_offset - (uint)cruise_governor_no_fuel_fueling;
     iVar5 = (uVar4 & 0xffff) * 0x22c8;
     iVar3 = 0x410000;
-    uVar2 = governor_cruise_rampScale_calc(cruise_bottom_droop_width_cal,iVar5,uVar4);
+    uVar2 = cm848_calculateBottomDroopGain(cruise_bottom_droop_width_cal,iVar5,uVar4);
     *(undefined2 *)(iVar3 + -0x4964) = uVar2;
     road_speed_governor_bottom_droop_gain =
-         governor_cruise_rampScale_calc(road_speed_governor_bottom_droop_width_cal,iVar5,uVar4);
+         cm848_calculateBottomDroopGain(road_speed_governor_bottom_droop_width_cal,iVar5,uVar4);
   }
   else {
     cruise_bottom_droop_gain = 0;
     road_speed_governor_bottom_droop_gain = 0;
   }
-  vehicle_speed_limit_fueling_top_droop_offset = cruise_speed_offset_default;
-  cruise_control_fueling_top_droop_offset = cruise_speed_offset_default;
-  vehicle_speed_limit_fueling_bottom_droop_offset = wVar1;
+  road_speed_governor_fueling_top_droop_offset = cruise_top_droop_offset_tau_0;
+  cruise_control_fueling_top_droop_offset = cruise_top_droop_offset_tau_0;
+  road_speed_governor_fueling_bottom_droop_offset = wVar1;
   cruise_control_fueling_bottom_droop_offset = wVar1;
   cruise_control_fueling_top_droop_gain = 0;
   cruise_control_fueling_bottom_droop_gain = 0;
-  vehicle_speed_limit_fueling_bottom_droop_gain = road_speed_governor_bottom_droop_gain;
-  vehicle_speed_limit_fueling_top_droop_gain = road_speed_governor_top_droop_gain;
+  road_speed_governor_fueling_bottom_droop_gain = road_speed_governor_bottom_droop_gain;
+  road_speed_governor_fueling_top_droop_gain = road_speed_governor_top_droop_gain;
   cruise_top_droop_gain = cruise_top_droop_gain_for_rear_axle_ratio_low;
   road_speed_governor_top_droop_gain = road_speed_governor_top_droop_gain_for_rear_axle_ratio_low;
   return;
@@ -85821,45 +85878,53 @@ void cm848_initializeCruiseControlDroopGains(void)
 
 
 //
-// Function: cm848_calculateCruisePidRateGainScale @ 0x005250c0
+// Function: cm848_calculateCruiseGovernorSpeedErrorGain @ 0x005250c0
 //
 
-/* Calculates cruise_pid_rate_gain_scale = ((tire_revolutions_per_mile_cal x rear_axle_ratio / 60) x
-   100 >> 7) x cruise_pid_rate_gain_scale_multiplier >> 10, capped at
-   cruise_pid_rate_gain_scale_upper_limit (4900). governor_cruise_speedError_torqueAdj multiplies
-   the cruise speed error x cruise_pid_rate_gain_working / 1000 by it (>> 7, clamped to +-10000) and
-   cm848_runCruiseAndVehicleSpeedLimitGovernor does the same to its rate term. Called from
-   cm848_presetCruiseAndVehicleSpeedLimitGovernor and cm848_runCruiseAndVehicleSpeedLimitGovernor.
-   (was governor_cruise_torqueLimit_calc) */
+/* Calculates cruise_governor_speed_error_gain = ((tire_revolutions_per_mile_cal x rear_axle_ratio /
+   60) x 100 >> 7) x cruise_governor_speed_error_gain_multiplier >> 10, capped at
+   cruise_governor_speed_error_gain_tool_upper_limit (was cm848_calculateCruisePidRateGainScale) |
+   earlier note: Calculates cruise_governor_speed_error_gain = ((tire_revolutions_per_mile_cal x
+   rear_axle_ratio / 60) x 100 >> 7) x cruise_governor_speed_error_gain_multiplier >> 10, capped at
+   cruise_governor_speed_error_gain_tool_upper_limit (4900).
+   cm848_calculateCruiseGovernorEngineSpeedError multiplies the cruise speed error x
+   cruise_governor_gear_ratio_gain / 1000 by it (>> 7, clamped to +-10000) and
+   cm848_runCruiseAndRoadSpeedGovernor does the same to its rate term. Called from
+   cm848_presetCruiseAndRoadSpeedGovernor and cm848_runCruiseAndRoadSpeedGovernor. (was
+   governor_cruise_torqueLimit_calc) */
 
-void cm848_calculateCruisePidRateGainScale(void)
+void cm848_calculateCruiseGovernorSpeedErrorGain(void)
 
 {
   uint uVar1;
   
   uVar1 = ((((uint)tire_revolutions_per_mile_cal * (uint)rear_axle_ratio) / 0x3c & 0xffff) * 100 >>
-          7) * (uint)cruise_pid_rate_gain_scale_multiplier >> 10;
-  if (cruise_pid_rate_gain_scale_upper_limit < uVar1) {
-    uVar1 = (uint)cruise_pid_rate_gain_scale_upper_limit;
+          7) * (uint)cruise_governor_speed_error_gain_multiplier >> 10;
+  if (cruise_governor_speed_error_gain_tool_upper_limit < uVar1) {
+    uVar1 = (uint)cruise_governor_speed_error_gain_tool_upper_limit;
   }
-  cruise_pid_rate_gain_scale = (word)uVar1;
+  cruise_governor_speed_error_gain = (word)uVar1;
   return;
 }
 
 
 
 //
-// Function: governor_cruise_speedError_torqueAdj @ 0x00525134
+// Function: cm848_calculateCruiseGovernorEngineSpeedError @ 0x00525134
 //
 
-int governor_cruise_speedError_torqueAdj(void)
+/* The speed error after droop in engine speed units: x cruise_governor_gear_ratio_gain / 1000 (at
+   least +-1 while the error is not 0), x cruise_governor_speed_error_gain >> 7, clamped to +-10000
+   (was governor_cruise_speedError_torqueAdj) */
+
+int cm848_calculateCruiseGovernorEngineSpeedError(void)
 
 {
   int iVar1;
   short sStack_6;
   
-  iVar1 = (int)governor_cruise_speed_error_net;
-  sStack_6 = (short)((iVar1 * (short)cruise_pid_rate_gain_working) / 1000);
+  iVar1 = (int)cruise_governor_speed_error_after_droop;
+  sStack_6 = (short)((iVar1 * (short)cruise_governor_gear_ratio_gain) / 1000);
   if ((sStack_6 == 0) && (iVar1 != 0)) {
     if (iVar1 < 1) {
       sStack_6 = -1;
@@ -85868,7 +85933,7 @@ int governor_cruise_speedError_torqueAdj(void)
       sStack_6 = 1;
     }
   }
-  iVar1 = (int)sStack_6 * (uint)cruise_pid_rate_gain_scale;
+  iVar1 = (int)sStack_6 * (uint)cruise_governor_speed_error_gain;
   if (iVar1 < 0x138800) {
     if (iVar1 < -0x1387ff) {
       sStack_6 = -10000;
@@ -85886,17 +85951,23 @@ int governor_cruise_speedError_torqueAdj(void)
 
 
 //
-// Function: cm848_presetCruiseAndVehicleSpeedLimitGovernor @ 0x005251e4
+// Function: cm848_presetCruiseAndRoadSpeedGovernor @ 0x005251e4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* The bumpless start of the cruise / vehicle speed limit governor (also from
-   cm848_arbitrateGovernedFueling): selects the gain zone (cm848_selectCruiseControlGainZone), sets
-   the ramp target and reference speed (the vehicle speed limit in state 10, else the cruise command
-   or the vehicle speed plus the droop error delta), the clamped speed error, and presets the
-   integrator from the present fueling (was protectionRampRateControl) */
+/* The bumpless start of the cruise / road speed governor (also from
+   cm848_arbitrateGovernedFueling): selects the gain set, sets the reference speed
+   (road_speed_governor_reference_speed in state 10, else cruise_speed_command, or the road speed on
+   RESUME / an external reset, plus the droop error delta), the clamped speed errors, the filter
+   states, the fueling maximum pointer and the integrator / sump from the present fueling (was
+   cm848_presetCruiseAndVehicleSpeedLimitGovernor) | earlier note: The bumpless start of the cruise
+   / vehicle speed limit governor (also from cm848_arbitrateGovernedFueling): selects the gain zone
+   (cm848_selectCruiseGovernorGainSet), sets the ramp target and reference speed (the vehicle speed
+   limit in state 10, else the cruise command or the vehicle speed plus the droop error delta), the
+   clamped speed error, and presets the integrator from the present fueling (was
+   protectionRampRateControl) */
 
-void cm848_presetCruiseAndVehicleSpeedLimitGovernor(void)
+void cm848_presetCruiseAndRoadSpeedGovernor(void)
 
 {
   word wVar1;
@@ -85910,47 +85981,47 @@ void cm848_presetCruiseAndVehicleSpeedLimitGovernor(void)
   undefined4 local_10;
   
   cruise_governor_preset_this_pass_flag = 1;
-  cm848_selectCruiseControlGainZone(cruise_fuel_demand_ema);
+  cm848_selectCruiseGovernorGainSet(cruise_droop_fueling_filtered);
   wVar5 = vehicle_speed_rise_limited;
   iVar4 = (int)(short)adjusted_user_fueling_state;
   iVar7 = (int)(short)vehicle_speed_rise_limited;
-  pwVar3 = &cruise_confirm_flag_a;
+  pwVar3 = &cruise_governor_external_reset_flag;
   if (iVar4 == 10) {
-    governor_cruise_speed_error_working = cruise_speed_limit_working - vehicle_speed_rise_limited;
-    wVar1 = cruise_speed_error_clamp_max;
-    if ((cruise_speed_error_clamp_max <= governor_cruise_speed_error_working) ||
-       (wVar1 = cruise_speed_error_clamp_min,
-       governor_cruise_speed_error_working < cruise_speed_error_clamp_min)) goto LAB_005252ec;
+    cruise_governor_speed_error = road_speed_governor_reference_speed - vehicle_speed_rise_limited;
+    wVar1 = cruise_governor_speed_error_maximum;
+    if ((cruise_governor_speed_error_maximum <= cruise_governor_speed_error) ||
+       (wVar1 = cruise_governor_speed_error_minimum,
+       cruise_governor_speed_error < cruise_governor_speed_error_minimum)) goto LAB_005252ec;
   }
   else {
     if ((cruise_control_state == CRUISE_RESUME) ||
-       (wVar1 = cruise_speed_command, cruise_confirm_flag_a != 0)) {
+       (wVar1 = cruise_speed_command, cruise_governor_external_reset_flag != 0)) {
       wVar1 = vehicle_speed_rise_limited;
     }
-    cruise_ramp_target_speed = wVar1 + cruise_droop_speed_error_delta;
-    cruise_governor_reference_speed = cruise_ramp_target_speed;
+    cruise_rate_limited_reference_speed = wVar1 + cruise_droop_speed_error_delta;
+    cruise_governor_reference_speed = cruise_rate_limited_reference_speed;
     wVar1 = cruise_droop_speed_error_delta;
 LAB_005252ec:
-    governor_cruise_speed_error_working = wVar1;
+    cruise_governor_speed_error = wVar1;
   }
-  if ((int)governor_cruise_speed_error_working < (short)cruise_droop_speed_error_delta + 0xa00) {
-    if ((short)cruise_droop_speed_error_delta + -0xa00 < (int)governor_cruise_speed_error_working) {
-      governor_cruise_speed_error_net =
-           governor_cruise_speed_error_working - cruise_droop_speed_error_delta;
+  if ((int)cruise_governor_speed_error < (short)cruise_droop_speed_error_delta + 0xa00) {
+    if ((short)cruise_droop_speed_error_delta + -0xa00 < (int)cruise_governor_speed_error) {
+      cruise_governor_speed_error_after_droop =
+           cruise_governor_speed_error - cruise_droop_speed_error_delta;
     }
     else {
-      governor_cruise_speed_error_net = -0xa00;
+      cruise_governor_speed_error_after_droop = -0xa00;
     }
   }
   else {
-    governor_cruise_speed_error_net = 0xa00;
+    cruise_governor_speed_error_after_droop = 0xa00;
   }
-  cm848_calculateCruisePidRateGainScale();
-  sVar2 = governor_cruise_speedError_torqueAdj();
+  cm848_calculateCruiseGovernorSpeedErrorGain();
+  sVar2 = cm848_calculateCruiseGovernorEngineSpeedError();
   DAT_003fd01a = (int)sVar2 << 0x10;
   DAT_003fd02a = iVar7 << 0x10;
-  cruise_setpoint_interp_prev = wVar5;
-  local_10 = (int)sVar2 * (int)cruise_pid_kp_working >> 0xc;
+  cruise_governor_filtered_road_speed = wVar5;
+  local_10 = (int)sVar2 * (int)cruise_pid_proportional_gain >> 0xc;
   if ((int)local_10 < 0x1700) {
     if ((int)local_10 < -0x16ff) {
       uVar8 = 0xe900;
@@ -85962,65 +86033,70 @@ LAB_005252ec:
 LAB_00525398:
     local_10 = (uint)uVar8;
   }
-  wVar5 = cruise_fuel_demand_stable_ref;
-  if (((cruise_fuel_demand_mode_prev == FUELING_STATE_VARIABLE_SPEED_GOVERNOR) ||
-      (cruise_fuel_demand_mode_prev == FUELING_STATE_CRUISE_CONTROL)) ||
-     (cruise_fuel_demand_mode_prev == FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE)) {
+  wVar5 = cruise_governor_preset_fueling;
+  if (((cruise_governor_fueling_state_previous == FUELING_STATE_VARIABLE_SPEED_GOVERNOR) ||
+      (cruise_governor_fueling_state_previous == FUELING_STATE_CRUISE_CONTROL)) ||
+     (cruise_governor_fueling_state_previous == FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE)) {
     if (iVar4 == 10) {
-      wVar5 = final_fueling - vehicle_speed_limit_integrator_preset_fuel_offset;
+      wVar5 = final_fueling - road_speed_governor_integrator_preset_fuel_offset;
     }
 LAB_0052540c:
-    governor_cruise_fuel_demand_delta = final_fueling - wVar5;
+    cruise_governor_sump_fuel = final_fueling - wVar5;
     cruise_pid_integrator_q16 = wVar5 - local_10._2_2_;
   }
   else {
-    if (((cruise_fuel_demand_mode_prev == FUELING_STATE_TSC1_SPEED_CONTROL) ||
-        (cruise_fuel_demand_mode_prev == FUELING_STATE_TSC1_TORQUE_CONTROL)) ||
-       ((cruise_fuel_demand_mode_prev == FUELING_STATE_UNIDENTIFIED_37 ||
-        (cruise_fuel_demand_mode_prev == FUELING_STATE_UNIDENTIFIED_38)))) goto LAB_0052540c;
-    governor_cruise_fuel_demand_delta = 0;
+    if (((cruise_governor_fueling_state_previous == FUELING_STATE_TSC1_SPEED_CONTROL) ||
+        (cruise_governor_fueling_state_previous == FUELING_STATE_TSC1_TORQUE_CONTROL)) ||
+       ((cruise_governor_fueling_state_previous == FUELING_STATE_UNIDENTIFIED_37 ||
+        (cruise_governor_fueling_state_previous == FUELING_STATE_UNIDENTIFIED_38))))
+    goto LAB_0052540c;
+    cruise_governor_sump_fuel = 0;
     cruise_pid_integrator_q16 = final_fueling - local_10._2_2_;
   }
   if (algorithm_enable_flags_18_cal.programmable_power_enable == 0) {
-    _cruise_speed_upper_limit_ptr = &cruise_fuel_demand_ceiling;
+    _cruise_speed_upper_limit_ptr = &cruise_governor_fueling_maximum;
   }
   else {
     _cruise_speed_upper_limit_ptr = &current_horsepower_peak_fueling_cal;
   }
   pwVar6 = _cruise_speed_upper_limit_ptr;
   if ((short)cruise_pid_integrator_q16 < (short)*_cruise_speed_upper_limit_ptr) {
-    if ((short)governor_cruise_fuel_demand_min <= (short)cruise_pid_integrator_q16)
+    if ((short)cruise_governor_no_fuel_fueling <= (short)cruise_pid_integrator_q16)
     goto LAB_005254b0;
-    pwVar6 = &governor_cruise_fuel_demand_min;
+    pwVar6 = &cruise_governor_no_fuel_fueling;
   }
   cruise_pid_integrator_q16 = *pwVar6;
 LAB_005254b0:
   DAT_003fd034 = 0;
   cruise_pid_integral_fuel = cruise_pid_integrator_q16;
-  cruise_fuel_demand_prev = final_fueling;
+  cruise_governor_pid_fueling = final_fueling;
   DAT_003fd01e = DAT_003fd01a;
   DAT_003fd02e = DAT_003fd02a;
   *pwVar3 = 0;
-  cruise_rate_correction_holdoff = cruise_rate_correction_holdoff_initial;
-  cruise_rate_correction_countdown = 4;
+  cruise_governor_sump_holdoff_countdown = cruise_governor_sump_prevent_time;
+  cruise_governor_sump_activation_countdown = 4;
   return;
 }
 
 
 
 //
-// Function: cm848_runCruiseAndVehicleSpeedLimitGovernor @ 0x00525504
+// Function: cm848_runCruiseAndRoadSpeedGovernor @ 0x00525504
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* The cruise control / vehicle speed limit (road speed governor) PID, run every pass from
-   cm848_periodicTaskSet_outputs: the reference and ramp target speeds, the speed error and its rate
-   term, the proportional and integral (Q16) terms, the fuel demand delta into
+/* The cruise control / road speed governor PID, every pass from cm848_periodicTaskSet_outputs: the
+   droop and preset fueling filters, the preset fueling window, the rate-limited reference, the
+   speed error and its engine speed form, the proportional / integral (Q16) / derivative terms, the
+   sump, and cruise_governor_fueling into adjusted_user_fueling; presets the governor on an external
+   reset or an ACCELERATE / COAST release (was cm848_runCruiseAndVehicleSpeedLimitGovernor) |
+   earlier note: The cruise control / vehicle speed limit (road speed governor) PID, run every pass
+   from cm848_periodicTaskSet_outputs: the reference and ramp target speeds, the speed error and its
+   rate term, the proportional and integral (Q16) terms, the fuel demand delta into
    adjusted_user_fueling, the stable-speed and rate-correction timers; it presets the governor
-   (cm848_presetCruiseAndVehicleSpeedLimitGovernor) when needed (was
-   protectionOutputActuatorControl) */
+   (cm848_presetCruiseAndRoadSpeedGovernor) when needed (was protectionOutputActuatorControl) */
 
-void cm848_runCruiseAndVehicleSpeedLimitGovernor(void)
+void cm848_runCruiseAndRoadSpeedGovernor(void)
 
 {
   FUELING_STATE FVar1;
@@ -86040,17 +86116,17 @@ void cm848_runCruiseAndVehicleSpeedLimitGovernor(void)
   word wStack_36;
   int local_34;
   
-  dVar3 = exponentialMovingAverage((uint)final_fueling,&ema_filter_state_t_003fd00a);
-  cruise_fuel_demand_ema = (word)dVar3;
-  dVar3 = exponentialMovingAverage((uint)final_fueling,&ema_filter_state_t_003fd03c);
-  wVar2 = cruise_setpoint_interp_prev;
+  dVar3 = exponentialMovingAverage((uint)final_fueling,&cruise_droop_fueling_filter);
+  cruise_droop_fueling_filtered = (word)dVar3;
+  dVar3 = exponentialMovingAverage((uint)final_fueling,&cruise_governor_preset_fueling_filter);
+  wVar2 = cruise_governor_filtered_road_speed;
   DAT_003fd044 = (word)dVar3;
-  cruise_setpoint_interp_prev =
-       cm848_interpolateTableLinearStep
+  cruise_governor_filtered_road_speed =
+       cm848_secondOrderFilterUnsigned
                  (vehicle_speed_rise_limited,
                   &PTR_cruise_pid_derivative_filter_coefficient_1_003fd022);
   FVar1 = adjusted_user_fueling_state;
-  iVar9 = (int)(short)(cruise_setpoint_interp_prev - wVar2);
+  iVar9 = (int)(short)(cruise_governor_filtered_road_speed - wVar2);
   if (iVar9 < 0x67) {
     if (iVar9 < -0x66) {
       iVar9 = -0x66;
@@ -86063,90 +86139,90 @@ void cm848_runCruiseAndVehicleSpeedLimitGovernor(void)
         (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_TORQUE_CONTROL)) ||
        (operating_mode_governor_output.mode_code == FUELING_STATE_UNIDENTIFIED_37)) ||
       ((operating_mode_governor_output.mode_code == FUELING_STATE_UNIDENTIFIED_38 ||
-       ((short)cruise_stable_speed_acceleration_threshold < iVar9)))) ||
-     (iVar9 < -(int)(short)cruise_stable_speed_acceleration_threshold)) {
+       ((short)cruise_governor_preset_fueling_acceleration_threshold < iVar9)))) ||
+     (iVar9 < -(int)(short)cruise_governor_preset_fueling_acceleration_threshold)) {
 LAB_00525668:
-    cruise_stable_speed_countdown = cruise_stable_speed_countdown_initial;
+    cruise_governor_preset_fueling_countdown = cruise_governor_preset_fueling_time;
   }
   else {
-    if (cruise_stable_speed_countdown_initial == cruise_stable_speed_countdown) {
+    if (cruise_governor_preset_fueling_time == cruise_governor_preset_fueling_countdown) {
       DAT_003fd046 = DAT_003fd044;
     }
-    if (cruise_stable_speed_countdown != 0) {
-      cruise_stable_speed_countdown = cruise_stable_speed_countdown - 1;
+    if (cruise_governor_preset_fueling_countdown != 0) {
+      cruise_governor_preset_fueling_countdown = cruise_governor_preset_fueling_countdown - 1;
     }
-    if ((cruise_stable_speed_countdown == 0) && (cruise_speed_min_cal < vehicle_speed_rise_limited))
-    {
+    if ((cruise_governor_preset_fueling_countdown == 0) &&
+       (cruise_minimum_set_speed < vehicle_speed_rise_limited)) {
       DAT_003fd04e = '\x01';
-      cruise_fuel_demand_stable_ref = DAT_003fd046;
+      cruise_governor_preset_fueling = DAT_003fd046;
       goto LAB_00525668;
     }
   }
   if (DAT_003fd04e == '\0') {
-    cruise_fuel_demand_stable_ref = final_fueling;
+    cruise_governor_preset_fueling = final_fueling;
   }
-  if (cruise_confirm_flag_b == 0) {
-    cruise_ramp_target_prev = cruise_ramp_target_speed;
+  if (cruise_reference_rate_limit_preset_flag == 0) {
+    cruise_rate_limited_reference_speed_previous = cruise_rate_limited_reference_speed;
   }
   else {
-    cruise_ramp_target_prev = vehicle_speed_rise_limited + cruise_droop_speed_error_delta;
-    cruise_confirm_flag_b = 0;
+    cruise_rate_limited_reference_speed_previous =
+         vehicle_speed_rise_limited + cruise_droop_speed_error_delta;
+    cruise_reference_rate_limit_preset_flag = 0;
   }
   if ((adjusted_user_fueling_state != FUELING_STATE_CRUISE_CONTROL) &&
-     (adjusted_user_fueling_state != FUELING_STATE_VEHICLE_SPEED_LIMIT)) goto LAB_00525db0;
-  if (cruise_confirm_flag_a == 1) {
-    cm848_presetCruiseAndVehicleSpeedLimitGovernor();
+     (adjusted_user_fueling_state != FUELING_STATE_ROAD_SPEED_GOVERNOR)) goto LAB_00525db0;
+  if (cruise_governor_external_reset_flag == 1) {
+    cm848_presetCruiseAndRoadSpeedGovernor();
     goto LAB_00525db0;
   }
-  cm848_calculateCruisePidRateGainScale();
+  cm848_calculateCruiseGovernorSpeedErrorGain();
   if (FVar1 == FUELING_STATE_CRUISE_CONTROL) {
     uVar5 = (uint)cruise_speed_command;
-    cruise_ramp_target_speed = cruise_speed_command;
-    uVar14 = (uint)cruise_ramp_target_prev;
+    cruise_rate_limited_reference_speed = cruise_speed_command;
+    uVar14 = (uint)cruise_rate_limited_reference_speed_previous;
     if (uVar14 < uVar5) {
-      wVar2 = (word)(uVar14 + cruise_ramp_target_speed_rate_limit_increase);
-      if ((uVar14 + cruise_ramp_target_speed_rate_limit_increase & 0xffff) < uVar5) {
+      wVar2 = (word)(uVar14 + cruise_reference_speed_rate_limit_increase);
+      if ((uVar14 + cruise_reference_speed_rate_limit_increase & 0xffff) < uVar5) {
 LAB_005257a0:
-        cruise_ramp_target_speed = wVar2;
+        cruise_rate_limited_reference_speed = wVar2;
       }
     }
-    else if ((uVar5 < uVar14) && (uVar5 + cruise_ramp_target_speed_rate_limit_decrease < uVar14)) {
-      wVar2 = cruise_ramp_target_prev - cruise_ramp_target_speed_rate_limit_decrease;
+    else if ((uVar5 < uVar14) && (uVar5 + cruise_reference_speed_rate_limit_decrease < uVar14)) {
+      wVar2 = cruise_rate_limited_reference_speed_previous -
+              cruise_reference_speed_rate_limit_decrease;
       goto LAB_005257a0;
     }
-    cruise_governor_reference_speed = cruise_ramp_target_speed;
+    cruise_governor_reference_speed = cruise_rate_limited_reference_speed;
     if (((cruise_control_state_prev == CRUISE_ACCELERATE) &&
         (cruise_control_state != CRUISE_ACCELERATE)) ||
-       ((cruise_control_state_prev == CRUISE_DECELERATE &&
-        (cruise_control_state != CRUISE_DECELERATE)))) {
-      cm848_presetCruiseAndVehicleSpeedLimitGovernor();
+       ((cruise_control_state_prev == CRUISE_COAST && (cruise_control_state != CRUISE_COAST)))) {
+      cm848_presetCruiseAndRoadSpeedGovernor();
     }
   }
   else {
-    cruise_governor_reference_speed = cruise_speed_limit_working;
+    cruise_governor_reference_speed = road_speed_governor_reference_speed;
   }
-  governor_cruise_speed_error_working = cruise_governor_reference_speed - vehicle_speed_rise_limited
-  ;
-  sVar13 = cruise_speed_error_clamp_max;
-  if ((cruise_speed_error_clamp_max < governor_cruise_speed_error_working) ||
-     (sVar13 = cruise_speed_error_clamp_min,
-     governor_cruise_speed_error_working < cruise_speed_error_clamp_min)) {
-    governor_cruise_speed_error_working = sVar13;
+  cruise_governor_speed_error = cruise_governor_reference_speed - vehicle_speed_rise_limited;
+  sVar13 = cruise_governor_speed_error_maximum;
+  if ((cruise_governor_speed_error_maximum < cruise_governor_speed_error) ||
+     (sVar13 = cruise_governor_speed_error_minimum,
+     cruise_governor_speed_error < cruise_governor_speed_error_minimum)) {
+    cruise_governor_speed_error = sVar13;
   }
-  cm848_selectCruiseControlGainZone(cruise_fuel_demand_ema);
-  if ((int)governor_cruise_speed_error_working < (short)cruise_droop_speed_error_delta + 0xa00) {
-    if ((short)cruise_droop_speed_error_delta + -0xa00 < (int)governor_cruise_speed_error_working) {
-      governor_cruise_speed_error_net =
-           governor_cruise_speed_error_working - cruise_droop_speed_error_delta;
+  cm848_selectCruiseGovernorGainSet(cruise_droop_fueling_filtered);
+  if ((int)cruise_governor_speed_error < (short)cruise_droop_speed_error_delta + 0xa00) {
+    if ((short)cruise_droop_speed_error_delta + -0xa00 < (int)cruise_governor_speed_error) {
+      cruise_governor_speed_error_after_droop =
+           cruise_governor_speed_error - cruise_droop_speed_error_delta;
     }
     else {
-      governor_cruise_speed_error_net = -0xa00;
+      cruise_governor_speed_error_after_droop = -0xa00;
     }
   }
   else {
-    governor_cruise_speed_error_net = 0xa00;
+    cruise_governor_speed_error_after_droop = 0xa00;
   }
-  sVar4 = governor_cruise_speedError_torqueAdj();
+  sVar4 = cm848_calculateCruiseGovernorEngineSpeedError();
   sVar4 = cm848_secondOrderFilter
                     ((int)sVar4,&PTR_cruise_pid_driveline_filter_coefficient_1_003fd012);
   iVar8 = (int)sVar4;
@@ -86158,48 +86234,48 @@ LAB_005257a0:
   else {
     iVar8 = 12000;
   }
-  wStack_36 = (word)(iVar9 * (short)cruise_pid_rate_gain_working >> 5);
-  iVar10 = (int)(short)wStack_36 * (uint)cruise_pid_rate_gain_scale;
+  wStack_36 = (word)(iVar9 * (short)cruise_governor_gear_ratio_gain >> 5);
+  iVar10 = (int)(short)wStack_36 * (uint)cruise_governor_speed_error_gain;
   iVar11 = (int)cruise_pid_differential_path_maximum;
   if ((iVar10 < iVar11 * 0x16) &&
      (iVar11 = (int)cruise_pid_differential_path_minimum, iVar11 * 0x16 < iVar10)) {
     iVar11 = (int)(short)(iVar10 / 0x16);
   }
-  iVar10 = iVar8 * cruise_pid_kp_working >> 0xc;
+  iVar10 = iVar8 * cruise_pid_proportional_gain >> 0xc;
   if (iVar10 < 0x7fff) {
     if (iVar10 < -0x7fff) {
-      cruise_pid_p_term_working = 0x8000;
+      cruise_pid_proportional_fuel = 0x8000;
     }
     else {
       wStack_36 = (word)iVar10;
-      cruise_pid_p_term_working = wStack_36;
+      cruise_pid_proportional_fuel = wStack_36;
     }
   }
   else {
-    cruise_pid_p_term_working = 0x7fff;
+    cruise_pid_proportional_fuel = 0x7fff;
   }
-  iVar12 = (int)(short)cruise_pid_p_term_working;
-  wStack_36 = (word)(iVar11 * cruise_pid_kd_working >> 0xf);
+  iVar12 = (int)(short)cruise_pid_proportional_fuel;
+  wStack_36 = (word)(iVar11 * cruise_pid_derivative_gain >> 0xf);
   iVar7 = (int)(short)wStack_36;
   cruise_pid_derivative_fuel = wStack_36;
-  iVar10 = ((int)(short)final_fueling - (int)(short)cruise_fuel_demand_prev) *
+  iVar10 = ((int)(short)final_fueling - (int)(short)cruise_governor_pid_fueling) *
            (int)cruise_pid_integral_adjustment_gain * 2;
   local_34 = 0x6e66666;
   if ((iVar10 < 0x6e66667) && (local_34 = iVar10, iVar10 < -0x6e66666)) {
     local_34 = -0x6e66666;
   }
   cruise_pid_integral_adjustment_fuel = local_34._0_2_;
-  if (cruise_zone_transition_flag != 0) {
-    iVar10 = (((short)cruise_fuel_demand_prev - iVar12) + iVar7) -
-             (int)governor_cruise_fuel_demand_delta;
+  if (cruise_governor_bumpless_transfer_flag != 0) {
+    iVar10 = (((short)cruise_governor_pid_fueling - iVar12) + iVar7) -
+             (int)cruise_governor_sump_fuel;
     pwVar6 = _cruise_speed_upper_limit_ptr;
     if ((int)(uint)*_cruise_speed_upper_limit_ptr < iVar10) {
 LAB_00525a60:
       wStack_36 = *pwVar6;
     }
     else {
-      if (iVar10 < (int)(uint)governor_cruise_fuel_demand_min) {
-        pwVar6 = &governor_cruise_fuel_demand_min;
+      if (iVar10 < (int)(uint)cruise_governor_no_fuel_fueling) {
+        pwVar6 = &cruise_governor_no_fuel_fueling;
         goto LAB_00525a60;
       }
       wStack_36 = (word)iVar10;
@@ -86207,52 +86283,52 @@ LAB_00525a60:
     _cruise_pid_integrator_q16 = (uint)wStack_36 << 0x10;
   }
   _cruise_pid_integrator_q16 =
-       ((_cruise_pid_integrator_q16 + iVar8 * cruise_pid_ki_working * 4) -
-       (iVar11 * cruise_pid_rate_integral_gain_working >> 4)) + local_34;
-  if (cruise_rate_correction_holdoff == 0) {
+       ((_cruise_pid_integrator_q16 + iVar8 * cruise_pid_integral_gain * 4) -
+       (iVar11 * cruise_pid_integral_acceleration_gain >> 4)) + local_34;
+  if (cruise_governor_sump_holdoff_countdown == 0) {
     DAT_003fd057 = (short)(iVar9 << 5) -
-                   (short)(((int)cruise_rate_correction_threshold_gain *
-                           (int)governor_cruise_speed_error_net) / 0x19);
-    if ((DAT_00408e7c < DAT_003fd057) && ((int)governor_cruise_speed_error_net < (int)DAT_00408e7e))
-    {
-      if (cruise_rate_correction_countdown == 0) {
-        cruise_rate_correction_trigger_flag = 1;
+                   (short)(((int)cruise_governor_sump_threshold_gain *
+                           (int)cruise_governor_speed_error_after_droop) / 0x19);
+    if ((DAT_00408e7c < DAT_003fd057) &&
+       ((int)cruise_governor_speed_error_after_droop < (int)DAT_00408e7e)) {
+      if (cruise_governor_sump_activation_countdown == 0) {
+        cruise_governor_sump_trigger_flag = 1;
       }
       else {
-        cruise_rate_correction_trigger_flag = 0;
-        cruise_rate_correction_countdown = cruise_rate_correction_countdown - 1;
+        cruise_governor_sump_trigger_flag = 0;
+        cruise_governor_sump_activation_countdown = cruise_governor_sump_activation_countdown - 1;
       }
     }
     else {
-      cruise_rate_correction_countdown = 4;
-      cruise_rate_correction_trigger_flag = 0;
+      cruise_governor_sump_activation_countdown = 4;
+      cruise_governor_sump_trigger_flag = 0;
     }
-    if (cruise_rate_correction_trigger_flag != 0) {
-      cruise_speed_rate_term = cruise_rate_correction_initial_fuel_gain * (short)iVar9;
-      if ((short)cruise_speed_rate_term < 0xb80) {
-        if ((short)cruise_speed_rate_term < -0xb80) {
-          cruise_speed_rate_term = 0xf480;
+    if (cruise_governor_sump_trigger_flag != 0) {
+      cruise_governor_sump_trigger_fuel = cruise_governor_sump_fuel_initial_gain * (short)iVar9;
+      if ((short)cruise_governor_sump_trigger_fuel < 0xb80) {
+        if ((short)cruise_governor_sump_trigger_fuel < -0xb80) {
+          cruise_governor_sump_trigger_fuel = 0xf480;
         }
       }
       else {
-        cruise_speed_rate_term = 0xb80;
+        cruise_governor_sump_trigger_fuel = 0xb80;
       }
       _cruise_pid_integrator_q16 =
-           _cruise_pid_integrator_q16 + (short)cruise_speed_rate_term * -0x10000;
-      cruise_rate_correction_holdoff = cruise_rate_correction_holdoff_initial;
-      governor_cruise_fuel_demand_delta = cruise_speed_rate_term;
+           _cruise_pid_integrator_q16 + (short)cruise_governor_sump_trigger_fuel * -0x10000;
+      cruise_governor_sump_holdoff_countdown = cruise_governor_sump_prevent_time;
+      cruise_governor_sump_fuel = cruise_governor_sump_trigger_fuel;
       goto LAB_00525c1c;
     }
   }
   else {
-    cruise_rate_correction_holdoff = cruise_rate_correction_holdoff - 1;
+    cruise_governor_sump_holdoff_countdown = cruise_governor_sump_holdoff_countdown - 1;
 LAB_00525c1c:
-    cruise_rate_correction_countdown = 4;
+    cruise_governor_sump_activation_countdown = 4;
   }
   pwVar6 = _cruise_speed_upper_limit_ptr;
   if ((short)cruise_pid_integrator_q16 < (short)*_cruise_speed_upper_limit_ptr) {
-    if ((short)cruise_pid_integrator_q16 < (short)governor_cruise_fuel_demand_min) {
-      pwVar6 = &governor_cruise_fuel_demand_min;
+    if ((short)cruise_pid_integrator_q16 < (short)cruise_governor_no_fuel_fueling) {
+      pwVar6 = &cruise_governor_no_fuel_fueling;
       goto LAB_00525c60;
     }
   }
@@ -86261,40 +86337,38 @@ LAB_00525c60:
     _cruise_pid_integrator_q16 = (uint)*pwVar6 << 0x10;
   }
   cruise_pid_integral_fuel = cruise_pid_integrator_q16;
-  if ((cruise_zone_transition_flag != 0) && (cruise_governor_preset_this_pass_flag == 0)) {
-    iVar9 = (((uint)cruise_fuel_demand_hold - iVar12) - (int)(short)cruise_pid_integrator_q16) +
+  if ((cruise_governor_bumpless_transfer_flag != 0) && (cruise_governor_preset_this_pass_flag == 0))
+  {
+    iVar9 = (((uint)cruise_governor_fueling - iVar12) - (int)(short)cruise_pid_integrator_q16) +
             iVar7;
     if (iVar9 < 0xb80) {
       if (iVar9 < -0xb7f) {
-        governor_cruise_fuel_demand_delta = -0xb80;
+        cruise_governor_sump_fuel = -0xb80;
       }
       else {
         wStack_36 = (word)iVar9;
-        governor_cruise_fuel_demand_delta = wStack_36;
+        cruise_governor_sump_fuel = wStack_36;
       }
     }
     else {
-      governor_cruise_fuel_demand_delta = 0xb80;
+      cruise_governor_sump_fuel = 0xb80;
     }
   }
-  iVar9 = (int)governor_cruise_fuel_demand_delta;
+  iVar9 = (int)cruise_governor_sump_fuel;
   if (iVar9 < 1) {
     if (iVar9 < 0) {
-      if (-(int)(short)governor_cruise_fuel_demand_delta_increment_rate < iVar9) goto LAB_00525d1c;
-      governor_cruise_fuel_demand_delta =
-           governor_cruise_fuel_demand_delta + governor_cruise_fuel_demand_delta_increment_rate;
+      if (-(int)(short)cruise_governor_sump_increment_rate < iVar9) goto LAB_00525d1c;
+      cruise_governor_sump_fuel = cruise_governor_sump_fuel + cruise_governor_sump_increment_rate;
     }
   }
-  else if (iVar9 < (short)governor_cruise_fuel_demand_delta_decrement_rate) {
+  else if (iVar9 < (short)cruise_governor_sump_decrement_rate) {
 LAB_00525d1c:
-    governor_cruise_fuel_demand_delta = 0;
+    cruise_governor_sump_fuel = 0;
   }
   else {
-    governor_cruise_fuel_demand_delta =
-         governor_cruise_fuel_demand_delta - governor_cruise_fuel_demand_delta_decrement_rate;
+    cruise_governor_sump_fuel = cruise_governor_sump_fuel - cruise_governor_sump_decrement_rate;
   }
-  iVar9 = ((iVar12 + (short)cruise_pid_integrator_q16) - iVar7) +
-          (int)governor_cruise_fuel_demand_delta;
+  iVar9 = ((iVar12 + (short)cruise_pid_integrator_q16) - iVar7) + (int)cruise_governor_sump_fuel;
   if (iVar9 < 0x2e00) {
     if (iVar9 < -0x24b) {
       wStack_36 = 0xfdb4;
@@ -86307,18 +86381,18 @@ LAB_00525d1c:
     wStack_36 = 0x2e00;
   }
   pwVar6 = _cruise_speed_upper_limit_ptr;
-  cruise_fuel_demand_prev = wStack_36;
+  cruise_governor_pid_fueling = wStack_36;
   if ((short)wStack_36 < (short)*_cruise_speed_upper_limit_ptr) {
-    adjusted_user_fueling = cruise_fuel_demand_floor;
-    cruise_fuel_demand_hold = cruise_fuel_demand_floor;
-    if ((short)wStack_36 <= (short)cruise_fuel_demand_floor) goto LAB_00525db0;
-    pwVar6 = &cruise_fuel_demand_prev;
+    adjusted_user_fueling = cruise_governor_fueling_minimum;
+    cruise_governor_fueling = cruise_governor_fueling_minimum;
+    if ((short)wStack_36 <= (short)cruise_governor_fueling_minimum) goto LAB_00525db0;
+    pwVar6 = &cruise_governor_pid_fueling;
   }
   adjusted_user_fueling = *pwVar6;
-  cruise_fuel_demand_hold = adjusted_user_fueling;
+  cruise_governor_fueling = adjusted_user_fueling;
 LAB_00525db0:
-  cruise_fuel_demand_mode_prev = adjusted_user_fueling_state;
-  governor_cruise_speedReference_update();
+  cruise_governor_fueling_state_previous = adjusted_user_fueling_state;
+  cm848_updateCruiseAndRoadSpeedGovernorDroops();
   cruise_control_state_prev = cruise_control_state;
   cruise_governor_preset_this_pass_flag = 0;
   return;
@@ -86327,13 +86401,17 @@ LAB_00525db0:
 
 
 //
-// Function: initCruiseConfirmFlags @ 0x00525de4
+// Function: cm848_initializeCruiseGovernorFilters @ 0x00525de4
 //
 
-void initCruiseConfirmFlags(void)
+/* Clears cruise_governor_external_reset_flag and points the driveline / derivative second order
+   filters and the droop / preset fueling EMA filters at their e2m 1186 / 1189 coefficients (was
+   initCruiseConfirmFlags) */
+
+void cm848_initializeCruiseGovernorFilters(void)
 
 {
-  cruise_confirm_flag_a = 0;
+  cruise_governor_external_reset_flag = 0;
   PTR_cruise_pid_driveline_filter_coefficient_1_003fd012 =
        (undefined *)&cruise_pid_driveline_filter_coefficient_1;
   PTR_cruise_pid_driveline_filter_coefficient_3_003fd016 =
@@ -86342,8 +86420,9 @@ void initCruiseConfirmFlags(void)
        (undefined *)&cruise_pid_derivative_filter_coefficient_1;
   PTR_cruise_pid_derivative_filter_coefficient_3_003fd026 =
        (undefined *)&cruise_pid_derivative_filter_coefficient_3;
-  ema_filter_state_t_003fd00a.coefficient = &WORD_00408e0a;
-  ema_filter_state_t_003fd03c.coefficient = &WORD_00408e70;
+  cruise_droop_fueling_filter.coefficient = &cruise_droop_fueling_filter_coefficient;
+  cruise_governor_preset_fueling_filter.coefficient =
+       &cruise_governor_preset_fueling_filter_coefficient;
   return;
 }
 
