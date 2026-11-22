@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 16:56:03 MST 2026
+// Generated: Sat Nov 21 17:41:24 MST 2026
 
 
 //
@@ -5939,8 +5939,8 @@ undefined4 cm848_validateWriteAuth(undefined4 scrambled_token)
   byte local_2a [5];
   byte bStack_25;
   uint local_24 [7];
-  byte key_matches;
   dword current_runtime;
+  byte key_matches;
   
   if (eeprom_shadow_header.version_marker == 0xff) {
     result = 0;
@@ -7484,7 +7484,7 @@ void main_loop(void)
     cm848_periodicTaskSet_sensorProcessing();
     cm848_periodicTaskSet_sensors2();
     cm848_periodicTaskSet_auxiliary();
-    protectionVoltageTimeoutControl();
+    cm848_expireSciCommand37Tests();
     main_loop_scheduler_phase = 10;
     break;
   case 10:
@@ -28110,12 +28110,12 @@ void cm848_calculateProtectionSpeedLimits(void)
         (fuel_demand_control_t_0040a57a.accelerator_off_idle != 0)))) ||
       ((vehicle_speed != 0 ||
        (wVar1 = governor_speed_limit_floor_b, governor_speed_limit_floor_a != 0xe5c1)))) &&
-     (wVar1 = governor_speed_limit_floor, governor_speed_limit_mode != 1)) {
+     (wVar1 = governor_speed_limit_floor, high_pressure_safety_valve_test_state != 1)) {
     wVar1 = 0;
   }
   governor_speed_limit_floor = wVar1;
-  if (governor_speed_limit_enable_flag == 0) {
-    governor_speed_limit_mode = 0;
+  if (high_pressure_safety_valve_test_request_flag == 0) {
+    high_pressure_safety_valve_test_state = 0;
   }
   else if ((((((protection_feature_flags & 0x10) == 0) ||
              (adjusted_user_fueling_state != FUELING_STATE_LOW_SPEED_GOVERNOR)) ||
@@ -28124,12 +28124,13 @@ void cm848_calculateProtectionSpeedLimits(void)
             ((switch_input_state_bits.switches_8_to_15 & 8) != 0)))) ||
           ((((switch_input_state_bits.switches_0_to_7 & 4) != 0 ||
             ((fuel_demand_control_t_0040a57a.accelerator_off_idle != 0 || (vehicle_speed != 0)))) ||
-           (governor_speed_limit_rpm_threshold_cal < engine_speed_state.filtered_engine_speed)))) {
-    governor_speed_limit_mode = 2;
+           (high_pressure_safety_valve_test_maximum_engine_speed <
+            engine_speed_state.filtered_engine_speed)))) {
+    high_pressure_safety_valve_test_state = 2;
   }
   else {
-    governor_speed_limit_floor = governor_speed_limit_floor_cal;
-    governor_speed_limit_mode = 1;
+    governor_speed_limit_floor = high_pressure_safety_valve_test_engine_speed_setpoint;
+    high_pressure_safety_valve_test_state = 1;
   }
   governor_speed_setpoint_snapshot = governor_output_t_0040aec2.idle_speed_barometric_ramped;
   if (((switch_input_state_bits.switches_8_to_15 & 8) == 0) &&
@@ -37672,13 +37673,13 @@ void cm848_applyAlternatorFieldDuty(void)
     if (alternator_field_duty_not_inverted_flag == 0) {
       wVar2 = 0x6400 - alternator_field_duty_target;
     }
-    if ((protection_voltage_active_flag != 0) &&
+    if ((alternator_field_actuator_test_active_flag != 0) &&
        ((engine_state == ENGINE_STATE_STOPPED ||
-        (alternator_field_protection_voltage_duty_always_flag == 1)))) {
-      wVar2 = alternator_field_protection_voltage_duty;
+        (alternator_field_actuator_test_while_running_enable == 1)))) {
+      wVar2 = alternator_field_actuator_test_duty;
     }
-    if (protection_mode_b_override_flag == 1) {
-      wVar2 = alternator_field_mode_b_override_duty;
+    if (end_of_line_alternator_test_field_cut_flag == 1) {
+      wVar2 = alternator_field_end_of_line_test_duty;
     }
     if (alternator_field_duty_full_on_threshold < wVar2) {
       wVar2 = alternator_field_duty_full_on;
@@ -37758,7 +37759,8 @@ void cm848_monitorChargingSystemVoltageHighAndLow(void)
 {
   if (((alternator_field_regulator_state == 0) ||
       ((short)charging_system_voltage_high_error_threshold <=
-       (short)charging_voltage_error_slow_average)) || (protection_voltage_active_flag != 0)) {
+       (short)charging_voltage_error_slow_average)) ||
+     (alternator_field_actuator_test_active_flag != 0)) {
     charging_system_voltage_high_condition_elapsed_passes = 0;
   }
   else {
@@ -37781,7 +37783,7 @@ void cm848_monitorChargingSystemVoltageHighAndLow(void)
   if (((alternator_field_regulator_state == 2) &&
       (sensor_readings_t_0040baf2.battery_voltage < charging_system_voltage_low_threshold)) &&
      ((intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_OFF &&
-      (protection_voltage_active_flag == 0)))) {
+      (alternator_field_actuator_test_active_flag == 0)))) {
     charging_system_voltage_low_condition_elapsed_passes =
          charging_system_voltage_low_condition_elapsed_passes + 1;
   }
@@ -37841,8 +37843,8 @@ void cm848_testAlternatorOutputByCuttingField(void)
              ((fault_detected_bits_368_to_383 & 4) == 0)))) &&
      (((fault_detected_bits_368_to_383 & 2) == 0 &&
       (((int)(uint)alternator_field_cut_test_error_threshold <
-        (int)(short)charging_voltage_error_slow_average && (protection_voltage_active_flag == 0)))))
-     ) {
+        (int)(short)charging_voltage_error_slow_average &&
+       (alternator_field_actuator_test_active_flag == 0)))))) {
     alternator_field_cut_test_condition_elapsed_passes =
          alternator_field_cut_test_condition_elapsed_passes + 1;
   }
@@ -45931,13 +45933,13 @@ void hpcr_cbdInitFilterState(void)
 // Function: cm848_runCylinderContributionTest @ 0x00043ac0
 //
 
-/* Cylinder contribution test (DRB SCI FD-E1 to FD-EB): while cylinder_diag_active_flag is set it
-   runs only with the vehicle stopped, the coolant inside its window and sync valid
-   (cylinder_contribution_test_status 1, else 2); it swaps in test thresholds and accumulators, then
-   turns each firing-order slot's accumulator into 100 - accumulator x
-   cylinder_contribution_test_gain x 4 / 471 % (0-200) - slots 1-6 = cylinders 1 / 5 / 3 / 6 / 2 / 4
-   - plus the cylinders 1-3 and 4-6 means; when the test ends it restores the saved values. Was
-   hpcr_processTimingCalibration */
+/* Cylinder contribution test (DRB SCI FD-E1 to FD-EB): while
+   cylinder_contribution_test_request_flag is set it runs only with the vehicle stopped, the coolant
+   inside its window and sync valid (cylinder_contribution_test_status 1, else 2); it swaps in test
+   thresholds and accumulators, then turns each firing-order slot's accumulator into 100 -
+   accumulator x cylinder_contribution_test_gain x 4 / 471 % (0-200) - slots 1-6 = cylinders 1 / 5 /
+   3 / 6 / 2 / 4 - plus the cylinders 1-3 and 4-6 means; when the test ends it restores the saved
+   values. Was hpcr_processTimingCalibration */
 
 void cm848_runCylinderContributionTest(void)
 
@@ -45948,8 +45950,8 @@ void cm848_runCylinderContributionTest(void)
   short sVar4;
   uint uVar5;
   
-  bVar1 = cylinder_diag_active_flag;
-  if (cylinder_diag_active_flag == 0) {
+  bVar1 = cylinder_contribution_test_request_flag;
+  if (cylinder_contribution_test_request_flag == 0) {
     cylinder_contribution_test_status = 0;
   }
   else if (((((cylinder_balance_compensation_enable_cal == 0) ||
@@ -45965,7 +45967,7 @@ void cm848_runCylinderContributionTest(void)
   else {
     cylinder_contribution_test_status = 1;
     cylinder_balance_trim_limits_exceeded_flag = 0;
-    if ((cylinder_diag_active_flag != 0) && (DAT_003fb596 == '\0')) {
+    if ((cylinder_contribution_test_request_flag != 0) && (DAT_003fb596 == '\0')) {
       ram_refresh_enable = RAM_REFRESH_DISABLED;
       uVar5 = 0;
       do {
@@ -57909,7 +57911,7 @@ void cm848_applicationMain(void)
   mpc555_initFuelDemandOffsetFilter();
   cm848_initOverboostMonitor();
   cm848_initVehicleSpeedCalculation();
-  cm848_initialization_group21_state_cont();
+  cm848_initializeEndOfLineTestSequence();
   cm848_initializeMisfireMonitor();
   cm848_sciInitCommandCallback();
   cm848_sciInitPort1();
@@ -57922,7 +57924,7 @@ void cm848_applicationMain(void)
   cm848_configureRadiatorFanSpeedInput();
   cm848_initCoolingFanControl();
   cm848_initEngineWarningFlags();
-  cm848_initialization_group25_state();
+  cm848_initializeRadiatorFanSpeedRationalityCheck();
   cm848_initInterpolationStateCounters();
   cm848_clearEngineProtectionFaultsConditional();
   cm848_sensorChannel4_process();
@@ -57950,7 +57952,7 @@ void cm848_applicationMain(void)
   cm848_copyROMCalibrationToRAM();
   cm848_initJ1939InputProcessing();
   cm848_initializeVariableGeometryTurbochargerPositionSensor();
-  initProtectionVoltageTimer();
+  cm848_initializeSciCommand37TestTimeouts();
   cm848_initMemoryLayout();
   cm848_resetFuelPressureSetpointNotReachedMonitor();
   cm848_clearGovernorFilterAccumulators();
@@ -70515,7 +70517,7 @@ void cm848_updateMilOnRequest(void)
    cm848_buildPciTransmitMessage3MilAndDtcDisplay while the field mode register is 5100). Called by
    the end-of-line test sequencer and its steps (cm848_runEndOfLineTestSequence,
    cm848_runEndOfLineMisfireTestStep and the cold start, deviation, battery voltage and bit check
-   steps) and, with step 3, by cm848_initialization_group21_state_cont at start-up when the
+   steps) and, with step 3, by cm848_initializeEndOfLineTestSequence at start-up when the
    failed-test power-down flag (e2m 1981 +1 EOL_MIL_Powerdown_State) is 1. (was
    diag_suppress_stateMachine) */
 
@@ -75291,9 +75293,9 @@ void cm848_selectCoolingFanDutySource(void)
   }
   if (cooling_fan_fixed_duty_enable == 0) {
     if (((engine_state == ENGINE_STATE_STOPPED) ||
-        (cooling_fan_injection_protection_duty_always_flag == 1)) &&
+        (cooling_fan_actuator_test_while_running_enable == 1)) &&
        (cooling_fan_actuator_test_active_flag != 0)) {
-      cooling_fan_duty_request = cooling_fan_injection_protection_duty;
+      cooling_fan_duty_request = cooling_fan_actuator_test_duty;
       cooling_fan_duty_source_code = 9;
     }
     else if (engine_speed_state.filtered_engine_speed < cooling_fan_low_engine_rpm) {
@@ -82654,7 +82656,7 @@ LAB_00520aa8:
 void cm848_sciCommand37Handler(void)
 
 {
-  DAT_003fcf60 = 0;
+  sci_command_37_received_byte_count = 0;
   sci_next_byte_handler = cm848_sciCommand37Callback;
   cm848_sciStartTransmit();
   return;
@@ -82678,46 +82680,47 @@ void cm848_sciCommand37Callback(void)
   uint uVar3;
   uint uVar4;
   
-  (&DAT_003fcf61)[DAT_003fcf60] = *(undefined1 *)sci_buffer_cursor;
-  bVar2 = DAT_003fcf62;
-  bVar1 = DAT_003fcf61;
-  uVar4 = DAT_003fcf60 + 1;
-  DAT_003fcf60 = (byte)uVar4;
+  (&sci_command_37_test_number)[sci_command_37_received_byte_count] =
+       *(undefined1 *)sci_buffer_cursor;
+  bVar2 = sci_command_37_requested_state;
+  bVar1 = sci_command_37_test_number;
+  uVar4 = sci_command_37_received_byte_count + 1;
+  sci_command_37_received_byte_count = (byte)uVar4;
   if ((uVar4 & 0xff) < 2) goto LAB_0052145c;
-  uVar4 = (uint)DAT_003fcf61;
-  if (DAT_003fcf61 == 0x11) {
-    if (DAT_003fcf62 == 1) {
+  uVar4 = (uint)sci_command_37_test_number;
+  if (sci_command_37_test_number == 0x11) {
+    if (sci_command_37_requested_state == 1) {
       sci_buffer[sci_transmit_byte_count] = 1;
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
-      protection_voltage_active_flag = 1;
-      protection_voltage_active_timeout_count = 0xf;
+      alternator_field_actuator_test_active_flag = 1;
+      alternator_field_actuator_test_timeout_count = 0xf;
     }
-    else if (DAT_003fcf62 == 2) {
+    else if (sci_command_37_requested_state == 2) {
       sci_buffer[sci_transmit_byte_count] = 2;
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
-      protection_voltage_active_flag = 0;
-      protection_voltage_active_timeout_count = 0;
+      alternator_field_actuator_test_active_flag = 0;
+      alternator_field_actuator_test_timeout_count = 0;
     }
   }
-  else if (((DAT_003fcf61 == 0x14) && (engine_state == ENGINE_STATE_RUNNING)) &&
-          (transmission_output_speed_in_use < DAT_00408ba2)) {
-    if (DAT_003fcf62 == 1) {
+  else if (((sci_command_37_test_number == 0x14) && (engine_state == ENGINE_STATE_RUNNING)) &&
+          (transmission_output_speed_in_use < transmission_actuator_test_maximum_output_speed)) {
+    if (sci_command_37_requested_state == 1) {
       sci_buffer[sci_transmit_byte_count] = 1;
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
       transmission_shift_strategy_flags.service_test_request_flags =
            transmission_shift_strategy_flags.service_test_request_flags | 1;
       if ((governor_pressure_solenoid_output_channel_cal != 0) &&
          (governor_pressure_solenoid_output_channel_cal < 0x33)) {
-        governor_pressure_solenoid_duty_command = DAT_00408ba0;
+        governor_pressure_solenoid_duty_command = governor_pressure_solenoid_actuator_test_duty;
         (**(code **)(&output_channel_driver_table_set_duty +
                     (uint)governor_pressure_solenoid_output_channel_cal * 0x10))();
       }
     }
     else {
-      if (DAT_003fcf62 != 2) {
+      if (sci_command_37_requested_state != 2) {
         transmission_shift_strategy_flags.service_test_request_flags =
              transmission_shift_strategy_flags.service_test_request_flags & 0xfe;
-        protection_throttle_output_timeout_count = 0;
+        governor_pressure_solenoid_actuator_test_timeout_count = 0;
         goto LAB_005212a0;
       }
       sci_buffer[sci_transmit_byte_count] = 2;
@@ -82731,11 +82734,11 @@ void cm848_sciCommand37Callback(void)
                     (uint)governor_pressure_solenoid_output_channel_cal * 0x10))();
       }
     }
-    protection_throttle_output_timeout_count = 0x19;
+    governor_pressure_solenoid_actuator_test_timeout_count = 0x19;
   }
-  else if (((DAT_003fcf61 == 0x15) && (engine_state == ENGINE_STATE_RUNNING)) &&
-          (transmission_output_speed_in_use < DAT_00408ba2)) {
-    if (DAT_003fcf62 == 1) {
+  else if (((sci_command_37_test_number == 0x15) && (engine_state == ENGINE_STATE_RUNNING)) &&
+          (transmission_output_speed_in_use < transmission_actuator_test_maximum_output_speed)) {
+    if (sci_command_37_requested_state == 1) {
       sci_buffer[sci_transmit_byte_count] = 1;
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
       transmission_shift_strategy_flags.service_test_request_flags =
@@ -82743,13 +82746,13 @@ void cm848_sciCommand37Callback(void)
       cm848_setLogicalOutputRequest(0x12,5);
     }
     else {
-      if (DAT_003fcf62 != 2) {
+      if (sci_command_37_requested_state != 2) {
         transmission_shift_strategy_flags.service_test_request_flags =
              transmission_shift_strategy_flags.service_test_request_flags & 0xfc;
         if (logical_output_request_priority[0x12] == 5) {
           logical_output_request_priority[0x12] = 0;
         }
-        protection_load_derate_output_timeout_count = 0;
+        converter_clutch_solenoid_actuator_test_timeout_count = 0;
         goto LAB_005212a0;
       }
       sci_buffer[sci_transmit_byte_count] = 2;
@@ -82765,11 +82768,11 @@ void cm848_sciCommand37Callback(void)
                   (uint)governor_pressure_solenoid_output_channel_cal * 0x10))
                 (governor_pressure_solenoid_duty_minimum);
     }
-    protection_load_derate_output_timeout_count = 10;
+    converter_clutch_solenoid_actuator_test_timeout_count = 10;
   }
-  else if (((DAT_003fcf61 == 0x16) && (engine_state == ENGINE_STATE_RUNNING)) &&
-          (transmission_output_speed_in_use < DAT_00408ba2)) {
-    if (DAT_003fcf62 == 1) {
+  else if (((sci_command_37_test_number == 0x16) && (engine_state == ENGINE_STATE_RUNNING)) &&
+          (transmission_output_speed_in_use < transmission_actuator_test_maximum_output_speed)) {
+    if (sci_command_37_requested_state == 1) {
       sci_buffer[sci_transmit_byte_count] = 1;
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
       transmission_shift_strategy_flags.service_test_request_flags =
@@ -82777,13 +82780,13 @@ void cm848_sciCommand37Callback(void)
       cm848_setLogicalOutputRequest(0x11,5);
     }
     else {
-      if (DAT_003fcf62 != 2) {
+      if (sci_command_37_requested_state != 2) {
         transmission_shift_strategy_flags.service_test_request_flags =
              transmission_shift_strategy_flags.service_test_request_flags & 0xfa;
         if (logical_output_request_priority[0x11] == 5) {
           logical_output_request_priority[0x11] = 0;
         }
-        protection_engine_protection_output_timeout_count = 0;
+        overdrive_solenoid_actuator_test_timeout_count = 0;
         goto LAB_005212a0;
       }
       sci_buffer[sci_transmit_byte_count] = 2;
@@ -82798,56 +82801,57 @@ void cm848_sciCommand37Callback(void)
       (**(code **)(&output_channel_driver_table_set_duty +
                   (uint)governor_pressure_solenoid_output_channel_cal * 0x10))();
     }
-    protection_engine_protection_output_timeout_count = 10;
+    overdrive_solenoid_actuator_test_timeout_count = 10;
   }
-  else if (((DAT_003fcf61 == 0x17) && (engine_state == ENGINE_STATE_RUNNING)) &&
-          (transmission_output_speed_in_use < DAT_00408ba2)) {
-    if (DAT_003fcf62 == 1) {
+  else if (((sci_command_37_test_number == 0x17) && (engine_state == ENGINE_STATE_RUNNING)) &&
+          (transmission_output_speed_in_use < transmission_actuator_test_maximum_output_speed)) {
+    if (sci_command_37_requested_state == 1) {
       sci_buffer[sci_transmit_byte_count] = 1;
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
       transmission_shift_strategy_flags.anti_hunt_flags =
            transmission_shift_strategy_flags.anti_hunt_flags | 8;
     }
   }
-  else if (DAT_003fcf61 == 0x24) {
-    if ((DAT_003fcf62 == 1) && (engine_state == ENGINE_STATE_STOPPED)) {
+  else if (sci_command_37_test_number == 0x24) {
+    if ((sci_command_37_requested_state == 1) && (engine_state == ENGINE_STATE_STOPPED)) {
       sci_buffer[sci_transmit_byte_count] = 1;
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
       cm848_setLogicalOutputRequest(0x35,5);
     }
     else {
-      if ((DAT_003fcf62 != 2) || (engine_state != ENGINE_STATE_STOPPED)) goto LAB_005212a0;
+      if ((sci_command_37_requested_state != 2) || (engine_state != ENGINE_STATE_STOPPED))
+      goto LAB_005212a0;
       sci_buffer[sci_transmit_byte_count] = 2;
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
       cm848_clearLogicalOutputRequest(0x35,5);
     }
-    protection_crank_fault_severity_timeout_count = 0x7d;
+    lift_pump_actuator_test_timeout_count = 0x7d;
   }
-  else if (DAT_003fcf61 == 0x25) {
-    if (DAT_003fcf62 == 1) {
+  else if (sci_command_37_test_number == 0x25) {
+    if (sci_command_37_requested_state == 1) {
       sci_buffer[sci_transmit_byte_count] = 1;
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
-      cylinder_diag_active_flag = 1;
-      protection_cylinder_diag_timeout_count = 0x5dc;
+      cylinder_contribution_test_request_flag = 1;
+      cylinder_contribution_test_request_timeout_count = 0x5dc;
     }
-    else if (DAT_003fcf62 == 2) {
+    else if (sci_command_37_requested_state == 2) {
       sci_buffer[sci_transmit_byte_count] = 2;
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
-      cylinder_diag_active_flag = 0;
-      protection_cylinder_diag_timeout_count = 0;
+      cylinder_contribution_test_request_flag = 0;
+      cylinder_contribution_test_request_timeout_count = 0;
     }
   }
-  else if (DAT_003fcf61 == 0x26) {
-    if (DAT_003fcf62 == 1) {
+  else if (sci_command_37_test_number == 0x26) {
+    if (sci_command_37_requested_state == 1) {
       sci_buffer[sci_transmit_byte_count] = 1;
-      governor_speed_limit_enable_flag = 1;
-      protection_speed_limit_enable_timeout_count = 0x96;
+      high_pressure_safety_valve_test_request_flag = 1;
+      high_pressure_safety_valve_test_timeout_count = 0x96;
     }
     else {
-      if (DAT_003fcf62 != 2) goto LAB_005212a0;
+      if (sci_command_37_requested_state != 2) goto LAB_005212a0;
       sci_buffer[sci_transmit_byte_count] = 2;
-      governor_speed_limit_enable_flag = 0;
-      protection_speed_limit_enable_timeout_count = 0;
+      high_pressure_safety_valve_test_request_flag = 0;
+      high_pressure_safety_valve_test_timeout_count = 0;
     }
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
   }
@@ -82859,28 +82863,28 @@ LAB_005212a0:
       uVar4 = 0;
       do {
         if ((&DAT_003fcf64)[uVar4] != 0) {
-          DAT_003fcf63 = DAT_003fcf63 + -1;
+          injector_cutout_test_count = injector_cutout_test_count + -1;
           (&DAT_003fcf64)[uVar4] = 0;
           cylinder_cutout_test_mask = 0;
         }
         uVar4 = uVar4 + 1 & 0xff;
       } while (uVar4 < 8);
-      protection_voltage_active_flag = 0;
+      alternator_field_actuator_test_active_flag = 0;
       if (logical_output_request_priority[0x35] == 5) {
         logical_output_request_priority[0x35] = 0;
       }
-      protection_voltage_active_timeout_count = 0;
-      cylinder_diag_active_flag = 0;
-      protection_cylinder_diag_timeout_count = 0;
-      governor_speed_limit_enable_flag = 0;
-      protection_speed_limit_enable_timeout_count = 0;
+      alternator_field_actuator_test_timeout_count = 0;
+      cylinder_contribution_test_request_flag = 0;
+      cylinder_contribution_test_request_timeout_count = 0;
+      high_pressure_safety_valve_test_request_flag = 0;
+      high_pressure_safety_valve_test_timeout_count = 0;
     }
     else {
       uVar4 = uVar4 + 0xfb;
       if (bVar2 == 1) {
         uVar3 = uVar4 * 2 & 0x1fe;
         if (*(short *)((int)&DAT_003fcf64 + uVar3) != 0) {
-          DAT_003fcf63 = DAT_003fcf63 + -1;
+          injector_cutout_test_count = injector_cutout_test_count + -1;
           *(undefined2 *)((int)&DAT_003fcf64 + uVar3) = 0;
           cylinder_cutout_test_mask = cylinder_cutout_test_mask & ~(ushort)(1 << (uVar4 & 0x3f));
         }
@@ -82888,7 +82892,7 @@ LAB_005212a0:
       else {
         uVar3 = uVar4 * 2 & 0x1fe;
         if (*(short *)((int)&DAT_003fcf64 + uVar3) == 0) {
-          DAT_003fcf63 = DAT_003fcf63 + '\x01';
+          injector_cutout_test_count = injector_cutout_test_count + '\x01';
           *(undefined2 *)((int)&DAT_003fcf64 + uVar3) = 1000;
           cylinder_cutout_test_mask = cylinder_cutout_test_mask | (ushort)(1 << (uVar4 & 0x3f));
         }
@@ -82908,57 +82912,72 @@ LAB_0052145c:
 
 
 //
-// Function: protectionVoltageTimeoutControl @ 0x00521474
+// Function: cm848_expireSciCommand37Tests @ 0x00521474
 //
 
-void protectionVoltageTimeoutControl(void)
+/* Main loop: counts down the SCI command 0x25 (37) test timeouts that cm848_sciCommand37Callback
+   sets and ends each test at 0 - the alternator field actuator test
+   (alternator_field_actuator_test_active_flag), the lift pump test (output 53 at priority 5; also
+   ended once the engine leaves ENGINE_STATE_STOPPED), the cylinder contribution test (DRB 25-25;
+   also ended when cylinder_contribution_test_status is 2), the high pressure safety valve test (DRB
+   25-26; also ended when high_pressure_safety_valve_test_state is 2) and the 48RE governor pressure
+   / converter clutch / overdrive solenoid tests
+   (transmission_shift_strategy_flags.service_test_request_flags bits 0 / 1 / 2, outputs 18 / 17)
+   (was protectionVoltageTimeoutControl) */
+
+void cm848_expireSciCommand37Tests(void)
 
 {
-  if ((protection_voltage_active_timeout_count != 0) &&
-     (protection_voltage_active_timeout_count = protection_voltage_active_timeout_count - 1,
-     protection_voltage_active_timeout_count == 0)) {
-    protection_voltage_active_flag = 0;
+  if ((alternator_field_actuator_test_timeout_count != 0) &&
+     (alternator_field_actuator_test_timeout_count =
+           alternator_field_actuator_test_timeout_count - 1,
+     alternator_field_actuator_test_timeout_count == 0)) {
+    alternator_field_actuator_test_active_flag = 0;
   }
-  if ((protection_crank_fault_severity_timeout_count != 0) &&
-     ((protection_crank_fault_severity_timeout_count =
-            protection_crank_fault_severity_timeout_count - 1,
-      protection_crank_fault_severity_timeout_count == 0 || (engine_state != ENGINE_STATE_STOPPED)))
-     ) {
+  if ((lift_pump_actuator_test_timeout_count != 0) &&
+     ((lift_pump_actuator_test_timeout_count = lift_pump_actuator_test_timeout_count - 1,
+      lift_pump_actuator_test_timeout_count == 0 || (engine_state != ENGINE_STATE_STOPPED)))) {
     if (logical_output_request_priority[0x35] == 5) {
       logical_output_request_priority[0x35] = 0;
     }
-    protection_crank_fault_severity_timeout_count = 0;
+    lift_pump_actuator_test_timeout_count = 0;
   }
-  if ((protection_cylinder_diag_timeout_count != 0) &&
-     ((protection_cylinder_diag_timeout_count = protection_cylinder_diag_timeout_count - 1,
-      protection_cylinder_diag_timeout_count == 0 || (cylinder_contribution_test_status == 2)))) {
-    cylinder_diag_active_flag = 0;
-    protection_cylinder_diag_timeout_count = 0;
+  if ((cylinder_contribution_test_request_timeout_count != 0) &&
+     ((cylinder_contribution_test_request_timeout_count =
+            cylinder_contribution_test_request_timeout_count - 1,
+      cylinder_contribution_test_request_timeout_count == 0 ||
+      (cylinder_contribution_test_status == 2)))) {
+    cylinder_contribution_test_request_flag = 0;
+    cylinder_contribution_test_request_timeout_count = 0;
   }
-  if ((protection_speed_limit_enable_timeout_count != 0) &&
-     ((protection_speed_limit_enable_timeout_count = protection_speed_limit_enable_timeout_count - 1
-      , protection_speed_limit_enable_timeout_count == 0 || (governor_speed_limit_mode == 2)))) {
-    governor_speed_limit_enable_flag = 0;
+  if ((high_pressure_safety_valve_test_timeout_count != 0) &&
+     ((high_pressure_safety_valve_test_timeout_count =
+            high_pressure_safety_valve_test_timeout_count - 1,
+      high_pressure_safety_valve_test_timeout_count == 0 ||
+      (high_pressure_safety_valve_test_state == 2)))) {
+    high_pressure_safety_valve_test_request_flag = 0;
   }
-  if ((protection_throttle_output_timeout_count != 0) &&
-     (protection_throttle_output_timeout_count = protection_throttle_output_timeout_count - 1,
-     protection_throttle_output_timeout_count == 0)) {
+  if ((governor_pressure_solenoid_actuator_test_timeout_count != 0) &&
+     (governor_pressure_solenoid_actuator_test_timeout_count =
+           governor_pressure_solenoid_actuator_test_timeout_count - 1,
+     governor_pressure_solenoid_actuator_test_timeout_count == 0)) {
     transmission_shift_strategy_flags.service_test_request_flags =
          transmission_shift_strategy_flags.service_test_request_flags & 0xfe;
   }
-  if ((protection_load_derate_output_timeout_count != 0) &&
-     (protection_load_derate_output_timeout_count = protection_load_derate_output_timeout_count - 1,
-     protection_load_derate_output_timeout_count == 0)) {
+  if ((converter_clutch_solenoid_actuator_test_timeout_count != 0) &&
+     (converter_clutch_solenoid_actuator_test_timeout_count =
+           converter_clutch_solenoid_actuator_test_timeout_count - 1,
+     converter_clutch_solenoid_actuator_test_timeout_count == 0)) {
     transmission_shift_strategy_flags.service_test_request_flags =
          transmission_shift_strategy_flags.service_test_request_flags & 0xfc;
     if (logical_output_request_priority[0x12] == 5) {
       logical_output_request_priority[0x12] = 0;
     }
   }
-  if ((protection_engine_protection_output_timeout_count != 0) &&
-     (protection_engine_protection_output_timeout_count =
-           protection_engine_protection_output_timeout_count - 1,
-     protection_engine_protection_output_timeout_count == 0)) {
+  if ((overdrive_solenoid_actuator_test_timeout_count != 0) &&
+     (overdrive_solenoid_actuator_test_timeout_count =
+           overdrive_solenoid_actuator_test_timeout_count - 1,
+     overdrive_solenoid_actuator_test_timeout_count == 0)) {
     transmission_shift_strategy_flags.service_test_request_flags =
          transmission_shift_strategy_flags.service_test_request_flags & 0xfa;
     if (logical_output_request_priority[0x11] == 5) {
@@ -82971,16 +82990,20 @@ void protectionVoltageTimeoutControl(void)
 
 
 //
-// Function: initProtectionVoltageTimer @ 0x005216cc
+// Function: cm848_initializeSciCommand37TestTimeouts @ 0x005216cc
 //
 
-void initProtectionVoltageTimer(void)
+/* Boot initializer (cm848_applicationMain): clears the alternator field, lift pump, cylinder
+   contribution and high pressure safety valve test timeouts of SCI command 0x25 (was
+   initProtectionVoltageTimer) */
+
+void cm848_initializeSciCommand37TestTimeouts(void)
 
 {
-  protection_voltage_active_timeout_count = 0;
-  protection_crank_fault_severity_timeout_count = 0;
-  protection_cylinder_diag_timeout_count = 0;
-  protection_speed_limit_enable_timeout_count = 0;
+  alternator_field_actuator_test_timeout_count = 0;
+  lift_pump_actuator_test_timeout_count = 0;
+  cylinder_contribution_test_request_timeout_count = 0;
+  high_pressure_safety_valve_test_timeout_count = 0;
   return;
 }
 
@@ -88594,9 +88617,10 @@ void cm848_initializeInjectionAngleScheduler(void)
    byte at 0x409a71 is 0; it is 1 here) plus a slewed offset table, held in a dead band at low speed
    and load. While cranking it uses the cold-start table and then ramps out of it, and the result is
    clamped to the calibration minimum and maximum (3279 counts = 160 MPa here); a forced or additive
-   override, 0 while engine_shutdown_command_flag, a fixed value in governor_speed_limit_mode 1 and
-   the fault-reaction cap (fault_reaction_request_bits bit 2) also act on it. The winning term goes
-   to fuel_pressure_setpoint_winning_term_code (was cm848_sensor_channel_state_load). */
+   override, 0 while engine_shutdown_command_flag, a fixed value in
+   high_pressure_safety_valve_test_state 1 and the fault-reaction cap (fault_reaction_request_bits
+   bit 2) also act on it. The winning term goes to fuel_pressure_setpoint_winning_term_code (was
+   cm848_sensor_channel_state_load). */
 
 void cm848_calculateFuelPressureSetpoint(void)
 
@@ -88628,8 +88652,8 @@ void cm848_calculateFuelPressureSetpoint(void)
     fuel_pressure_setpoint_winning_term_code = 5;
     return;
   }
-  if (governor_speed_limit_mode == 1) {
-    fuel_pressure_setpoint = fuel_pressure_setpoint_governor_speed_limit_value;
+  if (high_pressure_safety_valve_test_state == 1) {
+    fuel_pressure_setpoint = fuel_pressure_setpoint_high_pressure_safety_valve_test_value;
     return;
   }
   if (engine_shutdown_command_flag != 0) {
@@ -91372,35 +91396,52 @@ LAB_0052eeac:
 
 
 //
-// Function: cm848_initialization_group21_state_cont @ 0x0052ef90
+// Function: cm848_initializeEndOfLineTestSequence @ 0x0052ef90
 //
 
-void cm848_initialization_group21_state_cont(void)
+/* Boot initializer of cm848_runEndOfLineTestSequence (called from cm848_applicationMain): clears
+   end_of_line_test_seconds_since_engine_start and its pass divider, shows a failed result again
+   (MIL override 3) when end_of_line_test_malfunction_indicator_lamp_power_down_state_flag_cal is 1,
+   sets end_of_line_test_output_number to 80 (no output), end_of_line_test_step to 0 and
+   end_of_line_output_test_state to 1, and idles the intake air heater reading delay timers (0xffff)
+   (was cm848_initialization_group21_state_cont) */
+
+void cm848_initializeEndOfLineTestSequence(void)
 
 {
-  BYTE_003fd1ac = 0;
-  DAT_003fd1ad = 0;
+  end_of_line_test_seconds_since_engine_start = 0;
+  end_of_line_test_second_divider_pass_count = 0;
   if (end_of_line_test_malfunction_indicator_lamp_power_down_state_flag_cal == 1) {
     cm848_controlEndOfLineTestMalfunctionIndicatorLampOverride(3);
   }
-  DAT_003fd1ba = 0x50;
-  protection_state_machine_step = 0;
-  cold_start_protection_state = 1;
-  cold_start_protection_branch_flag = 0;
-  cold_start_protection_cycle_counter = 0;
-  cold_start_protection_sub_state = 0;
-  cold_start_battery_timer_a = 0xffff;
-  cold_start_battery_timer_b = 0xffff;
+  end_of_line_test_output_number = 0x50;
+  end_of_line_test_step = 0;
+  end_of_line_output_test_state = 1;
+  end_of_line_output_test_output_on_flag = 0;
+  end_of_line_output_test_start_delay_count = 0;
+  end_of_line_test_step_sub_state = 0;
+  end_of_line_test_intake_air_heater_1_reading_delay_timer = 0xffff;
+  end_of_line_test_intake_air_heater_2_reading_delay_timer = 0xffff;
   return;
 }
 
 
 
 //
-// Function: engine_protection_timerStateMachine_init @ 0x0052f030
+// Function: cm848_runEndOfLineTestStartStep @ 0x0052f030
 //
 
-undefined4 engine_protection_timerStateMachine_init(void)
+/* Step 0 of cm848_runEndOfLineTestSequence. Through EEPROM byte writes it clears the in-plant flag
+   bytes (end_of_line_test_settings_cal.test_flags_1 to _5) except the pending / not-passed bits of
+   the tests, and clears those bits for each test that end_of_line_test_enable_flags disables (bit 0
+   the intake air heater test - test_flags_5 bits 0-1, bit 5 the alternator test - test_flags_4 bit
+   0, bit 1 the misfire test - test_flags_5 bits 4-5); it also sets bytes 4-5 of
+   eeprom_shadow_header.calibration_block1 to 0 / 0x19. It returns the first pending step: 1 the
+   output tests (test_flags_2 bit 3 or test_flags_5 bit 0), 3 the alternator test (test_flags_3 bit
+   5), 5 the misfire test (test_flags_5 bit 4), 6 the final result (final_test_results_1 bit 3),
+   else 7 (done) (was engine_protection_timerStateMachine_init) */
+
+undefined4 cm848_runEndOfLineTestStartStep(void)
 
 {
   undefined4 uVar1;
@@ -91466,22 +91507,29 @@ undefined4 engine_protection_timerStateMachine_init(void)
 
 
 //
-// Function: diag_camSync_deviation_check @ 0x0052f250
+// Function: cm848_runEndOfLineIntakeAirHeaterResultStep @ 0x0052f250
 //
 
-undefined4 diag_camSync_deviation_check(void)
+/* Step 2 of cm848_runEndOfLineTestSequence: the intake air heater test verdict. Both voltage drops
+   (end_of_line_test_intake_air_heater_1_voltage_drop / _2_voltage_drop) above
+   end_of_line_test_intake_air_heater_minimum_delta_voltage_threshold pass it (test_flags_5 bit 1
+   cleared, MIL override 2); otherwise the MIL override goes to 3 and
+   end_of_line_test_malfunction_indicator_lamp_power_down_state_flag_cal to 1. It clears
+   test_flags_5 bit 0 (the test pending) and returns step 3 (was diag_camSync_deviation_check) */
+
+undefined4 cm848_runEndOfLineIntakeAirHeaterResultStep(void)
 
 {
   uint uVar1;
   byte local_8 [4];
   
   local_8[0] = end_of_line_test_settings_cal.test_flags_5;
-  uVar1 = (uint)(short)cold_start_battery_voltage_baseline_a;
+  uVar1 = (uint)(short)end_of_line_test_intake_air_heater_1_voltage_drop;
   if ((int)uVar1 < 0) {
     uVar1 = -uVar1;
   }
   if ((uint)end_of_line_test_intake_air_heater_minimum_delta_voltage_threshold < (uVar1 & 0xffff)) {
-    uVar1 = (uint)(short)cold_start_battery_voltage_baseline_b;
+    uVar1 = (uint)(short)end_of_line_test_intake_air_heater_2_voltage_drop;
     if ((int)uVar1 < 0) {
       uVar1 = -uVar1;
     }
@@ -91509,8 +91557,8 @@ LAB_0052f2f0:
 
 /* Step 5 of the Chrysler end-of-line (in-plant) test sequence of cm848_runEndOfLineTestSequence:
    the misfire monitor test. While end_of_line_test_settings_cal.test_flags_5 bit 0x10 is set it
-   waits for the elapsed seconds (BYTE_003fd1ac) to pass the warm-up time (e2m
-   CHRY_In_Plant_MFM_Delay_Time, 18 s here) with bit 0x20 set, then for the test timeout
+   waits for the elapsed seconds (end_of_line_test_seconds_since_engine_start) to pass the warm-up
+   time (e2m CHRY_In_Plant_MFM_Delay_Time, 18 s here) with bit 0x20 set, then for the test timeout
    (CHRY_In_Plant_MFM_Timeout, 30 s here, the byte at 0x3fd946); it then clears bit 0x10 (and bit
    0x20 when misfire_monitor_result is 2 = all cylinders good, calling
    cm848_controlEndOfLineTestMalfunctionIndicatorLampOverride(2); otherwise it sets
@@ -91526,22 +91574,24 @@ undefined4 cm848_runEndOfLineMisfireTestStep(void)
   
   if ((end_of_line_test_settings_cal.test_flags_5 & 0x10) == 0) {
 LAB_0052f410:
-    cold_start_protection_sub_state = 0;
+    end_of_line_test_step_sub_state = 0;
     uVar1 = 6;
   }
   else {
     if (((end_of_line_test_settings_cal.test_flags_5 & 0x20) == 0) ||
-       (BYTE_003fd1ac <= end_of_line_test_settings_cal.misfire_test_warm_up_seconds)) {
-      cold_start_protection_sub_state = 0;
+       (end_of_line_test_seconds_since_engine_start <=
+        end_of_line_test_settings_cal.misfire_test_warm_up_seconds)) {
+      end_of_line_test_step_sub_state = 0;
     }
-    else if (cold_start_protection_sub_state == 0) {
-      cold_start_protection_sub_state = 1;
+    else if (end_of_line_test_step_sub_state == 0) {
+      end_of_line_test_step_sub_state = 1;
     }
     else {
-      if (cold_start_protection_sub_state == 1) {
-        cold_start_protection_sub_state = 2;
+      if (end_of_line_test_step_sub_state == 1) {
+        end_of_line_test_step_sub_state = 2;
       }
-      if (end_of_line_test_settings_cal.misfire_test_timeout_seconds < BYTE_003fd1ac) {
+      if (end_of_line_test_settings_cal.misfire_test_timeout_seconds <
+          end_of_line_test_seconds_since_engine_start) {
         local_8[0] = end_of_line_test_settings_cal.test_flags_5 & 0xef;
         if (misfire_monitor_result == 2) {
           local_8[0] = end_of_line_test_settings_cal.test_flags_5 & 0xcf;
@@ -91566,14 +91616,13 @@ LAB_0052f410:
 // Function: cm848_checkRadiatorFanSpeedSignalNoise @ 0x0052f448
 //
 
-/* Fan speed signal noise test (a protection_state_machine_step step - returns 5 done / 4 in
-   progress): runs while end_of_line_test_settings_cal.test_flags_5 bit 0x40 or 0x80 is set; each
-   new three-sample history (type code 5100 only) counts as clean or as a spike (middle sample more
-   than 500 rpm from its neighbours' average); after radiator_fan_speed_noise_check_passes it clears
-   both flag bits if the clean ratio is above radiator_fan_speed_clean_sample_ratio_minimum,
-   otherwise clears only 0x40 and sets
-   end_of_line_test_malfunction_indicator_lamp_power_down_state_flag_cal; the flag byte is written
-   to EEPROM. Was engine_camSync_sampleRatio_validate */
+/* Fan speed signal noise test (a end_of_line_test_step step - returns 5 done / 4 in progress): runs
+   while end_of_line_test_settings_cal.test_flags_5 bit 0x40 or 0x80 is set; each new three-sample
+   history (type code 5100 only) counts as clean or as a spike (middle sample more than 500 rpm from
+   its neighbours' average); after radiator_fan_speed_noise_check_passes it clears both flag bits if
+   the clean ratio is above radiator_fan_speed_clean_sample_ratio_minimum, otherwise clears only
+   0x40 and sets end_of_line_test_malfunction_indicator_lamp_power_down_state_flag_cal; the flag
+   byte is written to EEPROM. Was engine_camSync_sampleRatio_validate */
 
 undefined4 cm848_checkRadiatorFanSpeedSignalNoise(void)
 
@@ -91627,10 +91676,21 @@ undefined4 cm848_checkRadiatorFanSpeedSignalNoise(void)
 
 
 //
-// Function: engine_coldStart_batteryVoltage_monitor @ 0x0052f5d4
+// Function: cm848_runEndOfLineAlternatorTestStep @ 0x0052f5d4
 //
 
-undefined4 engine_coldStart_batteryVoltage_monitor(void)
+/* Step 3 of cm848_runEndOfLineTestSequence: the alternator test (e2m 164A EOL_EVR_*) while
+   test_flags_3 bit 5 is set (else step 4). With the engine running it turns the MIL override on
+   once (end_of_line_alternator_test_started_flag). When end_of_line_test_time_since_engine_start
+   passes end_of_line_test_alternator_test_delay it snapshots the battery voltage and sets
+   end_of_line_alternator_test_field_cut_flag (cm848_applyAlternatorFieldDuty then drives
+   alternator_field_end_of_line_test_duty, 0); after end_of_line_test_alternator_test_time it
+   releases the field. The verdict takes the present voltage minus the snapshot in 16 bits, so any
+   fall passes (test_flags_4 bit 0 cleared, MIL override 2) and no fall sets
+   end_of_line_test_malfunction_indicator_lamp_power_down_state_flag_cal; test_flags_3 bit 5 is
+   cleared and it returns step 4 (was engine_coldStart_batteryVoltage_monitor) */
+
+undefined4 cm848_runEndOfLineAlternatorTestStep(void)
 
 {
   undefined4 uVar1;
@@ -91642,23 +91702,24 @@ undefined4 engine_coldStart_batteryVoltage_monitor(void)
   }
   else {
     if (engine_state == ENGINE_STATE_RUNNING) {
-      if (cold_start_battery_diag_suppress_done_flag == 0) {
+      if (end_of_line_alternator_test_started_flag == 0) {
         cm848_controlEndOfLineTestMalfunctionIndicatorLampOverride(1);
-        cold_start_battery_diag_suppress_done_flag = 1;
+        end_of_line_alternator_test_started_flag = 1;
       }
-      if (end_of_line_test_alternator_test_delay < DAT_003fd1ae) {
-        if (protection_mode_b_override_flag == 0) {
-          cold_start_battery_voltage_snapshot = sensor_readings_t_0040baf2.battery_voltage;
-          protection_mode_b_override_flag = 1;
+      if (end_of_line_test_alternator_test_delay < end_of_line_test_time_since_engine_start) {
+        if (end_of_line_alternator_test_field_cut_flag == 0) {
+          end_of_line_alternator_test_voltage_snapshot = sensor_readings_t_0040baf2.battery_voltage;
+          end_of_line_alternator_test_field_cut_flag = 1;
         }
-        if (DAT_000642ee < DAT_003fd1ae) {
+        if (end_of_line_test_alternator_test_time < end_of_line_test_time_since_engine_start) {
           uVar2 = 0;
-          if (sensor_readings_t_0040baf2.battery_voltage < cold_start_battery_voltage_snapshot) {
-            uVar2 = sensor_readings_t_0040baf2.battery_voltage - cold_start_battery_voltage_snapshot
-            ;
+          if (sensor_readings_t_0040baf2.battery_voltage <
+              end_of_line_alternator_test_voltage_snapshot) {
+            uVar2 = sensor_readings_t_0040baf2.battery_voltage -
+                    end_of_line_alternator_test_voltage_snapshot;
           }
           local_10[0] = end_of_line_test_settings_cal.test_flags_4;
-          protection_mode_b_override_flag = 0;
+          end_of_line_alternator_test_field_cut_flag = 0;
           if (end_of_line_test_alternator_voltage_threshold < uVar2) {
             local_10[0] = end_of_line_test_settings_cal.test_flags_4 & 0xfe;
             cm848_controlEndOfLineTestMalfunctionIndicatorLampOverride(2);
@@ -91686,44 +91747,52 @@ undefined4 engine_coldStart_batteryVoltage_monitor(void)
 
 
 //
-// Function: engine_protection_timerBitCheck_dispatch @ 0x0052f770
+// Function: cm848_runEndOfLineFinalResultStep @ 0x0052f770
 //
 
-undefined4 engine_protection_timerBitCheck_dispatch(void)
+/* Step 6 of cm848_runEndOfLineTestSequence: shows the plant tester's final verdict on the MIL.
+   While end_of_line_test_settings_cal.test_results_1 bit 3 is set it waits; bit 2 must then read
+   the same on two passes (end_of_line_test_step_sub_state 3 / 4). Clear (pass) sets the MIL
+   override to 2, set (fail) to 3 with
+   end_of_line_test_malfunction_indicator_lamp_power_down_state_flag_cal; both return step 7 (done).
+   A failed result from an earlier step (the power-down flag) is shown again (override 3) on every
+   pass (was engine_protection_timerBitCheck_dispatch) */
+
+undefined4 cm848_runEndOfLineFinalResultStep(void)
 
 {
   if (end_of_line_test_malfunction_indicator_lamp_power_down_state_flag_cal == 1) {
     cm848_controlEndOfLineTestMalfunctionIndicatorLampOverride(3);
   }
-  if (cold_start_protection_sub_state == 0) {
+  if (end_of_line_test_step_sub_state == 0) {
     if ((end_of_line_test_settings_cal.test_results_1 & 8) == 0) {
       if ((end_of_line_test_settings_cal.test_results_1 & 4) == 0) {
-        cold_start_protection_sub_state = 3;
+        end_of_line_test_step_sub_state = 3;
       }
       else {
-        cold_start_protection_sub_state = 4;
+        end_of_line_test_step_sub_state = 4;
       }
     }
   }
   else {
-    if (cold_start_protection_sub_state == 3) {
+    if (end_of_line_test_step_sub_state == 3) {
       if (((end_of_line_test_settings_cal.test_results_1 & 8) == 0) &&
          ((end_of_line_test_settings_cal.test_results_1 & 4) == 0)) {
         cm848_controlEndOfLineTestMalfunctionIndicatorLampOverride(2);
         return 7;
       }
     }
-    else if (cold_start_protection_sub_state == 4) {
+    else if (end_of_line_test_step_sub_state == 4) {
       if (((end_of_line_test_settings_cal.test_results_1 & 8) == 0) &&
          ((end_of_line_test_settings_cal.test_results_1 & 4) != 0)) {
         cm848_controlEndOfLineTestMalfunctionIndicatorLampOverride(3);
         end_of_line_test_malfunction_indicator_lamp_power_down_state_flag_cal = 1;
         return 7;
       }
-      cold_start_protection_sub_state = 0;
+      end_of_line_test_step_sub_state = 0;
       return 6;
     }
-    cold_start_protection_sub_state = 0;
+    end_of_line_test_step_sub_state = 0;
   }
   return 6;
 }
@@ -91731,23 +91800,33 @@ undefined4 engine_protection_timerBitCheck_dispatch(void)
 
 
 //
-// Function: sensor_battery_voltage_decrement @ 0x0052f89c
+// Function: cm848_measureEndOfLineIntakeAirHeaterVoltageDrops @ 0x0052f89c
 //
 
-void sensor_battery_voltage_decrement(void)
+/* Called each pass of cm848_runEndOfLineOutputTestStep while the intake air heater test runs
+   (test_flags_5 bit 0 and end_of_line_test_enable_flags bit 0): counts down each heater's reading
+   delay timer (0xffff = idle). When one reaches 0, its voltage word (the battery voltage stored
+   when the heater switched on) becomes that value minus the present battery voltage - the drop the
+   heater causes (was sensor_battery_voltage_decrement) */
+
+void cm848_measureEndOfLineIntakeAirHeaterVoltageDrops(void)
 
 {
-  if ((cold_start_battery_timer_a != 0xffff) &&
-     (cold_start_battery_timer_a = cold_start_battery_timer_a - 1, cold_start_battery_timer_a == 0))
-  {
-    cold_start_battery_voltage_baseline_a =
-         cold_start_battery_voltage_baseline_a - sensor_readings_t_0040baf2.battery_voltage;
+  if ((end_of_line_test_intake_air_heater_1_reading_delay_timer != 0xffff) &&
+     (end_of_line_test_intake_air_heater_1_reading_delay_timer =
+           end_of_line_test_intake_air_heater_1_reading_delay_timer - 1,
+     end_of_line_test_intake_air_heater_1_reading_delay_timer == 0)) {
+    end_of_line_test_intake_air_heater_1_voltage_drop =
+         end_of_line_test_intake_air_heater_1_voltage_drop -
+         sensor_readings_t_0040baf2.battery_voltage;
   }
-  if ((cold_start_battery_timer_b != 0xffff) &&
-     (cold_start_battery_timer_b = cold_start_battery_timer_b - 1, cold_start_battery_timer_b == 0))
-  {
-    cold_start_battery_voltage_baseline_b =
-         cold_start_battery_voltage_baseline_b - sensor_readings_t_0040baf2.battery_voltage;
+  if ((end_of_line_test_intake_air_heater_2_reading_delay_timer != 0xffff) &&
+     (end_of_line_test_intake_air_heater_2_reading_delay_timer =
+           end_of_line_test_intake_air_heater_2_reading_delay_timer - 1,
+     end_of_line_test_intake_air_heater_2_reading_delay_timer == 0)) {
+    end_of_line_test_intake_air_heater_2_voltage_drop =
+         end_of_line_test_intake_air_heater_2_voltage_drop -
+         sensor_readings_t_0040baf2.battery_voltage;
   }
   return;
 }
@@ -91755,10 +91834,15 @@ void sensor_battery_voltage_decrement(void)
 
 
 //
-// Function: fault_event_check_conflict @ 0x0052f938
+// Function: cm848_isDtcStoredOtherThanFault @ 0x0052f938
 //
 
-undefined4 fault_event_check_conflict(int param_1)
+/* Returns 0 when recent_fault_dtc_codes_cal holds no DTC, or only the DTC of the given fault (ROM
+   0x5985a slot -> obd_dtc_code_table), else 1. cm848_runEndOfLineOutputTestStep calls it with fault
+   256, which has no DTC slot (slot 170, past the table), so there it means 'a DTC is stored' (was
+   fault_event_check_conflict) */
+
+undefined4 cm848_isDtcStoredOtherThanFault(int param_1)
 
 {
   undefined4 uVar1;
@@ -91777,15 +91861,20 @@ undefined4 fault_event_check_conflict(int param_1)
 
 
 //
-// Function: fault_event_queue_set_active @ 0x0052f994
+// Function: cm848_setEndOfLineTestOutputRequest @ 0x0052f994
 //
 
-void fault_event_queue_set_active(int param_1,word param_2)
+/* Requests a logical output for the end-of-line output tests at the given priority (5): keeps the
+   output's present priority in end_of_line_test_output_previous_priority, the output in
+   end_of_line_test_output_number and the priority in end_of_line_test_output_priority, then calls
+   cm848_setLogicalOutputRequest (was fault_event_queue_set_active) */
+
+void cm848_setEndOfLineTestOutputRequest(int param_1,word param_2)
 
 {
-  protection_active_fault_severity_snapshot = (word)logical_output_request_priority[param_1];
-  DAT_003fd1ba = (undefined2)param_1;
-  protection_active_fault_severity_param = param_2;
+  end_of_line_test_output_previous_priority = (word)logical_output_request_priority[param_1];
+  end_of_line_test_output_number = (undefined2)param_1;
+  end_of_line_test_output_priority = param_2;
   cm848_setLogicalOutputRequest();
   return;
 }
@@ -91793,31 +91882,53 @@ void fault_event_queue_set_active(int param_1,word param_2)
 
 
 //
-// Function: fault_event_queue_clear_active @ 0x0052f9d8
+// Function: cm848_clearEndOfLineTestOutputRequest @ 0x0052f9d8
 //
 
-void fault_event_queue_clear_active(ushort param_1)
+/* Releases a logical output of the end-of-line output tests: zeroes its priority while it still
+   holds end_of_line_test_output_priority, then calls cm848_clearLogicalOutputRequest with the
+   output and end_of_line_test_output_previous_priority (was fault_event_queue_clear_active) */
+
+void cm848_clearEndOfLineTestOutputRequest(ushort param_1)
 
 {
   uint uVar1;
   
   uVar1 = (uint)param_1;
-  DAT_003fd1ba = param_1;
-  if ((ushort)logical_output_request_priority[uVar1] ==
-      (protection_active_fault_severity_param & 0xff)) {
+  end_of_line_test_output_number = param_1;
+  if ((ushort)logical_output_request_priority[uVar1] == (end_of_line_test_output_priority & 0xff)) {
     logical_output_request_priority[uVar1] = 0;
   }
-  cm848_clearLogicalOutputRequest(uVar1,protection_active_fault_severity_snapshot);
+  cm848_clearLogicalOutputRequest(uVar1,end_of_line_test_output_previous_priority);
   return;
 }
 
 
 
 //
-// Function: engine_coldStart_protection_stateMachine @ 0x0052fa34
+// Function: cm848_runEndOfLineOutputTestStep @ 0x0052fa34
 //
 
-undefined2 engine_coldStart_protection_stateMachine(void)
+/* Step 1 of cm848_runEndOfLineTestSequence: the output tests (e2m 164A; engine stopped). When the
+   engine is not stopped, or neither the intake air heater test (test_flags_5 bit 0 with
+   end_of_line_test_enable_flags bit 0) nor the output tests (test_flags_2 bits 3 and 4) are
+   pending, it releases the outputs and the actuator tests and returns step 3. After a two-pass
+   start delay end_of_line_output_test_state runs: 1 starts the fuel control / alternator field /
+   cooling fan actuator tests (enable bits 6 / 5 / 7) and turns the MIL override on; 2 runs the lift
+   pump (output 53, enable bit 3 - with the bit clear the state never moves on) for
+   end_of_line_test_lift_pump_on_time and passes it without P0629 / P0628 (test_flags_2 bits 5 and 7
+   cleared); 3 runs the wait-to-start lamp (output 4, bit 2) and the A/C clutch relay (output 38,
+   bit 4) for end_of_line_test_relay_on_time; 4-7 run intake air heaters 1 and 2 (outputs 43 / 44)
+   one at a time, each storing the battery voltage for
+   cm848_measureEndOfLineIntakeAirHeaterVoltageDrops; 7 passes the output tests when no DTC is
+   stored (test_flags_2 bit 4 cleared), clears bit 3 and returns step 2 for the heater verdict (step
+   3 without the heater test). Each output is on for its on time and off for
+   end_of_line_test_relay_off_time (end_of_line_output_test_timer /
+   end_of_line_output_test_output_on_flag), requested at priority 5 through
+   cm848_setEndOfLineTestOutputRequest / cm848_clearEndOfLineTestOutputRequest (was
+   engine_coldStart_protection_stateMachine) */
+
+undefined2 cm848_runEndOfLineOutputTestStep(void)
 
 {
   bool bVar1;
@@ -91830,33 +91941,33 @@ undefined2 engine_coldStart_protection_stateMachine(void)
   uVar5 = 1;
   if (((end_of_line_test_settings_cal.test_flags_5 & 1) != 0) &&
      ((end_of_line_test_enable_flags & 1) != 0)) {
-    sensor_battery_voltage_decrement();
+    cm848_measureEndOfLineIntakeAirHeaterVoltageDrops();
   }
   if (((((end_of_line_test_settings_cal.test_flags_5 & 1) == 0) ||
        ((end_of_line_test_enable_flags & 1) == 0)) &&
       (((end_of_line_test_settings_cal.test_flags_2 & 8) == 0 ||
        ((end_of_line_test_settings_cal.test_flags_2 & 0x10) == 0)))) ||
      (engine_state != ENGINE_STATE_STOPPED)) {
-    fault_event_queue_clear_active(0x35);
-    fault_event_queue_clear_active(4);
-    fault_event_queue_clear_active(0x26);
-    fault_event_queue_clear_active(0x2b);
-    fault_event_queue_clear_active(0x2c);
+    cm848_clearEndOfLineTestOutputRequest(0x35);
+    cm848_clearEndOfLineTestOutputRequest(4);
+    cm848_clearEndOfLineTestOutputRequest(0x26);
+    cm848_clearEndOfLineTestOutputRequest(0x2b);
+    cm848_clearEndOfLineTestOutputRequest(0x2c);
     fuel_control_actuator_test_active_flag = 0;
     cooling_fan_actuator_test_active_flag = 0;
-    protection_voltage_active_flag = 0;
-    cold_start_protection_state = 8;
+    alternator_field_actuator_test_active_flag = 0;
+    end_of_line_output_test_state = 8;
     if (engine_state != ENGINE_STATE_STOPPED) {
       cm848_controlEndOfLineTestMalfunctionIndicatorLampOverride(2);
     }
     return 3;
   }
-  if ((byte)(cold_start_protection_cycle_counter + 1) < 2) {
-    cold_start_protection_cycle_counter = cold_start_protection_cycle_counter + 1;
+  if ((byte)(end_of_line_output_test_start_delay_count + 1) < 2) {
+    end_of_line_output_test_start_delay_count = end_of_line_output_test_start_delay_count + 1;
     return 1;
   }
-  cold_start_protection_cycle_counter = 2;
-  switch(cold_start_protection_state) {
+  end_of_line_output_test_start_delay_count = 2;
+  switch(end_of_line_output_test_state) {
   case 0:
     break;
   case 1:
@@ -91864,30 +91975,30 @@ undefined2 engine_coldStart_protection_stateMachine(void)
       fuel_control_actuator_test_active_flag = 1;
     }
     if ((end_of_line_test_enable_flags & 0x20) != 0) {
-      protection_voltage_active_flag = 1;
+      alternator_field_actuator_test_active_flag = 1;
     }
     if ((end_of_line_test_enable_flags & 0x80) != 0) {
       cooling_fan_actuator_test_active_flag = 1;
     }
     cm848_controlEndOfLineTestMalfunctionIndicatorLampOverride(1);
-    cold_start_protection_state = 2;
+    end_of_line_output_test_state = 2;
     break;
   case 2:
     if ((end_of_line_test_enable_flags & 8) == 0) {
-      cold_start_protection_cycle_counter = 2;
+      end_of_line_output_test_start_delay_count = 2;
       return 1;
     }
-    if (cold_start_protection_branch_flag != 0) {
-      if (cold_start_protection_timer_countdown != 0) {
-        cold_start_protection_cycle_counter = 2;
-        cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+    if (end_of_line_output_test_output_on_flag != 0) {
+      if (end_of_line_output_test_timer != 0) {
+        end_of_line_output_test_start_delay_count = 2;
+        end_of_line_output_test_timer = end_of_line_output_test_timer - 1;
         return 1;
       }
-      cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
-      fault_event_queue_clear_active(0x35);
-      cold_start_protection_timer_countdown = end_of_line_test_relay_off_time;
-      cold_start_protection_branch_flag = 0;
-      cold_start_protection_state = 3;
+      end_of_line_output_test_timer = end_of_line_output_test_timer - 1;
+      cm848_clearEndOfLineTestOutputRequest(0x35);
+      end_of_line_output_test_timer = end_of_line_test_relay_off_time;
+      end_of_line_output_test_output_on_flag = 0;
+      end_of_line_output_test_state = 3;
       uVar5 = 1;
       if (((fault_detected_bits_384_to_399 & 4) == 0) && ((fault_detected_bits_384_to_399 & 8) == 0)
          ) {
@@ -91902,100 +92013,104 @@ undefined2 engine_coldStart_protection_stateMachine(void)
       }
       goto LAB_0052ffc8;
     }
-    if (cold_start_protection_timer_countdown != 0) {
-      cold_start_protection_cycle_counter = 2;
-      cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+    if (end_of_line_output_test_timer != 0) {
+      end_of_line_output_test_start_delay_count = 2;
+      end_of_line_output_test_timer = end_of_line_output_test_timer - 1;
       return 1;
     }
-    cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
-    fault_event_queue_set_active(0x35,5);
+    end_of_line_output_test_timer = end_of_line_output_test_timer - 1;
+    cm848_setEndOfLineTestOutputRequest(0x35,5);
     wVar4 = end_of_line_test_lift_pump_on_time;
     goto LAB_0052fd54;
   case 3:
-    if (cold_start_protection_branch_flag != 0) {
-      wVar4 = cold_start_protection_timer_countdown - 1;
-      if (cold_start_protection_timer_countdown == 0) {
-        cold_start_protection_timer_countdown = wVar4;
+    if (end_of_line_output_test_output_on_flag != 0) {
+      wVar4 = end_of_line_output_test_timer - 1;
+      if (end_of_line_output_test_timer == 0) {
+        end_of_line_output_test_timer = wVar4;
         if ((end_of_line_test_enable_flags & 4) != 0) {
-          fault_event_queue_clear_active(4);
+          cm848_clearEndOfLineTestOutputRequest(4);
         }
         if ((end_of_line_test_enable_flags & 0x10) != 0) {
-          fault_event_queue_clear_active(0x26);
+          cm848_clearEndOfLineTestOutputRequest(0x26);
         }
-        cold_start_protection_state = 4;
-        cold_start_protection_timer_countdown = end_of_line_test_relay_off_time;
-        protection_voltage_active_flag = 0;
+        end_of_line_output_test_state = 4;
+        end_of_line_output_test_timer = end_of_line_test_relay_off_time;
+        alternator_field_actuator_test_active_flag = 0;
         cooling_fan_actuator_test_active_flag = 0;
         fuel_control_actuator_test_active_flag = 0;
         return 1;
       }
-      cold_start_protection_cycle_counter = 2;
-      cold_start_protection_timer_countdown = wVar4;
+      end_of_line_output_test_start_delay_count = 2;
+      end_of_line_output_test_timer = wVar4;
       return 1;
     }
-    wVar4 = cold_start_protection_timer_countdown - 1;
-    if (cold_start_protection_timer_countdown != 0) {
-      cold_start_protection_cycle_counter = 2;
-      cold_start_protection_timer_countdown = wVar4;
+    wVar4 = end_of_line_output_test_timer - 1;
+    if (end_of_line_output_test_timer != 0) {
+      end_of_line_output_test_start_delay_count = 2;
+      end_of_line_output_test_timer = wVar4;
       return 1;
     }
-    cold_start_protection_timer_countdown = wVar4;
+    end_of_line_output_test_timer = wVar4;
     if ((end_of_line_test_enable_flags & 4) != 0) {
-      fault_event_queue_set_active(4,5);
+      cm848_setEndOfLineTestOutputRequest(4,5);
     }
     wVar4 = end_of_line_test_relay_on_time;
     if ((end_of_line_test_enable_flags & 0x10) != 0) {
-      fault_event_queue_set_active(0x26,5);
+      cm848_setEndOfLineTestOutputRequest(0x26,5);
       wVar4 = end_of_line_test_relay_on_time;
     }
 LAB_0052fd54:
-    cold_start_protection_branch_flag = 1;
-    cold_start_protection_timer_countdown = wVar4;
+    end_of_line_output_test_output_on_flag = 1;
+    end_of_line_output_test_timer = wVar4;
     break;
   case 4:
-    wVar4 = cold_start_protection_timer_countdown - 1;
-    bVar1 = cold_start_protection_timer_countdown == 0;
-    cold_start_protection_timer_countdown = wVar4;
+    wVar4 = end_of_line_output_test_timer - 1;
+    bVar1 = end_of_line_output_test_timer == 0;
+    end_of_line_output_test_timer = wVar4;
     if (bVar1) {
-      cold_start_battery_voltage_baseline_a = sensor_readings_t_0040baf2.battery_voltage;
-      cold_start_battery_timer_a = end_of_line_test_intake_air_heater_voltage_reading_delay_time;
-      fault_event_queue_set_active(0x2b,5);
-      cold_start_protection_timer_countdown = end_of_line_test_relay_on_time;
-      cold_start_protection_state = 5;
+      end_of_line_test_intake_air_heater_1_voltage_drop = sensor_readings_t_0040baf2.battery_voltage
+      ;
+      end_of_line_test_intake_air_heater_1_reading_delay_timer =
+           end_of_line_test_intake_air_heater_voltage_reading_delay_time;
+      cm848_setEndOfLineTestOutputRequest(0x2b,5);
+      end_of_line_output_test_timer = end_of_line_test_relay_on_time;
+      end_of_line_output_test_state = 5;
     }
     break;
   case 5:
-    bVar1 = cold_start_protection_timer_countdown == 0;
-    cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+    bVar1 = end_of_line_output_test_timer == 0;
+    end_of_line_output_test_timer = end_of_line_output_test_timer - 1;
     if (bVar1) {
-      cold_start_protection_timer_countdown = end_of_line_test_relay_off_time;
-      fault_event_queue_clear_active(0x2b);
-      cold_start_protection_state = 6;
+      end_of_line_output_test_timer = end_of_line_test_relay_off_time;
+      cm848_clearEndOfLineTestOutputRequest(0x2b);
+      end_of_line_output_test_state = 6;
     }
     break;
   case 6:
-    bVar1 = cold_start_protection_timer_countdown == 0;
-    cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+    bVar1 = end_of_line_output_test_timer == 0;
+    end_of_line_output_test_timer = end_of_line_output_test_timer - 1;
     if (bVar1) {
-      cold_start_protection_timer_countdown = end_of_line_test_relay_on_time;
-      cold_start_battery_voltage_baseline_b = sensor_readings_t_0040baf2.battery_voltage;
-      fault_event_queue_set_active(0x2c,5);
-      cold_start_battery_timer_b = end_of_line_test_intake_air_heater_voltage_reading_delay_time;
-      cold_start_protection_state = 7;
+      end_of_line_output_test_timer = end_of_line_test_relay_on_time;
+      end_of_line_test_intake_air_heater_2_voltage_drop = sensor_readings_t_0040baf2.battery_voltage
+      ;
+      cm848_setEndOfLineTestOutputRequest(0x2c,5);
+      end_of_line_test_intake_air_heater_2_reading_delay_timer =
+           end_of_line_test_intake_air_heater_voltage_reading_delay_time;
+      end_of_line_output_test_state = 7;
     }
     break;
   case 7:
-    if (cold_start_protection_timer_countdown != 0) {
-      cold_start_protection_cycle_counter = 2;
-      cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
+    if (end_of_line_output_test_timer != 0) {
+      end_of_line_output_test_start_delay_count = 2;
+      end_of_line_output_test_timer = end_of_line_output_test_timer - 1;
       return 1;
     }
-    cold_start_protection_timer_countdown = cold_start_protection_timer_countdown - 1;
-    fault_event_queue_clear_active(0x2c);
+    end_of_line_output_test_timer = end_of_line_output_test_timer - 1;
+    cm848_clearEndOfLineTestOutputRequest(0x2c);
     bVar2 = end_of_line_test_settings_cal.test_flags_2;
-    cold_start_protection_state = 8;
+    end_of_line_output_test_state = 8;
     local_18[0] = end_of_line_test_settings_cal.test_flags_2;
-    sVar3 = fault_event_check_conflict(0x100);
+    sVar3 = cm848_isDtcStoredOtherThanFault(0x100);
     if (sVar3 == 0) {
       local_18[0] = bVar2 & 0xef;
       cm848_controlEndOfLineTestMalfunctionIndicatorLampOverride(2);
@@ -92028,12 +92143,15 @@ LAB_0052ffc8:
 /* Chrysler end-of-line (in-plant) test sequencer. Above end_of_line_test_settings_cal.maximum_miles
    x 8000 lifetime distance pulses (32 miles in the EEPROM) it only calls
    cm848_controlEndOfLineTestMalfunctionIndicatorLampOverride(0); otherwise, while the field mode
-   register (end_of_line_test_settings_cal.field_mode_register) is 5100 (0x13ec), it keeps the
-   elapsed-seconds counter BYTE_003fd1ac (cleared in ENGINE_STATE_STOPPED, +1 per 10 passes) and
-   runs protection_state_machine_step through its steps: 0 initialize, 1 cold start, 2 deviation
-   check, 3 battery voltage, 4 radiator fan speed noise, 5 misfire test, 6 bit check. With any other
-   field mode value it resets its state and the diag suppress request (was
-   hpcr_calibration_group25_load). */
+   register (end_of_line_test_settings_cal.field_mode_register) is 5100 (0x13ec), it keeps
+   end_of_line_test_seconds_since_engine_start (+1 per 10 passes) and
+   end_of_line_test_time_since_engine_start (0.1 s), both 0 while ENGINE_STATE_STOPPED, and runs
+   end_of_line_test_step through its steps, each returning the next: 0 start
+   (cm848_runEndOfLineTestStartStep), 1 output tests (cm848_runEndOfLineOutputTestStep), 2 intake
+   air heater verdict, 3 alternator test, 4 radiator fan speed noise
+   (cm848_checkRadiatorFanSpeedSignalNoise), 5 misfire test, 6 final result, 7 done. With any other
+   field mode value it resets the step, the output test state and timers, the MIL override and its
+   power-down flag (was hpcr_calibration_group25_load). */
 
 void cm848_runEndOfLineTestSequence(void)
 
@@ -92047,58 +92165,59 @@ void cm848_runEndOfLineTestSequence(void)
       cm848_controlEndOfLineTestMalfunctionIndicatorLampOverride(3);
     }
     if (engine_state == ENGINE_STATE_STOPPED) {
-      BYTE_003fd1ac = 0;
-      DAT_003fd1ad = 0;
-      DAT_003fd1ae = 0;
+      end_of_line_test_seconds_since_engine_start = 0;
+      end_of_line_test_second_divider_pass_count = 0;
+      end_of_line_test_time_since_engine_start = 0;
     }
     else {
-      DAT_003fd1ad = DAT_003fd1ad + 1;
-      DAT_003fd1ae = DAT_003fd1ae + 1;
-      if (9 < DAT_003fd1ad) {
-        DAT_003fd1ad = 0;
-        BYTE_003fd1ac = BYTE_003fd1ac + 1;
+      end_of_line_test_second_divider_pass_count = end_of_line_test_second_divider_pass_count + 1;
+      end_of_line_test_time_since_engine_start = end_of_line_test_time_since_engine_start + 1;
+      if (9 < end_of_line_test_second_divider_pass_count) {
+        end_of_line_test_second_divider_pass_count = 0;
+        end_of_line_test_seconds_since_engine_start =
+             end_of_line_test_seconds_since_engine_start + 1;
       }
     }
-    switch(protection_state_machine_step) {
+    switch(end_of_line_test_step) {
     case 0:
-      protection_state_machine_step = engine_protection_timerStateMachine_init();
+      end_of_line_test_step = cm848_runEndOfLineTestStartStep();
       break;
     case 1:
-      protection_state_machine_step = engine_coldStart_protection_stateMachine();
+      end_of_line_test_step = cm848_runEndOfLineOutputTestStep();
       break;
     case 2:
-      protection_state_machine_step = diag_camSync_deviation_check();
+      end_of_line_test_step = cm848_runEndOfLineIntakeAirHeaterResultStep();
       break;
     case 3:
-      protection_state_machine_step = engine_coldStart_batteryVoltage_monitor();
+      end_of_line_test_step = cm848_runEndOfLineAlternatorTestStep();
       break;
     case 4:
-      protection_state_machine_step = cm848_checkRadiatorFanSpeedSignalNoise();
+      end_of_line_test_step = cm848_checkRadiatorFanSpeedSignalNoise();
       break;
     case 5:
-      protection_state_machine_step = cm848_runEndOfLineMisfireTestStep();
+      end_of_line_test_step = cm848_runEndOfLineMisfireTestStep();
       break;
     case 6:
-      protection_state_machine_step = engine_protection_timerBitCheck_dispatch();
+      end_of_line_test_step = cm848_runEndOfLineFinalResultStep();
       break;
     case 7:
     }
   }
   else {
-    protection_state_machine_step = 0;
+    end_of_line_test_step = 0;
     cm848_controlEndOfLineTestMalfunctionIndicatorLampOverride(0);
     end_of_line_test_malfunction_indicator_lamp_power_down_state_flag_cal = 0;
-    BYTE_003fd1ac = 0;
-    DAT_003fd1ad = 0;
-    DAT_003fd1ba = 0x50;
-    cold_start_protection_state = 1;
-    cold_start_protection_branch_flag = 0;
-    cold_start_protection_timer_countdown = 0;
-    cold_start_protection_cycle_counter = 0;
-    cold_start_protection_sub_state = 0;
-    cold_start_battery_timer_a = 0xffff;
-    cold_start_battery_timer_b = 0xffff;
-    cold_start_battery_diag_suppress_done_flag = 0;
+    end_of_line_test_seconds_since_engine_start = 0;
+    end_of_line_test_second_divider_pass_count = 0;
+    end_of_line_test_output_number = 0x50;
+    end_of_line_output_test_state = 1;
+    end_of_line_output_test_output_on_flag = 0;
+    end_of_line_output_test_timer = 0;
+    end_of_line_output_test_start_delay_count = 0;
+    end_of_line_test_step_sub_state = 0;
+    end_of_line_test_intake_air_heater_1_reading_delay_timer = 0xffff;
+    end_of_line_test_intake_air_heater_2_reading_delay_timer = 0xffff;
+    end_of_line_alternator_test_started_flag = 0;
     radiator_fan_speed_noise_check_pass_count = 0;
   }
   return;
@@ -92107,10 +92226,13 @@ void cm848_runEndOfLineTestSequence(void)
 
 
 //
-// Function: cm848_initialization_group25_state @ 0x00530288
+// Function: cm848_initializeRadiatorFanSpeedRationalityCheck @ 0x00530288
 //
 
-void cm848_initialization_group25_state(void)
+/* Boot initializer of cm848_checkRadiatorFanSpeedRationality (P0483): clears
+   radiator_fan_speed_out_of_range_count (was cm848_initialization_group25_state) */
+
+void cm848_initializeRadiatorFanSpeedRationalityCheck(void)
 
 {
   radiator_fan_speed_out_of_range_count = 0;

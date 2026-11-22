@@ -1729,8 +1729,8 @@ void cm848_sciCommand26Handler(void);  // @ 0x0052072c
 void cm848_sciCommand26Callback(void);  // @ 0x0052075c
 void cm848_sciCommand37Handler(void);  // @ 0x00520ad8
 void cm848_sciCommand37Callback(void);  // @ 0x00520b14
-void protectionVoltageTimeoutControl(void);  // @ 0x00521474
-void initProtectionVoltageTimer(void);  // @ 0x005216cc
+void cm848_expireSciCommand37Tests(void);  // @ 0x00521474
+void cm848_initializeSciCommand37TestTimeouts(void);  // @ 0x005216cc
 void cm848_sciCommand39WriteEepromSetting(void);  // @ 0x005216f4
 void cm848_sciCommand39WriteEepromSettingCallback(void);  // @ 0x00521730
 void cm848_sciCommand40ReadEepromSetting(void);  // @ 0x00521908
@@ -1857,20 +1857,20 @@ void cm848_initializeEgrDeltaPressureSensorPerformanceCheck(void);  // @ 0x0052e
 void cm848_checkEgrDeltaPressureSensorPerformance(void);  // @ 0x0052e29c
 void cm848_initializeEgrOrificeTemperatureSensorRationalityMonitor(void);  // @ 0x0052eac8
 void cm848_monitorEgrOrificeTemperatureSensorRationality(void);  // @ 0x0052eae8
-void cm848_initialization_group21_state_cont(void);  // @ 0x0052ef90
-undefined4 engine_protection_timerStateMachine_init(void);  // @ 0x0052f030
-undefined4 diag_camSync_deviation_check(void);  // @ 0x0052f250
+void cm848_initializeEndOfLineTestSequence(void);  // @ 0x0052ef90
+undefined4 cm848_runEndOfLineTestStartStep(void);  // @ 0x0052f030
+undefined4 cm848_runEndOfLineIntakeAirHeaterResultStep(void);  // @ 0x0052f250
 undefined4 cm848_runEndOfLineMisfireTestStep(void);  // @ 0x0052f32c
 undefined4 cm848_checkRadiatorFanSpeedSignalNoise(void);  // @ 0x0052f448
-undefined4 engine_coldStart_batteryVoltage_monitor(void);  // @ 0x0052f5d4
-undefined4 engine_protection_timerBitCheck_dispatch(void);  // @ 0x0052f770
-void sensor_battery_voltage_decrement(void);  // @ 0x0052f89c
-undefined4 fault_event_check_conflict(int param_1);  // @ 0x0052f938
-void fault_event_queue_set_active(int param_1,word param_2);  // @ 0x0052f994
-void fault_event_queue_clear_active(ushort param_1);  // @ 0x0052f9d8
-undefined2 engine_coldStart_protection_stateMachine(void);  // @ 0x0052fa34
+undefined4 cm848_runEndOfLineAlternatorTestStep(void);  // @ 0x0052f5d4
+undefined4 cm848_runEndOfLineFinalResultStep(void);  // @ 0x0052f770
+void cm848_measureEndOfLineIntakeAirHeaterVoltageDrops(void);  // @ 0x0052f89c
+undefined4 cm848_isDtcStoredOtherThanFault(int param_1);  // @ 0x0052f938
+void cm848_setEndOfLineTestOutputRequest(int param_1,word param_2);  // @ 0x0052f994
+void cm848_clearEndOfLineTestOutputRequest(ushort param_1);  // @ 0x0052f9d8
+undefined2 cm848_runEndOfLineOutputTestStep(void);  // @ 0x0052fa34
 void cm848_runEndOfLineTestSequence(void);  // @ 0x0053005c
-void cm848_initialization_group25_state(void);  // @ 0x00530288
+void cm848_initializeRadiatorFanSpeedRationalityCheck(void);  // @ 0x00530288
 void cm848_checkRadiatorFanSpeedRationality(void);  // @ 0x00530298
 void cm848_initializeFuelTemperatureSensorColdSoakCheck(void);  // @ 0x00530364
 undefined4 cm848_completeFuelTemperatureSensorColdSoakCheckReport(void);  // @ 0x00530374
