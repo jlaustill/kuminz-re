@@ -1260,6 +1260,31 @@ Scripts are in `session_folder/round21/`.
   - `function_definitions.csv` `int` parameters render as `dword`. Check the prototype importer for the same kind
     of silent type mapping as the struct importer had.
 
+## Done, round 22 (2026-11-22, same PR; the relayed "keep going" again): the engine protection leftovers
+
+Scripts are in `session_folder/round22/`.
+- **Stage A (14be183, label-only):** round 21's leads.
+  - The boot / restart resets: `cm848_resetEngineProtectionShutdownState` (was `cm848_completeEngineStartSequence`;
+    it is no part of an engine start), `cm848_resetEngineProtectionPrecrankState` (was
+    `cm848_initSensorChannelDataStructures`), `cm848_resetEngineProtectionShutdownOverrideDetector`.
+  - The override detector's words are logical switch 31's previous state and the pending request, not J1939 state.
+    Task 025 had read them the same way.
+  - The fault derate's J1939 torque curve (PGN 65251) adjustment: its initializer, its fuelings and speed points, its
+    priority bit (1 << e2m EPF_Torque_Curve_Priority) and its lookup cache.
+  - New rows: the shutdown channel recorded at power-up (`lha`), and the derate table's cache at the engine speed.
+  - The configuration flags are documented bit by bit in their field comment. They are not a clean bitfield: most
+    tests go through a whole word copy, with combined masks.
+- **Closed leads:**
+  - `function_definitions.csv`'s `int` maps to unsigned `dword` on purpose (`int32_t` is the signed one), and its
+    `short` is an unsigned word, unlike the struct importer's. The importer says so in a comment and reports unknown
+    types (`Error: Unknown type`). Write signed prototype types as `sword` / `int32_t`.
+  - The 10DA engine overspeed log was already typed (`engine_overspeed_event_t[5]`). It has the fault log entry's
+    shape but an unsigned value (the engine speed), so it stays a type of its own.
+  - `DAT_0040a78c` only ever gets 0 (four `sth`, no load), so it stays unnamed.
+- **Methods:** the scratch raw scanner (`raw_addr_scan.py`) accepted any `lis` of the base register in its 8-word
+  window, not the nearest one, so it reported false hits (0x51f884 reads 0x40bd4e, not 0x3fbd4e). It never hid one.
+  Fixed in `session_folder/round22/`; the round 19 control and the ANC range give the same counts.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

@@ -1,0 +1,14 @@
+cm848: round 22 closing - docs, the session archive, verify
+
+- task 046, the round 22 section:
+  - stage A;
+  - the closed leads: function_definitions.csv's int / short are unsigned on purpose (write sword / int32_t); the
+    10DA overspeed log was already typed and keeps its own type; DAT_0040a78c only ever gets 0;
+  - the scratch raw scanner's fix (the nearest lis decides, so 0x51f884's false hit goes; it never hid a hit).
+- PR body: the round 22 entry and test line; the open list now reads "after round 22".
+- todo line 046.
+- The session archive: session_folder/round22/, the round 22 build and verify logs in the large-files tarball, the PR
+  body copy and the README entry.
+- verify: two builds byte-identical.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

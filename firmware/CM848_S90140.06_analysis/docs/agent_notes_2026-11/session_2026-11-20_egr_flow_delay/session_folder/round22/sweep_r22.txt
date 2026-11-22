@@ -1,0 +1,10 @@
+work/tasks/046-cm848-egr-flow-estimate.md:1253: ...    `3a`, `4e`-`58`). `governor_faultDerate_channel_bit` / `_lookup_interp_state` and
+work/tasks/046-cm848-egr-flow-estimate.md:1254: ...    (`engine_protection_derateParam_priorityApply`, `fault_initBitwiseTimerMask
+work/tasks/046-cm848-egr-flow-estimate.md:1254: ... (`engine_protection_derateParam_priorityApply`, `fault_initBitwiseTimerMask`,
+work/tasks/046-cm848-egr-flow-estimate.md:1255: ...    `governor_calculateIntegratorRpmOutput`) are still guesses.
+work/tasks/046-cm848-egr-flow-estimate.md:1257: ...The module's init chain still has guessed names. `cm848_completeEngineStartSequence` only clears the engine
+work/tasks/046-cm848-egr-flow-estimate.md:1258: ...    protection shutdown state; `cm848_initSensorChannelDataStructures` and `exception_resetProtecti
+work/tasks/046-cm848-egr-flow-estimate.md:1258: ...ate; `cm848_initSensorChannelDataStructures` and `exception_resetProtectionModeState` are
+work/tasks/025-cm848-naming-wave-followups.md:692: ...- governor_derate_j1939_protection_active_prev 0x3fbd40 in cm848_updateJ1939
+work/tasks/025-cm848-naming-wave-followups.md:698: ... request (flags bit 9 = e2m EPSOOVEN / EPSOOVFG): governor_derate_j1939_trigger_pending = override request and govern
+work/tasks/025-cm848-naming-wave-followups.md:698: ...rate_j1939_trigger_pending = override request and governor_derate_j1939_protection_active_prev = previous switch 31 state - 
