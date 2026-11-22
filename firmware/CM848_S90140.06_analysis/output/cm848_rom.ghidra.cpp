@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 08:33:44 MST 2026
+// Generated: Sun Nov 22 09:28:39 MST 2026
 
 
 //
@@ -1136,10 +1136,10 @@ char mpc555_diagService25_executeFunction(int param_1)
     if (cVar6 != '\t') {
       cm848_sendDiagServiceResponse(param_1,0);
       wVar4 = mios_mmcsm_cnt.CNT;
-      cVar3 = j1939_can_ring_buf._pad16._0_1_;
+      cVar3 = boot_can_ring_state._pad16._0_1_;
       do {
-        dVar1 = j1939_can_ring_buf.j1939_tx_write_ptr;
-        dVar2 = j1939_can_ring_buf.j1939_tx_read_ptr;
+        dVar1 = boot_can_ring_state.transmit_write_pointer;
+        dVar2 = boot_can_ring_state.transmit_read_pointer;
         do {
           wVar5 = mios_mmcsm_cnt.CNT;
           if (0x40c < (int)((uint)wVar5 - (uint)wVar4)) goto LAB_000018f4;
@@ -2055,10 +2055,10 @@ void mpc555_initDiagnosticSubsystem(void)
   byte bVar6;
   undefined5 uVar7;
   
-  j1939_can_ring_buf.j1939_tx_read_ptr = 0x3022e6;
-  j1939_can_ring_buf.j1939_tx_write_ptr = 0x3022e6;
-  j1939_can_ring_buf.can_rx_read_ptr = 0x302016;
-  j1939_can_ring_buf.can_rx_write_ptr = 0x302016;
+  boot_can_ring_state.transmit_read_pointer = 0x3022e6;
+  boot_can_ring_state.transmit_write_pointer = 0x3022e6;
+  boot_can_ring_state.receive_read_pointer = 0x302016;
+  boot_can_ring_state.receive_write_pointer = 0x302016;
   uVar7 = mpc555_initDiagResponseHandlers();
   cm848_registerPgnEf00Handler((byte)((uint5)uVar7 >> 0x20),(void *)uVar7);
   cm848_registerMemoryReadServices();
@@ -2071,7 +2071,8 @@ void mpc555_initDiagnosticSubsystem(void)
   can_mailbox_counter.slot_start = (word)iVar5;
   can_mailbox_counter.slot_end = wVar2 + 5;
   ecu_power_state_flags.mailbox_index = wVar2 + 5;
-  j1939_can_ring_buf.toucan_mb_ptr = (dword)(&UNK_003070f0 + (iVar5 * 0x10 & 0xffff0));
+  boot_can_ring_state.transmit_message_buffer_pointer =
+       (dword)(&UNK_003070f0 + (iVar5 * 0x10 & 0xffff0));
   uVar4 = 0;
   bVar6 = 0;
   cVar3 = can_rx_channel_filter;
@@ -3056,7 +3057,7 @@ void mpc555_canTransmitQueuePush(uint param_1,uint param_2,int param_3,undefined
     uVar12 = 1;
   }
   else {
-    cVar4 = j1939_can_ring_buf._pad16._0_1_;
+    cVar4 = boot_can_ring_state._pad16._0_1_;
     if (cVar4 == '\x01') {
       uVar12 = 4;
     }
@@ -3085,9 +3086,9 @@ void mpc555_canTransmitQueuePush(uint param_1,uint param_2,int param_3,undefined
           param_2 = param_2 + 1 & 0xff;
         } while (param_2 < 8);
       }
-      dVar2 = j1939_can_ring_buf.toucan_mb_ptr;
+      dVar2 = boot_can_ring_state.transmit_message_buffer_pointer;
       if ((*(byte *)(dVar2 + 1) & 0xf0) == 0xc0) {
-        dVar2 = j1939_can_ring_buf.j1939_tx_write_ptr;
+        dVar2 = boot_can_ring_state.transmit_write_pointer;
         bVar11 = 0;
         puVar10 = &uStack_2a;
         puVar8 = (undefined2 *)(dVar2 - 2);
@@ -3097,19 +3098,19 @@ void mpc555_canTransmitQueuePush(uint param_1,uint param_2,int param_3,undefined
           *puVar8 = *puVar10;
           bVar11 = bVar11 + 1;
         } while (bVar11 < 6);
-        j1939_can_ring_buf.j1939_tx_write_ptr = dVar2 + 0xc;
+        boot_can_ring_state.transmit_write_pointer = dVar2 + 0xc;
         if (&UNK_003024ba < (undefined *)(dVar2 + 0xc)) {
-          j1939_can_ring_buf.j1939_tx_write_ptr = 0x3022e6;
+          boot_can_ring_state.transmit_write_pointer = 0x3022e6;
         }
-        dVar2 = j1939_can_ring_buf.j1939_tx_write_ptr;
-        dVar3 = j1939_can_ring_buf.j1939_tx_read_ptr;
+        dVar2 = boot_can_ring_state.transmit_write_pointer;
+        dVar3 = boot_can_ring_state.transmit_read_pointer;
         if (dVar2 == dVar3) {
-          j1939_can_ring_buf._pad16._0_1_ = 1;
+          boot_can_ring_state._pad16._0_1_ = 1;
         }
       }
       else {
         wVar5 = can_mailbox_counter.slot_start;
-        cm848_writeCan2ControllerTxMailbox(&toucan_a,wVar5 & 0xff,&local_28);
+        cm848_writeBootKernelCanTxMailbox(&toucan_a,wVar5 & 0xff,&local_28);
       }
       uVar12 = 0;
     }
@@ -3814,10 +3815,16 @@ void cm848_can2MailboxTransmitRangeWrapper(void)
 
 
 //
-// Function: cm848_writeCan2ControllerTxMailbox @ 0x00004f2c
+// Function: cm848_writeBootKernelCanTxMailbox @ 0x00004f2c
 //
 
-void cm848_writeCan2ControllerTxMailbox(int param_1,int param_2,int param_3)
+/* The boot kernel's copy (ROM 0x3C30-0x7F60 image) of cm848_writeCanControllerTxMailbox, byte for
+   byte: copies the ID and 8 data bytes (6 halfwords) into TouCAN A message buffer (number - 1) and
+   writes 0xC8 (transmit once, length 8) to its control byte. Called by mpc555_canTransmitQueuePush
+   and mpc555_manageCan1TransmitBuffer. The old 'Can2' was not a second controller (was
+   cm848_writeCan2ControllerTxMailbox) */
+
+void cm848_writeBootKernelCanTxMailbox(int param_1,int param_2,int param_3)
 
 {
   undefined2 *puVar1;
@@ -3908,20 +3915,20 @@ void mpc555_manageCan1TransmitBuffer(void)
   wVar4 = can_mailbox_counter.slot_start;
   wVar5 = toucan_a.IFLAG;
   toucan_a.IFLAG = wVar5 & ~(ushort)(1 << (wVar4 + 0xffff & 0x3f));
-  dVar2 = j1939_can_ring_buf.j1939_tx_read_ptr;
-  dVar1 = j1939_can_ring_buf.j1939_tx_write_ptr;
-  if ((dVar1 == dVar2) && (cVar3 = j1939_can_ring_buf._pad16._0_1_, cVar3 != '\x01')) {
-    dVar1 = j1939_can_ring_buf.toucan_mb_ptr;
+  dVar2 = boot_can_ring_state.transmit_read_pointer;
+  dVar1 = boot_can_ring_state.transmit_write_pointer;
+  if ((dVar1 == dVar2) && (cVar3 = boot_can_ring_state._pad16._0_1_, cVar3 != '\x01')) {
+    dVar1 = boot_can_ring_state.transmit_message_buffer_pointer;
     *(undefined1 *)(dVar1 + 1) = 0;
   }
   else {
     wVar4 = can_mailbox_counter.slot_start;
-    cm848_writeCan2ControllerTxMailbox(&toucan_a,wVar4 & 0xff);
-    j1939_can_ring_buf._pad16._0_1_ = 0;
-    dVar1 = j1939_can_ring_buf.j1939_tx_read_ptr;
-    j1939_can_ring_buf.j1939_tx_read_ptr = dVar1 + 0xc;
+    cm848_writeBootKernelCanTxMailbox(&toucan_a,wVar4 & 0xff);
+    boot_can_ring_state._pad16._0_1_ = 0;
+    dVar1 = boot_can_ring_state.transmit_read_pointer;
+    boot_can_ring_state.transmit_read_pointer = dVar1 + 0xc;
     if (&UNK_003024ba < (undefined *)(dVar1 + 0xc)) {
-      j1939_can_ring_buf.j1939_tx_read_ptr = 0x3022e6;
+      boot_can_ring_state.transmit_read_pointer = 0x3022e6;
     }
   }
   return;
@@ -3948,10 +3955,10 @@ void mpc555_processCanReceiveBuffer(int param_1)
   undefined1 *puVar10;
   ushort uVar11;
   
-  cVar4 = j1939_can_ring_buf._pad16._1_1_;
+  cVar4 = boot_can_ring_state._pad16._1_1_;
   if (cVar4 == '\0') {
     param_1 = param_1 * 0x10;
-    puVar1 = (uint *)j1939_can_ring_buf.can_rx_write_ptr;
+    puVar1 = (uint *)boot_can_ring_state.receive_write_pointer;
     *puVar1 = (*(uint *)(&DAT_003070f2 + param_1) & 0xffe00000) >> 3 |
               *(uint *)(&DAT_003070f2 + param_1) >> 1 & 0x3ffff;
     *(ushort *)(puVar1 + 1) = (byte)(&DAT_003070f1)[param_1] & 0xf;
@@ -3967,15 +3974,15 @@ void mpc555_processCanReceiveBuffer(int param_1)
     } while (uVar11 < 8);
     wVar5 = toucan_a.TIMER;
   }
-  dVar2 = j1939_can_ring_buf.can_rx_write_ptr;
-  j1939_can_ring_buf.can_rx_write_ptr = dVar2 + 0x12;
+  dVar2 = boot_can_ring_state.receive_write_pointer;
+  boot_can_ring_state.receive_write_pointer = dVar2 + 0x12;
   if (&UNK_003022d4 < (undefined *)(dVar2 + 0x12)) {
-    j1939_can_ring_buf.can_rx_write_ptr = 0x302016;
+    boot_can_ring_state.receive_write_pointer = 0x302016;
   }
-  dVar2 = j1939_can_ring_buf.can_rx_write_ptr;
-  dVar3 = j1939_can_ring_buf.can_rx_read_ptr;
+  dVar2 = boot_can_ring_state.receive_write_pointer;
+  dVar3 = boot_can_ring_state.receive_read_pointer;
   if (dVar2 == dVar3) {
-    j1939_can_ring_buf._pad16._1_1_ = 1;
+    boot_can_ring_state._pad16._1_1_ = 1;
     wVar5 = can_mailbox_counter.slot_start;
     iVar8 = 1 << (wVar5 + 1 & 0x3f);
     uVar7 = 0;
@@ -4023,9 +4030,9 @@ void mpc555_dispatchCanMessageHandlers(void)
     if (4 < iVar8) {
       return;
     }
-    dVar3 = j1939_can_ring_buf.can_rx_read_ptr;
-    dVar2 = j1939_can_ring_buf.can_rx_write_ptr;
-    if ((dVar2 == dVar3) && (cVar4 = j1939_can_ring_buf._pad16._1_1_, cVar4 != '\x01')) {
+    dVar3 = boot_can_ring_state.receive_read_pointer;
+    dVar2 = boot_can_ring_state.receive_write_pointer;
+    if ((dVar2 == dVar3) && (cVar4 = boot_can_ring_state._pad16._1_1_, cVar4 != '\x01')) {
       return;
     }
     bVar1 = *(byte *)(dVar3 + 1);
@@ -4047,14 +4054,14 @@ void mpc555_dispatchCanMessageHandlers(void)
         bVar11 = bVar11 + 1;
       } while (bVar11 < bVar1);
     }
-    dVar2 = j1939_can_ring_buf.can_rx_read_ptr;
-    j1939_can_ring_buf.can_rx_read_ptr = dVar2 + 0x12;
+    dVar2 = boot_can_ring_state.receive_read_pointer;
+    boot_can_ring_state.receive_read_pointer = dVar2 + 0x12;
     if (&UNK_003022d4 < (undefined *)(dVar2 + 0x12)) {
-      j1939_can_ring_buf.can_rx_read_ptr = 0x302016;
+      boot_can_ring_state.receive_read_pointer = 0x302016;
     }
-    cVar4 = j1939_can_ring_buf._pad16._1_1_;
+    cVar4 = boot_can_ring_state._pad16._1_1_;
     if (cVar4 == '\x01') {
-      j1939_can_ring_buf._pad16._1_1_ = 0;
+      boot_can_ring_state._pad16._1_1_ = 0;
       wVar5 = can_mailbox_counter.slot_start;
       iVar8 = 1 << (wVar5 & 0x3f);
       wVar5 = can_mailbox_counter.slot_start;
@@ -8633,13 +8640,13 @@ void cm848_initializeWaterInFuelChannel(void)
 // Function: cm848_calculateBoostPressure @ 0x0000dc64
 //
 
-/* Boost (gauge) pressure: with boost_is_gauge_pressure_flag set returns intake manifold pressure
-   minus barometric pressure (or minus barometric_pressure_sensor_config.default_value - the
-   barometric channel's default - when boost_uses_barometric_pressure_flag is 0) clamped at 0 -
-   otherwise the absolute intake manifold pressure; 1/18.56 kPa per count (0.0159 inHg) (was
-   cm848_oilPressureDeltaCalculation - the sensor_readings_t field it reads was misnamed
-   oil_pressure) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy
-   Confidence High */
+/* Boost (gauge) pressure: with absolute_boost_pressure_sensor_present_flag set returns intake
+   manifold pressure minus barometric pressure (or minus
+   barometric_pressure_sensor_config.default_value - the barometric channel's default - when
+   barometric_pressure_sensor_present_flag is 0) clamped at 0 - otherwise the absolute intake
+   manifold pressure; 1/18.56 kPa per count (0.0159 inHg) (was cm848_oilPressureDeltaCalculation -
+   the sensor_readings_t field it reads was misnamed oil_pressure) | review-function-readability
+   reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
 
 word cm848_calculateBoostPressure(void)
 
@@ -8647,8 +8654,8 @@ word cm848_calculateBoostPressure(void)
   word wVar1;
   
   wVar1 = intake_manifold_pressure_sensor_filtered;
-  if (boost_is_gauge_pressure_flag != 0) {
-    if (boost_uses_barometric_pressure_flag == 0) {
+  if (absolute_boost_pressure_sensor_present_flag != 0) {
+    if (barometric_pressure_sensor_present_flag == 0) {
       if (barometric_pressure_sensor_config.default_value < intake_manifold_pressure_sensor_filtered
          ) {
         return intake_manifold_pressure_sensor_filtered -
@@ -24745,7 +24752,7 @@ void cm848_buildPgn65265CruiseControlVehicleSpeedMessage(void)
   byte bVar3;
   undefined1 local_8;
   
-  if (two_speed_axle_enable_cal == 0) {
+  if (two_speed_axle_switch_present_cal == 0) {
     j1939_ccvs1_two_speed_axle_byte = 0xff;
   }
   else if (switch_input_state_bits.unwired_switch == 0) {
@@ -35183,11 +35190,11 @@ void cm848_updateTransmissionControlInputs(void)
     else {
       transmission_control_flags.mode_flags = transmission_control_flags.mode_flags & 0xef;
     }
-    if (boost_is_gauge_pressure_flag == 0) {
+    if (absolute_boost_pressure_sensor_present_flag == 0) {
       transmission_4th_gear_lockup_boost_pressure = intake_manifold_pressure_sensor_filtered;
     }
     else {
-      if (boost_uses_barometric_pressure_flag == 0) {
+      if (barometric_pressure_sensor_present_flag == 0) {
         if (barometric_pressure_sensor_config.default_value <
             intake_manifold_pressure_sensor_filtered) {
           transmission_normal_operation_flag = 1;
@@ -45598,19 +45605,19 @@ void cm848_inhibitLowSpeedGovernorAggressiveGains(void)
    Rear_Axle_Ratio, 1/128 per count) is set from rear_axle_ratio_high_cal (EEPROM 0xb2, e2m 1180 +C
    Rear_Axle_Ratio_High) and, while switch 31 (switch_input_state_bits[3] bit 0x80) is clear, from
    rear_axle_ratio_low_cal (EEPROM 0xac, e2m 1180 +6 Rear_Axle_Ratio_Low). The stores run only when
-   two_speed_axle_enable_cal is nonzero; with it 0 the word keeps the start-up value that 0x42770
-   loads from the HIGH record, whereas cm848_calculateVehicleSpeedFromOutputShaft and
+   two_speed_axle_switch_present_cal is nonzero; with it 0 the word keeps the start-up value that
+   0x42770 loads from the HIGH record, whereas cm848_calculateVehicleSpeedFromOutputShaft and
    cm848_calculateDrivetrainRatioFromVehicleSpeed use the LOW record in that single-speed case.
-   Called every pass of cm848_periodicTaskSet_auxiliaryControl. Inputs: two_speed_axle_enable_cal,
-   switch 31, the two ratio records. Output: rear_axle_ratio (read by
-   cm848_selectLowSpeedGovernorGearGainSet, cm848_calculateRiseLimitedVehicleSpeed and
+   Called every pass of cm848_periodicTaskSet_auxiliaryControl. Inputs:
+   two_speed_axle_switch_present_cal, switch 31, the two ratio records. Output: rear_axle_ratio
+   (read by cm848_selectLowSpeedGovernorGearGainSet, cm848_calculateRiseLimitedVehicleSpeed and
    cm848_calculateCruiseGovernorSpeedErrorGain). 453 = 3.54 in the dump for all three words;
-   two_speed_axle_enable_cal is 0 there. (was cm848_applyProtectionControlLimit) */
+   two_speed_axle_switch_present_cal is 0 there. (was cm848_applyProtectionControlLimit) */
 
 void cm848_selectTwoSpeedRearAxleRatio(void)
 
 {
-  if ((two_speed_axle_enable_cal != 0) &&
+  if ((two_speed_axle_switch_present_cal != 0) &&
      (rear_axle_ratio = rear_axle_ratio_high_cal, switch_input_state_bits.unwired_switch == 0)) {
     rear_axle_ratio = rear_axle_ratio_low_cal;
   }
@@ -45627,9 +45634,10 @@ void cm848_selectTwoSpeedRearAxleRatio(void)
    Rear_Axle_Ratio, 1/128 per count) = rear_axle_ratio_high_cal (EEPROM 0xb2, e2m 1180 +C
    Rear_Axle_Ratio_High). Called once from the boot list of cm848_applicationMain, just before the
    divisor calculation 0x5268e8. The value stays in use on a single-speed axle
-   (two_speed_axle_enable_cal = 0: the periodic select 0x4272c then stores nothing) and is the start
-   value on a two-speed axle, where the periodic select replaces it with rear_axle_ratio_low_cal
-   while switch 31 is clear. 453 = 3.54 in the dump. (was cm848_setProtectionControlValue) */
+   (two_speed_axle_switch_present_cal = 0: the periodic select 0x4272c then stores nothing) and is
+   the start value on a two-speed axle, where the periodic select replaces it with
+   rear_axle_ratio_low_cal while switch 31 is clear. 453 = 3.54 in the dump. (was
+   cm848_setProtectionControlValue) */
 
 void cm848_initializeRearAxleRatio(void)
 
@@ -86270,7 +86278,7 @@ void cm848_updateCruiseAndRoadSpeedGovernorDroops(void)
 
 {
   if ((vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_INDUCTIVE) &&
-     (two_speed_axle_enable_cal == 1)) {
+     (two_speed_axle_switch_present_cal == 1)) {
     if (switch_input_state_bits.unwired_switch == 0) {
       cruise_top_droop_gain = cruise_top_droop_gain_for_rear_axle_ratio_low;
       road_speed_governor_top_droop_gain =
@@ -87332,7 +87340,7 @@ void cm848_applyJ1939OutOfGearToDrivetrainRatio(void)
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
 /* VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO above vehicle_speed_minimum: drivetrain_ratio_raw =
    engine speed (engine_speed_state.engine_speed) over the speed-sensor speed with the axle divisor
-   picked by two_speed_axle_enable_cal and switch 31; 0x7ffd when it cannot be computed (was
+   picked by two_speed_axle_switch_present_cal and switch 31; 0x7ffd when it cannot be computed (was
    cm848_fuel_temperature_trim_calculation) | review-function-readability reviewed 2026-11-12 -
    Readability Medium Accuracy Confidence Medium */
 
@@ -87358,7 +87366,7 @@ void cm848_calculateDrivetrainRatioFromVehicleSpeed(void)
   }
   uVar3 = (uint)vehicle_speed_unfiltered;
   if (uVar3 != 0) {
-    if ((two_speed_axle_enable_cal == 0) || (switch_input_state_bits.unwired_switch == 0)) {
+    if ((two_speed_axle_switch_present_cal == 0) || (switch_input_state_bits.unwired_switch == 0)) {
       uVar2 = (uint)(((ulonglong)engine_speed_state.engine_speed << 0xf) /
                     ((ulonglong)rear_axle_ratio_low_cal << 3));
     }
@@ -87440,7 +87448,7 @@ void cm848_saveOutputShaftSpeed(void)
    drivetrain (VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO): vehicle_speed_unfiltered =
    output_shaft_speed_current x 0x3c000 / axle divisor -
    output_shaft_to_vehicle_speed_divisor_high_axle_ratio (the second axle ratio) when
-   two_speed_axle_enable_cal and switch 31 are set else
+   two_speed_axle_switch_present_cal and switch 31 are set else
    output_shaft_to_vehicle_speed_divisor_low_axle_ratio - capped at
    vehicle_speed_maximum_from_output_shaft (150 mph) (was cm848_fuelTrimFromOutputShaftSpeed) |
    review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
@@ -87453,7 +87461,7 @@ void cm848_calculateVehicleSpeedFromOutputShaft(void)
   dword fuel_temp_trim_uncapped;
   
   if (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO) {
-    if ((two_speed_axle_enable_cal == 0) || (switch_input_state_bits.unwired_switch == 0)) {
+    if ((two_speed_axle_switch_present_cal == 0) || (switch_input_state_bits.unwired_switch == 0)) {
       fuel_temp_trim_uncapped =
            (dword)(CONCAT44((int)((ulonglong)(uint)output_shaft_speed_current * 0x3c000 >> 0x20),
                             (uint)output_shaft_speed_current * 0x3c000) /
@@ -87488,9 +87496,9 @@ void cm848_calculateVehicleSpeedFromOutputShaft(void)
    0x3fee7a) is e2m 132C +0 Tire_Size, the number of tire revolutions per mile (the e2m range is
    300-725; 251 in the dump). cm848_calculateVehicleSpeedFromOutputShaft divides
    output_shaft_speed_current (1/8 rpm) x 0x3c000 (= 256 x 60 x 128 / 8) by the _cal divisor when
-   two_speed_axle_enable_cal is on and switch 31 is set, else by the _working one, which gives
-   vehicle speed in 1/256 mph. Called once from the boot list of cm848_applicationMain, after the
-   rear axle ratio initializer 0x42770. 113703 = 453 x 251 for both in the dump. (was
+   two_speed_axle_switch_present_cal is on and switch 31 is set, else by the _working one, which
+   gives vehicle speed in 1/256 mph. Called once from the boot list of cm848_applicationMain, after
+   the rear axle ratio initializer 0x42770. 113703 = 453 x 251 for both in the dump. (was
    cm848_computeProtectionTrimDivisors) */
 
 void cm848_calculateOutputShaftToVehicleSpeedDivisors(void)
@@ -91506,11 +91514,11 @@ void cm848_completeBoostPressureMonitorReport(void)
    of more than 377 (20.3 kPa) from barometric pressure sets fault 778 (P0069 MAP / barometric
    correlation; skipped while MAP faults 8 / 9 or barometric faults 25 / 26 / 340 are set). At the
    governor setpoint while bit 0x2000 of monitor_enabling_conditions_met is set, boost (gauge when
-   boost_is_gauge_pressure_flag is non-zero, else absolute) below 1069 (57.6 kPa) with target speed
-   of at least 2000 rpm and engine load of at least 35 percent sets fault 729 (P0299 underboost),
-   and boost above 1917 (103.3 kPa) with engine load of 7 percent or less sets fault 64; each of
-   those two needs 110 passes of its conditions and then a debounce count above 35, and clears when
-   the count is back at 0 (was cm848_calibration_group21_load). */
+   absolute_boost_pressure_sensor_present_flag is non-zero, else absolute) below 1069 (57.6 kPa)
+   with target speed of at least 2000 rpm and engine load of at least 35 percent sets fault 729
+   (P0299 underboost), and boost above 1917 (103.3 kPa) with engine load of 7 percent or less sets
+   fault 64; each of those two needs 110 passes of its conditions and then a debounce count above
+   35, and clears when the count is back at 0 (was cm848_calibration_group21_load). */
 
 void cm848_monitorBoostPressureSensorAndUnderboost(void)
 
@@ -91583,7 +91591,7 @@ void cm848_monitorBoostPressureSensorAndUnderboost(void)
     }
     if (underboost_dwell_count == underboost_dwell_limit) {
       uVar1 = boost_pressure_above_barometric;
-      if (boost_is_gauge_pressure_flag == 0) {
+      if (absolute_boost_pressure_sensor_present_flag == 0) {
         uVar1 = intake_manifold_pressure_sensor_filtered;
       }
       if (uVar1 < underboost_maximum_boost_pressure) {
@@ -91635,7 +91643,7 @@ LAB_0052d9e8:
   if (boost_pressure_sensor_high_reading_dwell_count ==
       boost_pressure_sensor_high_reading_dwell_limit) {
     uVar1 = boost_pressure_above_barometric;
-    if (boost_is_gauge_pressure_flag == 0) {
+    if (absolute_boost_pressure_sensor_present_flag == 0) {
       uVar1 = intake_manifold_pressure_sensor_filtered;
     }
     if (boost_pressure_sensor_high_reading_minimum_boost_pressure < uVar1) {
@@ -97471,9 +97479,9 @@ void cm848_monitorOverboostAndHighLoadBoostBand(void)
         ((fault_detected_cal.faults_0_to_15 & 0x200) == 0)) &&
        (fault_detected_cal.boost_in_range_high_error == 0)) {
       if ((final_fueling_state == FUELING_STATE_AIR_FUEL_CONTROL_DERATE) &&
-         ((((boost_is_gauge_pressure_flag == 0 &&
+         ((((absolute_boost_pressure_sensor_present_flag == 0 &&
             (overboost_minimum_boost_pressure < intake_manifold_pressure_sensor_filtered)) ||
-           ((boost_is_gauge_pressure_flag != 0 &&
+           ((absolute_boost_pressure_sensor_present_flag != 0 &&
             (overboost_minimum_boost_pressure < boost_pressure_above_barometric)))) &&
           (overboost_minimum_engine_speed < engine_speed_state.filtered_engine_speed)))) {
         if ((overboost_debounce_count < overboost_debounce_count_limit) &&
@@ -97489,11 +97497,11 @@ void cm848_monitorOverboostAndHighLoadBoostBand(void)
         fault_registered_cal._50_2_ = fault_registered_cal._50_2_ & 0x7fff;
       }
       if ((high_load_boost_band_minimum_engine_load < engine_load_at_current_speed_percent) &&
-         (((((boost_is_gauge_pressure_flag == 0 &&
+         (((((absolute_boost_pressure_sensor_present_flag == 0 &&
              (intake_manifold_pressure_sensor_filtered < high_load_boost_band_maximum_boost_pressure
              )) && (high_load_boost_band_minimum_boost_pressure <
                     intake_manifold_pressure_sensor_filtered)) ||
-           (((boost_is_gauge_pressure_flag != 0 &&
+           (((absolute_boost_pressure_sensor_present_flag != 0 &&
              (boost_pressure_above_barometric < high_load_boost_band_maximum_boost_pressure)) &&
             (high_load_boost_band_minimum_boost_pressure < boost_pressure_above_barometric)))) &&
           (overboost_minimum_engine_speed < engine_speed_state.filtered_engine_speed)))) {
@@ -97537,7 +97545,7 @@ void cm848_monitorOverboostAndHighLoadBoostBand(void)
    (wastegate_monitor_pass_event_count, wastegate_monitor_pass_duration_count) in which boost stays
    between the pass-low and pass-high thresholds at engine load of at least
    wastegate_monitor_pass_high_load_threshold; boost is intake_manifold_pressure, or
-   boost_pressure_above_barometric when boost_is_gauge_pressure_flag is set. (was
+   boost_pressure_above_barometric when absolute_boost_pressure_sensor_present_flag is set. (was
    hpcr_fuelDemandProc) */
 
 void cm848_monitorWastegateBoostPressure(void)
@@ -97587,10 +97595,10 @@ void cm848_monitorWastegateBoostPressure(void)
                   wastegate_monitor_pass_low_boost_pressure_values,0);
   if (((wastegate_monitor_driver_duty_threshold < wastegate_solenoid_duty_command) ||
       (engine_speed_state.filtered_engine_speed < wastegate_monitor_minimum_engine_speed_threshold))
-     || (((boost_is_gauge_pressure_flag != 0 ||
+     || (((absolute_boost_pressure_sensor_present_flag != 0 ||
           (intake_manifold_pressure_sensor_filtered <
            wastegate_monitor_fail_high_boost_pressure_threshold)) &&
-         ((boost_is_gauge_pressure_flag == 0 ||
+         ((absolute_boost_pressure_sensor_present_flag == 0 ||
           (boost_pressure_above_barometric < wastegate_monitor_fail_high_boost_pressure_threshold)))
          ))) {
     if (wastegate_monitor_high_boost_debounce_count == 0) goto LAB_005377b0;
@@ -97614,12 +97622,12 @@ LAB_005377b0:
   }
   if (((engine_load_percent < wastegate_monitor_pass_high_load_threshold) ||
       (engine_speed_state.filtered_engine_speed < wastegate_monitor_minimum_engine_speed_threshold))
-     || (((boost_is_gauge_pressure_flag != 0 ||
+     || (((absolute_boost_pressure_sensor_present_flag != 0 ||
           ((wastegate_monitor_pass_high_boost_pressure_threshold <
             intake_manifold_pressure_sensor_filtered ||
            (intake_manifold_pressure_sensor_filtered <
             wastegate_monitor_pass_low_boost_pressure_threshold)))) &&
-         ((boost_is_gauge_pressure_flag == 0 ||
+         ((absolute_boost_pressure_sensor_present_flag == 0 ||
           ((wastegate_monitor_pass_high_boost_pressure_threshold < boost_pressure_above_barometric
            || (boost_pressure_above_barometric < wastegate_monitor_pass_low_boost_pressure_threshold
               )))))))) {

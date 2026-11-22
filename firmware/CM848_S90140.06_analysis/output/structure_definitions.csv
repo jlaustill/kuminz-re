@@ -2011,14 +2011,14 @@ keyon_flags_t,0x00302002,runtime_counter,dword,4,ECU runtime counter (RAM 0x3020
 # CAN transmit/receive ring buffer pointers @ 0x3024c6
 # j1939_tx: J1939 message queue ring buffer (12-byte records, base 0x3022e6)
 # can_rx: CAN receive record ring buffer (18-byte records, base 0x302016)
-# toucan_mb_ptr: active TouCAN mailbox base for current diagnostic session
+# transmit_message_buffer_pointer: active TouCAN mailbox base for current diagnostic session
 # =============================================================================
-can_tx_ring_t,0x003024c6,j1939_tx_write_ptr,dword,4,J1939 TX queue write pointer (12-byte records base 0x3022E6),,verified
-can_tx_ring_t,0x003024c6,j1939_tx_read_ptr,dword,4,J1939 TX queue read pointer,,verified
-can_tx_ring_t,0x003024c6,can_rx_write_ptr,dword,4,CAN RX queue write pointer (18-byte records base 0x302016),,verified
-can_tx_ring_t,0x003024c6,can_rx_read_ptr,dword,4,CAN RX queue read pointer,,verified
-can_tx_ring_t,0x003024c6,_pad16,dword,4,Reserved,,verified
-can_tx_ring_t,0x003024c6,toucan_mb_ptr,dword,4,Active TouCAN mailbox base pointer for diagnostic session,,verified
+can_ring_state_t,0x003024c6,transmit_write_pointer,dword,4,Transmit ring write pointer: 12-byte frames from 0x3022e6; mpc555_canTransmitQueuePush stores a frame and advances it (was j1939_tx_write_ptr) | earlier note: J1939 TX queue write pointer (12-byte records base 0x3022E6),,verified
+can_ring_state_t,0x003024c6,transmit_read_pointer,dword,4,Transmit ring read pointer: mpc555_manageCan1TransmitBuffer sends the frame there and advances it (wrapping after 0x3024ba) (was j1939_tx_read_ptr) | earlier note: J1939 TX queue read pointer,,verified
+can_ring_state_t,0x003024c6,receive_write_pointer,dword,4,Receive ring write pointer: 18-byte records from 0x302016 (mpc555_processCanReceiveBuffer) (was can_rx_write_ptr) | earlier note: CAN RX queue write pointer (18-byte records base 0x302016),,verified
+can_ring_state_t,0x003024c6,receive_read_pointer,dword,4,Receive ring read pointer (mpc555_dispatchCanMessageHandlers) (was can_rx_read_ptr) | earlier note: CAN RX queue read pointer,,verified
+can_ring_state_t,0x003024c6,_pad16,dword,4,Reserved,,verified
+can_ring_state_t,0x003024c6,transmit_message_buffer_pointer,dword,4,The transmit message buffer: mpc555_initDiagnosticSubsystem sets it to TouCAN A buffer 0x3070f0 + 16 x n; the empty-ring path of mpc555_manageCan1TransmitBuffer clears its control byte (was toucan_mb_ptr) | earlier note: Active TouCAN mailbox base pointer for diagnostic session,,verified
 # =============================================================================
 # ADC scan trigger state @ 0x3024f4
 # sensor_param_ptr: pointer to active sensor parameter block (set in ADC init)

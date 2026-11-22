@@ -1314,7 +1314,7 @@ typedef struct qsmcm_qspi_ctrl_t qsmcm_qspi_ctrl_t;
 typedef struct qsmcm_recram_t qsmcm_recram_t;
 typedef struct qsmcm_txram_t qsmcm_txram_t;
 typedef struct keyon_flags_t keyon_flags_t;
-typedef struct can_tx_ring_t can_tx_ring_t;
+typedef struct can_ring_state_t can_ring_state_t;
 typedef struct diag_write_request_state_t diag_write_request_state_t;
 typedef struct can_slot_range_t can_slot_range_t;
 typedef struct can_rx_channel_t can_rx_channel_t;
@@ -3283,13 +3283,13 @@ struct keyon_flags_t {
     uint32_t runtime_counter;  /* ECU runtime counter (RAM 0x302012): loaded from EEPROM 0x1000030 at boot / +1 every 41 PIT ticks (~0.205 s per count if the PIT runs at 1 MHz) / written back at key-off; also the auth-token freshness clock (was eeprom_write_count) */
 };
 
-struct can_tx_ring_t {
-    uint32_t j1939_tx_write_ptr;  /* J1939 TX queue write pointer (12-byte records base 0x3022E6) */
-    uint32_t j1939_tx_read_ptr;  /* J1939 TX queue read pointer */
-    uint32_t can_rx_write_ptr;  /* CAN RX queue write pointer (18-byte records base 0x302016) */
-    uint32_t can_rx_read_ptr;  /* CAN RX queue read pointer */
+struct can_ring_state_t {
+    uint32_t transmit_write_pointer;  /* Transmit ring write pointer: 12-byte frames from 0x3022e6; mpc555_canTransmitQueuePush stores a frame and advances it (was j1939_tx_write_ptr) | earlier note: J1939 TX queue write pointer (12-byte records base 0x3022E6) */
+    uint32_t transmit_read_pointer;  /* Transmit ring read pointer: mpc555_manageCan1TransmitBuffer sends the frame there and advances it (wrapping after 0x3024ba) (was j1939_tx_read_ptr) | earlier note: J1939 TX queue read pointer */
+    uint32_t receive_write_pointer;  /* Receive ring write pointer: 18-byte records from 0x302016 (mpc555_processCanReceiveBuffer) (was can_rx_write_ptr) | earlier note: CAN RX queue write pointer (18-byte records base 0x302016) */
+    uint32_t receive_read_pointer;  /* Receive ring read pointer (mpc555_dispatchCanMessageHandlers) (was can_rx_read_ptr) | earlier note: CAN RX queue read pointer */
     uint32_t _pad16;  /* Reserved */
-    uint32_t toucan_mb_ptr;  /* Active TouCAN mailbox base pointer for diagnostic session */
+    uint32_t transmit_message_buffer_pointer;  /* The transmit message buffer: mpc555_initDiagnosticSubsystem sets it to TouCAN A buffer 0x3070f0 + 16 x n; the empty-ring path of mpc555_manageCan1TransmitBuffer clears its control byte (was toucan_mb_ptr) | earlier note: Active TouCAN mailbox base pointer for diagnostic session */
 };
 
 struct diag_write_request_state_t {

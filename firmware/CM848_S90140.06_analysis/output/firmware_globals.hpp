@@ -761,12 +761,7 @@ extern byte TPU3_CH12_PARAM0;  // 0x003021c0
 extern byte TPU3_CH13_PARAM0;  // 0x003021d0
 extern byte TPU3_CH14_PARAM0;  // 0x003021e0
 extern byte TPU3_CH15_PARAM0;  // 0x003021f0
-extern can_tx_ring_t j1939_can_ring_buf;  // 0x003024c6
-extern undefined qadc_a_ccw_2;  // 0x003024ca
-extern undefined qadc_a_ccw_4;  // 0x003024ce
-extern undefined qadc_a_ccw_6;  // 0x003024d2
-extern undefined qadc_a_queue1_wrap_flag;  // 0x003024d6
-extern undefined qadc_a_queue2_wrap_flag;  // 0x003024d7
+extern can_ring_state_t boot_can_ring_state;  // 0x003024c6
 extern diag_write_request_state_t diag_write_request_state;  // 0x003024f4
 extern can_slot_range_t can_mailbox_counter;  // 0x00302510
 extern can_rx_channel_t can_rx_channel_filter;  // 0x0030251c
@@ -2147,7 +2142,7 @@ extern word rear_axle_ratio_low_cal;  // 0x003fd52e
 extern word j1939_ccvs1_switch_logic_option_cal;  // 0x003fd530
 extern word cruise_discrete_switch_inputs_used_cal;  // 0x003fd532
 extern word rear_axle_ratio_high_cal;  // 0x003fd534
-extern word two_speed_axle_enable_cal;  // 0x003fd536
+extern word two_speed_axle_switch_present_cal;  // 0x003fd536
 extern word engine_brake_driveline_brake_type_cal;  // 0x003fd53e
 extern word algorithm_enable_flags_0_cal;  // 0x003fd59c
 extern algorithm_enable_flags_1_t algorithm_enable_flags_1_cal;  // 0x003fd59e
@@ -2465,8 +2460,8 @@ extern word executive_frame_maximum_time_capture_cal;  // 0x003feec0
 extern word low_speed_governor_reference_offset;  // 0x003fefea
 extern word cruise_neutral_fuel_ramp_rate;  // 0x003feff0
 extern word air_fuel_control_fueling_override_value;  // 0x003feff2
-extern word boost_uses_barometric_pressure_flag;  // 0x003feff4
-extern word boost_is_gauge_pressure_flag;  // 0x003feff6
+extern word barometric_pressure_sensor_present_flag;  // 0x003feff4
+extern word absolute_boost_pressure_sensor_present_flag;  // 0x003feff6
 extern word air_fuel_control_fueling_threshold_1;  // 0x003feff8
 extern word air_fuel_control_fueling_threshold_2;  // 0x003feffa
 extern word air_fuel_control_fueling_threshold_3;  // 0x003feffc

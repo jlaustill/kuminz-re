@@ -110,7 +110,7 @@ void cm848_runFlashProgramStateMachine(void);  // @ 0x00004720
 bool mpc555_cmfEraseBlocks(uint param_1);  // @ 0x000049d0
 void cm848_can2MailboxTransmitCompleteWrapper(void);  // @ 0x00004eec
 void cm848_can2MailboxTransmitRangeWrapper(void);  // @ 0x00004f0c
-void cm848_writeCan2ControllerTxMailbox(int param_1,int param_2,int param_3);  // @ 0x00004f2c
+void cm848_writeBootKernelCanTxMailbox(int param_1,int param_2,int param_3);  // @ 0x00004f2c
 void mpc555_can2TransmitInterruptHandler(void);  // @ 0x00004f6c
 void mpc555_manageCan1TransmitBuffer(void);  // @ 0x00005064
 void mpc555_processCanReceiveBuffer(int param_1);  // @ 0x00005134
