@@ -68,7 +68,7 @@ The states run 0 to 8: OFF, SET, RESUME, COAST, ACCEL, BUMP_DOWN, BUMP_UP, HOLD,
 - **Hold RESUME** to accelerate at 15/256 mph per pass. That's about 1.5 mph/s at an inferred 40 ms pass.
 - **Releasing COAST** sets the speed to the lower of the resume speed and road speed, and drops cruise below 35 mph. Releasing ACCEL sets it to the higher of the two.
 
-The set range is 35 to 85 mph. The set speed is lost at power-off, because bit 15 of `algorithm_enable_flags_3` is clear.
+The set range is 35 to 85 mph. The set speed is lost at power-off, because `algorithm_enable_flags_3_cal.cruise_save_set_speed_at_power_down_enable` (bit 15) is clear.
 
 ## Deny checks [review]
 
@@ -83,7 +83,8 @@ The set range is 35 to 85 mph. The set speed is lost at power-off, because bit 1
 7. CANCEL.
 8. Below 30 mph.
 9. Engine speed outside 450 to 4000 rpm.
-10. and 11. Manual transmission only: the gear and clutch checks.
+10. Manual transmission only: the gear check (an engine to road speed ratio window).
+11. Manual transmission only: the clutch check (an engine to road speed ratio integrator).
 12. Automatic transmission in park or neutral.
 
 Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrUserFueling`). [code]
@@ -112,13 +113,13 @@ Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrU
 **The disabled latch: `vacuum_throttle_actuator_disabled_flag`.** [code]
 - It latches on a pedal fault.
 - It also latches when the error stays above `vacuum_throttle_disabled_error_threshold` with the brake off. That needs `vacuum_throttle_disabled_counter` to reach `vacuum_throttle_maximum_error_time`.
-- Only boot init (`cm848_initCruiseServoControl`, 0x3fba4) clears it.
+- Only boot init (`cm848_initCruiseServoControl`, 0x3fba4) clears it. [review]
 - With `vacuum_throttle_cruise_actuator_disable_mode` = 1, the latch denies cruise (status 4). [round 26]
 
 **Who reads the enable bit.** Three functions, all by field name. None of them gates cruise engagement. [code]
 - the servo loop;
 - `cm848_calculateAllSpeedGovernorEquivalentThrottle` (0x45ecc), which applies a throttle offset when the bit is set;
-- `cm848_runOperatingModeSpeedGovernor` (0xea00), which cuts the all-speed governor's fuel by 44 counts while cruise is engaged.
+- `cm848_runOperatingModeSpeedGovernor` (0xea00). The review found it cuts the all-speed governor's fuel by 44 counts while cruise is engaged. [review]
 
 **Calibration.** EEPROM 0x170 = `0x11dc`, so the servo is on. [code]
 - P 384, I 256, D 26.
@@ -148,7 +149,7 @@ Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrU
   - SPN 91 (accelerator pedal position 1) is `all_speed_governor_equivalent_throttle` × 0.625;
   - SPN 558 (the low idle switch) comes from `commanded_throttle_state.accelerator_off_idle`.
 - **The enable.** `algorithm_enable_flags_32_cal.equivalent_throttle_enable` (EEPROM 0x15a bit 2) turns the calculation on; with it clear, the equivalent throttle equals the pedal. EEPROM 0x15a = `0x0007`, so it's on. [code]
-- **During cruise.** `cm848_calculateAllSpeedGovernorEquivalentThrottle` (0x45ecc) works out the throttle at which the all-speed governor would give the current fuel [review]. With the servo bit clear, it takes the larger of that and the pedal [code]. So the ECM reports a fuel-based throttle during cruise, with or without the servo.
+- **During cruise.** `cm848_calculateAllSpeedGovernorEquivalentThrottle` (0x45ecc) works out the throttle at which the all-speed governor would give the current fuel [review]. With the servo bit clear, it takes the larger of that and the pedal [code]. So the ECM reports a fuel-based throttle during cruise, with or without the servo. That conclusion rests on the [review] part.
 
 ## J1939
 
@@ -193,12 +194,13 @@ Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrU
 - What the firmware does with cruise engaged: nobody has captured data yet.
 - How the working demand reaches final fueling, and how TSC1 ranks against cruise there.
 - Whether a diagnostic memory write over J1939 could reach channel 47's override (`sensor_channel_diag_override[47]`). A function comment says it needs authentication [notes].
+- Which CRC16 algorithm `cm848_verifyCalibrationAndCodeCrc` (0x524360) uses. Nobody has written it down here yet, and fixing the CRC at 0x482 needs it.
 
 ## Turning the servo off
 
 These steps are untested:
 
-1. Clear bit 0x10 of EEPROM 0x170 (`0x11dc` to `0x11cc`).
+1. Clear bit 0x10 of EEPROM word 0x170 (`0x11dc` to `0x11cc`). The word is big-endian, so only the byte at 0x171 changes (`0xdc` to `0xcc`).
 2. Fix the CRC16 at 0x482.
 
 After that, cruise keeps fueling the engine, and the three servo outputs stay off.
