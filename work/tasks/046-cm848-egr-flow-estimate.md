@@ -1304,6 +1304,31 @@ Scripts are in `session_folder/round22/`.
   - The words next to the module that belong to other code: `DAT_003fbd20`-`26` (the emission level cap, the timer
     registers, the not-to-exceed zone) and `DAT_003fbd50`-`58` (`cm848_updateGeneralEngineProtection`).
 
+## Done, round 23 (2026-11-22, same PR; the relayed "keep going" again): the ambient module and the source enum
+
+Scripts are in `session_folder/round23/`.
+- **Stage A (0787531, label-only):**
+  - The ambient conditions module (e2m 1921 / 1977, `cm848_calculateAmbientAndCompressorInletConditions`):
+    - three `boost_*` words are the ambient air flow filter, its output, and the ambient air temperature estimate;
+    - the unnamed filters, coefficients, tables and caches are named from the parameter ID table (1977 +2 / +A, 197A /
+      197B the compressor inlet pressure drop, 197C / 1A0E / 197D the compressor inlet temperature rise);
+    - the initializer is `cm848_initializeAmbientConditions`.
+    This resolves round 19's lead on `cm848_initialization_step_3`'s filter.
+  - The PGN 65269 payload: all five fields, from the local J1939 database (SPN 108 / 170 / 171 / 172 / 79). Only
+    barometric pressure and ambient air temperature are built; the other three stay 'not available'. The ambient air
+    temperature byte comes from the ambient temperature sensor, not the ambient module's estimate.
+- **Stage B (e22155d, types):** `SENSOR_VALUE_SOURCE` on ten more `*_source` words. `source_scan.py` matches each
+  word's e2m value list (via the parameter ID table) against every literal the code uses, which resolves round 19's
+  reach lead. `egr_flow_source` (PRIMARY / BACKUP only) is included; the fan and fuel metering "sources" use other
+  value sets.
+- **Dead end:** the general engine protection's other reason bits. `DAT_0040a43c` / `_43e` are read but never written
+  (two `lhz`, even in permissive mode), `DAT_003fbd50` / `_54` are only zeroed, and the e2m names only the state and
+  its cap.
+- **Round 23 leads:**
+  - `algorithm_enable_flags_29_cal` bits 0 / 1 (the e2m's 'SS Ambient Advance / Derate') gate the ambient air
+    temperature broadcast, a hint at what 'SS' is.
+  - e2m 1977 +0 `C_AMB_Amb_Pressure_Fil_Cnst` (0x3ff074) has no row; check its users.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

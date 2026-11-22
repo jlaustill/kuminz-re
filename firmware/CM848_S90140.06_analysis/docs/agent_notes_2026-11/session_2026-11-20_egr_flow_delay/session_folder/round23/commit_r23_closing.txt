@@ -1,0 +1,14 @@
+cm848: round 23 closing - docs, the session archive, verify
+
+- task 046, the round 23 section:
+  - stages A and B;
+  - the dead end: the general engine protection's other reason bits, whose words are read but never written;
+  - the leads: algorithm_enable_flags_29_cal bits 0 / 1 gate the ambient temperature broadcast, and e2m 1977 +0 has
+    no row.
+- PR body: the round 23 entry and test line; the open list now reads "after round 23".
+- todo line 046.
+- The session archive: session_folder/round23/, the round 23 build and verify logs in the large-files tarball, the PR
+  body copy and the README entry.
+- verify: two builds byte-identical.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

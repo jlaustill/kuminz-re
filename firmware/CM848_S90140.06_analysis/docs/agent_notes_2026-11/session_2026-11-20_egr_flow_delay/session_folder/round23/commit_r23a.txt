@@ -1,0 +1,31 @@
+cm848: round 23 stage A - the ambient conditions module and the PGN 65269 payload (label-only)
+
+The ambient module (e2m 1921 / 1977; cm848_calculateAmbientAndCompressorInletConditions):
+- Misnamed words:
+  - boost_pressure_timing_filter_state -> ambient_air_flow_filter (its coefficient is e2m 1977 +6
+    C_AMB_Air_Flow_Fil_Cnst);
+  - boost_pressure_timing_ema_filtered -> ambient_air_flow_filtered;
+  - boost_fuel_timing_demand_filter_output -> ambient_air_temperature_estimate (compressor inlet temperature less its
+    rise, filtered; held through a user override). Neither is about boost fuel or timing.
+- Unnamed rows, named from the parameter ID table:
+  - the ambient air temperature filter and its coefficient (1977 +2 C_AMB_Amb_Tmptr_Fil_Cnst);
+  - the compressor inlet pressure drop air flow filter and its coefficient (1977 +A C_AMB_Air_Flow_CIPD_Fil_Cnst),
+    its table (197A / 197B C_AMB_Pressure_Drop_Flow_Axis / _Table) and a new row for its cache;
+  - the compressor inlet temperature rise table (197C / 1A0E / 197D C_AMB_Tmptr_Rise_Flow_Axis / _Speed_Axis /
+    _Table) and its 2-D cache.
+- cm848_initialization_step_3 -> cm848_initializeAmbientConditions.
+
+The PGN 65269 (Ambient Conditions) payload, laid out from the local J1939 database (SPN 108 / 170 / 171 / 172 / 79):
+- j1939_pgn65269_barometric_pressure (was j1939_amb_barometric_pressure);
+- _cab_interior_temperature (was _field1_init);
+- _ambient_air_temperature (new row, DAT_003faac5): the ambient temperature sensor converted to 0.03125 K/bit; 0xFFFF
+  while algorithm_enable_flags_29_cal bits 0 / 1 are not both set, 0xFFFE while fault 150 or 151 is detected;
+- _engine_air_intake_temperature (new row);
+- _road_surface_temperature (was _field2_init).
+The PGN-number prefix matches j1939_pgn65269_tx_message.
+
+Proof: reverse_names.py --ignore-comments --canonical-code-labels prints EQUIVALENT (20 names, all rendered; no named
+table left as WORD_ARRAY_; 2 functions differ only in the order of their local declarations). Headers regenerated (0
+g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

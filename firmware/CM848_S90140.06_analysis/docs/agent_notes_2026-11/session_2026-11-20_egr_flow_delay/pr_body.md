@@ -493,6 +493,12 @@ state enum, the flag bytes.**
   fault derate's J1939 torque curve adjustment (PGN 65251), two new rows, and the configuration flags documented.
 - **Stage B (eb3bc7e, label-only, review):** the two helpers it had only seen as calls, the second derate cache by the cache rule, and two comments corrected.
 
+**Round 23 (the relayed "keep going" again): the ambient module and the source enum.**
+- **Stage A (0787531, label-only):** the ambient conditions module's filters, coefficients, tables, caches and
+  initializer (e2m 1977 / 197A-197D / 1A0E), and the PGN 65269 payload's five fields.
+- **Stage B (e22155d, types):** `SENSOR_VALUE_SOURCE` on ten more source words (each e2m value list against the code's
+  literals).
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -584,6 +590,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 23: stage A is EQUIVALENT (20 names); stage B's enum proof shows only the substitutions.
 - [x] Round 22: stages A and B are EQUIVALENT (12 and 3 names).
 - [x] Round 21: stages A and B pass a layout / containment / artifact gate (A was piloted first); stage C is EQUIVALENT; stage D builds CM550 and CM848 identical before and after, and its positive control shows both new paths; stage E's gate passes (the five readers, no casts left).
 - [x] Round 20: stages A, C and E are EQUIVALENT; stages B, D and F pass the mask normalizer (the count gate: per word and mask, old masked reads = new field reads; pieces 464 -> 464).
@@ -616,7 +623,7 @@ state enum, the flag bytes.**
   - the fault derate scheduler words and the 11D5 air fuel control rows;
   - the TPU injection bytes and the A/C class-B coolant flags.
   The full list is in task 046.
-- **Open after round 22:**
+- **Open after round 23:**
   - the droop word at 0x40aedc and the task 046 leads;
   - the fault status records (a packed record array, but the range is time-shared RAM);
   - e2m 8C80 (TVA) / 8C2D;

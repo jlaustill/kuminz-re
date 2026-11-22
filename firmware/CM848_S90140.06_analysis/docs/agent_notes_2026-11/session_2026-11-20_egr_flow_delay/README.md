@@ -371,3 +371,8 @@ Hand work on the round 7 lead.
   `apply_r22_closing2.py`. `raw_addr_scan.py` is the fixed scanner: the nearest `lis` decides, and `--permissive`
   keeps the old rule for "no access" claims.
 
+## Round 23: the ambient module and the source enum (`session_folder/round23/`)
+
+- **Stage A:** `worklist_r23a.py`, `apply_r23a2.py` (the unnamed and new rows). **Stage B:** `source_scan.py` (each
+  `*_source` word's e2m value list against the code's literals), `apply_r23b.py`. **Closing:** `apply_r23_closing.py`.
+
