@@ -855,9 +855,9 @@ typedef enum {
     TIMER_CHANNEL_20 = 0x14,  /* Timer channel 20 (DAT_003fcf50) */
     TIMER_CHANNEL_21 = 0x15,  /* Timer channel 21 (DAT_003fcf52) */
     TIMER_CHANNEL_38 = 0x26,  /* Timer channel 38 (DAT_003fcf3a) */
-    TIMER_CHANNEL_43 = 0x2b,  /* Timer channel 43 (DAT_003fcf3c) */
-    TIMER_CHANNEL_44 = 0x2c,  /* Timer channel 44 (DAT_003fcf3e) */
-    TIMER_CHANNEL_53 = 0x35  /* Timer channel 53 (DAT_003fcf40) */
+    TIMER_CHANNEL_43 = 0x2b,  /* Timer channel 43 (sci_output_test_active_count) */
+    TIMER_CHANNEL_44 = 0x2c,  /* Timer channel 44 (sci_output_test_phase_countdown) */
+    TIMER_CHANNEL_53 = 0x35  /* Timer channel 53 (sci_output_test_timers) */
 } EVENT_TIMER_CHANNEL;
 
 typedef enum {
@@ -2628,7 +2628,7 @@ struct diag_clear_flags_t {
 struct j1939_ccss_tx_payload_t {
     uint8_t max_vehicle_speed_limit;  /* SPN 74 Maximum Vehicle Speed Limit (km/h); from maximum_road_speed; gate algorithm_enable_flags_3_cal&0x80 */
     uint8_t cruise_high_set_limit_speed;  /* SPN 87 Cruise Control High Set Limit Speed (km/h); gate algorithm_enable_flags_3_cal&0x40; fed by cruise_maximum_road_speed_cal */
-    uint8_t cruise_low_set_limit_speed;  /* SPN 88 Cruise Control Operator Low Set Limit Speed (km/h); from DAT_0005c28a */
+    uint8_t cruise_low_set_limit_speed;  /* SPN 88 Cruise Control Operator Low Set Limit Speed (km/h); from cruise_speed_low_limit */
     uint8_t reserved3;  /* reserved - init 0xff (not available) */
     uint8_t reserved4;  /* reserved - init 0xff (not available) */
     uint8_t reserved5;  /* reserved - init 0xff (not available) */

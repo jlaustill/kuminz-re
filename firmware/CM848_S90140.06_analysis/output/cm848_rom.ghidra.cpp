@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 04:16:25 MST 2026
+// Generated: Sun Nov 22 04:54:25 MST 2026
 
 
 //
@@ -21285,10 +21285,10 @@ void selectHighSpeedGovernorGainSet(void)
    active source lowers lowest_source_speed_limit and records its number in limiting_source_number -
    2 / 4 / 10 engine_speed_limit_source_2 / _4 / _10, 5 engine_speed_limit_fault_derate, 6
    engine_speed_limit_reference, 7 fuel_pressure_fault_engine_speed_limit_working, 8 the TSC1
-   override mode select 1 request (the e2m Jcomm high idle override speed, DAT_0005c39a), 9
-   j1939_powertrain_control_state.tsc1_speed_limit (governor mode 3), 11
-   power_take_off_throttle_override_engine_speed_limit, 13 engine_speed_limit_converter_slip, 14
-   engine_speed_limit_pedal_fault_mode, 15 engine_speed_limit_park_neutral_exit, 16
+   override mode select 1 request (the e2m Jcomm high idle override speed,
+   j1939_high_idle_override_speed), 9 j1939_powertrain_control_state.tsc1_speed_limit (governor mode
+   3), 11 power_take_off_throttle_override_engine_speed_limit, 13 engine_speed_limit_converter_slip,
+   14 engine_speed_limit_pedal_fault_mode, 15 engine_speed_limit_park_neutral_exit, 16
    engine_speed_limit_source_16 (turbocharger_speed_limiter_active_flag set). Sources 16 and 8
    return early with their own value as applied_speed_limit. Otherwise the result is held between
    engine_speed_limit_minimum (850 rpm) and engine_speed_limit_maximum (3500 rpm) and stored in
@@ -61746,7 +61746,8 @@ LAB_005022a4:
    fault 340 (P0106) / 778 (P0069) gate is on. The circuit status is the sensor channel status gated
    by faults 25 / 26 (P0108 / P0107) through bits 0 / 1 of fuel_boost_final_fault_gate_enable;
    faults 340 / 778 count only through bits 4 / 7 and when their fault_status_array entry allows it.
-   The combined status goes to DAT_0040a166 (write-only) (was hpcr_fuelFinal_periodic). */
+   The combined status goes to barometric_pressure_selection_fault_flags (write-only) (was
+   hpcr_fuelFinal_periodic). */
 
 void cm848_selectBarometricPressure(void)
 
@@ -67424,9 +67425,10 @@ void cm848_calculateFaultDerateFuelLimit(void)
 //
 
 /* Resets the fault derate fuel limit: fault_derate_ramp_times_256 to 0, its lookup state
-   DAT_003fbd4e to 2, fault_derate_fuel_limit to the no-limit value fuel_demand_maximum (5888) and
-   fault_derate_active_flag to 0. Called with cm848_initializeFaultDerateEngineSpeedLimit by
-   hpcr_initializeEngineProtection. (was engine_protection_torqueLimit_reset) */
+   fault_derate_fuel_limit_by_engine_speed_cached_axis_offset to 2, fault_derate_fuel_limit to the
+   no-limit value fuel_demand_maximum (5888) and fault_derate_active_flag to 0. Called with
+   cm848_initializeFaultDerateEngineSpeedLimit by hpcr_initializeEngineProtection. (was
+   engine_protection_torqueLimit_reset) */
 
 void cm848_resetFaultDerateFuelLimit(void)
 
@@ -83168,9 +83170,10 @@ LAB_00520aa8:
 
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    command 0x25 (37) handler | review-function-readability reviewed 2026-11-12 - Readability Medium
-   Accuracy Confidence Low | clears DAT_003fcf60 then installs cm848_sciCommand37Callback and starts
-   the response - SCI command 0x25 (37) via the 0x53a9a0 table (cm848_dispatchSciCommand) |
-   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low */
+   Accuracy Confidence Low | clears sci_command_37_received_byte_count then installs
+   cm848_sciCommand37Callback and starts the response - SCI command 0x25 (37) via the 0x53a9a0 table
+   (cm848_dispatchSciCommand) | review-function-readability reviewed 2026-11-12 - Readability Medium
+   Accuracy Confidence Low */
 
 void cm848_sciCommand37Handler(void)
 
@@ -84211,7 +84214,7 @@ void cm848_sciCommand52ReportFaultStatusByDtc(void)
 // Function: cm848_lookupFaultSpnIndex @ 0x00522468
 //
 
-/* searches the SPN table DAT_0005b57c for a matching SPN and returns its table index */
+/* searches the SPN table obd_dtc_code_table for a matching SPN and returns its table index */
 
 undefined4 cm848_lookupFaultSpnIndex(undefined2 *param_1,uint param_2)
 
@@ -90081,13 +90084,14 @@ void cm848_initializeFuelPressureGovernorMonitorState(void)
 /* Computes the pilot injection quantity injection_quantity_pilot_unscaled (0.0679 mm3 per count):
    the blended pilot_quantity map and the coolant, intake-temperature, ambient, boost and cold
    corrections are combined by sum / max / min wins (injection_quantity_pilot_logic_select, 2 = min
-   in the RAM dump), slew-limited, and capped at final_fueling x DAT_00409e66 / 4096 (half in the
-   dump). The result is 0 when engine_speed_limp_home_active_flag is set with the DAT_00409e62
-   switch on, or in the free-acceleration shutoff (coolant and intake limits are 300 F in the dump),
-   and a fixed value while fuel_pressure_limp_home_active_flag is set.
-   cm848_captureInjectionQuantityAndTimingSnapshots snapshots it into 0x3fd07e and
-   engine_injectionAngle_updateCutoutAndTimingDemand turns it into pilot_injection_quantity (was
-   cm848_torque_limit_state_update). */
+   in the RAM dump), slew-limited, and capped at final_fueling x
+   injection_quantity_pilot_ratio_limit / 4096 (half in the dump). The result is 0 when
+   engine_speed_limp_home_active_flag is set with the
+   injection_quantity_pilot_speed_limp_home_switch switch on, or in the free-acceleration shutoff
+   (coolant and intake limits are 300 F in the dump), and a fixed value while
+   fuel_pressure_limp_home_active_flag is set. cm848_captureInjectionQuantityAndTimingSnapshots
+   snapshots it into 0x3fd07e and engine_injectionAngle_updateCutoutAndTimingDemand turns it into
+   pilot_injection_quantity (was cm848_torque_limit_state_update). */
 
 void cm848_calculatePilotInjectionQuantity(void)
 
@@ -94115,13 +94119,14 @@ undefined4 cm848_abortIntakeAirHeaterPerformanceTestIfConditionsInvalid(void)
    passed, 5 failed, 6 aborted) that samples battery-voltage ADC channel index 4 in threes while the
    heater relays switch on and off; it runs only when algorithm_enable_flags_41_cal mask 0x200 is
    set (clear in the dump) and cm848_armIntakeAirHeaterPerformanceTest armed it at start. If the
-   voltage drop at turn-on and the recovery after turn-off agree within DAT_00064430 counts, then
-   both below the intake_air_heater_performance_threshold_* value for the intake manifold
-   temperature sets fault 411 (fault_detected_bits_400_to_415 mask 0x800, P2609; state 5) and
-   anything else clears it (state 4); if the two disagree the test ends in state 6 and leaves the
-   fault bit unchanged. cm848_abortIntakeAirHeaterPerformanceTestIfConditionsInvalid also aborts the
-   test (state 6) when voltage, temperature or heater state is out of range, and a steady result in
-   state 4 or 5 sets diagnostic_monitor_complete_bits 0x400. (was hpcr_injectPressureTuning) */
+   voltage drop at turn-on and the recovery after turn-off agree within
+   intake_air_heater_performance_test_drop_recovery_agreement_window_adc counts, then both below the
+   intake_air_heater_performance_threshold_* value for the intake manifold temperature sets fault
+   411 (fault_detected_bits_400_to_415 mask 0x800, P2609; state 5) and anything else clears it
+   (state 4); if the two disagree the test ends in state 6 and leaves the fault bit unchanged.
+   cm848_abortIntakeAirHeaterPerformanceTestIfConditionsInvalid also aborts the test (state 6) when
+   voltage, temperature or heater state is out of range, and a steady result in state 4 or 5 sets
+   diagnostic_monitor_complete_bits 0x400. (was hpcr_injectPressureTuning) */
 
 void cm848_monitorIntakeAirHeaterPerformance(void)
 
@@ -97190,15 +97195,16 @@ void cm848_monitorOverboostAndHighLoadBoostBand(void)
 
 /* Wastegate (CWG) boost-pressure monitor, called from periodicTaskSet_fuelDemand; it runs only when
    algorithm_enable_flags_19_cal mask 0x8, monitor_enabling_conditions_met mask 0x1000000 and the
-   start battery temperature test (DAT_003fd270) allow it, and it clears its counts and exits while
-   sensor faults or the wastegate solenoid fault (403) are active. It looks up three boost limits by
-   barometric_pressure_reference and sets fault 332 (fault_detected_bits_320_to_335 mask 0x1000,
-   high boost) after wastegate_monitor_debounce_count_limit passes with boost at or above
-   wastegate_monitor_fail_high_boost_pressure_threshold, engine speed at or above
+   start battery temperature test (wastegate_monitor_armed_flag) allow it, and it clears its counts
+   and exits while sensor faults or the wastegate solenoid fault (403) are active. It looks up three
+   boost limits by barometric_pressure_reference and sets fault 332 (fault_detected_bits_320_to_335
+   mask 0x1000, high boost) after wastegate_monitor_debounce_count_limit passes with boost at or
+   above wastegate_monitor_fail_high_boost_pressure_threshold, engine speed at or above
    wastegate_monitor_minimum_engine_speed_threshold and wastegate_solenoid_duty_command at or below
-   DAT_00409fe0. It also counts the passes (wastegate_monitor_pass_event_count,
-   wastegate_monitor_pass_duration_count) in which boost stays between the pass-low and pass-high
-   thresholds at engine load of at least DAT_00409fe4; boost is intake_manifold_pressure, or
+   wastegate_monitor_driver_duty_threshold. It also counts the passes
+   (wastegate_monitor_pass_event_count, wastegate_monitor_pass_duration_count) in which boost stays
+   between the pass-low and pass-high thresholds at engine load of at least
+   wastegate_monitor_pass_high_load_threshold; boost is intake_manifold_pressure, or
    boost_pressure_above_barometric when boost_is_gauge_pressure_flag is set. (was
    hpcr_fuelDemandProc) */
 

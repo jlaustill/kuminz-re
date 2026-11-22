@@ -766,9 +766,9 @@ EVENT_TIMER_CHANNEL,0x13,TIMER_CHANNEL_19,Timer channel 19 (DAT_003fcf4e),1
 EVENT_TIMER_CHANNEL,0x14,TIMER_CHANNEL_20,Timer channel 20 (DAT_003fcf50),1
 EVENT_TIMER_CHANNEL,0x15,TIMER_CHANNEL_21,Timer channel 21 (DAT_003fcf52),1
 EVENT_TIMER_CHANNEL,0x26,TIMER_CHANNEL_38,Timer channel 38 (DAT_003fcf3a),1
-EVENT_TIMER_CHANNEL,0x2b,TIMER_CHANNEL_43,Timer channel 43 (DAT_003fcf3c),1
-EVENT_TIMER_CHANNEL,0x2c,TIMER_CHANNEL_44,Timer channel 44 (DAT_003fcf3e),1
-EVENT_TIMER_CHANNEL,0x35,TIMER_CHANNEL_53,Timer channel 53 (DAT_003fcf40),1
+EVENT_TIMER_CHANNEL,0x2b,TIMER_CHANNEL_43,Timer channel 43 (sci_output_test_active_count),1
+EVENT_TIMER_CHANNEL,0x2c,TIMER_CHANNEL_44,Timer channel 44 (sci_output_test_phase_countdown),1
+EVENT_TIMER_CHANNEL,0x35,TIMER_CHANNEL_53,Timer channel 53 (sci_output_test_timers),1
 # Prior boot fault state - set at keyoff: 1 if engine didn't complete a normal run cycle
 # (engine_state != 1 at keyoff = crashed or shut down mid cold-start sequence)
 # Blocks diagnostic session access on next boot until the condition is resolved
