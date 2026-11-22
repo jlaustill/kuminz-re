@@ -1,0 +1,12 @@
+cm848: round 38 closing - task 046, the session archive, verify
+
+- task 046, the round 38 section: stage A, its proof and the leads (the legacy _cal tables to rename first, the
+  phantom-argument cache, per-function cache words).
+- PR body, README, the todo line.
+- The session archive:
+  - session_folder/round38/: the audit / apply scripts, the maps and the commit messages. The .cpp copies are left
+    out.
+  - The large tarball: the build and verify logs.
+- verify: two builds byte-identical, and the committed .cpp matches them apart from the timestamp.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

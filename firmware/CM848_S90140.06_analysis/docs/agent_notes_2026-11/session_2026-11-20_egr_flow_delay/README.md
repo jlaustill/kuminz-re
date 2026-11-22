@@ -452,3 +452,7 @@ Hand work on the round 7 lead.
 ## Round 37: 120 lookup cache words (`session_folder/round37/`)
 
 - `cache_users.py` (a cache range's lookups), `cache_names.py` (names every unnamed cache from its lookups), `apply_r37a.py`, the proof `prove_caches.py`. **Closing:** `apply_r37_closing.py`.
+
+## Round 38: the named lookup cache audit (`session_folder/round38/`)
+
+- `cache_audit.py` (named caches vs their lookups), `second_words.py` (a 2-D cache's y half), `apply_r38a.py`; the proof is round 37's `prove_caches.py`. **Closing:** `apply_r38_closing.py`.

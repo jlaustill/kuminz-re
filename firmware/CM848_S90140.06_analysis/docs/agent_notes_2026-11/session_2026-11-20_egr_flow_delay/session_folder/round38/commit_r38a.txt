@@ -1,0 +1,39 @@
+cm848: round 38 stage A - the named lookup cache rows audited against their own lookups (labels, types)
+
+cache_audit.py checks each of the 345 named cache rows against its own interpolator calls. It found 38 2-D caches
+typed as one word, which left their y segment offset unnamed (0x3fd134 in round 37 was one), and 64 names that differ
+from their lookups.
+- 34 caches widened to word[2]. Fifteen of them had their y half as a separate word row: ten named
+  <cache>_cached_axis_offset_y, five with legacy names (diag_state_group1_b / _d_state, fault_slot_state_6 / _8,
+  fuel_ema_slot_state_2).
+  - Each of those rows rendered only as the initializer's = 2, and now reads <cache>[1] as an untyped dotted row.
+  - A name ending _cached_axis_offset became _cached_axis_offsets.
+  - The shared blend caches keep their names (fuel_demand_mode1-3, the injection timing and pilot offset map blends,
+    fuel_limit_by_rpm_and_demand_blend and others).
+- 24 caches renamed after their own lookup's data table, among them:
+  - diag_state_group1_a_state / _c_state -> air_fuel_control_fuel_limit / _low_boost_fuel_limit_cached_axis_offsets
+  - fault_slot_state_5 / _7 -> crank_initial_fuel / crank_exit_fuel_cached_axis_offsets
+  - injection_timing_cam_offset / _fuel_table_cached_axis_offset -> pilot / main_injection_pulse_width_cached_axis_offsets
+  - injection_timing_trim_axis1 / 2 -> main_quantity_pilot_correction(_scale)_cached_axis_offsets
+  - fuel_load_correction_timing_cached_axis_offset ->
+    fuel_specific_nitrogen_oxide_ratio_by_intake_oxygen_fraction_cached_axis_offset
+  - the seven fuel_pressure_diagnostic_cached_axis_offset_0-6 -> one name per table
+  - governor_pid_init_state_a-e -> the all-speed governor blend / adjustment tables (_2: those tables have a second
+    cache)
+- Skipped (task 046):
+  - names that would inherit a legacy _cal table name (cylinder_event / crank_timing / fuel_demand_interp /
+    governor_interp / cam_timing);
+  - engine_retarder_torque_cached_axis_offset, whose data argument renders as a phantom register;
+  - the rename of torque_management_fuel_table_cached_axis_offset, which was widened only (its table is unnamed);
+  - four _2 names whose plain name is taken;
+  - protection_rpm_correction_cached_axis_offset, widened only (its table's name is taken).
+- One plate said "cooling_fan_feed_forward_table" for the table; it now says cooling_fan_feed_forward_duty_grid.
+
+Proof: prove_caches.py (round 37) maps both .cpp files to one canonical form:
+- a widened cache: &OLD -> name, OLD = 2 -> name[0] = 2;
+- a y half: OLD = 2 -> name[1] = 2;
+- the renames: tokens.
+All 1968 functions match. No pieces, no underscore renders, (word *) casts unchanged. lookup_tables.py: 920 tables
+typed, 0 sizing problems. Headers regenerated (0 g++ errors), tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

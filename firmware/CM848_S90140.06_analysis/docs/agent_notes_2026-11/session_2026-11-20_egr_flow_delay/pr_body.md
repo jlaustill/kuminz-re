@@ -581,6 +581,9 @@ state enum, the flag bytes.**
 **Round 37.**
 - **Stage A (4775962, labels, types):** 120 lookup cache words named from their own lookups
   (`<table>_cached_axis_offset(s)`); 0x3fd134 was named for the wrong table.
+**Round 38.**
+- **Stage A (0333c10, labels, types):** the named lookup cache rows audited against their own lookups: 34
+  2-D caches widened to `word[2]` (15 y halves merged) and 24 misnamed caches renamed after their tables.
 
 ## Test plan
 
@@ -673,6 +676,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 38: all 1968 functions match the canonical form.
 - [x] Round 37: every function matches the canonical form apart from one declaration reorder and one
   `WORD_` render of the same cache.
 - [x] Round 36: stages A / B are token-equal apart from the 2 / 9 hand-read functions and one declaration

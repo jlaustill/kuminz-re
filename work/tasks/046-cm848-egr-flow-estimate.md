@@ -1847,6 +1847,25 @@ A peer relay started the round. Scripts are in `session_folder/round37/`.
   - Named cache rows whose names do not match their lookups (0x3fd134 was one): an audit like `cache_names.py`
     over the named rows.
 
+## Done, round 38 (2026-11-22, same PR): the named lookup cache rows audited
+
+A peer relay started the round. Scripts are in `session_folder/round38/`.
+- **Stage A (0333c10, labels, types):** `cache_audit.py` checks the 345 named cache rows against their own lookups.
+  - 34 2-D caches typed as one word were widened to `word[2]`. Fifteen y halves that were separate rows became
+    `name[1]` dotted rows; ten of them were `_y` rows, five had legacy names.
+  - 24 misnamed caches now carry their own table's name: `fault_slot_state_5` / `_7`, `diag_state_group1_a` / `_c`,
+    the `fuel_pressure_diagnostic_*` set, `governor_pid_init_state_*`, and the injection pulse width / pilot
+    correction caches that had timing names.
+  - Proof: all 1968 functions match `prove_caches.py`'s canonical form.
+  - The re-audit leaves 6 width / 23 name findings, all of them skips.
+- **Leads:**
+  - Rename the legacy `_cal` tables, then their caches: `cylinder_event_values_*_cal`, `cylinder_seq_yend_cal`,
+    `j1939_fuel_table_yend_cal`, `governor_fuel_demand_output_cal`, `engine_sync_speed_correction_values_cal`,
+    `engine_event_countdown_values_cal`, `injection_timing_temp_corr_axis1_cal`, `safety_fuel_limit_rpm_axis_cal`.
+  - `engine_retarder_torque_cached_axis_offset`: its lookup's data argument renders as the phantom `in_r6`, a
+    prototype question.
+  - The tables with several caches need per-function cache words (round 37's lead).
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**
