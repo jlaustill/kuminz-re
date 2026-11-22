@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 23:54:26 MST 2026
+// Generated: Sat Nov 21 23:57:48 MST 2026
 
 
 //
@@ -10243,11 +10243,11 @@ void cm848_selectBatteryVoltage(void)
 {
   sensor_channel4_fault_snapshot = sensor_channel4_fault_status;
   if (sensor_channel4_fault_status == 2) {
-    battery_voltage_source = 2;
+    battery_voltage_source = SENSOR_VALUE_SOURCE_DEFAULT;
     battery_voltage_selected = battery_voltage_sensor_default_value;
   }
   else {
-    battery_voltage_source = 0;
+    battery_voltage_source = SENSOR_VALUE_SOURCE_PRIMARY;
     battery_voltage_selected = battery_voltage_sensor_value;
   }
   return;
@@ -10267,10 +10267,10 @@ void cm848_updateBatteryVoltageSource(void)
 
 {
   if ((sensor_channel4_fault_status == 0) || (sensor_channel4_fault_status == 1)) {
-    battery_voltage_source = 0;
+    battery_voltage_source = SENSOR_VALUE_SOURCE_PRIMARY;
   }
   else if (sensor_channel4_fault_status == 2) {
-    battery_voltage_source = 2;
+    battery_voltage_source = SENSOR_VALUE_SOURCE_DEFAULT;
   }
   return;
 }
@@ -11787,8 +11787,10 @@ word cm848_calculateDownstreamEgrFlowSource(void)
 {
   word wVar1;
   
-  if ((((egr_valve_position_source == 0) && (egr_orifice_delta_pressure_source == 0)) &&
-      (charge_pressure_source == 0)) && (egr_orifice_temperature_source == 0)) {
+  if ((((egr_valve_position_source == SENSOR_VALUE_SOURCE_PRIMARY) &&
+       (egr_orifice_delta_pressure_source == 0)) &&
+      (charge_pressure_source == SENSOR_VALUE_SOURCE_PRIMARY)) &&
+     (egr_orifice_temperature_source == SENSOR_VALUE_SOURCE_PRIMARY)) {
     wVar1 = 0;
   }
   else {
@@ -11813,8 +11815,9 @@ word cm848_calculateUpstreamEgrFlowSource(void)
 {
   word wVar1;
   
-  if (((egr_valve_position_source == 0) && (exhaust_pressure_source == 0)) &&
-     (exhaust_temperature_source == 0)) {
+  if (((egr_valve_position_source == SENSOR_VALUE_SOURCE_PRIMARY) &&
+      (exhaust_pressure_source == SENSOR_VALUE_SOURCE_PRIMARY)) && (exhaust_temperature_source == 0)
+     ) {
     wVar1 = 0;
   }
   else {
@@ -12156,8 +12159,9 @@ void cm848_calculateChargeFlowEstimate(void)
        intake_manifold_temperature_filtered + 0x7300;
   cm848_calculateVolumetricEfficiency();
   cm848_calculateChargeMassFlow();
-  if (((intake_manifold_temperature_filtered_source == 0) && (charge_pressure_source == 0)) &&
-     (exhaust_pressure_source == 0)) {
+  if (((intake_manifold_temperature_filtered_source == SENSOR_VALUE_SOURCE_PRIMARY) &&
+      (charge_pressure_source == SENSOR_VALUE_SOURCE_PRIMARY)) &&
+     (exhaust_pressure_source == SENSOR_VALUE_SOURCE_PRIMARY)) {
     charge_flow_estimate_terms.charge_flow_source = 0;
   }
   else {
@@ -12547,16 +12551,17 @@ void cm848_estimateChargePressure(void)
         (turbocharger_speed_source == 2)) ||
        (turbocharger_speed < charge_pressure_estimate_turbocharger_speed_low_threshold)) ||
       (((charge_pressure_estimate_turbocharger_speed_high_threshold < turbocharger_speed ||
-        (intake_manifold_temperature_filtered_source == 2)) ||
+        (intake_manifold_temperature_filtered_source == SENSOR_VALUE_SOURCE_DEFAULT)) ||
        ((compressor_inlet_temperature_source == 2 ||
-        ((barometric_pressure_selected_source == 2 ||
+        ((barometric_pressure_selected_source == SENSOR_VALUE_SOURCE_DEFAULT ||
          (monitor_enabling_conditions_met.charge_pressure_estimate_enable == 0)))))))) ||
      (monitor_battery_voltage_error_latch.charge_pressure_estimate_enable != 0)) {
     charge_pressure_estimate_with_turbocharger_speed_state = 0x80;
   }
-  else if ((((intake_manifold_temperature_filtered_source == 1) ||
+  else if ((((intake_manifold_temperature_filtered_source == SENSOR_VALUE_SOURCE_BACKUP) ||
             (compressor_inlet_temperature_source == 1)) ||
-           (barometric_pressure_selected_source == 1)) || (turbocharger_speed_source == 1)) {
+           (barometric_pressure_selected_source == SENSOR_VALUE_SOURCE_BACKUP)) ||
+          (turbocharger_speed_source == 1)) {
     charge_pressure_estimate_with_turbocharger_speed_state = 0x40;
   }
   else {
@@ -12793,10 +12798,10 @@ void cm848_selectLoadNormalizer
         ((uVar2 != 0 ||
          (((charge_pressure_state & 0x10) == 0 || ((charge_pressure_state & 2) != 0)))))))) {
       charge_pressure = boost_pressure_sensor_value;
-      charge_pressure_source = 0;
+      charge_pressure_source = SENSOR_VALUE_SOURCE_PRIMARY;
     }
     else {
-      charge_pressure_source = 1;
+      charge_pressure_source = SENSOR_VALUE_SOURCE_BACKUP;
       if ((((uVar2 == 0) && ((charge_pressure_state & 2) == 0)) ||
           ((uVar1 != 0 || ((charge_pressure_state & 0x40) != 0)))) &&
          (boost_pressure_sensor_value <= charge_pressure_estimate)) {
@@ -12809,7 +12814,7 @@ void cm848_selectLoadNormalizer
   }
   else {
     charge_pressure = boost_pressure_sensor_default_value;
-    charge_pressure_source = 2;
+    charge_pressure_source = SENSOR_VALUE_SOURCE_DEFAULT;
   }
   return;
 }
@@ -13068,17 +13073,17 @@ void cm848_filterAndSelectIntakeManifoldTemperature(void)
   intake_manifold_temperature_filtered_state = uVar4 | uVar3;
   if (((uVar4 & 0x80) == 0) || (((uVar4 & 2) == 0 && ((uVar4 & 0x20) == 0 && uVar3 == 0)))) {
     if (((uVar4 & 2) == 0) && ((uVar4 & 0x20) == 0 && uVar3 == 0)) {
-      intake_manifold_temperature_filtered_source = 0;
+      intake_manifold_temperature_filtered_source = SENSOR_VALUE_SOURCE_PRIMARY;
       intake_manifold_temperature_filtered = wVar1;
     }
     else {
-      intake_manifold_temperature_filtered_source = 1;
+      intake_manifold_temperature_filtered_source = SENSOR_VALUE_SOURCE_BACKUP;
       intake_manifold_temperature_filtered = charge_temperature_estimate;
     }
   }
   else {
     intake_manifold_temperature_filtered = intake_manifold_temperature_sensor_default_value;
-    intake_manifold_temperature_filtered_source = 2;
+    intake_manifold_temperature_filtered_source = SENSOR_VALUE_SOURCE_DEFAULT;
   }
   return;
 }
@@ -13112,10 +13117,10 @@ void cm848_initializeIntakeTemperatureFilterStates(void)
        &intake_manifold_temperature_lag_filter_coefficient;
   if ((intake_manifold_temperature_sensor_fault_status == 0) ||
      (intake_manifold_temperature_sensor_fault_status == 1)) {
-    intake_manifold_temperature_filtered_source = 0;
+    intake_manifold_temperature_filtered_source = SENSOR_VALUE_SOURCE_PRIMARY;
   }
   else if (intake_manifold_temperature_sensor_fault_status == 2) {
-    intake_manifold_temperature_filtered_source = 2;
+    intake_manifold_temperature_filtered_source = SENSOR_VALUE_SOURCE_DEFAULT;
   }
   return;
 }
@@ -15602,7 +15607,7 @@ void cm848_storeFuelDemandPreviousValues(void)
 
 {
   fuel_correction_output_b_working = injection_timing_compensated_reference;
-  fuel_correction_timer_counter = 0x19;
+  fuel_correction_timer_counter = INJECTION_TIMING_INTERMEDIATE_SOURCE_COMBUSTION_REFERENCE;
   injection_timing_compensated_reference_previous = injection_timing_compensated_reference;
   injection_timing_intermediate_source_code =
        INJECTION_TIMING_INTERMEDIATE_SOURCE_COMBUSTION_REFERENCE;
@@ -15807,10 +15812,12 @@ void cm848_calculateEgrDeltaPressures(void)
   else {
     egr_valve_delta_pressure = (exhaust_pressure - exhaust_pressure_offset) - charge_pressure;
     egr_orifice_delta_pressure = egr_delta_pressure_sensor_output;
-    if ((exhaust_pressure_source == 2) && (charge_pressure_source == 2)) {
+    if ((exhaust_pressure_source == SENSOR_VALUE_SOURCE_DEFAULT) &&
+       (charge_pressure_source == SENSOR_VALUE_SOURCE_DEFAULT)) {
       egr_valve_delta_pressure_source = 2;
     }
-    else if ((exhaust_pressure_source == 0) && (charge_pressure_source == 0)) {
+    else if ((exhaust_pressure_source == SENSOR_VALUE_SOURCE_PRIMARY) &&
+            (charge_pressure_source == SENSOR_VALUE_SOURCE_PRIMARY)) {
       egr_valve_delta_pressure_source = 0;
     }
     else {
@@ -16034,8 +16041,9 @@ void cm848_updateEgrDeltaPressureAutozeroConditions(void)
   bool bVar1;
   bool bVar2;
   
-  if (((coolant_temperature_source == 0) && (egr_delta_pressure_sensor_fault_status == 0)) &&
-     (egr_valve_position_source == 0)) {
+  if (((coolant_temperature_source == SENSOR_VALUE_SOURCE_PRIMARY) &&
+      (egr_delta_pressure_sensor_fault_status == 0)) &&
+     (egr_valve_position_source == SENSOR_VALUE_SOURCE_PRIMARY)) {
     egr_delta_pressure_autozero_bypass_flag = 0;
   }
   else {
@@ -16053,7 +16061,7 @@ void cm848_updateEgrDeltaPressureAutozeroConditions(void)
   }
   if (((egr_delta_pressure_autozero_intake_manifold_temperature_threshold <
         (short)intake_manifold_temperature_filtered) && (egr_valve_closed_flag == 1)) &&
-     (intake_manifold_temperature_filtered_source == 0)) {
+     (intake_manifold_temperature_filtered_source == SENSOR_VALUE_SOURCE_PRIMARY)) {
     bVar1 = true;
   }
   else {
@@ -16777,7 +16785,8 @@ void cm848_updateEgrValveOverTemperatureFault(void)
                     ((int)egr_valve_delta_pressure,&egr_valve_delta_pressure_filter_state);
   egr_valve_delta_pressure_over_temperature_threshold_reached_flag =
        (ushort)(egr_valve_over_temperature_delta_pressure_threshold <= sVar1);
-  if ((coolant_temperature_source == 0) && (egr_valve_delta_pressure_source == 0)) {
+  if ((coolant_temperature_source == SENSOR_VALUE_SOURCE_PRIMARY) &&
+     (egr_valve_delta_pressure_source == 0)) {
     egr_valve_over_temperature_timer_inhibit_flag = 0;
   }
   else {
@@ -16850,7 +16859,7 @@ void cm848_updateEgrValveMotorTemperature(void)
   ;
   egr_valve_motor_winding_temperature = (word)dVar2;
   egr_valve_coolant_temperature = coolant_temperature_selected;
-  if (coolant_temperature_source != 0) {
+  if (coolant_temperature_source != SENSOR_VALUE_SOURCE_PRIMARY) {
     egr_valve_coolant_temperature = egr_valve_coolant_temperature_default;
   }
   egr_valve_motor_ambient_temperature =
@@ -30363,15 +30372,17 @@ void cm848_estimateTurbochargerSpeed(void)
   }
   turbocharger_speed_estimate_delta = turbocharger_speed_sensor_value - turbocharger_speed_estimate;
   turbocharger_speed_estimate_sensor_snapshot = turbocharger_speed_sensor_value;
-  if (((((algorithm_enable_flags_6_cal & 1) == 0) || (charge_pressure_source == 2)) ||
+  if (((((algorithm_enable_flags_6_cal & 1) == 0) ||
+       (charge_pressure_source == SENSOR_VALUE_SOURCE_DEFAULT)) ||
       (compressor_inlet_pressure_source == 2)) ||
      ((compressor_inlet_temperature_source == 2 ||
-      (intake_manifold_temperature_filtered_source == 2)))) {
+      (intake_manifold_temperature_filtered_source == SENSOR_VALUE_SOURCE_DEFAULT)))) {
     turbocharger_speed_estimation_status = 0x80;
   }
-  else if (((charge_pressure_source == 1) || (compressor_inlet_pressure_source == 1)) ||
+  else if (((charge_pressure_source == SENSOR_VALUE_SOURCE_BACKUP) ||
+           (compressor_inlet_pressure_source == 1)) ||
           ((compressor_inlet_temperature_source == 1 ||
-           (intake_manifold_temperature_filtered_source == 1)))) {
+           (intake_manifold_temperature_filtered_source == SENSOR_VALUE_SOURCE_BACKUP)))) {
     turbocharger_speed_estimation_status = 0x40;
   }
   else {
@@ -32669,12 +32680,12 @@ void cm848_selectVariableGeometryTurbochargerPositionSource(void)
   }
   if ((uVar1 | variable_geometry_turbocharger_position_status_intermediate) == 0) {
     variable_geometry_turbocharger_position = variable_geometry_turbocharger_position_adjusted;
-    variable_geometry_turbocharger_position_source = 0;
+    variable_geometry_turbocharger_position_source = SENSOR_VALUE_SOURCE_PRIMARY;
   }
   else {
     variable_geometry_turbocharger_position =
          variable_geometry_turbocharger_position_sensor_default_value;
-    variable_geometry_turbocharger_position_source = 2;
+    variable_geometry_turbocharger_position_source = SENSOR_VALUE_SOURCE_DEFAULT;
   }
   if ((fault_detected_bits_656_to_671 & 0x4000) == 0) {
     uVar2 = 0;
@@ -58470,8 +58481,8 @@ void mpc555_miosSetChannelPwmDuty(mios_mdasm_t *channel_registers,word duty)
 
 {
   undefined4 compare_register_pair;
-  word modulus_period_value;
   word modulus_start_value;
+  word modulus_period_value;
   
   if (duty < 0x6400) {
     if (duty == 0) {
@@ -61730,11 +61741,11 @@ void cm848_selectBarometricPressure(void)
   barometric_pressure_selection_fault_flags = uVar2 | uVar1;
   if ((uVar2 & 0x22) == 0 && uVar1 == 0) {
     barometric_pressure_selected = barometric_pressure_sensor_value;
-    barometric_pressure_selected_source = 0;
+    barometric_pressure_selected_source = SENSOR_VALUE_SOURCE_PRIMARY;
   }
   else {
     barometric_pressure_selected = barometric_pressure_sensor_default_value;
-    barometric_pressure_selected_source = 2;
+    barometric_pressure_selected_source = SENSOR_VALUE_SOURCE_DEFAULT;
   }
   return;
 }
@@ -61755,10 +61766,10 @@ void cm848_initializeBarometricPressureSelection(void)
 {
   if ((barometric_pressure_sensor_fault_status == 0) ||
      (barometric_pressure_sensor_fault_status == 1)) {
-    barometric_pressure_selected_source = 0;
+    barometric_pressure_selected_source = SENSOR_VALUE_SOURCE_PRIMARY;
   }
   else if (barometric_pressure_sensor_fault_status == 2) {
-    barometric_pressure_selected_source = 2;
+    barometric_pressure_selected_source = SENSOR_VALUE_SOURCE_DEFAULT;
   }
   barometric_pressure_selected = barometric_pressure_sensor_value;
   return;
@@ -62107,15 +62118,15 @@ void cm848_calculateAmbientAndCompressorInletConditions(void)
     }
     compressor_inlet_pressure_source = barometric_pressure_selected_source;
     if ((charge_flow_estimate_terms.fresh_air_flow_source == 2) ||
-       (barometric_pressure_selected_source == 2)) {
-      barometric_pressure_reference_source = 2;
+       (barometric_pressure_selected_source == SENSOR_VALUE_SOURCE_DEFAULT)) {
+      barometric_pressure_reference_source = SENSOR_VALUE_SOURCE_DEFAULT;
     }
-    else if ((barometric_pressure_selected_source == 1) ||
+    else if ((barometric_pressure_selected_source == SENSOR_VALUE_SOURCE_BACKUP) ||
             (charge_flow_estimate_terms.fresh_air_flow_source == 1)) {
-      barometric_pressure_reference_source = 1;
+      barometric_pressure_reference_source = SENSOR_VALUE_SOURCE_BACKUP;
     }
     else {
-      barometric_pressure_reference_source = 0;
+      barometric_pressure_reference_source = SENSOR_VALUE_SOURCE_PRIMARY;
     }
   }
   else {
@@ -62128,10 +62139,10 @@ void cm848_calculateAmbientAndCompressorInletConditions(void)
     }
     barometric_pressure_reference_source = barometric_pressure_selected_source;
     if ((charge_flow_estimate_terms.fresh_air_flow_source == 2) ||
-       (barometric_pressure_selected_source == 2)) {
+       (barometric_pressure_selected_source == SENSOR_VALUE_SOURCE_DEFAULT)) {
       compressor_inlet_pressure_source = 2;
     }
-    else if ((barometric_pressure_selected_source == 1) ||
+    else if ((barometric_pressure_selected_source == SENSOR_VALUE_SOURCE_BACKUP) ||
             (charge_flow_estimate_terms.fresh_air_flow_source == 1)) {
       compressor_inlet_pressure_source = 1;
     }
@@ -62147,12 +62158,13 @@ void cm848_calculateAmbientAndCompressorInletConditions(void)
                  (&altitude_from_barometric_pressure_cached_axis_offset,
                   barometric_pressure_reference,altitude_from_barometric_pressure_axis,
                   altitude_from_barometric_pressure_values,2);
-  DAT_0040a1a6 = barometric_pressure_reference_source;
+  barometric_altitude_source = barometric_pressure_reference_source;
   ambient_relative_humidity =
        cm848_dualAxisTableInterpolation
-                 (&boost_fuel_rpm_blend_table_row_count,engine_speed_state.filtered_engine_speed,
-                  ambient_relative_humidity_x_axis,injection_quantity_combustion_reference,
-                  ambient_relative_humidity_y_axis,ambient_relative_humidity_grid,0);
+                 (ambient_relative_humidity_cached_axis_offsets,
+                  engine_speed_state.filtered_engine_speed,ambient_relative_humidity_x_axis,
+                  injection_quantity_combustion_reference,ambient_relative_humidity_y_axis,
+                  ambient_relative_humidity_grid,0);
   return;
 }
 
@@ -62187,16 +62199,17 @@ void cm848_initialization_step_3(void)
   ema_filter_state_t_003fb9e2.coefficient = &WORD_003ff076;
   ambient_air_temperature = compressor_inlet_temperature;
   ambient_air_temperature_source = compressor_inlet_temperature_source;
-  DAT_0040a1a6 = barometric_pressure_selected_source;
+  barometric_altitude_source = barometric_pressure_selected_source;
   barometric_pressure_reference = barometric_pressure_selected;
   compressor_inlet_pressure = barometric_pressure_selected;
-  boost_fuel_rpm_blend_table_row_count = 2;
-  DAT_003fb9f4 = 2;
+  ambient_relative_humidity_cached_axis_offsets[0] = 2;
+  ambient_relative_humidity_cached_axis_offsets[1] = 2;
   ambient_relative_humidity =
        cm848_dualAxisTableInterpolation
-                 (&boost_fuel_rpm_blend_table_row_count,engine_speed_state.filtered_engine_speed,
-                  ambient_relative_humidity_x_axis,injection_quantity_combustion_reference,
-                  ambient_relative_humidity_y_axis,ambient_relative_humidity_grid,0);
+                 (ambient_relative_humidity_cached_axis_offsets,
+                  engine_speed_state.filtered_engine_speed,ambient_relative_humidity_x_axis,
+                  injection_quantity_combustion_reference,ambient_relative_humidity_y_axis,
+                  ambient_relative_humidity_grid,0);
   barometric_altitude_feet =
        lookupTableInterpolation
                  (&altitude_from_barometric_pressure_cached_axis_offset,
@@ -62413,14 +62426,16 @@ void cm848_calculateEgrCoolerEfficiency(void)
   
   uVar2 = (uint)egr_mass_flow_delayed_filtered;
   iVar3 = (int)(short)coolant_temperature_selected;
-  if ((((egr_flow_cold_side_algorithm_select == 0) || (coolant_temperature_source != 0)) ||
+  if ((((egr_flow_cold_side_algorithm_select == 0) ||
+       (coolant_temperature_source != SENSOR_VALUE_SOURCE_PRIMARY)) ||
       (exhaust_temperature_source != 0)) ||
-     (((egr_orifice_temperature_source != 0 || (egr_flow_source != 0)) ||
+     (((egr_orifice_temperature_source != SENSOR_VALUE_SOURCE_PRIMARY || (egr_flow_source != 0)) ||
       ((uVar2 < egr_cooler_fouling_flow_threshold ||
        (iVar3 < (int)(uint)egr_cooler_fouling_coolant_temperature_threshold)))))) {
     egr_cooler_fouling_precondition_flag = 0;
   }
-  else if (((egr_valve_position_source == 0) && (egr_delta_pressure_sensor_source == 0)) &&
+  else if (((egr_valve_position_source == SENSOR_VALUE_SOURCE_PRIMARY) &&
+           (egr_delta_pressure_sensor_source == 0)) &&
           (((fault_detected_bits_720_to_735 & 0x20) == 0 &&
            ((((fault_detected_bits_512_to_527 & 8) == 0 &&
              (egr_cooler_fouling_valve_position_threshold <= (short)egr_valve_position)) &&
@@ -62501,10 +62516,12 @@ void cm848_updateEgrSystemHealthFlags(void)
 
 {
   cm848_calculateEgrCoolerEfficiency();
-  if ((((((charge_pressure_source == 2) || (exhaust_pressure_source == 2)) ||
-        (intake_manifold_temperature_filtered_source != 0)) ||
-       ((egr_delta_pressure_sensor_source != 0 || (egr_valve_position_source != 0)))) ||
-      ((egr_orifice_temperature_source != 0 ||
+  if ((((((charge_pressure_source == SENSOR_VALUE_SOURCE_DEFAULT) ||
+         (exhaust_pressure_source == SENSOR_VALUE_SOURCE_DEFAULT)) ||
+        (intake_manifold_temperature_filtered_source != SENSOR_VALUE_SOURCE_PRIMARY)) ||
+       ((egr_delta_pressure_sensor_source != 0 ||
+        (egr_valve_position_source != SENSOR_VALUE_SOURCE_PRIMARY)))) ||
+      ((egr_orifice_temperature_source != SENSOR_VALUE_SOURCE_PRIMARY ||
        (((fault_detected_bits_720_to_735 & 0x100) != 0 ||
         ((fault_detected_bits_720_to_735 & 0x80) != 0)))))) ||
      (((fault_detected_bits_720_to_735 & 0x40) != 0 ||
@@ -62514,7 +62531,8 @@ void cm848_updateEgrSystemHealthFlags(void)
   else {
     egr_system_failure_flag = 0;
   }
-  if ((charge_pressure_source == 1) || (exhaust_pressure_source == 1)) {
+  if ((charge_pressure_source == SENSOR_VALUE_SOURCE_BACKUP) ||
+     (exhaust_pressure_source == SENSOR_VALUE_SOURCE_BACKUP)) {
     fuel_blend_correction_inhibit_flag._0_2_ = 1;
   }
   else {
@@ -62532,7 +62550,7 @@ void cm848_updateEgrSystemHealthFlags(void)
 void cm848_fuelDemand_periodic(void)
 
 {
-  if ((((variable_geometry_turbocharger_position_source == 0) &&
+  if ((((variable_geometry_turbocharger_position_source == SENSOR_VALUE_SOURCE_PRIMARY) &&
        ((fault_detected_bits_736_to_751 & 0x400) == 0)) &&
       ((fault_detected_bits_736_to_751 & 0x200) == 0)) &&
      ((((fault_detected_bits_736_to_751 & 0x100) == 0 &&
@@ -64280,11 +64298,11 @@ void cm848_selectCoolantTemperature(void)
   DAT_0040a620 = coolant_temperature_sensor_fault_status;
   if ((coolant_temperature_sensor_fault_status & 2) == 0) {
     coolant_temperature_selected = coolant_temperature_sensor_value;
-    coolant_temperature_source = 0;
+    coolant_temperature_source = SENSOR_VALUE_SOURCE_PRIMARY;
   }
   else {
     coolant_temperature_selected = coolant_temperature_sensor_default_value;
-    coolant_temperature_source = 2;
+    coolant_temperature_source = SENSOR_VALUE_SOURCE_DEFAULT;
   }
   return;
 }
@@ -64304,10 +64322,10 @@ void cm848_initializeCoolantTemperatureSource(void)
 {
   if ((coolant_temperature_sensor_fault_status == 0) ||
      (coolant_temperature_sensor_fault_status == 1)) {
-    coolant_temperature_source = 0;
+    coolant_temperature_source = SENSOR_VALUE_SOURCE_PRIMARY;
   }
   else if (coolant_temperature_sensor_fault_status == 2) {
-    coolant_temperature_source = 2;
+    coolant_temperature_source = SENSOR_VALUE_SOURCE_DEFAULT;
   }
   coolant_temperature_selected = coolant_temperature_sensor_value;
   return;
@@ -64965,11 +64983,11 @@ void cm848_selectEgrValvePositionSource(void)
   }
   if (egr_valve_position_status == 0) {
     egr_valve_position = egr_valve_position_autozeroed;
-    egr_valve_position_source = 0;
+    egr_valve_position_source = SENSOR_VALUE_SOURCE_PRIMARY;
   }
   else {
     egr_valve_position = egr_valve_position_sensor_default_value;
-    egr_valve_position_source = 2;
+    egr_valve_position_source = SENSOR_VALUE_SOURCE_DEFAULT;
   }
   if (((int)(uint)egr_valve_closed_position_tolerance < (int)(short)egr_valve_position) &&
      (egr_valve_closed_hold_flag == 0)) {
@@ -65028,10 +65046,10 @@ void cm848_initializeEgrValvePosition(void)
   egr_valve_position_virtual_sensor_copy = egr_valve_position_sensor_value;
   if ((egr_valve_position_sensor_fault_status == 0) || (egr_valve_position_sensor_fault_status == 1)
      ) {
-    egr_valve_position_source = 0;
+    egr_valve_position_source = SENSOR_VALUE_SOURCE_PRIMARY;
   }
   if (egr_valve_position_sensor_fault_status == 2) {
-    egr_valve_position_source = 2;
+    egr_valve_position_source = SENSOR_VALUE_SOURCE_DEFAULT;
   }
   return;
 }
@@ -65085,10 +65103,12 @@ void cm848_estimateExhaustPressure(void)
   dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&exhaust_pressure_estimate_filter_state);
   exhaust_pressure_estimate = (word)dVar1;
   if ((((combustion_override_and_estimation_enable_flags_cal & 0x2000) == 0) ||
-      (egr_valve_position_source == 2)) || (charge_pressure_source == 2)) {
+      (egr_valve_position_source == SENSOR_VALUE_SOURCE_DEFAULT)) ||
+     (charge_pressure_source == SENSOR_VALUE_SOURCE_DEFAULT)) {
     exhaust_pressure_estimate_state = 0x80;
   }
-  else if ((egr_valve_position_source == 1) || (charge_pressure_source == 1)) {
+  else if ((egr_valve_position_source == SENSOR_VALUE_SOURCE_BACKUP) ||
+          (charge_pressure_source == SENSOR_VALUE_SOURCE_BACKUP)) {
     exhaust_pressure_estimate_state = 0x40;
   }
   else {
@@ -65226,8 +65246,9 @@ void cm848_estimateExhaustTemperature(void)
   exhaust_temperature = (word)uVar2;
   dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&ema_filter_state_t_003fbcea);
   exhaust_metal_temperature = (word)dVar1;
-  if ((((charge_flow_estimate_terms.charge_flow_source == 0) && (charge_pressure_source == 0)) &&
-      (intake_manifold_temperature_filtered_source == 0)) &&
+  if ((((charge_flow_estimate_terms.charge_flow_source == 0) &&
+       (charge_pressure_source == SENSOR_VALUE_SOURCE_PRIMARY)) &&
+      (intake_manifold_temperature_filtered_source == SENSOR_VALUE_SOURCE_PRIMARY)) &&
      (exhaust_temperature_model_invalid_flag == 0)) {
     exhaust_temperature_source = 0;
   }
@@ -65377,11 +65398,11 @@ void cm848_selectEgrOrificeTemperature(void)
 {
   if ((egr_orifice_temperature_state & 2U) == 0) {
     egr_orifice_temperature = DAT_003fbcf6;
-    egr_orifice_temperature_source = 0;
+    egr_orifice_temperature_source = SENSOR_VALUE_SOURCE_PRIMARY;
   }
   else {
     egr_orifice_temperature = egr_orifice_temperature_sensor_default_value;
-    egr_orifice_temperature_source = 2;
+    egr_orifice_temperature_source = SENSOR_VALUE_SOURCE_DEFAULT;
   }
   return;
 }
@@ -67269,19 +67290,23 @@ void cm848_calculateExhaustPressure(void)
   }
   exhaust_pressure = charge_pressure + egr_delta_pressure_sensor_output;
   if ((fault_detected_bits_512_to_527 & 0x1000) == 0) {
-    if ((charge_pressure_source == 2) || (egr_delta_pressure_sensor_source == 2)) {
+    if ((charge_pressure_source == SENSOR_VALUE_SOURCE_DEFAULT) ||
+       (egr_delta_pressure_sensor_source == 2)) {
       uVar1 = 8;
       goto LAB_005098f4;
     }
-    if ((charge_pressure_source == 1) || (egr_delta_pressure_sensor_source == 1)) {
+    if ((charge_pressure_source == SENSOR_VALUE_SOURCE_BACKUP) ||
+       (egr_delta_pressure_sensor_source == 1)) {
       uVar1 = 4;
       goto LAB_00509918;
     }
     uVar1 = 0;
   }
   else {
-    if ((charge_pressure_source != 2) && (egr_delta_pressure_sensor_source != 2)) {
-      if ((charge_pressure_source == 1) || (egr_delta_pressure_sensor_source == 1)) {
+    if ((charge_pressure_source != SENSOR_VALUE_SOURCE_DEFAULT) &&
+       (egr_delta_pressure_sensor_source != 2)) {
+      if ((charge_pressure_source == SENSOR_VALUE_SOURCE_BACKUP) ||
+         (egr_delta_pressure_sensor_source == 1)) {
         uVar1 = 0x24;
 LAB_00509918:
         exhaust_pressure_state = exhaust_pressure_estimate_state | uVar1;
@@ -67300,18 +67325,18 @@ LAB_00509978:
     if ((short)exhaust_pressure < 0) {
       exhaust_pressure = 0;
     }
-    exhaust_pressure_source = 0;
+    exhaust_pressure_source = SENSOR_VALUE_SOURCE_PRIMARY;
   }
   else if ((exhaust_pressure_state & 0x80) == 0) {
     exhaust_pressure = exhaust_pressure_estimate;
-    exhaust_pressure_source = 1;
+    exhaust_pressure_source = SENSOR_VALUE_SOURCE_BACKUP;
   }
   else {
     exhaust_pressure = exhaust_pressure_sensor_default_value;
-    exhaust_pressure_source = 2;
+    exhaust_pressure_source = SENSOR_VALUE_SOURCE_DEFAULT;
   }
   if (exhaust_pressure_estimate_as_primary_cal != 0) {
-    exhaust_pressure_source = 0;
+    exhaust_pressure_source = SENSOR_VALUE_SOURCE_PRIMARY;
     exhaust_pressure = exhaust_pressure_estimate;
   }
   exhaust_pressure_virtual_sensor_copy = exhaust_pressure_sensor_value;
@@ -67333,10 +67358,10 @@ void cm848_initializeExhaustPressure(void)
 
 {
   if ((exhaust_pressure_sensor_fault_status == 0) || (exhaust_pressure_sensor_fault_status == 1)) {
-    exhaust_pressure_source = 0;
+    exhaust_pressure_source = SENSOR_VALUE_SOURCE_PRIMARY;
   }
   else if (exhaust_pressure_sensor_fault_status == 2) {
-    exhaust_pressure_source = 2;
+    exhaust_pressure_source = SENSOR_VALUE_SOURCE_DEFAULT;
   }
   exhaust_pressure = exhaust_pressure_sensor_value;
   exhaust_pressure_virtual_sensor_copy = exhaust_pressure_sensor_value;
@@ -71281,8 +71306,9 @@ void cm848_calculateWaterVaporAndSaturationTemperatures(void)
                  (&DAT_003fcbf8,exhaust_water_vapor_partial_pressure_times_4,
                   fuel_demand_compensation_target_by_pressure_axis,
                   fuel_demand_compensation_target_by_pressure_values,2);
-  if (((charge_pressure_source == 0) && (ambient_air_temperature_source == 0)) &&
-     (barometric_pressure_reference_source == 0)) {
+  if (((charge_pressure_source == SENSOR_VALUE_SOURCE_PRIMARY) &&
+      (ambient_air_temperature_source == 0)) &&
+     (barometric_pressure_reference_source == SENSOR_VALUE_SOURCE_PRIMARY)) {
     fuel_demand_mode_active_flag = 0;
   }
   else {
@@ -72174,7 +72200,7 @@ void cm848_updateVariableGeometryTurbochargerValveOverTemperatureFault(void)
   
   if (((short)coolant_temperature_selected <
        variable_geometry_turbocharger_coolant_temperature_default) &&
-     (coolant_temperature_source == 0)) {
+     (coolant_temperature_source == SENSOR_VALUE_SOURCE_PRIMARY)) {
     bVar1 = false;
   }
   else {

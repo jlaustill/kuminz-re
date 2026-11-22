@@ -1217,7 +1217,7 @@ extern ema_filter_state_t fuel_demand_delta_filter;  // 0x003fa6f4
 extern word fuel_demand_override_counter;  // 0x003fa6fc
 extern word governor_speed_output_snapshot;  // 0x003fa6fe
 extern word fuel_correction_output_b_working;  // 0x003fa700
-extern word fuel_correction_timer_counter;  // 0x003fa702
+extern INJECTION_TIMING_INTERMEDIATE_SOURCE fuel_correction_timer_counter;  // 0x003fa702
 extern word throttle_demand_offset_cal_working;  // 0x003fa712
 extern word egr_delta_pressure_autozero_wait_counter;  // 0x003fa714
 extern ema_filter_state_t egr_delta_pressure_autozero_offset_filter_state;  // 0x003fa716
@@ -4148,7 +4148,7 @@ extern word boost_fuel_limit_blend_target;  // 0x0040a15a
 extern word air_fuel_control_normal_boost_timer;  // 0x0040a15c
 extern word air_fuel_control_low_boost_timer;  // 0x0040a15e
 extern word air_fuel_control_low_boost_blend_fraction;  // 0x0040a160
-extern int16_t barometric_pressure_selected_source;  // 0x0040a164
+extern SENSOR_VALUE_SOURCE barometric_pressure_selected_source;  // 0x0040a164
 extern word combustion_alpha_input;  // 0x0040a168
 extern word alpha_base;  // 0x0040a16a
 extern word alpha_state;  // 0x0040a16c
@@ -4325,7 +4325,7 @@ extern dword j1939_broadcast_enable_flag;  // 0x0040a336
 extern word total_fueling;  // 0x0040a33a
 extern RUN_LOCATION run_location;  // 0x0040a346
 extern word battery_voltage_selected;  // 0x0040a34c
-extern word battery_voltage_source;  // 0x0040a34e
+extern SENSOR_VALUE_SOURCE battery_voltage_source;  // 0x0040a34e
 extern word sensor_channel4_fault_snapshot;  // 0x0040a350
 extern word engine_retarder_command_percent;  // 0x0040a352
 extern ENGINE_RETARDER_COMMAND_SOURCE engine_retarder_override_command_source;  // 0x0040a354
@@ -4405,7 +4405,7 @@ extern word compressor_pressure_ratio_estimate;  // 0x0040a428
 extern word charge_pressure_estimate_with_turbocharger_speed;  // 0x0040a42a
 extern word charge_pressure_estimate_with_turbocharger_speed_state;  // 0x0040a42c
 extern word charge_pressure;  // 0x0040a42e
-extern word charge_pressure_source;  // 0x0040a430
+extern SENSOR_VALUE_SOURCE charge_pressure_source;  // 0x0040a430
 extern word charge_pressure_state;  // 0x0040a432
 extern word charge_pressure_in_range_condition;  // 0x0040a434
 extern word charge_pressure_in_range_enable_flag;  // 0x0040a436
@@ -4418,7 +4418,7 @@ extern int16_t intake_manifold_temperature_after_lead;  // 0x0040a458
 extern word intake_manifold_temperature_lead_term;  // 0x0040a45a
 extern word intake_manifold_temperature_lead_time_constant;  // 0x0040a45c
 extern word intake_manifold_temperature_filtered;  // 0x0040a460
-extern word intake_manifold_temperature_filtered_source;  // 0x0040a462
+extern SENSOR_VALUE_SOURCE intake_manifold_temperature_filtered_source;  // 0x0040a462
 extern word intake_manifold_temperature_filtered_state;  // 0x0040a464
 extern word egr_fraction_combustion_command;  // 0x0040a466
 extern word injection_quantity_combustion_command;  // 0x0040a46a
@@ -4534,7 +4534,7 @@ extern word compressor_outlet_temperature;  // 0x0040a616
 extern word compressor_outlet_temperature_source;  // 0x0040a618
 extern word compressor_outlet_temperature_estimation_active_flag;  // 0x0040a61a
 extern word coolant_temperature_selected;  // 0x0040a61c
-extern word coolant_temperature_source;  // 0x0040a61e
+extern SENSOR_VALUE_SOURCE coolant_temperature_source;  // 0x0040a61e
 extern word engine_torque_estimate;  // 0x0040a622
 extern int16_t egr_orifice_delta_pressure;  // 0x0040a624
 extern word egr_orifice_delta_pressure_source;  // 0x0040a626
@@ -4568,11 +4568,11 @@ extern int16_t egr_delta_pressure_autozeroed;  // 0x0040a660
 extern word egr_delta_pressure_state;  // 0x0040a662
 extern word egr_valve_closed_flag;  // 0x0040a668
 extern word egr_valve_position;  // 0x0040a66a
-extern word egr_valve_position_source;  // 0x0040a66c
+extern SENSOR_VALUE_SOURCE egr_valve_position_source;  // 0x0040a66c
 extern word exhaust_temperature;  // 0x0040a686
 extern int16_t exhaust_temperature_source;  // 0x0040a688
 extern word egr_orifice_temperature;  // 0x0040a68c
-extern int16_t egr_orifice_temperature_source;  // 0x0040a68e
+extern SENSOR_VALUE_SOURCE egr_orifice_temperature_source;  // 0x0040a68e
 extern word egr_valve_driver_over_current_retry_trigger_flag;  // 0x0040a698
 extern word egr_valve_driver_over_current_clear_conditions_met_flag;  // 0x0040a69a
 extern word egr_valve_driver_over_current_detected_flag;  // 0x0040a69c
@@ -4661,7 +4661,7 @@ extern dword engine_state_run_time;  // 0x0040a7ca
 extern byte engine_is_active_flag;  // 0x0040a7ce
 extern byte engine_is_starting_flag;  // 0x0040a7cf
 extern word exhaust_pressure;  // 0x0040a7d0
-extern word exhaust_pressure_source;  // 0x0040a7d2
+extern SENSOR_VALUE_SOURCE exhaust_pressure_source;  // 0x0040a7d2
 extern byte fault_spn_ring_buffer;  // 0x0040a7d8
 extern byte fault_spn_ring_buffer_data;  // 0x0040a7e9
 extern word system_switch_status;  // 0x0040a813
@@ -4973,7 +4973,7 @@ extern word variable_geometry_turbocharger_driver_over_current_clear_conditions_
 extern word variable_geometry_turbocharger_driver_over_current_detected_flag;  // 0x0040b07c
 extern word variable_geometry_turbocharger_motor_current;  // 0x0040b080
 extern word variable_geometry_turbocharger_position;  // 0x0040b094
-extern word variable_geometry_turbocharger_position_source;  // 0x0040b096
+extern SENSOR_VALUE_SOURCE variable_geometry_turbocharger_position_source;  // 0x0040b096
 extern int16_t variable_geometry_turbocharger_position_adjusted;  // 0x0040b098
 extern word variable_geometry_turbocharger_span_adjusted;  // 0x0040b09a
 extern word variable_geometry_turbocharger_span_filtered;  // 0x0040b09c
@@ -5875,7 +5875,7 @@ extern word engine_overheat_derate_reason_code;  // 0x0040b254
 extern word low_oil_pressure_active_flag;  // 0x0040b532
 extern word low_oil_pressure_derate_flag;  // 0x0040b534
 extern word barometric_pressure_selected;  // 0x0040a162
-extern word barometric_pressure_reference_source;  // 0x0040a198
+extern SENSOR_VALUE_SOURCE barometric_pressure_reference_source;  // 0x0040a198
 extern word ambient_air_temperature_source;  // 0x0040a19c
 extern word converter_clutch_engaged_since_low_speed_flag;  // 0x0040b57a
 extern byte converter_clutch_rationality_fail_count;  // 0x0040b57c
@@ -6535,6 +6535,7 @@ extern word cssc_initial_warmup_budget;  // 0x0040ba5e
 extern sensor_channel_state_t sensor_channelGeneric_ram;  // 0x0040a09e
 extern word compressor_inlet_pressure_drop;  // 0x0040a1a2
 extern word compressor_inlet_temperature_rise;  // 0x0040a1a4
+extern SENSOR_VALUE_SOURCE barometric_altitude_source;  // 0x0040a1a6
 extern word ambient_relative_humidity;  // 0x0040a1a8
 extern word injection_timing_torque_to_fuel_gain;  // 0x0040a552
 extern int16_t friction_torque_adjustment_for_coolant_temperature;  // 0x0040afbe
@@ -6692,7 +6693,7 @@ extern word fuel_limit_barometric_air_handling_fault_cached_axis_offsets[2];  //
 extern word boost_fuel_timing_demand_filter_output;  // 0x003fb9d6
 extern word boost_pressure_timing_ema_filtered;  // 0x003fb9d8
 extern word altitude_from_barometric_pressure_cached_axis_offset;  // 0x003fb9da
-extern word boost_fuel_rpm_blend_table_row_count;  // 0x003fb9f2
+extern word ambient_relative_humidity_cached_axis_offsets[2];  // 0x003fb9f2
 extern word emission_level_cap_before_rate_limit;  // 0x003fba28
 extern word data_collector_multiple_countdown;  // 0x003fbcb0
 extern word data_collector_sample_capacity;  // 0x003fbcb6
