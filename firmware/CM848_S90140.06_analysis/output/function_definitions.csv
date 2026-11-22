@@ -463,3 +463,25 @@ function_address,function_name,param_index,name,type,comment
 0x00056608,cm848_secondOrderFilterUnsigned,return,,word,(output >> 16) & 0xffff of an output already shifted down 16 (r3): 0 in this build
 0x00056608,cm848_secondOrderFilterUnsigned,0,input,uint,The input (r3; the caller passes a 16-bit road speed)
 0x00056608,cm848_secondOrderFilterUnsigned,1,filter,second_order_filter_state_t *,The filter record (r4)
+0x00507d50,threshold_adjustment_ramp,return,,word,The new severity index: + the ramp rate (capped at 0x100) while the duration is past the derate start duration, else - the ramp rate (floored at 0)
+0x00507d50,threshold_adjustment_ramp,0,configuration,engine_protection_channel_configuration_t *,The channel's configuration (r3)
+0x00507d50,threshold_adjustment_ramp,1,state,engine_protection_channel_state_t *,The channel's state (r4)
+0x00507d50,threshold_adjustment_ramp,2,history,engine_protection_channel_history_t *,The channel's history (r5)
+0x00507d50,threshold_adjustment_ramp,3,is_engine_speed,int,0 = the fueling index, 1 = the engine speed index (r6)
+0x00507ebc,protection_threshold_check,return,,sword,1 when the input is past the selected threshold (or the switch input is active)
+0x00507ebc,protection_threshold_check,0,configuration,engine_protection_channel_configuration_t *,The channel's configuration (r3)
+0x00507ebc,protection_threshold_check,1,state,engine_protection_channel_state_t *,The channel's state (r4)
+0x00507ebc,protection_threshold_check,2,is_engine_speed,int,0 = the fueling thresholds, 1 = the engine speed thresholds (r5)
+0x00507ebc,protection_threshold_check,3,threshold_select,int,0 / 1 the minimum / maximum threshold pointer, 2 the shutdown duration threshold, 3 the shutdown severity threshold (r6)
+0x0050832c,protection_threshold_update,return,,void,
+0x0050832c,protection_threshold_update,0,configuration,engine_protection_channel_configuration_t *,The channel's configuration (r3)
+0x0050832c,protection_threshold_update,1,state,engine_protection_channel_state_t *,The channel's state (r4)
+0x0050832c,protection_threshold_update,2,history,engine_protection_channel_history_t *,The channel's history (r5)
+0x00508408,protection_state_transition,return,,void,
+0x00508408,protection_state_transition,0,channel_index,int,The channel number (r3); only channel 4 takes the restart limitation path
+0x00508408,protection_state_transition,1,state,engine_protection_channel_state_t *,The channel's state (r4)
+0x00508408,protection_state_transition,2,configuration,engine_protection_channel_configuration_t *,The channel's configuration (r5)
+0x00508834,protection_event_timestamp,return,,void,
+0x00508834,protection_event_timestamp,0,configuration,engine_protection_channel_configuration_t *,The channel's configuration (r3)
+0x00508834,protection_event_timestamp,1,state,engine_protection_channel_state_t *,The channel's state (r4)
+0x00508834,protection_event_timestamp,2,is_engine_speed,int,0 = the fueling count, 1 = the engine speed count (r5)

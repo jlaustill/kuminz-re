@@ -1378,6 +1378,9 @@ typedef struct logical_output_request_bits_48_to_55_t logical_output_request_bit
 typedef struct logical_output_request_bits_64_to_71_t logical_output_request_bits_64_to_71_t;
 typedef struct logical_output_request_bits_72_to_79_t logical_output_request_bits_72_to_79_t;
 typedef struct switch_input_state_t switch_input_state_t;
+typedef struct engine_protection_channel_configuration_t engine_protection_channel_configuration_t;
+typedef struct engine_protection_channel_state_t engine_protection_channel_state_t;
+typedef struct engine_protection_channel_history_t engine_protection_channel_history_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -3408,4 +3411,66 @@ struct switch_input_state_t {
     uint8_t reserved_bit_29 : 1;  /* bit 5: switch 29 (byte 3 mask 0x20): no e2m 1612 record; no named use */
     uint8_t reserved_bit_30 : 1;  /* bit 6: switch 30 (byte 3 mask 0x40): e2m 1612 TVA_ASIC_Feedback; no named use */
     uint8_t unwired_switch : 1;  /* bit 7: switch 31 (byte 3 mask 0x80): no e2m 1612 record; no 11.45 record and no line: every unwired switch function compiles to it (the two-speed axle switch of cm848_updateCruiseAndRoadSpeedGovernorDroops among them), and cm848_updateSwitch31FromAcceleratorPedal / cm848_checkSwitch31OnTimeFault pulse or hold it from the accelerator pedal */
+};
+
+struct engine_protection_channel_configuration_t {
+    uint16_t configuration_flags;  /* +0x0 e2m Fuel_Temperature_EPF_Configuration [HEX] '[EPFTCG] Configuration word for fuel temperature EPF input' (was the flat row fuel_temperature_derate_configuration_flags) | earlier note: e2m 112E +0 Fuel_Temperature_EPF_Configuration '[EPFTCG] Configuration word for fuel temperature EPF input' (address from the ECU's parameter ID table) (bit fie */
+    uint16_t fueling_derate_start_duration;  /* +0x2 e2m Fuel_Temperature_Fueling_Derate_Start_Duration [SEC] '[EPFTFLDD] Time from fuel temperature overlimit reached to start of fuel derate' */
+    uint16_t engine_speed_derate_start_duration;  /* +0x4 e2m Fuel_Temperature_RPM_Derate_Start_Duration [SEC] '[EPFTRPDD] Time from fuel temperature overlimit reached to start of RPM derate' */
+    uint16_t fueling_ramp_rate;  /* +0x6 e2m Fuel_Temperature_Fueling_Ramp_Rate [SEC] '[EPFTFLIC] Time to reach full derate w/ fuel temperature engine protect. fueling flt' */
+    uint16_t engine_speed_ramp_rate;  /* +0x8 e2m Fuel_Temperature_RPM_Ramp_Rate [SEC] '[EPFTRPIC] Time to reach full derate w/ fuel temperature engine protection RPM fault' */
+    uint16_t fueling_minimum_threshold;  /* +0xa e2m Fuel_Temperature_Fueling_Min_Threshold [DEG_F] '[EPFTMNTD] Minimum temperature threshold for fuel temperature fuel limiting' (was the flat row fuel_temperature_derate_fueling_minimum_temperature) | earlier note: e2m 112E +A Fuel_Temperature_Fueling_Min_Threshold '[EPFTMNTD] Minimum temperature threshold for fuel temperature fuel limiting' (address from the ECU's paramet */
+    uint16_t fueling_maximum_threshold;  /* +0xc e2m Fuel_Temperature_Fueling_Max_Threshold [DEG_F] '[EPFTMXTD] Maximum threshold for fuel temperature fuel limiting' (was the flat row fuel_temperature_derate_fueling_maximum_temperature) | earlier note: e2m 112E +C Fuel_Temperature_Fueling_Max_Threshold '[EPFTMXTD] Maximum threshold for fuel temperature fuel limiting' (address from the ECU's parameter ID table) */
+    int16_t engine_speed_lower_limit_threshold;  /* +0xe e2m Fuel_Temperature_RPM_Lower_Limit [DEG_F] '[EPFTRPLL] Minimum threshold for fuel temperature RPM limiting' (was the flat row fuel_temperature_derate_engine_speed_minimum_temperature) | earlier note: e2m 112E +E Fuel_Temperature_RPM_Lower_Limit '[EPFTRPLL] Minimum threshold for fuel temperature RPM limiting' (address from the ECU's parameter ID table) (1/64 */
+    uint16_t fueling_shutdown_duration_threshold;  /* +0x10 e2m Fuel_Temperature_Fueling_Shutdown_Duration_Thres [SEC] '[EPFTFLSD] Threshold for fuel temperature fuel limiting to initiate shutdown' */
+    uint16_t engine_speed_shutdown_duration_threshold;  /* +0x12 e2m Fuel_Temperature_RPM_Shutdown_Duration_Thres [SEC] '[EPFTRPSD] Threshold for fuel temperature RPM limiting to initiate shutdown' */
+    uint16_t shutdown_delay;  /* +0x14 e2m Fuel_Temperature_Shutdown_Delay [SEC] '[EPFTFSDY] Shutdown delay for fuel temperature shutdown' */
+    uint16_t start_monitor_engine_speed;  /* +0x16 e2m Fuel_Temperature_Start_Monitor_RPM [RPM] '[EPFTSRRP] RPM threshold that must be crossed in order to log fuel temp fault' */
+    uint16_t start_monitor_time;  /* +0x18 e2m Fuel_Temperature_Start_Monitor_Time [SEC] '[EPFTSRTM] Time threshold that must be crossed in order to log fuel temperature fault' */
+    uint16_t fueling_fault_index;  /* +0x1a e2m EPF_Input_Source_0_Fueling_Index_Fault [HEX] '[EP00FLFU] Fault index indicating Input source 0 fueling error detected'; +0x1a e2m Fuel_Temperature_Fueling_Error [HEX] '[EPFTFLFU] Fault index indicating temperature fueling error detected' */
+    uint16_t engine_speed_fault_index;  /* +0x1c e2m EPF_Input_Source_0_RPM_Index_Fault [HEX] '[EP00RPFU] Fault index indicating Input source 0 RPM error detected'; +0x1c e2m Fuel_Temperature_RPM_Error [HEX] '[EPFTRPFU] Fault index indicating Fuel temperature RPM error detected' */
+    uint16_t shutdown_warning_time;  /* +0x1e e2m Fuel_Temperature_Shutdown_Warning_Time [SEC] '[EPFTWNTM] time duration to warn driver before shutdown due to fuel temperature' */
+    int16_t fueling_shutdown_severity_threshold;  /* +0x20 e2m Fuel_Temperature_Fueling_Shutdown_Severity_Thres [DEG_F] '[EPFTFLSS] Threshold for fuel temperature fuel limiting to initiate shutdown' */
+    int16_t engine_speed_shutdown_severity_threshold;  /* +0x22 e2m Fuel_Temperature_RPM_Shutdown_Severity_Thres [DEG_F] '[EPFTRPSS] Threshold for fuel temperature RPM limiting to initiate shutdown' */
+};
+
+struct engine_protection_channel_state_t {
+    word* input_pointer;  /* +0x0 e2m Fuel_Temperature_Input_Source [HEX] '[EPFTSA] Pointer to source of fuel temperature' (was the flat row fuel_temperature_derate_input_pointer) | earlier note: Input pointer (offset 0) of the single fuel temperature torque derate channel = &fuel_temperature_sensor_filtered (slot 7 - 1/64 deg F) - derate ramps from 200 */
+    uint16_t input_mask;  /* +0x4 e2m Fuel_Temperature_Input_Mask [HEX] '[EPFTSAMK] Mask for source of fuel temperature' */
+    uint16_t fueling_duration;  /* +0x6 e2m Fuel_Temperature_Fuel_Duration [SEC] '[EPFTFLTM] Amount of time since fuel temperature failure was detected' */
+    uint16_t engine_speed_duration;  /* +0x8 e2m Fuel_Temperature_RPM_Duration [SEC] '[EPFTRPTM] Amount of time since fuel temperature failure was detected' */
+    word* minimum_threshold_pointer;  /* +0xa e2m Fuel_Temperature_Min_Threshold_Pointer [HEX] '[EPFTMNSA] Pointer to fuel temperature min threshold' */
+    word* maximum_threshold_pointer;  /* +0xe e2m Fuel_Temperature_Max_Threshold_Pointer [HEX] '[EPFTMXSA] Pointer to fuel temperature max threshold' */
+    word* engine_speed_lower_limit_pointer;  /* +0x12 e2m Fuel_Temperature_RPM_Lower_Limit_Pointer [HEX] '[EPFTRLSA] Pointer to fuel temperature RPM limit threshold' */
+    uint16_t errors_allowed;  /* +0x16 e2m Fuel_Temperature_Errors_Allowed [UNITLESS] '[EPFTEREN] TRUE = fuel temperature error allowed, FALSE = not allowed' */
+    uint16_t precrank_error;  /* +0x18 e2m Fuel_Temperature_Precrank_Error [HEX] '[EPFTPKER] Fuel temperature system error detected before cranking in restart' (was the flat row fuel_temperature_derate_precrank_error_flag) | earlier note: e2m 1152 +18 Fuel_Temperature_Precrank_Error [EPFTPKER] 'Fuel temperature system error detected before cranking in restart' (address from the ECU's parameter ID */
+    uint16_t fueling_shutdown_time_count;  /* +0x1a e2m Fuel_Temperature_Fuel_Shutdown_Time_Count [SEC] '[EPFTFSCU] Amount of time over fuel temperature fuel shutdown threshold' (was the flat row fuel_temperature_derate_fuel_shutdown_time_count) | earlier note: e2m 1152 +1A Fuel_Temperature_Fuel_Shutdown_Time_Count '[EPFTFSCU] Amount of time over fuel temperature fuel shutdown threshold' (address from the ECU's paramet */
+    uint16_t engine_speed_shutdown_time_count;  /* +0x1c e2m Fuel_Temperature_RPM_Shutdown_Time_Count [SEC] '[EPFTRSCU] Amount of time over fuel temperature RPM shutdown threshold' (was the flat row fuel_temperature_derate_rpm_shutdown_time_count) | earlier note: e2m 1152 +1C Fuel_Temperature_RPM_Shutdown_Time_Count '[EPFTRSCU] Amount of time over fuel temperature RPM shutdown threshold' (address from the ECU's parameter */
+    uint16_t fueling_start_warning_time;  /* +0x1e e2m Fuel_Temperature_Fuel_Start_Warning_Time [SEC] '[EPFTFLWN] Time to start of warning after fuel temp fuel error declared' */
+    uint16_t engine_speed_start_warning_time;  /* +0x20 e2m Fuel_Temperature_RPM_Start_Warning_Time [SEC] '[EPFTRPWN] Time to start of warning after fuel temp RPM error declared' */
+    uint16_t errors_allowed_timer;  /* +0x22 e2m Fuel_Temperature_Errors_Allowed_Timer [SEC] '[EPFTERTM] Time since RPM crossed fuel temperature start threshold' */
+    uint16_t errors_allowed_timer_running;  /* +0x24 e2m Fuel_Temperature_Errors_Allowed_Timer_Running [UNITLESS] '[EPFTERFG] Flag indicating fuel temp. errors allowed timer is running' */
+    void * fueling_fault_log_pointer;  /* +0x26 e2m Fuel_Temperature_Fuel_Fault_Log_Pointer [HEX] '[EPFTFLSA] Pointer to Fuel Temperature Fuel Fault Log Data' */
+    void * engine_speed_fault_log_pointer;  /* +0x2a e2m Fuel_Temperature_RPM_Fault_Log_Pointer [HEX] '[EPFTRPSA] Pointer to Fuel Temperature RPM Fault Log Data' */
+    uint32_t fueling_fault_occurrence_time;  /* +0x2e e2m EPF_Input_Source_0_Fueling_Fault_Occurrence_Time [SEC] '[EP00FFTM] Input source 0 fueling fault occurrence time' */
+    uint16_t fueling_fault_log_value;  /* +0x32 e2m EPF_Input_Source_0_Fueling_Fault_Log_Value [UNITLESS] '[EP00FLVU] Keeps value of input source 0 at time of fueling fault' */
+    uint16_t fueling_fault_log_duration;  /* +0x34 e2m EPF_Input_Source_0_Fueling_Fault_Log_Duration [SEC] '[EP00FLFD] Input source 0 fueling fault log duration' */
+    uint32_t engine_speed_fault_occurrence_time;  /* +0x36 e2m EPF_Input_Source_0_RPM_Fault_Occurrence_Time [SEC] '[EP00RFFT] Input source 0 RPM fault occurrence time' */
+    uint16_t engine_speed_fault_log_value;  /* +0x3a e2m EPF_Input_Source_0_RPM_Fault_Log_Value [UNITLESS] '[EP00RPVU] Keeps value of input source 0 at time of RPM fault' */
+    uint16_t engine_speed_fault_log_duration;  /* +0x3c e2m EPF_Input_Source_0_RPM_Fault_Log_Duration [SEC] '[EP00RPFD] Input source 0 RPM fault log duration' */
+};
+
+struct engine_protection_channel_history_t {
+    uint16_t fueling_severity_index;  /* +0x0 e2m Fuel_Temperature_Fueling_Index [UNITLESS] '[EPFTFLIX] Fuel temperature fueling severity index.' (was the flat row fuel_temperature_derate_fueling_severity_index_cal) | earlier note: e2m 1143 +0 Fuel_Temperature_Fueling_Index '[EPFTFLIX] Fuel temperature fueling severity index.' (1/256 per count; EEPROM mirror): word 0 of the 30-byte record */
+    uint16_t engine_speed_severity_index;  /* +0x2 e2m Fuel_Temperature_RPM_Index [UNITLESS] '[EPFTRPIX] Fuel temperature RPM severity index.' (was the flat row fuel_temperature_derate_engine_speed_severity_index_cal) | earlier note: e2m Fuel_Temperature_RPM_Index [EPFTRPIX] (UNITLESS, 1/256, 0..1): fuel temperature RPM severity index. Word 1 of the per-channel record at 0x3fdfbe (stride 30, */
+    uint16_t fueling_restart_severity_index;  /* +0x4 e2m Fuel_Temperature_Fueling_Restart_Index [UNITLESS] '[EPFTRYIX] Fuel temperature fueling restart severity index.' */
+    uint16_t engine_speed_restart_severity_index;  /* +0x6 e2m Fuel_Temperature_RPM_Restart_Index [UNITLESS] '[EPFTRRIX] Fuel temperature RPM restart severity index.' */
+    int16_t input_extremity;  /* +0x8 e2m Fuel_Temperature_Extremity [DEG_F] '[EPFTEX] Fuel temperature extremity (max)' */
+    uint32_t input_extremity_time;  /* +0xa e2m Fuel_Temperature_Extremity_Time [UNITLESS] '[EPFTEXTM] Fuel temperature extremity time' */
+    uint32_t fueling_fault_elapsed_time;  /* +0xe e2m Fuel_Temperature_Fueling_Fault_Elapse_Time [SEC] '[EPFTFFET] Total time fuel pres. fuel fault has been active' */
+    uint32_t engine_speed_fault_elapsed_time;  /* +0x12 e2m Fuel_Temperature_RPM_Fault_Elapse_Time [SEC] '[EPFTRFET] Total time fuel temperature. rpm fault has been active' */
+    uint16_t fueling_fault_log_flag;  /* +0x16 e2m Fuel_Temperature_Fueling_Fault_Log_Flag [UNITLESS] '[EPFTFLFG] Fault log recording flag for fuel temperature fueling' */
+    uint16_t fueling_fault_log_index;  /* +0x18 e2m Fuel_Temperature_Fueling_Fault_Log_Index [UNITLESS] '[EPFTFLIN] Index into EPF fault log for Fuel temperature fueling' */
+    uint16_t engine_speed_fault_log_flag;  /* +0x1a e2m Fuel_Temperature_RPM_Fault_Log_Flag [UNITLESS] '[EPFTRPFG] Fault log recording flag for fuel temperature RPM' */
+    uint16_t engine_speed_fault_log_index;  /* +0x1c e2m Fuel_Temperature_RPM_Fault_Log_Index [UNITLESS] '[EPFTRPIN] Index into EPF fault log for fuel temperature RPM' */
 };

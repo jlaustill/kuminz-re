@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 01:23:10 MST 2026
+// Generated: Sun Nov 22 02:07:14 MST 2026
 
 
 //
@@ -6092,9 +6092,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
+  byte prescaler_count;
   dword runtime_value;
   word counter_value;
-  byte prescaler_count;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -38512,8 +38512,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  byte all_transmits_overdue;
   ushort receive_interval;
+  byte all_transmits_overdue;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
@@ -66035,41 +66035,45 @@ void cm848_runFaultDerateScheduler(void)
 // Function: threshold_adjustment_ramp @ 0x00507d50
 //
 
-ushort threshold_adjustment_ramp(int param_1,int param_2,ushort *param_3,int param_4)
+word threshold_adjustment_ramp
+               (engine_protection_channel_configuration_t *configuration,
+               engine_protection_channel_state_t *state,engine_protection_channel_history_t *history
+               ,dword is_engine_speed)
 
 {
   ushort uVar1;
   ushort uVar2;
   ushort uVar3;
   ushort uVar4;
-  int iVar5;
+  word wVar5;
+  int iVar6;
   
-  if (param_4 == 0) {
-    uVar4 = *param_3;
-    uVar1 = *(ushort *)(param_2 + 6);
-    uVar2 = *(ushort *)(param_1 + 2);
-    iVar5 = 6;
+  if (is_engine_speed == 0) {
+    uVar1 = history->fueling_severity_index;
+    uVar2 = state->fueling_duration;
+    uVar3 = configuration->fueling_derate_start_duration;
+    iVar6 = 6;
   }
   else {
-    uVar4 = param_3[1];
-    uVar1 = *(ushort *)(param_2 + 8);
-    uVar2 = *(ushort *)(param_1 + 4);
-    iVar5 = 8;
+    uVar1 = history->engine_speed_severity_index;
+    uVar2 = state->engine_speed_duration;
+    uVar3 = configuration->engine_speed_derate_start_duration;
+    iVar6 = 8;
   }
-  uVar3 = *(ushort *)(param_1 + iVar5);
-  if (uVar2 < uVar1) {
-    uVar4 = uVar4 + uVar3;
-    if (0x100 < uVar4) {
-      uVar4 = 0x100;
+  uVar4 = *(ushort *)(configuration->engine_speed_lower_limit_threshold + iVar6 + -0xe);
+  if (uVar3 < uVar2) {
+    wVar5 = uVar1 + uVar4;
+    if (0x100 < wVar5) {
+      wVar5 = 0x100;
     }
   }
-  else if (uVar3 < uVar4) {
-    uVar4 = uVar4 - uVar3;
+  else if (uVar4 < uVar1) {
+    wVar5 = uVar1 - uVar4;
   }
   else {
-    uVar4 = 0;
+    wVar5 = 0;
   }
-  return uVar4;
+  return wVar5;
 }
 
 
@@ -66103,17 +66107,17 @@ undefined2 threshold_value_interpolate(int param_1,int param_2,short param_3)
 void hpcr_initFuelTemperatureSensorChannel(void)
 
 {
-  fuel_temperature_derate_input_pointer = (undefined *)&fuel_temperature_sensor_filtered;
-  PTR_fuel_temperature_derate_fueling_minimum_temperature_0040a73e =
-       (undefined *)&fuel_temperature_derate_fueling_minimum_temperature;
-  PTR_fuel_temperature_derate_fueling_maximum_temperature_0040a742 =
-       (undefined *)&fuel_temperature_derate_fueling_maximum_temperature;
-  PTR_fuel_temperature_derate_engine_speed_minimum_temperature_0040a746 =
-       (undefined *)&fuel_temperature_derate_engine_speed_minimum_temperature;
-  PTR_DAT_0040a75e = &DAT_003fe006;
-  PTR_DAT_0040a75a = &DAT_003fe006;
-  if ((fuel_temperature_derate_configuration_flags & 0x1000) == 0) {
-    PTR_DAT_0040a75e = &DAT_003fe02e;
+  fuel_temperature_engine_protection_state.input_pointer = &fuel_temperature_sensor_filtered;
+  fuel_temperature_engine_protection_state.minimum_threshold_pointer =
+       &fuel_temperature_engine_protection_configuration.fueling_minimum_threshold;
+  fuel_temperature_engine_protection_state.maximum_threshold_pointer =
+       &fuel_temperature_engine_protection_configuration.fueling_maximum_threshold;
+  fuel_temperature_engine_protection_state.engine_speed_lower_limit_pointer =
+       (word *)fuel_temperature_engine_protection_configuration.engine_speed_lower_limit_threshold;
+  fuel_temperature_engine_protection_state.engine_speed_fault_log_pointer = &DAT_003fe006;
+  fuel_temperature_engine_protection_state.fueling_fault_log_pointer = &DAT_003fe006;
+  if ((fuel_temperature_engine_protection_configuration.configuration_flags & 0x1000) == 0) {
+    fuel_temperature_engine_protection_state.engine_speed_fault_log_pointer = &DAT_003fe02e;
   }
   cm848_initializeFaultDerateEngineSpeedLimit();
   cm848_resetFaultDerateFuelLimit();
@@ -66130,33 +66134,38 @@ void hpcr_initFuelTemperatureSensorChannel(void)
 // Function: protection_threshold_check @ 0x00507ebc
 //
 
-undefined4 protection_threshold_check(ushort *param_1,undefined4 *param_2,int param_3,int param_4)
+sword protection_threshold_check
+                (engine_protection_channel_configuration_t *configuration,
+                engine_protection_channel_state_t *state,dword is_engine_speed,
+                dword threshold_select)
 
 {
   ushort uVar1;
   bool bVar2;
-  ushort uVar3;
+  word wVar3;
   int iVar4;
+  ushort uVar5;
   
-  uVar1 = *param_1;
+  uVar1 = configuration->configuration_flags;
   if ((uVar1 & 0x30) != 0) {
-    if (param_1 == fault_derate_fuel_limit_by_engine_speed_axis) {
+    if (configuration ==
+        (engine_protection_channel_configuration_t *)fault_derate_fuel_limit_by_engine_speed_axis) {
       bVar2 = switch_input_state_bits.unwired_switch != 0;
       if ((switch_input_state_bits.unwired_switch != 0) == bVar2) {
         return 0;
       }
       if (bVar2) {
-        uVar3 = 1;
+        uVar5 = 1;
       }
       else {
-        uVar3 = 0;
+        uVar5 = 0;
       }
     }
     else {
-      uVar3 = *(ushort *)*param_2 & *(ushort *)(param_2 + 1);
+      uVar5 = *state->input_pointer & state->input_mask;
     }
-    if ((uVar3 == 0) || ((uVar1 & 0x10) == 0)) {
-      if (uVar3 != 0) {
+    if ((uVar5 == 0) || ((uVar1 & 0x10) == 0)) {
+      if (uVar5 != 0) {
         return 0;
       }
       if ((uVar1 & 0x20) == 0) {
@@ -66165,40 +66174,40 @@ undefined4 protection_threshold_check(ushort *param_1,undefined4 *param_2,int pa
     }
     return 1;
   }
-  if (param_3 == 0) {
-    if (param_4 == 0) {
-      uVar3 = **(ushort **)((int)param_2 + 10);
+  if (is_engine_speed == 0) {
+    if (threshold_select == 0) {
+      wVar3 = *state->minimum_threshold_pointer;
       goto LAB_00507ff8;
     }
-    if (param_4 == 1) {
-      uVar3 = **(ushort **)((int)param_2 + 0xe);
+    if (threshold_select == 1) {
+      wVar3 = *state->maximum_threshold_pointer;
       goto LAB_00507ff8;
     }
-    if (param_4 != 2) {
-      uVar3 = param_1[0x10];
+    if (threshold_select != 2) {
+      wVar3 = *(word *)configuration->fueling_shutdown_severity_threshold;
       goto LAB_00507ff8;
     }
     iVar4 = 0x10;
   }
   else {
-    if ((param_4 == 0) || (param_4 == 1)) {
-      uVar3 = **(ushort **)((int)param_2 + 0x12);
+    if ((threshold_select == 0) || (threshold_select == 1)) {
+      wVar3 = *state->engine_speed_lower_limit_pointer;
       goto LAB_00507ff8;
     }
-    if (param_4 == 2) {
-      uVar3 = param_1[9];
+    if (threshold_select == 2) {
+      wVar3 = configuration->engine_speed_shutdown_duration_threshold;
       goto LAB_00507ff8;
     }
     iVar4 = 0x22;
   }
-  uVar3 = *(ushort *)((int)param_1 + iVar4);
+  wVar3 = *(word *)(configuration->engine_speed_lower_limit_threshold + iVar4 + -0xe);
 LAB_00507ff8:
   if ((uVar1 & 4) == 0) {
-    if (*(short *)*param_2 < (short)uVar3) {
+    if ((short)*state->input_pointer < (short)wVar3) {
       return 1;
     }
   }
-  else if ((short)uVar3 <= *(short *)*param_2) {
+  else if ((short)wVar3 <= (short)*state->input_pointer) {
     return 1;
   }
   return 0;
@@ -66214,48 +66223,49 @@ void governor_fault_eventCounter_update(void)
 
 {
   ushort uVar1;
-  short sVar2;
-  word *pwVar3;
-  undefined **ppuVar4;
-  word *pwVar5;
+  sword sVar2;
+  word wVar3;
+  word *pwVar4;
+  engine_protection_channel_state_t *state;
+  engine_protection_channel_configuration_t *configuration;
   
-  pwVar5 = &fuel_temperature_derate_configuration_flags;
-  ppuVar4 = &fuel_temperature_derate_input_pointer;
-  pwVar3 = fault_derate_fuel_limit_by_engine_speed_axis;
+  configuration = &fuel_temperature_engine_protection_configuration;
+  state = &fuel_temperature_engine_protection_state;
+  pwVar4 = fault_derate_fuel_limit_by_engine_speed_axis;
   do {
-    if (*(short *)((int)ppuVar4 + 0x16) == 0) {
-      *(undefined2 *)((int)ppuVar4 + 6) = 0;
+    if (state->errors_allowed == 0) {
+      state->fueling_duration = 0;
 LAB_00508100:
-      sVar2 = 0;
+      wVar3 = 0;
 LAB_00508104:
-      *(short *)(ppuVar4 + 2) = sVar2;
+      state->engine_speed_duration = wVar3;
     }
     else {
-      uVar1 = *pwVar5;
+      uVar1 = configuration->configuration_flags;
       if ((uVar1 & 0x101) != 0) {
-        sVar2 = protection_threshold_check(pwVar5,ppuVar4,0,0);
+        sVar2 = protection_threshold_check(configuration,state,0,0);
         if (sVar2 == 0) {
-          sVar2 = 0;
+          wVar3 = 0;
         }
         else {
-          if (*(short *)((int)ppuVar4 + 6) == -1) goto LAB_005080b8;
-          sVar2 = *(short *)((int)ppuVar4 + 6) + 1;
+          if (state->fueling_duration == 0xffff) goto LAB_005080b8;
+          wVar3 = state->fueling_duration + 1;
         }
-        *(short *)((int)ppuVar4 + 6) = sVar2;
+        state->fueling_duration = wVar3;
       }
 LAB_005080b8:
       if ((uVar1 & 0x402) != 0) {
-        sVar2 = protection_threshold_check(pwVar5,ppuVar4,1,0);
+        sVar2 = protection_threshold_check(configuration,state,1,0);
         if (sVar2 == 0) goto LAB_00508100;
-        if (*(short *)(ppuVar4 + 2) == -1) goto LAB_00508108;
-        sVar2 = *(short *)(ppuVar4 + 2) + 1;
+        if (state->engine_speed_duration == 0xffff) goto LAB_00508108;
+        wVar3 = state->engine_speed_duration + 1;
         goto LAB_00508104;
       }
     }
 LAB_00508108:
-    pwVar5 = pwVar5 + 0x12;
-    ppuVar4 = (undefined **)((int)ppuVar4 + 0x3e);
-    if (pwVar3 <= pwVar5) {
+    configuration = configuration + 1;
+    state = state + 1;
+    if (pwVar4 <= configuration) {
       return;
     }
   } while( true );
@@ -66278,7 +66288,8 @@ LAB_00508108:
    restart enable bits are set in the per channel enable words (e2m 106B +12, EEPROM 0x12a: bits 130
    + 4n and 131 + 4n). If a threshold of that channel is still exceeded (protection_threshold_check
    at 0x507ebc, for the thresholds selected by the masks 0x1 and 0x2 of the channel's configuration
-   flags) it sets fuel_temperature_derate_precrank_error_flag for the channel (e2m 1152 +18
+   flags) it sets the channel's state precrank_error
+   (fuel_temperature_engine_protection_state.precrank_error) (e2m 1152 +18
    Fuel_Temperature_Precrank_Error) and engine_protection_precrank_shutdown_command_flag, which
    cm848_updateEngineProtectionShutdown (0x508898) turns into engine_shutdown_command_flag. Called
    on every pass by cm848_runFaultDerateScheduler (0x507c44). The shutdown enable bit is clear in
@@ -66291,11 +66302,10 @@ void cm848_examineEngineProtectionBeforeCranking(void)
   ushort uVar1;
   uint uVar2;
   int iVar3;
-  short sVar4;
+  sword sVar4;
   int iVar5;
   int iVar6;
-  int iVar7;
-  ushort *puVar8;
+  engine_protection_channel_configuration_t *configuration;
   
   if (((((engine_state == ENGINE_STATE_CRANKING) &&
         (algorithm_enable_flags_2_cal.engine_protection_enable != 0)) &&
@@ -66304,10 +66314,10 @@ void cm848_examineEngineProtectionBeforeCranking(void)
        (engine_protection_shutdown_active_channel_cal != 0xff)))) &&
      ((engine_protection_shutdown_active_channel_cal != 4 &&
       (DAT_0005c2f4 <= engine_protection_shutdown_count_cal)))) {
-    puVar8 = &fuel_temperature_derate_configuration_flags +
-             (short)engine_protection_shutdown_active_channel_cal * 0x12;
+    configuration =
+         &fuel_temperature_engine_protection_configuration +
+         (short)engine_protection_shutdown_active_channel_cal;
     iVar5 = (int)(short)engine_protection_shutdown_active_channel_cal;
-    iVar7 = (int)&fuel_temperature_derate_input_pointer + iVar5 * 0x3e;
     uVar2 = (uint)engine_protection_shutdown_active_channel_cal * 4 + 0x80 & 0xffff;
     iVar3 = uVar2 + 2;
     iVar6 = iVar3 >> 4;
@@ -66315,15 +66325,19 @@ void cm848_examineEngineProtectionBeforeCranking(void)
        && (iVar3 = uVar2 + 3, iVar6 = iVar3 >> 4,
           ((uint)(&algorithm_enable_flags_0_cal)[iVar6] & 1 << (iVar3 + iVar6 * -0x10 & 0x3fU)) != 0
           )) {
-      uVar1 = *puVar8;
-      if (((uVar1 & 1) != 0) && (sVar4 = protection_threshold_check(puVar8,iVar7,0,0), sVar4 != 0))
-      {
-        (&fuel_temperature_derate_precrank_error_flag)[iVar5 * 0x1f] = 1;
+      uVar1 = configuration->configuration_flags;
+      if (((uVar1 & 1) != 0) &&
+         (sVar4 = protection_threshold_check
+                            (configuration,&fuel_temperature_engine_protection_state + iVar5,0,0),
+         sVar4 != 0)) {
+        (&fuel_temperature_engine_protection_state)[iVar5].precrank_error = 1;
         engine_protection_precrank_shutdown_command_flag = 1;
       }
-      if (((uVar1 & 2) != 0) && (sVar4 = protection_threshold_check(puVar8,iVar7,1,0), sVar4 != 0))
-      {
-        (&fuel_temperature_derate_precrank_error_flag)[iVar5 * 0x1f] = 1;
+      if (((uVar1 & 2) != 0) &&
+         (sVar4 = protection_threshold_check
+                            (configuration,&fuel_temperature_engine_protection_state + iVar5,1,0),
+         sVar4 != 0)) {
+        (&fuel_temperature_engine_protection_state)[iVar5].precrank_error = 1;
         engine_protection_precrank_shutdown_command_flag = 1;
       }
     }
@@ -66341,7 +66355,7 @@ void cm848_initSensorChannelDataStructures(void)
 
 {
   engine_protection_precrank_shutdown_command_flag = 0;
-  fuel_temperature_derate_precrank_error_flag = 0;
+  fuel_temperature_engine_protection_state.precrank_error = 0;
   return;
 }
 
@@ -66351,38 +66365,42 @@ void cm848_initSensorChannelDataStructures(void)
 // Function: protection_threshold_update @ 0x0050832c
 //
 
-void protection_threshold_update(ushort *param_1,undefined4 *param_2,int param_3)
+void protection_threshold_update
+               (engine_protection_channel_configuration_t *configuration,
+               engine_protection_channel_state_t *state,engine_protection_channel_history_t *history
+               )
 
 {
   ushort uVar1;
-  short sVar2;
-  undefined2 uVar3;
+  sword sVar2;
+  word wVar3;
   
-  uVar1 = *param_1;
+  uVar1 = configuration->configuration_flags;
   if ((uVar1 & 1) != 0) {
-    sVar2 = protection_threshold_check(param_1,param_2,0,0);
+    sVar2 = protection_threshold_check(configuration,state,0,0);
     if (sVar2 == 0) {
-      uVar3 = 0;
+      wVar3 = 0;
     }
     else if ((uVar1 & 0x40) == 0) {
-      uVar3 = threshold_value_interpolate
-                        ((int)*(short *)*param_2,(int)**(short **)((int)param_2 + 10),
-                         (int)**(short **)((int)param_2 + 0xe));
+      wVar3 = threshold_value_interpolate
+                        ((int)(short)*state->input_pointer,
+                         (int)(short)*state->minimum_threshold_pointer,
+                         (int)(short)*state->maximum_threshold_pointer);
     }
     else {
-      uVar3 = 0x100;
+      wVar3 = 0x100;
     }
-    *(undefined2 *)(param_3 + 4) = uVar3;
+    history->fueling_restart_severity_index = wVar3;
   }
   if ((uVar1 & 2) != 0) {
-    sVar2 = protection_threshold_check(param_1,param_2,1,0);
+    sVar2 = protection_threshold_check(configuration,state,1,0);
     if (sVar2 == 0) {
-      uVar3 = 0;
+      wVar3 = 0;
     }
     else {
-      uVar3 = 0x100;
+      wVar3 = 0x100;
     }
-    *(undefined2 *)(param_3 + 6) = uVar3;
+    history->engine_speed_restart_severity_index = wVar3;
   }
   return;
 }
@@ -66393,22 +66411,24 @@ void protection_threshold_update(ushort *param_1,undefined4 *param_2,int param_3
 // Function: protection_state_transition @ 0x00508408
 //
 
-void protection_state_transition(int param_1,int param_2,int param_3)
+void protection_state_transition
+               (dword channel_index,engine_protection_channel_state_t *state,
+               engine_protection_channel_configuration_t *configuration)
 
 {
   bool bVar1;
   
-  if (((param_1 == 4) && (DAT_0005c2f4 <= engine_protection_shutdown_count_cal)) &&
-     (*(short *)(param_2 + 0x16) != 0)) {
-    bVar1 = *(short *)(param_2 + 6) != 0;
+  if (((channel_index == 4) && (DAT_0005c2f4 <= engine_protection_shutdown_count_cal)) &&
+     (state->errors_allowed != 0)) {
+    bVar1 = state->fueling_duration != 0;
     engine_protection_restart_limitation_shutdown_approaching_flag = (word)bVar1;
     if ((bVar1) && (engine_protection_shutdown_override_request_flag == 1)) {
-      *(undefined2 *)(param_2 + 6) = 0;
+      state->fueling_duration = 0;
       DAT_0040a78b = 1;
       DAT_0040a78c = 0;
     }
     engine_protection_restart_limitation_shutdown_command_flag =
-         (word)(*(ushort *)(param_3 + 0x1e) < *(ushort *)(param_2 + 6));
+         (word)(configuration->shutdown_warning_time < state->fueling_duration);
   }
   return;
 }
@@ -66422,42 +66442,42 @@ void protection_state_transition(int param_1,int param_2,int param_3)
 void governor_fault_derateCalc_channelIter(void)
 
 {
-  word *pwVar1;
-  int iVar2;
-  undefined **ppuVar3;
-  uint uVar4;
-  uint uVar5;
-  word *pwVar6;
+  engine_protection_channel_configuration_t *configuration;
+  int iVar1;
+  engine_protection_channel_state_t *state;
+  uint channel_index;
+  uint uVar2;
+  engine_protection_channel_history_t *history;
   
   if (((algorithm_enable_flags_2_cal.engine_protection_shutdown_enable != 0) &&
       (algorithm_enable_flags_2_cal.engine_protection_restart_enable != 0)) &&
      (engine_protection_shutdown_active_channel_cal != 0xff)) {
-    pwVar1 = &fuel_temperature_derate_configuration_flags;
-    ppuVar3 = &fuel_temperature_derate_input_pointer;
-    pwVar6 = &fuel_temperature_derate_fueling_severity_index_cal;
-    uVar5 = 0x80;
-    uVar4 = 0;
+    configuration = &fuel_temperature_engine_protection_configuration;
+    state = &fuel_temperature_engine_protection_state;
+    history = &fuel_temperature_engine_protection_history_cal;
+    uVar2 = 0x80;
+    channel_index = 0;
     do {
-      if ((((int)(short)engine_protection_shutdown_active_channel_cal == uVar4) &&
-          (iVar2 = (int)(uVar5 + 2) >> 4,
-          ((uint)(&algorithm_enable_flags_0_cal)[iVar2] & 1 << (uVar5 + 2 + iVar2 * -0x10 & 0x3f))
+      if ((((int)(short)engine_protection_shutdown_active_channel_cal == channel_index) &&
+          (iVar1 = (int)(uVar2 + 2) >> 4,
+          ((uint)(&algorithm_enable_flags_0_cal)[iVar1] & 1 << (uVar2 + 2 + iVar1 * -0x10 & 0x3f))
           != 0)) &&
-         (iVar2 = (int)(uVar5 + 3) >> 4,
-         ((uint)(&algorithm_enable_flags_0_cal)[iVar2] & 1 << (uVar5 + 3 + iVar2 * -0x10 & 0x3f)) !=
+         (iVar1 = (int)(uVar2 + 3) >> 4,
+         ((uint)(&algorithm_enable_flags_0_cal)[iVar1] & 1 << (uVar2 + 3 + iVar1 * -0x10 & 0x3f)) !=
          0)) {
-        protection_threshold_update(pwVar1,ppuVar3,pwVar6);
-        protection_state_transition(uVar4,ppuVar3,pwVar1);
+        protection_threshold_update(configuration,state,history);
+        protection_state_transition(channel_index,state,configuration);
       }
       else {
-        pwVar6[2] = 0;
-        pwVar6[3] = 0;
+        history->fueling_restart_severity_index = 0;
+        history->engine_speed_restart_severity_index = 0;
       }
-      pwVar1 = pwVar1 + 0x12;
-      ppuVar3 = (undefined **)((int)ppuVar3 + 0x3e);
-      pwVar6 = pwVar6 + 0xf;
-      uVar5 = uVar5 + 4 & 0xffff;
-      uVar4 = uVar4 + 1 & 0xffff;
-    } while (pwVar1 < fault_derate_fuel_limit_by_engine_speed_axis);
+      configuration = configuration + 1;
+      state = state + 1;
+      history = history + 1;
+      uVar2 = uVar2 + 4 & 0xffff;
+      channel_index = channel_index + 1 & 0xffff;
+    } while (configuration < fault_derate_fuel_limit_by_engine_speed_axis);
   }
   return;
 }
@@ -66476,55 +66496,57 @@ void governor_fault_derateCalc_channelIter(void)
 void cm848_calculateFaultDerateEngineSpeedLimit(void)
 
 {
-  ushort uVar2;
+  word wVar2;
   dword dVar1;
-  int iVar3;
-  undefined **ppuVar4;
-  ushort uVar5;
-  word *pwVar6;
+  uint uVar3;
+  int iVar4;
+  engine_protection_channel_state_t *state;
+  uint uVar5;
+  engine_protection_channel_history_t *history;
+  uint uVar6;
+  engine_protection_channel_configuration_t *configuration;
   uint uVar7;
-  word *pwVar8;
-  uint uVar9;
   
-  pwVar8 = &fuel_temperature_derate_configuration_flags;
-  ppuVar4 = &fuel_temperature_derate_input_pointer;
-  pwVar6 = &fuel_temperature_derate_fueling_severity_index_cal;
-  uVar7 = 0x81;
-  uVar9 = 0x1a4;
+  configuration = &fuel_temperature_engine_protection_configuration;
+  state = &fuel_temperature_engine_protection_state;
+  history = &fuel_temperature_engine_protection_history_cal;
+  uVar6 = 0x81;
+  uVar7 = 0x1a4;
   uVar5 = 0;
   do {
-    if ((*pwVar8 & 2) != 0) {
-      iVar3 = (int)uVar9 >> 4;
-      if ((((uint)(&algorithm_enable_flags_0_cal)[(int)uVar7 >> 4] &
-           1 << (uVar7 + ((int)uVar7 >> 4) * -0x10 & 0x3f)) == 0) &&
-         (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar9 + iVar3 * -0x10 & 0x3f)) == 0)
+    if ((configuration->configuration_flags & 2) != 0) {
+      iVar4 = (int)uVar7 >> 4;
+      if ((((uint)(&algorithm_enable_flags_0_cal)[(int)uVar6 >> 4] &
+           1 << (uVar6 + ((int)uVar6 >> 4) * -0x10 & 0x3f)) == 0) &&
+         (((uint)(&algorithm_enable_flags_0_cal)[iVar4] & 1 << (uVar7 + iVar4 * -0x10 & 0x3f)) == 0)
          ) {
-        uVar2 = 0;
+        uVar3 = 0;
       }
       else {
-        uVar2 = threshold_adjustment_ramp(pwVar8,ppuVar4,pwVar6,1);
-        if ((uVar2 < pwVar6[3]) &&
-           (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar9 + iVar3 * -0x10 & 0x3f)) ==
+        wVar2 = threshold_adjustment_ramp(configuration,state,history,1);
+        uVar3 = (uint)wVar2;
+        if (((uint)wVar2 < (uint)history->engine_speed_restart_severity_index) &&
+           (((uint)(&algorithm_enable_flags_0_cal)[iVar4] & 1 << (uVar7 + iVar4 * -0x10 & 0x3f)) ==
             0)) {
-          uVar2 = pwVar6[3];
+          uVar3 = (uint)history->engine_speed_restart_severity_index;
         }
       }
-      pwVar6[1] = uVar2;
-      if ((uVar5 < uVar2) &&
-         (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar9 + iVar3 * -0x10 & 0x3f)) == 0)
+      history->engine_speed_severity_index = (word)uVar3;
+      if ((uVar5 < uVar3) &&
+         (((uint)(&algorithm_enable_flags_0_cal)[iVar4] & 1 << (uVar7 + iVar4 * -0x10 & 0x3f)) == 0)
          ) {
-        uVar5 = uVar2;
+        uVar5 = uVar3;
       }
     }
-    pwVar8 = pwVar8 + 0x12;
-    ppuVar4 = (undefined **)((int)ppuVar4 + 0x3e);
-    pwVar6 = pwVar6 + 0xf;
-    uVar7 = uVar7 + 4 & 0xffff;
-    uVar9 = uVar9 + 1 & 0xffff;
-  } while (pwVar8 < fault_derate_fuel_limit_by_engine_speed_axis);
+    configuration = configuration + 1;
+    state = state + 1;
+    history = history + 1;
+    uVar6 = uVar6 + 4 & 0xffff;
+    uVar7 = uVar7 + 1 & 0xffff;
+  } while (configuration < fault_derate_fuel_limit_by_engine_speed_axis);
   dVar1 = exponentialMovingAverage
                     ((uint)engine_speed_limit_default_cal -
-                     ((uint)uVar5 * (uint)engine_speed_limit_fault_derate_span >> 8) & 0xffff,
+                     (uVar5 * engine_speed_limit_fault_derate_span >> 8) & 0xffff,
                      &ema_filter_state_t_003fbd2e);
   engine_speed_limit_fault_derate = (word)dVar1;
   return;
@@ -66562,27 +66584,29 @@ void cm848_initializeFaultDerateEngineSpeedLimit(void)
 // Function: protection_event_timestamp @ 0x00508834
 //
 
-void protection_event_timestamp(int param_1,int param_2,int param_3)
+void protection_event_timestamp
+               (engine_protection_channel_configuration_t *configuration,
+               engine_protection_channel_state_t *state,dword is_engine_speed)
 
 {
   int iVar1;
   
-  if (param_3 == 0) {
-    if (*(short *)(param_2 + 0x1a) != -1) {
-      *(short *)(param_2 + 0x1a) = *(short *)(param_2 + 0x1a) + 1;
+  if (is_engine_speed == 0) {
+    if (state->fueling_shutdown_time_count != 0xffff) {
+      state->fueling_shutdown_time_count = state->fueling_shutdown_time_count + 1;
     }
   }
-  else if (*(short *)(param_2 + 0x1c) != -1) {
-    *(short *)(param_2 + 0x1c) = *(short *)(param_2 + 0x1c) + 1;
+  else if (state->engine_speed_shutdown_time_count != 0xffff) {
+    state->engine_speed_shutdown_time_count = state->engine_speed_shutdown_time_count + 1;
   }
   if (governor_faultDerate_engine_start_flag != 0) {
-    if (param_3 == 0) {
+    if (is_engine_speed == 0) {
       iVar1 = 0x1e;
     }
     else {
       iVar1 = 0x20;
     }
-    *(undefined2 *)(param_2 + iVar1) = *(undefined2 *)(param_1 + 0x14);
+    *(word *)((int)&state->input_pointer + iVar1) = configuration->shutdown_delay;
   }
   return;
 }
@@ -66599,7 +66623,8 @@ void protection_event_timestamp(int param_1,int param_2,int param_3)
    cm848_runFaultDerateScheduler (0x507c44). With the engine STOPPED it clears
    governor_faultDerate_latch; with the shutdown disabled, or in SHUTDOWN or STOPPED, it clears
    engine_protection_shutdown_approaching_flag, the two shutdown time counts
-   (fuel_temperature_derate_fuel_shutdown_time_count / _rpm_) and the override latch
+   (fuel_temperature_engine_protection_state.fueling_shutdown_time_count /
+   engine_speed_shutdown_time_count) and the override latch
    engine_protection_shutdown_override_request_flag. Otherwise, unless the latch
    governor_faultDerate_latch is set, it goes through the channels whose shutdown enable bit is set
    (bit 130 + 4n of the e2m 106B +12 enable words): it counts the time over each of the channel's
@@ -66626,11 +66651,11 @@ void cm848_updateEngineProtectionShutdown(void)
   ushort uVar1;
   ushort uVar2;
   ushort uVar3;
-  short sVar4;
-  word *pwVar5;
+  sword sVar4;
+  engine_protection_channel_configuration_t *configuration;
+  uint uVar5;
   uint uVar6;
-  uint uVar7;
-  undefined **ppuVar8;
+  engine_protection_channel_state_t *state;
   
   if (engine_state == ENGINE_STATE_STOPPED) {
     governor_faultDerate_latch = 0;
@@ -66638,17 +66663,17 @@ void cm848_updateEngineProtectionShutdown(void)
   if (((algorithm_enable_flags_2_cal.engine_protection_shutdown_enable == 0) ||
       (engine_state == ENGINE_STATE_SHUTDOWN)) || (engine_state == ENGINE_STATE_STOPPED)) {
     engine_protection_shutdown_approaching_flag = 0;
-    fuel_temperature_derate_fuel_shutdown_time_count = 0;
-    fuel_temperature_derate_rpm_shutdown_time_count = 0;
+    fuel_temperature_engine_protection_state.fueling_shutdown_time_count = 0;
+    fuel_temperature_engine_protection_state.engine_speed_shutdown_time_count = 0;
     governor_faultDerate_peak_value = 0;
     engine_protection_shutdown_override_request_flag = 0;
   }
   else if (governor_faultDerate_latch == 0) {
     engine_protection_shutdown_approaching_flag = 0;
-    pwVar5 = &fuel_temperature_derate_configuration_flags;
-    ppuVar8 = &fuel_temperature_derate_input_pointer;
-    uVar6 = 0x82;
-    uVar7 = 0;
+    configuration = &fuel_temperature_engine_protection_configuration;
+    state = &fuel_temperature_engine_protection_state;
+    uVar5 = 0x82;
+    uVar6 = 0;
     if ((governor_faultDerate_prev_rpm == 0) && (engine_speed_state.filtered_engine_speed != 0)) {
       governor_faultDerate_engine_start_flag = 1;
     }
@@ -66657,89 +66682,94 @@ void cm848_updateEngineProtectionShutdown(void)
     }
     governor_faultDerate_peak_value = 0;
     do {
-      uVar1 = *pwVar5;
-      if (((uint)(&algorithm_enable_flags_0_cal)[(int)uVar6 >> 4] &
-          1 << (uVar6 + ((int)uVar6 >> 4) * -0x10 & 0x3f)) == 0) {
-        *(undefined2 *)((int)ppuVar8 + 0x1a) = 0;
+      uVar1 = configuration->configuration_flags;
+      if (((uint)(&algorithm_enable_flags_0_cal)[(int)uVar5 >> 4] &
+          1 << (uVar5 + ((int)uVar5 >> 4) * -0x10 & 0x3f)) == 0) {
+        state->fueling_shutdown_time_count = 0;
 LAB_00508c1c:
-        *(undefined2 *)(ppuVar8 + 7) = 0;
+        state->engine_speed_shutdown_time_count = 0;
       }
       else {
-        if ((((int)(short)engine_protection_shutdown_active_channel_cal == uVar7) &&
-            ((&fuel_temperature_derate_fueling_severity_index_cal)[uVar7 * 0xf] == 0)) &&
-           ((&fuel_temperature_derate_engine_speed_severity_index_cal)[uVar7 * 0xf] == 0)) {
+        if ((((int)(short)engine_protection_shutdown_active_channel_cal == uVar6) &&
+            ((&fuel_temperature_engine_protection_history_cal)[uVar6].fueling_severity_index == 0))
+           && ((&fuel_temperature_engine_protection_history_cal)[uVar6].engine_speed_severity_index
+               == 0)) {
           engine_protection_shutdown_active_channel_cal = 0xff;
           engine_protection_shutdown_count_cal = 0;
         }
-        if (((uVar1 & 0x300) == 0) || (*(short *)((int)ppuVar8 + 0x16) == 0)) {
-          *(undefined2 *)((int)ppuVar8 + 0x1a) = 0;
+        if (((uVar1 & 0x300) == 0) || (state->errors_allowed == 0)) {
+          state->fueling_shutdown_time_count = 0;
         }
         else {
           if ((uVar1 & 0x100) == 0) {
-            sVar4 = protection_threshold_check(pwVar5,ppuVar8,0,3);
+            sVar4 = protection_threshold_check(configuration,state,0,3);
             if (sVar4 != 0) goto LAB_00508a7c;
 LAB_00508a90:
-            *(undefined2 *)((int)ppuVar8 + 0x1a) = 0;
-            *(undefined2 *)((int)ppuVar8 + 0x1e) = 0;
+            state->fueling_shutdown_time_count = 0;
+            state->fueling_start_warning_time = 0;
           }
           else {
-            if ((int)(uint)*(ushort *)((int)ppuVar8 + 6) <= (int)(short)pwVar5[8])
-            goto LAB_00508a90;
+            if ((int)(uint)state->fueling_duration <=
+                (int)(short)configuration->fueling_shutdown_duration_threshold) goto LAB_00508a90;
 LAB_00508a7c:
-            protection_event_timestamp(pwVar5,ppuVar8,0);
+            protection_event_timestamp(configuration,state,0);
           }
-          uVar2 = *(ushort *)((int)ppuVar8 + 0x1a);
+          uVar2 = state->fueling_shutdown_time_count;
           if ((uint)governor_faultDerate_peak_value < (uint)uVar2) {
             governor_faultDerate_peak_value = uVar2;
           }
-          uVar3 = *(ushort *)((int)ppuVar8 + 0x1e);
+          uVar3 = state->fueling_start_warning_time;
           if (((uint)uVar3 < (uint)uVar2) &&
              (engine_protection_shutdown_approaching_flag = 1,
              engine_protection_shutdown_override_request_flag != 0)) {
-            *(ushort *)((int)ppuVar8 + 0x1a) = uVar3;
+            state->fueling_shutdown_time_count = uVar3;
             DAT_0040a78b = 1;
             DAT_0040a78c = 0;
           }
-          if ((uint)uVar3 + (uint)pwVar5[0xf] < (uint)*(ushort *)((int)ppuVar8 + 0x1a)) {
+          if ((uint)uVar3 + (uint)configuration->shutdown_warning_time <
+              (uint)state->fueling_shutdown_time_count) {
             engine_shutdown_command_flag = 1;
-            engine_protection_shutdown_active_channel_cal = (word)uVar7;
+            engine_protection_shutdown_active_channel_cal = (word)uVar6;
           }
         }
-        if (((uVar1 & 0xc00) == 0) || (*(short *)((int)ppuVar8 + 0x16) == 0)) goto LAB_00508c1c;
+        if (((uVar1 & 0xc00) == 0) || (state->errors_allowed == 0)) goto LAB_00508c1c;
         if ((uVar1 & 0x400) == 0) {
-          sVar4 = protection_threshold_check(pwVar5,ppuVar8,1,3);
+          sVar4 = protection_threshold_check(configuration,state,1,3);
           if (sVar4 != 0) goto LAB_00508b78;
 LAB_00508b8c:
-          *(undefined2 *)(ppuVar8 + 7) = 0;
-          *(undefined2 *)(ppuVar8 + 8) = 0;
+          state->engine_speed_shutdown_time_count = 0;
+          state->engine_speed_start_warning_time = 0;
         }
         else {
-          if ((int)(uint)*(ushort *)(ppuVar8 + 2) <= (int)(short)pwVar5[9]) goto LAB_00508b8c;
+          if ((int)(uint)state->engine_speed_duration <=
+              (int)(short)configuration->engine_speed_shutdown_duration_threshold)
+          goto LAB_00508b8c;
 LAB_00508b78:
-          protection_event_timestamp(pwVar5,ppuVar8,1);
+          protection_event_timestamp(configuration,state,1);
         }
-        uVar1 = *(ushort *)(ppuVar8 + 7);
+        uVar1 = state->engine_speed_shutdown_time_count;
         if ((uint)governor_faultDerate_peak_value < (uint)uVar1) {
           governor_faultDerate_peak_value = uVar1;
         }
-        uVar2 = *(ushort *)(ppuVar8 + 8);
+        uVar2 = state->engine_speed_start_warning_time;
         if (((uint)uVar2 < (uint)uVar1) &&
            (engine_protection_shutdown_approaching_flag = 1,
            engine_protection_shutdown_override_request_flag != 0)) {
-          *(ushort *)(ppuVar8 + 7) = uVar2;
+          state->engine_speed_shutdown_time_count = uVar2;
           DAT_0040a78b = 1;
           DAT_0040a78c = 0;
         }
-        if ((uint)uVar2 + (uint)pwVar5[0xf] < (uint)*(ushort *)(ppuVar8 + 7)) {
+        if ((uint)uVar2 + (uint)configuration->shutdown_warning_time <
+            (uint)state->engine_speed_shutdown_time_count) {
           engine_shutdown_command_flag = 1;
-          engine_protection_shutdown_active_channel_cal = (word)uVar7;
+          engine_protection_shutdown_active_channel_cal = (word)uVar6;
         }
       }
-      pwVar5 = pwVar5 + 0x12;
-      ppuVar8 = (undefined **)((int)ppuVar8 + 0x3e);
-      uVar6 = uVar6 + 4 & 0xffff;
-      uVar7 = uVar7 + 1 & 0xffff;
-    } while (pwVar5 < fault_derate_fuel_limit_by_engine_speed_axis);
+      configuration = configuration + 1;
+      state = state + 1;
+      uVar5 = uVar5 + 4 & 0xffff;
+      uVar6 = uVar6 + 1 & 0xffff;
+    } while (configuration < fault_derate_fuel_limit_by_engine_speed_axis);
     engine_protection_shutdown_override_request_flag = 0;
     if ((engine_protection_restart_limitation_shutdown_approaching_flag != 0) ||
        (engine_protection_precrank_shutdown_command_flag != 0)) {
@@ -66795,8 +66825,8 @@ void cm848_completeEngineStartSequence(void)
   DAT_003fbd3a = engine_protection_shutdown_active_channel_cal;
   governor_faultDerate_latch = 0;
   governor_faultDerate_prev_rpm = 0;
-  fuel_temperature_derate_fuel_shutdown_time_count = 0;
-  fuel_temperature_derate_rpm_shutdown_time_count = 0;
+  fuel_temperature_engine_protection_state.fueling_shutdown_time_count = 0;
+  fuel_temperature_engine_protection_state.engine_speed_shutdown_time_count = 0;
   engine_protection_shutdown_override_request_flag = 0;
   DAT_0040a78b = 0;
   DAT_0040a78c = 0;
@@ -67048,10 +67078,10 @@ void governor_fault_channelProcess_mainLoop(void)
   undefined4 uVar9;
   undefined *puVar10;
   
-  fault_channel_config_ptr = (dword)&fuel_temperature_derate_configuration_flags;
-  fault_channel_state_ptr = (dword)&fuel_temperature_derate_input_pointer;
+  fault_channel_config_ptr = (dword)&fuel_temperature_engine_protection_configuration;
+  fault_channel_state_ptr = (dword)&fuel_temperature_engine_protection_state;
   PTR_engine_startup_inhibit_cal_003fbd4a =
-       (undefined *)&fuel_temperature_derate_fueling_severity_index_cal;
+       (undefined *)&fuel_temperature_engine_protection_history_cal;
   do {
     dVar5 = fault_channel_state_ptr;
     dVar4 = fault_channel_config_ptr;
@@ -67172,84 +67202,86 @@ void cm848_applyFaultDerateFuelLimit(void)
 //
 
 /* Calculates the fault derate fuel limit fault_derate_fuel_limit (fuel quantity counts, 5888 = no
-   derate). For each channel of the derate table at 0x597b2 (one entry: the fuel temperature channel
-   fuel_temperature_derate_input_pointer with its 200 to 210 degrees F ramp) it takes a derate level
-   while the channel fault bits allow it, keeps the highest level of the unlatched channels and
-   moves fault_derate_ramp_times_256 (0 to 256) toward it by DAT_0005c2ec (13) per call. With the
-   ramp above 0 the limit lies between the fault_derate_fuel_limit_by_engine_speed curve (ramp 256)
-   and throttle_100_fueling (ramp near 0), otherwise it is fuel_demand_maximum;
+   derate). For each channel of the derate table at 0x597b2 (one entry: the fuel temperature
+   channel, fuel_temperature_engine_protection_state with its 200 to 210 degrees F ramp) it takes a
+   derate level while the channel fault bits allow it, keeps the highest level of the unlatched
+   channels and moves fault_derate_ramp_times_256 (0 to 256) toward it by DAT_0005c2ec (13) per
+   call. With the ramp above 0 the limit lies between the fault_derate_fuel_limit_by_engine_speed
+   curve (ramp 256) and throttle_100_fueling (ramp near 0), otherwise it is fuel_demand_maximum;
    fault_derate_active_flag is the ramp above 0. Task 2 of the fault derate scheduler
    cm848_runFaultDerateScheduler. (was engine_torqueLimit_upperCap_calc) */
 
 void cm848_calculateFaultDerateFuelLimit(void)
 
 {
-  uint uVar1;
   word wVar2;
+  uint uVar1;
   int iVar3;
   uint uVar4;
-  word *pwVar5;
-  uint uVar6;
-  word *pwVar7;
-  undefined **ppuVar8;
-  short sVar9;
-  uint uVar10;
+  engine_protection_channel_history_t *history;
+  uint uVar5;
+  engine_protection_channel_configuration_t *configuration;
+  engine_protection_channel_state_t *state;
+  short sVar6;
+  uint uVar7;
   
-  pwVar7 = &fuel_temperature_derate_configuration_flags;
-  ppuVar8 = &fuel_temperature_derate_input_pointer;
-  pwVar5 = &fuel_temperature_derate_fueling_severity_index_cal;
-  uVar6 = 0x80;
-  uVar10 = 0x1a4;
+  configuration = &fuel_temperature_engine_protection_configuration;
+  state = &fuel_temperature_engine_protection_state;
+  history = &fuel_temperature_engine_protection_history_cal;
+  uVar5 = 0x80;
+  uVar7 = 0x1a4;
   uVar4 = 0;
   do {
-    if ((*pwVar7 & 1) != 0) {
-      iVar3 = (int)uVar10 >> 4;
-      if ((((uint)(&algorithm_enable_flags_0_cal)[(int)uVar6 >> 4] &
-           1 << (uVar6 + ((int)uVar6 >> 4) * -0x10 & 0x3f)) == 0) &&
-         (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar10 + iVar3 * -0x10 & 0x3f)) == 0
-         )) {
+    if ((configuration->configuration_flags & 1) != 0) {
+      iVar3 = (int)uVar7 >> 4;
+      if ((((uint)(&algorithm_enable_flags_0_cal)[(int)uVar5 >> 4] &
+           1 << (uVar5 + ((int)uVar5 >> 4) * -0x10 & 0x3f)) == 0) &&
+         (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar7 + iVar3 * -0x10 & 0x3f)) == 0)
+         ) {
         uVar1 = 0;
       }
       else {
-        if ((*pwVar7 & 0x40) == 0) {
-          if (pwVar7[1] < *(ushort *)((int)ppuVar8 + 6)) {
+        if ((configuration->configuration_flags & 0x40) == 0) {
+          if (configuration->fueling_derate_start_duration < state->fueling_duration) {
             uVar1 = threshold_value_interpolate
-                              ((int)*(short *)*ppuVar8,(int)**(short **)((int)ppuVar8 + 10),
-                               (int)**(short **)((int)ppuVar8 + 0xe));
+                              ((int)(short)*state->input_pointer,
+                               (int)(short)*state->minimum_threshold_pointer,
+                               (int)(short)*state->maximum_threshold_pointer);
           }
           else {
             uVar1 = 0;
           }
         }
         else {
-          uVar1 = threshold_adjustment_ramp(pwVar7,ppuVar8,pwVar5,0);
+          wVar2 = threshold_adjustment_ramp(configuration,state,history,0);
+          uVar1 = (uint)wVar2;
         }
-        if (((uVar1 & 0xffff) < (uint)pwVar5[2]) &&
-           (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar10 + iVar3 * -0x10 & 0x3f)) ==
+        if (((uVar1 & 0xffff) < (uint)history->fueling_restart_severity_index) &&
+           (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar7 + iVar3 * -0x10 & 0x3f)) ==
             0)) {
-          uVar1 = (uint)pwVar5[2];
+          uVar1 = (uint)history->fueling_restart_severity_index;
         }
       }
-      *pwVar5 = (word)uVar1;
+      history->fueling_severity_index = (word)uVar1;
       if ((uVar4 < (uVar1 & 0xffff)) &&
-         (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar10 + iVar3 * -0x10 & 0x3f)) == 0
-         )) {
+         (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar7 + iVar3 * -0x10 & 0x3f)) == 0)
+         ) {
         uVar4 = uVar1 & 0xffff;
       }
     }
-    pwVar7 = pwVar7 + 0x12;
-    ppuVar8 = (undefined **)((int)ppuVar8 + 0x3e);
-    pwVar5 = pwVar5 + 0xf;
-    uVar6 = uVar6 + 4 & 0xffff;
-    uVar10 = uVar10 + 1 & 0xffff;
-  } while (pwVar7 < fault_derate_fuel_limit_by_engine_speed_axis);
-  sVar9 = fault_derate_ramp_times_256 + DAT_0005c2ec;
-  if (((int)uVar4 <= (int)sVar9) &&
-     (sVar9 = fault_derate_ramp_times_256 - DAT_0005c2ec, (int)sVar9 <= (int)uVar4)) {
-    sVar9 = (short)uVar4;
+    configuration = configuration + 1;
+    state = state + 1;
+    history = history + 1;
+    uVar5 = uVar5 + 4 & 0xffff;
+    uVar7 = uVar7 + 1 & 0xffff;
+  } while (configuration < fault_derate_fuel_limit_by_engine_speed_axis);
+  sVar6 = fault_derate_ramp_times_256 + DAT_0005c2ec;
+  if (((int)uVar4 <= (int)sVar6) &&
+     (sVar6 = fault_derate_ramp_times_256 - DAT_0005c2ec, (int)sVar6 <= (int)uVar4)) {
+    sVar6 = (short)uVar4;
   }
-  fault_derate_ramp_times_256 = sVar9;
-  if (0x100 < sVar9) {
+  fault_derate_ramp_times_256 = sVar6;
+  if (0x100 < sVar6) {
     fault_derate_ramp_times_256 = 0x100;
   }
   wVar2 = fuel_demand_maximum;

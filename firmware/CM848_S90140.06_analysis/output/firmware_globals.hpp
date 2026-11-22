@@ -79,10 +79,7 @@ extern word all_speed_governor_droop_blend_0_axis[8];  // 0x0005974e
 extern word all_speed_governor_droop_blend_0_values[8];  // 0x0005975e
 extern word all_speed_governor_droop_blend_128_axis[8];  // 0x0005976e
 extern word all_speed_governor_droop_blend_128_values[8];  // 0x0005977e
-extern word fuel_temperature_derate_configuration_flags;  // 0x000597b2
-extern word fuel_temperature_derate_fueling_minimum_temperature;  // 0x000597bc
-extern word fuel_temperature_derate_fueling_maximum_temperature;  // 0x000597be
-extern int16_t fuel_temperature_derate_engine_speed_minimum_temperature;  // 0x000597c0
+extern engine_protection_channel_configuration_t fuel_temperature_engine_protection_configuration;  // 0x000597b2
 extern word fault_derate_fuel_limit_by_engine_speed_axis[25];  // 0x000597d6
 extern word fault_derate_fuel_limit_by_engine_speed_values[25];  // 0x00059808
 extern dword fault_countdown_elapsed_time_mode_0;  // 0x0005983a
@@ -4629,7 +4626,6 @@ extern word egr_valve_drive_diagnostic_override_flag;  // 0x0040a712
 extern int16_t egr_valve_drive_diagnostic_override_value;  // 0x0040a714
 extern word egr_valve_ready_for_autozero_flag;  // 0x0040a716
 extern word j1939_pgn65251_speed_points_request_flags;  // 0x0040a732
-extern void * fuel_temperature_derate_input_pointer;  // 0x0040a734
 extern word fault_derate_fuel_limit;  // 0x0040a77c
 extern word fault_derate_active_flag;  // 0x0040a77e
 extern word engine_speed_limit_fault_derate;  // 0x0040a780
@@ -6115,8 +6111,6 @@ extern dword injection_angle_ch6_crank_position;  // 0x003fd0bc
 extern dword injection_angle_ch6_normalized;  // 0x003fd0c0
 extern word engine_protection_shutdown_active_channel_cal;  // 0x003fdfb8
 extern word engine_protection_shutdown_count_cal;  // 0x003fdfba
-extern word fuel_temperature_derate_fueling_severity_index_cal;  // 0x003fdfbe
-extern word fuel_temperature_derate_engine_speed_severity_index_cal;  // 0x003fdfc0
 extern word air_conditioning_shift_hold_off_count;  // 0x003fcd5e
 extern word air_conditioning_pressure_learn_count;  // 0x003fcd60
 extern word air_conditioning_high_fuel_demand_cutout_done_flag;  // 0x003fcd62
@@ -6625,9 +6619,6 @@ extern word exhaust_pressure_estimate;  // 0x0040a67c
 extern word egr_orifice_temperature_after_lead;  // 0x0040a692
 extern word egr_orifice_temperature_lead_term;  // 0x0040a694
 extern word egr_orifice_temperature_lead_time_constant;  // 0x0040a696
-extern word fuel_temperature_derate_precrank_error_flag;  // 0x0040a74c
-extern word fuel_temperature_derate_fuel_shutdown_time_count;  // 0x0040a74e
-extern word fuel_temperature_derate_rpm_shutdown_time_count;  // 0x0040a750
 extern word idle_check_accelerator_pedal_raw;  // 0x0040aac6
 extern word can_last_message_object_used;  // 0x0040adf2
 extern word turbocharger_speed_unfiltered;  // 0x0040aff2
@@ -7915,6 +7906,7 @@ extern word algorithm_enable_flags_7_cal;  // 0x003fd5aa
 extern word algorithm_enable_flags_8_cal;  // 0x003fd5ac
 extern algorithm_enable_flags_11_t algorithm_enable_flags_11_cal;  // 0x003fd5b2
 extern word algorithm_enable_flags_26_cal;  // 0x003fd5d0
+extern engine_protection_channel_history_t fuel_temperature_engine_protection_history_cal;  // 0x003fdfbe
 extern word barometric_pressure_selection_fault_flags;  // 0x0040a166
 extern int16_t egr_orifice_temperature_rationality_coolant_temperature_threshold;  // 0x00409eac
 extern int16_t egr_orifice_temperature_rationality_soak_temperature_difference_threshold;  // 0x00409eae
@@ -7928,3 +7920,4 @@ extern word water_in_fuel_running_heal_threshold;  // 0x004077f0
 extern word water_in_fuel_key_on_heal_threshold;  // 0x004077f2
 extern word water_in_fuel_maximum_wet_reading;  // 0x004077f4
 extern word general_engine_protection_emission_level_cap_when_active;  // 0x00406fb2
+extern engine_protection_channel_state_t fuel_temperature_engine_protection_state;  // 0x0040a734
