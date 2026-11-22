@@ -2034,8 +2034,8 @@ extern word tachometer_minimum_engine_speed;  // 0x003fb9aa
 extern ema_filter_state_t boost_pressure_timing_filter_state;  // 0x003fb9ea
 extern ema_filter_state_t exhaust_pressure_estimate_filter_state;  // 0x003fbce2
 extern ema_filter_state_t egr_valve_position_command_diagnostic_filter_state;  // 0x003fbd10
-extern dword fault_channel_config_ptr;  // 0x003fbd42
-extern dword fault_channel_state_ptr;  // 0x003fbd46
+extern engine_protection_channel_configuration_t* fault_channel_config_ptr;  // 0x003fbd42
+extern engine_protection_channel_state_t* fault_channel_state_ptr;  // 0x003fbd46
 extern void * j1939_tp_rx_session_status_ptr;  // 0x003fbd80
 extern void * j1939_tp_rx_session_tx_buf_ptr;  // 0x003fbd8c
 extern dword j1939_multiframe_tx_status_ptr;  // 0x003fbdd3
@@ -7907,6 +7907,8 @@ extern word algorithm_enable_flags_8_cal;  // 0x003fd5ac
 extern algorithm_enable_flags_11_t algorithm_enable_flags_11_cal;  // 0x003fd5b2
 extern word algorithm_enable_flags_26_cal;  // 0x003fd5d0
 extern engine_protection_channel_history_t fuel_temperature_engine_protection_history_cal;  // 0x003fdfbe
+extern engine_protection_fault_log_entry_t fuel_temperature_engine_protection_fueling_fault_log_cal[5];  // 0x003fe006
+extern engine_protection_fault_log_entry_t fuel_temperature_engine_protection_engine_speed_fault_log_cal[5];  // 0x003fe02e
 extern word barometric_pressure_selection_fault_flags;  // 0x0040a166
 extern int16_t egr_orifice_temperature_rationality_coolant_temperature_threshold;  // 0x00409eac
 extern int16_t egr_orifice_temperature_rationality_soak_temperature_difference_threshold;  // 0x00409eae

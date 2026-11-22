@@ -1378,6 +1378,7 @@ typedef struct logical_output_request_bits_48_to_55_t logical_output_request_bit
 typedef struct logical_output_request_bits_64_to_71_t logical_output_request_bits_64_to_71_t;
 typedef struct logical_output_request_bits_72_to_79_t logical_output_request_bits_72_to_79_t;
 typedef struct switch_input_state_t switch_input_state_t;
+typedef struct engine_protection_fault_log_entry_t engine_protection_fault_log_entry_t;
 typedef struct engine_protection_channel_configuration_t engine_protection_channel_configuration_t;
 typedef struct engine_protection_channel_state_t engine_protection_channel_state_t;
 typedef struct engine_protection_channel_history_t engine_protection_channel_history_t;
@@ -3413,6 +3414,12 @@ struct switch_input_state_t {
     uint8_t unwired_switch : 1;  /* bit 7: switch 31 (byte 3 mask 0x80): no e2m 1612 record; no 11.45 record and no line: every unwired switch function compiles to it (the two-speed axle switch of cm848_updateCruiseAndRoadSpeedGovernorDroops among them), and cm848_updateSwitch31FromAcceleratorPedal / cm848_checkSwitch31OnTimeFault pulse or hold it from the accelerator pedal */
 };
 
+struct engine_protection_fault_log_entry_t {
+    uint32_t occurrence_time;  /* +0: key_on_hour_meter when the fault became active (fault_snapshot_capture); e2m 1152 +2E EPF_Input_Source_0_Fueling_Fault_Occurrence_Time (0.2 s) names the copy in the channel state */
+    int16_t extreme_value;  /* +4: the input's extreme while the fault is active: starts at 0x8000, or 0x7fff while configuration flag 0x8 is set, and with configuration flags 0xc it takes the input whenever protection_condition_eval(input, value, flags) is nonzero (the code reads it as a signed short); e2m 1152 +32 EPF_Input_Source_0_Fueling_Fault_Log_Value */
+    uint16_t duration;  /* +6: 0 while the fault is active, then key_on_hour_meter - occurrence_time when it clears (fault_event_timing_snapshot); e2m 1152 +34 EPF_Input_Source_0_Fueling_Fault_Log_Duration (0.2 s) */
+};
+
 struct engine_protection_channel_configuration_t {
     uint16_t configuration_flags;  /* +0x0 e2m Fuel_Temperature_EPF_Configuration [HEX] '[EPFTCG] Configuration word for fuel temperature EPF input' (was the flat row fuel_temperature_derate_configuration_flags) | earlier note: e2m 112E +0 Fuel_Temperature_EPF_Configuration '[EPFTCG] Configuration word for fuel temperature EPF input' (address from the ECU's parameter ID table) (bit fie */
     uint16_t fueling_derate_start_duration;  /* +0x2 e2m Fuel_Temperature_Fueling_Derate_Start_Duration [SEC] '[EPFTFLDD] Time from fuel temperature overlimit reached to start of fuel derate' */
@@ -3450,14 +3457,10 @@ struct engine_protection_channel_state_t {
     uint16_t engine_speed_start_warning_time;  /* +0x20 e2m Fuel_Temperature_RPM_Start_Warning_Time [SEC] '[EPFTRPWN] Time to start of warning after fuel temp RPM error declared' */
     uint16_t errors_allowed_timer;  /* +0x22 e2m Fuel_Temperature_Errors_Allowed_Timer [SEC] '[EPFTERTM] Time since RPM crossed fuel temperature start threshold' */
     uint16_t errors_allowed_timer_running;  /* +0x24 e2m Fuel_Temperature_Errors_Allowed_Timer_Running [UNITLESS] '[EPFTERFG] Flag indicating fuel temp. errors allowed timer is running' */
-    void * fueling_fault_log_pointer;  /* +0x26 e2m Fuel_Temperature_Fuel_Fault_Log_Pointer [HEX] '[EPFTFLSA] Pointer to Fuel Temperature Fuel Fault Log Data' */
-    void * engine_speed_fault_log_pointer;  /* +0x2a e2m Fuel_Temperature_RPM_Fault_Log_Pointer [HEX] '[EPFTRPSA] Pointer to Fuel Temperature RPM Fault Log Data' */
-    uint32_t fueling_fault_occurrence_time;  /* +0x2e e2m EPF_Input_Source_0_Fueling_Fault_Occurrence_Time [SEC] '[EP00FFTM] Input source 0 fueling fault occurrence time' */
-    uint16_t fueling_fault_log_value;  /* +0x32 e2m EPF_Input_Source_0_Fueling_Fault_Log_Value [UNITLESS] '[EP00FLVU] Keeps value of input source 0 at time of fueling fault' */
-    uint16_t fueling_fault_log_duration;  /* +0x34 e2m EPF_Input_Source_0_Fueling_Fault_Log_Duration [SEC] '[EP00FLFD] Input source 0 fueling fault log duration' */
-    uint32_t engine_speed_fault_occurrence_time;  /* +0x36 e2m EPF_Input_Source_0_RPM_Fault_Occurrence_Time [SEC] '[EP00RFFT] Input source 0 RPM fault occurrence time' */
-    uint16_t engine_speed_fault_log_value;  /* +0x3a e2m EPF_Input_Source_0_RPM_Fault_Log_Value [UNITLESS] '[EP00RPVU] Keeps value of input source 0 at time of RPM fault' */
-    uint16_t engine_speed_fault_log_duration;  /* +0x3c e2m EPF_Input_Source_0_RPM_Fault_Log_Duration [SEC] '[EP00RPFD] Input source 0 RPM fault log duration' */
+    engine_protection_fault_log_entry_t* fueling_fault_log_pointer;  /* +0x26 e2m Fuel_Temperature_Fuel_Fault_Log_Pointer [HEX] '[EPFTFLSA] Pointer to Fuel Temperature Fuel Fault Log Data' | points at the channel's EEPROM fault log (fuel temperature: fuel_temperature_engine_protection_*_fault_log_cal; typed in round 21 stage B) */
+    engine_protection_fault_log_entry_t* engine_speed_fault_log_pointer;  /* +0x2a e2m Fuel_Temperature_RPM_Fault_Log_Pointer [HEX] '[EPFTRPSA] Pointer to Fuel Temperature RPM Fault Log Data' | points at the channel's EEPROM fault log (fuel temperature: fuel_temperature_engine_protection_*_fault_log_cal; typed in round 21 stage B) */
+    engine_protection_fault_log_entry_t fueling_fault_log_entry;  /* +0x2e: a copy of the fueling fault log's current entry (both log helpers copy the 8 bytes here); e2m 1152 EPF_Input_Source_0_Fueling_Fault_Occurrence_Time / _Log_Value / _Log_Duration (were the fields fueling_fault_occurrence_time, fueling_fault_log_value, fueling_fault_log_duration in stage A) */
+    engine_protection_fault_log_entry_t engine_speed_fault_log_entry;  /* +0x36: a copy of the engine speed fault log's current entry (both log helpers copy the 8 bytes here); e2m 1152 EPF_Input_Source_0_RPM_Fault_Occurrence_Time / _Log_Value / _Log_Duration (were the fields engine_speed_fault_occurrence_time, engine_speed_fault_log_value, engine_speed_fault_log_duration in stage A) */
 };
 
 struct engine_protection_channel_history_t {
