@@ -1423,9 +1423,6 @@ diag_clear_flags_t,0x003fedfc,learned_output_speed_to_vehicle_speed_ratio,word,2
 # row_count = first-axis (RPM) breakpoint count; col_count = second-axis breakpoint count
 # Total size: 4 bytes (2 x word). Initialized to {2, 2} by cm848_initProtectionTableSizes.
 # ==============================================================================
-dual_axis_table_dims_t,0x003fa878,row_count,word,2,Number of first-axis (RPM) breakpoints,,verified
-dual_axis_table_dims_t,0x003fa878,col_count,word,2,Number of second-axis (fuel) breakpoints,,verified
-dual_axis_table_dims_t,0x003fa87c,,,,governor offset table B - second instance,,verified
 # ==============================================================================
 # J1939 PGN 65261 (CCSS - Cruise Control/Vehicle Speed Setup) TX payload - 8 bytes at 0x3fab0a
 # Populated by j1939HandlePgn65261CruiseControlSetup; values scaled to km/h via *0xa1/100>>8; 0xff = not available
@@ -1647,6 +1644,23 @@ algorithm_enable_flags_18_t,,reserved_bit_13,bitfield:1@13,0,"guess (not proven,
 algorithm_enable_flags_18_t,,engine_retarder_service_brake_activate_enable,bitfield:1@14,0,"e2m EB_Service_Brake_Activate_Enable (EBBREN, EB = engine brake). Proven in PR #53 round 17: its only reader, cm848_updateEngineRetarderAllowedState (lhz at 0x41610), lets the driver conditions pass while it is set only after a service brake tap (service_brake_recently_applied_flag) or with a cruise non-override command (was reserved_bit_14). Clear in this calibration (0x0008).",,verified
 algorithm_enable_flags_18_t,,reserved_bit_15,bitfield:1@15,0,"e2m EB_Rate_Limit_Enable (EBRTLMEA, engine brake level rate limit). No reader in either bank (sweep of both banks). Clear in this calibration (0x0008).",,verified
 # algorithm_enable_flags_41_t: wave 11 shape (2026-11-18)
+# algorithm_enable_flags_4_t: algorithm enable flags word 4 (EEPROM 0x122, e2m 106B +A; PR #53 round 18); 0 in the dump
+algorithm_enable_flags_4_t,,user_commanded_fueling_enable,bitfield:1@0,2,"e2m 106B +A User_Commanded_Fueling_Enable [FSUCFLEN] 'Bit 0 Word 4': cm848_selectUserCommandedFueling uses the user commanded fueling while it is set",,verified
+algorithm_enable_flags_4_t,,reserved_bit_1,bitfield:1@1,0,"no e2m name; no reader",,verified
+algorithm_enable_flags_4_t,,reserved_bit_2,bitfield:1@2,0,"no e2m name; no reader",,verified
+algorithm_enable_flags_4_t,,reserved_bit_3,bitfield:1@3,0,"no e2m name; no reader",,verified
+algorithm_enable_flags_4_t,,reserved_bit_4,bitfield:1@4,0,"no e2m name; no reader",,verified
+algorithm_enable_flags_4_t,,reserved_bit_5,bitfield:1@5,0,"no e2m name; no reader",,verified
+algorithm_enable_flags_4_t,,reserved_bit_6,bitfield:1@6,0,"no e2m name; no reader",,verified
+algorithm_enable_flags_4_t,,reserved_bit_7,bitfield:1@7,0,"no e2m name; no reader",,verified
+algorithm_enable_flags_4_t,,user_commanded_timing_enable,bitfield:1@8,0,"e2m 106B +A User_Commanded_Timing_Enable [TSUCTAEN] 'Bit 8 of word 4': cm848_calculateFourDimensionalInjectionTiming takes user_commanded_injection_timing_cal as the 4D timing while it is set",,verified
+algorithm_enable_flags_4_t,,reserved_bit_9,bitfield:1@9,0,"no e2m name; no reader",,verified
+algorithm_enable_flags_4_t,,reserved_bit_10,bitfield:1@10,0,"no e2m name; no reader",,verified
+algorithm_enable_flags_4_t,,reserved_bit_11,bitfield:1@11,0,"no e2m name; no reader",,verified
+algorithm_enable_flags_4_t,,reserved_bit_12,bitfield:1@12,0,"no e2m name; no reader",,verified
+algorithm_enable_flags_4_t,,reserved_bit_13,bitfield:1@13,0,"no e2m name; no reader",,verified
+algorithm_enable_flags_4_t,,reserved_bit_14,bitfield:1@14,0,"no e2m name; no reader",,verified
+algorithm_enable_flags_4_t,,reserved_bit_15,bitfield:1@15,0,"no e2m name; no reader",,verified
 algorithm_enable_flags_41_t,,engine_retarder_extended_idle_enable,bitfield:1@0,2,"No e2m name; code only (PR #53 round 17). With low_speed_governor_extended_idle_active_flag (e2m 1496 +A LSG_Extended_Idle_Status) set, cm848_calculateEngineRetarderSelectionPercent forces the selection to 100 and cm848_updateEngineRetarderAllowedState forces the allowed state to OVERRIDE_OR_NON_OVERRIDE, while cm848_updateEngineRetarderActiveState keeps engine_retarder_active_flag at 0: the exhaust brake runs at extended idle (a warm-up use) without reporting braking (was engine_retarder_speed_limit_enable, from the flag's old name governor_speed_limit_active_flag) | earlier note: no e2m name; code only. cm848_updateEngineRetarderAllowedState (lhz at 0x41848), cm848_calculateEngineRetarderSelectionPercent (0x41998) and cm848_updateEngineRetarderActiveState (0x41e5c): while low_speed_governor_extended_idle_active_flag is set and this bit is set the retarder selection percent is forced to 100 and engine_retarder_active_flag stays 0. Clear in this calibration (0x7ca6).",,verified
 algorithm_enable_flags_41_t,,brake_switch_diagnostic_enable,bitfield:1@1,0,e2m Brake_Switch_Diag_Enable. cm848_monitorBrakeSwitchPairAgreement (lhz 82(r31) at 0x512140). Code agrees (wave 10). Set in this calibration (0x7ca6).,,verified
 algorithm_enable_flags_41_t,,fuel_level_rationality_diagnostic_enable,bitfield:1@2,0,e2m Fuel_Lvl_Rationality_Enable. cm848_monitorFuelLevelLowDistance (lhz at 0x5307f8). Code agrees (wave 10). Set in this calibration (0x7ca6).,,verified

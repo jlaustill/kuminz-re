@@ -1179,6 +1179,19 @@ typedef enum {
     ENGINE_RETARDER_ALLOWED_OVERRIDE_OR_NON_OVERRIDE = 2  /* The override or the non-override command may brake (the non-override command restarts at 101) */
 } ENGINE_RETARDER_ALLOWED_STATE;
 
+typedef enum {
+    MAIN_INJECTION_TIMING_SELECTION_NO_ADJUSTMENT = 0,  /* No change to main_injection_timing (e2m NOADJUST) */
+    MAIN_INJECTION_TIMING_SELECTION_CALCULATED = 1,  /* cm848_calculateMainInjectionTiming (e2m HPCRTMNG: the fuel system's timing); this truck */
+    MAIN_INJECTION_TIMING_SELECTION_USER_OVERRIDE = 2,  /* user_commanded_injection_timing_cal (e2m USEROVRD) */
+    MAIN_INJECTION_TIMING_SELECTION_CALCULATED_PLUS_USER_INCREMENT = 3  /* The calculated timing plus user_commanded_injection_timing_cal and the top dead center offset (e2m HPCRINCR) */
+} MAIN_INJECTION_TIMING_SELECTION;
+
+typedef enum {
+    INJECTION_TIMING_COMBINATION_SUM = 0,  /* The sum of the components clamped to +-1024 (e2m 'add coolant and intake adv') */
+    INJECTION_TIMING_COMBINATION_MAXIMUM = 1,  /* The largest component wins (e2m MAX WINS); this truck */
+    INJECTION_TIMING_COMBINATION_MINIMUM = 2  /* The smallest component wins (e2m MIN WINS) */
+} INJECTION_TIMING_COMBINATION_MODE;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_rx_msg_t j1939_rx_msg_t;
@@ -1304,7 +1317,6 @@ typedef struct boot_state_t boot_state_t;
 typedef struct mios_mpiosm_t mios_mpiosm_t;
 typedef struct mios1_isr_t mios1_isr_t;
 typedef struct diag_clear_flags_t diag_clear_flags_t;
-typedef struct dual_axis_table_dims_t dual_axis_table_dims_t;
 typedef struct j1939_ccss_tx_payload_t j1939_ccss_tx_payload_t;
 typedef struct pci_message_descriptor_t pci_message_descriptor_t;
 typedef struct qspi_job_t qspi_job_t;
@@ -1326,6 +1338,7 @@ typedef struct pci_controller_command_word_t pci_controller_command_word_t;
 typedef struct end_of_line_test_settings_t end_of_line_test_settings_t;
 typedef struct algorithm_enable_flags_12_t algorithm_enable_flags_12_t;
 typedef struct algorithm_enable_flags_18_t algorithm_enable_flags_18_t;
+typedef struct algorithm_enable_flags_4_t algorithm_enable_flags_4_t;
 typedef struct algorithm_enable_flags_41_t algorithm_enable_flags_41_t;
 typedef struct piecewise_linear_gain_t piecewise_linear_gain_t;
 typedef struct derivative_gain_t derivative_gain_t;
@@ -2583,11 +2596,6 @@ struct diag_clear_flags_t {
     uint16_t learned_output_speed_to_vehicle_speed_ratio;  /* EEPROM-backed learned ratio = output shaft speed x 4096 / vehicle_speed (5141 = 40.2 rpm per mph) clamped 4480-6656; synthesizes the output shaft speed on sensor fault; 0x3fedfb bit 0 marks it learned (was fuel_temp_protection_ratio) */
 };
 
-struct dual_axis_table_dims_t {
-    uint16_t row_count;  /* Number of first-axis (RPM) breakpoints */
-    uint16_t col_count;  /* Number of second-axis (fuel) breakpoints */
-};
-
 struct j1939_ccss_tx_payload_t {
     uint8_t max_vehicle_speed_limit;  /* SPN 74 Maximum Vehicle Speed Limit (km/h); from maximum_road_speed; gate j1939_governor_feature_cal&0x80 */
     uint8_t cruise_high_set_limit_speed;  /* SPN 87 Cruise Control High Set Limit Speed (km/h); gate j1939_governor_feature_cal&0x40; fed by cruise_maximum_road_speed_cal */
@@ -2812,6 +2820,25 @@ struct algorithm_enable_flags_18_t {
     uint16_t reserved_bit_13 : 1;  /* bit 13: guess (not proven, so reserved): remote throttle transition verification enable - e2m Remote_Throttle_Transition_Verification_Enable (CTRTTZEN). cm848_claimRemoteThrottleOverride (lhz at 0x50e6e4); the name agrees, the body was not read. Clear in this calibration (0x0008). */
     uint16_t engine_retarder_service_brake_activate_enable : 1;  /* bit 14: e2m EB_Service_Brake_Activate_Enable (EBBREN, EB = engine brake). Proven in PR #53 round 17: its only reader, cm848_updateEngineRetarderAllowedState (lhz at 0x41610), lets the driver conditions pass while it is set only after a service brake tap (service_brake_recently_applied_flag) or with a cruise non-override command (was reserved_bit_14). Clear in this calibration (0x0008). */
     uint16_t reserved_bit_15 : 1;  /* bit 15: e2m EB_Rate_Limit_Enable (EBRTLMEA, engine brake level rate limit). No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). */
+};
+
+struct algorithm_enable_flags_4_t {
+    uint16_t user_commanded_fueling_enable : 1;  /* bit 0: e2m 106B +A User_Commanded_Fueling_Enable [FSUCFLEN] 'Bit 0 Word 4': cm848_selectUserCommandedFueling uses the user commanded fueling while it is set */
+    uint16_t reserved_bit_1 : 1;  /* bit 1: no e2m name; no reader */
+    uint16_t reserved_bit_2 : 1;  /* bit 2: no e2m name; no reader */
+    uint16_t reserved_bit_3 : 1;  /* bit 3: no e2m name; no reader */
+    uint16_t reserved_bit_4 : 1;  /* bit 4: no e2m name; no reader */
+    uint16_t reserved_bit_5 : 1;  /* bit 5: no e2m name; no reader */
+    uint16_t reserved_bit_6 : 1;  /* bit 6: no e2m name; no reader */
+    uint16_t reserved_bit_7 : 1;  /* bit 7: no e2m name; no reader */
+    uint16_t user_commanded_timing_enable : 1;  /* bit 8: e2m 106B +A User_Commanded_Timing_Enable [TSUCTAEN] 'Bit 8 of word 4': cm848_calculateFourDimensionalInjectionTiming takes user_commanded_injection_timing_cal as the 4D timing while it is set */
+    uint16_t reserved_bit_9 : 1;  /* bit 9: no e2m name; no reader */
+    uint16_t reserved_bit_10 : 1;  /* bit 10: no e2m name; no reader */
+    uint16_t reserved_bit_11 : 1;  /* bit 11: no e2m name; no reader */
+    uint16_t reserved_bit_12 : 1;  /* bit 12: no e2m name; no reader */
+    uint16_t reserved_bit_13 : 1;  /* bit 13: no e2m name; no reader */
+    uint16_t reserved_bit_14 : 1;  /* bit 14: no e2m name; no reader */
+    uint16_t reserved_bit_15 : 1;  /* bit 15: no e2m name; no reader */
 };
 
 struct algorithm_enable_flags_41_t {

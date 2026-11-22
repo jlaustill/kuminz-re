@@ -1033,3 +1033,14 @@ ENGINE_RETARDER_COMMAND_SOURCE,6,ENGINE_RETARDER_COMMAND_SOURCE_NO_OVERRIDE,No o
 ENGINE_RETARDER_ALLOWED_STATE,0,ENGINE_RETARDER_ALLOWED_NONE,No command may brake: the brake is not wanted or an exit condition holds,2
 ENGINE_RETARDER_ALLOWED_STATE,1,ENGINE_RETARDER_ALLOWED_OVERRIDE_ONLY,Only the override command (TSC1) may brake: the driver conditions (pedal / clutch / service brake) hold the rest off,2
 ENGINE_RETARDER_ALLOWED_STATE,2,ENGINE_RETARDER_ALLOWED_OVERRIDE_OR_NON_OVERRIDE,The override or the non-override command may brake (the non-override command restarts at 101),2
+# MAIN_INJECTION_TIMING_SELECTION: how main_injection_timing is produced (PR #53 round 18) - e2m 8085 +0
+# Main_SOI_Selection_Switch value labels; cm848_selectMainInjectionTiming
+MAIN_INJECTION_TIMING_SELECTION,0,MAIN_INJECTION_TIMING_SELECTION_NO_ADJUSTMENT,No change to main_injection_timing (e2m NOADJUST),2
+MAIN_INJECTION_TIMING_SELECTION,1,MAIN_INJECTION_TIMING_SELECTION_CALCULATED,cm848_calculateMainInjectionTiming (e2m HPCRTMNG: the fuel system's timing); this truck,2
+MAIN_INJECTION_TIMING_SELECTION,2,MAIN_INJECTION_TIMING_SELECTION_USER_OVERRIDE,user_commanded_injection_timing_cal (e2m USEROVRD),2
+MAIN_INJECTION_TIMING_SELECTION,3,MAIN_INJECTION_TIMING_SELECTION_CALCULATED_PLUS_USER_INCREMENT,The calculated timing plus user_commanded_injection_timing_cal and the top dead center offset (e2m HPCRINCR),2
+# INJECTION_TIMING_COMBINATION_MODE: how cm848_calculateMainInjectionTiming combines its components (PR #53 round 18) -
+# e2m 8085 +2 Main_Cold_Advance_Select
+INJECTION_TIMING_COMBINATION_MODE,0,INJECTION_TIMING_COMBINATION_SUM,The sum of the components clamped to +-1024 (e2m 'add coolant and intake adv'),2
+INJECTION_TIMING_COMBINATION_MODE,1,INJECTION_TIMING_COMBINATION_MAXIMUM,The largest component wins (e2m MAX WINS); this truck,2
+INJECTION_TIMING_COMBINATION_MODE,2,INJECTION_TIMING_COMBINATION_MINIMUM,The smallest component wins (e2m MIN WINS),2
