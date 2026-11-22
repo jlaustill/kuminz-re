@@ -158,7 +158,7 @@ typedef enum {
     FUELING_STATE_COMBUSTION_OXYGEN_LIMIT = 58,  /* injection_quantity_combustion_reference_source_code (cm848_calculateCombustionFuelReference): injection_quantity_oxygen_limit - e2m label OFCDERAT (CHR_CC_11.45.01.07 0x3A) */
     FUELING_STATE_NET_TORQUE = 59,  /* fuel_demand_minimum_tracked_state (cm848_applyNetTorqueFuelLimit): net_torque_fuel_limit - a rate-limited engine speed fuel curve from the alpha / chi map blend of net_torque_fuel_limit_grid (cm848_calculateNetTorqueFuelLimit) while algorithm_enable_flags_13_cal bit 2 is set - e2m label NETTORQ (CHR_CC_11.45.01.07 0x3B) */
     FUELING_STATE_RAIL_PRESSURE_SHORTFALL_LIMIT = 61,  /* torque_derate_fuel_source_code (cm848_limitFuelQuantityOnRailPressureShortfall) - e2m label LOFPRDER (CHR_CC_11.45.01.07 0x3D) */
-    FUELING_STATE_FUEL_PRESSURE_GOVERNOR_FAULT_BLEND = 62  /* torque_derate_fuel_source_code (cm848_applyFuelPressureGovernorFaultBlend while safety_system_enable_cal is set): injection_quantity_combustion_chi_maximum - blended toward an engine speed table limit while fault 57 / 58 / 60 (P1221 / P1222 / P1223 - the fuel pressure governor plausibility checks) or 59 is set. RAM dump: 62 */
+    FUELING_STATE_FUEL_PRESSURE_GOVERNOR_FAULT_BLEND = 62  /* torque_derate_fuel_source_code (cm848_applyFuelPressureGovernorFaultBlend while safety_fuel_blend_enable is set): injection_quantity_combustion_chi_maximum - blended toward an engine speed table limit while fault 57 / 58 / 60 (P1221 / P1222 / P1223 - the fuel pressure governor plausibility checks) or 59 is set. RAM dump: 62 */
 } FUELING_STATE;
 
 typedef enum {
