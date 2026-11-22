@@ -472,7 +472,7 @@ void cm848_calculateProtectionRateLimited(void);  // @ 0x0001e4e8
 void cm848_arbitrateRequestedFueling(void);  // @ 0x0001e5a4
 void cm848_initEngineOperatingState(void);  // @ 0x0001e810
 void cm848_updateFourDimensionalFueling(void);  // @ 0x0001e830
-void cm848_calculateInjectionTimingOffset(void);  // @ 0x0001e870
+void cm848_calculateFourDimensionalInjectionTiming(void);  // @ 0x0001e870
 void cm848_initProtectionTableSizes(void);  // @ 0x0001ea6c
 void cm848_initFaultSeverityTables(void);  // @ 0x0001ea94
 void cm848_filterCommandedThrottle(void);  // @ 0x0001eae8
@@ -1024,7 +1024,7 @@ void cm848_evaluateInjectorDiagnosticFault (uint param_1,ushort *param_2,int par
 void cm848_evaluateInjectorDiagnostics(void);  // @ 0x0004ac3c
 void cm848_initTimingFilterStates(void);  // @ 0x0004ad8c
 void cm848_calculateMainInjectionTiming(void);  // @ 0x0004ae20
-void cm848_updateMainInjectionTimingByDeliveryMode(void);  // @ 0x0004b5b8
+void cm848_selectMainInjectionTiming(void);  // @ 0x0004b5b8
 void cm848_calculateFuelLimitByRpmAndDemand(void);  // @ 0x0004b6cc
 void cm848_applyFuelLimitByRpmAndDemand(void);  // @ 0x0004b9ac
 void cm848_evaluateCalibratedMonitorDisableConditions(void);  // @ 0x0004ba48
@@ -1601,7 +1601,7 @@ void cm848_calculateCoolantOverheatPiFuelLimit(void);  // @ 0x005139b8
 void cm848_selectCoolantOverheatFuelLimit(void);  // @ 0x00513af0
 void cm848_rampCoolantOverheatFuelDerate(void);  // @ 0x00513ba4
 void cm848_applyCoolantOverheatFuelFloor(void);  // @ 0x00513c80
-void governor_injectionTiming_modeAdj(void);  // @ 0x00513d08
+void cm848_rampCoolantOverheatDerateMinimumInjectionTiming(void);  // @ 0x00513d08
 void cm848_applyCoolantOverheatFuelDerate(void);  // @ 0x00513ddc
 void cm848_resetCoolantOverheatFuelDerate(void);  // @ 0x00513e0c
 void cm848_runCoolantOverheatFuelDerate(void);  // @ 0x00513f5c

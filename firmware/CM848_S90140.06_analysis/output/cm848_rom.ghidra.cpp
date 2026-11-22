@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 23:00:22 MST 2026
+// Generated: Sat Nov 21 23:06:34 MST 2026
 
 
 //
@@ -6794,13 +6794,13 @@ void cm848_periodicTaskSet_auxiliaryControl(void)
   cm848_applySwitchSelectedEngineSpeedLimit();
   cm848_calculateNetCombustionTorque();
   cm848_estimateExhaustTemperature();
-  cm848_calculateInjectionTimingOffset();
+  cm848_calculateFourDimensionalInjectionTiming();
   cm848_calculateColdStartRpmAdjust();
   cm848_processEngineConfigSpeedControl();
   cm848_runCombustionLimits();
   cm848_selectFinalFueling();
   cm848_calculateFuelPressureSetpoint();
-  cm848_updateMainInjectionTimingByDeliveryMode();
+  cm848_selectMainInjectionTiming();
   cm848_calculateAuxiliaryInjectionTiming();
   cm848_copyMainInjectionTiming();
   cm848_calculateAuxiliaryInjectionQuantityLimit();
@@ -15605,7 +15605,7 @@ void cm848_storeFuelDemandPreviousValues(void)
   fuel_correction_timer_counter = 0x19;
   injection_timing_compensated_reference_previous = injection_timing_compensated_reference;
   injection_timing_intermediate_source_code =
-       INJECTION_TIMING_INTERMEDIATE_SOURCE_PREVIOUS_VALUES_STORED;
+       INJECTION_TIMING_INTERMEDIATE_SOURCE_COMBUSTION_REFERENCE;
   return;
 }
 
@@ -20297,22 +20297,33 @@ void cm848_updateFourDimensionalFueling(void)
 
 
 //
-// Function: cm848_calculateInjectionTimingOffset @ 0x0001e870
+// Function: cm848_calculateFourDimensionalInjectionTiming @ 0x0001e870
 //
 
-/* Calculates the injection timing offset (timing counts of 0.1171875 degree) into
-   injection_timing_offset_map_output: two engine speed x final_fueling maps
+/* Calculates the 4D timing four_dimensional_injection_timing (e2m 103B +0 Four_D_Timing; 0.1171875
+   degree counts): four_dimensional_injection_timing_map_a / _b (engine speed x final_fueling)
+   blended by the combustion alpha (Q14, 16384 = map a only, 0 = map b only), or
+   user_commanded_injection_timing_cal while algorithm_enable_flags_4_cal bit 8
+   (User_Commanded_Timing_Enable) is set (injection_timing_intermediate_source_code 0 for the maps,
+   2 for the user timing). Adds user_commanded_injection_timing_increment_cal and sets
+   injection_timing_increment_flags to 1 when governor_feature_config_word bit 0x4000 is set, and
+   copies the result to main_injection_timing_copy (103B +2 SOI), which
+   cm848_copyMainInjectionTiming overwrites with main_injection_timing before its only reader
+   cm848_computeFuelRpmCompensatedOffset runs. Both maps are flat 171 counts (20 degrees) in the
+   dump. Task of cm848_periodicTaskSet_auxiliaryControl (was cm848_calculateInjectionTimingOffset) |
+   earlier note: Calculates the injection timing offset (timing counts of 0.1171875 degree) into
+   four_dimensional_injection_timing: two engine speed x final_fueling maps
    (injection_timing_offset_map_a and injection_timing_offset_map_b) blended by the combustion alpha
-   (Q14, 16384 = map a only, 0 = map b only), or the fixed injection_timing_offset_cal while
-   engine_mode_control_flags bit 8 is set (injection_timing_intermediate_source_code is 0 for the
-   maps and 2 for the fixed value). Adds injection_timing_offset_increment_cal and sets
+   (Q14, 16384 = map a only, 0 = map b only), or the fixed user_commanded_injection_timing_cal while
+   algorithm_enable_flags_4_cal bit 8 is set (injection_timing_intermediate_source_code is 0 for the
+   maps and 2 for the fixed value). Adds user_commanded_injection_timing_increment_cal and sets
    injection_timing_increment_flags to 1 when governor_feature_config_word bit 0x4000 is set, and
    copies the result to main_injection_timing_copy, which cm848_copyMainInjectionTiming overwrites
    with main_injection_timing before its only reader cm848_computeFuelRpmCompensatedOffset runs.
    Both maps are flat 171 counts (20 degrees) in the dump. Task of
    cm848_periodicTaskSet_auxiliaryControl (was cm848_processTorqueLimitState). */
 
-void cm848_calculateInjectionTimingOffset(void)
+void cm848_calculateFourDimensionalInjectionTiming(void)
 
 {
   word wVar1;
@@ -20320,54 +20331,59 @@ void cm848_calculateInjectionTimingOffset(void)
   uint uVar3;
   uint uVar4;
   
-  if ((engine_mode_control_flags & 0x100) == 0) {
+  if ((algorithm_enable_flags_4_cal & 0x100) == 0) {
     if (combustion_alpha_input == 0x4000) {
-      injection_timing_offset_map_output =
+      four_dimensional_injection_timing =
            cm848_dualAxisTableInterpolation
                      (&rpm_governor_offset_table_a_dims.row_count,
-                      engine_speed_state.filtered_engine_speed,injection_timing_offset_map_a_x_axis,
-                      final_fueling,injection_timing_offset_map_a_y_axis,
-                      injection_timing_offset_map_a_grid,4);
+                      engine_speed_state.filtered_engine_speed,
+                      four_dimensional_injection_timing_map_a_x_axis,final_fueling,
+                      four_dimensional_injection_timing_map_a_y_axis,
+                      four_dimensional_injection_timing_map_a_grid,4);
     }
     else if (combustion_alpha_input == 0) {
       wVar1 = cm848_dualAxisTableInterpolation
                         (&rpm_governor_offset_table_b_dims.row_count,
                          engine_speed_state.filtered_engine_speed,
-                         injection_timing_offset_map_b_x_axis,final_fueling,
-                         injection_timing_offset_map_b_y_axis,injection_timing_offset_map_b_grid,4);
-      injection_timing_offset_map_output =
+                         four_dimensional_injection_timing_map_b_x_axis,final_fueling,
+                         four_dimensional_injection_timing_map_b_y_axis,
+                         four_dimensional_injection_timing_map_b_grid,4);
+      four_dimensional_injection_timing =
            (sword)((int)((int)(short)wVar1 << 0xe | (uint)(int)(short)wVar1 >> 0x12) >> 0xe);
     }
     else {
       wVar1 = cm848_dualAxisTableInterpolation
                         (&rpm_governor_offset_table_a_dims.row_count,
                          engine_speed_state.filtered_engine_speed,
-                         injection_timing_offset_map_a_x_axis,final_fueling,
-                         injection_timing_offset_map_a_y_axis,injection_timing_offset_map_a_grid,4);
+                         four_dimensional_injection_timing_map_a_x_axis,final_fueling,
+                         four_dimensional_injection_timing_map_a_y_axis,
+                         four_dimensional_injection_timing_map_a_grid,4);
       wVar2 = cm848_dualAxisTableInterpolation
                         (&rpm_governor_offset_table_b_dims.row_count,
                          engine_speed_state.filtered_engine_speed,
-                         injection_timing_offset_map_b_x_axis,final_fueling,
-                         injection_timing_offset_map_b_y_axis,injection_timing_offset_map_b_grid,4);
+                         four_dimensional_injection_timing_map_b_x_axis,final_fueling,
+                         four_dimensional_injection_timing_map_b_y_axis,
+                         four_dimensional_injection_timing_map_b_grid,4);
       uVar3 = (int)(short)combustion_alpha_input * (int)(short)wVar1;
       uVar4 = (int)(short)(0x4000 - combustion_alpha_input) * (int)(short)wVar2;
-      injection_timing_offset_map_output =
+      four_dimensional_injection_timing =
            (short)((int)uVar3 >> 0xe) + (ushort)((int)uVar3 < 0 && (uVar3 & 0x3fff) != 0) +
            (short)((int)uVar4 >> 0xe) + (ushort)((int)uVar4 < 0 && (uVar4 & 0x3fff) != 0);
     }
-    injection_timing_intermediate_source_code = INJECTION_TIMING_INTERMEDIATE_SOURCE_OFFSET_MAPS;
+    injection_timing_intermediate_source_code =
+         INJECTION_TIMING_INTERMEDIATE_SOURCE_FOUR_DIMENSIONAL_TIMING;
   }
   else {
-    injection_timing_offset_map_output = injection_timing_offset_cal;
+    four_dimensional_injection_timing = user_commanded_injection_timing_cal;
     injection_timing_intermediate_source_code =
-         INJECTION_TIMING_INTERMEDIATE_SOURCE_FIXED_OFFSET_CALIBRATION;
+         INJECTION_TIMING_INTERMEDIATE_SOURCE_USER_COMMANDED_TIMING;
   }
   if ((governor_feature_config_word & 0x4000) != 0) {
-    injection_timing_offset_map_output =
-         injection_timing_offset_map_output + injection_timing_offset_increment_cal;
+    four_dimensional_injection_timing =
+         four_dimensional_injection_timing + user_commanded_injection_timing_increment_cal;
     injection_timing_increment_flags = 1;
   }
-  main_injection_timing_copy = injection_timing_offset_map_output;
+  main_injection_timing_copy = four_dimensional_injection_timing;
   return;
 }
 
@@ -28590,7 +28606,7 @@ void cm848_initProtectionFilterAccumulators(void)
   injection_timing_demand_floor_cached_axis_offset_y = 2;
   injection_timing_demand_floor_cached_axis_offset = 2;
   injection_timing_pid_init_flag = 0;
-  injection_timing_demand_floor = 0;
+  main_injection_timing_misfire_limit = 0;
   return;
 }
 
@@ -28607,7 +28623,7 @@ void cm848_processEngineConfigSpeedControl(void)
   
   if ((engine_feature_enable_flags_cal & 0x100) != 0) {
     x_input = cm848_calculateBoostPressure();
-    injection_timing_demand_floor =
+    main_injection_timing_misfire_limit =
          cm848_dualAxisTableInterpolation
                    (&injection_timing_demand_floor_cached_axis_offset,x_input,
                     injection_timing_demand_floor_x_axis,engine_speed_state.filtered_engine_speed,
@@ -38253,9 +38269,9 @@ void cm848_initializeAlternatorFieldControl(void)
 /* out = main_injection_timing_copy - ((main_injection_pulse_width + addend) * (average_engine_speed
    * 6) / 1e6 * 256 / 600) clamped to lower..upper; default when fuel or RPM is 0 | renamed
    2026-11-11 from cm848_computeCruiseSpeedSetpoint: limits are -171..512 in RAM dump (not a speed)
-   and the base falls back to injection_timing_offset_cal - does NOT cut fuel and is not protection
-   | output 0x40b28a has no direct reader anywhere in ROM (only the sth at 0x38748) | asm clrlwi
-   truncates rpm*6 to 16 bits so it wraps above raw 10922 (~1365 RPM) */
+   and the base falls back to user_commanded_injection_timing_cal - does NOT cut fuel and is not
+   protection | output 0x40b28a has no direct reader anywhere in ROM (only the sth at 0x38748) | asm
+   clrlwi truncates rpm*6 to 16 bits so it wraps above raw 10922 (~1365 RPM) */
 
 void cm848_computeFuelRpmCompensatedOffset(void)
 
@@ -45335,10 +45351,10 @@ void cm848_initializeRearAxleRatio(void)
 //
 
 /* Copies main_injection_timing into main_injection_timing_copy, the base of
-   cm848_computeFuelRpmCompensatedOffset. Runs after cm848_updateMainInjectionTimingByDeliveryMode
-   and cm848_calculateAuxiliaryInjectionTiming in cm848_periodicTaskSet_auxiliaryControl and
-   overwrites the injection timing offset map copy stored there earlier by
-   cm848_calculateInjectionTimingOffset. (was cm848_copyProtectionAccumulator) */
+   cm848_computeFuelRpmCompensatedOffset. Runs after cm848_selectMainInjectionTiming and
+   cm848_calculateAuxiliaryInjectionTiming in cm848_periodicTaskSet_auxiliaryControl and overwrites
+   the injection timing offset map copy stored there earlier by
+   cm848_calculateFourDimensionalInjectionTiming. (was cm848_copyProtectionAccumulator) */
 
 void cm848_copyMainInjectionTiming(void)
 
@@ -45472,7 +45488,7 @@ void cm848_selectUserCommandedFueling(void)
 
 {
   if ((engine_operating_mode == FUELING_STATE_NOT_SELECTED) &&
-     ((engine_mode_control_flags & 1) != 0)) {
+     ((algorithm_enable_flags_4_cal & 1) != 0)) {
     engine_operating_mode = FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND;
     engine_operating_mode_fuel_demand = user_commanded_fueling_cal;
   }
@@ -50478,7 +50494,7 @@ void cm848_initTimingFilterStates(void)
   injection_timing_main_boost_angle_cached_axis_offset_y = 2;
   injection_timing_main_boost_factor_cached_axis_offset = 2;
   injection_timing_main_boost_factor_cached_axis_offset_y = 2;
-  main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_INITIAL;
+  main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_ENGINE_STOPPED;
   return;
 }
 
@@ -50495,9 +50511,9 @@ void cm848_initTimingFilterStates(void)
    temperature, barometric pressure and boost components (each an rpm x final_fueling angle map x a
    Q12 factor / 4096), injection_timing_main_base_command and a constant, then the floor,
    governor-limit minimum and working minimum; in delivery mode 3 it adds
-   injection_timing_offset_cal and injection_timing_top_dead_center_offset (minus the top dead
-   center position, 171 counts). The winning source goes to main_injection_timing_source_code, and
-   the result is sent in PGN 65504 and is the angle of TPU-A channel 5 slot 8 (was
+   user_commanded_injection_timing_cal and injection_timing_top_dead_center_offset (minus the top
+   dead center position, 171 counts). The winning source goes to main_injection_timing_source_code,
+   and the result is sent in PGN 65504 and is the angle of TPU-A channel 5 slot 8 (was
    cm848_calculateEngineTimingData). */
 
 void cm848_calculateMainInjectionTiming(void)
@@ -50522,10 +50538,10 @@ void cm848_calculateMainInjectionTiming(void)
                     engine_speed_state.filtered_engine_speed,injection_timing_main_cold_start_x_axis
                     ,sensor_readings_t_0040baf2.coolant_temp,injection_timing_main_cold_start_y_axis
                     ,injection_timing_main_cold_start_grid,6);
-    if (injection_delivery_mode == 3) {
+    if (main_injection_timing_selection == 3) {
       injection_timing_adjustment_flags = injection_timing_adjustment_flags | 8;
     }
-    main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_COLD_START_MAP;
+    main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_CRANK;
     goto LAB_0004b524;
   }
   timing_barometric_pressure_snapshot = sensor_readings_t_0040baf2.barometric_pressure;
@@ -50616,7 +50632,7 @@ void cm848_calculateMainInjectionTiming(void)
     else if (0x400 < iVar5) {
       iVar5 = 0x400;
     }
-    main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_BASE_COMMAND;
+    main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_COMBUSTION_MANAGER;
     if (iVar7 != 0) {
       injection_timing_adjustment_flags = injection_timing_adjustment_flags | 0x10;
     }
@@ -50636,7 +50652,7 @@ void cm848_calculateMainInjectionTiming(void)
   }
   else if (injection_timing_main_combination_mode == 1) {
     injection_timing_demand = injection_timing_main_base_command;
-    main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_BASE_COMMAND;
+    main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_COMBUSTION_MANAGER;
     if (injection_timing_main_base_command < iVar7) {
       main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_COOLANT_COMPONENT;
       injection_timing_demand = injection_timing_main_coolant_component;
@@ -50678,39 +50694,39 @@ LAB_0004b424:
     }
     if (injection_timing_main_base_command < injection_timing_demand) {
       injection_timing_demand = injection_timing_main_base_command;
-      main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_BASE_COMMAND;
+      main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_COMBUSTION_MANAGER;
     }
     if (iVar2 < injection_timing_demand) goto LAB_0004b424;
   }
-  if ((main_injection_timing_source_code == MAIN_INJECTION_TIMING_SOURCE_BASE_COMMAND) &&
+  if ((main_injection_timing_source_code == MAIN_INJECTION_TIMING_SOURCE_COMBUSTION_MANAGER) &&
      (injection_timing_intermediate_source_code ==
       INJECTION_TIMING_INTERMEDIATE_SOURCE_COMBUSTION_MINIMUM_LIMIT)) {
     main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_COMBUSTION_MINIMUM_LIMIT;
   }
-  if ((main_injection_timing_source_code == MAIN_INJECTION_TIMING_SOURCE_BASE_COMMAND) &&
+  if ((main_injection_timing_source_code == MAIN_INJECTION_TIMING_SOURCE_COMBUSTION_MANAGER) &&
      (injection_timing_intermediate_source_code ==
       INJECTION_TIMING_INTERMEDIATE_SOURCE_COMBUSTION_MAXIMUM_LIMIT)) {
     main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_COMBUSTION_MAXIMUM_LIMIT;
   }
-  if (injection_timing_demand < injection_timing_demand_floor) {
-    injection_timing_demand = injection_timing_demand_floor;
-    main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_DEMAND_FLOOR;
+  if (injection_timing_demand < main_injection_timing_misfire_limit) {
+    injection_timing_demand = main_injection_timing_misfire_limit;
+    main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_MISFIRE_LIMIT;
     injection_timing_adjustment_flags = 0;
   }
   if ((low_speed_governor_extended_idle_active_flag != 0) &&
-     (injection_timing_demand < injection_timing_main_governor_limit_minimum)) {
-    injection_timing_demand = injection_timing_main_governor_limit_minimum;
-    main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_GOVERNOR_LIMIT_MINIMUM;
+     (injection_timing_demand < main_injection_timing_extended_idle_minimum)) {
+    injection_timing_demand = main_injection_timing_extended_idle_minimum;
+    main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_EXTENDED_IDLE;
     injection_timing_adjustment_flags = 0;
   }
-  if (injection_timing_demand < (short)injection_timing_demand_min_working) {
-    injection_timing_demand = injection_timing_demand_min_working;
-    main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_WORKING_MINIMUM;
+  if (injection_timing_demand < (short)coolant_overheat_derate_minimum_injection_timing) {
+    injection_timing_demand = coolant_overheat_derate_minimum_injection_timing;
+    main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_COOLANT_OVERHEAT_DERATE;
     injection_timing_adjustment_flags = 0;
   }
 LAB_0004b524:
-  if (injection_delivery_mode == 3) {
-    iVar6 = (int)injection_timing_demand + (int)injection_timing_offset_cal +
+  if (main_injection_timing_selection == 3) {
+    iVar6 = (int)injection_timing_demand + (int)user_commanded_injection_timing_cal +
             (int)injection_timing_top_dead_center_offset;
     if (iVar6 < -0x400) {
       iVar6 = -0x400;
@@ -50730,17 +50746,18 @@ LAB_0004b524:
 
 
 //
-// Function: cm848_updateMainInjectionTimingByDeliveryMode @ 0x0004b5b8
+// Function: cm848_selectMainInjectionTiming @ 0x0004b5b8
 //
 
 /* Once per pass of cm848_periodicTaskSet_auxiliaryControl: packs the winning-source codes of the
    pilot timing, pilot quantity, rail pressure setpoint and main timing into
-   combined_emissions_state, rebuilds bits 1 / 2 / 4 of injection_timing_adjustment_flags (boost
-   fuel blend, engine load correction, fuel demand mode), then produces main_injection_timing by
-   injection_delivery_mode: 2 = the fixed injection_timing_offset_cal (source code 7), 1 and 3 =
-   cm848_calculateMainInjectionTiming (was cm848_updateEngineStatusFlags). */
+   combined_emissions_state, rebuilds bits 1 / 2 / 4 of injection_timing_adjustment_flags, then
+   produces main_injection_timing by main_injection_timing_selection (e2m 8085 +0
+   Main_SOI_Selection_Switch): 2 = user_commanded_injection_timing_cal (source code 7), 1 and 3 =
+   cm848_calculateMainInjectionTiming, 0 = no change (was
+   cm848_updateMainInjectionTimingByDeliveryMode) */
 
-void cm848_updateMainInjectionTimingByDeliveryMode(void)
+void cm848_selectMainInjectionTiming(void)
 
 {
   combined_emissions_state =
@@ -50759,11 +50776,11 @@ void cm848_updateMainInjectionTimingByDeliveryMode(void)
   if (injection_timing_user_increment_active_flag != 0) {
     injection_timing_adjustment_flags = injection_timing_adjustment_flags | 4;
   }
-  if (injection_delivery_mode == 2) {
-    main_injection_timing = injection_timing_offset_cal;
-    main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_FIXED_OFFSET_CALIBRATION;
+  if (main_injection_timing_selection == 2) {
+    main_injection_timing = user_commanded_injection_timing_cal;
+    main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_USER_OVERRIDE;
   }
-  else if ((injection_delivery_mode == 1) || (injection_delivery_mode == 3)) {
+  else if ((main_injection_timing_selection == 1) || (main_injection_timing_selection == 3)) {
     cm848_calculateMainInjectionTiming();
   }
   return;
@@ -74665,35 +74682,45 @@ void cm848_applyCoolantOverheatFuelFloor(void)
 
 
 //
-// Function: governor_injectionTiming_modeAdj @ 0x00513d08
+// Function: cm848_rampCoolantOverheatDerateMinimumInjectionTiming @ 0x00513d08
 //
 
-void governor_injectionTiming_modeAdj(void)
+/* While the final fueling state is FUELING_STATE_COOLANT_OVERHEAT_DERATE: on entry (the previous
+   state at 0x3fcdc4 was not 46) coolant_overheat_derate_minimum_injection_timing starts at
+   main_injection_timing, then rises toward the engine speed table
+   (coolant_overheat_derate_minimum_injection_timing_values) by at most
+   coolant_overheat_derate_minimum_injection_timing_step per pass; outside the derate it falls by
+   the step to -1024 (no minimum). cm848_calculateMainInjectionTiming keeps the main timing at or
+   above it (was governor_injectionTiming_modeAdj) */
+
+void cm848_rampCoolantOverheatDerateMinimumInjectionTiming(void)
 
 {
   word wVar1;
   
   wVar1 = lookupTableInterpolation
                     (&DAT_003fcdd2,engine_speed_state.filtered_engine_speed,
-                     injection_timing_demand_min_by_engine_speed_axis,
-                     injection_timing_demand_min_by_engine_speed_values,2);
+                     coolant_overheat_derate_minimum_injection_timing_axis,
+                     coolant_overheat_derate_minimum_injection_timing_values,2);
   if ((DAT_003fcdc4 != 0x2e) && (final_fueling_state == FUELING_STATE_COOLANT_OVERHEAT_DERATE)) {
-    injection_timing_demand_min_working = main_injection_timing;
+    coolant_overheat_derate_minimum_injection_timing = main_injection_timing;
   }
   if (final_fueling_state == FUELING_STATE_COOLANT_OVERHEAT_DERATE) {
-    if ((int)(short)injection_timing_demand_min_working +
-        (int)(short)injection_timing_demand_step_rate < (int)(short)wVar1) {
-      wVar1 = injection_timing_demand_min_working + injection_timing_demand_step_rate;
+    if ((int)(short)coolant_overheat_derate_minimum_injection_timing +
+        (int)(short)coolant_overheat_derate_minimum_injection_timing_step < (int)(short)wVar1) {
+      wVar1 = coolant_overheat_derate_minimum_injection_timing +
+              coolant_overheat_derate_minimum_injection_timing_step;
     }
   }
-  else if ((int)(short)injection_timing_demand_min_working -
-           (int)(short)injection_timing_demand_step_rate < -0x3ff) {
+  else if ((int)(short)coolant_overheat_derate_minimum_injection_timing -
+           (int)(short)coolant_overheat_derate_minimum_injection_timing_step < -0x3ff) {
     wVar1 = 0xfc00;
   }
   else {
-    wVar1 = injection_timing_demand_min_working - injection_timing_demand_step_rate;
+    wVar1 = coolant_overheat_derate_minimum_injection_timing -
+            coolant_overheat_derate_minimum_injection_timing_step;
   }
-  injection_timing_demand_min_working = wVar1;
+  coolant_overheat_derate_minimum_injection_timing = wVar1;
   return;
 }
 
@@ -74748,7 +74775,7 @@ void cm848_resetCoolantOverheatFuelDerate(void)
   coolant_overheat_temperature_error = 0;
   engine_overheat_derate_active_flag = 0;
   engine_overheat_derate_active_prev_flag = 0;
-  injection_timing_demand_min_working = 0xfc00;
+  coolant_overheat_derate_minimum_injection_timing = 0xfc00;
   iVar2 = 0;
   pwVar1 = &cold_start_fuel_demand_proportional;
   do {
@@ -74797,7 +74824,7 @@ void cm848_runCoolantOverheatFuelDerate(void)
       cm848_applyCoolantOverheatFuelFloor();
       cm848_selectCoolantOverheatFuelLimit();
       cm848_rampCoolantOverheatFuelDerate();
-      governor_injectionTiming_modeAdj();
+      cm848_rampCoolantOverheatDerateMinimumInjectionTiming();
     }
     coolant_overheat_fuel_derate_prev = coolant_overheat_fuel_derate;
     engine_overheat_derate_active_prev_flag = engine_overheat_derate_active_flag;
@@ -90555,11 +90582,12 @@ LAB_0052ced0:
       if (injection_timing_pilot_offset_combination_mode == 3) {
         injection_timing_pilot_offset_arbitrated = injection_timing_pilot_offset_coolant_component;
         if (((((main_injection_timing_source_code != MAIN_INJECTION_TIMING_SOURCE_COOLANT_COMPONENT)
-              && (main_injection_timing_source_code != MAIN_INJECTION_TIMING_SOURCE_WORKING_MINIMUM)
-              ) && (injection_timing_pilot_offset_arbitrated =
-                         injection_timing_pilot_offset_intake_temperature_component,
-                   main_injection_timing_source_code !=
-                   MAIN_INJECTION_TIMING_SOURCE_INTAKE_TEMPERATURE_COMPONENT)) &&
+              && (main_injection_timing_source_code !=
+                  MAIN_INJECTION_TIMING_SOURCE_COOLANT_OVERHEAT_DERATE)) &&
+             (injection_timing_pilot_offset_arbitrated =
+                   injection_timing_pilot_offset_intake_temperature_component,
+             main_injection_timing_source_code !=
+             MAIN_INJECTION_TIMING_SOURCE_INTAKE_TEMPERATURE_COMPONENT)) &&
             ((injection_timing_pilot_offset_arbitrated =
                    injection_timing_pilot_offset_barometric_pressure_component,
              main_injection_timing_source_code !=
@@ -90567,7 +90595,7 @@ LAB_0052ced0:
              (injection_timing_pilot_offset_arbitrated =
                    injection_timing_pilot_offset_boost_component,
              main_injection_timing_source_code != MAIN_INJECTION_TIMING_SOURCE_BOOST_COMPONENT))))
-           && ((main_injection_timing_source_code != MAIN_INJECTION_TIMING_SOURCE_DEMAND_FLOOR &&
+           && ((main_injection_timing_source_code != MAIN_INJECTION_TIMING_SOURCE_MISFIRE_LIMIT &&
                (injection_timing_pilot_offset_arbitrated = injection_timing_pilot_offset_map_blend,
                main_injection_timing_source_code ==
                MAIN_INJECTION_TIMING_SOURCE_FUEL_PRESSURE_LIMP_HOME_COMPONENT)))) {
@@ -90681,7 +90709,7 @@ void cm848_calculatePilotInjectionTiming(void)
          injection_timing_pilot_offset_rpm_corrected + main_injection_timing;
   }
   if ((low_speed_governor_extended_idle_active_flag != 0) &&
-     (injection_timing_main_governor_limit_minimum == main_injection_timing)) {
+     (main_injection_timing_extended_idle_minimum == main_injection_timing)) {
     pilot_injection_timing_uncapped = injection_timing_pilot_offset_governor_limit_floor;
     if (injection_timing_pilot_absolute_switch == 0) {
       pilot_injection_timing_uncapped =

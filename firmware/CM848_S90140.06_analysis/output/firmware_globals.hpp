@@ -146,8 +146,8 @@ extern word coolant_overheat_engine_speed_fuel_limit_values[22];  // 0x0005ae84
 extern word coolant_overheat_fuel_demand_floor_x_axis[22];  // 0x0005aeb0
 extern word coolant_overheat_fuel_demand_floor_y_axis[11];  // 0x0005aedc
 extern word coolant_overheat_fuel_demand_floor_grid[210];  // 0x0005aef2
-extern word injection_timing_demand_min_by_engine_speed_axis[14];  // 0x0005b096
-extern word injection_timing_demand_min_by_engine_speed_values[14];  // 0x0005b0b2
+extern word coolant_overheat_derate_minimum_injection_timing_axis[14];  // 0x0005b096
+extern word coolant_overheat_derate_minimum_injection_timing_values[14];  // 0x0005b0b2
 extern word alternator_field_duty_regulation_axis[13];  // 0x0005b0ce
 extern word alternator_field_duty_regulation_values[13];  // 0x0005b0e8
 extern word charging_voltage_target_by_battery_temperature_axis[8];  // 0x0005b102
@@ -2135,7 +2135,7 @@ extern word governor_fault_status_flags;  // 0x003fd59c
 extern word governor_feature_flags;  // 0x003fd59e
 extern word governor_feature_config_word;  // 0x003fd5a0
 extern word j1939_governor_feature_cal;  // 0x003fd5a2
-extern word engine_mode_control_flags;  // 0x003fd5a4
+extern word algorithm_enable_flags_4_cal;  // 0x003fd5a4
 extern word combustion_override_and_estimation_enable_flags_cal;  // 0x003fd5a6
 extern word algorithm_enable_flags_6_cal;  // 0x003fd5a8
 extern algorithm_enable_flags_12_t algorithm_enable_flags_12_cal;  // 0x003fd5b4
@@ -2171,8 +2171,8 @@ extern word egr_valve_driver_over_current_give_up_enable_cal;  // 0x003fd7fe
 extern word egr_valve_h_bridge_fault_give_up_enable_cal;  // 0x003fd800
 extern word torque_derate_override_fuel_quantity_cal;  // 0x003fd802
 extern word user_override_fueling_cal;  // 0x003fd804
-extern int16_t injection_timing_offset_increment_cal;  // 0x003fd806
-extern int16_t injection_timing_offset_cal;  // 0x003fd808
+extern int16_t user_commanded_injection_timing_increment_cal;  // 0x003fd806
+extern int16_t user_commanded_injection_timing_cal;  // 0x003fd808
 extern word engine_speed_limit_droop_no_load_speed_default_cal;  // 0x003fd80c
 extern word engine_speed_limit_droop_cap_cal;  // 0x003fd80e
 extern word engine_speed_limit_droop_cap_alternate_cal;  // 0x003fd810
@@ -2929,12 +2929,12 @@ extern word four_dimensional_fueling_transient_y_axis[5];  // 0x00406994
 extern word four_dimensional_fueling_transient_grid[84];  // 0x0040699e
 extern word commanded_throttle_filter_coefficient_by_throttle_difference_axis[6];  // 0x00406a46
 extern word commanded_throttle_filter_coefficient_by_throttle_difference_values[6];  // 0x00406a52
-extern word injection_timing_offset_map_a_x_axis[20];  // 0x00406a5e
-extern word injection_timing_offset_map_a_y_axis[17];  // 0x00406a86
-extern word injection_timing_offset_map_a_grid[304];  // 0x00406aa8
-extern word injection_timing_offset_map_b_x_axis[20];  // 0x00406d08
-extern word injection_timing_offset_map_b_y_axis[17];  // 0x00406d30
-extern word injection_timing_offset_map_b_grid[304];  // 0x00406d52
+extern word four_dimensional_injection_timing_map_a_x_axis[20];  // 0x00406a5e
+extern word four_dimensional_injection_timing_map_a_y_axis[17];  // 0x00406a86
+extern word four_dimensional_injection_timing_map_a_grid[304];  // 0x00406aa8
+extern word four_dimensional_injection_timing_map_b_x_axis[20];  // 0x00406d08
+extern word four_dimensional_injection_timing_map_b_y_axis[17];  // 0x00406d30
+extern word four_dimensional_injection_timing_map_b_grid[304];  // 0x00406d52
 extern word high_speed_governor_proportional_gain_base;  // 0x00406fb4
 extern word high_speed_governor_derivative_gain_base;  // 0x00406fb6
 extern word high_speed_governor_integral_gain_base;  // 0x00406fb8
@@ -4090,9 +4090,9 @@ extern word injector_diagnostic_bits_fast_decay_debounce_limit;  // 0x00409a8a
 extern word injector_diagnostic_bits_open_circuit_debounce_limit;  // 0x00409a8c
 extern word injector_diagnostic_bits_short_to_ground_debounce_limit;  // 0x00409a8e
 extern word injector_diagnostic_bits_short_to_battery_debounce_limit;  // 0x00409a90
-extern word injection_delivery_mode;  // 0x00409e40
+extern word main_injection_timing_selection;  // 0x00409e40
 extern word injection_timing_main_combination_mode;  // 0x00409e42
-extern int16_t injection_timing_main_governor_limit_minimum;  // 0x00409e44
+extern int16_t main_injection_timing_extended_idle_minimum;  // 0x00409e44
 extern int16_t injection_timing_main_fuel_pressure_limp_home_default;  // 0x00409e46
 extern int16_t injection_timing_main_fuel_pressure_normal_value;  // 0x00409e48
 extern word radiator_fan_speed_rationality_maximum;  // 0x00409ec0
@@ -4288,7 +4288,7 @@ extern FUELING_STATE final_fueling_state_prev;  // 0x0040a2de
 extern word final_fueling_before_combustion_reference;  // 0x0040a2e0
 extern FUELING_STATE final_fueling_state_before_combustion_reference;  // 0x0040a2e2
 extern int16_t main_injection_timing;  // 0x0040a2e6
-extern int16_t injection_timing_offset_map_output;  // 0x0040a2ee
+extern int16_t four_dimensional_injection_timing;  // 0x0040a2ee
 extern int16_t main_injection_timing_copy;  // 0x0040a2f0
 extern INJECTION_TIMING_INTERMEDIATE_SOURCE injection_timing_intermediate_source_code;  // 0x0040a2f2
 extern word injection_timing_increment_flags;  // 0x0040a2f4
@@ -4848,7 +4848,7 @@ extern word low_speed_governor_adjusted_reference_speed;  // 0x0040aee0
 extern word low_speed_governor_derivative_error_term;  // 0x0040aee2
 extern word low_speed_governor_jerk_error_term;  // 0x0040aee4
 extern word fuel_demand_filter_dimension;  // 0x0040aee6
-extern int16_t injection_timing_demand_floor;  // 0x0040aee8
+extern int16_t main_injection_timing_misfire_limit;  // 0x0040aee8
 extern word injection_timing_pid_init_flag;  // 0x0040aeea
 extern word no_load_fuel_quantity;  // 0x0040aeec
 extern word engine_speed_limit_droop_no_load_fuel_quantity;  // 0x0040aeee
@@ -5088,7 +5088,7 @@ extern byte supervisor_input_lines_130_to_135_state;  // 0x0040b227
 extern byte supervisor_input_lines_144_to_151_state;  // 0x0040b228
 extern byte supervisor_input_lines_136_to_143_state;  // 0x0040b229
 extern word fuel_demand_offset_correction;  // 0x0040b22a
-extern word injection_timing_demand_min_working;  // 0x0040b256
+extern word coolant_overheat_derate_minimum_injection_timing;  // 0x0040b256
 extern byte serial_output_driver_transmit_word;  // 0x0040b258
 extern byte serial_output_driver_transmit_byte;  // 0x0040b259
 extern byte serial_output_driver_status_byte;  // 0x0040b25b
@@ -6377,7 +6377,7 @@ extern word air_conditioning_pressure_learn_time;  // 0x004086c4
 extern word brake_switch_pair_event_count_limit;  // 0x00408714
 extern word brake_switch_pair_debounce_threshold;  // 0x00408716
 extern word cruise_coast_accelerate_hold_time;  // 0x00408720
-extern word injection_timing_demand_step_rate;  // 0x0040876e
+extern word coolant_overheat_derate_minimum_injection_timing_step;  // 0x0040876e
 extern word cooling_fan_duty_maximum;  // 0x00408820
 extern word cooling_fan_duty_minimum;  // 0x00408822
 extern word cooling_fan_speed_ceiling;  // 0x00408860
