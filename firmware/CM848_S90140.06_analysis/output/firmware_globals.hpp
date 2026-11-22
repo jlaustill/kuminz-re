@@ -2026,8 +2026,6 @@ extern ema_filter_state_t egr_valve_position_command_diagnostic_filter_state;  /
 extern engine_protection_channel_configuration_t* engine_protection_current_configuration;  // 0x003fbd42
 extern engine_protection_channel_state_t* engine_protection_current_state;  // 0x003fbd46
 extern engine_protection_channel_history_t* engine_protection_current_history;  // 0x003fbd4a
-extern void * j1939_tp_rx_session_status_ptr;  // 0x003fbd80
-extern void * j1939_tp_rx_session_tx_buf_ptr;  // 0x003fbd8c
 extern dword j1939_multiframe_tx_status_ptr;  // 0x003fbdd3
 extern dword j1939_multiframe_tx_buf_ptr;  // 0x003fbddf
 extern void * j1939_multiframe_rx_data_buf_ptr;  // 0x003fbdfd
@@ -6671,7 +6669,7 @@ extern word j1939_engine_control_active_flag_cal;  // 0x003feb82
 extern word j1939_retarder_control_active_flag_cal;  // 0x003feb84
 extern J1939_CONTROL_DEVICE j1939_engine_control_source_cal;  // 0x003feb86
 extern J1939_CONTROL_DEVICE j1939_retarder_control_source_cal;  // 0x003feb88
-extern byte j1939_tp_rx_session_active;  // 0x003fbd74
+extern j1939_broadcast_transmit_session_t j1939_broadcast_transmit_sessions[2];  // 0x003fbd74
 extern byte j1939_multiframe_tx_destination_address;  // 0x003fbdc6
 extern word j1939_multiframe_tx_dest_addr_word;  // 0x003fbdc7
 extern byte j1939_multiframe_tx_cts_start_packet;  // 0x003fbdca
@@ -7918,6 +7916,8 @@ extern word cold_delta_fuel_cached_axis_offsets[2];  // 0x003fb35c
 extern word compressor_inlet_pressure_drop_by_air_flow_cached_axis_offset;  // 0x003fb9dc
 extern int16_t engine_protection_power_up_shutdown_channel;  // 0x003fbd3a
 extern word fault_derate_fuel_limit_by_engine_speed_cached_axis_offset;  // 0x003fbd4e
+extern byte j1939_broadcast_transmit_frame_buffer_0[8];  // 0x003fbdb4
+extern byte j1939_broadcast_transmit_frame_buffer_1[8];  // 0x003fbdbc
 extern word watchdog_fueling_coolant_duration_adjustment;  // 0x003fce30
 extern word watchdog_coolant_duration_adjustment_cached_axis_offset;  // 0x003fce32
 extern discrete_output_read_back_counters_t air_conditioning_output_read_back_check;  // 0x003fd27f

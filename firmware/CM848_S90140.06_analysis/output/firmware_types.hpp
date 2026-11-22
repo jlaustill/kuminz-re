@@ -1392,6 +1392,7 @@ typedef struct discrete_output_read_back_counters_t discrete_output_read_back_co
 typedef struct j1939_pgn65249_payload_t j1939_pgn65249_payload_t;
 typedef struct j1939_pgn65259_payload_t j1939_pgn65259_payload_t;
 typedef struct j1939_pgn65242_payload_t j1939_pgn65242_payload_t;
+typedef struct j1939_broadcast_transmit_session_t j1939_broadcast_transmit_session_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -4318,4 +4319,20 @@ struct j1939_pgn65242_payload_t {
     uint8_t ecm_identifier_delimiter;  /* '*' */
     uint8_t application_identifier[2];  /* the two ASCII characters of application_identifier_cal (e2m 1292) high byte first */
     uint8_t application_identifier_delimiter;  /* the '*' that ends the message (data length 47) */
+};
+
+struct j1939_broadcast_transmit_session_t {
+    uint8_t active;  /* 1 while the session runs: initiateJ1939TransportProtocol sets it / cm848_sendJ1939BroadcastDataPacket clears it after the last packet or a failed frame */
+    uint8_t total_packet_count;  /* (message_size - 1) / 7 + 1 */
+    uint16_t message_size;  /* the broadcast message's size in bytes (its descriptor's data_length) */
+    uint16_t next_data_byte_number;  /* the 1-based number of the next data byte: 1 at the announce and +7 per packet (one sth; the last packet carries message_size - this + 1 bytes) */
+    uint8_t next_packet_number;  /* the next packet's number: 1 at the announce */
+    uint8_t frame_queue_status;  /* the result mpc555_sendJ1939SingleFrame writes for the last frame (0 queued / 1 zero length / 4 queue full) */
+    byte* message_data_pointer;  /* the next data byte (the descriptor's data pointer; advanced per byte) */
+    byte* session_status_pointer;  /* the message's status byte (the descriptor's status_pointer): 0x10 announced / 0x11 sending / 5 complete / the send result */
+    uint16_t packet_delay_timer;  /* service passes until the next packet: 5 after each (0 while j1939_broadcast_no_packet_delay_flag is set) */
+    uint32_t frame_can_id;  /* the CAN identifier of the next frame: the message's with PDU format 0xEC (TP.CM) for the announce then 0xEB (TP.DT) / destination 0xff */
+    uint16_t frame_data_length;  /* data bytes of the next frame: 8 / the last packet's */
+    byte* transmit_frame_pointer;  /* the frame assembly buffer (j1939_broadcast_transmit_frame_buffer_0 / _1; cm848_initializeJ1939Transport) */
+    uint8_t unused[4];  /* no access found in the application transport (the records are 32 bytes apart) */
 };
