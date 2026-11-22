@@ -703,6 +703,11 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
       this reason: `transmission_shift_strategy_flags_t.wide_open_throttle_flags` and `transmission_control_flags_t.limp_home_flags_4`
       (then `protection_status_flags_t.status_flags` / `protection_condition_flags_t.fault_state_flags`).
       The two bitfields had given 18 named tests but 31 pieces.
+      - **One exception, by the user's decision (2026-11-21, PR #53 round 16): `switch_input_state_t` is all
+        bitfields.** Its 180 named bit accesses outweigh the 10 pieces in three single-bit setters
+        (`cm848_checkSwitch31OnTimeFault`, `cm848_updateAirConditioningSwitchFromPci`,
+        `cm848_deriveSecondBrakeSwitchSignal`). Its indexed loops print `(&switch_input_state_bits.field_0x0)[i]`.
+        The rule still holds for every other struct.
     - Check a shape change with `piece_census.py` (in the session folder), which lists each symbol whose piece count
       went up.
   - **`end_of_line_test_settings_cal`** (0x3fd938 = EEPROM 0x4b6) is the Chrysler in-plant test block. The old names
@@ -1087,6 +1092,34 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     (`cm848_stopSciOutputTest(0x3fcf42,0x2b)`). A `word *` prototype gives
     `&sci_output_test_timers.intake_heater_1`. Prove a new struct with `round10/relabel_struct.py` (it maps
     `instance.field` back to the old labels) and then `cast_normalized_diff.py`.
+- **Rounds 11-15 (2026-11-21, PR #53): the methods.** The user promoted them from task 046, which keeps the details
+  and the leads. Scripts are in the session folder under `roundNN/`.
+  - **The e2m discrete I/O and output tables.** Only 12A7 / 12A8 are in the dumped part of the parameter ID table.
+    - 1577: the 80 logical output requests (output N = byte N/8, mask 1 << N%8, at 0x40c080). 12A7 holds their
+      override priorities (0x40c094), and 1578 / 1579 / 157A the inversion, hardware map and previous command.
+    - 1612: the 32 debounced switches (`switch_input_state_bits`). 12A8 holds their override priorities (0x40c058).
+    - 1565 / 151C / 1527: the output channel map (0x3fdc94 + 2N) and its duty (0x40c138 + 2N) and period
+      (0x40c198 + 4N) caches, entry by entry.
+    - 1966: the sensor channels' value and default outputs.
+  - **Blocks past the dumped table** can be aligned by relative offset only when every record lands on its code use
+    and the dump values fit (14EE / 1496 / 14EF / 14F0, round 14). The next block's start bounds the last record.
+  - **Where 11.45 and 11.46 differ, the code decides.** 8A6F is one word longer in 11.46: a fixed word replaces
+    11.45's key-on time table input, so the +4 / +6 records sit at +6 / +8 (round 11).
+  - **Value lists.** An e2m record lists its values in the field before the `;`, with hexadecimal keys
+    (`0000=COOLANT:0001=PARK_NEU`).
+    - An enum built from a list holds exactly the values the code stores (`LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE`,
+      round 14).
+    - Prove the enum with `round13/check_enum_proof3.py` (it handles byte-sized enums) on a reversed `.cpp` written
+      without `--ignore-comments`. That flag strips comments on the reversed side only.
+  - **Arrays from comments (round 12).** Type a scalar row whose comment describes N elements as the array when no
+    other row sits inside the range (`round12/array_candidates.py`). The `DAT_` words inside are its elements. Read the
+    render before keeping the shape: `word[16]` at 0x3fd0ca rendered `x + 8`, because the words are eight `word[2]`
+    lookup caches.
+  - **Sensor channels are named as families (round 15).** Prove a channel by its calls (`channel_index` = argument 8)
+    and by its fault bits' DTCs. Then name all its rows together: config, state, filter, cache, value, default and
+    fault status (`round15/channel_calls_r15.py`).
+  - **Naming a type-only row is label-only (round 15).** The map's old label is the default label the `.cpp` renders
+    (`WORD_<address>`, `WORD_ARRAY_<address>`, `ema_filter_state_t_<address>`; `round15/apply_r15a_fill.py`).
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.
