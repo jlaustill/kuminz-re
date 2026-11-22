@@ -2489,9 +2489,9 @@ extern word boost_is_gauge_pressure_flag;  // 0x003feff6
 extern word air_fuel_control_fueling_threshold_1;  // 0x003feff8
 extern word air_fuel_control_fueling_threshold_2;  // 0x003feffa
 extern word air_fuel_control_fueling_threshold_3;  // 0x003feffc
-extern word fuel_demand_load_threshold_d;  // 0x003feffe
-extern word fuel_demand_load_result_working;  // 0x003ff002
-extern word fuel_demand_load_select_working;  // 0x003ff006
+extern dword air_fuel_control_fueling_slew_rate_1;  // 0x003feffe
+extern dword air_fuel_control_fueling_slew_rate_2;  // 0x003ff002
+extern dword air_fuel_control_fueling_slew_rate_3;  // 0x003ff006
 extern word air_fuel_control_low_boost_time_delay;  // 0x003ff00a
 extern word air_fuel_control_low_boost_blend_fraction_increase_step;  // 0x003ff00c
 extern word air_fuel_control_low_boost_blend_fraction_decrease_step;  // 0x003ff00e
@@ -4683,10 +4683,8 @@ extern int16_t throttle_100_fueling_low_horsepower_curve;  // 0x0040a899
 extern word engine_speed_limit_ramped_maximum_fuel_quantity;  // 0x0040a89b
 extern word engine_speed_limit_reference_maximum_fuel_quantity;  // 0x0040a89d
 extern word throttle_100_fueling_without_programmable_power;  // 0x0040a89f
-extern word four_dimensional_fueling_steady_state_cached_axis_offset;  // 0x0040a8a1
-extern word fuel_demand_threshold_cached_axis_offset_y;  // 0x0040a8a3
-extern word four_dimensional_fueling_transient_cached_axis_offset;  // 0x0040a8a5
-extern word governor_fuel_demand_cached_axis_offset_y;  // 0x0040a8a7
+extern word four_dimensional_fueling_steady_state_cached_axis_offsets[2];  // 0x0040a8a1
+extern word four_dimensional_fueling_transient_cached_axis_offsets[2];  // 0x0040a8a5
 extern word high_speed_governor_derivative_gain_working;  // 0x0040a8ad
 extern word high_speed_governor_error_filter_coefficient_working;  // 0x0040a8af
 extern word high_speed_governor_working_gain_set_code;  // 0x0040a8b1
@@ -6061,7 +6059,7 @@ extern word misfire_monitor_fueling_event_index;  // 0x003fd217
 extern word misfire_monitor_event_index_advanced_flag;  // 0x003fd21b
 extern byte misfire_monitor_flagged_cylinder_count;  // 0x003fd1fe
 extern word governor_pressure_solenoid_output_channel_cal;  // 0x003fdca8
-extern word cruise_pid_integrator_q16;  // 0x003fd032
+extern q16_fixed_point_t cruise_pid_integrator_q16;  // 0x003fd032
 extern word * cruise_governor_fueling_maximum_pointer;  // 0x003fd038
 extern word governor_pressure_integral_period_counter;  // 0x003fcf0c
 extern FUELING_STATE cruise_governor_fueling_state_previous;  // 0x003fd048

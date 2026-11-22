@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 22:22:49 MST 2026
+// Generated: Sat Nov 21 23:00:22 MST 2026
 
 
 //
@@ -8529,7 +8529,6 @@ word cm848_calculateBoostPressure(void)
 // Function: cm848_calculateAirFuelControlFuelLimit @ 0x0000dcdc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Sets air_fuel_control_fuel_limit, the air fuel control (boost) fuel limit (e2m AFCDERAT): the
    engine speed x boost pressure grid air_fuel_control_fuel_limit_grid, blended toward the low boost
    grid by a ramp while governor_fault_status_flags bit 1 is set (was
@@ -8542,7 +8541,7 @@ void cm848_calculateAirFuelControlFuelLimit(void)
   word wVar2;
   uint uVar3;
   uint uVar4;
-  int iVar5;
+  dword dVar5;
   
   if (algorithm_enable_flags_12_cal.air_fuel_control_override_enable == 0) {
     wVar1 = cm848_calculateBoostPressure();
@@ -8615,16 +8614,16 @@ void cm848_calculateAirFuelControlFuelLimit(void)
         fault_active_status_array = fault_active_status_array & 0xffbf;
       }
     }
-    iVar5 = _fuel_demand_load_select_working;
+    dVar5 = air_fuel_control_fueling_slew_rate_3;
     if (((air_fuel_control_fuel_limit <= air_fuel_control_fueling_threshold_3) &&
-        (iVar5 = _fuel_demand_load_result_working,
+        (dVar5 = air_fuel_control_fueling_slew_rate_2,
         air_fuel_control_fuel_limit <= air_fuel_control_fueling_threshold_2)) &&
-       (iVar5 = _fuel_demand_load_threshold_d,
+       (dVar5 = air_fuel_control_fueling_slew_rate_1,
        air_fuel_control_fuel_limit <= air_fuel_control_fueling_threshold_1)) {
-      iVar5 = 0x47e00;
+      dVar5 = 0x47e00;
     }
-    if ((iVar5 == 0x47e00) ||
-       (governor_demand_accumulator = governor_demand_accumulator + iVar5,
+    if ((dVar5 == 0x47e00) ||
+       (governor_demand_accumulator = governor_demand_accumulator + dVar5,
        (uVar3 & 0xffff) * 0x32 <= governor_demand_accumulator)) {
       air_fuel_control_fuel_limit = (word)uVar3;
       governor_demand_accumulator = (uVar3 & 0xffff) * 0x32;
@@ -15846,7 +15845,7 @@ void emptyStubFunction3(void)
 /* Percent peak torque x 256 (0x6400 = 100 percent) available at one engine speed, for the J1939
    (Jcomm) engine configuration data of e2m block 10E2. param_1 is the engine speed (1/8 rpm),
    param_2 the friction fuel at that speed. It reads the fuel at 100 percent throttle (y = 400) at
-   that speed from the maximum fuel grid (four_dimensional_fueling_steady_state_cached_axis_offset,
+   that speed from the maximum fuel grid (four_dimensional_fueling_steady_state_cached_axis_offsets,
    x axis four_dimensional_fueling_steady_state_x_axis, y axis
    four_dimensional_fueling_steady_state_y_axis, grid four_dimensional_fueling_steady_state_grid),
    clamps it with cm848_clampFuelDemandToValidRange (0x1ec48), subtracts param_2 plus the coolant
@@ -15864,7 +15863,7 @@ int cm848_calculateJ1939PercentPeakTorqueAtSpeed(word param_1,short param_2)
   word local_8 [2];
   
   local_8[0] = cm848_dualAxisTableInterpolation
-                         (&four_dimensional_fueling_steady_state_cached_axis_offset,param_1,
+                         (four_dimensional_fueling_steady_state_cached_axis_offsets,param_1,
                           four_dimensional_fueling_steady_state_x_axis,400,
                           four_dimensional_fueling_steady_state_y_axis,
                           four_dimensional_fueling_steady_state_grid,4);
@@ -20397,10 +20396,10 @@ void cm848_initProtectionTableSizes(void)
 void cm848_initFaultSeverityTables(void)
 
 {
-  four_dimensional_fueling_steady_state_cached_axis_offset = 2;
-  fuel_demand_threshold_cached_axis_offset_y = 2;
-  four_dimensional_fueling_transient_cached_axis_offset = 2;
-  governor_fuel_demand_cached_axis_offset_y = 2;
+  four_dimensional_fueling_steady_state_cached_axis_offsets[0] = 2;
+  four_dimensional_fueling_steady_state_cached_axis_offsets[1] = 2;
+  four_dimensional_fueling_transient_cached_axis_offsets[0] = 2;
+  four_dimensional_fueling_transient_cached_axis_offsets[1] = 2;
   friction_fuel_by_engine_speed_cached_axis_offset = 2;
   coolant_temperature_cached_axis_offsets[0] = 2;
   cm848_calculateJ1939FrictionLoadFuelingAtBreakpoints();
@@ -20542,7 +20541,7 @@ uint cm848_calculateDualAxisFuelLimit(void)
   if (y_input != 0) {
     if (four_dimensional_fueling_interpolation_factor != 0) {
       local_30 = cm848_dualAxisTableInterpolation
-                           (&four_dimensional_fueling_steady_state_cached_axis_offset,
+                           (four_dimensional_fueling_steady_state_cached_axis_offsets,
                             engine_speed_state.filtered_engine_speed,
                             four_dimensional_fueling_steady_state_x_axis,y_input,
                             four_dimensional_fueling_steady_state_y_axis,
@@ -20550,14 +20549,14 @@ uint cm848_calculateDualAxisFuelLimit(void)
       cm848_clampFuelDemandToValidRange(&local_30);
       unaff_r28 = (uint)(short)local_30;
       local_36 = cm848_dualAxisTableInterpolation
-                           (&four_dimensional_fueling_steady_state_cached_axis_offset,
+                           (four_dimensional_fueling_steady_state_cached_axis_offsets,
                             engine_speed_state.filtered_engine_speed,
                             four_dimensional_fueling_steady_state_x_axis,0,
                             four_dimensional_fueling_steady_state_y_axis,
                             four_dimensional_fueling_steady_state_grid,4);
       cm848_clampFuelDemandToValidRange(&local_36);
       local_38 = cm848_dualAxisTableInterpolation
-                           (&four_dimensional_fueling_steady_state_cached_axis_offset,
+                           (four_dimensional_fueling_steady_state_cached_axis_offsets,
                             engine_speed_state.filtered_engine_speed,
                             four_dimensional_fueling_steady_state_x_axis,400,
                             four_dimensional_fueling_steady_state_y_axis,
@@ -20574,7 +20573,7 @@ uint cm848_calculateDualAxisFuelLimit(void)
     }
     if (wVar1 < 0x4000) {
       local_2e[0] = cm848_dualAxisTableInterpolation
-                              (&four_dimensional_fueling_transient_cached_axis_offset,
+                              (four_dimensional_fueling_transient_cached_axis_offsets,
                                engine_speed_state.filtered_engine_speed,
                                four_dimensional_fueling_transient_x_axis,y_input,
                                four_dimensional_fueling_transient_y_axis,
@@ -20582,14 +20581,14 @@ uint cm848_calculateDualAxisFuelLimit(void)
       cm848_clampFuelDemandToValidRange(local_2e);
       unaff_r31 = (uint)(short)local_2e[0];
       local_32 = cm848_dualAxisTableInterpolation
-                           (&four_dimensional_fueling_transient_cached_axis_offset,
+                           (four_dimensional_fueling_transient_cached_axis_offsets,
                             engine_speed_state.filtered_engine_speed,
                             four_dimensional_fueling_transient_x_axis,0,
                             four_dimensional_fueling_transient_y_axis,
                             four_dimensional_fueling_transient_grid,4);
       cm848_clampFuelDemandToValidRange(&local_32);
       local_34 = cm848_dualAxisTableInterpolation
-                           (&four_dimensional_fueling_transient_cached_axis_offset,
+                           (four_dimensional_fueling_transient_cached_axis_offsets,
                             engine_speed_state.filtered_engine_speed,
                             four_dimensional_fueling_transient_x_axis,400,
                             four_dimensional_fueling_transient_y_axis,
@@ -20695,7 +20694,7 @@ uint cm848_calculateMaximumFuelCurve(word param_1,word param_2)
   
   if (four_dimensional_fueling_interpolation_factor != 0) {
     local_e = cm848_dualAxisTableInterpolation
-                        (&four_dimensional_fueling_steady_state_cached_axis_offset,param_1,
+                        (four_dimensional_fueling_steady_state_cached_axis_offsets,param_1,
                          four_dimensional_fueling_steady_state_x_axis,param_2,
                          four_dimensional_fueling_steady_state_y_axis,
                          four_dimensional_fueling_steady_state_grid,4);
@@ -20703,7 +20702,7 @@ uint cm848_calculateMaximumFuelCurve(word param_1,word param_2)
   }
   if (four_dimensional_fueling_interpolation_factor < 0x4000) {
     local_10 = cm848_dualAxisTableInterpolation
-                         (&four_dimensional_fueling_transient_cached_axis_offset,param_1,
+                         (four_dimensional_fueling_transient_cached_axis_offsets,param_1,
                           four_dimensional_fueling_transient_x_axis,param_2,
                           four_dimensional_fueling_transient_y_axis,
                           four_dimensional_fueling_transient_grid,4);
@@ -27262,7 +27261,7 @@ void cm848_calculateLowSpeedGovernorReferenceMaximumFuelQuantity(void)
   
   if (four_dimensional_fueling_interpolation_factor != 0) {
     local_6 = cm848_dualAxisTableInterpolation
-                        (&four_dimensional_fueling_steady_state_cached_axis_offset,
+                        (four_dimensional_fueling_steady_state_cached_axis_offsets,
                          low_speed_governor_adjusted_reference_speed,
                          four_dimensional_fueling_steady_state_x_axis,400,
                          four_dimensional_fueling_steady_state_y_axis,
@@ -27271,7 +27270,7 @@ void cm848_calculateLowSpeedGovernorReferenceMaximumFuelQuantity(void)
   }
   if (four_dimensional_fueling_interpolation_factor < 0x4000) {
     local_8 = cm848_dualAxisTableInterpolation
-                        (&four_dimensional_fueling_transient_cached_axis_offset,
+                        (four_dimensional_fueling_transient_cached_axis_offsets,
                          low_speed_governor_adjusted_reference_speed,
                          four_dimensional_fueling_transient_x_axis,400,
                          four_dimensional_fueling_transient_y_axis,
@@ -38456,8 +38455,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  ushort receive_interval;
   byte all_transmits_overdue;
+  ushort receive_interval;
   
   all_transmits_overdue = 1;
   if ((engine_feature_enable_flags_cal & 0x40) != 0) {
@@ -42936,7 +42935,7 @@ void cm848_calculateTorqueManagementFuelTableLimit(void)
   else {
     if (four_dimensional_fueling_interpolation_factor != 0) {
       local_e = cm848_dualAxisTableInterpolation
-                          (&four_dimensional_fueling_steady_state_cached_axis_offset,
+                          (four_dimensional_fueling_steady_state_cached_axis_offsets,
                            engine_speed_state.filtered_engine_speed,
                            four_dimensional_fueling_steady_state_x_axis,
                            four_dimensional_fueling_steady_state_y_axis
@@ -42947,7 +42946,7 @@ void cm848_calculateTorqueManagementFuelTableLimit(void)
     }
     if (four_dimensional_fueling_interpolation_factor < 0x4000) {
       local_10 = cm848_dualAxisTableInterpolation
-                           (&four_dimensional_fueling_transient_cached_axis_offset,
+                           (four_dimensional_fueling_transient_cached_axis_offsets,
                             engine_speed_state.filtered_engine_speed,
                             four_dimensional_fueling_transient_x_axis,
                             four_dimensional_fueling_transient_y_axis
@@ -86055,7 +86054,7 @@ LAB_00525398:
     }
 LAB_0052540c:
     cruise_governor_sump_fuel = final_fueling - wVar5;
-    cruise_pid_integrator_q16 = wVar5 - local_10._2_2_;
+    cruise_pid_integrator_q16.integer_part = wVar5 - local_10._2_2_;
   }
   else {
     if (((cruise_governor_fueling_state_previous == FUELING_STATE_TSC1_SPEED_CONTROL) ||
@@ -86064,7 +86063,7 @@ LAB_0052540c:
         (cruise_governor_fueling_state_previous == FUELING_STATE_UNIDENTIFIED_38))))
     goto LAB_0052540c;
     cruise_governor_sump_fuel = 0;
-    cruise_pid_integrator_q16 = final_fueling - local_10._2_2_;
+    cruise_pid_integrator_q16.integer_part = final_fueling - local_10._2_2_;
   }
   if (algorithm_enable_flags_18_cal.programmable_power_enable == 0) {
     cruise_governor_fueling_maximum_pointer = &cruise_governor_fueling_maximum;
@@ -86073,15 +86072,16 @@ LAB_0052540c:
     cruise_governor_fueling_maximum_pointer = &current_horsepower_peak_fueling_cal;
   }
   pwVar6 = cruise_governor_fueling_maximum_pointer;
-  if ((short)cruise_pid_integrator_q16 < (short)*cruise_governor_fueling_maximum_pointer) {
-    if ((short)cruise_governor_no_fuel_fueling <= (short)cruise_pid_integrator_q16)
+  if ((short)cruise_pid_integrator_q16.integer_part <
+      (short)*cruise_governor_fueling_maximum_pointer) {
+    if ((short)cruise_governor_no_fuel_fueling <= (short)cruise_pid_integrator_q16.integer_part)
     goto LAB_005254b0;
     pwVar6 = &cruise_governor_no_fuel_fueling;
   }
-  cruise_pid_integrator_q16 = *pwVar6;
+  cruise_pid_integrator_q16.integer_part = *pwVar6;
 LAB_005254b0:
-  DAT_003fd034 = 0;
-  cruise_pid_integral_fuel = cruise_pid_integrator_q16;
+  cruise_pid_integrator_q16.fractional_part = 0;
+  cruise_pid_integral_fuel = cruise_pid_integrator_q16.integer_part;
   cruise_governor_pid_fueling = final_fueling;
   cruise_pid_driveline_filter.output_previous = cruise_pid_driveline_filter.output;
   cruise_pid_derivative_filter.output_previous = cruise_pid_derivative_filter.output;
@@ -86097,7 +86097,6 @@ LAB_005254b0:
 // Function: cm848_runCruiseAndRoadSpeedGovernor @ 0x00525504
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* The cruise control / road speed governor PID, every pass from cm848_periodicTaskSet_outputs: the
    droop and preset fueling filters, the preset fueling window, the rate-limited reference, the
    speed error and its engine speed form, the proportional / integral (Q16) / derivative terms, the
@@ -86290,11 +86289,12 @@ LAB_00525a60:
       }
       wStack_36 = (word)iVar10;
     }
-    _cruise_pid_integrator_q16 = (uint)wStack_36 << 0x10;
+    cruise_pid_integrator_q16 = (q16_fixed_point_t)((uint)wStack_36 << 0x10);
   }
-  _cruise_pid_integrator_q16 =
-       ((_cruise_pid_integrator_q16 + iVar8 * cruise_pid_integral_gain * 4) -
-       (iVar11 * cruise_pid_integral_acceleration_gain >> 4)) + local_34;
+  cruise_pid_integrator_q16 =
+       (q16_fixed_point_t)
+       ((((int)cruise_pid_integrator_q16 + iVar8 * cruise_pid_integral_gain * 4) -
+        (iVar11 * cruise_pid_integral_acceleration_gain >> 4)) + local_34);
   if (cruise_governor_sump_holdoff_countdown == 0) {
     cruise_governor_sump_activation =
          (short)(iVar9 << 5) -
@@ -86325,8 +86325,9 @@ LAB_00525a60:
       else {
         cruise_governor_sump_trigger_fuel = 0xb80;
       }
-      _cruise_pid_integrator_q16 =
-           _cruise_pid_integrator_q16 + (short)cruise_governor_sump_trigger_fuel * -0x10000;
+      cruise_pid_integrator_q16 =
+           (q16_fixed_point_t)
+           ((int)cruise_pid_integrator_q16 + (short)cruise_governor_sump_trigger_fuel * -0x10000);
       cruise_governor_sump_holdoff_countdown = cruise_governor_sump_prevent_time;
       cruise_governor_sump_fuel = cruise_governor_sump_trigger_fuel;
       goto LAB_00525c1c;
@@ -86338,21 +86339,22 @@ LAB_00525c1c:
     cruise_governor_sump_activation_countdown = 4;
   }
   pwVar6 = cruise_governor_fueling_maximum_pointer;
-  if ((short)cruise_pid_integrator_q16 < (short)*cruise_governor_fueling_maximum_pointer) {
-    if ((short)cruise_pid_integrator_q16 < (short)cruise_governor_no_fuel_fueling) {
+  if ((short)cruise_pid_integrator_q16.integer_part <
+      (short)*cruise_governor_fueling_maximum_pointer) {
+    if ((short)cruise_pid_integrator_q16.integer_part < (short)cruise_governor_no_fuel_fueling) {
       pwVar6 = &cruise_governor_no_fuel_fueling;
       goto LAB_00525c60;
     }
   }
   else {
 LAB_00525c60:
-    _cruise_pid_integrator_q16 = (uint)*pwVar6 << 0x10;
+    cruise_pid_integrator_q16 = (q16_fixed_point_t)((uint)*pwVar6 << 0x10);
   }
-  cruise_pid_integral_fuel = cruise_pid_integrator_q16;
+  cruise_pid_integral_fuel = cruise_pid_integrator_q16.integer_part;
   if ((cruise_governor_bumpless_transfer_flag != 0) && (cruise_governor_preset_this_pass_flag == 0))
   {
-    iVar9 = (((uint)cruise_governor_fueling - iVar12) - (int)(short)cruise_pid_integrator_q16) +
-            iVar7;
+    iVar9 = (((uint)cruise_governor_fueling - iVar12) -
+            (int)(short)cruise_pid_integrator_q16.integer_part) + iVar7;
     if (iVar9 < 0xb80) {
       if (iVar9 < -0xb7f) {
         cruise_governor_sump_fuel = -0xb80;
@@ -86380,7 +86382,8 @@ LAB_00525d1c:
   else {
     cruise_governor_sump_fuel = cruise_governor_sump_fuel - cruise_governor_sump_decrement_rate;
   }
-  iVar9 = ((iVar12 + (short)cruise_pid_integrator_q16) - iVar7) + (int)cruise_governor_sump_fuel;
+  iVar9 = ((iVar12 + (short)cruise_pid_integrator_q16.integer_part) - iVar7) +
+          (int)cruise_governor_sump_fuel;
   if (iVar9 < 0x2e00) {
     if (iVar9 < -0x24b) {
       wStack_36 = 0xfdb4;
