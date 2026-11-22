@@ -1163,6 +1163,22 @@ typedef enum {
     LOW_SPEED_GOVERNOR_REFERENCE_MOVING = 12  /* e2m MOVING: low_speed_governor_moving_speed_request */
 } LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE;
 
+typedef enum {
+    ENGINE_RETARDER_COMMAND_SOURCE_NONE = 0,  /* No command (e2m NONE / NOT_COMM): cm848_selectEngineRetarderCommand with the allowed state NONE or no override in OVERRIDE_ONLY */
+    ENGINE_RETARDER_COMMAND_SOURCE_J1939_OVERRIDE = 1,  /* A TSC1 torque control request (e2m JCOMMOVD / JC_OVRD): the override command */
+    ENGINE_RETARDER_COMMAND_SOURCE_CRUISE = 2,  /* The cruise permission (e2m CRUISE): cm848_limitEngineRetarderPercentToCruisePermission */
+    ENGINE_RETARDER_COMMAND_SOURCE_SWITCH = 3,  /* The operator selection (e2m SWITCH): cm848_limitEngineRetarderPercentToOperatorSelection */
+    ENGINE_RETARDER_COMMAND_SOURCE_J1939_LIMIT = 4,  /* A TSC1 torque limit (e2m JCOMMLMT / JC_LIM): cm848_applyEngineRetarderTsc1Request */
+    ENGINE_RETARDER_COMMAND_SOURCE_NOT_SET = 5,  /* Not set (e2m NOT_SET): the power-up value of the override and command sources */
+    ENGINE_RETARDER_COMMAND_SOURCE_NO_OVERRIDE = 6  /* No override (e2m NOOVERDE / NO_OVRD): the override source without a TSC1 torque control request */
+} ENGINE_RETARDER_COMMAND_SOURCE;
+
+typedef enum {
+    ENGINE_RETARDER_ALLOWED_NONE = 0,  /* No command may brake: the brake is not wanted or an exit condition holds */
+    ENGINE_RETARDER_ALLOWED_OVERRIDE_ONLY = 1,  /* Only the override command (TSC1) may brake: the driver conditions (pedal / clutch / service brake) hold the rest off */
+    ENGINE_RETARDER_ALLOWED_OVERRIDE_OR_NON_OVERRIDE = 2  /* The override or the non-override command may brake (the non-override command restarts at 101) */
+} ENGINE_RETARDER_ALLOWED_STATE;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_rx_msg_t j1939_rx_msg_t;

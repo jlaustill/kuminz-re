@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 22:01:25 MST 2026
+// Generated: Sat Nov 21 22:05:13 MST 2026
 
 
 //
@@ -26019,16 +26019,18 @@ void cm848_buildPgn61440ElectronicRetarderController1Message(void)
   else {
     j1939_erc1_torque_mode_and_enable_byte = 0xd0;
   }
-  if (((engine_retarder_output_level_percent == 0) && (engine_retarder_command_source != 4)) &&
-     (engine_retarder_command_source != 1)) goto LAB_00026340;
-  if (engine_retarder_command_source == 1) {
+  if (((engine_retarder_output_level_percent == 0) &&
+      (engine_retarder_command_source != ENGINE_RETARDER_COMMAND_SOURCE_J1939_LIMIT)) &&
+     (engine_retarder_command_source != ENGINE_RETARDER_COMMAND_SOURCE_J1939_OVERRIDE))
+  goto LAB_00026340;
+  if (engine_retarder_command_source == ENGINE_RETARDER_COMMAND_SOURCE_J1939_OVERRIDE) {
 LAB_000262e8:
-    if (engine_retarder_j1939_control_device == 1) {
+    if (engine_retarder_j1939_control_device == J1939_CONTROL_DEVICE_TRANSMISSION) {
       bVar1 = 6;
     }
     else {
-      if (engine_retarder_j1939_control_device != 3) {
-        if (engine_retarder_j1939_control_device == 2) {
+      if (engine_retarder_j1939_control_device != J1939_CONTROL_DEVICE_ANTI_SLIP_REGULATION) {
+        if (engine_retarder_j1939_control_device == J1939_CONTROL_DEVICE_ANTI_LOCK_BRAKES) {
           bVar1 = 7;
           goto LAB_00026320;
         }
@@ -26040,14 +26042,15 @@ LAB_000262e8:
     j1939_erc1_torque_mode_and_enable_byte = j1939_erc1_torque_mode_and_enable_byte | bVar1;
   }
   else {
-    if (engine_retarder_command_source == 2) {
+    if (engine_retarder_command_source == ENGINE_RETARDER_COMMAND_SOURCE_CRUISE) {
       bVar1 = 2;
 LAB_00026320:
       j1939_erc1_torque_mode_and_enable_byte = j1939_erc1_torque_mode_and_enable_byte | bVar1;
       goto LAB_00026340;
     }
-    if (engine_retarder_command_source != 3) {
-      if (engine_retarder_command_source != 4) goto LAB_00026340;
+    if (engine_retarder_command_source != ENGINE_RETARDER_COMMAND_SOURCE_SWITCH) {
+      if (engine_retarder_command_source != ENGINE_RETARDER_COMMAND_SOURCE_J1939_LIMIT)
+      goto LAB_00026340;
       goto LAB_000262e8;
     }
     bVar1 = 1;
@@ -44547,7 +44550,8 @@ void cm848_updateEngineRetarderAllowedState(void)
       ((switch_input_state_bits.clutch_switch == 0 || ((governor_feature_config_word & 0x40) == 0)))
       ) && (((service_brake_recently_applied_flag == 1 ||
              (algorithm_enable_flags_18_cal.engine_retarder_service_brake_activate_enable == 0)) ||
-            (engine_retarder_non_override_command_source == 2)))) {
+            (engine_retarder_non_override_command_source == ENGINE_RETARDER_COMMAND_SOURCE_CRUISE)))
+     ) {
     engine_retarder_driver_conditions_met_flag = true;
   }
   else {
@@ -44596,18 +44600,18 @@ void cm848_updateEngineRetarderAllowedState(void)
      (algorithm_enable_flags_41_cal.engine_retarder_speed_limit_enable == 0)) {
     if (((engine_retarder_command_percent == 0) && (!(bool)engine_retarder_enter_condition_flag)) ||
        ((engine_retarder_command_percent != 0 && ((bool)engine_retarder_exit_condition_flag)))) {
-      engine_retarder_allowed_state = 0;
+      engine_retarder_allowed_state = ENGINE_RETARDER_ALLOWED_NONE;
       goto LAB_000418e0;
     }
     if ((((engine_retarder_command_percent != 0) || (!(bool)engine_retarder_enter_condition_flag))
         || (!(bool)engine_retarder_driver_conditions_met_flag)) &&
        (((engine_retarder_command_percent == 0 || ((bool)engine_retarder_exit_condition_flag)) ||
         ((bool)engine_retarder_driver_inhibit_flag)))) {
-      engine_retarder_allowed_state = 1;
+      engine_retarder_allowed_state = ENGINE_RETARDER_ALLOWED_OVERRIDE_ONLY;
       goto LAB_000418e0;
     }
   }
-  engine_retarder_allowed_state = 2;
+  engine_retarder_allowed_state = ENGINE_RETARDER_ALLOWED_OVERRIDE_OR_NON_OVERRIDE;
   engine_retarder_non_override_command_percent = 0x65;
 LAB_000418e0:
   if ((service_brake_recently_applied_flag == 1) && ((governor_mode_config_flags & 1) != 0)) {
@@ -44677,7 +44681,7 @@ void cm848_limitEngineRetarderPercentToOperatorSelection(void)
 {
   if (engine_retarder_selection_percent < engine_retarder_non_override_command_percent) {
     engine_retarder_non_override_command_percent = engine_retarder_selection_percent;
-    engine_retarder_non_override_command_source = 3;
+    engine_retarder_non_override_command_source = ENGINE_RETARDER_COMMAND_SOURCE_SWITCH;
   }
   return;
 }
@@ -44700,26 +44704,26 @@ void cm848_limitEngineRetarderPercentToOperatorSelection(void)
 void cm848_applyEngineRetarderTsc1Request(void)
 
 {
-  engine_retarder_override_command_source = 6;
+  engine_retarder_override_command_source = ENGINE_RETARDER_COMMAND_SOURCE_NO_OVERRIDE;
   if ((engine_retarder_override_control_mode == TSC1_OVERRIDE_OFF) ||
      (engine_retarder_tool_override_control_mode == 1)) {
     engine_retarder_override_command_percent = 0;
-    engine_retarder_override_command_source = 6;
-    engine_retarder_j1939_control_device = 0;
+    engine_retarder_override_command_source = ENGINE_RETARDER_COMMAND_SOURCE_NO_OVERRIDE;
+    engine_retarder_j1939_control_device = J1939_CONTROL_DEVICE_NONE;
   }
   else if ((engine_retarder_override_control_mode == TSC1_TORQUE_CONTROL) ||
           (engine_retarder_tool_override_control_mode == 2)) {
     engine_retarder_override_command_percent = engine_retarder_torque_request_percent;
-    engine_retarder_override_command_source = 1;
+    engine_retarder_override_command_source = ENGINE_RETARDER_COMMAND_SOURCE_J1939_OVERRIDE;
     engine_retarder_j1939_control_device = engine_retarder_control_device_indicator;
   }
   else if (((engine_retarder_override_control_mode == TSC1_SPEED_TORQUE_LIMIT) ||
            (engine_retarder_tool_override_control_mode == 3)) &&
           (engine_retarder_torque_limit_percent < engine_retarder_non_override_command_percent)) {
-    engine_retarder_override_command_source = 6;
+    engine_retarder_override_command_source = ENGINE_RETARDER_COMMAND_SOURCE_NO_OVERRIDE;
     engine_retarder_j1939_control_device = engine_retarder_control_device_indicator;
     engine_retarder_non_override_command_percent = engine_retarder_torque_limit_percent;
-    engine_retarder_non_override_command_source = 4;
+    engine_retarder_non_override_command_source = ENGINE_RETARDER_COMMAND_SOURCE_J1939_LIMIT;
   }
   return;
 }
@@ -44746,18 +44750,19 @@ void cm848_selectEngineRetarderCommand(void)
 
 {
   if (engine_retarder_command_tool_override_flag == 0) {
-    if (engine_retarder_allowed_state == 0) {
+    if (engine_retarder_allowed_state == ENGINE_RETARDER_ALLOWED_NONE) {
       engine_retarder_command_percent = 0;
-      engine_retarder_command_source = 0;
+      engine_retarder_command_source = ENGINE_RETARDER_COMMAND_SOURCE_NONE;
     }
-    else if ((engine_retarder_override_command_source == 6) && (engine_retarder_allowed_state == 1))
-    {
+    else if ((engine_retarder_override_command_source == ENGINE_RETARDER_COMMAND_SOURCE_NO_OVERRIDE)
+            && (engine_retarder_allowed_state == ENGINE_RETARDER_ALLOWED_OVERRIDE_ONLY)) {
       engine_retarder_command_percent = 0;
-      engine_retarder_command_source = 0;
+      engine_retarder_command_source = ENGINE_RETARDER_COMMAND_SOURCE_NONE;
     }
-    else if ((engine_retarder_override_command_source == 6) || (engine_retarder_allowed_state == 0))
-    {
-      if ((engine_retarder_override_command_source == 6) && (engine_retarder_allowed_state == 2)) {
+    else if ((engine_retarder_override_command_source == ENGINE_RETARDER_COMMAND_SOURCE_NO_OVERRIDE)
+            || (engine_retarder_allowed_state == ENGINE_RETARDER_ALLOWED_NONE)) {
+      if ((engine_retarder_override_command_source == ENGINE_RETARDER_COMMAND_SOURCE_NO_OVERRIDE) &&
+         (engine_retarder_allowed_state == ENGINE_RETARDER_ALLOWED_OVERRIDE_OR_NON_OVERRIDE)) {
         engine_retarder_command_percent = engine_retarder_non_override_command_percent;
         engine_retarder_command_source = engine_retarder_non_override_command_source;
       }
@@ -45030,11 +45035,11 @@ void cm848_initializeEngineRetarderRequestState(void)
   engine_retarder_release_counter = 0;
   service_brake_release_delay_counter = 0;
   engine_retarder_active_flag = 0;
-  engine_retarder_override_command_source = 5;
-  engine_retarder_command_source = 5;
+  engine_retarder_override_command_source = ENGINE_RETARDER_COMMAND_SOURCE_NOT_SET;
+  engine_retarder_command_source = ENGINE_RETARDER_COMMAND_SOURCE_NOT_SET;
   service_brake_recently_applied_flag = 0;
   engine_retarder_immediate_brake_flag._0_2_ = 0;
-  engine_retarder_allowed_state = 0;
+  engine_retarder_allowed_state = ENGINE_RETARDER_ALLOWED_NONE;
   engine_retarder_tool_override_control_mode = 0;
   engine_retarder_command_tool_override_flag = 0;
   mass_charge_flow_engine_retarder_command = 0;
@@ -85460,7 +85465,7 @@ void cm848_limitEngineRetarderPercentToCruisePermission(void)
 {
   if (engine_retarder_cruise_permission_percent < engine_retarder_non_override_command_percent) {
     engine_retarder_non_override_command_percent = engine_retarder_cruise_permission_percent;
-    engine_retarder_non_override_command_source = 2;
+    engine_retarder_non_override_command_source = ENGINE_RETARDER_COMMAND_SOURCE_CRUISE;
   }
   return;
 }
