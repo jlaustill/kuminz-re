@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 04:54:25 MST 2026
+// Generated: Sun Nov 22 05:31:12 MST 2026
 
 
 //
@@ -1777,10 +1777,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
-  word qadc_b_pqb0_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -6701,7 +6701,7 @@ void hpcr_periodicTaskSet_fuelFinal(void)
   cm848_updateAcceleratorPedalSensorFaultFlags();
   cm848_checkAcceleratorPedalChannelAgreement();
   cm848_calculateAcceleratorPedalDemandFromChannels();
-  cm848_fuelDemandFinalCalculation();
+  cm848_selectCommandedThrottle();
   cm848_updateVariableSpeedGovernorSelection();
   cm848_updateEngineState();
   return;
@@ -7211,7 +7211,7 @@ void cm848_periodicTaskSet_auxiliary(void)
 void periodicTaskSet_fuelDemand(void)
 
 {
-  cm848_fuelDemandCoordinator();
+  cm848_runThrottleValidation();
   cm848_updateTripAndLifetimeCounters();
   cm848_fuelDemand_periodic();
   cm848_monitorWastegateBoostPressure();
@@ -9435,7 +9435,7 @@ LAB_0000efb0:
     all_speed_governor_reset_flag = 0;
     uVar11 = all_speed_governor_state_pid_integral_clamped;
   }
-  if ((fuel_demand_control_t_0040a57a.calculated == 0) &&
+  if ((commanded_throttle_state.commanded_throttle == 0) &&
      (all_speed_governor_deadband_compensation_flag == 1)) {
     if (final_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR) {
       iVar9 = (((uint)final_fueling - (uint)all_speed_governor_fueling) +
@@ -9971,9 +9971,9 @@ void cm848_initFuelTimingTableSizes(void)
 //
 
 /* The ASG throttle reference speed: interpolates between the governor's low and high speeds by the
-   throttle (fuel_demand_control_t_0040a57a.calculated - 0..400 = 0..100 %) into speed_request_base
-   / speed_request_unfiltered and copies the filtered engine speed as the governor feedback (was
-   cm848_calculateFuelTimingTarget) */
+   throttle (commanded_throttle_state.commanded_throttle - 0..400 = 0..100 %) into
+   speed_request_base / speed_request_unfiltered and copies the filtered engine speed as the
+   governor feedback (was cm848_calculateFuelTimingTarget) */
 
 void cm848_calculateAllSpeedGovernorThrottleReference(void)
 
@@ -9985,7 +9985,7 @@ void cm848_calculateAllSpeedGovernorThrottleReference(void)
     governor_speed_lower_limit =
          low_speed_governor_desired_reference_speed - governor_speed_lower_limit_offset_cal;
   }
-  uVar1 = (uint)fuel_demand_control_t_0040a57a.calculated;
+  uVar1 = (uint)commanded_throttle_state.commanded_throttle;
   speed_request_base = all_speed_governor_maximum_reference_speed;
   if ((uVar1 != 400) && (speed_request_base = governor_speed_lower_limit, uVar1 != 0)) {
     speed_request_base =
@@ -15130,10 +15130,18 @@ void cm848_initializeOffNominalCompensationLookupCaches(void)
 
 
 //
-// Function: cm848_fuelDemandBaseCalculation @ 0x0001702c
+// Function: cm848_calculateCommandedThrottleFromPedal @ 0x0001702c
 //
 
-void cm848_fuelDemandBaseCalculation(void)
+/* Calculated_Commanded_Throttle (e2m 1047 +10) from the analog pedal:
+   (accelerator_pedal_sensor_counts - the autozero) x 400 / accelerator_pedal_throttle_range (e2m
+   1048 Throttle_Range), at most 400; 0 while a pedal fault holds (registered fault bits 10 / 11 set
+   the low word of throttle_fuel_enable_flag, or detected fault bits 63 / 68) or the pedal is at or
+   below the autozero. The autozero is accelerator_pedal_autozero_cal, or
+   accelerator_pedal_test_cell_autozero with the test cell override, which also sets
+   accelerator_off_idle (was cm848_fuelDemandBaseCalculation) */
+
+void cm848_calculateCommandedThrottleFromPedal(void)
 
 {
   uint uVar1;
@@ -15153,24 +15161,24 @@ void cm848_fuelDemandBaseCalculation(void)
   else {
     uVar1 = (uint)accelerator_pedal_test_cell_autozero;
     if (uVar1 < uVar2) {
-      fuel_demand_control_t_0040a57a.accelerator_off_idle = 1;
+      commanded_throttle_state.accelerator_off_idle = 1;
     }
     else {
-      fuel_demand_control_t_0040a57a.accelerator_off_idle = 0;
+      commanded_throttle_state.accelerator_off_idle = 0;
     }
   }
   if ((((throttle_fuel_enable_flag._0_2_ == 0) &&
        ((system_status_flags_t_003fe974.fault_detected_bits_48_to_63 & 0x8000) == 0)) &&
       ((system_status_flags_t_003fe974.fault_detected_bits_64_to_79 & 0x10) == 0)) &&
      (uVar1 < uVar2)) {
-    uVar2 = ((uVar2 - uVar1) * 400) / (uint)DAT_0005c292;
-    fuel_demand_control_t_0040a57a.rate_limited = (word)uVar2;
+    uVar2 = ((uVar2 - uVar1) * 400) / (uint)accelerator_pedal_throttle_range;
+    commanded_throttle_state.calculated_commanded_throttle = (word)uVar2;
     if (400 < (uVar2 & 0xffff)) {
-      fuel_demand_control_t_0040a57a.rate_limited = 400;
+      commanded_throttle_state.calculated_commanded_throttle = 400;
     }
   }
   else {
-    fuel_demand_control_t_0040a57a.rate_limited = 0;
+    commanded_throttle_state.calculated_commanded_throttle = 0;
   }
   return;
 }
@@ -15183,60 +15191,63 @@ void cm848_fuelDemandBaseCalculation(void)
 
 /* Idle validation: compares logical switches 7 (accelerator at idle) / 8 (off idle) with
    accelerator_pedal_sensor_counts against the idle position and the band (idle position +/-
-   offsets) -> fuel_demand_control_t.idle_validation_state 0-8 (was cm848_fuelDemandModeSelector) |
-   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+   offsets) -> commanded_throttle_state_t.idle_validation_state 0-8 (was
+   cm848_fuelDemandModeSelector) | review-function-readability reviewed 2026-11-12 - Readability
+   Medium Accuracy Confidence High */
 
 void cm848_evaluateIdleValidationSwitches(void)
 
 {
-  throttle_fuel_demand_upper_bound =
-       (accelerator_pedal_autozero_cal - accelerator_pedal_autozero_offset) + DAT_0005c28e;
-  throttle_fuel_demand_lower_bound =
-       (accelerator_pedal_autozero_cal - accelerator_pedal_autozero_offset) + DAT_0005c290;
+  idle_validation_off_idle_threshold =
+       (accelerator_pedal_autozero_cal - accelerator_pedal_autozero_offset) +
+       accelerator_pedal_off_idle_deadband;
+  idle_validation_idle_threshold =
+       (accelerator_pedal_autozero_cal - accelerator_pedal_autozero_offset) +
+       accelerator_pedal_idle_hysteresis;
   if (((switch_input_state_bits.idle_switch != 0) && (switch_input_state_bits.not_idle_switch == 0))
      || ((switch_input_state_bits.idle_switch == 0 && (switch_input_state_bits.not_idle_switch != 0)
          ))) {
     if (switch_input_state_bits.idle_switch == 0) {
       if (accelerator_pedal_autozero_cal <= accelerator_pedal_sensor_counts) {
-        fuel_demand_control_t_0040a57a.idle_validation_state = 1;
+        commanded_throttle_state.idle_validation_state = 1;
         return;
       }
-      if (accelerator_pedal_sensor_counts < throttle_fuel_demand_lower_bound) {
-        fuel_demand_control_t_0040a57a.idle_validation_state = 3;
+      if (accelerator_pedal_sensor_counts < idle_validation_idle_threshold) {
+        commanded_throttle_state.idle_validation_state = 3;
         return;
       }
     }
     else {
       if (accelerator_pedal_sensor_counts <= accelerator_pedal_autozero_cal) {
-        fuel_demand_control_t_0040a57a.idle_validation_state = 0;
+        commanded_throttle_state.idle_validation_state = 0;
         return;
       }
-      if (throttle_fuel_demand_upper_bound < accelerator_pedal_sensor_counts) {
-        fuel_demand_control_t_0040a57a.idle_validation_state = 2;
+      if (idle_validation_off_idle_threshold < accelerator_pedal_sensor_counts) {
+        commanded_throttle_state.idle_validation_state = 2;
         return;
       }
     }
-    fuel_demand_control_t_0040a57a.idle_validation_state = 8;
+    commanded_throttle_state.idle_validation_state = 8;
     return;
   }
   if (switch_input_state_bits.idle_switch != 0) {
-    if ((accelerator_pedal_sensor_counts <= throttle_fuel_demand_upper_bound) &&
-       (throttle_fuel_demand_lower_bound <= accelerator_pedal_sensor_counts)) {
-      fuel_demand_control_t_0040a57a.idle_validation_state = 7;
+    if ((accelerator_pedal_sensor_counts <= idle_validation_off_idle_threshold) &&
+       (idle_validation_idle_threshold <= accelerator_pedal_sensor_counts)) {
+      commanded_throttle_state.idle_validation_state = 7;
       return;
     }
-    fuel_demand_control_t_0040a57a.idle_validation_state = 4;
+    commanded_throttle_state.idle_validation_state = 4;
     return;
   }
-  if (throttle_fuel_demand_upper_bound < accelerator_pedal_sensor_counts) {
-    fuel_demand_control_t_0040a57a.idle_validation_state = 5;
+  if (idle_validation_off_idle_threshold < accelerator_pedal_sensor_counts) {
+    commanded_throttle_state.idle_validation_state = 5;
     return;
   }
-  if (accelerator_pedal_sensor_counts < throttle_fuel_demand_lower_bound) {
-    fuel_demand_control_t_0040a57a.idle_validation_state = 6;
+  if (accelerator_pedal_sensor_counts < idle_validation_idle_threshold) {
+    commanded_throttle_state.idle_validation_state = 6;
     return;
   }
-  fuel_demand_control_t_0040a57a.idle_validation_state = 7;
+  commanded_throttle_state.idle_validation_state = 7;
   return;
 }
 
@@ -15246,7 +15257,7 @@ void cm848_evaluateIdleValidationSwitches(void)
 // Function: cm848_updateOffIdleFromIdleValidation @ 0x000172b0
 //
 
-/* fuel_demand_control_t.accelerator_off_idle = 1 for idle_validation_state 1 / 3 / 5 (off-idle
+/* commanded_throttle_state_t.accelerator_off_idle = 1 for idle_validation_state 1 / 3 / 5 (off-idle
    switch agrees / off-idle switch with a low pedal / no switch with a high pedal) (was
    cm848_fuelDemandEnableChecker) | review-function-readability reviewed 2026-11-12 - Readability
    Medium Accuracy Confidence High */
@@ -15254,13 +15265,13 @@ void cm848_evaluateIdleValidationSwitches(void)
 void cm848_updateOffIdleFromIdleValidation(void)
 
 {
-  if (((fuel_demand_control_t_0040a57a.idle_validation_state == 1) ||
-      (fuel_demand_control_t_0040a57a.idle_validation_state == 3)) ||
-     (fuel_demand_control_t_0040a57a.idle_validation_state == 5)) {
-    fuel_demand_control_t_0040a57a.accelerator_off_idle = 1;
+  if (((commanded_throttle_state.idle_validation_state == 1) ||
+      (commanded_throttle_state.idle_validation_state == 3)) ||
+     (commanded_throttle_state.idle_validation_state == 5)) {
+    commanded_throttle_state.accelerator_off_idle = 1;
   }
   else {
-    fuel_demand_control_t_0040a57a.accelerator_off_idle = 0;
+    commanded_throttle_state.accelerator_off_idle = 0;
   }
   return;
 }
@@ -15268,31 +15279,39 @@ void cm848_updateOffIdleFromIdleValidation(void)
 
 
 //
-// Function: cm848_fuelDemandRateLimiterStateMachine @ 0x000172e8
+// Function: cm848_updateThrottleTransitionState @ 0x000172e8
 //
 
-void cm848_fuelDemandRateLimiterStateMachine(void)
+/* The throttle transition state (e2m 1047 +6 Transition_State, 'state of potentiometer and idle
+   validation switch readings'): 0 -> 1 and 2 -> 3 once the idle switch is on, the off-idle switch
+   off and the pedal at or below Throttle_Min + accelerator_pedal_autozero_offset; 1 -> 2 when idle
+   validation state 1 holds and the pedal is above Throttle_Min +
+   accelerator_pedal_above_idle_transition_range (e2m 1048 Throttle_Transition_Range).
+   cm848_monitorAcceleratorPedalIdleValidationFaults acts in state 3. No rate limiter (was
+   cm848_fuelDemandRateLimiterStateMachine) */
+
+void cm848_updateThrottleTransitionState(void)
 
 {
   word wVar1;
   
-  if (fuel_demand_control_t_0040a57a.rate_limiter_state == 0) {
+  if (commanded_throttle_state.throttle_transition_state == 0) {
     wVar1 = 1;
   }
   else {
-    if (fuel_demand_control_t_0040a57a.rate_limiter_state == 1) {
-      if (fuel_demand_control_t_0040a57a.idle_validation_state != 1) {
+    if (commanded_throttle_state.throttle_transition_state == 1) {
+      if (commanded_throttle_state.idle_validation_state != 1) {
         return;
       }
-      if ((uint)fuel_demand_control_t_0040a57a.throttle_based +
+      if ((uint)commanded_throttle_state.throttle_minimum +
           (uint)accelerator_pedal_above_idle_transition_range <
           (uint)accelerator_pedal_sensor_counts) {
-        fuel_demand_control_t_0040a57a.rate_limiter_state = 2;
+        commanded_throttle_state.throttle_transition_state = 2;
         return;
       }
       return;
     }
-    if (fuel_demand_control_t_0040a57a.rate_limiter_state != 2) {
+    if (commanded_throttle_state.throttle_transition_state != 2) {
       return;
     }
     wVar1 = 3;
@@ -15302,9 +15321,8 @@ void cm848_fuelDemandRateLimiterStateMachine(void)
   }
   if (switch_input_state_bits.not_idle_switch == 0) {
     if ((uint)accelerator_pedal_sensor_counts <=
-        (uint)fuel_demand_control_t_0040a57a.throttle_based +
-        (uint)accelerator_pedal_autozero_offset) {
-      fuel_demand_control_t_0040a57a.rate_limiter_state = wVar1;
+        (uint)commanded_throttle_state.throttle_minimum + (uint)accelerator_pedal_autozero_offset) {
+      commanded_throttle_state.throttle_transition_state = wVar1;
       return;
     }
     return;
@@ -15319,67 +15337,70 @@ void cm848_fuelDemandRateLimiterStateMachine(void)
 //
 
 /* Learns the accelerator pedal minimum Throttle_Min (e2m 1047 +A,
-   fuel_demand_control_t.throttle_based) and the autozero (e2m 101A +0 Auto_Zero,
+   commanded_throttle_state_t.throttle_minimum) and the autozero (e2m 101A +0 Auto_Zero,
    accelerator_pedal_autozero_cal, EEPROM 0x928). Learning runs only while switch 7 (accelerator at
    idle, switch_input_state_bits[0] mask 0x80) is on and switch 8 (off idle, [1] mask 0x01) is off,
-   fuel_demand_override_counter is not above the time limit (e2m 1048 +18 TPS_AZ_Time_Limit, ROM
-   0x5c2a6) and the accepted update count governor_speed_output_snapshot is not above
+   accelerator_pedal_autozero_elapsed_time is not above the time limit (e2m 1048 +18
+   TPS_AZ_Time_Limit, ROM 0x5c2a6) and the accepted update count
+   accelerator_pedal_autozero_update_count is not above
    accelerator_pedal_autozero_update_count_limit (e2m 1048 +1A TPS_AZ_Update_Limit); otherwise
-   throttle_fuel_demand_tracked follows throttle_based and the confidence counter
-   fuel_demand_control_t.rate_delta (e2m 1047 +8 Current_Confidence_Counter) is 0. While learning it
-   tracks the lowest accelerator_pedal_sensor_counts: a reading below throttle_based becomes the
-   candidate and loads the counter with accelerator_pedal_minimum_learning_confidence_count_limit
-   (e2m 1048 +8 Maximum_Confidence_Count); readings within
-   accelerator_pedal_minimum_learning_confidence_band (+A Confidence_Band) of the candidate count it
-   down and at 0 the candidate becomes throttle_based, accelerator_pedal_autozero_cal = candidate +
-   accelerator_pedal_autozero_offset (+10 Auto_Zero_Offset) is stored and the update count is
-   incremented; readings above the band count it back up, and reaching the count limit drops the
-   candidate. When throttle_based is at or above accelerator_pedal_highest_valid_minimum (+6
-   Highest_Throttle_Min) and an update was accepted, it is set back to
-   accelerator_pedal_autozero_cal - accelerator_pedal_autozero_offset. Caller
-   cm848_fuelDemandCoordinator. (was cm848_fuelDemandOverrideHandler) */
+   throttle_minimum_candidate follows throttle_minimum and the confidence counter
+   commanded_throttle_state_t.throttle_minimum_confidence_counter (e2m 1047 +8
+   Current_Confidence_Counter) is 0. While learning it tracks the lowest
+   accelerator_pedal_sensor_counts: a reading below throttle_minimum becomes the candidate and loads
+   the counter with accelerator_pedal_minimum_learning_confidence_count_limit (e2m 1048 +8
+   Maximum_Confidence_Count); readings within accelerator_pedal_minimum_learning_confidence_band (+A
+   Confidence_Band) of the candidate count it down and at 0 the candidate becomes throttle_minimum,
+   accelerator_pedal_autozero_cal = candidate + accelerator_pedal_autozero_offset (+10
+   Auto_Zero_Offset) is stored and the update count is incremented; readings above the band count it
+   back up, and reaching the count limit drops the candidate. When throttle_minimum is at or above
+   accelerator_pedal_highest_valid_minimum (+6 Highest_Throttle_Min) and an update was accepted, it
+   is set back to accelerator_pedal_autozero_cal - accelerator_pedal_autozero_offset. Caller
+   cm848_runThrottleValidation. (was cm848_fuelDemandOverrideHandler) */
 
 void cm848_learnAcceleratorPedalAutozero(void)
 
 {
   if ((((switch_input_state_bits.idle_switch == 0) || (switch_input_state_bits.not_idle_switch != 0)
-       ) || (DAT_0005c2a6 < fuel_demand_override_counter)) ||
-     (accelerator_pedal_autozero_update_count_limit < governor_speed_output_snapshot)) {
-    throttle_fuel_demand_tracked = fuel_demand_control_t_0040a57a.throttle_based;
-    fuel_demand_control_t_0040a57a.rate_delta = 0;
+       ) || (accelerator_pedal_autozero_time_limit < accelerator_pedal_autozero_elapsed_time)) ||
+     (accelerator_pedal_autozero_update_count_limit < accelerator_pedal_autozero_update_count)) {
+    throttle_minimum_candidate = commanded_throttle_state.throttle_minimum;
+    commanded_throttle_state.throttle_minimum_confidence_counter = 0;
   }
   else {
-    fuel_demand_override_counter = fuel_demand_override_counter + 1;
-    if (fuel_demand_control_t_0040a57a.rate_delta == 0) {
-      if (accelerator_pedal_sensor_counts < fuel_demand_control_t_0040a57a.throttle_based) {
-        throttle_fuel_demand_tracked = accelerator_pedal_sensor_counts;
-        fuel_demand_control_t_0040a57a.rate_delta =
+    accelerator_pedal_autozero_elapsed_time = accelerator_pedal_autozero_elapsed_time + 1;
+    if (commanded_throttle_state.throttle_minimum_confidence_counter == 0) {
+      if (accelerator_pedal_sensor_counts < commanded_throttle_state.throttle_minimum) {
+        throttle_minimum_candidate = accelerator_pedal_sensor_counts;
+        commanded_throttle_state.throttle_minimum_confidence_counter =
              accelerator_pedal_minimum_learning_confidence_count_limit;
       }
     }
-    else if ((uint)throttle_fuel_demand_tracked +
+    else if ((uint)throttle_minimum_candidate +
              (uint)accelerator_pedal_minimum_learning_confidence_band <
              (uint)accelerator_pedal_sensor_counts) {
-      fuel_demand_control_t_0040a57a.rate_delta = fuel_demand_control_t_0040a57a.rate_delta + 1;
-      if (fuel_demand_control_t_0040a57a.rate_delta ==
+      commanded_throttle_state.throttle_minimum_confidence_counter =
+           commanded_throttle_state.throttle_minimum_confidence_counter + 1;
+      if (commanded_throttle_state.throttle_minimum_confidence_counter ==
           accelerator_pedal_minimum_learning_confidence_count_limit) {
-        throttle_fuel_demand_tracked = fuel_demand_control_t_0040a57a.throttle_based;
-        fuel_demand_control_t_0040a57a.rate_delta = 0;
+        throttle_minimum_candidate = commanded_throttle_state.throttle_minimum;
+        commanded_throttle_state.throttle_minimum_confidence_counter = 0;
       }
     }
     else {
-      fuel_demand_control_t_0040a57a.rate_delta = fuel_demand_control_t_0040a57a.rate_delta - 1;
-      if (fuel_demand_control_t_0040a57a.rate_delta == 0) {
-        fuel_demand_control_t_0040a57a.throttle_based = throttle_fuel_demand_tracked;
+      commanded_throttle_state.throttle_minimum_confidence_counter =
+           commanded_throttle_state.throttle_minimum_confidence_counter - 1;
+      if (commanded_throttle_state.throttle_minimum_confidence_counter == 0) {
+        commanded_throttle_state.throttle_minimum = throttle_minimum_candidate;
         accelerator_pedal_autozero_cal =
-             throttle_fuel_demand_tracked + accelerator_pedal_autozero_offset;
-        governor_speed_output_snapshot = governor_speed_output_snapshot + 1;
+             throttle_minimum_candidate + accelerator_pedal_autozero_offset;
+        accelerator_pedal_autozero_update_count = accelerator_pedal_autozero_update_count + 1;
       }
     }
   }
-  if ((accelerator_pedal_highest_valid_minimum <= fuel_demand_control_t_0040a57a.throttle_based) &&
-     (governor_speed_output_snapshot != 0)) {
-    fuel_demand_control_t_0040a57a.throttle_based =
+  if ((accelerator_pedal_highest_valid_minimum <= commanded_throttle_state.throttle_minimum) &&
+     (accelerator_pedal_autozero_update_count != 0)) {
+    commanded_throttle_state.throttle_minimum =
          accelerator_pedal_autozero_cal - accelerator_pedal_autozero_offset;
   }
   return;
@@ -15401,7 +15422,7 @@ void cm848_monitorAcceleratorPedalIdleValidationFaults(void)
   ushort uVar1;
   uint uVar2;
   
-  if (fuel_demand_control_t_0040a57a.rate_limiter_state == 3) {
+  if (commanded_throttle_state.throttle_transition_state == 3) {
     if ((fault_registered_bits_64_to_79 & 0x10) != 0) {
       system_status_flags_t_003fe974.fault_detected_bits_64_to_79 =
            system_status_flags_t_003fe974.fault_detected_bits_64_to_79 & 0xffef;
@@ -15432,44 +15453,44 @@ void cm848_monitorAcceleratorPedalIdleValidationFaults(void)
     if (accelerator_pedal_autozero_cal <= accelerator_pedal_sensor_counts) {
       uVar1 = accelerator_pedal_fault_delay;
     }
-    if (fuel_demand_control_t_0040a57a.idle_validation_state == 4) {
+    if (commanded_throttle_state.idle_validation_state == 4) {
       if (accelerator_pedal_fault_debounce_count_a < uVar1) {
         accelerator_pedal_fault_debounce_count_a = accelerator_pedal_fault_debounce_count_a + 1;
       }
       else {
         system_status_flags_t_003fe974.fault_detected_bits_64_to_79 =
              system_status_flags_t_003fe974.fault_detected_bits_64_to_79 | 0x10;
-        fuel_demand_control_t_0040a57a.rate_limiter_state = 0;
+        commanded_throttle_state.throttle_transition_state = 0;
         accelerator_pedal_fault_debounce_count_a = uVar1;
       }
     }
     else {
       accelerator_pedal_fault_debounce_count_a = 0;
     }
-    if ((fuel_demand_control_t_0040a57a.idle_validation_state == 6) ||
-       (fuel_demand_control_t_0040a57a.idle_validation_state == 5)) {
+    if ((commanded_throttle_state.idle_validation_state == 6) ||
+       (commanded_throttle_state.idle_validation_state == 5)) {
       if (accelerator_pedal_fault_debounce_count_b < uVar1) {
         accelerator_pedal_fault_debounce_count_b = accelerator_pedal_fault_debounce_count_b + 1;
       }
       else {
         system_status_flags_t_003fe974.fault_detected_bits_48_to_63 =
              system_status_flags_t_003fe974.fault_detected_bits_48_to_63 | 0x4000;
-        fuel_demand_control_t_0040a57a.rate_limiter_state = 0;
+        commanded_throttle_state.throttle_transition_state = 0;
         accelerator_pedal_fault_debounce_count_b = uVar1;
       }
     }
     else {
       accelerator_pedal_fault_debounce_count_b = 0;
     }
-    if ((fuel_demand_control_t_0040a57a.idle_validation_state == 2) ||
-       (fuel_demand_control_t_0040a57a.idle_validation_state == 3)) {
+    if ((commanded_throttle_state.idle_validation_state == 2) ||
+       (commanded_throttle_state.idle_validation_state == 3)) {
       if (accelerator_pedal_fault_debounce_count_c < uVar1) {
         uVar1 = accelerator_pedal_fault_debounce_count_c + 1;
       }
       else {
         system_status_flags_t_003fe974.fault_detected_bits_48_to_63 =
              system_status_flags_t_003fe974.fault_detected_bits_48_to_63 | 0x8000;
-        fuel_demand_control_t_0040a57a.rate_limiter_state = 0;
+        commanded_throttle_state.throttle_transition_state = 0;
         idle_validation_switch_state_at_throttle_validation_error_cal =
              (word)(switch_input_state_bits.idle_switch != 0);
       }
@@ -15485,57 +15506,78 @@ void cm848_monitorAcceleratorPedalIdleValidationFaults(void)
 
 
 //
-// Function: cm848_fuelDemandFinalCalculation @ 0x0001782c
+// Function: cm848_selectCommandedThrottle @ 0x0001782c
 //
 
-void cm848_fuelDemandFinalCalculation(void)
+/* Sets the commanded throttle (e2m 1047 Commanded_Throttle, 0-400 = 0-100 %). The calculated
+   commanded throttle comes from cm848_calculateCommandedThrottleFromPedal, from
+   accelerator_pedal_dual_channel_validated_demand with the dual channel pedal, or from channel 13
+   while its held value (the J1939 pedal) is enabled - that case sets the commanded throttle
+   straight from channel 13 and returns when j1939_input_source_priority is below the channel's held
+   value source priority. While a claimer holds alternate_throttle_priority the commanded throttle
+   is the alternate throttle (selected_alternate_throttle_priority keeps the priority; the claim is
+   cleared every pass); then the per-pass change commanded_throttle_delta and its first order filter
+   (was cm848_fuelDemandFinalCalculation) */
+
+void cm848_selectCommandedThrottle(void)
 
 {
   word *pwVar1;
   
   if ((sensor_channel_held_value_enable_bits_cal[0] & 0x2000) == 0) {
     if (accelerator_pedal_dual_channel_enable_flag == 0) {
-      cm848_fuelDemandBaseCalculation();
+      cm848_calculateCommandedThrottleFromPedal();
       goto LAB_000178d0;
     }
-    pwVar1 = &governor_speed_demand_limit_prev;
+    pwVar1 = &accelerator_pedal_dual_channel_validated_demand;
   }
   else {
     if (j1939_input_source_priority <
         accelerator_pedal_sensor_channel_state.held_value_source_priority) {
-      fuel_demand_control_t_0040a57a.calculated = accelerator_pedal_sensor_filtered;
+      commanded_throttle_state.commanded_throttle = accelerator_pedal_sensor_filtered;
       return;
     }
     pwVar1 = &accelerator_pedal_sensor_filtered;
   }
-  fuel_demand_control_t_0040a57a.rate_limited = *pwVar1;
+  commanded_throttle_state.calculated_commanded_throttle = *pwVar1;
 LAB_000178d0:
-  if (fuel_demand_control_t_0040a57a.override_priority == 0) {
-    fuel_demand_control_t_0040a57a.override_countdown = 0;
-    fuel_demand_control_t_0040a57a.calculated = fuel_demand_control_t_0040a57a.rate_limited;
+  if (commanded_throttle_state.alternate_throttle_priority == 0) {
+    commanded_throttle_state.selected_alternate_throttle_priority = 0;
+    commanded_throttle_state.commanded_throttle =
+         commanded_throttle_state.calculated_commanded_throttle;
   }
   else {
-    fuel_demand_control_t_0040a57a.calculated = fuel_demand_control_t_0040a57a.override_value;
-    fuel_demand_control_t_0040a57a.override_countdown =
-         fuel_demand_control_t_0040a57a.override_priority;
-    fuel_demand_control_t_0040a57a.override_priority = 0;
+    commanded_throttle_state.commanded_throttle = commanded_throttle_state.alternate_throttle;
+    commanded_throttle_state.selected_alternate_throttle_priority =
+         commanded_throttle_state.alternate_throttle_priority;
+    commanded_throttle_state.alternate_throttle_priority = 0;
   }
-  fuel_demand_control_t_0040a57a.delta =
-       fuel_demand_control_t_0040a57a.calculated - throttle_fuel_enable_flag._2_2_;
-  fuel_demand_control_t_0040a57a.delta_filtered =
+  commanded_throttle_state.commanded_throttle_delta =
+       commanded_throttle_state.commanded_throttle - throttle_fuel_enable_flag._2_2_;
+  commanded_throttle_state.commanded_throttle_delta_filtered =
        cm848_signedFirstOrderFilter
-                 ((int)(short)fuel_demand_control_t_0040a57a.delta,&fuel_demand_delta_filter);
-  throttle_fuel_enable_flag._2_2_ = fuel_demand_control_t_0040a57a.calculated;
+                 ((int)(short)commanded_throttle_state.commanded_throttle_delta,
+                  &commanded_throttle_delta_filter);
+  throttle_fuel_enable_flag._2_2_ = commanded_throttle_state.commanded_throttle;
   return;
 }
 
 
 
 //
-// Function: cm848_fuelDemandCoordinator @ 0x00017980
+// Function: cm848_runThrottleValidation @ 0x00017980
 //
 
-void cm848_fuelDemandCoordinator(void)
+/* The throttle validation pass (analog pedal: no held value, no dual channel). Idle validation
+   (cm848_evaluateIdleValidationSwitches, cm848_updateOffIdleFromIdleValidation); then, with no
+   pedal fault, the transition state (cm848_updateThrottleTransitionState) and the Throttle_Min
+   learning (cm848_learnAcceleratorPedalAutozero), else Throttle_Min =
+   accelerator_pedal_highest_valid_minimum + 4; then
+   cm848_monitorAcceleratorPedalIdleValidationFaults. Fault bit 197 also sets the pedal fault flag.
+   With the test cell throttle switch override it only clears fault bits 62 / 63 / 68 when they are
+   registered (was cm848_fuelDemandCoordinator) */
+
+void cm848_runThrottleValidation(void)
 
 {
   if (((sensor_channel_held_value_enable_bits_cal[0] & 0x2000) == 0) &&
@@ -15547,11 +15589,11 @@ void cm848_fuelDemandCoordinator(void)
       cm848_evaluateIdleValidationSwitches();
       cm848_updateOffIdleFromIdleValidation();
       if (throttle_fuel_enable_flag._0_2_ == 0) {
-        cm848_fuelDemandRateLimiterStateMachine();
+        cm848_updateThrottleTransitionState();
         cm848_learnAcceleratorPedalAutozero();
       }
       else {
-        fuel_demand_control_t_0040a57a.throttle_based = accelerator_pedal_highest_valid_minimum + 4;
+        commanded_throttle_state.throttle_minimum = accelerator_pedal_highest_valid_minimum + 4;
       }
       cm848_monitorAcceleratorPedalIdleValidationFaults();
     }
@@ -15579,20 +15621,26 @@ void cm848_fuelDemandCoordinator(void)
 
 
 //
-// Function: cm848_initFuelDemandRateVariables @ 0x00017af4
+// Function: cm848_initializeCommandedThrottleState @ 0x00017af4
 //
 
-void cm848_initFuelDemandRateVariables(void)
+/* Boot initialization of the commanded throttle record: the confidence counter, idle validation
+   state, transition state and off-idle flag to 0, Throttle_Min =
+   accelerator_pedal_highest_valid_minimum + 4, the previous commanded throttle (high word of
+   throttle_fuel_enable_flag) to 0, and the delta filter (accumulator 0, coefficient
+   commanded_throttle_delta_filter_coefficient) (was cm848_initFuelDemandRateVariables) */
+
+void cm848_initializeCommandedThrottleState(void)
 
 {
-  fuel_demand_control_t_0040a57a.rate_delta = 0;
-  fuel_demand_control_t_0040a57a.idle_validation_state = 0;
-  fuel_demand_control_t_0040a57a.rate_limiter_state = 0;
-  fuel_demand_control_t_0040a57a.throttle_based = accelerator_pedal_highest_valid_minimum + 4;
-  fuel_demand_control_t_0040a57a.accelerator_off_idle = 0;
+  commanded_throttle_state.throttle_minimum_confidence_counter = 0;
+  commanded_throttle_state.idle_validation_state = 0;
+  commanded_throttle_state.throttle_transition_state = 0;
+  commanded_throttle_state.throttle_minimum = accelerator_pedal_highest_valid_minimum + 4;
+  commanded_throttle_state.accelerator_off_idle = 0;
   throttle_fuel_enable_flag._2_2_ = 0;
-  fuel_demand_delta_filter.accumulator = 0;
-  fuel_demand_delta_filter.coefficient = &fuel_demand_delta_filter_coefficient;
+  commanded_throttle_delta_filter.accumulator = 0;
+  commanded_throttle_delta_filter.coefficient = &commanded_throttle_delta_filter_coefficient;
   return;
 }
 
@@ -20446,7 +20494,7 @@ void cm848_initFaultSeverityTables(void)
 //
 
 /* Filters the commanded throttle for the 4-D fueling (e2m 1053): the error
-   fuel_demand_control_t.calculated (e2m 1047 +0 Commanded_Throttle) minus
+   commanded_throttle_state_t.commanded_throttle (e2m 1047 +0 Commanded_Throttle) minus
    commanded_throttle_filtered goes, as an absolute value, through the table
    commanded_throttle_filter_coefficient_by_throttle_difference_axis /
    commanded_throttle_filter_coefficient_by_throttle_difference_values into
@@ -20472,7 +20520,7 @@ void cm848_filterCommandedThrottle(void)
   ushort uVar4;
   
   wVar1 = commanded_throttle_filter_coefficient_lookup_result;
-  input = fuel_demand_control_t_0040a57a.calculated - commanded_throttle_filtered;
+  input = commanded_throttle_state.commanded_throttle - commanded_throttle_filtered;
   iVar3 = (int)(short)input;
   if (iVar3 < 0) {
     input = -input;
@@ -20509,7 +20557,7 @@ LAB_0001ebf8:
     commanded_throttle_filter_coefficient = commanded_throttle_filter_coefficient_lookup_result;
   }
   dVar2 = exponentialMovingAverage
-                    ((uint)fuel_demand_control_t_0040a57a.calculated,
+                    ((uint)commanded_throttle_state.commanded_throttle,
                      &commanded_throttle_filter_state);
   commanded_throttle_filtered = (word)dVar2;
   return;
@@ -25719,8 +25767,8 @@ void cm848_initEec1TxDescriptor(void)
 //
 
 /* Builds and sends the ECM's own EEC2 broadcast (PGN 61443): byte 1 accelerator low idle switch
-   (SPN 558 from fuel_demand_control_t.accelerator_off_idle - 3 when switch 7 is datalink-sourced -
-   2 on pedal faults) + kickdown field / byte 2 accelerator pedal position 1 =
+   (SPN 558 from commanded_throttle_state_t.accelerator_off_idle - 3 when switch 7 is
+   datalink-sourced - 2 on pedal faults) + kickdown field / byte 2 accelerator pedal position 1 =
    all_speed_governor_equivalent_throttle x 0.625 (0xFF in J1939-pedal mode) / byte 3 percent load
    at current speed / byte 4 remote accelerator position (0xFF unless algorithm_enable_flags_18_cal
    bit 12) / bytes 5-8 0xFF (was j1939HandlePgn61443Eec2 - a transmit builder) |
@@ -25753,7 +25801,7 @@ void cm848_buildPgn61443ElectronicEngineController2Message(void)
       j1939_eec2_low_idle_and_kickdown_byte = j1939_eec2_low_idle_and_kickdown_byte | 2;
       goto LAB_00025c0c;
     }
-    if (fuel_demand_control_t_0040a57a.accelerator_off_idle != 0) goto LAB_00025c0c;
+    if (commanded_throttle_state.accelerator_off_idle != 0) goto LAB_00025c0c;
     bVar1 = 1;
   }
   else {
@@ -25784,16 +25832,16 @@ LAB_00025c0c:
   }
   if ((algorithm_enable_flags_18_cal.remote_throttle_enable == 0) ||
      ((sensor_channel_held_value_enable_bits_cal[0] & 0x100) != 0)) {
-    j1939_eec2_remote_accel_pedal_byte = 0xff;
+    j1939_eec2_remote_accelerator_pedal_byte = 0xff;
   }
   else if (((system_status_flags_t_003fe974.fault_detected_bits_64_to_79 & 0x2000) == 0) &&
           ((system_status_flags_t_003fe974.fault_detected_bits_64_to_79 & 0x4000) == 0)) {
-    j1939_eec2_remote_accel_pedal_byte =
-         (char)((int)(uint)governor_torque_output >> 1) +
-         (char)((int)(uint)governor_torque_output >> 3);
+    j1939_eec2_remote_accelerator_pedal_byte =
+         (char)((int)(uint)remote_accelerator_pedal_sensor_filtered >> 1) +
+         (char)((int)(uint)remote_accelerator_pedal_sensor_filtered >> 3);
   }
   else {
-    j1939_eec2_remote_accel_pedal_byte = 0xfe;
+    j1939_eec2_remote_accelerator_pedal_byte = 0xfe;
   }
   DAT_003fadac = 0xff;
   DAT_003fadad = 0xff;
@@ -26714,7 +26762,7 @@ void cm848_emptyStubFunction5(void)
    tsc1_request_time_limit_timer expires (the sender then goes into the ignored request list with
    cm848_addEngineTsc1IgnoredRequestEntry) and when a request's tsc1_request_timeout_count runs out
    (modes 1 / 2 / 3). It keeps the governor mode in tsc1_override_control_mode_previous. While the
-   accelerator pedal (fuel_demand_control_t_0040a57a.calculated, 400 = 100 percent) is above
+   accelerator pedal (commanded_throttle_state.commanded_throttle, 400 = 100 percent) is above
    tsc1_lost_management_minimum_accelerator_pedal (TSC_Lost_Min_Throttle_Disable) and below
    tsc1_lost_management_maximum_accelerator_pedal_cal (11C1 +4 TSC_Lost_Max_Throttle_Disable) and
    tsc1_request_timed_out_flag is 1, then, while fuel_demand_timing_enable_flag is 1, it adds
@@ -26735,9 +26783,9 @@ void cm848_runTsc1LostManagement(void)
   uint uVar1;
   
   tsc1_override_control_mode_previous = j1939_powertrain_control_state.tsc1_override_control_mode;
-  if (((tsc1_lost_management_minimum_accelerator_pedal < fuel_demand_control_t_0040a57a.calculated)
-      && (fuel_demand_control_t_0040a57a.calculated <
-          tsc1_lost_management_maximum_accelerator_pedal_cal)) &&
+  if (((tsc1_lost_management_minimum_accelerator_pedal < commanded_throttle_state.commanded_throttle
+       ) && (commanded_throttle_state.commanded_throttle <
+             tsc1_lost_management_maximum_accelerator_pedal_cal)) &&
      (j1939_powertrain_control_state.tsc1_request_timed_out_flag == 1)) {
     if (fuel_demand_timing_enable_flag == 1) {
       if (tsc1_torque_limit_ramp_integrator < -(uint)tsc1_lost_torque_ramp_rate - 1) {
@@ -26766,7 +26814,7 @@ void cm848_runTsc1LostManagement(void)
   else {
     j1939_powertrain_control_state.tsc1_torque_limit_fueling = tsc1_lost_reset_torque_limit;
     if ((tsc1_lost_management_maximum_accelerator_pedal_cal <=
-         fuel_demand_control_t_0040a57a.calculated) &&
+         commanded_throttle_state.commanded_throttle) &&
        (j1939_powertrain_control_state.tsc1_request_timed_out_flag == 1)) {
       j1939_powertrain_control_state.tsc1_torque_limit_fueling = 0xffff;
     }
@@ -28156,7 +28204,7 @@ void cm848_selectLowSpeedGovernorDesiredReferenceSpeed(void)
         ((switch_input_state_bits.not_brake_switch == 0 &&
          ((short)intake_manifold_temperature_sensor_filtered <=
           (short)low_speed_governor_extended_idle_intake_manifold_temperature)))) &&
-       (fuel_demand_control_t_0040a57a.accelerator_off_idle == 0)) &&
+       (commanded_throttle_state.accelerator_off_idle == 0)) &&
       (vehicle_speed <= low_speed_governor_extended_idle_road_speed)))) {
     low_speed_governor_extended_idle_conditions_flag = 1;
   }
@@ -28233,7 +28281,7 @@ void cm848_selectLowSpeedGovernorDesiredReferenceSpeed(void)
        (((transmission_park_or_neutral_flag == 0 ||
          ((switch_input_state_bits.brake_switch != 0 ||
           (switch_input_state_bits.not_brake_switch != 0)))) ||
-        (fuel_demand_control_t_0040a57a.accelerator_off_idle != 0)))) ||
+        (commanded_throttle_state.accelerator_off_idle != 0)))) ||
       ((vehicle_speed != 0 ||
        (wVar1 = sci_set_engine_speed_request, sci_set_engine_speed_request_key != 0xe5c1)))) &&
      (wVar1 = low_speed_governor_tool_speed_request,
@@ -28249,9 +28297,9 @@ void cm848_selectLowSpeedGovernorDesiredReferenceSpeed(void)
             (engine_state != ENGINE_STATE_RUNNING)) ||
            ((transmission_park_or_neutral_flag == 0 || (switch_input_state_bits.brake_switch != 0)))
            ) || (((switch_input_state_bits.not_brake_switch != 0 ||
-                  ((fuel_demand_control_t_0040a57a.accelerator_off_idle != 0 || (vehicle_speed != 0)
-                   ))) || (high_pressure_safety_valve_test_maximum_engine_speed <
-                           engine_speed_state.filtered_engine_speed)))) {
+                  ((commanded_throttle_state.accelerator_off_idle != 0 || (vehicle_speed != 0)))) ||
+                 (high_pressure_safety_valve_test_maximum_engine_speed <
+                  engine_speed_state.filtered_engine_speed)))) {
     high_pressure_safety_valve_test_state = SERVICE_TOOL_TEST_ABORTED;
   }
   else {
@@ -28494,7 +28542,7 @@ void cm848_calculateLowSpeedGovernorNoLoadFuel(void)
                      low_speed_governor_adjusted_reference_before_droop,
                      friction_fuel_by_engine_speed_axis,friction_fuel_by_engine_speed_values,0);
   wVar2 = lookupTableInterpolation
-                    (&governor_interp_table_state_b,fuel_demand_control_t_0040a57a.calculated,
+                    (&governor_interp_table_state_b,commanded_throttle_state.commanded_throttle,
                      governor_fuel_demand_axis_cal,governor_fuel_demand_output_cal,0);
   low_speed_governor_reference.no_load_fuel = no_load_fuel_quantity;
   if ((low_speed_governor_final_gain_state != 0) && (low_speed_governor_final_gain_state != 1)) {
@@ -29954,7 +30002,7 @@ void cm848_blendAllSpeedGovernorReferenceSpeeds(void)
   word wVar1;
   uint uVar2;
   
-  if ((((fuel_demand_control_t_0040a57a.calculated == 0) &&
+  if ((((commanded_throttle_state.commanded_throttle == 0) &&
        ((uint)final_fueling <
         (uint)friction_fuel_adjustment_for_coolant_temperature +
         (uint)all_speed_governor_switch_droop_fueling_offset)) &&
@@ -30059,26 +30107,26 @@ void cm848_applySwitchSelectedEngineSpeedLimit(void)
 // Function: cm848_countAcceleratorPedalPresses @ 0x0002c180
 //
 
-/* fuel_demand_control_t.calculated (400 = 100 percent) reaching accelerator_pedal_press_threshold
-   (70 percent) sets accelerator_pedal_pressed_flag; dropping to accelerator_pedal_release_threshold
-   (30 percent) clears it and adds 1 to accelerator_pedal_press_count (was
-   cm848_trackFuelDemandThreshold) | review-function-readability reviewed 2026-11-13 - Readability
-   Medium Accuracy Confidence High */
+/* commanded_throttle_state_t.commanded_throttle (400 = 100 percent) reaching
+   accelerator_pedal_press_threshold (70 percent) sets accelerator_pedal_pressed_flag; dropping to
+   accelerator_pedal_release_threshold (30 percent) clears it and adds 1 to
+   accelerator_pedal_press_count (was cm848_trackFuelDemandThreshold) | review-function-readability
+   reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
 
 void cm848_countAcceleratorPedalPresses(void)
 
 {
   if (accelerator_pedal_press_tracking_initialized_flag == 0) {
     accelerator_pedal_pressed_flag =
-         (dword)(accelerator_pedal_press_threshold < fuel_demand_control_t_0040a57a.calculated);
+         (dword)(accelerator_pedal_press_threshold < commanded_throttle_state.commanded_throttle);
     accelerator_pedal_press_tracking_initialized_flag = 1;
   }
   else if (accelerator_pedal_pressed_flag == 0) {
-    if (accelerator_pedal_press_threshold <= fuel_demand_control_t_0040a57a.calculated) {
+    if (accelerator_pedal_press_threshold <= commanded_throttle_state.commanded_throttle) {
       accelerator_pedal_pressed_flag = 1;
     }
   }
-  else if (fuel_demand_control_t_0040a57a.calculated <= accelerator_pedal_release_threshold) {
+  else if (commanded_throttle_state.commanded_throttle <= accelerator_pedal_release_threshold) {
     accelerator_pedal_pressed_flag = 0;
     accelerator_pedal_press_count = accelerator_pedal_press_count + 1;
   }
@@ -30302,7 +30350,7 @@ void cm848_updateVariableSpeedGovernorSelection(void)
   wVar1 = variable_speed_governor_selected_flag;
   if (((((uint)final_fueling <=
          (uint)no_load_fuel_quantity + (uint)all_speed_governor_switch_droop_fueling_offset) &&
-       (fuel_demand_control_t_0040a57a.calculated == 0)) &&
+       (commanded_throttle_state.commanded_throttle == 0)) &&
       (wVar1 = variable_speed_governor_default_cal,
       algorithm_enable_flags_27_cal.switched_throttle_control_governor_select != 0)) &&
      (wVar1 = variable_speed_governor_default_cal, switch_input_state_bits.unwired_switch != 0)) {
@@ -32813,11 +32861,11 @@ void cm848_requestOverdriveShiftsLowRange(void)
                      transmission_output_speed_in_use,
                      transmission_low_range_3_4_upshift_maximum_throttle_axis,
                      transmission_low_range_3_4_upshift_maximum_throttle_values,0);
-  if (wVar1 < fuel_demand_control_t_0040a57a.calculated) {
+  if (wVar1 < commanded_throttle_state.commanded_throttle) {
     bVar3 = 2;
   }
   else {
-    if (wVar2 <= fuel_demand_control_t_0040a57a.calculated) {
+    if (wVar2 <= commanded_throttle_state.commanded_throttle) {
       return;
     }
     bVar3 = 4;
@@ -32860,7 +32908,7 @@ void cm848_selectGovernorPressureLowRange(void)
         transmission_control_flags.low_range_boost_flags = bVar3;
         wVar1 = lookupTableInterpolation
                           (&transmission_low_range_upshift_target_engine_speed_cached_axis_offset,
-                           fuel_demand_control_t_0040a57a.calculated,
+                           commanded_throttle_state.commanded_throttle,
                            transmission_low_range_upshift_target_engine_speed_axis,
                            transmission_low_range_upshift_target_engine_speed_values,0);
         uVar2 = (uint)(CONCAT44((int)((ulonglong)
@@ -32879,7 +32927,7 @@ void cm848_selectGovernorPressureLowRange(void)
         transmission_control_flags.low_range_boost_flags = bVar3;
         wVar1 = lookupTableInterpolation
                           (&transmission_low_range_upshift_target_engine_speed_cached_axis_offset,
-                           fuel_demand_control_t_0040a57a.calculated,
+                           commanded_throttle_state.commanded_throttle,
                            transmission_low_range_upshift_target_engine_speed_axis,
                            transmission_low_range_upshift_target_engine_speed_values,0);
         uVar2 = (uint)wVar1;
@@ -32887,7 +32935,7 @@ void cm848_selectGovernorPressureLowRange(void)
       governor_pressure_target =
            lookupTableInterpolation
                      (&transmission_low_range_1_2_hold_pressure_cached_axis_offset,
-                      fuel_demand_control_t_0040a57a.calculated,
+                      commanded_throttle_state.commanded_throttle,
                       transmission_low_range_1_2_hold_pressure_axis,
                       transmission_low_range_1_2_hold_pressure_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOW_RANGE_1_2_HOLD;
@@ -32898,7 +32946,7 @@ void cm848_selectGovernorPressureLowRange(void)
         governor_pressure_target =
              lookupTableInterpolation
                        (&transmission_low_range_1_2_boost_pressure_cached_axis_offset,
-                        fuel_demand_control_t_0040a57a.calculated,
+                        commanded_throttle_state.commanded_throttle,
                         transmission_low_range_1_2_boost_pressure_axis,
                         transmission_low_range_1_2_boost_pressure_values,0);
         transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOW_RANGE_1_2_BOOST
@@ -32910,7 +32958,7 @@ void cm848_selectGovernorPressureLowRange(void)
       governor_pressure_target =
            lookupTableInterpolation
                      (&transmission_low_range_1_2_boost_pressure_cached_axis_offset,
-                      fuel_demand_control_t_0040a57a.calculated,
+                      commanded_throttle_state.commanded_throttle,
                       transmission_low_range_1_2_boost_pressure_axis,
                       transmission_low_range_1_2_boost_pressure_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOW_RANGE_1_2_BOOST;
@@ -32927,7 +32975,7 @@ void cm848_selectGovernorPressureLowRange(void)
             wVar1 = lookupTableInterpolation
                               (&
                                transmission_low_range_upshift_target_engine_speed_cached_axis_offset
-                               ,fuel_demand_control_t_0040a57a.calculated,
+                               ,commanded_throttle_state.commanded_throttle,
                                transmission_low_range_upshift_target_engine_speed_axis,
                                transmission_low_range_upshift_target_engine_speed_values,0);
             uVar2 = (uint)(CONCAT44((int)((ulonglong)
@@ -32945,7 +32993,7 @@ void cm848_selectGovernorPressureLowRange(void)
             governor_pressure_target =
                  lookupTableInterpolation
                            (&transmission_low_range_2_3_hold_pressure_cached_axis_offset,
-                            fuel_demand_control_t_0040a57a.calculated,
+                            commanded_throttle_state.commanded_throttle,
                             transmission_low_range_2_3_hold_pressure_axis,
                             transmission_low_range_2_3_hold_pressure_values,0);
             transmission_pressure_state.pressure_state =
@@ -32963,7 +33011,7 @@ void cm848_selectGovernorPressureLowRange(void)
           governor_pressure_target =
                lookupTableInterpolation
                          (&transmission_low_range_2_3_boost_pressure_cached_axis_offset,
-                          fuel_demand_control_t_0040a57a.calculated,
+                          commanded_throttle_state.commanded_throttle,
                           transmission_low_range_2_3_boost_pressure_axis,
                           transmission_low_range_2_3_boost_pressure_values,0);
           transmission_pressure_state.pressure_state =
@@ -33056,9 +33104,9 @@ void cm848_applyConverterLockupScheduleLowRange(void)
                        transmission_output_speed_in_use,
                        transmission_3rd_gear_low_range_unlock_maximum_throttle_axis,
                        transmission_3rd_gear_low_range_unlock_maximum_throttle_values,0);
-    if (((wVar1 <= fuel_demand_control_t_0040a57a.calculated) &&
+    if (((wVar1 <= commanded_throttle_state.commanded_throttle) &&
         (((transmission_control_flags.mode_flags & 0x20) == 0 ||
-         (wVar2 <= fuel_demand_control_t_0040a57a.calculated)))) ||
+         (wVar2 <= commanded_throttle_state.commanded_throttle)))) ||
        ((transmission_control_flags.overdrive_flags & 0x20) == 0)) goto LAB_00030024;
   }
   else {
@@ -33081,9 +33129,9 @@ void cm848_applyConverterLockupScheduleLowRange(void)
                        transmission_output_speed_in_use,
                        transmission_4th_gear_low_range_unlock_maximum_throttle_axis,
                        transmission_4th_gear_low_range_unlock_maximum_throttle_values,0);
-    if ((wVar1 <= fuel_demand_control_t_0040a57a.calculated) &&
+    if ((wVar1 <= commanded_throttle_state.commanded_throttle) &&
        (((transmission_control_flags.mode_flags & 0x20) == 0 ||
-        (wVar2 <= fuel_demand_control_t_0040a57a.calculated)))) goto LAB_00030024;
+        (wVar2 <= commanded_throttle_state.commanded_throttle)))) goto LAB_00030024;
   }
   cm848_setLogicalOutputRequest(0x12,0);
 LAB_00030024:
@@ -33121,7 +33169,7 @@ void cm848_applyConverterUnlockConditionsLowRange(void)
                          transmission_4th_gear_low_range_unlock_maximum_throttle_axis,
                          transmission_4th_gear_low_range_unlock_maximum_throttle_values,0);
     }
-    if (fuel_demand_control_t_0040a57a.calculated <= uVar1) goto LAB_00030150;
+    if (commanded_throttle_state.commanded_throttle <= uVar1) goto LAB_00030150;
   }
   else {
     converter_clutch_apply_delay_countdown = converter_clutch_apply_delay_time;
@@ -33204,15 +33252,16 @@ void cm848_applyConverterLockupSchedule(void)
         ((algorithm_enable_flags_6_cal.second_gear_converter_lockup_enable != 0 &&
          (converter_clutch_apply_delay_countdown == 0)))) &&
        ((transmission_lockup_delay_1_2_timer == 0 && (transmission_lockup_delay_3_2_timer == 0)))) {
-      if ((transmission_2nd_gear_lockup_minimum_throttle < fuel_demand_control_t_0040a57a.calculated
-          ) || ((transmission_control_flags.state_flags & 2) != 0)) {
+      if ((transmission_2nd_gear_lockup_minimum_throttle <
+           commanded_throttle_state.commanded_throttle) ||
+         ((transmission_control_flags.state_flags & 2) != 0)) {
         if (transmission_overheat_protection_active_flag != 0) {
           wVar3 = fuel_demand_limit_working;
           wVar2 = wVar1;
         }
-        if ((fuel_demand_control_t_0040a57a.calculated < wVar2) ||
+        if ((commanded_throttle_state.commanded_throttle < wVar2) ||
            (((transmission_control_flags.mode_flags & 0x20) != 0 &&
-            (fuel_demand_control_t_0040a57a.calculated < wVar3)))) {
+            (commanded_throttle_state.commanded_throttle < wVar3)))) {
           cm848_setLogicalOutputRequest(0x12,0);
         }
       }
@@ -33267,14 +33316,14 @@ void cm848_applyConverterLockupSchedule(void)
       if (transmission_overheat_protection_active_flag == 0) {
         if ((exhaust_brake_transmission_features_inhibit == 0) &&
            (switch_input_state_bits.exhaust_brake_switch != 0)) {
-          if (wVar4 <= fuel_demand_control_t_0040a57a.calculated) goto joined_r0x00030600;
+          if (wVar4 <= commanded_throttle_state.commanded_throttle) goto joined_r0x00030600;
         }
-        else if (((wVar1 <= fuel_demand_control_t_0040a57a.calculated) &&
+        else if (((wVar1 <= commanded_throttle_state.commanded_throttle) &&
                  (((transmission_control_flags.mode_flags & 0x20) == 0 ||
-                  (wVar5 <= fuel_demand_control_t_0040a57a.calculated)))) ||
+                  (wVar5 <= commanded_throttle_state.commanded_throttle)))) ||
                 (((transmission_control_flags.overdrive_flags & 0x20) == 0 &&
                  (((transmission_control_flags.overdrive_flags & 0x40) == 0 &&
-                  (((fuel_demand_control_t_0040a57a.calculated <=
+                  (((commanded_throttle_state.commanded_throttle <=
                      transmission_3rd_gear_lockup_minimum_throttle ||
                     (transmission_3rd_gear_lockup_enable == 0)) ||
                    ((short)transmission_temperature_in_use <=
@@ -33285,10 +33334,10 @@ LAB_00030694:
       }
       else {
         uVar6 = fuel_demand_limit_working;
-        if (fuel_demand_control_t_0040a57a.calculated < wVar2) goto LAB_00030694;
+        if (commanded_throttle_state.commanded_throttle < wVar2) goto LAB_00030694;
 joined_r0x00030600:
         if (((transmission_control_flags.mode_flags & 0x20) != 0) &&
-           (fuel_demand_control_t_0040a57a.calculated < uVar6)) goto LAB_00030694;
+           (commanded_throttle_state.commanded_throttle < uVar6)) goto LAB_00030694;
       }
 LAB_000306ac:
       transmission_control_flags.mode_flags = transmission_control_flags.mode_flags & 0xdf;
@@ -33399,9 +33448,9 @@ LAB_000306ac:
   wVar3 = wVar4;
   wVar1 = wVar2;
 joined_r0x00030a54:
-  if ((fuel_demand_control_t_0040a57a.calculated < wVar1) ||
+  if ((commanded_throttle_state.commanded_throttle < wVar1) ||
      (((transmission_control_flags.mode_flags & 0x20) != 0 &&
-      (fuel_demand_control_t_0040a57a.calculated < wVar3)))) {
+      (commanded_throttle_state.commanded_throttle < wVar3)))) {
     cm848_setLogicalOutputRequest(0x12,0);
     transmission_3_4_shift_after_3rd_gear_lockup_flag = 0;
   }
@@ -33454,11 +33503,11 @@ void cm848_applyConverterUnlockConditions(void)
         if ((((transmission_selected_gear == 0x7f) || (transmission_selected_gear == 0x7e)) ||
             (transmission_pressure_state.pressure_state ==
              TRANSMISSION_PRESSURE_STATE_EXHAUST_BRAKE_CURVE)) &&
-           (fuel_demand_control_t_0040a57a.calculated <= wVar1)) goto LAB_00030fdc;
+           (commanded_throttle_state.commanded_throttle <= wVar1)) goto LAB_00030fdc;
       }
       else {
 LAB_00030f98:
-        if (fuel_demand_control_t_0040a57a.calculated <= fuel_demand_limit_working)
+        if (commanded_throttle_state.commanded_throttle <= fuel_demand_limit_working)
         goto LAB_00030fdc;
       }
     }
@@ -33486,12 +33535,12 @@ LAB_00030f98:
              (switch_input_state_bits.exhaust_brake_switch != 0)) {
             wVar1 = wVar2;
           }
-          if ((fuel_demand_control_t_0040a57a.calculated <= wVar1) &&
+          if ((commanded_throttle_state.commanded_throttle <= wVar1) &&
              (((transmission_control_flags.state_flags & 0x20) == 0 ||
               (transmission_unlock_service_minimum_output_speed_3rd <=
                transmission_output_speed_in_use)))) goto LAB_00030fdc;
         }
-        else if (fuel_demand_control_t_0040a57a.calculated <= fuel_demand_limit_working)
+        else if (commanded_throttle_state.commanded_throttle <= fuel_demand_limit_working)
         goto LAB_00030fdc;
         converter_clutch_apply_delay_countdown = converter_clutch_apply_delay_time;
         transmission_lockup_timers.lockup_off_timer = transmission_lockup_off_time;
@@ -33542,7 +33591,7 @@ LAB_00030f98:
           wVar1 = wVar2;
         }
       }
-      if ((fuel_demand_control_t_0040a57a.calculated <= wVar1) &&
+      if ((commanded_throttle_state.commanded_throttle <= wVar1) &&
          (((transmission_control_flags.state_flags & 0x20) == 0 ||
           (transmission_unlock_service_minimum_output_speed_4th <= transmission_output_speed_in_use)
           ))) goto LAB_00030fdc;
@@ -33676,8 +33725,8 @@ void cm848_requestOverdriveShiftsNormal(void)
                      transmission_normal_exhaust_brake_3_4_upshift_throttle_values,0);
   if ((exhaust_brake_transmission_features_inhibit == 0) &&
      (switch_input_state_bits.exhaust_brake_switch != 0)) {
-    if (fuel_demand_control_t_0040a57a.calculated < wVar2) {
-      if (wVar4 <= fuel_demand_control_t_0040a57a.calculated) {
+    if (commanded_throttle_state.commanded_throttle < wVar2) {
+      if (wVar4 <= commanded_throttle_state.commanded_throttle) {
         return;
       }
       bVar5 = 4;
@@ -33686,8 +33735,8 @@ void cm848_requestOverdriveShiftsNormal(void)
       bVar5 = 2;
     }
   }
-  else if (fuel_demand_control_t_0040a57a.calculated < wVar1) {
-    if (wVar3 <= fuel_demand_control_t_0040a57a.calculated) {
+  else if (commanded_throttle_state.commanded_throttle < wVar1) {
+    if (wVar3 <= commanded_throttle_state.commanded_throttle) {
       return;
     }
     bVar5 = 4;
@@ -33766,7 +33815,7 @@ void cm848_selectGovernorPressureBaseCurve(void)
                     governor_pressure_manual_2nd_curve_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_MANUAL_2ND_CURVE;
   }
-  else if (fuel_demand_control_t_0040a57a.calculated <
+  else if (commanded_throttle_state.commanded_throttle <
            governor_pressure_fuel_economy_maximum_throttle) {
     if (switch_input_state_bits.exhaust_brake_switch == 0) {
       governor_pressure_target =
@@ -34159,8 +34208,8 @@ void cm848_selectGovernorPressureCruise(void)
                      transmission_cruise_exhaust_brake_3_4_upshift_throttle_values,0);
   if ((exhaust_brake_transmission_features_inhibit == 0) &&
      (switch_input_state_bits.exhaust_brake_switch != 0)) {
-    if (fuel_demand_control_t_0040a57a.calculated < wVar3) {
-      if ((wVar4 <= fuel_demand_control_t_0040a57a.calculated) ||
+    if (commanded_throttle_state.commanded_throttle < wVar3) {
+      if ((wVar4 <= commanded_throttle_state.commanded_throttle) ||
          ((transmission_control_flags.mode_flags & 1) != 0)) goto LAB_00031f94;
       bVar7 = 4;
     }
@@ -34168,8 +34217,8 @@ void cm848_selectGovernorPressureCruise(void)
       bVar7 = 2;
     }
   }
-  else if (fuel_demand_control_t_0040a57a.calculated < wVar1) {
-    if ((wVar2 <= fuel_demand_control_t_0040a57a.calculated) ||
+  else if (commanded_throttle_state.commanded_throttle < wVar1) {
+    if ((wVar2 <= commanded_throttle_state.commanded_throttle) ||
        ((transmission_control_flags.mode_flags & 1) != 0)) goto LAB_00031f94;
     bVar7 = 4;
   }
@@ -34181,8 +34230,8 @@ LAB_00031f94:
   uVar6 = (uint)vehicle_speed;
   uVar5 = (uint)cruise_speed_command + (uint)cruise_set_speed_overspeed_margin;
   if ((((transmission_current_gear == 4) &&
-       (fuel_demand_control_t_0040a57a.calculated < transmission_cruise_downshift_maximum_throttle))
-      && (uVar5 < uVar6)) && (0 < transmission_output_shaft_acceleration)) {
+       (commanded_throttle_state.commanded_throttle < transmission_cruise_downshift_maximum_throttle
+       )) && (uVar5 < uVar6)) && (0 < transmission_output_shaft_acceleration)) {
     if ((transmission_cruise_downshift_delay_timer == 0) &&
        (transmission_output_speed_in_use < overdrive_downshift_maximum_output_speed)) {
       transmission_control_flags.request_flags = transmission_control_flags.request_flags | 2;
@@ -34193,8 +34242,8 @@ LAB_00031f94:
     transmission_cruise_downshift_delay_timer = transmission_cruise_downshift_delay_time;
   }
   if ((((transmission_control_flags.mode_flags & 1) != 0) && (transmission_current_gear == 3)) &&
-     ((transmission_cruise_downshift_maximum_throttle < fuel_demand_control_t_0040a57a.calculated &&
-      ((uVar6 < uVar5 && (transmission_cruise_upshift_delay_timer == 0)))))) {
+     ((transmission_cruise_downshift_maximum_throttle < commanded_throttle_state.commanded_throttle
+      && ((uVar6 < uVar5 && (transmission_cruise_upshift_delay_timer == 0)))))) {
     transmission_control_flags.request_flags = transmission_control_flags.request_flags | 4;
     transmission_control_flags.mode_flags = transmission_control_flags.mode_flags & 0xfe;
   }
@@ -34236,7 +34285,7 @@ uint cm848_calculateTransmissionOutputTorqueInGear(int param_1)
   transmission_throttle_prescaled =
        lookupTableInterpolation
                  (&transmission_throttle_prescale_cached_axis_offset,
-                  fuel_demand_control_t_0040a57a.calculated,transmission_throttle_prescale_axis,
+                  commanded_throttle_state.commanded_throttle,transmission_throttle_prescale_axis,
                   transmission_throttle_prescale_values,0);
   transmission_turbine_torque =
        cm848_dualAxisTableInterpolation
@@ -34355,7 +34404,7 @@ void cm848_learnVehicleInertia(void)
   int iVar2;
   
   if (transmission_vehicle_inertia_learning_minimum_throttle <
-      fuel_demand_control_t_0040a57a.calculated) {
+      commanded_throttle_state.commanded_throttle) {
     transmission_shift_acceleration_change =
          transmission_output_shaft_acceleration_at_shift_command -
          transmission_output_shaft_acceleration;
@@ -34448,7 +34497,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
     transmission_post_shift_acceleration_minimum =
          lookupTableInterpolation
                    (&transmission_1_2_upshift_minimum_post_shift_acceleration_cached_axis_offset,
-                    fuel_demand_control_t_0040a57a.calculated,
+                    commanded_throttle_state.commanded_throttle,
                     transmission_1_2_upshift_minimum_post_shift_acceleration_axis,
                     transmission_1_2_upshift_minimum_post_shift_acceleration_values,2);
     if ((transmission_pressure_state.anti_hunt_delay_timer == 0) &&
@@ -34474,7 +34523,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
     governor_pressure_target =
          lookupTableInterpolation
                    (&transmission_anti_hunt_1_2_hold_pressure_cached_axis_offset,
-                    fuel_demand_control_t_0040a57a.calculated,
+                    commanded_throttle_state.commanded_throttle,
                     transmission_anti_hunt_1_2_hold_pressure_axis,
                     transmission_anti_hunt_1_2_hold_pressure_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_1_2_HOLD;
@@ -34526,7 +34575,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
     transmission_post_shift_acceleration_minimum =
          lookupTableInterpolation
                    (&transmission_2_3_upshift_minimum_post_shift_acceleration_cached_axis_offset,
-                    fuel_demand_control_t_0040a57a.calculated,
+                    commanded_throttle_state.commanded_throttle,
                     transmission_2_3_upshift_minimum_post_shift_acceleration_axis,
                     transmission_2_3_upshift_minimum_post_shift_acceleration_values,2);
     if ((transmission_pressure_state.anti_hunt_delay_timer != 0) ||
@@ -34535,7 +34584,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
       governor_pressure_target =
            lookupTableInterpolation
                      (&transmission_anti_hunt_2_3_hold_pressure_cached_axis_offset,
-                      fuel_demand_control_t_0040a57a.calculated,
+                      commanded_throttle_state.commanded_throttle,
                       transmission_anti_hunt_2_3_hold_pressure_axis,
                       transmission_anti_hunt_2_3_hold_pressure_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_2_3_HOLD;
@@ -34570,7 +34619,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
       transmission_post_shift_acceleration_minimum =
            lookupTableInterpolation
                      (&transmission_3_4_upshift_minimum_post_shift_acceleration_cached_axis_offset,
-                      fuel_demand_control_t_0040a57a.calculated,
+                      commanded_throttle_state.commanded_throttle,
                       transmission_3_4_upshift_minimum_post_shift_acceleration_axis,
                       transmission_3_4_upshift_minimum_post_shift_acceleration_values,2);
       if (transmission_pressure_state.anti_hunt_delay_timer != 0) {
@@ -34667,20 +34716,20 @@ void cm848_selectGovernorPressureNormal(void)
   }
   if (((transmission_shift_strategy_flags.anti_hunt_flags & 0x80) != 0) ||
      ((transmission_shift_strategy_flags.anti_hunt_flags & 0x40) != 0)) goto LAB_00032ee0;
-  if ((transmission_anti_hunt_minimum_throttle < fuel_demand_control_t_0040a57a.calculated) &&
-     ((((fuel_demand_control_t_0040a57a.calculated <
+  if ((transmission_anti_hunt_minimum_throttle < commanded_throttle_state.commanded_throttle) &&
+     ((((commanded_throttle_state.commanded_throttle <
          transmission_anti_hunt_minimum_throttle_interpolated &&
         (transmission_anti_hunt_maximum_throttle_interpolated <
-         fuel_demand_control_t_0040a57a.calculated)) &&
+         commanded_throttle_state.commanded_throttle)) &&
        ((transmission_shift_strategy_flags.anti_hunt_flags & 8) == 0)) &&
       ((transmission_selected_gear != 0x7e && (transmission_selected_gear != 0x7f)))))) {
     transmission_shift_strategy_flags.anti_hunt_flags =
          transmission_shift_strategy_flags.anti_hunt_flags | 0x20;
   }
   else if (((transmission_shift_strategy_flags.anti_hunt_flags & 0x20) == 0) ||
-          ((fuel_demand_control_t_0040a57a.calculated <= transmission_anti_hunt_minimum_throttle ||
-           (transmission_anti_hunt_maximum_throttle_interpolated <
-            fuel_demand_control_t_0040a57a.calculated)))) {
+          ((commanded_throttle_state.commanded_throttle <= transmission_anti_hunt_minimum_throttle
+           || (transmission_anti_hunt_maximum_throttle_interpolated <
+               commanded_throttle_state.commanded_throttle)))) {
 LAB_00032e40:
     transmission_shift_strategy_flags.anti_hunt_flags =
          transmission_shift_strategy_flags.anti_hunt_flags & 0xdf;
@@ -34814,7 +34863,7 @@ void cm848_runTransmissionControl(void)
     }
   }
   else if (logical_output_request_bits_16_to_23.converter_clutch_solenoid_request == 0) {
-    if (transmission_low_range_minimum_throttle < fuel_demand_control_t_0040a57a.calculated) {
+    if (transmission_low_range_minimum_throttle < commanded_throttle_state.commanded_throttle) {
       cm848_selectGovernorPressureLowRange();
     }
     else {
@@ -35139,7 +35188,7 @@ void cm848_determineCurrentGearAndLockupInhibit(void)
   uint uVar11;
   
   uVar11 = 0;
-  iVar10 = (int)(short)fuel_demand_control_t_0040a57a.delta_filtered >> 1;
+  iVar10 = (int)(short)commanded_throttle_state.commanded_throttle_delta_filtered >> 1;
   if (iVar10 < 0) {
     iVar10 = -iVar10;
   }
@@ -35288,7 +35337,7 @@ void cm848_determineCurrentGearAndLockupInhibit(void)
       if ((exhaust_brake_transmission_features_inhibit != 0) ||
          (switch_input_state_bits.exhaust_brake_switch == 0)) goto joined_r0x000341e0;
 joined_r0x000341b8:
-      if (wVar7 <= fuel_demand_control_t_0040a57a.calculated) goto LAB_00034278;
+      if (wVar7 <= commanded_throttle_state.commanded_throttle) goto LAB_00034278;
     }
     else {
       wVar9 = wVar3;
@@ -35301,7 +35350,7 @@ joined_r0x000341b8:
          (switch_input_state_bits.exhaust_brake_switch != 0)) goto joined_r0x000341b8;
       if ((transmission_control_flags.mode_flags & 0x10) != 0) goto LAB_00034278;
 joined_r0x000341e0:
-      if ((wVar9 <= fuel_demand_control_t_0040a57a.calculated) &&
+      if ((wVar9 <= commanded_throttle_state.commanded_throttle) &&
          (fuel_demand_rate_abs < converter_clutch_relock_maximum_throttle_rate)) goto LAB_00034278;
     }
     converter_clutch_apply_delay_countdown = converter_clutch_apply_delay_time;
@@ -35354,7 +35403,7 @@ joined_r0x000341e0:
 joined_r0x00033fb8:
     if ((transmission_exhaust_brake_flags & 4) != 0) goto joined_r0x00033fe4;
 joined_r0x00033fcc:
-    if (fuel_demand_control_t_0040a57a.calculated < wVar4) goto LAB_00034278;
+    if (commanded_throttle_state.commanded_throttle < wVar4) goto LAB_00034278;
   }
   else {
     if ((transmission_current_gear == 3) && ((transmission_exhaust_brake_flags & 4) == 0)) {
@@ -35367,7 +35416,7 @@ joined_r0x00033fcc:
       if (switch_input_state_bits.exhaust_brake_switch != 0) goto joined_r0x00033fb8;
     }
 joined_r0x00033fe4:
-    if (fuel_demand_control_t_0040a57a.calculated <= wVar7) goto LAB_00034278;
+    if (commanded_throttle_state.commanded_throttle <= wVar7) goto LAB_00034278;
   }
   transmission_control_flags.request_flags = transmission_control_flags.request_flags & 0xbf;
 LAB_00034278:
@@ -35502,12 +35551,13 @@ void cm848_updateTransmissionConditionFlags(void)
     transmission_control_flags.request_flags = transmission_control_flags.request_flags & 0xf7;
   }
   if ((transmission_shift_strategy_flags.wide_open_throttle_flags & 0x80) == 0) {
-    if (transmission_wide_open_throttle_set_threshold < fuel_demand_control_t_0040a57a.calculated) {
+    if (transmission_wide_open_throttle_set_threshold < commanded_throttle_state.commanded_throttle)
+    {
       transmission_shift_strategy_flags.wide_open_throttle_flags =
            transmission_shift_strategy_flags.wide_open_throttle_flags | 0x80;
     }
   }
-  else if (fuel_demand_control_t_0040a57a.calculated <
+  else if (commanded_throttle_state.commanded_throttle <
            transmission_wide_open_throttle_clear_threshold) {
     if (((governor_pressure_wide_open_throttle_upshift_target_engine_speed_high <
           transmission_1st_gear_maximum_engine_speed) &&
@@ -35550,13 +35600,13 @@ void cm848_updateTransmissionConditionFlags(void)
     }
   }
   if ((transmission_shift_strategy_flags.anti_hunt_flags & 0x10) == 0) {
-    if (transmission_throttle_detent_set_threshold < fuel_demand_control_t_0040a57a.calculated) {
+    if (transmission_throttle_detent_set_threshold < commanded_throttle_state.commanded_throttle) {
       transmission_shift_strategy_flags.anti_hunt_flags =
            transmission_shift_strategy_flags.anti_hunt_flags | 0x10;
     }
   }
-  else if (fuel_demand_control_t_0040a57a.calculated < transmission_throttle_detent_clear_threshold)
-  {
+  else if (commanded_throttle_state.commanded_throttle <
+           transmission_throttle_detent_clear_threshold) {
     transmission_shift_strategy_flags.anti_hunt_flags =
          transmission_shift_strategy_flags.anti_hunt_flags & 0xef;
   }
@@ -35968,9 +36018,9 @@ void cm848_selectGovernorPressureLockupBoost(void)
       (((2 < transmission_current_gear && ((transmission_control_flags.request_flags & 0x40) == 0))
        && ((transmission_overheat_protection_active_flag == 0 &&
            (switch_input_state_bits.exhaust_brake_switch == 0)))))) &&
-     ((fuel_demand_control_t_0040a57a.calculated < wVar1 ||
+     ((commanded_throttle_state.commanded_throttle < wVar1 ||
       (((transmission_control_flags.state_flags & 4) != 0 &&
-       (fuel_demand_control_t_0040a57a.calculated < wVar2)))))) {
+       (commanded_throttle_state.commanded_throttle < wVar2)))))) {
     transmission_control_flags.state_flags = transmission_control_flags.state_flags | 4;
     governor_pressure_target = governor_pressure_lockup_boost;
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOCKUP_BOOST;
@@ -36037,7 +36087,7 @@ void cm848_selectSensorValuesInUse(void)
   
   if (algorithm_enable_flags_42_cal.actual_sensor_values_enable == 0) {
     intake_manifold_pressure_in_use = sensor_readings_t_0040baf2.intake_manifold_pressure;
-    accelerator_pedal_position_in_use = fuel_demand_control_t_0040a57a.calculated;
+    accelerator_pedal_position_in_use = commanded_throttle_state.commanded_throttle;
     coolant_temperature_in_use = sensor_readings_t_0040baf2.coolant_temp;
     intake_manifold_temperature_in_use = intake_manifold_temperature_sensor_filtered;
     return;
@@ -36093,7 +36143,7 @@ LAB_00035468:
   }
   if ((*(ushort *)((int)&system_status_flags_t_003fe974.fault_detected_bits_0_to_15 + iVar2) & 0x800
       ) == 0) {
-    accelerator_pedal_position_in_use = fuel_demand_control_t_0040a57a.calculated;
+    accelerator_pedal_position_in_use = commanded_throttle_state.commanded_throttle;
     return;
   }
   accelerator_pedal_position_in_use = protection_fuel_demand_snapshot_default_cal;
@@ -36117,7 +36167,7 @@ void cm848_copySensorValuesInUseUnchecked(void)
   intake_manifold_pressure_in_use = sensor_readings_t_0040baf2.intake_manifold_pressure;
   coolant_temperature_in_use = sensor_readings_t_0040baf2.coolant_temp;
   intake_manifold_temperature_in_use = intake_manifold_temperature_sensor_filtered;
-  accelerator_pedal_position_in_use = fuel_demand_control_t_0040a57a.calculated;
+  accelerator_pedal_position_in_use = commanded_throttle_state.commanded_throttle;
   return;
 }
 
@@ -40985,7 +41035,7 @@ void cm848_buildPciTransmitMessage2CruiseControlAndStatusBits(void)
       bVar3 = 0;
     }
   }
-  if ((fuel_demand_control_t_0040a57a.calculated < ok_to_lock_doors_accelerator_threshold) ||
+  if ((commanded_throttle_state.commanded_throttle < ok_to_lock_doors_accelerator_threshold) ||
      (vehicle_speed < ok_to_lock_doors_vehicle_speed_threshold)) {
     cVar4 = '\0';
   }
@@ -41480,7 +41530,8 @@ void mpc555_initFuelDemandTrackingState(void)
    sets accelerator_pedal_channel97_circuit_fault_flag and
    accelerator_pedal_channel98_circuit_fault_flag from the circuit fault bits of the two pedal
    channels and latches accelerator_pedal_sensor_fault_latched_flag while either is set, releasing
-   it once fuel_demand_control_t.accelerator_off_idle is 0 (was cm848_processFaultPendingFlags). */
+   it once commanded_throttle_state_t.accelerator_off_idle is 0 (was
+   cm848_processFaultPendingFlags). */
 
 void cm848_updateAcceleratorPedalSensorFaultFlags(void)
 
@@ -41508,7 +41559,7 @@ void cm848_updateAcceleratorPedalSensorFaultFlags(void)
        ((bool)accelerator_pedal_channel98_circuit_fault_flag)) {
       accelerator_pedal_sensor_fault_latched_flag = 1;
     }
-    else if (fuel_demand_control_t_0040a57a.accelerator_off_idle == 0) {
+    else if (commanded_throttle_state.accelerator_off_idle == 0) {
       accelerator_pedal_sensor_fault_latched_flag = 0;
     }
   }
@@ -41594,13 +41645,13 @@ LAB_0003d13c:
 // Function: cm848_calculateAcceleratorPedalDemandFromChannels @ 0x0003d204
 //
 
-/* Calculates governor_speed_demand_limit, the pedal demand 0 to 400 (0.25 percent per count), as
-   the idle-corrected reading of channel 97 (channel 98 when channel 97 has a circuit fault, 0 when
-   both have one; during a disagreement without a latched fault the lower of the two, or 0 when
-   accelerator_pedal_disagreement_zero_demand_enable is set) times 400 divided by
-   accelerator_pedal_travel_span, sets fuel_demand_control_t.accelerator_off_idle when it exceeds
-   accelerator_pedal_off_idle_threshold, and sets accelerator_pedal_input_fault_flag and
-   governor_speed_demand_limit_prev (was cm848_processFuelDemandEnableFlag). */
+/* Calculates accelerator_pedal_dual_channel_demand, the pedal demand 0 to 400 (0.25 percent per
+   count), as the idle-corrected reading of channel 97 (channel 98 when channel 97 has a circuit
+   fault, 0 when both have one; during a disagreement without a latched fault the lower of the two,
+   or 0 when accelerator_pedal_disagreement_zero_demand_enable is set) times 400 divided by
+   accelerator_pedal_travel_span, sets commanded_throttle_state_t.accelerator_off_idle when it
+   exceeds accelerator_pedal_off_idle_threshold, and sets accelerator_pedal_input_fault_flag and
+   accelerator_pedal_dual_channel_validated_demand (was cm848_processFuelDemandEnableFlag). */
 
 void cm848_calculateAcceleratorPedalDemandFromChannels(void)
 
@@ -41634,9 +41685,9 @@ void cm848_calculateAcceleratorPedalDemandFromChannels(void)
       sVar4 = 0;
     }
     uVar3 = (uint)(sVar4 * 400) / (uint)accelerator_pedal_travel_span;
-    governor_speed_demand_limit = (word)uVar3;
+    accelerator_pedal_dual_channel_demand = (word)uVar3;
     if (400 < (uVar3 & 0xffff)) {
-      governor_speed_demand_limit = 400;
+      accelerator_pedal_dual_channel_demand = 400;
     }
     if (((accelerator_pedal_channel_disagreement_flag == 0) ||
         (accelerator_pedal_sensor_fault_latched_flag != 0)) &&
@@ -41644,14 +41695,14 @@ void cm848_calculateAcceleratorPedalDemandFromChannels(void)
         (((fault_detected_bits_336_to_351 & 0x2000) != 0 &&
          (cruise_speed_target_min_cal <= accelerator_pedal_idle_threshold_a_cal)))))) {
       accelerator_pedal_input_fault_flag = 0;
-      governor_speed_demand_limit_prev = governor_speed_demand_limit;
+      accelerator_pedal_dual_channel_validated_demand = accelerator_pedal_dual_channel_demand;
     }
     else {
       accelerator_pedal_input_fault_flag = 1;
-      governor_speed_demand_limit_prev = 0;
+      accelerator_pedal_dual_channel_validated_demand = 0;
     }
-    fuel_demand_control_t_0040a57a.accelerator_off_idle =
-         (word)(accelerator_pedal_off_idle_threshold < governor_speed_demand_limit);
+    commanded_throttle_state.accelerator_off_idle =
+         (word)(accelerator_pedal_off_idle_threshold < accelerator_pedal_dual_channel_demand);
   }
   return;
 }
@@ -42369,8 +42420,8 @@ void cm848_calculateParkNeutralExitEngineSpeedLimit(void)
     }
     if ((((park_neutral_exit_engine_speed_limit_active_flag == 1) &&
          (temperature_protection_timer < temperature_protection_timer_threshold_cal)) &&
-        (temperature_protection_fuel_lower_cal <= fuel_demand_control_t_0040a57a.calculated)) &&
-       ((fuel_demand_control_t_0040a57a.calculated <= temperature_protection_fuel_upper_cal &&
+        (temperature_protection_fuel_lower_cal <= commanded_throttle_state.commanded_throttle)) &&
+       ((commanded_throttle_state.commanded_throttle <= temperature_protection_fuel_upper_cal &&
         (vehicle_speed < temperature_protection_trim_threshold_cal)))) {
       engine_speed_limit_park_neutral_exit = park_neutral_exit_engine_speed_limit;
       park_neutral_exit_engine_speed_limit_phase = 0;
@@ -42794,8 +42845,9 @@ void cm848_monitorConverterSlipAndEngineSpeedLimit(void)
   engine_speed_limit_converter_slip_table_output =
        cm848_dualAxisTableInterpolation
                  (&engine_speed_limit_converter_slip_cached_axis_offset,
-                  fuel_demand_control_t_0040a57a.calculated,engine_speed_limit_converter_slip_x_axis
-                  ,transmission_output_speed_engine_equivalent,
+                  commanded_throttle_state.commanded_throttle,
+                  engine_speed_limit_converter_slip_x_axis,
+                  transmission_output_speed_engine_equivalent,
                   engine_speed_limit_converter_slip_y_axis,engine_speed_limit_converter_slip_grid,0)
   ;
   uVar4 = (uint)transmission_output_speed_engine_equivalent;
@@ -43617,7 +43669,7 @@ void cm848_controlCruiseVacuumServo(void)
     governor_cycle_active_flag = 1;
     return;
   }
-  fuel_demand_error = fuel_demand_feed_forward - fuel_demand_control_t_0040a57a.calculated;
+  fuel_demand_error = fuel_demand_feed_forward - commanded_throttle_state.commanded_throttle;
   uVar5 = (uint)(short)fuel_demand_error;
   uVar3 = uVar5;
   if ((int)uVar5 < 0) {
@@ -43848,9 +43900,10 @@ void cm848_claimAcceleratorInterlockThrottleOverride(void)
 {
   if (((algorithm_enable_flags_12_cal.accelerator_interlock_enable != 0) &&
       (switch_input_state_bits.throttle_interlock_switch != 0)) &&
-     (fuel_demand_control_t_0040a57a.override_priority < accelerator_interlock_throttle_priority)) {
-    fuel_demand_control_t_0040a57a.override_priority = accelerator_interlock_throttle_priority;
-    fuel_demand_control_t_0040a57a.override_value = 0;
+     (commanded_throttle_state.alternate_throttle_priority < accelerator_interlock_throttle_priority
+     )) {
+    commanded_throttle_state.alternate_throttle_priority = accelerator_interlock_throttle_priority;
+    commanded_throttle_state.alternate_throttle = 0;
   }
   return;
 }
@@ -43920,10 +43973,10 @@ LAB_00040548:
           ((uint)engine_speed_state.filtered_engine_speed <=
            (uint)low_speed_governor_adjusted_reference_speed +
            (uint)low_speed_governor_reference_offset)) &&
-         (((fuel_demand_control_t_0040a57a.calculated == 0 && (cruise_control_engaged_flag != 1)) &&
-          ((operating_mode_governor_output.mode_code == FUELING_STATE_VARIABLE_SPEED_GOVERNOR ||
-           (operating_mode_governor_output.mode_code == FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE)))
-          ))))) {
+         (((commanded_throttle_state.commanded_throttle == 0 && (cruise_control_engaged_flag != 1))
+          && ((operating_mode_governor_output.mode_code == FUELING_STATE_VARIABLE_SPEED_GOVERNOR ||
+              (operating_mode_governor_output.mode_code == FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE
+              )))))))) {
     adjusted_user_fueling_state = FUELING_STATE_LOW_SPEED_GOVERNOR;
   }
   if ((adjusted_user_fueling_state == FUELING_STATE_CRUISE_CONTROL) ||
@@ -44506,7 +44559,7 @@ void cm848_selectCruiseOrUserFueling(void)
   }
   if ((((cruise_control_engaged_flag == 0) ||
        ((((uVar1 < operating_mode_governor_output.fuel_demand &&
-          (governor_override_fuel_threshold_cal < fuel_demand_control_t_0040a57a.calculated)) &&
+          (governor_override_fuel_threshold_cal < commanded_throttle_state.commanded_throttle)) &&
          ((cruise_speed_command != road_speed_governor_reference_speed ||
           (cruise_control_fueling != road_speed_governor_fueling)))) ||
         ((operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_SPEED_CONTROL ||
@@ -44604,7 +44657,7 @@ void cm848_updateEngineRetarderAllowedState(void)
   else {
     engine_retarder_enter_condition_flag = false;
   }
-  if ((((fuel_demand_control_t_0040a57a.calculated == 0) &&
+  if ((((commanded_throttle_state.commanded_throttle == 0) &&
        ((power_take_off_governor_active_flag == 0 ||
         (algorithm_enable_flags_40_cal.engine_retarder_inhibit_during_power_take_off_enable == 0))))
       && ((switch_input_state_bits.clutch_switch == 0 ||
@@ -44645,7 +44698,7 @@ void cm848_updateEngineRetarderAllowedState(void)
   else {
     engine_retarder_exit_condition_flag = false;
   }
-  if (((fuel_demand_control_t_0040a57a.calculated == 0) &&
+  if (((commanded_throttle_state.commanded_throttle == 0) &&
       ((power_take_off_governor_active_flag == 0 ||
        (algorithm_enable_flags_40_cal.engine_retarder_inhibit_during_power_take_off_enable == 0))))
      && ((switch_input_state_bits.clutch_switch == 0 ||
@@ -47498,7 +47551,7 @@ void cm848_calculateAllSpeedGovernorEquivalentThrottle(void)
   int iVar12;
   
   if (algorithm_enable_flags_32_cal.equivalent_throttle_enable == 0) {
-    all_speed_governor_equivalent_throttle = fuel_demand_control_t_0040a57a.calculated;
+    all_speed_governor_equivalent_throttle = commanded_throttle_state.commanded_throttle;
     return;
   }
   bVar1 = false;
@@ -47514,13 +47567,13 @@ void cm848_calculateAllSpeedGovernorEquivalentThrottle(void)
        (adjusted_user_fueling < operating_mode_governor_output.fuel_demand)) ||
       (0x80 < governor_tuning_set_blend_weight)))) {
     if (algorithm_enable_flags_43_cal.vacuum_throttle_cruise_enable == 0) {
-      uVar8 = (uint)fuel_demand_control_t_0040a57a.calculated;
+      uVar8 = (uint)commanded_throttle_state.commanded_throttle;
     }
     else {
       bVar1 = true;
       if (equivalent_throttle_vacuum_all_speed_governor_offset <
-          fuel_demand_control_t_0040a57a.calculated) {
-        uVar8 = (uint)(ushort)(fuel_demand_control_t_0040a57a.calculated -
+          commanded_throttle_state.commanded_throttle) {
+        uVar8 = (uint)(ushort)(commanded_throttle_state.commanded_throttle -
                               equivalent_throttle_vacuum_all_speed_governor_offset);
       }
       else {
@@ -47707,12 +47760,12 @@ LAB_0004659c:
   }
   uVar8 = uVar8 & 0xffff;
   if (algorithm_enable_flags_43_cal.vacuum_throttle_cruise_enable == 0) {
-    if (uVar8 < fuel_demand_control_t_0040a57a.calculated) {
-      uVar8 = (uint)fuel_demand_control_t_0040a57a.calculated;
+    if (uVar8 < commanded_throttle_state.commanded_throttle) {
+      uVar8 = (uint)commanded_throttle_state.commanded_throttle;
     }
   }
   else {
-    uVar10 = (uint)fuel_demand_control_t_0040a57a.calculated;
+    uVar10 = (uint)commanded_throttle_state.commanded_throttle;
     uVar9 = (uint)equivalent_throttle_vacuum_all_speed_governor_offset;
     if (uVar8 + uVar9 < uVar10) {
       if (uVar9 < uVar10) {
@@ -49050,7 +49103,7 @@ LAB_0004800c:
         awStack_68[0] = fuel_pressure_sensor_filter_coefficient;
       }
       iVar14 = (int)(short)((int)((uint)fuel_pressure_governor_accelerator_feed_forward_gain *
-                                 ((uint)fuel_demand_control_t_0040a57a.calculated -
+                                 ((uint)commanded_throttle_state.commanded_throttle -
                                  (uint)fuel_demand_calculated_snapshot)) >> 10);
       iVar13 = (int)fuel_pressure_governor_accelerator_feed_forward_minimum;
       if ((iVar13 <= iVar14) &&
@@ -49061,7 +49114,7 @@ LAB_0004800c:
            cm848_signedFirstOrderFilter
                      (iVar13,&fuel_pressure_governor_accelerator_feed_forward_filter);
       sVar7 = fuel_pressure_setpoint;
-      fuel_demand_calculated_snapshot = fuel_demand_control_t_0040a57a.calculated;
+      fuel_demand_calculated_snapshot = commanded_throttle_state.commanded_throttle;
       sVar11 = fuel_pressure_setpoint - fuel_pressure_feedback_filtered;
       fuel_pressure_feedback_previous = fuel_pressure_feedback_filtered;
       fuel_pressure_sensor_filter.coefficient = awStack_68;
@@ -50859,7 +50912,7 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
     fuel_limit_by_rpm_and_demand_reference =
          cm848_dualAxisTableInterpolation
                    (WORD_ARRAY_003fb738,engine_speed_state.filtered_engine_speed,
-                    fuel_limit_by_rpm_and_demand_x_axis,fuel_demand_control_t_0040a57a.calculated,
+                    fuel_limit_by_rpm_and_demand_x_axis,commanded_throttle_state.commanded_throttle,
                     fuel_limit_by_rpm_and_demand_y_axis,
                     fuel_limit_by_rpm_and_demand_reference_map_grid,0);
     if (combustion_chi_lower_map_number == 1) {
@@ -50867,7 +50920,8 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
            cm848_dualAxisTableInterpolation
                      (&fuel_limit_by_rpm_and_demand_blend_cached_axis_offset,
                       engine_speed_state.filtered_engine_speed,fuel_limit_by_rpm_and_demand_x_axis,
-                      fuel_demand_control_t_0040a57a.calculated,fuel_limit_by_rpm_and_demand_y_axis,
+                      commanded_throttle_state.commanded_throttle,
+                      fuel_limit_by_rpm_and_demand_y_axis,
                       fuel_limit_by_rpm_and_demand_blend_map_1_grid,0);
     }
     else if (combustion_chi_lower_map_number == 2) {
@@ -50875,7 +50929,8 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
            cm848_dualAxisTableInterpolation
                      (&fuel_limit_by_rpm_and_demand_blend_cached_axis_offset,
                       engine_speed_state.filtered_engine_speed,fuel_limit_by_rpm_and_demand_x_axis,
-                      fuel_demand_control_t_0040a57a.calculated,fuel_limit_by_rpm_and_demand_y_axis,
+                      commanded_throttle_state.commanded_throttle,
+                      fuel_limit_by_rpm_and_demand_y_axis,
                       fuel_limit_by_rpm_and_demand_blend_map_2_grid,0);
     }
     else if (combustion_chi_lower_map_number == 3) {
@@ -50883,7 +50938,8 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
            cm848_dualAxisTableInterpolation
                      (&fuel_limit_by_rpm_and_demand_blend_cached_axis_offset,
                       engine_speed_state.filtered_engine_speed,fuel_limit_by_rpm_and_demand_x_axis,
-                      fuel_demand_control_t_0040a57a.calculated,fuel_limit_by_rpm_and_demand_y_axis,
+                      commanded_throttle_state.commanded_throttle,
+                      fuel_limit_by_rpm_and_demand_y_axis,
                       fuel_limit_by_rpm_and_demand_blend_map_3_grid,0);
     }
     else if (combustion_chi_lower_map_number == 4) {
@@ -50891,7 +50947,8 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
            cm848_dualAxisTableInterpolation
                      (&fuel_limit_by_rpm_and_demand_blend_cached_axis_offset,
                       engine_speed_state.filtered_engine_speed,fuel_limit_by_rpm_and_demand_x_axis,
-                      fuel_demand_control_t_0040a57a.calculated,fuel_limit_by_rpm_and_demand_y_axis,
+                      commanded_throttle_state.commanded_throttle,
+                      fuel_limit_by_rpm_and_demand_y_axis,
                       fuel_limit_by_rpm_and_demand_blend_map_4_grid,0);
     }
     if (combustion_chi_upper_map_number == 1) {
@@ -50899,7 +50956,8 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
            cm848_dualAxisTableInterpolation
                      (&fuel_limit_by_rpm_and_demand_blend_cached_axis_offset,
                       engine_speed_state.filtered_engine_speed,fuel_limit_by_rpm_and_demand_x_axis,
-                      fuel_demand_control_t_0040a57a.calculated,fuel_limit_by_rpm_and_demand_y_axis,
+                      commanded_throttle_state.commanded_throttle,
+                      fuel_limit_by_rpm_and_demand_y_axis,
                       fuel_limit_by_rpm_and_demand_blend_map_1_grid,0);
     }
     else if (combustion_chi_upper_map_number == 2) {
@@ -50907,7 +50965,8 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
            cm848_dualAxisTableInterpolation
                      (&fuel_limit_by_rpm_and_demand_blend_cached_axis_offset,
                       engine_speed_state.filtered_engine_speed,fuel_limit_by_rpm_and_demand_x_axis,
-                      fuel_demand_control_t_0040a57a.calculated,fuel_limit_by_rpm_and_demand_y_axis,
+                      commanded_throttle_state.commanded_throttle,
+                      fuel_limit_by_rpm_and_demand_y_axis,
                       fuel_limit_by_rpm_and_demand_blend_map_2_grid,0);
     }
     else if (combustion_chi_upper_map_number == 3) {
@@ -50915,7 +50974,8 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
            cm848_dualAxisTableInterpolation
                      (&fuel_limit_by_rpm_and_demand_blend_cached_axis_offset,
                       engine_speed_state.filtered_engine_speed,fuel_limit_by_rpm_and_demand_x_axis,
-                      fuel_demand_control_t_0040a57a.calculated,fuel_limit_by_rpm_and_demand_y_axis,
+                      commanded_throttle_state.commanded_throttle,
+                      fuel_limit_by_rpm_and_demand_y_axis,
                       fuel_limit_by_rpm_and_demand_blend_map_3_grid,0);
     }
     else if (combustion_chi_upper_map_number == 4) {
@@ -50923,7 +50983,8 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
            cm848_dualAxisTableInterpolation
                      (&fuel_limit_by_rpm_and_demand_blend_cached_axis_offset,
                       engine_speed_state.filtered_engine_speed,fuel_limit_by_rpm_and_demand_x_axis,
-                      fuel_demand_control_t_0040a57a.calculated,fuel_limit_by_rpm_and_demand_y_axis,
+                      commanded_throttle_state.commanded_throttle,
+                      fuel_limit_by_rpm_and_demand_y_axis,
                       fuel_limit_by_rpm_and_demand_blend_map_4_grid,0);
     }
     fuel_limit_by_rpm_and_demand =
@@ -58108,7 +58169,7 @@ void cm848_applicationMain(void)
   cm848_initCrankingLimits();
   cm848_initSensorDefaults();
   cm848_initFuelFilterCoefficients();
-  cm848_initFuelDemandRateVariables();
+  cm848_initializeCommandedThrottleState();
   cm848_selectColdStartFactor();
   cm848_initProtectionTableSizes();
   cm848_initializePowerTakeOffGovernorState();
@@ -58216,7 +58277,7 @@ void cm848_applicationMain(void)
   cm848_initEngineWarningFlags();
   cm848_initializeRadiatorFanSpeedRationalityCheck();
   cm848_initInterpolationStateCounters();
-  cm848_clearEngineProtectionFaultsConditional();
+  cm848_initializeRemoteThrottle();
   cm848_sensorChannel4_process();
   cm848_sensorChannel7_update_configBundle();
   cm848_sensorChannel7_process();
@@ -68110,7 +68171,7 @@ joined_r0x0050a29c:
    cm848_readSwitchHardwareInput - accelerator_idle_switch_debounce_timer 100 minus 50 per pass) /
    set -> off idle while the raw pedal sensor (sensor channel 13 or its diagnostic override) is
    above 360 counts; drives logical switches 7 (at idle) and 8 (off idle) plus
-   fuel_demand_control_t.accelerator_off_idle (was fuel_demand_protection_loop) |
+   commanded_throttle_state_t.accelerator_off_idle (was fuel_demand_protection_loop) |
    review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
 
 void cm848_updateIdleSwitchesFromLocalInputs(void)
@@ -68134,12 +68195,12 @@ void cm848_updateIdleSwitchesFromLocalInputs(void)
         if (bVar2 == 0) {
           cm848_clearDatalinkSwitchStateIfPriority(8,0);
           cm848_setDatalinkSwitchStateIfPriority(7,0);
-          fuel_demand_control_t_0040a57a.accelerator_off_idle = 0;
+          commanded_throttle_state.accelerator_off_idle = 0;
         }
         else {
           cm848_setDatalinkSwitchStateIfPriority(8,0);
           cm848_clearDatalinkSwitchStateIfPriority(7,0);
-          fuel_demand_control_t_0040a57a.accelerator_off_idle = 1;
+          commanded_throttle_state.accelerator_off_idle = 1;
         }
       }
     }
@@ -68168,7 +68229,7 @@ void cm848_updateIdleSwitchesFromLocalInputs(void)
       cm848_clearDatalinkSwitchStateIfPriority(8,0);
       cm848_setDatalinkSwitchStateIfPriority(7,0);
     }
-    fuel_demand_control_t_0040a57a.accelerator_off_idle = (word)bVar1;
+    commanded_throttle_state.accelerator_off_idle = (word)bVar1;
     accelerator_idle_switch_debounce_armed_flag = 0;
   }
   return;
@@ -68292,14 +68353,14 @@ LAB_0050a6cc:
 /* J1939 input 7: EEC2 (PGN 61443) byte 2 Accelerator Pedal Position 1 (SPN 91 - 0.4 %/bit) ->
    accelerator_pedal_sensor_channel_state.held_value (raw x 16 / 10 = 0.25 %/bit - the local pedal
    scale; was j1939_accelerator_pedal_position) with its priority in .held_value_source_priority and
-   fuel_demand_control_t.accelerator_off_idle; 0xFE (error) sets emission_faults bit 15 and falls
-   back to the low idle switch; message lost runs cm848_updateIdleSwitchesFromLocalInputs; runs only
-   when sensor_channel_held_value_enable_bits_cal bit 13 (J1939 pedal) is set and switch 7 is
-   datalink-sourced; with the same bit 13 set the accelerator pedal channel (13) outputs held_value
-   in place of its sensor (the sensor-channel functions read it through state_ptr) - so the J1939
-   pedal DOES reach sensor_channel_filtered_output[13]; it was read as having no reader because
-   nothing names the address (was fuel_demandFeature_emission_update) | review-function-readability
-   reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+   commanded_throttle_state_t.accelerator_off_idle; 0xFE (error) sets emission_faults bit 15 and
+   falls back to the low idle switch; message lost runs cm848_updateIdleSwitchesFromLocalInputs;
+   runs only when sensor_channel_held_value_enable_bits_cal bit 13 (J1939 pedal) is set and switch 7
+   is datalink-sourced; with the same bit 13 set the accelerator pedal channel (13) outputs
+   held_value in place of its sensor (the sensor-channel functions read it through state_ptr) - so
+   the J1939 pedal DOES reach sensor_channel_filtered_output[13]; it was read as having no reader
+   because nothing names the address (was fuel_demandFeature_emission_update) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
 
 void cm848_processJ1939AcceleratorPedalPosition(void)
 
@@ -68344,7 +68405,7 @@ void cm848_processJ1939AcceleratorPedalPosition(void)
             accelerator_pedal_sensor_channel_state.held_value = (word)((uVar2 << 4) / 10);
             accelerator_pedal_sensor_channel_state.held_value_source_priority = bVar3;
           }
-          fuel_demand_control_t_0040a57a.accelerator_off_idle = (word)(uVar2 != 0);
+          commanded_throttle_state.accelerator_off_idle = (word)(uVar2 != 0);
           if ((system_status_flags_t_003fe974.fault_detected_bits_112_to_127 & 0x8000) == 0) {
             accelerator_idle_switch_debounce_armed_flag = 0;
             return;
@@ -68383,7 +68444,7 @@ void cm848_processJ1939AcceleratorPedalPosition(void)
              (j1939_accelerator_position_error_fallback_flag = 1,
              j1939_received_accelerator_pedal_1_low_idle_switch != 1)) {
             accelerator_idle_switch_debounce_armed_flag = 0;
-            fuel_demand_control_t_0040a57a.accelerator_off_idle = 1;
+            commanded_throttle_state.accelerator_off_idle = 1;
             j1939_accelerator_position_error_fallback_flag = 1;
             return;
           }
@@ -68392,7 +68453,7 @@ void cm848_processJ1939AcceleratorPedalPosition(void)
           cm848_setJ1939InputDataErrorBit(7);
         }
       }
-      fuel_demand_control_t_0040a57a.accelerator_off_idle = 0;
+      commanded_throttle_state.accelerator_off_idle = 0;
       return;
     }
   }
@@ -70792,7 +70853,7 @@ void cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit(void)
     }
     pedal_fault_mode_fuel_demand_limit_previous = (word)uVar3;
     wVar1 = fuel_demand_minimum;
-    if (((fuel_demand_control_t_0040a57a.accelerator_off_idle != 1) ||
+    if (((commanded_throttle_state.accelerator_off_idle != 1) ||
         (wVar1 = pedal_fault_mode_fuel_demand_ramp_initial_value,
         pedal_fault_mode_accelerator_off_idle_previous != 1)) ||
        (pedal_fault_mode_fuel_demand_ramp =
@@ -70806,8 +70867,7 @@ void cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit(void)
   else {
     engine_speed_limit_pedal_fault_mode = engine_speed_limit_default_cal;
   }
-  pedal_fault_mode_accelerator_off_idle_previous =
-       fuel_demand_control_t_0040a57a.accelerator_off_idle;
+  pedal_fault_mode_accelerator_off_idle_previous = commanded_throttle_state.accelerator_off_idle;
   return;
 }
 
@@ -71308,10 +71368,20 @@ void cm848_synchronizeProtectionEnableShadowFlags(void)
 
 
 //
-// Function: fuel_demandRateLimit_outputCheck @ 0x0050e534
+// Function: cm848_verifyRemoteThrottleTransition @ 0x0050e534
 //
 
-void fuel_demandRateLimit_outputCheck(void)
+/* The remote throttle hand-over latch
+   (algorithm_enable_flags_18_cal.remote_throttle_transition_verification_enable): with the remote
+   throttle switch on (switch 31, switch_input_state_bits.unwired_switch in this build) and the
+   remote pedal sound, sets remote_throttle_transition_verified_flag once
+   remote_accelerator_pedal_sensor_filtered is at or below the calculated commanded throttle; with
+   the switch off or a remote pedal fault (fault bit 78; with channel 8's held value enabled, a
+   J1939 pedal timeout or fault bit 129) it clears it once the calculated commanded throttle is at
+   or below the remote pedal. So the hand-over between the pedals never jumps (was
+   fuel_demandRateLimit_outputCheck) */
+
+void cm848_verifyRemoteThrottleTransition(void)
 
 {
   bool bVar1;
@@ -71330,17 +71400,20 @@ joined_r0x0050e584:
   bVar1 = true;
 LAB_0050e58c:
   if (bVar1) {
-    if (fuel_demand_control_t_0040a57a.rate_limited <= governor_torque_output) {
-      fuel_demand_rate_limit_active_flag = 0;
+    if (commanded_throttle_state.calculated_commanded_throttle <=
+        remote_accelerator_pedal_sensor_filtered) {
+      remote_throttle_transition_verified_flag = 0;
     }
   }
   else if (switch_input_state_bits.unwired_switch == 0) {
-    if (fuel_demand_control_t_0040a57a.rate_limited <= governor_torque_output) {
-      fuel_demand_rate_limit_active_flag = 0;
+    if (commanded_throttle_state.calculated_commanded_throttle <=
+        remote_accelerator_pedal_sensor_filtered) {
+      remote_throttle_transition_verified_flag = 0;
     }
   }
-  else if (governor_torque_output <= fuel_demand_control_t_0040a57a.rate_limited) {
-    fuel_demand_rate_limit_active_flag = 1;
+  else if (remote_accelerator_pedal_sensor_filtered <=
+           commanded_throttle_state.calculated_commanded_throttle) {
+    remote_throttle_transition_verified_flag = 1;
   }
   return;
 }
@@ -71384,14 +71457,14 @@ void cm848_claimRemoteThrottleOverride(void)
       }
     }
     else {
-      fuel_demandRateLimit_outputCheck();
-      if (fuel_demand_rate_limit_active_flag != 1) {
+      cm848_verifyRemoteThrottleTransition();
+      if (remote_throttle_transition_verified_flag != 1) {
         return;
       }
     }
-    if (fuel_demand_control_t_0040a57a.override_priority < remote_throttle_priority) {
-      fuel_demand_control_t_0040a57a.override_priority = remote_throttle_priority;
-      fuel_demand_control_t_0040a57a.override_value = governor_torque_output;
+    if (commanded_throttle_state.alternate_throttle_priority < remote_throttle_priority) {
+      commanded_throttle_state.alternate_throttle_priority = remote_throttle_priority;
+      commanded_throttle_state.alternate_throttle = remote_accelerator_pedal_sensor_filtered;
     }
   }
   return;
@@ -71400,13 +71473,19 @@ void cm848_claimRemoteThrottleOverride(void)
 
 
 //
-// Function: cm848_clearEngineProtectionFaultsConditional @ 0x0050e768
+// Function: cm848_initializeRemoteThrottle @ 0x0050e768
 //
 
-void cm848_clearEngineProtectionFaultsConditional(void)
+/* Boot initialization of the remote throttle (cm848_applicationMain): clears
+   remote_throttle_transition_verified_flag and, with
+   algorithm_enable_flags_18_cal.remote_throttle_enable off, the remote throttle fault bits 171 /
+   172 (detected and registered). It clears no engine protection fault (was
+   cm848_clearEngineProtectionFaultsConditional) */
+
+void cm848_initializeRemoteThrottle(void)
 
 {
-  fuel_demand_rate_limit_active_flag = 0;
+  remote_throttle_transition_verified_flag = 0;
   if (algorithm_enable_flags_18_cal.remote_throttle_enable == 0) {
     system_status_flags_t_003fe974.fault_detected_bits_160_to_175 =
          system_status_flags_t_003fe974.fault_detected_bits_160_to_175 & 0xe7ff;
@@ -72869,8 +72948,8 @@ void sensorChannelTypeB_configInit_axis1(void)
   sensorChannelConfigInit
             (&sensor_channel_config_t_0005abe8,&sensor_channel_state_t_0040b17a,&WORD_003fcd2c,
              sensor_channel26_linearization_axis,sensor_channel26_linearization_values,2,
-             &ema_filter_state_t_003fcd2e,0x1a,0x133,0x132,&WORD_0040bdbc,&WORD_0040bdbe,
-             &WORD_0040be32);
+             &ema_filter_state_t_003fcd2e,0x1a,0x133,0x132,&ecm_internal_temperature_sensor_value,
+             &ecm_internal_temperature_sensor_default_value,&WORD_0040be32);
   return;
 }
 
@@ -72886,8 +72965,8 @@ void sensorChannelTypeB_update_axis1(void)
   updateSensorChannelWithConfig
             (&sensor_channel_config_t_0005abe8,&sensor_channel_state_t_0040b17a,&WORD_003fcd2c,
              sensor_channel26_linearization_axis,sensor_channel26_linearization_values,2,
-             &ema_filter_state_t_003fcd2e,0x1a,0x133,0x132,&WORD_0040bdbc,&WORD_0040bdbe,
-             &WORD_0040be32);
+             &ema_filter_state_t_003fcd2e,0x1a,0x133,0x132,&ecm_internal_temperature_sensor_value,
+             &ecm_internal_temperature_sensor_default_value,&WORD_0040be32);
   return;
 }
 
@@ -72977,8 +73056,8 @@ void sensorChannelTypeB_configInit_axis4(void)
   sensorChannelTypeB_configInit
             (&sensor_channel_config_t_0005aca4,&fuel_level_sensor_channel_state,&WORD_003fcd4a,
              fuel_level_linearization_axis,fuel_level_linearization_values,0,
-             &ema_filter_state_t_003fcd4c,0x44,0x17d,0x17e,&WORD_0040bdb8,&WORD_0040bdba,
-             &WORD_0040be30);
+             &ema_filter_state_t_003fcd4c,0x44,0x17d,0x17e,&fuel_level_sensor_value,
+             &fuel_level_sensor_default_value,&WORD_0040be30);
   return;
 }
 
@@ -72994,8 +73073,8 @@ void sensorChannelTypeB_update_axis4(void)
   sensorChannelTypeB_update
             (&sensor_channel_config_t_0005aca4,&fuel_level_sensor_channel_state,&WORD_003fcd4a,
              fuel_level_linearization_axis,fuel_level_linearization_values,0,
-             &ema_filter_state_t_003fcd4c,0x44,0x17d,0x17e,&WORD_0040bdb8,&WORD_0040bdba,
-             &WORD_0040be30);
+             &ema_filter_state_t_003fcd4c,0x44,0x17d,0x17e,&fuel_level_sensor_value,
+             &fuel_level_sensor_default_value,&WORD_0040be30);
   return;
 }
 
@@ -73176,7 +73255,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
     air_conditioning_coolant_temperature_ok_flag = 0;
   }
   if (((air_conditioning_high_fuel_demand_cutout_throttle_threshold <
-        fuel_demand_control_t_0040a57a.calculated) &&
+        commanded_throttle_state.commanded_throttle) &&
       (vehicle_speed < air_conditioning_high_fuel_demand_cutout_vehicle_speed_threshold)) &&
      (air_conditioning_high_fuel_demand_cutout_rearm_count_limit <=
       air_conditioning_high_fuel_demand_cutout_rearm_timer)) {
@@ -73447,10 +73526,10 @@ void cm848_updateParkNeutralExitEngineSpeedLimitWindow(void)
       }
       else {
         park_neutral_exit_engine_speed_limit_active_flag = 0;
-        if ((((fuel_demand_control_t_0040a57a.calculated <
+        if ((((commanded_throttle_state.commanded_throttle <
                park_neutral_exit_engine_speed_limit_minimum_throttle) ||
              (park_neutral_exit_engine_speed_limit_maximum_throttle <
-              fuel_demand_control_t_0040a57a.calculated)) ||
+              commanded_throttle_state.commanded_throttle)) ||
             (transmission_output_speed_in_use <
              park_neutral_exit_engine_speed_limit_minimum_output_shaft_speed)) ||
            (DAT_004086d8 < transmission_output_speed_in_use)) {
@@ -75791,7 +75870,7 @@ void cm848_selectCoolingFanDutySource(void)
 
 {
   if ((((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR) &&
-       (fuel_demand_control_t_0040a57a.calculated <= cooling_fan_idle_accelerator_maximum)) &&
+       (commanded_throttle_state.commanded_throttle <= cooling_fan_idle_accelerator_maximum)) &&
       (vehicle_speed <= cooling_fan_idle_vehicle_speed_maximum)) &&
      (engine_speed_state.filtered_engine_speed < cooling_fan_idle_engine_rpm_limit)) {
     cooling_fan_engine_idle_flag = 1;
@@ -76681,8 +76760,8 @@ void fuel_quantity_demand_monitor(void)
          (j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_TORQUE_CONTROL)) ||
         (power_take_off_governor_active_flag != 0)) ||
        ((cruise_control_engaged_flag != 0 || ((fault_detected_bits_384_to_399 & 0x10) != 0)))) ||
-      ((fuel_demand_control_t_0040a57a.calculated != 0 ||
-       ((fuel_demand_control_t_0040a57a.accelerator_off_idle != 0 ||
+      ((commanded_throttle_state.commanded_throttle != 0 ||
+       ((commanded_throttle_state.accelerator_off_idle != 0 ||
         (average_engine_speed <= DAT_00408950)))))) ||
      ((int)(((uint)main_injection_pulse_width + (uint)pilot_injection_pulse_width +
             (uint)auxiliary_injection_pulse_width) -
@@ -78772,7 +78851,7 @@ void cm848_monitorEngineToVehicleSpeedRatio(void)
         (uVar2 < engine_to_vehicle_speed_ratio_stable_maximum_deviation)) &&
        ((engine_to_vehicle_speed_ratio_invalid_flag == 0 &&
         ((engine_to_vehicle_speed_ratio_high_minimum_accelerator_pedal <
-          fuel_demand_control_t_0040a57a.calculated &&
+          commanded_throttle_state.commanded_throttle &&
          (engine_to_vehicle_speed_ratio_high_threshold < engine_to_vehicle_speed_ratio_filtered)))))
        ) {
       engine_to_vehicle_speed_ratio_high_flag = 1;
@@ -78928,7 +79007,7 @@ void cm848_monitorGovernorPressureSensorOffset(void)
     governor_pressure_rationality_tested_in_park_neutral_flag = 0;
   }
   else if ((((((system_status_flags_t_003fe974.fault_detected_bits_144_to_159 & 0x10) == 0) &&
-             (fuel_demand_control_t_0040a57a.calculated <
+             (commanded_throttle_state.commanded_throttle <
               governor_pressure_rationality_maximum_accelerator_pedal)) &&
             ((int)(short)transmission_temperature_sensor_filtered <
              (int)(uint)governor_pressure_check_maximum_transmission_temperature)) &&
@@ -79018,7 +79097,7 @@ void cm848_monitorGovernorPressureTracking(void)
     governor_pressure_tracking_cycle_divider = 0;
     if ((((((switch_input_state_bits.park_neutral_switch == 0) &&
            ((system_status_flags_t_003fe974.fault_detected_bits_144_to_159 & 0x10) == 0)) &&
-          (fuel_demand_control_t_0040a57a.calculated <=
+          (commanded_throttle_state.commanded_throttle <=
            governor_pressure_check_maximum_accelerator_position)) &&
          (((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 0x400) == 0 &&
           ((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 0x800) == 0)))) &&
@@ -79480,7 +79559,7 @@ void cm848_monitorConverterClutchAndOverdrivePerformance(void)
     return;
   }
   converter_clutch_rationality_previous_throttle = converter_clutch_rationality_last_throttle;
-  converter_clutch_rationality_last_throttle = fuel_demand_control_t_0040a57a.calculated;
+  converter_clutch_rationality_last_throttle = commanded_throttle_state.commanded_throttle;
   bVar1 = logical_output_request_bits_16_to_23.overdrive_solenoid_request;
   bVar3 = logical_output_request_bits_16_to_23.overdrive_solenoid_request;
   bVar4 = logical_output_request_bits_16_to_23.overdrive_solenoid_request;
@@ -79490,7 +79569,7 @@ void cm848_monitorConverterClutchAndOverdrivePerformance(void)
     converter_clutch_rationality_cycle_divider = 0;
     return;
   }
-  uVar8 = wVar7 - fuel_demand_control_t_0040a57a.calculated;
+  uVar8 = wVar7 - commanded_throttle_state.commanded_throttle;
   if ((short)uVar8 < 0) {
     uVar8 = -uVar8;
   }
@@ -79522,7 +79601,7 @@ void cm848_monitorConverterClutchAndOverdrivePerformance(void)
     converter_clutch_rationality_ratio_delta_sum = 0;
     return;
   }
-  if (fuel_demand_control_t_0040a57a.calculated <= converter_clutch_minimum_throttle) {
+  if (commanded_throttle_state.commanded_throttle <= converter_clutch_minimum_throttle) {
     converter_clutch_rationality_previous_throttle = wVar7;
     converter_clutch_rationality_cycle_divider = 0;
     return;
@@ -79774,7 +79853,7 @@ void cm848_calibrateGovernorPressureSensorOffset(void)
           }
         }
         if ((transmission_control_flags.request_flags & 0x10) == 0) {
-          if (fuel_demand_control_t_0040a57a.calculated <
+          if (commanded_throttle_state.commanded_throttle <
               governor_pressure_offset_calibration_maximum_throttle) {
             if ((transmission_output_speed_in_use <
                  governor_pressure_offset_calibration_maximum_output_speed) &&
@@ -82542,7 +82621,7 @@ LAB_0051f804:
   case 0x46:
     if (accelerator_pedal_dual_channel_enable_flag == 0) {
       sci_buffer[sci_transmit_byte_count] =
-           (byte)(((uint)fuel_demand_control_t_0040a57a.rate_limited * 0xff) / 400);
+           (byte)(((uint)commanded_throttle_state.calculated_commanded_throttle * 0xff) / 400);
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
     }
     break;
@@ -82720,7 +82799,7 @@ LAB_0051f804:
   case 0x76:
     if (accelerator_pedal_dual_channel_enable_flag == 1) {
       sci_buffer[sci_transmit_byte_count] =
-           (byte)(((uint)governor_speed_demand_limit_prev * 0x18e7) / 10000);
+           (byte)(((uint)accelerator_pedal_dual_channel_validated_demand * 0x18e7) / 10000);
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
     }
     break;
@@ -84195,15 +84274,15 @@ void cm848_sciCommand51ReportActiveFaultDtcs(void)
 //
 
 /* reports fault status for the 2-byte OBD DTC code in the request - the key is matched in
-   obd_dtc_code_table by cm848_lookupFaultSpnIndex so it is a DTC not an SPN - SCI command 0x34 (52)
-   via the 0x53a9a0 table (cm848_dispatchSciCommand) (was ReportFaultStatusBySpn) |
+   obd_dtc_code_table by cm848_lookupFaultIndexByDtcCode so it is a DTC not an SPN - SCI command
+   0x34 (52) via the 0x53a9a0 table (cm848_dispatchSciCommand) (was ReportFaultStatusBySpn) |
    registration-table-sweep reviewed 2026-11-13 */
 
 void cm848_sciCommand52ReportFaultStatusByDtc(void)
 
 {
   DAT_003fcf92 = 0;
-  sci_next_byte_handler = cm848_sciCommand52ReportFaultStatusBySpnCallback;
+  sci_next_byte_handler = cm848_sciCommand52ReportFaultStatusByDtcCallback;
   cm848_sciStartTransmit();
   return;
 }
@@ -84211,12 +84290,15 @@ void cm848_sciCommand52ReportFaultStatusByDtc(void)
 
 
 //
-// Function: cm848_lookupFaultSpnIndex @ 0x00522468
+// Function: cm848_lookupFaultIndexByDtcCode @ 0x00522468
 //
 
-/* searches the SPN table obd_dtc_code_table for a matching SPN and returns its table index */
+/* Searches obd_dtc_code_table (170 fault slots) for the 2-byte OBD DTC code and returns 1 with its
+   slot index, or 0 (also for code 0). The table holds P-codes (0x0606 = P0606), not SPNs (was
+   cm848_lookupFaultSpnIndex) | earlier note: searches the SPN table obd_dtc_code_table for a
+   matching SPN and returns its table index */
 
-undefined4 cm848_lookupFaultSpnIndex(undefined2 *param_1,uint param_2)
+undefined4 cm848_lookupFaultIndexByDtcCode(undefined2 *param_1,uint param_2)
 
 {
   uint uVar1;
@@ -84267,13 +84349,16 @@ bool cm848_isFaultGroupStatusBitSet(uint param_1)
 
 
 //
-// Function: cm848_sciCommand52ReportFaultStatusBySpnCallback @ 0x0052252c
+// Function: cm848_sciCommand52ReportFaultStatusByDtcCallback @ 0x0052252c
 //
 
-/* SCI diagnostic link next-byte callback: command 52 SPN -> fault status |
+/* SCI diagnostic link next-byte callback of command 52 (cm848_sciCommand52ReportFaultStatusByDtc):
+   collects the 2-byte DTC code, finds its fault slot with cm848_lookupFaultIndexByDtcCode and
+   reports that slot's status (was cm848_sciCommand52ReportFaultStatusBySpnCallback) | earlier note:
+   SCI diagnostic link next-byte callback: command 52 SPN -> fault status |
    review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
 
-void cm848_sciCommand52ReportFaultStatusBySpnCallback(void)
+void cm848_sciCommand52ReportFaultStatusByDtcCallback(void)
 
 {
   uint uVar1;
@@ -84286,7 +84371,7 @@ void cm848_sciCommand52ReportFaultStatusBySpnCallback(void)
   uVar1 = DAT_003fcf92 + 1;
   DAT_003fcf92 = (byte)uVar1;
   if ((uVar1 & 0xff) < 2) goto LAB_00522660;
-  sVar2 = cm848_lookupFaultSpnIndex(local_8,CONCAT11(DAT_003fcf93,DAT_003fcf94));
+  sVar2 = cm848_lookupFaultIndexByDtcCode(local_8,CONCAT11(DAT_003fcf93,DAT_003fcf94));
   uVar1 = (uint)local_8[0];
   if (sVar2 != 0) {
     bVar3 = (&fault_status_array)[uVar1 * 3] >> 4 & 6;
@@ -87223,7 +87308,7 @@ void cm848_detectVehicleSpeedSensorZeroUnderLoad(void)
       vehicle_speed_zero_under_load_engine_load_filtered = (word)filtered_engine_load;
       if (((engine_state == ENGINE_STATE_RUNNING) &&
           (vehicle_speed_zero_under_load_accelerator_off_idle_previous == 0)) &&
-         (fuel_demand_control_t_0040a57a.accelerator_off_idle == 1)) {
+         (commanded_throttle_state.accelerator_off_idle == 1)) {
         vehicle_speed_zero_under_load_accelerator_off_idle_entry_count_cal =
              vehicle_speed_zero_under_load_accelerator_off_idle_entry_count_cal + 1;
       }
@@ -87314,7 +87399,7 @@ void cm848_runVehicleSpeedSensorMonitors(void)
   cm848_detectVehicleSpeedSensorZeroUnderLoad();
   cm848_clearHealedVehicleSpeedSensorFault();
   vehicle_speed_zero_under_load_accelerator_off_idle_previous =
-       fuel_demand_control_t_0040a57a.accelerator_off_idle;
+       commanded_throttle_state.accelerator_off_idle;
   return;
 }
 
@@ -89768,7 +89853,7 @@ LAB_0052b040:
        (fuel_pressure_check_injection_quantity_maximum < total_injection_quantity)) ||
       ((0 < (short)fuel_pressure_governor_state.fuel_pressure_governor_demand ||
        (switch_input_state_bits.clutch_switch == 0)))) ||
-     (fuel_demand_control_t_0040a57a.accelerator_off_idle != 0)) {
+     (commanded_throttle_state.accelerator_off_idle != 0)) {
     fuel_pressure_allowed_decay_check_enable_debounce_count = 0;
   }
   else if (fuel_pressure_allowed_decay_check_enable_debounce_count <
@@ -94338,7 +94423,7 @@ void cm848_monitorIntakeAirHeaterPerformance(void)
           intake_air_heater_performance_test_loaded_battery_voltage_adc =
                intake_air_heater_performance_test_ring_average_battery_voltage_adc;
           *pwVar5 = 3;
-          *pwVar6 = DAT_00064428;
+          *pwVar6 = intake_air_heater_performance_test_recovery_sample_delay_ticks;
           intake_air_heater_performance_test_sample_count = 0;
         }
       }
@@ -94477,10 +94562,10 @@ void cm848_checkMisfireMonitorTestConditions(void)
            (uint)misfire_monitor_idle_reference_speed_offset) &&
          (((((uint)engine_speed_state.engine_speed <= (uint)misfire_monitor_maximum_engine_speed &&
             (engine_load_at_current_speed_percent <= misfire_monitor_maximum_engine_load)) &&
-           (fuel_demand_control_t_0040a57a.calculated < misfire_monitor_maximum_accelerator_demand))
-          && ((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR &&
-              ((uint)misfire_monitor_idle_reference_speed_previous ==
-               (uint)low_speed_governor_reference.reference_speed)))))) &&
+           (commanded_throttle_state.commanded_throttle < misfire_monitor_maximum_accelerator_demand
+           )) && ((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR &&
+                  ((uint)misfire_monitor_idle_reference_speed_previous ==
+                   (uint)low_speed_governor_reference.reference_speed)))))) &&
         ((misfire_monitor_minimum_coolant_temperature <=
           (short)sensor_readings_t_0040baf2.coolant_temp ||
          ((end_of_line_test_settings_cal.field_mode_register == 0x13ec &&
@@ -94677,8 +94762,8 @@ void cm848_runMisfireMonitor(void)
              (uint)misfire_monitor_idle_reference_speed_offset) &&
            ((uint)engine_speed_state.engine_speed <= (uint)misfire_monitor_maximum_engine_speed)) &&
           (engine_load_at_current_speed_percent <= misfire_monitor_maximum_engine_load)) &&
-         ((fuel_demand_control_t_0040a57a.calculated < misfire_monitor_maximum_accelerator_demand &&
-          (adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR)))) {
+         ((commanded_throttle_state.commanded_throttle < misfire_monitor_maximum_accelerator_demand
+          && (adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR)))) {
         misfire_monitor_disabled_by_fault_flag = 0;
         if ((ushort)(misfire_monitor_idle_pass_count + 1) < misfire_monitor_minimum_idle_pass_count)
         {

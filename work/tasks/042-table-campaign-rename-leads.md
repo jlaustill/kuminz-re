@@ -47,7 +47,7 @@ applied and proved the waves are in `firmware/scripts/rename_waves/`.
 - `governor_adjustment_input` = altitude in feet; `governor_adjustment_rpm_axis_cal` is an altitude axis (bins 07 / 08; the altitude table matches the standard atmosphere).
 - `sensor_channelGeneric_*` = the coolant temperature channel (slot 2); `fuel_demand_boost_input` = that coolant value (bins 17 / 18).
 - `sensor_channel9_pressure_value` / `_default_value` = intake manifold temperature (bin 16).
-- `governor_torque_output` (0x40bb00) = the remote accelerator pedal position (bin 16).
+- `governor_torque_output` (0x40bb00) = the remote accelerator pedal position (bin 16). Done in PR #53 round 24: `remote_accelerator_pedal_sensor_filtered` (EEC2 byte 4, SPN 974).
 - `cruise_speed_current_a` / `_b` (0x40bbb2 / 0x40bbb4) = the two accelerator pedal tracks (bin 15).
 - `battery_voltage_prev` (0x40b26e) = the charging voltage target (bin 15).
 - `fuel_timing_sensor_value` = slot 4 = battery voltage (P0563 / P0562); `governor_speed_input_value` = slot 75 (sensor unknown).

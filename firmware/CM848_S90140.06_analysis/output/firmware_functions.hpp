@@ -369,15 +369,15 @@ void cm848_applyOffNominalTimingAdjustment(void);  // @ 0x00016d6c
 void cm848_calculateOffNominalCompensation(void);  // @ 0x00016e90
 void cm848_runOffNominalCompensation(void);  // @ 0x00016f9c
 void cm848_initializeOffNominalCompensationLookupCaches(void);  // @ 0x00016ffc
-void cm848_fuelDemandBaseCalculation(void);  // @ 0x0001702c
+void cm848_calculateCommandedThrottleFromPedal(void);  // @ 0x0001702c
 void cm848_evaluateIdleValidationSwitches(void);  // @ 0x00017150
 void cm848_updateOffIdleFromIdleValidation(void);  // @ 0x000172b0
-void cm848_fuelDemandRateLimiterStateMachine(void);  // @ 0x000172e8
+void cm848_updateThrottleTransitionState(void);  // @ 0x000172e8
 void cm848_learnAcceleratorPedalAutozero(void);  // @ 0x000173a8
 void cm848_monitorAcceleratorPedalIdleValidationFaults(void);  // @ 0x00017560
-void cm848_fuelDemandFinalCalculation(void);  // @ 0x0001782c
-void cm848_fuelDemandCoordinator(void);  // @ 0x00017980
-void cm848_initFuelDemandRateVariables(void);  // @ 0x00017af4
+void cm848_selectCommandedThrottle(void);  // @ 0x0001782c
+void cm848_runThrottleValidation(void);  // @ 0x00017980
+void cm848_initializeCommandedThrottleState(void);  // @ 0x00017af4
 void cm848_passCompensatedTimingToCombustionLimits(void);  // @ 0x00017b54
 uint cm848_estimateCompressorOutletTemperature(void);  // @ 0x00017b84
 void cm848_selectCompressorOutletTemperature(void);  // @ 0x00017d54
@@ -1527,9 +1527,9 @@ void cm848_calculateEngineLoadPercentages(void);  // @ 0x0050de54
 void cm848_validateFuelDemandRelativeToTiming(void);  // @ 0x0050e000
 void cm848_debounceOutputReadBackFaults(void);  // @ 0x0050e0a0
 void cm848_synchronizeProtectionEnableShadowFlags(void);  // @ 0x0050e4c4
-void fuel_demandRateLimit_outputCheck(void);  // @ 0x0050e534
+void cm848_verifyRemoteThrottleTransition(void);  // @ 0x0050e534
 void cm848_claimRemoteThrottleOverride(void);  // @ 0x0050e610
-void cm848_clearEngineProtectionFaultsConditional(void);  // @ 0x0050e768
+void cm848_initializeRemoteThrottle(void);  // @ 0x0050e768
 void cm848_calculateWaterVaporAndSaturationTemperatures(void);  // @ 0x0050e7f4
 void cm848_initBoostControlInterpolationState(void);  // @ 0x0050ea88
 void cm848_calculateFrictionNoLoadAndNetMachineTorque(void);  // @ 0x0050eaa8
@@ -1750,9 +1750,9 @@ void cm848_sciCommand49Callback(void);  // @ 0x00522158
 void cm848_sciCommand50ReportProtectionEventDtcs(void);  // @ 0x00522224
 void cm848_sciCommand51ReportActiveFaultDtcs(void);  // @ 0x00522314
 void cm848_sciCommand52ReportFaultStatusByDtc(void);  // @ 0x0052242c
-undefined4 cm848_lookupFaultSpnIndex(undefined2 *param_1,uint param_2);  // @ 0x00522468
+undefined4 cm848_lookupFaultIndexByDtcCode(undefined2 *param_1,uint param_2);  // @ 0x00522468
 bool cm848_isFaultGroupStatusBitSet(uint param_1);  // @ 0x005224b0
-void cm848_sciCommand52ReportFaultStatusBySpnCallback(void);  // @ 0x0052252c
+void cm848_sciCommand52ReportFaultStatusByDtcCallback(void);  // @ 0x0052252c
 void cm848_sciValidateSecurityKey(void);  // @ 0x00522674
 void bufferManagementWithBounds(void);  // @ 0x00522700
 void initMessageBufferPointers(void);  // @ 0x00522788
