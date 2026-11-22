@@ -1322,7 +1322,7 @@ void cm848_applyAltitudeDerateFuelLimit(void);  // @ 0x00502af4
 void cm848_initialization_step_2(void);  // @ 0x00502b24
 void cm848_initializeBarometricFuelLimitInterpolationStates(void);  // @ 0x00502b34
 void cm848_calculateAmbientAndCompressorInletConditions(void);  // @ 0x00502b6c
-void cm848_initialization_step_3(void);  // @ 0x00502eb8
+void cm848_initializeAmbientConditions(void);  // @ 0x00502eb8
 void cm848_selectTsc1SpeedControlMode(int previous_engine_operating_mode);  // @ 0x00503074
 void cm848_initializeVehicleSpeedAndCruiseState(void);  // @ 0x005031b4
 void cm848_updateEgrCoolerFoulingFaultCounter(void);  // @ 0x005031fc

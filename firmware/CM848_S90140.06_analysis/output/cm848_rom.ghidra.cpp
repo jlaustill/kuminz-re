@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 03:41:41 MST 2026
+// Generated: Sun Nov 22 03:57:50 MST 2026
 
 
 //
@@ -1777,10 +1777,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
+  word qadc_b_pqb0_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -6092,9 +6092,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
+  byte prescaler_count;
   dword runtime_value;
   word counter_value;
-  byte prescaler_count;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -24398,25 +24398,25 @@ void cm848_buildPgn65269AmbientConditionsMessage(void)
   
   if (((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x200) == 0) &&
      ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x400) == 0)) {
-    j1939_amb_barometric_pressure =
+    j1939_pgn65269_barometric_pressure =
          (byte)((((uint)sensor_readings_t_0040baf2.barometric_pressure * 2 & 0xffff) * 0x1afa) /
                 1000 >> 7);
   }
   else {
-    j1939_amb_barometric_pressure = 0xfe;
+    j1939_pgn65269_barometric_pressure = 0xfe;
   }
   if ((algorithm_enable_flags_29_cal.reserved_bit_0 == 0) ||
      (algorithm_enable_flags_29_cal.reserved_bit_1 == 0)) {
-    DAT_003faac5 = 0xffff;
+    j1939_pgn65269_ambient_air_temperature = 0xffff;
   }
   else if (((system_status_flags_t_003fe974.fault_detected_bits_144_to_159 & 0x40) == 0) &&
           ((system_status_flags_t_003fe974.fault_detected_bits_144_to_159 & 0x80) == 0)) {
     local_8[0] = ((short)((((short)ambient_air_temperature_sensor_filtered >> 6) * 5 + -0xa0) / 9) +
                  0x111) * 0x20;
-    DAT_003faac5 = j1939_reverseByteOrder16(local_8);
+    j1939_pgn65269_ambient_air_temperature = j1939_reverseByteOrder16(local_8);
   }
   else {
-    DAT_003faac5 = 0xfffe;
+    j1939_pgn65269_ambient_air_temperature = 0xfffe;
   }
   sendJ1939Message(&j1939_pgn65269_tx_message);
   return;
@@ -24434,13 +24434,13 @@ void cm848_initJ1939AmbientConditionsBuffer(void)
   j1939_pgn65269_tx_message.header.can_id =
        CONCAT13(((byte)j1939_pgn65269_priority_cal & 7) << 2,0xfef500);
   j1939_pgn65269_tx_message.header.data_length = 8;
-  j1939_pgn65269_tx_message.data_pointer = &j1939_amb_barometric_pressure;
+  j1939_pgn65269_tx_message.data_pointer = &j1939_pgn65269_barometric_pressure;
   j1939_pgn65269_tx_message.data_end_pointer = &DAT_003faaca;
   j1939_pgn65269_tx_message.header.can_id =
        CONCAT31(j1939_pgn65269_tx_message.header.can_id._0_3_,(char)j1939_source_address);
-  j1939_pgn65269_field1_init = 0xffff;
-  DAT_003faac7 = 0xff;
-  j1939_pgn65269_field2_init = 0xffff;
+  j1939_pgn65269_cab_interior_temperature = 0xffff;
+  j1939_pgn65269_engine_air_intake_temperature = 0xff;
+  j1939_pgn65269_road_surface_temperature = 0xffff;
   return;
 }
 
@@ -58311,7 +58311,7 @@ void cm848_applicationMain(void)
   cm848_initializeVariableGeometryTurbochargerAdjustmentFilters();
   cm848_initializeGovernorPressureTrackingMonitor();
   cm848_initParkNeutralSwitchMonitor();
-  cm848_initialization_step_3();
+  cm848_initializeAmbientConditions();
   cm848_initializeExhaustPressureEstimate();
   cm848_initialization_step_13();
   cm848_initializeEgrDeltaPressureAutozero();
@@ -62106,12 +62106,14 @@ void cm848_calculateAmbientAndCompressorInletConditions(void)
   
   dVar2 = exponentialMovingAverage
                     ((uint)charge_flow_estimate_terms.fresh_air_mass_flow_filtered,
-                     &boost_pressure_timing_filter_state);
-  boost_pressure_timing_ema_filtered = (word)dVar2;
+                     &ambient_air_flow_filter);
+  ambient_air_flow_filtered = (word)dVar2;
   compressor_inlet_temperature_rise =
        cm848_dualAxisTableInterpolation
-                 (WORD_ARRAY_003fb9de,boost_pressure_timing_ema_filtered,WORD_ARRAY_003ff108,
-                  vehicle_speed_copy,WORD_ARRAY_003ff3b6,WORD_ARRAY_003ff12e,0);
+                 (compressor_inlet_temperature_rise_cached_axis_offsets,ambient_air_flow_filtered,
+                  compressor_inlet_temperature_rise_x_axis,vehicle_speed_copy,
+                  compressor_inlet_temperature_rise_y_axis,compressor_inlet_temperature_rise_grid,0)
+  ;
   if ((compressor_inlet_temperature_source == 2) ||
      (charge_flow_estimate_terms.fresh_air_flow_source == 2)) {
     ambient_air_temperature_source = 2;
@@ -62124,23 +62126,25 @@ void cm848_calculateAmbientAndCompressorInletConditions(void)
     ambient_air_temperature_source = 0;
   }
   wVar3 = ambient_air_temperature_override_value;
-  wVar1 = boost_fuel_timing_demand_filter_output;
+  wVar1 = ambient_air_temperature_estimate;
   if ((ambient_air_temperature_user_override_enable_cal == 0) &&
      (wVar3 = ambient_air_temperature_default_value, wVar1 = ambient_air_temperature_default_value,
      ambient_air_temperature_source != 2)) {
     wVar3 = cm848_signedFirstOrderFilter
                       ((int)(short)(compressor_inlet_temperature - compressor_inlet_temperature_rise
-                                   ),&ema_filter_state_t_003fb9e2);
+                                   ),&ambient_air_temperature_filter);
     wVar1 = wVar3;
   }
-  boost_fuel_timing_demand_filter_output = wVar1;
+  ambient_air_temperature_estimate = wVar1;
   ambient_air_temperature = wVar3;
   dVar2 = exponentialMovingAverage
                     ((uint)charge_flow_estimate_terms.fresh_air_mass_flow_filtered,
-                     &ema_filter_state_t_003fb9f6);
+                     &compressor_inlet_pressure_drop_air_flow_filter);
   compressor_inlet_pressure_drop =
-       lookupTableInterpolation(&DAT_003fb9dc,(word)dVar2,WORD_ARRAY_003ff0c4,WORD_ARRAY_003ff0e6,0)
-  ;
+       lookupTableInterpolation
+                 (&compressor_inlet_pressure_drop_by_air_flow_cached_axis_offset,(word)dVar2,
+                  compressor_inlet_pressure_drop_by_air_flow_axis,
+                  compressor_inlet_pressure_drop_by_air_flow_values,0);
   if (barometric_pressure_sensor_senses_ambient_air_flag_cal == 0) {
     barometric_pressure_reference = barometric_pressure_selected + compressor_inlet_pressure_drop;
     compressor_inlet_pressure = barometric_pressure_selected;
@@ -62202,32 +62206,39 @@ void cm848_calculateAmbientAndCompressorInletConditions(void)
 
 
 //
-// Function: cm848_initialization_step_3 @ 0x00502eb8
+// Function: cm848_initializeAmbientConditions @ 0x00502eb8
 //
 
-void cm848_initialization_step_3(void)
+/* Boot initialization of the ambient conditions module (e2m 1921 / 1977): presets the lookup
+   caches, starts the ambient air flow and ambient air temperature filters from the current values,
+   sets the first compressor_inlet_temperature_rise, ambient_air_temperature_estimate, ambient air
+   temperature and its source, the barometric pressure reference and the compressor inlet pressure,
+   the relative humidity and the altitude (was cm848_initialization_step_3) */
+
+void cm848_initializeAmbientConditions(void)
 
 {
   dword dVar1;
   
   altitude_from_barometric_pressure_cached_axis_offset = 2;
-  DAT_003fb9dc = 2;
-  boost_pressure_timing_filter_state.accumulator =
+  compressor_inlet_pressure_drop_by_air_flow_cached_axis_offset = 2;
+  ambient_air_flow_filter.accumulator =
        (uint)charge_flow_estimate_terms.fresh_air_mass_flow_filtered << 0x10;
-  boost_pressure_timing_filter_state.coefficient = &ambient_air_flow_filter_coefficient;
+  ambient_air_flow_filter.coefficient = &ambient_air_flow_filter_coefficient;
   dVar1 = exponentialMovingAverage
                     ((uint)charge_flow_estimate_terms.fresh_air_mass_flow_filtered,
-                     &boost_pressure_timing_filter_state);
-  boost_pressure_timing_ema_filtered = (word)dVar1;
+                     &ambient_air_flow_filter);
+  ambient_air_flow_filtered = (word)dVar1;
   compressor_inlet_temperature_rise =
        cm848_dualAxisTableInterpolation
-                 (WORD_ARRAY_003fb9de,boost_pressure_timing_ema_filtered,WORD_ARRAY_003ff108,
-                  vehicle_speed_copy,WORD_ARRAY_003ff3b6,WORD_ARRAY_003ff12e,0);
-  boost_fuel_timing_demand_filter_output =
+                 (compressor_inlet_temperature_rise_cached_axis_offsets,ambient_air_flow_filtered,
+                  compressor_inlet_temperature_rise_x_axis,vehicle_speed_copy,
+                  compressor_inlet_temperature_rise_y_axis,compressor_inlet_temperature_rise_grid,0)
+  ;
+  ambient_air_temperature_estimate =
        compressor_inlet_temperature - compressor_inlet_temperature_rise;
-  ema_filter_state_t_003fb9e2.accumulator =
-       (int)(short)boost_fuel_timing_demand_filter_output << 0x10;
-  ema_filter_state_t_003fb9e2.coefficient = &WORD_003ff076;
+  ambient_air_temperature_filter.accumulator = (int)(short)ambient_air_temperature_estimate << 0x10;
+  ambient_air_temperature_filter.coefficient = &ambient_air_temperature_filter_coefficient;
   ambient_air_temperature = compressor_inlet_temperature;
   ambient_air_temperature_source = compressor_inlet_temperature_source;
   barometric_altitude_source = barometric_pressure_selected_source;
@@ -62246,9 +62257,10 @@ void cm848_initialization_step_3(void)
                  (&altitude_from_barometric_pressure_cached_axis_offset,
                   barometric_pressure_reference,altitude_from_barometric_pressure_axis,
                   altitude_from_barometric_pressure_values,2);
-  ema_filter_state_t_003fb9f6.accumulator =
+  compressor_inlet_pressure_drop_air_flow_filter.accumulator =
        (uint)charge_flow_estimate_terms.fresh_air_mass_flow_filtered << 0x10;
-  ema_filter_state_t_003fb9f6.coefficient = &WORD_003ff07e;
+  compressor_inlet_pressure_drop_air_flow_filter.coefficient =
+       &compressor_inlet_pressure_drop_air_flow_filter_coefficient;
   return;
 }
 
