@@ -90,9 +90,7 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Diagnostic Service Dispatchers
 # -----------------------------------------------------------------------------
-0x00006d24,cm848_dispatchDiagnosticService,0,service_code,byte,Service code (e.g. 0x22=ReadDataByID 0x2E=WriteDataByID)
-0x00006d24,cm848_dispatchDiagnosticService,1,data_ptr,byte*,Pointer to service data
-0x00006d24,cm848_dispatchDiagnosticService,2,data_length,ushort,Length of service data
+0x00006d24,cm848_dispatchDiagnosticService,0,request,j1939_rx_msg_t*,the received request (the boot transport receive session's message view at request_to_send_can_id: its data packet handler passes record + 8 in r3 and sets no r4 / r5 - the old rows service_code byte / data_ptr / data_length printed its low byte 0x2d as a service code; PR #53 round 36)
 
 0x0000662c,mpc555_diagnosticSubcommandDispatcher,0,subcommand,byte,Diagnostic subcommand code
 0x0000662c,mpc555_diagnosticSubcommandDispatcher,1,data_ptr,byte*,Pointer to subcommand data
@@ -130,9 +128,8 @@ function_address,function_name,param_index,name,type,comment
 0x00023dbc,cm848_sendJ1939NegativeAcknowledgement,0,msg,j1939_rx_msg_t*,Received message to NACK (accesses dest_address at +2 and data_ptr at +6)
 0x00023dbc,cm848_sendJ1939NegativeAcknowledgement,1,ack_type,J1939_ACK_TYPE,J1939-21 ACKM control byte value
 
-0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,0,dest_address,byte,Destination address for response
-0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,1,data_ptr,byte*,Pointer to diagnostic response data
-0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,2,data_length,ushort,Length of response data
+0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,0,destination_address,byte,the sender of the message just received
+0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,1,transported_pgn,ushort,the received message's PGN word (its high byte goes into the PGN bytes of the TP.CM 0x13 frame; the old rows data_ptr / data_length made the caller cast it to a pointer and pass a leftover third argument; PR #53 round 36)
 
 # -----------------------------------------------------------------------------
 # J1939 DM (Diagnostic Message) Handlers
@@ -518,3 +515,6 @@ function_address,function_name,param_index,name,type,comment
 0x000249c4,cm848_sendJ1939ResponseFrame,1,result_code,dword,the service result: 0 success / 0xfe an extended response / else an error code (dword: the body reuses it as a 32-bit variable)
 0x00003f20,cm848_transmitCanMessage,0,message,diagnostic_response_message_t*,the response record from cm848_allocateDiagnosticResponseBuffer (header / data pointer / status pointer)
 0x00005adc,mpc555_sendJ1939TransportRequestToSend,0,message,diagnostic_response_message_t*,the response record of a reply longer than 8 bytes
+# The boot kernel's diagnostic response sender (PR #53 round 36): the twin of cm848_sendJ1939ResponseFrame
+0x000074a0,cm848_sendDiagServiceResponse,0,request,j1939_rx_msg_t*,the request being answered (its addresses swap into the reply; its service byte is echoed)
+0x000074a0,cm848_sendDiagServiceResponse,1,result_code,dword,the service result: 0 positive (0x0C) / 0xfe pending (0x0E + the wait time) / else 0x0D + the code (dword: the body reuses it as a 32-bit variable)

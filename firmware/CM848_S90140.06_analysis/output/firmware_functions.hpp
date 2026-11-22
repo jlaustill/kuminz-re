@@ -7,7 +7,7 @@ void mpc555_reset_vector(void);  // @ 0x00000100
 void mpc555_keyOnStateMachine(void);  // @ 0x00000184
 void cm848_copyBootKernelToRam(void);  // @ 0x00000340
 void cm848_registerStandardDiagServices(void);  // @ 0x0000037c
-void cm848_eepromProgressNotify(undefined4 param_1,int param_2,undefined4 param_3);  // @ 0x000003ec
+void cm848_eepromProgressNotify(j1939_rx_msg_t *param_1,int param_2,dword param_3);  // @ 0x000003ec
 undefined4 cm848_diagServiceAcknowledgeNoOperation(void);  // @ 0x00000420
 void mpc555_loadEepromCalibration(undefined4 param_1,int param_2);  // @ 0x00000428
 undefined4 cm848_diagServiceDownloadCalibration(undefined4 param_1);  // @ 0x000008d4
@@ -31,7 +31,7 @@ void mpc555_initHardwareConfig(void);  // @ 0x00001454
 void mpc555_initSystemRegisters(void);  // @ 0x000016d0
 void cm848_initClockAndTimers(void);  // @ 0x000016dc
 void cm848_stubFunction2(void);  // @ 0x0000183c
-char mpc555_diagService25_executeFunction(int param_1);  // @ 0x00001840
+char mpc555_diagService25_executeFunction(j1939_rx_msg_t *param_1);  // @ 0x00001840
 void cm848_initService25Handler(void);  // @ 0x0000191c
 bool cm848_registerPgnResponseHandler(dword pgn,void *handler_func);  // @ 0x00001948
 void cm848_initDataBasedDiagServices(void);  // @ 0x0000198c
@@ -126,7 +126,7 @@ undefined4 cm848_validateDiagnosticRequestLengthAndAuthorization(int param_1);  
 void mpc555_sendJ1939TransportRequestToSend(diagnostic_response_message_t *message);  // @ 0x00005adc
 void mpc555_handleJ1939TransportClearToSend(byte request_type,byte connection_id);  // @ 0x00005c50
 void mpc555_sendJ1939TransportAbort(undefined1 param_1,undefined2 param_2);  // @ 0x00005cf4
-void mpc555_sendJ1939TransportEndOfMessageAcknowledge (byte dest_address,byte *data_ptr,word data_length);  // @ 0x00005d8c
+void mpc555_sendJ1939TransportEndOfMessageAcknowledge(byte destination_address,word transported_pgn);  // @ 0x00005d8c
 byte mpc555_sendJ1939TransportClearToSend (undefined1 param_1,undefined1 param_2,undefined1 param_3,undefined2 param_4);  // @ 0x00005e38
 void mpc555_handleJ1939TransportRequestToSend(j1939_rx_msg_t *rx_msg);  // @ 0x00005ecc
 void mpc555_handleJ1939TransportDataPacket(j1939_rx_msg_t *rx_msg);  // @ 0x00005fe4
@@ -151,14 +151,14 @@ undefined4 mpc555_runPacedSerialService(void);  // @ 0x00006b24
 void cm848_copyBytes(int param_1,int param_2,int param_3);  // @ 0x00006bac
 void mpc555_runPeriodicInterruptTimerTick(void);  // @ 0x00006bdc
 void cm848_runBootKernelLoop(void);  // @ 0x00006ca4
-void cm848_dispatchDiagnosticService(byte service_code,byte *data_ptr,word data_length);  // @ 0x00006d24
+void cm848_dispatchDiagnosticService(j1939_rx_msg_t *request);  // @ 0x00006d24
 void cm848_sendSerialDownloadStatusResponse(void);  // @ 0x00006e1c
 void mpc555_sciHandleDownloadStart(void);  // @ 0x00006eac
 void mpc555_sciHandleDownloadDataBlock(void);  // @ 0x00006f54
 void cm848_descrambleAuthToken(int param_1,int param_2);  // @ 0x000071f8
 undefined4 cm848_validateWriteAuth(undefined4 scrambled_token);  // @ 0x00007370
-void cm848_sendDiagServiceResponse(byte *param_1,uint param_2);  // @ 0x000074a0
-void cm848_sendDiagResponsePending(undefined4 param_1,word param_2);  // @ 0x000075dc
+void cm848_sendDiagServiceResponse(j1939_rx_msg_t *request,dword result_code);  // @ 0x000074a0
+void cm848_sendDiagResponsePending(j1939_rx_msg_t *param_1,word param_2);  // @ 0x000075dc
 void mpc555_tickTransferTimeoutAndRuntimeCounter(void);  // @ 0x00007608
 void mpc555_loadRuntimeCounterFromEepromShadow(void);  // @ 0x000076b4
 byte cm848_lookupMemoryRegionType(uint param_1,int param_2);  // @ 0x000076c8
