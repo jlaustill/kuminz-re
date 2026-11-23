@@ -1398,6 +1398,7 @@ typedef struct j1939_pgn65504_payload_t j1939_pgn65504_payload_t;
 typedef struct feature_selection_bits_t feature_selection_bits_t;
 typedef struct injector_driver_booster_capacitor_monitor_record_t injector_driver_booster_capacitor_monitor_record_t;
 typedef struct injector_driver_booster_capacitor_cylinder_record_t injector_driver_booster_capacitor_cylinder_record_t;
+typedef struct fault_status_record_t fault_status_record_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -4399,4 +4400,9 @@ struct injector_driver_booster_capacitor_cylinder_record_t {
     uint16_t injector_open_circuit_fault;  /* fault number (286 = injector_1_open_circuit_error) (PR #53 round 41) */
     uint16_t injector_short_to_ground_fault;  /* fault number (269 = injector_1_short_to_ground_error) (PR #53 round 41) */
     uint16_t injector_short_to_battery_fault;  /* fault number (268 = injector_1_short_to_battery_error) (PR #53 round 41) */
+};
+
+struct fault_status_record_t {
+    uint8_t flags;  /* bit 0x01: cleared by cm848_initFaultManagement and tested by cm848_mainLoopServiceMonitor / cm848_clearMilForHealedFaults; bits 0x0e: a 3-bit count diag_faultState_severity_increment steps; bit 0x10: the MIL request (cm848_updateMilOnRequest; the sensor monitors fall back to their defaults while it is set; cm848_clearMilForHealedFaults clears it at 3 heal cycles); bits 0x60: the 2-bit heal cycle count (diag_faultState_healCycleCount_increment); bit 0x80: a stored DTC (cm848_processPciObdRequest counts obd_stored_dtc_count from it). Updated with read-modify-write masks, so a byte, not bitfields (PR #53 round 42) */
+    uint16_t status_word;  /* bit 0x0001: the fault is active (cm848_sciCommand51ReportActiveFaultDtcs reports it); bits 0x0002 / 0x0004: flags cm848_removeHealedFaults / fault_captureDataSnapshot test; bits 3-9 (>> 3 & 0x7f): a 7-bit age the heal logic compares (PR #53 round 42) */
 };

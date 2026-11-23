@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 16:57:39 MST 2026
+// Generated: Sun Nov 22 17:26:37 MST 2026
 
 
 //
@@ -12885,8 +12885,8 @@ LAB_00013704:
    exceeds charge_pressure_estimate_tolerance, runs cm848_updateChargePressureInRangeFaultCount, and
    writes charge_pressure_sensor_state_flags: the sensor fault status while fault bit 8 or 9 is set
    and enabled in charge_pressure_sensor_fault_gate_bits (bits 0 / 1), | 0x20 while fault 64 or 729
-   is active with its fault_status_array bit 0x10 and gate bit 2 / 3, or fault 527 is set. No direct
-   caller in the decompile. (was cm848_processBoostProtectionConditions) */
+   is active with its fault_status_records_cal bit 0x10 and gate bit 2 / 3, or fault 527 is set. No
+   direct caller in the decompile. (was cm848_processBoostProtectionConditions) */
 
 void cm848_monitorChargePressureInRange(void)
 
@@ -12903,10 +12903,10 @@ void cm848_monitorChargePressureInRange(void)
     uVar2 = 0;
   }
   if ((((fault_detected_cal.boost_in_range_high_error == 0) ||
-       (((&fault_status_array)[DAT_000598da * 3] & 0x10) == 0)) ||
+       (((&fault_status_records_cal)[DAT_000598da].flags & 0x10) == 0)) ||
       ((charge_pressure_sensor_fault_gate_bits >> 2 & 1) == 0)) &&
      (((fault_detected_cal.boost_in_range_low_error == 0 ||
-       (((&fault_status_array)[DAT_00059e0c * 3] & 0x10) == 0)) ||
+       (((&fault_status_records_cal)[DAT_00059e0c].flags & 0x10) == 0)) ||
       ((charge_pressure_sensor_fault_gate_bits >> 3 & 1) == 0)))) {
     bVar1 = false;
   }
@@ -13217,10 +13217,10 @@ void cm848_filterAndSelectIntakeManifoldTemperature(void)
     uVar4 = intake_manifold_temperature_sensor_fault_status | charge_temperature_estimate_status;
   }
   if ((((fault_detected_cal.intake_manifold_temperature_key_on_rationality_error == 0) ||
-       (((&fault_status_array)[DAT_00059b26 * 3] & 0x10) == 0)) ||
+       (((&fault_status_records_cal)[DAT_00059b26].flags & 0x10) == 0)) ||
       ((fuel_pressure_phase_fault_gate_enable >> 5 & 1) == 0)) &&
      (((fault_detected_cal.intake_manifold_temperature_rationality_error == 0 ||
-       (((&fault_status_array)[DAT_00059b1e * 3] & 0x10) == 0)) ||
+       (((&fault_status_records_cal)[DAT_00059b1e].flags & 0x10) == 0)) ||
       ((fuel_pressure_phase_fault_gate_enable >> 6 & 1) == 0)))) {
     uVar3 = 0;
   }
@@ -19754,7 +19754,6 @@ void cm848_processFaultScanGroup(void)
   ushort uVar7;
   uint uVar8;
   uint uVar9;
-  int iVar10;
   
   uVar4 = 0;
   wVar6 = (&fault_detected_cal.faults_0_to_15)[fault_scan_index];
@@ -19771,10 +19770,10 @@ void cm848_processFaultScanGroup(void)
           if ((uVar7 & fault_enable_bitmask_array[uVar8]) == 0) {
             *(char *)(uVar9 + 0x3fe124) = *(char *)(uVar9 + 0x3fe124) + -1;
             if ((algorithm_enable_flags_12_cal.obd_fault_handler_enable != 0) &&
-               (iVar10 = uVar9 * 3, ((&fault_status_array)[iVar10] & 0x80) != 0)) {
-              *(ushort *)((int)&fault_status_word_array + iVar10) =
+               (((&fault_status_records_cal)[uVar9].flags & 0x80) != 0)) {
+              (&fault_status_records_cal)[uVar9].status_word =
                    (ushort)fault_auto_clear_warm_up_cycle_count_cal << 10 |
-                   *(ushort *)((int)&fault_status_word_array + iVar10) & 0x3ff;
+                   (&fault_status_records_cal)[uVar9].status_word & 0x3ff;
             }
             if (*(char *)(uVar9 + 0x3fe124) == '\0') {
               fault_state_records_cal[uVar9].status = 2;
@@ -62214,9 +62213,9 @@ LAB_005022a4:
    barometric_pressure_selected_source = 2 when the sensor status shows a confirmed fault or the
    fault 340 (P0106) / 778 (P0069) gate is on. The circuit status is the sensor channel status gated
    by faults 25 / 26 (P0108 / P0107) through bits 0 / 1 of fuel_boost_final_fault_gate_enable;
-   faults 340 / 778 count only through bits 4 / 7 and when their fault_status_array entry allows it.
-   The combined status goes to barometric_pressure_selection_fault_flags (write-only) (was
-   hpcr_fuelFinal_periodic). */
+   faults 340 / 778 count only through bits 4 / 7 and when their fault_status_records_cal entry
+   allows it. The combined status goes to barometric_pressure_selection_fault_flags (write-only)
+   (was hpcr_fuelFinal_periodic). */
 
 void cm848_selectBarometricPressure(void)
 
@@ -62232,10 +62231,10 @@ void cm848_selectBarometricPressure(void)
     uVar2 = 0;
   }
   if ((((fault_detected_cal.ambient_air_pressure_in_range_error == 0) ||
-       (((&fault_status_array)[DAT_00059b02 * 3] & 0x10) == 0)) ||
+       (((&fault_status_records_cal)[DAT_00059b02].flags & 0x10) == 0)) ||
       ((fuel_boost_final_fault_gate_enable >> 4 & 1) == 0)) &&
      (((fault_detected_cal.boost_ambient_delta_error == 0 ||
-       (((&fault_status_array)[DAT_00059e6e * 3] & 0x10) == 0)) ||
+       (((&fault_status_records_cal)[DAT_00059e6e].flags & 0x10) == 0)) ||
       (-1 < (char)fuel_boost_final_fault_gate_enable)))) {
     uVar1 = 0;
   }
@@ -62309,11 +62308,11 @@ void cm848_calculateAltitudeDerateFuelLimit(void)
      (wVar1 = fuel_demand_maximum, engine_state == ENGINE_STATE_RUNNING)) {
     wVar1 = altitude_derate_turbocharger_overspeed_ambient_pressure;
     if (turbocharger_overspeed_immediate_derate_flag != 1) {
-      if ((((((&fault_status_array)[DAT_00059b02 * 3] & 0x10) != 0) &&
+      if ((((((&fault_status_records_cal)[DAT_00059b02].flags & 0x10) != 0) &&
            (fault_detected_cal.ambient_air_pressure_in_range_error != 0)) &&
           ((altitude_derate_air_handling_fault_enable_a >> 4 & 1) != 0)) ||
          (((wVar1 = barometric_pressure_sensor_filtered,
-           ((&fault_status_array)[DAT_00059e6e * 3] & 0x10) != 0 &&
+           ((&fault_status_records_cal)[DAT_00059e6e].flags & 0x10) != 0 &&
            (fault_detected_cal.boost_ambient_delta_error != 0)) &&
           ((char)altitude_derate_air_handling_fault_enable_a < '\0')))) {
         wVar1 = barometric_pressure_sensor_config.default_value;
@@ -62339,13 +62338,13 @@ void cm848_calculateAltitudeDerateFuelLimit(void)
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_array)[DAT_00059b02 * 3] & 0x10) != 0) &&
+      if (((((&fault_status_records_cal)[DAT_00059b02].flags & 0x10) != 0) &&
           (fault_detected_cal.ambient_air_pressure_in_range_error != 0)) &&
          ((altitude_derate_air_handling_fault_enable_a >> 4 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_array)[DAT_00059e6e * 3] & 0x10) != 0) &&
+      if (((((&fault_status_records_cal)[DAT_00059e6e].flags & 0x10) != 0) &&
           (fault_detected_cal.boost_ambient_delta_error != 0)) &&
          ((char)altitude_derate_air_handling_fault_enable_a < '\0')) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
@@ -62361,13 +62360,13 @@ void cm848_calculateAltitudeDerateFuelLimit(void)
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_array)[DAT_00059b2a * 3] & 0x10) != 0) &&
+      if (((((&fault_status_records_cal)[DAT_00059b2a].flags & 0x10) != 0) &&
           (fault_detected_cal.ambient_air_temperature_key_on_rationality_error != 0)) &&
          ((altitude_derate_air_handling_fault_enable_b >> 5 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_array)[DAT_00059b00 * 3] & 0x10) != 0) &&
+      if (((((&fault_status_records_cal)[DAT_00059b00].flags & 0x10) != 0) &&
           (fault_detected_cal.ambient_air_temperature_rationality_error != 0)) &&
          ((altitude_derate_air_handling_fault_enable_b >> 6 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
@@ -62383,13 +62382,13 @@ void cm848_calculateAltitudeDerateFuelLimit(void)
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_array)[DAT_000598da * 3] & 0x10) != 0) &&
+      if (((((&fault_status_records_cal)[DAT_000598da].flags & 0x10) != 0) &&
           (fault_detected_cal.boost_in_range_high_error != 0)) &&
          ((fuel_correction_limit_enable_c >> 2 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_array)[DAT_00059e0c * 3] & 0x10) != 0) &&
+      if (((((&fault_status_records_cal)[DAT_00059e0c].flags & 0x10) != 0) &&
           (fault_detected_cal.boost_in_range_low_error != 0)) &&
          ((fuel_correction_limit_enable_c >> 3 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
@@ -62405,13 +62404,13 @@ void cm848_calculateAltitudeDerateFuelLimit(void)
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_array)[DAT_00059b26 * 3] & 0x10) != 0) &&
+      if (((((&fault_status_records_cal)[DAT_00059b26].flags & 0x10) != 0) &&
           (fault_detected_cal.intake_manifold_temperature_key_on_rationality_error != 0)) &&
          ((fuel_correction_limit_enable_d >> 5 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
         return;
       }
-      if (((((&fault_status_array)[DAT_00059b1e * 3] & 0x10) != 0) &&
+      if (((((&fault_status_records_cal)[DAT_00059b1e].flags & 0x10) != 0) &&
           (fault_detected_cal.intake_manifold_temperature_rationality_error != 0)) &&
          ((fuel_correction_limit_enable_d >> 6 & 1) != 0)) {
         altitude_derate_fuel_limit = altitude_derate_air_handling_fault_fuel_limit;
@@ -64758,10 +64757,10 @@ void cm848_selectCompressorInletTemperature(void)
     uVar2 = 0;
   }
   if ((((fault_detected_cal.ambient_air_temperature_key_on_rationality_error == 0) ||
-       (((&fault_status_array)[DAT_00059b2a * 3] & 0x10) == 0)) ||
+       (((&fault_status_records_cal)[DAT_00059b2a].flags & 0x10) == 0)) ||
       ((fuel_timing_demand_fault_gate_enable >> 5 & 1) == 0)) &&
      (((fault_detected_cal.ambient_air_temperature_rationality_error == 0 ||
-       (((&fault_status_array)[DAT_00059b00 * 3] & 0x10) == 0)) ||
+       (((&fault_status_records_cal)[DAT_00059b00].flags & 0x10) == 0)) ||
       ((fuel_timing_demand_fault_gate_enable >> 6 & 1) == 0)))) {
     uVar1 = 0;
   }
@@ -71468,8 +71467,8 @@ void cm848_initInterpolationStateCounters(void)
 // Function: cm848_updateMilOnRequest @ 0x0050dd40
 //
 
-/* Sets the MIL request at 0x40af08: 1 while any of the 170 fault slots has fault_status_array bit
-   0x10 (the same test as OBD mode 1 PID 1 byte A bit 7) or
+/* Sets the MIL request at 0x40af08: 1 while any of the 170 fault slots has fault_status_records_cal
+   bit 0x10 (the same test as OBD mode 1 PID 1 byte A bit 7) or
    end_of_line_test_malfunction_indicator_lamp_override_state is 1 / 0 when no slot has it and the
    flag is 0 (was main_loop_validateDiagnosticChannels) | review-function-readability reviewed
    2026-11-13 - Readability Medium Accuracy Confidence High */
@@ -71484,7 +71483,7 @@ void cm848_updateMilOnRequest(void)
     bVar1 = false;
     uVar2 = 0;
     do {
-      if (((&fault_status_array)[uVar2 * 3] & 0x10) != 0) {
+      if (((&fault_status_records_cal)[uVar2].flags & 0x10) != 0) {
         bVar1 = true;
         break;
       }
@@ -78277,9 +78276,9 @@ LAB_00519128:
       if (obd_dtc_scan_index < 0xaa) {
         uVar5 = (uint)obd_dtc_scan_index;
         do {
-          if (((((&fault_status_array)[uVar5 * 3] & 0x80) != 0) ||
-              (((*(ushort *)((int)&fault_status_word_array + uVar5 * 3) & 1) != 0 && (bVar3 == 7))))
-             && ((fault_definition_table[uVar5].entry_flags & 4) != 0)) {
+          if (((((&fault_status_records_cal)[uVar5].flags & 0x80) != 0) ||
+              ((((&fault_status_records_cal)[uVar5].status_word & 1) != 0 && (bVar3 == 7)))) &&
+             ((fault_definition_table[uVar5].entry_flags & 4) != 0)) {
             (&obd_dtc_staging)[uVar6] = obd_dtc_code_table[uVar5];
             uVar6 = uVar6 + 1 & 0xff;
             obd_dtc_count = obd_dtc_count + 1;
@@ -78662,11 +78661,11 @@ LAB_00519120:
     obd_stored_dtc_count = 0;
     uVar6 = 0;
     do {
-      if ((((&fault_status_array)[uVar6 * 3] & 0x80) != 0) &&
+      if ((((&fault_status_records_cal)[uVar6].flags & 0x80) != 0) &&
          ((fault_definition_table[uVar6].entry_flags & 4) != 0)) {
         obd_stored_dtc_count = obd_stored_dtc_count + 1;
       }
-      if (((&fault_status_array)[uVar6 * 3] & 0x10) != 0) {
+      if (((&fault_status_records_cal)[uVar6].flags & 0x10) != 0) {
         bVar2 = true;
       }
       uVar6 = uVar6 + 1 & 0xff;
@@ -84772,8 +84771,8 @@ void cm848_sciCommand50ReportProtectionEventDtcs(void)
 //
 
 /* reports OBD DTC codes from obd_dtc_code_table (BCD P-codes e.g. P0238 / P2123) for each slot
-   whose fault_status_word_array bit 0 is set - these are DTCs not SPNs - SCI command 0x33 (51) via
-   the 0x53a9a0 table (cm848_dispatchSciCommand) (was ReportActiveFaultSpns) |
+   whose fault_status_records_cal.status_word bit 0 is set - these are DTCs not SPNs - SCI command
+   0x33 (51) via the 0x53a9a0 table (cm848_dispatchSciCommand) (was ReportActiveFaultSpns) |
    registration-table-sweep reviewed 2026-11-13 */
 
 void cm848_sciCommand51ReportActiveFaultDtcs(void)
@@ -84790,7 +84789,7 @@ void cm848_sciCommand51ReportActiveFaultDtcs(void)
   uVar4 = 0;
   do {
     cVar3 = (char)iVar2;
-    if ((*(ushort *)((int)&fault_status_word_array + uVar4 * 3) & 1) != 0) {
+    if (((&fault_status_records_cal)[uVar4].status_word & 1) != 0) {
       uVar1 = obd_dtc_code_table[uVar4];
       uVar5 = (uint)uVar1;
       if (uVar5 != 0) {
@@ -84924,8 +84923,8 @@ void cm848_sciCommand52ReportFaultStatusByDtcCallback(void)
   sVar2 = cm848_lookupFaultIndexByDtcCode(local_8,CONCAT11(DAT_003fcf93,DAT_003fcf94));
   uVar1 = (uint)local_8[0];
   if (sVar2 != 0) {
-    bVar3 = (&fault_status_array)[uVar1 * 3] >> 4 & 6;
-    if (((&fault_status_array)[uVar1 * 3] & 0x10) != 0) {
+    bVar3 = (&fault_status_records_cal)[uVar1].flags >> 4 & 6;
+    if (((&fault_status_records_cal)[uVar1].flags & 0x10) != 0) {
       bVar3 = bVar3 | 0x10;
     }
     if ((fault_definition_table[uVar1].entry_flags & 0x10) == 0) {
@@ -91684,8 +91683,8 @@ void cm848_initializePilotInjectionTimingState(void)
    anything else lowers it by 1 per pass down to 0; at the limit it sets fault 340, at 0 it clears
    fault 340 and its registered bit. Fault 340 (bit 4 of fuel_boost_final_fault_gate_enable; fault
    778 uses bit 7) makes cm848_selectBarometricPressure replace the barometric pressure with
-   barometric_pressure_sensor_default_value when its fault_status_array entry allows it, and it
-   blocks the P0069 check of cm848_monitorBoostPressureSensorAndUnderboost (was
+   barometric_pressure_sensor_default_value when its fault_status_records_cal entry allows it, and
+   it blocks the P0069 check of cm848_monitorBoostPressureSensorAndUnderboost (was
    hpcr_calibration_group36_load). */
 
 void cm848_detectBarometricPressureSensorAboveMaximum(void)
@@ -95577,10 +95576,9 @@ LAB_00533650:
 void fault_clearByIndex(int param_1)
 
 {
-  param_1 = param_1 * 3;
-  *(ushort *)((int)&fault_status_word_array + param_1) =
-       *(ushort *)((int)&fault_status_word_array + param_1) & 0x3ff;
-  (&fault_status_array)[param_1] = 0;
+  (&fault_status_records_cal)[param_1].status_word =
+       (&fault_status_records_cal)[param_1].status_word & 0x3ff;
+  (&fault_status_records_cal)[param_1].flags = 0;
   return;
 }
 
@@ -95767,41 +95765,39 @@ LAB_00533dc4:
 void diag_resetSingleFault(void)
 
 {
-  int iVar1;
-  uint uVar2;
+  uint uVar1;
   
-  uVar2 = 0;
+  uVar1 = 0;
   do {
-    iVar1 = uVar2 * 3;
-    *(ushort *)((int)&fault_status_word_array + iVar1) =
-         *(ushort *)((int)&fault_status_word_array + iVar1) & 0x3ff;
-    (&fault_status_array)[iVar1] = 0;
-    *(ushort *)((int)&fault_status_word_array + iVar1) =
-         *(ushort *)((int)&fault_status_word_array + iVar1) & 0xfc07;
-    *(ushort *)((int)&fault_status_word_array + iVar1) =
-         *(ushort *)((int)&fault_status_word_array + iVar1) & 0xfff8;
-    uVar2 = uVar2 + 1 & 0xff;
-  } while (uVar2 < 0xaa);
+    (&fault_status_records_cal)[uVar1].status_word =
+         (&fault_status_records_cal)[uVar1].status_word & 0x3ff;
+    (&fault_status_records_cal)[uVar1].flags = 0;
+    (&fault_status_records_cal)[uVar1].status_word =
+         (&fault_status_records_cal)[uVar1].status_word & 0xfc07;
+    (&fault_status_records_cal)[uVar1].status_word =
+         (&fault_status_records_cal)[uVar1].status_word & 0xfff8;
+    uVar1 = uVar1 + 1 & 0xff;
+  } while (uVar1 < 0xaa);
   diagnostic_monitor_complete_bits = 0;
   diagnostic_monitor_complete_handled_bits = 0;
   monitor_pending_readiness_code_cal = 0xffffffff;
   monitor_readiness_code_cal = 0xffffffff;
-  uVar2 = 0;
+  uVar1 = 0;
   do {
-    fault_handled_bitmap[uVar2] = 0;
-    uVar2 = uVar2 + 1 & 0xff;
-  } while (uVar2 < 0x16);
-  uVar2 = 0;
+    fault_handled_bitmap[uVar1] = 0;
+    uVar1 = uVar1 + 1 & 0xff;
+  } while (uVar1 < 0x16);
+  uVar1 = 0;
   do {
-    recent_fault_dtc_codes_cal[uVar2] = 0;
-    engine_start_count_since_fault_logged_cal[uVar2] = 0;
-    uVar2 = uVar2 + 1 & 0xff;
-  } while (uVar2 < 8);
-  uVar2 = 0;
+    recent_fault_dtc_codes_cal[uVar1] = 0;
+    engine_start_count_since_fault_logged_cal[uVar1] = 0;
+    uVar1 = uVar1 + 1 & 0xff;
+  } while (uVar1 < 8);
+  uVar1 = 0;
   do {
-    fault_entry_pointer_queue_cal[uVar2] = (fault_entry_t *)0x0;
-    uVar2 = uVar2 + 1 & 0xff;
-  } while (uVar2 < 8);
+    fault_entry_pointer_queue_cal[uVar1] = (fault_entry_t *)0x0;
+    uVar1 = uVar1 + 1 & 0xff;
+  } while (uVar1 < 8);
   fault_entry_pointer_queue_count_cal = 0;
   return;
 }
@@ -95815,36 +95811,35 @@ void diag_resetSingleFault(void)
 void diag_resetAllFaults(void)
 
 {
-  int iVar1;
-  uint uVar2;
+  uint uVar1;
   
-  uVar2 = 1;
+  uVar1 = 1;
   if (previously_active_dtc_list_cal.count != 0) {
     do {
-      iVar1 = (uint)previously_active_dtc_list_cal.slots[uVar2 - 1] * 3;
-      *(ushort *)((int)&fault_status_word_array + iVar1) =
-           *(ushort *)((int)&fault_status_word_array + iVar1) & 0x3ff;
-      (&fault_status_array)[(uint)previously_active_dtc_list_cal.slots[uVar2 - 1] * 3] = 0;
-      iVar1 = (uint)previously_active_dtc_list_cal.slots[uVar2 - 1] * 3;
-      *(ushort *)((int)&fault_status_word_array + iVar1) =
-           *(ushort *)((int)&fault_status_word_array + iVar1) & 0xfff8;
-      iVar1 = (uint)previously_active_dtc_list_cal.slots[uVar2 - 1] * 3;
-      *(ushort *)((int)&fault_status_word_array + iVar1) =
-           *(ushort *)((int)&fault_status_word_array + iVar1) & 0xfc07;
-      fault_updateActiveCounters(previously_active_dtc_list_cal.slots[uVar2 - 1]);
-      fault_clearFromRing(previously_active_dtc_list_cal.slots[uVar2 - 1]);
-      uVar2 = uVar2 + 1 & 0xff;
-    } while (uVar2 <= previously_active_dtc_list_cal.count);
+      (&fault_status_records_cal)[previously_active_dtc_list_cal.slots[uVar1 - 1]].status_word =
+           (&fault_status_records_cal)[previously_active_dtc_list_cal.slots[uVar1 - 1]].status_word
+           & 0x3ff;
+      (&fault_status_records_cal)[previously_active_dtc_list_cal.slots[uVar1 - 1]].flags = 0;
+      (&fault_status_records_cal)[previously_active_dtc_list_cal.slots[uVar1 - 1]].status_word =
+           (&fault_status_records_cal)[previously_active_dtc_list_cal.slots[uVar1 - 1]].status_word
+           & 0xfff8;
+      (&fault_status_records_cal)[previously_active_dtc_list_cal.slots[uVar1 - 1]].status_word =
+           (&fault_status_records_cal)[previously_active_dtc_list_cal.slots[uVar1 - 1]].status_word
+           & 0xfc07;
+      fault_updateActiveCounters(previously_active_dtc_list_cal.slots[uVar1 - 1]);
+      fault_clearFromRing(previously_active_dtc_list_cal.slots[uVar1 - 1]);
+      uVar1 = uVar1 + 1 & 0xff;
+    } while (uVar1 <= previously_active_dtc_list_cal.count);
   }
   diagnostic_monitor_complete_bits = 0;
   diagnostic_monitor_complete_handled_bits = 0;
   monitor_pending_readiness_code_cal = 0xffffffff;
   monitor_readiness_code_cal = 0xffffffff;
-  uVar2 = 0;
+  uVar1 = 0;
   do {
-    fault_handled_bitmap[uVar2] = 0;
-    uVar2 = uVar2 + 1 & 0xff;
-  } while (uVar2 < 0x16);
+    fault_handled_bitmap[uVar1] = 0;
+    uVar1 = uVar1 + 1 & 0xff;
+  } while (uVar1 < 0x16);
   return;
 }
 
@@ -95860,14 +95855,12 @@ void fault_ring_buffer_auto_clear_emission(void)
   uint uVar1;
   uint uVar2;
   byte bVar3;
-  int iVar4;
   
   bVar3 = 0;
   do {
-    iVar4 = (uint)bVar3 * 3;
-    if ((((((&fault_status_array)[iVar4] & 0x80) != 0) &&
-         (((&fault_status_array)[iVar4] & 0x10) == 0)) &&
-        (*(ushort *)((int)&fault_status_word_array + iVar4) >> 10 ==
+    if ((((((&fault_status_records_cal)[bVar3].flags & 0x80) != 0) &&
+         (((&fault_status_records_cal)[bVar3].flags & 0x10) == 0)) &&
+        ((&fault_status_records_cal)[bVar3].status_word >> 10 ==
          (ushort)fault_auto_clear_warm_up_cycle_count_cal)) &&
        ((fault_state_records_cal[bVar3].status & 1) == 0)) {
       uVar2 = (uint)bVar3;
@@ -96015,7 +96008,7 @@ void cm848_mainLoopServiceMonitor(void)
 {
   char cVar1;
   fault_state_t *pfVar2;
-  byte *pbVar3;
+  fault_status_record_t *pfVar3;
   int iVar4;
   ushort *puVar5;
   uint uVar6;
@@ -96030,13 +96023,13 @@ void cm848_mainLoopServiceMonitor(void)
       pfVar2 = fault_state_records_cal;
       do {
         if ((pfVar2[uVar6].status & 1) == 0) {
-          pbVar3 = &fault_status_array;
+          pfVar3 = &fault_status_records_cal;
           iVar4 = uVar6 * 3;
-          if ((((((&fault_status_array)[iVar4] & 0xe) != 0) &&
+          if ((((((&fault_status_records_cal)[uVar6].flags & 0xe) != 0) &&
                ((fault_definition_table[uVar6].entry_flags & 2) != 0)) &&
-              (((&fault_status_array)[iVar4] & 1) == 0)) &&
+              (((&fault_status_records_cal)[uVar6].flags & 1) == 0)) &&
              (cVar1 = diag_faultEntry_conditions_validate(uVar6), cVar1 != '\0')) {
-            pbVar3[iVar4] = pbVar3[iVar4] | 1;
+            (&pfVar3->flags)[iVar4] = (&pfVar3->flags)[iVar4] | 1;
           }
         }
         uVar6 = uVar6 + 1 & 0xff;
@@ -96044,15 +96037,15 @@ void cm848_mainLoopServiceMonitor(void)
     }
     else if (fault_service_monitor_subtask_step == 3) {
       uVar6 = 0;
-      pbVar3 = &fault_status_array;
+      pfVar3 = &fault_status_records_cal;
       do {
         iVar4 = uVar6 * 3;
-        if ((((*(ushort *)(pbVar3 + iVar4 + 1) & 1) != 0) &&
+        if ((((pfVar3[uVar6].status_word & 1) != 0) &&
             ((fault_definition_table[uVar6].entry_flags & 2) != 0)) &&
            (((fault_definition_table[uVar6].entry_flags & 0x20) != 0 &&
-            (((*(ushort *)(pbVar3 + iVar4 + 1) & 4) == 0 &&
+            (((pfVar3[uVar6].status_word & 4) == 0 &&
              (cVar1 = diag_faultEntry_conditions_validate(uVar6), cVar1 != '\0')))))) {
-          puVar5 = (ushort *)(pbVar3 + iVar4 + 1);
+          puVar5 = (ushort *)((int)&pfVar3->status_word + iVar4);
           *puVar5 = *puVar5 & 7 | 4 | *puVar5 & 0xfff8;
         }
         uVar6 = uVar6 + 1 & 0xff;
@@ -96157,10 +96150,11 @@ uint cm848_isFaultMonitorGroupComplete(uint param_1)
 // Function: diag_faultState_healCycleCount_increment @ 0x005346e8
 //
 
-/* Increments a fault clean/heal-cycle count - fault_status_array bits 5-6 saturating 0-3 - driven
-   at engine start when the monitor completed or aged - at 3 the caller clears the registered/MIL
-   bit - NOT the occurrence count (bits 1-3) (was diag_faultState_occurrenceCount_increment) |
-   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
+/* Increments a fault clean/heal-cycle count - fault_status_records_cal bits 5-6 saturating 0-3 -
+   driven at engine start when the monitor completed or aged - at 3 the caller clears the
+   registered/MIL bit - NOT the occurrence count (bits 1-3) (was
+   diag_faultState_occurrenceCount_increment) | review-function-readability reviewed 2026-11-13 -
+   Readability Medium Accuracy Confidence High */
 
 void diag_faultState_healCycleCount_increment(int param_1)
 
@@ -96168,16 +96162,16 @@ void diag_faultState_healCycleCount_increment(int param_1)
   byte bVar1;
   char cVar2;
   
-  param_1 = param_1 * 3;
-  bVar1 = (&fault_status_array)[param_1] >> 5 & 3;
+  bVar1 = (&fault_status_records_cal)[param_1].flags >> 5 & 3;
   if (bVar1 < 3) {
     cVar2 = bVar1 + 1;
   }
   else {
     cVar2 = '\x03';
   }
-  (&fault_status_array)[param_1] = (&fault_status_array)[param_1] & 0x9f;
-  (&fault_status_array)[param_1] = (&fault_status_array)[param_1] | cVar2 << 5;
+  (&fault_status_records_cal)[param_1].flags = (&fault_status_records_cal)[param_1].flags & 0x9f;
+  (&fault_status_records_cal)[param_1].flags =
+       (&fault_status_records_cal)[param_1].flags | cVar2 << 5;
   return;
 }
 
@@ -96188,56 +96182,56 @@ void diag_faultState_healCycleCount_increment(int param_1)
 //
 
 /* Power-up init pass - NOT occurrence counting - bumps each registered fault clean-cycle count
-   (fault_status_array bits 5-6 via the heal-cycle increment) when its monitor group completed or
-   aging triggered - at 3 clears the MIL-request bit 0x10 (was cm848_initJ1939Stack) |
+   (fault_status_records_cal bits 5-6 via the heal-cycle increment) when its monitor group completed
+   or aging triggered - at 3 clears the MIL-request bit 0x10 (was cm848_initJ1939Stack) |
    review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
 
 void cm848_clearMilForHealedFaults(void)
 
 {
   byte bVar1;
-  byte bVar2;
-  int iVar3;
+  uint uVar2;
+  byte bVar3;
   int iVar4;
-  byte *pbVar5;
-  uint uVar6;
-  int iVar7;
+  int iVar5;
+  byte *pbVar6;
+  uint uVar7;
   
-  uVar6 = 0;
-  iVar4 = 1;
-  pbVar5 = fault_handled_bitmap;
+  uVar7 = 0;
+  iVar5 = 1;
+  pbVar6 = fault_handled_bitmap;
   do {
-    if ((((uint)pbVar5[(uVar6 & 0xff) >> 3] & iVar4 << (uVar6 & 7)) == 0) &&
-       (iVar7 = (uVar6 & 0xff) * 3, ((&fault_status_array)[iVar7] & 0x10) != 0)) {
-      bVar1 = fault_definition_table[uVar6 & 0xff].entry_flags;
+    if ((((uint)pbVar6[(uVar7 & 0xff) >> 3] & iVar5 << (uVar7 & 7)) == 0) &&
+       (uVar2 = uVar7 & 0xff, ((&fault_status_records_cal)[uVar2].flags & 0x10) != 0)) {
+      bVar1 = fault_definition_table[uVar7 & 0xff].entry_flags;
       if ((bVar1 & 0x10) == 0) {
-        bVar2 = fault_aging_triggered_flag;
+        bVar3 = fault_aging_triggered_flag;
         if ((bVar1 & 2) != 0) {
           if (fault_aging_triggered_flag == 0) goto LAB_00534838;
 LAB_00534820:
-          bVar2 = (&fault_status_array)[iVar7] & 1;
+          bVar3 = (&fault_status_records_cal)[uVar2].flags & 1;
         }
-        if (bVar2 != 0) {
+        if (bVar3 != 0) {
 LAB_00534830:
-          diag_faultState_healCycleCount_increment(uVar6 & 0xff);
+          diag_faultState_healCycleCount_increment(uVar7 & 0xff);
         }
       }
       else if ((bVar1 & 2) == 0) {
-        iVar3 = cm848_isFaultMonitorGroupComplete(uVar6 & 0xff);
-        if (iVar3 != 0) goto LAB_00534830;
+        iVar4 = cm848_isFaultMonitorGroupComplete(uVar7 & 0xff);
+        if (iVar4 != 0) goto LAB_00534830;
       }
       else {
-        iVar3 = cm848_isFaultMonitorGroupComplete(uVar6 & 0xff);
-        if (iVar3 != 0) goto LAB_00534820;
+        iVar4 = cm848_isFaultMonitorGroupComplete(uVar7 & 0xff);
+        if (iVar4 != 0) goto LAB_00534820;
       }
 LAB_00534838:
-      if (((&fault_status_array)[iVar7] & 0x60) == 0x60) {
-        (&fault_status_array)[iVar7] = (&fault_status_array)[iVar7] & 0xef;
-        (&fault_status_array)[iVar7] = (&fault_status_array)[iVar7] & 0x9f;
+      if (((&fault_status_records_cal)[uVar2].flags & 0x60) == 0x60) {
+        (&fault_status_records_cal)[uVar2].flags = (&fault_status_records_cal)[uVar2].flags & 0xef;
+        (&fault_status_records_cal)[uVar2].flags = (&fault_status_records_cal)[uVar2].flags & 0x9f;
       }
     }
-    uVar6 = uVar6 + 1;
-    if (0xa9 < (uVar6 & 0xff)) {
+    uVar7 = uVar7 + 1;
+    if (0xa9 < (uVar7 & 0xff)) {
       return;
     }
   } while( true );
@@ -96252,36 +96246,34 @@ LAB_00534838:
 void diag_activeFault_remove(uint param_1)
 
 {
-  int iVar1;
+  uint uVar1;
   uint uVar2;
-  uint uVar3;
   
-  iVar1 = param_1 * 3;
-  *(ushort *)((int)&fault_status_word_array + iVar1) =
-       *(ushort *)((int)&fault_status_word_array + iVar1) & 0xfff8;
-  *(ushort *)((int)&fault_status_word_array + iVar1) =
-       *(ushort *)((int)&fault_status_word_array + iVar1) & 0xfc07;
-  if (((&fault_status_array)[iVar1] & 0x80) == 0) {
+  (&fault_status_records_cal)[param_1].status_word =
+       (&fault_status_records_cal)[param_1].status_word & 0xfff8;
+  (&fault_status_records_cal)[param_1].status_word =
+       (&fault_status_records_cal)[param_1].status_word & 0xfc07;
+  if (((&fault_status_records_cal)[param_1].flags & 0x80) == 0) {
     cm848_resetFaultStatus(param_1);
-    uVar2 = 1;
+    uVar1 = 1;
     if (previously_active_dtc_list_cal.count != 0) {
       do {
-        if (previously_active_dtc_list_cal.slots[uVar2 - 1] == param_1) {
-          previously_active_dtc_list_cal.slots[uVar2 - 1] =
+        if (previously_active_dtc_list_cal.slots[uVar1 - 1] == param_1) {
+          previously_active_dtc_list_cal.slots[uVar1 - 1] =
                previously_active_dtc_list_cal.slots
                [j1587_fault_count_data_cal.previously_active_fault_count - 1];
-          uVar3 = (uint)j1587_fault_count_data_cal.previously_active_fault_count;
+          uVar2 = (uint)j1587_fault_count_data_cal.previously_active_fault_count;
           j1587_fault_count_data_cal.previously_active_fault_count =
                j1587_fault_count_data_cal.previously_active_fault_count - 1;
-          previously_active_dtc_cummins_fault_codes_cal[uVar2] =
-               previously_active_dtc_cummins_fault_codes_cal[uVar3];
+          previously_active_dtc_cummins_fault_codes_cal[uVar1] =
+               previously_active_dtc_cummins_fault_codes_cal[uVar2];
           previously_active_dtc_list_cal.count = previously_active_dtc_list_cal.count - 1;
           previously_active_dtc_cummins_fault_codes_cal[0] =
                previously_active_dtc_cummins_fault_codes_cal[0] - 1;
           return;
         }
-        uVar2 = uVar2 + 1 & 0xff;
-      } while (uVar2 <= previously_active_dtc_list_cal.count);
+        uVar1 = uVar1 + 1 & 0xff;
+      } while (uVar1 <= previously_active_dtc_list_cal.count);
     }
   }
   return;
@@ -96293,11 +96285,11 @@ void diag_activeFault_remove(uint param_1)
 // Function: cm848_removeHealedFaults @ 0x00534994
 //
 
-/* Engine-start heal pass over 170 slots - removes an active fault (fault_status_word_array bit0 set
-   / bit1 clear) via diag_activeFault_remove when its monitor group re-completed
-   (cm848_isFaultMonitorGroupComplete) or aged - clears active bits / delists previously_active_dtc
-   (was cm848_initUdsServer) | review-function-readability reviewed 2026-11-13 - Readability Medium
-   Accuracy Confidence High */
+/* Engine-start heal pass over 170 slots - removes an active fault
+   (fault_status_records_cal.status_word bit0 set / bit1 clear) via diag_activeFault_remove when its
+   monitor group re-completed (cm848_isFaultMonitorGroupComplete) or aged - clears active bits /
+   delists previously_active_dtc (was cm848_initUdsServer) | review-function-readability reviewed
+   2026-11-13 - Readability Medium Accuracy Confidence High */
 
 void cm848_removeHealedFaults(void)
 
@@ -96307,9 +96299,8 @@ void cm848_removeHealedFaults(void)
   
   bVar2 = 0;
   do {
-    iVar1 = (uint)bVar2 * 3;
-    if (((*(ushort *)((int)&fault_status_word_array + iVar1) & 1) != 0) &&
-       ((*(ushort *)((int)&fault_status_word_array + iVar1) & 2) == 0)) {
+    if ((((&fault_status_records_cal)[bVar2].status_word & 1) != 0) &&
+       (((&fault_status_records_cal)[bVar2].status_word & 2) == 0)) {
       if (fault_aging_triggered_flag == 1) {
         if ((fault_definition_table[bVar2].entry_flags & 2) == 0) {
           if ((fault_definition_table[bVar2].entry_flags & 0x10) == 0) {
@@ -96317,10 +96308,10 @@ LAB_00534a88:
             diag_activeFault_remove(bVar2);
           }
         }
-        else if ((((*(ushort *)((int)&fault_status_word_array + iVar1) & 4) != 0) ||
-                 ((*(ushort *)((int)&fault_status_word_array + iVar1) >> 3 & 0x7f) -
+        else if (((((&fault_status_records_cal)[bVar2].status_word & 4) != 0) ||
+                 (((&fault_status_records_cal)[bVar2].status_word >> 3 & 0x7f) -
                   (uint)fault_aging_drive_cycle_counter_cal == 1)) ||
-                (((*(ushort *)((int)&fault_status_word_array + iVar1) >> 3 & 0x7f) == 0 &&
+                ((((&fault_status_records_cal)[bVar2].status_word >> 3 & 0x7f) == 0 &&
                  (fault_aging_drive_cycle_counter_cal == 0x50)))) goto LAB_00534a88;
       }
       if (((fault_definition_table[bVar2].entry_flags & 0x10) != 0) &&
@@ -96344,19 +96335,18 @@ LAB_00534a88:
 void diag_faultState_severity_increment(uint param_1)
 
 {
-  int iVar1;
-  byte bVar2;
+  byte bVar1;
   
-  iVar1 = param_1 * 3;
-  bVar2 = (&fault_status_array)[iVar1] >> 1 & 7;
-  if (bVar2 < 7) {
-    bVar2 = bVar2 + 1;
+  bVar1 = (&fault_status_records_cal)[param_1].flags >> 1 & 7;
+  if (bVar1 < 7) {
+    bVar1 = bVar1 + 1;
   }
-  (&fault_status_array)[iVar1] = (&fault_status_array)[iVar1] & 0xf1;
-  (&fault_status_array)[iVar1] = (&fault_status_array)[iVar1] | bVar2 * '\x02';
+  (&fault_status_records_cal)[param_1].flags = (&fault_status_records_cal)[param_1].flags & 0xf1;
+  (&fault_status_records_cal)[param_1].flags =
+       (&fault_status_records_cal)[param_1].flags | bVar1 * '\x02';
   fault_handled_bitmap[(int)param_1 >> 3] =
        fault_handled_bitmap[(int)param_1 >> 3] | (byte)(1 << (param_1 & 7));
-  (&fault_status_array)[iVar1] = (&fault_status_array)[iVar1] & 0x9f;
+  (&fault_status_records_cal)[param_1].flags = (&fault_status_records_cal)[param_1].flags & 0x9f;
   return;
 }
 
@@ -96378,12 +96368,10 @@ void cm848_latchNewlyActiveFault(uint param_1)
 
 {
   uint uVar1;
-  byte *pbVar2;
-  int iVar3;
+  fault_status_record_t *pfVar2;
   
-  pbVar2 = &fault_status_array;
-  iVar3 = param_1 * 3;
-  if (((&fault_status_array)[iVar3] & 0x80) == 0) {
+  pfVar2 = &fault_status_records_cal;
+  if (((&fault_status_records_cal)[param_1].flags & 0x80) == 0) {
     uVar1 = 7;
     do {
       recent_fault_dtc_codes_cal[uVar1] =
@@ -96395,10 +96383,10 @@ void cm848_latchNewlyActiveFault(uint param_1)
     engine_start_count_since_fault_logged_cal[0] = 0;
   }
   diag_faultState_severity_increment(param_1);
-  pbVar2[iVar3] = pbVar2[iVar3] | 0x80;
+  pfVar2[param_1].flags = pfVar2[param_1].flags | 0x80;
   if (((uint)(ushort)(&DAT_0005b6d0)[(int)param_1 >> 4] & 1 << (param_1 & 0xf)) != 0) {
-    pbVar2[iVar3] = pbVar2[iVar3] | 0x10;
-    pbVar2[iVar3] = pbVar2[iVar3] & 0x9f;
+    pfVar2[param_1].flags = pfVar2[param_1].flags | 0x10;
+    pfVar2[param_1].flags = pfVar2[param_1].flags & 0x9f;
   }
   return;
 }
@@ -96512,35 +96500,33 @@ void fault_enqueueRecord(int param_1)
 void fault_captureDataSnapshot(int param_1,uint param_2)
 
 {
-  ushort *puVar1;
-  int iVar2;
+  word *pwVar1;
   
-  iVar2 = param_2 * 3;
-  if ((*(ushort *)((int)&fault_status_word_array + iVar2) & 1) == 0) {
-    puVar1 = (ushort *)((int)&fault_status_word_array + iVar2);
-    *puVar1 = *puVar1 & 7 | 2 | *puVar1 & 0xfff8;
-    *puVar1 = *puVar1 & 7 | 1 | *puVar1 & 0xfff8;
+  if (((&fault_status_records_cal)[param_2].status_word & 1) == 0) {
+    pwVar1 = &(&fault_status_records_cal)[param_2].status_word;
+    *pwVar1 = *pwVar1 & 7 | 2 | *pwVar1 & 0xfff8;
+    *pwVar1 = *pwVar1 & 7 | 1 | *pwVar1 & 0xfff8;
     fault_handled_bitmap[(int)param_2 >> 3] =
          fault_handled_bitmap[(int)param_2 >> 3] | (byte)(1 << (param_2 & 7));
-    (&fault_status_array)[iVar2] = (&fault_status_array)[iVar2] & 0x9f;
+    (&fault_status_records_cal)[param_2].flags = (&fault_status_records_cal)[param_2].flags & 0x9f;
     if ((fault_definition_table[param_2].entry_flags & 2) != 0) {
-      *puVar1 = *puVar1 & 7 | 4 | *puVar1 & 0xfff8;
-      *(ushort *)((int)&fault_status_word_array + iVar2) =
+      *pwVar1 = *pwVar1 & 7 | 4 | *pwVar1 & 0xfff8;
+      (&fault_status_records_cal)[param_2].status_word =
            (fault_aging_drive_cycle_counter_cal & 0x7f) << 3 |
-           *(ushort *)((int)&fault_status_word_array + iVar2) & 0xfc07;
+           (&fault_status_records_cal)[param_2].status_word & 0xfc07;
     }
   }
-  else if ((*(ushort *)((int)&fault_status_word_array + iVar2) & 2) == 0) {
+  else if (((&fault_status_records_cal)[param_2].status_word & 2) == 0) {
     if ((fault_freeze_frame_entries_cal[param_1].status_flags & 1) == 0) {
       fault_freeze_frame_entries_cal[param_1].status_flags =
            fault_freeze_frame_entries_cal[param_1].status_flags | 1;
       fault_enqueueRecord();
     }
     cm848_latchNewlyActiveFault(param_2);
-    *(ushort *)((int)&fault_status_word_array + iVar2) =
-         *(ushort *)((int)&fault_status_word_array + iVar2) & 0xfff8;
-    *(ushort *)((int)&fault_status_word_array + iVar2) =
-         *(ushort *)((int)&fault_status_word_array + iVar2) & 0xfc07;
+    (&fault_status_records_cal)[param_2].status_word =
+         (&fault_status_records_cal)[param_2].status_word & 0xfff8;
+    (&fault_status_records_cal)[param_2].status_word =
+         (&fault_status_records_cal)[param_2].status_word & 0xfc07;
     fault_handled_bitmap[(int)param_2 >> 3] =
          fault_handled_bitmap[(int)param_2 >> 3] | (byte)(1 << (param_2 & 7));
   }
@@ -96570,8 +96556,8 @@ void diag_mainStateHandler(void)
       do {
         uVar1 = (uint)fault_monitor_group_table[uVar2].fault_slots[uVar4];
         if (uVar1 != 0xaa) {
-          if ((((*(ushort *)((int)&fault_status_word_array + uVar1 * 3) & 1) != 0) &&
-              ((*(ushort *)((int)&fault_status_word_array + uVar1 * 3) & 2) == 0)) &&
+          if (((((&fault_status_records_cal)[uVar1].status_word & 1) != 0) &&
+              (((&fault_status_records_cal)[uVar1].status_word & 2) == 0)) &&
              ((fault_state_records_cal[uVar1].status & 1) != 0)) {
             cm848_registerFaultInActiveList(fault_monitor_group_table[uVar2].fault_slots[uVar4]);
           }
@@ -96632,15 +96618,15 @@ void cm848_initFaultManagement(void)
 
 {
   uint uVar1;
-  ushort *puVar2;
+  word *pwVar2;
   
   fault_service_monitor_startup_delay_count = warm_up_cycle_start_coolant_temperature_read_delay;
   uVar1 = 0;
   do {
-    puVar2 = (ushort *)((int)&fault_status_word_array + uVar1 * 3);
-    *puVar2 = *puVar2 & 5 | *puVar2 & 0xfff8;
-    *puVar2 = *puVar2 & 3 | *puVar2 & 0xfff8;
-    (&fault_status_array)[uVar1 * 3] = (&fault_status_array)[uVar1 * 3] & 0xfe;
+    pwVar2 = &(&fault_status_records_cal)[uVar1].status_word;
+    *pwVar2 = *pwVar2 & 5 | *pwVar2 & 0xfff8;
+    *pwVar2 = *pwVar2 & 3 | *pwVar2 & 0xfff8;
+    (&fault_status_records_cal)[uVar1].flags = (&fault_status_records_cal)[uVar1].flags & 0xfe;
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 0xaa);
   return;

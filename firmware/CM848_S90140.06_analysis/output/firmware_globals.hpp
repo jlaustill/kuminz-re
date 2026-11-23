@@ -5929,9 +5929,8 @@ extern word coolant_overheat_temperature_error;  // 0x0040b22c
 extern word transmission_temperature_rationality_driving_pass_count;  // 0x0040b626
 extern word engine_retarder_cruise_permission_percent;  // 0x0040b68a
 extern word four_wheel_drive_switch_position_code;  // 0x0040bb88
-extern byte fault_status_array;  // 0x003feb92
+extern fault_status_record_t fault_status_records_cal;  // 0x003feb92
 extern dword monitor_pending_readiness_code_cal;  // 0x003fed98
-extern word fault_status_word_array;  // 0x003feb93
 extern byte fault_aging_drive_cycle_counter_cal;  // 0x003fed90
 extern byte fault_auto_clear_warm_up_cycle_count_cal;  // 0x003fed91
 extern word recent_fault_dtc_codes_cal[8];  // 0x003fedbc
