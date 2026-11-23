@@ -1,0 +1,32 @@
+cm848: round 46 stage A - the warning chime (e2m 8B2D), the oil pressure gauge state (8A7F), the TSC1-lost flag (8A7C)
+
+The rest of the gap sweep. Records come from the default e2m, read in full this time:
+- 8A7F (tiled: it fills the gap between 8D38 and 8C69) is the oil pressure gauge state.
+  - +0 OPG_Check_Gauges, +4 OPG_Error_Count, +6 OPG_Pressure ("Oil_Pressure - Ambient_Air_Pressure", exactly the
+    code) and +8 OPG_Threshold_Value are cited.
+  - oil_pressure_model_unfiltered keeps its name: this firmware uses that table only as the switch-only pressure
+    model.
+  - +2 OPG_Chime: low_oil_pressure_derate_flag (and _previous) -> low_oil_pressure_chime_flag (_previous). Its only
+    consumer starts the warning chime on its rising edge; nothing derates on it.
+- 8B2D (field match: five records on five rows, same widths) holds the warning chime counts and the chime duration.
+  - The countdown is a count x Cluster_Warning_Chime_Duration x 5 / 10 in 200 ms passes. The request goes to the
+    cluster as PCI header 0x53, byte 1, bit 5.
+  - engine_warning_alert_duration_* -> warning_chime_count_* (coolant overheat / low oil pressure / coolant class B /
+    water in fuel / fault latch, the last by family membership).
+  - engine_warning_alert_duration_scale -> warning_chime_duration; engine_warning_alert_countdown ->
+    warning_chime_countdown; engine_warning_alert_flag (_previous) -> warning_chime_request_flag (_previous).
+- 8A7C (tiled: it fills the gap between 8A26 and 8C54) is the transmission state.
+  - +2 / +4 / +6 are cited.
+  - +0 Jcomm_Torque_Mgmt_Request ('backup Powertrain Protection mode is enabled'): fuel_demand_timing_enable_flag ->
+    tsc1_lost_management_active_flag.
+    - It is set on a TSC1 timing fault, together with fault 356 Jcomm_TSC_Lost_Fault and the ignoring of TSC1 from
+      the transmission / ASR / ABS.
+    - Its two consumers ramp the TSC1 torque limit and require torque management.
+    - In the dump it is 1 and fault 356 is detected.
+  - +8 / +A belong to stage B.
+
+Proof: prove_caches.py matches all 1968 functions. verify is byte-identical; thunks 18 / 14; the 3 name-mismatch
+warnings are unchanged. Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems,
+audit_cal_suffixes.py HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

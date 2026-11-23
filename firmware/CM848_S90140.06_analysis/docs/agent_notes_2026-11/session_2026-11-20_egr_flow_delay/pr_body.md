@@ -632,6 +632,12 @@ state enum, the flag bytes.**
   state. One rename.
 - **Skill (the user's request):** `auditing-cal-suffixes` says HARD 0 since round 39 (was "~1352"), and its region
   table matches `audit_cal_suffixes.py`. The round 27 section in `firmware/CLAUDE.md` stays as it is.
+**Round 46.**
+- **Stage A (e83a3ce, labels):** the warning chime (e2m 8B2D: `warning_chime_*`, was `engine_warning_alert_*`), the oil
+  pressure gauge state (8A7F; `low_oil_pressure_chime_flag`, was `…_derate_flag`) and the TSC1-lost backup
+  powertrain protection flag (8A7C; `tsc1_lost_management_active_flag`, was `fuel_demand_timing_enable_flag`).
+- **Stage B (3109998, labels, a row, functions):** the `park_neutral_exit_*` family is rock cycle torque management
+  (e2m 8C2A TC_Rock_Cycle_* / 8C49-8C4B RE_RCTM_*). It becomes `rock_cycle_*`: 20 globals, 3 functions, 1 new row.
 
 ## Test plan
 
@@ -724,6 +730,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 46: stage A `prove_caches.py` matches all 1968 functions; verify byte-identical. Stage B `prove_caches.py` against a copy of the old `.cpp` with the three function names changed matches all 1968 functions; verify byte-identical.
 - [x] Round 45: `prove_caches.py` matches 1967 of 1968 functions (the other differs only in the order of its local declarations); verify byte-identical.
 - [x] Round 44 stage C: `prove_caches.py` matches all 1968 functions; verify byte-identical.
 - [x] Round 44 stage B: `prove_caches.py` matches 1967 of 1968 functions; `mpc555_tickTransferTimeoutAndRuntimeCounter` differs only in the order of its local declarations, and the 6 `oil_change_monitor_soot_percentage_cal._0_1_` pieces are the boot ROM's existing byte view of the time-shared 0x3fee3e.

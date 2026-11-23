@@ -489,3 +489,7 @@ Hand work on the round 7 lead.
 ## Round 45: the table gap sweep (`session_folder/round45/`)
 
 - **Sweep:** `sweep_table_gaps.py` (+ `sweep_gaps.txt`), `match_gap_signatures.py` (+ `gap_signatures*.txt`), `rank_gap_semantics.py` (+ `gap_semantics.txt`), `show_placement.py` (+ `placements_*.txt`), `citation_status.py`, `fix_tools_r45.py`. **Stage A:** `apply_r45a.py`, `map_r45a.csv`. **Closing:** `apply_r45_closing.py`, `update_large_tar_r45.sh`.
+
+## Round 46: the warning chime, rock cycle torque management (`session_folder/round46/`)
+
+- `gap_leads.py` (+ `gap_leads.txt`), `placements_*.txt`. **Stage A:** `apply_r46a.py`, `map_r46a.csv`. **Stage B:** `apply_r46b.py`, `map_r46b*.csv`, `apply_r46b_struct_comment.py`. **Closing:** `apply_r46_closing.py`, `update_large_tar_r46.sh`.
