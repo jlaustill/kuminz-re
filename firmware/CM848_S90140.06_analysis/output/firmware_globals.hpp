@@ -1742,7 +1742,7 @@ extern word net_torque_fuel_limit_chi_upper_map_output;  // 0x003fb426
 extern word accelerator_pedal_channel_disagreement_debounce_counter;  // 0x003fb428
 extern word accelerator_pedal_channel97_idle_learning_debounce_counter;  // 0x003fb42a
 extern word accelerator_pedal_channel98_idle_learning_debounce_counter;  // 0x003fb42c
-extern word accelerator_pedal_idle_learning_total_step_counter;  // 0x003fb42e
+extern word accelerator_pedal_idle_learning_timer;  // 0x003fb42e
 extern word accelerator_pedal_channel97_idle_learning_step_counter;  // 0x003fb430
 extern word accelerator_pedal_channel98_idle_learning_step_counter;  // 0x003fb432
 extern byte qspi_active_queue_index;  // 0x003fb4cc
@@ -3546,7 +3546,7 @@ extern byte accelerator_pedal_dual_channel_enable_flag;  // 0x00408a84
 extern byte accelerator_pedal_compare_relative_to_idle_flag;  // 0x00408a85
 extern word accelerator_pedal_idle_learning_gain;  // 0x00408a86
 extern word accelerator_pedal_disagreement_zero_demand_enable;  // 0x00408a88
-extern word accelerator_pedal_idle_learning_total_step_limit;  // 0x00408a8a
+extern word accelerator_pedal_idle_learning_time_limit;  // 0x00408a8a
 extern word accelerator_pedal_idle_learning_channel_step_limit;  // 0x00408a8c
 extern word governor_pressure_rationality_maximum_accelerator_pedal;  // 0x00408a8e
 extern word governor_pressure_rationality_maximum_pressure;  // 0x00408a90

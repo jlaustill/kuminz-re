@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 19:29:12 MST 2026
+// Generated: Sun Nov 22 19:45:44 MST 2026
 
 
 //
@@ -42096,8 +42096,10 @@ void cm848_calculateAcceleratorPedalDemandFromChannels(void)
    circuit fault exists: after accelerator_pedal_idle_learning_debounce_limit passes below position
    plus accelerator_pedal_idle_learning_deadband it moves the idle position down by gain / 256 of
    the difference (accelerator_pedal_idle_learning_gain) for at most
-   accelerator_pedal_idle_learning_channel_step_limit steps, and stores position plus
-   accelerator_pedal_idle_threshold_offset as the idle threshold (the EEPROM-backed 0x3fee46 /
+   accelerator_pedal_idle_learning_channel_step_limit steps (e2m PPS_AZ_Update_Limit) while
+   accelerator_pedal_idle_learning_timer, the 100 ms passes with the learning conditions met, is at
+   or below accelerator_pedal_idle_learning_time_limit (e2m PPS_AZ_Time_Limit), and stores position
+   plus accelerator_pedal_idle_threshold_offset as the idle threshold (the EEPROM-backed 0x3fee46 /
    0x3fee48 words) (was cm848_processCalibration12FuelDemand). */
 
 void cm848_learnAcceleratorPedalIdlePositions(void)
@@ -42112,8 +42114,7 @@ void cm848_learnAcceleratorPedalIdlePositions(void)
   if ((((accelerator_pedal_dual_channel_enable_flag != 0) &&
        (accelerator_pedal_channel_disagreement_flag == 0)) &&
       (accelerator_pedal_sensor_fault_latched_flag == 0)) &&
-     (accelerator_pedal_idle_learning_total_step_counter <=
-      accelerator_pedal_idle_learning_total_step_limit)) {
+     (accelerator_pedal_idle_learning_timer <= accelerator_pedal_idle_learning_time_limit)) {
     uVar4 = (uint)accelerator_pedal_channel97_sensor_filtered;
     uVar5 = (uint)accelerator_pedal_idle_position_a;
     if (uVar4 < uVar5 + accelerator_pedal_idle_learning_deadband) {
@@ -42173,8 +42174,7 @@ void cm848_learnAcceleratorPedalIdlePositions(void)
            accelerator_pedal_channel98_idle_learning_step_counter + 1;
     }
     if ((bVar3) || (bVar1)) {
-      accelerator_pedal_idle_learning_total_step_counter =
-           accelerator_pedal_idle_learning_total_step_counter + 1;
+      accelerator_pedal_idle_learning_timer = accelerator_pedal_idle_learning_timer + 1;
     }
   }
   return;
