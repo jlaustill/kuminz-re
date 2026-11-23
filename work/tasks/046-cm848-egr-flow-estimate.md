@@ -2730,8 +2730,16 @@ A peer relay started the round; the scripts are in `session_folder/round61/`.
   - MISSING 218 -> 219 (78 boot-named rows): the boot table's row moved into `global_variables.csv` at a time-shared
     EEPROM-mirror address.
   - The wave 9 note on `diagnostic_service_dispatch_table` now says where the row lives.
-- **Leads:** the `j1939_dm1_request_mode_byte` global holds the DM7 request's mode byte, so the name looks wrong; 69
-  unprefixed CM848-only functions remain.
+- **Follow-up (comments only):** stage A's new field comments had dropped two verified facts, and they are
+  restored. The J1939 `service_id` points at the `EF00_SERVICE_ID` enum. The boot `service_id` lists the kernel's
+  constant-ID registrations: 0x0b / 0x10 / 0x18 acknowledge, 0x19, 0x41, and 0x43 / 0x4a / 0x4c memory reads.
+- **Leads:**
+  - Type `j1939_diagnostic_service_entry_t.service_id` as `EF00_SERVICE_ID`; pilot it and count the casts.
+  - `cm848_validateJ1939DiagnosticRequest`'s plate says the key check runs when
+    `calibration_download_security_key_cal` "is set". The code tests `!= 0xff`, so fix the plate at the next
+    rebuild.
+  - `j1939_dm1_request_mode_byte` holds the DM7 request's mode byte, so the name looks wrong.
+  - 69 unprefixed CM848-only functions remain.
 
 ## Leads (not in this PR)
 

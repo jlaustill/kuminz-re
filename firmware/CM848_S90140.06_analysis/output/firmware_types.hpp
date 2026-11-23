@@ -2572,13 +2572,13 @@ struct parameter_id_entry_t {
 };
 
 struct j1939_diagnostic_service_entry_t {
-    uint8_t service_id;  /* The PGN 61184 diagnostic service byte (the request's first data byte) */
+    uint8_t service_id;  /* The PGN 61184 diagnostic service byte (the request's first data byte; its values are the EF00_SERVICE_ID enum) */
     uint8_t pad;  /* Never written: the registrar stores only the service byte and the handler */
     void * handler;  /* The service handler: called with the received j1939_rx_msg_t once cm848_validateJ1939DiagnosticRequest accepts the request */
 };
 
 struct boot_diagnostic_service_entry_t {
-    uint8_t service_id;  /* The boot diagnostic service byte */
+    uint8_t service_id;  /* The boot diagnostic service byte: the kernel's constant-ID cm848_registerDiagnosticService calls register 0x0b / 0x10 / 0x18 (acknowledge - no operation) / 0x19 (execute function) / 0x41 (service 65) / 0x43 / 0x4a / 0x4c (memory reads) */
     void * handler;  /* The service handler at offset 1 (unaligned): cm848_dispatchDiagnosticService calls it */
 };
 
