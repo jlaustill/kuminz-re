@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 17:30:14 MST 2026
+// Generated: Sun Nov 22 17:53:56 MST 2026
 
 
 //
@@ -6797,7 +6797,7 @@ void cm848_periodicTaskSet_auxiliaryControl(void)
   cm848_calculateAuxiliaryInjectionTiming();
   cm848_copyMainInjectionTiming();
   cm848_calculateAuxiliaryInjectionQuantityLimit();
-  cm848_computeFuelRpmCompensatedOffset();
+  cm848_calculateMainInjectionEndTiming();
   cm848_calculatePilotInjectionQuantity();
   cm848_calculatePilotInjectionTiming();
   cm848_captureInjectionQuantityAndTimingSnapshots();
@@ -20571,7 +20571,7 @@ void cm848_updateFourDimensionalFueling(void)
    injection_timing_increment_flags to 1 when algorithm_enable_flags_2_cal bit 0x4000 is set, and
    copies the result to main_injection_timing_copy (103B +2 SOI), which
    cm848_copyMainInjectionTiming overwrites with main_injection_timing before its only reader
-   cm848_computeFuelRpmCompensatedOffset runs. Both maps are flat 171 counts (20 degrees) in the
+   cm848_calculateMainInjectionEndTiming runs. Both maps are flat 171 counts (20 degrees) in the
    dump. Task of cm848_periodicTaskSet_auxiliaryControl (was cm848_calculateInjectionTimingOffset) |
    earlier note: Calculates the injection timing offset (timing counts of 0.1171875 degree) into
    four_dimensional_injection_timing: two engine speed x final_fueling maps
@@ -20581,7 +20581,7 @@ void cm848_updateFourDimensionalFueling(void)
    maps and 2 for the fixed value). Adds user_commanded_injection_timing_increment_cal and sets
    injection_timing_increment_flags to 1 when algorithm_enable_flags_2_cal bit 0x4000 is set, and
    copies the result to main_injection_timing_copy, which cm848_copyMainInjectionTiming overwrites
-   with main_injection_timing before its only reader cm848_computeFuelRpmCompensatedOffset runs.
+   with main_injection_timing before its only reader cm848_calculateMainInjectionEndTiming runs.
    Both maps are flat 171 counts (20 degrees) in the dump. Task of
    cm848_periodicTaskSet_auxiliaryControl (was cm848_processTorqueLimitState). */
 
@@ -38726,35 +38726,39 @@ void cm848_initializeAlternatorFieldControl(void)
 
 
 //
-// Function: cm848_computeFuelRpmCompensatedOffset @ 0x0003866c
+// Function: cm848_calculateMainInjectionEndTiming @ 0x0003866c
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
-/* out = main_injection_timing_copy - ((main_injection_pulse_width + addend) * (average_engine_speed
-   * 6) / 1e6 * 256 / 600) clamped to lower..upper; default when fuel or RPM is 0 | renamed
-   2026-11-11 from cm848_computeCruiseSpeedSetpoint: limits are -171..512 in RAM dump (not a speed)
-   and the base falls back to user_commanded_injection_timing_cal - does NOT cut fuel and is not
-   protection | output 0x40b28a has no direct reader anywhere in ROM (only the sth at 0x38748) | asm
-   clrlwi truncates rpm*6 to 16 bits so it wraps above raw 10922 (~1365 RPM) */
+/* Calculates main_injection_end_timing, the end of the main injection in main timing counts
+   (0.1171875 deg): main_injection_timing_copy (the start) minus the pulse's crank angle
+   (main_injection_pulse_width + main_injection_end_timing_pulse_width_addend) x
+   average_engine_speed x 6 / 1e6 x 256 / 600. With the on-time at 0.4 us per count and the speed at
+   1/8 rpm that product is the pulse duration in the same counts. Clamped to
+   main_injection_end_timing_lower_limit .. _upper_limit (signed); main_injection_end_timing_default
+   while the pulse width or the engine speed is 0. The engine speed x 6 product is truncated to 16
+   bits (clrlwi), so it wraps above raw 10922 (about 1365 rpm). cm848_updateOilChangeMonitor reads
+   the result as its engine_power_accumulator_increment input. (was
+   cm848_computeFuelRpmCompensatedOffset, and before that cm848_computeCruiseSpeedSetpoint: its
+   limits are -171..512 in the RAM dump, not a speed) (PR #53 round 43) */
 
-void cm848_computeFuelRpmCompensatedOffset(void)
+void cm848_calculateMainInjectionEndTiming(void)
 
 {
   word wVar1;
   
-  fuel_rpm_compensated_offset = fuel_rpm_compensated_offset_default;
+  main_injection_end_timing = main_injection_end_timing_default;
   if ((((main_injection_pulse_width != 0) &&
-       (fuel_rpm_compensated_offset = fuel_rpm_compensated_offset_default, average_engine_speed != 0
-       )) && (wVar1 = main_injection_timing_copy -
-                      (short)((ulonglong)
-                              (((uint)(ushort)(main_injection_pulse_width +
-                                              fuel_rpm_compensated_offset_pulse_width_addend) *
-                               (uint)(ushort)(average_engine_speed * 6)) / 1000000 << 8) / 600),
-             fuel_rpm_compensated_offset = fuel_rpm_compensated_offset_lower_limit,
-             (short)fuel_rpm_compensated_offset_lower_limit <= (short)wVar1)) &&
-     (fuel_rpm_compensated_offset = wVar1,
-     (short)fuel_rpm_compensated_offset_upper_limit < (short)wVar1)) {
-    fuel_rpm_compensated_offset = fuel_rpm_compensated_offset_upper_limit;
+       (main_injection_end_timing = main_injection_end_timing_default, average_engine_speed != 0))
+      && (wVar1 = main_injection_timing_copy -
+                  (short)((ulonglong)
+                          (((uint)(ushort)(main_injection_pulse_width +
+                                          main_injection_end_timing_pulse_width_addend) *
+                           (uint)(ushort)(average_engine_speed * 6)) / 1000000 << 8) / 600),
+         main_injection_end_timing = main_injection_end_timing_lower_limit,
+         main_injection_end_timing_lower_limit <= (short)wVar1)) &&
+     (main_injection_end_timing = wVar1, main_injection_end_timing_upper_limit < (short)wVar1)) {
+    main_injection_end_timing = main_injection_end_timing_upper_limit;
   }
   return;
 }
@@ -45818,7 +45822,7 @@ void cm848_initializeRearAxleRatio(void)
 //
 
 /* Copies main_injection_timing into main_injection_timing_copy, the base of
-   cm848_computeFuelRpmCompensatedOffset. Runs after cm848_selectMainInjectionTiming and
+   cm848_calculateMainInjectionEndTiming. Runs after cm848_selectMainInjectionTiming and
    cm848_calculateAuxiliaryInjectionTiming in cm848_periodicTaskSet_auxiliaryControl and overwrites
    the 4D timing copy stored there earlier by cm848_calculateFourDimensionalInjectionTiming. (was
    cm848_copyProtectionAccumulator) */
@@ -79457,7 +79461,7 @@ void cm848_updateOilChangeMonitor(void)
       if (total_injection_quantity != 0) {
         wVar1 = lookupTableInterpolation
                           (&engine_power_accumulator_increment_cached_axis_offset,
-                           fuel_rpm_compensated_offset,engine_power_accumulator_increment_axis,
+                           main_injection_end_timing,engine_power_accumulator_increment_axis,
                            engine_power_accumulator_increment_values,1);
         oil_change_monitor_engine_power_accumulator_cal =
              oil_change_monitor_engine_power_accumulator_cal +

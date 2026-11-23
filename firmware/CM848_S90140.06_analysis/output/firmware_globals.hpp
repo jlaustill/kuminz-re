@@ -3430,10 +3430,10 @@ extern word alternator_field_actuator_test_while_running_enable;  // 0x004087f8
 extern word alternator_field_duty_while_charging_system_fault_368_set;  // 0x004087fa
 extern word alternator_field_retest_off_passes;  // 0x004087fc
 extern word alternator_field_retest_fault_confirm_passes;  // 0x004087fe
-extern word fuel_rpm_compensated_offset_default;  // 0x00408800
-extern word fuel_rpm_compensated_offset_pulse_width_addend;  // 0x00408802
-extern word fuel_rpm_compensated_offset_upper_limit;  // 0x00408804
-extern word fuel_rpm_compensated_offset_lower_limit;  // 0x00408806
+extern int16_t main_injection_end_timing_default;  // 0x00408800
+extern word main_injection_end_timing_pulse_width_addend;  // 0x00408802
+extern int16_t main_injection_end_timing_upper_limit;  // 0x00408804
+extern int16_t main_injection_end_timing_lower_limit;  // 0x00408806
 extern word engine_acceleration_first_stage_filter_coefficient;  // 0x00408808
 extern word engine_acceleration_second_stage_filter_coefficient;  // 0x0040880a
 extern int16_t engine_acceleration_first_stage_clamp_maximum;  // 0x0040880c
@@ -5030,7 +5030,7 @@ extern word alternator_field_actuator_test_active_flag;  // 0x0040b284
 extern byte end_of_line_alternator_test_field_cut_flag;  // 0x0040b286
 extern byte alternator_field_read_back_retest_active_flag;  // 0x0040b287
 extern word alternator_field_retest_pass_count;  // 0x0040b288
-extern word fuel_rpm_compensated_offset;  // 0x0040b28a
+extern word main_injection_end_timing;  // 0x0040b28a
 extern int16_t engine_acceleration_first_stage_filtered;  // 0x0040b28c
 extern int16_t engine_acceleration_second_stage_filtered;  // 0x0040b28e
 extern int16_t engine_acceleration_unfiltered;  // 0x0040b290

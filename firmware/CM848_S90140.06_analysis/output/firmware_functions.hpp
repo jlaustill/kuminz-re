@@ -814,7 +814,7 @@ undefined4 cm848_evaluateAlternatorFieldRegulatorStartRampState(void);  // @ 0x0
 undefined4 cm848_evaluateAlternatorFieldRegulatorRegulationState(void);  // @ 0x000383f0
 undefined4 cm848_evaluateAlternatorFieldRegulatorLoadResponseState(void);  // @ 0x0003844c
 void cm848_initializeAlternatorFieldControl(void);  // @ 0x000384d0
-void cm848_computeFuelRpmCompensatedOffset(void);  // @ 0x0003866c
+void cm848_calculateMainInjectionEndTiming(void);  // @ 0x0003866c
 void cm848_processEngineRpmDerivative(void);  // @ 0x00038760
 void cm848_initEngineRpmFilterPointers(void);  // @ 0x00038824
 void cm848_setEngineRpmFromCalibration(void);  // @ 0x00038868
