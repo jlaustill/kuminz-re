@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 03:59:56 MST 2026
+// Generated: Mon Nov 23 04:07:37 MST 2026
 
 
 //
@@ -41372,7 +41372,7 @@ void cm848_buildPciTransmitMessage2CruiseControlAndStatusBits(void)
   else {
     cVar4 = '\x01';
   }
-  if (((logical_output_request_bits & 0x10) == 0) && (protection_fault_latch_flag == 0)) {
+  if (((logical_output_request_bits & 0x10) == 0) && (fuel_pressure_fault_active_flag == 0)) {
     cVar6 = '\0';
   }
   else {
@@ -73788,7 +73788,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
   if ((short)coolant_temperature_sensor_filtered <
       air_conditioning_high_coolant_temperature_on_threshold) {
     air_conditioning_coolant_temperature_ok_flag = 1;
-    protection_coolant_classb_active_flag = 0;
+    air_conditioning_coolant_off_flag = 0;
   }
   if (air_conditioning_high_coolant_temperature_off_threshold <
       (short)coolant_temperature_sensor_filtered) {
@@ -73944,7 +73944,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
   }
   if ((air_conditioning_coolant_temperature_ok_flag == 0) &&
      (logical_output_request_bits_32_to_39.air_conditioning_clutch_request != 0)) {
-    protection_coolant_classb_active_flag = 1;
+    air_conditioning_coolant_off_flag = 1;
   }
   if (j1939_powertrain_control_state.etc1_spn574_shift_in_process == 0) {
     air_conditioning_shift_hold_off_count = 0;
@@ -75133,7 +75133,7 @@ LAB_00513168:
 // Function: cm848_updateEngineWarningFlags @ 0x00513200
 //
 
-/* Once per 40-phase main loop (200 ms derived): protection_fault_latch_flag = any of
+/* Once per 40-phase main loop (200 ms derived): fuel_pressure_fault_active_flag = any of
    fault_detected_cal.faults_48_to_63 bits 9-12; coolant_overheat_or_low_oil_pressure_flag; a rising
    edge of one of five inputs loads warning_chime_countdown that drives warning_chime_request_flag
    (the warning chime: e2m 8B2D chime counts x Cluster_Warning_Chime_Duration) (was
@@ -75147,12 +75147,12 @@ void cm848_updateEngineWarningFlags(void)
        (fault_detected_cal.fuel_pressure_governor_demand_above_limit_error == 0)) &&
       (fault_detected_cal.fuel_pressure_decay_below_model_error == 0)) &&
      (fault_detected_cal.fuel_metering_feedback_low_error == 0)) {
-    protection_fault_latch_flag = 0;
+    fuel_pressure_fault_active_flag = 0;
   }
   else {
-    protection_fault_latch_flag = 1;
+    fuel_pressure_fault_active_flag = 1;
   }
-  protection_fault_latch_flag_copy = protection_fault_latch_flag;
+  fuel_pressure_fault_active_flag_copy = fuel_pressure_fault_active_flag;
   if ((coolant_overheat_check_gauges_flag == 0) && (low_oil_pressure_active_flag == 0)) {
     coolant_overheat_or_low_oil_pressure_flag = 0;
   }
@@ -75161,19 +75161,20 @@ void cm848_updateEngineWarningFlags(void)
   }
   if ((coolant_overheat_chime_flag == 0) || (coolant_overheat_chime_flag_previous != 0)) {
     if ((low_oil_pressure_chime_flag == 0) || (low_oil_pressure_chime_flag_previous != 0)) {
-      if ((protection_coolant_classb_active_flag == 0) ||
-         (protection_coolant_classb_active_flag_previous != 0)) {
+      if ((air_conditioning_coolant_off_flag == 0) ||
+         (air_conditioning_coolant_off_flag_previous != 0)) {
         if ((water_in_fuel_detected_flag == 0) || (water_in_fuel_detected_flag_previous != 0)) {
-          if ((protection_fault_latch_flag == 0) || (protection_fault_latch_flag_previous != 0)) {
+          if ((fuel_pressure_fault_active_flag == 0) ||
+             (fuel_pressure_fault_active_flag_previous != 0)) {
             if (((coolant_overheat_chime_flag == 0) &&
-                (((low_oil_pressure_chime_flag == 0 && (protection_coolant_classb_active_flag == 0))
-                 && (water_in_fuel_detected_flag == 0)))) && (protection_fault_latch_flag == 0)) {
+                (((low_oil_pressure_chime_flag == 0 && (air_conditioning_coolant_off_flag == 0)) &&
+                 (water_in_fuel_detected_flag == 0)))) && (fuel_pressure_fault_active_flag == 0)) {
               warning_chime_countdown = 0;
             }
           }
-          else if (warning_chime_count_fault_latch != 0) {
+          else if (warning_chime_count_fuel_pressure_fault != 0) {
             warning_chime_countdown =
-                 (word)((int)((int)(short)warning_chime_count_fault_latch *
+                 (word)((int)((int)(short)warning_chime_count_fuel_pressure_fault *
                               (uint)warning_chime_duration * 5) / 10);
           }
         }
@@ -75183,9 +75184,9 @@ void cm848_updateEngineWarningFlags(void)
                             (uint)warning_chime_duration * 5) / 10);
         }
       }
-      else if (warning_chime_count_coolant_class_b != 0) {
+      else if (warning_chime_count_air_conditioning_coolant_off != 0) {
         warning_chime_countdown =
-             (word)((int)((int)(short)warning_chime_count_coolant_class_b *
+             (word)((int)((int)(short)warning_chime_count_air_conditioning_coolant_off *
                           (uint)warning_chime_duration * 5) / 10);
       }
     }
@@ -75212,9 +75213,9 @@ void cm848_updateEngineWarningFlags(void)
   }
   coolant_overheat_chime_flag_previous = coolant_overheat_chime_flag;
   low_oil_pressure_chime_flag_previous = low_oil_pressure_chime_flag;
-  protection_coolant_classb_active_flag_previous = protection_coolant_classb_active_flag;
+  air_conditioning_coolant_off_flag_previous = air_conditioning_coolant_off_flag;
   water_in_fuel_detected_flag_previous = water_in_fuel_detected_flag;
-  protection_fault_latch_flag_previous = protection_fault_latch_flag;
+  fuel_pressure_fault_active_flag_previous = fuel_pressure_fault_active_flag;
   return;
 }
 
