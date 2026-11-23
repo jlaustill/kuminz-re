@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 06:27:21 MST 2026
+// Generated: Mon Nov 23 06:37:26 MST 2026
 
 
 //
@@ -68169,14 +68169,17 @@ void cm848_copyROMCalibrationToRAM(void)
 
 
 //
-// Function: j1939_diagService15And16Handler @ 0x00509be0
+// Function: cm848_j1939DiagnosticServiceAcknowledgeNoOperation @ 0x00509be0
 //
 
-/* Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService:
-   services 0x0F and 0x10 - returns 0 (accepted / no action) | review-function-readability reviewed
-   2026-11-12 - Readability Low Accuracy Confidence Medium */
+/* PGN 61184 diagnostic services 0x0f / 0x10: returns 0 (accepted) and does nothing - the
+   application's twin of the boot kernel's cm848_diagServiceAcknowledgeNoOperation. Registered by
+   cm848_registerJ1939BroadcastAndNoOperationServices (was j1939_diagService15And16Handler; PR #53
+   round 62) | earlier note: Application CLIP diagnostic service handler registered with
+   cm848_j1939RegisterDiagnosticService: services 0x0F and 0x10 - returns 0 (accepted / no action) |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
 
-undefined4 j1939_diagService15And16Handler(void)
+undefined4 cm848_j1939DiagnosticServiceAcknowledgeNoOperation(void)
 
 {
   return 0;
@@ -68290,18 +68293,19 @@ undefined1 j1939_diagService5EnableBroadcast(undefined4 param_1)
 
 
 //
-// Function: cm848_registerJ1939ParameterAndBroadcastServices @ 0x00509d34
+// Function: cm848_registerJ1939BroadcastAndNoOperationServices @ 0x00509d34
 //
 
-/* From cm848_j1939_system_init: registers the PGN 61184 diagnostic services 0x0f / 0x10 (get
-   parameters by ID - j1939_diagService15And16Handler) and 4 / 5 (disable / enable broadcast) in
-   j1939_diagnostic_service_table (was j1939_diag_request_batch_init; PR #53 round 62) */
+/* From cm848_j1939_system_init: registers the PGN 61184 services 4 / 5 (disable / enable broadcast)
+   and 0x0f / 0x10 (accepted no-ops - cm848_j1939DiagnosticServiceAcknowledgeNoOperation) in
+   j1939_diagnostic_service_table. Stage A of this round named it ...ParameterAndBroadcastServices
+   from the EF00_SERVICE_ID member names (was j1939_diag_request_batch_init; PR #53 round 62) */
 
-void cm848_registerJ1939ParameterAndBroadcastServices(void)
+void cm848_registerJ1939BroadcastAndNoOperationServices(void)
 
 {
-  cm848_j1939RegisterDiagnosticService(0xf,j1939_diagService15And16Handler);
-  cm848_j1939RegisterDiagnosticService(0x10,j1939_diagService15And16Handler);
+  cm848_j1939RegisterDiagnosticService(0xf,cm848_j1939DiagnosticServiceAcknowledgeNoOperation);
+  cm848_j1939RegisterDiagnosticService(0x10,cm848_j1939DiagnosticServiceAcknowledgeNoOperation);
   cm848_j1939RegisterDiagnosticService(4,j1939_diagService4DisableBroadcast);
   cm848_j1939RegisterDiagnosticService(5,j1939_diagService5EnableBroadcast);
   return;
@@ -99335,7 +99339,7 @@ void cm848_j1939_system_init(void)
   cm848_registerJ1939GetAddressByParameterIdService();
   cm848_registerJ1939MemoryWriteServices();
   cm848_registerJ1939DiagnosticHandlers();
-  cm848_registerJ1939ParameterAndBroadcastServices();
+  cm848_registerJ1939BroadcastAndNoOperationServices();
   wVar1 = j1939_engine_destination_specific_receive_message_object_count;
   uVar3 = (uint)can_last_message_object_used;
   iVar2 = uVar3 + 1;

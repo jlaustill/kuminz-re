@@ -1437,11 +1437,11 @@ void cm848_initializeExhaustPressure(void);  // @ 0x00509a2c
 void cm848_updateGeneralEngineProtection(void);  // @ 0x00509a7c
 void cm848_initFlowControlStateVariables(void);  // @ 0x00509b5c
 void cm848_copyROMCalibrationToRAM(void);  // @ 0x00509b74
-undefined4 j1939_diagService15And16Handler(void);  // @ 0x00509be0
+undefined4 cm848_j1939DiagnosticServiceAcknowledgeNoOperation(void);  // @ 0x00509be0
 undefined4 cm848_updateJ1939BroadcastEnableMask(int param_1,int param_2);  // @ 0x00509be8
 undefined1 j1939_diagService4DisableBroadcast(undefined4 param_1);  // @ 0x00509ce4
 undefined1 j1939_diagService5EnableBroadcast(undefined4 param_1);  // @ 0x00509d0c
-void cm848_registerJ1939ParameterAndBroadcastServices(void);  // @ 0x00509d34
+void cm848_registerJ1939BroadcastAndNoOperationServices(void);  // @ 0x00509d34
 void cm848_clearJ1939InputDataErrorBit(uint param_1);  // @ 0x00509d98
 void cm848_clearJ1939PedalInputTimeoutBit(uint param_1);  // @ 0x00509dd8
 void cm848_clearJ1939InputTimeoutBit(uint param_1);  // @ 0x00509e18
