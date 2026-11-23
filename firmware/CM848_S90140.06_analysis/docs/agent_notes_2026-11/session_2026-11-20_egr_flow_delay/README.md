@@ -603,3 +603,9 @@ Hand work on the round 7 lead.
 - **Stage A:** `apply_r70a.py`, `map_r70a.csv`, `classify_dptram_rows.py`. **Follow-up:** `fix_r70b.py` (the MPC5xx
   memory map), then `fix_r70b2.py` (one retype reverted). **Proof:** `prove_r70.py`,
   `diff_r70.py`. **Closing:** `apply_r70_closing.py`, `update_large_tar_r70.sh`.
+
+## Round 71: MEMORY_REGION_TYPE (`session_folder/round71/`)
+
+- **Stage A:** `apply_r71a.py`, `map_r71a.csv`. **Proof:** `prove_r71.py`, `diff_r71.py`. **Closing:**
+  `apply_r71_closing.py`, `fix_r71_closing_text.py`, `fix_r71_closing_text2.py`, `update_large_tar_r71.sh`. **Follow-up:** `fix_r71b.py`. **Commit
+  messages:** `commit_r71a.txt`, `commit_r71b.txt`, `commit_r71_closing.txt`.

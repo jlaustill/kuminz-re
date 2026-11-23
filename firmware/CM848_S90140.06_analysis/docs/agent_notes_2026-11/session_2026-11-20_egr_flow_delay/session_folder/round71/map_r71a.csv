@@ -1,0 +1,3 @@
+address,name,old_label,kind,dims
+0x003f9830,boot_memory_region_table,memory_region_table,global,1
+0x003fee05,serial_download_region_type,sensor_fault_threshold_state,global,1

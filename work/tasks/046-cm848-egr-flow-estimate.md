@@ -3195,6 +3195,48 @@ A peer relay started the round; the scripts are in `session_folder/round70/`.
   - Round 69's leads stand: the Bank 2 re-dump, the 0x8000 branch table, the dword pairs after
     `block_data_structure`, and `block_capacity`'s 0x1f7e. So do round 67's and 68's.
 
+## Done, round 71 (2026-11-23, same PR): MEMORY_REGION_TYPE - both kernels' memory region maps
+
+A peer relay started the round; the scripts are in `session_folder/round71/`.
+- **Stage A (8755bedb):** round 67's region-type lead.
+  - **The codes:** both write-permission maps decode to the same codes, and both kernels' readers and writers branch
+    on them the same way: 0 RAM / 2 Bank 2 flash / 3 AUTHORIZATION_REQUIRED / 4 main flash / 5 EEPROM / 9 UNMAPPED /
+    10 REFUSED. Codes 9 and 10 go straight back as the service result, so their words come from
+    `J1939_DIAGNOSTIC_RESULT`.
+  - **The second type byte:** `memory_region_t`'s second byte is the application's type while development mode is
+    OFF (`development_mode_off_region_type`). The old name, `region_type_copy`, described only the boot table.
+  - **First match wins:** the boot table's type 3 entry is effectively 0x2fc000-0x301fff, and the application map
+    leaves out the dual-port TPU RAM, which comes back UNMAPPED.
+  - **New and renamed names:** `application_memory_region_table` (7 entries at 0x53a33a), `boot_memory_region_table`,
+    and `serial_download_region_type` (0x3fee05, was `sensor_fault_threshold_state`). Both lookups get prototypes,
+    and the two writers that pass a region code back get explicit byte / char returns.
+- **Proof:** 17 of 1968 functions differ after the renames, with net 26 placeholders fewer (28 out, 2 in) and net 3 casts more (8 in, 5 out). The region compares now name MEMORY_REGION_TYPE members (the download handlers, the 0x19 execute handler, both writers, both read handlers, the PCI diagnostic handler), and both lookups read their tables' fields (the application one lost its 5 casts). Of the 8 new casts, 6 convert lookup arguments to the parameters' integer types (a code * / a byte * / the PCI pointer x3 / a word length), 1 makes the 0x19 handler's region / result mix explicit (BVar6 = (BOOT_DIAGNOSTIC_RESULT)MVar7), and 1 is the 0x6ffff bound in mpc555_cmfEraseBlocks, which lost its DAT_0006ffff label. verify is byte-identical with round 70's WARNING lines; thunks 18 / 14; prototype and local rows 0 failed, locals Skipped 8 (the same warnings as round 66); no enum compositions. Headers regenerated (0 g++ errors), tests pass, lookup tables 0 sizing problems, audit_cal_suffixes.py HARD 0 / MISSING 211. 8755bedb's message says "28 placeholders fewer and 8 casts more"; the net figures above are the
+  right ones.
+- **Also seen:** the application writer also refuses (10) type 3 writes into 0x3fd481 up to `sensor_channel_ram_start`
+  (0x40a046: the EEPROM mirror and the ROM-copied constants behind it) while RAM refresh is on. Typing the
+  application table removed a `DAT_0006ffff` label from `mpc555_cmfEraseBlocks`: the pointer row at 0x53a33e (entry
+  0's end address, 0x6ffff) had created it.
+- **Follow-up (88e54bbb), from the closing review:**
+  - The lookups' parameters are `range_start` / `range_length`. Named `address` / `length`, they collided with their
+    callers' own and left 20 `length_00` / `address_00` temps.
+  - `MEMORY_REGION_TYPE_BANK_2_FLASH`'s comment notes that the application writer's pass-back reaches the tool as
+    `J1939_DIAGNOSTIC_RESULT` 0x02 `WRONG_LENGTH`.
+  - The junk row at 0x3fee03 (`j1939_cruise_state_t_003fee00.cruise_state_pad_03`: no such struct) is gone. It was an
+    EEPROM mirror name without `_cal`, so `audit_cal_suffixes.py` MISSING goes 211 -> 210.
+  - **Proof:** 5 of 1968 functions differ (the callers whose temps lost `_00`); casts and placeholders are
+    unchanged; verify is byte-identical with stage A's warnings.
+- **firmware/CLAUDE.md:** line 108, the reference refresh's factual rename (`memory_region_table` ->
+  `boot_memory_region_table`).
+- **Leads:**
+  - The boot read reply table at 0x7f60 is `boot_kernel_rom_end`'s own address (its comment documents it). Typing it
+    would make the image's end bound read as the table.
+  - The serial download handlers use unnamed `DAT_003fee06` / `ram0x003fee01` / `ram0x003fedfd`.
+  - CM550's `cm550_memoryOperationDispatcher` (0x2148a) is the application J1939 writer's twin, path for path: it
+    switches on the same codes from `cm550_addressRangeValidator` (0 copy / 3 and 5 after the security check / 4 ->
+    10 / the others back as the result), and its security check calls `sensorRangeValidation`, the twin of
+    `cm848_processSecurityCodeConversion` - so MEMORY_REGION_TYPE and the twins' names can carry over to CM550.
+  - Round 70's SRAM clear bound and the older leads stand.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

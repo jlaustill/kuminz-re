@@ -184,6 +184,7 @@
   200835 build_round69a.log
   200835 build_round70a.log
   200835 build_round70b.log
+  200841 build_round71a.log
   104456 cm550_base_build_round63.log
    23475 cm848_runCruiseAndRoadSpeedGovernor_round16.asm
  1071916 e2m_audit_round16a.csv
@@ -309,3 +310,5 @@
   401985 verify_round69b.log
   401985 verify_round70a.log
   401985 verify_round70b.log
+  401993 verify_round71a.log
+  401993 verify_round71b.log

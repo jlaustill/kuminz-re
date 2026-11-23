@@ -1,0 +1,19 @@
+cm848: round 71 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 71" records stage A (8755bedb) and the follow-up (88e54bbb).
+  - The proof uses the net figures: 26 placeholders fewer and 3 casts more. 8755bedb's message has the gross 28 / 8;
+    it stays.
+  - The application writer's extra refusal of 0x3fd481 up to sensor_channel_ram_start (the EEPROM mirror and the
+    ROM-copied constants) while RAM refresh is on.
+  - The DAT_0006ffff label that the removed pointer row at 0x53a33e had created.
+  - The follow-up's proof and the audit's MISSING 211 -> 210 step.
+  - Leads:
+    - the boot read reply table at boot_kernel_rom_end's address;
+    - the serial handlers' unnamed bytes;
+    - CM550's cm550_memoryOperationDispatcher: the application writer's twin, on the same region codes.
+- The proof's cast breakdown: 6 of the 8 new casts convert lookup arguments (one a word length, not a
+  pointer); the other 2 are the 0x19 handler's result cast and the 0x6ffff bound.
+- work/todo.md, the session README, session_folder/round71/, the large-files tarball (the round's build and verify
+  logs), pr_body.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
