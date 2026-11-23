@@ -533,3 +533,7 @@ Hand work on the round 7 lead.
 ## Round 56: the discrete output overrides (`session_folder/round56/`)
 
 - **Stage A:** `apply_r56a.py`, `map_r56a.csv`, `params_r56a.csv`. Proof: `prove_r56.sh` (the parameter renames per function, plus a struct-piece count). **Closing:** `apply_r56_closing.py`, `update_large_tar_r56.sh`.
+
+## Round 57: the cruise cluster, the N/V ratio, two warning chime sources (`session_folder/round57/`)
+
+- **Stage A:** `apply_r57a.py`, `map_r57a.csv`, `refresh_other_csvs_r57.py`. Proof: `prove_r57.sh`, `prove_return_types_r57.py`, `diff_function_r57.py`, `count_casts.py`. **Stage B:** `apply_r57b.py`, `map_r57b.csv`. **Closing:** `apply_r57_closing.py`, `update_large_tar_r57.sh`.

@@ -2537,7 +2537,7 @@ A peer relay started the round; the scripts are in `session_folder/round55/`.
   - The fault manager's prototypes still read `param_1` (the slot or fault code); naming them needs full
     `function_definitions.csv` rows.
 
-## Done, round 56 (2026-11-23, same PR): the discrete output overrides replace the last protection_* names
+## Done, round 56 (2026-11-23, same PR): the discrete output overrides replace the last protection_* function names
 
 A peer relay started the round; the scripts are in `session_folder/round56/`.
 - **Stage A (3115bca):** the 0x514048-0x514394 "protection" cluster and its globals are the discrete output overrides.
@@ -2567,6 +2567,43 @@ A peer relay started the round; the scripts are in `session_folder/round56/`.
     `cm848_validateWriteAuth`'s `param_1`) commits the parameter through `updateDBVariable` too, so it may cast the
     same way; a build would tell. Otherwise `ApplyFunctionDefinitions` would have to name parameters without locking
     the prototype, a shared-script change that needs both firmwares rebuilt.
+
+## Done, round 57 (2026-11-23, same PR): the cruise cluster, the cruise N/V ratio, two warning chime sources
+
+A peer relay started the round; the scripts are in `session_folder/round57/`.
+- **Stage A (868e3f5): the cruise cluster at 0x511ea8-0x513980, read function by function.**
+  - 10 unprefixed legacy names, plus `cm848_integrateCruiseRpmRatioChange` for the vocabulary.
+  - Three were wrong-domain:
+    - `governor_cruise_dualCalc_dispatch` runs the coolant overheat derate monitors
+      (`cm848_runCoolantOverheatDerateMonitors`).
+    - `engine_coolantTemp_delta_calc` is e2m 8A72 +0 CT_Derate_Temp_Error
+      (`cm848_calculateCoolantOverheatTemperatureError`).
+    - `fuel_demand_timing_initialize` initializes the TSC1 lost management and the rock cycle cache
+      (`cm848_initializeRockCycleAndTsc1LostManagement`).
+  - **The five state getters** return `CRUISE_CONTROL_STATE` (no parameters, r3 returns):
+    `cm848_selectBaseCruiseState`, `cm848_selectDeniedCruiseState` and `cm848_selectCruiseStateFor{Set,Resume,Coast}Switch`.
+    - They render the states by name and drop 6 casts.
+    - The caller re-renders with renumbered locals and no cast added.
+  - **The e2m 8A0E / 8A0F "N_V" ratio family** (table-resolved) is now `cruise_engine_to_vehicle_speed_ratio_*`
+    (was `cruise_rpm_ratio_*`): 12 rows, including the filter state and its coefficient (two type-only rows).
+- **Stage B (607a663): two of the five warning chime sources in `cm848_updateEngineWarningFlags`.**
+  - `fuel_pressure_fault_active_flag` (was `protection_fault_latch_flag`): any of the P1221 / P1222 / P1223 rail
+    pressure and fuel metering faults; PCI 0x35 bit 6.
+  - `air_conditioning_coolant_off_flag` (was `protection_coolant_classb_active_flag`): the A/C coolant-off condition
+    of the DR truck A/C clutch control, chimed by e2m 8B2D +6 AC_Coolant_Off_Chime_Count.
+  - Their copy / previous words and chime counts: 7 rows.
+  - The 11.45 e2m's 8A0F +C / +E / +10 records (cruise switch history, a transmission cutout) do not match the code
+    at those addresses, so 8A0F's 11.46 layout drifts from +C on.
+- **Proof:** stage A: `prove_r57.sh` shows 1962 of 1968 functions label-only; `prove_return_types_r57.py` proves the five retyped getters (members back to values, casts and locals normalized), and the caller only re-renders (renumbered locals, no cast added). Stage B: no function differs. verify byte-identical.
+- **Round 56's wording, corrected:** "the last `protection_*` names" was true of function names only; 17
+  `protection_*` globals were left, and stage B renamed 5 of them.
+- **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 221.
+- **Leads:**
+  - 69 unprefixed CM848-only functions remain.
+  - 12 `protection_*` globals remain: `protection_diag_state_a` / `_b` / `_c`,
+    `protection_event_output_polarity_bits_cal` / `_line_cal`, `protection_status_flags_b`, `protection_crank_event_counter`,
+    the `protection_group29_*` pair, `protection_rpm_correction_cached_axis_offsets`, and two pad fields.
+  - 8A0F +A Filtered_Cruise_N_V_Ratio (0x40b20e) has no code use under its address.
 
 ## Leads (not in this PR)
 

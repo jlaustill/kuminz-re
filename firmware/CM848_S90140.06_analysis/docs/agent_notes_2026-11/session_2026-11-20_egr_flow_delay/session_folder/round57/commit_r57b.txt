@@ -1,0 +1,27 @@
+cm848: round 57 stage B - two warning chime sources lose their protection_* names
+
+cm848_updateEngineWarningFlags chimes on a rising edge of five sources. Two of them kept legacy protection_* names:
+- protection_fault_latch_flag -> fuel_pressure_fault_active_flag. It is 1 while any of four rail pressure / fuel
+  metering faults is set (fault word 3 bits 9-12: P1221, P1222 twice and P1223, by their setters' plates).
+  cm848_buildPciTransmitMessage2CruiseControlAndStatusBits sends it OR logical output 4's request as PCI 0x35 bit 6
+  ("request 4 or P1221-P1223" in that builder's plate). Its _copy (no reader) and _previous follow, and
+  warning_chime_count_fault_latch -> warning_chime_count_fuel_pressure_fault.
+- protection_coolant_classb_active_flag -> air_conditioning_coolant_off_flag. This is the A/C coolant-off condition:
+  - cm848_controlAirConditioningClutchForDrTruck sets it while the A/C clutch is requested with
+    air_conditioning_coolant_temperature_ok_flag 0, and clears it below
+    air_conditioning_high_coolant_temperature_on_threshold;
+  - its chime count is e2m 8B2D +6 AC_Coolant_Off_Chime_Count, now warning_chime_count_air_conditioning_coolant_off;
+  - _previous follows.
+
+The 11.45 e2m puts 8A0F +C / +E / +10 (cruise switch history and a transmission cruise cutoff request) at
+0x40b210-0x40b214. The code uses those addresses as these warning flags, so the 11.46 layout of 8A0F drifts from +C
+on. None of the names is in CM550.
+
+Proof (prove_r57.sh with the 7 global map entries):
+- 0 of 1968 functions differ, and no old name is left in the .cpp.
+- check_history_r44b.py: all 7 rows keep their (was ...) note.
+- verify is byte-identical; thunks 18 / 14; the 3 name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

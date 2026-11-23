@@ -1,0 +1,15 @@
+cm848: round 57 closing - task 046, the session archive, the PR body
+
+- task 046, round 57:
+  - the cruise cluster (11 functions, three wrong-domain names, CRUISE_CONTROL_STATE returns on five getters);
+  - the e2m 8A0E / 8A0F N/V ratio family;
+  - two warning chime sources;
+  - the proofs;
+  - leads: 69 unprefixed CM848-only functions left, the 12 protection_* globals left, and 8A0F +A.
+- Round 56's "the last protection_* names" now reads "the last protection_* function names" (task 046, PR body,
+  memory). 17 protection_* globals were left then; stage B renamed 5 of them.
+- No firmware/CLAUDE.md edit: HARD stays 0 and MISSING 221.
+- PR body, README, todo, memory, and the round 57 session folder (the stage scripts and maps, the other-CSV refresh,
+  the proofs, the closing scripts, the verify logs).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

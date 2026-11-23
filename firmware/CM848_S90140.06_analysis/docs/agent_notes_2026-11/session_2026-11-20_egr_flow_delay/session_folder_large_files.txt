@@ -267,3 +267,5 @@
   401843 verify_round54b.log
   402047 verify_round55a.log
   402103 verify_round56a.log
+  402239 verify_round57a.log
+  402239 verify_round57b.log
