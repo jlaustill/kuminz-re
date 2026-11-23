@@ -2816,6 +2816,19 @@ A peer relay started the round on round 62's lead; the scripts are in `session_f
   - The 12 handlers and workers take the request.
   - 23 functions renamed (`cm848_handleBoot<member>Service` and so on).
   - `boot_kernel_rom_end` is also where the boot read reply table starts.
+- **Follow-up (1d2f74d4), from the closing checks:**
+  - CM550's `EF00_SERVICE_ID` type is `J1939_DIAGNOSTIC_SERVICE` too, since shared names change in both
+    firmwares. Its members stay CM550's own, and the enum renders nowhere in CM550: its `.cpp` matches a base
+    build.
+  - The 0x0d member comment: 0xfe sends 0x0e.
+  - The boot dispatcher's plate: a received 0x0c / 0x0d gets no answer. It said "answered directly".
+  - `diag_scan_step_counter` -> `boot_diagnostic_service_count`. The boot registrar appends at it (at most 20)
+    and the boot dispatcher scans that many entries.
+  - A wider sweep for the round's 46 old names and its three overturned claims. It fixed three docs:
+    - `parameter_by_id_system.md` names the boot handlers;
+    - `rom_to_ram_thunking.md`'s snapshot row;
+    - `ecu_identification.md` has a CM848 footnote under its test matrix.
+    Snapshots, worklists, dated plans and task logs keep the old names.
 - **Proof:** stage A 9 of 1968 functions differ: the registrar, its 5 callers and the dispatcher by member names (all 24 registrations keep their values and handlers in order), the read worker by the reply table, and one local declaration-order move. Stage B 21: the 20 typed functions (45 casts and 113 placeholder names removed, 1 cast added, no new artifacts) and the same declaration-order move. Stage C 22: the 19 predicted (41 casts and 57 placeholder names removed, none added; all 14 boot registrations keep their values and handlers) and three declaration-order moves. Every verify byte-identical, thunks 18 / 14, 0 failed prototype or local rows, headers 0 g++ errors, tests pass (Java 89), HARD 0 / MISSING 219.
 - **firmware/CLAUDE.md:** two factual edits.
   - Stage A: the callers line.
@@ -2832,6 +2845,13 @@ A peer relay started the round on round 62's lead; the scripts are in `session_f
   - **The dispatcher's `result_code`** splits off a `uVar1` once committed. The importer names locals in one pass,
     so that temp cannot be named.
   - `DAT_003fba10` (round 62's lead) is still open.
+  - **CM550's `J1939_DIAGNOSTIC_SERVICE` members are unreviewed.** They are its own CLIP-era names (0x43
+    `MEM_READ_2B_PARAM_4B_OFFSET`), and no CM550 handler was read this round.
+  - **Three unnamed length tables:**
+    - 0x53a322, the application's header lengths. The code's base 0x53a2e1 falls inside input signal
+      descriptor 10.
+    - 0x5761e, the Bank 1 echo lengths (base 0x575dd).
+    - The boot kernel's header lengths, in its image at RAM 0x3f97cd + service.
   - 38 unprefixed CM848-only functions remain.
 
 ## Leads (not in this PR)

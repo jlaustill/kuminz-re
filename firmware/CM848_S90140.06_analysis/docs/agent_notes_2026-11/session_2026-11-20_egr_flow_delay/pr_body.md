@@ -729,6 +729,11 @@ state enum, the flag bytes.**
   113 placeholder names gone).
 - **Stage C (d9933bac):** the boot kernel's twin: `BOOT_DIAGNOSTIC_SERVICE`, its wrong read prototypes fixed,
   23 functions renamed.
+- **Follow-up (1d2f74d4):**
+  - CM550's copy of the enum type is renamed too (its members stay its own).
+  - Two wrong comments fixed.
+  - The boot kernel's service count named.
+  - Three docs that still described the old reading fixed.
 
 ## Test plan
 

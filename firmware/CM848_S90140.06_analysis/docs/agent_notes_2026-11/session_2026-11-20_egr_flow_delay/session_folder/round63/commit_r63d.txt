@@ -1,0 +1,35 @@
+cm848 + cm550: round 63 follow-up - the shared enum type in CM550, two comment fixes, the boot service count
+
+From the round's closing checks:
+- CM550's enums.csv held its own EF00_SERVICE_ID (24 members, never applied in CM550). Shared names change in both
+  firmwares, so its type is J1939_DIAGNOSTIC_SERVICE too. A note says its members are CM550's own and unreviewed
+  against its handlers. CM550's verify output equals a base build of HEAD (both deterministic) apart from the
+  Generated line, so the .cpp is unchanged; its headers are regenerated.
+- J1939_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE said "any other result". cm848_sendJ1939ResponseFrame sends 0x0e for
+  result 0xfe, as BOOT_DIAGNOSTIC_SERVICE's comment already said.
+- cm848_dispatchDiagnosticService's plate said 0x0c / 0x0d "are answered directly". The code sets 0xff and sends
+  nothing, so a received response gets no handler and no answer.
+- diag_scan_step_counter -> boot_diagnostic_service_count. Its only users:
+  - cm848_registerDiagnosticService appends at it (at most 20; it returns true when full);
+  - cm848_dispatchDiagnosticService scans that many entries.
+  It is the boot kernel's twin of j1939_diagnostic_handler_count. CM550 has neither name.
+- A sweep beyond the CM848 output CSVs (sweep_live_text.py): the round's 46 old function names, EF00_SERVICE_ID,
+  and the three overturned claims (0x43 = an offset / 0x46 not registered / 0x15 = get address by ID). Live text
+  fixed:
+  - docs/parameter_by_id_system.md: the corrections section names the boot handlers and BOOT_DIAGNOSTIC_SERVICE;
+  - docs/rom_to_ram_thunking.md: the snapshot row of the thunk the round renamed;
+  - ecu_identification.md: a CM848 footnote under the test-based service matrix. Its cells stay as tested.
+  Left as they are: snapshots (classification.csv, memory-mappings/bank1.txt), campaign worklists, dated plans and
+  task logs, CM550's own analysis (calterm3/calterm-crc/ECU_PROGRAMMING_PROTOCOL.md) and clip-core's code (the
+  bench lead).
+
+Proof:
+- CM848 (prove_r63.sh with the counter rename mapped): 0 of 1968 functions differ, so the stage is label-only.
+  Without the map, differing.py lists only the counter's two users. The dispatcher's plate fix renders; the proof
+  excludes plates. No function's artifact count changed.
+- CM848 verify is byte-identical; thunks 18 / 14.
+- CM550: verify byte-identical, and equal to the base build.
+- Headers regenerated for both firmwares (0 g++ errors each), tests pass, audit_cal_suffixes.py HARD 0 /
+  MISSING 219.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

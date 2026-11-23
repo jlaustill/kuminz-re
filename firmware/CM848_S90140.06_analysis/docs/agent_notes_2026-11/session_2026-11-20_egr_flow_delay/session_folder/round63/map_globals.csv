@@ -1,1 +1,2 @@
 address,name,old_label,kind,dims
+0x003fdb94,boot_diagnostic_service_count,diag_scan_step_counter,global,1
