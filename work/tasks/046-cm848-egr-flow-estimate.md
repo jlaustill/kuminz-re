@@ -3062,6 +3062,54 @@ A peer relay started the round; the scripts are in `session_folder/round67/`.
   - **The serial response codes** (0x22 / 0x40 / 0x73-0x78 with 0x7f) of `cm848_diagSendResponseCode` /
     `mpc555_sciSendServiceResponse`, once their protocol is read. Channel value 1 is tested but never passed.
 
+## Done, round 68 (2026-11-23, same PR): the application's EEPROM mirror words at 0x3fee18, typed from e2m
+
+A peer relay started the round; the scripts are in `session_folder/round68/`.
+- **Stage A (3be13ab6):** round 67's first lead.
+  - The boot kernel's `eeprom_header_t` ran to 0x3fee29 over the application's EEPROM mirror, so 14 application
+    functions (10 + 3 + 1; 3be13ab6's message says 13) rendered their words as `eeprom_shadow_header.calibration_block1[N]` / `cal_word2` / ... It now ends at
+    0x3fee17.
+  - Three structs from e2m, with the widths from the asm (lbz / lhz / sth):
+    - `fuel_level_saved_values_t` (8A24, 4 bytes; e2m's own filler byte says the source has a struct);
+    - `intake_air_heater_saved_values_t` (8A36). The end-of-line step's one `sth` of 0x19 had rendered as two byte
+      stores;
+    - `engine_off_time_saved_values_t` (8C36 Chry_Dat42), the PCI engine-off time check.
+  - The boot kernel's copies of EEPROM 0x4a-0x4f / 0x50-0x54 time-share these words. Three boot plates say so, and
+    `cm848_lookupEepromParameterAddress` (it returns those bytes by parameter number) gets a `byte *` prototype: the
+    struct start at 0x3fee1c had made Ghidra type its return as the struct pointer, and its caller loses a cast. Its
+    local still shows as that struct's pointer: a `byte *` local row split the variable in two, so the row was
+    dropped (`fix_r68a3.py` / `fix_r68a4.py`). It is the one function that reads worse than before the round:
+    the same 4 casts and fewer placeholders (16 -> 9), but the casts now name a misleading struct pointer, and
+    its parameter 1-4 path reads as `eeprom_shadow_header.header_block + parameter + 0xb`.
+  - `boot_serial_reflash_unlock_request` / `boot_eeprom_status_block` (0x3fee24 / 0x3fee26). The old
+    `serial_number` was EEPROM 0x0c; the serial number is EEPROM 0x8e.
+- **Proof:** 6 of 1968 functions differ after the renames: the end-of-line start step (its single sth to 0x3fee1c is one word store, inhibit_postheat_start_count = 0x19, not two byte stores); the postheat update (the _4_2_ piece is the field); cm848_loadCalibrationFromEeprom and mpc555_systemInitialization (four RAM destinations of mpc555_eepromReadWords render as their symbols); cm848_lookupEepromParameterAddress (its byte * prototype; the local shows the struct pointer, see its plate); and its caller, whose (byte *) cast went. No old field name renders. verify is byte-identical; thunks 18 / 14; prototype and local rows 0 failed, locals Skipped 8 (the same warnings as round 66). Headers regenerated (0 g++ errors), tests pass, lookup tables 0 sizing problems, audit_cal_suffixes.py HARD 0 / MISSING 212 (was 216), history notes intact, leftovers 0.
+- **Follow-up (bca3c8fd), from the closing review:**
+  - EEPROM 0x0c is e2m 0001 +0 ECM_Part_Number ('Module Part Number', 4 bytes): `ecm_part_number_cal` (was
+    `eeprom_status_block`), and its boot copy at 0x3fee26 is `boot_ecm_part_number` (3be13ab6 coined
+    `boot_eeprom_status_block`).
+  - Two e2m quotes are now e2m's exact text: `Fuel_Lvl_Last_Valid_Percent`'s had been cut and completed by
+    hand, and `IAH_Redundant_Preheat_Req`'s comma had become a dash.
+  - `intake_air_heater_preheat_depleted_flag`'s comment named the removed `eeprom_status_flags`.
+  - **Two history notes repaired.** `refresh_references.py` protects old labels after "was", but not after
+    "named it". So this round's "3be13ab6 named it boot_eeprom_status_block" was rewritten, and so was
+    round 66's "382fa677 named it net_combustion_torque_coolant_friction_scale" (its follow-up c48cc435 turned
+    it into the current name). Both now read "(was <old> in <hash>)". `history_corruption_r68.py` also checks
+    "named it" and "said"; its two remaining hits are these intermediate names, as intended.
+- **firmware/CLAUDE.md:** line 146, a factual rename from the reference refresh (the boot copy of EEPROM 0x56 is
+  `boot_serial_reflash_unlock_request`).
+- **Leads:**
+  - `cm848_latchAndCheckEngineOffTime` sets its fault with `fault_detected_cal._38_2_ | 0x10`. The bit has a field
+    (word 19 bit 4 `engine_off_time_stuck_error`; e2m 1036 Chry_Dat42_Stuck_Error "Last ignition off time message
+    stuck", which also confirms Chry_Dat42 is PCI frame 0x42's ignition-off time). Ghidra just does not map this
+    word-wide read-modify-write onto the bitfield.
+  - **0x3fee34 is the same time-share:** it is typed `dword` over e2m 8B50 +0 (the oil change monitor) while the
+    +2 row at 0x3fee36 has no type, so the boot kernel's width wins there.
+  - 0x3fee38 is the boot kernel's word buffer for `cm848_lookupEepromParameterAddress`, inside the application's
+    `oil_change_monitor_fuel_hundredth_gallons_cal` dword; it stays unnamed.
+  - Round 67's other leads stand: the image header at ROM 0x8100, a memory region type enum, 0x3fedee / 0x3fedf4,
+    `DAT_01000000`, the boot `eeprom_*` vocabulary and the serial response codes.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

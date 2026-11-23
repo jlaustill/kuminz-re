@@ -585,3 +585,10 @@ Hand work on the round 7 lead.
   `params_r67a.csv`. **Proof:** `prove_r67.sh` (renames enum members as text too), `list_differing.py` (all
   canonically differing functions; prove_caches.py prints 12). **Closing:** `apply_r67_closing.py`,
   `update_large_tar_r67.sh`.
+
+## Round 68: the application's EEPROM mirror words at 0x3fee18 (`session_folder/round68/`)
+
+- **Stage A:** `apply_r68a.py`, then `fix_r68a2.py` (the lookup's prototype), `fix_r68a3.py` (a typed local)
+  and `fix_r68a4.py` (which undoes it), `map_r68a.csv`. **Proof:**
+  `prove_r68.py` (exact string renames: the old labels end in `]`), `diff_r68.py`. **Closing:**
+  `apply_r68_closing.py`, `update_large_tar_r68.sh`.
