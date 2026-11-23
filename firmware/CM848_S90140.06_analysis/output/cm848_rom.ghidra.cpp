@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 22:32:27 MST 2026
+// Generated: Sun Nov 22 23:00:50 MST 2026
 
 
 //
@@ -1773,10 +1773,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
-  word qadc_b_pqb0_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -6085,9 +6085,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
+  word counter_value;
   byte prescaler_count;
   dword runtime_value;
-  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -20699,13 +20699,13 @@ void cm848_initFaultSeverityTables(void)
    commanded_throttle_transient_flags holds the e2m 1053 +A flags (mask 0x01 Throttle_Decrease_Flag,
    mask 0x02 Throttle_Transient_Flag): a drop of the candidate starts a transient (mask 0x01 also
    set when the error is negative, i.e. the throttle is decreasing) and it ends when the error comes
-   back to the ROM threshold DAT_0005c30e (at or below it while increasing, above its negative while
-   decreasing). commanded_throttle_filter_coefficient (+6 Active_Throttle_Filter_Constant) follows
-   the candidate, but during a transient it only follows a lower one. exponentialMovingAverage
-   (state commanded_throttle_filter_state, whose coefficient is that word) then filters the
-   commanded throttle into commanded_throttle_filtered (+8 Filtered_Commanded_Throttle), the
-   throttle input of the 4-D fueling tables. Caller hpcr_periodicTaskSet_fuelFinal. (was
-   cm848_calculateFuelDemandChangeRate) */
+   back to the ROM threshold commanded_throttle_difference_threshold (at or below it while
+   increasing, above its negative while decreasing). commanded_throttle_filter_coefficient (+6
+   Active_Throttle_Filter_Constant) follows the candidate, but during a transient it only follows a
+   lower one. exponentialMovingAverage (state commanded_throttle_filter_state, whose coefficient is
+   that word) then filters the commanded throttle into commanded_throttle_filtered (+8
+   Filtered_Commanded_Throttle), the throttle input of the 4-D fueling tables. Caller
+   hpcr_periodicTaskSet_fuelFinal. (was cm848_calculateFuelDemandChangeRate) */
 
 void cm848_filterCommandedThrottle(void)
 
@@ -20738,12 +20738,12 @@ void cm848_filterCommandedThrottle(void)
   }
   else {
     if ((commanded_throttle_transient_flags & 1) == 0) {
-      if (iVar3 <= DAT_0005c30e) {
+      if (iVar3 <= commanded_throttle_difference_threshold) {
         commanded_throttle_transient_flags = commanded_throttle_transient_flags & 0xfffd;
       }
       goto LAB_0001ebf8;
     }
-    if (iVar3 <= -(int)DAT_0005c30e) goto LAB_0001ebf8;
+    if (iVar3 <= -(int)commanded_throttle_difference_threshold) goto LAB_0001ebf8;
     uVar4 = 0xfffd;
   }
   commanded_throttle_transient_flags = commanded_throttle_transient_flags & uVar4;
@@ -38942,8 +38942,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  ushort receive_interval;
   byte all_transmits_overdue;
+  ushort receive_interval;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
@@ -64700,8 +64700,8 @@ void cm848_updateWhiteSmokeAndMisfireProtection(void)
    ((ambient air temperature + 29440) x 128), i.e. pressure over absolute temperature (29440 = 460
    degF x 64), capped at 65535, then moved toward it by at most
    compressor_inlet_density_positive_rate_limit / _lower per pass into compressor_inlet_density (the
-   first pass jumps straight to it). Also sets DAT_0040a606 to 2 when both input states are 2, 0
-   when both are 0, else 1. (was cm848_mainLoop_step_2) */
+   first pass jumps straight to it). Also sets compressor_inlet_density_source to 2 when both input
+   states are 2, 0 when both are 0, else 1. (was cm848_mainLoop_step_2) */
 
 void cm848_calculateCompressorInletDensity(void)
 
@@ -65254,8 +65254,8 @@ LAB_00506360:
    duty_cycle_monitor_load_factor (e2m 111F +0 DC_Mon_Load_Factor, 0.01 percent; 0 when the ratio is
    negative); the engine speed is binned against the 8 breakpoints of e2m 111D DC_Mon_RPM_Axis (ROM
    0x5c2c0) and the load against the 10 of 111E DC_Mon_Load_Axis (0x5c2d4) into one of 80 fine
-   counters, a negative load into counter 81 or 82, and the counter number is stored in DAT_0040a64a
-   (e2m 111F +2 DC_Mon_Operating_Region); that fine counter and
+   counters, a negative load into counter 81 or 82, and the counter number is stored in
+   duty_cycle_monitor_operating_region (e2m 111F +2 DC_Mon_Operating_Region); that fine counter and
    load_histogram_total_sample_count_cal (e2m 1122 +4 DC_Mon_Long_Map_Total, up to 3,600,000,000 =
    100,000 h) get +1; percent_time_at_load_cal[0..9] (25600 = 100 percent, the DRB '% OF TIME @ x
    LOAD' words) are recomputed as each load band's 8 counters x 25600 / total, plus the two
@@ -66841,18 +66841,18 @@ LAB_00508108:
    Engine_Protection_Shutdown_Enable, 0x20 Engine_Protection_Restart_Enable) it looks at the channel
    that caused the last shutdown (engine_protection_shutdown_active_channel_cal, 0xff = none,
    channel 4 excluded) once that channel's consecutive shutdown count
-   engine_protection_shutdown_count_cal has reached the ROM limit DAT_0005c2f4 (e2m 10B9 +0
-   Shutdown_Max_Limit, 'max number of shutdowns before restart is not allowed') and its shutdown and
-   restart enable bits are set in the per channel enable words (e2m 106B +12, EEPROM 0x12a: bits 130
-   + 4n and 131 + 4n). If a threshold of that channel is still exceeded
-   (cm848_isEngineProtectionInputPastThreshold at 0x507ebc, for the thresholds selected by the masks
-   0x1 and 0x2 of the channel's configuration flags) it sets the channel's state precrank_error
-   (fuel_temperature_engine_protection_state.precrank_error) (e2m 1152 +18
-   Fuel_Temperature_Precrank_Error) and engine_protection_precrank_shutdown_command_flag, which
-   cm848_updateEngineProtectionShutdown (0x508898) turns into engine_shutdown_command_flag. Called
-   on every pass by cm848_runFaultDerateScheduler (0x507c44). The shutdown enable bit is clear in
-   this calibration (15888 = 0x3e10 in algorithm_enable_flags_2_cal), so it does nothing here. (was
-   governor_coldStart_faultDerate_trigger) */
+   engine_protection_shutdown_count_cal has reached the ROM limit
+   engine_protection_maximum_shutdowns (e2m 10B9 +0 Shutdown_Max_Limit, 'max number of shutdowns
+   before restart is not allowed') and its shutdown and restart enable bits are set in the per
+   channel enable words (e2m 106B +12, EEPROM 0x12a: bits 130 + 4n and 131 + 4n). If a threshold of
+   that channel is still exceeded (cm848_isEngineProtectionInputPastThreshold at 0x507ebc, for the
+   thresholds selected by the masks 0x1 and 0x2 of the channel's configuration flags) it sets the
+   channel's state precrank_error (fuel_temperature_engine_protection_state.precrank_error) (e2m
+   1152 +18 Fuel_Temperature_Precrank_Error) and engine_protection_precrank_shutdown_command_flag,
+   which cm848_updateEngineProtectionShutdown (0x508898) turns into engine_shutdown_command_flag.
+   Called on every pass by cm848_runFaultDerateScheduler (0x507c44). The shutdown enable bit is
+   clear in this calibration (15888 = 0x3e10 in algorithm_enable_flags_2_cal), so it does nothing
+   here. (was governor_coldStart_faultDerate_trigger) */
 
 void cm848_examineEngineProtectionBeforeCranking(void)
 
@@ -67812,11 +67812,12 @@ void cm848_applyFaultDerateFuelLimit(void)
    derate). For each channel of the derate table at 0x597b2 (one entry: the fuel temperature
    channel, fuel_temperature_engine_protection_state with its 200 to 210 degrees F ramp) it takes a
    derate level while the channel fault bits allow it, keeps the highest level of the unlatched
-   channels and moves fault_derate_ramp_times_256 (0 to 256) toward it by DAT_0005c2ec (13) per
-   call. With the ramp above 0 the limit lies between the fault_derate_fuel_limit_by_engine_speed
-   curve (ramp 256) and throttle_100_fueling (ramp near 0), otherwise it is fuel_demand_maximum;
-   fault_derate_active_flag is the ramp above 0. Task 2 of the fault derate scheduler
-   cm848_runFaultDerateScheduler. (was engine_torqueLimit_upperCap_calc) */
+   channels and moves fault_derate_ramp_times_256 (0 to 256) toward it by
+   engine_protection_fueling_index_ramp_rate (13) per call. With the ramp above 0 the limit lies
+   between the fault_derate_fuel_limit_by_engine_speed curve (ramp 256) and throttle_100_fueling
+   (ramp near 0), otherwise it is fuel_demand_maximum; fault_derate_active_flag is the ramp above 0.
+   Task 2 of the fault derate scheduler cm848_runFaultDerateScheduler. (was
+   engine_torqueLimit_upperCap_calc) */
 
 void cm848_calculateFaultDerateFuelLimit(void)
 
@@ -74154,16 +74155,16 @@ LAB_00511bf4:
   }
   if ((j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_OVERRIDE_OFF) ||
      (j1939_powertrain_control_state.tsc1_request_timed_out_flag != 0)) {
-    if (j1939_tsc1_active_duration_reload <= j1939_tsc1_active_duration_counter) goto LAB_00511cac;
+    if (tsc1_lost_time_limit <= tsc1_lost_counter) goto LAB_00511cac;
     sVar2 = 1;
   }
   else {
-    if (j1939_tsc1_active_duration_counter == 0) goto LAB_00511cac;
+    if (tsc1_lost_counter == 0) goto LAB_00511cac;
     sVar2 = -1;
   }
-  j1939_tsc1_active_duration_counter = j1939_tsc1_active_duration_counter + sVar2;
+  tsc1_lost_counter = tsc1_lost_counter + sVar2;
 LAB_00511cac:
-  if ((j1939_tsc1_active_duration_counter == 0) && (tsc1_lost_management_active_flag != 0)) {
+  if ((tsc1_lost_counter == 0) && (tsc1_lost_management_active_flag != 0)) {
     tsc1_lost_management_active_flag = 0;
     fault_detected_cal.j1939_tsc1_lost_fault = 0;
     fault_registered_cal.j1939_tsc1_lost_fault = 0;
@@ -74176,15 +74177,15 @@ LAB_00511cac:
     }
   }
   else {
-    if (j1939_tsc1_active_duration_counter == j1939_tsc1_timing_fault_counter_threshold) {
-      j1939_tsc1_timing_fault_cycle_count = j1939_tsc1_timing_fault_cycle_count + 1;
+    if (tsc1_lost_counter == tsc1_lost_intermittent_time_limit) {
+      tsc1_lost_intermittent_count = tsc1_lost_intermittent_count + 1;
       return;
     }
-    if (j1939_tsc1_active_duration_reload != j1939_tsc1_active_duration_counter) {
-      if (j1939_tsc1_active_duration_counter <= j1939_tsc1_timing_fault_counter_threshold) {
+    if (tsc1_lost_time_limit != tsc1_lost_counter) {
+      if (tsc1_lost_counter <= tsc1_lost_intermittent_time_limit) {
         return;
       }
-      if (j1939_tsc1_timing_fault_cycle_count <= DAT_004086ce) {
+      if (tsc1_lost_intermittent_count <= tsc1_lost_maximum_intermittent_count) {
         return;
       }
     }
@@ -74202,7 +74203,7 @@ LAB_00511cac:
       cm848_addEngineTsc1IgnoredRequestEntry(1,j1939_anti_lock_brake_source_address & 0xff,bVar3);
       bVar3 = bVar3 + 1;
     } while (bVar3 < 4);
-    j1939_tsc1_active_duration_counter = j1939_tsc1_active_duration_reload;
+    tsc1_lost_counter = tsc1_lost_time_limit;
     if (algorithm_enable_flags_42_cal.j1939_lost_tsc1_no_broadcast_enable == 0) {
       return;
     }
@@ -74222,7 +74223,7 @@ void fuel_demand_timing_initialize(void)
 
 {
   tsc1_lost_management_active_flag = 1;
-  j1939_tsc1_active_duration_counter = DAT_004086ca;
+  tsc1_lost_counter = tsc1_lost_counter_initial_value;
   rock_cycle_engine_speed_limit_countdown_cached_axis_offset = 2;
   return;
 }

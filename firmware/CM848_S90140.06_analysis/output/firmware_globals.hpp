@@ -295,6 +295,7 @@ extern word fuel_demand_maximum;  // 0x0005c306
 extern word engine_brake_fueling;  // 0x0005c308
 extern word engine_overspeed_fueling;  // 0x0005c30a
 extern word fuel_demand_minimum;  // 0x0005c30c
+extern int16_t commanded_throttle_difference_threshold;  // 0x0005c30e
 extern word fuel_delivery_rate_offset;  // 0x0005c310
 extern word fuel_delivery_rate_scale;  // 0x0005c312
 extern word j1939_input_source_priority;  // 0x0005c340
@@ -6118,7 +6119,7 @@ extern byte j1939_multiframe_tx_active;  // 0x003fbdc5
 extern j1939_transport_receive_session_t j1939_transport_receive_session;  // 0x003fbdef
 extern word variable_geometry_turbocharger_control_diagnostic_enable_counter;  // 0x003fccf0
 extern word variable_geometry_turbocharger_control_diagnostic_fault_counter;  // 0x003fccf2
-extern word j1939_tsc1_active_duration_counter;  // 0x003fcd7a
+extern word tsc1_lost_counter;  // 0x003fcd7a
 extern word cooling_fan_duty;  // 0x003fcdf6
 extern word cooling_fan_output_channel_cal;  // 0x003fdc96
 extern word radiator_fan_speed_snapshot;  // 0x003fce12
@@ -6567,7 +6568,7 @@ extern word egr_cooler_efficiency_threshold;  // 0x0040a44a
 extern word variable_geometry_turbocharger_control_diagnostic_enable_time;  // 0x00407774
 extern word variable_geometry_turbocharger_control_fault_time_increment;  // 0x00407776
 extern word variable_geometry_turbocharger_control_fault_time_fail_threshold;  // 0x0040777c
-extern word j1939_tsc1_active_duration_reload;  // 0x004086c8
+extern word tsc1_lost_time_limit;  // 0x004086c8
 extern word protection_fault_severity_code;  // 0x00408788
 extern word watchdog_fueling_minimum_duration_offset;  // 0x00408952
 extern word watchdog_coolant_duration_adjustment_axis[3];  // 0x00408954
@@ -6908,7 +6909,7 @@ extern word egr_valve_closed_hold_previous_flag;  // 0x003fbd1a
 extern word engine_protection_override_switch_previous_state;  // 0x003fbd40
 extern byte accelerator_idle_switch_previous_state;  // 0x003fbd68
 extern word variable_geometry_turbocharger_valve_over_temperature_inhibit_counter;  // 0x003fcd28
-extern word j1939_tsc1_timing_fault_cycle_count;  // 0x003fcd7c
+extern word tsc1_lost_intermittent_count;  // 0x003fcd7c
 extern word coolant_overheat_engine_speed_fuel_limit_prev;  // 0x003fcdbe
 extern word coolant_overheat_pi_fuel_limit_prev;  // 0x003fcdc0
 extern word engine_overheat_derate_active_prev_flag;  // 0x003fcdc2
@@ -7061,7 +7062,10 @@ extern word air_conditioning_low_rpm_on_threshold;  // 0x004086b6
 extern word air_conditioning_low_rpm_on_time;  // 0x004086b8
 extern word air_conditioning_high_fuel_demand_cutout_count_limit;  // 0x004086ba
 extern word air_conditioning_high_fuel_demand_cutout_vehicle_speed_threshold;  // 0x004086bc
-extern word j1939_tsc1_timing_fault_counter_threshold;  // 0x004086cc
+extern word tsc1_lost_counter_initial_value;  // 0x004086ca
+extern word tsc1_lost_intermittent_time_limit;  // 0x004086cc
+extern word tsc1_lost_maximum_intermittent_count;  // 0x004086ce
+extern word park_neutral_status_from_pci_message_0e_enable;  // 0x004086d0
 extern word rock_cycle_engine_speed_limit_minimum_throttle;  // 0x004086d2
 extern word rock_cycle_engine_speed_limit_maximum_throttle;  // 0x004086d4
 extern word rock_cycle_engine_speed_limit_minimum_output_shaft_speed;  // 0x004086d6
