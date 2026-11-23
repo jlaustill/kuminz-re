@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 09:30:49 MST 2026
+// Generated: Mon Nov 23 09:38:00 MST 2026
 
 
 //
@@ -6194,9 +6194,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
+  word counter_value;
   byte prescaler_count;
   dword runtime_value;
-  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -23322,7 +23322,7 @@ void cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings(void)
    yet named) | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
    Confidence Low */
 
-void cm848_receivePgn56576AntiTheftRequestMessage(int param_1)
+void cm848_receivePgn56576AntiTheftRequestMessage(j1939_rx_msg_t *message)
 
 {
   byte bVar1;
@@ -23330,13 +23330,13 @@ void cm848_receivePgn56576AntiTheftRequestMessage(int param_1)
   byte *pbVar3;
   int iVar4;
   
-  if (*(short *)(param_1 + 4) == 8) {
-    j1939_pgn56320_source_address = *(byte *)(param_1 + 2);
-    j1939_pgn56320_destination_address = *(byte *)(param_1 + 3);
+  if (message->data_length == 8) {
+    j1939_pgn56320_source_address = message->dest_address;
+    j1939_pgn56320_destination_address = message->source_address;
     if ((algorithm_enable_flags_27_cal.anti_theft_enable != 0) &&
        (j1939_anti_theft_status_transmit_state == 0)) {
       j1939_anti_theft_status_transmit_state = 2;
-      bVar1 = **(byte **)(param_1 + 6);
+      bVar1 = *message->data_pointer;
       if (((bVar1 & 0xc0) == 0xc0) || (((bVar1 & 0x18) == 0x10 || ((bVar1 & 6) == 4)))) {
         j1939_anti_theft_command_state_cal = 6;
         j1939_anti_theft_status_of_request_cal = 3;
@@ -23347,7 +23347,7 @@ void cm848_receivePgn56576AntiTheftRequestMessage(int param_1)
         j1939_anti_theft_encryption_indicator_cal = (word)((int)(bVar1 & 6) >> 1);
         iVar4 = 0;
         pbVar3 = (byte *)0x3fdd9b;
-        pbVar2 = *(byte **)(param_1 + 6) + 1;
+        pbVar2 = message->data_pointer + 1;
         do {
           pbVar2 = pbVar2 + 1;
           pbVar3 = pbVar3 + 1;
@@ -23585,7 +23585,7 @@ void cm848_clearJ1939Dm13StoppedNetworkBits(int param_1)
    and zeroes the hold timer and fault log inhibit (was cm848_processGovernorControlMessage) |
    review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
 
-void cm848_processJ1939Dm13StopStartBroadcast(int param_1)
+void cm848_processJ1939Dm13StopStartBroadcast(j1939_rx_msg_t *message)
 
 {
   byte bVar1;
@@ -23604,9 +23604,9 @@ void cm848_processJ1939Dm13StopStartBroadcast(int param_1)
   
   if (algorithm_enable_flags_29_cal.dm13_enable != 0) {
     if ((engine_speed_state.filtered_engine_speed == 0) && (vehicle_speed == 0)) {
-      pbVar11 = *(byte **)(param_1 + 6);
+      pbVar11 = message->data_pointer;
       j1939_dm13_network_command_byte = *pbVar11;
-      bVar1 = *(byte *)(param_1 + 3);
+      bVar1 = message->source_address;
       bVar2 = j1939_dm13_network_command_byte & 0x30;
       bVar6 = j1939_dm13_network_command_byte & 0x30;
       bVar3 = j1939_dm13_network_command_byte & 0xc;
@@ -23954,17 +23954,15 @@ void cm848_initJ1939Pgn61442Etc1Handler(void)
    transmission_park_or_neutral_flag (was part of cm848_initJ1939Pgn61442Etc1Handler) |
    review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
 
-void cm848_j1939ProcessPgn61445Etc2(int param_1)
+void cm848_j1939ProcessPgn61445Etc2(j1939_rx_msg_t *message)
 
 {
-  if (((*(byte *)(param_1 + 3) == j1939_transmission_source_address) ||
-      (j1939_transmission_source_address == 0xff)) && (*(short *)(param_1 + 4) == 8)) {
+  if (((message->source_address == j1939_transmission_source_address) ||
+      (j1939_transmission_source_address == 0xff)) && (message->data_length == 8)) {
     etc2_selected_gear_timeout = etc2_timeout_reload_count + 1;
-    j1939_powertrain_control_state.etc2_transmission_selected_gear =
-         **(TRANSMISSION_SELECTED_GEAR **)(param_1 + 6);
+    j1939_powertrain_control_state.etc2_transmission_selected_gear = *message->data_pointer;
     j1939_powertrain_messages_received.etc2_spn526_actual_gear_ratio =
-         CONCAT11(*(undefined1 *)(*(int *)(param_1 + 6) + 2),
-                  (*(TRANSMISSION_SELECTED_GEAR **)(param_1 + 6))[1]);
+         CONCAT11(message->data_pointer[2],message->data_pointer[1]);
     if (j1939_powertrain_messages_received.etc2_spn526_actual_gear_ratio < 0xfb00) {
       j1939_powertrain_messages_received.etc2_actual_gear_ratio_previous = etc2_actual_gear_ratio;
       etc2_actual_gear_ratio = j1939_powertrain_messages_received.etc2_spn526_actual_gear_ratio;
@@ -24241,8 +24239,7 @@ void cm848_j1939DispatchPgnHandler(j1939_rx_msg_t *msg)
 void cm848_initJ1939ProtocolHandlers(void)
 
 {
-  cm848_registerJ1939ReceiveHandler
-            (cm848_runOperatingModeSpeedGovernor,cm848_j1939DispatchPgnHandler);
+  cm848_registerJ1939ReceiveHandler(0xea00,cm848_j1939DispatchPgnHandler);
   initPgn65261CruiseControlSetupStruct();
   cm848_initPgn65259ComponentIdHandler();
   cm848_initPgn65262EngineTempHandler();
@@ -24278,14 +24275,14 @@ void cm848_initJ1939ProtocolHandlers(void)
    sets feature-enable and ascii-detect flags gated by algorithm_enable_flags_29_cal - registered by
    cm848_initJ1939ProprietaryHandler */
 
-void cm848_j1939HandlePgn56832Reset(j1939_rx_msg_t *param_1)
+void cm848_j1939HandlePgn56832Reset(j1939_rx_msg_t *message)
 
 {
   if (algorithm_enable_flags_29_cal.trip_reset_enable != 0) {
-    DAT_003faa64 = *param_1->data_pointer;
+    DAT_003faa64 = *message->data_pointer;
   }
   if (algorithm_enable_flags_29_cal.service_component_reset_enable != 0) {
-    j1939_proprietary_cmd_byte1 = param_1->data_pointer[1];
+    j1939_proprietary_cmd_byte1 = message->data_pointer[1];
     if (j1939_proprietary_cmd_byte1 == 0x20) {
       oil_change_monitor_reset_flag = 1;
     }
@@ -24293,7 +24290,7 @@ void cm848_j1939HandlePgn56832Reset(j1939_rx_msg_t *param_1)
       new_tires_installed_flag_cal = 1;
     }
   }
-  cm848_sendJ1939AcknowledgeMessage(param_1,J1939_ACK);
+  cm848_sendJ1939AcknowledgeMessage(message,J1939_ACK);
   return;
 }
 
@@ -61875,8 +61872,8 @@ void cm848_processUnsignedSensorChannel
   dword debounce_transition_state;
   dword sensor_value;
   uint uVar3;
-  word scratch16;
   ushort recovery_decrement;
+  word scratch16;
   
   channel_word_index = (int)channel_index >> 4;
   sensor_value = 1 << (channel_index +
@@ -69815,13 +69812,13 @@ J1939_DIAGNOSTIC_RESULT cm848_validateJ1939DiagnosticRequest(j1939_rx_msg_t *rx_
    yet named) | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
    Confidence Low */
 
-void cm848_receivePgn57344CabMessage1(int param_1)
+void cm848_receivePgn57344CabMessage1(j1939_rx_msg_t *message)
 
 {
   if ((j1939_input_source_address_filter_cal[0] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0] == 0xff)) {
     j1939_input_signal_timeouts[0] = 500;
-    j1939_received_engine_fan_requested_percent_speed = **(byte **)(param_1 + 6);
+    j1939_received_engine_fan_requested_percent_speed = *message->data_pointer;
   }
   return;
 }
@@ -69839,33 +69836,33 @@ void cm848_receivePgn57344CabMessage1(int param_1)
    working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named) |
    review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
 
-void cm848_receivePgn61441ElectronicBrakeController1Message(int param_1)
+void cm848_receivePgn61441ElectronicBrakeController1Message(j1939_rx_msg_t *message)
 
 {
   if ((j1939_input_source_address_filter_cal[1] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[1] == 0xff)) {
     j1939_input_signal_timeouts[1] = 0x32;
-    j1939_received_remote_accelerator_enable_switch = *(byte *)(*(int *)(param_1 + 6) + 3) >> 6;
+    j1939_received_remote_accelerator_enable_switch = message->data_pointer[3] >> 6;
   }
   if ((j1939_input_source_address_filter_cal[2] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[2] == 0xff)) {
     j1939_input_signal_timeouts[2] = 0x32;
-    j1939_received_engine_auxiliary_shutdown_switch = *(byte *)(*(int *)(param_1 + 6) + 3) >> 4 & 3;
+    j1939_received_engine_auxiliary_shutdown_switch = message->data_pointer[3] >> 4 & 3;
   }
   if ((j1939_input_source_address_filter_cal[3] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[3] == 0xff)) {
     j1939_input_signal_timeouts[3] = 0x32;
-    j1939_received_engine_derate_switch = *(byte *)(*(int *)(param_1 + 6) + 3) >> 2 & 3;
+    j1939_received_engine_derate_switch = message->data_pointer[3] >> 2 & 3;
   }
   if ((j1939_input_source_address_filter_cal[4] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[4] == 0xff)) {
     j1939_input_signal_timeouts[4] = 0x32;
-    j1939_received_accelerator_interlock_switch = *(byte *)(*(int *)(param_1 + 6) + 3) & 3;
+    j1939_received_accelerator_interlock_switch = message->data_pointer[3] & 3;
   }
   if ((j1939_input_source_address_filter_cal[5] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[5] == 0xff)) {
     j1939_input_signal_timeouts[5] = 0x32;
-    j1939_received_engine_retarder_selection = *(byte *)(*(int *)(param_1 + 6) + 4);
+    j1939_received_engine_retarder_selection = message->data_pointer[4];
   }
   return;
 }
@@ -69883,28 +69880,28 @@ void cm848_receivePgn61441ElectronicBrakeController1Message(int param_1)
    working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named) |
    review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
 
-void cm848_receivePgn61443ElectronicEngineController2Message(int param_1)
+void cm848_receivePgn61443ElectronicEngineController2Message(j1939_rx_msg_t *message)
 
 {
   if ((j1939_input_source_address_filter_cal[6] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[6] == 0xff)) {
     j1939_input_signal_timeouts[6] = 0x19;
-    j1939_received_accelerator_pedal_1_low_idle_switch = **(byte **)(param_1 + 6) & 3;
+    j1939_received_accelerator_pedal_1_low_idle_switch = *message->data_pointer & 3;
   }
   if ((j1939_input_source_address_filter_cal[7] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[7] == 0xff)) {
     j1939_input_signal_timeouts[7] = 0x19;
-    j1939_received_accelerator_pedal_position_1 = *(byte *)(*(int *)(param_1 + 6) + 1);
+    j1939_received_accelerator_pedal_position_1 = message->data_pointer[1];
   }
   if ((j1939_input_source_address_filter_cal[8] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[8] == 0xff)) {
     j1939_input_signal_timeouts[8] = 0x19;
-    j1939_received_remote_accelerator_pedal_position = *(byte *)(*(int *)(param_1 + 6) + 3);
+    j1939_received_remote_accelerator_pedal_position = message->data_pointer[3];
   }
   if ((j1939_input_source_address_filter_cal[9] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[9] == 0xff)) {
     j1939_input_signal_timeouts[9] = 0x19;
-    j1939_received_accelerator_pedal_position_2 = *(byte *)(*(int *)(param_1 + 6) + 4);
+    j1939_received_accelerator_pedal_position_2 = message->data_pointer[4];
   }
   return;
 }
@@ -69924,14 +69921,13 @@ void cm848_receivePgn61443ElectronicEngineController2Message(int param_1)
    yet named) | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
    Confidence Low */
 
-void cm848_receivePgn65252ShutdownMessage(int param_1)
+void cm848_receivePgn65252ShutdownMessage(j1939_rx_msg_t *message)
 
 {
   if ((j1939_input_source_address_filter_cal[10] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[10] == 0xff)) {
     j1939_input_signal_timeouts[10] = 500;
-    j1939_received_air_conditioner_high_pressure_fan_switch =
-         *(byte *)(*(int *)(param_1 + 6) + 2) & 3;
+    j1939_received_air_conditioner_high_pressure_fan_switch = message->data_pointer[2] & 3;
   }
   return;
 }
@@ -69950,28 +69946,28 @@ void cm848_receivePgn65252ShutdownMessage(int param_1)
    0x3feaa6-0x3fead0 not yet named) | review-function-readability reviewed 2026-11-12 - Readability
    Low Accuracy Confidence Medium */
 
-void cm848_receivePgn65264PowerTakeoffInformationMessage(int param_1)
+void cm848_receivePgn65264PowerTakeoffInformationMessage(j1939_rx_msg_t *message)
 
 {
   if ((j1939_input_source_address_filter_cal[0xb] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0xb] == 0xff)) {
     j1939_input_signal_timeouts[0xb] = 0x32;
-    j1939_received_remote_power_take_off_switch = *(byte *)(*(int *)(param_1 + 6) + 5) >> 2 & 3;
+    j1939_received_remote_power_take_off_switch = message->data_pointer[5] >> 2 & 3;
   }
   if ((j1939_input_source_address_filter_cal[0xc] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0xc] == 0xff)) {
     j1939_input_signal_timeouts[0xc] = 0x32;
-    j1939_received_power_take_off_on_switch = *(byte *)(*(int *)(param_1 + 6) + 5) & 3;
+    j1939_received_power_take_off_on_switch = message->data_pointer[5] & 3;
   }
   if ((j1939_input_source_address_filter_cal[0xd] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0xd] == 0xff)) {
     j1939_input_signal_timeouts[0xd] = 0x32;
-    j1939_received_power_take_off_resume_switch = *(byte *)(*(int *)(param_1 + 6) + 6) >> 4 & 3;
+    j1939_received_power_take_off_resume_switch = message->data_pointer[6] >> 4 & 3;
   }
   if ((j1939_input_source_address_filter_cal[0xe] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0xe] == 0xff)) {
     j1939_input_signal_timeouts[0xe] = 0x32;
-    j1939_received_power_take_off_set_switch = *(byte *)(*(int *)(param_1 + 6) + 6) & 3;
+    j1939_received_power_take_off_set_switch = message->data_pointer[6] & 3;
   }
   return;
 }
@@ -69990,49 +69986,48 @@ void cm848_receivePgn65264PowerTakeoffInformationMessage(int param_1)
    0x3feaa6-0x3fead0 not yet named) | review-function-readability reviewed 2026-11-12 - Readability
    Low Accuracy Confidence Medium */
 
-void cm848_receivePgn65265CruiseControlVehicleSpeedMessage(int param_1)
+void cm848_receivePgn65265CruiseControlVehicleSpeedMessage(j1939_rx_msg_t *message)
 
 {
   if ((j1939_input_source_address_filter_cal[0xf] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0xf] == 0xff)) {
     j1939_input_signal_timeouts[0xf] = 0x32;
-    j1939_received_clutch_switch = *(byte *)(*(int *)(param_1 + 6) + 3) >> 6;
+    j1939_received_clutch_switch = message->data_pointer[3] >> 6;
   }
   if ((j1939_input_source_address_filter_cal[0x10] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0x10] == 0xff)) {
     j1939_input_signal_timeouts[0x10] = 0x32;
-    j1939_received_brake_switch = *(byte *)(*(int *)(param_1 + 6) + 3) >> 4 & 3;
+    j1939_received_brake_switch = message->data_pointer[3] >> 4 & 3;
   }
   if ((j1939_input_source_address_filter_cal[0x11] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0x11] == 0xff)) {
     j1939_input_signal_timeouts[0x11] = 0x32;
-    j1939_received_cruise_control_enable_switch = *(byte *)(*(int *)(param_1 + 6) + 3) >> 2 & 3;
+    j1939_received_cruise_control_enable_switch = message->data_pointer[3] >> 2 & 3;
   }
   if ((j1939_input_source_address_filter_cal[0x12] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0x12] == 0xff)) {
     j1939_input_signal_timeouts[0x12] = 0x32;
-    j1939_received_cruise_control_resume_switch = *(byte *)(*(int *)(param_1 + 6) + 4) >> 4 & 3;
+    j1939_received_cruise_control_resume_switch = message->data_pointer[4] >> 4 & 3;
   }
   if ((j1939_input_source_address_filter_cal[0x13] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0x13] == 0xff)) {
     j1939_input_signal_timeouts[0x13] = 0x32;
-    j1939_received_cruise_control_set_switch = *(byte *)(*(int *)(param_1 + 6) + 4) & 3;
+    j1939_received_cruise_control_set_switch = message->data_pointer[4] & 3;
   }
   if ((j1939_input_source_address_filter_cal[0x14] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0x14] == 0xff)) {
     j1939_input_signal_timeouts[0x14] = 0x32;
-    j1939_received_engine_idle_increment_switch = *(byte *)(*(int *)(param_1 + 6) + 7) & 3;
+    j1939_received_engine_idle_increment_switch = message->data_pointer[7] & 3;
   }
   if ((j1939_input_source_address_filter_cal[0x15] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0x15] == 0xff)) {
     j1939_input_signal_timeouts[0x15] = 0x32;
-    j1939_received_engine_idle_decrement_switch = *(byte *)(*(int *)(param_1 + 6) + 7) >> 2 & 3;
+    j1939_received_engine_idle_decrement_switch = message->data_pointer[7] >> 2 & 3;
   }
   if ((j1939_input_source_address_filter_cal[0x16] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0x16] == 0xff)) {
     j1939_input_signal_timeouts[0x16] = 0x32;
-    j1939_received_engine_diagnostic_test_mode_switch =
-         *(byte *)(*(int *)(param_1 + 6) + 7) >> 4 & 3;
+    j1939_received_engine_diagnostic_test_mode_switch = message->data_pointer[7] >> 4 & 3;
   }
   return;
 }
@@ -70896,20 +70891,20 @@ void cm848_startJ1939TransportSession(j1939_tx_msg_t *msg)
    (timer 55) else sets the window | review-function-readability reviewed 2026-11-11 - Readability
    Medium Accuracy Confidence High (was j1939_transport_handleClearToSend; PR #53 round 65) */
 
-void cm848_handleJ1939TransportClearToSend(int param_1)
+void cm848_handleJ1939TransportClearToSend(j1939_rx_msg_t *message)
 
 {
   byte bVar1;
   byte bVar2;
   word local_8;
   
-  bVar1 = *(byte *)(*(int *)(param_1 + 6) + 2);
-  local_8 = (ushort)*(byte *)(*(int *)(param_1 + 6) + 6) << 8;
+  bVar1 = message->data_pointer[2];
+  local_8 = (ushort)message->data_pointer[6] << 8;
   if ((((j1939_multiframe_tx_active == 1) &&
-       (j1939_multiframe_tx_destination_address == *(byte *)(param_1 + 3))) &&
+       (j1939_multiframe_tx_destination_address == message->source_address)) &&
       ((uint)bVar1 <= (uint)j1939_transport_transmit_session.total_packet_count)) &&
      (local_8 == j1939_transport_transmit_session.transported_pgn)) {
-    bVar2 = *(byte *)(*(int *)(param_1 + 6) + 1);
+    bVar2 = message->data_pointer[1];
     if (bVar2 == 0) {
       j1939_transport_transmit_session.timeout_timer = 0x37;
     }
@@ -71077,29 +71072,32 @@ byte cm848_sendJ1939TransportClearToSend
    (timer 112); otherwise aborts | review-function-readability reviewed 2026-11-11 - Readability
    Medium Accuracy Confidence High (was j1939_transport_handleRequestToSend; PR #53 round 65) */
 
-void cm848_handleJ1939TransportRequestToSend(dword *param_1)
+void cm848_handleJ1939TransportRequestToSend(j1939_rx_msg_t *message)
 
 {
-  char cVar1;
+  byte bVar1;
   char cVar2;
-  int iVar3;
+  byte *pbVar3;
   word local_10;
   undefined2 local_c;
   
-  iVar3 = *(int *)((int)param_1 + 6);
-  local_10 = (ushort)*(byte *)(iVar3 + 6) << 8;
-  cVar1 = (char)*param_1;
-  local_c = CONCAT11(*(undefined1 *)(iVar3 + 2),*(undefined1 *)(iVar3 + 1));
+  pbVar3 = message->data_pointer;
+  local_10 = (ushort)pbVar3[6] << 8;
+  bVar1 = message->source_address;
+  local_c = CONCAT11(pbVar3[2],pbVar3[1]);
   if ((((j1939_transport_receive_session.active == 1) &&
-       ((char)j1939_transport_receive_session.request_to_send_can_id != cVar1)) ||
-      (*(byte *)(iVar3 + 6) != 0xef)) || (0x6a4 < local_c)) {
-    cm848_sendJ1939TransportAbort(cVar1,local_10);
+       ((byte)j1939_transport_receive_session.request_to_send_can_id != bVar1)) ||
+      (pbVar3[6] != 0xef)) || (0x6a4 < local_c)) {
+    cm848_sendJ1939TransportAbort(bVar1,local_10);
   }
   else {
     j1939_transport_receive_session.active = 1;
-    j1939_transport_receive_session.request_to_send_can_id = *param_1;
+    j1939_transport_receive_session.request_to_send_can_id._0_1_ = message->priority_dp_flags;
+    j1939_transport_receive_session.request_to_send_can_id._1_1_ = message->pgn_pf;
+    j1939_transport_receive_session.request_to_send_can_id._2_1_ = message->dest_address;
+    j1939_transport_receive_session.request_to_send_can_id._3_1_ = message->source_address;
     j1939_transport_receive_session.transported_pgn = local_10;
-    j1939_transport_receive_session.total_packet_count = *(byte *)(iVar3 + 3);
+    j1939_transport_receive_session.total_packet_count = pbVar3[3];
     j1939_transport_receive_session.message_size = local_c;
     j1939_transport_receive_session.timeout_timer = 0x70;
     j1939_transport_receive_session.next_packet_number = 1;
@@ -71108,9 +71106,9 @@ void cm848_handleJ1939TransportRequestToSend(dword *param_1)
     if (5 < j1939_transport_receive_session.total_packet_count) {
       j1939_transport_receive_session.granted_packet_count = 5;
     }
-    cVar2 = cm848_sendJ1939TransportClearToSend(cVar1,1);
+    cVar2 = cm848_sendJ1939TransportClearToSend(bVar1,1);
     if (cVar2 != '\0') {
-      cm848_sendJ1939TransportAbort(cVar1,j1939_transport_receive_session.transported_pgn);
+      cm848_sendJ1939TransportAbort(bVar1,j1939_transport_receive_session.transported_pgn);
       j1939_transport_receive_session.active = 0;
     }
   }
@@ -71129,10 +71127,10 @@ void cm848_handleJ1939TransportRequestToSend(dword *param_1)
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
    (was j1939_transport_handleDataPacket; PR #53 round 65) */
 
-void cm848_handleJ1939TransportDataPacket(int param_1)
+void cm848_handleJ1939TransportDataPacket(j1939_rx_msg_t *message)
 
 {
-  char cVar1;
+  byte bVar1;
   uint uVar2;
   char cVar3;
   uint uVar4;
@@ -71140,15 +71138,15 @@ void cm848_handleJ1939TransportDataPacket(int param_1)
   byte *pbVar6;
   byte *pbVar7;
   
-  if (*(short *)(param_1 + 4) != 8) {
+  if (message->data_length != 8) {
     return;
   }
-  cVar1 = *(char *)(param_1 + 3);
+  bVar1 = message->source_address;
   if (j1939_transport_receive_session.active == 1) {
-    if ((char)j1939_transport_receive_session.request_to_send_can_id != cVar1) {
+    if ((byte)j1939_transport_receive_session.request_to_send_can_id != bVar1) {
       return;
     }
-    pbVar6 = *(byte **)(param_1 + 6);
+    pbVar6 = message->data_pointer;
     uVar2 = (uint)*pbVar6;
     if (j1939_transport_receive_session.next_packet_number == uVar2) {
       if (j1939_transport_receive_session.total_packet_count == uVar2) {
@@ -71177,7 +71175,7 @@ void cm848_handleJ1939TransportDataPacket(int param_1)
       }
       if (uVar2 == j1939_transport_receive_session.total_packet_count) {
         cm848_sendJ1939TransportEndOfMessageAcknowledge
-                  (cVar1,j1939_transport_receive_session.transported_pgn);
+                  (bVar1,j1939_transport_receive_session.transported_pgn);
         j1939_transport_receive_session.active = 0;
         j1939_transport_receive_session.receive_buffer_pointer = &j1939_transport_receive_buffer;
         cm848_j1939DiagnosticServiceHandler
@@ -71195,11 +71193,11 @@ void cm848_handleJ1939TransportDataPacket(int param_1)
       }
     }
     cVar3 = cm848_sendJ1939TransportClearToSend
-                      (cVar1,j1939_transport_receive_session.next_packet_number,
+                      (bVar1,j1939_transport_receive_session.next_packet_number,
                        j1939_transport_receive_session.granted_packet_count,
                        j1939_transport_receive_session.transported_pgn);
     if (cVar3 != '\0') {
-      cm848_sendJ1939TransportAbort(cVar1,j1939_transport_receive_session.transported_pgn);
+      cm848_sendJ1939TransportAbort(bVar1,j1939_transport_receive_session.transported_pgn);
       j1939_transport_receive_session.active = 0;
     }
     return;
@@ -71217,14 +71215,14 @@ void cm848_handleJ1939TransportDataPacket(int param_1)
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
    (was j1939_transport_handleEndOfMessageAcknowledge; PR #53 round 65) */
 
-void cm848_handleJ1939TransportEndOfMessageAcknowledge(int param_1)
+void cm848_handleJ1939TransportEndOfMessageAcknowledge(j1939_rx_msg_t *message)
 
 {
-  undefined2 local_8;
+  word local_8;
   
   if ((j1939_multiframe_tx_active == 1) &&
-     (j1939_multiframe_tx_destination_address == *(byte *)(param_1 + 3))) {
-    local_8 = (ushort)*(byte *)(*(int *)(param_1 + 6) + 6) << 8;
+     (j1939_multiframe_tx_destination_address == message->source_address)) {
+    local_8 = (ushort)message->data_pointer[6] << 8;
     if (local_8 == j1939_transport_transmit_session.transported_pgn) {
       *j1939_transport_transmit_session.session_status_pointer = 9;
       j1939_multiframe_tx_active = 0;
@@ -71243,21 +71241,21 @@ void cm848_handleJ1939TransportEndOfMessageAcknowledge(int param_1)
    receive session | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy
    Confidence High (was j1939_transport_handleAbort; PR #53 round 65) */
 
-void cm848_handleJ1939TransportAbort(int param_1)
+void cm848_handleJ1939TransportAbort(j1939_rx_msg_t *message)
 
 {
-  undefined2 local_8;
+  word local_8;
   
-  local_8 = (ushort)*(byte *)(*(int *)(param_1 + 6) + 6) << 8;
+  local_8 = (ushort)message->data_pointer[6] << 8;
   if (((j1939_multiframe_tx_active == 1) &&
-      (j1939_multiframe_tx_destination_address == *(byte *)(param_1 + 3))) &&
+      (j1939_multiframe_tx_destination_address == message->source_address)) &&
      (local_8 == j1939_transport_transmit_session.transported_pgn)) {
     *j1939_transport_transmit_session.session_status_pointer = 10;
     j1939_multiframe_tx_active = 0;
   }
   else if (((j1939_transport_receive_session.active == 1) &&
-           ((byte)j1939_transport_receive_session.request_to_send_can_id == *(byte *)(param_1 + 3)))
-          && (local_8 == j1939_transport_receive_session.transported_pgn)) {
+           ((byte)j1939_transport_receive_session.request_to_send_can_id == message->source_address)
+           ) && (local_8 == j1939_transport_receive_session.transported_pgn)) {
     j1939_transport_receive_session.active = 0;
   }
   return;
@@ -71274,24 +71272,24 @@ void cm848_handleJ1939TransportAbort(int param_1)
    reviewed 2026-11-11 - Readability Medium Accuracy Confidence High (was
    j1939_transport_dispatchConnectionManagement; PR #53 round 65) */
 
-void cm848_dispatchJ1939TransportConnectionManagement(int param_1)
+void cm848_dispatchJ1939TransportConnectionManagement(j1939_rx_msg_t *message)
 
 {
-  char cVar1;
+  byte bVar1;
   
-  if (*(short *)(param_1 + 4) == 8) {
-    cVar1 = **(char **)(param_1 + 6);
-    if (cVar1 == '\x10') {
-      cm848_handleJ1939TransportRequestToSend();
+  if (message->data_length == 8) {
+    bVar1 = *message->data_pointer;
+    if (bVar1 == 0x10) {
+      cm848_handleJ1939TransportRequestToSend(message);
     }
-    else if (cVar1 == '\x11') {
-      cm848_handleJ1939TransportClearToSend();
+    else if (bVar1 == 0x11) {
+      cm848_handleJ1939TransportClearToSend(message);
     }
-    else if (cVar1 == '\x13') {
-      cm848_handleJ1939TransportEndOfMessageAcknowledge();
+    else if (bVar1 == 0x13) {
+      cm848_handleJ1939TransportEndOfMessageAcknowledge(message);
     }
-    else if (cVar1 == -1) {
-      cm848_handleJ1939TransportAbort();
+    else if (bVar1 == 0xff) {
+      cm848_handleJ1939TransportAbort(message);
     }
   }
   return;
@@ -99490,7 +99488,7 @@ void cm848_exceptionHandler(void)
    searches. Returns true when full. The receive side twin of cm848_j1939RegisterDiagnosticService
    (was j1939_handlerInitializer; PR #53 round 65) */
 
-bool cm848_registerJ1939ReceiveHandler(undefined2 param_1,undefined4 param_2)
+bool cm848_registerJ1939ReceiveHandler(word pgn_key,void *handler)
 
 {
   uint uVar1;
@@ -99498,9 +99496,8 @@ bool cm848_registerJ1939ReceiveHandler(undefined2 param_1,undefined4 param_2)
   uVar1 = (uint)j1939_receive_handler_count;
   if (uVar1 != 0x11) {
     j1939_receive_handler_count = j1939_receive_handler_count + 1;
-    (&DAT_003fd414)[uVar1 * 3] = param_1;
-    *(undefined4 *)((int)&PTR_cm848_dispatchJ1939TransportConnectionManagement_003fd416 + uVar1 * 6)
-         = param_2;
+    j1939_receive_handler_table[uVar1].pgn_key = pgn_key;
+    j1939_receive_handler_table[uVar1].handler = handler;
   }
   return uVar1 == 0x11;
 }
@@ -99525,7 +99522,7 @@ void cm848_dispatchJ1939ReceivedMessages(void)
   uint uVar4;
   int iVar5;
   ushort uVar6;
-  ushort *puVar7;
+  j1939_receive_handler_entry_t *pjVar7;
   byte *pbVar8;
   byte bVar9;
   undefined2 local_20;
@@ -99570,15 +99567,15 @@ LAB_00539014:
       bVar2 = true;
 LAB_00539060:
       if (!bVar2) {
-        puVar7 = &DAT_003fd414;
+        pjVar7 = j1939_receive_handler_table;
         bVar9 = 0;
         if (j1939_receive_handler_count != 0) {
           do {
-            if (*puVar7 == local_20) {
-              (**(code **)(puVar7 + 1))(can_receive_queue_read_pointer);
+            if (pjVar7->pgn_key == local_20) {
+              (*(code *)pjVar7->handler)(can_receive_queue_read_pointer);
               break;
             }
-            puVar7 = puVar7 + 3;
+            pjVar7 = pjVar7 + 1;
             bVar9 = bVar9 + 1;
           } while (bVar9 < j1939_receive_handler_count);
         }

@@ -2259,8 +2259,7 @@ address,name,type,comment
 0x003fd2f2,,pointer,
 0x003fd3b0,,pointer,
 0x003fd3ba,,pointer,
-0x003fd416,,pointer,
-0x003fd41c,,pointer,
+0x003fd414,j1939_receive_handler_table,j1939_receive_handler_entry_t[17],The J1939 receive handler table: 17 six-byte {PGN key - handler} entries up to j1939_receive_handler_count (0x3fd47a - right after the table). cm848_registerJ1939ReceiveHandler fills it at startup and cm848_dispatchJ1939ReceivedMessages calls the handler whose key matches each received frame. In the ROM-to-RAM copy window: no boot thunk lies in its 102 bytes (PR #53 round 65)
 0x003fd482,eeprom_mirror,byte,RAM mirror of the serial EEPROM: RAM = 0x3fd482 + EEPROM offset (0x0-0x1a3f) - loaded by cm848_initEepromDriverAndLoadMirror (was sensor_cal_table) | e2m: e2m 000B +0 ECM_STAT 'Indicator as to the calibration status of the ECM' (the first word of the mirror; this symbol is the base of the whole EEPROM mirror, so it deliberately has no _cal)
 0x003fd4b2,key_on_hour_meter_cal,dword,EEPROM 0x30 (mirror): lifetime ECM key-on time in 0.2 s counts - the EEPROM copy of key_on_hour_meter (HP Tuners does not wipe it: 177.3M -> 179.2M counts across the four dumps). The boot ROM loads the same word into ecu_power_state_flags.runtime_counter. Was sensor_param_id_working | e2m: e2m 0027 +0 [CMECBUTR] ECM_Run_Time_Backup (SEC, 0.2 s per count) 'Non-volatile copy of ECM_Run_Time' (ECM_Run_Time = 'Time key switch is on and ECM is running boot or application code' = key_on_hour_meter)
 0x003fd4b8,ecm_hardware_type_identifier_cal,word,EEPROM 0x36 (mirror): e2m 0000 +0 ECM_Identifier 'Identifier of the ECM hardware type.' (HEX, 2 bytes; 0x4336 = ASCII 'C6' in the dump): read-only; cm848_initPgn65242SoftwareIdHandler copies its two bytes (high byte first) into the PGN 65242 software identification message, field 5 of 6, between two '*' delimiters. Field 6 is application_identifier_cal = e2m 1292 Application_Identifier. (was sensor_channel_index_working)

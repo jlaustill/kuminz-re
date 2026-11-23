@@ -2111,6 +2111,7 @@ extern undefined end_of_line_test_output_number;  // 0x003fd1ba
 extern word fuel_pressure_sensor_pre_start_high_sample_count;  // 0x003fd1d8
 extern void * sensor_cal_rom_read_ptr;  // 0x003fd2d4
 extern void * sensor_cal_ram_write_ptr;  // 0x003fd2d8
+extern j1939_receive_handler_entry_t j1939_receive_handler_table[17];  // 0x003fd414
 extern byte eeprom_mirror;  // 0x003fd482
 extern dword key_on_hour_meter_cal;  // 0x003fd4b2
 extern word ecm_hardware_type_identifier_cal;  // 0x003fd4b8

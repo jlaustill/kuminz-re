@@ -1162,6 +1162,9 @@ parameter_id_entry_t,,address,dword,4,"The resolved address: EEPROM 0x01000000 +
 j1939_diagnostic_service_entry_t,,service_id,J1939_DIAGNOSTIC_SERVICE,1,The PGN 61184 diagnostic service byte (the request's first data byte; typed J1939_DIAGNOSTIC_SERVICE - was EF00_SERVICE_ID in this comment; PR #53 round 63),,verified
 j1939_diagnostic_service_entry_t,,pad,byte,1,Never written: the registrar stores only the service byte and the handler,,verified
 j1939_diagnostic_service_entry_t,,handler,pointer,4,The service handler: called with the received j1939_rx_msg_t once cm848_validateJ1939DiagnosticRequest accepts the request,,verified
+# J1939 receive handler entry (6 bytes): j1939_receive_handler_table (RAM 0x3fd414 - 17 slots) - cm848_registerJ1939ReceiveHandler appends {PGN key - handler} and cm848_dispatchJ1939ReceivedMessages calls the handler whose key matches a received frame (PR #53 round 65)
+j1939_receive_handler_entry_t,,pgn_key,word,2,The PGN's PDU format and PDU specific bytes as one word - specific 0 for a destination-specific PGN (0xef00 = PGN 61184 / 0xfef1 = PGN 65265 / 0 = TSC1),,verified
+j1939_receive_handler_entry_t,,handler,pointer,4,The receive handler: called with the received j1939_rx_msg_t,,verified
 
 # Boot kernel diagnostic service entry (5 bytes - packed): diagnostic_service_dispatch_table (RAM 0x3fdb30) - cm848_registerDiagnosticService appends {service - handler} (14 entries - capacity 20) and cm848_dispatchDiagnosticService scans them; 2 entries are typed because the application's EEPROM mirror words share the RAM from 0x3fdb3a (was diag_dispatch_entry_t; PR #53 round 61)
 boot_diagnostic_service_entry_t,,service_id,BOOT_DIAGNOSTIC_SERVICE,1,The boot diagnostic service byte: the kernel's constant-ID cm848_registerDiagnosticService calls register 0x0b / 0x10 / 0x18 (acknowledge - no operation) / 0x19 (execute function) / 0x41 (service 65) / 0x43 / 0x4a / 0x4c (memory reads),,verified

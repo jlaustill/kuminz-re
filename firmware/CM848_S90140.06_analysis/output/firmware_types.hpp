@@ -1330,6 +1330,7 @@ typedef struct eeprom_param_t eeprom_param_t;
 typedef struct j1939_powertrain_messages_received_t j1939_powertrain_messages_received_t;
 typedef struct parameter_id_entry_t parameter_id_entry_t;
 typedef struct j1939_diagnostic_service_entry_t j1939_diagnostic_service_entry_t;
+typedef struct j1939_receive_handler_entry_t j1939_receive_handler_entry_t;
 typedef struct boot_diagnostic_service_entry_t boot_diagnostic_service_entry_t;
 typedef struct executive_frame_timing_t executive_frame_timing_t;
 typedef struct j1939_dm13_requester_slot_t j1939_dm13_requester_slot_t;
@@ -2591,6 +2592,11 @@ struct j1939_diagnostic_service_entry_t {
     J1939_DIAGNOSTIC_SERVICE service_id;  /* The PGN 61184 diagnostic service byte (the request's first data byte; typed J1939_DIAGNOSTIC_SERVICE - was EF00_SERVICE_ID in this comment; PR #53 round 63) */
     uint8_t pad;  /* Never written: the registrar stores only the service byte and the handler */
     void * handler;  /* The service handler: called with the received j1939_rx_msg_t once cm848_validateJ1939DiagnosticRequest accepts the request */
+};
+
+struct j1939_receive_handler_entry_t {
+    uint16_t pgn_key;  /* The PGN's PDU format and PDU specific bytes as one word - specific 0 for a destination-specific PGN (0xef00 = PGN 61184 / 0xfef1 = PGN 65265 / 0 = TSC1) */
+    void * handler;  /* The receive handler: called with the received j1939_rx_msg_t */
 };
 
 struct boot_diagnostic_service_entry_t {
