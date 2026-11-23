@@ -226,7 +226,7 @@ function_address,function_name,param_index,name,type,comment
 # EF00 Service Dispatch System - J1939 PGN 0xEF00 handler registration
 # Two dispatch tables: ef00_service_dispatch_table (0x3FA8B2) and diag_service_dispatch_table (0x3FDB30)
 # -----------------------------------------------------------------------------
-0x000220e4,cm848_j1939RegisterDiagnosticService,0,service_id,byte,EF00 service ID to register
+0x000220e4,cm848_j1939RegisterDiagnosticService,0,service_id,J1939_DIAGNOSTIC_SERVICE,The PGN 61184 service byte to register (was EF00 service ID to register - EF00 is the PGN in hex; PR #53 round 63)
 0x000220e4,cm848_j1939RegisterDiagnosticService,1,handler_ptr,void*,Function pointer for service handler
 
 0x00002c94,cm848_registerDiagnosticService,0,service_id,byte,Diagnostic service ID (0x43/0x4A/0x4C)
@@ -240,7 +240,7 @@ function_address,function_name,param_index,name,type,comment
 # All handlers registered via processJ1939DiagnosticRequest share the
 # DIAG_RESPONSE callback contract (ACK=0, NACK_NOT_READY=4, NACK_PROTECTED=7)
 # -----------------------------------------------------------------------------
-0x00021584,cm848_advanceDiagnosticActionState,return,,DIAG_RESPONSE,Returns DIAG_ACK(0) or DIAG_NACK_PROTECTED(7)
+0x00021584,cm848_requestClearInactiveFaults,return,,DIAG_RESPONSE,Returns DIAG_ACK(0) or DIAG_NACK_PROTECTED(7)
 0x00021668,cm848_enterDevelopmentMode,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional state clear
 0x000216e8,cm848_commandEngineShutdown,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional flag set
 0x00021904,cm848_inhibitKeyOffShutdown,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional flag set

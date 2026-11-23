@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 06:37:26 MST 2026
+// Generated: Mon Nov 23 07:16:49 MST 2026
 
 
 //
@@ -1773,10 +1773,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word qadc_b_pqb0_sample;
-  word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
+  word qadc_b_pqb0_sample;
+  word qadc_b_pqa4_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -21806,10 +21806,16 @@ void initializeEngineSpeedLimitDefaults(void)
 
 
 //
-// Function: cm848_getLimitCategoryCode @ 0x000204a8
+// Function: cm848_getJ1939DiagnosticResponseEchoLength @ 0x000204a8
 //
 
-undefined1 cm848_getLimitCategoryCode(int param_1)
+/* How many request bytes a PGN 61184 response repeats after its response byte
+   (cm848_sendJ1939ResponseFrame): the service byte and its target but never the length field. 3 for
+   services 4 / 5 - 5 for 0x19 - the byte at 0x575dd + service for 0x41-0x4e (at 0x5761e: 3 for the
+   ID services without an offset / 5 with a 2-byte offset or a 4-byte address / 7 with a 4-byte
+   offset) - else 1 (was cm848_getLimitCategoryCode; PR #53 round 63) */
+
+undefined1 cm848_getJ1939DiagnosticResponseEchoLength(int param_1)
 
 {
   if (param_1 < 0x41) {
@@ -22596,14 +22602,21 @@ void cm848_initializeEngineRetarderTorqueLookupCache(void)
 
 
 //
-// Function: cm848_advanceDiagnosticActionState @ 0x00021584
+// Function: cm848_requestClearInactiveFaults @ 0x00021584
 //
 
-/* handles J1939 PGN 61184 diagnostic service id 1 via the 0x3fa8b2 table
-   (cm848_j1939DiagnosticServiceHandler after the cm848_validateJ1939DiagnosticRequest
-   length/security gate returns -1) - registered by cm848_registerJ1939DiagnosticHandlers */
+/* PGN 61184 service 1 (J1939_DIAGNOSTIC_SERVICE_CLEAR_INACTIVE_FAULTS): when
+   not_safe_to_program_flag is 0 with the key on or it is 1 with
+   algorithm_enable_flags_12_cal.obd_fault_handler_enable 0 it sets the CLEAR_INACTIVE bit of
+   diagnostic_clear_request_state (e2m 1080 +2: 0 -> 1 / 2 -> 3) and returns DIAG_ACK - else
+   DIAG_NACK_PROTECTED. The DM3 handler cm848_j1939HandlePgn65228Dm3ClearInactiveFaults does the
+   same. Registered by cm848_registerJ1939DiagnosticHandlers (was
+   cm848_advanceDiagnosticActionState; PR #53 round 63) | earlier note: handles J1939 PGN 61184
+   diagnostic service id 1 via the 0x3fa8b2 table (cm848_j1939DiagnosticServiceHandler after the
+   cm848_validateJ1939DiagnosticRequest length/security gate returns -1) - registered by
+   cm848_registerJ1939DiagnosticHandlers */
 
-DIAG_RESPONSE cm848_advanceDiagnosticActionState(void)
+DIAG_RESPONSE cm848_requestClearInactiveFaults(void)
 
 {
   DIAG_RESPONSE DVar1;
@@ -22672,9 +22685,9 @@ DIAG_RESPONSE cm848_exitDevelopmentMode(void)
    (e2m 0010 +0 RUN_LOC), and returns DIAG_ACK. With the refresh off, RAM calibration edits are not
    overwritten (the refresh pass and the periodic EEPROM mirror reload, cm848_onEepromBlockRead,
    stop), diagnostic writes to EEPROM addresses and EEPROM parameter ID writes go to the RAM mirror
-   only (cm848_lookupParameterIdAddress, j1939_writeDiagMemory), and the two register address ranges
-   of the diagnostic memory services open (cm848_lookupApplicationMemoryRegionType). The way back is
-   service 7 (0x21624) or, with the engine stopped, service 22 (0x21694). (was
+   only (cm848_lookupParameterIdAddress, cm848_writeJ1939DiagnosticMemory), and the two register
+   address ranges of the diagnostic memory services open (cm848_lookupApplicationMemoryRegionType).
+   The way back is service 7 (0x21624) or, with the engine stopped, service 22 (0x21694). (was
    cm848_resetDiagnosticSession) | jlaustill review 2026-05-25 - hopefully accurate */
 
 DIAG_RESPONSE cm848_enterDevelopmentMode(void)
@@ -22929,14 +22942,22 @@ DIAG_RESPONSE cm848_commitEepromMirrorToEeprom(void)
 void cm848_registerJ1939DiagnosticHandlers(void)
 
 {
-  cm848_j1939RegisterDiagnosticService(1,cm848_advanceDiagnosticActionState);
-  cm848_j1939RegisterDiagnosticService(7,cm848_exitDevelopmentMode);
-  cm848_j1939RegisterDiagnosticService(10,cm848_enterDevelopmentMode);
-  cm848_j1939RegisterDiagnosticService(0x16,cm848_forceExitDevelopmentMode);
-  cm848_j1939RegisterDiagnosticService(6,cm848_commandEngineShutdown);
-  cm848_j1939RegisterDiagnosticService(0xb,cm848_handleJ1939RestartService);
-  cm848_j1939RegisterDiagnosticService(0x18,cm848_inhibitKeyOffShutdown);
-  cm848_j1939RegisterDiagnosticService(0x15,cm848_commitEepromMirrorToEeprom);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_CLEAR_INACTIVE_FAULTS,cm848_requestClearInactiveFaults);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE,cm848_exitDevelopmentMode);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_ENTER_DEVELOPMENT_MODE,cm848_enterDevelopmentMode);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_FORCE_EXIT_DEVELOPMENT_MODE,cm848_forceExitDevelopmentMode);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_COMMAND_ENGINE_SHUTDOWN,cm848_commandEngineShutdown);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM,cm848_handleJ1939RestartService);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_INHIBIT_KEY_OFF_SHUTDOWN,cm848_inhibitKeyOffShutdown);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_COMMIT_EEPROM_MIRROR,cm848_commitEepromMirrorToEeprom);
   return;
 }
 
@@ -23248,7 +23269,7 @@ void cm848_initJ1939DiagnosticCallback(void)
    to 32 - not a request processor - scanned by cm848_j1939DiagnosticServiceHandler (was
    cm848_processJ1939DiagnosticRequest) | registration-table-sweep reviewed 2026-11-13 */
 
-bool cm848_j1939RegisterDiagnosticService(byte service_id,void *handler_ptr)
+bool cm848_j1939RegisterDiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *handler_ptr)
 
 {
   uint uVar1;
@@ -23276,37 +23297,39 @@ bool cm848_j1939RegisterDiagnosticService(byte service_id,void *handler_ptr)
 void cm848_j1939DiagnosticServiceHandler(j1939_rx_msg_t *rx_msg)
 
 {
-  byte bVar1;
-  byte bVar2;
-  j1939_diagnostic_service_entry_t *pjVar3;
-  uint uVar4;
+  uint uVar1;
+  byte entry_index;
+  j1939_diagnostic_service_entry_t *entry;
+  dword result_code;
+  J1939_DIAGNOSTIC_SERVICE service;
   
-  pjVar3 = j1939_diagnostic_service_table;
-  bVar1 = *rx_msg->data_pointer;
-  uVar4 = 0x18;
-  if ((bVar1 == 0xc) || (bVar1 == 0xd)) {
-    uVar4 = 0xff;
+  entry = j1939_diagnostic_service_table;
+  service = *rx_msg->data_pointer;
+  result_code = 0x18;
+  if ((service == J1939_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE) ||
+     (service == J1939_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE)) {
+    result_code = 0xff;
   }
   else {
-    bVar2 = 0;
+    entry_index = 0;
     if (j1939_diagnostic_handler_count != 0) {
       do {
-        if (pjVar3->service_id == bVar1) {
-          uVar4 = cm848_validateJ1939DiagnosticRequest(rx_msg);
-          uVar4 = uVar4 & 0xff;
-          if (uVar4 == 0xff) {
-            uVar4 = (*(code *)pjVar3->handler)(rx_msg);
-            uVar4 = uVar4 & 0xff;
+        if (entry->service_id == service) {
+          uVar1 = cm848_validateJ1939DiagnosticRequest(rx_msg);
+          result_code = uVar1 & 0xff;
+          if (result_code == 0xff) {
+            uVar1 = (*(code *)entry->handler)(rx_msg);
+            result_code = uVar1 & 0xff;
           }
           break;
         }
-        pjVar3 = pjVar3 + 1;
-        bVar2 = bVar2 + 1;
-      } while (bVar2 < j1939_diagnostic_handler_count);
+        entry = entry + 1;
+        entry_index = entry_index + 1;
+      } while (entry_index < j1939_diagnostic_handler_count);
     }
   }
-  if (uVar4 != 0xff) {
-    cm848_sendJ1939ResponseFrame(rx_msg,uVar4);
+  if (result_code != 0xff) {
+    cm848_sendJ1939ResponseFrame(rx_msg,result_code);
   }
   return;
 }
@@ -23557,14 +23580,19 @@ void cm848_processJ1939Dm13StopStartBroadcast(int param_1)
 
 
 //
-// Function: cm848_j1939HandlePgn65228Dm3ClearDiag @ 0x00022674
+// Function: cm848_j1939HandlePgn65228Dm3ClearInactiveFaults @ 0x00022674
 //
 
-/* handles the J1939 request for PGN 65228 DM3 clear previously active via j1939_pgn_dispatch_table
-   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call but reached only through
-   the table */
+/* DM3 (PGN 65228 - clear previously active codes) requested through PGN 59904
+   (j1939_pgn_dispatch_table / cm848_j1939DispatchPgnHandler): the gate and the CLEAR_INACTIVE bit
+   of cm848_requestClearInactiveFaults (PGN 61184 service 1) then an ACK or a NACK - through
+   cm848_sendJ1939NegativeAcknowledgement when j1939_dm1_active_flag is set (which it then clears) -
+   else cm848_sendJ1939AcknowledgeMessage (was cm848_j1939HandlePgn65228Dm3ClearDiag; PR #53 round
+   63) | earlier note: handles the J1939 request for PGN 65228 DM3 clear previously active via
+   j1939_pgn_dispatch_table (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call
+   but reached only through the table */
 
-void cm848_j1939HandlePgn65228Dm3ClearDiag(j1939_rx_msg_t *param_1)
+void cm848_j1939HandlePgn65228Dm3ClearInactiveFaults(j1939_rx_msg_t *param_1)
 
 {
   J1939_ACK_TYPE JVar1;
@@ -23613,7 +23641,7 @@ LAB_0002275c:
 void cm848_initPgn65228Dm3Handler(void)
 
 {
-  cm848_j1939RegisterPgnHandler(0xfecc,cm848_j1939HandlePgn65228Dm3ClearDiag);
+  cm848_j1939RegisterPgnHandler(0xfecc,cm848_j1939HandlePgn65228Dm3ClearInactiveFaults);
   return;
 }
 
@@ -25174,7 +25202,7 @@ void cm848_sendJ1939ResponseFrame(j1939_rx_msg_t *request,dword result_code)
   byte bVar4;
   byte *pbVar5;
   
-  bVar1 = cm848_getLimitCategoryCode(*request->data_pointer);
+  bVar1 = cm848_getJ1939DiagnosticResponseEchoLength(*request->data_pointer);
   if (result_code == 0) {
     iVar2 = 1;
   }
@@ -25187,7 +25215,7 @@ void cm848_sendJ1939ResponseFrame(j1939_rx_msg_t *request,dword result_code)
   }
   iVar2 = (uint)bVar1 + iVar2;
 LAB_00024a1c:
-  msg = (j1939_tx_msg_t *)j1939_selectResponseBuffer(iVar2);
+  msg = (j1939_tx_msg_t *)cm848_selectJ1939TransmitBuffer(iVar2);
   if (msg != (j1939_tx_msg_t *)0x0) {
     (msg->header).can_id = 0xef0000;
     *(byte *)&(msg->header).can_id =
@@ -30211,9 +30239,9 @@ void cm848_initializePgn65264PowerTakeOffInformationBuffer(void)
    Runs every pass of cm848_periodicTaskSet_auxiliaryControl. Input: engine_state. Output:
    not_safe_to_program_flag. While it is 1 the force-activate diagnostic service answers
    DIAG_NACK_PROTECTED, cm848_commitEepromMirrorToEeprom refuses, the diagnostic EEPROM writes
-   (j1939_writeDiagMemory, the PCI write service) answer 7 unless ram_refresh_enable is INACTIVE,
-   and cm848_lookupParameterIdAddress maps EEPROM parameter addresses to the RAM mirror. It handles
-   no fault and no key-off event. (was cm848_updateFaultOnKeyoff) */
+   (cm848_writeJ1939DiagnosticMemory, the PCI write service) answer 7 unless ram_refresh_enable is
+   INACTIVE, and cm848_lookupParameterIdAddress maps EEPROM parameter addresses to the RAM mirror.
+   It handles no fault and no key-off event. (was cm848_updateFaultOnKeyoff) */
 
 void cm848_updateNotSafeToProgramFlag(void)
 
@@ -65033,7 +65061,7 @@ void cm848_resetDataCollector(void)
    data_collector_start_address differs from the write pointer data_collector_end_address. It counts
    the buffered bytes (cut to a whole number of samples that fit into 32 bytes, that is 32 /
    data_collector_table_entry_count x that count), takes a transport buffer with
-   j1939_selectResponseBuffer, sets its can_id to priority 6, PF 0xff, PS 0xff and
+   cm848_selectJ1939TransmitBuffer, sets its can_id to priority 6, PF 0xff, PS 0xff and
    j1939_source_address (a broadcast that initiateJ1939TransportProtocol announces with the
    transport protocol) and copies the bytes out of the ring buffer (clearing
    data_collector_buffer_has_data_flag when the copy reaches the write pointer). Only when the
@@ -65074,7 +65102,7 @@ void cm848_sendDataCollectorBuffer(void)
         puVar3 = (undefined *)((0x20 / uVar4) * uVar4);
       }
     }
-    msg = (j1939_tx_msg_t *)j1939_selectResponseBuffer((uint)puVar3 & 0xffff);
+    msg = (j1939_tx_msg_t *)cm848_selectJ1939TransmitBuffer((uint)puVar3 & 0xffff);
     puVar1 = data_collector_start_address;
     if (msg != (j1939_tx_msg_t *)0x0) {
       (msg->header).can_id = 0xffff00;
@@ -68255,14 +68283,18 @@ undefined4 cm848_updateJ1939BroadcastEnableMask(int param_1,int param_2)
 
 
 //
-// Function: j1939_diagService4DisableBroadcast @ 0x00509ce4
+// Function: cm848_handleJ1939DisableBroadcastService @ 0x00509ce4
 //
 
-/* Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService:
-   service 4 - cm848_updateJ1939BroadcastEnableMask with enable 0 | review-function-readability
-   reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
+/* PGN 61184 service 4 (J1939_DIAGNOSTIC_SERVICE_DISABLE_BROADCAST):
+   cm848_updateJ1939BroadcastEnableMask with enable 0. Registered by
+   cm848_registerJ1939BroadcastAndNoOperationServices (was j1939_diagService4DisableBroadcast; PR
+   #53 round 63) | earlier note: Application CLIP diagnostic service handler registered with
+   cm848_j1939RegisterDiagnosticService: service 4 - cm848_updateJ1939BroadcastEnableMask with
+   enable 0 | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence
+   High */
 
-undefined1 j1939_diagService4DisableBroadcast(undefined4 param_1)
+undefined1 cm848_handleJ1939DisableBroadcastService(undefined4 param_1)
 
 {
   undefined1 uVar1;
@@ -68274,14 +68306,18 @@ undefined1 j1939_diagService4DisableBroadcast(undefined4 param_1)
 
 
 //
-// Function: j1939_diagService5EnableBroadcast @ 0x00509d0c
+// Function: cm848_handleJ1939EnableBroadcastService @ 0x00509d0c
 //
 
-/* Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService:
-   service 5 - cm848_updateJ1939BroadcastEnableMask with enable 1 | review-function-readability
-   reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
+/* PGN 61184 service 5 (J1939_DIAGNOSTIC_SERVICE_ENABLE_BROADCAST):
+   cm848_updateJ1939BroadcastEnableMask with enable 1. Registered by
+   cm848_registerJ1939BroadcastAndNoOperationServices (was j1939_diagService5EnableBroadcast; PR #53
+   round 63) | earlier note: Application CLIP diagnostic service handler registered with
+   cm848_j1939RegisterDiagnosticService: service 5 - cm848_updateJ1939BroadcastEnableMask with
+   enable 1 | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence
+   High */
 
-undefined1 j1939_diagService5EnableBroadcast(undefined4 param_1)
+undefined1 cm848_handleJ1939EnableBroadcastService(undefined4 param_1)
 
 {
   undefined1 uVar1;
@@ -68304,10 +68340,16 @@ undefined1 j1939_diagService5EnableBroadcast(undefined4 param_1)
 void cm848_registerJ1939BroadcastAndNoOperationServices(void)
 
 {
-  cm848_j1939RegisterDiagnosticService(0xf,cm848_j1939DiagnosticServiceAcknowledgeNoOperation);
-  cm848_j1939RegisterDiagnosticService(0x10,cm848_j1939DiagnosticServiceAcknowledgeNoOperation);
-  cm848_j1939RegisterDiagnosticService(4,j1939_diagService4DisableBroadcast);
-  cm848_j1939RegisterDiagnosticService(5,j1939_diagService5EnableBroadcast);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_15,
+             cm848_j1939DiagnosticServiceAcknowledgeNoOperation);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_16,
+             cm848_j1939DiagnosticServiceAcknowledgeNoOperation);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_DISABLE_BROADCAST,cm848_handleJ1939DisableBroadcastService);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_ENABLE_BROADCAST,cm848_handleJ1939EnableBroadcastService);
   return;
 }
 
@@ -69156,16 +69198,20 @@ void cm848_endRetarderShiftAssistAboveFuelDemandLimit(void)
 
 
 //
-// Function: j1939_writeDiagMemory @ 0x0050af58
+// Function: cm848_writeJ1939DiagnosticMemory @ 0x0050af58
 //
 
-/* Application CLIP diagnostic stack (PGN 61184): memory write worker (twin of boot
+/* Writes memory for a PGN 61184 write request: a length cap of 1764 / an optional 10-byte key after
+   the data / the region from cm848_lookupApplicationMemoryRegionType - EEPROM (type 5) through
+   cm848_queueEepromByteWrites or the RAM mirror / RAM (type 3) with the 0x3fd480 window protected.
+   Twin of the boot kernel's cm848_writeDiagMemory (was j1939_writeDiagMemory; PR #53 round 63) |
+   earlier note: Application CLIP diagnostic stack (PGN 61184): memory write worker (twin of boot
    cm848_writeDiagMemory): length cap 1764 / optional 10-byte auth trailer / region by
    cm848_lookupApplicationMemoryRegionType - EEPROM (type 5) via cm848_queueEepromByteWrites or the
    RAM mirror / RAM (type 3) with the 0x3fd480 window protected | review-function-readability
    reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-char j1939_writeDiagMemory(int param_1,byte *param_2,uint param_3)
+char cm848_writeJ1939DiagnosticMemory(int param_1,byte *param_2,uint param_3)
 
 {
   bool bVar1;
@@ -69179,7 +69225,7 @@ char j1939_writeDiagMemory(int param_1,byte *param_2,uint param_3)
     return '\x02';
   }
   param_3 = param_3 & 0xffff;
-  uVar3 = j1939_getDiagServiceDataOffset(**(undefined1 **)(param_1 + 6));
+  uVar3 = cm848_getJ1939MemoryServiceHeaderLength(**(undefined1 **)(param_1 + 6));
   uVar2 = (uVar3 & 0xff) + param_3 & 0xffff;
   uVar5 = (uint)*(ushort *)(param_1 + 4);
   if ((uVar5 == 8) || (uVar5 == uVar2)) {
@@ -69243,16 +69289,21 @@ char j1939_writeDiagMemory(int param_1,byte *param_2,uint param_3)
 
 
 //
-// Function: j1939_writeDiagMemoryByParameterId @ 0x0050b1b8
+// Function: cm848_writeJ1939DiagnosticMemoryByParameterId @ 0x0050b1b8
 //
 
-/* Application CLIP diagnostic stack (PGN 61184): services 0x44 / 0x45 / 0x47 / 0x49 (via undefined
-   stubs): resolves the parameter ID (0x539768; 8 = unknown) then j1939_writeDiagMemory at base +
-   offset; twin of boot cm848_memoryWriteByParameterId | review-function-readability reviewed
-   2026-11-11 - Readability Medium Accuracy Confidence High */
+/* Writes by parameter ID for the PGN 61184 services 0x44 / 0x45 / 0x47 / 0x49: resolves the ID with
+   cm848_lookupParameterIdAddress (8 = unknown ID) then cm848_writeJ1939DiagnosticMemory(request /
+   the ID's address + offset / length). Its parameters are the request / the ID / the offset / the
+   length. Twin of the boot kernel's cm848_memoryWriteByParameterId (was
+   j1939_writeDiagMemoryByParameterId; PR #53 round 63) | earlier note: Application CLIP diagnostic
+   stack (PGN 61184): services 0x44 / 0x45 / 0x47 / 0x49 (via undefined stubs): resolves the
+   parameter ID (0x539768; 8 = unknown) then cm848_writeJ1939DiagnosticMemory at base + offset; twin
+   of boot cm848_memoryWriteByParameterId | review-function-readability reviewed 2026-11-11 -
+   Readability Medium Accuracy Confidence High */
 
 undefined1
-j1939_writeDiagMemoryByParameterId
+cm848_writeJ1939DiagnosticMemoryByParameterId
           (undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4)
 
 {
@@ -69262,7 +69313,7 @@ j1939_writeDiagMemoryByParameterId
   
   cVar1 = cm848_lookupParameterIdAddress(param_2,&local_10);
   if (cVar1 == '\0') {
-    uVar2 = j1939_writeDiagMemory(param_1,local_10 + param_3,param_4);
+    uVar2 = cm848_writeJ1939DiagnosticMemory(param_1,local_10 + param_3,param_4);
   }
   else {
     uVar2 = 8;
@@ -69273,14 +69324,18 @@ j1939_writeDiagMemoryByParameterId
 
 
 //
-// Function: j1939_diagService68_memoryWriteByParameterId @ 0x0050b228
+// Function: cm848_handleJ1939WriteByParameterIdService @ 0x0050b228
 //
 
-/* Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService:
-   service 0x44 - write by parameter ID (j1939_writeDiagMemoryByParameterId) |
+/* PGN 61184 service 0x44: request bytes 1-2 the parameter ID and 3 the length then the data -
+   written at the ID's address (offset 0) through cm848_writeJ1939DiagnosticMemoryByParameterId.
+   Registered by cm848_registerJ1939MemoryWriteServices (was
+   j1939_diagService68_memoryWriteByParameterId; PR #53 round 63) | earlier note: Application CLIP
+   diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x44 -
+   write by parameter ID (cm848_writeJ1939DiagnosticMemoryByParameterId) |
    review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
 
-undefined1 j1939_diagService68_memoryWriteByParameterId(int param_1)
+undefined1 cm848_handleJ1939WriteByParameterIdService(int param_1)
 
 {
   undefined1 uVar1;
@@ -69289,21 +69344,25 @@ undefined1 j1939_diagService68_memoryWriteByParameterId(int param_1)
   
   cm848_memcpyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
   local_c = (uint)*(byte *)(*(int *)(param_1 + 6) + 3);
-  uVar1 = j1939_writeDiagMemoryByParameterId(param_1,local_10[0],0,local_c);
+  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(param_1,local_10[0],0,local_c);
   return uVar1;
 }
 
 
 
 //
-// Function: j1939_diagService69_memoryWriteByParameterIdExt @ 0x0050b298
+// Function: cm848_handleJ1939WriteByParameterIdLongLengthService @ 0x0050b298
 //
 
-/* Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService:
-   service 0x45 - write by parameter ID with a long length | review-function-readability reviewed
-   2026-11-12 - Readability Low Accuracy Confidence High */
+/* PGN 61184 service 0x45: request bytes 1-2 the parameter ID and 3-6 the length then the data -
+   written at the ID's address (offset 0) through cm848_writeJ1939DiagnosticMemoryByParameterId.
+   Registered by cm848_registerJ1939MemoryWriteServices (was
+   j1939_diagService69_memoryWriteByParameterIdExt; PR #53 round 63) | earlier note: Application
+   CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service
+   0x45 - write by parameter ID with a long length | review-function-readability reviewed 2026-11-12
+   - Readability Low Accuracy Confidence High */
 
-undefined1 j1939_diagService69_memoryWriteByParameterIdExt(int param_1)
+undefined1 cm848_handleJ1939WriteByParameterIdLongLengthService(int param_1)
 
 {
   undefined1 uVar1;
@@ -69312,21 +69371,25 @@ undefined1 j1939_diagService69_memoryWriteByParameterIdExt(int param_1)
   
   cm848_memcpyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
   cm848_memcpyBytes(local_c,*(int *)(param_1 + 6) + 3,4);
-  uVar1 = j1939_writeDiagMemoryByParameterId(param_1,local_10[0],0,local_c[0]);
+  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(param_1,local_10[0],0,local_c[0]);
   return uVar1;
 }
 
 
 
 //
-// Function: j1939_diagService71Handler @ 0x0050b300
+// Function: cm848_handleJ1939WriteByParameterIdShortOffsetService @ 0x0050b300
 //
 
-/* Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService:
-   service 0x47 (header length 6) | review-function-readability reviewed 2026-11-12 - Readability
-   Low Accuracy Confidence Low */
+/* PGN 61184 service 0x47: request bytes 1-2 the parameter ID / 3-4 the offset / 5 the length then
+   the data - written at the ID's address + offset through
+   cm848_writeJ1939DiagnosticMemoryByParameterId. Registered by
+   cm848_registerJ1939MemoryWriteServices (was j1939_diagService71Handler; PR #53 round 63) |
+   earlier note: Application CLIP diagnostic service handler registered with
+   cm848_j1939RegisterDiagnosticService: service 0x47 (header length 6) |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Low */
 
-undefined1 j1939_diagService71Handler(int param_1)
+undefined1 cm848_handleJ1939WriteByParameterIdShortOffsetService(int param_1)
 
 {
   undefined1 uVar1;
@@ -69338,21 +69401,25 @@ undefined1 j1939_diagService71Handler(int param_1)
   local_c = (uint)CONCAT11(*(undefined1 *)(*(int *)(param_1 + 6) + 3),
                            *(undefined1 *)(*(int *)(param_1 + 6) + 4));
   local_8 = (uint)*(byte *)(*(int *)(param_1 + 6) + 5);
-  uVar1 = j1939_writeDiagMemoryByParameterId(param_1,local_10[0],local_c,local_8);
+  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(param_1,local_10[0],local_c,local_8);
   return uVar1;
 }
 
 
 
 //
-// Function: j1939_diagService73_memoryWriteByParameterId @ 0x0050b38c
+// Function: cm848_handleJ1939WriteByParameterIdLongOffsetService @ 0x0050b38c
 //
 
-/* Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService:
-   service 0x49 (header length 11) - write by parameter ID | review-function-readability reviewed
-   2026-11-12 - Readability Low Accuracy Confidence Medium */
+/* PGN 61184 service 0x49: request bytes 1-2 the parameter ID / 3-6 the offset / 7-10 the length
+   then the data - written at the ID's address + offset through
+   cm848_writeJ1939DiagnosticMemoryByParameterId. Registered by
+   cm848_registerJ1939MemoryWriteServices (was j1939_diagService73_memoryWriteByParameterId; PR #53
+   round 63) | earlier note: Application CLIP diagnostic service handler registered with
+   cm848_j1939RegisterDiagnosticService: service 0x49 (header length 11) - write by parameter ID |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
 
-undefined1 j1939_diagService73_memoryWriteByParameterId(int param_1)
+undefined1 cm848_handleJ1939WriteByParameterIdLongOffsetService(int param_1)
 
 {
   undefined1 uVar1;
@@ -69363,42 +69430,49 @@ undefined1 j1939_diagService73_memoryWriteByParameterId(int param_1)
   cm848_memcpyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
   cm848_memcpyBytes(&local_c,*(int *)(param_1 + 6) + 3,4);
   cm848_memcpyBytes(&local_8,*(int *)(param_1 + 6) + 7,4);
-  uVar1 = j1939_writeDiagMemoryByParameterId(param_1,local_10[0],local_c,local_8);
+  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(param_1,local_10[0],local_c,local_8);
   return uVar1;
 }
 
 
 
 //
-// Function: j1939_diagService75_memoryWrite @ 0x0050b408
+// Function: cm848_handleJ1939WriteMemoryService @ 0x0050b408
 //
 
-/* Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService:
-   service 0x4B - write by address (j1939_writeDiagMemory) | review-function-readability reviewed
+/* PGN 61184 service 0x4b: request bytes 1-4 the address and 5 the length then the data - written
+   through cm848_writeJ1939DiagnosticMemory. Registered by cm848_registerJ1939MemoryWriteServices
+   (was j1939_diagService75_memoryWrite; PR #53 round 63) | earlier note: Application CLIP
+   diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x4B -
+   write by address (cm848_writeJ1939DiagnosticMemory) | review-function-readability reviewed
    2026-11-12 - Readability Low Accuracy Confidence High */
 
-undefined1 j1939_diagService75_memoryWrite(int param_1)
+undefined1 cm848_handleJ1939WriteMemoryService(int param_1)
 
 {
   undefined1 uVar1;
   undefined4 local_c [2];
   
   cm848_memcpyBytes(local_c,*(int *)(param_1 + 6) + 1,4);
-  uVar1 = j1939_writeDiagMemory(param_1,local_c[0],*(undefined1 *)(*(int *)(param_1 + 6) + 5));
+  uVar1 = cm848_writeJ1939DiagnosticMemory
+                    (param_1,local_c[0],*(undefined1 *)(*(int *)(param_1 + 6) + 5));
   return uVar1;
 }
 
 
 
 //
-// Function: j1939_diagService77_memoryWriteExt @ 0x0050b474
+// Function: cm848_handleJ1939WriteMemoryLongLengthService @ 0x0050b474
 //
 
-/* Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService:
-   service 0x4D - write by address with a long length | review-function-readability reviewed
-   2026-11-12 - Readability Low Accuracy Confidence High */
+/* PGN 61184 service 0x4d: request bytes 1-4 the address and 5-8 the length then the data - written
+   through cm848_writeJ1939DiagnosticMemory. Registered by cm848_registerJ1939MemoryWriteServices
+   (was j1939_diagService77_memoryWriteExt; PR #53 round 63) | earlier note: Application CLIP
+   diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x4D -
+   write by address with a long length | review-function-readability reviewed 2026-11-12 -
+   Readability Low Accuracy Confidence High */
 
-undefined1 j1939_diagService77_memoryWriteExt(int param_1)
+undefined1 cm848_handleJ1939WriteMemoryLongLengthService(int param_1)
 
 {
   undefined1 uVar1;
@@ -69407,7 +69481,7 @@ undefined1 j1939_diagService77_memoryWriteExt(int param_1)
   
   cm848_memcpyBytes(&local_10,*(int *)(param_1 + 6) + 1,4);
   cm848_memcpyBytes(local_c,*(int *)(param_1 + 6) + 5,4);
-  uVar1 = j1939_writeDiagMemory(param_1,local_10,local_c[0]);
+  uVar1 = cm848_writeJ1939DiagnosticMemory(param_1,local_10,local_c[0]);
   return uVar1;
 }
 
@@ -69418,18 +69492,29 @@ undefined1 j1939_diagService77_memoryWriteExt(int param_1)
 //
 
 /* From cm848_j1939_system_init: registers the PGN 61184 memory write services 0x44 / 0x45 / 0x4b /
-   0x4d / 0x47 / 0x49 (the j1939_diagService68-77 write handlers) in j1939_diagnostic_service_table
-   (was j1939_diag_request_batch_44to49; PR #53 round 62) */
+   0x4d / 0x47 / 0x49 (the cm848_handleJ1939Write*Service handlers) in
+   j1939_diagnostic_service_table (was j1939_diag_request_batch_44to49; PR #53 round 62) */
 
 void cm848_registerJ1939MemoryWriteServices(void)
 
 {
-  cm848_j1939RegisterDiagnosticService(0x44,j1939_diagService68_memoryWriteByParameterId);
-  cm848_j1939RegisterDiagnosticService(0x45,j1939_diagService69_memoryWriteByParameterIdExt);
-  cm848_j1939RegisterDiagnosticService(0x4b,j1939_diagService75_memoryWrite);
-  cm848_j1939RegisterDiagnosticService(0x4d,j1939_diagService77_memoryWriteExt);
-  cm848_j1939RegisterDiagnosticService(0x47,j1939_diagService71Handler);
-  cm848_j1939RegisterDiagnosticService(0x49,j1939_diagService73_memoryWriteByParameterId);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID,
+             cm848_handleJ1939WriteByParameterIdService);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_LENGTH,
+             cm848_handleJ1939WriteByParameterIdLongLengthService);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY,cm848_handleJ1939WriteMemoryService);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH,
+             cm848_handleJ1939WriteMemoryLongLengthService);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_SHORT_OFFSET,
+             cm848_handleJ1939WriteByParameterIdShortOffsetService);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_OFFSET,
+             cm848_handleJ1939WriteByParameterIdLongOffsetService);
   return;
 }
 
@@ -69503,15 +69588,19 @@ uint j1939_buildLampStatusByte(void)
 
 
 //
-// Function: j1939_getDiagServiceDataOffset @ 0x0050b610
+// Function: cm848_getJ1939MemoryServiceHeaderLength @ 0x0050b610
 //
 
-/* Application CLIP diagnostic stack (PGN 61184): request header length before the data: 0 for
-   service below 0x41 else the byte at 0x53a2e1 + service (twin of boot cm848_getServiceDataOffset)
-   | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
-    */
+/* The request bytes before the data for a PGN 61184 memory service: the byte at 0x53a2e1 + service
+   and 0 below 0x41. The bytes for 0x41-0x4e sit at 0x53a322: 3 / 7 / 7 / 4 / 7 / 6 / 6 / 11 / 11 /
+   6 / 6 / 9 / 9 / 3 (the base 0x53a2e1 falls inside input signal descriptor 10 at 0x53a2dc - so it
+   renders as that descriptor's reserved_5). Twin of the boot kernel's cm848_getServiceDataOffset
+   (was j1939_getDiagServiceDataOffset; PR #53 round 63) | earlier note: Application CLIP diagnostic
+   stack (PGN 61184): request header length before the data: 0 for service below 0x41 else the byte
+   at 0x53a2e1 + service (twin of boot cm848_getServiceDataOffset) | review-function-readability
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-byte j1939_getDiagServiceDataOffset(int param_1)
+byte cm848_getJ1939MemoryServiceHeaderLength(int param_1)
 
 {
   byte bVar1;
@@ -70142,14 +70231,19 @@ LAB_0050c2f4:
 
 
 //
-// Function: j1939_diagService65_getAddressByParameterId @ 0x0050c318
+// Function: cm848_handleJ1939GetAddressByParameterIdService @ 0x0050c318
 //
 
-/* Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService:
-   service 0x41 - resolves a parameter ID (cm848_lookupParameterIdAddress) to an address |
+/* PGN 61184 service 0x41: resolves the request's parameter ID (bytes 1-2) with
+   cm848_lookupParameterIdAddress and answers with service 0x42 - the ID and its 4-byte address in
+   one 7-byte frame (mpc555_sendJ1939SingleFrame). Registered by
+   cm848_registerJ1939GetAddressByParameterIdService (was
+   j1939_diagService65_getAddressByParameterId; PR #53 round 63) | earlier note: Application CLIP
+   diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x41 -
+   resolves a parameter ID (cm848_lookupParameterIdAddress) to an address |
    review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
 
-undefined4 j1939_diagService65_getAddressByParameterId(byte *param_1)
+undefined4 cm848_handleJ1939GetAddressByParameterIdService(byte *param_1)
 
 {
   char cVar2;
@@ -70201,29 +70295,36 @@ undefined4 j1939_diagService65_getAddressByParameterId(byte *param_1)
 //
 
 /* From cm848_j1939_system_init: registers the PGN 61184 service 0x41 (get address by parameter ID -
-   j1939_diagService65_getAddressByParameterId) in j1939_diagnostic_service_table (was
+   cm848_handleJ1939GetAddressByParameterIdService) in j1939_diagnostic_service_table (was
    j1939_diag_request_41_handler; PR #53 round 62) */
 
 void cm848_registerJ1939GetAddressByParameterIdService(void)
 
 {
-  cm848_j1939RegisterDiagnosticService(0x41,j1939_diagService65_getAddressByParameterId);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_GET_ADDRESS_BY_PARAMETER_ID,
+             cm848_handleJ1939GetAddressByParameterIdService);
   return;
 }
 
 
 
 //
-// Function: j1939_readDiagMemoryAndRespond @ 0x0050c42c
+// Function: cm848_readJ1939DiagnosticMemoryAndRespond @ 0x0050c42c
 //
 
-/* Application CLIP diagnostic stack (PGN 61184): memory read + response (twin of boot
-   cm848_diagMemoryReadHandler): response service from 0x53a330 (0x43->0x45 or 0x44 / 0x46->0x47 /
-   0x48->0x49 / 0x4A->0x4B / 0x4C->0x4D) on CAN ID 0xEF0000 to the requester; also called directly
-   by the 0x4A / 0x4C stubs | review-function-readability reviewed 2026-11-11 - Readability Medium
-   Accuracy Confidence High */
+/* Reads memory for a PGN 61184 read request and sends the reply: a length cap of 1764 (0x6e4) / a
+   request length of 8 or the service's header length (cm848_getJ1939MemoryServiceHeaderLength) or
+   that + 10 (the key) / the region from cm848_lookupApplicationMemoryRegionType. The reply service
+   comes from j1939_memory_read_reply_services (a 0x43 read under 256 bytes answers with 0x44). Twin
+   of the boot kernel's cm848_diagMemoryReadHandler (was j1939_readDiagMemoryAndRespond; PR #53
+   round 63) | earlier note: Application CLIP diagnostic stack (PGN 61184): memory read + response
+   (twin of boot cm848_diagMemoryReadHandler): response service from 0x53a330 (0x43->0x45 or 0x44 /
+   0x46->0x47 / 0x48->0x49 / 0x4A->0x4B / 0x4C->0x4D) on CAN ID 0xEF0000 to the requester; also
+   called directly by the 0x4A / 0x4C stubs | review-function-readability reviewed 2026-11-11 -
+   Readability Medium Accuracy Confidence High */
 
-char j1939_readDiagMemoryAndRespond(byte *param_1,uint param_2,uint param_3)
+char cm848_readJ1939DiagnosticMemoryAndRespond(byte *param_1,uint param_2,uint param_3)
 
 {
   ushort uVar1;
@@ -70233,46 +70334,46 @@ char j1939_readDiagMemoryAndRespond(byte *param_1,uint param_2,uint param_3)
   char cVar5;
   j1939_tx_msg_t *msg;
   int iVar6;
-  undefined1 uVar7;
+  byte bVar7;
   byte bVar8;
-  undefined *puVar9;
+  byte *pbVar9;
   
   cVar5 = **(char **)(param_1 + 6);
   if (param_3 < 0x6e5) {
-    uVar3 = j1939_getDiagServiceDataOffset(cVar5);
+    uVar3 = cm848_getJ1939MemoryServiceHeaderLength(cVar5);
     uVar1 = *(ushort *)(param_1 + 4);
     if (((uVar1 == 8) || (uVar1 == (uVar3 & 0xff))) || ((ushort)((uVar3 & 0xff) + 10) == uVar1)) {
       uVar2 = param_3 & 0xffff;
       cVar4 = cm848_lookupApplicationMemoryRegionType(param_2,uVar2);
       if ((cVar4 != '\n') && (cVar4 != '\t')) {
         if ((cVar5 == 'C') && (uVar2 < 0x100)) {
-          uVar7 = 0x44;
+          bVar7 = 0x44;
           *(undefined1 *)(*(int *)(param_1 + 6) + 3) = *(undefined1 *)(*(int *)(param_1 + 6) + 6);
         }
         else {
-          uVar7 = (&DAT_0053a330)[(byte)(cVar5 + 0xbd)];
+          bVar7 = j1939_memory_read_reply_services[(byte)(cVar5 + 0xbd)];
         }
-        cVar5 = j1939_getDiagServiceDataOffset(uVar7);
+        cVar5 = cm848_getJ1939MemoryServiceHeaderLength(bVar7);
         bVar8 = cVar5 - 1;
-        msg = (j1939_tx_msg_t *)j1939_selectResponseBuffer(bVar8 + param_3 + 1 & 0xffff);
+        msg = (j1939_tx_msg_t *)cm848_selectJ1939TransmitBuffer(bVar8 + param_3 + 1 & 0xffff);
         if (msg == (j1939_tx_msg_t *)0x0) {
           cVar4 = '\x04';
         }
         else {
-          puVar9 = msg->data_pointer;
+          pbVar9 = msg->data_pointer;
           (msg->header).can_id = 0xef0000;
           *(byte *)&(msg->header).can_id =
                (*param_1 >> 2 & 7) << 2 | *(byte *)&(msg->header).can_id & 0xe3;
           *(byte *)((int)&(msg->header).can_id + 2) = param_1[3];
           *(byte *)((int)&(msg->header).can_id + 3) = param_1[2];
           iVar6 = *(int *)(param_1 + 6);
-          *puVar9 = uVar7;
-          puVar9 = puVar9 + 1;
-          cm848_memcpyBytes(puVar9,iVar6 + 1,bVar8);
+          *pbVar9 = bVar7;
+          pbVar9 = pbVar9 + 1;
+          cm848_memcpyBytes(pbVar9,iVar6 + 1,bVar8);
           if (0xffffff < param_2) {
             param_2 = param_2 - 0xc02b7e;
           }
-          cm848_memcpyBytes(puVar9 + bVar8,param_2,uVar2);
+          cm848_memcpyBytes(pbVar9 + bVar8,param_2,uVar2);
           sendJ1939Message(msg);
           cVar4 = -1;
         }
@@ -70291,15 +70392,20 @@ char j1939_readDiagMemoryAndRespond(byte *param_1,uint param_2,uint param_3)
 
 
 //
-// Function: j1939_readDiagMemoryByParameterId @ 0x0050c5d0
+// Function: cm848_readJ1939DiagnosticMemoryByParameterId @ 0x0050c5d0
 //
 
-/* Application CLIP diagnostic stack (PGN 61184): services 0x43 / 0x46 / 0x48 (via undefined stubs):
-   resolves the parameter ID then j1939_readDiagMemoryAndRespond | review-function-readability
-   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+/* Reads by parameter ID for the PGN 61184 services 0x43 / 0x46 / 0x48: resolves the ID with
+   cm848_lookupParameterIdAddress (8 = unknown ID) then
+   cm848_readJ1939DiagnosticMemoryAndRespond(request / the ID's address + offset / length). Its
+   parameters are the request / the ID / the offset / the length. Twin of the boot kernel's
+   cm848_diagMemoryReadWithBaseOffset (was j1939_readDiagMemoryByParameterId; PR #53 round 63) |
+   earlier note: Application CLIP diagnostic stack (PGN 61184): services 0x43 / 0x46 / 0x48 (via
+   undefined stubs): resolves the parameter ID then cm848_readJ1939DiagnosticMemoryAndRespond |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
 undefined1
-j1939_readDiagMemoryByParameterId
+cm848_readJ1939DiagnosticMemoryByParameterId
           (undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4)
 
 {
@@ -70309,7 +70415,7 @@ j1939_readDiagMemoryByParameterId
   
   cVar1 = cm848_lookupParameterIdAddress(param_2,&local_10);
   if (cVar1 == '\0') {
-    uVar2 = j1939_readDiagMemoryAndRespond(param_1,local_10 + param_3,param_4);
+    uVar2 = cm848_readJ1939DiagnosticMemoryAndRespond(param_1,local_10 + param_3,param_4);
   }
   else {
     uVar2 = 8;
@@ -70320,14 +70426,18 @@ j1939_readDiagMemoryByParameterId
 
 
 //
-// Function: j1939_diagService67_memoryReadByParameterId @ 0x0050c640
+// Function: cm848_handleJ1939ReadByParameterIdLongLengthService @ 0x0050c640
 //
 
-/* Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService:
-   service 0x43 - read by parameter ID (j1939_readDiagMemoryByParameterId) |
-   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
+/* PGN 61184 service 0x43: request bytes 1-2 the parameter ID and 3-6 the length - read from the
+   ID's address (offset 0) through cm848_readJ1939DiagnosticMemoryByParameterId. Registered by
+   cm848_registerJ1939MemoryReadServices. The reply is 0x45 (0x44 under 256 bytes) (was
+   j1939_diagService67_memoryReadByParameterId; PR #53 round 63) | earlier note: Application CLIP
+   diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x43 -
+   read by parameter ID (cm848_readJ1939DiagnosticMemoryByParameterId) | review-function-readability
+   reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
 
-undefined1 j1939_diagService67_memoryReadByParameterId(int param_1)
+undefined1 cm848_handleJ1939ReadByParameterIdLongLengthService(int param_1)
 
 {
   undefined1 uVar1;
@@ -70336,21 +70446,24 @@ undefined1 j1939_diagService67_memoryReadByParameterId(int param_1)
   
   cm848_memcpyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
   cm848_memcpyBytes(local_c,*(int *)(param_1 + 6) + 3,4);
-  uVar1 = j1939_readDiagMemoryByParameterId(param_1,local_10[0],0,local_c[0]);
+  uVar1 = cm848_readJ1939DiagnosticMemoryByParameterId(param_1,local_10[0],0,local_c[0]);
   return uVar1;
 }
 
 
 
 //
-// Function: j1939_diagService70Handler @ 0x0050c6a8
+// Function: cm848_handleJ1939ReadByParameterIdShortOffsetService @ 0x0050c6a8
 //
 
-/* Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService:
-   service 0x46 | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
-   Confidence Low */
+/* PGN 61184 service 0x46: request bytes 1-2 the parameter ID / 3-4 the offset / 5 the length - read
+   from the ID's address + offset through cm848_readJ1939DiagnosticMemoryByParameterId. Registered
+   by cm848_registerJ1939MemoryReadServices. The reply is 0x47 (was j1939_diagService70Handler; PR
+   #53 round 63) | earlier note: Application CLIP diagnostic service handler registered with
+   cm848_j1939RegisterDiagnosticService: service 0x46 | review-function-readability reviewed
+   2026-11-12 - Readability Low Accuracy Confidence Low */
 
-undefined1 j1939_diagService70Handler(int param_1)
+undefined1 cm848_handleJ1939ReadByParameterIdShortOffsetService(int param_1)
 
 {
   undefined1 uVar1;
@@ -70362,21 +70475,25 @@ undefined1 j1939_diagService70Handler(int param_1)
   local_c = (uint)CONCAT11(*(undefined1 *)(*(int *)(param_1 + 6) + 3),
                            *(undefined1 *)(*(int *)(param_1 + 6) + 4));
   local_8 = (uint)*(byte *)(*(int *)(param_1 + 6) + 5);
-  uVar1 = j1939_readDiagMemoryByParameterId(param_1,local_10[0],local_c,local_8);
+  uVar1 = cm848_readJ1939DiagnosticMemoryByParameterId(param_1,local_10[0],local_c,local_8);
   return uVar1;
 }
 
 
 
 //
-// Function: j1939_diagService72_memoryReadByParameterId @ 0x0050c734
+// Function: cm848_handleJ1939ReadByParameterIdLongOffsetService @ 0x0050c734
 //
 
-/* Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService:
-   service 0x48 - read by parameter ID | review-function-readability reviewed 2026-11-12 -
-   Readability Low Accuracy Confidence Medium */
+/* PGN 61184 service 0x48: request bytes 1-2 the parameter ID / 3-6 the offset / 7-10 the length -
+   read from the ID's address + offset through cm848_readJ1939DiagnosticMemoryByParameterId.
+   Registered by cm848_registerJ1939MemoryReadServices. The reply is 0x49 (was
+   j1939_diagService72_memoryReadByParameterId; PR #53 round 63) | earlier note: Application CLIP
+   diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x48 -
+   read by parameter ID | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
+   Confidence Medium */
 
-undefined1 j1939_diagService72_memoryReadByParameterId(int param_1)
+undefined1 cm848_handleJ1939ReadByParameterIdLongOffsetService(int param_1)
 
 {
   undefined1 uVar1;
@@ -70387,28 +70504,32 @@ undefined1 j1939_diagService72_memoryReadByParameterId(int param_1)
   cm848_memcpyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
   cm848_memcpyBytes(&local_c,*(int *)(param_1 + 6) + 3,4);
   cm848_memcpyBytes(&local_8,*(int *)(param_1 + 6) + 7,4);
-  uVar1 = j1939_readDiagMemoryByParameterId(param_1,local_10[0],local_c,local_8);
+  uVar1 = cm848_readJ1939DiagnosticMemoryByParameterId(param_1,local_10[0],local_c,local_8);
   return uVar1;
 }
 
 
 
 //
-// Function: j1939_diagService74_memoryRead @ 0x0050c7b0
+// Function: cm848_handleJ1939ReadMemoryService @ 0x0050c7b0
 //
 
-/* Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService:
-   service 0x4A - read by address (j1939_readDiagMemoryAndRespond) | review-function-readability
-   reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
+/* PGN 61184 service 0x4a: request bytes 1-4 the address and 5 the length - read through
+   cm848_readJ1939DiagnosticMemoryAndRespond. The reply is 0x4b. Registered by
+   cm848_registerJ1939MemoryReadServices (was j1939_diagService74_memoryRead; PR #53 round 63) |
+   earlier note: Application CLIP diagnostic service handler registered with
+   cm848_j1939RegisterDiagnosticService: service 0x4A - read by address
+   (cm848_readJ1939DiagnosticMemoryAndRespond) | review-function-readability reviewed 2026-11-12 -
+   Readability Low Accuracy Confidence High */
 
-undefined1 j1939_diagService74_memoryRead(int param_1)
+undefined1 cm848_handleJ1939ReadMemoryService(int param_1)
 
 {
   undefined1 uVar1;
   undefined4 local_c [2];
   
   cm848_memcpyBytes(local_c,*(int *)(param_1 + 6) + 1,4);
-  uVar1 = j1939_readDiagMemoryAndRespond
+  uVar1 = cm848_readJ1939DiagnosticMemoryAndRespond
                     (param_1,local_c[0],*(undefined1 *)(*(int *)(param_1 + 6) + 5));
   return uVar1;
 }
@@ -70416,14 +70537,17 @@ undefined1 j1939_diagService74_memoryRead(int param_1)
 
 
 //
-// Function: j1939_diagService76_memoryReadExt @ 0x0050c81c
+// Function: cm848_handleJ1939ReadMemoryLongLengthService @ 0x0050c81c
 //
 
-/* Application CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService:
-   service 0x4C - read by address with a long length | review-function-readability reviewed
-   2026-11-12 - Readability Low Accuracy Confidence High */
+/* PGN 61184 service 0x4c: request bytes 1-4 the address and 5-8 the length - read through
+   cm848_readJ1939DiagnosticMemoryAndRespond. The reply is 0x4d. Registered by
+   cm848_registerJ1939MemoryReadServices (was j1939_diagService76_memoryReadExt; PR #53 round 63) |
+   earlier note: Application CLIP diagnostic service handler registered with
+   cm848_j1939RegisterDiagnosticService: service 0x4C - read by address with a long length |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
 
-undefined1 j1939_diagService76_memoryReadExt(int param_1)
+undefined1 cm848_handleJ1939ReadMemoryLongLengthService(int param_1)
 
 {
   undefined1 uVar1;
@@ -70432,7 +70556,7 @@ undefined1 j1939_diagService76_memoryReadExt(int param_1)
   
   cm848_memcpyBytes(&local_10,*(int *)(param_1 + 6) + 1,4);
   cm848_memcpyBytes(local_c,*(int *)(param_1 + 6) + 5,4);
-  uVar1 = j1939_readDiagMemoryAndRespond(param_1,local_10,local_c[0]);
+  uVar1 = cm848_readJ1939DiagnosticMemoryAndRespond(param_1,local_10,local_c[0]);
   return uVar1;
 }
 
@@ -70443,17 +70567,26 @@ undefined1 j1939_diagService76_memoryReadExt(int param_1)
 //
 
 /* From cm848_j1939_system_init: registers the PGN 61184 memory read services 0x43 / 0x4a / 0x4c /
-   0x46 / 0x48 (the j1939_diagService67-76 read handlers) in j1939_diagnostic_service_table (was
+   0x46 / 0x48 (the cm848_handleJ1939Read*Service handlers) in j1939_diagnostic_service_table (was
    j1939_diag_request_batch_43to48; PR #53 round 62) */
 
 void cm848_registerJ1939MemoryReadServices(void)
 
 {
-  cm848_j1939RegisterDiagnosticService(0x43,j1939_diagService67_memoryReadByParameterId);
-  cm848_j1939RegisterDiagnosticService(0x4a,j1939_diagService74_memoryRead);
-  cm848_j1939RegisterDiagnosticService(0x4c,j1939_diagService76_memoryReadExt);
-  cm848_j1939RegisterDiagnosticService(0x46,j1939_diagService70Handler);
-  cm848_j1939RegisterDiagnosticService(0x48,j1939_diagService72_memoryReadByParameterId);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_LENGTH,
+             cm848_handleJ1939ReadByParameterIdLongLengthService);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_READ_MEMORY,cm848_handleJ1939ReadMemoryService);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH,
+             cm848_handleJ1939ReadMemoryLongLengthService);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_SHORT_OFFSET,
+             cm848_handleJ1939ReadByParameterIdShortOffsetService);
+  cm848_j1939RegisterDiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_OFFSET,
+             cm848_handleJ1939ReadByParameterIdLongOffsetService);
   return;
 }
 
@@ -71236,10 +71369,17 @@ void cm848_serviceJ1939TransportSessions(void)
 
 
 //
-// Function: j1939_selectResponseBuffer @ 0x0050d688
+// Function: cm848_selectJ1939TransmitBuffer @ 0x0050d688
 //
 
-undefined * j1939_selectResponseBuffer(int param_1)
+/* Picks a transmit record (j1939_tx_msg_t) for a message of the given length: up to 8 bytes the
+   single-frame record at 0x3fcbc4 (data at 0x3fcbd3 / status byte at 0x3fcbd2) - else the transport
+   record at 0x3fc4ad (data at 0x3fc4bc / status byte at 0x3fc4bb) when that status byte's high
+   nibble is 0 - else 0. It sets the record's data length / data pointer / status pointer. Used by
+   the PGN 61184 replies (cm848_sendJ1939ResponseFrame / cm848_readJ1939DiagnosticMemoryAndRespond)
+   and cm848_sendDataCollectorBuffer (was j1939_selectResponseBuffer; PR #53 round 63) */
+
+undefined * cm848_selectJ1939TransmitBuffer(int param_1)
 
 {
   undefined *puVar1;

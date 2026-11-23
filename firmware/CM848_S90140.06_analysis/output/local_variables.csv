@@ -147,3 +147,7 @@ function_address,function_name,old_name,new_name,type,comment
 0x0050be6c,cm848_storeJ1939ControlSessionInHistoryTable,bVar5,copied_word_count,byte,12 words per record
 0x0051cf74,cm848_sciLookupEepromSettingAddress,pfVar1,setting_pointer,byte *,The EEPROM setting address it returns (base + index). Typed byte * so the struct type of feature_selection_bits_cal (one of the settings) does not spread to every setting (PR #53 round 40)
 0x00021314,cm848_calculateEngineRetarderTorque,in_r6,selected_stage_torque_values,word *,The engine_retarder_torque_stage_N_values table for engine_retarder_cylinders_on_count N (1 to 6); a count above 6 selects none and the lookup then reads whatever r6 held (PR #53 round 42)
+0x00022128,cm848_j1939DiagnosticServiceHandler,JVar1,service,J1939_DIAGNOSTIC_SERVICE,The request's service byte (PR #53 round 63)
+0x00022128,cm848_j1939DiagnosticServiceHandler,bVar2,entry_index,byte,Index into j1939_diagnostic_service_table (PR #53 round 63)
+0x00022128,cm848_j1939DiagnosticServiceHandler,pjVar3,entry,j1939_diagnostic_service_entry_t *,The j1939_diagnostic_service_table entry being compared (PR #53 round 63)
+0x00022128,cm848_j1939DiagnosticServiceHandler,uVar4,result_code,uint,The validator's or the handler's result: 0xff = no response - else cm848_sendJ1939ResponseFrame sends it (PR #53 round 63)

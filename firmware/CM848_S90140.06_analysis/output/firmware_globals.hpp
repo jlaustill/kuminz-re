@@ -5744,6 +5744,7 @@ extern dword tachometer_signal_period;  // 0x0040c262
 extern void * data_collector_start_address;  // 0x0040c278
 extern void * data_collector_end_address;  // 0x0040c280
 extern dword flash2_command_register;  // 0x00500000
+extern byte j1939_memory_read_reply_services[10];  // 0x0053a330
 extern sci_command_dispatch_entry_t sci_command_dispatch_table[19];  // 0x0053a9a0
 extern byte output_channel_driver_table_enable;  // 0x0053ac46
 extern void * output_channel_driver_table_read_feedback;  // 0x0053ac4a

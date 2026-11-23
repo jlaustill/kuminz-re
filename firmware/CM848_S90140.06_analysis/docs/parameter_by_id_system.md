@@ -2,6 +2,29 @@
 
 This document describes the parameter-by-ID lookup system in the CM848 firmware, reverse engineered from ROM analysis.
 
+## Corrections (2026-11-23, PR #53 round 63)
+
+The rest of this page predates these findings. Where it disagrees, these hold:
+
+- **Two kernels and two tables.** The 20-entry table at ROM 0x3CDC (`boot_parameter_id_table`) and the handlers at
+  0x19E8 / 0x1D5C belong to the boot kernel, which dispatches through `cm848_dispatchDiagnosticService`.
+  - The application dispatcher `cm848_j1939DiagnosticServiceHandler` (0x22128) never reaches them.
+  - Its service 0x41 is `cm848_handleJ1939GetAddressByParameterIdService` (0x50C318). Its ID lookup is
+    `cm848_lookupParameterIdAddress` (0x539768) over the 1886-record table at flash2 0x53BE38, described in
+    `firmware/CLAUDE.md`. So CM848 has far more than 20 parameter IDs.
+- **Service 0x43's bytes 3-6 are the length, not an offset**, in both kernels.
+  - The read starts at the resolved address.
+  - A read under 256 bytes answers with 0x44 and copies byte 6 (the length's low byte) into the 1-byte length slot.
+  - The services with an offset are 0x46 (2-byte offset, 1-byte length) and 0x48 (4-byte offset, 4-byte length).
+- **Service 0x46 is registered** by the application (`cm848_registerJ1939MemoryReadServices`). The boot kernel does
+  not register it.
+- **0x10 and 0x15 are not stubs of one kind.** 0x0F / 0x10 are accepted no-ops (they return 0). 0x15 commits the
+  EEPROM mirror (`cm848_commitEepromMirrorToEeprom`).
+- **The service IDs** are the `J1939_DIAGNOSTIC_SERVICE` enum (was `EF00_SERVICE_ID`) in `output/enums.csv`. Its
+  header lists the reply pairs and the boot kernel's own table.
+- **Open:** clip-core's `ECUReader::readParameterService43` sends bytes 3-6 as an offset. On CM848 that asks for a
+  length, so it needs a bench check (task 046 leads).
+
 ## Overview
 
 The CM848 provides a simple parameter lookup mechanism via EF00 services 0x41 and 0x43. Unlike CM550 which has 723 parameter IDs, CM848 has only **20 parameter entries** - this is by design, not an extraction bug.
@@ -128,10 +151,11 @@ Byte 3-6: Resolved address (big-endian)
 ```
 Byte 0: 0x43 (service ID)
 Byte 1-2: Parameter ID (big-endian)
-Byte 3-6: Offset (big-endian)
+Byte 3-6: Offset (big-endian)   <- wrong: the length (see Corrections)
 ```
 
-**Response Format:** Raw data bytes from (resolved_address + offset)
+**Response Format:** Raw data bytes from (resolved_address + offset) <- the read starts at the resolved address;
+the reply is 0x45 (0x44 under 256 bytes)
 
 ## Dispatch Tables
 
@@ -156,7 +180,7 @@ Byte 3-6: Offset (big-endian)
 | Entry size | 8 bytes | 6 bytes |
 | Dual-bank support | Yes | No |
 | RAM params | Many | None |
-| Service 0x46 | Implemented | Not registered |
+| Service 0x46 | Implemented | Registered by the application (not by the boot kernel) |
 
 ## Why CM848 Has Only 20 Parameters
 

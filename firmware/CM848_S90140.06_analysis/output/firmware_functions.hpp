@@ -490,7 +490,7 @@ void initializeHighSpeedGovernorGainSet(void);  // @ 0x0001f98c
 void selectHighSpeedGovernorGainSet(void);  // @ 0x0001fa20
 void selectEngineSpeedLimit(void);  // @ 0x0001fd94
 void initializeEngineSpeedLimitDefaults(void);  // @ 0x00020410
-undefined1 cm848_getLimitCategoryCode(int param_1);  // @ 0x000204a8
+undefined1 cm848_getJ1939DiagnosticResponseEchoLength(int param_1);  // @ 0x000204a8
 void cm848_calculateJ1939ReferenceEngineFueling(void);  // @ 0x00020500
 uint cm848_calculateEffectiveFuelLimit(void);  // @ 0x00020554
 void cm848_calculateDriverDemandPercentTorque(void);  // @ 0x00020860
@@ -505,7 +505,7 @@ void cm848_updateJ1939EngineConfigurationTorqueCurve(void);  // @ 0x00020d10
 void cm848_initializeJ1939ReferenceEngineFuelingAndTorque(void);  // @ 0x000212dc
 void cm848_calculateEngineRetarderTorque(void);  // @ 0x00021314
 void cm848_initializeEngineRetarderTorqueLookupCache(void);  // @ 0x0002156c
-DIAG_RESPONSE cm848_advanceDiagnosticActionState(void);  // @ 0x00021584
+DIAG_RESPONSE cm848_requestClearInactiveFaults(void);  // @ 0x00021584
 DIAG_RESPONSE cm848_exitDevelopmentMode(void);  // @ 0x00021624
 DIAG_RESPONSE cm848_enterDevelopmentMode(void);  // @ 0x00021668
 DIAG_RESPONSE cm848_forceExitDevelopmentMode(void);  // @ 0x00021694
@@ -522,7 +522,7 @@ void cm848_updateProtectionThresholdsIfLow(void);  // @ 0x00021c3c
 void cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings(void);  // @ 0x00021cd4
 void j1939_receivePgn56576Handler(int param_1);  // @ 0x00021fc4
 void cm848_initJ1939DiagnosticCallback(void);  // @ 0x000220b4
-bool cm848_j1939RegisterDiagnosticService(byte service_id,void *handler_ptr);  // @ 0x000220e4
+bool cm848_j1939RegisterDiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *handler_ptr);  // @ 0x000220e4
 void cm848_j1939DiagnosticServiceHandler(j1939_rx_msg_t *rx_msg);  // @ 0x00022128
 void cm848_initJ1939DiagnosticServiceHandler(void);  // @ 0x000221f0
 void cm848_tickJ1939Dm13Timers(void);  // @ 0x00022220
@@ -530,7 +530,7 @@ void cm848_onJ1939Dm13SeenOnBus(void);  // @ 0x000222f8
 void cm848_initJ1939Dm13Handler(void);  // @ 0x00022318
 void cm848_clearJ1939Dm13StoppedNetworkBits(int param_1);  // @ 0x0002236c
 void cm848_processJ1939Dm13StopStartBroadcast(int param_1);  // @ 0x000223f4
-void cm848_j1939HandlePgn65228Dm3ClearDiag(j1939_rx_msg_t *param_1);  // @ 0x00022674
+void cm848_j1939HandlePgn65228Dm3ClearInactiveFaults(j1939_rx_msg_t *param_1);  // @ 0x00022674
 void cm848_initPgn65228Dm3Handler(void);  // @ 0x00022770
 void cm848_j1939HandlePgn58112Dm7(j1939_rx_msg_t *request_msg);  // @ 0x000227a0
 void cm848_registerJ1939Dm7Handler(void);  // @ 0x00022840
@@ -1439,8 +1439,8 @@ void cm848_initFlowControlStateVariables(void);  // @ 0x00509b5c
 void cm848_copyROMCalibrationToRAM(void);  // @ 0x00509b74
 undefined4 cm848_j1939DiagnosticServiceAcknowledgeNoOperation(void);  // @ 0x00509be0
 undefined4 cm848_updateJ1939BroadcastEnableMask(int param_1,int param_2);  // @ 0x00509be8
-undefined1 j1939_diagService4DisableBroadcast(undefined4 param_1);  // @ 0x00509ce4
-undefined1 j1939_diagService5EnableBroadcast(undefined4 param_1);  // @ 0x00509d0c
+undefined1 cm848_handleJ1939DisableBroadcastService(undefined4 param_1);  // @ 0x00509ce4
+undefined1 cm848_handleJ1939EnableBroadcastService(undefined4 param_1);  // @ 0x00509d0c
 void cm848_registerJ1939BroadcastAndNoOperationServices(void);  // @ 0x00509d34
 void cm848_clearJ1939InputDataErrorBit(uint param_1);  // @ 0x00509d98
 void cm848_clearJ1939PedalInputTimeoutBit(uint param_1);  // @ 0x00509dd8
@@ -1463,19 +1463,19 @@ void cm848_processJ1939SwitchAndRequestInputs(void);  // @ 0x0050aba8
 void cm848_processJ1939AcceleratorInputs(void);  // @ 0x0050ad1c
 void cm848_initJ1939InputProcessing(void);  // @ 0x0050ae5c
 void cm848_endRetarderShiftAssistAboveFuelDemandLimit(void);  // @ 0x0050aec0
-char j1939_writeDiagMemory(int param_1,byte *param_2,uint param_3);  // @ 0x0050af58
-undefined1 j1939_writeDiagMemoryByParameterId (undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4);  // @ 0x0050b1b8
-undefined1 j1939_diagService68_memoryWriteByParameterId(int param_1);  // @ 0x0050b228
-undefined1 j1939_diagService69_memoryWriteByParameterIdExt(int param_1);  // @ 0x0050b298
-undefined1 j1939_diagService71Handler(int param_1);  // @ 0x0050b300
-undefined1 j1939_diagService73_memoryWriteByParameterId(int param_1);  // @ 0x0050b38c
-undefined1 j1939_diagService75_memoryWrite(int param_1);  // @ 0x0050b408
-undefined1 j1939_diagService77_memoryWriteExt(int param_1);  // @ 0x0050b474
+char cm848_writeJ1939DiagnosticMemory(int param_1,byte *param_2,uint param_3);  // @ 0x0050af58
+undefined1 cm848_writeJ1939DiagnosticMemoryByParameterId (undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4);  // @ 0x0050b1b8
+undefined1 cm848_handleJ1939WriteByParameterIdService(int param_1);  // @ 0x0050b228
+undefined1 cm848_handleJ1939WriteByParameterIdLongLengthService(int param_1);  // @ 0x0050b298
+undefined1 cm848_handleJ1939WriteByParameterIdShortOffsetService(int param_1);  // @ 0x0050b300
+undefined1 cm848_handleJ1939WriteByParameterIdLongOffsetService(int param_1);  // @ 0x0050b38c
+undefined1 cm848_handleJ1939WriteMemoryService(int param_1);  // @ 0x0050b408
+undefined1 cm848_handleJ1939WriteMemoryLongLengthService(int param_1);  // @ 0x0050b474
 void cm848_registerJ1939MemoryWriteServices(void);  // @ 0x0050b4d8
 undefined4 j1939_reverseByteOrder32(undefined4 *param_1);  // @ 0x0050b554
 undefined2 j1939_reverseByteOrder16(undefined2 *param_1);  // @ 0x0050b58c
 uint j1939_buildLampStatusByte(void);  // @ 0x0050b5b4
-byte j1939_getDiagServiceDataOffset(int param_1);  // @ 0x0050b610
+byte cm848_getJ1939MemoryServiceHeaderLength(int param_1);  // @ 0x0050b610
 undefined4 cm848_validateJ1939DiagnosticRequest(j1939_rx_msg_t *rx_msg);  // @ 0x0050b634
 void j1939_receivePgn57344Handler(int param_1);  // @ 0x0050b734
 void j1939_receivePgn61441Handler(int param_1);  // @ 0x0050b77c
@@ -1488,15 +1488,15 @@ void cm848_registerJ1939InputMessageHandlers(void);  // @ 0x0050bdcc
 void cm848_storeJ1939ControlSessionInHistoryTable(int session_kind);  // @ 0x0050be6c
 void cm848_startJ1939ControlSession(int session_kind);  // @ 0x0050beec
 void cm848_trackJ1939ControlSessions(void);  // @ 0x0050bff4
-undefined4 j1939_diagService65_getAddressByParameterId(byte *param_1);  // @ 0x0050c318
+undefined4 cm848_handleJ1939GetAddressByParameterIdService(byte *param_1);  // @ 0x0050c318
 void cm848_registerJ1939GetAddressByParameterIdService(void);  // @ 0x0050c400
-char j1939_readDiagMemoryAndRespond(byte *param_1,uint param_2,uint param_3);  // @ 0x0050c42c
-undefined1 j1939_readDiagMemoryByParameterId (undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4);  // @ 0x0050c5d0
-undefined1 j1939_diagService67_memoryReadByParameterId(int param_1);  // @ 0x0050c640
-undefined1 j1939_diagService70Handler(int param_1);  // @ 0x0050c6a8
-undefined1 j1939_diagService72_memoryReadByParameterId(int param_1);  // @ 0x0050c734
-undefined1 j1939_diagService74_memoryRead(int param_1);  // @ 0x0050c7b0
-undefined1 j1939_diagService76_memoryReadExt(int param_1);  // @ 0x0050c81c
+char cm848_readJ1939DiagnosticMemoryAndRespond(byte *param_1,uint param_2,uint param_3);  // @ 0x0050c42c
+undefined1 cm848_readJ1939DiagnosticMemoryByParameterId (undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4);  // @ 0x0050c5d0
+undefined1 cm848_handleJ1939ReadByParameterIdLongLengthService(int param_1);  // @ 0x0050c640
+undefined1 cm848_handleJ1939ReadByParameterIdShortOffsetService(int param_1);  // @ 0x0050c6a8
+undefined1 cm848_handleJ1939ReadByParameterIdLongOffsetService(int param_1);  // @ 0x0050c734
+undefined1 cm848_handleJ1939ReadMemoryService(int param_1);  // @ 0x0050c7b0
+undefined1 cm848_handleJ1939ReadMemoryLongLengthService(int param_1);  // @ 0x0050c81c
 void cm848_registerJ1939MemoryReadServices(void);  // @ 0x0050c880
 void initiateJ1939TransportProtocol(j1939_tx_msg_t *msg);  // @ 0x0050c8ec
 void j1939_transport_handleClearToSend(int param_1);  // @ 0x0050cc18
@@ -1512,7 +1512,7 @@ void cm848_sendJ1939BroadcastDataPacket(int param_1);  // @ 0x0050d2c0
 void cm848_sendJ1939ConnectionModeDataPackets(void);  // @ 0x0050d444
 void j1939_transport_timeout_decrement(void);  // @ 0x0050d5d8
 void cm848_serviceJ1939TransportSessions(void);  // @ 0x0050d60c
-undefined * j1939_selectResponseBuffer(int param_1);  // @ 0x0050d688
+undefined * cm848_selectJ1939TransmitBuffer(int param_1);  // @ 0x0050d688
 void cm848_initializeJ1939Transport(void);  // @ 0x0050d700
 undefined1 cm848_lookupApplicationMemoryRegionType(uint param_1,int param_2);  // @ 0x0050d784
 void cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit(void);  // @ 0x0050d864

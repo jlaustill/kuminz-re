@@ -583,31 +583,33 @@ typedef enum {
 } EEPROM_MEMORY_BLOCKS;
 
 typedef enum {
-    SERVICE_QUERY_TERMINATE = 0x01,  /* QueryTerminate - CLIP compatible */
-    SYSTEM_SERVICE_04 = 0x04,  /* System service 04 */
-    SYSTEM_SERVICE_05 = 0x05,  /* System service 05 */
-    SYSTEM_SERVICE_06 = 0x06,  /* High RPM shutdown activation */
-    SYSTEM_SERVICE_07 = 0x07,  /* System service 07 */
-    SYSTEM_SERVICE_0A = 0x0A,  /* System service 0A */
-    SYSTEM_SERVICE_0B = 0x0B,  /* System service 0B */
-    GET_PARAMETERS_BY_ID_ALT = 0x0F,  /* GetParametersByID alternate */
-    SERVICE_GET_PARAMETERS_BY_ID = 0x10,  /* GetParametersByID - CLIP compatible */
-    GET_ADDRESS_BY_PARAM_ID = 0x15,  /* GetAddressByParameterID - CLIP compatible */
-    SYSTEM_SERVICE_16 = 0x16,  /* System service 16 */
-    SYSTEM_SERVICE_18 = 0x18,  /* System service 18 */
-    DIAG_ADDR_RESOLVER = 0x41,  /* Address resolver via diagnosticMemoryAddressResolver */
-    MEM_READ_2B_PARAM_4B_OFFSET = 0x43,  /* Memory read: 2-byte param + 4-byte offset */
-    SERVICE_44 = 0x44,  /* Service 44 */
-    SERVICE_45 = 0x45,  /* Service 45 */
-    MEM_READ_2B_PARAM_ONLY = 0x46,  /* Memory read: 2-byte param only */
-    SERVICE_47 = 0x47,  /* Service 47 */
-    SERVICE_48 = 0x48,  /* Service 48 */
-    J1939_DATA_COPY = 0x49,  /* J1939 TP memory read/copy */
-    MEM_READ_4B_ADDR_1B_LEN = 0x4A,  /* Memory read: 4-byte addr + 1-byte len */
-    SERVICE_4B = 0x4B,  /* Service 4B */
-    MEM_READ_4B_ADDR_4B_LEN = 0x4C,  /* Memory read: 4-byte addr + 4-byte len */
-    SERVICE_4D = 0x4D  /* Service 4D */
-} EF00_SERVICE_ID;
+    J1939_DIAGNOSTIC_SERVICE_CLEAR_INACTIVE_FAULTS = 0x01,  /* cm848_requestClearInactiveFaults: sets the CLEAR_INACTIVE bit of diagnostic_clear_request_state as DM3 does (was SERVICE_QUERY_TERMINATE) */
+    J1939_DIAGNOSTIC_SERVICE_DISABLE_BROADCAST = 0x04,  /* cm848_handleJ1939DisableBroadcastService: cm848_updateJ1939BroadcastEnableMask with enable 0 (was SYSTEM_SERVICE_04) */
+    J1939_DIAGNOSTIC_SERVICE_ENABLE_BROADCAST = 0x05,  /* cm848_handleJ1939EnableBroadcastService: cm848_updateJ1939BroadcastEnableMask with enable 1 (was SYSTEM_SERVICE_05) */
+    J1939_DIAGNOSTIC_SERVICE_COMMAND_ENGINE_SHUTDOWN = 0x06,  /* cm848_commandEngineShutdown: sets engine_shutdown_command_flag (was SYSTEM_SERVICE_06) */
+    J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE = 0x07,  /* cm848_exitDevelopmentMode (was SYSTEM_SERVICE_07) */
+    J1939_DIAGNOSTIC_SERVICE_ENTER_DEVELOPMENT_MODE = 0x0a,  /* cm848_enterDevelopmentMode (was SYSTEM_SERVICE_0A) */
+    J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM = 0x0b,  /* cm848_handleJ1939RestartService: cm848_restartThroughBootRom (was SYSTEM_SERVICE_0B) */
+    J1939_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE = 0x0c,  /* Sent by cm848_sendJ1939ResponseFrame for result 0 - then the request's first bytes (cm848_getJ1939DiagnosticResponseEchoLength); cm848_j1939DiagnosticServiceHandler ignores a received one */
+    J1939_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE = 0x0d,  /* Sent by cm848_sendJ1939ResponseFrame for any other result - then the result code and the request's first bytes; cm848_j1939DiagnosticServiceHandler ignores a received one */
+    J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_15 = 0x0f,  /* cm848_j1939DiagnosticServiceAcknowledgeNoOperation: accepted and does nothing (was GET_PARAMETERS_BY_ID_ALT) */
+    J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_16 = 0x10,  /* cm848_j1939DiagnosticServiceAcknowledgeNoOperation: accepted and does nothing (was SERVICE_GET_PARAMETERS_BY_ID) */
+    J1939_DIAGNOSTIC_SERVICE_COMMIT_EEPROM_MIRROR = 0x15,  /* cm848_commitEepromMirrorToEeprom (was GET_ADDRESS_BY_PARAM_ID) */
+    J1939_DIAGNOSTIC_SERVICE_FORCE_EXIT_DEVELOPMENT_MODE = 0x16,  /* cm848_forceExitDevelopmentMode (was SYSTEM_SERVICE_16) */
+    J1939_DIAGNOSTIC_SERVICE_INHIBIT_KEY_OFF_SHUTDOWN = 0x18,  /* cm848_inhibitKeyOffShutdown (was SYSTEM_SERVICE_18) */
+    J1939_DIAGNOSTIC_SERVICE_GET_ADDRESS_BY_PARAMETER_ID = 0x41,  /* cm848_handleJ1939GetAddressByParameterIdService: the ID (2 bytes); answered with 0x42 - the ID and its 4-byte address (was DIAG_ADDR_RESOLVER) */
+    J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_LENGTH = 0x43,  /* cm848_handleJ1939ReadByParameterIdLongLengthService: the ID (2 bytes) and a length (4) read from the ID's address (was MEM_READ_2B_PARAM_4B_OFFSET) */
+    J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID = 0x44,  /* cm848_handleJ1939WriteByParameterIdService: the ID (2 bytes) and a length (1) then the data (was SERVICE_44) */
+    J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_LENGTH = 0x45,  /* cm848_handleJ1939WriteByParameterIdLongLengthService: the ID (2 bytes) and a length (4) then the data (was SERVICE_45) */
+    J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_SHORT_OFFSET = 0x46,  /* cm848_handleJ1939ReadByParameterIdShortOffsetService: the ID (2 bytes) / an offset (2) / a length (1) (was MEM_READ_2B_PARAM_ONLY) */
+    J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_SHORT_OFFSET = 0x47,  /* cm848_handleJ1939WriteByParameterIdShortOffsetService: the ID (2 bytes) / an offset (2) / a length (1) then the data (was SERVICE_47) */
+    J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_OFFSET = 0x48,  /* cm848_handleJ1939ReadByParameterIdLongOffsetService: the ID (2 bytes) / an offset (4) / a length (4) (was SERVICE_48) */
+    J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_OFFSET = 0x49,  /* cm848_handleJ1939WriteByParameterIdLongOffsetService: the ID (2 bytes) / an offset (4) / a length (4) then the data (was J1939_DATA_COPY) */
+    J1939_DIAGNOSTIC_SERVICE_READ_MEMORY = 0x4a,  /* cm848_handleJ1939ReadMemoryService: an address (4 bytes) and a length (1) (was MEM_READ_4B_ADDR_1B_LEN) */
+    J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY = 0x4b,  /* cm848_handleJ1939WriteMemoryService: an address (4 bytes) and a length (1) then the data (was SERVICE_4B) */
+    J1939_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH = 0x4c,  /* cm848_handleJ1939ReadMemoryLongLengthService: an address (4 bytes) and a length (4) (was MEM_READ_4B_ADDR_4B_LEN) */
+    J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH = 0x4d  /* cm848_handleJ1939WriteMemoryLongLengthService: an address (4 bytes) and a length (4) then the data (was SERVICE_4D) */
+} J1939_DIAGNOSTIC_SERVICE;
 
 typedef enum {
     BASIC_DELAY = 0,  /* Basic timer + delay with watchdog */
@@ -2572,7 +2574,7 @@ struct parameter_id_entry_t {
 };
 
 struct j1939_diagnostic_service_entry_t {
-    uint8_t service_id;  /* The PGN 61184 diagnostic service byte (the request's first data byte; its values are the EF00_SERVICE_ID enum) */
+    J1939_DIAGNOSTIC_SERVICE service_id;  /* The PGN 61184 diagnostic service byte (the request's first data byte; typed J1939_DIAGNOSTIC_SERVICE - was EF00_SERVICE_ID in this comment; PR #53 round 63) */
     uint8_t pad;  /* Never written: the registrar stores only the service byte and the handler */
     void * handler;  /* The service handler: called with the received j1939_rx_msg_t once cm848_validateJ1939DiagnosticRequest accepts the request */
 };
@@ -3299,7 +3301,7 @@ struct algorithm_enable_flags_12_t {
     uint16_t accelerator_interlock_enable : 1;  /* bit 7: e2m Accelerator_Interlock_Enable (ANEN). cm848_claimAcceleratorInterlockThrottleOverride (lhz at 0x403e8: with switch 26 set it forces the fuel demand override to its minimum) and cm848_j1939BuildEngineControlByte (lhz 24(r5) at 0x25788). Code agrees. Clear in this calibration (0x2e06). */
     uint16_t vehicle_speed_sensor_signal_loss_enable : 1;  /* bit 8: e2m VSS_Moving_Enable (VSMVEN): the sensor drops to 0 while the filtered speed is still above 10 mph. Named after the detector it gates. cm848_detectVehicleSpeedSensorSignalLoss (lhz at 0x526950, P0500 path 1) and cm848_clearHealedVehicleSpeedSensorFault (lhz at 0x526be8). Code agrees. Clear in this calibration (0x2e06). */
     uint16_t vehicle_speed_sensor_zero_under_load_enable : 1;  /* bit 9: e2m VSS_Stopped_Enable (VSSTEN): the sensor reads stopped (0) while the engine is under load. Named after the detector it gates. cm848_detectVehicleSpeedSensorZeroUnderLoad (lhz at 0x5269fc, P0500 path 2) and cm848_clearHealedVehicleSpeedSensorFault (lhz at 0x526bd8). Code agrees: the sensor reads 0 while the engine is under load. Set in this calibration (0x2e06). */
-    uint16_t obd_fault_handler_enable : 1;  /* bit 10: e2m OBD_Fault_Handler_Enable (DGOBFUHN). 11 fault framework functions test it (cm848_registerFaultInActiveList at 0x1cf1c, cm848_clearDiagnosticState, cm848_processFaultScanGroup, diagnosticMainStateProcessor, cm848_updateFaultEntryCounters, cm848_resetFaultStatus, hpcr_setFaultActiveStatus, cm848_advanceDiagnosticActionState, cm848_j1939HandlePgn65228Dm3ClearDiag, cm848_completeBoostPressureMonitorReport, cm848_monitorEgrOrificeTemperatureSensorRationality); the names agree, the bodies were not read. Set in this calibration (0x2e06). */
+    uint16_t obd_fault_handler_enable : 1;  /* bit 10: e2m OBD_Fault_Handler_Enable (DGOBFUHN). 11 fault framework functions test it (cm848_registerFaultInActiveList at 0x1cf1c, cm848_clearDiagnosticState, cm848_processFaultScanGroup, diagnosticMainStateProcessor, cm848_updateFaultEntryCounters, cm848_resetFaultStatus, hpcr_setFaultActiveStatus, cm848_requestClearInactiveFaults, cm848_j1939HandlePgn65228Dm3ClearInactiveFaults, cm848_completeBoostPressureMonitorReport, cm848_monitorEgrOrificeTemperatureSensorRationality); the names agree, the bodies were not read. Set in this calibration (0x2e06). */
     uint16_t power_take_off_brake_override_enable : 1;  /* bit 11: e2m PTO_Brake_Override_Enable (PTBRODEN). cm848_runPowerTakeOffGovernorStateMachine (lhz 24(r31) at 0x2b214) pairs it with power_take_off_governor_switch_state_bits 0x10000, which that function sets from switch 11 (brake), to leave power take off control. Code agrees. Set in this calibration (0x2e06). */
     uint16_t power_take_off_clutch_override_enable : 1;  /* bit 12: e2m PTO_Clutch_Override_Enable (PTCHODEN). The same function pairs it with power_take_off_governor_switch_state_bits 0x4000, set from switch 15 (clutch). Code agrees. Clear in this calibration (0x2e06). */
     uint16_t oil_change_monitor_enable : 1;  /* bit 13: e2m OCM_Enable (OCEA). cm848_updateOilChangeMonitor (lhz at 0x51a89c), together with feature_selection_bits_cal mask 4. Code agrees. Set in this calibration (0x2e06). */
