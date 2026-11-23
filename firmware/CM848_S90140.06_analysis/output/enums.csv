@@ -519,7 +519,7 @@ J1939_DIAGNOSTIC_SERVICE,0x07,J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE,cm8
 J1939_DIAGNOSTIC_SERVICE,0x0a,J1939_DIAGNOSTIC_SERVICE_ENTER_DEVELOPMENT_MODE,cm848_enterDevelopmentMode (was SYSTEM_SERVICE_0A),1
 J1939_DIAGNOSTIC_SERVICE,0x0b,J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM,cm848_handleJ1939RestartService: cm848_restartThroughBootRom (was SYSTEM_SERVICE_0B),1
 J1939_DIAGNOSTIC_SERVICE,0x0c,J1939_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE,Sent by cm848_sendJ1939ResponseFrame for result 0 - then the request's first bytes (cm848_getJ1939DiagnosticResponseEchoLength); cm848_j1939DiagnosticServiceHandler ignores a received one,1
-J1939_DIAGNOSTIC_SERVICE,0x0d,J1939_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE,Sent by cm848_sendJ1939ResponseFrame for any other result - then the result code and the request's first bytes; cm848_j1939DiagnosticServiceHandler ignores a received one,1
+J1939_DIAGNOSTIC_SERVICE,0x0d,J1939_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE,Sent by cm848_sendJ1939ResponseFrame for a nonzero result other than 0xfe (that sends 0x0e) - then the result code and the request's first bytes; cm848_j1939DiagnosticServiceHandler ignores a received one,1
 J1939_DIAGNOSTIC_SERVICE,0x0f,J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_15,cm848_j1939DiagnosticServiceAcknowledgeNoOperation: accepted and does nothing (was GET_PARAMETERS_BY_ID_ALT),1
 J1939_DIAGNOSTIC_SERVICE,0x10,J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_16,cm848_j1939DiagnosticServiceAcknowledgeNoOperation: accepted and does nothing (was SERVICE_GET_PARAMETERS_BY_ID),1
 J1939_DIAGNOSTIC_SERVICE,0x15,J1939_DIAGNOSTIC_SERVICE_COMMIT_EEPROM_MIRROR,cm848_commitEepromMirrorToEeprom (was GET_ADDRESS_BY_PARAM_ID),1

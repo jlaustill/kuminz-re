@@ -591,7 +591,7 @@ typedef enum {
     J1939_DIAGNOSTIC_SERVICE_ENTER_DEVELOPMENT_MODE = 0x0a,  /* cm848_enterDevelopmentMode (was SYSTEM_SERVICE_0A) */
     J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM = 0x0b,  /* cm848_handleJ1939RestartService: cm848_restartThroughBootRom (was SYSTEM_SERVICE_0B) */
     J1939_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE = 0x0c,  /* Sent by cm848_sendJ1939ResponseFrame for result 0 - then the request's first bytes (cm848_getJ1939DiagnosticResponseEchoLength); cm848_j1939DiagnosticServiceHandler ignores a received one */
-    J1939_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE = 0x0d,  /* Sent by cm848_sendJ1939ResponseFrame for any other result - then the result code and the request's first bytes; cm848_j1939DiagnosticServiceHandler ignores a received one */
+    J1939_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE = 0x0d,  /* Sent by cm848_sendJ1939ResponseFrame for a nonzero result other than 0xfe (that sends 0x0e) - then the result code and the request's first bytes; cm848_j1939DiagnosticServiceHandler ignores a received one */
     J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_15 = 0x0f,  /* cm848_j1939DiagnosticServiceAcknowledgeNoOperation: accepted and does nothing (was GET_PARAMETERS_BY_ID_ALT) */
     J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_16 = 0x10,  /* cm848_j1939DiagnosticServiceAcknowledgeNoOperation: accepted and does nothing (was SERVICE_GET_PARAMETERS_BY_ID) */
     J1939_DIAGNOSTIC_SERVICE_COMMIT_EEPROM_MIRROR = 0x15,  /* cm848_commitEepromMirrorToEeprom (was GET_ADDRESS_BY_PARAM_ID) */

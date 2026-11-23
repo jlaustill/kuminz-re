@@ -159,6 +159,10 @@ This matrix documents protocol and service support across ECU types based on tes
 | **Read Param+Offset** | 0x43 | ✓ | ? | Read parameter with offset |
 | **Service 0x05** | 0x05 | J1708 only | ? | Write service (J1708 bus, not CAN) |
 
+CM848 from its firmware, not bench-tested (PR #53 round 63): 0x43 takes the parameter ID and a 4-byte length,
+with no offset (the read starts at the ID's address). 0x46 takes the ID, a 2-byte offset and a 1-byte length.
+The service IDs are `J1939_DIAGNOSTIC_SERVICE` in `firmware/CM848_S90140.06_analysis/output/enums.csv`.
+
 ### CLIP Protocol (Session-Based)
 
 | Command | Code | CM550 | CM848 | Description |

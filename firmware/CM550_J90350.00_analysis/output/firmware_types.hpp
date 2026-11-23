@@ -916,7 +916,7 @@ typedef enum {
     SERVICE_4B = 0x4B,  /* Service 4B - dispatch @ 0x000217DE - UNSECURED - in dispatch table */
     MEM_READ_4B_ADDR_4B_LEN = 0x4C,  /* Memory read - dispatch @ 0x0002268E - UNSECURED - Format: [4C][Addr:4][Len:4] multi-frame */
     SERVICE_4D = 0x4D  /* Service 4D - dispatch @ 0x00021826 - UNSECURED - in dispatch table */
-} EF00_SERVICE_ID;
+} J1939_DIAGNOSTIC_SERVICE;
 
 typedef enum {
     FIRMWARE_START = 0x00000000,  /* Valid firmware region start (256KB code space) */

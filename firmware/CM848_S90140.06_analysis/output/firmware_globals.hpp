@@ -2239,7 +2239,7 @@ extern word transmission_type_cal;  // 0x003fd934
 extern word sensor_channel_held_value_enable_bits_cal[8];  // 0x003fda68
 extern boot_diagnostic_service_entry_t diagnostic_service_dispatch_table[2];  // 0x003fdb30
 extern word adc_forced_reading_enable_bits_cal[8];  // 0x003fdb78
-extern byte diag_scan_step_counter;  // 0x003fdb94
+extern byte boot_diagnostic_service_count;  // 0x003fdb94
 extern word kernel_watchdog_question;  // 0x003fdb96
 extern word kernel_watchdog_last_service_time;  // 0x003fdb98
 extern word kernel_watchdog_error_count;  // 0x003fdb9a

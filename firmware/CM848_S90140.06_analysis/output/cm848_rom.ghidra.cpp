@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 07:36:42 MST 2026
+// Generated: Mon Nov 23 07:54:28 MST 2026
 
 
 //
@@ -2225,9 +2225,9 @@ bool cm848_registerDiagnosticService(BOOT_DIAGNOSTIC_SERVICE service_id,void *ha
 {
   uint uVar1;
   
-  uVar1 = (uint)diag_scan_step_counter;
+  uVar1 = (uint)boot_diagnostic_service_count;
   if (uVar1 != 0x14) {
-    diag_scan_step_counter = diag_scan_step_counter + 1;
+    boot_diagnostic_service_count = boot_diagnostic_service_count + 1;
     diagnostic_service_dispatch_table[uVar1].service_id = service_id;
     diagnostic_service_dispatch_table[uVar1].handler = handler_ptr;
   }
@@ -5725,8 +5725,9 @@ void cm848_runBootKernelLoop(void)
 // Function: cm848_dispatchDiagnosticService @ 0x00006d24
 //
 
-/* scans diagnostic_service_dispatch_table for the request's service byte (its first data byte; 0x0c
-   / 0x0d are answered directly; the boot twin of cm848_j1939DiagnosticServiceHandler) - validates
+/* scans diagnostic_service_dispatch_table for the request's service byte (its first data byte; a
+   received 0x0c / 0x0d - a response - gets no handler and no answer (it said answered directly
+   before PR #53 round 63); the boot twin of cm848_j1939DiagnosticServiceHandler) - validates
    length/auth - calls the handler pointer (reflash memory read/write/download services) */
 
 void cm848_dispatchDiagnosticService(j1939_rx_msg_t *request)
@@ -5746,7 +5747,7 @@ void cm848_dispatchDiagnosticService(j1939_rx_msg_t *request)
   }
   else {
     bVar1 = 0;
-    if (diag_scan_step_counter != 0) {
+    if (boot_diagnostic_service_count != 0) {
       do {
         if (pbVar2->service_id == service) {
           uVar3 = cm848_validateDiagnosticRequestLengthAndAuthorization(request);
@@ -5765,7 +5766,7 @@ void cm848_dispatchDiagnosticService(j1939_rx_msg_t *request)
         }
         pbVar2 = pbVar2 + 1;
         bVar1 = bVar1 + 1;
-      } while (bVar1 < diag_scan_step_counter);
+      } while (bVar1 < boot_diagnostic_service_count);
     }
   }
   if (uVar3 != 0xff) {

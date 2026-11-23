@@ -7,7 +7,9 @@ This document describes the parameter-by-ID lookup system in the CM848 firmware,
 The rest of this page predates these findings. Where it disagrees, these hold:
 
 - **Two kernels and two tables.** The 20-entry table at ROM 0x3CDC (`boot_parameter_id_table`) and the handlers at
-  0x19E8 / 0x1D5C belong to the boot kernel, which dispatches through `cm848_dispatchDiagnosticService`.
+  0x19E8 / 0x1D5C belong to the boot kernel, which dispatches through `cm848_dispatchDiagnosticService`. Those
+  handlers are `cm848_handleBootGetAddressByParameterIdService` and `cm848_handleBootReadByParameterIdLongLengthService`;
+  the boot kernel's service IDs are the `BOOT_DIAGNOSTIC_SERVICE` enum.
   - The application dispatcher `cm848_j1939DiagnosticServiceHandler` (0x22128) never reaches them.
   - Its service 0x41 is `cm848_handleJ1939GetAddressByParameterIdService` (0x50C318). Its ID lookup is
     `cm848_lookupParameterIdAddress` (0x539768) over the 1886-record table at flash2 0x53BE38, described in

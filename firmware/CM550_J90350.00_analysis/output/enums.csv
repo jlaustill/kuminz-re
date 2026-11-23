@@ -649,31 +649,32 @@ SECURITY_ENABLED,0xFF,FALSE,Security checks are SKIPPED - all services accessibl
 # security_enabled @ 0x803b98 (use SECURITY_ENABLED enum)
 # Security key @ 0x803b0c = "ABCDEF" (factory default on bench ECU)
 # --- SECURED SERVICES (ID <= 0x19) - require authentication ---
-EF00_SERVICE_ID,0x01,SERVICE_QUERY_TERMINATE,QueryTerminate - CLIP - dispatch @ 0x0001183E - SECURED - in dispatch table,1
-EF00_SERVICE_ID,0x04,SYSTEM_SERVICE_04,System service 04 - NOT in dispatch table (handled elsewhere?),1
-EF00_SERVICE_ID,0x05,SYSTEM_SERVICE_05,System service 05 - NOT in dispatch table (handled elsewhere?),1
-EF00_SERVICE_ID,0x06,SERVICE_HIGH_RPM_SHUTDOWN_ACTIVATE,activateHighRpmShutdownFlag - dispatch @ 0x000118FC - SECURED - RESPONDS! in dispatch table,1
-EF00_SERVICE_ID,0x07,SYSTEM_SERVICE_07,System service 07 - dispatch @ 0x0001188C - SECURED - in dispatch table,1
-EF00_SERVICE_ID,0x0A,SYSTEM_SERVICE_0A,System service 0A - dispatch @ 0x000118B2 - SECURED - in dispatch table,1
-EF00_SERVICE_ID,0x0B,SYSTEM_SERVICE_0B,System service 0B - dispatch @ 0x00011908 - SECURED - in dispatch table,1
-EF00_SERVICE_ID,0x0F,GET_PARAMETERS_BY_ID_ALT,getParametersByIdHandler - NOT in dispatch table - RESPONDS! (alternate path?),1
-EF00_SERVICE_ID,0x10,SERVICE_GET_PARAMETERS_BY_ID,GetParametersByID - CLIP - NOT in dispatch table - RESPONDS! (alternate path?),1
-EF00_SERVICE_ID,0x15,GET_ADDRESS_BY_PARAM_ID,GetAddressByParameterID - dispatch @ 0x00011A74 - SECURED - in dispatch table,1
-EF00_SERVICE_ID,0x16,SYSTEM_SERVICE_16,System service 16 - dispatch @ 0x000118CC - SECURED - in dispatch table,1
-EF00_SERVICE_ID,0x18,SYSTEM_SERVICE_18,System service 18 - dispatch @ 0x00011A68 - SECURED - in dispatch table,1
+# J1939_DIAGNOSTIC_SERVICE (was EF00_SERVICE_ID - EF00 is the PGN in hex): renamed with CM848's in PR #53 round 63. The members below are CM550's own and unreviewed against its handlers
+J1939_DIAGNOSTIC_SERVICE,0x01,SERVICE_QUERY_TERMINATE,QueryTerminate - CLIP - dispatch @ 0x0001183E - SECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x04,SYSTEM_SERVICE_04,System service 04 - NOT in dispatch table (handled elsewhere?),1
+J1939_DIAGNOSTIC_SERVICE,0x05,SYSTEM_SERVICE_05,System service 05 - NOT in dispatch table (handled elsewhere?),1
+J1939_DIAGNOSTIC_SERVICE,0x06,SERVICE_HIGH_RPM_SHUTDOWN_ACTIVATE,activateHighRpmShutdownFlag - dispatch @ 0x000118FC - SECURED - RESPONDS! in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x07,SYSTEM_SERVICE_07,System service 07 - dispatch @ 0x0001188C - SECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x0A,SYSTEM_SERVICE_0A,System service 0A - dispatch @ 0x000118B2 - SECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x0B,SYSTEM_SERVICE_0B,System service 0B - dispatch @ 0x00011908 - SECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x0F,GET_PARAMETERS_BY_ID_ALT,getParametersByIdHandler - NOT in dispatch table - RESPONDS! (alternate path?),1
+J1939_DIAGNOSTIC_SERVICE,0x10,SERVICE_GET_PARAMETERS_BY_ID,GetParametersByID - CLIP - NOT in dispatch table - RESPONDS! (alternate path?),1
+J1939_DIAGNOSTIC_SERVICE,0x15,GET_ADDRESS_BY_PARAM_ID,GetAddressByParameterID - dispatch @ 0x00011A74 - SECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x16,SYSTEM_SERVICE_16,System service 16 - dispatch @ 0x000118CC - SECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x18,SYSTEM_SERVICE_18,System service 18 - dispatch @ 0x00011A68 - SECURED - in dispatch table,1
 # --- UNSECURED SERVICES (ID > 0x19) - bypass authentication ---
-EF00_SERVICE_ID,0x41,DIAG_ADDR_RESOLVER,canDiagnosticResponseSender - dispatch @ 0x000222B4 - UNSECURED - RESPONDS! in dispatch table,1
-EF00_SERVICE_ID,0x43,MEM_READ_2B_PARAM_4B_OFFSET,Memory read - dispatch @ 0x00022530 - UNSECURED - RESPONDS! Format: [43][Param:2][Offset:4],1
-EF00_SERVICE_ID,0x44,SERVICE_44,Service 44 - dispatch @ 0x0002167E - UNSECURED - in dispatch table,1
-EF00_SERVICE_ID,0x45,SERVICE_45,Service 45 - dispatch @ 0x000216C6 - UNSECURED - in dispatch table,1
-EF00_SERVICE_ID,0x46,MEM_READ_2B_PARAM_ONLY,Memory read - dispatch @ 0x0002257C - UNSECURED - RESPONDS! Format: [46][Param:2],1
-EF00_SERVICE_ID,0x47,SERVICE_47,Service 47 - dispatch @ 0x00021714 - UNSECURED - in dispatch table,1
-EF00_SERVICE_ID,0x48,SERVICE_48,Service 48 - dispatch @ 0x000225E0 - UNSECURED - in dispatch table,1
-EF00_SERVICE_ID,0x49,SERVICE_49,Service 49 - dispatch @ 0x00021778 - UNSECURED - in dispatch table,1
-EF00_SERVICE_ID,0x4A,MEM_READ_4B_ADDR_1B_LEN,Memory read - dispatch @ 0x00022646 - UNSECURED - WORKING! Format: [4A][Addr:4][Len:1],1
-EF00_SERVICE_ID,0x4B,SERVICE_4B,Service 4B - dispatch @ 0x000217DE - UNSECURED - in dispatch table,1
-EF00_SERVICE_ID,0x4C,MEM_READ_4B_ADDR_4B_LEN,Memory read - dispatch @ 0x0002268E - UNSECURED - Format: [4C][Addr:4][Len:4] multi-frame,1
-EF00_SERVICE_ID,0x4D,SERVICE_4D,Service 4D - dispatch @ 0x00021826 - UNSECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x41,DIAG_ADDR_RESOLVER,canDiagnosticResponseSender - dispatch @ 0x000222B4 - UNSECURED - RESPONDS! in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x43,MEM_READ_2B_PARAM_4B_OFFSET,Memory read - dispatch @ 0x00022530 - UNSECURED - RESPONDS! Format: [43][Param:2][Offset:4],1
+J1939_DIAGNOSTIC_SERVICE,0x44,SERVICE_44,Service 44 - dispatch @ 0x0002167E - UNSECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x45,SERVICE_45,Service 45 - dispatch @ 0x000216C6 - UNSECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x46,MEM_READ_2B_PARAM_ONLY,Memory read - dispatch @ 0x0002257C - UNSECURED - RESPONDS! Format: [46][Param:2],1
+J1939_DIAGNOSTIC_SERVICE,0x47,SERVICE_47,Service 47 - dispatch @ 0x00021714 - UNSECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x48,SERVICE_48,Service 48 - dispatch @ 0x000225E0 - UNSECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x49,SERVICE_49,Service 49 - dispatch @ 0x00021778 - UNSECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x4A,MEM_READ_4B_ADDR_1B_LEN,Memory read - dispatch @ 0x00022646 - UNSECURED - WORKING! Format: [4A][Addr:4][Len:1],1
+J1939_DIAGNOSTIC_SERVICE,0x4B,SERVICE_4B,Service 4B - dispatch @ 0x000217DE - UNSECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x4C,MEM_READ_4B_ADDR_4B_LEN,Memory read - dispatch @ 0x0002268E - UNSECURED - Format: [4C][Addr:4][Len:4] multi-frame,1
+J1939_DIAGNOSTIC_SERVICE,0x4D,SERVICE_4D,Service 4D - dispatch @ 0x00021826 - UNSECURED - in dispatch table,1
 # Address Range Validation Table - addressRangeValidator @ 0x2b544 uses table @ 0x2b512
 # 5 entries x 10 bytes each (start_addr[4] + end_addr[4] + flag1[1] + flag2[1])
 # Error 0x09 returned if address outside these ranges
