@@ -257,3 +257,5 @@
   401661 verify_round51b_shared_enum.log
   401661 verify_round51c_bitfield_structs_rejected.log
   401661 verify_round51_closing.log
+  401661 verify_round52a.log
+  401661 verify_round52b.log

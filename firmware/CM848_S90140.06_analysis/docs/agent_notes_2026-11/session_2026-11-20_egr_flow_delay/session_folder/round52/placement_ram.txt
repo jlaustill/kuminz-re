@@ -1,0 +1,142 @@
+== 8B22 at 0x40b292 (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 16 releases)
+   +00 0x40b292 FS_Demand_AC [N2] dump 2800: Fan speed demand based on ac pressure
+        row: cooling_fan_air_conditioning_speed_request word | Fan speed requested for the A/C (target source 2) (was egr_fuel_demand_speed_floor)
+   +02 0x40b294 FS_Demand [N2] dump 0: Final fan speed demand
+        row: cooling_fan_speed_target word | Target radiator fan speed (0.125 rpm) - set by cm848_selectCoolingFanSpeedTarget; the PID's error is this minu
+   +04 0x40b296 FS_Demand_IMT [N2] dump 2800: Fan speed demand based on intake manifold temperature
+        row: cooling_fan_intake_speed_request word | Fan speed requested for intake air temperature (target source 3) (was egr_load_speed_floor)
+   +06 0x40b298 FS_Demand_TOT [N2] dump 2800: Fan speed demand based on transmission oil temperature
+        row: cooling_fan_transmission_speed_request word | Fan speed requested for transmission temperature (target source 4) (was egr_governor_protection_load_speed_flo
+   +08 0x40b29a FS_Demand_Coolant_State [S2] dump 0: Indicates which coolant temp fan speed demand is in control
+        row: cooling_fan_coolant_request_state word | Coolant request state: 0 below the ramp start / 1 linear ramp / 2 PI / 3 full speed (also on a coolant sensor 
+   +0A 0x40b29c FS_Demand_Idle_Status [N2] dump 1: 1=Indicates engine is at idle for fan speed control
+        row: cooling_fan_engine_idle_flag word | Set by cm848_selectCoolingFanDutySource while adjusted_user_fueling_state = 0xb with the accelerator at most c
+   +0C 0x40b29e FS_Demand_Slip [N2] dump 0: Amount that fan speed is below max; = FS_Demand_Max_At_RPM - Fan_Speed
+        row: cooling_fan_engine_driven_headroom word | cooling_fan_engine_driven_speed_limit - radiator_fan_speed (0 when negative) (was egr_rpm_headroom_below_speed
+   +0E 0x40b2a0 FS_Demand_State [S2] dump 7: Indicates which input is controlling fan speed demand
+        row: cooling_fan_speed_target_source word | What set cooling_fan_speed_target: 0 base / 1 coolant / 2 A/C / 3 intake / 4 transmission / 5 6 0xb-0xf high-e
+   +10 0x40b2a2 FS_Demand_Max_At_RPM [N2] dump 0: Max fan speed demand at current eng spd =ENGRPM * fan pulley ratio
+        row: cooling_fan_engine_driven_speed_limit word | engine rpm x cooling_fan_drive_ratio / 256: the most an engine-driven fan can turn (target source 7 caps to it
+   +12 0x40b2a4 FS_Demand_Coolant [N2] dump 2800: Fan speed demand based on coolant temperature
+        row: cooling_fan_coolant_speed_request word | Fan speed requested for coolant temperature (target source 1); cm848_runCoolingFanSpeedPid integrates only whi
+   +14 0x40b2a6 FS_Demand_Coolant_Error [N2] dump 0: Fan speed demand clnt temp error(=clnt temp - FS_Control_Coolant_PI_Se
+        row: cooling_fan_coolant_temperature_error word | cooling_fan_coolant_temperature_filtered - cooling_fan_coolant_temperature_setpoint (was egr_governor_temp_err
+   +16 0x40b2a8 FS_Speed_Duty_Cycle_State [S2] dump 2: Indicates control mode for fan clutch duty cycle command
+        row: cooling_fan_duty_source_code word | Which branch set the cooling fan duty: 1-9 from cm848_selectCoolingFanDutySource (8 = cm848_runCoolingFanSpeed
+   +18 0x40b2aa FS_Demand_Coolant_Int [N4] dump 0: Fan speed demand coolant temp integral term
+        row: cooling_fan_coolant_integral dword | Coolant PI integral (/ 4096 into the speed) (was egr_governor_speed_integral)
+   +1C 0x40b2ae FS_Demand_Coolant_PI [N4] dump 0: Fan speed demand coolant temp proportional + integral term
+        row: cooling_fan_coolant_pi_speed dword | Coolant-temperature PI output (fan speed
+   +20 0x40b2b2 FS_Demand_Coolant_Prop [N4] dump 0: Fan speed demand coolant temp proportional term
+        row: cooling_fan_coolant_proportional_term dword | Coolant PI proportional term (was egr_governor_speed_p_term)
+   +24 0x40b2b6 FS_Filtered_Fan_Speed [N2] dump 0: Measured fan speed with lead/lag comp
+        row: cooling_fan_speed_feedback_filtered word | radiator_fan_speed plus cooling_fan_speed_prediction_gain x (speed - radiator_fan_speed_snapshot) / 64
+   +26 0x40b2b8 FS_Speed_Error [N2] dump 0: Diff betw Fan_Speed and FS_Filtered_Fan_Speed
+        row: cooling_fan_speed_error word | cooling_fan_speed_target - cooling_fan_speed_feedback_filtered
+   +28 0x40b2ba FS_Speed_Comp_Prop_Term [N2] dump 0: Speed control prop term w/lead/lag compensation
+        row: cooling_fan_proportional_derivative_term word | Filtered P + D term of the cooling fan speed PID (x 16 into the duty) (was governor_fuel_demand_pd_term)
+   +2A 0x40b2bc FS_Speed_Int_Term [N2] dump 0: Speed control integral term
+        row: cooling_fan_integral_term word | Integral term of the cooling fan speed PID
+   +2C 0x40b2be FS_Speed_Offset [N2] dump 0: Table output feed-forward term for fan speed control
+        row: cooling_fan_feed_forward_duty word | Feed-forward duty looked up from cooling_fan_speed_target (cooling_fan_feed_forward_duty_cached_axis_offsets) 
+   +2E 0x40b2c0 FS_Speed_Duty_Cycle [N2] dump 0: Fan control duty cycle command before inversion
+        row: cooling_fan_duty_request word | Cooling fan duty request (duty 0-25600 = 0-100 %) chosen by cm848_selectCoolingFanDutySource (its branches set
+   +30 0x40b2c2 Fan_Clutch_1_PWM_Tool_Override [S2] dump 0: Diagnostic Tool Override while engine stopped.
+        row: cooling_fan_actuator_test_active_flag word | Word: the 'PWM radiator fan' actuator test is running - SCI 13-5F (11 phases) or the end-of-line test (end_of_
+   +32 0x40b2c4 FS_Control_Coolant_Temperature [N2] dump 2055: Low pass filter for Coolant temp
+        row: cooling_fan_coolant_temperature_filtered word | Filtered coolant temperature used for the fan's coolant request (was egr_coolant_temp_filtered)
+   +34 0x40b2c6 FS_Control_IMT_Temperature [N2] dump 0: Low pass filter for intake manifold temperature
+        row: cooling_fan_intake_temperature_filtered word | Filtered intake_manifold_temperature_sensor_filtered for the fan's intake request (only at the governor setpoi
+   +36 0x40b2c8 FS_Control_Slip_High_Slip_Speed [N2] dump 0: Output fan speed when in or transitioning to high slip
+        row: cooling_fan_ramp_up_speed word | Current ramp-up speed (was governor_speed_overspeed_ramp_step)
+   +38 0x40b2ca FS_Control_Slip_Ramp_Down_Speed [N2] dump 0: Ramp down to FS_Demand from slip logic
+        row: cooling_fan_ramp_down_resume_speed word | Speed the ramp down continues from after a ramp-up (source 0xe) (was governor_speed_ramp_lower_step)
+   +3A 0x40b2cc FS_Control_Slip_Ramp_Down_To_Low_Slip [N2] dump 0: Ramp down to low slip fan speed demand
+        row: cooling_fan_ramp_down_speed word | Current ramp-down speed (was governor_speed_decel_target)
+   +3C 0x40b2ce FS_Control_Slip_Ramp_To_Control [N2] dump 0: Ramp up to FS_Demand from low slip logic
+        row: cooling_fan_ramp_up_resume_speed word | Speed of the post-ramp-down climb (source 0xf) (was governor_speed_ramp_upper_step)
+   +3E 0x40b2d0 Fan_Driver_Inhibit_Timer [N2] dump 0: Timer value of Fan Off cycle time when short or open circuit
+        row: cooling_fan_retest_pass_count word | Cooling fan retest pass counter (cm848_applyCoolingFanDuty): 0 % duty below cooling_fan_retest_off_passes / 10
+   +40 0x40b2d2 Fan_Driver_Inhibit_Protection [S1] dump 0: Indicates off cycle for Fan when open or short exists
+        row: cooling_fan_read_back_retest_active_flag byte | Set by cm848_debounceOutputReadBackFaults when the cooling fan read-back fault (output_read_back_fault_bits.co
+== 8A60 at 0x40b25c (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 16 releases)
+   +00 0x40b25c EVR_Avg_Duty_Cycle [N2] dump 0: Filtered value of EVR_Duty_Cycle
+        row: alternator_field_duty_slow_average word | ema = (ema x (65536 - coefficient) + alternator_field_duty_target x coefficient) / 65536 at the top of cm848_c
+   +02 0x40b25e EVR_Avg_Voltage_Error [N2] dump 48: Filtered value of EVR_Voltage_Error
+        row: charging_voltage_error_slow_average word | cm848_calculateChargingVoltageError: EMA of charging_voltage_error with charging_voltage_error_slow_average_co
+   +04 0x40b260 EVR_Delta_Voltage_Error [N2] dump 0: EVR_Avg_Voltage_Error - EVR_Voltage_Error (diff of filtered - raw)
+        row: charging_voltage_error_fast_component word | cm848_calculateChargingVoltageError: charging_voltage_error - charging_voltage_error_slow_average (the error m
+   +06 0x40b262 EVR_Diagnostic_Fail_Count [N2] dump 0: Number of occurances that the Charging System Active Diagnostics has f
+        row: alternator_field_cut_test_failed_test_count word | cm848_testAlternatorOutputByCuttingField: incremented for every failed test (cut held for the hold passes with
+   +08 0x40b264 EVR_Diagnostic_Test_Flag [N2] dump 0: If =1, EVR duty cycle set to 0% for Charging System Active Diagnostic 
+        row: alternator_field_cut_test_active_flag word | cm848_testAlternatorOutputByCuttingField sets it at the cut start pass and clears it when the test ends; cm848
+   +0A 0x40b266 EVR_Duty_Cycle [N2] dump 0: Duty cycle of the generator field as determined by EVR control
+        row: alternator_field_duty_target word | Alternator field duty target (duty 0-25600 = 0-100 %) from the charging-voltage PI loop in cm848_calculateAlte
+   +0C 0x40b268 EVR_High_Voltage_Counts [N2] dump 0: # of counts that Charging_System_High_Error must exist before declarin
+        row: charging_system_voltage_high_fault_timer_passes word | cm848_monitorChargingSystemVoltageHighAndLow: counts passes after the voltage-high confirm count is reached
+   +0E 0x40b26a EVR_Hold_Timer [N2] dump 0: Amount of hold time during EVR transient mode, determined by table loo
+        row: alternator_field_load_response_hold_remaining_passes word | Loaded on the first pass of state 3 from alternator_field_load_response_hold_time_* indexed by engine speed
+   +10 0x40b26c EVR_Mode [N2] dump 0: Mode of the EVR control alg (0=INACTIVE,1=STARTUP,2=SS,3=TRANS)
+        row: alternator_field_regulator_state word | Written only by cm848_updateAlternatorFieldRegulatorState (next state from the 4-entry handler table at ROM 0x
+   +12 0x40b26e EVR_Set_Point [N2] dump 240: Target setpoint of the battery voltage for EVR control
+        row: charging_voltage_target word | Written only in cm848_calculateChargingVoltageTarget: charging_voltage_target_by_battery_temperature_* lookup 
+   +14 0x40b270 EVR_Transient_Duty_Cycle [N2] dump 0: Duty cycle of the generator field in the transient mode
+        row: alternator_field_duty_slow_average_snapshot word | Copy of the slow average duty taken on entry to regulator state 3; written back into alternator_field_duty_tar
+   +16 0x40b272 EVR_Transient_Phase [N2] dump 0: When EVR_Mode=Transient, phase of transient mode (0=NONE,1=HOLD,2=RECO
+        row: alternator_field_load_response_stage word | 0 outside state 3
+   +18 0x40b274 EVR_Voltage_Error [N2] dump 48: Voltage error used in EVR control=(EVR_Set_Point - Battery_Voltage)
+        row: charging_voltage_error word | cm848_calculateChargingVoltageError: charging_voltage_error = charging_voltage_target (target) - battery_volta
+   +1A 0x40b276 EVR_Derivative_Term [N4] dump 0: Derivative term of the EVR PID control loop
+        row: alternator_field_duty_pid_derivative_term dword | (error - previous error) x derivative rate x 0x100 / 0x640 in cm848_calculateAlternatorFieldDutyByPid
+   +1E 0x40b27a EVR_Integral_Term [N4] dump 0: Integral term of the EVR PID control loop
+        row: alternator_field_duty_pid_integral_term dword | integrator x 0x100 / 0x640 clamped to 0..25600 in cm848_calculateAlternatorFieldDutyByPid
+   +22 0x40b27e EVR_PID_Duty_Cycle [N2] dump 0: Sum of the PID temrs for the EVR PID control loop
+        row: alternator_field_duty_pid_output word | Written with the final PID duty in cm848_calculateAlternatorFieldDutyByPid and zeroed by the init
+   +24 0x40b280 EVR_Proportional_Term [N4] dump 0: Proportional term of the EVR PID control loop
+        row: alternator_field_duty_pid_proportional_term dword | (charging_voltage_error x gain x 0x100) >> 4 in cm848_calculateAlternatorFieldDutyByPid
+   +28 0x40b284 EVR_Driver_Tool_Override [S2] dump 0: Indicates if tool override request for EVR driver
+        row: alternator_field_actuator_test_active_flag word | Word: the alternator field actuator test. SCI command 0x25 test 0x11 (1 on / 2 off; alternator_field_actuator_
+   +2A 0x40b286 EVR_Driver_EOL_Override [S1] dump 0: Indicates if EOL override request for EVR driver
+        row: end_of_line_alternator_test_field_cut_flag byte | Byte: set by cm848_runEndOfLineAlternatorTestStep from its voltage snapshot to its verdict; while it is 1 cm84
+   +2B 0x40b287 EVR_Driver_Inhibit_Protection [S1] dump 0: Indicates off cycle for EVR when open or short exists
+        row: alternator_field_read_back_retest_active_flag byte | Set by cm848_debounceOutputReadBackFaults when the alternator field read-back fault (output_read_back_fault_bi
+   +2C 0x40b288 EVR_Driver_Inhibit_Timer [N2] dump 0: Timer value of EVR Off cycle time when short or open circuit
+        row: alternator_field_retest_pass_count word | Alternator field retest pass counter (cm848_applyProtectionOutputDemand): 0 % duty below alternator_field_rete
+== 8B21 at 0x4088c8 (CHR_CC_11.45.01.07.e2m; 2 layout(s) in 16 releases: 12x CHR_CC_11.45.01.07.e2m / 4x CHR_CC_11.10.24.00.e2m)
+   +00 0x4088c8 Fan_Speed_Max [N2] dump 48000: value for fan speed when period is less than min limit
+        row: radiator_fan_speed_short_period_value word | Fan speed reported when the period is shorter than radiator_fan_speed_short_period_limit - 48000 (6000 rpm) in
+   +02 0x4088ca Fan_Speed_Min [N2] dump 0: value for fan speed when period exceeds max limit
+        row: radiator_fan_speed_long_period_value word | Fan speed reported when the period is longer than radiator_fan_speed_long_period_limit - 0 in the RAM dump
+   +04 0x4088cc Fan_Speed_Filter_Constant [N2] dump 0: TIME CONSTANT OF THE FILTER USED IN THE FAN SPEED CALCULATIONS
+        row: radiator_fan_speed_filter_coefficient word | EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - radiator_fan_speed_fi
+   +06 0x4088ce Fan_Speed_Period_Max_Time [N4] dump 1200000: Fan speed period above which fan speed is set to Fan_Speed_Min
+        row: radiator_fan_speed_long_period_limit dword | x pulses / prescaler: a longer accumulated period reads as radiator_fan_speed_long_period_value - 1200000 in t
+   +0A 0x4088d2 Fan_Speed_Period_Min_Time [N4] dump 10000: Fan speed period below which fan speed is set to Fan_Speed_Max
+        row: radiator_fan_speed_short_period_limit dword | x pulses / prescaler: a shorter accumulated period reads as radiator_fan_speed_short_period_value - 10000 in t
+   +0E 0x4088d6 Fan_Speed_Timeout [N2] dump 48: Maximum time between fan speed interrupt before fan speed is 0
+        row: radiator_fan_speed_pulse_timeout_passes word | Reload value of radiator_fan_speed_pulse_timeout_count - 48 in the RAM dump
+   +10 0x4088d8 Fan_Speed_Teeth_Per_Interrupt [N1] dump 6: Number of fan speed pulses per microprocessor interrupt
+        row: radiator_fan_pulses_per_measurement byte | Fan speed sensor pulses accumulated per TPU-B channel 9 measurement for every other type code - 6 in the RAM d
+   +11 0x4088d9 Fan_Speed_Teeth_Per_Rev [N1] dump 6: Number of fan speed teeth per revoltion
+        row: radiator_fan_speed_prescaler byte | Divisor in the fan speed numerator (pulses x 60000000 / this) and in the period limits - 6 in the RAM dump (wa
+   +12 0x4088da Fan_Speed_Override [N2] dump 0: If=1, Fan_Speed = Fan_Speed_User_Value
+        row: radiator_fan_speed_override_enable word | Non-zero: radiator_fan_speed is forced to radiator_fan_speed_override - 0 in the RAM dump
+   +14 0x4088dc Fan_Speed_User_Value [N2] dump 0: User override value for Fan_Speed
+        row: radiator_fan_speed_override word | Fan speed used while radiator_fan_speed_override_enable is set
+   +16 0x4088de Fan_Speed_EOL_Teeth_Per_Interrupt [N2] dump 1: Fan teeth per interrupt for EOL testing
+        row: radiator_fan_pulses_per_measurement_type_5100 word | Fan speed sensor pulses accumulated per TPU-B channel 9 measurement - used when end_of_line_test_settings_cal.
+== 15B4 at 0x40c120 (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 16 releases)
+   +00 0x40c120 Reset_Source [N2] dump 49336: RAM copy of Reset Status Register showing source of last reset.
+        row: exception_reset_status word | 
+   +02 0x40c122 Reset_Source_Addr [N4] dump 3217031103: RAM copy of SRR0 Register showing address of last instruction before r
+        row: exception_sprg0 dword | 
+   +06 0x40c126 Reset_Vector [N2] dump 57318: RAM copy of interrupt vector register prior to the last reset.
+        row: exception_sprg1 word | 
+   +08 0x40c128 Reset_Link_Register [N4] dump 2684354359: copy of Link Register showing address of caller to function that cause
+        row: exception_sprg2 dword | 
+   +0C 0x40c12c Reset_DAR [N4] dump 3068968644: Copy of DAR Register with bad address of a load or store alignment exc
+        row: exception_dar dword | 
+   +10 0x40c130 Reset_DSISR [N4] dump 3453878251: RAM copy of DSISR with the cause of data access and alignment exceptio
+        row: exception_dsisr dword | 
+   +14 0x40c134 Powerup_Executive_Time [N4] dump 354096: Global ECM start time information of POR time to 1st Executive Frame T
+        row: hardware_timer_capture dword | 

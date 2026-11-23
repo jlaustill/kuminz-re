@@ -1,0 +1,46 @@
+cm848: round 52 stage A - nine more e2m blocks record for record: the fan, the alternator field, the reset capture
+
+record_for_record_matches.py takes every absent (not table-resolved) block and every base that puts its first or
+second record on an existing row, and counts the records that land on a row start of the same width. A base is
+rejected if a record lands inside a row, on a row of another width, or in a span that already cites an e2m block.
+The mixed-width hits were then read by meaning. Six of them agree record for record, and three more blocks were found
+by hand next to round 51's:
+- 8B23 (0x408814, 92 records): the cooling fan speed control calibrations, cited on their code-named rows.
+- 8A5F (0x4087a0, 46): the EVR (alternator field / charging voltage) calibrations.
+- 8B22 (RAM 0x40b292, 30) and 8A60 (RAM 0x40b25c, 21): the fan speed demands and the EVR state.
+- 8B21 (0x4088c8, 11): the radiator fan speed sensor, the same layout as the transmission's 8BB2. Its names now match
+  that family:
+  - radiator_fan_speed_short / long_period_value -> radiator_fan_speed_maximum / _minimum
+  - radiator_fan_speed_long / short_period_limit -> radiator_fan_speed_period_maximum / _minimum
+  - radiator_fan_speed_prescaler -> radiator_fan_pulses_per_revolution (the numerator divides by it: teeth per
+    revolution)
+  - radiator_fan_pulses_per_measurement_type_5100 -> radiator_fan_pulses_per_measurement_end_of_line (used in the
+    end-of-line field mode 5100)
+- 15B4 (RAM 0x40c120, 7): the reset capture. The exception entry stubs (0x10650 / 0x106a8 / 0x541b0) move SRR0, a
+  vector byte and LR into SPRG0 / SPRG1 / SPRG2, and cm848_applicationMain copies those after the reset. So:
+  - exception_sprg0 -> exception_srr0
+  - exception_sprg1 -> exception_vector
+  - exception_sprg2 -> exception_link_register
+  - hardware_timer_capture -> power_on_reset_to_first_executive_frame_time (Powerup_Executive_Time: TBL latched once
+    at the end of initialization)
+- 8B9A (RAM 0x40b620) and 8BB4 (RAM 0x40b62c): the transmission temperature initial sample and limp-in timer, and the
+  output shaft speed sensor words.
+  - With round 51's 8C2D and 8B6C, RAM 0x40b620-0x40b647 is four absent blocks back to back.
+  - Round 51 wrote that the limp-in timer has no RAM record; it is 8B9A +2.
+- 8BB5 +50 / +52 and 8BB6 +1A: the governor pressure solenoid's retest records. Nothing accesses them, because in this
+  build a read-back fault only latches. New documentation rows governor_pressure_solenoid_retest_off_passes /
+  _fault_confirm_passes / _pass_count, named like the fan and alternator field drivers' implemented retests.
+- 8BB5 +54 cited on governor_pressure_controller_initial_output.
+- 8BB3 (RE_Axle_Ratio_Factor_Learned) cited on diag_clear_flags_t.learned_output_speed_to_vehicle_speed_ratio (5141 =
+  40.16 rpm per mph; the default is 42).
+- No CM550 twin carries any old name.
+
+Proof (prove_r52a.sh: the casts and two char literals folded, then prove_caches.py):
+- 0 of 1968 functions differ once the old labels map to the new; no old name is left in the .cpp.
+- verify is byte-identical; thunks 18 / 14; the 3 name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 221.
+- The citations merge each e2m label list over its duplicate records: the e2m splits a long list (FS_Demand_State's
+  16 labels) in two.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

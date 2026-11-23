@@ -2418,6 +2418,43 @@ A peer relay started the round; the scripts are in `session_folder/round51/`.
     says what the word is.
   - The rest of the transmission RAM 0x40b620-0x40b637 (the OSS period / speed words, 8BB4 / 8BB5?) is untiled.
 
+## Done, round 52 (2026-11-23, same PR): nine more blocks record for record, five state enums
+
+A peer relay started the round; the scripts are in `session_folder/round52/`.
+- **Method:** `record_for_record_matches.py`.
+  - For every absent block, it tries each base that puts the block's first or second record on an existing row, and
+    counts records that land on a row start of the same width.
+  - A base is rejected if any record lands inside a row, on a row of another width, or in a span already citing an
+    e2m block.
+  - The mixed-width hits were read by meaning.
+  - Dense all-word areas match any all-word block at every even offset, so width alone is only a filter.
+- **Stage A (61be5e0, labels, rows, comments):**
+  - 8B23 (92 records) and 8A5F (46): the cooling fan and EVR / alternator field calibrations, on their code-named
+    rows.
+  - 8B22 (30) and 8A60 (21): their RAM.
+  - 8B21 (11): the radiator fan speed sensor. It joins the transmission's 8BB2 vocabulary
+    (`radiator_fan_speed_maximum / _minimum / _period_*`, `radiator_fan_pulses_per_revolution`, which was a
+    "prescaler").
+  - 15B4 (7): the reset capture. The exception stubs move SRR0 / a vector byte / LR into SPRG0-2, so the rows become
+    `exception_srr0 / _vector / _link_register`. `hardware_timer_capture` becomes
+    `power_on_reset_to_first_executive_frame_time`.
+  - 8B9A / 8BB4: the rest of round 51's transmission RAM, now four blocks back to back at 0x40b620. Round 51's "no
+    RAM record" for the limp-in timer was wrong.
+  - The governor pressure solenoid's retest records (8BB5 +50 / +52, 8BB6 +1A) get documentation rows. Nothing reads
+    them: unlike the fan and EVR drivers, this one only latches.
+  - 8BB3 is cited on the learned output-speed-to-vehicle-speed ratio.
+  - The e2m splits long value-label lists over duplicate records; the citations merge them.
+- **Stage B (afe344d, enums):** five state enums from those labels, each member read against its storing branch:
+  - `COOLING_FAN_COOLANT_REQUEST_STATE`, `COOLING_FAN_SPEED_TARGET_SOURCE` (16), `COOLING_FAN_DUTY_SOURCE` (12);
+  - `ALTERNATOR_FIELD_REGULATOR_STATE` (on the state and its previous-state copy);
+  - `ALTERNATOR_FIELD_LOAD_RESPONSE_STAGE`.
+- **Proof:** stage A: `prove_caches.py` (casts folded) shows no function differing once the old labels map to the new; stage B: 1958 of 1968 functions match and the ten others equal the old text once each enum member value is put back (`prove_enum_substitution.py`). Every verify byte-identical.
+- **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 221.
+- **Leads:**
+  - The matcher's all-word hits (343 of 433) are unreviewed and need a by-meaning pass.
+  - The alternator field regulator's state handlers (the table at 0x57730) return the next state and could return the
+    enum.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**
