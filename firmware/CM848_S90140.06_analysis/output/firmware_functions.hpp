@@ -1223,7 +1223,7 @@ void cm848_setLogicalOutputRequest(uint param_1,int param_2);  // @ 0x0004ef24
 void cm848_setLogicalOutputAndDriveLine(uint param_1);  // @ 0x0004ef74
 void cm848_clearLogicalOutputRequest(uint param_1,int param_2);  // @ 0x0004f000
 void cm848_clearLogicalOutputAndDriveLine(uint param_1);  // @ 0x0004f050
-void cm848_checkProtectionModeFlags(void);  // @ 0x0004f0dc
+void cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63(void);  // @ 0x0004f0dc
 void cm848_applyLogicalOutputRequests(void);  // @ 0x0004f190
 void cm848_processProtectionFaultsAndTiming(void);  // @ 0x0004f2b0
 undefined4 cm848_readDiscreteInputLine(uint param_1,undefined4 param_2,undefined4 param_3,uint param_4);  // @ 0x0004f2ec
@@ -1533,7 +1533,7 @@ void cm848_initializeRemoteThrottle(void);  // @ 0x0050e768
 void cm848_calculateWaterVaporAndSaturationTemperatures(void);  // @ 0x0050e7f4
 void cm848_initBoostControlInterpolationState(void);  // @ 0x0050ea88
 void cm848_calculateFrictionNoLoadAndNetMachineTorque(void);  // @ 0x0050eaa8
-void cm848_initThrottleRateFilterState(void);  // @ 0x0050ebf0
+void cm848_initializeFrictionTorqueLookupCache(void);  // @ 0x0050ebf0
 void cm848_updateTurbochargerOverspeedImmediateDerate(void);  // @ 0x0050ec08
 void cm848_updateTurbochargerSpeedInRangeState(void);  // @ 0x0050ec8c
 void cm848_selectTurbochargerSpeedSource(void);  // @ 0x0050ecc4
@@ -1850,7 +1850,7 @@ void cm848_initializeBarometricPressureSensorAboveMaximumMonitor(void);  // @ 0x
 void cm848_completeBoostPressureMonitorReport(void);  // @ 0x0052d524
 void cm848_monitorBoostPressureSensorAndUnderboost(void);  // @ 0x0052d6a8
 void cm848_initializeBoostPressureMonitors(void);  // @ 0x0052dcd0
-void cm848_initialization_group22_state(void);  // @ 0x0052dd28
+void cm848_initializeCoolantTemperatureSensorPerformanceMonitor(void);  // @ 0x0052dd28
 void cm848_completeCoolantTemperatureSensorMonitorReport(void);  // @ 0x0052dd64
 void cm848_checkCoolantTemperatureSensorPerformance(void);  // @ 0x0052de14
 void cm848_initializeEgrDeltaPressureSensorPerformanceCheck(void);  // @ 0x0052e24c

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 04:17:29 MST 2026
+// Generated: Mon Nov 23 04:40:09 MST 2026
 
 
 //
@@ -951,7 +951,7 @@ void mpc555_initHardwareConfig(void)
     switch_input_datalink_source_bits_cal[1] = 0;
     switch_input_datalink_source_bits_cal[2] = 7;
     switch_input_datalink_source_bits_cal[3] = 0x20;
-    protection_event_output_polarity_bits_cal._0_2_ = 1;
+    logical_output_line_active_low_bits_cal._0_2_ = 1;
     switch_input_11_hardware_line_cal._1_1_ = 8;
     switch_input_13_hardware_line_cal = 100;
     cmf_control_base = 0x28000000;
@@ -979,7 +979,7 @@ void mpc555_initHardwareConfig(void)
     qadc_prescale_count_f = 0x14;
     qadc_prescale_count_g = 0x14;
     qadc_sample_rate_cal = 48000;
-    protection_event_output_polarity_bits_cal._2_2_ = 8;
+    logical_output_line_active_low_bits_cal._2_2_ = 8;
   }
   if (reflash_transfer_state.flash2_erase_state == 0) {
     reflash_transfer_state.flash2_erase_state = 1;
@@ -3443,7 +3443,7 @@ undefined4 mpc555_cmfApplyHighVoltagePulse(void)
   bVar1 = (&cmf_pulses_per_step)[uVar3] <= cmf_pulse_count;
   cmf_pulse_count = wVar4;
   if (bVar1) {
-    if ((int)(protection_event_output_polarity_bits_cal._2_2_ - 1) <= (int)uVar3) {
+    if ((int)(logical_output_line_active_low_bits_cal._2_2_ - 1) <= (int)uVar3) {
       return 0;
     }
     cmf_pulse_step_index = bVar2 + 1;
@@ -3711,7 +3711,7 @@ bool mpc555_cmfEraseBlocks(uint param_1)
           }
         }
         uVar10 = 0;
-        if ((iVar7 != 0) && (uVar5 = 0, protection_event_output_polarity_bits_cal._0_2_ != 0)) {
+        if ((iVar7 != 0) && (uVar5 = 0, logical_output_line_active_low_bits_cal._0_2_ != 0)) {
           while (uVar10 = uVar5, cmf_erase_pulse_total < switch_input_13_hardware_line_cal) {
             if (bVar1) {
               CMFCTL_A = uVar8 | cmf_erase_control_bits | 7;
@@ -3737,7 +3737,7 @@ bool mpc555_cmfEraseBlocks(uint param_1)
             }
             uVar10 = uVar10 + 1;
             if ((iVar7 == 0) ||
-               (uVar5 = uVar10, protection_event_output_polarity_bits_cal._0_2_ <= (uVar10 & 0xff)))
+               (uVar5 = uVar10, logical_output_line_active_low_bits_cal._0_2_ <= (uVar10 & 0xff)))
             break;
           }
         }
@@ -9955,9 +9955,9 @@ void cm848_initializeAllSpeedGovernorVariables(void)
   all_speed_governor_integral_adjustment = 0;
   all_speed_governor_derivative_adjustment = 0;
   variable_speed_governor_selected_flag = variable_speed_governor_default_cal;
-  protection_diag_state_a = 2;
-  protection_diag_state_b = 2;
-  protection_diag_state_c = 2;
+  all_speed_governor_spare_word_1 = 2;
+  all_speed_governor_spare_word_2 = 2;
+  all_speed_governor_spare_word_3 = 2;
   engine_rpm_prev_snapshot = 0;
   rpm_deceleration_limit_integral_term = 0;
   fuel_demand_ramp_state = 0x1700;
@@ -43767,7 +43767,7 @@ LAB_0003f598:
       transmission_temperature_in_use = transmission_temperature_sensor_filtered;
     }
   }
-  protection_status_flags_b = protection_status_flags_b | 1;
+  transmission_diagnostic_flags_6 = transmission_diagnostic_flags_6 | 1;
   return;
 }
 
@@ -55340,9 +55340,9 @@ void cm848_setLogicalOutputRequest(uint param_1,int param_2)
 // Function: cm848_setLogicalOutputAndDriveLine @ 0x0004ef74
 //
 
-/* Sets request bit N then immediately drives physical line protection_event_output_line_cal[N] to
-   match - high if polarity bit 0 / low if 1 - immediate variant of cm848_setLogicalOutputRequest
-   (was cm848_clearProtectionFault) | review-function-readability reviewed 2026-11-13 - Readability
+/* Sets request bit N then immediately drives physical line logical_output_line_cal[N] to match -
+   high if polarity bit 0 / low if 1 - immediate variant of cm848_setLogicalOutputRequest (was
+   cm848_clearProtectionFault) | review-function-readability reviewed 2026-11-13 - Readability
    Medium Accuracy Confidence High */
 
 void cm848_setLogicalOutputAndDriveLine(uint param_1)
@@ -55350,10 +55350,10 @@ void cm848_setLogicalOutputAndDriveLine(uint param_1)
 {
   uint uVar1;
   
-  uVar1 = (uint)(&protection_event_output_line_cal)[param_1];
+  uVar1 = (uint)(&logical_output_line_cal)[param_1];
   cm848_setLogicalOutputRequest(param_1,0);
   if (uVar1 != 0) {
-    if (((uint)*(byte *)((int)&protection_event_output_polarity_bits_cal + ((int)param_1 >> 3)) &
+    if (((uint)*(byte *)((int)&logical_output_line_active_low_bits_cal + ((int)param_1 >> 3)) &
         1 << (param_1 + (((int)param_1 >> 3) + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8
              & 0x3f)) == 0) {
       mpc555_driveOutputLineHigh(uVar1);
@@ -55395,8 +55395,8 @@ void cm848_clearLogicalOutputRequest(uint param_1,int param_2)
 // Function: cm848_clearLogicalOutputAndDriveLine @ 0x0004f050
 //
 
-/* Clears request bit N then immediately drives physical line protection_event_output_line_cal[N] -
-   low if polarity bit 0 / high if 1 - immediate variant of cm848_clearLogicalOutputRequest (was
+/* Clears request bit N then immediately drives physical line logical_output_line_cal[N] - low if
+   polarity bit 0 / high if 1 - immediate variant of cm848_clearLogicalOutputRequest (was
    cm848_protectionFlagManager) | review-function-readability reviewed 2026-11-13 - Readability
    Medium Accuracy Confidence High */
 
@@ -55405,10 +55405,10 @@ void cm848_clearLogicalOutputAndDriveLine(uint param_1)
 {
   uint uVar1;
   
-  uVar1 = (uint)(&protection_event_output_line_cal)[param_1];
+  uVar1 = (uint)(&logical_output_line_cal)[param_1];
   cm848_clearLogicalOutputRequest(param_1,0);
   if (uVar1 != 0) {
-    if (((uint)*(byte *)((int)&protection_event_output_polarity_bits_cal + ((int)param_1 >> 3)) &
+    if (((uint)*(byte *)((int)&logical_output_line_active_low_bits_cal + ((int)param_1 >> 3)) &
         1 << (param_1 + (((int)param_1 >> 3) + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8
              & 0x3f)) == 0) {
       mpc555_driveOutputLineLow(uVar1);
@@ -55423,16 +55423,23 @@ void cm848_clearLogicalOutputAndDriveLine(uint param_1)
 
 
 //
-// Function: cm848_checkProtectionModeFlags @ 0x0004f0dc
+// Function: cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63 @ 0x0004f0dc
 //
 
-void cm848_checkProtectionModeFlags(void)
+/* From cm848_applyLogicalOutputRequests: when logical outputs 17 and 62 both have lines
+   (logical_output_line_cal) output 62 follows the overdrive solenoid request (17) and when 18 and
+   63 both have lines output 63 follows the converter clutch solenoid request (18) - both at
+   priority 0. Active on this truck: lines 153 / 158 and 156 / 159. Entry 17 renders as the kernel's
+   time-shared name qadc_queue_timing_config._0_2_ (was cm848_checkProtectionModeFlags; PR #53 round
+   58) */
+
+void cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63(void)
 
 {
   word *pwVar1;
   
-  pwVar1 = &protection_event_output_line_cal;
-  if ((qadc_queue_timing_config._0_2_ != 0) && (qadc_adc_enable_flag != 0)) {
+  pwVar1 = &logical_output_line_cal;
+  if ((qadc_queue_timing_config._0_2_ != 0) && (logical_output_62_line_cal != 0)) {
     if (logical_output_request_bits_16_to_23.overdrive_solenoid_request == 0) {
       cm848_clearLogicalOutputRequest(0x3e,0);
     }
@@ -55471,7 +55478,7 @@ void cm848_applyLogicalOutputRequests(void)
   uint uVar4;
   uint uVar5;
   
-  cm848_checkProtectionModeFlags();
+  cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63();
   uVar5 = 0;
   do {
     (&logical_output_request_snapshot)[uVar5] = (&logical_output_request_bits)[uVar5];
@@ -55479,12 +55486,12 @@ void cm848_applyLogicalOutputRequests(void)
   } while (uVar5 < 10);
   uVar5 = 0;
   do {
-    uVar1 = (&protection_event_output_line_cal)[uVar5];
+    uVar1 = (&logical_output_line_cal)[uVar5];
     if (uVar1 != 0) {
       iVar2 = (int)uVar5 >> 3;
       uVar3 = 1 << (uVar5 + iVar2 * -8 & 0x3f);
       uVar4 = (&logical_output_request_bits)[iVar2] & uVar3;
-      uVar3 = *(byte *)((int)&protection_event_output_polarity_bits_cal + iVar2) & uVar3;
+      uVar3 = *(byte *)((int)&logical_output_line_active_low_bits_cal + iVar2) & uVar3;
       iVar2 = (int)(uint)uVar1 >> 3;
       if ((uVar3 & ~uVar4) == 0 && (uVar4 & ~uVar3) == 0) {
         (&output_line_state.lines_0_to_7)[iVar2] =
@@ -57378,7 +57385,7 @@ void cm848_refreshOutputPortsAndReadback(void)
   mios_mpwmsm19.SCR = uVar12;
   uVar8 = 0;
   do {
-    uVar12 = (&protection_event_output_line_cal)[uVar8];
+    uVar12 = (&logical_output_line_cal)[uVar8];
     if (uVar12 - 0x58 < 0x10) {
       uVar11 = uVar12 + 0xffa8;
       uVar3 = uVar11 & 0xffff;
@@ -58641,7 +58648,7 @@ void cm848_applicationMain(void)
   cm848_clearMonitorEnablingConditions();
   cm848_initializeFuelLevelLowDistanceMonitor();
   cm848_initializeFaultManagement();
-  cm848_initialization_group22_state();
+  cm848_initializeCoolantTemperatureSensorPerformanceMonitor();
   cm848_initDataStructures();
   cm848_resetFuelPressureTrackingErrorMonitor();
   cm848_initializeFuelTemperatureSensorColdSoakCheck();
@@ -58707,7 +58714,7 @@ void cm848_applicationMain(void)
   cm848_initDiagnosticRingBuffer();
   cm848_clearEgrValveHBridgeFaultState();
   cm848_initializeEgrValveClosedHoldPreviousFlag();
-  cm848_initThrottleRateFilterState();
+  cm848_initializeFrictionTorqueLookupCache();
   cm848_initializePredictedIntakeManifoldTemperature();
   cm848_initializeTurbochargerSpeedEstimate();
   cm848_initSensorRetryCounters();
@@ -72089,14 +72096,14 @@ void cm848_calculateFrictionNoLoadAndNetMachineTorque(void)
   
   friction_torque_adjustment_for_coolant_temperature =
        cm848_dualAxisTableInterpolation
-                 (protection_rpm_correction_cached_axis_offsets,
+                 (combustion_torque_by_fuel_quantity_friction_cached_axis_offsets,
                   engine_speed_state.filtered_engine_speed,combustion_torque_by_fuel_quantity_x_axis
                   ,friction_fuel_adjustment_for_coolant_temperature,
                   combustion_torque_by_fuel_quantity_y_axis,combustion_torque_by_fuel_quantity_grid,
                   6);
   engine_zero_fuel_base_friction_torque =
        cm848_dualAxisTableInterpolation
-                 (protection_rpm_correction_cached_axis_offsets,
+                 (combustion_torque_by_fuel_quantity_friction_cached_axis_offsets,
                   engine_speed_state.filtered_engine_speed,combustion_torque_by_fuel_quantity_x_axis
                   ,friction_fueling,combustion_torque_by_fuel_quantity_y_axis,
                   combustion_torque_by_fuel_quantity_grid,6);
@@ -72110,7 +72117,7 @@ void cm848_calculateFrictionNoLoadAndNetMachineTorque(void)
     wVar1 = 0;
   }
   wVar1 = cm848_dualAxisTableInterpolation
-                    (protection_rpm_correction_cached_axis_offsets,
+                    (combustion_torque_by_fuel_quantity_friction_cached_axis_offsets,
                      engine_speed_state.filtered_engine_speed,
                      combustion_torque_by_fuel_quantity_x_axis,wVar1,
                      combustion_torque_by_fuel_quantity_y_axis,
@@ -72122,14 +72129,19 @@ void cm848_calculateFrictionNoLoadAndNetMachineTorque(void)
 
 
 //
-// Function: cm848_initThrottleRateFilterState @ 0x0050ebf0
+// Function: cm848_initializeFrictionTorqueLookupCache @ 0x0050ebf0
 //
 
-void cm848_initThrottleRateFilterState(void)
+/* Boot (cm848_applicationMain): sets both words of
+   combustion_torque_by_fuel_quantity_friction_cached_axis_offsets to 2 (the lookup cache start) for
+   cm848_calculateFrictionNoLoadAndNetMachineTorque just before it in ROM. Nothing about a throttle
+   rate filter (was cm848_initThrottleRateFilterState; PR #53 round 58) */
+
+void cm848_initializeFrictionTorqueLookupCache(void)
 
 {
-  protection_rpm_correction_cached_axis_offsets[0] = 2;
-  protection_rpm_correction_cached_axis_offsets[1] = 2;
+  combustion_torque_by_fuel_quantity_friction_cached_axis_offsets[0] = 2;
+  combustion_torque_by_fuel_quantity_friction_cached_axis_offsets[1] = 2;
   return;
 }
 
@@ -82548,8 +82560,8 @@ void cm848_updateSciOutputTests(void)
    request at priority 5 on or off by sci_output_test_drive_phase_flag; then sets the timer.
    cm848_updateSciOutputTests steps the timers | earlier note: SCI diagnostic link (the fuelDemand*
    family on QSMCM SCI1): SCI 0x13 output test (only while cranking): arms a protection event at
-   priority 5 for a duration so its output line (protection_event_output_line_cal) is driven; code 0
-   stops all tests | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy
+   priority 5 for a duration so its output line (logical_output_line_cal) is driven; code 0 stops
+   all tests | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy
    Confidence Medium */
 
 void cm848_sciStartTimedOutputTest(word *timer,dword logical_output,word duration)
@@ -89331,12 +89343,12 @@ void cm848_loadInjectorDriverCalibration(void)
    fuel_system_hardware_shutdown_error_count_cal (was cm848_tpu_interrupt_flag_init) | earlier note:
    (Re)initializes the TPU-A channel set used for injection (function select, priority and
    host-sequence setup of channels 2, 4, 5, 7 and 14, interrupt enables) and the MIOS PWM 16-19
-   outputs, clears logical output lines 47 / 48, sets tpu_protection_enable_flag and
-   tpu_init_restart_pending_flag, and counts the restart in
-   fuel_system_hardware_shutdown_error_count_cal (cap 255); once the count already exceeds the ROM
-   limit fuel_system_hardware_shutdown_fail_count_threshold (0xffff = never) it sets fault 399
-   (P0607, control module performance). cm848_monitorFuelSystemHardwareShutdown clears the count
-   when its engine-standby check of QADC slots 54 / 55 against
+   outputs, clears logical output lines 47 / 48, sets
+   fuel_system_hardware_shutdown_check_enable_flag and tpu_init_restart_pending_flag, and counts the
+   restart in fuel_system_hardware_shutdown_error_count_cal (cap 255); once the count already
+   exceeds the ROM limit fuel_system_hardware_shutdown_fail_count_threshold (0xffff = never) it sets
+   fault 399 (P0607, control module performance). cm848_monitorFuelSystemHardwareShutdown clears the
+   count when its engine-standby check of QADC slots 54 / 55 against
    fuel_system_hardware_shutdown_error_threshold passes. Name kept: the fault is the retry-limit
    tail of the initializer. */
 
@@ -89464,8 +89476,8 @@ void cm848_initializeInjectionHardware(void)
   injection_angle_offset_cached_axis_offsets[1] = 2;
   tpu_a_channel_14_scale_by_battery_voltage_cached_axis_offset = 2;
   tpu_a_channel_4_scale_by_battery_voltage_cached_axis_offset = 2;
-  protection_crank_event_counter = 0;
-  tpu_protection_enable_flag = 1;
+  injector_driver_booster_recharge_off_delay_counter = 0;
+  fuel_system_hardware_shutdown_check_enable_flag = 1;
   if ((fuel_system_hardware_shutdown_fail_count_threshold <
        fuel_system_hardware_shutdown_error_count_cal) &&
      (fuel_system_hardware_shutdown_fail_count_threshold != 0xffff)) {
@@ -89512,30 +89524,33 @@ void cm848_monitorFuelSystemHardwareShutdown(void)
   word wVar3;
   uint uVar4;
   
-  if ((protection_crank_event_counter == injector_driver_booster_recharge_off_delay) &&
+  if ((injector_driver_booster_recharge_off_delay_counter ==
+       injector_driver_booster_recharge_off_delay) &&
      (injector_driver_booster_recharge_off_delay != 0xffff)) {
     wVar3 = TPUA_CH4_PARAM0;
     TPUA_CH4_PARAM0 = wVar3 & 0x7fff;
     wVar3 = tpu_channel_control.PARAM0;
     tpu_channel_control.PARAM0 = wVar3 & 0x7fff;
-    tpu_protection_enable_flag = 0;
+    fuel_system_hardware_shutdown_check_enable_flag = 0;
   }
   if (engine_state == ENGINE_STATE_STOPPED) {
-    protection_crank_event_counter = protection_crank_event_counter + 1;
+    injector_driver_booster_recharge_off_delay_counter =
+         injector_driver_booster_recharge_off_delay_counter + 1;
   }
   else {
-    if ((engine_state == ENGINE_STATE_RUNNING) && (protection_crank_event_counter == 0xffff)) {
-      tpu_protection_enable_flag = 1;
+    if ((engine_state == ENGINE_STATE_RUNNING) &&
+       (injector_driver_booster_recharge_off_delay_counter == 0xffff)) {
+      fuel_system_hardware_shutdown_check_enable_flag = 1;
     }
-    if (protection_crank_event_counter != 0xffff) {
+    if (injector_driver_booster_recharge_off_delay_counter != 0xffff) {
       wVar3 = TPUA_CH4_PARAM0;
       TPUA_CH4_PARAM0 = wVar3 | 0x8000;
       wVar3 = tpu_channel_control.PARAM0;
       tpu_channel_control.PARAM0 = wVar3 | 0x8000;
     }
-    protection_crank_event_counter = 0xffff;
+    injector_driver_booster_recharge_off_delay_counter = 0xffff;
     if (engine_state == ENGINE_STATE_SHUTDOWN) {
-      if ((tpu_protection_enable_flag == 1) && (cylinder_cutout_mask == 0)) {
+      if ((fuel_system_hardware_shutdown_check_enable_flag == 1) && (cylinder_cutout_mask == 0)) {
         uVar1 = DAT_0040bcec;
         if ((adc_forced_reading_enable_bits_cal[3] & 0x40) == 0) {
           if (qadc_channel_index_table[0x36] < 0x81) {
@@ -89557,22 +89572,22 @@ void cm848_monitorFuelSystemHardwareShutdown(void)
           uVar2 = *qadc_channel_dispatch_table[uVar4].result_register;
         }
         if (fuel_system_hardware_shutdown_error_threshold <= uVar1) {
-          protection_crank_event_counter = 0xffff;
+          injector_driver_booster_recharge_off_delay_counter = 0xffff;
           return;
         }
         if (fuel_system_hardware_shutdown_error_threshold <= uVar2) {
-          protection_crank_event_counter = 0xffff;
+          injector_driver_booster_recharge_off_delay_counter = 0xffff;
           return;
         }
         fuel_system_hardware_shutdown_error_count_cal = 0;
       }
       else {
         if (tpu_init_restart_pending_flag == 0) {
-          protection_crank_event_counter = 0xffff;
+          injector_driver_booster_recharge_off_delay_counter = 0xffff;
           return;
         }
         if (fuel_system_hardware_shutdown_error_count_cal == 0) {
-          protection_crank_event_counter = 0xffff;
+          injector_driver_booster_recharge_off_delay_counter = 0xffff;
           return;
         }
         fuel_system_hardware_shutdown_error_count_cal =
@@ -92240,14 +92255,20 @@ void cm848_initializeBoostPressureMonitors(void)
 
 
 //
-// Function: cm848_initialization_group22_state @ 0x0052dd28
+// Function: cm848_initializeCoolantTemperatureSensorPerformanceMonitor @ 0x0052dd28
 //
 
-void cm848_initialization_group22_state(void)
+/* Boot (cm848_applicationMain): the initializer of cm848_checkCoolantTemperatureSensorPerformance
+   (P0116) - state 0 - the start delay countdown from
+   coolant_temperature_sensor_performance_start_delay - the snapshot dwell count / soak conditions
+   flag / precheck flag cleared (was cm848_initialization_group22_state; PR #53 round 58) */
+
+void cm848_initializeCoolantTemperatureSensorPerformanceMonitor(void)
 
 {
   coolant_temperature_sensor_performance_state = 0;
-  protection_group29_startup_timer_count = coolant_temperature_sensor_performance_start_delay;
+  coolant_temperature_sensor_performance_start_delay_countdown =
+       coolant_temperature_sensor_performance_start_delay;
   coolant_temperature_sensor_performance_snapshot_dwell_count = 0;
   coolant_temperature_sensor_performance_soak_conditions_met_flag = 0;
   coolant_temperature_sensor_performance_precheck_done_flag = 0;
@@ -92315,18 +92336,19 @@ void cm848_checkCoolantTemperatureSensorPerformance(void)
     if (fault_detected_cal.coolant_temperature_high_error != 0) {
       return;
     }
-    if (0 < (short)protection_group29_startup_timer_count) {
-      protection_group29_startup_timer_count = protection_group29_startup_timer_count - 1;
+    if (0 < (short)coolant_temperature_sensor_performance_start_delay_countdown) {
+      coolant_temperature_sensor_performance_start_delay_countdown =
+           coolant_temperature_sensor_performance_start_delay_countdown - 1;
       return;
     }
-    if (protection_group29_startup_timer_count != 0) {
+    if (coolant_temperature_sensor_performance_start_delay_countdown != 0) {
       if (engine_state != ENGINE_STATE_RUNNING) {
         return;
       }
       coolant_temperature_sensor_performance_temperature_minimum =
-           protection_group29_coolant_temp_snapshot;
+           coolant_temperature_sensor_performance_snapshot_coolant_temperature;
       coolant_temperature_sensor_performance_temperature_maximum =
-           protection_group29_coolant_temp_snapshot;
+           coolant_temperature_sensor_performance_snapshot_coolant_temperature;
       coolant_temperature_sensor_performance_test_timer = 0;
       coolant_temperature_sensor_performance_state = 1;
       return;
@@ -92345,14 +92367,17 @@ void cm848_checkCoolantTemperatureSensorPerformance(void)
            coolant_temperature_sensor_performance_snapshot_dwell_count + 1;
       return;
     }
-    protection_group29_startup_timer_count = 0xffff;
-    protection_group29_coolant_temp_snapshot = coolant_temperature_sensor_filtered;
-    DAT_003fd186 = battery_temperature_sensor_filtered;
-    DAT_003fd184 = intake_manifold_temperature_sensor_filtered;
+    coolant_temperature_sensor_performance_start_delay_countdown = 0xffff;
+    coolant_temperature_sensor_performance_snapshot_coolant_temperature =
+         coolant_temperature_sensor_filtered;
+    coolant_temperature_sensor_performance_snapshot_battery_temperature =
+         battery_temperature_sensor_filtered;
+    coolant_temperature_sensor_performance_snapshot_intake_manifold_temperature =
+         intake_manifold_temperature_sensor_filtered;
     if ((int)(uint)coolant_temperature_sensor_performance_maximum_start_temperature_difference <=
         (int)(short)intake_manifold_temperature_sensor_filtered -
         (int)(short)battery_temperature_sensor_filtered) {
-      protection_group29_startup_timer_count = 0xffff;
+      coolant_temperature_sensor_performance_start_delay_countdown = 0xffff;
       return;
     }
     if ((((engine_off_time_latched_flag == 0) ||
@@ -92360,19 +92385,19 @@ void cm848_checkCoolantTemperatureSensorPerformance(void)
         (engine_off_time_at_key_on < coolant_temperature_sensor_performance_minimum_engine_off_time)
         ) && (((pci_receive_message_14_status & 0x3f) == 0 &&
               (fault_detected_cal.engine_off_time_stuck_error == 0)))) {
-      protection_group29_startup_timer_count = 0xffff;
+      coolant_temperature_sensor_performance_start_delay_countdown = 0xffff;
       return;
     }
     coolant_temperature_sensor_performance_soak_conditions_met_flag = 1;
     if ((int)coolant_temperature_sensor_performance_maximum_start_intake_air_temperature <=
         (int)(short)intake_manifold_temperature_sensor_filtered) {
-      protection_group29_startup_timer_count = 0xffff;
+      coolant_temperature_sensor_performance_start_delay_countdown = 0xffff;
       coolant_temperature_sensor_performance_soak_conditions_met_flag = 1;
       return;
     }
     if ((short)coolant_temperature_sensor_filtered <=
         coolant_temperature_sensor_performance_maximum_start_coolant_temperature) {
-      protection_group29_startup_timer_count = 0xffff;
+      coolant_temperature_sensor_performance_start_delay_countdown = 0xffff;
       coolant_temperature_sensor_performance_soak_conditions_met_flag = 1;
       return;
     }
@@ -92387,10 +92412,10 @@ void cm848_checkCoolantTemperatureSensorPerformance(void)
       return;
     }
     if (((((monitor_enabling_conditions_met.coolant_temperature_sensor_performance == 0) ||
-          ((short)protection_group29_coolant_temp_snapshot <
+          ((short)coolant_temperature_sensor_performance_snapshot_coolant_temperature <
            coolant_temperature_sensor_performance_minimum_start_temperature)) ||
          (coolant_temperature_sensor_performance_maximum_start_temperature <
-          (short)protection_group29_coolant_temp_snapshot)) ||
+          (short)coolant_temperature_sensor_performance_snapshot_coolant_temperature)) ||
         ((fault_detected_cal.coolant_temperature_low_error != 0 ||
          (fault_detected_cal.coolant_temperature_high_error != 0)))) ||
        (fault_detected_cal.thermostat_system_error != 0)) {
@@ -98445,7 +98470,7 @@ void cm848_checkDiscreteOutputReadBack
   int iVar6;
   
   if ((&switch_input_hardware_line_cal)[read_back_line] == 0 ||
-      (&protection_event_output_line_cal)[logical_output] == 0) {
+      (&logical_output_line_cal)[logical_output] == 0) {
     return;
   }
   uVar4 = (uint)switch_input_sample_bits
