@@ -521,3 +521,7 @@ Hand work on the round 7 lead.
 ## Round 53: blocks ranked by meaning, the coolant temperature derate module (`session_folder/round53/`)
 
 - Search: `semantic_record_matches.py` (from round 52's matcher, `patch_matcher.py`), `semantic_score.py`, `semantic_matches.txt`, `placements.txt`. Shared helpers: `e2m_cite.py`. **Stage A:** `apply_r53a.py` (`fix_r53a_texts.py`), `map_r53a.csv`. **Stage B:** `apply_r53b.py`, `map_r53b.csv`, `refresh_dat_mentions_r53.py` (the plates that quoted the new rows' DAT_ labels). Proof: `prove_r53.sh`. **Closing:** `apply_r53_closing.py`, `update_large_tar_r53.sh`.
+
+## Round 54: the last unnamed tables, the stack monitor, legacy boot functions (`session_folder/round54/`)
+
+- `placements.txt` (round 53's disputed hits), `word_arrays.txt`, `list_unprefixed.py` (+ `unprefixed.txt`), `order_only.py`. **Stage A:** `apply_r54a.py`, `map_r54a.csv`. **Stage B:** `apply_r54b.py`, `map_r54b.csv`. Proof: `prove_r54.sh`. **Closing:** `apply_r54_closing.py`, `update_large_tar_r54.sh`.

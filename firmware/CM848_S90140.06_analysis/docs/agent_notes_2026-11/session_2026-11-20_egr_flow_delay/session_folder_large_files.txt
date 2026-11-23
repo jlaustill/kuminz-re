@@ -263,3 +263,5 @@
   401661 verify_round53a.log
   401675 verify_round53b.log
   401675 verify_round53b_first.log
+  401741 verify_round54a.log
+  401843 verify_round54b.log

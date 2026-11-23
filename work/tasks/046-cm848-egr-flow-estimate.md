@@ -2489,6 +2489,35 @@ A peer relay started the round; the scripts are in `session_folder/round53/`.
   - The matcher's other hits read by meaning but not applied: 1497 / 1498 (LSG droop on ASG-named rows), 158D, 8BA4.
   - 8B7C (AFR) exists only in older layouts.
 
+## Done, round 54 (2026-11-23, same PR): the last unnamed tables, the stack monitor, legacy boot functions
+
+A peer relay started the round; the scripts are in `session_folder/round54/`.
+- **Round 53's disputed matcher hits stay rejected.** Read by meaning, every one contradicts its rows:
+  - 8BA4 is a sensor-channel config, but the rows hold temperatures in deg F;
+  - 158D would put a reset flag on a word that holds 27136;
+  - 1497 / 1498 would put low speed governor droop slopes on code-proven words.
+- **Stage A (b53080a, labels, rows, plates):**
+  - The ten tables the 2026-11-16 campaign left `WORD_ARRAY_` are named: nine through the parameter ID table
+    (turbocharger speed linearization, EGR orifice temperature lead time constant, turbocharger speed derate gain,
+    torque management fuel grid) and one lookup cache. No `WORD_ARRAY_` table is left.
+  - The application stack (RAM 0x3f9800-0x3f9ff8, r1 = 0x3f9ff8) has a high-water monitor, `cm848_updateStackHighWaterMark`
+    (was `bufferManagementWithBounds`, read as a message buffer); its new `stack_headroom_factor_tenths` is 27 in the dump.
+  - `cm848_initializeLifetimeDistanceRecordIndex` (was `initSensorTableIndexing`).
+  - `test_disasm_tools.py` needed an unnamed table to test the xref tool and none is left; it falls back to a
+    type-only word row.
+- **Stage B (66af83f):**
+  - Five boot-time functions named from their bodies: the rail pressure shortfall limit, the engine oil pressure
+    processing, the oil change monitor lookups, the EEPROM calibration identifier update, and the OBD-II service state.
+  - The calibration ID characters 4-9 (EEPROM 0x4a-0x4f) are the `byte[6]` row
+    `calibration_identifier_characters_4_to_9_cal`.
+- **Proof:** stage A: `prove_caches.py` (casts folded, function renames applied to the old .cpp) matches 1966 of 1968 functions, the other two differing only in local declaration order; stage B: 1964 match, two more order-only, and the last two only show the new calibration ID array row (read by hand). Every verify byte-identical.
+- **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 221.
+- **Leads:**
+  - 98 unprefixed CM848-only functions remain, 46 with no plate (`list_unprefixed.py`). The fault manager core at
+    0x533aec-0x535270 and the protection cluster at 0x514048-0x514394 are the largest groups; reviewing them all
+    is an agent-sized job.
+  - `initGovernorFlagsAux` only zeroes 0x3fcfba, which nothing reads directly.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

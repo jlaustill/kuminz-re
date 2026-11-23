@@ -676,6 +676,10 @@ state enum, the flag bytes.**
   the eight sensor-fault substitutes named by the fault that selects them; `pci_four_wheel_drive_status_flag`.
 - **Stage B (c1ba0fe, labels, rows):** the coolant temperature derate module (e2m CT_Derate 8A71 / 8A7A / 8A79 / 8A72):
   the `cold_start_*` / bucket names were the overheat derate's; 7 new rows and 3 function renames.
+**Round 54.**
+- **Stage A (b53080a, labels, rows):** the last ten unnamed tables (nine through the parameter ID table), the
+  application stack high-water monitor (was read as a message buffer), the lifetime distance record index.
+- **Stage B (66af83f):** five legacy boot-time functions named from their bodies; the calibration ID characters 4-9.
 
 ## Test plan
 
@@ -768,6 +772,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 54: stage A: `prove_caches.py` (casts folded, function renames applied to the old .cpp) matches 1966 of 1968 functions, the other two differing only in local declaration order; stage B: 1964 match, two more order-only, and the last two only show the new calibration ID array row (read by hand). Every verify byte-identical.
 - [x] Round 53: stage A: `prove_caches.py` (casts folded) shows no function differing once the old labels map to the new; stage B: 1966 of 1968 match, the other two only show the new axis table row in place of a raw pointer / DAT_ label (read by hand). Every verify byte-identical.
 - [x] Round 52: stage A: `prove_caches.py` (casts folded) shows no function differing once the old labels map to the new; stage B: 1958 of 1968 functions match and the ten others equal the old text once each enum member value is put back (`prove_enum_substitution.py`). Every verify byte-identical.
 - [x] Round 51: stage A: `prove_caches.py` (casts folded, the function rename applied to the old .cpp) matches 1967 of 1968 functions, the other differing only in local declaration order; stage B: 1962 match and the six others equal the old text once each enum member value is put back and the removed argument dropped (`prove_r51b_enum.py`); closing: no function body differs, only the flag function plate. Every verify byte-identical.
