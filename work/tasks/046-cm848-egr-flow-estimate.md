@@ -2587,8 +2587,11 @@ A peer relay started the round; the scripts are in `session_folder/round57/`.
   - **The e2m 8A0E / 8A0F "N_V" ratio family** (table-resolved) is now `cruise_engine_to_vehicle_speed_ratio_*`
     (was `cruise_rpm_ratio_*`): 12 rows, including the filter state and its coefficient (two type-only rows).
 - **Stage B (607a663): two of the five warning chime sources in `cm848_updateEngineWarningFlags`.**
-  - `fuel_pressure_fault_active_flag` (was `protection_fault_latch_flag`): any of the P1221 / P1222 / P1223 rail
-    pressure and fuel metering faults; PCI 0x35 bit 6.
+  - `fuel_pressure_fault_active_flag` (was `protection_fault_latch_flag`): any of four rail pressure and fuel
+    metering faults, 57-60 = P1221 / P1222 / no DTC (fault 59's slot holds P0000) / P1223; PCI 0x35 bit 6. The
+    stage B commit message says "P1222 twice"; the follow-up corrected the row.
+  - Its chime count `warning_chime_count_fuel_pressure_fault` is 8B2D +A. The CHR_B2 e2m releases (11.61-11.72)
+    name that word Catalyst_Warning_Chime_Count, but the truck's code chimes it for these faults.
   - `air_conditioning_coolant_off_flag` (was `protection_coolant_classb_active_flag`): the A/C coolant-off condition
     of the DR truck A/C clutch control, chimed by e2m 8B2D +6 AC_Coolant_Off_Chime_Count.
   - Their copy / previous words and chime counts: 7 rows.
@@ -2604,6 +2607,8 @@ A peer relay started the round; the scripts are in `session_folder/round57/`.
     `protection_event_output_polarity_bits_cal` / `_line_cal`, `protection_status_flags_b`, `protection_crank_event_counter`,
     the `protection_group29_*` pair, `protection_rpm_correction_cached_axis_offsets`, and two pad fields.
   - 8A0F +A Filtered_Cruise_N_V_Ratio (0x40b20e) has no code use under its address.
+  - The 0x3fcd90 word that `cm848_initializeCruiseControl` zeroes has no reader found by name; it sits in the
+    time-shared ROM-to-RAM window, so a pointer or boot-side reader is not ruled out.
 
 ## Leads (not in this PR)
 

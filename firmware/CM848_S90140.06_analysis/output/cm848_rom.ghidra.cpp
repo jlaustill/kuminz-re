@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 04:07:37 MST 2026
+// Generated: Mon Nov 23 04:17:29 MST 2026
 
 
 //
@@ -74466,8 +74466,8 @@ void cm848_monitorBrakeSwitchPairAgreement(void)
    toggle off - cruise_control_denied_status and cruise_control_last_cutout_reason 1 - the raw
    switch requests 5 and the debounced ones CRUISE_SWITCH_IDLE - the engine speed / vehicle speed
    ratio filter (coefficient e2m 8A0E +C) with its previous sample / integral / steady count zeroed.
-   It also zeroes the word at 0x3fcd90 which nothing reads (was governor_fuel_mode_initialization;
-   PR #53 round 57) */
+   It also zeroes the word at 0x3fcd90 (no reader found by name - it sits in the time-shared
+   ROM-to-RAM window) (was governor_fuel_mode_initialization; PR #53 round 57) */
 
 void cm848_initializeCruiseControl(void)
 
