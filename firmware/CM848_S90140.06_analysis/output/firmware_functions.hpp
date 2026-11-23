@@ -161,7 +161,7 @@ void cm848_sendDiagServiceResponse(j1939_rx_msg_t *request,dword result_code);  
 void cm848_sendDiagResponsePending(j1939_rx_msg_t *param_1,word param_2);  // @ 0x000075dc
 void mpc555_tickTransferTimeoutAndRuntimeCounter(void);  // @ 0x00007608
 void mpc555_loadRuntimeCounterFromEepromShadow(void);  // @ 0x000076b4
-MEMORY_REGION_TYPE cm848_lookupBootMemoryRegionType(dword address,dword length);  // @ 0x000076c8
+MEMORY_REGION_TYPE cm848_lookupBootMemoryRegionType(dword range_start,dword range_length);  // @ 0x000076c8
 byte cm848_trackDownloadBlock(byte *data,dword address,word *length,BOOT_REQUEST_CHANNEL channel);  // @ 0x00007740
 byte cm848_finishDownloadBlock(word *trailing_crc);  // @ 0x00007840
 byte cm848_updateDownloadCrc(byte *data,dword length,BOOT_REQUEST_CHANNEL channel);  // @ 0x000078d0
@@ -1514,7 +1514,7 @@ void cm848_tickJ1939TransportReceiveTimeout(void);  // @ 0x0050d5d8
 void cm848_serviceJ1939TransportSessions(void);  // @ 0x0050d60c
 j1939_tx_msg_t * cm848_selectJ1939TransmitBuffer(int length);  // @ 0x0050d688
 void cm848_initializeJ1939Transport(void);  // @ 0x0050d700
-MEMORY_REGION_TYPE cm848_lookupApplicationMemoryRegionType(dword address,dword length);  // @ 0x0050d784
+MEMORY_REGION_TYPE cm848_lookupApplicationMemoryRegionType(dword range_start,dword range_length);  // @ 0x0050d784
 void cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit(void);  // @ 0x0050d864
 void cm848_presetPedalFaultModeFuelDemand(void);  // @ 0x0050da7c
 void cm848_transitionEngineOperatingMode(int previous_engine_operating_mode);  // @ 0x0050daac

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 15:05:47 MST 2026
+// Generated: Mon Nov 23 15:16:10 MST 2026
 
 
 //
@@ -1407,7 +1407,7 @@ cm848_readBootDiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,d
 
 {
   ushort uVar1;
-  uint length_00;
+  uint range_length;
   ushort uVar2;
   MEMORY_REGION_TYPE MVar3;
   char cVar4;
@@ -1422,10 +1422,10 @@ cm848_readBootDiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,d
     uVar2 = cm848_getBootMemoryServiceHeaderLength(bVar6);
     uVar1 = request->data_length;
     if (((uVar1 == 8) || (uVar1 == (uVar2 & 0xff))) || ((ushort)((uVar2 & 0xff) + 10) == uVar1)) {
-      length_00 = length & 0xffff;
-      MVar3 = cm848_lookupBootMemoryRegionType(address,length_00);
+      range_length = length & 0xffff;
+      MVar3 = cm848_lookupBootMemoryRegionType(address,range_length);
       if ((MVar3 != MEMORY_REGION_TYPE_REFUSED) && (MVar3 != MEMORY_REGION_TYPE_UNMAPPED)) {
-        if ((bVar6 == 0x43) && (length_00 < 0x100)) {
+        if ((bVar6 == 0x43) && (range_length < 0x100)) {
           bVar6 = 0x44;
           request->data_pointer[3] = request->data_pointer[6];
         }
@@ -1451,10 +1451,10 @@ cm848_readBootDiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,d
           pbVar8 = pbVar8 + 1;
           cm848_copyBytes(pbVar8,pbVar5 + 1,bVar7);
           if (address < 0x1000000) {
-            cm848_copyBytes(pbVar8 + bVar7,address,length_00);
+            cm848_copyBytes(pbVar8 + bVar7,address,range_length);
           }
           else {
-            mpc555_eepromReadWords(address,pbVar8 + bVar7,length_00);
+            mpc555_eepromReadWords(address,pbVar8 + bVar7,range_length);
           }
           cm848_transmitCanMessage(message);
           MVar3 = ~MEMORY_REGION_TYPE_RAM;
@@ -6346,19 +6346,19 @@ void mpc555_loadRuntimeCounterFromEepromShadow(void)
    flash2_writes_enabled / 3 registers / 4 main flash / 5 EEPROM) or 9 when not writable |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-MEMORY_REGION_TYPE cm848_lookupBootMemoryRegionType(dword address,dword length)
+MEMORY_REGION_TYPE cm848_lookupBootMemoryRegionType(dword range_start,dword range_length)
 
 {
   uint uVar1;
   memory_region_t *pmVar2;
   byte bVar3;
   
-  uVar1 = (address + length) - 1;
-  if (address <= uVar1) {
+  uVar1 = (range_start + range_length) - 1;
+  if (range_start <= uVar1) {
     pmVar2 = &boot_memory_region_table;
     bVar3 = 0;
     do {
-      if ((pmVar2->start_address <= address) && (uVar1 <= pmVar2->end_address)) {
+      if ((pmVar2->start_address <= range_start) && (uVar1 <= pmVar2->end_address)) {
         if (pmVar2->region_type != MEMORY_REGION_TYPE_BANK_2_FLASH) {
           return pmVar2->region_type;
         }
@@ -69432,7 +69432,7 @@ byte cm848_writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dwor
 
 {
   bool bVar1;
-  uint length_00;
+  uint range_length;
   uint uVar2;
   uint uVar3;
   MEMORY_REGION_TYPE MVar4;
@@ -69443,9 +69443,9 @@ byte cm848_writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dwor
   if (0x6e4 < length) {
     return 2;
   }
-  length_00 = length & 0xffff;
+  range_length = length & 0xffff;
   uVar3 = cm848_getJ1939MemoryServiceHeaderLength(*request->data_pointer);
-  uVar2 = (uVar3 & 0xff) + length_00 & 0xffff;
+  uVar2 = (uVar3 & 0xff) + range_length & 0xffff;
   uVar6 = (uint)request->data_length;
   if ((uVar6 == 8) || (uVar6 == uVar2)) {
     bVar1 = false;
@@ -69457,7 +69457,7 @@ byte cm848_writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dwor
     bVar1 = true;
   }
   pbVar7 = request->data_pointer + (uVar3 & 0xff);
-  MVar4 = cm848_lookupApplicationMemoryRegionType((dword)address,length_00);
+  MVar4 = cm848_lookupApplicationMemoryRegionType((dword)address,range_length);
   if (MVar4 != MEMORY_REGION_TYPE_RAM) {
     if (MVar4 != MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED) {
       if (MVar4 == MEMORY_REGION_TYPE_MAIN_FLASH) {
@@ -69474,18 +69474,18 @@ byte cm848_writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dwor
           return 0x1a;
         }
         cVar5 = cm848_processSecurityCodeConversion
-                          (request->data_pointer + length_00 + (uVar3 & 0xff));
+                          (request->data_pointer + range_length + (uVar3 & 0xff));
         if (cVar5 != '\0') {
           return 3;
         }
       }
       if ((ram_refresh_enable == RAM_REFRESH_ENABLED) &&
          (cVar5 = cm848_queueEepromByteWrites
-                            ((uint)(address + -0x1000000) & 0xffff,pbVar7,length_00),
+                            ((uint)(address + -0x1000000) & 0xffff,pbVar7,range_length),
          cVar5 == '\x01')) {
         return 0xb;
       }
-      cm848_memcpyBytes(address + -0xc02b7e,pbVar7,length_00);
+      cm848_memcpyBytes(address + -0xc02b7e,pbVar7,range_length);
       return 0;
     }
     if (calibration_download_security_key_cal != 0xff) {
@@ -69493,7 +69493,7 @@ byte cm848_writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dwor
         return 0x1a;
       }
       cVar5 = cm848_processSecurityCodeConversion
-                        (request->data_pointer + length_00 + (uVar3 & 0xff));
+                        (request->data_pointer + range_length + (uVar3 & 0xff));
       if (cVar5 != '\0') {
         return 3;
       }
@@ -69503,7 +69503,7 @@ byte cm848_writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dwor
       return 10;
     }
   }
-  cm848_memcpyBytes(address,pbVar7,length_00);
+  cm848_memcpyBytes(address,pbVar7,range_length);
   return 0;
 }
 
@@ -70583,7 +70583,7 @@ cm848_readJ1939DiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,
 
 {
   ushort uVar1;
-  uint length_00;
+  uint range_length;
   ushort uVar2;
   MEMORY_REGION_TYPE MVar3;
   char cVar4;
@@ -70598,10 +70598,10 @@ cm848_readJ1939DiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,
     uVar2 = cm848_getJ1939MemoryServiceHeaderLength(bVar6);
     uVar1 = request->data_length;
     if (((uVar1 == 8) || (uVar1 == (uVar2 & 0xff))) || ((ushort)((uVar2 & 0xff) + 10) == uVar1)) {
-      length_00 = length & 0xffff;
-      MVar3 = cm848_lookupApplicationMemoryRegionType(address,length_00);
+      range_length = length & 0xffff;
+      MVar3 = cm848_lookupApplicationMemoryRegionType(address,range_length);
       if ((MVar3 != MEMORY_REGION_TYPE_REFUSED) && (MVar3 != MEMORY_REGION_TYPE_UNMAPPED)) {
-        if ((bVar6 == 0x43) && (length_00 < 0x100)) {
+        if ((bVar6 == 0x43) && (range_length < 0x100)) {
           bVar6 = 0x44;
           request->data_pointer[3] = request->data_pointer[6];
         }
@@ -70628,7 +70628,7 @@ cm848_readJ1939DiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,
           if (0xffffff < address) {
             address = address - 0xc02b7e;
           }
-          cm848_memcpyBytes(pbVar8 + bVar7,address,length_00);
+          cm848_memcpyBytes(pbVar8 + bVar7,address,range_length);
           cm848_sendJ1939Message(msg);
           MVar3 = ~MEMORY_REGION_TYPE_RAM;
         }
@@ -71712,19 +71712,19 @@ void cm848_initializeJ1939Transport(void)
    5 EEPROM / 3 or 10 registers / 9 unmapped (was uds_validateMemoryRegion) |
    review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
 
-MEMORY_REGION_TYPE cm848_lookupApplicationMemoryRegionType(dword address,dword length)
+MEMORY_REGION_TYPE cm848_lookupApplicationMemoryRegionType(dword range_start,dword range_length)
 
 {
   memory_region_t *pmVar1;
   uint uVar2;
   byte bVar3;
   
-  uVar2 = (address + length) - 1;
-  if (address <= uVar2) {
+  uVar2 = (range_start + range_length) - 1;
+  if (range_start <= uVar2) {
     pmVar1 = application_memory_region_table;
     bVar3 = 0;
     do {
-      if ((pmVar1->start_address <= address) && (uVar2 <= pmVar1->end_address)) {
+      if ((pmVar1->start_address <= range_start) && (uVar2 <= pmVar1->end_address)) {
         if (development_mode == DEVELOPMENT_MODE_ON) {
           return pmVar1->region_type;
         }

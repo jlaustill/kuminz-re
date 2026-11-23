@@ -643,7 +643,7 @@ typedef enum {
 
 typedef enum {
     MEMORY_REGION_TYPE_RAM = 0x00,  /* Written by a plain copy: boot 0x302000-0x3fffff (the first match - so the TPU / TouCAN registers from 0x304000 resolve here too) / application 0x40c26e-0x43ffff */
-    MEMORY_REGION_TYPE_BANK_2_FLASH = 0x02,  /* Bank 2 flash from 0x500000: the boot worker writes it through eeprom_xfer_state.flash2_write_callback (the boot lookup answers UNMAPPED instead while flash2_writes_enabled is 0); the application writer passes the code back */
+    MEMORY_REGION_TYPE_BANK_2_FLASH = 0x02,  /* Bank 2 flash from 0x500000: the boot worker writes it through eeprom_xfer_state.flash2_write_callback (the boot lookup answers UNMAPPED instead while flash2_writes_enabled is 0); the application writer passes the code back - which J1939_DIAGNOSTIC_RESULT reads as 0x02 WRONG_LENGTH (the codes coincide) */
     MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED = 0x03,  /* Written after the write authorization (cm848_validateWriteAuth / cm848_processSecurityCodeConversion): boot 0x2fc000-0x301fff (its entry reads 0x2fc000-0x307fff but the RAM entry matches the rest first) / application 0x3fa000-0x40c26e and - in development mode - its register ranges */
     MEMORY_REGION_TYPE_MAIN_FLASH = 0x04,  /* Main flash 0x0-0x6ffff: the boot worker programs it (cm848_dataTransferBufferWrite); the application writer refuses it (J1939_DIAGNOSTIC_RESULT_REGION_REFUSED) */
     MEMORY_REGION_TYPE_EEPROM = 0x05,  /* EEPROM from 0x1000000: written after the write authorization (boot eeprom_xfer_state.eeprom_write_callback / application cm848_queueEepromByteWrites) */
