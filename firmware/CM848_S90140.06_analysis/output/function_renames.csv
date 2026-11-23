@@ -342,7 +342,7 @@ address,name
 0x00000bec,mpc555_eepromWriteWords
 0x00000d88,mpc555_eepromReadWords
 0x00000e90,cm848_mainLoopIteration
-0x00000ec0,cm848_loadCalibrationFromEeprom,Boot kernel: mpc555_eepromValidationCycle and mpc555_keyOnStateMachine / then copies EEPROM 0x4a (6 bytes) / 0x50 / 0x52 / 0x54 / 0x0c (4) / 0x56 into RAM 0x3fee18 / 0x3fee1e / 0x3fee20 / 0x3fee22 / 0x3fee26 / 0x3fee24 - from 0x3fee18 to 0x3fee23 the application's EEPROM mirror words take its own names (PR #53 round 68)
+0x00000ec0,cm848_loadCalibrationFromEeprom,Boot kernel: mpc555_eepromValidationCycle and mpc555_keyOnStateMachine / then copies EEPROM 0x4a (6 bytes) / 0x50 / 0x52 / 0x54 / 0x0c (4 - ecm_part_number_cal) / 0x56 into RAM 0x3fee18 / 0x3fee1e / 0x3fee20 / 0x3fee22 / 0x3fee26 / 0x3fee24 - from 0x3fee18 to 0x3fee23 the application's EEPROM mirror words take its own names (PR #53 round 68)
 0x00000f74,cm848_loadVersionConfigFromEeprom
 0x00001008,mpc555_bootStateMachine
 0x000010ac,cm848_generateCrcTable

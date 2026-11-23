@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 12:16:54 MST 2026
+// Generated: Mon Nov 23 12:30:43 MST 2026
 
 
 //
@@ -726,9 +726,9 @@ void cm848_mainLoopIteration(void)
 //
 
 /* Boot kernel: mpc555_eepromValidationCycle and mpc555_keyOnStateMachine / then copies EEPROM 0x4a
-   (6 bytes) / 0x50 / 0x52 / 0x54 / 0x0c (4) / 0x56 into RAM 0x3fee18 / 0x3fee1e / 0x3fee20 /
-   0x3fee22 / 0x3fee26 / 0x3fee24 - from 0x3fee18 to 0x3fee23 the application's EEPROM mirror words
-   take its own names (PR #53 round 68) */
+   (6 bytes) / 0x50 / 0x52 / 0x54 / 0x0c (4 - ecm_part_number_cal) / 0x56 into RAM 0x3fee18 /
+   0x3fee1e / 0x3fee20 / 0x3fee22 / 0x3fee26 / 0x3fee24 - from 0x3fee18 to 0x3fee23 the
+   application's EEPROM mirror words take its own names (PR #53 round 68) */
 
 void cm848_loadCalibrationFromEeprom(void)
 
@@ -739,7 +739,7 @@ void cm848_loadCalibrationFromEeprom(void)
   mpc555_eepromReadWords(&serial_reflash_status_flags_cal,0x3fee1e,2);
   mpc555_eepromReadWords(&serial_reflash_success_count_cal,&engine_off_time_saved_values_cal,2);
   mpc555_eepromReadWords(&serial_reflash_attempt_count_cal,0x3fee22,2);
-  mpc555_eepromReadWords(&eeprom_status_block,&boot_eeprom_status_block,4);
+  mpc555_eepromReadWords(&ecm_part_number_cal,&boot_ecm_part_number,4);
   mpc555_eepromReadWords(&serial_reflash_unlock_request_cal,&boot_serial_reflash_unlock_request,2);
   return;
 }

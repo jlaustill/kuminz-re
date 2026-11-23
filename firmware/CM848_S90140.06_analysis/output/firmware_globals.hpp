@@ -2429,7 +2429,7 @@ extern fuel_level_saved_values_t fuel_level_saved_values_cal;  // 0x003fee18
 extern intake_air_heater_saved_values_t intake_air_heater_saved_values_cal;  // 0x003fee1c
 extern engine_off_time_saved_values_t engine_off_time_saved_values_cal;  // 0x003fee20
 extern word boot_serial_reflash_unlock_request;  // 0x003fee24
-extern dword boot_eeprom_status_block;  // 0x003fee26
+extern dword boot_ecm_part_number;  // 0x003fee26
 extern dword eeprom_write_buffer;  // 0x003fee2a
 extern word flash2_operation_active_flag;  // 0x003fee30
 extern word immobilizer_present_flag;  // 0x003fee32
@@ -5766,7 +5766,7 @@ extern byte output_channel_driver_table_set_duty;  // 0x0053ac52
 extern word parameter_id_table_bucket_start[1889];  // 0x0053af76
 extern parameter_id_entry_t parameter_id_table[1441];  // 0x0053be38
 extern byte eeprom_security_key;  // 0x01000002
-extern byte eeprom_status_block;  // 0x0100000c
+extern dword ecm_part_number_cal;  // 0x0100000c
 extern byte eeprom_config_block;  // 0x01000030
 extern byte eeprom_version_marker;  // 0x01000034
 extern byte eeprom_calibration_block;  // 0x0100004a

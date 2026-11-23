@@ -1572,14 +1572,14 @@ struct eeprom_header_t {
 
 struct fuel_level_saved_values_t {
     uint8_t in_range_filtered_percent;  /* e2m 8A24 +0 Fuel_Lvl_In_Range_Filtered [%] 'Filtered Fuel Level Goods Readings' (1/2.55 % per count) - seeds fuel_level_fast_filter at power up */
-    uint8_t last_valid_percent;  /* e2m 8A24 +1 Fuel_Lvl_Last_Valid_Percent [%] 'Last Valid Fuel_Lvl_Percent_Tank_Full' - seeds fuel_level_slow_filter_reference */
+    uint8_t last_valid_percent;  /* e2m 8A24 +1 Fuel_Lvl_Last_Valid_Percent [%] 'Last Valid Fuel_Lvl_Percent_Tank_Full_Avg that was sent on the bus' - seeds fuel_level_slow_filter_reference */
     uint8_t percent_tank_full_average;  /* e2m 8A24 +2 Fuel_Lvl_Percent_Tank_Full_Avg [%] 'Averaged percent tank full sent on bus for fuel level gauge control' - PCI TX[13] header 0xA4 sends it / seeds fuel_level_slow_filter */
     uint8_t dummy_byte_1;  /* e2m 8A24 +3 Fuel_Lvl_Dummy_Byte_1 'Dummy value used as space filler to prevent compiler complaints' */
 };
 
 struct intake_air_heater_saved_values_t {
     uint16_t inhibit_postheat_start_count;  /* e2m 8A36 +0 IAH_Inhibit_Postheat_Counter 'IAH: Inhibits postheat phase for this number of engine starts' - cm848_runEndOfLineTestStartStep sets it to 0x19 */
-    uint16_t redundant_preheat_request;  /* e2m 8A36 +2 IAH_Redundant_Preheat_Req 'If preheat w/o cranking - this param=1; saved at powerdown' | boot kernel (time-shared): its copy of EEPROM 0x50 serial_reflash_status_flags_cal (cm848_beginSerialReflash / mpc555_verifyDownloadedCalibration change bits 1 and 3) */
+    uint16_t redundant_preheat_request;  /* e2m 8A36 +2 IAH_Redundant_Preheat_Req 'If preheat w/o cranking, this param=1;saved at powerdown' | boot kernel (time-shared): its copy of EEPROM 0x50 serial_reflash_status_flags_cal (cm848_beginSerialReflash / mpc555_verifyDownloadedCalibration change bits 1 and 3) */
 };
 
 struct engine_off_time_saved_values_t {
