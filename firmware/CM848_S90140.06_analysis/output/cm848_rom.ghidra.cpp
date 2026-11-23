@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 19:11:21 MST 2026
+// Generated: Sun Nov 22 19:29:12 MST 2026
 
 
 //
@@ -2917,10 +2917,10 @@ void cm848_restoreDiagnosticHandler(void)
   bool bVar1;
   char cVar2;
   
-  if ((oil_change_monitor_engine_power_accumulator_cal._0_1_ != '\0') &&
-     (cVar2 = oil_change_monitor_engine_power_accumulator_cal._0_1_ + -1,
-     bVar1 = oil_change_monitor_engine_power_accumulator_cal._0_1_ == '\x01',
-     oil_change_monitor_engine_power_accumulator_cal._0_1_ = cVar2, bVar1)) {
+  if ((oil_change_monitor_soot_percentage_cal._0_1_ != '\0') &&
+     (cVar2 = oil_change_monitor_soot_percentage_cal._0_1_ + -1,
+     bVar1 = oil_change_monitor_soot_percentage_cal._0_1_ == '\x01',
+     oil_change_monitor_soot_percentage_cal._0_1_ = cVar2, bVar1)) {
     diagnostic_callback_ptr = (undefined *)diagnostic_callback_init_ptr;
     mpc555_sciResetToReceiveRequest();
   }
@@ -2936,7 +2936,7 @@ void cm848_restoreDiagnosticHandler(void)
 void cm848_enableDiagnosticTimer(void)
 
 {
-  oil_change_monitor_engine_power_accumulator_cal._0_1_ = 0x11;
+  oil_change_monitor_soot_percentage_cal._0_1_ = 0x11;
   return;
 }
 
@@ -2949,7 +2949,7 @@ void cm848_enableDiagnosticTimer(void)
 void cm848_processTimerInterrupt(void)
 
 {
-  oil_change_monitor_engine_power_accumulator_cal._0_1_ = 0;
+  oil_change_monitor_soot_percentage_cal._0_1_ = 0;
   return;
 }
 
@@ -6085,9 +6085,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
-  byte prescaler_count;
   dword runtime_value;
   word counter_value;
+  byte prescaler_count;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -9809,9 +9809,9 @@ LAB_0000f700:
   all_speed_governor_fueling = (word)uVar17;
   if ((cruise_control_engaged_flag == 1) &&
      (algorithm_enable_flags_43_cal.vacuum_throttle_cruise_enable != 0)) {
-    if ((uint)all_speed_governor_vacuum_cruise_fueling_reduction < (uVar17 & 0xffff)) {
+    if ((uint)vacuum_throttle_all_speed_governor_fueling_reduction < (uVar17 & 0xffff)) {
       all_speed_governor_fueling =
-           all_speed_governor_fueling - all_speed_governor_vacuum_cruise_fueling_reduction;
+           all_speed_governor_fueling - vacuum_throttle_all_speed_governor_fueling_reduction;
     }
     else {
       all_speed_governor_fueling = 0;
@@ -38740,9 +38740,11 @@ void cm848_initializeAlternatorFieldControl(void)
    main_injection_end_timing_lower_limit .. _upper_limit (signed); main_injection_end_timing_default
    while the pulse width or the engine speed is 0. The engine speed x 6 product is truncated to 16
    bits (clrlwi), so it wraps above raw 10922 (about 1365 rpm). cm848_updateOilChangeMonitor reads
-   the result as its engine_power_accumulator_increment input. (was
-   cm848_computeFuelRpmCompensatedOffset, and before that cm848_computeCruiseSpeedSetpoint: its
-   limits are -171..512 in the RAM dump, not a speed) (PR #53 round 43) */
+   the result as the axis input of its oil soot table
+   (oil_change_monitor_soot_percentage_by_end_of_injection, e2m 8B54 OCM_Soot_Percentage_EOI_Axis /
+   8B55). (was cm848_computeFuelRpmCompensatedOffset, and before that
+   cm848_computeCruiseSpeedSetpoint: its limits are -171..512 in the RAM dump, not a speed) (PR #53
+   round 43) */
 
 void cm848_calculateMainInjectionEndTiming(void)
 
@@ -42069,8 +42071,8 @@ void cm848_calculateAcceleratorPedalDemandFromChannels(void)
         (accelerator_pedal_sensor_fault_latched_flag != 0)) &&
        ((accelerator_pedal_sensor_fault_latched_flag == 0 ||
         ((fault_detected_cal.pedal_position_sensor_2_low_error != 0 &&
-         (accelerator_pedal_single_channel_minimum_idle_threshold <=
-          accelerator_pedal_idle_threshold_a_cal)))))) {
+         (accelerator_pedal_test_cell_idle_threshold <= accelerator_pedal_idle_threshold_a_cal))))))
+    {
       accelerator_pedal_input_fault_flag = 0;
       accelerator_pedal_dual_channel_validated_demand = accelerator_pedal_dual_channel_demand;
     }
@@ -44913,9 +44915,9 @@ LAB_000410d0:
    governor_fuel_demand_working_mode: cruise_control_fueling with FUELING_STATE_CRUISE_CONTROL while
    cruise control is engaged - unless the accelerator asks for more fuel than cruise (the operating
    mode governor's fuel demand above the cruise fueling, with
-   commanded_throttle_state.commanded_throttle above cruise_accelerator_override_throttle_threshold)
-   or TSC1 / mode 5 / 37 / 38 controls - else the operating mode governor output and its mode_code
-   (was cm848_calculateProtectionLevelLimit) */
+   commanded_throttle_state.commanded_throttle above cruise_throttle_transition_threshold) or TSC1 /
+   mode 5 / 37 / 38 controls - else the operating mode governor output and its mode_code (was
+   cm848_calculateProtectionLevelLimit) */
 
 void cm848_selectCruiseOrUserFueling(void)
 
@@ -44936,8 +44938,7 @@ void cm848_selectCruiseOrUserFueling(void)
   }
   if ((((cruise_control_engaged_flag == 0) ||
        ((((uVar1 < operating_mode_governor_output.fuel_demand &&
-          (cruise_accelerator_override_throttle_threshold <
-           commanded_throttle_state.commanded_throttle)) &&
+          (cruise_throttle_transition_threshold < commanded_throttle_state.commanded_throttle)) &&
          ((cruise_speed_command != road_speed_governor_reference_speed ||
           (cruise_control_fueling != road_speed_governor_fueling)))) ||
         ((operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_SPEED_CONTROL ||
@@ -79426,13 +79427,18 @@ void cm848_detectTransferCaseLowRange(void)
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Updates the oil change monitor while it is enabled (config word mask 0x2000 and
-   feature_selection_bits_cal mask 0x04): it accumulates the distance since the last reset in
-   speed-sensor pulses, the injected fuel weighted by coolant temperature and target rpm (one count
-   per 0.01 US gallon at 100 percent weight) and a third table-driven accumulator (probably the oil
-   soot estimate), and sets the flag at 0x40ae5e when any exceeds its threshold and the distance has
-   reached its minimum. A J1939 proprietary command (oil_change_monitor_reset_flag) zeroes the
-   accumulators (was governorCruiseTimerManagement). */
+/* Updates the oil change monitor (e2m OCM_*) while it is enabled (algorithm_enable_flags_12_cal
+   mask 0x2000 = e2m 106B OCM_Enable, and feature_selection_bits_cal mask 0x04). It accumulates
+   three amounts since the last reset: the distance (e2m 8B50 OCM_Miles_Since_Last_Reset, 1/8000
+   mile counts); the injected fuel weighted by oil_change_monitor_severity_factor (e2m 8B53
+   OCM_Oil_Severity_Factor_Table over coolant temperature and engine speed; one count per 0.01 US
+   gallon at a factor of 1.00); and the oil soot percentage (e2m 8B55 OCM_Soot_Percentage_Table over
+   main_injection_end_timing, 'based on 250 operating hours': each pass adds table x 85048 / 900000,
+   0.2 s of the table's rate in 2.351589501e-8 % counts). It sets oil_change_monitor_change_due_flag
+   (e2m 1094 OCM_Interval_Warning_Flag) when any amount exceeds its e2m 8B4E threshold and the
+   distance has reached oil_change_monitor_minimum_distance_pulses_cal (2000 miles here). A J1939
+   proprietary command (oil_change_monitor_reset_flag) zeroes the accumulators (was
+   governorCruiseTimerManagement). */
 
 void cm848_updateOilChangeMonitor(void)
 
@@ -79444,33 +79450,35 @@ void cm848_updateOilChangeMonitor(void)
     if (engine_state != ENGINE_STATE_STOPPED) {
       _oil_change_monitor_distance_pulses_cal =
            lifetime_distance_pulses_cal - oil_change_monitor_reset_distance_pulses_cal;
-      oil_change_monitor_fuel_weight_percent =
+      oil_change_monitor_severity_factor =
            cm848_dualAxisTableInterpolation
-                     (fuel_accumulation_weight_by_coolant_and_rpm_cached_axis_offsets,
+                     (oil_change_monitor_severity_factor_by_coolant_and_rpm_cached_axis_offsets,
                       coolant_temperature_sensor_filtered,
-                      fuel_accumulation_weight_by_coolant_and_rpm_x_axis,
+                      oil_change_monitor_severity_factor_by_coolant_and_rpm_x_axis,
                       engine_speed_state.engine_speed,
-                      fuel_accumulation_weight_by_coolant_and_rpm_y_axis,
-                      fuel_accumulation_weight_by_coolant_and_rpm_grid,1);
+                      oil_change_monitor_severity_factor_by_coolant_and_rpm_y_axis,
+                      oil_change_monitor_severity_factor_by_coolant_and_rpm_grid,1);
       oil_change_monitor_weighted_fuel_accumulator =
            oil_change_monitor_weighted_fuel_accumulator +
            (int)(CONCAT44((int)((ulonglong)
                                 (injected_fuel_running_total -
                                 oil_change_monitor_injected_fuel_snapshot) *
-                                (ulonglong)(uint)oil_change_monitor_fuel_weight_percent >> 0x20),
+                                (ulonglong)(uint)oil_change_monitor_severity_factor >> 0x20),
                           (injected_fuel_running_total - oil_change_monitor_injected_fuel_snapshot)
-                          * (uint)oil_change_monitor_fuel_weight_percent) / 100);
+                          * (uint)oil_change_monitor_severity_factor) / 100);
       if (0x8809a < oil_change_monitor_weighted_fuel_accumulator) {
         register0x0000002c = ram0x003fee36 + 1;
         oil_change_monitor_weighted_fuel_accumulator = 0;
       }
       if (total_injection_quantity != 0) {
         wVar1 = lookupTableInterpolation
-                          (&engine_power_accumulator_increment_cached_axis_offset,
-                           main_injection_end_timing,engine_power_accumulator_increment_axis,
-                           engine_power_accumulator_increment_values,1);
-        oil_change_monitor_engine_power_accumulator_cal =
-             oil_change_monitor_engine_power_accumulator_cal +
+                          (&
+                           oil_change_monitor_soot_percentage_by_end_of_injection_cached_axis_offset
+                           ,main_injection_end_timing,
+                           oil_change_monitor_soot_percentage_by_end_of_injection_axis,
+                           oil_change_monitor_soot_percentage_by_end_of_injection_values,1);
+        oil_change_monitor_soot_percentage_cal =
+             oil_change_monitor_soot_percentage_cal +
              (int)(CONCAT44(wVar1 / 0xc545,(uint)wVar1 * 0x14c38) / 900000);
       }
     }
@@ -79484,8 +79492,7 @@ void cm848_updateOilChangeMonitor(void)
     }
     if ((((oil_change_monitor_distance_threshold_pulses < _oil_change_monitor_distance_pulses_cal)
          || (oil_change_monitor_fuel_threshold_hundredth_gallons < ram0x003fee36)) ||
-        (oil_change_monitor_engine_power_accumulator_threshold <
-         oil_change_monitor_engine_power_accumulator_cal)) &&
+        (oil_change_monitor_soot_percentage_threshold < oil_change_monitor_soot_percentage_cal)) &&
        (oil_change_monitor_minimum_distance_pulses_cal <= _oil_change_monitor_distance_pulses_cal))
     {
       oil_change_monitor_change_due_flag = 1;
@@ -79496,7 +79503,7 @@ void cm848_updateOilChangeMonitor(void)
     if (oil_change_monitor_reset_flag != 0) {
       _oil_change_monitor_distance_pulses_cal = 0;
       ram0x003fee36 = 0;
-      oil_change_monitor_engine_power_accumulator_cal = 0;
+      oil_change_monitor_soot_percentage_cal = 0;
       oil_change_monitor_fault_event_bits_cal._0_2_ = 0;
       oil_change_monitor_reset_distance_pulses_cal = lifetime_distance_pulses_cal;
       oil_change_monitor_change_due_flag = 0;
@@ -79516,9 +79523,9 @@ void cm848_updateOilChangeMonitor(void)
 void initFuelCorrectionTableParams(void)
 
 {
-  fuel_accumulation_weight_by_coolant_and_rpm_cached_axis_offsets[0] = 2;
-  fuel_accumulation_weight_by_coolant_and_rpm_cached_axis_offsets[1] = 2;
-  engine_power_accumulator_increment_cached_axis_offset = 2;
+  oil_change_monitor_severity_factor_by_coolant_and_rpm_cached_axis_offsets[0] = 2;
+  oil_change_monitor_severity_factor_by_coolant_and_rpm_cached_axis_offsets[1] = 2;
+  oil_change_monitor_soot_percentage_by_end_of_injection_cached_axis_offset = 2;
   return;
 }
 

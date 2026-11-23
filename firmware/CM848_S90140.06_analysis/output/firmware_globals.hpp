@@ -424,11 +424,11 @@ extern byte engine_off_time_unchanged_count_limit;  // 0x0005c7d0
 extern byte engine_off_time_unchanged_delta;  // 0x0005c7d1
 extern word fuel_quantity_limit_rail_pressure_shortfall_axis[15];  // 0x0005c7d2
 extern word fuel_quantity_limit_rail_pressure_shortfall_values[15];  // 0x0005c7f0
-extern word fuel_accumulation_weight_by_coolant_and_rpm_x_axis[11];  // 0x0005c80e
-extern word fuel_accumulation_weight_by_coolant_and_rpm_y_axis[11];  // 0x0005c824
-extern word fuel_accumulation_weight_by_coolant_and_rpm_grid[100];  // 0x0005c83a
-extern word engine_power_accumulator_increment_axis[11];  // 0x0005c902
-extern word engine_power_accumulator_increment_values[11];  // 0x0005c918
+extern word oil_change_monitor_severity_factor_by_coolant_and_rpm_x_axis[11];  // 0x0005c80e
+extern word oil_change_monitor_severity_factor_by_coolant_and_rpm_y_axis[11];  // 0x0005c824
+extern word oil_change_monitor_severity_factor_by_coolant_and_rpm_grid[100];  // 0x0005c83a
+extern word oil_change_monitor_soot_percentage_by_end_of_injection_axis[11];  // 0x0005c902
+extern word oil_change_monitor_soot_percentage_by_end_of_injection_values[11];  // 0x0005c918
 extern word drivetrain_ratio_tolerance;  // 0x0005c92e
 extern word drivetrain_ratio_minimum_limit;  // 0x0005c930
 extern word drivetrain_ratio_maximum_limit;  // 0x0005c932
@@ -2381,7 +2381,7 @@ extern word immobilizer_present_flag;  // 0x003fee32
 extern dword oil_change_monitor_fault_event_bits_cal;  // 0x003fee34
 extern undefined oil_change_monitor_fuel_hundredth_gallons_cal;  // 0x003fee36
 extern word oil_change_monitor_distance_pulses_cal;  // 0x003fee3a
-extern dword oil_change_monitor_engine_power_accumulator_cal;  // 0x003fee3e
+extern dword oil_change_monitor_soot_percentage_cal;  // 0x003fee3e
 extern word accelerator_pedal_idle_threshold_a_cal;  // 0x003fee46
 extern word accelerator_pedal_idle_threshold_b_cal;  // 0x003fee48
 extern word four_wheel_drive_switch_learned_flag_cal;  // 0x003fee4a
@@ -2452,7 +2452,9 @@ extern word fuel_demand_ramp_step;  // 0x003ff6c2
 extern word fuel_demand_ramp_drivetrain_ratio_threshold;  // 0x003ff6c4
 extern word all_speed_governor_delta_droop;  // 0x003ff6c6
 extern word all_speed_governor_delta_upper_limit;  // 0x003ff6c8
-extern word all_speed_governor_vacuum_cruise_fueling_reduction;  // 0x003ff6ce
+extern int16_t vacuum_throttle_override_duty_cycle_threshold;  // 0x003ff6ca
+extern int16_t vacuum_throttle_override_position_error_threshold;  // 0x003ff6cc
+extern word vacuum_throttle_all_speed_governor_fueling_reduction;  // 0x003ff6ce
 extern word all_speed_governor_throttle_mode_reference_filter_coefficient;  // 0x003ff6d0
 extern word governor_fuel_demand_tracking_limit_throttle_mode;  // 0x003ff6d2
 extern word governor_fuel_demand_tracking_floor_throttle_mode;  // 0x003ff6d4
@@ -3534,7 +3536,7 @@ extern word net_torque_fuel_limit_alpha_axis[6];  // 0x004089ba
 extern word net_torque_fuel_limit_grid[70];  // 0x004089c6
 extern word accelerator_pedal_idle_learning_debounce_limit;  // 0x00408a72
 extern word accelerator_pedal_channel_disagreement_debounce_limit;  // 0x00408a74
-extern word accelerator_pedal_single_channel_minimum_idle_threshold;  // 0x00408a76
+extern word accelerator_pedal_test_cell_idle_threshold;  // 0x00408a76
 extern word accelerator_pedal_idle_threshold_offset;  // 0x00408a7a
 extern word accelerator_pedal_travel_span;  // 0x00408a7c
 extern word accelerator_pedal_idle_learning_deadband;  // 0x00408a7e
@@ -3701,7 +3703,7 @@ extern word cruise_coast_ramp;  // 0x00408e8e
 extern word cruise_minimum_coast_speed;  // 0x00408e90
 extern word cruise_minimum_set_speed;  // 0x00408e92
 extern word cruise_out_of_gear_disable;  // 0x00408e94
-extern word cruise_accelerator_override_throttle_threshold;  // 0x00408e96
+extern word cruise_throttle_transition_threshold;  // 0x00408e96
 extern word cruise_bump_up_step_margin_scale;  // 0x00408e98
 extern word engine_retarder_enter_minimum_engine_speed_warm_oil;  // 0x00408e9a
 extern word engine_retarder_release_passes;  // 0x00408e9c
@@ -6913,7 +6915,7 @@ extern word fuel_pressure_governor_demand_offset_rpm;  // 0x0040b8fa
 extern word fuel_pressure_governor_demand_threshold_rpm;  // 0x0040b8fc
 extern byte fuel_pressure_governor_demand_above_limit_flag;  // 0x0040b903
 extern byte fuel_pressure_governor_demand_residual_update_gate_flag;  // 0x0040b90b
-extern word oil_change_monitor_fuel_weight_percent;  // 0x0040b54a
+extern word oil_change_monitor_severity_factor;  // 0x0040b54a
 extern int16_t egr_cooler_efficiency_threshold_gain;  // 0x004051e8
 extern int16_t net_combustion_torque_subtracted_term_scale;  // 0x004059f4
 extern int16_t injection_timing_torque_to_fuel_adjustment_maximum_limit;  // 0x00405a9e
@@ -7509,7 +7511,7 @@ extern dword oil_change_monitor_reset_distance_pulses_cal;  // 0x003fee42
 extern word oil_change_monitor_change_due_flag;  // 0x0040ae5e
 extern dword oil_change_monitor_fuel_threshold_hundredth_gallons;  // 0x00408a66
 extern dword oil_change_monitor_distance_threshold_pulses;  // 0x00408a6a
-extern dword oil_change_monitor_engine_power_accumulator_threshold;  // 0x00408a6e
+extern dword oil_change_monitor_soot_percentage_threshold;  // 0x00408a6e
 extern dword oil_change_monitor_minimum_distance_pulses_cal;  // 0x003fd8ec
 extern byte j1939_fd1_fan_drive_state_byte;  // 0x003fae21
 extern word alternator_field_regulator_start_engine_speed_threshold;  // 0x004087a8
@@ -7939,8 +7941,8 @@ extern word intake_air_heater_duty_percent_by_target_level_cached_axis_offset;  
 extern word intake_air_heater_postheat_pulse_duration_cached_axis_offsets[2];  // 0x003fce74
 extern word fuel_quantity_limit_rail_pressure_shortfall_cached_axis_offset;  // 0x003fceaa
 extern word oil_pressure_model_cached_axis_offsets[2];  // 0x003fceae
-extern word fuel_accumulation_weight_by_coolant_and_rpm_cached_axis_offsets[2];  // 0x003fced8
-extern word engine_power_accumulator_increment_cached_axis_offset;  // 0x003fcedc
+extern word oil_change_monitor_severity_factor_by_coolant_and_rpm_cached_axis_offsets[2];  // 0x003fced8
+extern word oil_change_monitor_soot_percentage_by_end_of_injection_cached_axis_offset;  // 0x003fcedc
 extern word turbocharger_speed_limiter_time_cached_axis_offset;  // 0x003fcfc6
 extern word injection_timing_auxiliary_coolant_factor_cached_axis_offsets[2];  // 0x003fd08e
 extern word injection_timing_auxiliary_coolant_angle_cached_axis_offsets[2];  // 0x003fd092
