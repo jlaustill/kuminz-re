@@ -613,6 +613,11 @@ state enum, the flag bytes.**
 - **Stage B (ef9781b, rows):** 30 junk `<name>+<N>` rows removed (the build changes only local declaration order).
 - **Stage C (d0bd88c, labels):** the block named by e2m 8B47 / 8B48 (EOI_Default / _Hydraulic_Delay / _Max_Limit /
   _Min_Limit, EOI); the addend is the hydraulic delay.
+**Round 44.**
+- **Stage A (a0c4d30, labels, a type):** round 39's three unverified rows named from their code (the vacuum cruise
+  fueling reduction, the cruise accelerator override threshold, the single-channel pedal idle threshold minimum),
+  the last typed junk row (the previous-pass cruise engaged flag) and a documentation row for e2m
+  Cruise_Out_Of_Gear_Disable.
 
 ## Test plan
 
@@ -705,6 +710,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 44: label-only proof matches all 1968 functions (the `undefined2` -> `word` retype changes nothing); a raw lis + displacement scan of both images finds exactly the accesses the `.cpp` shows.
 - [x] Round 43: the end timing function has 0 differing statements; removing the junk rows changes only the order of local declarations.
 - [x] Round 42: all 24 status record users match field by field (index set-up dropped; one pair is the same address in two forms); the retarder function has 0 differing statements; the other functions match the canonical form.
 - [x] Round 41: the monitor's 112 statements match field by field (prove_records.py: field identity and statement structure; the indexes are dropped); the other functions match the canonical form or differ in local declaration order only; widths asm-verified.

@@ -481,3 +481,7 @@ Hand work on the round 7 lead.
 ## Round 43: the main injection end timing, the junk rows (`session_folder/round43/`)
 
 - **Stage A:** `apply_r43a.py`, `rules_r43a*.json`. **Stage B:** `apply_r43b.py`, `removed_junk_rows.txt`. **Stage C:** `apply_r43c.py`. **Fix:** `dedupe_task046.py`, `apply_r43_fix.py`. **Closing:** `apply_r43_closing.py`, `update_large_tar_r43.sh`, the MISSING survey (`missing*.tsv`).
+
+## Round 44: round 39's unverified rows, the last typed junk row (`session_folder/round44/`)
+
+- **Stage A:** `apply_r44a.py`, `map_r44a.csv`. **Evidence:** `e2m_negatives.py` (+ `e2m_negatives.txt`), `raw_address_scan.py`, `pedal_records.txt`. **Closing:** `apply_r44_closing.py`, `update_large_tar_r44.sh`.

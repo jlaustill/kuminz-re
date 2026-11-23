@@ -2059,6 +2059,45 @@ A peer relay started the round; the scripts are in `session_folder/round43/`.
   - The oil change monitor's "engine power" accumulator and increment table: keyed by the end of injection, so likely
     soot, but unproven.
 
+## Done, round 44 (2026-11-22, same PR): round 39's unverified rows, the last typed junk row
+
+A peer relay started the round; the scripts are in `session_folder/round44/`.
+- **Stage A (a0c4d30, labels, a type):** the three rows round 39 left unverified, named from their code, and the typed
+  junk row.
+  - `governor_override_fuel_decay` is `all_speed_governor_vacuum_cruise_fueling_reduction`. While vacuum-throttle
+    cruise is engaged, `cm848_runOperatingModeSpeedGovernor` subtracts it from `all_speed_governor_fueling`, with a
+    floor of 0 (44 here).
+  - `governor_override_fuel_threshold` is `cruise_accelerator_override_throttle_threshold`. On the accelerator path of
+    `cm848_selectCruiseOrUserFueling`, the commanded throttle must be above it (0 here) before the operating mode
+    governor takes the fueling from cruise. The function's plate named the wrong operands (`fuel_demand_control`);
+    it now names the governor's fuel demand and the commanded throttle.
+  - `cruise_speed_target_min` is `accelerator_pedal_single_channel_minimum_idle_threshold`. With the pedal fault
+    latched, the demand stays valid only for P2127 (sensor 2, channel 98, low), and only while channel 97's learned
+    idle threshold is at least this value (68; the dump holds 78).
+  - The typed junk row at 0x3fb52a (`fuel_demand_enable_sync_flag_shadow+2`, `undefined2`) is
+    `cruise_control_engaged_flag_previous_arbitration`, a word (lhz / sth). Its falling edge starts the cruise fuel
+    ramp-down. Task 045 read it the same way.
+  - 0x408e94 gets a documentation row from e2m 118F +0x0C: `cruise_out_of_gear_disable` (1 here). No instruction in
+    the ROM or the live flash2 forms its address.
+- **Evidence:**
+  - The parameter ID table resolves none of the three rows.
+  - No record sits at 107D +0x44..+0x49 or 118F +0x0D..+0x11 in any of the 68 e2m files. The search reads the offsets
+    as numbers because some files zero-pad them to four digits.
+  - The pedal block 0x408a72-0x408a7e lies past the dumped table, and no e2m record describes dual-channel pedal idle
+    learning or disagreement.
+  - `raw_address_scan.py` (lis + displacement over both images) finds exactly the accesses the `.cpp` shows.
+    - Its first run read `cm848_flash2.bin`, which differs from the live image the build uses, and reported a false
+      reader of 0x408a76.
+  - The dump values agree with ROM through the copy rule.
+- **Proof:** `prove_caches.py` matches all 1968 functions. The retype from `undefined2` to `word` changes no statement.
+- This resolves round 39's unverified rows, round 43's typed junk row lead, and task 045's 0x3fb52a lead.
+- **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 221.
+- **Leads:**
+  - The oil change monitor's third accumulator. CHR_B2's e2m has an OCM "FOD" accumulator: grams since the last oil
+    change, from an rpm x fueling quantity map scaled by an Aux2 start-of-injection factor. CM848's is a 1-D table on
+    `main_injection_end_timing`, so the names do not transfer. Its "engine power" name stays unproven.
+  - `cruise_out_of_gear_disable` is 1 in the calibration, but no code reads it.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**
