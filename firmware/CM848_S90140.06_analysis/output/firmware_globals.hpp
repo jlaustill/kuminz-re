@@ -1056,7 +1056,7 @@ extern byte TOUCAN_B_IFLAG;  // 0x00307424
 extern word toucan_can_ext_ctrl;  // 0x00307f80
 extern undefined4 calibration_ram_start;  // 0x003f9800
 extern memory_region_t memory_region_table;  // 0x003f9830
-extern undefined2 param_id_lookup_table;  // 0x003f98ac
+extern parameter_id_entry_t boot_parameter_id_table[20];  // 0x003f98ac
 extern word executive_frame_ticks;  // 0x003fa000
 extern dword executive_frame_start_ticks;  // 0x003fa002
 extern word executive_timing_enabled_previous_flag;  // 0x003fa006
@@ -5740,10 +5740,13 @@ extern dword tachometer_signal_period;  // 0x0040c262
 extern void * data_collector_start_address;  // 0x0040c278
 extern void * data_collector_end_address;  // 0x0040c280
 extern dword flash2_command_register;  // 0x00500000
+extern sci_command_dispatch_entry_t sci_command_dispatch_table[19];  // 0x0053a9a0
 extern byte output_channel_driver_table_enable;  // 0x0053ac46
 extern void * output_channel_driver_table_read_feedback;  // 0x0053ac4a
 extern byte output_channel_driver_table_set_period;  // 0x0053ac4e
 extern byte output_channel_driver_table_set_duty;  // 0x0053ac52
+extern word parameter_id_table_bucket_start[1889];  // 0x0053af76
+extern parameter_id_entry_t parameter_id_table[1441];  // 0x0053be38
 extern byte eeprom_security_key;  // 0x01000002
 extern byte eeprom_status_block;  // 0x0100000c
 extern byte eeprom_config_block;  // 0x01000030

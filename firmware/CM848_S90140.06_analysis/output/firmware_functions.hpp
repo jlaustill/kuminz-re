@@ -96,7 +96,7 @@ void mpc555_initQspiRegisters(void);  // @ 0x00003b6c
 undefined1 cm848_getDiagnosticResponseEchoLength(int param_1);  // @ 0x00003d54
 void mpc555_canTransmitQueuePush(dword can_id,dword data_length,byte *data,byte *result);  // @ 0x00003dac
 void cm848_transmitCanMessage(diagnostic_response_message_t *message);  // @ 0x00003f20
-undefined4 cm848_lookupTableEntryByKey(word param_id);  // @ 0x00003f70
+dword cm848_lookupBootParameterIdAddress(word param_id);  // @ 0x00003f70
 undefined4 cm848_dataTransferBufferWrite(int param_1,dword param_2,uint param_3,int param_4,byte param_5);  // @ 0x00003fcc
 void cm848_fillFlashProgramPageBuffer(void);  // @ 0x00004194
 void cm848_completePendingDiagWrite(void);  // @ 0x000042b0

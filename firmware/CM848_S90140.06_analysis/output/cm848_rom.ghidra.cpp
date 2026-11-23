@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 04:40:09 MST 2026
+// Generated: Mon Nov 23 05:30:46 MST 2026
 
 
 //
@@ -1235,7 +1235,7 @@ undefined4 cm848_diagService65_handler(dword request_msg)
   undefined2 local_c;
   
   local_c = *(word *)(*(int *)(request_msg + 6) + 1);
-  iVar1 = cm848_lookupTableEntryByKey(local_c);
+  iVar1 = cm848_lookupBootParameterIdAddress(local_c);
   if (iVar1 == 0) {
     uVar2 = 8;
   }
@@ -1379,7 +1379,7 @@ cm848_diagMemoryReadWithBaseOffset(dword request_msg,word param_id,word reserved
   int iVar1;
   undefined1 uVar2;
   
-  iVar1 = cm848_lookupTableEntryByKey(param_id);
+  iVar1 = cm848_lookupBootParameterIdAddress(param_id);
   if (iVar1 == 0) {
     uVar2 = 8;
   }
@@ -3139,30 +3139,36 @@ void cm848_transmitCanMessage(diagnostic_response_message_t *message)
 
 
 //
-// Function: cm848_lookupTableEntryByKey @ 0x00003f70
+// Function: cm848_lookupBootParameterIdAddress @ 0x00003f70
 //
 
-undefined4 cm848_lookupTableEntryByKey(word param_id)
+/* Boot kernel: returns the address of a parameter ID from boot_parameter_id_table (20 records
+   sorted by ID - a linear scan to 0x3f9924) or 0 when absent - the boot twin of
+   cm848_lookupParameterIdAddress. Callers: the boot diagnostic services cm848_diagService65_handler
+   / cm848_diagMemoryReadWithBaseOffset / cm848_memoryWriteByParameterId (was
+   cm848_lookupTableEntryByKey; PR #53 round 60) */
+
+dword cm848_lookupBootParameterIdAddress(word param_id)
 
 {
   ushort uVar1;
   undefined2 in_register_0000000c;
-  ushort *puVar2;
-  undefined4 uVar3;
+  parameter_id_entry_t *ppVar2;
+  dword dVar3;
   
-  puVar2 = &param_id_lookup_table;
-  uVar1 = param_id_lookup_table;
+  ppVar2 = boot_parameter_id_table;
+  uVar1 = boot_parameter_id_table[0].parameter_id;
   while (((int)(uint)uVar1 < (int)CONCAT22(in_register_0000000c,param_id) &&
-         (puVar2 = puVar2 + 3, puVar2 < (ushort *)0x3f9924))) {
-    uVar1 = *puVar2;
+         (ppVar2 = ppVar2 + 1, ppVar2 < (parameter_id_entry_t *)0x3f9924))) {
+    uVar1 = ppVar2->parameter_id;
   }
-  if ((uint)*puVar2 == CONCAT22(in_register_0000000c,param_id)) {
-    uVar3 = *(undefined4 *)(puVar2 + 1);
+  if ((uint)ppVar2->parameter_id == CONCAT22(in_register_0000000c,param_id)) {
+    dVar3 = ppVar2->address;
   }
   else {
-    uVar3 = 0;
+    dVar3 = 0;
   }
-  return uVar3;
+  return dVar3;
 }
 
 
@@ -4208,10 +4214,10 @@ byte cm848_writeDiagMemory(dword param_1,uint param_2,uint param_3)
 //
 
 /* Boot reflash kernel (runs only from its RAM copy; never called by the application): resolves a
-   2-byte parameter ID via cm848_lookupTableEntryByKey (returns 8 when unknown) then hands address +
-   offset + length to the shared memory-write worker at 0x5400 with addressing mode 0 (parameter ID)
-   | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
-    */
+   2-byte parameter ID via cm848_lookupBootParameterIdAddress (returns 8 when unknown) then hands
+   address + offset + length to the shared memory-write worker at 0x5400 with addressing mode 0
+   (parameter ID) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy
+   Confidence Medium */
 
 undefined1
 cm848_memoryWriteByParameterId(undefined4 param_1,word param_2,int param_3,undefined4 param_4)
@@ -4220,7 +4226,7 @@ cm848_memoryWriteByParameterId(undefined4 param_1,word param_2,int param_3,undef
   int iVar1;
   undefined1 uVar2;
   
-  iVar1 = cm848_lookupTableEntryByKey(param_2);
+  iVar1 = cm848_lookupBootParameterIdAddress(param_2);
   if (iVar1 == 0) {
     uVar2 = 8;
   }
@@ -81641,8 +81647,8 @@ void cm848_dispatchSciCommand(void)
   bVar1 = false;
   uVar2 = 0;
   do {
-    if (*(char *)sci_buffer_cursor == (&DAT_0053a9a0)[uVar2 * 6]) {
-      (**(code **)((int)&PTR_cm848_sciCommand18EnterHighSpeedMode_0053a9a2 + uVar2 * 6))();
+    if (*(byte *)sci_buffer_cursor == sci_command_dispatch_table[uVar2].command) {
+      (*(code *)sci_command_dispatch_table[uVar2].handler)();
       bVar1 = true;
     }
     uVar2 = uVar2 + 1 & 0xff;
@@ -99362,25 +99368,25 @@ undefined4 cm848_lookupParameterIdAddress(uint param_1,uint *param_2)
 {
   undefined4 uVar1;
   uint uVar2;
-  ushort *puVar3;
-  ushort *puVar4;
+  parameter_id_entry_t *ppVar3;
+  parameter_id_entry_t *ppVar4;
   
   uVar2 = (int)param_1 % 0x761 & 0xffff;
-  if (*(ushort *)(&DAT_0053af76 + uVar2 * 2) < 0x75e) {
-    puVar4 = (ushort *)(&DAT_0053be38 + (uint)*(ushort *)(&DAT_0053af76 + uVar2 * 2) * 6);
-    if ((uVar2 == 0x760) || (*(ushort *)(&DAT_0053af78 + uVar2 * 2) == 0xffff)) {
-      puVar3 = (ushort *)0x53ea6c;
+  if (parameter_id_table_bucket_start[uVar2] < 0x75e) {
+    ppVar4 = parameter_id_table + parameter_id_table_bucket_start[uVar2];
+    if ((uVar2 == 0x760) || (parameter_id_table_bucket_start[uVar2 + 1] == 0xffff)) {
+      ppVar3 = (parameter_id_entry_t *)0x53ea6c;
     }
     else {
-      puVar3 = (ushort *)(&DAT_0053be38 + (uint)*(ushort *)(&DAT_0053af78 + uVar2 * 2) * 6);
+      ppVar3 = parameter_id_table + parameter_id_table_bucket_start[uVar2 + 1];
     }
-    for (; (puVar4 != puVar3 && (*puVar4 != param_1)); puVar4 = puVar4 + 3) {
+    for (; (ppVar4 != ppVar3 && (ppVar4->parameter_id != param_1)); ppVar4 = ppVar4 + 1) {
     }
-    if (puVar4 == puVar3) {
+    if (ppVar4 == ppVar3) {
       uVar1 = 1;
     }
     else {
-      uVar2 = *(uint *)(puVar4 + 1);
+      uVar2 = ppVar4->address;
       if (((0xffffff < uVar2) && (uVar2 < 0x10008e8)) &&
          ((run_location != RUN_LOCATION_NORMAL || (not_safe_to_program_flag != 0)))) {
         uVar2 = uVar2 - 0xc02b7e;

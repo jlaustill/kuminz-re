@@ -1309,10 +1309,9 @@ typedef struct q16_fixed_point_t q16_fixed_point_t;
 typedef struct j1939_pgn_handler_entry_t j1939_pgn_handler_entry_t;
 typedef struct j1939_tx_msg_t j1939_tx_msg_t;
 typedef struct j1939_acknowledgement_payload_t j1939_acknowledgement_payload_t;
-typedef struct j1939_ack_msg_t j1939_ack_msg_t;
 typedef struct eeprom_param_t eeprom_param_t;
 typedef struct j1939_powertrain_messages_received_t j1939_powertrain_messages_received_t;
-typedef struct param_id_entry_t param_id_entry_t;
+typedef struct parameter_id_entry_t parameter_id_entry_t;
 typedef struct ef00_dispatch_entry_t ef00_dispatch_entry_t;
 typedef struct diag_dispatch_entry_t diag_dispatch_entry_t;
 typedef struct executive_frame_timing_t executive_frame_timing_t;
@@ -1435,6 +1434,7 @@ typedef struct injector_driver_booster_capacitor_monitor_record_t injector_drive
 typedef struct injector_driver_booster_capacitor_cylinder_record_t injector_driver_booster_capacitor_cylinder_record_t;
 typedef struct fault_status_record_t fault_status_record_t;
 typedef struct discrete_output_override_t discrete_output_override_t;
+typedef struct sci_command_dispatch_entry_t sci_command_dispatch_entry_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -2538,17 +2538,6 @@ struct j1939_acknowledgement_payload_t {
     uint8_t pgn_high;  /* Acknowledged PGN high byte (= dest_address of request) */
 };
 
-struct j1939_ack_msg_t {
-    J1939_ACK_TYPE control_byte;  /* J1939-21 ACKM control byte */
-    uint8_t group_function;  /* Group function value (0xFF = not defined per J1939-21) */
-    uint8_t reserved_byte2;  /* Reserved byte 2 (always 0xFF per J1939-21) */
-    uint8_t reserved_byte3;  /* Reserved byte 3 (always 0xFF per J1939-21) */
-    uint8_t address_acknowledged;  /* Source address of message being acknowledged (0xFF = global) */
-    uint8_t pgn_low;  /* Acknowledged PGN low byte (hardcoded 0 for PDU1 requests) */
-    uint8_t pgn_mid;  /* Acknowledged PGN mid byte (= PF byte of request) */
-    uint8_t pgn_high;  /* Acknowledged PGN high byte (= PS/DP byte of request) */
-};
-
 struct eeprom_param_t {
     uint16_t value;  /* Parameter value (resolution varies per parameter) */
     uint16_t min_limit;  /* Minimum allowed value for parameter */
@@ -2577,9 +2566,9 @@ struct j1939_powertrain_messages_received_t {
     uint8_t tsc1_accepted_requested_torque;  /* the requested torque of the accepted torque control / limit request (modes 2 and 3) (was torque_stored, described as an SPN 522 copy) */
 };
 
-struct param_id_entry_t {
-    uint16_t param_id;  /* Parameter ID (0x0000-0x12A9 for CM848) */
-    uint32_t address;  /* Resolved memory address (EEPROM/ROM/MPC555 regs) */
+struct parameter_id_entry_t {
+    uint16_t parameter_id;  /* The ID looked up: a boot service parameter (0x0000-0x12A9) in the boot table, an e2m block ID (e2m column 3, e.g. 0x105E / 0x8A0F) in the flash2 table (lhz) - was param_id (PR #53 round 60) */
+    uint32_t address;  /* The resolved address: EEPROM 0x01000000 + offset (the application maps it to the RAM mirror 0x3fd482 + offset) / ROM / RAM / MPC555 registers (lwz at +2; a dword: as a pointer it would add about 1460 references) */
 };
 
 struct ef00_dispatch_entry_t {
@@ -4136,4 +4125,10 @@ struct fault_status_record_t {
 struct discrete_output_override_t {
     uint8_t enable;  /* A discrete output override's enable (e2m 8B5B / 8C29 <driver>_Override_N; 0 = not overridden): while it is set cm848_applyDiscreteOutputOverride requests the output from value at discrete_output_override_priority (PR #53 round 56) */
     uint8_t value;  /* The overridden output's requested state (e2m <driver>_User_Value_N): nonzero = on / 0 = off (PR #53 round 56) */
+};
+
+struct sci_command_dispatch_entry_t {
+    uint8_t command;  /* The SCI command number (18 / 19 / 20 / 23 / 25 ... 53 / 40 / 43 / 44 / 49 in table order) */
+    uint8_t pad;  /* 0 in every record */
+    void * handler;  /* The command's cm848_sciCommand<N> function */
 };

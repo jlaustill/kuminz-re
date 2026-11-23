@@ -207,7 +207,7 @@ function_address,function_name,param_index,name,type,comment
 # Resolves firmware parameter IDs (0x0000-0x12A9) to memory addresses
 # Table at ROM 0x3CDC copied to RAM 0x3F98AC (20 entries x 6 bytes)
 # -----------------------------------------------------------------------------
-0x00003f70,cm848_lookupTableEntryByKey,0,param_id,ushort,16-bit parameter ID to resolve
+0x00003f70,cm848_lookupBootParameterIdAddress,0,param_id,ushort,16-bit parameter ID to resolve
 
 0x000019e8,cm848_diagService65_handler,0,request_msg,int,Pointer to EF00 request message (service 0x41)
 

@@ -1120,17 +1120,6 @@ j1939_acknowledgement_payload_t,,pgn_low,byte,1,Acknowledged PGN low byte (hardc
 j1939_acknowledgement_payload_t,,pgn_mid,byte,1,Acknowledged PGN mid byte (= pgn_pf of request),,verified
 j1939_acknowledgement_payload_t,,pgn_high,byte,1,Acknowledged PGN high byte (= dest_address of request),,verified
 
-# J1939 Acknowledge Message - 8-byte ACKM payload type definition (kept for reference)
-# Absorbed into j1939_tx_msg_t fields above; no standalone instance
-j1939_ack_msg_t,,control_byte,J1939_ACK_TYPE,1,J1939-21 ACKM control byte,,verified
-j1939_ack_msg_t,,group_function,byte,1,Group function value (0xFF = not defined per J1939-21),,verified
-j1939_ack_msg_t,,reserved_byte2,byte,1,Reserved byte 2 (always 0xFF per J1939-21),,verified
-j1939_ack_msg_t,,reserved_byte3,byte,1,Reserved byte 3 (always 0xFF per J1939-21),,verified
-j1939_ack_msg_t,,address_acknowledged,byte,1,Source address of message being acknowledged (0xFF = global),,verified
-j1939_ack_msg_t,,pgn_low,byte,1,Acknowledged PGN low byte (hardcoded 0 for PDU1 requests),,verified
-j1939_ack_msg_t,,pgn_mid,byte,1,Acknowledged PGN mid byte (= PF byte of request),,verified
-j1939_ack_msg_t,,pgn_high,byte,1,Acknowledged PGN high byte (= PS/DP byte of request),,verified
-
 # ============================================================================
 # Additional Generic Structures - Ported from CM550 for analysis reference
 # These define common data patterns across Cummins ECUs
@@ -1165,12 +1154,9 @@ j1939_powertrain_messages_received_t,0x003fa982,tsc1_accepted_priority,byte,1,th
 j1939_powertrain_messages_received_t,0x003fa982,tsc1_accepted_requested_speed,word,2,"the requested speed of the accepted speed control / limit request (modes 1 and 3); a mode 3 takeover at the same priority needs a lower torque or speed (was speed_stored, described as an SPN 191 copy)",,verified
 j1939_powertrain_messages_received_t,0x003fa982,tsc1_accepted_requested_torque,byte,1,"the requested torque of the accepted torque control / limit request (modes 2 and 3) (was torque_stored, described as an SPN 522 copy)",,verified
 
-# Parameter ID Lookup Entry - firmware parameter lookup table entry
-# Located at ROM 0x3CDC (copied to RAM 0x3F98AC at boot)
-# Used by lookupTableEntryByKey to resolve parameter IDs to memory addresses
-# Total size: 6 bytes per entry (20 entries in CM848)
-param_id_entry_t,,param_id,word,2,Parameter ID (0x0000-0x12A9 for CM848),,verified
-param_id_entry_t,,address,dword,4,Resolved memory address (EEPROM/ROM/MPC555 regs),,verified
+# Parameter ID tables ({parameter ID, address} records, 6 bytes): the boot kernel's boot_parameter_id_table (ROM 0x3CDC copied to RAM 0x3F98AC - 20 records - cm848_lookupBootParameterIdAddress) and the application's parameter_id_table (flash2 0x53be38 - 1886 records, 1441 in the dump - cm848_lookupParameterIdAddress through parameter_id_table_bucket_start)
+parameter_id_entry_t,,parameter_id,word,2,"The ID looked up: a boot service parameter (0x0000-0x12A9) in the boot table, an e2m block ID (e2m column 3, e.g. 0x105E / 0x8A0F) in the flash2 table (lhz) - was param_id (PR #53 round 60)",,verified
+parameter_id_entry_t,,address,dword,4,"The resolved address: EEPROM 0x01000000 + offset (the application maps it to the RAM mirror 0x3fd482 + offset) / ROM / RAM / MPC555 registers (lwz at +2; a dword: as a pointer it would add about 1460 references)",,verified
 
 # EF00 Service Dispatch Entry - PGN 0xEF00 service handler registration
 # Located at RAM 0x3FA8B2 (populated by processJ1939DiagnosticRequest)
@@ -2802,3 +2788,8 @@ fault_status_record_t,,flags,byte,1,"bit 0x01: cleared by cm848_initializeFaultM
 fault_status_record_t,,status_word,word,2,"bit 0x0001: cm848_sciCommand51ReportActiveFaultDtcs reports the slots that have it (clear in every slot of the truck's dump, the active P0483 too: slot 100 reads flags 0x82 / status_word 0, so not simply 'active'); bits 0x0002 / 0x0004: flags cm848_removeHealedFaults / cm848_recordFaultDetection test; bits 3-9 (>> 3 & 0x7f): a 7-bit age the heal logic compares (PR #53 round 42)",,verified
 discrete_output_override_t,,enable,byte,1,"A discrete output override's enable (e2m 8B5B / 8C29 <driver>_Override_N; 0 = not overridden): while it is set cm848_applyDiscreteOutputOverride requests the output from value at discrete_output_override_priority (PR #53 round 56)",,verified
 discrete_output_override_t,,value,byte,1,"The overridden output's requested state (e2m <driver>_User_Value_N): nonzero = on / 0 = off (PR #53 round 56)",,verified
+
+# SCI command dispatch entry (6 bytes): cm848_dispatchSciCommand compares the received command byte with command and calls handler (sci_command_dispatch_table, flash2 0x53a9a0, 19 records; PR #53 round 60)
+sci_command_dispatch_entry_t,,command,byte,1,The SCI command number (18 / 19 / 20 / 23 / 25 ... 53 / 40 / 43 / 44 / 49 in table order),,verified
+sci_command_dispatch_entry_t,,pad,byte,1,0 in every record,,verified
+sci_command_dispatch_entry_t,,handler,pointer,4,The command's cm848_sciCommand<N> function,,verified

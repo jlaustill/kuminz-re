@@ -1118,9 +1118,7 @@ address,name,type,comment
 0x00307f80,toucan_can_ext_ctrl,word,
 0x003f9800,calibration_ram_start,undefined4,
 0x003f9830,memory_region_table,memory_region_t,Boot reflash kernel write-permission map (6 regions) - region 0 = main flash 0x0-0x6ffff type 4
-0x003f98ac,param_id_lookup_table,undefined2,
-0x003f98ae,,pointer,
-0x003f98ba,,pointer,
+0x003f98ac,boot_parameter_id_table,parameter_id_entry_t[20],The boot kernel's parameter ID table: ROM 0x3CDC copied to RAM 0x3F98AC at boot - 20 records sorted by ID (0x0 -> EEPROM 0x1000036 ... 0x12a9 -> ROM 0x108); cm848_lookupBootParameterIdAddress scans it to 0x3f9924 for the boot diagnostic services. In the ROM-to-RAM window (was param_id_lookup_table; PR #53 round 60)
 0x003fa000,executive_frame_ticks,word,The pass's time in timebase ticks (TBLr - executive_frame_start_ticks), stored by main_loop. Its address is also the start of working RAM for cm848_clearWorkingRam and cm848_evaluateCalibratedMonitorDisableConditions (was scheduler_task_stat_value_working) (PR #53 round 25)
 0x003fa002,executive_frame_start_ticks,dword,TBLr at the start of main_loop's pass (was timer_base_snapshot) (PR #53 round 25)
 0x003fa006,executive_timing_enabled_previous_flag,word,algorithm_enable_flags_18_cal.executive_timing_enable at the last pass: main_loop clears the records when the enable is set and this is 0 (was scheduler_feature_enabled_flag) (PR #53 round 25)
@@ -6149,8 +6147,7 @@ address,name,type,comment
 0x0050f680,,byte,
 0x0053a33e,,pointer,
 0x0053a344,,pointer,
-0x0053a9a2,,pointer,
-0x0053a9a8,,pointer,
+0x0053a9a0,sci_command_dispatch_table,sci_command_dispatch_entry_t[19],The SCI command table: cm848_dispatchSciCommand compares the received command byte with each record's command and calls its handler (19 records: commands 18 / 19 / 20 / 23 / 25 / 26 / 35 / 37 / 39 / 41 / 42 / 50 / 51 / 52 / 53 / 40 / 43 / 44 / 49) (PR #53 round 60)
 0x0053ac46,output_channel_driver_table_enable,byte,Output channel driver table (flash2 0x53ac46-0x53af75): 51 records of 16 bytes = enable / read feedback / set period / set duty function pointers; record 0 = no output (blr / return-0 stubs); TPU-B channels 0-15 (cm848_tpuBChannel{N}* / read-back records cm848_tpuBReadBackChannel{N}*) = records 1-16 / TPU-A channels 0-15 (cm848_tpuAChannel{N}*) = 17-32 / MDASM11-15 and 27-31 = 33-42 / PWM submodules 0-3 and 16-19 = 43-50. Consumers index it with an EEPROM output channel word (*_output_channel_cal) and check 0 < channel < 51 first. This label is slot +0 (enable) of record 0 - consumers render &output_channel_driver_table_enable + channel x 0x10 - was j1939_pgn_handler_table
 0x0053ac4a,output_channel_driver_table_read_feedback,pointer,Slot +4 (read feedback) of output channel driver table record 0 - the shared return-0 stub unless the channel has a read-back; cm848_updateOutputReadBackFaultBits calls it for each output channel assignment table entry (verdict 0 / 1 / 2 into output_read_back_fault_bits) - was PTR_LAB_0053ac4a
 0x0053ac4e,output_channel_driver_table_set_period,byte,Slot +8 (set period - most consumers pass 1000000 / frequency = microseconds; the actuator e and g paths pass a calibration word directly) of output channel driver table record 0 - was j1939_pgn_handler_table_func2
@@ -6168,7 +6165,8 @@ address,name,type,comment
 0x0053ad02,,pointer,
 0x0053ad46,,pointer,
 0x0053ad4e,,pointer,
-0x0053be3a,,pointer,
+0x0053af76,parameter_id_table_bucket_start,word[1889],The bucket index of parameter_id_table: bucket = parameter ID mod 1889 (0x761); the word is the bucket's first record (0xffff = empty) and the next bucket's word - or the table end 0x53ea6c - ends it (cm848_lookupParameterIdAddress). 1889 words end where the table starts; largest entry 1885 (PR #53 round 60)
+0x0053be38,parameter_id_table,parameter_id_entry_t[1441],The application's parameter ID table: e2m block ID -> address (record = table[block] + offset). The code bounds it at 0x53ea6c = 1886 records; the flash2 dump ends after record 1440, so 1441 are typed. firmware/scripts/e2m_block_addresses.py resolves it from the binary (PR #53 round 60)
 0x01000002,eeprom_security_key,byte,
 0x0100000c,eeprom_status_block,byte,
 0x01000030,eeprom_config_block,byte,
