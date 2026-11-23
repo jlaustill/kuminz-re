@@ -2,7 +2,7 @@
 
 This file covers what the S90140.06 firmware does for cruise control. It comes from a read-only review on 2026-11-22.
 
-**Names and addresses follow PR #53 at `ebb08aae` (round 65).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
+**Names and addresses follow PR #53 at `b1cd09ef` (round 67).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
 
 Evidence tags:
 
@@ -195,7 +195,7 @@ Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrU
 | 0x15a | `0x0007` | Bit 2: equivalent throttle on | [code] |
 | 0x16c | `0x7ca6` | Bit 0x2: brake switch pair diagnostic on | [code] |
 | 0x170 | `0x11dc` | Bit 0x10: vacuum throttle servo on | [code] |
-| 0x482 | `0x5e0e` | CRC16 of the calibration block (`cm848_verifyCalibrationAndCodeCrc`, 0x524360). A mismatch sets P0602. | [code]; the covered range, 0x118 to 0x171, is [review] |
+| 0x482 | `0x5e0e` | CRC of EEPROM 0x118 to 0x171 (`cm848_verifyCalibrationAndCodeCrc`, 0x524360). A mismatch sets P0602. The algorithm is in the note below. | [code] |
 
 ## Open questions
 
@@ -204,14 +204,16 @@ Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrU
 - What the firmware does with cruise engaged: nobody has captured data yet.
 - How the working demand reaches final fueling, and how TSC1 ranks against cruise there.
 - Whether a diagnostic memory write over J1939 could reach channel 47's override (`sensor_channel_diag_override[47]`). A function comment says it needs authentication [notes].
-- Which CRC16 algorithm `cm848_verifyCalibrationAndCodeCrc` (0x524360) uses. Nobody has written it down here yet, and fixing the CRC at 0x482 needs it.
-
 ## Turning the servo off
 
 These steps are untested:
 
 1. Clear bit 0x10 of EEPROM word 0x170 (`0x11dc` to `0x11cc`). The word is big-endian, so only the byte at 0x171 changes (`0xdc` to `0xcc`).
-2. Fix the CRC16 at 0x482.
+2. Set the CRC word at 0x482 to the CRC of EEPROM 0x118 to 0x171. With only step 1's change to the dumps' contents, that's `0x5e0e` to `0x4e8f`. If anything else in that block differs on the truck, recompute it.
+
+**The CRC algorithm.** CRC-16/KERMIT: reflected polynomial 0x8408, initial value 0, no final XOR.
+- `cm848_verifyCalibrationAndCodeCrc` starts its accumulator at 0 and calls `cm848_calculateCrc16Simple` (0x55ea0). That function's ROM table at 0x5842e matches the reflected 0x8408 table on all 256 entries. [code]
+- Over EEPROM 0x118 to 0x171, this CRC reproduces the stored `0x5e0e` in the before-HPT and after-HPT dumps. [code]
 
 After that, cruise keeps fueling the engine, and the three servo outputs stay off.
 
