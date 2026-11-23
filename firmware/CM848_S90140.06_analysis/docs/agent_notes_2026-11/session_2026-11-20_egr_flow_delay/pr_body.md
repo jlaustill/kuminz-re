@@ -598,6 +598,10 @@ state enum, the flag bytes.**
   brake switch learned flag, ...).
 - **Stage B (9c5414a, a type):** `feature_selection_bits_cal` as a bitfield struct; the SCI setting lookup's pointer
   typed `byte *`.
+**Round 41.**
+- **Stage A (ea2bacd, types, labels):** the injector driver booster capacitor monitor (was
+  cm848_processFaultScanLookup): its two ROM record tables typed as struct arrays, its RAM counts as arrays, the
+  low voltage mask and the initializer named.
 
 ## Test plan
 
@@ -690,6 +694,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 41: the monitor's 112 statements match field by field (prove_records.py); the other functions match the canonical form or differ in local declaration order only.
 - [x] Round 40: every function matches the canonical form or has 0 differing statements (bitfield tests rewritten to their masks); 15 / 15 resolved addresses checked; MISSING 258 -> 234.
 - [x] Round 39: every function matches the canonical form or has 0 differing statements; `audit_cal_suffixes.py` HARD 63 -> 0, SOFT 4 -> 0; e2m sizes agree; RAM 0x3feed0-0x40a048 = ROM + 0x39a3e6 (all 22717 words).
 - [x] Round 38: all 1968 functions match the canonical form.

@@ -1962,6 +1962,29 @@ Two peer relays covered the round. The scripts are in `session_folder/round40/`.
   - the immobilizer secret key bytes under boot-time names;
   - `audit_cal_suffixes.py` could skip documentation rows.
 
+## Done, round 41 (2026-11-22, same PR): the injector driver booster capacitor monitor
+
+A peer relay started the round; the scripts are in `session_folder/round41/`.
+- **Stage A (ea2bacd, types, labels):** `cm848_processFaultScanLookup` is `cm848_monitorInjectorDriverBoosterCapacitorVoltage`.
+  - It runs for each cylinder event and checks the cylinder's capacitor (channel 54 / 55) three ways: the high
+    threshold (fault 328 / 330), the low threshold (329 / 331), and the low voltage at injection count.
+  - **`injector_driver_booster_capacitor_monitor_record_t[2]`** (0x5762c, 52 bytes each, decoded from the ROM) replaces
+    12 loose rows; two of them were J1939-named fault numbers.
+  - **`injector_driver_booster_capacitor_cylinder_record_t[8]`** (0x57694, was `calibration_constant_1`) holds the
+    capacitor index and the four injector circuit faults that skip the cylinder.
+  - **The RAM:** the lookup cache, the per-capacitor `word[2]` counts and the per-cylinder `word[8]` counts (were
+    `per_cylinder_timing_array` / `_sync_counter` / `_timing_counter`). `injection_check_flags` is
+    `injector_driver_booster_capacitor_low_voltage_mask`.
+  - The initializer is `cm848_initializeInjectorDriverBoosterCapacitorMonitor` (was mpc555_initSensorCalibrationTables).
+- **Proof:** `prove_records.py` maps the old raw addresses and the new struct accesses to field tokens by offset.
+  - The monitor has 112 statements on each side, identical apart from its name.
+  - The initializer was checked address by address.
+  - The other functions match the canonical form or differ in the order of local declarations only.
+- **Leads:**
+  - The monitor still carries decompiler temps and one goto (Readability Medium).
+  - The record's spare count pointer has no reader.
+  - `cylinder_event_count_max` (e2m 8194 Engine_Cylinders) keeps its name.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

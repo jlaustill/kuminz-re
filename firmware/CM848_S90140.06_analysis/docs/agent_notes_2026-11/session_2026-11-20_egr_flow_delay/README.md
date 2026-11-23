@@ -469,3 +469,7 @@ Hand work on the round 7 lead.
 - **Stage A:** `audit.txt`, `missing_survey.py` / `missing.tsv`, `missing_users.py` / `missing_users.tsv` (who uses each row), `app_e2m.txt` (the parameter ID table), `apply_r40a.py`, `apply_r40a_followups.py`.
 - **Stage B:** `apply_r40b.py`, `rules_r40b*.json`, `address_pairs_check.py`.
 - **Closing:** `apply_r40_closing.py`, `update_large_tar_r40.sh`.
+
+## Round 41: the injector driver booster capacitor monitor (`session_folder/round41/`)
+
+- `apply_r41a.py` (the two record types decoded from the ROM, the RAM arrays, the renames), `prove_records.py` (old raw addresses and new struct fields to one canonical form). **Closing:** `apply_r41_closing.py`, `update_large_tar_r41.sh`.
