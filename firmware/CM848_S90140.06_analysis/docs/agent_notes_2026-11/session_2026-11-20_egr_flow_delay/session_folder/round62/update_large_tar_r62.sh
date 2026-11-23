@@ -10,7 +10,7 @@ rsync -a --files-from="$W/r62_list.txt" "$W/r62/" "$D/session_folder/round62/"
 rm -rf "$W/largetar"
 mkdir -p "$W/largetar"
 tar -xJf "$D/session_folder_large_files.tar.xz" -C "$W/largetar"
-for pair in verify_r62a:verify_round62a; do
+for pair in verify_r62a:verify_round62a verify_r62b:verify_round62b; do
     if [ -f "$W/r62/${pair%%:*}.log" ]; then cp "$W/r62/${pair%%:*}.log" "$W/largetar/${pair##*:}.log"; fi
 done
 cd "$W/largetar"

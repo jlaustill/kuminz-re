@@ -718,6 +718,9 @@ state enum, the flag bytes.**
 - **Stage A (25098ce):** the J1939 registration functions, the DM7 test identifier (SPN 1224), the J1939 input fault
   start delay and four vague Bank 2 helpers are named from their code, and one more combustion torque cache is
   typed.
+- **Stage B (fa13ad2d):** the services 0x0f / 0x10 handler is a no-op, now
+  `cm848_j1939DiagnosticServiceAcknowledgeNoOperation`, and its registrar is
+  `cm848_registerJ1939BroadcastAndNoOperationServices` (stage A had named it after the enum's member names).
 
 ## Test plan
 

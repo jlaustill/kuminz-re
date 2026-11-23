@@ -2746,7 +2746,7 @@ A peer relay started the round; the scripts are in `session_folder/round61/`.
 A peer relay started the round; the scripts are in `session_folder/round62/`.
 - **Stage A (25098ce):**
   - **The registration functions called by `cm848_j1939_system_init`:**
-    `cm848_registerJ1939ParameterAndBroadcastServices` / `cm848_registerJ1939MemoryWriteServices` /
+    `cm848_registerJ1939BroadcastAndNoOperationServices` (stage B) / `cm848_registerJ1939MemoryWriteServices` /
     `cm848_registerJ1939MemoryReadServices` / `cm848_registerJ1939GetAddressByParameterIdService` (were the
     `j1939_diag_request_batch_*` / `_41_handler` names), `cm848_registerJ1939InputMessageHandlers` (was
     `j1939_pgn_handler_init_batch`) and `cm848_registerJ1939Dm7Handler` (was `cm848_initJ1939Dm1RequestHandler`).
@@ -2759,6 +2759,19 @@ A peer relay started the round; the scripts are in `session_folder/round62/`.
   - **New rows:** the pedal fault mode engine speed filter and its coefficient (two type-only rows named) and
     `combustion_torque_by_fuel_quantity_timing_adjusted_cached_axis_offsets` (`word[2]`).
   - `cm848_validateJ1939DiagnosticRequest`'s plate says "is not 0xff" for the key test (round 61's lead).
+- **Stage B (fa13ad2d), from the closing checks:** stage A named the services 0x0f / 0x10 / 4 / 5 registrar
+  `...ParameterAndBroadcastServices` after the `EF00_SERVICE_ID` member names. But `j1939_diagService15And16Handler`
+  only returns 0: 0x0f / 0x10 are accepted no-ops in this build. The handler is now
+  `cm848_j1939DiagnosticServiceAcknowledgeNoOperation` (the application's twin of the boot kernel's
+  `cm848_diagServiceAcknowledgeNoOperation`), and the registrar is `cm848_registerJ1939BroadcastAndNoOperationServices`.
+  Also checked:
+  - e2m 10CE (Limp_Home_*) holds every `pedal_fault_mode_*` setting, and the filter coefficient row now cites
+    10CE +0;
+  - `j1939_input_fault_start_delay` reads 1000 in the dump, as it should with the J1939 input layer off, and both
+    input processors clear the two faults while it is nonzero;
+  - none of the round's old labels is in CM550;
+  - "first byte" for the DM7 Test Identifier rests on the code reading byte 0, since the database gives no byte
+    positions.
 - **Not done:** typing the J1939 service ID as `EF00_SERVICE_ID`. The enum covers all 24 registered IDs, but its
   members are placeholders or abbreviations (`SYSTEM_SERVICE_04`, `MEM_READ_2B_PARAM_4B_OFFSET`), and the handler
   names already say more.

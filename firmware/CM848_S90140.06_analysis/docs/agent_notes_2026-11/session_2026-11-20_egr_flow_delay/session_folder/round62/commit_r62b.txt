@@ -1,0 +1,22 @@
+cm848: round 62 stage B - the services 0x0f / 0x10 handler is a no-op, and its registrar is named for it
+
+From the closing checks: stage A named the registrar of the PGN 61184 services 0x0f / 0x10 / 4 / 5
+cm848_registerJ1939ParameterAndBroadcastServices, after the EF00_SERVICE_ID member names ("get parameters by ID"). But
+j1939_diagService15And16Handler only returns 0, so 0x0f / 0x10 are accepted no-ops in this build.
+- j1939_diagService15And16Handler -> cm848_j1939DiagnosticServiceAcknowledgeNoOperation, the application's twin of the
+  boot kernel's cm848_diagServiceAcknowledgeNoOperation.
+- cm848_registerJ1939ParameterAndBroadcastServices -> cm848_registerJ1939BroadcastAndNoOperationServices; its plate
+  keeps "was j1939_diag_request_batch_init".
+- pedal_fault_mode_engine_speed_filter_coefficient now cites e2m 10CE +0 Limp_Home_Engine_Speed_Filter_Constant.
+  Block 10CE holds every pedal_fault_mode_* setting; the e2m calls the mode limp home.
+
+Also checked:
+- none of stage A's 15 old labels or these two is in CM550;
+- j1939_input_fault_start_delay reads 1000 in the dump (the J1939 input layer is off);
+- both input processors clear the two faults while it is nonzero.
+
+Proof (prove_r62.sh): 0 of 1968 functions differ; the old handler name is left once, in its plate. verify is
+byte-identical; thunks 18 / 14; no name-mismatch warning. Headers regenerated (0 g++ errors), tests pass,
+audit_cal_suffixes.py HARD 0 / MISSING 219.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
