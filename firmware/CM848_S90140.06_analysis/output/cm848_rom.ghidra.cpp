@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 16:08:28 MST 2026
+// Generated: Sun Nov 22 16:57:39 MST 2026
 
 
 //
@@ -1773,10 +1773,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word qadc_b_pqb0_sample;
-  word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
+  word qadc_b_pqb0_sample;
+  word qadc_b_pqa4_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -36883,220 +36883,268 @@ void cm848_learnOutputSpeedToVehicleSpeedRatio(void)
 
 
 //
-// Function: mpc555_initSensorCalibrationTables @ 0x00035f14
+// Function: cm848_initializeInjectorDriverBoosterCapacitorMonitor @ 0x00035f14
 //
 
-void mpc555_initSensorCalibrationTables(void)
+/* Clears the booster capacitor monitor's per-cylinder counts (three word[8] arrays) and
+   per-capacitor counts, injector_driver_booster_capacitor_low_voltage_mask, and sets the
+   linearization lookup cache to 2 (was mpc555_initSensorCalibrationTables) */
+
+void cm848_initializeInjectorDriverBoosterCapacitorMonitor(void)
 
 {
-  undefined2 *puVar1;
-  undefined2 *puVar2;
-  undefined2 *puVar3;
+  word *pwVar1;
+  word *pwVar2;
+  word *pwVar3;
   uint uVar4;
   int iVar5;
   
   iVar5 = 0;
   uVar4 = (uint)cylinder_event_count_max;
   if (uVar4 != 0) {
-    puVar3 = &DAT_003fb234;
-    puVar2 = (undefined2 *)0x3fb244;
-    puVar1 = (undefined2 *)0x3fb254;
+    pwVar3 = injector_driver_booster_capacitor_spare_counts + 1;
+    pwVar2 = injector_driver_booster_capacitor_cylinder_high_fault_debounce_counts + 7;
+    pwVar1 = injector_driver_booster_capacitor_cylinder_low_fault_debounce_counts + 7;
     do {
-      puVar3 = puVar3 + 1;
-      *puVar3 = 0;
-      puVar2 = puVar2 + 1;
-      *puVar2 = 0;
-      puVar1 = puVar1 + 1;
-      *puVar1 = 0;
+      pwVar3 = pwVar3 + 1;
+      *pwVar3 = 0;
+      pwVar2 = pwVar2 + 1;
+      *pwVar2 = 0;
+      pwVar1 = pwVar1 + 1;
+      *pwVar1 = 0;
       iVar5 = iVar5 + 1;
     } while (iVar5 < (int)uVar4);
   }
-  DAT_003fb22a = 0;
-  DAT_003fb22e = 0;
-  DAT_003fb22c = 0;
-  DAT_003fb230 = 0;
-  DAT_003fb232 = 0;
-  DAT_003fb234 = 0;
-  injection_check_flags = 0;
-  DAT_003fb228 = 2;
+  injector_driver_booster_capacitor_high_fault_debounce_counts[0] = 0;
+  injector_driver_booster_capacitor_low_fault_debounce_counts[0] = 0;
+  injector_driver_booster_capacitor_high_fault_debounce_counts[1] = 0;
+  injector_driver_booster_capacitor_low_fault_debounce_counts[1] = 0;
+  injector_driver_booster_capacitor_spare_counts[0] = 0;
+  injector_driver_booster_capacitor_spare_counts[1] = 0;
+  injector_driver_booster_capacitor_low_voltage_mask = 0;
+  injector_driver_booster_capacitor_voltage_linearization_cached_axis_offset = 2;
   return;
 }
 
 
 
 //
-// Function: cm848_processFaultScanLookup @ 0x00035fa8
+// Function: cm848_monitorInjectorDriverBoosterCapacitorVoltage @ 0x00035fa8
 //
 
-void cm848_processFaultScanLookup(void)
+/* The injector driver booster capacitor monitor, run for each cylinder event by
+   engine_injectionAngle_tpuChannel6EventHandler. For the cylinder's capacitor
+   (injector_driver_booster_capacitor_cylinder_records ->
+   injector_driver_booster_capacitor_monitor_records) it stores the QADC reading of channel 54 / 55
+   and its linearization (or the held value), then, while the engine is RUNNING, the cylinder's four
+   injector circuit faults are clear, the driver ASIC is not shut off, final_fueling is above 0x3a
+   and supervisor register 36 bit 1 is not held low: above the high threshold it debounces the
+   cylinder and the capacitor counts up to the debounce limit and then sets the high fault (328 /
+   330), healing it once both counts are back at 0; the low threshold does the same for the low
+   fault (329 / 331); at or below injector_driver_booster_capacitor_low_voltage_threshold (no cutout
+   active) it counts injector_driver_booster_capacitor_cylinder_low_voltage_counts up to the limit
+   and sets injector_driver_booster_capacitor_low_voltage_mask. (was cm848_processFaultScanLookup) |
+   review-function-readability reviewed 2026-11-22 - Readability Medium Accuracy Confidence High */
+
+void cm848_monitorInjectorDriverBoosterCapacitorVoltage(void)
 
 {
-  bool bVar1;
-  word wVar2;
-  uint uVar3;
-  int iVar4;
+  ushort uVar1;
+  bool bVar2;
+  word wVar3;
+  uint uVar4;
   int iVar5;
   uint uVar6;
-  int iVar7;
+  injector_driver_booster_capacitor_monitor_record_t *piVar7;
   uint uVar8;
-  ushort *puVar9;
-  uint uVar10;
   
-  uVar3 = (uint)cylinder_event_index;
-  iVar4 = uVar3 * 10;
-  uVar6 = (uint)(&calibration_constant_1)[uVar3 * 5];
-  iVar7 = uVar6 * 0x34;
-  puVar9 = (ushort *)(&DAT_0005762c + iVar7);
-  uVar8 = (uint)*puVar9;
-  iVar5 = (int)uVar8 >> 4;
-  uVar10 = 1 << (uVar8 + iVar5 * -0x10 & 0x3f);
-  if ((sensor_channel_enable_bits_cal[iVar5] & uVar10) != 0) {
+  uVar4 = (uint)cylinder_event_index;
+  uVar1 = injector_driver_booster_capacitor_cylinder_records[uVar4].capacitor_index;
+  piVar7 = injector_driver_booster_capacitor_monitor_records + uVar1;
+  uVar6 = (uint)piVar7->sensor_channel;
+  iVar5 = (int)uVar6 >> 4;
+  uVar8 = 1 << (uVar6 + iVar5 * -0x10 & 0x3f);
+  if ((sensor_channel_enable_bits_cal[iVar5] & uVar8) != 0) {
     return;
   }
-  if ((adc_forced_reading_enable_bits_cal[iVar5] & uVar10) == 0) {
-    if (qadc_channel_index_table[uVar8] < 0x81) {
-      uVar8 = (uint)qadc_channel_index_table[uVar8];
+  if ((adc_forced_reading_enable_bits_cal[iVar5] & uVar8) == 0) {
+    if (qadc_channel_index_table[uVar6] < 0x81) {
+      uVar6 = (uint)qadc_channel_index_table[uVar6];
     }
     else {
-      uVar8 = 0;
+      uVar6 = 0;
     }
-    wVar2 = *qadc_channel_dispatch_table[uVar8].result_register;
+    wVar3 = *qadc_channel_dispatch_table[uVar6].result_register;
   }
   else {
-    wVar2 = (&sensor_channel_diag_override)[uVar8];
+    wVar3 = (&sensor_channel_diag_override)[uVar6];
   }
-  **(word **)(&BYTE_0005763e + iVar7) = wVar2;
-  iVar5 = (int)(uint)*puVar9 >> 4;
+  *injector_driver_booster_capacitor_monitor_records[uVar1].raw_value_pointer = wVar3;
+  iVar5 = (int)(uint)piVar7->sensor_channel >> 4;
   if (((uint)sensor_channel_held_value_enable_bits_cal[iVar5] &
-      1 << ((uint)*puVar9 + iVar5 * -0x10 & 0x3f)) == 0) {
-    wVar2 = lookupTableInterpolation
-                      (&DAT_003fb228,wVar2,
-                       (word *)(&
-                               PTR_injector_driver_booster_capacitor_1_voltage_linearization_axis_0005764a
-                               )[uVar6 * 0xd],
-                       (word *)(&
-                               PTR_injector_driver_booster_capacitor_1_voltage_linearization_values_0005764e
-                               )[uVar6 * 0xd],0);
+      1 << ((uint)piVar7->sensor_channel + iVar5 * -0x10 & 0x3f)) == 0) {
+    wVar3 = lookupTableInterpolation
+                      (&injector_driver_booster_capacitor_voltage_linearization_cached_axis_offset,
+                       wVar3,injector_driver_booster_capacitor_monitor_records[uVar1].
+                             linearization_axis_pointer,
+                       injector_driver_booster_capacitor_monitor_records[uVar1].
+                       linearization_values_pointer,0);
   }
   else {
-    wVar2 = **(word **)(&BYTE_00057646 + iVar7);
+    wVar3 = *injector_driver_booster_capacitor_monitor_records[uVar1].held_value_pointer;
   }
-  (&sensor_channel_filtered_output)[*puVar9] = wVar2;
-  **(word **)(&BYTE_00057642 + iVar7) = wVar2;
+  (&sensor_channel_filtered_output)[piVar7->sensor_channel] = wVar3;
+  *injector_driver_booster_capacitor_monitor_records[uVar1].value_pointer = wVar3;
   if (((((engine_state == ENGINE_STATE_RUNNING) &&
         (((uint)(&fault_detected_cal.faults_0_to_15)
-                [(int)(uint)*(ushort *)(&DAT_00057696 + iVar4) >> 4] &
-         1 << (*(ushort *)(&DAT_00057696 + iVar4) & 0xf)) == 0)) &&
+                [(int)(uint)injector_driver_booster_capacitor_cylinder_records[uVar4].
+                            injector_fast_decay_fault >> 4] &
+         1 << (injector_driver_booster_capacitor_cylinder_records[uVar4].injector_fast_decay_fault &
+              0xf)) == 0)) &&
        (((uint)(&fault_detected_cal.faults_0_to_15)
-               [(int)(uint)*(ushort *)(&DAT_00057698 + iVar4) >> 4] &
-        1 << (*(ushort *)(&DAT_00057698 + iVar4) & 0xf)) == 0)) &&
+               [(int)(uint)injector_driver_booster_capacitor_cylinder_records[uVar4].
+                           injector_open_circuit_fault >> 4] &
+        1 << (injector_driver_booster_capacitor_cylinder_records[uVar4].injector_open_circuit_fault
+             & 0xf)) == 0)) &&
       ((((uint)(&fault_detected_cal.faults_0_to_15)
-               [(int)(uint)*(ushort *)(&DAT_0005769a + iVar4) >> 4] &
-        1 << (*(ushort *)(&DAT_0005769a + iVar4) & 0xf)) == 0 &&
+               [(int)(uint)injector_driver_booster_capacitor_cylinder_records[uVar4].
+                           injector_short_to_ground_fault >> 4] &
+        1 << (injector_driver_booster_capacitor_cylinder_records[uVar4].
+              injector_short_to_ground_fault & 0xf)) == 0 &&
        (((uint)(&fault_detected_cal.faults_0_to_15)
-               [(int)(uint)*(ushort *)(&DAT_0005769c + iVar4) >> 4] &
-        1 << (*(ushort *)(&DAT_0005769c + iVar4) & 0xf)) == 0)))) &&
+               [(int)(uint)injector_driver_booster_capacitor_cylinder_records[uVar4].
+                           injector_short_to_battery_fault >> 4] &
+        1 << (injector_driver_booster_capacitor_cylinder_records[uVar4].
+              injector_short_to_battery_fault & 0xf)) == 0)))) &&
      ((logical_output_request_bits_48_to_55.driver_asic_shutoff_request == 0 &&
       ((0x3a < final_fueling && (supervisor_register_36_bit_1_low_held_flag == 0)))))) {
-    if (*(ushort *)
-         (&PTR_injector_driver_booster_capacitor_1_voltage_sensor_config_high_threshold_0005762e)
-         [uVar6 * 0xd] < **(ushort **)(&BYTE_0005763e + iVar7)) {
-      if (*(ushort *)(&per_cylinder_timing_array + (uint)cylinder_event_index * 2) <
-          *(ushort *)
-           (&PTR_injector_driver_booster_capacitor_1_voltage_sensor_config_debounce_limit_0005763a)
-           [uVar6 * 0xd]) {
-        **(short **)
-          (&BYTE_00057652 + (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34)
-             = **(short **)
-                 (&BYTE_00057652 +
-                 (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34) + 1;
-        *(short *)(&per_cylinder_timing_array + (uint)cylinder_event_index * 2) =
-             *(short *)(&per_cylinder_timing_array + (uint)cylinder_event_index * 2) + 1;
+    if (*injector_driver_booster_capacitor_monitor_records[uVar1].high_threshold_pointer <
+        *injector_driver_booster_capacitor_monitor_records[uVar1].raw_value_pointer) {
+      if (injector_driver_booster_capacitor_cylinder_high_fault_debounce_counts
+          [cylinder_event_index] <
+          *injector_driver_booster_capacitor_monitor_records[uVar1].debounce_limit_pointer) {
+        *injector_driver_booster_capacitor_monitor_records
+         [injector_driver_booster_capacitor_cylinder_records[cylinder_event_index].capacitor_index].
+         high_fault_debounce_count_pointer =
+             *injector_driver_booster_capacitor_monitor_records
+              [injector_driver_booster_capacitor_cylinder_records[cylinder_event_index].
+               capacitor_index].high_fault_debounce_count_pointer + 1;
+        injector_driver_booster_capacitor_cylinder_high_fault_debounce_counts[cylinder_event_index]
+             = injector_driver_booster_capacitor_cylinder_high_fault_debounce_counts
+               [cylinder_event_index] + 1;
       }
       else {
-        (&fault_detected_cal.faults_0_to_15)[*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) >> 4] =
-             (&fault_detected_cal.faults_0_to_15)[*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) >> 4] |
-             (ushort)(1 << (*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) & 0xf));
+        (&fault_detected_cal.faults_0_to_15)
+        [injector_driver_booster_capacitor_monitor_records[uVar1].high_fault >> 4] =
+             (&fault_detected_cal.faults_0_to_15)
+             [injector_driver_booster_capacitor_monitor_records[uVar1].high_fault >> 4] |
+             (ushort)(1 << (injector_driver_booster_capacitor_monitor_records[uVar1].high_fault &
+                           0xf));
       }
     }
-    else if (*(short *)(&per_cylinder_timing_array + (uint)cylinder_event_index * 2) == 0) {
-      if ((**(short **)(&BYTE_00057652 + iVar7) == 0) &&
+    else if (injector_driver_booster_capacitor_cylinder_high_fault_debounce_counts
+             [cylinder_event_index] == 0) {
+      if ((*injector_driver_booster_capacitor_monitor_records[uVar1].
+            high_fault_debounce_count_pointer == 0) &&
          (((uint)(&fault_detected_cal.faults_0_to_15)
-                 [(int)(uint)*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) >> 4] &
-          1 << (*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) & 0xf)) != 0)) {
-        (&fault_detected_cal.faults_0_to_15)[*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) >> 4] =
-             (&fault_detected_cal.faults_0_to_15)[*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) >> 4] &
-             ~(ushort)(1 << (*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) & 0xf));
-        (&fault_registered_cal.faults_0_to_15)[*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) >> 4] =
-             (&fault_registered_cal.faults_0_to_15)[*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) >> 4]
-             & ~(ushort)(1 << (*(ushort *)(&j1939_pgn_lookup_ptr + iVar7) & 0xf));
-      }
-    }
-    else {
-      **(short **)
-        (&BYTE_00057652 + (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34) =
-           **(short **)
-             (&BYTE_00057652 +
-             (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34) + -1;
-      *(short *)(&per_cylinder_timing_array + (uint)cylinder_event_index * 2) =
-           *(short *)(&per_cylinder_timing_array + (uint)cylinder_event_index * 2) + -1;
-    }
-    if (**(ushort **)(&BYTE_0005763e + iVar7) <
-        *(ushort *)
-         (&PTR_injector_driver_booster_capacitor_1_voltage_sensor_config_low_threshold_00057632)
-         [uVar6 * 0xd]) {
-      if ((&per_cylinder_sync_counter)[cylinder_event_index] <
-          *(ushort *)
-           (&PTR_injector_driver_booster_capacitor_1_voltage_sensor_config_debounce_limit_0005763a)
-           [uVar6 * 0xd]) {
-        **(short **)
-          (&BYTE_00057656 + (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34)
-             = **(short **)
-                 (&BYTE_00057656 +
-                 (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34) + 1;
-        (&per_cylinder_sync_counter)[cylinder_event_index] =
-             (&per_cylinder_sync_counter)[cylinder_event_index] + 1;
-      }
-      else {
-        (&fault_detected_cal.faults_0_to_15)[*(ushort *)(&j1939_message_def_ptr + iVar7) >> 4] =
-             (&fault_detected_cal.faults_0_to_15)[*(ushort *)(&j1939_message_def_ptr + iVar7) >> 4]
-             | (ushort)(1 << (*(ushort *)(&j1939_message_def_ptr + iVar7) & 0xf));
-      }
-    }
-    else if ((&per_cylinder_sync_counter)[cylinder_event_index] == 0) {
-      if ((**(short **)(&BYTE_00057656 + iVar7) == 0) &&
-         (((uint)(&fault_detected_cal.faults_0_to_15)
-                 [(int)(uint)*(ushort *)(&j1939_message_def_ptr + iVar7) >> 4] &
-          1 << (*(ushort *)(&j1939_message_def_ptr + iVar7) & 0xf)) != 0)) {
-        (&fault_detected_cal.faults_0_to_15)[*(ushort *)(&j1939_message_def_ptr + iVar7) >> 4] =
-             (&fault_detected_cal.faults_0_to_15)[*(ushort *)(&j1939_message_def_ptr + iVar7) >> 4]
-             & ~(ushort)(1 << (*(ushort *)(&j1939_message_def_ptr + iVar7) & 0xf));
-        (&fault_registered_cal.faults_0_to_15)[*(ushort *)(&j1939_message_def_ptr + iVar7) >> 4] =
+                 [(int)(uint)injector_driver_booster_capacitor_monitor_records[uVar1].high_fault >>
+                  4] &
+          1 << (injector_driver_booster_capacitor_monitor_records[uVar1].high_fault & 0xf)) != 0)) {
+        (&fault_detected_cal.faults_0_to_15)
+        [injector_driver_booster_capacitor_monitor_records[uVar1].high_fault >> 4] =
+             (&fault_detected_cal.faults_0_to_15)
+             [injector_driver_booster_capacitor_monitor_records[uVar1].high_fault >> 4] &
+             ~(ushort)(1 << (injector_driver_booster_capacitor_monitor_records[uVar1].high_fault &
+                            0xf));
+        (&fault_registered_cal.faults_0_to_15)
+        [injector_driver_booster_capacitor_monitor_records[uVar1].high_fault >> 4] =
              (&fault_registered_cal.faults_0_to_15)
-             [*(ushort *)(&j1939_message_def_ptr + iVar7) >> 4] &
-             ~(ushort)(1 << (*(ushort *)(&j1939_message_def_ptr + iVar7) & 0xf));
+             [injector_driver_booster_capacitor_monitor_records[uVar1].high_fault >> 4] &
+             ~(ushort)(1 << (injector_driver_booster_capacitor_monitor_records[uVar1].high_fault &
+                            0xf));
       }
     }
     else {
-      **(short **)
-        (&BYTE_00057656 + (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34) =
-           **(short **)
-             (&BYTE_00057656 +
-             (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34) + -1;
-      (&per_cylinder_sync_counter)[cylinder_event_index] =
-           (&per_cylinder_sync_counter)[cylinder_event_index] - 1;
+      *injector_driver_booster_capacitor_monitor_records
+       [injector_driver_booster_capacitor_cylinder_records[cylinder_event_index].capacitor_index].
+       high_fault_debounce_count_pointer =
+           *injector_driver_booster_capacitor_monitor_records
+            [injector_driver_booster_capacitor_cylinder_records[cylinder_event_index].
+             capacitor_index].high_fault_debounce_count_pointer - 1;
+      injector_driver_booster_capacitor_cylinder_high_fault_debounce_counts[cylinder_event_index] =
+           injector_driver_booster_capacitor_cylinder_high_fault_debounce_counts
+           [cylinder_event_index] - 1;
+    }
+    if (*injector_driver_booster_capacitor_monitor_records[uVar1].raw_value_pointer <
+        *injector_driver_booster_capacitor_monitor_records[uVar1].low_threshold_pointer) {
+      if (injector_driver_booster_capacitor_cylinder_low_fault_debounce_counts[cylinder_event_index]
+          < *injector_driver_booster_capacitor_monitor_records[uVar1].debounce_limit_pointer) {
+        *injector_driver_booster_capacitor_monitor_records
+         [injector_driver_booster_capacitor_cylinder_records[cylinder_event_index].capacitor_index].
+         low_fault_debounce_count_pointer =
+             *injector_driver_booster_capacitor_monitor_records
+              [injector_driver_booster_capacitor_cylinder_records[cylinder_event_index].
+               capacitor_index].low_fault_debounce_count_pointer + 1;
+        injector_driver_booster_capacitor_cylinder_low_fault_debounce_counts[cylinder_event_index] =
+             injector_driver_booster_capacitor_cylinder_low_fault_debounce_counts
+             [cylinder_event_index] + 1;
+      }
+      else {
+        (&fault_detected_cal.faults_0_to_15)
+        [injector_driver_booster_capacitor_monitor_records[uVar1].low_fault >> 4] =
+             (&fault_detected_cal.faults_0_to_15)
+             [injector_driver_booster_capacitor_monitor_records[uVar1].low_fault >> 4] |
+             (ushort)(1 << (injector_driver_booster_capacitor_monitor_records[uVar1].low_fault & 0xf
+                           ));
+      }
+    }
+    else if (injector_driver_booster_capacitor_cylinder_low_fault_debounce_counts
+             [cylinder_event_index] == 0) {
+      if ((*injector_driver_booster_capacitor_monitor_records[uVar1].
+            low_fault_debounce_count_pointer == 0) &&
+         (((uint)(&fault_detected_cal.faults_0_to_15)
+                 [(int)(uint)injector_driver_booster_capacitor_monitor_records[uVar1].low_fault >> 4
+                 ] & 1 << (injector_driver_booster_capacitor_monitor_records[uVar1].low_fault & 0xf)
+          ) != 0)) {
+        (&fault_detected_cal.faults_0_to_15)
+        [injector_driver_booster_capacitor_monitor_records[uVar1].low_fault >> 4] =
+             (&fault_detected_cal.faults_0_to_15)
+             [injector_driver_booster_capacitor_monitor_records[uVar1].low_fault >> 4] &
+             ~(ushort)(1 << (injector_driver_booster_capacitor_monitor_records[uVar1].low_fault &
+                            0xf));
+        (&fault_registered_cal.faults_0_to_15)
+        [injector_driver_booster_capacitor_monitor_records[uVar1].low_fault >> 4] =
+             (&fault_registered_cal.faults_0_to_15)
+             [injector_driver_booster_capacitor_monitor_records[uVar1].low_fault >> 4] &
+             ~(ushort)(1 << (injector_driver_booster_capacitor_monitor_records[uVar1].low_fault &
+                            0xf));
+      }
+    }
+    else {
+      *injector_driver_booster_capacitor_monitor_records
+       [injector_driver_booster_capacitor_cylinder_records[cylinder_event_index].capacitor_index].
+       low_fault_debounce_count_pointer =
+           *injector_driver_booster_capacitor_monitor_records
+            [injector_driver_booster_capacitor_cylinder_records[cylinder_event_index].
+             capacitor_index].low_fault_debounce_count_pointer - 1;
+      injector_driver_booster_capacitor_cylinder_low_fault_debounce_counts[cylinder_event_index] =
+           injector_driver_booster_capacitor_cylinder_low_fault_debounce_counts
+           [cylinder_event_index] - 1;
     }
   }
-  else if ((&per_cylinder_sync_counter)[cylinder_event_index] != 0) {
-    **(short **)
-      (&BYTE_00057656 + (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34) =
-         **(short **)
-           (&BYTE_00057656 + (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34)
-         + -1;
-    (&per_cylinder_sync_counter)[cylinder_event_index] =
-         (&per_cylinder_sync_counter)[cylinder_event_index] - 1;
+  else if (injector_driver_booster_capacitor_cylinder_low_fault_debounce_counts
+           [cylinder_event_index] != 0) {
+    *injector_driver_booster_capacitor_monitor_records
+     [injector_driver_booster_capacitor_cylinder_records[cylinder_event_index].capacitor_index].
+     low_fault_debounce_count_pointer =
+         *injector_driver_booster_capacitor_monitor_records
+          [injector_driver_booster_capacitor_cylinder_records[cylinder_event_index].capacitor_index]
+          .low_fault_debounce_count_pointer - 1;
+    injector_driver_booster_capacitor_cylinder_low_fault_debounce_counts[cylinder_event_index] =
+         injector_driver_booster_capacitor_cylinder_low_fault_debounce_counts[cylinder_event_index]
+         - 1;
   }
-  wVar2 = injector_driver_booster_capacitor_low_voltage_count_limit;
+  wVar3 = injector_driver_booster_capacitor_low_voltage_count_limit;
   if (engine_state != ENGINE_STATE_RUNNING) {
     return;
   }
@@ -37108,46 +37156,54 @@ void cm848_processFaultScanLookup(void)
   }
   if ((injector_driver_booster_capacitor_low_voltage_count_limit == 0) ||
      (injector_driver_booster_capacitor_low_voltage_threshold <
-      **(ushort **)(&BYTE_0005763e + iVar7))) {
+      *injector_driver_booster_capacitor_monitor_records[uVar1].raw_value_pointer)) {
     if (cylinder_cutout_mask != 0) goto LAB_0003670c;
     if (final_fueling < 0x3b) {
-      if ((&per_cylinder_timing_counter)[cylinder_event_index] != 0) {
-        (&per_cylinder_timing_counter)[cylinder_event_index] =
-             (&per_cylinder_timing_counter)[cylinder_event_index] - 1;
+      if (injector_driver_booster_capacitor_cylinder_low_voltage_counts[cylinder_event_index] != 0)
+      {
+        injector_driver_booster_capacitor_cylinder_low_voltage_counts[cylinder_event_index] =
+             injector_driver_booster_capacitor_cylinder_low_voltage_counts[cylinder_event_index] - 1
+        ;
       }
       goto LAB_0003670c;
     }
   }
   else {
-    if ((injection_check_flags == 0) && (cylinder_cutout_mask == 0)) {
+    if ((injector_driver_booster_capacitor_low_voltage_mask == 0) && (cylinder_cutout_mask == 0)) {
       uVar6 = (uint)cylinder_event_index;
-      if ((&per_cylinder_timing_counter)[uVar6] <
+      if (injector_driver_booster_capacitor_cylinder_low_voltage_counts[uVar6] <
           injector_driver_booster_capacitor_low_voltage_count_limit) {
-        (&per_cylinder_timing_counter)[uVar6] = (&per_cylinder_timing_counter)[uVar6] + 1;
+        injector_driver_booster_capacitor_cylinder_low_voltage_counts[uVar6] =
+             injector_driver_booster_capacitor_cylinder_low_voltage_counts[uVar6] + 1;
       }
-      if (wVar2 <= (&per_cylinder_timing_counter)[uVar6]) {
-        injection_check_flags = *(word *)(&DAT_0005765e + iVar7);
+      if (wVar3 <= injector_driver_booster_capacitor_cylinder_low_voltage_counts[uVar6]) {
+        injector_driver_booster_capacitor_low_voltage_mask =
+             injector_driver_booster_capacitor_monitor_records[uVar1].low_voltage_mask;
       }
       goto LAB_0003670c;
     }
-    if (*(word *)(&DAT_0005765e + iVar7) == injection_check_flags) goto LAB_0003670c;
+    if (injector_driver_booster_capacitor_monitor_records[uVar1].low_voltage_mask ==
+        injector_driver_booster_capacitor_low_voltage_mask) goto LAB_0003670c;
   }
-  (&per_cylinder_timing_counter)[cylinder_event_index] = 0;
+  injector_driver_booster_capacitor_cylinder_low_voltage_counts[cylinder_event_index] = 0;
 LAB_0003670c:
-  bVar1 = false;
+  bVar2 = false;
   uVar6 = 0;
   if (cylinder_event_count_max != 0) {
     do {
-      if (((&calibration_constant_1)[uVar6 * 5] == (&calibration_constant_1)[uVar3 * 5]) &&
-         ((&per_cylinder_timing_counter)[uVar6] != 0)) {
-        bVar1 = true;
+      if ((injector_driver_booster_capacitor_cylinder_records[uVar6].capacitor_index ==
+           injector_driver_booster_capacitor_cylinder_records[uVar4].capacitor_index) &&
+         (injector_driver_booster_capacitor_cylinder_low_voltage_counts[uVar6] != 0)) {
+        bVar2 = true;
         break;
       }
       uVar6 = uVar6 + 1 & 0xffff;
     } while (uVar6 < cylinder_event_count_max);
   }
-  if (!bVar1) {
-    injection_check_flags = injection_check_flags & ~*(ushort *)(&DAT_0005765e + iVar7);
+  if (!bVar2) {
+    injector_driver_booster_capacitor_low_voltage_mask =
+         injector_driver_booster_capacitor_low_voltage_mask &
+         ~injector_driver_booster_capacitor_monitor_records[uVar1].low_voltage_mask;
   }
   return;
 }
@@ -38877,8 +38933,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  byte all_transmits_overdue;
   ushort receive_interval;
+  byte all_transmits_overdue;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
@@ -58585,7 +58641,7 @@ void cm848_applicationMain(void)
   cm848_sciInitPort1();
   cm848_initializeFourWheelDriveSwitchChannel();
   cm848_initializeFourWheelDriveSwitchMonitor();
-  mpc555_initSensorCalibrationTables();
+  cm848_initializeInjectorDriverBoosterCapacitorMonitor();
   cm848_copySensorValuesInUseUnchecked();
   cm848_resetImmobilizerHandshake();
   cm848_initRadiatorFanSpeedMeasurement();
@@ -88113,8 +88169,8 @@ void engine_injectionAngle_updateCutoutAndTimingDemand(void)
           ((cylinder_cutout_diagnostic_class_enable_mask & 2) != 0)))) ||
         (((injector_diagnostic_bits_fast_decay & 0x55) != 0 &&
          ((cylinder_cutout_diagnostic_class_enable_mask & 4) != 0)))) ||
-       ((injection_check_flags == 1 && ((cylinder_cutout_diagnostic_class_enable_mask & 8) != 0))))
-    {
+       ((injector_driver_booster_capacitor_low_voltage_mask == 1 &&
+        ((cylinder_cutout_diagnostic_class_enable_mask & 8) != 0)))) {
       if (cylinder_cutout_debounce_counter == 0) {
         if (cylinder_cutout_mask == 0) {
           cylinder_cutout_duration_countdown =
@@ -88132,8 +88188,8 @@ void engine_injectionAngle_updateCutoutAndTimingDemand(void)
          ((cylinder_cutout_diagnostic_class_enable_mask & 2) != 0)))) ||
        ((((injector_diagnostic_bits_fast_decay & 0xaa) != 0 &&
          ((cylinder_cutout_diagnostic_class_enable_mask & 4) != 0)) ||
-        ((injection_check_flags == 2 && ((cylinder_cutout_diagnostic_class_enable_mask & 8) != 0))))
-       )) {
+        ((injector_driver_booster_capacitor_low_voltage_mask == 2 &&
+         ((cylinder_cutout_diagnostic_class_enable_mask & 8) != 0)))))) {
       if (cylinder_cutout_debounce_counter == 0) {
         if (cylinder_cutout_mask == 0) {
           cylinder_cutout_duration_countdown =
@@ -88145,7 +88201,7 @@ void engine_injectionAngle_updateCutoutAndTimingDemand(void)
         cylinder_cutout_debounce_counter = cylinder_cutout_debounce_counter - 1;
       }
     }
-    if ((injection_check_flags == 0 &&
+    if ((injector_driver_booster_capacitor_low_voltage_mask == 0 &&
          ((injector_diagnostic_bits_fast_decay == 0 && injector_diagnostic_bits_short_to_ground == 0
           ) && injector_diagnostic_bits_short_to_battery == 0)) &&
        ((uint)cylinder_cutout_debounce_counter <
@@ -89448,7 +89504,7 @@ void engine_injectionAngle_tpuChannel6EventHandler(void)
     cm848_setMainQuantityAndPulseWidthLimits();
     cm848_monitorInjectionLimitViolationCounters();
     engine_injectionAngle_computeLoadCh6();
-    cm848_processFaultScanLookup();
+    cm848_monitorInjectorDriverBoosterCapacitorVoltage();
     engine_injectionAngle_tpuUpdate();
   }
   else {
@@ -89533,7 +89589,7 @@ void engine_injectionAngle_tpuChannel6EventHandler(void)
                   );
         engine_injectionAngle_selectCylinderInjector(cylinder_event_index & 0xff);
         engine_injectionAngle_accumulateInjectedFuel();
-        cm848_processFaultScanLookup();
+        cm848_monitorInjectorDriverBoosterCapacitorVoltage();
         engine_injectionAngle_tpuUpdate();
         injection_angle_sequence_state_prev = injection_angle_sequence_state;
         injection_angle_sequence_state = 8;

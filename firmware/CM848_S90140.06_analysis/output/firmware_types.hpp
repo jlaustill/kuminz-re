@@ -1396,6 +1396,8 @@ typedef struct j1939_transport_receive_session_t j1939_transport_receive_session
 typedef struct j1939_pgn65263_payload_t j1939_pgn65263_payload_t;
 typedef struct j1939_pgn65504_payload_t j1939_pgn65504_payload_t;
 typedef struct feature_selection_bits_t feature_selection_bits_t;
+typedef struct injector_driver_booster_capacitor_monitor_record_t injector_driver_booster_capacitor_monitor_record_t;
+typedef struct injector_driver_booster_capacitor_cylinder_record_t injector_driver_booster_capacitor_cylinder_record_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -4371,4 +4373,30 @@ struct feature_selection_bits_t {
     uint8_t reserved_bit_5 : 1;  /* bit 5: mask 0x20: no reader (PR #53 round 40) */
     uint8_t reserved_bit_6 : 1;  /* bit 6: mask 0x40: no reader (PR #53 round 40) */
     uint8_t reserved_bit_7 : 1;  /* bit 7: mask 0x80: no reader (PR #53 round 40) */
+};
+
+struct injector_driver_booster_capacitor_monitor_record_t {
+    uint16_t sensor_channel;  /* the capacitor's sensor channel (54 / 55): indexes sensor_channel_filtered_output and the channel enable / held value / forced reading bitmaps (PR #53 round 41) */
+    word* high_threshold_pointer;  /* points at the channel config's high_threshold (0x5b560 / 0x5b570) (PR #53 round 41) */
+    word* low_threshold_pointer;  /* points at the channel config's low_threshold (PR #53 round 41) */
+    uint16_t high_fault;  /* fault number set above the high threshold: 328 / 330 (booster_capacitor_1 / 2_voltage_high_error) (PR #53 round 41) */
+    uint16_t low_fault;  /* fault number set below the low threshold: 329 / 331 (booster_capacitor_1 / 2_voltage_low_error) (PR #53 round 41) */
+    word* debounce_limit_pointer;  /* points at the channel config's debounce_limit (the per-cylinder count limit of both threshold checks) (PR #53 round 41) */
+    word* raw_value_pointer;  /* points at the channel state's raw_adc_counts (0x40b722 / 0x40b72e): the QADC reading is stored there (PR #53 round 41) */
+    word* value_pointer;  /* points at the channel state's value: the linearized reading is stored there (PR #53 round 41) */
+    word* held_value_pointer;  /* points at the channel state's held_value (used while the channel's held value bit is set) (PR #53 round 41) */
+    word* linearization_axis_pointer;  /* points at the capacitor's linearization axis (0x6429c / 0x642a8) (PR #53 round 41) */
+    word* linearization_values_pointer;  /* points at the capacitor's linearization values (PR #53 round 41) */
+    word* high_fault_debounce_count_pointer;  /* points at injector_driver_booster_capacitor_high_fault_debounce_counts[capacitor] (PR #53 round 41) */
+    word* low_fault_debounce_count_pointer;  /* points at injector_driver_booster_capacitor_low_fault_debounce_counts[capacitor] (PR #53 round 41) */
+    word* spare_count_pointer;  /* points at injector_driver_booster_capacitor_spare_counts[capacitor]; no code reads this field (PR #53 round 41) */
+    uint16_t low_voltage_mask;  /* 1 / 2: the bit injector_driver_booster_capacitor_low_voltage_mask takes when this capacitor's cylinders reach injector_driver_booster_capacitor_low_voltage_count_limit (PR #53 round 41) */
+};
+
+struct injector_driver_booster_capacitor_cylinder_record_t {
+    uint16_t capacitor_index;  /* 0 / 1: the cylinder's record in injector_driver_booster_capacitor_monitor_records (PR #53 round 41) */
+    uint16_t injector_fast_decay_fault;  /* fault number (270 = injector_1_fast_decay_error for record 0) (PR #53 round 41) */
+    uint16_t injector_open_circuit_fault;  /* fault number (286 = injector_1_open_circuit_error) (PR #53 round 41) */
+    uint16_t injector_short_to_ground_fault;  /* fault number (269 = injector_1_short_to_ground_error) (PR #53 round 41) */
+    uint16_t injector_short_to_battery_fault;  /* fault number (268 = injector_1_short_to_battery_error) (PR #53 round 41) */
 };

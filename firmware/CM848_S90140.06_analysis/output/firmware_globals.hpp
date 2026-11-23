@@ -16,9 +16,8 @@ extern undefined cm848_initPgn65263FluidLevelPressureHandler;  // 0x00025fd8
 extern undefined cm848_initPgn65270InletExhaustHandler;  // 0x0002661c
 extern void * mpc555_interrupt_task_mask_table;  // 0x000575bc
 extern void * mpc555_interrupt_dispatch_table;  // 0x000575de
-extern byte j1939_pgn_lookup_ptr;  // 0x00057636
-extern byte j1939_message_def_ptr;  // 0x00057638
-extern word calibration_constant_1;  // 0x00057694
+extern injector_driver_booster_capacitor_monitor_record_t injector_driver_booster_capacitor_monitor_records[2];  // 0x0005762c
+extern injector_driver_booster_capacitor_cylinder_record_t injector_driver_booster_capacitor_cylinder_records[8];  // 0x00057694
 extern byte supervisor_qspi_command_bytes;  // 0x00057724
 extern pci_message_descriptor_t pci_receive_message_table[15];  // 0x0005774b
 extern pci_message_descriptor_t pci_transmit_message_table[25];  // 0x000578ef
@@ -1651,9 +1650,9 @@ extern word governor_pressure_linearization_cached_axis_offset;  // 0x003fb21a
 extern ema_filter_state_t governor_pressure_sensor_filter_state;  // 0x003fb21c
 extern word initial_ambient_air_pressure_pending_flag;  // 0x003fb224
 extern word intake_manifold_pressure_snapshot;  // 0x003fb226
-extern byte per_cylinder_timing_array;  // 0x003fb236
-extern word per_cylinder_sync_counter;  // 0x003fb246
-extern word per_cylinder_timing_counter;  // 0x003fb256
+extern word injector_driver_booster_capacitor_cylinder_high_fault_debounce_counts[8];  // 0x003fb236
+extern word injector_driver_booster_capacitor_cylinder_low_fault_debounce_counts[8];  // 0x003fb246
+extern word injector_driver_booster_capacitor_cylinder_low_voltage_counts[8];  // 0x003fb256
 extern word supervisor_watchdog_question;  // 0x003fb266
 extern byte supervisor_qspi_slot;  // 0x003fb268
 extern byte supervisor_watchdog_cycle_counter;  // 0x003fb269
@@ -4985,7 +4984,7 @@ extern word transmission_temperature_in_use;  // 0x0040b1f2
 extern word transmission_current_gear;  // 0x0040b1f4
 extern word park_neutral_exit_engine_speed_limit_active_flag;  // 0x0040b1f6
 extern word output_speed_to_vehicle_speed_ratio_learn_delay_count;  // 0x0040b1fa
-extern word injection_check_flags;  // 0x0040b1fc
+extern word injector_driver_booster_capacitor_low_voltage_mask;  // 0x0040b1fc
 extern int16_t cruise_rpm_ratio_integral;  // 0x0040b204
 extern word cruise_rpm_ratio_ema;  // 0x0040b206
 extern word cruise_control_on_flag;  // 0x0040b208
@@ -7894,6 +7893,10 @@ extern byte j1939_pgn65260_transmit_status;  // 0x003faf06
 extern byte j1939_pgn65279_transmit_status;  // 0x003faf32
 extern byte j1939_pgn65264_transmit_status;  // 0x003fb00a
 extern word turbocharger_corrected_speed_cached_axis_offsets[2];  // 0x003fb01a
+extern word injector_driver_booster_capacitor_voltage_linearization_cached_axis_offset;  // 0x003fb228
+extern word injector_driver_booster_capacitor_high_fault_debounce_counts[2];  // 0x003fb22a
+extern word injector_driver_booster_capacitor_low_fault_debounce_counts[2];  // 0x003fb22e
+extern word injector_driver_booster_capacitor_spare_counts[2];  // 0x003fb232
 extern word cold_delta_fuel_cached_axis_offsets[2];  // 0x003fb35c
 extern word safety_fuel_limit_cached_axis_offset;  // 0x003fb3c2
 extern word injection_quantity_auxiliary_base_map_cached_axis_offsets[2];  // 0x003fb5ee

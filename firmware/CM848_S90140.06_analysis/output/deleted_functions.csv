@@ -88,7 +88,7 @@ address,reason
 0x0002bfd0,mid-function split inside cm848_blendAllSpeedGovernorReferenceSpeeds +0x64 (was cm848_j1939SendPgn65264_FEF0_PowerTakeoff)
 0x0002c14c,mid-function split inside cm848_applySwitchSelectedEngineSpeedLimit +0x38 (was cm848_updateTorqueLimitFromThreshold)
 0x00035d48,mid-function split inside cm848_processSensorTemperatureData +0x48 (was cm848_computeTemperatureDifferential)
-0x00036220,mid-function split inside cm848_processFaultScanLookup +0x278 (was cm848_processMultiAxisInterpolation)
+0x00036220,mid-function split inside cm848_monitorInjectorDriverBoosterCapacitorVoltage +0x278 (was cm848_processMultiAxisInterpolation)
 0x0003afc8,mid-function split inside cm848_validatePciSecurityKey +0x10 (was cm848_validateDataWithChecksumTable)
 0x0003b95c,mid-function split inside cm848_diagnoseClusterLampStatusMessage +0x4c (was cm848_decrementProtectionChannelValue)
 0x0003bb74,mid-function split inside cm848_updateSelectedGearFromShiftLever +0x4c (was cm848_indirectJumpDispatcher)

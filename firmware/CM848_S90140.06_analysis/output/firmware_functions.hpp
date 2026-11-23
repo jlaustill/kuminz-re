@@ -771,8 +771,8 @@ void cm848_initializeGovernorPressureChannel(void);  // @ 0x00035c74
 void cm848_processSensorTemperatureData(void);  // @ 0x00035d00
 void cm848_enableSensorFilterUpdate(void);  // @ 0x00035d70
 void cm848_learnOutputSpeedToVehicleSpeedRatio(void);  // @ 0x00035d80
-void mpc555_initSensorCalibrationTables(void);  // @ 0x00035f14
-void cm848_processFaultScanLookup(void);  // @ 0x00035fa8
+void cm848_initializeInjectorDriverBoosterCapacitorMonitor(void);  // @ 0x00035f14
+void cm848_monitorInjectorDriverBoosterCapacitorVoltage(void);  // @ 0x00035fa8
 void cm848_queueSupervisorStatusRead(void);  // @ 0x000367a4
 void cm848_onSupervisorStatusRead(void);  // @ 0x000367f0
 void cm848_queueSupervisorOutputWrite(void);  // @ 0x0003682c
