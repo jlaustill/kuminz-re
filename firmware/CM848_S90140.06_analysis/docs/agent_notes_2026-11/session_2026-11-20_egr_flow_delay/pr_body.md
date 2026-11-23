@@ -704,6 +704,11 @@ state enum, the flag bytes.**
   with the same layout) and 25 with no CM848 home, taking the last `protection_` field names with them. Three are kept as leads for untyped
   tables.
 - **Stage B (0b13a71):** round 58's "2 of 6 stores" scan claim corrected (the decompile repeats a shared store).
+**Round 60.**
+- **Stage A (afff095):** the parameter ID tables and the SCI command dispatch table get their struct types:
+  `boot_parameter_id_table` / `parameter_id_table` (`parameter_id_entry_t`) with the bucket index, and
+  `sci_command_dispatch_table` (`sci_command_dispatch_entry_t`). The boot lookup is renamed and `j1939_ack_msg_t`
+  is removed.
 
 ## Test plan
 
@@ -796,6 +801,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 60: exactly the three expected functions differ, each diffed; casts 8 -> 5 over them, no pieces; `firmware_types.hpp` changes by one rename, one new type, one removal. verify byte-identical, thunks 18 / 14.
 - [x] Round 59: stage A: the `.cpp` is unchanged (only the timestamp differed); `firmware_types.hpp` loses exactly the 29 types; the other headers are unchanged; verify byte-identical. Stage B: comments only.
 - [x] Round 58: `prove_r58.sh` shows no function differing; the 5 piece renders of the new names are the boot kernel's same 5 halves of the time-shared polarity word; all 12 renamed rows keep their notes. verify byte-identical.
 - [x] Round 57: stage A: `prove_r57.sh` shows 1962 of 1968 functions label-only; `prove_return_types_r57.py` proves the five retyped getters (members back to values, casts and locals normalized), and the caller only re-renders (renumbered locals, no cast added). Stage B: no function differs. verify byte-identical.

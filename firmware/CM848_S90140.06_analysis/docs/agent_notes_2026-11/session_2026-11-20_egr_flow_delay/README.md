@@ -545,3 +545,7 @@ Hand work on the round 7 lead.
 ## Round 59: struct types nothing uses (`session_folder/round59/`)
 
 - **Stage A:** `orphan_struct_types.py`, `apply_r59a.py`, `removed_orphan_types.txt`. **Stage B:** `fix_r59b.py`. **Closing:** `apply_r59_closing.py`, `update_large_tar_r59.sh`.
+
+## Round 60: the parameter ID tables and the SCI dispatch table typed (`session_folder/round60/`)
+
+- **Stage A:** `check_tables.py`, `apply_r60a.py`, `map_r60a.csv`. Proof: `prove_r60.sh`, `diff_function_r57.py`, `count_casts.py`. **Closing:** `apply_r60_closing.py`, `update_large_tar_r60.sh`.

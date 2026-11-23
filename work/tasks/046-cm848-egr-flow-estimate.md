@@ -2662,8 +2662,9 @@ A peer relay started the round; the scripts are in `session_folder/round59/`.
   - **No CM848 home (deleted, 25):** speculative protocol / DMA / patch types, CM550 templates unused there too, and
     three CM550 applies with no CM848 layout. The data plate is not at CM550's EEPROM 0x2C0 here.
     - The last `protection_` field names went with `engine_control_flags_t` and `timing_mode_control_t`.
-  - **Kept as leads:** `param_id_entry_t`, `diag_dispatch_entry_t` and `ef00_dispatch_entry_t` (the untyped tables
-    at 0x53be38 / 0x539508 / 0x53a9a0).
+  - **Kept as leads:** `param_id_entry_t`, `diag_dispatch_entry_t` and `ef00_dispatch_entry_t`. This round gave
+    them homes at 0x53be38 / 0x539508 / 0x53a9a0; round 60 found their own comments name others (the boot table
+    0x3F98AC, RAM 0x3FA8B2, RAM 0x3FDB30), and 0x539508 is code.
   - The removed text is archived verbatim with each type's pile (`removed_orphan_types.txt`). CM550 is untouched.
 - **Stage B (0b13a71): round 58's scan claim corrected.** Round 58's follow-up said `scan_accesses_v2.py` found "2 of
   the 6 stores" to two words. The machine code has exactly 2 stores to each; the decompile prints 6 lines by repeating
@@ -2674,10 +2675,37 @@ A peer relay started the round; the scripts are in `session_folder/round59/`.
 - **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 218.
 - **Leads:**
   - Type the parameter ID table (`param_id_entry_t`, 1441 records to the end of the flash2 dump) and the two dispatch
-    tables.
+    tables. Done in round 60 for the parameter ID tables and the SCI table; the dispatch types' homes differ.
   - CM550 keeps unused copies of 18 of the removed types.
   - `j1939_ack_msg_t` is unused as well (only an `enums.csv` comment names it); `j1939_acknowledgement_payload_t`
     covers its role.
+  - 69 unprefixed CM848-only functions remain.
+
+## Done, round 60 (2026-11-23, same PR): the parameter ID tables and the SCI command dispatch table typed
+
+A peer relay started the round; the scripts are in `session_folder/round60/`.
+- **Stage A (afff095).**
+  - **`parameter_id_entry_t`** (was `param_id_entry_t`: {word parameter_id, dword address}). Its own comments named its
+    home, the boot kernel's 20-entry table. It now types both tables:
+    - `boot_parameter_id_table` (`parameter_id_entry_t[20]` at 0x3f98ac, was `param_id_lookup_table`), with
+      `cm848_lookupBootParameterIdAddress` (was `cm848_lookupTableEntryByKey`);
+    - the application's `parameter_id_table` (`parameter_id_entry_t[1441]` at 0x53be38) and its hash index
+      `parameter_id_table_bucket_start` (`word[1889]`).
+  - **`sci_command_dispatch_entry_t`** (new) on `sci_command_dispatch_table` (flash2 0x53a9a0, 19 records).
+  - Five type-only pointer rows inside the arrays are gone. `j1939_ack_msg_t` is deleted: its 8 fields equal
+    `j1939_acknowledgement_payload_t`'s.
+  - `ef00_dispatch_entry_t` / `diag_dispatch_entry_t` are untouched; their documented RAM homes are unverified.
+- **Round 59's homes corrected:** its kept types' homes (0x53be38 / 0x539508 / 0x53a9a0) were wrong for two of the
+  three, and 0x539508 is code. The round 59 lines above now say so.
+- **Proof:** exactly the three expected functions differ, each diffed; casts 8 -> 5 over them, no pieces; `firmware_types.hpp` changes by one rename, one new type, one removal. verify byte-identical, thunks 18 / 14.
+- **firmware/CLAUDE.md (factual corrections, verified this round):**
+  - the Bank 2 "Command dispatch table" address 0x00539508 -> 0x0053a9a0 (0x539508 is a run of `bl` calls);
+  - the stuck-warning row for `_param_id_lookup_table` now records that the typed array applies over the window.
+- **Leads:**
+  - The real homes of `ef00_dispatch_entry_t` / `diag_dispatch_entry_t`: read `j1939_diagServiceDispatch` and the
+    registration code for each table's address and stride.
+  - `cm848_lookupBootParameterIdAddress` keeps its `word` parameter and the `CONCAT22` it causes. A wider prototype
+    would remove it but could add casts at its three callers (pilot it).
   - 69 unprefixed CM848-only functions remain.
 
 ## Leads (not in this PR)
