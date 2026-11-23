@@ -1917,6 +1917,28 @@ memory_region_t,0x003f9844,,,,region 2 0x3f9800 type 3 (end 0x302000 is below st
 memory_region_t,0x003f984e,,,,region 3 0x302000-0x3fffff RAM - marker,,verified
 memory_region_t,0x003f9858,,,,region 4 0x1000000-0x1003fff EEPROM - marker,,verified
 memory_region_t,0x003f9862,,,,region 5 0x2fc000-0x307fff internal registers - marker,,verified
+# checksum_region_t - one region of checksum_region_table that mpc555_verifyDownloadedCalibration sums (PR #53 round 69)
+checksum_region_t,,expected_sum,word,2,The 16-bit sum of the region's words that the verifier requires,,verified
+checksum_region_t,,start_address,word*,4,The region's first word,,verified
+checksum_region_t,,end_address,word*,4,The region's last word (the sum includes it),,verified
+# checksum_region_table_t - the calibration image's checksum table at ROM 0xb752 (checksum_table_descriptor points at it; not in e2m): a word count then that many regions - this image has 2 (PR #53 round 69)
+checksum_region_table_t,0x0000b752,region_count,word,2,2 in this image,,verified
+checksum_region_table_t,0x0000b752,first_region,checksum_region_t,10,0xb76a-0x591f6 (the main flash code) - sum 0xd501: the ROM dump sums to it,,verified
+checksum_region_table_t,0x0000b752,second_region,checksum_region_t,10,"0x500000-0x53ea6c (Bank 2) - sum 0x17b2: both flash2 dumps end before 0x53ea6c (at 0x53d4e9 and 0x53dfff), so it is unchecked",,verified
+# checksum_table_descriptor_t - e2m 1236 (10 bytes) at ROM 0x8104 (PR #53 round 69)
+checksum_table_descriptor_t,0x00008104,checksum_table_pointer,checksum_region_table_t*,4,e2m 1236 +0 Checksum_Table_Ptr 'Pointer to checksum table.' - checksum_region_table (0xb752),,verified
+checksum_table_descriptor_t,0x00008104,application_code_checksum_range_start_dummy,word,2,e2m 1236 +4 Start_App_Code_Checksum_Range_Dummy 'Start of Flash Block to be checksummed.' - 0 here - no reader found,,verified
+checksum_table_descriptor_t,0x00008104,application_code_checksum_range_end_dummy,dword,4,e2m 1236 +6 End_App_Code_Checksum_Range_Dummy 'Dummy end of Flash Block to be checksummed.' - 0 here - no reader found,,verified
+# block_data_structure_t - e2m 002E +0 Block_Data_Structure (60 bytes) at ROM 0x8112: the calibration image's download blocks (PR #53 round 69). Each array follows its own word count (4 here) - the verifier finds block_length at 0x811e + 8 x download_block_count - so the fixed [4] arrays fit this image
+block_data_structure_t,0x00008112,reserved_0,word,2,0x003a = 58: the bytes after it (e2m sizes the block at 60) - no reader found,,verified
+block_data_structure_t,0x00008112,reserved_2,word,2,0x00f0 - no reader found,,verified
+block_data_structure_t,0x00008112,download_block_count,word,2,4: mpc555_verifyDownloadedCalibration requires eeprom_block_tracking.block_count to equal it,,verified
+block_data_structure_t,0x00008112,reserved_6,word,2,4: the count before block_start_address - no reader found,,verified
+block_data_structure_t,0x00008112,block_start_address,dword,16,0x8000 / 0x40000 / 0x500000 / 0x1000080 - the verifier requires each download_block_list[i].start_address to equal it,,verified
+block_data_structure_t,0x00008112,reserved_24,word,2,4: the count before block_capacity - no reader found,,verified
+block_data_structure_t,0x00008112,block_capacity,dword,16,"0x38000 / 0x30000 / 0x40000 / 0x1f7e: main flash blocks 1-7, module B and Bank 2 match the flash geometry; 0x80 + 0x1f7e = 0x1ffe is unexplained - no reader found",,verified
+block_data_structure_t,0x00008112,reserved_42,word,2,4: the count before block_length - no reader found,,verified
+block_data_structure_t,0x00008112,block_length,dword,16,"0x38000 / 0x2fc64 / 0x3ea6e / 0x19c0: the image's length in each block - module B's ends at 0x6fc63 (0xff from 0x6fc64 on) and Bank 2's where checksum region 2 ends. The verifier requires each download_block_list[i].end_address to be at least it: an address against a length, so it always holds for the blocks that start above their length (all but the first)",,verified
 
 # --- j1939_input_signal_descriptor_t: J1939 input supervision table (10 bytes x 17 @ Bank 2 0x53a278) ---
 j1939_input_signal_descriptor_t,0x0053a278,signal_value,byte*,4,Received signal byte (j1939_received_*),,verified

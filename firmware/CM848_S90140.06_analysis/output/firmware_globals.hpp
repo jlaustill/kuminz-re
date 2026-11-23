@@ -7,8 +7,12 @@
 extern dword boot_kernel_rom_start;  // 0x00003c30
 extern byte boot_kernel_rom_end;  // 0x00007f60
 extern void * eepromStatusHandler_ptr0;  // 0x00007f7b
+extern dword smart_boot_indicator;  // 0x00008100
+extern checksum_table_descriptor_t checksum_table_descriptor;  // 0x00008104
 extern void * flash_operational_code_entry_pointer;  // 0x0000810e
+extern block_data_structure_t block_data_structure;  // 0x00008112
 extern byte application_overlay_core_software_version[4];  // 0x0000b74a
+extern checksum_region_table_t checksum_region_table;  // 0x0000b752
 extern undefined accept_tsc1_command;  // 0x00022f1c
 extern undefined cm848_initPgn65227Dm2ResponseHandler;  // 0x00025050
 extern undefined cm848_j1939SendPgn61443_F003_AcceleratorPedalEec2;  // 0x00025d88
@@ -5765,6 +5769,7 @@ extern byte output_channel_driver_table_set_period;  // 0x0053ac4e
 extern byte output_channel_driver_table_set_duty;  // 0x0053ac52
 extern word parameter_id_table_bucket_start[1889];  // 0x0053af76
 extern parameter_id_entry_t parameter_id_table[1441];  // 0x0053be38
+extern word bank2_image_last_word;  // 0x0053ea6c
 extern byte eeprom_security_key;  // 0x01000002
 extern dword ecm_part_number_cal;  // 0x0100000c
 extern byte eeprom_config_block;  // 0x01000030

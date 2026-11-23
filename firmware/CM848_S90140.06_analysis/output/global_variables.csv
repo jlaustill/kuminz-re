@@ -3,9 +3,16 @@ address,name,type,comment
 0x00007f60,boot_kernel_rom_end,byte,End of the boot reflash kernel image - and the start of the boot read reply table that cm848_readBootDiagnosticMemoryAndRespond indexes by the read service - 0x43 (45 00 00 47 00 49 00 4b 00 4d: the same pairs as j1939_memory_read_reply_services). The name stays for the copy loop's bound (PR #53 round 63)
 0x00007f7b,eepromStatusHandler_ptr0,pointer,
 0x00007f80,,byte,
-0x00008104,,pointer,
+0x00008100,smart_boot_indicator,dword,e2m 1235 +0 Smart_Boot_Indicator '[SSSMRTSR] If SMT_BOOT_SUPPORTED, OK to smart download' (HEX) - 0x98765432 here - no reader found: the calibration image starts its header with it (PR #53 round 69)
+0x00008104,checksum_table_descriptor,checksum_table_descriptor_t,e2m 1236 (10 bytes): the checksum table pointer and a dummy range (was a type-only pointer row; PR #53 round 69)
+0x00008108,checksum_table_descriptor.application_code_checksum_range_start_dummy,,(PR #53 round 69)
+0x0000810a,checksum_table_descriptor.application_code_checksum_range_end_dummy,,(PR #53 round 69)
 0x0000810e,flash_operational_code_entry_pointer,pointer,e2m 1198 +0 Flash_Start_Address '[SSFHSRAD] Pointer to the Flash operational code entry location, from boot loader.' (HEX, 4 bytes; 0x00054380 here). ROM constant, so no _cal. mpc555_hardwareInitialization calls through it with argument 0 as the hand-off from the boot code to the application; the target is mpc555_systemStartupInitialization (0x54380), which calls cm848_applicationMain. (was systemStartupInit_ptr)
-0x0000811a,,pointer,
+0x00008112,block_data_structure,block_data_structure_t,e2m 002E +0 Block_Data_Structure (60 bytes): the calibration image's download blocks - mpc555_verifyDownloadedCalibration checks download_block_list against it (PR #53 round 69)
+0x00008116,block_data_structure.download_block_count,,(PR #53 round 69)
+0x0000811a,block_data_structure.block_start_address[0],,(PR #53 round 69)
+0x0000812c,block_data_structure.block_capacity[0],,(PR #53 round 69)
+0x0000813e,block_data_structure.block_length[0],,(PR #53 round 69)
 0x00008600,,byte,
 0x00008980,,byte,
 0x00008b0a,,byte,
@@ -15,9 +22,9 @@ address,name,type,comment
 0x0000a0fa,,pointer,
 0x0000ac3a,,byte,
 0x0000b74a,application_overlay_core_software_version,byte[4],e2m 0019 +0 Calibration_Version_Number 'APPLICATION OVERLAY WITH CORE SOFTWARE VERSION' (address from the ECU's parameter ID table): 4 ROM bytes, passed by pointer to cm848_formatNumberAsDecimalText (really a number-to-decimal-text helper) that writes each byte as two decimal digits into the 4th field of the PGN 65242 software identification message ... (new row 2026-11-19, wave 12)
-0x0000b756,,pointer,
-0x0000b75a,,pointer,
-0x0000b760,,dword,
+0x0000b752,checksum_region_table,checksum_region_table_t,The calibration image's checksum table (checksum_table_descriptor.checksum_table_pointer) - mpc555_verifyDownloadedCalibration sums each region (PR #53 round 69)
+0x0000b754,checksum_region_table.first_region,,(PR #53 round 69)
+0x0000b75e,checksum_region_table.second_region,,(PR #53 round 69)
 0x00022c86,,pointer,
 0x00022f1c,accept_tsc1_command,,
 0x00025050,cm848_initPgn65227Dm2ResponseHandler,,
@@ -6171,6 +6178,7 @@ address,name,type,comment
 0x0053ad4e,,pointer,
 0x0053af76,parameter_id_table_bucket_start,word[1889],The bucket index of parameter_id_table: bucket = parameter ID mod 1889 (0x761); the word is the bucket's first record (0xffff = empty) and the next bucket's word - or the table end 0x53ea6c - ends it (cm848_lookupParameterIdAddress). 1889 words end where the table starts; largest entry 1885 (PR #53 round 60)
 0x0053be38,parameter_id_table,parameter_id_entry_t[1441],The application's parameter ID table: e2m block ID -> address (record = table[block] + offset). The code bounds it at 0x53ea6c = 1886 records; the flash2 dump ends after record 1440, so 1441 are typed. firmware/scripts/e2m_block_addresses.py resolves it from the binary (PR #53 round 60)
+0x0053ea6c,bank2_image_last_word,word,The Bank 2 image's last word: checksum_region_table.second_region.end_address (block_data_structure.block_length[2] = 0x3ea6e from 0x500000) - and one past parameter_id_table's 1886 records, so cm848_lookupParameterIdAddress ends its last bucket at its address. Both flash2 dumps end before it (at 0x53d4e9 and 0x53dfff) (PR #53 round 69)
 0x01000002,eeprom_security_key,byte,
 0x0100000c,ecm_part_number_cal,dword,EEPROM 0x0c: e2m 0001 +0 ECM_Part_Number 'Module Part Number' (HEX - 4 bytes) - the boot kernel copies it to boot_ecm_part_number (was eeprom_status_block; PR #53 round 68)
 0x01000030,eeprom_config_block,byte,

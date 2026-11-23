@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 12:30:43 MST 2026
+// Generated: Mon Nov 23 13:09:07 MST 2026
 
 
 //
@@ -204,15 +204,15 @@ undefined4 cm848_bootDiagnosticServiceAcknowledgeNoOperation(void)
 
 /* Boot kernel (service 7 and cm848_finishSerialReflash): reads ECM_Status (EEPROM 0x0).
    CALIBRATION_VALID answers 0 and then resets the ECU (after waiting for the answer to go out).
-   CALIBRATION_DOWNLOADED_NOT_VERIFIED: sums each region of the image header's checksum table
-   (pointer at ROM 0x8104 - a count then 10-byte sum / start / end records) and checks
-   download_block_list against the header's expected block count and addresses (0x8116 onward) - a
-   mismatch answers DOWNLOAD_INVALID (the serial channel then resets); a match writes
-   CALIBRATION_VALID (the serial channel also sets bit 3 and clears bit 1 of
-   serial_reflash_status_flags_cal and counts serial_reflash_success_count_cal) / the runtime
-   counter to eeprom_config_block / answers 0 / resets when MIOS MDASM30 SCRD bit 15 is set. Any
-   other status answers DOWNLOAD_INVALID. Clears bit 7 of eeprom_service_mode_flags first Here
-   intake_air_heater_saved_values_cal.redundant_preheat_request and
+   CALIBRATION_DOWNLOADED_NOT_VERIFIED: sums each region of checksum_region_table
+   (checksum_table_descriptor.checksum_table_pointer: a count then 10-byte sum / first word / last
+   word regions) and checks download_block_list against block_data_structure (e2m 002E: the block
+   count / start addresses / lengths; PR #53 round 69) - a mismatch answers DOWNLOAD_INVALID (the
+   serial channel then resets); a match writes CALIBRATION_VALID (the serial channel also sets bit 3
+   and clears bit 1 of serial_reflash_status_flags_cal and counts serial_reflash_success_count_cal)
+   / the runtime counter to eeprom_config_block / answers 0 / resets when MIOS MDASM30 SCRD bit 15
+   is set. Any other status answers DOWNLOAD_INVALID. Clears bit 7 of eeprom_service_mode_flags
+   first Here intake_air_heater_saved_values_cal.redundant_preheat_request and
    engine_off_time_saved_values_cal.previous_trip_value are the boot kernel's copies of EEPROM 0x50
    and 0x52 (it time-shares the application's EEPROM mirror; PR #53 round 68) (was
    mpc555_loadEepromCalibration; PR #53 round 67) */
@@ -229,11 +229,11 @@ void mpc555_verifyDownloadedCalibration(j1939_rx_msg_t *request,BOOT_REQUEST_CHA
   ushort uVar7;
   ushort uVar8;
   uint uVar9;
-  ushort *puVar10;
+  checksum_region_t *pcVar10;
   uint uVar11;
-  short *psVar12;
-  short *psVar13;
-  uint *puVar14;
+  word *pwVar12;
+  word *pwVar13;
+  dword *pdVar14;
   ushort local_38 [2];
   dword local_34 [2];
   
@@ -276,51 +276,52 @@ void mpc555_verifyDownloadedCalibration(j1939_rx_msg_t *request,BOOT_REQUEST_CHA
       cm848_sendDiagResponsePending(request,10);
     }
     bVar1 = false;
-    uVar7 = *(ushort *)PTR_DAT_00008104;
-    puVar10 = (ushort *)(PTR_DAT_00008104 + 2);
+    uVar7 = (checksum_table_descriptor.checksum_table_pointer)->region_count;
+    pcVar10 = &(checksum_table_descriptor.checksum_table_pointer)->first_region;
     uVar8 = 0;
     if (uVar7 != 0) {
       do {
         local_38[0] = 0;
-        psVar13 = *(short **)(puVar10 + 1);
-        psVar12 = *(short **)(puVar10 + 3);
-        while (psVar13 <= psVar12) {
+        pwVar13 = pcVar10->start_address;
+        pwVar12 = pcVar10->end_address;
+        while (pwVar13 <= pwVar12) {
           uVar6 = 0;
-          if (psVar13 <= psVar12) {
+          if (pwVar13 <= pwVar12) {
             do {
-              local_38[0] = local_38[0] + *psVar13;
-              psVar13 = psVar13 + 1;
+              local_38[0] = local_38[0] + *pwVar13;
+              pwVar13 = pwVar13 + 1;
               mpc555_sciPollDuringEepromWrite();
               uVar6 = uVar6 + 1;
-              if (psVar12 < psVar13) break;
+              if (pwVar12 < pwVar13) break;
             } while (uVar6 < 0x200);
           }
           cm848_serviceSupervisorWatchdog();
           mpc555_runPacedSerialService();
         }
-        if (local_38[0] != *puVar10) {
+        if (local_38[0] != pcVar10->expected_sum) {
           bVar1 = true;
           break;
         }
-        puVar10 = puVar10 + 5;
+        pcVar10 = pcVar10 + 1;
         uVar8 = uVar8 + 1;
       } while (uVar8 < uVar7);
     }
     if (!bVar1) {
       wVar4 = eeprom_block_tracking.block_count;
       uVar9 = (uint)wVar4;
-      if (uVar9 == DAT_00008116) {
-        puVar14 = &DAT_0000811e + (uint)DAT_00008116 * 2;
+      if (uVar9 == block_data_structure.download_block_count) {
+        pdVar14 = block_data_structure.block_start_address +
+                  (uint)block_data_structure.download_block_count * 2 + 1;
         uVar11 = 0;
         if (uVar9 != 0) {
           do {
-            if (((undefined *)download_block_list[uVar11].start_address !=
-                 (&PTR_DAT_0000811a)[uVar11]) ||
-               (download_block_list[uVar11].end_address < *puVar14)) {
+            if ((download_block_list[uVar11].start_address !=
+                 block_data_structure.block_start_address[uVar11]) ||
+               (download_block_list[uVar11].end_address < *pdVar14)) {
               bVar1 = true;
               break;
             }
-            puVar14 = puVar14 + 1;
+            pdVar14 = pdVar14 + 1;
             uVar11 = uVar11 + 1 & 0xffff;
           } while (uVar11 < uVar9);
         }
@@ -1885,10 +1886,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
+  word direction_register_value;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -6270,9 +6271,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
+  word counter_value;
   byte prescaler_count;
   dword runtime_value;
-  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -99889,7 +99890,7 @@ undefined4 cm848_lookupParameterIdAddress(uint param_1,uint *param_2)
   if (parameter_id_table_bucket_start[uVar2] < 0x75e) {
     ppVar4 = parameter_id_table + parameter_id_table_bucket_start[uVar2];
     if ((uVar2 == 0x760) || (parameter_id_table_bucket_start[uVar2 + 1] == 0xffff)) {
-      ppVar3 = (parameter_id_entry_t *)0x53ea6c;
+      ppVar3 = (parameter_id_entry_t *)&bank2_image_last_word;
     }
     else {
       ppVar3 = parameter_id_table + parameter_id_table_bucket_start[uVar2 + 1];

@@ -1393,6 +1393,10 @@ typedef struct qspi_job_t qspi_job_t;
 typedef struct qspi_device_slot_t qspi_device_slot_t;
 typedef struct qspi_job_queue_t qspi_job_queue_t;
 typedef struct memory_region_t memory_region_t;
+typedef struct checksum_region_t checksum_region_t;
+typedef struct checksum_region_table_t checksum_region_table_t;
+typedef struct checksum_table_descriptor_t checksum_table_descriptor_t;
+typedef struct block_data_structure_t block_data_structure_t;
 typedef struct j1939_input_signal_descriptor_t j1939_input_signal_descriptor_t;
 typedef struct output_read_back_fault_bits_t output_read_back_fault_bits_t;
 typedef struct monitor_condition_bits_t monitor_condition_bits_t;
@@ -3186,6 +3190,36 @@ struct memory_region_t {
     uint32_t end_address;  /* Last address of the region */
     uint8_t region_type;  /* 0 RAM / 2 Bank-2 flash / 3 registers / 4 main flash / 5 EEPROM (9 = not found) */
     uint8_t region_type_copy;  /* Same value as region_type in every entry */
+};
+
+struct checksum_region_t {
+    uint16_t expected_sum;  /* The 16-bit sum of the region's words that the verifier requires */
+    word* start_address;  /* The region's first word */
+    word* end_address;  /* The region's last word (the sum includes it) */
+};
+
+struct checksum_region_table_t {
+    uint16_t region_count;  /* 2 in this image */
+    checksum_region_t first_region;  /* 0xb76a-0x591f6 (the main flash code) - sum 0xd501: the ROM dump sums to it */
+    checksum_region_t second_region;  /* 0x500000-0x53ea6c (Bank 2) - sum 0x17b2: both flash2 dumps end before 0x53ea6c (at 0x53d4e9 and 0x53dfff), so it is unchecked */
+};
+
+struct checksum_table_descriptor_t {
+    checksum_region_table_t* checksum_table_pointer;  /* e2m 1236 +0 Checksum_Table_Ptr 'Pointer to checksum table.' - checksum_region_table (0xb752) */
+    uint16_t application_code_checksum_range_start_dummy;  /* e2m 1236 +4 Start_App_Code_Checksum_Range_Dummy 'Start of Flash Block to be checksummed.' - 0 here - no reader found */
+    uint32_t application_code_checksum_range_end_dummy;  /* e2m 1236 +6 End_App_Code_Checksum_Range_Dummy 'Dummy end of Flash Block to be checksummed.' - 0 here - no reader found */
+};
+
+struct block_data_structure_t {
+    uint16_t reserved_0;  /* 0x003a = 58: the bytes after it (e2m sizes the block at 60) - no reader found */
+    uint16_t reserved_2;  /* 0x00f0 - no reader found */
+    uint16_t download_block_count;  /* 4: mpc555_verifyDownloadedCalibration requires eeprom_block_tracking.block_count to equal it */
+    uint16_t reserved_6;  /* 4: the count before block_start_address - no reader found */
+    uint32_t block_start_address[4];  /* 0x8000 / 0x40000 / 0x500000 / 0x1000080 - the verifier requires each download_block_list[i].start_address to equal it */
+    uint16_t reserved_24;  /* 4: the count before block_capacity - no reader found */
+    uint32_t block_capacity[4];  /* 0x38000 / 0x30000 / 0x40000 / 0x1f7e: main flash blocks 1-7, module B and Bank 2 match the flash geometry; 0x80 + 0x1f7e = 0x1ffe is unexplained - no reader found */
+    uint16_t reserved_42;  /* 4: the count before block_length - no reader found */
+    uint32_t block_length[4];  /* 0x38000 / 0x2fc64 / 0x3ea6e / 0x19c0: the image's length in each block - module B's ends at 0x6fc63 (0xff from 0x6fc64 on) and Bank 2's where checksum region 2 ends. The verifier requires each download_block_list[i].end_address to be at least it: an address against a length, so it always holds for the blocks that start above their length (all but the first) */
 };
 
 struct j1939_input_signal_descriptor_t {
