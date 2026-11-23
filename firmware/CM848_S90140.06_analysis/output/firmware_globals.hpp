@@ -2080,7 +2080,7 @@ extern word governor_tuning_set_default_blend_weight_cal;  // 0x003fd526
 extern word cruise_maximum_road_speed_trim_cal;  // 0x003fd52a
 extern word maximum_road_speed_trim_cal;  // 0x003fd52c
 extern word rear_axle_ratio_low_cal;  // 0x003fd52e
-extern word j1939_ccvs1_switch_logic_option_cal;  // 0x003fd530
+extern word cruise_set_accelerate_switch_select_cal;  // 0x003fd530
 extern word cruise_discrete_switch_inputs_used_cal;  // 0x003fd532
 extern word rear_axle_ratio_high_cal;  // 0x003fd534
 extern word two_speed_axle_switch_present_cal;  // 0x003fd536
@@ -4331,7 +4331,8 @@ extern word charge_pressure_state;  // 0x0040a432
 extern word charge_pressure_in_range_condition;  // 0x0040a434
 extern word charge_pressure_in_range_enable_flag;  // 0x0040a436
 extern word charge_pressure_in_range_fault_count;  // 0x0040a438
-extern dword fuel_blend_correction_inhibit_flag;  // 0x0040a442
+extern word egr_off_allowed_flag;  // 0x0040a442
+extern word egr_cooler_fouled_flag;  // 0x0040a444
 extern int16_t charge_temperature_estimate;  // 0x0040a452
 extern word compressor_inlet_temperature_reference;  // 0x0040a454
 extern word charge_temperature_estimate_status;  // 0x0040a456

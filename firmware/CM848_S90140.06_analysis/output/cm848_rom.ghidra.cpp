@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 21:29:50 MST 2026
+// Generated: Sun Nov 22 21:36:29 MST 2026
 
 
 //
@@ -15151,7 +15151,7 @@ void cm848_calculateTimingReferenceDeltaAdjustment(void)
    combustion timing reference clamped to -1023..1024 counts
    (injection_timing_compensated_reference). The adjustment is switched off
    (off_nominal_compensation_off_flag = 1, output = the unadjusted reference) when EGR is off, alpha
-   is 0, the chi is above the threshold or fuel_blend_correction_inhibit_flag is set. (was
+   is 0, the chi is above the threshold or egr_off_allowed_flag is set. (was
    cm848_applyFuelDemandOffset) */
 
 void cm848_applyOffNominalTimingAdjustment(void)
@@ -15181,8 +15181,7 @@ void cm848_applyOffNominalTimingAdjustment(void)
     injection_timing_compensated_reference = 0x400;
   }
   fuel_correction_output_prev_snapshot = injection_timing_compensated_reference;
-  if ((((fuel_blend_correction_inhibit_flag._0_2_ == 0) &&
-       (combustion_reference_state.egr_off_flag == 0)) &&
+  if ((((egr_off_allowed_flag == 0) && (combustion_reference_state.egr_off_flag == 0)) &&
       (combustion_reference_state.alpha_percent != 0)) &&
      ((uint)combustion_reference_state.chi_hundredths << 10 <
       (uint)air_handling_system_protection_level_3_emission_level_cap_when_active * 100)) {
@@ -24896,10 +24895,10 @@ LAB_00024304:
     }
     if ((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) {
       if (((switch_input_state_bits.unwired_switch != 0) ||
-          ((j1939_ccvs1_switch_logic_option_cal == 0 &&
+          ((cruise_set_accelerate_switch_select_cal == 0 &&
            (switch_input_state_bits.unwired_switch != 0)))) ||
-         ((j1939_ccvs1_switch_logic_option_cal != 0 && (switch_input_state_bits.unwired_switch != 0)
-          ))) {
+         ((cruise_set_accelerate_switch_select_cal != 0 &&
+          (switch_input_state_bits.unwired_switch != 0)))) {
         bVar3 = 0x10;
         goto LAB_00024424;
       }
@@ -24925,10 +24924,10 @@ LAB_00024494:
     }
     if ((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) {
       if (((switch_input_state_bits.unwired_switch == 0) &&
-          ((j1939_ccvs1_switch_logic_option_cal == 0 ||
+          ((cruise_set_accelerate_switch_select_cal == 0 ||
            (switch_input_state_bits.unwired_switch == 0)))) &&
-         ((j1939_ccvs1_switch_logic_option_cal != 0 || (switch_input_state_bits.unwired_switch == 0)
-          ))) goto LAB_00024514;
+         ((cruise_set_accelerate_switch_select_cal != 0 ||
+          (switch_input_state_bits.unwired_switch == 0)))) goto LAB_00024514;
       bVar3 = 1;
     }
     else {
@@ -62846,9 +62845,8 @@ void cm848_initializeVehicleSpeedAndCruiseState(void)
    per pass up to egr_cooler_fouling_fault_time_threshold while egr_cooler_efficiency is below
    egr_cooler_efficiency_threshold and falls by 1 while it is at or above it; the counter is held at
    0 while bit 0x2000 of algorithm_enable_flags_19_cal is clear or
-   air_handling_compensation_and_diagnostic_bypass_cal is non-zero; egr_cooler_fouled_flag (second
-   word of fuel_blend_correction_inhibit_flag) is set at the maximum and cleared at 0. (was
-   governor_adjustment_counter_update) */
+   air_handling_compensation_and_diagnostic_bypass_cal is non-zero; egr_cooler_fouled_flag is set at
+   the maximum and cleared at 0. (was governor_adjustment_counter_update) */
 
 void cm848_updateEgrCoolerFoulingFaultCounter(void)
 
@@ -62922,11 +62920,11 @@ void cm848_updateEgrCoolerFoulingFaultCounter(void)
   egr_cooler_fouling_fault_counter = wVar4;
   if (egr_cooler_fouling_fault_counter < uVar5) {
     if (egr_cooler_fouling_fault_counter == 0) {
-      fuel_blend_correction_inhibit_flag._2_2_ = 0;
+      egr_cooler_fouled_flag = 0;
     }
   }
   else {
-    fuel_blend_correction_inhibit_flag._2_2_ = 1;
+    egr_cooler_fouled_flag = 1;
   }
   return;
 }
@@ -63043,8 +63041,8 @@ void cm848_calculateEgrCoolerEfficiency(void)
    actuator state is bad (charge_pressure_source or exhaust_pressure_source 2,
    intake_manifold_temperature_filtered_source non-zero, egr_delta_pressure_sensor_source or
    egr_valve_position_source non-zero, faults 726 / 727 / 728 of the EGR valve, or the cooler
-   fouled) and the first word of fuel_blend_correction_inhibit_flag when either of the two state
-   words is 1. (was cm848_auxiliary_periodic) */
+   fouled) and egr_off_allowed_flag when either of the two state words is 1. (was
+   cm848_auxiliary_periodic) */
 
 void cm848_updateEgrSystemHealthFlags(void)
 
@@ -63058,8 +63056,8 @@ void cm848_updateEgrSystemHealthFlags(void)
       ((egr_orifice_temperature_source != SENSOR_VALUE_SOURCE_PRIMARY ||
        ((fault_detected_cal.egr_valve_actuator_over_temperature != 0 ||
         (fault_detected_cal.egr_valve_actuator_driver_over_current != 0)))))) ||
-     ((fault_detected_cal.egr_valve_actuator_electrical_fault != 0 ||
-      (fuel_blend_correction_inhibit_flag._2_2_ != 0)))) {
+     ((fault_detected_cal.egr_valve_actuator_electrical_fault != 0 || (egr_cooler_fouled_flag != 0))
+     )) {
     egr_system_failure_flag = 1;
   }
   else {
@@ -63067,10 +63065,10 @@ void cm848_updateEgrSystemHealthFlags(void)
   }
   if ((charge_pressure_source == SENSOR_VALUE_SOURCE_BACKUP) ||
      (exhaust_pressure_source == SENSOR_VALUE_SOURCE_BACKUP)) {
-    fuel_blend_correction_inhibit_flag._0_2_ = 1;
+    egr_off_allowed_flag = 1;
   }
   else {
-    fuel_blend_correction_inhibit_flag._0_2_ = 0;
+    egr_off_allowed_flag = 0;
   }
   return;
 }
