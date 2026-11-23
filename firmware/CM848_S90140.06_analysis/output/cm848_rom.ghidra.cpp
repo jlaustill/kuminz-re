@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 21:05:20 MST 2026
+// Generated: Sun Nov 22 21:12:21 MST 2026
 
 
 //
@@ -6750,8 +6750,8 @@ void cm848_periodicTaskSet_controlLoop(void)
   cm848_estimateChargePressure();
   cm848_calculateEngineOutputTorque();
   cm848_calculateHighSpeedGovernorCompensatedEngineSpeed();
-  cm848_updateParkNeutralExitEngineSpeedLimitWindow();
-  cm848_calculateParkNeutralExitEngineSpeedLimit();
+  cm848_updateRockCycleEngineSpeedLimitWindow();
+  cm848_calculateRockCycleEngineSpeedLimit();
   selectEngineSpeedLimit();
   selectHighSpeedGovernorGainSet();
   runHighSpeedGovernorPid();
@@ -21537,7 +21537,7 @@ void selectHighSpeedGovernorGainSet(void)
    override mode select 1 request (the e2m Jcomm high idle override speed,
    j1939_high_idle_override_speed), 9 j1939_powertrain_control_state.tsc1_speed_limit (governor mode
    3), 11 power_take_off_throttle_override_engine_speed_limit, 13 engine_speed_limit_converter_slip,
-   14 engine_speed_limit_pedal_fault_mode, 15 engine_speed_limit_park_neutral_exit, 16
+   14 engine_speed_limit_pedal_fault_mode, 15 engine_speed_limit_rock_cycle, 16
    engine_speed_limit_source_16 (turbocharger_speed_limiter_active_flag set). Sources 16 and 8
    return early with their own value as applied_speed_limit. Otherwise the result is held between
    engine_speed_limit_minimum (850 rpm) and engine_speed_limit_maximum (3500 rpm) and stored in
@@ -21660,9 +21660,8 @@ void selectEngineSpeedLimit(void)
     engine_speed_limit_arbitration.lowest_source_speed_limit = engine_speed_limit_converter_slip;
     engine_speed_limit_arbitration.limiting_source_number = 0xd;
   }
-  if (engine_speed_limit_park_neutral_exit <=
-      engine_speed_limit_arbitration.lowest_source_speed_limit) {
-    engine_speed_limit_arbitration.lowest_source_speed_limit = engine_speed_limit_park_neutral_exit;
+  if (engine_speed_limit_rock_cycle <= engine_speed_limit_arbitration.lowest_source_speed_limit) {
+    engine_speed_limit_arbitration.lowest_source_speed_limit = engine_speed_limit_rock_cycle;
     engine_speed_limit_arbitration.limiting_source_number = 0xf;
   }
   if (engine_speed_limit_maximum < engine_speed_limit_arbitration.lowest_source_speed_limit) {
@@ -42764,54 +42763,54 @@ void cm848_initVehicleSpeedCalculation(void)
 
 
 //
-// Function: cm848_calculateParkNeutralExitEngineSpeedLimit @ 0x0003e2bc
+// Function: cm848_calculateRockCycleEngineSpeedLimit @ 0x0003e2bc
 //
 
-/* Engine speed limit source 15 for automatic transmissions (algorithm_enable_flags_43_cal bit 3,
-   transmission_type_cal 3): while the park/neutral exit window is open, the vehicle is below its
-   speed threshold and commanded throttle is inside its calibrated range (park_neutral_exit_minimum
-   / maximum_commanded_throttle), the limit is held at park_neutral_exit_engine_speed_limit (6800 =
-   850 rpm) and the phase is 0; afterwards it ramps up by
-   park_neutral_exit_engine_speed_limit_ramp_step per call to the default 3750 rpm (phase 1).
-   Otherwise the limit stays at the default. (was cm848_processTorqueLimitConfig) */
+/* Rock cycle torque management (e2m TC_Rock_Cycle_* 8C2A / RE_RCTM_* 8C49-8C4B;
+   algorithm_enable_flags_43_cal.rock_cycle_torque_management_enable): Engine speed limit source 15
+   for automatic transmissions (algorithm_enable_flags_43_cal bit 3, transmission_type_cal 3): while
+   the park/neutral exit window is open, the vehicle is below its speed threshold and commanded
+   throttle is inside its calibrated range (park_neutral_exit_minimum / maximum_commanded_throttle),
+   the limit is held at rock_cycle_engine_speed_limit (6800 = 850 rpm) and the phase is 0;
+   afterwards it ramps up by rock_cycle_engine_speed_limit_ramp_step per call to the default 3750
+   rpm (phase 1). Otherwise the limit stays at the default. (was cm848_processTorqueLimitConfig)
+   (was cm848_calculateParkNeutralExitEngineSpeedLimit; PR #53 round 46) */
 
-void cm848_calculateParkNeutralExitEngineSpeedLimit(void)
+void cm848_calculateRockCycleEngineSpeedLimit(void)
 
 {
   word wVar1;
   
   if ((algorithm_enable_flags_43_cal.rock_cycle_torque_management_enable == 0) ||
      (transmission_type_cal != 3)) {
-    engine_speed_limit_park_neutral_exit = engine_speed_limit_default_cal;
+    engine_speed_limit_rock_cycle = engine_speed_limit_default_cal;
   }
   else {
-    if (park_neutral_exit_engine_speed_limit_active_flag == 1) {
-      if (park_neutral_exit_window_timer < park_neutral_exit_window_duration) {
-        park_neutral_exit_window_timer = park_neutral_exit_window_timer + 1;
+    if (rock_cycle_engine_speed_limit_active_flag == 1) {
+      if (rock_cycle_window_timer < rock_cycle_window_duration) {
+        rock_cycle_window_timer = rock_cycle_window_timer + 1;
       }
     }
     else {
-      park_neutral_exit_window_timer = 0;
+      rock_cycle_window_timer = 0;
     }
-    if ((((park_neutral_exit_engine_speed_limit_active_flag == 1) &&
-         (park_neutral_exit_window_timer < park_neutral_exit_window_duration)) &&
-        (park_neutral_exit_minimum_commanded_throttle <= commanded_throttle_state.commanded_throttle
-        )) && ((commanded_throttle_state.commanded_throttle <=
-                park_neutral_exit_maximum_commanded_throttle &&
-               (vehicle_speed < park_neutral_exit_maximum_vehicle_speed)))) {
-      engine_speed_limit_park_neutral_exit = park_neutral_exit_engine_speed_limit;
-      park_neutral_exit_engine_speed_limit_phase = 0;
+    if ((((rock_cycle_engine_speed_limit_active_flag == 1) &&
+         (rock_cycle_window_timer < rock_cycle_window_duration)) &&
+        (rock_cycle_minimum_commanded_throttle <= commanded_throttle_state.commanded_throttle)) &&
+       ((commanded_throttle_state.commanded_throttle <= rock_cycle_maximum_commanded_throttle &&
+        (vehicle_speed < rock_cycle_maximum_vehicle_speed)))) {
+      engine_speed_limit_rock_cycle = rock_cycle_engine_speed_limit;
+      rock_cycle_engine_speed_limit_phase = 0;
     }
     else {
       wVar1 = engine_speed_limit_default_cal;
-      if (engine_speed_limit_park_neutral_exit <
-          engine_speed_limit_arbitration.lowest_source_speed_limit) {
-        wVar1 = engine_speed_limit_park_neutral_exit +
-                park_neutral_exit_engine_speed_limit_ramp_step;
+      if (engine_speed_limit_rock_cycle < engine_speed_limit_arbitration.lowest_source_speed_limit)
+      {
+        wVar1 = engine_speed_limit_rock_cycle + rock_cycle_engine_speed_limit_ramp_step;
       }
-      engine_speed_limit_park_neutral_exit = wVar1;
-      if (park_neutral_exit_engine_speed_limit_phase == 0) {
-        park_neutral_exit_engine_speed_limit_phase = 1;
+      engine_speed_limit_rock_cycle = wVar1;
+      if (rock_cycle_engine_speed_limit_phase == 0) {
+        rock_cycle_engine_speed_limit_phase = 1;
       }
     }
   }
@@ -42821,19 +42820,22 @@ void cm848_calculateParkNeutralExitEngineSpeedLimit(void)
 
 
 //
-// Function: cm848_initializeParkNeutralExitEngineSpeedLimit @ 0x0003e400
+// Function: cm848_initializeRockCycleEngineSpeedLimit @ 0x0003e400
 //
 
-/* Start-up reset of the park/neutral exit engine speed limit: the limit goes to the default
+/* Rock cycle torque management (e2m TC_Rock_Cycle_* 8C2A / RE_RCTM_* 8C49-8C4B;
+   algorithm_enable_flags_43_cal.rock_cycle_torque_management_enable): Start-up reset of the
+   park/neutral exit engine speed limit: the limit goes to the default
    engine_speed_limit_default_cal, the window timer to 0 and the phase to 2 (idle). (was
-   cm848_initTorqueLimitState) */
+   cm848_initTorqueLimitState) (was cm848_initializeParkNeutralExitEngineSpeedLimit; PR #53 round
+   46) */
 
-void cm848_initializeParkNeutralExitEngineSpeedLimit(void)
+void cm848_initializeRockCycleEngineSpeedLimit(void)
 
 {
-  engine_speed_limit_park_neutral_exit = engine_speed_limit_default_cal;
-  park_neutral_exit_window_timer = 0;
-  park_neutral_exit_engine_speed_limit_phase = 2;
+  engine_speed_limit_rock_cycle = engine_speed_limit_default_cal;
+  rock_cycle_window_timer = 0;
+  rock_cycle_engine_speed_limit_phase = 2;
   return;
 }
 
@@ -58719,7 +58721,7 @@ void cm848_applicationMain(void)
   configurationValidationCheck();
   initSensorTableIndexing();
   cm848_initialization_calibration_state();
-  cm848_initializeParkNeutralExitEngineSpeedLimit();
+  cm848_initializeRockCycleEngineSpeedLimit();
   cm848_initializeEgrOrificeTemperatureSensorRationalityMonitor();
   cm848_initializeEgrDeltaPressureSensorPerformanceCheck();
   cm848_initializeExhaustPressureChannel();
@@ -74007,88 +74009,88 @@ void cm848_controlAirConditioningClutch(void)
 
 
 //
-// Function: cm848_updateParkNeutralExitEngineSpeedLimitWindow @ 0x0051193c
+// Function: cm848_updateRockCycleEngineSpeedLimitWindow @ 0x0051193c
 //
 
-/* Park/neutral exit engine speed limit timing (algorithm_enable_flags_43_cal bit 3): while switch
-   20 (park/neutral) is set with fuel demand 20-400 it loads the countdown from a transmission
-   temperature table; once the switch clears the active flag is 1 until it runs out, and
-   cm848_calculateParkNeutralExitEngineSpeedLimit holds the speed limit at 850 rpm meanwhile. (was
-   cm848_updateParkNeutralExitTorqueLimitWindow, earlier fuel_temp_protection_monitor) */
+/* Rock cycle torque management (e2m TC_Rock_Cycle_* 8C2A / RE_RCTM_* 8C49-8C4B;
+   algorithm_enable_flags_43_cal.rock_cycle_torque_management_enable): Park/neutral exit engine
+   speed limit timing (algorithm_enable_flags_43_cal bit 3): while switch 20 (park/neutral) is set
+   with fuel demand 20-400 it loads the countdown from a transmission temperature table; once the
+   switch clears the active flag is 1 until it runs out, and
+   cm848_calculateRockCycleEngineSpeedLimit holds the speed limit at 850 rpm meanwhile. (was
+   cm848_updateParkNeutralExitTorqueLimitWindow, earlier fuel_temp_protection_monitor) (was
+   cm848_updateParkNeutralExitEngineSpeedLimitWindow; PR #53 round 46) */
 
-void cm848_updateParkNeutralExitEngineSpeedLimitWindow(void)
+void cm848_updateRockCycleEngineSpeedLimitWindow(void)
 
 {
   byte bVar1;
   
-  if (park_neutral_exit_engine_speed_limit_startup_delay_count <=
-      park_neutral_exit_engine_speed_limit_startup_delay) {
-    park_neutral_exit_engine_speed_limit_startup_delay_count =
-         park_neutral_exit_engine_speed_limit_startup_delay_count + 1;
+  if (rock_cycle_engine_speed_limit_startup_delay_count <=
+      rock_cycle_engine_speed_limit_startup_delay) {
+    rock_cycle_engine_speed_limit_startup_delay_count =
+         rock_cycle_engine_speed_limit_startup_delay_count + 1;
   }
   if (algorithm_enable_flags_43_cal.rock_cycle_torque_management_enable != 0) {
-    bVar1 = park_neutral_exit_engine_speed_limit_state_bits;
-    if ((park_neutral_exit_engine_speed_limit_state_bits & 2) == 0) {
+    bVar1 = rock_cycle_engine_speed_limit_state_bits;
+    if ((rock_cycle_engine_speed_limit_state_bits & 2) == 0) {
       if (switch_input_state_bits.park_neutral_switch == 0) {
-        if ((park_neutral_exit_engine_speed_limit_state_bits & 4) != 0) {
-          if (park_neutral_exit_engine_speed_limit_countdown == 0) {
-            bVar1 = park_neutral_exit_engine_speed_limit_state_bits & 0xfb;
-            if ((park_neutral_exit_engine_speed_limit_state_bits & 1) != 0) {
-              park_neutral_exit_engine_speed_limit_active_flag = 0;
-              bVar1 = park_neutral_exit_engine_speed_limit_state_bits & 0xfa | 8;
+        if ((rock_cycle_engine_speed_limit_state_bits & 4) != 0) {
+          if (rock_cycle_engine_speed_limit_countdown == 0) {
+            bVar1 = rock_cycle_engine_speed_limit_state_bits & 0xfb;
+            if ((rock_cycle_engine_speed_limit_state_bits & 1) != 0) {
+              rock_cycle_engine_speed_limit_active_flag = 0;
+              bVar1 = rock_cycle_engine_speed_limit_state_bits & 0xfa | 8;
             }
           }
           else {
-            park_neutral_exit_engine_speed_limit_active_flag = 1;
-            park_neutral_exit_engine_speed_limit_countdown =
-                 park_neutral_exit_engine_speed_limit_countdown - 1;
-            bVar1 = park_neutral_exit_engine_speed_limit_state_bits | 1;
+            rock_cycle_engine_speed_limit_active_flag = 1;
+            rock_cycle_engine_speed_limit_countdown = rock_cycle_engine_speed_limit_countdown - 1;
+            bVar1 = rock_cycle_engine_speed_limit_state_bits | 1;
           }
         }
       }
       else {
-        park_neutral_exit_engine_speed_limit_active_flag = 0;
+        rock_cycle_engine_speed_limit_active_flag = 0;
         if ((((commanded_throttle_state.commanded_throttle <
-               park_neutral_exit_engine_speed_limit_minimum_throttle) ||
-             (park_neutral_exit_engine_speed_limit_maximum_throttle <
+               rock_cycle_engine_speed_limit_minimum_throttle) ||
+             (rock_cycle_engine_speed_limit_maximum_throttle <
               commanded_throttle_state.commanded_throttle)) ||
             (transmission_output_speed_in_use <
-             park_neutral_exit_engine_speed_limit_minimum_output_shaft_speed)) ||
-           (DAT_004086d8 < transmission_output_speed_in_use)) {
-          park_neutral_exit_engine_speed_limit_countdown = 0;
-          bVar1 = park_neutral_exit_engine_speed_limit_state_bits & 0xfa;
+             rock_cycle_engine_speed_limit_minimum_output_shaft_speed)) ||
+           (rock_cycle_engine_speed_limit_maximum_output_shaft_speed <
+            transmission_output_speed_in_use)) {
+          rock_cycle_engine_speed_limit_countdown = 0;
+          bVar1 = rock_cycle_engine_speed_limit_state_bits & 0xfa;
         }
         else {
-          park_neutral_exit_engine_speed_limit_state_bits =
-               park_neutral_exit_engine_speed_limit_state_bits & 0xfe | 4;
-          park_neutral_exit_engine_speed_limit_countdown =
+          rock_cycle_engine_speed_limit_state_bits =
+               rock_cycle_engine_speed_limit_state_bits & 0xfe | 4;
+          rock_cycle_engine_speed_limit_countdown =
                lookupTableInterpolation
-                         (&park_neutral_exit_engine_speed_limit_countdown_cached_axis_offset,
+                         (&rock_cycle_engine_speed_limit_countdown_cached_axis_offset,
                           transmission_temperature_in_use,
-                          park_neutral_exit_engine_speed_limit_countdown_axis,
-                          park_neutral_exit_engine_speed_limit_countdown_values,1);
-          bVar1 = park_neutral_exit_engine_speed_limit_state_bits;
+                          rock_cycle_engine_speed_limit_countdown_axis,
+                          rock_cycle_engine_speed_limit_countdown_values,1);
+          bVar1 = rock_cycle_engine_speed_limit_state_bits;
         }
       }
     }
-    park_neutral_exit_engine_speed_limit_state_bits = bVar1;
-    if (park_neutral_exit_engine_speed_limit_startup_delay <
-        park_neutral_exit_engine_speed_limit_startup_delay_count) {
-      park_neutral_exit_engine_speed_limit_state_bits =
-           park_neutral_exit_engine_speed_limit_state_bits & 0xfd;
+    rock_cycle_engine_speed_limit_state_bits = bVar1;
+    if (rock_cycle_engine_speed_limit_startup_delay <
+        rock_cycle_engine_speed_limit_startup_delay_count) {
+      rock_cycle_engine_speed_limit_state_bits = rock_cycle_engine_speed_limit_state_bits & 0xfd;
     }
     else {
-      park_neutral_exit_engine_speed_limit_state_bits =
-           park_neutral_exit_engine_speed_limit_state_bits | 2;
+      rock_cycle_engine_speed_limit_state_bits = rock_cycle_engine_speed_limit_state_bits | 2;
     }
-    if (park_neutral_exit_engine_speed_limit_phase == 2) {
-      park_neutral_exit_engine_speed_limit_state_bits =
-           park_neutral_exit_engine_speed_limit_state_bits & 0xef;
+    if (rock_cycle_engine_speed_limit_phase == 2) {
+      rock_cycle_engine_speed_limit_state_bits = rock_cycle_engine_speed_limit_state_bits & 0xef;
     }
-    else if (park_neutral_exit_engine_speed_limit_phase == 1) {
-      park_neutral_exit_engine_speed_limit_state_bits =
-           park_neutral_exit_engine_speed_limit_state_bits & 0xf7 | 0x10;
-      park_neutral_exit_engine_speed_limit_phase = 2;
+    else if (rock_cycle_engine_speed_limit_phase == 1) {
+      rock_cycle_engine_speed_limit_state_bits =
+           rock_cycle_engine_speed_limit_state_bits & 0xf7 | 0x10;
+      rock_cycle_engine_speed_limit_phase = 2;
     }
   }
   return;
@@ -74218,7 +74220,7 @@ void fuel_demand_timing_initialize(void)
 {
   tsc1_lost_management_active_flag = 1;
   j1939_tsc1_active_duration_counter = DAT_004086ca;
-  park_neutral_exit_engine_speed_limit_countdown_cached_axis_offset = 2;
+  rock_cycle_engine_speed_limit_countdown_cached_axis_offset = 2;
   return;
 }
 

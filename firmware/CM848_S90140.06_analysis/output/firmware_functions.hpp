@@ -886,8 +886,8 @@ void cm848_monitorTransmissionOutputSpeedSensor(void);  // @ 0x0003dd98
 void cm848_calculateVehicleSpeed(void);  // @ 0x0003dfb8
 void cm848_requestPowerDownDelayWhileVehicleMoving(void);  // @ 0x0003e210
 void cm848_initVehicleSpeedCalculation(void);  // @ 0x0003e230
-void cm848_calculateParkNeutralExitEngineSpeedLimit(void);  // @ 0x0003e2bc
-void cm848_initializeParkNeutralExitEngineSpeedLimit(void);  // @ 0x0003e400
+void cm848_calculateRockCycleEngineSpeedLimit(void);  // @ 0x0003e2bc
+void cm848_initializeRockCycleEngineSpeedLimit(void);  // @ 0x0003e400
 void cm848_calculateMaximumRoadSpeeds(void);  // @ 0x0003e42c
 void cm848_initializeMaximumRoadSpeeds(void);  // @ 0x0003e520
 void cm848_sciResetReceiveState(void);  // @ 0x0003e578
@@ -1572,7 +1572,7 @@ void cm848_initializeAirConditioningClutchControl(void);  // @ 0x00510f34
 void cm848_controlAirConditioningClutchForBrTruck(void);  // @ 0x00510fa0
 void cm848_controlAirConditioningClutchForDrTruck(void);  // @ 0x00511078
 void cm848_controlAirConditioningClutch(void);  // @ 0x005118f8
-void cm848_updateParkNeutralExitEngineSpeedLimitWindow(void);  // @ 0x0051193c
+void cm848_updateRockCycleEngineSpeedLimitWindow(void);  // @ 0x0051193c
 void cm848_updateParkNeutralFlagAndTsc1Activity(void);  // @ 0x00511b64
 void fuel_demand_timing_initialize(void);  // @ 0x00511ea8
 void cm848_deriveSecondBrakeSwitchSignal(void);  // @ 0x00511ed4
