@@ -4271,7 +4271,7 @@ struct discrete_output_read_back_counters_t {
 
 struct j1939_pgn65249_payload_t {
     uint8_t retarder_type_and_location;  /* SPN 901 retarder type (bits 1-4) and SPN 902 retarder location (bits 5-8): 0x14 = exhaust (4) at the engine exhaust brake (1) for one engine_retarder_output_driver_count / 3 = compression release (3) at the engine compression release brake (0) for two or more / 0xff = not available */
-    uint8_t retarder_control_method;  /* SPN 557 retarder control method: 0xff / 6 / 3 / 2 / 1 for engine_retarder_stage_1_weight 0 / 1 / 2 / 3 / 6 (6 divided by the weight); other weights leave it */
+    uint8_t retarder_control_method;  /* SPN 557 retarder control method: 0xff / 6 / 3 / 2 / 1 for engine_retarder_driver_1_cylinder_count 0 / 1 / 2 / 3 / 6 (6 divided by the weight); other weights leave it */
     uint8_t retarder_speed_at_idle_point_1_low_byte;  /* SPN 546 retarder speed at idle (point 1); low byte */
     uint8_t retarder_speed_at_idle_point_1_high_byte;  /* SPN 546; high byte */
     uint8_t percent_torque_at_idle_point_1;  /* SPN 551; 125 minus the high byte of the ROM percent word */

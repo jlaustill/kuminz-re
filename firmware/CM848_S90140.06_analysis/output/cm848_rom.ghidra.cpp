@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 17:26:37 MST 2026
+// Generated: Sun Nov 22 17:30:14 MST 2026
 
 
 //
@@ -1773,10 +1773,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
   word qadc_b_pqb0_sample;
-  word qadc_b_pqa4_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -22476,70 +22476,73 @@ void cm848_initializeJ1939ReferenceEngineFuelingAndTorque(void)
 //
 
 /* Calculates the engine retarder torque reported in ERC1 (PGN 61440) byte 2, SPN 520: the
-   engine_retarder_torque_stage table selected by the number of engaged retarder stages (0 to 6) at
-   the current rpm, divided by the full-scale torque (stage 6 value [4]) and multiplied by a ramp
-   that starts after a 2 call delay and rises 50 percent per call. The result is percent x 256
-   (32000 = 125 percent, 0x8300 = invalid) and 0 when no stage is engaged; called by the ERC1
-   builder cm848_buildPgn61440ElectronicRetarderController1Message, which transmits 125 minus the
-   percent (was cm848_calculateSpeedControlError). */
+   engine_retarder_torque_stage table selected by the number of braking cylinders
+   (engine_retarder_cylinders_on_count, 0 to 6) at the current rpm, divided by the full-scale torque
+   (stage 6 value [4]) and multiplied by a ramp that starts after a 2 call delay and rises 50
+   percent per call. The result is percent x 256 (32000 = 125 percent, 0x8300 = invalid) and 0 when
+   no stage is engaged; called by the ERC1 builder
+   cm848_buildPgn61440ElectronicRetarderController1Message, which transmits 125 minus the percent
+   (was cm848_calculateSpeedControlError). A count above 6 selects no table, so the lookup then
+   reads whatever r6 held (selected_stage_torque_values); the driver cylinder counts in this
+   calibration are 1 / 0 / 0 / 0 / 0 / 0, so the count is 0 or 1. */
 
 void cm848_calculateEngineRetarderTorque(void)
 
 {
   word wVar1;
-  word *in_r6;
+  word *selected_stage_torque_values;
   uint uVar2;
   
-  engine_retarder_engaged_stage_count = 0;
+  engine_retarder_cylinders_on_count = 0;
   if (logical_output_request_bits_8_to_15.engine_brake_driver_1_request != 0) {
-    engine_retarder_engaged_stage_count = engine_retarder_stage_1_weight;
+    engine_retarder_cylinders_on_count = engine_retarder_driver_1_cylinder_count;
   }
   if (logical_output_request_bits_8_to_15.engine_brake_driver_2_request != 0) {
-    engine_retarder_engaged_stage_count =
-         engine_retarder_engaged_stage_count + engine_retarder_stage_2_weight;
+    engine_retarder_cylinders_on_count =
+         engine_retarder_cylinders_on_count + engine_retarder_driver_2_cylinder_count;
   }
   if (logical_output_request_bits_8_to_15.engine_brake_driver_3_request != 0) {
-    engine_retarder_engaged_stage_count =
-         engine_retarder_engaged_stage_count + engine_retarder_stage_3_weight;
+    engine_retarder_cylinders_on_count =
+         engine_retarder_cylinders_on_count + engine_retarder_driver_3_cylinder_count;
   }
   if (logical_output_request_bits_8_to_15.engine_brake_driver_4_request != 0) {
-    engine_retarder_engaged_stage_count =
-         engine_retarder_engaged_stage_count + engine_retarder_stage_4_weight;
+    engine_retarder_cylinders_on_count =
+         engine_retarder_cylinders_on_count + engine_retarder_driver_4_cylinder_count;
   }
   if (logical_output_request_bits_8_to_15.engine_brake_driver_5_request != 0) {
-    engine_retarder_engaged_stage_count =
-         engine_retarder_engaged_stage_count + engine_retarder_stage_5_weight;
+    engine_retarder_cylinders_on_count =
+         engine_retarder_cylinders_on_count + engine_retarder_driver_5_cylinder_count;
   }
-  if (engine_retarder_engaged_stage_count == 0) {
+  if (engine_retarder_cylinders_on_count == 0) {
     engine_retarder_torque_percent_times_256 = 0;
     engine_retarder_torque_ramp_percent_times_256 = 0;
     engine_retarder_torque_ramp_delay_count = 0;
   }
   else {
-    if (engine_retarder_engaged_stage_count < 5) {
-      if (engine_retarder_engaged_stage_count == 4) {
-        in_r6 = engine_retarder_torque_stage_4_values;
+    if (engine_retarder_cylinders_on_count < 5) {
+      if (engine_retarder_cylinders_on_count == 4) {
+        selected_stage_torque_values = engine_retarder_torque_stage_4_values;
       }
-      else if (engine_retarder_engaged_stage_count == 1) {
-        in_r6 = engine_retarder_torque_stage_1_values;
+      else if (engine_retarder_cylinders_on_count == 1) {
+        selected_stage_torque_values = engine_retarder_torque_stage_1_values;
       }
-      else if (engine_retarder_engaged_stage_count == 2) {
-        in_r6 = engine_retarder_torque_stage_2_values;
+      else if (engine_retarder_cylinders_on_count == 2) {
+        selected_stage_torque_values = engine_retarder_torque_stage_2_values;
       }
-      else if (engine_retarder_engaged_stage_count == 3) {
-        in_r6 = engine_retarder_torque_stage_3_values;
+      else if (engine_retarder_cylinders_on_count == 3) {
+        selected_stage_torque_values = engine_retarder_torque_stage_3_values;
       }
     }
-    else if (engine_retarder_engaged_stage_count == 5) {
-      in_r6 = engine_retarder_torque_stage_5_values;
+    else if (engine_retarder_cylinders_on_count == 5) {
+      selected_stage_torque_values = engine_retarder_torque_stage_5_values;
     }
-    else if (engine_retarder_engaged_stage_count == 6) {
-      in_r6 = engine_retarder_torque_stage_6_values;
+    else if (engine_retarder_cylinders_on_count == 6) {
+      selected_stage_torque_values = engine_retarder_torque_stage_6_values;
     }
     wVar1 = lookupTableInterpolation
                       (&engine_retarder_torque_cached_axis_offset,
                        engine_speed_state.filtered_engine_speed,
-                       engine_retarder_torque_engine_speed_axis,in_r6,0);
+                       engine_retarder_torque_engine_speed_axis,selected_stage_torque_values,0);
     if ((short)wVar1 < -31999) {
       engine_retarder_torque_percent_times_256 = 0x8300;
     }
@@ -24463,9 +24466,9 @@ void cm848_initGovernorProtectionState(void)
   engine_retarder_override_control_mode = TSC1_OVERRIDE_OFF;
   engine_retarder_control_device_indicator = J1939_CONTROL_DEVICE_NONE;
   engine_retarder_stage_count =
-       engine_retarder_stage_1_weight + engine_retarder_stage_2_weight +
-       engine_retarder_stage_3_weight + engine_retarder_stage_4_weight +
-       engine_retarder_stage_5_weight + engine_retarder_stage_6_weight;
+       engine_retarder_driver_1_cylinder_count + engine_retarder_driver_2_cylinder_count +
+       engine_retarder_driver_3_cylinder_count + engine_retarder_driver_4_cylinder_count +
+       engine_retarder_driver_5_cylinder_count + engine_retarder_driver_6_cylinder_count;
   engine_retarder_torque_stage_1_cached_axis_offset = 2;
   engine_retarder_torque_stage_2_cached_axis_offset = 2;
   engine_retarder_torque_stage_3_cached_axis_offset = 2;
@@ -26520,10 +26523,10 @@ void cm848_initJ1939InletExhaustConditionsBuffer(void)
 /* Builds and sends the ECM's RC broadcast (PGN 65249, Retarder Configuration, every 5000 ms on
    retarder queue 1, 19 data bytes so it goes out through the transport protocol) from the engine
    retarder source address: the first two bytes follow engine_retarder_output_driver_count (0xFF /
-   0x14 / 3) and engine_retarder_stage_1_weight, then five speed word + percent torque byte points
-   (125 minus the percent) from the engine_retarder_configuration_* ROM words in the J1939 order:
-   idle (point 1), maximum speed (point 2), points 3 and 4, peak torque (point 5, speed in bytes
-   15-16), the reference torque (bytes 17-18) and the peak torque percent (byte 19) (was
+   0x14 / 3) and engine_retarder_driver_1_cylinder_count, then five speed word + percent torque byte
+   points (125 minus the percent) from the engine_retarder_configuration_* ROM words in the J1939
+   order: idle (point 1), maximum speed (point 2), points 3 and 4, peak torque (point 5, speed in
+   bytes 15-16), the reference torque (bytes 17-18) and the peak torque percent (byte 19) (was
    cm848_j1939BuildProtocolModeStatus). */
 
 void cm848_buildPgn65249RetarderConfigurationMessage(void)
@@ -26544,19 +26547,19 @@ void cm848_buildPgn65249RetarderConfigurationMessage(void)
     else {
       j1939_pgn65249_payload.retarder_type_and_location = 3;
     }
-    if (engine_retarder_stage_1_weight == 0) {
+    if (engine_retarder_driver_1_cylinder_count == 0) {
       j1939_pgn65249_payload.retarder_control_method = 0xff;
     }
-    else if (engine_retarder_stage_1_weight == 1) {
+    else if (engine_retarder_driver_1_cylinder_count == 1) {
       j1939_pgn65249_payload.retarder_control_method = 6;
     }
-    else if (engine_retarder_stage_1_weight == 2) {
+    else if (engine_retarder_driver_1_cylinder_count == 2) {
       j1939_pgn65249_payload.retarder_control_method = 3;
     }
-    else if (engine_retarder_stage_1_weight == 3) {
+    else if (engine_retarder_driver_1_cylinder_count == 3) {
       j1939_pgn65249_payload.retarder_control_method = 2;
     }
-    else if (engine_retarder_stage_1_weight == 6) {
+    else if (engine_retarder_driver_1_cylinder_count == 6) {
       j1939_pgn65249_payload.retarder_control_method = 1;
     }
     bStack_7 = (byte)engine_retarder_configuration_idle_speed;

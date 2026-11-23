@@ -341,12 +341,12 @@ extern word tsc1_lost_speed_ramp_rate;  // 0x0005c3b0
 extern word tsc1_lost_torque_ramp_rate;  // 0x0005c3b2
 extern tsc1_source_configuration_t tsc1_source_configuration_table[10];  // 0x0005c3b4
 extern word engine_retarder_output_driver_count;  // 0x0005c47c
-extern word engine_retarder_stage_1_weight;  // 0x0005c47e
-extern word engine_retarder_stage_2_weight;  // 0x0005c480
-extern word engine_retarder_stage_3_weight;  // 0x0005c482
-extern word engine_retarder_stage_4_weight;  // 0x0005c484
-extern word engine_retarder_stage_5_weight;  // 0x0005c486
-extern word engine_retarder_stage_6_weight;  // 0x0005c488
+extern word engine_retarder_driver_1_cylinder_count;  // 0x0005c47e
+extern word engine_retarder_driver_2_cylinder_count;  // 0x0005c480
+extern word engine_retarder_driver_3_cylinder_count;  // 0x0005c482
+extern word engine_retarder_driver_4_cylinder_count;  // 0x0005c484
+extern word engine_retarder_driver_5_cylinder_count;  // 0x0005c486
+extern word engine_retarder_driver_6_cylinder_count;  // 0x0005c488
 extern word engine_retarder_torque_ramp_rate_percent_times_256;  // 0x0005c48a
 extern word engine_retarder_torque_ramp_start_delay;  // 0x0005c48c
 extern word pedal_fault_mode_fuel_demand_limit_slope;  // 0x0005c490
@@ -4708,7 +4708,7 @@ extern undefined etc1_override_timer_countdown;  // 0x0040ae4c
 extern word etc2_selected_gear_timeout;  // 0x0040ae50
 extern word diagnostic_fault_to_erase;  // 0x0040ae56
 extern word diagnostic_clear_request_state;  // 0x0040ae58
-extern word engine_retarder_engaged_stage_count;  // 0x0040ae5a
+extern word engine_retarder_cylinders_on_count;  // 0x0040ae5a
 extern word oil_change_monitor_reset_flag;  // 0x0040ae60
 extern word stop_fault_lamp_flag;  // 0x0040ae62
 extern word warning_fault_lamp_flag;  // 0x0040ae64

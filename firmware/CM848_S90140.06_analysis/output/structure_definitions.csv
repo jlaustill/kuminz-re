@@ -2985,7 +2985,7 @@ discrete_output_read_back_counters_t,0x003fd2b7,,,,cruise_vacuum_output_read_bac
 discrete_output_read_back_counters_t,0x003fd2bd,,,,cruise_servo_supply_output_read_back_check - marker only,,verified
 # j1939_pgn65249_payload_t: the J1939 RC (PGN 65249) payload: 19 bytes in J1939 byte order (PR #53 round 33)
 j1939_pgn65249_payload_t,0x003fae50,retarder_type_and_location,byte,1,SPN 901 retarder type (bits 1-4) and SPN 902 retarder location (bits 5-8): 0x14 = exhaust (4) at the engine exhaust brake (1) for one engine_retarder_output_driver_count / 3 = compression release (3) at the engine compression release brake (0) for two or more / 0xff = not available,,verified
-j1939_pgn65249_payload_t,0x003fae50,retarder_control_method,byte,1,SPN 557 retarder control method: 0xff / 6 / 3 / 2 / 1 for engine_retarder_stage_1_weight 0 / 1 / 2 / 3 / 6 (6 divided by the weight); other weights leave it,,verified
+j1939_pgn65249_payload_t,0x003fae50,retarder_control_method,byte,1,SPN 557 retarder control method: 0xff / 6 / 3 / 2 / 1 for engine_retarder_driver_1_cylinder_count 0 / 1 / 2 / 3 / 6 (6 divided by the weight); other weights leave it,,verified
 j1939_pgn65249_payload_t,0x003fae50,retarder_speed_at_idle_point_1_low_byte,byte,1,SPN 546 retarder speed at idle (point 1); low byte,,verified
 j1939_pgn65249_payload_t,0x003fae50,retarder_speed_at_idle_point_1_high_byte,byte,1,SPN 546; high byte,,verified
 j1939_pgn65249_payload_t,0x003fae50,percent_torque_at_idle_point_1,byte,1,SPN 551; 125 minus the high byte of the ROM percent word,,verified
