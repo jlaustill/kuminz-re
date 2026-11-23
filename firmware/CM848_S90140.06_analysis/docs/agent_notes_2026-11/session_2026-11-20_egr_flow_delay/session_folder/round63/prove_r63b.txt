@@ -1,0 +1,38 @@
+functions 1968; differing after canonicalization: 21; pieces of new names: 0
+== mpc555_areBootModeStrapPinsHigh 
+   old ...ordwVar1;wordport_output_zero;word*qadc_b_port;word*qadc_a_port;word*qadc_b_direction;wordqadc_a_pqa2_sample;worddirection_register_value;wordqadc_b_pqb0_sample;wordqadc_b_pqa4_sample;qadc_b_direction
+   new ...ordwVar1;wordport_output_zero;word*qadc_b_port;word*qadc_a_port;word*qadc_b_direction;worddirection_register_value;wordqadc_b_pqb0_sample;wordqadc_b_pqa4_sample;wordqadc_a_pqa2_sample;qadc_b_direction
+== cm848_handleJ1939RestartService 
+   old ...//undefined1cm848_handleJ1939RestartService(undefined4param_1){undefined1uVar1;uVar1=cm848_restartThroughBootRom(param_1,0);returnuVar1;}//
+   new ...//undefined1cm848_handleJ1939RestartService(j1939_rx_msg_t*request){undefined1uVar1;uVar1=cm848_restartThroughBootRom(request,0);returnuVar1;}//
+== cm848_updateJ1939BroadcastEnableMask 
+   old ...//undefined4cm848_updateJ1939BroadcastEnableMask(intparam_1,intparam_2){charcVar1;charcVar2;ushortuVar3;cVar1=*(char*)(*(int*)(param_1+6)+1);cVar2=*(char*)(*(i
+   new ...//undefined4cm848_updateJ1939BroadcastEnableMask(j1939_rx_msg_t*request,dwordenable){bytebVar1;bytebVar2;ushortuVar3;bVar1=request->data_pointer[1];bVar2=reque
+== cm848_handleJ1939DisableBroadcastService 
+   old ...//undefined1cm848_handleJ1939DisableBroadcastService(undefined4param_1){undefined1uVar1;uVar1=cm848_updateJ1939BroadcastEnableMask(param_1,0);returnuVar1;}//
+   new ...//undefined1cm848_handleJ1939DisableBroadcastService(j1939_rx_msg_t*request){undefined1uVar1;uVar1=cm848_updateJ1939BroadcastEnableMask(request,0);returnuVar1;}//
+== cm848_handleJ1939EnableBroadcastService 
+   old ...//undefined1cm848_handleJ1939EnableBroadcastService(undefined4param_1){undefined1uVar1;uVar1=cm848_updateJ1939BroadcastEnableMask(param_1,1);returnuVar1;}//
+   new ...//undefined1cm848_handleJ1939EnableBroadcastService(j1939_rx_msg_t*request){undefined1uVar1;uVar1=cm848_updateJ1939BroadcastEnableMask(request,1);returnuVar1;}//
+== cm848_writeJ1939DiagnosticMemory 
+   old ...//charcm848_writeJ1939DiagnosticMemory(intparam_1,byte*param_2,uintparam_3){boolbVar1;uintuVar2;uintuVar3;charcVar4;uintuVar5;intiVar6;if(0x6e4<param
+   new ...//charcm848_writeJ1939DiagnosticMemory(j1939_rx_msg_t*request,byte*address,dwordlength){boolbVar1;uintuVar2;uintuVar3;uintuVar4;charcVar5;uintuVar6;b
+== cm848_writeJ1939DiagnosticMemoryByParameterId 
+   old ...//undefined1cm848_writeJ1939DiagnosticMemoryByParameterId(undefined4param_1,undefined4param_2,intparam_3,undefined4param_4){charcVar1;undefined1uVar2;intlocal_10;cVar1=
+   new ...//undefined1cm848_writeJ1939DiagnosticMemoryByParameterId(j1939_rx_msg_t*request,wordparameter_id,dwordoffset,dwordlength){charcVar1;undefined1uVar2;undefined2in_regist
+== cm848_handleJ1939WriteByParameterIdService 
+   old ...//undefined1cm848_handleJ1939WriteByParameterIdService(intparam_1){undefined1uVar1;undefined2local_10[2];uintlocal_c;cm848_memcpyBytes(local_10,*(int*)(param_1+6)+1,
+   new ...//undefined1cm848_handleJ1939WriteByParameterIdService(j1939_rx_msg_t*request){undefined1uVar1;wordlocal_10[2];uintlocal_c;cm848_memcpyBytes(local_10,request->data_p
+== cm848_handleJ1939WriteByParameterIdLongLengthService 
+   old ...//undefined1cm848_handleJ1939WriteByParameterIdLongLengthService(intparam_1){undefined1uVar1;undefined2local_10[2];undefined4local_c[2];cm848_memcpyBytes(local_10,*(int*)(para
+   new ...//undefined1cm848_handleJ1939WriteByParameterIdLongLengthService(j1939_rx_msg_t*request){undefined1uVar1;wordlocal_10[2];dwordlocal_c[2];cm848_memcpyBytes(local_10,request->da
+== cm848_handleJ1939WriteByParameterIdShortOffsetService 
+   old ...//undefined1cm848_handleJ1939WriteByParameterIdShortOffsetService(intparam_1){undefined1uVar1;undefined2local_10[2];uintlocal_c;uintlocal_8;cm848_memcpyBytes(local_10,*(int*)(p
+   new ...//undefined1cm848_handleJ1939WriteByParameterIdShortOffsetService(j1939_rx_msg_t*request){undefined1uVar1;wordlocal_10[2];uintlocal_c;uintlocal_8;cm848_memcpyBytes(local_10,req
+== cm848_handleJ1939WriteByParameterIdLongOffsetService 
+   old ...//undefined1cm848_handleJ1939WriteByParameterIdLongOffsetService(intparam_1){undefined1uVar1;undefined2local_10[2];undefined4local_c;undefined4local_8;cm848_memcpyBytes(local_
+   new ...//undefined1cm848_handleJ1939WriteByParameterIdLongOffsetService(j1939_rx_msg_t*request){undefined1uVar1;wordlocal_10[2];dwordlocal_c;dwordlocal_8;cm848_memcpyBytes(local_10,r
+== cm848_handleJ1939WriteMemoryService 
+   old ...//undefined1cm848_handleJ1939WriteMemoryService(intparam_1){undefined1uVar1;undefined4local_c[2];cm848_memcpyBytes(local_c,*(int*)(param_1+6)+1,4);uVar1=cm848
+   new ...//undefined1cm848_handleJ1939WriteMemoryService(j1939_rx_msg_t*request){undefined1uVar1;uintlocal_10;byte*local_c[2];cm848_memcpyBytes(local_c,request->data_p
+struct instances 0; piece or underscore renders: 0 

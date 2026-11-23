@@ -557,3 +557,10 @@ Hand work on the round 7 lead.
 ## Round 62: the J1939 registration functions, the DM7 test identifier (`session_folder/round62/`)
 
 - **Stage A:** `service_ids.py`, `apply_r62a.py`, `map_r62a.csv`. Proof: `prove_r62.sh`. **Closing:** `apply_r62_closing.py`, `update_large_tar_r62.sh`.
+
+## Round 63: the PGN 61184 diagnostic services in both kernels (`session_folder/round63/`)
+
+- **Stage A:** `registrations.py`, `checks_r63a.py`, `service_tables.py`, `apply_r63a.py` (its first draft `apply_r63a_first_draft.py`), `fix_r63a.py`, `map_r63a.csv`, `params_r63a.csv`. Checks: `compare_registrations.py`, `leftovers.py`, `check_function_history.py`.
+- **Stage B:** `signatures.py`, `apply_r63b.py`. Review: `review_typed.py`, `artifacts.py`, `differing.py`.
+- **Stage C:** `boot_tables.py`, `cm550_names.py`, `apply_r63c.py`, `map_r63c.csv`.
+- **Proof:** `prove_r63.sh`. **Closing:** `apply_r63_closing.py`, `update_large_tar_r63.sh`.

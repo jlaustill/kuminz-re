@@ -276,3 +276,8 @@
   400997 verify_round61a.log
   401191 verify_round62a.log
   401233 verify_round62b.log
+  402607 verify_round63a.log
+  401633 verify_round63a2.log
+  401885 verify_round63b.log
+  401633 verify_round63b2.log
+  401665 verify_round63c.log

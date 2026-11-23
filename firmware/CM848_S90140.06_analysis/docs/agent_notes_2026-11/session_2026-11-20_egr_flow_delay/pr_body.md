@@ -721,6 +721,14 @@ state enum, the flag bytes.**
 - **Stage B (fa13ad2d):** the services 0x0f / 0x10 handler is a no-op, now
   `cm848_j1939DiagnosticServiceAcknowledgeNoOperation`, and its registrar is
   `cm848_registerJ1939BroadcastAndNoOperationServices` (stage A had named it after the enum's member names).
+**Round 63.**
+- **Stage A (eba8399d):** the PGN 61184 services are `J1939_DIAGNOSTIC_SERVICE`, named from the handlers the
+  application registers. The old CLIP guesses were wrong for CM848 (0x43's 4 bytes are the length). The 14
+  handlers and their workers are named on one scheme, and the read reply table is typed.
+- **Stage B (f7d68431):** the application's handlers and workers take a `j1939_rx_msg_t *` request (45 casts and
+  113 placeholder names gone).
+- **Stage C (d9933bac):** the boot kernel's twin: `BOOT_DIAGNOSTIC_SERVICE`, its wrong read prototypes fixed,
+  23 functions renamed.
 
 ## Test plan
 
@@ -813,6 +821,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 63: stage A 9 of 1968 functions differ: the registrar, its 5 callers and the dispatcher by member names (all 24 registrations keep their values and handlers in order), the read worker by the reply table, and one local declaration-order move. Stage B 21: the 20 typed functions (45 casts and 113 placeholder names removed, 1 cast added, no new artifacts) and the same declaration-order move. Stage C 22: the 19 predicted (41 casts and 57 placeholder names removed, none added; all 14 boot registrations keep their values and handlers) and three declaration-order moves. Every verify byte-identical, thunks 18 / 14, 0 failed prototype or local rows, headers 0 g++ errors, tests pass (Java 89), HARD 0 / MISSING 219.
 - [x] Round 62: `prove_r62.sh` shows no function differing; both renamed rows keep their notes. verify byte-identical, thunks 18 / 14, no name-mismatch warning.
 - [x] Round 61: exactly the four table functions differ (two registrars, two scanners), each diffed; casts 3 -> 2 over them, no pieces; `firmware_types.hpp` renames the two dispatch types and nothing else. verify byte-identical, thunks 18 / 14, no name-mismatch warning left.
 - [x] Round 60: exactly the three expected functions differ, each diffed; casts 8 -> 5 over them, no pieces; `firmware_types.hpp` changes by one rename, one new type, one removal. verify byte-identical, thunks 18 / 14.

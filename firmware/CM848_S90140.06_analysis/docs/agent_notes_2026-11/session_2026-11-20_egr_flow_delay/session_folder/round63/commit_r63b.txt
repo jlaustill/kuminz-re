@@ -1,0 +1,31 @@
+cm848: round 63 stage B - the application's PGN 61184 handlers and workers take a j1939_rx_msg_t * request
+
+cm848_j1939DiagnosticServiceHandler calls every handler with its j1939_rx_msg_t *rx_msg, and each handler read
+its request through raw offsets: +6 = data_pointer, and for the 0x41 handler +0 / +2 / +3 = priority_dp_flags /
+dest_address / source_address.
+
+Prototypes for 20 functions:
+- the 15 handlers that use the request: broadcast 4 / 5, restart 0x0b, address 0x41 and the 11 memory services;
+- cm848_updateJ1939BroadcastEnableMask (request + enable: 1 sets the selected bits of
+  datalink_broadcast_enable_flags, anything else clears them);
+- the 4 memory workers, their other parameters named from stage A's reading (parameter ID / offset / length /
+  address).
+The chain is closed: every caller of a typed worker is itself typed here.
+
+Review (review_typed.py on the 20, the real text, not the cast-stripped proof):
+- 45 casts and 113 placeholder names removed; 0 placeholders added.
+- 1 cast added: (byte *)(local_10 + offset) in the by-ID write worker, the address arithmetic becoming the write
+  pointer.
+- artifacts.py: no function's CONCAT / in_register / extraout count changed.
+- A first build typed parameter_id as a halfword. The lookup's hash divides the whole register
+  (divw r0,r3,r12 at 0x53976c), so the lookup call became CONCAT22(in_register_00000010, parameter_id). It is
+  undefined4 now (named, with the callers' local_10[0] left uncast as before).
+- The dispatcher's call_result row is gone. The temp it names appears only once result_code is committed, after
+  the importer's single pass.
+
+Proof (prove_r63.sh): 21 of 1968 functions differ. Those are the 20 typed functions and
+mpc555_areBootModeStrapPinsHigh, whose local declaration order moved again (one line; body equal).
+verify is byte-identical; thunks 18 / 14; prototype rows 0 failed; local variables 0 failed. Headers regenerated
+(0 g++ errors), tests pass, audit_cal_suffixes.py HARD 0 / MISSING 219, lookup_tables.py 0 sizing problems.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

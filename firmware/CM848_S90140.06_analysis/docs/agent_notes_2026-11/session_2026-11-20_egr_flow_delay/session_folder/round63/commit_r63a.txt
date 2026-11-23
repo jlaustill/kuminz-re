@@ -1,0 +1,52 @@
+cm848: round 63 stage A - the PGN 61184 diagnostic services: J1939_DIAGNOSTIC_SERVICE and the handler family
+
+The service IDs ("EF00_SERVICE_ID", the PGN in hex) carried CLIP guesses that did not match the handlers CM848's
+application registers: 0x15 was "get address by parameter ID" but commits the EEPROM mirror; 0x43's 4-byte field
+was an "offset" but is the length; 0x46 was "param only, not registered" but is registered with an offset and a
+length.
+
+- EF00_SERVICE_ID -> J1939_DIAGNOSTIC_SERVICE. Its 24 members are named from the handlers the application registers
+  (each comment keeps the old name), plus 0x0c POSITIVE_RESPONSE / 0x0d NEGATIVE_RESPONSE, the two responses
+  cm848_sendJ1939ResponseFrame sends. The enum's header records:
+  - the reply pairs (0x41 -> 0x42; each read -> the matching write layout);
+  - that the boot kernel's table differs (its 7 downloads a calibration);
+  - an open bench lead: clip-core's readParameterService43 / 46 send these bytes as an offset / zeros.
+- Typed with it: the registrar's service_id parameter (all 24 registrations render member names), the dispatch
+  table's entry field and the dispatcher's service local. The dispatcher's other locals are named (entry /
+  entry_index / result_code).
+- 23 functions renamed from their code:
+  - the 14 memory / broadcast / address handlers on one scheme, cm848_handleJ1939<member>Service (was
+    j1939_diagService4..77_*);
+  - the 4 memory workers;
+  - cm848_getJ1939MemoryServiceHeaderLength (the application's header-length table);
+  - cm848_getJ1939DiagnosticResponseEchoLength (was cm848_getLimitCategoryCode): how many request bytes a response
+    repeats - the service byte and its target, never the length;
+  - cm848_selectJ1939TransmitBuffer: the data collector uses it too;
+  - service 1 = cm848_requestClearInactiveFaults (was cm848_advanceDiagnosticActionState): it sets the
+    CLEAR_INACTIVE bit of diagnostic_clear_request_state (e2m 1080 +2), as the DM3 handler does (now
+    cm848_j1939HandlePgn65228Dm3ClearInactiveFaults).
+- j1939_memory_read_reply_services (0x53a330 byte[10]). Its bytes in cm848_flash2_live.bin match the old plate
+  (0x43 -> 0x45 ...). A first build with byte[11] reached 0x53a33a, which cm848_lookupApplicationMemoryRegionType
+  reads as its own table.
+- firmware/CLAUDE.md: the cm848_lookupParameterIdAddress callers line listed 3 of its 5 callers, and the one it
+  named is renamed here.
+- docs/parameter_by_id_system.md gains a dated corrections section:
+  - its 20-entry table and handlers are the boot kernel's;
+  - the application has the 1886-record table;
+  - 0x43's bytes 3-6 are the length in both kernels;
+  - 0x46 is registered;
+  - 0x15 commits the EEPROM mirror.
+  The two protocol lines it contradicts are marked in place.
+
+Proof (prove_r63.sh, with the dispatcher's locals as parameter renames): 9 of 1968 functions differ.
+- The registrar, its 5 callers and the dispatcher differ by the member names. All 24 registrations keep their
+  values and handlers in order, and the registrar bodies are otherwise equal.
+- cm848_readJ1939DiagnosticMemoryAndRespond: the table name and the byte types it brings.
+- mpc555_areBootModeStrapPinsHigh: only the order of two local declarations moved.
+- Committing result_code split the raw call result into a new uint uVar1. The next stage tries another type.
+
+verify is byte-identical; thunks 18 / 14; no name-mismatch warning; local variables 121 applied / 0 failed.
+Headers regenerated (0 g++ errors), tests pass, audit_cal_suffixes.py HARD 0 / MISSING 219, lookup_tables.py 0
+sizing problems. 38 CM848-only functions are still unprefixed (59 at round 62's count).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

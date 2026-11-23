@@ -2783,6 +2783,57 @@ A peer relay started the round; the scripts are in `session_folder/round62/`.
   - `DAT_003fba10`, the word next to the new cache in `cm848_calculateNetCombustionTorque`.
   - 59 unprefixed CM848-only functions remain. Round 61's "69" did not count its own rename, so it was 68.
 
+## Done, round 63 (2026-11-23, same PR): the PGN 61184 diagnostic services in both kernels
+
+A peer relay started the round on round 62's lead; the scripts are in `session_folder/round63/`.
+- **Stage A (eba8399d): the application's service vocabulary.**
+  - `EF00_SERVICE_ID` -> `J1939_DIAGNOSTIC_SERVICE`: 24 members named from the handlers the application registers,
+    plus 0x0c / 0x0d (the two responses). The old CLIP guesses were wrong for CM848:
+    - 0x15 commits the EEPROM mirror;
+    - 0x43's 4-byte field is the length;
+    - 0x46 is registered, with an offset and a length.
+  - The enum types the registrar's `service_id` (all 24 registrations render names), the dispatch table's entry
+    field and the dispatcher's `service` local.
+  - 23 functions renamed:
+    - the 14 handlers on one scheme (`cm848_handleJ1939<member>Service`) and the 4 memory workers;
+    - both header-length helpers: `cm848_getJ1939DiagnosticResponseEchoLength` (was `cm848_getLimitCategoryCode`)
+      returns how many request bytes a response repeats;
+    - `cm848_selectJ1939TransmitBuffer`;
+    - service 1, `cm848_requestClearInactiveFaults`: it sets e2m 1080 +2's CLEAR_INACTIVE bit, as DM3 does. The DM3
+      handler is renamed too.
+  - `j1939_memory_read_reply_services` (0x53a330, 10 bytes). A first build with 11 bytes reached 0x53a33a, the start
+    of `cm848_lookupApplicationMemoryRegionType`'s table.
+  - `firmware/CLAUDE.md`: the `cm848_lookupParameterIdAddress` callers line listed 3 of the 5 callers.
+  - `docs/parameter_by_id_system.md`: a corrections section. Its 20 parameters and handlers are the boot kernel's;
+    0x43's bytes 3-6 are the length.
+- **Stage B (f7d68431): the application's request is a `j1939_rx_msg_t *`** in 20 handlers and workers.
+  - 45 casts and 113 placeholder names are gone; one informative cast is added.
+  - `parameter_id` is `undefined4`: the lookup hashes all 32 bits, so a halfword type made a CONCAT22.
+- **Stage C (d9933bac): the boot kernel's twin.**
+  - `BOOT_DIAGNOSTIC_SERVICE`, 16 members. It is a separate enum because the boot kernel's 7 downloads a calibration.
+  - Wrong prototypes fixed: the read handler's three rows (address / length / response_ptr are the request / the
+    address / the length), and the read-by-ID worker's offset and length, which were named reserved and offset.
+  - The 12 handlers and workers take the request.
+  - 23 functions renamed (`cm848_handleBoot<member>Service` and so on).
+  - `boot_kernel_rom_end` is also where the boot read reply table starts.
+- **Proof:** stage A 9 of 1968 functions differ: the registrar, its 5 callers and the dispatcher by member names (all 24 registrations keep their values and handlers in order), the read worker by the reply table, and one local declaration-order move. Stage B 21: the 20 typed functions (45 casts and 113 placeholder names removed, 1 cast added, no new artifacts) and the same declaration-order move. Stage C 22: the 19 predicted (41 casts and 57 placeholder names removed, none added; all 14 boot registrations keep their values and handlers) and three declaration-order moves. Every verify byte-identical, thunks 18 / 14, 0 failed prototype or local rows, headers 0 g++ errors, tests pass (Java 89), HARD 0 / MISSING 219.
+- **firmware/CLAUDE.md:** two factual edits.
+  - Stage A: the callers line.
+  - Stage C: the reference refresh updated two renamed boot function names in the kernel flash driver note.
+  HARD stays 0 and MISSING 219.
+- **Leads:**
+  - **Bench:** clip-core's `ECUReader::readParameterService43` sends bytes 3-6 as an offset, and
+    `readParameterService46` sends zeros after the ID. On CM848 those bytes are a length (0x43) and an offset plus
+    a length (0x46). Check both against the truck before trusting a by-ID read through kuminz-cli.
+  - **The two `j1939_tx_msg_t` records** that `cm848_selectJ1939TransmitBuffer` picks are unnamed (0x3fcbc4 single
+    frame with data at 0x3fcbd3; 0x3fc4ad transport with data at 0x3fc4bc).
+  - **`DIAG_RESPONSE`** could gain the dispatcher's own result codes (2 wrong length / 3 key refused / 8 unknown ID /
+    0x18 unknown service / 0x1a key missing) and a spelled-out name.
+  - **The dispatcher's `result_code`** splits off a `uVar1` once committed. The importer names locals in one pass,
+    so that temp cannot be named.
+  - `DAT_003fba10` (round 62's lead) is still open.
+  - 38 unprefixed CM848-only functions remain.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**
