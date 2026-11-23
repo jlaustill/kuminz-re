@@ -285,15 +285,16 @@ INSITE_COMMAND,0x80,EXTENDED_PARAM,Extended parameter request
 INSITE_COMMAND,0xC3,PID_DTC_REQUEST,PID/DTC diagnostic request
 INSITE_COMMAND,0xC4,PID_DTC_ACK,PID/DTC acknowledgment
 # Diagnostic Response Codes
-DIAG_RESPONSE_CODE,0,SUCCESS,Operation successful
-DIAG_RESPONSE_CODE,2,DIAG_INVALID_LENGTH,Invalid message length
-DIAG_RESPONSE_CODE,3,SECURITY_FAILED,Security check failed
-DIAG_RESPONSE_CODE,4,BUFFER_OVERFLOW,Buffer overflow or unsupported
-DIAG_RESPONSE_CODE,8,ADDR_VALIDATION_FAIL,Address validation failed
-DIAG_RESPONSE_CODE,9,INVALID_ADDR_RANGE,Invalid address range
-DIAG_RESPONSE_CODE,10,INVALID_ADDR_ALT,Invalid address range (alternate)
-DIAG_RESPONSE_CODE,0x14,CHECKSUM_MISMATCH,Checksum mismatch
-DIAG_RESPONSE_CODE,0x18,UNKNOWN_SUBFUNC,Unknown sub-function - default error in diagnosticServiceDispatcher
+# J1939_DIAGNOSTIC_RESULT (was DIAG_RESPONSE_CODE): renamed with CM848's in PR #53 round 64. The members below are CM550's own and unreviewed against its handlers
+J1939_DIAGNOSTIC_RESULT,0,SUCCESS,Operation successful
+J1939_DIAGNOSTIC_RESULT,2,DIAG_INVALID_LENGTH,Invalid message length
+J1939_DIAGNOSTIC_RESULT,3,SECURITY_FAILED,Security check failed
+J1939_DIAGNOSTIC_RESULT,4,BUFFER_OVERFLOW,Buffer overflow or unsupported
+J1939_DIAGNOSTIC_RESULT,8,ADDR_VALIDATION_FAIL,Address validation failed
+J1939_DIAGNOSTIC_RESULT,9,INVALID_ADDR_RANGE,Invalid address range
+J1939_DIAGNOSTIC_RESULT,10,INVALID_ADDR_ALT,Invalid address range (alternate)
+J1939_DIAGNOSTIC_RESULT,0x14,CHECKSUM_MISMATCH,Checksum mismatch
+J1939_DIAGNOSTIC_RESULT,0x18,UNKNOWN_SUBFUNC,Unknown sub-function - default error in diagnosticServiceDispatcher
 # CAN Multi-Packet Response Types (diagnosticMultiPacketResponseBuilder byte 0)
 CAN_MULTIPACKET_RESPONSE,0x0C,SUCCESS_RESPONSE,Operation successful - no error code follows
 CAN_MULTIPACKET_RESPONSE,0x0D,STATUS_RESPONSE,Error/status response - error code follows in byte 1

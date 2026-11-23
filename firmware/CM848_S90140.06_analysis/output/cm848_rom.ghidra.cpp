@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 08:36:17 MST 2026
+// Generated: Mon Nov 23 09:04:40 MST 2026
 
 
 //
@@ -22714,20 +22714,20 @@ void cm848_initializeEngineRetarderTorqueLookupCache(void)
 /* PGN 61184 service 1 (J1939_DIAGNOSTIC_SERVICE_CLEAR_INACTIVE_FAULTS): when
    not_safe_to_program_flag is 0 with the key on or it is 1 with
    algorithm_enable_flags_12_cal.obd_fault_handler_enable 0 it sets the CLEAR_INACTIVE bit of
-   diagnostic_clear_request_state (e2m 1080 +2: 0 -> 1 / 2 -> 3) and returns DIAG_ACK - else
-   DIAG_NACK_PROTECTED. The DM3 handler cm848_j1939HandlePgn65228Dm3ClearInactiveFaults does the
-   same. Registered by cm848_registerJ1939DiagnosticHandlers (was
-   cm848_advanceDiagnosticActionState; PR #53 round 63) | earlier note: handles J1939 PGN 61184
-   diagnostic service id 1 via the 0x3fa8b2 table (cm848_j1939DiagnosticServiceHandler after the
-   cm848_validateJ1939DiagnosticRequest length/security gate returns -1) - registered by
-   cm848_registerJ1939DiagnosticHandlers */
+   diagnostic_clear_request_state (e2m 1080 +2: 0 -> 1 / 2 -> 3) and returns
+   J1939_DIAGNOSTIC_RESULT_ACCEPTED - else J1939_DIAGNOSTIC_RESULT_NOT_SAFE. The DM3 handler
+   cm848_j1939HandlePgn65228Dm3ClearInactiveFaults does the same. Registered by
+   cm848_registerJ1939DiagnosticHandlers (was cm848_advanceDiagnosticActionState; PR #53 round 63) |
+   earlier note: handles J1939 PGN 61184 diagnostic service id 1 via the 0x3fa8b2 table
+   (cm848_j1939DiagnosticServiceHandler after the cm848_validateJ1939DiagnosticRequest
+   length/security gate returns -1) - registered by cm848_registerJ1939DiagnosticHandlers */
 
-DIAG_RESPONSE cm848_requestClearInactiveFaults(void)
+J1939_DIAGNOSTIC_RESULT cm848_requestClearInactiveFaults(void)
 
 {
-  DIAG_RESPONSE DVar1;
+  J1939_DIAGNOSTIC_RESULT JVar1;
   
-  DVar1 = DIAG_NACK_PROTECTED;
+  JVar1 = J1939_DIAGNOSTIC_RESULT_NOT_SAFE;
   if (((not_safe_to_program_flag == 0) && (switch_input_state_bits.key_switch != 0)) ||
      ((not_safe_to_program_flag == 1 &&
       (algorithm_enable_flags_12_cal.obd_fault_handler_enable == 0)))) {
@@ -22743,9 +22743,9 @@ DIAG_RESPONSE cm848_requestClearInactiveFaults(void)
     else if (diagnostic_clear_request_state == 3) {
       diagnostic_clear_request_state = 3;
     }
-    DVar1 = DIAG_ACK;
+    JVar1 = J1939_DIAGNOSTIC_RESULT_ACCEPTED;
   }
-  return DVar1;
+  return JVar1;
 }
 
 
@@ -22756,26 +22756,26 @@ DIAG_RESPONSE cm848_requestClearInactiveFaults(void)
 
 /* Leaves development mode and turns the RAM refresh back on (J1939 diagnostic service 7): accepted
    only while development_mode is DEVELOPMENT_MODE_ON (e2m 1328 +0 Development_Mode = 1), otherwise
-   it returns DIAG_NACK_NOT_READY. Then it sets development_mode = DEVELOPMENT_MODE_OFF (development
-   mode 0), ram_refresh_enable = ACTIVE (e2m 10C7 +0 RAM_Refresh_Enable = 1) and run_location = 0xee
-   (e2m 0010 +0 RUN_LOC; 0xee is also the start-up value) and returns DIAG_ACK. There is no engine
-   state check; the force variant (service 22, 0x21694) requires the engine to be stopped but not
-   development mode. (was cm848_activateDiagnosticSession) | jlaustill reviewed - hopefully accurate
-    */
+   it returns J1939_DIAGNOSTIC_RESULT_CANNOT_COMPLY. Then it sets development_mode =
+   DEVELOPMENT_MODE_OFF (development mode 0), ram_refresh_enable = ACTIVE (e2m 10C7 +0
+   RAM_Refresh_Enable = 1) and run_location = 0xee (e2m 0010 +0 RUN_LOC; 0xee is also the start-up
+   value) and returns J1939_DIAGNOSTIC_RESULT_ACCEPTED. There is no engine state check; the force
+   variant (service 22, 0x21694) requires the engine to be stopped but not development mode. (was
+   cm848_activateDiagnosticSession) | jlaustill reviewed - hopefully accurate */
 
-DIAG_RESPONSE cm848_exitDevelopmentMode(void)
+J1939_DIAGNOSTIC_RESULT cm848_exitDevelopmentMode(void)
 
 {
-  DIAG_RESPONSE diag_ack_result;
+  J1939_DIAGNOSTIC_RESULT result;
   
-  diag_ack_result = DIAG_NACK_NOT_READY;
+  result = J1939_DIAGNOSTIC_RESULT_CANNOT_COMPLY;
   if (development_mode == DEVELOPMENT_MODE_ON) {
     development_mode = DEVELOPMENT_MODE_OFF;
     ram_refresh_enable = RAM_REFRESH_ENABLED;
     run_location = RUN_LOCATION_NORMAL;
-    diag_ack_result = DIAG_ACK;
+    result = J1939_DIAGNOSTIC_RESULT_ACCEPTED;
   }
-  return diag_ack_result;
+  return result;
 }
 
 
@@ -22788,21 +22788,22 @@ DIAG_RESPONSE cm848_exitDevelopmentMode(void)
    cm848_processPciDiagnosticRequest right after the PCI security key has been accepted): disables
    the RAM refresh (ram_refresh_enable = INACTIVE, e2m 10C7 +0 RAM_Refresh_Enable = 0), sets
    development_mode = DEVELOPMENT_MODE_ON (e2m 1328 +0 Development_Mode = 1) and run_location = 0xea
-   (e2m 0010 +0 RUN_LOC), and returns DIAG_ACK. With the refresh off, RAM calibration edits are not
-   overwritten (the refresh pass and the periodic EEPROM mirror reload, cm848_onEepromBlockRead,
-   stop), diagnostic writes to EEPROM addresses and EEPROM parameter ID writes go to the RAM mirror
-   only (cm848_lookupParameterIdAddress, cm848_writeJ1939DiagnosticMemory), and the two register
-   address ranges of the diagnostic memory services open (cm848_lookupApplicationMemoryRegionType).
-   The way back is service 7 (0x21624) or, with the engine stopped, service 22 (0x21694). (was
-   cm848_resetDiagnosticSession) | jlaustill review 2026-05-25 - hopefully accurate */
+   (e2m 0010 +0 RUN_LOC), and returns J1939_DIAGNOSTIC_RESULT_ACCEPTED. With the refresh off, RAM
+   calibration edits are not overwritten (the refresh pass and the periodic EEPROM mirror reload,
+   cm848_onEepromBlockRead, stop), diagnostic writes to EEPROM addresses and EEPROM parameter ID
+   writes go to the RAM mirror only (cm848_lookupParameterIdAddress,
+   cm848_writeJ1939DiagnosticMemory), and the two register address ranges of the diagnostic memory
+   services open (cm848_lookupApplicationMemoryRegionType). The way back is service 7 (0x21624) or,
+   with the engine stopped, service 22 (0x21694). (was cm848_resetDiagnosticSession) | jlaustill
+   review 2026-05-25 - hopefully accurate */
 
-DIAG_RESPONSE cm848_enterDevelopmentMode(void)
+J1939_DIAGNOSTIC_RESULT cm848_enterDevelopmentMode(void)
 
 {
   ram_refresh_enable = RAM_REFRESH_DISABLED;
   development_mode = DEVELOPMENT_MODE_ON;
   run_location = RUN_LOCATION_DEVELOPMENT;
-  return DIAG_ACK;
+  return J1939_DIAGNOSTIC_RESULT_ACCEPTED;
 }
 
 
@@ -22815,26 +22816,27 @@ DIAG_RESPONSE cm848_enterDevelopmentMode(void)
    with not_safe_to_program_flag clear (engine stopped) it always turns the RAM refresh on
    (ram_refresh_enable = ACTIVE, e2m 10C7 +0 RAM_Refresh_Enable = 1) and, only if run_location is
    0xea (development mode), also restores run_location = 0xee and development_mode =
-   DEVELOPMENT_MODE_OFF (e2m 1328 +0 Development_Mode = 0); it returns DIAG_ACK. With the engine not
-   stopped it returns DIAG_NACK_PROTECTED and changes nothing. Unlike service 7 (0x21624) it does
-   not require development mode to be on. (was cm848_forceActivateDiagnosticSession) | jlaustill
+   DEVELOPMENT_MODE_OFF (e2m 1328 +0 Development_Mode = 0); it returns
+   J1939_DIAGNOSTIC_RESULT_ACCEPTED. With the engine not stopped it returns
+   J1939_DIAGNOSTIC_RESULT_NOT_SAFE and changes nothing. Unlike service 7 (0x21624) it does not
+   require development mode to be on. (was cm848_forceActivateDiagnosticSession) | jlaustill
    reviewed 2026-05-25 - frustrated about != 1 and == 0xea/0xee not working as enums */
 
-DIAG_RESPONSE cm848_forceExitDevelopmentMode(void)
+J1939_DIAGNOSTIC_RESULT cm848_forceExitDevelopmentMode(void)
 
 {
-  DIAG_RESPONSE diag_ack_result;
+  J1939_DIAGNOSTIC_RESULT result;
   
-  diag_ack_result = DIAG_NACK_PROTECTED;
+  result = J1939_DIAGNOSTIC_RESULT_NOT_SAFE;
   if (not_safe_to_program_flag != 1) {
     ram_refresh_enable = RAM_REFRESH_ENABLED;
     if (run_location == RUN_LOCATION_DEVELOPMENT) {
       run_location = RUN_LOCATION_NORMAL;
       development_mode = DEVELOPMENT_MODE_OFF;
     }
-    diag_ack_result = DIAG_ACK;
+    result = J1939_DIAGNOSTIC_RESULT_ACCEPTED;
   }
-  return diag_ack_result;
+  return result;
 }
 
 
@@ -22847,11 +22849,11 @@ DIAG_RESPONSE cm848_forceExitDevelopmentMode(void)
    cm848_setEngineStarting) | jlaustill reviewed 2026-5-25 - annoyed that = 1 rejects bool = TRUE,
    but otherwise hoping accurate */
 
-DIAG_RESPONSE cm848_commandEngineShutdown(void)
+J1939_DIAGNOSTIC_RESULT cm848_commandEngineShutdown(void)
 
 {
   engine_shutdown_command_flag = 1;
-  return DIAG_ACK;
+  return J1939_DIAGNOSTIC_RESULT_ACCEPTED;
 }
 
 
@@ -22968,11 +22970,11 @@ undefined1 cm848_handleJ1939RestartService(j1939_rx_msg_t *request)
    edge a key-off does not shut the engine down - registered by
    cm848_registerJ1939DiagnosticHandlers (was cm848_setColdStartMode2Flag) */
 
-DIAG_RESPONSE cm848_inhibitKeyOffShutdown(void)
+J1939_DIAGNOSTIC_RESULT cm848_inhibitKeyOffShutdown(void)
 
 {
   key_off_shutdown_inhibit_flag = 1;
-  return DIAG_ACK;
+  return J1939_DIAGNOSTIC_RESULT_ACCEPTED;
 }
 
 
@@ -22986,19 +22988,19 @@ DIAG_RESPONSE cm848_inhibitKeyOffShutdown(void)
    eeprom_checksummed_block_start via cm848_queueEepromByteWrites - does not validate (was
    cm848_validateCalibrationMemory) | registration-table-sweep reviewed 2026-11-13 */
 
-DIAG_RESPONSE cm848_commitEepromMirrorToEeprom(void)
+J1939_DIAGNOSTIC_RESULT cm848_commitEepromMirrorToEeprom(void)
 
 {
   char cVar1;
   ushort uVar2;
   ushort uVar3;
   uint uVar4;
-  DIAG_RESPONSE DVar5;
+  J1939_DIAGNOSTIC_RESULT JVar5;
   byte *pbVar6;
   uint uVar7;
   
   if (not_safe_to_program_flag == 1) {
-    DVar5 = DIAG_NACK_PROTECTED;
+    JVar5 = J1939_DIAGNOSTIC_RESULT_NOT_SAFE;
   }
   else {
     uVar3 = 0;
@@ -23030,13 +23032,13 @@ DIAG_RESPONSE cm848_commitEepromMirrorToEeprom(void)
     } while ((pbVar6 < &eeprom_checksummed_block_start) && (uVar3 < 2));
     if ((word *)pbVar6 == &eeprom_checksummed_block_start) {
       power_down_refresh_enable = 0;
-      DVar5 = DIAG_ACK;
+      JVar5 = J1939_DIAGNOSTIC_RESULT_ACCEPTED;
     }
     else {
-      DVar5 = 0xb;
+      JVar5 = J1939_DIAGNOSTIC_RESULT_EEPROM_WRITE_QUEUE_FULL;
     }
   }
-  return DVar5;
+  return JVar5;
 }
 
 
@@ -23403,15 +23405,15 @@ bool cm848_j1939RegisterDiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,vo
 void cm848_j1939DiagnosticServiceHandler(j1939_rx_msg_t *rx_msg)
 
 {
-  uint uVar1;
+  J1939_DIAGNOSTIC_RESULT JVar1;
   byte entry_index;
   j1939_diagnostic_service_entry_t *entry;
-  dword result_code;
+  J1939_DIAGNOSTIC_RESULT result_code;
   J1939_DIAGNOSTIC_SERVICE service;
   
   entry = j1939_diagnostic_service_table;
   service = *rx_msg->data_pointer;
-  result_code = 0x18;
+  result_code = J1939_DIAGNOSTIC_RESULT_UNKNOWN_SERVICE;
   if ((service == J1939_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE) ||
      (service == J1939_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE)) {
     result_code = 0xff;
@@ -23421,11 +23423,11 @@ void cm848_j1939DiagnosticServiceHandler(j1939_rx_msg_t *rx_msg)
     if (j1939_diagnostic_handler_count != 0) {
       do {
         if (entry->service_id == service) {
-          uVar1 = cm848_validateJ1939DiagnosticRequest(rx_msg);
-          result_code = uVar1 & 0xff;
+          JVar1 = cm848_validateJ1939DiagnosticRequest(rx_msg);
+          result_code = JVar1 & 0xff;
           if (result_code == 0xff) {
-            uVar1 = (*(code *)entry->handler)(rx_msg);
-            result_code = uVar1 & 0xff;
+            JVar1 = (*(code *)entry->handler)(rx_msg);
+            result_code = JVar1 & 0xff;
           }
           break;
         }
@@ -30344,10 +30346,11 @@ void cm848_initializePgn65264PowerTakeOffInformationBuffer(void)
    = safe for program, 1 = not safe)'): 1 while engine_state is not ENGINE_STATE_STOPPED, else 0.
    Runs every pass of cm848_periodicTaskSet_auxiliaryControl. Input: engine_state. Output:
    not_safe_to_program_flag. While it is 1 the force-activate diagnostic service answers
-   DIAG_NACK_PROTECTED, cm848_commitEepromMirrorToEeprom refuses, the diagnostic EEPROM writes
-   (cm848_writeJ1939DiagnosticMemory, the PCI write service) answer 7 unless ram_refresh_enable is
-   INACTIVE, and cm848_lookupParameterIdAddress maps EEPROM parameter addresses to the RAM mirror.
-   It handles no fault and no key-off event. (was cm848_updateFaultOnKeyoff) */
+   J1939_DIAGNOSTIC_RESULT_NOT_SAFE, cm848_commitEepromMirrorToEeprom refuses, the diagnostic EEPROM
+   writes (cm848_writeJ1939DiagnosticMemory, the PCI write service) answer 7 unless
+   ram_refresh_enable is INACTIVE, and cm848_lookupParameterIdAddress maps EEPROM parameter
+   addresses to the RAM mirror. It handles no fault and no key-off event. (was
+   cm848_updateFaultOnKeyoff) */
 
 void cm848_updateNotSafeToProgramFlag(void)
 
@@ -69736,7 +69739,7 @@ byte cm848_getJ1939MemoryServiceHeaderLength(int param_1)
    wrong length / 0x1a = key missing / 3 = key refused (was j1939_diagServiceDispatch; PR #53 round
    61) */
 
-undefined4 cm848_validateJ1939DiagnosticRequest(j1939_rx_msg_t *rx_msg)
+J1939_DIAGNOSTIC_RESULT cm848_validateJ1939DiagnosticRequest(j1939_rx_msg_t *rx_msg)
 
 {
   byte bVar1;
@@ -69759,19 +69762,19 @@ undefined4 cm848_validateJ1939DiagnosticRequest(j1939_rx_msg_t *rx_msg)
     if (((1 << (bVar1 & 7) & (uint)(&j1939_command_security_flags)[bVar1 >> 3]) == 0) ||
        (calibration_download_security_key_cal == 0xff)) {
       if ((uVar4 != 8) && (iVar2 + 10U != uVar4)) {
-        return 2;
+        return J1939_DIAGNOSTIC_RESULT_WRONG_LENGTH;
       }
     }
     else {
       if (iVar2 + 10U != uVar4) {
         if (uVar4 == 8) {
-          return 0x1a;
+          return J1939_DIAGNOSTIC_RESULT_KEY_MISSING;
         }
-        return 2;
+        return J1939_DIAGNOSTIC_RESULT_WRONG_LENGTH;
       }
       cVar3 = cm848_processSecurityCodeConversion(rx_msg->data_pointer + iVar2);
       if (cVar3 != '\0') {
-        return 3;
+        return J1939_DIAGNOSTIC_RESULT_KEY_REFUSED;
       }
     }
   }

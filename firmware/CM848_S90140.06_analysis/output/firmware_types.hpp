@@ -356,18 +356,6 @@ typedef enum {
 } DERATE_STATUS_BITS;
 
 typedef enum {
-    SUCCESS = 0,  /* Operation successful */
-    DIAG_INVALID_LENGTH = 2,  /* Invalid message length */
-    SECURITY_FAILED = 3,  /* Security check failed */
-    BUFFER_OVERFLOW = 4,  /* Buffer overflow or unsupported */
-    ADDR_VALIDATION_FAIL = 8,  /* Address validation failed */
-    INVALID_ADDR_RANGE = 9,  /* Invalid address range */
-    INVALID_ADDR_ALT = 10,  /* Invalid address range (alternate) */
-    CHECKSUM_MISMATCH = 0x14,  /* Checksum mismatch */
-    UNKNOWN_SUBFUNC = 0x18  /* Unknown sub-function - default error */
-} DIAG_RESPONSE_CODE;
-
-typedef enum {
     RESET_MODE = 0,  /* Reset/clear arbitrator state */
     RPM_TARGET_MODE = 1,  /* Set RPM target mode */
     THROTTLE_PCT_MODE = 2,  /* Throttle percentage control mode */
@@ -910,10 +898,18 @@ typedef enum {
 } RUN_LOCATION;
 
 typedef enum {
-    DIAG_ACK = 0,  /* Request fulfilled successfully */
-    DIAG_NACK_NOT_READY = 4,  /* Rejected: ECU not in standby (development_mode was 0) */
-    DIAG_NACK_PROTECTED = 7  /* Rejected: protection mode active */
-} DIAG_RESPONSE;
+    J1939_DIAGNOSTIC_RESULT_ACCEPTED = 0x00,  /* Done - cm848_sendJ1939ResponseFrame answers with 0x0c (was DIAG_ACK / SUCCESS) */
+    J1939_DIAGNOSTIC_RESULT_WRONG_LENGTH = 0x02,  /* The request length is none of 8 / its header and data / that + 10 for the key - or a memory length over 1764 (was DIAG_INVALID_LENGTH) */
+    J1939_DIAGNOSTIC_RESULT_KEY_REFUSED = 0x03,  /* cm848_processSecurityCodeConversion refused the request's key (was SECURITY_FAILED) */
+    J1939_DIAGNOSTIC_RESULT_CANNOT_COMPLY = 0x04,  /* Not now or not this: development mode is not on (cm848_exitDevelopmentMode) / no transmit record is free (the read worker) / an unknown broadcast item (cm848_updateJ1939BroadcastEnableMask) (was DIAG_NACK_NOT_READY / BUFFER_OVERFLOW) */
+    J1939_DIAGNOSTIC_RESULT_NOT_SAFE = 0x07,  /* Refused in this state: not_safe_to_program_flag set (an EEPROM write / a forced exit from development mode) / the engine not stopped (cm848_restartThroughBootRom) / outside the key and flag gate of cm848_requestClearInactiveFaults (was DIAG_NACK_PROTECTED) */
+    J1939_DIAGNOSTIC_RESULT_UNKNOWN_PARAMETER_ID = 0x08,  /* cm848_lookupParameterIdAddress does not know the ID (was ADDR_VALIDATION_FAIL) */
+    J1939_DIAGNOSTIC_RESULT_UNMAPPED_ADDRESS = 0x09,  /* No memory region holds the address range (was INVALID_ADDR_RANGE) */
+    J1939_DIAGNOSTIC_RESULT_REGION_REFUSED = 0x0a,  /* The region refuses the access: ROM for a write / the registers outside development mode / the EEPROM mirror RAM while the RAM refresh is on (was INVALID_ADDR_ALT) */
+    J1939_DIAGNOSTIC_RESULT_EEPROM_WRITE_QUEUE_FULL = 0x0b,  /* cm848_queueEepromByteWrites would overflow its 64-entry queue */
+    J1939_DIAGNOSTIC_RESULT_UNKNOWN_SERVICE = 0x18,  /* No handler is registered for the service byte (was UNKNOWN_SUBFUNC) */
+    J1939_DIAGNOSTIC_RESULT_KEY_MISSING = 0x1a  /* The service needs the key but the request carries none */
+} J1939_DIAGNOSTIC_RESULT;
 
 typedef enum {
     EEPROM_DIAG_HANDLE_RESPONSE = 0x03,  /* Handle EEPROM diagnostic response */

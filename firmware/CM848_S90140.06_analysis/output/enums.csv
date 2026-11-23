@@ -294,16 +294,7 @@ DERATE_STATUS_BITS,0x20,DERATE_BIT5,Derate status bit 5 - maps to INSITE bit 0x2
 DERATE_STATUS_BITS,0x08,DERATE_STATUS_BIT3,Derate status bit 3 - maps to INSITE status 0x20,1
 DERATE_STATUS_BITS,0x04,DERATE_STATUS_BIT2,Derate status bit 2 - maps to INSITE status 0x40,1
 
-# Diagnostic Response Codes - Ported from CM550 (common diagnostic protocol)
-DIAG_RESPONSE_CODE,0,SUCCESS,Operation successful,1
-DIAG_RESPONSE_CODE,2,DIAG_INVALID_LENGTH,Invalid message length,1
-DIAG_RESPONSE_CODE,3,SECURITY_FAILED,Security check failed,1
-DIAG_RESPONSE_CODE,4,BUFFER_OVERFLOW,Buffer overflow or unsupported,1
-DIAG_RESPONSE_CODE,8,ADDR_VALIDATION_FAIL,Address validation failed,1
-DIAG_RESPONSE_CODE,9,INVALID_ADDR_RANGE,Invalid address range,1
-DIAG_RESPONSE_CODE,10,INVALID_ADDR_ALT,Invalid address range (alternate),1
-DIAG_RESPONSE_CODE,0x14,CHECKSUM_MISMATCH,Checksum mismatch,1
-DIAG_RESPONSE_CODE,0x18,UNKNOWN_SUBFUNC,Unknown sub-function - default error,1
+# DIAG_RESPONSE_CODE (ported from CM550) was merged into J1939_DIAGNOSTIC_RESULT in PR #53 round 64
 
 # Fuel Arbitrator Modes - Ported from CM550 (diagnostic fuel control)
 FUEL_ARB_MODE,0,RESET_MODE,Reset/clear arbitrator state,1
@@ -805,10 +796,19 @@ DEVELOPMENT_MODE_STATE,0,DEVELOPMENT_MODE_OFF,Normal operation; stored by the ac
 DEVELOPMENT_MODE_STATE,1,DEVELOPMENT_MODE_ON,Development mode; stored only by the reset service together with the RAM refresh disabled; the activate service needs it and the register address ranges of the diagnostic memory services open,2
 RUN_LOCATION,0xea,RUN_LOCATION_DEVELOPMENT,Development: set by cm848_resetDiagnosticSession together with development_mode on and the RAM refresh off,1
 RUN_LOCATION,0xee,RUN_LOCATION_NORMAL,Normal: set at boot / power-down and by the activate services; the only value for which cm848_lookupParameterIdAddress gives raw EEPROM addresses,1
-# J1939 diagnostic request response codes - returned by handlers and sent back to tool on PGN 0xEF00
-DIAG_RESPONSE,0,DIAG_ACK,Request fulfilled successfully,4
-DIAG_RESPONSE,4,DIAG_NACK_NOT_READY,Rejected: ECU not in standby (development_mode was 0),4
-DIAG_RESPONSE,7,DIAG_NACK_PROTECTED,Rejected: protection mode active,4
+# J1939_DIAGNOSTIC_RESULT - the result code of a PGN 61184 request (PR #53 round 64). 0xff - nothing to send: the validator passed the request / the handler answered itself / a response came in - is no member: the dispatcher masks each result with 0xff and a member of that value names the mask: was DIAG_RESPONSE (0 / 4 / 7) merged with DIAG_RESPONSE_CODE (ported from CM550 - its 0x14 CHECKSUM_MISMATCH has no CM848 producer found). cm848_j1939DiagnosticServiceHandler takes it from cm848_validateJ1939DiagnosticRequest or the handler; cm848_sendJ1939ResponseFrame answers ACCEPTED with 0x0c and the rest with 0x0d + the code
+# The memory workers pass a region type from cm848_lookupApplicationMemoryRegionType straight through: 9 (no region) / 10 (refused) - and a write to Bank 2 flash returns its type 2 (the value of WRONG_LENGTH). The boot kernel's dispatcher answers an unknown service with 5 and a refused ROM handler with 10
+J1939_DIAGNOSTIC_RESULT,0x00,J1939_DIAGNOSTIC_RESULT_ACCEPTED,Done - cm848_sendJ1939ResponseFrame answers with 0x0c (was DIAG_ACK / SUCCESS),4
+J1939_DIAGNOSTIC_RESULT,0x02,J1939_DIAGNOSTIC_RESULT_WRONG_LENGTH,The request length is none of 8 / its header and data / that + 10 for the key - or a memory length over 1764 (was DIAG_INVALID_LENGTH),4
+J1939_DIAGNOSTIC_RESULT,0x03,J1939_DIAGNOSTIC_RESULT_KEY_REFUSED,cm848_processSecurityCodeConversion refused the request's key (was SECURITY_FAILED),4
+J1939_DIAGNOSTIC_RESULT,0x04,J1939_DIAGNOSTIC_RESULT_CANNOT_COMPLY,Not now or not this: development mode is not on (cm848_exitDevelopmentMode) / no transmit record is free (the read worker) / an unknown broadcast item (cm848_updateJ1939BroadcastEnableMask) (was DIAG_NACK_NOT_READY / BUFFER_OVERFLOW),4
+J1939_DIAGNOSTIC_RESULT,0x07,J1939_DIAGNOSTIC_RESULT_NOT_SAFE,Refused in this state: not_safe_to_program_flag set (an EEPROM write / a forced exit from development mode) / the engine not stopped (cm848_restartThroughBootRom) / outside the key and flag gate of cm848_requestClearInactiveFaults (was DIAG_NACK_PROTECTED),4
+J1939_DIAGNOSTIC_RESULT,0x08,J1939_DIAGNOSTIC_RESULT_UNKNOWN_PARAMETER_ID,cm848_lookupParameterIdAddress does not know the ID (was ADDR_VALIDATION_FAIL),4
+J1939_DIAGNOSTIC_RESULT,0x09,J1939_DIAGNOSTIC_RESULT_UNMAPPED_ADDRESS,No memory region holds the address range (was INVALID_ADDR_RANGE),4
+J1939_DIAGNOSTIC_RESULT,0x0a,J1939_DIAGNOSTIC_RESULT_REGION_REFUSED,The region refuses the access: ROM for a write / the registers outside development mode / the EEPROM mirror RAM while the RAM refresh is on (was INVALID_ADDR_ALT),4
+J1939_DIAGNOSTIC_RESULT,0x0b,J1939_DIAGNOSTIC_RESULT_EEPROM_WRITE_QUEUE_FULL,cm848_queueEepromByteWrites would overflow its 64-entry queue,4
+J1939_DIAGNOSTIC_RESULT,0x18,J1939_DIAGNOSTIC_RESULT_UNKNOWN_SERVICE,No handler is registered for the service byte (was UNKNOWN_SUBFUNC),4
+J1939_DIAGNOSTIC_RESULT,0x1a,J1939_DIAGNOSTIC_RESULT_KEY_MISSING,The service needs the key but the request carries none,4
 # EEPROM diagnostic handler state machine (eeprom_diag_state at 0x003fecf1)
 # Dispatches diagnostic requests during EEPROM operations in mpc555_processDiagnosticAndEepromRequests
 EEPROM_DIAG_STATE,0x03,EEPROM_DIAG_HANDLE_RESPONSE,Handle EEPROM diagnostic response,1

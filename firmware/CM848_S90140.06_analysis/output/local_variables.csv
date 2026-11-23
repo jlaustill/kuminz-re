@@ -42,8 +42,8 @@ function_address,function_name,old_name,new_name,type,comment
 0x000032dc,mpc555_generateSerialChallenge,seed_high_byte,challenge_high_byte,byte,Upper byte of 16-bit challenge (bits 15-8)
 0x000032dc,mpc555_generateSerialChallenge,uVar3,write_pos,uint,Current write position in diag_serial_buffer
 # cm848_activateDiagnosticSession / cm848_forceActivateDiagnosticSession response codes
-0x00021624,cm848_exitDevelopmentMode,uVar1,diag_ack_result,DIAG_RESPONSE,DIAG_RESPONSE: ACK(0) if standby→active transition succeeded NACK_NOT_READY(4) if not in standby
-0x00021694,cm848_forceExitDevelopmentMode,uVar1,diag_ack_result,DIAG_RESPONSE,DIAG_RESPONSE: ACK(0) if activated NACK_PROTECTED(7) if protection mode blocked
+0x00021624,cm848_exitDevelopmentMode,uVar1,result,J1939_DIAGNOSTIC_RESULT,J1939_DIAGNOSTIC_RESULT: ACK(0) if standby→active transition succeeded NACK_NOT_READY(4) if not in standby
+0x00021694,cm848_forceExitDevelopmentMode,uVar1,result,J1939_DIAGNOSTIC_RESULT,J1939_DIAGNOSTIC_RESULT: ACK(0) if activated NACK_PROTECTED(7) if protection mode blocked
 # cm848_j1939DispatchPgnHandler @ 0x000231cc - linear search through j1939_pgn_dispatch_table
 0x000231cc,cm848_j1939DispatchPgnHandler,bVar1,search_idx,byte,Index of current entry being tested; equals j1939_pgn_handler_count on exit if no handler matched
 0x000231cc,cm848_j1939DispatchPgnHandler,pjVar2,entry,j1939_pgn_handler_entry_t *,Pointer to current dispatch table entry under test
@@ -150,5 +150,5 @@ function_address,function_name,old_name,new_name,type,comment
 0x00022128,cm848_j1939DiagnosticServiceHandler,JVar1,service,J1939_DIAGNOSTIC_SERVICE,The request's service byte (PR #53 round 63)
 0x00022128,cm848_j1939DiagnosticServiceHandler,bVar2,entry_index,byte,Index into j1939_diagnostic_service_table (PR #53 round 63)
 0x00022128,cm848_j1939DiagnosticServiceHandler,pjVar3,entry,j1939_diagnostic_service_entry_t *,The j1939_diagnostic_service_table entry being compared (PR #53 round 63)
-0x00022128,cm848_j1939DiagnosticServiceHandler,uVar4,result_code,uint,The validator's or the handler's result: 0xff = no response - else cm848_sendJ1939ResponseFrame sends it (PR #53 round 63)
+0x00022128,cm848_j1939DiagnosticServiceHandler,JVar4,result_code,J1939_DIAGNOSTIC_RESULT,The validator's or the handler's result: 0xff = no response - else cm848_sendJ1939ResponseFrame sends it (PR #53 round 63)
 0x00006d24,cm848_dispatchDiagnosticService,BVar1,service,BOOT_DIAGNOSTIC_SERVICE,The request's service byte - named as the enum type reaches it from the entry field (PR #53 round 63)

@@ -448,7 +448,7 @@ typedef enum {
     INVALID_ADDR_ALT = 10,  /* Invalid address range (alternate) */
     CHECKSUM_MISMATCH = 0x14,  /* Checksum mismatch */
     UNKNOWN_SUBFUNC = 0x18  /* Unknown sub-function - default error in diagnosticServiceDispatcher */
-} DIAG_RESPONSE_CODE;
+} J1939_DIAGNOSTIC_RESULT;
 
 typedef enum {
     SUCCESS_RESPONSE = 0x0C,  /* Operation successful - no error code follows */
