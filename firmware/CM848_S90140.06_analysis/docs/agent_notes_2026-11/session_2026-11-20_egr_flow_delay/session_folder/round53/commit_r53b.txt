@@ -1,0 +1,57 @@
+cm848: round 53 stage B - the coolant temperature derate module in the e2m's CT_Derate vocabulary
+
+Its rows were named for a cold start, but every one belongs to the overheat derate; its functions' plates already said
+so. The e2m blocks:
+- 8A71, calibrations at 0x40874e (16 records): 9 records on rows and 7 with no row, each accessed with the record's
+  width and sign (lwz / lha / lhz).
+- 8A7A and 8A79 follow: the level temperature axis at 0x408770 and the time table at 0x40877c (byte-length word 10,
+  then five words each). Together they tile 0x40874e-0x408787 up to the next row.
+- 8A72: the RAM at 0x40b22c (17 records).
+
+The module:
+- The minimum derate (fault 390, cm848_monitorCoolantOverheatMinimumDerate, was engine_coolant_overheat_check):
+  - it starts above coolant_overheat_maximum_allowed_temperature (was coolant_overheat_temp_threshold, a banned
+    abbreviation);
+  - it stops after coolant_overheat_recovery_count_limit passes below the new coolant_overheat_recovery_temperature.
+- The aggressive derate (fault 389, cm848_monitorCoolantOverheatAggressiveDerate, was
+  cm848_monitorCoolantTemperatureBucketOverheat):
+  - cm848_accumulateCoolantOverheatLevelTimers (was ...TemperatureBuckets) times the coolant above each
+    coolant_overheat_level_temperature_axis level into coolant_overheat_level_timers (arrays.csv, was
+    cold_start_coolant_bucket_counters; CT_Derate_Timer1-5);
+  - the derate starts when a timer passes its coolant_overheat_level_time_limits entry (was
+    cold_start_coolant_bucket_thresholds);
+  - reference / stop temperature / stop time: coolant_overheat_aggressive_derate_reference_temperature /
+    _stop_temperature / _stop_time (were cold_start_coolant_bucket_overheat_setpoint / _recovery_temp_threshold /
+    _recovery_count_limit);
+  - counters: _active_time (was cold_start_coolant_overheat_event_count) with its new _active_time_limit, and
+    _stop_count (was sensor_overheat_recovery_count);
+  - level timer reset: the new coolant_overheat_level_timer_reset_temperature / _reset_time, and
+    coolant_overheat_level_timer_reset_count (was coolant_temperature_bucket_cycle_count).
+- The PI loop:
+  - coolant_overheat_pi_proportional_fuel / _integral_fuel / _integral_accumulator (were cold_start_fuel_demand_* /
+    its "q8_scaled" accumulator, scaled by 0x2280);
+  - the new gains coolant_overheat_pi_proportional_gain / _integral_gain;
+  - the new coolant_overheat_derate_skip_temperature.
+- The requests read by cm848_updateEngineWarningFlags:
+  - coolant_overheat_check_gauges_flag (was coolant_bucket_overheat_detected_flag, CT_Derate_Check_Gages: it goes into
+    the check gauges lamp with low oil pressure);
+  - coolant_overheat_chime_flag / _previous (was coolant_bucket_overheat_active_flag, CT_Derate_Chime: its rising edge
+    loads the warning chime, the twin of low_oil_pressure_chime_flag).
+- Left untyped: the lifetime level-timer totals (8A73), EEPROM mirror 0x3fee04 + 4 x level. They overlap the boot
+  kernel's time-shared eeprom_shadow_header.
+- No CM550 twin carries any old name.
+
+Proof (prove_r53.sh: the three function renames applied to the old .cpp, the casts and two char literals folded,
+then prove_caches.py):
+- 1966 of 1968 functions match once the old labels map to the new.
+- The two others are the new axis row's own effect, read by hand:
+  - cm848_accumulateCoolantOverheatLevelTimers: (ushort *)0x408770 becomes coolant_overheat_level_temperature_axis
+    and the locals follow (ushort -> word);
+  - cm848_selectCoolantOverheatFuelLimit: DAT_00408772 becomes coolant_overheat_level_temperature_axis[1].
+- The plates that quoted the new rows' DAT_ labels name them (refresh_dat_mentions_r53.py). The rebuild after that
+  changed plate text only.
+- verify is byte-identical; thunks 18 / 14; the 3 name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

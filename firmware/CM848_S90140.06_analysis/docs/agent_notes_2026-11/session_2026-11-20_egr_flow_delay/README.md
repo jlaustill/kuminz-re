@@ -517,3 +517,7 @@ Hand work on the round 7 lead.
 ## Round 52: nine more blocks record for record, five state enums (`session_folder/round52/`)
 
 - Search: `record_for_record_matches.py` (+ `record_matches.txt`), `placement_*.txt`, `find_sprg_writers.py`. **Stage A:** `apply_r52a.py` (`apply_r52a_first_draft.py` = before the retest names and the six blocks), `map_r52a.csv`, `prove_r52a.sh`. **Stage B:** `apply_r52b.py`, `prove_enum_substitution.py`. **Closing:** `apply_r52_closing.py`, `update_large_tar_r52.sh`.
+
+## Round 53: blocks ranked by meaning, the coolant temperature derate module (`session_folder/round53/`)
+
+- Search: `semantic_record_matches.py` (from round 52's matcher, `patch_matcher.py`), `semantic_score.py`, `semantic_matches.txt`, `placements.txt`. Shared helpers: `e2m_cite.py`. **Stage A:** `apply_r53a.py` (`fix_r53a_texts.py`), `map_r53a.csv`. **Stage B:** `apply_r53b.py`, `map_r53b.csv`, `refresh_dat_mentions_r53.py` (the plates that quoted the new rows' DAT_ labels). Proof: `prove_r53.sh`. **Closing:** `apply_r53_closing.py`, `update_large_tar_r53.sh`.

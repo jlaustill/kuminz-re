@@ -187,6 +187,7 @@
  1072915 e2m_audit_round19a.csv
  2753025 pre_r24e_globals.csv
   330882 pre_r24e_structs.csv
+      59 semantic_matcher_round53.log
  3544401 stage2.cpp
   402904 verify.log
   402089 verify2.log
@@ -259,3 +260,6 @@
   401661 verify_round51_closing.log
   401661 verify_round52a.log
   401661 verify_round52b.log
+  401661 verify_round53a.log
+  401675 verify_round53b.log
+  401675 verify_round53b_first.log

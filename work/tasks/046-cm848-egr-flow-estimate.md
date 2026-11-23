@@ -2455,6 +2455,40 @@ A peer relay started the round; the scripts are in `session_folder/round52/`.
   - The alternator field regulator's state handlers (the table at 0x57730) return the next state and could return the
     enum.
 
+## Done, round 53 (2026-11-23, same PR): blocks ranked by meaning, the coolant temperature derate module
+
+A peer relay started the round; the scripts are in `session_folder/round53/`.
+- **Method:** `semantic_record_matches.py` is round 52's matcher ranked by a meaning score.
+  - `semantic_score.py` expands the e2m abbreviations and scores the record name and description against the row name.
+  - The score ranks, it does not decide: 8A71's best-scoring base was wrong. The true base, 0x40874e, fits all 16
+    records, with every access's width and sign matching its record.
+  - `e2m_cite.py` shares the citation helpers the stage scripts used to copy.
+- **Stage A (dfd604c, labels, rows):** eleven blocks:
+  - the fan speed sensor RAM (8B20);
+  - the PTO / battery voltage flags and their calibrations (160A / 1609);
+  - the sensor-fault substitutes and the in-use values (8B03 / 8B04). The eight substitutes are now named by the fault
+    that selects them (`<sensor>_high_fault_substitute`), because the temperature pair went by value;
+  - the learned ratio limits (8BB1);
+  - the gear ratio margin and the rail-leak limit (8B8A, a new row);
+  - the J1850 received data (8A7D, `pci_four_wheel_drive_status_flag`);
+  - the brake switch pair (8A86);
+  - the vehicle speed words (8ADA), which anchor round 51's 0x40b5a8 lead;
+  - the VSS calibrations (8ADB) and the transfer case learning (8B0B).
+- **Stage B (c1ba0fe, labels, rows):** the coolant temperature derate module (CT_Derate: 8A71 / 8A7A / 8A79 / 8A72).
+  - The minimum derate (fault 390), the aggressive derate (fault 389) with its five level timers, the PI loop, and the
+    check gauges / chime requests.
+  - About 20 `cold_start_*` / `*bucket*` names became `coolant_overheat_*`, plus 7 new rows and 3 function renames
+    (`cm848_monitorCoolantOverheatMinimumDerate` / `...AggressiveDerate`, `cm848_accumulateCoolantOverheatLevelTimers`).
+  - `coolant_overheat_temp_threshold` used the banned abbreviation "temp".
+- **Proof:** stage A: `prove_caches.py` (casts folded) shows no function differing once the old labels map to the new; stage B: 1966 of 1968 match, the other two only show the new axis table row in place of a raw pointer / DAT_ label (read by hand). Every verify byte-identical.
+- **firmware/CLAUDE.md:** one factual correction, no new rule. The read-back bullet called the 0x5139b8 helpers
+  "unidentified"; they are the coolant temperature derate. HARD stays 0 and MISSING 221.
+- **Leads:**
+  - The lifetime level-timer totals (8A73, EEPROM mirror 0x3fee04 + 4 x level) overlap the boot kernel's
+    `eeprom_shadow_header`, so they stay untyped. This is the same time-sharing problem as the trip distance dword.
+  - The matcher's other hits read by meaning but not applied: 1497 / 1498 (LSG droop on ASG-named rows), 158D, 8BA4.
+  - 8B7C (AFR) exists only in older layouts.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

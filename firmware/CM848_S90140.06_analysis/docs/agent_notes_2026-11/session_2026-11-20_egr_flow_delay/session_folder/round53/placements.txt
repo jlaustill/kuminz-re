@@ -1,0 +1,179 @@
+== 8B20 at 0x40b2f4 (CHR_CC_11.45.01.07.e2m; 2 layout(s) in 16 releases: 12x CHR_CC_11.45.01.07.e2m / 4x CHR_CC_11.10.24.00.e2m)
+   +00 0x40b2f4 Fan_Speed [N2] dump 0: Filtered value of Fan_Speed_Average
+        row: radiator_fan_speed word | DRB SCI read FD-80-81 'RAD FAN SPEED' - flash2 SCI table 253 (0x53a5ec
+   +02 0x40b2f6 Fan_Speed_Average [N2] dump 0: Average fan speed of the last Fan_Speed_Teeth_Per_Interrupt pulses
+        row: radiator_fan_speed_unfiltered word | Fan speed before the moving average (0.125 rpm) - cm848_measureRadiatorFanSpeed
+   +04 0x40b2f8 Fan_Speed_Constant [N4] dump 60000000: Constant to convert fan speed period measurement to rpm
+        row: radiator_fan_speed_numerator dword | pulses x 60000000 / radiator_fan_pulses_per_revolution: radiator fan speed (0.125 rpm) = this x 8 / radiator_f
+   +08 0x40b2fc Fan_Speed_Period [N4] dump 0: Period between the last Fan_Speed_Teeth_Per_Interrupt fan speed pulses
+        row: radiator_fan_speed_period_microseconds dword | Accumulated fan speed sensor period from TPU-B channel 9 (cm848_radiatorFanSpeedInterruptHandler: capture x 10
+   +0C 0x40b300 Fan_Speed_EOL_Buffer_Update [S1] dump 1: Flag to enable/disable the buffer update for testing
+        row: radiator_fan_speed_history_enable byte | Set by cm848_initRadiatorFanSpeedMeasurement: with type code 5100 each measurement shifts radiator_fan_speed i
+== 160A at 0x40b9c8 (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 16 releases)
+   +00 0x40b9c8 PTO_Disengaged_For_Three_Min [N2] dump 1: Indicates PTO has been disabled for at least 3 minutes
+        row: power_take_off_disengaged_delay_elapsed_flag word | Set to 1 when the pass count (0x3fd1e2) exceeds ROM 0x64302 (100)
+   +02 0x40b9ca OBD_Battery_Voltage_In_Range [N1] dump 1: Indicates battery voltage is in range for OBD monitor use
+        row: obd_battery_voltage_in_range_flag byte | byte (stb at 0x5317b4): 1 while ROM 0x64304 (168 = 10.5 V) < battery_voltage < ROM 0x64306 (264 = 16.5 V)
+   +03 0x40b9cb Gen_Diag_Battery_Voltage_In_Range [N1] dump 1: Indicates battery voltage is in range for general diagnostics
+        row: general_diagnostic_battery_voltage_in_range_flag byte | byte: 1 while ROM 0x64308 (128 = 8.0 V) < battery_voltage < ROM 0x6430a (264 = 16.5 V); its reader is cm848_bu
+   +04 0x40b9cc OBD_Engine_State [S2] dump 0: Indicates PTO has been disabled for at least 3 minutes
+        row: obd_engine_running_flag word | word: 1 while engine_state is 3 (RUNNING)
+   +06 0x40b9ce OBD_Post_Crank_Timer [N2] dump 100: Countdown timer for OBD voltage errors after crank
+        row: obd_battery_voltage_post_crank_lockout_count word | word: reloaded from ROM 0x6430c (100) while engine_state is 1 or 2
+== 1609 at 0x64302 (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 16 releases)
+   +00 0x64302 PTO_Debounce_Counts [N2] dump 100: Debounce used for determining PTO diabled 3 min
+        row: power_take_off_disengaged_delay_limit word | ROM word = 100: the pass count must exceed it before power_take_off_disengaged_delay_elapsed_flag is set (lhz 
+   +02 0x64304 OBD_Batt_Volt_Low_Threshold [N2] dump 168: Low battery threshold used for by global monitor disable
+        row: obd_battery_voltage_in_range_low_limit word | ROM word = 168 = 10.5 V at 1/16 V per count: OBD battery voltage in range needs battery_voltage above it
+   +04 0x64306 OBD_Batt_Volt_High_Threshold [N2] dump 264: High battery voltage threshold used by global monitor dis
+        row: obd_battery_voltage_in_range_high_limit word | ROM word = 264 = 16.5 V: OBD battery voltage in range needs battery_voltage below it (lhz at 0x531798); e2m OB
+   +06 0x64308 Gen_Diag_Batt_Volt_Low_Threshold [N2] dump 128: Low battery voltage threshold used by global monitor dis
+        row: general_diagnostic_battery_voltage_in_range_low_limit word | ROM word = 128 = 8.0 V: general diagnostic voltage in range needs battery_voltage above it
+   +08 0x6430a Gen_Diag_Batt_Volt_High_Threshold [N2] dump 264: High battery voltage threshold used by global monitor dis
+        row: general_diagnostic_battery_voltage_in_range_high_limit word | ROM word = 264 = 16.5 V: general diagnostic voltage in range needs battery_voltage below it (lhz at 0x5317d0);
+   +0A 0x6430c OBD_Post_Crank_Time_Limit [N2] dump 100: Number of cycles after crank before logging obd voltage errors
+        row: obd_battery_voltage_post_crank_lockout_reload word | ROM word = 100: reload value of obd_battery_voltage_post_crank_lockout_count while engine_state is 1 or 2 (lhz
+== 8B03 at 0x40868a (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 16 releases)
+   +00 0x40868a Boost_Pressure_High_Default [N2] dump 7261: commanded throttle default when sensor is failed OOR high
+        row: intake_manifold_pressure_high_substitute word | Value used for intake_manifold_pressure_in_use while system_status_flags enable_state bit 8 is set (7261 = 391
+   +02 0x40868c Boost_Pressure_Low_Default [N2] dump 0: commanded throttle default when sensor is failed OOR low
+        row: intake_manifold_pressure_low_substitute word | Value used for intake_manifold_pressure_in_use while enable_state bit 9 is set (0); working RAM - not EEPROM-b
+   +04 0x40868e Commanded_Throttle_High_Default [N2] dump 400: commanded throttle default when sensor is failed OOR high
+        row: accelerator_pedal_position_high_substitute word | Value used for accelerator_pedal_position_in_use while the pedal sensor's high error is set (fault_detected_ca
+   +06 0x408690 Commanded_Throttle_Low_Default [N2] dump 0: commanded throttle default when sensor is failed OOR low
+        row: accelerator_pedal_position_low_substitute word | Value used for accelerator_pedal_position_in_use while bit 11 of the pedal fault word is set (pedal_position_s
+   +08 0x408692 Coolant_Temperature_High_Default [N2] dump 62336: coolant temperature default when sensor is failed OOR high
+        row: coolant_temperature_low_substitute word | Value used for coolant_temperature_in_use while condition_monitor bit 0 is set (-3200 = -50 deg F) (was protec
+   +0A 0x408694 Coolant_Temperature_Low_Default [N2] dump 16383: coolant temperature default when sensor is failed OOR high
+        row: coolant_temperature_high_substitute word | Value used for coolant_temperature_in_use while condition_monitor bit 1 is set (16383 = 256 deg F) (was protec
+   +0C 0x408696 Intake_Manifold_Temperature_High_Default [N2] dump 62336: intake air temperature default when sensor is failed OOR high
+        row: intake_manifold_temperature_low_substitute word | Value used for intake_manifold_temperature_in_use while condition_monitor bit 3 is set (-50 deg F) (was protec
+   +0E 0x408698 Intake_Manifold_Temperature_Low_Default [N2] dump 16383: intake air temperature default sensor is failed OOR low
+        row: intake_manifold_temperature_high_substitute word | Value used for intake_manifold_temperature_in_use while condition_monitor bit 4 is set (256 deg F) (was protec
+== 8B04 at 0x40b14e (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 16 releases)
+   +00 0x40b14e Boost_Pressure_Actual [N2] dump 1700: actual boost pressure, event if sensor is failed
+        row: intake_manifold_pressure_in_use word | Intake manifold pressure the engine protection uses (cm848_selectSensorValuesInUse - a substitute on its fault
+   +02 0x40b150 Commanded_Throttle_Actual [N2] dump 0: actual commanded throttle, event if sensor is failed
+        row: accelerator_pedal_position_in_use word | commanded_throttle_state_t.commanded_throttle as protection and the freeze frame use it (a substitute on its f
+   +04 0x40b152 Coolant_Temperature_Actual [N2] dump 2057: actual coolant temperature, even if sensor is failed
+        row: coolant_temperature_in_use word | Coolant temperature (1/64 deg F) the engine protection uses (cm848_selectSensorValuesInUse - a substitute on i
+   +06 0x40b154 Intake_Manifold_Temperature_Actual [N2] dump 2602: actual intake air temperature, event if sensor is failed
+        row: intake_manifold_temperature_in_use word | Intake manifold temperature (1/64 deg F) the engine protection uses (cm848_selectSensorValuesInUse - a substit
+== 8BB1 at 0x408706 (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 10 releases)
+   +00 0x408706 RE_Axle_Ratio_Factor_Learned_Max [N2] dump 6656: Maximum value for axle ratio factor learned
+        row: output_speed_to_vehicle_speed_ratio_learn_maximum word | Upper clamp of the learned output shaft to vehicle speed ratio: 6656 / 4096 = 1.63 = 52 output shaft rpm per m
+   +02 0x408708 RE_Axle_Ratio_Factor_Learned_Min [N2] dump 4480: Minimum value for axle ratio factor learned
+        row: output_speed_to_vehicle_speed_ratio_learn_minimum word | Lower clamp of the learned output shaft to vehicle speed ratio: 4480 / 4096 = 1.09 = 35 output shaft rpm per m
+   +04 0x40870a RE_MPHX2_Counter_NV_Ratio_Max [N2] dump 3: Times road speed must exceed calibrated value to learn NV ratio
+        row: output_speed_to_vehicle_speed_ratio_learn_delay_limit word | ROM: the pass count output_speed_to_vehicle_speed_ratio_learn_delay_count must pass before the ratio is learne
+   +06 0x40870c RE_MPHX2_To_Learn_NV_Ratio [N2] dump 10240: Road speed has to be above this threshold to learn NV ratio
+        row: output_speed_to_vehicle_speed_ratio_learn_minimum_vehicle_speed word | 10240 = 40 mph: the output shaft ratio learn counts each rise of vehicle_speed above this and learns once (res
+   +08 0x40870e RE_Scaled_OSS_To_Learn_NV_Ratio [N2] dump 800: Output shaft speed has to be > this limit to learn NV ratio
+        row: output_speed_to_vehicle_speed_ratio_learn_minimum_output_speed word | 800 = 100 rpm (1/8 rpm): the output shaft ratio learn needs transmission_output_speed_in_use (TPU-B channel 14
+== 8B8A at 0x408b78 (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 16 releases)
+   +00 0x408b78 Fractional_GR_Difference [N2] dump 2501: Percent gear ratio difference used to detect top gear and gear ratio
+   +02 0x408b7a Cruise_Limit_To_RSG_Reference [N2] dump 1: If enabled, Crusie_Max_Road_Speed limited to RSG_Reference_Speed
+        row: cruise_maximum_road_speed_clamp_enable word | While nonzero cm848_calculateMaximumRoadSpeeds lowers cruise_maximum_road_speed_cal to road_speed_governor_ref
+   +04 0x408b7c RSG_HPCR_Leak_Min_Speed [N2] dump 6400: Vehicle speed limited to this when fuel leak detected
+        row: fault_vehicle_speed_limit_floor word | 6400 = 25 mph: while fault_reaction_request_bits (fault mask) is set the vehicle speed limit ramps down from t
+   +06 0x408b7e RSG_HPCR_Leak_Speed_Slew_Rate [N2] dump 15: Vehicle speed limited at this rate when fuel leak detected
+        row: fault_vehicle_speed_limit_ramp_step word | 15 = 0.059 mph (1/256 mph) per pass: ramp-down step of the fault vehicle speed limit from the vehicle speed at
+== 8A7D at 0x40b4ff (CHR_CC_11.45.01.07.e2m; 4 layout(s) in 16 releases: 6x CHR_CC_11.45.01.07.e2m / 4x CHR_CC_11.25.05.07.e2m / 2x CHR_CC_11.12.09.00.e2m / 4x CHR_CC_11.10.24.00.e2m)
+   +00 0x40b4ff J1850_Selected_Gear [S1] dump 251: Derived from J1850 PRNDL message info. Similar to J1939_Selected_Gear
+        row: transmission_selected_gear TRANSMISSION_SELECTED_GEAR | Selected gear from the PCI 0x37 shift lever in J1939 SPN 524 coding: 0x7C R / 0x7D N / 0x7E 1st / 0x7F 2nd / 0
+   +01 0x40b500 J1850_LSG_Speed [N2] dump 0: Request from J1850 for LSG reference speed
+        row: pci_requested_idle_speed word | Idle speed requested over PCI RX[2] header 0x0E in 1/8 rpm = (byte 1 & 0x7f) << 7 - latched by cm848_latchPciI
+   +03 0x40b502 J1850_Requested_MIL [S1] dump 0: Indicates a J1850 request from Transmission for MIL illumination.
+        row: pci_received_mil_request_flag byte | 1 = PCI RX[8] header 0x6C byte 4 bit 7 asks for the MIL (ignored while end_of_line_test_malfunction_indicator_
+   +04 0x40b503 Trip_Info_Reset_Flag [S1] dump 0: [TIRF] Global flag used by dev to clear trip parameters
+        row: trip_counters_reset_pending_flag byte | Set by SCI command 35 (cm848_sciCommand35Callback); cm848_updateTripAndLifetimeCounters zeroes the trip set an
+   +05 0x40b504 J1850_AC_Request [N2] dump 0: J1850 request from HVAC for desired state of AC driver;0=off,1=on
+   +1A 0x40b519 J1850_Lockup_Status [S1] dump 0: Transmission gear lockup status from $3A message
+   +1E 0x40b51d J2190_Security_Seed [N2] dump 0: 2-Bytes transmitted to tool to determine J2190_Security_Key
+        row: pci_security_seed word | Seed sent in the 67 01 reply (bytes 4-5): low 16 bits of key_on_hour_meter (0 -> 1) - 0 once unlocked; checked
+   +20 0x40b51f J2190_Security_Key [N2] dump 0: 2-bytes of the 10-byte key computed using J2190_Security_Seed
+        row: pci_security_key word | Key received with service 0x27 sub-function 2 = (request byte 4 << 8) + request byte 5 (was uds_security_seed_
+   +22 0x40b521 J2190_NFAA_Counter [N2] dump 0: J2190 protocol security; "Number of Failed Access Attempts"
+        row: pci_security_failed_key_count word | Invalid keys in a row: 1-2 -> 7F 27 35 (invalid key) / the 3rd -> 7F 27 36 (attempts exceeded) + pci_security_
+   +24 0x40b523 J2190_NFAA_Delay_Timer [N2] dump 0: 10-second countdown timer after invalid J2190 key received
+        row: pci_security_lockout_timer word | Lockout after 3 invalid keys: 250 then -1 per handler run (every 8th main-loop phase - about 10 s if a phase i
+   +26 0x40b525 J2190_Security_Validated [N1] dump 0: Flag showing validity of security key passed by tool
+        row: pci_security_key_matched_flag byte | Result of cm848_validatePciSecurityKey for the last key: 1 matched / 0 not (was uds_security_checksum_result)
+   +27 0x40b526 J2190_Seed_Requested [N1] dump 0: Flag showing security seed requested by tool
+        row: pci_security_seed_sent_flag byte | 1 once a seed request was answered (67 01); a key with no seed before it gets 7F 27 C0; cleared after the 3rd 
+   +28 0x40b527 J2190_Lock_Mode [N1] dump 0: J2190 data write security [0=LOCKED,1=UNLOCKED,2=KEY-ON_LOCK-OUT]
+        row: pci_security_unlocked_flag byte | PCI security access granted: set by a valid 0x27 key (which also calls cm848_enterDevelopmentMode) and never c
+   +29 0x40b528 J1850_4WD_Status [N1] dump 0: j1850 msg $92 = $2, set J1850_4WD_Status TRUE
+        row: pci_receive_message_13_state_2_flag byte | 1 when PCI 0x92 payload byte 1 bits 0-2 = 2 (cm848_decodePciReceiveMessage13State); write-only - no code or SC
+== 8A72 at 0x40b22c (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 16 releases)
+   +00 0x40b22c CT_Derate_Temp_Error [N2] dump 0: Coolant Temp Derate error (CT_Derate_Ref_Temp - Coolant_Temperature)
+        row: coolant_overheat_temperature_error word | signed setpoint minus coolant temp; cold-start P/I input (was cold_start_coolant_temp_error)
+   +02 0x40b22e CT_Derate_Check_Gages [N2] dump 0: Coolant Temp Derate; indicates that check gages lamp should be turned 
+        row: coolant_bucket_overheat_detected_flag word | bucket overheat detected; gates coolant_overheat_or_low_oil_pressure_flag
+   +04 0x40b230 CT_Derate_Chime [N2] dump 0: Coolant Temp Derate; indicates that cluster chime should be turned ON
+        row: coolant_bucket_overheat_active_flag word | set on bucket-count or sustained overtemp; highest-priority protection ramp gate
+   +06 0x40b232 CT_Derate_Fuel [N2] dump 25600: Coolant Temp Derate; derate fuel commanded by CT Derate algorithm
+        row: coolant_overheat_fuel_derate word | The engine coolant overheat fuel derate (cm848_rampCoolantOverheatFuelDerate; 0x6400 = no limit) - FUELING_STA
+   +08 0x40b234 CT_Derate_Init_Fuel [N2] dump 25600: Coolant Temp Derate; initial derate fuel commanded to maintain power
+        row: coolant_overheat_engine_speed_fuel_limit word | RPM-based cold-start fuel demand limit from table lookup (was cold_start_rpm_fuel_limit)
+   +0A 0x40b236 CT_Derate_Int_Fuel [N2] dump 25600: Coolant Temp Derate; Integral fuel component of PI derate control
+        row: cold_start_fuel_demand_integral word | integral term of cold-start coolant-temp correction
+   +0C 0x40b238 CT_Derate_Required [N2] dump 0: Coolant Temp Derate; indicates that derate is required
+        row: engine_overheat_derate_active_flag word | Set to 1 only by the two P0217 monitors (faults 390 / 389: engine_coolant_overheat_check and cm848_monitorCool
+   +0E 0x40b23a CT_Derate_PI_Fuel [N2] dump 25600: Coolant Temp Derate; sum of derate proportional and integral fuel comp
+        row: coolant_overheat_pi_fuel_limit word | sum of cold-start P+I correction clamped 0..0x6400 (was cold_start_fuel_demand_pi_correction)
+   +10 0x40b23c CT_Derate_Prop_Fuel [N2] dump 25600: Coolant Temp Derate; proportional fuel contribution of derate fuel
+        row: cold_start_fuel_demand_proportional word | proportional term of cold-start coolant-temp correction
+   +12 0x40b23e CT_Derate_Ref_Temp [N2] dump 16320: Coolant Temp Derate reference temperature for PI control
+        row: engine_overheat_derate_coolant_temperature_setpoint word | Latched to the trip threshold (coolant_overheat_temp_threshold or cold_start_coolant_bucket_overheat_setpoint)
+   +14 0x40b240 CT_Derate_Timer1 [N4] dump 0: Coolant Temp Derate timer1; time over table bkpt 1
+   +18 0x40b244 CT_Derate_Timer2 [N4] dump 0: Coolant Temp Derate timer2; time over table bkpt 2
+   +1C 0x40b248 CT_Derate_Timer3 [N4] dump 0: Coolant Temp Derate timer3; time over table bkpt 3
+   +20 0x40b24c CT_Derate_Timer4 [N4] dump 0: Coolant Temp Derate timer4; time over table bkpt 4
+   +24 0x40b250 CT_Derate_Timer5 [N4] dump 0: Coolant Temp Derate timer5; time over table bkpt 5
+   +28 0x40b254 CT_Derate_State [S2] dump 9: Coolant Temp Derate State - indicates which derate is active
+        row: engine_overheat_derate_reason_code word | Written only with the overheat events: 3 = direct coolant overheat set
+   +2A 0x40b256 CT_Derate_Main_SOI [N2] dump 64512: Coolant Temp Derate Main SOI - active when coolant temp > 224 degF
+        row: coolant_overheat_derate_minimum_injection_timing word | The main timing minimum of the coolant overheat derate (source label 18 CTDRATE): cm848_rampCoolantOverheatDer
+== 8A86 at 0x3fcd88 (CHR_CC_11.45.01.07.e2m; 2 layout(s) in 16 releases: 10x CHR_CC_11.45.01.07.e2m / 6x CHR_CC_11.12.09.00.e2m)
+   +00 0x3fcd88 Brake_Switch_High_Counter [N2] dump 0: Number of times brake switch input is high
+        row: brake_switch_pair_both_clear_debounce_count word | Counts consecutive passes with both switches clear (bVar1 = 0); at the threshold it resets itself
+   +02 0x3fcd8a Brake_Switch_Low_Counter [N2] dump 0: Number of times brake switch input is low
+        row: brake_switch_pair_both_set_debounce_count word | Counts consecutive passes with both switches set (bVar1 = 3); at the threshold it resets itself
+   +04 0x3fcd8c Alt_Not_Brake_Switch [N1] dump 0: Desired state of the Not_Brake_Switch output driver.
+        row: brake_switch_pair_state_previous byte | Last debounced state of the pair: 0 = both clear
+== 8ADA at 0x40b5a8 (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 16 releases)
+   +00 0x40b5a8 Sampled_Road_Speed [N2] dump 0: AVERAGE ROAD SPEED
+        row: vehicle_speed_unfiltered word | Vehicle speed before the EMA (1/256 mph) - from the speed-sensor period or (J1939 automatic) the output shaft 
+   +02 0x40b5aa Software_Road_Speed_Constant [N4] dump 324000000: Road_Speed_Constant in software units
+        row: vehicle_speed_conversion_numerator dword | Period-to-speed numerator set by cm848_initVehicleSpeedCalculation (was fuel_temp_trim_numerator)
+   +06 0x40b5ae VSS_Period_Sample [N4] dump 1383936612: Time that has elapsed between previous and current processor interrupt
+        row: vehicle_speed_sensor_scaled_period dword | vehicle_speed_sensor_period x vehicle_speed_sensor_period_scale_cal (was fuel_temp_trim_product_prev)
+== 8ADB at 0x3fd8f0 (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 16 releases)
+   +00 0x3fd8f0 Road_Speed_Constant [N4] dump 8000: VSS PULSES PER MILE USED TO CALCULATE ROAD SPEED
+        row: vehicle_speed_sensor_pulses_per_mile_cal dword | EEPROM-backed (EEPROM 0x46e): speed-sensor pulses per mile - 8000 in this calibration (the Chrysler standard) 
+   +04 0x3fd8f4 Teeth_Per_Interrupt [N2] dump 9: Number of pulses per microprocessor interrupt
+        row: vehicle_speed_sensor_period_scale_cal word | EEPROM-backed (EEPROM 0x472): multiplies both the period and the numerator so it cancels in the speed formula 
+   +06 0x3fd8f6 VSS_Max_Time [N4] dump 632812: Tailshaft period above which Road_Speed is forced to Minimum_MPH
+        row: vehicle_speed_sensor_max_scaled_period_cal dword | EEPROM-backed (EEPROM 0x474): longest accepted scaled period - 632812 = the 2 mph period x 9 (was fuel_temp_tr
+   +0A 0x3fd8fa VSS_Min_Time [N4] dump 8437: Tailshaft period below which Road_Speed is forced to Maximum_MPH
+        row: vehicle_speed_sensor_min_scaled_period_cal dword | EEPROM-backed (EEPROM 0x478): shortest accepted scaled period - 8437 = the 150 mph period x 9 (was fuel_temp_f
+   +0E 0x3fd8fe Global_Road_Speed_Maximum [N2] dump 30720: this is the absolute maximum reference road speed
+== 8B0B at 0x408d1c (CHR_CC_11.45.01.07.e2m; 1 layout(s) in 16 releases)
+   +00 0x408d1c Tcase_Switch_Learn_Delay [N2] dump 600: Time to delay before starting to learn Tcase switch
+        row: four_wheel_drive_switch_warmup_passes word | 600 (RAM dump
+   +02 0x408d1e Tcase_Switch_Learn_Raw_Maximum [N2] dump 563: Upper limit below which the Tcase switch can still be learned
+        row: four_wheel_drive_switch_learn_maximum_adc_reading word | 563 (RAM dump). lhz @ 0x522860: the raw ADC 76 reading must be below it (and above 0x408d20) for the switch to
+   +04 0x408d20 Tcase_Switch_Learn_Raw_Minimum [N2] dump 54: Lower limit above which the Tcase switch can still be learned
+        row: four_wheel_drive_switch_learn_minimum_adc_reading word | 54 (RAM dump). lhz @ 0x522850: the raw reading must be above it; 54 is the start of the code 3 window (54-60).
+   +06 0x408d22 Tcase_Switch_Mux_OOR_Debounce_Count [N2] dump 90: Number of Tcase out of range errors that must occur before fault is se
+        row: four_wheel_drive_switch_invalid_code_fault_passes word | 90 (RAM dump). lhz @ 0x522950: consecutive passes with a position code of 0 that set P0837 (about 9 s at 100 m
+   +08 0x408d24 Tcase_Switch_Mux_Debounce_Count [N2] dump 1: Number of execution frames to debounce the Tcase switch mux processed 
+        row: four_wheel_drive_switch_stable_code_passes word | 1 (RAM dump). lhz @ 0x5228e4: consecutive equal position codes needed before the debounced code is updated. (n
+== 8B7C at 0x40a546 (CHR_CC_11.15.08.06.e2m; 1 layout(s) in 8 releases)
+   +00 0x40a546 AFR_Actual [N2] dump 128: Calculated Air Fuel Ratio
+        row: charge_fuel_ratio word | Code: cm848_calculateAirFuelRatioAndIntakeOxygenFraction writes (charge_mass_flow_filtered << 7) / fuel_mass_f
+   +02 0x40a548 AFR_Fueling [N2] dump 128: Air Fuel Ratio Fuel Limit
+        row: air_fuel_ratio word | Code: (charge_flow_estimate_terms_t.fresh_air_mass_flow_filtered << 7) / fuel_mass_flow
+   +04 0x40a54a AFR_Limit [N2] dump 65535: Air Fuel Ratio Limit as determined by AFR_Limit_Table
+        row: fuel_air_equivalence_ratio word | Code: stoichiometric_air_fuel_ratio (1893 = 14.79 x 128

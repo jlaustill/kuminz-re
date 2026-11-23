@@ -671,6 +671,11 @@ state enum, the flag bytes.**
   the alternator field (8A5F / 8A60), the reset capture (15B4: `exception_srr0 / _vector / _link_register` from the
   exception stubs' SPRG saves), and round 51's transmission RAM (8B9A / 8BB4).
 - **Stage B (afe344d, enums):** five state enums from those blocks' value labels.
+**Round 53.**
+- **Stage A (dfd604c, labels, rows):** eleven more e2m blocks record for record, found by a meaning-ranked matcher;
+  the eight sensor-fault substitutes named by the fault that selects them; `pci_four_wheel_drive_status_flag`.
+- **Stage B (c1ba0fe, labels, rows):** the coolant temperature derate module (e2m CT_Derate 8A71 / 8A7A / 8A79 / 8A72):
+  the `cold_start_*` / bucket names were the overheat derate's; 7 new rows and 3 function renames.
 
 ## Test plan
 
@@ -763,6 +768,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 53: stage A: `prove_caches.py` (casts folded) shows no function differing once the old labels map to the new; stage B: 1966 of 1968 match, the other two only show the new axis table row in place of a raw pointer / DAT_ label (read by hand). Every verify byte-identical.
 - [x] Round 52: stage A: `prove_caches.py` (casts folded) shows no function differing once the old labels map to the new; stage B: 1958 of 1968 functions match and the ten others equal the old text once each enum member value is put back (`prove_enum_substitution.py`). Every verify byte-identical.
 - [x] Round 51: stage A: `prove_caches.py` (casts folded, the function rename applied to the old .cpp) matches 1967 of 1968 functions, the other differing only in local declaration order; stage B: 1962 match and the six others equal the old text once each enum member value is put back and the removed argument dropped (`prove_r51b_enum.py`); closing: no function body differs, only the flag function plate. Every verify byte-identical.
 - [x] Round 50: `prove_caches.py` with the casts folded matches 1965 of 1968 functions (the other three differ only in local declaration order); verify byte-identical.
