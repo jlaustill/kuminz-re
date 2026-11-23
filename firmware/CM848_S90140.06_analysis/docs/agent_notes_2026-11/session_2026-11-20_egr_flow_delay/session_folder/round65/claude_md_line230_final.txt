@@ -1,0 +1,1 @@
+- The ROM `cm848_buildPgn65265CruiseControlVehicleSpeedMessage` (0x24178) and `cm848_buildPgn61443ElectronicEngineController2Message` (0x25b10) are the ECM's own CCVS1 / EEC2 **transmit** builders (they end in `cm848_sendJ1939Message`), not receive handlers (were `j1939HandlePgn65265CruiseVehicleSpeed` / `j1939HandlePgn61443Eec2`).
