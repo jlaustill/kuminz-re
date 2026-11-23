@@ -25,6 +25,7 @@ address,name,type,comment
 0x0000b752,checksum_region_table,checksum_region_table_t,The calibration image's checksum table (checksum_table_descriptor.checksum_table_pointer) - mpc555_verifyDownloadedCalibration sums each region (PR #53 round 69)
 0x0000b754,checksum_region_table.first_region,,(PR #53 round 69)
 0x0000b75e,checksum_region_table.second_region,,(PR #53 round 69)
+0x0000b76a,first_checksum_region_start_marker,word,0xa1a1: checksum_region_table.first_region's first word - right before the first code (0xb76c) (PR #53 round 70)
 0x00022c86,,pointer,
 0x00022f1c,accept_tsc1_command,,
 0x00025050,cm848_initPgn65227Dm2ResponseHandler,,
@@ -46,6 +47,8 @@ address,name,type,comment
 0x00057bbe,pci_security_key_table,word[16],16 ROM words XORed into the seed by each of its 4 nibbles (plus 0x1911) to form the PCI security key: a81f 57c9 4140 ... d507 - identical to the SCI table at flash2 0x53abfe (was DAT_00057bbe)
 0x00057d76,calibration_table_ptr_3,byte,
 0x00057dd2,qadc_channel_dispatch_table,qadc_channel_dispatch_entry_t[129],QADC channel dispatch table: one record per channel slot (result register pointer + a shared zero-word pointer); the analog read is *qadc_channel_dispatch_table[qadc_channel_index_table[k]].result_register. Typed as a record array 2026-11-18 | earlier note: 129-entry x 8-byte table: channel index -> (QADC result-reg pointer + shared 0x57dd0); read via base[i*2] by cm848_checkCruiseSwitchLearnCondition + ~38 sensor sites; verified ptrs 0x304a80.. = MPC555 QADC right-justified result regs; double-indirection asm slwi r,3/lwzx/lhz @0x512ebc
+0x0005862e,dual_port_tpu_ram_load_table,word[1508],Three {offset / word count / words} records - variable length so a word array - that mpc555_initTpuConfiguration copies to 0x302000 + offset: 994 words to 0x302000 / 348 to 0x302800 / 160 to 0x302ec0 (0x302000-0x302fff of the dual-port TPU RAM) before it sets both TPU module configuration registers - TPU microcode by that use. It overwrites the boot kernel's variables there (ecu_power_state_flags / both CAN rings / boot_can_ring_state / crc_ccitt_table / eeprom_block_tracking / ...); it ends at first_checksum_region_end_marker (PR #53 round 70)
+0x000591f6,first_checksum_region_end_marker,word,0xa1a1: checksum_region_table.first_region's last word - right after dual_port_tpu_ram_load_table; 0x1a1a three times and another 0xa1a1 (0x591fe) follow outside the region (PR #53 round 70)
 0x000592a2,barometric_pressure_sensor_config,sensor_channel_config_t,Calibration block of sensor channel 3 (barometric pressure - AMB SPN 108); its default_value is the fixed reference cm848_calculateBoostPressure subtracts when it uses no barometer (was the interior label boost_pressure_fixed_reference)
 0x000592b2,barometric_pressure_linearization_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_processBarometricPressureChannel / cm848_initializeBarometricPressureChannel
 0x000592c4,barometric_pressure_linearization_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_processBarometricPressureChannel / cm848_initializeBarometricPressureChannel
@@ -783,40 +786,13 @@ address,name,type,comment
 0x002fc844,CMFTST_B,dword,MPC555 CMF flash module B test register (was mislabeled QADC64)
 0x002fc848,CMFCTL_B,dword,MPC555 CMF flash module B high-voltage control register (was mislabeled QADC64)
 0x00300004,usiu_ext_004,,
-0x00302000,TPU3_TPUMCR,byte,
+0x00302000,dual_port_tpu_ram_start,byte,The 6 KB RAM 0x302000-0x3037ff that cm848_clearRamRegions clears: the MPC555's only 6 KB RAM - the dual-port TPU RAM (its SRAM is 0x3f9800 on). The boot kernel keeps its variables in it; the application loads dual_port_tpu_ram_load_table into 0x302000-0x302fff (was TPU3_TPUMCR in a TPU3 register map laid over this RAM - the TPU3 registers are tpu_a_mcr / tpu_b_mcr at 0x304000 / 0x304400; PR #53 round 70)
 0x00302002,ecu_power_state_flags,keyon_flags_t,
-0x00302004,TPU3_DSCR,,
-0x00302006,keyon_state_machine_phase,,
-0x00302008,TPU3_TICR,,
-0x0030200a,qadc_a_portqa,,
-0x0030200c,TPU3_CFSR0,,
-0x0030200e,TPU3_CFSR1,,
-0x00302010,TPU3_CFSR2,,
-0x00302012,ecm_runtime_accumulator,,
-0x00302014,TPU3_HSQR0,,
-0x00302016,TPU3_HSQR1,j1939_rx_msg_t,
-0x00302017,TPU3_HSQR1+1,,
-0x00302018,TPU3_HSRR0,,
-0x0030201a,TPU3_HSRR1,,
-0x0030201c,TPU3_CPR0,,
-0x0030201e,TPU3_CPR1,,
-0x00302020,TPU3_CISR,,
-0x00302100,TPU3_CH0_PARAM0,byte,
-0x00302110,TPU3_CH1_PARAM0,byte,
-0x00302120,TPU3_CH2_PARAM0,byte,
-0x00302130,TPU3_CH3_PARAM0,byte,
-0x00302140,TPU3_CH4_PARAM0,byte,
-0x00302150,TPU3_CH5_PARAM0,byte,
-0x00302160,TPU3_CH6_PARAM0,byte,
-0x00302170,TPU3_CH7_PARAM0,byte,
-0x00302180,TPU3_CH8_PARAM0,byte,
-0x00302190,TPU3_CH9_PARAM0,byte,
-0x003021a0,TPU3_CH10_PARAM0,byte,
-0x003021b0,TPU3_CH11_PARAM0,byte,
-0x003021c0,TPU3_CH12_PARAM0,byte,
-0x003021d0,TPU3_CH13_PARAM0,byte,
-0x003021e0,TPU3_CH14_PARAM0,byte,
-0x003021f0,TPU3_CH15_PARAM0,byte,
+0x00302006,ecu_power_state_flags.state,,(was keyon_state_machine_phase: a stale flat row inside the struct; PR #53 round 70)
+0x0030200a,ecu_power_state_flags.transfer_crc,,(was qadc_a_portqa: a stale flat row inside the struct; PR #53 round 70)
+0x00302012,ecu_power_state_flags.runtime_counter,,(was ecm_runtime_accumulator: a stale flat row inside the struct; PR #53 round 70)
+0x00302016,boot_can_receive_ring,j1939_rx_msg_t[40],The boot kernel's CAN receive ring: 40 18-byte records 0x302016-0x3022e5 - mpc555_processCanReceiveBuffer fills it and mpc555_dispatchCanMessageHandlers reads it through boot_can_ring_state; both wrap past 0x3022d4 (the last record) (was TPU3_HSQR1; PR #53 round 70)
+0x003022e6,boot_can_transmit_ring,boot_can_transmit_frame_t[40],The boot kernel's CAN transmit ring: 40 12-byte frames 0x3022e6-0x3024c5 - mpc555_canTransmitQueuePush queues a frame here while the mailbox is busy (it wraps past 0x3024ba - the last frame) and mpc555_manageCan1TransmitBuffer sends them (PR #53 round 70)
 0x003024c6,boot_can_ring_state,can_ring_state_t,The boot ROM / kernel CAN driver's queue state (can_ring_state_t): the transmit ring (12-byte frames at 0x3022e6) and receive ring (18-byte records at 0x302016) pointers, their full flags and the transmit message buffer. Users: mpc555_canTransmitQueuePush, mpc555_manageCan1TransmitBuffer, mpc555_processCanReceiveBuffer, mpc555_dispatchCanMessageHandlers (kernel) and mpc555_initDiagnosticSubsystem, cm848_handleBootExecuteAtAddressService (boot ROM); the application has its own CAN driver (was j1939_can_ring_buf)
 0x003024ca,boot_can_ring_state.transmit_read_pointer,,
 0x003024ce,boot_can_ring_state.receive_write_pointer,,
@@ -8416,6 +8392,7 @@ address,name,type,comment
 0x00064428,intake_air_heater_performance_test_recovery_sample_delay_ticks,word,e2m 162A +4 IAH_Grid_Off_Voltage_Check_Delay 'Delay between grid-off and taking voltage sample': loaded into intake_air_heater_performance_test_delay_ticks when state 2 ends (the preheat is over) and the test moves to state 3, the recovery after the heater turns off (lhz @ 0x532880); 2 in ROM (PR #53 round 24)
 0x0030306d,boot_j1939_transport_transmit_frame_buffer,byte[8],the boot reflash kernel's J1939 transport frame assembly buffer: mpc555_initDiagResponseHandlers points boot_j1939_transport_transmit_session.transmit_frame_pointer here (8 bytes after the single-frame response data at 0x303065; PR #53 round 34)
 0x00303075,boot_j1939_transport_receive_buffer,byte,the first byte of the boot kernel's J1939 transport receive buffer (boot_j1939_transport_receive_session.receive_buffer_pointer starts here; PR #53 round 35)
+0x00303800,dual_port_tpu_ram_end,byte,One past the 6 KB dual-port TPU RAM: cm848_clearRamRegions' bound (PR #53 round 70)
 0x003fa0de,fuel_blend_coefficient_by_barometric_pressure_cached_axis_offset,word,the lookup cache of fuel_blend_coefficient_by_barometric_pressure (1-D: the segment offset of the last lookup; 1 calls in cm848_temperatureBasedFuelTrim; PR #53 round 37)
 0x003fa0e0,fuel_blend_coefficient_by_coolant_temperature_cached_axis_offset,word,the lookup cache of fuel_blend_coefficient_by_coolant_temperature (1-D: the segment offset of the last lookup; 1 calls in cm848_temperatureBasedFuelTrim; PR #53 round 37)
 0x003fa130,charge_flow_turbocharger_speed_limit_factor_by_barometric_pressure_cached_axis_offset,word,the lookup cache of charge_flow_turbocharger_speed_limit_factor_by_barometric_pressure (1-D: the segment offset of the last lookup; 1 calls in cm848_calculateChargeFlowTurbochargerSpeedDerate; PR #53 round 37)

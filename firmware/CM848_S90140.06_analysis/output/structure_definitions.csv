@@ -1694,16 +1694,19 @@ keyon_flags_t,0x00302002,_pad10,word,2,Reserved,,verified
 keyon_flags_t,0x00302002,mailbox_index,word,2,CAN mailbox slot index for channel assignment,,verified
 keyon_flags_t,0x00302002,_pad14,word,2,Reserved,,verified
 keyon_flags_t,0x00302002,runtime_counter,dword,4,ECU runtime counter (RAM 0x302012): loaded from EEPROM 0x1000030 at boot / +1 every 41 PIT ticks (~0.205 s per count if the PIT runs at 1 MHz) / written back at key-off; also the auth-token freshness clock (was eeprom_write_count),,verified
+# boot_can_transmit_frame_t - one frame of boot_can_transmit_ring: the 12 bytes mpc555_canTransmitQueuePush builds and either queues or hands to cm848_writeBootKernelCanTxMailbox (PR #53 round 70)
+boot_can_transmit_frame_t,,toucan_identifier,dword,4,The TouCAN ID_HIGH / ID_LOW image: identifier bits 28-18 shifted to 31-21 / SRR and IDE (0x180000) / bits 17-0 shifted to 18-1,,verified
+boot_can_transmit_frame_t,,data,byte,8,The payload - 0xff past its length,,verified
 # =============================================================================
 # CAN transmit/receive ring buffer pointers @ 0x3024c6
-# j1939_tx: J1939 message queue ring buffer (12-byte records, base 0x3022e6)
-# can_rx: CAN receive record ring buffer (18-byte records, base 0x302016)
+# boot_can_transmit_ring: 40 boot_can_transmit_frame_t at 0x3022e6 (round 70)
+# boot_can_receive_ring: 40 j1939_rx_msg_t at 0x302016 (round 70)
 # transmit_message_buffer_pointer: active TouCAN mailbox base for current diagnostic session
 # =============================================================================
-can_ring_state_t,0x003024c6,transmit_write_pointer,dword,4,Transmit ring write pointer: 12-byte frames from 0x3022e6; mpc555_canTransmitQueuePush stores a frame and advances it (was j1939_tx_write_ptr) | earlier note: J1939 TX queue write pointer (12-byte records base 0x3022E6),,verified
-can_ring_state_t,0x003024c6,transmit_read_pointer,dword,4,Transmit ring read pointer: mpc555_manageCan1TransmitBuffer sends the frame there and advances it (wrapping after 0x3024ba) (was j1939_tx_read_ptr) | earlier note: J1939 TX queue read pointer,,verified
-can_ring_state_t,0x003024c6,receive_write_pointer,dword,4,Receive ring write pointer: 18-byte records from 0x302016 (mpc555_processCanReceiveBuffer) (was can_rx_write_ptr) | earlier note: CAN RX queue write pointer (18-byte records base 0x302016),,verified
-can_ring_state_t,0x003024c6,receive_read_pointer,dword,4,Receive ring read pointer (mpc555_dispatchCanMessageHandlers) (was can_rx_read_ptr) | earlier note: CAN RX queue read pointer,,verified
+can_ring_state_t,0x003024c6,transmit_write_pointer,boot_can_transmit_frame_t*,4,Transmit ring write pointer: 12-byte frames from 0x3022e6; mpc555_canTransmitQueuePush stores a frame and advances it (was j1939_tx_write_ptr) | earlier note: J1939 TX queue write pointer (12-byte records base 0x3022E6),,verified
+can_ring_state_t,0x003024c6,transmit_read_pointer,boot_can_transmit_frame_t*,4,Transmit ring read pointer: mpc555_manageCan1TransmitBuffer sends the frame there and advances it (wrapping after 0x3024ba) (was j1939_tx_read_ptr) | earlier note: J1939 TX queue read pointer,,verified
+can_ring_state_t,0x003024c6,receive_write_pointer,j1939_rx_msg_t*,4,Receive ring write pointer: 18-byte records from 0x302016 (mpc555_processCanReceiveBuffer) (was can_rx_write_ptr) | earlier note: CAN RX queue write pointer (18-byte records base 0x302016),,verified
+can_ring_state_t,0x003024c6,receive_read_pointer,j1939_rx_msg_t*,4,Receive ring read pointer (mpc555_dispatchCanMessageHandlers) (was can_rx_read_ptr) | earlier note: CAN RX queue read pointer,,verified
 can_ring_state_t,0x003024c6,transmit_ring_full_flag,byte,1,1 = the transmit ring is full: mpc555_canTransmitQueuePush sets it when its write pointer reaches the read pointer (and returns 4 while it is set); mpc555_manageCan1TransmitBuffer clears it after sending a frame (was _pad16 byte 0; PR #53 round 28),,verified
 can_ring_state_t,0x003024c6,receive_ring_full_flag,byte,1,1 = the receive ring is full: mpc555_processCanReceiveBuffer sets it when its write pointer reaches the read pointer; mpc555_dispatchCanMessageHandlers clears it (was _pad16 byte 1; PR #53 round 28),,verified
 can_ring_state_t,0x003024c6,reserved_18,word,2,No users (bytes 2-3 of the old _pad16),,verified

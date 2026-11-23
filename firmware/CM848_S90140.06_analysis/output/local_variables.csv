@@ -23,7 +23,7 @@ function_address,function_name,old_name,new_name,type,comment
 # cm848_validateWriteAuth @ 0x00007370 - Validate scrambled auth token for calibration writes
 0x00007370,cm848_validateWriteAuth,param_1,scrambled_token,undefined4,Pointer to 10-byte scrambled auth data from tool
 0x00007370,cm848_validateWriteAuth,bVar2,attempt_count,byte,Current value of eeprom_block_tracking.failed_write_authorization_count (was write_auth_attempt_counter
-0x00007370,cm848_validateWriteAuth,dVar2,current_runtime,dword,Snapshot of ecm_runtime_accumulator for timestamp check
+0x00007370,cm848_validateWriteAuth,dVar2,current_runtime,dword,Snapshot of ecu_power_state_flags.runtime_counter for timestamp check
 0x00007370,cm848_validateWriteAuth,bVar1,key_matches,byte,Whether all 6 descrambled key bytes match EEPROM header
 0x00007370,cm848_validateWriteAuth,cVar8,compare_index,char,Loop counter for 6-byte key comparison
 0x00007370,cm848_validateWriteAuth,bVar7,copy_count,byte,Loop counter for 3-byte timestamp extraction

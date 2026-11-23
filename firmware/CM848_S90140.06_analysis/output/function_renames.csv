@@ -383,7 +383,7 @@ address,name
 0x00002694,mpc555_hardwareInitialization
 0x00002970,mpc555_initCanController
 0x00002a40,mpc555_initDiagnosticSubsystem,registers every diagnostic_service_dispatch_table entry at boot (services 2 7 11 16 24 25 65 67 68 69 74 75 76 77)
-0x00002b7c,cm848_clearRamRegions
+0x00002b7c,cm848_clearRamRegions,Boot kernel: clears the SRAM from calibration_ram_start (0x3f9800) up to 0x3fffd0 - that bound renders as wastegate_duty_floor_x_axis + 0x12 because an application table time-shares it - and the whole 6 KB dual-port TPU RAM (dual_port_tpu_ram_start to dual_port_tpu_ram_end) (PR #53 round 70)
 0x00002bc8,cm848_softReset
 0x00002c94,cm848_registerDiagnosticService,fills diagnostic_service_dispatch_table (entry = byte service_id + void* handler - max 20); returns true when full
 0x00002cd8,cm848_registerPgnEf00Handler
@@ -1627,7 +1627,7 @@ address,name
 0x0005573c,cm848_processSecurityCodeConversion
 0x0005586c,cm848_driveTachometerOutputs,Drives the tachometer outputs (e2m 116A / 116B; output channel entries 25 / 26 = e2m 1565 Tachometer_Highside / Lowside_Driver_Map): the engine speed (or tachometer_override_engine_speed in override mode 1), raised to tachometer_minimum_engine_speed when lower and nonzero, gives tachometer_signal_period = tachometer_base_period x 1000000 / speed microseconds at 50 % duty (0x3200); speed 0 (or a base period above 0x10c5) turns them off (period 0xffffffff, duty 0) (was cm848_processEngineRpmDiagnostic)
 0x00055a40,cm848_initializeTachometerOutputs,Boot initializer of the tachometer outputs: tachometer_minimum_engine_speed = tachometer_base_period x 0x1312 >> 10 (at least tachometer_engine_speed_cutoff); then enables entries 25 / 26 with period 0xffffffff and duty 0 (was cm848_dispatchCalibrationFunctions)
-0x00055c1c,mpc555_initTpuConfiguration
+0x00055c1c,mpc555_initTpuConfiguration,Unless TPU B's TPUMCR has bit 0x400 set: copies dual_port_tpu_ram_load_table's records into the dual-port TPU RAM (0x302000-0x302fff) / then sets both TPU module configuration registers (0x4430 B / 0x4460 A) and their interrupt registers (PR #53 round 70)
 0x00055d2c,mpc555_tpuBInterruptDispatcher
 0x00055de4,mpc555_tpuAInterruptDispatcher
 0x00055e9c,cm848_emptyStubFunction8,Empty function: returns immediately (a single blr). No bl caller found in either bank. (was cm848_emptyStubFunction)

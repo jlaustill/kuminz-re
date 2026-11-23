@@ -1374,6 +1374,7 @@ typedef struct qsmcm_qspi_ctrl_t qsmcm_qspi_ctrl_t;
 typedef struct qsmcm_recram_t qsmcm_recram_t;
 typedef struct qsmcm_txram_t qsmcm_txram_t;
 typedef struct keyon_flags_t keyon_flags_t;
+typedef struct boot_can_transmit_frame_t boot_can_transmit_frame_t;
 typedef struct can_ring_state_t can_ring_state_t;
 typedef struct diag_write_request_state_t diag_write_request_state_t;
 typedef struct can_slot_range_t can_slot_range_t;
@@ -3048,11 +3049,16 @@ struct keyon_flags_t {
     uint32_t runtime_counter;  /* ECU runtime counter (RAM 0x302012): loaded from EEPROM 0x1000030 at boot / +1 every 41 PIT ticks (~0.205 s per count if the PIT runs at 1 MHz) / written back at key-off; also the auth-token freshness clock (was eeprom_write_count) */
 };
 
+struct boot_can_transmit_frame_t {
+    uint32_t toucan_identifier;  /* The TouCAN ID_HIGH / ID_LOW image: identifier bits 28-18 shifted to 31-21 / SRR and IDE (0x180000) / bits 17-0 shifted to 18-1 */
+    uint8_t data[8];  /* The payload - 0xff past its length */
+};
+
 struct can_ring_state_t {
-    uint32_t transmit_write_pointer;  /* Transmit ring write pointer: 12-byte frames from 0x3022e6; mpc555_canTransmitQueuePush stores a frame and advances it (was j1939_tx_write_ptr) | earlier note: J1939 TX queue write pointer (12-byte records base 0x3022E6) */
-    uint32_t transmit_read_pointer;  /* Transmit ring read pointer: mpc555_manageCan1TransmitBuffer sends the frame there and advances it (wrapping after 0x3024ba) (was j1939_tx_read_ptr) | earlier note: J1939 TX queue read pointer */
-    uint32_t receive_write_pointer;  /* Receive ring write pointer: 18-byte records from 0x302016 (mpc555_processCanReceiveBuffer) (was can_rx_write_ptr) | earlier note: CAN RX queue write pointer (18-byte records base 0x302016) */
-    uint32_t receive_read_pointer;  /* Receive ring read pointer (mpc555_dispatchCanMessageHandlers) (was can_rx_read_ptr) | earlier note: CAN RX queue read pointer */
+    boot_can_transmit_frame_t* transmit_write_pointer;  /* Transmit ring write pointer: 12-byte frames from 0x3022e6; mpc555_canTransmitQueuePush stores a frame and advances it (was j1939_tx_write_ptr) | earlier note: J1939 TX queue write pointer (12-byte records base 0x3022E6) */
+    boot_can_transmit_frame_t* transmit_read_pointer;  /* Transmit ring read pointer: mpc555_manageCan1TransmitBuffer sends the frame there and advances it (wrapping after 0x3024ba) (was j1939_tx_read_ptr) | earlier note: J1939 TX queue read pointer */
+    j1939_rx_msg_t* receive_write_pointer;  /* Receive ring write pointer: 18-byte records from 0x302016 (mpc555_processCanReceiveBuffer) (was can_rx_write_ptr) | earlier note: CAN RX queue write pointer (18-byte records base 0x302016) */
+    j1939_rx_msg_t* receive_read_pointer;  /* Receive ring read pointer (mpc555_dispatchCanMessageHandlers) (was can_rx_read_ptr) | earlier note: CAN RX queue read pointer */
     uint8_t transmit_ring_full_flag;  /* 1 = the transmit ring is full: mpc555_canTransmitQueuePush sets it when its write pointer reaches the read pointer (and returns 4 while it is set); mpc555_manageCan1TransmitBuffer clears it after sending a frame (was _pad16 byte 0; PR #53 round 28) */
     uint8_t receive_ring_full_flag;  /* 1 = the receive ring is full: mpc555_processCanReceiveBuffer sets it when its write pointer reaches the read pointer; mpc555_dispatchCanMessageHandlers clears it (was _pad16 byte 1; PR #53 round 28) */
     uint16_t reserved_18;  /* No users (bytes 2-3 of the old _pad16) */

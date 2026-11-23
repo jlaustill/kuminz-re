@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 13:09:07 MST 2026
+// Generated: Mon Nov 23 14:07:10 MST 2026
 
 
 //
@@ -1189,8 +1189,8 @@ void cm848_stubFunction2(void)
 BOOT_DIAGNOSTIC_RESULT cm848_handleBootExecuteAtAddressService(j1939_rx_msg_t *request)
 
 {
-  dword dVar1;
-  dword dVar2;
+  boot_can_transmit_frame_t *pbVar1;
+  boot_can_transmit_frame_t *pbVar2;
   byte bVar3;
   word wVar4;
   word wVar5;
@@ -1206,12 +1206,12 @@ BOOT_DIAGNOSTIC_RESULT cm848_handleBootExecuteAtAddressService(j1939_rx_msg_t *r
       wVar4 = mios_mmcsm_cnt.CNT;
       bVar3 = boot_can_ring_state.transmit_ring_full_flag;
       do {
-        dVar1 = boot_can_ring_state.transmit_write_pointer;
-        dVar2 = boot_can_ring_state.transmit_read_pointer;
+        pbVar1 = boot_can_ring_state.transmit_write_pointer;
+        pbVar2 = boot_can_ring_state.transmit_read_pointer;
         do {
           wVar5 = mios_mmcsm_cnt.CNT;
           if (0x40c < (int)((uint)wVar5 - (uint)wVar4)) goto LAB_000018f4;
-        } while (dVar1 != dVar2);
+        } while (pbVar1 != pbVar2);
       } while (bVar3 == 1);
 LAB_000018f4:
       (*local_20[0])();
@@ -2167,10 +2167,10 @@ void mpc555_initDiagnosticSubsystem(void)
   byte bVar6;
   undefined5 uVar7;
   
-  boot_can_ring_state.transmit_read_pointer = 0x3022e6;
-  boot_can_ring_state.transmit_write_pointer = 0x3022e6;
-  boot_can_ring_state.receive_read_pointer = 0x302016;
-  boot_can_ring_state.receive_write_pointer = 0x302016;
+  boot_can_ring_state.transmit_read_pointer = boot_can_transmit_ring;
+  boot_can_ring_state.transmit_write_pointer = boot_can_transmit_ring;
+  boot_can_ring_state.receive_read_pointer = boot_can_receive_ring;
+  boot_can_ring_state.receive_write_pointer = boot_can_receive_ring;
   uVar7 = mpc555_initDiagResponseHandlers();
   cm848_registerPgnEf00Handler((byte)((uint5)uVar7 >> 0x20),(void *)uVar7);
   cm848_registerBootMemoryReadServices();
@@ -2214,6 +2214,11 @@ void mpc555_initDiagnosticSubsystem(void)
 // Function: cm848_clearRamRegions @ 0x00002b7c
 //
 
+/* Boot kernel: clears the SRAM from calibration_ram_start (0x3f9800) up to 0x3fffd0 - that bound
+   renders as wastegate_duty_floor_x_axis + 0x12 because an application table time-shares it - and
+   the whole 6 KB dual-port TPU RAM (dual_port_tpu_ram_start to dual_port_tpu_ram_end) (PR #53 round
+   70) */
+
 void cm848_clearRamRegions(void)
 
 {
@@ -2226,14 +2231,14 @@ void cm848_clearRamRegions(void)
     pwVar1[1] = 0;
     pwVar1 = pwVar1 + 2;
   } while (pwVar1 < wastegate_duty_floor_x_axis + 0x12);
-  pbVar2 = &TPU3_TPUMCR;
+  pbVar2 = &dual_port_tpu_ram_start;
   do {
     pbVar2[0] = 0;
     pbVar2[1] = 0;
     pbVar2[2] = 0;
     pbVar2[3] = 0;
     pbVar2 = pbVar2 + 4;
-  } while (pbVar2 < &DAT_00303800);
+  } while (pbVar2 < &dual_port_tpu_ram_end);
   return;
 }
 
@@ -3181,12 +3186,12 @@ void mpc555_canTransmitQueuePush(dword can_id,dword data_length,byte *data,byte 
 
 {
   byte *pbVar1;
-  dword dVar2;
-  dword dVar3;
-  word wVar4;
-  uint uVar5;
-  byte *pbVar6;
-  undefined2 *puVar7;
+  boot_can_transmit_frame_t *pbVar2;
+  boot_can_transmit_frame_t *pbVar3;
+  dword dVar4;
+  word wVar5;
+  uint uVar6;
+  byte *pbVar7;
   byte *pbVar8;
   undefined2 *puVar9;
   byte bVar10;
@@ -3205,53 +3210,53 @@ void mpc555_canTransmitQueuePush(dword can_id,dword data_length,byte *data,byte 
     else {
       local_28 = (can_id & 0x1ffc0000) << 3 | (can_id & 0x3ffff) << 1 | 0x180000;
       pbVar8 = local_24;
-      uVar5 = 0;
+      uVar6 = 0;
       if (0 < (int)data_length) {
-        pbVar6 = data + -1;
+        pbVar7 = data + -1;
         pbVar1 = (byte *)((int)&local_28 + 3);
         do {
           pbVar8 = pbVar1;
-          pbVar6 = pbVar6 + 1;
+          pbVar7 = pbVar7 + 1;
           pbVar1 = pbVar8 + 1;
-          *pbVar1 = *pbVar6;
-          uVar5 = uVar5 + 1 & 0xff;
-        } while ((int)uVar5 < (int)data_length);
+          *pbVar1 = *pbVar7;
+          uVar6 = uVar6 + 1 & 0xff;
+        } while ((int)uVar6 < (int)data_length);
         pbVar8 = pbVar8 + 2;
       }
-      uVar5 = data_length & 0xff;
-      if (uVar5 < 8) {
+      uVar6 = data_length & 0xff;
+      if (uVar6 < 8) {
         pbVar8 = pbVar8 + -1;
         do {
           pbVar8 = pbVar8 + 1;
           *pbVar8 = 0xff;
-          uVar5 = uVar5 + 1 & 0xff;
-        } while (uVar5 < 8);
+          uVar6 = uVar6 + 1 & 0xff;
+        } while (uVar6 < 8);
       }
-      dVar2 = boot_can_ring_state.transmit_message_buffer_pointer;
-      if ((*(byte *)(dVar2 + 1) & 0xf0) == 0xc0) {
-        dVar2 = boot_can_ring_state.transmit_write_pointer;
+      dVar4 = boot_can_ring_state.transmit_message_buffer_pointer;
+      if ((*(byte *)(dVar4 + 1) & 0xf0) == 0xc0) {
+        pbVar2 = boot_can_ring_state.transmit_write_pointer;
         bVar10 = 0;
         puVar9 = &uStack_2a;
-        puVar7 = (undefined2 *)(dVar2 - 2);
+        pbVar8 = pbVar2[-1].data + 6;
         do {
           puVar9 = puVar9 + 1;
-          puVar7 = puVar7 + 1;
-          *puVar7 = *puVar9;
+          pbVar8 = pbVar8 + 2;
+          *(undefined2 *)pbVar8 = *puVar9;
           bVar10 = bVar10 + 1;
         } while (bVar10 < 6);
-        boot_can_ring_state.transmit_write_pointer = dVar2 + 0xc;
-        if (&UNK_003024ba < (undefined *)(dVar2 + 0xc)) {
-          boot_can_ring_state.transmit_write_pointer = 0x3022e6;
+        boot_can_ring_state.transmit_write_pointer = pbVar2 + 1;
+        if (boot_can_transmit_ring + 0x27 < pbVar2 + 1) {
+          boot_can_ring_state.transmit_write_pointer = boot_can_transmit_ring;
         }
-        dVar2 = boot_can_ring_state.transmit_write_pointer;
-        dVar3 = boot_can_ring_state.transmit_read_pointer;
-        if (dVar2 == dVar3) {
+        pbVar2 = boot_can_ring_state.transmit_write_pointer;
+        pbVar3 = boot_can_ring_state.transmit_read_pointer;
+        if (pbVar2 == pbVar3) {
           boot_can_ring_state.transmit_ring_full_flag = 1;
         }
       }
       else {
-        wVar4 = can_mailbox_counter.slot_start;
-        cm848_writeBootKernelCanTxMailbox(&toucan_a,wVar4 & 0xff,(word *)&local_28);
+        wVar5 = can_mailbox_counter.slot_start;
+        cm848_writeBootKernelCanTxMailbox(&toucan_a,wVar5 & 0xff,(word *)&local_28);
       }
       bVar10 = 0;
     }
@@ -4054,31 +4059,31 @@ void mpc555_can2TransmitInterruptHandler(void)
 void mpc555_manageCan1TransmitBuffer(void)
 
 {
-  word *pwVar1;
-  word *frame_words;
-  dword dVar2;
-  byte bVar3;
+  boot_can_transmit_frame_t *pbVar1;
+  boot_can_transmit_frame_t *frame_words;
+  byte bVar2;
+  dword dVar3;
   word wVar4;
   word wVar5;
   
   wVar4 = can_mailbox_counter.slot_start;
   wVar5 = toucan_a.IFLAG;
   toucan_a.IFLAG = wVar5 & ~(ushort)(1 << (wVar4 + 0xffff & 0x3f));
-  frame_words = (word *)boot_can_ring_state.transmit_read_pointer;
-  pwVar1 = (word *)boot_can_ring_state.transmit_write_pointer;
-  if ((pwVar1 == frame_words) && (bVar3 = boot_can_ring_state.transmit_ring_full_flag, bVar3 != 1))
+  frame_words = boot_can_ring_state.transmit_read_pointer;
+  pbVar1 = boot_can_ring_state.transmit_write_pointer;
+  if ((pbVar1 == frame_words) && (bVar2 = boot_can_ring_state.transmit_ring_full_flag, bVar2 != 1))
   {
-    dVar2 = boot_can_ring_state.transmit_message_buffer_pointer;
-    *(undefined1 *)(dVar2 + 1) = 0;
+    dVar3 = boot_can_ring_state.transmit_message_buffer_pointer;
+    *(undefined1 *)(dVar3 + 1) = 0;
   }
   else {
     wVar4 = can_mailbox_counter.slot_start;
-    cm848_writeBootKernelCanTxMailbox(&toucan_a,wVar4 & 0xff,frame_words);
+    cm848_writeBootKernelCanTxMailbox(&toucan_a,wVar4 & 0xff,(word *)frame_words);
     boot_can_ring_state.transmit_ring_full_flag = 0;
-    dVar2 = boot_can_ring_state.transmit_read_pointer;
-    boot_can_ring_state.transmit_read_pointer = dVar2 + 0xc;
-    if (&UNK_003024ba < (undefined *)(dVar2 + 0xc)) {
-      boot_can_ring_state.transmit_read_pointer = 0x3022e6;
+    pbVar1 = boot_can_ring_state.transmit_read_pointer;
+    boot_can_ring_state.transmit_read_pointer = pbVar1 + 1;
+    if (boot_can_transmit_ring + 0x27 < pbVar1 + 1) {
+      boot_can_ring_state.transmit_read_pointer = boot_can_transmit_ring;
     }
   }
   return;
@@ -4093,59 +4098,62 @@ void mpc555_manageCan1TransmitBuffer(void)
 void mpc555_processCanReceiveBuffer(int param_1)
 
 {
-  uint *puVar1;
-  dword dVar2;
-  dword dVar3;
-  byte bVar4;
+  j1939_rx_msg_t *pjVar1;
+  j1939_rx_msg_t *pjVar2;
+  byte bVar3;
+  word wVar4;
   word wVar5;
-  word wVar6;
-  uint uVar7;
-  int iVar8;
-  undefined *puVar9;
-  undefined1 *puVar10;
-  ushort uVar11;
+  int iVar6;
+  undefined *puVar7;
+  undefined1 *puVar8;
+  uint uVar9;
+  ushort uVar10;
   
-  bVar4 = boot_can_ring_state.receive_ring_full_flag;
-  if (bVar4 == 0) {
+  bVar3 = boot_can_ring_state.receive_ring_full_flag;
+  if (bVar3 == 0) {
     param_1 = param_1 * 0x10;
-    puVar1 = (uint *)boot_can_ring_state.receive_write_pointer;
-    *puVar1 = (*(uint *)(&DAT_003070f2 + param_1) & 0xffe00000) >> 3 |
-              *(uint *)(&DAT_003070f2 + param_1) >> 1 & 0x3ffff;
-    *(ushort *)(puVar1 + 1) = (byte)(&DAT_003070f1)[param_1] & 0xf;
-    *(dword *)((int)puVar1 + 6) = (int)puVar1 + 10;
-    uVar11 = 0;
-    puVar9 = &UNK_003070f5 + param_1;
-    puVar10 = (undefined1 *)((int)puVar1 + 9);
+    pjVar1 = boot_can_ring_state.receive_write_pointer;
+    uVar9 = (*(uint *)(&DAT_003070f2 + param_1) & 0xffe00000) >> 3 |
+            *(uint *)(&DAT_003070f2 + param_1) >> 1 & 0x3ffff;
+    pjVar1->priority_dp_flags = (char)(uVar9 >> 0x18);
+    pjVar1->pgn_pf = (char)(uVar9 >> 0x10);
+    pjVar1->dest_address = (char)(uVar9 >> 8);
+    pjVar1->source_address = (char)uVar9;
+    pjVar1->data_length = (byte)(&DAT_003070f1)[param_1] & 0xf;
+    pjVar1->data_pointer = pjVar1->inline_data;
+    uVar10 = 0;
+    puVar7 = &UNK_003070f5 + param_1;
+    puVar8 = (undefined1 *)((int)&pjVar1->data_pointer + 3);
     do {
-      puVar9 = puVar9 + 1;
-      puVar10 = puVar10 + 1;
-      *puVar10 = *puVar9;
-      uVar11 = uVar11 + 1;
-    } while (uVar11 < 8);
-    wVar5 = toucan_a.TIMER;
+      puVar7 = puVar7 + 1;
+      puVar8 = puVar8 + 1;
+      *puVar8 = *puVar7;
+      uVar10 = uVar10 + 1;
+    } while (uVar10 < 8);
+    wVar4 = toucan_a.TIMER;
   }
-  dVar2 = boot_can_ring_state.receive_write_pointer;
-  boot_can_ring_state.receive_write_pointer = dVar2 + 0x12;
-  if (&UNK_003022d4 < (undefined *)(dVar2 + 0x12)) {
-    boot_can_ring_state.receive_write_pointer = 0x302016;
+  pjVar1 = boot_can_ring_state.receive_write_pointer;
+  boot_can_ring_state.receive_write_pointer = pjVar1 + 1;
+  if (boot_can_receive_ring + 0x27 < pjVar1 + 1) {
+    boot_can_ring_state.receive_write_pointer = boot_can_receive_ring;
   }
-  dVar2 = boot_can_ring_state.receive_write_pointer;
-  dVar3 = boot_can_ring_state.receive_read_pointer;
-  if (dVar2 == dVar3) {
+  pjVar1 = boot_can_ring_state.receive_write_pointer;
+  pjVar2 = boot_can_ring_state.receive_read_pointer;
+  if (pjVar1 == pjVar2) {
     boot_can_ring_state.receive_ring_full_flag = 1;
-    wVar5 = can_mailbox_counter.slot_start;
-    iVar8 = 1 << (wVar5 + 1 & 0x3f);
-    uVar7 = 0;
-    wVar6 = can_mailbox_counter.slot_end;
-    if (0 < (int)((uint)wVar6 - (uint)wVar5)) {
+    wVar4 = can_mailbox_counter.slot_start;
+    iVar6 = 1 << (wVar4 + 1 & 0x3f);
+    uVar9 = 0;
+    wVar5 = can_mailbox_counter.slot_end;
+    if (0 < (int)((uint)wVar5 - (uint)wVar4)) {
       do {
-        wVar5 = toucan_a.IMASK;
-        toucan_a.IMASK = wVar5 & ~(ushort)iVar8;
-        iVar8 = iVar8 * 2;
-        uVar7 = uVar7 + 1 & 0xffff;
-        wVar6 = can_mailbox_counter.slot_end;
-        wVar5 = can_mailbox_counter.slot_start;
-      } while ((int)uVar7 < (int)((uint)wVar6 - (uint)wVar5));
+        wVar4 = toucan_a.IMASK;
+        toucan_a.IMASK = wVar4 & ~(ushort)iVar6;
+        iVar6 = iVar6 * 2;
+        uVar9 = uVar9 + 1 & 0xffff;
+        wVar5 = can_mailbox_counter.slot_end;
+        wVar4 = can_mailbox_counter.slot_start;
+      } while ((int)uVar9 < (int)((uint)wVar5 - (uint)wVar4));
     }
   }
   return;
@@ -4160,9 +4168,9 @@ void mpc555_processCanReceiveBuffer(int param_1)
 void mpc555_dispatchCanMessageHandlers(void)
 
 {
-  byte bVar1;
-  dword dVar2;
-  dword dVar3;
+  j1939_rx_msg_t *pjVar1;
+  j1939_rx_msg_t *pjVar2;
+  byte bVar3;
   word wVar4;
   can_rx_channel_t cVar5;
   word wVar6;
@@ -4179,37 +4187,37 @@ void mpc555_dispatchCanMessageHandlers(void)
     if (4 < iVar7) {
       return;
     }
-    dVar3 = boot_can_ring_state.receive_read_pointer;
-    dVar2 = boot_can_ring_state.receive_write_pointer;
-    if ((dVar2 == dVar3) && (bVar1 = boot_can_ring_state.receive_ring_full_flag, bVar1 != 1)) {
+    pjVar2 = boot_can_ring_state.receive_read_pointer;
+    pjVar1 = boot_can_ring_state.receive_write_pointer;
+    if ((pjVar1 == pjVar2) && (bVar3 = boot_can_ring_state.receive_ring_full_flag, bVar3 != 1)) {
       return;
     }
-    bVar1 = *(byte *)(dVar3 + 1);
-    local_28 = *(short *)(dVar3 + 1);
-    if ((bVar1 < 0xf0) &&
-       (cVar5 = can_rx_channel_filter, (cVar5.channel_id & 0xff) == (ushort)*(byte *)(dVar3 + 2))) {
-      local_28 = (ushort)bVar1 << 8;
+    local_28._0_1_ = pjVar2->pgn_pf;
+    local_28._1_1_ = pjVar2->dest_address;
+    if ((pjVar2->pgn_pf < 0xf0) &&
+       (cVar5 = can_rx_channel_filter, (cVar5.channel_id & 0xff) == (ushort)pjVar2->dest_address)) {
+      local_28 = (ushort)pjVar2->pgn_pf << 8;
     }
     pbVar8 = &pgn_response_handler_table;
     bVar10 = 0;
-    bVar1 = pgn_response_handler_count;
-    if (bVar1 != 0) {
+    bVar3 = pgn_response_handler_count;
+    if (bVar3 != 0) {
       do {
         if (*(short *)pbVar8 == local_28) {
-          (**(code **)(pbVar8 + 2))(dVar3);
+          (**(code **)(pbVar8 + 2))(pjVar2);
           break;
         }
         pbVar8 = pbVar8 + 6;
         bVar10 = bVar10 + 1;
-      } while (bVar10 < bVar1);
+      } while (bVar10 < bVar3);
     }
-    dVar2 = boot_can_ring_state.receive_read_pointer;
-    boot_can_ring_state.receive_read_pointer = dVar2 + 0x12;
-    if (&UNK_003022d4 < (undefined *)(dVar2 + 0x12)) {
-      boot_can_ring_state.receive_read_pointer = 0x302016;
+    pjVar1 = boot_can_ring_state.receive_read_pointer;
+    boot_can_ring_state.receive_read_pointer = pjVar1 + 1;
+    if (boot_can_receive_ring + 0x27 < pjVar1 + 1) {
+      boot_can_ring_state.receive_read_pointer = boot_can_receive_ring;
     }
-    bVar1 = boot_can_ring_state.receive_ring_full_flag;
-    if (bVar1 == 1) {
+    bVar3 = boot_can_ring_state.receive_ring_full_flag;
+    if (bVar3 == 1) {
       boot_can_ring_state.receive_ring_full_flag = 0;
       wVar4 = can_mailbox_counter.slot_start;
       iVar7 = 1 << (wVar4 & 0x3f);
@@ -6271,9 +6279,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
-  word counter_value;
   byte prescaler_count;
   dword runtime_value;
+  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -59902,33 +59910,37 @@ void cm848_initializeTachometerOutputs(void)
 // Function: mpc555_initTpuConfiguration @ 0x00055c1c
 //
 
+/* Unless TPU B's TPUMCR has bit 0x400 set: copies dual_port_tpu_ram_load_table's records into the
+   dual-port TPU RAM (0x302000-0x302fff) / then sets both TPU module configuration registers (0x4430
+   B / 0x4460 A) and their interrupt registers (PR #53 round 70) */
+
 void mpc555_initTpuConfiguration(void)
 
 {
   word wVar1;
   ushort *puVar2;
   ushort *puVar3;
-  ushort *puVar4;
+  word *pwVar4;
   ushort uVar5;
   
   wVar1 = tpu_b_mcr.TPUMCR;
   if ((wVar1 & 0x400) != 0x400) {
-    puVar4 = &DAT_0005862e;
+    pwVar4 = dual_port_tpu_ram_load_table;
     do {
-      uVar5 = puVar4[1];
+      uVar5 = pwVar4[1];
       if (uVar5 != 0) {
-        puVar3 = (ushort *)(*puVar4 + 0x301ffe);
-        puVar2 = puVar4 + 1;
+        puVar3 = (ushort *)(*pwVar4 + 0x301ffe);
+        puVar2 = pwVar4 + 1;
         do {
-          puVar4 = puVar2;
+          pwVar4 = puVar2;
           puVar3 = puVar3 + 1;
-          *puVar3 = puVar4[1];
+          *puVar3 = pwVar4[1];
           uVar5 = uVar5 - 1;
-          puVar2 = puVar4 + 1;
+          puVar2 = pwVar4 + 1;
         } while (uVar5 != 0);
       }
-      puVar4 = puVar4 + 2;
-    } while (puVar4 < &DAT_000591f6);
+      pwVar4 = pwVar4 + 2;
+    } while (pwVar4 < &first_checksum_region_end_marker);
     tpu_b_mcr.TPUMCR = 0x4430;
     tpu_b_mcr.R028 = 0x20;
     tpu_b_mcr.R02A = 0x1e;
