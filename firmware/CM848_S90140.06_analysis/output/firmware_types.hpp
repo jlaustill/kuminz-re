@@ -363,15 +363,6 @@ typedef enum {
 } FUEL_ARB_MODE;
 
 typedef enum {
-    DIRECT_ACCESS = 0x00,  /* READ: Allowed | WRITE: Direct access no security check */
-    SECURITY_REQUIRED = 0x03,  /* READ: Allowed | WRITE: Requires security check or bypass */
-    WRITE_DENIED = 0x04,  /* READ: Allowed | WRITE: Denied - returns error 0x0A */
-    LOGGING_MODE = 0x05,  /* READ: Allowed | WRITE: Requires system_logging_state check */
-    RANGE_INVALID = 0x09,  /* READ: Denied | WRITE: Error - address not in validation table */
-    ACCESS_DENIED = 0x0A  /* READ: Denied | WRITE: Error - explicitly blocked region */
-} MEMORY_ACCESS_FLAG;
-
-typedef enum {
     CORE_SERVICES = 0x01,  /* Enable core diagnostic services (secured memory ops) */
     INSITE_LIVE = 0x02,  /* Enable Insite live data monitoring */
     EXTENDED_SERVICES = 0x04,  /* Enable extended diagnostic services */

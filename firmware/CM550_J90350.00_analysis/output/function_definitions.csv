@@ -118,7 +118,7 @@ function_address,function_name,param_index,name,type,comment
 # Memory Operations (Service 0x4B Write Path)
 # -----------------------------------------------------------------------------
 # writeJ1939DiagnosticMemory @ 0x2148a - Core memory write handler
-# Returns: MEMORY_OP_RESULT enum (0=success, 2=invalid_length, 3=auth_failed, etc.)
+# Returns: char - the MEMORY_OP_RESULT numbers (0 written / 2 wrong length / 3 key / 7 / 0x0a / 0x0b / 0x1a) or the region type passed back (was documented as MEMORY_OP_RESULT; PR #53 round 72)
 0x0002148a,writeJ1939DiagnosticMemory,return,,char,The result: 0 written / 2 wrong length / 3 key missing (type 3) or refused / 7 EEPROM writes blocked / 0x0a main flash / 0x0b EEPROM queue full / 0x1a key missing (EEPROM) - or the region type passed back (UNMAPPED / REFUSED); a char as in CM848 so the region codes do not name the result (PR #53 round 72)
 0x0002148a,writeJ1939DiagnosticMemory,0,request,int,The PGN 61184 request (+4 its data length / +6 its data pointer) (was request_ptr; PR #53 round 72)
 0x0002148a,writeJ1939DiagnosticMemory,1,address,dword,The first address to write - the request's bytes 1-4 (was operation_size short: it read the address as two words; PR #53 round 72)
