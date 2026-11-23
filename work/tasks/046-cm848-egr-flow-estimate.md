@@ -2879,7 +2879,7 @@ A peer relay started the round on round 63's leads; the scripts are in `session_
     `refresh_other_csvs_r64.py` skips history markers as `refresh_references.py` does, and
     `history_corruption.py` finds a rewritten note. Round 63's renames show none, and neither do rounds 57-62's
     archived maps.
-- **Corrections (this follow-up), from the closing review:**
+- **Corrections (f7e7b6c1), from the closing review:**
   - The pushed closing said 12 codes and that the dispatcher lost 4 placeholder names. The enum has 11 codes, and
     the dispatcher lost none. `review_typed.py` matched only lowercase prefixes; `review_typed_r64.py` matches
     `JVar` too.
@@ -2919,7 +2919,7 @@ A peer relay started the round on round 63's lead; the scripts are in `session_f
   - `j1939_receive_handler_table` (0x3fd414, `j1939_receive_handler_entry_t[17]`) with the registrar's prototype.
   - All 16 handlers take `j1939_rx_msg_t *message`. The 4 TP.CM sub-handlers that the TP.CM dispatcher calls with
     the message still in r3 now show that argument.
-- **Follow-up (this follow-up), from the closing review:**
+- **Follow-up (79e9e95f), from the closing review:**
   - `cm848_updateCylinderCutoutAndInjectionQuantities` became `cm848_updateCylinderCutoutAndInjectionDemand`.
     It also writes the pilot / main / auxiliary timings for the cylinder event and
     `main_injection_timing_for_air_handling`.
@@ -2933,20 +2933,9 @@ A peer relay started the round on round 63's lead; the scripts are in `session_f
     anti-theft request / 0xe000 Cab Message 1 / 0xea00 the request dispatcher.
   - Commit 5e0d02e6 says the registrar differs by newly named globals. It differs by its renamed count and
     the `PTR_..._003fd416` auto-label.
-- **Follow-up (this follow-up), from the closing review:**
-  - `cm848_updateCylinderCutoutAndInjectionQuantities` became `cm848_updateCylinderCutoutAndInjectionDemand`.
-    It also writes the pilot / main / auxiliary timings for the cylinder event and
-    `main_injection_timing_for_air_handling`.
-  - `cm848_armTpuChannel10AtEndOfInjectionLimit` holds: both branches arm channel 10 at the end-limit angle;
-    the enable flag only picks the top nibble of `TPUA_CH10_PARAM0`.
-  - The two TPU-A handler plates cited `schedule_crankValid` / `schedule_crankInvalid`. They now name
-    `cm848_scheduleInjectionAnglesInSpeedLimpHome` / `cm848_scheduleInjectionAnglesOnPrimarySpeedInput`
-    (the rename history and the channel 10 handler's branches agree).
-  - `docs/tpu_mios_channel_map.md` and four memory notes use the current names.
-  - All 17 receive registrations, listed with comments stripped, keep their keys and handlers: 0xdd00 the
-    anti-theft request / 0xe000 Cab Message 1 / 0xea00 the request dispatcher.
-  - Commit 5e0d02e6 says the registrar differs by newly named globals. It differs by its renamed count and
-    the `PTR_..._003fd416` auto-label.
+  - `firmware/CLAUDE.md` lines 217 / 230 on the current names (ab2dce05). On line 217 the refresh had changed only
+    the registrar, not the `j1939_receivePgn{...}Handler` brace list. Line 230 said the two CCVS1 / EEC2 transmit
+    builders were not yet renamed; earlier rounds had renamed both.
 - **Proof:** stage A 4 of 1968 functions differ with the 38 renames mapped: the two SCI functions by the newly named globals and the registrar by its renamed count plus the PTR_<handler>_003fd416 auto-label that embeds the renamed TP.CM dispatcher's name, and one local declaration-order move; no artifact count changed. Stage B 21: the 18 typed functions (86 casts and 75 placeholder names removed, none added), cm848_initJ1939ProtocolHandlers (its 0xea00 key no longer renders as a function pointer) and two declaration-order moves. Every verify byte-identical, thunks 18 / 14, 0 failed prototype or local rows, history notes intact, headers 0 g++ errors, tests pass, HARD 0 / MISSING 219.
 - **Leads:**
   - `initGovernorFlagsAux` / the word at 0x3fcfba, in the trip counter block.
