@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 02:27:21 MST 2026
+// Generated: Mon Nov 23 03:21:35 MST 2026
 
 
 //
@@ -7253,7 +7253,7 @@ void cm848_periodicTaskGroup38_calibration17(void)
 {
   cm848_updateParkNeutralFlagAndTsc1Activity();
   cm848_runCoolantOverheatFuelDerate();
-  protection_fault_snapshot_update();
+  cm848_applyDiscreteOutputOverrides();
   return;
 }
 
@@ -58701,7 +58701,7 @@ void cm848_applicationMain(void)
   cm848_initWaterInFuelDistanceMonitor();
   cm848_initializeOilChangeMonitorLookups();
   cm848_clearEgrValveDriverOverCurrentState();
-  protection_fault_snapshot_initialize();
+  cm848_initializeDiscreteOutputOverrides();
   cm848_initializeBarometricPressureSensorAboveMaximumMonitor();
   cm848_clearFuelDemandFlag();
   cm848_initDiagnosticRingBuffer();
@@ -58734,7 +58734,7 @@ void cm848_applicationMain(void)
   cm848_resetTransmissionTemperatureValidation();
   cm848_initializeTransmissionShiftLogic();
   cm848_initializeTransmissionControl();
-  protection_event_11_reset();
+  cm848_initializeOverdriveSwitchAndShift();
   cm848_initializeTransmissionTemperatureSensorPerformanceMonitor();
   cm848_initTransmissionOutputSpeedFilters();
   mpc555_initTpuBConfiguration();
@@ -58812,7 +58812,7 @@ void cm848_applicationMain(void)
   cm848_flagTripInformationPowerDownDataLoss();
   cm848_removeHealedFaults();
   cm848_clearMilForHealedFaults();
-  protection_accumulator_update();
+  cm848_addCoolantOverheatLevelTimersToTotals();
   cm848_saveCruiseSetSpeedForPowerDown();
   cm848_initCommunication();
   cm848_runPowerDownSequence();
@@ -58859,7 +58859,7 @@ void cm848_restartApplicationWithoutReset(void)
   cm848_flagTripInformationPowerDownDataLoss();
   cm848_removeHealedFaults();
   cm848_clearMilForHealedFaults();
-  protection_accumulator_update();
+  cm848_addCoolantOverheatLevelTimersToTotals();
   cm848_saveCruiseSetSpeedForPowerDown();
   cm848_initCommunication();
   cm848_runPowerDownSequence();
@@ -73392,10 +73392,17 @@ void cm848_processOverdriveSwitchAndShift(void)
 
 
 //
-// Function: protection_event_11_reset @ 0x00510978
+// Function: cm848_initializeOverdriveSwitchAndShift @ 0x00510978
 //
 
-void protection_event_11_reset(void)
+/* Boot (cm848_applicationMain after cm848_initializeTransmissionControl): the initializer of
+   cm848_processOverdriveSwitchAndShift - requests the overdrive solenoid (logical output 17) off at
+   priority 0 and clears the converter clutch (bit 1) and overdrive (bit 2) solenoid test requests
+   in transmission_shift_strategy_flags.service_test_request_flags - the two bits
+   cm848_processOverdriveSwitchAndShift tests. The old name read output 0x11 as event 11 (was
+   protection_event_11_reset; PR #53 round 56) */
+
+void cm848_initializeOverdriveSwitchAndShift(void)
 
 {
   cm848_clearLogicalOutputRequest(0x11,0);
@@ -75707,10 +75714,17 @@ void cm848_runCoolantOverheatFuelDerate(void)
 
 
 //
-// Function: protection_accumulator_update @ 0x00514048
+// Function: cm848_addCoolantOverheatLevelTimersToTotals @ 0x00514048
 //
 
-void protection_accumulator_update(void)
+/* Power-down step of cm848_applicationMain and cm848_restartApplicationWithoutReset (after the
+   healed fault clean-up and before cm848_saveCruiseSetSpeedForPowerDown): adds the five
+   coolant_overheat_level_timers (e2m 8A72 +14..+24 CT_Derate_Timer1-5) to their lifetime totals in
+   the EEPROM mirror at 0x3fee04 (e2m 8A73 CT_Derate_Timer1-5_Total - a dword per level). The totals
+   stay untyped: the boot kernel's eeprom_shadow_header shares those addresses (round 53) (was
+   protection_accumulator_update; PR #53 round 56) */
+
+void cm848_addCoolantOverheatLevelTimersToTotals(void)
 
 {
   dword *pdVar1;
@@ -75729,24 +75743,36 @@ void protection_accumulator_update(void)
 
 
 //
-// Function: engine_protection_faultSeverity_manage @ 0x0051408c
+// Function: cm848_applyDiscreteOutputOverride @ 0x0051408c
 //
 
-void engine_protection_faultSeverity_manage(int param_1,int param_2,int param_3,int param_4)
+/* One discrete output override (e2m 8B5B / 8C29). Parameters: param_1 = the logical output /
+   param_2 = the override's .enable / param_3 = its .value / param_4 = the .enable of the previous
+   pass (no prototype row: one naming them put a (uint) cast on all 33 call arguments of
+   cm848_applyDiscreteOutputOverrides with any of dword / int32_t / undefined4). While param_2 is
+   set it requests the output on (param_3 nonzero) or off (0) at discrete_output_override_priority
+   through cm848_setLogicalOutputRequest / cm848_clearLogicalOutputRequest (each writes only when
+   that priority is at least the output's stored request priority). When the enable falls (param_2 0
+   with param_4 set) it zeroes the output's request priority if it still equals the override
+   priority - it leaves the request bit alone - so the output's own module takes over again. Called
+   by cm848_applyDiscreteOutputOverrides (was engine_protection_faultSeverity_manage; PR #53 round
+   56) */
+
+void cm848_applyDiscreteOutputOverride(int param_1,int param_2,int param_3,int param_4)
 
 {
   if (param_2 == 0) {
     if ((param_4 != 0) &&
-       ((ushort)logical_output_request_priority[param_1] == (protection_fault_severity_code & 0xff))
-       ) {
+       ((ushort)logical_output_request_priority[param_1] ==
+        (discrete_output_override_priority & 0xff))) {
       logical_output_request_priority[param_1] = 0;
     }
   }
   else if (param_3 == 0) {
-    cm848_clearLogicalOutputRequest(param_1,protection_fault_severity_code);
+    cm848_clearLogicalOutputRequest(param_1,discrete_output_override_priority);
   }
   else {
-    cm848_setLogicalOutputRequest(param_1,protection_fault_severity_code);
+    cm848_setLogicalOutputRequest(param_1,discrete_output_override_priority);
   }
   return;
 }
@@ -75754,68 +75780,102 @@ void engine_protection_faultSeverity_manage(int param_1,int param_2,int param_3,
 
 
 //
-// Function: protection_fault_snapshot_update @ 0x00514108
+// Function: cm848_applyDiscreteOutputOverrides @ 0x00514108
 //
 
-void protection_fault_snapshot_update(void)
+/* Periodic (cm848_periodicTaskGroup38_calibration17): applies the 11 discrete output overrides of
+   e2m 8B5B / 8C29 through cm848_applyDiscreteOutputOverride - engine brake 1 (logical output 11) /
+   air conditioning (38) / intake air heaters 1 and 2 (43 / 44) / lift pump (53) / cruise servo
+   supply / vacuum / vent (21 / 20 / 19) / transmission overdrive (17) / torque converter clutch
+   (18) / transmission relay (16) - then copies each .enable into its _enable_previous word (was
+   protection_fault_snapshot_update; PR #53 round 56) */
+
+void cm848_applyDiscreteOutputOverrides(void)
 
 {
-  engine_protection_faultSeverity_manage
-            (0xb,protection_fault_enable_event11,DAT_0040878b,protection_fault_prevEnable_event11);
-  engine_protection_faultSeverity_manage
-            (0x26,protection_fault_enable_event38,DAT_0040878d,protection_fault_prevEnable_event38);
-  engine_protection_faultSeverity_manage
-            (0x2b,protection_fault_enable_event43,DAT_0040878f,protection_fault_prevEnable_event43);
-  engine_protection_faultSeverity_manage
-            (0x2c,protection_fault_enable_event44,DAT_00408791,protection_fault_prevEnable_event44);
-  engine_protection_faultSeverity_manage
-            (0x35,protection_fault_enable_event53,DAT_00408793,protection_fault_prevEnable_event53);
-  engine_protection_faultSeverity_manage
-            (0x15,protection_fault_enable_event21,DAT_00408795,protection_fault_prevEnable_event21);
-  engine_protection_faultSeverity_manage
-            (0x14,protection_fault_enable_event20,DAT_00408797,protection_fault_prevEnable_event20);
-  engine_protection_faultSeverity_manage
-            (0x13,protection_fault_enable_event19,DAT_00408799,protection_fault_prevEnable_event19);
-  engine_protection_faultSeverity_manage
-            (0x11,protection_fault_enable_event17,DAT_0040879b,protection_fault_prevEnable_event17);
-  engine_protection_faultSeverity_manage
-            (0x12,protection_fault_enable_event18,DAT_0040879d,protection_fault_prevEnable_event18);
-  engine_protection_faultSeverity_manage
-            (0x10,protection_fault_enable_event16,DAT_0040879f,protection_fault_prevEnable_event16);
-  protection_fault_prevEnable_event11 = (ushort)protection_fault_enable_event11;
-  protection_fault_prevEnable_event38 = (ushort)protection_fault_enable_event38;
-  protection_fault_prevEnable_event43 = (ushort)protection_fault_enable_event43;
-  protection_fault_prevEnable_event44 = (ushort)protection_fault_enable_event44;
-  protection_fault_prevEnable_event53 = (ushort)protection_fault_enable_event53;
-  protection_fault_prevEnable_event21 = (ushort)protection_fault_enable_event21;
-  protection_fault_prevEnable_event20 = (ushort)protection_fault_enable_event20;
-  protection_fault_prevEnable_event19 = (ushort)protection_fault_enable_event19;
-  protection_fault_prevEnable_event17 = (ushort)protection_fault_enable_event17;
-  protection_fault_prevEnable_event18 = (ushort)protection_fault_enable_event18;
-  protection_fault_prevEnable_event16 = (ushort)protection_fault_enable_event16;
+  cm848_applyDiscreteOutputOverride
+            (0xb,engine_brake_1_output_override.enable,engine_brake_1_output_override.value,
+             engine_brake_1_output_override_enable_previous);
+  cm848_applyDiscreteOutputOverride
+            (0x26,air_conditioning_output_override.enable,air_conditioning_output_override.value,
+             air_conditioning_output_override_enable_previous);
+  cm848_applyDiscreteOutputOverride
+            (0x2b,intake_air_heater_1_output_override.enable,
+             intake_air_heater_1_output_override.value,
+             intake_air_heater_1_output_override_enable_previous);
+  cm848_applyDiscreteOutputOverride
+            (0x2c,intake_air_heater_2_output_override.enable,
+             intake_air_heater_2_output_override.value,
+             intake_air_heater_2_output_override_enable_previous);
+  cm848_applyDiscreteOutputOverride
+            (0x35,lift_pump_output_override.enable,lift_pump_output_override.value,
+             lift_pump_output_override_enable_previous);
+  cm848_applyDiscreteOutputOverride
+            (0x15,cruise_servo_supply_output_override.enable,
+             cruise_servo_supply_output_override.value,
+             cruise_servo_supply_output_override_enable_previous);
+  cm848_applyDiscreteOutputOverride
+            (0x14,cruise_vacuum_output_override.enable,cruise_vacuum_output_override.value,
+             cruise_vacuum_output_override_enable_previous);
+  cm848_applyDiscreteOutputOverride
+            (0x13,cruise_vent_output_override.enable,cruise_vent_output_override.value,
+             cruise_vent_output_override_enable_previous);
+  cm848_applyDiscreteOutputOverride
+            (0x11,transmission_overdrive_output_override.enable,
+             transmission_overdrive_output_override.value,
+             transmission_overdrive_output_override_enable_previous);
+  cm848_applyDiscreteOutputOverride
+            (0x12,transmission_torque_converter_clutch_output_override.enable,
+             transmission_torque_converter_clutch_output_override.value,
+             transmission_torque_converter_clutch_output_override_enable_previous);
+  cm848_applyDiscreteOutputOverride
+            (0x10,transmission_relay_output_override.enable,transmission_relay_output_override.value
+             ,transmission_relay_output_override_enable_previous);
+  engine_brake_1_output_override_enable_previous = (ushort)engine_brake_1_output_override.enable;
+  air_conditioning_output_override_enable_previous = (ushort)air_conditioning_output_override.enable
+  ;
+  intake_air_heater_1_output_override_enable_previous =
+       (ushort)intake_air_heater_1_output_override.enable;
+  intake_air_heater_2_output_override_enable_previous =
+       (ushort)intake_air_heater_2_output_override.enable;
+  lift_pump_output_override_enable_previous = (ushort)lift_pump_output_override.enable;
+  cruise_servo_supply_output_override_enable_previous =
+       (ushort)cruise_servo_supply_output_override.enable;
+  cruise_vacuum_output_override_enable_previous = (ushort)cruise_vacuum_output_override.enable;
+  cruise_vent_output_override_enable_previous = (ushort)cruise_vent_output_override.enable;
+  transmission_overdrive_output_override_enable_previous =
+       (ushort)transmission_overdrive_output_override.enable;
+  transmission_torque_converter_clutch_output_override_enable_previous =
+       (ushort)transmission_torque_converter_clutch_output_override.enable;
+  transmission_relay_output_override_enable_previous =
+       (ushort)transmission_relay_output_override.enable;
   return;
 }
 
 
 
 //
-// Function: protection_fault_snapshot_initialize @ 0x00514394
+// Function: cm848_initializeDiscreteOutputOverrides @ 0x00514394
 //
 
-void protection_fault_snapshot_initialize(void)
+/* Boot (cm848_applicationMain): zeroes the _enable_previous words of the 11 discrete output
+   overrides (cm848_applyDiscreteOutputOverrides) (was protection_fault_snapshot_initialize; PR #53
+   round 56) */
+
+void cm848_initializeDiscreteOutputOverrides(void)
 
 {
-  protection_fault_prevEnable_event43 = 0;
-  protection_fault_prevEnable_event44 = 0;
-  protection_fault_prevEnable_event11 = 0;
-  protection_fault_prevEnable_event38 = 0;
-  protection_fault_prevEnable_event53 = 0;
-  protection_fault_prevEnable_event21 = 0;
-  protection_fault_prevEnable_event20 = 0;
-  protection_fault_prevEnable_event19 = 0;
-  protection_fault_prevEnable_event17 = 0;
-  protection_fault_prevEnable_event18 = 0;
-  protection_fault_prevEnable_event16 = 0;
+  intake_air_heater_1_output_override_enable_previous = 0;
+  intake_air_heater_2_output_override_enable_previous = 0;
+  engine_brake_1_output_override_enable_previous = 0;
+  air_conditioning_output_override_enable_previous = 0;
+  lift_pump_output_override_enable_previous = 0;
+  cruise_servo_supply_output_override_enable_previous = 0;
+  cruise_vacuum_output_override_enable_previous = 0;
+  cruise_vent_output_override_enable_previous = 0;
+  transmission_overdrive_output_override_enable_previous = 0;
+  transmission_torque_converter_clutch_output_override_enable_previous = 0;
+  transmission_relay_output_override_enable_previous = 0;
   return;
 }
 

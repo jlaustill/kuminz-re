@@ -1463,6 +1463,7 @@ typedef struct feature_selection_bits_t feature_selection_bits_t;
 typedef struct injector_driver_booster_capacitor_monitor_record_t injector_driver_booster_capacitor_monitor_record_t;
 typedef struct injector_driver_booster_capacitor_cylinder_record_t injector_driver_booster_capacitor_cylinder_record_t;
 typedef struct fault_status_record_t fault_status_record_t;
+typedef struct discrete_output_override_t discrete_output_override_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -4469,4 +4470,9 @@ struct injector_driver_booster_capacitor_cylinder_record_t {
 struct fault_status_record_t {
     uint8_t flags;  /* bit 0x01: cleared by cm848_initializeFaultManagement and tested by cm848_mainLoopServiceMonitor / cm848_clearMilForHealedFaults; bits 0x0e: a 3-bit count cm848_countFaultOccurrence steps; bit 0x10: the MIL request (cm848_updateMilOnRequest; the sensor monitors fall back to their defaults while it is set; cm848_clearMilForHealedFaults clears it at 3 heal cycles); bits 0x60: the 2-bit heal cycle count (cm848_incrementFaultHealCycleCount); bit 0x80: a stored DTC (cm848_processPciObdRequest counts obd_stored_dtc_count from it). Updated with read-modify-write masks, so a byte, not bitfields (PR #53 round 42) */
     uint16_t status_word;  /* bit 0x0001: cm848_sciCommand51ReportActiveFaultDtcs reports the slots that have it (clear in every slot of the truck's dump, the active P0483 too: slot 100 reads flags 0x82 / status_word 0, so not simply 'active'); bits 0x0002 / 0x0004: flags cm848_removeHealedFaults / cm848_recordFaultDetection test; bits 3-9 (>> 3 & 0x7f): a 7-bit age the heal logic compares (PR #53 round 42) */
+};
+
+struct discrete_output_override_t {
+    uint8_t enable;  /* A discrete output override's enable (e2m 8B5B / 8C29 <driver>_Override_N; 0 = not overridden): while it is set cm848_applyDiscreteOutputOverride requests the output from value at discrete_output_override_priority (PR #53 round 56) */
+    uint8_t value;  /* The overridden output's requested state (e2m <driver>_User_Value_N): nonzero = on / 0 = off (PR #53 round 56) */
 };

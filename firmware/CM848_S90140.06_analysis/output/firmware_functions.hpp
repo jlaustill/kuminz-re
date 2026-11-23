@@ -1557,7 +1557,7 @@ void cm848_updateVariableGeometryTurbochargerMeanSquaredCurrent(void);  // @ 0x0
 void cm848_initializeVariableGeometryTurbochargerMotorThermalModel(void);  // @ 0x005102d4
 void cm848_monitorWaterInFuel(void);  // @ 0x005103ac
 void cm848_processOverdriveSwitchAndShift(void);  // @ 0x00510520
-void protection_event_11_reset(void);  // @ 0x00510978
+void cm848_initializeOverdriveSwitchAndShift(void);  // @ 0x00510978
 void cm848_processEcmInternalTemperatureChannel(void);  // @ 0x005109bc
 void cm848_initializeEcmInternalTemperatureChannel(void);  // @ 0x00510a48
 void cm848_processSensorReferenceVoltageBChannel(void);  // @ 0x00510ad4
@@ -1605,10 +1605,10 @@ void cm848_rampCoolantOverheatDerateMinimumInjectionTiming(void);  // @ 0x00513d
 void cm848_applyCoolantOverheatFuelDerate(void);  // @ 0x00513ddc
 void cm848_resetCoolantOverheatFuelDerate(void);  // @ 0x00513e0c
 void cm848_runCoolantOverheatFuelDerate(void);  // @ 0x00513f5c
-void protection_accumulator_update(void);  // @ 0x00514048
-void engine_protection_faultSeverity_manage(int param_1,int param_2,int param_3,int param_4);  // @ 0x0051408c
-void protection_fault_snapshot_update(void);  // @ 0x00514108
-void protection_fault_snapshot_initialize(void);  // @ 0x00514394
+void cm848_addCoolantOverheatLevelTimersToTotals(void);  // @ 0x00514048
+void cm848_applyDiscreteOutputOverride(int param_1,int param_2,int param_3,int param_4);  // @ 0x0051408c
+void cm848_applyDiscreteOutputOverrides(void);  // @ 0x00514108
+void cm848_initializeDiscreteOutputOverrides(void);  // @ 0x00514394
 void cm848_selectCoolingFanSpeedTarget(void);  // @ 0x005143f4
 void cm848_runCoolingFanSpeedPid(void);  // @ 0x00515370
 void cm848_selectCoolingFanDutySource(void);  // @ 0x00515660
