@@ -648,6 +648,11 @@ state enum, the flag bytes.**
 - **Stage A (8f0019c, labels, rows, types):** the OBD cooling monitors from e2m 8A8B / 8A8C (thermostat, P0128) and
   8A9D / 8A9E (coolant temperature in-range). It adds 18 rows (the code read 16 of them unnamed), renames 6
   (every `cssc_*` row) and retypes 3 to `i16`.
+**Round 49.**
+- **Stage A (762fc7a, rows, a rename):** 33 unnamed addresses the code reads are named from the e2m records the dumped
+  parameter ID table resolves them to (the J1939 torque curve, intake air heater, engine protection, the J1939
+  NAMEs, the MIL bitmap, the fault code table, the injector maps, ...).
+  `fuel_demand_mode_active_flag` -> `charge_saturation_temperature_source`.
 
 ## Test plan
 
@@ -740,6 +745,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 49: `prove_caches.py` with the scalar casts and two char literals folded matches 1967 of 1968 functions (the other differs only in local declaration order); verify byte-identical.
 - [x] Round 48: `prove_caches.py` on copies with the scalar casts stripped matches all 1968 functions (2 differ only in local declaration order; unstripped, the three thermostat functions differ only in casts); verify byte-identical.
 - [x] Round 47: stage A `prove_caches.py` (the retyped word's two `._0_2_` pieces folded) matches all 1968 functions; verify byte-identical. Stage B `prove_caches.py` (the split dword's six pieces folded) matches all 1968 functions; verify byte-identical.
 - [x] Round 46: stage A `prove_caches.py` matches all 1968 functions; verify byte-identical. Stage B `prove_caches.py` against a copy of the old `.cpp` with the three function names changed matches all 1968 functions; verify byte-identical.

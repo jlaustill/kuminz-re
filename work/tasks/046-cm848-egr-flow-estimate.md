@@ -2317,6 +2317,30 @@ A peer relay started the round; the scripts are in `session_folder/round48/`.
     pointer-passed (`addi`), so each needs the parameter type checked.
   - The 44 remaining round 47 outliers; the 138 unprefixed function names.
 
+## Done, round 49 (2026-11-22, same PR): unnamed data the code reads, named from table-resolved records
+
+A peer relay started the round; the scripts are in `session_folder/round49/`.
+- **Method:** `unnamed_table_reads.py`.
+  - The `.cpp` reads 411 unnamed addresses; 34 resolve through the dumped parameter ID table to a default-e2m scalar
+    record.
+  - Each is graded by its block's consistency, and each access width was checked with `raw_address_scan.py`.
+- **Stage A (762fc7a, rows, a rename):** 33 rows in their blocks' naming style.
+  - Groups: the J1939 torque curve's derated points, the duty cycle monitor, the compressor inlet and coolant states,
+    the temperature headroom cap's exhaust limit, the injector continuous recharge interval, four intake air heater
+    calibrations, the altitude derate's charge pressure bitmap, engine protection's ramp rate and maximum shutdowns,
+    the J1939 NAMEs / security flags / DM4 / fault 111 data, the MIL bitmap, the fault code assignment table, the SCI
+    data plate, and the per-cylinder injector maps.
+  - Array-sized records reached only by `addi` get a row at their base, with the e2m size in the comment.
+  - `fuel_demand_mode_active_flag` -> `charge_saturation_temperature_source` (1982 +A); the new
+    `exhaust_saturation_temperature_source` (+C) copies it. This resolves round 47's 1982 +A outlier.
+  - Skipped: 0x4086ca (8A14 +30 reaches past 8A2A's base: drift).
+- **Proof:** `prove_caches.py` with the scalar casts and two char literals folded matches 1967 of 1968 functions (the other differs only in local declaration order); verify byte-identical.
+- **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 221.
+- **Leads:**
+  - Full array types for the base-only rows: the NAMEs, the MIL bitmap, the fault code table and the cylinder maps.
+    The SCI data plate and the fault code table hold rows inside them.
+  - The other 377 unnamed reads do not resolve through the dumped table.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

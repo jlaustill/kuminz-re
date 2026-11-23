@@ -501,3 +501,7 @@ Hand work on the round 7 lead.
 ## Round 48: the OBD cooling monitors (`session_folder/round48/`)
 
 - **Stage A:** `apply_r48a.py`, `map_r48a.csv`, the cast-stripped proof (`prove_r48a.sh`). **Closing:** `apply_r48_closing.py`, `update_large_tar_r48.sh`.
+
+## Round 49: unnamed table-resolved reads (`session_folder/round49/`)
+
+- `unnamed_table_reads.py` (+ `unnamed_reads.txt`). **Stage A:** `apply_r49a.py`, `map_r49a.csv`, `prove_r49a.sh`. **Closing:** `apply_r49_closing.py`, `update_large_tar_r49.sh`.

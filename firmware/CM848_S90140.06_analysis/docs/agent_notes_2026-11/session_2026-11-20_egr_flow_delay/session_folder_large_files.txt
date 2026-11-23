@@ -248,3 +248,5 @@
   401646 verify_round47.log
   401646 verify_round47b.log
   401647 verify_round48.log
+  401637 verify_round49.log
+  401638 verify_round49b.log
