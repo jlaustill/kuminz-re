@@ -2092,9 +2092,14 @@ A peer relay started the round; the scripts are in `session_folder/round44/`.
 - **Proof:** `prove_caches.py` matches all 1968 functions. The retype from `undefined2` to `word` changes no statement.
 - This resolves round 39's unverified rows, round 43's typed junk row lead, and task 045's 0x3fb52a lead.
 - **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 221.
-- **Stage B (379b0d0, labels, rows):** the uncapped search finds the blocks that hold stage A's rows. They lie past the
-  dumped parameter ID table. Each block's CHR_CC layout fills a gap between dumped-table blocks exactly, and every
-  record's description matches the code that reads the row (`align_blocks.py`):
+- **Stage B (379b0d0, labels, rows):** the uncapped search finds 14 blocks past the dumped parameter ID table that hold
+  stage A's rows and their neighbours (`align_blocks.py`). Every record's description matches the code that reads
+  the row. How each block is placed:
+  - 11 blocks fill five gaps between dumped-table blocks exactly: 8C30; 8B12; 8B4E + 8BAC; 8B4F + 8BAD; and 8B51-8B55,
+    between 8D3A's 30-byte table and 106D.
+  - 8B50 / 8BAE match the EEPROM rows field by field. 8C36 ends at EEPROM 0x19a1, 16 bytes before 8B50.
+  - 8B59 is placed by meaning only.
+  The blocks:
   - 8C30 (6 bytes) fills 0x3ff6ca-0x3ff6cf, between 107D's last record and 107B.
     - +4 Vac_Throttle_ASG_Delta is 0x3ff6ce, now `vacuum_throttle_all_speed_governor_fueling_reduction`.
     - +0 / +2 (the driver override thresholds) get `i16` documentation rows; no instruction forms their addresses.
@@ -2103,7 +2108,8 @@ A peer relay started the round; the scripts are in `session_folder/round44/`.
       now `cruise_throttle_transition_threshold`.
     - +2 Cruise_Bump_Up_Step_Adjust is `cruise_bump_up_step_margin_scale`.
   - 8B4E (12 bytes) and 8BAC (28 bytes) fill 0x408a66-0x408a8d, between 8C5F and 8C55.
-    - 8BAC's 15 records match the 15 pedal calibration rows in order.
+    - 8BAC's 15 records line up with the 15 pedal calibration rows in order. 14 descriptions match the code-derived
+      names; the 15th, +0x18 PPS_AZ_Time_Limit, shows the "total step" limit is a time limit (stage C).
     - +4 PPS_Test_Cell_Threshold_Auto_Zero ('PPS Auto_Zero threshold value if greater than is considered in test
       cell') is 0x408a76, now `accelerator_pedal_test_cell_idle_threshold`.
   - 8B4F (2 bytes) and 8BAD (14 bytes) fill 0x40b54a-0x40b559, between 8C60 and 8C56.
@@ -2136,7 +2142,19 @@ A peer relay started the round; the scripts are in `session_folder/round44/`.
     rows at 0x3fee34 / 0x3fee36 / 0x3fee3a are dword / untyped / word. 0x3fee3a renders
     `_oil_change_monitor_distance_pulses_cal`. The boot ROM shares 0x3fee34-0x3fee3d.
   - `cruise_out_of_gear_disable` (e2m 118F +0x0C) is 1 in the calibration, but no direct access was found.
-  - 8B13 ASG_Throttle_Reset_Allow is not placed: no gap matches it.
+  - 8B13 ASG_Throttle_Reset_Allow was not searched for.
+- **Stage C (6aefe56, labels):** the advisor's review of stage B.
+  - `accelerator_pedal_idle_learning_total_step_limit` / `_counter` are `accelerator_pedal_idle_learning_time_limit`
+    / `accelerator_pedal_idle_learning_timer`.
+    - The counter increments on every 100 ms pass in which either channel's learning conditions hold, whether or
+      not a step is taken.
+    - Its limit is 8BAC +0x18 PPS_AZ_Time_Limit: 'Time allowed from key on for pps auto zero when auto zero
+      conditions exist', 29.9 s here.
+  - The PPS block is inactive in this calibration. 0x408a84 (8BAC +0x12 Accelerator_Position_Sensor_Type) is 0,
+    which the e2m defines as TPS operation for the commanded throttle, so the five PPS block functions do nothing.
+    The test cell comment on 0x408a76 now says so.
+  - No history was lost: every `(was` note of stage B's renamed rows survives (`check_r44b_review.py`).
+  - **Proof:** `prove_caches.py` matches all 1968 functions; verify byte-identical.
 
 ## Leads (not in this PR)
 

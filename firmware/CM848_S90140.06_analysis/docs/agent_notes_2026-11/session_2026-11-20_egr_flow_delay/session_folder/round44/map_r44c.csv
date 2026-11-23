@@ -1,0 +1,3 @@
+address,name,old_label,kind,dims
+0x00408a8a,accelerator_pedal_idle_learning_time_limit,accelerator_pedal_idle_learning_total_step_limit,global,1
+0x003fb42e,accelerator_pedal_idle_learning_timer,accelerator_pedal_idle_learning_total_step_counter,global,1

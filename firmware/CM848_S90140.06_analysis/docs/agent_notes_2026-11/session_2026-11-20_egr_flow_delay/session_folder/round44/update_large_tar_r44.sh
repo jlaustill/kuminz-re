@@ -15,6 +15,7 @@ cp "$W"/r44/build_r44*.log "$W/largetar/"
 true
 if [ -f "$W/r44/verify_r44a.log" ]; then cp "$W/r44/verify_r44a.log" "$W/largetar/verify_round44.log"; fi
 if [ -f "$W/r44/verify_r44b.log" ]; then cp "$W/r44/verify_r44b.log" "$W/largetar/verify_round44b.log"; fi
+if [ -f "$W/r44/verify_r44c.log" ]; then cp "$W/r44/verify_r44c.log" "$W/largetar/verify_round44c.log"; fi
 cd "$W/largetar"
 ls | sort -V > ../large_order.txt
 tar --sort=name -cJf ../large_new.tar.xz -T ../large_order.txt

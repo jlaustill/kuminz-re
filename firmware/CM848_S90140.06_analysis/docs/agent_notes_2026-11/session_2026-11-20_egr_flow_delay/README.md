@@ -484,4 +484,4 @@ Hand work on the round 7 lead.
 
 ## Round 44: round 39's unverified rows, the last typed junk row (`session_folder/round44/`)
 
-- **Stage A:** `apply_r44a.py`, `map_r44a.csv`. **Evidence:** `e2m_negatives.py` (+ `e2m_negatives.txt`), `raw_address_scan.py`, `pedal_records.txt`. **Closing:** `apply_r44_closing.py`, `update_large_tar_r44.sh`. **Stage B:** `apply_r44b.py`, `map_r44b.csv`, `align_blocks.py` (+ `align_blocks.txt`), `candidate_blocks.txt`, `col5_neighbours.txt`, `check_history_r44b.py`, `apply_r44b_closing.py`.
+- **Stage A:** `apply_r44a.py`, `map_r44a.csv`. **Evidence:** `e2m_negatives.py` (+ `e2m_negatives.txt`), `raw_address_scan.py`, `pedal_records.txt`. **Closing:** `apply_r44_closing.py`, `update_large_tar_r44.sh`. **Stage B:** `apply_r44b.py`, `map_r44b.csv`, `align_blocks.py` (+ `align_blocks.txt`), `candidate_blocks.txt`, `col5_neighbours.txt`, `check_history_r44b.py`, `apply_r44b_closing.py`. **Stage C:** `apply_r44c.py`, `map_r44c.csv`, `check_r44b_review.py` (run with `git show f338e54:firmware/CM848_S90140.06_analysis/output/global_variables.csv` as its before file), `apply_r44c_closing.py`.

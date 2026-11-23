@@ -618,10 +618,13 @@ state enum, the flag bytes.**
   fueling reduction, the cruise accelerator override threshold, the single-channel pedal idle threshold minimum),
   the last typed junk row (the previous-pass cruise engaged flag) and a documentation row for e2m
   Cruise_Out_Of_Gear_Disable.
-- **Stage B (379b0d0, labels, rows):** nine e2m blocks past the dumped parameter ID table placed by tiling. Stage A's
+- **Stage B (379b0d0, labels, rows):** 14 e2m blocks past the dumped parameter ID table (11 fill five gaps between dumped-table
+  blocks exactly, 8B50 / 8BAE match field by field, 8B59 by meaning). Stage A's
   rows get their e2m names (Vac_Throttle_ASG_Delta, Cruise_Throttle_Transition_Threshold,
   PPS_Test_Cell_Threshold_Auto_Zero). The oil change monitor's third accumulator is the oil soot percentage (e2m
   OCM_Soot_Percentage_*). 33 rows gain citations.
+- **Stage C (6aefe56, labels):** the pedal learning's "total step" limit and counter are a time limit and its timer (e2m
+  PPS_AZ_Time_Limit); the PPS block is inactive in this calibration (Accelerator_Position_Sensor_Type = 0, TPS).
 
 ## Test plan
 
@@ -714,6 +717,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 44 stage C: `prove_caches.py` matches all 1968 functions; verify byte-identical.
 - [x] Round 44 stage B: `prove_caches.py` matches 1967 of 1968 functions; `mpc555_tickTransferTimeoutAndRuntimeCounter` differs only in the order of its local declarations, and the 6 `oil_change_monitor_soot_percentage_cal._0_1_` pieces are the boot ROM's existing byte view of the time-shared 0x3fee3e.
 - [x] Round 44: label-only proof matches all 1968 functions (the `undefined2` -> `word` retype changes nothing); a raw lis + displacement scan of both images finds exactly the accesses the `.cpp` shows.
 - [x] Round 43: the end timing function has 0 differing statements; removing the junk rows changes only the order of local declarations.
