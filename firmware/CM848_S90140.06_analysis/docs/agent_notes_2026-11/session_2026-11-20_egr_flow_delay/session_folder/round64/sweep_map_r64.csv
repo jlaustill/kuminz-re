@@ -1,0 +1,13 @@
+address,name,old_label,kind,dims
+-,new,DIAG_RESPONSE,old,1
+-,new,DIAG_RESPONSE_CODE,old,1
+-,new,DIAG_ACK,old,1
+-,new,DIAG_NACK_NOT_READY,old,1
+-,new,DIAG_NACK_PROTECTED,old,1
+-,new,diag_ack_result,old,1
+-,new,diagnostic_response_message_t,old,1
+-,new,DIAG_INVALID_LENGTH,old,1
+-,new,ADDR_VALIDATION_FAIL,old,1
+-,new,INVALID_ADDR_RANGE,old,1
+-,new,INVALID_ADDR_ALT,old,1
+-,new,UNKNOWN_SUBFUNC,old,1

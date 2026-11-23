@@ -2870,14 +2870,26 @@ A peer relay started the round on round 63's leads; the scripts are in `session_
     `diagnostic_single_frame_response_data` `byte[8]`).
 - **Stage C (36c29ebe): `J1939_DIAGNOSTIC_RESULT`.**
   - It merges `DIAG_RESPONSE` (0 / 4 / 7) and the unused `DIAG_RESPONSE_CODE`, which was ported from CM550.
-  - 12 codes, named from what produces them in this firmware: the validator, the dispatcher, the memory workers,
-    the region lookup and the handlers.
+  - 11 codes, named from what produces them in this firmware: the validator, the dispatcher, the memory workers,
+    the region lookup and the handlers. 0xff (nothing to send) is deliberately not a member: the dispatcher masks
+    each result with 0xff, and a member of that value would name the mask.
   - It types the validator's return and the dispatcher's `result_code`.
   - CM550's `DIAG_RESPONSE_CODE` type takes the same name; its members stay its own.
   - **A tool fix:** `refresh_other_csvs_r57.py` rewrote history notes ("(was DIAG_ACK ...)" became the new name).
     `refresh_other_csvs_r64.py` skips history markers as `refresh_references.py` does, and
-    `history_corruption.py` finds a rewritten note. Round 63's renames show none.
-- **Proof:** stage A 6 of 1968 functions differ: the selector, its 3 callers (each loses its cast) and two local declaration-order moves. Stage B 6: the boot allocator, its 2 callers (each loses its cast), the 2 boot transmit functions and one declaration-order move. Stage C 9: the 7 handlers, the validator and the dispatcher, with no cast added and 4 placeholder names removed; CM550's output equals a base build. Every verify byte-identical, thunks 18 / 14, 0 failed prototype or local rows, no artifact count changed, headers 0 g++ errors for both firmwares, tests pass, HARD 0 / MISSING 219.
+    `history_corruption.py` finds a rewritten note. Round 63's renames show none, and neither do rounds 57-62's
+    archived maps.
+- **Corrections (this follow-up), from the closing review:**
+  - The pushed closing said 12 codes and that the dispatcher lost 4 placeholder names. The enum has 11 codes, and
+    the dispatcher lost none. `review_typed.py` matched only lowercase prefixes; `review_typed_r64.py` matches
+    `JVar` too.
+  - Commit 3ce87e58 says the thunk snapshot has 10 targets at 0x3fc580 - 0x3fcb24. That range holds 9; the
+    snapshot's tenth, 0x3fc484, lies below the record.
+  - The `j1939_transport_tx_data` comment said a 0x4c read reply needs up to 1775 bytes. That is the 0x49 reply
+    to a 0x48 read (header 11 + 1764); a 0x4c reply needs 1773. The comment is fixed, and the `.cpp` is
+    unchanged.
+  - Commit 36c29ebe repeats the 4-placeholder claim.
+- **Proof:** stage A 6 of 1968 functions differ: the selector, its 3 callers (each loses its cast) and two local declaration-order moves. Stage B 6: the boot allocator, its 2 callers (each loses its cast), the 2 boot transmit functions and one declaration-order move. Stage C 9: the 7 handlers, the validator and the dispatcher, with no cast or placeholder added or removed (the dispatcher's split temp is J1939_DIAGNOSTIC_RESULT JVar1 now - was uint uVar1); CM550's output equals a base build. Every verify byte-identical, thunks 18 / 14, 0 failed prototype or local rows, no artifact count changed, headers 0 g++ errors for both firmwares, tests pass, HARD 0 / MISSING 219.
 - **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 219.
 - **Leads:**
   - **The boot kernel's result codes differ:** 5 = unknown service, 10 = a ROM handler refused in EEPROM service

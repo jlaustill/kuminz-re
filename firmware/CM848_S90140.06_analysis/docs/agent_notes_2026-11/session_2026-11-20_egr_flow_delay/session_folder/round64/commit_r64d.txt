@@ -1,0 +1,19 @@
+cm848: round 64 follow-up - the closing's numbers corrected, one comment fact fixed
+
+From the round's closing review:
+- task 046 / the PR body / the proof note said 12 codes and that the dispatcher lost 4 placeholder names.
+  - J1939_DIAGNOSTIC_RESULT has 11 codes; 0xff is deliberately not a member, and task 046 now says so.
+  - The dispatcher lost no placeholder names: its split temp is J1939_DIAGNOSTIC_RESULT JVar1 now (was uint uVar1).
+    review_typed.py matched only lowercase prefixes; review_typed_r64.py matches JVar too. Recounted with it, stage C
+    added or removed no cast or placeholder.
+  - Commit 36c29ebe repeats the 4-placeholder claim; task 046 records the correction.
+- j1939_transport_tx_data's comment said a 0x4c read reply needs up to 1775 bytes. That is the 0x49 reply to a 0x48
+  read (header 11 + 1764); a 0x4c reply needs 1773. The verify build is byte-identical, and the .cpp is unchanged
+  apart from its Generated line.
+- Commit 3ce87e58 says the thunk snapshot has 10 targets at 0x3fc580 - 0x3fcb24. That range holds 9; the tenth,
+  0x3fc484, lies below the record. Task 046 records this.
+- history_corruption.py over the archived round 57-62 maps finds no rewritten history note. The live-text sweep for
+  this round's old names finds them only in dated task 046 entries; .claude/skills has none.
+- The session archive gains the follow-up's scripts and messages, and its verify log.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
