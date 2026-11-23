@@ -1,0 +1,59 @@
+cm848: round 44 stage B - nine e2m blocks past the dumped table placed by tiling: the oil soot model, the PPS block
+
+Stage A's e2m search read its output through head, and the cut fell before the 8Bxx-8Cxx blocks. Read in full, it
+finds the blocks that hold stage A's rows. They lie past the dumped parameter ID table. Each block's CHR_CC layout
+fills a gap between dumped-table blocks exactly, and every record's description matches the code that reads the row:
+- 8C30 (6 bytes) fills 0x3ff6ca-0x3ff6cf, between 107D's last record and 107B.
+  - +4 is Vac_Throttle_ASG_Delta: 'ASG fuel is decreased by this amount when in cruise with vac throttle'.
+  - all_speed_governor_vacuum_cruise_fueling_reduction -> vacuum_throttle_all_speed_governor_fueling_reduction.
+  - +0 / +2 are the driver override thresholds. They get i16 documentation rows; no instruction forms their
+    addresses.
+- 8B12 (4 bytes) fills 0x408e96-0x408e99, between 118F and 1071.
+  - +0 is Cruise_Throttle_Transition_Threshold: 'If throttle <= to this cal, will transition to cruise if crus active'.
+  - cruise_accelerator_override_throttle_threshold -> cruise_throttle_transition_threshold.
+  - +2 is Cruise_Bump_Up_Step_Adjust, which cruise_bump_up_step_margin_scale already names. Its "no e2m record"
+    note is dropped.
+- 8B4E (12 bytes) and 8BAC (28 bytes) fill 0x408a66-0x408a8d, between 8C5F and 8C55.
+  - 8BAC's 15 records match the 15 pedal calibration rows in order.
+  - +4 is PPS_Test_Cell_Threshold_Auto_Zero: 'PPS Auto_Zero threshold value if greater than is considered in test cell'.
+  - accelerator_pedal_single_channel_minimum_idle_threshold -> accelerator_pedal_test_cell_idle_threshold.
+- 8B4F (2 bytes) and 8BAD (14 bytes) fill 0x40b54a-0x40b559, between 8C60 and 8C56.
+  - They hold the severity factor and the 9 pedal state rows, widths included: +4..+7 are bytes.
+- 8B50 (18 bytes) and 8BAE (4 bytes) fill the EEPROM rows 0x3fee34-0x3fee49.
+  - They hold the oil change monitor accumulators and the learned idle thresholds (PPS1 / PPS2_Auto_Zero).
+
+The oil change monitor's third accumulator is the oil soot percentage:
+- 8B4E +8 OCM_Soot_Percentage_Threshold is 2.10 % here, and 8B50 +0xA is OCM_Soot_Percentage_Since_Last_Reset.
+- The soot table 8B54 / 8B55 runs over the end of injection: 'Percentage of soot present in the engine oil based on
+  250 operating hours'.
+- The code adds table x 85048 / 900000 per pass. At the e2m's scales that is exactly 0.2 s per pass:
+  900000 s = 250 h, and 85048 = 0.01 / 2.351589501e-8 x 0.2.
+- Renames:
+  - oil_change_monitor_engine_power_accumulator_threshold / _cal -> oil_change_monitor_soot_percentage_threshold /
+    _cal;
+  - engine_power_accumulator_increment_axis / _values / _cached_axis_offset ->
+    oil_change_monitor_soot_percentage_by_end_of_injection_*;
+  - fuel_accumulation_weight_by_coolant_and_rpm_* -> oil_change_monitor_severity_factor_by_coolant_and_rpm_*
+    (8B51-8B53);
+  - oil_change_monitor_fuel_weight_percent -> oil_change_monitor_severity_factor (8B4F +0).
+- The tables decode with the e2m scales: coolant -50..250 F, 0..3000 rpm, factors 1.00..2.00, the end of injection
+  -20.04..-5.04 deg, soot 47..0.37 %.
+- The cm848_updateOilChangeMonitor plate now says all this, and the end timing plate names the soot table.
+
+Sources:
+- The OCM blocks exist only in the older CHR_CC_11.20.13.16 / 11.25.05.07; the default 11.45.01.07 lacks them.
+- The PPS, vacuum throttle and cruise blocks are in the default.
+- 8B59 (OCM_Interval_Warning_Min_Miles, 2000 miles here) is cited by meaning only.
+- 33 rows gain citations. The time-shared rows at 0x3fee34-0x3fee3d keep their types.
+- 0x408e94's note narrows "no code reads it" to "no direct access found". The firmware uses no small-data base
+  register, so the lis scan is representative.
+
+Proof (prove_caches.py):
+- 1967 of 1968 functions match. The other, mpc555_tickTransferTimeoutAndRuntimeCounter, differs only in the order
+  of its local declarations.
+- The 6 oil_change_monitor_soot_percentage_cal._0_1_ pieces are the boot ROM's byte view of the time-shared
+  0x3fee3e, the same 6 the old name had.
+Thunks 18 / 14. Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems,
+audit_cal_suffixes.py HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -618,6 +618,10 @@ state enum, the flag bytes.**
   fueling reduction, the cruise accelerator override threshold, the single-channel pedal idle threshold minimum),
   the last typed junk row (the previous-pass cruise engaged flag) and a documentation row for e2m
   Cruise_Out_Of_Gear_Disable.
+- **Stage B (379b0d0, labels, rows):** nine e2m blocks past the dumped parameter ID table placed by tiling. Stage A's
+  rows get their e2m names (Vac_Throttle_ASG_Delta, Cruise_Throttle_Transition_Threshold,
+  PPS_Test_Cell_Threshold_Auto_Zero). The oil change monitor's third accumulator is the oil soot percentage (e2m
+  OCM_Soot_Percentage_*). 33 rows gain citations.
 
 ## Test plan
 
@@ -710,6 +714,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 44 stage B: `prove_caches.py` matches 1967 of 1968 functions; `mpc555_tickTransferTimeoutAndRuntimeCounter` differs only in the order of its local declarations, and the 6 `oil_change_monitor_soot_percentage_cal._0_1_` pieces are the boot ROM's existing byte view of the time-shared 0x3fee3e.
 - [x] Round 44: label-only proof matches all 1968 functions (the `undefined2` -> `word` retype changes nothing); a raw lis + displacement scan of both images finds exactly the accesses the `.cpp` shows.
 - [x] Round 43: the end timing function has 0 differing statements; removing the junk rows changes only the order of local declarations.
 - [x] Round 42: all 24 status record users match field by field (index set-up dropped; one pair is the same address in two forms); the retarder function has 0 differing statements; the other functions match the canonical form.

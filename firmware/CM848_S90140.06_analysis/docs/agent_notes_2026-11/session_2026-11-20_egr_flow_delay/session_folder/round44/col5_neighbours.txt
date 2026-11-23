@@ -1,0 +1,14 @@
+absent blocks with column 5 in 0xbc0-0xbe0 or 0xfc8-0xfe8 (all records, no keyword filter):
+== 1CB7 col5 0xfce
+   +00 Ignition_Cycle_Time_Threshold size 2: Max time for engine state = RUN to increment ignition cycle cntr.
+   +02 Ratio_Min_AAT_Threshold size 2: Minimum ambient air temp to increment the in-use denominator
+   +04 Ratio_Min_Vehicle_Speed size 2: Min road speed to increase in-use denominator.
+   +06 Ratio_Engine_Start_Time_Threshold size 2: Min time for engine state = RUN to increment the in-use denominator
+   +08 Ratio_Vehicle_Speed_Time_Threshold size 2: Min time for vehicle speed>25mph to increment in-use denominator
+   +0A Ratio_Idle_Speed_Time_Threshold size 2: Min time for engine to be at idle to increment in-use denominator
+   +0C Max_Idle_Vehicle_Speed size 2: Max road speed to define engine idle state.
+   +0E Max_In_Use_Ratio size 2: Max value for in-use ratio
+   +10 In_Use_Monitor_ITN_4046_Pad size 2: GCC static padding.
+== 1CB9 col5 0xfcf
+   +00 General_Denominator size 2: Increments when conditions defined in the regulation are met.
+   +02 Ignition_Cycle_Counter size 2: Number of key cycles

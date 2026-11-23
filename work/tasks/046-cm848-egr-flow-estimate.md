@@ -2083,8 +2083,8 @@ A peer relay started the round; the scripts are in `session_folder/round44/`.
   - The parameter ID table resolves none of the three rows.
   - No record sits at 107D +0x44..+0x49 or 118F +0x0D..+0x11 in any of the 68 e2m files. The search reads the offsets
     as numbers because some files zero-pad them to four digits.
-  - The pedal block 0x408a72-0x408a7e lies past the dumped table, and no e2m record describes dual-channel pedal idle
-    learning or disagreement.
+  - The pedal block 0x408a72-0x408a7e lies past the dumped table. Stage A said no e2m record describes it. That was
+    wrong: the search output was read through `head`, which cut it before the 8Bxx-8Cxx blocks (stage B).
   - `raw_address_scan.py` (lis + displacement over both images) finds exactly the accesses the `.cpp` shows.
     - Its first run read `cm848_flash2.bin`, which differs from the live image the build uses, and reported a false
       reader of 0x408a76.
@@ -2092,11 +2092,51 @@ A peer relay started the round; the scripts are in `session_folder/round44/`.
 - **Proof:** `prove_caches.py` matches all 1968 functions. The retype from `undefined2` to `word` changes no statement.
 - This resolves round 39's unverified rows, round 43's typed junk row lead, and task 045's 0x3fb52a lead.
 - **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 221.
+- **Stage B (379b0d0, labels, rows):** the uncapped search finds the blocks that hold stage A's rows. They lie past the
+  dumped parameter ID table. Each block's CHR_CC layout fills a gap between dumped-table blocks exactly, and every
+  record's description matches the code that reads the row (`align_blocks.py`):
+  - 8C30 (6 bytes) fills 0x3ff6ca-0x3ff6cf, between 107D's last record and 107B.
+    - +4 Vac_Throttle_ASG_Delta is 0x3ff6ce, now `vacuum_throttle_all_speed_governor_fueling_reduction`.
+    - +0 / +2 (the driver override thresholds) get `i16` documentation rows; no instruction forms their addresses.
+  - 8B12 (4 bytes) fills 0x408e96-0x408e99, between 118F and 1071.
+    - +0 Cruise_Throttle_Transition_Threshold ('If throttle <= to this cal, will transition to cruise') is 0x408e96,
+      now `cruise_throttle_transition_threshold`.
+    - +2 Cruise_Bump_Up_Step_Adjust is `cruise_bump_up_step_margin_scale`.
+  - 8B4E (12 bytes) and 8BAC (28 bytes) fill 0x408a66-0x408a8d, between 8C5F and 8C55.
+    - 8BAC's 15 records match the 15 pedal calibration rows in order.
+    - +4 PPS_Test_Cell_Threshold_Auto_Zero ('PPS Auto_Zero threshold value if greater than is considered in test
+      cell') is 0x408a76, now `accelerator_pedal_test_cell_idle_threshold`.
+  - 8B4F (2 bytes) and 8BAD (14 bytes) fill 0x40b54a-0x40b559, between 8C60 and 8C56.
+    - They hold the severity factor and the 9 pedal state rows, widths included (+4..+7 are bytes).
+  - 8B50 (18 bytes) and 8BAE (4 bytes) fill the EEPROM rows 0x3fee34-0x3fee49.
+    - They hold the oil change monitor accumulators and the learned idle thresholds (PPS1 / PPS2_Auto_Zero).
+  - The oil change monitor's third accumulator is the oil soot percentage.
+    - 8B4E +8 OCM_Soot_Percentage_Threshold is 2.10 % here, and 8B50 +0xA is OCM_Soot_Percentage_Since_Last_Reset.
+    - The soot table 8B54 / 8B55 runs over the end of injection: 'Percentage of soot present in the engine oil
+      based on 250 operating hours'.
+    - The code adds table x 85048 / 900000 per pass. At the e2m's scales that is exactly 0.2 s per pass
+      (900000 s = 250 h; 85048 = 0.01 / 2.351589501e-8 x 0.2).
+    - The `engine_power_accumulator` names become `oil_change_monitor_soot_percentage_*`. The severity table
+      (8B51-8B53) becomes `oil_change_monitor_severity_factor_by_coolant_and_rpm_*`, and its output
+      `oil_change_monitor_severity_factor` (8B4F +0).
+    - The tables decode with the e2m scales: coolant -50..250 F, 0..3000 rpm, factors 1.00..2.00, the end of
+      injection -20.04..-5.04 deg, soot 47..0.37 %.
+  - Sources:
+    - The OCM blocks exist only in the older CHR_CC_11.20.13.16 / 11.25.05.07; the default 11.45.01.07 lacks them.
+    - The PPS, vacuum throttle and cruise blocks are in the default.
+    - 8B59 (OCM_Interval_Warning_Min_Miles, 2000 miles here) is cited by meaning only.
+  - 33 rows gain citations. 0x408e94's note narrows "no code reads it" to "no direct access found". The firmware
+    uses no small-data base register (r2 / r13 bases are under 0.1 % of D-form instructions), so the lis scan is
+    representative.
+- **Proof (stage B):** `prove_caches.py` matches 1967 of 1968 functions; `mpc555_tickTransferTimeoutAndRuntimeCounter` differs only in the order of its local declarations, and the 6 `oil_change_monitor_soot_percentage_cal._0_1_` pieces are the boot ROM's existing byte view of the time-shared 0x3fee3e.
+- Stage B resolves task 042's [G4] soot table lead, round 43's "engine power" accumulator lead, and stage A's
+  oil change monitor lead.
 - **Leads:**
-  - The oil change monitor's third accumulator. CHR_B2's e2m has an OCM "FOD" accumulator: grams since the last oil
-    change, from an rpm x fueling quantity map scaled by an Aux2 start-of-injection factor. CM848's is a 1-D table on
-    `main_injection_end_timing`, so the names do not transfer. Its "engine power" name stays unproven.
-  - `cruise_out_of_gear_disable` is 1 in the calibration, but no code reads it.
+  - The time-shared oil change monitor rows keep their types. e2m 8B50 gives +0 2 bytes and +2 / +6 4 bytes; the
+    rows at 0x3fee34 / 0x3fee36 / 0x3fee3a are dword / untyped / word. 0x3fee3a renders
+    `_oil_change_monitor_distance_pulses_cal`. The boot ROM shares 0x3fee34-0x3fee3d.
+  - `cruise_out_of_gear_disable` (e2m 118F +0x0C) is 1 in the calibration, but no direct access was found.
+  - 8B13 ASG_Throttle_Reset_Allow is not placed: no gap matches it.
 
 ## Leads (not in this PR)
 
