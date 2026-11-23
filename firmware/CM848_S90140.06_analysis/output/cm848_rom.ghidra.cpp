@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 01:33:39 MST 2026
+// Generated: Mon Nov 23 01:43:50 MST 2026
 
 
 //
@@ -75082,20 +75082,19 @@ void cm848_updateEngineWarningFlags(void)
     protection_fault_latch_flag = 1;
   }
   protection_fault_latch_flag_copy = protection_fault_latch_flag;
-  if ((coolant_bucket_overheat_detected_flag == 0) && (low_oil_pressure_active_flag == 0)) {
+  if ((coolant_overheat_check_gauges_flag == 0) && (low_oil_pressure_active_flag == 0)) {
     coolant_overheat_or_low_oil_pressure_flag = 0;
   }
   else {
     coolant_overheat_or_low_oil_pressure_flag = 1;
   }
-  if ((coolant_bucket_overheat_active_flag == 0) ||
-     (coolant_bucket_overheat_active_flag_previous != 0)) {
+  if ((coolant_overheat_chime_flag == 0) || (coolant_overheat_chime_flag_previous != 0)) {
     if ((low_oil_pressure_chime_flag == 0) || (low_oil_pressure_chime_flag_previous != 0)) {
       if ((protection_coolant_classb_active_flag == 0) ||
          (protection_coolant_classb_active_flag_previous != 0)) {
         if ((water_in_fuel_detected_flag == 0) || (water_in_fuel_detected_flag_previous != 0)) {
           if ((protection_fault_latch_flag == 0) || (protection_fault_latch_flag_previous != 0)) {
-            if (((coolant_bucket_overheat_active_flag == 0) &&
+            if (((coolant_overheat_chime_flag == 0) &&
                 (((low_oil_pressure_chime_flag == 0 && (protection_coolant_classb_active_flag == 0))
                  && (water_in_fuel_detected_flag == 0)))) && (protection_fault_latch_flag == 0)) {
               warning_chime_countdown = 0;
@@ -75140,7 +75139,7 @@ void cm848_updateEngineWarningFlags(void)
     warning_chime_request_flag = 1;
     warning_chime_countdown = warning_chime_countdown - 1;
   }
-  coolant_bucket_overheat_active_flag_previous = coolant_bucket_overheat_active_flag;
+  coolant_overheat_chime_flag_previous = coolant_overheat_chime_flag;
   low_oil_pressure_chime_flag_previous = low_oil_pressure_chime_flag;
   protection_coolant_classb_active_flag_previous = protection_coolant_classb_active_flag;
   water_in_fuel_detected_flag_previous = water_in_fuel_detected_flag;
@@ -75170,53 +75169,56 @@ void cm848_initEngineWarningFlags(void)
 
 
 //
-// Function: cm848_accumulateCoolantTemperatureBuckets @ 0x00513508
+// Function: cm848_accumulateCoolantOverheatLevelTimers @ 0x00513508
 //
 
-/* Adds one to cold_start_coolant_bucket_counters[i] for every pass the coolant temperature is above
-   level i of five thresholds (ROM words from 0x408772); once coolant_temperature_bucket_cycle_count
-   passes DAT_00408768 the counters are added into the totals at DAT_003fee04 + 4 x i and cleared.
-   Feeds cm848_monitorCoolantTemperatureBucketOverheat (was engine_coolantTemp_bucket_accumulate).
-    */
+/* Adds one to coolant_overheat_level_timers[i] for every pass the coolant temperature is above
+   level i of five thresholds (ROM words from 0x408772); once
+   coolant_overheat_level_timer_reset_count passes coolant_overheat_level_timer_reset_time the
+   counters are added into the totals at DAT_003fee04 + 4 x i and cleared. Feeds
+   cm848_monitorCoolantOverheatAggressiveDerate (was engine_coolantTemp_bucket_accumulate). (was
+   cm848_accumulateCoolantTemperatureBuckets; PR #53 round 53: the e2m's CT_Derate vocabulary) */
 
-void cm848_accumulateCoolantTemperatureBuckets(void)
+void cm848_accumulateCoolantOverheatLevelTimers(void)
 
 {
   bool bVar1;
-  ushort uVar2;
-  ushort *puVar3;
+  word wVar2;
+  word *pwVar3;
   int iVar4;
   int iVar5;
   
-  uVar2 = DAT_00408768;
+  wVar2 = coolant_overheat_level_timer_reset_time;
   iVar4 = (int)(short)coolant_temperature_sensor_filtered;
   iVar5 = 0;
   bVar1 = false;
-  puVar3 = (ushort *)0x408770;
+  pwVar3 = coolant_overheat_level_temperature_axis;
   do {
-    puVar3 = puVar3 + 1;
-    if ((int)(uint)*puVar3 < iVar4) {
-      cold_start_coolant_bucket_counters[iVar5] = cold_start_coolant_bucket_counters[iVar5] + 1;
+    pwVar3 = pwVar3 + 1;
+    if ((int)(uint)*pwVar3 < iVar4) {
+      coolant_overheat_level_timers[iVar5] = coolant_overheat_level_timers[iVar5] + 1;
     }
-    if ((bVar1) || ((cold_start_coolant_bucket_counters[iVar5] != 0 && (iVar4 < DAT_00408766)))) {
+    if ((bVar1) ||
+       ((coolant_overheat_level_timers[iVar5] != 0 &&
+        (iVar4 < coolant_overheat_level_timer_reset_temperature)))) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
-    if (uVar2 < coolant_temperature_bucket_cycle_count) {
+    if (wVar2 < coolant_overheat_level_timer_reset_count) {
       *(dword *)(&DAT_003fee04 + iVar5 * 4) =
-           *(int *)(&DAT_003fee04 + iVar5 * 4) + cold_start_coolant_bucket_counters[iVar5];
-      cold_start_coolant_bucket_counters[iVar5] = 0;
-      coolant_temperature_bucket_cycle_count = uVar2 + 1;
+           *(int *)(&DAT_003fee04 + iVar5 * 4) + coolant_overheat_level_timers[iVar5];
+      coolant_overheat_level_timers[iVar5] = 0;
+      coolant_overheat_level_timer_reset_count = wVar2 + 1;
     }
     iVar5 = iVar5 + 1;
   } while (iVar5 < 5);
   if (bVar1) {
-    coolant_temperature_bucket_cycle_count = coolant_temperature_bucket_cycle_count + 1;
+    coolant_overheat_level_timer_reset_count = coolant_overheat_level_timer_reset_count + 1;
   }
   else {
-    coolant_temperature_bucket_cycle_count = 0;
+    coolant_overheat_level_timer_reset_count = 0;
   }
   return;
 }
@@ -75224,33 +75226,37 @@ void cm848_accumulateCoolantTemperatureBuckets(void)
 
 
 //
-// Function: engine_coolant_overheat_check @ 0x0051361c
+// Function: cm848_monitorCoolantOverheatMinimumDerate @ 0x0051361c
 //
 
 /* Direct coolant overheat monitor (fault 390, P0217 engine overtemperature): coolant temperature
-   above coolant_overheat_temp_threshold for more than coolant_overheat_debounce_count_limit passes
-   sets fault 390, the engine overheat derate (its setpoint = the threshold) and reason code 3;
-   coolant below DAT_00408756 (15296 = 239 deg F) for coolant_overheat_recovery_count_limit passes
-   clears fault 390 and its registered bit (reason 4). Name kept. */
+   above coolant_overheat_maximum_allowed_temperature for more than
+   coolant_overheat_debounce_count_limit passes sets fault 390, the engine overheat derate (its
+   setpoint = the threshold) and reason code 3; coolant below coolant_overheat_recovery_temperature
+   (15296 = 239 deg F) for coolant_overheat_recovery_count_limit passes clears fault 390 and its
+   registered bit (reason 4). (was engine_coolant_overheat_check; PR #53 round 53: the e2m's
+   CT_Derate vocabulary) */
 
-void engine_coolant_overheat_check(void)
+void cm848_monitorCoolantOverheatMinimumDerate(void)
 
 {
-  if ((short)coolant_overheat_temp_threshold < (short)coolant_temperature_sensor_filtered) {
+  if ((short)coolant_overheat_maximum_allowed_temperature <
+      (short)coolant_temperature_sensor_filtered) {
     coolant_overheat_debounce_count = coolant_overheat_debounce_count + 1;
   }
   else {
     coolant_overheat_debounce_count = 0;
   }
   if (coolant_overheat_debounce_count_limit < coolant_overheat_debounce_count) {
-    engine_overheat_derate_coolant_temperature_setpoint = coolant_overheat_temp_threshold;
+    engine_overheat_derate_coolant_temperature_setpoint =
+         coolant_overheat_maximum_allowed_temperature;
     engine_overheat_derate_active_flag = 1;
     fault_detected_cal._48_2_ = fault_detected_cal._48_2_ | 0x40;
     coolant_overheat_debounce_count = coolant_overheat_debounce_count_limit;
     engine_overheat_derate_reason_code = 3;
   }
   if ((fault_detected_cal.coolant_temperature_derate_minimum_derate_error == 0) ||
-     (DAT_00408756 <= (short)coolant_temperature_sensor_filtered)) {
+     (coolant_overheat_recovery_temperature <= (short)coolant_temperature_sensor_filtered)) {
     coolant_overheat_recovery_count = 0;
   }
   else {
@@ -75269,19 +75275,22 @@ void engine_coolant_overheat_check(void)
 
 
 //
-// Function: cm848_monitorCoolantTemperatureBucketOverheat @ 0x0051375c
+// Function: cm848_monitorCoolantOverheatAggressiveDerate @ 0x0051375c
 //
 
-/* Cumulative coolant overheat monitor (fault 389, P0217): cm848_accumulateCoolantTemperatureBuckets
-   counts the passes the coolant spends above each of five temperature levels; if any of the
-   counters 1-4 exceeds its limit (cold_start_coolant_bucket_thresholds) this sets fault 389, the
-   engine overheat derate (setpoint cold_start_coolant_bucket_overheat_setpoint), the bucket
-   overheat flags and reason code 5 and counts the event; the faults and flags clear after
-   cold_start_coolant_bucket_recovery_count_limit passes with coolant below
-   cold_start_coolant_bucket_recovery_temp_threshold (reason 6). It checks the accumulated counters,
-   not a sensor (was engine_sensor_check_overheat). */
+/* Cumulative coolant overheat monitor (fault 389, P0217):
+   cm848_accumulateCoolantOverheatLevelTimers counts the passes the coolant spends above each of
+   five temperature levels; if any of the counters 1-4 exceeds its limit
+   (coolant_overheat_level_time_limits) this sets fault 389, the engine overheat derate (setpoint
+   coolant_overheat_aggressive_derate_reference_temperature), the bucket overheat flags and reason
+   code 5 and counts the event; the faults and flags clear after
+   coolant_overheat_aggressive_derate_stop_time passes with coolant below
+   coolant_overheat_aggressive_derate_stop_temperature (reason 6). It checks the accumulated
+   counters, not a sensor (was engine_sensor_check_overheat). (was
+   cm848_monitorCoolantTemperatureBucketOverheat; PR #53 round 53: the e2m's CT_Derate vocabulary)
+    */
 
-void cm848_monitorCoolantTemperatureBucketOverheat(void)
+void cm848_monitorCoolantOverheatAggressiveDerate(void)
 
 {
   dword *pdVar1;
@@ -75289,49 +75298,53 @@ void cm848_monitorCoolantTemperatureBucketOverheat(void)
   int iVar3;
   
   iVar3 = 1;
-  pdVar1 = cold_start_coolant_bucket_counters;
-  pwVar2 = cold_start_coolant_bucket_thresholds;
+  pdVar1 = coolant_overheat_level_timers;
+  pwVar2 = coolant_overheat_level_time_limits;
   do {
     pdVar1 = pdVar1 + 1;
     pwVar2 = pwVar2 + 1;
     if ((uint)*pwVar2 < *pdVar1) {
       engine_overheat_derate_coolant_temperature_setpoint =
-           cold_start_coolant_bucket_overheat_setpoint;
+           coolant_overheat_aggressive_derate_reference_temperature;
       engine_overheat_derate_active_flag = 1;
-      coolant_bucket_overheat_detected_flag = 1;
+      coolant_overheat_check_gauges_flag = 1;
       fault_detected_cal._48_2_ = fault_detected_cal._48_2_ | 0x20;
-      cold_start_coolant_overheat_event_count = cold_start_coolant_overheat_event_count + 1;
+      coolant_overheat_aggressive_derate_active_time =
+           coolant_overheat_aggressive_derate_active_time + 1;
       engine_overheat_derate_reason_code = 5;
       break;
     }
     iVar3 = iVar3 + 1;
   } while (iVar3 < 5);
-  if (cold_start_coolant_bucket_recovery_count_limit <= sensor_overheat_recovery_count) {
+  if (coolant_overheat_aggressive_derate_stop_time <= coolant_overheat_aggressive_derate_stop_count)
+  {
     engine_overheat_derate_active_flag = 0;
-    coolant_bucket_overheat_detected_flag = 0;
-    coolant_bucket_overheat_active_flag = 0;
+    coolant_overheat_check_gauges_flag = 0;
+    coolant_overheat_chime_flag = 0;
     fault_detected_cal._48_2_ = fault_detected_cal._48_2_ & 0xffdf;
     fault_registered_cal._48_2_ = fault_registered_cal._48_2_ & 0xffdf;
-    cold_start_coolant_overheat_event_count = 0;
+    coolant_overheat_aggressive_derate_active_time = 0;
     engine_overheat_derate_reason_code = 6;
-    sensor_overheat_recovery_count = cold_start_coolant_bucket_recovery_count_limit;
+    coolant_overheat_aggressive_derate_stop_count = coolant_overheat_aggressive_derate_stop_time;
   }
   if ((fault_detected_cal.coolant_temperature_derate_aggressive_derate_error != 0) &&
      ((short)coolant_temperature_sensor_filtered <
-      (short)cold_start_coolant_bucket_recovery_temp_threshold)) {
-    sensor_overheat_recovery_count = sensor_overheat_recovery_count + 1;
+      (short)coolant_overheat_aggressive_derate_stop_temperature)) {
+    coolant_overheat_aggressive_derate_stop_count =
+         coolant_overheat_aggressive_derate_stop_count + 1;
   }
-  if ((sensor_overheat_recovery_count != 0) &&
-     ((short)cold_start_coolant_bucket_recovery_temp_threshold <
+  if ((coolant_overheat_aggressive_derate_stop_count != 0) &&
+     ((short)coolant_overheat_aggressive_derate_stop_temperature <
       (short)coolant_temperature_sensor_filtered)) {
-    sensor_overheat_recovery_count = 0;
+    coolant_overheat_aggressive_derate_stop_count = 0;
   }
   if ((fault_detected_cal.coolant_temperature_derate_aggressive_derate_error != 0) &&
-     ((cold_start_coolant_bucket_thresholds[4] < cold_start_coolant_bucket_counters[4] ||
-      ((DAT_0040874e < cold_start_coolant_overheat_event_count &&
-       ((short)cold_start_coolant_bucket_overheat_setpoint <
+     ((coolant_overheat_level_time_limits[4] < coolant_overheat_level_timers[4] ||
+      ((coolant_overheat_aggressive_derate_active_time_limit <
+        coolant_overheat_aggressive_derate_active_time &&
+       ((short)coolant_overheat_aggressive_derate_reference_temperature <
         (short)coolant_temperature_sensor_filtered)))))) {
-    coolant_bucket_overheat_active_flag = 1;
+    coolant_overheat_chime_flag = 1;
   }
   if (engine_overheat_derate_active_flag == 0) {
     engine_overheat_derate_coolant_temperature_setpoint = 0x3fc0;
@@ -75348,8 +75361,8 @@ void cm848_monitorCoolantTemperatureBucketOverheat(void)
 void governor_cruise_dualCalc_dispatch(void)
 
 {
-  engine_coolant_overheat_check();
-  cm848_monitorCoolantTemperatureBucketOverheat();
+  cm848_monitorCoolantOverheatMinimumDerate();
+  cm848_monitorCoolantOverheatAggressiveDerate();
   return;
 }
 
@@ -75387,35 +75400,35 @@ void cm848_calculateCoolantOverheatPiFuelLimit(void)
   int iVar1;
   
   if ((engine_overheat_derate_active_prev_flag == 0) && (engine_overheat_derate_active_flag == 1)) {
-    cold_start_fuel_demand_integral_q8_scaled = (uint)final_fueling * 0x2280;
+    coolant_overheat_pi_integral_accumulator = (uint)final_fueling * 0x2280;
   }
   if (engine_overheat_derate_active_flag == 1) {
-    cold_start_fuel_demand_proportional =
-         (word)((int)((int)(short)coolant_overheat_temperature_error * (uint)DAT_00408764) / 0x2580)
-    ;
+    coolant_overheat_pi_proportional_fuel =
+         (word)((int)((int)(short)coolant_overheat_temperature_error *
+                     (uint)coolant_overheat_pi_proportional_gain) / 0x2580);
   }
   else {
-    cold_start_fuel_demand_proportional = 0x6400;
+    coolant_overheat_pi_proportional_fuel = 0x6400;
   }
   if (engine_overheat_derate_active_flag == 1) {
-    cold_start_fuel_demand_integral_q8_scaled =
-         cold_start_fuel_demand_integral_q8_scaled +
-         DAT_0040875a * (short)coolant_overheat_temperature_error;
-    cold_start_fuel_demand_integral = (word)(cold_start_fuel_demand_integral_q8_scaled / 0x2280);
-    if ((int)(short)cold_start_fuel_demand_integral < (int)(uint)coolant_overheat_fuel_floor) {
-      cold_start_fuel_demand_integral = coolant_overheat_fuel_floor;
-      cold_start_fuel_demand_integral_q8_scaled = (short)coolant_overheat_fuel_floor * 0x2280;
+    coolant_overheat_pi_integral_accumulator =
+         coolant_overheat_pi_integral_accumulator +
+         coolant_overheat_pi_integral_gain * (int)(short)coolant_overheat_temperature_error;
+    coolant_overheat_pi_integral_fuel = (word)(coolant_overheat_pi_integral_accumulator / 0x2280);
+    if ((int)(short)coolant_overheat_pi_integral_fuel < (int)(uint)coolant_overheat_fuel_floor) {
+      coolant_overheat_pi_integral_fuel = coolant_overheat_fuel_floor;
+      coolant_overheat_pi_integral_accumulator = (short)coolant_overheat_fuel_floor * 0x2280;
     }
-    if ((int)(uint)throttle_100_fueling < (int)(short)cold_start_fuel_demand_integral) {
-      cold_start_fuel_demand_integral = throttle_100_fueling;
-      cold_start_fuel_demand_integral_q8_scaled = (short)throttle_100_fueling * 0x2280;
+    if ((int)(uint)throttle_100_fueling < (int)(short)coolant_overheat_pi_integral_fuel) {
+      coolant_overheat_pi_integral_fuel = throttle_100_fueling;
+      coolant_overheat_pi_integral_accumulator = (short)throttle_100_fueling * 0x2280;
     }
   }
   else {
-    cold_start_fuel_demand_integral = 0x6400;
+    coolant_overheat_pi_integral_fuel = 0x6400;
   }
-  iVar1 = (int)(short)cold_start_fuel_demand_proportional +
-          (int)(short)cold_start_fuel_demand_integral;
+  iVar1 = (int)(short)coolant_overheat_pi_proportional_fuel +
+          (int)(short)coolant_overheat_pi_integral_fuel;
   if (0x6400 < iVar1) {
     iVar1 = 0x6400;
   }
@@ -75434,7 +75447,7 @@ void cm848_calculateCoolantOverheatPiFuelLimit(void)
 
 /* Sets coolant_overheat_engine_speed_fuel_limit (the engine speed table
    coolant_overheat_engine_speed_fuel_limit_values while the first coolant temperature bucket
-   counter is past cold_start_coolant_bucket_thresholds and the coolant is above a threshold; else
+   counter is past coolant_overheat_level_time_limits and the coolant is above a threshold; else
    0x6400) and coolant_overheat_fuel_limit, the smaller of it and coolant_overheat_pi_fuel_limit
    (reason code 1 when the engine speed limit is the smaller) (was fuel_coldStart_rpmLimit_select)
     */
@@ -75442,8 +75455,9 @@ void cm848_calculateCoolantOverheatPiFuelLimit(void)
 void cm848_selectCoolantOverheatFuelLimit(void)
 
 {
-  if ((cold_start_coolant_bucket_thresholds[0] < cold_start_coolant_bucket_counters[0]) &&
-     ((int)(uint)DAT_00408772 < (int)(short)coolant_temperature_sensor_filtered)) {
+  if ((coolant_overheat_level_time_limits[0] < coolant_overheat_level_timers[0]) &&
+     ((int)(uint)coolant_overheat_level_temperature_axis[1] <
+      (int)(short)coolant_temperature_sensor_filtered)) {
     coolant_overheat_engine_speed_fuel_limit =
          lookupTableInterpolation
                    (&coolant_overheat_engine_speed_fuel_limit_cached_axis_offset,
@@ -75612,24 +75626,24 @@ void cm848_resetCoolantOverheatFuelDerate(void)
   
   fault_detected_cal._48_2_ = fault_detected_cal._48_2_ & 0xff9f;
   fault_registered_cal._48_2_ = fault_registered_cal._48_2_ & 0xff9f;
-  coolant_bucket_overheat_detected_flag = 0;
-  coolant_bucket_overheat_active_flag = 0;
+  coolant_overheat_check_gauges_flag = 0;
+  coolant_overheat_chime_flag = 0;
   coolant_overheat_fuel_derate = 0x6400;
   coolant_overheat_fuel_derate_prev = 0x6400;
   coolant_overheat_engine_speed_fuel_limit = 0x6400;
   coolant_overheat_engine_speed_fuel_limit_prev = 0x6400;
-  cold_start_fuel_demand_integral = 0x6400;
-  cold_start_fuel_demand_integral_q8_scaled = 0xd7a0000;
+  coolant_overheat_pi_integral_fuel = 0x6400;
+  coolant_overheat_pi_integral_accumulator = 0xd7a0000;
   coolant_overheat_pi_fuel_limit = 0x6400;
   coolant_overheat_pi_fuel_limit_prev = 0x6400;
-  cold_start_fuel_demand_proportional = 0x6400;
+  coolant_overheat_pi_proportional_fuel = 0x6400;
   engine_overheat_derate_coolant_temperature_setpoint = 0x3fc0;
   coolant_overheat_temperature_error = 0;
   engine_overheat_derate_active_flag = 0;
   engine_overheat_derate_active_prev_flag = 0;
   coolant_overheat_derate_minimum_injection_timing = 0xfc00;
   iVar2 = 0;
-  pwVar1 = &cold_start_fuel_demand_proportional;
+  pwVar1 = &coolant_overheat_pi_proportional_fuel;
   do {
     pwVar1 = pwVar1 + 2;
     pwVar1[0] = 0;
@@ -75663,12 +75677,12 @@ void cm848_runCoolantOverheatFuelDerate(void)
     engine_overheat_derate_reason_code = 0;
   }
   else {
-    if (((short)coolant_temperature_sensor_filtered < DAT_0040876a) &&
-       (coolant_temperature_bucket_cycle_count == 0)) {
+    if (((short)coolant_temperature_sensor_filtered < coolant_overheat_derate_skip_temperature) &&
+       (coolant_overheat_level_timer_reset_count == 0)) {
       cm848_resetCoolantOverheatFuelDerate();
     }
     else {
-      cm848_accumulateCoolantTemperatureBuckets();
+      cm848_accumulateCoolantOverheatLevelTimers();
       governor_cruise_dualCalc_dispatch();
       engine_coolantTemp_delta_calc();
       cm848_calculateCoolantOverheatPiFuelLimit();
@@ -75699,7 +75713,7 @@ void protection_accumulator_update(void)
   int *piVar2;
   
   piVar2 = (int *)&DAT_003fee04;
-  pdVar1 = cold_start_coolant_bucket_counters;
+  pdVar1 = coolant_overheat_level_timers;
   do {
     *piVar2 = *piVar2 + *pdVar1;
     piVar2 = piVar2 + 1;

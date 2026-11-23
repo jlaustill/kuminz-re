@@ -1592,9 +1592,9 @@ undefined4 governor_cruise_standbyState_get(void);  // @ 0x00512f18
 void cm848_cruiseControlPeriodicUpdate(void);  // @ 0x00512ff4
 void cm848_updateEngineWarningFlags(void);  // @ 0x00513200
 void cm848_initEngineWarningFlags(void);  // @ 0x005134e8
-void cm848_accumulateCoolantTemperatureBuckets(void);  // @ 0x00513508
-void engine_coolant_overheat_check(void);  // @ 0x0051361c
-void cm848_monitorCoolantTemperatureBucketOverheat(void);  // @ 0x0051375c
+void cm848_accumulateCoolantOverheatLevelTimers(void);  // @ 0x00513508
+void cm848_monitorCoolantOverheatMinimumDerate(void);  // @ 0x0051361c
+void cm848_monitorCoolantOverheatAggressiveDerate(void);  // @ 0x0051375c
 void governor_cruise_dualCalc_dispatch(void);  // @ 0x0051395c
 void engine_coolantTemp_delta_calc(void);  // @ 0x00513980
 void cm848_calculateCoolantOverheatPiFuelLimit(void);  // @ 0x005139b8
