@@ -3431,7 +3431,7 @@ extern word alternator_field_duty_while_charging_system_fault_368_set;  // 0x004
 extern word alternator_field_retest_off_passes;  // 0x004087fc
 extern word alternator_field_retest_fault_confirm_passes;  // 0x004087fe
 extern int16_t main_injection_end_timing_default;  // 0x00408800
-extern word main_injection_end_timing_pulse_width_addend;  // 0x00408802
+extern word main_injection_end_timing_hydraulic_delay;  // 0x00408802
 extern int16_t main_injection_end_timing_upper_limit;  // 0x00408804
 extern int16_t main_injection_end_timing_lower_limit;  // 0x00408806
 extern word engine_acceleration_first_stage_filter_coefficient;  // 0x00408808

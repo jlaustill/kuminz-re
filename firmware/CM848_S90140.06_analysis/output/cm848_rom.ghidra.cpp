@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 18:00:34 MST 2026
+// Generated: Sun Nov 22 18:15:11 MST 2026
 
 
 //
@@ -38730,9 +38730,10 @@ void cm848_initializeAlternatorFieldControl(void)
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
-/* Calculates main_injection_end_timing, the end of the main injection in main timing counts
-   (0.1171875 deg): main_injection_timing_copy (the start) minus the pulse's crank angle
-   (main_injection_pulse_width + main_injection_end_timing_pulse_width_addend) x
+/* Calculates main_injection_end_timing (e2m 8B48 EOI 'Main end of injection'; its settings are e2m
+   8B47 EOI_Default / EOI_Hydraulic_Delay / EOI_Max_Limit / EOI_Min_Limit), the end of the main
+   injection in main timing counts (0.1171875 deg): main_injection_timing_copy (the start) minus the
+   pulse's crank angle (main_injection_pulse_width + main_injection_end_timing_hydraulic_delay) x
    average_engine_speed x 6 / 1e6 x 256 / 600. With the on-time at 0.4 us per count and the speed at
    1/8 rpm that product is the pulse duration in the same counts. Clamped to
    main_injection_end_timing_lower_limit .. _upper_limit (signed); main_injection_end_timing_default
@@ -38753,7 +38754,7 @@ void cm848_calculateMainInjectionEndTiming(void)
       && (wVar1 = main_injection_timing_copy -
                   (short)((ulonglong)
                           (((uint)(ushort)(main_injection_pulse_width +
-                                          main_injection_end_timing_pulse_width_addend) *
+                                          main_injection_end_timing_hydraulic_delay) *
                            (uint)(ushort)(average_engine_speed * 6)) / 1000000 << 8) / 600),
          main_injection_end_timing = main_injection_end_timing_lower_limit,
          main_injection_end_timing_lower_limit <= (short)wVar1)) &&
