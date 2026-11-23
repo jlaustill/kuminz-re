@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 00:49:01 MST 2026
+// Generated: Mon Nov 23 01:33:39 MST 2026
 
 
 //
@@ -36358,49 +36358,49 @@ void cm848_selectSensorValuesInUse(void)
     return;
   }
   if (fault_detected_cal.coolant_temperature_high_error == 0) {
-    coolant_temperature_in_use = coolant_temperature_high_substitute;
+    coolant_temperature_in_use = coolant_temperature_low_fault_substitute;
     if (fault_detected_cal.coolant_temperature_low_error == 0) {
       pwVar1 = &coolant_temperature_sensor_filtered;
       goto LAB_000353cc;
     }
   }
   else {
-    pwVar1 = &coolant_temperature_low_substitute;
+    pwVar1 = &coolant_temperature_high_fault_substitute;
 LAB_000353cc:
     coolant_temperature_in_use = *pwVar1;
   }
   if (fault_detected_cal.intake_manifold_temperature_high_error == 0) {
-    intake_manifold_temperature_in_use = intake_manifold_temperature_high_substitute;
+    intake_manifold_temperature_in_use = intake_manifold_temperature_low_fault_substitute;
     if (fault_detected_cal.intake_manifold_temperature_low_error == 0) {
       pwVar1 = &intake_manifold_temperature_sensor_filtered;
       goto LAB_00035418;
     }
   }
   else {
-    pwVar1 = &intake_manifold_temperature_low_substitute;
+    pwVar1 = &intake_manifold_temperature_high_fault_substitute;
 LAB_00035418:
     intake_manifold_temperature_in_use = *pwVar1;
   }
   if ((fault_detected_cal.faults_0_to_15 & 0x100) == 0) {
-    intake_manifold_pressure_in_use = intake_manifold_pressure_low_substitute;
+    intake_manifold_pressure_in_use = intake_manifold_pressure_low_fault_substitute;
     if ((fault_detected_cal.faults_0_to_15 & 0x200) != 0) goto LAB_00035468;
     pwVar1 = &intake_manifold_pressure_sensor_filtered;
   }
   else {
-    pwVar1 = &intake_manifold_pressure_high_substitute;
+    pwVar1 = &intake_manifold_pressure_high_fault_substitute;
   }
   intake_manifold_pressure_in_use = *pwVar1;
 LAB_00035468:
   if (accelerator_pedal_dual_channel_enable_flag == 1) {
     if (fault_detected_cal.pedal_position_sensor_1_high_error != 0) {
-      accelerator_pedal_position_in_use = accelerator_pedal_position_high_substitute;
+      accelerator_pedal_position_in_use = accelerator_pedal_position_high_fault_substitute;
       return;
     }
     iVar2 = 0x2a;
   }
   else {
     if ((fault_detected_cal.faults_0_to_15 & 0x400) != 0) {
-      accelerator_pedal_position_in_use = accelerator_pedal_position_high_substitute;
+      accelerator_pedal_position_in_use = accelerator_pedal_position_high_fault_substitute;
       return;
     }
     iVar2 = 0;
@@ -36409,7 +36409,7 @@ LAB_00035468:
     accelerator_pedal_position_in_use = commanded_throttle_state.commanded_throttle;
     return;
   }
-  accelerator_pedal_position_in_use = accelerator_pedal_position_low_substitute;
+  accelerator_pedal_position_in_use = accelerator_pedal_position_low_fault_substitute;
   return;
 }
 
@@ -41159,7 +41159,7 @@ void cm848_processPciRemoteFaultStatus(void)
 // Function: cm848_decodePciReceiveMessage13State @ 0x0003c018
 //
 
-/* Every 4th PCI application tick sets pci_receive_message_13_state_2_flag = (PCI RX[13] header 0x92
+/* Every 4th PCI application tick sets pci_four_wheel_drive_status_flag = (PCI RX[13] header 0x92
    payload byte 1 & 7) = 2; no message-status check; the flag has no reader (was
    cm848_checkSpeedDerivativeMode) | review-function-readability reviewed 2026-11-13 - Readability
    Medium Accuracy Confidence High */
@@ -41167,7 +41167,7 @@ void cm848_processPciRemoteFaultStatus(void)
 void cm848_decodePciReceiveMessage13State(void)
 
 {
-  pci_receive_message_13_state_2_flag = (pci_receive_message_13_payload[0] & 7) == 2;
+  pci_four_wheel_drive_status_flag = (pci_receive_message_13_payload[0] & 7) == 2;
   return;
 }
 
@@ -87518,13 +87518,15 @@ void cm848_updateDrivetrainRatio(void)
           drivetrain_ratio_save_pending_flag = 1;
         }
       }
-      uVar4 = ((DAT_00408b78 + 0x6400) * (uint)top_gear_ratio_cal) / 0x6400;
+      uVar4 = ((drivetrain_gear_ratio_detection_margin + 0x6400) * (uint)top_gear_ratio_cal) /
+              0x6400;
       uVar3 = (uint)drivetrain_ratio_maximum_limit;
       if (uVar3 < uVar4) {
         uVar4 = uVar3;
       }
       top_gear_ratio_threshold = (word)uVar4;
-      uVar6 = ((DAT_00408b78 + 0x6400) * (uint)gear_down_gear_ratio_cal) / 0x6400;
+      uVar6 = ((drivetrain_gear_ratio_detection_margin + 0x6400) * (uint)gear_down_gear_ratio_cal) /
+              0x6400;
       if (uVar3 < uVar6) {
         uVar6 = uVar3;
       }
