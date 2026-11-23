@@ -2741,6 +2741,35 @@ A peer relay started the round; the scripts are in `session_folder/round61/`.
   - `j1939_dm1_request_mode_byte` holds the DM7 request's mode byte, so the name looks wrong.
   - 69 unprefixed CM848-only functions remain.
 
+## Done, round 62 (2026-11-23, same PR): the J1939 registration functions, the DM7 test identifier, a startup fault delay
+
+A peer relay started the round; the scripts are in `session_folder/round62/`.
+- **Stage A (25098ce):**
+  - **The registration functions called by `cm848_j1939_system_init`:**
+    `cm848_registerJ1939ParameterAndBroadcastServices` / `cm848_registerJ1939MemoryWriteServices` /
+    `cm848_registerJ1939MemoryReadServices` / `cm848_registerJ1939GetAddressByParameterIdService` (were the
+    `j1939_diag_request_batch_*` / `_41_handler` names), `cm848_registerJ1939InputMessageHandlers` (was
+    `j1939_pgn_handler_init_batch`) and `cm848_registerJ1939Dm7Handler` (was `cm848_initJ1939Dm1RequestHandler`).
+  - **`j1939_dm7_test_identifier`** (was `j1939_dm1_request_mode_byte`): DM7's first byte, the Test Identifier
+    (SPN 1224, from the local J1939 database).
+  - **`j1939_input_fault_start_delay`** (was `governor_table_check_startup_delay`): while it counts down, the J1939
+    input processors clear their data error and timeout faults instead of setting them.
+  - **The vague Bank 2 helpers:** `cm848_initializeTorqueLookupCaches`, `cm848_initializeOxygenLimitLookupCaches`,
+    `cm848_calculateFrictionTorquePercentAndNetOutputTorque` and `cm848_presetPedalFaultModeFuelDemand`.
+  - **New rows:** the pedal fault mode engine speed filter and its coefficient (two type-only rows named) and
+    `combustion_torque_by_fuel_quantity_timing_adjusted_cached_axis_offsets` (`word[2]`).
+  - `cm848_validateJ1939DiagnosticRequest`'s plate says "is not 0xff" for the key test (round 61's lead).
+- **Not done:** typing the J1939 service ID as `EF00_SERVICE_ID`. The enum covers all 24 registered IDs, but its
+  members are placeholders or abbreviations (`SYSTEM_SERVICE_04`, `MEM_READ_2B_PARAM_4B_OFFSET`), and the handler
+  names already say more.
+- **Proof:** `prove_r62.sh` shows no function differing; both renamed rows keep their notes. verify byte-identical, thunks 18 / 14, no name-mismatch warning.
+- **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 219.
+- **Leads:**
+  - Rename the `EF00_SERVICE_ID` members from their registered handlers, then type the registrar's `service_id`
+    parameter (24 call sites would read the names).
+  - `DAT_003fba10`, the word next to the new cache in `cm848_calculateNetCombustionTorque`.
+  - 59 unprefixed CM848-only functions remain. Round 61's "69" did not count its own rename, so it was 68.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

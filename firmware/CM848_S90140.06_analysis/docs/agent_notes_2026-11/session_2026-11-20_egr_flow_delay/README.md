@@ -553,3 +553,7 @@ Hand work on the round 7 lead.
 ## Round 61: both diagnostic service dispatch tables typed (`session_folder/round61/`)
 
 - **Stage A:** `apply_r61a.py`, `map_r61a.csv`. Proof: `prove_r61.sh`, `diff_function_r57.py`, `count_casts.py`. **Closing:** `apply_r61_closing.py`, `update_large_tar_r61.sh`.
+
+## Round 62: the J1939 registration functions, the DM7 test identifier (`session_folder/round62/`)
+
+- **Stage A:** `service_ids.py`, `apply_r62a.py`, `map_r62a.csv`. Proof: `prove_r62.sh`. **Closing:** `apply_r62_closing.py`, `update_large_tar_r62.sh`.

@@ -714,6 +714,10 @@ state enum, the flag bytes.**
   application's 32-slot table, `boot_diagnostic_service_entry_t` on the boot kernel's). The request check is named
   `cm848_validateJ1939DiagnosticRequest`, 15 plates are refreshed, and the three stale prototype names are synced,
   so the build no longer warns about name mismatches.
+**Round 62.**
+- **Stage A (25098ce):** the J1939 registration functions, the DM7 test identifier (SPN 1224), the J1939 input fault
+  start delay and four vague Bank 2 helpers are named from their code, and one more combustion torque cache is
+  typed.
 
 ## Test plan
 
@@ -806,6 +810,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 62: `prove_r62.sh` shows no function differing; both renamed rows keep their notes. verify byte-identical, thunks 18 / 14, no name-mismatch warning.
 - [x] Round 61: exactly the four table functions differ (two registrars, two scanners), each diffed; casts 3 -> 2 over them, no pieces; `firmware_types.hpp` renames the two dispatch types and nothing else. verify byte-identical, thunks 18 / 14, no name-mismatch warning left.
 - [x] Round 60: exactly the three expected functions differ, each diffed; casts 8 -> 5 over them, no pieces; `firmware_types.hpp` changes by one rename, one new type, one removal. verify byte-identical, thunks 18 / 14.
 - [x] Round 59: stage A: the `.cpp` is unchanged (only the timestamp differed); `firmware_types.hpp` loses exactly the 29 types; the other headers are unchanged; verify byte-identical. Stage B: comments only.

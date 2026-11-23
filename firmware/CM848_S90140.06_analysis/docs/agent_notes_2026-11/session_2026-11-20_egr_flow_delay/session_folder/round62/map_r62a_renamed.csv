@@ -1,0 +1,3 @@
+address,name,old_label,kind,dims
+0x003fa97a,j1939_dm7_test_identifier,j1939_dm1_request_mode_byte,global,1
+0x0040aaa4,j1939_input_fault_start_delay,governor_table_check_startup_delay,global,1
