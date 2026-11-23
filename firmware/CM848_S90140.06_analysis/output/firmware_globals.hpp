@@ -767,7 +767,7 @@ extern dword CMFCTL_A;  // 0x002fc808
 extern dword CMFMCR_B;  // 0x002fc840
 extern dword CMFTST_B;  // 0x002fc844
 extern dword CMFCTL_B;  // 0x002fc848
-extern undefined usiu_ext_004;  // 0x00300004
+extern word DPTRAM_RAMBAR;  // 0x00300004
 extern byte dual_port_tpu_ram_start;  // 0x00302000
 extern keyon_flags_t ecu_power_state_flags;  // 0x00302002
 extern j1939_rx_msg_t boot_can_receive_ring[40];  // 0x00302016

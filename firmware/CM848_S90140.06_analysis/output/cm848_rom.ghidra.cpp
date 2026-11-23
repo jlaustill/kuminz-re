@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 14:07:10 MST 2026
+// Generated: Mon Nov 23 14:26:20 MST 2026
 
 
 //
@@ -37,7 +37,7 @@ void mpc555_reset_vector(void)
   mios_mmcsm_cnt.SCRD = 0x60f;
   mios_mmcsm_cnt.CNT = 0;
   mios_mmcsm_cnt.ML = 0;
-  _usiu_ext_004 = 0xffa0;
+  _DPTRAM_RAMBAR = 0xffa0;
   mios_mdasm30.SCRD = 3;
   cm848_waitForStableIgnitionKeyOn();
   mpc555_hardwareInitialization();
@@ -1109,7 +1109,7 @@ void mpc555_initSystemRegisters(void)
   mios_mmcsm_cnt.SCRD = 0x60f;
   mios_mmcsm_cnt.CNT = 0;
   mios_mmcsm_cnt.ML = 0;
-  _usiu_ext_004 = 0xffa0;
+  _DPTRAM_RAMBAR = 0xffa0;
   mios_mdasm30.SCRD = 3;
   cm848_waitForStableIgnitionKeyOn();
   mpc555_hardwareInitialization();
@@ -1153,7 +1153,7 @@ void cm848_initClockAndTimers(void)
   mios_mmcsm_cnt.SCRD = 0x60f;
   mios_mmcsm_cnt.CNT = 0;
   mios_mmcsm_cnt.ML = 0;
-  _usiu_ext_004 = 0xffa0;
+  _DPTRAM_RAMBAR = 0xffa0;
   mios_mdasm30.SCRD = 3;
   cm848_waitForStableIgnitionKeyOn();
   mpc555_hardwareInitialization();
@@ -59910,9 +59910,11 @@ void cm848_initializeTachometerOutputs(void)
 // Function: mpc555_initTpuConfiguration @ 0x00055c1c
 //
 
-/* Unless TPU B's TPUMCR has bit 0x400 set: copies dual_port_tpu_ram_load_table's records into the
-   dual-port TPU RAM (0x302000-0x302fff) / then sets both TPU module configuration registers (0x4430
-   B / 0x4460 A) and their interrupt registers (PR #53 round 70) */
+/* Unless TPU B is already in emulation mode (TPUMCR bit 0x400 - EMU): copies
+   dual_port_tpu_ram_load_table's records - the TPU microcode - into the dual-port TPU RAM
+   (0x302000-0x302fff) while the CPU can still write it / then sets both TPU module configuration
+   registers with EMU (0x4430 B / 0x4460 A) so both TPUs run it / and their interrupt registers (PR
+   #53 round 70) */
 
 void mpc555_initTpuConfiguration(void)
 
