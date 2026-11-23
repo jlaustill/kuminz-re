@@ -16,13 +16,13 @@ determinable from the binary alone — see "Still blocked" below.
 
 | CH | CFSR fn | Direction | Logical owner / purpose | Confidence |
 |----|---------|-----------|-------------------------|------------|
-| 0  | (capture) | input | **Crank position sensor** — `engine_injectionTiming_crankSyncDispatch` reads PARAM4 (captured tooth); `mpc555_updateEngineCrankState`, `injectorTimingCalculation`, hpcr sync. 42 refs. | confirmed input |
+| 0  | (capture) | input | **Crank position sensor** — `cm848_dispatchCrankSynchronousInjection` reads PARAM4 (captured tooth); `mpc555_updateEngineCrankState`, `injectorTimingCalculation`, hpcr sync. 42 refs. | confirmed input |
 | 1  | (capture) | input | **Cam / secondary position sensor** input capture — same crank-sync readers | confirmed input |
 | 2  | 7 | — | its flag counts end-of-injection-limit violations: `cm848_monitorInjectionLimitViolationCounters` (was `cm848_updateEngineStatusTimers`; e2m 804A / 804B, fault 325) | inferred |
 | 3  | (capture) | input | sync-pulse input — `hpcr_processEngineSyncPulses`, `mpc555_updateEngineCrankState` | inferred |
 | 4  | 0xa | output | cold-start-gated output — `cm848_monitorFuelSystemHardwareShutdown` (was `cm848_protection_timer_init`) enables/disables CH4 **and CH9** (`TPUA_CH4_PARAM0 |/& 0x8000`) by `cold_start_phase` + a standby QADC sensor check | output, device unknown |
 | 5  | 0xa | output | output — `FUN_00528508` | unknown |
-| 6  | 9 | output | **INJECTION TIMING** — all three `engine_injectionAngle_{computeLoadCh6,schedule_crankValid,schedule_crankInvalid}` load the angle (tooth+phase) into CH6 PARAM 0x304162 | **CONFIRMED** |
+| 6  | 9 | output | **INJECTION TIMING** — all three `cm848_loadInjectionStartAnglesOnTpuChannel6` / `cm848_scheduleInjectionAnglesInSpeedLimpHome` / `cm848_scheduleInjectionAnglesOnPrimarySpeedInput` (were `cm848_loadInjectionStartAnglesOnTpuChannel6` / `cm848_scheduleInjectionAnglesInSpeedLimpHome` / `cm848_scheduleInjectionAnglesOnPrimarySpeedInput` (were `engine_injectionAngle_{computeLoadCh6,schedule_crankValid,schedule_crankInvalid}`)) load the angle (tooth+phase) into CH6 PARAM 0x304162 | **CONFIRMED** |
 | 7  | 8 | — | engine status timing (pair with CH2) | inferred |
 | 8  | 0xa | output | output (CFSR-assigned only) | unknown |
 | 9  | 9 | output | injection-related — fn 9 like CH6; `tpu_channel_control` (`tpua_ch9_params_t` @0x304190) toggled with CH4. Possibly a 2nd injection event/pulse | inferred output |

@@ -1810,7 +1810,7 @@ void cm848_runVehicleSpeedSensorMonitors(void);  // @ 0x00526c80
 void cm848_initializeVehicleSpeedSensorZeroUnderLoadMonitor(void);  // @ 0x00526cb8
 void cm848_vehicleSpeedSensorInterruptHandler(void);  // @ 0x00526ce4
 void cm848_initVehicleSpeedSensorChannel(void);  // @ 0x00527050
-void cm848_updateCylinderCutoutAndInjectionQuantities(void);  // @ 0x0052731c
+void cm848_updateCylinderCutoutAndInjectionDemand(void);  // @ 0x0052731c
 void cm848_resetCylinderCutoutState(void);  // @ 0x00527860
 void cm848_captureInjectionQuantityAndTimingSnapshots(void);  // @ 0x005278ac
 void cm848_accumulateInjectedFuel(void);  // @ 0x00527938

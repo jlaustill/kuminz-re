@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 09:38:00 MST 2026
+// Generated: Mon Nov 23 09:50:20 MST 2026
 
 
 //
@@ -48392,7 +48392,7 @@ void cm848_initRpmSetpointFilters(void)
    value when enabled, and set to 0 when engine_speed_limp_home_active_flag is set with
    injection_quantity_auxiliary_speed_limp_home_switch = 1.
    cm848_captureInjectionQuantityAndTimingSnapshots copies it to 0x3fd080 and
-   cm848_updateCylinderCutoutAndInjectionQuantities uses it, scaled, as the cap of
+   cm848_updateCylinderCutoutAndInjectionDemand uses it, scaled, as the cap of
    auxiliary_injection_quantity; the winning term goes to injection_quantity_auxiliary_source_code
    (was cm848_calculateGovernorOutput). */
 
@@ -88775,18 +88775,20 @@ void cm848_initVehicleSpeedSensorChannel(void)
 
 
 //
-// Function: cm848_updateCylinderCutoutAndInjectionQuantities @ 0x0052731c
+// Function: cm848_updateCylinderCutoutAndInjectionDemand @ 0x0052731c
 //
 
 /* WARNING: Removing unreachable block (ram,0x005277a4) */
 /* Debounced cylinder-cutout evaluation (fault masks 0x55 / 0xaa per bank -> cylinder_cutout_mask;
-   can clear TPU-A channel 4 enable bit) then the per-cylinder timing demand: rate-limits
-   injection_quantity_scale_factor and computes total_injection_quantity / pilot_injection_quantity
-   / auxiliary_injection_quantity with the cylinder trim | review-function-readability reviewed
+   can clear TPU-A channel 4 enable bit) then the per-cylinder injection demand: it rate-limits
+   injection_quantity_scale_factor / computes total_injection_quantity / pilot_injection_quantity /
+   auxiliary_injection_quantity with the cylinder trim / sets the pilot / main / auxiliary timings
+   for the cylinder event and main_injection_timing_for_air_handling (stage A of this round named it
+   ...InjectionQuantities - it writes the timings too) | review-function-readability reviewed
    2026-11-11 - Readability Medium Accuracy Confidence Medium (was
    engine_injectionAngle_updateCutoutAndTimingDemand; PR #53 round 65) */
 
-void cm848_updateCylinderCutoutAndInjectionQuantities(void)
+void cm848_updateCylinderCutoutAndInjectionDemand(void)
 
 {
   word wVar1;
@@ -88967,10 +88969,9 @@ void cm848_resetCylinderCutoutState(void)
 
 /* Latches final_fueling, the unscaled pilot quantity and auxiliary quantity limit, and
    main_injection_timing / pilot_injection_timing / auxiliary_injection_timing into the *_snapshot
-   words 0x3fd07c-0x3fd086; cm848_updateCylinderCutoutAndInjectionQuantities scales and applies them
-   per cylinder event. Also resets injection_quantity_scale_factor to 51200 (1.0) unless
-   engine_state is ENGINE_STATE_RUNNING or ENGINE_STATE_ENGINE_BRAKE (was
-   cm848_fuel_demand_state_capture). */
+   words 0x3fd07c-0x3fd086; cm848_updateCylinderCutoutAndInjectionDemand scales and applies them per
+   cylinder event. Also resets injection_quantity_scale_factor to 51200 (1.0) unless engine_state is
+   ENGINE_STATE_RUNNING or ENGINE_STATE_ENGINE_BRAKE (was cm848_fuel_demand_state_capture). */
 
 void cm848_captureInjectionQuantityAndTimingSnapshots(void)
 
@@ -89435,12 +89436,12 @@ LAB_00528338:
 
 /* TPU-A channel 10 interrupt: advances cylinder_event_index (wrapping at cylinder_event_count_max
    -> cm848_evaluateInjectorDiagnostics) and starts the next injection-angle sequence (state 4 +
-   schedule_crankValid when injection_tpu_period_parameter_address is 0x12 / else state 1 +
-   schedule_crankInvalid). Was missing from every build | review-function-readability reviewed
-   2026-11-11 - Readability Medium Accuracy Confidence Medium | reached via
-   tpu_a_channel_interrupt_handler_table[10] - mpc555_tpuAInterruptDispatcher 0x55de4 calls
-   table[channel] - no direct caller (was engine_injectionAngle_tpuChannel10CylinderEventHandler; PR
-   #53 round 65) */
+   cm848_scheduleInjectionAnglesInSpeedLimpHome when injection_tpu_period_parameter_address is 0x12
+   / else state 1 + cm848_scheduleInjectionAnglesOnPrimarySpeedInput). Was missing from every build
+   | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+   | reached via tpu_a_channel_interrupt_handler_table[10] - mpc555_tpuAInterruptDispatcher 0x55de4
+   calls table[channel] - no direct caller (was
+   engine_injectionAngle_tpuChannel10CylinderEventHandler; PR #53 round 65) */
 
 void cm848_handleTpuChannel10CylinderEvent(void)
 
@@ -90124,15 +90125,15 @@ LAB_005295d8:
 
 /* TPU-A channel 6 interrupt: the injection scheduling state machine on
    injection_angle_sequence_state. State 1 runs the cut-out, quantity and timing demand
-   (cm848_updateCylinderCutoutAndInjectionQuantities) and loads the pilot, main and auxiliary start
+   (cm848_updateCylinderCutoutAndInjectionDemand) and loads the pilot, main and auxiliary start
    angles (cm848_loadInjectionStartAnglesOnTpuChannel6, which re-arms the channel for the scheduling
    angle and sets state 2); state 2 computes the pilot, main and auxiliary on-times and writes the
    three events (start angle, on-time, slots 4 / 8 / 12) into TPU-A channel 5 parameter RAM via
    cm848_writeInjectionAngleToTpuChannel5, then state 8; state 4 is the speed limp home sequence
-   (TPU mode 18, set by the schedule_crankValid scheduler): it does the same in one step,
-   recomputing everything or reusing the angles of a still pending state 2. The auxiliary start is
-   shifted by the main on-time as an angle (clipped to injection_end_limit_angle -
-   auxiliary_injection_end_limit_separation) when
+   (TPU mode 18, set by the cm848_scheduleInjectionAnglesInSpeedLimpHome scheduler): it does the
+   same in one step, recomputing everything or reusing the angles of a still pending state 2. The
+   auxiliary start is shifted by the main on-time as an angle (clipped to injection_end_limit_angle
+   - auxiliary_injection_end_limit_separation) when
    injection_timing_auxiliary_relative_to_main_end_flag is nonzero in state 2 but when it is 0 in
    state 4. Was missing from every build (wrongly in deleted_functions.csv) |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium |
@@ -90155,7 +90156,7 @@ void cm848_handleTpuChannel6InjectionEvent(void)
     cm848_processFuelPressureSensor();
     fuel_pressure_at_other_angle_events = fuel_pressure_sensor;
     cm848_countFuelPressureGovernorStartRevolutions();
-    cm848_updateCylinderCutoutAndInjectionQuantities();
+    cm848_updateCylinderCutoutAndInjectionDemand();
     cm848_lookupInjectionTimingTableOffset();
     cm848_setMainQuantityAndPulseWidthLimits();
     cm848_monitorInjectionLimitViolationCounters();
@@ -90210,7 +90211,7 @@ void cm848_handleTpuChannel6InjectionEvent(void)
         }
         else {
           cm848_countFuelPressureGovernorStartRevolutions();
-          cm848_updateCylinderCutoutAndInjectionQuantities();
+          cm848_updateCylinderCutoutAndInjectionDemand();
           cm848_lookupInjectionTimingTableOffset();
           cm848_setMainQuantityAndPulseWidthLimits();
           cm848_monitorInjectionLimitViolationCounters();
@@ -91376,7 +91377,7 @@ void cm848_initializeFuelPressureGovernorMonitorState(void)
    injection_quantity_pilot_speed_limp_home_switch switch on, or in the free-acceleration shutoff
    (coolant and intake limits are 300 F in the dump), and a fixed value while
    fuel_pressure_limp_home_active_flag is set. cm848_captureInjectionQuantityAndTimingSnapshots
-   snapshots it into 0x3fd07e and cm848_updateCylinderCutoutAndInjectionQuantities turns it into
+   snapshots it into 0x3fd07e and cm848_updateCylinderCutoutAndInjectionDemand turns it into
    pilot_injection_quantity (was cm848_torque_limit_state_update). */
 
 void cm848_calculatePilotInjectionQuantity(void)
