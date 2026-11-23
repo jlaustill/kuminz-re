@@ -611,6 +611,8 @@ state enum, the flag bytes.**
 - **Stage A (d8d2cdf, labels, types):** the main injection end of injection timing (was
   cm848_computeFuelRpmCompensatedOffset): the function, its output and its calibrations.
 - **Stage B (ef9781b, rows):** 30 junk `<name>+<N>` rows removed (the build changes only local declaration order).
+- **Stage C (d0bd88c, labels):** the block named by e2m 8B47 / 8B48 (EOI_Default / _Hydraulic_Delay / _Max_Limit /
+  _Min_Limit, EOI); the addend is the hydraulic delay.
 
 ## Test plan
 

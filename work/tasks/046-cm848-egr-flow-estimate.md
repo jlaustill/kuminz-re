@@ -1917,8 +1917,6 @@ left outside the EEPROM mirror.
   - `engine_retarder_torque_cached_axis_offset`'s phantom `in_r6` data argument.
   - `fuel_rpm_compensated_offset_upper_limit` / `_lower_limit` render under `(short)` casts: `i16` candidates.
   - `audit_cal_suffixes.py` calls RAM 0x3feed0-0x40a048 WORKING_RAM; it is the ROM copy.
-  - `fuel_rpm_compensated_offset_upper_limit` / `_lower_limit` render under `(short)` casts: `i16` candidates.
-  - `audit_cal_suffixes.py` calls RAM 0x3feed0-0x40a048 WORKING_RAM; it is the ROM copy.
   - The `auditing-cal-suffixes` skill still says "~1352 HARD"; the list is empty now.
 
 ## Done, round 40 (2026-11-22, same PR): the application's EEPROM mirror names
@@ -1979,20 +1977,9 @@ A peer relay started the round; the scripts are in `session_folder/round41/`.
 - **Proof:** `prove_records.py` maps the old raw addresses and the new struct accesses to field tokens by offset.
   - The monitor has 112 statements on each side, identical apart from its name. That proves field identity and
     statement structure: the canonical form drops the bracket indexes, the index set-up and the temp names, so it
-    does not check which record or cylinder an access indexes (the index derivation reads the same in both). That proves field identity and
-    statement structure: the canonical form drops the bracket indexes, the index set-up and the temp names, so it
     does not check which record or cylinder an access indexes (the index derivation reads the same in both).
   - The initializer was checked address by address.
   - The other functions match the canonical form or differ in the order of local declarations only.
-- **Checks (fix commit):**
-  - The parameter ID table resolves none of the new rows (absence of data). Its records for the channel config /
-    state (81CB-81CF) confirm every pointer target: High_Limit / Low_Limit / Fault_Set, Raw / Unfiltered /
-    User_Value.
-  - Every access is word-width (`lhz` / `sth`, indexed included).
-  - The low voltage check is on in this calibration and distinct from the low fault: count limit 3 at threshold 699
-    raw counts, against the low fault's 705.
-  - All 8 cylinder records follow the field order; records 6 / 7 are injectors 7 / 8.
-  - This resolves round 39's booster capacitor monitor lead.
 - **Checks (fix commit):**
   - The parameter ID table resolves none of the new rows (absence of data). Its records for the channel config /
     state (81CB-81CF) confirm every pointer target: High_Limit / Low_Limit / Fault_Set, Raw / Unfiltered /
@@ -2049,10 +2036,24 @@ A peer relay started the round; the scripts are in `session_folder/round43/`.
   - Its output is `main_injection_end_timing`, and its four calibrations follow (round 39's fuel_rpm_compensated_*
     names). The three signed ones (lha) are `i16`.
   - The old plate said the output had no reader; `cm848_updateOilChangeMonitor` reads it.
+  - This resolves round 39's `i16` clamp lead.
+- **Stage C (d0bd88c, labels):** the full e2m search names this block. The dumped parameter ID table does not reach it,
+  but name, order, sign, scale and description all match the code.
+  - 8B47: EOI_Default / EOI_Hydraulic_Delay / EOI_Max_Limit / EOI_Min_Limit. 8B48: EOI.
+  - The pulse width addend is `main_injection_end_timing_hydraulic_delay` (uSEC, 0.4 per count).
+  - The dump: default -171 = -20.04 deg, maximum 512 = 60.00 deg, minimum -171, hydraulic delay 1975 = 790 us; the
+    output equals the default with the engine stopped.
+  - `main_injection_timing_copy` is 103B +2 SOI.
+  - So the `i16` types (default / maximum / minimum) meet both conditions of the signedness rule: a signed e2m record
+    and `lha` loads. Stage A had only the loads.
 - **Stage B (ef9781b, rows):** 30 junk `<name>+<N>` rows removed. They were an old export's labels for interior bytes,
   rendered nowhere. The `.cpp` differs only in local declaration order. MISSING 233 -> 221.
 - **firmware/CLAUDE.md (factual refresh):** the MISSING sentence gives 221 (123 documentation, 77 boot-named, 10 dual-use,
   7 unreferenced, 4 deferred).
+- **Checks (fix commit):** thunks 18 / 14 after the dotted junk rows; all four test scripts pass; CM550 uses none of
+  the stage A names.
+  - The round 39 / 41 fix scripts had duplicated text in this file: their edit guard let a second run re-apply an
+    edit whose new text contains the old. `dedupe_task046.py` removed the copies.
 - **Leads:**
   - The typed junk row `fuel_demand_enable_sync_flag_shadow+2` (`undefined2`).
   - The oil change monitor's "engine power" accumulator and increment table: keyed by the end of injection, so likely

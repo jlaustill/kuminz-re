@@ -480,4 +480,4 @@ Hand work on the round 7 lead.
 
 ## Round 43: the main injection end timing, the junk rows (`session_folder/round43/`)
 
-- **Stage A:** `apply_r43a.py`, `rules_r43a*.json`. **Stage B:** `apply_r43b.py`, `removed_junk_rows.txt`. **Closing:** `apply_r43_closing.py`, `update_large_tar_r43.sh`, the MISSING survey (`missing*.tsv`).
+- **Stage A:** `apply_r43a.py`, `rules_r43a*.json`. **Stage B:** `apply_r43b.py`, `removed_junk_rows.txt`. **Stage C:** `apply_r43c.py`. **Fix:** `dedupe_task046.py`, `apply_r43_fix.py`. **Closing:** `apply_r43_closing.py`, `update_large_tar_r43.sh`, the MISSING survey (`missing*.tsv`).
