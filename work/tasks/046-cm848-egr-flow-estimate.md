@@ -2341,6 +2341,27 @@ A peer relay started the round; the scripts are in `session_folder/round49/`.
     The SCI data plate and the fault code table hold rows inside them.
   - The other 377 unnamed reads do not resolve through the dumped table.
 
+## Done, round 50 (2026-11-22, same PR): gaps by access signature - the TSC1-lost counter, the throttle threshold
+
+A peer relay started the round; the scripts are in `session_folder/round50/`.
+- **Method:** `gap_access_signatures.py` matches each gap by access signature. Every load and store inside it (raw
+  lis + displacement scan) must land on a record of its width, with `lha` / `lhz` agreeing with the record's sign.
+  Only four gaps still hold unnamed reads.
+- **Stage A (316e46c, labels, rows):**
+  - 8A7B (tiled between 8A2A and 8C49) holds the TSC1-lost counter's calibrations ("PTP mode" = the backup powertrain
+    protection).
+    - The counter, its reload and threshold, and its intermittent count join the `tsc1_lost_*` family:
+      `tsc1_lost_counter`, `tsc1_lost_time_limit`, `tsc1_lost_intermittent_time_limit`,
+      `tsc1_lost_intermittent_count`.
+    - New rows: `tsc1_lost_counter_initial_value`, `tsc1_lost_maximum_intermittent_count`, and the documentation row
+      `park_neutral_status_from_pci_message_0e_enable`.
+  - 1585 (tiled between 1052 and 1034) is Throttle_Diff_Threshold: a new `i16` row,
+    `commanded_throttle_difference_threshold`, where the commanded throttle filter ends a transient.
+- **Proof:** `prove_caches.py` with the casts folded matches 1965 of 1968 functions (the other three differ only in local declaration order); verify byte-identical.
+- **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 221.
+- **Leads:** the two large gaps with unnamed reads (0x408d38 +62, 0x40b592 +52) have no one- or two-block fit; they may
+  hold three or more blocks.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

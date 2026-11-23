@@ -653,6 +653,10 @@ state enum, the flag bytes.**
   parameter ID table resolves them to (the J1939 torque curve, intake air heater, engine protection, the J1939
   NAMEs, the MIL bitmap, the fault code table, the injector maps, ...).
   `fuel_demand_mode_active_flag` -> `charge_saturation_temperature_source`.
+**Round 50.**
+- **Stage A (316e46c, labels, rows):** gaps matched by access signature. They give the TSC1-lost counter's calibrations
+  (e2m 8A7B), with the `j1939_tsc1_*` timing rows joining the `tsc1_lost_*` family, and the commanded throttle
+  difference threshold (1585).
 
 ## Test plan
 
@@ -745,6 +749,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 50: `prove_caches.py` with the casts folded matches 1965 of 1968 functions (the other three differ only in local declaration order); verify byte-identical.
 - [x] Round 49: `prove_caches.py` with the scalar casts and two char literals folded matches 1967 of 1968 functions (the other differs only in local declaration order); verify byte-identical.
 - [x] Round 48: `prove_caches.py` on copies with the scalar casts stripped matches all 1968 functions (2 differ only in local declaration order; unstripped, the three thermostat functions differ only in casts); verify byte-identical.
 - [x] Round 47: stage A `prove_caches.py` (the retyped word's two `._0_2_` pieces folded) matches all 1968 functions; verify byte-identical. Stage B `prove_caches.py` (the split dword's six pieces folded) matches all 1968 functions; verify byte-identical.

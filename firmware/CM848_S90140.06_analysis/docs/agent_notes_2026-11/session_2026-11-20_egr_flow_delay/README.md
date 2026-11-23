@@ -505,3 +505,7 @@ Hand work on the round 7 lead.
 ## Round 49: unnamed table-resolved reads (`session_folder/round49/`)
 
 - `unnamed_table_reads.py` (+ `unnamed_reads.txt`). **Stage A:** `apply_r49a.py`, `map_r49a.csv`, `prove_r49a.sh`. **Closing:** `apply_r49_closing.py`, `update_large_tar_r49.sh`.
+
+## Round 50: gaps by access signature (`session_folder/round50/`)
+
+- `gap_access_signatures.py` (+ `gap_access.txt`). **Stage A:** `apply_r50a.py`, `map_r50a.csv`, `prove_r50a.sh`. **Closing:** `apply_r50_closing.py`, `update_large_tar_r50.sh`.
