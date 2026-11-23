@@ -602,6 +602,11 @@ state enum, the flag bytes.**
 - **Stage A (ea2bacd, types, labels):** the injector driver booster capacitor monitor (was
   cm848_processFaultScanLookup): its two ROM record tables typed as struct arrays, its RAM counts as arrays, the
   low voltage mask and the initializer named.
+**Round 42.**
+- **Stage A (34f1e78, a type):** the per-fault-slot status records (`fault_status_records_cal`, a 3-byte struct; was
+  two overlapping rows).
+- **Stage B (e3b6532, labels):** the engine retarder driver cylinder counts and the cylinders-on count from e2m 13D8 /
+  13D9; the retarder torque lookup's live-in table pointer named.
 
 ## Test plan
 
@@ -694,6 +699,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 42: the 24 status record users match field by field (index set-up dropped); the retarder function has 0 differing statements; the other functions match the canonical form.
 - [x] Round 41: the monitor's 112 statements match field by field (prove_records.py: field identity and statement structure; the indexes are dropped); the other functions match the canonical form or differ in local declaration order only; widths asm-verified.
 - [x] Round 40: every function matches the canonical form or has 0 differing statements (bitfield tests rewritten to their masks); 15 / 15 resolved addresses checked; MISSING 258 -> 234.
 - [x] Round 39: every function matches the canonical form or has 0 differing statements; `audit_cal_suffixes.py` HARD 63 -> 0, SOFT 4 -> 0; e2m sizes agree; RAM 0x3feed0-0x40a048 = ROM + 0x39a3e6 (all 22717 words).

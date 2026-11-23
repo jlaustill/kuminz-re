@@ -1,0 +1,13 @@
+functions 1968; differing after canonicalization: 24; pieces of new names: 0
+== cm848_monitorChargePressureInRange 
+== cm848_filterAndSelectIntakeManifoldTemperature 
+== cm848_processFaultScanGroup 
+== cm848_selectBarometricPressure 
+== cm848_calculateAltitudeDerateFuelLimit 
+== cm848_selectCompressorInletTemperature 
+== cm848_updateMilOnRequest 
+== cm848_processPciObdRequest 
+== cm848_sciCommand51ReportActiveFaultDtcs 
+== cm848_sciCommand52ReportFaultStatusByDtcCallback 
+== fault_clearByIndex 
+== diag_resetSingleFault 

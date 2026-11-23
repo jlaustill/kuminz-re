@@ -2007,6 +2007,29 @@ A peer relay started the round; the scripts are in `session_folder/round41/`.
   - The record's spare count pointer has no reader.
   - `cylinder_event_count_max` (e2m 8194 Engine_Cylinders) keeps its name.
 
+## Done, round 42 (2026-11-22, same PR): the fault status records, the retarder cylinder counts
+
+A peer relay started the round; the scripts are in `session_folder/round42/`.
+- **Stage A (34f1e78, a type):** `fault_status_array` (byte) and `fault_status_word_array` (word at +1) are one
+  per-fault-slot status record (EEPROM 0x1710 + 3 x slot), now `fault_status_records_cal` (`fault_status_record_t`:
+  `flags` byte + `status_word`).
+  - **flags:** 0x10 the MIL request, 0x60 the heal cycle count, 0x0e a severity count, 0x80 a stored DTC. They are
+    updated with read-modify-write masks, so the field stays a byte.
+  - **status_word:** bit 0 active, bits 3-9 an age.
+  - **Typed at the base only:** 170 records would run across the boot kernel's time-shared structures at
+    0x3fec7a-0x3fecf6.
+  - **Render:** the 24 users read `(&fault_status_records_cal)[slot].flags` / `.status_word`.
+  - **Proof:** `prove_status_records.py` gives 0 differing statements in 23 users; `fault_clearByIndex` keeps one
+    index set-up the struct index absorbs. This proves field identity and statement structure, not the index.
+- **Stage B (e3b6532, labels and a local):** the retarder's six "stage weights" are e2m 13D8 Jcomm_EB_Driver_N_Num_Cyl
+  (`engine_retarder_driver_N_cylinder_count`, 1 / 0 / 0 / 0 / 0 / 0). The engaged count is 13D9 Engine_Brake_On_Sum
+  (`engine_retarder_cylinders_on_count`).
+  - `cm848_calculateEngineRetarderTorque`'s live-in `in_r6` is the selected table (`selected_stage_torque_values`).
+  - A count above 6 would read a stale r6; that is unreachable with these counts.
+- **Leads:**
+  - The other `fault_status_records_cal` bits: flags 0x01, status_word 0x02 / 0x04.
+  - The "stage N" torque tables have no e2m record in the dump.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

@@ -473,3 +473,7 @@ Hand work on the round 7 lead.
 ## Round 41: the injector driver booster capacitor monitor (`session_folder/round41/`)
 
 - `apply_r41a.py` (the two record types decoded from the ROM, the RAM arrays, the renames), `prove_records.py` (old raw addresses and new struct fields to one canonical form). **Closing:** `apply_r41_closing.py`, `update_large_tar_r41.sh`.
+
+## Round 42: the fault status records, the retarder cylinder counts (`session_folder/round42/`)
+
+- **Stage A:** `apply_r42a.py`, `prove_status_records.py`. **Stage B:** `apply_r42b.py`, `rules_r42b.json`. **Closing:** `apply_r42_closing.py`, `update_large_tar_r42.sh`.
