@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 17:53:56 MST 2026
+// Generated: Sun Nov 22 18:00:34 MST 2026
 
 
 //
@@ -1773,10 +1773,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
-  word qadc_b_pqb0_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -38939,8 +38939,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  ushort receive_interval;
   byte all_transmits_overdue;
+  ushort receive_interval;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
