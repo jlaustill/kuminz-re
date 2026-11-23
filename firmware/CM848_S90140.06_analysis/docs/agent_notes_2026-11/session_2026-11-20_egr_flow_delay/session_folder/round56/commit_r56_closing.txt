@@ -1,0 +1,13 @@
+cm848: round 56 closing - task 046, the session archive, the PR body
+
+- task 046, round 56:
+  - the discrete output overrides (e2m 8B5B / 8C29) replace the last protection_* names;
+  - why the per-output helper has no prototype (any committed parameter cast all 33 call arguments);
+  - the proof;
+  - leads: 79 unprefixed CM848-only functions left, a LOGICAL_OUTPUT enum pilot, and naming parameters without
+    locking the prototype (a shared-script change).
+- No firmware/CLAUDE.md edit: HARD stays 0 and MISSING 221.
+- PR body, README, todo, memory, and the round 56 session folder (the stage script, map and parameter list, the proof
+  script, the declaration-order and cast counters, the closing scripts, the verify log).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

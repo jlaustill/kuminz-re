@@ -2537,6 +2537,35 @@ A peer relay started the round; the scripts are in `session_folder/round55/`.
   - The fault manager's prototypes still read `param_1` (the slot or fault code); naming them needs full
     `function_definitions.csv` rows.
 
+## Done, round 56 (2026-11-23, same PR): the discrete output overrides replace the last protection_* names
+
+A peer relay started the round; the scripts are in `session_folder/round56/`.
+- **Stage A (3115bca):** the 0x514048-0x514394 "protection" cluster and its globals are the discrete output overrides.
+  - **The blocks:** e2m 8B5B (the override priority word and five enable / value byte pairs) and 8C29 (six more
+    pairs). Neither is in the parameter ID table. They tile the gap from 8A79 (ends at 0x408787) to 8A5F (0x4087a0)
+    exactly, and every pair is passed with the logical output its e2m record names. The output's own module and its
+    round 32 read-back check use the same number.
+  - **The types:** `discrete_output_override_t` (enable / value), with 11 instances named from the read-back stems.
+    Also `discrete_output_override_priority` and the 11 `<stem>_output_override_enable_previous` words.
+  - **The functions:** `cm848_applyDiscreteOutputOverride`, `cm848_applyDiscreteOutputOverrides`,
+    `cm848_initializeDiscreteOutputOverrides`, `cm848_addCoolantOverheatLevelTimersToTotals` (8A72 timers into the
+    8A73 totals at power-down) and `cm848_initializeOverdriveSwitchAndShift`.
+  - **No prototype for the per-output helper.** Pilot builds that committed its four parameter names with `dword`,
+    `int32_t` or `undefined4` each put a `(uint)` cast on all 33 call arguments (11 -> 44 casts), because a committed
+    parameter locks the argument types. The plate names `param_1`-`param_4` instead.
+  - **The trap:** the legacy suffixes are decimal output numbers, but `protection_event_11_reset` drove output 0x11
+    (17). The script asserts its output table against the decompile's call arguments.
+- **Proof:** `prove_caches.py` (the function renames applied to the old .cpp, casts folded, the struct fields as `instance.enable` / `.value`) shows no function differing; the 11 instances render with no pieces and the cast counts are unchanged. verify byte-identical.
+- **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 221.
+- **Leads:**
+  - 79 unprefixed CM848-only functions remain.
+  - Twelve logical outputs now have proven names (these 11 plus round 11's output 54). A `LOGICAL_OUTPUT` enum on
+    the first parameter of `cm848_setLogicalOutputRequest` / `cm848_clearLogicalOutputRequest` would name them at
+    every call site. This round shows that committing a parameter casts every argument that differs from its type, so
+    pilot it and count the casts.
+  - Parameter names without the cast cost would need `ApplyFunctionDefinitions` to name parameters without locking
+    the prototype. That is a shared-script change, so both firmwares would have to be rebuilt.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

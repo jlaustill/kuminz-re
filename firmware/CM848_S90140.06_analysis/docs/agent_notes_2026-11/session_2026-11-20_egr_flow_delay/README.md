@@ -529,3 +529,7 @@ Hand work on the round 7 lead.
 ## Round 55: the fault manager core named from its code (`session_folder/round55/`)
 
 - `function_summary.py`. **Stage A:** `apply_r55a.py`, `map_r55a.csv`, `refresh_struct_comments_r55.py`. Proof: `prove_r55.sh`. **Closing:** `apply_r55_closing.py`, `update_large_tar_r55.sh`.
+
+## Round 56: the discrete output overrides (`session_folder/round56/`)
+
+- **Stage A:** `apply_r56a.py`, `map_r56a.csv`, `params_r56a.csv`. Proof: `prove_r56.sh` (the parameter renames per function, plus a struct-piece count). **Closing:** `apply_r56_closing.py`, `update_large_tar_r56.sh`.

@@ -683,6 +683,10 @@ state enum, the flag bytes.**
 **Round 55.**
 - **Stage A (c4ebb04, function names):** the fault manager core, 15 functions named from their code. Two old names
   were swapped in meaning (`cm848_clearAllFaultRecords` / `cm848_clearPreviouslyActiveFaults`).
+**Round 56.**
+- **Stage A (3115bca):** the last `protection_*` names are the discrete output overrides (e2m 8B5B / 8C29, placed by
+  tiling and by each pair's logical output): `discrete_output_override_t` x 11, the priority word, the previous
+  enables, and 5 functions.
 
 ## Test plan
 
@@ -775,6 +779,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 56: `prove_caches.py` (the function renames applied to the old .cpp, casts folded, the struct fields as `instance.enable` / `.value`) shows no function differing; the 11 instances render with no pieces and the cast counts are unchanged. verify byte-identical.
 - [x] Round 55: `prove_caches.py` (the function renames applied to the old .cpp, casts folded) shows no function differing; each old name is left once, in its own plate. verify byte-identical.
 - [x] Round 54: stage A: `prove_caches.py` (casts folded, function renames applied to the old .cpp) matches 1966 of 1968 functions, the other two differing only in local declaration order; stage B: 1964 match, two more order-only, and the last two only show the new calibration ID array row (read by hand). Every verify byte-identical.
 - [x] Round 53: stage A: `prove_caches.py` (casts folded) shows no function differing once the old labels map to the new; stage B: 1966 of 1968 match, the other two only show the new axis table row in place of a raw pointer / DAT_ label (read by hand). Every verify byte-identical.
