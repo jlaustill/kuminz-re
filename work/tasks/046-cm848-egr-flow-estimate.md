@@ -2013,14 +2013,24 @@ A peer relay started the round; the scripts are in `session_folder/round42/`.
 - **Stage A (34f1e78, a type):** `fault_status_array` (byte) and `fault_status_word_array` (word at +1) are one
   per-fault-slot status record (EEPROM 0x1710 + 3 x slot), now `fault_status_records_cal` (`fault_status_record_t`:
   `flags` byte + `status_word`).
-  - **flags:** 0x10 the MIL request, 0x60 the heal cycle count, 0x0e a severity count, 0x80 a stored DTC. They are
-    updated with read-modify-write masks, so the field stays a byte.
-  - **status_word:** bit 0 active, bits 3-9 an age.
+  - **flags:** 0x10 the MIL request, 0x60 the heal cycle count, 0x0e a 3-bit count that
+    `diag_faultState_severity_increment` steps, 0x80 a stored DTC. They are updated with read-modify-write masks, so
+    the field stays a byte.
+  - **status_word:** bit 0 is what `cm848_sciCommand51ReportActiveFaultDtcs` reports. It is clear in every slot of
+    the truck's dump, the active P0483 too (slot 100: flags 0x82, status_word 0), so it is not simply "active".
+    Bits 3-9 hold an age.
+  - The dump agrees with the flags byte: P0483's 0x82 has the stored DTC bit.
   - **Typed at the base only:** 170 records would run across the boot kernel's time-shared structures at
     0x3fec7a-0x3fecf6.
-  - **Render:** the 24 users read `(&fault_status_records_cal)[slot].flags` / `.status_word`.
-  - **Proof:** `prove_status_records.py` gives 0 differing statements in 23 users; `fault_clearByIndex` keeps one
-    index set-up the struct index absorbs. This proves field identity and statement structure, not the index.
+  - **Render:** the 24 users (34f1e78's message said 22) read `(&fault_status_records_cal)[slot].flags` /
+    `.status_word`.
+  - **Proof:** `prove_status_records.py` gives 0 differing statements in 23 of the 24 users. In the 24th,
+    `cm848_mainLoopServiceMonitor`, one pair is the same address (base + 1 + 3 x slot) written two ways.
+    - It proves field identity and statement structure, not the index.
+    - The first run covered only 12 users, because `prove_caches.py` prints at most 12 names; the fix commit
+      re-ran it on every user.
+  - This resolves round 40's deferred `fault_status_*` pair. The parameter ID table has no record at 0x3feb92
+    (round 40's `app_e2m.txt`).
 - **Stage B (e3b6532, labels and a local):** the retarder's six "stage weights" are e2m 13D8 Jcomm_EB_Driver_N_Num_Cyl
   (`engine_retarder_driver_N_cylinder_count`, 1 / 0 / 0 / 0 / 0 / 0). The engaged count is 13D9 Engine_Brake_On_Sum
   (`engine_retarder_cylinders_on_count`).

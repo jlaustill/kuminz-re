@@ -699,7 +699,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
-- [x] Round 42: the 24 status record users match field by field (index set-up dropped); the retarder function has 0 differing statements; the other functions match the canonical form.
+- [x] Round 42: all 24 status record users match field by field (index set-up dropped; one pair is the same address in two forms); the retarder function has 0 differing statements; the other functions match the canonical form.
 - [x] Round 41: the monitor's 112 statements match field by field (prove_records.py: field identity and statement structure; the indexes are dropped); the other functions match the canonical form or differ in local declaration order only; widths asm-verified.
 - [x] Round 40: every function matches the canonical form or has 0 differing statements (bitfield tests rewritten to their masks); 15 / 15 resolved addresses checked; MISSING 258 -> 234.
 - [x] Round 39: every function matches the canonical form or has 0 differing statements; `audit_cal_suffixes.py` HARD 63 -> 0, SOFT 4 -> 0; e2m sizes agree; RAM 0x3feed0-0x40a048 = ROM + 0x39a3e6 (all 22717 words).

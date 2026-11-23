@@ -51,6 +51,15 @@ def canon_old(s):
             break
         e = close(s, m.start() + len("(ushort *)"))
         s = s[:m.start()] + "&FS.status_word" + s[e:]
+    for base in set(re.findall(r"(\w+) = &fault_status_array;", s)):
+        s = s.replace(f"{base} = &fault_status_array;", "")
+        s = re.sub(r"\*\(ushort \*\)\(" + base + r" \+ [^;()]*?\+ 1\)", "FS.status_word", s)
+        s = re.sub(r"\(ushort \*\)\(" + base + r" \+ [^;()]*?\+ 1\)", "&FS.status_word", s)
+        while True:
+            m = re.search(r"\b" + base + r"\s?\[", s)
+            if not m:
+                break
+            s = s[:m.start()] + "FS.flags" + s[close(s, m.end() - 1):]
     return s.replace("&fault_status_array", "&FS")
 
 
@@ -60,6 +69,21 @@ def canon_new(s):
         if not m:
             break
         s = s[:m.start()] + "FS" + s[close(s, m.end() - 1):]
+    s = re.sub(r"FS\s?\.\s?", "FS.", s)
+    for base in set(re.findall(r"(\w+) = &fault_status_records_cal;", s)):
+        s = s.replace(f"{base} = &fault_status_records_cal;", "")
+        while True:
+            m = re.search(r"\(&" + base + r"->(flags|status_word)\)\s?\[", s)
+            if not m:
+                break
+            s = s[:m.start()] + "FS." + m.group(1) + s[close(s, m.end() - 1):]
+        s = re.sub(r"\(&" + base + r"->status_word \+ [^;()]*\)", "&FS.status_word", s)
+        while True:
+            m = re.search(r"\b" + base + r"\s?\[", s)
+            if not m:
+                break
+            s = s[:m.start()] + "FS" + s[close(s, m.end() - 1):]
+        s = re.sub(r"\b" + base + r"->", "FS.", s)
     s = re.sub(r"FS\s?\.\s?", "FS.", s)
     s = s.replace("&fault_status_records_cal", "&FS")
     return s
@@ -75,8 +99,9 @@ def common(s):
     st = [x.strip() for x in re.split(r"(?<=[;{}])", s) if x.strip() and x.strip() != ";"]
     out = []
     for x in st:
-        if re.fullmatch(r"[a-z]{1,3}Var\d+ = \(?[a-z]{1,3}Var\d+(?: & 0xff)?\)? \* 3;", x):
+        if re.fullmatch(r"(?:[a-z]{1,3}Var\d+|param_\d+) = [^;]* \* 3;", x) and "FS" not in x:
             continue
+        x = re.sub(r"\(([a-z]{1,3}Var\d+) = \(([^()]*)\) \* 3,", r"(\1 = \2,", x)
         x = re.sub(r"\(\s*([a-z]{1,3}Var\d+) = [a-z]{1,3}Var\d+ \* 3\s*,\s*", "(", x)
         x = TEMP.sub("T", x)
         for a, b in ((r"\s*,\s*", ","), (r"\s+\)", ")"), (r"\(\s+", "("), (r"\s+\]", "]"), (r"\s+;", ";"),
