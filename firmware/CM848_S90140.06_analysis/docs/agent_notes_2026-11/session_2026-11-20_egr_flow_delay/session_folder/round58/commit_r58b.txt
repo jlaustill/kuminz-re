@@ -1,0 +1,20 @@
+cm848: round 58 follow-up - what the access scan can and cannot show, the protection_ count's scope
+
+Two corrections from the closing checks (fix_r58b.py; comments, docs and memory only, nothing that renders):
+- scan_accesses_v2.py under-reports. It tracks bases in address order and drops the volatile registers at every bl,
+  so a base kept across a call on another path is lost. It found 2 of the 6 stores to the P0116 countdown (0x3fd188)
+  and 2 of the 6 to the booster counter (0x3fd0b8) that the decompile shows.
+  - The seven "no other access" rows (the three ASG spare words, logical_output_62_line_cal,
+    transmission_diagnostic_flags_6, the two snapshot words) now say what the claim rests on: the decompile's use list
+    (every function, by name) plus the dump values. The scan adds raw-offset forms but cannot prove absence.
+  - The same goes for task 046's method line and the memory note.
+- "No global keeps a protection_ prefix" was counted in global_variables.csv only. Four struct fields still start with
+  protection_ (engine_control_flags_t.protection_system, timing_mode_control_t.protection_blend_ramp /
+  protection_counter_1 / protection_counter_2), so task 046 now says "global_variables.csv rows" and lists the fields
+  as leads.
+- A new lead: firmware/CLAUDE.md's time-shared bullet still says 0x3fdbd2 / 0x3fdbdc / 0x3fdbfe are read "by
+  protection + J1939 builders". They are the logical output line map.
+
+No rebuild: global row comments do not render in the .cpp, and the headers regenerate unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

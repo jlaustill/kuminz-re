@@ -2613,8 +2613,11 @@ A peer relay started the round; the scripts are in `session_folder/round57/`.
 ## Done, round 58 (2026-11-23, same PR): the last 12 protection_* globals named from their code
 
 A peer relay started the round; the scripts are in `session_folder/round58/`.
-- **Stage A (d0ce823).** Accesses were checked with `scan_accesses_v2.py`, a base-tracking D-form scan of both banks
-  (lis / addi / ori / mr bases). Computed pointers can escape it, so the rows say "no other access found".
+- **Stage A (d0ce823).** Each "no other access found" rests on the decompile's use list (every function, by name)
+  plus the dump values. `scan_accesses_v2.py`, a base-tracking D-form scan of both banks (lis / addi / ori / mr
+  bases), adds the raw-offset forms such as `lbz r11,19(r31)`. It tracks bases in address order and drops the
+  volatile registers at every `bl`, so it under-reports: it found 2 of the 6 stores to the P0116 countdown and 2 of
+  the 6 to the booster counter. The follow-up commit corrected the rows' wording.
   - **The logical output line map** (EEPROM mirror; the boot kernel's time-shared rows inside it keep their names):
     `logical_output_line_cal` (the table), `logical_output_line_active_low_bits_cal` (the polarity bits),
     `logical_output_62_line_cal` (was `qadc_adc_enable_flag`) and `cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63`
@@ -2632,12 +2635,17 @@ A peer relay started the round; the scripts are in `session_folder/round58/`.
   documentation rows, 3 deferred). This round's own rows changed it: `logical_output_62_line_cal` gained `_cal`, and two
   documentation rows were deleted.
 - **Leads:**
-  - No global keeps a `protection_` prefix now. 99 rows still have `protection` inside their names.
+  - No `global_variables.csv` row keeps a `protection_` prefix now; four struct fields still do
+    (`engine_control_flags_t.protection_system`, `timing_mode_control_t.protection_blend_ramp` /
+    `protection_counter_1` / `protection_counter_2`). 99 rows still have `protection` inside their names.
   - Entry 17 of the line table renders as the boot kernel's time-shared name `qadc_queue_timing_config._0_2_` in the
     mirror function.
   - `coolant_temperature_sensor_performance_snapshot_coolant_temperature` is read only with `lha`, so it is an `i16`
     candidate.
-  - `scan_accesses_v2.py` could become a repo tool (an access finder that sees base-register forms).
+  - `scan_accesses_v2.py` could become a repo tool once it follows control flow; it now tracks bases in address
+    order and under-reports.
+  - firmware/CLAUDE.md's time-shared bullet still says 0x3fdbd2 / 0x3fdbdc / 0x3fdbfe are read "by protection + J1939
+    builders"; they are the logical output line map.
 
 ## Leads (not in this PR)
 
