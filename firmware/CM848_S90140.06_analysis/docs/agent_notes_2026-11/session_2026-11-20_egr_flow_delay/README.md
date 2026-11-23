@@ -574,3 +574,7 @@ Hand work on the round 7 lead.
 
 - **Stage A:** `apply_r65a.py`, `map_r65a.csv`. **Stage B:** `apply_r65b.py`, `param_passing.py`.
 - **Proof:** `prove_r65.sh` and round 63's `differing.py` / `artifacts.py`. **Closing:** `apply_r65_closing.py`, `update_large_tar_r65.sh`.
+
+## Round 66: the boot kernel's result codes, the coolant friction torque term (`session_folder/round66/`)
+
+- **Stage A:** `apply_r66a.py`, `map_r66a.csv`, `shared_unprefixed.py`. **Proof:** `prove_r66.sh`. **Closing:** `apply_r66_closing.py`, `update_large_tar_r66.sh`.

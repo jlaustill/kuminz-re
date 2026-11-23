@@ -2943,6 +2943,29 @@ A peer relay started the round on round 63's lead; the scripts are in `session_f
   - Still open from rounds 63-64: the boot result codes, 0x14 / 0xfe, CM550's unreviewed members, the three length
     tables, and `DAT_003fba10`.
 
+## Done, round 66 (2026-11-23, same PR): the boot kernel's result codes, the coolant friction torque term
+
+A peer relay started the round; the scripts are in `session_folder/round66/`.
+- **Stage A (382fa677):**
+  - `BOOT_DIAGNOSTIC_RESULT` (size 4), the boot kernel's twin of `J1939_DIAGNOSTIC_RESULT`, with 11 codes named
+    from their producers. Its own codes are 5 (unknown service; the application uses 0x18), 0x11 (a flash write
+    failed) and 0x17 (the EEPROM transfer did not start). 0xff is no member.
+  - It types the boot validator's return (whose full prototype also takes `j1939_rx_msg_t *request`) and the boot
+    dispatcher's `result_code`. The dispatcher locals were keyed on positional names (`BVar4`) from round 64's
+    lesson, and they applied on the first build.
+  - `net_combustion_torque_coolant_friction_term` (was `DAT_003fba10`, round 62's lead), with its scale renamed
+    `net_combustion_torque_coolant_friction_scale`.
+- **Proof:** stage A 6 of 1968 functions differ: the 4 predicted (the boot validator returns BOOT_DIAGNOSTIC_RESULT names and reads its j1939_rx_msg_t request through fields; the boot dispatcher names UNKNOWN_SERVICE / REGION_REFUSED and its entry / result_code locals; the 0x19 handler takes the enum return; the net torque calculation names its coolant friction term) and two local declaration-order moves. No artifact count changed. verify byte-identical, thunks 18 / 14, 0 failed prototype or local rows, history notes intact, headers 0 g++ errors, tests pass, HARD 0 / MISSING 219.
+- **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 219.
+- **Leads:**
+  - **The 30 unprefixed names shared with CM550** are cross-firmware twins by design. Only a few are vague
+    (`emptyStubFunction2`-`4`, empty functions called from code - compiled-out hooks), and renaming them needs
+    their CM550 call sites read too.
+  - `initGovernorFlagsAux` / the word at 0x3fcfba.
+  - CM550's unreviewed members, the three length tables, and 0x14 / 0xfe with no CM848 producer.
+  - `cm848_handleBootExecuteAtAddressService` now shows `& 0xff` masks from the inferred enum return. Its own
+    prototype could return `char` if that reads better.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

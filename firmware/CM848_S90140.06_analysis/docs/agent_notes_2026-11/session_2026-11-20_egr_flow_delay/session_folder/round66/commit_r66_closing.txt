@@ -1,0 +1,14 @@
+cm848: round 66 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 66". It records stage A (382fa677) and its proof. Its leads:
+  - the 30 unprefixed names shared with CM550: twins by design; the vague ones need CM550's call sites read;
+  - initGovernorFlagsAux;
+  - CM550's members, the length tables, 0x14 / 0xfe;
+  - the 0x19 handler's & 0xff masks.
+- work/todo.md: the round 66 line.
+- The session README: the round 66 section.
+- session_folder/round66/: the round's scripts, map, commit messages and proof note.
+- session_folder_large_files.tar.xz: the round's verify log.
+- pr_body.md: refreshed.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
