@@ -137,7 +137,7 @@ Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrU
 - The supply output's faults are 146 and 147 (`cruise_servo_supply_driver_high_control_error`, `cruise_servo_supply_driver_low_control_error`). [round 32]
 - The vent and vacuum codes need the disabled latch first; the supply code can set alone. [review]
 
-**Service overrides.** `cm848_applyDiscreteOutputOverrides` (0x514108) lets a service tool force outputs 21, 20 and 19 on or off. It uses three `.enable` / `.value` pairs, one per output: `cruise_servo_supply_output_override`, `cruise_vacuum_output_override` and `cruise_vent_output_override`. In the e2m they're record 8C29: `Cruise_SC_Source_Driver_Override`, `Cruise_Vacuum_Driver_Override` and `Cruise_Vent_Driver_Override`, each with a `_User_Value` row. [code]
+**Service overrides.** `cm848_applyDiscreteOutputOverrides` (0x514108) lets a service tool force outputs 21, 20 and 19 on or off. It uses three `.enable` / `.value` pairs, one per output: `cruise_servo_supply_output_override`, `cruise_vacuum_output_override` and `cruise_vent_output_override`. In the e2m they're record 8C29: `Cruise_SC_Source_Driver_Override`, `Cruise_Vacuum_Driver_Override` and `Cruise_Vent_Driver_Override`, each with a matching user value row. [code]
 
 ## Second brake signal [code]
 
