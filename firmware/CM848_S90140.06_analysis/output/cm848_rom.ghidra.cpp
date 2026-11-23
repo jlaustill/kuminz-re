@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 01:59:27 MST 2026
+// Generated: Mon Nov 23 02:06:54 MST 2026
 
 
 //
@@ -1773,10 +1773,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
-  word qadc_b_pqb0_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -38944,8 +38944,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  ushort receive_interval;
   byte all_transmits_overdue;
+  ushort receive_interval;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
@@ -40351,7 +40351,7 @@ void cm848_initJ1939CommunicationSystem(void)
   cm848_initPciInFrameResponseBytes();
   cm848_clearCanMessageBuffers();
   cm848_initPciTransmitMessage3State();
-  j1939_fault_processor_initialize();
+  cm848_initializeObdServiceState();
   cm848_resetPciTransmitState();
   fault_detected_cal.j1850_system_bus_fault = 0;
   fault_registered_cal.j1850_system_bus_fault = 0;
@@ -58637,7 +58637,7 @@ void cm848_applicationMain(void)
   cm848_resetCoolantOverheatFuelDerate();
   cm848_initializeInjectorDriverBoosterCapacitor1VoltageChannel();
   cm848_initializeInjectorDriverBoosterCapacitor2VoltageChannel();
-  initDiagnosticShadowFlags();
+  cm848_initializeEngineOilPressureProcessing();
   cm848_clearMonitorEnablingConditions();
   cm848_initializeFuelLevelLowDistanceMonitor();
   cm848_initFaultManagement();
@@ -58699,7 +58699,7 @@ void cm848_applicationMain(void)
   cm848_resetFuelPressureSetpointNotReachedMonitor();
   cm848_clearGovernorFilterAccumulators();
   cm848_initWaterInFuelDistanceMonitor();
-  initFuelCorrectionTableParams();
+  cm848_initializeOilChangeMonitorLookups();
   cm848_clearEgrValveDriverOverCurrentState();
   protection_fault_snapshot_initialize();
   cm848_initializeBarometricPressureSensorAboveMaximumMonitor();
@@ -58721,7 +58721,7 @@ void cm848_applicationMain(void)
   cm848_initializeGovernorPressureChannel();
   cm848_initializeTransmissionTemperatureChannel();
   cm848_initializeAcceleratorPedalIdlePositions();
-  configurationValidationCheck();
+  cm848_updateEepromCalibrationIdentifier();
   cm848_initializeLifetimeDistanceRecordIndex();
   cm848_initialization_calibration_state();
   cm848_initializeRockCycleEngineSpeedLimit();
@@ -58788,7 +58788,7 @@ void cm848_applicationMain(void)
   cm848_synchronizeProtectionEnableShadowFlags();
   cm848_initializeChargePressureEstimate();
   cm848_initializeAlpha();
-  protection_speed_limit_initialize();
+  cm848_initializeRailPressureShortfallFuelLimit();
   cm848_startTurbochargerSpeedLimiter();
   cm848_initializeFuelPressureSensorPlausibilityState();
   cm848_initProtectionFilterLimits();
@@ -78842,10 +78842,14 @@ switchD_00518c0c_default:
 
 
 //
-// Function: j1939_fault_processor_initialize @ 0x005196f0
+// Function: cm848_initializeObdServiceState @ 0x005196f0
 //
 
-void j1939_fault_processor_initialize(void)
+/* Called by cm848_initJ1939CommunicationSystem: zeroes the OBD-II service state -
+   obd_stored_dtc_count / obd_dtc_scan_index / obd_dtc_scan_more_flag / obd_dtc_copy_index and the
+   VIN / calibration ID frame indexes (was j1939_fault_processor_initialize; PR #53 round 54) */
+
+void cm848_initializeObdServiceState(void)
 
 {
   obd_stored_dtc_count = 0;
@@ -79187,10 +79191,15 @@ void cm848_limitFuelQuantityOnRailPressureShortfall(void)
 
 
 //
-// Function: protection_speed_limit_initialize @ 0x00519ffc
+// Function: cm848_initializeRailPressureShortfallFuelLimit @ 0x00519ffc
 //
 
-void protection_speed_limit_initialize(void)
+/* Boot (cm848_applicationMain): presets the rail pressure shortfall fuel limit - its lookup cache
+   fuel_quantity_limit_rail_pressure_shortfall_cached_axis_offset = 2 and its ramp
+   fuel_quantity_limit_rail_pressure_shortfall_ramp = 0x1700 (no limit) (was
+   protection_speed_limit_initialize; PR #53 round 54) */
+
+void cm848_initializeRailPressureShortfallFuelLimit(void)
 
 {
   fuel_quantity_limit_rail_pressure_shortfall_cached_axis_offset = 2;
@@ -79201,10 +79210,15 @@ void protection_speed_limit_initialize(void)
 
 
 //
-// Function: initDiagnosticShadowFlags @ 0x0051a018
+// Function: cm848_initializeEngineOilPressureProcessing @ 0x0051a018
 //
 
-void initDiagnosticShadowFlags(void)
+/* Boot (cm848_applicationMain) - the twin of cm848_processEngineOilPressure: clears the low oil
+   pressure flags / debounce count and fault_detected_cal /
+   fault_registered_cal.low_oil_pressure_error and presets the oil pressure model's lookup caches
+   and engine_oil_pressure_filter_state (was initDiagnosticShadowFlags; PR #53 round 54) */
+
+void cm848_initializeEngineOilPressureProcessing(void)
 
 {
   low_oil_pressure_active_flag = 0;
@@ -79545,10 +79559,14 @@ void cm848_updateOilChangeMonitor(void)
 
 
 //
-// Function: initFuelCorrectionTableParams @ 0x0051ab50
+// Function: cm848_initializeOilChangeMonitorLookups @ 0x0051ab50
 //
 
-void initFuelCorrectionTableParams(void)
+/* Boot (cm848_applicationMain): presets the oil change monitor's lookup caches (the severity factor
+   by coolant and rpm grid and the soot percentage by end of injection table) (was
+   initFuelCorrectionTableParams; PR #53 round 54) */
+
+void cm848_initializeOilChangeMonitorLookups(void)
 
 {
   oil_change_monitor_severity_factor_by_coolant_and_rpm_cached_axis_offsets[0] = 2;
@@ -80974,7 +80992,7 @@ byte * cm848_sciLookupEepromSettingAddress(int param_1,uint param_2)
     goto LAB_0051d5a4;
   }
   if (((param_2 & 0xff) != 0) && ((param_2 & 0xff) < 7)) {
-    setting_pointer = &DAT_003fd4cc;
+    setting_pointer = calibration_identifier_characters_4_to_9_cal;
     uVar1 = (param_2 & 0xff) + 0xffff;
     goto LAB_0051d5a4;
   }
@@ -81715,16 +81733,23 @@ void cm848_sciInitPort1(void)
 
 
 //
-// Function: configurationValidationCheck @ 0x0051db0c
+// Function: cm848_updateEepromCalibrationIdentifier @ 0x0051db0c
 //
 
-void configurationValidationCheck(void)
+/* Boot (cm848_applicationMain): when the EEPROM copy of the calibration ID characters 4-9
+   (calibration_identifier_characters_4_to_9_cal) differs from the running calibration's own
+   (calibration_id_byte0-5) it writes them to EEPROM 0x4a (4 bytes) and 0x4e (2 bytes) with
+   cm848_writeEepromBytes (was configurationValidationCheck; PR #53 round 54) */
+
+void cm848_updateEepromCalibrationIdentifier(void)
 
 {
-  if ((((calibration_id_byte0 != DAT_003fd4cc) || (calibration_id_byte1 != DAT_003fd4cd)) ||
-      (calibration_id_byte2 != DAT_003fd4ce)) ||
-     (((calibration_id_byte3 != DAT_003fd4cf || (calibration_id_byte4 != DAT_003fd4d0)) ||
-      (calibration_id_byte5 != DAT_003fd4d1)))) {
+  if ((((calibration_id_byte0 != calibration_identifier_characters_4_to_9_cal[0]) ||
+       (calibration_id_byte1 != calibration_identifier_characters_4_to_9_cal[1])) ||
+      (calibration_id_byte2 != calibration_identifier_characters_4_to_9_cal[2])) ||
+     (((calibration_id_byte3 != calibration_identifier_characters_4_to_9_cal[3] ||
+       (calibration_id_byte4 != calibration_identifier_characters_4_to_9_cal[4])) ||
+      (calibration_id_byte5 != calibration_identifier_characters_4_to_9_cal[5])))) {
     cm848_writeEepromBytes(&eeprom_calibration_block,&calibration_id_byte0,4);
     cm848_writeEepromBytes(&DAT_0100004e,&calibration_id_byte4,2);
   }

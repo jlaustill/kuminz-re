@@ -2103,6 +2103,7 @@ extern byte eeprom_mirror;  // 0x003fd482
 extern dword key_on_hour_meter_cal;  // 0x003fd4b2
 extern word ecm_hardware_type_identifier_cal;  // 0x003fd4b8
 extern dword engine_hour_meter_cal;  // 0x003fd4c4
+extern byte calibration_identifier_characters_4_to_9_cal[6];  // 0x003fd4cc
 extern word eeprom_block_checksum_expected_cal;  // 0x003fd4de
 extern word calibration_download_security_key_cal;  // 0x003fd510
 extern word user_override_alpha_cal;  // 0x003fd514
