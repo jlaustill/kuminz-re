@@ -541,3 +541,7 @@ Hand work on the round 7 lead.
 ## Round 58: the last protection_* globals (`session_folder/round58/`)
 
 - **Stage A:** `apply_r58a.py`, `map_r58a.csv`, the access scanners `scan_accesses.py` / `scan_accesses_v2.py`, `uses.py`. Proof: `prove_r58.sh`, `count_casts.py`. **Closing:** `apply_r58_closing.py`, `update_large_tar_r58.sh`.
+
+## Round 59: struct types nothing uses (`session_folder/round59/`)
+
+- **Stage A:** `orphan_struct_types.py`, `apply_r59a.py`, `removed_orphan_types.txt`. **Stage B:** `fix_r59b.py`. **Closing:** `apply_r59_closing.py`, `update_large_tar_r59.sh`.

@@ -699,6 +699,11 @@ state enum, the flag bytes.**
   line map and its active-low bits, the injector driver booster recharge-off delay, the P0116 coolant monitor's
   snapshot, 8C19 +13 and a friction torque lookup cache. Also 3 functions, 2 new rows and 2 junk rows deleted;
   MISSING 221 -> 218.
+**Round 59.**
+- **Stage A (18c75e9):** 29 CM848 struct types that nothing uses are removed: 4 superseded by live types and 25
+  with no CM848 home, taking the last `protection_` field names with them. Three are kept as leads for untyped
+  tables.
+- **Stage B (0b13a71):** round 58's "2 of 6 stores" scan claim corrected (the decompile repeats a shared store).
 
 ## Test plan
 
@@ -791,6 +796,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 59: stage A: the `.cpp` is unchanged (only the timestamp differed); `firmware_types.hpp` loses exactly the 29 types; the other headers are unchanged; verify byte-identical. Stage B: comments only.
 - [x] Round 58: `prove_r58.sh` shows no function differing; the 5 piece renders of the new names are the boot kernel's same 5 halves of the time-shared polarity word; all 12 renamed rows keep their notes. verify byte-identical.
 - [x] Round 57: stage A: `prove_r57.sh` shows 1962 of 1968 functions label-only; `prove_return_types_r57.py` proves the five retyped getters (members back to values, casts and locals normalized), and the caller only re-renders (renumbered locals, no cast added). Stage B: no function differs. verify byte-identical.
 - [x] Round 56: `prove_caches.py` (the function renames applied to the old .cpp, casts folded, the struct fields as `instance.enable` / `.value`) shows no function differing; the 11 instances render with no pieces and the cast counts are unchanged. verify byte-identical.
