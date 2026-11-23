@@ -709,6 +709,11 @@ state enum, the flag bytes.**
   `boot_parameter_id_table` / `parameter_id_table` (`parameter_id_entry_t`) with the bucket index, and
   `sci_command_dispatch_table` (`sci_command_dispatch_entry_t`). The boot lookup is renamed and `j1939_ack_msg_t`
   is removed.
+**Round 61.**
+- **Stage A (acca2b6):** both diagnostic service dispatch tables typed (`j1939_diagnostic_service_entry_t` on the
+  application's 32-slot table, `boot_diagnostic_service_entry_t` on the boot kernel's). The request check is named
+  `cm848_validateJ1939DiagnosticRequest`, 15 plates are refreshed, and the three stale prototype names are synced,
+  so the build no longer warns about name mismatches.
 
 ## Test plan
 
@@ -801,6 +806,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 61: exactly the four table functions differ (two registrars, two scanners), each diffed; casts 3 -> 2 over them, no pieces; `firmware_types.hpp` renames the two dispatch types and nothing else. verify byte-identical, thunks 18 / 14, no name-mismatch warning left.
 - [x] Round 60: exactly the three expected functions differ, each diffed; casts 8 -> 5 over them, no pieces; `firmware_types.hpp` changes by one rename, one new type, one removal. verify byte-identical, thunks 18 / 14.
 - [x] Round 59: stage A: the `.cpp` is unchanged (only the timestamp differed); `firmware_types.hpp` loses exactly the 29 types; the other headers are unchanged; verify byte-identical. Stage B: comments only.
 - [x] Round 58: `prove_r58.sh` shows no function differing; the 5 piece renders of the new names are the boot kernel's same 5 halves of the time-shared polarity word; all 12 renamed rows keep their notes. verify byte-identical.

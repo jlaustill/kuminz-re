@@ -2710,6 +2710,29 @@ A peer relay started the round; the scripts are in `session_folder/round60/`.
     would remove it but could add casts at its three callers (pilot it).
   - 69 unprefixed CM848-only functions remain.
 
+## Done, round 61 (2026-11-23, same PR): both diagnostic service dispatch tables typed
+
+A peer relay started the round; the scripts are in `session_folder/round61/`.
+- **Stage A (acca2b6).** The two dispatch templates got the homes their own comments named:
+  - **`j1939_diagnostic_service_entry_t`** (was `ef00_dispatch_entry_t`) on `j1939_diagnostic_service_table` (RAM
+    0x3fa8b2, 32 slots). `cm848_j1939RegisterDiagnosticService` fills it and `cm848_j1939DiagnosticServiceHandler`
+    scans it.
+  - **`boot_diagnostic_service_entry_t`** (was `diag_dispatch_entry_t`; 5 bytes, handler at offset 1) on the boot
+    kernel's `diagnostic_service_dispatch_table` (0x3fdb30). The `arrays.csv` `byte[10]` row became a
+    `global_variables.csv` `[2]` row, the same 10 bytes.
+  - `cm848_validateJ1939DiagnosticRequest` (was `j1939_diagServiceDispatch`): it checks length and security; it does not
+    dispatch.
+  - The 15 `j1939_diagService` plates now name the registrar's current name.
+  - The three stale `function_definitions.csv` names are synced, so the build's three "Function name mismatch"
+    warnings are gone. Later rounds should expect none.
+- **Proof:** exactly the four table functions differ (two registrars, two scanners), each diffed; casts 3 -> 2 over them, no pieces; `firmware_types.hpp` renames the two dispatch types and nothing else. verify byte-identical, thunks 18 / 14, no name-mismatch warning left.
+- **firmware/CLAUDE.md (factual corrections, numbers / locations only):**
+  - MISSING 218 -> 219 (78 boot-named rows): the boot table's row moved into `global_variables.csv` at a time-shared
+    EEPROM-mirror address.
+  - The wave 9 note on `diagnostic_service_dispatch_table` now says where the row lives.
+- **Leads:** the `j1939_dm1_request_mode_byte` global holds the DM7 request's mode byte, so the name looks wrong; 69
+  unprefixed CM848-only functions remain.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

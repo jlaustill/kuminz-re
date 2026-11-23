@@ -549,3 +549,7 @@ Hand work on the round 7 lead.
 ## Round 60: the parameter ID tables and the SCI dispatch table typed (`session_folder/round60/`)
 
 - **Stage A:** `check_tables.py`, `apply_r60a.py`, `map_r60a.csv`. Proof: `prove_r60.sh`, `diff_function_r57.py`, `count_casts.py`. **Closing:** `apply_r60_closing.py`, `update_large_tar_r60.sh`.
+
+## Round 61: both diagnostic service dispatch tables typed (`session_folder/round61/`)
+
+- **Stage A:** `apply_r61a.py`, `map_r61a.csv`. Proof: `prove_r61.sh`, `diff_function_r57.py`, `count_casts.py`. **Closing:** `apply_r61_closing.py`, `update_large_tar_r61.sh`.

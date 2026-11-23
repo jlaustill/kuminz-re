@@ -1,0 +1,19 @@
+cm848: round 61 closing - task 046, the session archive, the PR body, two CLAUDE.md corrections
+
+- task 046, round 61:
+  - both diagnostic service dispatch tables typed;
+  - the request check named;
+  - 15 plates refreshed;
+  - the three stale prototype names synced, so the build has no name-mismatch warning;
+  - the proof;
+  - leads: j1939_dm1_request_mode_byte holds the DM7 mode byte, and 69 unprefixed functions remain.
+- firmware/CLAUDE.md, two factual corrections this round's own rows caused (no rule text):
+  - MISSING 218 -> 219 (77 -> 78 boot-named): the boot table's row moved into global_variables.csv at a time-shared
+    EEPROM-mirror address.
+  - The wave 9 note on diagnostic_service_dispatch_table now says the row lives in global_variables.csv as
+    boot_diagnostic_service_entry_t[2], the same 10 bytes.
+  The memory note on the _cal rule says the same.
+- PR body, README, todo, memory, and the round 61 session folder (the stage script and map, the proof scripts, the
+  closing scripts, the verify log).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
