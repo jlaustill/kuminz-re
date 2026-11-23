@@ -1385,7 +1385,7 @@ extern word j1939_pgn65232_field2_init_word;  // 0x003fad74
 extern byte j1939_status_byte_a;  // 0x003fad7b
 extern j1939_tx_msg_t j1939_pgn61441_tx_message;  // 0x003fad80
 extern byte j1939_engine_status_byte;  // 0x003fad90
-extern byte j1939_dm1_spn_fmi_byte;  // 0x003fad92
+extern byte j1939_eec1_actual_engine_percent_torque_byte;  // 0x003fad92
 extern j1939_tx_msg_t j1939_pgn61444_tx_message;  // 0x003fad98
 extern byte j1939_eec2_low_idle_and_kickdown_byte;  // 0x003fada8
 extern j1939_tx_msg_t j1939_pgn61443_tx_message;  // 0x003fadb0
@@ -4242,7 +4242,7 @@ extern word engine_speed_limit_rock_cycle;  // 0x0040a32c
 extern word engine_speed_limit_arbitrated_snapshot;  // 0x0040a32e
 extern word injection_fuel_quantity_snapshot;  // 0x0040a330
 extern word key_off_shutdown_mode;  // 0x0040a334
-extern dword j1939_broadcast_enable_flag;  // 0x0040a336
+extern word j1939_torque_and_load_not_available_flag;  // 0x0040a336
 extern word total_fueling;  // 0x0040a33a
 extern RUN_LOCATION run_location;  // 0x0040a346
 extern word battery_voltage_selected;  // 0x0040a34c
@@ -5635,7 +5635,7 @@ extern word four_wheel_drive_switch_sensor_fault_status;  // 0x0040be56
 extern word cruise_switch_fault_status;  // 0x0040be58
 extern word accelerator_pedal_position_sensor_1_fault_status;  // 0x0040be5a
 extern word accelerator_pedal_position_sensor_2_fault_status;  // 0x0040be5c
-extern word sensor_diag_default_a;  // 0x0040be5e
+extern word throttle_valve_actuator_position_sensor_fault_status;  // 0x0040be5e
 extern word sensor_diag_default_b;  // 0x0040be60
 extern word sensor_diag_default_c;  // 0x0040be62
 extern word executive_frame_overflow_threshold_ticks;  // 0x0040be64

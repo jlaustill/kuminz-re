@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 21:12:21 MST 2026
+// Generated: Sun Nov 22 21:29:50 MST 2026
 
 
 //
@@ -7799,7 +7799,7 @@ void main_loop(void)
 void cm848_initSensorDefaults(void)
 
 {
-  sensor_diag_default_a = 10;
+  throttle_valve_actuator_position_sensor_fault_status = 10;
   sensor_diag_default_e = 0x1e2;
   sensor_diag_default_b = 5;
   sensor_diag_default_c = 200;
@@ -25824,7 +25824,7 @@ void cm848_initializePgn61441ElectronicBrakeController1Buffer(void)
    states, else 0xfe. Byte 2 is the driver demand percent torque plus 125
    (cm848_calculateDriverDemandPercentTorque, SPN 512), byte 3 the actual engine percent torque plus
    125 (cm848_calculateActualEnginePercentTorque at 0x209e8, SPN 513; 0xfe when
-   j1939_broadcast_enable_flag is 1) and bytes 4-5 the engine speed
+   j1939_torque_and_load_not_available_flag is 1) and bytes 4-5 the engine speed
    (engine_speed_state.filtered_engine_speed, SPN 190). Shared name with CM550 0x32c76 (the same
    function). (was j1939GetEngineStateCode) */
 
@@ -25950,9 +25950,10 @@ LAB_00025a28:
   j1939_eec1_driver_demand_torque_byte =
        (char)((ushort)driver_demand_percent_torque_times_256 >> 8) + 0x7d;
   cm848_calculateActualEnginePercentTorque();
-  j1939_dm1_spn_fmi_byte = (char)((ushort)actual_engine_percent_torque_times_256 >> 8) + 0x7d;
-  if (j1939_broadcast_enable_flag._0_2_ == 1) {
-    j1939_dm1_spn_fmi_byte = 0xfe;
+  j1939_eec1_actual_engine_percent_torque_byte =
+       (char)((ushort)actual_engine_percent_torque_times_256 >> 8) + 0x7d;
+  if (j1939_torque_and_load_not_available_flag == 1) {
+    j1939_eec1_actual_engine_percent_torque_byte = 0xfe;
   }
   bStack_7 = (byte)engine_speed_state.filtered_engine_speed;
   j1939_eec1_engine_speed_low_byte = bStack_7;
@@ -26048,7 +26049,7 @@ LAB_00025c0c:
   }
   cm848_calculateEnginePercentLoadAtCurrentSpeed();
   j1939_eec2_percent_load_byte = (byte)(j1939_engine_percent_load_at_current_speed_times_256 >> 8);
-  if (j1939_broadcast_enable_flag._0_2_ == 1) {
+  if (j1939_torque_and_load_not_available_flag == 1) {
     j1939_eec2_percent_load_byte = 0xfe;
   }
   if ((algorithm_enable_flags_18_cal.remote_throttle_enable == 0) ||
