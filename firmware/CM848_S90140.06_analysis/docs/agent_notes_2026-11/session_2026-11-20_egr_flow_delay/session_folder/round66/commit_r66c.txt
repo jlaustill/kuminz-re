@@ -1,0 +1,12 @@
+cm848: round 66 follow-up closing - task 046 and the PR body record c48cc435
+
+- task 046:
+  - The round 66 section gains the follow-up bullet: the three boot members renamed from their producers, the three
+    added (0x14 CHECKSUM_MISMATCH closes the open 0x14 lead for the boot kernel), and the torque words' e2m names.
+  - The shared-names lead no longer says "by design" (nothing read showed that). It says rename in both firmwares
+    or keep.
+  - A new lead: service 2's names (mpc555_initEepromTransfer erases the flash).
+- The PR body: a follow-up line.
+- session_folder/round66/: the follow-up's script, map and messages, and its verify log in the tarball.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

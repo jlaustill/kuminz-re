@@ -749,6 +749,8 @@ state enum, the flag bytes.**
 **Round 66.**
 - **Stage A (382fa677):** `BOOT_DIAGNOSTIC_RESULT`, the boot kernel's result codes (11, including its own 5 / 0x11 /
   0x17), types the boot validator and dispatcher. The coolant friction torque term is named (round 62's lead).
+- **Follow-up (c48cc435):** three boot result members renamed from the boot kernel's own producers, three
+  added (0x10 / 0x14 checksum mismatch / 0x15), and the torque words renamed from e2m.
 
 ## Test plan
 

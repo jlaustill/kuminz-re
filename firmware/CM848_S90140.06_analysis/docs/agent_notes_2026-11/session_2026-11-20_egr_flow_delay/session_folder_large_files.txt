@@ -296,3 +296,4 @@
   401985 verify_round65b.log
   401977 verify_round65c.log
   401977 verify_round66a.log
+  401977 verify_round66b.log

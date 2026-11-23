@@ -2955,14 +2955,29 @@ A peer relay started the round; the scripts are in `session_folder/round66/`.
     lesson, and they applied on the first build.
   - `net_combustion_torque_coolant_friction_term` (was `DAT_003fba10`, round 62's lead), with its scale renamed
     `net_combustion_torque_coolant_friction_scale`.
+- **Follow-up (c48cc435), from the closing review, renamed from the boot kernel's own producers:**
+  - 0x09 is `ADDRESS_NOT_ACCEPTED` (was `UNMAPPED_ADDRESS`). The boot lookup also returns 9 for Bank 2 with
+    `flash2_writes_enabled` 0, and `cm848_trackDownloadBlock` for an out-of-sequence address or a block
+    overrun.
+  - 0x0a is `ROM_HANDLER_REFUSED` (was `REGION_REFUSED`). No boot region has type 10.
+  - 0x17 is `FLASH_ERASE_FAILED` (was `EEPROM_TRANSFER_NOT_STARTED`). `mpc555_initEepromTransfer` answers
+    0x17 when its flash erase fails.
+  - New: 0x10 `NO_DOWNLOAD_BLOCK`, 0x14 `CHECKSUM_MISMATCH` (`cm848_finishDownloadBlock`'s CRC compare - the
+    open 0x14 lead, for the boot kernel) and 0x15 `DOWNLOAD_BLOCK_LIST_FULL`.
+  - The torque words take their e2m name: `coolant_torque_adjustment_factor` (e2m 16A4 +1E
+    C_CBP_Coolant_Torque_Adj_Factor) and `coolant_torque_adjustment_term`.
+  - `cm848_handleBootExecuteAtAddressService` has its full prototype (`request`, the enum return).
 - **Proof:** stage A 6 of 1968 functions differ: the 4 predicted (the boot validator returns BOOT_DIAGNOSTIC_RESULT names and reads its j1939_rx_msg_t request through fields; the boot dispatcher names UNKNOWN_SERVICE / REGION_REFUSED and its entry / result_code locals; the 0x19 handler takes the enum return; the net torque calculation names its coolant friction term) and two local declaration-order moves. No artifact count changed. verify byte-identical, thunks 18 / 14, 0 failed prototype or local rows, history notes intact, headers 0 g++ errors, tests pass, HARD 0 / MISSING 219.
 - **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 219.
 - **Leads:**
-  - **The 30 unprefixed names shared with CM550** are cross-firmware twins by design. Only a few are vague
-    (`emptyStubFunction2`-`4`, empty functions called from code - compiled-out hooks), and renaming them needs
-    their CM550 call sites read too.
+  - **The 30 unprefixed names shared with CM550:** rename in both firmwares or keep. A few are vague
+    (`emptyStubFunction2`-`4`: empty functions called from code, likely compiled-out hooks), and renaming them
+    needs their CM550 call sites read too.
   - `initGovernorFlagsAux` / the word at 0x3fcfba.
-  - CM550's unreviewed members, the three length tables, and 0x14 / 0xfe with no CM848 producer.
+  - CM550's unreviewed members, the three length tables, and 0xfe with no CM848 producer.
+  - **Service 2's names:** `mpc555_initEepromTransfer` writes the EEPROM magic, erases the flash and resets the
+    download tracking. So `BOOT_DIAGNOSTIC_SERVICE_INITIALIZE_EEPROM_TRANSFER`, its handler and that function
+    may each be misnamed; read the reflash flow before renaming.
   - `cm848_handleBootExecuteAtAddressService` now shows `& 0xff` masks from the inferred enum return. Its own
     prototype could return `char` if that reads better.
 
