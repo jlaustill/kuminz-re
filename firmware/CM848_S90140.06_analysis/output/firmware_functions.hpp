@@ -533,7 +533,7 @@ void cm848_processJ1939Dm13StopStartBroadcast(int param_1);  // @ 0x000223f4
 void cm848_j1939HandlePgn65228Dm3ClearDiag(j1939_rx_msg_t *param_1);  // @ 0x00022674
 void cm848_initPgn65228Dm3Handler(void);  // @ 0x00022770
 void cm848_j1939HandlePgn58112Dm7(j1939_rx_msg_t *request_msg);  // @ 0x000227a0
-void cm848_initJ1939Dm1RequestHandler(void);  // @ 0x00022840
+void cm848_registerJ1939Dm7Handler(void);  // @ 0x00022840
 void cm848_j1939ProcessPgn61442Etc1(j1939_rx_msg_t *rx_msg);  // @ 0x00022870
 void cm848_initJ1939Pgn61442Etc1Handler(void);  // @ 0x00022bc4
 void cm848_j1939ProcessPgn61445Etc2(int param_1);  // @ 0x00022c5c
@@ -1334,19 +1334,19 @@ void cm848_stub_noop_503960(void);  // @ 0x00503960
 void cm848_runOxygenFuelLimitTask(void);  // @ 0x00503964
 void cm848_initialization_step_4(void);  // @ 0x0050398c
 void cm848_calculateNetCombustionTorque(void);  // @ 0x005039b4
-void fuel_boostTrim_ramVars_init(void);  // @ 0x00503b2c
+void cm848_initializeTorqueLookupCaches(void);  // @ 0x00503b2c
 void cm848_calculateTemperatureHeadroomFuelCap(void);  // @ 0x00503b54
 void cm848_calculateCylinderOxygenMasses(void);  // @ 0x00503cbc
 void cm848_calculateResidualOxygenFraction(void);  // @ 0x00503ed0
 void cm848_calculateCylinderOxygenBalance(void);  // @ 0x00503f60
 void cm848_calculateOxygenFuelLimit(void);  // @ 0x00503f84
-void fuel_demandLimit_calPtrs_init(void);  // @ 0x00504110
+void cm848_initializeOxygenLimitLookupCaches(void);  // @ 0x00504110
 void cm848_calculateResidualGasMass(void);  // @ 0x00504130
 void cm848_checkAirHandlingSystemProtectionHighLoad(void);  // @ 0x005041bc
 void cm848_checkAirHandlingSystemProtectionLevelConditions(void);  // @ 0x0050422c
 void cm848_checkAirHandlingSystemNearLimits(void);  // @ 0x005043b4
 void cm848_updateAirHandlingSystemProtection(void);  // @ 0x00504528
-void governor_speedRatio_etcFuelCorrection_calc(void);  // @ 0x00504654
+void cm848_calculateFrictionTorquePercentAndNetOutputTorque(void);  // @ 0x00504654
 void cm848_initialization_step_5(void);  // @ 0x00504754
 void cm848_calculateEmissionLevelCapCommand(void);  // @ 0x0050477c
 void cm848_initializeEmissionLevelCapRateLimiter(void);  // @ 0x00504938
@@ -1441,7 +1441,7 @@ undefined4 j1939_diagService15And16Handler(void);  // @ 0x00509be0
 undefined4 cm848_updateJ1939BroadcastEnableMask(int param_1,int param_2);  // @ 0x00509be8
 undefined1 j1939_diagService4DisableBroadcast(undefined4 param_1);  // @ 0x00509ce4
 undefined1 j1939_diagService5EnableBroadcast(undefined4 param_1);  // @ 0x00509d0c
-void j1939_diag_request_batch_init(void);  // @ 0x00509d34
+void cm848_registerJ1939ParameterAndBroadcastServices(void);  // @ 0x00509d34
 void cm848_clearJ1939InputDataErrorBit(uint param_1);  // @ 0x00509d98
 void cm848_clearJ1939PedalInputTimeoutBit(uint param_1);  // @ 0x00509dd8
 void cm848_clearJ1939InputTimeoutBit(uint param_1);  // @ 0x00509e18
@@ -1471,7 +1471,7 @@ undefined1 j1939_diagService71Handler(int param_1);  // @ 0x0050b300
 undefined1 j1939_diagService73_memoryWriteByParameterId(int param_1);  // @ 0x0050b38c
 undefined1 j1939_diagService75_memoryWrite(int param_1);  // @ 0x0050b408
 undefined1 j1939_diagService77_memoryWriteExt(int param_1);  // @ 0x0050b474
-void j1939_diag_request_batch_44to49(void);  // @ 0x0050b4d8
+void cm848_registerJ1939MemoryWriteServices(void);  // @ 0x0050b4d8
 undefined4 j1939_reverseByteOrder32(undefined4 *param_1);  // @ 0x0050b554
 undefined2 j1939_reverseByteOrder16(undefined2 *param_1);  // @ 0x0050b58c
 uint j1939_buildLampStatusByte(void);  // @ 0x0050b5b4
@@ -1484,12 +1484,12 @@ void j1939_receivePgn65252Handler(int param_1);  // @ 0x0050b98c
 void j1939_receivePgn65264Handler(int param_1);  // @ 0x0050b9d8
 void j1939_receivePgn65265Handler(int param_1);  // @ 0x0050bacc
 void cm848_tickJ1939InputSupervision(void);  // @ 0x0050bca0
-void j1939_pgn_handler_init_batch(void);  // @ 0x0050bdcc
+void cm848_registerJ1939InputMessageHandlers(void);  // @ 0x0050bdcc
 void cm848_storeJ1939ControlSessionInHistoryTable(int session_kind);  // @ 0x0050be6c
 void cm848_startJ1939ControlSession(int session_kind);  // @ 0x0050beec
 void cm848_trackJ1939ControlSessions(void);  // @ 0x0050bff4
 undefined4 j1939_diagService65_getAddressByParameterId(byte *param_1);  // @ 0x0050c318
-void j1939_diag_request_41_handler(void);  // @ 0x0050c400
+void cm848_registerJ1939GetAddressByParameterIdService(void);  // @ 0x0050c400
 char j1939_readDiagMemoryAndRespond(byte *param_1,uint param_2,uint param_3);  // @ 0x0050c42c
 undefined1 j1939_readDiagMemoryByParameterId (undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4);  // @ 0x0050c5d0
 undefined1 j1939_diagService67_memoryReadByParameterId(int param_1);  // @ 0x0050c640
@@ -1497,7 +1497,7 @@ undefined1 j1939_diagService70Handler(int param_1);  // @ 0x0050c6a8
 undefined1 j1939_diagService72_memoryReadByParameterId(int param_1);  // @ 0x0050c734
 undefined1 j1939_diagService74_memoryRead(int param_1);  // @ 0x0050c7b0
 undefined1 j1939_diagService76_memoryReadExt(int param_1);  // @ 0x0050c81c
-void j1939_diag_request_batch_43to48(void);  // @ 0x0050c880
+void cm848_registerJ1939MemoryReadServices(void);  // @ 0x0050c880
 void initiateJ1939TransportProtocol(j1939_tx_msg_t *msg);  // @ 0x0050c8ec
 void j1939_transport_handleClearToSend(int param_1);  // @ 0x0050cc18
 void j1939_transport_sendAbort(undefined1 param_1,undefined2 param_2);  // @ 0x0050ccbc
@@ -1516,7 +1516,7 @@ undefined * j1939_selectResponseBuffer(int param_1);  // @ 0x0050d688
 void cm848_initializeJ1939Transport(void);  // @ 0x0050d700
 undefined1 cm848_lookupApplicationMemoryRegionType(uint param_1,int param_2);  // @ 0x0050d784
 void cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit(void);  // @ 0x0050d864
-void fuel_demand_periodSnapshot_save(void);  // @ 0x0050da7c
+void cm848_presetPedalFaultModeFuelDemand(void);  // @ 0x0050da7c
 void cm848_transitionEngineOperatingMode(int previous_engine_operating_mode);  // @ 0x0050daac
 void cm848_initDroopModeStateVariables(void);  // @ 0x0050db88
 void cm848_calculateNoLoadFuel(void);  // @ 0x0050dba8

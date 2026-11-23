@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 05:57:50 MST 2026
+// Generated: Mon Nov 23 06:27:21 MST 2026
 
 
 //
@@ -23626,23 +23626,22 @@ void cm848_initPgn65228Dm3Handler(void)
 /* receives J1939 PGN 58112 DM7 command via the Bank-2 receive table 0x3fd414
    (cm848_dispatchJ1939ReceivedMessages) - reads a mode byte and sends a PGN 65232 DM8 response via
    cm848_sendPgn65232NonContinuousMonitorTestResultMessage - registered by
-   cm848_initJ1939Dm1RequestHandler (was cm848_j1939HandleDm1RequestMessage) |
-   registration-table-sweep reviewed 2026-11-13 */
+   cm848_registerJ1939Dm7Handler (was cm848_j1939HandleDm1RequestMessage) | registration-table-sweep
+   reviewed 2026-11-13 */
 
 void cm848_j1939HandlePgn58112Dm7(j1939_rx_msg_t *request_msg)
 
 {
-  j1939_dm1_request_mode_byte = *request_msg->data_pointer;
-  if ((j1939_dm1_request_mode_byte == 0) && ((supported_non_continuous_monitors_bits & 0x100) != 0))
-  {
+  j1939_dm7_test_identifier = *request_msg->data_pointer;
+  if ((j1939_dm7_test_identifier == 0) && ((supported_non_continuous_monitors_bits & 0x100) != 0)) {
     cm848_sendPgn65232NonContinuousMonitorTestResultMessage
               (0,(byte)intake_air_heater_monitor_result);
   }
-  else if ((j1939_dm1_request_mode_byte == 1) &&
+  else if ((j1939_dm7_test_identifier == 1) &&
           ((supported_non_continuous_monitors_bits & 0x200) != 0)) {
     cm848_sendPgn65232NonContinuousMonitorTestResultMessage(1,(byte)misfire_monitor_result);
   }
-  else if (j1939_dm1_request_mode_byte < 2) {
+  else if (j1939_dm7_test_identifier < 2) {
     cm848_sendJ1939AcknowledgeMessage(request_msg,J1939_NACK);
   }
   return;
@@ -23651,10 +23650,14 @@ void cm848_j1939HandlePgn58112Dm7(j1939_rx_msg_t *request_msg)
 
 
 //
-// Function: cm848_initJ1939Dm1RequestHandler @ 0x00022840
+// Function: cm848_registerJ1939Dm7Handler @ 0x00022840
 //
 
-void cm848_initJ1939Dm1RequestHandler(void)
+/* From cm848_j1939_system_init: registers cm848_j1939HandlePgn58112Dm7 for PGN 58112 (DM7 - command
+   a non-continuously monitored test). Nothing about DM1 (was cm848_initJ1939Dm1RequestHandler; PR
+   #53 round 62) */
+
+void cm848_registerJ1939Dm7Handler(void)
 
 {
   j1939_handlerInitializer(0xe300,cm848_j1939HandlePgn58112Dm7);
@@ -63220,8 +63223,8 @@ void cm848_initialization_step_4(void)
 
 {
   cm848_stub_noop_503960();
-  fuel_demandLimit_calPtrs_init();
-  fuel_boostTrim_ramVars_init();
+  cm848_initializeOxygenLimitLookupCaches();
+  cm848_initializeTorqueLookupCaches();
   return;
 }
 
@@ -63273,10 +63276,11 @@ void cm848_calculateNetCombustionTorque(void)
        injection_timing_torque_to_fuel_adjustment + total_injection_quantity_for_air_handling;
   combustion_torque =
        cm848_dualAxisTableInterpolation
-                 (&DAT_003fba0c,engine_speed_state.filtered_engine_speed,
-                  combustion_torque_by_fuel_quantity_x_axis,total_injection_quantity_timing_adjusted
-                  ,combustion_torque_by_fuel_quantity_y_axis,combustion_torque_by_fuel_quantity_grid
-                  ,6);
+                 (combustion_torque_by_fuel_quantity_timing_adjusted_cached_axis_offsets,
+                  engine_speed_state.filtered_engine_speed,combustion_torque_by_fuel_quantity_x_axis
+                  ,total_injection_quantity_timing_adjusted,
+                  combustion_torque_by_fuel_quantity_y_axis,combustion_torque_by_fuel_quantity_grid,
+                  6);
   DAT_003fba10 = (short)(CONCAT44((int)((ulonglong)
                                         ((longlong)
                                          (int)friction_torque_adjustment_for_coolant_temperature *
@@ -63291,16 +63295,21 @@ void cm848_calculateNetCombustionTorque(void)
 
 
 //
-// Function: fuel_boostTrim_ramVars_init @ 0x00503b2c
+// Function: cm848_initializeTorqueLookupCaches @ 0x00503b2c
 //
 
-void fuel_boostTrim_ramVars_init(void)
+/* From cm848_initialization_step_4: sets the lookup caches
+   injection_timing_torque_to_fuel_gain_cached_axis_offsets and
+   combustion_torque_by_fuel_quantity_timing_adjusted_cached_axis_offsets to 2 (both words). Nothing
+   about boost trim (was fuel_boostTrim_ramVars_init; PR #53 round 62) */
+
+void cm848_initializeTorqueLookupCaches(void)
 
 {
   injection_timing_torque_to_fuel_gain_cached_axis_offsets[0] = 2;
   injection_timing_torque_to_fuel_gain_cached_axis_offsets[1] = 2;
-  DAT_003fba0c = 2;
-  DAT_003fba0e = 2;
+  combustion_torque_by_fuel_quantity_timing_adjusted_cached_axis_offsets[0] = 2;
+  combustion_torque_by_fuel_quantity_timing_adjusted_cached_axis_offsets[1] = 2;
   return;
 }
 
@@ -63561,10 +63570,15 @@ void cm848_calculateOxygenFuelLimit(void)
 
 
 //
-// Function: fuel_demandLimit_calPtrs_init @ 0x00504110
+// Function: cm848_initializeOxygenLimitLookupCaches @ 0x00504110
 //
 
-void fuel_demandLimit_calPtrs_init(void)
+/* From cm848_initialization_step_4: sets the lookup caches
+   oxygen_limit_equivalence_ratio_cached_axis_offsets (both words) and
+   oxygen_limit_ambient_pressure_gain_cached_axis_offset to 2 (was fuel_demandLimit_calPtrs_init; PR
+   #53 round 62) */
+
+void cm848_initializeOxygenLimitLookupCaches(void)
 
 {
   oxygen_limit_equivalence_ratio_cached_axis_offsets[0] = 2;
@@ -63812,12 +63826,18 @@ void cm848_updateAirHandlingSystemProtection(void)
 
 
 //
-// Function: governor_speedRatio_etcFuelCorrection_calc @ 0x00504654
+// Function: cm848_calculateFrictionTorquePercentAndNetOutputTorque @ 0x00504654
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* From cm848_runEmissionManager: the indicated friction torque percent x 256 = (friction_fueling +
+   friction_fuel_adjustment_for_coolant_temperature - zero_torque_fueling) x 25600 /
+   (j1939_reference_engine_fueling - zero_torque_fueling) - 0 when either difference is not positive
+   - capped at 32000 (125 %); then j1939_powertrain_control_state.engine_net_output_torque (e2m 10E8
+   +28) = (actual percent torque - friction percent) x reference_engine_torque_working / 0x43ca / 2
+   (was governor_speedRatio_etcFuelCorrection_calc; PR #53 round 62) */
 
-void governor_speedRatio_etcFuelCorrection_calc(void)
+void cm848_calculateFrictionTorquePercentAndNetOutputTorque(void)
 
 {
   int iVar1;
@@ -63956,7 +63976,7 @@ void cm848_runEmissionManager(void)
 
 {
   cm848_calculateActualEnginePercentTorque();
-  governor_speedRatio_etcFuelCorrection_calc();
+  cm848_calculateFrictionTorquePercentAndNetOutputTorque();
   cm848_updateAirHandlingSystemProtection();
   cm848_updateExtremeAmbientOverheatProtection();
   cm848_updateCondensationProtection();
@@ -68270,10 +68290,14 @@ undefined1 j1939_diagService5EnableBroadcast(undefined4 param_1)
 
 
 //
-// Function: j1939_diag_request_batch_init @ 0x00509d34
+// Function: cm848_registerJ1939ParameterAndBroadcastServices @ 0x00509d34
 //
 
-void j1939_diag_request_batch_init(void)
+/* From cm848_j1939_system_init: registers the PGN 61184 diagnostic services 0x0f / 0x10 (get
+   parameters by ID - j1939_diagService15And16Handler) and 4 / 5 (disable / enable broadcast) in
+   j1939_diagnostic_service_table (was j1939_diag_request_batch_init; PR #53 round 62) */
+
+void cm848_registerJ1939ParameterAndBroadcastServices(void)
 
 {
   cm848_j1939RegisterDiagnosticService(0xf,j1939_diagService15And16Handler);
@@ -69010,7 +69034,7 @@ void cm848_processJ1939SwitchAndRequestInputs(void)
     cm848_copyStatusBitToDatalinkSwitch(4,4);
     cm848_copyStatusBitToDatalinkSwitch(0x1f,5);
     sVar1 = cm848_anyJ1939InputDataErrorActive();
-    if ((sVar1 == 0) || (governor_table_check_startup_delay != 0)) {
+    if ((sVar1 == 0) || (j1939_input_fault_start_delay != 0)) {
       fault_detected_cal._16_2_ = fault_detected_cal._16_2_ & 0xfffb;
       fault_registered_cal._16_2_ = fault_registered_cal._16_2_ & 0xfffb;
     }
@@ -69018,7 +69042,7 @@ void cm848_processJ1939SwitchAndRequestInputs(void)
       fault_detected_cal._16_2_ = fault_detected_cal._16_2_ | 4;
     }
     sVar1 = cm848_anyJ1939InputTimeoutActive();
-    if ((sVar1 == 0) || (governor_table_check_startup_delay != 0)) {
+    if ((sVar1 == 0) || (j1939_input_fault_start_delay != 0)) {
       fault_detected_cal._16_2_ = fault_detected_cal._16_2_ & 0xfffe;
       fault_registered_cal._16_2_ = fault_registered_cal._16_2_ & 0xfffe;
     }
@@ -69051,7 +69075,7 @@ void cm848_processJ1939AcceleratorInputs(void)
     cm848_processJ1939AcceleratorIdleSwitchPair();
     cm848_processJ1939AcceleratorPedalPosition();
     sVar1 = cm848_anyJ1939InputDataErrorActive();
-    if ((sVar1 == 0) || (governor_table_check_startup_delay != 0)) {
+    if ((sVar1 == 0) || (j1939_input_fault_start_delay != 0)) {
       fault_detected_cal._16_2_ = fault_detected_cal._16_2_ & 0xfffb;
       fault_registered_cal._16_2_ = fault_registered_cal._16_2_ & 0xfffb;
     }
@@ -69059,7 +69083,7 @@ void cm848_processJ1939AcceleratorInputs(void)
       fault_detected_cal._16_2_ = fault_detected_cal._16_2_ | 4;
     }
     sVar1 = cm848_anyJ1939InputTimeoutActive();
-    if ((sVar1 == 0) || (governor_table_check_startup_delay != 0)) {
+    if ((sVar1 == 0) || (j1939_input_fault_start_delay != 0)) {
       fault_detected_cal._16_2_ = fault_detected_cal._16_2_ & 0xfffe;
       fault_registered_cal._16_2_ = fault_registered_cal._16_2_ & 0xfffe;
     }
@@ -69386,10 +69410,14 @@ undefined1 j1939_diagService77_memoryWriteExt(int param_1)
 
 
 //
-// Function: j1939_diag_request_batch_44to49 @ 0x0050b4d8
+// Function: cm848_registerJ1939MemoryWriteServices @ 0x0050b4d8
 //
 
-void j1939_diag_request_batch_44to49(void)
+/* From cm848_j1939_system_init: registers the PGN 61184 memory write services 0x44 / 0x45 / 0x4b /
+   0x4d / 0x47 / 0x49 (the j1939_diagService68-77 write handlers) in j1939_diagnostic_service_table
+   (was j1939_diag_request_batch_44to49; PR #53 round 62) */
+
+void cm848_registerJ1939MemoryWriteServices(void)
 
 {
   cm848_j1939RegisterDiagnosticService(0x44,j1939_diagService68_memoryWriteByParameterId);
@@ -69502,9 +69530,10 @@ byte j1939_getDiagServiceDataOffset(int param_1)
 /* Checks a J1939 (PGN 61184) diagnostic request before cm848_j1939DiagnosticServiceHandler calls
    its handler: for services below 0x1a the data length must be 8 or the header length (3 for
    services 4 / 5 - 5 for 0x19 - else 1) + 10; when j1939_command_security_flags marks the service
-   and calibration_download_security_key_cal is set the request must carry the key after the header
-   and cm848_processSecurityCodeConversion must accept it. Returns 0xff = accepted / 2 = wrong
-   length / 0x1a = key missing / 3 = key refused (was j1939_diagServiceDispatch; PR #53 round 61) */
+   and calibration_download_security_key_cal is not 0xff the request must carry the key after the
+   header and cm848_processSecurityCodeConversion must accept it. Returns 0xff = accepted / 2 =
+   wrong length / 0x1a = key missing / 3 = key refused (was j1939_diagServiceDispatch; PR #53 round
+   61) */
 
 undefined4 cm848_validateJ1939DiagnosticRequest(j1939_rx_msg_t *rx_msg)
 
@@ -69771,7 +69800,7 @@ void j1939_receivePgn65265Handler(int param_1)
 /* Ticks the J1939 input supervision: start-up delay (j1939_input_monitor_startup_timer /
    j1939_input_monitor_inhibit_flag after the cold-start phases) then counts every
    j1939_input_signal_timeouts slot down unless j1939_dm13_fault_log_inhibit_flag is set (suspected
-   DM13 suspend - unverified); also decrements governor_table_check_startup_delay (was
+   DM13 suspend - unverified); also decrements j1939_input_fault_start_delay (was
    phase_group_a_updateStartupTimer) | review-function-readability reviewed 2026-11-12 - Readability
    Medium Accuracy Confidence Medium */
 
@@ -69781,8 +69810,8 @@ void cm848_tickJ1939InputSupervision(void)
   word *pwVar1;
   
   if (algorithm_enable_flags_28_cal.j1939_multiplex_enable != 0) {
-    if (governor_table_check_startup_delay != 0) {
-      governor_table_check_startup_delay = governor_table_check_startup_delay - 1;
+    if (j1939_input_fault_start_delay != 0) {
+      j1939_input_fault_start_delay = j1939_input_fault_start_delay - 1;
     }
     if (((engine_state == ENGINE_STATE_RUNNING) || (engine_state == ENGINE_STATE_ENGINE_BRAKE)) ||
        (engine_state == ENGINE_STATE_OVERSPEED)) {
@@ -69819,10 +69848,15 @@ void cm848_tickJ1939InputSupervision(void)
 
 
 //
-// Function: j1939_pgn_handler_init_batch @ 0x0050bdcc
+// Function: cm848_registerJ1939InputMessageHandlers @ 0x0050bdcc
 //
 
-void j1939_pgn_handler_init_batch(void)
+/* From cm848_j1939_system_init: registers the J1939 input layer's receive handlers (PGN 57344 /
+   61441 EBC1 / 61443 EEC2 / 65252 / 65264 / 65265 CCVS1 - the j1939_receivePgn<N>Handler functions)
+   and starts j1939_input_fault_start_delay at 1000 (was j1939_pgn_handler_init_batch; PR #53 round
+   62) */
+
+void cm848_registerJ1939InputMessageHandlers(void)
 
 {
   j1939_handlerInitializer(0xe000,j1939_receivePgn57344Handler);
@@ -69831,7 +69865,7 @@ void j1939_pgn_handler_init_batch(void)
   j1939_handlerInitializer(0xfee4,j1939_receivePgn65252Handler);
   j1939_handlerInitializer(0xfef0,j1939_receivePgn65264Handler);
   j1939_handlerInitializer(0xfef1,j1939_receivePgn65265Handler);
-  governor_table_check_startup_delay = 1000;
+  j1939_input_fault_start_delay = 1000;
   return;
 }
 
@@ -70159,10 +70193,14 @@ undefined4 j1939_diagService65_getAddressByParameterId(byte *param_1)
 
 
 //
-// Function: j1939_diag_request_41_handler @ 0x0050c400
+// Function: cm848_registerJ1939GetAddressByParameterIdService @ 0x0050c400
 //
 
-void j1939_diag_request_41_handler(void)
+/* From cm848_j1939_system_init: registers the PGN 61184 service 0x41 (get address by parameter ID -
+   j1939_diagService65_getAddressByParameterId) in j1939_diagnostic_service_table (was
+   j1939_diag_request_41_handler; PR #53 round 62) */
+
+void cm848_registerJ1939GetAddressByParameterIdService(void)
 
 {
   cm848_j1939RegisterDiagnosticService(0x41,j1939_diagService65_getAddressByParameterId);
@@ -70397,10 +70435,14 @@ undefined1 j1939_diagService76_memoryReadExt(int param_1)
 
 
 //
-// Function: j1939_diag_request_batch_43to48 @ 0x0050c880
+// Function: cm848_registerJ1939MemoryReadServices @ 0x0050c880
 //
 
-void j1939_diag_request_batch_43to48(void)
+/* From cm848_j1939_system_init: registers the PGN 61184 memory read services 0x43 / 0x4a / 0x4c /
+   0x46 / 0x48 (the j1939_diagService67-76 read handlers) in j1939_diagnostic_service_table (was
+   j1939_diag_request_batch_43to48; PR #53 round 62) */
+
+void cm848_registerJ1939MemoryReadServices(void)
 
 {
   cm848_j1939RegisterDiagnosticService(0x43,j1939_diagService67_memoryReadByParameterId);
@@ -71313,7 +71355,8 @@ void cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit(void)
   
   if (engine_operating_mode == FUELING_STATE_ACCELERATOR_PEDAL_FAULT) {
     dVar2 = exponentialMovingAverage
-                      ((uint)engine_speed_state.engine_speed,&ema_filter_state_t_003fcbdc);
+                      ((uint)engine_speed_state.engine_speed,
+                       &pedal_fault_mode_engine_speed_filter_state);
     pedal_fault_mode_target_speed_filtered = (word)dVar2;
     uVar3 = ((uint)pedal_fault_mode_fuel_demand_limit_slope * (dVar2 & 0xffff)) / 0x8b21;
     if (((switch_input_state_bits.brake_switch == 0) &&
@@ -71364,15 +71407,21 @@ void cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit(void)
 
 
 //
-// Function: fuel_demand_periodSnapshot_save @ 0x0050da7c
+// Function: cm848_presetPedalFaultModeFuelDemand @ 0x0050da7c
 //
 
-void fuel_demand_periodSnapshot_save(void)
+/* From cm848_transitionEngineOperatingMode: presets the pedal fault mode -
+   pedal_fault_mode_fuel_demand_ramp and pedal_fault_mode_fuel_demand_limit_previous take
+   final_fueling and pedal_fault_mode_engine_speed_filter_state's accumulator takes the current
+   engine speed (was fuel_demand_periodSnapshot_save; PR #53 round 62) */
+
+void cm848_presetPedalFaultModeFuelDemand(void)
 
 {
   pedal_fault_mode_fuel_demand_ramp = final_fueling;
   pedal_fault_mode_fuel_demand_limit_previous = final_fueling;
-  ema_filter_state_t_003fcbdc.accumulator = (uint)engine_speed_state.engine_speed << 0x10;
+  pedal_fault_mode_engine_speed_filter_state.accumulator =
+       (uint)engine_speed_state.engine_speed << 0x10;
   return;
 }
 
@@ -71410,7 +71459,7 @@ void cm848_transitionEngineOperatingMode(int previous_engine_operating_mode)
 LAB_0050db64:
   engine_operating_mode = FUELING_STATE_ACCELERATOR_PEDAL_FAULT;
   if (previous_engine_operating_mode != 6) {
-    fuel_demand_periodSnapshot_save();
+    cm848_presetPedalFaultModeFuelDemand();
   }
   return;
 }
@@ -71424,8 +71473,9 @@ LAB_0050db64:
 void cm848_initDroopModeStateVariables(void)
 
 {
-  ema_filter_state_t_003fcbdc.accumulator = 0;
-  ema_filter_state_t_003fcbdc.coefficient = &WORD_0005c48e;
+  pedal_fault_mode_engine_speed_filter_state.accumulator = 0;
+  pedal_fault_mode_engine_speed_filter_state.coefficient =
+       &pedal_fault_mode_engine_speed_filter_coefficient;
   return;
 }
 
@@ -99278,14 +99328,14 @@ void cm848_j1939_system_init(void)
   cm848_initJ1939ProtocolHandlers();
   cm848_initJ1939ProprietaryHandler();
   cm848_initJ1939Dm13Handler();
-  cm848_initJ1939Dm1RequestHandler();
-  j1939_pgn_handler_init_batch();
+  cm848_registerJ1939Dm7Handler();
+  cm848_registerJ1939InputMessageHandlers();
   cm848_initJ1939DiagnosticCallback();
-  j1939_diag_request_batch_43to48();
-  j1939_diag_request_41_handler();
-  j1939_diag_request_batch_44to49();
+  cm848_registerJ1939MemoryReadServices();
+  cm848_registerJ1939GetAddressByParameterIdService();
+  cm848_registerJ1939MemoryWriteServices();
   cm848_registerJ1939DiagnosticHandlers();
-  j1939_diag_request_batch_init();
+  cm848_registerJ1939ParameterAndBroadcastServices();
   wVar1 = j1939_engine_destination_specific_receive_message_object_count;
   uVar3 = (uint)can_last_message_object_used;
   iVar2 = uVar3 + 1;

@@ -365,6 +365,7 @@ extern word engine_retarder_driver_5_cylinder_count;  // 0x0005c486
 extern word engine_retarder_driver_6_cylinder_count;  // 0x0005c488
 extern word engine_retarder_torque_ramp_rate_percent_times_256;  // 0x0005c48a
 extern word engine_retarder_torque_ramp_start_delay;  // 0x0005c48c
+extern word pedal_fault_mode_engine_speed_filter_coefficient;  // 0x0005c48e
 extern word pedal_fault_mode_fuel_demand_limit_slope;  // 0x0005c490
 extern word pedal_fault_mode_fuel_demand_limit_offset;  // 0x0005c492
 extern word pedal_fault_mode_fuel_demand_ramp_increment;  // 0x0005c494
@@ -2023,6 +2024,7 @@ extern ema_filter_state_t egr_valve_position_command_diagnostic_filter_state;  /
 extern engine_protection_channel_configuration_t* engine_protection_current_configuration;  // 0x003fbd42
 extern engine_protection_channel_state_t* engine_protection_current_state;  // 0x003fbd46
 extern engine_protection_channel_history_t* engine_protection_current_history;  // 0x003fbd4a
+extern ema_filter_state_t pedal_fault_mode_engine_speed_filter_state;  // 0x003fcbdc
 extern word turbocharger_speed_linearization_cached_axis_offset;  // 0x003fcc06
 extern ema_filter_state_t turbocharger_speed_filter_state;  // 0x003fcc08
 extern ema_filter_state_t variable_geometry_turbocharger_position_command_diagnostic_filter_state;  // 0x003fcce8
@@ -5929,7 +5931,7 @@ extern word speed_limp_home_high_fuel_derate;  // 0x00408f52
 extern word speed_limp_home_low_fuel_derate;  // 0x00408f54
 extern word egr_cooler_fouling_fault_counter;  // 0x0040a44c
 extern int16_t fault_derate_ramp_times_256;  // 0x0040a792
-extern word governor_table_check_startup_delay;  // 0x0040aaa4
+extern word j1939_input_fault_start_delay;  // 0x0040aaa4
 extern word variable_geometry_turbocharger_control_diagnostic_enable_flag;  // 0x0040b046
 extern word transfer_case_road_speed;  // 0x0040b548
 extern dword intake_condensation_increment;  // 0x0040a5e0
@@ -6631,7 +6633,7 @@ extern word fuel_pressure_tracking_error_per_pass;  // 0x0040b9e0
 extern word high_load_boost_band_event_count;  // 0x0040ba6a
 extern word high_load_boost_band_duration_count;  // 0x0040ba6c
 extern void * data_collector_center_address;  // 0x0040c27c
-extern byte j1939_dm1_request_mode_byte;  // 0x003fa97a
+extern byte j1939_dm7_test_identifier;  // 0x003fa97a
 extern byte engine_retarder_controlling_override_priority_bits;  // 0x003faa66
 extern byte j1939_dm1_transmit_status;  // 0x003fabca
 extern byte j1939_dm1_broadcast_pending_flag;  // 0x003fabcb
@@ -8012,6 +8014,7 @@ extern word injection_quantity_auxiliary_coolant_factor_cached_axis_offsets[2]; 
 extern word injection_quantity_auxiliary_coolant_limit_cached_axis_offsets[2];  // 0x003fb60e
 extern word compressor_inlet_pressure_drop_by_air_flow_cached_axis_offset;  // 0x003fb9dc
 extern word injection_timing_torque_to_fuel_gain_cached_axis_offsets[2];  // 0x003fba08
+extern word combustion_torque_by_fuel_quantity_timing_adjusted_cached_axis_offsets[2];  // 0x003fba0c
 extern word oxygen_limit_equivalence_ratio_cached_axis_offsets[2];  // 0x003fba12
 extern word oxygen_limit_ambient_pressure_gain_cached_axis_offset;  // 0x003fba16
 extern word air_handling_system_protection_high_load_torque_cached_axis_offset;  // 0x003fba1a
