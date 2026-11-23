@@ -2,7 +2,7 @@
 
 This file covers what the S90140.06 firmware does for cruise control. It comes from a read-only review on 2026-11-22.
 
-**Names and addresses follow PR #53 at `e2184d0` (round 44).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
+**Names and addresses follow PR #53 at `71e0e34` (round 47).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
 
 Evidence tags:
 
@@ -70,6 +70,8 @@ The states run 0 to 8: OFF, SET, RESUME, COAST, ACCEL, BUMP_DOWN, BUMP_UP, HOLD,
 - **Releasing COAST** sets the speed to the lower of the resume speed and road speed, and drops cruise below 35 mph. Releasing ACCEL sets it to the higher of the two.
 
 The set range is 35 to 85 mph. The set speed is lost at power-off, because `algorithm_enable_flags_3_cal.cruise_save_set_speed_at_power_down_enable` (bit 15) is clear.
+
+`cruise_set_accelerate_switch_select_cal` (EEPROM 0xae, e2m `Set_Accel_Switch_Select`) is 0 here, which the e2m describes as SET/COAST and RESUME/ACCEL. Its only reader is the ECM's own CCVS1 broadcast (`cm848_buildPgn65265CruiseControlVehicleSpeedMessage`, 0x24178). So it changes how the ECM reports the buttons on J1939, not how cruise responds to them. [code]
 
 ## Deny checks [review]
 
@@ -182,6 +184,7 @@ Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrU
 
 | EEPROM | Value | Meaning | Evidence |
 |---|---|---|---|
+| 0xae | `0x0000` | `cruise_set_accelerate_switch_select_cal`: SET/COAST and RESUME/ACCEL, read only by the CCVS1 broadcast | [code] |
 | 0x120 | `0x00d0` | PTO, cruise and road speed governor on; set-speed save off | [review] |
 | 0x126 | `0x801f` | Bit 0x10: the derived second brake signal and its diagnostic on | [code] |
 | 0x152 | `0x0000` | J1939 input layer off | [review] |
