@@ -1754,8 +1754,8 @@ undefined4 cm848_lookupFaultIndexByDtcCode(undefined2 *param_1,uint param_2);  /
 bool cm848_isFaultGroupStatusBitSet(uint param_1);  // @ 0x005224b0
 void cm848_sciCommand52ReportFaultStatusByDtcCallback(void);  // @ 0x0052252c
 void cm848_sciValidateSecurityKey(void);  // @ 0x00522674
-void bufferManagementWithBounds(void);  // @ 0x00522700
-void initMessageBufferPointers(void);  // @ 0x00522788
+void cm848_updateStackHighWaterMark(void);  // @ 0x00522700
+void cm848_initializeStackHighWaterMark(void);  // @ 0x00522788
 void cm848_monitorFourWheelDriveSwitch(void);  // @ 0x005227ac
 void cm848_initializeFourWheelDriveSwitchMonitor(void);  // @ 0x005229c0
 void cm848_initializeTransmissionTemperatureSensorPerformanceMonitor(void);  // @ 0x00522a04
@@ -1763,7 +1763,7 @@ void cm848_updateTransmissionTemperatureSensorPerformanceFault(void);  // @ 0x00
 void cm848_completeTransmissionTemperatureMonitorReport(void);  // @ 0x00522ab0
 void cm848_checkTransmissionTemperatureSensorPerformance(void);  // @ 0x00522b64
 void cm848_recordLifetimeDistanceEvery8Miles(void);  // @ 0x00523068
-void initSensorTableIndexing(void);  // @ 0x005230f4
+void cm848_initializeLifetimeDistanceRecordIndex(void);  // @ 0x005230f4
 void cm848_updateTripAndLifetimeCounters(void);  // @ 0x00523148
 void initGovernorFlagsAux(void);  // @ 0x00523750
 void cm848_flagTripInformationPowerDownDataLoss(void);  // @ 0x00523760

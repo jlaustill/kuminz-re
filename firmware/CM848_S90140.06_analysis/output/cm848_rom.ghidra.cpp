@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 01:43:50 MST 2026
+// Generated: Mon Nov 23 01:59:27 MST 2026
 
 
 //
@@ -1773,10 +1773,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
+  word qadc_b_pqb0_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -7535,7 +7535,7 @@ void main_loop(void)
     cm848_periodicTaskSet_communication();
     cm848_periodicTaskGroup17_calibration5();
     hpcr_periodicTaskGroup20_calibration();
-    bufferManagementWithBounds();
+    cm848_updateStackHighWaterMark();
     main_loop_scheduler_phase = 0x10;
     break;
   case 0x10:
@@ -11398,8 +11398,9 @@ void cm848_calculateWastegateDutyRequest(void)
     iVar7 = 0x7fff;
   }
   wastegate_duty_controller_state.first_error_gain =
-       lookupTableInterpolation(&DAT_003fa18a,(word)iVar7,WORD_ARRAY_003ffcb6,WORD_ARRAY_003ffcca,3)
-  ;
+       lookupTableInterpolation
+                 (&turbocharger_speed_derate_gain_cached_axis_offset,(word)iVar7,
+                  turbocharger_speed_derate_gain_axis,turbocharger_speed_derate_gain_values,3);
   fuel_demand_delta_working = (uint)turbocharger_speed - (uint)fuel_demand_quantity_snapshot;
   fuel_demand_quantity_snapshot = turbocharger_speed;
   iVar8 = (int)(CONCAT44((int)((ulonglong)
@@ -11705,7 +11706,7 @@ void cm848_initializeWastegateDutyController(void)
   wastegate_integrator_gain_by_error_cached_axis_offset = 2;
   wastegate_duty_ceiling_by_engine_speed_cached_axis_offset = 2;
   wastegate_duty_floor_adjustment_by_altitude_cached_axis_offset = 2;
-  DAT_003fa18a = 2;
+  turbocharger_speed_derate_gain_cached_axis_offset = 2;
   wastegate_duty_ceiling_adjustment_by_altitude_cached_axis_offset = 2;
   wastegate_duty_second_error_gain_by_error_cached_axis_offset = 2;
   DAT_003fa192 = 2;
@@ -38943,8 +38944,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  byte all_transmits_overdue;
   ushort receive_interval;
+  byte all_transmits_overdue;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
@@ -43422,8 +43423,9 @@ void cm848_calculateTorqueManagementFuelTableLimit(void)
     torque_management_table_fuel_limit =
          cm848_dualAxisTableInterpolation
                    (torque_management_fuel_table_cached_axis_offsets,
-                    engine_speed_state.filtered_engine_speed,WORD_ARRAY_0005b4d6,
-                    combustion_alpha_input,WORD_ARRAY_0005b502,WORD_ARRAY_0005b508,0);
+                    engine_speed_state.filtered_engine_speed,torque_management_fuel_table_x_axis,
+                    combustion_alpha_input,torque_management_fuel_table_y_axis,
+                    torque_management_fuel_table_grid,0);
   }
   else {
     if (four_dimensional_fueling_interpolation_factor != 0) {
@@ -51314,9 +51316,9 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
      (engine_operating_mode == FUELING_STATE_VARIABLE_SPEED_GOVERNOR)) {
     fuel_limit_by_rpm_and_demand_reference =
          cm848_dualAxisTableInterpolation
-                   (WORD_ARRAY_003fb738,engine_speed_state.filtered_engine_speed,
-                    fuel_limit_by_rpm_and_demand_x_axis,commanded_throttle_state.commanded_throttle,
-                    fuel_limit_by_rpm_and_demand_y_axis,
+                   (fuel_limit_by_rpm_and_demand_reference_map_cached_axis_offsets,
+                    engine_speed_state.filtered_engine_speed,fuel_limit_by_rpm_and_demand_x_axis,
+                    commanded_throttle_state.commanded_throttle,fuel_limit_by_rpm_and_demand_y_axis,
                     fuel_limit_by_rpm_and_demand_reference_map_grid,0);
     if (combustion_chi_lower_map_number == 1) {
       fuel_limit_by_rpm_and_demand_chi_lower =
@@ -58712,7 +58714,7 @@ void cm848_applicationMain(void)
   cm848_initializeEgrOrificeTemperatureChannel();
   cm848_initializeEgrDeltaPressureChannel();
   initGovernorFlagsAux();
-  initMessageBufferPointers();
+  cm848_initializeStackHighWaterMark();
   cm848_initializeMaximumRoadSpeeds();
   cm848_initializeAcceleratorPedalPositionSensor1Channel();
   cm848_initializeAcceleratorPedalPositionSensor2Channel();
@@ -58720,7 +58722,7 @@ void cm848_applicationMain(void)
   cm848_initializeTransmissionTemperatureChannel();
   cm848_initializeAcceleratorPedalIdlePositions();
   configurationValidationCheck();
-  initSensorTableIndexing();
+  cm848_initializeLifetimeDistanceRecordIndex();
   cm848_initialization_calibration_state();
   cm848_initializeRockCycleEngineSpeedLimit();
   cm848_initializeEgrOrificeTemperatureSensorRationalityMonitor();
@@ -65896,8 +65898,9 @@ void cm848_filterEgrOrificeTemperature(void)
   }
   egr_orifice_temperature_lead_time_constant_lookup =
        lookupTableInterpolation
-                 (&WORD_003fbcfe,egr_mass_flow_delayed_filtered,WORD_ARRAY_00406778,
-                  WORD_ARRAY_0040678c,0);
+                 (&egr_orifice_temperature_lead_time_constant_cached_axis_offset,
+                  egr_mass_flow_delayed_filtered,egr_orifice_temperature_lead_time_constant_axis,
+                  egr_orifice_temperature_lead_time_constant_values,0);
   wVar1 = egr_orifice_temperature_sensor_fault_status;
   if (((egr_orifice_temperature_sensor_fault_status != 0) ||
       (air_handling_compensation_and_diagnostic_bypass_cal != 0)) ||
@@ -72417,8 +72420,9 @@ void cm848_calculateTurbochargerSpeedSensorValue(void)
      (fault_detected_cal.turbocharger_speed_low_error == 0)) {
     turbocharger_speed_unfiltered_previous = turbocharger_speed_unfiltered;
     uVar1 = lookupTableInterpolation
-                      (&DAT_003fcc06,turbocharger_speed_sensor_frequency,WORD_ARRAY_0040770e,
-                       WORD_ARRAY_00407714,0);
+                      (&turbocharger_speed_linearization_cached_axis_offset,
+                       turbocharger_speed_sensor_frequency,turbocharger_speed_linearization_axis,
+                       turbocharger_speed_linearization_values,0);
   }
   uVar2 = (uint)uVar1;
   turbocharger_speed_unfiltered_step = (uint)uVar1 - (uint)turbocharger_speed_unfiltered_previous;
@@ -72656,7 +72660,7 @@ void cm848_initializeTurbochargerSpeedSensorChannel(void)
   fault_registered_cal.turbocharger_speed_in_range_error = 0;
   turbocharger_speed_filter_state.accumulator = (uint)turbocharger_speed << 0x10;
   turbocharger_speed_filter_state.coefficient = &turbocharger_speed_sensor_filter_constant;
-  DAT_003fcc06 = 2;
+  turbocharger_speed_linearization_cached_axis_offset = 2;
   return;
 }
 
@@ -85027,43 +85031,53 @@ void cm848_sciValidateSecurityKey(void)
 
 
 //
-// Function: bufferManagementWithBounds @ 0x00522700
+// Function: cm848_updateStackHighWaterMark @ 0x00522700
 //
 
-void bufferManagementWithBounds(void)
+/* Main-loop stack high-water monitor: from stack_high_water_mark_scan_cursor it reads up to 20
+   bytes toward the stack top (0x3f9ff8) for a nonzero byte; on one below stack_deepest_address it
+   records it and sets stack_headroom_factor_tenths = 20400 / the bytes used; then the scan starts
+   again at 0x3f9808 (was bufferManagementWithBounds; PR #53 round 54) */
+
+void cm848_updateStackHighWaterMark(void)
 
 {
   char *pcVar1;
   
-  pcVar1 = (char *)(message_buffer_scan_cursor + 0x14);
-  if (&LAB_003f9ff8 < (char *)(message_buffer_scan_cursor + 0x14)) {
+  pcVar1 = (char *)(stack_high_water_mark_scan_cursor + 0x14);
+  if (&LAB_003f9ff8 < (char *)(stack_high_water_mark_scan_cursor + 0x14)) {
     pcVar1 = &LAB_003f9ff8;
   }
   do {
-    if (pcVar1 < message_buffer_scan_cursor) {
+    if (pcVar1 < stack_high_water_mark_scan_cursor) {
       return;
     }
-    message_buffer_scan_cursor = message_buffer_scan_cursor + 1;
-  } while (*(char *)message_buffer_scan_cursor == '\0');
-  if (message_buffer_scan_cursor < message_buffer_scan_low_watermark) {
-    DAT_0040b60c = (undefined2)(0x4fb0 / (0x9ff8 - message_buffer_scan_cursor & 0xffff));
-    message_buffer_scan_low_watermark = (undefined *)message_buffer_scan_cursor;
+    stack_high_water_mark_scan_cursor = stack_high_water_mark_scan_cursor + 1;
+  } while (*(char *)stack_high_water_mark_scan_cursor == '\0');
+  if (stack_high_water_mark_scan_cursor < stack_deepest_address) {
+    stack_headroom_factor_tenths =
+         (word)(0x4fb0 / (0x9ff8 - stack_high_water_mark_scan_cursor & 0xffff));
+    stack_deepest_address = (undefined *)stack_high_water_mark_scan_cursor;
   }
-  message_buffer_scan_cursor = (dword)&DAT_003f9808;
+  stack_high_water_mark_scan_cursor = (dword)&DAT_003f9808;
   return;
 }
 
 
 
 //
-// Function: initMessageBufferPointers @ 0x00522788
+// Function: cm848_initializeStackHighWaterMark @ 0x00522788
 //
 
-void initMessageBufferPointers(void)
+/* Boot (cm848_applicationMain): stack_high_water_mark_scan_cursor = 0x3f9808 and
+   stack_deepest_address = 0x3f9ff8 (nothing used yet) (was initMessageBufferPointers; PR #53 round
+   54) */
+
+void cm848_initializeStackHighWaterMark(void)
 
 {
-  message_buffer_scan_cursor = (dword)&DAT_003f9808;
-  message_buffer_scan_low_watermark = &LAB_003f9ff8;
+  stack_high_water_mark_scan_cursor = (dword)&DAT_003f9808;
+  stack_deepest_address = &LAB_003f9ff8;
   return;
 }
 
@@ -85527,10 +85541,14 @@ void cm848_recordLifetimeDistanceEvery8Miles(void)
 
 
 //
-// Function: initSensorTableIndexing @ 0x005230f4
+// Function: cm848_initializeLifetimeDistanceRecordIndex @ 0x005230f4
 //
 
-void initSensorTableIndexing(void)
+/* Boot (cm848_applicationMain): lifetime_distance_8_mile_record_index = the index (0-3) of the
+   largest lifetime_distance_8_mile_record_cal entry - the newest record (was
+   initSensorTableIndexing; PR #53 round 54) */
+
+void cm848_initializeLifetimeDistanceRecordIndex(void)
 
 {
   uint uVar1;

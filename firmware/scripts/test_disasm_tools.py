@@ -55,21 +55,26 @@ def main():
     print(f"[{'PASS' if ro_ok else 'FAIL'}] xref 0x00408dfc read-only: {writes} writes / {len(refs)} fns")
     fails += not ro_ok
 
-    # an unnamed lookup table typed by a type-only row renders WORD_ARRAY_<addr>, not DAT_<addr>. The table is
-    # picked from the CSV (the first type-only word[N] row whose label is in the .cpp), because the naming
-    # campaigns keep naming the fixed example (0x5fe88 was named on 2026-11-16).
+    # data typed by a type-only row (no name) renders with Ghidra's default label - WORD_ARRAY_<addr> for a word[N]
+    # table, WORD_<addr> for a word - not DAT_<addr>. The row is picked from the CSV (the first type-only word[N] row
+    # whose label is in the .cpp, else the first type-only word row), because the naming campaigns keep naming the
+    # examples: 0x5fe88 was named on 2026-11-16, and PR #53 round 54 named the last unnamed table.
     output = os.path.join(D.FW, "output")
     cpp = open(os.path.join(output, "cm848_rom.ghidra.cpp")).read()
-    unnamed = None
-    for line in open(os.path.join(output, "global_variables.csv")):
-        p = line.rstrip("\n").split(",")
-        if p[0].startswith("0x") and len(p) > 2 and not p[1] and p[2].startswith("word["):
-            if f"WORD_ARRAY_{int(p[0], 16):08x}" in cpp:
-                unnamed = int(p[0], 16)
+    rows = [line.rstrip("\n").split(",") for line in open(os.path.join(output, "global_variables.csv"))]
+    rows = [p for p in rows if p[0].startswith("0x") and len(p) > 2 and not p[1]]
+    unnamed, label = None, ""
+    for kind, wanted in (("WORD_ARRAY_", lambda t: t.startswith("word[")), ("WORD_", lambda t: t == "word")):
+        for p in rows:
+            if wanted(p[2]) and f"{kind}{int(p[0], 16):08x}" in cpp:
+                unnamed, label = int(p[0], 16), f"{kind}{int(p[0], 16):08x}"
                 break
+        if unnamed is not None:
+            break
     name, refs = referencing_functions(unnamed) if unnamed is not None else ("", [])
     table_ok = unnamed is not None and not name and len(refs) > 0
-    print(f"[{'PASS' if table_ok else 'FAIL'}] xref {hex(unnamed or 0)} unnamed word array: {len(refs)} fns")
+    print(f"[{'PASS' if table_ok else 'FAIL'}] xref {hex(unnamed or 0)} unnamed type-only row ({label}): "
+          f"{len(refs)} fns")
     fails += not table_ok
 
     print(f"\n{'ALL PASS' if fails == 0 else str(fails) + ' FAILED'}")

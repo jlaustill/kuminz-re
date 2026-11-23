@@ -212,6 +212,9 @@ extern word intake_air_heater_duty_percent_by_target_level_values[6];  // 0x0005
 extern word oil_pressure_model_x_axis[6];  // 0x0005b474
 extern word oil_pressure_model_y_axis[6];  // 0x0005b480
 extern word oil_pressure_model_grid[25];  // 0x0005b48c
+extern word torque_management_fuel_table_x_axis[22];  // 0x0005b4d6
+extern word torque_management_fuel_table_y_axis[3];  // 0x0005b502
+extern word torque_management_fuel_table_grid[42];  // 0x0005b508
 extern sensor_channel_config_t injector_driver_booster_capacitor_1_voltage_sensor_config;  // 0x0005b55c
 extern sensor_channel_config_t injector_driver_booster_capacitor_2_voltage_sensor_config;  // 0x0005b56c
 extern word obd_dtc_code_table;  // 0x0005b57c
@@ -1961,6 +1964,7 @@ extern word coolant_temp_snapshot;  // 0x003fb728
 extern word timing_intake_manifold_temperature_snapshot;  // 0x003fb72a
 extern word timing_barometric_pressure_snapshot;  // 0x003fb72c
 extern word fuel_temp_b_snapshot;  // 0x003fb72e
+extern word fuel_limit_by_rpm_and_demand_reference_map_cached_axis_offsets[2];  // 0x003fb738
 extern word fuel_limit_by_rpm_and_demand_reference;  // 0x003fb740
 extern word fuel_limit_by_rpm_and_demand_chi_lower;  // 0x003fb742
 extern word fuel_limit_by_rpm_and_demand_chi_upper;  // 0x003fb744
@@ -2018,6 +2022,7 @@ extern ema_filter_state_t egr_valve_position_command_diagnostic_filter_state;  /
 extern engine_protection_channel_configuration_t* engine_protection_current_configuration;  // 0x003fbd42
 extern engine_protection_channel_state_t* engine_protection_current_state;  // 0x003fbd46
 extern engine_protection_channel_history_t* engine_protection_current_history;  // 0x003fbd4a
+extern word turbocharger_speed_linearization_cached_axis_offset;  // 0x003fcc06
 extern ema_filter_state_t turbocharger_speed_filter_state;  // 0x003fcc08
 extern ema_filter_state_t variable_geometry_turbocharger_position_command_diagnostic_filter_state;  // 0x003fcce8
 extern ema_filter_state_t variable_geometry_turbocharger_motor_mean_squared_current_filter_state;  // 0x003fccf6
@@ -2564,6 +2569,8 @@ extern int16_t wastegate_duty_engine_brake_lower_limit;  // 0x003ffcac
 extern word wastegate_duty_turbocharger_speed_derate_derivative_gain;  // 0x003ffcae
 extern word wastegate_duty_compressor_outlet_temperature_derate_derivative_gain;  // 0x003ffcb0
 extern word wastegate_duty_compressor_outlet_temperature_derate_scale_gain;  // 0x003ffcb2
+extern word turbocharger_speed_derate_gain_axis[10];  // 0x003ffcb6
+extern word turbocharger_speed_derate_gain_values[10];  // 0x003ffcca
 extern word wastegate_duty_ceiling_engine_speed_axis[20];  // 0x003ffcde
 extern word wastegate_duty_ceiling_y_axis[17];  // 0x003ffd06
 extern word wastegate_duty_ceiling_grid[304];  // 0x003ffd28
@@ -3018,6 +3025,8 @@ extern word turbocharger_speed_estimate_boost_lead_gain;  // 0x0040729c
 extern word turbocharger_corrected_speed_x_axis[35];  // 0x004072a2
 extern word turbocharger_corrected_speed_y_axis[16];  // 0x004072e8
 extern word turbocharger_corrected_speed_grid[510];  // 0x00407308
+extern word turbocharger_speed_linearization_axis[3];  // 0x0040770e
+extern word turbocharger_speed_linearization_values[3];  // 0x00407714
 extern word variable_geometry_turbocharger_position_command_override_value;  // 0x0040771a
 extern int16_t variable_geometry_turbocharger_derivative_gain_normal;  // 0x0040771c
 extern int16_t variable_geometry_turbocharger_derivative_gain_open;  // 0x0040771e
@@ -5311,6 +5320,7 @@ extern byte sci_security_key_matched_flag;  // 0x0040b5de
 extern byte sci_buffer[32];  // 0x0040b5e2
 extern word sci_receive_flag;  // 0x0040b602
 extern void * sci_default_command_handler;  // 0x0040b604
+extern word stack_headroom_factor_tenths;  // 0x0040b60c
 extern word engine_speed_limit_converter_slip;  // 0x0040b60e
 extern word transmission_output_speed_engine_equivalent;  // 0x0040b610
 extern word converter_slip_counter;  // 0x0040b612
@@ -6099,7 +6109,7 @@ extern byte pci_message_handler_tick;  // 0x003fce7a
 extern word low_oil_pressure_debounce_count;  // 0x003fceac
 extern word oil_pressure_switch_stuck_count;  // 0x003fceb2
 extern word oil_pressure_switch_fault_running_count;  // 0x003fcebc
-extern dword message_buffer_scan_cursor;  // 0x003fcf96
+extern dword stack_high_water_mark_scan_cursor;  // 0x003fcf96
 extern word main_injection_timing_snapshot;  // 0x003fd082
 extern byte cylinder_cutout_expiry_count;  // 0x003fd088
 extern word cylinder_cutout_duration_countdown;  // 0x003fd089
@@ -6605,7 +6615,7 @@ extern word transfer_case_engine_to_vehicle_speed_ratio;  // 0x0040b542
 extern word transfer_case_engine_to_vehicle_speed_ratio_average;  // 0x0040b544
 extern byte transfer_case_launch_flag;  // 0x0040b547
 extern word sci_key_retry_delay;  // 0x0040b5e0
-extern void * message_buffer_scan_low_watermark;  // 0x0040b608
+extern void * stack_deepest_address;  // 0x0040b608
 extern int16_t transmission_temperature_rationality_driving_range;  // 0x0040b628
 extern word fuel_pressure_tracking_error_per_pass;  // 0x0040b9e0
 extern word high_load_boost_band_event_count;  // 0x0040ba6a
@@ -6911,6 +6921,7 @@ extern word fuel_demand_timing_demand_ring_buf[150];  // 0x003fba38
 extern word extreme_ambient_coolant_temperature_high_flag;  // 0x003fbca2
 extern word egr_valve_autozero_active_flag;  // 0x003fbccc
 extern word egr_orifice_temperature_lead_time_constant_lookup;  // 0x003fbcf8
+extern word egr_orifice_temperature_lead_time_constant_cached_axis_offset;  // 0x003fbcfe
 extern word egr_valve_closed_hold_previous_flag;  // 0x003fbd1a
 extern word engine_protection_override_switch_previous_state;  // 0x003fbd40
 extern byte accelerator_idle_switch_previous_state;  // 0x003fbd68
@@ -7035,6 +7046,8 @@ extern word egr_orifice_temperature_estimate_maximum_limit;  // 0x00406774
 extern word exhaust_temperature_model_delta;  // 0x0040a67e
 extern word exhaust_temperature_rise_over_intake_manifold_temperature;  // 0x0040a680
 extern word egr_orifice_temperature_estimate_minimum_limit;  // 0x00406776
+extern word egr_orifice_temperature_lead_time_constant_axis[10];  // 0x00406778
+extern word egr_orifice_temperature_lead_time_constant_values[10];  // 0x0040678c
 extern word egr_valve_control_fault_time_decrement;  // 0x004067e0
 extern word egr_valve_position_command_diagnostic_filter_constant;  // 0x004067e2
 extern word remote_throttle_priority;  // 0x004071de
@@ -7918,6 +7931,7 @@ extern word wastegate_duty_ceiling_battery_voltage_gain_cached_axis_offset;  // 
 extern word wastegate_integrator_gain_by_error_cached_axis_offset;  // 0x003fa180
 extern word wastegate_duty_ceiling_by_engine_speed_cached_axis_offset;  // 0x003fa186
 extern word wastegate_duty_floor_adjustment_by_altitude_cached_axis_offset;  // 0x003fa188
+extern word turbocharger_speed_derate_gain_cached_axis_offset;  // 0x003fa18a
 extern word wastegate_duty_ceiling_adjustment_by_altitude_cached_axis_offset;  // 0x003fa18c
 extern word wastegate_duty_second_error_gain_by_error_cached_axis_offset;  // 0x003fa18e
 extern word wastegate_duty_floor_cached_axis_offsets[2];  // 0x003fa194
