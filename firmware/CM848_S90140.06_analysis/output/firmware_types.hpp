@@ -625,10 +625,13 @@ typedef enum {
     BOOT_DIAGNOSTIC_RESULT_CANNOT_COMPLY = 0x04,  /* No response buffer is free (cm848_allocateDiagnosticResponseBuffer returned 0) */
     BOOT_DIAGNOSTIC_RESULT_UNKNOWN_SERVICE = 0x05,  /* No handler is registered for the service byte (cm848_dispatchDiagnosticService - the application answers this with 0x18) */
     BOOT_DIAGNOSTIC_RESULT_UNKNOWN_PARAMETER_ID = 0x08,  /* cm848_lookupBootParameterIdAddress does not know the ID */
-    BOOT_DIAGNOSTIC_RESULT_UNMAPPED_ADDRESS = 0x09,  /* No memory region holds the address range (cm848_lookupBootMemoryRegionType) */
-    BOOT_DIAGNOSTIC_RESULT_REGION_REFUSED = 0x0a,  /* The region refuses the access - or the dispatcher refuses a ROM handler while the low nibble of eeprom_service_mode_flags is set */
+    BOOT_DIAGNOSTIC_RESULT_ADDRESS_NOT_ACCEPTED = 0x09,  /* No region accepts the address range - none holds it or it is Bank 2 flash while flash2_writes_enabled is 0 (cm848_lookupBootMemoryRegionType) - or cm848_trackDownloadBlock refuses it (out of sequence or past the block length) (382fa677 named it UNMAPPED_ADDRESS) */
+    BOOT_DIAGNOSTIC_RESULT_ROM_HANDLER_REFUSED = 0x0a,  /* The dispatcher refuses a handler in ROM (at or below 0x6fffe) while the low nibble of eeprom_service_mode_flags is set - only RAM handlers run then; no boot region has type 10 (382fa677 named it REGION_REFUSED) */
+    BOOT_DIAGNOSTIC_RESULT_NO_DOWNLOAD_BLOCK = 0x10,  /* cm848_trackDownloadBlock: a write while eeprom_xfer_state.block_length is 0 - no download block announced */
     BOOT_DIAGNOSTIC_RESULT_FLASH_WRITE_FAILED = 0x11,  /* cm848_writeBootDiagnosticMemory: a flash write at an odd address or a flash write that failed */
-    BOOT_DIAGNOSTIC_RESULT_EEPROM_TRANSFER_NOT_STARTED = 0x17,  /* Service 2: mpc555_initEepromTransfer returned 0 */
+    BOOT_DIAGNOSTIC_RESULT_CHECKSUM_MISMATCH = 0x14,  /* cm848_finishDownloadBlock: the block's trailing CRC differs from the running CRC (the name CM550's DIAG_RESPONSE_CODE gave 0x14) */
+    BOOT_DIAGNOSTIC_RESULT_DOWNLOAD_BLOCK_LIST_FULL = 0x15,  /* cm848_finishDownloadBlock: its 10-entry block list is full */
+    BOOT_DIAGNOSTIC_RESULT_FLASH_ERASE_FAILED = 0x17,  /* Service 2: the flash erase in mpc555_initEepromTransfer (mpc555_cmfEraseBlocks then cm848_flashEraseChip) failed (382fa677 named it EEPROM_TRANSFER_NOT_STARTED) */
     BOOT_DIAGNOSTIC_RESULT_KEY_MISSING = 0x1a  /* The service needs the token but the request carries none */
 } BOOT_DIAGNOSTIC_RESULT;
 

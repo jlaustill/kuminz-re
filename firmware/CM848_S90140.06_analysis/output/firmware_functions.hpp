@@ -31,7 +31,7 @@ void mpc555_initHardwareConfig(void);  // @ 0x00001454
 void mpc555_initSystemRegisters(void);  // @ 0x000016d0
 void cm848_initClockAndTimers(void);  // @ 0x000016dc
 void cm848_stubFunction2(void);  // @ 0x0000183c
-BOOT_DIAGNOSTIC_RESULT cm848_handleBootExecuteAtAddressService(j1939_rx_msg_t *param_1);  // @ 0x00001840
+BOOT_DIAGNOSTIC_RESULT cm848_handleBootExecuteAtAddressService(j1939_rx_msg_t *request);  // @ 0x00001840
 void cm848_registerBootExecuteAtAddressService(void);  // @ 0x0000191c
 bool cm848_registerPgnResponseHandler(dword pgn,void *handler_func);  // @ 0x00001948
 void cm848_registerBootMemoryWriteServices(void);  // @ 0x0000198c

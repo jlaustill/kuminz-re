@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 10:27:03 MST 2026
+// Generated: Mon Nov 23 10:38:34 MST 2026
 
 
 //
@@ -1146,7 +1146,7 @@ void cm848_stubFunction2(void)
    service 25 via diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) - not a dead
    function */
 
-BOOT_DIAGNOSTIC_RESULT cm848_handleBootExecuteAtAddressService(j1939_rx_msg_t *param_1)
+BOOT_DIAGNOSTIC_RESULT cm848_handleBootExecuteAtAddressService(j1939_rx_msg_t *request)
 
 {
   dword dVar1;
@@ -1157,12 +1157,12 @@ BOOT_DIAGNOSTIC_RESULT cm848_handleBootExecuteAtAddressService(j1939_rx_msg_t *p
   BOOT_DIAGNOSTIC_RESULT BVar6;
   code *local_20 [6];
   
-  BVar6 = cm848_validateDiagnosticRequestLengthAndAuthorization(param_1);
+  BVar6 = cm848_validateDiagnosticRequestLengthAndAuthorization(request);
   if ((BVar6 & 0xff) == 0xff) {
-    cm848_copyBytes(local_20,param_1->data_pointer + 1,4);
+    cm848_copyBytes(local_20,request->data_pointer + 1,4);
     BVar6 = cm848_lookupBootMemoryRegionType(local_20[0],1);
-    if ((BVar6 & 0xff) != BOOT_DIAGNOSTIC_RESULT_UNMAPPED_ADDRESS) {
-      cm848_sendDiagServiceResponse(param_1,0);
+    if ((BVar6 & 0xff) != BOOT_DIAGNOSTIC_RESULT_ADDRESS_NOT_ACCEPTED) {
+      cm848_sendDiagServiceResponse(request,0);
       wVar4 = mios_mmcsm_cnt.CNT;
       bVar3 = boot_can_ring_state.transmit_ring_full_flag;
       do {
@@ -1847,10 +1847,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
-  word direction_register_value;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -5760,7 +5760,7 @@ void cm848_dispatchDiagnosticService(j1939_rx_msg_t *request)
               result_code = BVar1 & 0xff;
             }
             else {
-              result_code = BOOT_DIAGNOSTIC_RESULT_REGION_REFUSED;
+              result_code = BOOT_DIAGNOSTIC_RESULT_ROM_HANDLER_REFUSED;
             }
           }
           break;
@@ -63385,9 +63385,8 @@ void cm848_initialization_step_4(void)
    injection_timing_torque_to_fuel_adjustment; total_injection_quantity_timing_adjusted =
    total_injection_quantity_for_air_handling + that adjustment goes through the engine speed x fuel
    table into combustion_torque. net_combustion_torque = combustion_torque -
-   pumping_torque_adjustment - (the governor target's table value x
-   net_combustion_torque_coolant_friction_scale / 2048);
-   cm848_calculateFrictionNoLoadAndNetMachineTorque reads it. (was
+   pumping_torque_adjustment - (the governor target's table value x coolant_torque_adjustment_factor
+   / 2048); cm848_calculateFrictionNoLoadAndNetMachineTorque reads it. (was
    cm848_auxiliaryControl_tableInterpolation) */
 
 void cm848_calculateNetCombustionTorque(void)
@@ -63425,15 +63424,14 @@ void cm848_calculateNetCombustionTorque(void)
                   ,total_injection_quantity_timing_adjusted,
                   combustion_torque_by_fuel_quantity_y_axis,combustion_torque_by_fuel_quantity_grid,
                   6);
-  net_combustion_torque_coolant_friction_term =
+  coolant_torque_adjustment_term =
        (sword)(CONCAT44((int)((ulonglong)
                               ((longlong)(int)friction_torque_adjustment_for_coolant_temperature *
-                              (longlong)(int)net_combustion_torque_coolant_friction_scale) >> 0x20),
+                              (longlong)(int)coolant_torque_adjustment_factor) >> 0x20),
                         (int)friction_torque_adjustment_for_coolant_temperature *
-                        (int)net_combustion_torque_coolant_friction_scale) / 0x800);
+                        (int)coolant_torque_adjustment_factor) / 0x800);
   net_combustion_torque =
-       (combustion_torque - pumping_torque_adjustment) - net_combustion_torque_coolant_friction_term
-  ;
+       (combustion_torque - pumping_torque_adjustment) - coolant_torque_adjustment_term;
   return;
 }
 

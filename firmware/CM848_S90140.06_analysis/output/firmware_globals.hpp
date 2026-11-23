@@ -7008,7 +7008,7 @@ extern byte fuel_pressure_governor_demand_above_limit_flag;  // 0x0040b903
 extern byte fuel_pressure_governor_demand_residual_update_gate_flag;  // 0x0040b90b
 extern word oil_change_monitor_severity_factor;  // 0x0040b54a
 extern int16_t egr_cooler_efficiency_threshold_gain;  // 0x004051e8
-extern int16_t net_combustion_torque_coolant_friction_scale;  // 0x004059f4
+extern int16_t coolant_torque_adjustment_factor;  // 0x004059f4
 extern int16_t injection_timing_torque_to_fuel_adjustment_maximum_limit;  // 0x00405a9e
 extern word injection_timing_torque_to_fuel_gain_x_axis[20];  // 0x00405aa0
 extern word injection_timing_torque_to_fuel_gain_y_axis[17];  // 0x00405ac8
@@ -8027,7 +8027,7 @@ extern word injection_quantity_auxiliary_coolant_limit_cached_axis_offsets[2];  
 extern word compressor_inlet_pressure_drop_by_air_flow_cached_axis_offset;  // 0x003fb9dc
 extern word injection_timing_torque_to_fuel_gain_cached_axis_offsets[2];  // 0x003fba08
 extern word combustion_torque_by_fuel_quantity_timing_adjusted_cached_axis_offsets[2];  // 0x003fba0c
-extern int16_t net_combustion_torque_coolant_friction_term;  // 0x003fba10
+extern int16_t coolant_torque_adjustment_term;  // 0x003fba10
 extern word oxygen_limit_equivalence_ratio_cached_axis_offsets[2];  // 0x003fba12
 extern word oxygen_limit_ambient_pressure_gain_cached_axis_offset;  // 0x003fba16
 extern word air_handling_system_protection_high_load_torque_cached_axis_offset;  // 0x003fba1a
