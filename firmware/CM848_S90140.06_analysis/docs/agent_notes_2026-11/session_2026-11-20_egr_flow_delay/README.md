@@ -609,3 +609,8 @@ Hand work on the round 7 lead.
 - **Stage A:** `apply_r71a.py`, `map_r71a.csv`. **Proof:** `prove_r71.py`, `diff_r71.py`. **Closing:**
   `apply_r71_closing.py`, `fix_r71_closing_text.py`, `fix_r71_closing_text2.py`, `update_large_tar_r71.sh`. **Follow-up:** `fix_r71b.py`. **Commit
   messages:** `commit_r71a.txt`, `commit_r71b.txt`, `commit_r71_closing.txt`.
+
+## Round 72: the J1939 memory write service shared with CM550 (`session_folder/round72/`)
+
+- **Stage A:** `apply_r72a.py` / `apply_r72a2.py` / `apply_r72a3.py` / `apply_r72a4.py`, the maps `map_r72a_cm848.csv` / `map_r72a_cm550.csv`. **Stage B1:** `apply_r72b1.py` / `apply_r72b1b.py` / `apply_r72b1c.py` / `apply_r72b1d.py`, `map_r72b_*.csv`.
+- **Proof:** `prove_r72*.py` (renamed functions keyed by their new name; boundary-aware renames), `diff_r72*.py`. **Closing:** `apply_r72_closing.py`, `update_large_tar_r72.sh`.

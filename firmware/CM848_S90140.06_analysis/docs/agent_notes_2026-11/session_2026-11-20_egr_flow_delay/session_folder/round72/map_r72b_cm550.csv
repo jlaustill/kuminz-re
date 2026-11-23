@@ -1,0 +1,7 @@
+address,name,old_label,kind,dims
+0x0002148a,writeJ1939DiagnosticMemory,cm550_memoryOperationDispatcher,function,1
+0x000217de,handleJ1939WriteMemoryService,cm550_memoryOperationFromMessageExtended,function,1
+0x00021826,handleJ1939WriteMemoryLongLengthService,cm550_FUN_00021826,function,1
+0x00021964,getJ1939MemoryServiceHeaderLength,cm550_addressLookupFunction,function,1
+0x0002fcdc,validateSecurityKey,sensorRangeValidation,function,1
+0x0002fbd8,unscrambleSecurityKey,cm550_FUN_0002fbd8,function,1

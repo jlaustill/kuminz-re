@@ -1,0 +1,24 @@
+cm848: round 72 closing - task 046, the session archive, the PR body, firmware/CLAUDE.md line 108's effective range
+
+- work/tasks/046: "Done, round 72" records the gate, stages A (f94b884e), B1 (f07a08e5) and B2 (5edbe6af), and their
+  proofs.
+  - Stage A's count is corrected: f94b884e's "13 members" was a line count. There are 17 member renders, 15 of them
+    in 5 callers.
+  - It records stage A's unkept promise, the writer's locals, as a lead.
+  - It records the sweep's results: the pipeline snapshots left as they are, and two pipeline mismatches.
+  - Leads:
+    - the writers' locals;
+    - the security globals: the failure count, the EEPROM-backed key byte, the password at EEPROM offset 2 in both;
+    - CM550's development mode flag inside a J1708 struct instance, and its three setters;
+    - the CM550 read side;
+    - CM550 prototypes;
+    - the result enums;
+    - the README diagram's EEPROM / type 3 paths;
+    - the CM550 request struct.
+- firmware/CLAUDE.md line 108 is a factual correction from round 71's own verified work. The boot registers entry
+  (0x2FC000-0x307FFF type 3) is effectively 0x2FC000-0x301FFF, because the first match wins and the RAM entry takes
+  0x302000 and up.
+- work/todo.md, the session README, session_folder/round72/, the large-files tarball (the round's 11 build / verify
+  logs), pr_body.md: a Round 72 section, a test plan line, and a 'Beyond CM848' summary bullet.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
