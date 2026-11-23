@@ -1216,6 +1216,60 @@ typedef enum {
     TRANSMISSION_TEMPERATURE_RATIONALITY_FAIL_VERDICT = 6  /* no e2m label: cm848_updateTransmissionTemperatureSensorPerformanceFault sets it while a result flag is set; cm848_completeTransmissionTemperatureMonitorReport turns it into FAILED (PR #53 round 51) */
 } TRANSMISSION_TEMPERATURE_RATIONALITY_STATE;
 
+typedef enum {
+    COOLING_FAN_COOLANT_REQUEST_BELOW_RAMP = 0,  /* e2m IDLE: coolant under cooling_fan_coolant_ramp_start_temperature (cooling_fan_coolant_speed_minimum) (PR #53 round 52) */
+    COOLING_FAN_COOLANT_REQUEST_RAMP = 1,  /* e2m RAMP: the linear ramp from cooling_fan_coolant_ramp_base_speed (PR #53 round 52) */
+    COOLING_FAN_COOLANT_REQUEST_PI_CONTROL = 2,  /* e2m PI_CNTRL: the PI loop above cooling_fan_coolant_temperature_setpoint (PR #53 round 52) */
+    COOLING_FAN_COOLANT_REQUEST_FULL_SPEED = 3  /* e2m COOL_MAX: cooling_fan_coolant_speed_maximum (also on a coolant sensor fault) (PR #53 round 52) */
+} COOLING_FAN_COOLANT_REQUEST_STATE;
+
+typedef enum {
+    COOLING_FAN_TARGET_BASE_SPEED = 0,  /* e2m MIN_DEM: cm848_selectCoolingFanSpeedTarget starts from cooling_fan_base_speed (PR #53 round 52) */
+    COOLING_FAN_TARGET_COOLANT = 1,  /* e2m COOLANT: cooling_fan_coolant_speed_request (PR #53 round 52) */
+    COOLING_FAN_TARGET_AIR_CONDITIONING = 2,  /* e2m AC: cooling_fan_air_conditioning_speed_request (PR #53 round 52) */
+    COOLING_FAN_TARGET_INTAKE = 3,  /* e2m IMT: cooling_fan_intake_speed_request (PR #53 round 52) */
+    COOLING_FAN_TARGET_TRANSMISSION = 4,  /* e2m TOT: cooling_fan_transmission_speed_request (PR #53 round 52) */
+    COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMP_UP_TARGET = 5,  /* e2m HIGHSLIP: cooling_fan_high_engine_rpm_ramp_up_target (PR #53 round 52) */
+    COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMP_DOWN_FLOOR = 6,  /* e2m LOW_SLIP: cooling_fan_high_engine_rpm_ramp_down_floor (PR #53 round 52) */
+    COOLING_FAN_TARGET_ENGINE_DRIVEN_LIMIT = 7,  /* e2m MAX_RPM: cooling_fan_engine_driven_speed_limit (PR #53 round 52) */
+    COOLING_FAN_TARGET_CEILING = 8,  /* e2m MAX_DEM: cooling_fan_speed_ceiling (PR #53 round 52) */
+    COOLING_FAN_TARGET_OVERRIDE = 9,  /* e2m OVERRIDE: cooling_fan_speed_target_override (PR #53 round 52) */
+    COOLING_FAN_TARGET_THERMOSTAT_MONITOR = 10,  /* e2m TSTAT: the thermostat monitor holds cooling_fan_base_speed (PR #53 round 52) */
+    COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMPING_DOWN = 11,  /* e2m LOWRMPDN: cooling_fan_ramp_down_speed stepping down to the floor (PR #53 round 52) */
+    COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMPING_UP = 12,  /* e2m RAMPUP: cooling_fan_ramp_up_speed stepping up to the ramp-up target (PR #53 round 52) */
+    COOLING_FAN_TARGET_HIGH_ENGINE_RPM_AT_TARGET = 13,  /* e2m SLIPTMR: held at the ramp-up target for cooling_fan_ramp_at_target_passes (PR #53 round 52) */
+    COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMP_DOWN_RESUME = 14,  /* e2m RAMPDN: cooling_fan_ramp_down_resume_speed stepping down (PR #53 round 52) */
+    COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMP_UP_RESUME = 15  /* e2m EXLOWSLP: cooling_fan_ramp_up_resume_speed stepping up out of the floor (PR #53 round 52) */
+} COOLING_FAN_SPEED_TARGET_SOURCE;
+
+typedef enum {
+    COOLING_FAN_DUTY_CLAMPED_MINIMUM = 0,  /* e2m MIN_PWM: cm848_applyCoolingFanDuty clamps the request to cooling_fan_duty_minimum (PR #53 round 52) */
+    COOLING_FAN_DUTY_FIXED = 1,  /* e2m OVERRIDE: cm848_selectCoolingFanDutySource uses cooling_fan_fixed_duty (PR #53 round 52) */
+    COOLING_FAN_DUTY_LOW_ENGINE_RPM = 2,  /* e2m STOP: under cooling_fan_low_engine_rpm (cooling_fan_low_engine_rpm_duty) (PR #53 round 52) */
+    COOLING_FAN_DUTY_ENGAGEMENT = 3,  /* e2m KICKON: cooling_fan_engagement_duty (PR #53 round 52) */
+    COOLING_FAN_DUTY_BASE_SPEED_TARGET = 4,  /* e2m MIN_SPD: the target is cooling_fan_base_speed (PR #53 round 52) */
+    COOLING_FAN_DUTY_CEILING_TARGET = 5,  /* e2m MAX_SPD: the target is cooling_fan_speed_ceiling off idle (cooling_fan_duty_maximum) (PR #53 round 52) */
+    COOLING_FAN_DUTY_IDLE_LIMITED = 6,  /* e2m IDLE_ON: cooling_fan_idle_limited_duty (PR #53 round 52) */
+    COOLING_FAN_DUTY_IDLE_MINIMUM = 7,  /* e2m IDLE_OFF: cooling_fan_duty_minimum at idle (PR #53 round 52) */
+    COOLING_FAN_DUTY_SPEED_CONTROL = 8,  /* e2m CONTROL: cm848_runCoolingFanSpeedPid (PR #53 round 52) */
+    COOLING_FAN_DUTY_ACTUATOR_TEST = 9,  /* e2m TOOL: cooling_fan_actuator_test_duty (PR #53 round 52) */
+    COOLING_FAN_DUTY_CLAMPED_MAXIMUM = 10,  /* e2m MAX_PWM: cm848_applyCoolingFanDuty clamps the request to cooling_fan_duty_maximum (PR #53 round 52) */
+    COOLING_FAN_DUTY_HOLD = 11  /* e2m PWMDELAY: cm848_applyCoolingFanDuty holds cooling_fan_hold_duty for cooling_fan_hold_passes (PR #53 round 52) */
+} COOLING_FAN_DUTY_SOURCE;
+
+typedef enum {
+    ALTERNATOR_FIELD_REGULATOR_INACTIVE = 0,  /* e2m 8A60 +10 EVR_Mode 0=INACTIVE (PR #53 round 52) */
+    ALTERNATOR_FIELD_REGULATOR_STARTUP = 1,  /* e2m 1=STARTUP (PR #53 round 52) */
+    ALTERNATOR_FIELD_REGULATOR_STEADY_STATE = 2,  /* e2m 2=SS (PR #53 round 52) */
+    ALTERNATOR_FIELD_REGULATOR_LOAD_RESPONSE = 3  /* e2m 3=TRANS: the transient mode (alternator_field_load_response_*) (PR #53 round 52) */
+} ALTERNATOR_FIELD_REGULATOR_STATE;
+
+typedef enum {
+    ALTERNATOR_FIELD_LOAD_RESPONSE_NONE = 0,  /* e2m 8A60 +16 EVR_Transient_Phase 0=NONE (outside the load response) (PR #53 round 52) */
+    ALTERNATOR_FIELD_LOAD_RESPONSE_HOLD = 1,  /* e2m 1=HOLD (PR #53 round 52) */
+    ALTERNATOR_FIELD_LOAD_RESPONSE_RECOVERY = 2  /* e2m 2=RECOVERY (PR #53 round 52) */
+} ALTERNATOR_FIELD_LOAD_RESPONSE_STAGE;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_rx_msg_t j1939_rx_msg_t;

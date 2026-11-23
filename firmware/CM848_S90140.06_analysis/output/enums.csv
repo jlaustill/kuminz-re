@@ -1067,3 +1067,47 @@ TRANSMISSION_TEMPERATURE_RATIONALITY_STATE,3,TRANSMISSION_TEMPERATURE_RATIONALIT
 TRANSMISSION_TEMPERATURE_RATIONALITY_STATE,4,TRANSMISSION_TEMPERATURE_RATIONALITY_ABORTED,"e2m label ABORT: no verdict this key cycle (the check is disabled / a related fault / the soak was not qualified) (PR #53 round 51)",2
 TRANSMISSION_TEMPERATURE_RATIONALITY_STATE,5,TRANSMISSION_TEMPERATURE_RATIONALITY_PASS_VERDICT,"no e2m label: cm848_checkTransmissionTemperatureSensorPerformance sets it once the swing reaches transmission_temperature_rationality_minimum_swing; cm848_completeTransmissionTemperatureMonitorReport turns it into PASSED (PR #53 round 51)",2
 TRANSMISSION_TEMPERATURE_RATIONALITY_STATE,6,TRANSMISSION_TEMPERATURE_RATIONALITY_FAIL_VERDICT,"no e2m label: cm848_updateTransmissionTemperatureSensorPerformanceFault sets it while a result flag is set; cm848_completeTransmissionTemperatureMonitorReport turns it into FAILED (PR #53 round 51)",2
+# COOLING_FAN_COOLANT_REQUEST_STATE: from the e2m value labels, each member checked against the branch that stores it (PR #53 round 52)
+COOLING_FAN_COOLANT_REQUEST_STATE,0,COOLING_FAN_COOLANT_REQUEST_BELOW_RAMP,"e2m IDLE: coolant under cooling_fan_coolant_ramp_start_temperature (cooling_fan_coolant_speed_minimum) (PR #53 round 52)",2
+COOLING_FAN_COOLANT_REQUEST_STATE,1,COOLING_FAN_COOLANT_REQUEST_RAMP,"e2m RAMP: the linear ramp from cooling_fan_coolant_ramp_base_speed (PR #53 round 52)",2
+COOLING_FAN_COOLANT_REQUEST_STATE,2,COOLING_FAN_COOLANT_REQUEST_PI_CONTROL,"e2m PI_CNTRL: the PI loop above cooling_fan_coolant_temperature_setpoint (PR #53 round 52)",2
+COOLING_FAN_COOLANT_REQUEST_STATE,3,COOLING_FAN_COOLANT_REQUEST_FULL_SPEED,"e2m COOL_MAX: cooling_fan_coolant_speed_maximum (also on a coolant sensor fault) (PR #53 round 52)",2
+# COOLING_FAN_SPEED_TARGET_SOURCE: from the e2m value labels, each member checked against the branch that stores it (PR #53 round 52)
+COOLING_FAN_SPEED_TARGET_SOURCE,0,COOLING_FAN_TARGET_BASE_SPEED,"e2m MIN_DEM: cm848_selectCoolingFanSpeedTarget starts from cooling_fan_base_speed (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,1,COOLING_FAN_TARGET_COOLANT,"e2m COOLANT: cooling_fan_coolant_speed_request (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,2,COOLING_FAN_TARGET_AIR_CONDITIONING,"e2m AC: cooling_fan_air_conditioning_speed_request (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,3,COOLING_FAN_TARGET_INTAKE,"e2m IMT: cooling_fan_intake_speed_request (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,4,COOLING_FAN_TARGET_TRANSMISSION,"e2m TOT: cooling_fan_transmission_speed_request (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,5,COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMP_UP_TARGET,"e2m HIGHSLIP: cooling_fan_high_engine_rpm_ramp_up_target (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,6,COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMP_DOWN_FLOOR,"e2m LOW_SLIP: cooling_fan_high_engine_rpm_ramp_down_floor (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,7,COOLING_FAN_TARGET_ENGINE_DRIVEN_LIMIT,"e2m MAX_RPM: cooling_fan_engine_driven_speed_limit (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,8,COOLING_FAN_TARGET_CEILING,"e2m MAX_DEM: cooling_fan_speed_ceiling (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,9,COOLING_FAN_TARGET_OVERRIDE,"e2m OVERRIDE: cooling_fan_speed_target_override (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,10,COOLING_FAN_TARGET_THERMOSTAT_MONITOR,"e2m TSTAT: the thermostat monitor holds cooling_fan_base_speed (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,11,COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMPING_DOWN,"e2m LOWRMPDN: cooling_fan_ramp_down_speed stepping down to the floor (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,12,COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMPING_UP,"e2m RAMPUP: cooling_fan_ramp_up_speed stepping up to the ramp-up target (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,13,COOLING_FAN_TARGET_HIGH_ENGINE_RPM_AT_TARGET,"e2m SLIPTMR: held at the ramp-up target for cooling_fan_ramp_at_target_passes (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,14,COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMP_DOWN_RESUME,"e2m RAMPDN: cooling_fan_ramp_down_resume_speed stepping down (PR #53 round 52)",2
+COOLING_FAN_SPEED_TARGET_SOURCE,15,COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMP_UP_RESUME,"e2m EXLOWSLP: cooling_fan_ramp_up_resume_speed stepping up out of the floor (PR #53 round 52)",2
+# COOLING_FAN_DUTY_SOURCE: from the e2m value labels, each member checked against the branch that stores it (PR #53 round 52)
+COOLING_FAN_DUTY_SOURCE,0,COOLING_FAN_DUTY_CLAMPED_MINIMUM,"e2m MIN_PWM: cm848_applyCoolingFanDuty clamps the request to cooling_fan_duty_minimum (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,1,COOLING_FAN_DUTY_FIXED,"e2m OVERRIDE: cm848_selectCoolingFanDutySource uses cooling_fan_fixed_duty (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,2,COOLING_FAN_DUTY_LOW_ENGINE_RPM,"e2m STOP: under cooling_fan_low_engine_rpm (cooling_fan_low_engine_rpm_duty) (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,3,COOLING_FAN_DUTY_ENGAGEMENT,"e2m KICKON: cooling_fan_engagement_duty (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,4,COOLING_FAN_DUTY_BASE_SPEED_TARGET,"e2m MIN_SPD: the target is cooling_fan_base_speed (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,5,COOLING_FAN_DUTY_CEILING_TARGET,"e2m MAX_SPD: the target is cooling_fan_speed_ceiling off idle (cooling_fan_duty_maximum) (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,6,COOLING_FAN_DUTY_IDLE_LIMITED,"e2m IDLE_ON: cooling_fan_idle_limited_duty (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,7,COOLING_FAN_DUTY_IDLE_MINIMUM,"e2m IDLE_OFF: cooling_fan_duty_minimum at idle (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,8,COOLING_FAN_DUTY_SPEED_CONTROL,"e2m CONTROL: cm848_runCoolingFanSpeedPid (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,9,COOLING_FAN_DUTY_ACTUATOR_TEST,"e2m TOOL: cooling_fan_actuator_test_duty (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,10,COOLING_FAN_DUTY_CLAMPED_MAXIMUM,"e2m MAX_PWM: cm848_applyCoolingFanDuty clamps the request to cooling_fan_duty_maximum (PR #53 round 52)",2
+COOLING_FAN_DUTY_SOURCE,11,COOLING_FAN_DUTY_HOLD,"e2m PWMDELAY: cm848_applyCoolingFanDuty holds cooling_fan_hold_duty for cooling_fan_hold_passes (PR #53 round 52)",2
+# ALTERNATOR_FIELD_REGULATOR_STATE: from the e2m value labels, each member checked against the branch that stores it (PR #53 round 52)
+ALTERNATOR_FIELD_REGULATOR_STATE,0,ALTERNATOR_FIELD_REGULATOR_INACTIVE,"e2m 8A60 +10 EVR_Mode 0=INACTIVE (PR #53 round 52)",2
+ALTERNATOR_FIELD_REGULATOR_STATE,1,ALTERNATOR_FIELD_REGULATOR_STARTUP,"e2m 1=STARTUP (PR #53 round 52)",2
+ALTERNATOR_FIELD_REGULATOR_STATE,2,ALTERNATOR_FIELD_REGULATOR_STEADY_STATE,"e2m 2=SS (PR #53 round 52)",2
+ALTERNATOR_FIELD_REGULATOR_STATE,3,ALTERNATOR_FIELD_REGULATOR_LOAD_RESPONSE,"e2m 3=TRANS: the transient mode (alternator_field_load_response_*) (PR #53 round 52)",2
+# ALTERNATOR_FIELD_LOAD_RESPONSE_STAGE: from the e2m value labels, each member checked against the branch that stores it (PR #53 round 52)
+ALTERNATOR_FIELD_LOAD_RESPONSE_STAGE,0,ALTERNATOR_FIELD_LOAD_RESPONSE_NONE,"e2m 8A60 +16 EVR_Transient_Phase 0=NONE (outside the load response) (PR #53 round 52)",2
+ALTERNATOR_FIELD_LOAD_RESPONSE_STAGE,1,ALTERNATOR_FIELD_LOAD_RESPONSE_HOLD,"e2m 1=HOLD (PR #53 round 52)",2
+ALTERNATOR_FIELD_LOAD_RESPONSE_STAGE,2,ALTERNATOR_FIELD_LOAD_RESPONSE_RECOVERY,"e2m 2=RECOVERY (PR #53 round 52)",2

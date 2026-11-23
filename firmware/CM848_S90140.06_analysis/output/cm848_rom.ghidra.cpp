@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 00:44:20 MST 2026
+// Generated: Mon Nov 23 00:49:01 MST 2026
 
 
 //
@@ -38121,16 +38121,16 @@ void cm848_calculateAlternatorFieldDutyByRegulatorState(void)
                       (0x10000 - (uint)alternator_field_duty_slow_average_coefficient) +
                      (uint)alternator_field_duty_target *
                      (uint)alternator_field_duty_slow_average_coefficient) / 0x10000);
-    if (alternator_field_regulator_state == 0) {
+    if (alternator_field_regulator_state == ALTERNATOR_FIELD_REGULATOR_INACTIVE) {
       alternator_field_load_response_elapsed_passes = 0;
       alternator_field_duty_target = alternator_field_duty_while_charging_system_fault_368_set;
       if (fault_detected_cal.alternator_error == 0) {
         alternator_field_duty_target = 0;
       }
       alternator_field_start_ramp_elapsed_passes = 0;
-      alternator_field_load_response_stage = 0;
+      alternator_field_load_response_stage = ALTERNATOR_FIELD_LOAD_RESPONSE_NONE;
     }
-    else if (alternator_field_regulator_state == 1) {
+    else if (alternator_field_regulator_state == ALTERNATOR_FIELD_REGULATOR_STARTUP) {
       alternator_field_duty_target =
            lookupTableInterpolation
                      (&alternator_field_duty_start_ramp_cached_axis_offset,
@@ -38140,11 +38140,11 @@ void cm848_calculateAlternatorFieldDutyByRegulatorState(void)
       alternator_field_start_ramp_elapsed_passes = alternator_field_start_ramp_elapsed_passes + 1;
       alternator_field_load_response_elapsed_passes = 0;
     }
-    else if (alternator_field_regulator_state == 3) {
+    else if (alternator_field_regulator_state == ALTERNATOR_FIELD_REGULATOR_LOAD_RESPONSE) {
       alternator_field_load_response_elapsed_passes =
            alternator_field_load_response_elapsed_passes + 1;
-      if (alternator_field_regulator_previous_state != 3) {
-        alternator_field_load_response_stage = 1;
+      if (alternator_field_regulator_previous_state != ALTERNATOR_FIELD_REGULATOR_LOAD_RESPONSE) {
+        alternator_field_load_response_stage = ALTERNATOR_FIELD_LOAD_RESPONSE_HOLD;
         alternator_field_duty_slow_average_snapshot = alternator_field_duty_slow_average;
         alternator_field_load_response_hold_remaining_passes =
              lookupTableInterpolation
@@ -38163,9 +38163,9 @@ void cm848_calculateAlternatorFieldDutyByRegulatorState(void)
              alternator_field_load_response_hold_remaining_passes - 1;
       }
       if (alternator_field_load_response_hold_remaining_passes == 0) {
-        if (alternator_field_load_response_stage == 1) {
+        if (alternator_field_load_response_stage == ALTERNATOR_FIELD_LOAD_RESPONSE_HOLD) {
           alternator_field_duty_target = alternator_field_duty_slow_average_snapshot;
-          alternator_field_load_response_stage = 2;
+          alternator_field_load_response_stage = ALTERNATOR_FIELD_LOAD_RESPONSE_RECOVERY;
         }
         else {
           wVar1 = lookupTableInterpolation
@@ -38189,7 +38189,7 @@ void cm848_calculateAlternatorFieldDutyByRegulatorState(void)
                      (&alternator_field_duty_regulation_cached_axis_offset,charging_voltage_error,
                       alternator_field_duty_regulation_axis,alternator_field_duty_regulation_values,
                       1);
-      alternator_field_load_response_stage = 0;
+      alternator_field_load_response_stage = ALTERNATOR_FIELD_LOAD_RESPONSE_NONE;
       alternator_field_load_response_elapsed_passes = 0;
       alternator_field_start_ramp_elapsed_passes = 0;
     }
@@ -38223,9 +38223,10 @@ void cm848_calculateAlternatorFieldDutyByPid(void)
   int iVar1;
   
   if (((algorithm_enable_flags_41_cal.electronic_voltage_regulator_pid_enable != 0) &&
-      (alternator_field_regulator_state != 0)) && (alternator_field_regulator_state != 1)) {
-    if ((alternator_field_regulator_previous_state == 1) && (alternator_field_regulator_state == 2))
-    {
+      (alternator_field_regulator_state != ALTERNATOR_FIELD_REGULATOR_INACTIVE)) &&
+     (alternator_field_regulator_state != ALTERNATOR_FIELD_REGULATOR_STARTUP)) {
+    if ((alternator_field_regulator_previous_state == ALTERNATOR_FIELD_REGULATOR_STARTUP) &&
+       (alternator_field_regulator_state == ALTERNATOR_FIELD_REGULATOR_STEADY_STATE)) {
       alternator_field_duty_pid_integrator = ((uint)alternator_field_duty_target * 0x640) / 0x100;
     }
     iVar1 = (int)(short)charging_voltage_error;
@@ -38404,7 +38405,7 @@ void cm848_applyAlternatorFieldDuty(void)
 void cm848_monitorChargingSystemVoltageHighAndLow(void)
 
 {
-  if (((alternator_field_regulator_state == 0) ||
+  if (((alternator_field_regulator_state == ALTERNATOR_FIELD_REGULATOR_INACTIVE) ||
       ((short)charging_system_voltage_high_error_threshold <=
        (short)charging_voltage_error_slow_average)) ||
      (alternator_field_actuator_test_active_flag != 0)) {
@@ -38427,7 +38428,7 @@ void cm848_monitorChargingSystemVoltageHighAndLow(void)
     charging_system_voltage_high_fault_timer_passes = charging_system_voltage_high_fault_count_limit
     ;
   }
-  if (((alternator_field_regulator_state == 2) &&
+  if (((alternator_field_regulator_state == ALTERNATOR_FIELD_REGULATOR_STEADY_STATE) &&
       (battery_voltage_sensor_filtered < charging_system_voltage_low_threshold)) &&
      ((intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_OFF &&
       (alternator_field_actuator_test_active_flag == 0)))) {
@@ -38483,7 +38484,7 @@ void cm848_monitorChargingSystemVoltageHighAndLow(void)
 void cm848_testAlternatorOutputByCuttingField(void)
 
 {
-  if (((((alternator_field_regulator_state == 2) &&
+  if (((((alternator_field_regulator_state == ALTERNATOR_FIELD_REGULATOR_STEADY_STATE) &&
         (intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_OFF)) &&
        (alternator_field_cut_test_engine_speed_threshold < engine_speed_state.filtered_engine_speed)
        ) && ((fault_detected_cal.alternator_error == 0 &&
@@ -38693,11 +38694,11 @@ void cm848_initializeAlternatorFieldControl(void)
   alternator_field_duty_load_response_cached_axis_offset = 2;
   alternator_field_load_response_ramp_by_rpm_cached_axis_offset = 2;
   alternator_field_load_response_ramp_by_duty_cached_axis_offset = 2;
-  alternator_field_regulator_state = 0;
+  alternator_field_regulator_state = ALTERNATOR_FIELD_REGULATOR_INACTIVE;
   alternator_field_duty_target = 0;
   alternator_field_duty_slow_average = 0;
   alternator_field_load_response_hold_remaining_passes = 0;
-  alternator_field_load_response_stage = 0;
+  alternator_field_load_response_stage = ALTERNATOR_FIELD_LOAD_RESPONSE_NONE;
   alternator_field_duty_pid_proportional_term = 0;
   alternator_field_duty_pid_integral_term = 0;
   alternator_field_duty_pid_derivative_term = 0;
@@ -75876,24 +75877,24 @@ LAB_00514584:
     cooling_fan_coolant_pi_speed = dVar6;
     if ((short)cooling_fan_coolant_temperature_filtered <
         (short)cooling_fan_coolant_ramp_start_temperature) {
-      cooling_fan_coolant_request_state = 0;
+      cooling_fan_coolant_request_state = COOLING_FAN_COOLANT_REQUEST_BELOW_RAMP;
     }
     else if (cooling_fan_coolant_full_speed_temperature <=
              (short)cooling_fan_coolant_temperature_filtered) goto LAB_005145b0;
   }
   else {
 LAB_005145b0:
-    cooling_fan_coolant_request_state = 3;
+    cooling_fan_coolant_request_state = COOLING_FAN_COOLANT_REQUEST_FULL_SPEED;
   }
-  if (cooling_fan_coolant_request_state == 0) {
+  if (cooling_fan_coolant_request_state == COOLING_FAN_COOLANT_REQUEST_BELOW_RAMP) {
     cooling_fan_coolant_speed_request = cooling_fan_coolant_speed_minimum;
     cooling_fan_coolant_pi_active_flag = 0;
     if ((short)cooling_fan_coolant_ramp_start_temperature <=
         (short)cooling_fan_coolant_temperature_filtered) {
-      cooling_fan_coolant_request_state = 1;
+      cooling_fan_coolant_request_state = COOLING_FAN_COOLANT_REQUEST_RAMP;
     }
   }
-  else if (cooling_fan_coolant_request_state == 1) {
+  else if (cooling_fan_coolant_request_state == COOLING_FAN_COOLANT_REQUEST_RAMP) {
     uVar4 = ((int)(short)cooling_fan_coolant_temperature_filtered -
             (int)(short)cooling_fan_coolant_ramp_start_temperature) *
             (uint)cooling_fan_coolant_ramp_gain;
@@ -75905,13 +75906,13 @@ LAB_005145b0:
 LAB_005146dc:
       cooling_fan_coolant_integral_reset_flag = 1;
       cooling_fan_coolant_pi_active_flag = 1;
-      cooling_fan_coolant_request_state = 2;
+      cooling_fan_coolant_request_state = COOLING_FAN_COOLANT_REQUEST_PI_CONTROL;
     }
   }
-  else if (cooling_fan_coolant_request_state == 2) {
+  else if (cooling_fan_coolant_request_state == COOLING_FAN_COOLANT_REQUEST_PI_CONTROL) {
     cooling_fan_coolant_speed_request = (word)cooling_fan_coolant_pi_speed;
   }
-  else if (cooling_fan_coolant_request_state == 3) {
+  else if (cooling_fan_coolant_request_state == COOLING_FAN_COOLANT_REQUEST_FULL_SPEED) {
     cooling_fan_coolant_speed_request = cooling_fan_coolant_speed_maximum;
     if (((fault_detected_cal.coolant_temperature_high_error == 0) &&
         (fault_detected_cal.coolant_temperature_low_error == 0)) &&
@@ -75920,11 +75921,11 @@ LAB_005146dc:
           cooling_fan_coolant_full_speed_exit_temperature) goto LAB_005146dc;
     }
     else {
-      cooling_fan_coolant_request_state = 3;
+      cooling_fan_coolant_request_state = COOLING_FAN_COOLANT_REQUEST_FULL_SPEED;
     }
   }
   else {
-    cooling_fan_coolant_request_state = 0;
+    cooling_fan_coolant_request_state = COOLING_FAN_COOLANT_REQUEST_BELOW_RAMP;
   }
   if (cooling_fan_coolant_speed_maximum < cooling_fan_coolant_speed_request) {
     cooling_fan_coolant_speed_request = cooling_fan_coolant_speed_maximum;
@@ -76093,24 +76094,25 @@ LAB_00514b4c:
     cooling_fan_speed_target = cooling_fan_coolant_speed_request;
   }
   cooling_fan_speed_target_source =
-       (word)(cooling_fan_base_speed < cooling_fan_coolant_speed_request);
+       (COOLING_FAN_SPEED_TARGET_SOURCE)(cooling_fan_base_speed < cooling_fan_coolant_speed_request)
+  ;
   if (cooling_fan_speed_target < cooling_fan_air_conditioning_speed_request) {
     cooling_fan_speed_target = cooling_fan_air_conditioning_speed_request;
-    cooling_fan_speed_target_source = 2;
+    cooling_fan_speed_target_source = COOLING_FAN_TARGET_AIR_CONDITIONING;
   }
   if (cooling_fan_speed_target < cooling_fan_intake_speed_request) {
     cooling_fan_speed_target = cooling_fan_intake_speed_request;
-    cooling_fan_speed_target_source = 3;
+    cooling_fan_speed_target_source = COOLING_FAN_TARGET_INTAKE;
   }
   if ((uint)cooling_fan_speed_target < (uVar4 & 0xffff)) {
-    cooling_fan_speed_target_source = 4;
+    cooling_fan_speed_target_source = COOLING_FAN_TARGET_TRANSMISSION;
     cooling_fan_speed_target = (word)uVar4;
   }
   if (cooling_fan_ramp_up_at_target_flag != 0) {
     if (cooling_fan_ramp_at_target_count < cooling_fan_ramp_at_target_passes) {
       cooling_fan_ramp_at_target_count = cooling_fan_ramp_at_target_count + 1;
       cooling_fan_speed_target = cooling_fan_high_engine_rpm_ramp_up_target;
-      cooling_fan_speed_target_source = 0xd;
+      cooling_fan_speed_target_source = COOLING_FAN_TARGET_HIGH_ENGINE_RPM_AT_TARGET;
       cooling_fan_ramp_up_step_flag = 0;
     }
     else if (cooling_fan_high_engine_rpm_exit < engine_speed_state.filtered_engine_speed) {
@@ -76122,7 +76124,7 @@ LAB_00514b4c:
       }
       else {
         cooling_fan_speed_target = cooling_fan_high_engine_rpm_ramp_up_target;
-        cooling_fan_speed_target_source = 5;
+        cooling_fan_speed_target_source = COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMP_UP_TARGET;
       }
     }
     else {
@@ -76148,7 +76150,7 @@ LAB_00514b4c:
         cooling_fan_ramp_down_resume_speed =
              cooling_fan_ramp_down_resume_speed - cooling_fan_ramp_down_step;
       }
-      cooling_fan_speed_target_source = 0xe;
+      cooling_fan_speed_target_source = COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMP_DOWN_RESUME;
     }
     if (cooling_fan_speed_target < cooling_fan_ramp_down_resume_speed) {
       cooling_fan_speed_target = cooling_fan_ramp_down_resume_speed;
@@ -76176,7 +76178,7 @@ LAB_00514b4c:
     if (cooling_fan_ramp_up_active_flag != 0) {
       cooling_fan_ramp_up_resume_speed = cooling_fan_ramp_up_resume_speed + cooling_fan_ramp_up_step
       ;
-      cooling_fan_speed_target_source = 0xf;
+      cooling_fan_speed_target_source = COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMP_UP_RESUME;
       bVar1 = cooling_fan_speed_target < cooling_fan_ramp_up_resume_speed;
       cooling_fan_speed_target = cooling_fan_ramp_up_resume_speed;
       if (bVar1) goto LAB_00514f98;
@@ -76221,11 +76223,11 @@ LAB_005150d4:
       if (cooling_fan_ramp_down_step < cooling_fan_ramp_down_speed) {
         cooling_fan_ramp_down_speed = cooling_fan_ramp_down_speed - cooling_fan_ramp_down_step;
       }
-      cooling_fan_speed_target_source = 0xb;
+      cooling_fan_speed_target_source = COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMPING_DOWN;
     }
     else {
       cooling_fan_ramp_down_speed = cooling_fan_high_engine_rpm_ramp_down_floor;
-      cooling_fan_speed_target_source = 6;
+      cooling_fan_speed_target_source = COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMP_DOWN_FLOOR;
     }
     cooling_fan_ramp_down_above_floor_flag =
          cooling_fan_high_engine_rpm_ramp_down_floor < cooling_fan_ramp_down_speed;
@@ -76248,7 +76250,7 @@ LAB_005150d4:
     }
     if (cooling_fan_ramp_up_speed < cooling_fan_high_engine_rpm_ramp_up_target) {
       cooling_fan_speed_target = cooling_fan_ramp_up_speed + cooling_fan_ramp_up_step;
-      cooling_fan_speed_target_source = 0xc;
+      cooling_fan_speed_target_source = COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMPING_UP;
       cooling_fan_ramp_up_speed = cooling_fan_speed_target;
     }
     else {
@@ -76259,30 +76261,32 @@ LAB_005150d4:
   }
 LAB_0051524c:
   if (cooling_fan_high_engine_rpm_flag != 0) {
-    cooling_fan_ramp_down_was_at_floor_flag = cooling_fan_speed_target_source == 6;
-    cooling_fan_ramp_down_was_stepping_flag = cooling_fan_speed_target_source == 0xb;
+    cooling_fan_ramp_down_was_at_floor_flag =
+         cooling_fan_speed_target_source == COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMP_DOWN_FLOOR;
+    cooling_fan_ramp_down_was_stepping_flag =
+         cooling_fan_speed_target_source == COOLING_FAN_TARGET_HIGH_ENGINE_RPM_RAMPING_DOWN;
   }
   if (((cooling_fan_engine_driven_limit_enable != 0) &&
       (cooling_fan_speed_target < cooling_fan_speed_ceiling)) &&
      (cooling_fan_engine_driven_speed_limit < cooling_fan_speed_target)) {
     cooling_fan_speed_target = cooling_fan_engine_driven_speed_limit;
-    cooling_fan_speed_target_source = 7;
+    cooling_fan_speed_target_source = COOLING_FAN_TARGET_ENGINE_DRIVEN_LIMIT;
   }
   if (cooling_fan_speed_ceiling < cooling_fan_speed_target) {
     cooling_fan_speed_target = cooling_fan_speed_ceiling;
-    cooling_fan_speed_target_source = 8;
+    cooling_fan_speed_target_source = COOLING_FAN_TARGET_CEILING;
   }
   if ((algorithm_enable_flags_41_cal.thermostat_system_monitor_enable != 0) &&
      ((thermostat_monitor_state == 0 || (thermostat_monitor_state == 1)))) {
     cooling_fan_speed_target = cooling_fan_base_speed;
-    cooling_fan_speed_target_source = 10;
+    cooling_fan_speed_target_source = COOLING_FAN_TARGET_THERMOSTAT_MONITOR;
     if (cooling_fan_coolant_pi_active_flag != 0) {
       cooling_fan_coolant_integral_reset_flag = 1;
     }
   }
   if (cooling_fan_speed_target_override_enable != 0) {
     cooling_fan_speed_target = cooling_fan_speed_target_override;
-    cooling_fan_speed_target_source = 9;
+    cooling_fan_speed_target_source = COOLING_FAN_TARGET_OVERRIDE;
   }
   return;
 }
@@ -76350,7 +76354,7 @@ void cm848_runCoolingFanSpeedPid(void)
   cooling_fan_proportional_derivative_term =
        cm848_signedFirstOrderFilter((int)(short)iVar4,&cooling_fan_proportional_derivative_filter);
   if ((((adjusted_user_fueling_state != FUELING_STATE_LOW_SPEED_GOVERNOR) &&
-       (cooling_fan_duty_source_code == 8)) &&
+       (cooling_fan_duty_source_code == COOLING_FAN_DUTY_SPEED_CONTROL)) &&
       (cooling_fan_air_conditioning_speed_request < cooling_fan_coolant_speed_request)) &&
      ((cooling_fan_intake_speed_request < cooling_fan_coolant_speed_request &&
       (cooling_fan_transmission_speed_request < cooling_fan_coolant_speed_request)))) {
@@ -76428,56 +76432,56 @@ void cm848_selectCoolingFanDutySource(void)
         (cooling_fan_actuator_test_while_running_enable == 1)) &&
        (cooling_fan_actuator_test_active_flag != 0)) {
       cooling_fan_duty_request = cooling_fan_actuator_test_duty;
-      cooling_fan_duty_source_code = 9;
+      cooling_fan_duty_source_code = COOLING_FAN_DUTY_ACTUATOR_TEST;
     }
     else if (engine_speed_state.filtered_engine_speed < cooling_fan_low_engine_rpm) {
       cooling_fan_duty_request = cooling_fan_low_engine_rpm_duty;
-      cooling_fan_duty_source_code = 2;
+      cooling_fan_duty_source_code = COOLING_FAN_DUTY_LOW_ENGINE_RPM;
     }
     else if (((cooling_fan_engagement_engine_rpm < engine_speed_state.filtered_engine_speed) &&
              (cooling_fan_engagement_target_minimum < cooling_fan_speed_target)) &&
             (radiator_fan_speed < cooling_fan_engagement_fan_speed_maximum)) {
       cooling_fan_duty_request = cooling_fan_engagement_duty;
-      cooling_fan_duty_source_code = 3;
+      cooling_fan_duty_source_code = COOLING_FAN_DUTY_ENGAGEMENT;
     }
     else {
       if (cooling_fan_base_speed == cooling_fan_speed_target) {
-        cooling_fan_duty_source_code = 4;
+        cooling_fan_duty_source_code = COOLING_FAN_DUTY_BASE_SPEED_TARGET;
       }
       else {
         if ((cooling_fan_speed_ceiling == cooling_fan_speed_target) &&
            (cooling_fan_engine_idle_flag == 0)) {
           radiator_fan_speed_snapshot = radiator_fan_speed;
-          cooling_fan_duty_source_code = 5;
+          cooling_fan_duty_source_code = COOLING_FAN_DUTY_CEILING_TARGET;
           cooling_fan_duty_request = cooling_fan_duty_maximum;
           return;
         }
         if (cooling_fan_engine_idle_flag == 0) {
           cm848_runCoolingFanSpeedPid();
           radiator_fan_speed_snapshot = radiator_fan_speed;
-          cooling_fan_duty_source_code = 8;
+          cooling_fan_duty_source_code = COOLING_FAN_DUTY_SPEED_CONTROL;
           return;
         }
         if (cooling_fan_idle_target_threshold < cooling_fan_speed_target) {
           if (cooling_fan_engine_driven_headroom < cooling_fan_idle_headroom_threshold) {
             radiator_fan_speed_snapshot = radiator_fan_speed;
-            cooling_fan_duty_source_code = 6;
+            cooling_fan_duty_source_code = COOLING_FAN_DUTY_IDLE_LIMITED;
             cooling_fan_duty_request = cooling_fan_idle_limited_duty;
             return;
           }
           radiator_fan_speed_snapshot = radiator_fan_speed;
-          cooling_fan_duty_source_code = 7;
+          cooling_fan_duty_source_code = COOLING_FAN_DUTY_IDLE_MINIMUM;
           cooling_fan_duty_request = cooling_fan_duty_minimum;
           return;
         }
-        cooling_fan_duty_source_code = 7;
+        cooling_fan_duty_source_code = COOLING_FAN_DUTY_IDLE_MINIMUM;
       }
       cooling_fan_duty_request = cooling_fan_duty_minimum;
     }
   }
   else {
     cooling_fan_duty_request = cooling_fan_fixed_duty;
-    cooling_fan_duty_source_code = 1;
+    cooling_fan_duty_source_code = COOLING_FAN_DUTY_FIXED;
   }
   radiator_fan_speed_snapshot = radiator_fan_speed;
   return;
@@ -76505,11 +76509,11 @@ void cm848_applyCoolingFanDuty(void)
 {
   if (cooling_fan_duty_request < cooling_fan_duty_minimum) {
     cooling_fan_duty = cooling_fan_duty_minimum;
-    cooling_fan_duty_source_code = 0;
+    cooling_fan_duty_source_code = COOLING_FAN_DUTY_CLAMPED_MINIMUM;
   }
   else if (cooling_fan_duty_maximum < cooling_fan_duty_request) {
     cooling_fan_duty = cooling_fan_duty_maximum;
-    cooling_fan_duty_source_code = 10;
+    cooling_fan_duty_source_code = COOLING_FAN_DUTY_CLAMPED_MAXIMUM;
   }
   else {
     cooling_fan_duty = cooling_fan_duty_request;
@@ -76524,7 +76528,7 @@ void cm848_applyCoolingFanDuty(void)
   if (cooling_fan_hold_pass_count < cooling_fan_hold_passes) {
     cooling_fan_hold_pass_count = cooling_fan_hold_pass_count + 1;
     cooling_fan_duty = cooling_fan_hold_duty;
-    cooling_fan_duty_source_code = 0xb;
+    cooling_fan_duty_source_code = COOLING_FAN_DUTY_HOLD;
   }
   if (cooling_fan_read_back_retest_active_flag != 0) {
     cooling_fan_retest_pass_count = cooling_fan_retest_pass_count + 1;
@@ -76596,9 +76600,9 @@ void cm848_initCoolingFanControl(void)
 {
   cooling_fan_coolant_integral_reset_flag = 0;
   cooling_fan_coolant_pi_active_flag = 0;
-  cooling_fan_coolant_request_state = 0;
-  cooling_fan_speed_target_source = 0;
-  cooling_fan_duty_source_code = 0;
+  cooling_fan_coolant_request_state = COOLING_FAN_COOLANT_REQUEST_BELOW_RAMP;
+  cooling_fan_speed_target_source = COOLING_FAN_TARGET_BASE_SPEED;
+  cooling_fan_duty_source_code = COOLING_FAN_DUTY_CLAMPED_MINIMUM;
   radiator_fan_speed_snapshot = 0;
   cooling_fan_proportional_term_previous = 0;
   cooling_fan_proportional_derivative_term = 0;

@@ -1723,7 +1723,7 @@ extern word alternator_field_load_response_hold_time_cached_axis_offset;  // 0x0
 extern word alternator_field_duty_load_response_cached_axis_offset;  // 0x003fb396
 extern word alternator_field_load_response_ramp_by_rpm_cached_axis_offset;  // 0x003fb398
 extern word alternator_field_load_response_ramp_by_duty_cached_axis_offset;  // 0x003fb39a
-extern word alternator_field_regulator_previous_state;  // 0x003fb39c
+extern ALTERNATOR_FIELD_REGULATOR_STATE alternator_field_regulator_previous_state;  // 0x003fb39c
 extern dword alternator_field_duty_pid_integrator;  // 0x003fb39e
 extern word alternator_field_duty_pid_proportional_gain_working;  // 0x003fb3a2
 extern dword alternator_field_duty_pid_integral_rate_working;  // 0x003fb3a4
@@ -5062,10 +5062,10 @@ extern word alternator_field_cut_test_active_flag;  // 0x0040b264
 extern word alternator_field_duty_target;  // 0x0040b266
 extern word charging_system_voltage_high_fault_timer_passes;  // 0x0040b268
 extern word alternator_field_load_response_hold_remaining_passes;  // 0x0040b26a
-extern word alternator_field_regulator_state;  // 0x0040b26c
+extern ALTERNATOR_FIELD_REGULATOR_STATE alternator_field_regulator_state;  // 0x0040b26c
 extern word charging_voltage_target;  // 0x0040b26e
 extern word alternator_field_duty_slow_average_snapshot;  // 0x0040b270
-extern word alternator_field_load_response_stage;  // 0x0040b272
+extern ALTERNATOR_FIELD_LOAD_RESPONSE_STAGE alternator_field_load_response_stage;  // 0x0040b272
 extern word charging_voltage_error;  // 0x0040b274
 extern dword alternator_field_duty_pid_derivative_term;  // 0x0040b276
 extern dword alternator_field_duty_pid_integral_term;  // 0x0040b27a
@@ -5080,7 +5080,7 @@ extern int16_t engine_acceleration_first_stage_filtered;  // 0x0040b28c
 extern int16_t engine_acceleration_second_stage_filtered;  // 0x0040b28e
 extern int16_t engine_acceleration_unfiltered;  // 0x0040b290
 extern word cooling_fan_speed_target;  // 0x0040b294
-extern word cooling_fan_speed_target_source;  // 0x0040b2a0
+extern COOLING_FAN_SPEED_TARGET_SOURCE cooling_fan_speed_target_source;  // 0x0040b2a0
 extern ema_filter_state_t cooling_fan_speed_feedback_filter;  // 0x0040b2d4
 extern ema_filter_state_t cooling_fan_proportional_derivative_filter;  // 0x0040b2dc
 extern ema_filter_state_t cooling_fan_coolant_temperature_filter;  // 0x0040b2e4
@@ -5749,7 +5749,7 @@ extern byte radiator_fan_pulses_per_revolution;  // 0x004088d9
 extern dword radiator_fan_speed_numerator;  // 0x0040b2f8
 extern word radiator_fan_speed_history_middle;  // 0x0040b9aa
 extern word cooling_fan_coolant_temperature_filtered;  // 0x0040b2c4
-extern word cooling_fan_coolant_request_state;  // 0x0040b29a
+extern COOLING_FAN_COOLANT_REQUEST_STATE cooling_fan_coolant_request_state;  // 0x0040b29a
 extern word cooling_fan_coolant_speed_request;  // 0x0040b2a4
 extern dword cooling_fan_coolant_pi_speed;  // 0x0040b2ae
 extern dword cooling_fan_coolant_integral;  // 0x0040b2aa
@@ -5757,7 +5757,7 @@ extern word cooling_fan_air_conditioning_speed_request;  // 0x0040b292
 extern word cooling_fan_intake_speed_request;  // 0x0040b296
 extern word cooling_fan_engine_driven_speed_limit;  // 0x0040b2a2
 extern word cooling_fan_engine_idle_flag;  // 0x0040b29c
-extern word cooling_fan_duty_source_code;  // 0x0040b2a8
+extern COOLING_FAN_DUTY_SOURCE cooling_fan_duty_source_code;  // 0x0040b2a8
 extern word cooling_fan_integral_term;  // 0x0040b2bc
 extern word cooling_fan_duty_request;  // 0x0040b2c0
 extern word cooling_fan_actuator_test_active_flag;  // 0x0040b2c2
