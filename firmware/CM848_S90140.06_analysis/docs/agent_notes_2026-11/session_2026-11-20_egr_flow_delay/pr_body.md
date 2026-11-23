@@ -638,6 +638,12 @@ state enum, the flag bytes.**
   powertrain protection flag (8A7C; `tsc1_lost_management_active_flag`, was `fuel_demand_timing_enable_flag`).
 - **Stage B (3109998, labels, a row, functions):** the `park_neutral_exit_*` family is rock cycle torque management
   (e2m 8C2A TC_Rock_Cycle_* / 8C49-8C4B RE_RCTM_*). It becomes `rock_cycle_*`: 20 globals, 3 functions, 1 new row.
+**Round 47.**
+- **Stage A (54fef43, labels, a type):** an audit of rows the dumped parameter ID table resolves but that never cited
+  their e2m block. It renames the EEC1 / EEC2 torque-and-load 0xFE flag (retyped to a word), the EEC1 actual torque
+  byte (was `j1939_dm1_spn_fmi_byte`) and a throttle valve actuator status.
+- **Stage B (ca0121e, labels, a split):** the EGR off-allowed / cooler-fouled flags (a dword split into two words of
+  e2m 1A57) and the cruise set / accelerate switch select.
 
 ## Test plan
 
@@ -730,6 +736,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 47: stage A `prove_caches.py` (the retyped word's two `._0_2_` pieces folded) matches all 1968 functions; verify byte-identical. Stage B `prove_caches.py` (the split dword's six pieces folded) matches all 1968 functions; verify byte-identical.
 - [x] Round 46: stage A `prove_caches.py` matches all 1968 functions; verify byte-identical. Stage B `prove_caches.py` against a copy of the old `.cpp` with the three function names changed matches all 1968 functions; verify byte-identical.
 - [x] Round 45: `prove_caches.py` matches 1967 of 1968 functions (the other differs only in the order of its local declarations); verify byte-identical.
 - [x] Round 44 stage C: `prove_caches.py` matches all 1968 functions; verify byte-identical.

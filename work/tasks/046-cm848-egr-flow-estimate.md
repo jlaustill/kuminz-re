@@ -2255,6 +2255,43 @@ A peer relay started the round; the scripts are in `session_folder/round46/`.
     and 0x4086c8 (`DAT_004086ca` / `DAT_004086ce`, read by the TSC1 function).
   - The remaining small perfect-width gaps (2-4 bytes, 1-2 rows) have no meaning match.
 
+## Done, round 47 (2026-11-22, same PR): uncited table rows
+
+A peer relay started the round; the scripts are in `session_folder/round47/`.
+- **Method:**
+  - `uncited_table_rows.py`: 5121 default-e2m scalar records resolve through the dumped parameter ID table, and 1295
+    rows at those addresses do not cite their block.
+  - `block_reliability.py`: the default e2m's layout drifts from this firmware for some blocks. A low word score only
+    counts inside a block whose other rows match their records: 240 blocks are at least 70 % consistent, and they
+    hold 49 outliers. Each was read against the code.
+- **Stage A (54fef43, labels, a type):**
+  - 0x40a336 `j1939_broadcast_enable_flag` (dword) -> `j1939_torque_and_load_not_available_flag` (word). It is 120C +6
+    FSS_Torque_Load_Calculation_Flag: at 1 the EEC1 actual torque byte and the EEC2 percent load byte go out as 0xFE.
+  - 0x3fad92 `j1939_dm1_spn_fmi_byte` -> `j1939_eec1_actual_engine_percent_torque_byte`; its only uses are in the
+    EEC1 builder.
+  - 0x40be5e `sensor_diag_default_a` -> `throttle_valve_actuator_position_sensor_fault_status` (1963 +4A).
+  - **Proof:** `prove_caches.py` (the retyped word's two `._0_2_` pieces folded) matches all 1968 functions; verify byte-identical.
+- **Stage B (ca0121e, labels, a split):**
+  - 0x40a442 `fuel_blend_correction_inhibit_flag` (dword) is two words of 1A57: `egr_off_allowed_flag` (+0
+    CHH_CBO_Off) and a new `egr_cooler_fouled_flag` (+2 CHH_EGR_Cooler_Fouled).
+  - 0x3fd530 `j1939_ccvs1_switch_logic_option_cal` -> `cruise_set_accelerate_switch_select_cal` (1180 +8).
+  - **Proof:** `prove_caches.py` (the split dword's six pieces folded) matches all 1968 functions; verify byte-identical.
+- **Kept:**
+  - `sendPgn61444ElectronicEngineController1Message` keeps its unprefixed name, shared with its CM550 twin (0x32c76).
+    The first attempt renamed it, and the CM550 grep caught it.
+  - Drift cases are not renamed: 8A14 / 8A2B reach into the next block's base, and 8A0F +C lands under the chime
+    flag.
+- refresh_references.py rewrote the old dword's name inside three texts that described its two words; the texts are
+  restored (`fix_r47b_texts.py`).
+- **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 221.
+- **Leads:**
+  - The other 44 outliers in consistent blocks; most are wording differences, and the code would settle the rest.
+    Candidates: 1070 +20 EB_Active_Driver_Fraction (its scale disagrees with the 0 / 100 the code writes), 10E3 +24 /
+    +26 under two OBD names, 1226 +E, 8C34 +14, 1982 +A.
+  - The 1295 uncited rows could take citations in bulk wherever their record matches.
+  - 138 function names lack a firmware prefix. Many are shared with CM550 by design, so a sweep must rename both
+    firmwares or keep the name.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

@@ -493,3 +493,7 @@ Hand work on the round 7 lead.
 ## Round 46: the warning chime, rock cycle torque management (`session_folder/round46/`)
 
 - `gap_leads.py` (+ `gap_leads.txt`), `placements_*.txt`. **Stage A:** `apply_r46a.py`, `map_r46a.csv`. **Stage B:** `apply_r46b.py`, `map_r46b*.csv`, `apply_r46b_struct_comment.py`. **Closing:** `apply_r46_closing.py`, `update_large_tar_r46.sh`.
+
+## Round 47: uncited table rows (`session_folder/round47/`)
+
+- `uncited_table_rows.py` (+ `uncited.txt`), `block_reliability.py` (+ `reliable_leads.txt`). **Stage A:** `apply_r47a.py`, `map_r47a*.csv`. **Stage B:** `apply_r47b.py`, `map_r47b.csv`, `fix_r47b_texts.py`. **Closing:** `apply_r47_closing.py`, `update_large_tar_r47.sh`.

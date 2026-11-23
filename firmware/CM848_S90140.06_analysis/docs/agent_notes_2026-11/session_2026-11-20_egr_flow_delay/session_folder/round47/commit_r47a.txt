@@ -1,0 +1,30 @@
+cm848: round 47 stage A - uncited table rows: the EEC1 / EEC2 torque-load 0xFE flag, the EEC1 torque byte, a TVA status
+
+Round 46 found a block in the dumped parameter ID table whose rows had code-only names (8C49). This round sweeps for
+that systematically:
+- uncited_table_rows.py: 1295 rows resolve to a default-e2m record they do not cite.
+- block_reliability.py: the default e2m's layout drifts from this firmware for some blocks, so a low word score only
+  counts inside a block whose other rows match their records. 240 blocks are >= 70 % consistent; 49 outliers sit in
+  them.
+- Read against the code, three are real misreads:
+  - 0x40a336 j1939_broadcast_enable_flag (dword) -> j1939_torque_and_load_not_available_flag (word). It is 120C +6
+    FSS_Torque_Load_Calculation_Flag: 'When active, this flag sets bdcst for Actual Eng %Torque and %Load to 0xFE.'
+    - The EEC1 and EEC2 builders read its first word (lhz @ 0x25a68 / 0x25ca4). At 1 they send 0xFE for the actual
+      engine percent torque byte and the percent load byte.
+    - Nothing reads 0x40a338.
+  - 0x3fad92 j1939_dm1_spn_fmi_byte -> j1939_eec1_actual_engine_percent_torque_byte. Its only uses are in the EEC1
+    builder (actual torque + 0x7D, or 0xFE).
+  - 0x40be5e sensor_diag_default_a -> throttle_valve_actuator_position_sensor_fault_status. It is 1963 +4A
+    TVA_Position_Status in the sensor fault status block (33 / 34 rows match); it is written 10 at start-up and never
+    read.
+- The EEC1 builder keeps its unprefixed name sendPgn61444ElectronicEngineController1Message, which it shares with its
+  CM550 twin (0x32c76).
+- Drift cases (8A14 and 8A2B overlapping the next block's base, 8A0F +C under the chime flag) are not renamed.
+
+Proof: prove_caches.py against the old .cpp with the retyped word's two ._0_2_ pieces folded.
+- All 1968 functions match.
+- verify is byte-identical; thunks 18 / 14; the 3 name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 221.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
