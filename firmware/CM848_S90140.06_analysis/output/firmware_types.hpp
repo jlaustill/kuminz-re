@@ -1377,7 +1377,6 @@ typedef struct system_initialization_flags_t system_initialization_flags_t;
 typedef struct eeprom_xfer_state_t eeprom_xfer_state_t;
 typedef struct eeprom_block_tracking_t eeprom_block_tracking_t;
 typedef struct j1939_transport_transmit_session_t j1939_transport_transmit_session_t;
-typedef struct diagnostic_response_message_t diagnostic_response_message_t;
 typedef struct boot_state_t boot_state_t;
 typedef struct mios_mpiosm_t mios_mpiosm_t;
 typedef struct mios1_isr_t mios1_isr_t;
@@ -2545,7 +2544,7 @@ struct j1939_pgn_handler_entry_t {
 struct j1939_tx_msg_t {
     j1939_msg_hdr_t header;  /* J1939 TX message header (can_id + data_length) */
     void * data_pointer;  /* Pointer to the first payload byte */
-    void * status_pointer;  /* Points at the message's status byte j1939_<message>_transmit_status (was data_end_pointer: the byte often sits right after the payload; PR #53 round 33): in the application mpc555_sendJ1939SingleFrame stores its result there (0 queued / 1 zero length / 4 queue full) and the transport its session codes: a broadcast (BAM) session through the per source address records at 0x3fbd74 (initiateJ1939TransportProtocol / cm848_sendJ1939BroadcastDataPacket: 0x10 announced / 0x11 sending / 5 complete / 2 already active) and a destination-specific (RTS / CTS) session through j1939_transport_transmit_session.session_status_pointer (0x12 started / 0x13 sending / 9 complete / 10 aborted / 6 clear to send timeout / 7 send failed / 8 busy); 3 = not our source address. The multi-frame builders rebuild only while its 0xf0 nibble is clear (no session in progress). The boot twin is diagnostic_response_message_t.status_pointer */
+    void * status_pointer;  /* Points at the message's status byte j1939_<message>_transmit_status (was data_end_pointer: the byte often sits right after the payload; PR #53 round 33): in the application mpc555_sendJ1939SingleFrame stores its result there (0 queued / 1 zero length / 4 queue full) and the transport its session codes: a broadcast (BAM) session through the per source address records at 0x3fbd74 (initiateJ1939TransportProtocol / cm848_sendJ1939BroadcastDataPacket: 0x10 announced / 0x11 sending / 5 complete / 2 already active) and a destination-specific (RTS / CTS) session through j1939_transport_transmit_session.session_status_pointer (0x12 started / 0x13 sending / 9 complete / 10 aborted / 6 clear to send timeout / 7 send failed / 8 busy); 3 = not our source address. The multi-frame builders rebuild only while its 0xf0 nibble is clear (no session in progress). In the boot kernel (whose records use this type since its twin diagnostic_response_message_t was merged in PR #53 round 64) the transport writes 0x12 while it sends and 6 on a timeout */
 };
 
 struct j1939_acknowledgement_payload_t {
@@ -3091,12 +3090,6 @@ struct j1939_transport_transmit_session_t {
     uint32_t frame_can_id;  /* The CAN identifier of the next frame: the message's with PDU format 0xEC (TP.CM, PGN 60416) for the request-to-send, then 0xEB (TP.DT, PGN 60160) (was can_header) | earlier note: CAN frame header word (PGN 0xEC00 RTS or 0xEB00 DT) */
     uint16_t frame_data_length;  /* Data bytes of the next frame: 8, or what is left for the last data packet (was packet_size) | earlier note: Bytes in current CTS packet grant (max 8) */
     byte* transmit_frame_pointer;  /* The frame assembly buffer the senders fill (0x30306D) (was tx_buf_ptr) | earlier note: Pointer to CAN TX assembly buffer (0x30306D) */
-};
-
-struct diagnostic_response_message_t {
-    j1939_msg_hdr_t header;  /* CAN id and data length (the reply length the allocator gets) */
-    void * data_pointer;  /* The reply data */
-    void * status_pointer;  /* Points at the status byte right after the record (the J1939 transport writes 0x12 while it sends, 6 on a timeout); not a data end pointer */
 };
 
 struct boot_state_t {

@@ -814,10 +814,12 @@ extern byte boot_j1939_transport_transmit_active;  // 0x00302903
 extern byte boot_j1939_transport_transmit_destination_address;  // 0x00302904
 extern j1939_transport_transmit_session_t boot_j1939_transport_transmit_session;  // 0x00302905
 extern j1939_transport_receive_session_t boot_j1939_transport_receive_session;  // 0x00302925
-extern diagnostic_response_message_t diagnostic_transport_response_message;  // 0x00303047
+extern byte diagnostic_transport_response_data[1800];  // 0x0030293f
+extern j1939_tx_msg_t diagnostic_transport_response_message;  // 0x00303047
 extern byte diagnostic_transport_response_status;  // 0x00303055
-extern diagnostic_response_message_t diagnostic_single_frame_response_message;  // 0x00303056
+extern j1939_tx_msg_t diagnostic_single_frame_response_message;  // 0x00303056
 extern byte diagnostic_single_frame_response_status;  // 0x00303064
+extern byte diagnostic_single_frame_response_data[8];  // 0x00303065
 extern byte pgn_response_handler_table;  // 0x00303485
 extern byte pgn_response_handler_callbacks;  // 0x00303487
 extern byte pgn_response_handler_count;  // 0x0030349d

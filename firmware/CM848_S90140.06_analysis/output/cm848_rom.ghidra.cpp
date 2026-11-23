@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 08:29:32 MST 2026
+// Generated: Mon Nov 23 08:36:17 MST 2026
 
 
 //
@@ -1367,7 +1367,7 @@ char cm848_readBootDiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword addr
   uint uVar2;
   ushort uVar3;
   char cVar4;
-  diagnostic_response_message_t *message;
+  j1939_tx_msg_t *message;
   byte *pbVar5;
   byte bVar6;
   byte bVar7;
@@ -1390,9 +1390,8 @@ char cm848_readBootDiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword addr
         }
         cVar4 = cm848_getBootMemoryServiceHeaderLength(bVar6);
         bVar7 = cVar4 - 1;
-        message = (diagnostic_response_message_t *)
-                  cm848_allocateDiagnosticResponseBuffer(bVar7 + length + 1 & 0xffff);
-        if (message == (diagnostic_response_message_t *)0x0) {
+        message = cm848_allocateDiagnosticResponseBuffer(bVar7 + length + 1 & 0xffff);
+        if (message == (j1939_tx_msg_t *)0x0) {
           cVar4 = '\x04';
         }
         else {
@@ -3195,7 +3194,7 @@ void mpc555_canTransmitQueuePush(dword can_id,dword data_length,byte *data,byte 
 // Function: cm848_transmitCanMessage @ 0x00003f20
 //
 
-void cm848_transmitCanMessage(diagnostic_response_message_t *message)
+void cm848_transmitCanMessage(j1939_tx_msg_t *message)
 
 {
   uint data_length;
@@ -4570,7 +4569,7 @@ LAB_00005a58:
    TP.CM 0x10 request-to-send on PGN 60416 then switches to PGN 60160 data transfer |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-void mpc555_sendJ1939TransportRequestToSend(diagnostic_response_message_t *message)
+void mpc555_sendJ1939TransportRequestToSend(j1939_tx_msg_t *message)
 
 {
   ushort *puVar1;
@@ -5245,32 +5244,32 @@ void mpc555_serviceJ1939TransportSessions(byte connection_id)
    the multi-frame transport buffer when no transport is in progress / else NULL |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-diagnostic_response_message_t * cm848_allocateDiagnosticResponseBuffer(int param_1)
+j1939_tx_msg_t * cm848_allocateDiagnosticResponseBuffer(int length)
 
 {
   byte bVar1;
-  diagnostic_response_message_t *pdVar2;
+  j1939_tx_msg_t *pjVar2;
   
-  if (param_1 < 9) {
-    pdVar2 = &diagnostic_single_frame_response_message;
-    diagnostic_single_frame_response_message.data_pointer = &DAT_00303065;
-    diagnostic_single_frame_response_message.header.data_length = (word)param_1;
+  if (length < 9) {
+    pjVar2 = &diagnostic_single_frame_response_message;
+    diagnostic_single_frame_response_message.data_pointer = diagnostic_single_frame_response_data;
+    diagnostic_single_frame_response_message.header.data_length = (word)length;
     diagnostic_single_frame_response_message.status_pointer =
          &diagnostic_single_frame_response_status;
   }
   else {
     bVar1 = diagnostic_transport_response_status;
     if ((bVar1 & 0xf0) == 0) {
-      diagnostic_transport_response_message.data_pointer = &DAT_0030293f;
-      diagnostic_transport_response_message.header.data_length = (word)param_1;
+      diagnostic_transport_response_message.data_pointer = diagnostic_transport_response_data;
+      diagnostic_transport_response_message.header.data_length = (word)length;
       diagnostic_transport_response_message.status_pointer = &diagnostic_transport_response_status;
-      pdVar2 = &diagnostic_transport_response_message;
+      pjVar2 = &diagnostic_transport_response_message;
     }
     else {
-      pdVar2 = (diagnostic_response_message_t *)0x0;
+      pjVar2 = (j1939_tx_msg_t *)0x0;
     }
   }
-  return pdVar2;
+  return pjVar2;
 }
 
 
@@ -6105,7 +6104,7 @@ void cm848_sendDiagServiceResponse(j1939_rx_msg_t *request,dword result_code)
 
 {
   byte bVar1;
-  diagnostic_response_message_t *message;
+  j1939_tx_msg_t *message;
   int iVar2;
   byte *pbVar3;
   byte bVar4;
@@ -6124,8 +6123,8 @@ void cm848_sendDiagServiceResponse(j1939_rx_msg_t *request,dword result_code)
   }
   iVar2 = (uint)bVar1 + iVar2;
 LAB_000074f8:
-  message = (diagnostic_response_message_t *)cm848_allocateDiagnosticResponseBuffer(iVar2);
-  if (message != (diagnostic_response_message_t *)0x0) {
+  message = cm848_allocateDiagnosticResponseBuffer(iVar2);
+  if (message != (j1939_tx_msg_t *)0x0) {
     (message->header).can_id = 0xefff00;
     *(byte *)&(message->header).can_id =
          (request->priority_dp_flags >> 2 & 7) << 2 | *(byte *)&(message->header).can_id & 0xe3;
@@ -39087,8 +39086,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  byte all_transmits_overdue;
   ushort receive_interval;
+  byte all_transmits_overdue;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {

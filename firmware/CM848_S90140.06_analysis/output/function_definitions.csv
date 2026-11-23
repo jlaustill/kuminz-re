@@ -502,8 +502,8 @@ function_address,function_name,param_index,name,type,comment
 0x0050b634,cm848_validateJ1939DiagnosticRequest,0,rx_msg,j1939_rx_msg_t*,the received request
 0x000249c4,cm848_sendJ1939ResponseFrame,0,request,j1939_rx_msg_t*,the request being answered (its addresses swap into the reply)
 0x000249c4,cm848_sendJ1939ResponseFrame,1,result_code,dword,the service result: 0 success / 0xfe an extended response / else an error code (dword: the body reuses it as a 32-bit variable)
-0x00003f20,cm848_transmitCanMessage,0,message,diagnostic_response_message_t*,the response record from cm848_allocateDiagnosticResponseBuffer (header / data pointer / status pointer)
-0x00005adc,mpc555_sendJ1939TransportRequestToSend,0,message,diagnostic_response_message_t*,the response record of a reply longer than 8 bytes
+0x00003f20,cm848_transmitCanMessage,0,message,j1939_tx_msg_t*,the response record from cm848_allocateDiagnosticResponseBuffer (header / data pointer / status pointer)
+0x00005adc,mpc555_sendJ1939TransportRequestToSend,0,message,j1939_tx_msg_t*,the response record of a reply longer than 8 bytes
 # The boot kernel's diagnostic response sender (PR #53 round 36): the twin of cm848_sendJ1939ResponseFrame
 0x000074a0,cm848_sendDiagServiceResponse,0,request,j1939_rx_msg_t*,the request being answered (its addresses swap into the reply; its service byte is echoed)
 0x000074a0,cm848_sendDiagServiceResponse,1,result_code,dword,the service result: 0 positive (0x0C) / 0xfe pending (0x0E + the wait time) / else 0x0D + the code (dword: the body reuses it as a 32-bit variable)
@@ -569,3 +569,5 @@ function_address,function_name,param_index,name,type,comment
 0x000058e8,cm848_handleBootWriteMemoryLongLengthService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
 0x0050d688,cm848_selectJ1939TransmitBuffer,return,,j1939_tx_msg_t*,j1939_single_frame_tx_message or j1939_transport_tx_message - 0 while the transport record is busy (PR #53 round 64)
 0x0050d688,cm848_selectJ1939TransmitBuffer,0,length,int32_t,The message's data bytes: up to 8 takes the single frame record (PR #53 round 64)
+0x00006508,cm848_allocateDiagnosticResponseBuffer,return,,j1939_tx_msg_t*,diagnostic_single_frame_response_message or diagnostic_transport_response_message - 0 while the transport record is busy (PR #53 round 64)
+0x00006508,cm848_allocateDiagnosticResponseBuffer,0,length,int32_t,The reply's data bytes: up to 8 takes the single frame record (PR #53 round 64)

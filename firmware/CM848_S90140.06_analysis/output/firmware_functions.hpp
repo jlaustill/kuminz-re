@@ -95,7 +95,7 @@ void cm848_saveDefaultDiagnosticHandler(void);  // @ 0x00003b58
 void mpc555_initQspiRegisters(void);  // @ 0x00003b6c
 undefined1 cm848_getDiagnosticResponseEchoLength(int param_1);  // @ 0x00003d54
 void mpc555_canTransmitQueuePush(dword can_id,dword data_length,byte *data,byte *result);  // @ 0x00003dac
-void cm848_transmitCanMessage(diagnostic_response_message_t *message);  // @ 0x00003f20
+void cm848_transmitCanMessage(j1939_tx_msg_t *message);  // @ 0x00003f20
 dword cm848_lookupBootParameterIdAddress(word param_id);  // @ 0x00003f70
 undefined4 cm848_dataTransferBufferWrite(int param_1,dword param_2,uint param_3,int param_4,byte param_5);  // @ 0x00003fcc
 void cm848_fillFlashProgramPageBuffer(void);  // @ 0x00004194
@@ -123,7 +123,7 @@ undefined1 cm848_handleBootWriteMemoryService(j1939_rx_msg_t *request);  // @ 0x
 undefined1 cm848_handleBootWriteMemoryLongLengthService(j1939_rx_msg_t *request);  // @ 0x000058e8
 undefined1 cm848_getBootMemoryServiceHeaderLength(int param_1);  // @ 0x00005958
 undefined4 cm848_validateDiagnosticRequestLengthAndAuthorization(int param_1);  // @ 0x0000597c
-void mpc555_sendJ1939TransportRequestToSend(diagnostic_response_message_t *message);  // @ 0x00005adc
+void mpc555_sendJ1939TransportRequestToSend(j1939_tx_msg_t *message);  // @ 0x00005adc
 void mpc555_handleJ1939TransportClearToSend(byte request_type,byte connection_id);  // @ 0x00005c50
 void mpc555_sendJ1939TransportAbort(undefined1 param_1,undefined2 param_2);  // @ 0x00005cf4
 void mpc555_sendJ1939TransportEndOfMessageAcknowledge(byte destination_address,word transported_pgn);  // @ 0x00005d8c
@@ -136,7 +136,7 @@ void mpc555_dispatchJ1939TransportConnectionManagement(j1939_rx_msg_t *rx_msg,by
 void mpc555_sendJ1939TransportDataPackets(void *queue_entry);  // @ 0x000062fc
 void mpc555_ageJ1939TransportReceiveTimeout(void);  // @ 0x00006490
 void mpc555_serviceJ1939TransportSessions(byte connection_id);  // @ 0x000064c4
-diagnostic_response_message_t * cm848_allocateDiagnosticResponseBuffer(int param_1);  // @ 0x00006508
+j1939_tx_msg_t * cm848_allocateDiagnosticResponseBuffer(int length);  // @ 0x00006508
 void mpc555_sciSendServiceResponse(byte param_1,int param_2);  // @ 0x00006580
 void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_ptr);  // @ 0x0000662c
 void cm848_resetSerialReceiveBuffer(void);  // @ 0x00006770

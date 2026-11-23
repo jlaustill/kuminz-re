@@ -864,10 +864,12 @@ address,name,type,comment
 0x00302930,boot_j1939_transport_receive_session.request_to_send_can_id,,byte 3: the source address (was qadc_a_paused_channel_id; PR #53 round 35)
 0x00302931,boot_j1939_transport_receive_session.message_size,,(was qadc_a_completion_flag; PR #53 round 35)
 0x00302933,boot_j1939_transport_receive_session.receive_buffer_pointer,,(was qadc_a_queue_flags.rx_buf_ptr; PR #53 round 35)
-0x00303047,diagnostic_transport_response_message,diagnostic_response_message_t,The boot reflash kernel's multi-frame diagnostic response: cm848_allocateDiagnosticResponseBuffer returns it for replies of 9 bytes or more while the high nibble of diagnostic_transport_response_status is 0 (data at 0x30293f, sent through the J1939 transport) (PR #53 round 25)
+0x0030293f,diagnostic_transport_response_data,byte[1800],The data of diagnostic_transport_response_message (cm848_allocateDiagnosticResponseBuffer points its data_pointer here): 1800 bytes up to the record at 0x303047 - the size of the application's j1939_transport_tx_data (PR #53 round 64)
+0x00303047,diagnostic_transport_response_message,j1939_tx_msg_t,The boot reflash kernel's multi-frame diagnostic response: cm848_allocateDiagnosticResponseBuffer returns it for replies of 9 bytes or more while the high nibble of diagnostic_transport_response_status is 0 (data at 0x30293f, sent through the J1939 transport) (PR #53 round 25)
 0x00303055,diagnostic_transport_response_status,byte,Status byte of diagnostic_transport_response_message (its status_pointer points here): the allocator hands the message out only while the high nibble is 0; the J1939 transport writes 0x12 / 6 (was diag_buffer_b_status) (PR #53 round 25)
-0x00303056,diagnostic_single_frame_response_message,diagnostic_response_message_t,The boot reflash kernel's single-frame diagnostic response: cm848_allocateDiagnosticResponseBuffer returns it for replies under 9 bytes (data at 0x303065) (PR #53 round 25)
+0x00303056,diagnostic_single_frame_response_message,j1939_tx_msg_t,The boot reflash kernel's single-frame diagnostic response: cm848_allocateDiagnosticResponseBuffer returns it for replies under 9 bytes (data at 0x303065) (PR #53 round 25)
 0x00303064,diagnostic_single_frame_response_status,byte,Status byte of diagnostic_single_frame_response_message (its status_pointer points here) (PR #53 round 25)
+0x00303065,diagnostic_single_frame_response_data,byte[8],The data of diagnostic_single_frame_response_message: one CAN frame (PR #53 round 64)
 0x00303485,pgn_response_handler_table,byte,
 0x00303487,pgn_response_handler_callbacks,byte,
 0x0030349d,pgn_response_handler_count,byte,
