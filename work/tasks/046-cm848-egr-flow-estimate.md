@@ -2652,10 +2652,13 @@ A peer relay started the round; the scripts are in `session_folder/round58/`.
 
 A peer relay started the round; the scripts are in `session_folder/round59/`.
 - **Stage A (18c75e9):** `orphan_struct_types.py` lists every struct type that nothing names: no address row, field,
-  dependency, CSV, `.cpp` render, script, test, CLAUDE.md or skill. 32 of the 192 qualified, most from the
-  2026-01-30 port of 26 generic CM550 structures.
-  - **Superseded (deleted):** `ad_sensor_config_t` / `sensor_fault_config_t` (now `sensor_channel_config_t`),
-    `sensor_debounce_state_t` (`sensor_channel_state_t`) and `address_range_entry_t` (`memory_region_t`).
+  dependency, CSV, `.cpp` render, script, test, CLAUDE.md or skill. 32 of the 192 qualified. 24 of the 29 removed
+  came with the 2026-01-30 port of 26 generic CM550 structures (fdc657a); the 5 protocol / DMA / patch types were
+  there before.
+  - **Covered by a live type (deleted):** `ad_sensor_config_t` (16 bytes) and `address_range_entry_t` (10) have
+    the same size as `sensor_channel_config_t` / `memory_region_t`. `sensor_fault_config_t` (24) and
+    `sensor_debounce_state_t` (22) only cover the role of `sensor_channel_config_t` / `sensor_channel_state_t`
+    (16 / 12) and were marked "documentation only". The stage A commit message calls all four "superseded".
   - **No CM848 home (deleted, 25):** speculative protocol / DMA / patch types, CM550 templates unused there too, and
     three CM550 applies with no CM848 layout. The data plate is not at CM550's EEPROM 0x2C0 here.
     - The last `protection_` field names went with `engine_control_flags_t` and `timing_mode_control_t`.
@@ -2665,13 +2668,16 @@ A peer relay started the round; the scripts are in `session_folder/round59/`.
 - **Stage B (0b13a71): round 58's scan claim corrected.** Round 58's follow-up said `scan_accesses_v2.py` found "2 of
   the 6 stores" to two words. The machine code has exactly 2 stores to each; the decompile prints 6 lines by repeating
   a shared store in each branch's return path. The scan still cannot prove absence (computed pointers; volatile bases
-  forgotten at each call), and the seven rows, task 046 and the memory note now say that.
+  forgotten at each call), and the seven rows, task 046 and the memory note now say that. Both words' 2 stores were
+  checked in the disassembly (0x52deac / 0x52df64 and 0x5290dc / 0x529140).
 - **Proof:** stage A: the `.cpp` is unchanged (only the timestamp differed); `firmware_types.hpp` loses exactly the 29 types; the other headers are unchanged; verify byte-identical. Stage B: comments only.
 - **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 218.
 - **Leads:**
   - Type the parameter ID table (`param_id_entry_t`, 1441 records to the end of the flash2 dump) and the two dispatch
     tables.
   - CM550 keeps unused copies of 18 of the removed types.
+  - `j1939_ack_msg_t` is unused as well (only an `enums.csv` comment names it); `j1939_acknowledgement_payload_t`
+    covers its role.
   - 69 unprefixed CM848-only functions remain.
 
 ## Leads (not in this PR)

@@ -700,8 +700,8 @@ state enum, the flag bytes.**
   snapshot, 8C19 +13 and a friction torque lookup cache. Also 3 functions, 2 new rows and 2 junk rows deleted;
   MISSING 221 -> 218.
 **Round 59.**
-- **Stage A (18c75e9):** 29 CM848 struct types that nothing uses are removed: 4 superseded by live types and 25
-  with no CM848 home, taking the last `protection_` field names with them. Three are kept as leads for untyped
+- **Stage A (18c75e9):** 29 CM848 struct types that nothing uses are removed: 4 whose role a live type covers (2
+  with the same layout) and 25 with no CM848 home, taking the last `protection_` field names with them. Three are kept as leads for untyped
   tables.
 - **Stage B (0b13a71):** round 58's "2 of 6 stores" scan claim corrected (the decompile repeats a shared store).
 

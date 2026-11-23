@@ -1,3 +1,5 @@
+Correction (round 59 follow-up): of the four SUPERSEDED types, ad_sensor_config_t (16 bytes) and address_range_entry_t (10) match their live types' sizes; sensor_fault_config_t (24) and sensor_debounce_state_t (22) only cover the role of sensor_channel_config_t / sensor_channel_state_t (16 / 12). 24 of the 29 came with fdc657a; the 5 protocol / DMA / patch types were there before.
+
 Round 59 stage A: struct types removed from CM848's structure_definitions.csv (verbatim, with their '#' title lines), each with its pile.
 
 === parameter_response_t: NO CM848 HOME: speculative (not in CM550)
