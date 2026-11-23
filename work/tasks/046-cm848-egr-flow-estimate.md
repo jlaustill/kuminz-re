@@ -1977,9 +1977,31 @@ A peer relay started the round; the scripts are in `session_folder/round41/`.
     `injector_driver_booster_capacitor_low_voltage_mask`.
   - The initializer is `cm848_initializeInjectorDriverBoosterCapacitorMonitor` (was mpc555_initSensorCalibrationTables).
 - **Proof:** `prove_records.py` maps the old raw addresses and the new struct accesses to field tokens by offset.
-  - The monitor has 112 statements on each side, identical apart from its name.
+  - The monitor has 112 statements on each side, identical apart from its name. That proves field identity and
+    statement structure: the canonical form drops the bracket indexes, the index set-up and the temp names, so it
+    does not check which record or cylinder an access indexes (the index derivation reads the same in both). That proves field identity and
+    statement structure: the canonical form drops the bracket indexes, the index set-up and the temp names, so it
+    does not check which record or cylinder an access indexes (the index derivation reads the same in both).
   - The initializer was checked address by address.
   - The other functions match the canonical form or differ in the order of local declarations only.
+- **Checks (fix commit):**
+  - The parameter ID table resolves none of the new rows (absence of data). Its records for the channel config /
+    state (81CB-81CF) confirm every pointer target: High_Limit / Low_Limit / Fault_Set, Raw / Unfiltered /
+    User_Value.
+  - Every access is word-width (`lhz` / `sth`, indexed included).
+  - The low voltage check is on in this calibration and distinct from the low fault: count limit 3 at threshold 699
+    raw counts, against the low fault's 705.
+  - All 8 cylinder records follow the field order; records 6 / 7 are injectors 7 / 8.
+  - This resolves round 39's booster capacitor monitor lead.
+- **Checks (fix commit):**
+  - The parameter ID table resolves none of the new rows (absence of data). Its records for the channel config /
+    state (81CB-81CF) confirm every pointer target: High_Limit / Low_Limit / Fault_Set, Raw / Unfiltered /
+    User_Value.
+  - Every access is word-width (`lhz` / `sth`, indexed included).
+  - The low voltage check is on in this calibration and distinct from the low fault: count limit 3 at threshold 699
+    raw counts, against the low fault's 705.
+  - All 8 cylinder records follow the field order; records 6 / 7 are injectors 7 / 8.
+  - This resolves round 39's booster capacitor monitor lead.
 - **Leads:**
   - The monitor still carries decompiler temps and one goto (Readability Medium).
   - The record's spare count pointer has no reader.

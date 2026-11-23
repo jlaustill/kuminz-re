@@ -1,0 +1,22 @@
+cm848: round 41 fix - the monitor's checks recorded, the proof claim narrowed, two comments corrected
+
+A review of round 41 found the round's names came from code alone and two comments were off. Comment and document
+text only; global comments reach neither the .cpp nor the headers, so the build is unchanged.
+- **The parameter ID table:** it resolves none of the new rows, which is absence of data. Its records for the capacitor
+  channels' config and state (81CB-81CF) confirm every pointer target of the monitor record:
+  - High_Limit / Low_Limit / Fault_Set (the config's high / low threshold and debounce limit);
+  - Raw / Unfiltered / User_Value (the state's raw, value and held value).
+- **Widths:** every access to the mask, the cache and the count arrays is word-width (lhz / sth, the indexed forms
+  included), so the plate's Accuracy High stands.
+- **The low voltage check is on in this calibration and distinct from the low fault:** its count limit is 3 at a
+  threshold of 699 raw counts, against the low fault's 705.
+- **Comments corrected:**
+  - The mask row said "cutout class bit 8"; the cutout tests cylinder_cutout_diagnostic_class_enable_mask & 8.
+  - The cylinder records said records 6 / 7 are unused. They hold injectors 7 / 8 (the same field order) and lie past
+    cylinder_event_count_max (6).
+- **The proof claim, narrowed** (task 046 and the PR test plan): prove_records.py proves field identity and statement
+  structure. It drops the bracket indexes, the index set-up and the temp names, so it does not check which record or
+  cylinder an access indexes.
+- task 046 also records that this resolves round 39's booster capacitor monitor lead.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
