@@ -1298,9 +1298,6 @@ typedef struct engine_speed_limit_arbitration_t engine_speed_limit_arbitration_t
 typedef struct operating_mode_governor_output_t operating_mode_governor_output_t;
 typedef struct transmission_lockup_timers_t transmission_lockup_timers_t;
 typedef struct j1939_msg_hdr_t j1939_msg_hdr_t;
-typedef struct parameter_response_t parameter_response_t;
-typedef struct calterm_protocol_t calterm_protocol_t;
-typedef struct insite_protocol_t insite_protocol_t;
 typedef struct sensor_channel_config_t sensor_channel_config_t;
 typedef struct sensor_channel_state_t sensor_channel_state_t;
 typedef struct cruise_governor_gain_set_t cruise_governor_gain_set_t;
@@ -1309,37 +1306,11 @@ typedef struct engine_retarder_brake_type_t engine_retarder_brake_type_t;
 typedef struct ema_filter_state_t ema_filter_state_t;
 typedef struct high_speed_governor_gain_set_t high_speed_governor_gain_set_t;
 typedef struct q16_fixed_point_t q16_fixed_point_t;
-typedef struct dma_descriptor_t dma_descriptor_t;
-typedef struct memory_patch_entry_t memory_patch_entry_t;
 typedef struct j1939_pgn_handler_entry_t j1939_pgn_handler_entry_t;
 typedef struct j1939_tx_msg_t j1939_tx_msg_t;
 typedef struct j1939_acknowledgement_payload_t j1939_acknowledgement_payload_t;
 typedef struct j1939_ack_msg_t j1939_ack_msg_t;
 typedef struct eeprom_param_t eeprom_param_t;
-typedef struct param_lookup_args_t param_lookup_args_t;
-typedef struct can_param_msg_t can_param_msg_t;
-typedef struct scheduler_phase_slot_t scheduler_phase_slot_t;
-typedef struct ad_sensor_config_t ad_sensor_config_t;
-typedef struct sensor_fault_config_t sensor_fault_config_t;
-typedef struct sensor_debounce_state_t sensor_debounce_state_t;
-typedef struct cummins_data_plate_t cummins_data_plate_t;
-typedef struct memory_operation_request_t memory_operation_request_t;
-typedef struct j1939_source_addresses_t j1939_source_addresses_t;
-typedef struct network_type_switches_t network_type_switches_t;
-typedef struct diag_transfer_state_t diag_transfer_state_t;
-typedef struct diag_service_request_t diag_service_request_t;
-typedef struct circular_buffer_t circular_buffer_t;
-typedef struct address_range_entry_t address_range_entry_t;
-typedef struct fuel_limit_arbitration_t fuel_limit_arbitration_t;
-typedef struct engine_control_flags_t engine_control_flags_t;
-typedef struct high_rpm_protection_t high_rpm_protection_t;
-typedef struct oil_pressure_protection_t oil_pressure_protection_t;
-typedef struct fault_persistence_counters_t fault_persistence_counters_t;
-typedef struct fault_status_registers_t fault_status_registers_t;
-typedef struct fault_latch_registers_t fault_latch_registers_t;
-typedef struct engine_operating_mode_t engine_operating_mode_t;
-typedef struct rpm_fuel_protection_t rpm_fuel_protection_t;
-typedef struct timing_mode_control_t timing_mode_control_t;
 typedef struct j1939_powertrain_messages_received_t j1939_powertrain_messages_received_t;
 typedef struct param_id_entry_t param_id_entry_t;
 typedef struct ef00_dispatch_entry_t ef00_dispatch_entry_t;
@@ -2486,27 +2457,6 @@ struct j1939_msg_hdr_t {
     uint16_t data_length;  /* CAN DLC - payload byte count for TX message */
 };
 
-struct parameter_response_t {
-    uint8_t error_code;  /* Error code (0=success non-zero=error) */
-    uint16_t param_value;  /* Retrieved parameter value */
-    uint8_t scaling_applied;  /* Flag indicating if scaling was applied */
-    uint32_t timestamp;  /* Response generation timestamp */
-};
-
-struct calterm_protocol_t {
-    uint8_t command_id;  /* CalTerm command identifier */
-    uint8_t parameter_count;  /* Number of parameters in request/response */
-    uint8_t data_payload[8];  /* Parameter data payload (up to 8 bytes) */
-    uint8_t checksum;  /* Message integrity checksum */
-};
-
-struct insite_protocol_t {
-    uint8_t function_code;  /* Insite function code */
-    uint8_t live_data_request;  /* Live data monitoring request flag */
-    uint8_t status_flags;  /* Monitoring status flags */
-    uint8_t response_data[6];  /* Live parameter response data */
-};
-
 struct sensor_channel_config_t {
     uint16_t filter_coefficient;  /* EMA coefficient: the weight of the previous filtered value in 1/65536 (0 = no filtering) - the channel's ema_filter_state_t.coefficient points here (was config_word0) */
     uint16_t default_value;  /* Nominal/fault fallback value (written to filtered output and state_ptr[1]) */
@@ -2565,20 +2515,6 @@ struct q16_fixed_point_t {
     uint16_t fractional_part;  /* Low 16 bits - fractional portion */
 };
 
-struct dma_descriptor_t {
-    uint32_t source_address;  /* DMA transfer source memory address */
-    uint32_t dest_address;  /* DMA transfer destination memory address */
-    uint16_t transfer_count;  /* Number of bytes/words to transfer */
-    uint16_t control_flags;  /* DMA control flags (mode type enable etc) */
-    uint32_t next_descriptor;  /* Pointer to next descriptor in chain */
-};
-
-struct memory_patch_entry_t {
-    uint32_t target_address;  /* Memory address to patch */
-    uint8_t patch_size;  /* Number of bytes to copy to target address */
-    uint8_t reserved;  /* Unused padding byte for 6-byte alignment */
-};
-
 struct j1939_pgn_handler_entry_t {
     uint8_t pgn_byte_1;  /* First PGN byte for matching (compared against msg+6+1) */
     uint8_t pgn_byte_0;  /* Second PGN byte for matching (compared against msg+6+0) */
@@ -2619,281 +2555,6 @@ struct eeprom_param_t {
     uint16_t max_limit;  /* Maximum allowed value for parameter */
     uint16_t default_value;  /* Factory default value */
     uint32_t callback_param;  /* Diagnostic callback parameter for EEPROM transfer */
-};
-
-struct param_lookup_args_t {
-    uint32_t calculated_block;  /* Block × 256 × 4 calculation result */
-    uint16_t offset;  /* Parameter offset within block */
-    uint16_t result_value;  /* Retrieved parameter value (capped at 32000) */
-};
-
-struct can_param_msg_t {
-    uint8_t msg_id;  /* Message identifier */
-    uint8_t param_1;  /* First parameter byte */
-    uint8_t param_2;  /* Second parameter byte */
-    uint8_t param_3;  /* Third parameter byte */
-    uint8_t param_4;  /* Fourth parameter byte */
-    uint16_t timestamp;  /* Message timestamp */
-    uint8_t checksum;  /* Message checksum */
-};
-
-struct scheduler_phase_slot_t {
-    uint32_t last_execution_time;  /* Timer value of last task execution */
-    uint16_t runtime_ticks;  /* Task runtime duration in timer ticks */
-    uint16_t deadline_ticks;  /* Task execution deadline (0xFFFF = disabled) */
-    uint16_t execution_count;  /* Number of times task has been executed */
-    uint16_t overrun_count;  /* Number of deadline overruns detected */
-    uint32_t reserved;  /* Reserved/padding bytes for alignment */
-};
-
-struct ad_sensor_config_t {
-    uint16_t channel_addr;  /* A/D channel address for sensor input */
-    uint16_t filter_const;  /* Digital filter constant (0-1) */
-    uint16_t fault_clear_count;  /* Fault clear counter threshold */
-    uint16_t fault_decrement;  /* Fault counter decrement value */
-    uint16_t fault_increment;  /* Fault counter increment value */
-    uint16_t fault_set_threshold;  /* Fault set threshold */
-    uint16_t high_error_limit;  /* A/D high error limit (0-1023) */
-    uint16_t low_error_limit;  /* A/D low error limit (0-1023) */
-};
-
-struct sensor_fault_config_t {
-    uint16_t reserved_00;  /* Reserved/padding at offset 0x00 */
-    uint16_t default_value;  /* Default sensor value on fault (offset 0x02) */
-    uint16_t clear_threshold;  /* Threshold for fault clear (offset 0x04) */
-    uint16_t decrement_value;  /* Debounce counter decrement (offset 0x06) */
-    uint16_t increment_value;  /* Debounce counter increment (offset 0x08) */
-    uint16_t set_threshold;  /* Threshold for fault set (offset 0x0a) */
-    uint16_t high_limit;  /* High error limit (offset 0x0c) */
-    uint16_t low_limit;  /* Low error limit (offset 0x0e) */
-    uint16_t adc_lookup_index;  /* A/D channel lookup table index (offset 0x10) */
-    uint8_t reserved_12;  /* Reserved byte at offset 0x12 */
-    uint8_t alt_fault_enable;  /* Alternative fault enable flag (offset 0x13) */
-    uint8_t primary_fault_id;  /* Primary fault code packed bit/word (offset 0x14) */
-    uint8_t secondary_fault_id;  /* Secondary fault code (offset 0x15) */
-    uint8_t tertiary_fault_id;  /* Tertiary fault code (offset 0x16) */
-    uint8_t debounce_max;  /* Maximum debounce count (offset 0x17) */
-};
-
-struct sensor_debounce_state_t {
-    uint8_t reserved_00[8];  /* Reserved bytes at offset 0x00-0x07 */
-    uint16_t interpolated_value;  /* Interpolated sensor value (offset 0x08) */
-    uint16_t lookup_result;  /* Table lookup result (offset 0x0a) */
-    uint16_t debounce_counter;  /* Current debounce count (offset 0x0c) */
-    uint8_t fault_active_flag;  /* Fault currently active flag (offset 0x0e) */
-    uint8_t sample_counter;  /* Sample phase counter (offset 0x0f) */
-    uint16_t adc_raw_value;  /* Raw A/D conversion value (offset 0x10) */
-    uint8_t reserved_12[4];  /* Reserved bytes at offset 0x12-0x15 */
-};
-
-struct cummins_data_plate_t {
-    uint16_t data_plate_length;  /* Data plate length field */
-    uint8_t engine_make[5];  /* Engine manufacturer identifier */
-    uint8_t engine_model[17];  /* Engine model designation */
-    uint32_t engine_serial_number;  /* Engine serial number */
-    uint8_t engine_build_month;  /* Engine manufacturing month */
-    uint8_t engine_build_day;  /* Engine manufacturing day */
-    uint8_t engine_build_year;  /* Engine manufacturing year */
-    uint16_t engine_cpl;  /* Engine CPL (Component Parts List) */
-    uint16_t peak_torque_low_range;  /* Peak torque low range value */
-    uint16_t peak_torque_high_range;  /* Peak torque high range value */
-    uint16_t peak_torque_rpm_low;  /* Peak torque RPM low range */
-    uint16_t peak_torque_rpm_high;  /* Peak torque RPM high range */
-    uint16_t governed_speed_low;  /* Governed speed low range */
-    uint16_t governed_speed_high;  /* Governed speed high range */
-    uint16_t horsepower_low_range;  /* Horsepower low range value */
-    uint16_t horsepower_high_range;  /* Horsepower high range value */
-    uint16_t horsepower_rpm_low;  /* Horsepower RPM low range */
-    uint16_t horsepower_rpm_high;  /* Horsepower RPM high range */
-    uint8_t fuel_code_part_number[7];  /* Fuel code part number */
-    uint8_t percent_torque_rise;  /* Percent torque rise specification */
-    uint16_t peak_torque;  /* Peak torque specification */
-    uint16_t peak_torque_rpm;  /* Peak torque RPM specification */
-    uint16_t governed_speed;  /* Governed speed specification */
-    uint16_t ecm_id;  /* ECM identification number */
-    uint32_t ecm_part_number;  /* ECM part number */
-    uint32_t ecm_serial_number;  /* ECM serial number */
-    uint8_t ecm_voltage_low_range;  /* ECM voltage low range */
-    uint8_t ecm_voltage_high_range;  /* ECM voltage high range */
-    uint8_t ecm_code[10];  /* ECM identification code */
-    uint8_t engine_calibration_time[12];  /* Engine calibration timestamp */
-    uint16_t sc_option_number;  /* SC option number */
-    uint16_t do_option_number;  /* DO option number */
-    uint8_t other_options[40];  /* Other options field */
-    uint8_t oem_name[15];  /* Original equipment manufacturer name */
-    uint8_t oem_vehicle[15];  /* OEM vehicle designation */
-    uint8_t vin[20];  /* Vehicle identification number */
-    uint8_t vehicle_year[10];  /* Vehicle manufacturing year */
-    uint8_t customer_name[15];  /* Customer name */
-    uint8_t location[15];  /* Installation location */
-    uint8_t unit_number[10];  /* Unit identification number */
-};
-
-struct memory_operation_request_t {
-    uint32_t source_data_ptr;  /* Pointer to source data for memory operation */
-    uint32_t target_data_ptr;  /* Pointer to destination memory location */
-    uint16_t operation_size;  /* Number of bytes to copy (max varies) */
-    uint16_t metadata_value;  /* Logging metadata/timestamp for circular buffer */
-};
-
-struct j1939_source_addresses_t {
-    uint16_t source_addr_1;  /* J1939 source address 1 */
-    uint16_t source_addr_2;  /* J1939 source address 2 */
-    uint16_t source_addr_3;  /* J1939 source address 3 */
-    uint16_t source_addr_4;  /* J1939 source address 4 */
-    uint16_t source_addr_5;  /* J1939 source address 5 */
-};
-
-struct network_type_switches_t {
-    uint8_t type_switch_1;  /* Network type switch 1 (0=J1922 1=J1939) */
-    uint8_t type_switch_2;  /* Network type switch 2 (0=J1922 1=J1939) */
-    uint8_t type_switch_3;  /* Network type switch 3 (0=J1922 1=J1939) */
-    uint8_t type_switch_4;  /* Network type switch 4 (0=J1922 1=J1939) */
-    uint8_t type_switch_5;  /* Network type switch 5 (0=J1922 1=J1939) */
-};
-
-struct diag_transfer_state_t {
-    uint16_t target_address;  /* Target memory address for transfer */
-    uint32_t data_pointer;  /* Pointer to source/dest data buffer */
-    uint16_t remaining_length;  /* Remaining bytes to transfer */
-    uint16_t byte_count;  /* Total byte count for operation */
-    uint8_t tx_active_flag;  /* Transmit operation active (0/1) */
-    uint8_t rx_active_flag;  /* Receive operation active (0/1) */
-};
-
-struct diag_service_request_t {
-    uint8_t message_length;  /* Total message length including header */
-    uint8_t service_id;  /* Service identifier (3=secured 4=control 5=memory) */
-    uint8_t sub_function;  /* Sub-function code for service routing */
-    uint8_t data_payload[16];  /* Variable-length request data payload */
-};
-
-struct circular_buffer_t {
-    uint16_t write_index;  /* Current write position (0-N) */
-    uint16_t entry_count;  /* Number of entries in buffer */
-    uint16_t read_index;  /* Current read position (0-N) */
-    uint16_t buffer_size;  /* Maximum buffer capacity */
-};
-
-struct address_range_entry_t {
-    uint32_t start_address;  /* Start of valid address range (big-endian) */
-    uint32_t end_address;  /* End of valid address range (big-endian) */
-    uint8_t special_mode_flag;  /* Access flag when in special mode (non-0x09/0x0A = allow) */
-    uint8_t normal_mode_flag;  /* Access flag in normal operation (0x09=invalid 0x0A=denied other=allow) */
-};
-
-struct fuel_limit_arbitration_t {
-    uint16_t source_id;  /* ID of current fuel limit source (arbitrator output) */
-    uint16_t demand_limited;  /* Rate-limited fuel demand */
-    uint16_t arbitration_threshold;  /* Fuel limit arbitration threshold */
-    uint16_t demand_delta;  /* Fuel demand delta for rate limiting */
-    uint16_t maximum_limit;  /* Maximum fuel demand limit */
-    uint16_t offset_value;  /* Fuel limit offset value */
-    uint16_t comparison_low;  /* Fuel limit comparison low value */
-    uint16_t comparison_high;  /* Fuel limit comparison high value */
-    uint16_t rate_limit;  /* Fuel demand rate limiting value */
-};
-
-struct engine_control_flags_t {
-    uint16_t fuel_demand_control;  /* Fuel demand mode control flags */
-    uint16_t protection_system;  /* Protection system status flags */
-    uint16_t engine_operating_state;  /* Engine operating state flags */
-    uint16_t reserved_06;  /* Gap/reserved */
-    uint16_t reserved_08;  /* Gap/reserved */
-    uint16_t fuel_temp_control;  /* Fuel temp control bit flags */
-};
-
-struct high_rpm_protection_t {
-    uint16_t fault_flag;  /* High RPM protection fault active flag */
-    uint16_t state;  /* State machine state */
-    uint16_t timer;  /* Countdown timer */
-    uint16_t reserved_06;  /* Reserved/gap */
-    uint16_t warning_flag;  /* Warning active flag */
-};
-
-struct oil_pressure_protection_t {
-    uint32_t sensor_status_history_bits;  /* Sensor status history bits - shifting record */
-    uint16_t rpm_ramp_complete;  /* Flag indicating RPM ramp complete */
-    uint16_t rpm_limit_current;  /* Current RPM limit from oil pressure */
-    uint16_t rpm_limit_target;  /* Target RPM limit for oil pressure */
-    uint16_t rpm_limit_previous;  /* Previous RPM limit for tracking */
-    uint16_t state_index;  /* State index for oil pressure protection */
-    uint16_t validation_timer;  /* Timer for oil pressure validation */
-    uint16_t sensor_validation_counter;  /* Sensor status validation counter */
-};
-
-struct fault_persistence_counters_t {
-    uint8_t periodic_monitor_phase;  /* 5-phase counter for periodic fault monitoring */
-    uint8_t can_pin_fault;  /* CAN pin switching fault persistence counter */
-    uint8_t io_fault_1;  /* I/O control fault 1 persistence counter */
-    uint8_t io_fault_2;  /* I/O control fault 2 persistence counter */
-    uint8_t io_fault_3;  /* I/O control fault 3 persistence counter */
-    uint8_t io_fault_4;  /* I/O control fault 4 persistence counter */
-    uint8_t io_fault_5;  /* I/O control fault 5 persistence counter */
-    uint8_t io_fault_6;  /* I/O control fault 6 persistence counter */
-};
-
-struct fault_status_registers_t {
-    uint16_t sensor_fault_status;  /* Sensor fault status register */
-    uint16_t fault_status_2;  /* Fault status flags register 2 */
-    uint16_t engine_fault_status;  /* Engine fault status register */
-    uint16_t reserved_06;  /* Reserved/gap */
-    uint16_t io_fault_status_1;  /* IO fault status register 1 */
-    uint16_t io_fault_status_2;  /* IO fault status register 2 */
-    uint16_t io_fault_status_3;  /* IO fault status register 3 */
-    uint16_t io_fault_status_4;  /* IO fault status register 4 */
-};
-
-struct fault_latch_registers_t {
-    uint16_t sensor_fault_latch;  /* Sensor fault latch register */
-    uint16_t fault_status_8_previous;  /* Previous state for edge detection */
-    uint16_t engine_fault_latch;  /* Engine fault latch register */
-    uint16_t reserved_06;  /* Reserved/gap */
-    uint16_t io_fault_latch_1;  /* IO fault latch register 1 */
-    uint16_t io_fault_latch_2;  /* IO fault latch register 2 */
-    uint16_t io_fault_latch_3;  /* IO fault latch register 3 */
-    uint16_t io_fault_latch_4;  /* IO fault latch register 4 */
-};
-
-struct engine_operating_mode_t {
-    uint16_t state;  /* Engine operating mode state 1-8 */
-    uint16_t shutdown_complete_flag;  /* Engine shutdown complete flag */
-};
-
-struct rpm_fuel_protection_t {
-    uint16_t fuel_limit_shutdown;  /* Fuel limit during shutdown */
-    uint16_t high_rpm_fuel_limit;  /* High RPM fuel control limit */
-    uint16_t low_rpm_fuel_protection_limit;  /* Low RPM fuel protection limit */
-    uint16_t rpm_rate_limiter_output;  /* RPM rate limiter output */
-    uint16_t rpm_rate_limited_value;  /* RPM rate limited value */
-    uint16_t rpm_rate_secondary_calc;  /* Secondary RPM rate calculation */
-    uint16_t rpm_state_accumulator;  /* RPM state accumulator */
-    uint16_t high_rpm_fuel_accumulator;  /* High RPM fuel accumulator */
-    uint16_t low_rpm_fuel_accumulator;  /* Low RPM fuel accumulator */
-    uint16_t fuel_demand_before_limiting;  /* Fuel demand saved before limiting */
-    uint16_t low_rpm_threshold_exceeded_flag;  /* Low RPM threshold exceeded flag */
-    uint16_t rpm_threshold_exceeded_flag;  /* RPM threshold exceeded flag */
-    uint16_t high_rpm_threshold_exceeded_flag;  /* High RPM threshold exceeded flag */
-    uint16_t fuel_protection_timer_enable;  /* Timer enable for protection state machines */
-    uint16_t fuel_system_protection_enabled;  /* Master fuel protection system enable (1=active) */
-};
-
-struct timing_mode_control_t {
-    uint16_t blend_factor;  /* Fuel timing mode blend factor Q14 */
-    uint16_t protection_blend_ramp;  /* Timing protection blend ramp 0-16384 */
-    uint16_t source_selector;  /* Timing mode source selector 0-4 */
-    uint16_t transition_result;  /* Timing mode transition result */
-    uint16_t fuel_blend_result;  /* Timing fuel blend result */
-    uint16_t oil_pressure_result;  /* Timing oil pressure condition result */
-    uint16_t mode_11_result;  /* Timing mode 11 countdown result */
-    uint16_t protection_counter_1;  /* Timing protection counter 1 */
-    uint16_t protection_counter_2;  /* Timing protection counter 2 */
-    uint16_t blend_state;  /* Timing blend state */
-    uint16_t blend_accumulator;  /* Timing blend accumulator */
-    uint16_t fuel_source_mode_11_state;  /* Fuel source mode 11 state */
-    uint16_t fuel_source_mode_11_timer;  /* Fuel source mode 11 timer */
-    uint16_t fuel_mode_transition_state;  /* Fuel mode transition state */
-    uint16_t fuel_mode_transition_timer;  /* Fuel mode transition timer */
 };
 
 struct j1939_powertrain_messages_received_t {
