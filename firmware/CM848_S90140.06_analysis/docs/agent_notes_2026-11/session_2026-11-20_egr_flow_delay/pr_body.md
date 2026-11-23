@@ -751,6 +751,11 @@ state enum, the flag bytes.**
   0x17), types the boot validator and dispatcher. The coolant friction torque term is named (round 62's lead).
 - **Follow-up (c48cc435):** three boot result members renamed from the boot kernel's own producers, three
   added (0x10 / 0x14 checksum mismatch / 0x15), and the torque words renamed from e2m.
+**Round 67.**
+- **Stage A (ebb61637):** the boot kernel's reflash state machine. EEPROM word 0 is typed `ECM_STATUS` (e2m 000B
+  ECM_Status: valid / reflash in progress / downloaded, not verified). The reflash functions are renamed from
+  their bodies (begin = mark + erase, verify = checksum the image). `BOOT_REQUEST_CHANNEL` types the channel;
+  `download_block_list` and `crc_ccitt_table` are typed, and `eeprom_param_t` / a duplicate enum are removed.
 
 ## Test plan
 
@@ -843,6 +848,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 67: 22 of 1968 functions differ after canonicalization: 21 predicted (the 10 retyped reflash functions; the CRC table builder and reader; the block finish and the serial transfer block that fill download_block_list; the J1939 write worker and the serial data handler, which pass the channel; the erase dispatcher loop and its local; the five boot readers of ECM_STATUS; the serial begin, whose EEPROM casts went) plus one local declaration-order move (mpc555_areBootModeStrapPinsHigh). No new name renders in pieces. verify is byte-identical; thunks 18 / 14; prototype and local rows 0 failed, locals Skipped 8 (the baseline, the same warnings as round 66). Headers regenerated (0 g++ errors), tests pass, lookup tables 920 with 0 sizing problems, audit_cal_suffixes.py HARD 0 / MISSING 216 (was 219: the three EEPROM words now end in _cal), history notes intact, leftovers 0.
 - [x] Round 66: stage A 6 of 1968 functions differ: the 4 predicted (the boot validator returns BOOT_DIAGNOSTIC_RESULT names and reads its j1939_rx_msg_t request through fields; the boot dispatcher names UNKNOWN_SERVICE / REGION_REFUSED and its entry / result_code locals; the 0x19 handler takes the enum return; the net torque calculation names its coolant friction term) and two local declaration-order moves. No artifact count changed. verify byte-identical, thunks 18 / 14, 0 failed prototype or local rows, history notes intact, headers 0 g++ errors, tests pass, HARD 0 / MISSING 219.
 - [x] Round 65: stage A 4 of 1968 functions differ with the 38 renames mapped: the two SCI functions by the newly named globals and the registrar by its renamed count plus the PTR_<handler>_003fd416 auto-label that embeds the renamed TP.CM dispatcher's name, and one local declaration-order move; no artifact count changed. Stage B 21: the 18 typed functions (86 casts and 75 placeholder names removed, none added), cm848_initJ1939ProtocolHandlers (its 0xea00 key no longer renders as a function pointer) and two declaration-order moves. Every verify byte-identical, thunks 18 / 14, 0 failed prototype or local rows, history notes intact, headers 0 g++ errors, tests pass, HARD 0 / MISSING 219.
 - [x] Round 64: stage A 6 of 1968 functions differ: the selector, its 3 callers (each loses its cast) and two local declaration-order moves. Stage B 6: the boot allocator, its 2 callers (each loses its cast), the 2 boot transmit functions and one declaration-order move. Stage C 9: the 7 handlers, the validator and the dispatcher, with no cast or placeholder added or removed (the dispatcher's split temp is J1939_DIAGNOSTIC_RESULT JVar1 now - was uint uVar1); CM550's output equals a base build. Every verify byte-identical, thunks 18 / 14, 0 failed prototype or local rows, no artifact count changed, headers 0 g++ errors for both firmwares, tests pass, HARD 0 / MISSING 219.

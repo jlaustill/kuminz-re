@@ -578,3 +578,10 @@ Hand work on the round 7 lead.
 ## Round 66: the boot kernel's result codes, the coolant friction torque term (`session_folder/round66/`)
 
 - **Stage A:** `apply_r66a.py`, `map_r66a.csv`, `shared_unprefixed.py`. **Proof:** `prove_r66.sh`. **Closing:** `apply_r66_closing.py`, `update_large_tar_r66.sh`.
+
+## Round 67: the boot kernel's reflash state machine (`session_folder/round67/`)
+
+- **Stage A:** `apply_r67a.py` then `fix_r67a2.py` (two retypes dropped after the first build), `map_r67a.csv`,
+  `params_r67a.csv`. **Proof:** `prove_r67.sh` (renames enum members as text too), `list_differing.py` (all
+  canonically differing functions; prove_caches.py prints 12). **Closing:** `apply_r67_closing.py`,
+  `update_large_tar_r67.sh`.

@@ -1,0 +1,54 @@
+cm848: round 67 stage A - the boot kernel's reflash state machine: ECM_STATUS, the reflash functions, the download block list
+
+EEPROM word 0 is e2m 000B +0 ECM_Status, "Indicator as to the calibration status of the ECM". The boot ROM reads it
+before it jumps to the operational code, and the reflash path walks it through three values. The old EEPROM_MAGIC
+enum named the values but was applied nowhere, and its 0x2b16 "needs programming" had the meaning backwards.
+- ECM_STATUS on eeprom_header_t.ecm_status (was magic):
+  - 0x600d CALIBRATION_VALID: written after a verified download; the boot ROM runs the operational code only with
+    it (and the boot mode strap pins low);
+  - 0x1d0a REFLASH_IN_PROGRESS: the application's serial reflash request writes it while its image is still intact,
+    and mpc555_beginReflash before the erase; it keeps the boot kernel resident;
+  - 0x2b16 CALIBRATION_DOWNLOADED_NOT_VERIFIED: cm848_finishSerialReflash (no J1939 writer found in the firmware).
+- The reflash functions, renamed from their bodies (no CM550 twins; "reflash" is the CSVs' existing word):
+  - mpc555_initEepromTransfer -> mpc555_beginReflash: marks REFLASH_IN_PROGRESS / erases the internal flash but
+    block 0 (mask 0x7ffc: the boot block keeps the boot ROM) and then the Bank 2 chip / answers / resets the download
+    tracking;
+  - mpc555_loadEepromCalibration -> mpc555_verifyDownloadedCalibration: sums the image header's checksum regions and
+    checks the block list, then writes CALIBRATION_VALID or answers 0x15;
+  - cm848_eepromProgressNotify -> cm848_sendBootResultToJ1939Requester: answers only the J1939 channel;
+  - the service 2 / 7 handlers -> cm848_handleBootBeginReflashService / cm848_handleBootVerifyDownloadedCalibrationService,
+    and the BOOT_DIAGNOSTIC_SERVICE members BEGIN_REFLASH / VERIFY_DOWNLOADED_CALIBRATION;
+  - the serial path: cm848_beginSerialReflash / cm848_finishSerialReflash / cm848_dispatchSerialReflashRequest /
+    cm848_resetSerialReflashState (were cm848_beginEepromCalibrationWrite / cm848_updateEepromMagicAndReload /
+    cm848_dispatchEepromWriteRequest / cm848_resetEepromCalibrationState);
+  - cm848_registerBootCalibrationAndNoOperationServices -> cm848_registerBootReflashAndNoOperationServices.
+- BOOT_REQUEST_CHANNEL (2 J1939 / 3 serial) on the five functions that carry the channel, with full prototypes. The
+  code also tests 1; no caller passes it.
+- BOOT_DIAGNOSTIC_RESULT:
+  - 0x15 DOWNLOAD_BLOCK_LIST_FULL -> DOWNLOAD_INVALID: the verifier sends it too;
+  - 0xfe RESPONSE_PENDING added: cm848_sendDiagResponsePending sends it (round 66 said 0xfe had no producer);
+  - the 0x14 comment names CM550's J1939_DIAGNOSTIC_RESULT (c48cc435 said DIAG_RESPONSE_CODE).
+- Globals:
+  - serial_reflash_busy_flag / serial_reflash_erase_pending_flag (were eeprom_calibration_pending_flag /
+    eeprom_write_pending_flag); their application-side notes are kept;
+  - EEPROM 0x50 / 0x52 / 0x54: serial_reflash_status_flags_cal / serial_reflash_success_count_cal /
+    serial_reflash_attempt_count_cal (were eeprom_cal_word1-3; now word);
+  - 0x30252a begin_reflash_request (j1939_rx_msg_t *) and 0x302530 crc_ccitt_table (word[256], filled by
+    cm848_generateCrcTable with the reflected polynomial 0x8408). Both were one eeprom_param_t "eeprom_diag_callback";
+    eeprom_param_t (a type ported from CM550 and used only there) and the orphan can_tx_status.callback_param row
+    are removed;
+  - download_block_list: download_block_range_t[10] at 0x3028b3, right after eeprom_block_tracking (asm: base
+    0x3028b3, stride 8; it ends where the next named row starts). Both paths fill it: cm848_finishDownloadBlock (J1939)
+    and mpc555_diagServiceTransferBlock (serial). Was DAT_003028b3 / DAT_003028b7;
+  - four stale flat rows inside eeprom_block_tracking became its field rows.
+- The DIAGNOSTIC_SERVICE enum, a duplicate of BOOT_DIAGNOSTIC_SERVICE that nothing types, is removed.
+- The erase_result local (was eeprom_init_result, whose note said 0 = success; 0 is the failure).
+- Two retypes were tried and dropped after the first build:
+  - cm848_sendDiagServiceResponse's result stays dword: its body reuses the variable, and the 0x0c positive
+    response service rendered as UNKNOWN_PARAMETER_ID|CANNOT_COMPLY;
+  - cm848_writeBootDiagnosticMemory keeps its inferred return: its returned variable also holds the region type,
+    and regions 3 / 4 / 5 rendered as result codes. (It does return the tracker's status: asm 0x5710.)
+
+Proof (prove_r67.sh with list_differing.py): PROOF_LINE
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,38 @@
+functions 1968; differing after canonicalization: 22; pieces of new names: 0
+== mpc555_keyOnStateMachine 
+   old ...lags.state=0;eeprom_block_tracking.watchdog_counter=0;if(eeprom_shadow_header.ecm_status==0x600d){if(eeprom_config_write_triggered_flag==0){eeprom_write_buffer=ecu_power_state_flags.runtime_counter;ee
+   new ...lags.state=0;eeprom_block_tracking.watchdog_counter=0;if(eeprom_shadow_header.ecm_status==ECM_STATUS_CALIBRATION_VALID){if(eeprom_config_write_triggered_flag==0){eeprom_write_buffer=ecu_power_state_fl
+== cm848_sendBootResultToJ1939Requester 
+   old ...//voidcm848_sendBootResultToJ1939Requester(j1939_rx_msg_t*request,intchannel,dwordresult){if((channel!=1)&&(channel==2)){cm848_sendDiagServiceResponse(request,result);}return;}
+   new ...//voidcm848_sendBootResultToJ1939Requester(j1939_rx_msg_t*request,BOOT_REQUEST_CHANNELchannel,BOOT_DIAGNOSTIC_RESULTresult){if((channel!=1)&&(channel==BOOT_REQUEST_CHANNEL_J193
+== mpc555_verifyDownloadedCalibration 
+   old ...//voidmpc555_verifyDownloadedCalibration(undefined4request,intchannel){boolbVar1;dworddVar2;bytebVar3;wordwVar4;shortsVar5;ushortuVar6;ushortuVar7;usho
+   new ...//voidmpc555_verifyDownloadedCalibration(j1939_rx_msg_t*request,BOOT_REQUEST_CHANNELchannel){boolbVar1;dworddVar2;bytebVar3;wordwVar4;shortsVar5;ushort
+== cm848_handleBootVerifyDownloadedCalibrationService 
+   old ...//undefined4cm848_handleBootVerifyDownloadedCalibrationService(undefined4request){mpc555_verifyDownloadedCalibra
+   new ...//BOOT_DIAGNOSTIC_RESULTcm848_handleBootVerifyDownloadedCalibrationService(j1939_rx_msg_t*request){mpc555_verify
+== mpc555_beginReflash 
+   old ...//shortmpc555_beginReflash(intchannel){j1939_rx_msg_t*request;bytebVar1;shortsVar2;shortsVar3;dwordresult_code;u
+   new ...//wordmpc555_beginReflash(BOOT_REQUEST_CHANNELchannel){j1939_rx_msg_t*request;bytebVar1;shortsVar2;wordwVar3;dwo
+== cm848_handleBootBeginReflashService 
+   old ...//undefined4cm848_handleBootBeginReflashService(undefined4request){shortsVar2;undefined4uVar1;cm848_sendDiagResp
+   new ...//BOOT_DIAGNOSTIC_RESULTcm848_handleBootBeginReflashService(j1939_rx_msg_t*request){wordwVar2;BOOT_DIAGNOSTIC_RE
+== cm848_computeCrcCcitt 
+   old ...,uintparam_2){uintuVar1;uVar1=0;for(;param_2!=0;param_2=param_2+0xff&0xff){uVar1=uVar1>>8^(&crc_ccitt_table)[(uVar1^*(byte*)*param_1)&0xff];*(char*)(param_1+3)=*(char*)(param_1+3)+1;}returnuVar1;}//
+   new ...,uintparam_2){uintuVar1;uVar1=0;for(;param_2!=0;param_2=param_2+0xff&0xff){uVar1=uVar1>>8^crc_ccitt_table[(uVar1^*(byte*)*param_1)&0xff];*(char*)(param_1+3)=*(char*)(param_1+3)+1;}returnuVar1;}//
+== cm848_generateCrcTable 
+   old ...r2=sVar2+-1;if((uVar3&1)==0){uVar3=uVar3>>1;}else{uVar3=uVar3>>1^0x8408;}}while(sVar2!=0);(&crc_ccitt_table)[uVar1]=uVar3;uVar1=uVar1+1&0xffff;}while(uVar1<0x100);return;}//
+   new ...r2=sVar2+-1;if((uVar3&1)==0){uVar3=uVar3>>1;}else{uVar3=uVar3>>1^0x8408;}}while(sVar2!=0);crc_ccitt_table[uVar1]=uVar3;uVar1=uVar1+1&0xffff;}while(uVar1<0x100);return;}//
+== mpc555_processDiagnosticAndEepromRequests 
+   old ...//voidmpc555_processDiagnosticAndEepromRequests(void){bytebVar1;wordeeprom_init_result;bytediag_response_code;mpc555_sciValidateChecksum();cm848_processDiagnosticTimeout();if((dia
+   new ...//voidmpc555_processDiagnosticAndEepromRequests(void){bytebVar1;worderase_result;bytediag_response_code;mpc555_sciValidateChecksum();cm848_processDiagnosticTimeout();if((diag_requ
+== mpc555_eepromValidationCycle 
+   old ...1;return;}oil_change_monitor_fault_event_bits_cal=0xc;if(eeprom_shadow_header.ecm_status==0x600d){oil_change_monitor_fault_event_bits_cal=dVar1;return;}}else{oil_change_monitor_fault_event_bits_cal=0;
+   new ...1;return;}oil_change_monitor_fault_event_bits_cal=0xc;if(eeprom_shadow_header.ecm_status==ECM_STATUS_CALIBRATION_VALID){oil_change_monitor_fault_event_bits_cal=dVar1;return;}}else{oil_change_monitor_f
+== mpc555_areBootModeStrapPinsHigh 
+   old ...ordwVar1;wordport_output_zero;word*qadc_b_port;word*qadc_a_port;word*qadc_b_direction;worddirection_register_value;wordqadc_b_pqb0_sample;wordqadc_b_pqa4_sample;wordqadc_a_pqa2_sample;qadc_b_direction
+   new ...ordwVar1;wordport_output_zero;word*qadc_b_port;word*qadc_a_port;word*qadc_b_direction;wordqadc_b_pqb0_sample;wordqadc_b_pqa4_sample;wordqadc_a_pqa2_sample;worddirection_register_value;qadc_b_direction
+== mpc555_systemInitialization 
+   old ...();bVar2=eeprom_service_mode_flags;if(((bVar2&0xf)!=0)&&(eeprom_shadow_header.ecm_status==0x1d0a)){cm848_runBootKernelLoop();mpc555_initHardwareConfig();}cm848_serviceSupervisorWatchdog();mpc555_can2T
+   new ...();bVar2=eeprom_service_mode_flags;if(((bVar2&0xf)!=0)&&(eeprom_shadow_header.ecm_status==ECM_STATUS_REFLASH_IN_PROGRESS)){cm848_runBootKernelLoop();mpc555_initHardwareConfig();}cm848_serviceSuperviso
+struct instances 1; piece or underscore renders: 0 

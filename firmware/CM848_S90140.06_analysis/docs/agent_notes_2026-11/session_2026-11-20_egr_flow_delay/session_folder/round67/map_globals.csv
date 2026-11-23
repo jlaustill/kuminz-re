@@ -1,0 +1,9 @@
+address,name,old_label,kind,dims
+0x003fedee,serial_reflash_busy_flag,eeprom_calibration_pending_flag,global,1
+0x003fedf4,serial_reflash_erase_pending_flag,eeprom_write_pending_flag,global,1
+0x003fee0a,eeprom_shadow_header.ecm_status,eeprom_shadow_header.magic,global,1
+0x01000050,serial_reflash_status_flags_cal,eeprom_cal_word1,global,1
+0x01000052,serial_reflash_success_count_cal,eeprom_cal_word2,global,1
+0x01000054,serial_reflash_attempt_count_cal,eeprom_cal_word3,global,1
+0x00302530,crc_ccitt_table,eeprom_diag_callback.default_value,global,1
+0x0030252a,begin_reflash_request,eeprom_diag_callback,global,1
