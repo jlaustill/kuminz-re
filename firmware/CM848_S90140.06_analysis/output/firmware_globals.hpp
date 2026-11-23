@@ -90,6 +90,7 @@ extern word fault_derate_fuel_limit_by_engine_speed_axis[25];  // 0x000597d6
 extern word fault_derate_fuel_limit_by_engine_speed_values[25];  // 0x00059808
 extern dword fault_countdown_elapsed_time_mode_0;  // 0x0005983a
 extern dword fault_countdown_decrement_interval_mode_0;  // 0x0005983e
+extern byte fault_code_assignment_table;  // 0x0005985a
 extern fault_definition_t fault_definition_table[170];  // 0x00059e9a
 extern word engine_retarder_torque_engine_speed_axis[5];  // 0x0005a426
 extern word engine_retarder_torque_stage_1_values[5];  // 0x0005a430
@@ -104,6 +105,8 @@ extern word j1939_transmission_source_address;  // 0x0005a470
 extern word j1939_anti_lock_brake_source_address;  // 0x0005a472
 extern word j1939_anti_slip_regulation_source_address;  // 0x0005a474
 extern word supported_non_continuous_monitors_bits;  // 0x0005a494
+extern byte j1939_dm4_manufacturer_specific_parameters;  // 0x0005a496
+extern byte fault_111_j1939_data;  // 0x0005a4aa
 extern word friction_fuel_by_engine_speed_axis[10];  // 0x0005a77c
 extern word friction_fuel_by_engine_speed_values[10];  // 0x0005a790
 extern word friction_fuel_correction_by_coolant_temperature_axis[12];  // 0x0005a7a4
@@ -212,6 +215,7 @@ extern word oil_pressure_model_grid[25];  // 0x0005b48c
 extern sensor_channel_config_t injector_driver_booster_capacitor_1_voltage_sensor_config;  // 0x0005b55c
 extern sensor_channel_config_t injector_driver_booster_capacitor_2_voltage_sensor_config;  // 0x0005b56c
 extern word obd_dtc_code_table;  // 0x0005b57c
+extern word mil_fault_indicator_bits;  // 0x0005b6d0
 extern fault_monitor_group_t fault_monitor_group_table[32];  // 0x0005b6e6
 extern word thermostat_monitor_minimum_fuel_to_fail_axis[6];  // 0x0005b8e6
 extern word thermostat_monitor_minimum_fuel_to_fail_values[6];  // 0x0005b8f2
@@ -274,8 +278,11 @@ extern word j1939_rated_speed_tau_0;  // 0x0005c2b4
 extern word j1939_speed_breakpoint_3_tau_0;  // 0x0005c2b6
 extern word j1939_speed_breakpoint_4_tau_0;  // 0x0005c2b8
 extern word j1939_speed_breakpoint_5_tau_0;  // 0x0005c2ba
+extern word duty_cycle_monitor_high_cutoff_engine_speed;  // 0x0005c2bc
 extern word duty_cycle_monitor_low_cutoff_engine_speed;  // 0x0005c2be
+extern word engine_protection_fueling_index_ramp_rate;  // 0x0005c2ec
 extern word engine_speed_limit_fault_derate_full_severity;  // 0x0005c2f0
+extern word engine_protection_maximum_shutdowns;  // 0x0005c2f4
 extern word fault_derate_curve_low_speed_governor_intercept_fueling;  // 0x0005c2f6
 extern word fault_derate_curve_high_speed_governor_intercept_fueling;  // 0x0005c2f8
 extern word fault_derate_curve_engine_speed_point_2;  // 0x0005c2fa
@@ -303,6 +310,11 @@ extern word j1939_derated_fueling_at_idle;  // 0x0005c352
 extern word j1939_derated_fueling_at_point_3;  // 0x0005c354
 extern word j1939_derated_fueling_at_point_4;  // 0x0005c356
 extern word j1939_derated_fueling_at_point_5;  // 0x0005c358
+extern word j1939_low_power_derated_engine_speed_at_point_2;  // 0x0005c35a
+extern word j1939_low_power_derated_fueling_at_point_2;  // 0x0005c35c
+extern word j1939_low_power_point_5_intersection_engine_speed;  // 0x0005c35e
+extern word j1939_high_power_derated_engine_speed_at_point_2;  // 0x0005c360
+extern word j1939_high_power_derated_fueling_at_point_2;  // 0x0005c362
 extern word low_speed_governor_reference_speed_delta;  // 0x0005c366
 extern word j1939_all_speed_governor_droop_minimum_limit;  // 0x0005c368
 extern word engine_retarder_configuration_reference_torque;  // 0x0005c36a
@@ -390,6 +402,7 @@ extern word cooling_fan_feed_forward_duty_x_axis[9];  // 0x0005c6f6
 extern word cooling_fan_feed_forward_duty_y_axis[8];  // 0x0005c708
 extern word cooling_fan_feed_forward_duty_grid[56];  // 0x0005c718
 extern word intake_air_heater_crank_time_limit;  // 0x0005c788
+extern word intake_air_heater_fuel_threshold;  // 0x0005c78a
 extern word intake_air_heater_fuel_time_limit;  // 0x0005c78c
 extern word intake_air_heater_override_time_limit;  // 0x0005c78e
 extern word intake_air_heater_overvoltage_limit;  // 0x0005c790
@@ -397,11 +410,14 @@ extern word intake_air_heater_postheat_stage_engine_speed;  // 0x0005c794
 extern word intake_air_heater_postheat_stage_engine_speed_hysteresis;  // 0x0005c796
 extern word intake_air_heater_postheat_temperature_select_delta;  // 0x0005c798
 extern word intake_air_heater_vehicle_speed_threshold;  // 0x0005c79a
+extern int16_t intake_air_heater_postheat_coolant_temperature_limit;  // 0x0005c79c
 extern int16_t intake_air_heater_postheat_input_temperature_limit;  // 0x0005c79e
 extern word intake_air_heater_redundant_preheat_time;  // 0x0005c7a0
 extern word intake_air_heater_crank_heat_subtraction_enable_flag;  // 0x0005c7a2
 extern word intake_air_heater_crank_heat_time_limit;  // 0x0005c7a4
 extern word intake_air_heater_crank_low_engine_speed_time_limit;  // 0x0005c7a6
+extern word intake_air_heater_crank_off_engine_speed;  // 0x0005c7a8
+extern word intake_air_heater_crank_on_engine_speed;  // 0x0005c7aa
 extern int16_t intake_air_heater_default_intake_manifold_temperature;  // 0x0005c7ac
 extern word pci_message_timeout_grace;  // 0x0005c7ae
 extern word pci_link_error_limit;  // 0x0005c7b0
@@ -527,6 +543,9 @@ extern word injection_timing_auxiliary_map_4_y_axis[17];  // 0x0005eeac
 extern word injection_timing_auxiliary_map_4_grid[304];  // 0x0005eece
 extern word injection_end_limit_base_axis[8];  // 0x0005f12e
 extern word injection_end_limit_base_values[8];  // 0x0005f13e
+extern byte injector_bank_by_cylinder;  // 0x0005f14e
+extern byte injection_injector_by_cylinder;  // 0x0005f156
+extern byte recharge_injector_by_cylinder;  // 0x0005f15e
 extern word injection_angle_offset_x_axis[6];  // 0x0005f166
 extern word injection_angle_offset_y_axis[12];  // 0x0005f172
 extern word injection_angle_offset_grid[55];  // 0x0005f18a
@@ -4455,8 +4474,10 @@ extern commanded_throttle_state_t commanded_throttle_state;  // 0x0040a57a
 extern word emission_level_cap_command;  // 0x0040a5b4
 extern word emission_manager_engine_protection_state;  // 0x0040a5ee
 extern word compressor_inlet_density;  // 0x0040a604
+extern word compressor_inlet_density_source;  // 0x0040a606
 extern word compressor_inlet_temperature;  // 0x0040a608
 extern SENSOR_VALUE_SOURCE compressor_inlet_temperature_source;  // 0x0040a60a
+extern word compressor_inlet_temperature_state;  // 0x0040a60c
 extern word compressor_map_corrected_air_flow;  // 0x0040a60e
 extern word compressor_map_corrected_turbocharger_speed;  // 0x0040a610
 extern word compressor_outlet_temperature_to_inlet_temperature_ratio;  // 0x0040a612
@@ -4466,6 +4487,7 @@ extern SENSOR_VALUE_SOURCE compressor_outlet_temperature_source;  // 0x0040a618
 extern word compressor_outlet_temperature_estimation_active_flag;  // 0x0040a61a
 extern word coolant_temperature_selected;  // 0x0040a61c
 extern SENSOR_VALUE_SOURCE coolant_temperature_source;  // 0x0040a61e
+extern word coolant_temperature_state;  // 0x0040a620
 extern word engine_torque_estimate;  // 0x0040a622
 extern int16_t egr_orifice_delta_pressure;  // 0x0040a624
 extern SENSOR_VALUE_SOURCE egr_orifice_delta_pressure_source;  // 0x0040a626
@@ -4486,6 +4508,7 @@ extern word j1939_friction_load_fueling_at_breakpoint_3;  // 0x0040a642
 extern word j1939_friction_load_fueling_at_breakpoint_4;  // 0x0040a644
 extern word j1939_friction_load_fueling_at_breakpoint_5;  // 0x0040a646
 extern word duty_cycle_monitor_load_factor;  // 0x0040a648
+extern byte duty_cycle_monitor_operating_region;  // 0x0040a64a
 extern byte duty_cycle_monitor_map_reset_pending_flag;  // 0x0040a64b
 extern dword key_on_hour_meter;  // 0x0040a64c
 extern word egr_delta_pressure_autozero_complete_flag;  // 0x0040a650
@@ -4665,7 +4688,9 @@ extern word engine_retarder_torque_request_percent;  // 0x0040ad64
 extern word engine_retarder_requested_torque_percent;  // 0x0040ad66
 extern word can_tx_mailbox_start_index;  // 0x0040ad68
 extern word can_tx_mailbox_end_index;  // 0x0040ad6a
+extern word j1939_engine_name;  // 0x0040ad6c
 extern word j1939_source_address;  // 0x0040ad74
+extern word j1939_engine_retarder_name;  // 0x0040ad76
 extern word j1939_engine_retarder_source_address;  // 0x0040ad7e
 extern word can_transmit_completed_flag;  // 0x0040ad80
 extern word intake_air_heater_monitor_result;  // 0x0040ad82
@@ -6262,7 +6287,8 @@ extern word exhaust_temperature_model_invalid_flag;  // 0x0040a684
 extern word charge_water_vapor_fraction;  // 0x0040af68
 extern word exhaust_water_vapor_fraction;  // 0x0040af6a
 extern word inlet_water_vapor_fraction;  // 0x0040af6c
-extern word fuel_demand_mode_active_flag;  // 0x0040af72
+extern word charge_saturation_temperature_source;  // 0x0040af72
+extern word exhaust_saturation_temperature_source;  // 0x0040af74
 extern word ambient_saturation_vapor_pressure;  // 0x0040af76
 extern dword ambient_water_vapor_partial_pressure;  // 0x0040af78
 extern dword egr_cooler_condensation_count_maximum;  // 0x00406552
@@ -6330,6 +6356,7 @@ extern word converter_clutch_lockup_third_gear_minimum_ratio;  // 0x00408ada
 extern word converter_clutch_lockup_fourth_gear_ratio_limit;  // 0x00408adc
 extern word converter_clutch_rationality_ratio;  // 0x0040b581
 extern word converter_clutch_lockup_gear_ratio;  // 0x0040b588
+extern byte chrysler_sci_data_plate;  // 0x00408b80
 extern byte calibration_id_byte0;  // 0x00408b81
 extern byte calibration_id_byte1;  // 0x00408b82
 extern byte calibration_id_byte2;  // 0x00408b83
@@ -6614,6 +6641,7 @@ extern byte engine_retarder_driver_inhibit_flag;  // 0x003fb553
 extern byte fuel_metering_outer_loop_coil_temperature_ready_flag;  // 0x003fb6c5
 extern byte altitude_derate_air_handling_fault_enable_a;  // 0x003ff065
 extern byte altitude_derate_air_handling_fault_enable_b;  // 0x003ff069
+extern byte altitude_derate_charge_pressure_fault_enable_bits;  // 0x003ff06c
 extern byte fuel_correction_limit_enable_c;  // 0x003ff06d
 extern byte fuel_correction_limit_enable_d;  // 0x003ff071
 extern word fuel_limit_barometric_temperature_band_cached_axis_offsets[2];  // 0x003fb9ce
@@ -6945,6 +6973,7 @@ extern word injection_timing_torque_to_fuel_gain_y_axis[17];  // 0x00405ac8
 extern word injection_timing_torque_to_fuel_gain_grid[304];  // 0x00405aea
 extern word injection_quantity_temperature_headroom_cap_upper_limit;  // 0x00405d4a
 extern word injection_quantity_temperature_headroom_cap_lower_limit;  // 0x00405d4c
+extern word injection_quantity_temperature_headroom_cap_exhaust_temperature_limit;  // 0x00405d4e
 extern word injection_quantity_temperature_headroom_cap_exhaust_metal_temperature_gain;  // 0x00405d50
 extern int16_t net_combustion_torque;  // 0x0040a54e
 extern word injection_quantity_oxygen_limit_maximum;  // 0x00406008
@@ -7165,6 +7194,7 @@ extern word injector_driver_hold_current_level;  // 0x004090b4
 extern word injector_driver_pull_in_current_level;  // 0x004090b6
 extern word injector_driver_hold_current_pwm_period_microseconds;  // 0x004090b8
 extern word injector_driver_pull_in_current_pwm_period_microseconds;  // 0x004090ba
+extern dword injector_driver_continuous_recharge_interval;  // 0x004090bc
 extern dword injector_driver_bank_cutoff_recharge_interval;  // 0x004090c0
 extern word injection_cylinder_fault_index_offset;  // 0x004090c4
 extern word injector_driver_booster_recharge_off_delay;  // 0x004090c6
@@ -7591,6 +7621,9 @@ extern word cylinder_residual_gas_mass_unclamped;  // 0x0040a578
 extern word air_handling_system_protection_near_compressor_outlet_temperature_limit_flag;  // 0x0040a5ae
 extern word air_handling_system_protection_near_turbocharger_speed_limit_flag;  // 0x0040a5b0
 extern word air_handling_system_protection_near_exhaust_temperature_limit_flag;  // 0x0040a5b2
+extern word j1939_default_engine_name;  // 0x0005a476
+extern word j1939_default_retarder_name;  // 0x0005a47e
+extern byte j1939_command_security_flags;  // 0x0005a486
 extern int16_t injection_timing_top_dead_center_offset;  // 0x0005a48a
 extern word j1939_diagnostic_vehicle_speed_in_freeze_frame_flag;  // 0x0005a48e
 extern word obd_compliance_code;  // 0x0005a490
