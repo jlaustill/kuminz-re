@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 18:15:11 MST 2026
+// Generated: Sun Nov 22 19:11:21 MST 2026
 
 
 //
@@ -9809,8 +9809,9 @@ LAB_0000f700:
   all_speed_governor_fueling = (word)uVar17;
   if ((cruise_control_engaged_flag == 1) &&
      (algorithm_enable_flags_43_cal.vacuum_throttle_cruise_enable != 0)) {
-    if ((uint)governor_override_fuel_decay < (uVar17 & 0xffff)) {
-      all_speed_governor_fueling = all_speed_governor_fueling - governor_override_fuel_decay;
+    if ((uint)all_speed_governor_vacuum_cruise_fueling_reduction < (uVar17 & 0xffff)) {
+      all_speed_governor_fueling =
+           all_speed_governor_fueling - all_speed_governor_vacuum_cruise_fueling_reduction;
     }
     else {
       all_speed_governor_fueling = 0;
@@ -42068,7 +42069,8 @@ void cm848_calculateAcceleratorPedalDemandFromChannels(void)
         (accelerator_pedal_sensor_fault_latched_flag != 0)) &&
        ((accelerator_pedal_sensor_fault_latched_flag == 0 ||
         ((fault_detected_cal.pedal_position_sensor_2_low_error != 0 &&
-         (cruise_speed_target_min <= accelerator_pedal_idle_threshold_a_cal)))))) {
+         (accelerator_pedal_single_channel_minimum_idle_threshold <=
+          accelerator_pedal_idle_threshold_a_cal)))))) {
       accelerator_pedal_input_fault_flag = 0;
       accelerator_pedal_dual_channel_validated_demand = accelerator_pedal_dual_channel_demand;
     }
@@ -44375,7 +44377,8 @@ LAB_00040548:
   adjusted_user_fueling = wVar2;
 LAB_000406b0:
   cruise_resume_active_flag_previous = cruise_resume_active_flag;
-  if ((fuel_demand_enable_sync_flag_shadow_2 == 1) && (cruise_control_engaged_flag == 0)) {
+  if ((cruise_control_engaged_flag_previous_arbitration == 1) && (cruise_control_engaged_flag == 0))
+  {
     cruise_fuel_ramp_down_working = final_fueling;
   }
   if ((((transmission_type_cal == 0) && (cruise_control_last_cutout_reason == 0xb)) ||
@@ -44402,7 +44405,7 @@ LAB_000406b0:
       (operating_mode_governor_output.mode_code != FUELING_STATE_UNIDENTIFIED_38)))) {
     adjusted_user_fueling = cruise_fuel_ramp_down_working;
   }
-  fuel_demand_enable_sync_flag_shadow_2 = cruise_control_engaged_flag;
+  cruise_control_engaged_flag_previous_arbitration = cruise_control_engaged_flag;
   if (adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR) {
     low_speed_governor_active_flag = 1;
   }
@@ -44908,10 +44911,11 @@ LAB_000410d0:
 
 /* Sets the user fueling governor_fuel_demand_working and its state
    governor_fuel_demand_working_mode: cruise_control_fueling with FUELING_STATE_CRUISE_CONTROL while
-   cruise control is engaged - unless the accelerator asks for more fuel than cruise
-   (fuel_demand_control.calculated above governor_override_fuel_threshold) or TSC1 / mode 5 / 37 /
-   38 controls - else the operating mode governor output and its mode_code (was
-   cm848_calculateProtectionLevelLimit) */
+   cruise control is engaged - unless the accelerator asks for more fuel than cruise (the operating
+   mode governor's fuel demand above the cruise fueling, with
+   commanded_throttle_state.commanded_throttle above cruise_accelerator_override_throttle_threshold)
+   or TSC1 / mode 5 / 37 / 38 controls - else the operating mode governor output and its mode_code
+   (was cm848_calculateProtectionLevelLimit) */
 
 void cm848_selectCruiseOrUserFueling(void)
 
@@ -44932,7 +44936,8 @@ void cm848_selectCruiseOrUserFueling(void)
   }
   if ((((cruise_control_engaged_flag == 0) ||
        ((((uVar1 < operating_mode_governor_output.fuel_demand &&
-          (governor_override_fuel_threshold < commanded_throttle_state.commanded_throttle)) &&
+          (cruise_accelerator_override_throttle_threshold <
+           commanded_throttle_state.commanded_throttle)) &&
          ((cruise_speed_command != road_speed_governor_reference_speed ||
           (cruise_control_fueling != road_speed_governor_fueling)))) ||
         ((operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_SPEED_CONTROL ||

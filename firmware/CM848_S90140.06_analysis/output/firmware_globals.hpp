@@ -1779,6 +1779,7 @@ extern word cruise_fuel_ramp_down_working;  // 0x003fb522
 extern FUELING_STATE governor_fuel_demand_mode_prev;  // 0x003fb524
 extern FUELING_STATE governor_fuel_demand_working_mode_prev;  // 0x003fb526
 extern word cruise_resume_active_flag_previous;  // 0x003fb528
+extern word cruise_control_engaged_flag_previous_arbitration;  // 0x003fb52a
 extern word vehicle_speed_rise_limited_prev;  // 0x003fb52c
 extern CRUISE_CONTROL_STATE cruise_speed_command_previous_state;  // 0x003fb52e
 extern dword cruise_control_engaged_previous_flag;  // 0x003fb530
@@ -2451,7 +2452,7 @@ extern word fuel_demand_ramp_step;  // 0x003ff6c2
 extern word fuel_demand_ramp_drivetrain_ratio_threshold;  // 0x003ff6c4
 extern word all_speed_governor_delta_droop;  // 0x003ff6c6
 extern word all_speed_governor_delta_upper_limit;  // 0x003ff6c8
-extern word governor_override_fuel_decay;  // 0x003ff6ce
+extern word all_speed_governor_vacuum_cruise_fueling_reduction;  // 0x003ff6ce
 extern word all_speed_governor_throttle_mode_reference_filter_coefficient;  // 0x003ff6d0
 extern word governor_fuel_demand_tracking_limit_throttle_mode;  // 0x003ff6d2
 extern word governor_fuel_demand_tracking_floor_throttle_mode;  // 0x003ff6d4
@@ -3533,7 +3534,7 @@ extern word net_torque_fuel_limit_alpha_axis[6];  // 0x004089ba
 extern word net_torque_fuel_limit_grid[70];  // 0x004089c6
 extern word accelerator_pedal_idle_learning_debounce_limit;  // 0x00408a72
 extern word accelerator_pedal_channel_disagreement_debounce_limit;  // 0x00408a74
-extern word cruise_speed_target_min;  // 0x00408a76
+extern word accelerator_pedal_single_channel_minimum_idle_threshold;  // 0x00408a76
 extern word accelerator_pedal_idle_threshold_offset;  // 0x00408a7a
 extern word accelerator_pedal_travel_span;  // 0x00408a7c
 extern word accelerator_pedal_idle_learning_deadband;  // 0x00408a7e
@@ -3699,7 +3700,8 @@ extern word cruise_bump_up_step;  // 0x00408e8c
 extern word cruise_coast_ramp;  // 0x00408e8e
 extern word cruise_minimum_coast_speed;  // 0x00408e90
 extern word cruise_minimum_set_speed;  // 0x00408e92
-extern word governor_override_fuel_threshold;  // 0x00408e96
+extern word cruise_out_of_gear_disable;  // 0x00408e94
+extern word cruise_accelerator_override_throttle_threshold;  // 0x00408e96
 extern word cruise_bump_up_step_margin_scale;  // 0x00408e98
 extern word engine_retarder_enter_minimum_engine_speed_warm_oil;  // 0x00408e9a
 extern word engine_retarder_release_passes;  // 0x00408e9c
