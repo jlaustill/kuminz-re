@@ -741,6 +741,11 @@ state enum, the flag bytes.**
   data buffers are typed.
 - **Stage C (36c29ebe):** one result-code enum, `J1939_DIAGNOSTIC_RESULT` (11 codes, each named from its producer),
   replaces two; CM550's copy of the type is renamed too.
+**Round 65.**
+- **Stage A (5e0d02e6):** 37 of the 38 unprefixed CM848-only functions are named from their code: the J1939
+  transport, the receive handlers and their registrar, two misnamed schedulers, the injection angle cluster and the
+  SCI timers.
+- **Stage B (f2588f7e):** the J1939 receive handler table is typed, and its 16 handlers take `j1939_rx_msg_t *`.
 
 ## Test plan
 
@@ -833,6 +838,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 65: stage A 4 of 1968 functions differ with the 38 renames mapped: the two SCI functions and the registrar by newly named globals, and one local declaration-order move; no artifact count changed. Stage B 21: the 18 typed functions (86 casts and 75 placeholder names removed, none added), cm848_initJ1939ProtocolHandlers (its 0xea00 key no longer renders as a function pointer) and two declaration-order moves. Every verify byte-identical, thunks 18 / 14, 0 failed prototype or local rows, history notes intact, headers 0 g++ errors, tests pass, HARD 0 / MISSING 219.
 - [x] Round 64: stage A 6 of 1968 functions differ: the selector, its 3 callers (each loses its cast) and two local declaration-order moves. Stage B 6: the boot allocator, its 2 callers (each loses its cast), the 2 boot transmit functions and one declaration-order move. Stage C 9: the 7 handlers, the validator and the dispatcher, with no cast or placeholder added or removed (the dispatcher's split temp is J1939_DIAGNOSTIC_RESULT JVar1 now - was uint uVar1); CM550's output equals a base build. Every verify byte-identical, thunks 18 / 14, 0 failed prototype or local rows, no artifact count changed, headers 0 g++ errors for both firmwares, tests pass, HARD 0 / MISSING 219.
 - [x] Round 63: stage A 9 of 1968 functions differ: the registrar, its 5 callers and the dispatcher by member names (all 24 registrations keep their values and handlers in order), the read worker by the reply table, and one local declaration-order move. Stage B 21: the 20 typed functions (45 casts and 113 placeholder names removed, 1 cast added, no new artifacts) and the same declaration-order move. Stage C 22: the 19 predicted (41 casts and 57 placeholder names removed, none added; all 14 boot registrations keep their values and handlers) and three declaration-order moves. Every verify byte-identical, thunks 18 / 14, 0 failed prototype or local rows, headers 0 g++ errors, tests pass (Java 89), HARD 0 / MISSING 219.
 - [x] Round 62: `prove_r62.sh` shows no function differing; both renamed rows keep their notes. verify byte-identical, thunks 18 / 14, no name-mismatch warning.

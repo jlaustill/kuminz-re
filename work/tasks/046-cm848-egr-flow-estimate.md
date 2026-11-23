@@ -2900,6 +2900,32 @@ A peer relay started the round on round 63's leads; the scripts are in `session_
   - Still open from round 63: the three unnamed length tables, `DAT_003fba10`, and 38 unprefixed CM848-only
     functions.
 
+## Done, round 65 (2026-11-23, same PR): the unprefixed CM848-only functions, the J1939 receive table
+
+A peer relay started the round on round 63's lead; the scripts are in `session_folder/round65/`.
+- **Stage A (5e0d02e6): 37 of the 38 unprefixed CM848-only functions named from their code.** That leaves 1.
+  - The application's J1939 transport (11), e.g. `cm848_startJ1939TransportSession`.
+  - The 7 receive handlers, named with the database's PGN names (`cm848_receivePgn61441ElectronicBrakeController1Message`
+    and so on), and their registrar `cm848_registerJ1939ReceiveHandler` (was `j1939_handlerInitializer`).
+  - Two misnamed schedulers: `cm848_runCoolingFanControl` (was `j1939_periodic_processing`) and
+    `cm848_scheduleJ1939PeriodicMessage` (was `diag_record_queue_add_entry`).
+  - The injection angle cluster (10).
+  - The SCI service timers, with the SCI 0x17 clear-diagnostics delay and its two bytes.
+  - `cm848_getSensorChannelReferenceSupplyState`.
+  - **Not renamed:** `initGovernorFlagsAux`. It only clears the word at 0x3fcfba, and nothing else is found reading
+    it.
+  - `firmware/CLAUDE.md`: the reference refresh updated 5 renamed names on 4 lines.
+- **Stage B (f2588f7e): the receive table and its handlers.**
+  - `j1939_receive_handler_table` (0x3fd414, `j1939_receive_handler_entry_t[17]`) with the registrar's prototype.
+  - All 16 handlers take `j1939_rx_msg_t *message`. The 4 TP.CM sub-handlers that the TP.CM dispatcher calls with
+    the message still in r3 now show that argument.
+- **Proof:** stage A 4 of 1968 functions differ with the 38 renames mapped: the two SCI functions and the registrar by newly named globals, and one local declaration-order move; no artifact count changed. Stage B 21: the 18 typed functions (86 casts and 75 placeholder names removed, none added), cm848_initJ1939ProtocolHandlers (its 0xea00 key no longer renders as a function pointer) and two declaration-order moves. Every verify byte-identical, thunks 18 / 14, 0 failed prototype or local rows, history notes intact, headers 0 g++ errors, tests pass, HARD 0 / MISSING 219.
+- **Leads:**
+  - `initGovernorFlagsAux` / the word at 0x3fcfba, in the trip counter block.
+  - 30 unprefixed names are shared with CM550. A rename needs both firmwares or neither.
+  - Still open from rounds 63-64: the boot result codes, 0x14 / 0xfe, CM550's unreviewed members, the three length
+    tables, and `DAT_003fba10`.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

@@ -1,0 +1,31 @@
+cm848: round 65 stage B - the J1939 receive handler table typed; its 16 handlers take j1939_rx_msg_t *
+
+cm848_dispatchJ1939ReceivedMessages walks RAM 0x3fd414 in 6-byte steps: a word key compared with the received
+frame's PDU format / specific, and the handler pointer at +2, called with the 18-byte receive queue entry (a
+j1939_rx_msg_t). cm848_registerJ1939ReceiveHandler appends {key, handler} up to j1939_receive_handler_count: 17
+slots, so the table ends right at the count (0x3fd47a).
+
+- j1939_receive_handler_entry_t {pgn_key word / handler pointer} and j1939_receive_handler_table
+  (j1939_receive_handler_entry_t[17]). It is in the ROM-to-RAM copy window, but no boot thunk lies in its 102 bytes.
+  The two type-only pointer rows inside it (0x3fd416 / 0x3fd41c, entries 0 and 1's handler) go.
+- The registrar's prototype: (word pgn_key, void *handler).
+  - Its 17 calls keep their arguments.
+  - One renders right for the first time: the PGN 59904 Request key 0xea00 used to show as the function pointer
+    cm848_runOperatingModeSpeedGovernor (a function sits at 0xea00) and now reads 0xea00.
+- Every registered handler that took an int / dword * takes j1939_rx_msg_t *message: DM13, ETC2, the PGN 56832
+  reset, the 7 receive handlers, the TP.CM dispatcher and TP.DT. So do the 4 TP.CM sub-handlers.
+  - The dispatcher calls those with the message still in r3, so their calls showed no argument. They now pass
+    message.
+  - The abort test now reads == 0xff (was == -1).
+
+Review (review_typed_r64.py on the 18 typed functions): 86 casts and 75 placeholder names removed, none added.
+artifacts.py: no change.
+
+Proof (prove_r65.sh): 21 of 1968 functions differ:
+- the 18 typed;
+- cm848_initJ1939ProtocolHandlers (the 0xea00 call);
+- two local declaration-order moves (cm848_processUnsignedSensorChannel / mpc555_tickTransferTimeoutAndRuntimeCounter).
+verify is byte-identical; thunks 18 / 14; prototype rows 0 failed. Headers regenerated (0 g++ errors), tests
+pass, audit_cal_suffixes.py HARD 0 / MISSING 219, lookup_tables.py 0 sizing problems.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

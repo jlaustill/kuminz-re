@@ -569,3 +569,8 @@ Hand work on the round 7 lead.
 
 - **Stage A:** `apply_r64a.py`. **Stage B:** `apply_r64b.py`. **Stage C:** `apply_r64c.py`, `map_r64c.csv`, `refresh_other_csvs_r64.py` (history-safe), `history_corruption.py`.
 - **Proof:** `prove_r64.sh` and round 63's `differing.py` / `review_typed.py` / `artifacts.py`. **Closing:** `apply_r64_closing.py`, `update_large_tar_r64.sh`.
+
+## Round 65: the unprefixed CM848-only functions, the J1939 receive table (`session_folder/round65/`)
+
+- **Stage A:** `apply_r65a.py`, `map_r65a.csv`. **Stage B:** `apply_r65b.py`, `param_passing.py`.
+- **Proof:** `prove_r65.sh` and round 63's `differing.py` / `artifacts.py`. **Closing:** `apply_r65_closing.py`, `update_large_tar_r65.sh`.

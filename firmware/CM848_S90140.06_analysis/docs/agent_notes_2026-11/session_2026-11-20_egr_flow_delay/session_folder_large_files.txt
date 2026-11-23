@@ -292,3 +292,5 @@
   401677 verify_round64c4.log
   209253 verify_round64c_cm550.log
   401677 verify_round64d.log
+  401985 verify_round65a.log
+  401985 verify_round65b.log
