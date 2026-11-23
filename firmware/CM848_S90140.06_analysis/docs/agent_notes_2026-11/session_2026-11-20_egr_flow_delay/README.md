@@ -497,3 +497,7 @@ Hand work on the round 7 lead.
 ## Round 47: uncited table rows (`session_folder/round47/`)
 
 - `uncited_table_rows.py` (+ `uncited.txt`), `block_reliability.py` (+ `reliable_leads.txt`). **Stage A:** `apply_r47a.py`, `map_r47a*.csv`. **Stage B:** `apply_r47b.py`, `map_r47b.csv`, `fix_r47b_texts.py`. **Closing:** `apply_r47_closing.py`, `update_large_tar_r47.sh`.
+
+## Round 48: the OBD cooling monitors (`session_folder/round48/`)
+
+- **Stage A:** `apply_r48a.py`, `map_r48a.csv`, the cast-stripped proof (`prove_r48a.sh`). **Closing:** `apply_r48_closing.py`, `update_large_tar_r48.sh`.

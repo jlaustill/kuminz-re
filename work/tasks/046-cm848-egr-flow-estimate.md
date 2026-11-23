@@ -2292,6 +2292,31 @@ A peer relay started the round; the scripts are in `session_folder/round47/`.
   - 138 function names lack a firmware prefix. Many are shared with CM550 by design, so a sweep must rename both
     firmwares or keep the name.
 
+## Done, round 48 (2026-11-22, same PR): the OBD cooling monitors
+
+A peer relay started the round; the scripts are in `session_folder/round48/`.
+- **Stage A (8f0019c, labels, rows, types):** two leads from the unread gaps are the two cooling system monitors.
+  - **The thermostat monitor (P0128).**
+    - 8A8B (22 bytes, tiled between 1901 and 18F1) holds its calibrations. Three records match the rows named from
+      code; the other eight are the eight unnamed addresses `cm848_runThermostatMonitor` reads, and they gain names.
+    - 8A8C (anchored at its end by 18F0; 11 / 13 records land on named rows) holds its state: two new rows, and three
+      `cssc_*` rows renamed into `thermostat_monitor_*`.
+  - **The coolant temperature in-range (CTIR) monitor.**
+    - 8A9D (20 bytes, tiled into the ROM gap between 1631 and 164A) holds its calibrations: nine new rows, one renamed
+      into the family. The test timer's limit `DAT_000642d8` is +A CTIR_Max_Test_Time.
+    - 8A9E (+0..+4, a field match) holds its state. `cssc_coolant_monitoring_cycle_count` ->
+      `coolant_temperature_sensor_performance_test_timer`.
+    - The dumped table's 1632 +4 BIR_Ratio at 0x40b9a2 is drift.
+  - **Types:** every signed record is loaded with `lha` and every unsigned one with `lhz`, so the signed ones are
+    `i16`. The thermostat calibrations +4 / +6 / +8 are retyped by the same rule.
+  - `cssc_` was an invented abbreviation; no row carries it now.
+- **Proof:** `prove_caches.py` on copies with the scalar casts stripped matches all 1968 functions (2 differ only in local declaration order; unstripped, the three thermostat functions differ only in casts); verify byte-identical.
+- **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 221.
+- **Leads:**
+  - The 8A8C / 8A9E state rows still use `word` where the e2m record is signed. Their loads are `lha`, but some are
+    pointer-passed (`addi`), so each needs the parameter type checked.
+  - The 44 remaining round 47 outliers; the 138 unprefixed function names.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

@@ -1,0 +1,5 @@
+cssc_initial_warmup_budget
+cssc_conditioning_cycle_count
+cssc_oiltemp_cooling_rate_fraction
+coolant_temperature_check_minimum_engine_off_time
+cssc_coolant_monitoring_cycle_count
