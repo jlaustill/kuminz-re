@@ -257,10 +257,12 @@ S90140.06. Add a `tools/read_odometer.sh` that only does the read.
 `mpc555_tickTransferTimeoutAndRuntimeCounter` @ 0x7608 runs periodically. Every 40 ticks
 (`watchdog_tick_prescaler` reaches 0x28), it increments both:
 - `ecm_runtime_accumulator` @ 0x00302012 (lifetime counter)
-- `keyon_duration_counter` @ 0x003028a6 (session counter)
+- `eeprom_block_tracking.key_off_duration_ticks` @ 0x003028a6 (was `keyon_duration_counter`, then
+  `watchdog_counter`; PR #53 round 67: `mpc555_keyOnStateMachine` zeroes it while the key is on, so it
+  counts key-off time)
 
 `mpc555_keyOnStateMachine` @ 0x184 saves to EEPROM in two scenarios:
-1. **Periodic save:** `keyon_duration_counter > 0x2903` (10,499 ticks)
+1. **Periodic save:** `key_off_duration_ticks > 0x2903` (10,499 ticks)
 2. **Key-off save:** `mios_mdasm30.SCRD` bit 15 set AND
    `eeprom_version_marker.magic == 0x600d`
    *(2026-11-13, PR #48: bit 15 = 1 means key ON — the reset code waits for it — so this branch is really the key-back-on save before the watchdog reset / restart, and scenario 1 runs while bit 15 reads 0 = key off.)*
@@ -602,7 +604,7 @@ Purpose: Determine the exact time-per-count for `ecm_runtime_accumulator`.
 
 ### Test 5: Keyon-Duration Threshold Check (optional)
 
-Purpose: Verify the 0x2903 (10,499) threshold on `keyon_duration_counter`.
+Purpose: Verify the 0x2903 (10,499) threshold on `key_off_duration_ticks` (was `keyon_duration_counter`).
 At 1.5 Hz, that's ~7000 seconds = ~117 minutes. This means a key-on session
 shorter than ~2 hours may NOT trigger a periodic save — only the key-off
 save would fire.

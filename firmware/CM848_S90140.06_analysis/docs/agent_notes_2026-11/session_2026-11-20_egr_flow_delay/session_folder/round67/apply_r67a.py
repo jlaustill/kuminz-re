@@ -1,5 +1,6 @@
-"""Round 67 stage A: the boot kernel's reflash state machine. Idempotent: each change keys on a row's address / enum
-value / prefix and skips when the new text is already there.
+"""Round 67 stage A: the boot kernel's reflash state machine. Each change keys on a row's address / enum value /
+prefix and skips when the new text is already there, so it can run twice. Run it once, then fix_r67a2.py: replayed
+after fix_r67a2.py it re-adds the two retypes that fix_r67a2.py drops and then stops on the local row's assert.
 
 - ECM_STATUS (was EEPROM_MAGIC, applied nowhere): e2m 000B +0 ECM_Status = EEPROM word 0, typed on eeprom_header_t's
   field (was magic). 0x600d CALIBRATION_VALID / 0x1d0a REFLASH_IN_PROGRESS / 0x2b16 CALIBRATION_DOWNLOADED_NOT_VERIFIED.

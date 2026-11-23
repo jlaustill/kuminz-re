@@ -1,0 +1,30 @@
+cm848: round 67 follow-up - key_off_duration_ticks, cm848_finishDownloadBlock's prototype, the verifier and begin plates
+
+From the round's closing review:
+- eeprom_block_tracking_t.watchdog_counter -> key_off_duration_ticks.
+  - mpc555_tickTransferTimeoutAndRuntimeCounter counts it with the runtime counter every 41 calls.
+  - mpc555_keyOnStateMachine zeroes it while SCRD bit 15 (key on, PR #48's reading) is set, and saves the runtime
+    counter to eeprom_config_block once it passes 0x2903.
+  - Nothing resets it per block, so the old "Transfer watchdog counter (reset each block)" was wrong.
+  - The engine hours doc called it keyon_duration_counter; its three mentions now use the new name.
+- cm848_finishDownloadBlock has its full prototype: trailing_crc (the block's 2-byte CRC after its data) and a byte
+  status (0xff recorded / 0x14 CRC mismatch / 0x15 list full).
+- mpc555_verifyDownloadedCalibration's plate: CALIBRATION_VALID answers 0 and then resets the ECU.
+- mpc555_beginReflash's plate gives the erase's evidence. mpc555_cmfEraseBlocks' interlock writes go to
+  0x8000-0x38000 and 0x40000-0x68000, which is blocks 1-7 of module A and all 6 of module B, so the boot block
+  stays.
+- The region table (ROM 0x3c60) puts EEPROM 0x1000000-0x1003fff in region type 5, so the write services can reach
+  ECM_Status. That backs the "no J1939 writer found" note.
+- eeprom_header_t.eeprom_status_flags' note said "IAT derate history". The boot kernel's word is EEPROM 0x50, the
+  serial reflash flags; the application's is e2m 8A36 +2 IAH_Redundant_Preheat_Req (the intake air heater).
+- A local's comment named the stale write_auth_attempt_counter.
+
+Proof (prove_r67.sh with list_differing.py): 3 of 1968 functions differ:
+- cm848_finishDownloadBlock (its prototype; 2 placeholders fewer);
+- cm848_updateDownloadCrc (its call now casts data to word *: the CRC follows the data at a byte address);
+- mpc555_areBootModeStrapPinsHigh's declaration-order move.
+No artifact count changed. verify is byte-identical; thunks 18 / 14; prototype and local rows 0 failed; locals
+Skipped 8 (the same warnings as round 66). Headers regenerated (0 g++ errors), tests pass, lookup tables 0 sizing
+problems, audit_cal_suffixes.py HARD 0 / MISSING 216, history notes intact.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

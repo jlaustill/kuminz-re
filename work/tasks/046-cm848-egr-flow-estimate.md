@@ -3016,9 +3016,24 @@ A peer relay started the round; the scripts are in `session_folder/round67/`.
   - c48cc435's "the write worker passes these up" holds: the J1939 worker returns the tracker's status (asm
     0x5710). For a while this round I misread the worker as dropping it, because my declaration filter
     (`[a-z]* [a-z]Var[0-9]*;`) also hid every `return xVarN;` line.
-- **Proof:** 22 of 1968 functions differ after canonicalization: 21 predicted (the 10 retyped reflash functions; the CRC table builder and reader; the block finish and the serial transfer block that fill download_block_list; the J1939 write worker and the serial data handler, which pass the channel; the erase dispatcher loop and its local; the five boot readers of ECM_STATUS; the serial begin, whose EEPROM casts went) plus one local declaration-order move (mpc555_areBootModeStrapPinsHigh). No new name renders in pieces. verify is byte-identical; thunks 18 / 14; prototype and local rows 0 failed, locals Skipped 8 (the baseline, the same warnings as round 66). Headers regenerated (0 g++ errors), tests pass, lookup tables 920 with 0 sizing problems, audit_cal_suffixes.py HARD 0 / MISSING 216 (was 219: the three EEPROM words now end in _cal), history notes intact, leftovers 0.
+- **Proof:** 22 of 1968 functions differ after canonicalization: 21 predicted (the 7 functions with new prototypes; the CRC table builder and reader; the block finish and the serial transfer block that fill download_block_list; the J1939 write worker and the serial data handler, which pass the channel; the erase dispatcher loop and its local; the six boot readers of ECM_STATUS, the serial finish among them; the serial begin, whose EEPROM casts went - the three renamed functions without a new prototype do not differ) plus one local declaration-order move (mpc555_areBootModeStrapPinsHigh). No new name renders in pieces. verify is byte-identical; thunks 18 / 14; prototype and local rows 0 failed, locals Skipped 8 (the baseline, the same warnings as round 66). Headers regenerated (0 g++ errors), tests pass, lookup tables 920 with 0 sizing problems, audit_cal_suffixes.py HARD 0 / MISSING 216 (was 219: the three EEPROM words now end in _cal), history notes intact, leftovers 0.
 - **ebb61637's message ends with a `PROOF_LINE` placeholder** instead of the proof above. The command that filled it in
   was refused, and the commit and push sent beside it ran anyway. The pushed commit stays as it is (no force-push).
+- **Follow-up (09ade9c9), from the closing review:**
+  - The proof breakdown above is recounted. The first version said "the 10 retyped reflash functions": 7 of
+    the 10 renamed functions got prototypes, and the other 3 are pure renames that do not differ.
+  - The verifier's plate says that CALIBRATION_VALID also resets the ECU, and the begin plate gives the
+    erase's evidence: `mpc555_cmfEraseBlocks`' interlock writes go to 0x8000-0x38000 and
+    0x40000-0x68000, so block 0 is left alone. The region table (ROM 0x3c60) puts EEPROM
+    0x1000000-0x1003fff in region type 5, so the write services can reach ECM_Status.
+  - `cm848_finishDownloadBlock` has its full prototype (`trailing_crc`, a byte status).
+  - `eeprom_block_tracking_t.watchdog_counter` is `key_off_duration_ticks`. The tick counts it with the
+    runtime counter; the key-on state machine zeroes it while SCRD bit 15 (key on, PR #48) is set and saves
+    the runtime counter once it passes 0x2903. Nothing resets it per block. The engine hours doc called it
+    `keyon_duration_counter`.
+  - `eeprom_header_t.eeprom_status_flags`' note said "IAT derate history". The application's word there is
+    e2m 8A36 +2 IAH_Redundant_Preheat_Req (the intake air heater); the boot kernel's is the serial reflash
+    flags.
 - **firmware/CLAUDE.md:** no edit.
 - **Leads:**
   - **The time-shared header fields at 0x3fee18-0x3fee22.** The boot kernel reads EEPROM 0x50 / 0x52 / 0x54 into
@@ -3032,6 +3047,13 @@ A peer relay started the round; the scripts are in `session_folder/round67/`.
     `eeprom_service_mode_flags` (bit 7 is set by `mpc555_beginReflash` and cleared by the verifier; the low nibble
     gates the ROM handlers), `eeprom_write_request_type` (a serial request byte that other handlers read as a
     word) and `mpc555_processDiagnosticAndEepromRequests`.
+  - **0x3fedee / 0x3fedf4 are time-shared too:** three transmission functions read e2m RE_Two_Three_Lag (the
+    learned 2-3 shift lag per temperature range) as `*(word *)(&serial_reflash_busy_flag + range * 2)` (it was
+    `&eeprom_calibration_pending_flag + ...`).
+  - **`DAT_01000000`** is EEPROM word 0, ECM_Status, in the boot kernel, but the EEPROM's lower bound in two
+    application range checks; one name would mislead one side.
+  - **`mpc555_beginReflash`'s `result_code` local** (0x17 / 0) stays `dword`: typing it needs its pre-stage
+    key.
   - **The image header at ROM 0x8100:** the checksum region table pointer (0x8104), and the expected block count
     (0x8116) and addresses (0x811a onward), as a struct once the asm settles the layout.
   - **A memory region type enum** (0 RAM / 2 Bank 2 / 3 registers / 4 main flash / 5 EEPROM / 9 not accepted) on
