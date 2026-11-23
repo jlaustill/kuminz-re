@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 02:06:54 MST 2026
+// Generated: Mon Nov 23 02:27:21 MST 2026
 
 
 //
@@ -19467,8 +19467,8 @@ void cm848_clearFaultFromActiveList(byte param_1)
   }
   if ((param_1 < 0xaa) && (!bVar1)) {
     uVar2 = (uint)param_1;
-    fault_clearByIndex(uVar2);
-    fault_clearFromRing(uVar2);
+    cm848_clearFaultStatusRecord(uVar2);
+    cm848_removeFaultFromRecentDtcList(uVar2);
     cm848_resetFaultStatus(param_1);
     if ((fault_definition_table[uVar2].definition_flags & 0x2000) == 0) {
       j1587_fault_count_data_cal.total_emission_faults =
@@ -19681,7 +19681,7 @@ void cm848_clearDiagnosticState(void)
       (algorithm_enable_flags_12_cal.obd_fault_handler_enable == 0)))) {
     if (algorithm_enable_flags_12_cal.obd_fault_handler_enable != 0) {
       if ((diagnostic_clear_request_state & 2) == 0) {
-        diag_resetAllFaults();
+        cm848_clearPreviouslyActiveFaults();
       }
       else {
         uVar1 = 0;
@@ -19703,8 +19703,8 @@ void cm848_clearDiagnosticState(void)
         active_dtc_cummins_fault_codes_cal[0] = 0;
         j1587_fault_count_data_cal.active_fault_count = 0;
         j1587_fault_count_data_cal.emission_count = 0;
-        diag_resetAllFaults();
-        diag_resetSingleFault();
+        cm848_clearPreviouslyActiveFaults();
+        cm848_clearAllFaultRecords();
       }
     }
     uVar1 = 1;
@@ -20000,8 +20000,8 @@ void diagnosticMainStateProcessor(void)
   }
   if ((algorithm_enable_flags_12_cal.obd_fault_handler_enable != 0) &&
      (diagnostic_monitor_complete_bits != diagnostic_monitor_complete_handled_bits)) {
-    diag_mainStateHandler();
-    diag_stateTransition();
+    cm848_registerFaultsOfCompletedMonitors();
+    cm848_markFaultsOfCompletedMonitorsHandled();
   }
   if (switch_input_state_bits.not_idle_switch == 0) {
     uVar1 = system_switch_status & 0xfffb;
@@ -20161,7 +20161,7 @@ void cm848_updateFaultEntryCounters(uint param_1)
   bVar1 = false;
   uVar2 = 0;
   if (algorithm_enable_flags_12_cal.obd_fault_handler_enable != 0) {
-    fault_updateActiveCounters(param_1);
+    cm848_removeFaultFreezeFrameEntry(param_1);
   }
   do {
     if (fault_freeze_frame_entries_cal[uVar2].fault_code == param_1) {
@@ -20275,11 +20275,11 @@ void hpcr_setFaultActiveStatus(int param_1,uint param_2)
         if (bVar1) {
           fault_freeze_frame_entries_cal[param_1].status_flags =
                fault_freeze_frame_entries_cal[param_1].status_flags | 1;
-          fault_enqueueRecord();
+          cm848_queueFaultFreezeFrameEntry();
         }
       }
       else {
-        fault_captureDataSnapshot();
+        cm848_recordFaultDetection();
       }
     }
   }
@@ -58640,7 +58640,7 @@ void cm848_applicationMain(void)
   cm848_initializeEngineOilPressureProcessing();
   cm848_clearMonitorEnablingConditions();
   cm848_initializeFuelLevelLowDistanceMonitor();
-  cm848_initFaultManagement();
+  cm848_initializeFaultManagement();
   cm848_initialization_group22_state();
   cm848_initDataStructures();
   cm848_resetFuelPressureTrackingErrorMonitor();
@@ -95686,10 +95686,14 @@ LAB_00533650:
 
 
 //
-// Function: fault_clearByIndex @ 0x00533aec
+// Function: cm848_clearFaultStatusRecord @ 0x00533aec
 //
 
-void fault_clearByIndex(int param_1)
+/* Clears one fault slot's status record: flags = 0 and status_word bits 10-15 (the warm-up cycle
+   count). Called by cm848_clearFaultFromActiveList and cm848_autoClearFaultsAfterWarmUpCycles (was
+   fault_clearByIndex; PR #53 round 55) */
+
+void cm848_clearFaultStatusRecord(int param_1)
 
 {
   (&fault_status_records_cal)[param_1].status_word =
@@ -95737,10 +95741,10 @@ void cm848_incrementEngineStartCountsSinceFaultLogged(void)
 /* Removes one entry from the engine start counts since a fault was logged
    (engine_start_count_since_fault_logged_cal, word[8], e2m 138F +2 Number_Of_Starts_1..8): for i =
    param_1 .. 6 it copies count[i] = count[i + 1], so every older entry moves one slot toward index
-   0 and closes the gap (index 7 keeps its value). Called by fault_clearFromRing with the index of a
-   cleared fault's code in recent_fault_dtc_codes_cal, which fault_clearFromRing then closes the
-   same way. Opposite direction of 0x533b94, which opens index 0 for a new fault. (was
-   diag_protection_history_shiftIn) */
+   0 and closes the gap (index 7 keeps its value). Called by cm848_removeFaultFromRecentDtcList with
+   the index of a cleared fault's code in recent_fault_dtc_codes_cal, which
+   cm848_removeFaultFromRecentDtcList then closes the same way. Opposite direction of 0x533b94,
+   which opens index 0 for a new fault. (was diag_protection_history_shiftIn) */
 
 void cm848_removeEngineStartCountSinceFaultLogged(uint param_1)
 
@@ -95785,10 +95789,14 @@ void cm848_shiftEngineStartCountsSinceFaultLogged(void)
 
 
 //
-// Function: fault_clearFromRing @ 0x00533bc4
+// Function: cm848_removeFaultFromRecentDtcList @ 0x00533bc4
 //
 
-void fault_clearFromRing(int param_1)
+/* Removes the slot's DTC (obd_dtc_code_table[slot]) from the 8-entry recent_fault_dtc_codes_cal
+   list: shifts the later entries down and drops the matching engine start count
+   (cm848_removeEngineStartCountSinceFaultLogged) (was fault_clearFromRing; PR #53 round 55) */
+
+void cm848_removeFaultFromRecentDtcList(int param_1)
 
 {
   bool bVar1;
@@ -95820,10 +95828,15 @@ void fault_clearFromRing(int param_1)
 
 
 //
-// Function: fault_updateActiveCounters @ 0x00533c80
+// Function: cm848_removeFaultFreezeFrameEntry @ 0x00533c80
 //
 
-void fault_updateActiveCounters(uint param_1)
+/* For the freeze frame entry holding this fault code (status_flags bit 0 set): removes its pointer
+   from fault_entry_pointer_queue_cal (shifting the rest) - clears the entry's flags (bit 1 also
+   calls cm848_markFaultForReplacement) - and counts the queue down (was fault_updateActiveCounters;
+   PR #53 round 55) */
+
+void cm848_removeFaultFreezeFrameEntry(uint param_1)
 
 {
   bool bVar1;
@@ -95875,10 +95888,16 @@ LAB_00533dc4:
 
 
 //
-// Function: diag_resetSingleFault @ 0x00533df0
+// Function: cm848_clearAllFaultRecords @ 0x00533df0
 //
 
-void diag_resetSingleFault(void)
+/* Clears every one of the 170 fault status records (flags and status_word) - the monitor complete
+   bits - the readiness codes (all 1 = not ready) - fault_handled_bitmap - the recent DTC list and
+   its engine start counts - and the freeze frame pointer queue. The old name said single;
+   cm848_clearDiagnosticState runs it for a full clear (was diag_resetSingleFault; PR #53 round 55)
+    */
+
+void cm848_clearAllFaultRecords(void)
 
 {
   uint uVar1;
@@ -95921,10 +95940,16 @@ void diag_resetSingleFault(void)
 
 
 //
-// Function: diag_resetAllFaults @ 0x00533efc
+// Function: cm848_clearPreviouslyActiveFaults @ 0x00533efc
 //
 
-void diag_resetAllFaults(void)
+/* Clears the faults on previously_active_dtc_list_cal: their status records - freeze frame entries
+   (cm848_removeFaultFreezeFrameEntry) and recent DTC list entries - then the monitor complete bits
+   / readiness codes / fault_handled_bitmap. The old name said all; cm848_clearDiagnosticState runs
+   it alone when the request does not ask for a full clear (the J1939 DM3 meaning) (was
+   diag_resetAllFaults; PR #53 round 55) */
+
+void cm848_clearPreviouslyActiveFaults(void)
 
 {
   uint uVar1;
@@ -95942,8 +95967,8 @@ void diag_resetAllFaults(void)
       (&fault_status_records_cal)[previously_active_dtc_list_cal.slots[uVar1 - 1]].status_word =
            (&fault_status_records_cal)[previously_active_dtc_list_cal.slots[uVar1 - 1]].status_word
            & 0xfc07;
-      fault_updateActiveCounters(previously_active_dtc_list_cal.slots[uVar1 - 1]);
-      fault_clearFromRing(previously_active_dtc_list_cal.slots[uVar1 - 1]);
+      cm848_removeFaultFreezeFrameEntry(previously_active_dtc_list_cal.slots[uVar1 - 1]);
+      cm848_removeFaultFromRecentDtcList(previously_active_dtc_list_cal.slots[uVar1 - 1]);
       uVar1 = uVar1 + 1 & 0xff;
     } while (uVar1 <= previously_active_dtc_list_cal.count);
   }
@@ -95962,10 +95987,17 @@ void diag_resetAllFaults(void)
 
 
 //
-// Function: fault_ring_buffer_auto_clear_emission @ 0x00534010
+// Function: cm848_autoClearFaultsAfterWarmUpCycles @ 0x00534010
 //
 
-void fault_ring_buffer_auto_clear_emission(void)
+/* From cm848_monitorWarmUpCycle: erases each stored (flags 0x80) inactive fault without the MIL
+   request whose warm-up cycle count (status_word >> 10) reached
+   fault_auto_clear_warm_up_cycle_count_cal - its status record / recent DTC list entry / fault
+   status and its place in previously_active_dtc_list_cal - and counts
+   j1587_fault_count_data_cal.total_emission_faults down unless the definition has flag 0x2000 (was
+   fault_ring_buffer_auto_clear_emission; PR #53 round 55) */
+
+void cm848_autoClearFaultsAfterWarmUpCycles(void)
 
 {
   uint uVar1;
@@ -95980,8 +96012,8 @@ void fault_ring_buffer_auto_clear_emission(void)
          (ushort)fault_auto_clear_warm_up_cycle_count_cal)) &&
        ((fault_state_records_cal[bVar3].status & 1) == 0)) {
       uVar2 = (uint)bVar3;
-      fault_clearByIndex(uVar2);
-      fault_clearFromRing(uVar2);
+      cm848_clearFaultStatusRecord(uVar2);
+      cm848_removeFaultFromRecentDtcList(uVar2);
       cm848_resetFaultStatus(bVar3);
       if ((fault_definition_table[uVar2].definition_flags & 0x2000) == 0) {
         j1587_fault_count_data_cal.total_emission_faults =
@@ -96028,7 +96060,7 @@ void fault_ring_buffer_auto_clear_emission(void)
    startup delay) and bit 1 when coolant_temp is above warm_up_cycle_minimum_coolant_temperature
    (e2m 11F9 +2 Warm_Up_Temp_Max, 8960 = 140 degrees F). With both set (3) a warm-up cycle has
    occurred: it stops evaluating, adds 1 to fault_auto_clear_warm_up_cycle_count_cal (counts 0..39,
-   then 0) and calls fault_ring_buffer_auto_clear_emission, which clears the fault ring. Called by
+   then 0) and calls cm848_autoClearFaultsAfterWarmUpCycles, which clears the fault ring. Called by
    cm848_mainLoopServiceMonitor. 0 in the dump (engine off). (was
    engine_coolantTemp_overheat_monitor) */
 
@@ -96051,7 +96083,7 @@ void cm848_monitorWarmUpCycle(void)
       else {
         fault_auto_clear_warm_up_cycle_count_cal = 0;
       }
-      fault_ring_buffer_auto_clear_emission();
+      cm848_autoClearFaultsAfterWarmUpCycles();
     }
   }
   return;
@@ -96060,10 +96092,15 @@ void cm848_monitorWarmUpCycle(void)
 
 
 //
-// Function: diag_faultEntry_conditions_validate @ 0x00534250
+// Function: cm848_areConditionsSimilarToFreezeFrame @ 0x00534250
 //
 
-undefined4 diag_faultEntry_conditions_validate(uint param_1)
+/* Returns 1 when the conditions match this fault code's freeze frame entry: engine speed within
+   3000 (375 rpm) - engine_load_at_current_speed_percent within 0x1400 - and the coolant on the same
+   side of warm_up_coolant_temperature_threshold; 0 when they differ or the code has no entry
+   (cm848_mainLoopServiceMonitor) (was diag_faultEntry_conditions_validate; PR #53 round 55) */
+
+undefined4 cm848_areConditionsSimilarToFreezeFrame(uint param_1)
 
 {
   uint uVar1;
@@ -96144,7 +96181,7 @@ void cm848_mainLoopServiceMonitor(void)
           if ((((((&fault_status_records_cal)[uVar6].flags & 0xe) != 0) &&
                ((fault_definition_table[uVar6].entry_flags & 2) != 0)) &&
               (((&fault_status_records_cal)[uVar6].flags & 1) == 0)) &&
-             (cVar1 = diag_faultEntry_conditions_validate(uVar6), cVar1 != '\0')) {
+             (cVar1 = cm848_areConditionsSimilarToFreezeFrame(uVar6), cVar1 != '\0')) {
             (&pfVar3->flags)[iVar4] = (&pfVar3->flags)[iVar4] | 1;
           }
         }
@@ -96160,7 +96197,7 @@ void cm848_mainLoopServiceMonitor(void)
             ((fault_definition_table[uVar6].entry_flags & 2) != 0)) &&
            (((fault_definition_table[uVar6].entry_flags & 0x20) != 0 &&
             (((pfVar3[uVar6].status_word & 4) == 0 &&
-             (cVar1 = diag_faultEntry_conditions_validate(uVar6), cVar1 != '\0')))))) {
+             (cVar1 = cm848_areConditionsSimilarToFreezeFrame(uVar6), cVar1 != '\0')))))) {
           puVar5 = (ushort *)((int)&pfVar3->status_word + iVar4);
           *puVar5 = *puVar5 & 7 | 4 | *puVar5 & 0xfff8;
         }
@@ -96263,16 +96300,17 @@ uint cm848_isFaultMonitorGroupComplete(uint param_1)
 
 
 //
-// Function: diag_faultState_healCycleCount_increment @ 0x005346e8
+// Function: cm848_incrementFaultHealCycleCount @ 0x005346e8
 //
 
 /* Increments a fault clean/heal-cycle count - fault_status_records_cal bits 5-6 saturating 0-3 -
    driven at engine start when the monitor completed or aged - at 3 the caller clears the
    registered/MIL bit - NOT the occurrence count (bits 1-3) (was
    diag_faultState_occurrenceCount_increment) | review-function-readability reviewed 2026-11-13 -
-   Readability Medium Accuracy Confidence High */
+   Readability Medium Accuracy Confidence High (was diag_faultState_healCycleCount_increment; PR #53
+   round 55) */
 
-void diag_faultState_healCycleCount_increment(int param_1)
+void cm848_incrementFaultHealCycleCount(int param_1)
 
 {
   byte bVar1;
@@ -96329,7 +96367,7 @@ LAB_00534820:
         }
         if (bVar3 != 0) {
 LAB_00534830:
-          diag_faultState_healCycleCount_increment(uVar7 & 0xff);
+          cm848_incrementFaultHealCycleCount(uVar7 & 0xff);
         }
       }
       else if ((bVar1 & 2) == 0) {
@@ -96356,10 +96394,14 @@ LAB_00534838:
 
 
 //
-// Function: diag_activeFault_remove @ 0x00534890
+// Function: cm848_removeHealedFault @ 0x00534890
 //
 
-void diag_activeFault_remove(uint param_1)
+/* The per-fault step of cm848_removeHealedFaults: clears status_word bits 0-9 and for a fault that
+   is not a stored DTC (flags 0x80 clear) resets its fault status and drops it from
+   previously_active_dtc_list_cal (was diag_activeFault_remove; PR #53 round 55) */
+
+void cm848_removeHealedFault(uint param_1)
 
 {
   uint uVar1;
@@ -96402,7 +96444,7 @@ void diag_activeFault_remove(uint param_1)
 //
 
 /* Engine-start heal pass over 170 slots - removes an active fault
-   (fault_status_records_cal.status_word bit0 set / bit1 clear) via diag_activeFault_remove when its
+   (fault_status_records_cal.status_word bit0 set / bit1 clear) via cm848_removeHealedFault when its
    monitor group re-completed (cm848_isFaultMonitorGroupComplete) or aged - clears active bits /
    delists previously_active_dtc (was cm848_initUdsServer) | review-function-readability reviewed
    2026-11-13 - Readability Medium Accuracy Confidence High */
@@ -96421,7 +96463,7 @@ void cm848_removeHealedFaults(void)
         if ((fault_definition_table[bVar2].entry_flags & 2) == 0) {
           if ((fault_definition_table[bVar2].entry_flags & 0x10) == 0) {
 LAB_00534a88:
-            diag_activeFault_remove(bVar2);
+            cm848_removeHealedFault(bVar2);
           }
         }
         else if (((((&fault_status_records_cal)[bVar2].status_word & 4) != 0) ||
@@ -96432,7 +96474,7 @@ LAB_00534a88:
       }
       if (((fault_definition_table[bVar2].entry_flags & 0x10) != 0) &&
          (iVar1 = cm848_isFaultMonitorGroupComplete(bVar2), iVar1 != 0)) {
-        diag_activeFault_remove(bVar2);
+        cm848_removeHealedFault(bVar2);
       }
     }
     bVar2 = bVar2 + 1;
@@ -96445,10 +96487,14 @@ LAB_00534a88:
 
 
 //
-// Function: diag_faultState_severity_increment @ 0x00534ae4
+// Function: cm848_countFaultOccurrence @ 0x00534ae4
 //
 
-void diag_faultState_severity_increment(uint param_1)
+/* From cm848_latchNewlyActiveFault: steps the 3-bit count in flags bits 1-3 (saturating at 7) -
+   sets the slot's fault_handled_bitmap bit - and zeroes the heal cycle count (flags bits 5-6) (was
+   diag_faultState_severity_increment; PR #53 round 55) */
+
+void cm848_countFaultOccurrence(uint param_1)
 
 {
   byte bVar1;
@@ -96473,8 +96519,8 @@ void diag_faultState_severity_increment(uint param_1)
 //
 
 /* Latches a fault on first activation - records its P-code (obd_dtc_code_table) into
-   recent_fault_dtc_codes_cal - bumps occurrence (diag_faultState_severity_increment bits 1-3) -
-   sets latched bit 0x80 and (slot in ROM bitmap 0x5b6d0) registered bit 0x10 (was
+   recent_fault_dtc_codes_cal - bumps occurrence (cm848_countFaultOccurrence bits 1-3) - sets
+   latched bit 0x80 and (slot in ROM bitmap 0x5b6d0) registered bit 0x10 (was
    fault_tableEntryProcessor) | review-function-readability reviewed 2026-11-13 - Readability Medium
    Accuracy Confidence High Decompiler note: the history shift recent_fault_dtc_codes_cal[i] = [i -
    1] addresses [i - 1] from 0x3fedba, which is the last word of fault_entry_pointer_queue_cal, so
@@ -96498,7 +96544,7 @@ void cm848_latchNewlyActiveFault(uint param_1)
     cm848_shiftEngineStartCountsSinceFaultLogged();
     engine_start_count_since_fault_logged_cal[0] = 0;
   }
-  diag_faultState_severity_increment(param_1);
+  cm848_countFaultOccurrence(param_1);
   pfVar2[param_1].flags = pfVar2[param_1].flags | 0x80;
   if (((uint)(&mil_fault_indicator_bits)[(int)param_1 >> 4] & 1 << (param_1 & 0xf)) != 0) {
     pfVar2[param_1].flags = pfVar2[param_1].flags | 0x10;
@@ -96510,10 +96556,15 @@ void cm848_latchNewlyActiveFault(uint param_1)
 
 
 //
-// Function: fault_enqueueRecord @ 0x00534c6c
+// Function: cm848_queueFaultFreezeFrameEntry @ 0x00534c6c
 //
 
-void fault_enqueueRecord(int param_1)
+/* Puts a freeze frame entry into fault_entry_pointer_queue_cal: with the queue full or an entry
+   marked for replacement (status_flags bit 1) it keeps the entries whose fault definitions rank
+   higher (entry_flags 0x0e / 0x0a). Called by cm848_recordFaultDetection and
+   hpcr_setFaultActiveStatus (was fault_enqueueRecord; PR #53 round 55) */
+
+void cm848_queueFaultFreezeFrameEntry(int param_1)
 
 {
   bool bVar1;
@@ -96610,10 +96661,17 @@ void fault_enqueueRecord(int param_1)
 
 
 //
-// Function: fault_captureDataSnapshot @ 0x00534fb0
+// Function: cm848_recordFaultDetection @ 0x00534fb0
 //
 
-void fault_captureDataSnapshot(int param_1,uint param_2)
+/* Records a detection of the fault in this slot. The first time (status_word bit 0 clear) it sets
+   bits 0-1 - marks the slot handled - zeroes the heal cycle count - and when the definition has
+   entry_flags 0x02 sets bit 2 and stores fault_aging_drive_cycle_counter_cal in bits 3-9. On a
+   later detection with bit 1 clear it marks the freeze frame entry used and queues it
+   (cm848_queueFaultFreezeFrameEntry) - latches the fault (cm848_latchNewlyActiveFault) - and clears
+   bits 0-9. Called by hpcr_setFaultActiveStatus (was fault_captureDataSnapshot; PR #53 round 55) */
+
+void cm848_recordFaultDetection(int param_1,uint param_2)
 
 {
   word *pwVar1;
@@ -96636,7 +96694,7 @@ void fault_captureDataSnapshot(int param_1,uint param_2)
     if ((fault_freeze_frame_entries_cal[param_1].status_flags & 1) == 0) {
       fault_freeze_frame_entries_cal[param_1].status_flags =
            fault_freeze_frame_entries_cal[param_1].status_flags | 1;
-      fault_enqueueRecord();
+      cm848_queueFaultFreezeFrameEntry();
     }
     cm848_latchNewlyActiveFault(param_2);
     (&fault_status_records_cal)[param_2].status_word =
@@ -96652,10 +96710,16 @@ void fault_captureDataSnapshot(int param_1,uint param_2)
 
 
 //
-// Function: diag_mainStateHandler @ 0x0053515c
+// Function: cm848_registerFaultsOfCompletedMonitors @ 0x0053515c
 //
 
-void diag_mainStateHandler(void)
+/* For each of the 32 fault monitor groups whose diagnostic_monitor_complete_bits bit is newly set:
+   registers each of its 16 slots (0xaa = none) whose status_word has bit 0 without bit 1 and whose
+   fault_state_records_cal status bit 0 is set (cm848_registerFaultInActiveList) - then marks the
+   group in diagnostic_monitor_complete_handled_bits. Called by diagnosticMainStateProcessor (was
+   diag_mainStateHandler; PR #53 round 55) */
+
+void cm848_registerFaultsOfCompletedMonitors(void)
 
 {
   uint uVar1;
@@ -96691,10 +96755,14 @@ void diag_mainStateHandler(void)
 
 
 //
-// Function: diag_stateTransition @ 0x00535270
+// Function: cm848_markFaultsOfCompletedMonitorsHandled @ 0x00535270
 //
 
-void diag_stateTransition(void)
+/* For each fault monitor group whose complete bit is set and not yet handled: sets
+   fault_handled_bitmap for each of its slots whose fault_state_records_cal status bit 0 is set.
+   Called by diagnosticMainStateProcessor (was diag_stateTransition; PR #53 round 55) */
+
+void cm848_markFaultsOfCompletedMonitorsHandled(void)
 
 {
   byte bVar1;
@@ -96727,10 +96795,14 @@ void diag_stateTransition(void)
 
 
 //
-// Function: cm848_initFaultManagement @ 0x00535344
+// Function: cm848_initializeFaultManagement @ 0x00535344
 //
 
-void cm848_initFaultManagement(void)
+/* Boot (cm848_applicationMain): loads fault_service_monitor_startup_delay_count from
+   warm_up_cycle_start_coolant_temperature_read_delay and clears status_word bits 1-2 and flags bit
+   0 of all 170 fault slots (was cm848_initFaultManagement; PR #53 round 55) */
+
+void cm848_initializeFaultManagement(void)
 
 {
   uint uVar1;

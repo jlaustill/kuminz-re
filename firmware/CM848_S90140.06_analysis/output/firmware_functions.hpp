@@ -1900,31 +1900,31 @@ void cm848_checkMisfireMonitorTestConditions(void);  // @ 0x00532c3c
 void cm848_countFlaggedMisfireCylinders(void);  // @ 0x00532df4
 void cm848_evaluateMisfireMonitorCylinderResponse(void);  // @ 0x00532e78
 void cm848_runMisfireMonitor(void);  // @ 0x00532fac
-void fault_clearByIndex(int param_1);  // @ 0x00533aec
+void cm848_clearFaultStatusRecord(int param_1);  // @ 0x00533aec
 void cm848_incrementEngineStartCountsSinceFaultLogged(void);  // @ 0x00533b18
 void cm848_removeEngineStartCountSinceFaultLogged(uint param_1);  // @ 0x00533b5c
 void cm848_shiftEngineStartCountsSinceFaultLogged(void);  // @ 0x00533b94
-void fault_clearFromRing(int param_1);  // @ 0x00533bc4
-void fault_updateActiveCounters(uint param_1);  // @ 0x00533c80
-void diag_resetSingleFault(void);  // @ 0x00533df0
-void diag_resetAllFaults(void);  // @ 0x00533efc
-void fault_ring_buffer_auto_clear_emission(void);  // @ 0x00534010
+void cm848_removeFaultFromRecentDtcList(int param_1);  // @ 0x00533bc4
+void cm848_removeFaultFreezeFrameEntry(uint param_1);  // @ 0x00533c80
+void cm848_clearAllFaultRecords(void);  // @ 0x00533df0
+void cm848_clearPreviouslyActiveFaults(void);  // @ 0x00533efc
+void cm848_autoClearFaultsAfterWarmUpCycles(void);  // @ 0x00534010
 void cm848_monitorWarmUpCycle(void);  // @ 0x005341a8
-undefined4 diag_faultEntry_conditions_validate(uint param_1);  // @ 0x00534250
+undefined4 cm848_areConditionsSimilarToFreezeFrame(uint param_1);  // @ 0x00534250
 void cm848_mainLoopServiceMonitor(void);  // @ 0x00534328
 void cm848_auxiliaryControlTask(void);  // @ 0x00534530
 uint cm848_isFaultMonitorGroupComplete(uint param_1);  // @ 0x00534684
-void diag_faultState_healCycleCount_increment(int param_1);  // @ 0x005346e8
+void cm848_incrementFaultHealCycleCount(int param_1);  // @ 0x005346e8
 void cm848_clearMilForHealedFaults(void);  // @ 0x0053473c
-void diag_activeFault_remove(uint param_1);  // @ 0x00534890
+void cm848_removeHealedFault(uint param_1);  // @ 0x00534890
 void cm848_removeHealedFaults(void);  // @ 0x00534994
-void diag_faultState_severity_increment(uint param_1);  // @ 0x00534ae4
+void cm848_countFaultOccurrence(uint param_1);  // @ 0x00534ae4
 void cm848_latchNewlyActiveFault(uint param_1);  // @ 0x00534b68
-void fault_enqueueRecord(int param_1);  // @ 0x00534c6c
-void fault_captureDataSnapshot(int param_1,uint param_2);  // @ 0x00534fb0
-void diag_mainStateHandler(void);  // @ 0x0053515c
-void diag_stateTransition(void);  // @ 0x00535270
-void cm848_initFaultManagement(void);  // @ 0x00535344
+void cm848_queueFaultFreezeFrameEntry(int param_1);  // @ 0x00534c6c
+void cm848_recordFaultDetection(int param_1,uint param_2);  // @ 0x00534fb0
+void cm848_registerFaultsOfCompletedMonitors(void);  // @ 0x0053515c
+void cm848_markFaultsOfCompletedMonitorsHandled(void);  // @ 0x00535270
+void cm848_initializeFaultManagement(void);  // @ 0x00535344
 void cm848_crossCheckTemperatureSensorsBeforeStart(void);  // @ 0x005353c8
 void cm848_confirmIntakeManifoldTemperatureKeyOnRationality(void);  // @ 0x00535868
 void cm848_checkBatteryTemperatureKeyOnRationality(void);  // @ 0x00535964
