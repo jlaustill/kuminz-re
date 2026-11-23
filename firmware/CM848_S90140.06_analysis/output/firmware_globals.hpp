@@ -2024,6 +2024,12 @@ extern ema_filter_state_t egr_valve_position_command_diagnostic_filter_state;  /
 extern engine_protection_channel_configuration_t* engine_protection_current_configuration;  // 0x003fbd42
 extern engine_protection_channel_state_t* engine_protection_current_state;  // 0x003fbd46
 extern engine_protection_channel_history_t* engine_protection_current_history;  // 0x003fbd4a
+extern j1939_tx_msg_t j1939_transport_tx_message;  // 0x003fc4ad
+extern byte j1939_transport_transmit_status;  // 0x003fc4bb
+extern byte j1939_transport_tx_data;  // 0x003fc4bc
+extern j1939_tx_msg_t j1939_single_frame_tx_message;  // 0x003fcbc4
+extern byte j1939_single_frame_transmit_status;  // 0x003fcbd2
+extern byte j1939_single_frame_tx_data[8];  // 0x003fcbd3
 extern ema_filter_state_t pedal_fault_mode_engine_speed_filter_state;  // 0x003fcbdc
 extern word turbocharger_speed_linearization_cached_axis_offset;  // 0x003fcc06
 extern ema_filter_state_t turbocharger_speed_filter_state;  // 0x003fcc08

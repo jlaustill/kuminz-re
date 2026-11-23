@@ -2160,12 +2160,14 @@ address,name,type,comment
 0x003fbdfd,j1939_transport_receive_session.receive_buffer_pointer,,(was j1939_multiframe_rx_data_buf_ptr; PR #53 round 35) | earlier note: RX data assembly buffer pointer
 0x003fc094,,byte,
 0x003fc0d8,,byte,
-0x003fc4b3,,pointer,
-0x003fc4b7,,pointer,
+0x003fc4ad,j1939_transport_tx_message,j1939_tx_msg_t,The transmit record cm848_selectJ1939TransmitBuffer hands out for a message over 8 bytes (sent with the J1939 transport protocol): it sets data_length and points data_pointer at j1939_transport_tx_data and status_pointer at j1939_transport_transmit_status. Taken only while that status byte's high nibble is 0. Users: the PGN 61184 replies (cm848_sendJ1939ResponseFrame / cm848_readJ1939DiagnosticMemoryAndRespond) and cm848_sendDataCollectorBuffer (PR #53 round 64)
+0x003fc4bb,j1939_transport_transmit_status,byte,The status byte of j1939_transport_tx_message (its status_pointer target): cm848_selectJ1939TransmitBuffer refuses the record while the high nibble is not 0 (PR #53 round 64)
+0x003fc4bc,j1939_transport_tx_data,byte,The first byte of j1939_transport_tx_message's data. The buffer runs to 0x3fcbc3 (1800 bytes; a 0x4c memory read reply needs up to 1775). Not typed as an array: the boot reflash kernel's image fills this RAM at boot and the boot ROM calls into it (thunks at 0x3fc580 - 0x3fcb24) (PR #53 round 64)
 # 0x003fc688 removed - is function mpc555_pollSerialDuringEeprom (ROM 0x6ab8) not a variable
 0x003fc77c,,byte,
-0x003fcbca,,pointer,
-0x003fcbce,,pointer,
+0x003fcbc4,j1939_single_frame_tx_message,j1939_tx_msg_t,The transmit record cm848_selectJ1939TransmitBuffer hands out for a message of up to 8 bytes: it sets data_length and points data_pointer at j1939_single_frame_tx_data and status_pointer at j1939_single_frame_transmit_status. Users: the PGN 61184 replies (cm848_sendJ1939ResponseFrame / cm848_readJ1939DiagnosticMemoryAndRespond) and cm848_sendDataCollectorBuffer (PR #53 round 64)
+0x003fcbd2,j1939_single_frame_transmit_status,byte,The status byte of j1939_single_frame_tx_message (its status_pointer target) (PR #53 round 64)
+0x003fcbd3,j1939_single_frame_tx_data,byte[8],The data of j1939_single_frame_tx_message: one CAN frame (PR #53 round 64)
 0x003fcbdc,pedal_fault_mode_engine_speed_filter_state,ema_filter_state_t,The EMA filter of engine_speed_state.engine_speed in cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: cm848_initDroopModeStateVariables points its coefficient at pedal_fault_mode_engine_speed_filter_coefficient and cm848_presetPedalFaultModeFuelDemand loads the accumulator with the current speed (was ema_filter_state_t_003fcbdc - a type-only row; PR #53 round 62) | earlier note: EMA filter state - used by cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit (was PTR_DAT_003fcbdc)
 0x003fcc06,turbocharger_speed_linearization_cached_axis_offset,word,The lookup cache of turbocharger_speed_linearization_axis (cm848_calculateTurbochargerSpeedSensorValue) (PR #53 round 54)
 0x003fcc08,turbocharger_speed_filter_state,ema_filter_state_t,code: ema_filter_state_t of the speed filter: coefficient pointer 0x3ff6fa (turbocharger_speed_sensor_filter_constant), accumulator seeded with turbocharger_speed << 16 at boot. Time-shared window (0x3F9800-0x3FDB30): xref_addr.py lists no access below 0x7F60 and a scan of the boot ROM 0x0-0x7F5F (low halfword of the address in a load / store / addi / ori, and aligned 32-bit constants equal to it) ... (was ) | earlier note: EMA filter state - used by cm848_calculateTurbochargerSpeedSensorValue (was PTR_DAT_003fcc08)

@@ -1512,7 +1512,7 @@ void cm848_sendJ1939BroadcastDataPacket(int param_1);  // @ 0x0050d2c0
 void cm848_sendJ1939ConnectionModeDataPackets(void);  // @ 0x0050d444
 void j1939_transport_timeout_decrement(void);  // @ 0x0050d5d8
 void cm848_serviceJ1939TransportSessions(void);  // @ 0x0050d60c
-undefined * cm848_selectJ1939TransmitBuffer(int param_1);  // @ 0x0050d688
+j1939_tx_msg_t * cm848_selectJ1939TransmitBuffer(int length);  // @ 0x0050d688
 void cm848_initializeJ1939Transport(void);  // @ 0x0050d700
 undefined1 cm848_lookupApplicationMemoryRegionType(uint param_1,int param_2);  // @ 0x0050d784
 void cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit(void);  // @ 0x0050d864

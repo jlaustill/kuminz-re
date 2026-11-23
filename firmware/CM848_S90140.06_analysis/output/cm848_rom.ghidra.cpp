@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 07:54:28 MST 2026
+// Generated: Mon Nov 23 08:29:32 MST 2026
 
 
 //
@@ -6044,8 +6044,8 @@ undefined4 cm848_validateWriteAuth(undefined4 scrambled_token)
   byte local_2a [5];
   byte bStack_25;
   uint local_24 [7];
-  byte key_matches;
   dword current_runtime;
+  byte key_matches;
   
   if (eeprom_shadow_header.version_marker == 0xff) {
     result = 0;
@@ -6195,9 +6195,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
+  byte prescaler_count;
   dword runtime_value;
   word counter_value;
-  byte prescaler_count;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -25322,7 +25322,7 @@ void cm848_sendJ1939ResponseFrame(j1939_rx_msg_t *request,dword result_code)
   }
   iVar2 = (uint)bVar1 + iVar2;
 LAB_00024a1c:
-  msg = (j1939_tx_msg_t *)cm848_selectJ1939TransmitBuffer(iVar2);
+  msg = cm848_selectJ1939TransmitBuffer(iVar2);
   if (msg != (j1939_tx_msg_t *)0x0) {
     (msg->header).can_id = 0xef0000;
     *(byte *)&(msg->header).can_id =
@@ -65209,7 +65209,7 @@ void cm848_sendDataCollectorBuffer(void)
         puVar3 = (undefined *)((0x20 / uVar4) * uVar4);
       }
     }
-    msg = (j1939_tx_msg_t *)cm848_selectJ1939TransmitBuffer((uint)puVar3 & 0xffff);
+    msg = cm848_selectJ1939TransmitBuffer((uint)puVar3 & 0xffff);
     puVar1 = data_collector_start_address;
     if (msg != (j1939_tx_msg_t *)0x0) {
       (msg->header).can_id = 0xffff00;
@@ -70464,7 +70464,7 @@ char cm848_readJ1939DiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword add
         }
         cVar4 = cm848_getJ1939MemoryServiceHeaderLength(bVar6);
         bVar7 = cVar4 - 1;
-        msg = (j1939_tx_msg_t *)cm848_selectJ1939TransmitBuffer(bVar7 + length + 1 & 0xffff);
+        msg = cm848_selectJ1939TransmitBuffer(bVar7 + length + 1 & 0xffff);
         if (msg == (j1939_tx_msg_t *)0x0) {
           cVar4 = '\x04';
         }
@@ -71488,27 +71488,27 @@ void cm848_serviceJ1939TransportSessions(void)
    the PGN 61184 replies (cm848_sendJ1939ResponseFrame / cm848_readJ1939DiagnosticMemoryAndRespond)
    and cm848_sendDataCollectorBuffer (was j1939_selectResponseBuffer; PR #53 round 63) */
 
-undefined * cm848_selectJ1939TransmitBuffer(int param_1)
+j1939_tx_msg_t * cm848_selectJ1939TransmitBuffer(int length)
 
 {
-  undefined *puVar1;
+  j1939_tx_msg_t *pjVar1;
   
-  if (param_1 < 9) {
-    puVar1 = &DAT_003fcbc4;
-    PTR_DAT_003fcbca = &DAT_003fcbd3;
-    PTR_DAT_003fcbce = &DAT_003fcbd2;
-    DAT_003fcbc8 = (short)param_1;
+  if (length < 9) {
+    pjVar1 = &j1939_single_frame_tx_message;
+    j1939_single_frame_tx_message.data_pointer = j1939_single_frame_tx_data;
+    j1939_single_frame_tx_message.status_pointer = &j1939_single_frame_transmit_status;
+    j1939_single_frame_tx_message.header.data_length = (word)length;
   }
-  else if ((DAT_003fc4bb & 0xf0) == 0) {
-    PTR_DAT_003fc4b3 = &DAT_003fc4bc;
-    PTR_DAT_003fc4b7 = &DAT_003fc4bb;
-    puVar1 = &DAT_003fc4ad;
-    DAT_003fc4b1 = (short)param_1;
+  else if ((j1939_transport_transmit_status & 0xf0) == 0) {
+    j1939_transport_tx_message.data_pointer = &j1939_transport_tx_data;
+    j1939_transport_tx_message.status_pointer = &j1939_transport_transmit_status;
+    pjVar1 = &j1939_transport_tx_message;
+    j1939_transport_tx_message.header.data_length = (word)length;
   }
   else {
-    puVar1 = (undefined *)0x0;
+    pjVar1 = (j1939_tx_msg_t *)0x0;
   }
-  return puVar1;
+  return pjVar1;
 }
 
 

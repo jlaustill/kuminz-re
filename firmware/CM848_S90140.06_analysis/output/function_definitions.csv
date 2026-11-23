@@ -567,3 +567,5 @@ function_address,function_name,param_index,name,type,comment
 0x00005808,cm848_handleBootWriteByParameterIdLongLengthService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
 0x00005870,cm848_handleBootWriteMemoryService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
 0x000058e8,cm848_handleBootWriteMemoryLongLengthService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x0050d688,cm848_selectJ1939TransmitBuffer,return,,j1939_tx_msg_t*,j1939_single_frame_tx_message or j1939_transport_tx_message - 0 while the transport record is busy (PR #53 round 64)
+0x0050d688,cm848_selectJ1939TransmitBuffer,0,length,int32_t,The message's data bytes: up to 8 takes the single frame record (PR #53 round 64)
