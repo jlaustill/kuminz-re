@@ -1728,7 +1728,7 @@ extern word cluster_lamp_status_error_count;  // 0x003fb3fc
 extern TRANSMISSION_SELECTED_GEAR transmission_selected_gear_last_valid;  // 0x003fb3fe
 extern word pci_transmit_message_2_status_bits;  // 0x003fb400
 extern word pci_transmit_message_2_status_bits_previous;  // 0x003fb402
-extern word engine_warning_alert_flag_previous;  // 0x003fb404
+extern word warning_chime_request_flag_previous;  // 0x003fb404
 extern word coolant_overheat_or_low_oil_pressure_flag_previous;  // 0x003fb406
 extern word pci_transmit_message_11_pulse_timeout_previous;  // 0x003fb408
 extern word pci_transmit_message_11_pulse_total_previous;  // 0x003fb40a
@@ -4984,7 +4984,7 @@ extern sensor_channel_state_t governor_pressure_sensor_channel_state;  // 0x0040
 extern sensor_channel_state_t transmission_temperature_sensor_channel_state;  // 0x0040b1da
 extern word boost_pressure_above_barometric;  // 0x0040b1ea
 extern word initial_ambient_air_pressure;  // 0x0040b1ec
-extern word fuel_demand_timing_enable_flag;  // 0x0040b1ee
+extern word tsc1_lost_management_active_flag;  // 0x0040b1ee
 extern word transmission_output_speed_in_use;  // 0x0040b1f0
 extern word transmission_temperature_in_use;  // 0x0040b1f2
 extern word transmission_current_gear;  // 0x0040b1f4
@@ -4996,7 +4996,7 @@ extern word cruise_rpm_ratio_ema;  // 0x0040b206
 extern word cruise_control_on_flag;  // 0x0040b208
 extern word cruise_control_last_cutout_reason;  // 0x0040b20a
 extern word cruise_control_denied_status;  // 0x0040b20c
-extern word engine_warning_alert_flag;  // 0x0040b210
+extern word warning_chime_request_flag;  // 0x0040b210
 extern word coolant_overheat_or_low_oil_pressure_flag;  // 0x0040b212
 extern word protection_fault_latch_flag;  // 0x0040b214
 extern word supervisor_register_36_bit_1_low_flag;  // 0x0040b218
@@ -5800,7 +5800,7 @@ extern word intake_air_heater_start_temperature;  // 0x0040b34a
 extern word intake_air_heater_preheat_remaining_ticks;  // 0x0040b9ea
 extern word water_in_fuel_detected_flag;  // 0x0040b0a8
 extern word protection_coolant_classb_active_flag;  // 0x0040b1e8
-extern word engine_warning_alert_duration_scale;  // 0x00408736
+extern word warning_chime_duration;  // 0x00408736
 extern word coolant_bucket_overheat_active_flag;  // 0x0040b230
 extern word coolant_overheat_fuel_derate;  // 0x0040b232
 extern word coolant_overheat_engine_speed_fuel_limit;  // 0x0040b234
@@ -5811,7 +5811,7 @@ extern word cold_start_fuel_demand_proportional;  // 0x0040b23c
 extern word engine_overheat_derate_coolant_temperature_setpoint;  // 0x0040b23e
 extern word engine_overheat_derate_reason_code;  // 0x0040b254
 extern word low_oil_pressure_active_flag;  // 0x0040b532
-extern word low_oil_pressure_derate_flag;  // 0x0040b534
+extern word low_oil_pressure_chime_flag;  // 0x0040b534
 extern word barometric_pressure_selected;  // 0x0040a162
 extern SENSOR_VALUE_SOURCE barometric_pressure_reference_source;  // 0x0040a198
 extern SENSOR_VALUE_SOURCE ambient_air_temperature_source;  // 0x0040a19c
@@ -6052,7 +6052,7 @@ extern word air_conditioning_high_fuel_demand_cutout_rearm_timer;  // 0x003fcd64
 extern word air_conditioning_low_engine_speed_on_count;  // 0x003fcd68
 extern word air_conditioning_cycle_on_count;  // 0x003fcd6c
 extern word air_conditioning_cycle_off_count;  // 0x003fcd6e
-extern word engine_warning_alert_countdown;  // 0x003fcdb0
+extern word warning_chime_countdown;  // 0x003fcdb0
 extern byte pci_message_handler_tick;  // 0x003fce7a
 extern word low_oil_pressure_debounce_count;  // 0x003fceac
 extern word oil_pressure_switch_stuck_count;  // 0x003fceb2
@@ -7022,11 +7022,11 @@ extern word park_neutral_exit_engine_speed_limit_countdown_axis[10];  // 0x00408
 extern word park_neutral_exit_engine_speed_limit_countdown_values[10];  // 0x004086f2
 extern byte second_brake_switch_trigger_accumulator_limit;  // 0x0040871c
 extern byte second_brake_switch_trigger_accumulator_step;  // 0x0040871d
-extern word engine_warning_alert_duration_coolant_overheat;  // 0x00408732
-extern word engine_warning_alert_duration_low_oil_pressure;  // 0x00408734
-extern word engine_warning_alert_duration_coolant_class_b;  // 0x00408738
-extern word engine_warning_alert_duration_water_in_fuel;  // 0x0040873a
-extern word engine_warning_alert_duration_fault_latch;  // 0x0040873c
+extern word warning_chime_count_coolant_overheat;  // 0x00408732
+extern word warning_chime_count_low_oil_pressure;  // 0x00408734
+extern word warning_chime_count_coolant_class_b;  // 0x00408738
+extern word warning_chime_count_water_in_fuel;  // 0x0040873a
+extern word warning_chime_count_fault_latch;  // 0x0040873c
 extern word cold_start_coolant_bucket_overheat_setpoint;  // 0x00408750
 extern word cold_start_coolant_bucket_recovery_temp_threshold;  // 0x00408752
 extern word cold_start_coolant_bucket_recovery_count_limit;  // 0x00408754
@@ -7238,7 +7238,7 @@ extern qspi_job_t eeprom_job;  // 0x003fb8d6
 extern word egr_system_failure_validation_bit;  // 0x003fbd52
 extern word protection_coolant_classb_active_flag_previous;  // 0x003fcdb2
 extern word coolant_bucket_overheat_active_flag_previous;  // 0x003fcdb4
-extern word low_oil_pressure_derate_flag_previous;  // 0x003fcdb6
+extern word low_oil_pressure_chime_flag_previous;  // 0x003fcdb6
 extern word water_in_fuel_detected_flag_previous;  // 0x003fcdb8
 extern word protection_fault_latch_flag_previous;  // 0x003fcdba
 extern byte fuel_level_previous_sample;  // 0x003fce2a

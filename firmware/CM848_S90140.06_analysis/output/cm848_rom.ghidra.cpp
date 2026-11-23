@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 20:08:46 MST 2026
+// Generated: Sun Nov 22 21:05:20 MST 2026
 
 
 //
@@ -27009,7 +27009,7 @@ void cm848_emptyStubFunction5(void)
    accelerator pedal (commanded_throttle_state.commanded_throttle, 400 = 100 percent) is above
    tsc1_lost_management_minimum_accelerator_pedal (TSC_Lost_Min_Throttle_Disable) and below
    tsc1_lost_management_maximum_accelerator_pedal_cal (11C1 +4 TSC_Lost_Max_Throttle_Disable) and
-   tsc1_request_timed_out_flag is 1, then, while fuel_demand_timing_enable_flag is 1, it adds
+   tsc1_request_timed_out_flag is 1, then, while tsc1_lost_management_active_flag is 1, it adds
    tsc1_lost_torque_ramp_rate to tsc1_torque_limit_ramp_integrator (the torque limit
    tsc1_torque_limit_fueling is its value >> 6, at most 0xffff) and tsc1_lost_speed_ramp_rate to the
    speed limit j1939_powertrain_control_state.tsc1_speed_limit, and sets governor mode 3. Outside
@@ -27031,7 +27031,7 @@ void cm848_runTsc1LostManagement(void)
        ) && (commanded_throttle_state.commanded_throttle <
              tsc1_lost_management_maximum_accelerator_pedal_cal)) &&
      (j1939_powertrain_control_state.tsc1_request_timed_out_flag == 1)) {
-    if (fuel_demand_timing_enable_flag == 1) {
+    if (tsc1_lost_management_active_flag == 1) {
       if (tsc1_torque_limit_ramp_integrator < -(uint)tsc1_lost_torque_ramp_rate - 1) {
         tsc1_torque_limit_ramp_integrator =
              tsc1_torque_limit_ramp_integrator + tsc1_lost_torque_ramp_rate;
@@ -41444,7 +41444,7 @@ void cm848_buildPciTransmitMessage2CruiseControlAndStatusBits(void)
 // Function: cm848_buildPciTransmitMessage5EngineWarningBits @ 0x0003c5f0
 //
 
-/* Builds PCI (J1850) TX[5] header 0x53: byte 1 bit 5 = engine_warning_alert_flag / bit 4 =
+/* Builds PCI (J1850) TX[5] header 0x53: byte 1 bit 5 = warning_chime_request_flag / bit 4 =
    coolant_overheat_or_low_oil_pressure_flag / byte 2 = 0; when either flag changes it copies both
    bytes and sets the timer to 1002 (interval 1000 ms) to send at once (was
    cm848_processProtectionStateChange) | review-function-readability reviewed 2026-11-13 -
@@ -41459,13 +41459,13 @@ void cm848_buildPciTransmitMessage5EngineWarningBits(void)
   undefined2 local_8;
   
   wVar2 = coolant_overheat_or_low_oil_pressure_flag;
-  wVar1 = engine_warning_alert_flag;
-  if ((engine_warning_alert_flag_previous != engine_warning_alert_flag) ||
+  wVar1 = warning_chime_request_flag;
+  if ((warning_chime_request_flag_previous != warning_chime_request_flag) ||
      (coolant_overheat_or_low_oil_pressure_flag_previous !=
       coolant_overheat_or_low_oil_pressure_flag)) {
     local_8._1_1_ = 0;
     local_8._0_1_ = 0;
-    if (engine_warning_alert_flag == 1) {
+    if (warning_chime_request_flag == 1) {
       local_8._1_1_ = 0;
       local_8._0_1_ = 0x20;
     }
@@ -41479,7 +41479,7 @@ void cm848_buildPciTransmitMessage5EngineWarningBits(void)
     } while (uVar3 < 2);
     pci_transmit_message_5_timer = 0x3ea;
   }
-  engine_warning_alert_flag_previous = wVar1;
+  warning_chime_request_flag_previous = wVar1;
   coolant_overheat_or_low_oil_pressure_flag_previous = wVar2;
   return;
 }
@@ -43325,7 +43325,7 @@ void cm848_setThermalProtectionMode5(void)
    which table stage applies (torque_management_gear_ratio_stage): manual transmission
    (transmission_type_cal 0) compares drivetrain_ratio with the manual threshold and, with
    algorithm_enable_flags_42_cal bit 0x1000, the three stage thresholds; type 1 uses the manual
-   threshold while fuel_demand_timing_enable_flag is 1; type 2 (47RE) is required in gear 4, or in
+   threshold while tsc1_lost_management_active_flag is 1; type 2 (47RE) is required in gear 4, or in
    unknown gear 255 at or below the 47RE threshold; type 3 only stores a mode word and is never
    reached. Only called by cm848_runTorqueManagement. (was cm848_evaluateThermalProtectionActive) */
 
@@ -43365,7 +43365,7 @@ void cm848_evaluateTorqueManagementRequired(void)
     return;
   }
   if (transmission_type_cal == 1) {
-    if (fuel_demand_timing_enable_flag == 1) {
+    if (tsc1_lost_management_active_flag == 1) {
       if (vehicle_speed == 0) {
         torque_management_required_flag = 1;
         return;
@@ -74158,8 +74158,8 @@ LAB_00511bf4:
   }
   j1939_tsc1_active_duration_counter = j1939_tsc1_active_duration_counter + sVar2;
 LAB_00511cac:
-  if ((j1939_tsc1_active_duration_counter == 0) && (fuel_demand_timing_enable_flag != 0)) {
-    fuel_demand_timing_enable_flag = 0;
+  if ((j1939_tsc1_active_duration_counter == 0) && (tsc1_lost_management_active_flag != 0)) {
+    tsc1_lost_management_active_flag = 0;
     fault_detected_cal.j1939_tsc1_lost_fault = 0;
     fault_registered_cal.j1939_tsc1_lost_fault = 0;
     cm848_removeEngineTsc1IgnoredRequestEntry(1,j1939_transmission_source_address & 0xff);
@@ -74183,11 +74183,11 @@ LAB_00511cac:
         return;
       }
     }
-    if (fuel_demand_timing_enable_flag != 0) {
+    if (tsc1_lost_management_active_flag != 0) {
       fault_detected_cal.j1939_tsc1_lost_fault = 1;
       return;
     }
-    fuel_demand_timing_enable_flag = 1;
+    tsc1_lost_management_active_flag = 1;
     bVar3 = 1;
     fault_detected_cal._44_2_ = fault_detected_cal._44_2_ | 0x10;
     do {
@@ -74216,7 +74216,7 @@ LAB_00511cac:
 void fuel_demand_timing_initialize(void)
 
 {
-  fuel_demand_timing_enable_flag = 1;
+  tsc1_lost_management_active_flag = 1;
   j1939_tsc1_active_duration_counter = DAT_004086ca;
   park_neutral_exit_engine_speed_limit_countdown_cached_axis_offset = 2;
   return;
@@ -75057,9 +75057,10 @@ LAB_00513168:
 
 /* Once per 40-phase main loop (200 ms derived): protection_fault_latch_flag = any of
    fault_detected_cal.faults_48_to_63 bits 9-12; coolant_overheat_or_low_oil_pressure_flag; a rising
-   edge of one of five inputs loads engine_warning_alert_countdown that drives
-   engine_warning_alert_flag (was protection_fault_latch_update) | review-function-readability
-   reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
+   edge of one of five inputs loads warning_chime_countdown that drives warning_chime_request_flag
+   (the warning chime: e2m 8B2D chime counts x Cluster_Warning_Chime_Duration) (was
+   protection_fault_latch_update) | review-function-readability reviewed 2026-11-13 - Readability
+   Medium Accuracy Confidence High */
 
 void cm848_updateEngineWarningFlags(void)
 
@@ -75082,60 +75083,58 @@ void cm848_updateEngineWarningFlags(void)
   }
   if ((coolant_bucket_overheat_active_flag == 0) ||
      (coolant_bucket_overheat_active_flag_previous != 0)) {
-    if ((low_oil_pressure_derate_flag == 0) || (low_oil_pressure_derate_flag_previous != 0)) {
+    if ((low_oil_pressure_chime_flag == 0) || (low_oil_pressure_chime_flag_previous != 0)) {
       if ((protection_coolant_classb_active_flag == 0) ||
          (protection_coolant_classb_active_flag_previous != 0)) {
         if ((water_in_fuel_detected_flag == 0) || (water_in_fuel_detected_flag_previous != 0)) {
           if ((protection_fault_latch_flag == 0) || (protection_fault_latch_flag_previous != 0)) {
             if (((coolant_bucket_overheat_active_flag == 0) &&
-                (((low_oil_pressure_derate_flag == 0 && (protection_coolant_classb_active_flag == 0)
-                  ) && (water_in_fuel_detected_flag == 0)))) && (protection_fault_latch_flag == 0))
-            {
-              engine_warning_alert_countdown = 0;
+                (((low_oil_pressure_chime_flag == 0 && (protection_coolant_classb_active_flag == 0))
+                 && (water_in_fuel_detected_flag == 0)))) && (protection_fault_latch_flag == 0)) {
+              warning_chime_countdown = 0;
             }
           }
-          else if (engine_warning_alert_duration_fault_latch != 0) {
-            engine_warning_alert_countdown =
-                 (word)((int)((int)(short)engine_warning_alert_duration_fault_latch *
-                              (uint)engine_warning_alert_duration_scale * 5) / 10);
+          else if (warning_chime_count_fault_latch != 0) {
+            warning_chime_countdown =
+                 (word)((int)((int)(short)warning_chime_count_fault_latch *
+                              (uint)warning_chime_duration * 5) / 10);
           }
         }
-        else if (engine_warning_alert_duration_water_in_fuel != 0) {
-          engine_warning_alert_countdown =
-               (word)((int)((int)(short)engine_warning_alert_duration_water_in_fuel *
-                            (uint)engine_warning_alert_duration_scale * 5) / 10);
+        else if (warning_chime_count_water_in_fuel != 0) {
+          warning_chime_countdown =
+               (word)((int)((int)(short)warning_chime_count_water_in_fuel *
+                            (uint)warning_chime_duration * 5) / 10);
         }
       }
-      else if (engine_warning_alert_duration_coolant_class_b != 0) {
-        engine_warning_alert_countdown =
-             (word)((int)((int)(short)engine_warning_alert_duration_coolant_class_b *
-                          (uint)engine_warning_alert_duration_scale * 5) / 10);
+      else if (warning_chime_count_coolant_class_b != 0) {
+        warning_chime_countdown =
+             (word)((int)((int)(short)warning_chime_count_coolant_class_b *
+                          (uint)warning_chime_duration * 5) / 10);
       }
     }
-    else if (engine_warning_alert_duration_low_oil_pressure != 0) {
-      engine_warning_alert_countdown =
-           (word)((int)((int)(short)engine_warning_alert_duration_low_oil_pressure *
-                        (uint)engine_warning_alert_duration_scale * 5) / 10);
+    else if (warning_chime_count_low_oil_pressure != 0) {
+      warning_chime_countdown =
+           (word)((int)((int)(short)warning_chime_count_low_oil_pressure *
+                        (uint)warning_chime_duration * 5) / 10);
     }
   }
-  else if (engine_warning_alert_duration_coolant_overheat != 0) {
-    engine_warning_alert_countdown =
-         (word)((int)((int)(short)engine_warning_alert_duration_coolant_overheat *
-                      (uint)engine_warning_alert_duration_scale * 5) / 10);
+  else if (warning_chime_count_coolant_overheat != 0) {
+    warning_chime_countdown =
+         (word)((int)((int)(short)warning_chime_count_coolant_overheat *
+                      (uint)warning_chime_duration * 5) / 10);
   }
-  if ((short)engine_warning_alert_countdown < 1) {
-    engine_warning_alert_flag = 0;
+  if ((short)warning_chime_countdown < 1) {
+    warning_chime_request_flag = 0;
   }
-  else if ((word)(((short)engine_warning_alert_duration_scale * 0x4fb) / 10) ==
-           engine_warning_alert_countdown) {
-    engine_warning_alert_flag = 1;
+  else if ((word)(((short)warning_chime_duration * 0x4fb) / 10) == warning_chime_countdown) {
+    warning_chime_request_flag = 1;
   }
   else {
-    engine_warning_alert_flag = 1;
-    engine_warning_alert_countdown = engine_warning_alert_countdown - 1;
+    warning_chime_request_flag = 1;
+    warning_chime_countdown = warning_chime_countdown - 1;
   }
   coolant_bucket_overheat_active_flag_previous = coolant_bucket_overheat_active_flag;
-  low_oil_pressure_derate_flag_previous = low_oil_pressure_derate_flag;
+  low_oil_pressure_chime_flag_previous = low_oil_pressure_chime_flag;
   protection_coolant_classb_active_flag_previous = protection_coolant_classb_active_flag;
   water_in_fuel_detected_flag_previous = water_in_fuel_detected_flag;
   protection_fault_latch_flag_previous = protection_fault_latch_flag;
@@ -75148,16 +75147,16 @@ void cm848_updateEngineWarningFlags(void)
 // Function: cm848_initEngineWarningFlags @ 0x005134e8
 //
 
-/* Clears engine_warning_alert_flag / coolant_overheat_or_low_oil_pressure_flag /
-   engine_warning_alert_countdown (was protection_sensor_state_initialize) |
-   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
+/* Clears warning_chime_request_flag / coolant_overheat_or_low_oil_pressure_flag /
+   warning_chime_countdown (was protection_sensor_state_initialize) | review-function-readability
+   reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
 
 void cm848_initEngineWarningFlags(void)
 
 {
-  engine_warning_alert_flag = 0;
+  warning_chime_request_flag = 0;
   coolant_overheat_or_low_oil_pressure_flag = 0;
-  engine_warning_alert_countdown = 0;
+  warning_chime_countdown = 0;
   return;
 }
 
@@ -79180,7 +79179,7 @@ void initDiagnosticShadowFlags(void)
 
 {
   low_oil_pressure_active_flag = 0;
-  low_oil_pressure_derate_flag = 0;
+  low_oil_pressure_chime_flag = 0;
   fault_detected_cal.low_oil_pressure_error = 0;
   fault_registered_cal.low_oil_pressure_error = 0;
   low_oil_pressure_debounce_count = 0;
@@ -79203,7 +79202,7 @@ void initDiagnosticShadowFlags(void)
    0x3fceae + EMA) and the low-oil-pressure switch (switch 14) drives the fault; above
    low_oil_pressure_check_minimum_rpm a debounced low reading sets
    fault_detected_cal.faults_384_to_399 0x200 + low_oil_pressure_active_flag +
-   low_oil_pressure_derate_flag; a switch that never shows low pressure with the engine stopped sets
+   low_oil_pressure_chime_flag; a switch that never shows low pressure with the engine stopped sets
    fault_detected_cal.faults_336_to_351 0x20 (was governorGovernorTempCompute) |
    review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
     */
@@ -79245,7 +79244,7 @@ void cm848_processEngineOilPressure(void)
          (low_oil_pressure_debounce_limit <= low_oil_pressure_debounce_count)) {
         fault_detected_cal._48_2_ = fault_detected_cal._48_2_ | 0x200;
         low_oil_pressure_active_flag = 1;
-        low_oil_pressure_derate_flag = 1;
+        low_oil_pressure_chime_flag = 1;
       }
       if (engine_oil_pressure < low_oil_pressure_threshold) {
         return;
@@ -79255,7 +79254,7 @@ void cm848_processEngineOilPressure(void)
     fault_detected_cal._48_2_ = fault_detected_cal._48_2_ & 0xfdff;
     low_oil_pressure_debounce_count = 0;
     low_oil_pressure_active_flag = 0;
-    low_oil_pressure_derate_flag = 0;
+    low_oil_pressure_chime_flag = 0;
     return;
   }
   oil_pressure_model_unfiltered =
@@ -79275,7 +79274,7 @@ void cm848_processEngineOilPressure(void)
        (low_oil_pressure_debounce_limit <= low_oil_pressure_debounce_count)) {
       fault_detected_cal._48_2_ = fault_detected_cal._48_2_ | 0x200;
       low_oil_pressure_active_flag = 1;
-      low_oil_pressure_derate_flag = 1;
+      low_oil_pressure_chime_flag = 1;
       engine_oil_pressure = 0;
     }
     if (switch_input_state_bits.low_oil_pressure_switch != 0) goto LAB_0051a478;
@@ -79283,7 +79282,7 @@ void cm848_processEngineOilPressure(void)
   fault_registered_cal.low_oil_pressure_error = 0;
   fault_detected_cal._48_2_ = fault_detected_cal._48_2_ & 0xfdff;
   low_oil_pressure_active_flag = 0;
-  low_oil_pressure_derate_flag = 0;
+  low_oil_pressure_chime_flag = 0;
   low_oil_pressure_debounce_count = 0;
 LAB_0051a478:
   if ((engine_speed_state.filtered_engine_speed == 0) &&
@@ -79302,7 +79301,7 @@ LAB_0051a478:
     fault_detected_cal._42_2_ = fault_detected_cal._42_2_ & 0xffdf;
     fault_registered_cal._42_2_ = fault_registered_cal._42_2_ & 0xffdf;
     low_oil_pressure_active_flag = 0;
-    low_oil_pressure_derate_flag = 0;
+    low_oil_pressure_chime_flag = 0;
   }
   if ((fault_detected_cal.low_oil_switch_error == 0) || (engine_state != ENGINE_STATE_RUNNING)) {
     oil_pressure_switch_fault_running_count = 0;
@@ -79315,7 +79314,7 @@ LAB_0051a478:
     oil_pressure_switch_fault_running_count = oil_pressure_switch_fault_running_count_limit;
     if (low_oil_switch_chime_enable != 0) {
       low_oil_pressure_active_flag = 1;
-      low_oil_pressure_derate_flag = 1;
+      low_oil_pressure_chime_flag = 1;
     }
   }
   return;
