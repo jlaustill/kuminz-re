@@ -1914,7 +1914,7 @@ qspi_job_queue_t,,jobs,qspi_job_t*,64,Ring of 16 queued job pointers,,verified
 memory_region_t,0x003f9830,start_address,dword,4,First address of the region,,verified
 memory_region_t,0x003f9830,end_address,dword,4,Last address of the region,,verified
 memory_region_t,0x003f9830,region_type,MEMORY_REGION_TYPE,1,The type - the boot kernel's / the application's while development_mode is ON (PR #53 round 71: was byte '0 RAM / 2 Bank-2 flash / 3 registers / 4 main flash / 5 EEPROM (9 = not found)'),,verified
-memory_region_t,0x003f9830,development_mode_off_region_type,MEMORY_REGION_TYPE,1,The application's type while development_mode is OFF (cm848_lookupApplicationMemoryRegionType): its register ranges become REFUSED; equal to region_type in boot_memory_region_table (PR #53 round 71: was region_type_copy 'Same value as region_type in every entry' - true of the boot table only),,verified
+memory_region_t,0x003f9830,development_mode_off_region_type,MEMORY_REGION_TYPE,1,The application's type while development_mode is OFF (lookupApplicationMemoryRegionType): its register ranges become REFUSED; equal to region_type in boot_memory_region_table (PR #53 round 71: was region_type_copy 'Same value as region_type in every entry' - true of the boot table only),,verified
 memory_region_t,0x003f983a,,,,region 1 0x500000-0x5fffff Bank-2 flash - marker,,verified
 memory_region_t,0x003f9844,,,,region 2 0x3f9800 type 3 (end 0x302000 is below start so never matches) - marker,,verified
 memory_region_t,0x003f984e,,,,region 3 0x302000-0x3fffff RAM - marker,,verified

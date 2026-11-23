@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Sat Nov 21 02:52:43 MST 2026
+// Generated: Mon Nov 23 16:11:46 MST 2026
 
 
 //
@@ -10999,17 +10999,18 @@ void cm550_multiPacketTransmitHandler(void)
   char cVar4;
   char cVar6;
   int iVar5;
+  MEMORY_REGION_TYPE MVar7;
   undefined4 unaff_D2;
-  byte bVar7;
   byte bVar8;
   byte bVar9;
-  undefined1 uVar10;
+  byte bVar10;
+  undefined1 uVar11;
   undefined4 local_c;
   undefined4 local_8;
   
   pbVar3 = _j1708_transmit_buffer_0_2_32;
-  uVar10 = (undefined1)((uint)unaff_D2 >> 0x18);
-  bVar7 = (byte)((uint)unaff_D2 >> 0x10);
+  uVar11 = (undefined1)((uint)unaff_D2 >> 0x18);
+  bVar8 = (byte)((uint)unaff_D2 >> 0x10);
   j1708_transmit_buffer_2_32_ddc6.reserved_28[0] = 0;
   if (*_j1708_receive_buffer_pointer_2_32_dcaa == '\x06') {
     local_8._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
@@ -11022,15 +11023,15 @@ void cm550_multiPacketTransmitHandler(void)
     local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\x05');
     cVar6 = cm550_diagnosticMemoryAddressResolver(0x80);
     if (cVar6 == '\0') {
-      bVar8 = *local_8;
+      bVar9 = *local_8;
       local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\x06');
-      j1708_transmit_buffer_2_32_ddc6.field_24 = CONCAT11(*local_8,bVar8);
+      j1708_transmit_buffer_2_32_ddc6.field_24 = CONCAT11(*local_8,bVar9);
       if (j1708_transmit_buffer_2_32_ddc6.field_24 < 0xf) {
-        bVar9 = bVar8 + 6;
+        bVar10 = bVar9 + 6;
       }
       else {
-        bVar9 = 0x14;
-        bVar8 = 0xe;
+        bVar10 = 0x14;
+        bVar9 = 0xe;
         j1708_transmit_buffer_2_32_ddc6.reserved_28[0] = 1;
       }
       if ((int)pbVar3 < _j1708_transmit_buffer_2_32_dc9c) {
@@ -11039,21 +11040,21 @@ void cm550_multiPacketTransmitHandler(void)
       else {
         iVar5 = (_j1708_transmit_buffer_2_32_dc9c - (int)pbVar3) + 0xfe;
       }
-      if ((int)(uint)bVar9 < iVar5) {
+      if ((int)(uint)bVar10 < iVar5) {
         local_c._3_1_ = (char)pbVar3;
         cVar4 = (char)local_c;
         local_c._0_3_ = (undefined3)((uint)pbVar3 >> 8);
         local_c = (byte *)CONCAT31(local_c._0_3_,(char)local_c + '\x01');
         *local_c = 7;
         local_c = (byte *)CONCAT31(local_c._0_3_,cVar4 + '\x02');
-        *local_c = bVar8 | 0xb0;
+        *local_c = bVar9 | 0xb0;
         local_c = (byte *)CONCAT31(local_c._0_3_,cVar4 + '\x03');
-        cVar6 = cm550_addressRangeValidator
+        MVar7 = lookupApplicationMemoryRegionType
                           (j1708_transmit_buffer_2_32_ddc6.data_ptr_18,
-                           CONCAT31(CONCAT21(j1708_transmit_buffer_2_32_ddc6.field_24,uVar10),bVar7)
+                           CONCAT31(CONCAT21(j1708_transmit_buffer_2_32_ddc6.field_24,uVar11),bVar8)
                           );
-        if ((cVar6 == '\t') || (cVar6 == '\n')) {
-          cm550_diagnosticMessageQueueWrite(bVar7);
+        if ((MVar7 == MEMORY_REGION_TYPE_UNMAPPED) || (MVar7 == MEMORY_REGION_TYPE_REFUSED)) {
+          cm550_diagnosticMessageQueueWrite(bVar8);
           j1708_transmit_buffer_2_32_ddc6.reserved_28[0] = 0;
         }
         else {
@@ -11065,7 +11066,7 @@ void cm550_multiPacketTransmitHandler(void)
           local_c = (byte *)CONCAT31(local_c._0_3_,cVar4 + '\x06');
           *local_c = j1708_transmit_buffer_2_32_ddc6.field_24._0_1_;
           local_c = (byte *)CONCAT31(local_c._0_3_,cVar4 + '\a');
-          for (bVar7 = 0; bVar7 < bVar8; bVar7 = bVar7 + 1) {
+          for (bVar8 = 0; bVar8 < bVar9; bVar8 = bVar8 + 1) {
             bVar2 = *(byte *)j1708_transmit_buffer_2_32_ddc6.data_ptr_18;
             j1708_transmit_buffer_2_32_ddc6.data_ptr_18 =
                  j1708_transmit_buffer_2_32_ddc6.data_ptr_18 + 1;
@@ -11073,8 +11074,8 @@ void cm550_multiPacketTransmitHandler(void)
             local_c = (byte *)CONCAT31(local_c._0_3_,(char)local_c + '\x01');
           }
           j1708_transmit_buffer_2_32_ddc6.field_24 =
-               j1708_transmit_buffer_2_32_ddc6.field_24 - bVar8;
-          *pbVar3 = bVar9;
+               j1708_transmit_buffer_2_32_ddc6.field_24 - bVar9;
+          *pbVar3 = bVar10;
           *local_c = 0;
           _j1708_transmit_buffer_0_2_32 = local_c;
           mc68k_tpuTransmissionTrigger();
@@ -11083,18 +11084,18 @@ void cm550_multiPacketTransmitHandler(void)
       }
       else {
         j1708_transmit_buffer_2_32_ddc6.reserved_28[0] = 0;
-        cm550_diagnosticMessageQueueWrite(bVar7);
+        cm550_diagnosticMessageQueueWrite(bVar8);
         _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
              _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
         _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
       }
     }
     else {
-      cm550_diagnosticMessageQueueWrite(bVar7);
+      cm550_diagnosticMessageQueueWrite(bVar8);
     }
   }
   else {
-    cm550_diagnosticMessageQueueWrite(bVar7);
+    cm550_diagnosticMessageQueueWrite(bVar8);
   }
   return;
 }
@@ -11116,35 +11117,36 @@ void cm550_multiPacketReceiveHandler(void)
   short sVar4;
   undefined1 *puVar5;
   dword dVar6;
-  char cVar7;
+  MEMORY_REGION_TYPE MVar7;
+  char cVar8;
   undefined4 unaff_D2;
-  byte bVar8;
-  undefined1 uVar9;
+  byte bVar9;
+  undefined1 uVar10;
   byte response_type;
   undefined2 local_a;
   undefined4 local_8;
   
-  uVar9 = (undefined1)((uint)unaff_D2 >> 0x18);
+  uVar10 = (undefined1)((uint)unaff_D2 >> 0x18);
   response_type = (byte)((uint)unaff_D2 >> 0x10);
   local_8._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
-  cVar7 = (char)local_8;
+  cVar8 = (char)local_8;
   local_8._0_3_ = (undefined3)((uint)_j1708_receive_buffer_pointer_2_32_dcaa >> 8);
   local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x02');
   bVar3 = *local_8 & 0xf;
   if (j1708_transmit_buffer_2_32_ddc6.reserved_28[1] == 1) {
     if ((uint)*_j1708_receive_buffer_pointer_2_32_dcaa - (uint)bVar3 == 4) {
-      local_8 = (byte *)CONCAT31(local_8._0_3_,cVar7 + '\x03');
+      local_8 = (byte *)CONCAT31(local_8._0_3_,cVar8 + '\x03');
       uVar2 = *local_8;
-      local_8 = (byte *)CONCAT31(local_8._0_3_,cVar7 + '\x04');
+      local_8 = (byte *)CONCAT31(local_8._0_3_,cVar8 + '\x04');
       local_a = CONCAT11(*local_8,uVar2);
-      local_8 = (byte *)CONCAT31(local_8._0_3_,cVar7 + '\x05');
+      local_8 = (byte *)CONCAT31(local_8._0_3_,cVar8 + '\x05');
       if (local_a == j1708_transmit_buffer_2_32_ddc6.length_16) {
         switch(j1708_transmit_buffer_2_32_ddc6.length_16) {
         case 0x15:
         case 0x17:
         case 0x18:
         case 0x19:
-          for (bVar8 = 0; bVar8 < bVar3; bVar8 = bVar8 + 1) {
+          for (bVar9 = 0; bVar9 < bVar3; bVar9 = bVar9 + 1) {
             dVar6 = j1708_transmit_buffer_2_32_ddc6.data_ptr_18 + 1;
             *(byte *)j1708_transmit_buffer_2_32_ddc6.data_ptr_18 = *local_8;
             j1708_transmit_buffer_2_32_ddc6.data_ptr_18 = dVar6;
@@ -11157,15 +11159,16 @@ void cm550_multiPacketReceiveHandler(void)
           }
           break;
         default:
-          cVar7 = cm550_addressRangeValidator
+          MVar7 = lookupApplicationMemoryRegionType
                             (j1708_transmit_buffer_2_32_ddc6.data_ptr_18,
-                             CONCAT31(CONCAT21(j1708_transmit_buffer_2_32_ddc6.field_26,uVar9),
+                             CONCAT31(CONCAT21(j1708_transmit_buffer_2_32_ddc6.field_26,uVar10),
                                       response_type));
-          if ((cVar7 == '\x03') || (cVar7 == '\x05')) {
+          if ((MVar7 == MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED) ||
+             (MVar7 == MEMORY_REGION_TYPE_EEPROM)) {
             psVar1 = (short *)((short)(j1708_transmit_buffer_2_32_ddc6.status_102 * 3) * 2 +
                               0x80dd84);
             *psVar1 = (ushort)bVar3 + *psVar1;
-            for (bVar8 = 0; bVar8 < bVar3; bVar8 = bVar8 + 1) {
+            for (bVar9 = 0; bVar9 < bVar3; bVar9 = bVar9 + 1) {
               puVar5 = _scratch_pad_write_pointer + 1;
               *_scratch_pad_write_pointer = *local_8;
               _scratch_pad_write_pointer = puVar5;
@@ -11178,7 +11181,7 @@ void cm550_multiPacketReceiveHandler(void)
             }
           }
           else {
-            for (bVar8 = 0; bVar8 < bVar3; bVar8 = bVar8 + 1) {
+            for (bVar9 = 0; bVar9 < bVar3; bVar9 = bVar9 + 1) {
               dVar6 = j1708_transmit_buffer_2_32_ddc6.data_ptr_18 + 1;
               *(byte *)j1708_transmit_buffer_2_32_ddc6.data_ptr_18 = *local_8;
               j1708_transmit_buffer_2_32_ddc6.data_ptr_18 = dVar6;
@@ -11208,23 +11211,23 @@ void cm550_multiPacketReceiveHandler(void)
     }
   }
   else if ((uint)*_j1708_receive_buffer_pointer_2_32_dcaa - (uint)bVar3 == 6) {
-    local_8 = (byte *)CONCAT31(local_8._0_3_,cVar7 + '\x03');
+    local_8 = (byte *)CONCAT31(local_8._0_3_,cVar8 + '\x03');
     uVar2 = *local_8;
-    local_8 = (byte *)CONCAT31(local_8._0_3_,cVar7 + '\x04');
+    local_8 = (byte *)CONCAT31(local_8._0_3_,cVar8 + '\x04');
     j1708_transmit_buffer_2_32_ddc6.length_16 = CONCAT11(*local_8,uVar2);
-    local_8 = (byte *)CONCAT31(local_8._0_3_,cVar7 + '\x05');
+    local_8 = (byte *)CONCAT31(local_8._0_3_,cVar8 + '\x05');
     uVar2 = *local_8;
-    local_8 = (byte *)CONCAT31(local_8._0_3_,cVar7 + '\x06');
+    local_8 = (byte *)CONCAT31(local_8._0_3_,cVar8 + '\x06');
     j1708_transmit_buffer_2_32_ddc6.field_26 = CONCAT11(*local_8,uVar2);
-    local_8 = (byte *)CONCAT31(local_8._0_3_,cVar7 + '\a');
-    cVar7 = cm550_diagnosticMemoryAddressResolver(0x80);
-    if (cVar7 == '\0') {
+    local_8 = (byte *)CONCAT31(local_8._0_3_,cVar8 + '\a');
+    cVar8 = cm550_diagnosticMemoryAddressResolver(0x80);
+    if (cVar8 == '\0') {
       switch(j1708_transmit_buffer_2_32_ddc6.length_16) {
       case 0x15:
       case 0x17:
       case 0x18:
       case 0x19:
-        for (bVar8 = 0; bVar8 < bVar3; bVar8 = bVar8 + 1) {
+        for (bVar9 = 0; bVar9 < bVar3; bVar9 = bVar9 + 1) {
           dVar6 = j1708_transmit_buffer_2_32_ddc6.data_ptr_18 + 1;
           *(byte *)j1708_transmit_buffer_2_32_ddc6.data_ptr_18 = *local_8;
           j1708_transmit_buffer_2_32_ddc6.data_ptr_18 = dVar6;
@@ -11236,11 +11239,12 @@ void cm550_multiPacketReceiveHandler(void)
         }
         break;
       default:
-        cVar7 = cm550_addressRangeValidator
+        MVar7 = lookupApplicationMemoryRegionType
                           (j1708_transmit_buffer_2_32_ddc6.data_ptr_18,
-                           CONCAT31(CONCAT21(j1708_transmit_buffer_2_32_ddc6.field_26,uVar9),
+                           CONCAT31(CONCAT21(j1708_transmit_buffer_2_32_ddc6.field_26,uVar10),
                                     response_type));
-        if ((cVar7 == '\x05') || (cVar7 == '\x03')) {
+        if ((MVar7 == MEMORY_REGION_TYPE_EEPROM) ||
+           (MVar7 == MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED)) {
           if ((10 < j1708_transmit_buffer_2_32_ddc6.status_102 + 1) ||
              (0x80dd85 - (int)_scratch_pad_write_pointer <=
               (int)(uint)j1708_transmit_buffer_2_32_ddc6.field_26)) {
@@ -11254,7 +11258,7 @@ void cm550_multiPacketReceiveHandler(void)
           j1708_transmit_buffer_2_32_ddc6.status_102 =
                j1708_transmit_buffer_2_32_ddc6.status_102 + 1;
           *(ushort *)(sVar4 * 2 + 0x80dd8a) = (ushort)bVar3;
-          for (bVar8 = 0; bVar8 < bVar3; bVar8 = bVar8 + 1) {
+          for (bVar9 = 0; bVar9 < bVar3; bVar9 = bVar9 + 1) {
             puVar5 = _scratch_pad_write_pointer + 1;
             *_scratch_pad_write_pointer = *local_8;
             _scratch_pad_write_pointer = puVar5;
@@ -11267,15 +11271,15 @@ void cm550_multiPacketReceiveHandler(void)
           }
         }
         else {
-          if (cVar7 != '\0') {
-            if (cVar7 == '\n') {
+          if (MVar7 != MEMORY_REGION_TYPE_RAM) {
+            if (MVar7 == MEMORY_REGION_TYPE_REFUSED) {
               cm550_diagnosticMessageQueueWrite(response_type);
               return;
             }
             cm550_diagnosticMessageQueueWrite(response_type);
             return;
           }
-          for (bVar8 = 0; bVar8 < bVar3; bVar8 = bVar8 + 1) {
+          for (bVar9 = 0; bVar9 < bVar3; bVar9 = bVar9 + 1) {
             dVar6 = j1708_transmit_buffer_2_32_ddc6.data_ptr_18 + 1;
             *(byte *)j1708_transmit_buffer_2_32_ddc6.data_ptr_18 = *local_8;
             j1708_transmit_buffer_2_32_ddc6.data_ptr_18 = dVar6;
@@ -20247,44 +20251,45 @@ void cm550_responseBufferFinalize(void)
 void cm550_diagnosticMemoryWriteHandler(byte service_id)
 
 {
-  char cVar1;
+  MEMORY_REGION_TYPE MVar1;
+  char cVar2;
   undefined4 unaff_D2;
-  byte bVar2;
   byte bVar3;
   byte bVar4;
-  dword *pdVar5;
-  byte *pbVar6;
-  bool bVar7;
+  byte bVar5;
+  dword *pdVar6;
+  byte *pbVar7;
+  bool bVar8;
   byte in_stack_00000005;
-  undefined1 uVar8;
+  undefined1 uVar9;
   byte response_type;
   byte bStack_f;
   dword local_e;
   byte local_9;
   undefined4 local_8;
   
-  uVar8 = (undefined1)((uint)unaff_D2 >> 0x18);
+  uVar9 = (undefined1)((uint)unaff_D2 >> 0x18);
   response_type = (byte)((uint)unaff_D2 >> 0x10);
   local_9 = *_j1708_receive_buffer_pointer_2_32_dcaa;
   local_8._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
-  cVar1 = (char)local_8;
+  cVar2 = (char)local_8;
   local_8._0_3_ = (undefined3)((uint)_j1708_receive_buffer_pointer_2_32_dcaa >> 8);
   local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x02');
-  bVar4 = *local_8 & 0xf;
-  bVar7 = bVar4 == 0;
-  if (bVar7) {
-    bVar3 = 4;
+  bVar5 = *local_8 & 0xf;
+  bVar8 = bVar5 == 0;
+  if (bVar8) {
+    bVar4 = 4;
   }
   else {
-    bVar3 = 2;
+    bVar4 = 2;
   }
-  local_8 = (byte *)CONCAT31(local_8._0_3_,cVar1 + '\x03');
-  pdVar5 = (dword *)&DAT_0080db68;
+  local_8 = (byte *)CONCAT31(local_8._0_3_,cVar2 + '\x03');
+  pdVar6 = (dword *)&DAT_0080db68;
   do {
-    if (local_9 <= bVar3) {
-      if (bVar3 == local_9) {
-        cVar1 = cm550_FUN_0002cf7e();
-        if (cVar1 != -1) {
+    if (local_9 <= bVar4) {
+      if (bVar4 == local_9) {
+        cVar2 = cm550_FUN_0002cf7e();
+        if (cVar2 != -1) {
           cm550_diagnosticMessageQueueWrite(response_type);
         }
       }
@@ -20293,26 +20298,26 @@ void cm550_diagnosticMemoryWriteHandler(byte service_id)
       }
       return;
     }
-    pbVar6 = &bStack_f + in_stack_00000005;
-    for (bVar2 = 0; bVar2 < in_stack_00000005; bVar2 = bVar2 + 1) {
-      *pbVar6 = *local_8;
+    pbVar7 = &bStack_f + in_stack_00000005;
+    for (bVar3 = 0; bVar3 < in_stack_00000005; bVar3 = bVar3 + 1) {
+      *pbVar7 = *local_8;
       local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
-      pbVar6 = pbVar6 + -1;
+      pbVar7 = pbVar7 + -1;
     }
-    if (bVar7) {
-      bVar4 = *local_8;
+    if (bVar8) {
+      bVar5 = *local_8;
       local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
-      bVar3 = bVar3 + 1;
+      bVar4 = bVar4 + 1;
     }
-    bVar3 = bVar4 + in_stack_00000005 + bVar3;
+    bVar4 = bVar5 + in_stack_00000005 + bVar4;
     if (in_stack_00000005 == 2) {
       DAT_0080dbfe = 2;
       if (local_e._0_2_ == 0x15) {
         j1708_transmit_buffer_2_32_ddc6.reserved_112[2] = 0;
         j1708_transmit_buffer_2_32_ddc6.reserved_112[3] = 1;
       }
-      cVar1 = cm550_diagnosticMemoryAddressResolver((word)((uint)&local_e >> 0x10));
-      if (cVar1 != '\0') {
+      cVar2 = cm550_diagnosticMemoryAddressResolver((word)((uint)&local_e >> 0x10));
+      if (cVar2 != '\0') {
         cm550_diagnosticMessageQueueWrite(response_type);
         return;
       }
@@ -20320,22 +20325,22 @@ void cm550_diagnosticMemoryWriteHandler(byte service_id)
     else {
       DAT_0080dbfe = 4;
     }
-    cVar1 = cm550_addressRangeValidator(local_e,(uint)CONCAT21(CONCAT11(bVar4,uVar8),response_type))
-    ;
-    if ((cVar1 == '\n') || (cVar1 == '\x04')) {
+    MVar1 = lookupApplicationMemoryRegionType
+                      (local_e,(uint)CONCAT21(CONCAT11(bVar5,uVar9),response_type));
+    if ((MVar1 == MEMORY_REGION_TYPE_REFUSED) || (MVar1 == MEMORY_REGION_TYPE_MAIN_FLASH)) {
       cm550_diagnosticMessageQueueWrite(response_type);
       return;
     }
-    if (cVar1 == '\t') {
+    if (MVar1 == MEMORY_REGION_TYPE_UNMAPPED) {
       cm550_diagnosticMessageQueueWrite(response_type);
       return;
     }
-    *pdVar5 = local_e;
-    pdVar5[1] = (dword)local_8;
-    *(byte *)(pdVar5 + 2) = bVar4;
-    *(char *)((int)pdVar5 + 9) = cVar1;
-    pdVar5 = (dword *)((int)pdVar5 + 10);
-    local_8 = (byte *)CONCAT31(local_8._0_3_,bVar4 + (char)local_8);
+    *pdVar6 = local_e;
+    pdVar6[1] = (dword)local_8;
+    *(byte *)(pdVar6 + 2) = bVar5;
+    *(MEMORY_REGION_TYPE *)((int)pdVar6 + 9) = MVar1;
+    pdVar6 = (dword *)((int)pdVar6 + 10);
+    local_8 = (byte *)CONCAT31(local_8._0_3_,bVar5 + (char)local_8);
   } while( true );
 }
 
@@ -20351,24 +20356,25 @@ void cm550_diagnosticMemoryReadHandler(byte service_id)
 
 {
   byte bVar1;
-  undefined3 uVar2;
-  uint uVar3;
-  int iVar4;
-  char cVar6;
+  char cVar2;
+  undefined3 uVar3;
+  uint uVar4;
+  int iVar5;
   char cVar7;
-  undefined2 uVar5;
+  MEMORY_REGION_TYPE MVar8;
+  undefined2 uVar6;
   undefined4 unaff_D2;
-  char cVar8;
-  byte bVar9;
+  char cVar9;
   byte bVar10;
-  int iVar11;
-  byte bVar12;
+  byte bVar11;
+  int iVar12;
   byte bVar13;
-  byte *pbVar14;
-  undefined1 *puVar15;
+  byte bVar14;
+  byte *pbVar15;
+  undefined1 *puVar16;
   char in_stack_00000005;
   undefined1 auStackY_ca [128];
-  undefined1 uVar16;
+  undefined1 uVar17;
   byte response_type;
   undefined4 local_1c;
   char local_17;
@@ -20378,125 +20384,125 @@ void cm550_diagnosticMemoryReadHandler(byte service_id)
   undefined4 local_c;
   undefined4 local_8;
   
-  puVar15 = auStackY_ca + 0x86;
-  uVar16 = (undefined1)((uint)unaff_D2 >> 0x18);
+  puVar16 = auStackY_ca + 0x86;
+  uVar17 = (undefined1)((uint)unaff_D2 >> 0x18);
   response_type = (byte)((uint)unaff_D2 >> 0x10);
   if (in_stack_00000005 == '\x02') {
-    iVar11 = 4;
+    iVar12 = 4;
   }
   else {
-    iVar11 = 2;
+    iVar12 = 2;
   }
   local_10 = _j1708_transmit_buffer_0_2_32;
   local_c = _j1708_transmit_buffer_0_2_32;
-  bVar13 = *_j1708_receive_buffer_pointer_2_32_dcaa;
+  bVar14 = *_j1708_receive_buffer_pointer_2_32_dcaa;
   local_8._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
-  cVar7 = (char)local_8;
+  cVar2 = (char)local_8;
   local_8._0_3_ = (undefined3)((uint)_j1708_receive_buffer_pointer_2_32_dcaa >> 8);
-  uVar2 = local_8._0_3_;
+  uVar3 = local_8._0_3_;
   local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x02');
-  bVar10 = *local_8 & 0xf;
-  bVar12 = (byte)iVar11;
-  if (bVar10 == 0) {
-    if ((int)(bVar13 - 4) % (iVar11 + 1) != 0) {
+  bVar11 = *local_8 & 0xf;
+  bVar13 = (byte)iVar12;
+  if (bVar11 == 0) {
+    if ((int)(bVar14 - 4) % (iVar12 + 1) != 0) {
       cm550_diagnosticMessageQueueWrite(response_type);
       return;
     }
-    uVar3 = (int)(bVar13 - 4) / (iVar11 + 1);
-    cVar6 = (char)uVar3;
-    uVar3 = uVar3 & 0xff;
-    bVar13 = 4;
-    while (cVar8 = (char)uVar3, uVar3 = (uint)(byte)(cVar8 - 1), cVar8 != '\0') {
-      local_8 = (byte *)CONCAT31(local_8._0_3_,bVar12 + 1 + (char)local_8);
-      bVar13 = bVar12 + *local_8 + '\x01' + bVar13;
+    uVar4 = (int)(bVar14 - 4) / (iVar12 + 1);
+    cVar7 = (char)uVar4;
+    uVar4 = uVar4 & 0xff;
+    bVar14 = 4;
+    while (cVar9 = (char)uVar4, uVar4 = (uint)(byte)(cVar9 - 1), cVar9 != '\0') {
+      local_8 = (byte *)CONCAT31(local_8._0_3_,bVar13 + 1 + (char)local_8);
+      bVar14 = bVar13 + *local_8 + '\x01' + bVar14;
     }
     local_17 = '\x01';
   }
   else {
-    if ((int)(bVar13 - 2) % iVar11 != 0) {
+    if ((int)(bVar14 - 2) % iVar12 != 0) {
       cm550_diagnosticMessageQueueWrite(response_type);
       return;
     }
-    cVar6 = (char)((int)(bVar13 - 2) / iVar11);
-    bVar13 = (bVar10 + bVar12) * cVar6 + 2;
+    cVar7 = (char)((int)(bVar14 - 2) / iVar12);
+    bVar14 = (bVar11 + bVar13) * cVar7 + 2;
     local_17 = '\0';
   }
   if ((int)_j1708_transmit_buffer_0_2_32 < _j1708_transmit_buffer_2_32_dc9c) {
-    iVar4 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + -2;
+    iVar5 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + -2;
   }
   else {
-    iVar4 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + 0xfe;
+    iVar5 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + 0xfe;
   }
-  if ((int)(uint)bVar13 < iVar4) {
-    local_8 = (byte *)CONCAT31(uVar2,cVar7 + '\x03');
+  if ((int)(uint)bVar14 < iVar5) {
+    local_8 = (byte *)CONCAT31(uVar3,cVar2 + '\x03');
     local_c._3_1_ = (char)_j1708_transmit_buffer_0_2_32;
-    cVar7 = (char)local_c;
+    cVar2 = (char)local_c;
     local_c._0_3_ = (undefined3)((uint)_j1708_transmit_buffer_0_2_32 >> 8);
     local_c = (byte *)CONCAT31(local_c._0_3_,(char)local_c + '\x01');
     *local_c = 7;
-    local_c = (byte *)CONCAT31(local_c._0_3_,cVar7 + '\x02');
+    local_c = (byte *)CONCAT31(local_c._0_3_,cVar2 + '\x02');
     if (in_stack_00000005 == '\x02') {
-      *local_c = bVar10 | 0x80;
+      *local_c = bVar11 | 0x80;
     }
     else if (in_stack_00000005 == '\x01') {
-      *local_c = bVar10 | 0xa0;
+      *local_c = bVar11 | 0xa0;
     }
     else {
-      *local_c = bVar10 | 0x20;
+      *local_c = bVar11 | 0x20;
     }
-    local_c = (byte *)CONCAT31(local_c._0_3_,cVar7 + '\x03');
+    local_c = (byte *)CONCAT31(local_c._0_3_,cVar2 + '\x03');
     local_14 = local_c;
-    while (cVar7 = cVar6 + -1, cVar6 != '\0') {
-      bVar9 = 0;
-      pbVar14 = auStackY_ca + iVar11 + 0xad;
+    while (cVar2 = cVar7 + -1, cVar7 != '\0') {
+      bVar10 = 0;
+      pbVar15 = auStackY_ca + iVar12 + 0xad;
       while( true ) {
-        if (bVar12 <= bVar9) break;
+        if (bVar13 <= bVar10) break;
         bVar1 = *local_8;
         *local_c = bVar1;
-        *pbVar14 = bVar1;
+        *pbVar15 = bVar1;
         local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
         local_c = (byte *)CONCAT31(local_c._0_3_,(char)local_c + '\x01');
-        bVar9 = bVar9 + 1;
-        pbVar14 = pbVar14 + -1;
+        bVar10 = bVar10 + 1;
+        pbVar15 = pbVar15 + -1;
       }
       if (local_17 == '\x01') {
-        bVar10 = *local_8;
-        *local_c = bVar10;
+        bVar11 = *local_8;
+        *local_c = bVar11;
         local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
         local_c = (byte *)CONCAT31(local_c._0_3_,(char)local_c + '\x01');
       }
       if (((in_stack_00000005 == '\x01') || (in_stack_00000005 == '\x03')) &&
-         (cVar6 = cm550_diagnosticMemoryAddressResolver((word)((uint)&local_1c >> 0x10)),
-         cVar6 != '\0')) {
+         (cVar7 = cm550_diagnosticMemoryAddressResolver((word)((uint)&local_1c >> 0x10)),
+         cVar7 != '\0')) {
         cm550_diagnosticMessageQueueWrite(response_type);
         return;
       }
-      cVar6 = cVar7;
+      cVar7 = cVar2;
       if (in_stack_00000005 == '\x03') {
-        if (bVar10 != 4) {
+        if (bVar11 != 4) {
           cm550_diagnosticMessageQueueWrite(response_type);
           return;
         }
-        bVar9 = 0;
-        pbVar14 = (byte *)((int)&local_1c + 3);
+        bVar10 = 0;
+        pbVar15 = (byte *)((int)&local_1c + 3);
         do {
-          *local_c = *pbVar14;
+          *local_c = *pbVar15;
           local_c = (byte *)CONCAT31(local_c._0_3_,(char)local_c + '\x01');
-          bVar9 = bVar9 + 1;
-          pbVar14 = pbVar14 + -1;
-        } while (bVar9 < 4);
+          bVar10 = bVar10 + 1;
+          pbVar15 = pbVar15 + -1;
+        } while (bVar10 < 4);
       }
       else {
-        cVar7 = cm550_addressRangeValidator
-                          ((dword)local_1c,(uint)CONCAT21(CONCAT11(bVar10,uVar16),response_type));
-        if ((cVar7 == '\t') || (cVar7 == '\n')) {
+        MVar8 = lookupApplicationMemoryRegionType
+                          ((dword)local_1c,(uint)CONCAT21(CONCAT11(bVar11,uVar17),response_type));
+        if ((MVar8 == MEMORY_REGION_TYPE_UNMAPPED) || (MVar8 == MEMORY_REGION_TYPE_REFUSED)) {
           cm550_diagnosticMessageQueueWrite(response_type);
           return;
         }
         if (&UNK_00ffffff < local_1c) {
           local_1c = local_1c + -0x7fc4f6;
         }
-        for (bVar9 = 0; bVar9 < bVar10; bVar9 = bVar9 + 1) {
+        for (bVar10 = 0; bVar10 < bVar11; bVar10 = bVar10 + 1) {
           *local_c = *local_1c;
           local_c = (byte *)CONCAT31(local_c._0_3_,(char)local_c + '\x01');
           local_1c = local_1c + 1;
@@ -20504,21 +20510,21 @@ void cm550_diagnosticMemoryReadHandler(byte service_id)
       }
     }
     if (local_17 == '\x01') {
-      uVar5 = cm550_crc16Calculate();
-      puVar15 = auStackY_ca + 0x80;
-      local_16._1_1_ = (byte)uVar5;
+      uVar6 = cm550_crc16Calculate();
+      puVar16 = auStackY_ca + 0x80;
+      local_16._1_1_ = (byte)uVar6;
       *local_c = (byte)local_16;
-      cVar7 = (char)local_c;
+      cVar2 = (char)local_c;
       local_c = (byte *)CONCAT31(local_c._0_3_,(char)local_c + '\x01');
-      local_16._0_1_ = (undefined1)((ushort)uVar5 >> 8);
+      local_16._0_1_ = (undefined1)((ushort)uVar6 >> 8);
       *local_c = local_16._0_1_;
-      local_c = (byte *)CONCAT31(local_c._0_3_,cVar7 + '\x02');
-      local_16 = uVar5;
+      local_c = (byte *)CONCAT31(local_c._0_3_,cVar2 + '\x02');
+      local_16 = uVar6;
     }
-    *local_10 = bVar13;
+    *local_10 = bVar14;
     *local_c = 0;
     _j1708_transmit_buffer_0_2_32 = local_c;
-    *(undefined4 *)(puVar15 + -4) = 0x1f0ac;
+    *(undefined4 *)(puVar16 + -4) = 0x1f0ac;
     mc68k_tpuTransmissionTrigger();
   }
   else {
@@ -22611,13 +22617,13 @@ uint cm550_memoryOperationDispatcher(dword request_ptr,word operation_size,dword
 {
   int iVar1;
   bool bVar2;
-  byte bVar4;
   byte bVar5;
-  char cVar6;
+  MEMORY_REGION_TYPE MVar6;
   uint uVar3;
+  char cVar7;
+  uint uVar4;
   undefined4 unaff_D2;
   short sVar8;
-  uint uVar7;
   undefined2 in_stack_00000008;
   undefined2 uVar9;
   
@@ -22626,43 +22632,43 @@ uint cm550_memoryOperationDispatcher(dword request_ptr,word operation_size,dword
     return 2;
   }
   sVar8 = (short)operation_flags;
-  bVar4 = cm550_addressLookupFunction();
+  bVar5 = cm550_addressLookupFunction();
   if ((*(short *)(request_ptr + 4) == 8) ||
-     ((ushort)(sVar8 + (ushort)bVar4) == *(ushort *)(request_ptr + 4))) {
+     ((ushort)(sVar8 + (ushort)bVar5) == *(ushort *)(request_ptr + 4))) {
     bVar2 = false;
   }
   else {
-    if ((ushort)(sVar8 + (ushort)bVar4) + 10 != (uint)*(ushort *)(request_ptr + 4)) {
+    if ((ushort)(sVar8 + (ushort)bVar5) + 10 != (uint)*(ushort *)(request_ptr + 4)) {
       return 2;
     }
     bVar2 = true;
   }
-  iVar1 = *(int *)(request_ptr + 6) + (uint)bVar4;
-  bVar5 = cm550_addressRangeValidator
+  iVar1 = *(int *)(request_ptr + 6) + (uint)bVar5;
+  MVar6 = lookupApplicationMemoryRegionType
                     (CONCAT22(in_stack_00000008,operation_size),CONCAT22(sVar8,uVar9));
-  uVar7 = (uint)bVar5;
-  uVar3 = uVar7;
-  if (uVar7 < 6) {
-    uVar3 = (uint)(&switchD_00021526::switchdataD_0002152a)[uVar7];
+  uVar3 = (uint)MVar6;
+  uVar4 = uVar3;
+  if (uVar3 < 6) {
+    uVar4 = (uint)(&switchD_00021526::switchdataD_0002152a)[uVar3];
     uVar9 = (undefined2)iVar1;
-    switch(uVar7) {
+    switch(uVar3) {
     case 0:
-      uVar3 = cm550_memcpy(operation_size,uVar9);
-      return uVar3 & 0xffffff00;
+      uVar4 = cm550_memcpy(operation_size,uVar9);
+      return uVar4 & 0xffffff00;
     case 3:
       if (_DAT_00803b98 != 0xff) {
         if (!bVar2) {
           return 3;
         }
-        cVar6 = sensorRangeValidation
+        cVar7 = sensorRangeValidation
                           ((byte *)(*(int *)(request_ptr + 6) +
-                                   (operation_flags & 0xffff) + (uint)bVar4));
-        if (cVar6 != '\0') {
+                                   (operation_flags & 0xffff) + (uint)bVar5));
+        if (cVar7 != '\0') {
           return 3;
         }
       }
-      uVar3 = cm550_memcpy(operation_size,uVar9);
-      return uVar3 & 0xffffff00;
+      uVar4 = cm550_memcpy(operation_size,uVar9);
+      return uVar4 & 0xffffff00;
     case 4:
       return 10;
     case 5:
@@ -22673,24 +22679,24 @@ uint cm550_memoryOperationDispatcher(dword request_ptr,word operation_size,dword
         if (!bVar2) {
           return 0x1a;
         }
-        cVar6 = sensorRangeValidation
+        cVar7 = sensorRangeValidation
                           ((byte *)(*(int *)(request_ptr + 6) +
-                                   (operation_flags & 0xffff) + (uint)bVar4));
-        if (cVar6 != '\0') {
+                                   (operation_flags & 0xffff) + (uint)bVar5));
+        if (cVar7 != '\0') {
           return 3;
         }
       }
       if (_calibration_data_valid_flag == 1) {
-        cVar6 = cm550_circularBufferWrite((short)((uint)iVar1 >> 0x10),sVar8);
-        if (cVar6 == '\x01') {
+        cVar7 = cm550_circularBufferWrite((short)((uint)iVar1 >> 0x10),sVar8);
+        if (cVar7 == '\x01') {
           return 0xb;
         }
       }
-      uVar3 = cm550_memcpy(operation_size + 0x3b0a,uVar9);
-      return uVar3 & 0xffffff00;
+      uVar4 = cm550_memcpy(operation_size + 0x3b0a,uVar9);
+      return uVar4 & 0xffffff00;
     }
   }
-  return CONCAT31((int3)(uVar3 >> 8),bVar5);
+  return CONCAT31((int3)(uVar4 >> 8),MVar6);
 }
 
 
@@ -23399,66 +23405,67 @@ undefined4
 cm550_diagMemoryReadResponseBuilder(byte *request_ptr,dword start_address,dword read_length)
 
 {
+  undefined3 extraout_var;
   undefined3 uVar1;
-  byte bVar5;
-  undefined4 uVar2;
-  undefined2 uVar3;
+  byte bVar4;
+  MEMORY_REGION_TYPE MVar5;
+  undefined2 uVar2;
   char cVar6;
   j1939_header_t *msg_header;
-  ushort uVar4;
+  ushort uVar3;
   undefined4 unaff_D2;
   undefined1 uVar7;
   int iVar8;
   undefined1 *puVar9;
   undefined1 *puVar10;
   
-  uVar3 = (undefined2)((uint)unaff_D2 >> 0x10);
+  uVar2 = (undefined2)((uint)unaff_D2 >> 0x10);
   cVar6 = **(char **)(request_ptr + 6);
   if (0x6e4 < read_length) {
     return 2;
   }
-  bVar5 = cm550_addressLookupFunction();
-  if (((*(short *)(request_ptr + 4) != 8) && (*(ushort *)(request_ptr + 4) != (ushort)bVar5)) &&
-     (*(short *)(request_ptr + 4) != (ushort)(bVar5 + 10))) {
+  bVar4 = cm550_addressLookupFunction();
+  if (((*(short *)(request_ptr + 4) != 8) && (*(ushort *)(request_ptr + 4) != (ushort)bVar4)) &&
+     (*(short *)(request_ptr + 4) != (ushort)(bVar4 + 10))) {
     return 2;
   }
-  uVar2 = cm550_addressRangeValidator(start_address,CONCAT22((ushort)read_length,uVar3));
-  uVar1 = (undefined3)((uint)uVar2 >> 8);
-  if (((char)uVar2 == '\n') || ((char)uVar2 == '\t')) {
-    return uVar2;
+  MVar5 = lookupApplicationMemoryRegionType(start_address,CONCAT22((ushort)read_length,uVar2));
+  if ((MVar5 == MEMORY_REGION_TYPE_REFUSED) || (MVar5 == MEMORY_REGION_TYPE_UNMAPPED)) {
+    return CONCAT31(extraout_var,MVar5);
   }
   if ((cVar6 == 'C') && ((ushort)read_length < 0x100)) {
     uVar7 = 0x44;
     *(undefined1 *)(*(int *)(request_ptr + 6) + 3) = *(undefined1 *)(*(int *)(request_ptr + 6) + 6);
+    uVar1 = extraout_var;
   }
   else {
     uVar1 = 0;
     uVar7 = (&DAT_00022384)[(short)(ushort)(byte)(cVar6 + 0xbd)];
   }
-  uVar3 = (undefined2)CONCAT31(uVar1,uVar7);
+  uVar2 = (undefined2)CONCAT31(uVar1,uVar7);
   cVar6 = cm550_addressLookupFunction();
-  msg_header = (j1939_header_t *)cm550_multiPacketBufferAllocator(uVar3);
+  msg_header = (j1939_header_t *)cm550_multiPacketBufferAllocator(uVar2);
   if (msg_header == (j1939_header_t *)0x0) {
     return 4;
   }
   puVar10 = (undefined1 *)msg_header[1].id;
   msg_header->id = 0xef0000;
-  bVar5 = *request_ptr;
+  bVar4 = *request_ptr;
   *(byte *)&msg_header->id = *(byte *)&msg_header->id & 0xe3;
-  *(byte *)&msg_header->id = bVar5 & 0x1c | *(byte *)&msg_header->id;
+  *(byte *)&msg_header->id = bVar4 & 0x1c | *(byte *)&msg_header->id;
   *(byte *)((int)&msg_header->id + 2) = request_ptr[3];
   *(byte *)((int)&msg_header->id + 3) = request_ptr[2];
   iVar8 = *(int *)(request_ptr + 6) + 1;
   puVar9 = puVar10 + 1;
   *puVar10 = uVar7;
-  uVar4 = (ushort)(byte)(cVar6 - 1U);
+  uVar3 = (ushort)(byte)(cVar6 - 1U);
   puVar10 = puVar9;
   cm550_memcpy((short)puVar9,(short)iVar8);
   if (0xffffff < start_address) {
     start_address = start_address - 0x7fc4f6;
   }
   cm550_memcpy(puVar9 + (byte)(cVar6 - 1U),(short)start_address,(short)((uint)puVar10 >> 0x10),
-               (short)((uint)iVar8 >> 0x10),uVar4);
+               (short)((uint)iVar8 >> 0x10),uVar3);
   cm550_sendCanMessage(msg_header);
   return 0xff;
 }
@@ -37887,38 +37894,38 @@ void cm550_initMultiSystemParameters(void)
 
 
 //
-// Function: cm550_addressRangeValidator @ 0x0003460e
+// Function: lookupApplicationMemoryRegionType @ 0x0003460e
 //
 
-undefined4 cm550_addressRangeValidator(dword target_address,dword operation_length)
+/* The type (MEMORY_REGION_TYPE) of the first application_memory_region_table entry holding
+   range_start..range_start+range_length-1 - its first type byte while the development mode flag
+   (0x80de30) is 1 else its second - or UNMAPPED (9) for none or a range that wraps: the same
+   function as CM848 0x50d784 (shared name; was cm550_addressRangeValidator; PR #53 round 72) */
+
+MEMORY_REGION_TYPE lookupApplicationMemoryRegionType(dword range_start,dword range_length)
 
 {
-  undefined3 uVar1;
+  byte bVar1;
   uint uVar2;
-  byte bVar3;
-  uint uVar4;
-  uint *puVar5;
+  memory_region_t *pmVar3;
   
-  uVar2 = operation_length >> 0x10;
-  uVar4 = (target_address + uVar2) - 1;
-  if (uVar4 < target_address) {
-    return 9;
+  uVar2 = (range_start + (range_length >> 0x10)) - 1;
+  if (uVar2 < range_start) {
+    return MEMORY_REGION_TYPE_UNMAPPED;
   }
-  puVar5 = &DAT_000345dc;
-  bVar3 = 0;
-  while ((target_address < *puVar5 || (puVar5[1] < uVar4))) {
-    uVar2 = 0;
-    puVar5 = (uint *)((int)puVar5 + 10);
-    bVar3 = bVar3 + 1;
-    if (4 < bVar3) {
-      return 9;
+  pmVar3 = application_memory_region_table;
+  bVar1 = 0;
+  while ((range_start < pmVar3->start_address || (pmVar3->end_address < uVar2))) {
+    pmVar3 = pmVar3 + 1;
+    bVar1 = bVar1 + 1;
+    if (4 < bVar1) {
+      return MEMORY_REGION_TYPE_UNMAPPED;
     }
   }
-  uVar1 = (undefined3)(uVar2 >> 8);
   if (j1708_transmit_buffer_2_32_ddc6.count_106 == 1) {
-    return CONCAT31(uVar1,*(undefined1 *)(puVar5 + 2));
+    return pmVar3->region_type;
   }
-  return CONCAT31(uVar1,*(undefined1 *)((int)puVar5 + 9));
+  return pmVar3->development_mode_off_region_type;
 }
 
 

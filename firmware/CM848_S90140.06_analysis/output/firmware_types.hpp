@@ -3205,7 +3205,7 @@ struct memory_region_t {
     uint32_t start_address;  /* First address of the region */
     uint32_t end_address;  /* Last address of the region */
     MEMORY_REGION_TYPE region_type;  /* The type - the boot kernel's / the application's while development_mode is ON (PR #53 round 71: was byte '0 RAM / 2 Bank-2 flash / 3 registers / 4 main flash / 5 EEPROM (9 = not found)') */
-    MEMORY_REGION_TYPE development_mode_off_region_type;  /* The application's type while development_mode is OFF (cm848_lookupApplicationMemoryRegionType): its register ranges become REFUSED; equal to region_type in boot_memory_region_table (PR #53 round 71: was region_type_copy 'Same value as region_type in every entry' - true of the boot table only) */
+    MEMORY_REGION_TYPE development_mode_off_region_type;  /* The application's type while development_mode is OFF (lookupApplicationMemoryRegionType): its register ranges become REFUSED; equal to region_type in boot_memory_region_table (PR #53 round 71: was region_type_copy 'Same value as region_type in every entry' - true of the boot table only) */
 };
 
 struct checksum_region_t {

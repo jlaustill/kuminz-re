@@ -2,6 +2,8 @@
 
 > **Note:** J90280.05 has been removed from the repository (unreliable partial ROM dump). The J90280.05 references below are retained as historical analysis context. J90350.00 is the primary CM550 firmware.
 
+> **Current names (PR #53 round 72):** J90350.00's `addressRangeValidator` (0x3460e) is `lookupApplicationMemoryRegionType` - the same function as CM848 0x50d784, so the two firmwares share the name - and `MEMORY_ACCESS_FLAG` is `MEMORY_REGION_TYPE` (0 RAM / 3 AUTHORIZATION_REQUIRED / 4 MAIN_FLASH / 5 EEPROM / 9 UNMAPPED / 10 REFUSED: CM848's codes, which add 2 = Bank 2 flash); its table is `application_memory_region_table` at ROM 0x345dc (5 entries; CM848 has 7).
+
 Cross-firmware comparison of the J1939 memory write implementation between J90280.05 (removed) and J90350.00 (live ECU).
 
 ## Executive Summary

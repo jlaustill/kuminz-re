@@ -8,6 +8,7 @@ extern ushort USHORT_0000fc3a;  // 0x0000fc3a
 extern ushort USHORT_0000fc3c;  // 0x0000fc3c
 extern void * PTR_DAT_00011ba6;  // 0x00011ba6
 extern ushort USHORT_00013d7e;  // 0x00013d7e
+extern memory_region_t application_memory_region_table[5];  // 0x000345dc
 extern undefined rpm_rate_limit_countdown;  // 0x00800000
 extern undefined rpm_control_timer_1;  // 0x00800002
 extern undefined high_rpm_threshold_countdown;  // 0x00800004

@@ -768,7 +768,7 @@ address,name
 0x00034564,cm550_setDiagnosticSourceFromEngineFlags
 0x0003458c,cm550_engine_protection_coordinator
 0x000345c8,cm550_initMultiSystemParameters
-0x0003460e,cm550_addressRangeValidator
+0x0003460e,lookupApplicationMemoryRegionType,The type (MEMORY_REGION_TYPE) of the first application_memory_region_table entry holding range_start..range_start+range_length-1 - its first type byte while the development mode flag (0x80de30) is 1 else its second - or UNMAPPED (9) for none or a range that wraps: the same function as CM848 0x50d784 (shared name; was cm550_addressRangeValidator; PR #53 round 72)
 0x00034674,mc68k_pwmTimerMode0Init
 0x00034696,mc68k_timerCaptureHardwareInit
 0x0003478c,mc68k_pwmTimerMode0Reset

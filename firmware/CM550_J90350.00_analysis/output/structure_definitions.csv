@@ -626,3 +626,8 @@ insite_response_buffer_t,0x0080D417,data_offset,byte,1,Current data offset in bu
 insite_response_buffer_t,0x0080D418,buffer_index,byte,1,Buffer index for multi-response,,verified
 insite_response_buffer_t,0x0080D41A,buffer_length,byte,1,Current response length,,verified
 insite_response_buffer_t,0x0080D41B,reserved,byte,1,Reserved/padding byte,,verified
+# --- memory_region_t: a write-permission map entry - application_memory_region_table (5 x 10 bytes @ ROM 0x345dc); the first matching entry wins; the layout of CM848's memory_region_t (PR #53 round 72) ---
+memory_region_t,,start_address,dword,4,First address of the region,,verified
+memory_region_t,,end_address,dword,4,Last address of the region (inclusive),,verified
+memory_region_t,,region_type,MEMORY_REGION_TYPE,1,The type while the development mode flag (0x80de30) is 1,,verified
+memory_region_t,,development_mode_off_region_type,MEMORY_REGION_TYPE,1,The type while the development mode flag is not 1 (the registers become REFUSED),,verified

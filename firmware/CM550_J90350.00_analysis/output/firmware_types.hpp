@@ -919,19 +919,12 @@ typedef enum {
 } J1939_DIAGNOSTIC_SERVICE;
 
 typedef enum {
-    FIRMWARE_START = 0x00000000,  /* Valid firmware region start (256KB code space) */
-    FIRMWARE_END = 0x0003FFFF,  /* Valid firmware region end */
-    RAM_START = 0x00800000,  /* Valid RAM region start (~37KB data) */
-    RAM_END = 0x008091C2  /* Valid RAM region end */
-} VALID_MEMORY_RANGE;
-
-typedef enum {
     INVALID_LENGTH = 0x02,  /* diagnosticServiceSecurityValidator - message length mismatch */
     ERROR_SECURITY_FAILED = 0x03,  /* diagnosticServiceSecurityValidator - systemSecurityCheck returned non-zero */
     CONDITION_NOT_MET = 0x07,  /* memoryOperationDispatcher - system_logging_state check failed */
     ADDR_LOOKUP_FAIL = 0x08,  /* j1939MemoryDataCopyResolver - initial address lookup at 0xeaf0 failed */
-    ADDR_RANGE_INVALID = 0x09,  /* addressRangeValidator @ 0x2b544 - address not in address_range_validation_table @ 0x2b512 */
-    ADDR_ACCESS_DENIED = 0x0A,  /* addressRangeValidator @ 0x2b544 - normal_mode_flag=0x0A blocks access (high memory 0xFFC800-0xFFFFFF in normal mode) */
+    ADDR_RANGE_INVALID = 0x09,  /* lookupApplicationMemoryRegionType @ 0x3460e (MEMORY_REGION_TYPE_UNMAPPED) - the range is in no application_memory_region_table entry (J90280.05: addressRangeValidator @ 0x2b544; PR #53 round 72) */
+    ADDR_ACCESS_DENIED = 0x0A,  /* lookupApplicationMemoryRegionType @ 0x3460e (MEMORY_REGION_TYPE_REFUSED) - the registers 0xffc800-0xffffff while the development mode flag is not 1 (J90280.05: addressRangeValidator @ 0x2b544; PR #53 round 72) */
     BUFFER_WRITE_FAIL = 0x0B,  /* memoryOperationDispatcher - circularBufferWrite returned error */
     WRITE_DENIED = 0x0A,  /* memoryOperationDispatcher - write to read-only region (ROM/Flash case 4) */
     PATCH_LIMIT = 0x0E,  /* diagnosticResponseBuilder - memory patch count exceeded limit */
@@ -954,13 +947,13 @@ typedef enum {
 } SERVICE_4A_RESPONSE;
 
 typedef enum {
-    DIRECT_ACCESS = 0x00,  /* READ: Allowed | WRITE: Direct access no security check (Extended RAM) */
-    SECURITY_REQUIRED = 0x03,  /* READ: Allowed | WRITE: Requires security check or bypass (RAM) */
-    MEMORY_ACCESS_WRITE_DENIED = 0x04,  /* READ: Allowed | WRITE: Denied - returns error 0x0A (Flash/ROM) */
-    LOGGING_MODE = 0x05,  /* READ: Allowed | WRITE: Requires system_logging_state check (EEPROM) */
-    RANGE_INVALID = 0x09,  /* READ: Denied | WRITE: Error - address not in validation table */
-    ACCESS_DENIED = 0x0A  /* READ: Denied | WRITE: Error - explicitly blocked region */
-} MEMORY_ACCESS_FLAG;
+    MEMORY_REGION_TYPE_RAM = 0x00,  /* Copied without a check: the extended RAM 0x8091dc-0x80ffff (was MEMORY_ACCESS_FLAG DIRECT_ACCESS; PR #53 round 72) */
+    MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED = 0x03,  /* Copied after the security code check: RAM 0x800000-0x8091dc and - while the development mode flag is 1 - the registers 0xffc800-0xffffff (was MEMORY_ACCESS_FLAG SECURITY_REQUIRED; PR #53 round 72) */
+    MEMORY_REGION_TYPE_MAIN_FLASH = 0x04,  /* Main flash 0x0-0x7ffff: the memory write service refuses it (10) (was MEMORY_ACCESS_FLAG MEMORY_ACCESS_WRITE_DENIED; PR #53 round 72) */
+    MEMORY_REGION_TYPE_EEPROM = 0x05,  /* EEPROM 0x1000000-0x1001fff: written after the security code check (was MEMORY_ACCESS_FLAG LOGGING_MODE - the range is the EEPROM; PR #53 round 72) */
+    MEMORY_REGION_TYPE_UNMAPPED = 0x09,  /* No entry holds the range or it wraps past 0xffffffff - passed back as the result (was MEMORY_ACCESS_FLAG RANGE_INVALID; PR #53 round 72) */
+    MEMORY_REGION_TYPE_REFUSED = 0x0a  /* The registers while the development mode flag is not 1 - passed back as the result (was MEMORY_ACCESS_FLAG ACCESS_DENIED; PR #53 round 72) */
+} MEMORY_REGION_TYPE;
 
 typedef enum {
     BYPASS_ENABLED = 0xB522,  /* Magic value to bypass security checks (stored at 0x803586) */
@@ -1110,6 +1103,7 @@ typedef struct can_buffer_setup_t can_buffer_setup_t;
 typedef struct can_message_buffer_t can_message_buffer_t;
 typedef struct data_collector_t data_collector_t;
 typedef struct insite_response_buffer_t insite_response_buffer_t;
+typedef struct memory_region_t memory_region_t;
 
 struct j1939_header_t {
     uint32_t id;  /* CAN identifier containing PGN and addressing info */
@@ -1680,4 +1674,11 @@ struct insite_response_buffer_t {
     uint8_t buffer_index;  /* Buffer index for multi-response */
     uint8_t buffer_length;  /* Current response length */
     uint8_t reserved;  /* Reserved/padding byte */
+};
+
+struct memory_region_t {
+    uint32_t start_address;  /* First address of the region */
+    uint32_t end_address;  /* Last address of the region (inclusive) */
+    MEMORY_REGION_TYPE region_type;  /* The type while the development mode flag (0x80de30) is 1 */
+    MEMORY_REGION_TYPE development_mode_off_region_type;  /* The type while the development mode flag is not 1 (the registers become REFUSED) */
 };

@@ -676,21 +676,15 @@ J1939_DIAGNOSTIC_SERVICE,0x4A,MEM_READ_4B_ADDR_1B_LEN,Memory read - dispatch @ 0
 J1939_DIAGNOSTIC_SERVICE,0x4B,SERVICE_4B,Service 4B - dispatch @ 0x000217DE - UNSECURED - in dispatch table,1
 J1939_DIAGNOSTIC_SERVICE,0x4C,MEM_READ_4B_ADDR_4B_LEN,Memory read - dispatch @ 0x0002268E - UNSECURED - Format: [4C][Addr:4][Len:4] multi-frame,1
 J1939_DIAGNOSTIC_SERVICE,0x4D,SERVICE_4D,Service 4D - dispatch @ 0x00021826 - UNSECURED - in dispatch table,1
-# Address Range Validation Table - addressRangeValidator @ 0x2b544 uses table @ 0x2b512
-# 5 entries x 10 bytes each (start_addr[4] + end_addr[4] + flag1[1] + flag2[1])
-# Error 0x09 returned if address outside these ranges
-VALID_MEMORY_RANGE,0x00000000,FIRMWARE_START,Valid firmware region start (256KB code space),4
-VALID_MEMORY_RANGE,0x0003FFFF,FIRMWARE_END,Valid firmware region end,4
-VALID_MEMORY_RANGE,0x00800000,RAM_START,Valid RAM region start (~37KB data),4
-VALID_MEMORY_RANGE,0x008091C2,RAM_END,Valid RAM region end,4
+# (VALID_MEMORY_RANGE - J90280.05's table bounds held as an enum - removed in PR #53 round 72: J90350's table is application_memory_region_table @ ROM 0x345dc, typed as memory_region_t[5])
 # Detailed Error Code Sources - traceable through firmware analysis
 # Error code flows: handler → diagnosticMultiPacketResponseBuilder → [0x0D][error_code][service_id]...
 DIAG_ERROR_SOURCE,0x02,INVALID_LENGTH,diagnosticServiceSecurityValidator - message length mismatch,1
 DIAG_ERROR_SOURCE,0x03,ERROR_SECURITY_FAILED,diagnosticServiceSecurityValidator - systemSecurityCheck returned non-zero,1
 DIAG_ERROR_SOURCE,0x07,CONDITION_NOT_MET,memoryOperationDispatcher - system_logging_state check failed,1
 DIAG_ERROR_SOURCE,0x08,ADDR_LOOKUP_FAIL,j1939MemoryDataCopyResolver - initial address lookup at 0xeaf0 failed,1
-DIAG_ERROR_SOURCE,0x09,ADDR_RANGE_INVALID,addressRangeValidator @ 0x2b544 - address not in address_range_validation_table @ 0x2b512,1
-DIAG_ERROR_SOURCE,0x0A,ADDR_ACCESS_DENIED,addressRangeValidator @ 0x2b544 - normal_mode_flag=0x0A blocks access (high memory 0xFFC800-0xFFFFFF in normal mode),1
+DIAG_ERROR_SOURCE,0x09,ADDR_RANGE_INVALID,lookupApplicationMemoryRegionType @ 0x3460e (MEMORY_REGION_TYPE_UNMAPPED) - the range is in no application_memory_region_table entry (J90280.05: addressRangeValidator @ 0x2b544; PR #53 round 72),1
+DIAG_ERROR_SOURCE,0x0A,ADDR_ACCESS_DENIED,lookupApplicationMemoryRegionType @ 0x3460e (MEMORY_REGION_TYPE_REFUSED) - the registers 0xffc800-0xffffff while the development mode flag is not 1 (J90280.05: addressRangeValidator @ 0x2b544; PR #53 round 72),1
 DIAG_ERROR_SOURCE,0x0B,BUFFER_WRITE_FAIL,memoryOperationDispatcher - circularBufferWrite returned error,1
 DIAG_ERROR_SOURCE,0x0A,WRITE_DENIED,memoryOperationDispatcher - write to read-only region (ROM/Flash case 4),1
 DIAG_ERROR_SOURCE,0x0E,PATCH_LIMIT,diagnosticResponseBuilder - memory patch count exceeded limit,1
@@ -712,14 +706,15 @@ MEMORY_OP_RESULT,0x1A,MEMORY_OPERATION_AUTH_REQUIRED_MISSING,EEPROM write (regio
 # Request:  [4A][addr3][addr2][addr1][addr0][len][00][00]
 # Response: [4B][addr3][addr2][addr1][addr0][len][data...]
 # - Response code 0x4B indicates success (echoes service ID + 1)
-# - Accessible regions defined in address_range_validation_table @ 0x2b512:
-#   * Flash/ROM: 0x00000000-0x0003FFFF (256KB) - flags 0x04/0x04
-#   * RAM: 0x00800000-0x008091C2 (37KB) - flags 0x03/0x03
-#   * Extended RAM: 0x008091C2-0x0080FFFF (28KB) - flags 0x00/0x00
-#   * EEPROM: 0x01000000-0x01000FFF (4KB) - flags 0x05/0x05
-#   * High Memory: 0x00FFC800-0x00FFFFFF (14KB) - flags 0x03/0x0A (blocked in normal mode)
+# - Accessible regions: application_memory_region_table @ ROM 0x345dc (J90280.05: 0x2b512; PR #53 round 72):
+#   * Flash/ROM: 0x00000000-0x0007FFFF - types 0x04/0x04
+#   * RAM: 0x00800000-0x008091DC - types 0x03/0x03
+#   * Extended RAM: 0x008091DC-0x0080FFFF - types 0x00/0x00
+#   * EEPROM: 0x01000000-0x01001FFF - types 0x05/0x05
+#   * High Memory: 0x00FFC800-0x00FFFFFF - types 0x03/0x0A (REFUSED unless the development mode flag is 1)
 SERVICE_4A_RESPONSE,0x4B,SERVICE_74_SUCCESS,Service 0x4A success response code (service ID + 1),1
-# Memory Access Flags - from address_range_validation_table entries (byte 8=special_mode byte 9=normal_mode)
+# MEMORY_REGION_TYPE (was MEMORY_ACCESS_FLAG; PR #53 round 72) - the type bytes of application_memory_region_table @ ROM 0x345dc (byte 8 while the development mode flag at 0x80de30 is 1 / byte 9 otherwise) read by lookupApplicationMemoryRegionType @ 0x3460e: the same function and codes as CM848's (CM848 adds 2 = Bank 2 flash). The memory write service at 0x2148a branches on it; 9 and 10 go back as its result.
+# (The READ / WRITE notes below are the J90280.05 analysis - its addresses:)
 # READ operations (diagMemoryReadResponseBuilder @ 0x1c0b8):
 #   - 0x09 or 0x0A = DENIED (returns error code)
 #   - Any other value = ALLOWED
@@ -729,12 +724,12 @@ SERVICE_4A_RESPONSE,0x4B,SERVICE_74_SUCCESS,Service 0x4A success response code (
 #   - 0x04 = Write denied
 #   - 0x05 = Special logging mode (requires system_logging_state check)
 #   - 0x09/0x0A = Error passed through
-MEMORY_ACCESS_FLAG,0x00,DIRECT_ACCESS,READ: Allowed | WRITE: Direct access no security check (Extended RAM),1
-MEMORY_ACCESS_FLAG,0x03,SECURITY_REQUIRED,READ: Allowed | WRITE: Requires security check or bypass (RAM),1
-MEMORY_ACCESS_FLAG,0x04,MEMORY_ACCESS_WRITE_DENIED,READ: Allowed | WRITE: Denied - returns error 0x0A (Flash/ROM),1
-MEMORY_ACCESS_FLAG,0x05,LOGGING_MODE,READ: Allowed | WRITE: Requires system_logging_state check (EEPROM),1
-MEMORY_ACCESS_FLAG,0x09,RANGE_INVALID,READ: Denied | WRITE: Error - address not in validation table,1
-MEMORY_ACCESS_FLAG,0x0A,ACCESS_DENIED,READ: Denied | WRITE: Error - explicitly blocked region,1
+MEMORY_REGION_TYPE,0x00,MEMORY_REGION_TYPE_RAM,Copied without a check: the extended RAM 0x8091dc-0x80ffff (was MEMORY_ACCESS_FLAG DIRECT_ACCESS; PR #53 round 72),1
+MEMORY_REGION_TYPE,0x03,MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED,Copied after the security code check: RAM 0x800000-0x8091dc and - while the development mode flag is 1 - the registers 0xffc800-0xffffff (was MEMORY_ACCESS_FLAG SECURITY_REQUIRED; PR #53 round 72),1
+MEMORY_REGION_TYPE,0x04,MEMORY_REGION_TYPE_MAIN_FLASH,Main flash 0x0-0x7ffff: the memory write service refuses it (10) (was MEMORY_ACCESS_FLAG MEMORY_ACCESS_WRITE_DENIED; PR #53 round 72),1
+MEMORY_REGION_TYPE,0x05,MEMORY_REGION_TYPE_EEPROM,EEPROM 0x1000000-0x1001fff: written after the security code check (was MEMORY_ACCESS_FLAG LOGGING_MODE - the range is the EEPROM; PR #53 round 72),1
+MEMORY_REGION_TYPE,0x09,MEMORY_REGION_TYPE_UNMAPPED,No entry holds the range or it wraps past 0xffffffff - passed back as the result (was MEMORY_ACCESS_FLAG RANGE_INVALID; PR #53 round 72),1
+MEMORY_REGION_TYPE,0x0a,MEMORY_REGION_TYPE_REFUSED,The registers while the development mode flag is not 1 - passed back as the result (was MEMORY_ACCESS_FLAG ACCESS_DENIED; PR #53 round 72),1
 # Security Bypass Mechanism (diagnosticServiceSecurityValidator @ 0x1b7e8)
 # When security_bypass_flag @ 0x803586 == 0xB522 (signed -0x4ADE):
 #   - Services 3 and 4 skip security check requirement

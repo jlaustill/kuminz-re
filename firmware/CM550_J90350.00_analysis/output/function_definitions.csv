@@ -131,10 +131,11 @@ function_address,function_name,param_index,name,type,comment
 # Similar to Extended but for shorter messages
 0x00021826,memoryOperationFromMessage8Byte,0,msg_ptr,int,Pointer to 8-byte J1939 diagnostic message
 
-# addressRangeValidator @ 0x3460e - Validates memory address against 5-entry range table
-# Returns: MEMORY_ACCESS_FLAG (0=direct, 3=secured, 4=denied, 5=logging, 9=invalid)
-0x0003460e,addressRangeValidator,0,target_address,uint,Memory address to validate (start of operation)
-0x0003460e,addressRangeValidator,1,operation_length,uint,Length of memory operation in bytes
+# lookupApplicationMemoryRegionType @ 0x3460e (was addressRangeValidator) - the type of the application_memory_region_table entry holding a range
+# Returns: MEMORY_REGION_TYPE (was MEMORY_ACCESS_FLAG; PR #53 round 72)
+0x0003460e,lookupApplicationMemoryRegionType,return,,MEMORY_REGION_TYPE,The first application_memory_region_table entry holding the range - UNMAPPED for none (PR #53 round 72)
+0x0003460e,lookupApplicationMemoryRegionType,0,range_start,uint,The range's first address (was target_address; PR #53 round 72)
+0x0003460e,lookupApplicationMemoryRegionType,1,range_length,uint,Its length in bytes - in the upper half of the 4-byte stack slot: the callers push a word and the body shifts it down (a word type moves the parameter to the slot's other half; was operation_length; PR #53 round 72)
 0x00010520,arrayRangeSum,0,start_ptr,short*,Pointer to start of array
 0x00010520,arrayRangeSum,1,end_ptr,short*,Pointer to end of array
 

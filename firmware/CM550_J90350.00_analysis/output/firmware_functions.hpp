@@ -758,7 +758,7 @@ void cm550_setDiagnosticSourceFromFuelArbitrator(void);  // @ 0x00034540
 void cm550_setDiagnosticSourceFromEngineFlags(void);  // @ 0x00034564
 void cm550_engine_protection_coordinator(void);  // @ 0x0003458c
 void cm550_initMultiSystemParameters(void);  // @ 0x000345c8
-undefined4 cm550_addressRangeValidator(dword target_address,dword operation_length);  // @ 0x0003460e
+MEMORY_REGION_TYPE lookupApplicationMemoryRegionType(dword range_start,dword range_length);  // @ 0x0003460e
 uint mc68k_pwmTimerMode0Init(void);  // @ 0x00034674
 uint mc68k_timerCaptureHardwareInit(void);  // @ 0x00034696
 void mc68k_pwmTimerMode0Reset(void);  // @ 0x0003478c

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 15:16:10 MST 2026
+// Generated: Mon Nov 23 16:09:09 MST 2026
 
 
 //
@@ -6339,7 +6339,7 @@ void mpc555_loadRuntimeCounterFromEepromShadow(void)
 /* Boot reflash kernel: the region type (MEMORY_REGION_TYPE; its type 3 entry -
    AUTHORIZATION_REQUIRED - is effectively 0x2fc000-0x301fff because the first match wins; PR #53
    round 71) of an address range for the boot read / write / execute services and the SCI download
-   handlers (the application's is cm848_lookupApplicationMemoryRegionType) (was
+   handlers (the application's is lookupApplicationMemoryRegionType) (was
    cm848_lookupMemoryRegionType; PR #53 round 63) | earlier note: Boot reflash kernel: finds the
    boot_memory_region_table entry (6 x {start / end / type}) that wholly contains
    address..address+length-1; returns its type (0 RAM / 2 Bank-2 flash only when
@@ -22887,9 +22887,9 @@ J1939_DIAGNOSTIC_RESULT cm848_exitDevelopmentMode(void)
    cm848_onEepromBlockRead, stop), diagnostic writes to EEPROM addresses and EEPROM parameter ID
    writes go to the RAM mirror only (cm848_lookupParameterIdAddress,
    cm848_writeJ1939DiagnosticMemory), and the two register address ranges of the diagnostic memory
-   services open (cm848_lookupApplicationMemoryRegionType). The way back is service 7 (0x21624) or,
-   with the engine stopped, service 22 (0x21694). (was cm848_resetDiagnosticSession) | jlaustill
-   review 2026-05-25 - hopefully accurate */
+   services open (lookupApplicationMemoryRegionType). The way back is service 7 (0x21624) or, with
+   the engine stopped, service 22 (0x21694). (was cm848_resetDiagnosticSession) | jlaustill review
+   2026-05-25 - hopefully accurate */
 
 J1939_DIAGNOSTIC_RESULT cm848_enterDevelopmentMode(void)
 
@@ -40961,9 +40961,9 @@ LAB_0003b37c:
         if (cVar1 == '\0') {
           pci_diagnostic_memory_address =
                pci_diagnostic_parameter_base_address + (short)pci_diagnostic_address_offset;
-          MVar2 = cm848_lookupApplicationMemoryRegionType((dword)pci_diagnostic_memory_address,4);
+          MVar2 = lookupApplicationMemoryRegionType((dword)pci_diagnostic_memory_address,4);
           if ((MVar2 != MEMORY_REGION_TYPE_UNMAPPED) &&
-             (MVar2 = cm848_lookupApplicationMemoryRegionType
+             (MVar2 = lookupApplicationMemoryRegionType
                                 ((dword)(pci_diagnostic_memory_address + 3),4),
              MVar2 != MEMORY_REGION_TYPE_UNMAPPED)) {
             pci_diagnostic_read_buffer_pointer = pci_diagnostic_read_buffer;
@@ -41015,7 +41015,7 @@ LAB_0003b37c:
              pci_diagnostic_parameter_base_address + (short)pci_diagnostic_address_offset;
         pci_diagnostic_write_data_pointer = &pci_diagnostic_request_data_5;
         pci_diagnostic_write_result = 0;
-        MVar2 = cm848_lookupApplicationMemoryRegionType((dword)pci_diagnostic_memory_address,1);
+        MVar2 = lookupApplicationMemoryRegionType((dword)pci_diagnostic_memory_address,1);
         if (MVar2 == MEMORY_REGION_TYPE_RAM) {
           cm848_memcpyBytes(pci_diagnostic_memory_address,pci_diagnostic_write_data_pointer,1);
           pci_diagnostic_write_result = 0;
@@ -69419,14 +69419,14 @@ void cm848_endRetarderShiftAssistAboveFuelDemandLimit(void)
 //
 
 /* Writes memory for a PGN 61184 write request: a length cap of 1764 / an optional 10-byte key after
-   the data / the region from cm848_lookupApplicationMemoryRegionType - EEPROM (type 5) through
+   the data / the region from lookupApplicationMemoryRegionType - EEPROM (type 5) through
    cm848_queueEepromByteWrites or the RAM mirror / RAM (type 3) with the 0x3fd480 window protected.
    Twin of the boot kernel's cm848_writeBootDiagnosticMemory (was j1939_writeDiagMemory; PR #53
    round 63) | earlier note: Application CLIP diagnostic stack (PGN 61184): memory write worker
    (twin of boot cm848_writeBootDiagnosticMemory): length cap 1764 / optional 10-byte auth trailer /
-   region by cm848_lookupApplicationMemoryRegionType - EEPROM (type 5) via
-   cm848_queueEepromByteWrites or the RAM mirror / RAM (type 3) with the 0x3fd480 window protected |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   region by lookupApplicationMemoryRegionType - EEPROM (type 5) via cm848_queueEepromByteWrites or
+   the RAM mirror / RAM (type 3) with the 0x3fd480 window protected | review-function-readability
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
 byte cm848_writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dword length)
 
@@ -69457,7 +69457,7 @@ byte cm848_writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dwor
     bVar1 = true;
   }
   pbVar7 = request->data_pointer + (uVar3 & 0xff);
-  MVar4 = cm848_lookupApplicationMemoryRegionType((dword)address,range_length);
+  MVar4 = lookupApplicationMemoryRegionType((dword)address,range_length);
   if (MVar4 != MEMORY_REGION_TYPE_RAM) {
     if (MVar4 != MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED) {
       if (MVar4 == MEMORY_REGION_TYPE_MAIN_FLASH) {
@@ -70568,15 +70568,14 @@ void cm848_registerJ1939GetAddressByParameterIdService(void)
 
 /* Reads memory for a PGN 61184 read request and sends the reply: a length cap of 1764 (0x6e4) / a
    request length of 8 or the service's header length (cm848_getJ1939MemoryServiceHeaderLength) or
-   that + 10 (the key) / the region from cm848_lookupApplicationMemoryRegionType. The reply service
-   comes from j1939_memory_read_reply_services (a 0x43 read under 256 bytes answers with 0x44). Twin
-   of the boot kernel's cm848_readBootDiagnosticMemoryAndRespond (was
-   j1939_readDiagMemoryAndRespond; PR #53 round 63) | earlier note: Application CLIP diagnostic
-   stack (PGN 61184): memory read + response (twin of boot
-   cm848_readBootDiagnosticMemoryAndRespond): response service from 0x53a330 (0x43->0x45 or 0x44 /
-   0x46->0x47 / 0x48->0x49 / 0x4A->0x4B / 0x4C->0x4D) on CAN ID 0xEF0000 to the requester; also
-   called directly by the 0x4A / 0x4C stubs | review-function-readability reviewed 2026-11-11 -
-   Readability Medium Accuracy Confidence High */
+   that + 10 (the key) / the region from lookupApplicationMemoryRegionType. The reply service comes
+   from j1939_memory_read_reply_services (a 0x43 read under 256 bytes answers with 0x44). Twin of
+   the boot kernel's cm848_readBootDiagnosticMemoryAndRespond (was j1939_readDiagMemoryAndRespond;
+   PR #53 round 63) | earlier note: Application CLIP diagnostic stack (PGN 61184): memory read +
+   response (twin of boot cm848_readBootDiagnosticMemoryAndRespond): response service from 0x53a330
+   (0x43->0x45 or 0x44 / 0x46->0x47 / 0x48->0x49 / 0x4A->0x4B / 0x4C->0x4D) on CAN ID 0xEF0000 to
+   the requester; also called directly by the 0x4A / 0x4C stubs | review-function-readability
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
 MEMORY_REGION_TYPE
 cm848_readJ1939DiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,dword length)
@@ -70599,7 +70598,7 @@ cm848_readJ1939DiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,
     uVar1 = request->data_length;
     if (((uVar1 == 8) || (uVar1 == (uVar2 & 0xff))) || ((ushort)((uVar2 & 0xff) + 10) == uVar1)) {
       range_length = length & 0xffff;
-      MVar3 = cm848_lookupApplicationMemoryRegionType(address,range_length);
+      MVar3 = lookupApplicationMemoryRegionType(address,range_length);
       if ((MVar3 != MEMORY_REGION_TYPE_REFUSED) && (MVar3 != MEMORY_REGION_TYPE_UNMAPPED)) {
         if ((bVar6 == 0x43) && (range_length < 0x100)) {
           bVar6 = 0x44;
@@ -71703,16 +71702,18 @@ void cm848_initializeJ1939Transport(void)
 
 
 //
-// Function: cm848_lookupApplicationMemoryRegionType @ 0x0050d784
+// Function: lookupApplicationMemoryRegionType @ 0x0050d784
 //
 
-/* Application twin of the boot cm848_lookupBootMemoryRegionType (MEMORY_REGION_TYPE): type of the
+/* The same function as CM550 0x3460e (shared name - there 5 entries and no Bank 2; was
+   cm848_lookupApplicationMemoryRegionType; PR #53 round 72). Application twin of the boot
+   cm848_lookupBootMemoryRegionType (MEMORY_REGION_TYPE): type of the
    application_memory_region_table (0x53a33a) entry (7 x {start / end / type if DEVELOPMENT_MODE_ON
    / else}) holding address..address+length-1: 4 ROM / 2 flash2 / 3 RAM to 0x40c26e / 0 RAM above /
    5 EEPROM / 3 or 10 registers / 9 unmapped (was uds_validateMemoryRegion) |
    review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
 
-MEMORY_REGION_TYPE cm848_lookupApplicationMemoryRegionType(dword range_start,dword range_length)
+MEMORY_REGION_TYPE lookupApplicationMemoryRegionType(dword range_start,dword range_length)
 
 {
   memory_region_t *pmVar1;

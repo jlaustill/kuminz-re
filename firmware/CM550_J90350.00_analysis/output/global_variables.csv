@@ -71,6 +71,7 @@ address,name,type,comment
 0x00033936,switchdataD_00033936,ushort,
 0x00033d56,switchD,,
 0x00033d5a,switchdataD_00033d5a,ushort,
+0x000345dc,application_memory_region_table,memory_region_t[5],The application's write-permission map (5 x 10 bytes; the lookup's code follows at 0x3460e): main flash 0x0-0x7ffff 4 / RAM 0x800000-0x8091dc 3 / extended RAM 0x8091dc-0x80ffff 0 / EEPROM 0x1000000-0x1001fff 5 / registers 0xffc800-0xffffff 3 while the development mode flag is 1 else 10 - read by lookupApplicationMemoryRegionType (PR #53 round 72)
 0x00034b48,switchD,,
 0x00034b4c,switchdataD_00034b4c,ushort,
 0x00800000,rpm_rate_limit_countdown,undefined,

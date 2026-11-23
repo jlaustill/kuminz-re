@@ -54,13 +54,13 @@ The following diagram shows the complete authentication process for writing to s
 │  └─────────────────┬───────────────────┘                                     │
 │                    ▼                                                         │
 │  ┌─────────────────────────────────────┐                                     │
-│  │ addressRangeValidator               │                                     │
+│  │ lookupApplicationMemoryRegionType   │                                     │
 │  │ @ 0x3460e                           │                                     │
 │  │                                     │                                     │
 │  │ • Check address against 5-entry     │                                     │
-│  │   validation table @ 0x801be8       │                                     │
+│  │   region table @ ROM 0x345dc        │                                     │
 │  │                                     │                                     │
-│  │ Returns MEMORY_ACCESS_FLAG:         │                                     │
+│  │ Returns MEMORY_REGION_TYPE:         │                                     │
 │  └─────────────────┬───────────────────┘                                     │
 │                    │                                                         │
 │    ┌───────────────┼───────────────┬───────────────┬───────────────┐         │
