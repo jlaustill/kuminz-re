@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 09:04:40 MST 2026
+// Generated: Mon Nov 23 09:30:49 MST 2026
 
 
 //
@@ -6754,7 +6754,7 @@ void cm848_phase_group_b_processing(void)
   cm848_applyAlternatorFieldDuty();
   cm848_testAlternatorOutputByCuttingField();
   cm848_runDataCollector(0);
-  phaseGroupB_ControlDispatchers();
+  cm848_updateSciServiceTimers();
   cm848_selectTransmissionTemperatureInUse();
   cm848_updateTransmissionControlState();
   cm848_runTransmissionControlWhenEnabled();
@@ -7077,7 +7077,7 @@ void cm848_periodicTaskGroup12_calibration1(void)
 void cm848_periodicTaskGroup13_calibration2(void)
 
 {
-  j1939_periodic_processing();
+  cm848_runCoolingFanControl();
   cm848_checkRadiatorFanSpeedRationality();
   return;
 }
@@ -18775,7 +18775,7 @@ void cm848_sendPgn65251EngineConfiguration1Message(void)
 {
   if ((j1939_pgn65251_transmit_status & 0xf0) == 0) {
     buildPgn65251EngineConfiguration1Payload(&j1939_pgn65251_payload);
-    sendJ1939Message(&j1939_pgn65251_tx_message);
+    cm848_sendJ1939Message(&j1939_pgn65251_tx_message);
   }
   return;
 }
@@ -23309,14 +23309,20 @@ void cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings(void)
 
 
 //
-// Function: j1939_receivePgn56576Handler @ 0x00021fc4
+// Function: cm848_receivePgn56576AntiTheftRequestMessage @ 0x00021fc4
 //
 
-/* J1939 receive handler registered with j1939_handlerInitializer for PGN 56576: unpacks the message
-   into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named) |
-   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Low */
+/* J1939 PGN 56576 Anti-theft Request (ATR): with algorithm_enable_flags_27_cal.anti_theft_enable
+   set and no status reply pending it records the addresses for the PGN 56320 Anti-theft Status
+   reply / unpacks the command state / desired exit mode / encryption indicator and the password
+   bytes / sets j1939_anti_theft_status_transmit_state 2. Registered with
+   cm848_registerJ1939ReceiveHandler (was j1939_receivePgn56576Handler; PR #53 round 65) | earlier
+   note: J1939 receive handler registered with cm848_registerJ1939ReceiveHandler for PGN 56576:
+   unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not
+   yet named) | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
+   Confidence Low */
 
-void j1939_receivePgn56576Handler(int param_1)
+void cm848_receivePgn56576AntiTheftRequestMessage(int param_1)
 
 {
   byte bVar1;
@@ -23363,7 +23369,7 @@ void j1939_receivePgn56576Handler(int param_1)
 void cm848_initJ1939DiagnosticCallback(void)
 
 {
-  j1939_handlerInitializer(0xdd00,j1939_receivePgn56576Handler);
+  cm848_registerJ1939ReceiveHandler(0xdd00,cm848_receivePgn56576AntiTheftRequestMessage);
   return;
 }
 
@@ -23451,7 +23457,7 @@ void cm848_j1939DiagnosticServiceHandler(j1939_rx_msg_t *rx_msg)
 void cm848_initJ1939DiagnosticServiceHandler(void)
 
 {
-  j1939_handlerInitializer(0xef00,cm848_j1939DiagnosticServiceHandler);
+  cm848_registerJ1939ReceiveHandler(0xef00,cm848_j1939DiagnosticServiceHandler);
   return;
 }
 
@@ -23535,7 +23541,7 @@ void cm848_initJ1939Dm13Handler(void)
   j1939_dm13_requester_slots[1].broadcast_enable_flags = 0xffff;
   j1939_dm13_requester_slots[2].broadcast_enable_flags = 0xffff;
   j1939_dm13_broadcast_enable_flags = 0xffff;
-  j1939_handlerInitializer(0xdf00,cm848_processJ1939Dm13StopStartBroadcast);
+  cm848_registerJ1939ReceiveHandler(0xdf00,cm848_processJ1939Dm13StopStartBroadcast);
   return;
 }
 
@@ -23796,7 +23802,7 @@ void cm848_j1939HandlePgn58112Dm7(j1939_rx_msg_t *request_msg)
 void cm848_registerJ1939Dm7Handler(void)
 
 {
-  j1939_handlerInitializer(0xe300,cm848_j1939HandlePgn58112Dm7);
+  cm848_registerJ1939ReceiveHandler(0xe300,cm848_j1939HandlePgn58112Dm7);
   return;
 }
 
@@ -23928,7 +23934,7 @@ void cm848_initJ1939Pgn61442Etc1Handler(void)
     fault_detected_cal._2_2_ = fault_detected_cal._2_2_ & 0xdfff;
     fault_registered_cal._2_2_ = fault_registered_cal._2_2_ & 0xdfff;
   }
-  j1939_handlerInitializer(0xf002,cm848_j1939ProcessPgn61442Etc1);
+  cm848_registerJ1939ReceiveHandler(0xf002,cm848_j1939ProcessPgn61442Etc1);
   return;
 }
 
@@ -23991,7 +23997,7 @@ void cm848_initEtc2Handler(void)
   j1939_powertrain_messages_received.etc2_actual_gear_ratio_previous = 0;
   j1939_powertrain_control_state.etc2_transmission_selected_gear =
        TRANSMISSION_SELECTED_GEAR_NOT_AVAILABLE;
-  j1939_handlerInitializer(0xf005,cm848_j1939ProcessPgn61445Etc2);
+  cm848_registerJ1939ReceiveHandler(0xf005,cm848_j1939ProcessPgn61445Etc2);
   return;
 }
 
@@ -24235,7 +24241,8 @@ void cm848_j1939DispatchPgnHandler(j1939_rx_msg_t *msg)
 void cm848_initJ1939ProtocolHandlers(void)
 
 {
-  j1939_handlerInitializer(cm848_runOperatingModeSpeedGovernor,cm848_j1939DispatchPgnHandler);
+  cm848_registerJ1939ReceiveHandler
+            (cm848_runOperatingModeSpeedGovernor,cm848_j1939DispatchPgnHandler);
   initPgn65261CruiseControlSetupStruct();
   cm848_initPgn65259ComponentIdHandler();
   cm848_initPgn65262EngineTempHandler();
@@ -24299,7 +24306,7 @@ void cm848_j1939HandlePgn56832Reset(j1939_rx_msg_t *param_1)
 void cm848_initJ1939ProprietaryHandler(void)
 
 {
-  j1939_handlerInitializer(0xde00,cm848_j1939HandlePgn56832Reset);
+  cm848_registerJ1939ReceiveHandler(0xde00,cm848_j1939HandlePgn56832Reset);
   return;
 }
 
@@ -24659,7 +24666,7 @@ void cm848_dispatchTsc1ByDestinationAddress(j1939_rx_msg_t *msg)
 void cm848_initJ1939AddressDispatcher(void)
 
 {
-  j1939_handlerInitializer(0,cm848_dispatchTsc1ByDestinationAddress);
+  cm848_registerJ1939ReceiveHandler(0,cm848_dispatchTsc1ByDestinationAddress);
   return;
 }
 
@@ -24688,7 +24695,7 @@ void cm848_sendPgn56320AntiTheftStatus(void)
     j1939_pgn56320_encryption_seed = j1939_anti_theft_encryption_seed_cal;
     j1939_pgn56320_tx_message.header.can_id._3_1_ = j1939_pgn56320_source_address;
     j1939_pgn56320_tx_message.header.can_id._2_1_ = j1939_pgn56320_destination_address;
-    sendJ1939Message(&j1939_pgn56320_tx_message);
+    cm848_sendJ1939Message(&j1939_pgn56320_tx_message);
     j1939_anti_theft_status_transmit_state = 0;
   }
   return;
@@ -24735,7 +24742,7 @@ void cm848_sendJ1939AcknowledgeMessage(j1939_rx_msg_t *request_msg,J1939_ACK_TYP
   j1939_ack_payload.pgn_mid = request_msg->pgn_pf;
   j1939_ack_payload.pgn_high = request_msg->dest_address;
   j1939_ack_payload.control_byte = ack_type;
-  sendJ1939Message(&j1939_pgn59392_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn59392_tx_message);
   return;
 }
 
@@ -24761,7 +24768,7 @@ void cm848_sendJ1939NegativeAcknowledgement(j1939_rx_msg_t *msg,J1939_ACK_TYPE a
   j1939_ack_payload.pgn_mid = pbVar1[1];
   j1939_ack_payload.pgn_high = pbVar1[2];
   j1939_ack_payload.control_byte = ack_type;
-  sendJ1939Message(&j1939_pgn59392_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn59392_tx_message);
   return;
 }
 
@@ -24819,12 +24826,12 @@ void cm848_buildPgn65269AmbientConditionsMessage(void)
           (fault_detected_cal.ambient_air_temperature_low_error == 0)) {
     local_8[0] = ((short)((((short)ambient_air_temperature_sensor_filtered >> 6) * 5 + -0xa0) / 9) +
                  0x111) * 0x20;
-    j1939_pgn65269_ambient_air_temperature = j1939_reverseByteOrder16(local_8);
+    j1939_pgn65269_ambient_air_temperature = cm848_reverseByteOrder16(local_8);
   }
   else {
     j1939_pgn65269_ambient_air_temperature = 0xfffe;
   }
-  sendJ1939Message(&j1939_pgn65269_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn65269_tx_message);
   return;
 }
 
@@ -24906,7 +24913,7 @@ LAB_000240c0:
   }
   j1939_auxiliary_input_output_status_1_byte = bVar2 | bVar1;
 LAB_00024104:
-  sendJ1939Message(&j1939_pgn65241_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn65241_tx_message);
   return;
 }
 
@@ -25131,7 +25138,7 @@ LAB_00024604:
   }
   j1939_ccvs1_idle_switches_byte = j1939_ccvs1_idle_switches_byte | bVar3;
 LAB_00024648:
-  sendJ1939Message(&j1939_pgn65265_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn65265_tx_message);
   return;
 }
 
@@ -25197,7 +25204,7 @@ void j1939HandlePgn65261CruiseControlSetup(void)
   }
   j1939_ccss_tx_payload_t_003fab0a.cruise_low_set_limit_speed = 0xff;
 LAB_000247e0:
-  sendJ1939Message(&j1939_pgn65261_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn65261_tx_message);
   return;
 }
 
@@ -25264,7 +25271,7 @@ void cm848_j1939HandlePgn65259ComponentId(void)
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 10);
   j1939_pgn65259_payload.unit_number_delimiter = 0x2a;
-  sendJ1939Message(&j1939_pgn65259_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn65259_tx_message);
   return;
 }
 
@@ -25355,7 +25362,7 @@ LAB_00024a1c:
         bVar4 = bVar4 + 1;
       } while (bVar4 < bVar1);
     }
-    sendJ1939Message(msg);
+    cm848_sendJ1939Message(msg);
   }
   return;
 }
@@ -25388,8 +25395,8 @@ void cm848_sendJ1939ExtendedResponse(j1939_rx_msg_t *param_1,word param_2)
 void cm848_j1939HandlePgn65234Dm10(void)
 
 {
-  j1939_dm10_payload = j1939_reverseByteOrder16(&supported_non_continuous_monitors_bits);
-  sendJ1939Message(&j1939_dm10_tx_message);
+  j1939_dm10_payload = cm848_reverseByteOrder16(&supported_non_continuous_monitors_bits);
+  cm848_sendJ1939Message(&j1939_dm10_tx_message);
   return;
 }
 
@@ -25445,7 +25452,7 @@ void j1939HandlePgn65226Dm1ActiveDtc(void)
       j1939_dm1_tx_message.header.data_length = 6;
     }
     else {
-      j1939_dm1_lamp_status = j1939_buildLampStatusByte();
+      j1939_dm1_lamp_status = cm848_buildJ1939LampStatusByte();
       uVar3 = 1;
       if (active_dtc_list_cal.count != 0) {
         do {
@@ -25469,7 +25476,7 @@ void j1939HandlePgn65226Dm1ActiveDtc(void)
         } while ((uVar3 <= active_dtc_list_cal.count) && (uVar3 < 0x15));
       }
     }
-    sendJ1939Message(&j1939_dm1_tx_message);
+    cm848_sendJ1939Message(&j1939_dm1_tx_message);
   }
   return;
 }
@@ -25540,7 +25547,7 @@ void cm848_j1939HandlePgn65227Dm2PreviousDtc(void)
   
   if ((j1939_dm2_transmit_status & 0xf0) == 0) {
     j1939_dm2_tx_message.header.data_length = 2;
-    DAT_003fabda = j1939_buildLampStatusByte();
+    DAT_003fabda = cm848_buildJ1939LampStatusByte();
     if (previously_active_dtc_list_cal.count == 0) {
       j1939_dm2_dtc_mask_working = 0xffffffff;
       j1939_dm2_tx_message.header.data_length = j1939_dm2_tx_message.header.data_length + 4;
@@ -25570,7 +25577,7 @@ void cm848_j1939HandlePgn65227Dm2PreviousDtc(void)
         } while ((uVar3 <= previously_active_dtc_list_cal.count) && (uVar3 < 0x15));
       }
     }
-    sendJ1939Message(&j1939_dm2_tx_message);
+    cm848_sendJ1939Message(&j1939_dm2_tx_message);
   }
   return;
 }
@@ -25677,7 +25684,7 @@ void cm848_j1939BuildDm4FreezeFrame(int param_1)
       uVar7 = 500;
     }
     pbVar6[6] = (byte)(uVar7 >> 1);
-    uVar4 = j1939_reverseByteOrder16
+    uVar4 = cm848_reverseByteOrder16
                       (&fault_freeze_frame_entries_cal[uVar9 * 8 + param_1].filtered_rpm);
     *(undefined2 *)(pbVar6 + 7) = uVar4;
     pbVar6[9] = (byte)(fault_freeze_frame_entries_cal[uVar9 * 8 + param_1].
@@ -25692,7 +25699,7 @@ void cm848_j1939BuildDm4FreezeFrame(int param_1)
       local_20[0] = (undefined2)
                     ((uint)fault_freeze_frame_entries_cal[uVar9 * 8 + param_1].vehicle_speed * 0x19c
                     >> 8);
-      uVar4 = j1939_reverseByteOrder16(local_20);
+      uVar4 = cm848_reverseByteOrder16(local_20);
     }
     else {
       uVar4 = 0xffff;
@@ -25743,7 +25750,7 @@ void cm848_j1939HandlePgn65229Dm4FreezeFrame(void)
         bVar1 = bVar1 + 1;
       } while (bVar1 < 8);
     }
-    sendJ1939Message(&j1939_pgn65229_tx_message);
+    cm848_sendJ1939Message(&j1939_pgn65229_tx_message);
   }
   return;
 }
@@ -25768,7 +25775,7 @@ void cm848_j1939HandlePgn65230Dm5Readiness(void)
   DAT_003fad57 = previously_active_dtc_list_cal.count;
   DAT_003fad58 = (undefined1)obd_compliance_code;
   DAT_003fad59 = (undefined1)supported_continuous_monitors_bits;
-  j1939_feature_config_tx_word = j1939_reverseByteOrder16(&supported_non_continuous_monitors_bits);
+  j1939_feature_config_tx_word = cm848_reverseByteOrder16(&supported_non_continuous_monitors_bits);
   if (intake_air_heater_monitor_result == 1) {
     local_10[0] = 0x1000;
   }
@@ -25779,8 +25786,8 @@ void cm848_j1939HandlePgn65230Dm5Readiness(void)
           ((supported_non_continuous_monitors_bits & 0x100) != 0)) {
     local_10[0] = local_10[0] & 0xfeff;
   }
-  j1939_dm1_active_faults_tx_word = j1939_reverseByteOrder16(local_10);
-  sendJ1939Message(&j1939_pgn65230_tx_message);
+  j1939_dm1_active_faults_tx_word = cm848_reverseByteOrder16(local_10);
+  cm848_sendJ1939Message(&j1939_pgn65230_tx_message);
   return;
 }
 
@@ -25814,7 +25821,7 @@ void cm848_initPgn65230Dm5Handler(void)
    Non-continuously Monitored Systems; transmit descriptor j1939_pgn65232_tx_message, 8 bytes, set
    by cm848_initializePgn65232Dm8Buffer at 0x2560c). param_1 is the test identifier (SPN 1224, byte
    1: 0 = the intake air heater monitor, 1 = the misfire monitor) and param_2 the 16-bit test value
-   (SPN 1226, byte swapped with j1939_reverseByteOrder16 into bytes 3-4). The test type byte and the
+   (SPN 1226, byte swapped with cm848_reverseByteOrder16 into bytes 3-4). The test type byte and the
    limit words keep their 0xff / 0xffff initial values (not available). The only caller is
    cm848_j1939HandlePgn58112Dm7 (0x227a0), the handler of the command for these tests (PGN 58112),
    which passes intake_air_heater_monitor_result for test 0 and misfire_monitor_result for test 1.
@@ -25828,8 +25835,8 @@ void cm848_sendPgn65232NonContinuousMonitorTestResultMessage(byte dest_address,b
   
   local_6 = CONCAT11(in_register_00000012,fault_count);
   DAT_003fad6e = dest_address;
-  j1939_pgn65232_param_tx_word = j1939_reverseByteOrder16(&local_6);
-  sendJ1939Message(&j1939_pgn65232_tx_message);
+  j1939_pgn65232_param_tx_word = cm848_reverseByteOrder16(&local_6);
+  cm848_sendJ1939Message(&j1939_pgn65232_tx_message);
   return;
 }
 
@@ -25921,7 +25928,7 @@ LAB_000257c4:
   else {
     DAT_003fad7c = 0xff;
   }
-  sendJ1939Message(&j1939_pgn61441_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn61441_tx_message);
   return;
 }
 
@@ -25958,8 +25965,8 @@ void cm848_initializePgn61441ElectronicBrakeController1Buffer(void)
 
 /* Builds and sends the ECM's own EEC1 broadcast, PGN 61444: the transmit descriptor
    j1939_pgn61444_tx_message (can_id built from 0xf00400, 5 bytes, set by cm848_initEec1TxDescriptor
-   at 0x25ab8) is registered in the periodic transmit queue with diag_record_queue_add_entry. Byte 1
-   is the engine torque mode (SPN 899): while a TSC1 override is active
+   at 0x25ab8) is registered in the periodic transmit queue with cm848_scheduleJ1939PeriodicMessage.
+   Byte 1 is the engine torque mode (SPN 899): while a TSC1 override is active
    (j1939_powertrain_control_state.tsc1_override_control_mode non-zero in the TSC1 fueling states)
    0xf6 / 0xf7 / 0xf5 for the sender index 1 / 2 / 3 (transmission / ABS / ASR), otherwise from
    final_fueling_state: 0xf8 (torque limiting) when torque_derate_fuel_source_code equals it, 0xf0
@@ -26103,7 +26110,7 @@ LAB_00025a28:
   j1939_eec1_engine_speed_low_byte = bStack_7;
   local_8 = (byte)(engine_speed_state.filtered_engine_speed >> 8);
   j1939_eec1_engine_speed_high_byte = local_8;
-  sendJ1939Message(&j1939_pgn61444_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn61444_tx_message);
   return;
 }
 
@@ -26213,7 +26220,7 @@ LAB_00025c0c:
   DAT_003fadad = 0xff;
   DAT_003fadae = 0xff;
   DAT_003fadaf = 0xff;
-  sendJ1939Message(&j1939_pgn61443_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn61443_tx_message);
   return;
 }
 
@@ -26266,7 +26273,7 @@ void cm848_buildPgn65247ElectronicEngineController3Message(void)
   j1939_eec3_desired_operating_speed_high_byte = local_8;
   j1939_eec3_desired_operating_speed_asymmetry =
        (byte)j1939_pgn65247_desired_operating_speed_asymmetry_adjustment;
-  sendJ1939Message(&j1939_pgn65247_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn65247_tx_message);
   return;
 }
 
@@ -26329,7 +26336,7 @@ void cm848_buildPgn65263EngineFluidLevelPressure1Message(void)
     j1939_pgn65263_payload.coolant_pressure =
          (byte)(((uint)(coolant_pressure_sensor_filtered >> 7) * 0x1afa) / 1000 >> 1);
   }
-  sendJ1939Message(&j1939_pgn65263_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn65263_tx_message);
   return;
 }
 
@@ -26400,12 +26407,12 @@ void cm848_buildPgn65262EngineTemperature1Message(void)
   if ((fault_detected_cal.fault_22 == 0) && (fault_detected_cal.fault_23 == 0)) {
     local_8[0] = (short)(((short)oil_temperature_sensor_filtered * 0xa0 + -0x50000) / 0x240) +
                  0x2220;
-    j1939_et1_engine_oil_temperature = j1939_reverseByteOrder16(local_8);
+    j1939_et1_engine_oil_temperature = cm848_reverseByteOrder16(local_8);
   }
   else {
     j1939_et1_engine_oil_temperature = 0xfefe;
   }
-  sendJ1939Message(&j1939_pgn65262_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn65262_tx_message);
   return;
 }
 
@@ -26512,7 +26519,7 @@ LAB_00026340:
     j1939_erc1_actual_retarder_percent_torque_byte =
          0x7d - (char)(engine_retarder_torque_percent_times_256 >> 8);
   }
-  sendJ1939Message(&j1939_pgn61440_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn61440_tx_message);
   return;
 }
 
@@ -26570,7 +26577,7 @@ void cm848_buildPgn65213FanDrive1Message(void)
   else {
     j1939_fd1_fan_drive_state_byte = 0xfe;
   }
-  sendJ1939Message(&j1939_pgn65213_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn65213_tx_message);
   return;
 }
 
@@ -26631,7 +26638,7 @@ void cm848_buildPgn65270InletExhaustConditions1Message(void)
   else {
     j1939_ic1_intake_manifold_temperature = 0xfe;
   }
-  sendJ1939Message(&j1939_pgn65270_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn65270_tx_message);
   return;
 }
 
@@ -26741,7 +26748,7 @@ void cm848_buildPgn65249RetarderConfigurationMessage(void)
     j1939_pgn65249_payload.reference_retarder_torque_high_byte = local_8;
     j1939_pgn65249_payload.percent_torque_at_peak_torque_point_5 =
          0x7d - (char)(engine_retarder_configuration_peak_torque_percent >> 8);
-    sendJ1939Message(&j1939_pgn65249_tx_message);
+    cm848_sendJ1939Message(&j1939_pgn65249_tx_message);
   }
   return;
 }
@@ -26785,7 +26792,7 @@ void cm848_initializePgn65249RetarderConfigurationBuffer(void)
 void cm848_j1939HandlePgn65242SoftwareId(void)
 
 {
-  sendJ1939Message(&j1939_pgn65242_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn65242_tx_message);
   return;
 }
 
@@ -26855,7 +26862,7 @@ void cm848_initPgn65242SoftwareIdHandler(void)
 
 /* handles the J1939 request for PGN 65504 Proprietary B (PDU2 range 65280-65535 - Proprietary A is
    61184) via j1939_pgn_dispatch_table (cm848_j1939DispatchPgnHandler) - also broadcasts every 200
-   ms via diag_record_queue_add_entry (was cm848_j1939HandlePgn65504ProprietaryA) |
+   ms via cm848_scheduleJ1939PeriodicMessage (was cm848_j1939HandlePgn65504ProprietaryA) |
    registration-table-sweep reviewed 2026-11-13 */
 
 void cm848_j1939HandlePgn65504ProprietaryB(void)
@@ -26898,7 +26905,7 @@ void cm848_j1939HandlePgn65504ProprietaryB(void)
     j1939_pgn65504_payload.scrambled_injection_timing_byte_3 =
          (byte)((uVar2 & 0x1a) << 3) | (byte)(uVar1 >> 7) & 0x2f;
   }
-  sendJ1939Message(&j1939_pgn65504_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn65504_tx_message);
   return;
 }
 
@@ -26940,12 +26947,12 @@ void cm848_j1939HandlePgn65248VehicleDistance(void)
   local_10 = (undefined4)
              (CONCAT44((int)((ulonglong)trip_distance_cal * 0xc47400 >> 0x20),
                        trip_distance_cal * 0xc47400) / 64000000);
-  j1939_pgn65248_field1_tx_dword = j1939_reverseByteOrder32(&local_10);
+  j1939_pgn65248_field1_tx_dword = cm848_reverseByteOrder32(&local_10);
   local_10 = (undefined4)
              (CONCAT44((int)((ulonglong)lifetime_distance_pulses_cal * 0xc47400 >> 0x20),
                        lifetime_distance_pulses_cal * 0xc47400) / 0xdcd65000);
-  j1939_pgn65248_field2_tx_dword = j1939_reverseByteOrder32(&local_10);
-  sendJ1939Message(&j1939_pgn65248_tx_message);
+  j1939_pgn65248_field2_tx_dword = cm848_reverseByteOrder32(&local_10);
+  cm848_sendJ1939Message(&j1939_pgn65248_tx_message);
   return;
 }
 
@@ -26977,7 +26984,7 @@ void cm848_initPgn65248VehicleDistanceHandler(void)
 
 /* handles the J1939 request for PGN 65271 vehicle electrical power via j1939_pgn_dispatch_table
    (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - also a periodic broadcast builder via
-   diag_record_queue_add_entry every 1000 ms */
+   cm848_scheduleJ1939PeriodicMessage every 1000 ms */
 
 void cm848_j1939HandlePgn65271VehicleElectrical(void)
 
@@ -26985,8 +26992,8 @@ void cm848_j1939HandlePgn65271VehicleElectrical(void)
   undefined2 local_8 [4];
   
   local_8[0] = (undefined2)((uint)battery_voltage_sensor_filtered * 0x14 >> 3);
-  j1939_pgn65271_voltage_tx_word = j1939_reverseByteOrder16(local_8);
-  sendJ1939Message(&j1939_pgn65271_tx_message);
+  j1939_pgn65271_voltage_tx_word = cm848_reverseByteOrder16(local_8);
+  cm848_sendJ1939Message(&j1939_pgn65271_tx_message);
   return;
 }
 
@@ -27026,7 +27033,7 @@ void cm848_initJ1939VehicleElectricalBuffer(void)
 void cm848_j1939HandlePgn65260VehicleId(void)
 
 {
-  sendJ1939Message(&j1939_pgn65260_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn65260_tx_message);
   return;
 }
 
@@ -27080,7 +27087,7 @@ void cm848_sendPgn65279WaterInFuelIndicatorMessage(void)
   else {
     j1939_pgn65279_water_in_fuel_indicator_byte = 0xfd;
   }
-  sendJ1939Message(&j1939_pgn65279_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn65279_tx_message);
   return;
 }
 
@@ -30263,7 +30270,7 @@ void cm848_buildPgn65264PowerTakeOffInformationMessage(void)
     goto LAB_0002beb4;
   }
   j1939_pgn65264_requested_engine_speed_tx_word =
-       j1939_reverseByteOrder16(&power_take_off_requested_engine_speed);
+       cm848_reverseByteOrder16(&power_take_off_requested_engine_speed);
   if ((switch_input_datalink_source_bits_cal[2] & 8) == 0) {
     if (switch_input_state_bits.remote_power_take_off_switch == 0) {
       j1939_pgn65264_payload_byte_6 = 0xcc;
@@ -30306,7 +30313,7 @@ LAB_0002be0c:
   }
   j1939_pgn65264_payload_byte_7 = j1939_pgn65264_payload_byte_7 | bVar1;
 LAB_0002beb4:
-  sendJ1939Message(&j1939_pgn65264_tx_message);
+  cm848_sendJ1939Message(&j1939_pgn65264_tx_message);
   return;
 }
 
@@ -37081,7 +37088,7 @@ void cm848_initializeInjectorDriverBoosterCapacitorMonitor(void)
 //
 
 /* The injector driver booster capacitor monitor, run for each cylinder event by
-   engine_injectionAngle_tpuChannel6EventHandler. For the cylinder's capacitor
+   cm848_handleTpuChannel6InjectionEvent. For the cylinder's capacitor
    (injector_driver_booster_capacitor_cylinder_records ->
    injector_driver_booster_capacitor_monitor_records) it stores the QADC reading of channel 54 / 55
    and its linearization (or the held value), then, while the engine is RUNNING, the cylinder's four
@@ -39089,8 +39096,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  ushort receive_interval;
   byte all_transmits_overdue;
+  ushort receive_interval;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
@@ -47335,7 +47342,7 @@ void cm848_enterSpeedLimpHome(void)
 
 
 //
-// Function: engine_injectionTiming_crankSyncDispatch @ 0x00044bf4
+// Function: cm848_dispatchCrankSynchronousInjection @ 0x00044bf4
 //
 
 /* Crank-synchronous injection dispatcher. With engine_speed_limp_home_active_flag = 0 it waits
@@ -47344,9 +47351,10 @@ void cm848_enterSpeedLimpHome(void)
    cm848_scheduleInjectionAnglesOnPrimarySpeedInput; with the flag = 1 (speed limp home) it takes
    the tooth number from channel 1 parameter 2 and calls
    cm848_scheduleInjectionAnglesInSpeedLimpHome. Clears firing_detection_count at the end. (was
-   mpc555_processProtectionConditions; no protection logic) */
+   mpc555_processProtectionConditions; no protection logic) (was
+   engine_injectionTiming_crankSyncDispatch; PR #53 round 65) */
 
-void engine_injectionTiming_crankSyncDispatch(void)
+void cm848_dispatchCrankSynchronousInjection(void)
 
 {
   word wVar1;
@@ -47381,11 +47389,10 @@ void engine_injectionTiming_crankSyncDispatch(void)
 //
 
 /* Cam sync lost (from mpc555_handleCamSignalInterrupt): cam_sync_state = 1; when speed limp home is
-   active it ends it (cm848_exitSpeedLimpHome) and re-runs engine_injectionTiming_crankSyncDispatch
+   active it ends it (cm848_exitSpeedLimpHome) and re-runs cm848_dispatchCrankSynchronousInjection
    (was cm848_setEngineCrankState1) | earlier note: Crank state transition handler: sets
    cam_crank_sync_state.cam_sync_state to 1 and, when engine_speed_limp_home_active_flag is 1 (speed
-   limp home), calls cm848_exitSpeedLimpHome and re-runs engine_injectionTiming_crankSyncDispatch.
-    */
+   limp home), calls cm848_exitSpeedLimpHome and re-runs cm848_dispatchCrankSynchronousInjection. */
 
 void cm848_enterCamSyncLost(void)
 
@@ -47393,7 +47400,7 @@ void cm848_enterCamSyncLost(void)
   cam_crank_sync_state.cam_sync_state = 1;
   if (engine_speed_limp_home_active_flag == 1) {
     cm848_exitSpeedLimpHome();
-    engine_injectionTiming_crankSyncDispatch();
+    cm848_dispatchCrankSynchronousInjection();
   }
   return;
 }
@@ -47406,11 +47413,11 @@ void cm848_enterCamSyncLost(void)
 
 /* Crank sync lost (from mpc555_updateCrankSyncState): crank_sync_state = 1; with the cam in sync
    (cam_sync_state 4) and speed limp home not active, enters speed limp home
-   (cm848_enterSpeedLimpHome) and re-runs engine_injectionTiming_crankSyncDispatch (was
+   (cm848_enterSpeedLimpHome) and re-runs cm848_dispatchCrankSynchronousInjection (was
    cm848_setEngineRunState1) | earlier note: Run state transition handler: sets
    cam_crank_sync_state.crank_sync_state to 1 and, when speed limp home is not active and
    cam_sync_state is 4, calls cm848_enterSpeedLimpHome (backup speed input) and re-runs
-   engine_injectionTiming_crankSyncDispatch. */
+   cm848_dispatchCrankSynchronousInjection. */
 
 void cm848_enterCrankSyncLost(void)
 
@@ -47418,7 +47425,7 @@ void cm848_enterCrankSyncLost(void)
   cam_crank_sync_state.crank_sync_state = 1;
   if ((engine_speed_limp_home_active_flag == 0) && (cam_crank_sync_state.cam_sync_state == 4)) {
     cm848_enterSpeedLimpHome();
-    engine_injectionTiming_crankSyncDispatch();
+    cm848_dispatchCrankSynchronousInjection();
   }
   return;
 }
@@ -47431,7 +47438,7 @@ void cm848_enterCrankSyncLost(void)
 
 /* crank_sync_state = 4 (in sync) when crank sync lost recovers through the cam
    (mpc555_updateCrankSyncState): ends speed limp home, re-runs
-   engine_injectionTiming_crankSyncDispatch and latches crank_have_sync_time_ticks the first time
+   cm848_dispatchCrankSynchronousInjection and latches crank_have_sync_time_ticks the first time
    (was cm848_engineRunState4Handler) */
 
 void cm848_enterCrankInSync(void)
@@ -47441,7 +47448,7 @@ void cm848_enterCrankInSync(void)
   
   cam_crank_sync_state.crank_sync_state = 4;
   cm848_exitSpeedLimpHome();
-  engine_injectionTiming_crankSyncDispatch();
+  cm848_dispatchCrankSynchronousInjection();
   if (crank_have_sync_time_ticks == 0) {
     iVar1 = TBLr;
     crank_have_sync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
@@ -47460,7 +47467,7 @@ void cm848_enterCrankInSync(void)
    (was cm848_engineRunState3Handler) | earlier note: Run state 3 transition handler: snapshots
    average_pulse_period into crank_period_prev_snapshot, restarts crank_preliminary_sync_count from
    its calibration, sets crank_sync_state to 3, leaves speed limp home if it is active and re-runs
-   engine_injectionTiming_crankSyncDispatch. */
+   cm848_dispatchCrankSynchronousInjection. */
 
 void cm848_reenterCrankPreliminarySync(void)
 
@@ -47472,7 +47479,7 @@ void cm848_reenterCrankPreliminarySync(void)
   if (engine_speed_limp_home_active_flag == 1) {
     cm848_exitSpeedLimpHome();
   }
-  engine_injectionTiming_crankSyncDispatch();
+  cm848_dispatchCrankSynchronousInjection();
   return;
 }
 
@@ -47483,10 +47490,10 @@ void cm848_reenterCrankPreliminarySync(void)
 //
 
 /* The cam signal handler's other crank_sync_state = 4: ends speed limp home and re-runs
-   engine_injectionTiming_crankSyncDispatch only when speed limp home is active; latches
+   cm848_dispatchCrankSynchronousInjection only when speed limp home is active; latches
    crank_have_sync_time_ticks the first time (was cm848_engineRunState4Conditional) | earlier note:
    Run state 4 transition handler: sets crank_sync_state to 4, leaves speed limp home (and re-runs
-   engine_injectionTiming_crankSyncDispatch) only if it is active, and latches
+   cm848_dispatchCrankSynchronousInjection) only if it is active, and latches
    crank_have_sync_time_ticks = TBLr - first_speed_interrupt_time_ticks the first time it is 0.
    cm848_enterCrankInSync and ...Handler2 do the same but leave speed limp home unconditionally. */
 
@@ -47498,7 +47505,7 @@ void cm848_setCrankInSyncFromCam(void)
   cam_crank_sync_state.crank_sync_state = 4;
   if (engine_speed_limp_home_active_flag == 1) {
     cm848_exitSpeedLimpHome();
-    engine_injectionTiming_crankSyncDispatch();
+    cm848_dispatchCrankSynchronousInjection();
   }
   if (crank_have_sync_time_ticks == 0) {
     iVar1 = TBLr;
@@ -47523,7 +47530,7 @@ void cm848_enterCrankInSyncFromCam(void)
   
   cam_crank_sync_state.crank_sync_state = 4;
   cm848_exitSpeedLimpHome();
-  engine_injectionTiming_crankSyncDispatch();
+  cm848_dispatchCrankSynchronousInjection();
   if (crank_have_sync_time_ticks == 0) {
     iVar1 = TBLr;
     crank_have_sync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
@@ -47540,13 +47547,13 @@ void cm848_enterCrankInSyncFromCam(void)
 /* crank_sync_state = 3 (preliminary sync) from start sync (mpc555_updateCrankSyncState) and from
    hpcr_processEngineSyncPulses: snapshots average_pulse_period, restarts
    crank_preliminary_sync_count from crank_preliminary_sync_evaluation_count, ends speed limp home
-   when it is active, re-runs engine_injectionTiming_crankSyncDispatch and latches
+   when it is active, re-runs cm848_dispatchCrankSynchronousInjection and latches
    crank_preliminary_sync_time_ticks the first time (was
    cm848_engineRunState3HandlerWithTimebaseCapture) | earlier note: Crank run state 3 transition
    handler: the same steps as cm848_reenterCrankPreliminarySync (snapshot average_pulse_period into
    crank_period_prev_snapshot, restart crank_preliminary_sync_count from its calibration,
    crank_sync_state = 3, leave speed limp home if it is active, re-run
-   engine_injectionTiming_crankSyncDispatch) and additionally latches
+   cm848_dispatchCrankSynchronousInjection) and additionally latches
    crank_preliminary_sync_time_ticks = TBLr - first_speed_interrupt_time_ticks the first time it is
    0. No protection logic. (was cm848_protectionOverrideEvaluator) */
 
@@ -47562,7 +47569,7 @@ void cm848_enterCrankPreliminarySync(void)
   if (engine_speed_limp_home_active_flag == 1) {
     cm848_exitSpeedLimpHome();
   }
-  engine_injectionTiming_crankSyncDispatch();
+  cm848_dispatchCrankSynchronousInjection();
   if (crank_preliminary_sync_time_ticks == 0) {
     iVar1 = TBLr;
     crank_preliminary_sync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
@@ -47823,7 +47830,7 @@ void mpc555_updateCrankSyncState(void)
             crank_resync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
             crank_resync_count = crank_resync_count + 1;
             if (engine_speed_limp_home_active_flag == 0) {
-              engine_injectionTiming_crankSyncDispatch();
+              cm848_dispatchCrankSynchronousInjection();
             }
           }
           crank_preliminary_sync_count = crank_preliminary_sync_evaluation_count;
@@ -47879,7 +47886,7 @@ void mpc555_updateCrankSyncState(void)
    cam_crank_plausibility_count_2 and mismatches in cam_crank_mismatch_count (819B +10
    Cam_Crank_Mismatch_Count), and requests a TPU host service (tpu_a_mcr.HSRR1 = 1) with
    crank_resync_time_ticks / crank_resync_count when the crank bank is out of phase, then dispatches
-   the run state handlers and the injection timing (engine_injectionTiming_crankSyncDispatch,
+   the run state handlers and the injection timing (cm848_dispatchCrankSynchronousInjection,
    cm848_enterSpeedLimpHome). (was mpc555_updateEngineCrankState) */
 
 void mpc555_handleCamSignalInterrupt(void)
@@ -47991,7 +47998,7 @@ LAB_00045970:
             crank_resync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
             crank_resync_count = crank_resync_count + 1;
             if (cam_crank_sync_state.crank_sync_state == 3) {
-              engine_injectionTiming_crankSyncDispatch();
+              cm848_dispatchCrankSynchronousInjection();
             }
           }
         }
@@ -48030,7 +48037,7 @@ LAB_00045970:
         crank_resync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
         crank_resync_count = crank_resync_count + 1;
         if (engine_speed_limp_home_active_flag == 0) {
-          engine_injectionTiming_crankSyncDispatch();
+          cm848_dispatchCrankSynchronousInjection();
         }
       }
       if ((crank_tooth_counter_zero_flag != 0) &&
@@ -48053,7 +48060,7 @@ LAB_00045970:
          (crank_sync_error_count_speed_limp_home_threshold <
           cam_crank_sync_state.crank_sync_error_count)) {
         cm848_enterSpeedLimpHome();
-        engine_injectionTiming_crankSyncDispatch();
+        cm848_dispatchCrankSynchronousInjection();
       }
     }
     goto LAB_00045ea0;
@@ -48388,7 +48395,7 @@ void cm848_initRpmSetpointFilters(void)
    value when enabled, and set to 0 when engine_speed_limp_home_active_flag is set with
    injection_quantity_auxiliary_speed_limp_home_switch = 1.
    cm848_captureInjectionQuantityAndTimingSnapshots copies it to 0x3fd080 and
-   engine_injectionAngle_updateCutoutAndTimingDemand uses it, scaled, as the cap of
+   cm848_updateCylinderCutoutAndInjectionQuantities uses it, scaled, as the cap of
    auxiliary_injection_quantity; the winning term goes to injection_quantity_auxiliary_source_code
    (was cm848_calculateGovernorOutput). */
 
@@ -48730,7 +48737,7 @@ void cm848_clearTimingAccumulators(void)
    main_injection_pulse_width_grid, capped at main_injection_pulse_width_maximum (giving
    main_injection_pulse_width_before_minimum_check) and set to 0 below the minimum on-time for that
    rail pressure. The result main_injection_pulse_width (0.4 us ticks) is written as the second
-   injection event (TPU-A channel 5 slot 8) by engine_injectionAngle_tpuChannel6EventHandler (was
+   injection event (TPU-A channel 5 slot 8) by cm848_handleTpuChannel6InjectionEvent (was
    cm848_calculateTimingWithTables). */
 
 void cm848_calculateMainInjectionPulseWidth(void)
@@ -57906,12 +57913,13 @@ void mpc555_sendJ1939SingleFrame(dword can_id,word data_length,byte *data,byte *
 
 
 //
-// Function: sendJ1939Message @ 0x000539fc
+// Function: cm848_sendJ1939Message @ 0x000539fc
 //
 
-/* jlaustill reviewed 2026-5-26 - reads nicely, hopefully accurate */
+/* jlaustill reviewed 2026-5-26 - reads nicely, hopefully accurate (was sendJ1939Message; PR #53
+   round 65) */
 
-void sendJ1939Message(j1939_tx_msg_t *msg)
+void cm848_sendJ1939Message(j1939_tx_msg_t *msg)
 
 {
   word data_length;
@@ -57922,7 +57930,7 @@ void sendJ1939Message(j1939_tx_msg_t *msg)
               ((msg->header).can_id,data_length,msg->data_pointer,msg->status_pointer);
   }
   else {
-    initiateJ1939TransportProtocol(msg);
+    cm848_startJ1939TransportSession(msg);
   }
   return;
 }
@@ -61337,7 +61345,7 @@ void cm848_processSignedSensorChannel
     sVar4 = 0;
   }
   else {
-    sVar4 = sensorChannelConditionValidator(channel_index);
+    sVar4 = cm848_getSensorChannelReferenceSupplyState(channel_index);
   }
   if ((adc_forced_reading_enable_bits_cal[iVar9] & uVar11) == 0) {
     if (qadc_channel_index_table[channel_index] < 0x81) {
@@ -61586,7 +61594,7 @@ void cm848_initializeSignedSensorChannel
       sVar3 = 0;
     }
     else {
-      sVar3 = sensorChannelConditionValidator(channel_index);
+      sVar3 = cm848_getSensorChannelReferenceSupplyState(channel_index);
     }
     if ((adc_forced_reading_enable_bits_cal[iVar7] & uVar9) == 0) {
       if (qadc_channel_index_table[channel_index] < 0x81) {
@@ -61909,7 +61917,7 @@ void cm848_processUnsignedSensorChannel
     validation_state = 0;
   }
   else {
-    validation_state = sensorChannelConditionValidator(channel_index);
+    validation_state = cm848_getSensorChannelReferenceSupplyState(channel_index);
   }
   if ((adc_forced_reading_enable_bits_cal[channel_word_index] & sensor_value) == 0) {
     if (qadc_channel_index_table[channel_index] < 0x81) {
@@ -62190,7 +62198,7 @@ void cm848_initializeUnsignedSensorChannel
       validation_state = 0;
     }
     else {
-      validation_state = sensorChannelConditionValidator(channel_index);
+      validation_state = cm848_getSensorChannelReferenceSupplyState(channel_index);
     }
     if ((adc_forced_reading_enable_bits_cal[channel_word_index] & sensor_value) == 0) {
       if (qadc_channel_index_table[channel_index] < 0x81) {
@@ -65171,7 +65179,7 @@ void cm848_resetDataCollector(void)
    the buffered bytes (cut to a whole number of samples that fit into 32 bytes, that is 32 /
    data_collector_table_entry_count x that count), takes a transport buffer with
    cm848_selectJ1939TransmitBuffer, sets its can_id to priority 6, PF 0xff, PS 0xff and
-   j1939_source_address (a broadcast that initiateJ1939TransportProtocol announces with the
+   j1939_source_address (a broadcast that cm848_startJ1939TransportSession announces with the
    transport protocol) and copies the bytes out of the ring buffer (clearing
    data_collector_buffer_has_data_flag when the copy reaches the write pointer). Only when the
    transport session started (state 0x10, then the packets go out with
@@ -65231,7 +65239,7 @@ void cm848_sendDataCollectorBuffer(void)
           puVar5 = data_collector_buffer_start_address;
         }
       }
-      initiateJ1939TransportProtocol(msg);
+      cm848_startJ1939TransportSession(msg);
       puVar1 = data_collector_start_address;
       if (*msg->status_pointer == '\x10') {
         do {
@@ -69631,10 +69639,14 @@ void cm848_registerJ1939MemoryWriteServices(void)
 
 
 //
-// Function: j1939_reverseByteOrder32 @ 0x0050b554
+// Function: cm848_reverseByteOrder32 @ 0x0050b554
 //
 
-undefined4 j1939_reverseByteOrder32(undefined4 *param_1)
+/* Returns the dword at the pointer with its bytes reversed - the J1939 byte order for a message
+   builder (caller: cm848_j1939HandlePgn65248VehicleDistance) (was j1939_reverseByteOrder32; PR #53
+   round 65) */
+
+undefined4 cm848_reverseByteOrder32(undefined4 *param_1)
 
 {
   undefined2 uVar1;
@@ -69654,10 +69666,13 @@ undefined4 j1939_reverseByteOrder32(undefined4 *param_1)
 
 
 //
-// Function: j1939_reverseByteOrder16 @ 0x0050b58c
+// Function: cm848_reverseByteOrder16 @ 0x0050b58c
 //
 
-undefined2 j1939_reverseByteOrder16(undefined2 *param_1)
+/* Returns the word at the pointer with its bytes reversed - the J1939 byte order for the 8 message
+   builders that call it (was j1939_reverseByteOrder16; PR #53 round 65) */
+
+undefined2 cm848_reverseByteOrder16(undefined2 *param_1)
 
 {
   undefined2 local_8;
@@ -69671,10 +69686,14 @@ undefined2 j1939_reverseByteOrder16(undefined2 *param_1)
 
 
 //
-// Function: j1939_buildLampStatusByte @ 0x0050b5b4
+// Function: cm848_buildJ1939LampStatusByte @ 0x0050b5b4
 //
 
-uint j1939_buildLampStatusByte(void)
+/* The DM1 / DM2 lamp status byte: 0x40 malfunction indicator (mil_on_request_flag) / 0x10 red stop
+   (stop_fault_lamp_flag) / 0x04 amber warning (warning_fault_lamp_flag) / 0x01 protect
+   (maintenance_fault_lamp_flag) (was j1939_buildLampStatusByte; PR #53 round 65) */
+
+uint cm848_buildJ1939LampStatusByte(void)
 
 {
   uint uVar1;
@@ -69784,14 +69803,19 @@ J1939_DIAGNOSTIC_RESULT cm848_validateJ1939DiagnosticRequest(j1939_rx_msg_t *rx_
 
 
 //
-// Function: j1939_receivePgn57344Handler @ 0x0050b734
+// Function: cm848_receivePgn57344CabMessage1 @ 0x0050b734
 //
 
-/* J1939 receive handler registered with j1939_handlerInitializer for PGN 57344: unpacks the message
-   into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named) |
-   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Low */
+/* J1939 PGN 57344 Cab Message 1 (CM1): byte 1 (the requested percent fan speed) into
+   j1939_received_engine_fan_requested_percent_speed when the source passes
+   j1939_input_source_address_filter_cal slot 0 (signal timeout 500). Registered with
+   cm848_registerJ1939ReceiveHandler (was j1939_receivePgn57344Handler; PR #53 round 65) | earlier
+   note: J1939 receive handler registered with cm848_registerJ1939ReceiveHandler for PGN 57344:
+   unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not
+   yet named) | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
+   Confidence Low */
 
-void j1939_receivePgn57344Handler(int param_1)
+void cm848_receivePgn57344CabMessage1(int param_1)
 
 {
   if ((j1939_input_source_address_filter_cal[0] == j1939_received_source_address) ||
@@ -69805,14 +69829,17 @@ void j1939_receivePgn57344Handler(int param_1)
 
 
 //
-// Function: j1939_receivePgn61441Handler @ 0x0050b77c
+// Function: cm848_receivePgn61441ElectronicBrakeController1Message @ 0x0050b77c
 //
 
-/* J1939 receive handler registered with j1939_handlerInitializer for PGN 61441 (EBC1): unpacks the
-   message into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named)
-   | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
+/* J1939 PGN 61441 Electronic Brake Controller 1 (EBC1): unpacks its signals for the sources that
+   pass j1939_input_source_address_filter_cal. Registered with cm848_registerJ1939ReceiveHandler
+   (was j1939_receivePgn61441Handler; PR #53 round 65) | earlier note: J1939 receive handler
+   registered with cm848_registerJ1939ReceiveHandler for PGN 61441 (EBC1): unpacks the message into
+   working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named) |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
 
-void j1939_receivePgn61441Handler(int param_1)
+void cm848_receivePgn61441ElectronicBrakeController1Message(int param_1)
 
 {
   if ((j1939_input_source_address_filter_cal[1] == j1939_received_source_address) ||
@@ -69846,14 +69873,17 @@ void j1939_receivePgn61441Handler(int param_1)
 
 
 //
-// Function: j1939_receivePgn61443Handler @ 0x0050b8a4
+// Function: cm848_receivePgn61443ElectronicEngineController2Message @ 0x0050b8a4
 //
 
-/* J1939 receive handler registered with j1939_handlerInitializer for PGN 61443 (EEC2): unpacks the
-   message into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named)
-   | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
+/* J1939 PGN 61443 Electronic Engine Controller 2 (EEC2): unpacks its signals for the sources that
+   pass j1939_input_source_address_filter_cal. Registered with cm848_registerJ1939ReceiveHandler
+   (was j1939_receivePgn61443Handler; PR #53 round 65) | earlier note: J1939 receive handler
+   registered with cm848_registerJ1939ReceiveHandler for PGN 61443 (EEC2): unpacks the message into
+   working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named) |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
 
-void j1939_receivePgn61443Handler(int param_1)
+void cm848_receivePgn61443ElectronicEngineController2Message(int param_1)
 
 {
   if ((j1939_input_source_address_filter_cal[6] == j1939_received_source_address) ||
@@ -69882,14 +69912,19 @@ void j1939_receivePgn61443Handler(int param_1)
 
 
 //
-// Function: j1939_receivePgn65252Handler @ 0x0050b98c
+// Function: cm848_receivePgn65252ShutdownMessage @ 0x0050b98c
 //
 
-/* J1939 receive handler registered with j1939_handlerInitializer for PGN 65252: unpacks the message
-   into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named) |
-   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Low */
+/* J1939 PGN 65252 Shutdown (SHUTDN): byte 3 bits 1-2 (the A/C high pressure fan switch) into
+   j1939_received_air_conditioner_high_pressure_fan_switch when the source passes
+   j1939_input_source_address_filter_cal slot 10 (signal timeout 500). Registered with
+   cm848_registerJ1939ReceiveHandler (was j1939_receivePgn65252Handler; PR #53 round 65) | earlier
+   note: J1939 receive handler registered with cm848_registerJ1939ReceiveHandler for PGN 65252:
+   unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not
+   yet named) | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
+   Confidence Low */
 
-void j1939_receivePgn65252Handler(int param_1)
+void cm848_receivePgn65252ShutdownMessage(int param_1)
 
 {
   if ((j1939_input_source_address_filter_cal[10] == j1939_received_source_address) ||
@@ -69904,14 +69939,18 @@ void j1939_receivePgn65252Handler(int param_1)
 
 
 //
-// Function: j1939_receivePgn65264Handler @ 0x0050b9d8
+// Function: cm848_receivePgn65264PowerTakeoffInformationMessage @ 0x0050b9d8
 //
 
-/* J1939 receive handler registered with j1939_handlerInitializer for PGN 65264 (PTO): unpacks the
-   message into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named)
-   | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
+/* J1939 PGN 65264 Power Takeoff Information (PTO): the remote PTO / PTO on / resume / set switches
+   for the sources that pass j1939_input_source_address_filter_cal slots 11-14 (signal timeout 50).
+   Registered with cm848_registerJ1939ReceiveHandler (was j1939_receivePgn65264Handler; PR #53 round
+   65) | earlier note: J1939 receive handler registered with cm848_registerJ1939ReceiveHandler for
+   PGN 65264 (PTO): unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aabf /
+   0x3feaa6-0x3fead0 not yet named) | review-function-readability reviewed 2026-11-12 - Readability
+   Low Accuracy Confidence Medium */
 
-void j1939_receivePgn65264Handler(int param_1)
+void cm848_receivePgn65264PowerTakeoffInformationMessage(int param_1)
 
 {
   if ((j1939_input_source_address_filter_cal[0xb] == j1939_received_source_address) ||
@@ -69940,15 +69979,18 @@ void j1939_receivePgn65264Handler(int param_1)
 
 
 //
-// Function: j1939_receivePgn65265Handler @ 0x0050bacc
+// Function: cm848_receivePgn65265CruiseControlVehicleSpeedMessage @ 0x0050bacc
 //
 
-/* J1939 receive handler registered with j1939_handlerInitializer for PGN 65265 (CCVS - cruise
-   control / vehicle speed): unpacks the message into working RAM (signal globals at
-   0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named) | review-function-readability reviewed
-   2026-11-12 - Readability Low Accuracy Confidence Medium */
+/* J1939 PGN 65265 Cruise Control/Vehicle Speed 1 (CCVS1): unpacks its signals for the sources that
+   pass j1939_input_source_address_filter_cal. Registered with cm848_registerJ1939ReceiveHandler
+   (was j1939_receivePgn65265Handler; PR #53 round 65) | earlier note: J1939 receive handler
+   registered with cm848_registerJ1939ReceiveHandler for PGN 65265 (CCVS - cruise control / vehicle
+   speed): unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aabf /
+   0x3feaa6-0x3fead0 not yet named) | review-function-readability reviewed 2026-11-12 - Readability
+   Low Accuracy Confidence Medium */
 
-void j1939_receivePgn65265Handler(int param_1)
+void cm848_receivePgn65265CruiseControlVehicleSpeedMessage(int param_1)
 
 {
   if ((j1939_input_source_address_filter_cal[0xf] == j1939_received_source_address) ||
@@ -70063,12 +70105,12 @@ void cm848_tickJ1939InputSupervision(void)
 void cm848_registerJ1939InputMessageHandlers(void)
 
 {
-  j1939_handlerInitializer(0xe000,j1939_receivePgn57344Handler);
-  j1939_handlerInitializer(0xf001,j1939_receivePgn61441Handler);
-  j1939_handlerInitializer(0xf003,j1939_receivePgn61443Handler);
-  j1939_handlerInitializer(0xfee4,j1939_receivePgn65252Handler);
-  j1939_handlerInitializer(0xfef0,j1939_receivePgn65264Handler);
-  j1939_handlerInitializer(0xfef1,j1939_receivePgn65265Handler);
+  cm848_registerJ1939ReceiveHandler(0xe000,cm848_receivePgn57344CabMessage1);
+  cm848_registerJ1939ReceiveHandler(0xf001,cm848_receivePgn61441ElectronicBrakeController1Message);
+  cm848_registerJ1939ReceiveHandler(0xf003,cm848_receivePgn61443ElectronicEngineController2Message);
+  cm848_registerJ1939ReceiveHandler(0xfee4,cm848_receivePgn65252ShutdownMessage);
+  cm848_registerJ1939ReceiveHandler(0xfef0,cm848_receivePgn65264PowerTakeoffInformationMessage);
+  cm848_registerJ1939ReceiveHandler(0xfef1,cm848_receivePgn65265CruiseControlVehicleSpeedMessage);
   j1939_input_fault_start_delay = 1000;
   return;
 }
@@ -70485,7 +70527,7 @@ char cm848_readJ1939DiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword add
             address = address - 0xc02b7e;
           }
           cm848_memcpyBytes(pbVar8 + bVar7,address,uVar2);
-          sendJ1939Message(msg);
+          cm848_sendJ1939Message(msg);
           cVar4 = -1;
         }
       }
@@ -70704,10 +70746,16 @@ void cm848_registerJ1939MemoryReadServices(void)
 
 
 //
-// Function: initiateJ1939TransportProtocol @ 0x0050c8ec
+// Function: cm848_startJ1939TransportSession @ 0x0050c8ec
 //
 
-void initiateJ1939TransportProtocol(j1939_tx_msg_t *msg)
+/* Starts sending a message over 8 bytes with the J1939 transport protocol: to one destination (PDU
+   format below 0xf0 and a destination other than 0xff) it opens j1939_transport_transmit_session
+   for a request-to-send / clear-to-send exchange while j1939_multiframe_tx_active is 0 - else a
+   broadcast session (j1939_broadcast_transmit_session_t) (was initiateJ1939TransportProtocol; PR
+   #53 round 65) */
+
+void cm848_startJ1939TransportSession(j1939_tx_msg_t *msg)
 
 {
   ushort *puVar1;
@@ -70841,14 +70889,14 @@ void initiateJ1939TransportProtocol(j1939_tx_msg_t *msg)
 
 
 //
-// Function: j1939_transport_handleClearToSend @ 0x0050cc18
+// Function: cm848_handleJ1939TransportClearToSend @ 0x0050cc18
 //
 
 /* Application J1939 transport: matches the transmit session's destination + PGN; 0 packets = hold
    (timer 55) else sets the window | review-function-readability reviewed 2026-11-11 - Readability
-   Medium Accuracy Confidence High */
+   Medium Accuracy Confidence High (was j1939_transport_handleClearToSend; PR #53 round 65) */
 
-void j1939_transport_handleClearToSend(int param_1)
+void cm848_handleJ1939TransportClearToSend(int param_1)
 
 {
   byte bVar1;
@@ -70881,14 +70929,14 @@ void j1939_transport_handleClearToSend(int param_1)
 
 
 //
-// Function: j1939_transport_sendAbort @ 0x0050ccbc
+// Function: cm848_sendJ1939TransportAbort @ 0x0050ccbc
 //
 
 /* Application J1939 transport: sends TP.CM abort 0x18EC<destination><source> FF FF FF FF FF 00 PGN
    | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
-    */
+   (was j1939_transport_sendAbort; PR #53 round 65) */
 
-void j1939_transport_sendAbort(undefined1 param_1,undefined2 param_2)
+void cm848_sendJ1939TransportAbort(undefined1 param_1,undefined2 param_2)
 
 {
   byte *pbVar1;
@@ -70926,13 +70974,14 @@ void j1939_transport_sendAbort(undefined1 param_1,undefined2 param_2)
 
 
 //
-// Function: j1939_transport_sendEndOfMessageAcknowledge @ 0x0050cd54
+// Function: cm848_sendJ1939TransportEndOfMessageAcknowledge @ 0x0050cd54
 //
 
 /* Application J1939 transport: sends TP.CM 0x13 (total bytes / packets / FF / PGN) |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+   (was j1939_transport_sendEndOfMessageAcknowledge; PR #53 round 65) */
 
-void j1939_transport_sendEndOfMessageAcknowledge(undefined1 param_1,undefined2 param_2)
+void cm848_sendJ1939TransportEndOfMessageAcknowledge(undefined1 param_1,undefined2 param_2)
 
 {
   word wVar1;
@@ -70976,13 +71025,14 @@ void j1939_transport_sendEndOfMessageAcknowledge(undefined1 param_1,undefined2 p
 
 
 //
-// Function: j1939_transport_sendClearToSend @ 0x0050cdfc
+// Function: cm848_sendJ1939TransportClearToSend @ 0x0050cdfc
 //
 
 /* Application J1939 transport: sends TP.CM 0x11 (packets allowed / next packet / FF FF / PGN) |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+   (was j1939_transport_sendClearToSend; PR #53 round 65) */
 
-byte j1939_transport_sendClearToSend
+byte cm848_sendJ1939TransportClearToSend
                (undefined1 param_1,undefined1 param_2,undefined1 param_3,undefined2 param_4)
 
 {
@@ -71020,14 +71070,14 @@ byte j1939_transport_sendClearToSend
 
 
 //
-// Function: j1939_transport_handleRequestToSend @ 0x0050ce90
+// Function: cm848_handleJ1939TransportRequestToSend @ 0x0050ce90
 //
 
 /* Application J1939 transport: accepts only PGN 61184 / up to 1700 bytes / window of 5 or fewer
    (timer 112); otherwise aborts | review-function-readability reviewed 2026-11-11 - Readability
-   Medium Accuracy Confidence High */
+   Medium Accuracy Confidence High (was j1939_transport_handleRequestToSend; PR #53 round 65) */
 
-void j1939_transport_handleRequestToSend(dword *param_1)
+void cm848_handleJ1939TransportRequestToSend(dword *param_1)
 
 {
   char cVar1;
@@ -71043,7 +71093,7 @@ void j1939_transport_handleRequestToSend(dword *param_1)
   if ((((j1939_transport_receive_session.active == 1) &&
        ((char)j1939_transport_receive_session.request_to_send_can_id != cVar1)) ||
       (*(byte *)(iVar3 + 6) != 0xef)) || (0x6a4 < local_c)) {
-    j1939_transport_sendAbort(cVar1,local_10);
+    cm848_sendJ1939TransportAbort(cVar1,local_10);
   }
   else {
     j1939_transport_receive_session.active = 1;
@@ -71058,9 +71108,9 @@ void j1939_transport_handleRequestToSend(dword *param_1)
     if (5 < j1939_transport_receive_session.total_packet_count) {
       j1939_transport_receive_session.granted_packet_count = 5;
     }
-    cVar2 = j1939_transport_sendClearToSend(cVar1,1);
+    cVar2 = cm848_sendJ1939TransportClearToSend(cVar1,1);
     if (cVar2 != '\0') {
-      j1939_transport_sendAbort(cVar1,j1939_transport_receive_session.transported_pgn);
+      cm848_sendJ1939TransportAbort(cVar1,j1939_transport_receive_session.transported_pgn);
       j1939_transport_receive_session.active = 0;
     }
   }
@@ -71070,15 +71120,16 @@ void j1939_transport_handleRequestToSend(dword *param_1)
 
 
 //
-// Function: j1939_transport_handleDataPacket @ 0x0050cfa8
+// Function: cm848_handleJ1939TransportDataPacket @ 0x0050cfa8
 //
 
 /* Application J1939 transport: registered for PGN 60160 (TP.DT): checks the sequence / copies 7
    bytes / restarts the 25-tick timer / sends the next clear-to-send or the end-of-message
    acknowledge and hands the message to cm848_j1939DiagnosticServiceHandler |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+   (was j1939_transport_handleDataPacket; PR #53 round 65) */
 
-void j1939_transport_handleDataPacket(int param_1)
+void cm848_handleJ1939TransportDataPacket(int param_1)
 
 {
   char cVar1;
@@ -71125,7 +71176,7 @@ void j1939_transport_handleDataPacket(int param_1)
         return;
       }
       if (uVar2 == j1939_transport_receive_session.total_packet_count) {
-        j1939_transport_sendEndOfMessageAcknowledge
+        cm848_sendJ1939TransportEndOfMessageAcknowledge
                   (cVar1,j1939_transport_receive_session.transported_pgn);
         j1939_transport_receive_session.active = 0;
         j1939_transport_receive_session.receive_buffer_pointer = &j1939_transport_receive_buffer;
@@ -71143,12 +71194,12 @@ void j1939_transport_handleDataPacket(int param_1)
         j1939_transport_receive_session.granted_packet_count = 5;
       }
     }
-    cVar3 = j1939_transport_sendClearToSend
+    cVar3 = cm848_sendJ1939TransportClearToSend
                       (cVar1,j1939_transport_receive_session.next_packet_number,
                        j1939_transport_receive_session.granted_packet_count,
                        j1939_transport_receive_session.transported_pgn);
     if (cVar3 != '\0') {
-      j1939_transport_sendAbort(cVar1,j1939_transport_receive_session.transported_pgn);
+      cm848_sendJ1939TransportAbort(cVar1,j1939_transport_receive_session.transported_pgn);
       j1939_transport_receive_session.active = 0;
     }
     return;
@@ -71159,13 +71210,14 @@ void j1939_transport_handleDataPacket(int param_1)
 
 
 //
-// Function: j1939_transport_handleEndOfMessageAcknowledge @ 0x0050d144
+// Function: cm848_handleJ1939TransportEndOfMessageAcknowledge @ 0x0050d144
 //
 
 /* Application J1939 transport: closes the matching transmit session with status 9 |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+   (was j1939_transport_handleEndOfMessageAcknowledge; PR #53 round 65) */
 
-void j1939_transport_handleEndOfMessageAcknowledge(int param_1)
+void cm848_handleJ1939TransportEndOfMessageAcknowledge(int param_1)
 
 {
   undefined2 local_8;
@@ -71184,14 +71236,14 @@ void j1939_transport_handleEndOfMessageAcknowledge(int param_1)
 
 
 //
-// Function: j1939_transport_handleAbort @ 0x0050d1ac
+// Function: cm848_handleJ1939TransportAbort @ 0x0050d1ac
 //
 
 /* Application J1939 transport: closes the transmit session with status 10 or drops the matching
    receive session | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy
-   Confidence High */
+   Confidence High (was j1939_transport_handleAbort; PR #53 round 65) */
 
-void j1939_transport_handleAbort(int param_1)
+void cm848_handleJ1939TransportAbort(int param_1)
 
 {
   undefined2 local_8;
@@ -71214,14 +71266,15 @@ void j1939_transport_handleAbort(int param_1)
 
 
 //
-// Function: j1939_transport_dispatchConnectionManagement @ 0x0050d250
+// Function: cm848_dispatchJ1939TransportConnectionManagement @ 0x0050d250
 //
 
 /* Application J1939 transport: registered for PGN 60416 (TP.CM): 8-byte frames 0x10 request-to-send
    / 0x11 clear-to-send / 0x13 end-of-message acknowledge / 0xFF abort | review-function-readability
-   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High (was
+   j1939_transport_dispatchConnectionManagement; PR #53 round 65) */
 
-void j1939_transport_dispatchConnectionManagement(int param_1)
+void cm848_dispatchJ1939TransportConnectionManagement(int param_1)
 
 {
   char cVar1;
@@ -71229,16 +71282,16 @@ void j1939_transport_dispatchConnectionManagement(int param_1)
   if (*(short *)(param_1 + 4) == 8) {
     cVar1 = **(char **)(param_1 + 6);
     if (cVar1 == '\x10') {
-      j1939_transport_handleRequestToSend();
+      cm848_handleJ1939TransportRequestToSend();
     }
     else if (cVar1 == '\x11') {
-      j1939_transport_handleClearToSend();
+      cm848_handleJ1939TransportClearToSend();
     }
     else if (cVar1 == '\x13') {
-      j1939_transport_handleEndOfMessageAcknowledge();
+      cm848_handleJ1939TransportEndOfMessageAcknowledge();
     }
     else if (cVar1 == -1) {
-      j1939_transport_handleAbort();
+      cm848_handleJ1939TransportAbort();
     }
   }
   return;
@@ -71431,10 +71484,13 @@ LAB_0050d5a0:
 
 
 //
-// Function: j1939_transport_timeout_decrement @ 0x0050d5d8
+// Function: cm848_tickJ1939TransportReceiveTimeout @ 0x0050d5d8
 //
 
-void j1939_transport_timeout_decrement(void)
+/* Counts j1939_transport_receive_session.timeout_timer down and closes the receive session (active
+   0) at 0 (was j1939_transport_timeout_decrement; PR #53 round 65) */
+
+void cm848_tickJ1939TransportReceiveTimeout(void)
 
 {
   if (j1939_transport_receive_session.timeout_timer == 0) {
@@ -71456,8 +71512,8 @@ void j1939_transport_timeout_decrement(void)
 /* The application J1939 transport's periodic service: sends the next packet of each active
    broadcast session record (cm848_sendJ1939BroadcastDataPacket 0 / 1) / runs the connection mode
    transmit session (cm848_sendJ1939ConnectionModeDataPackets) / ages the receive session's timeout
-   (j1939_transport_timeout_decrement) (was phase_group_a_triggerControllerUpdates; PR #53 round 34)
-   (was phase_group_a_triggerControllerUpdates) */
+   (cm848_tickJ1939TransportReceiveTimeout) (was phase_group_a_triggerControllerUpdates; PR #53
+   round 34) (was phase_group_a_triggerControllerUpdates) */
 
 void cm848_serviceJ1939TransportSessions(void)
 
@@ -71472,7 +71528,7 @@ void cm848_serviceJ1939TransportSessions(void)
     cm848_sendJ1939ConnectionModeDataPackets();
   }
   if (j1939_transport_receive_session.active == 1) {
-    j1939_transport_timeout_decrement();
+    cm848_tickJ1939TransportReceiveTimeout();
   }
   return;
 }
@@ -71522,7 +71578,7 @@ j1939_tx_msg_t * cm848_selectJ1939TransmitBuffer(int length)
 /* Points the transport's frame buffers (the two broadcast session records' at 0x3fbdb4 / 0x3fbdbc /
    the connection mode transmit session's at 0x3fbde7 / the receive data buffer at 0x3fbe09) and
    registers the PGN 60416 (TP.CM) and 60160 (TP.DT) receive handlers
-   j1939_transport_dispatchConnectionManagement / j1939_transport_handleDataPacket (was
+   cm848_dispatchJ1939TransportConnectionManagement / cm848_handleJ1939TransportDataPacket (was
    j1939_pgn_handler_init_ec00eb00; PR #53 round 34) (was j1939_pgn_handler_init_ec00eb00) */
 
 void cm848_initializeJ1939Transport(void)
@@ -71534,8 +71590,8 @@ void cm848_initializeJ1939Transport(void)
        j1939_broadcast_transmit_frame_buffer_1;
   j1939_transport_transmit_session.transmit_frame_pointer = j1939_transport_transmit_frame_buffer;
   j1939_transport_receive_session.receive_buffer_pointer = &j1939_transport_receive_buffer;
-  j1939_handlerInitializer(0xec00,j1939_transport_dispatchConnectionManagement);
-  j1939_handlerInitializer(0xeb00,j1939_transport_handleDataPacket);
+  cm848_registerJ1939ReceiveHandler(0xec00,cm848_dispatchJ1939TransportConnectionManagement);
+  cm848_registerJ1939ReceiveHandler(0xeb00,cm848_handleJ1939TransportDataPacket);
   return;
 }
 
@@ -77049,10 +77105,14 @@ void cm848_applyCoolingFanDuty(void)
 
 
 //
-// Function: j1939_periodic_processing @ 0x00515bac
+// Function: cm848_runCoolingFanControl @ 0x00515bac
 //
 
-void j1939_periodic_processing(void)
+/* One cooling fan pass from cm848_periodicTaskGroup13_calibration2:
+   cm848_selectCoolingFanSpeedTarget / cm848_selectCoolingFanDutySource / cm848_applyCoolingFanDuty
+   - nothing J1939 in it (was j1939_periodic_processing; PR #53 round 65) */
+
+void cm848_runCoolingFanControl(void)
 
 {
   cm848_selectCoolingFanSpeedTarget();
@@ -81992,14 +82052,18 @@ void cm848_sciInitCommandCallback(void)
 
 
 //
-// Function: phaseGroupB_ControlDispatchers @ 0x0051d840
+// Function: cm848_updateSciServiceTimers @ 0x0051d840
 //
 
-void phaseGroupB_ControlDispatchers(void)
+/* From cm848_phase_group_b_processing: the SCI service timers - cm848_updateSciOutputTests /
+   cm848_countDownSciClearDiagnosticsDelay / cm848_expireSciSetEngineSpeedRequest /
+   cm848_sciDecrementKeyRetryDelay (was phaseGroupB_ControlDispatchers; PR #53 round 65) */
+
+void cm848_updateSciServiceTimers(void)
 
 {
   cm848_updateSciOutputTests();
-  cm848_countdown_timer_update();
+  cm848_countDownSciClearDiagnosticsDelay();
   cm848_expireSciSetEngineSpeedRequest();
   cm848_sciDecrementKeyRetryDelay();
   return;
@@ -84022,7 +84086,7 @@ void cm848_sciCommand23ClearDiagnostics(void)
   uint uVar2;
   uint uVar3;
   
-  if (DAT_003fcf5d == '\x01') {
+  if (sci_clear_diagnostics_done_flag == 1) {
     uVar1 = (uint)sci_transmit_byte_count;
     uVar3 = (uint)sci_transmit_byte_count;
     if (uVar3 < uVar1 + 3) {
@@ -84034,13 +84098,13 @@ void cm848_sciCommand23ClearDiagnostics(void)
       } while (uVar3 < uVar2);
       sci_transmit_byte_count = (byte)uVar1;
     }
-    DAT_003fcf5d = '\0';
+    sci_clear_diagnostics_done_flag = 0;
   }
   else {
     if (engine_state == ENGINE_STATE_STOPPED) {
-      if (DAT_003fcf5c == '\0') {
+      if (sci_clear_diagnostics_delay_count == 0) {
         diagnostic_clear_request_state = 3;
-        DAT_003fcf5c = '\x04';
+        sci_clear_diagnostics_delay_count = 4;
       }
       sci_buffer[sci_transmit_byte_count] = 0xff;
     }
@@ -84058,14 +84122,20 @@ void cm848_sciCommand23ClearDiagnostics(void)
 
 
 //
-// Function: cm848_countdown_timer_update @ 0x0052061c
+// Function: cm848_countDownSciClearDiagnosticsDelay @ 0x0052061c
 //
 
-void cm848_countdown_timer_update(void)
+/* Counts sci_clear_diagnostics_delay_count down and sets sci_clear_diagnostics_done_flag when it
+   reaches 0 (the delay SCI command 0x17 starts) (was cm848_countdown_timer_update; PR #53 round 65)
+    */
+
+void cm848_countDownSciClearDiagnosticsDelay(void)
 
 {
-  if ((DAT_003fcf5c != '\0') && (DAT_003fcf5c = DAT_003fcf5c + -1, DAT_003fcf5c == '\0')) {
-    DAT_003fcf5d = 1;
+  if ((sci_clear_diagnostics_delay_count != 0) &&
+     (sci_clear_diagnostics_delay_count = sci_clear_diagnostics_delay_count - 1,
+     sci_clear_diagnostics_delay_count == 0)) {
+    sci_clear_diagnostics_done_flag = 1;
   }
   return;
 }
@@ -88707,7 +88777,7 @@ void cm848_initVehicleSpeedSensorChannel(void)
 
 
 //
-// Function: engine_injectionAngle_updateCutoutAndTimingDemand @ 0x0052731c
+// Function: cm848_updateCylinderCutoutAndInjectionQuantities @ 0x0052731c
 //
 
 /* WARNING: Removing unreachable block (ram,0x005277a4) */
@@ -88715,9 +88785,10 @@ void cm848_initVehicleSpeedSensorChannel(void)
    can clear TPU-A channel 4 enable bit) then the per-cylinder timing demand: rate-limits
    injection_quantity_scale_factor and computes total_injection_quantity / pilot_injection_quantity
    / auxiliary_injection_quantity with the cylinder trim | review-function-readability reviewed
-   2026-11-11 - Readability Medium Accuracy Confidence Medium */
+   2026-11-11 - Readability Medium Accuracy Confidence Medium (was
+   engine_injectionAngle_updateCutoutAndTimingDemand; PR #53 round 65) */
 
-void engine_injectionAngle_updateCutoutAndTimingDemand(void)
+void cm848_updateCylinderCutoutAndInjectionQuantities(void)
 
 {
   word wVar1;
@@ -88898,8 +88969,8 @@ void cm848_resetCylinderCutoutState(void)
 
 /* Latches final_fueling, the unscaled pilot quantity and auxiliary quantity limit, and
    main_injection_timing / pilot_injection_timing / auxiliary_injection_timing into the *_snapshot
-   words 0x3fd07c-0x3fd086; engine_injectionAngle_updateCutoutAndTimingDemand scales and applies
-   them per cylinder event. Also resets injection_quantity_scale_factor to 51200 (1.0) unless
+   words 0x3fd07c-0x3fd086; cm848_updateCylinderCutoutAndInjectionQuantities scales and applies them
+   per cylinder event. Also resets injection_quantity_scale_factor to 51200 (1.0) unless
    engine_state is ENGINE_STATE_RUNNING or ENGINE_STATE_ENGINE_BRAKE (was
    cm848_fuel_demand_state_capture). */
 
@@ -88922,14 +88993,15 @@ void cm848_captureInjectionQuantityAndTimingSnapshots(void)
 
 
 //
-// Function: engine_injectionAngle_accumulateInjectedFuel @ 0x00527938
+// Function: cm848_accumulateInjectedFuel @ 0x00527938
 //
 
 /* injected_fuel_running_total += injection_fuel_quantity_snapshot - once per injection from the
    TPU-A channel 6 injection interrupt (was engine_injectionAngle_accumulateCrankPeriod) |
-   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+   (was engine_injectionAngle_accumulateInjectedFuel; PR #53 round 65) */
 
-void engine_injectionAngle_accumulateInjectedFuel(void)
+void cm848_accumulateInjectedFuel(void)
 
 {
   injected_fuel_running_total = injected_fuel_running_total + injection_fuel_quantity_snapshot;
@@ -89246,10 +89318,18 @@ void cm848_initializeAuxiliaryInjectionTimingState(void)
 
 
 //
-// Function: engine_injectionAngle_tpuUpdate @ 0x005280a4
+// Function: cm848_armTpuChannel10AtEndOfInjectionLimit @ 0x005280a4
 //
 
-void engine_injectionAngle_tpuUpdate(void)
+/* Computes injection_end_limit_angle (the injection_end_limit_base lookup on average_engine_speed
+   plus the fuel pressure scale and valve delay bias terms - plus the limp home adjustment) and
+   programs TPU-A channel 10 (TPUA_CH10_PARAM0 and a host service request) from the cylinder's angle
+   + injection_timing_table_offset + that angle;
+   algorithm_enable_flags_32_cal.end_of_injection_limit_enable takes part. Called by the TPU-A
+   channel 6 handler and cm848_scheduleInjectionAnglesInSpeedLimpHome (was
+   engine_injectionAngle_tpuUpdate; PR #53 round 65) */
+
+void cm848_armTpuChannel10AtEndOfInjectionLimit(void)
 
 {
   word wVar1;
@@ -89352,7 +89432,7 @@ LAB_00528338:
 
 
 //
-// Function: engine_injectionAngle_tpuChannel10CylinderEventHandler @ 0x005283d0
+// Function: cm848_handleTpuChannel10CylinderEvent @ 0x005283d0
 //
 
 /* TPU-A channel 10 interrupt: advances cylinder_event_index (wrapping at cylinder_event_count_max
@@ -89361,9 +89441,10 @@ LAB_00528338:
    schedule_crankInvalid). Was missing from every build | review-function-readability reviewed
    2026-11-11 - Readability Medium Accuracy Confidence Medium | reached via
    tpu_a_channel_interrupt_handler_table[10] - mpc555_tpuAInterruptDispatcher 0x55de4 calls
-   table[channel] - no direct caller */
+   table[channel] - no direct caller (was engine_injectionAngle_tpuChannel10CylinderEventHandler; PR
+   #53 round 65) */
 
-void engine_injectionAngle_tpuChannel10CylinderEventHandler(void)
+void cm848_handleTpuChannel10CylinderEvent(void)
 
 {
   cylinder_event_index = cylinder_event_index + 1;
@@ -89414,7 +89495,7 @@ void cm848_tpu_configuration_setup(void)
 
 
 //
-// Function: engine_injectionAngle_writeTpuEvent @ 0x00528508
+// Function: cm848_writeInjectionAngleToTpuChannel5 @ 0x00528508
 //
 
 /* Converts an injection angle for a cylinder (wraps at 0x7800) into crank tooth number + fraction
@@ -89422,9 +89503,10 @@ void cm848_tpu_configuration_setup(void)
    (4 / 8 / 0xc) with the quantity in the paired parameter at 0x304152 + slot; quantity forced to 0
    while the ignition key switch is off (unless key_off_shutdown_inhibit_flag is set) or
    engine_shutdown_command_flag is set | review-function-readability reviewed 2026-11-11 -
-   Readability Medium Accuracy Confidence Medium */
+   Readability Medium Accuracy Confidence Medium (was engine_injectionAngle_writeTpuEvent; PR #53
+   round 65) */
 
-void engine_injectionAngle_writeTpuEvent(int param_1,int param_2,undefined2 param_3,int param_4)
+void cm848_writeInjectionAngleToTpuChannel5(int param_1,int param_2,undefined2 param_3,int param_4)
 
 {
   uint uVar1;
@@ -89509,16 +89591,16 @@ LAB_005286f0:
 
 
 //
-// Function: engine_injectionAngle_selectCylinderInjector @ 0x0052877c
+// Function: cm848_selectCylinderInjector @ 0x0052877c
 //
 
 /* Per-cylinder injector selection from ROM tables 0x5f14e (bank) / 0x5f156 / 0x5f15e (output index;
    shifted by injection_cylinder_fault_index_offset when the cylinder's fault bits are set):
    programs TPU-A channel 4 or the bank-B channel PARAM0 plus channel 2 or 7 mode then a host
    service request | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy
-   Confidence Medium */
+   Confidence Medium (was engine_injectionAngle_selectCylinderInjector; PR #53 round 65) */
 
-void engine_injectionAngle_selectCylinderInjector(int param_1)
+void cm848_selectCylinderInjector(int param_1)
 
 {
   word wVar1;
@@ -89575,13 +89657,14 @@ void engine_injectionAngle_selectCylinderInjector(int param_1)
 
 
 //
-// Function: engine_injectionAngle_lookupTimingTableOffset @ 0x00528978
+// Function: cm848_lookupInjectionTimingTableOffset @ 0x00528978
 //
 
 /* injection_timing_table_offset = RPM-indexed table lookup (table state 0x3fd0b0) |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+   (was engine_injectionAngle_lookupTimingTableOffset; PR #53 round 65) */
 
-void engine_injectionAngle_lookupTimingTableOffset(void)
+void cm848_lookupInjectionTimingTableOffset(void)
 
 {
   injection_timing_table_offset =
@@ -89919,13 +90002,19 @@ void cm848_monitorFuelSystemHardwareShutdown(void)
 
 
 //
-// Function: engine_injectionAngle_computeLoadCh6 @ 0x00529284
+// Function: cm848_loadInjectionStartAnglesOnTpuChannel6 @ 0x00529284
 //
 
-/* computes injection_timing_tooth_b + phase from cam/crank sync and loads TPU-A ch6 param 0x304162;
-   no caller found in decompilation (pointer/tail-call?) */
+/* From the TPU-A channel 6 handler (state 1): the pilot / main / auxiliary start angles (each
+   timing for the cylinder event x -5) and the wake-up lead (injection_wakeup_duration_* by the
+   speed breakpoint x the tooth separation / average_pulse_period) give the channel 6 crank position
+   it loads (the cylinder's angle + injection_timing_table_offset - the lead + the start angle). Its
+   old plate said no caller was found - the channel 6 handler calls it (was
+   engine_injectionAngle_computeLoadCh6; PR #53 round 65) | earlier note: computes
+   injection_timing_tooth_b + phase from cam/crank sync and loads TPU-A ch6 param 0x304162; no
+   caller found in decompilation (pointer/tail-call?) */
 
-void engine_injectionAngle_computeLoadCh6(void)
+void cm848_loadInjectionStartAnglesOnTpuChannel6(void)
 
 {
   ushort uVar1;
@@ -90032,27 +90121,28 @@ LAB_005295d8:
 
 
 //
-// Function: engine_injectionAngle_tpuChannel6EventHandler @ 0x00529640
+// Function: cm848_handleTpuChannel6InjectionEvent @ 0x00529640
 //
 
 /* TPU-A channel 6 interrupt: the injection scheduling state machine on
    injection_angle_sequence_state. State 1 runs the cut-out, quantity and timing demand
-   (engine_injectionAngle_updateCutoutAndTimingDemand) and loads the pilot, main and auxiliary start
-   angles (engine_injectionAngle_computeLoadCh6, which re-arms the channel for the scheduling angle
-   and sets state 2); state 2 computes the pilot, main and auxiliary on-times and writes the three
-   events (start angle, on-time, slots 4 / 8 / 12) into TPU-A channel 5 parameter RAM via
-   engine_injectionAngle_writeTpuEvent, then state 8; state 4 is the speed limp home sequence (TPU
-   mode 18, set by the schedule_crankValid scheduler): it does the same in one step, recomputing
-   everything or reusing the angles of a still pending state 2. The auxiliary start is shifted by
-   the main on-time as an angle (clipped to injection_end_limit_angle -
+   (cm848_updateCylinderCutoutAndInjectionQuantities) and loads the pilot, main and auxiliary start
+   angles (cm848_loadInjectionStartAnglesOnTpuChannel6, which re-arms the channel for the scheduling
+   angle and sets state 2); state 2 computes the pilot, main and auxiliary on-times and writes the
+   three events (start angle, on-time, slots 4 / 8 / 12) into TPU-A channel 5 parameter RAM via
+   cm848_writeInjectionAngleToTpuChannel5, then state 8; state 4 is the speed limp home sequence
+   (TPU mode 18, set by the schedule_crankValid scheduler): it does the same in one step,
+   recomputing everything or reusing the angles of a still pending state 2. The auxiliary start is
+   shifted by the main on-time as an angle (clipped to injection_end_limit_angle -
    auxiliary_injection_end_limit_separation) when
    injection_timing_auxiliary_relative_to_main_end_flag is nonzero in state 2 but when it is 0 in
    state 4. Was missing from every build (wrongly in deleted_functions.csv) |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium |
    reached via tpu_a_channel_interrupt_handler_table[6] - mpc555_tpuAInterruptDispatcher 0x55de4
-   calls table[channel] - no direct caller */
+   calls table[channel] - no direct caller (was engine_injectionAngle_tpuChannel6EventHandler; PR
+   #53 round 65) */
 
-void engine_injectionAngle_tpuChannel6EventHandler(void)
+void cm848_handleTpuChannel6InjectionEvent(void)
 
 {
   bool bVar1;
@@ -90067,13 +90157,13 @@ void engine_injectionAngle_tpuChannel6EventHandler(void)
     cm848_processFuelPressureSensor();
     fuel_pressure_at_other_angle_events = fuel_pressure_sensor;
     cm848_countFuelPressureGovernorStartRevolutions();
-    engine_injectionAngle_updateCutoutAndTimingDemand();
-    engine_injectionAngle_lookupTimingTableOffset();
+    cm848_updateCylinderCutoutAndInjectionQuantities();
+    cm848_lookupInjectionTimingTableOffset();
     cm848_setMainQuantityAndPulseWidthLimits();
     cm848_monitorInjectionLimitViolationCounters();
-    engine_injectionAngle_computeLoadCh6();
+    cm848_loadInjectionStartAnglesOnTpuChannel6();
     cm848_monitorInjectorDriverBoosterCapacitorVoltage();
-    engine_injectionAngle_tpuUpdate();
+    cm848_armTpuChannel10AtEndOfInjectionLimit();
   }
   else {
     if (injection_angle_sequence_state == 2) {
@@ -90096,18 +90186,18 @@ void engine_injectionAngle_tpuChannel6EventHandler(void)
                 auxiliary_injection_start_angle;
       }
       cm848_calculateAuxiliaryInjectionPulseWidth(bVar1);
-      engine_injectionAngle_writeTpuEvent
+      cm848_writeInjectionAngleToTpuChannel5
                 (injection_schedule_cylinder_event_index,(int)pilot_injection_start_angle,
                  (int)(short)pilot_injection_pulse_width,4);
-      engine_injectionAngle_writeTpuEvent
+      cm848_writeInjectionAngleToTpuChannel5
                 (injection_schedule_cylinder_event_index,(int)main_injection_start_angle,
                  (int)(short)main_injection_pulse_width,8);
-      engine_injectionAngle_writeTpuEvent
+      cm848_writeInjectionAngleToTpuChannel5
                 (injection_schedule_cylinder_event_index,
                  (int)(short)(auxiliary_injection_start_angle + sVar5),
                  (int)(short)auxiliary_injection_pulse_width,0xc);
-      engine_injectionAngle_selectCylinderInjector(cylinder_event_index & 0xff);
-      engine_injectionAngle_accumulateInjectedFuel();
+      cm848_selectCylinderInjector(cylinder_event_index & 0xff);
+      cm848_accumulateInjectedFuel();
       bVar7 = 8;
     }
     else {
@@ -90122,8 +90212,8 @@ void engine_injectionAngle_tpuChannel6EventHandler(void)
         }
         else {
           cm848_countFuelPressureGovernorStartRevolutions();
-          engine_injectionAngle_updateCutoutAndTimingDemand();
-          engine_injectionAngle_lookupTimingTableOffset();
+          cm848_updateCylinderCutoutAndInjectionQuantities();
+          cm848_lookupInjectionTimingTableOffset();
           cm848_setMainQuantityAndPulseWidthLimits();
           cm848_monitorInjectionLimitViolationCounters();
           uVar4 = cylinder_event_index & 0xff;
@@ -90148,17 +90238,17 @@ void engine_injectionAngle_tpuChannel6EventHandler(void)
                   auxiliary_injection_start_angle;
         }
         cm848_calculateAuxiliaryInjectionPulseWidth(bVar1);
-        engine_injectionAngle_writeTpuEvent
+        cm848_writeInjectionAngleToTpuChannel5
                   (uVar4,(int)sVar5,(int)(short)pilot_injection_pulse_width,4);
-        engine_injectionAngle_writeTpuEvent
+        cm848_writeInjectionAngleToTpuChannel5
                   (uVar4,(int)sVar3,(int)(short)main_injection_pulse_width,8);
-        engine_injectionAngle_writeTpuEvent
+        cm848_writeInjectionAngleToTpuChannel5
                   (uVar4,(int)(short)(sVar2 + sVar6),(int)(short)auxiliary_injection_pulse_width,0xc
                   );
-        engine_injectionAngle_selectCylinderInjector(cylinder_event_index & 0xff);
-        engine_injectionAngle_accumulateInjectedFuel();
+        cm848_selectCylinderInjector(cylinder_event_index & 0xff);
+        cm848_accumulateInjectedFuel();
         cm848_monitorInjectorDriverBoosterCapacitorVoltage();
-        engine_injectionAngle_tpuUpdate();
+        cm848_armTpuChannel10AtEndOfInjectionLimit();
         injection_angle_sequence_state_prev = injection_angle_sequence_state;
         injection_angle_sequence_state = 8;
         return;
@@ -90177,8 +90267,8 @@ void engine_injectionAngle_tpuChannel6EventHandler(void)
 // Function: cm848_scheduleInjectionAnglesInSpeedLimpHome @ 0x00529994
 //
 
-/* Speed limp home path of the injection scheduler: engine_injectionTiming_crankSyncDispatch calls
-   it when engine_speed_limp_home_active_flag == 1 (engine position from TPU-A channel 1) and the
+/* Speed limp home path of the injection scheduler: cm848_dispatchCrankSynchronousInjection calls it
+   when engine_speed_limp_home_active_flag == 1 (engine position from TPU-A channel 1) and the
    channel 10 cylinder handler calls it while injection_tpu_period_parameter_address is 18. Sets
    mode 18, walks injection_angle_sequence_state (2 / 8 / 1 -> 4) and re-arms TPU-A channel 6 at the
    injection tooth (was engine_injectionAngle_schedule_crankValid, earlier
@@ -90197,7 +90287,7 @@ void cm848_scheduleInjectionAnglesInSpeedLimpHome(void)
   uVar5 = (uint)cylinder_event_index;
   injection_tpu_period_parameter_address = 0x12;
   if (injection_angle_sequence_state == 2) {
-    engine_injectionAngle_tpuUpdate();
+    cm848_armTpuChannel10AtEndOfInjectionLimit();
     if (average_engine_speed < injection_timing_sequence_speed_threshold) {
       injection_angle_sequence_state_prev = injection_angle_sequence_state;
       injection_angle_sequence_state = 4;
@@ -90241,7 +90331,7 @@ void cm848_scheduleInjectionAnglesInSpeedLimpHome(void)
       uVar5 = uVar5 + 1;
     }
     else {
-      engine_injectionAngle_tpuUpdate();
+      cm848_armTpuChannel10AtEndOfInjectionLimit();
     }
   }
   if ((injection_angle_sequence_state == 1) || (injection_angle_sequence_state == 4)) {
@@ -90355,17 +90445,16 @@ LAB_00529e34:
 //
 
 /* Initializes the injection angle scheduler, the TPU-A channel 6 per-cylinder injection event
-   channel (handled by engine_injectionAngle_tpuChannel6EventHandler): sets
-   injection_angle_sequence_state (e2m 805E +0 HPCR_Wakeup_Processing_Status_N) to 1 and
-   injection_tpu_period_parameter_address (805E +B HPCR_Period_Address) to 2 (the primary speed
-   input, TPU-A channel 0 parameter 1 at 0x304102), sets up channel 6 (CFSR2 function field 9, host
-   service request 3 in HSRR1, channel interrupt enable bit 0x40 in CIER, priority field of CPR1;
-   TPUA_CH6_PARAM0 = 0x6002 = 0x6000 | the period address) and stores
-   injection_timing_tooth_separation_per_cylinder (805E +C HPCR_Wakeup_Seperation_In_Increments) =
-   injection_timing_tooth_count / cylinder_event_count_max (120 / 6 = 20). Called once from the boot
-   list of cm848_applicationMain and again by cm848_updateEngineSpeedFromCrankSignal after
-   average_engine_speed has dropped to 0, right after mpc555_resetEngineTimingAccumulators. (was
-   cm848_sensor_diagnostic_flag_update) */
+   channel (handled by cm848_handleTpuChannel6InjectionEvent): sets injection_angle_sequence_state
+   (e2m 805E +0 HPCR_Wakeup_Processing_Status_N) to 1 and injection_tpu_period_parameter_address
+   (805E +B HPCR_Period_Address) to 2 (the primary speed input, TPU-A channel 0 parameter 1 at
+   0x304102), sets up channel 6 (CFSR2 function field 9, host service request 3 in HSRR1, channel
+   interrupt enable bit 0x40 in CIER, priority field of CPR1; TPUA_CH6_PARAM0 = 0x6002 = 0x6000 |
+   the period address) and stores injection_timing_tooth_separation_per_cylinder (805E +C
+   HPCR_Wakeup_Seperation_In_Increments) = injection_timing_tooth_count / cylinder_event_count_max
+   (120 / 6 = 20). Called once from the boot list of cm848_applicationMain and again by
+   cm848_updateEngineSpeedFromCrankSignal after average_engine_speed has dropped to 0, right after
+   mpc555_resetEngineTimingAccumulators. (was cm848_sensor_diagnostic_flag_update) */
 
 void cm848_initializeInjectionAngleScheduler(void)
 
@@ -91289,7 +91378,7 @@ void cm848_initializeFuelPressureGovernorMonitorState(void)
    injection_quantity_pilot_speed_limp_home_switch switch on, or in the free-acceleration shutoff
    (coolant and intake limits are 300 F in the dump), and a fixed value while
    fuel_pressure_limp_home_active_flag is set. cm848_captureInjectionQuantityAndTimingSnapshots
-   snapshots it into 0x3fd07e and engine_injectionAngle_updateCutoutAndTimingDemand turns it into
+   snapshots it into 0x3fd07e and cm848_updateCylinderCutoutAndInjectionQuantities turns it into
    pilot_injection_quantity (was cm848_torque_limit_state_update). */
 
 void cm848_calculatePilotInjectionQuantity(void)
@@ -98720,10 +98809,16 @@ void cm848_mainLoopDispatcher(void)
 
 
 //
-// Function: sensorChannelConditionValidator @ 0x00537b50
+// Function: cm848_getSensorChannelReferenceSupplyState @ 0x00537b50
 //
 
-undefined4 sensorChannelConditionValidator(int param_1)
+/* For a sensor channel's ratiometric reference (sensor_channel_ratiometric_reference_channel_cal):
+   2 when that supply has a voltage high or low fault (the throttle sensor supply / the engine
+   connector sensors supply / sensor supply 1 ...) - 1 while its reference voltage channel debounces
+   - else 0. Called by the four sensor channel processors (was sensorChannelConditionValidator; PR
+   #53 round 65) */
+
+undefined4 cm848_getSensorChannelReferenceSupplyState(int param_1)
 
 {
   word wVar1;
@@ -99277,11 +99372,17 @@ void cm848_refreshRamCalibration(void)
 
 
 //
-// Function: diag_record_queue_add_entry @ 0x00538c8c
+// Function: cm848_scheduleJ1939PeriodicMessage @ 0x00538c8c
 //
 
+/* Adds a periodic J1939 broadcast to transmit queue 0 (20 entries at 0x3fd2e2) or 1 (10 entries at
+   0x3fd3aa): the PGN / the period (ms - kept in 10 ms ticks) / the first send (the queue's current
+   tick + the offset ms in ticks) / the builder. Returns 1 when the queue is full.
+   cm848_j1939_system_init schedules each broadcast (PGN 65265 every 100 ms from 70 ms ...) (was
+   diag_record_queue_add_entry; PR #53 round 65) */
+
 undefined4
-diag_record_queue_add_entry
+cm848_scheduleJ1939PeriodicMessage
           (int param_1,undefined2 param_2,int param_3,int param_4,undefined4 param_5)
 
 {
@@ -99381,20 +99482,25 @@ void cm848_exceptionHandler(void)
 
 
 //
-// Function: j1939_handlerInitializer @ 0x00538eb0
+// Function: cm848_registerJ1939ReceiveHandler @ 0x00538eb0
 //
 
-bool j1939_handlerInitializer(undefined2 param_1,undefined4 param_2)
+/* Appends a PGN and its handler to the J1939 receive handler table at 0x3fd414 (6-byte entries - at
+   most 17; the count is j1939_receive_handler_count) that cm848_dispatchJ1939ReceivedMessages
+   searches. Returns true when full. The receive side twin of cm848_j1939RegisterDiagnosticService
+   (was j1939_handlerInitializer; PR #53 round 65) */
+
+bool cm848_registerJ1939ReceiveHandler(undefined2 param_1,undefined4 param_2)
 
 {
   uint uVar1;
   
-  uVar1 = (uint)j1939_data_log_handler_count;
+  uVar1 = (uint)j1939_receive_handler_count;
   if (uVar1 != 0x11) {
-    j1939_data_log_handler_count = j1939_data_log_handler_count + 1;
+    j1939_receive_handler_count = j1939_receive_handler_count + 1;
     (&DAT_003fd414)[uVar1 * 3] = param_1;
-    *(undefined4 *)((int)&PTR_j1939_transport_dispatchConnectionManagement_003fd416 + uVar1 * 6) =
-         param_2;
+    *(undefined4 *)((int)&PTR_cm848_dispatchJ1939TransportConnectionManagement_003fd416 + uVar1 * 6)
+         = param_2;
   }
   return uVar1 == 0x11;
 }
@@ -99466,7 +99572,7 @@ LAB_00539060:
       if (!bVar2) {
         puVar7 = &DAT_003fd414;
         bVar9 = 0;
-        if (j1939_data_log_handler_count != 0) {
+        if (j1939_receive_handler_count != 0) {
           do {
             if (*puVar7 == local_20) {
               (**(code **)(puVar7 + 1))(can_receive_queue_read_pointer);
@@ -99474,7 +99580,7 @@ LAB_00539060:
             }
             puVar7 = puVar7 + 3;
             bVar9 = bVar9 + 1;
-          } while (bVar9 < j1939_data_log_handler_count);
+          } while (bVar9 < j1939_receive_handler_count);
         }
       }
       can_receive_queue_read_pointer = can_receive_queue_read_pointer + 0x12;
@@ -99551,31 +99657,39 @@ void cm848_j1939_system_init(void)
   cm848_initJ1939ProprietaryPgn65504Buffer();
   cm848_initPgn65226Dm1Handler();
   cm848_initializePgn65232Dm8Buffer();
-  diag_record_queue_add_entry(0,0xfef1,100,0x46,cm848_buildPgn65265CruiseControlVehicleSpeedMessage)
+  cm848_scheduleJ1939PeriodicMessage
+            (0,0xfef1,100,0x46,cm848_buildPgn65265CruiseControlVehicleSpeedMessage);
+  cm848_scheduleJ1939PeriodicMessage(0,0xf004,0x14,0,sendPgn61444ElectronicEngineController1Message)
   ;
-  diag_record_queue_add_entry(0,0xf004,0x14,0,sendPgn61444ElectronicEngineController1Message);
-  diag_record_queue_add_entry
+  cm848_scheduleJ1939PeriodicMessage
             (0,0xf003,0x14,10,cm848_buildPgn61443ElectronicEngineController2Message);
-  diag_record_queue_add_entry
+  cm848_scheduleJ1939PeriodicMessage
             (0,0xfedf,0x32,0x1e,cm848_buildPgn65247ElectronicEngineController3Message);
-  diag_record_queue_add_entry(0,0xfee3,5000,0x6e,cm848_sendPgn65251EngineConfiguration1Message);
-  diag_record_queue_add_entry
+  cm848_scheduleJ1939PeriodicMessage
+            (0,0xfee3,5000,0x6e,cm848_sendPgn65251EngineConfiguration1Message);
+  cm848_scheduleJ1939PeriodicMessage
             (1,0xf000,100,0x32,cm848_buildPgn61440ElectronicRetarderController1Message);
-  diag_record_queue_add_entry(1,0xfee1,5000,0x12d,cm848_buildPgn65249RetarderConfigurationMessage);
-  diag_record_queue_add_entry(0,0xfeee,1000,0x1ae,cm848_buildPgn65262EngineTemperature1Message);
-  diag_record_queue_add_entry
+  cm848_scheduleJ1939PeriodicMessage
+            (1,0xfee1,5000,0x12d,cm848_buildPgn65249RetarderConfigurationMessage);
+  cm848_scheduleJ1939PeriodicMessage
+            (0,0xfeee,1000,0x1ae,cm848_buildPgn65262EngineTemperature1Message);
+  cm848_scheduleJ1939PeriodicMessage
             (0,0xfed9,0xfa,200,cm848_buildPgn65241AuxiliaryInputOutputStatus1Message);
-  diag_record_queue_add_entry(0,0xfeef,500,0x82,cm848_buildPgn65263EngineFluidLevelPressure1Message)
+  cm848_scheduleJ1939PeriodicMessage
+            (0,0xfeef,500,0x82,cm848_buildPgn65263EngineFluidLevelPressure1Message);
+  cm848_scheduleJ1939PeriodicMessage
+            (0,0xfef0,100,0x96,cm848_buildPgn65264PowerTakeOffInformationMessage);
+  cm848_scheduleJ1939PeriodicMessage(0,0xfef5,1000,0xaa,cm848_buildPgn65269AmbientConditionsMessage)
   ;
-  diag_record_queue_add_entry(0,0xfef0,100,0x96,cm848_buildPgn65264PowerTakeOffInformationMessage);
-  diag_record_queue_add_entry(0,0xfef5,1000,0xaa,cm848_buildPgn65269AmbientConditionsMessage);
-  diag_record_queue_add_entry(0,0xfef6,500,0xbe,cm848_buildPgn65270InletExhaustConditions1Message);
-  diag_record_queue_add_entry(0,0xfef7,1000,0xd2,cm848_j1939HandlePgn65271VehicleElectrical);
-  diag_record_queue_add_entry(0,0xffe0,200,0xfa,cm848_j1939HandlePgn65504ProprietaryB);
-  diag_record_queue_add_entry(0,0xfeca,1000,500,cm848_processDm1FaultBroadcast);
-  diag_record_queue_add_entry(0,0xfebd,1000,0x32,cm848_buildPgn65213FanDrive1Message);
-  diag_record_queue_add_entry(0,0xf001,100,0x14,cm848_j1939BuildEngineControlByte);
-  diag_record_queue_add_entry(0,0xfeff,10000,0x28,cm848_sendPgn65279WaterInFuelIndicatorMessage);
+  cm848_scheduleJ1939PeriodicMessage
+            (0,0xfef6,500,0xbe,cm848_buildPgn65270InletExhaustConditions1Message);
+  cm848_scheduleJ1939PeriodicMessage(0,0xfef7,1000,0xd2,cm848_j1939HandlePgn65271VehicleElectrical);
+  cm848_scheduleJ1939PeriodicMessage(0,0xffe0,200,0xfa,cm848_j1939HandlePgn65504ProprietaryB);
+  cm848_scheduleJ1939PeriodicMessage(0,0xfeca,1000,500,cm848_processDm1FaultBroadcast);
+  cm848_scheduleJ1939PeriodicMessage(0,0xfebd,1000,0x32,cm848_buildPgn65213FanDrive1Message);
+  cm848_scheduleJ1939PeriodicMessage(0,0xf001,100,0x14,cm848_j1939BuildEngineControlByte);
+  cm848_scheduleJ1939PeriodicMessage
+            (0,0xfeff,10000,0x28,cm848_sendPgn65279WaterInFuelIndicatorMessage);
   cm848_initJ1939DiagnosticServiceHandler();
   cm848_initJ1939AddressDispatcher();
   cm848_initJ1939Pgn61442Etc1Handler();

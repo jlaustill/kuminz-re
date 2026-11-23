@@ -246,7 +246,7 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # J1939 Send Dispatcher
 # -----------------------------------------------------------------------------
-0x000539fc,sendJ1939Message,0,msg,j1939_tx_msg_t*,TX message descriptor; dispatches to single-frame (<9 bytes) or multi-frame transport protocol
+0x000539fc,cm848_sendJ1939Message,0,msg,j1939_tx_msg_t*,TX message descriptor; dispatches to single-frame (<9 bytes) or multi-frame transport protocol
 
 0x00053a4c,cm848_lookupJ1939ControlDevice,return,,J1939_CONTROL_DEVICE,the control device of the source address (1 transmission / 2 ABS / 3 ASR / 4 other)
 0x00053a4c,cm848_lookupJ1939ControlDevice,0,source_address,uint,the J1939 source address to classify
@@ -488,7 +488,7 @@ function_address,function_name,param_index,name,type,comment
 0x00027bc4,cm848_formatNumberAsDecimalText,1,text,byte*,the text buffer; the digits are written backwards from text + digit_count - 1
 0x00027bc4,cm848_formatNumberAsDecimalText,2,digit_count,int32_t,the digit count (the callers use 8); 1 selects two digits per byte
 # The application J1939 transport's senders (PR #53 round 34)
-0x0050c8ec,initiateJ1939TransportProtocol,0,msg,j1939_tx_msg_t*,the transmit descriptor of a message longer than 8 bytes (from sendJ1939Message)
+0x0050c8ec,cm848_startJ1939TransportSession,0,msg,j1939_tx_msg_t*,the transmit descriptor of a message longer than 8 bytes (from cm848_sendJ1939Message)
 0x00053858,mpc555_sendJ1939SingleFrame,0,can_id,dword,the 29-bit identifier (priority / PGN / source address)
 0x00053858,mpc555_sendJ1939SingleFrame,1,data_length,ushort,the data bytes (padded to 8 with 0xff); ushort because every caller passes a 16-bit length
 0x00053858,mpc555_sendJ1939SingleFrame,2,data,byte*,the data

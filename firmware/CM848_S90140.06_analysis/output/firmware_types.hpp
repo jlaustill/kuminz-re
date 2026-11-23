@@ -2540,7 +2540,7 @@ struct j1939_pgn_handler_entry_t {
 struct j1939_tx_msg_t {
     j1939_msg_hdr_t header;  /* J1939 TX message header (can_id + data_length) */
     void * data_pointer;  /* Pointer to the first payload byte */
-    void * status_pointer;  /* Points at the message's status byte j1939_<message>_transmit_status (was data_end_pointer: the byte often sits right after the payload; PR #53 round 33): in the application mpc555_sendJ1939SingleFrame stores its result there (0 queued / 1 zero length / 4 queue full) and the transport its session codes: a broadcast (BAM) session through the per source address records at 0x3fbd74 (initiateJ1939TransportProtocol / cm848_sendJ1939BroadcastDataPacket: 0x10 announced / 0x11 sending / 5 complete / 2 already active) and a destination-specific (RTS / CTS) session through j1939_transport_transmit_session.session_status_pointer (0x12 started / 0x13 sending / 9 complete / 10 aborted / 6 clear to send timeout / 7 send failed / 8 busy); 3 = not our source address. The multi-frame builders rebuild only while its 0xf0 nibble is clear (no session in progress). In the boot kernel (whose records use this type since its twin diagnostic_response_message_t was merged in PR #53 round 64) the transport writes 0x12 while it sends and 6 on a timeout */
+    void * status_pointer;  /* Points at the message's status byte j1939_<message>_transmit_status (was data_end_pointer: the byte often sits right after the payload; PR #53 round 33): in the application mpc555_sendJ1939SingleFrame stores its result there (0 queued / 1 zero length / 4 queue full) and the transport its session codes: a broadcast (BAM) session through the per source address records at 0x3fbd74 (cm848_startJ1939TransportSession / cm848_sendJ1939BroadcastDataPacket: 0x10 announced / 0x11 sending / 5 complete / 2 already active) and a destination-specific (RTS / CTS) session through j1939_transport_transmit_session.session_status_pointer (0x12 started / 0x13 sending / 9 complete / 10 aborted / 6 clear to send timeout / 7 send failed / 8 busy); 3 = not our source address. The multi-frame builders rebuild only while its 0xf0 nibble is clear (no session in progress). In the boot kernel (whose records use this type since its twin diagnostic_response_message_t was merged in PR #53 round 64) the transport writes 0x12 while it sends and 6 on a timeout */
 };
 
 struct j1939_acknowledgement_payload_t {
@@ -3576,7 +3576,7 @@ struct algorithm_enable_flags_27_t {
     uint16_t four_step_wastegate_control_enable : 1;  /* bit 8: e2m TU_WG_Enable (0x100): '[TUWGEN] Enable/Disable for 4 Step WG control. Bit8 15 of 0-15'; no reader in this build; clear on this truck */
     uint16_t wastegate_tool_override_enable : 1;  /* bit 9: e2m TU_WG_Tool_Override_Enable (0x200): '[TUWGOVEN] Bit9 Enable/Disable for tool override of wastegates. Bit 14 of 0-15'; no reader in this build; clear on this truck */
     uint16_t idle_shutdown_temperature_enable : 1;  /* bit 10: e2m Idle_Shutdown_Temperature_Enable (0x400): '[ISAATPEN] bit 10 of 15.selects the temp. interaction option for Idle Shutdown'; no reader in this build; clear on this truck */
-    uint16_t anti_theft_enable : 1;  /* bit 11: e2m AT_AUTO_Anti_Theft_Enable (0x800): '[AT01EN] Bit 11 of 15. Enables the anti theft at_auto module'; read by j1939_receivePgn56576Handler, cm848_sendPgn56320AntiTheftStatus; clear on this truck */
+    uint16_t anti_theft_enable : 1;  /* bit 11: e2m AT_AUTO_Anti_Theft_Enable (0x800): '[AT01EN] Bit 11 of 15. Enables the anti theft at_auto module'; read by cm848_receivePgn56576AntiTheftRequestMessage, cm848_sendPgn56320AntiTheftStatus; clear on this truck */
     uint16_t anti_theft_automatic_lock_enable : 1;  /* bit 12: e2m Anti_Theft_Auto_Lock_Enable (0x1000): '[ATAULOEN] Bit 12 of 15. Enables the automatic locking functionality'; no reader in this build; clear on this truck */
     uint16_t road_speed_governor_reference_speed_ramp_enable : 1;  /* bit 13: e2m SR_Ramp_Enable (0x2000): '[SRRMEN] If enabled, RSG ref speed is allowed to ramp'; no reader in this build; clear on this truck */
     uint16_t reserved_bit_14 : 1;  /* bit 14: no e2m record (0x4000); no reader in this build; clear on this truck */
@@ -3642,7 +3642,7 @@ struct algorithm_enable_flags_31_t {
 
 struct algorithm_enable_flags_32_t {
     uint16_t intake_air_heater_control_enable : 1;  /* bit 0: e2m IAH_Control_Enable (0x1): 'Intake Air Heater Control Algorithm Enable'; read by cm848_updateIntakeAirHeaterControl, cm848_updateIntakeAirHeaterAmbientTemperature; set on this truck */
-    uint16_t end_of_injection_limit_enable : 1;  /* bit 1: e2m EOI_Limit_Algorithm_Enable (0x2): 'Algorithm enable calibration for eoi_limit'; read by engine_injectionAngle_tpuUpdate; set on this truck */
+    uint16_t end_of_injection_limit_enable : 1;  /* bit 1: e2m EOI_Limit_Algorithm_Enable (0x2): 'Algorithm enable calibration for eoi_limit'; read by cm848_armTpuChannel10AtEndOfInjectionLimit; set on this truck */
     uint16_t equivalent_throttle_enable : 1;  /* bit 2: e2m Equivalent_Throttle_Enable (0x4): 'Equivalent_Throttle Algorithm Enable'; read by cm848_calculateAllSpeedGovernorEquivalentThrottle; the e2m record's mask is 7 but its value list says 0=DISABLE:4=ENABLE; the code tests 4; set on this truck */
     uint16_t reserved_bit_3 : 1;  /* bit 3: no e2m record (0x8); no reader in this build; clear on this truck */
     uint16_t intake_air_heater_24_volt_enable : 1;  /* bit 4: e2m IAH_24V_Enable (0x10): 'Intake Air Heater 24V Control Algorithm Enable'; read by cm848_initIntakeAirHeaterControl, cm848_computeIntakeAirHeaterPreheatDuration, cm848_countDownIntakeAirHeaterPreheat, cm848_pulseIntakeAirHeaterRelays, cm848_shutdownIntakeAirHeater, cm848_updateIntakeAirHeaterPostheat, cm848_updateIntakeAirHeaterControl; clear on this truck */
@@ -4044,7 +4044,7 @@ struct j1939_pgn65242_payload_t {
 };
 
 struct j1939_broadcast_transmit_session_t {
-    uint8_t active;  /* 1 while the session runs: initiateJ1939TransportProtocol sets it / cm848_sendJ1939BroadcastDataPacket clears it after the last packet or a failed frame */
+    uint8_t active;  /* 1 while the session runs: cm848_startJ1939TransportSession sets it / cm848_sendJ1939BroadcastDataPacket clears it after the last packet or a failed frame */
     uint8_t total_packet_count;  /* (message_size - 1) / 7 + 1 */
     uint16_t message_size;  /* the broadcast message's size in bytes (its descriptor's data_length) */
     uint16_t next_data_byte_number;  /* the 1-based number of the next data byte: 1 at the announce and +7 per packet (one sth; the last packet carries message_size - this + 1 bytes) */

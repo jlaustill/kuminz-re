@@ -6128,6 +6128,8 @@ extern byte pci_message_handler_tick;  // 0x003fce7a
 extern word low_oil_pressure_debounce_count;  // 0x003fceac
 extern word oil_pressure_switch_stuck_count;  // 0x003fceb2
 extern word oil_pressure_switch_fault_running_count;  // 0x003fcebc
+extern byte sci_clear_diagnostics_delay_count;  // 0x003fcf5c
+extern byte sci_clear_diagnostics_done_flag;  // 0x003fcf5d
 extern dword stack_high_water_mark_scan_cursor;  // 0x003fcf96
 extern word main_injection_timing_snapshot;  // 0x003fd082
 extern byte cylinder_cutout_expiry_count;  // 0x003fd088
@@ -6309,7 +6311,7 @@ extern byte fuel_level_low_distance_check_disabled_flag;  // 0x003fd1cd
 extern word fuel_level_low_distance_check_start_delay_count;  // 0x003fd1d0
 extern byte fuel_pressure_setpoint_not_reached_monitor_active_flag;  // 0x003fd264
 extern byte discrete_output_read_back_pass_count;  // 0x003fd27e
-extern byte j1939_data_log_handler_count;  // 0x003fd47a
+extern byte j1939_receive_handler_count;  // 0x003fd47a
 extern engine_overspeed_event_t engine_overspeed_log_cal[5];  // 0x003fdfde
 extern word j1939_control_session_history_next_entry_cal;  // 0x003feb8a
 extern byte j1939_accelerator_low_idle_switch_unavailable_flag;  // 0x0040aaa7

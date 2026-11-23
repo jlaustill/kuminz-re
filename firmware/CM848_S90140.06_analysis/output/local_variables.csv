@@ -2,13 +2,13 @@ function_address,function_name,old_name,new_name,type,comment
 # Format: old_name is the decompiler's generated name (e.g., puVar1)
 # Run ./analyze.sh localvars to apply, then ./analyze.sh export to see changes
 #
-# sendJ1939Message @ 0x000539fc - Dispatches to single-frame or transport protocol by payload size
+# cm848_sendJ1939Message @ 0x000539fc - Dispatches to single-frame or transport protocol by payload size
 0x000128a0,cm848_calculateDelayedEgrFlowAndFraction,uVar1,delay_volume_term,uint,oxygen_flow_delay_volume_fraction x 120 >> 10 (0xffff above 1.0): with x 1000 / (volumetric efficiency x speed) it gives the oxygen delay in ms
 0x000128a0,cm848_calculateDelayedEgrFlowAndFraction,dVar2,filtered_oxygen_fraction,uint,exponentialMovingAverage output - stored as egr_oxygen_fraction
 0x000128a0,cm848_calculateDelayedEgrFlowAndFraction,wVar3,delayed_oxygen_fraction,word,The residual oxygen fraction from oxygen_flow_delay_milliseconds / 10 passes back (cm848_delayUnsignedSample)
 0x000128a0,cm848_calculateDelayedEgrFlowAndFraction,sVar4,delayed_egr_mass_flow,sword,The EGR mass flow before delay from egr_flow_delay_milliseconds / 10 passes back (cm848_delaySignedSample)
 0x000128a0,cm848_calculateDelayedEgrFlowAndFraction,uVar5,volumetric_efficiency_speed_product,uint,engine_volumetric_efficiency x engine speed >> 13 limited to 1600 .. 0xffff: the divisor of the oxygen delay. Committing this name splits the reused register: its later values (the two delays and the EGR fraction) render as a new uVar1 that no row can name (rows match the auto-names before the commit and uVar1 is the delay_volume_term row)
-# (sendJ1939Message's row uVar1 -> message_data_length went in PR #53 round 34: since mpc555_sendJ1939SingleFrame has a prototype the local takes its parameter's name data_length and the row matched nothing)
+# (cm848_sendJ1939Message's row uVar1 -> message_data_length went in PR #53 round 34: since mpc555_sendJ1939SingleFrame has a prototype the local takes its parameter's name data_length and the row matched nothing)
 # cm848_lookupJ1939ControlDevice @ 0x00053a4c - Returns 1-3 if SA matches a calibrated address, 4 if unknown
 0x00053a4c,cm848_lookupJ1939ControlDevice,JVar1,control_device,J1939_CONTROL_DEVICE,the control device the source address maps to (was address_index on wVar1)
 # copyCalibrationToRam @ 0x00000340 - Copies ROM calibration defaults to RAM
@@ -118,7 +118,7 @@ function_address,function_name,old_name,new_name,type,comment
 0x005012dc,cm848_processUnsignedSensorChannel,iVar9,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
 0x005012dc,cm848_processUnsignedSensorChannel,iVar8,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault bitmaps
 0x005012dc,cm848_processUnsignedSensorChannel,iVar7,low_fault_word_index,int,low_fault_bit >> 4 - word index into the fault bitmaps
-0x005012dc,cm848_processUnsignedSensorChannel,sVar5,validation_state,short,sensorChannelConditionValidator result (0 for channels 21 / 42 / 43 / 28)
+0x005012dc,cm848_processUnsignedSensorChannel,sVar5,validation_state,short,cm848_getSensorChannelReferenceSupplyState result (0 for channels 21 / 42 / 43 / 28)
 0x005012dc,cm848_processUnsignedSensorChannel,uVar10,sensor_value,uint,Reading compared against the thresholds and stored as lookup_input (the register is also reused for the channel bit mask and the dispatch index)
 0x005012dc,cm848_processUnsignedSensorChannel,uVar3,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table
 0x005012dc,cm848_processUnsignedSensorChannel,wVar6,sensor_scratch,word,Raw reading / lookup result / fault status - one register reused across the paths
@@ -129,7 +129,7 @@ function_address,function_name,old_name,new_name,type,comment
 0x00501b4c,cm848_initializeUnsignedSensorChannel,iVar7,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
 0x00501b4c,cm848_initializeUnsignedSensorChannel,iVar8,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault bitmaps
 0x00501b4c,cm848_initializeUnsignedSensorChannel,iVar6,low_fault_word_index,int,low_fault_bit >> 4 - word index into the fault bitmaps
-0x00501b4c,cm848_initializeUnsignedSensorChannel,sVar3,validation_state,short,sensorChannelConditionValidator result (0 for channels 21 / 42 / 43 / 28)
+0x00501b4c,cm848_initializeUnsignedSensorChannel,sVar3,validation_state,short,cm848_getSensorChannelReferenceSupplyState result (0 for channels 21 / 42 / 43 / 28)
 0x00501b4c,cm848_initializeUnsignedSensorChannel,uVar9,sensor_value,uint,Lookup input before it is stored in lookup_input (the register is also reused for the channel bit mask and the dispatch index)
 0x00501b4c,cm848_initializeUnsignedSensorChannel,uVar5,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table
 0x00501b4c,cm848_initializeUnsignedSensorChannel,wVar4,sensor_scratch,word,Raw reading / lookup result / fault status - one register reused across the paths
