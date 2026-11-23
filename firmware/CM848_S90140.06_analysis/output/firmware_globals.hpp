@@ -1035,7 +1035,7 @@ extern byte TOUCAN_B_IMASK;  // 0x00307422
 extern byte TOUCAN_B_IFLAG;  // 0x00307424
 extern word toucan_can_ext_ctrl;  // 0x00307f80
 extern undefined4 calibration_ram_start;  // 0x003f9800
-extern memory_region_t memory_region_table;  // 0x003f9830
+extern memory_region_t boot_memory_region_table;  // 0x003f9830
 extern parameter_id_entry_t boot_parameter_id_table[20];  // 0x003f98ac
 extern word executive_frame_ticks;  // 0x003fa000
 extern dword executive_frame_start_ticks;  // 0x003fa002
@@ -2401,7 +2401,7 @@ extern byte output_speed_to_vehicle_speed_ratio_learned_flag_cal;  // 0x003fedfb
 extern diag_clear_flags_t diag_clear_flags_t_003fedfc;  // 0x003fedfc
 extern word cruise_control_switches_learned_flag_cal;  // 0x003fee00
 extern word supervisor_watchdog_serious_error_events_cal;  // 0x003fee02
-extern byte sensor_fault_threshold_state;  // 0x003fee05
+extern MEMORY_REGION_TYPE serial_download_region_type;  // 0x003fee05
 extern eeprom_header_t eeprom_shadow_header;  // 0x003fee08
 extern fuel_level_saved_values_t fuel_level_saved_values_cal;  // 0x003fee18
 extern intake_air_heater_saved_values_t intake_air_heater_saved_values_cal;  // 0x003fee1c
@@ -5736,6 +5736,7 @@ extern void * data_collector_start_address;  // 0x0040c278
 extern void * data_collector_end_address;  // 0x0040c280
 extern dword flash2_command_register;  // 0x00500000
 extern byte j1939_memory_read_reply_services[10];  // 0x0053a330
+extern memory_region_t application_memory_region_table[7];  // 0x0053a33a
 extern sci_command_dispatch_entry_t sci_command_dispatch_table[19];  // 0x0053a9a0
 extern byte output_channel_driver_table_enable;  // 0x0053ac46
 extern void * output_channel_driver_table_read_feedback;  // 0x0053ac4a

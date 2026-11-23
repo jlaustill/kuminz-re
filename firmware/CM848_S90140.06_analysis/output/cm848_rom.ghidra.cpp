@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 14:26:20 MST 2026
+// Generated: Mon Nov 23 15:05:47 MST 2026
 
 
 //
@@ -1195,13 +1195,15 @@ BOOT_DIAGNOSTIC_RESULT cm848_handleBootExecuteAtAddressService(j1939_rx_msg_t *r
   word wVar4;
   word wVar5;
   BOOT_DIAGNOSTIC_RESULT BVar6;
+  MEMORY_REGION_TYPE MVar7;
   code *local_20 [6];
   
   BVar6 = cm848_validateDiagnosticRequestLengthAndAuthorization(request);
   if ((BVar6 & 0xff) == 0xff) {
     cm848_copyBytes(local_20,request->data_pointer + 1,4);
-    BVar6 = cm848_lookupBootMemoryRegionType(local_20[0],1);
-    if ((BVar6 & 0xff) != BOOT_DIAGNOSTIC_RESULT_ADDRESS_NOT_ACCEPTED) {
+    MVar7 = cm848_lookupBootMemoryRegionType((dword)local_20[0],1);
+    BVar6 = (BOOT_DIAGNOSTIC_RESULT)MVar7;
+    if (MVar7 != MEMORY_REGION_TYPE_UNMAPPED) {
       cm848_sendDiagServiceResponse(request,0);
       wVar4 = mios_mmcsm_cnt.CNT;
       bVar3 = boot_can_ring_state.transmit_ring_full_flag;
@@ -1400,12 +1402,14 @@ void cm848_registerBootMemoryReadServices(void)
    the length (the old rows said address / length / response_ptr). Twin of the application's
    cm848_readJ1939DiagnosticMemoryAndRespond (was cm848_diagMemoryReadHandler; PR #53 round 63) */
 
-char cm848_readBootDiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,dword length)
+MEMORY_REGION_TYPE
+cm848_readBootDiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,dword length)
 
 {
   ushort uVar1;
-  uint uVar2;
-  ushort uVar3;
+  uint length_00;
+  ushort uVar2;
+  MEMORY_REGION_TYPE MVar3;
   char cVar4;
   j1939_tx_msg_t *message;
   byte *pbVar5;
@@ -1415,13 +1419,13 @@ char cm848_readBootDiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword addr
   
   bVar6 = *request->data_pointer;
   if (length < 0x6e5) {
-    uVar3 = cm848_getBootMemoryServiceHeaderLength(bVar6);
+    uVar2 = cm848_getBootMemoryServiceHeaderLength(bVar6);
     uVar1 = request->data_length;
-    if (((uVar1 == 8) || (uVar1 == (uVar3 & 0xff))) || ((ushort)((uVar3 & 0xff) + 10) == uVar1)) {
-      uVar2 = length & 0xffff;
-      cVar4 = cm848_lookupBootMemoryRegionType(address,uVar2);
-      if ((cVar4 != '\n') && (cVar4 != '\t')) {
-        if ((bVar6 == 0x43) && (uVar2 < 0x100)) {
+    if (((uVar1 == 8) || (uVar1 == (uVar2 & 0xff))) || ((ushort)((uVar2 & 0xff) + 10) == uVar1)) {
+      length_00 = length & 0xffff;
+      MVar3 = cm848_lookupBootMemoryRegionType(address,length_00);
+      if ((MVar3 != MEMORY_REGION_TYPE_REFUSED) && (MVar3 != MEMORY_REGION_TYPE_UNMAPPED)) {
+        if ((bVar6 == 0x43) && (length_00 < 0x100)) {
           bVar6 = 0x44;
           request->data_pointer[3] = request->data_pointer[6];
         }
@@ -1432,7 +1436,7 @@ char cm848_readBootDiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword addr
         bVar7 = cVar4 - 1;
         message = cm848_allocateDiagnosticResponseBuffer(bVar7 + length + 1 & 0xffff);
         if (message == (j1939_tx_msg_t *)0x0) {
-          cVar4 = '\x04';
+          MVar3 = MEMORY_REGION_TYPE_MAIN_FLASH;
         }
         else {
           pbVar8 = message->data_pointer;
@@ -1447,24 +1451,24 @@ char cm848_readBootDiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword addr
           pbVar8 = pbVar8 + 1;
           cm848_copyBytes(pbVar8,pbVar5 + 1,bVar7);
           if (address < 0x1000000) {
-            cm848_copyBytes(pbVar8 + bVar7,address,uVar2);
+            cm848_copyBytes(pbVar8 + bVar7,address,length_00);
           }
           else {
-            mpc555_eepromReadWords(address,pbVar8 + bVar7,uVar2);
+            mpc555_eepromReadWords(address,pbVar8 + bVar7,length_00);
           }
           cm848_transmitCanMessage(message);
-          cVar4 = -1;
+          MVar3 = ~MEMORY_REGION_TYPE_RAM;
         }
       }
     }
     else {
-      cVar4 = '\x02';
+      MVar3 = MEMORY_REGION_TYPE_BANK_2_FLASH;
     }
   }
   else {
-    cVar4 = '\x02';
+    MVar3 = MEMORY_REGION_TYPE_BANK_2_FLASH;
   }
-  return cVar4;
+  return MVar3;
 }
 
 
@@ -3905,7 +3909,7 @@ bool mpc555_cmfEraseBlocks(uint param_1)
       }
     }
     iVar7 = 0;
-    while (memory_scan_pointer < &DAT_0006ffff) {
+    while (memory_scan_pointer < (undefined *)0x6ffff) {
       if (*(int *)memory_scan_pointer == -1) {
         memory_scan_pointer = memory_scan_pointer + 4;
       }
@@ -4263,10 +4267,11 @@ byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword
   dword dVar3;
   code *pcVar4;
   uint uVar5;
-  byte bVar7;
+  MEMORY_REGION_TYPE MVar7;
   char cVar8;
+  byte bVar9;
   short sVar6;
-  uint uVar9;
+  uint uVar10;
   byte *data;
   ushort local_20 [4];
   
@@ -4277,22 +4282,22 @@ byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword
   local_20[0] = (ushort)length;
   uVar5 = cm848_getBootMemoryServiceHeaderLength(*request->data_pointer);
   uVar2 = (uVar5 & 0xff) + (uint)local_20[0] & 0xffff;
-  uVar9 = (uint)request->data_length;
-  if ((uVar9 == 8) || (uVar9 == uVar2)) {
+  uVar10 = (uint)request->data_length;
+  if ((uVar10 == 8) || (uVar10 == uVar2)) {
     bVar1 = false;
   }
   else {
-    if (uVar2 + 10 != uVar9) {
+    if (uVar2 + 10 != uVar10) {
       return 2;
     }
     bVar1 = true;
   }
   data = request->data_pointer + (uVar5 & 0xff);
-  bVar7 = cm848_lookupBootMemoryRegionType(address,(uint)local_20[0]);
-  if (3 < bVar7) {
-    if (bVar7 != 4) {
-      if (bVar7 != 5) {
-        return bVar7;
+  MVar7 = cm848_lookupBootMemoryRegionType(address,(uint)local_20[0]);
+  if (MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED < MVar7) {
+    if (MVar7 != MEMORY_REGION_TYPE_MAIN_FLASH) {
+      if (MVar7 != MEMORY_REGION_TYPE_EEPROM) {
+        return MVar7;
       }
       if (eeprom_shadow_header.version_marker != 0xff) {
         if (!bVar1) {
@@ -4305,18 +4310,18 @@ byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword
       }
       dVar3 = diag_write_request_state.address_mode;
       if ((dVar3 == 1) &&
-         (bVar7 = cm848_trackDownloadBlock(data,address,local_20,BOOT_REQUEST_CHANNEL_J1939),
-         bVar7 != 0xff)) {
-        return bVar7;
+         (bVar9 = cm848_trackDownloadBlock(data,address,local_20,BOOT_REQUEST_CHANNEL_J1939),
+         bVar9 != 0xff)) {
+        return bVar9;
       }
       cm848_sendDiagResponsePending(request,10);
       pcVar4 = (code *)eeprom_xfer_state.eeprom_write_callback;
       (*pcVar4)(data,address,local_20[0]);
       return 0;
     }
-    bVar7 = cm848_trackDownloadBlock(data,address,local_20,BOOT_REQUEST_CHANNEL_J1939);
-    if (bVar7 != 0xff) {
-      return bVar7;
+    bVar9 = cm848_trackDownloadBlock(data,address,local_20,BOOT_REQUEST_CHANNEL_J1939);
+    if (bVar9 != 0xff) {
+      return bVar9;
     }
     if ((address & 1) != 0) {
       return 0x11;
@@ -4333,7 +4338,7 @@ byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword
     diag_write_request_state.pending_request = (dword)request;
     return 0xff;
   }
-  if (bVar7 == 3) {
+  if (MVar7 == MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED) {
     if (eeprom_shadow_header.version_marker != 0xff) {
       if (!bVar1) {
         return 3;
@@ -4344,13 +4349,13 @@ byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword
       }
     }
   }
-  else if (bVar7 != 0) {
-    if (bVar7 != 2) {
-      return bVar7;
+  else if (MVar7 != MEMORY_REGION_TYPE_RAM) {
+    if (MVar7 != MEMORY_REGION_TYPE_BANK_2_FLASH) {
+      return MVar7;
     }
-    bVar7 = cm848_trackDownloadBlock(data,address,local_20,BOOT_REQUEST_CHANNEL_J1939);
-    if (bVar7 != 0xff) {
-      return bVar7;
+    bVar9 = cm848_trackDownloadBlock(data,address,local_20,BOOT_REQUEST_CHANNEL_J1939);
+    if (bVar9 != 0xff) {
+      return bVar9;
     }
     if ((address & 1) != 0) {
       return 0x11;
@@ -4382,23 +4387,22 @@ byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword
    with addressing mode 0 (parameter ID) | review-function-readability reviewed 2026-11-11 -
    Readability Medium Accuracy Confidence Medium */
 
-undefined1
-cm848_writeBootDiagnosticMemoryByParameterId
-          (j1939_rx_msg_t *request,word parameter_id,dword offset,dword length)
+byte cm848_writeBootDiagnosticMemoryByParameterId
+               (j1939_rx_msg_t *request,word parameter_id,dword offset,dword length)
 
 {
   int iVar1;
-  undefined1 uVar2;
+  byte bVar2;
   
   iVar1 = cm848_lookupBootParameterIdAddress(parameter_id);
   if (iVar1 == 0) {
-    uVar2 = 8;
+    bVar2 = 8;
   }
   else {
     diag_write_request_state.address_mode = 0;
-    uVar2 = cm848_writeBootDiagnosticMemory(request,iVar1 + offset,length);
+    bVar2 = cm848_writeBootDiagnosticMemory(request,iVar1 + offset,length);
   }
-  return uVar2;
+  return bVar2;
 }
 
 
@@ -4470,18 +4474,18 @@ undefined1 cm848_handleBootWriteByParameterIdLongLengthService(j1939_rx_msg_t *r
    write counterpart of service 74 | review-function-readability reviewed 2026-11-11 - Readability
    Medium Accuracy Confidence Medium */
 
-undefined1 cm848_handleBootWriteMemoryService(j1939_rx_msg_t *request)
+byte cm848_handleBootWriteMemoryService(j1939_rx_msg_t *request)
 
 {
-  undefined1 uVar1;
+  byte bVar1;
   dword local_10;
   uint local_c;
   
   cm848_copyBytes(&local_10,request->data_pointer + 1,4);
   local_c = (uint)request->data_pointer[5];
   diag_write_request_state.address_mode = 1;
-  uVar1 = cm848_writeBootDiagnosticMemory(request,local_10,local_c);
-  return uVar1;
+  bVar1 = cm848_writeBootDiagnosticMemory(request,local_10,local_c);
+  return bVar1;
 }
 
 
@@ -4498,18 +4502,18 @@ undefined1 cm848_handleBootWriteMemoryService(j1939_rx_msg_t *request)
    counterpart of service 76 | review-function-readability reviewed 2026-11-11 - Readability Medium
    Accuracy Confidence Medium */
 
-undefined1 cm848_handleBootWriteMemoryLongLengthService(j1939_rx_msg_t *request)
+byte cm848_handleBootWriteMemoryLongLengthService(j1939_rx_msg_t *request)
 
 {
-  undefined1 uVar1;
+  byte bVar1;
   dword local_10;
   dword local_c [2];
   
   cm848_copyBytes(&local_10,request->data_pointer + 1,4);
   cm848_copyBytes(local_c,request->data_pointer + 5,4);
   diag_write_request_state.address_mode = 1;
-  uVar1 = cm848_writeBootDiagnosticMemory(request,local_10,local_c[0]);
-  return uVar1;
+  bVar1 = cm848_writeBootDiagnosticMemory(request,local_10,local_c[0]);
+  return bVar1;
 }
 
 
@@ -5900,15 +5904,15 @@ void mpc555_sciHandleDownloadStart(void)
 
 {
   undefined4 uVar1;
-  char cVar2;
+  MEMORY_REGION_TYPE MVar2;
   
   if (serial_reflash_busy_flag == 0) {
     if (eeprom_shadow_header.ecm_status == ECM_STATUS_REFLASH_IN_PROGRESS) {
       ram0x003fedfd = 0;
       ram0x003fee01 = _eeprom_write_request_type;
       eeprom_xfer_state.block_length = _eeprom_block_length_cal;
-      cVar2 = cm848_lookupBootMemoryRegionType(_eeprom_write_request_type,1);
-      if (cVar2 != '\t') {
+      MVar2 = cm848_lookupBootMemoryRegionType(_eeprom_write_request_type,1);
+      if (MVar2 != MEMORY_REGION_TYPE_UNMAPPED) {
         uVar1 = 0x73;
         goto LAB_00006f3c;
       }
@@ -5964,14 +5968,16 @@ void mpc555_sciHandleDownloadDataBlock(void)
     if (dVar1 <= dVar2) {
       bVar5 = cm848_trackDownloadBlock
                         (&DAT_003fecf3,register0x00000010,local_30,BOOT_REQUEST_CHANNEL_SERIAL);
-      sensor_fault_threshold_state = cm848_lookupBootMemoryRegionType(ram0x003fee01,local_30[0]);
+      serial_download_region_type =
+           cm848_lookupBootMemoryRegionType(ram0x003fee01,(uint)local_30[0]);
       if (bVar5 != 0xff) {
         uVar7 = 0x74;
         goto LAB_000071c8;
       }
-      if ((sensor_fault_threshold_state == 2) || (sensor_fault_threshold_state == 4)) {
+      if ((serial_download_region_type == MEMORY_REGION_TYPE_BANK_2_FLASH) ||
+         (serial_download_region_type == MEMORY_REGION_TYPE_MAIN_FLASH)) {
         diag_request_pending_flag = 0;
-        if (sensor_fault_threshold_state != 4) {
+        if (serial_download_region_type != MEMORY_REGION_TYPE_MAIN_FLASH) {
           pcVar3 = (code *)eeprom_xfer_state.flash2_write_callback;
           sVar4 = (*pcVar3)(&DAT_003fecf3,ram0x003fedfd,local_30[0]);
           if (sVar4 == 0) {
@@ -5995,7 +6001,7 @@ LAB_00007110:
         }
         serial_reflash_busy_flag = 0;
       }
-      else if (sensor_fault_threshold_state == 5) {
+      else if (serial_download_region_type == MEMORY_REGION_TYPE_EEPROM) {
         serial_reflash_busy_flag = 1;
         DAT_003fee06 = 1;
         mpc555_sciSendServiceResponse(0x78,0x74);
@@ -6004,7 +6010,7 @@ LAB_00007110:
         }
         diag_request_pending_flag = 0;
         pcVar3 = (code *)eeprom_xfer_state.eeprom_write_callback;
-        (*pcVar3)(&DAT_003fecf3,unique0x1000014c - 0x1000000,local_30[0]);
+        (*pcVar3)(&DAT_003fecf3,unique0x10000146 - 0x1000000,local_30[0]);
         serial_reflash_busy_flag = 0;
         diag_session_state_byte = 0x73;
         DAT_003fee06 = 0;
@@ -6330,41 +6336,43 @@ void mpc555_loadRuntimeCounterFromEepromShadow(void)
 // Function: cm848_lookupBootMemoryRegionType @ 0x000076c8
 //
 
-/* Boot reflash kernel: the region type of an address range for the boot read / write / execute
-   services and the SCI download handlers (the application's is
-   cm848_lookupApplicationMemoryRegionType) (was cm848_lookupMemoryRegionType; PR #53 round 63) |
-   earlier note: Boot reflash kernel: finds the memory_region_table entry (6 x {start / end / type})
-   that wholly contains address..address+length-1; returns its type (0 RAM / 2 Bank-2 flash only
-   when flash2_writes_enabled / 3 registers / 4 main flash / 5 EEPROM) or 9 when not writable |
+/* Boot reflash kernel: the region type (MEMORY_REGION_TYPE; its type 3 entry -
+   AUTHORIZATION_REQUIRED - is effectively 0x2fc000-0x301fff because the first match wins; PR #53
+   round 71) of an address range for the boot read / write / execute services and the SCI download
+   handlers (the application's is cm848_lookupApplicationMemoryRegionType) (was
+   cm848_lookupMemoryRegionType; PR #53 round 63) | earlier note: Boot reflash kernel: finds the
+   boot_memory_region_table entry (6 x {start / end / type}) that wholly contains
+   address..address+length-1; returns its type (0 RAM / 2 Bank-2 flash only when
+   flash2_writes_enabled / 3 registers / 4 main flash / 5 EEPROM) or 9 when not writable |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-byte cm848_lookupBootMemoryRegionType(uint param_1,int param_2)
+MEMORY_REGION_TYPE cm848_lookupBootMemoryRegionType(dword address,dword length)
 
 {
   uint uVar1;
   memory_region_t *pmVar2;
   byte bVar3;
   
-  uVar1 = (param_1 + param_2) - 1;
-  if (param_1 <= uVar1) {
-    pmVar2 = &memory_region_table;
+  uVar1 = (address + length) - 1;
+  if (address <= uVar1) {
+    pmVar2 = &boot_memory_region_table;
     bVar3 = 0;
     do {
-      if ((pmVar2->start_address <= param_1) && (uVar1 <= pmVar2->end_address)) {
-        if (pmVar2->region_type != 2) {
+      if ((pmVar2->start_address <= address) && (uVar1 <= pmVar2->end_address)) {
+        if (pmVar2->region_type != MEMORY_REGION_TYPE_BANK_2_FLASH) {
           return pmVar2->region_type;
         }
         bVar3 = flash2_writes_enabled;
         if (bVar3 == 0) {
-          return 9;
+          return MEMORY_REGION_TYPE_UNMAPPED;
         }
-        return 2;
+        return MEMORY_REGION_TYPE_BANK_2_FLASH;
       }
       pmVar2 = pmVar2 + 1;
       bVar3 = bVar3 + 1;
     } while (bVar3 < 6);
   }
-  return 9;
+  return MEMORY_REGION_TYPE_UNMAPPED;
 }
 
 
@@ -40750,7 +40758,8 @@ void cm848_processPciDiagnosticRequest(void)
 
 {
   char cVar1;
-  byte bVar2;
+  MEMORY_REGION_TYPE MVar2;
+  byte bVar3;
   
   if (pci_security_lockout_timer != 0) {
     pci_security_lockout_timer = pci_security_lockout_timer - 1;
@@ -40767,7 +40776,7 @@ void cm848_processPciDiagnosticRequest(void)
     pci_receive_message_1_timer_previous = pci_receive_message_1_timer;
     return;
   }
-  bVar2 = (byte)pci_ecm_address;
+  bVar3 = (byte)pci_ecm_address;
   if (pci_diagnostic_request_service_id < 0x29) {
     if (pci_diagnostic_request_service_id == 0x28) {
       if (pci_normal_transmit_disabled != 0) {
@@ -40777,7 +40786,7 @@ void cm848_processPciDiagnosticRequest(void)
       pci_receive_message_1_timer_previous = pci_receive_message_1_timer;
       pci_normal_transmit_disabled = 1;
       pci_transmit_message_10_length = 3;
-      pci_transmit_message_10.source_address = bVar2;
+      pci_transmit_message_10.source_address = bVar3;
       pci_transmit_message_10.response_service_id = 0x68;
       pci_transmit_message_10.data_1 = pci_diagnostic_request_data_1;
       pci_transmit_message_10.transmit_timer = 1;
@@ -40790,7 +40799,7 @@ void cm848_processPciDiagnosticRequest(void)
       if (pci_diagnostic_request_service_id == 0x20) {
         pci_receive_message_1_timer_previous = pci_receive_message_1_timer;
         pci_transmit_message_10_length = 2;
-        pci_transmit_message_10.source_address = bVar2;
+        pci_transmit_message_10.source_address = bVar3;
         pci_transmit_message_10.response_service_id = 0x60;
         pci_transmit_message_10.transmit_timer = 1;
         return;
@@ -40800,7 +40809,7 @@ void cm848_processPciDiagnosticRequest(void)
           pci_receive_message_1_timer_previous = pci_receive_message_1_timer;
           pci_normal_transmit_disabled = 0;
           pci_transmit_message_10_length = 4;
-          pci_transmit_message_10.source_address = bVar2;
+          pci_transmit_message_10.source_address = bVar3;
           pci_transmit_message_10.response_service_id = 0x7f;
           pci_transmit_message_10.data_1 = pci_diagnostic_request_service_id;
           pci_transmit_message_10.data_2 = 0x11;
@@ -40814,7 +40823,7 @@ void cm848_processPciDiagnosticRequest(void)
               pci_transmit_message_10.response_service_id = 0x7f;
               pci_transmit_message_10.data_1 = 0x27;
               pci_transmit_message_10.data_3 = 0;
-              pci_transmit_message_10.source_address = bVar2;
+              pci_transmit_message_10.source_address = bVar3;
               if (pci_security_unlocked_flag != 1) {
                 if (pci_security_lockout_timer != 0) {
                   pci_receive_message_1_timer_previous = pci_receive_message_1_timer;
@@ -40878,7 +40887,7 @@ void cm848_processPciDiagnosticRequest(void)
                 }
                 pci_receive_message_1_timer_previous = pci_receive_message_1_timer;
                 pci_transmit_message_10_length = 5;
-                pci_transmit_message_10.source_address = bVar2;
+                pci_transmit_message_10.source_address = bVar3;
                 pci_transmit_message_10.response_service_id = 0x67;
                 pci_transmit_message_10.data_1 = 1;
                 pci_transmit_message_10.data_2 = (byte)(pci_security_seed >> 8);
@@ -40892,7 +40901,7 @@ void cm848_processPciDiagnosticRequest(void)
               pci_transmit_message_10.response_service_id = 0x67;
               pci_transmit_message_10.data_1 = 1;
               pci_transmit_message_10.data_2 = 0;
-              pci_transmit_message_10.source_address = bVar2;
+              pci_transmit_message_10.source_address = bVar3;
             }
           }
           else {
@@ -40900,14 +40909,14 @@ void cm848_processPciDiagnosticRequest(void)
 LAB_0003b37c:
             pci_transmit_message_10.response_service_id = 0x7f;
             pci_transmit_message_10.data_1 = 0x27;
-            pci_transmit_message_10.source_address = bVar2;
+            pci_transmit_message_10.source_address = bVar3;
           }
         }
         else {
           pci_transmit_message_10.response_service_id = 0x7f;
           pci_transmit_message_10.data_1 = pci_diagnostic_request_service_id;
           pci_transmit_message_10.data_2 = 0x12;
-          pci_transmit_message_10.source_address = bVar2;
+          pci_transmit_message_10.source_address = bVar3;
         }
         goto LAB_0003b680;
       }
@@ -40916,14 +40925,14 @@ LAB_0003b37c:
     pci_transmit_message_10.response_service_id = 0x7f;
     pci_transmit_message_10.data_2 = 0x12;
     pci_transmit_message_10_length = 4;
-    pci_transmit_message_10.source_address = bVar2;
+    pci_transmit_message_10.source_address = bVar3;
   }
   else {
     if (pci_diagnostic_request_service_id == 0x29) {
       pci_receive_message_1_timer_previous = pci_receive_message_1_timer;
       pci_normal_transmit_disabled = 0;
       pci_transmit_message_10_length = 2;
-      pci_transmit_message_10.source_address = bVar2;
+      pci_transmit_message_10.source_address = bVar3;
       pci_transmit_message_10.response_service_id = 0x69;
       pci_transmit_message_10.transmit_timer = 1;
       return;
@@ -40933,7 +40942,7 @@ LAB_0003b37c:
         pci_receive_message_1_timer_previous = pci_receive_message_1_timer;
         pci_normal_transmit_disabled = 0;
         pci_transmit_message_10_length = 4;
-        pci_transmit_message_10.source_address = bVar2;
+        pci_transmit_message_10.source_address = bVar3;
         pci_transmit_message_10.response_service_id = 0x7f;
         pci_transmit_message_10.data_1 = pci_diagnostic_request_service_id;
         pci_transmit_message_10.data_2 = 0x11;
@@ -40945,17 +40954,18 @@ LAB_0003b37c:
       pci_diagnostic_address_offset =
            CONCAT11(pci_diagnostic_request_data_3,pci_diagnostic_request_data_4);
       if ((pci_receive_message_1_status & 4) == 0) {
-        pci_transmit_message_10.source_address = bVar2;
+        pci_transmit_message_10.source_address = bVar3;
         cVar1 = cm848_lookupParameterIdAddress
                           (CONCAT11(pci_diagnostic_request_data_1,pci_diagnostic_request_data_2),
                            &pci_diagnostic_parameter_base_address);
         if (cVar1 == '\0') {
           pci_diagnostic_memory_address =
                pci_diagnostic_parameter_base_address + (short)pci_diagnostic_address_offset;
-          cVar1 = cm848_lookupApplicationMemoryRegionType(pci_diagnostic_memory_address,4);
-          if ((cVar1 != '\t') &&
-             (cVar1 = cm848_lookupApplicationMemoryRegionType(pci_diagnostic_memory_address + 3,4),
-             cVar1 != '\t')) {
+          MVar2 = cm848_lookupApplicationMemoryRegionType((dword)pci_diagnostic_memory_address,4);
+          if ((MVar2 != MEMORY_REGION_TYPE_UNMAPPED) &&
+             (MVar2 = cm848_lookupApplicationMemoryRegionType
+                                ((dword)(pci_diagnostic_memory_address + 3),4),
+             MVar2 != MEMORY_REGION_TYPE_UNMAPPED)) {
             pci_diagnostic_read_buffer_pointer = pci_diagnostic_read_buffer;
             if ((undefined *)0xffffff < pci_diagnostic_memory_address) {
               pci_diagnostic_eeprom_mirror_pointer = &eeprom_mirror;
@@ -40983,7 +40993,7 @@ LAB_0003b37c:
       else {
         pci_transmit_message_10.data_1 = pci_diagnostic_request_service_id;
         pci_transmit_message_10.data_2 = 0x12;
-        pci_transmit_message_10.source_address = bVar2;
+        pci_transmit_message_10.source_address = bVar3;
       }
       pci_receive_message_1_timer_previous = pci_receive_message_1_timer;
       pci_transmit_message_10_length = 5;
@@ -41005,19 +41015,19 @@ LAB_0003b37c:
              pci_diagnostic_parameter_base_address + (short)pci_diagnostic_address_offset;
         pci_diagnostic_write_data_pointer = &pci_diagnostic_request_data_5;
         pci_diagnostic_write_result = 0;
-        cVar1 = cm848_lookupApplicationMemoryRegionType(pci_diagnostic_memory_address,1);
-        if (cVar1 == '\0') {
+        MVar2 = cm848_lookupApplicationMemoryRegionType((dword)pci_diagnostic_memory_address,1);
+        if (MVar2 == MEMORY_REGION_TYPE_RAM) {
           cm848_memcpyBytes(pci_diagnostic_memory_address,pci_diagnostic_write_data_pointer,1);
           pci_diagnostic_write_result = 0;
         }
-        else if (cVar1 == '\x03') {
+        else if (MVar2 == MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED) {
           if (((ram_refresh_enable != RAM_REFRESH_DISABLED) &&
               (&DAT_003fd480 < pci_diagnostic_memory_address)) &&
              (pci_diagnostic_memory_address < &sensor_channel_ram_start)) goto LAB_0003b608;
           cm848_memcpyBytes(pci_diagnostic_memory_address,pci_diagnostic_write_data_pointer,1);
           pci_diagnostic_write_result = 0;
         }
-        else if (cVar1 == '\x05') {
+        else if (MVar2 == MEMORY_REGION_TYPE_EEPROM) {
           if ((not_safe_to_program_flag == 1) && (ram_refresh_enable != RAM_REFRESH_DISABLED)) {
             pci_diagnostic_write_result = 7;
           }
@@ -69418,79 +69428,83 @@ void cm848_endRetarderShiftAssistAboveFuelDemandLimit(void)
    cm848_queueEepromByteWrites or the RAM mirror / RAM (type 3) with the 0x3fd480 window protected |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-char cm848_writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dword length)
+byte cm848_writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dword length)
 
 {
   bool bVar1;
+  uint length_00;
   uint uVar2;
   uint uVar3;
-  uint uVar4;
+  MEMORY_REGION_TYPE MVar4;
   char cVar5;
   uint uVar6;
   byte *pbVar7;
   
   if (0x6e4 < length) {
-    return '\x02';
+    return 2;
   }
-  uVar2 = length & 0xffff;
-  uVar4 = cm848_getJ1939MemoryServiceHeaderLength(*request->data_pointer);
-  uVar3 = (uVar4 & 0xff) + uVar2 & 0xffff;
+  length_00 = length & 0xffff;
+  uVar3 = cm848_getJ1939MemoryServiceHeaderLength(*request->data_pointer);
+  uVar2 = (uVar3 & 0xff) + length_00 & 0xffff;
   uVar6 = (uint)request->data_length;
-  if ((uVar6 == 8) || (uVar6 == uVar3)) {
+  if ((uVar6 == 8) || (uVar6 == uVar2)) {
     bVar1 = false;
   }
   else {
-    if (uVar3 + 10 != uVar6) {
-      return '\x02';
+    if (uVar2 + 10 != uVar6) {
+      return 2;
     }
     bVar1 = true;
   }
-  pbVar7 = request->data_pointer + (uVar4 & 0xff);
-  cVar5 = cm848_lookupApplicationMemoryRegionType(address,uVar2);
-  if (cVar5 != '\0') {
-    if (cVar5 != '\x03') {
-      if (cVar5 == '\x04') {
-        return '\n';
+  pbVar7 = request->data_pointer + (uVar3 & 0xff);
+  MVar4 = cm848_lookupApplicationMemoryRegionType((dword)address,length_00);
+  if (MVar4 != MEMORY_REGION_TYPE_RAM) {
+    if (MVar4 != MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED) {
+      if (MVar4 == MEMORY_REGION_TYPE_MAIN_FLASH) {
+        return 10;
       }
-      if (cVar5 != '\x05') {
-        return cVar5;
+      if (MVar4 != MEMORY_REGION_TYPE_EEPROM) {
+        return MVar4;
       }
       if ((not_safe_to_program_flag == 1) && (ram_refresh_enable != RAM_REFRESH_DISABLED)) {
-        return '\a';
+        return 7;
       }
       if (calibration_download_security_key_cal != 0xff) {
         if (!bVar1) {
-          return '\x1a';
+          return 0x1a;
         }
-        cVar5 = cm848_processSecurityCodeConversion(request->data_pointer + uVar2 + (uVar4 & 0xff));
+        cVar5 = cm848_processSecurityCodeConversion
+                          (request->data_pointer + length_00 + (uVar3 & 0xff));
         if (cVar5 != '\0') {
-          return '\x03';
+          return 3;
         }
       }
       if ((ram_refresh_enable == RAM_REFRESH_ENABLED) &&
-         (cVar5 = cm848_queueEepromByteWrites((uint)(address + -0x1000000) & 0xffff,pbVar7,uVar2),
+         (cVar5 = cm848_queueEepromByteWrites
+                            ((uint)(address + -0x1000000) & 0xffff,pbVar7,length_00),
          cVar5 == '\x01')) {
-        return '\v';
+        return 0xb;
       }
-      cm848_memcpyBytes(address + -0xc02b7e,pbVar7,uVar2);
-      return '\0';
+      cm848_memcpyBytes(address + -0xc02b7e,pbVar7,length_00);
+      return 0;
     }
     if (calibration_download_security_key_cal != 0xff) {
       if (!bVar1) {
-        return '\x1a';
+        return 0x1a;
       }
-      cVar5 = cm848_processSecurityCodeConversion(request->data_pointer + uVar2 + (uVar4 & 0xff));
+      cVar5 = cm848_processSecurityCodeConversion
+                        (request->data_pointer + length_00 + (uVar3 & 0xff));
       if (cVar5 != '\0') {
-        return '\x03';
+        return 3;
       }
     }
     if (((ram_refresh_enable != RAM_REFRESH_DISABLED) && (&DAT_003fd480 < address)) &&
        (address < &sensor_channel_ram_start)) {
-      return '\n';
+      return 10;
     }
   }
-  cm848_memcpyBytes(address,pbVar7,uVar2);
-  return '\0';
+  cm848_memcpyBytes(address,pbVar7,length_00);
+  return 0;
 }
 
 
@@ -69509,23 +69523,22 @@ char cm848_writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dwor
    of boot cm848_writeBootDiagnosticMemoryByParameterId | review-function-readability reviewed
    2026-11-11 - Readability Medium Accuracy Confidence High */
 
-undefined1
-cm848_writeJ1939DiagnosticMemoryByParameterId
-          (j1939_rx_msg_t *request,undefined4 parameter_id,dword offset,dword length)
+byte cm848_writeJ1939DiagnosticMemoryByParameterId
+               (j1939_rx_msg_t *request,undefined4 parameter_id,dword offset,dword length)
 
 {
   char cVar1;
-  undefined1 uVar2;
+  byte bVar2;
   int local_10;
   
   cVar1 = cm848_lookupParameterIdAddress(parameter_id,&local_10);
   if (cVar1 == '\0') {
-    uVar2 = cm848_writeJ1939DiagnosticMemory(request,(byte *)(local_10 + offset),length);
+    bVar2 = cm848_writeJ1939DiagnosticMemory(request,(byte *)(local_10 + offset),length);
   }
   else {
-    uVar2 = 8;
+    bVar2 = 8;
   }
-  return uVar2;
+  return bVar2;
 }
 
 
@@ -69653,17 +69666,17 @@ undefined1 cm848_handleJ1939WriteByParameterIdLongOffsetService(j1939_rx_msg_t *
    write by address (cm848_writeJ1939DiagnosticMemory) | review-function-readability reviewed
    2026-11-12 - Readability Low Accuracy Confidence High */
 
-undefined1 cm848_handleJ1939WriteMemoryService(j1939_rx_msg_t *request)
+byte cm848_handleJ1939WriteMemoryService(j1939_rx_msg_t *request)
 
 {
-  undefined1 uVar1;
+  byte bVar1;
   uint local_10;
   byte *local_c [2];
   
   cm848_memcpyBytes(local_c,request->data_pointer + 1,4);
   local_10 = (uint)request->data_pointer[5];
-  uVar1 = cm848_writeJ1939DiagnosticMemory(request,local_c[0],local_10);
-  return uVar1;
+  bVar1 = cm848_writeJ1939DiagnosticMemory(request,local_c[0],local_10);
+  return bVar1;
 }
 
 
@@ -69679,17 +69692,17 @@ undefined1 cm848_handleJ1939WriteMemoryService(j1939_rx_msg_t *request)
    write by address with a long length | review-function-readability reviewed 2026-11-12 -
    Readability Low Accuracy Confidence High */
 
-undefined1 cm848_handleJ1939WriteMemoryLongLengthService(j1939_rx_msg_t *request)
+byte cm848_handleJ1939WriteMemoryLongLengthService(j1939_rx_msg_t *request)
 
 {
-  undefined1 uVar1;
+  byte bVar1;
   byte *local_10;
   dword local_c [2];
   
   cm848_memcpyBytes(&local_10,request->data_pointer + 1,4);
   cm848_memcpyBytes(local_c,request->data_pointer + 5,4);
-  uVar1 = cm848_writeJ1939DiagnosticMemory(request,local_10,local_c[0]);
-  return uVar1;
+  bVar1 = cm848_writeJ1939DiagnosticMemory(request,local_10,local_c[0]);
+  return bVar1;
 }
 
 
@@ -70565,12 +70578,14 @@ void cm848_registerJ1939GetAddressByParameterIdService(void)
    called directly by the 0x4A / 0x4C stubs | review-function-readability reviewed 2026-11-11 -
    Readability Medium Accuracy Confidence High */
 
-char cm848_readJ1939DiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,dword length)
+MEMORY_REGION_TYPE
+cm848_readJ1939DiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,dword length)
 
 {
   ushort uVar1;
-  uint uVar2;
-  ushort uVar3;
+  uint length_00;
+  ushort uVar2;
+  MEMORY_REGION_TYPE MVar3;
   char cVar4;
   j1939_tx_msg_t *msg;
   byte *pbVar5;
@@ -70580,13 +70595,13 @@ char cm848_readJ1939DiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword add
   
   bVar6 = *request->data_pointer;
   if (length < 0x6e5) {
-    uVar3 = cm848_getJ1939MemoryServiceHeaderLength(bVar6);
+    uVar2 = cm848_getJ1939MemoryServiceHeaderLength(bVar6);
     uVar1 = request->data_length;
-    if (((uVar1 == 8) || (uVar1 == (uVar3 & 0xff))) || ((ushort)((uVar3 & 0xff) + 10) == uVar1)) {
-      uVar2 = length & 0xffff;
-      cVar4 = cm848_lookupApplicationMemoryRegionType(address,uVar2);
-      if ((cVar4 != '\n') && (cVar4 != '\t')) {
-        if ((bVar6 == 0x43) && (uVar2 < 0x100)) {
+    if (((uVar1 == 8) || (uVar1 == (uVar2 & 0xff))) || ((ushort)((uVar2 & 0xff) + 10) == uVar1)) {
+      length_00 = length & 0xffff;
+      MVar3 = cm848_lookupApplicationMemoryRegionType(address,length_00);
+      if ((MVar3 != MEMORY_REGION_TYPE_REFUSED) && (MVar3 != MEMORY_REGION_TYPE_UNMAPPED)) {
+        if ((bVar6 == 0x43) && (length_00 < 0x100)) {
           bVar6 = 0x44;
           request->data_pointer[3] = request->data_pointer[6];
         }
@@ -70597,7 +70612,7 @@ char cm848_readJ1939DiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword add
         bVar7 = cVar4 - 1;
         msg = cm848_selectJ1939TransmitBuffer(bVar7 + length + 1 & 0xffff);
         if (msg == (j1939_tx_msg_t *)0x0) {
-          cVar4 = '\x04';
+          MVar3 = MEMORY_REGION_TYPE_MAIN_FLASH;
         }
         else {
           pbVar8 = msg->data_pointer;
@@ -70613,20 +70628,20 @@ char cm848_readJ1939DiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword add
           if (0xffffff < address) {
             address = address - 0xc02b7e;
           }
-          cm848_memcpyBytes(pbVar8 + bVar7,address,uVar2);
+          cm848_memcpyBytes(pbVar8 + bVar7,address,length_00);
           cm848_sendJ1939Message(msg);
-          cVar4 = -1;
+          MVar3 = ~MEMORY_REGION_TYPE_RAM;
         }
       }
     }
     else {
-      cVar4 = '\x02';
+      MVar3 = MEMORY_REGION_TYPE_BANK_2_FLASH;
     }
   }
   else {
-    cVar4 = '\x02';
+    MVar3 = MEMORY_REGION_TYPE_BANK_2_FLASH;
   }
-  return cVar4;
+  return MVar3;
 }
 
 
@@ -71691,35 +71706,35 @@ void cm848_initializeJ1939Transport(void)
 // Function: cm848_lookupApplicationMemoryRegionType @ 0x0050d784
 //
 
-/* Application twin of the boot cm848_lookupBootMemoryRegionType: type of the 0x53a33a region (7 x
-   {start / end / type if DEVELOPMENT_MODE_ON / else}) holding address..address+length-1: 4 ROM / 2
-   flash2 / 3 RAM to 0x40c26e / 0 RAM above / 5 EEPROM / 3 or 10 registers / 9 unmapped (was
-   uds_validateMemoryRegion) | review-function-readability reviewed 2026-11-13 - Readability Medium
-   Accuracy Confidence High */
+/* Application twin of the boot cm848_lookupBootMemoryRegionType (MEMORY_REGION_TYPE): type of the
+   application_memory_region_table (0x53a33a) entry (7 x {start / end / type if DEVELOPMENT_MODE_ON
+   / else}) holding address..address+length-1: 4 ROM / 2 flash2 / 3 RAM to 0x40c26e / 0 RAM above /
+   5 EEPROM / 3 or 10 registers / 9 unmapped (was uds_validateMemoryRegion) |
+   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
 
-undefined1 cm848_lookupApplicationMemoryRegionType(uint param_1,int param_2)
+MEMORY_REGION_TYPE cm848_lookupApplicationMemoryRegionType(dword address,dword length)
 
 {
-  uint *puVar1;
+  memory_region_t *pmVar1;
   uint uVar2;
   byte bVar3;
   
-  uVar2 = (param_1 + param_2) - 1;
-  if (param_1 <= uVar2) {
-    puVar1 = &DAT_0053a33a;
+  uVar2 = (address + length) - 1;
+  if (address <= uVar2) {
+    pmVar1 = application_memory_region_table;
     bVar3 = 0;
     do {
-      if ((*puVar1 <= param_1) && (uVar2 <= puVar1[1])) {
+      if ((pmVar1->start_address <= address) && (uVar2 <= pmVar1->end_address)) {
         if (development_mode == DEVELOPMENT_MODE_ON) {
-          return *(undefined1 *)(puVar1 + 2);
+          return pmVar1->region_type;
         }
-        return *(undefined1 *)((int)puVar1 + 9);
+        return pmVar1->development_mode_off_region_type;
       }
-      puVar1 = (uint *)((int)puVar1 + 10);
+      pmVar1 = pmVar1 + 1;
       bVar3 = bVar3 + 1;
     } while (bVar3 < 7);
   }
-  return 9;
+  return MEMORY_REGION_TYPE_UNMAPPED;
 }
 
 

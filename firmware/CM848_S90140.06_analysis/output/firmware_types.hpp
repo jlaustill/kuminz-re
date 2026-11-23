@@ -626,7 +626,7 @@ typedef enum {
     BOOT_DIAGNOSTIC_RESULT_UNKNOWN_SERVICE = 0x05,  /* No handler is registered for the service byte (cm848_dispatchDiagnosticService - the application answers this with 0x18) */
     BOOT_DIAGNOSTIC_RESULT_UNKNOWN_PARAMETER_ID = 0x08,  /* cm848_lookupBootParameterIdAddress does not know the ID */
     BOOT_DIAGNOSTIC_RESULT_ADDRESS_NOT_ACCEPTED = 0x09,  /* No region accepts the address range - none holds it or it is Bank 2 flash while flash2_writes_enabled is 0 (cm848_lookupBootMemoryRegionType) - or cm848_trackDownloadBlock refuses it (out of sequence or past the block length) (382fa677 named it UNMAPPED_ADDRESS) */
-    BOOT_DIAGNOSTIC_RESULT_ROM_HANDLER_REFUSED = 0x0a,  /* The dispatcher refuses a handler in ROM (at or below 0x6fffe) while the low nibble of eeprom_service_mode_flags is set - only RAM handlers run then; no boot region has type 10 (382fa677 named it REGION_REFUSED) */
+    BOOT_DIAGNOSTIC_RESULT_ROM_HANDLER_REFUSED = 0x0a,  /* The dispatcher refuses a handler in ROM (at or below 0x6fffe) while the low nibble of eeprom_service_mode_flags is set - only RAM handlers run then; no boot region has type 10 (382fa677 named it REGION_REFUSED) - though the boot read handler still tests 10: the code it shares with the application */
     BOOT_DIAGNOSTIC_RESULT_NO_DOWNLOAD_BLOCK = 0x10,  /* cm848_trackDownloadBlock: a write while eeprom_xfer_state.block_length is 0 - no download block announced */
     BOOT_DIAGNOSTIC_RESULT_FLASH_WRITE_FAILED = 0x11,  /* cm848_writeBootDiagnosticMemory: a flash write at an odd address or a flash write that failed */
     BOOT_DIAGNOSTIC_RESULT_CHECKSUM_MISMATCH = 0x14,  /* cm848_finishDownloadBlock: the block's trailing CRC differs from the running CRC (the name CM550's J1939_DIAGNOSTIC_RESULT gives 0x14 - c48cc435 said DIAG_RESPONSE_CODE) */
@@ -640,6 +640,16 @@ typedef enum {
     BOOT_REQUEST_CHANNEL_J1939 = 0x02,  /* The PGN 61184 services: only this channel gets cm848_sendBootResultToJ1939Requester's answer / the CAN transmit runs while the verifier waits / cm848_finishDownloadBlock checks a block's trailing CRC */
     BOOT_REQUEST_CHANNEL_SERIAL = 0x03  /* The serial reflash services: mpc555_runPacedSerialService runs while waiting / the verifier counts and flags the reflash in EEPROM / mpc555_diagServiceTransferBlock ends a block against the CRC in its own request */
 } BOOT_REQUEST_CHANNEL;
+
+typedef enum {
+    MEMORY_REGION_TYPE_RAM = 0x00,  /* Written by a plain copy: boot 0x302000-0x3fffff (the first match - so the TPU / TouCAN registers from 0x304000 resolve here too) / application 0x40c26e-0x43ffff */
+    MEMORY_REGION_TYPE_BANK_2_FLASH = 0x02,  /* Bank 2 flash from 0x500000: the boot worker writes it through eeprom_xfer_state.flash2_write_callback (the boot lookup answers UNMAPPED instead while flash2_writes_enabled is 0); the application writer passes the code back */
+    MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED = 0x03,  /* Written after the write authorization (cm848_validateWriteAuth / cm848_processSecurityCodeConversion): boot 0x2fc000-0x301fff (its entry reads 0x2fc000-0x307fff but the RAM entry matches the rest first) / application 0x3fa000-0x40c26e and - in development mode - its register ranges */
+    MEMORY_REGION_TYPE_MAIN_FLASH = 0x04,  /* Main flash 0x0-0x6ffff: the boot worker programs it (cm848_dataTransferBufferWrite); the application writer refuses it (J1939_DIAGNOSTIC_RESULT_REGION_REFUSED) */
+    MEMORY_REGION_TYPE_EEPROM = 0x05,  /* EEPROM from 0x1000000: written after the write authorization (boot eeprom_xfer_state.eeprom_write_callback / application cm848_queueEepromByteWrites) */
+    MEMORY_REGION_TYPE_UNMAPPED = 0x09,  /* No entry holds the range - the application map leaves out the dual-port TPU RAM 0x302000-0x3037ff that emulation mode takes from the CPU - or Bank 2 in the boot kernel while flash2_writes_enabled is 0; the readers and writers pass it back as the result (J1939_DIAGNOSTIC_RESULT_UNMAPPED_ADDRESS / BOOT_DIAGNOSTIC_RESULT_ADDRESS_NOT_ACCEPTED) */
+    MEMORY_REGION_TYPE_REFUSED = 0x0a  /* The application's register ranges while development mode is off (development_mode_off_region_type); passed back as J1939_DIAGNOSTIC_RESULT_REGION_REFUSED - the boot read handler tests it too */
+} MEMORY_REGION_TYPE;
 
 typedef enum {
     BASIC_DELAY = 0,  /* Basic timer + delay with watchdog */
@@ -3194,8 +3204,8 @@ struct qspi_job_queue_t {
 struct memory_region_t {
     uint32_t start_address;  /* First address of the region */
     uint32_t end_address;  /* Last address of the region */
-    uint8_t region_type;  /* 0 RAM / 2 Bank-2 flash / 3 registers / 4 main flash / 5 EEPROM (9 = not found) */
-    uint8_t region_type_copy;  /* Same value as region_type in every entry */
+    MEMORY_REGION_TYPE region_type;  /* The type - the boot kernel's / the application's while development_mode is ON (PR #53 round 71: was byte '0 RAM / 2 Bank-2 flash / 3 registers / 4 main flash / 5 EEPROM (9 = not found)') */
+    MEMORY_REGION_TYPE development_mode_off_region_type;  /* The application's type while development_mode is OFF (cm848_lookupApplicationMemoryRegionType): its register ranges become REFUSED; equal to region_type in boot_memory_region_table (PR #53 round 71: was region_type_copy 'Same value as region_type in every entry' - true of the boot table only) */
 };
 
 struct checksum_region_t {
