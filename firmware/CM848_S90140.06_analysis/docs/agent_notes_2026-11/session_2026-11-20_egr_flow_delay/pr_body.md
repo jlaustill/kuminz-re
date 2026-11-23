@@ -764,6 +764,12 @@ state enum, the flag bytes.**
   runs over them, and its time-shared uses are noted.
 - **Follow-up (bca3c8fd):** EEPROM 0x0c is e2m's ECM_Part_Number (`ecm_part_number_cal` / `boot_ecm_part_number`);
   two e2m quotes made exact; a stale comment.
+**Round 69.**
+- **Stage A (12ee3607):** the calibration image header at ROM 0x8100, typed by e2m's own blocks (1235 / 1236 / 002E),
+  and the checksum region table at 0xb752. The verifier's checksum walk now reads `region->start_address` /
+  `end_address` / `expected_sum`; region 1 sums to its 0xd501 in the ROM dump.
+- **Follow-up (ff09eaa8):** the smart boot indicator's readers (none in CM848; CM550's boot code compares it); two
+  stale comments. Bank 2's image runs to 0x53ea6d, past both dumps: a bench lead.
 
 ## Test plan
 
@@ -856,6 +862,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 69: 4 of 1968 functions differ: mpc555_verifyDownloadedCalibration (13 -> 8 casts; region + 1 steps one 10-byte region, so the packed layout holds), cm848_lookupParameterIdAddress (&bank2_image_last_word), and two local declaration-order moves. The follow-up changes none. verify is byte-identical with round 68's WARNING lines; thunks 18 / 14; prototype and local rows 0 failed, locals Skipped 8 (the same warnings as round 66). Headers regenerated (0 g++ errors), tests pass (the e2m resolver names 1235 / 1236 / 002E), lookup tables 0 sizing problems, audit_cal_suffixes.py HARD 0 / MISSING 211, no piece renders of the new instances.
 - [x] Round 68: 6 of 1968 functions differ after the renames: the end-of-line start step (its single sth to 0x3fee1c is one word store, inhibit_postheat_start_count = 0x19, not two byte stores); the postheat update (the _4_2_ piece is the field); cm848_loadCalibrationFromEeprom and mpc555_systemInitialization (four RAM destinations of mpc555_eepromReadWords render as their symbols); cm848_lookupEepromParameterAddress (its byte * prototype; the local shows the struct pointer, see its plate); and its caller, whose (byte *) cast went. No old field name renders. verify is byte-identical; thunks 18 / 14; prototype and local rows 0 failed, locals Skipped 8 (the same warnings as round 66). Headers regenerated (0 g++ errors), tests pass, lookup tables 0 sizing problems, audit_cal_suffixes.py HARD 0 / MISSING 212 (was 216), history notes intact, leftovers 0.
 - [x] Round 67: 22 of 1968 functions differ after canonicalization: 21 predicted (the 7 functions with new prototypes; the CRC table builder and reader; the block finish and the serial transfer block that fill download_block_list; the J1939 write worker and the serial data handler, which pass the channel; the erase dispatcher loop and its local; the six boot readers of ECM_STATUS, the serial finish among them; the serial begin, whose EEPROM casts went - the three renamed functions without a new prototype do not differ) plus one local declaration-order move (mpc555_areBootModeStrapPinsHigh). No new name renders in pieces. verify is byte-identical; thunks 18 / 14; prototype and local rows 0 failed, locals Skipped 8 (the baseline, the same warnings as round 66). Headers regenerated (0 g++ errors), tests pass, lookup tables 920 with 0 sizing problems, audit_cal_suffixes.py HARD 0 / MISSING 216 (was 219: the three EEPROM words now end in _cal), history notes intact, leftovers 0.
 - [x] Round 66: stage A 6 of 1968 functions differ: the 4 predicted (the boot validator returns BOOT_DIAGNOSTIC_RESULT names and reads its j1939_rx_msg_t request through fields; the boot dispatcher names UNKNOWN_SERVICE / REGION_REFUSED and its entry / result_code locals; the 0x19 handler takes the enum return; the net torque calculation names its coolant friction term) and two local declaration-order moves. No artifact count changed. verify byte-identical, thunks 18 / 14, 0 failed prototype or local rows, history notes intact, headers 0 g++ errors, tests pass, HARD 0 / MISSING 219.

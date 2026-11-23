@@ -1,0 +1,18 @@
+cm848: round 69 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 69" records stage A (12ee3607) and the follow-up (ff09eaa8).
+  - The proof: 4 differing functions, all explained.
+  - How the design changed: from one 78-byte struct to e2m's blocks.
+  - The stopped and rerun verify, and the packing evidence.
+  - Leads:
+    - Bank 2 is longer than dumped (the image runs to 0x53ea6d): a bench re-dump of 0x53e000-0x53ea6d would check
+      region 2 and give parameter_id_table's last 445 records;
+    - the TPU RAM init table 0x5862e-0x591f6;
+    - the branch table at 0x8000;
+    - the dword pairs after block_data_structure;
+    - block_capacity's 0x1f7e.
+  - Round 67's and 68's open leads; the image header is done.
+- work/todo.md, the session README, session_folder/round69/, the large-files tarball (the round's build and verify
+  logs), pr_body.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

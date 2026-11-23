@@ -592,3 +592,8 @@ Hand work on the round 7 lead.
   and `fix_r68a4.py` (which undoes it), `map_r68a.csv`. **Proof:**
   `prove_r68.py` (exact string renames: the old labels end in `]`), `diff_r68.py`. **Closing:**
   `apply_r68_closing.py`, `update_large_tar_r68.sh`.
+
+## Round 69: the calibration image header at ROM 0x8100 (`session_folder/round69/`)
+
+- **Stage A:** `apply_r69a.py`, then `fix_r69a2.py` (`bank2_image_last_word`) and `fix_r69a3.py` (field rows).
+  **Proof:** `prove_r69.py`, `diff_r69.py`. **Closing:** `apply_r69_closing.py`, `update_large_tar_r69.sh`.

@@ -3110,6 +3110,50 @@ A peer relay started the round; the scripts are in `session_folder/round68/`.
   - Round 67's other leads stand: the image header at ROM 0x8100, a memory region type enum, 0x3fedee / 0x3fedf4,
     `DAT_01000000`, the boot `eeprom_*` vocabulary and the serial response codes.
 
+## Done, round 69 (2026-11-23, same PR): the calibration image header at ROM 0x8100, the checksum region table
+
+A peer relay started the round; the scripts are in `session_folder/round69/`.
+- **Stage A (12ee3607):** round 67's image header lead.
+  - e2m names the header as separate blocks: 1235 `Smart_Boot_Indicator` (0x8100), 1236 (0x8104: the checksum table
+    pointer and a dummy range), 1198 (0x810e, the entry pointer) and 002E `Block_Data_Structure` (0x8112, 60 bytes).
+    They became `smart_boot_indicator`, `checksum_table_descriptor_t`, the existing `flash_operational_code_entry_pointer`
+    and `block_data_structure_t`.
+  - `block_data_structure_t`'s arrays each follow their own word count (4 here). The verifier's `0x811e + 8 x count`
+    is that layout, now rendered as `block_start_address + download_block_count * 2 + 1`. The counts have no
+    reader, so they stay `reserved_<offset>`. `block_length` holds the image lengths (the ROM is 0xff from 0x6fc64,
+    where module B's ends); the verifier compares recorded end addresses with them.
+  - `checksum_region_table_t` (0xb752): a count and two regions. The verifier's walk now reads
+    `region->start_address` / `end_address` / `expected_sum`. Region 1 sums to 0xd501 in the ROM dump; region 2
+    (Bank 2) runs past both flash2 dumps.
+  - `bank2_image_last_word` (0x53ea6c): the region's pointer field made Ghidra label it inside
+    `cm848_lookupParameterIdAddress`.
+- **Proof:** 4 of 1968 functions differ: mpc555_verifyDownloadedCalibration (13 -> 8 casts; region + 1 steps one 10-byte region, so the packed layout holds), cm848_lookupParameterIdAddress (&bank2_image_last_word), and two local declaration-order moves. The follow-up changes none. verify is byte-identical with round 68's WARNING lines; thunks 18 / 14; prototype and local rows 0 failed, locals Skipped 8 (the same warnings as round 66). Headers regenerated (0 g++ errors), tests pass (the e2m resolver names 1235 / 1236 / 002E), lookup tables 0 sizing problems, audit_cal_suffixes.py HARD 0 / MISSING 211, no piece renders of the new instances.
+- **How it got there:** the first plan was one 78-byte struct, and e2m's blocks replaced it. `fix_r69a2.py` named
+  0x53ea6c and `fix_r69a3.py` added field rows (a verify was stopped and rerun to cover them). The importer packs
+  fields (`eeprom_block_tracking_t`'s dwords sit at odd addresses), and the region stride confirms it here, but
+  `block_data_structure`'s fields at +6 / +26 / +44 never render.
+- **Follow-up (ff09eaa8):**
+  - `smart_boot_indicator`: no CM848 code builds 0x98765432 (no `lis` 0x9876 / `ori` 0x5432 pair in the ROM or
+    Bank 2), while CM550's boot code compares it (`cmpi.l #$98765432,(a0)` at CM550 0x3c02, where its ROM holds no
+    header - so no second count to name the count words from).
+  - Round 67's two live comments that said "the image header at ROM 0x8104" now name `checksum_region_table` /
+    `block_data_structure`.
+- **firmware/CLAUDE.md:** no edit.
+- **Leads:**
+  - **Bank 2 is longer than dumped (a bench lead):** the image runs to 0x53ea6d (`block_length[2]` = 0x3ea6e;
+    checksum region 2 ends at 0x53ea6c). That is past both flash2 dumps (0x53d4e9 / 0x53dfff), and past the
+    0x53DFFF the auditing-cal-suffixes skill gives as Bank 2's end. Re-dumping 0x53e000-0x53ea6d would check region 2's
+    sum (0x17b2) and give `parameter_id_table`'s last 445 records. The e2m files carry no binary records (two
+    sections each), so it cannot come from them. (The skill is not edited on a peer round.)
+  - `mpc555_initTpuConfiguration` copies a TPU RAM init table, `{offset / count / words}` records from 0x5862e to
+    0x591f6, which is the end of checksum region 1. Type it.
+  - 0x8000-0x80ff is a table of `b` instructions at block 1's start.
+  - Past `block_data_structure` come more dword pairs; e2m maps nothing from 0x814e to 0x81bf.
+  - 0xb768 is 0x0000 between the table and region 1. Region 1 starts with 0xa1a1, and the code starts at 0xb76c.
+  - `block_capacity`'s 0x1f7e (0x80 + 0x1f7e = 0x1ffe) is unexplained.
+  - Round 67's other open leads stand: a memory region type enum, 0x3fedee / 0x3fedf4, `DAT_01000000`, the boot
+    `eeprom_*` vocabulary and the serial response codes. So do round 68's. The image header is this round.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**
