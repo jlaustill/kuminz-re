@@ -441,18 +441,18 @@ void cm550_FUN_00021146(void);  // @ 0x00021146
 void cm550_FUN_000211f4(void);  // @ 0x000211f4
 uint mc68k_FUN_000212b2(void);  // @ 0x000212b2
 ushort cm550_FUN_0002142c(void);  // @ 0x0002142c
-uint cm550_memoryOperationDispatcher(dword request_ptr,word operation_size,dword operation_flags);  // @ 0x0002148a
+byte writeJ1939DiagnosticMemory(dword request,dword address,dword length);  // @ 0x0002148a
 void cm550_j1939DataCopyWrapper2Byte(int param_1);  // @ 0x0002167e
 void cm550_FUN_000216c6(int param_1);  // @ 0x000216c6
 void cm550_j1939DataCopyWrapperExtended(int param_1);  // @ 0x00021714
 void cm550_FUN_00021778(int param_1);  // @ 0x00021778
-void cm550_memoryOperationFromMessageExtended(dword msg_ptr);  // @ 0x000217de
-void cm550_FUN_00021826(dword msg_ptr);  // @ 0x00021826
+void handleJ1939WriteMemoryService(dword request);  // @ 0x000217de
+void handleJ1939WriteMemoryLongLengthService(dword request);  // @ 0x00021826
 void cm550_FUN_00021872(void);  // @ 0x00021872
 undefined4 byteSwap32(undefined4 *param_1);  // @ 0x000218ca
 undefined2 byteSwap16(undefined2 *param_1);  // @ 0x000218fe
 byte cm550_FUN_00021920(void);  // @ 0x00021920
-uint cm550_addressLookupFunction(undefined4 param_1);  // @ 0x00021964
+uint getJ1939MemoryServiceHeaderLength(undefined4 param_1);  // @ 0x00021964
 undefined4 cm550_diagnosticServiceSecurityValidator(dword msg_ptr);  // @ 0x00021982
 void cm550_FUN_00021a8c(int param_1);  // @ 0x00021a8c
 void cm550_FUN_00021b88(int param_1);  // @ 0x00021b88
@@ -650,8 +650,8 @@ void cm550_FUN_0002faa4(void);  // @ 0x0002faa4
 void cm550_initOilPressureProtectionPointers(void);  // @ 0x0002faba
 void cm550_torqueControlAddressDispatcher(int param_1);  // @ 0x0002fb70
 void cm550_FUN_0002fbb2(void);  // @ 0x0002fbb2
-void cm550_FUN_0002fbd8(byte *input_buffer,byte *output_buffer);  // @ 0x0002fbd8
-byte sensorRangeValidation(byte *auth_payload_ptr);  // @ 0x0002fcdc
+void unscrambleSecurityKey(byte *input_buffer,byte *output_buffer);  // @ 0x0002fbd8
+byte validateSecurityKey(byte *auth_payload_ptr);  // @ 0x0002fcdc
 void cm550_FUN_0002fd90(undefined4 param_1);  // @ 0x0002fd90
 void cm550_diagnosticTableEntryClear(undefined4 param_1);  // @ 0x0002fddc
 void cm550_diagnosticTableSnapshotCapture(undefined4 param_1);  // @ 0x0002fe38

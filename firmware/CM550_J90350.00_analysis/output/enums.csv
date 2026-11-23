@@ -681,23 +681,23 @@ J1939_DIAGNOSTIC_SERVICE,0x4D,SERVICE_4D,Service 4D - dispatch @ 0x00021826 - UN
 # Error code flows: handler → diagnosticMultiPacketResponseBuilder → [0x0D][error_code][service_id]...
 DIAG_ERROR_SOURCE,0x02,INVALID_LENGTH,diagnosticServiceSecurityValidator - message length mismatch,1
 DIAG_ERROR_SOURCE,0x03,ERROR_SECURITY_FAILED,diagnosticServiceSecurityValidator - systemSecurityCheck returned non-zero,1
-DIAG_ERROR_SOURCE,0x07,CONDITION_NOT_MET,memoryOperationDispatcher - system_logging_state check failed,1
+DIAG_ERROR_SOURCE,0x07,CONDITION_NOT_MET,writeJ1939DiagnosticMemory - system_logging_state check failed,1
 DIAG_ERROR_SOURCE,0x08,ADDR_LOOKUP_FAIL,j1939MemoryDataCopyResolver - initial address lookup at 0xeaf0 failed,1
 DIAG_ERROR_SOURCE,0x09,ADDR_RANGE_INVALID,lookupApplicationMemoryRegionType @ 0x3460e (MEMORY_REGION_TYPE_UNMAPPED) - the range is in no application_memory_region_table entry (J90280.05: addressRangeValidator @ 0x2b544; PR #53 round 72),1
 DIAG_ERROR_SOURCE,0x0A,ADDR_ACCESS_DENIED,lookupApplicationMemoryRegionType @ 0x3460e (MEMORY_REGION_TYPE_REFUSED) - the registers 0xffc800-0xffffff while the development mode flag is not 1 (J90280.05: addressRangeValidator @ 0x2b544; PR #53 round 72),1
-DIAG_ERROR_SOURCE,0x0B,BUFFER_WRITE_FAIL,memoryOperationDispatcher - circularBufferWrite returned error,1
-DIAG_ERROR_SOURCE,0x0A,WRITE_DENIED,memoryOperationDispatcher - write to read-only region (ROM/Flash case 4),1
+DIAG_ERROR_SOURCE,0x0B,BUFFER_WRITE_FAIL,writeJ1939DiagnosticMemory - circularBufferWrite returned error,1
+DIAG_ERROR_SOURCE,0x0A,WRITE_DENIED,writeJ1939DiagnosticMemory - write to read-only region (ROM/Flash case 4),1
 DIAG_ERROR_SOURCE,0x0E,PATCH_LIMIT,diagnosticResponseBuilder - memory patch count exceeded limit,1
 DIAG_ERROR_SOURCE,0x18,UNKNOWN_SERVICE,diagnosticServiceDispatcher - service ID not in dispatch table,1
-DIAG_ERROR_SOURCE,0x1A,AUTH_REQUIRED_MISSING,memoryOperationDispatcher - EEPROM write requires auth but none provided,1
+DIAG_ERROR_SOURCE,0x1A,AUTH_REQUIRED_MISSING,writeJ1939DiagnosticMemory - EEPROM write requires auth but none provided,1
 # -----------------------------------------------------------------------------
-# memoryOperationDispatcher Return Codes (Service 0x4B) @ 0x0002148a
+# writeJ1939DiagnosticMemory Return Codes (Service 0x4B) @ 0x0002148a
 # Complete list of return values from the memory write dispatcher
-# Used by: memoryOperationFromMessageExtended (0x217de) memoryOperationFromMessage8Byte (0x21826)
+# Used by: handleJ1939WriteMemoryService (0x217de) handleJ1939WriteMemoryLongLengthService (0x21826)
 # -----------------------------------------------------------------------------
 MEMORY_OP_RESULT,0x00,MEMORY_OPERATION_SUCCESS,Memory operation completed successfully (masked from memcpy return),1
 MEMORY_OP_RESULT,0x02,MEMORY_OPERATION_INVALID_LENGTH,Message length mismatch - expected calculated_msg_length or +10 for auth,1
-MEMORY_OP_RESULT,0x03,MEMORY_OPERATION_AUTH_FAILED,hourMeterSecurityValidator returned non-zero (auth payload invalid),1
+MEMORY_OP_RESULT,0x03,MEMORY_OPERATION_AUTH_FAILED,validateSecurityKey returned non-zero (auth payload invalid),1
 MEMORY_OP_RESULT,0x07,CALIBRATION_WRITE_BLOCKED,EEPROM write blocked - calibration_write_protect_state==1 and calibration_bank_selector!=FACTORY,1
 MEMORY_OP_RESULT,0x0A,MEMORY_OPERATION_WRITE_DENIED,Region type 4 (ROM/Flash) - write operations not permitted,1
 MEMORY_OP_RESULT,0x0B,MEMORY_OPERATION_BUFFER_WRITE_FAIL,circularBufferWrite returned error during EEPROM logging,1
@@ -718,7 +718,7 @@ SERVICE_4A_RESPONSE,0x4B,SERVICE_74_SUCCESS,Service 0x4A success response code (
 # READ operations (diagMemoryReadResponseBuilder @ 0x1c0b8):
 #   - 0x09 or 0x0A = DENIED (returns error code)
 #   - Any other value = ALLOWED
-# WRITE operations (memoryOperationDispatcher @ 0x1b3c8):
+# WRITE operations (writeJ1939DiagnosticMemory @ 0x1b3c8):
 #   - 0x00 = Direct write (no security check)
 #   - 0x03 = Security check required (unless security_bypass_flag == 0xB522)
 #   - 0x04 = Write denied
@@ -733,10 +733,10 @@ MEMORY_REGION_TYPE,0x0a,MEMORY_REGION_TYPE_REFUSED,The registers while the devel
 # Security Bypass Mechanism (diagnosticServiceSecurityValidator @ 0x1b7e8)
 # When security_bypass_flag @ 0x803586 == 0xB522 (signed -0x4ADE):
 #   - Services 3 and 4 skip security check requirement
-#   - memoryOperationDispatcher allows writes without security check
+#   - writeJ1939DiagnosticMemory allows writes without security check
 # Note: systemSecurityCheckStub_AlwaysPasses @ 0x27e98 is a STUB that always returns 0 (pass)
 SECURITY_BYPASS,0xB522,BYPASS_ENABLED,Magic value to bypass security checks (stored at 0x803586),2
-SECURITY_BYPASS,0x00FF,LEGACY_BYPASS,Legacy security bypass value check in memoryOperationDispatcher,1
+SECURITY_BYPASS,0x00FF,LEGACY_BYPASS,Legacy security bypass value check in writeJ1939DiagnosticMemory,1
 # Diagnostic Service Command Structure (diagnosticCommandDispatcher @ 0x12484)
 # Service routing based on first byte after length:
 #   0x03-0x06: Core diagnostic services (requires _diagnostic_service_enable_flags & 1)

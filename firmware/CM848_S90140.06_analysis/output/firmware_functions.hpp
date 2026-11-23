@@ -1272,8 +1272,8 @@ void mpc555_tpuAEnablePwmChannel(uint channel);  // @ 0x00055294
 void mpc555_tpuASetPwmDuty(int channel,word duty);  // @ 0x000553ec
 void mpc555_tpuASetPwmPeriodMicroseconds(int channel,uint period_microseconds);  // @ 0x00055458
 void initQadcModule(void);  // @ 0x00055500
-void cm848_copyDataBuffer(int param_1,int param_2);  // @ 0x000555cc
-undefined4 cm848_processSecurityCodeConversion(undefined4 param_1);  // @ 0x0005573c
+void unscrambleSecurityKey(int param_1,int param_2);  // @ 0x000555cc
+undefined4 validateSecurityKey(undefined4 param_1);  // @ 0x0005573c
 void cm848_driveTachometerOutputs(void);  // @ 0x0005586c
 void cm848_initializeTachometerOutputs(void);  // @ 0x00055a40
 void mpc555_initTpuConfiguration(void);  // @ 0x00055c1c
@@ -1463,19 +1463,19 @@ void cm848_processJ1939SwitchAndRequestInputs(void);  // @ 0x0050aba8
 void cm848_processJ1939AcceleratorInputs(void);  // @ 0x0050ad1c
 void cm848_initJ1939InputProcessing(void);  // @ 0x0050ae5c
 void cm848_endRetarderShiftAssistAboveFuelDemandLimit(void);  // @ 0x0050aec0
-byte cm848_writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dword length);  // @ 0x0050af58
+byte writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dword length);  // @ 0x0050af58
 byte cm848_writeJ1939DiagnosticMemoryByParameterId (j1939_rx_msg_t *request,undefined4 parameter_id,dword offset,dword length);  // @ 0x0050b1b8
 undefined1 cm848_handleJ1939WriteByParameterIdService(j1939_rx_msg_t *request);  // @ 0x0050b228
 undefined1 cm848_handleJ1939WriteByParameterIdLongLengthService(j1939_rx_msg_t *request);  // @ 0x0050b298
 undefined1 cm848_handleJ1939WriteByParameterIdShortOffsetService(j1939_rx_msg_t *request);  // @ 0x0050b300
 undefined1 cm848_handleJ1939WriteByParameterIdLongOffsetService(j1939_rx_msg_t *request);  // @ 0x0050b38c
-byte cm848_handleJ1939WriteMemoryService(j1939_rx_msg_t *request);  // @ 0x0050b408
-byte cm848_handleJ1939WriteMemoryLongLengthService(j1939_rx_msg_t *request);  // @ 0x0050b474
+byte handleJ1939WriteMemoryService(j1939_rx_msg_t *request);  // @ 0x0050b408
+byte handleJ1939WriteMemoryLongLengthService(j1939_rx_msg_t *request);  // @ 0x0050b474
 void cm848_registerJ1939MemoryWriteServices(void);  // @ 0x0050b4d8
 undefined4 cm848_reverseByteOrder32(undefined4 *param_1);  // @ 0x0050b554
 undefined2 cm848_reverseByteOrder16(undefined2 *param_1);  // @ 0x0050b58c
 uint cm848_buildJ1939LampStatusByte(void);  // @ 0x0050b5b4
-byte cm848_getJ1939MemoryServiceHeaderLength(int param_1);  // @ 0x0050b610
+byte getJ1939MemoryServiceHeaderLength(int param_1);  // @ 0x0050b610
 J1939_DIAGNOSTIC_RESULT cm848_validateJ1939DiagnosticRequest(j1939_rx_msg_t *rx_msg);  // @ 0x0050b634
 void cm848_receivePgn57344CabMessage1(j1939_rx_msg_t *message);  // @ 0x0050b734
 void cm848_receivePgn61441ElectronicBrakeController1Message(j1939_rx_msg_t *message);  // @ 0x0050b77c

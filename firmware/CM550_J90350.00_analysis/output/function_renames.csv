@@ -449,19 +449,19 @@ address,name
 0x00021272,cm550_canTransmissionController
 0x000212b2,mc68k_FUN_000212b2
 0x0002142c,cm550_FUN_0002142c
-0x0002148a,cm550_memoryOperationDispatcher
+0x0002148a,writeJ1939DiagnosticMemory,Writes memory for a PGN 61184 write request (services 0x4b / 0x4d): a length cap of 1764 / an optional 10-byte key after the data / the region from lookupApplicationMemoryRegionType - 0 copied / 3 copied after validateSecurityKey (3 when the key is missing or refused) / 4 refused (10) / 5 EEPROM: 7 while EEPROM writes are blocked then the key (0x1a missing / 3 refused) then cm550_circularBufferWrite (0x0b when full) and the mirror copy / the other codes passed back. The same function as CM848 0x50af58 (shared name - CM848 returns 0x1a for a type 3 write without the key / refuses (10) type 3 writes into its calibration RAM while RAM refresh is on / has Bank 2; was cm550_memoryOperationDispatcher; PR #53 round 72).
 0x00021642,cm550_j1939MemoryDataCopyResolver
 0x0002167e,cm550_j1939DataCopyWrapper2Byte
 0x000216c6,cm550_FUN_000216c6
 0x00021714,cm550_j1939DataCopyWrapperExtended
 0x00021778,cm550_FUN_00021778
-0x000217de,cm550_memoryOperationFromMessageExtended
-0x00021826,cm550_FUN_00021826
+0x000217de,handleJ1939WriteMemoryService,PGN 61184 service 0x4b: request bytes 1-4 the address and 5 the length then the data - written through writeJ1939DiagnosticMemory. The same function as CM848 0x50b408 (shared name; was cm550_memoryOperationFromMessageExtended; PR #53 round 72).
+0x00021826,handleJ1939WriteMemoryLongLengthService,PGN 61184 service 0x4d: request bytes 1-4 the address and 5-8 the length then the data - written through writeJ1939DiagnosticMemory. The same function as CM848 0x50b474 (shared name; was cm550_FUN_00021826; PR #53 round 72).
 0x00021872,cm550_FUN_00021872
 0x000218ca,byteSwap32
 0x000218fe,byteSwap16
 0x00021920,cm550_FUN_00021920
-0x00021964,cm550_addressLookupFunction
+0x00021964,getJ1939MemoryServiceHeaderLength,The request bytes before the data for a PGN 61184 memory service: 0 below 0x41 else j1939_memory_service_header_lengths[service - 0x41] (read from its base 0x21915). The same function and table as CM848 0x50b610 / 0x53a322 (shared name; was cm550_addressLookupFunction; PR #53 round 72).
 0x00021982,cm550_diagnosticServiceSecurityValidator
 0x00021a8c,cm550_FUN_00021a8c
 0x00021b88,cm550_FUN_00021b88
@@ -660,8 +660,8 @@ address,name
 0x0002faba,cm550_initOilPressureProtectionPointers
 0x0002fb70,cm550_torqueControlAddressDispatcher
 0x0002fbb2,cm550_FUN_0002fbb2
-0x0002fbd8,cm550_FUN_0002fbd8
-0x0002fcdc,sensorRangeValidation
+0x0002fbd8,unscrambleSecurityKey,Unscrambles the 10-byte security key: each bit goes to the front of the work buffer when its security_key_scramble_mask bit is 0 and to the back otherwise / each work byte is XORed with the work byte its security_key_byte_order entry names / the output is written through security_key_byte_order backwards. The same function and tables as CM848 0x555cc / 0x5839a / 0x583a4 (shared name; was cm550_FUN_0002fbd8; PR #53 round 72).
+0x0002fcdc,validateSecurityKey,Checks the 10-byte security key of a secured request: 0 (pass) when the key byte 0x803b98 is 0xff; 1 once the failure count 0x801e76 reaches 0x11 (a lockout after 17 misses); else unscrambleSecurityKey gives 6 characters (compared with ecu_identity_test_pattern) and a 4-byte hour meter stamp ((meter & ~0xff) - (stamp & ~0xff) < 0x1a): a match clears the count and passes / a miss adds one and fails. Called by writeJ1939DiagnosticMemory (types 3 / 5) and diagnosticCommandDispatcher (J1708 command 3). The same function as CM848 0x5573c (shared name; was sensorRangeValidation; PR #53 round 72).
 0x0002fd90,cm550_FUN_0002fd90
 0x0002fddc,cm550_diagnosticTableEntryClear
 0x0002fe38,cm550_diagnosticTableSnapshotCapture

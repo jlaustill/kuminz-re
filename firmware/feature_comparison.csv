@@ -4,7 +4,8 @@ vp44_diagnostic_state_machine,fuel_system,present,not_found,not_applicable,unkno
 vp44_timing_validation,fuel_system,present,not_found,not_applicable,unknown,unknown,VP44 timing range validation functions
 common_rail_cbd,fuel_system,not_applicable,not_applicable,present,unknown,unknown,Cylinder Balance Deviation - per-cylinder fuel trim (common rail only)
 common_rail_injector_control,fuel_system,not_applicable,not_applicable,present,unknown,unknown,Direct injector pulse width calculation
-auth_security,security,stub,present,present,unknown,unknown,J90280 returns 0 (disabled) - J90350 and CM848D have full implementation
+auth_security,security,stub,present,present,unknown,unknown,J90280 returns 0 (disabled) - J90350 and CM848D have full implementation: validateSecurityKey / unscrambleSecurityKey are the same functions with byte-identical scramble tables in both (PR #53 round 72)
+j1939_memory_write_service,diagnostics,present,present,present,unknown,unknown,PGN 61184 services 0x4b / 0x4d through writeJ1939DiagnosticMemory and lookupApplicationMemoryRegionType - shared code (identical header length table and region codes); method versioning: CM848D returns 0x1a for a region type 3 write without the key (J90350: 3) / refuses (10) type 3 writes into its calibration RAM while RAM refresh is on / adds Bank 2 (region type 2) (PR #53 round 72)
 kickdown_signal,transmission,present,not_found,unknown,unknown,unknown,Automatic transmission kickdown interface
 retarder_control,drivetrain,present,not_found,unknown,unknown,unknown,Engine brake/retarder percentage control
 derate_system,protection,present,present,present,unknown,unknown,Engine power derate for protection

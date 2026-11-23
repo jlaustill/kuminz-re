@@ -147,7 +147,7 @@ address,reason
 0x00053d74,mid-function split inside cm848_addEngineTsc1IgnoredRequestEntry +0x38 (was cm848_setDefaultCalibrationValue)
 0x00053fe0,mid-function split inside cm848_removeEngineTsc1IgnoredRequestEntry +0x38 (was cm848_removeCalibrationListEntry)
 0x00054a9c,mid-function split inside hpcr_exceptionHandler +0x5d8 (was cm848_initializationContinuation)
-0x0005576c,mid-function split inside cm848_processSecurityCodeConversion +0x30 (was cm848_validateSecurityCode)
+0x0005576c,mid-function split inside validateSecurityKey +0x30 (was cm848_validateSecurityCode)
 0x00055ed0,mid-function split inside cm848_calculateCrc16Simple +0x30 (was cm848_calculateCrc16)
 0x00055f24,mid-function split inside lookupTableInterpolation +0x30 (was cm848_linearInterpolate1D)
 0x0005632c,mid-function split inside cm848_clampedDivisionWithBounds +0x30 (was cm848_noOperation2)

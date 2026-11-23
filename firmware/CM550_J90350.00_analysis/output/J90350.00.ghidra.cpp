@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Mon Nov 23 16:11:46 MST 2026
+// Generated: Mon Nov 23 16:25:46 MST 2026
 
 
 //
@@ -10664,7 +10664,7 @@ void diagnosticCommandDispatcher(void)
             bVar8 = bVar8 + 1;
             pbVar9 = pbVar9 + 1;
           } while (bVar8 < 10);
-          cVar7 = sensorRangeValidation(abStack_16);
+          cVar7 = validateSecurityKey(abStack_16);
           if (cVar7 == '\0') {
             switch(*local_8) {
             case 0x40:
@@ -22607,96 +22607,92 @@ ushort cm550_FUN_0002142c(void)
 
 
 //
-// Function: cm550_memoryOperationDispatcher @ 0x0002148a
+// Function: writeJ1939DiagnosticMemory @ 0x0002148a
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Writes memory for a PGN 61184 write request (services 0x4b / 0x4d): a length cap of 1764 / an
+   optional 10-byte key after the data / the region from lookupApplicationMemoryRegionType - 0
+   copied / 3 copied after validateSecurityKey (3 when the key is missing or refused) / 4 refused
+   (10) / 5 EEPROM: 7 while EEPROM writes are blocked then the key (0x1a missing / 3 refused) then
+   cm550_circularBufferWrite (0x0b when full) and the mirror copy / the other codes passed back. The
+   same function as CM848 0x50af58 (shared name - CM848 returns 0x1a for a type 3 write without the
+   key / refuses (10) type 3 writes into its calibration RAM while RAM refresh is on / has Bank 2;
+   was cm550_memoryOperationDispatcher; PR #53 round 72). */
 
-uint cm550_memoryOperationDispatcher(dword request_ptr,word operation_size,dword operation_flags)
+byte writeJ1939DiagnosticMemory(dword request,dword address,dword length)
 
 {
   int iVar1;
   bool bVar2;
-  byte bVar5;
-  MEMORY_REGION_TYPE MVar6;
-  uint uVar3;
-  char cVar7;
-  uint uVar4;
+  byte bVar3;
+  MEMORY_REGION_TYPE MVar4;
+  char cVar5;
   undefined4 unaff_D2;
-  short sVar8;
-  undefined2 in_stack_00000008;
-  undefined2 uVar9;
+  short sVar6;
+  undefined2 uVar7;
   
-  uVar9 = (undefined2)((uint)unaff_D2 >> 0x10);
-  if (0x6e4 < operation_flags) {
+  uVar7 = (undefined2)((uint)unaff_D2 >> 0x10);
+  if (0x6e4 < length) {
     return 2;
   }
-  sVar8 = (short)operation_flags;
-  bVar5 = cm550_addressLookupFunction();
-  if ((*(short *)(request_ptr + 4) == 8) ||
-     ((ushort)(sVar8 + (ushort)bVar5) == *(ushort *)(request_ptr + 4))) {
+  sVar6 = (short)length;
+  bVar3 = getJ1939MemoryServiceHeaderLength();
+  if ((*(short *)(request + 4) == 8) ||
+     ((ushort)(sVar6 + (ushort)bVar3) == *(ushort *)(request + 4))) {
     bVar2 = false;
   }
   else {
-    if ((ushort)(sVar8 + (ushort)bVar5) + 10 != (uint)*(ushort *)(request_ptr + 4)) {
+    if ((ushort)(sVar6 + (ushort)bVar3) + 10 != (uint)*(ushort *)(request + 4)) {
       return 2;
     }
     bVar2 = true;
   }
-  iVar1 = *(int *)(request_ptr + 6) + (uint)bVar5;
-  MVar6 = lookupApplicationMemoryRegionType
-                    (CONCAT22(in_stack_00000008,operation_size),CONCAT22(sVar8,uVar9));
-  uVar3 = (uint)MVar6;
-  uVar4 = uVar3;
-  if (uVar3 < 6) {
-    uVar4 = (uint)(&switchD_00021526::switchdataD_0002152a)[uVar3];
-    uVar9 = (undefined2)iVar1;
-    switch(uVar3) {
-    case 0:
-      uVar4 = cm550_memcpy(operation_size,uVar9);
-      return uVar4 & 0xffffff00;
-    case 3:
-      if (_DAT_00803b98 != 0xff) {
-        if (!bVar2) {
-          return 3;
-        }
-        cVar7 = sensorRangeValidation
-                          ((byte *)(*(int *)(request_ptr + 6) +
-                                   (operation_flags & 0xffff) + (uint)bVar5));
-        if (cVar7 != '\0') {
-          return 3;
-        }
+  iVar1 = *(int *)(request + 6) + (uint)bVar3;
+  MVar4 = lookupApplicationMemoryRegionType(address,CONCAT22(sVar6,uVar7));
+  uVar7 = (undefined2)iVar1;
+  switch(MVar4) {
+  case MEMORY_REGION_TYPE_RAM:
+    cm550_memcpy((short)address,uVar7);
+    return 0;
+  default:
+    return MVar4;
+  case MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED:
+    break;
+  case MEMORY_REGION_TYPE_MAIN_FLASH:
+    return 10;
+  case MEMORY_REGION_TYPE_EEPROM:
+    if ((_diagnostic_session_state == 1) && (_calibration_data_valid_flag != 0)) {
+      return 7;
+    }
+    if (_DAT_00803b98 != 0xff) {
+      if (!bVar2) {
+        return 0x1a;
       }
-      uVar4 = cm550_memcpy(operation_size,uVar9);
-      return uVar4 & 0xffffff00;
-    case 4:
-      return 10;
-    case 5:
-      if ((_diagnostic_session_state == 1) && (_calibration_data_valid_flag != 0)) {
-        return 7;
+      cVar5 = validateSecurityKey((byte *)(*(int *)(request + 6) + (length & 0xffff) + (uint)bVar3))
+      ;
+      if (cVar5 != '\0') {
+        return 3;
       }
-      if (_DAT_00803b98 != 0xff) {
-        if (!bVar2) {
-          return 0x1a;
-        }
-        cVar7 = sensorRangeValidation
-                          ((byte *)(*(int *)(request_ptr + 6) +
-                                   (operation_flags & 0xffff) + (uint)bVar5));
-        if (cVar7 != '\0') {
-          return 3;
-        }
-      }
-      if (_calibration_data_valid_flag == 1) {
-        cVar7 = cm550_circularBufferWrite((short)((uint)iVar1 >> 0x10),sVar8);
-        if (cVar7 == '\x01') {
-          return 0xb;
-        }
-      }
-      uVar4 = cm550_memcpy(operation_size + 0x3b0a,uVar9);
-      return uVar4 & 0xffffff00;
+    }
+    if ((_calibration_data_valid_flag == 1) &&
+       (cVar5 = cm550_circularBufferWrite((short)((uint)iVar1 >> 0x10),sVar6), cVar5 == '\x01')) {
+      return 0xb;
+    }
+    cm550_memcpy((short)(address - 0x7fc4f6),uVar7);
+    return 0;
+  }
+  if (_DAT_00803b98 != 0xff) {
+    if (!bVar2) {
+      return 3;
+    }
+    cVar5 = validateSecurityKey((byte *)(*(int *)(request + 6) + (length & 0xffff) + (uint)bVar3));
+    if (cVar5 != '\0') {
+      return 3;
     }
   }
-  return CONCAT31((int3)(uVar4 >> 8),MVar6);
+  cm550_memcpy((short)address,uVar7);
+  return 0;
 }
 
 
@@ -22772,38 +22768,44 @@ void cm550_FUN_00021778(int param_1)
 
 
 //
-// Function: cm550_memoryOperationFromMessageExtended @ 0x000217de
+// Function: handleJ1939WriteMemoryService @ 0x000217de
 //
 
-void cm550_memoryOperationFromMessageExtended(dword msg_ptr)
+/* PGN 61184 service 0x4b: request bytes 1-4 the address and 5 the length then the data - written
+   through writeJ1939DiagnosticMemory. The same function as CM848 0x50b408 (shared name; was
+   cm550_memoryOperationFromMessageExtended; PR #53 round 72). */
+
+void handleJ1939WriteMemoryService(dword request)
 
 {
-  dword operation_flags;
-  undefined1 auStack_8 [2];
-  word operation_size;
+  dword length;
+  dword address;
   
-  cm550_memcpy(auStack_8,*(int *)(msg_ptr + 6) + 1);
-  operation_flags = (dword)*(byte *)(*(int *)(msg_ptr + 6) + 5);
-  cm550_memoryOperationDispatcher(msg_ptr,operation_size,operation_flags);
+  cm550_memcpy(&address,*(int *)(request + 6) + 1);
+  length = (dword)*(byte *)(*(int *)(request + 6) + 5);
+  writeJ1939DiagnosticMemory(request,address,length);
   return;
 }
 
 
 
 //
-// Function: cm550_FUN_00021826 @ 0x00021826
+// Function: handleJ1939WriteMemoryLongLengthService @ 0x00021826
 //
 
-void cm550_FUN_00021826(dword msg_ptr)
+/* PGN 61184 service 0x4d: request bytes 1-4 the address and 5-8 the length then the data - written
+   through writeJ1939DiagnosticMemory. The same function as CM848 0x50b474 (shared name; was
+   cm550_FUN_00021826; PR #53 round 72). */
+
+void handleJ1939WriteMemoryLongLengthService(dword request)
 
 {
-  dword operation_flags;
-  undefined1 auStack_8 [2];
-  word operation_size;
+  dword length;
+  dword address;
   
-  cm550_memcpy(auStack_8,*(int *)(msg_ptr + 6) + 1);
-  cm550_memcpy(&operation_flags,*(int *)(msg_ptr + 6) + 5);
-  cm550_memoryOperationDispatcher(msg_ptr,operation_size,operation_flags);
+  cm550_memcpy(&address,*(int *)(request + 6) + 1);
+  cm550_memcpy(&length,*(int *)(request + 6) + 5);
+  writeJ1939DiagnosticMemory(request,address,length);
   return;
 }
 
@@ -22895,10 +22897,15 @@ byte cm550_FUN_00021920(void)
 
 
 //
-// Function: cm550_addressLookupFunction @ 0x00021964
+// Function: getJ1939MemoryServiceHeaderLength @ 0x00021964
 //
 
-uint cm550_addressLookupFunction(undefined4 param_1)
+/* The request bytes before the data for a PGN 61184 memory service: 0 below 0x41 else
+   j1939_memory_service_header_lengths[service - 0x41] (read from its base 0x21915). The same
+   function and table as CM848 0x50b610 / 0x53a322 (shared name; was cm550_addressLookupFunction; PR
+   #53 round 72). */
+
+uint getJ1939MemoryServiceHeaderLength(undefined4 param_1)
 
 {
   uint in_D0;
@@ -22922,8 +22929,8 @@ undefined4 cm550_diagnosticServiceSecurityValidator(dword msg_ptr)
 {
   byte auth_result;
   int required_param_len;
-  byte service_id;
   word msg_length;
+  byte service_id;
   
   service_id = **(byte **)(msg_ptr + 6);
   msg_length = *(word *)(msg_ptr + 4);
@@ -22949,7 +22956,7 @@ undefined4 cm550_diagnosticServiceSecurityValidator(dword msg_ptr)
   if (required_param_len + 10U != (uint)msg_length) {
     return 2;
   }
-  auth_result = sensorRangeValidation((byte *)(*(int *)(msg_ptr + 6) + required_param_len));
+  auth_result = validateSecurityKey((byte *)(*(int *)(msg_ptr + 6) + required_param_len));
   if (auth_result == 0) {
     return 0xff;
   }
@@ -23424,7 +23431,7 @@ cm550_diagMemoryReadResponseBuilder(byte *request_ptr,dword start_address,dword 
   if (0x6e4 < read_length) {
     return 2;
   }
-  bVar4 = cm550_addressLookupFunction();
+  bVar4 = getJ1939MemoryServiceHeaderLength();
   if (((*(short *)(request_ptr + 4) != 8) && (*(ushort *)(request_ptr + 4) != (ushort)bVar4)) &&
      (*(short *)(request_ptr + 4) != (ushort)(bVar4 + 10))) {
     return 2;
@@ -23443,7 +23450,7 @@ cm550_diagMemoryReadResponseBuilder(byte *request_ptr,dword start_address,dword 
     uVar7 = (&DAT_00022384)[(short)(ushort)(byte)(cVar6 + 0xbd)];
   }
   uVar2 = (undefined2)CONCAT31(uVar1,uVar7);
-  cVar6 = cm550_addressLookupFunction();
+  cVar6 = getJ1939MemoryServiceHeaderLength();
   msg_header = (j1939_header_t *)cm550_multiPacketBufferAllocator(uVar2);
   if (msg_header == (j1939_header_t *)0x0) {
     return 4;
@@ -33840,10 +33847,16 @@ void cm550_FUN_0002fbb2(void)
 
 
 //
-// Function: cm550_FUN_0002fbd8 @ 0x0002fbd8
+// Function: unscrambleSecurityKey @ 0x0002fbd8
 //
 
-void cm550_FUN_0002fbd8(byte *input_buffer,byte *output_buffer)
+/* Unscrambles the 10-byte security key: each bit goes to the front of the work buffer when its
+   security_key_scramble_mask bit is 0 and to the back otherwise / each work byte is XORed with the
+   work byte its security_key_byte_order entry names / the output is written through
+   security_key_byte_order backwards. The same function and tables as CM848 0x555cc / 0x5839a /
+   0x583a4 (shared name; was cm550_FUN_0002fbd8; PR #53 round 72). */
+
+void unscrambleSecurityKey(byte *input_buffer,byte *output_buffer)
 
 {
   byte bVar1;
@@ -33873,7 +33886,7 @@ void cm550_FUN_0002fbd8(byte *input_buffer,byte *output_buffer)
   cVar3 = '\0';
   cVar4 = '\t';
   input_byte_index = 0;
-  backward_write_ptr = &DAT_0002fbc4;
+  backward_write_ptr = security_key_scramble_mask;
   do {
     bVar6 = 0;
     bVar1 = *backward_write_ptr;
@@ -33914,7 +33927,7 @@ void cm550_FUN_0002fbd8(byte *input_buffer,byte *output_buffer)
   } while ((char)input_byte_index < '\n');
   cVar3 = '\0';
   pbVar9 = working_buffer;
-  pbVar10 = &DAT_0002fbce;
+  pbVar10 = security_key_byte_order;
   do {
     *pbVar9 = working_buffer[(short)(ushort)*pbVar10] ^ *pbVar9;
     cVar3 = cVar3 + '\x01';
@@ -33922,7 +33935,7 @@ void cm550_FUN_0002fbd8(byte *input_buffer,byte *output_buffer)
     pbVar10 = pbVar10 + 1;
   } while (cVar3 < '\n');
   cVar3 = '\0';
-  pbVar10 = &DAT_0002fbd7;
+  pbVar10 = security_key_byte_order + 9;
   pbVar9 = working_buffer;
   do {
     output_buffer[*pbVar10] = *pbVar9;
@@ -33936,12 +33949,19 @@ void cm550_FUN_0002fbd8(byte *input_buffer,byte *output_buffer)
 
 
 //
-// Function: sensorRangeValidation @ 0x0002fcdc
+// Function: validateSecurityKey @ 0x0002fcdc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Checks the 10-byte security key of a secured request: 0 (pass) when the key byte 0x803b98 is
+   0xff; 1 once the failure count 0x801e76 reaches 0x11 (a lockout after 17 misses); else
+   unscrambleSecurityKey gives 6 characters (compared with ecu_identity_test_pattern) and a 4-byte
+   hour meter stamp ((meter & ~0xff) - (stamp & ~0xff) < 0x1a): a match clears the count and passes
+   / a miss adds one and fails. Called by writeJ1939DiagnosticMemory (types 3 / 5) and
+   diagnosticCommandDispatcher (J1708 command 3). The same function as CM848 0x5573c (shared name;
+   was sensorRangeValidation; PR #53 round 72). */
 
-byte sensorRangeValidation(byte *auth_payload_ptr)
+byte validateSecurityKey(byte *auth_payload_ptr)
 
 {
   bool bVar1;
@@ -33961,7 +33981,7 @@ byte sensorRangeValidation(byte *auth_payload_ptr)
     validation_result = 1;
   }
   else {
-    cm550_FUN_0002fbd8(auth_payload_ptr,abStack_e);
+    unscrambleSecurityKey(auth_payload_ptr,abStack_e);
     bVar2 = 1;
     puVar4 = &local_12;
     pbVar5 = hour_meter_bytes;

@@ -594,9 +594,9 @@ typedef enum {
     J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_OFFSET = 0x48,  /* cm848_handleJ1939ReadByParameterIdLongOffsetService: the ID (2 bytes) / an offset (4) / a length (4) (was SERVICE_48) */
     J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_OFFSET = 0x49,  /* cm848_handleJ1939WriteByParameterIdLongOffsetService: the ID (2 bytes) / an offset (4) / a length (4) then the data (was J1939_DATA_COPY) */
     J1939_DIAGNOSTIC_SERVICE_READ_MEMORY = 0x4a,  /* cm848_handleJ1939ReadMemoryService: an address (4 bytes) and a length (1) (was MEM_READ_4B_ADDR_1B_LEN) */
-    J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY = 0x4b,  /* cm848_handleJ1939WriteMemoryService: an address (4 bytes) and a length (1) then the data (was SERVICE_4B) */
+    J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY = 0x4b,  /* handleJ1939WriteMemoryService: an address (4 bytes) and a length (1) then the data (was SERVICE_4B) */
     J1939_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH = 0x4c,  /* cm848_handleJ1939ReadMemoryLongLengthService: an address (4 bytes) and a length (4) (was MEM_READ_4B_ADDR_4B_LEN) */
-    J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH = 0x4d  /* cm848_handleJ1939WriteMemoryLongLengthService: an address (4 bytes) and a length (4) then the data (was SERVICE_4D) */
+    J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH = 0x4d  /* handleJ1939WriteMemoryLongLengthService: an address (4 bytes) and a length (4) then the data (was SERVICE_4D) */
 } J1939_DIAGNOSTIC_SERVICE;
 
 typedef enum {
@@ -644,7 +644,7 @@ typedef enum {
 typedef enum {
     MEMORY_REGION_TYPE_RAM = 0x00,  /* Written by a plain copy: boot 0x302000-0x3fffff (the first match - so the TPU / TouCAN registers from 0x304000 resolve here too) / application 0x40c26e-0x43ffff */
     MEMORY_REGION_TYPE_BANK_2_FLASH = 0x02,  /* Bank 2 flash from 0x500000: the boot worker writes it through eeprom_xfer_state.flash2_write_callback (the boot lookup answers UNMAPPED instead while flash2_writes_enabled is 0); the application writer passes the code back - which J1939_DIAGNOSTIC_RESULT reads as 0x02 WRONG_LENGTH (the codes coincide) */
-    MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED = 0x03,  /* Written after the write authorization (cm848_validateWriteAuth / cm848_processSecurityCodeConversion): boot 0x2fc000-0x301fff (its entry reads 0x2fc000-0x307fff but the RAM entry matches the rest first) / application 0x3fa000-0x40c26e and - in development mode - its register ranges */
+    MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED = 0x03,  /* Written after the write authorization (cm848_validateWriteAuth / validateSecurityKey): boot 0x2fc000-0x301fff (its entry reads 0x2fc000-0x307fff but the RAM entry matches the rest first) / application 0x3fa000-0x40c26e and - in development mode - its register ranges */
     MEMORY_REGION_TYPE_MAIN_FLASH = 0x04,  /* Main flash 0x0-0x6ffff: the boot worker programs it (cm848_dataTransferBufferWrite); the application writer refuses it (J1939_DIAGNOSTIC_RESULT_REGION_REFUSED) */
     MEMORY_REGION_TYPE_EEPROM = 0x05,  /* EEPROM from 0x1000000: written after the write authorization (boot eeprom_xfer_state.eeprom_write_callback / application cm848_queueEepromByteWrites) */
     MEMORY_REGION_TYPE_UNMAPPED = 0x09,  /* No entry holds the range - the application map leaves out the dual-port TPU RAM 0x302000-0x3037ff that emulation mode takes from the CPU - or Bank 2 in the boot kernel while flash2_writes_enabled is 0; the readers and writers pass it back as the result (J1939_DIAGNOSTIC_RESULT_UNMAPPED_ADDRESS / BOOT_DIAGNOSTIC_RESULT_ADDRESS_NOT_ACCEPTED) */
@@ -933,7 +933,7 @@ typedef enum {
 typedef enum {
     J1939_DIAGNOSTIC_RESULT_ACCEPTED = 0x00,  /* Done - cm848_sendJ1939ResponseFrame answers with 0x0c (was DIAG_ACK / SUCCESS) */
     J1939_DIAGNOSTIC_RESULT_WRONG_LENGTH = 0x02,  /* The request length is none of 8 / its header and data / that + 10 for the key - or a memory length over 1764 (was DIAG_INVALID_LENGTH) */
-    J1939_DIAGNOSTIC_RESULT_KEY_REFUSED = 0x03,  /* cm848_processSecurityCodeConversion refused the request's key (was SECURITY_FAILED) */
+    J1939_DIAGNOSTIC_RESULT_KEY_REFUSED = 0x03,  /* validateSecurityKey refused the request's key (was SECURITY_FAILED) */
     J1939_DIAGNOSTIC_RESULT_CANNOT_COMPLY = 0x04,  /* Not now or not this: development mode is not on (cm848_exitDevelopmentMode) / no transmit record is free (the read worker) / an unknown broadcast item (cm848_updateJ1939BroadcastEnableMask) (was DIAG_NACK_NOT_READY / BUFFER_OVERFLOW) */
     J1939_DIAGNOSTIC_RESULT_NOT_SAFE = 0x07,  /* Refused in this state: not_safe_to_program_flag set (an EEPROM write / a forced exit from development mode) / the engine not stopped (cm848_restartThroughBootRom) / outside the key and flag gate of cm848_requestClearInactiveFaults (was DIAG_NACK_PROTECTED) */
     J1939_DIAGNOSTIC_RESULT_UNKNOWN_PARAMETER_ID = 0x08,  /* cm848_lookupParameterIdAddress does not know the ID (was ADDR_VALIDATION_FAIL) */

@@ -154,3 +154,7 @@ function_address,function_name,old_name,new_name,type,comment
 0x00006d24,cm848_dispatchDiagnosticService,BVar1,service,BOOT_DIAGNOSTIC_SERVICE,The request's service byte - named as the enum type reaches it from the entry field (PR #53 round 63)
 0x00006d24,cm848_dispatchDiagnosticService,BVar4,result_code,BOOT_DIAGNOSTIC_RESULT,The validator's or the handler's result: 0xff = no response - else cm848_sendDiagServiceResponse sends it (PR #53 round 66)
 0x00006d24,cm848_dispatchDiagnosticService,pbVar3,entry,boot_diagnostic_service_entry_t *,The diagnostic_service_dispatch_table entry being compared (PR #53 round 66)
+0x0050b408,handleJ1939WriteMemoryService,local_c,address,byte *,The address - request bytes 1-4 (PR #53 round 72)
+0x0050b408,handleJ1939WriteMemoryService,local_10,length,uint,The byte count - request byte 5 (PR #53 round 72)
+0x0050b474,handleJ1939WriteMemoryLongLengthService,local_10,address,byte *,The address - request bytes 1-4 (PR #53 round 72)
+0x0050b474,handleJ1939WriteMemoryLongLengthService,local_c,length,dword,The byte count - request bytes 5-8 (PR #53 round 72)

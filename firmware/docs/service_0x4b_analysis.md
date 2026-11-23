@@ -3,6 +3,7 @@
 > **Note:** J90280.05 has been removed from the repository (unreliable partial ROM dump). The J90280.05 references below are retained as historical analysis context. J90350.00 is the primary CM550 firmware.
 
 > **Current names (PR #53 round 72):** J90350.00's `addressRangeValidator` (0x3460e) is `lookupApplicationMemoryRegionType` - the same function as CM848 0x50d784, so the two firmwares share the name - and `MEMORY_ACCESS_FLAG` is `MEMORY_REGION_TYPE` (0 RAM / 3 AUTHORIZATION_REQUIRED / 4 MAIN_FLASH / 5 EEPROM / 9 UNMAPPED / 10 REFUSED: CM848's codes, which add 2 = Bank 2 flash); its table is `application_memory_region_table` at ROM 0x345dc (5 entries; CM848 has 7).
+> The write path's other functions are CM848 twins too, so they share names: `memoryOperationDispatcher` (0x2148a) = `writeJ1939DiagnosticMemory`, `memoryOperationFromMessageExtended` (0x217de) = `handleJ1939WriteMemoryService`, `memoryOperationFromMessage8Byte` (0x21826) = `handleJ1939WriteMemoryLongLengthService` (service 0x4d: its length is 4 bytes - not an 8-byte message), `addressLookupFunction` (0x21964) = `getJ1939MemoryServiceHeaderLength`, `hourMeterSecurityValidator` (0x2fcdc) = `validateSecurityKey` and `bitPackingAlgorithm` (0x2fbd8) = `unscrambleSecurityKey`; the tables are `security_key_scramble_mask` (0x2fbc4), `security_key_byte_order` (0x2fbce) and `j1939_memory_service_header_lengths` (0x21956), each byte-identical with CM848's.
 
 Cross-firmware comparison of the J1939 memory write implementation between J90280.05 (removed) and J90350.00 (live ECU).
 

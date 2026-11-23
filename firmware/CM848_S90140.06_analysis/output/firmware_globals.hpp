@@ -33,6 +33,8 @@ extern byte pci_diagnostic_power_up_announcement[8];  // 0x00057bb6
 extern word pci_security_key_table[16];  // 0x00057bbe
 extern byte calibration_table_ptr_3;  // 0x00057d76
 extern qadc_channel_dispatch_entry_t qadc_channel_dispatch_table[129];  // 0x00057dd2
+extern byte security_key_scramble_mask[10];  // 0x0005839a
+extern byte security_key_byte_order[10];  // 0x000583a4
 extern word dual_port_tpu_ram_load_table[1508];  // 0x0005862e
 extern word first_checksum_region_end_marker;  // 0x000591f6
 extern sensor_channel_config_t barometric_pressure_sensor_config;  // 0x000592a2
@@ -5735,6 +5737,7 @@ extern dword tachometer_signal_period;  // 0x0040c262
 extern void * data_collector_start_address;  // 0x0040c278
 extern void * data_collector_end_address;  // 0x0040c280
 extern dword flash2_command_register;  // 0x00500000
+extern byte j1939_memory_service_header_lengths[14];  // 0x0053a322
 extern byte j1939_memory_read_reply_services[10];  // 0x0053a330
 extern memory_region_t application_memory_region_table[7];  // 0x0053a33a
 extern sci_command_dispatch_entry_t sci_command_dispatch_table[19];  // 0x0053a9a0

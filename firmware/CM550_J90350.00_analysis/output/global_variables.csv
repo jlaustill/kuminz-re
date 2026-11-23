@@ -59,12 +59,15 @@ address,name,type,comment
 0x00020022,switchdataD_00020022,ushort,
 0x00021526,switchD,,
 0x0002152a,switchdataD_0002152a,ushort,
+0x00021956,j1939_memory_service_header_lengths,byte[14],The request bytes before the data for PGN 61184 services 0x41-0x4e (3 7 7 4 7 6 6 11 11 6 6 9 9 3) - getJ1939MemoryServiceHeaderLength reads it from its base 0x21915; byte-identical with CM848's 0x53a322 (PR #53 round 72)
 0x0002347a,switchD,,
 0x0002347e,switchdataD_0002347e,ushort,
 0x000234f6,switchD,,
 0x000234fa,switchdataD_000234fa,ushort,
 0x0002f2c2,switchD,,
 0x0002f2c6,switchdataD_0002f2c6,ushort,
+0x0002fbc4,security_key_scramble_mask,byte[10],The mask unscrambleSecurityKey routes the security key's bits by (46 58 9a 32 70 87 23 99 85 64) - byte-identical with CM848's 0x5839a (PR #53 round 72)
+0x0002fbce,security_key_byte_order,byte[10],The byte order unscrambleSecurityKey XORs and writes the key by (06 08 01 02 00 07 03 09 05 04) - byte-identical with CM848's 0x583a4 (PR #53 round 72)
 0x00032d00,switchD,,
 0x00032d04,switchdataD_00032d04,ushort,
 0x00033932,switchD,,

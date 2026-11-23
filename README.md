@@ -37,7 +37,7 @@ The following diagram shows the complete authentication process for writing to s
 ├──────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
 │  ┌─────────────────────────────────────┐                                     │
-│  │ memoryOperationFromMessageExtended  │                                     │
+│  │ handleJ1939WriteMemoryService       │                                     │
 │  │ @ 0x217de                           │                                     │
 │  │                                     │                                     │
 │  │ • Parse J1939 message               │                                     │
@@ -46,7 +46,7 @@ The following diagram shows the complete authentication process for writing to s
 │  └─────────────────┬───────────────────┘                                     │
 │                    ▼                                                         │
 │  ┌─────────────────────────────────────┐                                     │
-│  │ memoryOperationDispatcher           │                                     │
+│  │ writeJ1939DiagnosticMemory          │                                     │
 │  │ @ 0x2148a                           │                                     │
 │  │                                     │                                     │
 │  │ • Validate message length           │──── FAIL ──▶ Return 0x02            │
@@ -85,14 +85,14 @@ The following diagram shows the complete authentication process for writing to s
 │     │             │  │                          │  │                         │
 │     │             ▼  ▼                          ▼  ▼                         │
 │     │     ┌────────┐ Return 0x1A         Write   Return 0x07                 │
-│     │     │ hourMeterSecurityValidator   to      (LOGGING_                   │
+│     │     │ validateSecurityKey          to      (LOGGING_                   │
 │     │     │ @ 0x2fcdc                    EEPROM  STATE_ERROR)                 │
 │     │     │                       │         │                                │
 │     │     │ 1. Check retry count  │         │                                │
 │     │     │    (< 17 attempts)    │         │                                │
 │     │     │                       │         │                                │
 │     │     │ 2. Call               │         │                                │
-│     │     │    bitPackingAlgorithm│         │                                │
+│     │     │  unscrambleSecurityKey│         │                                │
 │     │     │    @ 0x2fbd8          │         │                                │
 │     │     │    ┌──────────────────┴──┐      │                                │
 │     │     │    │ Transform 10-byte   │      │                                │
@@ -151,13 +151,14 @@ The following diagram shows the complete authentication process for writing to s
 | 0x0A   | WRITE_DENIED           | ROM region - blocked           |
 | 0x1A   | AUTH_REQUIRED_MISSING  | Secured region, no auth provided |
 
-### bitPackingAlgorithm Lookup Tables (ROM @ 0x2fbc4)
+### unscrambleSecurityKey Lookup Tables (ROM @ 0x2fbc4)
 
-| Table                  | Address  | Values (hex)                          |
-|------------------------|----------|---------------------------------------|
-| SECURITY_MASK_TABLE    | 0x2fbc4  | `46 58 9a 32 70 87 23 99 85 64`       |
-| SECURITY_XOR_TABLE     | 0x2fbce  | `06 08 01 02 00 07 03 09 05 04`       |
-| SECURITY_REORDER_TABLE | 0x2fbd7  | (same data, read backwards)           |
+| Table                        | Address  | Values (hex)                    |
+|------------------------------|----------|---------------------------------|
+| `security_key_scramble_mask` | 0x2fbc4  | `46 58 9a 32 70 87 23 99 85 64` |
+| `security_key_byte_order`    | 0x2fbce  | `06 08 01 02 00 07 03 09 05 04` - the XOR step reads it forwards, the reorder step backwards from 0x2fbd7 |
+
+CM848 holds the same bytes at 0x5839a / 0x583a4, and its `unscrambleSecurityKey` (0x555cc) is the same function - the J1939 memory write path is shared code (PR #53 round 72).
 
 For detailed analysis, see [firmware/docs/service_0x4b_analysis.md](firmware/docs/service_0x4b_analysis.md).
 

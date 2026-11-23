@@ -117,19 +117,20 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Memory Operations (Service 0x4B Write Path)
 # -----------------------------------------------------------------------------
-# memoryOperationDispatcher @ 0x2148a - Core memory write handler
+# writeJ1939DiagnosticMemory @ 0x2148a - Core memory write handler
 # Returns: MEMORY_OP_RESULT enum (0=success, 2=invalid_length, 3=auth_failed, etc.)
-0x0002148a,memoryOperationDispatcher,0,request_ptr,int,Pointer to memory operation request (message data)
-0x0002148a,memoryOperationDispatcher,1,operation_size,short,Size of memory operation (data bytes to write)
-0x0002148a,memoryOperationDispatcher,2,operation_flags,uint,Operation control flags from message byte 5
+0x0002148a,writeJ1939DiagnosticMemory,return,,char,The result: 0 written / 2 wrong length / 3 key missing (type 3) or refused / 7 EEPROM writes blocked / 0x0a main flash / 0x0b EEPROM queue full / 0x1a key missing (EEPROM) - or the region type passed back (UNMAPPED / REFUSED); a char as in CM848 so the region codes do not name the result (PR #53 round 72)
+0x0002148a,writeJ1939DiagnosticMemory,0,request,int,The PGN 61184 request (+4 its data length / +6 its data pointer) (was request_ptr; PR #53 round 72)
+0x0002148a,writeJ1939DiagnosticMemory,1,address,dword,The first address to write - the request's bytes 1-4 (was operation_size short: it read the address as two words; PR #53 round 72)
+0x0002148a,writeJ1939DiagnosticMemory,2,length,dword,The byte count - 1764 at most (was operation_flags uint; PR #53 round 72)
 
-# memoryOperationFromMessageExtended @ 0x217de - Service 0x4B entry point
-# Extracts address/flags from J1939 message and calls memoryOperationDispatcher
-0x000217de,memoryOperationFromMessageExtended,0,msg_ptr,int,Pointer to J1939 diagnostic message structure
+# handleJ1939WriteMemoryService @ 0x217de - Service 0x4B entry point
+# Extracts address/flags from J1939 message and calls writeJ1939DiagnosticMemory
+0x000217de,handleJ1939WriteMemoryService,0,request,int,The PGN 61184 request (was msg_ptr - Pointer to J1939 diagnostic message structure; PR #53 round 72)
 
-# memoryOperationFromMessage8Byte @ 0x21826 - 8-byte message variant
-# Similar to Extended but for shorter messages
-0x00021826,memoryOperationFromMessage8Byte,0,msg_ptr,int,Pointer to 8-byte J1939 diagnostic message
+# handleJ1939WriteMemoryLongLengthService @ 0x21826 (was memoryOperationFromMessage8Byte; PR #53 round 72) - service 0x4d: the 4-byte length variant
+# Like service 0x4b but the length is request bytes 5-8
+0x00021826,handleJ1939WriteMemoryLongLengthService,0,request,int,The PGN 61184 request (was msg_ptr - Pointer to 8-byte J1939 diagnostic message; PR #53 round 72)
 
 # lookupApplicationMemoryRegionType @ 0x3460e (was addressRangeValidator) - the type of the application_memory_region_table entry holding a range
 # Returns: MEMORY_REGION_TYPE (was MEMORY_ACCESS_FLAG; PR #53 round 72)
@@ -180,16 +181,16 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Security Authentication Functions
 # -----------------------------------------------------------------------------
-# bitPackingAlgorithm @ 0x2fbd8 - Core security key derivation
+# unscrambleSecurityKey @ 0x2fbd8 - Core security key derivation
 # Takes 10-byte input and produces 10-byte output via bit manipulation
 # Uses mask table, XOR table, and reorder table from ROM
-0x0002fbd8,bitPackingAlgorithm,0,input_buffer,byte*,Pointer to 10-byte authentication input payload
-0x0002fbd8,bitPackingAlgorithm,1,output_buffer,byte*,Pointer to 10-byte output (security_key[6] + hour_meter[4])
+0x0002fbd8,unscrambleSecurityKey,0,input_buffer,byte*,Pointer to 10-byte authentication input payload
+0x0002fbd8,unscrambleSecurityKey,1,output_buffer,byte*,Pointer to 10-byte output (security_key[6] + hour_meter[4])
 
-# hourMeterSecurityValidator @ 0x2fcdc - Validates auth payload against security key and hour meter
+# validateSecurityKey @ 0x2fcdc - Validates auth payload against security key and hour meter
 # Returns 0 on success, 1 on failure
 # Increments retry counter on failure, locks out at 17 (0x11) attempts
-0x0002fcdc,hourMeterSecurityValidator,0,auth_payload_ptr,byte*,Pointer to 10-byte authentication payload from request
+0x0002fcdc,validateSecurityKey,0,auth_payload_ptr,byte*,Pointer to 10-byte authentication payload from request
 
 # diagnosticServiceSecurityValidator @ 0x21982 - Checks if service requires auth and validates
 # Returns 0xFF on success (auth passed or not needed), error code on failure

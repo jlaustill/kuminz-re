@@ -921,21 +921,21 @@ typedef enum {
 typedef enum {
     INVALID_LENGTH = 0x02,  /* diagnosticServiceSecurityValidator - message length mismatch */
     ERROR_SECURITY_FAILED = 0x03,  /* diagnosticServiceSecurityValidator - systemSecurityCheck returned non-zero */
-    CONDITION_NOT_MET = 0x07,  /* memoryOperationDispatcher - system_logging_state check failed */
+    CONDITION_NOT_MET = 0x07,  /* writeJ1939DiagnosticMemory - system_logging_state check failed */
     ADDR_LOOKUP_FAIL = 0x08,  /* j1939MemoryDataCopyResolver - initial address lookup at 0xeaf0 failed */
     ADDR_RANGE_INVALID = 0x09,  /* lookupApplicationMemoryRegionType @ 0x3460e (MEMORY_REGION_TYPE_UNMAPPED) - the range is in no application_memory_region_table entry (J90280.05: addressRangeValidator @ 0x2b544; PR #53 round 72) */
     ADDR_ACCESS_DENIED = 0x0A,  /* lookupApplicationMemoryRegionType @ 0x3460e (MEMORY_REGION_TYPE_REFUSED) - the registers 0xffc800-0xffffff while the development mode flag is not 1 (J90280.05: addressRangeValidator @ 0x2b544; PR #53 round 72) */
-    BUFFER_WRITE_FAIL = 0x0B,  /* memoryOperationDispatcher - circularBufferWrite returned error */
-    WRITE_DENIED = 0x0A,  /* memoryOperationDispatcher - write to read-only region (ROM/Flash case 4) */
+    BUFFER_WRITE_FAIL = 0x0B,  /* writeJ1939DiagnosticMemory - circularBufferWrite returned error */
+    WRITE_DENIED = 0x0A,  /* writeJ1939DiagnosticMemory - write to read-only region (ROM/Flash case 4) */
     PATCH_LIMIT = 0x0E,  /* diagnosticResponseBuilder - memory patch count exceeded limit */
     UNKNOWN_SERVICE = 0x18,  /* diagnosticServiceDispatcher - service ID not in dispatch table */
-    AUTH_REQUIRED_MISSING = 0x1A  /* memoryOperationDispatcher - EEPROM write requires auth but none provided */
+    AUTH_REQUIRED_MISSING = 0x1A  /* writeJ1939DiagnosticMemory - EEPROM write requires auth but none provided */
 } DIAG_ERROR_SOURCE;
 
 typedef enum {
     MEMORY_OPERATION_SUCCESS = 0x00,  /* Memory operation completed successfully (masked from memcpy return) */
     MEMORY_OPERATION_INVALID_LENGTH = 0x02,  /* Message length mismatch - expected calculated_msg_length or +10 for auth */
-    MEMORY_OPERATION_AUTH_FAILED = 0x03,  /* hourMeterSecurityValidator returned non-zero (auth payload invalid) */
+    MEMORY_OPERATION_AUTH_FAILED = 0x03,  /* validateSecurityKey returned non-zero (auth payload invalid) */
     CALIBRATION_WRITE_BLOCKED = 0x07,  /* EEPROM write blocked - calibration_write_protect_state==1 and calibration_bank_selector!=FACTORY */
     MEMORY_OPERATION_WRITE_DENIED = 0x0A,  /* Region type 4 (ROM/Flash) - write operations not permitted */
     MEMORY_OPERATION_BUFFER_WRITE_FAIL = 0x0B,  /* circularBufferWrite returned error during EEPROM logging */
@@ -957,7 +957,7 @@ typedef enum {
 
 typedef enum {
     BYPASS_ENABLED = 0xB522,  /* Magic value to bypass security checks (stored at 0x803586) */
-    LEGACY_BYPASS = 0x00FF  /* Legacy security bypass value check in memoryOperationDispatcher */
+    LEGACY_BYPASS = 0x00FF  /* Legacy security bypass value check in writeJ1939DiagnosticMemory */
 } SECURITY_BYPASS;
 
 typedef enum {

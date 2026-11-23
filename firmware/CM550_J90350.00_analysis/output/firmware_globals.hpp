@@ -8,6 +8,9 @@ extern ushort USHORT_0000fc3a;  // 0x0000fc3a
 extern ushort USHORT_0000fc3c;  // 0x0000fc3c
 extern void * PTR_DAT_00011ba6;  // 0x00011ba6
 extern ushort USHORT_00013d7e;  // 0x00013d7e
+extern byte j1939_memory_service_header_lengths[14];  // 0x00021956
+extern byte security_key_scramble_mask[10];  // 0x0002fbc4
+extern byte security_key_byte_order[10];  // 0x0002fbce
 extern memory_region_t application_memory_region_table[5];  // 0x000345dc
 extern undefined rpm_rate_limit_countdown;  // 0x00800000
 extern undefined rpm_control_timer_1;  // 0x00800002
