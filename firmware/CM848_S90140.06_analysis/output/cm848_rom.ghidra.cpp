@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 03:21:35 MST 2026
+// Generated: Mon Nov 23 03:59:56 MST 2026
 
 
 //
@@ -58604,7 +58604,7 @@ void cm848_applicationMain(void)
   initializeEngineSpeedLimitDefaults();
   cm848_initializeBatteryTemperatureChannel();
   cm848_initializeFuelLevelChannel();
-  governor_fuel_mode_initialization();
+  cm848_initializeCruiseControl();
   hpcr_cbdInitFilterState();
   hpcr_initializeEngineProtection();
   cm848_initializeAirConditioningClutchControl();
@@ -58633,7 +58633,7 @@ void cm848_applicationMain(void)
   cm848_initializeAuxiliaryInjectionQuantityState();
   cm848_initializeAuxiliaryInjectionTimingState();
   cm848_initializeWatchdogFueling();
-  fuel_demand_timing_initialize();
+  cm848_initializeRockCycleAndTsc1LostManagement();
   cm848_resetCoolantOverheatFuelDerate();
   cm848_initializeInjectorDriverBoosterCapacitor1VoltageChannel();
   cm848_initializeInjectorDriverBoosterCapacitor2VoltageChannel();
@@ -74228,10 +74228,16 @@ LAB_00511cac:
 
 
 //
-// Function: fuel_demand_timing_initialize @ 0x00511ea8
+// Function: cm848_initializeRockCycleAndTsc1LostManagement @ 0x00511ea8
 //
 
-void fuel_demand_timing_initialize(void)
+/* Boot (cm848_applicationMain): the initializer of cm848_updateRockCycleEngineSpeedLimitWindow and
+   cm848_updateParkNeutralFlagAndTsc1Activity just before it in ROM - sets
+   tsc1_lost_management_active_flag / loads tsc1_lost_counter from tsc1_lost_counter_initial_value /
+   sets the rock cycle countdown lookup's cache to its first segment (2). Nothing here is fuel
+   demand or timing (was fuel_demand_timing_initialize; PR #53 round 57) */
+
+void cm848_initializeRockCycleAndTsc1LostManagement(void)
 
 {
   tsc1_lost_management_active_flag = 1;
@@ -74453,10 +74459,17 @@ void cm848_monitorBrakeSwitchPairAgreement(void)
 
 
 //
-// Function: governor_fuel_mode_initialization @ 0x00512554
+// Function: cm848_initializeCruiseControl @ 0x00512554
 //
 
-void governor_fuel_mode_initialization(void)
+/* Boot (cm848_applicationMain): the initializer of cm848_cruiseControlPeriodicUpdate - the on / off
+   toggle off - cruise_control_denied_status and cruise_control_last_cutout_reason 1 - the raw
+   switch requests 5 and the debounced ones CRUISE_SWITCH_IDLE - the engine speed / vehicle speed
+   ratio filter (coefficient e2m 8A0E +C) with its previous sample / integral / steady count zeroed.
+   It also zeroes the word at 0x3fcd90 which nothing reads (was governor_fuel_mode_initialization;
+   PR #53 round 57) */
+
+void cm848_initializeCruiseControl(void)
 
 {
   cruise_control_on_toggle_state = 0;
@@ -74468,27 +74481,33 @@ void governor_fuel_mode_initialization(void)
   cruise_switch_request = CRUISE_SWITCH_IDLE;
   cruise_switch_request_working_previous = CRUISE_SWITCH_IDLE;
   cruise_switch_request_debounce_count = 0;
-  ema_filter_state_t_003fcd96.accumulator = 0;
-  ema_filter_state_t_003fcd96.coefficient = &WORD_0040872a;
+  cruise_engine_to_vehicle_speed_ratio_filter_state.accumulator = 0;
+  cruise_engine_to_vehicle_speed_ratio_filter_state.coefficient =
+       &cruise_engine_to_vehicle_speed_ratio_filter_coefficient;
   DAT_003fcd90 = 0;
-  cruise_rpm_prev_sample = 0;
-  cruise_rpm_ratio_ema_prev = 0;
-  cruise_rpm_ratio_integral = 0;
-  cruise_steady_state_debounce_counter = 0;
+  cruise_engine_speed_previous = 0;
+  cruise_engine_to_vehicle_speed_ratio_previous = 0;
+  cruise_engine_to_vehicle_speed_ratio_integral = 0;
+  cruise_engine_to_vehicle_speed_ratio_steady_count = 0;
   return;
 }
 
 
 
 //
-// Function: governor_cruise_coastButton_handler @ 0x005125f4
+// Function: cm848_selectCruiseStateForCoastSwitch @ 0x005125f4
 //
 
-/* Cruise switch-request state 2 (COAST button - confirmed live 2026-06-12) -> CRUISE_CONTROL_STATE:
+/* Cruise state for a COAST switch request (cm848_cruiseControlPeriodicUpdate while the cruise is
+   not denied): while engaged a new press gives CRUISE_BUMP_DOWN and reloads
+   cruise_coast_accelerate_hold_countdown from cruise_coast_accelerate_hold_time (e2m 8A0E +2
+   Coast_Accel_Timer) and holding it until the countdown ends gives CRUISE_COAST; otherwise the
+   state stays (was governor_cruise_coastButton_handler; PR #53 round 57) | earlier note: Cruise
+   switch-request state 2 (COAST button - confirmed live 2026-06-12) -> CRUISE_CONTROL_STATE:
    returns CRUISE_COAST(3)/CRUISE_BUMP_DOWN(5) via the holdoff countdown. Was
    governor_cruiseOverride_state2_handler. */
 
-int governor_cruise_coastButton_handler(void)
+CRUISE_CONTROL_STATE cm848_selectCruiseStateForCoastSwitch(void)
 
 {
   CRUISE_CONTROL_STATE CVar1;
@@ -74509,7 +74528,7 @@ int governor_cruise_coastButton_handler(void)
       CVar1 = CRUISE_BUMP_DOWN;
     }
   }
-  return (int)(short)CVar1;
+  return CVar1;
 }
 
 
@@ -74553,87 +74572,111 @@ int cm848_updateCruiseControlOnOffToggle(void)
 
 
 //
-// Function: governor_cruise_baseState_get @ 0x00512724
+// Function: cm848_selectBaseCruiseState @ 0x00512724
 //
 
-/* Base CRUISE_CONTROL_STATE from override/enable flags: CRUISE_HOLD(7) if override active; else
+/* The base cruise state of each pass before the switch handlers
+   (cm848_cruiseControlPeriodicUpdate): CRUISE_HOLD while cruise_control_engaged_flag is set / else
+   CRUISE_CANCEL while cruise_resume_speed_valid_flag is set (a resume speed is kept) / else
+   CRUISE_OFF (was governor_cruise_baseState_get; PR #53 round 57) | earlier note: Base
+   CRUISE_CONTROL_STATE from override/enable flags: CRUISE_HOLD(7) if override active; else
    CRUISE_CANCEL(8) if cruise_resume_speed_valid_flag set; else CRUISE_OFF(0). This is the FIRST
    write to cruise_control_state each cycle in cm848_cruiseControlPeriodicUpdate before the button
    handlers may overwrite it. Was governor_fuelMode_state_get. */
 
-undefined4 governor_cruise_baseState_get(void)
+CRUISE_CONTROL_STATE cm848_selectBaseCruiseState(void)
 
 {
-  undefined4 uVar1;
+  CRUISE_CONTROL_STATE CVar1;
   
   if (cruise_control_engaged_flag == 0) {
     if (cruise_resume_speed_valid_flag == 0) {
-      uVar1 = 0;
+      CVar1 = CRUISE_OFF;
     }
     else {
-      uVar1 = 8;
+      CVar1 = CRUISE_CANCEL;
     }
   }
   else {
-    uVar1 = 7;
+    CVar1 = CRUISE_HOLD;
   }
-  return uVar1;
+  return CVar1;
 }
 
 
 
 //
-// Function: governor_cruise_rpmRatio_ema @ 0x0051275c
+// Function: cm848_filterCruiseEngineToVehicleSpeedRatio @ 0x0051275c
 //
 
-void governor_cruise_rpmRatio_ema(void)
+/* e2m 8A0F +2 Cruise_N_V_Ratio: (filtered_engine_speed + cruise_engine_speed_previous) x 128 /
+   vehicle_speed_rise_limited (0xffff when that would overflow) filtered by exponentialMovingAverage
+   with cruise_engine_to_vehicle_speed_ratio_filter_state (coefficient e2m 8A0E +C
+   Cruise_N_V_Calc_Filter_Constant) into cruise_engine_to_vehicle_speed_ratio. The first step of
+   cm848_cruiseControlPeriodicUpdate (was governor_cruise_rpmRatio_ema; PR #53 round 57) */
+
+void cm848_filterCruiseEngineToVehicleSpeedRatio(void)
 
 {
   dword dVar1;
   uint uVar2;
   
-  uVar2 = ((uint)engine_speed_state.filtered_engine_speed + (uint)cruise_rpm_prev_sample) * 0x80;
+  uVar2 = ((uint)engine_speed_state.filtered_engine_speed + (uint)cruise_engine_speed_previous) *
+          0x80;
   if ((uint)vehicle_speed_rise_limited * 0xffff < uVar2) {
     uVar2 = 0xffff;
   }
   else {
     uVar2 = uVar2 / vehicle_speed_rise_limited;
   }
-  dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&ema_filter_state_t_003fcd96);
-  cruise_rpm_ratio_ema = (word)dVar1;
+  dVar1 = exponentialMovingAverage
+                    (uVar2 & 0xffff,&cruise_engine_to_vehicle_speed_ratio_filter_state);
+  cruise_engine_to_vehicle_speed_ratio = (word)dVar1;
   return;
 }
 
 
 
 //
-// Function: cm848_integrateCruiseRpmRatioChange @ 0x005127d8
+// Function: cm848_integrateCruiseEngineToVehicleSpeedRatioChange @ 0x005127d8
 //
 
-/* Integrates the change of the engine speed / vehicle speed ratio (cruise_rpm_ratio_ema) into
-   cruise_rpm_ratio_integral - not a speed error; the clutch cutout uses it (was
+/* e2m 8A0F +0 Cruise_N_V_Ratio_Int: adds the pass's change of cruise_engine_to_vehicle_speed_ratio
+   to cruise_engine_to_vehicle_speed_ratio_integral; a change below
+   cruise_engine_to_vehicle_speed_ratio_integral_clear_level (8A0E +8) counts
+   cruise_engine_to_vehicle_speed_ratio_steady_count instead and at
+   cruise_engine_to_vehicle_speed_ratio_integral_clear_count (8A0E +6) passes the integral is
+   zeroed. The kick-out level is cruise_engine_to_vehicle_speed_ratio_integral_limit (8A0E +A) (was
+   cm848_integrateCruiseRpmRatioChange; PR #53 round 57) | earlier note: Integrates the change of
+   the engine speed / vehicle speed ratio (cruise_engine_to_vehicle_speed_ratio) into
+   cruise_engine_to_vehicle_speed_ratio_integral - not a speed error; the clutch cutout uses it (was
    governor_cruise_speedError_integrate) */
 
-void cm848_integrateCruiseRpmRatioChange(void)
+void cm848_integrateCruiseEngineToVehicleSpeedRatioChange(void)
 
 {
   uint uVar1;
   
-  uVar1 = (uint)(short)(cruise_rpm_ratio_ema_prev - cruise_rpm_ratio_ema);
+  uVar1 = (uint)(short)(cruise_engine_to_vehicle_speed_ratio_previous -
+                       cruise_engine_to_vehicle_speed_ratio);
   if ((int)uVar1 < 0) {
     uVar1 = -uVar1;
   }
-  if ((uVar1 & 0xffff) < (uint)cruise_ratio_steady_threshold) {
-    cruise_steady_state_debounce_counter = cruise_steady_state_debounce_counter + 1;
-    if (cruise_steady_debounce_count <= cruise_steady_state_debounce_counter) {
-      cruise_steady_state_debounce_counter = cruise_steady_debounce_count;
-      cruise_rpm_ratio_integral = 0;
+  if ((uVar1 & 0xffff) < (uint)cruise_engine_to_vehicle_speed_ratio_integral_clear_level) {
+    cruise_engine_to_vehicle_speed_ratio_steady_count =
+         cruise_engine_to_vehicle_speed_ratio_steady_count + 1;
+    if (cruise_engine_to_vehicle_speed_ratio_integral_clear_count <=
+        cruise_engine_to_vehicle_speed_ratio_steady_count) {
+      cruise_engine_to_vehicle_speed_ratio_steady_count =
+           cruise_engine_to_vehicle_speed_ratio_integral_clear_count;
+      cruise_engine_to_vehicle_speed_ratio_integral = 0;
     }
   }
   else {
-    cruise_rpm_ratio_integral =
-         cruise_rpm_ratio_integral + (cruise_rpm_ratio_ema_prev - cruise_rpm_ratio_ema);
-    cruise_steady_state_debounce_counter = 0;
+    cruise_engine_to_vehicle_speed_ratio_integral =
+         cruise_engine_to_vehicle_speed_ratio_integral +
+         (cruise_engine_to_vehicle_speed_ratio_previous - cruise_engine_to_vehicle_speed_ratio);
+    cruise_engine_to_vehicle_speed_ratio_steady_count = 0;
   }
   return;
 }
@@ -74641,14 +74684,19 @@ void cm848_integrateCruiseRpmRatioChange(void)
 
 
 //
-// Function: governor_cruise_resumeButton_handler @ 0x00512878
+// Function: cm848_selectCruiseStateForResumeSwitch @ 0x00512878
 //
 
-/* Cruise switch-request state 4 (RESUME/ACCEL button) -> CRUISE_CONTROL_STATE: override-off with
-   fuel-enable set returns CRUISE_RESUME(2); held returns CRUISE_ACCELERATE(4)/CRUISE_BUMP_UP(6).
-   Was governor_cruiseOverride_state4_handler. */
+/* Cruise state for a RESUME switch request: not engaged with a resume speed kept
+   (cruise_resume_speed_valid_flag) it gives CRUISE_RESUME and reloads the hold countdown; while
+   engaged a new press gives CRUISE_BUMP_UP (and reloads the countdown) and holding it until the
+   countdown ends gives CRUISE_ACCELERATE; otherwise the state stays (was
+   governor_cruise_resumeButton_handler; PR #53 round 57) | earlier note: Cruise switch-request
+   state 4 (RESUME/ACCEL button) -> CRUISE_CONTROL_STATE: override-off with fuel-enable set returns
+   CRUISE_RESUME(2); held returns CRUISE_ACCELERATE(4)/CRUISE_BUMP_UP(6). Was
+   governor_cruiseOverride_state4_handler. */
 
-int governor_cruise_resumeButton_handler(void)
+CRUISE_CONTROL_STATE cm848_selectCruiseStateForResumeSwitch(void)
 
 {
   CRUISE_CONTROL_STATE CVar1;
@@ -74673,21 +74721,26 @@ int governor_cruise_resumeButton_handler(void)
     cruise_coast_accelerate_hold_countdown = cruise_coast_accelerate_hold_time;
     CVar1 = CRUISE_BUMP_UP;
   }
-  return (int)(short)CVar1;
+  return CVar1;
 }
 
 
 
 //
-// Function: governor_cruise_setButton_handler @ 0x0051291c
+// Function: cm848_selectCruiseStateForSetSwitch @ 0x0051291c
 //
 
-/* Cruise switch-request state 3 (SET/COAST button) -> CRUISE_CONTROL_STATE: rising edge (state_b==3
-   && prev!=3) with vehicle_speed_rise_limited>=cruise_minimum_set_speed returns CRUISE_SET(1) to
-   LATCH the setpoint; held returns CRUISE_COAST(3). Was governor_cruiseOverride_state3_handler.
-   NOTE the SET capture only runs when cm848_updateCruiseControlDeniedStatus()==0. */
+/* Cruise state for a SET switch request: a new press with vehicle_speed_rise_limited at or above
+   cruise_minimum_set_speed gives CRUISE_SET (the set speed latches) and reloads the hold countdown;
+   holding it while engaged until the countdown ends gives CRUISE_COAST; otherwise the state stays.
+   It runs only while the cruise is not denied (cm848_updateCruiseControlDeniedStatus returned 0)
+   (was governor_cruise_setButton_handler; PR #53 round 57) | earlier note: Cruise switch-request
+   state 3 (SET/COAST button) -> CRUISE_CONTROL_STATE: rising edge (state_b==3 && prev!=3) with
+   vehicle_speed_rise_limited>=cruise_minimum_set_speed returns CRUISE_SET(1) to LATCH the setpoint;
+   held returns CRUISE_COAST(3). Was governor_cruiseOverride_state3_handler. NOTE the SET capture
+   only runs when cm848_updateCruiseControlDeniedStatus()==0. */
 
-int governor_cruise_setButton_handler(void)
+CRUISE_CONTROL_STATE cm848_selectCruiseStateForSetSwitch(void)
 
 {
   CRUISE_CONTROL_STATE CVar1;
@@ -74708,7 +74761,7 @@ int governor_cruise_setButton_handler(void)
     CVar1 = CRUISE_SET;
     cruise_coast_accelerate_hold_countdown = cruise_coast_accelerate_hold_time;
   }
-  return (int)(short)CVar1;
+  return CVar1;
 }
 
 
@@ -74813,8 +74866,10 @@ undefined4 cm848_updateCruiseControlDeniedStatus(void)
             uVar1 = 1;
           }
           else if (((short)transmission_type_cal < 1) &&
-                  ((cruise_rpm_ratio_max < cruise_rpm_ratio_ema ||
-                   (cruise_rpm_ratio_ema < cruise_rpm_ratio_min)))) {
+                  ((cruise_engine_to_vehicle_speed_ratio_maximum <
+                    cruise_engine_to_vehicle_speed_ratio ||
+                   (cruise_engine_to_vehicle_speed_ratio <
+                    cruise_engine_to_vehicle_speed_ratio_minimum)))) {
             cruise_control_denied_status = 10;
             if (cruise_control_engaged_flag != 0) {
               cruise_control_last_cutout_reason = 10;
@@ -74823,11 +74878,11 @@ undefined4 cm848_updateCruiseControlDeniedStatus(void)
           }
           else {
             if ((short)transmission_type_cal < 1) {
-              uVar2 = (uint)cruise_rpm_ratio_integral;
+              uVar2 = (uint)cruise_engine_to_vehicle_speed_ratio_integral;
               if ((int)uVar2 < 0) {
                 uVar2 = -uVar2;
               }
-              if ((uint)cruise_rpm_ratio_integral_limit <= (uVar2 & 0xffff)) {
+              if ((uint)cruise_engine_to_vehicle_speed_ratio_integral_limit <= (uVar2 & 0xffff)) {
                 if (cruise_control_engaged_flag != 0) {
                   cruise_control_last_cutout_reason = 0xb;
                 }
@@ -74929,18 +74984,23 @@ undefined4 cm848_checkCruiseSwitchLearnCondition(void)
 
 
 //
-// Function: governor_cruise_standbyState_get @ 0x00512f18
+// Function: cm848_selectDeniedCruiseState @ 0x00512f18
 //
 
-/* Returns the CRUISE_CONTROL_STATE used when the button-override path is inhibited:
-   CRUISE_CANCEL(8) if all engage conditions hold AND cruise_resume_speed_valid_flag!=0 else
-   CRUISE_OFF(0). Legacy name governor_cruise_disengage_check was misleading - it is a state getter
-   not a boolean check. */
+/* The cruise state while the cruise is denied (cm848_updateCruiseControlDeniedStatus nonzero - in
+   place of the switch handlers): CRUISE_CANCEL (the resume speed is kept) when the on / off toggle
+   is on - algorithm_enable_flags_3_cal.cruise_control_enable is set - the switches are learned -
+   there is no fault reaction and no vehicle speed / cruise switch / brake switch fault - the vacuum
+   throttle actuator is not disabled for cruise - and cruise_resume_speed_valid_flag is set; else
+   CRUISE_OFF (was governor_cruise_standbyState_get; PR #53 round 57) | earlier note: Returns the
+   CRUISE_CONTROL_STATE used when the button-override path is inhibited: CRUISE_CANCEL(8) if all
+   engage conditions hold AND cruise_resume_speed_valid_flag!=0 else CRUISE_OFF(0). Legacy name
+   governor_cruise_disengage_check was misleading - it is a state getter not a boolean check. */
 
-undefined4 governor_cruise_standbyState_get(void)
+CRUISE_CONTROL_STATE cm848_selectDeniedCruiseState(void)
 
 {
-  undefined4 uVar1;
+  CRUISE_CONTROL_STATE CVar1;
   
   if (((((cruise_control_on_toggle_state == 0) ||
         (algorithm_enable_flags_3_cal.cruise_control_enable == 0)) ||
@@ -74953,12 +75013,12 @@ undefined4 governor_cruise_standbyState_get(void)
      (((vacuum_throttle_actuator_disabled_flag != 0 &&
        (vacuum_throttle_cruise_actuator_disable_mode == 1)) || (cruise_resume_speed_valid_flag == 0)
       ))) {
-    uVar1 = 0;
+    CVar1 = CRUISE_OFF;
   }
   else {
-    uVar1 = 8;
+    CVar1 = CRUISE_CANCEL;
   }
-  return uVar1;
+  return CVar1;
 }
 
 
@@ -74977,28 +75037,28 @@ void cm848_cruiseControlPeriodicUpdate(void)
 
 {
   int iVar1;
-  CRUISE_CONTROL_STATE CVar2;
-  short sVar3;
-  word wVar4;
+  word wVar2;
+  CRUISE_CONTROL_STATE CVar3;
+  short sVar4;
   CRUISE_SWITCH_REQUEST CVar5;
   CRUISE_CONTROL_STATE *pCVar6;
   
-  governor_cruise_rpmRatio_ema();
-  cm848_integrateCruiseRpmRatioChange();
+  cm848_filterCruiseEngineToVehicleSpeedRatio();
+  cm848_integrateCruiseEngineToVehicleSpeedRatioChange();
   cruise_switch_request = cm848_debounceCruiseSwitchRequest();
   CVar5 = cruise_switch_request;
   iVar1 = cm848_checkCruiseSwitchLearnCondition();
   if (iVar1 != 0) {
     cruise_control_switches_learned_flag_cal = 1;
   }
-  cruise_control_on_toggle_state = cm848_updateCruiseControlOnOffToggle();
-  cruise_control_on_flag = (word)(cruise_control_on_toggle_state != 0);
+  wVar2 = cm848_updateCruiseControlOnOffToggle();
+  cruise_control_on_flag = (word)(wVar2 != 0);
   pCVar6 = &cruise_control_state;
-  wVar4 = cruise_control_on_toggle_state;
-  CVar2 = governor_cruise_baseState_get();
-  *pCVar6 = CVar2;
-  sVar3 = cm848_updateCruiseControlDeniedStatus();
-  if (sVar3 == 0) {
+  cruise_control_on_toggle_state = wVar2;
+  CVar3 = cm848_selectBaseCruiseState();
+  *pCVar6 = CVar3;
+  sVar4 = cm848_updateCruiseControlDeniedStatus();
+  if (sVar4 == 0) {
     if (cruise_control_engaged_flag == 0) {
       cruise_control_denied_status = 0;
     }
@@ -75006,22 +75066,22 @@ void cm848_cruiseControlPeriodicUpdate(void)
       cruise_control_denied_status = 0xd;
     }
     if (CVar5 == CRUISE_SWITCH_RESUME) {
-      CVar2 = governor_cruise_resumeButton_handler();
+      CVar3 = cm848_selectCruiseStateForResumeSwitch();
       goto LAB_005130dc;
     }
     if (CVar5 == CRUISE_SWITCH_SET) {
-      CVar2 = governor_cruise_setButton_handler();
+      CVar3 = cm848_selectCruiseStateForSetSwitch();
       goto LAB_005130dc;
     }
     if (CVar5 == CRUISE_SWITCH_COAST) {
-      CVar2 = governor_cruise_coastButton_handler();
+      CVar3 = cm848_selectCruiseStateForCoastSwitch();
       goto LAB_005130dc;
     }
   }
   else {
-    CVar2 = governor_cruise_standbyState_get();
+    CVar3 = cm848_selectDeniedCruiseState();
 LAB_005130dc:
-    *pCVar6 = CVar2;
+    *pCVar6 = CVar3;
   }
   switch(*pCVar6) {
   case CRUISE_OFF:
@@ -75060,10 +75120,10 @@ LAB_00513168:
     ccvs1_cruise_control_state = 6;
   }
   cruise_switch_request_raw_previous = cruise_switch_request_raw;
-  cruise_control_on_toggle_state_previous = wVar4;
+  cruise_control_on_toggle_state_previous = wVar2;
   cruise_switch_request_working_previous = CVar5;
-  cruise_rpm_prev_sample = engine_speed_state.filtered_engine_speed;
-  cruise_rpm_ratio_ema_prev = cruise_rpm_ratio_ema;
+  cruise_engine_speed_previous = engine_speed_state.filtered_engine_speed;
+  cruise_engine_to_vehicle_speed_ratio_previous = cruise_engine_to_vehicle_speed_ratio;
   return;
 }
 
@@ -75366,10 +75426,14 @@ void cm848_monitorCoolantOverheatAggressiveDerate(void)
 
 
 //
-// Function: governor_cruise_dualCalc_dispatch @ 0x0051395c
+// Function: cm848_runCoolantOverheatDerateMonitors @ 0x0051395c
 //
 
-void governor_cruise_dualCalc_dispatch(void)
+/* A step of cm848_runCoolantOverheatFuelDerate: runs cm848_monitorCoolantOverheatMinimumDerate then
+   cm848_monitorCoolantOverheatAggressiveDerate. Nothing to do with cruise despite the old name (was
+   governor_cruise_dualCalc_dispatch; PR #53 round 57) */
+
+void cm848_runCoolantOverheatDerateMonitors(void)
 
 {
   cm848_monitorCoolantOverheatMinimumDerate();
@@ -75380,10 +75444,15 @@ void governor_cruise_dualCalc_dispatch(void)
 
 
 //
-// Function: engine_coolantTemp_delta_calc @ 0x00513980
+// Function: cm848_calculateCoolantOverheatTemperatureError @ 0x00513980
 //
 
-void engine_coolantTemp_delta_calc(void)
+/* e2m 8A72 +0 CT_Derate_Temp_Error: coolant_overheat_temperature_error =
+   engine_overheat_derate_coolant_temperature_setpoint - coolant_temperature_sensor_filtered while
+   engine_overheat_derate_active_flag is 1 - else 0. A step of cm848_runCoolantOverheatFuelDerate
+   (before the PI fuel limit) (was engine_coolantTemp_delta_calc; PR #53 round 57) */
+
+void cm848_calculateCoolantOverheatTemperatureError(void)
 
 {
   if (engine_overheat_derate_active_flag == 1) {
@@ -75694,8 +75763,8 @@ void cm848_runCoolantOverheatFuelDerate(void)
     }
     else {
       cm848_accumulateCoolantOverheatLevelTimers();
-      governor_cruise_dualCalc_dispatch();
-      engine_coolantTemp_delta_calc();
+      cm848_runCoolantOverheatDerateMonitors();
+      cm848_calculateCoolantOverheatTemperatureError();
       cm848_calculateCoolantOverheatPiFuelLimit();
       cm848_applyCoolantOverheatFuelFloor();
       cm848_selectCoolantOverheatFuelLimit();

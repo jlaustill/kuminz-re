@@ -961,7 +961,7 @@ typedef enum {
 typedef enum {
     CRUISE_SWITCH_ON_OFF = 0,  /* ON/OFF master button - arms cruise (engage check wants state_b 0 with prev 5). Confirmed live 2026-06-12 */
     CRUISE_SWITCH_CANCEL = 1,  /* CANCEL button. Confirmed live 2026-06-12 */
-    CRUISE_SWITCH_COAST = 2,  /* COAST button - decelerate (governor_cruise_coastButton_handler returns CRUISE_COAST). Confirmed live 2026-06-12 */
+    CRUISE_SWITCH_COAST = 2,  /* COAST button - decelerate (cm848_selectCruiseStateForCoastSwitch returns CRUISE_COAST). Confirmed live 2026-06-12 */
     CRUISE_SWITCH_SET = 3,  /* SET button - rising edge latches setpoint (CRUISE_SET). Confirmed live 2026-06-12 */
     CRUISE_SWITCH_RESUME = 4,  /* RESUME/ACCEL button - tap returns CRUISE_RESUME - held accelerates (CRUISE_ACCELERATE). Confirmed live 2026-06-12 */
     CRUISE_SWITCH_IDLE = 5  /* No button pressed / debounce-settling value */

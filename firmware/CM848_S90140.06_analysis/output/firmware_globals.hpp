@@ -2037,6 +2037,7 @@ extern word fuel_level_linearization_cached_axis_offset;  // 0x003fcd4a
 extern ema_filter_state_t fuel_level_sensor_filter_state;  // 0x003fcd4c
 extern word transmission_temperature_linearization_cached_axis_offset;  // 0x003fcd54
 extern ema_filter_state_t transmission_temperature_sensor_filter_state;  // 0x003fcd56
+extern ema_filter_state_t cruise_engine_to_vehicle_speed_ratio_filter_state;  // 0x003fcd96
 extern word cruise_control_on_toggle_state;  // 0x003fcd9e
 extern CRUISE_SWITCH_REQUEST cruise_switch_request;  // 0x003fcda2
 extern word cooling_fan_feed_forward_duty_cached_axis_offsets[2];  // 0x003fcdfb
@@ -3418,11 +3419,12 @@ extern word output_speed_to_vehicle_speed_ratio_learn_minimum_output_speed;  // 
 extern word injector_driver_booster_capacitor_low_voltage_count_limit;  // 0x00408710
 extern word injector_driver_booster_capacitor_low_voltage_threshold;  // 0x00408712
 extern word cruise_maximum_engine_speed;  // 0x00408722
-extern word cruise_steady_debounce_count;  // 0x00408724
-extern word cruise_ratio_steady_threshold;  // 0x00408726
-extern word cruise_rpm_ratio_integral_limit;  // 0x00408728
-extern word cruise_rpm_ratio_max;  // 0x0040872c
-extern word cruise_rpm_ratio_min;  // 0x0040872e
+extern word cruise_engine_to_vehicle_speed_ratio_integral_clear_count;  // 0x00408724
+extern word cruise_engine_to_vehicle_speed_ratio_integral_clear_level;  // 0x00408726
+extern word cruise_engine_to_vehicle_speed_ratio_integral_limit;  // 0x00408728
+extern word cruise_engine_to_vehicle_speed_ratio_filter_coefficient;  // 0x0040872a
+extern word cruise_engine_to_vehicle_speed_ratio_maximum;  // 0x0040872c
+extern word cruise_engine_to_vehicle_speed_ratio_minimum;  // 0x0040872e
 extern word cruise_minimum_engine_speed;  // 0x00408730
 extern word supervisor_watchdog_window_setting;  // 0x00408740
 extern word supervisor_watchdog_cycle_interval;  // 0x00408742
@@ -5041,8 +5043,8 @@ extern word transmission_current_gear;  // 0x0040b1f4
 extern word rock_cycle_engine_speed_limit_active_flag;  // 0x0040b1f6
 extern word output_speed_to_vehicle_speed_ratio_learn_delay_count;  // 0x0040b1fa
 extern word injector_driver_booster_capacitor_low_voltage_mask;  // 0x0040b1fc
-extern int16_t cruise_rpm_ratio_integral;  // 0x0040b204
-extern word cruise_rpm_ratio_ema;  // 0x0040b206
+extern int16_t cruise_engine_to_vehicle_speed_ratio_integral;  // 0x0040b204
+extern word cruise_engine_to_vehicle_speed_ratio;  // 0x0040b206
 extern word cruise_control_on_flag;  // 0x0040b208
 extern word cruise_control_last_cutout_reason;  // 0x0040b20a
 extern word cruise_control_denied_status;  // 0x0040b20c
@@ -6089,7 +6091,7 @@ extern word engine_protection_task_index;  // 0x003fbd2c
 extern word engine_protection_longest_shutdown_time_count;  // 0x003fbd3e
 extern word cruise_coast_accelerate_hold_countdown;  // 0x003fcd92
 extern CRUISE_SWITCH_REQUEST cruise_switch_request_working_previous;  // 0x003fcdaa
-extern word cruise_steady_state_debounce_counter;  // 0x003fcdae
+extern word cruise_engine_to_vehicle_speed_ratio_steady_count;  // 0x003fcdae
 extern word calibBlock1_update_phase_counter;  // 0x003fce22
 extern word fuel_level_fast_filter;  // 0x003fce24
 extern word fuel_level_slow_filter;  // 0x003fce26
@@ -6715,9 +6717,9 @@ extern word air_conditioning_coolant_temperature_ok_flag;  // 0x003fcd78
 extern dword rock_cycle_engine_speed_limit_startup_delay_count;  // 0x003fcd80
 extern word cruise_switch_request_raw;  // 0x003fcd94
 extern word cruise_switch_request_raw_previous;  // 0x003fcda4
-extern word cruise_rpm_ratio_ema_prev;  // 0x003fcda6
+extern word cruise_engine_to_vehicle_speed_ratio_previous;  // 0x003fcda6
 extern word cruise_control_on_toggle_state_previous;  // 0x003fcda8
-extern word cruise_rpm_prev_sample;  // 0x003fcdac
+extern word cruise_engine_speed_previous;  // 0x003fcdac
 extern word coolant_overheat_aggressive_derate_active_time;  // 0x003fcdcc
 extern byte radiator_fan_input_configured_for_type_5100_flag;  // 0x003fce1e
 extern byte radiator_fan_input_was_type_5100_flag;  // 0x003fce1f
