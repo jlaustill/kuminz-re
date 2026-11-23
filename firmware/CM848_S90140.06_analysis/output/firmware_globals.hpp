@@ -452,6 +452,7 @@ extern high_speed_governor_gain_set_t high_speed_governor_gain_set_20;  // 0x000
 extern high_speed_governor_gain_set_t high_speed_governor_gain_set_21;  // 0x0005c95c
 extern word vehicle_speed_zero_under_load_event_limit;  // 0x0005c964
 extern word vehicle_speed_zero_under_load_minimum_boost_pressure;  // 0x0005c966
+extern word vehicle_speed_sensor_stopped_engine_speed;  // 0x0005c968
 extern word vehicle_speed_zero_under_load_accelerator_off_idle_entry_limit;  // 0x0005c96a
 extern word vehicle_speed_signal_loss_minimum_vehicle_speed;  // 0x0005c96c
 extern word vehicle_speed_zero_under_load_minimum_engine_load;  // 0x0005c96e
@@ -2021,6 +2022,7 @@ extern byte obd_vin_frame_index;  // 0x003fce9a
 extern byte obd_calibration_id_frame_index;  // 0x003fce9b
 extern byte obd_dtc_scan_more_flag;  // 0x003fce9c
 extern byte obd_dtc_copy_index;  // 0x003fce9d
+extern ema_filter_state_t engine_oil_pressure_filter_state;  // 0x003fceb4
 extern ema_filter_state_t transfer_case_ratio_average_filter;  // 0x003fcebe
 extern ema_filter_state_t transfer_case_ratio_change_filter;  // 0x003fcec6
 extern ema_filter_state_t transfer_case_road_speed_filter;  // 0x003fcece
@@ -7090,6 +7092,9 @@ extern word cooling_fan_retest_fault_confirm_passes;  // 0x004088bc
 extern dword cooling_fan_period_microseconds;  // 0x0040c19c
 extern word low_oil_pressure_check_minimum_rpm;  // 0x00408986
 extern word oil_pressure_switch_stuck_count_limit;  // 0x00408988
+extern word engine_oil_pressure_filter_coefficient;  // 0x0040898a
+extern word low_oil_switch_chime_enable;  // 0x0040898e
+extern word engine_oil_pressure_default;  // 0x00408992
 extern word oil_pressure_switch_fault_running_count_limit;  // 0x00408990
 extern word oil_pressure_model_unfiltered;  // 0x0040b53a
 extern word transfer_case_launch_maximum_vehicle_speed;  // 0x00408a52
@@ -7542,7 +7547,7 @@ extern word injection_wakeup_duration_above_breakpoint;  // 0x004090ed
 extern int16_t fuel_pressure_sensor_plausibility_minimum_coolant_temperature;  // 0x00409ed2
 extern byte fuel_pressure_sensor_plausibility_maximum_setpoint_error;  // 0x00409ed5
 extern word fuel_pressure_sensor_plausibility_in_gear_fuel_addend;  // 0x00409ed8
-extern word fuel_pressure_sensor_plausibility_maximum_governor_output;  // 0x00409eda
+extern word fuel_pressure_sensor_plausibility_maximum_throttle;  // 0x00409eda
 extern word fuel_pressure_sensor_plausibility_maximum_speed_error;  // 0x00409edc
 extern word fuel_pressure_sensor_plausibility_step_limit;  // 0x00409ede
 extern word fuel_pressure_sensor_plausibility_maximum_vehicle_speed;  // 0x00409ee0

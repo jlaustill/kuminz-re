@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 19:45:44 MST 2026
+// Generated: Sun Nov 22 20:08:46 MST 2026
 
 
 //
@@ -6085,9 +6085,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
+  byte prescaler_count;
   dword runtime_value;
   word counter_value;
-  byte prescaler_count;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -79186,8 +79186,8 @@ void initDiagnosticShadowFlags(void)
   low_oil_pressure_debounce_count = 0;
   oil_pressure_model_cached_axis_offsets[0] = 2;
   oil_pressure_model_cached_axis_offsets[1] = 2;
-  ema_filter_state_t_003fceb4.accumulator = 0;
-  ema_filter_state_t_003fceb4.coefficient = &WORD_0040898a;
+  engine_oil_pressure_filter_state.accumulator = 0;
+  engine_oil_pressure_filter_state.coefficient = &engine_oil_pressure_filter_coefficient;
   return;
 }
 
@@ -79263,8 +79263,8 @@ void cm848_processEngineOilPressure(void)
                  (oil_pressure_model_cached_axis_offsets,engine_speed_state.filtered_engine_speed,
                   oil_pressure_model_x_axis,coolant_temperature_sensor_filtered,
                   oil_pressure_model_y_axis,oil_pressure_model_grid,2);
-  dVar1 = exponentialMovingAverage((uint)oil_pressure_model_unfiltered,&ema_filter_state_t_003fceb4)
-  ;
+  dVar1 = exponentialMovingAverage
+                    ((uint)oil_pressure_model_unfiltered,&engine_oil_pressure_filter_state);
   engine_oil_pressure = (word)dVar1;
   if (low_oil_pressure_check_minimum_rpm < engine_speed_state.filtered_engine_speed) {
     if ((switch_input_state_bits.low_oil_pressure_switch != 0) &&
@@ -79311,9 +79311,9 @@ LAB_0051a478:
     oil_pressure_switch_fault_running_count = oil_pressure_switch_fault_running_count + 1;
   }
   if (oil_pressure_switch_fault_running_count_limit <= oil_pressure_switch_fault_running_count) {
-    engine_oil_pressure = DAT_00408992;
+    engine_oil_pressure = engine_oil_pressure_default;
     oil_pressure_switch_fault_running_count = oil_pressure_switch_fault_running_count_limit;
-    if (DAT_0040898e != 0) {
+    if (low_oil_switch_chime_enable != 0) {
       low_oil_pressure_active_flag = 1;
       low_oil_pressure_derate_flag = 1;
     }
@@ -93919,9 +93919,8 @@ void cm848_checkFuelPressureSensorPlausibilityByFuelDemand(void)
        (power_take_off_governor_active_flag != 0)) ||
       ((logical_output_request_bits_8_to_15.engine_brake_driver_1_request != 0 ||
        (fuel_pressure_sensor_plausibility_maximum_vehicle_speed < vehicle_speed_copy)))) ||
-     ((fuel_pressure_sensor_plausibility_maximum_governor_output <
-       all_speed_governor_equivalent_throttle || (fault_detected_cal.obd_fuel_level_low_error != 0))
-     )) {
+     ((fuel_pressure_sensor_plausibility_maximum_throttle < all_speed_governor_equivalent_throttle
+      || (fault_detected_cal.obd_fuel_level_low_error != 0)))) {
 LAB_00530e4c:
     if (fuel_pressure_sensor_plausibility_verdict_locked_flag == 0) {
       fuel_pressure_sensor_plausibility_state = 0;
