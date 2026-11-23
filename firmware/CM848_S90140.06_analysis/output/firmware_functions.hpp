@@ -163,7 +163,7 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void);  // @ 0x00007608
 void mpc555_loadRuntimeCounterFromEepromShadow(void);  // @ 0x000076b4
 byte cm848_lookupBootMemoryRegionType(uint param_1,int param_2);  // @ 0x000076c8
 byte cm848_trackDownloadBlock(byte *data,dword address,word *length,BOOT_REQUEST_CHANNEL channel);  // @ 0x00007740
-undefined4 cm848_finishDownloadBlock(word *param_1);  // @ 0x00007840
+byte cm848_finishDownloadBlock(word *trailing_crc);  // @ 0x00007840
 byte cm848_updateDownloadCrc(byte *data,dword length,BOOT_REQUEST_CHANNEL channel);  // @ 0x000078d0
 void cm848_serviceSupervisorWatchdog(void);  // @ 0x00007974
 void cm848_initSupervisorWatchdog(void);  // @ 0x00007b08

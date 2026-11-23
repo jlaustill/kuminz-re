@@ -1566,7 +1566,7 @@ struct eeprom_header_t {
     uint32_t config_dword;  /* EEPROM configuration dword */
     uint16_t config_word;  /* EEPROM configuration word */
     uint8_t calibration_block1[6];  /* Calibration data block 1 */
-    uint16_t eeprom_status_flags;  /* Bit0=IAT derate history | Bit3=calibration validated */
+    uint16_t eeprom_status_flags;  /* Boot kernel: EEPROM 0x50 (serial_reflash_status_flags_cal) - bit 3 set and bit 1 cleared by a verified serial download | application side (time-shared - the EEPROM mirror): e2m 8A36 +2 IAH_Redundant_Preheat_Req (the intake air heater - the old note said IAT derate history; PR #53 round 67) */
     uint16_t cal_word2;  /* Calibration parameter word 2 */
     uint16_t cal_word3;  /* Calibration parameter word 3 */
     uint16_t serial_reflash_unlock_request;  /* Boot copy of EEPROM 0x56 (serial_reflash_unlock_request_cal) - the application's serial reflash hand-off; non-zero makes mpc555_initDiagnosticSession start the boot SCI session unlocked (was cal_word4) */
@@ -3070,7 +3070,7 @@ struct eeprom_xfer_state_t {
 };
 
 struct eeprom_block_tracking_t {
-    uint16_t watchdog_counter;  /* Transfer watchdog counter (reset each block) */
+    uint16_t key_off_duration_ticks;  /* Counted with the runtime counter by mpc555_tickTransferTimeoutAndRuntimeCounter (every 41 calls) - mpc555_keyOnStateMachine zeroes it while SCRD bit 15 (key on - PR #48) is set and saves the runtime counter once it passes 0x2903 (was watchdog_counter 'Transfer watchdog counter (reset each block)'; PR #53 round 67) */
     uint8_t failed_write_authorization_count;  /* cm848_validateWriteAuth's count of failed write authorizations: at 0x11 every check fails / a matching token resets it / a mismatch adds 1 (was _pad2; PR #53 round 35) */
     uint32_t last_write_addr;  /* Previous block write address for continuity validation */
     uint32_t block_start_addr;  /* Start address of current EEPROM transfer range */

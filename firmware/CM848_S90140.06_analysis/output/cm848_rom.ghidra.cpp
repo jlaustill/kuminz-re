@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 11:28:28 MST 2026
+// Generated: Mon Nov 23 11:43:33 MST 2026
 
 
 //
@@ -63,13 +63,13 @@ void mpc555_keyOnStateMachine(void)
       ecu_power_state_flags.state = 1;
     }
     else {
-      eeprom_block_tracking.watchdog_counter = 0;
+      eeprom_block_tracking.key_off_duration_ticks = 0;
     }
   }
   else if (dVar1 == 1) {
     wVar2 = mios_mdasm30.SCRD;
     if ((wVar2 & 0x8000) == 0) {
-      wVar2 = eeprom_block_tracking.watchdog_counter;
+      wVar2 = eeprom_block_tracking.key_off_duration_ticks;
       if (0x2903 < wVar2) {
         if (eeprom_config_write_triggered_flag == 0) {
           eeprom_write_buffer = ecu_power_state_flags.runtime_counter;
@@ -84,7 +84,7 @@ void mpc555_keyOnStateMachine(void)
     }
     else {
       ecu_power_state_flags.state = 0;
-      eeprom_block_tracking.watchdog_counter = 0;
+      eeprom_block_tracking.key_off_duration_ticks = 0;
       if (eeprom_shadow_header.ecm_status == ECM_STATUS_CALIBRATION_VALID) {
         if (eeprom_config_write_triggered_flag == 0) {
           eeprom_write_buffer = ecu_power_state_flags.runtime_counter;
@@ -203,10 +203,11 @@ undefined4 cm848_bootDiagnosticServiceAcknowledgeNoOperation(void)
 //
 
 /* Boot kernel (service 7 and cm848_finishSerialReflash): reads ECM_Status (EEPROM 0x0).
-   CALIBRATION_VALID answers 0. CALIBRATION_DOWNLOADED_NOT_VERIFIED: sums each region of the image
-   header's checksum table (pointer at ROM 0x8104 - a count then 10-byte sum / start / end records)
-   and checks download_block_list against the header's expected block count and addresses (0x8116
-   onward) - a mismatch answers DOWNLOAD_INVALID (the serial channel then resets); a match writes
+   CALIBRATION_VALID answers 0 and then resets the ECU (after waiting for the answer to go out).
+   CALIBRATION_DOWNLOADED_NOT_VERIFIED: sums each region of the image header's checksum table
+   (pointer at ROM 0x8104 - a count then 10-byte sum / start / end records) and checks
+   download_block_list against the header's expected block count and addresses (0x8116 onward) - a
+   mismatch answers DOWNLOAD_INVALID (the serial channel then resets); a match writes
    CALIBRATION_VALID (the serial channel also sets bit 3 and clears bit 1 of
    serial_reflash_status_flags_cal and counts serial_reflash_success_count_cal) / the runtime
    counter to eeprom_config_block / answers 0 / resets when MIOS MDASM30 SCRD bit 15 is set. Any
@@ -430,11 +431,12 @@ BOOT_DIAGNOSTIC_RESULT cm848_handleBootVerifyDownloadedCalibrationService(j1939_
 //
 
 /* Boot kernel (service 2 and the serial erase request): writes ECM_Status REFLASH_IN_PROGRESS
-   unless it already is / erases the internal flash but block 0 (mpc555_cmfEraseBlocks(0x7ffc) - the
-   boot block keeps the boot ROM) and then the Bank 2 chip (cm848_flashEraseChip) / answers
-   begin_reflash_request with 0 or FLASH_ERASE_FAILED unless the channel is 1 / resets the download
-   tracking / sets bit 7 of eeprom_service_mode_flags; returns nonzero when both erases succeeded
-   (was mpc555_initEepromTransfer; PR #53 round 67) */
+   unless it already is / erases the internal flash but block 0 (mpc555_cmfEraseBlocks(0x7ffc): its
+   interlock writes go to 0x8000-0x38000 and 0x40000-0x68000 - blocks 1-7 of module A and all 6 of
+   module B - so the boot block keeps the boot ROM) and then the Bank 2 chip (cm848_flashEraseChip)
+   / answers begin_reflash_request with 0 or FLASH_ERASE_FAILED unless the channel is 1 / resets the
+   download tracking / sets bit 7 of eeprom_service_mode_flags; returns nonzero when both erases
+   succeeded (was mpc555_initEepromTransfer; PR #53 round 67) */
 
 word mpc555_beginReflash(BOOT_REQUEST_CHANNEL channel)
 
@@ -1876,10 +1878,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
-  word direction_register_value;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -6270,8 +6272,8 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
     watchdog_tick_prescaler = 0;
     runtime_value = ecu_power_state_flags.runtime_counter;
     ecu_power_state_flags.runtime_counter = runtime_value + 1;
-    wVar1 = eeprom_block_tracking.watchdog_counter;
-    eeprom_block_tracking.watchdog_counter = wVar1 + 1;
+    wVar1 = eeprom_block_tracking.key_off_duration_ticks;
+    eeprom_block_tracking.key_off_duration_ticks = wVar1 + 1;
   }
   return;
 }
@@ -6410,17 +6412,17 @@ byte cm848_trackDownloadBlock(byte *data,dword address,word *length,BOOT_REQUEST
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
     */
 
-undefined4 cm848_finishDownloadBlock(word *param_1)
+byte cm848_finishDownloadBlock(word *trailing_crc)
 
 {
   word wVar1;
   dword dVar2;
   dword dVar3;
   uint uVar4;
-  undefined4 uVar5;
+  byte bVar5;
   
   wVar1 = ecu_power_state_flags.transfer_crc;
-  if (*param_1 == wVar1) {
+  if (*trailing_crc == wVar1) {
     wVar1 = eeprom_block_tracking.block_count;
     uVar4 = (uint)wVar1;
     if (uVar4 < 10) {
@@ -6429,16 +6431,16 @@ undefined4 cm848_finishDownloadBlock(word *param_1)
       dVar2 = eeprom_xfer_state.block_length;
       download_block_list[uVar4].end_address = (dVar3 + dVar2) - 3;
       eeprom_block_tracking.block_count = wVar1 + 1;
-      uVar5 = 0xff;
+      bVar5 = 0xff;
     }
     else {
-      uVar5 = 0x15;
+      bVar5 = 0x15;
     }
   }
   else {
-    uVar5 = 0x14;
+    bVar5 = 0x14;
   }
-  return uVar5;
+  return bVar5;
 }
 
 
@@ -6474,7 +6476,7 @@ byte cm848_updateDownloadCrc(byte *data,dword length,BOOT_REQUEST_CHANNEL channe
   }
   dVar3 = eeprom_xfer_state.bytes_transferred;
   if ((dVar3 == 0) && (channel != BOOT_REQUEST_CHANNEL_SERIAL)) {
-    bVar5 = cm848_finishDownloadBlock(data);
+    bVar5 = cm848_finishDownloadBlock((word *)data);
   }
   else {
     bVar5 = 0xff;
