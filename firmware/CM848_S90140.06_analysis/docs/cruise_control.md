@@ -2,13 +2,13 @@
 
 This file covers what the S90140.06 firmware does for cruise control. It comes from a read-only review on 2026-11-22.
 
-**Names and addresses follow PR #53 at `63489b1` (round 40).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
+**Names and addresses follow PR #53 at `e2184d0` (round 44).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
 
 Evidence tags:
 
 - **[code]**: read in `output/cm848_rom.ghidra.cpp` or `output/bank2_functions.cpp` during the review.
 - **[round 26]**: PR #53 checked it in the code before it applied the round 26 renames.
-- **[round 27]**, **[round 32]**: PR #53 checked it in the code in that round.
+- **[round 27]**, **[round 32]**, **[round 44]**: PR #53 checked it in the code in that round.
 - **[review]**: a review agent read it in the code. Nobody has checked it a second time.
 - **[notes]**: from `firmware/CLAUDE.md` or the PR #53 description only.
 
@@ -98,7 +98,7 @@ Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrU
   - Otherwise it copies the operating mode governor's fuel demand.
 - **The choice.** `cm848_selectCruiseOrUserFueling` (0x411b0) sets the working demand (`governor_fuel_demand_working`) to the lower of the two, with mode `FUELING_STATE_CRUISE_CONTROL`. It never tests the servo bit. It hands control back to the operating mode governor when any of these hold:
   - cruise isn't engaged;
-  - the pedal's governor asks for more fuel than cruise, with the throttle above `governor_override_fuel_threshold`;
+  - the pedal's governor asks for more fuel than cruise, with the throttle above `cruise_throttle_transition_threshold` (e2m `Cruise_Throttle_Transition_Threshold`, 0 % in this calibration, so cruise takes over again only with the pedal fully released) [round 44];
   - a TSC1 speed or torque mode, mode 37 or 38, or a fixed fuel demand is active.
 
 ## Vacuum throttle servo
@@ -120,7 +120,7 @@ Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrU
 **Who reads the enable bit.** Three functions, all by field name. None of them gates cruise engagement. [code]
 - the servo loop;
 - `cm848_calculateAllSpeedGovernorEquivalentThrottle` (0x45ecc), which applies a throttle offset when the bit is set;
-- `cm848_runOperatingModeSpeedGovernor` (0xea00). The review found it cuts the all-speed governor's fuel by 44 counts while cruise is engaged. [review]
+- `cm848_runOperatingModeSpeedGovernor` (0xea00). While cruise is engaged with the servo on, it lowers the all-speed governor's fuel by `vacuum_throttle_all_speed_governor_fueling_reduction` (e2m `Vac_Throttle_ASG_Delta`) [round 44]. The value is 44 counts, about 3 mm³ [review].
 
 **Calibration.** EEPROM 0x170 = `0x11dc`, so the servo is on. [code]
 - P 384, I 256, D 26.
