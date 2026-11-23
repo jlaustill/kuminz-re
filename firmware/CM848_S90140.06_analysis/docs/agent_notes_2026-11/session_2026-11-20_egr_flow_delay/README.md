@@ -525,3 +525,7 @@ Hand work on the round 7 lead.
 ## Round 54: the last unnamed tables, the stack monitor, legacy boot functions (`session_folder/round54/`)
 
 - `placements.txt` (round 53's disputed hits), `word_arrays.txt`, `list_unprefixed.py` (+ `unprefixed.txt`), `order_only.py`. **Stage A:** `apply_r54a.py`, `map_r54a.csv`. **Stage B:** `apply_r54b.py`, `map_r54b.csv`. Proof: `prove_r54.sh`. **Closing:** `apply_r54_closing.py`, `update_large_tar_r54.sh`.
+
+## Round 55: the fault manager core named from its code (`session_folder/round55/`)
+
+- `function_summary.py`. **Stage A:** `apply_r55a.py`, `map_r55a.csv`, `refresh_struct_comments_r55.py`. Proof: `prove_r55.sh`. **Closing:** `apply_r55_closing.py`, `update_large_tar_r55.sh`.

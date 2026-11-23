@@ -2518,6 +2518,25 @@ A peer relay started the round; the scripts are in `session_folder/round54/`.
     is an agent-sized job.
   - `initGovernorFlagsAux` only zeroes 0x3fcfba, which nothing reads directly.
 
+## Done, round 55 (2026-11-23, same PR): the fault manager core named from its code
+
+A peer relay started the round; the scripts are in `session_folder/round55/`.
+- **Stage A (c4ebb04, function names and plates):** the fault manager at 0x533aec-0x535344, read function by function
+  (`function_summary.py` lists a range's functions, plates and callers).
+  - 14 unprefixed legacy names and `cm848_initFaultManagement` (now "initialize").
+  - Two old names were swapped in meaning: `diag_resetSingleFault` cleared every record (now
+    `cm848_clearAllFaultRecords`) and `diag_resetAllFaults` only the previously active faults (now
+    `cm848_clearPreviouslyActiveFaults`, the DM3 meaning).
+  - The others: the warm-up cycle auto clear, the similar-conditions test, the heal step, the occurrence count, the
+    freeze frame queue, the detection record (pending, then confirmed), and the completed-monitor registration.
+  - `diagnosticMainStateProcessor` is shared with CM550 and keeps its name.
+- **Proof:** `prove_caches.py` (the function renames applied to the old .cpp, casts folded) shows no function differing; each old name is left once, in its own plate. verify byte-identical.
+- **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 221.
+- **Leads:**
+  - 84 unprefixed CM848-only functions remain. The protection cluster at 0x514048-0x514394 is next.
+  - The fault manager's prototypes still read `param_1` (the slot or fault code); naming them needs full
+    `function_definitions.csv` rows.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

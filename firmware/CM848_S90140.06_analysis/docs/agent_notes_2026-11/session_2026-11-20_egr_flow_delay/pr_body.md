@@ -680,6 +680,9 @@ state enum, the flag bytes.**
 - **Stage A (b53080a, labels, rows):** the last ten unnamed tables (nine through the parameter ID table), the
   application stack high-water monitor (was read as a message buffer), the lifetime distance record index.
 - **Stage B (66af83f):** five legacy boot-time functions named from their bodies; the calibration ID characters 4-9.
+**Round 55.**
+- **Stage A (c4ebb04, function names):** the fault manager core, 15 functions named from their code. Two old names
+  were swapped in meaning (`cm848_clearAllFaultRecords` / `cm848_clearPreviouslyActiveFaults`).
 
 ## Test plan
 
@@ -772,6 +775,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 55: `prove_caches.py` (the function renames applied to the old .cpp, casts folded) shows no function differing; each old name is left once, in its own plate. verify byte-identical.
 - [x] Round 54: stage A: `prove_caches.py` (casts folded, function renames applied to the old .cpp) matches 1966 of 1968 functions, the other two differing only in local declaration order; stage B: 1964 match, two more order-only, and the last two only show the new calibration ID array row (read by hand). Every verify byte-identical.
 - [x] Round 53: stage A: `prove_caches.py` (casts folded) shows no function differing once the old labels map to the new; stage B: 1966 of 1968 match, the other two only show the new axis table row in place of a raw pointer / DAT_ label (read by hand). Every verify byte-identical.
 - [x] Round 52: stage A: `prove_caches.py` (casts folded) shows no function differing once the old labels map to the new; stage B: 1958 of 1968 functions match and the ten others equal the old text once each enum member value is put back (`prove_enum_substitution.py`). Every verify byte-identical.
