@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 23:00:50 MST 2026
+// Generated: Sun Nov 22 23:44:15 MST 2026
 
 
 //
@@ -6085,9 +6085,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
-  word counter_value;
   byte prescaler_count;
   dword runtime_value;
+  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -43687,16 +43687,16 @@ void cm848_selectTransmissionTemperatureInUse(void)
   if (algorithm_enable_flags_6_cal.transmission_control_enable == 0) {
     return;
   }
-  if ((((transmission_temperature_early_substitute_countdown == 0) ||
-       (dVar2 = transmission_temperature_early_substitute_countdown_reload,
+  if ((((transmission_temperature_limp_in_delay_timer == 0) ||
+       (dVar2 = transmission_temperature_limp_in_delay_maximum,
        switch_input_state_bits.park_neutral_switch == 0)) &&
-      (dVar2 = transmission_temperature_early_substitute_countdown,
-      transmission_temperature_early_substitute_countdown != 0)) &&
+      (dVar2 = transmission_temperature_limp_in_delay_timer,
+      transmission_temperature_limp_in_delay_timer != 0)) &&
      ((engine_state == ENGINE_STATE_RUNNING &&
-      (transmission_temperature_late_substitute_minimum_vehicle_speed < vehicle_speed)))) {
-    dVar2 = transmission_temperature_early_substitute_countdown - 1;
+      (transmission_temperature_limp_in_delay_minimum_vehicle_speed < vehicle_speed)))) {
+    dVar2 = transmission_temperature_limp_in_delay_timer - 1;
   }
-  transmission_temperature_early_substitute_countdown = dVar2;
+  transmission_temperature_limp_in_delay_timer = dVar2;
   if (((fault_detected_cal.transmission_oil_temperature_high_error == 0) &&
       (fault_detected_cal.transmission_oil_temperature_low_error == 0)) &&
      (fault_detected_cal.transmission_oil_temperature_rationality_error == 0)) {
@@ -43717,9 +43717,9 @@ void cm848_selectTransmissionTemperatureInUse(void)
            transmission_temperature_coolant_model_offset;
       goto LAB_0003f598;
     }
-    transmission_temperature_in_use = transmission_temperature_early_substitute;
-    if (transmission_temperature_early_substitute_countdown != 0) goto LAB_0003f598;
-    pwVar3 = &transmission_temperature_late_substitute;
+    transmission_temperature_in_use = transmission_temperature_default_during_limp_in_delay;
+    if (transmission_temperature_limp_in_delay_timer != 0) goto LAB_0003f598;
+    pwVar3 = &transmission_temperature_default_after_limp_in_delay;
   }
   else {
     pwVar3 = &transmission_temperature_sensor_filtered;
@@ -43776,7 +43776,7 @@ LAB_0003f598:
 
 /* Boot reset of the transmission temperature stability check: clears the unchanged-reading latch
    (limp_home_and_temperature_flags bit 2), the previous raw reading and the unchanged-reading
-   counter, and sets transmission_temperature_early_substitute_countdown to 10. (was
+   counter, and sets transmission_temperature_limp_in_delay_timer to 10. (was
    cm848_resetEngineLoadTracker) */
 
 void cm848_resetTransmissionTemperatureValidation(void)
@@ -43786,7 +43786,7 @@ void cm848_resetTransmissionTemperatureValidation(void)
        transmission_shift_strategy_flags.limp_home_and_temperature_flags & 0xfd;
   transmission_temperature_adc_previous_reading = 0;
   transmission_temperature_adc_unchanged_reading_counter = 0;
-  transmission_temperature_early_substitute_countdown = 10;
+  transmission_temperature_limp_in_delay_timer = 10;
   return;
 }
 
@@ -43834,7 +43834,7 @@ void cm848_calculateTransmissionOutputSpeed(void)
       transmission_output_speed_sensor_unfiltered = 8;
     }
     else {
-      transmission_output_speed_sensor_unfiltered = transmission_output_speed_floor;
+      transmission_output_speed_sensor_unfiltered = transmission_output_speed_minimum;
       if ((transmission_output_speed_period_microseconds <= transmission_output_speed_period_maximum
           ) && (transmission_output_speed_sensor_unfiltered = transmission_output_speed_maximum,
                transmission_output_speed_period_minimum <=
@@ -43860,7 +43860,7 @@ LAB_0003f82c:
   }
   else if (transmission_output_speed_period_maximum < transmission_output_speed_period_microseconds)
   {
-    uVar2 = (uint)transmission_output_speed_floor;
+    uVar2 = (uint)transmission_output_speed_minimum;
   }
   else {
     uVar2 = (uint)(CONCAT44(transmission_output_speed_numerator >> 0x1d,
@@ -58806,7 +58806,7 @@ void cm848_applicationMain(void)
   } while (power_down_start_flag == 0);
   scheduler_task_flags_snapshot = USIU_SIMASK._0_2_;
   USIU_SIMASK._0_2_ = 0x100;
-  sensorDiagnosticsConfiguration(0x30d4);
+  cm848_flagTripInformationPowerDownDataLoss(0x30d4);
   cm848_removeHealedFaults();
   cm848_clearMilForHealedFaults();
   protection_accumulator_update();
@@ -58853,7 +58853,7 @@ void cm848_restartApplicationWithoutReset(void)
   } while (power_down_start_flag == 0);
   scheduler_task_flags_snapshot = USIU_SIMASK._0_2_;
   USIU_SIMASK._0_2_ = 0x100;
-  sensorDiagnosticsConfiguration(0x30d4);
+  cm848_flagTripInformationPowerDownDataLoss(0x30d4);
   cm848_removeHealedFaults();
   cm848_clearMilForHealedFaults();
   protection_accumulator_update();
@@ -85313,7 +85313,7 @@ void cm848_checkTransmissionTemperatureSensorPerformance(void)
              transmission_temperature_rationality_start_temperature;
         transmission_temperature_rationality_driving_maximum_temperature =
              transmission_temperature_rationality_start_temperature;
-        transmission_temperature_rationality_driving_pass_count = 0;
+        transmission_temperature_rationality_test_timer = 0;
         transmission_temperature_rationality_state = 1;
         return;
       }
@@ -85343,9 +85343,9 @@ void cm848_checkTransmissionTemperatureSensorPerformance(void)
     }
     if ((((engine_off_time_latched_flag == 0) ||
          (fault_detected_cal.engine_off_time_stuck_error != 0)) ||
-        (engine_off_time_at_key_on < transmission_temperature_check_minimum_engine_off_time)) &&
-       (((pci_receive_message_14_status & 0x3f) == 0 &&
-        (fault_detected_cal.engine_off_time_stuck_error == 0)))) {
+        (engine_off_time_at_key_on < transmission_temperature_rationality_minimum_engine_off_time))
+       && (((pci_receive_message_14_status & 0x3f) == 0 &&
+           (fault_detected_cal.engine_off_time_stuck_error == 0)))) {
       transmission_temperature_rationality_start_snapshot_taken_flag = 1;
       return;
     }
@@ -85363,8 +85363,8 @@ void cm848_checkTransmissionTemperatureSensorPerformance(void)
       return;
     }
     if ((short)transmission_temperature_sensor_filtered <=
-        transmission_temperature_rationality_cold_soak_maximum_temperature) {
-      if (transmission_temperature_rationality_cold_soak_maximum_temperature <
+        transmission_temperature_rationality_start_test_maximum_transmission_temperature) {
+      if (transmission_temperature_rationality_start_test_maximum_transmission_temperature <
           (short)transmission_temperature_sensor_filtered) {
         transmission_temperature_rationality_soak_qualified_flag = 1;
         transmission_temperature_rationality_start_snapshot_taken_flag = 1;
@@ -85422,9 +85422,9 @@ void cm848_checkTransmissionTemperatureSensorPerformance(void)
     transmission_temperature_rationality_driving_range =
          transmission_temperature_rationality_driving_maximum_temperature - wVar1;
     if ((transmission_temperature_rationality_minimum_vehicle_speed < vehicle_speed_copy) &&
-       (transmission_temperature_rationality_driving_pass_count != 0xffff)) {
-      transmission_temperature_rationality_driving_pass_count =
-           transmission_temperature_rationality_driving_pass_count + 1;
+       (transmission_temperature_rationality_test_timer != 0xffff)) {
+      transmission_temperature_rationality_test_timer =
+           transmission_temperature_rationality_test_timer + 1;
     }
     transmission_temperature_rationality_driving_minimum_temperature = wVar1;
     if ((short)transmission_temperature_rationality_driving_range <
@@ -85433,8 +85433,8 @@ void cm848_checkTransmissionTemperatureSensorPerformance(void)
           (short)transmission_temperature_rationality_driving_range) {
         return;
       }
-      if (transmission_temperature_rationality_driving_pass_count <
-          transmission_temperature_rationality_minimum_driving_passes) {
+      if (transmission_temperature_rationality_test_timer <
+          transmission_temperature_rationality_maximum_test_time) {
         return;
       }
       if (transmission_temperature_rationality_soak_qualified_flag != 1) {
@@ -85540,9 +85540,9 @@ void initSensorTableIndexing(void)
    (trip = the dword at 0x3fee28 / EEPROM 0x19a6 - it renders as ram0x003fee28 because the boot
    ROM's eeprom_shadow_header is defined over the same RAM) then recomputes
    trip_average_fuel_economy_cal; each counter has an overflow bit in
-   trip_and_lifetime_overflow_flags_cal. HP Tuners zeroes all of them (was
-   j1939FuelDemandProcessing) | review-function-readability reviewed 2026-11-12 - Readability Medium
-   Accuracy Confidence Medium */
+   trip_information_fault_status_cal. HP Tuners zeroes all of them (was j1939FuelDemandProcessing) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+    */
 
 void cm848_updateTripAndLifetimeCounters(void)
 
@@ -85558,8 +85558,9 @@ void cm848_updateTripAndLifetimeCounters(void)
       trip_idle_fuel_used_cal = 0;
       trip_idle_time_cal = 0;
       trip_engine_run_time_cal = 0;
-      trip_counter_status_flags_cal = trip_counter_status_flags_cal & 0xffcf;
-      trip_and_lifetime_overflow_flags_cal = trip_and_lifetime_overflow_flags_cal & 0xc3f7;
+      trip_information_distance_fault_status_cal =
+           trip_information_distance_fault_status_cal & 0xffcf;
+      trip_information_fault_status_cal = trip_information_fault_status_cal & 0xc3f7;
       trip_counters_reset_pending_flag = 0;
     }
     uVar2 = (uint)engine_speed_state.filtered_engine_speed;
@@ -85576,14 +85577,14 @@ void cm848_updateTripAndLifetimeCounters(void)
         trip_engine_run_time_cal = trip_engine_run_time_cal + 1;
       }
       else {
-        trip_and_lifetime_overflow_flags_cal = trip_and_lifetime_overflow_flags_cal | 0x400;
+        trip_information_fault_status_cal = trip_information_fault_status_cal | 0x400;
         trip_engine_run_time_cal = 0;
       }
       if (lifetime_engine_run_time_cal < 0xfffffffe) {
         lifetime_engine_run_time_cal = lifetime_engine_run_time_cal + 1;
       }
       else {
-        trip_and_lifetime_overflow_flags_cal = trip_and_lifetime_overflow_flags_cal | 0x10;
+        trip_information_fault_status_cal = trip_information_fault_status_cal | 0x10;
         lifetime_engine_run_time_cal = 0;
       }
     }
@@ -85592,14 +85593,14 @@ void cm848_updateTripAndLifetimeCounters(void)
         lifetime_idle_time_cal = lifetime_idle_time_cal + 1;
       }
       else {
-        trip_and_lifetime_overflow_flags_cal = trip_and_lifetime_overflow_flags_cal | 0x80;
+        trip_information_fault_status_cal = trip_information_fault_status_cal | 0x80;
         lifetime_idle_time_cal = 0;
       }
       if (trip_idle_time_cal < 0xfffffffe) {
         trip_idle_time_cal = trip_idle_time_cal + 1;
       }
       else {
-        trip_and_lifetime_overflow_flags_cal = trip_and_lifetime_overflow_flags_cal | 0x2000;
+        trip_information_fault_status_cal = trip_information_fault_status_cal | 0x2000;
         trip_idle_time_cal = 0;
       }
     }
@@ -85627,14 +85628,14 @@ void cm848_updateTripAndLifetimeCounters(void)
           trip_fuel_used_cal = trip_fuel_used_cal + fuel_used_increment;
         }
         else {
-          trip_and_lifetime_overflow_flags_cal = trip_and_lifetime_overflow_flags_cal | 0x800;
+          trip_information_fault_status_cal = trip_information_fault_status_cal | 0x800;
           trip_fuel_used_cal = 0;
         }
         if (lifetime_fuel_used_cal < uVar1) {
           lifetime_fuel_used_cal = lifetime_fuel_used_cal + fuel_used_increment;
         }
         else {
-          trip_and_lifetime_overflow_flags_cal = trip_and_lifetime_overflow_flags_cal | 0x20;
+          trip_information_fault_status_cal = trip_information_fault_status_cal | 0x20;
           lifetime_fuel_used_cal = 0;
         }
         if (engine_idling_flag == 1) {
@@ -85642,14 +85643,14 @@ void cm848_updateTripAndLifetimeCounters(void)
             trip_idle_fuel_used_cal = trip_idle_fuel_used_cal + fuel_used_increment;
           }
           else {
-            trip_and_lifetime_overflow_flags_cal = trip_and_lifetime_overflow_flags_cal | 0x1000;
+            trip_information_fault_status_cal = trip_information_fault_status_cal | 0x1000;
             trip_idle_fuel_used_cal = 0;
           }
           if (lifetime_idle_fuel_used_cal < uVar1) {
             lifetime_idle_fuel_used_cal = lifetime_idle_fuel_used_cal + fuel_used_increment;
           }
           else {
-            trip_and_lifetime_overflow_flags_cal = trip_and_lifetime_overflow_flags_cal | 0x40;
+            trip_information_fault_status_cal = trip_information_fault_status_cal | 0x40;
             lifetime_idle_fuel_used_cal = 0;
           }
         }
@@ -85675,8 +85676,9 @@ void cm848_updateTripAndLifetimeCounters(void)
            (fault_detected_cal.vss_tampering_error == 0)) {
           distance_sensor_fault_count = 0;
         }
-        else if (DAT_00408d74 < distance_sensor_fault_count) {
-          trip_counter_status_flags_cal = trip_counter_status_flags_cal | 0x12;
+        else if (trip_information_fault_minimum_time < distance_sensor_fault_count) {
+          trip_information_distance_fault_status_cal =
+               trip_information_distance_fault_status_cal | 0x12;
         }
         else {
           distance_sensor_fault_count = distance_sensor_fault_count + 1;
@@ -85685,14 +85687,16 @@ void cm848_updateTripAndLifetimeCounters(void)
           register0x00000074 = ram0x003fee28 + trip_counter_pulse_delta;
         }
         else {
-          trip_counter_status_flags_cal = trip_counter_status_flags_cal | 0x20;
+          trip_information_distance_fault_status_cal =
+               trip_information_distance_fault_status_cal | 0x20;
           register0x00000074 = 0;
         }
         if (lifetime_distance_pulses_cal < -trip_counter_pulse_delta - 1) {
           lifetime_distance_pulses_cal = lifetime_distance_pulses_cal + trip_counter_pulse_delta;
         }
         else {
-          trip_counter_status_flags_cal = trip_counter_status_flags_cal | 4;
+          trip_information_distance_fault_status_cal =
+               trip_information_distance_fault_status_cal | 4;
           lifetime_distance_pulses_cal = 0;
         }
       }
@@ -85727,14 +85731,20 @@ void initGovernorFlagsAux(void)
 
 
 //
-// Function: sensorDiagnosticsConfiguration @ 0x00523760
+// Function: cm848_flagTripInformationPowerDownDataLoss @ 0x00523760
 //
 
-void sensorDiagnosticsConfiguration(void)
+/* Power-down step (cm848_applicationMain calls it twice after the RAM calibration refresh): while
+   fault_detected_cal.power_down_data_lost_error is set it sets bits 0x208 of
+   trip_information_fault_status_cal (e2m 8B6D +E Trip_Info_Fault_Status): bit 3 (a trip reset
+   clears it) and bit 9 (a trip reset keeps it) (was sensorDiagnosticsConfiguration; PR #53 round
+   51) */
+
+void cm848_flagTripInformationPowerDownDataLoss(void)
 
 {
   if (fault_detected_cal.power_down_data_lost_error != 0) {
-    trip_and_lifetime_overflow_flags_cal = trip_and_lifetime_overflow_flags_cal | 0x208;
+    trip_information_fault_status_cal = trip_information_fault_status_cal | 0x208;
   }
   return;
 }

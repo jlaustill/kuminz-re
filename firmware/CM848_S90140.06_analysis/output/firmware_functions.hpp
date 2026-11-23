@@ -1766,7 +1766,7 @@ void cm848_recordLifetimeDistanceEvery8Miles(void);  // @ 0x00523068
 void initSensorTableIndexing(void);  // @ 0x005230f4
 void cm848_updateTripAndLifetimeCounters(void);  // @ 0x00523148
 void initGovernorFlagsAux(void);  // @ 0x00523750
-void sensorDiagnosticsConfiguration(void);  // @ 0x00523760
+void cm848_flagTripInformationPowerDownDataLoss(void);  // @ 0x00523760
 void cm848_updateTurbochargerSpeedLimiter(void);  // @ 0x00523798
 void cm848_startTurbochargerSpeedLimiter(void);  // @ 0x00523858
 void cm848_processImmobilizerStatusMessage(void);  // @ 0x0052390c
