@@ -2610,6 +2610,35 @@ A peer relay started the round; the scripts are in `session_folder/round57/`.
   - The 0x3fcd90 word that `cm848_initializeCruiseControl` zeroes has no reader found by name; it sits in the
     time-shared ROM-to-RAM window, so a pointer or boot-side reader is not ruled out.
 
+## Done, round 58 (2026-11-23, same PR): the last 12 protection_* globals named from their code
+
+A peer relay started the round; the scripts are in `session_folder/round58/`.
+- **Stage A (d0ce823).** Accesses were checked with `scan_accesses_v2.py`, a base-tracking D-form scan of both banks
+  (lis / addi / ori / mr bases). Computed pointers can escape it, so the rows say "no other access found".
+  - **The logical output line map** (EEPROM mirror; the boot kernel's time-shared rows inside it keep their names):
+    `logical_output_line_cal` (the table), `logical_output_line_active_low_bits_cal` (the polarity bits),
+    `logical_output_62_line_cal` (was `qadc_adc_enable_flag`) and `cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63`
+    (outputs 62 / 63 follow the overdrive / converter clutch solenoid requests; active on this truck).
+  - **The injector driver booster:** `injector_driver_booster_recharge_off_delay_counter` (e2m 8041 +26) and
+    `fuel_system_hardware_shutdown_check_enable_flag` (was `tpu_protection_enable_flag`).
+  - **The P0116 coolant rationality monitor:** its snapshot words (two of them new rows), the start delay countdown,
+    and `cm848_initializeCoolantTemperatureSensorPerformanceMonitor`.
+  - **Others:** `transmission_diagnostic_flags_6` (e2m 8C19 +13), `combustion_torque_by_fuel_quantity_friction_cached_axis_offsets`
+    with `cm848_initializeFrictionTorqueLookupCache` (was `cm848_initThrottleRateFilterState`), and
+    `all_speed_governor_spare_word_1` / `_2` / `_3` (set to 2 at boot; no other access found).
+  - Two junk documentation rows were deleted (`protection_b_state_t_003feebc.protection_b_pad_01` / `_03`).
+- **Proof:** `prove_r58.sh` shows no function differing; the 5 piece renders of the new names are the boot kernel's same 5 halves of the time-shared polarity word; all 12 renamed rows keep their notes. verify byte-identical.
+- **firmware/CLAUDE.md (factual correction, numbers only):** the MISSING sentence now gives 218 since round 58 (121
+  documentation rows, 3 deferred). This round's own rows changed it: `logical_output_62_line_cal` gained `_cal`, and two
+  documentation rows were deleted.
+- **Leads:**
+  - No global keeps a `protection_` prefix now. 99 rows still have `protection` inside their names.
+  - Entry 17 of the line table renders as the boot kernel's time-shared name `qadc_queue_timing_config._0_2_` in the
+    mirror function.
+  - `coolant_temperature_sensor_performance_snapshot_coolant_temperature` is read only with `lha`, so it is an `i16`
+    candidate.
+  - `scan_accesses_v2.py` could become a repo tool (an access finder that sees base-register forms).
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

@@ -1,0 +1,60 @@
+cm848: round 58 stage A - the last 12 protection_* globals named from their code
+
+Each row was checked with scan_accesses_v2.py, a base-tracking scan of both banks. It follows lis / addi / ori / mr
+bases, so it sees "lbz r11,19(r31)" off a struct base, which a name grep or a lis-only scan misses. Computed pointers
+can still escape it, so the rows say "no other access found", never "unused".
+
+The logical output line map (EEPROM mirror; time-shared with the boot kernel, whose CMF / flash rows inside it keep
+their names; no retype):
+- protection_event_output_line_cal -> logical_output_line_cal: line = table[logical output]. Dump: entries
+  17 / 18 / 62 / 63 = lines 153 / 156 / 158 / 159.
+- protection_event_output_polarity_bits_cal -> logical_output_line_active_low_bits_cal: a set bit drives the line low
+  for on (cm848_setLogicalOutputAndDriveLine) and high for off (cm848_clearLogicalOutputAndDriveLine). Dump: outputs
+  16-20 / 62 / 63 are active low.
+- qadc_adc_enable_flag -> logical_output_62_line_cal: entry 62, past the kernel range. This was round 40's
+  evidence-less lead, and it now carries _cal.
+- cm848_checkProtectionModeFlags -> cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63: outputs 62 / 63 follow
+  the overdrive / converter clutch solenoid requests when both outputs of a pair have lines. Active on this truck.
+
+The injector driver booster:
+- protection_crank_event_counter -> injector_driver_booster_recharge_off_delay_counter. It counts engine-stopped
+  passes up to e2m 8041 +26 HPCR_Booster_Recharge_Off_Delay, then the booster recharge stops (TPU-A channel 4 PARAM0
+  bit 15). Dump: 9920.
+- tpu_protection_enable_flag -> fuel_system_hardware_shutdown_check_enable_flag: it gates the shutdown-time check of
+  the booster capacitor channels 54 / 55.
+
+The P0116 coolant rationality monitor:
+- protection_group29_coolant_temp_snapshot -> coolant_temperature_sensor_performance_snapshot_coolant_temperature;
+- the two unnamed snapshot words beside it -> ..._snapshot_intake_manifold_temperature / ..._snapshot_battery_temperature
+  (write-only by the scan);
+- protection_group29_startup_timer_count -> coolant_temperature_sensor_performance_start_delay_countdown;
+- cm848_initialization_group22_state -> cm848_initializeCoolantTemperatureSensorPerformanceMonitor.
+
+Others:
+- protection_status_flags_b -> transmission_diagnostic_flags_6: e2m 8C19 +13 RE_Diag_Flag6; bit 0 is set every
+  cm848_selectTransmissionTemperatureInUse pass.
+- protection_rpm_correction_cached_axis_offsets -> combustion_torque_by_fuel_quantity_friction_cached_axis_offsets:
+  the cache of the friction torque function's three lookups of that grid.
+- cm848_initThrottleRateFilterState -> cm848_initializeFrictionTorqueLookupCache: it only sets that cache.
+- protection_diag_state_a / _b / _c -> all_speed_governor_spare_word_1 / _2 / _3: set to 2 (the lookup cache start
+  value) by the ASG initializer; no other access found, and 2 in the dump.
+
+Two junk rows were deleted: the protection_b_state_t_003feebc.protection_b_pad_01 / _03 documentation rows. They
+named the low bytes of two EEPROM words, both accessed only as words, after a struct type that no longer exists, and
+they rendered nowhere.
+
+MISSING 221 -> 218: logical_output_62_line_cal is a deferred row that now carries _cal, and the deleted rows were
+documentation rows. None of the 17 old labels is in CM550 or either CLAUDE.md.
+
+Proof (prove_r58.sh: the renames applied to the old .cpp, casts folded):
+- 0 of 1968 functions differ, and no old global name is left in the .cpp. Each old function name is left once, in
+  its own plate's (was ...) note.
+- The 5 piece renders of the new names are the boot kernel's ._0_2_ / ._2_2_ halves of the time-shared polarity
+  word. They are the same 5 under the old name.
+- check_history_r44b.py: all 12 renamed rows keep their (was ...) note.
+- verify is byte-identical; thunks 18 / 14 (the new rows at 0x3fd184 / 6 change nothing there); the 3
+  name-mismatch warnings are unchanged.
+- Headers regenerated (0 g++ errors), tests pass, lookup_tables.py 0 sizing problems, audit_cal_suffixes.py
+  HARD 0 / MISSING 218.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

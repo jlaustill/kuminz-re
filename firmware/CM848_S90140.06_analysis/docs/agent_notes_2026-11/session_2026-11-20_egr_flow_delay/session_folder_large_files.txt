@@ -270,3 +270,4 @@
   402239 verify_round57a.log
   402239 verify_round57b.log
   402239 verify_round57c.log
+  402303 verify_round58a.log

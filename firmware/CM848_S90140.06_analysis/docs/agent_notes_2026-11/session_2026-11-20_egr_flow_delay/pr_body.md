@@ -694,6 +694,11 @@ state enum, the flag bytes.**
   `cruise_engine_to_vehicle_speed_ratio_*` (12 rows).
 - **Stage B (607a663):** two warning chime sources: `fuel_pressure_fault_active_flag` (P1221-P1223) and
   `air_conditioning_coolant_off_flag` (e2m 8B2D +6), 7 rows.
+**Round 58.**
+- **Stage A (d0ce823):** the last 12 `protection_*` globals named from their code. They cover the logical output
+  line map and its active-low bits, the injector driver booster recharge-off delay, the P0116 coolant monitor's
+  snapshot, 8C19 +13 and a friction torque lookup cache. Also 3 functions, 2 new rows and 2 junk rows deleted;
+  MISSING 221 -> 218.
 
 ## Test plan
 
@@ -786,6 +791,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 58: `prove_r58.sh` shows no function differing; the 5 piece renders of the new names are the boot kernel's same 5 halves of the time-shared polarity word; all 12 renamed rows keep their notes. verify byte-identical.
 - [x] Round 57: stage A: `prove_r57.sh` shows 1962 of 1968 functions label-only; `prove_return_types_r57.py` proves the five retyped getters (members back to values, casts and locals normalized), and the caller only re-renders (renumbered locals, no cast added). Stage B: no function differs. verify byte-identical.
 - [x] Round 56: `prove_caches.py` (the function renames applied to the old .cpp, casts folded, the struct fields as `instance.enable` / `.value`) shows no function differing; the 11 instances render with no pieces and the cast counts are unchanged. verify byte-identical.
 - [x] Round 55: `prove_caches.py` (the function renames applied to the old .cpp, casts folded) shows no function differing; each old name is left once, in its own plate. verify byte-identical.

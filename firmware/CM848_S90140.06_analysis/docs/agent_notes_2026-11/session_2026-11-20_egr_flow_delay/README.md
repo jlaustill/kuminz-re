@@ -537,3 +537,7 @@ Hand work on the round 7 lead.
 ## Round 57: the cruise cluster, the N/V ratio, two warning chime sources (`session_folder/round57/`)
 
 - **Stage A:** `apply_r57a.py`, `map_r57a.csv`, `refresh_other_csvs_r57.py`. Proof: `prove_r57.sh`, `prove_return_types_r57.py`, `diff_function_r57.py`, `count_casts.py`. **Stage B:** `apply_r57b.py`, `map_r57b.csv`. **Closing:** `apply_r57_closing.py`, `update_large_tar_r57.sh`.
+
+## Round 58: the last protection_* globals (`session_folder/round58/`)
+
+- **Stage A:** `apply_r58a.py`, `map_r58a.csv`, the access scanners `scan_accesses.py` / `scan_accesses_v2.py`, `uses.py`. Proof: `prove_r58.sh`, `count_casts.py`. **Closing:** `apply_r58_closing.py`, `update_large_tar_r58.sh`.
