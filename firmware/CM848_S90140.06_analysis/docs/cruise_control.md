@@ -2,13 +2,13 @@
 
 This file covers what the S90140.06 firmware does for cruise control. It comes from a read-only review on 2026-11-22.
 
-**Names and addresses follow PR #53 at `ab6153b` (round 56).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
+**Names and addresses follow PR #53 at `db8cfa7` (round 57).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
 
 Evidence tags:
 
 - **[code]**: read in `output/cm848_rom.ghidra.cpp` or `output/bank2_functions.cpp` during the review.
 - **[round 26]**: PR #53 checked it in the code before it applied the round 26 renames.
-- **[round 27]**, **[round 32]**, **[round 44]**: PR #53 checked it in the code in that round.
+- **[round 27]**, **[round 32]**, **[round 44]**, **[round 57]**: PR #53 checked it in the code in that round.
 - **[review]**: a review agent read it in the code. Nobody has checked it a second time.
 - **[notes]**: from `firmware/CLAUDE.md` or the PR #53 description only.
 
@@ -89,6 +89,8 @@ The set range is 35 to 85 mph. The set speed is lost at power-off, because `algo
 10. Manual transmission only: the gear check (an engine to road speed ratio window).
 11. Manual transmission only: the clutch check (an engine to road speed ratio integrator).
 12. Automatic transmission in park or neutral.
+
+Checks 10 and 11 use the `cruise_engine_to_vehicle_speed_ratio_*` family (e2m 8A0E / 8A0F) [round 57]. The calibration is set for an automatic transmission, so they don't run [review].
 
 Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrUserFueling`). [code]
 
