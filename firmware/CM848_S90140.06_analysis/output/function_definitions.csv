@@ -519,4 +519,4 @@ function_address,function_name,param_index,name,type,comment
 0x000074a0,cm848_sendDiagServiceResponse,0,request,j1939_rx_msg_t*,the request being answered (its addresses swap into the reply; its service byte is echoed)
 0x000074a0,cm848_sendDiagServiceResponse,1,result_code,dword,the service result: 0 positive (0x0C) / 0xfe pending (0x0E + the wait time) / else 0x0D + the code (dword: the body reuses it as a 32-bit variable)
 # The trip information power-down step takes no parameters (PR #53 round 51)
-0x00523760,cm848_flagTripInformationPowerDownDataLoss,return,,void,Takes no parameters: its power-down calls in cm848_applicationMain and cm848_restartApplicationWithoutReset pass the r3 left over from the preceding code (0x30d4) (PR #53 round 51)
+0x00523760,cm848_flagTripInformationPowerDownDataLoss,return,,void,Takes no parameters: at its one call (0x54de0) r3 still holds 12500 = 0x30d4 from li r3 / mtdec r3 (the decrementer reload) which the decompiler showed as an argument (PR #53 round 51)

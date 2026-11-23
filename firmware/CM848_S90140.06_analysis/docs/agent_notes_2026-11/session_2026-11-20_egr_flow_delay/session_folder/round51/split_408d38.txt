@@ -1,0 +1,338 @@
+gap 0x408d38 +62 (0x408d38..0x408d75) after 8A57 before 8D79
+== fixed 8C2C @ 0x408d48 (size 24)
+   +00 0x408d48 TTSR_Max_Start_Battery_Temperature [S2] acc=['lha'] row=transmission_temperature_rationality_start_test_maximum_battery_temperature 
+   +02 0x408d4a TTSR_Max_Start_Trans_Oil_Temperature [S2] acc=['lha'] row=transmission_temperature_rationality_cold_soak_maximum_temperature 
+   +04 0x408d4c TTSR_Max_Start_Coolant_Temperature [S2] acc=['lha'] row=transmission_temperature_rationality_start_test_maximum_coolant_temperature 
+   +06 0x408d4e TTSR_Min_Start_Temp_Threshold [S2] acc=['lha'] row=transmission_temperature_rationality_start_snapshot_minimum_temperature 
+   +08 0x408d50 TTSR_Max_Start_Temp_Threshold [S2] acc=['lha'] row=transmission_temperature_rationality_start_snapshot_maximum_temperature 
+   +0A 0x408d52 TTSR_Min_Delta_Temp_Threshold [S2] acc=['lha'] row=transmission_temperature_rationality_minimum_swing 
+   +0C 0x408d54 TTSR_Max_Test_Time [U2] acc=['lhz'] row=transmission_temperature_rationality_minimum_driving_passes 
+   +0E 0x408d56 TTSR_Min_Off_Time [U2] acc=['lhz'] row=transmission_temperature_check_minimum_engine_off_time 
+   +10 0x408d58 TTSR_Max_Startup_Delta_Temperature [S2] acc=['lha'] row=transmission_temperature_rationality_soak_maximum_coolant_battery_difference 
+   +12 0x408d5a TTSR_Startup_Time_Delay [U2] acc=['lhz'] row=transmission_temperature_rationality_start_wait_passes 
+   +14 0x408d5c TTSR_Start_Trans_Oil_Temp [S2] acc=['lha'] row=transmission_temperature_rationality_swing_test_maximum_start_temperature 
+   +16 0x408d5e TTSR_Vehicle_Speed [U2] acc=['lhz'] row=transmission_temperature_rationality_minimum_vehicle_speed 
+== free 0x408d38 +16: accessed / named ['0x408d38', '0x408d3a', '0x408d3c', '0x408d40', '0x408d42', '0x408d44', '0x408d46']
+   rows: 0x408d38 transmission_temperature_late_substitute_minimum_vehicle_speed word, 0x408d3a transmission_temperature_adc_unchanged_reading_limit word, 0x408d3c transmission_temperature_early_substitute_countdown_reload dword, 0x408d40 transmission_temperature_late_substitute word, 0x408d42 transmission_temperature_early_substitute word, 0x408d44 transmission_temperature_coolant_model_scale word, 0x408d46 transmission_temperature_coolant_model_offset word
+   accesses: 0x408d38 ['lhz'], 0x408d3a ['lhz'], 0x408d3c ['lwz'], 0x408d40 ['addi'], 0x408d42 ['lha'], 0x408d44 ['lhz'], 0x408d46 ['lha']
+   candidate 14A0 (size 16):
+   +00 0x408d38 Ambient_Air_Pressure_Filter_Constant [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Ambient_Air_Pressure_Global_Default [U2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit 
+   +04 0x408d3c Ambient_Air_Pressure_High_Limit [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Ambient_Air_Pressure_Low_Limit [U2] acc=[] row=- 
+   +08 0x408d40 Ambient_Air_Pressure_Fault_Increment [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Ambient_Air_Pressure_Fault_Decrement [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Ambient_Air_Pressure_Fault_Set [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Ambient_Air_Pressure_Fault_Clear [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 4; uncovered []
+   candidate 14A7 (size 16):
+   +00 0x408d38 Ambient_Air_Temperature_Filter_Constant [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Ambient_Air_Temperature_Global_Default [S2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit lhz sign U != S
+   +04 0x408d3c Ambient_Air_Temperature_High_Limit [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Ambient_Air_Temperature_Low_Limit [U2] acc=[] row=- 
+   +08 0x408d40 Ambient_Air_Temperature_Fault_Increment [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Ambient_Air_Temperature_Fault_Decrement [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Ambient_Air_Temperature_Fault_Set [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Ambient_Air_Temperature_Fault_Clear [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 5; uncovered []
+   candidate 14AB (size 16):
+   +00 0x408d38 Battery_Voltage_Filter_Constant [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Battery_Voltage_Global_Default [U2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit 
+   +04 0x408d3c Battery_Voltage_High_Limit [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Battery_Voltage_Low_Limit [U2] acc=[] row=- 
+   +08 0x408d40 Battery_Voltage_Fault_Increment [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Battery_Voltage_Fault_Decrement [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Battery_Voltage_Fault_Set [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Battery_Voltage_Fault_Clear [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 4; uncovered []
+   candidate 14B0 (size 16):
+   +00 0x408d38 Boost_Pressure_Filter_Constant [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Boost_Pressure_Global_Default [U2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit 
+   +04 0x408d3c Boost_Pressure_High_Limit [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Boost_Pressure_Low_Limit [U2] acc=[] row=- 
+   +08 0x408d40 Boost_Pressure_Fault_Increment [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Boost_Pressure_Fault_Decrement [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Boost_Pressure_Fault_Set [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Boost_Pressure_Fault_Clear [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 4; uncovered []
+   candidate 14BD (size 16):
+   +00 0x408d38 Coolant_Temperature_Filter_Constant [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Coolant_Temperature_Global_Default [S2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit lhz sign U != S
+   +04 0x408d3c Coolant_Temperature_High_Limit [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Coolant_Temperature_Low_Limit [U2] acc=[] row=- 
+   +08 0x408d40 Coolant_Temperature_Fault_Increment [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Coolant_Temperature_Fault_Decrement [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Coolant_Temperature_Fault_Set [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Coolant_Temperature_Fault_Clear [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 5; uncovered []
+   candidate 14C1 (size 16):
+   +00 0x408d38 Fuel_Temperature_Filter_Constant [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Fuel_Temperature_Global_Default [S2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit lhz sign U != S
+   +04 0x408d3c Fuel_Temperature_High_Limit [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Fuel_Temperature_Low_Limit [U2] acc=[] row=- 
+   +08 0x408d40 Fuel_Temperature_Fault_Increment [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Fuel_Temperature_Fault_Decrement [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Fuel_Temperature_Fault_Set [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Fuel_Temperature_Fault_Clear [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 5; uncovered []
+   candidate 14CD (size 16):
+   +00 0x408d38 Intake_Manifold_Temperature_Filter_Constant [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Intake_Manifold_Temperature_Global_Default [S2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit lhz sign U != S
+   +04 0x408d3c Intake_Manifold_Temperature_High_Limit [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Intake_Manifold_Temperature_Low_Limit [U2] acc=[] row=- 
+   +08 0x408d40 Intake_Manifold_Temperature_Fault_Increment [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Intake_Manifold_Temperature_Fault_Decrement [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Intake_Manifold_Temperature_Fault_Set [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Intake_Manifold_Temperature_Fault_Clear [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 5; uncovered []
+   candidate 14D1 (size 16):
+   +00 0x408d38 Oil_Pressure_Filter_Constant [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Oil_Pressure_Global_Default [U2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit 
+   +04 0x408d3c Oil_Pressure_High_Limit [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Oil_Pressure_Low_Limit [U2] acc=[] row=- 
+   +08 0x408d40 Oil_Pressure_Fault_Increment [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Oil_Pressure_Fault_Decrement [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Oil_Pressure_Fault_Set [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Oil_Pressure_Fault_Clear [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 4; uncovered []
+   candidate 14D9 (size 16):
+   +00 0x408d38 Remote_Throttle_Filter_Constant [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Remote_Throttle_Global_Default [U2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit 
+   +04 0x408d3c Remote_Throttle_High_Limit [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Remote_Throttle_Low_Limit [U2] acc=[] row=- 
+   +08 0x408d40 Remote_Throttle_Fault_Increment [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Remote_Throttle_Fault_Decrement [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Remote_Throttle_Fault_Set [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Remote_Throttle_Fault_Clear [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 4; uncovered []
+   candidate 14DE (size 16):
+   +00 0x408d38 Sampled_Throttle_Filter_Constant [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Sampled_Throttle_Global_Default [U2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit 
+   +04 0x408d3c Sampled_Throttle_High_Limit [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Sampled_Throttle_Low_Limit [U2] acc=[] row=- 
+   +08 0x408d40 Sampled_Throttle_Fault_Increment [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Sampled_Throttle_Fault_Decrement [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Sampled_Throttle_Fault_Set [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Sampled_Throttle_Fault_Clear [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 4; uncovered []
+   candidate 1500 (size 16):
+   +00 0x408d38 Water_In_Fuel_Filter_Constant [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Water_In_Fuel_Global_Default [U2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit 
+   +04 0x408d3c Water_In_Fuel_High_Limit [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Water_In_Fuel_Low_Limit [U2] acc=[] row=- 
+   +08 0x408d40 Water_In_Fuel_Fault_Increment [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Water_In_Fuel_Fault_Decrement [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Water_In_Fuel_Fault_Set [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Water_In_Fuel_Fault_Clear [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 4; uncovered []
+   candidate 1532 (size 16):
+   +00 0x408d38 Analog_Inputs_Enable_Flags_0 [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Analog_Inputs_Enable_Flags_1 [U2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit 
+   +04 0x408d3c Analog_Inputs_Enable_Flags_2 [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Analog_Inputs_Enable_Flags_3 [U2] acc=[] row=- 
+   +08 0x408d40 Analog_Inputs_Enable_Flags_4 [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Analog_Inputs_Enable_Flags_5 [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Analog_Inputs_Enable_Flags_6 [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Analog_Inputs_Enable_Flags_7 [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 4; uncovered []
+   candidate 1533 (size 16):
+   +00 0x408d38 Analog_Inputs_Override_0 [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Analog_Inputs_Override_1 [U2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit 
+   +04 0x408d3c Analog_Inputs_Override_2 [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Analog_Inputs_Override_3 [U2] acc=[] row=- 
+   +08 0x408d40 Analog_Inputs_Override_4 [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Analog_Inputs_Override_5 [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Analog_Inputs_Override_6 [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Analog_Inputs_Override_7 [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 4; uncovered []
+   candidate 1534 (size 16):
+   +00 0x408d38 Analog_Inputs_Raw_Override_0 [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Analog_Inputs_Raw_Override_1 [U2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit 
+   +04 0x408d3c Analog_Inputs_Raw_Override_2 [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Analog_Inputs_Raw_Override_3 [U2] acc=[] row=- 
+   +08 0x408d40 Analog_Inputs_Raw_Override_4 [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Analog_Inputs_Raw_Override_5 [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Analog_Inputs_Raw_Override_6 [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Analog_Inputs_Raw_Override_7 [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 4; uncovered []
+   candidate 1549 (size 16):
+   +00 0x408d38 Throttle_Sensor_Supply_Voltage_Filter_Constant [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Throttle_Sensor_Supply_Voltage_Global_Default [U2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit 
+   +04 0x408d3c Throttle_Sensor_Supply_Voltage_High_Limit [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Throttle_Sensor_Supply_Voltage_Low_Limit [U2] acc=[] row=- 
+   +08 0x408d40 Throttle_Sensor_Supply_Voltage_Fault_Increment [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Throttle_Sensor_Supply_Voltage_Fault_Decrement [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Throttle_Sensor_Supply_Voltage_Fault_Set [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Throttle_Sensor_Supply_Voltage_Fault_Clear [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 4; uncovered []
+   candidate 1CB7 (size 16):
+   +00 0x408d38 Ignition_Cycle_Time_Threshold [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Ratio_Min_AAT_Threshold [S2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit lhz sign U != S
+   +04 0x408d3c Ratio_Min_Vehicle_Speed [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Ratio_Engine_Start_Time_Threshold [U2] acc=[] row=- 
+   +08 0x408d40 Ratio_Vehicle_Speed_Time_Threshold [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Ratio_Idle_Speed_Time_Threshold [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Max_Idle_Vehicle_Speed [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Max_In_Use_Ratio [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 5; uncovered []
+   candidate 1D41 (size 16):
+   +00 0x408d38 FP_Idle_Coolant_Temp_Min [S2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed lhz sign U != S
+   +02 0x408d3a FP_Idle_Count_Limit [U1] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit lhz width 2 != 1; row transmission_temperature_adc_unchanged_reading_limit is word
+   +03 0x408d3b FP_Idle_Delta_Limit [U1] acc=[] row=- 
+   +04 0x408d3c FP_Idle_EVR_Duty_Cycle_Breakpoint [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e FP_Idle_Final_Fueling_Limit_AT_Delta_Cal [U2] acc=[] row=- 
+   +08 0x408d40 FP_Idle_Throttle_Limit [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 FP_Idle_Speed_Delta_Limit [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 FP_Idle_Time_Limit [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 FP_Idle_Vehicle_Speed_Limit [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 7; uncovered []
+   candidate 8ADB (size 16):
+   +00 0x408d38 Road_Speed_Constant [U4] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed lhz width 2 != 4; row transmission_temperature_late_substitute_minimum_vehicle_speed is word
+   +04 0x408d3c Teeth_Per_Interrupt [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e VSS_Max_Time [U4] acc=[] row=- 
+   +0A 0x408d42 VSS_Min_Time [U4] acc=['lha'] row=transmission_temperature_early_substitute lha width 2 != 4; lha sign S != U; row transmission_temperature_early_substitute is word
+   +0E 0x408d46 Global_Road_Speed_Maximum [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 8; uncovered ['0x408d3a', '0x408d40', '0x408d44']
+   candidate 8B03 (size 16):
+   +00 0x408d38 Boost_Pressure_High_Default [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Boost_Pressure_Low_Default [U2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit 
+   +04 0x408d3c Commanded_Throttle_High_Default [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Commanded_Throttle_Low_Default [U2] acc=[] row=- 
+   +08 0x408d40 Coolant_Temperature_High_Default [S2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Coolant_Temperature_Low_Default [S2] acc=['lha'] row=transmission_temperature_early_substitute 
+   +0C 0x408d44 Intake_Manifold_Temperature_High_Default [S2] acc=['lhz'] row=transmission_temperature_coolant_model_scale lhz sign U != S
+   +0E 0x408d46 Intake_Manifold_Temperature_Low_Default [S2] acc=['lha'] row=transmission_temperature_coolant_model_offset 
+      -> FAILS 3; uncovered []
+   candidate 8B07 (size 16):
+   +00 0x408d38 Tcase_Switch_Mux_Filter_Constant [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Tcase_Switch_Mux_Global_Default [U2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit 
+   +04 0x408d3c Tcase_Switch_Mux_High_Limit [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Tcase_Switch_Mux_Low_Limit [U2] acc=[] row=- 
+   +08 0x408d40 Tcase_Switch_Mux_Fault_Increment [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Tcase_Switch_Mux_Fault_Decrement [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Tcase_Switch_Mux_Fault_Set [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Tcase_Switch_Mux_Fault_Clear [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 4; uncovered []
+   candidate 8B2B (size 16):
+   +00 0x408d38 Analog_Inputs_Init_Default_0 [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Analog_Inputs_Init_Default_1 [U2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit 
+   +04 0x408d3c Analog_Inputs_Init_Default_2 [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Analog_Inputs_Init_Default_3 [U2] acc=[] row=- 
+   +08 0x408d40 Analog_Inputs_Init_Default_4 [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Analog_Inputs_Init_Default_5 [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Analog_Inputs_Init_Default_6 [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Analog_Inputs_Init_Default_7 [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 4; uncovered []
+   candidate 8B6C (size 16):
+   +00 0x408d38 Fuel_Used [U4] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed lhz width 2 != 4; row transmission_temperature_late_substitute_minimum_vehicle_speed is word
+   +04 0x408d3c Instantaneous_Distance [U4] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload 
+   +08 0x408d40 J1850_Distance_Pulses [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 J1850_Fuel_Used [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Trip_Info_State [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Trip_Info_Distance_Pulses [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 4; uncovered ['0x408d3a']
+   candidate 8B95 (size 16):
+   +00 0x408d38 ECM_Internal_Temperature_Filter_Constant [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a ECM_Internal_Temperature_Global_Default [S2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit lhz sign U != S
+   +04 0x408d3c ECM_Internal_Temperature_High_Limit [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e ECM_Internal_Temperature_Low_Limit [U2] acc=[] row=- 
+   +08 0x408d40 ECM_Internal_Temperature_Fault_Increment [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 ECM_Internal_Temperature_Fault_Decrement [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 ECM_Internal_Temperature_Fault_Set [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 ECM_Internal_Temperature_Fault_Clear [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 5; uncovered []
+   candidate 8B9B (size 16):
+   +00 0x408d38 RE_MPHX2_To_Decrement_Trans_Temp_Delay_Timer [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a RE_Pass_Count_To_Pick_Initial_Trans_Temp_Value [U2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit 
+   +04 0x408d3c RE_Trans_Sump_Limpin_Delay_Max [U4] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload 
+   +08 0x408d40 RE_Trans_Temp_Default_Expired [S2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 RE_Trans_Temp_Default_Running [S2] acc=['lha'] row=transmission_temperature_early_substitute 
+   +0C 0x408d44 RE_Temp_Coolant_Scalar [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 RE_Temp_Coolant_Offset [S2] acc=['lha'] row=transmission_temperature_coolant_model_offset 
+      -> width/sign ok; uncovered []
+   candidate 8B9C (size 16):
+   +00 0x408d38 Pedal_Position_Sensor_1_Filter_Constant [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Pedal_Position_Sensor_1_Global_Default [U2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit 
+   +04 0x408d3c Pedal_Position_Sensor_1_High_Limit [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Pedal_Position_Sensor_1_Low_Limit [U2] acc=[] row=- 
+   +08 0x408d40 Pedal_Position_Sensor_1_Fault_Increment [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Pedal_Position_Sensor_1_Fault_Decrement [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Pedal_Position_Sensor_1_Fault_Set [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Pedal_Position_Sensor_1_Fault_Clear [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 4; uncovered []
+   candidate 8BA0 (size 16):
+   +00 0x408d38 Pedal_Position_Sensor_2_Filter_Constant [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Pedal_Position_Sensor_2_Global_Default [U2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit 
+   +04 0x408d3c Pedal_Position_Sensor_2_High_Limit [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Pedal_Position_Sensor_2_Low_Limit [U2] acc=[] row=- 
+   +08 0x408d40 Pedal_Position_Sensor_2_Fault_Increment [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Pedal_Position_Sensor_2_Fault_Decrement [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Pedal_Position_Sensor_2_Fault_Set [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Pedal_Position_Sensor_2_Fault_Clear [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 4; uncovered []
+   candidate 8BA4 (size 16):
+   +00 0x408d38 Transmission_Oil_Temperature_Filter_Constant [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Transmission_Oil_Temperature_Global_Default [S2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit lhz sign U != S
+   +04 0x408d3c Transmission_Oil_Temperature_High_Limit [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Transmission_Oil_Temperature_Low_Limit [U2] acc=[] row=- 
+   +08 0x408d40 Transmission_Oil_Temperature_Fault_Increment [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Transmission_Oil_Temperature_Fault_Decrement [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Transmission_Oil_Temperature_Fault_Set [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Transmission_Oil_Temperature_Fault_Clear [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 5; uncovered []
+   candidate 8BA8 (size 16):
+   +00 0x408d38 Transmission_Governor_Pressure_Filter_Constant [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a Transmission_Governor_Pressure_Global_Default [U2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit 
+   +04 0x408d3c Transmission_Governor_Pressure_High_Limit [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e Transmission_Governor_Pressure_Low_Limit [U2] acc=[] row=- 
+   +08 0x408d40 Transmission_Governor_Pressure_Fault_Increment [U2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 Transmission_Governor_Pressure_Fault_Decrement [U2] acc=['lha'] row=transmission_temperature_early_substitute lha sign S != U
+   +0C 0x408d44 Transmission_Governor_Pressure_Fault_Set [U2] acc=['lhz'] row=transmission_temperature_coolant_model_scale 
+   +0E 0x408d46 Transmission_Governor_Pressure_Fault_Clear [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 4; uncovered []
+   candidate 8C80 (size 16):
+   +00 0x408d38 TVA_Filtered_Position [S2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed lhz sign U != S
+   +02 0x408d3a TVA_Max_Observed_Position [S2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit lhz sign U != S
+   +04 0x408d3c TVA_Max_Observed_Span [S2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e TVA_Min_Observed_Position [S2] acc=[] row=- 
+   +08 0x408d40 TVA_Position [S2] acc=['addi'] row=transmission_temperature_late_substitute 
+   +0A 0x408d42 TVA_Max_Hard_Stop [S2] acc=['lha'] row=transmission_temperature_early_substitute 
+   +0C 0x408d44 TVA_Min_Hard_Stop [S2] acc=['lhz'] row=transmission_temperature_coolant_model_scale lhz sign U != S
+   +0E 0x408d46 TVA_AZ_Monitor_Status [U2] acc=['lha'] row=transmission_temperature_coolant_model_offset lha sign S != U
+      -> FAILS 6; uncovered []
+   candidate 8D40 (size 16):
+   +00 0x408d38 VTA_Invalid_Ign_Cycle_Counter [U2] acc=['lhz'] row=transmission_temperature_late_substitute_minimum_vehicle_speed 
+   +02 0x408d3a VTA_SKIM_Failure [U2] acc=['lhz'] row=transmission_temperature_adc_unchanged_reading_limit 
+   +04 0x408d3c VTA_Enable [U2] acc=['lwz'] row=transmission_temperature_early_substitute_countdown_reload lwz width 4 != 2; row transmission_temperature_early_substitute_countdown_reload is dword
+   +06 0x408d3e VTA_Secret_Key [U6] acc=[] row=- 
+   +0C 0x408d44 Vehicle_Odometer [U4] acc=['lhz'] row=transmission_temperature_coolant_model_scale lhz width 2 != 4; row transmission_temperature_coolant_model_scale is word
+      -> FAILS 4; uncovered ['0x408d40', '0x408d42', '0x408d46']
+== free 0x408d60 +22: accessed / named ['0x408d60', '0x408d62', '0x408d64', '0x408d66', '0x408d68', '0x408d6c', '0x408d70', '0x408d71', '0x408d72', '0x408d74']
+   rows: 0x408d60 output_speed_to_vehicle_speed_default_ratio word, 0x408d62 transmission_output_speed_filter_coefficient word, 0x408d64 transmission_output_speed_maximum word, 0x408d66 transmission_output_speed_floor word, 0x408d68 transmission_output_speed_period_maximum dword, 0x408d6c transmission_output_speed_period_minimum dword, 0x408d70 output_speed_sensor_periods_accumulated byte, 0x408d71 output_speed_sensor_pulses_per_revolution byte, 0x408d72 transmission_output_speed_pulse_timeout_reload word
+   accesses: 0x408d60 ['lhz'], 0x408d62 ['addi'], 0x408d64 ['addi', 'lhz'], 0x408d66 ['lhz'], 0x408d68 ['lwz'], 0x408d6c ['lwz'], 0x408d70 ['lbz'], 0x408d71 ['lbz'], 0x408d72 ['lhz'], 0x408d74 ['lhz']
+   candidate 8A8B (size 22):
+   +00 0x408d60 Tstat_Min_Start_Temp_Threshold [S2] acc=['lhz'] row=output_speed_to_vehicle_speed_default_ratio lhz sign U != S
+   +02 0x408d62 Tstat_Max_Start_Temp_Threshold [S2] acc=['addi'] row=transmission_output_speed_filter_coefficient 
+   +04 0x408d64 Cooling_Max_Startup_Delta_Temperature [S2] acc=['addi', 'lhz'] row=transmission_output_speed_maximum lhz sign U != S
+   +06 0x408d66 Cooling_Maximum_Battery_Temp_Decrease [S2] acc=['lhz'] row=transmission_output_speed_floor lhz sign U != S
+   +08 0x408d68 Cooling_Engine_Warmed_Up_Temp_Threshold [S2] acc=['lwz'] row=transmission_output_speed_period_maximum lwz width 4 != 2; row transmission_output_speed_period_maximum is dword
+   +0A 0x408d6a Tstat_Predicted_Energy_Coefficient [S2] acc=[] row=- 
+   +0C 0x408d6c Tstat_Predicted_Energy_Alpha [S2] acc=['lwz'] row=transmission_output_speed_period_minimum lwz width 4 != 2; row transmission_output_speed_period_minimum is dword
+   +0E 0x408d6e Tstat_AD_Startup_Delay [S2] acc=[] row=- 
+   +10 0x408d70 Tstat_Max_Idle_Time [U2] acc=['lbz'] row=output_speed_sensor_periods_accumulated lbz width 1 != 2; row output_speed_sensor_periods_accumulated is byte
+   +12 0x408d72 Tstat_Test_Abort_Timer_Percent [U2] acc=['lhz'] row=transmission_output_speed_pulse_timeout_reload 
+   +14 0x408d74 Tstat_Max_Start_Temp_For_Fan_Inhibit [S2] acc=['lhz'] row=- lhz sign U != S
+      -> FAILS 10; uncovered ['0x408d71']
+   candidate 8C7D (size 22):
+   +00 0x408d60 TVA_Equivalent_Throttle_Angle [S2] acc=['lhz'] row=output_speed_to_vehicle_speed_default_ratio lhz sign U != S
+   +02 0x408d62 TVA_Position_Cmd [S2] acc=['addi'] row=transmission_output_speed_filter_coefficient 
+   +04 0x408d64 TVA_Position_Command_State [U2] acc=['addi', 'lhz'] row=transmission_output_speed_maximum 
+   +06 0x408d66 TVA_AZ_Closed_Cmd [S2] acc=['lhz'] row=transmission_output_speed_floor lhz sign U != S
+   +08 0x408d68 TVA_AZ_Open_Cmd [S2] acc=['lwz'] row=transmission_output_speed_period_maximum lwz width 4 != 2; row transmission_output_speed_period_maximum is dword
+   +0A 0x408d6a TVA_AZ_Adjust_Timer [U2] acc=[] row=- 
+   +0C 0x408d6c TVA_AZ_Hard_Stop_Hold_Timer [U2] acc=['lwz'] row=transmission_output_speed_period_minimum lwz width 4 != 2; row transmission_output_speed_period_minimum is dword
+   +0E 0x408d6e TVA_AZ_Key_On_Delay_Timer [U2] acc=[] row=- 
+   +10 0x408d70 TVA_Sleep_Timer [U4] acc=['lbz'] row=output_speed_sensor_periods_accumulated lbz width 1 != 4; row output_speed_sensor_periods_accumulated is byte
+   +14 0x408d74 TVA_AZ_Denied_State [U1] acc=['lhz'] row=- lhz width 2 != 1
+   +15 0x408d75 TVA_Span_Denied_State [U1] acc=[] row=- 
+      -> FAILS 9; uncovered ['0x408d71', '0x408d72']

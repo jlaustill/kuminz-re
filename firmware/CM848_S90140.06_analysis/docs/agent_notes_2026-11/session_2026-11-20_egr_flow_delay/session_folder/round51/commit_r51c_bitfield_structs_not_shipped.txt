@@ -1,0 +1,20 @@
+cm848: round 51 stage C - the two trip information status words as bitfield structs
+
+e2m 8B6D +C / +E, EEPROM mirror 0x3fee64 / 0x3fee66. One field per mask their setters use; the bits nobody sets are
+reserved_bit_N. Every setter and the trip reset are in cm848_updateTripAndLifetimeCounters and
+cm848_flagTripInformationPowerDownDataLoss.
+- trip_information_distance_fault_status_t:
+  - lifetime_distance_vehicle_speed_sensor_fault (0x02) and trip_distance_vehicle_speed_sensor_fault (0x10): set
+    together once a vehicle speed sensor fault outlasts trip_information_fault_minimum_time.
+  - lifetime_distance_overflow (0x04) and trip_distance_overflow (0x20).
+- trip_information_fault_status_t:
+  - one overflow bit per counter: lifetime run time / fuel / idle fuel / idle time (0x10-0x80) and trip
+    (0x400-0x2000);
+  - the power-down data loss pair: trip_power_down_data_lost (0x08) and lifetime_power_down_data_lost (0x200).
+- Trip / lifetime scope comes from the trip reset masks (0x0030 / 0x3c08). The setters confirm it for every overflow
+  bit. The power-down pair rests on the reset mask alone: the overflow pairs sit 6 bits apart, which would make bit 3
+  the lifetime one, so both fields say their scope is inferred.
+
+PROOF_PLACEHOLDER
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

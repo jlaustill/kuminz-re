@@ -252,3 +252,8 @@
   401638 verify_round49b.log
   401637 verify_round50.log
   401637 verify_round50b.log
+  401661 verify_round51a.log
+  401661 verify_round51b.log
+  401661 verify_round51b_shared_enum.log
+  401661 verify_round51c_bitfield_structs_rejected.log
+  401661 verify_round51_closing.log

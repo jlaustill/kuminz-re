@@ -509,3 +509,7 @@ Hand work on the round 7 lead.
 ## Round 50: gaps by access signature (`session_folder/round50/`)
 
 - `gap_access_signatures.py` (+ `gap_access.txt`). **Stage A:** `apply_r50a.py`, `map_r50a.csv`, `prove_r50a.sh`. **Closing:** `apply_r50_closing.py`, `update_large_tar_r50.sh`.
+
+## Round 51: the 0x408d38 gap is four blocks, the trip information blocks (`session_folder/round51/`)
+
+- Search: `three_block_fill.py`, `split_gap_debug.py`, `pair_fill.py`, `scored_cover.py` (+ their `.txt` outputs). **Stage A:** `apply_r51a.py`, `map_r51a.csv`, `prove_r51a.sh`. **Stage B:** `apply_r51b.py`, `prove_r51b_enum.py`. **Not shipped:** `apply_r51c_bitfield_structs_rejected.py`, `commit_r51c_bitfield_structs_not_shipped.txt`. `show_function_changes.py` lists the changed lines the type stages were read by. **Closing:** `find_branch_callers.py`, `apply_r51_call_site_fix.py`, `apply_r51_closing.py`, `update_large_tar_r51.sh`.

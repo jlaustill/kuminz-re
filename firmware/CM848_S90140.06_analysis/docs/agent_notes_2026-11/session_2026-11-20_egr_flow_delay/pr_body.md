@@ -657,6 +657,15 @@ state enum, the flag bytes.**
 - **Stage A (316e46c, labels, rows):** gaps matched by access signature. They give the TSC1-lost counter's calibrations
   (e2m 8A7B), with the `j1939_tsc1_*` timing rows joining the `tsc1_lost_*` family, and the commanded throttle
   difference threshold (1585).
+**Round 51.**
+- **Stage A (c2a1175, labels, rows):** the 0x408d38 gap is four e2m blocks: the transmission temperature
+  defaults and limp-in delay (8B9B), the P0711 rationality calibrations (8C2C), the output shaft speed sensor (8BB2)
+  and the trip information fault time (8B6B). The same modules' RAM / EEPROM blocks 8C2D / 8B6C / 8B6D are cited
+  record for record; `sensorDiagnosticsConfiguration` becomes `cm848_flagTripInformationPowerDownDataLoss`.
+- **Stage B (0604834, types):** three i16 rows, `TRANSMISSION_TEMPERATURE_RATIONALITY_STATE` (the shared monitor enum
+  rendered the check's own states 5 / 6 as OR combinations), and a void prototype.
+- Bitfield structs for the two trip information status words were built and rejected: every access is a
+  whole-word mask write, so they rendered no field name and only added a cast to each mask line.
 
 ## Test plan
 
@@ -749,6 +758,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 51: stage A: `prove_caches.py` (casts folded, the function rename applied to the old .cpp) matches 1967 of 1968 functions, the other differing only in local declaration order; stage B: 1962 match and the six others equal the old text once each enum member value is put back and the removed argument dropped (`prove_r51b_enum.py`); closing: no function body differs, only the flag function plate. Every verify byte-identical.
 - [x] Round 50: `prove_caches.py` with the casts folded matches 1965 of 1968 functions (the other three differ only in local declaration order); verify byte-identical.
 - [x] Round 49: `prove_caches.py` with the scalar casts and two char literals folded matches 1967 of 1968 functions (the other differs only in local declaration order); verify byte-identical.
 - [x] Round 48: `prove_caches.py` on copies with the scalar casts stripped matches all 1968 functions (2 differ only in local declaration order; unstripped, the three thermostat functions differ only in casts); verify byte-identical.

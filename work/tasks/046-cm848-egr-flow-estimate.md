@@ -2360,7 +2360,63 @@ A peer relay started the round; the scripts are in `session_folder/round50/`.
 - **Proof:** `prove_caches.py` with the casts folded matches 1965 of 1968 functions (the other three differ only in local declaration order); verify byte-identical.
 - **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 221.
 - **Leads:** the two large gaps with unnamed reads (0x408d38 +62, 0x40b592 +52) have no one- or two-block fit; they may
-  hold three or more blocks.
+  hold three or more blocks. (Round 51: 0x408d38 is four blocks; 0x40b592 starts with 8BB6.)
+
+## Done, round 51 (2026-11-22, same PR): the 0x408d38 gap is four blocks, the trip information blocks
+
+A peer relay started the round; the scripts are in `session_folder/round51/`.
+- **Round 50's lead, answered:**
+  - The 62-byte gap 0x408d38 is four absent blocks back to back: 8B9B 16 + 8C2C 24 + 8BB2 20 + 8B6B 2. No search
+    of three blocks or fewer could find it. `split_gap_debug.py` (fix one block, test the rest) and `pair_fill.py`
+    found it.
+  - The 0x40b592 gap was misread. Its first 22 bytes are 8BB6 (the governor pressure PID, placed in an earlier round
+    over 8C34's drifting tail). The rest, 0x40b5a8 +30, has 9816 width-consistent covers of up to three blocks
+    (`scored_cover.py`, sign scored instead of rejected), none of them meaningful. A working-RAM span needs a
+    semantic anchor, not width alone.
+- **Stage A (c2a1175, labels and rows):**
+  - 8B9B: the transmission temperature defaults and their limp-in delay, in the e2m's vocabulary
+    (`transmission_temperature_limp_in_delay_*`, `transmission_temperature_default_during / after_limp_in_delay`,
+    the RAM `transmission_temperature_limp_in_delay_timer`).
+  - 8C2C (12 records on 12 rows): `transmission_temperature_rationality_maximum_test_time` (was a "minimum driving
+    passes"), the start test's transmission limit, and the minimum engine-off time joining the `_rationality_`
+    family.
+  - 8C2D (RAM 0x40b626): `transmission_temperature_rationality_test_timer`.
+  - 8BB2: `transmission_output_speed_minimum` (was `_floor`).
+  - 8B6B: a new row, `trip_information_fault_minimum_time`, chosen by its use since 32 blocks fit the 2 bytes.
+  - 8B6D (EEPROM mirror 0x3fee58, nine records on nine rows): `trip_information_distance_fault_status_cal` (+C) and
+    `trip_information_fault_status_cal` (+E). The e2m's TI_Fault_Period says the delayed fault goes in +E; the code
+    puts it in +C.
+  - 8B6C (RAM 0x40b638): five rows cited, plus the documentation row `pci_transmit_message_11_fuel_used`.
+  - `sensorDiagnosticsConfiguration` -> `cm848_flagTripInformationPowerDownDataLoss`.
+  - The stale 8C34 +12 citation at 0x40b58c is dropped. 8C34's +12..+17 records start with CHR_CC 11.25.05.07.
+- **Stage B (0604834, types):**
+  - Three i16 rows. They change no rendered line.
+  - `TRANSMISSION_TEMPERATURE_RATIONALITY_STATE`: members 0-4 from 8C2D's labels, plus the check's own verdict
+    states 5 / 6. The shared `DIAGNOSTIC_MONITOR_STATE` rendered 5 and 6 as `ABORTED|RUNNING` / `ABORTED|PASSED`.
+  - A void (void) prototype that removes the 0x30d4 argument the decompiler showed at the call.
+- **Bitfield structs: built and rejected (not shipped).**
+  - The build changed only the two writer functions and rendered 0 field names on the 14 masks. Every access is a
+    whole-word `ori` / `andi` write; nothing tests a bit. Each mask line just gained a
+    `(trip_information_*_t)(...)` cast.
+  - Both words stay `word`, with every bit spelled out in their row comments.
+  - The script is `apply_r51c_bitfield_structs_rejected.py` (log `verify_r51c_bitfield_structs.log`), so the user can
+    overrule this in one line.
+- **Closing:** the flag function has one call site, a bl at 0x54de0 in `cm848_restartApplicationWithoutReset`
+  (`find_branch_callers.py`). `cm848_applicationMain` falls through into that code from 0x54d2c, so both
+  decompilations show it. The 0x30d4 is 12500 from `li r3,12500 / mtdec r3`, the decrementer reload. Stage A's plate
+  ("cm848_applicationMain twice") and stage B's "two calls" were wrong; the plate and the prototype comment are fixed.
+- **Proof:** stage A: `prove_caches.py` (casts folded, the function rename applied to the old .cpp) matches 1967 of 1968 functions, the other differing only in local declaration order; stage B: 1962 match and the six others equal the old text once each enum member value is put back and the removed argument dropped (`prove_r51b_enum.py`); closing: no function body differs, only the flag function plate. Every verify byte-identical.
+- **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 221.
+- **Leads:**
+  - **User call, untested:** a flag enum (power-of-two members) on the two trip information words might render
+    `| TRIP_INFORMATION_TRIP_FUEL_USED_OVERFLOW` where the bitfields render nothing. Ghidra already split stage B's
+    whole-value constants into member combinations. firmware/CLAUDE.md allows an enum type only for whole-value
+    compares, so it was not tried.
+  - 0x40b5a8 +30 (vehicle speed state, the rock cycle phase, the road speed governor references, unnamed 0x40b5c0)
+    needs a semantic anchor.
+  - `initGovernorFlagsAux` only zeroes 0x3fcfba (in the trip counter RAM, never read directly): misnamed, but nothing
+    says what the word is.
+  - The rest of the transmission RAM 0x40b620-0x40b637 (the OSS period / speed words, 8BB4 / 8BB5?) is untiled.
 
 ## Leads (not in this PR)
 

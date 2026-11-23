@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 23:54:51 MST 2026
+// Generated: Mon Nov 23 00:12:47 MST 2026
 
 
 //
@@ -85740,11 +85740,12 @@ void initGovernorFlagsAux(void)
 // Function: cm848_flagTripInformationPowerDownDataLoss @ 0x00523760
 //
 
-/* Power-down step (cm848_applicationMain and cm848_restartApplicationWithoutReset each call it
-   after the RAM calibration refresh): while fault_detected_cal.power_down_data_lost_error is set it
-   sets bits 0x208 of trip_information_fault_status_cal (e2m 8B6D +E Trip_Info_Fault_Status): bit 3
-   (a trip reset clears it) and bit 9 (a trip reset keeps it) (was sensorDiagnosticsConfiguration;
-   PR #53 round 51) */
+/* Power-down step called once (bl @ 0x54de0 after the RAM calibration refresh) in
+   cm848_restartApplicationWithoutReset; cm848_applicationMain falls through into that code from
+   0x54d2c so both decompilations show the call: while fault_detected_cal.power_down_data_lost_error
+   is set it sets bits 0x208 of trip_information_fault_status_cal (e2m 8B6D +E
+   Trip_Info_Fault_Status): bit 3 (a trip reset clears it) and bit 9 (a trip reset keeps it) (was
+   sensorDiagnosticsConfiguration; PR #53 round 51) */
 
 void cm848_flagTripInformationPowerDownDataLoss(void)
 
