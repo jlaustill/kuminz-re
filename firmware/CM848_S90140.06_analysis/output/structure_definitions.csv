@@ -108,7 +108,7 @@ engine_speed_state_t,0x0040b7ac,filtered_engine_speed,word,2,"e2m 819B +2C Filte
 # Located in RAM copy of EEPROM data at 0x003fee08
 # Total size: 32 bytes (0x003fee08-0x003fee27)
 eeprom_header_t,0x003fee08,version_marker,word,2,EEPROM data version marker,,verified
-eeprom_header_t,0x003fee08,magic,word,2,Validation magic (EEPROM_MAGIC enum: 0x600D=valid),,verified
+eeprom_header_t,0x003fee08,ecm_status,ECM_STATUS,2,e2m 000B +0 ECM_Status (EEPROM 0x0) - the calibration status the boot ROM reads before it jumps to the operational code (was magic; PR #53 round 67),,verified
 eeprom_header_t,0x003fee08,header_block,byte,6,EEPROM header data block,,verified
 eeprom_header_t,0x003fee08,config_dword,dword,4,EEPROM configuration dword,,verified
 eeprom_header_t,0x003fee08,config_word,word,2,EEPROM configuration word,,verified
@@ -1125,13 +1125,6 @@ j1939_acknowledgement_payload_t,,pgn_high,byte,1,Acknowledged PGN high byte (= d
 # These define common data patterns across Cummins ECUs
 # ============================================================================
 
-# EEPROM Parameter Structure - customer-configurable parameter format
-# Used for PTO setpoints, limits, and other EEPROM-stored calibrations
-eeprom_param_t,,value,word,2,Parameter value (resolution varies per parameter),,verified
-eeprom_param_t,,min_limit,word,2,Minimum allowed value for parameter,,verified
-eeprom_param_t,,max_limit,word,2,Maximum allowed value for parameter,,verified
-eeprom_param_t,,default_value,word,2,Factory default value,,verified
-
 # J1939 powertrain messages received (j1939_powertrain_messages_received; round 6: was etc1_message_t /
 #   j1939_tsc1_received): the ETC1 bytes (cm848_j1939ProcessPgn61442Etc1), the ETC2 bytes at +0x10
 #   (cm848_j1939ProcessPgn61445Etc2) and the engine TSC1 bytes (processEngineTsc1Request)
@@ -1730,11 +1723,6 @@ can_slot_range_t,0x00302510,slot_end,word,2,Last CAN mailbox slot for diagnostic
 # =============================================================================
 can_rx_channel_t,0x0030251c,channel_id,word,2,J1939 source address filter for CAN receive matching,,verified
 # =============================================================================
-# EEPROM diagnostic service callback parameter @ 0x30252a
-# Pointer/handle passed to cm848_handleBootInitializeEepromTransferService callback
-# =============================================================================
-eeprom_param_t,0x0030252a,callback_param,dword,4,Diagnostic callback parameter for EEPROM transfer,,verified
-# =============================================================================
 # System initialization sentinel @ 0x302736
 # Written in mpc555_systemInitialization: sentinel=0xBBBB counter=0
 # Sentinel checked at boot to detect cold-start vs warm-reset
@@ -1760,14 +1748,17 @@ eeprom_xfer_state_t,0x00302878,transfer_timer,word,2,Transfer timeout countdown 
 # watchdog_counter: incremented per tick to detect transfer stalls
 # last_write_addr: previous block write address for sequential continuity check
 # block_start_addr: start address of current transfer address range
-# block_count: number of completed transfer blocks recorded (max 9)
+# block_count: finished download blocks recorded in download_block_list @ 0x3028b3 (10 at most)
 # Note: last_write_addr and block_start_addr are UNALIGNED dwords (packed struct)
 # =============================================================================
 eeprom_block_tracking_t,0x003028a6,watchdog_counter,word,2,Transfer watchdog counter (reset each block),,verified
 eeprom_block_tracking_t,0x003028a6,failed_write_authorization_count,byte,1,cm848_validateWriteAuth's count of failed write authorizations: at 0x11 every check fails / a matching token resets it / a mismatch adds 1 (was _pad2; PR #53 round 35),,verified
 eeprom_block_tracking_t,0x003028a6,last_write_addr,dword,4,Previous block write address for continuity validation,,verified
 eeprom_block_tracking_t,0x003028a6,block_start_addr,dword,4,Start address of current EEPROM transfer range,,verified
-eeprom_block_tracking_t,0x003028a6,block_count,word,2,Completed transfer block count (max 9),,verified
+eeprom_block_tracking_t,0x003028a6,block_count,word,2,Finished download blocks in download_block_list (10 at most - cm848_finishDownloadBlock answers DOWNLOAD_INVALID when it is full; PR #53 round 67),,verified
+# download_block_range_t - one entry of download_block_list @ 0x3028b3 (PR #53 round 67)
+download_block_range_t,,start_address,dword,4,The block's first address (eeprom_block_tracking.block_start_addr),,verified
+download_block_range_t,,end_address,dword,4,The block's last data byte: start + block length - 3 for a J1939 block (before its 2-byte CRC) / - 1 for a serial block,,verified
 # =============================================================================
 # J1939 Transport Protocol queue/RTS-CTS state machine @ 0x302905
 # Used by mpc555_handleJ1939TransportRequestToSend / mpc555_sendJ1939TransportDataPackets

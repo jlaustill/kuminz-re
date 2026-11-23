@@ -822,9 +822,8 @@ address,name,type,comment
 0x00302510,can_mailbox_counter,can_slot_range_t,
 0x00302512,can_mailbox_counter.slot_end,,
 0x0030251c,can_rx_channel_filter,can_rx_channel_t,
-0x0030252a,eeprom_diag_callback,eeprom_param_t,
-0x00302530,eeprom_diag_callback.default_value,,
-0x00302532,can_tx_status.callback_param,,
+0x0030252a,begin_reflash_request,j1939_rx_msg_t *,Boot kernel: the service 2 request that cm848_handleBootBeginReflashService keeps for mpc555_beginReflash's answer (was eeprom_diag_callback typed eeprom_param_t - its bytes 6 on are crc_ccitt_table; PR #53 round 67)
+0x00302530,crc_ccitt_table,word[256],The reflected CRC-CCITT table (polynomial 0x8408) built by cm848_generateCrcTable - read by cm848_computeCrcCcitt and cm848_updateDownloadCrc; it ends at 0x30272f (was eeprom_diag_callback.default_value; PR #53 round 67)
 0x00302731,flash2_writes_enabled,byte,Nonzero allows diagnostic writes to Bank-2 flash 0x500000-0x5fffff (memory region type 2); otherwise those addresses report 9 = not writable
 0x00302736,system_initialization_flags,system_initialization_flags_t,Set by the boot service loop mpc555_systemInitialization: initialization_sentinel = 0xBBBB and initialization_counter = 0 (no reader in the .cpp) (was sys_init_flags_t_00302736)
 0x00302738,system_initialization_flags.initialization_counter,,
@@ -836,10 +835,11 @@ address,name,type,comment
 0x0030288a,watchdog_timeout_countdown,,
 0x003028a5,watchdog_tick_prescaler,byte,
 0x003028a6,eeprom_block_tracking,eeprom_block_tracking_t,
-0x003028a8,write_auth_attempt_counter,,
-0x003028a9,keyon_duration_counter.last_write_addr,,
-0x003028ad,qadc_a_result_ch28,,
-0x003028b1,qadc_a_result_ch30,,
+0x003028a8,eeprom_block_tracking.failed_write_authorization_count,,(was write_auth_attempt_counter: a stale flat row inside the struct; PR #53 round 67)
+0x003028a9,eeprom_block_tracking.last_write_addr,,(was keyon_duration_counter.last_write_addr: a stale flat row inside the struct; PR #53 round 67)
+0x003028ad,eeprom_block_tracking.block_start_addr,,(was qadc_a_result_ch28: a stale flat row inside the struct; PR #53 round 67)
+0x003028b1,eeprom_block_tracking.block_count,,(was qadc_a_result_ch30: a stale flat row inside the struct; PR #53 round 67)
+0x003028b3,download_block_list,download_block_range_t[10],Boot kernel: the start and last data address of each finished download block - filled by cm848_finishDownloadBlock (J1939: DOWNLOAD_INVALID when all 10 are used) and mpc555_diagServiceTransferBlock (serial: 0x75 when full) and checked against the image header by mpc555_verifyDownloadedCalibration; ends at 0x302902 (was DAT_003028b3 / DAT_003028b7; PR #53 round 67)
 0x00302903,boot_j1939_transport_transmit_active,byte,1 while the boot kernel's connection mode (RTS / CTS) transmit session runs: mpc555_sendJ1939TransportRequestToSend sets it / the end of message acknowledge and abort handlers and the data sender's timeout clear it (the twin of j1939_multiframe_tx_active) (was qadc_a_queue_status_1; PR #53 round 35)
 0x00302904,boot_j1939_transport_transmit_destination_address,byte,the session's destination address (the message identifier's PDU specific byte); the clear to send / end of message acknowledge / abort handlers match replies against it (the twin of j1939_multiframe_tx_destination_address) (was qadc_a_active_channel_id; PR #53 round 35)
 0x00302905,boot_j1939_transport_transmit_session,j1939_transport_transmit_session_t,The boot reflash kernel's outbound J1939 transport session (j1939_transport_transmit_session_t): mpc555_sendJ1939TransportRequestToSend opens it (TP.CM request-to-send), mpc555_handleJ1939TransportClearToSend records each granted window and mpc555_sendJ1939TransportDataPackets sends up to 15 TP.DT frames per call (was j1939_tp_queue_t_00302905)
@@ -2653,10 +2653,10 @@ address,name,type,comment
 0x003fedde,variable_geometry_turbocharger_saved_span_cal,word,code: written every pass by the span filter (floor value while fault 670 is set), read back as the filter start value by init and as the held span; EEPROM 0x195c = 9600 in all four EEPROM dumps and in the RAM dump. Inside the EEPROM mirror, so _cal; not in a time-shared window. e2m: T_VGT_Adjusted_Span (0x011A3B00, measured span saved at power down). (was protection_load_filtered)
 0x003fede0,variable_geometry_turbocharger_saved_closed_position_cal,i16,code: written every pass by the closed-position filter (12800 while fault 670 is set), read back by init to start the filter; EEPROM 0x195e = 12800 in all four dumps and the RAM dump. _cal (EEPROM mirror). e2m: T_VGT_Closed_Position (0x011A3B02, measured position saved at power down). (was protection_ema_output_snapshot) | retyped word -> i16 2026-11-20 (e2m signed, every load lha)
 0x003fede2,transmission_1_2_shift_lag_cal,word[6],e2m RE_One_Two_Lag (T table, 'Shift lag tbl corresponding to temperature range, pwr-dwn trim'): the learned 1-2 shift lag per transmission_temperature_range (index 1..5; EEPROM 0x1960, so _cal). The WOT and low range modes load transmission_predicted_1_2_shift_delay from it. The 2-3 twin (RE_Two_Three_Lag) is at 0x3fedee, under the boot kernel's diagnostic row names
-0x003fedee,eeprom_calibration_pending_flag,byte, | application side (time-shared, the EEPROM mirror): word 0 (with the next byte) of e2m RE_Two_Three_Lag, the learned 2-3 shift lag per transmission_temperature_range (0x3fedee + 2 x range), read into transmission_predicted_2_3_shift_delay
+0x003fedee,serial_reflash_busy_flag,byte,Boot kernel: set by cm848_beginSerialReflash and cm848_finishSerialReflash - the serial transfer block and download services answer response pending while it is set - cleared after the erase (mpc555_processDiagnosticAndEepromRequests) / the verify / cm848_resetSerialReflashState (was eeprom_calibration_pending_flag; PR #53 round 67) | application side (time-shared, the EEPROM mirror): word 0 (with the next byte) of e2m RE_Two_Three_Lag, the learned 2-3 shift lag per transmission_temperature_range (0x3fedee + 2 x range), read into transmission_predicted_2_3_shift_delay
 0x003fedef,diag_session_state_byte,byte,
 0x003fedf0,diagnostic_callback_init_ptr,dword, | application side (time-shared, the EEPROM mirror): word 1 of e2m RE_Two_Three_Lag, the learned 2-3 shift lag per transmission_temperature_range (0x3fedee + 2 x range), read into transmission_predicted_2_3_shift_delay
-0x003fedf4,eeprom_write_pending_flag,word, | application side (time-shared, the EEPROM mirror): word 3 of e2m RE_Two_Three_Lag, the learned 2-3 shift lag per transmission_temperature_range (0x3fedee + 2 x range), read into transmission_predicted_2_3_shift_delay
+0x003fedf4,serial_reflash_erase_pending_flag,word,Boot kernel: cm848_beginSerialReflash sets it to 1 - mpc555_processDiagnosticAndEepromRequests then runs mpc555_beginReflash(serial) and clears it (was eeprom_write_pending_flag; PR #53 round 67) | application side (time-shared, the EEPROM mirror): word 3 of e2m RE_Two_Three_Lag, the learned 2-3 shift lag per transmission_temperature_range (0x3fedee + 2 x range), read into transmission_predicted_2_3_shift_delay
 0x003fedf6,eeprom_write_request_pending,word,staged EEPROM write request type awaiting dispatch | application side (time-shared, the EEPROM mirror): word 4 of e2m RE_Two_Three_Lag, the learned 2-3 shift lag per transmission_temperature_range (0x3fedee + 2 x range), read into transmission_predicted_2_3_shift_delay
 0x003fedf8,mios_cnt_snapshot,word, | application side (time-shared, the EEPROM mirror): word 5 of e2m RE_Two_Three_Lag, the learned 2-3 shift lag per transmission_temperature_range (0x3fedee + 2 x range), read into transmission_predicted_2_3_shift_delay
 0x003fedfa,transmission_learned_information_stored_flags_byte_1_cal,byte,e2m 8CE5 +0 RE_Non_Vol_Mem_Flags1 (HEX, 1 byte): 'Flags indicating transmission learned info is stored, byte 1 of 2'. EEPROM 0x1978 (mirror), the first of two flag bytes beside the learned output speed ratio (diag_clear_flags_t at 0x3fedfc); the second byte, output_speed_to_vehicle_speed_ratio_learned_flag_cal at 0x3fedfb, is the one the application uses (bit 0 = learned ratio stored); no application code reads or writes this byte in the decompile. TIME-SHARED with the boot reflash kernel: mpc555_sciReceiveDataByte sets it to 2 (and 0) and mpc555_sciValidateChecksum counts it down as an SCI response pending countdown. 0 in the RAM dump and in all four EEPROM dumps (was diag_response_pending_flag)
@@ -2669,7 +2669,7 @@ address,name,type,comment
 0x003fee03,j1939_cruise_state_t_003fee00.cruise_state_pad_03,,
 0x003fee05,sensor_fault_threshold_state,byte,
 0x003fee08,eeprom_shadow_header,eeprom_header_t,RAM shadow of EEPROM header loaded at boot
-0x003fee0a,eeprom_shadow_header.magic,,
+0x003fee0a,eeprom_shadow_header.ecm_status,,(was eeprom_shadow_header.magic; PR #53 round 67)
 0x003fee0c,eeprom_shadow_header.header_block[0],,
 0x003fee12,eeprom_shadow_header.config_dword,,
 0x003fee16,eeprom_shadow_header.config_word,,
@@ -5390,7 +5390,7 @@ address,name,type,comment
 0x0040b12e,transmission_throttle_previous,word,e2m 8C17 +2C RE_TPS_Last ('Previous throttle; used in trans control logic') (was protection_state_counter_b)
 0x0040b130,fuel_demand_rate_abs,word,
 0x0040b132,transmission_3_4_transition_timer,word,e2m 8C17 +30 RE_Transition_3_4_Timer: reloaded from transmission_3_4_transition_time (8BBB +04 RE_Transition_3_4_Timer_Max, 'Timer value used to delay ratio calc after engaging overdrive') when the overdrive solenoid turns on; counted down in cm848_decrementTransmissionTimers (was overdrive_upshift_timer) | earlier note: Loaded with 400 (DAT_004077fa) when the overdrive solenoid turns on; counted down in cm848_decrementTransmissionTimers; while it runs and the ratio is still 30 or more the gear stays third (was protection_debounce_counter) (Medium confidence)
-0x0040b134,transmission_predicted_2_3_shift_delay,word,e2m 8C17 +32 RE_Two_Three_Delay ('Predicted 2-3 shift delay') (was governor_pressure_learned_gain_gear2) | earlier note: Gear 2 per-temperature learned lead factor (0-40) multiplying engine load to set the RPM escalation point for governor pressure - working copy of the EEPROM-mirror table base 0x3fedee (and eeprom_calibration_pending_flag) indexed by transmission_temperature_range (was protection_status_entry) (Medium confidence)
+0x0040b134,transmission_predicted_2_3_shift_delay,word,e2m 8C17 +32 RE_Two_Three_Delay ('Predicted 2-3 shift delay') (was governor_pressure_learned_gain_gear2) | earlier note: Gear 2 per-temperature learned lead factor (0-40) multiplying engine load to set the RPM escalation point for governor pressure - working copy of the EEPROM-mirror table base 0x3fedee (and serial_reflash_busy_flag) indexed by transmission_temperature_range (was protection_status_entry) (Medium confidence)
 0x0040b136,transmission_overdrive_upshift_inhibit_timer,word,e2m 8C17 +34 RE_Upshift_3_4_Inhibit_Timer ('Timer used to delay OD upshifts') (was protection_timer_d)
 0x0040b138,governor_pressure_wide_open_throttle_boost_timer,word,e2m 8C17 +36 RE_WOT_Boost_Timer ('Timer used to control duration of WOT upshift boost pressure') (was protection_recovery_timer)
 0x0040b13a,transmission_temperature_range,byte,1-5 from transmission_temperature_in_use against the 98.6 / 149 / 200 / 250 deg F thresholds (was protection_status_table_index)
@@ -6177,9 +6177,9 @@ address,name,type,comment
 0x01000030,eeprom_config_block,byte,
 0x01000034,eeprom_version_marker,byte,
 0x0100004a,eeprom_calibration_block,byte,
-0x01000050,eeprom_cal_word1,byte,
-0x01000052,eeprom_cal_word2,byte,
-0x01000054,eeprom_cal_word3,byte,
+0x01000050,serial_reflash_status_flags_cal,word,EEPROM 0x50: the boot kernel's serial reflash flags - cm848_beginSerialReflash clears bits 1 and 3 and a verified serial download sets bit 3 and clears bit 1 (mpc555_verifyDownloadedCalibration) - read into the boot shadow 0x3fee1e by cm848_loadCalibrationFromEeprom (was eeprom_cal_word1; PR #53 round 67)
+0x01000052,serial_reflash_success_count_cal,word,EEPROM 0x52: counted by mpc555_verifyDownloadedCalibration after each verified serial download - read into the boot shadow 0x3fee20 (was eeprom_cal_word2; PR #53 round 67)
+0x01000054,serial_reflash_attempt_count_cal,word,EEPROM 0x54: counted by cm848_beginSerialReflash at each serial reflash start - read into the boot shadow 0x3fee22 (was eeprom_cal_word3; PR #53 round 67)
 0x01000056,serial_reflash_unlock_request_cal,word,EEPROM 0x56: one-shot serial reflash hand-off from the application. SCI command 49 (cm848_sciCommand49Callback, with sci_security_state 1 and engine_state 1 or end_of_line_test_settings_cal.field_mode_register 5100) writes 1 here and the boot-kernel magic 0x1d0a at EEPROM 0x00, then restarts through the boot ROM (cm848_restartThroughBootRomAfterSciRequest). The boot ROM loads it into eeprom_shadow_header.serial_reflash_unlock_request, and mpc555_initDiagnosticSession clears it and starts the boot SCI session unlocked. 0 in the EEPROM dump. Was eeprom_cal_word4 (byte)
 0x0100008e,eeprom_serial_number,byte,
 # protection_control_state_flags: 10-channel rolling 2-bit edge-detection register (dword)

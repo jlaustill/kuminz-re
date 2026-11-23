@@ -20,10 +20,10 @@ J1939_PGN_LOWER,0xfeda,PGN_65242_SOFTWARE_ID,Software Identification,2
 J1939_PGN_LOWER,0xfee0,PGN_65248_VEHICLE_DISTANCE,Vehicle Distance,2
 J1939_PGN_LOWER,0xfeec,PGN_65260_VEHICLE_ID,Vehicle Identification,2
 J1939_PGN_LOWER,0xf003,PGN_61443_EEC2,Electronic Engine Controller 2,2
-# EEPROM Magic Values
-EEPROM_MAGIC,0x600d,VALID_MARKER,EEPROM contains valid calibration data,2
-EEPROM_MAGIC,0x2b16,NEEDS_PROGRAMMING,EEPROM needs calibration programming,2
-EEPROM_MAGIC,0x1d0a,FLASH_MODE_MARKER,Flash programming mode marker,2
+# ECM_STATUS - e2m 000B +0 ECM_Status (EEPROM word 0) 'Indicator as to the calibration status of the ECM': the boot ROM's reflash state on eeprom_header_t.ecm_status (was EEPROM_MAGIC - applied nowhere; PR #53 round 67)
+ECM_STATUS,0x600d,ECM_STATUS_CALIBRATION_VALID,The downloaded calibration was verified: with the boot mode strap pins low mpc555_hardwareInitialization jumps to flash_operational_code_entry_pointer - written by mpc555_verifyDownloadedCalibration (was VALID_MARKER),2
+ECM_STATUS,0x1d0a,ECM_STATUS_REFLASH_IN_PROGRESS,Written by cm848_sciCommand49Callback (the application's serial reflash request - its image still intact) and by mpc555_beginReflash before the erase: keeps the boot kernel resident (mpc555_systemInitialization runs cm848_runBootKernelLoop) and mpc555_sciHandleDownloadStart requires it (was FLASH_MODE_MARKER),2
+ECM_STATUS,0x2b16,ECM_STATUS_CALIBRATION_DOWNLOADED_NOT_VERIFIED,Written by cm848_finishSerialReflash after a serial download (no J1939 writer found in the firmware - the write memory services can reach EEPROM 0x0): mpc555_verifyDownloadedCalibration checks the image then writes CALIBRATION_VALID (was NEEDS_PROGRAMMING),2
 # Diagnostic Protocol Service IDs (CalTerm/Insite) - same as CM550
 DIAG_SERVICE_ID,3,SECURED_WRITE,Secured write operations (requires security check),1
 DIAG_SERVICE_ID,4,SYSTEM_CONTROL,System control operations,1
@@ -530,8 +530,8 @@ J1939_DIAGNOSTIC_SERVICE,0x4c,J1939_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH,c
 J1939_DIAGNOSTIC_SERVICE,0x4d,J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH,cm848_handleJ1939WriteMemoryLongLengthService: an address (4 bytes) and a length (4) then the data (was SERVICE_4D),1
 # BOOT_DIAGNOSTIC_SERVICE - the PGN 61184 service byte as the boot kernel reads it (PR #53 round 63): the services it registers with cm848_registerDiagnosticService (diagnostic_service_dispatch_table) and the two responses cm848_sendDiagServiceResponse sends. Its 7 downloads a calibration where the application's 7 exits development mode - so it is its own enum (the application's is J1939_DIAGNOSTIC_SERVICE)
 # The memory services keep the application's layouts and reply pairs (0x43 -> 0x45 or 0x44 under 256 bytes / 0x4a -> 0x4b / 0x4c -> 0x4d through the table at boot_kernel_rom_end); the writes run from the reflash kernel's RAM copy
-BOOT_DIAGNOSTIC_SERVICE,0x02,BOOT_DIAGNOSTIC_SERVICE_INITIALIZE_EEPROM_TRANSFER,cm848_handleBootInitializeEepromTransferService: mpc555_initEepromTransfer(2) after a response-pending 0x96,1
-BOOT_DIAGNOSTIC_SERVICE,0x07,BOOT_DIAGNOSTIC_SERVICE_DOWNLOAD_CALIBRATION,cm848_handleBootDownloadCalibrationService: mpc555_loadEepromCalibration(request / 2),1
+BOOT_DIAGNOSTIC_SERVICE,0x02,BOOT_DIAGNOSTIC_SERVICE_BEGIN_REFLASH,cm848_handleBootBeginReflashService: response pending 0x96 then mpc555_beginReflash(J1939) - ECM_Status REFLASH_IN_PROGRESS / the erase / the download tracking reset (was INITIALIZE_EEPROM_TRANSFER),1
+BOOT_DIAGNOSTIC_SERVICE,0x07,BOOT_DIAGNOSTIC_SERVICE_VERIFY_DOWNLOADED_CALIBRATION,cm848_handleBootVerifyDownloadedCalibrationService: mpc555_verifyDownloadedCalibration(request / J1939) (was DOWNLOAD_CALIBRATION),1
 BOOT_DIAGNOSTIC_SERVICE,0x0b,BOOT_DIAGNOSTIC_SERVICE_NO_OPERATION_11,cm848_bootDiagnosticServiceAcknowledgeNoOperation: accepted and does nothing,1
 BOOT_DIAGNOSTIC_SERVICE,0x0c,BOOT_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE,Sent by cm848_sendDiagServiceResponse for result 0; cm848_dispatchDiagnosticService ignores a received one,1
 BOOT_DIAGNOSTIC_SERVICE,0x0d,BOOT_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE,Sent by cm848_sendDiagServiceResponse for a nonzero result other than 0xfe (that sends 0x0e); cm848_dispatchDiagnosticService ignores a received one,1
@@ -546,7 +546,7 @@ BOOT_DIAGNOSTIC_SERVICE,0x4a,BOOT_DIAGNOSTIC_SERVICE_READ_MEMORY,cm848_handleBoo
 BOOT_DIAGNOSTIC_SERVICE,0x4b,BOOT_DIAGNOSTIC_SERVICE_WRITE_MEMORY,cm848_handleBootWriteMemoryService (RAM copy 0x3fb440): an address (4 bytes) and a length (1) then the data,1
 BOOT_DIAGNOSTIC_SERVICE,0x4c,BOOT_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH,cm848_handleBootReadMemoryLongLengthService: an address (4 bytes) and a length (4),1
 BOOT_DIAGNOSTIC_SERVICE,0x4d,BOOT_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH,cm848_handleBootWriteMemoryLongLengthService (RAM copy 0x3fb4b8): an address (4 bytes) and a length (4) then the data,1
-# BOOT_DIAGNOSTIC_RESULT - the result code of a boot kernel PGN 61184 request (PR #53 round 66): the twin of J1939_DIAGNOSTIC_RESULT with the boot kernel's own 5 / 0x0a / 0x10 / 0x11 / 0x14 / 0x15 / 0x17. cm848_dispatchDiagnosticService takes it from cm848_validateDiagnosticRequestLengthAndAuthorization or the handler; cm848_sendDiagServiceResponse answers ACCEPTED with 0x0c and the rest with 0x0d + the code. 0xff (nothing to send) is no member: the dispatcher masks each result with 0xff and a member of that value names the mask. The read and write workers pass region types and cm848_trackDownloadBlock codes straight through
+# BOOT_DIAGNOSTIC_RESULT - the result code of a boot kernel PGN 61184 request (PR #53 round 66): the twin of J1939_DIAGNOSTIC_RESULT with the boot kernel's own 5 / 0x0a / 0x10 / 0x11 / 0x14 / 0x15 / 0x17 / 0xfe. cm848_dispatchDiagnosticService takes it from cm848_validateDiagnosticRequestLengthAndAuthorization or the handler; cm848_sendDiagServiceResponse answers ACCEPTED with 0x0c and the rest with 0x0d + the code. 0xff (nothing to send) is no member: the dispatcher masks each result with 0xff and a member of that value names the mask. The read and write workers pass region types and cm848_trackDownloadBlock codes straight through
 BOOT_DIAGNOSTIC_RESULT,0x00,BOOT_DIAGNOSTIC_RESULT_ACCEPTED,Done - cm848_sendDiagServiceResponse answers with 0x0c,4
 BOOT_DIAGNOSTIC_RESULT,0x02,BOOT_DIAGNOSTIC_RESULT_WRONG_LENGTH,The request length does not fit the service (the validator) or a memory length is over 1764 (the read and write workers),4
 BOOT_DIAGNOSTIC_RESULT,0x03,BOOT_DIAGNOSTIC_RESULT_KEY_REFUSED,cm848_validateWriteAuth refused the request's token,4
@@ -557,10 +557,14 @@ BOOT_DIAGNOSTIC_RESULT,0x09,BOOT_DIAGNOSTIC_RESULT_ADDRESS_NOT_ACCEPTED,No regio
 BOOT_DIAGNOSTIC_RESULT,0x0a,BOOT_DIAGNOSTIC_RESULT_ROM_HANDLER_REFUSED,The dispatcher refuses a handler in ROM (at or below 0x6fffe) while the low nibble of eeprom_service_mode_flags is set - only RAM handlers run then; no boot region has type 10 (382fa677 named it REGION_REFUSED),4
 BOOT_DIAGNOSTIC_RESULT,0x10,BOOT_DIAGNOSTIC_RESULT_NO_DOWNLOAD_BLOCK,cm848_trackDownloadBlock: a write while eeprom_xfer_state.block_length is 0 - no download block announced,4
 BOOT_DIAGNOSTIC_RESULT,0x11,BOOT_DIAGNOSTIC_RESULT_FLASH_WRITE_FAILED,cm848_writeBootDiagnosticMemory: a flash write at an odd address or a flash write that failed,4
-BOOT_DIAGNOSTIC_RESULT,0x14,BOOT_DIAGNOSTIC_RESULT_CHECKSUM_MISMATCH,cm848_finishDownloadBlock: the block's trailing CRC differs from the running CRC (the name CM550's DIAG_RESPONSE_CODE gave 0x14),4
-BOOT_DIAGNOSTIC_RESULT,0x15,BOOT_DIAGNOSTIC_RESULT_DOWNLOAD_BLOCK_LIST_FULL,cm848_finishDownloadBlock: its 10-entry block list is full,4
-BOOT_DIAGNOSTIC_RESULT,0x17,BOOT_DIAGNOSTIC_RESULT_FLASH_ERASE_FAILED,Service 2: the flash erase in mpc555_initEepromTransfer (mpc555_cmfEraseBlocks then cm848_flashEraseChip) failed (382fa677 named it EEPROM_TRANSFER_NOT_STARTED),4
+BOOT_DIAGNOSTIC_RESULT,0x14,BOOT_DIAGNOSTIC_RESULT_CHECKSUM_MISMATCH,cm848_finishDownloadBlock: the block's trailing CRC differs from the running CRC (the name CM550's J1939_DIAGNOSTIC_RESULT gives 0x14 - c48cc435 said DIAG_RESPONSE_CODE),4
+BOOT_DIAGNOSTIC_RESULT,0x15,BOOT_DIAGNOSTIC_RESULT_DOWNLOAD_INVALID,The download does not form a valid calibration: cm848_finishDownloadBlock finds download_block_list full - or mpc555_verifyDownloadedCalibration (service 7) finds a region sum or the block layout unlike the image header at ROM 0x8104 or ECM_Status neither CALIBRATION_VALID nor CALIBRATION_DOWNLOADED_NOT_VERIFIED (c48cc435 named it DOWNLOAD_BLOCK_LIST_FULL),4
+BOOT_DIAGNOSTIC_RESULT,0x17,BOOT_DIAGNOSTIC_RESULT_FLASH_ERASE_FAILED,Service 2: the flash erase in mpc555_beginReflash (mpc555_cmfEraseBlocks then cm848_flashEraseChip) failed (382fa677 named it EEPROM_TRANSFER_NOT_STARTED),4
 BOOT_DIAGNOSTIC_RESULT,0x1a,BOOT_DIAGNOSTIC_RESULT_KEY_MISSING,The service needs the token but the request carries none,4
+BOOT_DIAGNOSTIC_RESULT,0xfe,BOOT_DIAGNOSTIC_RESULT_RESPONSE_PENDING,cm848_sendDiagResponsePending: cm848_sendDiagServiceResponse answers it with service 0x0e and the wait time - the real result follows later (round 66 said 0xfe had no producer),4
+# BOOT_REQUEST_CHANNEL - which link a boot kernel reflash request came over: the channel argument of mpc555_beginReflash / mpc555_verifyDownloadedCalibration / cm848_sendBootResultToJ1939Requester / cm848_trackDownloadBlock / cm848_updateDownloadCrc (PR #53 round 67). The code also tests 1 - no caller passes it
+BOOT_REQUEST_CHANNEL,0x02,BOOT_REQUEST_CHANNEL_J1939,The PGN 61184 services: only this channel gets cm848_sendBootResultToJ1939Requester's answer / the CAN transmit runs while the verifier waits / cm848_finishDownloadBlock checks a block's trailing CRC,4
+BOOT_REQUEST_CHANNEL,0x03,BOOT_REQUEST_CHANNEL_SERIAL,The serial reflash services: mpc555_runPacedSerialService runs while waiting / the verifier counts and flags the reflash in EEPROM / mpc555_diagServiceTransferBlock ends a block against the CRC in its own request,4
 
 # CAN Timer Init Modes
 CAN_TIMER_INIT_MODE,0,BASIC_DELAY,Basic timer + delay with watchdog,1
@@ -888,22 +892,6 @@ CRUISE_SWITCH_REQUEST,4,CRUISE_SWITCH_RESUME,RESUME/ACCEL button - tap returns C
 CRUISE_SWITCH_REQUEST,5,CRUISE_SWITCH_IDLE,No button pressed / debounce-settling value,2
 VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_STATE,0,VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_NORMAL,engine-load protection not derating,2
 VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_STATE,8,VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_ERROR,engine-load protection actively derating - bit3 (0x08) of the protection status word mirrors governor_status_flags confirm-B (0x8000),2
-# Reflash-kernel diagnostic service IDs - registered in diagnostic_service_dispatch_table by mpc555_initDiagnosticSubsystem (Calterm/Insite programming path)
-DIAGNOSTIC_SERVICE,0x02,DIAGNOSTIC_SERVICE_EEPROM_TRANSFER_INIT,cm848_handleBootInitializeEepromTransferService,1
-DIAGNOSTIC_SERVICE,0x07,DIAGNOSTIC_SERVICE_DOWNLOAD_CALIBRATION,cm848_handleBootDownloadCalibrationService,1
-DIAGNOSTIC_SERVICE,0x0b,DIAGNOSTIC_SERVICE_ACKNOWLEDGE_11,stub,1
-DIAGNOSTIC_SERVICE,0x10,DIAGNOSTIC_SERVICE_ACKNOWLEDGE_16,stub,1
-DIAGNOSTIC_SERVICE,0x18,DIAGNOSTIC_SERVICE_ACKNOWLEDGE_24,stub,1
-DIAGNOSTIC_SERVICE,0x19,DIAGNOSTIC_SERVICE_EXECUTE_ROUTINE,cm848_handleBootExecuteAtAddressService,1
-DIAGNOSTIC_SERVICE,0x41,DIAGNOSTIC_SERVICE_GET_ADDRESS_BY_PARAMETER_ID,cm848_handleBootGetAddressByParameterIdService,1
-DIAGNOSTIC_SERVICE,0x43,DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_OFFSET,cm848_handleBootReadByParameterIdLongLengthService,1
-DIAGNOSTIC_SERVICE,0x44,DIAGNOSTIC_SERVICE_MEMORY_WRITE,kernel memory-write (ROM->RAM window),1
-DIAGNOSTIC_SERVICE,0x45,DIAGNOSTIC_SERVICE_MEMORY_WRITE_69,kernel memory-write,1
-DIAGNOSTIC_SERVICE,0x4a,DIAGNOSTIC_SERVICE_MEMORY_READ,cm848_handleBootReadMemoryService,1
-DIAGNOSTIC_SERVICE,0x4b,DIAGNOSTIC_SERVICE_MEMORY_WRITE_75,kernel memory-write,1
-DIAGNOSTIC_SERVICE,0x4c,DIAGNOSTIC_SERVICE_MEMORY_READ_EXT,cm848_handleBootReadMemoryLongLengthService,1
-DIAGNOSTIC_SERVICE,0x4d,DIAGNOSTIC_SERVICE_MEMORY_WRITE_EXT,kernel memory-write ext,1
-
 # FUEL_PRESSURE_GOVERNOR_MODE - fuel_pressure_governor_state_t.fuel_pressure_governor_mode (cm848_calculateFuelMeteringCommand)
 FUEL_PRESSURE_GOVERNOR_MODE,1,FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START,Open-loop start command (two tables blended by the input fuel_metering_outer_loop_preset_temperature_source picks); the mode the others fall back to,1
 FUEL_PRESSURE_GOVERNOR_MODE,2,FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP_AFTER_START,PID on fuel_pressure_setpoint - fuel_pressure_feedback_filtered for the first 1000 revolutions (fuel_pressure_governor_start_revolutions),1

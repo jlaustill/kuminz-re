@@ -59,10 +59,10 @@ typedef enum {
 } J1939_PGN_LOWER;
 
 typedef enum {
-    VALID_MARKER = 0x600d,  /* EEPROM contains valid calibration data */
-    NEEDS_PROGRAMMING = 0x2b16,  /* EEPROM needs calibration programming */
-    FLASH_MODE_MARKER = 0x1d0a  /* Flash programming mode marker */
-} EEPROM_MAGIC;
+    ECM_STATUS_CALIBRATION_VALID = 0x600d,  /* The downloaded calibration was verified: with the boot mode strap pins low mpc555_hardwareInitialization jumps to flash_operational_code_entry_pointer - written by mpc555_verifyDownloadedCalibration (was VALID_MARKER) */
+    ECM_STATUS_REFLASH_IN_PROGRESS = 0x1d0a,  /* Written by cm848_sciCommand49Callback (the application's serial reflash request - its image still intact) and by mpc555_beginReflash before the erase: keeps the boot kernel resident (mpc555_systemInitialization runs cm848_runBootKernelLoop) and mpc555_sciHandleDownloadStart requires it (was FLASH_MODE_MARKER) */
+    ECM_STATUS_CALIBRATION_DOWNLOADED_NOT_VERIFIED = 0x2b16  /* Written by cm848_finishSerialReflash after a serial download (no J1939 writer found in the firmware - the write memory services can reach EEPROM 0x0): mpc555_verifyDownloadedCalibration checks the image then writes CALIBRATION_VALID (was NEEDS_PROGRAMMING) */
+} ECM_STATUS;
 
 typedef enum {
     SECURED_WRITE = 3,  /* Secured write operations (requires security check) */
@@ -600,8 +600,8 @@ typedef enum {
 } J1939_DIAGNOSTIC_SERVICE;
 
 typedef enum {
-    BOOT_DIAGNOSTIC_SERVICE_INITIALIZE_EEPROM_TRANSFER = 0x02,  /* cm848_handleBootInitializeEepromTransferService: mpc555_initEepromTransfer(2) after a response-pending 0x96 */
-    BOOT_DIAGNOSTIC_SERVICE_DOWNLOAD_CALIBRATION = 0x07,  /* cm848_handleBootDownloadCalibrationService: mpc555_loadEepromCalibration(request / 2) */
+    BOOT_DIAGNOSTIC_SERVICE_BEGIN_REFLASH = 0x02,  /* cm848_handleBootBeginReflashService: response pending 0x96 then mpc555_beginReflash(J1939) - ECM_Status REFLASH_IN_PROGRESS / the erase / the download tracking reset (was INITIALIZE_EEPROM_TRANSFER) */
+    BOOT_DIAGNOSTIC_SERVICE_VERIFY_DOWNLOADED_CALIBRATION = 0x07,  /* cm848_handleBootVerifyDownloadedCalibrationService: mpc555_verifyDownloadedCalibration(request / J1939) (was DOWNLOAD_CALIBRATION) */
     BOOT_DIAGNOSTIC_SERVICE_NO_OPERATION_11 = 0x0b,  /* cm848_bootDiagnosticServiceAcknowledgeNoOperation: accepted and does nothing */
     BOOT_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE = 0x0c,  /* Sent by cm848_sendDiagServiceResponse for result 0; cm848_dispatchDiagnosticService ignores a received one */
     BOOT_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE = 0x0d,  /* Sent by cm848_sendDiagServiceResponse for a nonzero result other than 0xfe (that sends 0x0e); cm848_dispatchDiagnosticService ignores a received one */
@@ -629,11 +629,17 @@ typedef enum {
     BOOT_DIAGNOSTIC_RESULT_ROM_HANDLER_REFUSED = 0x0a,  /* The dispatcher refuses a handler in ROM (at or below 0x6fffe) while the low nibble of eeprom_service_mode_flags is set - only RAM handlers run then; no boot region has type 10 (382fa677 named it REGION_REFUSED) */
     BOOT_DIAGNOSTIC_RESULT_NO_DOWNLOAD_BLOCK = 0x10,  /* cm848_trackDownloadBlock: a write while eeprom_xfer_state.block_length is 0 - no download block announced */
     BOOT_DIAGNOSTIC_RESULT_FLASH_WRITE_FAILED = 0x11,  /* cm848_writeBootDiagnosticMemory: a flash write at an odd address or a flash write that failed */
-    BOOT_DIAGNOSTIC_RESULT_CHECKSUM_MISMATCH = 0x14,  /* cm848_finishDownloadBlock: the block's trailing CRC differs from the running CRC (the name CM550's DIAG_RESPONSE_CODE gave 0x14) */
-    BOOT_DIAGNOSTIC_RESULT_DOWNLOAD_BLOCK_LIST_FULL = 0x15,  /* cm848_finishDownloadBlock: its 10-entry block list is full */
-    BOOT_DIAGNOSTIC_RESULT_FLASH_ERASE_FAILED = 0x17,  /* Service 2: the flash erase in mpc555_initEepromTransfer (mpc555_cmfEraseBlocks then cm848_flashEraseChip) failed (382fa677 named it EEPROM_TRANSFER_NOT_STARTED) */
-    BOOT_DIAGNOSTIC_RESULT_KEY_MISSING = 0x1a  /* The service needs the token but the request carries none */
+    BOOT_DIAGNOSTIC_RESULT_CHECKSUM_MISMATCH = 0x14,  /* cm848_finishDownloadBlock: the block's trailing CRC differs from the running CRC (the name CM550's J1939_DIAGNOSTIC_RESULT gives 0x14 - c48cc435 said DIAG_RESPONSE_CODE) */
+    BOOT_DIAGNOSTIC_RESULT_DOWNLOAD_INVALID = 0x15,  /* The download does not form a valid calibration: cm848_finishDownloadBlock finds download_block_list full - or mpc555_verifyDownloadedCalibration (service 7) finds a region sum or the block layout unlike the image header at ROM 0x8104 or ECM_Status neither CALIBRATION_VALID nor CALIBRATION_DOWNLOADED_NOT_VERIFIED (c48cc435 named it DOWNLOAD_BLOCK_LIST_FULL) */
+    BOOT_DIAGNOSTIC_RESULT_FLASH_ERASE_FAILED = 0x17,  /* Service 2: the flash erase in mpc555_beginReflash (mpc555_cmfEraseBlocks then cm848_flashEraseChip) failed (382fa677 named it EEPROM_TRANSFER_NOT_STARTED) */
+    BOOT_DIAGNOSTIC_RESULT_KEY_MISSING = 0x1a,  /* The service needs the token but the request carries none */
+    BOOT_DIAGNOSTIC_RESULT_RESPONSE_PENDING = 0xfe  /* cm848_sendDiagResponsePending: cm848_sendDiagServiceResponse answers it with service 0x0e and the wait time - the real result follows later (round 66 said 0xfe had no producer) */
 } BOOT_DIAGNOSTIC_RESULT;
+
+typedef enum {
+    BOOT_REQUEST_CHANNEL_J1939 = 0x02,  /* The PGN 61184 services: only this channel gets cm848_sendBootResultToJ1939Requester's answer / the CAN transmit runs while the verifier waits / cm848_finishDownloadBlock checks a block's trailing CRC */
+    BOOT_REQUEST_CHANNEL_SERIAL = 0x03  /* The serial reflash services: mpc555_runPacedSerialService runs while waiting / the verifier counts and flags the reflash in EEPROM / mpc555_diagServiceTransferBlock ends a block against the CRC in its own request */
+} BOOT_REQUEST_CHANNEL;
 
 typedef enum {
     BASIC_DELAY = 0,  /* Basic timer + delay with watchdog */
@@ -1007,23 +1013,6 @@ typedef enum {
 } VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_STATE;
 
 typedef enum {
-    DIAGNOSTIC_SERVICE_EEPROM_TRANSFER_INIT = 0x02,  /* cm848_handleBootInitializeEepromTransferService */
-    DIAGNOSTIC_SERVICE_DOWNLOAD_CALIBRATION = 0x07,  /* cm848_handleBootDownloadCalibrationService */
-    DIAGNOSTIC_SERVICE_ACKNOWLEDGE_11 = 0x0b,  /* stub */
-    DIAGNOSTIC_SERVICE_ACKNOWLEDGE_16 = 0x10,  /* stub */
-    DIAGNOSTIC_SERVICE_ACKNOWLEDGE_24 = 0x18,  /* stub */
-    DIAGNOSTIC_SERVICE_EXECUTE_ROUTINE = 0x19,  /* cm848_handleBootExecuteAtAddressService */
-    DIAGNOSTIC_SERVICE_GET_ADDRESS_BY_PARAMETER_ID = 0x41,  /* cm848_handleBootGetAddressByParameterIdService */
-    DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_OFFSET = 0x43,  /* cm848_handleBootReadByParameterIdLongLengthService */
-    DIAGNOSTIC_SERVICE_MEMORY_WRITE = 0x44,  /* kernel memory-write (ROM->RAM window) */
-    DIAGNOSTIC_SERVICE_MEMORY_WRITE_69 = 0x45,  /* kernel memory-write */
-    DIAGNOSTIC_SERVICE_MEMORY_READ = 0x4a,  /* cm848_handleBootReadMemoryService */
-    DIAGNOSTIC_SERVICE_MEMORY_WRITE_75 = 0x4b,  /* kernel memory-write */
-    DIAGNOSTIC_SERVICE_MEMORY_READ_EXT = 0x4c,  /* cm848_handleBootReadMemoryLongLengthService */
-    DIAGNOSTIC_SERVICE_MEMORY_WRITE_EXT = 0x4d  /* kernel memory-write ext */
-} DIAGNOSTIC_SERVICE;
-
-typedef enum {
     FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START = 1,  /* Open-loop start command (two tables blended by the input fuel_metering_outer_loop_preset_temperature_source picks); the mode the others fall back to */
     FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP_AFTER_START = 2,  /* PID on fuel_pressure_setpoint - fuel_pressure_feedback_filtered for the first 1000 revolutions (fuel_pressure_governor_start_revolutions) */
     FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP = 4,  /* PID after the start revolutions */
@@ -1343,7 +1332,6 @@ typedef struct q16_fixed_point_t q16_fixed_point_t;
 typedef struct j1939_pgn_handler_entry_t j1939_pgn_handler_entry_t;
 typedef struct j1939_tx_msg_t j1939_tx_msg_t;
 typedef struct j1939_acknowledgement_payload_t j1939_acknowledgement_payload_t;
-typedef struct eeprom_param_t eeprom_param_t;
 typedef struct j1939_powertrain_messages_received_t j1939_powertrain_messages_received_t;
 typedef struct parameter_id_entry_t parameter_id_entry_t;
 typedef struct j1939_diagnostic_service_entry_t j1939_diagnostic_service_entry_t;
@@ -1390,6 +1378,7 @@ typedef struct can_rx_channel_t can_rx_channel_t;
 typedef struct system_initialization_flags_t system_initialization_flags_t;
 typedef struct eeprom_xfer_state_t eeprom_xfer_state_t;
 typedef struct eeprom_block_tracking_t eeprom_block_tracking_t;
+typedef struct download_block_range_t download_block_range_t;
 typedef struct j1939_transport_transmit_session_t j1939_transport_transmit_session_t;
 typedef struct boot_state_t boot_state_t;
 typedef struct mios_mpiosm_t mios_mpiosm_t;
@@ -1572,7 +1561,7 @@ struct engine_speed_state_t {
 
 struct eeprom_header_t {
     uint16_t version_marker;  /* EEPROM data version marker */
-    uint16_t magic;  /* Validation magic (EEPROM_MAGIC enum: 0x600D=valid) */
+    ECM_STATUS ecm_status;  /* e2m 000B +0 ECM_Status (EEPROM 0x0) - the calibration status the boot ROM reads before it jumps to the operational code (was magic; PR #53 round 67) */
     uint8_t header_block[6];  /* EEPROM header data block */
     uint32_t config_dword;  /* EEPROM configuration dword */
     uint16_t config_word;  /* EEPROM configuration word */
@@ -2572,14 +2561,6 @@ struct j1939_acknowledgement_payload_t {
     uint8_t pgn_high;  /* Acknowledged PGN high byte (= dest_address of request) */
 };
 
-struct eeprom_param_t {
-    uint16_t value;  /* Parameter value (resolution varies per parameter) */
-    uint16_t min_limit;  /* Minimum allowed value for parameter */
-    uint16_t max_limit;  /* Maximum allowed value for parameter */
-    uint16_t default_value;  /* Factory default value */
-    uint32_t callback_param;  /* Diagnostic callback parameter for EEPROM transfer */
-};
-
 struct j1939_powertrain_messages_received_t {
     uint16_t etc1_output_shaft_speed_previous;  /* output_shaft_speed_current before the latest valid ETC1 output shaft speed (was speed_previous) */
     uint8_t etc1_status_byte_1;  /* ETC1 byte 1: bits 1-2 driveline engaged (SPN 560), 3-4 torque converter lockup engaged (SPN 573), 5-6 shift in process (SPN 574) (was byte1_status) */
@@ -3093,7 +3074,12 @@ struct eeprom_block_tracking_t {
     uint8_t failed_write_authorization_count;  /* cm848_validateWriteAuth's count of failed write authorizations: at 0x11 every check fails / a matching token resets it / a mismatch adds 1 (was _pad2; PR #53 round 35) */
     uint32_t last_write_addr;  /* Previous block write address for continuity validation */
     uint32_t block_start_addr;  /* Start address of current EEPROM transfer range */
-    uint16_t block_count;  /* Completed transfer block count (max 9) */
+    uint16_t block_count;  /* Finished download blocks in download_block_list (10 at most - cm848_finishDownloadBlock answers DOWNLOAD_INVALID when it is full; PR #53 round 67) */
+};
+
+struct download_block_range_t {
+    uint32_t start_address;  /* The block's first address (eeprom_block_tracking.block_start_addr) */
+    uint32_t end_address;  /* The block's last data byte: start + block length - 3 for a J1939 block (before its 2-byte CRC) / - 1 for a serial block */
 };
 
 struct j1939_transport_transmit_session_t {

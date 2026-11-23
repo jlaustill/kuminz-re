@@ -798,7 +798,8 @@ extern can_ring_state_t boot_can_ring_state;  // 0x003024c6
 extern diag_write_request_state_t diag_write_request_state;  // 0x003024f4
 extern can_slot_range_t can_mailbox_counter;  // 0x00302510
 extern can_rx_channel_t can_rx_channel_filter;  // 0x0030251c
-extern eeprom_param_t eeprom_diag_callback;  // 0x0030252a
+extern j1939_rx_msg_t * begin_reflash_request;  // 0x0030252a
+extern word crc_ccitt_table[256];  // 0x00302530
 extern byte flash2_writes_enabled;  // 0x00302731
 extern system_initialization_flags_t system_initialization_flags;  // 0x00302736
 extern byte eeprom_service_mode_flags;  // 0x00302877
@@ -807,9 +808,7 @@ extern undefined qadc_a_result_ch4;  // 0x0030287c
 extern undefined watchdog_timeout_countdown;  // 0x0030288a
 extern byte watchdog_tick_prescaler;  // 0x003028a5
 extern eeprom_block_tracking_t eeprom_block_tracking;  // 0x003028a6
-extern undefined write_auth_attempt_counter;  // 0x003028a8
-extern undefined qadc_a_result_ch28;  // 0x003028ad
-extern undefined qadc_a_result_ch30;  // 0x003028b1
+extern download_block_range_t download_block_list[10];  // 0x003028b3
 extern byte boot_j1939_transport_transmit_active;  // 0x00302903
 extern byte boot_j1939_transport_transmit_destination_address;  // 0x00302904
 extern j1939_transport_transmit_session_t boot_j1939_transport_transmit_session;  // 0x00302905
@@ -2413,10 +2412,10 @@ extern fault_entry_t * fault_entry_pointer_queue_cal[8];  // 0x003fed9c
 extern word variable_geometry_turbocharger_saved_span_cal;  // 0x003fedde
 extern int16_t variable_geometry_turbocharger_saved_closed_position_cal;  // 0x003fede0
 extern word transmission_1_2_shift_lag_cal[6];  // 0x003fede2
-extern byte eeprom_calibration_pending_flag;  // 0x003fedee
+extern byte serial_reflash_busy_flag;  // 0x003fedee
 extern byte diag_session_state_byte;  // 0x003fedef
 extern dword diagnostic_callback_init_ptr;  // 0x003fedf0
-extern word eeprom_write_pending_flag;  // 0x003fedf4
+extern word serial_reflash_erase_pending_flag;  // 0x003fedf4
 extern word eeprom_write_request_pending;  // 0x003fedf6
 extern word mios_cnt_snapshot;  // 0x003fedf8
 extern byte transmission_learned_information_stored_flags_byte_1_cal;  // 0x003fedfa
@@ -5766,9 +5765,9 @@ extern byte eeprom_status_block;  // 0x0100000c
 extern byte eeprom_config_block;  // 0x01000030
 extern byte eeprom_version_marker;  // 0x01000034
 extern byte eeprom_calibration_block;  // 0x0100004a
-extern byte eeprom_cal_word1;  // 0x01000050
-extern byte eeprom_cal_word2;  // 0x01000052
-extern byte eeprom_cal_word3;  // 0x01000054
+extern word serial_reflash_status_flags_cal;  // 0x01000050
+extern word serial_reflash_success_count_cal;  // 0x01000052
+extern word serial_reflash_attempt_count_cal;  // 0x01000054
 extern word serial_reflash_unlock_request_cal;  // 0x01000056
 extern byte eeprom_serial_number;  // 0x0100008e
 extern word radiator_fan_speed;  // 0x0040b2f4

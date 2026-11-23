@@ -6,13 +6,13 @@
 void mpc555_reset_vector(void);  // @ 0x00000100
 void mpc555_keyOnStateMachine(void);  // @ 0x00000184
 void cm848_copyBootKernelToRam(void);  // @ 0x00000340
-void cm848_registerBootCalibrationAndNoOperationServices(void);  // @ 0x0000037c
-void cm848_eepromProgressNotify(j1939_rx_msg_t *param_1,int param_2,dword param_3);  // @ 0x000003ec
+void cm848_registerBootReflashAndNoOperationServices(void);  // @ 0x0000037c
+void cm848_sendBootResultToJ1939Requester (j1939_rx_msg_t *request,BOOT_REQUEST_CHANNEL channel,BOOT_DIAGNOSTIC_RESULT result);  // @ 0x000003ec
 undefined4 cm848_bootDiagnosticServiceAcknowledgeNoOperation(void);  // @ 0x00000420
-void mpc555_loadEepromCalibration(undefined4 param_1,int param_2);  // @ 0x00000428
-undefined4 cm848_handleBootDownloadCalibrationService(undefined4 param_1);  // @ 0x000008d4
-short mpc555_initEepromTransfer(int param_1);  // @ 0x000008fc
-undefined4 cm848_handleBootInitializeEepromTransferService(undefined4 param_1);  // @ 0x000009e4
+void mpc555_verifyDownloadedCalibration(j1939_rx_msg_t *request,BOOT_REQUEST_CHANNEL channel);  // @ 0x00000428
+BOOT_DIAGNOSTIC_RESULT cm848_handleBootVerifyDownloadedCalibrationService(j1939_rx_msg_t *request);  // @ 0x000008d4
+word mpc555_beginReflash(BOOT_REQUEST_CHANNEL channel);  // @ 0x000008fc
+BOOT_DIAGNOSTIC_RESULT cm848_handleBootBeginReflashService(j1939_rx_msg_t *request);  // @ 0x000009e4
 uint cm848_computeCrcCcitt(undefined4 *param_1,uint param_2);  // @ 0x00000a40
 void mpc555_updatePowerStateOutputs(void);  // @ 0x00000b44
 void cm848_stubFunction1(void);  // @ 0x00000be8
@@ -82,10 +82,10 @@ void cm848_bootSciCheckSecurityKey(void);  // @ 0x00003408
 void cm848_initDiagnosticSessionHandler(void);  // @ 0x000035e4
 void cm848_processDiagnosticSessionFlags(void);  // @ 0x00003614
 void cm848_sendDiagnosticResponse(void);  // @ 0x0000368c
-void cm848_resetEepromCalibrationState(void);  // @ 0x000036f8
-void cm848_beginEepromCalibrationWrite(void);  // @ 0x00003710
-void cm848_updateEepromMagicAndReload(void);  // @ 0x000037e0
-void cm848_dispatchEepromWriteRequest(void);  // @ 0x000038f4
+void cm848_resetSerialReflashState(void);  // @ 0x000036f8
+void cm848_beginSerialReflash(void);  // @ 0x00003710
+void cm848_finishSerialReflash(void);  // @ 0x000037e0
+void cm848_dispatchSerialReflashRequest(void);  // @ 0x000038f4
 void mpc555_diagServiceTransferBlock(void);  // @ 0x00003948
 void cm848_verifySerialResponse(void);  // @ 0x00003a5c
 void cm848_restoreDiagnosticHandler(void);  // @ 0x00003ad8
@@ -162,9 +162,9 @@ void cm848_sendDiagResponsePending(j1939_rx_msg_t *param_1,word param_2);  // @ 
 void mpc555_tickTransferTimeoutAndRuntimeCounter(void);  // @ 0x00007608
 void mpc555_loadRuntimeCounterFromEepromShadow(void);  // @ 0x000076b4
 byte cm848_lookupBootMemoryRegionType(uint param_1,int param_2);  // @ 0x000076c8
-undefined1 cm848_trackDownloadBlock(undefined4 param_1,dword param_2,ushort *param_3,int param_4);  // @ 0x00007740
+byte cm848_trackDownloadBlock(byte *data,dword address,word *length,BOOT_REQUEST_CHANNEL channel);  // @ 0x00007740
 undefined4 cm848_finishDownloadBlock(word *param_1);  // @ 0x00007840
-undefined1 cm848_updateDownloadCrc(byte *param_1,uint param_2,int param_3);  // @ 0x000078d0
+byte cm848_updateDownloadCrc(byte *data,dword length,BOOT_REQUEST_CHANNEL channel);  // @ 0x000078d0
 void cm848_serviceSupervisorWatchdog(void);  // @ 0x00007974
 void cm848_initSupervisorWatchdog(void);  // @ 0x00007b08
 void cm848_forceSupervisorWatchdogReset(void);  // @ 0x00007dc4

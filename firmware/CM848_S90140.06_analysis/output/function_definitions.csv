@@ -54,9 +54,9 @@ function_address,function_name,param_index,name,type,comment
 0x00000bec,mpc555_eepromWriteWords,1,src_ptr,word*,Pointer to source data words
 0x00000bec,mpc555_eepromWriteWords,2,word_count,ushort,Number of words to write
 
-0x000036f8,cm848_resetEepromCalibrationState,return,,void,Clears eeprom_calibration_pending_flag and diag_session_state_byte
+0x000036f8,cm848_resetSerialReflashState,return,,void,Clears serial_reflash_busy_flag and diag_session_state_byte
 
-0x000038f4,cm848_dispatchEepromWriteRequest,return,,void,Dispatches EEPROM write by request type - takes no params (reads global directly)
+0x000038f4,cm848_dispatchSerialReflashRequest,return,,void,Dispatches a serial reflash request by eeprom_write_request_type - takes no params (was 'Dispatches EEPROM write by request type'; PR #53 round 67)
 
 # -----------------------------------------------------------------------------
 # Boot delay helper
@@ -594,3 +594,25 @@ function_address,function_name,param_index,name,type,comment
 0x0000597c,cm848_validateDiagnosticRequestLengthAndAuthorization,0,request,j1939_rx_msg_t*,The boot kernel's PGN 61184 request (PR #53 round 66)
 0x00001840,cm848_handleBootExecuteAtAddressService,return,,BOOT_DIAGNOSTIC_RESULT,The validator's result or the region lookup's - 0xff after the positive response and the call (PR #53 round 66)
 0x00001840,cm848_handleBootExecuteAtAddressService,0,request,j1939_rx_msg_t*,The boot kernel's PGN 61184 request (PR #53 round 66)
+0x000003ec,cm848_sendBootResultToJ1939Requester,return,,void,Nothing (PR #53 round 67)
+0x000003ec,cm848_sendBootResultToJ1939Requester,0,request,j1939_rx_msg_t*,The PGN 61184 request to answer (PR #53 round 67)
+0x000003ec,cm848_sendBootResultToJ1939Requester,1,channel,BOOT_REQUEST_CHANNEL,Only BOOT_REQUEST_CHANNEL_J1939 is answered (PR #53 round 67)
+0x000003ec,cm848_sendBootResultToJ1939Requester,2,result,BOOT_DIAGNOSTIC_RESULT,The result to send (PR #53 round 67)
+0x00000428,mpc555_verifyDownloadedCalibration,return,,void,Nothing - it answers the request itself (PR #53 round 67)
+0x00000428,mpc555_verifyDownloadedCalibration,0,request,j1939_rx_msg_t*,The service 7 request (0 from cm848_finishSerialReflash) (PR #53 round 67)
+0x00000428,mpc555_verifyDownloadedCalibration,1,channel,BOOT_REQUEST_CHANNEL,J1939 from service 7 / serial from cm848_finishSerialReflash (PR #53 round 67)
+0x000008d4,cm848_handleBootVerifyDownloadedCalibrationService,return,,BOOT_DIAGNOSTIC_RESULT,0xff: the verifier answered already (PR #53 round 67)
+0x000008d4,cm848_handleBootVerifyDownloadedCalibrationService,0,request,j1939_rx_msg_t*,The boot kernel's PGN 61184 request (PR #53 round 67)
+0x000008fc,mpc555_beginReflash,return,,short,Nonzero when both erases succeeded (PR #53 round 67)
+0x000008fc,mpc555_beginReflash,0,channel,BOOT_REQUEST_CHANNEL,J1939 from service 2 / serial from mpc555_processDiagnosticAndEepromRequests (PR #53 round 67)
+0x000009e4,cm848_handleBootBeginReflashService,return,,BOOT_DIAGNOSTIC_RESULT,FLASH_ERASE_FAILED when an erase failed else 0xff (PR #53 round 67)
+0x000009e4,cm848_handleBootBeginReflashService,0,request,j1939_rx_msg_t*,The boot kernel's PGN 61184 request (PR #53 round 67)
+0x00007740,cm848_trackDownloadBlock,return,,byte,0xff to go on / 9 out of sequence or past the block / 0x10 no block / or cm848_updateDownloadCrc's status (PR #53 round 67)
+0x00007740,cm848_trackDownloadBlock,0,data,byte*,The bytes being written (PR #53 round 67)
+0x00007740,cm848_trackDownloadBlock,1,address,dword,Their first address (PR #53 round 67)
+0x00007740,cm848_trackDownloadBlock,2,length,ushort*,Their length - 2 less (the trailing CRC) when they end the block (PR #53 round 67)
+0x00007740,cm848_trackDownloadBlock,3,channel,BOOT_REQUEST_CHANNEL,J1939 blocks end in cm848_updateDownloadCrc / serial blocks in mpc555_diagServiceTransferBlock (PR #53 round 67)
+0x000078d0,cm848_updateDownloadCrc,return,,byte,0xff to go on - or cm848_finishDownloadBlock's status once a J1939 block ends (PR #53 round 67)
+0x000078d0,cm848_updateDownloadCrc,0,data,byte*,The bytes to add to ecu_power_state_flags.transfer_crc (PR #53 round 67)
+0x000078d0,cm848_updateDownloadCrc,1,length,uint,How many (PR #53 round 67)
+0x000078d0,cm848_updateDownloadCrc,2,channel,BOOT_REQUEST_CHANNEL,Only a J1939 block is finished here (PR #53 round 67)

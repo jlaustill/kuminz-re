@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 10:38:34 MST 2026
+// Generated: Mon Nov 23 11:28:28 MST 2026
 
 
 //
@@ -85,7 +85,7 @@ void mpc555_keyOnStateMachine(void)
     else {
       ecu_power_state_flags.state = 0;
       eeprom_block_tracking.watchdog_counter = 0;
-      if (eeprom_shadow_header.magic == 0x600d) {
+      if (eeprom_shadow_header.ecm_status == ECM_STATUS_CALIBRATION_VALID) {
         if (eeprom_config_write_triggered_flag == 0) {
           eeprom_write_buffer = ecu_power_state_flags.runtime_counter;
           eeprom_config_write_triggered_flag = 1;
@@ -129,23 +129,23 @@ void cm848_copyBootKernelToRam(void)
 
 
 //
-// Function: cm848_registerBootCalibrationAndNoOperationServices @ 0x0000037c
+// Function: cm848_registerBootReflashAndNoOperationServices @ 0x0000037c
 //
 
-/* Boot kernel: registers its PGN 61184 services 2 (cm848_handleBootInitializeEepromTransferService)
-   / 7 (cm848_handleBootDownloadCalibrationService) / 0x0b / 0x10 / 0x18
+/* Boot kernel: registers its PGN 61184 services 2 (cm848_handleBootBeginReflashService) / 7
+   (cm848_handleBootVerifyDownloadedCalibrationService) / 0x0b / 0x10 / 0x18
    (cm848_bootDiagnosticServiceAcknowledgeNoOperation) in diagnostic_service_dispatch_table (was
-   cm848_registerStandardDiagServices; PR #53 round 63) */
+   cm848_registerStandardDiagServices; PR #53 round 63) (was
+   cm848_registerBootCalibrationAndNoOperationServices; PR #53 round 67) */
 
-void cm848_registerBootCalibrationAndNoOperationServices(void)
+void cm848_registerBootReflashAndNoOperationServices(void)
 
 {
   cm848_registerDiagnosticService
-            (BOOT_DIAGNOSTIC_SERVICE_INITIALIZE_EEPROM_TRANSFER,
-             cm848_handleBootInitializeEepromTransferService);
+            (BOOT_DIAGNOSTIC_SERVICE_BEGIN_REFLASH,cm848_handleBootBeginReflashService);
   cm848_registerDiagnosticService
-            (BOOT_DIAGNOSTIC_SERVICE_DOWNLOAD_CALIBRATION,cm848_handleBootDownloadCalibrationService
-            );
+            (BOOT_DIAGNOSTIC_SERVICE_VERIFY_DOWNLOADED_CALIBRATION,
+             cm848_handleBootVerifyDownloadedCalibrationService);
   cm848_registerDiagnosticService
             (BOOT_DIAGNOSTIC_SERVICE_NO_OPERATION_11,
              cm848_bootDiagnosticServiceAcknowledgeNoOperation);
@@ -161,14 +161,19 @@ void cm848_registerBootCalibrationAndNoOperationServices(void)
 
 
 //
-// Function: cm848_eepromProgressNotify @ 0x000003ec
+// Function: cm848_sendBootResultToJ1939Requester @ 0x000003ec
 //
 
-void cm848_eepromProgressNotify(j1939_rx_msg_t *param_1,int param_2,dword param_3)
+/* Boot kernel: sends a reflash result with cm848_sendDiagServiceResponse only when the channel is
+   BOOT_REQUEST_CHANNEL_J1939 - the serial channel answers through its own session state (was
+   cm848_eepromProgressNotify; PR #53 round 67) */
+
+void cm848_sendBootResultToJ1939Requester
+               (j1939_rx_msg_t *request,BOOT_REQUEST_CHANNEL channel,BOOT_DIAGNOSTIC_RESULT result)
 
 {
-  if ((param_2 != 1) && (param_2 == 2)) {
-    cm848_sendDiagServiceResponse(param_1,param_3);
+  if ((channel != 1) && (channel == BOOT_REQUEST_CHANNEL_J1939)) {
+    cm848_sendDiagServiceResponse(request,result);
   }
   return;
 }
@@ -194,10 +199,21 @@ undefined4 cm848_bootDiagnosticServiceAcknowledgeNoOperation(void)
 
 
 //
-// Function: mpc555_loadEepromCalibration @ 0x00000428
+// Function: mpc555_verifyDownloadedCalibration @ 0x00000428
 //
 
-void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
+/* Boot kernel (service 7 and cm848_finishSerialReflash): reads ECM_Status (EEPROM 0x0).
+   CALIBRATION_VALID answers 0. CALIBRATION_DOWNLOADED_NOT_VERIFIED: sums each region of the image
+   header's checksum table (pointer at ROM 0x8104 - a count then 10-byte sum / start / end records)
+   and checks download_block_list against the header's expected block count and addresses (0x8116
+   onward) - a mismatch answers DOWNLOAD_INVALID (the serial channel then resets); a match writes
+   CALIBRATION_VALID (the serial channel also sets bit 3 and clears bit 1 of
+   serial_reflash_status_flags_cal and counts serial_reflash_success_count_cal) / the runtime
+   counter to eeprom_config_block / answers 0 / resets when MIOS MDASM30 SCRD bit 15 is set. Any
+   other status answers DOWNLOAD_INVALID. Clears bit 7 of eeprom_service_mode_flags first (was
+   mpc555_loadEepromCalibration; PR #53 round 67) */
+
+void mpc555_verifyDownloadedCalibration(j1939_rx_msg_t *request,BOOT_REQUEST_CHANNEL channel)
 
 {
   bool bVar1;
@@ -221,9 +237,9 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
   eeprom_service_mode_flags = bVar3 & 0x7f;
   eeprom_xfer_state.transfer_timer = 0;
   mpc555_eepromReadWords(0x1000000,0x3fee0a,2);
-  if (eeprom_shadow_header.magic == 0x600d) {
-    cm848_eepromProgressNotify(param_1,param_2,0);
-    if (param_2 == 3) {
+  if (eeprom_shadow_header.ecm_status == ECM_STATUS_CALIBRATION_VALID) {
+    cm848_sendBootResultToJ1939Requester(request,channel,BOOT_DIAGNOSTIC_RESULT_ACCEPTED);
+    if (channel == BOOT_REQUEST_CHANNEL_SERIAL) {
       uVar7 = 0;
       do {
         while (sVar5 = mpc555_runPacedSerialService(), sVar5 == 0) {
@@ -236,7 +252,7 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
     else {
       uVar7 = 0;
       do {
-        if (param_2 == 2) {
+        if (channel == BOOT_REQUEST_CHANNEL_J1939) {
           mpc555_can2TransmitInterruptHandler();
         }
         uVar8 = 0;
@@ -251,9 +267,9 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
     mpc555_reset_vector();
     return;
   }
-  if (eeprom_shadow_header.magic == 0x2b16) {
-    if (param_2 == 2) {
-      cm848_sendDiagResponsePending(param_1,10);
+  if (eeprom_shadow_header.ecm_status == ECM_STATUS_CALIBRATION_DOWNLOADED_NOT_VERIFIED) {
+    if (channel == BOOT_REQUEST_CHANNEL_J1939) {
+      cm848_sendDiagResponsePending(request,10);
     }
     bVar1 = false;
     uVar7 = *(ushort *)PTR_DAT_00008104;
@@ -294,8 +310,9 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
         uVar11 = 0;
         if (uVar9 != 0) {
           do {
-            if (((undefined *)(&DAT_003028b3)[uVar11 * 2] != (&PTR_DAT_0000811a)[uVar11]) ||
-               ((uint)(&DAT_003028b7)[uVar11 * 2] < *puVar14)) {
+            if (((undefined *)download_block_list[uVar11].start_address !=
+                 (&PTR_DAT_0000811a)[uVar11]) ||
+               (download_block_list[uVar11].end_address < *puVar14)) {
               bVar1 = true;
               break;
             }
@@ -309,9 +326,9 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
       }
     }
     if (bVar1) {
-      cm848_eepromProgressNotify(param_1,param_2,0x15);
-      if (param_2 == 3) {
-        eeprom_calibration_pending_flag = 0;
+      cm848_sendBootResultToJ1939Requester(request,channel,BOOT_DIAGNOSTIC_RESULT_DOWNLOAD_INVALID);
+      if (channel == BOOT_REQUEST_CHANNEL_SERIAL) {
+        serial_reflash_busy_flag = 0;
         diag_session_state_byte = 0x40;
         uVar7 = 0;
         do {
@@ -329,18 +346,18 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
     else {
       local_38[0] = 0x600d;
       mpc555_eepromWriteWords((dword)local_38,(word *)&DAT_01000000,2);
-      if (param_2 == 3) {
+      if (channel == BOOT_REQUEST_CHANNEL_SERIAL) {
         local_38[0] = eeprom_shadow_header.eeprom_status_flags & 0xfffd | 8;
-        mpc555_eepromWriteWords((dword)local_38,(word *)&eeprom_cal_word1,2);
+        mpc555_eepromWriteWords((dword)local_38,&serial_reflash_status_flags_cal,2);
         local_38[0] = eeprom_shadow_header.cal_word2 + 1;
-        mpc555_eepromWriteWords((dword)local_38,(word *)&eeprom_cal_word2,2);
-        eeprom_calibration_pending_flag = 0;
+        mpc555_eepromWriteWords((dword)local_38,&serial_reflash_success_count_cal,2);
+        serial_reflash_busy_flag = 0;
         diag_session_state_byte = 0x61;
         mpc555_runPacedSerialService();
       }
       local_34[0] = ecu_power_state_flags.runtime_counter;
       mpc555_eepromWriteWords((dword)local_34,(word *)&eeprom_config_block,4);
-      if (param_2 == 3) {
+      if (channel == BOOT_REQUEST_CHANNEL_SERIAL) {
         uVar7 = 0;
         do {
           while (sVar5 = mpc555_runPacedSerialService(), sVar5 == 0) {
@@ -351,12 +368,12 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
         } while (uVar7 < 100);
       }
       else {
-        cm848_eepromProgressNotify(param_1,param_2,0);
+        cm848_sendBootResultToJ1939Requester(request,channel,BOOT_DIAGNOSTIC_RESULT_ACCEPTED);
         uVar7 = 0;
         do {
           uVar8 = 0;
           do {
-            if (param_2 == 2) {
+            if (channel == BOOT_REQUEST_CHANNEL_J1939) {
               mpc555_can2TransmitInterruptHandler();
             }
             uVar6 = 0;
@@ -380,7 +397,7 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
     }
   }
   else {
-    cm848_eepromProgressNotify(param_1,param_2,0x15);
+    cm848_sendBootResultToJ1939Requester(request,channel,BOOT_DIAGNOSTIC_RESULT_DOWNLOAD_INVALID);
   }
   return;
 }
@@ -388,95 +405,108 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
 
 
 //
-// Function: cm848_handleBootDownloadCalibrationService @ 0x000008d4
+// Function: cm848_handleBootVerifyDownloadedCalibrationService @ 0x000008d4
 //
 
-/* Boot kernel service 7: mpc555_loadEepromCalibration(request / 2) then returns 0xff (the
-   dispatcher sends no response) (was cm848_diagServiceDownloadCalibration; PR #53 round 63) |
-   earlier note: dispatched as diagnostic service 7 via diagnostic_service_dispatch_table
-   (cm848_dispatchDiagnosticService) - not a dead function */
+/* Boot kernel service 7: mpc555_verifyDownloadedCalibration(request / J1939) answers the request
+   itself - then returns 0xff (the dispatcher sends no response) (was
+   cm848_handleBootDownloadCalibrationService; PR #53 round 67) | earlier note: Boot kernel service
+   7: mpc555_verifyDownloadedCalibration(request / 2) then returns 0xff (the dispatcher sends no
+   response) (was cm848_diagServiceDownloadCalibration; PR #53 round 63) | earlier note: dispatched
+   as diagnostic service 7 via diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) -
+   not a dead function */
 
-undefined4 cm848_handleBootDownloadCalibrationService(undefined4 param_1)
+BOOT_DIAGNOSTIC_RESULT cm848_handleBootVerifyDownloadedCalibrationService(j1939_rx_msg_t *request)
 
 {
-  mpc555_loadEepromCalibration(param_1,2);
+  mpc555_verifyDownloadedCalibration(request,BOOT_REQUEST_CHANNEL_J1939);
   return 0xff;
 }
 
 
 
 //
-// Function: mpc555_initEepromTransfer @ 0x000008fc
+// Function: mpc555_beginReflash @ 0x000008fc
 //
 
-short mpc555_initEepromTransfer(int param_1)
+/* Boot kernel (service 2 and the serial erase request): writes ECM_Status REFLASH_IN_PROGRESS
+   unless it already is / erases the internal flash but block 0 (mpc555_cmfEraseBlocks(0x7ffc) - the
+   boot block keeps the boot ROM) and then the Bank 2 chip (cm848_flashEraseChip) / answers
+   begin_reflash_request with 0 or FLASH_ERASE_FAILED unless the channel is 1 / resets the download
+   tracking / sets bit 7 of eeprom_service_mode_flags; returns nonzero when both erases succeeded
+   (was mpc555_initEepromTransfer; PR #53 round 67) */
+
+word mpc555_beginReflash(BOOT_REQUEST_CHANNEL channel)
 
 {
   j1939_rx_msg_t *request;
   byte bVar1;
   short sVar2;
-  short sVar3;
+  word wVar3;
   dword result_code;
   undefined2 local_10 [2];
   
-  if (eeprom_shadow_header.magic != 0x1d0a) {
+  if (eeprom_shadow_header.ecm_status != ECM_STATUS_REFLASH_IN_PROGRESS) {
     local_10[0] = 0x1d0a;
     mpc555_eepromWriteWords((dword)local_10,(word *)&DAT_01000000,2);
   }
-  if (param_1 == 3) {
+  if (channel == BOOT_REQUEST_CHANNEL_SERIAL) {
     bVar1 = eeprom_service_mode_flags;
     eeprom_service_mode_flags = bVar1 | 0x80;
   }
   sVar2 = mpc555_cmfEraseBlocks(0x7ffc);
-  sVar3 = 0;
+  wVar3 = 0;
   if (sVar2 != 0) {
-    sVar3 = cm848_flashEraseChip();
+    wVar3 = cm848_flashEraseChip();
   }
-  if (param_1 != 1) {
-    if (sVar3 == 0) {
+  if (channel != 1) {
+    if (wVar3 == 0) {
       result_code = 0x17;
     }
     else {
       result_code = 0;
     }
-    request = (j1939_rx_msg_t *)eeprom_diag_callback._0_4_;
+    request = begin_reflash_request;
     cm848_sendDiagServiceResponse(request,result_code);
   }
   eeprom_xfer_state.bytes_transferred = 0;
   eeprom_block_tracking.block_count = 0;
   bVar1 = eeprom_service_mode_flags;
   eeprom_service_mode_flags = bVar1 | 0x80;
-  return sVar3;
+  return wVar3;
 }
 
 
 
 //
-// Function: cm848_handleBootInitializeEepromTransferService @ 0x000009e4
+// Function: cm848_handleBootBeginReflashService @ 0x000009e4
 //
 
-/* Boot kernel service 2: sends response-pending 0x96 (cm848_sendDiagResponsePending) / keeps the
-   request in eeprom_diag_callback / starts mpc555_initEepromTransfer(2) - 0x17 when that returns 0
-   else 0xff (was mpc555_diagServiceInitEepromTransfer; PR #53 round 63) | earlier note: dispatched
-   as diagnostic service 2 via diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) -
+/* Boot kernel service 2: sends response pending 0x96 / keeps the request in begin_reflash_request /
+   mpc555_beginReflash(J1939) answers it - returns FLASH_ERASE_FAILED when an erase failed else 0xff
+   (was cm848_handleBootInitializeEepromTransferService; PR #53 round 67) | earlier note: Boot
+   kernel service 2: sends response-pending 0x96 (cm848_sendDiagResponsePending) / keeps the request
+   in begin_reflash_request / starts mpc555_beginReflash(2) - 0x17 when that returns 0 else 0xff
+   (was mpc555_diagServiceInitEepromTransfer; PR #53 round 63) | earlier note: dispatched as
+   diagnostic service 2 via diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) -
    not a dead function */
 
-undefined4 cm848_handleBootInitializeEepromTransferService(undefined4 param_1)
+BOOT_DIAGNOSTIC_RESULT cm848_handleBootBeginReflashService(j1939_rx_msg_t *request)
 
 {
-  short sVar2;
-  undefined4 uVar1;
+  word wVar2;
+  BOOT_DIAGNOSTIC_RESULT BVar1;
   
-  cm848_sendDiagResponsePending(param_1,0x96);
-  eeprom_diag_callback._0_4_ = param_1;
-  sVar2 = mpc555_initEepromTransfer(2);
-  if (sVar2 == 0) {
-    uVar1 = 0x17;
+  cm848_sendDiagResponsePending(request,0x96);
+  begin_reflash_request = request;
+  wVar2 = mpc555_beginReflash(BOOT_REQUEST_CHANNEL_J1939);
+  if (wVar2 == 0) {
+    BVar1 = BOOT_DIAGNOSTIC_RESULT_FLASH_ERASE_FAILED;
   }
   else {
-    uVar1 = 0xff;
+    BVar1 = 0xff;
   }
-  return uVar1;
+  return BVar1;
 }
 
 
@@ -492,8 +522,7 @@ uint cm848_computeCrcCcitt(undefined4 *param_1,uint param_2)
   
   uVar1 = 0;
   for (; param_2 != 0; param_2 = param_2 + 0xff & 0xff) {
-    uVar1 = uVar1 >> 8 ^
-            (uint)(&eeprom_diag_callback.default_value)[(uVar1 ^ *(byte *)*param_1) & 0xff];
+    uVar1 = uVar1 >> 8 ^ (uint)crc_ccitt_table[(uVar1 ^ *(byte *)*param_1) & 0xff];
     *(char *)((int)param_1 + 3) = *(char *)((int)param_1 + 3) + '\x01';
   }
   return uVar1;
@@ -697,9 +726,9 @@ void cm848_loadCalibrationFromEeprom(void)
   mpc555_eepromValidationCycle();
   mpc555_keyOnStateMachine();
   mpc555_eepromReadWords(&eeprom_calibration_block,0x3fee18,6);
-  mpc555_eepromReadWords(&eeprom_cal_word1,0x3fee1e,2);
-  mpc555_eepromReadWords(&eeprom_cal_word2,0x3fee20,2);
-  mpc555_eepromReadWords(&eeprom_cal_word3,0x3fee22,2);
+  mpc555_eepromReadWords(&serial_reflash_status_flags_cal,0x3fee1e,2);
+  mpc555_eepromReadWords(&serial_reflash_success_count_cal,0x3fee20,2);
+  mpc555_eepromReadWords(&serial_reflash_attempt_count_cal,0x3fee22,2);
   mpc555_eepromReadWords(&eeprom_status_block,0x3fee26,4);
   mpc555_eepromReadWords(&serial_reflash_unlock_request_cal,0x3fee24,2);
   return;
@@ -790,7 +819,7 @@ void cm848_generateCrcTable(void)
         uVar3 = uVar3 >> 1 ^ 0x8408;
       }
     } while (sVar2 != 0);
-    (&eeprom_diag_callback.default_value)[uVar1] = (word)uVar3;
+    crc_ccitt_table[uVar1] = (word)uVar3;
     uVar1 = uVar1 + 1 & 0xffff;
   } while (uVar1 < 0x100);
   return;
@@ -1591,7 +1620,7 @@ void mpc555_processDiagnosticAndEepromRequests(void)
 
 {
   byte bVar1;
-  word eeprom_init_result;
+  word erase_result;
   byte diag_response_code;
   
   mpc555_sciValidateChecksum();
@@ -1625,7 +1654,7 @@ LAB_0000208c:
         diag_response_code = 0x12;
         goto LAB_00002098;
       }
-      cm848_dispatchEepromWriteRequest();
+      cm848_dispatchSerialReflashRequest();
     }
   }
   else {
@@ -1635,21 +1664,21 @@ LAB_00002098:
   }
   diag_request_pending_flag = '\0';
 LAB_000020ac:
-  if (eeprom_write_pending_flag == 1) {
-    eeprom_init_result = mpc555_initEepromTransfer(3);
-    if (eeprom_init_result == 0) {
+  if (serial_reflash_erase_pending_flag == 1) {
+    erase_result = mpc555_beginReflash(BOOT_REQUEST_CHANNEL_SERIAL);
+    if (erase_result == 0) {
       diag_session_state_byte = 0x22;
     }
     else {
       diag_session_state_byte = 0x73;
     }
-    eeprom_write_pending_flag = 0;
-    eeprom_calibration_pending_flag = 0;
+    serial_reflash_erase_pending_flag = 0;
+    serial_reflash_busy_flag = 0;
   }
   if (eeprom_write_request_pending != 0) {
     eeprom_diag_state = EEPROM_DIAG_WRITE_DISPATCH;
     eeprom_write_request_type = (byte)eeprom_write_request_pending;
-    cm848_dispatchEepromWriteRequest();
+    cm848_dispatchSerialReflashRequest();
     eeprom_write_request_pending = 0;
   }
   return;
@@ -1665,7 +1694,7 @@ void cm848_initDiagnosticCallback(void)
 
 {
   diagnostic_callback_ptr = mpc555_processDiagnosticAndEepromRequests;
-  eeprom_write_pending_flag = 0;
+  serial_reflash_erase_pending_flag = 0;
   eeprom_write_request_pending = 0;
   return;
 }
@@ -1766,7 +1795,7 @@ void mpc555_eepromValidationCycle(void)
       return;
     }
     oil_change_monitor_fault_event_bits_cal = 0xc;
-    if (eeprom_shadow_header.magic == 0x600d) {
+    if (eeprom_shadow_header.ecm_status == ECM_STATUS_CALIBRATION_VALID) {
       oil_change_monitor_fault_event_bits_cal = dVar1;
       return;
     }
@@ -1847,10 +1876,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
+  word direction_register_value;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -1958,7 +1987,8 @@ void mpc555_systemInitialization(void)
     mpc555_sciDispatchByTransferPhase();
     cm848_runFlashProgramStateMachine();
     bVar2 = eeprom_service_mode_flags;
-    if (((bVar2 & 0xf) != 0) && (eeprom_shadow_header.magic == 0x1d0a)) {
+    if (((bVar2 & 0xf) != 0) && (eeprom_shadow_header.ecm_status == ECM_STATUS_REFLASH_IN_PROGRESS))
+    {
       cm848_runBootKernelLoop();
       mpc555_initHardwareConfig();
     }
@@ -2063,7 +2093,8 @@ LAB_00002900:
 LAB_0000291c:
   uVar4 = mpc555_areBootModeStrapPinsHigh();
   boot_mode_strap_pins_high = uVar4 & 0xff;
-  if ((boot_mode_strap_pins_high != 0) || (eeprom_shadow_header.magic != 0x600d)) {
+  if ((boot_mode_strap_pins_high != 0) ||
+     (eeprom_shadow_header.ecm_status != ECM_STATUS_CALIBRATION_VALID)) {
     mpc555_systemInitialization();
   }
   (*(code *)flash_operational_code_entry_pointer)(0);
@@ -2135,7 +2166,7 @@ void mpc555_initDiagnosticSubsystem(void)
   cm848_registerBootMemoryReadServices();
   cm848_registerBootGetAddressByParameterIdService();
   cm848_registerBootMemoryWriteServices();
-  cm848_registerBootCalibrationAndNoOperationServices();
+  cm848_registerBootReflashAndNoOperationServices();
   cm848_registerBootExecuteAtAddressService();
   wVar2 = ecu_power_state_flags.mailbox_index;
   iVar5 = wVar2 + 1;
@@ -2808,13 +2839,16 @@ void cm848_sendDiagnosticResponse(void)
 
 
 //
-// Function: cm848_resetEepromCalibrationState @ 0x000036f8
+// Function: cm848_resetSerialReflashState @ 0x000036f8
 //
 
-void cm848_resetEepromCalibrationState(void)
+/* Boot kernel: clears serial_reflash_busy_flag and diag_session_state_byte (was
+   cm848_resetEepromCalibrationState; PR #53 round 67) */
+
+void cm848_resetSerialReflashState(void)
 
 {
-  eeprom_calibration_pending_flag = 0;
+  serial_reflash_busy_flag = 0;
   diag_session_state_byte = 0;
   return;
 }
@@ -2822,15 +2856,21 @@ void cm848_resetEepromCalibrationState(void)
 
 
 //
-// Function: cm848_beginEepromCalibrationWrite @ 0x00003710
+// Function: cm848_beginSerialReflash @ 0x00003710
 //
 
-void cm848_beginEepromCalibrationWrite(void)
+/* Boot kernel serial reflash request type 1: sets serial_reflash_busy_flag / sends response pending
+   (0x78 / 0x74) / waits out the serial transmit / clears bits 1 and 3 of
+   serial_reflash_status_flags_cal / counts serial_reflash_attempt_count_cal / sets
+   serial_reflash_erase_pending_flag - mpc555_processDiagnosticAndEepromRequests then runs
+   mpc555_beginReflash(serial) (was cm848_beginEepromCalibrationWrite; PR #53 round 67) */
+
+void cm848_beginSerialReflash(void)
 
 {
   ushort local_8 [2];
   
-  eeprom_calibration_pending_flag = 1;
+  serial_reflash_busy_flag = 1;
   cm848_diagSendResponseCode(0x78,0x74);
   while (diag_serial_transfer_phase == 3) {
     mpc555_sciPollDuringEepromWrite();
@@ -2839,38 +2879,44 @@ void cm848_beginEepromCalibrationWrite(void)
   diag_session_state_byte = 0x78;
   diag_request_pending_flag = 0;
   local_8[0] = eeprom_shadow_header.eeprom_status_flags & 0xfff5;
-  mpc555_eepromWriteWords((dword)local_8,(word *)&eeprom_cal_word1,2);
+  mpc555_eepromWriteWords((dword)local_8,&serial_reflash_status_flags_cal,2);
   local_8[0] = eeprom_shadow_header.cal_word3 + 1;
-  mpc555_eepromWriteWords((dword)local_8,(word *)&eeprom_cal_word3,2);
-  eeprom_write_pending_flag = 1;
+  mpc555_eepromWriteWords((dword)local_8,&serial_reflash_attempt_count_cal,2);
+  serial_reflash_erase_pending_flag = 1;
   return;
 }
 
 
 
 //
-// Function: cm848_updateEepromMagicAndReload @ 0x000037e0
+// Function: cm848_finishSerialReflash @ 0x000037e0
 //
 
-void cm848_updateEepromMagicAndReload(void)
+/* Boot kernel serial reflash request type 2: when ECM_Status is REFLASH_IN_PROGRESS sets
+   serial_reflash_busy_flag / sends response pending (0x78 / 0x74) / waits out the serial transmit /
+   writes CALIBRATION_DOWNLOADED_NOT_VERIFIED to EEPROM 0x0 and polls until it reads back (400 polls
+   at least) / then mpc555_verifyDownloadedCalibration(serial); otherwise answers 0x40 / 0x7f (was
+   cm848_updateEepromMagicAndReload; PR #53 round 67) */
+
+void cm848_finishSerialReflash(void)
 
 {
   short sVar1;
   ushort uVar2;
-  word local_10 [2];
+  ECM_STATUS local_10 [2];
   
   uVar2 = 0;
-  eeprom_calibration_pending_flag = 1;
-  if (eeprom_shadow_header.magic == 0x1d0a) {
+  serial_reflash_busy_flag = 1;
+  if (eeprom_shadow_header.ecm_status == ECM_STATUS_REFLASH_IN_PROGRESS) {
     cm848_diagSendResponseCode(0x78,0x74);
     while (diag_serial_transfer_phase == 3) {
       mpc555_sciPollDuringEepromWrite();
       cm848_serviceSupervisorWatchdog();
     }
     diag_request_pending_flag = 0;
-    local_10[0] = 0x2b16;
+    local_10[0] = ECM_STATUS_CALIBRATION_DOWNLOADED_NOT_VERIFIED;
     mpc555_eepromWriteWords((dword)local_10,(word *)&DAT_01000000,2);
-    while ((uVar2 < 400 || (eeprom_shadow_header.magic != local_10[0]))) {
+    while ((uVar2 < 400 || (eeprom_shadow_header.ecm_status != local_10[0]))) {
       while (sVar1 = mpc555_runPacedSerialService(), sVar1 == 0) {
         mpc555_sciPollDuringEepromWrite();
         cm848_serviceSupervisorWatchdog();
@@ -2878,7 +2924,7 @@ void cm848_updateEepromMagicAndReload(void)
       mpc555_eepromReadWords(0x1000000,0x3fee0a,2);
       uVar2 = uVar2 + 1;
     }
-    mpc555_loadEepromCalibration(0,3);
+    mpc555_verifyDownloadedCalibration((j1939_rx_msg_t *)0x0,BOOT_REQUEST_CHANNEL_SERIAL);
   }
   else {
     cm848_diagSendResponseCode(0x40,0x7f);
@@ -2889,21 +2935,25 @@ void cm848_updateEepromMagicAndReload(void)
 
 
 //
-// Function: cm848_dispatchEepromWriteRequest @ 0x000038f4
+// Function: cm848_dispatchSerialReflashRequest @ 0x000038f4
 //
 
-/* dispatches EEPROM write by request type: 1=begin cal write 2=update magic |
-   review-function-readability reviewed 2026-06-09 - Readability High Accuracy Confidence High */
+/* Boot kernel: cm848_resetSerialReflashState then request type 1 (cm848_beginSerialReflash) or 2
+   (cm848_finishSerialReflash); any other type answers 0x12 / 0x7f. Readability Medium now:
+   eeprom_write_request_type names a serial request byte that other handlers read as a word (was
+   cm848_dispatchEepromWriteRequest; PR #53 round 67) | earlier note: dispatches EEPROM write by
+   request type: 1=begin cal write 2=update magic | review-function-readability reviewed 2026-06-09
+   - Readability High Accuracy Confidence High */
 
-void cm848_dispatchEepromWriteRequest(void)
+void cm848_dispatchSerialReflashRequest(void)
 
 {
-  cm848_resetEepromCalibrationState();
+  cm848_resetSerialReflashState();
   if (eeprom_write_request_type == 1) {
-    cm848_beginEepromCalibrationWrite();
+    cm848_beginSerialReflash();
   }
   else if (eeprom_write_request_type == 2) {
-    cm848_updateEepromMagicAndReload();
+    cm848_finishSerialReflash();
   }
   else {
     cm848_diagSendResponseCode(0x12,0x7f);
@@ -2927,7 +2977,7 @@ void mpc555_diagServiceTransferBlock(void)
   dword dVar3;
   byte response_code;
   
-  if (eeprom_calibration_pending_flag != 0) {
+  if (serial_reflash_busy_flag != 0) {
     cm848_diagSendResponseCode(0x78,0x74);
     return;
   }
@@ -2944,9 +2994,9 @@ void mpc555_diagServiceTransferBlock(void)
       cm848_diagSendResponseCode(0x61,0x74);
       dVar3 = eeprom_block_tracking.block_start_addr;
       wVar1 = eeprom_block_tracking.block_count;
-      (&DAT_003028b3)[(uint)wVar1 * 2] = dVar3;
+      download_block_list[wVar1].start_address = dVar3;
       dVar2 = eeprom_xfer_state.block_length;
-      (&DAT_003028b7)[(uint)wVar1 * 2] = dVar3 + dVar2 + -1;
+      download_block_list[wVar1].end_address = (dVar3 + dVar2) - 1;
       eeprom_block_tracking.block_count = wVar1 + 1;
       eeprom_xfer_state.bytes_transferred = 0;
       ecu_power_state_flags.transfer_crc = 0;
@@ -3371,8 +3421,8 @@ void cm848_fillFlashProgramPageBuffer(void)
 
 /* Boot reflash kernel: when the pending flash/EEPROM write finishes (data_transfer_state 1) sends
    the deferred positive response for diag_write_request_state.pending_request; state 2 clears
-   eeprom_calibration_pending_flag | review-function-readability reviewed 2026-11-11 - Readability
-   Medium Accuracy Confidence Medium */
+   serial_reflash_busy_flag | review-function-readability reviewed 2026-11-11 - Readability Medium
+   Accuracy Confidence Medium */
 
 void cm848_completePendingDiagWrite(void)
 
@@ -3380,7 +3430,7 @@ void cm848_completePendingDiagWrite(void)
   j1939_rx_msg_t *request;
   
   if (reflash_transfer_state.pending_write_transport == 2) {
-    eeprom_calibration_pending_flag = 0;
+    serial_reflash_busy_flag = 0;
   }
   else if ((reflash_transfer_state.pending_write_transport == 1) &&
           (request = (j1939_rx_msg_t *)diag_write_request_state.pending_request,
@@ -4187,7 +4237,7 @@ byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword
   char cVar8;
   short sVar6;
   uint uVar9;
-  byte *pbVar10;
+  byte *data;
   ushort local_20 [4];
   
   eeprom_xfer_state.transfer_timer = 0x4b;
@@ -4207,7 +4257,7 @@ byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword
     }
     bVar1 = true;
   }
-  pbVar10 = request->data_pointer + (uVar5 & 0xff);
+  data = request->data_pointer + (uVar5 & 0xff);
   bVar7 = cm848_lookupBootMemoryRegionType(address,(uint)local_20[0]);
   if (3 < bVar7) {
     if (bVar7 != 4) {
@@ -4225,15 +4275,16 @@ byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword
       }
       dVar3 = diag_write_request_state.address_mode;
       if ((dVar3 == 1) &&
-         (bVar7 = cm848_trackDownloadBlock(pbVar10,address,local_20,2), bVar7 != 0xff)) {
+         (bVar7 = cm848_trackDownloadBlock(data,address,local_20,BOOT_REQUEST_CHANNEL_J1939),
+         bVar7 != 0xff)) {
         return bVar7;
       }
       cm848_sendDiagResponsePending(request,10);
       pcVar4 = (code *)eeprom_xfer_state.eeprom_write_callback;
-      (*pcVar4)(pbVar10,address,local_20[0]);
+      (*pcVar4)(data,address,local_20[0]);
       return 0;
     }
-    bVar7 = cm848_trackDownloadBlock(pbVar10,address,local_20,2);
+    bVar7 = cm848_trackDownloadBlock(data,address,local_20,BOOT_REQUEST_CHANNEL_J1939);
     if (bVar7 != 0xff) {
       return bVar7;
     }
@@ -4241,7 +4292,7 @@ byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword
       return 0x11;
     }
     dVar3 = eeprom_xfer_state.bytes_transferred;
-    cVar8 = cm848_dataTransferBufferWrite(pbVar10,address,local_20[0],dVar3 == 0,1);
+    cVar8 = cm848_dataTransferBufferWrite(data,address,local_20[0],dVar3 == 0,1);
     if (cVar8 == '\x01') {
       return 0x11;
     }
@@ -4267,7 +4318,7 @@ byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword
     if (bVar7 != 2) {
       return bVar7;
     }
-    bVar7 = cm848_trackDownloadBlock(pbVar10,address,local_20,2);
+    bVar7 = cm848_trackDownloadBlock(data,address,local_20,BOOT_REQUEST_CHANNEL_J1939);
     if (bVar7 != 0xff) {
       return bVar7;
     }
@@ -4275,13 +4326,13 @@ byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword
       return 0x11;
     }
     pcVar4 = (code *)eeprom_xfer_state.flash2_write_callback;
-    sVar6 = (*pcVar4)(pbVar10,address,local_20[0]);
+    sVar6 = (*pcVar4)(data,address,local_20[0]);
     if (sVar6 == 0) {
       return 0x11;
     }
     return 0;
   }
-  cm848_copyBytes(address,pbVar10,local_20[0]);
+  cm848_copyBytes(address,data,local_20[0]);
   return 0;
 }
 
@@ -5789,7 +5840,7 @@ void cm848_dispatchDiagnosticService(j1939_rx_msg_t *request)
 void cm848_sendSerialDownloadStatusResponse(void)
 
 {
-  if (eeprom_calibration_pending_flag == 1) {
+  if (serial_reflash_busy_flag == 1) {
     mpc555_sciSendServiceResponse(0x78,0x74);
   }
   else if ((((diag_session_state_byte == 2) || (diag_session_state_byte == 0x61)) ||
@@ -5821,8 +5872,8 @@ void mpc555_sciHandleDownloadStart(void)
   undefined4 uVar1;
   char cVar2;
   
-  if (eeprom_calibration_pending_flag == 0) {
-    if (eeprom_shadow_header.magic == 0x1d0a) {
+  if (serial_reflash_busy_flag == 0) {
+    if (eeprom_shadow_header.ecm_status == ECM_STATUS_REFLASH_IN_PROGRESS) {
       ram0x003fedfd = 0;
       ram0x003fee01 = _eeprom_write_request_type;
       eeprom_xfer_state.block_length = _eeprom_block_length_cal;
@@ -5864,26 +5915,28 @@ void mpc555_sciHandleDownloadDataBlock(void)
   dword dVar1;
   dword dVar2;
   code *pcVar3;
-  char cVar5;
+  byte bVar5;
+  char cVar6;
   short sVar4;
-  undefined4 uVar6;
-  ushort local_30 [8];
+  undefined4 uVar7;
+  word local_30 [8];
   
   local_30[0] = 0;
-  if (eeprom_calibration_pending_flag != 0) {
+  if (serial_reflash_busy_flag != 0) {
     mpc555_sciSendServiceResponse(0x78,0x74);
     return;
   }
-  local_30[0] = (ushort)eeprom_write_request_type;
+  local_30[0] = (word)eeprom_write_request_type;
   dVar1 = eeprom_xfer_state.bytes_transferred;
   register0x00000010 = ram0x003fee01 + dVar1;
   if ((eeprom_write_request_type < 0xfb) && ((register0x00000010 & 1) == 0)) {
     dVar2 = eeprom_xfer_state.block_length;
     if (dVar1 <= dVar2) {
-      cVar5 = cm848_trackDownloadBlock(&DAT_003fecf3,register0x00000010,local_30,3);
+      bVar5 = cm848_trackDownloadBlock
+                        (&DAT_003fecf3,register0x00000010,local_30,BOOT_REQUEST_CHANNEL_SERIAL);
       sensor_fault_threshold_state = cm848_lookupBootMemoryRegionType(ram0x003fee01,local_30[0]);
-      if (cVar5 != -1) {
-        uVar6 = 0x74;
+      if (bVar5 != 0xff) {
+        uVar7 = 0x74;
         goto LAB_000071c8;
       }
       if ((sensor_fault_threshold_state == 2) || (sensor_fault_threshold_state == 4)) {
@@ -5892,7 +5945,7 @@ void mpc555_sciHandleDownloadDataBlock(void)
           pcVar3 = (code *)eeprom_xfer_state.flash2_write_callback;
           sVar4 = (*pcVar3)(&DAT_003fecf3,ram0x003fedfd,local_30[0]);
           if (sVar4 == 0) {
-            eeprom_calibration_pending_flag = 0;
+            serial_reflash_busy_flag = 0;
             mpc555_sciSendServiceResponse(0x40,0x7f);
             diag_session_state_byte = 0x40;
             return;
@@ -5904,16 +5957,16 @@ LAB_00007110:
         }
         dVar1 = eeprom_xfer_state.bytes_transferred;
         dVar2 = eeprom_xfer_state.block_length;
-        cVar5 = cm848_dataTransferBufferWrite
+        cVar6 = cm848_dataTransferBufferWrite
                           (&DAT_003fecf3,ram0x003fedfd,local_30[0],dVar1 == dVar2,2);
-        if (cVar5 != '\x01') {
-          eeprom_calibration_pending_flag = cVar5 == '\x02';
+        if (cVar6 != '\x01') {
+          serial_reflash_busy_flag = cVar6 == '\x02';
           goto LAB_00007110;
         }
-        eeprom_calibration_pending_flag = 0;
+        serial_reflash_busy_flag = 0;
       }
       else if (sensor_fault_threshold_state == 5) {
-        eeprom_calibration_pending_flag = 1;
+        serial_reflash_busy_flag = 1;
         DAT_003fee06 = 1;
         mpc555_sciSendServiceResponse(0x78,0x74);
         while (diag_serial_transfer_phase == 3) {
@@ -5921,8 +5974,8 @@ LAB_00007110:
         }
         diag_request_pending_flag = 0;
         pcVar3 = (code *)eeprom_xfer_state.eeprom_write_callback;
-        (*pcVar3)(&DAT_003fecf3,unique0x10000152 - 0x1000000,local_30[0]);
-        eeprom_calibration_pending_flag = 0;
+        (*pcVar3)(&DAT_003fecf3,unique0x1000014c - 0x1000000,local_30[0]);
+        serial_reflash_busy_flag = 0;
         diag_session_state_byte = 0x73;
         DAT_003fee06 = 0;
         return;
@@ -5931,9 +5984,9 @@ LAB_00007110:
     mpc555_sciSendServiceResponse(0x40,0x7f);
   }
   else {
-    uVar6 = 0x79;
+    uVar7 = 0x79;
 LAB_000071c8:
-    mpc555_sciSendServiceResponse(uVar6,0x7f);
+    mpc555_sciSendServiceResponse(uVar7,0x7f);
   }
   return;
 }
@@ -6295,55 +6348,55 @@ byte cm848_lookupBootMemoryRegionType(uint param_1,int param_2)
    cm848_updateDownloadCrc | review-function-readability reviewed 2026-11-11 - Readability Medium
    Accuracy Confidence Medium */
 
-undefined1 cm848_trackDownloadBlock(undefined4 param_1,dword param_2,ushort *param_3,int param_4)
+byte cm848_trackDownloadBlock(byte *data,dword address,word *length,BOOT_REQUEST_CHANNEL channel)
 
 {
   dword dVar1;
   dword dVar2;
   dword dVar3;
-  undefined1 uVar4;
+  byte bVar4;
   uint uVar5;
   
   dVar2 = eeprom_xfer_state.block_length;
   if (dVar2 == 0) {
-    uVar4 = 0x10;
+    bVar4 = 0x10;
   }
   else {
     dVar1 = eeprom_block_tracking.last_write_addr;
-    if (dVar1 == param_2) {
-      uVar4 = 0xff;
+    if (dVar1 == address) {
+      bVar4 = 0xff;
     }
     else {
-      eeprom_block_tracking.last_write_addr = param_2;
+      eeprom_block_tracking.last_write_addr = address;
       dVar1 = eeprom_xfer_state.bytes_transferred;
       if (dVar1 == 0) {
-        eeprom_block_tracking.block_start_addr = param_2;
+        eeprom_block_tracking.block_start_addr = address;
         ecu_power_state_flags.transfer_crc = 0;
       }
       else {
         dVar3 = eeprom_block_tracking.block_start_addr;
-        if (dVar3 + dVar1 != param_2) {
+        if (dVar3 + dVar1 != address) {
           return 9;
         }
       }
-      if (param_4 == 3) {
-        eeprom_xfer_state.bytes_transferred = dVar1 + *param_3;
+      if (channel == BOOT_REQUEST_CHANNEL_SERIAL) {
+        eeprom_xfer_state.bytes_transferred = dVar1 + *length;
       }
       else {
-        uVar5 = dVar1 + *param_3;
+        uVar5 = dVar1 + *length;
         eeprom_xfer_state.bytes_transferred = uVar5;
         if (uVar5 == dVar2) {
           eeprom_xfer_state.bytes_transferred = 0;
-          *param_3 = *param_3 - 2;
+          *length = *length - 2;
         }
         else if (dVar2 < uVar5) {
           return 9;
         }
       }
-      uVar4 = cm848_updateDownloadCrc(param_1,*param_3,param_4);
+      bVar4 = cm848_updateDownloadCrc(data,(uint)*length,channel);
     }
   }
-  return uVar4;
+  return bVar4;
 }
 
 
@@ -6372,9 +6425,9 @@ undefined4 cm848_finishDownloadBlock(word *param_1)
     uVar4 = (uint)wVar1;
     if (uVar4 < 10) {
       dVar3 = eeprom_block_tracking.block_start_addr;
-      (&DAT_003028b3)[uVar4 * 2] = dVar3;
+      download_block_list[uVar4].start_address = dVar3;
       dVar2 = eeprom_xfer_state.block_length;
-      (&DAT_003028b7)[uVar4 * 2] = dVar3 + dVar2 + -3;
+      download_block_list[uVar4].end_address = (dVar3 + dVar2) - 3;
       eeprom_block_tracking.block_count = wVar1 + 1;
       uVar5 = 0xff;
     }
@@ -6398,34 +6451,35 @@ undefined4 cm848_finishDownloadBlock(word *param_1)
    ecu_power_state_flags.transfer_crc; finishes the block when bytes_transferred wraps to 0 |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-undefined1 cm848_updateDownloadCrc(byte *param_1,uint param_2,int param_3)
+byte cm848_updateDownloadCrc(byte *data,dword length,BOOT_REQUEST_CHANNEL channel)
 
 {
   byte *pbVar1;
   word wVar2;
   dword dVar3;
-  undefined1 uVar4;
+  byte *pbVar4;
+  byte bVar5;
   
-  if (param_2 != 0) {
-    pbVar1 = param_1 + -1;
+  if (length != 0) {
+    pbVar1 = data + -1;
     do {
-      param_1 = pbVar1;
-      param_2 = param_2 + 0xffff & 0xffff;
+      pbVar4 = pbVar1;
+      length = length + 0xffff & 0xffff;
       wVar2 = ecu_power_state_flags.transfer_crc;
-      pbVar1 = param_1 + 1;
+      pbVar1 = pbVar4 + 1;
       ecu_power_state_flags.transfer_crc =
-           wVar2 >> 8 ^ (&eeprom_diag_callback.default_value)[((uint)wVar2 ^ (uint)*pbVar1) & 0xff];
-    } while (param_2 != 0);
-    param_1 = param_1 + 2;
+           wVar2 >> 8 ^ crc_ccitt_table[((uint)wVar2 ^ (uint)*pbVar1) & 0xff];
+    } while (length != 0);
+    data = pbVar4 + 2;
   }
   dVar3 = eeprom_xfer_state.bytes_transferred;
-  if ((dVar3 == 0) && (param_3 != 3)) {
-    uVar4 = cm848_finishDownloadBlock(param_1);
+  if ((dVar3 == 0) && (channel != BOOT_REQUEST_CHANNEL_SERIAL)) {
+    bVar5 = cm848_finishDownloadBlock(data);
   }
   else {
-    uVar4 = 0xff;
+    bVar5 = 0xff;
   }
-  return uVar4;
+  return bVar5;
 }
 
 
@@ -33303,7 +33357,7 @@ void cm848_selectGovernorPressureLowRange(void)
   transmission_predicted_1_2_shift_delay =
        transmission_1_2_shift_lag_cal[transmission_temperature_range];
   transmission_predicted_2_3_shift_delay =
-       *(word *)(&eeprom_calibration_pending_flag + (uint)transmission_temperature_range * 2);
+       *(word *)(&serial_reflash_busy_flag + (uint)transmission_temperature_range * 2);
   if (transmission_current_gear == 1) {
     bVar3 = transmission_control_flags.low_range_boost_flags & 0xfd;
     if ((transmission_control_flags.low_range_boost_flags & 1) == 0) {
@@ -34284,7 +34338,7 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
   transmission_predicted_1_2_shift_delay =
        transmission_1_2_shift_lag_cal[transmission_temperature_range];
   transmission_predicted_2_3_shift_delay =
-       *(word *)(&eeprom_calibration_pending_flag + (uint)transmission_temperature_range * 2);
+       *(word *)(&serial_reflash_busy_flag + (uint)transmission_temperature_range * 2);
   wVar1 = lookupTableInterpolation
                     (&governor_pressure_wide_open_throttle_curve_cached_axis_offset_2,
                      transmission_output_speed_in_use,
@@ -34405,8 +34459,7 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
                    transmission_predicted_2_3_shift_delay) &&
                  (transmission_predicted_2_3_shift_delay <
                   transmission_predicted_2_3_shift_delay_maximum)) {
-                *(word *)(&eeprom_calibration_pending_flag +
-                         (uint)transmission_temperature_range * 2) =
+                *(word *)(&serial_reflash_busy_flag + (uint)transmission_temperature_range * 2) =
                      transmission_predicted_2_3_shift_delay;
               }
             }
@@ -35982,11 +36035,11 @@ void cm848_updateTransmissionConditionFlags(void)
       transmission_1_2_shift_lag_cal[iVar6] = uVar5;
     }
     if (wVar2 < transmission_2nd_gear_maximum_engine_speed) {
-      uVar5 = *(short *)(&eeprom_calibration_pending_flag + iVar6 * 2) +
+      uVar5 = *(short *)(&serial_reflash_busy_flag + iVar6 * 2) +
               transmission_predicted_shift_delay_adjustment_step;
       if ((transmission_predicted_2_3_shift_delay_minimum < uVar5) &&
          (uVar5 < transmission_predicted_2_3_shift_delay_maximum)) {
-        *(ushort *)(&eeprom_calibration_pending_flag + iVar6 * 2) = uVar5;
+        *(ushort *)(&serial_reflash_busy_flag + iVar6 * 2) = uVar5;
       }
     }
     transmission_shift_strategy_flags.wide_open_throttle_flags =
