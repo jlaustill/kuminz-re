@@ -1,0 +1,16 @@
+cm848: round 70 closing - task 046, the session archive, the PR body, the engine hours doc
+
+- work/tasks/046: "Done, round 70" records stage A (ae4338bd) and the follow-up (b2856de5).
+  - The proof: 8 functions, 9 casts fewer and 13 placeholders more, with the cause.
+  - Corrected: the boot kernel keeps most of its RAM variables in the dual-port TPU RAM, not all of them, and 30 of
+    the 39 named rows rendered before stage A (33 after). ae4338bd's message says "all" and "39"; it stays.
+  - The first apply run that stopped before saving, and the ring-pointer retype that was kept.
+  - The sourced facts: NXP's MPC5xx memory map, DPTRAM_RAMBAR and TPUMCR's EMU bit.
+  - The reverted mailbox retype.
+  - Lead: the SRAM clear's 0x3fffd0 bound.
+- firmware/CM848_S90140.06_analysis/docs/engine_hours_and_odometer.md: ecm_runtime_accumulator is
+  ecu_power_state_flags.runtime_counter (7 mentions; one note keeps the old name).
+- work/todo.md, the session README, session_folder/round70/, the large-files tarball (the round's build and verify
+  logs), pr_body.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

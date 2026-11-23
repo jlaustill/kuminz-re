@@ -597,3 +597,9 @@ Hand work on the round 7 lead.
 
 - **Stage A:** `apply_r69a.py`, then `fix_r69a2.py` (`bank2_image_last_word`) and `fix_r69a3.py` (field rows).
   **Proof:** `prove_r69.py`, `diff_r69.py`. **Closing:** `apply_r69_closing.py`, `update_large_tar_r69.sh`.
+
+## Round 70: the 6 KB dual-port TPU RAM (`session_folder/round70/`)
+
+- **Stage A:** `apply_r70a.py`, `map_r70a.csv`, `classify_dptram_rows.py`. **Follow-up:** `fix_r70b.py` (the MPC5xx
+  memory map), then `fix_r70b2.py` (one retype reverted). **Proof:** `prove_r70.py`,
+  `diff_r70.py`. **Closing:** `apply_r70_closing.py`, `update_large_tar_r70.sh`.

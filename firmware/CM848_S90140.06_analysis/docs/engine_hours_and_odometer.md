@@ -114,7 +114,7 @@ The real, live ECM run-time counter is `0x01000030` (rises across every dump).
 
 `mpc555_eepromWriteWords(0x3fee2a,&eeprom_config_block,4)` and `eeprom_config_block`
 is at EEPROM `0x01000030` — consistent with the 2026-04-09 trace of
-`ecm_runtime_accumulator → 0x01000030`. Still bench-unverified.
+`ecu_power_state_flags.runtime_counter → 0x01000030`. Still bench-unverified.
 
 ### Naming conflicts to reconcile on the next bench
 
@@ -256,7 +256,8 @@ S90140.06. Add a `tools/read_odometer.sh` that only does the read.
 
 `mpc555_tickTransferTimeoutAndRuntimeCounter` @ 0x7608 runs periodically. Every 40 ticks
 (`watchdog_tick_prescaler` reaches 0x28), it increments both:
-- `ecm_runtime_accumulator` @ 0x00302012 (lifetime counter)
+- `ecu_power_state_flags.runtime_counter` @ 0x00302012 (lifetime counter)
+  (was the stale flat row `ecm_runtime_accumulator`, PR #53 round 70)
 - `eeprom_block_tracking.key_off_duration_ticks` @ 0x003028a6 (was `keyon_duration_counter`, then
   `watchdog_counter`; PR #53 round 67: `mpc555_keyOnStateMachine` zeroes it while the key is on, so it
   counts key-off time)
@@ -267,12 +268,12 @@ S90140.06. Add a `tools/read_odometer.sh` that only does the read.
    `eeprom_version_marker.magic == 0x600d`
    *(2026-11-13, PR #48: bit 15 = 1 means key ON — the reset code waits for it — so this branch is really the key-back-on save before the watchdog reset / restart, and scenario 1 runs while bit 15 reads 0 = key off.)*
 
-Save path: `ecm_runtime_accumulator` → `eeprom_runtime_write_staging`
+Save path: `ecu_power_state_flags.runtime_counter` → `eeprom_runtime_write_staging`
 (0x003fee2a) → `mpc555_eepromWriteWords(0x3fee2a, &DAT_01000030, 4)`
 → **EEPROM 0x01000030**.
 
 On boot, `mpc555_loadRuntimeCounterFromEepromShadow` @ 0x76B4 reloads
-`ecm_runtime_accumulator` from `eeprom_version_marker.config_dword`,
+`ecu_power_state_flags.runtime_counter` from `eeprom_version_marker.config_dword`,
 which is read from EEPROM 0x01000034 (line 669).
 
 ```bash
@@ -286,7 +287,7 @@ which is read from EEPROM 0x01000034 (line 669).
 **Scale factor unknown.** The watchdog tick rate determines the time-per-count.
 Bench session showed `session_time_counter` at 0x0040B150 runs at 1.5 Hz
 with a different prescaler. The watchdog prescaler is 40 ticks, so if the
-watchdog runs at 60 Hz, each `ecm_runtime_accumulator` count = 40/60 = 0.667s
+watchdog runs at 60 Hz, each `ecu_power_state_flags.runtime_counter` count = 40/60 = 0.667s
 (matching the 1.5 Hz observation). **Needs truck verification to confirm.**
 
 ### 4. Engine run time (engine-running seconds) — **dead end via known services**
@@ -477,7 +478,7 @@ EEPROM 0x01000030 as the target. Remaining:
 - [ ] Update `docs/service_0x4a_protocol.md` to document the wider Service
       0x4A window (0x003Fxxxx is readable, not just 0x00408000+).
 - [X] ~~Trace the ECU shutdown path~~ — found `mpc555_keyOnStateMachine` @ 0x184
-      saves `ecm_runtime_accumulator` to EEPROM 0x01000030 (2026-04-09).
+      saves `ecu_power_state_flags.runtime_counter` to EEPROM 0x01000030 (2026-04-09).
 - [X] ~~Bench-verify `ECM_Run_Time` @ `0x01000400`~~ — confirmed NOT the
       hours counter (static value, never changes).
 - [X] ~~Implement `--resolve-param` / Service 0x15/0x16~~ — deleted, CM848
@@ -579,7 +580,7 @@ to EEPROM 0x01000030 on shutdown.
 
 ### Test 4: Scale Factor Calibration
 
-Purpose: Determine the exact time-per-count for `ecm_runtime_accumulator`.
+Purpose: Determine the exact time-per-count for `ecu_power_state_flags.runtime_counter`.
 
 ```bash
 # 4a. At key-on, immediately read EEPROM and note wall-clock time

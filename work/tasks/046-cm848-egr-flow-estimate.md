@@ -3154,6 +3154,47 @@ A peer relay started the round; the scripts are in `session_folder/round69/`.
   - Round 67's other open leads stand: a memory region type enum, 0x3fedee / 0x3fedf4, `DAT_01000000`, the boot
     `eeprom_*` vocabulary and the serial response codes. So do round 68's. The image header is this round.
 
+## Done, round 70 (2026-11-23, same PR): the 6 KB dual-port TPU RAM and what lives in it
+
+A peer relay started the round; the scripts are in `session_folder/round70/`.
+- **Stage A (ae4338bd):** from round 69's TPU table lead.
+  - **The RAM:** `cm848_clearRamRegions` clears 0x302000-0x3037ff, 6 KB: the dual-port TPU RAM
+    (`dual_port_tpu_ram_start` / `_end`). The boot kernel keeps most of its RAM variables there; others sit in the
+    SRAM, such as `eeprom_shadow_header` at 0x3fee08 and `serial_reflash_busy_flag` at 0x3fedee.
+    `classify_dptram_rows.py` counts 39 named rows in it: 30 rendered before this stage and 33 after, none in an
+    application function.
+  - **The stale map:** an early campaign had laid a TPU3 register map over it. 28 rows that rendered nowhere are
+    removed; `TPU3_TPUMCR` and `TPU3_HSQR1` were renamed.
+  - **The CAN rings** tile the RAM: `boot_can_receive_ring` (`j1939_rx_msg_t[40]`) and `boot_can_transmit_ring`
+    (a new 12-byte `boot_can_transmit_frame_t[40]`: a TouCAN ID image and 8 data bytes). The wrap bounds prove both
+    counts, and `can_ring_state_t`'s pointers are typed to match.
+  - **`ecu_power_state_flags`:** three stale flat rows inside it became its field rows.
+  - **`dual_port_tpu_ram_load_table`** (0x5862e): three variable-length records that `mpc555_initTpuConfiguration`
+    copies into 0x302000-0x302fff before it starts both TPUs - TPU microcode by that use.
+  - **The markers:** the 0xa1a1 words that bracket the first checksum region.
+- **Proof:** 8 of 1968 functions differ after the renames, with 9 casts fewer and 13 placeholders more (the receive record's header now fills as four byte fields, and typed pointers name their temps): the four ring functions (mpc555_processCanReceiveBuffer fills record fields and advances by a record), mpc555_initDiagnosticSubsystem (it points the rings at boot_can_receive_ring / boot_can_transmit_ring), cm848_handleBootExecuteAtAddressService (typed transmit pointers), mpc555_initTpuConfiguration (dual_port_tpu_ram_load_table), and one local declaration-order move. The 28 removed rows change no render. verify is byte-identical with round 69's WARNING lines; thunks 18 / 14; prototype and local rows 0 failed, locals Skipped 8 (the same warnings as round 66). Headers regenerated (0 g++ errors), tests pass, lookup tables 0 sizing problems, audit_cal_suffixes.py HARD 0 / MISSING 211, no piece renders of the new names, and no raw ring address left.
+- **Along the way:** the first `apply_r70a.py` run stopped before saving: its drop loop had already removed the junk
+  `TPU3_HSQR1+1` row that a later line removed again. The ring-pointer retype was tried with a single build first and
+  kept (9 casts fewer).
+- **Follow-up (b2856de5), from the closing review:**
+  - NXP's "Motorola MPC5xx Memory Maps" (Rev C, March 2003) lists, for the MPC555, "DPTRAM (6 Kbytes)" at
+    0x302000-0x3037ff and "DPTRAM Control" at 0x300000-0x30003f. So the RAM is sourced, not inferred.
+  - 0x300004 (`usiu_ext_004`, inside that control block; the USIU is 0x2fc000-0x2fc7ff) is `DPTRAM_RAMBAR`. The
+    boot code writes 0xffa0, the value the MPC555 user's manual requires (as a web search excerpted it).
+  - TPUMCR bit 0x400 is EMU: a TPU in emulation mode runs its microcode from the DPTRAM and the CPU loses access to
+    it, which is why `mpc555_initTpuConfiguration` loads the table first. The function is sourced; the bit position
+    comes from the TPU3 register layout.
+  - `mpc555_registers.csv`, which the build applies, carried the same TPU3 map at 0x302000 (29 rows); it is gone,
+    and the file's TPUA / TPUB headers now say TPU3_A / TPU3_B.
+  - `cm848_writeBootKernelCanTxMailbox`'s frame stays `word *`. Typed as the frame struct, its halfword copy started
+    at `frame[-1].data + 6`, so `fix_r70b2.py` reverted it.
+- **firmware/CLAUDE.md:** no edit.
+- **Leads:**
+  - `cm848_clearRamRegions`' SRAM bound 0x3fffd0 renders as `wastegate_duty_floor_x_axis + 0x12` (an application
+    table time-shares it). The 48 bytes above it are left alone; what they hold is open.
+  - Round 69's leads stand: the Bank 2 re-dump, the 0x8000 branch table, the dword pairs after
+    `block_data_structure`, and `block_capacity`'s 0x1f7e. So do round 67's and 68's.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**
