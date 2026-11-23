@@ -42,12 +42,14 @@ A peer relay started the round; the scripts are in `session_folder/round56/`.
 - **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 221.
 - **Leads:**
   - {left} unprefixed CM848-only functions remain.
-  - Twelve logical outputs now have proven names (these 11 plus round 11's output 54). A `LOGICAL_OUTPUT` enum on
-    the first parameter of `cm848_setLogicalOutputRequest` / `cm848_clearLogicalOutputRequest` would name them at
-    every call site. This round shows that committing a parameter casts every argument that differs from its type, so
-    pilot it and count the casts.
-  - Parameter names without the cast cost would need `ApplyFunctionDefinitions` to name parameters without locking
-    the prototype. That is a shared-script change, so both firmwares would have to be rebuilt.
+  - These 11 logical outputs now have proven names (the other outputs were not counted this round). A
+    `LOGICAL_OUTPUT` enum on the first parameter of `cm848_setLogicalOutputRequest` /
+    `cm848_clearLogicalOutputRequest` would name them at every call site. This round shows that committing a
+    parameter casts every argument that differs from its type, so pilot it and count the casts.
+  - Parameter names without the cast cost are untried. The `local_variables.csv` route (it already renames
+    `cm848_validateWriteAuth`'s `param_1`) commits the parameter through `updateDBVariable` too, so it may cast the
+    same way; a build would tell. Otherwise `ApplyFunctionDefinitions` would have to name parameters without locking
+    the prototype, a shared-script change that needs both firmwares rebuilt.
 
 ## Leads (not in this PR)"""
 edit("work/tasks/046-cm848-egr-flow-estimate.md", "## Leads (not in this PR)", T46)
