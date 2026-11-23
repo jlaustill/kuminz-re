@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 07:16:49 MST 2026
+// Generated: Mon Nov 23 07:30:46 MST 2026
 
 
 //
@@ -1773,10 +1773,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word qadc_a_pqa2_sample;
   word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
+  word qadc_a_pqa2_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -22842,12 +22842,12 @@ undefined1 cm848_restartThroughBootRomAfterSciRequest(void)
    through the boot ROM and acknowledge with a J1939 response frame. Was
    cm848_j1939ProcessRxQueueParam */
 
-undefined1 cm848_handleJ1939RestartService(undefined4 param_1)
+undefined1 cm848_handleJ1939RestartService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
   
-  uVar1 = cm848_restartThroughBootRom(param_1,0);
+  uVar1 = cm848_restartThroughBootRom(request,0);
   return uVar1;
 }
 
@@ -68225,53 +68225,53 @@ undefined4 cm848_j1939DiagnosticServiceAcknowledgeNoOperation(void)
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
     */
 
-undefined4 cm848_updateJ1939BroadcastEnableMask(int param_1,int param_2)
+undefined4 cm848_updateJ1939BroadcastEnableMask(j1939_rx_msg_t *request,dword enable)
 
 {
-  char cVar1;
-  char cVar2;
+  byte bVar1;
+  byte bVar2;
   ushort uVar3;
   
-  cVar1 = *(char *)(*(int *)(param_1 + 6) + 1);
-  cVar2 = *(char *)(*(int *)(param_1 + 6) + 2);
-  if ((cVar1 == -2) && (cVar2 == -2)) {
+  bVar1 = request->data_pointer[1];
+  bVar2 = request->data_pointer[2];
+  if ((bVar1 == 0xfe) && (bVar2 == 0xfe)) {
     uVar3 = 0xffff;
   }
-  else if (cVar2 == '\x01') {
-    if (cVar1 == '\x01') {
+  else if (bVar2 == 1) {
+    if (bVar1 == 1) {
       uVar3 = 0xc;
     }
-    else if (cVar1 == '\x02') {
+    else if (bVar1 == 2) {
       uVar3 = 0x80;
     }
-    else if (cVar1 == '\x06') {
+    else if (bVar1 == 6) {
       uVar3 = 1;
     }
     else {
-      if (cVar1 != '\a') {
+      if (bVar1 != 7) {
         return 4;
       }
       uVar3 = 2;
     }
   }
   else {
-    if (cVar2 != -3) {
+    if (bVar2 != 0xfd) {
       return 4;
     }
-    if (cVar1 == '\x01') {
+    if (bVar1 == 1) {
       uVar3 = 0xc;
     }
-    else if (cVar1 == '\x02') {
+    else if (bVar1 == 2) {
       uVar3 = 0x80;
     }
     else {
-      if (cVar1 != -2) {
+      if (bVar1 != 0xfe) {
         return 4;
       }
       uVar3 = 0x8c;
     }
   }
-  if (param_2 == 1) {
+  if (enable == 1) {
     datalink_broadcast_enable_flags = datalink_broadcast_enable_flags | uVar3;
   }
   else {
@@ -68294,12 +68294,12 @@ undefined4 cm848_updateJ1939BroadcastEnableMask(int param_1,int param_2)
    enable 0 | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence
    High */
 
-undefined1 cm848_handleJ1939DisableBroadcastService(undefined4 param_1)
+undefined1 cm848_handleJ1939DisableBroadcastService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
   
-  uVar1 = cm848_updateJ1939BroadcastEnableMask(param_1,0);
+  uVar1 = cm848_updateJ1939BroadcastEnableMask(request,0);
   return uVar1;
 }
 
@@ -68317,12 +68317,12 @@ undefined1 cm848_handleJ1939DisableBroadcastService(undefined4 param_1)
    enable 1 | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence
    High */
 
-undefined1 cm848_handleJ1939EnableBroadcastService(undefined4 param_1)
+undefined1 cm848_handleJ1939EnableBroadcastService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
   
-  uVar1 = cm848_updateJ1939BroadcastEnableMask(param_1,1);
+  uVar1 = cm848_updateJ1939BroadcastEnableMask(request,1);
   return uVar1;
 }
 
@@ -69211,41 +69211,42 @@ void cm848_endRetarderShiftAssistAboveFuelDemandLimit(void)
    RAM mirror / RAM (type 3) with the 0x3fd480 window protected | review-function-readability
    reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-char cm848_writeJ1939DiagnosticMemory(int param_1,byte *param_2,uint param_3)
+char cm848_writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dword length)
 
 {
   bool bVar1;
   uint uVar2;
   uint uVar3;
-  char cVar4;
-  uint uVar5;
-  int iVar6;
+  uint uVar4;
+  char cVar5;
+  uint uVar6;
+  byte *pbVar7;
   
-  if (0x6e4 < param_3) {
+  if (0x6e4 < length) {
     return '\x02';
   }
-  param_3 = param_3 & 0xffff;
-  uVar3 = cm848_getJ1939MemoryServiceHeaderLength(**(undefined1 **)(param_1 + 6));
-  uVar2 = (uVar3 & 0xff) + param_3 & 0xffff;
-  uVar5 = (uint)*(ushort *)(param_1 + 4);
-  if ((uVar5 == 8) || (uVar5 == uVar2)) {
+  uVar2 = length & 0xffff;
+  uVar4 = cm848_getJ1939MemoryServiceHeaderLength(*request->data_pointer);
+  uVar3 = (uVar4 & 0xff) + uVar2 & 0xffff;
+  uVar6 = (uint)request->data_length;
+  if ((uVar6 == 8) || (uVar6 == uVar3)) {
     bVar1 = false;
   }
   else {
-    if (uVar2 + 10 != uVar5) {
+    if (uVar3 + 10 != uVar6) {
       return '\x02';
     }
     bVar1 = true;
   }
-  iVar6 = *(int *)(param_1 + 6) + (uVar3 & 0xff);
-  cVar4 = cm848_lookupApplicationMemoryRegionType(param_2,param_3);
-  if (cVar4 != '\0') {
-    if (cVar4 != '\x03') {
-      if (cVar4 == '\x04') {
+  pbVar7 = request->data_pointer + (uVar4 & 0xff);
+  cVar5 = cm848_lookupApplicationMemoryRegionType(address,uVar2);
+  if (cVar5 != '\0') {
+    if (cVar5 != '\x03') {
+      if (cVar5 == '\x04') {
         return '\n';
       }
-      if (cVar4 != '\x05') {
-        return cVar4;
+      if (cVar5 != '\x05') {
+        return cVar5;
       }
       if ((not_safe_to_program_flag == 1) && (ram_refresh_enable != RAM_REFRESH_DISABLED)) {
         return '\a';
@@ -69254,35 +69255,34 @@ char cm848_writeJ1939DiagnosticMemory(int param_1,byte *param_2,uint param_3)
         if (!bVar1) {
           return '\x1a';
         }
-        cVar4 = cm848_processSecurityCodeConversion
-                          (*(int *)(param_1 + 6) + (uVar3 & 0xff) + param_3);
-        if (cVar4 != '\0') {
+        cVar5 = cm848_processSecurityCodeConversion(request->data_pointer + uVar2 + (uVar4 & 0xff));
+        if (cVar5 != '\0') {
           return '\x03';
         }
       }
       if ((ram_refresh_enable == RAM_REFRESH_ENABLED) &&
-         (cVar4 = cm848_queueEepromByteWrites((uint)(param_2 + -0x1000000) & 0xffff,iVar6,param_3),
-         cVar4 == '\x01')) {
+         (cVar5 = cm848_queueEepromByteWrites((uint)(address + -0x1000000) & 0xffff,pbVar7,uVar2),
+         cVar5 == '\x01')) {
         return '\v';
       }
-      cm848_memcpyBytes(param_2 + -0xc02b7e,iVar6,param_3);
+      cm848_memcpyBytes(address + -0xc02b7e,pbVar7,uVar2);
       return '\0';
     }
     if (calibration_download_security_key_cal != 0xff) {
       if (!bVar1) {
         return '\x1a';
       }
-      cVar4 = cm848_processSecurityCodeConversion(*(int *)(param_1 + 6) + (uVar3 & 0xff) + param_3);
-      if (cVar4 != '\0') {
+      cVar5 = cm848_processSecurityCodeConversion(request->data_pointer + uVar2 + (uVar4 & 0xff));
+      if (cVar5 != '\0') {
         return '\x03';
       }
     }
-    if (((ram_refresh_enable != RAM_REFRESH_DISABLED) && (&DAT_003fd480 < param_2)) &&
-       (param_2 < &sensor_channel_ram_start)) {
+    if (((ram_refresh_enable != RAM_REFRESH_DISABLED) && (&DAT_003fd480 < address)) &&
+       (address < &sensor_channel_ram_start)) {
       return '\n';
     }
   }
-  cm848_memcpyBytes(param_2,iVar6,param_3);
+  cm848_memcpyBytes(address,pbVar7,uVar2);
   return '\0';
 }
 
@@ -69304,16 +69304,16 @@ char cm848_writeJ1939DiagnosticMemory(int param_1,byte *param_2,uint param_3)
 
 undefined1
 cm848_writeJ1939DiagnosticMemoryByParameterId
-          (undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4)
+          (j1939_rx_msg_t *request,undefined4 parameter_id,dword offset,dword length)
 
 {
   char cVar1;
   undefined1 uVar2;
   int local_10;
   
-  cVar1 = cm848_lookupParameterIdAddress(param_2,&local_10);
+  cVar1 = cm848_lookupParameterIdAddress(parameter_id,&local_10);
   if (cVar1 == '\0') {
-    uVar2 = cm848_writeJ1939DiagnosticMemory(param_1,local_10 + param_3,param_4);
+    uVar2 = cm848_writeJ1939DiagnosticMemory(request,(byte *)(local_10 + offset),length);
   }
   else {
     uVar2 = 8;
@@ -69335,16 +69335,16 @@ cm848_writeJ1939DiagnosticMemoryByParameterId
    write by parameter ID (cm848_writeJ1939DiagnosticMemoryByParameterId) |
    review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
 
-undefined1 cm848_handleJ1939WriteByParameterIdService(int param_1)
+undefined1 cm848_handleJ1939WriteByParameterIdService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
-  undefined2 local_10 [2];
+  ushort local_10 [2];
   uint local_c;
   
-  cm848_memcpyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
-  local_c = (uint)*(byte *)(*(int *)(param_1 + 6) + 3);
-  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(param_1,local_10[0],0,local_c);
+  cm848_memcpyBytes(local_10,request->data_pointer + 1,2);
+  local_c = (uint)request->data_pointer[3];
+  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(request,(uint)local_10[0],0,local_c);
   return uVar1;
 }
 
@@ -69362,16 +69362,16 @@ undefined1 cm848_handleJ1939WriteByParameterIdService(int param_1)
    0x45 - write by parameter ID with a long length | review-function-readability reviewed 2026-11-12
    - Readability Low Accuracy Confidence High */
 
-undefined1 cm848_handleJ1939WriteByParameterIdLongLengthService(int param_1)
+undefined1 cm848_handleJ1939WriteByParameterIdLongLengthService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
-  undefined2 local_10 [2];
-  undefined4 local_c [2];
+  ushort local_10 [2];
+  dword local_c [2];
   
-  cm848_memcpyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
-  cm848_memcpyBytes(local_c,*(int *)(param_1 + 6) + 3,4);
-  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(param_1,local_10[0],0,local_c[0]);
+  cm848_memcpyBytes(local_10,request->data_pointer + 1,2);
+  cm848_memcpyBytes(local_c,request->data_pointer + 3,4);
+  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(request,(uint)local_10[0],0,local_c[0]);
   return uVar1;
 }
 
@@ -69389,19 +69389,18 @@ undefined1 cm848_handleJ1939WriteByParameterIdLongLengthService(int param_1)
    cm848_j1939RegisterDiagnosticService: service 0x47 (header length 6) |
    review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Low */
 
-undefined1 cm848_handleJ1939WriteByParameterIdShortOffsetService(int param_1)
+undefined1 cm848_handleJ1939WriteByParameterIdShortOffsetService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
-  undefined2 local_10 [2];
+  ushort local_10 [2];
   uint local_c;
   uint local_8;
   
-  cm848_memcpyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
-  local_c = (uint)CONCAT11(*(undefined1 *)(*(int *)(param_1 + 6) + 3),
-                           *(undefined1 *)(*(int *)(param_1 + 6) + 4));
-  local_8 = (uint)*(byte *)(*(int *)(param_1 + 6) + 5);
-  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(param_1,local_10[0],local_c,local_8);
+  cm848_memcpyBytes(local_10,request->data_pointer + 1,2);
+  local_c = (uint)CONCAT11(request->data_pointer[3],request->data_pointer[4]);
+  local_8 = (uint)request->data_pointer[5];
+  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(request,(uint)local_10[0],local_c,local_8);
   return uVar1;
 }
 
@@ -69419,18 +69418,18 @@ undefined1 cm848_handleJ1939WriteByParameterIdShortOffsetService(int param_1)
    cm848_j1939RegisterDiagnosticService: service 0x49 (header length 11) - write by parameter ID |
    review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
 
-undefined1 cm848_handleJ1939WriteByParameterIdLongOffsetService(int param_1)
+undefined1 cm848_handleJ1939WriteByParameterIdLongOffsetService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
-  undefined2 local_10 [2];
-  undefined4 local_c;
-  undefined4 local_8;
+  ushort local_10 [2];
+  dword local_c;
+  dword local_8;
   
-  cm848_memcpyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
-  cm848_memcpyBytes(&local_c,*(int *)(param_1 + 6) + 3,4);
-  cm848_memcpyBytes(&local_8,*(int *)(param_1 + 6) + 7,4);
-  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(param_1,local_10[0],local_c,local_8);
+  cm848_memcpyBytes(local_10,request->data_pointer + 1,2);
+  cm848_memcpyBytes(&local_c,request->data_pointer + 3,4);
+  cm848_memcpyBytes(&local_8,request->data_pointer + 7,4);
+  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(request,(uint)local_10[0],local_c,local_8);
   return uVar1;
 }
 
@@ -69447,15 +69446,16 @@ undefined1 cm848_handleJ1939WriteByParameterIdLongOffsetService(int param_1)
    write by address (cm848_writeJ1939DiagnosticMemory) | review-function-readability reviewed
    2026-11-12 - Readability Low Accuracy Confidence High */
 
-undefined1 cm848_handleJ1939WriteMemoryService(int param_1)
+undefined1 cm848_handleJ1939WriteMemoryService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
-  undefined4 local_c [2];
+  uint local_10;
+  byte *local_c [2];
   
-  cm848_memcpyBytes(local_c,*(int *)(param_1 + 6) + 1,4);
-  uVar1 = cm848_writeJ1939DiagnosticMemory
-                    (param_1,local_c[0],*(undefined1 *)(*(int *)(param_1 + 6) + 5));
+  cm848_memcpyBytes(local_c,request->data_pointer + 1,4);
+  local_10 = (uint)request->data_pointer[5];
+  uVar1 = cm848_writeJ1939DiagnosticMemory(request,local_c[0],local_10);
   return uVar1;
 }
 
@@ -69472,16 +69472,16 @@ undefined1 cm848_handleJ1939WriteMemoryService(int param_1)
    write by address with a long length | review-function-readability reviewed 2026-11-12 -
    Readability Low Accuracy Confidence High */
 
-undefined1 cm848_handleJ1939WriteMemoryLongLengthService(int param_1)
+undefined1 cm848_handleJ1939WriteMemoryLongLengthService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
-  undefined4 local_10;
-  undefined4 local_c [2];
+  byte *local_10;
+  dword local_c [2];
   
-  cm848_memcpyBytes(&local_10,*(int *)(param_1 + 6) + 1,4);
-  cm848_memcpyBytes(local_c,*(int *)(param_1 + 6) + 5,4);
-  uVar1 = cm848_writeJ1939DiagnosticMemory(param_1,local_10,local_c[0]);
+  cm848_memcpyBytes(&local_10,request->data_pointer + 1,4);
+  cm848_memcpyBytes(local_c,request->data_pointer + 5,4);
+  uVar1 = cm848_writeJ1939DiagnosticMemory(request,local_10,local_c[0]);
   return uVar1;
 }
 
@@ -70243,7 +70243,7 @@ LAB_0050c2f4:
    resolves a parameter ID (cm848_lookupParameterIdAddress) to an address |
    review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
 
-undefined4 cm848_handleJ1939GetAddressByParameterIdService(byte *param_1)
+undefined4 cm848_handleJ1939GetAddressByParameterIdService(j1939_rx_msg_t *request)
 
 {
   char cVar2;
@@ -70265,11 +70265,11 @@ undefined4 cm848_handleJ1939GetAddressByParameterIdService(byte *param_1)
   undefined2 local_10;
   byte *local_e;
   
-  local_24 = *(undefined2 *)(*(int *)(param_1 + 6) + 1);
+  local_24 = *(undefined2 *)(request->data_pointer + 1);
   cVar2 = cm848_lookupParameterIdAddress(local_24,&local_20);
   if (cVar2 == '\0') {
-    local_14 = CONCAT13((*param_1 >> 2 & 7) << 2,0xef0000);
-    local_14 = CONCAT31(CONCAT21(local_14._0_2_,param_1[3]),param_1[2]);
+    local_14 = CONCAT13((request->priority_dp_flags >> 2 & 7) << 2,0xef0000);
+    local_14 = CONCAT31(CONCAT21(local_14._0_2_,request->source_address),request->dest_address);
     local_e = &local_1c;
     local_10 = 7;
     local_1c = 0x42;
@@ -70324,56 +70324,55 @@ void cm848_registerJ1939GetAddressByParameterIdService(void)
    called directly by the 0x4A / 0x4C stubs | review-function-readability reviewed 2026-11-11 -
    Readability Medium Accuracy Confidence High */
 
-char cm848_readJ1939DiagnosticMemoryAndRespond(byte *param_1,uint param_2,uint param_3)
+char cm848_readJ1939DiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,dword length)
 
 {
   ushort uVar1;
   uint uVar2;
   ushort uVar3;
   char cVar4;
-  char cVar5;
   j1939_tx_msg_t *msg;
-  int iVar6;
+  byte *pbVar5;
+  byte bVar6;
   byte bVar7;
-  byte bVar8;
-  byte *pbVar9;
+  byte *pbVar8;
   
-  cVar5 = **(char **)(param_1 + 6);
-  if (param_3 < 0x6e5) {
-    uVar3 = cm848_getJ1939MemoryServiceHeaderLength(cVar5);
-    uVar1 = *(ushort *)(param_1 + 4);
+  bVar6 = *request->data_pointer;
+  if (length < 0x6e5) {
+    uVar3 = cm848_getJ1939MemoryServiceHeaderLength(bVar6);
+    uVar1 = request->data_length;
     if (((uVar1 == 8) || (uVar1 == (uVar3 & 0xff))) || ((ushort)((uVar3 & 0xff) + 10) == uVar1)) {
-      uVar2 = param_3 & 0xffff;
-      cVar4 = cm848_lookupApplicationMemoryRegionType(param_2,uVar2);
+      uVar2 = length & 0xffff;
+      cVar4 = cm848_lookupApplicationMemoryRegionType(address,uVar2);
       if ((cVar4 != '\n') && (cVar4 != '\t')) {
-        if ((cVar5 == 'C') && (uVar2 < 0x100)) {
-          bVar7 = 0x44;
-          *(undefined1 *)(*(int *)(param_1 + 6) + 3) = *(undefined1 *)(*(int *)(param_1 + 6) + 6);
+        if ((bVar6 == 0x43) && (uVar2 < 0x100)) {
+          bVar6 = 0x44;
+          request->data_pointer[3] = request->data_pointer[6];
         }
         else {
-          bVar7 = j1939_memory_read_reply_services[(byte)(cVar5 + 0xbd)];
+          bVar6 = j1939_memory_read_reply_services[(byte)(bVar6 + 0xbd)];
         }
-        cVar5 = cm848_getJ1939MemoryServiceHeaderLength(bVar7);
-        bVar8 = cVar5 - 1;
-        msg = (j1939_tx_msg_t *)cm848_selectJ1939TransmitBuffer(bVar8 + param_3 + 1 & 0xffff);
+        cVar4 = cm848_getJ1939MemoryServiceHeaderLength(bVar6);
+        bVar7 = cVar4 - 1;
+        msg = (j1939_tx_msg_t *)cm848_selectJ1939TransmitBuffer(bVar7 + length + 1 & 0xffff);
         if (msg == (j1939_tx_msg_t *)0x0) {
           cVar4 = '\x04';
         }
         else {
-          pbVar9 = msg->data_pointer;
+          pbVar8 = msg->data_pointer;
           (msg->header).can_id = 0xef0000;
           *(byte *)&(msg->header).can_id =
-               (*param_1 >> 2 & 7) << 2 | *(byte *)&(msg->header).can_id & 0xe3;
-          *(byte *)((int)&(msg->header).can_id + 2) = param_1[3];
-          *(byte *)((int)&(msg->header).can_id + 3) = param_1[2];
-          iVar6 = *(int *)(param_1 + 6);
-          *pbVar9 = bVar7;
-          pbVar9 = pbVar9 + 1;
-          cm848_memcpyBytes(pbVar9,iVar6 + 1,bVar8);
-          if (0xffffff < param_2) {
-            param_2 = param_2 - 0xc02b7e;
+               (request->priority_dp_flags >> 2 & 7) << 2 | *(byte *)&(msg->header).can_id & 0xe3;
+          *(byte *)((int)&(msg->header).can_id + 2) = request->source_address;
+          *(byte *)((int)&(msg->header).can_id + 3) = request->dest_address;
+          pbVar5 = request->data_pointer;
+          *pbVar8 = bVar6;
+          pbVar8 = pbVar8 + 1;
+          cm848_memcpyBytes(pbVar8,pbVar5 + 1,bVar7);
+          if (0xffffff < address) {
+            address = address - 0xc02b7e;
           }
-          cm848_memcpyBytes(pbVar9 + bVar8,param_2,uVar2);
+          cm848_memcpyBytes(pbVar8 + bVar7,address,uVar2);
           sendJ1939Message(msg);
           cVar4 = -1;
         }
@@ -70406,16 +70405,16 @@ char cm848_readJ1939DiagnosticMemoryAndRespond(byte *param_1,uint param_2,uint p
 
 undefined1
 cm848_readJ1939DiagnosticMemoryByParameterId
-          (undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4)
+          (j1939_rx_msg_t *request,undefined4 parameter_id,dword offset,dword length)
 
 {
   char cVar1;
   undefined1 uVar2;
   int local_10;
   
-  cVar1 = cm848_lookupParameterIdAddress(param_2,&local_10);
+  cVar1 = cm848_lookupParameterIdAddress(parameter_id,&local_10);
   if (cVar1 == '\0') {
-    uVar2 = cm848_readJ1939DiagnosticMemoryAndRespond(param_1,local_10 + param_3,param_4);
+    uVar2 = cm848_readJ1939DiagnosticMemoryAndRespond(request,local_10 + offset,length);
   }
   else {
     uVar2 = 8;
@@ -70437,16 +70436,16 @@ cm848_readJ1939DiagnosticMemoryByParameterId
    read by parameter ID (cm848_readJ1939DiagnosticMemoryByParameterId) | review-function-readability
    reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
 
-undefined1 cm848_handleJ1939ReadByParameterIdLongLengthService(int param_1)
+undefined1 cm848_handleJ1939ReadByParameterIdLongLengthService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
-  undefined2 local_10 [2];
-  undefined4 local_c [2];
+  ushort local_10 [2];
+  dword local_c [2];
   
-  cm848_memcpyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
-  cm848_memcpyBytes(local_c,*(int *)(param_1 + 6) + 3,4);
-  uVar1 = cm848_readJ1939DiagnosticMemoryByParameterId(param_1,local_10[0],0,local_c[0]);
+  cm848_memcpyBytes(local_10,request->data_pointer + 1,2);
+  cm848_memcpyBytes(local_c,request->data_pointer + 3,4);
+  uVar1 = cm848_readJ1939DiagnosticMemoryByParameterId(request,(uint)local_10[0],0,local_c[0]);
   return uVar1;
 }
 
@@ -70463,19 +70462,18 @@ undefined1 cm848_handleJ1939ReadByParameterIdLongLengthService(int param_1)
    cm848_j1939RegisterDiagnosticService: service 0x46 | review-function-readability reviewed
    2026-11-12 - Readability Low Accuracy Confidence Low */
 
-undefined1 cm848_handleJ1939ReadByParameterIdShortOffsetService(int param_1)
+undefined1 cm848_handleJ1939ReadByParameterIdShortOffsetService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
-  undefined2 local_10 [2];
+  ushort local_10 [2];
   uint local_c;
   uint local_8;
   
-  cm848_memcpyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
-  local_c = (uint)CONCAT11(*(undefined1 *)(*(int *)(param_1 + 6) + 3),
-                           *(undefined1 *)(*(int *)(param_1 + 6) + 4));
-  local_8 = (uint)*(byte *)(*(int *)(param_1 + 6) + 5);
-  uVar1 = cm848_readJ1939DiagnosticMemoryByParameterId(param_1,local_10[0],local_c,local_8);
+  cm848_memcpyBytes(local_10,request->data_pointer + 1,2);
+  local_c = (uint)CONCAT11(request->data_pointer[3],request->data_pointer[4]);
+  local_8 = (uint)request->data_pointer[5];
+  uVar1 = cm848_readJ1939DiagnosticMemoryByParameterId(request,(uint)local_10[0],local_c,local_8);
   return uVar1;
 }
 
@@ -70493,18 +70491,18 @@ undefined1 cm848_handleJ1939ReadByParameterIdShortOffsetService(int param_1)
    read by parameter ID | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
    Confidence Medium */
 
-undefined1 cm848_handleJ1939ReadByParameterIdLongOffsetService(int param_1)
+undefined1 cm848_handleJ1939ReadByParameterIdLongOffsetService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
-  undefined2 local_10 [2];
-  undefined4 local_c;
-  undefined4 local_8;
+  ushort local_10 [2];
+  dword local_c;
+  dword local_8;
   
-  cm848_memcpyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
-  cm848_memcpyBytes(&local_c,*(int *)(param_1 + 6) + 3,4);
-  cm848_memcpyBytes(&local_8,*(int *)(param_1 + 6) + 7,4);
-  uVar1 = cm848_readJ1939DiagnosticMemoryByParameterId(param_1,local_10[0],local_c,local_8);
+  cm848_memcpyBytes(local_10,request->data_pointer + 1,2);
+  cm848_memcpyBytes(&local_c,request->data_pointer + 3,4);
+  cm848_memcpyBytes(&local_8,request->data_pointer + 7,4);
+  uVar1 = cm848_readJ1939DiagnosticMemoryByParameterId(request,(uint)local_10[0],local_c,local_8);
   return uVar1;
 }
 
@@ -70522,15 +70520,16 @@ undefined1 cm848_handleJ1939ReadByParameterIdLongOffsetService(int param_1)
    (cm848_readJ1939DiagnosticMemoryAndRespond) | review-function-readability reviewed 2026-11-12 -
    Readability Low Accuracy Confidence High */
 
-undefined1 cm848_handleJ1939ReadMemoryService(int param_1)
+undefined1 cm848_handleJ1939ReadMemoryService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
-  undefined4 local_c [2];
+  uint local_10;
+  dword local_c [2];
   
-  cm848_memcpyBytes(local_c,*(int *)(param_1 + 6) + 1,4);
-  uVar1 = cm848_readJ1939DiagnosticMemoryAndRespond
-                    (param_1,local_c[0],*(undefined1 *)(*(int *)(param_1 + 6) + 5));
+  cm848_memcpyBytes(local_c,request->data_pointer + 1,4);
+  local_10 = (uint)request->data_pointer[5];
+  uVar1 = cm848_readJ1939DiagnosticMemoryAndRespond(request,local_c[0],local_10);
   return uVar1;
 }
 
@@ -70547,16 +70546,16 @@ undefined1 cm848_handleJ1939ReadMemoryService(int param_1)
    cm848_j1939RegisterDiagnosticService: service 0x4C - read by address with a long length |
    review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
 
-undefined1 cm848_handleJ1939ReadMemoryLongLengthService(int param_1)
+undefined1 cm848_handleJ1939ReadMemoryLongLengthService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
-  undefined4 local_10;
-  undefined4 local_c [2];
+  dword local_10;
+  dword local_c [2];
   
-  cm848_memcpyBytes(&local_10,*(int *)(param_1 + 6) + 1,4);
-  cm848_memcpyBytes(local_c,*(int *)(param_1 + 6) + 5,4);
-  uVar1 = cm848_readJ1939DiagnosticMemoryAndRespond(param_1,local_10,local_c[0]);
+  cm848_memcpyBytes(&local_10,request->data_pointer + 1,4);
+  cm848_memcpyBytes(local_c,request->data_pointer + 5,4);
+  uVar1 = cm848_readJ1939DiagnosticMemoryAndRespond(request,local_10,local_c[0]);
   return uVar1;
 }
 
