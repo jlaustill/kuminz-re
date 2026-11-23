@@ -3392,7 +3392,7 @@ struct mios1_isr_t {
 struct diag_clear_flags_t {
     uint8_t diag_response_write_count;  /* Diagnostic response write count pending */
     uint8_t diag_eeprom_work_byte;  /* EEPROM channel scratch byte */
-    uint16_t learned_output_speed_to_vehicle_speed_ratio;  /* EEPROM-backed learned ratio = output shaft speed x 4096 / vehicle_speed (5141 = 40.2 rpm per mph) clamped 4480-6656; synthesizes the output shaft speed on sensor fault; 0x3fedfb bit 0 marks it learned (was fuel_temp_protection_ratio) */
+    uint16_t learned_output_speed_to_vehicle_speed_ratio;  /* e2m 8BB3 +0 RE_Axle_Ratio_Factor_Learned 'Ratio of transmission output shaft speed to road speed (NV ratio)' (0.0078125 per count = rpm per mph; 5141 = 40.16 in the dump; the default 8BB2 +0 output_speed_to_vehicle_speed_default_ratio = 42 on the same scale; EEPROM 0x197c) (PR #53 round 52): EEPROM-backed learned ratio = output shaft speed x 4096 / vehicle_speed (5141 = 40.2 rpm per mph) clamped 4480-6656; synthesizes the output shaft speed on sensor fault; 0x3fedfb bit 0 marks it learned (was fuel_temp_protection_ratio) */
 };
 
 struct j1939_ccss_tx_payload_t {

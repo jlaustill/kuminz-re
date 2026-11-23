@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 00:12:47 MST 2026
+// Generated: Mon Nov 23 00:44:20 MST 2026
 
 
 //
@@ -58437,9 +58437,9 @@ void cm848_applicationMain(void)
   cm848_clearWorkingRam();
   exception_reset_status = USIU_SCCR.RSR;
   USIU_SCCR.RSR = 0xffff;
-  exception_sprg0 = in_SPRG0;
-  exception_sprg1 = in_SPRG1;
-  exception_sprg2 = in_SPRG2;
+  exception_srr0 = in_SPRG0;
+  exception_vector = in_SPRG1;
+  exception_link_register = in_SPRG2;
   exception_dar = in_DAR;
   exception_dsisr = in_DSISR;
   cm848_copyRomToRamBuffer();
@@ -58795,8 +58795,8 @@ void cm848_applicationMain(void)
   cm848_resetEngineProtectionShutdownState();
   cm848_resetEngineProtectionPrecrankState();
   power_down_start_flag = 0;
-  if (hardware_timer_capture == 0) {
-    hardware_timer_capture = TBLr;
+  if (power_on_reset_to_first_executive_frame_time == 0) {
+    power_on_reset_to_first_executive_frame_time = TBLr;
   }
   uVar2 = USIU_SIMASK._0_2_;
   USIU_SIMASK._0_2_ = scheduler_task_flags_snapshot | uVar2 | 1;
@@ -58842,8 +58842,8 @@ void cm848_restartApplicationWithoutReset(void)
   cm848_resetEngineProtectionShutdownState();
   cm848_resetEngineProtectionPrecrankState();
   power_down_start_flag = 0;
-  if (hardware_timer_capture == 0) {
-    hardware_timer_capture = TBLr;
+  if (power_on_reset_to_first_executive_frame_time == 0) {
+    power_on_reset_to_first_executive_frame_time = TBLr;
   }
   uVar1 = USIU_SIMASK._0_2_;
   USIU_SIMASK._0_2_ = scheduler_task_flags_snapshot | uVar1 | 1;
@@ -76659,14 +76659,14 @@ void cm848_measureRadiatorFanSpeed(void)
   uint uVar3;
   
   if (end_of_line_test_settings_cal.field_mode_register == 0x13ec) {
-    uVar3 = radiator_fan_pulses_per_measurement_type_5100 & 0xff;
+    uVar3 = radiator_fan_pulses_per_measurement_end_of_line & 0xff;
     if (radiator_fan_input_configured_for_type_5100_flag == 0) {
       radiator_fan_speed_numerator =
            (dword)(CONCAT44((int)((ulonglong)
-                                  ((uint)radiator_fan_pulses_per_measurement_type_5100 * 0x3c) *
+                                  ((uint)radiator_fan_pulses_per_measurement_end_of_line * 0x3c) *
                                   1000000 >> 0x20),
-                            (uint)radiator_fan_pulses_per_measurement_type_5100 * 60000000) /
-                  (ulonglong)radiator_fan_speed_prescaler);
+                            (uint)radiator_fan_pulses_per_measurement_end_of_line * 60000000) /
+                  (ulonglong)radiator_fan_pulses_per_revolution);
       wVar1 = tpu_b_mcr.CIER;
       tpu_b_mcr.CIER = wVar1 & 0xfdff;
       wVar1 = tpu_b_mcr.CPR0;
@@ -76677,7 +76677,7 @@ void cm848_measureRadiatorFanSpeed(void)
       tpu_b_mcr.CISR = wVar1 & 0xfdff;
       wVar1 = tpu_b_mcr.CFSR1;
       tpu_b_mcr.CFSR1 = wVar1 & 0xff0f | 0xd0;
-      DAT_00304592 = radiator_fan_pulses_per_measurement_type_5100 << 8;
+      DAT_00304592 = radiator_fan_pulses_per_measurement_end_of_line << 8;
       DAT_00304596 = 0;
       DAT_00304598 = 0;
       TPUB_CH9_PARAM0 = 0xb;
@@ -76697,7 +76697,7 @@ void cm848_measureRadiatorFanSpeed(void)
     if (radiator_fan_input_was_type_5100_flag != 0) {
       radiator_fan_speed_numerator =
            (dword)(CONCAT44((int)((ulonglong)(uVar3 * 0x3c) * 1000000 >> 0x20),uVar3 * 60000000) /
-                  (ulonglong)radiator_fan_speed_prescaler);
+                  (ulonglong)radiator_fan_pulses_per_revolution);
       wVar1 = tpu_b_mcr.CIER;
       tpu_b_mcr.CIER = wVar1 & 0xfdff;
       wVar1 = tpu_b_mcr.CPR0;
@@ -76730,12 +76730,12 @@ void cm848_measureRadiatorFanSpeed(void)
     uVar3 = 0;
   }
   else if (radiator_fan_speed_period_microseconds <
-           (radiator_fan_speed_short_period_limit * uVar3) / (uint)radiator_fan_speed_prescaler) {
-    uVar3 = (uint)radiator_fan_speed_short_period_value;
+           (radiator_fan_speed_period_minimum * uVar3) / (uint)radiator_fan_pulses_per_revolution) {
+    uVar3 = (uint)radiator_fan_speed_maximum;
   }
-  else if ((radiator_fan_speed_long_period_limit * uVar3) / (uint)radiator_fan_speed_prescaler <
+  else if ((radiator_fan_speed_period_maximum * uVar3) / (uint)radiator_fan_pulses_per_revolution <
            radiator_fan_speed_period_microseconds) {
-    uVar3 = (uint)radiator_fan_speed_long_period_value;
+    uVar3 = (uint)radiator_fan_speed_minimum;
   }
   else {
     uVar3 = (uint)(CONCAT44(radiator_fan_speed_numerator >> 0x1d,radiator_fan_speed_numerator << 3)
@@ -76779,14 +76779,14 @@ void cm848_initRadiatorFanSpeedMeasurement(void)
   radiator_fan_speed_filter_state.accumulator = 0;
   radiator_fan_speed_filter_state.coefficient = &radiator_fan_speed_filter_coefficient;
   if (end_of_line_test_settings_cal.field_mode_register == 0x13ec) {
-    uVar1 = (uint)radiator_fan_pulses_per_measurement_type_5100;
+    uVar1 = (uint)radiator_fan_pulses_per_measurement_end_of_line;
   }
   else {
     uVar1 = (uint)radiator_fan_pulses_per_measurement;
   }
   radiator_fan_speed_numerator =
        (dword)(CONCAT44((int)((ulonglong)(uVar1 * 0x3c) * 1000000 >> 0x20),uVar1 * 60000000) /
-              (ulonglong)radiator_fan_speed_prescaler);
+              (ulonglong)radiator_fan_pulses_per_revolution);
   return;
 }
 
@@ -76841,7 +76841,7 @@ void cm848_configureRadiatorFanSpeedInput(void)
     tpu_b_mcr.CISR = wVar2 & 0xfdff;
     wVar2 = tpu_b_mcr.CFSR1;
     tpu_b_mcr.CFSR1 = wVar2 & 0xff0f | 0xd0;
-    sVar1 = radiator_fan_pulses_per_measurement_type_5100 << 8;
+    sVar1 = radiator_fan_pulses_per_measurement_end_of_line << 8;
   }
   else {
     wVar2 = tpu_b_mcr.CPR0;

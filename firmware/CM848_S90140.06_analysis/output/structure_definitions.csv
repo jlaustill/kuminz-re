@@ -2176,7 +2176,7 @@ mios1_isr_t,0x00306c00,EN,word,2,MIOS1 interrupt enable register (channel mask),
 # ==============================================================================
 diag_clear_flags_t,0x003fedfc,diag_response_write_count,byte,1,Diagnostic response write count pending,,best_guess
 diag_clear_flags_t,0x003fedfc,diag_eeprom_work_byte,byte,1,EEPROM channel scratch byte,,best_guess
-diag_clear_flags_t,0x003fedfc,learned_output_speed_to_vehicle_speed_ratio,word,2,EEPROM-backed learned ratio = output shaft speed x 4096 / vehicle_speed (5141 = 40.2 rpm per mph) clamped 4480-6656; synthesizes the output shaft speed on sensor fault; 0x3fedfb bit 0 marks it learned (was fuel_temp_protection_ratio),,best_guess
+diag_clear_flags_t,0x003fedfc,learned_output_speed_to_vehicle_speed_ratio,word,2,e2m 8BB3 +0 RE_Axle_Ratio_Factor_Learned 'Ratio of transmission output shaft speed to road speed (NV ratio)' (0.0078125 per count = rpm per mph; 5141 = 40.16 in the dump; the default 8BB2 +0 output_speed_to_vehicle_speed_default_ratio = 42 on the same scale; EEPROM 0x197c) (PR #53 round 52): EEPROM-backed learned ratio = output shaft speed x 4096 / vehicle_speed (5141 = 40.2 rpm per mph) clamped 4480-6656; synthesizes the output shaft speed on sensor fault; 0x3fedfb bit 0 marks it learned (was fuel_temp_protection_ratio),,best_guess
 # ==============================================================================
 # Dual-axis lookup table dimension descriptor
 # Passed as first arg to cm848_dualAxisTableInterpolation to describe table size
