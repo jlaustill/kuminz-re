@@ -1206,6 +1206,16 @@ typedef enum {
     SENSOR_VALUE_SOURCE_DEFAULT = 2  /* e2m DEFAULT */
 } SENSOR_VALUE_SOURCE;
 
+typedef enum {
+    TRANSMISSION_TEMPERATURE_RATIONALITY_NOT_RUN = 0,  /* e2m 8C2D +4 label NORUN: cm848_checkTransmissionTemperatureSensorPerformance qualifies the start conditions and takes the start snapshot (PR #53 round 51) */
+    TRANSMISSION_TEMPERATURE_RATIONALITY_RUNNING = 1,  /* e2m label RUN: the check tracks the temperature swing while driving above 30 mph (PR #53 round 51) */
+    TRANSMISSION_TEMPERATURE_RATIONALITY_PASSED = 2,  /* e2m label CMPPS (complete / passed): cm848_completeTransmissionTemperatureMonitorReport reports state 5 as this (PR #53 round 51) */
+    TRANSMISSION_TEMPERATURE_RATIONALITY_FAILED = 3,  /* e2m label CMPFL (complete / failed): cm848_completeTransmissionTemperatureMonitorReport reports every other verdict as this (PR #53 round 51) */
+    TRANSMISSION_TEMPERATURE_RATIONALITY_ABORTED = 4,  /* e2m label ABORT: no verdict this key cycle (the check is disabled / a related fault / the soak was not qualified) (PR #53 round 51) */
+    TRANSMISSION_TEMPERATURE_RATIONALITY_PASS_VERDICT = 5,  /* no e2m label: cm848_checkTransmissionTemperatureSensorPerformance sets it once the swing reaches transmission_temperature_rationality_minimum_swing; cm848_completeTransmissionTemperatureMonitorReport turns it into PASSED (PR #53 round 51) */
+    TRANSMISSION_TEMPERATURE_RATIONALITY_FAIL_VERDICT = 6  /* no e2m label: cm848_updateTransmissionTemperatureSensorPerformanceFault sets it while a result flag is set; cm848_completeTransmissionTemperatureMonitorReport turns it into FAILED (PR #53 round 51) */
+} TRANSMISSION_TEMPERATURE_RATIONALITY_STATE;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_rx_msg_t j1939_rx_msg_t;

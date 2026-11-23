@@ -3680,9 +3680,9 @@ extern word transmission_temperature_limp_in_delay_minimum_vehicle_speed;  // 0x
 extern word transmission_temperature_adc_unchanged_reading_limit;  // 0x00408d3a
 extern dword transmission_temperature_limp_in_delay_maximum;  // 0x00408d3c
 extern word transmission_temperature_default_after_limp_in_delay;  // 0x00408d40
-extern word transmission_temperature_default_during_limp_in_delay;  // 0x00408d42
+extern int16_t transmission_temperature_default_during_limp_in_delay;  // 0x00408d42
 extern word transmission_temperature_coolant_model_scale;  // 0x00408d44
-extern word transmission_temperature_coolant_model_offset;  // 0x00408d46
+extern int16_t transmission_temperature_coolant_model_offset;  // 0x00408d46
 extern word output_speed_to_vehicle_speed_default_ratio;  // 0x00408d60
 extern word transmission_output_speed_filter_coefficient;  // 0x00408d62
 extern word transmission_output_speed_maximum;  // 0x00408d64
@@ -5317,7 +5317,7 @@ extern word torque_management_fuel_limit;  // 0x0040b61c
 extern word torque_management_required_flag;  // 0x0040b61e
 extern word transmission_temperature_adc_previous_reading;  // 0x0040b620
 extern dword transmission_temperature_limp_in_delay_timer;  // 0x0040b622
-extern word transmission_temperature_rationality_state;  // 0x0040b62a
+extern TRANSMISSION_TEMPERATURE_RATIONALITY_STATE transmission_temperature_rationality_state;  // 0x0040b62a
 extern dword transmission_output_speed_period_microseconds;  // 0x0040b62c
 extern word transmission_output_speed_in_use_unfiltered;  // 0x0040b630
 extern dword transmission_output_speed_numerator;  // 0x0040b632
@@ -6602,7 +6602,7 @@ extern word transfer_case_engine_to_vehicle_speed_ratio_average;  // 0x0040b544
 extern byte transfer_case_launch_flag;  // 0x0040b547
 extern word sci_key_retry_delay;  // 0x0040b5e0
 extern void * message_buffer_scan_low_watermark;  // 0x0040b608
-extern word transmission_temperature_rationality_driving_range;  // 0x0040b628
+extern int16_t transmission_temperature_rationality_driving_range;  // 0x0040b628
 extern word fuel_pressure_tracking_error_per_pass;  // 0x0040b9e0
 extern word high_load_boost_band_event_count;  // 0x0040ba6a
 extern word high_load_boost_band_duration_count;  // 0x0040ba6c

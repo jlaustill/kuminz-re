@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 23:44:15 MST 2026
+// Generated: Sun Nov 22 23:54:51 MST 2026
 
 
 //
@@ -58806,7 +58806,7 @@ void cm848_applicationMain(void)
   } while (power_down_start_flag == 0);
   scheduler_task_flags_snapshot = USIU_SIMASK._0_2_;
   USIU_SIMASK._0_2_ = 0x100;
-  cm848_flagTripInformationPowerDownDataLoss(0x30d4);
+  cm848_flagTripInformationPowerDownDataLoss();
   cm848_removeHealedFaults();
   cm848_clearMilForHealedFaults();
   protection_accumulator_update();
@@ -58853,7 +58853,7 @@ void cm848_restartApplicationWithoutReset(void)
   } while (power_down_start_flag == 0);
   scheduler_task_flags_snapshot = USIU_SIMASK._0_2_;
   USIU_SIMASK._0_2_ = 0x100;
-  cm848_flagTripInformationPowerDownDataLoss(0x30d4);
+  cm848_flagTripInformationPowerDownDataLoss();
   cm848_removeHealedFaults();
   cm848_clearMilForHealedFaults();
   protection_accumulator_update();
@@ -85173,7 +85173,7 @@ void cm848_initializeFourWheelDriveSwitchMonitor(void)
 void cm848_initializeTransmissionTemperatureSensorPerformanceMonitor(void)
 
 {
-  transmission_temperature_rationality_state = 0;
+  transmission_temperature_rationality_state = TRANSMISSION_TEMPERATURE_RATIONALITY_NOT_RUN;
   transmission_temperature_rationality_start_wait_pass_count = 0;
   transmission_temperature_rationality_soak_qualified_flag = 0;
   transmission_temperature_rationality_start_snapshot_taken_flag = 0;
@@ -85206,7 +85206,7 @@ void cm848_updateTransmissionTemperatureSensorPerformanceFault(void)
   }
   else {
     fault_detected_cal._36_2_ = fault_detected_cal._36_2_ | 0x400;
-    transmission_temperature_rationality_state = 6;
+    transmission_temperature_rationality_state = TRANSMISSION_TEMPERATURE_RATIONALITY_FAIL_VERDICT;
   }
   return;
 }
@@ -85229,7 +85229,8 @@ void cm848_completeTransmissionTemperatureMonitorReport(void)
   if ((fault_previous_pass_cal._36_2_ & 0x400) == (fault_detected_cal._36_2_ & 0x400)) {
     diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits | 0x80000000;
     if ((monitor_readiness_code_cal & 0x80000000) != 0) {
-      if ((transmission_temperature_rationality_state == 5) ||
+      if ((transmission_temperature_rationality_state ==
+           TRANSMISSION_TEMPERATURE_RATIONALITY_PASS_VERDICT) ||
          ((monitor_pending_readiness_code_cal & 0x80000000) == 0)) {
         monitor_readiness_code_cal = monitor_readiness_code_cal & 0x7fffffff;
       }
@@ -85237,11 +85238,12 @@ void cm848_completeTransmissionTemperatureMonitorReport(void)
         monitor_pending_readiness_code_cal = monitor_pending_readiness_code_cal & 0x7fffffff;
       }
     }
-    if (transmission_temperature_rationality_state == 5) {
-      transmission_temperature_rationality_state = 2;
+    if (transmission_temperature_rationality_state ==
+        TRANSMISSION_TEMPERATURE_RATIONALITY_PASS_VERDICT) {
+      transmission_temperature_rationality_state = TRANSMISSION_TEMPERATURE_RATIONALITY_PASSED;
     }
     else {
-      transmission_temperature_rationality_state = 3;
+      transmission_temperature_rationality_state = TRANSMISSION_TEMPERATURE_RATIONALITY_FAILED;
     }
   }
   return;
@@ -85278,7 +85280,7 @@ void cm848_checkTransmissionTemperatureSensorPerformance(void)
 {
   word wVar1;
   
-  if (transmission_temperature_rationality_state == 0) {
+  if (transmission_temperature_rationality_state == TRANSMISSION_TEMPERATURE_RATIONALITY_NOT_RUN) {
     if ((((((algorithm_enable_flags_43_cal.transmission_temperature_rationality_monitor_enable == 0)
            || (fault_detected_cal.coolant_temperature_low_error != 0)) ||
           (fault_detected_cal.coolant_temperature_high_error != 0)) ||
@@ -85294,7 +85296,7 @@ void cm848_checkTransmissionTemperatureSensorPerformance(void)
         (((fault_detected_cal.power_off_command_ignored_error != 0 ||
           ((fault_detected_cal.faults_0_to_15 & 1) != 0)) ||
          (fault_detected_cal.obd_fuel_level_low_error != 0)))))) {
-      transmission_temperature_rationality_state = 4;
+      transmission_temperature_rationality_state = TRANSMISSION_TEMPERATURE_RATIONALITY_ABORTED;
       return;
     }
     if (transmission_temperature_rationality_start_snapshot_taken_flag != 0) {
@@ -85314,7 +85316,7 @@ void cm848_checkTransmissionTemperatureSensorPerformance(void)
         transmission_temperature_rationality_driving_maximum_temperature =
              transmission_temperature_rationality_start_temperature;
         transmission_temperature_rationality_test_timer = 0;
-        transmission_temperature_rationality_state = 1;
+        transmission_temperature_rationality_state = TRANSMISSION_TEMPERATURE_RATIONALITY_RUNNING;
         return;
       }
       return;
@@ -85386,27 +85388,28 @@ void cm848_checkTransmissionTemperatureSensorPerformance(void)
     transmission_temperature_rationality_start_too_hot_flag_cal = 1;
     cm848_updateTransmissionTemperatureSensorPerformanceFault();
   }
-  else if (transmission_temperature_rationality_state == 1) {
+  else if (transmission_temperature_rationality_state ==
+           TRANSMISSION_TEMPERATURE_RATIONALITY_RUNNING) {
     if ((short)transmission_temperature_rationality_start_temperature <
         transmission_temperature_rationality_start_snapshot_minimum_temperature) {
-      transmission_temperature_rationality_state = 4;
+      transmission_temperature_rationality_state = TRANSMISSION_TEMPERATURE_RATIONALITY_ABORTED;
       return;
     }
     if (transmission_temperature_rationality_start_snapshot_maximum_temperature <
         (short)transmission_temperature_rationality_start_temperature) {
-      transmission_temperature_rationality_state = 4;
+      transmission_temperature_rationality_state = TRANSMISSION_TEMPERATURE_RATIONALITY_ABORTED;
       return;
     }
     if (fault_detected_cal.transmission_oil_temperature_low_error != 0) {
-      transmission_temperature_rationality_state = 4;
+      transmission_temperature_rationality_state = TRANSMISSION_TEMPERATURE_RATIONALITY_ABORTED;
       return;
     }
     if (fault_detected_cal.transmission_oil_temperature_high_error != 0) {
-      transmission_temperature_rationality_state = 4;
+      transmission_temperature_rationality_state = TRANSMISSION_TEMPERATURE_RATIONALITY_ABORTED;
       return;
     }
     if (fault_detected_cal.vss_signal_lost_error != 0) {
-      transmission_temperature_rationality_state = 4;
+      transmission_temperature_rationality_state = TRANSMISSION_TEMPERATURE_RATIONALITY_ABORTED;
       return;
     }
     wVar1 = transmission_temperature_sensor_filtered;
@@ -85427,10 +85430,10 @@ void cm848_checkTransmissionTemperatureSensorPerformance(void)
            transmission_temperature_rationality_test_timer + 1;
     }
     transmission_temperature_rationality_driving_minimum_temperature = wVar1;
-    if ((short)transmission_temperature_rationality_driving_range <
+    if (transmission_temperature_rationality_driving_range <
         transmission_temperature_rationality_minimum_swing) {
       if (transmission_temperature_rationality_minimum_swing <=
-          (short)transmission_temperature_rationality_driving_range) {
+          transmission_temperature_rationality_driving_range) {
         return;
       }
       if (transmission_temperature_rationality_test_timer <
@@ -85439,7 +85442,7 @@ void cm848_checkTransmissionTemperatureSensorPerformance(void)
       }
       if (transmission_temperature_rationality_soak_qualified_flag != 1) {
         diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits & 0x7fffffff;
-        transmission_temperature_rationality_state = 4;
+        transmission_temperature_rationality_state = TRANSMISSION_TEMPERATURE_RATIONALITY_ABORTED;
         return;
       }
       transmission_temperature_rationality_insufficient_rise_flag_cal = 1;
@@ -85447,12 +85450,15 @@ void cm848_checkTransmissionTemperatureSensorPerformance(void)
     }
     else {
       transmission_temperature_rationality_insufficient_rise_flag_cal = 0;
-      transmission_temperature_rationality_state = 5;
+      transmission_temperature_rationality_state = TRANSMISSION_TEMPERATURE_RATIONALITY_PASS_VERDICT
+      ;
       cm848_updateTransmissionTemperatureSensorPerformanceFault();
     }
   }
-  else if ((transmission_temperature_rationality_state != 5) &&
-          (transmission_temperature_rationality_state != 6)) {
+  else if ((transmission_temperature_rationality_state !=
+            TRANSMISSION_TEMPERATURE_RATIONALITY_PASS_VERDICT) &&
+          (transmission_temperature_rationality_state !=
+           TRANSMISSION_TEMPERATURE_RATIONALITY_FAIL_VERDICT)) {
     return;
   }
   cm848_completeTransmissionTemperatureMonitorReport();
@@ -85734,11 +85740,11 @@ void initGovernorFlagsAux(void)
 // Function: cm848_flagTripInformationPowerDownDataLoss @ 0x00523760
 //
 
-/* Power-down step (cm848_applicationMain calls it twice after the RAM calibration refresh): while
-   fault_detected_cal.power_down_data_lost_error is set it sets bits 0x208 of
-   trip_information_fault_status_cal (e2m 8B6D +E Trip_Info_Fault_Status): bit 3 (a trip reset
-   clears it) and bit 9 (a trip reset keeps it) (was sensorDiagnosticsConfiguration; PR #53 round
-   51) */
+/* Power-down step (cm848_applicationMain and cm848_restartApplicationWithoutReset each call it
+   after the RAM calibration refresh): while fault_detected_cal.power_down_data_lost_error is set it
+   sets bits 0x208 of trip_information_fault_status_cal (e2m 8B6D +E Trip_Info_Fault_Status): bit 3
+   (a trip reset clears it) and bit 9 (a trip reset keeps it) (was sensorDiagnosticsConfiguration;
+   PR #53 round 51) */
 
 void cm848_flagTripInformationPowerDownDataLoss(void)
 
