@@ -590,3 +590,5 @@ function_address,function_name,param_index,name,type,comment
 0x0050cc18,cm848_handleJ1939TransportClearToSend,0,message,j1939_rx_msg_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
 0x0050d144,cm848_handleJ1939TransportEndOfMessageAcknowledge,0,message,j1939_rx_msg_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
 0x0050d1ac,cm848_handleJ1939TransportAbort,0,message,j1939_rx_msg_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
+0x0000597c,cm848_validateDiagnosticRequestLengthAndAuthorization,return,,BOOT_DIAGNOSTIC_RESULT,0xff when the request may go to its handler - else WRONG_LENGTH / KEY_REFUSED / KEY_MISSING (PR #53 round 66)
+0x0000597c,cm848_validateDiagnosticRequestLengthAndAuthorization,0,request,j1939_rx_msg_t*,The boot kernel's PGN 61184 request (PR #53 round 66)

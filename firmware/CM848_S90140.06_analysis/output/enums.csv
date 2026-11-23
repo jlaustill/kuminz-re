@@ -546,6 +546,18 @@ BOOT_DIAGNOSTIC_SERVICE,0x4a,BOOT_DIAGNOSTIC_SERVICE_READ_MEMORY,cm848_handleBoo
 BOOT_DIAGNOSTIC_SERVICE,0x4b,BOOT_DIAGNOSTIC_SERVICE_WRITE_MEMORY,cm848_handleBootWriteMemoryService (RAM copy 0x3fb440): an address (4 bytes) and a length (1) then the data,1
 BOOT_DIAGNOSTIC_SERVICE,0x4c,BOOT_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH,cm848_handleBootReadMemoryLongLengthService: an address (4 bytes) and a length (4),1
 BOOT_DIAGNOSTIC_SERVICE,0x4d,BOOT_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH,cm848_handleBootWriteMemoryLongLengthService (RAM copy 0x3fb4b8): an address (4 bytes) and a length (4) then the data,1
+# BOOT_DIAGNOSTIC_RESULT - the result code of a boot kernel PGN 61184 request (PR #53 round 66): the twin of J1939_DIAGNOSTIC_RESULT with the boot kernel's own 5 / 0x11 / 0x17. cm848_dispatchDiagnosticService takes it from cm848_validateDiagnosticRequestLengthAndAuthorization or the handler; cm848_sendDiagServiceResponse answers ACCEPTED with 0x0c and the rest with 0x0d + the code. 0xff (nothing to send) is no member: the dispatcher masks each result with 0xff and a member of that value names the mask. The read and write workers pass region types and cm848_trackDownloadBlock codes straight through
+BOOT_DIAGNOSTIC_RESULT,0x00,BOOT_DIAGNOSTIC_RESULT_ACCEPTED,Done - cm848_sendDiagServiceResponse answers with 0x0c,4
+BOOT_DIAGNOSTIC_RESULT,0x02,BOOT_DIAGNOSTIC_RESULT_WRONG_LENGTH,The request length does not fit the service (the validator) or a memory length is over 1764 (the read and write workers),4
+BOOT_DIAGNOSTIC_RESULT,0x03,BOOT_DIAGNOSTIC_RESULT_KEY_REFUSED,cm848_validateWriteAuth refused the request's token,4
+BOOT_DIAGNOSTIC_RESULT,0x04,BOOT_DIAGNOSTIC_RESULT_CANNOT_COMPLY,No response buffer is free (cm848_allocateDiagnosticResponseBuffer returned 0),4
+BOOT_DIAGNOSTIC_RESULT,0x05,BOOT_DIAGNOSTIC_RESULT_UNKNOWN_SERVICE,No handler is registered for the service byte (cm848_dispatchDiagnosticService - the application answers this with 0x18),4
+BOOT_DIAGNOSTIC_RESULT,0x08,BOOT_DIAGNOSTIC_RESULT_UNKNOWN_PARAMETER_ID,cm848_lookupBootParameterIdAddress does not know the ID,4
+BOOT_DIAGNOSTIC_RESULT,0x09,BOOT_DIAGNOSTIC_RESULT_UNMAPPED_ADDRESS,No memory region holds the address range (cm848_lookupBootMemoryRegionType),4
+BOOT_DIAGNOSTIC_RESULT,0x0a,BOOT_DIAGNOSTIC_RESULT_REGION_REFUSED,The region refuses the access - or the dispatcher refuses a ROM handler while the low nibble of eeprom_service_mode_flags is set,4
+BOOT_DIAGNOSTIC_RESULT,0x11,BOOT_DIAGNOSTIC_RESULT_FLASH_WRITE_FAILED,cm848_writeBootDiagnosticMemory: a flash write at an odd address or a flash write that failed,4
+BOOT_DIAGNOSTIC_RESULT,0x17,BOOT_DIAGNOSTIC_RESULT_EEPROM_TRANSFER_NOT_STARTED,Service 2: mpc555_initEepromTransfer returned 0,4
+BOOT_DIAGNOSTIC_RESULT,0x1a,BOOT_DIAGNOSTIC_RESULT_KEY_MISSING,The service needs the token but the request carries none,4
 
 # CAN Timer Init Modes
 CAN_TIMER_INIT_MODE,0,BASIC_DELAY,Basic timer + delay with watchdog,1

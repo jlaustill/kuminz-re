@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 09:50:20 MST 2026
+// Generated: Mon Nov 23 10:27:03 MST 2026
 
 
 //
@@ -1146,7 +1146,7 @@ void cm848_stubFunction2(void)
    service 25 via diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) - not a dead
    function */
 
-char cm848_handleBootExecuteAtAddressService(j1939_rx_msg_t *param_1)
+BOOT_DIAGNOSTIC_RESULT cm848_handleBootExecuteAtAddressService(j1939_rx_msg_t *param_1)
 
 {
   dword dVar1;
@@ -1154,14 +1154,14 @@ char cm848_handleBootExecuteAtAddressService(j1939_rx_msg_t *param_1)
   byte bVar3;
   word wVar4;
   word wVar5;
-  char cVar6;
+  BOOT_DIAGNOSTIC_RESULT BVar6;
   code *local_20 [6];
   
-  cVar6 = cm848_validateDiagnosticRequestLengthAndAuthorization(param_1);
-  if (cVar6 == -1) {
+  BVar6 = cm848_validateDiagnosticRequestLengthAndAuthorization(param_1);
+  if ((BVar6 & 0xff) == 0xff) {
     cm848_copyBytes(local_20,param_1->data_pointer + 1,4);
-    cVar6 = cm848_lookupBootMemoryRegionType(local_20[0],1);
-    if (cVar6 != '\t') {
+    BVar6 = cm848_lookupBootMemoryRegionType(local_20[0],1);
+    if ((BVar6 & 0xff) != BOOT_DIAGNOSTIC_RESULT_UNMAPPED_ADDRESS) {
       cm848_sendDiagServiceResponse(param_1,0);
       wVar4 = mios_mmcsm_cnt.CNT;
       bVar3 = boot_can_ring_state.transmit_ring_full_flag;
@@ -1177,7 +1177,7 @@ LAB_000018f4:
       (*local_20[0])();
     }
   }
-  return cVar6;
+  return BVar6 & 0xff;
 }
 
 
@@ -4467,7 +4467,8 @@ undefined1 cm848_getBootMemoryServiceHeaderLength(int param_1)
    failed / 26 token missing | review-function-readability reviewed 2026-11-11 - Readability Medium
    Accuracy Confidence High */
 
-undefined4 cm848_validateDiagnosticRequestLengthAndAuthorization(int param_1)
+BOOT_DIAGNOSTIC_RESULT
+cm848_validateDiagnosticRequestLengthAndAuthorization(j1939_rx_msg_t *request)
 
 {
   bool bVar1;
@@ -4475,8 +4476,8 @@ undefined4 cm848_validateDiagnosticRequestLengthAndAuthorization(int param_1)
   char cVar3;
   uint uVar4;
   
-  uVar2 = (uint)*(ushort *)(param_1 + 4);
-  switch(**(undefined1 **)(param_1 + 6)) {
+  uVar2 = (uint)request->data_length;
+  switch(*request->data_pointer) {
   case 0:
     break;
   case 1:
@@ -4540,17 +4541,17 @@ LAB_00005a58:
     }
     else {
       if (uVar2 == 8) {
-        return 0x1a;
+        return BOOT_DIAGNOSTIC_RESULT_KEY_MISSING;
       }
       if (uVar2 == uVar4) {
-        cVar3 = cm848_validateWriteAuth(*(undefined1 **)(param_1 + 6) + (uVar4 - 10));
+        cVar3 = cm848_validateWriteAuth(request->data_pointer + (uVar4 - 10));
         if (cVar3 == '\0') {
           return 0xff;
         }
-        return 3;
+        return BOOT_DIAGNOSTIC_RESULT_KEY_REFUSED;
       }
     }
-    return 2;
+    return BOOT_DIAGNOSTIC_RESULT_WRONG_LENGTH;
   case 0x19:
     uVar4 = 0xf;
     bVar1 = true;
@@ -5732,44 +5733,45 @@ void cm848_runBootKernelLoop(void)
 void cm848_dispatchDiagnosticService(j1939_rx_msg_t *request)
 
 {
-  byte bVar1;
-  boot_diagnostic_service_entry_t *pbVar2;
-  uint uVar3;
+  BOOT_DIAGNOSTIC_RESULT BVar1;
+  byte bVar2;
+  boot_diagnostic_service_entry_t *entry;
+  BOOT_DIAGNOSTIC_RESULT result_code;
   BOOT_DIAGNOSTIC_SERVICE service;
   
-  pbVar2 = diagnostic_service_dispatch_table;
+  entry = diagnostic_service_dispatch_table;
   service = *request->data_pointer;
-  uVar3 = 5;
+  result_code = BOOT_DIAGNOSTIC_RESULT_UNKNOWN_SERVICE;
   if ((service == BOOT_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE) ||
      (service == BOOT_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE)) {
-    uVar3 = 0xff;
+    result_code = 0xff;
   }
   else {
-    bVar1 = 0;
+    bVar2 = 0;
     if (boot_diagnostic_service_count != 0) {
       do {
-        if (pbVar2->service_id == service) {
-          uVar3 = cm848_validateDiagnosticRequestLengthAndAuthorization(request);
-          uVar3 = uVar3 & 0xff;
-          if (uVar3 == 0xff) {
-            bVar1 = eeprom_service_mode_flags;
-            if (((bVar1 & 0xf) == 0) || ((undefined *)0x6fffe < pbVar2->handler)) {
-              uVar3 = (*(code *)pbVar2->handler)(request);
-              uVar3 = uVar3 & 0xff;
+        if (entry->service_id == service) {
+          BVar1 = cm848_validateDiagnosticRequestLengthAndAuthorization(request);
+          result_code = BVar1 & 0xff;
+          if (result_code == 0xff) {
+            bVar2 = eeprom_service_mode_flags;
+            if (((bVar2 & 0xf) == 0) || ((undefined *)0x6fffe < entry->handler)) {
+              BVar1 = (*(code *)entry->handler)(request);
+              result_code = BVar1 & 0xff;
             }
             else {
-              uVar3 = 10;
+              result_code = BOOT_DIAGNOSTIC_RESULT_REGION_REFUSED;
             }
           }
           break;
         }
-        pbVar2 = pbVar2 + 1;
-        bVar1 = bVar1 + 1;
-      } while (bVar1 < boot_diagnostic_service_count);
+        entry = entry + 1;
+        bVar2 = bVar2 + 1;
+      } while (bVar2 < boot_diagnostic_service_count);
     }
   }
-  if (uVar3 != 0xff) {
-    cm848_sendDiagServiceResponse(request,uVar3);
+  if (result_code != 0xff) {
+    cm848_sendDiagServiceResponse(request,result_code);
   }
   return;
 }
@@ -6194,9 +6196,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
-  word counter_value;
   byte prescaler_count;
   dword runtime_value;
+  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -61872,8 +61874,8 @@ void cm848_processUnsignedSensorChannel
   dword debounce_transition_state;
   dword sensor_value;
   uint uVar3;
-  ushort recovery_decrement;
   word scratch16;
+  ushort recovery_decrement;
   
   channel_word_index = (int)channel_index >> 4;
   sensor_value = 1 << (channel_index +
@@ -63384,7 +63386,7 @@ void cm848_initialization_step_4(void)
    total_injection_quantity_for_air_handling + that adjustment goes through the engine speed x fuel
    table into combustion_torque. net_combustion_torque = combustion_torque -
    pumping_torque_adjustment - (the governor target's table value x
-   net_combustion_torque_subtracted_term_scale / 2048);
+   net_combustion_torque_coolant_friction_scale / 2048);
    cm848_calculateFrictionNoLoadAndNetMachineTorque reads it. (was
    cm848_auxiliaryControl_tableInterpolation) */
 
@@ -63423,14 +63425,15 @@ void cm848_calculateNetCombustionTorque(void)
                   ,total_injection_quantity_timing_adjusted,
                   combustion_torque_by_fuel_quantity_y_axis,combustion_torque_by_fuel_quantity_grid,
                   6);
-  DAT_003fba10 = (short)(CONCAT44((int)((ulonglong)
-                                        ((longlong)
-                                         (int)friction_torque_adjustment_for_coolant_temperature *
-                                        (longlong)(int)net_combustion_torque_subtracted_term_scale)
-                                       >> 0x20),
-                                  (int)friction_torque_adjustment_for_coolant_temperature *
-                                  (int)net_combustion_torque_subtracted_term_scale) / 0x800);
-  net_combustion_torque = (combustion_torque - pumping_torque_adjustment) - DAT_003fba10;
+  net_combustion_torque_coolant_friction_term =
+       (sword)(CONCAT44((int)((ulonglong)
+                              ((longlong)(int)friction_torque_adjustment_for_coolant_temperature *
+                              (longlong)(int)net_combustion_torque_coolant_friction_scale) >> 0x20),
+                        (int)friction_torque_adjustment_for_coolant_temperature *
+                        (int)net_combustion_torque_coolant_friction_scale) / 0x800);
+  net_combustion_torque =
+       (combustion_torque - pumping_torque_adjustment) - net_combustion_torque_coolant_friction_term
+  ;
   return;
 }
 

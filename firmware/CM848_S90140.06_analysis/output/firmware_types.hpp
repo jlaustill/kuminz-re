@@ -619,6 +619,20 @@ typedef enum {
 } BOOT_DIAGNOSTIC_SERVICE;
 
 typedef enum {
+    BOOT_DIAGNOSTIC_RESULT_ACCEPTED = 0x00,  /* Done - cm848_sendDiagServiceResponse answers with 0x0c */
+    BOOT_DIAGNOSTIC_RESULT_WRONG_LENGTH = 0x02,  /* The request length does not fit the service (the validator) or a memory length is over 1764 (the read and write workers) */
+    BOOT_DIAGNOSTIC_RESULT_KEY_REFUSED = 0x03,  /* cm848_validateWriteAuth refused the request's token */
+    BOOT_DIAGNOSTIC_RESULT_CANNOT_COMPLY = 0x04,  /* No response buffer is free (cm848_allocateDiagnosticResponseBuffer returned 0) */
+    BOOT_DIAGNOSTIC_RESULT_UNKNOWN_SERVICE = 0x05,  /* No handler is registered for the service byte (cm848_dispatchDiagnosticService - the application answers this with 0x18) */
+    BOOT_DIAGNOSTIC_RESULT_UNKNOWN_PARAMETER_ID = 0x08,  /* cm848_lookupBootParameterIdAddress does not know the ID */
+    BOOT_DIAGNOSTIC_RESULT_UNMAPPED_ADDRESS = 0x09,  /* No memory region holds the address range (cm848_lookupBootMemoryRegionType) */
+    BOOT_DIAGNOSTIC_RESULT_REGION_REFUSED = 0x0a,  /* The region refuses the access - or the dispatcher refuses a ROM handler while the low nibble of eeprom_service_mode_flags is set */
+    BOOT_DIAGNOSTIC_RESULT_FLASH_WRITE_FAILED = 0x11,  /* cm848_writeBootDiagnosticMemory: a flash write at an odd address or a flash write that failed */
+    BOOT_DIAGNOSTIC_RESULT_EEPROM_TRANSFER_NOT_STARTED = 0x17,  /* Service 2: mpc555_initEepromTransfer returned 0 */
+    BOOT_DIAGNOSTIC_RESULT_KEY_MISSING = 0x1a  /* The service needs the token but the request carries none */
+} BOOT_DIAGNOSTIC_RESULT;
+
+typedef enum {
     BASIC_DELAY = 0,  /* Basic timer + delay with watchdog */
     ALT_TRANSMIT = 1,  /* Alt timer + message transmit init */
     DIVIDED_TRANSMIT = 2,  /* Divided timer + message transmit init */
