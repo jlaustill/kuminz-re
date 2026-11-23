@@ -2425,6 +2425,11 @@ extern word cruise_control_switches_learned_flag_cal;  // 0x003fee00
 extern word supervisor_watchdog_serious_error_events_cal;  // 0x003fee02
 extern byte sensor_fault_threshold_state;  // 0x003fee05
 extern eeprom_header_t eeprom_shadow_header;  // 0x003fee08
+extern fuel_level_saved_values_t fuel_level_saved_values_cal;  // 0x003fee18
+extern intake_air_heater_saved_values_t intake_air_heater_saved_values_cal;  // 0x003fee1c
+extern engine_off_time_saved_values_t engine_off_time_saved_values_cal;  // 0x003fee20
+extern word boot_serial_reflash_unlock_request;  // 0x003fee24
+extern dword boot_eeprom_status_block;  // 0x003fee26
 extern dword eeprom_write_buffer;  // 0x003fee2a
 extern word flash2_operation_active_flag;  // 0x003fee30
 extern word immobilizer_present_flag;  // 0x003fee32

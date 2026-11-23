@@ -106,18 +106,23 @@ engine_speed_state_t,0x0040b7ac,filtered_engine_speed,word,2,"e2m 819B +2C Filte
 # Total size: 8 bytes (0x0040baf2-0x0040baf9)
 # EEPROM Header Block - calibration validation and configuration
 # Located in RAM copy of EEPROM data at 0x003fee08
-# Total size: 32 bytes (0x003fee08-0x003fee27)
+# Total size: 16 bytes (0x003fee08-0x003fee17) - the words after it are the application's EEPROM mirror (PR #53 round 68: was 32 bytes to 0x3fee27 while the fields ran to 0x3fee29)
 eeprom_header_t,0x003fee08,version_marker,word,2,EEPROM data version marker,,verified
 eeprom_header_t,0x003fee08,ecm_status,ECM_STATUS,2,e2m 000B +0 ECM_Status (EEPROM 0x0) - the calibration status the boot ROM reads before it jumps to the operational code (was magic; PR #53 round 67),,verified
 eeprom_header_t,0x003fee08,header_block,byte,6,EEPROM header data block,,verified
 eeprom_header_t,0x003fee08,config_dword,dword,4,EEPROM configuration dword,,verified
 eeprom_header_t,0x003fee08,config_word,word,2,EEPROM configuration word,,verified
-eeprom_header_t,0x003fee08,calibration_block1,byte,6,Calibration data block 1,,verified
-eeprom_header_t,0x003fee08,eeprom_status_flags,word,2,Boot kernel: EEPROM 0x50 (serial_reflash_status_flags_cal) - bit 3 set and bit 1 cleared by a verified serial download | application side (time-shared - the EEPROM mirror): e2m 8A36 +2 IAH_Redundant_Preheat_Req (the intake air heater - the old note said IAT derate history; PR #53 round 67),,verified
-eeprom_header_t,0x003fee08,cal_word2,word,2,Calibration parameter word 2,,verified
-eeprom_header_t,0x003fee08,cal_word3,word,2,Calibration parameter word 3,,verified
-eeprom_header_t,0x003fee08,serial_reflash_unlock_request,word,2,Boot copy of EEPROM 0x56 (serial_reflash_unlock_request_cal) - the application's serial reflash hand-off; non-zero makes mpc555_initDiagnosticSession start the boot SCI session unlocked (was cal_word4),,verified
-eeprom_header_t,0x003fee08,serial_number,dword,4,ECU serial number from EEPROM,,needs_review
+# fuel_level_saved_values_t - e2m 8A24 (EEPROM 0x1996-0x1999 = the application's mirror 0x3fee18): the fuel level bytes kept over a power down (PR #53 round 68). The boot kernel time-shares 0x3fee18-0x3fee1d for its copy of EEPROM 0x4a-0x4f (eeprom_calibration_block - cm848_loadCalibrationFromEeprom) and reads it back only by address: cm848_lookupEepromParameterAddress returns its bytes for parameters 1-4 / 0x17 / 0x18
+fuel_level_saved_values_t,0x003fee18,in_range_filtered_percent,byte,1,e2m 8A24 +0 Fuel_Lvl_In_Range_Filtered [%] 'Filtered Fuel Level Goods Readings' (1/2.55 % per count) - seeds fuel_level_fast_filter at power up,,verified
+fuel_level_saved_values_t,0x003fee18,last_valid_percent,byte,1,e2m 8A24 +1 Fuel_Lvl_Last_Valid_Percent [%] 'Last Valid Fuel_Lvl_Percent_Tank_Full' - seeds fuel_level_slow_filter_reference,,verified
+fuel_level_saved_values_t,0x003fee18,percent_tank_full_average,byte,1,e2m 8A24 +2 Fuel_Lvl_Percent_Tank_Full_Avg [%] 'Averaged percent tank full sent on bus for fuel level gauge control' - PCI TX[13] header 0xA4 sends it / seeds fuel_level_slow_filter,,verified
+fuel_level_saved_values_t,0x003fee18,dummy_byte_1,byte,1,e2m 8A24 +3 Fuel_Lvl_Dummy_Byte_1 'Dummy value used as space filler to prevent compiler complaints',,verified
+# intake_air_heater_saved_values_t - e2m 8A36 (EEPROM 0x199a-0x199d = the mirror 0x3fee1c) (PR #53 round 68)
+intake_air_heater_saved_values_t,0x003fee1c,inhibit_postheat_start_count,word,2,e2m 8A36 +0 IAH_Inhibit_Postheat_Counter 'IAH: Inhibits postheat phase for this number of engine starts' - cm848_runEndOfLineTestStartStep sets it to 0x19,,verified
+intake_air_heater_saved_values_t,0x003fee1c,redundant_preheat_request,word,2,e2m 8A36 +2 IAH_Redundant_Preheat_Req 'If preheat w/o cranking - this param=1; saved at powerdown' | boot kernel (time-shared): its copy of EEPROM 0x50 serial_reflash_status_flags_cal (cm848_beginSerialReflash / mpc555_verifyDownloadedCalibration change bits 1 and 3),,verified
+# engine_off_time_saved_values_t - e2m 8C36 (EEPROM 0x199e-0x19a1 = the mirror 0x3fee20): the PCI engine-off time check of cm848_latchAndCheckEngineOffTime (PR #53 round 68)
+engine_off_time_saved_values_t,0x003fee20,previous_trip_value,word,2,e2m 8C36 +0 Chry_Dat42_Previous [HEX] 'Chry_Dat42 in previous trip' - pci_receive_message_14_engine_off_time as the last check saved it | boot kernel (time-shared): its copy of EEPROM 0x52 serial_reflash_success_count_cal,,verified
+engine_off_time_saved_values_t,0x003fee20,unchanged_trip_count,word,2,e2m 8C36 +2 Chry_Dat42_Stuck_Times 'Number of trips in which Chry_Dat42 message stucks' - counted while the time moved less than engine_off_time_unchanged_delta (the fault bit sets at engine_off_time_unchanged_count_limit) | boot kernel (time-shared): its copy of EEPROM 0x54 serial_reflash_attempt_count_cal,,verified
 # Governor Output State - speed control integrator and output
 # Used by governor PID controller
 # Total size: 8 bytes (0x0040aec2-0x0040aec9)

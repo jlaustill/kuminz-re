@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 11:43:33 MST 2026
+// Generated: Mon Nov 23 12:16:54 MST 2026
 
 
 //
@@ -211,7 +211,10 @@ undefined4 cm848_bootDiagnosticServiceAcknowledgeNoOperation(void)
    CALIBRATION_VALID (the serial channel also sets bit 3 and clears bit 1 of
    serial_reflash_status_flags_cal and counts serial_reflash_success_count_cal) / the runtime
    counter to eeprom_config_block / answers 0 / resets when MIOS MDASM30 SCRD bit 15 is set. Any
-   other status answers DOWNLOAD_INVALID. Clears bit 7 of eeprom_service_mode_flags first (was
+   other status answers DOWNLOAD_INVALID. Clears bit 7 of eeprom_service_mode_flags first Here
+   intake_air_heater_saved_values_cal.redundant_preheat_request and
+   engine_off_time_saved_values_cal.previous_trip_value are the boot kernel's copies of EEPROM 0x50
+   and 0x52 (it time-shares the application's EEPROM mirror; PR #53 round 68) (was
    mpc555_loadEepromCalibration; PR #53 round 67) */
 
 void mpc555_verifyDownloadedCalibration(j1939_rx_msg_t *request,BOOT_REQUEST_CHANNEL channel)
@@ -348,9 +351,9 @@ void mpc555_verifyDownloadedCalibration(j1939_rx_msg_t *request,BOOT_REQUEST_CHA
       local_38[0] = 0x600d;
       mpc555_eepromWriteWords((dword)local_38,(word *)&DAT_01000000,2);
       if (channel == BOOT_REQUEST_CHANNEL_SERIAL) {
-        local_38[0] = eeprom_shadow_header.eeprom_status_flags & 0xfffd | 8;
+        local_38[0] = intake_air_heater_saved_values_cal.redundant_preheat_request & 0xfffd | 8;
         mpc555_eepromWriteWords((dword)local_38,&serial_reflash_status_flags_cal,2);
-        local_38[0] = eeprom_shadow_header.cal_word2 + 1;
+        local_38[0] = engine_off_time_saved_values_cal.previous_trip_value + 1;
         mpc555_eepromWriteWords((dword)local_38,&serial_reflash_success_count_cal,2);
         serial_reflash_busy_flag = 0;
         diag_session_state_byte = 0x61;
@@ -722,17 +725,22 @@ void cm848_mainLoopIteration(void)
 // Function: cm848_loadCalibrationFromEeprom @ 0x00000ec0
 //
 
+/* Boot kernel: mpc555_eepromValidationCycle and mpc555_keyOnStateMachine / then copies EEPROM 0x4a
+   (6 bytes) / 0x50 / 0x52 / 0x54 / 0x0c (4) / 0x56 into RAM 0x3fee18 / 0x3fee1e / 0x3fee20 /
+   0x3fee22 / 0x3fee26 / 0x3fee24 - from 0x3fee18 to 0x3fee23 the application's EEPROM mirror words
+   take its own names (PR #53 round 68) */
+
 void cm848_loadCalibrationFromEeprom(void)
 
 {
   mpc555_eepromValidationCycle();
   mpc555_keyOnStateMachine();
-  mpc555_eepromReadWords(&eeprom_calibration_block,0x3fee18,6);
+  mpc555_eepromReadWords(&eeprom_calibration_block,&fuel_level_saved_values_cal,6);
   mpc555_eepromReadWords(&serial_reflash_status_flags_cal,0x3fee1e,2);
-  mpc555_eepromReadWords(&serial_reflash_success_count_cal,0x3fee20,2);
+  mpc555_eepromReadWords(&serial_reflash_success_count_cal,&engine_off_time_saved_values_cal,2);
   mpc555_eepromReadWords(&serial_reflash_attempt_count_cal,0x3fee22,2);
-  mpc555_eepromReadWords(&eeprom_status_block,0x3fee26,4);
-  mpc555_eepromReadWords(&serial_reflash_unlock_request_cal,0x3fee24,2);
+  mpc555_eepromReadWords(&eeprom_status_block,&boot_eeprom_status_block,4);
+  mpc555_eepromReadWords(&serial_reflash_unlock_request_cal,&boot_serial_reflash_unlock_request,2);
   return;
 }
 
@@ -1737,11 +1745,10 @@ void cm848_setDataTransferMode(void)
 // Function: mpc555_initDiagnosticSession @ 0x000021d0
 //
 
-/* Starts the boot SCI session. eeprom_shadow_header.serial_reflash_unlock_request 0 (the normal
-   path): installs the boot SCI dispatcher at the normal baud rate (SCC1R0 0xa0), locked
-   (boot_sci_security_state 0). Set (the application's SCI command 49 hand-off): clears EEPROM 0x56
-   and starts unlocked (boot_sci_security_state 1, session_flags bit 0, transfer phase 2) at high
-   speed (SCC1R0 0x14) */
+/* Starts the boot SCI session. boot_serial_reflash_unlock_request 0 (the normal path): installs the
+   boot SCI dispatcher at the normal baud rate (SCC1R0 0xa0), locked (boot_sci_security_state 0).
+   Set (the application's SCI command 49 hand-off): clears EEPROM 0x56 and starts unlocked
+   (boot_sci_security_state 1, session_flags bit 0, transfer phase 2) at high speed (SCC1R0 0x14) */
 
 void mpc555_initDiagnosticSession(void)
 
@@ -1751,7 +1758,7 @@ void mpc555_initDiagnosticSession(void)
   local_8[0] = qsmcm_sccr1.SC1SR;
   boot_sci_failed_key_count = 0;
   boot_sci_key_retry_delay = 0;
-  if (eeprom_shadow_header.serial_reflash_unlock_request == 0) {
+  if (boot_serial_reflash_unlock_request == 0) {
     cm848_installBootSciDispatcher();
     boot_sci_session_state.session_flags = boot_sci_session_state.session_flags & 0xfc;
     diag_serial_crc_match_flag = 0;
@@ -1982,7 +1989,7 @@ void mpc555_systemInitialization(void)
   mpc555_eepromReadWords(&eeprom_serial_number,0x3fee16,2);
   mpc555_eepromWriteWords(0x3fee16,(word *)&eeprom_version_marker,2);
   eeprom_xfer_state.eeprom_write_callback = 0xbec;
-  mpc555_eepromReadWords(&serial_reflash_unlock_request_cal,0x3fee24,2);
+  mpc555_eepromReadWords(&serial_reflash_unlock_request_cal,&boot_serial_reflash_unlock_request,2);
   mpc555_initDiagnosticSession();
   mpc555_initHardwareConfig();
   do {
@@ -2285,35 +2292,45 @@ void cm848_registerPgnEf00Handler(byte sub_id,void *handler_func)
 // Function: cm848_lookupEepromParameterAddress @ 0x00002d08
 //
 
-undefined * cm848_lookupEepromParameterAddress(byte param_1)
+/* Boot kernel: the address of a diagnostic EEPROM parameter's value for
+   cm848_processDiagnosticResponseCallback - parameters 1-4 / 0x17 / 0x18 return 0x3fee18-0x3fee1b /
+   0x3fee1c / 0x3fee1d (the boot kernel's copy of EEPROM 0x4a-0x4f - time-shared with the
+   application's fuel level and intake air heater words) / 10-12 and 15-16 read an EEPROM word from
+   0x20-0x24 into 0x3fee38 (inside the application's oil_change_monitor_fuel_hundredth_gallons_cal)
+   / others return 0. Its local shows as intake_air_heater_saved_values_t * because one path returns
+   that struct's address; typing it byte * split it in two (PR #53 round 68) */
+
+byte * cm848_lookupEepromParameterAddress(byte parameter)
 
 {
   int iVar1;
-  undefined *puVar2;
+  intake_air_heater_saved_values_t *piVar2;
   
-  puVar2 = &DAT_003fee38;
-  if (param_1 - 1 < 4) {
-    puVar2 = (undefined *)(param_1 + 0x3fee17);
+  piVar2 = (intake_air_heater_saved_values_t *)&DAT_003fee38;
+  if (parameter - 1 < 4) {
+    piVar2 = (intake_air_heater_saved_values_t *)
+             (eeprom_shadow_header.header_block + parameter + 0xb);
   }
-  else if (param_1 == 0x17) {
-    puVar2 = (undefined *)0x3fee1c;
+  else if (parameter == 0x17) {
+    piVar2 = &intake_air_heater_saved_values_cal;
   }
-  else if (param_1 == 0x18) {
-    puVar2 = (undefined *)0x3fee1d;
+  else if (parameter == 0x18) {
+    piVar2 = (intake_air_heater_saved_values_t *)
+             ((int)&intake_air_heater_saved_values_cal.inhibit_postheat_start_count + 1);
   }
   else {
-    if (param_1 - 10 < 3) {
+    if (parameter - 10 < 3) {
       iVar1 = 6;
     }
     else {
-      if (1 < param_1 - 0xf) {
-        return (undefined *)0x0;
+      if (1 < parameter - 0xf) {
+        return (byte *)0x0;
       }
       iVar1 = 4;
     }
-    mpc555_eepromReadWords(param_1 + 0x1000010 + iVar1,&DAT_003fee38,2);
+    mpc555_eepromReadWords(parameter + 0x1000010 + iVar1,&DAT_003fee38,2);
   }
-  return puVar2;
+  return (byte *)piVar2;
 }
 
 
@@ -2602,8 +2619,7 @@ void cm848_processDiagnosticResponseCallback(void)
 {
   byte *pbVar1;
   
-  pbVar1 = (byte *)cm848_lookupEepromParameterAddress
-                             (*boot_sci_session_state.response_cursor_pointer);
+  pbVar1 = cm848_lookupEepromParameterAddress(*boot_sci_session_state.response_cursor_pointer);
   if (pbVar1 != (byte *)0x0) {
     diag_serial_buffer[boot_sci_session_state.response_write_index] = *pbVar1;
     boot_sci_session_state.response_write_index = boot_sci_session_state.response_write_index + 1;
@@ -2865,7 +2881,10 @@ void cm848_resetSerialReflashState(void)
    (0x78 / 0x74) / waits out the serial transmit / clears bits 1 and 3 of
    serial_reflash_status_flags_cal / counts serial_reflash_attempt_count_cal / sets
    serial_reflash_erase_pending_flag - mpc555_processDiagnosticAndEepromRequests then runs
-   mpc555_beginReflash(serial) (was cm848_beginEepromCalibrationWrite; PR #53 round 67) */
+   mpc555_beginReflash(serial) Here intake_air_heater_saved_values_cal.redundant_preheat_request and
+   engine_off_time_saved_values_cal.unchanged_trip_count are the boot kernel's copies of EEPROM 0x50
+   and 0x54 (it time-shares the application's EEPROM mirror; PR #53 round 68) (was
+   cm848_beginEepromCalibrationWrite; PR #53 round 67) */
 
 void cm848_beginSerialReflash(void)
 
@@ -2880,9 +2899,9 @@ void cm848_beginSerialReflash(void)
   }
   diag_session_state_byte = 0x78;
   diag_request_pending_flag = 0;
-  local_8[0] = eeprom_shadow_header.eeprom_status_flags & 0xfff5;
+  local_8[0] = intake_air_heater_saved_values_cal.redundant_preheat_request & 0xfff5;
   mpc555_eepromWriteWords((dword)local_8,&serial_reflash_status_flags_cal,2);
-  local_8[0] = eeprom_shadow_header.cal_word3 + 1;
+  local_8[0] = engine_off_time_saved_values_cal.unchanged_trip_count + 1;
   mpc555_eepromWriteWords((dword)local_8,&serial_reflash_attempt_count_cal,2);
   serial_reflash_erase_pending_flag = 1;
   return;
@@ -41254,26 +41273,28 @@ void cm848_latchAndCheckEngineOffTime(void)
   if ((engine_off_time_latched_flag == 0) && ((pci_receive_message_14_status & 0x3f) == 0)) {
     uVar2 = (uint)pci_receive_message_14_engine_off_time;
     engine_off_time_at_key_on = pci_receive_message_14_engine_off_time;
-    if (eeprom_shadow_header.cal_word2 < uVar2) {
-      iVar1 = uVar2 - eeprom_shadow_header.cal_word2;
+    if (engine_off_time_saved_values_cal.previous_trip_value < uVar2) {
+      iVar1 = uVar2 - engine_off_time_saved_values_cal.previous_trip_value;
     }
     else {
-      iVar1 = eeprom_shadow_header.cal_word2 - uVar2;
+      iVar1 = engine_off_time_saved_values_cal.previous_trip_value - uVar2;
     }
     if (iVar1 < (int)(uint)engine_off_time_unchanged_delta) {
-      eeprom_shadow_header.cal_word3 = eeprom_shadow_header.cal_word3 + 1;
+      engine_off_time_saved_values_cal.unchanged_trip_count =
+           engine_off_time_saved_values_cal.unchanged_trip_count + 1;
     }
     else {
-      eeprom_shadow_header.cal_word3 = 0;
+      engine_off_time_saved_values_cal.unchanged_trip_count = 0;
     }
-    if (eeprom_shadow_header.cal_word3 < engine_off_time_unchanged_count_limit) {
+    if (engine_off_time_saved_values_cal.unchanged_trip_count <
+        engine_off_time_unchanged_count_limit) {
       fault_detected_cal._38_2_ = fault_detected_cal._38_2_ & 0xffef;
       fault_registered_cal._38_2_ = fault_registered_cal._38_2_ & 0xffef;
     }
     else {
       fault_detected_cal._38_2_ = fault_detected_cal._38_2_ | 0x10;
     }
-    eeprom_shadow_header.cal_word2 = pci_receive_message_14_engine_off_time;
+    engine_off_time_saved_values_cal.previous_trip_value = pci_receive_message_14_engine_off_time;
     engine_off_time_latched_flag = 1;
   }
   return;
@@ -41775,8 +41796,8 @@ void cm848_buildPciTransmitMessage11DistanceAndFuelUsed(void)
 //
 
 /* Builds PCI (J1850) TX[13] header 0xA4 byte 1 = fuel level in 1/2.55 percent
-   (eeprom_shadow_header.calibration_block1[2]) - 0 while fault_reaction_request_bits is nonzero;
-   timer kept at 1 (no send) until fuel_level_ready_flag then sent at once (1214) (was
+   (fuel_level_saved_values_cal.percent_tank_full_average) - 0 while fault_reaction_request_bits is
+   nonzero; timer kept at 1 (no send) until fuel_level_ready_flag then sent at once (1214) (was
    cm848_updateCbdThresholdState) | review-function-readability reviewed 2026-11-13 - Readability
    Medium Accuracy Confidence High */
 
@@ -41789,7 +41810,7 @@ void cm848_buildPciTransmitMessage13FuelLevel(void)
   else if (fuel_level_ready_flag_previous == 0) {
     pci_transmit_message_13_timer = 0x4be;
   }
-  pci_transmit_message_13_fuel_level = eeprom_shadow_header.calibration_block1[2];
+  pci_transmit_message_13_fuel_level = fuel_level_saved_values_cal.percent_tank_full_average;
   if (fault_reaction_request_bits != 0) {
     pci_transmit_message_13_fuel_level = 0;
   }
@@ -77523,13 +77544,15 @@ undefined4 cm848_qualifyFuelLevelSample(void)
         uVar1 = 1;
         goto LAB_0051656c;
       }
-      eeprom_shadow_header.calibration_block1[0] = (byte)fuel_level_sensor_filtered;
+      fuel_level_saved_values_cal.in_range_filtered_percent = (byte)fuel_level_sensor_filtered;
       fuel_level_fast_filter = fuel_level_sensor_filtered << 8;
       fuel_level_power_up_check_pending_flag = 0;
       fuel_level_slow_filter = fuel_level_fast_filter;
       fuel_level_slow_filter_reference = fuel_level_fast_filter;
-      eeprom_shadow_header.calibration_block1[1] = eeprom_shadow_header.calibration_block1[0];
-      eeprom_shadow_header.calibration_block1[2] = eeprom_shadow_header.calibration_block1[0];
+      fuel_level_saved_values_cal.last_valid_percent =
+           fuel_level_saved_values_cal.in_range_filtered_percent;
+      fuel_level_saved_values_cal.percent_tank_full_average =
+           fuel_level_saved_values_cal.in_range_filtered_percent;
     }
   }
   uVar1 = 0;
@@ -77619,19 +77642,24 @@ void cm848_checkFuelLevelChangeAtPowerUp(void)
   if (fuel_level_power_up_check_pending_flag == 1) {
     if (fuel_level_sensor_high_voltage_debounce_counter == 0) {
       if ((fuel_level_sensor_channel_state.value & 0xff) <
-          (ushort)eeprom_shadow_header.calibration_block1[1]) {
-        uVar1 = eeprom_shadow_header.calibration_block1[1] - fuel_level_sensor_channel_state.value;
+          (ushort)fuel_level_saved_values_cal.last_valid_percent) {
+        uVar1 = fuel_level_saved_values_cal.last_valid_percent -
+                fuel_level_sensor_channel_state.value;
       }
       else {
-        uVar1 = fuel_level_sensor_channel_state.value - eeprom_shadow_header.calibration_block1[1];
+        uVar1 = fuel_level_sensor_channel_state.value -
+                fuel_level_saved_values_cal.last_valid_percent;
       }
       if ((ushort)fuel_level_power_up_refill_minimum_change_percent <= (uVar1 & 0xff)) {
-        eeprom_shadow_header.calibration_block1[0] = (byte)fuel_level_sensor_channel_state.value;
+        fuel_level_saved_values_cal.in_range_filtered_percent =
+             (byte)fuel_level_sensor_channel_state.value;
         fuel_level_slow_filter = fuel_level_sensor_channel_state.value << 8;
         fuel_level_fast_filter = fuel_level_sensor_channel_state.value << 8;
         fuel_level_slow_filter_reference = fuel_level_slow_filter;
-        eeprom_shadow_header.calibration_block1[1] = eeprom_shadow_header.calibration_block1[0];
-        eeprom_shadow_header.calibration_block1[2] = eeprom_shadow_header.calibration_block1[0];
+        fuel_level_saved_values_cal.last_valid_percent =
+             fuel_level_saved_values_cal.in_range_filtered_percent;
+        fuel_level_saved_values_cal.percent_tank_full_average =
+             fuel_level_saved_values_cal.in_range_filtered_percent;
       }
     }
     fuel_level_power_up_check_pending_flag = 0;
@@ -77661,8 +77689,9 @@ void cm848_filterFuelLevelFast(void)
   
   if (((fuel_level_first_sample_flag == 0) && (fuel_level_power_up_check_pending_flag == 0)) &&
      (fuel_level_sensor_high_voltage_debounce_counter == 0)) {
-    if (eeprom_shadow_header.calibration_block1[0] == 0) {
-      eeprom_shadow_header.calibration_block1[0] = (byte)fuel_level_sensor_channel_state.value;
+    if (fuel_level_saved_values_cal.in_range_filtered_percent == 0) {
+      fuel_level_saved_values_cal.in_range_filtered_percent =
+           (byte)fuel_level_sensor_channel_state.value;
       fuel_level_fast_filter = fuel_level_sensor_channel_state.value << 8;
     }
     else {
@@ -77672,7 +77701,7 @@ void cm848_filterFuelLevelFast(void)
               (int)(CONCAT44((int)((ulonglong)uVar2 * (ulonglong)uVar1 >> 0x20) +
                              uVar2 * ((int)uVar1 >> 0x1f),uVar2 * uVar1) / 0x10000);
       fuel_level_fast_filter = (word)iVar3;
-      eeprom_shadow_header.calibration_block1[0] = (byte)((uint)iVar3 >> 8);
+      fuel_level_saved_values_cal.in_range_filtered_percent = (byte)((uint)iVar3 >> 8);
     }
   }
   return;
@@ -77734,7 +77763,7 @@ void cm848_filterFuelLevelSlow(undefined4 param_1,ushort param_2,word param_3)
       uVar2 = ((uint)fuel_level_slow_filter * (uint)fuel_level_slow_filter_stable_weight +
                (uint)param_3 + ((int)uVar2 >> 1)) / uVar2;
       fuel_level_slow_filter = (word)uVar2;
-      eeprom_shadow_header.calibration_block1[1] = (byte)(uVar2 >> 8);
+      fuel_level_saved_values_cal.last_valid_percent = (byte)(uVar2 >> 8);
     }
     else {
       if ((ushort)((ushort)fuel_level_anti_slosh_maximum_change_percent << 8) <= param_2) {
@@ -77744,10 +77773,11 @@ void cm848_filterFuelLevelSlow(undefined4 param_1,ushort param_2,word param_3)
       uVar2 = ((uint)fuel_level_slow_filter * (uint)fuel_level_slow_filter_unstable_weight +
                (uint)param_3 + ((int)uVar2 >> 1)) / uVar2;
       fuel_level_slow_filter = (word)uVar2;
-      eeprom_shadow_header.calibration_block1[1] = (byte)((uVar2 & 0xffff) + 0x80 >> 8);
+      fuel_level_saved_values_cal.last_valid_percent = (byte)((uVar2 & 0xffff) + 0x80 >> 8);
     }
     fuel_level_slow_filter_reference = fuel_level_slow_filter;
-    eeprom_shadow_header.calibration_block1[2] = eeprom_shadow_header.calibration_block1[1];
+    fuel_level_saved_values_cal.percent_tank_full_average =
+         fuel_level_saved_values_cal.last_valid_percent;
   }
   return;
 }
@@ -77785,9 +77815,9 @@ void cm848_initFuelLevelFilter(void)
   cm848_calibBlock1_trimTimer_reset();
   cm848_calibBlock1_warmupFlag_reset();
   calibBlock1_update_phase_counter = 4;
-  fuel_level_fast_filter = (ushort)eeprom_shadow_header.calibration_block1[0] << 8;
-  fuel_level_slow_filter = (ushort)eeprom_shadow_header.calibration_block1[2] << 8;
-  fuel_level_slow_filter_reference = (ushort)eeprom_shadow_header.calibration_block1[1] << 8;
+  fuel_level_fast_filter = (ushort)fuel_level_saved_values_cal.in_range_filtered_percent << 8;
+  fuel_level_slow_filter = (ushort)fuel_level_saved_values_cal.percent_tank_full_average << 8;
+  fuel_level_slow_filter_reference = (ushort)fuel_level_saved_values_cal.last_valid_percent << 8;
   return;
 }
 
@@ -77809,8 +77839,10 @@ void cm848_substituteFuelLevelOnSensorFault(void)
       (fault_detected_cal.fuel_level_high_error == 0)) &&
      ((fault_detected_cal.fuel_level_low_error == 0 && (fuel_level_sensor_high_voltage_flag == 0))))
   {
-    eeprom_shadow_header.calibration_block1[1] = eeprom_shadow_header.calibration_block1[0];
-    eeprom_shadow_header.calibration_block1[2] = eeprom_shadow_header.calibration_block1[0];
+    fuel_level_saved_values_cal.last_valid_percent =
+         fuel_level_saved_values_cal.in_range_filtered_percent;
+    fuel_level_saved_values_cal.percent_tank_full_average =
+         fuel_level_saved_values_cal.in_range_filtered_percent;
     fuel_level_fault_substitution_flag = 0;
   }
   if ((((fuel_level_first_sample_flag == 0) && (fuel_level_fault_substitution_flag == 0)) &&
@@ -77818,9 +77850,9 @@ void cm848_substituteFuelLevelOnSensorFault(void)
        ((fault_detected_cal.fuel_level_high_error != 0 ||
         (fault_detected_cal.fuel_level_low_error != 0)))))) &&
      ((fuel_level_fault_substitution_flag = 1, fault_detected_cal.fuel_level_high_error != 0 ||
-      (eeprom_shadow_header.calibration_block1[2] = fuel_level_shorted_message_percent,
+      (fuel_level_saved_values_cal.percent_tank_full_average = fuel_level_shorted_message_percent,
       fuel_level_sensor_high_voltage_flag == 1)))) {
-    eeprom_shadow_header.calibration_block1[2] = fuel_level_open_message_percent;
+    fuel_level_saved_values_cal.percent_tank_full_average = fuel_level_open_message_percent;
   }
   return;
 }
@@ -78007,7 +78039,7 @@ void cm848_computeIntakeAirHeaterPreheatDuration(void)
   }
   else {
     intake_air_heater_preheat_remaining_ticks = intake_air_heater_preheat_total_ticks;
-    if (((eeprom_shadow_header.eeprom_status_flags == 1) ||
+    if (((intake_air_heater_saved_values_cal.redundant_preheat_request == 1) ||
         (intake_air_heater_preheat_depleted_flag == 1)) && (DAT_003fce53 == '\0')) {
       intake_air_heater_preheat_remaining_ticks = intake_air_heater_redundant_preheat_time;
     }
@@ -78085,7 +78117,7 @@ void cm848_countDownIntakeAirHeaterPreheat(void)
         (int)((uint)intake_air_heater_preheat_total_ticks -
              (uint)intake_air_heater_redundant_preheat_time)) {
       intake_air_heater_preheat_depleted_flag = 1;
-      eeprom_shadow_header.eeprom_status_flags = 1;
+      intake_air_heater_saved_values_cal.redundant_preheat_request = 1;
     }
   }
   intake_air_heater_crank_time_countdown = intake_air_heater_crank_time_limit;
@@ -78114,7 +78146,7 @@ void cm848_updateIntakeAirHeaterCrankPhase(void)
   if (intake_air_heater_control_state_previous != INTAKE_AIR_HEATER_PHASE_CRANK) {
     cm848_clearLogicalOutputRequest(0x2b,0);
     cm848_clearLogicalOutputRequest(0x2c,0);
-    eeprom_shadow_header.eeprom_status_flags = 0;
+    intake_air_heater_saved_values_cal.redundant_preheat_request = 0;
   }
   if ((short)intake_air_heater_start_temperature <= intake_air_heater_crank_temperature_threshold) {
     if (engine_speed_state.filtered_engine_speed < intake_air_heater_crank_off_engine_speed) {
@@ -78423,10 +78455,11 @@ void cm848_updateIntakeAirHeaterPostheat(void)
   byte bVar3;
   
   if ((intake_air_heater_control_state_previous != INTAKE_AIR_HEATER_PHASE_POSTHEAT) &&
-     (cm848_clearLogicalOutputRequest(4,2), eeprom_shadow_header.calibration_block1._4_2_ != 0)) {
+     (cm848_clearLogicalOutputRequest(4,2),
+     intake_air_heater_saved_values_cal.inhibit_postheat_start_count != 0)) {
     intake_air_heater_shutdown_reason = 7;
-    eeprom_shadow_header.calibration_block1._4_2_ =
-         eeprom_shadow_header.calibration_block1._4_2_ + -1;
+    intake_air_heater_saved_values_cal.inhibit_postheat_start_count =
+         intake_air_heater_saved_values_cal.inhibit_postheat_start_count - 1;
     cm848_shutdownIntakeAirHeater();
     return;
   }
@@ -93402,11 +93435,12 @@ void cm848_initializeEndOfLineTestSequence(void)
    bytes (end_of_line_test_settings_cal.test_flags_1 to _5) except the pending / not-passed bits of
    the tests, and clears those bits for each test that end_of_line_test_enable_flags disables (bit 0
    the intake air heater test - test_flags_5 bits 0-1, bit 5 the alternator test - test_flags_4 bit
-   0, bit 1 the misfire test - test_flags_5 bits 4-5); it also sets bytes 4-5 of
-   eeprom_shadow_header.calibration_block1 to 0 / 0x19. It returns the first pending step: 1 the
-   output tests (test_flags_2 bit 3 or test_flags_5 bit 0), 3 the alternator test (test_flags_3 bit
-   5), 5 the misfire test (test_flags_5 bit 4), 6 the final result (final_test_results_1 bit 3),
-   else 7 (done) (was engine_protection_timerStateMachine_init) */
+   0, bit 1 the misfire test - test_flags_5 bits 4-5); it also sets
+   intake_air_heater_saved_values_cal.inhibit_postheat_start_count to 0x19 (25 engine starts). It
+   returns the first pending step: 1 the output tests (test_flags_2 bit 3 or test_flags_5 bit 0), 3
+   the alternator test (test_flags_3 bit 5), 5 the misfire test (test_flags_5 bit 4), 6 the final
+   result (final_test_results_1 bit 3), else 7 (done) (was engine_protection_timerStateMachine_init)
+    */
 
 undefined4 cm848_runEndOfLineTestStartStep(void)
 
@@ -93429,8 +93463,7 @@ undefined4 cm848_runEndOfLineTestStartStep(void)
   local_18[0] = end_of_line_test_settings_cal.test_flags_5 & 0xf3;
   cm848_queueEepromByteWritesAtOffset11134(0x3fd942,local_18,1);
   end_of_line_test_settings_cal.test_flags_5 = local_18[0];
-  eeprom_shadow_header.calibration_block1[4] = 0;
-  eeprom_shadow_header.calibration_block1[5] = 0x19;
+  intake_air_heater_saved_values_cal.inhibit_postheat_start_count = 0x19;
   if ((end_of_line_test_enable_flags & 1) == 0) {
     local_18[0] = local_18[0] & 0xfc;
     cm848_queueEepromByteWritesAtOffset11134(0x3fd942,local_18,1);
@@ -94395,13 +94428,13 @@ void cm848_initializeFuelLevelLowDistanceMonitor(void)
    key-on while the fuel level sensor substitutes a fault value
    (fuel_level_fault_substitution_flag). When armed (fuel_level_low_distance_check_armed_flag_cal)
    and enabled (monitor_enabling_conditions_met mask 0x20, algorithm_enable_flags_41_cal mask 0x4),
-   a stored fuel level byte (eeprom_shadow_header.calibration_block1[1], 1/2.55 % per count) below
-   fuel_level_low_distance_level_threshold (38 = 14.9 %) sets fault 397 and adds vehicle_speed x 222
-   >> 4 to fuel_level_low_distance_accumulator_cal; at or above the threshold the fault and the
-   accumulator clear. Above fuel_level_low_distance_accumulator_limit (1920000000, about 120 miles)
-   it sets fault 398 = P0461, clears 397 and disarms; P0461 clears and re-arms when the stored level
-   is above the threshold again, and fault 397 also clears while P0462 / P0463 (faults 382 / 381)
-   are active (was cm848_main_loop_protection_eval) */
+   a stored fuel level byte (fuel_level_saved_values_cal.last_valid_percent, 1/2.55 % per count)
+   below fuel_level_low_distance_level_threshold (38 = 14.9 %) sets fault 397 and adds vehicle_speed
+   x 222 >> 4 to fuel_level_low_distance_accumulator_cal; at or above the threshold the fault and
+   the accumulator clear. Above fuel_level_low_distance_accumulator_limit (1920000000, about 120
+   miles) it sets fault 398 = P0461, clears 397 and disarms; P0461 clears and re-arms when the
+   stored level is above the threshold again, and fault 397 also clears while P0462 / P0463 (faults
+   382 / 381) are active (was cm848_main_loop_protection_eval) */
 
 void cm848_monitorFuelLevelLowDistance(void)
 
@@ -94435,7 +94468,8 @@ void cm848_monitorFuelLevelLowDistance(void)
     fuel_level_low_distance_check_key_on_previous_flag = bVar2;
     if (fuel_level_low_distance_check_start_delay_done_flag != 0) {
       if ((fault_detected_cal.fuel_level_rationality_error != 0) &&
-         (fuel_level_low_distance_level_threshold < eeprom_shadow_header.calibration_block1[1])) {
+         (fuel_level_low_distance_level_threshold < fuel_level_saved_values_cal.last_valid_percent))
+      {
         fuel_level_low_distance_check_armed_flag_cal = 1;
         fault_detected_cal._48_2_ = fault_detected_cal._48_2_ & 0xbfff;
         fault_registered_cal._48_2_ = fault_registered_cal._48_2_ & 0xbfff;
@@ -94448,7 +94482,8 @@ void cm848_monitorFuelLevelLowDistance(void)
           (fuel_level_low_distance_check_armed_flag_cal == 1)) &&
          ((monitor_enabling_conditions_met.fuel_level_low_distance != 0 &&
           (algorithm_enable_flags_41_cal.fuel_level_rationality_diagnostic_enable != 0)))) {
-        if (eeprom_shadow_header.calibration_block1[1] < fuel_level_low_distance_level_threshold) {
+        if (fuel_level_saved_values_cal.last_valid_percent < fuel_level_low_distance_level_threshold
+           ) {
           fault_detected_cal._48_2_ = fault_detected_cal._48_2_ | 0x2000;
           fuel_level_low_distance_accumulator_cal =
                fuel_level_low_distance_accumulator_cal +

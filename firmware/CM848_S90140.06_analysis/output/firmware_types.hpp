@@ -1306,6 +1306,9 @@ typedef struct cam_crank_sync_state_t cam_crank_sync_state_t;
 typedef struct fuel_pressure_governor_state_t fuel_pressure_governor_state_t;
 typedef struct engine_speed_state_t engine_speed_state_t;
 typedef struct eeprom_header_t eeprom_header_t;
+typedef struct fuel_level_saved_values_t fuel_level_saved_values_t;
+typedef struct intake_air_heater_saved_values_t intake_air_heater_saved_values_t;
+typedef struct engine_off_time_saved_values_t engine_off_time_saved_values_t;
 typedef struct low_speed_governor_reference_t low_speed_governor_reference_t;
 typedef struct pci_link_state_t pci_link_state_t;
 typedef struct j1587_fault_count_data_t j1587_fault_count_data_t;
@@ -1565,12 +1568,23 @@ struct eeprom_header_t {
     uint8_t header_block[6];  /* EEPROM header data block */
     uint32_t config_dword;  /* EEPROM configuration dword */
     uint16_t config_word;  /* EEPROM configuration word */
-    uint8_t calibration_block1[6];  /* Calibration data block 1 */
-    uint16_t eeprom_status_flags;  /* Boot kernel: EEPROM 0x50 (serial_reflash_status_flags_cal) - bit 3 set and bit 1 cleared by a verified serial download | application side (time-shared - the EEPROM mirror): e2m 8A36 +2 IAH_Redundant_Preheat_Req (the intake air heater - the old note said IAT derate history; PR #53 round 67) */
-    uint16_t cal_word2;  /* Calibration parameter word 2 */
-    uint16_t cal_word3;  /* Calibration parameter word 3 */
-    uint16_t serial_reflash_unlock_request;  /* Boot copy of EEPROM 0x56 (serial_reflash_unlock_request_cal) - the application's serial reflash hand-off; non-zero makes mpc555_initDiagnosticSession start the boot SCI session unlocked (was cal_word4) */
-    uint32_t serial_number;  /* ECU serial number from EEPROM */
+};
+
+struct fuel_level_saved_values_t {
+    uint8_t in_range_filtered_percent;  /* e2m 8A24 +0 Fuel_Lvl_In_Range_Filtered [%] 'Filtered Fuel Level Goods Readings' (1/2.55 % per count) - seeds fuel_level_fast_filter at power up */
+    uint8_t last_valid_percent;  /* e2m 8A24 +1 Fuel_Lvl_Last_Valid_Percent [%] 'Last Valid Fuel_Lvl_Percent_Tank_Full' - seeds fuel_level_slow_filter_reference */
+    uint8_t percent_tank_full_average;  /* e2m 8A24 +2 Fuel_Lvl_Percent_Tank_Full_Avg [%] 'Averaged percent tank full sent on bus for fuel level gauge control' - PCI TX[13] header 0xA4 sends it / seeds fuel_level_slow_filter */
+    uint8_t dummy_byte_1;  /* e2m 8A24 +3 Fuel_Lvl_Dummy_Byte_1 'Dummy value used as space filler to prevent compiler complaints' */
+};
+
+struct intake_air_heater_saved_values_t {
+    uint16_t inhibit_postheat_start_count;  /* e2m 8A36 +0 IAH_Inhibit_Postheat_Counter 'IAH: Inhibits postheat phase for this number of engine starts' - cm848_runEndOfLineTestStartStep sets it to 0x19 */
+    uint16_t redundant_preheat_request;  /* e2m 8A36 +2 IAH_Redundant_Preheat_Req 'If preheat w/o cranking - this param=1; saved at powerdown' | boot kernel (time-shared): its copy of EEPROM 0x50 serial_reflash_status_flags_cal (cm848_beginSerialReflash / mpc555_verifyDownloadedCalibration change bits 1 and 3) */
+};
+
+struct engine_off_time_saved_values_t {
+    uint16_t previous_trip_value;  /* e2m 8C36 +0 Chry_Dat42_Previous [HEX] 'Chry_Dat42 in previous trip' - pci_receive_message_14_engine_off_time as the last check saved it | boot kernel (time-shared): its copy of EEPROM 0x52 serial_reflash_success_count_cal */
+    uint16_t unchanged_trip_count;  /* e2m 8C36 +2 Chry_Dat42_Stuck_Times 'Number of trips in which Chry_Dat42 message stucks' - counted while the time moved less than engine_off_time_unchanged_delta (the fault bit sets at engine_off_time_unchanged_count_limit) | boot kernel (time-shared): its copy of EEPROM 0x54 serial_reflash_attempt_count_cal */
 };
 
 struct low_speed_governor_reference_t {

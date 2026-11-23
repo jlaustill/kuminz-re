@@ -62,7 +62,7 @@ void cm848_clearRamRegions(void);  // @ 0x00002b7c
 void cm848_softReset(void);  // @ 0x00002bc8
 bool cm848_registerDiagnosticService(BOOT_DIAGNOSTIC_SERVICE service_id,void *handler_ptr);  // @ 0x00002c94
 void cm848_registerPgnEf00Handler(byte sub_id,void *handler_func);  // @ 0x00002cd8
-undefined * cm848_lookupEepromParameterAddress(byte param_1);  // @ 0x00002d08
+byte * cm848_lookupEepromParameterAddress(byte parameter);  // @ 0x00002d08
 void cm848_pumpDiagnosticCallback(void);  // @ 0x00002de4
 void cm848_dispatchBootSciDiagnosticCommand(void);  // @ 0x00002e58
 void cm848_installBootSciDispatcher(void);  // @ 0x00002ee8

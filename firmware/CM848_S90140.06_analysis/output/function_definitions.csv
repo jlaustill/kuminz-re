@@ -618,3 +618,5 @@ function_address,function_name,param_index,name,type,comment
 0x000078d0,cm848_updateDownloadCrc,2,channel,BOOT_REQUEST_CHANNEL,Only a J1939 block is finished here (PR #53 round 67)
 0x00007840,cm848_finishDownloadBlock,return,,byte,0xff when the block is recorded / 0x14 CRC mismatch / 0x15 download_block_list full (PR #53 round 67)
 0x00007840,cm848_finishDownloadBlock,0,trailing_crc,word*,The block's 2-byte CRC that follows its data (PR #53 round 67)
+0x00002d08,cm848_lookupEepromParameterAddress,return,,byte*,The parameter's value (see the plate) - 0 for an unknown parameter (PR #53 round 68)
+0x00002d08,cm848_lookupEepromParameterAddress,0,parameter,byte,The diagnostic EEPROM parameter number (PR #53 round 68)
