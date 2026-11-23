@@ -151,3 +151,4 @@ function_address,function_name,old_name,new_name,type,comment
 0x00022128,cm848_j1939DiagnosticServiceHandler,bVar2,entry_index,byte,Index into j1939_diagnostic_service_table (PR #53 round 63)
 0x00022128,cm848_j1939DiagnosticServiceHandler,pjVar3,entry,j1939_diagnostic_service_entry_t *,The j1939_diagnostic_service_table entry being compared (PR #53 round 63)
 0x00022128,cm848_j1939DiagnosticServiceHandler,uVar4,result_code,uint,The validator's or the handler's result: 0xff = no response - else cm848_sendJ1939ResponseFrame sends it (PR #53 round 63)
+0x00006d24,cm848_dispatchDiagnosticService,BVar1,service,BOOT_DIAGNOSTIC_SERVICE,The request's service byte - named as the enum type reaches it from the entry field (PR #53 round 63)

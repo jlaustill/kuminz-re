@@ -612,6 +612,25 @@ typedef enum {
 } J1939_DIAGNOSTIC_SERVICE;
 
 typedef enum {
+    BOOT_DIAGNOSTIC_SERVICE_INITIALIZE_EEPROM_TRANSFER = 0x02,  /* cm848_handleBootInitializeEepromTransferService: mpc555_initEepromTransfer(2) after a response-pending 0x96 */
+    BOOT_DIAGNOSTIC_SERVICE_DOWNLOAD_CALIBRATION = 0x07,  /* cm848_handleBootDownloadCalibrationService: mpc555_loadEepromCalibration(request / 2) */
+    BOOT_DIAGNOSTIC_SERVICE_NO_OPERATION_11 = 0x0b,  /* cm848_bootDiagnosticServiceAcknowledgeNoOperation: accepted and does nothing */
+    BOOT_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE = 0x0c,  /* Sent by cm848_sendDiagServiceResponse for result 0; cm848_dispatchDiagnosticService ignores a received one */
+    BOOT_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE = 0x0d,  /* Sent by cm848_sendDiagServiceResponse for a nonzero result other than 0xfe (that sends 0x0e); cm848_dispatchDiagnosticService ignores a received one */
+    BOOT_DIAGNOSTIC_SERVICE_NO_OPERATION_16 = 0x10,  /* cm848_bootDiagnosticServiceAcknowledgeNoOperation: accepted and does nothing */
+    BOOT_DIAGNOSTIC_SERVICE_NO_OPERATION_24 = 0x18,  /* cm848_bootDiagnosticServiceAcknowledgeNoOperation: accepted and does nothing */
+    BOOT_DIAGNOSTIC_SERVICE_EXECUTE_AT_ADDRESS = 0x19,  /* cm848_handleBootExecuteAtAddressService: calls the request's 4-byte address once the positive response has left the CAN transmit ring */
+    BOOT_DIAGNOSTIC_SERVICE_GET_ADDRESS_BY_PARAMETER_ID = 0x41,  /* cm848_handleBootGetAddressByParameterIdService: the ID (2 bytes); answered with 0x42 */
+    BOOT_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_LENGTH = 0x43,  /* cm848_handleBootReadByParameterIdLongLengthService: the ID (2 bytes) and a length (4) */
+    BOOT_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID = 0x44,  /* cm848_handleBootWriteByParameterIdService (RAM copy 0x3fb368): the ID (2 bytes) and a length (1) then the data */
+    BOOT_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_LENGTH = 0x45,  /* cm848_handleBootWriteByParameterIdLongLengthService (RAM copy 0x3fb3d8): the ID (2 bytes) and a length (4) then the data */
+    BOOT_DIAGNOSTIC_SERVICE_READ_MEMORY = 0x4a,  /* cm848_handleBootReadMemoryService: an address (4 bytes) and a length (1) */
+    BOOT_DIAGNOSTIC_SERVICE_WRITE_MEMORY = 0x4b,  /* cm848_handleBootWriteMemoryService (RAM copy 0x3fb440): an address (4 bytes) and a length (1) then the data */
+    BOOT_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH = 0x4c,  /* cm848_handleBootReadMemoryLongLengthService: an address (4 bytes) and a length (4) */
+    BOOT_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH = 0x4d  /* cm848_handleBootWriteMemoryLongLengthService (RAM copy 0x3fb4b8): an address (4 bytes) and a length (4) then the data */
+} BOOT_DIAGNOSTIC_SERVICE;
+
+typedef enum {
     BASIC_DELAY = 0,  /* Basic timer + delay with watchdog */
     ALT_TRANSMIT = 1,  /* Alt timer + message transmit init */
     DIVIDED_TRANSMIT = 2,  /* Divided timer + message transmit init */
@@ -975,19 +994,19 @@ typedef enum {
 } VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_STATE;
 
 typedef enum {
-    DIAGNOSTIC_SERVICE_EEPROM_TRANSFER_INIT = 0x02,  /* mpc555_diagServiceInitEepromTransfer */
-    DIAGNOSTIC_SERVICE_DOWNLOAD_CALIBRATION = 0x07,  /* cm848_diagServiceDownloadCalibration */
+    DIAGNOSTIC_SERVICE_EEPROM_TRANSFER_INIT = 0x02,  /* cm848_handleBootInitializeEepromTransferService */
+    DIAGNOSTIC_SERVICE_DOWNLOAD_CALIBRATION = 0x07,  /* cm848_handleBootDownloadCalibrationService */
     DIAGNOSTIC_SERVICE_ACKNOWLEDGE_11 = 0x0b,  /* stub */
     DIAGNOSTIC_SERVICE_ACKNOWLEDGE_16 = 0x10,  /* stub */
     DIAGNOSTIC_SERVICE_ACKNOWLEDGE_24 = 0x18,  /* stub */
-    DIAGNOSTIC_SERVICE_EXECUTE_ROUTINE = 0x19,  /* mpc555_diagService25_executeFunction */
-    DIAGNOSTIC_SERVICE_GET_ADDRESS_BY_PARAMETER_ID = 0x41,  /* cm848_diagService65_handler */
-    DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_OFFSET = 0x43,  /* cm848_diagService67_memoryReadOffset */
+    DIAGNOSTIC_SERVICE_EXECUTE_ROUTINE = 0x19,  /* cm848_handleBootExecuteAtAddressService */
+    DIAGNOSTIC_SERVICE_GET_ADDRESS_BY_PARAMETER_ID = 0x41,  /* cm848_handleBootGetAddressByParameterIdService */
+    DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_OFFSET = 0x43,  /* cm848_handleBootReadByParameterIdLongLengthService */
     DIAGNOSTIC_SERVICE_MEMORY_WRITE = 0x44,  /* kernel memory-write (ROM->RAM window) */
     DIAGNOSTIC_SERVICE_MEMORY_WRITE_69 = 0x45,  /* kernel memory-write */
-    DIAGNOSTIC_SERVICE_MEMORY_READ = 0x4a,  /* cm848_diagService74_memoryRead */
+    DIAGNOSTIC_SERVICE_MEMORY_READ = 0x4a,  /* cm848_handleBootReadMemoryService */
     DIAGNOSTIC_SERVICE_MEMORY_WRITE_75 = 0x4b,  /* kernel memory-write */
-    DIAGNOSTIC_SERVICE_MEMORY_READ_EXT = 0x4c,  /* cm848_diagService76_memoryReadExt */
+    DIAGNOSTIC_SERVICE_MEMORY_READ_EXT = 0x4c,  /* cm848_handleBootReadMemoryLongLengthService */
     DIAGNOSTIC_SERVICE_MEMORY_WRITE_EXT = 0x4d  /* kernel memory-write ext */
 } DIAGNOSTIC_SERVICE;
 
@@ -2580,7 +2599,7 @@ struct j1939_diagnostic_service_entry_t {
 };
 
 struct boot_diagnostic_service_entry_t {
-    uint8_t service_id;  /* The boot diagnostic service byte: the kernel's constant-ID cm848_registerDiagnosticService calls register 0x0b / 0x10 / 0x18 (acknowledge - no operation) / 0x19 (execute function) / 0x41 (service 65) / 0x43 / 0x4a / 0x4c (memory reads) */
+    BOOT_DIAGNOSTIC_SERVICE service_id;  /* The boot diagnostic service byte: the kernel's constant-ID cm848_registerDiagnosticService calls register 0x0b / 0x10 / 0x18 (acknowledge - no operation) / 0x19 (execute function) / 0x41 (service 65) / 0x43 / 0x4a / 0x4c (memory reads) */
     void * handler;  /* The service handler at offset 1 (unaligned): cm848_dispatchDiagnosticService calls it */
 };
 
@@ -3046,8 +3065,8 @@ struct eeprom_xfer_state_t {
     uint32_t bytes_transferred;  /* Current byte offset progress in EEPROM transfer block */
     uint32_t block_length;  /* Total bytes in current EEPROM transfer block */
     uint16_t _pad8;  /* Reserved */
-    uint32_t eeprom_write_callback;  /* Writer for memory region type 5 (EEPROM) called by cm848_writeDiagMemory (was write_callback_ptr) */
-    uint32_t flash2_write_callback;  /* Writer for memory region type 2 (Bank-2 flash) called by cm848_writeDiagMemory (was read_callback_ptr - it writes) */
+    uint32_t eeprom_write_callback;  /* Writer for memory region type 5 (EEPROM) called by cm848_writeBootDiagnosticMemory (was write_callback_ptr) */
+    uint32_t flash2_write_callback;  /* Writer for memory region type 2 (Bank-2 flash) called by cm848_writeBootDiagnosticMemory (was read_callback_ptr - it writes) */
     uint16_t transfer_timer;  /* Transfer timeout countdown (0x28 or 0x4B ticks init) */
 };
 

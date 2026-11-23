@@ -1,6 +1,6 @@
 address,name,type,comment
 0x00003c30,boot_kernel_rom_start,dword,Start of the boot reflash kernel image copied to RAM 0x3f9800
-0x00007f60,boot_kernel_rom_end,byte,End of the boot reflash kernel image
+0x00007f60,boot_kernel_rom_end,byte,End of the boot reflash kernel image - and the start of the boot read reply table that cm848_readBootDiagnosticMemoryAndRespond indexes by the read service - 0x43 (45 00 00 47 00 49 00 4b 00 4d: the same pairs as j1939_memory_read_reply_services). The name stays for the copy loop's bound (PR #53 round 63)
 0x00007f7b,eepromStatusHandler_ptr0,pointer,
 0x00007f80,,byte,
 0x00008104,,pointer,
@@ -810,7 +810,7 @@ address,name,type,comment
 0x003021d0,TPU3_CH13_PARAM0,byte,
 0x003021e0,TPU3_CH14_PARAM0,byte,
 0x003021f0,TPU3_CH15_PARAM0,byte,
-0x003024c6,boot_can_ring_state,can_ring_state_t,The boot ROM / kernel CAN driver's queue state (can_ring_state_t): the transmit ring (12-byte frames at 0x3022e6) and receive ring (18-byte records at 0x302016) pointers, their full flags and the transmit message buffer. Users: mpc555_canTransmitQueuePush, mpc555_manageCan1TransmitBuffer, mpc555_processCanReceiveBuffer, mpc555_dispatchCanMessageHandlers (kernel) and mpc555_initDiagnosticSubsystem, mpc555_diagService25_executeFunction (boot ROM); the application has its own CAN driver (was j1939_can_ring_buf)
+0x003024c6,boot_can_ring_state,can_ring_state_t,The boot ROM / kernel CAN driver's queue state (can_ring_state_t): the transmit ring (12-byte frames at 0x3022e6) and receive ring (18-byte records at 0x302016) pointers, their full flags and the transmit message buffer. Users: mpc555_canTransmitQueuePush, mpc555_manageCan1TransmitBuffer, mpc555_processCanReceiveBuffer, mpc555_dispatchCanMessageHandlers (kernel) and mpc555_initDiagnosticSubsystem, cm848_handleBootExecuteAtAddressService (boot ROM); the application has its own CAN driver (was j1939_can_ring_buf)
 0x003024ca,boot_can_ring_state.transmit_read_pointer,,
 0x003024ce,boot_can_ring_state.receive_write_pointer,,
 0x003024d2,boot_can_ring_state.receive_read_pointer,,
@@ -8579,7 +8579,7 @@ address,name,type,comment
 0x003fd28b,intake_air_heater_2_output_read_back_check,discrete_output_read_back_counters_t,logical output 44 (read-back line 10; faults 297 / 296): its read-back check counters (cm848_checkDiscreteOutputReadBack) (PR #53 round 32)
 0x003fd28f,lift_pump_output_read_back_check,discrete_output_read_back_counters_t,logical output 53 (read-back line 1; faults 386 / 387): its read-back check counters (cm848_checkDiscreteOutputReadBack) (PR #53 round 32)
 0x003fd295,air_conditioning_output_read_back_retry_count,word,logical output 38: commanded-on-but-off retries of the output (up to auxiliary_driver_toggle_count_limit before fault 371) (PR #53 round 32)
-0x003fd297,engine_brake_1_output_read_back_retry_count,word,logical output 11: commanded-on-but-off retries of the output (up to auxiliary_driver_toggle_count_limit before fault 41) | TIME-SHARED: TIME-SHARED: the boot ROM calls cm848_lookupMemoryRegionType here (the kernel RAM image) while the application uses the byte as data - keep a data label until the application meaning is named (PR #53 round 32)
+0x003fd297,engine_brake_1_output_read_back_retry_count,word,logical output 11: commanded-on-but-off retries of the output (up to auxiliary_driver_toggle_count_limit before fault 41) | TIME-SHARED: TIME-SHARED: the boot ROM calls cm848_lookupBootMemoryRegionType here (the kernel RAM image) while the application uses the byte as data - keep a data label until the application meaning is named (PR #53 round 32)
 0x003fd299,intake_air_heater_1_output_read_back_retry_count,word,logical output 43: commanded-on-but-off retries of the output (up to auxiliary_driver_toggle_count_limit before fault 295) (PR #53 round 32)
 0x003fd29b,intake_air_heater_2_output_read_back_retry_count,word,logical output 44: commanded-on-but-off retries of the output (up to auxiliary_driver_toggle_count_limit before fault 297) (PR #53 round 32)
 0x003fd29d,lift_pump_output_read_back_retry_count,word,logical output 53: commanded-on-but-off retries of the output (up to auxiliary_driver_toggle_count_limit before fault 386) (PR #53 round 32)

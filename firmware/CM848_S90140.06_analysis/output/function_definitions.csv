@@ -99,9 +99,6 @@ function_address,function_name,param_index,name,type,comment
 # Memory Read Handlers (Diagnostic Services 0x43-0x4A)
 # Pattern: Returns response data via pointer, returns length
 # -----------------------------------------------------------------------------
-0x00001b48,cm848_diagMemoryReadHandler,0,address,uint,Memory address to read from
-0x00001b48,cm848_diagMemoryReadHandler,1,length,ushort,Number of bytes to read
-0x00001b48,cm848_diagMemoryReadHandler,2,response_ptr,byte*,Pointer to response buffer
 
 # -----------------------------------------------------------------------------
 # Handler Registration Functions
@@ -209,18 +206,10 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 0x00003f70,cm848_lookupBootParameterIdAddress,0,param_id,ushort,16-bit parameter ID to resolve
 
-0x000019e8,cm848_diagService65_handler,0,request_msg,int,Pointer to EF00 request message (service 0x41)
 
-0x00001cf8,cm848_diagMemoryReadWithBaseOffset,0,request_msg,dword,Pointer to request message
-0x00001cf8,cm848_diagMemoryReadWithBaseOffset,1,param_id,ushort,Parameter ID to resolve
-0x00001cf8,cm848_diagMemoryReadWithBaseOffset,2,reserved,short,Reserved (always 0)
-0x00001cf8,cm848_diagMemoryReadWithBaseOffset,3,offset,dword,Offset to add to resolved address
 
-0x00001d5c,cm848_diagService67_memoryReadOffset,0,request_msg,int,Pointer to EF00 request message (service 0x43)
 
-0x00001dc4,cm848_diagService74_memoryRead,0,request_msg,dword,Pointer to EF00 request message (service 0x4A)
 
-0x00001e30,cm848_diagService76_memoryReadExt,0,request_msg,dword,Pointer to EF00 request message (service 0x4C)
 
 # -----------------------------------------------------------------------------
 # EF00 Service Dispatch System - J1939 PGN 0xEF00 handler registration
@@ -229,7 +218,7 @@ function_address,function_name,param_index,name,type,comment
 0x000220e4,cm848_j1939RegisterDiagnosticService,0,service_id,J1939_DIAGNOSTIC_SERVICE,The PGN 61184 service byte to register (was EF00 service ID to register - EF00 is the PGN in hex; PR #53 round 63)
 0x000220e4,cm848_j1939RegisterDiagnosticService,1,handler_ptr,void*,Function pointer for service handler
 
-0x00002c94,cm848_registerDiagnosticService,0,service_id,byte,Diagnostic service ID (0x43/0x4A/0x4C)
+0x00002c94,cm848_registerDiagnosticService,0,service_id,BOOT_DIAGNOSTIC_SERVICE,Diagnostic service ID (0x43/0x4A/0x4C)
 0x00002c94,cm848_registerDiagnosticService,1,handler_ptr,void*,Function pointer for service handler
 
 0x00002cd8,cm848_registerPgnEf00Handler,0,sub_id,byte,Sub-identifier for PGN 0xEF00 filtering
@@ -556,3 +545,25 @@ function_address,function_name,param_index,name,type,comment
 0x0050af58,cm848_writeJ1939DiagnosticMemory,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x0050af58,cm848_writeJ1939DiagnosticMemory,1,address,byte*,The first byte to write (PR #53 round 63)
 0x0050af58,cm848_writeJ1939DiagnosticMemory,2,length,uint,Bytes to write - at most 1764 (PR #53 round 63)
+0x00001b48,cm848_readBootDiagnosticMemoryAndRespond,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00001b48,cm848_readBootDiagnosticMemoryAndRespond,1,address,uint,The first byte to read (was the length row; PR #53 round 63)
+0x00001b48,cm848_readBootDiagnosticMemoryAndRespond,2,length,uint,Bytes to read - at most 1764 (was the response_ptr row; PR #53 round 63)
+0x00001cf8,cm848_readBootDiagnosticMemoryByParameterId,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00001cf8,cm848_readBootDiagnosticMemoryByParameterId,1,parameter_id,ushort,The parameter ID that cm848_lookupBootParameterIdAddress resolves (PR #53 round 63)
+0x00001cf8,cm848_readBootDiagnosticMemoryByParameterId,2,offset,uint,Added to the ID's address (was named reserved; PR #53 round 63)
+0x00001cf8,cm848_readBootDiagnosticMemoryByParameterId,3,length,uint,Bytes to read (was named offset; PR #53 round 63)
+0x00005400,cm848_writeBootDiagnosticMemory,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00005400,cm848_writeBootDiagnosticMemory,1,address,uint,The first byte to write (PR #53 round 63)
+0x00005400,cm848_writeBootDiagnosticMemory,2,length,uint,Bytes to write (PR #53 round 63)
+0x00005728,cm848_writeBootDiagnosticMemoryByParameterId,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00005728,cm848_writeBootDiagnosticMemoryByParameterId,1,parameter_id,ushort,The parameter ID that cm848_lookupBootParameterIdAddress resolves (PR #53 round 63)
+0x00005728,cm848_writeBootDiagnosticMemoryByParameterId,2,offset,uint,Added to the ID's address (PR #53 round 63)
+0x00005728,cm848_writeBootDiagnosticMemoryByParameterId,3,length,uint,Bytes to write (PR #53 round 63)
+0x000019e8,cm848_handleBootGetAddressByParameterIdService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00001d5c,cm848_handleBootReadByParameterIdLongLengthService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00001dc4,cm848_handleBootReadMemoryService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00001e30,cm848_handleBootReadMemoryLongLengthService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00005798,cm848_handleBootWriteByParameterIdService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00005808,cm848_handleBootWriteByParameterIdLongLengthService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x00005870,cm848_handleBootWriteMemoryService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)
+0x000058e8,cm848_handleBootWriteMemoryLongLengthService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)

@@ -1164,7 +1164,7 @@ j1939_diagnostic_service_entry_t,,pad,byte,1,Never written: the registrar stores
 j1939_diagnostic_service_entry_t,,handler,pointer,4,The service handler: called with the received j1939_rx_msg_t once cm848_validateJ1939DiagnosticRequest accepts the request,,verified
 
 # Boot kernel diagnostic service entry (5 bytes - packed): diagnostic_service_dispatch_table (RAM 0x3fdb30) - cm848_registerDiagnosticService appends {service - handler} (14 entries - capacity 20) and cm848_dispatchDiagnosticService scans them; 2 entries are typed because the application's EEPROM mirror words share the RAM from 0x3fdb3a (was diag_dispatch_entry_t; PR #53 round 61)
-boot_diagnostic_service_entry_t,,service_id,byte,1,The boot diagnostic service byte: the kernel's constant-ID cm848_registerDiagnosticService calls register 0x0b / 0x10 / 0x18 (acknowledge - no operation) / 0x19 (execute function) / 0x41 (service 65) / 0x43 / 0x4a / 0x4c (memory reads),,verified
+boot_diagnostic_service_entry_t,,service_id,BOOT_DIAGNOSTIC_SERVICE,1,The boot diagnostic service byte: the kernel's constant-ID cm848_registerDiagnosticService calls register 0x0b / 0x10 / 0x18 (acknowledge - no operation) / 0x19 (execute function) / 0x41 (service 65) / 0x43 / 0x4a / 0x4c (memory reads),,verified
 boot_diagnostic_service_entry_t,,handler,pointer,4,The service handler at offset 1 (unaligned): cm848_dispatchDiagnosticService calls it,,verified
 
 # ============================================================================
@@ -1728,7 +1728,7 @@ can_slot_range_t,0x00302510,slot_end,word,2,Last CAN mailbox slot for diagnostic
 can_rx_channel_t,0x0030251c,channel_id,word,2,J1939 source address filter for CAN receive matching,,verified
 # =============================================================================
 # EEPROM diagnostic service callback parameter @ 0x30252a
-# Pointer/handle passed to mpc555_diagServiceInitEepromTransfer callback
+# Pointer/handle passed to cm848_handleBootInitializeEepromTransferService callback
 # =============================================================================
 eeprom_param_t,0x0030252a,callback_param,dword,4,Diagnostic callback parameter for EEPROM transfer,,verified
 # =============================================================================
@@ -1749,8 +1749,8 @@ system_initialization_flags_t,0x00302736,initialization_counter,word,2,"0, store
 eeprom_xfer_state_t,0x00302878,bytes_transferred,dword,4,Current byte offset progress in EEPROM transfer block,,verified
 eeprom_xfer_state_t,0x00302878,block_length,dword,4,Total bytes in current EEPROM transfer block,,verified
 eeprom_xfer_state_t,0x00302878,_pad8,word,2,Reserved,,verified
-eeprom_xfer_state_t,0x00302878,eeprom_write_callback,dword,4,Writer for memory region type 5 (EEPROM) called by cm848_writeDiagMemory (was write_callback_ptr),,verified
-eeprom_xfer_state_t,0x00302878,flash2_write_callback,dword,4,Writer for memory region type 2 (Bank-2 flash) called by cm848_writeDiagMemory (was read_callback_ptr - it writes),,verified
+eeprom_xfer_state_t,0x00302878,eeprom_write_callback,dword,4,Writer for memory region type 5 (EEPROM) called by cm848_writeBootDiagnosticMemory (was write_callback_ptr),,verified
+eeprom_xfer_state_t,0x00302878,flash2_write_callback,dword,4,Writer for memory region type 2 (Bank-2 flash) called by cm848_writeBootDiagnosticMemory (was read_callback_ptr - it writes),,verified
 eeprom_xfer_state_t,0x00302878,transfer_timer,word,2,Transfer timeout countdown (0x28 or 0x4B ticks init),,verified
 # =============================================================================
 # EEPROM block range tracking @ 0x3028a6

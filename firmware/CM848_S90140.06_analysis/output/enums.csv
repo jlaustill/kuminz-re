@@ -508,7 +508,7 @@ EEPROM_MEMORY_BLOCKS,9,PRIMARY_BLOCK,Main parameter memory block,1
 
 # J1939_DIAGNOSTIC_SERVICE - the PGN 61184 diagnostic service byte: the first data byte of a request or a response (was EF00_SERVICE_ID - EF00 is the PGN in hex; PR #53 round 63). Members: the services the application registers with cm848_j1939RegisterDiagnosticService (j1939_diagnostic_service_table) and the two responses cm848_sendJ1939ResponseFrame sends
 # Replies: 0x41 answers with 0x42 (the ID and its 4-byte address). A memory read answers with the matching write layout carrying the data (j1939_memory_read_reply_services): 0x43 -> 0x45 (0x44 under 256 bytes) / 0x46 -> 0x47 / 0x48 -> 0x49 / 0x4a -> 0x4b / 0x4c -> 0x4d
-# The boot kernel keeps its own table (cm848_registerDiagnosticService: 2 / 7 / 0x0b / 0x10 / 0x18 / 0x19 / 0x41 / 0x43-0x45 / 0x4a-0x4d) and its 7 downloads a calibration - so this enum is for the application only
+# The boot kernel keeps its own table (cm848_registerDiagnosticService: 2 / 7 / 0x0b / 0x10 / 0x18 / 0x19 / 0x41 / 0x43-0x45 / 0x4a-0x4d) and its 7 downloads a calibration - so this enum is for the application only (the boot kernel's is BOOT_DIAGNOSTIC_SERVICE)
 # Corrected here: 0x15 was GET_ADDRESS_BY_PARAM_ID but commits the EEPROM mirror (0x41 gets the address) - 0x43 was MEM_READ_2B_PARAM_4B_OFFSET but its 4-byte field is the length - 0x46 was MEM_READ_2B_PARAM_ONLY and noted NOT REGISTERED but the application registers it with an offset and a length - 0x49 was J1939_DATA_COPY but writes by parameter ID
 # Open: clip-core (ECUReader::readParameterService43 / 46) sends 0x43's 4 bytes as an offset and 0x46 with zeros after the ID - on CM848 those bytes are a length (0x43) and an offset and a length (0x46); a bench check is a task 046 lead
 J1939_DIAGNOSTIC_SERVICE,0x01,J1939_DIAGNOSTIC_SERVICE_CLEAR_INACTIVE_FAULTS,cm848_requestClearInactiveFaults: sets the CLEAR_INACTIVE bit of diagnostic_clear_request_state as DM3 does (was SERVICE_QUERY_TERMINATE),1
@@ -537,6 +537,24 @@ J1939_DIAGNOSTIC_SERVICE,0x4a,J1939_DIAGNOSTIC_SERVICE_READ_MEMORY,cm848_handleJ
 J1939_DIAGNOSTIC_SERVICE,0x4b,J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY,cm848_handleJ1939WriteMemoryService: an address (4 bytes) and a length (1) then the data (was SERVICE_4B),1
 J1939_DIAGNOSTIC_SERVICE,0x4c,J1939_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH,cm848_handleJ1939ReadMemoryLongLengthService: an address (4 bytes) and a length (4) (was MEM_READ_4B_ADDR_4B_LEN),1
 J1939_DIAGNOSTIC_SERVICE,0x4d,J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH,cm848_handleJ1939WriteMemoryLongLengthService: an address (4 bytes) and a length (4) then the data (was SERVICE_4D),1
+# BOOT_DIAGNOSTIC_SERVICE - the PGN 61184 service byte as the boot kernel reads it (PR #53 round 63): the services it registers with cm848_registerDiagnosticService (diagnostic_service_dispatch_table) and the two responses cm848_sendDiagServiceResponse sends. Its 7 downloads a calibration where the application's 7 exits development mode - so it is its own enum (the application's is J1939_DIAGNOSTIC_SERVICE)
+# The memory services keep the application's layouts and reply pairs (0x43 -> 0x45 or 0x44 under 256 bytes / 0x4a -> 0x4b / 0x4c -> 0x4d through the table at boot_kernel_rom_end); the writes run from the reflash kernel's RAM copy
+BOOT_DIAGNOSTIC_SERVICE,0x02,BOOT_DIAGNOSTIC_SERVICE_INITIALIZE_EEPROM_TRANSFER,cm848_handleBootInitializeEepromTransferService: mpc555_initEepromTransfer(2) after a response-pending 0x96,1
+BOOT_DIAGNOSTIC_SERVICE,0x07,BOOT_DIAGNOSTIC_SERVICE_DOWNLOAD_CALIBRATION,cm848_handleBootDownloadCalibrationService: mpc555_loadEepromCalibration(request / 2),1
+BOOT_DIAGNOSTIC_SERVICE,0x0b,BOOT_DIAGNOSTIC_SERVICE_NO_OPERATION_11,cm848_bootDiagnosticServiceAcknowledgeNoOperation: accepted and does nothing,1
+BOOT_DIAGNOSTIC_SERVICE,0x0c,BOOT_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE,Sent by cm848_sendDiagServiceResponse for result 0; cm848_dispatchDiagnosticService ignores a received one,1
+BOOT_DIAGNOSTIC_SERVICE,0x0d,BOOT_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE,Sent by cm848_sendDiagServiceResponse for a nonzero result other than 0xfe (that sends 0x0e); cm848_dispatchDiagnosticService ignores a received one,1
+BOOT_DIAGNOSTIC_SERVICE,0x10,BOOT_DIAGNOSTIC_SERVICE_NO_OPERATION_16,cm848_bootDiagnosticServiceAcknowledgeNoOperation: accepted and does nothing,1
+BOOT_DIAGNOSTIC_SERVICE,0x18,BOOT_DIAGNOSTIC_SERVICE_NO_OPERATION_24,cm848_bootDiagnosticServiceAcknowledgeNoOperation: accepted and does nothing,1
+BOOT_DIAGNOSTIC_SERVICE,0x19,BOOT_DIAGNOSTIC_SERVICE_EXECUTE_AT_ADDRESS,cm848_handleBootExecuteAtAddressService: calls the request's 4-byte address once the positive response has left the CAN transmit ring,1
+BOOT_DIAGNOSTIC_SERVICE,0x41,BOOT_DIAGNOSTIC_SERVICE_GET_ADDRESS_BY_PARAMETER_ID,cm848_handleBootGetAddressByParameterIdService: the ID (2 bytes); answered with 0x42,1
+BOOT_DIAGNOSTIC_SERVICE,0x43,BOOT_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_LENGTH,cm848_handleBootReadByParameterIdLongLengthService: the ID (2 bytes) and a length (4),1
+BOOT_DIAGNOSTIC_SERVICE,0x44,BOOT_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID,cm848_handleBootWriteByParameterIdService (RAM copy 0x3fb368): the ID (2 bytes) and a length (1) then the data,1
+BOOT_DIAGNOSTIC_SERVICE,0x45,BOOT_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_LENGTH,cm848_handleBootWriteByParameterIdLongLengthService (RAM copy 0x3fb3d8): the ID (2 bytes) and a length (4) then the data,1
+BOOT_DIAGNOSTIC_SERVICE,0x4a,BOOT_DIAGNOSTIC_SERVICE_READ_MEMORY,cm848_handleBootReadMemoryService: an address (4 bytes) and a length (1),1
+BOOT_DIAGNOSTIC_SERVICE,0x4b,BOOT_DIAGNOSTIC_SERVICE_WRITE_MEMORY,cm848_handleBootWriteMemoryService (RAM copy 0x3fb440): an address (4 bytes) and a length (1) then the data,1
+BOOT_DIAGNOSTIC_SERVICE,0x4c,BOOT_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH,cm848_handleBootReadMemoryLongLengthService: an address (4 bytes) and a length (4),1
+BOOT_DIAGNOSTIC_SERVICE,0x4d,BOOT_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH,cm848_handleBootWriteMemoryLongLengthService (RAM copy 0x3fb4b8): an address (4 bytes) and a length (4) then the data,1
 
 # CAN Timer Init Modes
 CAN_TIMER_INIT_MODE,0,BASIC_DELAY,Basic timer + delay with watchdog,1
@@ -856,19 +874,19 @@ CRUISE_SWITCH_REQUEST,5,CRUISE_SWITCH_IDLE,No button pressed / debounce-settling
 VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_STATE,0,VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_NORMAL,engine-load protection not derating,2
 VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_STATE,8,VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_ERROR,engine-load protection actively derating - bit3 (0x08) of the protection status word mirrors governor_status_flags confirm-B (0x8000),2
 # Reflash-kernel diagnostic service IDs - registered in diagnostic_service_dispatch_table by mpc555_initDiagnosticSubsystem (Calterm/Insite programming path)
-DIAGNOSTIC_SERVICE,0x02,DIAGNOSTIC_SERVICE_EEPROM_TRANSFER_INIT,mpc555_diagServiceInitEepromTransfer,1
-DIAGNOSTIC_SERVICE,0x07,DIAGNOSTIC_SERVICE_DOWNLOAD_CALIBRATION,cm848_diagServiceDownloadCalibration,1
+DIAGNOSTIC_SERVICE,0x02,DIAGNOSTIC_SERVICE_EEPROM_TRANSFER_INIT,cm848_handleBootInitializeEepromTransferService,1
+DIAGNOSTIC_SERVICE,0x07,DIAGNOSTIC_SERVICE_DOWNLOAD_CALIBRATION,cm848_handleBootDownloadCalibrationService,1
 DIAGNOSTIC_SERVICE,0x0b,DIAGNOSTIC_SERVICE_ACKNOWLEDGE_11,stub,1
 DIAGNOSTIC_SERVICE,0x10,DIAGNOSTIC_SERVICE_ACKNOWLEDGE_16,stub,1
 DIAGNOSTIC_SERVICE,0x18,DIAGNOSTIC_SERVICE_ACKNOWLEDGE_24,stub,1
-DIAGNOSTIC_SERVICE,0x19,DIAGNOSTIC_SERVICE_EXECUTE_ROUTINE,mpc555_diagService25_executeFunction,1
-DIAGNOSTIC_SERVICE,0x41,DIAGNOSTIC_SERVICE_GET_ADDRESS_BY_PARAMETER_ID,cm848_diagService65_handler,1
-DIAGNOSTIC_SERVICE,0x43,DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_OFFSET,cm848_diagService67_memoryReadOffset,1
+DIAGNOSTIC_SERVICE,0x19,DIAGNOSTIC_SERVICE_EXECUTE_ROUTINE,cm848_handleBootExecuteAtAddressService,1
+DIAGNOSTIC_SERVICE,0x41,DIAGNOSTIC_SERVICE_GET_ADDRESS_BY_PARAMETER_ID,cm848_handleBootGetAddressByParameterIdService,1
+DIAGNOSTIC_SERVICE,0x43,DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_OFFSET,cm848_handleBootReadByParameterIdLongLengthService,1
 DIAGNOSTIC_SERVICE,0x44,DIAGNOSTIC_SERVICE_MEMORY_WRITE,kernel memory-write (ROM->RAM window),1
 DIAGNOSTIC_SERVICE,0x45,DIAGNOSTIC_SERVICE_MEMORY_WRITE_69,kernel memory-write,1
-DIAGNOSTIC_SERVICE,0x4a,DIAGNOSTIC_SERVICE_MEMORY_READ,cm848_diagService74_memoryRead,1
+DIAGNOSTIC_SERVICE,0x4a,DIAGNOSTIC_SERVICE_MEMORY_READ,cm848_handleBootReadMemoryService,1
 DIAGNOSTIC_SERVICE,0x4b,DIAGNOSTIC_SERVICE_MEMORY_WRITE_75,kernel memory-write,1
-DIAGNOSTIC_SERVICE,0x4c,DIAGNOSTIC_SERVICE_MEMORY_READ_EXT,cm848_diagService76_memoryReadExt,1
+DIAGNOSTIC_SERVICE,0x4c,DIAGNOSTIC_SERVICE_MEMORY_READ_EXT,cm848_handleBootReadMemoryLongLengthService,1
 DIAGNOSTIC_SERVICE,0x4d,DIAGNOSTIC_SERVICE_MEMORY_WRITE_EXT,kernel memory-write ext,1
 
 # FUEL_PRESSURE_GOVERNOR_MODE - fuel_pressure_governor_state_t.fuel_pressure_governor_mode (cm848_calculateFuelMeteringCommand)

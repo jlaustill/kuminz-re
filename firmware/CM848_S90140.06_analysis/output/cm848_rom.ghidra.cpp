@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 07:30:46 MST 2026
+// Generated: Mon Nov 23 07:36:42 MST 2026
 
 
 //
@@ -129,17 +129,32 @@ void cm848_copyBootKernelToRam(void)
 
 
 //
-// Function: cm848_registerStandardDiagServices @ 0x0000037c
+// Function: cm848_registerBootCalibrationAndNoOperationServices @ 0x0000037c
 //
 
-void cm848_registerStandardDiagServices(void)
+/* Boot kernel: registers its PGN 61184 services 2 (cm848_handleBootInitializeEepromTransferService)
+   / 7 (cm848_handleBootDownloadCalibrationService) / 0x0b / 0x10 / 0x18
+   (cm848_bootDiagnosticServiceAcknowledgeNoOperation) in diagnostic_service_dispatch_table (was
+   cm848_registerStandardDiagServices; PR #53 round 63) */
+
+void cm848_registerBootCalibrationAndNoOperationServices(void)
 
 {
-  cm848_registerDiagnosticService(2,mpc555_diagServiceInitEepromTransfer);
-  cm848_registerDiagnosticService(7,cm848_diagServiceDownloadCalibration);
-  cm848_registerDiagnosticService(0xb,cm848_diagServiceAcknowledgeNoOperation);
-  cm848_registerDiagnosticService(0x10,cm848_diagServiceAcknowledgeNoOperation);
-  cm848_registerDiagnosticService(0x18,cm848_diagServiceAcknowledgeNoOperation);
+  cm848_registerDiagnosticService
+            (BOOT_DIAGNOSTIC_SERVICE_INITIALIZE_EEPROM_TRANSFER,
+             cm848_handleBootInitializeEepromTransferService);
+  cm848_registerDiagnosticService
+            (BOOT_DIAGNOSTIC_SERVICE_DOWNLOAD_CALIBRATION,cm848_handleBootDownloadCalibrationService
+            );
+  cm848_registerDiagnosticService
+            (BOOT_DIAGNOSTIC_SERVICE_NO_OPERATION_11,
+             cm848_bootDiagnosticServiceAcknowledgeNoOperation);
+  cm848_registerDiagnosticService
+            (BOOT_DIAGNOSTIC_SERVICE_NO_OPERATION_16,
+             cm848_bootDiagnosticServiceAcknowledgeNoOperation);
+  cm848_registerDiagnosticService
+            (BOOT_DIAGNOSTIC_SERVICE_NO_OPERATION_24,
+             cm848_bootDiagnosticServiceAcknowledgeNoOperation);
   return;
 }
 
@@ -161,13 +176,16 @@ void cm848_eepromProgressNotify(j1939_rx_msg_t *param_1,int param_2,dword param_
 
 
 //
-// Function: cm848_diagServiceAcknowledgeNoOperation @ 0x00000420
+// Function: cm848_bootDiagnosticServiceAcknowledgeNoOperation @ 0x00000420
 //
 
-/* Diagnostic service no-op (li r3 0; blr = returns 0 success): registered for services 11 / 16 / 24
-   in diagnostic_service_dispatch_table - accepts the request and does nothing */
+/* Boot kernel services 0x0b / 0x10 / 0x18: returns 0 (accepted) and does nothing. The application's
+   twin is cm848_j1939DiagnosticServiceAcknowledgeNoOperation (was
+   cm848_diagServiceAcknowledgeNoOperation; PR #53 round 63) | earlier note: Diagnostic service
+   no-op (li r3 0; blr = returns 0 success): registered for services 11 / 16 / 24 in
+   diagnostic_service_dispatch_table - accepts the request and does nothing */
 
-undefined4 cm848_diagServiceAcknowledgeNoOperation(void)
+undefined4 cm848_bootDiagnosticServiceAcknowledgeNoOperation(void)
 
 {
   return 0;
@@ -370,13 +388,15 @@ void mpc555_loadEepromCalibration(undefined4 param_1,int param_2)
 
 
 //
-// Function: cm848_diagServiceDownloadCalibration @ 0x000008d4
+// Function: cm848_handleBootDownloadCalibrationService @ 0x000008d4
 //
 
-/* dispatched as diagnostic service 7 via diagnostic_service_dispatch_table
+/* Boot kernel service 7: mpc555_loadEepromCalibration(request / 2) then returns 0xff (the
+   dispatcher sends no response) (was cm848_diagServiceDownloadCalibration; PR #53 round 63) |
+   earlier note: dispatched as diagnostic service 7 via diagnostic_service_dispatch_table
    (cm848_dispatchDiagnosticService) - not a dead function */
 
-undefined4 cm848_diagServiceDownloadCalibration(undefined4 param_1)
+undefined4 cm848_handleBootDownloadCalibrationService(undefined4 param_1)
 
 {
   mpc555_loadEepromCalibration(param_1,2);
@@ -432,13 +452,16 @@ short mpc555_initEepromTransfer(int param_1)
 
 
 //
-// Function: mpc555_diagServiceInitEepromTransfer @ 0x000009e4
+// Function: cm848_handleBootInitializeEepromTransferService @ 0x000009e4
 //
 
-/* dispatched as diagnostic service 2 via diagnostic_service_dispatch_table
-   (cm848_dispatchDiagnosticService) - not a dead function */
+/* Boot kernel service 2: sends response-pending 0x96 (cm848_sendDiagResponsePending) / keeps the
+   request in eeprom_diag_callback / starts mpc555_initEepromTransfer(2) - 0x17 when that returns 0
+   else 0xff (was mpc555_diagServiceInitEepromTransfer; PR #53 round 63) | earlier note: dispatched
+   as diagnostic service 2 via diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) -
+   not a dead function */
 
-undefined4 mpc555_diagServiceInitEepromTransfer(undefined4 param_1)
+undefined4 cm848_handleBootInitializeEepromTransferService(undefined4 param_1)
 
 {
   short sVar2;
@@ -1112,13 +1135,18 @@ void cm848_stubFunction2(void)
 
 
 //
-// Function: mpc555_diagService25_executeFunction @ 0x00001840
+// Function: cm848_handleBootExecuteAtAddressService @ 0x00001840
 //
 
-/* dispatched as diagnostic service 25 via diagnostic_service_dispatch_table
-   (cm848_dispatchDiagnosticService) - not a dead function */
+/* Boot kernel service 0x19: checks the request
+   (cm848_validateDiagnosticRequestLengthAndAuthorization) / takes a 4-byte address from bytes 1-4 /
+   refuses region type 9 (cm848_lookupBootMemoryRegionType) / sends the positive response / waits at
+   most 0x40c MIOS counter ticks for the boot CAN transmit ring to empty and calls the address (was
+   mpc555_diagService25_executeFunction; PR #53 round 63) | earlier note: dispatched as diagnostic
+   service 25 via diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) - not a dead
+   function */
 
-char mpc555_diagService25_executeFunction(j1939_rx_msg_t *param_1)
+char cm848_handleBootExecuteAtAddressService(j1939_rx_msg_t *param_1)
 
 {
   dword dVar1;
@@ -1132,7 +1160,7 @@ char mpc555_diagService25_executeFunction(j1939_rx_msg_t *param_1)
   cVar6 = cm848_validateDiagnosticRequestLengthAndAuthorization(param_1);
   if (cVar6 == -1) {
     cm848_copyBytes(local_20,param_1->data_pointer + 1,4);
-    cVar6 = cm848_lookupMemoryRegionType(local_20[0],1);
+    cVar6 = cm848_lookupBootMemoryRegionType(local_20[0],1);
     if (cVar6 != '\t') {
       cm848_sendDiagServiceResponse(param_1,0);
       wVar4 = mios_mmcsm_cnt.CNT;
@@ -1155,13 +1183,17 @@ LAB_000018f4:
 
 
 //
-// Function: cm848_initService25Handler @ 0x0000191c
+// Function: cm848_registerBootExecuteAtAddressService @ 0x0000191c
 //
 
-void cm848_initService25Handler(void)
+/* Boot kernel: registers service 0x19 (cm848_handleBootExecuteAtAddressService) (was
+   cm848_initService25Handler; PR #53 round 63) */
+
+void cm848_registerBootExecuteAtAddressService(void)
 
 {
-  cm848_registerDiagnosticService(0x19,mpc555_diagService25_executeFunction);
+  cm848_registerDiagnosticService
+            (BOOT_DIAGNOSTIC_SERVICE_EXECUTE_AT_ADDRESS,cm848_handleBootExecuteAtAddressService);
   return;
 }
 
@@ -1190,34 +1222,47 @@ bool cm848_registerPgnResponseHandler(dword pgn,void *handler_func)
 
 
 //
-// Function: cm848_initDataBasedDiagServices @ 0x0000198c
+// Function: cm848_registerBootMemoryWriteServices @ 0x0000198c
 //
 
-/* Boot path (reset -> mpc555_initDiagnosticSubsystem): registers boot reflash kernel memory-write
-   services 0x44 / 0x45 / 0x4B / 0x4D with handlers at their RAM-copy addresses 0x3fb368 / 0x3fb3d8
-   / 0x3fb440 / 0x3fb4b8 (= ROM 0x5798 / 0x5808 / 0x5870 / 0x58e8). The arguments render as
-   application variables because the running app reuses that RAM */
+/* Boot kernel (reset -> mpc555_initDiagnosticSubsystem): registers the memory write services 0x44 /
+   0x45 / 0x4b / 0x4d with their handlers' RAM-copy addresses 0x3fb368 / 0x3fb3d8 / 0x3fb440 /
+   0x3fb4b8 (ROM 0x5798 / 0x5808 / 0x5870 / 0x58e8 - the cm848_handleBootWrite*Service handlers).
+   The arguments render as application variables because the running application reuses that RAM
+   (was cm848_initDataBasedDiagServices; PR #53 round 63) | earlier note: Boot path (reset ->
+   mpc555_initDiagnosticSubsystem): registers boot reflash kernel memory-write services 0x44 / 0x45
+   / 0x4B / 0x4D with handlers at their RAM-copy addresses 0x3fb368 / 0x3fb3d8 / 0x3fb440 / 0x3fb4b8
+   (= ROM 0x5798 / 0x5808 / 0x5870 / 0x58e8). The arguments render as application variables because
+   the running app reuses that RAM */
 
-void cm848_initDataBasedDiagServices(void)
+void cm848_registerBootMemoryWriteServices(void)
 
 {
-  cm848_registerDiagnosticService(0x44,(void *)((int)&serial_output_driver_job.transmit_words + 2));
-  cm848_registerDiagnosticService(0x45,(void *)((int)&pci_diagnostic_parameter_base_address + 2));
-  cm848_registerDiagnosticService(0x4b,qspi_device_slot_table + 3);
-  cm848_registerDiagnosticService(0x4d,&qspi_job_queues[1].field_0x2f);
+  cm848_registerDiagnosticService
+            (BOOT_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID,
+             (void *)((int)&serial_output_driver_job.transmit_words + 2));
+  cm848_registerDiagnosticService
+            (BOOT_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_LENGTH,
+             (void *)((int)&pci_diagnostic_parameter_base_address + 2));
+  cm848_registerDiagnosticService(BOOT_DIAGNOSTIC_SERVICE_WRITE_MEMORY,qspi_device_slot_table + 3);
+  cm848_registerDiagnosticService
+            (BOOT_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH,&qspi_job_queues[1].field_0x2f);
   return;
 }
 
 
 
 //
-// Function: cm848_diagService65_handler @ 0x000019e8
+// Function: cm848_handleBootGetAddressByParameterIdService @ 0x000019e8
 //
 
-/* dispatched as diagnostic service 65 via diagnostic_service_dispatch_table
-   (cm848_dispatchDiagnosticService) - not a dead function */
+/* Boot kernel service 0x41: resolves the request's parameter ID (bytes 1-2) with
+   cm848_lookupBootParameterIdAddress (8 when unknown) and answers with 0x42. Twin of the
+   application's cm848_handleJ1939GetAddressByParameterIdService (was cm848_diagService65_handler;
+   PR #53 round 63) | earlier note: dispatched as diagnostic service 65 via
+   diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) - not a dead function */
 
-undefined4 cm848_diagService65_handler(dword request_msg)
+undefined4 cm848_handleBootGetAddressByParameterIdService(j1939_rx_msg_t *request)
 
 {
   int iVar1;
@@ -1234,15 +1279,14 @@ undefined4 cm848_diagService65_handler(dword request_msg)
   undefined4 local_10;
   undefined2 local_c;
   
-  local_c = *(word *)(*(int *)(request_msg + 6) + 1);
+  local_c = *(word *)(request->data_pointer + 1);
   iVar1 = cm848_lookupBootParameterIdAddress(local_c);
   if (iVar1 == 0) {
     uVar2 = 8;
   }
   else {
-    local_28 = CONCAT13((*(byte *)request_msg >> 2 & 7) << 2,0xefff00);
-    local_28 = CONCAT31(CONCAT21(local_28._0_2_,*(undefined1 *)(request_msg + 3)),
-                        *(undefined1 *)(request_msg + 2));
+    local_28 = CONCAT13((request->priority_dp_flags >> 2 & 7) << 2,0xefff00);
+    local_28 = CONCAT31(CONCAT21(local_28._0_2_,request->source_address),request->dest_address);
     local_18 = 0x42;
     local_17 = local_c._0_1_;
     local_16 = (undefined1)local_c;
@@ -1264,92 +1308,110 @@ undefined4 cm848_diagService65_handler(dword request_msg)
 
 
 //
-// Function: cm848_registerService65Handler @ 0x00001ad0
+// Function: cm848_registerBootGetAddressByParameterIdService @ 0x00001ad0
 //
 
-void cm848_registerService65Handler(void)
+/* Boot kernel: registers service 0x41 (cm848_handleBootGetAddressByParameterIdService) (was
+   cm848_registerService65Handler; PR #53 round 63) */
+
+void cm848_registerBootGetAddressByParameterIdService(void)
 
 {
-  cm848_registerDiagnosticService(0x41,cm848_diagService65_handler);
+  cm848_registerDiagnosticService
+            (BOOT_DIAGNOSTIC_SERVICE_GET_ADDRESS_BY_PARAMETER_ID,
+             cm848_handleBootGetAddressByParameterIdService);
   return;
 }
 
 
 
 //
-// Function: cm848_registerMemoryReadServices @ 0x00001afc
+// Function: cm848_registerBootMemoryReadServices @ 0x00001afc
 //
 
-void cm848_registerMemoryReadServices(void)
+/* Boot kernel: registers the memory read services 0x43 / 0x4a / 0x4c (the
+   cm848_handleBootRead*Service handlers) (was cm848_registerMemoryReadServices; PR #53 round 63) */
+
+void cm848_registerBootMemoryReadServices(void)
 
 {
-  cm848_registerDiagnosticService(0x43,cm848_diagService67_memoryReadOffset);
-  cm848_registerDiagnosticService(0x4a,cm848_diagService74_memoryRead);
-  cm848_registerDiagnosticService(0x4c,cm848_diagService76_memoryReadExt);
+  cm848_registerDiagnosticService
+            (BOOT_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_LENGTH,
+             cm848_handleBootReadByParameterIdLongLengthService);
+  cm848_registerDiagnosticService
+            (BOOT_DIAGNOSTIC_SERVICE_READ_MEMORY,cm848_handleBootReadMemoryService);
+  cm848_registerDiagnosticService
+            (BOOT_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH,
+             cm848_handleBootReadMemoryLongLengthService);
   return;
 }
 
 
 
 //
-// Function: cm848_diagMemoryReadHandler @ 0x00001b48
+// Function: cm848_readBootDiagnosticMemoryAndRespond @ 0x00001b48
 //
 
-char cm848_diagMemoryReadHandler(dword address,word length,byte *response_ptr)
+/* Boot kernel: reads memory for a PGN 61184 read request and sends the reply
+   (cm848_allocateDiagnosticResponseBuffer / CAN ID 0xefff00): a length cap of 1764 / the request
+   length against cm848_getBootMemoryServiceHeaderLength / the region from
+   cm848_lookupBootMemoryRegionType. The reply service comes from the table at boot_kernel_rom_end
+   (a 0x43 read under 256 bytes answers with 0x44). Its parameters are the request / the address /
+   the length (the old rows said address / length / response_ptr). Twin of the application's
+   cm848_readJ1939DiagnosticMemoryAndRespond (was cm848_diagMemoryReadHandler; PR #53 round 63) */
+
+char cm848_readBootDiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,dword length)
 
 {
   ushort uVar1;
   uint uVar2;
   ushort uVar3;
   char cVar4;
-  char cVar5;
   diagnostic_response_message_t *message;
-  undefined2 in_register_00000010;
-  uint uVar6;
-  int iVar7;
-  byte bVar8;
-  byte bVar9;
-  byte *pbVar10;
+  byte *pbVar5;
+  byte bVar6;
+  byte bVar7;
+  byte *pbVar8;
   
-  uVar6 = CONCAT22(in_register_00000010,length);
-  cVar5 = **(char **)(address + 6);
-  if (response_ptr < (byte *)0x6e5) {
-    uVar3 = cm848_getServiceDataOffset(cVar5);
-    uVar1 = *(ushort *)(address + 4);
+  bVar6 = *request->data_pointer;
+  if (length < 0x6e5) {
+    uVar3 = cm848_getBootMemoryServiceHeaderLength(bVar6);
+    uVar1 = request->data_length;
     if (((uVar1 == 8) || (uVar1 == (uVar3 & 0xff))) || ((ushort)((uVar3 & 0xff) + 10) == uVar1)) {
-      uVar2 = (uint)response_ptr & 0xffff;
-      cVar4 = cm848_lookupMemoryRegionType(uVar6,uVar2);
+      uVar2 = length & 0xffff;
+      cVar4 = cm848_lookupBootMemoryRegionType(address,uVar2);
       if ((cVar4 != '\n') && (cVar4 != '\t')) {
-        if ((cVar5 == 'C') && (uVar2 < 0x100)) {
-          bVar8 = 0x44;
-          *(undefined1 *)(*(int *)(address + 6) + 3) = *(undefined1 *)(*(int *)(address + 6) + 6);
+        if ((bVar6 == 0x43) && (uVar2 < 0x100)) {
+          bVar6 = 0x44;
+          request->data_pointer[3] = request->data_pointer[6];
         }
         else {
-          bVar8 = (&boot_kernel_rom_end)[(byte)(cVar5 + 0xbd)];
+          bVar6 = (&boot_kernel_rom_end)[(byte)(bVar6 + 0xbd)];
         }
-        cVar5 = cm848_getServiceDataOffset(bVar8);
-        bVar9 = cVar5 - 1;
+        cVar4 = cm848_getBootMemoryServiceHeaderLength(bVar6);
+        bVar7 = cVar4 - 1;
         message = (diagnostic_response_message_t *)
-                  cm848_allocateDiagnosticResponseBuffer((uint)(response_ptr + bVar9 + 1) & 0xffff);
+                  cm848_allocateDiagnosticResponseBuffer(bVar7 + length + 1 & 0xffff);
         if (message == (diagnostic_response_message_t *)0x0) {
           cVar4 = '\x04';
         }
         else {
-          pbVar10 = message->data_pointer;
+          pbVar8 = message->data_pointer;
           (message->header).can_id = 0xefff00;
           *(byte *)&(message->header).can_id =
-               (*(byte *)address >> 2 & 7) << 2 | *(byte *)&(message->header).can_id & 0xe3;
-          *(undefined1 *)((int)&(message->header).can_id + 2) = *(undefined1 *)(address + 3);
-          *(undefined1 *)((int)&(message->header).can_id + 3) = *(undefined1 *)(address + 2);
-          iVar7 = *(int *)(address + 6);
-          *pbVar10 = bVar8;
-          pbVar10 = pbVar10 + 1;
-          cm848_copyBytes(pbVar10,iVar7 + 1,bVar9);
-          if (uVar6 < 0x1000000) {
-            cm848_copyBytes(pbVar10 + bVar9,uVar6,uVar2);
+               (request->priority_dp_flags >> 2 & 7) << 2 |
+               *(byte *)&(message->header).can_id & 0xe3;
+          *(byte *)((int)&(message->header).can_id + 2) = request->source_address;
+          *(byte *)((int)&(message->header).can_id + 3) = request->dest_address;
+          pbVar5 = request->data_pointer;
+          *pbVar8 = bVar6;
+          pbVar8 = pbVar8 + 1;
+          cm848_copyBytes(pbVar8,pbVar5 + 1,bVar7);
+          if (address < 0x1000000) {
+            cm848_copyBytes(pbVar8 + bVar7,address,uVar2);
           }
           else {
-            mpc555_eepromReadWords(uVar6,pbVar10 + bVar9,uVar2);
+            mpc555_eepromReadWords(address,pbVar8 + bVar7,uVar2);
           }
           cm848_transmitCanMessage(message);
           cVar4 = -1;
@@ -1369,22 +1431,30 @@ char cm848_diagMemoryReadHandler(dword address,word length,byte *response_ptr)
 
 
 //
-// Function: cm848_diagMemoryReadWithBaseOffset @ 0x00001cf8
+// Function: cm848_readBootDiagnosticMemoryByParameterId @ 0x00001cf8
 //
 
+/* Boot kernel: reads by parameter ID for service 0x43 - cm848_lookupBootParameterIdAddress (8 when
+   unknown) then cm848_readBootDiagnosticMemoryAndRespond(request / the ID's address + offset /
+   length). Its add r31 / r4 / r31 adds the third parameter to the address and the fourth goes on as
+   the length (the old rows named them reserved and offset). Twin of the application's
+   cm848_readJ1939DiagnosticMemoryByParameterId (was cm848_diagMemoryReadWithBaseOffset; PR #53
+   round 63) */
+
 undefined1
-cm848_diagMemoryReadWithBaseOffset(dword request_msg,word param_id,word reserved,dword offset)
+cm848_readBootDiagnosticMemoryByParameterId
+          (j1939_rx_msg_t *request,word parameter_id,dword offset,dword length)
 
 {
   int iVar1;
   undefined1 uVar2;
   
-  iVar1 = cm848_lookupBootParameterIdAddress(param_id);
+  iVar1 = cm848_lookupBootParameterIdAddress(parameter_id);
   if (iVar1 == 0) {
     uVar2 = 8;
   }
   else {
-    uVar2 = cm848_diagMemoryReadHandler(request_msg,(short)iVar1 + reserved,(byte *)offset);
+    uVar2 = cm848_readBootDiagnosticMemoryAndRespond(request,iVar1 + offset,length);
   }
   return uVar2;
 }
@@ -1392,68 +1462,73 @@ cm848_diagMemoryReadWithBaseOffset(dword request_msg,word param_id,word reserved
 
 
 //
-// Function: cm848_diagService67_memoryReadOffset @ 0x00001d5c
+// Function: cm848_handleBootReadByParameterIdLongLengthService @ 0x00001d5c
 //
 
-/* dispatched as diagnostic service 67 via diagnostic_service_dispatch_table
+/* Boot kernel service 0x43: request bytes 1-2 the parameter ID and 3-6 the length - read from the
+   ID's address (offset 0) through cm848_readBootDiagnosticMemoryByParameterId. The 4 bytes are the
+   length - not an offset (was cm848_diagService67_memoryReadOffset; PR #53 round 63) | earlier
+   note: dispatched as diagnostic service 67 via diagnostic_service_dispatch_table
    (cm848_dispatchDiagnosticService) - not a dead function */
 
-undefined1 cm848_diagService67_memoryReadOffset(dword request_msg)
+undefined1 cm848_handleBootReadByParameterIdLongLengthService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
   word local_10 [2];
   dword local_c [2];
   
-  cm848_copyBytes(local_10,*(int *)(request_msg + 6) + 1,2);
-  cm848_copyBytes(local_c,*(int *)(request_msg + 6) + 3,4);
-  uVar1 = cm848_diagMemoryReadWithBaseOffset(request_msg,local_10[0],0,local_c[0]);
+  cm848_copyBytes(local_10,request->data_pointer + 1,2);
+  cm848_copyBytes(local_c,request->data_pointer + 3,4);
+  uVar1 = cm848_readBootDiagnosticMemoryByParameterId(request,local_10[0],0,local_c[0]);
   return uVar1;
 }
 
 
 
 //
-// Function: cm848_diagService74_memoryRead @ 0x00001dc4
+// Function: cm848_handleBootReadMemoryService @ 0x00001dc4
 //
 
-/* dispatched as diagnostic service 74 via diagnostic_service_dispatch_table
+/* Boot kernel service 0x4a: request bytes 1-4 the address and 5 the length - read through
+   cm848_readBootDiagnosticMemoryAndRespond (was cm848_diagService74_memoryRead; PR #53 round 63) |
+   earlier note: dispatched as diagnostic service 74 via diagnostic_service_dispatch_table
    (cm848_dispatchDiagnosticService) - not a dead function */
 
-undefined1 cm848_diagService74_memoryRead(dword request_msg)
+undefined1 cm848_handleBootReadMemoryService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
-  undefined1 local_10 [2];
-  word wStack_e;
-  byte *local_c;
+  dword local_10;
+  uint local_c;
   
-  cm848_copyBytes(local_10,*(int *)(request_msg + 6) + 1,4);
-  local_c = (byte *)(uint)*(byte *)(*(int *)(request_msg + 6) + 5);
-  uVar1 = cm848_diagMemoryReadHandler(request_msg,wStack_e,local_c);
+  cm848_copyBytes(&local_10,request->data_pointer + 1,4);
+  local_c = (uint)request->data_pointer[5];
+  uVar1 = cm848_readBootDiagnosticMemoryAndRespond(request,local_10,local_c);
   return uVar1;
 }
 
 
 
 //
-// Function: cm848_diagService76_memoryReadExt @ 0x00001e30
+// Function: cm848_handleBootReadMemoryLongLengthService @ 0x00001e30
 //
 
-/* dispatched as diagnostic service 76 via diagnostic_service_dispatch_table
+/* Boot kernel service 0x4c: request bytes 1-4 the address and 5-8 the length - read through
+   cm848_readBootDiagnosticMemoryAndRespond (was cm848_diagService76_memoryReadExt; PR #53 round 63)
+   | earlier note: dispatched as diagnostic service 76 via diagnostic_service_dispatch_table
    (cm848_dispatchDiagnosticService) - not a dead function */
 
-undefined1 cm848_diagService76_memoryReadExt(dword request_msg)
+undefined1 cm848_handleBootReadMemoryLongLengthService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
-  undefined1 local_10 [2];
-  word wStack_e;
-  byte *local_c [2];
+  dword local_10;
+  dword local_c [2];
   
-  cm848_copyBytes(local_10,*(int *)(request_msg + 6) + 1,4);
-  cm848_copyBytes(local_c,*(int *)(request_msg + 6) + 5,4);
-  uVar1 = cm848_diagMemoryReadHandler(request_msg,wStack_e,local_c[0]);
+  cm848_copyBytes(&local_10,request->data_pointer + 1,4);
+  cm848_copyBytes(local_c,request->data_pointer + 5,4);
+  uVar1 = cm848_readBootDiagnosticMemoryAndRespond(request,local_10,local_c[0]);
   return uVar1;
 }
 
@@ -1773,10 +1848,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
+  word direction_register_value;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -2058,11 +2133,11 @@ void mpc555_initDiagnosticSubsystem(void)
   boot_can_ring_state.receive_write_pointer = 0x302016;
   uVar7 = mpc555_initDiagResponseHandlers();
   cm848_registerPgnEf00Handler((byte)((uint5)uVar7 >> 0x20),(void *)uVar7);
-  cm848_registerMemoryReadServices();
-  cm848_registerService65Handler();
-  cm848_initDataBasedDiagServices();
-  cm848_registerStandardDiagServices();
-  cm848_initService25Handler();
+  cm848_registerBootMemoryReadServices();
+  cm848_registerBootGetAddressByParameterIdService();
+  cm848_registerBootMemoryWriteServices();
+  cm848_registerBootCalibrationAndNoOperationServices();
+  cm848_registerBootExecuteAtAddressService();
   wVar2 = ecu_power_state_flags.mailbox_index;
   iVar5 = wVar2 + 1;
   can_mailbox_counter.slot_start = (word)iVar5;
@@ -2145,7 +2220,7 @@ void cm848_softReset(void)
 /* fills diagnostic_service_dispatch_table (entry = byte service_id + void* handler - max 20);
    returns true when full */
 
-bool cm848_registerDiagnosticService(byte service_id,void *handler_ptr)
+bool cm848_registerDiagnosticService(BOOT_DIAGNOSTIC_SERVICE service_id,void *handler_ptr)
 
 {
   uint uVar1;
@@ -3144,9 +3219,10 @@ void cm848_transmitCanMessage(diagnostic_response_message_t *message)
 
 /* Boot kernel: returns the address of a parameter ID from boot_parameter_id_table (20 records
    sorted by ID - a linear scan to 0x3f9924) or 0 when absent - the boot twin of
-   cm848_lookupParameterIdAddress. Callers: the boot diagnostic services cm848_diagService65_handler
-   / cm848_diagMemoryReadWithBaseOffset / cm848_memoryWriteByParameterId (was
-   cm848_lookupTableEntryByKey; PR #53 round 60) */
+   cm848_lookupParameterIdAddress. Callers: the boot diagnostic services
+   cm848_handleBootGetAddressByParameterIdService / cm848_readBootDiagnosticMemoryByParameterId /
+   cm848_writeBootDiagnosticMemoryByParameterId (was cm848_lookupTableEntryByKey; PR #53 round 60)
+    */
 
 dword cm848_lookupBootParameterIdAddress(word param_id)
 
@@ -4087,17 +4163,20 @@ void mpc555_dispatchCanMessageHandlers(void)
 
 
 //
-// Function: cm848_writeDiagMemory @ 0x00005400
+// Function: cm848_writeBootDiagnosticMemory @ 0x00005400
 //
 
-/* Boot reflash kernel: shared worker for memory-write services 68/69/75/77: caps length at 1764 /
-   accepts an optional 10-byte auth trailer / cm848_lookupMemoryRegionType then writes by region: 0
-   RAM copy / 2 Bank-2 flash via flash2_write_callback / 3 registers (auth then copy) / 4 main flash
-   via cm848_dataTransferBufferWrite / 5 EEPROM (auth unless blank then eeprom_write_callback) |
+/* Boot reflash kernel: writes memory for a PGN 61184 write request (the request / the address / the
+   length). Twin of the application's cm848_writeJ1939DiagnosticMemory (was cm848_writeDiagMemory;
+   PR #53 round 63) | earlier note: Boot reflash kernel: shared worker for memory-write services
+   68/69/75/77: caps length at 1764 / accepts an optional 10-byte auth trailer /
+   cm848_lookupBootMemoryRegionType then writes by region: 0 RAM copy / 2 Bank-2 flash via
+   flash2_write_callback / 3 registers (auth then copy) / 4 main flash via
+   cm848_dataTransferBufferWrite / 5 EEPROM (auth unless blank then eeprom_write_callback) |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
     */
 
-byte cm848_writeDiagMemory(dword param_1,uint param_2,uint param_3)
+byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword length)
 
 {
   bool bVar1;
@@ -4109,17 +4188,17 @@ byte cm848_writeDiagMemory(dword param_1,uint param_2,uint param_3)
   char cVar8;
   short sVar6;
   uint uVar9;
-  int iVar10;
+  byte *pbVar10;
   ushort local_20 [4];
   
   eeprom_xfer_state.transfer_timer = 0x4b;
-  if (0x6e4 < param_3) {
+  if (0x6e4 < length) {
     return 2;
   }
-  local_20[0] = (ushort)param_3;
-  uVar5 = cm848_getServiceDataOffset(**(undefined1 **)(param_1 + 6));
+  local_20[0] = (ushort)length;
+  uVar5 = cm848_getBootMemoryServiceHeaderLength(*request->data_pointer);
   uVar2 = (uVar5 & 0xff) + (uint)local_20[0] & 0xffff;
-  uVar9 = (uint)*(ushort *)(param_1 + 4);
+  uVar9 = (uint)request->data_length;
   if ((uVar9 == 8) || (uVar9 == uVar2)) {
     bVar1 = false;
   }
@@ -4129,8 +4208,8 @@ byte cm848_writeDiagMemory(dword param_1,uint param_2,uint param_3)
     }
     bVar1 = true;
   }
-  iVar10 = *(int *)(param_1 + 6) + (uVar5 & 0xff);
-  bVar7 = cm848_lookupMemoryRegionType(param_2,(uint)local_20[0]);
+  pbVar10 = request->data_pointer + (uVar5 & 0xff);
+  bVar7 = cm848_lookupBootMemoryRegionType(address,(uint)local_20[0]);
   if (3 < bVar7) {
     if (bVar7 != 4) {
       if (bVar7 != 5) {
@@ -4140,38 +4219,38 @@ byte cm848_writeDiagMemory(dword param_1,uint param_2,uint param_3)
         if (!bVar1) {
           return 0x1a;
         }
-        cVar8 = cm848_validateWriteAuth(*(int *)(param_1 + 6) + (uVar5 & 0xff) + (uint)local_20[0]);
+        cVar8 = cm848_validateWriteAuth(request->data_pointer + (uint)local_20[0] + (uVar5 & 0xff));
         if (cVar8 != '\0') {
           return 3;
         }
       }
       dVar3 = diag_write_request_state.address_mode;
       if ((dVar3 == 1) &&
-         (bVar7 = cm848_trackDownloadBlock(iVar10,param_2,local_20,2), bVar7 != 0xff)) {
+         (bVar7 = cm848_trackDownloadBlock(pbVar10,address,local_20,2), bVar7 != 0xff)) {
         return bVar7;
       }
-      cm848_sendDiagResponsePending(param_1,10);
+      cm848_sendDiagResponsePending(request,10);
       pcVar4 = (code *)eeprom_xfer_state.eeprom_write_callback;
-      (*pcVar4)(iVar10,param_2,local_20[0]);
+      (*pcVar4)(pbVar10,address,local_20[0]);
       return 0;
     }
-    bVar7 = cm848_trackDownloadBlock(iVar10,param_2,local_20,2);
+    bVar7 = cm848_trackDownloadBlock(pbVar10,address,local_20,2);
     if (bVar7 != 0xff) {
       return bVar7;
     }
-    if ((param_2 & 1) != 0) {
+    if ((address & 1) != 0) {
       return 0x11;
     }
     dVar3 = eeprom_xfer_state.bytes_transferred;
-    cVar8 = cm848_dataTransferBufferWrite(iVar10,param_2,local_20[0],dVar3 == 0,1);
+    cVar8 = cm848_dataTransferBufferWrite(pbVar10,address,local_20[0],dVar3 == 0,1);
     if (cVar8 == '\x01') {
       return 0x11;
     }
     if (cVar8 == '\0') {
       return 0;
     }
-    cm848_sendDiagResponsePending(param_1,10);
-    diag_write_request_state.pending_request = param_1;
+    cm848_sendDiagResponsePending(request,10);
+    diag_write_request_state.pending_request = (dword)request;
     return 0xff;
   }
   if (bVar7 == 3) {
@@ -4179,7 +4258,7 @@ byte cm848_writeDiagMemory(dword param_1,uint param_2,uint param_3)
       if (!bVar1) {
         return 3;
       }
-      cVar8 = cm848_validateWriteAuth(*(int *)(param_1 + 6) + (uVar5 & 0xff) + (uint)local_20[0]);
+      cVar8 = cm848_validateWriteAuth(request->data_pointer + (uint)local_20[0] + (uVar5 & 0xff));
       if (cVar8 != '\0') {
         return 3;
       }
@@ -4189,50 +4268,55 @@ byte cm848_writeDiagMemory(dword param_1,uint param_2,uint param_3)
     if (bVar7 != 2) {
       return bVar7;
     }
-    bVar7 = cm848_trackDownloadBlock(iVar10,param_2,local_20,2);
+    bVar7 = cm848_trackDownloadBlock(pbVar10,address,local_20,2);
     if (bVar7 != 0xff) {
       return bVar7;
     }
-    if ((param_2 & 1) != 0) {
+    if ((address & 1) != 0) {
       return 0x11;
     }
     pcVar4 = (code *)eeprom_xfer_state.flash2_write_callback;
-    sVar6 = (*pcVar4)(iVar10,param_2,local_20[0]);
+    sVar6 = (*pcVar4)(pbVar10,address,local_20[0]);
     if (sVar6 == 0) {
       return 0x11;
     }
     return 0;
   }
-  cm848_copyBytes(param_2,iVar10,local_20[0]);
+  cm848_copyBytes(address,pbVar10,local_20[0]);
   return 0;
 }
 
 
 
 //
-// Function: cm848_memoryWriteByParameterId @ 0x00005728
+// Function: cm848_writeBootDiagnosticMemoryByParameterId @ 0x00005728
 //
 
-/* Boot reflash kernel (runs only from its RAM copy; never called by the application): resolves a
-   2-byte parameter ID via cm848_lookupBootParameterIdAddress (returns 8 when unknown) then hands
-   address + offset + length to the shared memory-write worker at 0x5400 with addressing mode 0
-   (parameter ID) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy
-   Confidence Medium */
+/* Boot reflash kernel: writes by parameter ID for services 0x44 / 0x45 -
+   cm848_lookupBootParameterIdAddress (8 when unknown) then cm848_writeBootDiagnosticMemory(request
+   / the ID's address + offset / length) with addressing mode 0. Twin of the application's
+   cm848_writeJ1939DiagnosticMemoryByParameterId (was cm848_memoryWriteByParameterId; PR #53 round
+   63) | earlier note: Boot reflash kernel (runs only from its RAM copy; never called by the
+   application): resolves a 2-byte parameter ID via cm848_lookupBootParameterIdAddress (returns 8
+   when unknown) then hands address + offset + length to the shared memory-write worker at 0x5400
+   with addressing mode 0 (parameter ID) | review-function-readability reviewed 2026-11-11 -
+   Readability Medium Accuracy Confidence Medium */
 
 undefined1
-cm848_memoryWriteByParameterId(undefined4 param_1,word param_2,int param_3,undefined4 param_4)
+cm848_writeBootDiagnosticMemoryByParameterId
+          (j1939_rx_msg_t *request,word parameter_id,dword offset,dword length)
 
 {
   int iVar1;
   undefined1 uVar2;
   
-  iVar1 = cm848_lookupBootParameterIdAddress(param_2);
+  iVar1 = cm848_lookupBootParameterIdAddress(parameter_id);
   if (iVar1 == 0) {
     uVar2 = 8;
   }
   else {
     diag_write_request_state.address_mode = 0;
-    uVar2 = cm848_writeDiagMemory(param_1,iVar1 + param_3,param_4);
+    uVar2 = cm848_writeBootDiagnosticMemory(request,iVar1 + offset,length);
   }
   return uVar2;
 }
@@ -4240,107 +4324,125 @@ cm848_memoryWriteByParameterId(undefined4 param_1,word param_2,int param_3,undef
 
 
 //
-// Function: cm848_diagService68_memoryWriteByParameterId @ 0x00005798
+// Function: cm848_handleBootWriteByParameterIdService @ 0x00005798
 //
 
-/* Boot reflash kernel (runs only from its RAM copy; never called by the application): diagnostic
-   service 0x44 (registered by cm848_initDataBasedDiagServices) - request = 2-byte parameter ID +
-   1-byte length + data; write counterpart of service 67 | review-function-readability reviewed
+/* Boot reflash kernel service 0x44 (runs from its RAM copy at 0x3fb368): request bytes 1-2 the
+   parameter ID and 3 the length then the data - through
+   cm848_writeBootDiagnosticMemoryByParameterId (was cm848_diagService68_memoryWriteByParameterId;
+   PR #53 round 63) | earlier note: Boot reflash kernel (runs only from its RAM copy; never called
+   by the application): diagnostic service 0x44 (registered by
+   cm848_registerBootMemoryWriteServices) - request = 2-byte parameter ID + 1-byte length + data;
+   write counterpart of service 67 | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence Medium */
+
+undefined1 cm848_handleBootWriteByParameterIdService(j1939_rx_msg_t *request)
+
+{
+  undefined1 uVar1;
+  word local_10 [2];
+  uint local_c;
+  
+  cm848_copyBytes(local_10,request->data_pointer + 1,2);
+  local_c = (uint)request->data_pointer[3];
+  uVar1 = cm848_writeBootDiagnosticMemoryByParameterId(request,local_10[0],0,local_c);
+  return uVar1;
+}
+
+
+
+//
+// Function: cm848_handleBootWriteByParameterIdLongLengthService @ 0x00005808
+//
+
+/* Boot reflash kernel service 0x45 (runs from its RAM copy at 0x3fb3d8): request bytes 1-2 the
+   parameter ID and 3-6 the length then the data - through
+   cm848_writeBootDiagnosticMemoryByParameterId (was
+   cm848_diagService69_memoryWriteByParameterIdExt; PR #53 round 63) | earlier note: Boot reflash
+   kernel (runs only from its RAM copy; never called by the application): diagnostic service 0x45 -
+   request = 2-byte parameter ID + 4-byte length + data | review-function-readability reviewed
    2026-11-11 - Readability Medium Accuracy Confidence Medium */
 
-undefined1 cm848_diagService68_memoryWriteByParameterId(int param_1)
+undefined1 cm848_handleBootWriteByParameterIdLongLengthService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
-  undefined2 local_10 [2];
+  word local_10 [2];
+  dword local_c [2];
+  
+  cm848_copyBytes(local_10,request->data_pointer + 1,2);
+  cm848_copyBytes(local_c,request->data_pointer + 3,4);
+  uVar1 = cm848_writeBootDiagnosticMemoryByParameterId(request,local_10[0],0,local_c[0]);
+  return uVar1;
+}
+
+
+
+//
+// Function: cm848_handleBootWriteMemoryService @ 0x00005870
+//
+
+/* Boot reflash kernel service 0x4b (runs from its RAM copy at 0x3fb440): request bytes 1-4 the
+   address and 5 the length then the data - sets diag_write_request_state.address_mode 1 and writes
+   through cm848_writeBootDiagnosticMemory (was cm848_diagService75_memoryWrite; PR #53 round 63) |
+   earlier note: Boot reflash kernel (runs only from its RAM copy; never called by the application):
+   diagnostic service 0x4B - request = 4-byte address + 1-byte length + data (addressing mode 1);
+   write counterpart of service 74 | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence Medium */
+
+undefined1 cm848_handleBootWriteMemoryService(j1939_rx_msg_t *request)
+
+{
+  undefined1 uVar1;
+  dword local_10;
   uint local_c;
   
-  cm848_copyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
-  local_c = (uint)*(byte *)(*(int *)(param_1 + 6) + 3);
-  uVar1 = cm848_memoryWriteByParameterId(param_1,local_10[0],0,local_c);
+  cm848_copyBytes(&local_10,request->data_pointer + 1,4);
+  local_c = (uint)request->data_pointer[5];
+  diag_write_request_state.address_mode = 1;
+  uVar1 = cm848_writeBootDiagnosticMemory(request,local_10,local_c);
   return uVar1;
 }
 
 
 
 //
-// Function: cm848_diagService69_memoryWriteByParameterIdExt @ 0x00005808
+// Function: cm848_handleBootWriteMemoryLongLengthService @ 0x000058e8
 //
 
-/* Boot reflash kernel (runs only from its RAM copy; never called by the application): diagnostic
-   service 0x45 - request = 2-byte parameter ID + 4-byte length + data | review-function-readability
-   reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium */
-
-undefined1 cm848_diagService69_memoryWriteByParameterIdExt(int param_1)
-
-{
-  undefined1 uVar1;
-  undefined2 local_10 [2];
-  undefined4 local_c [2];
-  
-  cm848_copyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
-  cm848_copyBytes(local_c,*(int *)(param_1 + 6) + 3,4);
-  uVar1 = cm848_memoryWriteByParameterId(param_1,local_10[0],0,local_c[0]);
-  return uVar1;
-}
-
-
-
-//
-// Function: cm848_diagService75_memoryWrite @ 0x00005870
-//
-
-/* Boot reflash kernel (runs only from its RAM copy; never called by the application): diagnostic
-   service 0x4B - request = 4-byte address + 1-byte length + data (addressing mode 1); write
-   counterpart of service 74 | review-function-readability reviewed 2026-11-11 - Readability Medium
+/* Boot reflash kernel service 0x4d (runs from its RAM copy at 0x3fb4b8): request bytes 1-4 the
+   address and 5-8 the length then the data - sets diag_write_request_state.address_mode 1 and
+   writes through cm848_writeBootDiagnosticMemory (was cm848_diagService77_memoryWriteExt; PR #53
+   round 63) | earlier note: Boot reflash kernel (runs only from its RAM copy; never called by the
+   application): diagnostic service 0x4D - request = 4-byte address + 4-byte length + data; write
+   counterpart of service 76 | review-function-readability reviewed 2026-11-11 - Readability Medium
    Accuracy Confidence Medium */
 
-undefined1 cm848_diagService75_memoryWrite(int param_1)
+undefined1 cm848_handleBootWriteMemoryLongLengthService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
-  undefined4 local_10;
-  uint local_c;
+  dword local_10;
+  dword local_c [2];
   
-  cm848_copyBytes(&local_10,*(int *)(param_1 + 6) + 1,4);
-  local_c = (uint)*(byte *)(*(int *)(param_1 + 6) + 5);
+  cm848_copyBytes(&local_10,request->data_pointer + 1,4);
+  cm848_copyBytes(local_c,request->data_pointer + 5,4);
   diag_write_request_state.address_mode = 1;
-  uVar1 = cm848_writeDiagMemory(param_1,local_10,local_c);
+  uVar1 = cm848_writeBootDiagnosticMemory(request,local_10,local_c[0]);
   return uVar1;
 }
 
 
 
 //
-// Function: cm848_diagService77_memoryWriteExt @ 0x000058e8
+// Function: cm848_getBootMemoryServiceHeaderLength @ 0x00005958
 //
 
-/* Boot reflash kernel (runs only from its RAM copy; never called by the application): diagnostic
-   service 0x4D - request = 4-byte address + 4-byte length + data; write counterpart of service 76 |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
-    */
+/* Boot reflash kernel: the request bytes before the data for a memory service - the byte at RAM
+   0x3f97cd + service (a table in the kernel image) and 0 below 0x41. Twin of the application's
+   cm848_getJ1939MemoryServiceHeaderLength (was cm848_getServiceDataOffset; PR #53 round 63) */
 
-undefined1 cm848_diagService77_memoryWriteExt(int param_1)
-
-{
-  undefined1 uVar1;
-  undefined4 local_10;
-  undefined4 local_c [2];
-  
-  cm848_copyBytes(&local_10,*(int *)(param_1 + 6) + 1,4);
-  cm848_copyBytes(local_c,*(int *)(param_1 + 6) + 5,4);
-  diag_write_request_state.address_mode = 1;
-  uVar1 = cm848_writeDiagMemory(param_1,local_10,local_c[0]);
-  return uVar1;
-}
-
-
-
-//
-// Function: cm848_getServiceDataOffset @ 0x00005958
-//
-
-undefined1 cm848_getServiceDataOffset(int param_1)
+undefined1 cm848_getBootMemoryServiceHeaderLength(int param_1)
 
 {
   undefined1 uVar1;
@@ -5631,42 +5733,43 @@ void cm848_dispatchDiagnosticService(j1939_rx_msg_t *request)
 
 {
   byte bVar1;
-  byte bVar2;
-  boot_diagnostic_service_entry_t *pbVar3;
-  uint uVar4;
+  boot_diagnostic_service_entry_t *pbVar2;
+  uint uVar3;
+  BOOT_DIAGNOSTIC_SERVICE service;
   
-  pbVar3 = diagnostic_service_dispatch_table;
-  bVar1 = *request->data_pointer;
-  uVar4 = 5;
-  if ((bVar1 == 0xc) || (bVar1 == 0xd)) {
-    uVar4 = 0xff;
+  pbVar2 = diagnostic_service_dispatch_table;
+  service = *request->data_pointer;
+  uVar3 = 5;
+  if ((service == BOOT_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE) ||
+     (service == BOOT_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE)) {
+    uVar3 = 0xff;
   }
   else {
-    bVar2 = 0;
+    bVar1 = 0;
     if (diag_scan_step_counter != 0) {
       do {
-        if (pbVar3->service_id == bVar1) {
-          uVar4 = cm848_validateDiagnosticRequestLengthAndAuthorization(request);
-          uVar4 = uVar4 & 0xff;
-          if (uVar4 == 0xff) {
+        if (pbVar2->service_id == service) {
+          uVar3 = cm848_validateDiagnosticRequestLengthAndAuthorization(request);
+          uVar3 = uVar3 & 0xff;
+          if (uVar3 == 0xff) {
             bVar1 = eeprom_service_mode_flags;
-            if (((bVar1 & 0xf) == 0) || ((undefined *)0x6fffe < pbVar3->handler)) {
-              uVar4 = (*(code *)pbVar3->handler)(request);
-              uVar4 = uVar4 & 0xff;
+            if (((bVar1 & 0xf) == 0) || ((undefined *)0x6fffe < pbVar2->handler)) {
+              uVar3 = (*(code *)pbVar2->handler)(request);
+              uVar3 = uVar3 & 0xff;
             }
             else {
-              uVar4 = 10;
+              uVar3 = 10;
             }
           }
           break;
         }
-        pbVar3 = pbVar3 + 1;
-        bVar2 = bVar2 + 1;
-      } while (bVar2 < diag_scan_step_counter);
+        pbVar2 = pbVar2 + 1;
+        bVar1 = bVar1 + 1;
+      } while (bVar1 < diag_scan_step_counter);
     }
   }
-  if (uVar4 != 0xff) {
-    cm848_sendDiagServiceResponse(request,uVar4);
+  if (uVar3 != 0xff) {
+    cm848_sendDiagServiceResponse(request,uVar3);
   }
   return;
 }
@@ -5721,7 +5824,7 @@ void mpc555_sciHandleDownloadStart(void)
       ram0x003fedfd = 0;
       ram0x003fee01 = _eeprom_write_request_type;
       eeprom_xfer_state.block_length = _eeprom_block_length_cal;
-      cVar2 = cm848_lookupMemoryRegionType(_eeprom_write_request_type,1);
+      cVar2 = cm848_lookupBootMemoryRegionType(_eeprom_write_request_type,1);
       if (cVar2 != '\t') {
         uVar1 = 0x73;
         goto LAB_00006f3c;
@@ -5776,7 +5879,7 @@ void mpc555_sciHandleDownloadDataBlock(void)
     dVar2 = eeprom_xfer_state.block_length;
     if (dVar1 <= dVar2) {
       cVar5 = cm848_trackDownloadBlock(&DAT_003fecf3,register0x00000010,local_30,3);
-      sensor_fault_threshold_state = cm848_lookupMemoryRegionType(ram0x003fee01,local_30[0]);
+      sensor_fault_threshold_state = cm848_lookupBootMemoryRegionType(ram0x003fee01,local_30[0]);
       if (cVar5 != -1) {
         uVar6 = 0x74;
         goto LAB_000071c8;
@@ -5940,8 +6043,8 @@ undefined4 cm848_validateWriteAuth(undefined4 scrambled_token)
   byte local_2a [5];
   byte bStack_25;
   uint local_24 [7];
-  dword current_runtime;
   byte key_matches;
+  dword current_runtime;
   
   if (eeprom_shadow_header.version_marker == 0xff) {
     result = 0;
@@ -6091,9 +6194,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
-  byte prescaler_count;
   dword runtime_value;
   word counter_value;
+  byte prescaler_count;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -6139,15 +6242,18 @@ void mpc555_loadRuntimeCounterFromEepromShadow(void)
 
 
 //
-// Function: cm848_lookupMemoryRegionType @ 0x000076c8
+// Function: cm848_lookupBootMemoryRegionType @ 0x000076c8
 //
 
-/* Boot reflash kernel: finds the memory_region_table entry (6 x {start / end / type}) that wholly
-   contains address..address+length-1; returns its type (0 RAM / 2 Bank-2 flash only when
-   flash2_writes_enabled / 3 registers / 4 main flash / 5 EEPROM) or 9 when not writable |
+/* Boot reflash kernel: the region type of an address range for the boot read / write / execute
+   services and the SCI download handlers (the application's is
+   cm848_lookupApplicationMemoryRegionType) (was cm848_lookupMemoryRegionType; PR #53 round 63) |
+   earlier note: Boot reflash kernel: finds the memory_region_table entry (6 x {start / end / type})
+   that wholly contains address..address+length-1; returns its type (0 RAM / 2 Bank-2 flash only
+   when flash2_writes_enabled / 3 registers / 4 main flash / 5 EEPROM) or 9 when not writable |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-byte cm848_lookupMemoryRegionType(uint param_1,int param_2)
+byte cm848_lookupBootMemoryRegionType(uint param_1,int param_2)
 
 {
   uint uVar1;
@@ -68201,11 +68307,12 @@ void cm848_copyROMCalibrationToRAM(void)
 //
 
 /* PGN 61184 diagnostic services 0x0f / 0x10: returns 0 (accepted) and does nothing - the
-   application's twin of the boot kernel's cm848_diagServiceAcknowledgeNoOperation. Registered by
-   cm848_registerJ1939BroadcastAndNoOperationServices (was j1939_diagService15And16Handler; PR #53
-   round 62) | earlier note: Application CLIP diagnostic service handler registered with
-   cm848_j1939RegisterDiagnosticService: services 0x0F and 0x10 - returns 0 (accepted / no action) |
-   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
+   application's twin of the boot kernel's cm848_bootDiagnosticServiceAcknowledgeNoOperation.
+   Registered by cm848_registerJ1939BroadcastAndNoOperationServices (was
+   j1939_diagService15And16Handler; PR #53 round 62) | earlier note: Application CLIP diagnostic
+   service handler registered with cm848_j1939RegisterDiagnosticService: services 0x0F and 0x10 -
+   returns 0 (accepted / no action) | review-function-readability reviewed 2026-11-12 - Readability
+   Low Accuracy Confidence Medium */
 
 undefined4 cm848_j1939DiagnosticServiceAcknowledgeNoOperation(void)
 
@@ -69204,12 +69311,12 @@ void cm848_endRetarderShiftAssistAboveFuelDemandLimit(void)
 /* Writes memory for a PGN 61184 write request: a length cap of 1764 / an optional 10-byte key after
    the data / the region from cm848_lookupApplicationMemoryRegionType - EEPROM (type 5) through
    cm848_queueEepromByteWrites or the RAM mirror / RAM (type 3) with the 0x3fd480 window protected.
-   Twin of the boot kernel's cm848_writeDiagMemory (was j1939_writeDiagMemory; PR #53 round 63) |
-   earlier note: Application CLIP diagnostic stack (PGN 61184): memory write worker (twin of boot
-   cm848_writeDiagMemory): length cap 1764 / optional 10-byte auth trailer / region by
-   cm848_lookupApplicationMemoryRegionType - EEPROM (type 5) via cm848_queueEepromByteWrites or the
-   RAM mirror / RAM (type 3) with the 0x3fd480 window protected | review-function-readability
-   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   Twin of the boot kernel's cm848_writeBootDiagnosticMemory (was j1939_writeDiagMemory; PR #53
+   round 63) | earlier note: Application CLIP diagnostic stack (PGN 61184): memory write worker
+   (twin of boot cm848_writeBootDiagnosticMemory): length cap 1764 / optional 10-byte auth trailer /
+   region by cm848_lookupApplicationMemoryRegionType - EEPROM (type 5) via
+   cm848_queueEepromByteWrites or the RAM mirror / RAM (type 3) with the 0x3fd480 window protected |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
 char cm848_writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dword length)
 
@@ -69295,12 +69402,12 @@ char cm848_writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dwor
 /* Writes by parameter ID for the PGN 61184 services 0x44 / 0x45 / 0x47 / 0x49: resolves the ID with
    cm848_lookupParameterIdAddress (8 = unknown ID) then cm848_writeJ1939DiagnosticMemory(request /
    the ID's address + offset / length). Its parameters are the request / the ID / the offset / the
-   length. Twin of the boot kernel's cm848_memoryWriteByParameterId (was
+   length. Twin of the boot kernel's cm848_writeBootDiagnosticMemoryByParameterId (was
    j1939_writeDiagMemoryByParameterId; PR #53 round 63) | earlier note: Application CLIP diagnostic
    stack (PGN 61184): services 0x44 / 0x45 / 0x47 / 0x49 (via undefined stubs): resolves the
    parameter ID (0x539768; 8 = unknown) then cm848_writeJ1939DiagnosticMemory at base + offset; twin
-   of boot cm848_memoryWriteByParameterId | review-function-readability reviewed 2026-11-11 -
-   Readability Medium Accuracy Confidence High */
+   of boot cm848_writeBootDiagnosticMemoryByParameterId | review-function-readability reviewed
+   2026-11-11 - Readability Medium Accuracy Confidence High */
 
 undefined1
 cm848_writeJ1939DiagnosticMemoryByParameterId
@@ -69594,11 +69701,12 @@ uint j1939_buildLampStatusByte(void)
 /* The request bytes before the data for a PGN 61184 memory service: the byte at 0x53a2e1 + service
    and 0 below 0x41. The bytes for 0x41-0x4e sit at 0x53a322: 3 / 7 / 7 / 4 / 7 / 6 / 6 / 11 / 11 /
    6 / 6 / 9 / 9 / 3 (the base 0x53a2e1 falls inside input signal descriptor 10 at 0x53a2dc - so it
-   renders as that descriptor's reserved_5). Twin of the boot kernel's cm848_getServiceDataOffset
-   (was j1939_getDiagServiceDataOffset; PR #53 round 63) | earlier note: Application CLIP diagnostic
-   stack (PGN 61184): request header length before the data: 0 for service below 0x41 else the byte
-   at 0x53a2e1 + service (twin of boot cm848_getServiceDataOffset) | review-function-readability
-   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   renders as that descriptor's reserved_5). Twin of the boot kernel's
+   cm848_getBootMemoryServiceHeaderLength (was j1939_getDiagServiceDataOffset; PR #53 round 63) |
+   earlier note: Application CLIP diagnostic stack (PGN 61184): request header length before the
+   data: 0 for service below 0x41 else the byte at 0x53a2e1 + service (twin of boot
+   cm848_getBootMemoryServiceHeaderLength) | review-function-readability reviewed 2026-11-11 -
+   Readability Medium Accuracy Confidence High */
 
 byte cm848_getJ1939MemoryServiceHeaderLength(int param_1)
 
@@ -70317,9 +70425,10 @@ void cm848_registerJ1939GetAddressByParameterIdService(void)
    request length of 8 or the service's header length (cm848_getJ1939MemoryServiceHeaderLength) or
    that + 10 (the key) / the region from cm848_lookupApplicationMemoryRegionType. The reply service
    comes from j1939_memory_read_reply_services (a 0x43 read under 256 bytes answers with 0x44). Twin
-   of the boot kernel's cm848_diagMemoryReadHandler (was j1939_readDiagMemoryAndRespond; PR #53
-   round 63) | earlier note: Application CLIP diagnostic stack (PGN 61184): memory read + response
-   (twin of boot cm848_diagMemoryReadHandler): response service from 0x53a330 (0x43->0x45 or 0x44 /
+   of the boot kernel's cm848_readBootDiagnosticMemoryAndRespond (was
+   j1939_readDiagMemoryAndRespond; PR #53 round 63) | earlier note: Application CLIP diagnostic
+   stack (PGN 61184): memory read + response (twin of boot
+   cm848_readBootDiagnosticMemoryAndRespond): response service from 0x53a330 (0x43->0x45 or 0x44 /
    0x46->0x47 / 0x48->0x49 / 0x4A->0x4B / 0x4C->0x4D) on CAN ID 0xEF0000 to the requester; also
    called directly by the 0x4A / 0x4C stubs | review-function-readability reviewed 2026-11-11 -
    Readability Medium Accuracy Confidence High */
@@ -70398,9 +70507,9 @@ char cm848_readJ1939DiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword add
    cm848_lookupParameterIdAddress (8 = unknown ID) then
    cm848_readJ1939DiagnosticMemoryAndRespond(request / the ID's address + offset / length). Its
    parameters are the request / the ID / the offset / the length. Twin of the boot kernel's
-   cm848_diagMemoryReadWithBaseOffset (was j1939_readDiagMemoryByParameterId; PR #53 round 63) |
-   earlier note: Application CLIP diagnostic stack (PGN 61184): services 0x43 / 0x46 / 0x48 (via
-   undefined stubs): resolves the parameter ID then cm848_readJ1939DiagnosticMemoryAndRespond |
+   cm848_readBootDiagnosticMemoryByParameterId (was j1939_readDiagMemoryByParameterId; PR #53 round
+   63) | earlier note: Application CLIP diagnostic stack (PGN 61184): services 0x43 / 0x46 / 0x48
+   (via undefined stubs): resolves the parameter ID then cm848_readJ1939DiagnosticMemoryAndRespond |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
 undefined1
@@ -71433,7 +71542,7 @@ void cm848_initializeJ1939Transport(void)
 // Function: cm848_lookupApplicationMemoryRegionType @ 0x0050d784
 //
 
-/* Application twin of the boot cm848_lookupMemoryRegionType: type of the 0x53a33a region (7 x
+/* Application twin of the boot cm848_lookupBootMemoryRegionType: type of the 0x53a33a region (7 x
    {start / end / type if DEVELOPMENT_MODE_ON / else}) holding address..address+length-1: 4 ROM / 2
    flash2 / 3 RAM to 0x40c26e / 0 RAM above / 5 EEPROM / 3 or 10 registers / 9 unmapped (was
    uds_validateMemoryRegion) | review-function-readability reviewed 2026-11-13 - Readability Medium
