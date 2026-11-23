@@ -1,0 +1,40 @@
+{
+ "*": [
+  [
+   "\\bfuel_rpm_compensated_offset_default\\b",
+   "main_injection_end_timing_default"
+  ],
+  [
+   "\\bfuel_rpm_compensated_offset_pulse_width_addend\\b",
+   "main_injection_end_timing_pulse_width_addend"
+  ],
+  [
+   "\\bfuel_rpm_compensated_offset_upper_limit\\b",
+   "main_injection_end_timing_upper_limit"
+  ],
+  [
+   "\\bfuel_rpm_compensated_offset_lower_limit\\b",
+   "main_injection_end_timing_lower_limit"
+  ],
+  [
+   "\\bfuel_rpm_compensated_offset\\b",
+   "main_injection_end_timing"
+  ],
+  [
+   "\\(short\\)",
+   ""
+  ],
+  [
+   " ;",
+   ";"
+  ],
+  [
+   " \\)",
+   ")"
+  ],
+  [
+   "\\( ",
+   "("
+  ]
+ ]
+}

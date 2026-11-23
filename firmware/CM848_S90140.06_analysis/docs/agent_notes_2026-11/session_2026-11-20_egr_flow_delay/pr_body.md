@@ -607,6 +607,10 @@ state enum, the flag bytes.**
   two overlapping rows).
 - **Stage B (e3b6532, labels):** the engine retarder driver cylinder counts and the cylinders-on count from e2m 13D8 /
   13D9; the retarder torque lookup's live-in table pointer named.
+**Round 43.**
+- **Stage A (d8d2cdf, labels, types):** the main injection end of injection timing (was
+  cm848_computeFuelRpmCompensatedOffset): the function, its output and its calibrations.
+- **Stage B (ef9781b, rows):** 30 junk `<name>+<N>` rows removed (the build changes only local declaration order).
 
 ## Test plan
 
@@ -699,6 +703,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 43: the end timing function has 0 differing statements; removing the junk rows changes only the order of local declarations.
 - [x] Round 42: all 24 status record users match field by field (index set-up dropped; one pair is the same address in two forms); the retarder function has 0 differing statements; the other functions match the canonical form.
 - [x] Round 41: the monitor's 112 statements match field by field (prove_records.py: field identity and statement structure; the indexes are dropped); the other functions match the canonical form or differ in local declaration order only; widths asm-verified.
 - [x] Round 40: every function matches the canonical form or has 0 differing statements (bitfield tests rewritten to their masks); 15 / 15 resolved addresses checked; MISSING 258 -> 234.

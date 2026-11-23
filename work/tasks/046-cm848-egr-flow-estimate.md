@@ -2040,6 +2040,24 @@ A peer relay started the round; the scripts are in `session_folder/round42/`.
   - The other `fault_status_records_cal` bits: flags 0x01, status_word 0x02 / 0x04.
   - The "stage N" torque tables have no e2m record in the dump.
 
+## Done, round 43 (2026-11-22, same PR): the main injection end timing, the junk rows
+
+A peer relay started the round; the scripts are in `session_folder/round43/`.
+- **Stage A (d8d2cdf, labels, types):** `cm848_computeFuelRpmCompensatedOffset` is `cm848_calculateMainInjectionEndTiming`.
+  - It computes the main injection's end of injection timing: the start minus the pulse's crank angle.
+  - Units: on-time at 0.4 us per count x engine speed at 1/8 rpm x 6 / 1e6 x 256 / 600 lands in main timing counts.
+  - Its output is `main_injection_end_timing`, and its four calibrations follow (round 39's fuel_rpm_compensated_*
+    names). The three signed ones (lha) are `i16`.
+  - The old plate said the output had no reader; `cm848_updateOilChangeMonitor` reads it.
+- **Stage B (ef9781b, rows):** 30 junk `<name>+<N>` rows removed. They were an old export's labels for interior bytes,
+  rendered nowhere. The `.cpp` differs only in local declaration order. MISSING 233 -> 221.
+- **firmware/CLAUDE.md (factual refresh):** the MISSING sentence gives 221 (123 documentation, 77 boot-named, 10 dual-use,
+  7 unreferenced, 4 deferred).
+- **Leads:**
+  - The typed junk row `fuel_demand_enable_sync_flag_shadow+2` (`undefined2`).
+  - The oil change monitor's "engine power" accumulator and increment table: keyed by the end of injection, so likely
+    soot, but unproven.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

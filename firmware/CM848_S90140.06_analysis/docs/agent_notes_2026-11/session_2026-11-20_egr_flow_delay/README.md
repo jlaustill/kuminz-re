@@ -477,3 +477,7 @@ Hand work on the round 7 lead.
 ## Round 42: the fault status records, the retarder cylinder counts (`session_folder/round42/`)
 
 - **Stage A:** `apply_r42a.py`, `prove_status_records.py`. **Stage B:** `apply_r42b.py`, `rules_r42b.json`. **Closing:** `apply_r42_closing.py`, `update_large_tar_r42.sh`.
+
+## Round 43: the main injection end timing, the junk rows (`session_folder/round43/`)
+
+- **Stage A:** `apply_r43a.py`, `rules_r43a*.json`. **Stage B:** `apply_r43b.py`, `removed_junk_rows.txt`. **Closing:** `apply_r43_closing.py`, `update_large_tar_r43.sh`, the MISSING survey (`missing*.tsv`).

@@ -1,0 +1,29 @@
+cm848: round 43 stage A - cm848_computeFuelRpmCompensatedOffset is the main injection end of injection timing
+
+The function computes main_injection_timing_copy - (main_injection_pulse_width + addend) x average_engine_speed x 6 /
+1e6 x 256 / 600.
+- **The units:** on-times are 0.4 us per count and the speed is 1/8 rpm. So the subtrahend is the pulse's crank angle
+  in main timing counts (0.1171875 deg), and the result is where the main injection ends.
+- **Renames:**
+  - the function -> cm848_calculateMainInjectionEndTiming;
+  - its output fuel_rpm_compensated_offset -> main_injection_end_timing;
+  - its four calibrations (round 39's fuel_rpm_compensated_offset_* names) -> main_injection_end_timing_default /
+    _pulse_width_addend / _upper_limit / _lower_limit.
+- **Types:**
+  - default / upper / lower are i16, since every load of them is an lha. Their (short) casts are gone.
+  - The addend (lhz) and the output stay word. cm848_updateOilChangeMonitor loads the output with lhz and reads it
+    through a signed lookup axis.
+- **Plate:** the old one said the output had no reader. cm848_updateOilChangeMonitor uses it as the
+  engine_power_accumulator_increment input, and the plate now says so.
+  - That fits an oil soot estimate keyed by the end of injection. The accumulator's comment already names soot as
+    the e2m candidate, but it stays unproven, so the oil change monitor's names are unchanged.
+- The e2m end of injection vocabulary (EOI_Limit 8040, 819F) is the separate injection_end_* family; this block
+  resolves no record.
+
+Proof:
+- prove_caches.py: 1967 of 1968 functions match.
+- statement_diff.py (the renames, the dropped (short) casts, whitespace): 0 differing statements in the function
+  itself.
+- Thunks 18 / 14. lookup_tables.py: 0 sizing problems. Headers regenerated (0 g++ errors), tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

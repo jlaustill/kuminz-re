@@ -1,0 +1,14 @@
+cm848: round 43 closing - task 046, the session archive, MISSING 221, verify
+
+- task 046, the round 43 section: stages A / B, the proofs, and the leads (the typed junk row, the oil change monitor's
+  soot question).
+- firmware/CLAUDE.md (factual refresh): the MISSING sentence gives 221, from round 40's survey re-run: 123
+  documentation rows, 77 boot-named, 10 dual-use, 7 unreferenced, 4 deferred.
+- PR body, README, the todo line.
+- The session archive:
+  - session_folder/round43/: the apply scripts, the rules, the removed rows, the MISSING survey, the maps and the
+    commit messages. The .cpp copies are left out.
+  - The large tarball: the build and verify logs.
+- verify: two builds byte-identical, and the committed .cpp matches them apart from the timestamp.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
