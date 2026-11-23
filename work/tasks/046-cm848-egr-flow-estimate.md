@@ -2854,6 +2854,40 @@ A peer relay started the round on round 62's lead; the scripts are in `session_f
     - The boot kernel's header lengths, in its image at RAM 0x3f97cd + service.
   - 38 unprefixed CM848-only functions remain.
 
+## Done, round 64 (2026-11-23, same PR): both kernels' transmit records, one result-code enum
+
+A peer relay started the round on round 63's leads; the scripts are in `session_folder/round64/`.
+- **Stage A (3ce87e58): the records `cm848_selectJ1939TransmitBuffer` hands out.**
+  - `j1939_single_frame_tx_message` (0x3fcbc4) and `j1939_transport_tx_message` (0x3fc4ad), with their status
+    bytes and data. `j1939_single_frame_tx_data` is `byte[8]`. `j1939_transport_tx_data` is a named first byte,
+    because boot kernel thunks sit inside its 1800-byte extent.
+  - The selector returns `j1939_tx_msg_t *`, so its three callers lose their casts.
+- **Stage B (57f9cb3d): the boot kernel's records.**
+  - `diagnostic_response_message_t` was `j1939_tx_msg_t` field for field and is merged into it, along with two
+    stale comment blocks.
+  - The boot allocator gets the selector's prototype.
+  - Its two data buffers are named (`diagnostic_transport_response_data` `byte[1800]`,
+    `diagnostic_single_frame_response_data` `byte[8]`).
+- **Stage C (36c29ebe): `J1939_DIAGNOSTIC_RESULT`.**
+  - It merges `DIAG_RESPONSE` (0 / 4 / 7) and the unused `DIAG_RESPONSE_CODE`, which was ported from CM550.
+  - 12 codes, named from what produces them in this firmware: the validator, the dispatcher, the memory workers,
+    the region lookup and the handlers.
+  - It types the validator's return and the dispatcher's `result_code`.
+  - CM550's `DIAG_RESPONSE_CODE` type takes the same name; its members stay its own.
+  - **A tool fix:** `refresh_other_csvs_r57.py` rewrote history notes ("(was DIAG_ACK ...)" became the new name).
+    `refresh_other_csvs_r64.py` skips history markers as `refresh_references.py` does, and
+    `history_corruption.py` finds a rewritten note. Round 63's renames show none.
+- **Proof:** stage A 6 of 1968 functions differ: the selector, its 3 callers (each loses its cast) and two local declaration-order moves. Stage B 6: the boot allocator, its 2 callers (each loses its cast), the 2 boot transmit functions and one declaration-order move. Stage C 9: the 7 handlers, the validator and the dispatcher, with no cast added and 4 placeholder names removed; CM550's output equals a base build. Every verify byte-identical, thunks 18 / 14, 0 failed prototype or local rows, no artifact count changed, headers 0 g++ errors for both firmwares, tests pass, HARD 0 / MISSING 219.
+- **firmware/CLAUDE.md:** no edit. HARD stays 0 and MISSING 219.
+- **Leads:**
+  - **The boot kernel's result codes differ:** 5 = unknown service, 10 = a ROM handler refused in EEPROM service
+    mode. A boot twin of `J1939_DIAGNOSTIC_RESULT` would cover them.
+  - 0x14 (CM550's CHECKSUM_MISMATCH) and 0xfe (answered with 0x0e by `cm848_sendJ1939ResponseFrame`) have no CM848
+    producer found.
+  - CM550's `J1939_DIAGNOSTIC_RESULT` / `J1939_DIAGNOSTIC_SERVICE` members are unreviewed.
+  - Still open from round 63: the three unnamed length tables, `DAT_003fba10`, and 38 unprefixed CM848-only
+    functions.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

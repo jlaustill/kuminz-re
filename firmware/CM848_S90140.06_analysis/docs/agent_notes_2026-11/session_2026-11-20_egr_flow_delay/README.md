@@ -564,3 +564,8 @@ Hand work on the round 7 lead.
 - **Stage B:** `signatures.py`, `apply_r63b.py`. Review: `review_typed.py`, `artifacts.py`, `differing.py`.
 - **Stage C:** `boot_tables.py`, `cm550_names.py`, `apply_r63c.py`, `map_r63c.csv`.
 - **Proof:** `prove_r63.sh`. **Closing:** `apply_r63_closing.py`, `update_large_tar_r63.sh`.
+
+## Round 64: both kernels' transmit records, one result-code enum (`session_folder/round64/`)
+
+- **Stage A:** `apply_r64a.py`. **Stage B:** `apply_r64b.py`. **Stage C:** `apply_r64c.py`, `map_r64c.csv`, `refresh_other_csvs_r64.py` (history-safe), `history_corruption.py`.
+- **Proof:** `prove_r64.sh` and round 63's `differing.py` / `review_typed.py` / `artifacts.py`. **Closing:** `apply_r64_closing.py`, `update_large_tar_r64.sh`.

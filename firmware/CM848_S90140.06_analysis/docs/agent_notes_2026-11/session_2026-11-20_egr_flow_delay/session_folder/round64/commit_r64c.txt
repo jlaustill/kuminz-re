@@ -1,0 +1,43 @@
+cm848 + cm550: round 64 stage C - one result-code enum for PGN 61184: J1939_DIAGNOSTIC_RESULT
+
+CM848 had two enums for one code space:
+- DIAG_RESPONSE (0 DIAG_ACK / 4 DIAG_NACK_NOT_READY / 7 DIAG_NACK_PROTECTED), on 5 handler returns and 2 locals;
+- DIAG_RESPONSE_CODE, applied nowhere: "ported from CM550", with abbreviated or guessed names (ADDR_VALIDATION_FAIL,
+  UNKNOWN_SUBFUNC).
+They are merged into J1939_DIAGNOSTIC_RESULT (size 4). Each of its 11 codes is named from what produces it in
+this firmware: the validator, the dispatcher, the memory workers, the region lookup and the handlers.
+- ACCEPTED 0
+- WRONG_LENGTH 2
+- KEY_REFUSED 3
+- CANNOT_COMPLY 4: development mode not on / no free transmit record / an unknown broadcast item
+- NOT_SAFE 7: not_safe_to_program_flag / the engine not stopped / the clear-faults gate
+- UNKNOWN_PARAMETER_ID 8
+- UNMAPPED_ADDRESS 9
+- REGION_REFUSED 10
+- EEPROM_WRITE_QUEUE_FULL 0x0b: cm848_commitEepromMirrorToEeprom's raw 0xb now renders as this member too
+- UNKNOWN_SERVICE 0x18
+- KEY_MISSING 0x1a
+CM550's 0x14 CHECKSUM_MISMATCH has no CM848 producer found and is not carried over.
+
+- Typed on cm848_validateJ1939DiagnosticRequest's return (its four codes render as names) and on the dispatcher's
+  result_code. The two handler locals are now result (was diag_ack_result).
+- 0xff (nothing to send) is not a member, and the header says why. The dispatcher masks each result with 0xff, so
+  a member of that value named the mask: a first build read result & J1939_DIAGNOSTIC_RESULT_NONE.
+- Builds 2-3 tried a one-byte enum (which split the validator's result into a byte plus a uint) and keyed the
+  result local on JVar1. JVar1 was the service variable's key (both enums' locals are named J...), and it typed
+  the service byte as a result. The last build keys it on JVar4: Ghidra numbers locals by position, and the type
+  gives the prefix.
+- CM550: its DIAG_RESPONSE_CODE type is J1939_DIAGNOSTIC_RESULT too, since shared names change in both firmwares.
+  Its members stay its own. CM550's verify output equals a base build apart from the Generated line, and its
+  headers are regenerated.
+- A tool fix in the session scripts: refresh_other_csvs_r57.py rewrote "(was DIAG_ACK ...)" history notes into the
+  new names; the five notes are restored. refresh_other_csvs_r64.py skips history markers as refresh_references.py
+  does, and history_corruption.py finds rewritten notes. Round 63's renames show none.
+
+Proof (prove_r64.sh): 9 of 1968 functions differ, the 9 predicted: the 7 handlers, the validator and the
+dispatcher. No cast was added; the dispatcher lost 4 placeholder names; no artifact count changed. verify is
+byte-identical; thunks 18 / 14; prototype rows 0 failed; local rows 0 failed and the 8 skips that were there
+before. Headers regenerated for both firmwares (0 g++ errors each), tests pass, audit_cal_suffixes.py HARD 0 /
+MISSING 219, lookup_tables.py 0 sizing problems.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

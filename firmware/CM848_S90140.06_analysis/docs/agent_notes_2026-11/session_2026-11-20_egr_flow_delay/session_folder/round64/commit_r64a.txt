@@ -1,0 +1,29 @@
+cm848: round 64 stage A - the two transmit records cm848_selectJ1939TransmitBuffer hands out, as j1939_tx_msg_t
+
+Round 63's lead. The selector fills two records in place, at +4 data_length / +6 data_pointer / +10
+status_pointer of a 14-byte j1939_tx_msg_t:
+- up to 8 bytes: the record at 0x3fcbc4 (data 0x3fcbd3 / status byte 0x3fcbd2);
+- longer: the record at 0x3fc4ad (data 0x3fc4bc / status byte 0x3fc4bb), taken only while that status byte's high
+  nibble is 0.
+Users: the PGN 61184 replies and cm848_sendDataCollectorBuffer.
+
+- j1939_single_frame_tx_message / j1939_transport_tx_message (j1939_tx_msg_t). Their status bytes:
+  j1939_single_frame_transmit_status / j1939_transport_transmit_status.
+- j1939_single_frame_tx_data (byte[8]).
+- j1939_transport_tx_data is a named first byte, not an array. Its buffer runs to 0x3fcbc3 (1800 bytes), but that
+  RAM holds the boot reflash kernel's image at boot, and the boot ROM calls into it (the thunk snapshot in
+  docs/rom_to_ram_thunking.md has 10 targets at 0x3fc580 - 0x3fcb24). Inside the two records none.
+- The four type-only pointer rows inside the records (0x3fc4b3 / 0x3fc4b7 / 0x3fcbca / 0x3fcbce) are replaced in
+  place.
+- cm848_selectJ1939TransmitBuffer gets its full prototype: returns j1939_tx_msg_t *; length is int32_t, as the
+  decompiler inferred, so the call sites keep their arguments.
+
+Proof (prove_r64.sh): 6 of 1968 functions differ.
+- The selector now reads j1939_single_frame_tx_message.data_pointer = j1939_single_frame_tx_data and so on.
+- Its 3 callers lose their (j1939_tx_msg_t *) casts and nothing else.
+- Two local declaration-order moves: cm848_validateWriteAuth, mpc555_tickTransferTimeoutAndRuntimeCounter.
+- No artifact count changed.
+verify is byte-identical; thunks 18 / 14 (unchanged); prototype rows 0 failed. Headers regenerated (0 g++
+errors), tests pass, audit_cal_suffixes.py HARD 0 / MISSING 219, lookup_tables.py 0 sizing problems.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
