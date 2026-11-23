@@ -2,7 +2,7 @@
 
 This file covers what the S90140.06 firmware does for cruise control. It comes from a read-only review on 2026-11-22.
 
-**Names and addresses follow PR #53 at `71e0e34` (round 47).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
+**Names and addresses follow PR #53 at `ab6153b` (round 56).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
 
 Evidence tags:
 
@@ -136,6 +136,8 @@ Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrU
 **Feedback.** `cm848_monitorDiscreteOutputReadBack` (0x538278) is the read-back check for 11 discrete outputs. It compares outputs 21, 19 and 20 with raw switches 28, 25 and 27 while the brake is off. Mismatches set P0596 / P0595, P0588 / P0587 and P0584 / P0583. [review]
 - The supply output's faults are 146 and 147 (`cruise_servo_supply_driver_high_control_error`, `cruise_servo_supply_driver_low_control_error`). [round 32]
 - The vent and vacuum codes need the disabled latch first; the supply code can set alone. [review]
+
+**Service overrides.** `cm848_applyDiscreteOutputOverrides` (0x514108) lets a service tool force outputs 21, 20 and 19 on or off. It uses three `.enable` / `.value` pairs, one per output: `cruise_servo_supply_output_override`, `cruise_vacuum_output_override` and `cruise_vent_output_override`. In the e2m they're record 8C29: `Cruise_SC_Source_Driver_Override`, `Cruise_Vacuum_Driver_Override` and `Cruise_Vent_Driver_Override`, each with a `_User_Value` row. [code]
 
 ## Second brake signal [code]
 
