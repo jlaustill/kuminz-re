@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 21:36:29 MST 2026
+// Generated: Sun Nov 22 22:01:34 MST 2026
 
 
 //
@@ -1773,10 +1773,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word qadc_b_pqb0_sample;
-  word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
+  word qadc_b_pqb0_sample;
+  word qadc_b_pqa4_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -38942,8 +38942,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  byte all_transmits_overdue;
   ushort receive_interval;
+  byte all_transmits_overdue;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
@@ -92030,7 +92030,7 @@ void cm848_initialization_group22_state(void)
 
 {
   coolant_temperature_sensor_performance_state = 0;
-  protection_group29_startup_timer_count = DAT_000642da;
+  protection_group29_startup_timer_count = coolant_temperature_sensor_performance_start_delay;
   coolant_temperature_sensor_performance_snapshot_dwell_count = 0;
   coolant_temperature_sensor_performance_soak_conditions_met_flag = 0;
   coolant_temperature_sensor_performance_precheck_done_flag = 0;
@@ -92110,7 +92110,7 @@ void cm848_checkCoolantTemperatureSensorPerformance(void)
            protection_group29_coolant_temp_snapshot;
       coolant_temperature_sensor_performance_temperature_maximum =
            protection_group29_coolant_temp_snapshot;
-      cssc_coolant_monitoring_cycle_count = 0;
+      coolant_temperature_sensor_performance_test_timer = 0;
       coolant_temperature_sensor_performance_state = 1;
       return;
     }
@@ -92122,7 +92122,8 @@ void cm848_checkCoolantTemperatureSensorPerformance(void)
         (((fault_detected_cal.battery_temperature_high_error != 0 ||
           (fault_detected_cal.battery_temperature_low_error != 0)) ||
          (fault_detected_cal.battery_temperature_rationality_error != 0)))))) goto LAB_0052e210;
-    if (coolant_temperature_sensor_performance_snapshot_dwell_count < DAT_000642e0) {
+    if (coolant_temperature_sensor_performance_snapshot_dwell_count <
+        coolant_temperature_sensor_performance_key_on_delay) {
       coolant_temperature_sensor_performance_snapshot_dwell_count =
            coolant_temperature_sensor_performance_snapshot_dwell_count + 1;
       return;
@@ -92131,7 +92132,7 @@ void cm848_checkCoolantTemperatureSensorPerformance(void)
     protection_group29_coolant_temp_snapshot = coolant_temperature_sensor_filtered;
     DAT_003fd186 = battery_temperature_sensor_filtered;
     DAT_003fd184 = intake_manifold_temperature_sensor_filtered;
-    if ((int)(uint)DAT_000642de <=
+    if ((int)(uint)coolant_temperature_sensor_performance_maximum_start_temperature_difference <=
         (int)(short)intake_manifold_temperature_sensor_filtered -
         (int)(short)battery_temperature_sensor_filtered) {
       protection_group29_startup_timer_count = 0xffff;
@@ -92139,19 +92140,21 @@ void cm848_checkCoolantTemperatureSensorPerformance(void)
     }
     if ((((engine_off_time_latched_flag == 0) ||
          (fault_detected_cal.engine_off_time_stuck_error != 0)) ||
-        (engine_off_time_at_key_on < coolant_temperature_check_minimum_engine_off_time)) &&
-       (((pci_receive_message_14_status & 0x3f) == 0 &&
-        (fault_detected_cal.engine_off_time_stuck_error == 0)))) {
+        (engine_off_time_at_key_on < coolant_temperature_sensor_performance_minimum_engine_off_time)
+        ) && (((pci_receive_message_14_status & 0x3f) == 0 &&
+              (fault_detected_cal.engine_off_time_stuck_error == 0)))) {
       protection_group29_startup_timer_count = 0xffff;
       return;
     }
     coolant_temperature_sensor_performance_soak_conditions_met_flag = 1;
-    if ((int)DAT_000642ce <= (int)(short)intake_manifold_temperature_sensor_filtered) {
+    if ((int)coolant_temperature_sensor_performance_maximum_start_intake_air_temperature <=
+        (int)(short)intake_manifold_temperature_sensor_filtered) {
       protection_group29_startup_timer_count = 0xffff;
       coolant_temperature_sensor_performance_soak_conditions_met_flag = 1;
       return;
     }
-    if ((short)coolant_temperature_sensor_filtered <= DAT_000642d0) {
+    if ((short)coolant_temperature_sensor_filtered <=
+        coolant_temperature_sensor_performance_maximum_start_coolant_temperature) {
       protection_group29_startup_timer_count = 0xffff;
       coolant_temperature_sensor_performance_soak_conditions_met_flag = 1;
       return;
@@ -92167,8 +92170,10 @@ void cm848_checkCoolantTemperatureSensorPerformance(void)
       return;
     }
     if (((((monitor_enabling_conditions_met.coolant_temperature_sensor_performance == 0) ||
-          ((short)protection_group29_coolant_temp_snapshot < DAT_000642d2)) ||
-         (DAT_000642d4 < (short)protection_group29_coolant_temp_snapshot)) ||
+          ((short)protection_group29_coolant_temp_snapshot <
+           coolant_temperature_sensor_performance_minimum_start_temperature)) ||
+         (coolant_temperature_sensor_performance_maximum_start_temperature <
+          (short)protection_group29_coolant_temp_snapshot)) ||
         ((fault_detected_cal.coolant_temperature_low_error != 0 ||
          (fault_detected_cal.coolant_temperature_high_error != 0)))) ||
        (fault_detected_cal.thermostat_system_error != 0)) {
@@ -92188,17 +92193,21 @@ void cm848_checkCoolantTemperatureSensorPerformance(void)
     coolant_temperature_sensor_performance_temperature_span =
          coolant_temperature_sensor_performance_temperature_maximum -
          coolant_temperature_sensor_performance_temperature_minimum;
-    cssc_coolant_monitoring_cycle_count = cssc_coolant_monitoring_cycle_count + 1;
-    if (DAT_000642d6 <= (short)coolant_temperature_sensor_performance_temperature_span) {
+    coolant_temperature_sensor_performance_test_timer =
+         coolant_temperature_sensor_performance_test_timer + 1;
+    if (coolant_temperature_sensor_performance_minimum_temperature_span <=
+        (short)coolant_temperature_sensor_performance_temperature_span) {
       fault_detected_cal.coolant_temperature_in_range_error = 0;
       fault_registered_cal.coolant_temperature_in_range_error = 0;
       coolant_temperature_sensor_performance_state = 2;
       return;
     }
-    if (DAT_000642d6 <= (short)coolant_temperature_sensor_performance_temperature_span) {
+    if (coolant_temperature_sensor_performance_minimum_temperature_span <=
+        (short)coolant_temperature_sensor_performance_temperature_span) {
       return;
     }
-    if (cssc_coolant_monitoring_cycle_count < DAT_000642d8) {
+    if (coolant_temperature_sensor_performance_test_timer <
+        coolant_temperature_sensor_performance_maximum_test_time) {
       return;
     }
     if (coolant_temperature_sensor_performance_soak_conditions_met_flag != 1) {
@@ -97313,8 +97322,8 @@ void cm848_initDataStructures(void)
 
 {
   thermostat_monitor_state = 0;
-  thermostat_monitor_start_delay_countdown = DAT_00409fc6;
-  cssc_oiltemp_cooling_rate_fraction = 0;
+  thermostat_monitor_start_delay_countdown = thermostat_monitor_start_delay;
+  thermostat_monitor_test_timer_rate_accumulator = 0;
   thermostat_monitor_test_timer_cached_axis_offset = 2;
   thermostat_monitor_minimum_fuel_to_fail_cached_axis_offset = 2;
   thermostat_monitor_test_timer_rate_cached_axis_offset = 2;
@@ -97341,14 +97350,14 @@ void cm848_decideThermostatMonitorAtTargetTemperature(void)
     fault_registered_cal._50_2_ = fault_registered_cal._50_2_ & 0xfffe;
     thermostat_monitor_state = 2;
   }
-  else if (((((int)(short)thermostat_monitor_cold_soak_limit <
+  else if (((((int)thermostat_monitor_cold_soak_limit <
               (int)(short)thermostat_monitor_start_coolant_temperature -
               (int)(short)thermostat_monitor_start_battery_temperature) ||
             (fault_detected_cal.coolant_temperature_in_range_error != 0)) ||
            (fault_detected_cal.battery_temperature_high_error != 0)) ||
           (((fault_detected_cal.battery_temperature_low_error != 0 ||
             (thermostat_monitor_state == 7)) ||
-           ((int)(short)thermostat_monitor_battery_temperature_drop_limit <=
+           ((int)thermostat_monitor_battery_temperature_drop_limit <=
             (int)(short)thermostat_monitor_start_battery_temperature -
             (int)(short)battery_temperature_sensor_filtered)))) {
     thermostat_monitor_state = 6;
@@ -97376,14 +97385,14 @@ void cm848_decideThermostatMonitorBelowTargetTemperature(void)
 
 {
   if ((((thermostat_monitor_fuel_since_start < thermostat_monitor_minimum_fuel_to_fail) ||
-       ((int)(short)thermostat_monitor_cold_soak_limit <
+       ((int)thermostat_monitor_cold_soak_limit <
         (int)(short)thermostat_monitor_start_coolant_temperature -
         (int)(short)thermostat_monitor_start_battery_temperature)) ||
       (fault_detected_cal.coolant_temperature_in_range_error != 0)) ||
      (((fault_detected_cal.battery_temperature_high_error != 0 ||
        (fault_detected_cal.battery_temperature_low_error != 0)) ||
       ((thermostat_monitor_state == 7 ||
-       ((int)(short)thermostat_monitor_battery_temperature_drop_limit <=
+       ((int)thermostat_monitor_battery_temperature_drop_limit <=
         (int)(short)thermostat_monitor_start_battery_temperature -
         (int)(short)battery_temperature_sensor_filtered)))))) {
     thermostat_monitor_state = 6;
@@ -97461,8 +97470,10 @@ void cm848_runThermostatMonitor(void)
               return;
             }
             if (((algorithm_enable_flags_41_cal.thermostat_system_monitor_enable != 0) &&
-                (DAT_00409fb8 <= (short)coolant_temperature_sensor_filtered)) &&
-               ((short)coolant_temperature_sensor_filtered <= DAT_00409fba)) {
+                (thermostat_monitor_minimum_start_coolant_temperature <=
+                 (short)coolant_temperature_sensor_filtered)) &&
+               ((short)coolant_temperature_sensor_filtered <=
+                thermostat_monitor_maximum_start_coolant_temperature)) {
               thermostat_monitor_fuel_since_start = 0;
               thermostat_monitor_start_coolant_temperature = coolant_temperature_sensor_filtered;
               thermostat_monitor_coolant_rise_needed =
@@ -97476,7 +97487,8 @@ void cm848_runThermostatMonitor(void)
                                    injected_fuel_running_total * 0x1900) / 0x21366040);
               thermostat_monitor_maximum_fuel_to_pass =
                    (word)(((short)thermostat_monitor_coolant_rise_needed * 0x140) /
-                         ((int)DAT_00409fc2 + (int)DAT_00409fc4));
+                         ((int)thermostat_monitor_predicted_fuel_coefficient +
+                         (int)thermostat_monitor_predicted_fuel_alpha));
               thermostat_monitor_minimum_fuel_to_fail =
                    lookupTableInterpolation
                              (&thermostat_monitor_minimum_fuel_to_fail_cached_axis_offset,
@@ -97489,13 +97501,14 @@ void cm848_runThermostatMonitor(void)
                               thermostat_monitor_start_coolant_temperature,
                               thermostat_monitor_test_timer_axis,
                               thermostat_monitor_test_timer_values,1);
-              if (DAT_00409fcc < (short)thermostat_monitor_start_coolant_temperature) {
+              if (thermostat_monitor_fan_inhibit_maximum_start_coolant_temperature <
+                  (short)thermostat_monitor_start_coolant_temperature) {
                 thermostat_monitor_state = 8;
-                cssc_initial_warmup_budget = thermostat_monitor_test_timer;
+                thermostat_monitor_initial_test_timer = thermostat_monitor_test_timer;
                 return;
               }
               thermostat_monitor_state = 1;
-              cssc_initial_warmup_budget = thermostat_monitor_test_timer;
+              thermostat_monitor_initial_test_timer = thermostat_monitor_test_timer;
               return;
             }
             diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits & 0xffffbfff;
@@ -97526,51 +97539,55 @@ LAB_00536b90:
     }
     else {
       if ((final_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR) && (vehicle_speed == 0)) {
-        if (cssc_conditioning_cycle_count != 0xffff) {
-          cssc_conditioning_cycle_count = cssc_conditioning_cycle_count + 1;
+        if (thermostat_monitor_idle_timer != 0xffff) {
+          thermostat_monitor_idle_timer = thermostat_monitor_idle_timer + 1;
         }
       }
       else {
-        cssc_conditioning_cycle_count = 0;
+        thermostat_monitor_idle_timer = 0;
       }
-      if (((((DAT_00409fc8 < cssc_conditioning_cycle_count) &&
+      if (((((thermostat_monitor_maximum_idle_time < thermostat_monitor_idle_timer) &&
             ((uint)thermostat_monitor_test_timer <
-             (((uint)DAT_00409fca * (uint)cssc_initial_warmup_budget) / 0x6400 & 0xffff))) ||
-           ((int)(short)thermostat_monitor_cold_soak_limit <
+             (((uint)thermostat_monitor_abort_timer_percent *
+              (uint)thermostat_monitor_initial_test_timer) / 0x6400 & 0xffff))) ||
+           ((int)thermostat_monitor_cold_soak_limit <
             (int)(short)thermostat_monitor_start_coolant_temperature -
             (int)(short)thermostat_monitor_start_battery_temperature)) ||
           ((fault_detected_cal.coolant_temperature_in_range_error != 0 ||
            (fault_detected_cal.battery_temperature_high_error != 0)))) ||
          ((fault_detected_cal.battery_temperature_low_error != 0 ||
-          ((int)(short)thermostat_monitor_battery_temperature_drop_limit <=
+          ((int)thermostat_monitor_battery_temperature_drop_limit <=
            (int)(short)thermostat_monitor_start_battery_temperature -
            (int)(short)battery_temperature_sensor_filtered)))) {
         thermostat_monitor_state = 7;
       }
-      DAT_0040ba5a = lookupTableInterpolation
-                               (&thermostat_monitor_test_timer_rate_cached_axis_offset,
-                                engine_load_at_current_speed_percent,
-                                thermostat_monitor_test_timer_rate_axis,
-                                thermostat_monitor_test_timer_rate_values,8);
-      for (cssc_oiltemp_cooling_rate_fraction = cssc_oiltemp_cooling_rate_fraction + DAT_0040ba5a;
-          99 < cssc_oiltemp_cooling_rate_fraction;
-          cssc_oiltemp_cooling_rate_fraction = cssc_oiltemp_cooling_rate_fraction - 100) {
+      thermostat_monitor_test_timer_rate =
+           lookupTableInterpolation
+                     (&thermostat_monitor_test_timer_rate_cached_axis_offset,
+                      engine_load_at_current_speed_percent,thermostat_monitor_test_timer_rate_axis,
+                      thermostat_monitor_test_timer_rate_values,8);
+      for (thermostat_monitor_test_timer_rate_accumulator =
+                thermostat_monitor_test_timer_rate_accumulator + thermostat_monitor_test_timer_rate;
+          99 < thermostat_monitor_test_timer_rate_accumulator;
+          thermostat_monitor_test_timer_rate_accumulator =
+               thermostat_monitor_test_timer_rate_accumulator - 100) {
         if (thermostat_monitor_test_timer != 0) {
           thermostat_monitor_test_timer = thermostat_monitor_test_timer - 1;
         }
       }
       if ((thermostat_monitor_test_timer == 0) ||
-         ((short)thermostat_monitor_target_coolant_temperature <= (short)wVar2)) {
+         (thermostat_monitor_target_coolant_temperature <= (short)wVar2)) {
         uVar1 = CONCAT44((int)((ulonglong)injected_fuel_running_total * 0x1900 >> 0x20),
                          injected_fuel_running_total * 0x1900) / 0x21366040;
-        DAT_0040ba4c = (short)uVar1;
+        thermostat_monitor_fuel_total = (word)uVar1;
         if ((uint)thermostat_monitor_start_fuel_total < (uint)uVar1) {
-          thermostat_monitor_fuel_since_start = DAT_0040ba4c - thermostat_monitor_start_fuel_total;
+          thermostat_monitor_fuel_since_start =
+               thermostat_monitor_fuel_total - thermostat_monitor_start_fuel_total;
         }
         else {
           thermostat_monitor_fuel_since_start = 0;
         }
-        if ((short)wVar2 < (short)thermostat_monitor_target_coolant_temperature) {
+        if ((short)wVar2 < thermostat_monitor_target_coolant_temperature) {
           cm848_decideThermostatMonitorBelowTargetTemperature();
         }
         else {
