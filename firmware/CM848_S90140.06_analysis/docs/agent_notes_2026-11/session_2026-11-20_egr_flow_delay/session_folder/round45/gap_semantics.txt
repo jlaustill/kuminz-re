@@ -1,0 +1,184 @@
+gap 0x00592d6 +16 after 101C before 138E, rows: ambient_air_temperature_sensor_config
+   0.40 8D30 (extent 2, 0/1 records on same-width rows) ['ambient', 'temperature']
+   0.29 1532 (extent 16, 0/8 records on same-width rows) ['air', 'ambient', 'sensor', 'temperature']
+   0.27 8B2B (extent 16, 0/8 records on same-width rows) ['air', 'ambient', 'sensor', 'temperature']
+gap 0x0059692 +64 after 182F before 1294, rows: sensor_reference_voltage_c_config, sensor_reference_voltage_c_linearization_axis, sensor_reference_voltage_c_linearization_values
+   0.33 150D (extent 20, 0/10 records on same-width rows) ['channel', 'data']
+   0.20 8D6C (extent 40, 0/1 records on same-width rows) ['table']
+   0.17 8B4D (extent 4, 0/2 records on same-width rows) ['table']
+gap 0x005c4ae +8 after 10EB before 8A51, rows: low_speed_governor_error_filter_coefficient, low_speed_governor_error_filter_gain, low_speed_governor_filtered_error_maximum, low_speed_governor_filte
+   0.62 14EF (extent 8, 1/4 records on same-width rows) ['clamp', 'constant', 'error', 'filter', 'filtered', 'gain', 'lsg', 'maximum']
+   0.32 1498 (extent 8, 1/4 records on same-width rows) ['lower', 'lsg', 'maximum', 'minimum', 'speed', 'upper']
+   0.29 1497 (extent 8, 1/4 records on same-width rows) ['constant', 'filter', 'filtered', 'lsg', 'speed']
+gap 0x005c4da +24 after 8A52 before 8A3E, rows: low_speed_governor_altitude_speed_axis, low_speed_governor_altitude_speed_values
+   0.30 8B46 (extent 6, 0/1 records on same-width rows) ['pressure', 'speed', 'table']
+   0.22 148A (extent 2, 0/1 records on same-width rows) ['data', 'parameter']
+   0.22 1489 (extent 2, 0/1 records on same-width rows) ['data', 'parameter']
+gap 0x005c964 +18 after 1298 before 80C5, rows: vehicle_speed_zero_under_load_event_limit, vehicle_speed_zero_under_load_minimum_boost_pressure, vehicle_speed_zero_under_load_accelerator_off_idle_en
+   0.45 15C7 (extent 18, 8/9 records on same-width rows) ['above', 'boost', 'constant', 'count', 'engine', 'filter', 'idle', 'limit']
+   0.40 15C6 (extent 4, 2/2 records on same-width rows) ['idle', 'percent']
+   0.38 1A06 (extent 4, 2/2 records on same-width rows) ['monitor', 'speed', 'vehicle']
+gap 0x03fede2 +24 after 1A3B before 8CE5, rows: transmission_1_2_shift_lag_cal, eeprom_calibration_pending_flag, diag_session_state_byte, diagnostic_callback_init_ptr, eeprom_write_pending_flag, eep
+   0.38 15A7 (extent 2, 0/1 records on same-width rows) ['count', 'eeprom', 'write']
+   0.25 0018 (extent 4, 0/1 records on same-width rows) ['calibration']
+   0.23 8C2D (extent 6, 0/3 records on same-width rows) ['state', 'time', 'transmission']
+gap 0x03fee4e +42 after 8D1B before 1191, rows: lifetime_distance_8_mile_record_cal, lifetime_fuel_used_cal, lifetime_idle_time_cal, lifetime_engine_run_time_cal, trip_counter_status_flags_cal, trip
+   0.57 8AFC (extent 2, 0/1 records on same-width rows) ['application', 'fuel', 'fueling', 'offset']
+   0.50 8AD2 (extent 8, 0/2 records on same-width rows) ['distance', 'engine', 'fuel', 'total', 'trip']
+   0.40 15C6 (extent 4, 0/2 records on same-width rows) ['idle', 'time']
+gap 0x03fee7e +26 after 132C before 8C61, rows: vehicle_speed_zero_under_load_event_count_cal, vehicle_speed_zero_under_load_accelerator_off_idle_entry_count_cal, cylinder_balance_fueling_trim_cal, 
+   0.45 8BAE (extent 4, 2/2 records on same-width rows) ['commanded', 'dynamic', 'sensor', 'throttle', 'zero']
+   0.38 8B06 (extent 1, 0/1 records on same-width rows) ['commanded', 'enable', 'monitor']
+   0.38 1A06 (extent 4, 2/2 records on same-width rows) ['monitor', 'speed', 'vehicle']
+gap 0x03fee9a +12 after 8C61 before 1930, rows: end_of_line_test_malfunction_indicator_lamp_power_down_state_flag_cal, fuel_level_low_distance_check_armed_flag_cal, fuel_level_low_distance_accumulat
+   0.40 15C5 (extent 2, 0/1 records on same-width rows) ['eeprom', 'powerdown']
+   0.29 148B (extent 2, 0/1 records on same-width rows) ['eeprom', 'end']
+   0.25 8B48 (extent 2, 0/1 records on same-width rows) ['end']
+gap 0x03ff6ca +6 after 107D before 107B, rows: vacuum_throttle_override_duty_cycle_threshold, vacuum_throttle_override_position_error_threshold, vacuum_throttle_all_speed_governor_fueling_reduction
+   1.00 8C30 (extent 6, 3/3 records on same-width rows) ['amount', 'asg', 'assumed', 'cruise', 'cycle', 'decreased', 'delta', 'duty']
+   0.33 8A9F (extent 2, 1/1 records on same-width rows) ['amount', 'delta', 'fuel', 'speed']
+   0.33 1585 (extent 2, 1/1 records on same-width rows) ['threshold', 'throttle']
+gap 0x04070ee +64 after 10EC before 8C76, rows: low_speed_governor_cold_idle_coolant_temperature, low_speed_governor_cold_idle_time, low_speed_governor_hot_idle_coolant_temperature, low_speed_govern
+   0.57 8AFC (extent 2, 1/1 records on same-width rows) ['fuel', 'lsg', 'offset', 'vehicle']
+   0.54 1CB7 (extent 16, 8/8 records on same-width rows) ['air', 'idle', 'increment', 'maximum', 'minimum', 'road', 'run', 'speed']
+   0.50 1496 (extent 34, 15/16 records on same-width rows) ['ac', 'air', 'altitude', 'coolant', 'desired', 'droop', 'extended', 'fuel']
+gap 0x0408986 +14 after 8D37 before 8C68, rows: low_oil_pressure_check_minimum_rpm, oil_pressure_switch_stuck_count_limit, , low_oil_pressure_threshold, oil_pressure_switch_fault_running_count_limit
+   0.35 8A7E (extent 14, 5/7 records on same-width rows) ['above', 'enable', 'filter', 'low', 'oil', 'pressure', 'speed', 'switch']
+   0.33 8D23 (extent 14, 4/8 records on same-width rows) ['count', 'governor', 'limit', 'maximum', 'minimum', 'oil', 'pressure', 'runs']
+   0.33 8A9F (extent 2, 1/1 records on same-width rows) ['cold', 'fuel', 'speed', 'temperature']
+gap 0x0408a66 +40 after 8C5F before 8C55, rows: oil_change_monitor_fuel_threshold_hundredth_gallons, oil_change_monitor_distance_threshold_pulses, oil_change_monitor_soot_percentage_threshold, accel
+   1.00 8B4E (extent 12, 3/3 records on same-width rows) ['amount', 'burned', 'change', 'fuel', 'gallons', 'miles', 'needed', 'number']
+   0.96 8BAC (extent 28, 7/15 records on same-width rows) ['above', 'accelerator', 'adjust', 'adjustment', 'allowed', 'any', 'auto', 'az']
+   0.73 8BAE (extent 4, 0/2 records on same-width rows) ['auto', 'commanded', 'pedal', 'pps1', 'pps2', 'sensor', 'throttle', 'zero']
+gap 0x0408d38 +62 after 8A57 before 8D79, rows: transmission_temperature_late_substitute_minimum_vehicle_speed, transmission_temperature_adc_unchanged_reading_limit, transmission_temperature_early_s
+   0.75 1A06 (extent 4, 2/2 records on same-width rows) ['performance', 'ratio', 'rationality', 'speed', 'use', 'vehicle']
+   0.62 8A9E (extent 8, 2/4 records on same-width rows) ['coolant', 'performance', 'ratio', 'rationality', 'state', 'temperature', 'test', 'time']
+   0.58 8BB2 (extent 20, 3/9 records on same-width rows) ['above', 'been', 'before', 'below', 'default', 'exceeds', 'filter', 'has']
+gap 0x0408e96 +4 after 118F before 1071, rows: cruise_throttle_transition_threshold, cruise_bump_up_step_margin_scale
+   0.80 8B12 (extent 4, 2/2 records on same-width rows) ['adjust', 'adjustment', 'bump', 'cruise', 'fueling', 'handoff', 'selected', 'step']
+   0.33 1585 (extent 2, 1/1 records on same-width rows) ['threshold', 'throttle']
+   0.29 8AFC (extent 2, 1/1 records on same-width rows) ['adjustment', 'fueling']
+gap 0x040913a +36 after 8000 before 8001, rows: fuel_metering_cold_start_temperature, fuel_metering_hot_start_temperature, fuel_metering_outer_loop_preset_temperature_source, fuel_metering_read_back
+   0.79 8B3C (extent 36, 18/18 records on same-width rows) ['allow', 'applied', 'calculated', 'calculation', 'coefficient', 'coil', 'cold', 'command']
+   0.60 1468 (extent 2, 1/1 records on same-width rows) ['current', 'engine', 'output']
+   0.56 14EF (extent 8, 4/4 records on same-width rows) ['engine', 'error', 'filter', 'filtered', 'gain', 'maximum', 'minimum', 'speed']
+gap 0x0409a8a +8 after 8022 before 8114, rows: injector_diagnostic_bits_fast_decay_debounce_limit, injector_diagnostic_bits_open_circuit_debounce_limit, injector_diagnostic_bits_short_to_ground_deb
+   0.40 8A88 (extent 8, 4/4 records on same-width rows) ['circuit', 'debounce', 'decay', 'fast', 'ground', 'injector', 'open', 'short']
+   0.20 8B0E (extent 2, 1/1 records on same-width rows) ['debounce']
+   0.20 1D1A (extent 2, 1/1 records on same-width rows) ['limit']
+gap 0x0409ec6 +28 after 17C3 before 1D8D, rows: fuel_level_low_distance_level_threshold, fuel_level_low_distance_accumulator_limit, fuel_level_low_distance_vehicle_speed_scale, fuel_level_low_distan
+   0.50 8A8A (extent 6, 2/2 records on same-width rows) ['above', 'after', 'fuel', 'level', 'low', 'threshold']
+   0.48 8D23 (extent 14, 2/8 records on same-width rows) ['after', 'before', 'count', 'delay', 'governor', 'limit', 'maximum', 'minimum']
+   0.45 1D41 (extent 16, 3/9 records on same-width rows) ['alternator', 'coolant', 'count', 'duty', 'engine', 'fuel', 'limit', 'maximum']
+gap 0x0409fb8 +22 after 1901 before 18F1, rows: thermostat_monitor_cold_soak_limit, thermostat_monitor_battery_temperature_drop_limit, thermostat_monitor_target_coolant_temperature
+   0.33 1585 (extent 2, 0/1 records on same-width rows) ['difference', 'threshold']
+   0.31 8A9E (extent 8, 2/4 records on same-width rows) ['coolant', 'delta', 'monitor', 'temperature', 'time']
+   0.31 8C2D (extent 6, 1/3 records on same-width rows) ['delta', 'monitor', 'temperature', 'time']
+gap 0x040a062 +48 after 176A before 17DC, rows: barometric_pressure_sensor_channel_state, ambient_air_temperature_sensor_channel_state, battery_voltage_sensor_channel_state, boost_pressure_sensor_ch
+   0.40 8D30 (extent 2, 0/1 records on same-width rows) ['ambient', 'temperature']
+   0.36 8B04 (extent 8, 0/4 records on same-width rows) ['air', 'boost', 'pressure', 'sensor', 'temperature']
+   0.36 1532 (extent 16, 0/8 records on same-width rows) ['air', 'ambient', 'pressure', 'sensor', 'temperature']
+gap 0x040a0e6 +60 after 1814 before 1808, rows: fuel_temperature_sensor_channel_state, intake_manifold_temperature_sensor_channel_state, oil_pressure_sensor_channel_state, remote_accelerator_pedal_s
+   0.36 8B04 (extent 8, 0/4 records on same-width rows) ['intake', 'manifold', 'pressure', 'sensor', 'temperature']
+   0.33 8B03 (extent 16, 0/8 records on same-width rows) ['intake', 'manifold', 'pressure', 'sensor', 'temperature']
+   0.21 1532 (extent 16, 0/8 records on same-width rows) ['pressure', 'sensor', 'temperature']
+gap 0x040a264 +4 after 107A before 117D, rows: j1939_pgn56320_source_address, j1939_pgn56320_destination_address, etc2_gear_ratio_timeout
+   0.33 8B8B (extent 2, 0/1 records on same-width rows) ['gear', 'ratio']
+   0.25 8B4C (extent 2, 0/1 records on same-width rows) ['status']
+   0.25 1CC4 (extent 2, 0/1 records on same-width rows) ['ratio']
+gap 0x040a622 +2 after 19C2 before 1A19, rows: engine_torque_estimate
+   0.40 1468 (extent 2, 1/1 records on same-width rows) ['engine', 'torque']
+   0.29 8AFC (extent 2, 1/1 records on same-width rows) ['fuel', 'fueling']
+   0.25 8B48 (extent 2, 1/1 records on same-width rows) ['injection']
+gap 0x040add6 +24 after 1102 before 102E, rows: j1939_dm13_broadcast_enable_flags, j1939_dm13_hold_timer, j1939_dm13_fault_log_inhibit_flag, j1939_dm13_requester_slots
+   0.61 14EB (extent 6, 3/3 records on same-width rows) ['broadcast', 'dm13', 'dm13brd', 'dm13fltf', 'dm13hldt', 'enable', 'fault', 'flags']
+   0.40 1D1A (extent 2, 1/1 records on same-width rows) ['limit', 'timer']
+   0.31 14ED (extent 4, 2/2 records on same-width rows) ['broadcast', 'dm13', 'stop', 'time', 'timer']
+gap 0x040ae20 +54 after 10E8 before 1080, rows: j1939_powertrain_control_state.tsc1_request_time_limit_timer, j1939_powertrain_control_state.tsc1_request_timeout_count, j1939_powertrain_control_stat
+   0.40 1D1A (extent 2, 0/1 records on same-width rows) ['limit', 'timer']
+   0.40 15C6 (extent 4, 0/2 records on same-width rows) ['idle', 'time']
+   0.40 1468 (extent 2, 0/1 records on same-width rows) ['output', 'torque']
+gap 0x040aeb2 +34 after 1065 before 8C77, rows: low_speed_governor_adjusted_reference_before_droop, low_speed_governor_desired_reference_speed, low_speed_governor_air_conditioning_speed_request, low
+   0.76 1496 (extent 34, 12/16 records on same-width rows) ['0x', 'ac', 'active', 'adjusted', 'air', 'altitude', 'before', 'chrysler']
+   0.43 8AFC (extent 2, 1/1 records on same-width rows) ['fuel', 'lsg', 'vehicle']
+   0.40 8B2C (extent 4, 2/2 records on same-width rows) ['before', 'error', 'key', 'state']
+gap 0x040aed6 +18 after 8C77 before 8A3D, rows: governor_integrator_correction_term, governor_speed_error_reference, low_speed_governor_filtered_speed_error, low_speed_governor_adjusted_reference_sp
+   0.56 14F0 (extent 8, 2/4 records on same-width rows) ['adjusted', 'derivative', 'error', 'filtered', 'jerk', 'lsg', 'reference', 'speed']
+   0.43 8AFC (extent 2, 0/1 records on same-width rows) ['fuel', 'lsg', 'offset']
+   0.38 14EF (extent 8, 2/4 records on same-width rows) ['error', 'filter', 'filtered', 'gain', 'lsg', 'speed']
+gap 0x040aef8 +6 after 109C before 1226, rows: friction_fuel_by_engine_speed_cached_axis_offset, coolant_temperature_cached_axis_offsets
+   0.30 8B46 (extent 6, 0/1 records on same-width rows) ['fuel', 'speed', 'table']
+   0.29 8AFC (extent 2, 1/1 records on same-width rows) ['fuel', 'offset']
+   0.25 8A9F (extent 2, 1/1 records on same-width rows) ['fuel', 'speed', 'temperature']
+gap 0x040af7c +8 after 1982 before 175E, rows: governor_tuning_set_blend_weight, all_speed_governor_maximum_reference_speed, all_speed_governor_minimum_reference_speed, high_idle_override_flag
+   0.33 1585 (extent 2, 1/1 records on same-width rows) ['threshold', 'throttle']
+   0.25 1CC4 (extent 2, 1/1 records on same-width rows) ['ratio']
+   0.25 1A06 (extent 4, 2/2 records on same-width rows) ['ratio', 'speed']
+gap 0x040b1aa +64 after 8A06 before 8A26, rows: accelerator_pedal_position_sensor_1_channel_state, accelerator_pedal_position_sensor_2_channel_state, four_wheel_drive_switch_sensor_channel_state, go
+   0.36 8B04 (extent 8, 0/4 records on same-width rows) ['air', 'coolant', 'pressure', 'sensor', 'temperature']
+   0.36 1532 (extent 16, 0/8 records on same-width rows) ['air', 'enable', 'pressure', 'sensor', 'temperature']
+   0.33 8B4D (extent 4, 0/2 records on same-width rows) ['enable', 'table']
+gap 0x040b1ee +12 after 8A26 before 8C54, rows: fuel_demand_timing_enable_flag, transmission_output_speed_in_use, transmission_temperature_in_use, transmission_current_gear, park_neutral_exit_engine
+   0.60 1468 (extent 2, 1/1 records on same-width rows) ['current', 'engine', 'output']
+   0.45 8BB3 (extent 2, 1/1 records on same-width rows) ['output', 'ratio', 'shaft', 'speed', 'transmission']
+   0.38 1A06 (extent 4, 2/2 records on same-width rows) ['ratio', 'speed', 'use']
+gap 0x040b1fc +8 after 8C54 before 8A0F, rows: injector_driver_booster_capacitor_low_voltage_mask, brake_switch_pair_switch_11_only_event_count, brake_switch_pair_switch_2_only_event_count, second_
+   0.40 8B0E (extent 2, 1/1 records on same-width rows) ['debounced', 'switch']
+   0.38 8A86 (extent 5, 2/3 records on same-width rows) ['brake', 'driver', 'low', 'state', 'switch']
+   0.36 8A85 (extent 4, 2/2 records on same-width rows) ['brake', 'count', 'fault', 'switch']
+gap 0x040b34e +64 after 8A38 before 8A11, rows: pci_link_state, pci_link_state.tx_match_index, pci_link_state.receive_byte_count, pci_link_state.init_complete_marker, pci_link_state.link_event_code,
+   0.33 8B99 (extent 4, 0/2 records on same-width rows) ['command', 'device', 'status']
+   0.29 148C (extent 2, 0/1 records on same-width rows) ['marker', 'ram']
+   0.29 148B (extent 2, 0/1 records on same-width rows) ['marker', 'ram']
+gap 0x040b4ff +45 after 8A13 before 8D38, rows: transmission_selected_gear, pci_requested_idle_speed, pci_received_mil_request_flag, trip_counters_reset_pending_flag, immobilizer_expected_key, immob
+   0.75 15A7 (extent 2, 0/1 records on same-width rows) ['attempts', 'count', 'eeprom', 'failed', 'retry', 'write']
+   0.60 8B2C (extent 4, 0/2 records on same-width rows) ['before', 'final', 'fueling', 'key', 'off', 'state']
+   0.50 8D65 (extent 2, 0/1 records on same-width rows) ['disable', 'enable']
+gap 0x040b532 +10 after 8D38 before 8C69, rows: low_oil_pressure_active_flag, low_oil_pressure_derate_flag, low_oil_pressure_debounce_limit, engine_oil_pressure, oil_pressure_model_unfiltered
+   0.60 8B0E (extent 2, 1/1 records on same-width rows) ['debounce', 'debounced', 'switch']
+   0.40 8B46 (extent 6, 0/1 records on same-width rows) ['fuel', 'pressure', 'speed', 'table']
+   0.36 8B2D (extent 10, 5/5 records on same-width rows) ['coolant', 'count', 'derate', 'low', 'oil', 'pressure', 'temperature', 'warning']
+gap 0x040b54a +16 after 8C60 before 8C56, rows: oil_change_monitor_severity_factor, accelerator_pedal_dual_channel_validated_demand, accelerator_pedal_dual_channel_demand, accelerator_pedal_channel_
+   0.94 8BAD (extent 14, 6/9 records on same-width rows) ['active', 'alg', 'any', 'based', 'calculated', 'commanded', 'condition', 'conformance']
+   0.90 8B4F (extent 2, 1/1 records on same-width rows) ['based', 'coolant', 'factor', 'gallons', 'multiplier', 'ocm', 'oil', 'severity']
+   0.55 8BAE (extent 4, 2/2 records on same-width rows) ['commanded', 'pedal', 'pps1', 'pps2', 'sensor', 'throttle']
+gap 0x040b592 +52 after 8C34 before 1269, rows: governor_pressure, governor_pressure_integral_term, governor_pressure_error_slope, governor_pressure_error_sum, governor_pressure_proportional_term, g
+   0.89 8BB6 (extent 28, 3/11 records on same-width rows) ['adjusted', 'before', 'control', 'cycle', 'delta', 'derivative', 'determined', 'driver']
+   0.75 1CC4 (extent 2, 1/1 records on same-width rows) ['denominator', 'numerator', 'ratio']
+   0.67 8B8B (extent 2, 1/1 records on same-width rows) ['down', 'gear', 'ratio', 'top']
+gap 0x040b620 +40 after 8A58 before 8D7A, rows: transmission_temperature_adc_previous_reading, transmission_temperature_early_substitute_countdown, transmission_temperature_rationality_driving_pass_
+   0.75 1A06 (extent 4, 1/2 records on same-width rows) ['monitor', 'ratio', 'rationality', 'speed', 'use', 'vehicle']
+   0.55 8BB3 (extent 2, 1/1 records on same-width rows) ['learned', 'output', 'ratio', 'shaft', 'speed', 'transmission']
+   0.54 8C2D (extent 6, 1/3 records on same-width rows) ['delta', 'monitor', 'range', 'rationality', 'state', 'temperature', 'transmission']
+gap 0x040b64e +26 after 8D7A before 8C75, rows: vacuum_throttle_derivative_term, vacuum_throttle_duty_cycle, vacuum_throttle_integral_term, vacuum_throttle_position_error, vacuum_throttle_target_pos
+   0.75 8C2F (extent 26, 10/10 records on same-width rows) ['actuator', 'cannot', 'consecutive', 'controller', 'counter', 'cruise', 'cycle', 'deriv']
+   0.56 8C30 (extent 6, 0/3 records on same-width rows) ['cruise', 'cycle', 'duty', 'e', 'error', 'fuel', 'threshold', 'throttle']
+   0.41 8D01 (extent 8, 0/4 records on same-width rows) ['actuator', 'cycle', 'duty', 'error', 'fault', 'large', 'position', 'threshold']
+gap 0x040b66c +6 after 8C75 before 11A4, rows: rom_crc_calc_phase, rom_crc_computed_results
+   0.40 15C5 (extent 2, 1/1 records on same-width rows) ['block', 'eeprom']
+   0.25 0018 (extent 4, 0/1 records on same-width rows) ['calibration']
+   0.20 1D1A (extent 2, 1/1 records on same-width rows) ['calibration']
+gap 0x040b6e8 +12 after 1190 before 106C, rows: drivetrain_ratio_filter_state, top_gear_ratio_threshold, gear_down_ratio_threshold
+   0.67 8B8B (extent 2, 0/1 records on same-width rows) ['down', 'gear', 'ratio', 'top']
+   0.29 148C (extent 2, 0/1 records on same-width rows) ['eeprom', 'image']
+   0.29 148B (extent 2, 0/1 records on same-width rows) ['eeprom', 'image']
+gap 0x040b702 +4 after 106C before 13AB, rows: drivetrain_ratio_engine_period_valid_flag, high_speed_governor_compensator_output_previous
+   0.40 1468 (extent 2, 1/1 records on same-width rows) ['engine', 'output']
+   0.38 1A06 (extent 4, 2/2 records on same-width rows) ['ratio', 'speed', 'vehicle']
+   0.27 8BB3 (extent 2, 1/1 records on same-width rows) ['output', 'ratio', 'speed']
+gap 0x040b9b8 +12 after 1629 before 1B2D, rows: fuel_pressure_sensor_plausibility_fail_result_count, fuel_pressure_sensor_plausibility_pass_result_count, fuel_pressure_sensor_plausibility_average_fu
+   0.40 8B7C (extent 6, 2/3 records on same-width rows) ['fuel', 'fueling', 'limit', 'table']
+   0.30 8C82 (extent 2, 0/1 records on same-width rows) ['fuel', 'fueling', 'limit']
+   0.30 8B46 (extent 6, 0/1 records on same-width rows) ['fuel', 'pressure', 'table']
+gap 0x040ba4e +20 after 1902 before 18F0, rows: thermostat_monitor_minimum_fuel_to_fail, thermostat_monitor_maximum_fuel_to_pass, thermostat_monitor_start_coolant_temperature, thermostat_monitor_coo
+   0.43 160F (extent 8, 0/2 records on same-width rows) ['abort', 'monitor', 'run']
+   0.40 1468 (extent 2, 1/1 records on same-width rows) ['current', 'engine']
+   0.38 8C2D (extent 6, 3/3 records on same-width rows) ['monitor', 'state', 'temperature', 'test', 'timer']
+gap 0x040c077 +29 after 12A8 before 12A7, rows: logical_output_request_bits, logical_output_request_bits_8_to_15, logical_output_request_bits_16_to_23, logical_output_request_bits_32_to_39, logical_
+   0.33 1612 (extent 4, 0/4 records on same-width rows) ['ac', 'discrete', 'driver', 'output', 'state']
+   0.25 8B2E (extent 4, 0/2 records on same-width rows) ['check', 'lamp', 'request']
+   0.24 8B5B (extent 12, 1/11 records on same-width rows) ['ac', 'discrete', 'driver', 'output']
+gap 0x100004a +14 after 1291 before 0049, rows: eeprom_calibration_block, eeprom_cal_word1, eeprom_cal_word2, eeprom_cal_word3, serial_reflash_unlock_request_cal
+   0.40 15C5 (extent 2, 0/1 records on same-width rows) ['block', 'eeprom']
+   0.25 0018 (extent 4, 0/1 records on same-width rows) ['calibration']
+   0.20 1D1A (extent 2, 0/1 records on same-width rows) ['calibration']

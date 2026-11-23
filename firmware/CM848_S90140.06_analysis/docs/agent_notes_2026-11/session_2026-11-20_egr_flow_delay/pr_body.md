@@ -625,6 +625,11 @@ state enum, the flag bytes.**
   OCM_Soot_Percentage_*). 33 rows gain citations.
 - **Stage C (6aefe56, labels):** the pedal learning's "total step" limit and counter are a time limit and its timer (e2m
   PPS_AZ_Time_Limit); the PPS block is inactive in this calibration (Accelerator_Position_Sensor_Type = 0, TPS).
+**Round 45.**
+- **Stage A (ee5d688, labels, rows):** a sweep of the gaps between dumped parameter ID table blocks. It places six
+  more e2m blocks: the injector debounce limits, the fuel level and fuel pressure rationality tests, the P0500
+  vehicle speed sensor monitor, the oil pressure gauge and low oil switch (2 new rows, 2 named), and the DM13
+  state. One rename.
 
 ## Test plan
 
@@ -717,6 +722,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 45: `prove_caches.py` matches 1967 of 1968 functions (the other differs only in the order of its local declarations); verify byte-identical.
 - [x] Round 44 stage C: `prove_caches.py` matches all 1968 functions; verify byte-identical.
 - [x] Round 44 stage B: `prove_caches.py` matches 1967 of 1968 functions; `mpc555_tickTransferTimeoutAndRuntimeCounter` differs only in the order of its local declarations, and the 6 `oil_change_monitor_soot_percentage_cal._0_1_` pieces are the boot ROM's existing byte view of the time-shared 0x3fee3e.
 - [x] Round 44: label-only proof matches all 1968 functions (the `undefined2` -> `word` retype changes nothing); a raw lis + displacement scan of both images finds exactly the accesses the `.cpp` shows.

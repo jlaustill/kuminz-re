@@ -1,0 +1,95 @@
+== 8A89 at 0x409ec6 (CHR_CC_11.60.01.01.e2m)
+   +00 0x409ec6 Fuel_Level_Rationality_Threshold [N2] dump 38: Low fuel threshold
+        row: fuel_level_low_distance_level_threshold word | 38: while the stored fuel level (eeprom_shadow_header.calibration_block1[1] - its copy is PCI 0xA4 FUEL TANK L
+   +02 0x409ec8 Fuel_Level_Mileage_Threshold [N4] dump 1920000000: Mileage limit for the fuel level rationality diagnostics
+        row: fuel_level_low_distance_accumulator_limit dword | DAT_00409ec8: lwz @ 0x5308b4 (disasm_func.py
+   +06 0x409ecc Low_Fuel_Constant [N4] dump 222: Execution rate (sec) * (1 hr/3600 sec)
+        row: fuel_level_low_distance_vehicle_speed_scale dword | 222: each pass adds (vehicle_speed x this) >> 4 (a distance) to the accumulator 0x3fee9e while the stored fuel
+   +0A 0x409ed0 Fuel_Level_Rationality_Start_Counts [N2] dump 18: Number of seconds between key on and start of fuel level rationality m
+        row: fuel_level_low_distance_check_start_delay_limit word | lhz @ 0x5306f8; value 18 in the RAM dump; the done flag sets on the evaluation after the count reached it (19 
+== 1D41 at 0x409ed2 (CHR_CC_11.60.01.01.e2m)
+   +00 0x409ed2 FP_Idle_Coolant_Temp_Min [N2] dump 10880: The min coolant temp required for fuel pressure idle diag to run.
+        row: fuel_pressure_sensor_plausibility_minimum_coolant_temperature i16 | 10880 = 170 F (1/64 F per count): the check runs only with coolant_temp at or above it. Width: xref_addr.py sa
+   +02 0x409ed4 FP_Idle_Count_Limit [N1] dump 3: The number of passes or fails required per drive cycle.
+        row: fuel_pressure_sensor_plausibility_result_count_limit byte | 3 in the dump: number of consecutive tests with the same result needed for a verdict. xref: byte
+   +03 0x409ed5 FP_Idle_Delta_Limit [N1] dump 82: Maximum allowed change in fuel pressure for FP Idle Rat to run.
+        row: fuel_pressure_sensor_plausibility_maximum_setpoint_error byte | 82 counts = 4.0 MPa: largest |fuel_pressure_sensor - fuel_pressure_setpoint| for which the check runs. Width: 
+   +04 0x409ed6 FP_Idle_EVR_Duty_Cycle_Breakpoint [N2] dump 14080: Alternator Duty Cycle threshold for FP Idle Final Fueling Limit.
+        row: fuel_pressure_sensor_plausibility_alternator_field_duty_threshold word | 14080 = 55 percent of the 25600 duty scale: alternator_field_duty_target at or below it (or above) selects the
+   +06 0x409ed8 FP_Idle_Final_Fueling_Limit_AT_Delta_Cal [N2] dump 200: Calibrated Delta for final fueling an auto trans not in neutral.
+        row: fuel_pressure_sensor_plausibility_in_gear_fuel_addend word | 200 = 13.6 mm3: fuel quantity added to the expected demand when transmission_type_cal is nonzero and transmiss
+   +08 0x409eda FP_Idle_Throttle_Limit [N2] dump 0: Maximum allowed change in throttle position for FP Idle Rat to run.
+        row: fuel_pressure_sensor_plausibility_maximum_governor_output word | 0 in the dump: the check runs only while all_speed_governor_equivalent_throttle is not above it. Width: xref_a
+   +0A 0x409edc FP_Idle_Speed_Delta_Limit [N2] dump 200: Maximum allowed change in engine rpm for FP idle rat to run.
+        row: fuel_pressure_sensor_plausibility_maximum_speed_error word | 200 = 25 rpm: largest |engine_speed_state_t.filtered_engine_speed - the governor speed word 0x40aec2| for whic
+   +0C 0x409ede FP_Idle_Time_Limit [N2] dump 150: The time required for the FP Idle Rat to run over.
+        row: fuel_pressure_sensor_plausibility_step_limit word | 150: passes averaged before a test is evaluated (the step count stops there). Width: xref_addr.py says word (1
+   +0E 0x409ee0 FP_Idle_Vehicle_Speed_Limit [N2] dump 0: Maximum allowed vehicle speed for fuel pressure idle rat to run.
+        row: fuel_pressure_sensor_plausibility_maximum_vehicle_speed word | 0 in the dump: the check runs only while vehicle_speed_copy is not above it (vehicle stopped). Width: xref_add
+== 8D04 at 0x40a264 (CHR_CC_11.60.01.01.e2m)
+   +00 0x40a264 TVA_PWM_Direction_Change [N1] dump 0: Indicates if TVA_Duty_Cycle changed sign since previous loop
+        row: j1939_pgn56320_source_address byte | j1939_receivePgn56576Handler stores byte 2 of the anti-theft request in it; cm848_sendPgn56320AntiTheftStatus 
+   +01 0x40a265 TVA_PWM_Within_Driver_Deadband [N1] dump 0: Indicates that abs value of TVA_Duty_Cycle < TVA_PWM_Zero_Thd
+        row: j1939_pgn56320_destination_address byte | j1939_receivePgn56576Handler stores byte 3 of the anti-theft request in it; cm848_sendPgn56320AntiTheftStatus 
+   +02 0x40a266 TVA_PWM_Valid_Abs_Duty_Cycle [N2] dump 0: Abs value of TVA_Duty_Cycle corrected for PWM polarity if required
+        row: etc2_gear_ratio_timeout word | ETC2 PGN 61445 actual-gear-ratio timeout SPN 526 - reloaded on a valid ratio in cm848_j1939ProcessPgn61445Etc2
+== 8C2F at 0x40b64e (CHR_CC_11.60.01.01.e2m)
+   +00 0x40b64e Vac_Throttle_Deriv_Term [N4] dump 0: Cruise throttle position control derivative term
+        row: vacuum_throttle_derivative_term dword | e2m 8C2F +0 Vac_Throttle_Deriv_Term: D gain x the error change / 4 (was fuel_demand_d_term)
+   +04 0x40b652 Vac_Throttle_Duty_Cycle [N4] dump 0: Output of cruise throttle position controller
+        row: vacuum_throttle_duty_cycle dword | e2m 8C2F +4 Vac_Throttle_Duty_Cycle 'Output of cruise throttle position controller': P + I + D clamped
+   +08 0x40b656 Vac_Throttle_Integral_Term [N2] dump 5120: Cruise throttle position control integral term
+        row: vacuum_throttle_integral_term word | e2m 8C2F +8 Vac_Throttle_Integral_Term (was fuel_demand_rate_accumulator)
+   +0A 0x40b658 Vac_Throttle_Position_Error [N2] dump 0: Difference between equivalent and actual throttle position
+        row: vacuum_throttle_position_error word | e2m 8C2F +A Vac_Throttle_Position_Error: vacuum_throttle_target_position - commanded_throttle_state.commanded_
+   +0C 0x40b65a Vac_Throttle_Target_Position [N2] dump 0: Equal to equivalent throttle in cruise mode, unless overidden
+        row: vacuum_throttle_target_position word | e2m 8C2F +C Vac_Throttle_Target_Position 'Equal to equivalent throttle in cruise mode
+   +0E 0x40b65c Vac_Throttle_Vac_PWM [N2] dump 0: Percent on-time applied to throt actuator vacuum valve
+        row: vacuum_throttle_vacuum_pwm word | e2m 8C2F +E Vac_Throttle_Vac_PWM: the vacuum valve on-time (logical output 20) (was cruise_servo_vacuum_duty) 
+   +10 0x40b65e Vac_Throttle_Vent_PWM [N2] dump 0: Percent on-time applied to throt actuator vent valve
+        row: vacuum_throttle_vent_pwm word | e2m 8C2F +10 Vac_Throttle_Vent_PWM: the vent valve on-time (logical output 19) (was cruise_servo_vent_duty) | 
+   +12 0x40b660 Vac_Throttle_Actuator_Disabled [N2] dump 0: TRUE indicates throttle cannot be positioned with vac actuator
+        row: vacuum_throttle_actuator_disabled_flag word | e2m 8C2F +12 Vac_Throttle_Actuator_Disabled 'TRUE indicates throttle cannot be positioned with vac actuator': 
+   +14 0x40b662 Vac_Throttle_Disabled_Counter [N2] dump 0: Number of consecutive 10 msec cts that pos error is large
+        row: vacuum_throttle_disabled_counter word | e2m 8C2F +14 Vac_Throttle_Disabled_Counter: consecutive passes with the error above vacuum_throttle_disabled_e
+   +16 0x40b664 Vac_Throttle_Prop_Term [N4] dump 0: Cruise throttle position control proportional term
+        row: vacuum_throttle_proportional_term dword | e2m 8C2F +16 Vac_Throttle_Prop_Term: P gain x the error / 4 (was fuel_demand_p_term)
+== 8B06 at 0x1000034 (CHR_CC_11.60.01.01.e2m)
+   +00 0x3fd4b6 Oil_Change_Monitor_SCI_Enable [S1] dump 0: Oil Change Monitor Algorithm Enable as commanded over SCI.
+== 8B3C at 0x40913a (CHR_CC_11.60.01.01.e2m)
+   +00 0x40913a HPCR_Cold_MPROP_Temperature [N2] dump 62976: Cold start dutycycle table is used at this temperature
+        row: fuel_metering_cold_start_temperature word | e2m 8B3C +0 HPCR_Cold_MPROP_Temperature 'Cold start dutycycle table is used at this temperature' (-40 F in the
+   +02 0x40913c HPCR_Hot_MPROP_Temperature [N2] dump 31680: Hot start dutycycle table is used at this temperature
+        row: fuel_metering_hot_start_temperature word | e2m 8B3C +2 HPCR_Hot_MPROP_Temperature 'Hot start dutycycle table is used at this temperature': the upper boun
+   +04 0x40913e HPCR_MPROP_Temperature_Flag [S2] dump 1: Selects temperature source for current loop int reset
+        row: fuel_metering_outer_loop_preset_temperature_source word | e2m 8B3C +4 HPCR_MPROP_Temperature_Flag 'Selects temperature source for current loop int reset' (1 in the dump
+   +06 0x409140 CP3_Pump_Regulator_Diag_Min_Duty_Cycle [N2] dump 245: If duty cycle < this cal, don't diagnose errors
+        row: fuel_metering_read_back_minimum_command word | cm848_tpuBReadBackChannel11ReadFeedback: for a fuel metering command above 0 but below this the MDASM29 pin ch
+   +08 0x409142 HPCR_Dutycycle_Output_Tool_Value [N2] dump 1025: Indicates if tool override request for CP3 driver
+        row: fuel_metering_tool_override_command word | e2m 8B3C +8 HPCR_Dutycycle_Output_Tool_Value: the M-PROP command used for the service tool override (was engin
+   +0A 0x409144 HPCR_Open_Loop_Dutycycle [N2] dump 2865: Duty cycle during open loop
+        row: fuel_pressure_governor_sensor_fault_command word | Demand in FUEL_PRESSURE_GOVERNOR_SENSOR_FAULT (2865 = 70 % of the 4095 command). Was cam_sync_ref_count_state4
+   +0C 0x409146 HPCR_Dutycycle_Output_Tool_State_Flag [N2] dump 0: 0=Allow CP3 driver override for tool in STOP state only;1=all states
+        row: fuel_metering_tool_override_while_running_enable word | e2m 8B3C +C HPCR_Dutycycle_Output_Tool_State_Flag ('0=Allow CP3 driver override for tool in' engine stopped on
+   +0E 0x409148 HPCR_Coil_Resistance_Filter_Coeff [N2] dump 55706: Filter applied to calculated coil resistance
+        row: fuel_metering_coil_resistance_filter_coefficient word | e2m 8B3C +E HPCR_Coil_Resistance_Filter_Coeff 'Filter applied to calculated coil resistance': the coefficient 
+   +10 0x40914a HPCR_Current_Sample_Minimum_Counts [N2] dump 25: Estimated coil temp considered good with this many samples
+        row: fuel_metering_coil_resistance_minimum_samples word | e2m 8B3C +10 HPCR_Current_Sample_Minimum_Counts 'Estimated coil temp considered good with this many samples' (
+   +12 0x40914c HPCR_MPROP_Inner_Loop_Temperature_Flag_N [N2] dump 1: Selects temperature source for current loop int reset
+        row: fuel_metering_inner_loop_preset_temperature_source word | e2m 8B3C +12 HPCR_MPROP_Inner_Loop_Temperature_Flag: the current loop integrator preset runs when it is 5 (was
+   +14 0x40914e HPCR_Duty_Out_Filter_Coeff [N2] dump 16384: Filter applied to dutycycle used for coil resistance calculation
+        row: fuel_metering_command_filter_coefficient word | Coefficient of a cm848_signedFirstOrderFilter record
+   +16 0x409150 HPCR_MPROP_Coil_Initial_Resistance [N2] dump 620: Initial value at power-up
+        row: fuel_metering_coil_initial_resistance word | e2m 8B3C +16 HPCR_MPROP_Coil_Initial_Resistance 'Initial value at power-up' (0.005 ohm; 620 = 3.1 ohm): cm848_
+   +18 0x409152 HPCR_MPROP_Startup_Pulse_Dutycycle [N2] dump 1311: Temporary output dutycycle at startup while RPM is zero
+        row: fuel_metering_startup_pulse_duty_cycle word | e2m 8B3C +18 HPCR_MPROP_Startup_Pulse_Dutycycle 'Temporary output dutycycle at startup while RPM is zero' (was
+   +1A 0x409154 HPCR_MPROP_Startup_Pulse_Time [N2] dump 100: Duration of temporary dutycycle command at power-up at 0 RPM
+        row: fuel_metering_startup_pulse_time word | e2m 8B3C +1A HPCR_MPROP_Startup_Pulse_Time 'Duration of temporary dutycycle command at power-up at 0 RPM' (0.0
+   +1C 0x409156 HPCR_MPROP_Temperature_Gain [N2] dump 13890: Slope for resistance to temperature calculation
+        row: fuel_metering_coil_temperature_gain word | e2m 8B3C +1C HPCR_MPROP_Temperature_Gain 'Slope for resistance to temperature calculation': fuel_metering_coil
+   +1E 0x409158 HPCR_MPROP_Temperature_Offset [N2] dump 41480: Offset for resistance to temperature calculation
+        row: fuel_metering_coil_temperature_offset word | e2m 8B3C +1E HPCR_MPROP_Temperature_Offset 'Offset for resistance to temperature calculation' (was engine_sync
+   +20 0x40915a HPCR_Resistance_Current_Threshold [N2] dump 900: Min current to allow resistance calculation
+        row: fuel_metering_resistance_minimum_current word | e2m 8B3C +20 HPCR_Resistance_Current_Threshold 'Min current to allow resistance calculation' (900 mA) (was cam
+   +22 0x40915c HPCR_Resistance_PWM_Threshold [N2] dump 615: Temporary output dutycycle at startup while RPM is zero
+        row: fuel_metering_resistance_minimum_duty_cycle word | e2m 8B3C +22 HPCR_Resistance_PWM_Threshold: the minimum duty cycle for a coil resistance sample (was cam_speed
