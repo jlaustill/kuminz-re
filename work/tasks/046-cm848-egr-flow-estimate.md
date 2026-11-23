@@ -2204,6 +2204,13 @@ A peer relay started the round; the scripts are in `session_folder/round45/`.
 - **Leads:**
   - The other perfect-match gaps (many candidates each) and the 81 gaps with none.
   - The `fuel_level_low_distance_*` family (11 rows) could take the e2m's "rationality" vocabulary.
+- **The user's decisions (2026-11-22):**
+  - The round 27 fault bitfield exception section in `firmware/CLAUDE.md` stays as it is. The user left the call
+    to me. One line cannot carry its two gotchas: word 0 stays a plain word (the base of 200 indexed accesses), and
+    a nested type per word prints `ZPULL(...)`.
+  - The `auditing-cal-suffixes` skill now says HARD 0 since round 39 (was "~1352"), checked by a fresh
+    `audit_cal_suffixes.py` run (0 hard, 0 soft, 221 missing). Its region table now matches the auditor: the
+    mirror is 0x3FD482-0x3FEEC1, and the copy window's overlapping top counts as mirror.
 
 ## Leads (not in this PR)
 

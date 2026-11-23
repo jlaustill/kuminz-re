@@ -630,6 +630,8 @@ state enum, the flag bytes.**
   more e2m blocks: the injector debounce limits, the fuel level and fuel pressure rationality tests, the P0500
   vehicle speed sensor monitor, the oil pressure gauge and low oil switch (2 new rows, 2 named), and the DM13
   state. One rename.
+- **Skill (the user's request):** `auditing-cal-suffixes` says HARD 0 since round 39 (was "~1352"), and its region
+  table matches `audit_cal_suffixes.py`. The round 27 section in `firmware/CLAUDE.md` stays as it is.
 
 ## Test plan
 
