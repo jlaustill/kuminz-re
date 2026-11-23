@@ -1158,20 +1158,14 @@ j1939_powertrain_messages_received_t,0x003fa982,tsc1_accepted_requested_torque,b
 parameter_id_entry_t,,parameter_id,word,2,"The ID looked up: a boot service parameter (0x0000-0x12A9) in the boot table, an e2m block ID (e2m column 3, e.g. 0x105E / 0x8A0F) in the flash2 table (lhz) - was param_id (PR #53 round 60)",,verified
 parameter_id_entry_t,,address,dword,4,"The resolved address: EEPROM 0x01000000 + offset (the application maps it to the RAM mirror 0x3fd482 + offset) / ROM / RAM / MPC555 registers (lwz at +2; a dword: as a pointer it would add about 1460 references)",,verified
 
-# EF00 Service Dispatch Entry - PGN 0xEF00 service handler registration
-# Located at RAM 0x3FA8B2 (populated by processJ1939DiagnosticRequest)
-# Used by j1939DiagnosticServiceHandler to route service requests
-# Total size: 6 bytes per entry (max 32 entries)
-ef00_dispatch_entry_t,,service_id,byte,1,EF00 service ID (see EF00_SERVICE_ID enum),,verified
-ef00_dispatch_entry_t,,reserved,byte,1,Padding byte,,verified
-ef00_dispatch_entry_t,,handler_ptr,dword,4,Function pointer to service handler,,verified
+# J1939 diagnostic service entry (6 bytes): j1939_diagnostic_service_table (RAM 0x3fa8b2 - 32 slots) - cm848_j1939RegisterDiagnosticService appends {service - handler} and cm848_j1939DiagnosticServiceHandler scans it for a PGN 61184 request's service byte (was ef00_dispatch_entry_t; PR #53 round 61)
+j1939_diagnostic_service_entry_t,,service_id,byte,1,The PGN 61184 diagnostic service byte (the request's first data byte),,verified
+j1939_diagnostic_service_entry_t,,pad,byte,1,Never written: the registrar stores only the service byte and the handler,,verified
+j1939_diagnostic_service_entry_t,,handler,pointer,4,The service handler: called with the received j1939_rx_msg_t once cm848_validateJ1939DiagnosticRequest accepts the request,,verified
 
-# Diagnostic Service Dispatch Entry - registerDiagnosticService table entry
-# Located at RAM 0x3FDB30 (populated by registerDiagnosticService)
-# Used by service dispatcher for 0x43/0x4A/0x4C memory read services
-# Total size: 5 bytes per entry (max 20 entries)
-diag_dispatch_entry_t,,service_id,byte,1,Diagnostic service ID (0x43=paramRead 0x4A=memRead 0x4C=memReadExt),,verified
-diag_dispatch_entry_t,,handler_ptr,dword,4,Function pointer to service handler,,verified
+# Boot kernel diagnostic service entry (5 bytes - packed): diagnostic_service_dispatch_table (RAM 0x3fdb30) - cm848_registerDiagnosticService appends {service - handler} (14 entries - capacity 20) and cm848_dispatchDiagnosticService scans them; 2 entries are typed because the application's EEPROM mirror words share the RAM from 0x3fdb3a (was diag_dispatch_entry_t; PR #53 round 61)
+boot_diagnostic_service_entry_t,,service_id,byte,1,The boot diagnostic service byte,,verified
+boot_diagnostic_service_entry_t,,handler,pointer,4,The service handler at offset 1 (unaligned): cm848_dispatchDiagnosticService calls it,,verified
 
 # ============================================================================
 # Scheduler Task Statistics - per-task timing and execution counters

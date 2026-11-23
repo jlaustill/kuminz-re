@@ -1360,6 +1360,7 @@ extern word engine_retarder_torque_ramp_percent_times_256;  // 0x003fa8aa
 extern word engine_retarder_torque_ramp_delay_count;  // 0x003fa8ac
 extern word throttle_100_speed_points_request_bit;  // 0x003fa8ae
 extern word throttle_100_speed_points_request_bit_initialized_flag;  // 0x003fa8b0
+extern j1939_diagnostic_service_entry_t j1939_diagnostic_service_table[32];  // 0x003fa8b2
 extern byte j1939_diagnostic_handler_count;  // 0x003fa972
 extern byte j1939_dm13_network_command_byte;  // 0x003fa974
 extern j1939_powertrain_messages_received_t j1939_powertrain_messages_received;  // 0x003fa982
@@ -2234,6 +2235,7 @@ extern word engine_retarder_exit_engine_speed_warm_oil_cal;  // 0x003fd924
 extern word engine_retarder_minimum_road_speed_cal;  // 0x003fd92c
 extern word transmission_type_cal;  // 0x003fd934
 extern word sensor_channel_held_value_enable_bits_cal[8];  // 0x003fda68
+extern boot_diagnostic_service_entry_t diagnostic_service_dispatch_table[2];  // 0x003fdb30
 extern word adc_forced_reading_enable_bits_cal[8];  // 0x003fdb78
 extern byte diag_scan_step_counter;  // 0x003fdb94
 extern word kernel_watchdog_question;  // 0x003fdb96

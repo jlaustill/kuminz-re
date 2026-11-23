@@ -135,7 +135,7 @@ function_address,function_name,param_index,name,type,comment
 # J1939 DM (Diagnostic Message) Handlers
 # Standard SAE J1939-73 diagnostic message processing
 # -----------------------------------------------------------------------------
-0x000227a0,cm848_j1939HandleDm1RequestMessage,0,request_msg,j1939_rx_msg_t*,Pointer to DM1 (Active DTC) request
+0x000227a0,cm848_j1939HandlePgn58112Dm7,0,request_msg,j1939_rx_msg_t*,The received DM7 (PGN 58112) request
 
 0x000255c0,cm848_sendPgn65232NonContinuousMonitorTestResultMessage,0,dest_address,byte,Destination address for DM1 response
 0x000255c0,cm848_sendPgn65232NonContinuousMonitorTestResultMessage,1,fault_count,byte,Number of active DTCs to report
@@ -226,8 +226,8 @@ function_address,function_name,param_index,name,type,comment
 # EF00 Service Dispatch System - J1939 PGN 0xEF00 handler registration
 # Two dispatch tables: ef00_service_dispatch_table (0x3FA8B2) and diag_service_dispatch_table (0x3FDB30)
 # -----------------------------------------------------------------------------
-0x000220e4,cm848_processJ1939DiagnosticRequest,0,service_id,byte,EF00 service ID to register
-0x000220e4,cm848_processJ1939DiagnosticRequest,1,handler_ptr,void*,Function pointer for service handler
+0x000220e4,cm848_j1939RegisterDiagnosticService,0,service_id,byte,EF00 service ID to register
+0x000220e4,cm848_j1939RegisterDiagnosticService,1,handler_ptr,void*,Function pointer for service handler
 
 0x00002c94,cm848_registerDiagnosticService,0,service_id,byte,Diagnostic service ID (0x43/0x4A/0x4C)
 0x00002c94,cm848_registerDiagnosticService,1,handler_ptr,void*,Function pointer for service handler
@@ -244,7 +244,7 @@ function_address,function_name,param_index,name,type,comment
 0x00021668,cm848_enterDevelopmentMode,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional state clear
 0x000216e8,cm848_commandEngineShutdown,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional flag set
 0x00021904,cm848_inhibitKeyOffShutdown,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional flag set
-0x00021918,cm848_validateCalibrationMemory,return,,DIAG_RESPONSE,Returns DIAG_ACK(0) or DIAG_NACK_PROTECTED(7)
+0x00021918,cm848_commitEepromMirrorToEeprom,return,,DIAG_RESPONSE,Returns DIAG_ACK(0) or DIAG_NACK_PROTECTED(7)
 
 # -----------------------------------------------------------------------------
 # J1939 RX Message Handlers - all receive j1939_rx_msg_t* as first param
@@ -510,7 +510,7 @@ function_address,function_name,param_index,name,type,comment
 0x00003dac,mpc555_canTransmitQueuePush,2,data,byte*,the data
 0x00003dac,mpc555_canTransmitQueuePush,3,result,byte*,where the result goes: 0 queued / 1 no data / 4 queue full
 0x00022128,cm848_j1939DiagnosticServiceHandler,0,rx_msg,j1939_rx_msg_t*,the received PGN 61184 request (a single frame / or the transport receive session's message view from its request_to_send_can_id)
-0x0050b634,j1939_diagServiceDispatch,0,rx_msg,j1939_rx_msg_t*,the received request
+0x0050b634,cm848_validateJ1939DiagnosticRequest,0,rx_msg,j1939_rx_msg_t*,the received request
 0x000249c4,cm848_sendJ1939ResponseFrame,0,request,j1939_rx_msg_t*,the request being answered (its addresses swap into the reply)
 0x000249c4,cm848_sendJ1939ResponseFrame,1,result_code,dword,the service result: 0 success / 0xfe an extended response / else an error code (dword: the body reuses it as a 32-bit variable)
 0x00003f20,cm848_transmitCanMessage,0,message,diagnostic_response_message_t*,the response record from cm848_allocateDiagnosticResponseBuffer (header / data pointer / status pointer)

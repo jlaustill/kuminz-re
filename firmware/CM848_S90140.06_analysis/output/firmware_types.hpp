@@ -1312,8 +1312,8 @@ typedef struct j1939_acknowledgement_payload_t j1939_acknowledgement_payload_t;
 typedef struct eeprom_param_t eeprom_param_t;
 typedef struct j1939_powertrain_messages_received_t j1939_powertrain_messages_received_t;
 typedef struct parameter_id_entry_t parameter_id_entry_t;
-typedef struct ef00_dispatch_entry_t ef00_dispatch_entry_t;
-typedef struct diag_dispatch_entry_t diag_dispatch_entry_t;
+typedef struct j1939_diagnostic_service_entry_t j1939_diagnostic_service_entry_t;
+typedef struct boot_diagnostic_service_entry_t boot_diagnostic_service_entry_t;
 typedef struct executive_frame_timing_t executive_frame_timing_t;
 typedef struct j1939_dm13_requester_slot_t j1939_dm13_requester_slot_t;
 typedef struct combustion_chi_maximum_fuel_points_t combustion_chi_maximum_fuel_points_t;
@@ -2571,15 +2571,15 @@ struct parameter_id_entry_t {
     uint32_t address;  /* The resolved address: EEPROM 0x01000000 + offset (the application maps it to the RAM mirror 0x3fd482 + offset) / ROM / RAM / MPC555 registers (lwz at +2; a dword: as a pointer it would add about 1460 references) */
 };
 
-struct ef00_dispatch_entry_t {
-    uint8_t service_id;  /* EF00 service ID (see EF00_SERVICE_ID enum) */
-    uint8_t reserved;  /* Padding byte */
-    uint32_t handler_ptr;  /* Function pointer to service handler */
+struct j1939_diagnostic_service_entry_t {
+    uint8_t service_id;  /* The PGN 61184 diagnostic service byte (the request's first data byte) */
+    uint8_t pad;  /* Never written: the registrar stores only the service byte and the handler */
+    void * handler;  /* The service handler: called with the received j1939_rx_msg_t once cm848_validateJ1939DiagnosticRequest accepts the request */
 };
 
-struct diag_dispatch_entry_t {
-    uint8_t service_id;  /* Diagnostic service ID (0x43=paramRead 0x4A=memRead 0x4C=memReadExt) */
-    uint32_t handler_ptr;  /* Function pointer to service handler */
+struct boot_diagnostic_service_entry_t {
+    uint8_t service_id;  /* The boot diagnostic service byte */
+    void * handler;  /* The service handler at offset 1 (unaligned): cm848_dispatchDiagnosticService calls it */
 };
 
 struct executive_frame_timing_t {

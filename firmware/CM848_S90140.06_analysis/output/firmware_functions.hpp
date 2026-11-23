@@ -1476,7 +1476,7 @@ undefined4 j1939_reverseByteOrder32(undefined4 *param_1);  // @ 0x0050b554
 undefined2 j1939_reverseByteOrder16(undefined2 *param_1);  // @ 0x0050b58c
 uint j1939_buildLampStatusByte(void);  // @ 0x0050b5b4
 byte j1939_getDiagServiceDataOffset(int param_1);  // @ 0x0050b610
-undefined4 j1939_diagServiceDispatch(j1939_rx_msg_t *rx_msg);  // @ 0x0050b634
+undefined4 cm848_validateJ1939DiagnosticRequest(j1939_rx_msg_t *rx_msg);  // @ 0x0050b634
 void j1939_receivePgn57344Handler(int param_1);  // @ 0x0050b734
 void j1939_receivePgn61441Handler(int param_1);  // @ 0x0050b77c
 void j1939_receivePgn61443Handler(int param_1);  // @ 0x0050b8a4
