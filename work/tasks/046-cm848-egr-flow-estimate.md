@@ -2700,7 +2700,9 @@ A peer relay started the round; the scripts are in `session_folder/round60/`.
 - **Proof:** exactly the three expected functions differ, each diffed; casts 8 -> 5 over them, no pieces; `firmware_types.hpp` changes by one rename, one new type, one removal. verify byte-identical, thunks 18 / 14.
 - **firmware/CLAUDE.md (factual corrections, verified this round):**
   - the Bank 2 "Command dispatch table" address 0x00539508 -> 0x0053a9a0 (0x539508 is a run of `bl` calls);
-  - the stuck-warning row for `_param_id_lookup_table` now records that the typed array applies over the window.
+  - the stuck-warning row for `_param_id_lookup_table`: it already rendered without the `_` before this round; the
+    row now says so, and that the typed array applies over the window (a follow-up fixed the row's first wording,
+    "resolved in round 60").
 - **Leads:**
   - The real homes of `ef00_dispatch_entry_t` / `diag_dispatch_entry_t`: read `j1939_diagServiceDispatch` and the
     registration code for each table's address and stride.
