@@ -3787,7 +3787,8 @@ as workflows. The scripts are in `session_folder/round85/`.
   - **The rule:** commit 16143a5c (2026-03-17) says a function whose only hardware access is the inline watchdog kick
     is generic code, not `mc68k_`. `hardware_access_kinds.py` splits each body's accesses, unnamed 0xFFxxxx addresses
     included, so 12 of the proposed `mc68k_` names keep `cm550_`.
-  - **23 renames, 11 `mc68k_` and 12 `cm550_`**, for example:
+  - **23 renames, 14 `mc68k_` and 9 `cm550_`** (12 proposals were kept off `mc68k_`: 8 renamed with `cm550_`, 4 left
+    as they were; the closing first misstated this as 11 / 12), for example:
     - `injectorTimingCalculation` -> `mc68k_sampleAndDebounceDiscreteInputs`;
     - `oilPressureRpmFaultMonitor` -> `mc68k_monitorPwmOutputReadBackFaults`;
     - the four TPU channel 10 primary speed handlers, one per `speed_measurement_mode`;
@@ -3828,6 +3829,10 @@ as workflows. The scripts are in `session_folder/round85/`.
     - `cm550_throttleTimeAccumulatorProcessor` is the mode 3 period ring / sync gap processor.
   - **Unreliable renders:** the .cpp drops blocks in `mc68k_flashEraseBlock` and `cm550_flashProgramAndVerifyWords`;
     read the ROM.
+  - **More spurious records (the survey's class Z):** 0xFBE4 is a fragment of 0xFB26, and 0x1B4C2 an interrupt
+    epilogue fragment entered from 0x1B4B2. 10 call targets have no function in the .cpp.
+  - **Round 86:** the stack argument fix (the research reports are `session_folder/round85/research_*.txt`). Re-derive the design's
+    wave-0 rows and its counts (89 functions, 72 / 79 lines) from the current .cpp first.
 
 ## Leads (not in this PR)
 

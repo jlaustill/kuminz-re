@@ -922,7 +922,7 @@ state enum, the flag bytes.**
 
 **Round 85.**
 - **Stage A (5fd9219c):** a workflow audit of CM550's hardware-touching functions. 23 are renamed for what they do
-  (11 take `mc68k_`; the watchdog-only ones stay `cm550_` under commit 16143a5c), and 9 spurious function records
+  (14 take `mc68k_`; the 9 watchdog-only ones stay `cm550_` under commit 16143a5c), and 9 spurious function records
   are deleted.
 - **Stage B (808a338b):** the Huffman tree node struct is applied; `FLASH_ERASE_RESULT`.
 

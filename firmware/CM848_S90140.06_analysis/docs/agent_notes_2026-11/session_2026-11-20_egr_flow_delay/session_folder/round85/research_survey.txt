@@ -1,0 +1,247 @@
+CM550 small stack argument survey (read-only; no repository file changed)
+
+Answer: CM550's compiler does not pad a word argument to 4 bytes. It moves stack arguments in 2-byte units:
+- Every 8-bit or 16-bit argument takes one 2-byte slot, written by move.w / clr.w or by a move.w store into the slot. The value sits at the next free offset.
+- A byte value travels in a word slot, with the byte at the odd address.
+- Longs and pointers take 4 bytes (move.l / pea / clr.l). They are not 4-aligned: they can start at +6, +10 or +14 after a word.
+- No push in the walked code uses move.b to the stack.
+Nothing in the ROM contradicts "word arguments are pushed as 2 bytes at their natural offset". The only thing that contradicts it is Ghidra's prototype model (4-byte slots, right-justified).
+
+SCOPE AND METHOD
+Scripts and data are in /home/linux/.claude/jobs/374b0424/tmp/w15/r85/research/stack-args-survey/:
+- parse_cpp.py, m68k.py (CPU32 decoder), analyze.py (walker), survey.py, classify.py, excess_check.py, push_census.py, final_counts.py.
+- Outputs: handback_table.txt, table.txt, compact.txt, classes.json, survey.json, all_sites.json, global.txt.
+
+The decoder reproduces the 0x3870 example:
+- Caller 0x3990 `3f3c 0002` puts a word at callee +4.
+- 0x3994 `4ebb 8170 ffff feda` decodes to target 0x3870.
+- 0x399c `548f` pops 2.
+- Callee 0x3882 `b26f 0004` is cmp.w (4,sp),d1.
+
+The walker:
+- starts from all 767 .cpp entries plus 10 call targets that have no body in the .cpp (777 in all);
+- follows branches and the 37 switch tables (`303b 0a06 4efb 0002` idiom);
+- resolves jsr (An) through constant address registers (218 calls, e.g. `247c 0001 42d4` ... `4e92`);
+- tracks sp, link frames and sp-alias registers, and keeps a shadow of which instruction wrote each stack byte.
+
+A raw ROM scan for call encodings cross-checks the walker:
+- For the affected set: 368 sites are flow-reached and 1 is scan-only (0x32160).
+- The boot image copy 0x291F4-0x2CE63 is excluded.
+- 111 call targets outside the dump (≥0x40000, RAM) are left out.
+- Argument extents come from what the callee reads; pops are used only as corroboration.
+
+1. AFFECTED FUNCTIONS (89)
+The .cpp tokens are as given: 72 lines with in_stack_00000004 and 79 with param_N._0_2_. Named-parameter partials are included too (divisor._0_2_, table_descriptor._2_2_).
+
+Wherever both exist, the ROM reads and the call sites agree. No function has two different layouts across its call sites.
+
+Many .cpp tokens point at the wrong width:
+- `param_1._1_1_` and `in_stack_00000005` (byte at +5) are mostly a move.w of the whole word at +4 that the decompiler narrowed. 42 of the 48 one-word functions load the full word.
+- 0x2f4be `undefined3 in_stack_00000004` is a pointer read with movea.l at +4.
+- 0x142d4 `_in_stack_00000006` is a word read at +6.
+
+2. CLASSES (89 = 48+12+4+1+4+10+3+1+1+1+1+3)
+Pushes are listed in execution order; [+N] is the callee offset.
+
+A. One word at +4 — 48 functions (42 read the word, 6 read only its low byte at +5)
+- 0x3870: caller 0x3990 `3f3c 0002` [+4] / `4ebb 8170 fffffeda` / `548f`. Callee `b26f 0004` cmp.w (4,sp).
+- 0xb6e8 (the CSV says `byte response_type`, which Ghidra puts at +7): caller 0x11a0e `4267` clr.w -(sp) / `4eb9 0000b6e8` / `548f`. Callee 0xb6f0 `342e 0008` move.w (8,a6) = +4.
+- Low-byte reader 0x24c5a: caller 0x24d9c `3f3c 007d` / `4eb9 00024c5a` / `548f`. Callee 0x24c6e `142f 000d` move.b (13,sp) with sp −8 = +5.
+
+B. Two words at +4, +6 — 12
+- 0x1e79a: 0x26f6e `3f3c 000f` [+6], 0x26f72 `3f3c 000e` [+4], `4eb9 0001e79a`, `588f`. Callee 0x1e79e `382f 002a` (+6) and `3a2f 0028` (+4), sp −36.
+- 0x333d6: 0x3352c `548f` releases 2 of the previous pea's 4 bytes. 0x3352e `3eb9 0080 34f2` move.w (abs),(sp) [+6], 0x33534 `3f39 0080350e` [+4], 0x3353a `4e95` jsr (a5) (a5 loaded by `2a7c 000333d6` at 0x33504), `588f`.
+- 0xfaa6: 0xfcbe `3f3c 0001` [+6], 0xfcc2 `3f39 0080816c` [+4], `6100 fddc`, `588f`. Callee `342f 000c` (+4) and 0xfb04 `4a2f 000f` tst.b (+7, the low byte of the +6 word). The CSV `byte torque_index` lands on +7 by coincidence, so the call renders as calculateGovernorDroopSpeed(1) and loses the +4 word.
+
+C. Three words at +4, +6, +8 — 4
+- 0x18708: 0x18c6a `3f10` [+8], `3f10` [+6], 0x18c72 `3f03` [+4], `4eb9 00018708`, `5c8f`. Callee `342f 000a`, `302f 0008`, `322f 000c` (sp −4).
+- 0x238ac: 0x2351c `3f3c 0001` [+8], 0x23526 `3f00` [+6], 0x23528 `3f15` [+4], `5c8f`. Callee `34af 0008` (+4), `156f 000b 0002` move.b (+7), `356f 000c 0004` (+8).
+
+D. Four words at +4..+10 — 1
+- 0x22ad8: 0x22bf0 `3f15` [+10], `3f00` [+8], `3f00` [+6], 0x22c00 `3f00` [+4], `6100 fed4`, `508f`. Callee reads bytes at +5, +7, +9 ((9/11/13,a6)) and a word at +10 ((14,a6)).
+
+E. Word at +4, long at +6 — 4 (the long is not 4-aligned)
+- 0x10e16: 0x13dd8 `2f0a` move.l a2 [+6], 0x13de0 `3f30 2000` [+4], `4eb9 00010e16`, `5c8f`. Callee 0x10e18 `322f 0008` (+4) and 0x10e1c `246f 000a` movea.l (+6). It renders as `*_param_id`.
+- 0x34f8a: 0xbc4c `2f0b` [+6], 0xbc4e `3f2b 000a` [+4], `4eb9 00034f8a`, `5c8f`. Callee `226e 000a` (+6), `302e 0008` (+4).
+- 0x21272 (no .cpp body): 0x2f540 `4879 0002f4be` [+6], 0x2f546 `3f3c ea00` [+4], `4eb9 00021272`. Callee `34af 0008`, `256f 000a 0002`.
+
+F. Long at +4, word at +8 — 10
+- 0x165f2: 0xf8a8 `3f03` [+8], 0xf8aa `2f02` [+4], `4eb9 000165f2`, `5c8f`. Callee `342f 0010` (+8), `262f 000c` (+4).
+- 0x1bfa2 (byte value): 0x14ad0 `3f00` [+8], 0x14ad2 `4879 0080bc8c` [+4], `4eb9 0001bfa2`, `5c8f`. Callee 0x1bfb0 `10af 0009` move.b (9,sp) (+9).
+- 0x3792 (slot reuse): 0x385c `548f`, then `3e80` move.w d0,(sp) [+8], `486e f3fa` pea [+4], `4eba ff2c`.
+
+G. Long, long, word (+4, +8, +12) — 3
+- 0x16c3c: 0x11036 `3f3c 0002` [+12], `486e fffe` [+8], `4879 00803fd6` [+4], `4e95`, `4fef 000a`. Callee `342f 001c` (+12).
+
+H. Long, long, word, word (+4, +8, +12, +14) — 1
+- 0x18968: 0x18a50 `4267` [+14], `4267` [+12], `2f0a`, `2f0b`, `6100 ff0e`, `4fef 000c`. Callee `342f 0022` (+14), `4a6f 0020` (+12).
+
+I. Long, long, long, word (+4, +8, +12, +16) — 1
+- 0x186ae: 0x18e8a `3f3c 0001` [+16], 3× move.l, `4fef 000e`. Callee `4a6f 001c` (+16).
+
+J. Long, word, word, word (+4, +8, +10, +12) — 1, callee-only
+- 0x16628: `242f 0014`, `3a2f 0018`, `382f 001a`, `362f 001c` (sp −16). Its address appears nowhere in the dump.
+
+K. One long at +4 — 1
+- 0x2f4be: `266f 0018` (+4). It is a callback: 0x2f540 registers it with 0x21272 under 0xea00 (a table at 0x800ab0). The dispatch at 0x21388 is `2f13` move.l (a3),-(sp) / `206a 0002` / `4e90` jsr (a0) / `588f`. Every unresolved jsr (a0) dispatch pushes one long.
+
+Z. Not callee-argument cases — 3 (offset-0 tokens)
+- 0x14fae is the caller-side face of a 4-byte CSV type. It runs `3f3c 000a` / 2× pea / `4eb9 0001c016` / `4fef 000a` at sp 0. circularBufferInit declares `dword buffer_size` (+12..+15) but reads `move.w (12,sp)`, so its upper half takes the caller's return address: `CONCAT22(10,in_stack_00000000)`.
+- 0xfbe4 is a fragment of 0xfb26 and shows the same effect. clampedDivisionCalculator's `division_operand_t max_result` gets only `clr.w` at +12 (0xfe0e), which gives `max_result.limit = in_stack_00000000`.
+- 0x1b4c2 is an interrupt epilogue fragment entered from 0x1b4b2: `andi.w #0xfffd,TPU_CISR; movem.l (sp)+; rte`.
+
+3. GLOBAL COUNTS (all 777 walked functions, fragments excluded)
+- 747 deduplicated call sites to the 131 callees that read arguments (739 walked, 8 scan-only).
+- 1411 argument reads:
+  - 748 are a 4-byte read of a 4-byte push;
+  - 591 are a 2-byte read of a 2-byte push;
+  - 70 are a byte read of the low (+1) byte of a word push;
+  - 2 are an in-place addq.b on byte 3 of a pointer: crc16Calculate 0x11da6, `43ee 000b` lea (11,a6),a1 / `5211`, the CONCAT31 `_0_3_` artifact, also in 0x2cf52.
+- 0 of each of these: a word read in the low half of a long push (padding), a word read in the high half, a read spanning two pushes, a read of an unwritten byte.
+- Pushes in walked code: 0 byte pushes. Argument units:
+  - 2-byte: 559 move.w, 60 clr.w, 27 2-byte stores;
+  - 4-byte: 365 pea, 349 move.l, 24 clr.l, 10 4-byte stores.
+- The 14 "word, then clr.w above it" pairs are separate word arguments; each callee reads them separately.
+- Pops after the 747 calls:
+  - 406 equal the argument bytes;
+  - 62 are larger (one pop for several calls). Every extra byte is a push from before an earlier call.
+  - 277 have no pop right after the call (cleaned up later or by unlk). Nothing pushed for the call sits unread above its arguments; only earlier leftovers, nested arguments, prologue register saves or `move sr,-(sp)` saves.
+  - 2 are smaller: slot reuse at 0x385c and 0x3352c.
+- Affected set: 262 equal, 13 larger, 94 none.
+- 18 long reads in 14 functions start at an offset ≡ 2 mod 4: 0x10e16, 0x34e9a, 0x34f00, 0x34f8a, plus the 10 without a .cpp body (0x103ba, 0x16cd8, 0x18dae, 0x1e0bc, 0x1fe84, 0x21272, 0x21642, 0x224f4, 0x2ee62, 0x2f47e).
+- sp-merge in the 89: 0x19332, 0x1cb76, 0x1ec3c and 0x1edae read their arguments only through a6, so the merges do not affect them.
+
+4. WHAT LOOKS LIKE A CONTRADICTION BUT IS NOT
+- Slot reuse: `548f` keeps 2 bytes of a previous pea slot for the next word argument, and move.w Dn,(sp) stores into a slot a deferred pop left behind. The word is still 2 bytes at its natural offset; it is written by a store, not a push.
+- Pops are not reliable as argument sizes (deferred and merged pops).
+- 0x32b38 takes the address of its +6 word argument (`486e 000a` pea (10,a6)) for byteSwap16. Its callers push two words (0x2ef6e `3f3c 0100`, `3f00`, `588f`).
+- The CSV layer: every 1- or 2-byte CSV parameter gets a right-justified offset (+6, +7, +10, +11, +14) that the code never reads as that parameter. The exceptions are coincidences: 0xfaa6 at +7, 0x18968 at +14, 0x1cb76 at +6 (a real second word). 0x32244's `dtc_count` is a phantom: the body reads no stack argument and its only caller (0x2f5fc) pushes nothing.
+
+5. NO TOKEN TODAY, BUT A FIX WILL CHANGE THEM
+These sub-long readers render without a token in the callee. The callers push the natural 2-byte layout.
+- Through a 4-byte type: 0x1645e safeDivideWithClamp and 0x1651e clampedDivisionCalculator (division_operand_t), 0x1c016 circularBufferInit (word at +12), 0x1c5e8 flashProgramFromRam (word at +12), 0x1e5f0 and 0x22ece (word at +4, `>>16`), 0x3460e lookupApplicationMemoryRegionType (word at +8).
+- void wrappers that pass their own +4 word on: 0x1e1ac, 0x1e1be.
+- The 10 functions without a .cpp body. They exist in Ghidra, e.g. FUN_0001fe84(0,100), and cm550_canTransmissionController() is shown with no arguments. They use word/long mixes such as long +4, word +8, long +10, long +14. This is a lead: the .cpp export drops these bodies.
+
+6. FULL TABLE
+Format: address name | what the callee reads | call sites | .cpp tokens (token@offset/width ×count).
+
+## One word at +4 (48)
+0x03870 cm550_busyWaitDelayLoop | as pushed | 5 | param_1._0_2_@4/2 x1
+0x0b688 cm550_FUN_0000b688 | as pushed | 1 | param_1._1_1_@5/1 x6
+0x0b6e8 cm550_diagnosticMessageQueueWrite | as pushed | 39 | in_stack_00000004@4/2 x6
+0x0c80e cm550_modeBasedDataDispatcher | as pushed | 1 | param_1._1_1_@5/1 x3
+0x0d1a4 cm550_diagnosticStatus2Initializer | as pushed | 1 | param_1._0_2_@4/2 x1
+0x0d4ae cm550_FUN_0000d4ae | as pushed | 1 | param_1._0_2_@4/2 x2
+0x0ed34 cm550_diagnosticCodeTableSearch | as pushed | 9 | param_1._1_1_@5/1 x1
+0x1025c cm550_retarderModeThresholdCalculator | as pushed | 1 | param_1._1_1_@5/1 x3
+0x13616 vp44_communication_state_machine | as pushed | 5 | param_1._0_2_@4/2 x1
+0x13ed8 cm550_FUN_00013ed8 | as pushed | 2 | param_1._1_1_@5/1 x32
+0x142a8 cm550_canBusConfigTypeSelector | as pushed | 5 | in_stack_00000005@5/1 x3
+0x144bc cm550_diagnosticCodeDebounceHandler | as pushed (read in the prologue; the body continues into the 0x1452e fragment) | 1 | in_stack_00000005@5/1 x11
+0x146b4 cm550_oldestDiagnosticTimestampSearch | as pushed | 2 | param_1._0_2_@4/2 x1
+0x14720 cm550_diagnosticCodeRegistrar | as pushed | 1 | in_stack_00000004@4/2 x1
+0x14f42 cm550_insitePidDtcHandler | as pushed | 1 | param_1._1_1_@5/1 x1
+0x19332 protectionStateProcessor | as pushed | 3 | param_1._0_2_@4/2 x1
+0x19436 protectionStateValidator | as pushed | 5 | param_1._0_2_@4/2 x1
+0x1e056 cm550_serialNodeAddressChecker | as pushed | 1 | in_stack_00000005@5/1 x1
+0x1e086 cm550_serialNodeAddressForwarder | as pushed | 2 | in_stack_00000005@5/1 x3
+0x1ec3c cm550_diagnosticMemoryWriteHandler | as pushed | 2 | in_stack_00000005@5/1 x4
+0x1edae cm550_diagnosticMemoryReadHandler | as pushed | 3 | in_stack_00000005@5/1 x6
+0x1fdc0 cm550_j1939MessageTypeCounter | as pushed | 2 | param_1._0_2_@4/2 x4
+0x201d6 cm550_FUN_000201d6 | as pushed | 7 | param_1._1_1_@5/1 x3
+0x20210 cm550_FUN_00020210 | as pushed | 3 | param_1._1_1_@5/1 x3
+0x2024a cm550_FUN_0002024a | as pushed | 7 | param_1._1_1_@5/1 x3
+0x202d8 setBitInArray | as pushed | 8 | param_1._1_1_@5/1 x3
+0x20310 cm550_FUN_00020310 | as pushed | 3 | param_1._1_1_@5/1 x3
+0x20348 cm550_FUN_00020348 | as pushed | 7 | param_1._1_1_@5/1 x3
+0x20890 cm550_FUN_00020890 | as pushed | 1 | in_stack_00000004@4/2 x29
+0x21964 getJ1939MemoryServiceHeaderLength | as pushed | 3 | param_1._1_1_@5/1 x2
+0x21f4e cm550_diagnosticGroupPositionBufferStore | low byte +5 | 5 | param_1._1_1_@5/1 x1
+0x21fac cm550_diagnosticGroupSnapshotCapture | low byte +5 | 4 | param_1._1_1_@5/1 x1
+0x23130 cm550_multiPacketBufferAllocator | as pushed | 2 | param_1._0_2_@4/2 x3
+0x23870 cm550_ioControlTimeoutTableLookup | as pushed | 1 | param_1._1_1_@5/1 x1
+0x238ec cm550_ioControlTimeoutEntryAdd | low byte +5 | 1 | param_1._1_1_@5/1 x1
+0x23a3c cm550_ioControlEntryRemove | as pushed | 1 | param_1._1_1_@5/1 x1
+0x24b4e cm550_ioControlDigitDisplaySequencer | as pushed | 1 | param_1._0_2_@4/2 x3
+0x24c5a cm550_FUN_00024c5a | low byte +5 | 3 | param_1._1_1_@5/1 x5
+0x24cd2 cm550_FUN_00024cd2 | low byte +5 | 1 | param_1._1_1_@5/1 x5
+0x25806 cm550_FUN_00025806 | as pushed | 1 | param_1._0_2_@4/2 x2
+0x26272 cm550_epsOverrideChecker | as pushed | 1 | param_1._0_2_@4/2 x1
+0x27cd0 vp44_FUN_00027cd0 | low byte +5 | 4 | param_1._1_1_@5/1 x1
+0x2cf7e cm550_FUN_0002cf7e | as pushed | 1 | param_1._1_1_@5/1 x2
+0x2f606 cm550_FUN_0002f606 | as pushed | 2 | param_1._1_1_@5/1 x3
+0x2fd90 cm550_FUN_0002fd90 | as pushed | 1 | param_1._0_2_@4/2 x1
+0x2fddc cm550_diagnosticTableEntryClear | as pushed | 2 | param_1._0_2_@4/2 x7
+0x34bba cm550_watchdogServiceLoop | as pushed | 19 | param_1._0_2_@4/2 x1
+0x34bf8 cm550_FUN_00034bf8 (CSV hardwareTimerDelayLoop) | as pushed | 6 | in_stack_00000004@4/2 x1
+
+## Two words at +4, +6 (12)
+0x0faa6 cm550_calculateGovernorDroopSpeed | low byte of +6 (+7) | 4 | in_stack_00000004@4/2 x3
+0x142d4 cm550_FUN_000142d4 | as pushed | 5 | in_stack_00000004@4/2 x1; in_stack_00000006@6/1 x1
+0x1cb76 cm550_calculateBlendedTableValue | as pushed | 9 | in_stack_00000004@4/2 x2
+0x1e79a cm550_insiteMultiFrameResponseBuilder | as pushed | 6 | param_1._1_1_@5/1 x4
+0x229ea cm550_messageErrorHandler | low byte of +4 | 4 | param_1._1_1_@5/1 x1
+0x22a58 vp44CanFrameBuilder | low byte of +4 | 1 | param_1._1_1_@5/1 x1
+0x239d2 cm550_diagnosticStateInitializer | as pushed | 7 | param_1._0_2_@4/2 x1
+0x2fe38 cm550_diagnosticTableSnapshotCapture | as pushed | 4 | param_1._0_2_@4/2 x26; param_1._2_2_@6/2 x4
+0x31ace cm550_diagnosticSessionValidator | as pushed | 9 | param_1._0_2_@4/2 x2
+0x32b38 vp44_diagnosticByteResponseSender | low byte of +4, address of +6 | 2 | in_stack_00000005@5/1 x1
+0x333d6 cm550_FUN_000333d6 | as pushed | 6 | param_1._0_2_@4/2 x7; param_1._2_2_@6/2 x1
+0x33460 cm550_FUN_00033460 | as pushed | 6 | param_1._1_1_@5/1 x7
+
+## Three words at +4, +6, +8 (4)
+0x18708 cm550_protectionPercentageCalculator | as pushed | 2 | param_1._0_2_@4/2; param_1._2_2_@6/2 x2; param_2._0_2_@8/2
+0x192f2 cm550_protectionCalculationHelper | as pushed | 2 | param_1._0_2_@4/2 x2; param_1._2_2_@6/2 x2
+0x23820 cm550_diagnosticMessageValidator | as pushed | 3 | param_1._0_2_@4/2; param_2._0_2_@8/2
+0x238ac cm550_ioControlEntryAdd | low byte of +6 | 2 | param_1._0_2_@4/2; param_2._0_2_@8/2
+
+## Four words at +4..+10 (1)
+0x22ad8 vp44MessageTransmitter | low bytes of +4/+6/+8, word +10 | 3 | param_1._1_1_@5/1
+
+## Word at +4, long at +6 (4)
+0x10e16 cm550_diagnosticMemoryAddressResolver | as pushed | 9 | in_stack_00000004@4/2 x12; in_stack_00000008@8/2 (declared only)
+0x34e9a exponentialMovingAverage | as pushed | 6 | in_stack_00000004@4/2 x2; in_stack_00000008@8/2 (declared only)
+0x34f00 cm550_unsignedLinearInterpolation | callee only (word +4, long +6); no reference anywhere in the dump | 0 | in_stack_00000004@4/2; in_stack_00000008@8/2
+0x34f8a cm550_coreTableInterpolation | as pushed | 11 | table_descriptor._0_2_@4/2 x2; table_descriptor._2_2_@6/2; in_stack_00000008@8/2
+
+## Long at +4, word at +8 (10)
+0x03792 cm550_huffmanDecompress | as pushed | 1 | in_stack_00000008@8/2
+0x1192a cm550_FUN_0001192a | as pushed | 2 | param_2._1_1_@9/1 x2
+0x11da6 cm550_crc16Calculate | long, plus addq.b on its byte at +7 (CONCAT31) | 2 | param_1._0_3_@4/3; param_2._0_2_@8/2
+0x165f2 cm550_param_address_calc | as pushed | 4 | param_2._0_2_@8/2 x3
+0x1a95a cm550_throttleTimeAccumulatorProcessor | as pushed (a `4e56 0000` stub that falls into 0x1a95e, which reads (8,a6) and (12,a6)) | 1 | param_2._0_2_@8/2
+0x1bfa2 cm550_circularBufferPush | low byte of +8 (+9) | 2 | in_stack_00000009@9/1
+0x1ffd6 cm550_j1939TorqueControlModeParser | low byte of +8 (+9) | 2 | param_2._1_1_@9/1
+0x2cf52 cm550_FUN_0002cf52 | callee only (long +4 with addq.b at +7, word +8); no reference anywhere in the dump | 0 | param_1._0_3_@4/3; param_2._0_2_@8/2
+0x31b22 cm550_diagnosticCanResponseSender | as pushed | 3 | param_2._1_1_@9/1
+0x3216a cm550_diagnosticMultiPacketResponseBuilder | as pushed | 3 (1 scan-only) | param_2._1_1_@9/1 x3
+
+## Long, long, word (+4, +8, +12) (3)
+0x16c3c cm550_parameterCircularBufferWrite | as pushed | 21 | in_stack_0000000c@12/2 x4
+0x18f86 incrementDiagnosticCounters | as pushed | 4 | in_stack_0000000c@12/2 x2
+0x26a64 cm550_memcpy | as pushed | 24 | param_3._0_2_@12/2
+
+## Long, long, word, word (1)
+0x18968 cm550_protectionConditionEvaluator | as pushed | 8 | in_stack_0000000c@12/2
+
+## Long, long, long, word (1)
+0x186ae cm550_protectionThresholdCalculationHelper | as pushed | 2 | param_4._0_2_@16/2
+
+## Long, word, word, word (1)
+0x16628 cm550_limitedDivisionCalculator | callee only | 0 | divisor._0_2_@8/2 x2; divisor._2_2_@10/2; limit_value._0_2_@12/2 x2
+
+## One long at +4 (1)
+0x2f4be cm550_FUN_0002f4be | long; callback, dispatchers push one long | 0 direct | in_stack_00000004@4/3 x7
+
+## Not callee arguments (3)
+0x0fbe4 vp44_fuelSourceOilPressureConditionChecker | fragment of 0xfb26; caller face of division_operand_t | in_stack_00000000@0/2
+0x14fae cm550_initHourMeterSystem | caller face of circularBufferInit's dword buffer_size | in_stack_00000000@0/2
+0x1b4c2 mc68k_phase2_slot_8_handler | interrupt epilogue fragment | in_stack_00000000@0 (undefined8)
+
+7. RULE A FIX MUST MODEL (CM550 / this compiler)
+- The first argument is at entry sp +4.
+- Arguments are packed at 2-byte granularity in call order, with no alignment.
+- 1-byte and 2-byte arguments take a 2-byte slot. Bytes sit at the odd address (+1 within the slot); a callee may still load the whole word.
+- 4-byte arguments take 4 bytes at whatever even offset comes next.
+- The caller cleans up, often late or merged, so pop sizes are not evidence of argument sizes.

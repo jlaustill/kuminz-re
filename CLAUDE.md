@@ -359,7 +359,9 @@ When comparing firmware versions, track four types of differences:
 
 ### Relocation Map
 
-Each firmware analysis directory contains `output/relocation_map.csv` mapping function addresses between firmware versions:
+Only CM550 has one: `firmware/CM550_J90350.00_analysis/output/relocation_map.csv` maps function addresses from the
+historical J90280.05 dump (removed) to J90350.00 (see that firmware's `docs/comparison_report.md`). It is not a
+CM550 -> CM848 map, and CM848 has none:
 
 | Status | Meaning |
 |--------|---------|
@@ -367,4 +369,5 @@ Each firmware analysis directory contains `output/relocation_map.csv` mapping fu
 | `similar` | Function exists but code differs |
 | `not_found` | Function doesn't exist in target |
 
-Relocation maps are per-firmware in `output/relocation_map.csv`. Currently only CM550 J90350.00 and CM848 S90140.06 are active.
+Cross-firmware twins share one name in both firmwares' `function_renames.csv`. `firmware/cross_firmware_matches.csv`
+lists scored match candidates (CM550 -> CM848, action `review`); check each one, since not every row is a twin.

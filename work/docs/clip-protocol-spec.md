@@ -440,6 +440,10 @@ This confirms:
 
 From reverse engineering `diagnosticCommandDispatcher` at 0x00012484:
 
+> **Note (2026-11-24, PR #53 round 85):** 0x00012484 is this function's address in J90280.05, a removed dump. In
+> J90350.00 it is `mc68k_dispatchJ1708ReceivedMessages` at 0x00015F8E: it drains the J1708 receive buffer and picks the
+> handler from the first message byte.
+
 1. **Diagnostic Service Enable Flags** (`0x8035ea`):
    - Bit 0: Core services (Service 3,4,5,6)
    - Bit 1: Insite live data

@@ -183,7 +183,7 @@ DIAG_SECURED_SUBFUNC,0x51,MEMORY_PATCH,RAM patching system (memoryPatchingSystem
 DIAG_SECURED_SUBFUNC,0x52,SECURED_SHUTDOWN_REQUEST,Request secured shutdown (requestSecuredShutdown)
 DIAG_SECURED_SUBFUNC,0x53,UNSUPPORTED_ERROR,Unsupported operation - returns error code 4
 DIAG_SECURED_SUBFUNC,0x54,CAN_BUFFER_LOGGER,CAN message buffer logger (canMessageBufferLogger)
-# Service 4 Sub-functions (System Control) - case 4 in diagnosticCommandDispatcher
+# Service 4 Sub-functions (System Control) - case 4 in mc68k_dispatchJ1708ReceivedMessages (0x15F8E; 0x12484 in J90280.05; was diagnosticCommandDispatcher)
 DIAG_CONTROL_SUBFUNC,0x64,SYSTEM_CONTROL_100,System control function 100 (systemControl64)
 DIAG_CONTROL_SUBFUNC,0x65,FAULT_SCANNER_ENABLE,Enable fault flag scanner (enableFaultFlagScanner)
 DIAG_CONTROL_SUBFUNC,0x66,CLEAR_COMMAND_STATE,Clear diagnostic_command_state to 0
@@ -737,7 +737,7 @@ MEMORY_REGION_TYPE,0x0a,MEMORY_REGION_TYPE_REFUSED,The registers while the devel
 # Note: systemSecurityCheckStub_AlwaysPasses @ 0x27e98 is a STUB that always returns 0 (pass)
 SECURITY_BYPASS,0xB522,BYPASS_ENABLED,Magic value to bypass security checks (stored at 0x803586),2
 SECURITY_BYPASS,0x00FF,LEGACY_BYPASS,Legacy security bypass value check in writeJ1939DiagnosticMemory,1
-# Diagnostic Service Command Structure (diagnosticCommandDispatcher @ 0x12484)
+# Diagnostic Service Command Structure (mc68k_dispatchJ1708ReceivedMessages (0x15F8E; 0x12484 in J90280.05; was diagnosticCommandDispatcher))
 # Service routing based on first byte after length:
 #   0x03-0x06: Core diagnostic services (requires _diagnostic_service_enable_flags & 1)
 #   0x45-0x56: Extended services (requires _diagnostic_service_enable_flags & 4)
@@ -749,7 +749,7 @@ DIAG_SERVICE_ID,0x4A,FUEL_ARBITRATOR,fuelArbitratorControlService - fuel system 
 DIAG_SERVICE_ID,0x4C,EXTENDED_4C,extendedDiagnosticService4C,1
 DIAG_SERVICE_ID,0x4F,SERVICE_79_EXTENDED,extendedDiagnosticService4F,1
 DIAG_SERVICE_ID,0x51,SERVICE_81_EXTENDED,extendedDiagnosticService51,1
-# Service 0x03 Subfunction Codes (Secured Commands - diagnosticCommandDispatcher switch @ 0x125a6)
+# Service 0x03 Subfunction Codes (Secured Commands - the J1708 dispatcher's switch: 0x125a6 in J90280.05)
 # IMPORTANT: Commands 0x40-0x41 control CALIBRATION BANK SELECTION (factory vs active tuning) [PR #53 round 73: 0x80dc6c is ram_refresh_enable - e2m block 10C7 RAM_Refresh_Enable in CM550's parameter ID table - and 0x40 / 0x41 are enterDevelopmentMode / forceExitDevelopmentMode (CM848's twins); the 'bank' reading is J90280.05's]
 # calibration_bank_selector @ 0x0080dc6c: 0=factory bank (read-only OEM values) 1=active bank (tunable values)
 DIAG_SERVICE_3_CMD,0x40,SERVICE_3_ENTER_DEVELOPMENT_MODE,enterDevelopmentMode after the security key (was SERVICE_3_SWITCH_TO_FACTORY_BANK; PR #53 round 74),1
@@ -761,7 +761,7 @@ DIAG_SERVICE_3_CMD,0x51,SERVICE_3_MEMORY_PATCH,memoryPatchingSystem - apply queu
 DIAG_SERVICE_3_CMD,0x52,SECURED_SHUTDOWN,requestSecuredShutdown - request secured engine shutdown,1
 DIAG_SERVICE_3_CMD,0x53,RESERVED_ERROR,Reserved - always returns error 0x04,1
 DIAG_SERVICE_3_CMD,0x54,CAN_BUFFER_LOG,canMessageBufferLogger - log CAN message buffer,1
-# Service 0x04 Subfunction Codes (System Control - diagnosticCommandDispatcher switch @ 0x12690)
+# Service 0x04 Subfunction Codes (System Control - the J1708 dispatcher's switch: 0x12690 in J90280.05)
 DIAG_SERVICE_4_CMD,0x64,CONTROL_64,systemControl64 - system control function,1
 DIAG_SERVICE_4_CMD,0x65,FAULT_SCANNER,enableFaultFlagScanner - enable fault flag scanning,1
 DIAG_SERVICE_4_CMD,0x66,STATE_RESET,Reset diagnostic_command_state to 0,1

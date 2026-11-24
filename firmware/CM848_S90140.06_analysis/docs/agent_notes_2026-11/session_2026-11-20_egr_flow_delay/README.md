@@ -706,4 +706,8 @@ Hand work on the round 7 lead.
 - **Stage B (CM550):** `apply_r85b.py`.
 - **Research:** `stack_argument_survey/` (a CPU32 decoder and call-site walker that classifies CM550's small
   stack arguments; its scripts and text outputs).
-- **Closing:** `apply_r85_closing.py`, `update_large_tar_r85.sh`.
+- **Research reports:** `research_survey.txt`, `research_mechanics.txt`, `research_design.txt` (`save_research.py`,
+  `journal_results.py` pull them out of the workflow result).
+- **Closing:** `apply_r85_closing.py`, `update_large_tar_r85.sh`; the fix-up `apply_r85c_docs.py` (the 14 / 9 split, the
+  class Z leads, the J1708 dispatcher's old name in comments, CLAUDE.md's relocation map section) with
+  `rom_hardware_operands.py` (each watchdog-only function's ROM bytes scanned for other 0x00FFxxxx operands).
