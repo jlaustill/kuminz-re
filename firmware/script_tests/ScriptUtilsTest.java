@@ -464,7 +464,7 @@ class ScriptUtilsTest {
 
     @Test void pack_oneWord_atFour() { assertArrayEquals(new int[]{4}, pack2(2)); }          // cm550_busyWaitDelayLoop
     @Test void pack_oneByte_atTheOddHalf() { assertArrayEquals(new int[]{5}, pack2(1)); }
-    @Test void pack_wordThenLong_longNotAligned() {                                          // exponentialMovingAverage
+    @Test void pack_wordThenLong_longNotAligned() {                                          // cm550_signedFirstOrderFilter
         assertArrayEquals(new int[]{4, 6}, pack2(2, 4));
     }
     @Test void pack_longThenWord() { assertArrayEquals(new int[]{4, 8}, pack2(4, 2)); }

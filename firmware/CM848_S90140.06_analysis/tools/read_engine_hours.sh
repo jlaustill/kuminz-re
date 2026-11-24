@@ -30,7 +30,7 @@
 #     (+1 every 41 PIT ticks = 0.205 s while in the boot ROM only).
 #   Both are loaded at start (cm848_loadHourMetersFromEeprom) and saved back at
 #   power-down (cm848_runPowerDownSequence) and before a reflash restart
-#   (cm848_restartThroughBootRom).
+#   (restartThroughBootRom).
 #
 # EVIDENCE THAT 0x42 IS ENGINE-RUNNING TIME:
 #   during the two HP Tuners flash sessions (key on, engine off) the key-on

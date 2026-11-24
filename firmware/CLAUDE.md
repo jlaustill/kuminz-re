@@ -922,7 +922,8 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     - Read 0x40c280 and up at address - 0x80; there is no data for 0x40c200-0x40c27f.
     - The proof: the collector end pointer 0x40c28a, then 0 and the table address 0x3fddc4, sit at dump 0x40c200, and
       the file is exactly 0x80 short of 0x440000.
-    - The cause: clip-core's `ECUReader::readMemoryService4ALarge` skipped a failed 128-byte chunk without padding.
+    - The cause: clip-core's `ECUReader::readMemoryService4ALarge` skipped a failed 128-byte chunk without padding
+      (kuminz-cli asks for `CM848_RAM_SIZE` 0x46000 bytes from 0x3FA000; the file holds 0x45F80).
       Since PR #53 round 88 it pads the chunk with 0xFF and lists it in `<dump>.gaps.txt` (`readInChunks`, with unit tests).
       CM550's extended RAM dump has the same 0x80 shift (its README).
     - The build puts the bytes back: `SetupMemoryMapCM848.java` builds the RAM block (0x3FA000-0x43FFFF) with
