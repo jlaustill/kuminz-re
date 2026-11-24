@@ -1,0 +1,20 @@
+cm848+cm550: round 75 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 75" records stage B (5500c55b, the boot kernel's EEPROM header shadow and its EEPROM
+  words) and stage A (9aa91e6a, CM550's InSite parameter schedule, the J1708 SCI registers and functions, and the
+  ApplyHardwareRegisters fix), with their proofs.
+- Leads:
+  - the rest of CM550's MC68336 register map (TPU / QSPI / SIM / CTM4 still render Ram00fffXXX). CM550's tpu_* struct
+    rows sit at QSM addresses;
+  - mc68k_tpuChannelStateMachine is J1708 timer code, not TPU code;
+  - insite_response_frame_start needs insite_response_write_pointer typed first;
+  - diagnostic_multipacket_data_pointer is used both as an address and as a pointer;
+  - the scratch pad directory's 6-byte entries;
+  - the parameter bitmaps;
+  - j1708_rx_state_t_0080dcaf's pieces;
+  - the six startup callers' names.
+- The PR body: the Round 75 bullets, the "Beyond CM848" bullet for rounds 72-75, and the test plan line.
+- work/todo.md, the session README, session_folder/round75/, the large-files tarball (the round's 7 verify / build
+  logs), pr_body.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

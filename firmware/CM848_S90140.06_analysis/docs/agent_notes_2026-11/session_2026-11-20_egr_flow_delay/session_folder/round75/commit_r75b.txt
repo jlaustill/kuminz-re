@@ -1,0 +1,34 @@
+cm848: round 75 stage B - the boot kernel's EEPROM header shadow, named for the EEPROM words it holds; the EEPROM rows get their widths and _cal
+
+cm848_loadVersionConfigFromEeprom fills eeprom_shadow_header (eeprom_header_t at 0x3fee08) from five EEPROM words.
+Each field is now named for the word it holds:
+- +0 version_marker -> security_key_copy (EEPROM 0x34, no e2m record). The boot service loop mpc555_systemInitialization
+  writes EEPROM 0x8e into it each time it starts (it runs only when the boot mode strap pins are high or the ECM status
+  is not CALIBRATION_VALID). cm848_validateBootSecurityKey passes every key while it is 0xff. This is the same gate that
+  validateSecurityKey applies to calibration_download_security_key_cal (EEPROM 0x8e).
+- +4 header_block -> security_master_password (EEPROM 0x2-0x7 = e2m 0005 ECM_PSWD / Master_Password). The boot key
+  check compares the unscrambled key's 6 characters with it.
+- +10 config_dword -> key_on_hour_meter (EEPROM 0x30, the application's key_on_hour_meter_cal).
+  mpc555_loadRuntimeCounterFromEepromShadow loads the runtime counter from it.
+- +14 config_word -> calibration_download_security_key (EEPROM 0x8e = e2m 1000 Security_Key).
+
+The EEPROM-space rows those words are read from get the same names with _cal, and their real widths:
+- 0x01000002 eeprom_security_key byte -> eeprom_security_master_password_cal byte[6]
+- 0x01000030 eeprom_config_block byte -> eeprom_key_on_hour_meter_cal dword
+- 0x01000034 eeprom_version_marker byte -> eeprom_security_key_copy_cal word
+- 0x0100008e eeprom_serial_number byte -> eeprom_calibration_download_security_key_cal word (not a serial number)
+
+docs/engine_hours_and_odometer.md uses the current names. Its claim that the runtime counter is read from EEPROM 0x34
+is corrected: cm848_loadVersionConfigFromEeprom reads it from EEPROM 0x30.
+
+firmware/CLAUDE.md, two factual corrections:
+- the version table's EEPROM 0x0002 row: 'Security key' -> the master password (e2m's Security_Key is EEPROM 0x8e);
+- the trip counters bullet: the shadow header's runtime counter field is key_on_hour_meter (was config_dword).
+
+Proof: of 1968 functions, 2 differ after the renames, and both differences come from the new widths:
+- cm848_loadVersionConfigFromEeprom: the byte[6] source renders without '&';
+- mpc555_systemInitialization: the word drops a '(word *)' cast.
+CM848 verify is DETERMINISTIC (thunks 18 / call overrides 14 / locals skipped 8). The headers regenerate with 0 g++
+errors. The _cal audit reports HARD 0 and MISSING 206 (was 210). The script tests and lookup_tables.py are clean.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

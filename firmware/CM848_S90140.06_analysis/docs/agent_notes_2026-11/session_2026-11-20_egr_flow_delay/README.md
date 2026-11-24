@@ -624,3 +624,11 @@ Hand work on the round 7 lead.
 
 - **Stage A:** `struct_accesses.py` (every access with its address and width), `apply_r74a.py` (+ `patch_r74a_render.py`), `apply_r74a2.py`, `pairs_r74a.json`. **Stage B:** `apply_r74b.py`, `map_r74b_cm848.csv`. **Stage C:** `apply_r74c.py`. **Checks:** `closing_checks_r74.py`, `sweep_r74.py`.
 - **Proof:** `prove_r74*.py`, `diff_r74*.py`. **Closing:** `apply_r74_closing.py`, `update_large_tar_r74.sh`.
+
+## Round 75: the boot kernel's EEPROM header; CM550's InSite parameter schedule and J1708 SCI (`session_folder/round75/`)
+
+- **Stage B (CM848):** `apply_r75b.py` (the header fields, the EEPROM rows, the plate comment), `map_r75b.csv`.
+- **Stage A (CM550):** `apply_r75a.py` (the schedule struct, the pointer types), `apply_r75a2.py` (the table row
+  label-only: no memory block past the dump), `apply_r75a3.py` (the SCI registers, the two J1708 functions),
+  `apply_r75a4.py` (the mc68k_ prefix), `apply_r75a5.py` (the SCI interrupt handler), `map_r75a3/4/5.csv`.
+- **Proof:** `prove_r75*.py`, `diff_r75*.py`. **Closing:** `apply_r75_closing.py`, `update_large_tar_r75.sh`.

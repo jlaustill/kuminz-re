@@ -195,6 +195,7 @@
    101964 build_round74a2_cm550.log
    101964 build_round74a3_cm550.log
    101964 build_round74a_cm550.log
+   200814 build_round75a_cm848_script_check.log
    104456 cm550_base_build_round63.log
     23475 cm848_runCruiseAndRoadSpeedGovernor_round16.asm
   1071916 e2m_audit_round16a.csv
@@ -336,3 +337,9 @@
    401943 verify_round74b.log
    204257 verify_round74b_cm550.log
    204237 verify_round74c_cm550.log
+   204237 verify_round75a2_cm550.log
+   204757 verify_round75a3_cm550.log
+   206581 verify_round75a4_cm550.log
+   206593 verify_round75a5_cm550.log
+   204772 verify_round75a_cm550.log
+   401941 verify_round75b.log
