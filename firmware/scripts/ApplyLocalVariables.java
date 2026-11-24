@@ -326,6 +326,19 @@ public class ApplyLocalVariables extends GhidraScript {
     }
 
     private DataType getDataType(String typeString) {
+        // Array: "<element>[<count>]" (byte[6], huffman_tree_node_t[513]), built like ImportAnalysis builds
+        // array globals. Before PR #53 round 89 the name lookup below found an array only when something else
+        // had created the same array type: CM550's byte[4] local stopped applying once a struct field that
+        // happened to be byte[4] became a dword.
+        ScriptUtils.ArrayTypeSpec array = ScriptUtils.parseArrayType(typeString);
+        if (array != null) {
+            DataType element = getDataType(array.elementType);
+            if (element == null || element.getLength() <= 0) {
+                return null;
+            }
+            return new ArrayDataType(element, array.count, element.getLength());
+        }
+
         // Handle pointer types
         if (ScriptUtils.isPointerType(typeString)) {
             String baseType = ScriptUtils.stripPointer(typeString);

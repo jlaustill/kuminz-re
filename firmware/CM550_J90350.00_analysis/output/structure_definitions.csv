@@ -74,21 +74,21 @@ division_operand_t,,limit,word,2,Secondary 16-bit limit/clamp value,,verified
 # Accessed at offsets 0, 1, 2 as single bytes
 
 # A/D channel config record (24 bytes; e2m block 1003 = 25 of them from 0x806ae2 in channel order). Replaces the unused sensor_fault_config_t template (PR #53 round 89)
-sensor_config_t,,filter_coefficient,word,2,+0: A/D digital filter constant (1/65536): the weight of the previous value - the channel's ema_filter_state_t.coefficient points here and cm550_exponentialMovingAverage reads it,,verified
-sensor_config_t,,default_value,word,2,+2: global default value in the channel's units: filtered_value and the accumulator (<< 16) while the fault is active or on a tri-state reading,,verified
-sensor_config_t,,fault_clear_threshold,short,2,+4: A/D fault clear counts: debounce_counter at or below it clears fault_active_flag; each high / low status bit (0x806000) clears only while its 0x806040 first-occurrence bit is clear,,verified
-sensor_config_t,,debounce_counter_decrement,short,2,+6: A/D fault decrement: taken off debounce_counter on each in-range sample (floored at 0),,verified
-sensor_config_t,,debounce_counter_increment,short,2,+8: A/D fault increment: added to debounce_counter on each out-of-range sample,,verified
-sensor_config_t,,fault_set_threshold,short,2,+10: A/D fault set: debounce_counter at or above it sets the fault and is capped there,,verified
-sensor_config_t,,high_error_limit,word,2,+12: A/D high error limit in raw counts (0-1023): adc_raw_value above it counts toward high_error_fault_number,,verified
-sensor_config_t,,low_error_limit,word,2,+14: A/D low error limit in raw counts: adc_raw_value below it counts toward low_error_fault_number,,verified
-sensor_config_t,,qadc_result_register_index,word,2,+16: the QADC result slot (0-39) whose right-justified result register (0xfff2b0 + 2 x n) gives adc_raw_value,,verified
-sensor_config_t,,multiplexer_setting,byte,1,+18: channel multiplexer setting: no reader in J90350.00 (0 in all 25 records),,verified
-sensor_config_t,,tri_state_error_enable,byte,1,+19: tri-state flag: nonzero makes a lookup result of 4 count toward tri_state_error_fault_number (0 in all 25 records),,verified
-sensor_config_t,,high_error_fault_number,byte,1,+20: the fault the high limit sets (bit n mod 16 of status word n / 16 at 0x806000 / 0x806040),,verified
-sensor_config_t,,low_error_fault_number,byte,1,+21: the fault the low limit sets,,verified
-sensor_config_t,,tri_state_error_fault_number,byte,1,+22: the in-range / tri-state error: set at the fifth consecutive lookup result of 4 and cleared at the fifth other reading,,verified
-sensor_config_t,,sample_period,byte,1,+23: the channel runs once every sample_period passes of the A/D loop (0 = not processed); the e2m scale calls a pass 20 ms - not measured,,verified
+sensor_config_t,,filter_coefficient,word,2,+0: A/D digital filter constant (1/65536): the weight of the previous value - the channel's sensor_state_t.filter.coefficient points here and cm550_exponentialMovingAverage reads it (Calterm ...CS),,verified
+sensor_config_t,,default_value,word,2,+2: global default value in the channel's units: filtered_value and the accumulator (<< 16) while the fault is active or on a tri-state reading (Calterm ...GD or ADDF + the channel code),,verified
+sensor_config_t,,fault_clear_threshold,short,2,+4: A/D fault clear counts: debounce_counter at or below it clears fault_active_flag; each high / low status bit (0x806000) clears only while its 0x806040 first-occurrence bit is clear (Calterm ...CC or ...FC),,verified
+sensor_config_t,,debounce_counter_decrement,short,2,+6: A/D fault decrement: taken off debounce_counter on each in-range sample (floored at 0) (Calterm ...DT or ...FD),,verified
+sensor_config_t,,debounce_counter_increment,short,2,+8: A/D fault increment: added to debounce_counter on each out-of-range sample (Calterm ...IC or ...FI),,verified
+sensor_config_t,,fault_set_threshold,short,2,+10: A/D fault set: debounce_counter at or above it sets the fault and is capped there (Calterm ...SE or ...FS),,verified
+sensor_config_t,,high_error_limit,word,2,+12: A/D high error limit in raw counts (0-1023): adc_raw_value above it counts toward high_error_fault_number (Calterm ...HL),,verified
+sensor_config_t,,low_error_limit,word,2,+14: A/D low error limit in raw counts: adc_raw_value below it counts toward low_error_fault_number (Calterm ...LL),,verified
+sensor_config_t,,qadc_result_register_index,word,2,+16: the QADC result slot (0-39) whose right-justified result register (0xfff2b0 + 2 x n) gives adc_raw_value (Calterm ...CA: channel address),,verified
+sensor_config_t,,multiplexer_setting,byte,1,+18: channel multiplexer setting: no reader in J90350.00 (0 in all 25 records) (Calterm ...MU),,verified
+sensor_config_t,,tri_state_error_enable,byte,1,+19: tri-state flag: nonzero makes a lookup result of 4 count toward tri_state_error_fault_number (0 in all 25 records) (Calterm ...TS),,verified
+sensor_config_t,,high_error_fault_number,byte,1,+20: the fault the high limit sets (bit n mod 16 of status word n / 16 at 0x806000 / 0x806040) (Calterm ...HE),,verified
+sensor_config_t,,low_error_fault_number,byte,1,+21: the fault the low limit sets (Calterm ...LE),,verified
+sensor_config_t,,tri_state_error_fault_number,byte,1,+22: the in-range / tri-state error: set at the fifth consecutive lookup result of 4 and cleared at the fifth other reading (Calterm ...TE),,verified
+sensor_config_t,,sample_period,byte,1,+23: the channel runs once every sample_period passes of the A/D loop (0 = not processed); the e2m scale calls a pass 20 ms - not measured (Calterm ...SA or ...SR),,verified
 
 # Filter records (PR #53 round 88): CM848's ema_filter_state_t layout; cm550_signedFirstOrderFilter / cm550_exponentialMovingAverage take one, cm550_secondOrderFilter / cm550_secondOrderFilterUnsigned the second order record
 ema_filter_state_t,,coefficient,word*,4,Points at the filter coefficient word: the weight of the previous value in 1/65536 (0 = no filtering),,verified
@@ -97,15 +97,15 @@ second_order_filter_state_t,,coefficient_1,word*,4,+0: points at coefficient 1 (
 second_order_filter_state_t,,coefficient_3,word*,4,+4: points at coefficient 3 (1/65535): the weight of the output before last,,verified
 second_order_filter_state_t,,output,dword,4,+8: the filter output (its integer part is returned),,verified
 second_order_filter_state_t,,output_previous,dword,4,+12: the output of the previous call,,verified
-# Sensor Debounce State Entry (22 bytes per sensor)
-sensor_debounce_state_t,,filter,ema_filter_state_t,8,+0: the channel's filter record (its coefficient points at the channel config's +0 filter constant) (was reserved_00; PR #53 round 88),,verified
-sensor_debounce_state_t,,filtered_value,word,2,+8: the filter output - or the config default while the fault is active - or the channel's override value (was interpolated_value; PR #53 round 88),,verified
-sensor_debounce_state_t,,lookup_result,word,2,+10: the linearized reading (the table lookup result),,verified
-sensor_debounce_state_t,,debounce_counter,short,2,+12: the fault debounce count (signed: floored at 0),,verified
-sensor_debounce_state_t,,fault_active_flag,byte,1,+14: fault currently active flag,,verified
-sensor_debounce_state_t,,sample_counter,byte,1,+15: sample phase counter,,verified
-sensor_debounce_state_t,,adc_raw_value,word,2,+16: raw A/D conversion value,,verified
-sensor_debounce_state_t,,reserved_18,byte,4,+18-+21: no access; 0 in all 25 dumped records (was reserved_12 - the hex offset; PR #53 round 88),,verified
+# A/D channel runtime record (22 bytes; e2m block 1004 = 25 of them from 0x80a2aa in channel order; the pair of sensor_config_t) (was sensor_debounce_state_t; PR #53 round 89)
+sensor_state_t,,filter,ema_filter_state_t,8,+0: the channel's filter record (its coefficient points at the channel config's +0 filter constant) (was reserved_00; PR #53 round 88),,verified
+sensor_state_t,,filtered_value,word,2,+8: the filter output - or the config default while the fault is active - or the channel's override value (Calterm ...FT: filtered and linearized) (was interpolated_value; PR #53 round 88),,verified
+sensor_state_t,,unfiltered_value,word,2,+10: the linearized reading before the filter - the table lookup result (Calterm ...UF: unfiltered and linearized) (was lookup_result; PR #53 round 89),,verified
+sensor_state_t,,debounce_counter,short,2,+12: the fault debounce count (signed: floored at 0),,verified
+sensor_state_t,,fault_active_flag,byte,1,+14: fault currently active flag,,verified
+sensor_state_t,,sample_counter,byte,1,+15: sample phase counter,,verified
+sensor_state_t,,adc_raw_value,word,2,+16: raw A/D conversion value (Calterm ...RC: raw counts),,verified
+sensor_state_t,,reserved_18,dword,4,+18-+21: no access; 0 in all 25 dumped records. One dword: as byte[4] the decompiler made it the base of byte arithmetic (the array end and indexed channel reads) (was reserved_12 - the hex offset; PR #53 round 88; byte[4] until round 89),,verified
 
 # -----------------------------------------------------------------------------
 # EEPROM Structures (Fixed Addresses - Same Across Firmware Versions)

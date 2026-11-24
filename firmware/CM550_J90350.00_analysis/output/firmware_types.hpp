@@ -1075,7 +1075,7 @@ typedef struct division_operand_t division_operand_t;
 typedef struct sensor_config_t sensor_config_t;
 typedef struct ema_filter_state_t ema_filter_state_t;
 typedef struct second_order_filter_state_t second_order_filter_state_t;
-typedef struct sensor_debounce_state_t sensor_debounce_state_t;
+typedef struct sensor_state_t sensor_state_t;
 typedef struct cummins_data_plate_header_t cummins_data_plate_header_t;
 typedef struct module_variant_offsets_t module_variant_offsets_t;
 typedef struct cummins_data_plate_t cummins_data_plate_t;
@@ -1174,21 +1174,21 @@ struct division_operand_t {
 };
 
 struct sensor_config_t {
-    uint16_t filter_coefficient;  /* +0: A/D digital filter constant (1/65536): the weight of the previous value - the channel's ema_filter_state_t.coefficient points here and cm550_exponentialMovingAverage reads it */
-    uint16_t default_value;  /* +2: global default value in the channel's units: filtered_value and the accumulator (<< 16) while the fault is active or on a tri-state reading */
-    int16_t fault_clear_threshold;  /* +4: A/D fault clear counts: debounce_counter at or below it clears fault_active_flag; each high / low status bit (0x806000) clears only while its 0x806040 first-occurrence bit is clear */
-    int16_t debounce_counter_decrement;  /* +6: A/D fault decrement: taken off debounce_counter on each in-range sample (floored at 0) */
-    int16_t debounce_counter_increment;  /* +8: A/D fault increment: added to debounce_counter on each out-of-range sample */
-    int16_t fault_set_threshold;  /* +10: A/D fault set: debounce_counter at or above it sets the fault and is capped there */
-    uint16_t high_error_limit;  /* +12: A/D high error limit in raw counts (0-1023): adc_raw_value above it counts toward high_error_fault_number */
-    uint16_t low_error_limit;  /* +14: A/D low error limit in raw counts: adc_raw_value below it counts toward low_error_fault_number */
-    uint16_t qadc_result_register_index;  /* +16: the QADC result slot (0-39) whose right-justified result register (0xfff2b0 + 2 x n) gives adc_raw_value */
-    uint8_t multiplexer_setting;  /* +18: channel multiplexer setting: no reader in J90350.00 (0 in all 25 records) */
-    uint8_t tri_state_error_enable;  /* +19: tri-state flag: nonzero makes a lookup result of 4 count toward tri_state_error_fault_number (0 in all 25 records) */
-    uint8_t high_error_fault_number;  /* +20: the fault the high limit sets (bit n mod 16 of status word n / 16 at 0x806000 / 0x806040) */
-    uint8_t low_error_fault_number;  /* +21: the fault the low limit sets */
-    uint8_t tri_state_error_fault_number;  /* +22: the in-range / tri-state error: set at the fifth consecutive lookup result of 4 and cleared at the fifth other reading */
-    uint8_t sample_period;  /* +23: the channel runs once every sample_period passes of the A/D loop (0 = not processed); the e2m scale calls a pass 20 ms - not measured */
+    uint16_t filter_coefficient;  /* +0: A/D digital filter constant (1/65536): the weight of the previous value - the channel's sensor_state_t.filter.coefficient points here and cm550_exponentialMovingAverage reads it (Calterm ...CS) */
+    uint16_t default_value;  /* +2: global default value in the channel's units: filtered_value and the accumulator (<< 16) while the fault is active or on a tri-state reading (Calterm ...GD or ADDF + the channel code) */
+    int16_t fault_clear_threshold;  /* +4: A/D fault clear counts: debounce_counter at or below it clears fault_active_flag; each high / low status bit (0x806000) clears only while its 0x806040 first-occurrence bit is clear (Calterm ...CC or ...FC) */
+    int16_t debounce_counter_decrement;  /* +6: A/D fault decrement: taken off debounce_counter on each in-range sample (floored at 0) (Calterm ...DT or ...FD) */
+    int16_t debounce_counter_increment;  /* +8: A/D fault increment: added to debounce_counter on each out-of-range sample (Calterm ...IC or ...FI) */
+    int16_t fault_set_threshold;  /* +10: A/D fault set: debounce_counter at or above it sets the fault and is capped there (Calterm ...SE or ...FS) */
+    uint16_t high_error_limit;  /* +12: A/D high error limit in raw counts (0-1023): adc_raw_value above it counts toward high_error_fault_number (Calterm ...HL) */
+    uint16_t low_error_limit;  /* +14: A/D low error limit in raw counts: adc_raw_value below it counts toward low_error_fault_number (Calterm ...LL) */
+    uint16_t qadc_result_register_index;  /* +16: the QADC result slot (0-39) whose right-justified result register (0xfff2b0 + 2 x n) gives adc_raw_value (Calterm ...CA: channel address) */
+    uint8_t multiplexer_setting;  /* +18: channel multiplexer setting: no reader in J90350.00 (0 in all 25 records) (Calterm ...MU) */
+    uint8_t tri_state_error_enable;  /* +19: tri-state flag: nonzero makes a lookup result of 4 count toward tri_state_error_fault_number (0 in all 25 records) (Calterm ...TS) */
+    uint8_t high_error_fault_number;  /* +20: the fault the high limit sets (bit n mod 16 of status word n / 16 at 0x806000 / 0x806040) (Calterm ...HE) */
+    uint8_t low_error_fault_number;  /* +21: the fault the low limit sets (Calterm ...LE) */
+    uint8_t tri_state_error_fault_number;  /* +22: the in-range / tri-state error: set at the fifth consecutive lookup result of 4 and cleared at the fifth other reading (Calterm ...TE) */
+    uint8_t sample_period;  /* +23: the channel runs once every sample_period passes of the A/D loop (0 = not processed); the e2m scale calls a pass 20 ms - not measured (Calterm ...SA or ...SR) */
 };
 
 struct ema_filter_state_t {
@@ -1203,15 +1203,15 @@ struct second_order_filter_state_t {
     uint32_t output_previous;  /* +12: the output of the previous call */
 };
 
-struct sensor_debounce_state_t {
+struct sensor_state_t {
     ema_filter_state_t filter;  /* +0: the channel's filter record (its coefficient points at the channel config's +0 filter constant) (was reserved_00; PR #53 round 88) */
-    uint16_t filtered_value;  /* +8: the filter output - or the config default while the fault is active - or the channel's override value (was interpolated_value; PR #53 round 88) */
-    uint16_t lookup_result;  /* +10: the linearized reading (the table lookup result) */
+    uint16_t filtered_value;  /* +8: the filter output - or the config default while the fault is active - or the channel's override value (Calterm ...FT: filtered and linearized) (was interpolated_value; PR #53 round 88) */
+    uint16_t unfiltered_value;  /* +10: the linearized reading before the filter - the table lookup result (Calterm ...UF: unfiltered and linearized) (was lookup_result; PR #53 round 89) */
     int16_t debounce_counter;  /* +12: the fault debounce count (signed: floored at 0) */
     uint8_t fault_active_flag;  /* +14: fault currently active flag */
     uint8_t sample_counter;  /* +15: sample phase counter */
-    uint16_t adc_raw_value;  /* +16: raw A/D conversion value */
-    uint8_t reserved_18[4];  /* +18-+21: no access; 0 in all 25 dumped records (was reserved_12 - the hex offset; PR #53 round 88) */
+    uint16_t adc_raw_value;  /* +16: raw A/D conversion value (Calterm ...RC: raw counts) */
+    uint32_t reserved_18;  /* +18-+21: no access; 0 in all 25 dumped records. One dword: as byte[4] the decompiler made it the base of byte arithmetic (the array end and indexed channel reads) (was reserved_12 - the hex offset; PR #53 round 88; byte[4] until round 89) */
 };
 
 struct cummins_data_plate_header_t {
