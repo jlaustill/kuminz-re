@@ -3635,6 +3635,29 @@ lead.
   - From the earlier rounds: the `io_control_*` names, the diagnostic receive buffer past 0x808D00,
     `j1708_pending_abort_count`, and the parameter buffer at 0x80C7A8.
 
+## Done, round 80 (2026-11-24, same PR): the chip select 2 watchdog register; the EEPROM log's indexes
+
+A peer relay started the round; the scripts are in `session_folder/round80/`. These are round 79's leads.
+- **Stage A (18d684a1), CM550:**
+  - `CS2_WATCHDOG_SERVICE` (0xFFD00F): every watchdog service writes 0x55 / 0xaa there right after `SIM_SWSR`.
+    Chip select 2's device is an output driver (the warning lamp driver enable and the commanded driver state go to
+    0xFFD004 / 0xFFD006). The part is not identified.
+  - **The EEPROM log:** a word array at 0x80BDA8 and a byte array at 0x80C7A8, indexed modulo 0x500. The QSPI path
+    sends its entries through `QSM_TR4` / `QSM_TR5`. The read index (`eeprom_circular_buffer_read_index`, new), the
+    write index and the pending count are words.
+  - **The two 82527s' bit timing** (in the RAM dump) is identical, XTAL / 64 = 250 kbit/s with a 16 MHz crystal. The
+    rows' comments record it.
+  - **Proof:** CM550: the .cpp changes are the 128 watchdog writes now named CS2_WATCHDOG_SERVICE, the EEPROM log indexes losing their '_' prefixes, one underscore-overlap warning gone and one declaration reordered; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
+- **firmware/CLAUDE.md:** none.
+- **Leads:**
+  - **182 rows inside the EEPROM log (0x80BDA8-0x80CCA7):** none renders, and none has an absolute access in the
+    dumped ROM, so they are probably old misnames of log contents. Check them against the code above 0x40000 (not in
+    the 256 KB dump) before removing them, and then type the two arrays (word[1280] / byte[1280]).
+  - Chip select 2's other registers (0xFFD000-0xFFD00E) need the part: they take lamp and driver commands.
+  - Which bus each 82527 carries: CS5 uses 11-bit identifiers, so it is not J1939.
+  - From the earlier rounds: the `io_control_*` names, the diagnostic receive buffer past 0x808D00, and
+    `j1708_pending_abort_count`.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

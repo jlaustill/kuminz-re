@@ -665,3 +665,9 @@ Hand work on the round 7 lead.
   `map_r79a3.csv`. The register map comes from Intel's 82527 Architectural Overview; the document itself is not
   archived here.
 - **Proof:** `prove_r79a_cm550.py`. **Closing:** `apply_r79_closing.py`, `update_large_tar_r79.sh`.
+
+## Round 80: the chip select 2 watchdog register; the EEPROM log's indexes (`session_folder/round80/`)
+
+- **Stage A (CM550):** `apply_r80a.py`; `inside_addresses.txt` (the 182 rows inside the log range, each scanned
+  for absolute accesses).
+- **Closing:** `apply_r80_closing.py`, `update_large_tar_r80.sh`.

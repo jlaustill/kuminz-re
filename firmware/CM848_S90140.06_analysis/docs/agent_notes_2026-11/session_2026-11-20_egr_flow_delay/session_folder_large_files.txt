@@ -354,3 +354,4 @@
    202603 verify_round79a2_cm550.log
    202622 verify_round79a3_cm550.log
    202603 verify_round79a_cm550.log
+   202877 verify_round80a_cm550.log
