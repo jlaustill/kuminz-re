@@ -682,3 +682,8 @@ Hand work on the round 7 lead.
 
 - **Stage A (CM550):** `apply_r82a.py`, `map_r82a.csv`; `ch10_a.txt` / `ch10_b.txt` (the two channel 10 modes).
 - **Closing:** `apply_r82_closing.py`, `update_large_tar_r82.sh`.
+
+## Round 83: the TPU microcode images; the engine position functions (`session_folder/round83/`)
+
+- **Stage A (CM550):** `apply_r83a.py`, `map_r83a.csv`.
+- **Closing:** `apply_r83_closing.py`, `update_large_tar_r83.sh`.

@@ -1,0 +1,34 @@
+cm550: round 83 stage A - the TPU microcode image and entry table typed; the six pwmTimer* functions renamed for the engine position work they do
+
+From round 82's leads:
+- The microcode that mc68k_loadTpuMicrocode copies into the TPU RAM:
+  - tpu_microcode_image: ROM 0x30C9C, dword[342]. The loader copies 0x68c bytes from here to 0xFFE000-0xFFE68B, but
+    the array stops at 0x311F4. mc68k_FUN_0002cc88 reads 0x311F4 as a signature (0x98765432 / 0x98765433) and 0x31256
+    as a code pointer, a record inside the copied block. Typed as dword[419], the first build rendered those reads as
+    tpu_microcode_image[0x156] and tpu_microcode_image._1466_4_.
+  - tpu_microcode_entry_table: ROM 0x31328, word[128], copied to 0xFFE700-0xFFE7FF, the top 256 bytes of the 2 KB
+    microcode memory (16 functions x 8 entry words).
+  No other row lies in that ROM range.
+- The six pwmTimer* functions touch only the TPU (round 81's hardware name check). They are the engine position code:
+  - 0x34674 mc68k_pwmTimerMode0Init -> mc68k_initializeSpeedMeasurementMode0 (channel 0 on function 0xc).
+  - 0x3478c mc68k_pwmTimerMode0Reset -> mc68k_resetSpeedMeasurementMode0.
+  - 0x3480e mc68k_pwmTimerMode1ChannelSetup -> mc68k_setUpTpuChannel3AnglePulseOutput. Channel 3 is on function 8: a
+    pulse whose start and end are a tooth number plus a fraction, from the TDC index, the angle after TDC, the tooth 0
+    offset, the per-cylinder offsets and the high duration. The Cummins names call it the DZG pulse.
+  - 0x3494a mc68k_pwmTimerMode1Update -> mc68k_updateTpuChannel3AnglePulseOutput (recomputes the pulse for the current
+    cylinder).
+  - 0x34a82 mc68k_pwmTimerModeDispatcher -> mc68k_configureTpuChannelsForSpeedMeasurementMode (channel 3 is on
+    function 0xa in mode 0).
+  - 0x34b20 mc68k_pwmTimerCycleAdvance -> mc68k_alignCylinderIndexToCrankRevolution (moves current_cylinder_index by 3
+    to match the crank revolution flag).
+
+Proof:
+- CM550 verify is DETERMINISTIC after both steps.
+- label_only_check.py strips the comments, applies the six renames and diffs the full text. 40 lines differ, all in
+  mc68k_loadTpuMicrocode: its two copy sources are named, and its copy temporaries become dword *. No indexed or piece
+  render of the image is left.
+- The same full check finds 0 differing lines for rounds 81 and 82. Their earlier diffs had skipped every line
+  indented three spaces or more, so that check is redone here and their claims hold.
+- The headers regenerate with 0 g++ errors. The _cal audit reports HARD 0 and MISSING 31.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

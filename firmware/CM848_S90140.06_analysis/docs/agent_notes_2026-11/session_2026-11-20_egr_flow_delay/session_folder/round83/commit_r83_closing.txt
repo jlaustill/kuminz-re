@@ -1,0 +1,13 @@
+cm550: round 83 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 83" records stage A (4cfa493e: the TPU microcode image and entry table typed, and the
+  six pwmTimer* functions renamed for the engine position work) and its proof.
+  - It also corrects the checking method: rounds 81-82's diffs skipped lines indented three spaces or more.
+    label_only_check.py now compares the full text, and finds 0 differing lines for both rounds.
+- Leads: the microcode's function table, the DZG pulse's receiver, the signature record at 0x311F4 / 0x31256, the CS4
+  message object handlers, and the 182 rows inside the EEPROM write queue's range.
+- The PR body: the Round 83 bullet, "Beyond CM848" for rounds 72-83, and the test plan line.
+- work/todo.md, the session README, session_folder/round83/, the large-files tarball (the round's 2 verify logs),
+  pr_body.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

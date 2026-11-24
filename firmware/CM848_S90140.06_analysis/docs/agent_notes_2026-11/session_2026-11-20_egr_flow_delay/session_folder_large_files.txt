@@ -357,3 +357,5 @@
    202877 verify_round80a_cm550.log
    202877 verify_round81a_cm550.log
    202877 verify_round82a_cm550.log
+   202877 verify_round83a2_cm550.log
+   202877 verify_round83a_cm550.log

@@ -8,7 +8,7 @@ fresh air flow records; the e2m never spells it out, so no name guesses an expan
 - **Round 2:** at the user's request the rest of the family is renamed too, on this PR (stages 3 / 4). The scope rule:
   a symbol is in if its e2m record is `CHP_` / `C_CHP_`, or if it is an input that a family function would otherwise
   misname.
-- **Beyond CM848 (rounds 72-82):** the J1939 memory write service and the development mode code are shared:
+- **Beyond CM848 (rounds 72-83):** the J1939 memory write service and the development mode code are shared:
   eleven CM550 functions are CM848 twins and share their names. Round 74 also dismantles a misapplied CM550
   struct, round 75 types CM550's InSite parameter schedule and names its J1708 SCI, and round 76 names CM550's
   MC68336 registers, so CM550's CSVs, the root README and `firmware/feature_comparison.csv` change too.
@@ -849,6 +849,10 @@ state enum, the flag bytes.**
 **Round 82.**
 - **Stage A (e875e603):** CM550's six CAN-named TPU set-up functions renamed for the channel and signal each sets up
   (the missing-tooth input, the primary / backup speed sensors) and the TPU microcode loader.
+**Round 83.**
+- **Stage A (4cfa493e):** CM550's TPU microcode image and entry table in ROM are typed, and the six TPU-only
+  `pwmTimer*` functions are renamed for the engine position work they do (speed measurement mode 0 on channel 0,
+  the angle pulse output on channel 3, the cylinder index alignment).
 
 ## Test plan
 
@@ -941,6 +945,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 83: A: CM550: a full-text check (comments stripped, renames applied) finds 40 differing lines, all in the TPU microcode loader (its two copy sources named, its temporaries dword *); rounds 81-82 re-checked the same way: 0 lines; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 82: A: CM550: label-only - with the six renames applied the .cpp differs only in the new plate comments; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 81: A: CM550: label-only - with the four renames applied the .cpp differs only in the new plate comments; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 80: A: CM550: the .cpp changes are the 128 watchdog writes now named CS2_WATCHDOG_SERVICE, the EEPROM log indexes losing their '_' prefixes, one underscore-overlap warning gone and one declaration reordered; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.

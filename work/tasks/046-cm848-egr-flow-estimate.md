@@ -3704,6 +3704,34 @@ A peer relay started the round; the scripts are in `session_folder/round82/`. Th
   - The CS4 message object handlers.
   - The 182 rows inside the EEPROM write queue's range.
 
+## Done, round 83 (2026-11-24, same PR): the TPU microcode images; the engine position functions
+
+A peer relay started the round; the scripts are in `session_folder/round83/`. These are round 82's leads.
+- **Stage A (4cfa493e), CM550:**
+  - **The microcode:** `tpu_microcode_image` (ROM 0x30C9C) and `tpu_microcode_entry_table` (ROM 0x31328,
+    `word[128]`). `mc68k_loadTpuMicrocode` copies them to 0xFFE000-0xFFE68B and to 0xFFE700-0xFFE7FF, the top 256
+    bytes of the 2 KB microcode memory (16 functions x 8 entry words).
+    - The image array is `dword[342]` and stops at 0x311F4. `mc68k_FUN_0002cc88` reads a signature there
+      (0x98765432 / 0x98765433) and a code pointer at 0x31256, a record inside the copied block.
+  - **Checking method corrected:** the 'label-only' diffs of rounds 81-82 filtered out every line indented three
+    spaces or more, so they compared only the outer lines of each function. `label_only_check.py` strips the
+    comments and diffs the full text. It finds 0 differing lines for both rounds, so their claims hold.
+  - **The six `pwmTimer*` functions** touch only the TPU. They are the engine position code and are renamed:
+    - `mc68k_initializeSpeedMeasurementMode0` / `mc68k_resetSpeedMeasurementMode0`: channel 0, function 0xc;
+    - `mc68k_setUpTpuChannel3AnglePulseOutput` / `mc68k_updateTpuChannel3AnglePulseOutput`: function 8, the pulse
+      the Cummins names call DZG, placed on the missing-tooth wheel per cylinder;
+    - `mc68k_configureTpuChannelsForSpeedMeasurementMode`;
+    - `mc68k_alignCylinderIndexToCrankRevolution`.
+  - **Proof:** CM550: a full-text check (comments stripped, renames applied) finds 40 differing lines, all in the TPU microcode loader (its two copy sources named, its temporaries dword *); rounds 81-82 re-checked the same way: 0 lines; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
+- **firmware/CLAUDE.md:** none.
+- **Leads:**
+  - **Reading the microcode:** its entry table and microinstructions would give each channel's function (0x8 / 0xa /
+    0xb / 0xc).
+  - **What receives the DZG pulse:** the pump, for example.
+  - **The signature record at 0x311F4 / 0x31256:** `mc68k_FUN_0002cc88` jumps through its code pointer when the
+    signature matches. A ROM extension?
+  - The CS4 message object handlers, and the 182 rows inside the EEPROM write queue's range.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**
