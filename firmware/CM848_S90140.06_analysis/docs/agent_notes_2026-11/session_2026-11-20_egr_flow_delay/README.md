@@ -720,4 +720,7 @@ Hand work on the round 7 lead.
   `classify_changes.py`, `remaining_and_hazard.py`, `list_remaining.py`.
 - **Stage B:** `apply_r86b_docs.py`.
 - **Stage C:** `wave2_summary.py`, `apply_r86c_rows.py`, `applied_r86c.csv`.
-- **Closing:** `apply_r86_closing.py`, `update_large_tar_r86.sh`.
+- **Stage D:** `local_rows_check.py` (each named local of a changed function, before / after),
+  `new_token_lines.py` (the new artifact lines, for classification), `apply_r86d.py`.
+- **Closing:** `apply_r86_closing.py`, `apply_r86d_closing.py`, `update_large_tar_r86.sh`; `wave2_result.json` is the
+  workflow's proposals and verdicts.

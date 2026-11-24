@@ -3849,7 +3849,14 @@ Peer relays started and continued the round (06:20, 06:50, 07:20). The scripts a
   return-only / gap rule on CM550), and the local-variable storage rule in the CM550 prototype file's header.
 - **Stage C (4b6911cb), wave 2:** a workflow of 6 read-only investigators and 6 skeptics proposed and verified rows for
   the 58 functions that still showed stack-argument pieces: 50 accepted, 8 amended (comments only), 88 parameter rows.
+  C2 added the two chip select 5 message object wrappers, so stage C placed 60 functions (58 + 2).
   - **Proof:** CM550: verify DETERMINISTIC; 120 functions placed, no Error / mismatch / exception; 0 functions left with a parameter piece or stack read; param_N pieces 201 -> 0 and in_stack_ 139 -> 2 over the round (the 2: an offset-0 return read); placed rows match the survey's reads and pushes; headers 0 g++ errors.
+- **Stage D (009958eb), from an advisor review of stage C:** the local rows of the changed functions were checked
+  (`local_rows_check.py`). One had moved: stage C's word return for `cm550_crc16Calculate` merged three values of
+  one register in `mc68k_dispatchJ1708ReceivedMessages` (the elapsed timer read, the CRC, a `QSM_SCCR1` temp), so
+  `elapsedTimerCount` had landed on the CRC result. That row is removed. Every new artifact token in the 13 census
+  functions was read (`new_token_lines.py`): nearly all are the stale high byte of a pushed word. The exception is
+  `cm550_diagMemoryReadResponseBuilder`'s unused return, now a `void` row.
 - **firmware/CLAUDE.md:** the two corrections in stage B (old and new lines in its commit).
 - **Leads:**
   - No function is left with a stack-argument piece (param_N pieces 201 -> 0 over the round); the 2 in_stack_ tokens left are an offset-0 return read in mc68k_phase2_slot_8_handler.

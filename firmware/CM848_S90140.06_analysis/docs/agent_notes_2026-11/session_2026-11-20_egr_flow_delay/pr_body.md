@@ -931,7 +931,10 @@ state enum, the flag bytes.**
   itself (custom storage) from the new `stack_parameter_layout.csv`, so the 125 `in_stack_` tokens are gone and the
   calls show their arguments. CM848's output is unchanged.
 - **Stage B (d1b75a77):** two firmware/CLAUDE.md corrections.
-- **Stage C (4b6911cb):** wave 2 - rows for 58 more functions, proposed and verified by a workflow.
+- **Stage C (4b6911cb):** wave 2 - rows for 60 more functions (58 proposed and verified by a workflow, plus 2
+  wrappers).
+- **Stage D (009958eb):** a local row that stage C's renumbering had moved is removed; one unused return becomes
+  `void`.
 
 ## Test plan
 
@@ -1024,6 +1027,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 86: D: CM550 verify DETERMINISTIC; only the two target functions change; the local rows of every changed function checked
 - [x] Round 86: C: CM550: verify DETERMINISTIC; 120 functions placed, no Error / mismatch / exception; 0 functions left with a parameter piece or stack read; param_N pieces 201 -> 0 and in_stack_ 139 -> 2 over the round (the 2: an offset-0 return read); placed rows match the survey's reads and pushes; headers 0 g++ errors.
 - [x] Round 86: A: CM550 verify DETERMINISTIC; CM848 rebuilt byte-identical to its committed .cpp (T1); 60 functions placed with no Error / mismatch / exception; in_stack_ tokens 125 -> 0; the 20 control functions byte-identical; 100 changed functions all with rows or their callers; every predicted call constant rendered; the caller census, the placed-vs-survey check (0 problems) and the log greps clean; 104 unit tests pass; headers 0 g++ errors.
 - [x] Round 85: B: CM550: verify DETERMINISTIC; 8 functions changed as intended (struct fields in the 3 Huffman functions, FLASH_ERASE_RESULT at the 3 erase callers and the 2 erase functions), none removed or added; no new build warning; headers 0 g++ errors; _cal HARD 0 / MISSING 31.

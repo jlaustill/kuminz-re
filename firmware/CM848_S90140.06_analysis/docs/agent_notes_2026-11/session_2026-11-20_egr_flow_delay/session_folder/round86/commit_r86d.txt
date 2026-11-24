@@ -1,0 +1,34 @@
+cm550: round 86 stage D - a local row that stage C's renumbering moved; cm550_diagMemoryReadResponseBuilder returns void
+
+An advisor review of stage C (4b6911cb) asked for two checks I had done only for stage A.
+- Local rows in the changed functions (local_rows_check.py over the 123 functions stages C / C2 changed):
+  - The two J1939 write memory services' address / length rows and the Huffman tree_nodes row hold the same values as
+    before round 86.
+  - mc68k_dispatchJ1708ReceivedMessages (0x15f8e) did not. Stage C's word return for cm550_crc16Calculate made the
+    decompiler merge three values of one register into wVar4: the elapsed CTM4_BIUTBR read, the CRC result and a
+    QSM_SCCR1 temp. A build without the function's local rows shows it.
+  - So the row wVar4 -> elapsedTimerCount had landed on the CRC result, and the elapsed read rendered as an unnamed
+    temp. A single name for three values would mislead, so that row is removed. The currentTimerCount row (wVar3,
+    the entry read, alone in its register) stays.
+- The new artifact tokens in the 13 census functions:
+  - Nearly all are the stale high byte of a word argument: (word)CONCAT31(stale, byte) or CONCAT11 inside a call's
+    argument list, where the compiler replaced only the low byte of a register before pushing it. That includes the
+    19 / 18 extraout_var tokens in insiteCommandByteDispatcher / cm550_FUN_000334ec: the upper bytes of D0 after a
+    byte return, reused for the next call's argument.
+  - One was a return: cm550_diagMemoryReadResponseBuilder ended in return CONCAT31(extraout_var, ...), and both of
+    its callers call it as a statement. It gets a void return row, and its rows take the current function name.
+  - vp44MessageTransmitter's uStack_1c is a one-byte message buffer that the newly named destination_address made
+    visible (local_12 = CONCAT22(0x18ec, destination_address << 8) is a TP.CM CAN identifier). That is not an
+    artifact.
+
+Proof:
+- CM550 verify is DETERMINISTIC.
+- function_set_check.py against stage C2's committed output: 0 functions removed or added, and 2 changed - exactly the
+  two targets.
+  - mc68k_dispatchJ1708ReceivedMessages reads currentTimerCount = CTM4_BIUTBR at entry again. The merged register
+    renders as one auto temp: wVar3 = CTM4_BIUTBR / wVar3 = cm550_crc16Calculate(...) / QSM_SCCR1 = wVar3 | 0x20.
+  - cm550_diagMemoryReadResponseBuilder is void, with no return CONCAT left.
+- The headers regenerate with 0 g++ errors. The _cal audit reports HARD 0 and MISSING 31. test_rename_waves.py:
+  ALL PASS.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
