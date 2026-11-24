@@ -8,7 +8,7 @@ fresh air flow records; the e2m never spells it out, so no name guesses an expan
 - **Round 2:** at the user's request the rest of the family is renamed too, on this PR (stages 3 / 4). The scope rule:
   a symbol is in if its e2m record is `CHP_` / `C_CHP_`, or if it is an input that a family function would otherwise
   misname.
-- **Beyond CM848 (rounds 72-83):** the J1939 memory write service and the development mode code are shared:
+- **Beyond CM848 (rounds 72-84):** the J1939 memory write service and the development mode code are shared:
   eleven CM550 functions are CM848 twins and share their names. Round 74 also dismantles a misapplied CM550
   struct, round 75 types CM550's InSite parameter schedule and names its J1708 SCI, and round 76 names CM550's
   MC68336 registers, so CM550's CSVs, the root README and `firmware/feature_comparison.csv` change too.
@@ -504,6 +504,7 @@ state enum, the flag bytes.**
   literals).
 - **Stage C (bc99794, types, review):** three more (an `i16` global and two struct fields), the scan widened to every
   type and struct field (none left), and a stale `DAT_` label refreshed.
+
 **Round 24 (the relayed "keep going" again): struct instances still named after their Ghidra labels.**
 - **Stage A (1d84f6c, comments):** 73 present-tense Ghidra labels in CSV comments refreshed (round 23's lead).
 - **Stage B (8de3cf6, label-only):** the commanded throttle record (e2m 1047 / 1048), the remote and dual channel
@@ -516,6 +517,7 @@ state enum, the flag bytes.**
 - **Stage F (9ed041a, types):** sensor channels 1-4 flat like their neighbours; the throttle dword split.
 - Open after round 24: named fault bits (the user's call), `diag_clear_flags_t`, the executive timing records,
   the sensor channel blocks, the TouCAN A register map, the kernel's response messages (task 046).
+
 **Round 25 (the relayed "keep going" again): an enum and three shapes from the round 24 leads.**
 - **Stage A (91a9b02, types):** `TRANSMISSION_SELECTED_GEAR` (J1939 SPN 524) on the four gear words; the junk
   `PROTECTION_OVERRIDE` enum gone.
@@ -524,9 +526,11 @@ state enum, the flag bytes.**
 - **Stage D (170236d, types):** the boot kernel's two diagnostic response messages.
 - Open after round 25: the sensor channel blocks, TouCAN B's base, the kernel transport's message parameter,
   named fault bits (the user's call), `diag_clear_flags_t` (task 046).
+
 **Round 26 (the peer session's cruise review of 69d6f68).**
 - **Stage A (51ba84a, label-only):** the cruise vacuum throttle actuator named from e2m 8C2E / 8C2F (30 words, the
   learn check, the previous-pass flag); the vehicle speed path's mode-4 behaviour recorded in task 046.
+
 **Round 27 (the user approved the named fault bits and the CLAUDE.md J1939 note).**
 - **Stage A (084a1cc, label-only):** the sensor channel layer. The inverted periodic / boot names are fixed (four base
   functions signed / unsigned, 63 wrappers process / initialize), and 91 blocks are named by channel from e2m. Finding:
@@ -537,26 +541,32 @@ state enum, the flag bytes.**
 - **Stage B (2eb75f6, types):** one bitfield per fault in `fault_bit_words_t` words 1-49 (301 e2m names, the rest
   `fault_<n>`). 780 bit-name references (656 tests, 108 writes, 16 other); 943 piece tokens, 856 of them on
   set / clear writes.
+
 **Round 28 (the round 25-27 leads).**
 - **Stage A (0ec3474, label-only):** three sensor-present flags named from e2m: the absolute boost sensor flag read
   backwards, plus the barometric sensor and the two-speed axle switch. The boot kernel's copy of the CAN transmit
   mailbox writer (the old "Can2" was not a second controller). The boot CAN ring state struct and its fields.
 - **Stage B (c65bdd0, types):** the ring's two full flags split out of `_pad16`; full prototypes for the mailbox
   writers, so two calls that hid their frame argument show it.
+
 **Round 29.**
 - **Stage A (f13aca5, label-only):** the transfer case low-range detector named from e2m 8C5F / 8C60 (was the
   `engine_to_vehicle_speed_ratio_*` monitor: the low-range flag read as a "high ratio" flag, the launch flag as
   "invalid"). Nine `fault_<n>` bits named from the code that sets them.
+
 **Round 30.**
 - **Stage A (82b5069, label-only):** the watchdog fueling monitor (fault 388) and its words named from e2m 8A70 /
   8B3B / 8B3D; it was `fuel_quantity_demand_monitor` with five `DAT_` words.
+
 **Round 31.**
 - **Stage A (8146833, types):** the J1939 EC1 (PGN 65251) payload and its previous copy as one 28-byte struct with
   the SPN fields; the send-on-change test now reads by field.
+
 **Round 32.**
 - **Stage A (cad1457, labels and types):** the discrete output read-back checks. The check, its monitor and
   initializer are named, the four counters are a struct with 11 instances, each output has a retry word, and faults
   146 / 147 are the cruise servo supply's. These were 55 `DAT_` labels.
+
 **Round 33.**
 - **Stage A (3c495a2, labels):** the J1939 transmit descriptor's third field is the status pointer (was
   `data_end_pointer`): the send result or the broadcast / RTS-CTS session code, 0x1x while a session runs.
@@ -565,6 +575,7 @@ state enum, the flag bytes.**
 - **Stage B (20a26d2, types):** the RC (PGN 65249), CI (PGN 65259) and SOFT (PGN 65242) payloads as structs, and
   the decimal text formatter's prototype. RC byte 1 decodes as exhaust brake (one driver) or compression release
   brake (two or more).
+
 **Round 34.**
 - **Stage A (67955cf, labels):** the transport's send / service / initialize functions and the PGN 65535 delay
   flag named from the code.
@@ -572,22 +583,27 @@ state enum, the flag bytes.**
   `j1939_tp_rx_session_*` / DAT_).
 - **Stage C (44f4c9e, types):** the RTS / CTS transmit session as the boot twin's type, that type's pointers as
   `byte*`, and the prototypes of `initiateJ1939TransportProtocol` / `mpc555_sendJ1939SingleFrame`.
+
 **Round 35.**
 - **Stage A (fb9cccd, labels):** the boot kernel's transmit session flag / destination (were QADC names).
 - **Stage B (ff9e247, types):** the J1939 transport receive session as one type with boot and application
   instances (were `j1939_tp_pause_t` / `qadc_a_*` / `j1939_multiframe_rx_*`); both `_pad2` fields named.
 - **Stage C (68c58e4, prototypes):** the boot record senders, the boot queue push and the diagnostic service chain.
+
 **Round 36.**
 - **Stage A (29f28c8, types):** the EFL/P1 (PGN 65263) and PGN 65504 payloads as structs (SPN 101 crankcase
   pressure was `j1939_diag_response_word_b`; PGN 65504 carries a time-base-scrambled injection timing).
 - **Stage B (c7d1515, prototypes):** the boot diagnostic request path. The dispatcher's old rows printed a fake
   service code 0x2d (the low byte of the receive session's message view).
+
 **Round 37.**
 - **Stage A (4775962, labels, types):** 120 lookup cache words named from their own lookups
   (`<table>_cached_axis_offset(s)`); 0x3fd134 was named for the wrong table.
+
 **Round 38.**
 - **Stage A (0333c10, labels, types):** the named lookup cache rows audited against their own lookups: 34
   2-D caches widened to `word[2]` (15 y halves merged) and 24 misnamed caches renamed after their tables.
+
 **Round 39.**
 - **Stage A (912c379, labels, types):** the 24 lookup tables named `_cal` outside the EEPROM mirror, renamed after
   their lookups (the turbocharger corrected speed map, e2m MT_Max_Torque_Map, ...), and 11 caches.
@@ -596,27 +612,32 @@ state enum, the flag bytes.**
   dword.
 - **Stage C (2aa86ed, labels, types):** the last 42 HARD `_cal` scalars renamed from their code (11 with e2m records);
   the J1939-named supervisor chip block re-domained. `audit_cal_suffixes.py` HARD 63 -> 0.
+
 **Round 40.**
 - **Stage A (7f54db1, labels):** 24 application-side names in the EEPROM mirror gain `_cal`; 9 of them (plus
   `engine_idling_flag`) renamed from their e2m records and code (the idle counters, the feature bitmap, the exhaust
   brake switch learned flag, ...).
 - **Stage B (9c5414a, a type):** `feature_selection_bits_cal` as a bitfield struct; the SCI setting lookup's pointer
   typed `byte *`.
+
 **Round 41.**
 - **Stage A (ea2bacd, types, labels):** the injector driver booster capacitor monitor (was
   cm848_processFaultScanLookup): its two ROM record tables typed as struct arrays, its RAM counts as arrays, the
   low voltage mask and the initializer named.
+
 **Round 42.**
 - **Stage A (34f1e78, a type):** the per-fault-slot status records (`fault_status_records_cal`, a 3-byte struct; was
   two overlapping rows).
 - **Stage B (e3b6532, labels):** the engine retarder driver cylinder counts and the cylinders-on count from e2m 13D8 /
   13D9; the retarder torque lookup's live-in table pointer named.
+
 **Round 43.**
 - **Stage A (d8d2cdf, labels, types):** the main injection end of injection timing (was
   cm848_computeFuelRpmCompensatedOffset): the function, its output and its calibrations.
 - **Stage B (ef9781b, rows):** 30 junk `<name>+<N>` rows removed (the build changes only local declaration order).
 - **Stage C (d0bd88c, labels):** the block named by e2m 8B47 / 8B48 (EOI_Default / _Hydraulic_Delay / _Max_Limit /
   _Min_Limit, EOI); the addend is the hydraulic delay.
+
 **Round 44.**
 - **Stage A (a0c4d30, labels, a type):** round 39's three unverified rows named from their code (the vacuum cruise
   fueling reduction, the cruise accelerator override threshold, the single-channel pedal idle threshold minimum),
@@ -629,6 +650,7 @@ state enum, the flag bytes.**
   OCM_Soot_Percentage_*). 33 rows gain citations.
 - **Stage C (6aefe56, labels):** the pedal learning's "total step" limit and counter are a time limit and its timer (e2m
   PPS_AZ_Time_Limit); the PPS block is inactive in this calibration (Accelerator_Position_Sensor_Type = 0, TPS).
+
 **Round 45.**
 - **Stage A (ee5d688, labels, rows):** a sweep of the gaps between dumped parameter ID table blocks. It places six
   more e2m blocks: the injector debounce limits, the fuel level and fuel pressure rationality tests, the P0500
@@ -636,31 +658,37 @@ state enum, the flag bytes.**
   state. One rename.
 - **Skill (the user's request):** `auditing-cal-suffixes` says HARD 0 since round 39 (was "~1352"), and its region
   table matches `audit_cal_suffixes.py`. The round 27 section in `firmware/CLAUDE.md` stays as it is.
+
 **Round 46.**
 - **Stage A (e83a3ce, labels):** the warning chime (e2m 8B2D: `warning_chime_*`, was `engine_warning_alert_*`), the oil
   pressure gauge state (8A7F; `low_oil_pressure_chime_flag`, was `…_derate_flag`) and the TSC1-lost backup
   powertrain protection flag (8A7C; `tsc1_lost_management_active_flag`, was `fuel_demand_timing_enable_flag`).
 - **Stage B (3109998, labels, a row, functions):** the `park_neutral_exit_*` family is rock cycle torque management
   (e2m 8C2A TC_Rock_Cycle_* / 8C49-8C4B RE_RCTM_*). It becomes `rock_cycle_*`: 20 globals, 3 functions, 1 new row.
+
 **Round 47.**
 - **Stage A (54fef43, labels, a type):** an audit of rows the dumped parameter ID table resolves but that never cited
   their e2m block. It renames the EEC1 / EEC2 torque-and-load 0xFE flag (retyped to a word), the EEC1 actual torque
   byte (was `j1939_dm1_spn_fmi_byte`) and a throttle valve actuator status.
 - **Stage B (ca0121e, labels, a split):** the EGR off-allowed / cooler-fouled flags (a dword split into two words of
   e2m 1A57) and the cruise set / accelerate switch select.
+
 **Round 48.**
 - **Stage A (8f0019c, labels, rows, types):** the OBD cooling monitors from e2m 8A8B / 8A8C (thermostat, P0128) and
   8A9D / 8A9E (coolant temperature in-range). It adds 18 rows (the code read 16 of them unnamed), renames 6
   (every `cssc_*` row) and retypes 3 to `i16`.
+
 **Round 49.**
 - **Stage A (762fc7a, rows, a rename):** 33 unnamed addresses the code reads are named from the e2m records the dumped
   parameter ID table resolves them to (the J1939 torque curve, intake air heater, engine protection, the J1939
   NAMEs, the MIL bitmap, the fault code table, the injector maps, ...).
   `fuel_demand_mode_active_flag` -> `charge_saturation_temperature_source`.
+
 **Round 50.**
 - **Stage A (316e46c, labels, rows):** gaps matched by access signature. They give the TSC1-lost counter's calibrations
   (e2m 8A7B), with the `j1939_tsc1_*` timing rows joining the `tsc1_lost_*` family, and the commanded throttle
   difference threshold (1585).
+
 **Round 51.**
 - **Stage A (c2a1175, labels, rows):** the 0x408d38 gap is four e2m blocks: the transmission temperature
   defaults and limp-in delay (8B9B), the P0711 rationality calibrations (8C2C), the output shaft speed sensor (8BB2)
@@ -670,27 +698,33 @@ state enum, the flag bytes.**
   rendered the check's own states 5 / 6 as OR combinations), and a void prototype.
 - Bitfield structs for the two trip information status words were built and rejected: every access is a
   whole-word mask write, so they rendered no field name and only added a cast to each mask line.
+
 **Round 52.**
 - **Stage A (61be5e0, labels, rows):** nine more e2m blocks record for record: the cooling fan (8B23 / 8B22 / 8B21),
   the alternator field (8A5F / 8A60), the reset capture (15B4: `exception_srr0 / _vector / _link_register` from the
   exception stubs' SPRG saves), and round 51's transmission RAM (8B9A / 8BB4).
 - **Stage B (afe344d, enums):** five state enums from those blocks' value labels.
+
 **Round 53.**
 - **Stage A (dfd604c, labels, rows):** eleven more e2m blocks record for record, found by a meaning-ranked matcher;
   the eight sensor-fault substitutes named by the fault that selects them; `pci_four_wheel_drive_status_flag`.
 - **Stage B (c1ba0fe, labels, rows):** the coolant temperature derate module (e2m CT_Derate 8A71 / 8A7A / 8A79 / 8A72):
   the `cold_start_*` / bucket names were the overheat derate's; 7 new rows and 3 function renames.
+
 **Round 54.**
 - **Stage A (b53080a, labels, rows):** the last ten unnamed tables (nine through the parameter ID table), the
   application stack high-water monitor (was read as a message buffer), the lifetime distance record index.
 - **Stage B (66af83f):** five legacy boot-time functions named from their bodies; the calibration ID characters 4-9.
+
 **Round 55.**
 - **Stage A (c4ebb04, function names):** the fault manager core, 15 functions named from their code. Two old names
   were swapped in meaning (`cm848_clearAllFaultRecords` / `cm848_clearPreviouslyActiveFaults`).
+
 **Round 56.**
 - **Stage A (3115bca):** the last `protection_*` function names are the discrete output overrides (e2m 8B5B / 8C29, placed by
   tiling and by each pair's logical output): `discrete_output_override_t` x 11, the priority word, the previous
   enables, and 5 functions.
+
 **Round 57.**
 - **Stage A (868e3f5):** the cruise cluster, 11 functions named from their code. Three names were wrong-domain:
   two coolant overheat derate steps and the TSC1 lost / rock cycle initializer. `CRUISE_CONTROL_STATE` returns
@@ -698,26 +732,31 @@ state enum, the flag bytes.**
   `cruise_engine_to_vehicle_speed_ratio_*` (12 rows).
 - **Stage B (607a663):** two warning chime sources: `fuel_pressure_fault_active_flag` (P1221-P1223) and
   `air_conditioning_coolant_off_flag` (e2m 8B2D +6), 7 rows.
+
 **Round 58.**
 - **Stage A (d0ce823):** the last 12 `protection_*` globals named from their code. They cover the logical output
   line map and its active-low bits, the injector driver booster recharge-off delay, the P0116 coolant monitor's
   snapshot, 8C19 +13 and a friction torque lookup cache. Also 3 functions, 2 new rows and 2 junk rows deleted;
   MISSING 221 -> 218.
+
 **Round 59.**
 - **Stage A (18c75e9):** 29 CM848 struct types that nothing uses are removed: 4 whose role a live type covers (2
   with the same layout) and 25 with no CM848 home, taking the last `protection_` field names with them. Three are kept as leads for untyped
   tables.
 - **Stage B (0b13a71):** round 58's "2 of 6 stores" scan claim corrected (the decompile repeats a shared store).
+
 **Round 60.**
 - **Stage A (afff095):** the parameter ID tables and the SCI command dispatch table get their struct types:
   `boot_parameter_id_table` / `parameter_id_table` (`parameter_id_entry_t`) with the bucket index, and
   `sci_command_dispatch_table` (`sci_command_dispatch_entry_t`). The boot lookup is renamed and `j1939_ack_msg_t`
   is removed.
+
 **Round 61.**
 - **Stage A (acca2b6):** both diagnostic service dispatch tables typed (`j1939_diagnostic_service_entry_t` on the
   application's 32-slot table, `boot_diagnostic_service_entry_t` on the boot kernel's). The request check is named
   `cm848_validateJ1939DiagnosticRequest`, 15 plates are refreshed, and the three stale prototype names are synced,
   so the build no longer warns about name mismatches.
+
 **Round 62.**
 - **Stage A (25098ce):** the J1939 registration functions, the DM7 test identifier (SPN 1224), the J1939 input fault
   start delay and four vague Bank 2 helpers are named from their code, and one more combustion torque cache is
@@ -725,6 +764,7 @@ state enum, the flag bytes.**
 - **Stage B (fa13ad2d):** the services 0x0f / 0x10 handler is a no-op, now
   `cm848_j1939DiagnosticServiceAcknowledgeNoOperation`, and its registrar is
   `cm848_registerJ1939BroadcastAndNoOperationServices` (stage A had named it after the enum's member names).
+
 **Round 63.**
 - **Stage A (eba8399d):** the PGN 61184 services are `J1939_DIAGNOSTIC_SERVICE`, named from the handlers the
   application registers. The old CLIP guesses were wrong for CM848 (0x43's 4 bytes are the length). The 14
@@ -738,6 +778,7 @@ state enum, the flag bytes.**
   - Two wrong comments fixed.
   - The boot kernel's service count named.
   - Three docs that still described the old reading fixed.
+
 **Round 64.**
 - **Stage A (3ce87e58):** the two transmit records `cm848_selectJ1939TransmitBuffer` hands out are typed
   `j1939_tx_msg_t` instances with named data and status bytes. The selector returns `j1939_tx_msg_t *`.
@@ -745,16 +786,19 @@ state enum, the flag bytes.**
   data buffers are typed.
 - **Stage C (36c29ebe):** one result-code enum, `J1939_DIAGNOSTIC_RESULT` (11 codes, each named from its producer),
   replaces two; CM550's copy of the type is renamed too.
+
 **Round 65.**
 - **Stage A (5e0d02e6):** 37 of the 38 unprefixed CM848-only functions are named from their code: the J1939
   transport, the receive handlers and their registrar, two misnamed schedulers, the injection angle cluster and the
   SCI timers.
 - **Stage B (f2588f7e):** the J1939 receive handler table is typed, and its 16 handlers take `j1939_rx_msg_t *`.
+
 **Round 66.**
 - **Stage A (382fa677):** `BOOT_DIAGNOSTIC_RESULT`, the boot kernel's result codes (11, including its own 5 / 0x11 /
   0x17), types the boot validator and dispatcher. The coolant friction torque term is named (round 62's lead).
 - **Follow-up (c48cc435):** three boot result members renamed from the boot kernel's own producers, three
   added (0x10 / 0x14 checksum mismatch / 0x15), and the torque words renamed from e2m.
+
 **Round 67.**
 - **Stage A (ebb61637):** the boot kernel's reflash state machine. EEPROM word 0 is typed `ECM_STATUS` (e2m 000B
   ECM_Status: valid / reflash in progress / downloaded, not verified). The reflash functions are renamed from
@@ -762,18 +806,21 @@ state enum, the flag bytes.**
   `download_block_list` and `crc_ccitt_table` are typed, and `eeprom_param_t` / a duplicate enum are removed.
 - **Follow-up (09ade9c9):** the proof breakdown recounted; the verifier / begin plates; `cm848_finishDownloadBlock`'s
   prototype; `key_off_duration_ticks` (was `watchdog_counter`); the header field's intake air heater note.
+
 **Round 68.**
 - **Stage A (3be13ab6):** the application's EEPROM mirror words at 0x3fee18 typed from e2m: the fuel level (8A24),
   intake air heater (8A36) and engine-off time (8C36) blocks as structs. The boot kernel's header struct no longer
   runs over them, and its time-shared uses are noted.
 - **Follow-up (bca3c8fd):** EEPROM 0x0c is e2m's ECM_Part_Number (`ecm_part_number_cal` / `boot_ecm_part_number`);
   two e2m quotes made exact; a stale comment.
+
 **Round 69.**
 - **Stage A (12ee3607):** the calibration image header at ROM 0x8100, typed by e2m's own blocks (1235 / 1236 / 002E),
   and the checksum region table at 0xb752. The verifier's checksum walk now reads `region->start_address` /
   `end_address` / `expected_sum`; region 1 sums to its 0xd501 in the ROM dump.
 - **Follow-up (ff09eaa8):** the smart boot indicator's readers (none in CM848; CM550's boot code compares it); two
   stale comments. Bank 2's image runs to 0x53ea6d, past both dumps: a bench lead.
+
 **Round 70.**
 - **Stage A (ae4338bd):** the 6 KB dual-port TPU RAM at 0x302000, where the boot kernel lives. Its CAN rings are typed
   (`boot_can_receive_ring` / `boot_can_transmit_ring`), a stale TPU3 register map is gone (28 rows), the TPU RAM
@@ -781,6 +828,7 @@ state enum, the flag bytes.**
 - **Follow-up (b2856de5):** the RAM is sourced from NXP's MPC5xx memory map; `DPTRAM_RAMBAR` (0x300004, written
   0xffa0); TPUMCR's EMU bit explains the microcode load; the same stale TPU3 map removed from
   `mpc555_registers.csv`.
+
 **Round 71.**
 - **Stage A (8755bedb):** `MEMORY_REGION_TYPE` types both kernels' memory region maps (the codes the write paths
   branch on; 9 / 10 double as results). `application_memory_region_table` is typed,
@@ -788,6 +836,7 @@ state enum, the flag bytes.**
   `serial_download_region_type`.
 - **Follow-up (88e54bbb):** the lookups' parameters renamed so their callers lose 20 `length_00` / `address_00`
   temps; a junk row removed.
+
 **Round 72.**
 - **Stage A (f94b884e):** `lookupApplicationMemoryRegionType` is one function in CM848 and CM550 (shared name);
   CM550's `MEMORY_ACCESS_FLAG` becomes `MEMORY_REGION_TYPE` and its 5-entry region table is typed.
@@ -796,6 +845,7 @@ state enum, the flag bytes.**
   share names in both firmwares; the key and header tables are named (byte-identical in both ROMs); the CM550
   writer's switch names its region cases.
 - **Stage B2 (5edbe6af):** CM848's stale `MEMORY_ACCESS_FLAG` (ported from CM550, unused) removed.
+
 **Round 73.**
 - **Stage A0 (e165ebe3):** `audit_cal_suffixes.py` knows CM550's EEPROM RAM mirror (0x803b0a-0x804155; the
   twin store-back proves it); CM550's audit lists the mirror's names without `_cal` as a backlog (32, 31
@@ -807,6 +857,7 @@ state enum, the flag bytes.**
   `run_location` get CM848's names and enums; the README's 0x07 / 0x1A / region table follow the code.
 - **Stage C (9326cf14):** CM550's own parameter ID table (e2m block ids) makes 0x80dc92 `not_safe_to_program_flag`
   and the struct field at 0x80de30 `development_mode`.
+
 **Round 74.**
 - **Stage A (6ea1b5c2):** CM550's misapplied 256-byte `j1708_multipacket_msg_t` instance is gone (13 separate e2m
   blocks lived inside it); its 980 field renders become CM550's own names for those globals, and the widths its
@@ -815,6 +866,7 @@ state enum, the flag bytes.**
   differs from the application's); CM550's 'calibration bank' subcommands are the development mode ones.
 - **Stage C (03e166a0):** two more duplicate J90280.05-era CM550 enums removed (`CALIBRATION_BANK`,
   `CALIBRATION_STATE_SIGNATURE`).
+
 **Round 75.**
 - **Stage B (5500c55b):** the boot kernel's EEPROM header shadow is named for the EEPROM words it holds (the master
   password, the key-on hour meter, the security key and the boot kernel's copy of it); the EEPROM rows get their
@@ -823,36 +875,48 @@ state enum, the flag bytes.**
   tick); the first MC68336 registers CM550 names are the J1708 SCI's (`QSM_SCCR0` ... `QSM_SCDR`), and the J1708
   transmit start, datalink initializer and SCI interrupt handler get their names (`ApplyHardwareRegisters.java`
   now types a register row the importer has already labelled).
+
 **Round 76.**
 - **Stage A (4e0b9ffb):** CM550's MC68336 register map: the 141 module registers the code reaches are named from the
   MC68336/376 manual's register summary (SIM, QADC, QSM, CTM4, TPU and its parameter RAM, the RAM modules), with
   the manual's widths; five wrong register struct types and a malformed circular buffer struct are removed.
+
 **Round 77.**
 - **Stage A (4e84a68c):** CM550's malformed J1708 state structs (one instance covered 61 accesses to separate globals)
   are removed. The J1708 driver's globals are typed from their m68k accesses, and the CTM4 bus timer functions are
   named for what they drive.
+
 **Round 78.**
 - **Stage A (b9de2fc1):** the last 16 CM550 structs with a separate address on each field row are removed (one
   oversize type each, with fake field renders of other globals); their globals and the neighbors they covered are
   typed from their accesses.
+
 **Round 79.**
 - **Stage A (c1820e23):** CM550's two external Intel 82527 CAN controllers (chip selects 5 / 4) are named from the
   82527 register map; the register block now covers chip select 5, and the CS5 controller's two functions are
   named for what they drive.
+
 **Round 80.**
 - **Stage A (18d684a1):** CM550's chip select 2 device has its own watchdog service register (written right after
   `SIM_SWSR` every time); the EEPROM log's read / write indexes and count are typed; the 82527s' bit timing is
   recorded.
+
 **Round 81.**
 - **Stage A (f522aa24):** four CM550 functions renamed for the hardware they drive (the serial EEPROM driver over the
   QSPI and the chip select 4 CAN controller); round 80's EEPROM "log" is a write queue (address word + data byte).
+
 **Round 82.**
 - **Stage A (e875e603):** CM550's six CAN-named TPU set-up functions renamed for the channel and signal each sets up
   (the missing-tooth input, the primary / backup speed sensors) and the TPU microcode loader.
+
 **Round 83.**
 - **Stage A (4cfa493e):** CM550's TPU microcode image and entry table in ROM are typed, and the six TPU-only
   `pwmTimer*` functions are renamed for the engine position work they do (speed measurement mode 0 on channel 0,
   the angle pulse output on channel 3, the cylinder index alignment).
+
+**Round 84.**
+- **Stage A (7c1bb279):** CM550's boot block image (ROM 0x291F4, a byte-for-byte copy of the boot block) and its updater
+  `cm550_updateBootBlockFromImage` are named; the nine image copies are named after their originals.
 
 ## Test plan
 
@@ -945,6 +1009,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 84: A: CM550: a full-text check (comments stripped, renames applied) leaves only the updater's lines (the image and the two version dwords named, one wrap); verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 83: A: CM550: a full-text check (comments stripped, renames applied) finds 40 differing lines, all in the TPU microcode loader (its two copy sources named, its temporaries dword *); rounds 81-82 re-checked the same way: 0 lines; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 82: A: CM550: label-only - with the six renames applied the .cpp differs only in the new plate comments; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 81: A: CM550: label-only - with the four renames applied the .cpp differs only in the new plate comments; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.

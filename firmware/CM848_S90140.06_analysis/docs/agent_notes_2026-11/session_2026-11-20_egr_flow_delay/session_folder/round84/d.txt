@@ -1,0 +1,44 @@
+{
+  word wVar1;
+  byte bVar2;
+  word wVar3;
+  uint uVar4;
+  QSM_SPCR0 = 0x8004;
+  QSM_PQSPAR = 0x7b;
+  QSM_DDRQS = 0xfe;
+  QSM_PORTQS = 0xff;
+  wVar1 = QSM_SPCR1;
+  QSM_SPCR1 = wVar1 & 0x80ff;
+  wVar1 = QSM_SPCR1;
+  QSM_SPCR1 = wVar1 | 0x1000;
+  wVar1 = QSM_SPCR1;
+  QSM_SPCR1 = wVar1 & 0xff00;
+  wVar1 = QSM_SPCR1;
+  QSM_SPCR1 = wVar1 | 0x28;
+  wVar1 = QSM_SPCR2;
+  QSM_SPCR2 = wVar1 & 0xf0ff;
+  wVar1 = QSM_SPCR2;
+  QSM_SPCR2 = wVar1 | 0xf00;
+  QSM_TR0 = 3;
+  QSM_CR0 = 0xbd;
+  QSM_TR1 = 0;
+  QSM_CR1 = 0xfd;
+  for (uVar4 = 2; (byte)uVar4 < 0x10; uVar4 = (uint)(byte)((byte)uVar4 + 1)) {
+    (&QSM_TR0)[uVar4] = 0;
+    (&QSM_CR0)[uVar4] = 0xbd;
+  }
+  wVar1 = QSM_SPCR1;
+  QSM_SPCR1 = wVar1 | 0x8000;
+  do {
+    do {
+      bVar2 = QSM_SPSR;
+    } while ((bVar2 & 0x80) == 0);
+    bVar2 = QSM_SPSR;
+  } while ((bVar2 & 0xf) != 0xf);
+  wVar1 = QSM_RR2;
+  wVar3 = QSM_RR3;
+  if (((uint)wVar3 | (uint)wVar1 << 8) == 0x600d) {
+    return 0x6000;
+  }
+  return 1;
+}

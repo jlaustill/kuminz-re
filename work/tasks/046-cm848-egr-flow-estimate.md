@@ -3732,6 +3732,34 @@ A peer relay started the round; the scripts are in `session_folder/round83/`. Th
     signature matches. A ROM extension?
   - The CS4 message object handlers, and the 182 rows inside the EEPROM write queue's range.
 
+## Done, round 84 (2026-11-24, same PR): CM550's boot block image and its updater
+
+A peer relay started the round; the scripts are in `session_folder/round84/`.
+- **The check:** `placeholder_hardware_functions.py` lists the CM550 functions that still have placeholder names but
+  drive named hardware (29). Its clearest cluster was a second copy of the start-up code.
+- **Stage A (7c1bb279), CM550:**
+  - **The image:** ROM 0x291F4-0x2CE63 is byte-for-byte ROM 0x0-0x3C6F, the boot block image (`boot_block_image`).
+  - **The updater:** `cm550_updateBootBlockFromImage` (was `cm550_FUN_0002ce64`, right after the image) programs the
+    image into flash at address 0. It does so when `boot_block_version` (ROM 0x16) is non-zero and the key is 0xbad1
+    with an older version, or 0x1d1d with a different one (`boot_block_image_version` at 0x2920A). Both versions are
+    dwords, 0x02020300 in this dump, so the updater leaves the boot block alone.
+  - **The copies:** the nine functions Ghidra found inside the image are copies of the boot block's and are named
+    `<original>ImageCopy`. Their PC-relative references show the original's 0x8000 / 0x8062 / 0x80339E as 0x311F4 /
+    0x31256 / 0x82C592.
+  - **Correction to round 83:** the "signature record" at 0x311F4 / 0x31256 is only the image copy's view of ROM
+    0x8000 / 0x8062. That is where the boot block's start-up looks for the application's signature (0x98765432 /
+    0x98765433) and entry pointer.
+  - `cm550_waitForChipSelect2InputBit0High` (was `cm550_FUN_0000395a`) waits for 5 consecutive 1 samples of bit 0
+    at 0xFFD000, the same pattern as CM848's `cm848_waitForStableIgnitionKeyOn`. The signal is not identified.
+  - **Proof:** CM550: a full-text check (comments stripped, renames applied) leaves only the updater's lines (the image and the two version dwords named, one wrap); verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
+- **firmware/CLAUDE.md:** none.
+- **Leads:**
+  - The ROM 0x8000 / 0x8062 application signature and entry pointer, and the RAM program at 0x80339E (decompressed by
+    `cm550_huffmanDecompressMain`: the service program?).
+  - What 0xFFD000 bit 0 is (the key line?).
+  - The other placeholder-named hardware functions (the speed sensor handlers `vp44_FUN_00019e90` / `_0001a52c` /
+    `_0001a8a4`, `mc68k_FUN_00015df0` ...).
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

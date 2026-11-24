@@ -687,3 +687,10 @@ Hand work on the round 7 lead.
 
 - **Stage A (CM550):** `apply_r83a.py`, `map_r83a.csv`.
 - **Closing:** `apply_r83_closing.py`, `update_large_tar_r83.sh`.
+
+## Round 84: CM550's boot block image and its updater (`session_folder/round84/`)
+
+- **Stage A (CM550):** `placeholder_hardware_functions.py` (the placeholder-named functions that drive hardware),
+  `apply_r84a.py`, `map_r84a.csv`.
+- **Closing:** `apply_r84_closing.py`, `update_large_tar_r84.sh`, `fix_pr_body_round_headings_r84.py` (the PR
+  body's round 24-84 headings had no blank line above them, so GitHub showed each inside the bullet above it).
