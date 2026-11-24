@@ -767,3 +767,16 @@ Hand work on the round 7 lead.
 - **Round 90 leads:** `check_parameter_table_r89.py` / `parameter_table_r89.tsv` (the parameter ID table's stale
   firmware_variable column).
 - **Closing:** `apply_r89_closing.py`, `update_large_tar_r89.sh`.
+
+## Round 90: CM550's parameter ID table, the CM550 e2m audit, a naming wave, DM8 (`session_folder/round90/`)
+
+- **Stage A:** `find_cm550_table_r90.py` / `check_cm550_table_layout_r90.py` (the table's layout, against the CSV),
+  `apply_r90a.py`, `check_e2m_parameter_rule_r90.py` / `diff_parameter_table_r90.py` / `classify_table_names_r90.py`
+  (the old CSV columns against the regenerated table). The tool changes are in the commit.
+- **Stage B:** `cm550_e2m_census_r90.py` (the first census), `gap_effect_r90.py` (the CM848 reader fix's effect).
+- **Stage C:** `wave_candidates_r90.py` / `make_batches_r90.py` (`wave/`: the candidates and batches, the agents'
+  scratch), `wave_result_r90.json` / `wave_notes_r90.txt` (the workflow's proposals, verdicts and notes),
+  `tally_wave_r90.py` / `show_wave_r90.py`, `apply_r90c.py` (with the two array overrides), `extend_map_r90c.py`,
+  `apply_r90c_vsk.py` (validateSecurityKey), `keep_r90c.txt` (the Calterm names the refresh keeps).
+- **Stage D:** `apply_r90d.py`.
+- **Closing:** `apply_r90_closing.py`, `update_large_tar_r90.sh`.

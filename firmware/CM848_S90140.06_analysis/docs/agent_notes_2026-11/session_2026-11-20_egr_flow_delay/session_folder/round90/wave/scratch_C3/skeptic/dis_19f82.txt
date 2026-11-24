@@ -1,0 +1,146 @@
+019f82: movem.l c0fc,-(a7)
+019f86: movea.l #$80d0cd,a2
+019f8c: movea.l #$80d293,a3
+019f92: movea.l #$80d0cc,a4
+019f98: movea.l #$80d0cf,a5
+019f9e: moveq #0,d0
+019fa0: move.w $fffffc,d0
+019fa6: asr.l #8,d0
+019fa8: move.b d0,(a3)
+019faa: move.b $fffffd,$80d292
+019fb4: tst.b (a3)
+019fb6: beq 19fc0
+019fb8: cmpi.b #$ff,(a3)
+019fbc: bne 1a08a
+019fc0: move.w $ffffa2,d0
+019fc6: andi.w #$ff,d0
+019fca: move.w d0,$80d294
+019fd0: move.w $ffffa2,d0
+019fd6: andi.w #$ff00,d0
+019fda: move.b $807f51,d1
+019fe0: andi.w #$ff,d1
+019fe4: or.w d1,d0
+019fe6: move.w d0,$ffffa2
+019fec: moveq #0,d0
+019fee: move.b $807f51,d0
+019ff4: moveq #0,d1
+019ff6: move.w $80d294,d1
+019ffc: sub.l d1,d0
+019ffe: moveq #1,d1
+01a000: cmp.l d0,d1
+01a002: beq 1a022
+01a006: move sr/ccr -(a7)
+01a008: ori.w #...,ccr/sr
+01a00c: ori.w #$2000,$806004
+01a014: ori.w #$2000,$806044
+01a01c: move sr/ccr (a7)+
+01a01e: bra 1a04e
+01a022: move.w $806004,d0
+01a028: andi.w #$2000,d0
+01a02c: beq 1a04e
+01a030: move.w $806044,d0
+01a036: andi.w #$2000,d0
+01a03a: bne 1a04e
+01a03e: move sr/ccr -(a7)
+01a040: ori.w #...,ccr/sr
+01a044: andi.w #$dfff,$806004
+01a04c: move sr/ccr (a7)+
+01a04e: move.b #$1,(a2)
+01a052: tst.b $80d0ce
+01a058: bne 1a06c
+01a05a: tst.b (a5)
+01a05c: bne 1a064
+01a05e: move.b #$1,(a5)
+01a062: bra 1a0ce
+01a064: clr.b (a5)
+01a066: move.b #$2,(a4)
+01a06a: bra 1a0ce
+01a06c: tst.b (a5)
+01a06e: bne 1a07c
+01a070: clr.b $80d0ce
+01a076: move.b #$2,(a4)
+01a07a: bra 1a0ce
+01a07c: clr.b (a5)
+01a07e: clr.b $80d0ce
+01a084: move.b #$1,(a4)
+01a088: bra 1a0ce
+01a08a: clr.b (a4)
+01a08c: clr.b $80d0ce
+01a092: cmpi.b #$c0,(a3)
+01a096: bcs 1a0a6
+01a098: cmpi.b #$cf,(a3)
+01a09c: bhi 1a0a6
+01a09e: tst.b (a2)
+01a0a0: beq 1a0a6
+01a0a2: clr.b (a2)
+01a0a4: bra 1a0ce
+01a0a6: cmpi.b #$80,(a3)
+01a0aa: bcs 1a0ce
+01a0ac: cmpi.b #$8f,(a3)
+01a0b0: bhi 1a0ce
+01a0b2: cmpi.b #$1,(a2)
+01a0b6: bne 1a0ce
+01a0b8: move.w $80ccf6,d0
+01a0be: cmp.w $807eda,d0
+01a0c4: bls 1a0cc
+01a0c6: move.b #$2,(a2)
+01a0ca: bra 1a0ce
+01a0cc: clr.b (a2)
+01a0ce: cmpi.b #$2,(a4)
+01a0d2: bne 1a112
+01a0d6: cmpi.b #$1,(a2)
+01a0da: bne 1a112
+01a0de: move.w $80d0d2,d0
+01a0e4: cmp.w $807f2c,d0
+01a0ea: bcc 1a0f6
+01a0ec: addq.w #1,$80d0d2
+01a0f2: bra 1a14c
+01a0f6: move sr/ccr -(a7)
+01a0f8: ori.w #...,ccr/sr
+01a0fc: ori.w #$800,$806004
+01a104: ori.w #$800,$806044
+01a10c: move sr/ccr (a7)+
+01a10e: bra 1a14c
+01a112: cmpi.b #$1,(a4)
+01a116: bne 1a14c
+01a11a: clr.w $80d0d2
+01a120: move.w $806004,d0
+01a126: andi.w #$800,d0
+01a12a: beq 1a14c
+01a12e: move.w $806044,d0
+01a134: andi.w #$800,d0
+01a138: bne 1a14c
+01a13c: move sr/ccr -(a7)
+01a13e: ori.w #...,ccr/sr
+01a142: andi.w #$f7ff,$806004
+01a14a: move sr/ccr (a7)+
+01a14c: cmpi.b #$2,(a2)
+01a150: bne 1a188
+01a154: move.w $80d0d4,d0
+01a15a: cmp.w $807f2a,d0
+01a160: bcc 1a16c
+01a162: addq.w #1,$80d0d4
+01a168: bra 1a1c2
+01a16c: move sr/ccr -(a7)
+01a16e: ori.w #...,ccr/sr
+01a172: ori.w #$4000,$806004
+01a17a: ori.w #$4000,$806044
+01a182: move sr/ccr (a7)+
+01a184: bra 1a1c2
+01a188: cmpi.b #$1,(a2)
+01a18c: bne 1a1c2
+01a190: clr.w $80d0d4
+01a196: move.w $806004,d0
+01a19c: andi.w #$4000,d0
+01a1a0: beq 1a1c2
+01a1a4: move.w $806044,d0
+01a1aa: andi.w #$4000,d0
+01a1ae: bne 1a1c2
+01a1b2: move sr/ccr -(a7)
+01a1b4: ori.w #...,ccr/sr
+01a1b8: andi.w #$bfff,$806004
+01a1c0: move sr/ccr (a7)+
+01a1c2: jsr $34a82
+01a1c8: andi.w #$fffe,$fffe20
+01a1d0: movem.l 3f03,(a7)+ (->regs)
+01a1d4: rte

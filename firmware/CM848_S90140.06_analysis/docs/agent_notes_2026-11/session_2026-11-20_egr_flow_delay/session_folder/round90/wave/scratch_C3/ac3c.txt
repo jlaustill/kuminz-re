@@ -1,0 +1,266 @@
+   0ac3c: movem.l	%d2-%d5/%a0-%a5, -(%sp)                  48e73f3c
+   0ac40: move.l	#8436432, %a3                             267c0080bad0
+   0ac46: move.l	#8436439, %a4                             287c0080bad7
+   0ac4c: move.l	#8436438, %a5                             2a7c0080bad6
+   0ac52: move.w	$803cb8, %d0                              303900803cb8
+   0ac58: <undecoded 0240>                                 0240
+   0ac5a: <undecoded 0008>                                 0008
+   0ac5c: beq	$30c                                         6700030c
+   0ac60: cmpi.w	#1, $80d0c8                               0c7900010080d0c8
+   0ac68: beq	$300                                         67000300
+   0ac6c: <undecoded 4ab9>                                 4ab9
+   0ac6e: <undecoded 0080>                                 0080
+   0ac70: <undecoded 5398>                                 5398
+   0ac72: bne	$a                                           660a
+   0ac74: move.l	$80ccee, $805390                          23f90080ccee00805390
+   0ac7e: <undecoded 4ab9>                                 4ab9
+   0ac80: <undecoded 0080>                                 0080
+   0ac82: <undecoded bacc>                                 bacc
+   0ac84: bne	$1a                                          661a
+   0ac86: <undecoded 4a93>                                 4a93
+   0ac88: beq	$a                                           670a
+   0ac8a: move.l	(%a3), %d0                                2013
+   0ac8c: <undecoded b0b9>                                 b0b9
+   0ac8e: <undecoded 0080>                                 0080
+   0ac90: <undecoded 0006>                                 0006
+   0ac92: bcs	$c                                           650c
+   0ac94: move.l	$80ccee, $805388                          23f90080ccee00805388
+   0ac9e: bra	$1c                                          601c
+   0aca0: <undecoded 4a93>                                 4a93
+   0aca2: bne	$18                                          6618
+   0aca4: move.l	$80bacc, %d0                              20390080bacc
+   0acaa: <undecoded b0b9>                                 b0b9
+   0acac: <undecoded 0080>                                 0080
+   0acae: <undecoded 0006>                                 0006
+   0acb0: bcs	$a                                           650a
+   0acb2: move.l	$80ccee, $80538c                          23f90080ccee0080538c
+   0acbc: move.w	$80ccf6, %d0                              30390080ccf6
+   0acc2: <undecoded b079>                                 b079
+   0acc4: <undecoded 0080>                                 0080
+   0acc6: <undecoded 7d18>                                 7d18
+   0acc8: bcc	$10                                          6410
+   0acca: move.w	$80ccf6, %d0                              30390080ccf6
+   0acd0: <undecoded b079>                                 b079
+   0acd2: <undecoded 0080>                                 0080
+   0acd4: <undecoded 7d1a>                                 7d1a
+   0acd6: bcc	$e0                                          640000e0
+   0acda: move.w	$80ccf6, %d0                              30390080ccf6
+   0ace0: <undecoded b079>                                 b079
+   0ace2: <undecoded 0080>                                 0080
+   0ace4: <undecoded 7d18>                                 7d18
+   0ace6: bcs	$16                                          6516
+   0ace8: move.w	$807d18, $800016                          33f900807d1800800016
+   0acf2: move.w	$807d18, $80002c                          33f900807d180080002c
+   0acfc: bra	$14                                          6014
+   0acfe: move.w	$807d1a, $800016                          33f900807d1a00800016
+   0ad08: move.w	$807d1a, $80002c                          33f900807d1a0080002c
+   0ad12: cmpi.w	#16384, $80a8f8                           0c7940000080a8f8
+   0ad1a: bne	$18                                          6618
+   0ad1c: <undecoded 4879>                                 4879
+   0ad1e: <undecoded 0080>                                 0080
+   0ad20: <undecoded 0010>                                 0010
+   0ad22: jsr	$35088                                       4eb900035088
+   0ad28: <undecoded 588f>                                 588f
+   0ad2a: move.w	%d0, $800004                              33c000800004
+   0ad30: bra	$90                                          60000090
+   0ad34: <undecoded 4a79>                                 4a79
+   0ad36: <undecoded 0080>                                 0080
+   0ad38: <undecoded a8f8>                                 a8f8
+   0ad3a: bne	$16                                          6616
+   0ad3c: <undecoded 4879>                                 4879
+   0ad3e: <undecoded 0080>                                 0080
+   0ad40: <undecoded 0026>                                 0026
+   0ad42: jsr	$35088                                       4eb900035088
+   0ad48: <undecoded 588f>                                 588f
+   0ad4a: move.w	%d0, $800004                              33c000800004
+   0ad50: bra	$70                                          6070
+   0ad52: <undecoded 4879>                                 4879
+   0ad54: <undecoded 0080>                                 0080
+   0ad56: <undecoded 0010>                                 0010
+   0ad58: jsr	$35088                                       4eb900035088
+   0ad5e: move.w	%d0, $80000c                              33c00080000c
+   0ad64: <undecoded 4879>                                 4879
+   0ad66: <undecoded 0080>                                 0080
+   0ad68: <undecoded 0026>                                 0026
+   0ad6a: jsr	$35088                                       4eb900035088
+   0ad70: <undecoded 508f>                                 508f
+   0ad72: move.w	%d0, $80000e                              33c00080000e
+   0ad78: move.w	$80a8f8, %d0                              30390080a8f8
+   0ad7e: <undecoded c0f9>                                 c0f9
+   0ad80: <undecoded 0080>                                 0080
+   0ad82: <undecoded 000c>                                 000c
+   0ad84: <undecoded 720e>                                 720e
+   0ad86: lsr.l	%d1, %d0                                   e2a8
+   0ad88: move.l	%d0, -(%sp)                               2f00
+   0ad8a: <undecoded 7000>                                 7000
+   0ad8c: move.w	$80a8f8, %d0                              30390080a8f8
+   0ad92: move.l	#16384, %d1                               223c00004000
+   0ad98: sub.l	%d0, %d1                                   9280
+   0ad9a: move.l	%d1, %d0                                  2001
+   0ad9c: <undecoded 7200>                                 7200
+   0ad9e: move.w	$80000e, %d1                              32390080000e
+   0ada4: mulu.l	%d1, %d0                                  4c010000
+   0ada8: <undecoded 720e>                                 720e
+   0adaa: lsr.l	%d1, %d0                                   e2a8
+   0adac: move.l	(%sp)+, %d1                               221f
+   0adae: add.w	%d1, %d0                                   d041
+   0adb0: move.w	%d0, $800004                              33c000800004
+   0adb6: bra	$a                                           600a
+   0adb8: move.w	$80d368, $800004                          33f90080d36800800004
+   0adc2: move.w	$800004, %d0                              303900800004
+   0adc8: <undecoded b079>                                 b079
+   0adca: <undecoded 0080>                                 0080
+   0adcc: <undecoded db1c>                                 db1c
+   0adce: bne	$10                                          6610
+   0add0: <undecoded 7000>                                 7000
+   0add2: move.w	$807d40, %d0                              303900807d40
+   0add8: move.l	%d0, $800000                              23c000800000
+   0adde: bra	$3e                                          603e
+   0ade0: <undecoded 7000>                                 7000
+   0ade2: move.w	$80d32e, %d0                              30390080d32e
+   0ade8: <undecoded 7200>                                 7200
+   0adea: move.w	$80db1c, %d1                              32390080db1c
+   0adf0: sub.l	%d1, %d0                                   9081
+   0adf2: move.l	%d0, %d1                                  2200
+   0adf4: lsl.l	#2, %d0                                    e588
+   0adf6: add.l	%d1, %d0                                   d081
+   0adf8: lsl.l	#3, %d0                                    e788
+   0adfa: sub.l	%d1, %d0                                   9081
+   0adfc: lsl.l	#4, %d0                                    e988
+   0adfe: add.l	%d1, %d0                                   d081
+   0ae00: lsl.l	#4, %d0                                    e988
+   0ae02: <undecoded 7200>                                 7200
+   0ae04: move.w	$800004, %d1                              323900800004
+   0ae0a: <undecoded 7e00>                                 7e00
+   0ae0c: move.w	$80db1c, %d7                              3e390080db1c
+   0ae12: sub.l	%d7, %d1                                   9287
+   0ae14: divs.l	%d1, %d0                                  4c410800
+   0ae18: move.l	%d0, $800000                              23c000800000
+   0ae1e: <undecoded 4ab9>                                 4ab9
+   0ae20: <undecoded 0080>                                 0080
+   0ae22: <undecoded 0000>                                 0000
+   0ae24: bge	$24                                          6c24
+   0ae26: <undecoded 4279>                                 4279
+   0ae28: <undecoded 0080>                                 0080
+   0ae2a: <undecoded bad4>                                 bad4
+   0ae2c: move.w	$80ccf6, %d0                              30390080ccf6
+   0ae32: <undecoded b079>                                 b079
+   0ae34: <undecoded 0080>                                 0080
+   0ae36: <undecoded 7d18>                                 7d18
+   0ae38: bcc	$8                                           6408
+   0ae3a: move.b	#49, (%a5)                                1abc0031
+   0ae3e: bra	$8a                                          6000008a
+   0ae42: move.b	#50, (%a5)                                1abc0032
+   0ae46: bra	$82                                          60000082
+   0ae4a: move.w	$800002, $80bad4                          33f9008000020080bad4
+   0ae54: <undecoded 7c08>                                 7c08
+   0ae56: <undecoded 7a06>                                 7a06
+   0ae58: <undecoded 4203>                                 4203
+   0ae5a: <undecoded 7401>                                 7401
+   0ae5c: move.l	#8420640, %a2                             247c00807d20
+   0ae62: move.w	$80ccf6, %d4                              38390080ccf6
+   0ae68: bra	$18                                          6018
+   0ae6a: <undecoded b85a>                                 b85a
+   0ae6c: bhi	$12                                          6212
+   0ae6e: <undecoded 7601>                                 7601
+   0ae70: cmpi.b	#1, %d2                                   0c020001
+   0ae74: bne	$4                                           6604
+   0ae76: <undecoded 7c01>                                 7c01
+   0ae78: bra	$6                                           6006
+   0ae7a: move.b	%d2, %d6                                  1c02
+   0ae7c: <undecoded 0606>                                 0606
+   0ae7e: <undecoded 00ff>                                 00ff
+   0ae80: <undecoded 5202>                                 5202
+   0ae82: cmpi.b	#9, %d2                                   0c020009
+   0ae86: bcc	$4                                           6404
+   0ae88: <undecoded 4a03>                                 4a03
+   0ae8a: beq	$de                                          67de
+   0ae8c: <undecoded 4203>                                 4203
+   0ae8e: <undecoded 7401>                                 7401
+   0ae90: move.l	#8420660, %a2                             247c00807d34
+   0ae96: move.w	$80bad4, %d4                              38390080bad4
+   0ae9c: bra	$18                                          6018
+   0ae9e: <undecoded b85a>                                 b85a
+   0aea0: bhi	$12                                          6212
+   0aea2: <undecoded 7601>                                 7601
+   0aea4: cmpi.b	#1, %d2                                   0c020001
+   0aea8: bne	$4                                           6604
+   0aeaa: <undecoded 7a01>                                 7a01
+   0aeac: bra	$6                                           6006
+   0aeae: move.b	%d2, %d5                                  1a02
+   0aeb0: <undecoded 0605>                                 0605
+   0aeb2: <undecoded 00ff>                                 00ff
+   0aeb4: <undecoded 5202>                                 5202
+   0aeb6: cmpi.b	#7, %d2                                   0c020007
+   0aeba: bcc	$4                                           6404
+   0aebc: <undecoded 4a03>                                 4a03
+   0aebe: beq	$de                                          67de
+   0aec0: <undecoded 7006>                                 7006
+   0aec2: sub.b	%d5, %d0                                   9005
+   0aec4: lsl.b	#3, %d0                                    e708
+   0aec6: add.b	%d6, %d0                                   d006
+   0aec8: move.b	%d0, (%a5)                                1a80
+   0aeca: cmpi.l	#3600000000, $805398                      0cb9d693a40000805398
+   0aed4: bcc	$14                                          6414
+   0aed6: <undecoded 7000>                                 7000
+   0aed8: move.b	(%a5), %d0                                1015
+   0aeda: move.l	#8410222, %a0                             207c0080546e
+   0aee0: <undecoded 52b0>                                 52b0
+   0aee2: <undecoded 0400>                                 0400
+   0aee4: <undecoded 52b9>                                 52b9
+   0aee6: <undecoded 0080>                                 0080
+   0aee8: <undecoded 5398>                                 5398
+   0aeea: move.l	$80bacc, %d0                              20390080bacc
+   0aef0: <undecoded b0b9>                                 b0b9
+   0aef2: <undecoded 0080>                                 0080
+   0aef4: <undecoded 0006>                                 0006
+   0aef6: bcc	$e                                           640e
+   0aef8: <undecoded 4ab9>                                 4ab9
+   0aefa: <undecoded 0080>                                 0080
+   0aefc: <undecoded bacc>                                 bacc
+   0aefe: beq	$6                                           6706
+   0af00: move.b	#1, (%a4)                                 18bc0001
+   0af04: bra	$2e                                          602e
+   0af06: <undecoded 4ab9>                                 4ab9
+   0af08: <undecoded 0080>                                 0080
+   0af0a: <undecoded bacc>                                 bacc
+   0af0c: bne	$14                                          6614
+   0af0e: <undecoded 4a93>                                 4a93
+   0af10: beq	$a                                           670a
+   0af12: move.l	(%a3), %d0                                2013
+   0af14: <undecoded b0b9>                                 b0b9
+   0af16: <undecoded 0080>                                 0080
+   0af18: <undecoded 0006>                                 0006
+   0af1a: bcs	$6                                           6506
+   0af1c: move.b	#1, (%a4)                                 18bc0001
+   0af20: bra	$12                                          6012
+   0af22: move.l	(%a3), %d0                                2013
+   0af24: <undecoded b0b9>                                 b0b9
+   0af26: <undecoded 0080>                                 0080
+   0af28: <undecoded 0006>                                 0006
+   0af2a: bcc	$6                                           6406
+   0af2c: move.b	#2, (%a4)                                 18bc0002
+   0af30: bra	$2                                           6002
+   0af32: <undecoded 4214>                                 4214
+   0af34: cmpi.b	#1, (%a4)                                 0c140001
+   0af38: bne	$1a                                          661a
+   0af3a: <undecoded 7000>                                 7000
+   0af3c: move.b	(%a5), %d0                                1015
+   0af3e: move.l	#8436442, %a0                             207c0080bada
+   0af44: <undecoded 52b0>                                 52b0
+   0af46: <undecoded 0400>                                 0400
+   0af48: <undecoded 52b9>                                 52b9
+   0af4a: <undecoded 0080>                                 0080
+   0af4c: <undecoded bacc>                                 bacc
+   0af4e: movem.l	(%sp)+, %d2-%d7/%a2-%a5                  4cdf3cfc
+   0af52: rts                                              4e75
+   0af54: cmpi.b	#2, (%a4)                                 0c140002
+   0af58: bne	$10                                          6610
+   0af5a: <undecoded 7000>                                 7000
+   0af5c: move.b	(%a5), %d0                                1015
+   0af5e: move.l	#8436648, %a0                             207c0080bba8
+   0af64: <undecoded 52b0>                                 52b0
+   0af66: <undecoded 0400>                                 0400
+   0af68: <undecoded 5293>                                 5293
+   0af6a: movem.l	(%sp)+, %d2-%d7/%a2-%a5                  4cdf3cfc
+   0af6e: rts                                              4e75

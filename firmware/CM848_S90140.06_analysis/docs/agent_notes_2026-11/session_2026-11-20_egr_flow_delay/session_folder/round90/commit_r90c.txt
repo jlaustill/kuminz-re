@@ -1,0 +1,50 @@
+cm550 + scripts: round 90 stage C - the CM550 naming wave from the e2m audit (162 rows); validateSecurityKey's locals
+
+The candidates came from stage B's CM550 audit:
+- A: 66 e2m records the .cpp references at an address with no row;
+- B: the 20 unnamed_data_<address> placeholder rows;
+- C: 82 referenced rows named with a bare Calterm mnemonic.
+Workflow wf_69f8159d-0ca ran an investigator and a skeptic per batch (7 batches, 14 agents). Every candidate was named:
+158 confirmed, 10 amended by the skeptic, none refuted.
+
+- 162 rows: 60 new (group A, two records at one address 6 times), 20 placeholders renamed (B: the A/D channels'
+  linearization tables, <channel>_linearization_values word[N]) and 82 mnemonic rows renamed (C; each comment keeps the
+  mnemonic). Examples:
+  - j1939_<signal>_source_address_filter_cal: CM550's per-signal bytes of CM848's j1939_input_source_address_filter_cal.
+  - trip_ / lifetime_ fuel used.
+  - user_fueling_state (FSDSFLST, 38 renders; it printed as the untyped _FSDSFLST).
+  - engine_control_network_type, alpha_base / alpha_state / the alpha results, the duty cycle monitor maps.
+  - j1939_tsc1_speed_control_condition_gain_sets (i16[36]: 4 sets of 9, indexed by TSC1 condition x 18).
+  - smart_boot_indicator / flash_operational_code_entry_pointer.
+- Two verdicts named element 0 of a per-channel array, so they are arrays: analog_sensor_override_values and
+  analog_sensor_raw_override_values (word[25] each; mc68k_processAnalogSensorChannels reads element [channel] while the
+  channel's override bit is set; the unused rows inside sat at the right channel offsets).
+- 87 rows with no reference inside the new arrays are removed. They were legacy guesses inside the power take-off
+  governor's gain tables (can_controller_2_baud_byte_0, histogram_bin_count_3, vp44_sensor_value_3, ...), the TSC1 gain
+  sets' bare mnemonics and fault log words. The refresh map points their names at the array elements.
+- validateSecurityKey (0x2fcdc): 7 of its 10 local rows never applied. 'bool' was an unknown type, and the others
+  named an older decompilation's temporaries. Its rows are matched against one decompilation taken before they
+  commit, in which validation_result is still uVar2, so the later temporaries are one number higher. All 8 rows apply
+  now (all_keys_match, hour_meter_byte_count, key_byte_index, hour_meter_copy_destination, extracted_hour_meter, ...);
+  the reused byte pointer keeps its auto-name. ApplyLocalVariables maps 'bool' to the decompiler's bool (CM848 has no
+  bool local rows).
+- The refresh keeps the 81 group C names that are Calterm record names (--keep): a comment citing one names the
+  Calterm parameter. refresh_other_csvs.py has no --keep, so its map leaves them out (a first pass rewrote 16
+  mnemonics in prototype / enum comments and was undone).
+- output/parameter_id_lookup_table.csv rewritten (test_e2m_block_addresses.py caught the stale names).
+
+Known cost (round 91): four scalar rows are field +0 of a record array, so about ten lines read
+(int)&name + offset where they read &DAT_ + offset. The rows are the fault count table (125 x 10 bytes at 0x805a1c),
+the datalogger data records (6 bytes from 0x803da4) and the datalogger trigger records (from 0x803d65). They are
+struct arrays to type next.
+
+Proof:
+- CM550: verify DETERMINISTIC; 0 functions removed / added; 124 changed (the renamed / typed reads, char literals as
+  integers, pointer arithmetic as indexing, validateSecurityKey's names); caller artifacts unchanged (unaff_ 90,
+  extraout_ 31, in_ 43, uStack 38, CONCAT 176 before and after); the build's validateSecurityKey error and 6 warnings are gone; 188
+  fewer untyped rows, 1 more type that could not be applied.
+- CM848 unchanged (the bool mapping only affects bool local rows; stage D's build ran with it).
+- test_e2m_block_addresses / test_e2m_name_audit / test_rename_waves / test_lookup_tables / test_disasm_tools pass;
+  109 script tests; headers 0 g++ errors; _cal HARD 0.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

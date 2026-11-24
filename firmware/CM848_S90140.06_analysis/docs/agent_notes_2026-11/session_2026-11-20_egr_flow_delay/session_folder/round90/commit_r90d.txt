@@ -1,0 +1,25 @@
+cm848: round 90 stage D - the DM8 (PGN 65232) payload as a struct; its builder's parameters
+
+Round 88's skeptic lead: the DM8 payload words take SPN names.
+- j1939_pgn65232_payload (0x3fad6e, j1939_pgn65232_payload_t): the 8 bytes j1939_pgn65232_tx_message.data_pointer
+  points at, laid out as J1939-73 DM8 - SPN 1224 test_identifier (byte 1), SPN 1225 test_type_component_identifier
+  (byte 2), SPN 1226 test_value (bytes 3-4), SPN 1227 test_limit_maximum (bytes 5-6), SPN 1228 test_limit_minimum
+  (bytes 7-8). It rendered DAT_003fad6e / DAT_003fad6f and three generic words (j1939_pgn65232_param_tx_word /
+  _field1_init_word / _field2_init_word, removed). cm848_initializePgn65232Dm8Buffer presets the type byte and both
+  limits to not available (0xff / 0xffff).
+- cm848_sendPgn65232NonContinuousMonitorTestResultMessage (0x255c0) takes (byte test_identifier, ushort test_value):
+  its prototype rows said (byte dest_address, byte fault_count) against its own plate comment. The body stores the
+  halfword, which printed as CONCAT11(in_register_00000012, fault_count), and both callers in
+  cm848_j1939HandlePgn58112Dm7 pass word monitor results (intake_air_heater_monitor_result / misfire_monitor_result)
+  cast to (byte).
+
+- CM550's j1939_dm8_test_limit_maximum / _minimum (0x803474 / 0x803476) cited the old CM848 words as their
+  counterparts; their comments now cite the fields (the same field names).
+
+Proof:
+- CM848: verify DETERMINISTIC; 0 functions removed / added; 3 changed: the builder (its parameters, no CONCAT11 /
+  in_register), the initializer (payload fields) and cm848_j1939HandlePgn58112Dm7 (both (byte) casts gone); no new
+  build warning.
+- Headers 0 g++ errors; _cal HARD 0.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

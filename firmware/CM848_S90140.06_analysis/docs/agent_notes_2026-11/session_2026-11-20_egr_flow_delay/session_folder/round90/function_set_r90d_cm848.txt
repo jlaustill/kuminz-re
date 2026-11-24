@@ -1,0 +1,24 @@
+removed 0: 
+added 0: 
+changed 3
+  0x000227a0 cm848_j1939HandlePgn58112Dm7: 5 lines
+      -    cm848_sendPgn65232NonContinuousMonitorTestResultMessage
+      -              (0,(byte)intake_air_heater_monitor_result);
+      +    cm848_sendPgn65232NonContinuousMonitorTestResultMessage(0,intake_air_heater_monitor_result);
+      -    cm848_sendPgn65232NonContinuousMonitorTestResultMessage(1,(byte)misfire_monitor_result);
+      +    cm848_sendPgn65232NonContinuousMonitorTestResultMessage(1,misfire_monitor_result);
+  0x000255c0 cm848_sendPgn65232NonContinuousMonitorTestResultMessage: 9 lines
+      -void cm848_sendPgn65232NonContinuousMonitorTestResultMessage(byte dest_address,byte fault_count)
+      +void cm848_sendPgn65232NonContinuousMonitorTestResultMessage(byte test_identifier,word test_value)
+      -  undefined1 in_register_00000012;
+      -  undefined2 local_6;
+      -  local_6 = CONCAT11(in_register_00000012,fault_count);
+      -  DAT_003fad6e = dest_address;
+      +  word local_6;
+      +  j1939_pgn65232_payload.test_identifier = test_identifier;
+      +  local_6 = test_value;
+  0x0002560c cm848_initializePgn65232Dm8Buffer: 4 lines
+      -  j1939_pgn65232_tx_message.data_pointer = &DAT_003fad6e;
+      +  j1939_pgn65232_tx_message.data_pointer = &j1939_pgn65232_payload.test_identifier;
+      -  DAT_003fad6f = 0xff;
+      +  j1939_pgn65232_payload.test_type_component_identifier = 0xff;

@@ -1,0 +1,18 @@
+scripts: round 90 stage B - e2m_name_audit.py audits CM550; the dump reader handles both short dumps
+
+- e2m_name_audit.py --firmware cm550: J90350.00's ROM table and EEPROM mirror (stage A's e2m_block_addresses.py),
+  e2m-analysis/originals/v64t6_s.e2m, the CM550 CSVs and .cpp, and the four J90350.00 dumps. CM550's records are
+  8-letter mnemonics, so token_overlap scores the description's words (before `~`); its format has no maximum column and
+  columns 13 / 14 are the subfile and group (the min / max columns now say so), so dump_in_range stays empty there.
+  Block 0's system records (all at offset 0) are skipped.
+- The dumps are read by address segment (make_reader): CM848's RAM dump misses 0x40c200-0x40c27f, and the audit read
+  every value from 0x40c280 on 0x80 bytes too far on (6 records; 5 values change, no in-range verdict changes). CM550's
+  extended RAM file is 0x80 short (0x8092C2 on at file offset 0x80; 0x8091C2-0x8092C1 uncertain).
+- test_e2m_name_audit.py: the reader across CM848's gap (before, in, after, signed, across), CM550's extended RAM shift
+  and EEPROM, the description words.
+
+The CM550 audit (4525 scalar records: 2348 named, 1742 none, 428 inside, 7 unnamed) lists 66 records that the .cpp
+references with no row, and 478 named rows whose words differ from their description: the next naming wave's input.
+The CM848 audit output is the same as before apart from those 5 values.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

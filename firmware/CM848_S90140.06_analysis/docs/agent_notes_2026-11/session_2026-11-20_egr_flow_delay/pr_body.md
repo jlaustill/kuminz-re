@@ -8,7 +8,7 @@ fresh air flow records; the e2m never spells it out, so no name guesses an expan
 - **Round 2:** at the user's request the rest of the family is renamed too, on this PR (stages 3 / 4). The scope rule:
   a symbol is in if its e2m record is `CHP_` / `C_CHP_`, or if it is an input that a family function would otherwise
   misname.
-- **Beyond CM848 (rounds 72-89):** the J1939 memory write service and the development mode code are shared:
+- **Beyond CM848 (rounds 72-90):** the J1939 memory write service and the development mode code are shared:
   eleven CM550 functions are CM848 twins and share their names. Round 74 also dismantles a misapplied CM550
   struct, round 75 types CM550's InSite parameter schedule and names its J1708 SCI, and round 76 names CM550's
   MC68336 registers, so CM550's CSVs, the root README and `firmware/feature_comparison.csv` change too.
@@ -970,6 +970,15 @@ state enum, the flag bytes.**
   (`docs/analog_sensor_channels.md`); `ApplyLocalVariables` builds array types.
 - **Stage D (92f1ba9d):** CM550's README and npm scripts follow the one deterministic build.
 
+**Round 90.**
+- **Stage A (eef9fc0c):** CM550's parameter ID table (`parameter_id_table`, `cm550_lookupParameterIdAddress`);
+  `e2m_block_addresses.py` resolves CM550 and rewrites `parameter_id_lookup_table.csv` (with a staleness test).
+- **Stage B (5742ef45):** `e2m_name_audit.py` audits CM550; its dump reader handles both short dumps.
+- **Stage C (7f344430):** a skeptic-verified naming wave from that audit: 162 CM550 rows (the A/D linearization
+  tables, the J1939 source address filters, the fueling states, ...), two per-channel override arrays,
+  `validateSecurityKey`'s locals.
+- **Stage D (de089dd8):** CM848's DM8 payload as a struct; its builder's parameters.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -1061,6 +1070,10 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 90: D: CM848 verify DETERMINISTIC (3 functions changed: the DM8 builder, its initializer, the DM7 handler); headers 0 g++ errors; _cal HARD 0.
+- [x] Round 90: C: CM550 verify DETERMINISTIC (0 functions removed / added; 124 changed by the names / types; caller artifacts unchanged; validateSecurityKey's build error and 6 warnings gone); test suites pass; headers 0 g++ errors; _cal HARD 0.
+- [x] Round 90: B: test_e2m_name_audit passes (the reader across CM848's gap and CM550's shift); the CM848 audit's output changes only in the 5 gap-shifted values.
+- [x] Round 90: A: CM550 verify DETERMINISTIC (1 function changed: the lookup's table reads); CM848 byte-identical (common.sh message); test_e2m_block_addresses passes (CM550 ranges, mirror, 723 entries, the table CSV current).
 - [x] Round 89: D: docs only (no build input changed); package.json parses.
 - [x] Round 89: C: CM550 verify DETERMINISTIC (0 functions removed / added; 39 changed: the A/D loops and 37 readers; caller artifacts unchanged; only the two walker rows render differently); CM848 verify DETERMINISTIC and byte-identical (ApplyLocalVariables change); 109 JUnit tests pass; headers 0 g++ errors; _cal HARD 0.
 - [x] Round 89: B: CM550 verify DETERMINISTIC (2 fall-through rows deleted on purpose; 7 functions changed beyond labels; caller artifacts unchanged); CM848 label-only; headers 0 g++ errors; _cal HARD 0.

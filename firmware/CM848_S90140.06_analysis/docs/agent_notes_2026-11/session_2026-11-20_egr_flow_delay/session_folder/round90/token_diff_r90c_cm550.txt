@@ -1,0 +1,299 @@
+0x00003a94: 3 token changes: - 0x6789abcd => 0x98765433 | - 0x6789abce => 0x98765432 |  => ( code * )
+0x00003abe: 3 token changes: - 0x6789abcd => 0x98765433 | - 0x6789abce => 0x98765432 |  => ( code * )
+0x0000ac3c: 13 token changes: _DCMNHIES => duty_cycle_monitor_high_cutoff_engine_speed | _DCMNLOES => duty_cycle_monitor_low_cutoff_engine_speed | _DCMNHIES => duty_cycle_monitor_high_cutoff_engine_speed | _DCMNLOES => duty_cycle_monitor_low_cutoff_engine_speed | _DCMNHIES => duty_cycle_monitor_high_cutoff_engine_speed | _DCMNHIES => duty_cycle_monitor_high_cutoff_engine_speed | ' \ x01 ' => 1 | ' \ x01 ' => 1 | ' \ x02 ' => 2 | ' \ =>  | ' =>  | ' \ x01 ' => 1 | ' \ x02 ' => 2
+0x0000af70: 12 token changes: _DCMNLOES => duty_cycle_monitor_low_cutoff_engine_speed | _DCMNLOES => duty_cycle_monitor_low_cutoff_engine_speed | _DCSHPR01 => duty_cycle_monitor_short_term_processing_map_1_byte_count | _DCMNMP01 => duty_cycle_monitor_stored_short_term_map_1 [ 0 ] | _DCSHPR02 => duty_cycle_monitor_short_term_processing_map_2_byte_count | _DCMNMP02 => duty_cycle_monitor_stored_short_term_map_2 [ 0 ] | * ( ushort * ) ( => duty_cycle_monitor_stored_short_term_map_1 [ | * 2 =>  | 0x80539e ) => 1 ] | * ( ushort * ) ( => duty_cycle_monitor_stored_short_term_map_2 [ | * 2 =>  | 0x805406 ) => 1 ]
+0x0000b130: 8 token changes: * ( short * ) ( => duty_cycle_monitor_stored_short_term_map_1 [ | * 2 =>  | 0x80539e ) => 1 ] | short => word | * ( short * ) ( => duty_cycle_monitor_stored_short_term_map_2 [ | * 2 =>  | 0x805406 ) => 1 ] | short => word
+0x0000b7bc: 6 token changes: * ( word * ) ( & =>  | + => [ | * 2 ) => ] | * ( word * ) ( & =>  | + => [ | * 2 ) => ]
+0x0000bcf0: 22 token changes: & =>  | & =>  | & =>  | & =>  | & =>  | & =>  | & =>  | & =>  | & =>  | & =>  | & =>  | & =>  | & =>  | & =>  | & =>  | & =>  | & =>  | & =>  | & =>  | & =>  | & =>  | & => 
+0x0000c2a0: 1 token changes: _FSLMAHST => fuel_demand_minimum_tracked_state
+0x0000c326: 7 token changes: _APAPBA => alpha_base | _APAPST => alpha_state | _APAPBA => alpha_base | _APAPST => alpha_state | _APAPST => alpha_state | _APAPST => alpha_state | _ASALPHA => master_slave_final_override_alpha
+0x0000c404: 2 token changes: undefined2 => word | _APFLRTAP => alpha_fuel_rate_result
+0x0000c556: 2 token changes: undefined2 => word | _APAAPRSS => alpha_low_ambient_air_pressure_result
+0x0000c582: 22 token changes: _APLSAP => alpha_low_speed_governor_result | _APAFSS => alpha_air_fuel_control_result | _APAFSS => alpha_air_fuel_control_result | _APFLRTAP => alpha_fuel_rate_result | _APFLRTAP => alpha_fuel_rate_result | _APGVAP => alpha_on_governor_result | _APGVAP => alpha_on_governor_result | _APAAPRSS => alpha_low_ambient_air_pressure_result | ushort => word | _APAAPRSS => alpha_low_ambient_air_pressure_result | _APAPBA => alpha_base | _APAPBA => alpha_base | _APAPBA => alpha_base | _APAPBA => alpha_base | _APAPBA => alpha_base | _APAPBA => alpha_base | _APAPBA => alpha_base | _APAPBA => alpha_base | _A
+0x0000c8a0: 5 token changes: _ASTHPFRL => all_speed_governor_throttle_reference_rate_limit | ushort => word | _ASTHPFRL => all_speed_governor_throttle_reference_rate_limit | _ASTHPFRL => all_speed_governor_throttle_reference_rate_limit | _ASTHPFRL => all_speed_governor_throttle_reference_rate_limit
+0x0000c962: 22 token changes: _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state | _ASRSSTX6 => all_speed_governor_reset_state_fuel_demand_correction | _FSDSFLST => user_fueling_state | _ASDVDELM => all_speed_governor_derivative_deadband_limit | _ASDVDELM => all_speed_governor_derivative_deadband_limit | _ASDVDELM => all_speed_governor_derivative_deadband_limit | _ASDVLM => all_speed_governor_derivative_limit | _ASDVLM => all_speed_governor_derivative_limit | _ASDVDELM => al
+0x0000d0e2: 2 token changes: _ASRSSTX6 => all_speed_governor_reset_state_fuel_demand_correction | _ASAPSTX6 => all_speed_governor_application_reset_state_fuel_demand_correction
+0x0000d0fc: 2 token changes: _ASRSSTX6 => all_speed_governor_reset_state_fuel_demand_correction | _ASAPSTX6 => all_speed_governor_application_reset_state_fuel_demand_correction
+0x0000d18a: 2 token changes: _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state
+0x0000d1a4: 6 token changes: _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state | & =>  | 0x12 => 9 | _ASJCFLMN => governor_fuel_demand_tracking_floor_j1939 | _ASJCFLMX => governor_fuel_demand_tracking_limit_j1939
+0x0000d4ae: 4 token changes: _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state | _ASCNLOLM => governor_fuel_demand_tracking_floor_throttle_mode | _ASCNHILM => governor_fuel_demand_tracking_limit_throttle_mode
+0x0000d5e6: 1 token changes: _DAT_0080a9d6 => engine_speed_limit_source_2
+0x0000ed34: 4 token changes:  => [ 0 ] | char => byte | ( & =>  | ) => 
+0x0000ed64: 1 token changes: _DAT_0080dc24 => power_take_off_requested_engine_speed
+0x0000fa68: 1 token changes: _JC39P3RP => j1939_engine_speed_at_point_3
+0x0000faa6: 2 token changes: undefined2 => word | _JC39P5RP => j1939_engine_speed_at_point_5
+0x0000fb26: 9 token changes: _JC39P3RP => j1939_engine_speed_at_point_3 | _JC39P4RP => j1939_engine_speed_at_point_4 | _JC39P5RP => j1939_engine_speed_at_point_5 | _JC39P3RP => j1939_engine_speed_at_point_3 | _JC39P4RP => j1939_engine_speed_at_point_4 | _JC39P4RP => j1939_engine_speed_at_point_4 | _JC39P5RP => j1939_engine_speed_at_point_5 | _JC39P4RP => j1939_engine_speed_at_point_4 | _JCEVRPP2 => j1939_determined_engine_speed_at_point_2
+0x0000fbe4: 9 token changes: _JC39P3RP => j1939_engine_speed_at_point_3 | _JC39P4RP => j1939_engine_speed_at_point_4 | _JC39P5RP => j1939_engine_speed_at_point_5 | _JC39P3RP => j1939_engine_speed_at_point_3 | _JC39P4RP => j1939_engine_speed_at_point_4 | _JC39P4RP => j1939_engine_speed_at_point_4 | _JC39P5RP => j1939_engine_speed_at_point_5 | _JC39P4RP => j1939_engine_speed_at_point_4 | _JCEVRPP2 => j1939_determined_engine_speed_at_point_2
+0x0001025c: 1 token changes: _CSCKES => crank_sync_running_speed_threshold
+0x000127c2: 122 token changes:  => dword * pdVar10 ; | puVar10 => puVar11 | piVar11 => piVar12 | pcVar12 => pcVar13 ; word * pwVar14 | psVar13 ; undefined2 * puVar14 ; int * piVar15 => psVar15 |  => undefined2 * puVar17 ; | psVar17 => psVar18 | int => sdword | piVar18 => psVar19 | puVar19 => puVar20 | psVar20 => psVar21 | puVar21 ; short * psVar22 => puVar22 | piVar11 => pdVar10 | ( int * ) =>  | piVar15 => piVar12 | piVar18 => psVar19 | ( int * ) =>  | piVar18 => psVar19 | piVar15 => piVar12 | piVar11 => pdVar10 | piVar11 => pdVar10 | piVar11 => pdVar10 | piVar15 => piVar12 | piVar15 => piVar12 | piVar18 => psVar19 | piVar
+0x000138b6: 4 token changes: ' \ =>  | ' =>  | ' \ =>  | ' => 
+0x00013a5c: 6 token changes:  => ( int ) |  => ( int ) |  => ( int ) |  => ( int ) |  => ( int ) |  => ( int )
+0x00013cc8: 2 token changes:  => ( int ) |  => ( int )
+0x00013dbe: 4 token changes:  => ( int ) |  => ( int ) |  => ( int ) |  => ( int )
+0x00013e12: 2 token changes:  => ( int ) |  => ( int )
+0x00013e64: 4 token changes:  => ( int ) |  => ( int ) |  => ( int ) |  => ( int )
+0x00013ed8: 2 token changes:  => ( int ) |  => ( int )
+0x000144bc: 15 token changes:  => ( int ) |  => [ 0 ] | + => [ 0 ] | _DGIEFOBF => previously_active_dtc_cummins_fault_codes [ 0 ] | _DGIEFOBF + => previously_active_dtc_cummins_fault_codes [ 0 ] | ( & =>  | ) =>  | ( & =>  | ) =>  | * ( undefined2 * ) ( & =>  | + => [ | * 2 ) => ] | * ( undefined2 * ) ( & =>  | + => [ | * 2 ) => ]
+0x0001452e: 15 token changes:  => ( int ) |  => [ 0 ] | + => [ 0 ] | _DGIEFOBF => previously_active_dtc_cummins_fault_codes [ 0 ] | _DGIEFOBF + => previously_active_dtc_cummins_fault_codes [ 0 ] | ( & =>  | ) =>  | ( & =>  | ) =>  | * ( undefined2 * ) ( & =>  | + => [ | * 2 ) => ] | * ( undefined2 * ) ( & =>  | + => [ | * 2 ) => ]
+0x00014670: 3 token changes:  => [ 0 ] | ( & =>  | ) => 
+0x000146b4: 4 token changes:  => ( int ) |  => ( int ) |  => ( int ) |  => ( int )
+0x00014812: 5 token changes:  => [ 0 ] | ( & =>  | ) =>  |  => [ 0 ] | _DGIEFOBF => previously_active_dtc_cummins_fault_codes [ 0 ]
+0x00014872: 58 token changes:  => ( int ) |  => [ 0 ] | ( & =>  | ) =>  |  => [ 0 ] |  => [ 0 ] | _DGAEFOBF => active_dtc_cummins_fault_codes [ 0 ] | _DGAEFOBF + => active_dtc_cummins_fault_codes [ 0 ] | ( & =>  | ) =>  | ( & =>  | ) =>  | * ( undefined2 * ) ( & =>  | + => [ | * 2 ) => ] | * ( undefined2 * ) ( & =>  | + => [ | * 2 ) => ] |  => [ 0 ] |  => [ 0 ] |  => [ 0 ] | _DGIEFOBF => previously_active_dtc_cummins_fault_codes [ 0 ] | _DGIEFOBF => previously_active_dtc_cummins_fault_codes [ 0 ] | ( & =>  | ) =>  | * ( undefined2 * ) ( & =>  | + => [ | * 2 ) => ] | undefined2 => word |  => [ 0 ] |  => ( int ) |  => [ 0 ] 
+0x000159ee: 24 token changes: ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' => 
+0x00015df0: 8 token changes: ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' => 
+0x000171be: 5 token changes: _ESSXSNEN => engine_speed_sensor_enable_flags | _ESSXSNEN => engine_speed_sensor_enable_flags | ' \ x01 ' => 1 | ' \ =>  | ' => 
+0x00018620: 1 token changes: _EPESLM => engine_speed_limit_fault_derate
+0x0001873e: 5 token changes: & =>  | & =>  | & =>  | & =>  | & => 
+0x00018e0c: 1 token changes: _EPESLM => engine_speed_limit_fault_derate
+0x00018f4c: 2 token changes: _EPESLM => engine_speed_limit_fault_derate | _EPMXDQRP => engine_speed_limit_fault_derate_full_severity
+0x0001a746: 2 token changes: _ESSXSNEN => engine_speed_sensor_enable_flags | _ESSXSNEN => engine_speed_sensor_enable_flags
+0x0001a8a4: 1 token changes: ' \ x01 ' => 1
+0x0001a95a: 8 token changes: ' \ x01 ' => 1 | ' \ x01 ' => 1 | ' \ x02 ' => 2 | _CSCKES => crank_sync_running_speed_threshold | ' \ x02 ' => 2 | ' \ x02 ' => 2 | ' \ x01 ' => 1 | ' \ x02 ' => 2
+0x0001a95e: 8 token changes: ' \ x01 ' => 1 | ' \ x01 ' => 1 | ' \ x02 ' => 2 | _CSCKES => crank_sync_running_speed_threshold | ' \ x02 ' => 2 | ' \ x02 ' => 2 | ' \ x01 ' => 1 | ' \ x02 ' => 2
+0x0001b1ea: 2 token changes: _ESSXSNEN => engine_speed_sensor_enable_flags | _ESSXSNEN => engine_speed_sensor_enable_flags
+0x0001b30a: 1 token changes: _ESSXSNEN => engine_speed_sensor_enable_flags
+0x0001b876: 30 token changes: undefined4 => byte | puVar2 => pbVar2 | ( int * ) ( & =>  | ) =>  | puVar2 => pbVar2 | ( undefined4 * ) & =>  | puVar2 => pbVar2 | puVar2 => pbVar2 | puVar2 => pbVar2 | 4 => 0x10 | * puVar2 => pbVar2 [ 0 ] | * ( undefined2 * ) ( puVar2 + => pbVar2 [ | ) => ] | * ( undefined2 * ) ( ( int ) puVar2 + 6 ) = 0xffff ; * ( undefined2 * ) ( puVar2 + => pbVar2 [ | ) => ] | * ( undefined2 * ) ( ( int ) puVar2 + => pbVar2 [ 3 ] = 0 ; pbVar2 [ 4 ] = 0 ; pbVar2 [ 5 ] = 0 ; pbVar2 [ 6 ] = 0xff ; pbVar2 [ 7 ] = 0xff ; pbVar2 [ 8 ] = 0 ; pbVar2 [ 9 ] = 0 ; pbVar2 [ | ) => ] = 0 ; pbVar2 [ 0xb ] | ( int * ) & 
+0x0001bf54: 4 token changes: _SSECTMHE => executive_frame_timing_header [ 0 ] | _DAT_00809eec => executive_frame_timing_header [ 1 ] | _DAT_00809eee => executive_frame_timing_header [ 2 ] | _DAT_00809ef0 => executive_frame_timing_header [ 3 ]
+0x0001c03c: 4 token changes: _FSLMDSST => requested_fueling_state | _FSLMAHST => fuel_demand_minimum_tracked_state | _FSLMDSST => requested_fueling_state | _FSLMAHST => fuel_demand_minimum_tracked_state
+0x0001c152: 3 token changes: _FSLMDSST => requested_fueling_state | _FSLMDSST => requested_fueling_state | _FSLMAHST => fuel_demand_minimum_tracked_state
+0x0001c630: 2 token changes: _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state
+0x0001c640: 1 token changes: _FSDSFLST => user_fueling_state
+0x0001ca54: 6 token changes: ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' => 
+0x0001ce58: 1 token changes: _FSLMAHST => fuel_demand_minimum_tracked_state
+0x0001d2e4: 3 token changes: & =>  | & =>  | & => 
+0x0001d5a0: 14 token changes: _JCHII1OD => high_idle_override_active_flag | _JCHSODES => j1939_high_idle_override_speed | _EPESLM => engine_speed_limit_fault_derate | _EPESLM => engine_speed_limit_fault_derate | _DAT_0080a9d6 => engine_speed_limit_source_2 | _DAT_0080a9d6 => engine_speed_limit_source_2 | _DAT_0080a9d6 => engine_speed_limit_source_2 | _DAT_0080a9d6 => engine_speed_limit_source_2 | _DAT_0080d65c => engine_speed_limit_source_10 | _DAT_0080d65c => engine_speed_limit_source_10 | _DAT_00808144 => engine_speed_limit_maximum | _DAT_00808144 => engine_speed_limit_maximum | _JCEGNETY => engine_control_network_type |
+0x0001d94e: 3 token changes: _DAT_00803ba0 => engine_speed_limit_reference_default_cal | _HSINRFST => engine_speed_limit_limiting_source_number_snapshot | _DAT_0080d65c => engine_speed_limit_source_10
+0x0001dcfc: 1 token changes: _APAPBA => alpha_base
+0x0001f0de: 1 token changes: _JCEGDSRP => j1939_pgn65247_desired_operating_speed
+0x0001f2d0: 2 token changes: _JCPKT0RP => peak_torque_engine_speed_tau_0 | _DAT_00808144 => engine_speed_limit_maximum
+0x0001f4e8: 5 token changes: _JCEGNETY => engine_control_network_type | _JCEGNETY => engine_control_network_type | _JCHII1OD => high_idle_override_active_flag | ushort => word | _JCOGNETY => out_of_gear_network_type
+0x0001f8bc: 2 token changes: _JCEGNETY => engine_control_network_type | _JCEGNETY => engine_control_network_type
+0x00020784: 4 token changes: _DAT_0080a744 => analog_sensor_override_values [ 0xb ] | _DAT_0080a744 => analog_sensor_override_values [ 0xb ] | _DAT_0080a744 => analog_sensor_override_values [ 0xb ] | _DAT_0080a744 => analog_sensor_override_values [ 0xb ]
+0x00020c98: 4 token changes: _DAT_0080a742 => analog_sensor_override_values [ 10 ] | _DAT_0080a742 => analog_sensor_override_values [ 10 ] | _DAT_0080a742 => analog_sensor_override_values [ 10 ] | _DAT_0080a742 => analog_sensor_override_values [ 10 ]
+0x00020fac: 5 token changes: _DAT_0080a760 => analog_sensor_raw_override_values [ 0 ] | _DAT_0080a760 => analog_sensor_raw_override_values [ 0 ] | short => word | _DAT_0080a760 => analog_sensor_raw_override_values [ 0 ] | _DAT_0080a760 => analog_sensor_raw_override_values [ 0 ]
+0x00021a8c: 5 token changes: - 1 => 0xff | - 1 => 0xff | - 1 => 0xff | - 1 => 0xff | - 1 => 0xff
+0x00021b88: 5 token changes: - 1 => 0xff | - 1 => 0xff | undefined1 => byte | - 1 => 0xff | - 1 => 0xff
+0x00021c74: 4 token changes: - 1 => 0xff | - 1 => 0xff | - 1 => 0xff | - 1 => 0xff
+0x00021d44: 8 token changes: - 1 => 0xff | - 1 => 0xff | - 1 => 0xff | - 1 => 0xff | - 1 => 0xff | - 1 => 0xff | - 1 => 0xff | - 1 => 0xff
+0x00022070: 3 token changes: _JCEGNETY => engine_control_network_type | _JCEGNETY => engine_control_network_type | _JCEGNETY => engine_control_network_type
+0x00023244: 11 token changes: _JCHII1OD => high_idle_override_active_flag | _JCHII1OD => high_idle_override_active_flag | _JCHII1OD => high_idle_override_active_flag | _JCHII1OD => high_idle_override_active_flag | _JCEGNETY => engine_control_network_type | _JCEGNETY => engine_control_network_type | _JCEGNETY => engine_control_network_type | _JCEGNETY => engine_control_network_type | _JCEGNETY => engine_control_network_type | _JCEGNETY => engine_control_network_type | _JCHII1OD => high_idle_override_active_flag
+0x00023a90: 22 token changes: ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' => 
+0x00024c5a: 4 token changes:  => [ 0 ] |  => [ 0 ] | ( & =>  | ) => 
+0x00024cd2: 4 token changes:  => [ 0 ] |  => [ 0 ] | ( & =>  | ) => 
+0x00024d40: 2 token changes: ' \ =>  | ' => 
+0x00024f30: 31 token changes:  => [ 0 ] | ( & =>  | ) =>  | ( & =>  | ) =>  | ( & =>  | ) =>  | ( & =>  | ) =>  | ( & =>  | ) =>  | ( & =>  | ) =>  | ( & =>  | ) =>  | ( & =>  | ) =>  | ( & =>  | ) =>  | ( & =>  | ) =>  | ( & =>  | ) =>  | ( & =>  | ) =>  | ( & =>  | ) =>  | ( & =>  | ) =>  | ( & =>  | ) => 
+0x0002571e: 1 token changes: _FSDSFLST => user_fueling_state
+0x00025806: 3 token changes: _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state
+0x0002629e: 1 token changes: ( undefined2 * ) => 
+0x00026308: 1 token changes: _DAT_00808314 => low_speed_governor_default_proportional_gain
+0x00026a7e: 2 token changes: & =>  | _BSTABELM => injection_timing_before_misfire_limit
+0x00026af0: 1 token changes: _BSTABELM => injection_timing_before_misfire_limit
+0x00026b00: 1 token changes: _BSTABELM => injection_timing_before_misfire_limit
+0x00026c7e: 1 token changes: ' \ x01 ' => 1
+0x00026eec: 4 token changes: ( & =>  | ) =>  | ( & =>  | ) => 
+0x00026fea: 18 token changes:  => [ 0 ] | ( & =>  | ) =>  | ( & =>  | ) =>  |  => [ 0 ] | ( & =>  | ) =>  |  => [ 0 ] | ( & =>  | ) =>  |  => [ 0 ] | ( & =>  | ) =>  | ( & =>  | ) =>  | & DAT_008058d5 => active_dtc_list + 1 | & DAT_008058f5 => previously_active_dtc_list + 1
+0x0002db2a: 3 token changes: & =>  | & =>  | & => 
+0x0002dbde: 5 token changes: _DAT_0080dc24 => power_take_off_requested_engine_speed | _DAT_0080dc24 => power_take_off_requested_engine_speed | _DAT_0080dc24 => power_take_off_requested_engine_speed | _DAT_0080dc24 => power_take_off_requested_engine_speed | _DAT_0080dc24 => power_take_off_requested_engine_speed
+0x0002dcb0: 11 token changes: _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state
+0x0002ef4a: 2 token changes: _DAT_00060fa8 => _supported_non_continuous_monitors_bits | _DAT_00060fa8 => _supported_non_continuous_monitors_bits
+0x0002efd0: 3 token changes: _JCHII1OD => high_idle_override_active_flag | _JCHII1OD => high_idle_override_active_flag | _JCOGNETY => out_of_gear_network_type
+0x0002f128: 2 token changes: _JCEGNETY => engine_control_network_type | _JCEGNETY => engine_control_network_type
+0x0002fcdc: 37 token changes: bool bVar1 ; =>  | bVar2 => hour_meter_byte_count | char cVar3 ; uint * puVar4 => byte key_byte_index | pbVar5 => pbVar1 | uint local_12 => dword extracted_hour_meter |  => ; bool all_keys_match ; dword * hour_meter_copy_destination | bVar2 => hour_meter_byte_count | puVar4 => hour_meter_copy_destination | local_12 => extracted_hour_meter | pbVar5 => pbVar1 | puVar4 => hour_meter_copy_destination | pbVar5 => pbVar1 | bVar2 => hour_meter_byte_count | bVar2 => hour_meter_byte_count | puVar4 => hour_meter_copy_destination | uint => dword | puVar4 => hour_meter_copy_destination | pbVar5 => pbVar1 
+0x0002fddc: 2 token changes:  => ( int ) |  => ( int )
+0x000306ca: 10 token changes: _DAT_00806126 => trip_drive_fuel_used_remainder | _DAT_0080612e => trip_fuel_used_remainder | _DAT_00806132 => trip_idle_fuel_used_remainder | _DAT_00806136 => trip_power_take_off_fuel_used_remainder | _DAT_0080613e => trip_drive_fuel_used | _DAT_00806142 => trip_fuel_used | _DAT_00806146 => trip_idle_fuel_used | _DAT_0080614a => trip_power_take_off_fuel_used | _DAT_0080617a => lifetime_fuel_used | _DAT_00806142 => trip_fuel_used
+0x000315be: 2 token changes: _DAT_0080617a => lifetime_fuel_used | uint ) ( _DAT_0080617a => lifetime_fuel_used
+0x00031ace: 1 token changes: ( word * ) => 
+0x000322ae: 4 token changes:  => [ 0 ] |  => [ 0 ] | ( & =>  | ) => 
+0x0003241c: 8 token changes:  => [ 0 ] |  => [ 0 ] | ( & =>  | ) =>  | ( & =>  | ) =>  | ( & =>  | ) => 
+0x0003258a: 6 token changes:  => [ 0 ] | ' \ =>  | ' =>  |  => [ 0 ] | ' \ =>  | ' => 
+0x00032a42: 4 token changes:  => [ 0 ] |  => [ 0 ] | _DAT_00060fa8 => _supported_non_continuous_monitors_bits | _DAT_00060fa8 => _supported_non_continuous_monitors_bits
+0x00032c76: 1 token changes: _JCFSTLFG => j1939_torque_and_load_not_available_flag
+0x00032c7a: 1 token changes: _JCFSTLFG => j1939_torque_and_load_not_available_flag
+0x00032e4c: 1 token changes: _JCFSTLFG => j1939_torque_and_load_not_available_flag
+0x000330c4: 2 token changes: _JCEGDSRP => j1939_pgn65247_desired_operating_speed | ( ushort ) _JCEGDSRP => j1939_pgn65247_desired_operating_speed
+0x0003320e: 6 token changes: _JCEVRPP2 => j1939_determined_engine_speed_at_point_2 | ( ushort ) _JCEVRPP2 => j1939_determined_engine_speed_at_point_2 | _JCHSODES => j1939_high_idle_override_speed | ( ushort ) _JCHSODES => j1939_high_idle_override_speed | _DAT_00808144 => engine_speed_limit_maximum | _DAT_00808144 => engine_speed_limit_maximum
+0x000338ea: 3 token changes: _EB39CNID => engine_retarder_j1939_control_device | _EB39CNID => engine_retarder_j1939_control_device | _EB39CNID => engine_retarder_j1939_control_device
+0x0003407a: 4 token changes: _JCRDISRP => engine_retarder_configuration_idle_speed | ( ushort ) _JCRDISRP => engine_retarder_configuration_idle_speed | _JCMXEBRP => engine_retarder_configuration_maximum_speed | ( ushort ) _JCMXEBRP => engine_retarder_configuration_maximum_speed
+0x00034540: 2 token changes: _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state
+0x00034564: 2 token changes: _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state
+0x0003458c: 2 token changes: _FSDSFLST => user_fueling_state | _FSDSFLST => user_fueling_state
+0x00034b20: 1 token changes: ' \ x01 ' => 1
+0x00034cc4: 1 token changes: & => 
+---- census of distinct changes
+  45 ) => 
+  44 ( & => 
+  38 ' \ => 
+  38 ' => 
+  38 _FSDSFLST => user_fueling_state
+  36 & => 
+  35  => [ 0 ]
+  30  => ( int )
+  21 puVar14 => puVar16
+  21 - 1 => 0xff
+  16 _JCEGNETY => engine_control_network_type
+  15 ' \ x01 ' => 1
+  15 _APAPBA => alpha_base
+  13 psVar13 => psVar15
+  12 + => [
+  12 * 2 ) => ]
+  11 piVar11 => piVar12
+  10 ' \ x02 ' => 2
+  10 * ( undefined2 * ) ( & => 
+   9 _JCHII1OD => high_idle_override_active_flag
+   9 pbVar5 => pbVar1
+   8 _JC39P4RP => j1939_engine_speed_at_point_4
+   7 _ESSXSNEN => engine_speed_sensor_enable_flags
+   6 _DAT_0080dc24 => power_take_off_requested_engine_speed
+   6 _DGIEFOBF => previously_active_dtc_cummins_fault_codes [ 0 ]
+   5 _FSLMAHST => fuel_demand_minimum_tracked_state
+   5 undefined2 => word
+   5 _DAT_0080a9d6 => engine_speed_limit_source_2
+   5 _JC39P3RP => j1939_engine_speed_at_point_3
+   5 _JC39P5RP => j1939_engine_speed_at_point_5
+   5 puVar10 => puVar11
+   5 psVar17 => psVar18
+   5 piVar18 => psVar19
+   5 psVar20 => psVar21
+   5 _DAT_00809284 => cylinder_balance_acceleration_buffer_1
+   5 _EPESLM => engine_speed_limit_fault_derate
+   5 puVar2 => pbVar2
+   5 _DAT_00808144 => engine_speed_limit_maximum
+   5 bVar2 => hour_meter_byte_count
+   4 _DCMNHIES => duty_cycle_monitor_high_cutoff_engine_speed
+   4 _DCMNLOES => duty_cycle_monitor_low_cutoff_engine_speed
+   4 * 2 => 
+   4 _APAPST => alpha_state
+   4 _ASTHPFRL => all_speed_governor_throttle_reference_rate_limit
+   4 _ASDVDELM => all_speed_governor_derivative_deadband_limit
+   4 _ASDVLM => all_speed_governor_derivative_limit
+   4 _ASMXFL => all_speed_governor_fueling
+   4 piVar11 => pdVar10
+   4 piVar15 => piVar12
+   4 pcVar12 => pcVar13
+   4 psVar22 => pwVar14
+   4 puVar14 => pwVar14
+   4 psVar13 => pwVar14
+   4 psVar17 => psVar15
+   4 ( int ) => 
+   4 _FSLMDSST => requested_fueling_state
+   4 _DAT_0080a744 => analog_sensor_override_values [ 0xb ]
+   4 _DAT_0080a742 => analog_sensor_override_values [ 10 ]
+   4 _DAT_0080a760 => analog_sensor_raw_override_values [ 0 ]
+   4 _DAT_00060fa8 => _supported_non_continuous_monitors_bits
+   4 puVar4 => hour_meter_copy_destination
+   4 bVar1 => all_keys_match
+   3 short => word
+   3 _APFLRTAP => alpha_fuel_rate_result
+   3 _APAAPRSS => alpha_low_ambient_air_pressure_result
+   3 ushort => word
+   3 _ASRSSTX6 => all_speed_governor_reset_state_fuel_demand_correction
+   3 _JCEVRPP2 => j1939_determined_engine_speed_at_point_2
+   3 _CSCKES => crank_sync_running_speed_threshold
+   3 _DGIEFOBF + => previously_active_dtc_cummins_fault_codes [ 0 ]
+   3 _DGAEFOBF => active_dtc_cummins_fault_codes [ 0 ]
+   3 _DAT_0080d65c => engine_speed_limit_source_10
+   3 _BSTABELM => injection_timing_before_misfire_limit
+   3 cVar3 => key_byte_index
+   3 _JCFSTLFG => j1939_torque_and_load_not_available_flag
+   3 _EB39CNID => engine_retarder_j1939_control_device
+   2 - 0x6789abcd => 0x98765433
+   2 - 0x6789abce => 0x98765432
+   2  => ( code * )
+   2 0x80539e ) => 1 ]
+   2 0x805406 ) => 1 ]
+   2 * ( word * ) ( & => 
+   2 _APAFSS => alpha_air_fuel_control_result
+   2 _APGVAP => alpha_on_governor_result
+   2 _ASAPSTX6 => all_speed_governor_application_reset_state_fuel_demand_correction
+   2 puVar19 => puVar20
+   2 ( int * ) => 
+   2 puVar21 => puVar22
+   2 puVar19 => puVar17
+   2 ( short * ) => 
+   2 ( undefined2 * ) => 
+   2 + => [ 0 ]
+   2 4 => 0x10
+   2 ) => ]
+   2 2 => 8
+   2 1 => 4
+   2 _DAT_00809eee => executive_frame_timing_header [ 2 ]
+   2 _JCHSODES => j1939_high_idle_override_speed
+   2 _HSINRFST => engine_speed_limit_limiting_source_number_snapshot
+   2 _JCEGDSRP => j1939_pgn65247_desired_operating_speed
+   2 _JCOGNETY => out_of_gear_network_type
+   2 local_12 => extracted_hour_meter
+   2 cVar3 => ( char ) key_byte_index
+   2 _DAT_00806142 => trip_fuel_used
+   2 _DAT_0080617a => lifetime_fuel_used
+   1 _DCSHPR01 => duty_cycle_monitor_short_term_processing_map_1_byte_count
+   1 _DCMNMP01 => duty_cycle_monitor_stored_short_term_map_1 [ 0 ]
+   1 _DCSHPR02 => duty_cycle_monitor_short_term_processing_map_2_byte_count
+   1 _DCMNMP02 => duty_cycle_monitor_stored_short_term_map_2 [ 0 ]
+   1 * ( ushort * ) ( => duty_cycle_monitor_stored_short_term_map_1 [
+   1 * ( ushort * ) ( => duty_cycle_monitor_stored_short_term_map_2 [
+   1 * ( short * ) ( => duty_cycle_monitor_stored_short_term_map_1 [
+   1 * ( short * ) ( => duty_cycle_monitor_stored_short_term_map_2 [
+   1 _ASALPHA => master_slave_final_override_alpha
+   1 _APLSAP => alpha_low_speed_governor_result
+   1 _ASDVFTCF => all_speed_governor_derivative_filter_coefficient
+   1 0x12 => 9
+   1 _ASJCFLMN => governor_fuel_demand_tracking_floor_j1939
+   1 _ASJCFLMX => governor_fuel_demand_tracking_limit_j1939
+   1 _ASCNLOLM => governor_fuel_demand_tracking_floor_throttle_mode
+   1 _ASCNHILM => governor_fuel_demand_tracking_limit_throttle_mode
+   1 char => byte
+   1  => dword * pdVar10 ;
+   1 pcVar12 => pcVar13 ; word * pwVar14
+   1 psVar13 ; undefined2 * puVar14 ; int * piVar15 => psVar15
+   1  => undefined2 * puVar17 ;
+   1 int => sdword
+   1 puVar21 ; short * psVar22 => puVar22
+   1 puVar16 => puVar17
+   1 puVar19 => puVar20 = 10000 ; * puVar17
+   1 = 10000 ; * puVar14 => 
+   1 puVar14 = puVar14 + 1 ; => 
+   1 puVar21 => puVar20
+   1 puVar21 => puVar20 + 1 ; puVar22 = puVar22
+   1 _DGAEFOBF + => active_dtc_cummins_fault_codes [ 0 ]
+   1 _EPMXDQRP => engine_speed_limit_fault_derate_full_severity
+   1 undefined4 => byte
+   1 ( int * ) ( & => 
+   1 ( undefined4 * ) & => 
+   1 * puVar2 => pbVar2 [ 0 ]
+   1 * ( undefined2 * ) ( puVar2 + => pbVar2 [
+   1 * ( undefined2 * ) ( ( int ) puVar2 + 6 ) = 0xffff ; * ( undefined2 * ) ( puVar2 + => pbVar2 [
+   1 * ( undefined2 * ) ( ( int ) puVar2 + => pbVar2 [ 3 ] = 0 ; pbVar2 [ 4 ] = 0 ; pbVar2 [ 5 ] = 0 ; pbVar2 [ 6 ] = 0xff ; pbVar2 [ 7 ] = 0xff ; pbVar2 [ 8 ] = 0 ; pbVar2 [ 9 ] = 0 ; pbVar2 [
+   1 ) => ] = 0 ; pbVar2 [ 0xb ]
+   1 ( int * ) & => 
+   1  => ( uint * )
+   1  => ( int * )
+   1 _SSECTMHE => executive_frame_timing_header [ 0 ]
+   1 _DAT_00809eec => executive_frame_timing_header [ 1 ]
+   1 _DAT_00809ef0 => executive_frame_timing_header [ 3 ]
+   1 _DAT_00803ba0 => engine_speed_limit_reference_default_cal
+   1 _JCPKT0RP => peak_torque_engine_speed_tau_0
+   1 undefined1 => byte
+   1 _DAT_00808314 => low_speed_governor_default_proportional_gain
+   1 & DAT_008058d5 => active_dtc_list + 1
+   1 & DAT_008058f5 => previously_active_dtc_list + 1
+   1 bool bVar1 ; => 
+   1 char cVar3 ; uint * puVar4 => byte key_byte_index
+   1 uint local_12 => dword extracted_hour_meter
+   1  => ; bool all_keys_match ; dword * hour_meter_copy_destination
+   1 uint => dword
+   1 _DAT_00806126 => trip_drive_fuel_used_remainder
+   1 _DAT_0080612e => trip_fuel_used_remainder
+   1 _DAT_00806132 => trip_idle_fuel_used_remainder
+   1 _DAT_00806136 => trip_power_take_off_fuel_used_remainder
+   1 _DAT_0080613e => trip_drive_fuel_used
+   1 _DAT_00806146 => trip_idle_fuel_used
+   1 _DAT_0080614a => trip_power_take_off_fuel_used
+   1 uint ) ( _DAT_0080617a => lifetime_fuel_used
+   1 ( word * ) => 
+   1 ( ushort ) _JCEGDSRP => j1939_pgn65247_desired_operating_speed
+   1 ( ushort ) _JCEVRPP2 => j1939_determined_engine_speed_at_point_2
+   1 ( ushort ) _JCHSODES => j1939_high_idle_override_speed
+   1 _JCRDISRP => engine_retarder_configuration_idle_speed
+   1 ( ushort ) _JCRDISRP => engine_retarder_configuration_idle_speed
+   1 _JCMXEBRP => engine_retarder_configuration_maximum_speed
+   1 ( ushort ) _JCMXEBRP => engine_retarder_configuration_maximum_speed

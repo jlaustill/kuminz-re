@@ -207,6 +207,9 @@
   1072915 e2m_audit_round19a.csv
   2753025 pre_r24e_globals.csv
    330882 pre_r24e_structs.csv
+   872620 round90_audit_cm550_r90.csv
+  1088734 round90_audit_cm848_r90.csv
+   901671 round90_census_v64t6_r90.tsv
        59 semantic_matcher_round53.log
   3544401 stage2.cpp
    402904 verify.log
@@ -392,3 +395,7 @@
    242398 verify_round89c4_cm550.log
    402040 verify_round89c4_cm848.log
    242591 verify_round89c_cm550.log
+   242300 verify_round90a_cm550.log
+   402053 verify_round90a_cm848.log
+   240673 verify_round90c_cm550.log
+   402031 verify_round90d_cm848.log

@@ -1,0 +1,131 @@
+00af70: movem.l	%d3-%d5/%a5, -(%sp)
+00af74: move.l	#8388646, %a4
+00af7a: move.l	#8388624, %a1
+00af80: move.w	$807d1a, (6,%a1)
+00af88: move.l	#395374, (2,%a1)
+00af90: move.w	#2, $800010
+00af98: move.w	#400, (14,%a1)
+00af9e: move.l	#395418, (10,%a1)
+00afa6: move.w	#2, (8,%a1)
+00afac: move.l	#395428, (16,%a1)
+00afb4: move.w	$807d1a, (6,%a4)
+00afbc: move.l	#395596, (2,%a4)
+00afc4: move.w	#2, $800026
+00afcc: move.w	#400, (14,%a4)
+00afd2: move.l	#395640, (10,%a4)
+00afda: move.w	#2, (8,%a4)
+00afe0: move.l	#395650, (16,%a4)
+00afe8: moveq	#0, %d0   [manual]
+00afea: move.w	$807d1c, %d0
+00aff0: move.l	%d0, %d1
+00aff2: lsl.l	#2, %d0
+00aff4: add.l	%d1, %d0
+00aff6: move.l	%d0, %d1
+00aff8: lsl.l	#3, %d0
+00affa: sub.l	%d1, %d0
+00affc: lsl.l	#5, %d0
+00affe: add.l	%d1, %d0
+00b000: lsl.l	#5, %d0
+00b002: move.l	%d0, $800006
+00b008: move.w	$807d1c, %d0
+00b00e: move.w	%d0, %d1
+00b010: lsl.w	#4, %d0
+00b012: sub.w	%d1, %d0
+00b014: lsl.w	#2, %d0
+00b016: move.w	%d0, $80000a
+00b01c: move.w	$805394, %d0
+00b022: .word 0xb079  (undecodable)
+00b024: .word 0x0080  (undecodable)
+00b026: .word 0x000a  (undecodable)
+00b028: bcs	$c
+00b02a: move.l	$800006, $80bacc
+00b034: bra	$26
+00b036: moveq	#0, %d0   [manual]
+00b038: move.w	$805394, %d0
+00b03e: move.l	%d0, %d1
+00b040: lsl.l	#2, %d0
+00b042: add.l	%d1, %d0
+00b044: move.l	%d0, %d1
+00b046: lsl.l	#3, %d0
+00b048: sub.l	%d1, %d0
+00b04a: lsl.l	#5, %d0
+00b04c: add.l	%d1, %d0
+00b04e: lsl.l	#5, %d0
+00b050: moveq	#60, %d1   [manual]
+00b052: divu.l	%d1, %d0
+00b056: move.l	%d0, $80bacc
+00b05c: move.w	$805396, %d0
+00b062: .word 0xb079  (undecodable)
+00b064: .word 0x0080  (undecodable)
+00b066: .word 0x000a  (undecodable)
+00b068: bcs	$c
+00b06a: move.l	$800006, $80bad0
+00b074: bra	$26
+00b076: moveq	#0, %d0   [manual]
+00b078: move.w	$805396, %d0
+00b07e: move.l	%d0, %d1
+00b080: lsl.l	#2, %d0
+00b082: add.l	%d1, %d0
+00b084: move.l	%d0, %d1
+00b086: lsl.l	#3, %d0
+00b088: sub.l	%d1, %d0
+00b08a: lsl.l	#5, %d0
+00b08c: add.l	%d1, %d0
+00b08e: lsl.l	#5, %d0
+00b090: moveq	#60, %d1   [manual]
+00b092: divu.l	%d1, %d0
+00b096: move.l	%d0, $80bad0
+00b09c: move.w	$80539c, %d0
+00b0a2: add.w	%d0, %d0
+00b0a4: move.w	%d0, $80bad8
+00b0aa: move.w	$805404, %d0
+00b0b0: add.w	%d0, %d0
+00b0b2: move.w	%d0, $80bba6
+00b0b8: moveq	#1, %d2   [manual]
+00b0ba: move.l	#8436652, %a3
+00b0c0: move.l	#8436446, %a2
+00b0c6: moveq	#0, %d0   [manual]
+00b0c8: move.b	%d2, %d0
+00b0ca: move.l	#8410014, %a0
+00b0d0: .word 0x3030  (undecodable)
+00b0d2: .word 0x0200  (undecodable)
+00b0d4: .word 0x0280  (undecodable)
+00b0d6: .word 0x0000  (undecodable)
+00b0d8: .word 0xffff  (undecodable)
+00b0da: move.l	%d0, %d1
+00b0dc: lsl.l	#2, %d0
+00b0de: add.l	%d1, %d0
+00b0e0: move.l	%d0, %d1
+00b0e2: lsl.l	#3, %d0
+00b0e4: sub.l	%d1, %d0
+00b0e6: lsl.l	#5, %d0
+00b0e8: add.l	%d1, %d0
+00b0ea: lsl.l	#5, %d0
+00b0ec: moveq	#60, %d1   [manual]
+00b0ee: divu.l	%d1, %d0
+00b0f2: move.l	%d0, (%a2)+
+00b0f4: moveq	#0, %d0   [manual]
+00b0f6: move.b	%d2, %d0
+00b0f8: move.l	#8410118, %a0
+00b0fe: .word 0x3030  (undecodable)
+00b100: .word 0x0200  (undecodable)
+00b102: .word 0x0280  (undecodable)
+00b104: .word 0x0000  (undecodable)
+00b106: .word 0xffff  (undecodable)
+00b108: move.l	%d0, %d1
+00b10a: lsl.l	#2, %d0
+00b10c: add.l	%d1, %d0
+00b10e: move.l	%d0, %d1
+00b110: lsl.l	#3, %d0
+00b112: sub.l	%d1, %d0
+00b114: lsl.l	#5, %d0
+00b116: add.l	%d1, %d0
+00b118: lsl.l	#5, %d0
+00b11a: moveq	#60, %d1   [manual]
+00b11c: divu.l	%d1, %d0
+00b120: move.l	%d0, (%a3)+
+00b122: addq.b	#1, %d2   [manual]
+00b124: cmpi.b	#50, %d2
+00b128: bls	$9c
+00b12a: movem.l	(%sp)+, %d2/%a2-%a4
+00b12e: rts

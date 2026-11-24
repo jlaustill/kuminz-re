@@ -1,0 +1,251 @@
+A3 0x0080a760: the verdict's intake_manifold_temperature_raw_override_value became analog_sensor_raw_override_values word[25] (an array)
+A3 0x0080a72e: the verdict's intake_manifold_temperature_override_value became analog_sensor_override_values word[25] (an array)
+A3 0x00008000 DAT_00008000 -> smart_boot_indicator dword
+A3 0x00008062 DAT_00008062 -> flash_operational_code_entry_pointer pointer
+A3 0x00060fa8 DAT_00060fa8 -> supported_non_continuous_monitors_bits word
+A3 0x00803ba0 DAT_00803ba0 -> engine_speed_limit_reference_default_cal word
+A3 0x00803d65 DAT_00803d65 -> datalogger_trigger_1_disable_cal byte
+A3 0x00803d66 DAT_00803d66 -> datalogger_trigger_1_fault_code_flag_cal word
+A3 0x00803d6a DAT_00803d6a -> datalogger_trigger_1_parameter_id_or_fault_code_cal word
+A3 0x00803d95 DAT_00803d95 -> datalogger_trigger_4_disable_cal byte
+A3 0x00803da4 DAT_00803da4 -> datalogger_data_1_length_cal word
+A3 0x00803da6 DAT_00803da6 -> datalogger_data_1_parameter_id_cal word
+A1 0x00803f9d DAT_00803f9d -> j1939_remote_accelerator_enable_switch_source_address_filter_cal byte
+A1 0x00803f9e DAT_00803f9e -> j1939_engine_auxiliary_shutdown_switch_source_address_filter_cal byte
+A1 0x00803f9f DAT_00803f9f -> j1939_engine_derate_switch_source_address_filter_cal byte
+A1 0x00803fa0 DAT_00803fa0 -> j1939_accelerator_interlock_switch_source_address_filter_cal byte
+A1 0x00803fa1 DAT_00803fa1 -> j1939_engine_retarder_selection_source_address_filter_cal byte
+A1 0x00803fa2 DAT_00803fa2 -> j1939_accelerator_pedal_1_low_idle_switch_source_address_filter_cal byte
+A1 0x00803fa3 DAT_00803fa3 -> j1939_accelerator_pedal_position_1_source_address_filter_cal byte
+A1 0x00803fa4 DAT_00803fa4 -> j1939_remote_accelerator_pedal_position_source_address_filter_cal byte
+A1 0x00803fa5 DAT_00803fa5 -> j1939_wet_tank_pressure_source_address_filter_cal byte
+A1 0x00803fa7 DAT_00803fa7 -> j1939_remote_power_take_off_switch_source_address_filter_cal byte
+A1 0x00803fa8 DAT_00803fa8 -> j1939_power_take_off_on_switch_source_address_filter_cal byte
+A1 0x00803fa9 DAT_00803fa9 -> j1939_power_take_off_resume_switch_source_address_filter_cal byte
+A1 0x00803faa DAT_00803faa -> j1939_power_take_off_set_switch_source_address_filter_cal byte
+A1 0x00803fab DAT_00803fab -> j1939_clutch_switch_source_address_filter_cal byte
+A1 0x00803fac DAT_00803fac -> j1939_brake_switch_source_address_filter_cal byte
+A1 0x00803fad DAT_00803fad -> j1939_cruise_control_enable_switch_source_address_filter_cal byte
+A1 0x00803fae DAT_00803fae -> j1939_cruise_control_resume_switch_source_address_filter_cal byte
+A1 0x00803faf DAT_00803faf -> j1939_cruise_control_set_switch_source_address_filter_cal byte
+A1 0x00803fb0 DAT_00803fb0 -> j1939_engine_idle_increment_switch_source_address_filter_cal byte
+A1 0x00803fb1 DAT_00803fb1 -> j1939_engine_idle_decrement_switch_source_address_filter_cal byte
+A1 0x00803fb2 DAT_00803fb2 -> j1939_engine_diagnostic_test_mode_switch_source_address_filter_cal byte
+C1 0x0080539c DCMNMP01 -> duty_cycle_monitor_stored_short_term_map_1 word[52]
+C1 0x00805404 DCMNMP02 -> duty_cycle_monitor_stored_short_term_map_2 word[52]
+C1 0x00805562 DGCLLVLF -> coolant_level_engine_protection_fault_log word[20]
+C1 0x0080558a DGCLTPLF -> coolant_temperature_engine_protection_fault_log word[20]
+C1 0x008055da DGLOPRLF -> oil_pressure_engine_protection_fueling_fault_log word[20]
+C1 0x00805602 DGVYPRLF -> oil_pressure_engine_protection_engine_speed_fault_log word[20]
+C1 0x008058d4 DGAEFUBF -> active_dtc_list byte[32]
+C1 0x008058f4 DGIEFUBF -> previously_active_dtc_list byte[32]
+C1 0x00805914 DGAEFOBF -> active_dtc_cummins_fault_codes word[32]
+C1 0x00805954 DGIEFOBF -> previously_active_dtc_cummins_fault_codes word[32]
+C1 0x00805a1c DGFUCUBF -> diagnostic_fault_status_change_time dword
+A2 0x00806126 DAT_00806126 -> trip_drive_fuel_used_remainder dword
+A2 0x0080612e DAT_0080612e -> trip_fuel_used_remainder dword
+A2 0x00806132 DAT_00806132 -> trip_idle_fuel_used_remainder dword
+A2 0x00806136 DAT_00806136 -> trip_power_take_off_fuel_used_remainder dword
+A2 0x0080613e DAT_0080613e -> trip_drive_fuel_used dword
+A2 0x00806142 DAT_00806142 -> trip_fuel_used dword
+A2 0x00806146 DAT_00806146 -> trip_idle_fuel_used dword
+A2 0x0080614a DAT_0080614a -> trip_power_take_off_fuel_used dword
+A2 0x0080617a DAT_0080617a -> lifetime_fuel_used dword
+B1 0x00806e24 unnamed_data_6e24 -> fuel_pressure_linearization_values word[3]
+B1 0x00806e36 unnamed_data_6e36 -> oil_pressure_linearization_values word[6]
+B1 0x00806e4c unnamed_data_6e4c -> boost_pressure_linearization_values word[5]
+B1 0x00806e8a unnamed_data_6e8a -> coolant_temperature_linearization_values word[26]
+C1 0x00806ed0 ADAATXA -> ambient_air_temperature_linearization_values word[9]
+C1 0x00806ee8 ADPOTPXA -> power_steering_temperature_linearization_values word[3]
+B1 0x00806ef4 unnamed_data_6ef4 -> exhaust_pressure_linearization_values word[3]
+B1 0x00806f08 unnamed_data_6f08 -> sampled_throttle_linearization_values word[7]
+B1 0x00806f24 unnamed_data_6f24 -> remote_throttle_linearization_values word[7]
+B1 0x00806f3c unnamed_data_6f3c -> ambient_air_pressure_linearization_values word[5]
+B1 0x00806f4c unnamed_data_6f4c -> battery_voltage_linearization_values word[3]
+B1 0x00806f58 unnamed_data_6f58 -> engine_speed_sensor_supply_voltage_linearization_values word[3]
+B1 0x00806f64 unnamed_data_6f64 -> throttle_position_sensor_supply_voltage_linearization_values word[3]
+B1 0x00806f70 unnamed_data_6f70 -> vehicle_connector_sensor_supply_voltage_linearization_values word[3]
+B1 0x00806f7c unnamed_data_6f7c -> engine_connector_sensor_supply_voltage_linearization_values word[3]
+B1 0x00806f88 unnamed_data_6f88 -> frequency_throttle_input_supply_voltage_linearization_values word[3]
+B1 0x00806fb4 unnamed_data_6fb4 -> cruise_control_switch_multiplexer_linearization_values word[19]
+B1 0x00806fec unnamed_data_6fec -> water_in_fuel_linearization_values word[9]
+B1 0x00807006 unnamed_data_7006 -> egr_current_feedback_linearization_values word[4]
+B1 0x00807014 unnamed_data_7014 -> programming_pulse_supply_voltage_linearization_values word[3]
+B1 0x00807020 unnamed_data_7020 -> high_side_gate_bias_supply_voltage_linearization_values word[3]
+B1 0x0080702c unnamed_data_702c -> operational_amplifier_and_comparator_supply_voltage_linearization_values word[3]
+C1 0x00807114 EPFPMNTD -> fuel_pressure_engine_protection_fueling_minimum_threshold word
+C1 0x00807116 EPFPMXTD -> fuel_pressure_engine_protection_fueling_maximum_threshold word
+C1 0x0080721e WSCLTATB -> wet_stack_timing_by_coolant_temperature_values word[9]
+C1 0x0080794e BSTATBZA -> injection_timing_misfire_limit_grid word[16]
+C1 0x00807abe ASDVDELM -> all_speed_governor_derivative_deadband_limit i16
+C1 0x00807ac0 ASDVFTCF -> all_speed_governor_derivative_filter_coefficient i16
+C1 0x00807ac2 ASDVLM -> all_speed_governor_derivative_limit i16
+C1 0x00807ac6 ASTHPFRL -> all_speed_governor_throttle_reference_rate_limit word
+C1 0x00807b8e ASJCFLMX -> governor_fuel_demand_tracking_limit_j1939 word
+C1 0x00807b90 ASJCFLMN -> governor_fuel_demand_tracking_floor_j1939 word
+C1 0x00807b92 ASJ100PP -> j1939_tsc1_speed_control_condition_gain_sets i16[36]
+C1 0x00807bdc ASCNHILM -> governor_fuel_demand_tracking_limit_throttle_mode word
+C1 0x00807bde ASCNLOLM -> governor_fuel_demand_tracking_floor_throttle_mode word
+C1 0x00807d18 DCMNHIES -> duty_cycle_monitor_high_cutoff_engine_speed word
+C1 0x00807d1a DCMNLOES -> duty_cycle_monitor_low_cutoff_engine_speed word
+C2 0x00807d48 JCPKT0RP -> peak_torque_engine_speed_tau_0 word
+A3 0x00807ecc DAT_00807ecc -> primary_speed_sensor_teeth_per_period_measurement byte
+C2 0x00807ed4 ESSXSNEN -> engine_speed_sensor_enable_flags word
+C2 0x00807ed8 CSCKES -> crank_sync_running_speed_threshold word
+C2 0x00807f38 EPMXDQRP -> engine_speed_limit_fault_derate_full_severity word
+C2 0x00808084 HSDVCFXA -> high_speed_governor_derivative_gain_adjustment_multiplier_values word[14]
+C2 0x008080bc HSPPCFXA -> high_speed_governor_proportional_gain_adjustment_multiplier_values word[14]
+C2 0x008080f4 HSITCFXA -> high_speed_governor_integral_gain_adjustment_multiplier_values word[14]
+A3 0x00808144 DAT_00808144 -> engine_speed_limit_maximum word
+C2 0x00808162 JC39P3RP -> j1939_engine_speed_at_point_3 word
+C2 0x00808164 JC39P4RP -> j1939_engine_speed_at_point_4 word
+C2 0x00808166 JC39P5RP -> j1939_engine_speed_at_point_5 word
+C2 0x0080817e JCEGDSRP -> j1939_pgn65247_desired_operating_speed word
+A3 0x00808196 DAT_00808196 -> tsc1_source_configuration_1_data_link word
+C2 0x008081fa JCHSODES -> j1939_high_idle_override_speed word
+A3 0x0080820c DAT_0080820c -> fault_flash_automatic_mode_enable byte
+A3 0x00808314 DAT_00808314 -> low_speed_governor_default_proportional_gain word
+C2 0x00808474 ESASOSTY -> supervisor_chip_overspeed_non_latching_flag byte
+C2 0x008088cc PTGNQDTB -> power_take_off_governor_derivative_gain_adjustment_values word[14]
+C2 0x00808904 PTGNQITB -> power_take_off_governor_integral_gain_adjustment_values word[14]
+C2 0x0080893c PTGNQPTB -> power_take_off_governor_proportional_gain_adjustment_values word[14]
+C2 0x008089aa JCRDISRP -> engine_retarder_configuration_idle_speed word
+C2 0x008089ba JCMXEBRP -> engine_retarder_configuration_maximum_speed word
+A3 0x008091ee DAT_008091ee -> cylinder_balance_speed_buffer_2 dword
+A3 0x00809252 DAT_00809252 -> cylinder_balance_trim_adjustment_1 word
+A3 0x00809284 DAT_00809284 -> cylinder_balance_acceleration_buffer_1 i32
+C2 0x00809eea SSECTMHE -> executive_frame_timing_header word[4]
+C2 0x00809ef2 SSECTMDX -> executive_frame_timings byte[640]
+C2 0x0080a270 BSTABELM -> injection_timing_before_misfire_limit word
+A3 0x0080a72e DAT_0080a72e -> analog_sensor_override_values word[25]
+A3 0x0080a760 DAT_0080a760 -> analog_sensor_raw_override_values word[25]
+C2 0x0080a8fa APAPBA -> alpha_base word
+C2 0x0080a8fc APAPST -> alpha_state word
+C2 0x0080a8fe APAFSS -> alpha_air_fuel_control_result word
+C2 0x0080a900 APFLRTAP -> alpha_fuel_rate_result word
+C2 0x0080a902 APGVAP -> alpha_on_governor_result word
+C2 0x0080a904 APLSAP -> alpha_low_speed_governor_result word
+C2 0x0080a90a APAAPRSS -> alpha_low_ambient_air_pressure_result word
+C3 0x0080a930 ASALPHA -> master_slave_final_override_alpha word
+C3 0x0080a93c ASRSSTX6 -> all_speed_governor_reset_state_fuel_demand_correction i16
+C3 0x0080a958 ASAPSTX6 -> all_speed_governor_application_reset_state_fuel_demand_correction i16
+C3 0x0080a976 ASMXFL -> all_speed_governor_fueling word
+A3 0x0080a9d6 DAT_0080a9d6 -> engine_speed_limit_source_2 word
+C3 0x0080a9da EB39CNID -> engine_retarder_j1939_control_device word
+C3 0x0080bad7 DCMNSHNU -> duty_cycle_monitor_active_short_term_map byte
+C3 0x0080bad8 DCSHPR01 -> duty_cycle_monitor_short_term_processing_map_1_byte_count word
+C3 0x0080bba6 DCSHPR02 -> duty_cycle_monitor_short_term_processing_map_2_byte_count word
+C3 0x0080bcd5 DSPTSESW -> power_take_off_switch_state_bits byte
+C3 0x0080bcd9 DSUSEBSW -> switch_9_to_16_override_values byte
+C3 0x0080bd03 DSFMCHFB -> auxiliary_driver_feedback_bits byte
+A2 0x0080bd1c DAT_0080bd1c -> water_in_fuel_lamp_override_priority byte
+A2 0x0080bd1e DAT_0080bd1e -> engine_protection_lamp_override_priority byte
+A2 0x0080bd20 DAT_0080bd20 -> warning_lamp_override_priority byte
+A2 0x0080bd23 DAT_0080bd23 -> cold_start_aid_1_driver_override_priority byte
+A2 0x0080bd24 DAT_0080bd24 -> cold_start_aid_2_driver_override_priority byte
+A2 0x0080bd27 DAT_0080bd27 -> ether_start_driver_override_priority byte
+A2 0x0080bd47 DAT_0080bd47 -> fuel_shutoff_driver_override_priority byte
+C3 0x0080d0cc CMSYSS -> cam_sync_state byte
+C3 0x0080d0ce CMSYRSFG -> cam_cycle_reset_flag byte
+C3 0x0080d0d0 CMSYBKSS -> cam_sync_backup_state byte
+C3 0x0080d288 EPESLM -> engine_speed_limit_fault_derate word
+C3 0x0080d334 FSLMDSST -> requested_fueling_state word
+C3 0x0080d358 JCFSTLFG -> j1939_torque_and_load_not_available_flag word
+A3 0x0080d65c DAT_0080d65c -> engine_speed_limit_source_10 word
+C3 0x0080d664 HSINRFST -> engine_speed_limit_limiting_source_number_snapshot word
+C3 0x0080d714 JCCMTHMU -> multiplexed_accelerator_pedal_position byte
+C3 0x0080da28 JCEVRPP2 -> j1939_determined_engine_speed_at_point_2 word
+C3 0x0080da54 JCHII1OD -> high_idle_override_active_flag word
+C3 0x0080da68 JCEGNETY -> engine_control_network_type word
+C3 0x0080da6a JCOGNETY -> out_of_gear_network_type word
+A3 0x0080dc24 DAT_0080dc24 -> power_take_off_requested_engine_speed word
+C3 0x0080de3e DRTKODMD -> tachometer_override_enable_flag word
+C3 0x0080ded0 FSLMAHST -> fuel_demand_minimum_tracked_state word
+C3 0x0080ded4 FSDSFLST -> user_fueling_state word
+removed 0x0080a76e ambient_air_temperature_raw_user_value_0_1023 (inside a new array, no user)
+removed 0x0080a784 frequency_throttle_input_sv_raw_user_value_0_to_6 (inside a new array, no user)
+removed 0x0080a73c user_value_100_to_255 (inside a new array, no user)
+removed 0x00806fb6 shutdown_protection_param_1 (inside a new array, no user)
+removed 0x00806fb8 shutdown_protection_param_2 (inside a new array, no user)
+removed 0x00805564 loop_counter_capture_start_1 (inside a new array, no user)
+removed 0x00805568 loop_counter_elapsed_time_1 (inside a new array, no user)
+removed 0x0080556c diagnostic_capture_active_flag (inside a new array, no user)
+removed 0x0080556e timing_measurement_active_flag_1 (inside a new array, no user)
+removed 0x00805570 diagnostic_snapshot_fuel_mode_capture (inside a new array, no user)
+removed 0x00805572 diagnostic_snapshot_retarder_mode (inside a new array, no user)
+removed 0x00805574 diagnostic_buffer_write_index (inside a new array, no user)
+removed 0x00805576 serial_transmit_ready_flag (inside a new array, no user)
+removed 0x00805578 fuel_arbitrator_overflow_counter_1 (inside a new array, no user)
+removed 0x0080557a fuel_arbitrator_overflow_counter_2 (inside a new array, no user)
+removed 0x0080557c fuel_timing_offset_state_backup (inside a new array, no user)
+removed 0x0080557e crank_fuel_delta_accumulator (inside a new array, no user)
+removed 0x00805582 crank_fuel_over_limit_snapshot (inside a new array, no user)
+removed 0x00805586 crank_timing_delta_accumulator (inside a new array, no user)
+removed 0x0080558e crank_fuel_status_flags (inside a new array, no user)
+removed 0x00805590 crank_fuel_buffer_index (inside a new array, no user)
+removed 0x0080561e fault_code_active_list_count (inside a new array, no user)
+removed 0x00805620 hour_meter_event_log_array (inside a new array, no user)
+removed 0x00805621 hour_meter_event_log_array_1 (inside a new array, no user)
+removed 0x00807950 accel_throttle_diag_reading_threshold (inside a new array, no user)
+removed 0x00807b94 ASJ200PP (inside a new array, no user)
+removed 0x00807b96 ASJ100IT (inside a new array, no user)
+removed 0x00807b98 ASJ200IT (inside a new array, no user)
+removed 0x00807b9a ASJ100DV (inside a new array, no user)
+removed 0x00807b9c ASJ200DV (inside a new array, no user)
+removed 0x00807b9e ASJ100CF (inside a new array, no user)
+removed 0x00807ba0 ASJ200CF (inside a new array, no user)
+removed 0x00807ba2 ASJ300CF (inside a new array, no user)
+removed 0x00807ba4 ASJ101PP (inside a new array, no user)
+removed 0x00807ba6 ASJ201PP (inside a new array, no user)
+removed 0x00807ba8 ASJ101IT (inside a new array, no user)
+removed 0x00807baa ASJ201IT (inside a new array, no user)
+removed 0x00807bac ASJ101DV (inside a new array, no user)
+removed 0x00807bae ASJ201DV (inside a new array, no user)
+removed 0x00807bb0 ASJ101CF (inside a new array, no user)
+removed 0x00807bb2 ASJ201CF (inside a new array, no user)
+removed 0x00807bb4 ASJ301CF (inside a new array, no user)
+removed 0x00807bb6 ASJ110PP (inside a new array, no user)
+removed 0x00807bb8 ASJ210PP (inside a new array, no user)
+removed 0x00807bba ASJ110IT (inside a new array, no user)
+removed 0x00807bbc ASJ210IT (inside a new array, no user)
+removed 0x00807bbe ASJ110DV (inside a new array, no user)
+removed 0x00807bc0 ASJ210DV (inside a new array, no user)
+removed 0x00807bc2 ASJ110CF (inside a new array, no user)
+removed 0x00807bc4 ASJ210CF (inside a new array, no user)
+removed 0x00807bc6 ASJ310CF (inside a new array, no user)
+removed 0x00807bc8 ASJ111PP (inside a new array, no user)
+removed 0x00807bca ASJ211PP (inside a new array, no user)
+removed 0x00807bcc ASJ111IT (inside a new array, no user)
+removed 0x00807bce ASJ211IT (inside a new array, no user)
+removed 0x00807bd0 ASJ111DV (inside a new array, no user)
+removed 0x00807bd2 ASJ211DV (inside a new array, no user)
+removed 0x00807bd4 ASJ111CF (inside a new array, no user)
+removed 0x00807bd6 ASJ211CF (inside a new array, no user)
+removed 0x00807bd8 ASJ311CF (inside a new array, no user)
+removed 0x008088ce can_controller_1_timing_word (inside a new array, no user)
+removed 0x008088d1 can_controller_2_status_byte (inside a new array, no user)
+removed 0x008088d3 can_controller_2_filter_byte_1 (inside a new array, no user)
+removed 0x008088d5 can_controller_2_filter_byte_2 (inside a new array, no user)
+removed 0x008088d7 can_controller_2_filter_byte_3 (inside a new array, no user)
+removed 0x008088d8 can_controller_2_baud_byte_0 (inside a new array, no user)
+removed 0x008088d9 can_controller_2_baud_byte_1 (inside a new array, no user)
+removed 0x008088da can_controller_2_baud_byte_2 (inside a new array, no user)
+removed 0x008088db can_controller_2_baud_byte_3 (inside a new array, no user)
+removed 0x008088dc can_controller_2_timing_word (inside a new array, no user)
+removed 0x008088de histogram_bin_count_3 (inside a new array, no user)
+removed 0x008088e0 histogram_bin_count_0 (inside a new array, no user)
+removed 0x008088e2 histogram_bin_count_1 (inside a new array, no user)
+removed 0x008088e4 histogram_bin_count_2 (inside a new array, no user)
+removed 0x00808912 flash_bootloader_param (inside a new array, no user)
+removed 0x0080891c rpm_multiplier_0 (inside a new array, no user)
+removed 0x0080891e rpm_multiplier_1 (inside a new array, no user)
+removed 0x00808940 oil_pressure_fault_debounce_threshold (inside a new array, no user)
+removed 0x00808942 oil_pressure_rpm_fault_threshold (inside a new array, no user)
+removed 0x00808948 water_in_fuel_fault_threshold (inside a new array, no user)
+removed 0x0080894a vp44_fuel_temperature_raw (inside a new array, no user)
+removed 0x0080894c cached_parameter_upper_limit (inside a new array, no user)
+removed 0x0080894e vp44_sensor_value_3 (inside a new array, no user)
+removed 0x00808950 vp44_sensor_value_4 (inside a new array, no user)
+removed 0x00808952 vp44_sensor_value_5 (inside a new array, no user)
+removed 0x00808954 vp44_sensor_value_1 (inside a new array, no user)
+removed 0x00808956 retarder_torque_point_2_value (inside a new array, no user)

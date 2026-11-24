@@ -4052,6 +4052,62 @@ Peer relays started and continued the round (12:19, 12:50). The scripts are in `
     0x801ab6-0x801b0d; `cm550_peakTorqueFuelCorrection`; `cm550_j1939TorqueControlMode*` (services 4 / 5);
     `cm848_mathMultiplyDivide32`'s fall-through; 0x80ddd3.
 
+## Done, round 90 (2026-11-24, same PR): CM550's parameter ID table; the CM550 e2m audit; a 162-row naming wave; DM8
+
+Peer relays started and continued the round (13:20, 13:50, 14:20, 14:50, 15:19). The scripts, the wave's batches,
+proposals, verdicts (`wave_result_r90.json`) and notes (`wave_notes_r90.txt`) are in `session_folder/round90/`; the
+three big audit tables are in the large-files tarball (`round90_*`).
+- **Stage A (eef9fc0c), the parameter ID table:** CM550's ROM table is `parameter_id_table` (0x35224,
+  `parameter_id_table_entry_t[1806]`), read by `cm550_lookupParameterIdAddress` (0x10e16, was
+  `cm550_diagnosticMemoryAddressResolver`; the counterpart of `cm848_lookupParameterIdAddress`). It indexes by id
+  range: id for 0x0000-0x002E, id - 0xFD1 for 0x1000-0x1478, id - 0x7B58 for 0x8000-0x8265. Each entry holds the
+  address used in development mode (RAM refresh disabled) and the one used otherwise; the two are equal in all 1806.
+  - `e2m_block_addresses.py --firmware cm550` decodes it, maps EEPROM entries to the RAM mirror (0x803B0A + offset)
+    and resolves e2m records with `v64t6_s.e2m`. `--write-table` rewrote `output/parameter_id_lookup_table.csv`:
+    47 rows named an older global, 101 empty rows had one and 36 named no current global. A test fails when the
+    committed table is stale.
+  - Two stale build messages (CM550's hwregs stage, common.sh's deletions stage) no longer point at removed commands.
+- **Stage B (5742ef45), the audit:** `e2m_name_audit.py --firmware cm550`. CM550's 4525 scalar records: 2348 land on
+  named rows, 1742 on none, 428 inside typed rows and 7 on unnamed rows; 66 referenced records had no row; 478 named
+  rows' words differ from their description.
+  - The audit's dump reader now reads by address segment. CM848's RAM dump gap had shifted 6 records' values by 0x80
+    bytes since the tool was written; no in-range verdict changed.
+- **Stage C (7f344430), the naming wave (workflow wf_69f8159d-0ca, 14 agents):** the 168 candidates (66 referenced
+  no-row records, 20 unnamed_data_ rows, 82 bare-mnemonic names) were all verified: 158 confirmed and 10 amended by
+  the skeptics, none refuted. They became 162 rows. Examples:
+  - the A/D channels' linearization tables (`<channel>_linearization_values`);
+  - the J1939 source address filters (CM550's per-signal bytes of CM848's `j1939_input_source_address_filter_cal`);
+  - trip / lifetime fuel used, `user_fueling_state` (38 renders) and the other fueling states, the alpha results,
+    the duty cycle monitor maps, the TSC1 gain sets.
+
+  Two of the wave's scalars became per-channel arrays (`analog_sensor_override_values` /
+  `analog_sensor_raw_override_values`). 87 unreferenced rows inside the new arrays were removed (legacy guesses such
+  as `can_controller_2_baud_byte_0` inside the power take-off governor's gain tables). `validateSecurityKey`'s 8 local
+  rows all apply now, and `ApplyLocalVariables` maps `bool`. The refresh keeps the Calterm mnemonics in comments.
+- **Stage D (de089dd8), CM848's DM8:** `j1939_pgn65232_payload` (`j1939_pgn65232_payload_t`: SPNs 1224-1228).
+  `cm848_sendPgn65232NonContinuousMonitorTestResultMessage` takes `(byte test_identifier, ushort test_value)` (it said
+  `dest_address` / `fault_count`), so its CONCAT11 and the DM7 handler's `(byte)` casts are gone.
+- **firmware/CLAUDE.md:** no edit this round.
+- **Leads (round 91):**
+  - Structs, and the `(int)&` casts stage C left:
+    - the fault count table (0x805a1c, 125 x 10 bytes; +8 / +9 are named);
+    - the datalogger data records (6 bytes from 0x803da4) and trigger records (from 0x803d65);
+    - the TSC1 gain sets (4 x 9 i16; CM848's twin type).
+  - The wave's notes (`wave_notes_r90.txt`):
+    - CM550's J1939 receive handlers are CM848's twins: 0x21a8c / 0x21b88 / 0x21c74 / 0x21d44 =
+      `cm848_receivePgn61441` / `61443` / `65264` / `65265*`; 0x21edc = `cm848_tickJ1939InputSupervision`; 0x21ef6 =
+      `cm848_registerJ1939InputMessageHandlers`.
+    - `cm550_canTransmissionController` (0x21272) is the twin of `cm848_registerJ1939ReceiveHandler`, and
+      `cm550_diagnosticSessionValidator` (0x31ace) is `cm848_findTsc1SourceConfiguration`.
+    - CM848's `j1939_received_accelerator_pedal_position_2` (0x40aaba) is the J1939 wet tank pressure (e2m 12F7 +14).
+    - CM550's J1939 input timeout words are 0x804234-0x804264.
+  - The audit's 478 named rows that disagree with their description; a fueling state enum for CM550; one type in
+    stage C could not be applied (the build log does not say which).
+  - Carried: the misnamed PGN builders; `linearization_table_ch15_x_axis` (channel 0's table); 0x803f40 `_cal`;
+    ESCMES / ENGRPM; the DIAG enum members 0x42 / 0x52 / 0x54; the descriptor rows 0x801ab6-0x801b0d;
+    `cm550_peakTorqueFuelCorrection`; `cm550_j1939TorqueControlMode*`; `cm848_mathMultiplyDivide32`'s fall-through;
+    0x80ddd3; the A/D array-end bound render.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

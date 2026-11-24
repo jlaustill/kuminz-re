@@ -1,0 +1,33 @@
+2 changed functions have local rows
+  0x0b7bc mc68k_processAnalogSensorChannels channel_record: DIFFERENT
+     before: channel_record = &intake_manifold_temperature_sensor_state;
+     before: channel_record->sample_counter = 0;
+     before: channel_record->sample_counter = channel_record->sample_counter + 1;
+     after:  channel_record = &intake_manifold_temperature_sensor_state;
+     after:  channel_record->sample_counter = 0;
+     after:  channel_record->sample_counter = channel_record->sample_counter + 1;
+  0x0b7bc mc68k_processAnalogSensorChannels channel_config: same
+  0x2fcdc validateSecurityKey all_keys_match: DIFFERENT
+     after:  all_keys_match = true;
+     after:  for (key_byte_index = 0; (all_keys_match && ((char)key_byte_index < '\x06'));
+     after:  all_keys_match = false;
+  0x2fcdc validateSecurityKey validation_result: same
+  0x2fcdc validateSecurityKey hour_meter_byte_count: DIFFERENT
+     after:  hour_meter_byte_count = 1;
+     after:  hour_meter_byte_count = hour_meter_byte_count + 1;
+  0x2fcdc validateSecurityKey key_byte_index: DIFFERENT
+     after:  for (key_byte_index = 0; (all_keys_match && ((char)key_byte_index < '\x06'));
+     after:  key_byte_index = key_byte_index + 1) {
+     after:  if (security_master_password_cal[(short)(char)key_byte_index] != *pbVar1) {
+  0x2fcdc validateSecurityKey hour_meter_copy_destination: DIFFERENT
+     after:  hour_meter_copy_destination = &extracted_hour_meter;
+     after:  *(byte *)hour_meter_copy_destination = *pbVar1;
+     after:  hour_meter_copy_destination = (dword *)((int)hour_meter_copy_destination + 1);
+  0x2fcdc validateSecurityKey extracted_hour_meter: DIFFERENT
+     after:  hour_meter_copy_destination = &extracted_hour_meter;
+  0x2fcdc validateSecurityKey extracted_key: DIFFERENT
+     before: pbVar5 = extracted_key;
+     after:  pbVar1 = extracted_key;
+  0x2fcdc validateSecurityKey hour_meter_bytes: DIFFERENT
+     before: pbVar5 = hour_meter_bytes;
+     after:  pbVar1 = hour_meter_bytes;

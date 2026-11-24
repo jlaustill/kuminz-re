@@ -1,0 +1,24 @@
+Naming basis: the signal words in each name are CM848's receiver names (j1939_received_<signal>, 0x40aaa9-0x40aabf, named after the J1939 SPNs). The words 'source_address_filter' come from CM848's array j1939_input_source_address_filter_cal. One exception: slot 9 says wet_tank_pressure, not CM848's accelerator_pedal_position_2 (see that row).
+
+Record array / CM848 twin: 12E8 +6..+1C (0x803f9c-0x803fb2) matches CM848's j1939_input_source_address_filter_cal byte[23] (0x3fd81e, CM848 arrays.csv) slot for slot. The slot is the e2m offset - 6. CM550 registers the same six handlers in the same order as cm848_registerJ1939InputMessageHandlers. cm550_FUN_00021ef6 is that function without the j1939_input_fault_start_delay = 1000 store. The CM550 handlers read each byte at its absolute address, with no index and no pointer walk, so this batch gives flat rows. A reviewer who wants CM848's shape can use one row instead: 0x00803f9c,j1939_input_source_address_filter_cal,byte[23]. That row replaces these 21 and also covers slots 0 and 10. CM550 has no arrays.csv, so the array goes in global_variables.csv as byte[23].
+
+Slots not in this batch: 0x803f9c (slot 0, MXMNFMSA, Calterm Manual_Fan_Level_Source_Address_Enable) and 0x803fa6 (slot 10, MXAKPRSA, Calterm AC_Pressure_Switch_Source_Address_Enable). Two receive handlers read them, and Ghidra has not defined either one as a function, so the decompilation shows zero references:
+- 0x21a5c handles PGN 57344 CM1. It stores data[0] in 0x80d71c multiplexed_value_for_requested_fan_speed_0_100 and sets timeout 0x804234 = 500. CM848 twin: cm848_receivePgn57344CabMessage1.
+- 0x21c3c handles PGN 65252 SHUTDN. It stores data[2] & 3 in 0x80d70f multiplex_value_for_air_conditioner_pressure_switch_on_off and sets timeout 0x804248 = 500. CM848 twin: cm848_receivePgn65252ShutdownMessage.
+The ROM has exactly two absolute references to each of those bytes (move.b @0x21a5c / cmpi.b @0x21a6a, and move.b @0x21c3c / cmpi.b @0x21c4a). If flat rows are kept, the matching names are j1939_engine_fan_requested_percent_speed_source_address_filter_cal and j1939_air_conditioner_high_pressure_fan_switch_source_address_filter_cal. Nothing in the ROM references 0x803fb3 (MXDUMYSA 'unused dummy', dump 0x00) or 0x803f96-0x803f9b (MXMOS1-6, module source addresses) by absolute address.
+
+Timeout words, an inference: the handlers reload words at 0x804234 + 2 x slot (500 for slots 0 and 10, 50 for slots 1-5 and 11-22, 25 for slots 6-9). cm550_FUN_00021edc counts down the 25 words 0x804234-0x804264. These are the twins of CM848's j1939_input_signal_timeouts word[25] and cm848_tickJ1939InputSupervision. e2m_block_addresses.py prints the 12F6 +2n records (MX..TR) at 0x0100072a + 2n, with the EEPROM-region tag. My own arithmetic gives 0x803B0A + 0x72A = 0x804234, and the timer signal names match the slots one for one, so the rows cite them that way. Two facts about _cal for these words: the table tags them in the EEPROM region, but 0x804234-0x804264 is outside the stated mirror range 0x803B0A-0x804155. I make no ruling on _cal for them.
+
+Function twins for function_renames.csv:
+- cm550_FUN_00021a8c = cm848_receivePgn61441ElectronicBrakeController1Message
+- cm550_FUN_00021b88 = cm848_receivePgn61443ElectronicEngineController2Message
+- cm550_FUN_00021c74 = cm848_receivePgn65264PowerTakeoffInformationMessage
+- cm550_FUN_00021d44 = cm848_receivePgn65265CruiseControlVehicleSpeedMessage
+- cm550_FUN_00021edc = cm848_tickJ1939InputSupervision (its counting loop)
+- cm550_FUN_00021ef6 = cm848_registerJ1939InputMessageHandlers (without the start delay)
+- 0x21272, now cm550_canTransmissionController, has the wrong name. It appends a PGN word and a handler pointer as a 6-byte entry at 0x800ab0 + 6 x count (count byte 0x800b10, at most 16). That makes it the twin of cm848_registerJ1939ReceiveHandler.
+cm550_FUN_00021ef6 calls it as: pea handler; move.w #PGN,-(sp); jsr (a2), with these pairs: 57344 -> 0x21a5c, 61441 -> 0x21a8c, 61443 -> 0x21b88, 65252 -> 0x21c3c, 65264 -> 0x21c74, 65265 -> 0x21d44.
+
+Misnamed CM848 neighbour: 0x40aaba j1939_received_accelerator_pedal_position_2 is e2m 12F7 +14 J1939_Mux_Wet_Tank_Pressure (JCWTPRMU, PSI_A 0.7252683). CM848 has no reader. In CM550 the same input is scaled as a pressure.
+
+CM550 receivers: 0x80d70f-0x80d725 (the e2m 12F7 multiplex values, typed undefined, with names from the Calterm descriptions) are the twins of CM848's j1939_received_* bytes. 0x80d720's consumer writes 0x80a760, which the e2m calls 12D3 +0 ADIMTPUR (intake manifold temperature raw user value). Settle that conflict before naming 0x80a760.

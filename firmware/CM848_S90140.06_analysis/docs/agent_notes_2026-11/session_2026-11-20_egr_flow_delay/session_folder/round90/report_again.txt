@@ -1,0 +1,2 @@
+A3 0x0080a760: the verdict's intake_manifold_temperature_raw_override_value became analog_sensor_raw_override_values word[25] (an array)
+A3 0x0080a72e: the verdict's intake_manifold_temperature_override_value became analog_sensor_override_values word[25] (an array)

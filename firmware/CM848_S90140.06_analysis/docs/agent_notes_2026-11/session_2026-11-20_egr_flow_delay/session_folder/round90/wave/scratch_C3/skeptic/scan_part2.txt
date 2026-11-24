@@ -1,0 +1,137 @@
+80a9da   03394c cm550_dutyCycleMonitorAltIsrHandler@338ea     cmpi.w #$1,(a3)                                  ; 80a9da w cmpi
+80a9da   033958 cm550_dutyCycleMonitorAltIsrHandler@338ea     cmpi.w #$3,(a3)                                  ; 80a9da w cmpi
+80a9da   033964 cm550_dutyCycleMonitorAltIsrHandler@338ea     cmpi.w #$2,(a3)                                  ; 80a9da w cmpi
+80bad7   00af00 cm550_FUN_0000ac3c@ac3c                       move.b #$1,(a4)                                  ; 80bad7 b write
+80bad7   00af1c cm550_FUN_0000ac3c@ac3c                       move.b #$1,(a4)                                  ; 80bad7 b write
+80bad7   00af2c cm550_FUN_0000ac3c@ac3c                       move.b #$2,(a4)                                  ; 80bad7 b write
+80bad7   00af32 cm550_FUN_0000ac3c@ac3c                       clr.b (a4)                                       ; 80bad7 b clr
+80bad7   00af34 cm550_FUN_0000ac3c@ac3c                       cmpi.b #$1,(a4)                                  ; 80bad7 b cmpi
+80bad7   00af54 cm550_FUN_0000ac3c@ac3c                       cmpi.b #$2,(a4)                                  ; 80bad7 b cmpi
+80bad8   00b0a4 cm550_FUN_0000af70@af70                       move.w d0,$80bad8                                ; 80bad8 w write
+80bba6   00b0b2 cm550_FUN_0000af70@af70                       move.w d0,$80bba6                                ; 80bba6 w write
+80bcd5   00f16e insiteCommandByteDispatcher@ed64              btst #1,$80bcd5                                  ; 80bcd5 b btst
+80bcd5   00f17c insiteCommandByteDispatcher@ed64              btst #0,$80bcd5                                  ; 80bcd5 b btst
+80bcd5   00f18a insiteCommandByteDispatcher@ed64              btst #3,$80bcd5                                  ; 80bcd5 b btst
+80bcd5   00f198 insiteCommandByteDispatcher@ed64              btst #2,$80bcd5                                  ; 80bcd5 b btst
+80bcd5   00f1a6 insiteCommandByteDispatcher@ed64              btst #4,$80bcd5                                  ; 80bcd5 b btst
+80bcd5   014d94 cm550_FUN_00014872@14872                      move.b d2,(0,a0,d0.w*1)                          ; INDEXED base 80bca8 (target 80bcd5) b write
+80bcd5   014e60 cm550_faultFlagScannerAndProcessor@14dc6      move.b (0,a4,d0.l*1),d0                          ; INDEXED base 80bcce (target 80bcd5) b read
+80bcd5   014eaa cm550_faultFlagScannerAndProcessor@14dc6      move.b (0,a4,d0.l*1),d0                          ; INDEXED base 80bcce (target 80bcd5) b read
+80bcd5   014ef4 cm550_faultFlagScannerAndProcessor@14dc6      move.b (0,a4,d0.l*1),d0                          ; INDEXED base 80bcce (target 80bcd5) b read
+80bcd5   0153aa mc68k_sampleAndDebounceDiscreteInputs@14fca   or.b d0,(7,a4)                                   ; 80bcd5 b or_to_mem
+80bcd5   0153ba mc68k_sampleAndDebounceDiscreteInputs@14fca   ori.b #$10,(7,a4)                                ; 80bcd5 b ori
+80bcd5   0153c2 mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$ef,(7,a4)                               ; 80bcd5 b andi
+80bcd5   0153de mc68k_sampleAndDebounceDiscreteInputs@14fca   or.b d0,(7,a4)                                   ; 80bcd5 b or_to_mem
+80bcd5   0153ee mc68k_sampleAndDebounceDiscreteInputs@14fca   ori.b #$4,(7,a4)                                 ; 80bcd5 b ori
+80bcd5   0153f6 mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$fb,(7,a4)                               ; 80bcd5 b andi
+80bcd5   015412 mc68k_sampleAndDebounceDiscreteInputs@14fca   or.b d0,(7,a4)                                   ; 80bcd5 b or_to_mem
+80bcd5   015422 mc68k_sampleAndDebounceDiscreteInputs@14fca   ori.b #$1,(7,a4)                                 ; 80bcd5 b ori
+80bcd5   01542a mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$fe,(7,a4)                               ; 80bcd5 b andi
+80bcd5   015430 mc68k_sampleAndDebounceDiscreteInputs@14fca   move.b (7,a4),d0                                 ; 80bcd5 b read
+80bcd5   015454 mc68k_sampleAndDebounceDiscreteInputs@14fca   move.b (7,a4),d0                                 ; 80bcd5 b read
+80bcd5   015482 mc68k_sampleAndDebounceDiscreteInputs@14fca   move.b (7,a4),d0                                 ; 80bcd5 b read
+80bcd5   01549a mc68k_sampleAndDebounceDiscreteInputs@14fca   move.b (7,a4),d0                                 ; 80bcd5 b read
+80bcd5   0154a6 mc68k_sampleAndDebounceDiscreteInputs@14fca   move.b (7,a4),d0                                 ; 80bcd5 b read
+80bcd5   0154ba mc68k_sampleAndDebounceDiscreteInputs@14fca   ori.b #$20,(7,a4)                                ; 80bcd5 b ori
+80bcd5   0154c4 mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$fb,(7,a4)                               ; 80bcd5 b andi
+80bcd5   0154ca mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$fe,(7,a4)                               ; 80bcd5 b andi
+80bcd5   0154d0 mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$f7,(7,a4)                               ; 80bcd5 b andi
+80bcd5   0154d6 mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$fd,(7,a4)                               ; 80bcd5 b andi
+80bcd5   0154de mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$df,(7,a4)                               ; 80bcd5 b andi
+80bcd5   0154e4 mc68k_sampleAndDebounceDiscreteInputs@14fca   btst #2,(7,a4)                                   ; 80bcd5 b btst
+80bcd5   015518 mc68k_sampleAndDebounceDiscreteInputs@14fca   ori.b #$8,(7,a4)                                 ; 80bcd5 b ori
+80bcd5   01551e mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$fb,(7,a4)                               ; 80bcd5 b andi
+80bcd5   015526 mc68k_sampleAndDebounceDiscreteInputs@14fca   ori.b #$2,(7,a4)                                 ; 80bcd5 b ori
+80bcd5   01552c mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$fb,(7,a4)                               ; 80bcd5 b andi
+80bcd5   01553c mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$f7,(7,a4)                               ; 80bcd5 b andi
+80bcd5   015544 mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$fd,(7,a4)                               ; 80bcd5 b andi
+80bcd5   01555a mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$f7,(7,a4)                               ; 80bcd5 b andi
+80bcd5   015562 mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$fd,(7,a4)                               ; 80bcd5 b andi
+80bcd5   015568 mc68k_sampleAndDebounceDiscreteInputs@14fca   btst #0,(7,a4)                                   ; 80bcd5 b btst
+80bcd5   01559c mc68k_sampleAndDebounceDiscreteInputs@14fca   ori.b #$2,(7,a4)                                 ; 80bcd5 b ori
+80bcd5   0155a2 mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$fe,(7,a4)                               ; 80bcd5 b andi
+80bcd5   0155aa mc68k_sampleAndDebounceDiscreteInputs@14fca   ori.b #$8,(7,a4)                                 ; 80bcd5 b ori
+80bcd5   0155b0 mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$fe,(7,a4)                               ; 80bcd5 b andi
+80bcd5   0155c0 mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$fd,(7,a4)                               ; 80bcd5 b andi
+80bcd5   0155c8 mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$f7,(7,a4)                               ; 80bcd5 b andi
+80bcd5   0155de mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$fd,(7,a4)                               ; 80bcd5 b andi
+80bcd5   0155e6 mc68k_sampleAndDebounceDiscreteInputs@14fca   andi.b #$f7,(7,a4)                               ; 80bcd5 b andi
+80bcd5   033faa cm550_FUN_00033f5a@33f5a                      move.b (7,a3),d0                                 ; 80bcd5 b read
+80bcd5   033fc8 cm550_FUN_00033f5a@33f5a                      move.b (7,a3),d0                                 ; 80bcd5 b read
+80bcd5   033fea cm550_FUN_00033f5a@33f5a                      move.b (7,a3),d0                                 ; 80bcd5 b read
+80bcd9   0151ec mc68k_sampleAndDebounceDiscreteInputs@14fca   move.b $80bcd9,d1                                ; 80bcd9 b read
+80bcd9   015842 mc68k_sampleAndDebounceDiscreteInputs@14fca   move.b $80bcd9,d0                                ; 80bcd9 b read
+80bcd9   015862 mc68k_sampleAndDebounceDiscreteInputs@14fca   move.b $80bcd9,d0                                ; 80bcd9 b read
+80bcd9   015c9c mc68k_ioDriverStrobeHandler@159ee             move.b $80bcd9,d1                                ; 80bcd9 b read
+80bcd9   02060e cm550_FUN_000205c4@205c4                      andi.b #$fe,(1,a1)                               ; 80bcd9 b andi
+80bcd9   020620 cm550_FUN_000205c4@205c4                      ori.b #$1,(1,a1)                                 ; 80bcd9 b ori
+80bcd9   020672 cm550_FUN_000205c4@205c4                      ori.b #$1,(1,a1)                                 ; 80bcd9 b ori
+80bcd9   020686 cm550_FUN_000205c4@205c4                      andi.b #$fe,(1,a1)                               ; 80bcd9 b andi
+80bcd9   02075e cm550_FUN_000206a8@206a8                      or.b d1,(0,a1,d0.l*1)                            ; INDEXED base 80bcd8 (target 80bcd9) b or_to_mem
+80bcd9   02077a cm550_FUN_000206a8@206a8                      and.b d1,(0,a1,d0.l*1)                           ; INDEXED base 80bcd8 (target 80bcd9) b and_to_mem
+80bcd9   0209fc cm550_FUN_00020890@20890                      or.b d1,(0,a0,d0.w*1)                            ; INDEXED base 80bcd8 (target 80bcd9) b or_to_mem
+80bcd9   020a22 cm550_FUN_00020890@20890                      and.b d1,(0,a0,d0.w*1)                           ; INDEXED base 80bcd8 (target 80bcd9) b and_to_mem
+80bcd9   020ac8 cm550_FUN_00020890@20890                      or.b d1,(0,a0,d0.w*1)                            ; INDEXED base 80bcd8 (target 80bcd9) b or_to_mem
+80bcd9   020b06 cm550_FUN_00020890@20890                      and.b d1,(0,a0,d0.w*1)                           ; INDEXED base 80bcd8 (target 80bcd9) b and_to_mem
+80bcd9   020ba0 cm550_FUN_00020890@20890                      or.b d1,(0,a0,d0.w*1)                            ; INDEXED base 80bcd8 (target 80bcd9) b or_to_mem
+80bcd9   020bde cm550_FUN_00020890@20890                      and.b d1,(0,a0,d0.w*1)                           ; INDEXED base 80bcd8 (target 80bcd9) b and_to_mem
+80bcd9   020c50 cm550_FUN_00020890@20890                      or.b d1,(0,a0,d0.w*1)                            ; INDEXED base 80bcd8 (target 80bcd9) b or_to_mem
+80bcd9   020c8e cm550_FUN_00020890@20890                      and.b d1,(0,a0,d0.w*1)                           ; INDEXED base 80bcd8 (target 80bcd9) b and_to_mem
+80bcd9   020f08 cm550_FUN_00020e14@20e14                      ori.b #$1,(1,a5)                                 ; 80bcd9 b ori
+80bcd9   020f14 cm550_FUN_00020e14@20e14                      andi.b #$fe,(1,a5)                               ; 80bcd9 b andi
+80bcd9   020f5a cm550_FUN_00020e14@20e14                      ori.b #$1,(1,a5)                                 ; 80bcd9 b ori
+80bcd9   020f62 cm550_FUN_00020e14@20e14                      andi.b #$fe,(1,a5)                               ; 80bcd9 b andi
+80bd03   00d854 updateEngineSyncStatus@d610                   move.b $80bd03,d0                                ; 80bd03 b read
+80bd03   00d88c updateEngineSyncStatus@d610                   btst #0,$80bd03                                  ; 80bd03 b btst
+80bd03   00da54 updateEngineSyncStatus@d610                   move.b $80bd03,d0                                ; 80bd03 b read
+80bd03   00da8c updateEngineSyncStatus@d610                   btst #1,$80bd03                                  ; 80bd03 b btst
+80bd03   00dc54 updateEngineSyncStatus@d610                   move.b $80bd03,d0                                ; 80bd03 b read
+80bd03   00dc8c updateEngineSyncStatus@d610                   btst #2,$80bd03                                  ; 80bd03 b btst
+80bd03   00de54 updateEngineSyncStatus@d610                   move.b $80bd03,d0                                ; 80bd03 b read
+80bd03   00de8c updateEngineSyncStatus@d610                   btst #5,$80bd03                                  ; 80bd03 b btst
+80bd03   00e054 updateEngineSyncStatus@d610                   move.b $80bd03,d0                                ; 80bd03 b read
+80bd03   00e08c updateEngineSyncStatus@d610                   btst #4,$80bd03                                  ; 80bd03 b btst
+80bd03   00e21a updateEngineSyncStatus@d610                   move.b $80bd03,d0                                ; 80bd03 b read
+80bd03   00e252 updateEngineSyncStatus@d610                   btst #6,$80bd03                                  ; 80bd03 b btst
+80bd03   00e3e0 updateEngineSyncStatus@d610                   move.b $80bd03,d0                                ; 80bd03 b read
+80bd03   00e418 updateEngineSyncStatus@d610                   btst #3,$80bd03                                  ; 80bd03 b btst
+80bd03   00e5a6 updateEngineSyncStatus@d610                   move.b $80bd03,d0                                ; 80bd03 b read
+80bd03   00e5de updateEngineSyncStatus@d610                   btst #7,$80bd03                                  ; 80bd03 b btst
+80bd03   015d24 mc68k_ioDriverStrobeHandler@159ee             move.b d0,$80bd03                                ; 80bd03 b write
+80bd03   020740 cm550_FUN_000206a8@206a8                      move.b (0,a0,d0.w*1),d0                          ; INDEXED base 80bcf6 (target 80bd03) b read
+80bd03   0248b2 cm550_ioControlMaskStateMachine@24858         or.b d1,(0,a0,d0.w*1)                            ; INDEXED base 80bcf6 (target 80bd03) b or_to_mem
+80bd03   02492a cm550_ioControlMaskStateMachine@24858         and.b d1,(0,a0,d0.w*1)                           ; INDEXED base 80bcf6 (target 80bd03) b and_to_mem
+80d0cc   0130d2 vp44_FUN_000127c2@127c2                       cmpi.b #$1,$80d0cc                               ; 80d0cc b cmpi
+80d0cc   0174de cm550_calculateEngineSpeed@171be              cmpi.b #$1,$80d0cc                               ; 80d0cc b cmpi
+80d0cc   0174e8 cm550_calculateEngineSpeed@171be              tst.b $80d0cc                                    ; 80d0cc b tst
+80d0cc   019bf6 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0@19acc move.b #$2,$80d0cc                               ; 80d0cc b write
+80d0cc   01a066 UNDEF_19f82@19f82                             move.b #$2,(a4)                                  ; 80d0cc b write
+80d0cc   01a076 UNDEF_19f82@19f82                             move.b #$2,(a4)                                  ; 80d0cc b write
+80d0cc   01a084 UNDEF_19f82@19f82                             move.b #$1,(a4)                                  ; 80d0cc b write
+80d0cc   01a08a UNDEF_19f82@19f82                             clr.b (a4)                                       ; 80d0cc b clr
+80d0cc   01a0ce UNDEF_19f82@19f82                             cmpi.b #$2,(a4)                                  ; 80d0cc b cmpi
+80d0cc   01a112 UNDEF_19f82@19f82                             cmpi.b #$1,(a4)                                  ; 80d0cc b cmpi
+80d0cc   01a656 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2@1a52c move.b #$2,$80d0cc                               ; 80d0cc b write
+80d0cc   01a71a mc68k_crankFuelAndTimingBufferStore@1a6e8     clr.b (a3)                                       ; 80d0cc b clr
+80d0cc   01a720 mc68k_crankFuelAndTimingBufferStore@1a6e8     move.b #$2,(a3)                                  ; 80d0cc b write
+80d0cc   01a8c6 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3@1a8a4 cmpi.b #$1,$80d0cc                               ; 80d0cc b cmpi
+80d0cc   01a9c2 vp44FaultThresholdTablesInit@1a95e            cmpi.b #$1,(a3)                                  ; 80d0cc b cmpi
+80d0cc   01a9c8 vp44FaultThresholdTablesInit@1a95e            move.b #$2,(a3)                                  ; 80d0cc b write
+80d0cc   01aace vp44FaultThresholdTablesInit@1a95e            cmpi.b #$1,(a3)                                  ; 80d0cc b cmpi
+80d0cc   01aad4 vp44FaultThresholdTablesInit@1a95e            move.b #$2,(a3)                                  ; 80d0cc b write
+80d0cc   01aafe vp44FaultThresholdTablesInit@1a95e            cmpi.b #$2,(a3)                                  ; 80d0cc b cmpi
+80d0cc   01ab48 vp44FaultThresholdTablesInit@1a95e            move.b #$1,(a3)                                  ; 80d0cc b write
+80d0cc   01ab6a vp44FaultThresholdTablesInit@1a95e            cmpi.b #$2,$80d0cc                               ; 80d0cc b cmpi
+80d0cc   01ae50 mc68k_initializeTpuChannel1BackupSpeedInput@1ae22 clr.b $80d0cc                                    ; 80d0cc b clr
+80d0cc   01afc4 mc68k_dutyCycleMonitorIsrHandler@1af32        move.b #$1,(a5)                                  ; 80d0cc b write
+80d0cc   01b032 mc68k_dutyCycleMonitorIsrHandler@1af32        move.b #$2,(a5)                                  ; 80d0cc b write
+80d0cc   01b0e4 mc68k_dutyCycleMonitorIsrHandler@1af32        move.b #$1,(a5)                                  ; 80d0cc b write
+80d0cc   01b152 mc68k_dutyCycleMonitorIsrHandler@1af32        move.b #$2,(a5)                                  ; 80d0cc b write
+80d0cc   034b30 mc68k_alignCylinderIndexToCrankRevolution@34b20 cmpi.b #$1,$80d0cc                               ; 80d0cc b cmpi
+80d0ce   01a052 UNDEF_19f82@19f82                             tst.b $80d0ce                                    ; 80d0ce b tst
+80d0ce   01a070 UNDEF_19f82@19f82                             clr.b $80d0ce                                    ; 80d0ce b clr
+80d0ce   01a07e UNDEF_19f82@19f82                             clr.b $80d0ce                                    ; 80d0ce b clr
+80d0ce   01a08c UNDEF_19f82@19f82                             clr.b $80d0ce                                    ; 80d0ce b clr
+80d0ce   01b338 mc68k_FUN_0001b30a@1b30a                      move.b #$1,$80d0ce                               ; 80d0ce b write
+80d0d0   01ab12 vp44FaultThresholdTablesInit@1a95e            cmpi.b #$2,$80d0d0                               ; 80d0d0 b cmpi
+80d0d0   01ab8e vp44FaultThresholdTablesInit@1a95e            cmpi.b #$2,$80d0d0                               ; 80d0d0 b cmpi

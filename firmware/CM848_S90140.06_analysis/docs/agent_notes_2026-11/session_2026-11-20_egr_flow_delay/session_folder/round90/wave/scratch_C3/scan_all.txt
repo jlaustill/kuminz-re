@@ -1,0 +1,261 @@
+=== 0x80a930
+  calculateAlpha@c326                              0c39a: move.w $80a930,(a2)
+=== 0x80a93c
+  cm550_runAllSpeedGovernor@c962                   0cb84: move.w $80a93c,d5
+  cm550_fuelDeliverySystemInit@d0fc                0d160: move.w $80a958,$80a93c
+=== 0x80a958
+  cm550_fuelDeliverySystemInit@d0fc                0d160: move.w $80a958,$80a93c
+=== 0x80a976
+  cm550_runAllSpeedGovernor@c962                   0d094: move.w $80a99c,$80a976
+  cm550_runAllSpeedGovernor@c962                   0d0ae: move.w $80a99e,$80a976
+  cm550_runAllSpeedGovernor@c962                   0d0ba: move.w $800100,$80a976
+  cm550_runAllSpeedGovernor@c962                   0d0c4: move.w $80a976,$80ded2
+=== 0x80a9da
+  cm550_dutyCycleMonitorAltIsrHandler@338ea        338f4: movea.l #$80a9da,a3   [immediate]
+  cm550_dutyCycleMonitorAltIsrHandler@338ea        3394c: cmpi.w #$1,(a3)   ; a3=$80a9da
+  cm550_dutyCycleMonitorAltIsrHandler@338ea        33958: cmpi.w #$3,(a3)   ; a3=$80a9da
+  cm550_dutyCycleMonitorAltIsrHandler@338ea        33964: cmpi.w #$2,(a3)   ; a3=$80a9da
+=== 0x80bad7
+  cm550_FUN_0000ac3c@ac3c                          0ac46: movea.l #$80bad7,a4   [immediate]
+  cm550_FUN_0000ac3c@ac3c                          0af00: move.b #$1,(a4)   ; a4=$80bad7
+  cm550_FUN_0000ac3c@ac3c                          0af1c: move.b #$1,(a4)   ; a4=$80bad7
+  cm550_FUN_0000ac3c@ac3c                          0af2c: move.b #$2,(a4)   ; a4=$80bad7
+  cm550_FUN_0000ac3c@ac3c                          0af32: clr.b (a4)   ; a4=$80bad7
+  cm550_FUN_0000ac3c@ac3c                          0af34: cmpi.b #$1,(a4)   ; a4=$80bad7
+  cm550_FUN_0000ac3c@ac3c                          0af54: cmpi.b #$2,(a4)   ; a4=$80bad7
+=== 0x80bad8
+  cm550_FUN_0000af70@af70                          0b0a4: move.w d0,$80bad8
+=== 0x80bba6
+  cm550_FUN_0000af70@af70                          0b0b2: move.w d0,$80bba6
+=== 0x80bcd5
+  insiteCommandByteDispatcher@ed64                 0f16e: btst.b #1,$80bcd5
+  insiteCommandByteDispatcher@ed64                 0f17c: btst.b #0,$80bcd5
+  insiteCommandByteDispatcher@ed64                 0f18a: btst.b #3,$80bcd5
+  insiteCommandByteDispatcher@ed64                 0f198: btst.b #2,$80bcd5
+  insiteCommandByteDispatcher@ed64                 0f1a6: btst.b #4,$80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      153aa: or.b d0,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      153ba: ori.b #$10,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      153c2: andi.b #$ef,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      153de: or.b d0,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      153ee: ori.b #$4,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      153f6: andi.b #$fb,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      15412: or.b d0,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      15422: ori.b #$1,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      1542a: andi.b #$fe,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      15430: move.b (7,a4),d0   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      15454: move.b (7,a4),d0   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      15482: move.b (7,a4),d0   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      1549a: move.b (7,a4),d0   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      154a6: move.b (7,a4),d0   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      154ba: ori.b #$20,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      154c4: andi.b #$fb,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      154ca: andi.b #$fe,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      154d0: andi.b #$f7,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      154d6: andi.b #$fd,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      154de: andi.b #$df,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      154e4: btst.b #2,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      15518: ori.b #$8,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      1551e: andi.b #$fb,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      15526: ori.b #$2,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      1552c: andi.b #$fb,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      1553c: andi.b #$f7,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      15544: andi.b #$fd,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      1555a: andi.b #$f7,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      15562: andi.b #$fd,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      15568: btst.b #0,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      1559c: ori.b #$2,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      155a2: andi.b #$fe,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      155aa: ori.b #$8,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      155b0: andi.b #$fe,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      155c0: andi.b #$fd,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      155c8: andi.b #$f7,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      155de: andi.b #$fd,(7,a4)   ; a4=$80bcce -> $80bcd5
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      155e6: andi.b #$f7,(7,a4)   ; a4=$80bcce -> $80bcd5
+  cm550_FUN_00033f5a@33f5a                         33faa: move.b (7,a3),d0   ; a3=$80bcce -> $80bcd5
+  cm550_FUN_00033f5a@33f5a                         33fc8: move.b (7,a3),d0   ; a3=$80bcce -> $80bcd5
+  cm550_FUN_00033f5a@33f5a                         33fea: move.b (7,a3),d0   ; a3=$80bcce -> $80bcd5
+=== 0x80bcd9
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      151ec: move.b $80bcd9,d1
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      15842: move.b $80bcd9,d0
+  mc68k_sampleAndDebounceDiscreteInputs@14fca      15862: move.b $80bcd9,d0
+  mc68k_ioDriverStrobeHandler@159ee                15c9c: move.b $80bcd9,d1
+  cm550_FUN_000205c4@205c4                         2060e: andi.b #$fe,(1,a1)   ; a1=$80bcd8 -> $80bcd9
+  cm550_FUN_000205c4@205c4                         20620: ori.b #$1,(1,a1)   ; a1=$80bcd8 -> $80bcd9
+  cm550_FUN_000205c4@205c4                         20672: ori.b #$1,(1,a1)   ; a1=$80bcd8 -> $80bcd9
+  cm550_FUN_000205c4@205c4                         20686: andi.b #$fe,(1,a1)   ; a1=$80bcd8 -> $80bcd9
+  cm550_FUN_00020e14@20e14                         20f08: ori.b #$1,(1,a5)   ; a5=$80bcd8 -> $80bcd9
+  cm550_FUN_00020e14@20e14                         20f14: andi.b #$fe,(1,a5)   ; a5=$80bcd8 -> $80bcd9
+  cm550_FUN_00020e14@20e14                         20f5a: ori.b #$1,(1,a5)   ; a5=$80bcd8 -> $80bcd9
+  cm550_FUN_00020e14@20e14                         20f62: andi.b #$fe,(1,a5)   ; a5=$80bcd8 -> $80bcd9
+=== 0x80bd03
+  updateEngineSyncStatus@d610                      0d854: move.b $80bd03,d0
+  updateEngineSyncStatus@d610                      0d88c: btst.b #0,$80bd03
+  updateEngineSyncStatus@d610                      0da54: move.b $80bd03,d0
+  updateEngineSyncStatus@d610                      0da8c: btst.b #1,$80bd03
+  updateEngineSyncStatus@d610                      0dc54: move.b $80bd03,d0
+  updateEngineSyncStatus@d610                      0dc8c: btst.b #2,$80bd03
+  updateEngineSyncStatus@d610                      0de54: move.b $80bd03,d0
+  updateEngineSyncStatus@d610                      0de8c: btst.b #5,$80bd03
+  updateEngineSyncStatus@d610                      0e054: move.b $80bd03,d0
+  updateEngineSyncStatus@d610                      0e08c: btst.b #4,$80bd03
+  updateEngineSyncStatus@d610                      0e21a: move.b $80bd03,d0
+  updateEngineSyncStatus@d610                      0e252: btst.b #6,$80bd03
+  updateEngineSyncStatus@d610                      0e3e0: move.b $80bd03,d0
+  updateEngineSyncStatus@d610                      0e418: btst.b #3,$80bd03
+  updateEngineSyncStatus@d610                      0e5a6: move.b $80bd03,d0
+  updateEngineSyncStatus@d610                      0e5de: btst.b #7,$80bd03
+  mc68k_ioDriverStrobeHandler@159ee                15d24: move.b d0,$80bd03
+=== 0x80d0cc
+  vp44_FUN_000127c2@127c2                          130d2: cmpi.b #$1,$80d0cc
+  cm550_calculateEngineSpeed@171be                 174de: cmpi.b #$1,$80d0cc
+  cm550_calculateEngineSpeed@171be                 174e8: tst.b $80d0cc
+  mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0@19acc 19bf6: move.b #$2,$80d0cc
+  mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1@19e90 19f92: movea.l #$80d0cc,a4   [immediate]
+  mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1@19e90 1a066: move.b #$2,(a4)   ; a4=$80d0cc
+  mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1@19e90 1a076: move.b #$2,(a4)   ; a4=$80d0cc
+  mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1@19e90 1a084: move.b #$1,(a4)   ; a4=$80d0cc
+  mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1@19e90 1a08a: clr.b (a4)   ; a4=$80d0cc
+  mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1@19e90 1a0ce: cmpi.b #$2,(a4)   ; a4=$80d0cc
+  mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1@19e90 1a112: cmpi.b #$1,(a4)   ; a4=$80d0cc
+  mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2@1a52c 1a656: move.b #$2,$80d0cc
+  mc68k_crankFuelAndTimingBufferStore@1a6e8        1a6f2: movea.l #$80d0cc,a3   [immediate]
+  mc68k_crankFuelAndTimingBufferStore@1a6e8        1a71a: clr.b (a3)   ; a3=$80d0cc
+  mc68k_crankFuelAndTimingBufferStore@1a6e8        1a720: move.b #$2,(a3)   ; a3=$80d0cc
+  mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3@1a8a4 1a8c6: cmpi.b #$1,$80d0cc
+  vp44FaultThresholdTablesInit@1a95e               1a968: movea.l #$80d0cc,a3   [immediate]
+  vp44FaultThresholdTablesInit@1a95e               1a9c2: cmpi.b #$1,(a3)   ; a3=$80d0cc
+  vp44FaultThresholdTablesInit@1a95e               1a9c8: move.b #$2,(a3)   ; a3=$80d0cc
+  vp44FaultThresholdTablesInit@1a95e               1aace: cmpi.b #$1,(a3)   ; a3=$80d0cc
+  vp44FaultThresholdTablesInit@1a95e               1aad4: move.b #$2,(a3)   ; a3=$80d0cc
+  vp44FaultThresholdTablesInit@1a95e               1aafe: cmpi.b #$2,(a3)   ; a3=$80d0cc
+  vp44FaultThresholdTablesInit@1a95e               1ab48: move.b #$1,(a3)   ; a3=$80d0cc
+  vp44FaultThresholdTablesInit@1a95e               1ab6a: cmpi.b #$2,$80d0cc
+  mc68k_initializeTpuChannel1BackupSpeedInput@1ae22 1ae50: clr.b $80d0cc
+  mc68k_dutyCycleMonitorIsrHandler@1af32           1af48: movea.l #$80d0cc,a5   [immediate]
+  mc68k_dutyCycleMonitorIsrHandler@1af32           1afc4: move.b #$1,(a5)   ; a5=$80d0cc
+  mc68k_dutyCycleMonitorIsrHandler@1af32           1b032: move.b #$2,(a5)   ; a5=$80d0cc
+  mc68k_dutyCycleMonitorIsrHandler@1af32           1b0e4: move.b #$1,(a5)   ; a5=$80d0cc
+  mc68k_dutyCycleMonitorIsrHandler@1af32           1b152: move.b #$2,(a5)   ; a5=$80d0cc
+  mc68k_alignCylinderIndexToCrankRevolution@34b20  34b30: cmpi.b #$1,$80d0cc
+=== 0x80d0ce
+  mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1@19e90 1a052: tst.b $80d0ce
+  mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1@19e90 1a070: clr.b $80d0ce
+  mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1@19e90 1a07e: clr.b $80d0ce
+  mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1@19e90 1a08c: clr.b $80d0ce
+  mc68k_FUN_0001b30a@1b30a                         1b338: move.b #$1,$80d0ce
+=== 0x80d0d0
+  vp44FaultThresholdTablesInit@1a95e               1ab12: cmpi.b #$2,$80d0d0
+  vp44FaultThresholdTablesInit@1a95e               1ab8e: cmpi.b #$2,$80d0d0
+=== 0x80d288
+  cm550_engineProtectionMultiStateSlowCycle40Coordinator@18620 1868a: move.w $803f40,$80d288
+  cm550_calculateFaultDerateEngineSpeedLimit@18e0c 18f40: move.w d0,$80d288
+  initializeFaultDerateEngineSpeedLimit@18f4c      18f68: move.w $803f40,$80d288
+  selectEngineSpeedLimit@1d5a0                     1d5e6: move.w $80d288,d0
+  selectEngineSpeedLimit@1d5a0                     1d5f0: move.w $80d288,(a2)
+=== 0x80d334
+  cm550_diagnosticFuelLimitInterpolator@1c03c      1c064: move.w $80d334,(a2)
+  cm550_diagnosticFuelLimitInterpolator@1c03c      1c0ba: move.w $80d334,(a2)
+  fuelTimingOilPressureModeController@1c152        1c1a8: move.w $80a8f2,$80d334
+  fuelTimingOilPressureModeController@1c152        1c1ba: move.w $80deca,$80d334
+=== 0x80d358
+  vp44Message300FaultFlagProcessor@32c7a           32dce: cmpi.w #$1,$80d358
+  j1939HandlePgn61443Eec2@32e4c                    32fba: cmpi.w #$1,$80d358
+=== 0x80d664
+  selectEngineSpeedLimit@1d5a0                     1d942: move.w (a3),$80d664
+  initializeEngineSpeedLimitDefaults@1d94e         1d96a: move.w #$6,$80d664
+=== 0x80d714
+  cm550_FUN_00020c98@20c98                         20d18: cmpi.b #$fa,$80d714
+  cm550_FUN_00020c98@20c98                         20d30: move.b $80d714,d0
+  cm550_FUN_00020c98@20c98                         20d40: tst.b $80d714
+  cm550_FUN_00020c98@20c98                         20da6: cmpi.b #$fe,$80d714
+  cm550_FUN_00021b88@21b88                         21be0: move.b (1,a0),$80d714
+=== 0x80da28
+  vp44_fuelSourceOilPressureConditionChecker@fbe4  0ff06: move.w (a2),$80da28
+  buildPgn65251EngineConfiguration1Payload@3320e   33250: move.w $80da28,(a4)
+=== 0x80da54
+  selectEngineSpeedLimit@1d5a0                     1d5bc: cmpi.w #$1,$80da54
+  cm550_FUN_0001f4e8@1f4e8                         1f7fa: move.w #$1,$80da54
+  cm550_FUN_0001f4e8@1f4e8                         1f80a: clr.w $80da54
+  cm550_fuelDemandLimitOrchestrator@23244          2326e: cmp.w $80da54,d0
+  cm550_fuelDemandLimitOrchestrator@23244          23276: cmpi.w #$1,$80da54
+  cm550_fuelDemandLimitOrchestrator@23244          232aa: clr.w $80da54
+  cm550_fuelDemandLimitOrchestrator@23244          232dc: clr.w $80da54
+  cm550_fuelDemandLimitOrchestrator@23244          235d4: move.w $80da54,$801988
+  cm550_diagnosticServiceDispatcherByPgn@2efd0     2f04e: move.w #$1,$80da54
+  cm550_diagnosticServiceDispatcherByPgn@2efd0     2f070: clr.w $80da54
+=== 0x80da68
+  selectEngineSpeedLimit@1d5a0                     1d75c: cmpi.w #$1,$80da68
+  cm550_FUN_0001f4e8@1f4e8                         1f574: tst.w $80da68
+  cm550_FUN_0001f4e8@1f4e8                         1f5de: clr.w $80da68
+  cm550_engineFluidLevelDataBuilder@1f8bc          1f942: tst.w $80da68
+  cm550_engineFluidLevelDataBuilder@1f8bc          1f9ac: clr.w $80da68
+  cm550_memoryRegisterController@22070             2209c: move.w $80da68,d0
+  cm550_memoryRegisterController@22070             220f8: cmpi.w #$1,$80da68
+  cm550_memoryRegisterController@22070             221a4: move.w $80da68,$800b16
+  cm550_fuelDemandLimitOrchestrator@23244          2325a: movea.l #$80da68,a5   [immediate]
+  cm550_fuelDemandLimitOrchestrator@23244          23450: move.w (a5),d0   ; a5=$80da68
+  cm550_fuelDemandLimitOrchestrator@23244          23528: move.w (a5),-(a7)   ; a5=$80da68
+  cm550_fuelDemandLimitOrchestrator@23244          23568: move.w (a5),-(a7)   ; a5=$80da68
+  cm550_fuelDemandLimitOrchestrator@23244          23592: cmpi.w #$1,(a5)   ; a5=$80da68
+  cm550_fuelDemandLimitOrchestrator@23244          235a6: cmpi.w #$1,(a5)   ; a5=$80da68
+  cm550_fuelDemandLimitOrchestrator@23244          235c4: move.w (a5),$801984   ; a5=$80da68
+  processEngineTsc1Request@2f128                   2f1c0: cmpi.w #$1,$80da68
+  processEngineTsc1Request@2f128                   2f2a4: move.w #$1,$80da68
+=== 0x80da6a
+  cm550_FUN_0001f4e8@1f4e8                         1f83e: clr.w $80da6a
+  cm550_diagnosticServiceDispatcherByPgn@2efd0     2f0f4: move.w #$1,$80da6a
+=== 0x80de3e
+  mc68k_engineRpmHardwareTimerSetup@30290          302ac: cmpi.w #$1,$80de3e
+=== 0x80ded0
+  cm550_shutdownMinimumSelector16@c2a0             0c2b4: move.w #$10,$80ded0
+  cm550_diagnosticFuelLimitInterpolator@1c03c      1c0a6: move.w $80ded0,(a2)
+  cm550_diagnosticFuelLimitInterpolator@1c03c      1c0c8: move.w $80ded0,(a2)
+  fuelTimingOilPressureModeController@1c152        1c2da: move.w $80ded0,$80deca
+  cm550_FUN_0001ce58@1ce58                         1ce72: move.w #$28,$80ded0
+=== 0x80ded4
+  cm550_runAllSpeedGovernor@c962                   0c978: cmpi.w #$7,$80ded4
+  cm550_runAllSpeedGovernor@c962                   0c982: cmpi.w #$3,$80ded4
+  cm550_runAllSpeedGovernor@c962                   0c98c: cmpi.w #$2,$80ded4
+  cm550_runAllSpeedGovernor@c962                   0c996: cmpi.w #$1e,$80ded4
+  cm550_runAllSpeedGovernor@c962                   0c9a2: move.w $80ded4,d0
+  cm550_runAllSpeedGovernor@c962                   0cac6: cmpi.w #$7,$80ded4
+  cm550_runAllSpeedGovernor@c962                   0cba6: move.w $80ded4,d0
+  cm550_runAllSpeedGovernor@c962                   0d0ce: move.w $80ded4,$8000fe
+  cm550_diagnosticStatus30Setter@d18a              0d18a: movea.l #$80ded4,a0   [immediate]
+  cm550_diagnosticStatus30Setter@d18a              0d190: tst.w (a0)   ; a0=$80ded4
+  cm550_diagnosticStatus30Setter@d18a              0d19e: move.w #$1e,(a0)   ; a0=$80ded4
+  cm550_diagnosticStatus2Initializer@d1a4          0d1a4: movea.l #$80ded4,a1   [immediate]
+  cm550_diagnosticStatus2Initializer@d1a4          0d1aa: tst.w (a1)   ; a1=$80ded4
+  cm550_diagnosticStatus2Initializer@d1a4          0d1b8: move.w #$2,(a1)   ; a1=$80ded4
+  cm550_FUN_0000d4ae@d4ae                          0d4bc: movea.l #$80ded4,a3   [immediate]
+  cm550_FUN_0000d4ae@d4ae                          0d532: tst.w (a3)   ; a3=$80ded4
+  cm550_FUN_0000d4ae@d4ae                          0d53c: move.w #$7,(a3)   ; a3=$80ded4
+  cm550_diagnosticStatusDefaultSetter@1c630        1c630: movea.l #$80ded4,a0   [immediate]
+  cm550_diagnosticStatusDefaultSetter@1c630        1c636: tst.w (a0)   ; a0=$80ded4
+  cm550_diagnosticStatusDefaultSetter@1c630        1c63a: move.w #$8,(a0)   ; a0=$80ded4
+  cm550_diagnostic_parameter_handler@1c640         1c640: cmpi.w #$8,$80ded4
+  cm550_calculatePedalFaultModeFuelDemand@2571e    2573a: cmpi.w #$6,$80ded4
+  cm550_FUN_00025806@25806                         2581a: movea.l #$80ded4,a4   [immediate]
+  cm550_FUN_00025806@25806                         2582a: tst.w (a4)   ; a4=$80ded4
+  cm550_FUN_00025806@25806                         25848: move.w #$6,(a4)   ; a4=$80ded4
+  cm550_FUN_00025806@25806                         2589a: move.w #$6,(a4)   ; a4=$80ded4
+  cm550_oil_pressure_shutdown_controller@2dcb0     2dcb4: movea.l #$80ded4,a2   [immediate]
+  cm550_oil_pressure_shutdown_controller@2dcb0     2dccc: cmpi.w #$1,(a2)   ; a2=$80ded4
+  cm550_oil_pressure_shutdown_controller@2dcb0     2dcd2: cmpi.w #$2,(a2)   ; a2=$80ded4
+  cm550_oil_pressure_shutdown_controller@2dcb0     2dcd8: cmpi.w #$1e,(a2)   ; a2=$80ded4
+  cm550_oil_pressure_shutdown_controller@2dcb0     2dcde: cmpi.w #$3,(a2)   ; a2=$80ded4
+  cm550_oil_pressure_shutdown_controller@2dcb0     2dce4: move.w (a2),(a0)   ; a2=$80ded4
+  cm550_oil_pressure_shutdown_controller@2dcb0     2dd1a: cmpi.w #$7,(a2)   ; a2=$80ded4
+  cm550_oil_pressure_shutdown_controller@2dcb0     2dd20: cmpi.w #$8,(a2)   ; a2=$80ded4
+  cm550_oil_pressure_shutdown_controller@2dcb0     2dd4c: move.w (a2),(a0)   ; a2=$80ded4
+  cm550_oil_pressure_shutdown_controller@2dcb0     2dd7a: cmpi.w #$6,(a2)   ; a2=$80ded4
+  cm550_oil_pressure_shutdown_controller@2dcb0     2dd80: cmpi.w #$5,(a2)   ; a2=$80ded4
+  cm550_oil_pressure_shutdown_controller@2dcb0     2ddac: move.w (a2),(a0)   ; a2=$80ded4
+  cm550_setDiagnosticSourceFromFuelArbitrator@34540 34540: movea.l #$80ded4,a0   [immediate]
+  cm550_setDiagnosticSourceFromFuelArbitrator@34540 34546: tst.w (a0)   ; a0=$80ded4
+  cm550_setDiagnosticSourceFromFuelArbitrator@34540 34554: move.w #$1,(a0)   ; a0=$80ded4
+  cm550_setDiagnosticSourceFromEngineFlags@34564   34564: movea.l #$80ded4,a0   [immediate]
+  cm550_setDiagnosticSourceFromEngineFlags@34564   3456a: tst.w (a0)   ; a0=$80ded4
+  cm550_setDiagnosticSourceFromEngineFlags@34564   3457c: move.w #$5,(a0)   ; a0=$80ded4
+  cm550_engine_protection_coordinator@3458c        3458e: move.w $80ded4,d2
+  cm550_engine_protection_coordinator@3458c        34594: clr.w $80ded4

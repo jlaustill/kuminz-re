@@ -1,0 +1,4 @@
+address,name,old_label,kind,dims
+0x003fad70,j1939_pgn65232_payload.test_value,j1939_pgn65232_param_tx_word,symbol,1
+0x003fad72,j1939_pgn65232_payload.test_limit_maximum,j1939_pgn65232_field1_init_word,symbol,1
+0x003fad74,j1939_pgn65232_payload.test_limit_minimum,j1939_pgn65232_field2_init_word,symbol,1

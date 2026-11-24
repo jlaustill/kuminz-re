@@ -1,0 +1,171 @@
+01873e: movem.l	%d2-%d5, -(%sp)
+018742: move.l	#8430250, %a4
+018748: move.l	#8410546, %a5
+01874e: move.l	#8442076, %a2
+018754: move.l	#8417330, %a3
+01875a: move.l	#8425958, (%a2)
+018760: move.w	#1, (4,%a2)
+018766: move.l	#8410466, (38,%a2)
+01876e: moveq	#46, %d0   [manual]
+018770: adda.l	%d0, %a2
+018772: moveq	#36, %d0   [manual]
+018774: adda.l	%d0, %a3
+018776: move.l	%a4, %d0
+018778: addi.l	#140, %d0   [manual]
+01877e: move.l	%d0, (%a2)
+018780: move.l	%a3, %d0
+018782: moveq	#10, %d1   [manual]
+018784: add.l	%d1, %d0
+018786: move.l	%d0, (10,%a2)
+01878a: move.l	%a3, %d0
+01878c: moveq	#12, %d1   [manual]
+01878e: add.l	%d1, %d0
+018790: move.l	%d0, (14,%a2)
+018794: move.l	%a3, %d0
+018796: moveq	#14, %d1   [manual]
+018798: add.l	%d1, %d0
+01879a: move.l	%d0, (18,%a2)
+01879e: move.l	#8410506, (38,%a2)
+0187a6: move.l	#8410506, (42,%a2)
+0187ae: moveq	#46, %d0   [manual]
+0187b0: adda.l	%d0, %a2
+0187b2: moveq	#36, %d0   [manual]
+0187b4: adda.l	%d0, %a3
+0187b6: move.l	#8430186, (%a2)
+0187bc: move.l	%a3, %d0
+0187be: moveq	#10, %d1   [manual]
+0187c0: add.l	%d1, %d0
+0187c2: move.l	%d0, (10,%a2)
+0187c6: move.l	%a3, %d0
+0187c8: moveq	#12, %d1   [manual]
+0187ca: add.l	%d1, %d0
+0187cc: move.l	%d0, (14,%a2)
+0187d0: move.l	%a3, %d0
+0187d2: moveq	#14, %d1   [manual]
+0187d4: add.l	%d1, %d0
+0187d6: move.l	%d0, (18,%a2)
+0187da: move.l	%a5, (38,%a2)
+0187de: move.l	%a5, (42,%a2)
+0187e2: moveq	#46, %d0   [manual]
+0187e4: adda.l	%d0, %a2
+0187e6: moveq	#36, %d0   [manual]
+0187e8: adda.l	%d0, %a3
+0187ea: move.l	%a4, %d0
+0187ec: moveq	#96, %d1   [manual]
+0187ee: add.l	%d1, %d0
+0187f0: move.l	%d0, (%a2)
+0187f2: move.l	#8444606, (10,%a2)
+0187fa: move.l	#8444608, (18,%a2)
+018802: move.l	#8410586, (38,%a2)
+01880a: move.l	#8410626, (42,%a2)
+018812: moveq	#46, %d0   [manual]
+018814: adda.l	%d0, %a2
+018816: moveq	#36, %d0   [manual]
+018818: adda.l	%d0, %a3
+01881a: move.l	%a4, %d0
+01881c: addi.l	#448, %d0   [manual]
+018822: move.l	%d0, (%a2)
+018824: move.l	%a3, %d0
+018826: moveq	#10, %d1   [manual]
+018828: add.l	%d1, %d0
+01882a: move.l	%d0, (10,%a2)
+01882e: move.l	%a3, %d0
+018830: moveq	#12, %d1   [manual]
+018832: add.l	%d1, %d0
+018834: move.l	%d0, (14,%a2)
+018838: move.l	%a3, %d0
+01883a: moveq	#14, %d1   [manual]
+01883c: add.l	%d1, %d0
+01883e: move.l	%d0, (18,%a2)
+018842: move.l	#8410666, (38,%a2)
+01884a: move.l	#8410710, (42,%a2)
+018852: moveq	#46, %d0   [manual]
+018854: adda.l	%d0, %a2
+018856: moveq	#36, %d0   [manual]
+018858: adda.l	%d0, %a3
+01885a: move.l	%a4, %d0
+01885c: moveq	#118, %d1   [manual]
+01885e: add.l	%d1, %d0
+018860: move.l	%d0, (%a2)
+018862: move.l	%a3, %d0
+018864: moveq	#10, %d1   [manual]
+018866: add.l	%d1, %d0
+018868: move.l	%d0, (10,%a2)
+01886c: move.l	%a3, %d0
+01886e: moveq	#12, %d1   [manual]
+018870: add.l	%d1, %d0
+018872: move.l	%d0, (14,%a2)
+018876: move.l	%a3, %d0
+018878: moveq	#14, %d1   [manual]
+01887a: add.l	%d1, %d0
+01887c: move.l	%d0, (18,%a2)
+018880: move.l	#8410750, (38,%a2)
+018888: move.l	#8410790, (42,%a2)
+018890: moveq	#46, %d0   [manual]
+018892: adda.l	%d0, %a2
+018894: moveq	#36, %d0   [manual]
+018896: adda.l	%d0, %a3
+018898: move.l	%a4, %d0
+01889a: moveq	#74, %d1   [manual]
+01889c: add.l	%d1, %d0
+01889e: move.l	%d0, (%a2)
+0188a0: move.l	%a3, %d0
+0188a2: moveq	#10, %d1   [manual]
+0188a4: add.l	%d1, %d0
+0188a6: move.l	%d0, (10,%a2)
+0188aa: move.l	%a3, %d0
+0188ac: moveq	#12, %d1   [manual]
+0188ae: add.l	%d1, %d0
+0188b0: move.l	%d0, (14,%a2)
+0188b4: move.l	%a3, %d0
+0188b6: moveq	#14, %d1   [manual]
+0188b8: add.l	%d1, %d0
+0188ba: move.l	%d0, (18,%a2)
+0188be: move.l	#8410830, (38,%a2)
+0188c6: move.l	#8410870, (42,%a2)
+0188ce: moveq	#46, %d0   [manual]
+0188d0: adda.l	%d0, %a2
+0188d2: moveq	#36, %d0   [manual]
+0188d4: adda.l	%d0, %a3
+0188d6: move.l	#8430164, (%a2)
+0188dc: move.l	%a3, %d0
+0188de: moveq	#10, %d1   [manual]
+0188e0: add.l	%d1, %d0
+0188e2: move.l	%d0, (10,%a2)
+0188e6: move.l	%a3, %d0
+0188e8: moveq	#12, %d1   [manual]
+0188ea: add.l	%d1, %d0
+0188ec: move.l	%d0, (14,%a2)
+0188f0: move.l	%a3, %d0
+0188f2: moveq	#14, %d1   [manual]
+0188f4: add.l	%d1, %d0
+0188f6: move.l	%d0, (18,%a2)
+0188fa: move.l	#8410910, (38,%a2)
+018902: move.l	#8410950, (42,%a2)
+01890a: moveq	#46, %d0   [manual]
+01890c: adda.l	%d0, %a2
+01890e: moveq	#36, %d0   [manual]
+018910: adda.l	%d0, %a3
+018912: move.l	%a4, %d0
+018914: addi.l	#272, %d0   [manual]
+01891a: move.l	%d0, (%a2)
+01891c: move.l	%a3, %d0
+01891e: moveq	#10, %d1   [manual]
+018920: add.l	%d1, %d0
+018922: move.l	%d0, (10,%a2)
+018926: move.l	%a3, %d0
+018928: moveq	#12, %d1   [manual]
+01892a: add.l	%d1, %d0
+01892c: move.l	%d0, (14,%a2)
+018930: move.l	%a3, %d0
+018932: moveq	#14, %d1   [manual]
+018934: add.l	%d1, %d0
+018936: move.l	%d0, (18,%a2)
+01893a: move.l	#8410990, (38,%a2)
+018942: move.l	#8411030, (42,%a2)
+01894a: jsr	$18f4c
+018950: jsr	$19960
+018956: jsr	$192e0
+01895c: clr.w	$80060e   [manual]
+018962: movem.l	(%sp)+, %a2-%a5
+018966: rts
