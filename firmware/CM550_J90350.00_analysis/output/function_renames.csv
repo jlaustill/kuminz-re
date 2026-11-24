@@ -11,7 +11,7 @@ address,name
 0x00003836,cm550_huffmanDecompressMain
 0x00003870,cm550_busyWaitDelayLoop
 0x0000388a,mc68k_portPinTestSequence2
-0x0000395a,mc68k_waitForChipSelect2InputBit0High,Services both watchdogs (SIM_SWSR / CS2_WATCHDOG_SERVICE) and then waits until bit 0 of the chip select 2 device's register 0 (0xFFD000) reads 1 in 5 consecutive samples (cm550_busyWaitDelayLoop between them) - the same pattern as CM848's cm848_waitForStableIgnitionKeyOn; the signal is not identified (was cm550_FUN_0000395a; PR #53 round 84; mc68k_ because it writes SIM_SWSR - round 84 stage B)
+0x0000395a,mc68k_waitForChipSelect2InputBit0High,Services both watchdogs (SIM_SWSR / CS2_WATCHDOG_SERVICE) and then waits until bit 0 of the chip select 2 device's register 0 (0xFFD000) reads 1 in 5 consecutive samples (cm550_busyWaitDelayLoop between them) - the same pattern as CM848's cm848_waitForStableIgnitionKeyOn; the signal is not identified (was cm550_FUN_0000395a; PR #53 round 84; mc68k_ because it polls the chip select 2 device's register 0xFFD000 - the watchdog kick alone would not make it mc68k_ (commit 16143a5c); round 84 stage B / round 85)
 0x000039a8,mc68k_checkSerialEepromSignature,Reads the serial EEPROM's first word over the QSPI and checks it: sets up the QSPI (QSM_SPCR0-2 / QSM_PQSPAR / QSM_DDRQS) - queues READ (command 3) at address 0 and 14 clock bytes - waits for QSM_SPSR - returns 0x6000 when the received QSM_RR2:QSM_RR3 is 0x600d (CM848's ECM_STATUS_CALIBRATION_VALID) and 1 otherwise. No TPU or QADC register is involved (was mc68k_tpuAndQadcVerification; PR #53 round 81)
 0x00003a94,mc68k_hardwareInitAndStartup
 0x00003abe,mc68k_FUN_00003abe
@@ -112,12 +112,12 @@ address,name
 0x00010822,vp44_derateThresholdMonitorAndFaultController
 0x00010e06,cm550_FUN_00010e06
 0x00010e16,cm550_diagnosticMemoryAddressResolver
-0x00010e80,cm550_calibrationDataCopyWithChecksum
-0x00010f32,cm550_calibrationDataCopySecondary
-0x00010fe0,cm550_eepromCalibrationWriteSecondary
-0x0001125a,cm550_FUN_0001125a
+0x00010e80,cm550_loadParameterBlock1FromFlash,Start-up load of flash parameter block 1: it copies flash 0x4000-0x55B3 into the RAM copy 0x804F96-0x806549 - sets calibration_bank_active = 1 and returns 0 - only when the word sum of 0x4000-0x55B3 matches EEPROM 0x8 or the marker word 0x55B2 holds 0xA1A1; otherwise it returns 1 and copies nothing. Its only hardware access is the inline watchdog kick, so not mc68k_ (commit 16143a5c) (was cm550_calibrationDataCopyWithChecksum; PR #53 round 85)
+0x00010f32,cm550_loadParameterBlock2FromFlash,The block 2 loader: it copies flash 0x6000-0x75B3 into the same RAM copy - sets calibration_bank_active = 2 and returns 0 - only when the word sum of 0x6000-0x75B3 matches EEPROM 0xA (no marker exception); otherwise it returns 1. Its only hardware access is the inline watchdog kick, so not mc68k_ (commit 16143a5c) (was cm550_calibrationDataCopySecondary; PR #53 round 85)
+0x00010fe0,cm550_saveParameterBlock1ToFlash,Saves the RAM copy (0x804F96) into flash parameter block 1: it bumps calibration_bank1_write_sequence so the bank 1 + bank 2 sum ends odd (block 1 = newest) - erases block 0x4000 with cm550_flashEraseFromRam - programs 0x4000-0x55B1 - stores the new block sum in EEPROM 0x8 and the sequence at 0x803FD8 - and sets calibration_bank_active = 1. Returns 0 saved / 2 a program step failed / 1 or 2 after a failed erase. Its only hardware access is the inline watchdog kick, so not mc68k_ (commit 16143a5c) (was cm550_eepromCalibrationWriteSecondary; PR #53 round 85)
+0x0001125a,cm550_saveParameterBlock2ToFlash,The block 2 saver: the sequence sum ends even (block 2 = newest); it erases block 0x6000 - programs 0x6000-0x75B1 from RAM 0x804F96 - stores the block sum in EEPROM 0xA and the sequence at 0x803FE0 - and sets calibration_bank_active = 2. The same return codes as cm550_saveParameterBlock1ToFlash. Its only hardware access is the inline watchdog kick, so not mc68k_ (commit 16143a5c) (was cm550_FUN_0001125a; PR #53 round 85)
 0x000114d4,vp44_validateRedundantSensors
-0x000117ec,cm550_firmwareDataCopyToWorkingMemory
+0x000117ec,cm550_copyCalibrationFromRomToRam,Copies 2401 dwords from ROM 0x61376-0x638F9 (above the dumped 256 KB) into RAM 0x80654A-0x808ACD - the calibration parameters (1757 named e2m rows there) - once at start-up after cm550_clearWorkingMemory. CM848's cm848_copyRomToRamBuffer holds the same start-up slot. Its only hardware access is the inline watchdog kick, so not mc68k_ (commit 16143a5c) (was cm550_firmwareDataCopyToWorkingMemory; PR #53 round 85)
 0x0001183e,cm550_FUN_0001183e
 0x0001188c,exitDevelopmentMode,Leaves development mode: only while development_mode (0x80de30) is 1 - clears it / ram_refresh_enable on / run_location RUN_LOCATION_NORMAL / result 0; else 4. The same function as CM848 0x21624 (shared name; was cm550_waterInFuelDetectionStateInit; PR #53 round 73).
 0x000118b2,enterDevelopmentMode,Enters development mode (J1708 command 3 subcommand 0x40 after the security key): ram_refresh_enable off / development_mode (0x80de30) set / run_location RUN_LOCATION_DEVELOPMENT; result 0. The same function as CM848 0x21668 (shared name; was cm550_waterInFuelFaultClear; PR #53 round 73).
@@ -166,13 +166,12 @@ address,name
 0x00014dc6,cm550_faultFlagScannerAndProcessor
 0x00014f42,cm550_insitePidDtcHandler
 0x00014fae,cm550_initHourMeterSystem
-0x00014fca,injectorTimingCalculation
+0x00014fca,mc68k_sampleAndDebounceDiscreteInputs,The discrete input sampler and debouncer - nothing in it concerns injector timing: it reads the chip select 2 device's input bytes 0xFFD000-0xFFD003 / 0xFFD005 / 0xFFD007 and SIM_PORTE0 / SIM_PORTF0 - XORs them with the polarity masks into three 4-sample rings - debounces each byte as (AND of 4) | (OR of 4 & previous) - then decodes the PTO and cruise switches with 25-pass hold counters and two 50-pass switch-pair faults (was injectorTimingCalculation; PR #53 round 85)
 0x000159ee,mc68k_ioDriverStrobeHandler
 0x00015dd0,vp44_initVP44StatusMonitoring
 0x00015df0,mc68k_FUN_00015df0
-0x00015e06,clearModuleSyncFlag
 0x00015f8c,emptyStubFunction4
-0x00015f8e,diagnosticCommandDispatcher
+0x00015f8e,mc68k_dispatchJ1708ReceivedMessages,Drains the J1708 receive buffer for at most 500 CTM4_BIUTBR ticks: first it sends the deferred reply commitEepromMirrorToEeprom arms (once the EEPROM write queue is empty); each record is [length][message bytes] and the first message byte picks the handler (3 = the 10-byte key through validateSecurityKey and then commands 0x40-0x54 - 4 = control commands 0x64-0x76 - 5 = memory read / write / multipacket). Its old shared name came from a pairing CM848 later dropped (was diagnosticCommandDispatcher; PR #53 round 85)
 0x0001645e,cm550_safeDivideWithClamp
 0x0001651e,cm550_clampedDivisionCalculator
 0x000165f2,cm550_param_address_calc
@@ -234,26 +233,26 @@ address,name
 0x000196e4,cm550_shutdownMinimumSelector29
 0x00019702,cm550_FUN_00019702
 0x00019960,cm550_initShutdownLimitVariables
-0x0001999c,mc68k_initializeTpuChannel10PrimarySpeedInputDivided,Sets up TPU channel 10 for the primary speed sensor and fills its pulse period table (pulse_period_table_table_containing_main_speed_pulse_per_1000_65535): parameter 1 = DAT_00807ecc << 8 - parameter 0 = 0xb - HSQR0 bits 0x30 - handler vp44_rpmTimerInterruptHandler2. The other mode is mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled. No CAN register is involved (was mc68k_can1TimerBufferInitDivided; PR #53 round 82)
+0x0001999c,mc68k_initializeTpuChannel10PrimarySpeedInputDivided,Sets up TPU channel 10 for the primary speed sensor and fills its pulse period table (pulse_period_table_table_containing_main_speed_pulse_per_1000_65535): parameter 1 = DAT_00807ecc << 8 - parameter 0 = 0xb - HSQR0 bits 0x30 - handler mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0. The other mode is mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled. No CAN register is involved (was mc68k_can1TimerBufferInitDivided; PR #53 round 82)
 0x000199fa,mc68k_phase2_slot_0_handler
 0x00019ac2,cm550_delayWithWatchdogServiceWrapper2
 0x00019aca,cm550_emptyStubFunction7
-0x00019acc,vp44_rpmTimerInterruptHandler2
+0x00019acc,mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0,The TPU channel 10 (primary engine speed sensor) interrupt handler for speed_measurement_mode 0 (saves d0-d1 / a0-a5 and ends in RTE): it reads the 32-bit pulse period from channel 10 parameters 4-5 and clears parameter 4 - updates the pulse period ring with its per-cam and per-cylinder sums - the tooth counter and the lost-sensor timeout - checks the cylinder identification pulse - then runs the main / backup phase comparator and clears TPU_CISR bit 10 (was vp44_rpmTimerInterruptHandler2; PR #53 round 85)
 0x00019caa,mc68k_FUN_00019caa
 0x00019dd0,mc68k_initializeTpuChannel0MissingToothInput,Sets up TPU channel 0 (its CIER / HSRR1 bits and parameters 2-6) for the missing-tooth wheel input: it uses pmm_ratio_tooth_spacing_at_which_missing_tooth_is_found_0_1_9921875 / pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 / tooth_count_at_which_missing_tooth_not_detct_err_0_255. No CAN register is involved (was mc68k_can1MessageTransmitInit2; PR #53 round 82)
 0x00019e8e,cm550_FUN_00019e8e
-0x00019e90,vp44_FUN_00019e90
+0x00019e90,mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1,The TPU channel 10 primary speed interrupt handler for speed_measurement_mode 1 (set up with mc68k_initializeTpuChannel0MissingToothInput): the mode 0 period read / ring / sums / lost-sensor timeout without the tooth counter and the cylinder identification check - then the same phase comparator and TPU_CISR bit 10 tail. It is the handler the dumped ECU runs (RAM 0x808F04 = 0x19E90) (was vp44_FUN_00019e90; PR #53 round 85)
 0x0001a1e0,cm550_rpmTimingDeltaComparatorWithReturn
 0x0001a298,cm550_FUN_0001a298
 0x0001a350,mc68k_FUN_0001a350
 0x0001a47c,mc68k_FUN_0001a47c
 0x0001a52a,cm550_FUN_0001a52a
-0x0001a52c,vp44_FUN_0001a52c
+0x0001a52c,mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2,The TPU channel 10 primary speed interrupt handler for speed_measurement_mode 2: ROM 0x1A52C-0x1A6E7 is the same 444 bytes as the mode 0 handler (0x19ACC-0x19C87); only its set-up differs (channel 10 parameter 1 from the per-cam pulse count, paired with the channel 0 missing-tooth set-up) (was vp44_FUN_0001a52c; PR #53 round 85)
 0x0001a6e8,mc68k_crankFuelAndTimingBufferStore
-0x0001a746,mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled,The same set-up of TPU channel 10 for the primary speed sensor as mc68k_initializeTpuChannel10PrimarySpeedInputDivided but only when _ESSXSNEN bit 0 is set and in the other mode: parameter 1 = 0x100 - parameter 0 = 7 - HSQR0 bits 0x20 - handler vp44_FUN_0001a8a4. No CAN register is involved (was mc68k_can1TimerBufferInitConditional; PR #53 round 82)
+0x0001a746,mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled,The same set-up of TPU channel 10 for the primary speed sensor as mc68k_initializeTpuChannel10PrimarySpeedInputDivided but only when _ESSXSNEN bit 0 is set and in the other mode: parameter 1 = 0x100 - parameter 0 = 7 - HSQR0 bits 0x20 - handler mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3. No CAN register is involved (was mc68k_can1TimerBufferInitConditional; PR #53 round 82)
 0x0001a89a,cm550_FUN_0001a89a
 0x0001a8a2,cm550_FUN_0001a8a2
-0x0001a8a4,vp44_FUN_0001a8a4
+0x0001a8a4,mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3,The TPU channel 10 primary speed interrupt handler for speed_measurement_mode 3 (saves d0-d3 / a0-a1 and ends in RTE): it reads the period and the edge time TPU_CH10_PARAM2 - clears parameter 4 - passes them to cm550_throttleTimeAccumulatorProcessor (in fact the mode 3 period ring / sync gap processor) - re-arms channel 10 (parameter 0 and HSR 2) - then runs the same phase comparator tail (was vp44_FUN_0001a8a4; PR #53 round 85)
 0x0001a95a,cm550_throttleTimeAccumulatorProcessor
 0x0001a95e,vp44FaultThresholdTablesInit
 0x0001abb2,cm550_FUN_0001abb2
@@ -345,9 +344,9 @@ address,name
 0x0001c0d4,cm550_FUN_0001c0d4
 0x0001c152,fuelTimingOilPressureModeController
 0x0001c308,cm550_FUN_0001c308
-0x0001c31a,cm550_flashEraseWithWatchdog
-0x0001c484,cm550_FUN_0001c484
-0x0001c4ba,cm550_flashProgramWordWithWatchdog
+0x0001c31a,mc68k_flashEraseBlock,Flash block erase - run only from the 2 KB stack copy cm550_flashEraseFromRam makes: it writes 0x2020 / 0xD0D0 (erase set-up / confirm) to *flash_target_address_ptr and polls the status word for bit 7 up to 40000 times. Returns 0 erased / 1 erase error (status bit 5) or timeout / 2 suspended (0xB0B0) when the suspend check is on and bit 0 of the chip select 2 device's register 0 reads 1 on 4 consecutive reads. The .cpp drops the 0 path and the status commands - read ROM 0x1C354 onward. mc68k_ for the 0xFFD000 read (was cm550_flashEraseWithWatchdog; PR #53 round 85)
+0x0001c484,cm550_flashEraseFromRam,The erase runner - the erase twin of cm550_flashProgramFromRam: it stores the block address in flash_target_address_ptr and the suspend flag at 0x8006A6 (1 = never suspend: the boot block; 0 from the parameter block savers), copies mc68k_flashEraseBlock (0x1C31A-0x1C483) into a 2 KB stack buffer and calls the copy. Returns its result: 0 erased / 1 error or timeout / 2 suspended (was cm550_FUN_0001c484; PR #53 round 85)
+0x0001c4ba,cm550_flashProgramAndVerifyWords,The RAM-run flash programmer (run only from the stack copy cm550_flashProgramFromRam makes): for each word up to the end pointer at 0x8006A2 it writes 0x4040 and the source word - polls the status up to 5000 times - accepts the word only when status & 0xF8F8 = 0x0080 and the read-back matches - and retries a failed word up to 5 times. Returns 1 all words programmed / 0 a word failed (the .cpp's 'return 0' on both exits is wrong). Its only hardware access is the inline watchdog kick, so not mc68k_ (commit 16143a5c) (was cm550_flashProgramWordWithWatchdog; PR #53 round 85)
 0x0001c5e8,cm550_flashProgramFromRam
 0x0001c630,cm550_diagnosticStatusDefaultSetter
 0x0001c640,cm550_diagnostic_parameter_handler
@@ -395,7 +394,7 @@ address,name
 0x0001e288,mc68k_j1708SciInterruptHandler,The J1708 SCI interrupt handler: on QSM_SCSR RDRF (0x40) it reads the byte from QSM_SCDR into the J1708 receive buffer and adds it to the checksum - while transmitting it sends the next transmit byte to QSM_SCDR and at the end the two's complement of the checksum (~sum + 1) - and it clears QSM_SCCR1 RIE when the receive buffer is full. No EPS position sensor is involved (was mc68k_epsPositionSensorIsrHandler; PR #53 round 75)
 0x0001e522,cm550_tpuChannelIsrRegister
 0x0001e52e,mc68k_canCs4TransmitNextFrame,Sends the next frame on the 82527 CAN controller on chip select 4: writes a message object's control register through _can_control_register_pointer - copies the next 14-byte entry of the CAN transmit ring (0x80D896-0x80D9A0) with cm550_canFrameDataCopy(&CAN_CS4_CONTROL) and advances the ring pointer. No serial port is involved (was serialTransmitHandler; PR #53 round 81)
-0x0001e5f0,cm550_FUN_0001e5f0
+0x0001e5f0,mc68k_queueCanCs4ReceiveMessage,Copies the frame in message object n of the chip select 4 82527 (n = the low byte of its word argument) into the next 18-byte entry of the CAN receive ring: the identifier (arbitration >> 3) - the length - a pointer to the entry's data - the 8 data bytes. Objects 1-14 are re-read while control 1 bit 1 is set again; object 15 is read at 0xFFD8F2 / 0xFFD8F6 / 0xFFD8F7. The ring wraps from past 0x80D884 to 0x80D72E (was cm550_FUN_0001e5f0; PR #53 round 85)
 0x0001e734,cm550_interruptCounter1Increment
 0x0001e76a,cm550_interruptCounter2Increment
 0x0001e77a,cm550_initVectorTable
@@ -585,24 +584,16 @@ address,name
 0x00027706,cm550_insiteCapacityResponseBuilder
 0x000277e6,cm550_FUN_000277e6
 0x00027998,vp44_hourMeterEventLogger
-0x00027af0,vp44StatusInitAndWait
+0x00027af0,cm550_restartOnKeyOnDuringPowerDown,Services both watchdogs and re-samples the discrete inputs - adds 1 to the completed power-down count (0x803FEC) and queues the EEPROM write - waits up to 1000 passes - writes the power cycle sequence number 0x803FE2 = the incomplete count (0x803FEA) + the completed count - waits again - and jumps to the application main's restart entry 0x28978. CM848's cm848_restartOnKeyOnDuringPowerDown runs the same steps. Its only hardware access is the inline watchdog kick, so not mc68k_ (commit 16143a5c) (was vp44StatusInitAndWait; PR #53 round 85)
 0x00027c20,vp44_FUN_00027c20
-0x00027cd0,vp44_FUN_00027cd0
-0x00027f9c,vp44_FUN_00027f9c
-0x000284e8,vp44_FUN_000284e8
-0x00028508,vp44_mainSystemInitialization
-0x0002874a,vp44_slowCycle4Coordinator
-0x00028792,vp44_engineDiagnosticSystemCoordinator
-0x00028816,cm550_fuelDemandUpdateOrchestrator
-0x00028828,cm550_advancedEngineProtectionCoordinator
-0x00028936,cm550_shutdownMinimumSelectorOrchestrator
+0x00027cd0,cm550_savePowerDownDataToFlashBank,Writes the RAM power-down data block into the flash bank its word argument names first (1 = bank 1 at 0x4000 through cm550_saveParameterBlock1ToFlash; otherwise bank 2 at 0x6000 through cm550_saveParameterBlock2ToFlash) with up to 3 attempts; when all fail it sets 0x803FE8 = 1 and - unless enable_to_protects_parameter_block_data_at_powerdown is set - writes the other bank. Its only hardware access is the inline watchdog kick, so not mc68k_ (commit 16143a5c) (was vp44_FUN_00027cd0; PR #53 round 85)
+0x00027f9c,mc68k_runPowerDownSequence,The power-down sequence mc68k_applicationMain runs after its background loop ends (ROM 0x289FA; the .cpp shows no caller because Ghidra prunes the main's exit). CM848's cm848_runPowerDownSequence runs the same sequence with the same constants. mc68k_ for its CTM4_BIUTBR reads (was vp44_FUN_00027f9c; PR #53 round 85)
+0x000284e8,mc68k_applicationMain,The application main: mc68k_main calls it once (ROM 0x1DCF4) and it never returns. Its start-up clears working RAM (cm550_clearWorkingMemory) after mc68k_loadTpuMicrocode - copies the calibration (cm550_copyCalibrationFromRomToRam) - loads a parameter block - and configures the QSM / SIM / TPU / CTM4 interrupts and channels; then it runs the background loop and mc68k_runPowerDownSequence. 0x28978 inside it is the restart entry cm550_restartOnKeyOnDuringPowerDown jumps to. CM848's cm848_applicationMain has the same skeleton (was vp44_FUN_000284e8; PR #53 round 85)
 0x00028978,cm550_FUN_00028978
-0x00028990,cm550_phase4InitSequence
 0x00028a04,mc68k_dualCanControllerInit
-0x00028b80,initDiagnosticBufferPointers
-0x00028e32,cm550_mainCanTransmissionLoop
+0x00028b80,mc68k_initializeJ1939Datalink,Initializes the J1939 datalink on the chip select 4 82527: the CAN transmit / receive ring pointers - the transport frame buffers - a 4-entry source address list of 0xFE - 21 transmit buffer initializers - 19 periodic schedule entries - and the remaining set-up / registration calls. Its old shared name came from a pairing CM848 later dropped (was initDiagnosticBufferPointers; PR #53 round 85)
 0x00029130,mc68k_initializeJ1708Datalink,Initializes the J1708 datalink: the secure write scratch pad - the diagnostic buffer pointers (cm550_diagnosticBufferPointerInit) - the J1708 receive state - the multipacket flags - the broadcast enable word (from EEPROM 0x47e) - the InSite parameter schedule (next due ticks from insite_parameter_schedule_table) - then the QSM SCI (QSM_SCCR0 = 0x34 / QSM_SCCR1 = 0x102c). Six startup functions call it (was mc68k_FUN_00029130; PR #53 round 75)
-0x0002ce64,cm550_updateBootBlockFromImage,Reprograms the boot block from boot_block_image: when boot_block_version (ROM 0x16) is non-zero and _this_key_must_be_set_to_bad1_before_boot_block_is_programmed_none is 0xbad1 with boot_block_version below boot_block_image_version - or 0x1d1d with a different version - it sets the boot block programming enable flag bit 2 - erases (cm550_FUN_0001c484(0 / 1)) - and copies 0x291F4 up to this function's address through a 256-byte RAM buffer into flash at address 0 with cm550_flashProgramFromRam (was cm550_FUN_0002ce64; PR #53 round 84)
+0x0002ce64,cm550_updateBootBlockFromImage,Reprograms the boot block from boot_block_image: when boot_block_version (ROM 0x16) is non-zero and _this_key_must_be_set_to_bad1_before_boot_block_is_programmed_none is 0xbad1 with boot_block_version below boot_block_image_version - or 0x1d1d with a different version - it sets the boot block programming enable flag bit 2 - erases (cm550_flashEraseFromRam(0 / 1)) - and copies 0x291F4 up to this function's address through a 256-byte RAM buffer into flash at address 0 with cm550_flashProgramFromRam (was cm550_FUN_0002ce64; PR #53 round 84)
 0x0002cf52,cm550_FUN_0002cf52
 0x0002cf7e,cm550_FUN_0002cf7e
 0x0002d09e,cm550_systemControl64
@@ -621,7 +612,7 @@ address,name
 0x0002ddbc,cm550_FUN_0002ddbc
 0x0002ddce,mc68k_hardwareTimerFlagsInit
 0x0002ddd6,mc68k_initDiagnosticModeSystem
-0x0002dde8,oilPressureRpmFaultMonitor
+0x0002dde8,mc68k_monitorPwmOutputReadBackFaults,A PWM output driver read-back fault monitor - nothing in it reads oil pressure or engine speed: for PWM1 / PWM2 / PWM5 with a non-zero period it compares the read-back pin (bit 7 of DASM10SIC / DASM9SIC / DASM4SIC) with the commanded duty - a high pin at 0 % or a low pin at 100 % counts a driver error and the right level heals it. For its first 6 passes it also steps mc68k_waterInFuelDiagnosticHandler (in fact the PWM 3 / 4 start-up check) (was oilPressureRpmFaultMonitor; PR #53 round 85)
 0x0002e2f4,mc68k_waterInFuelDiagnosticHandler
 0x0002e5c0,mc68k_pwmFuelDemandOutputCalculator
 0x0002e95e,initQadcModule
@@ -652,7 +643,7 @@ address,name
 0x0002fb70,cm550_torqueControlAddressDispatcher
 0x0002fbb2,cm550_FUN_0002fbb2
 0x0002fbd8,unscrambleSecurityKey,Unscrambles the 10-byte security key: each bit goes to the front of the work buffer when its security_key_scramble_mask bit is 0 and to the back otherwise / each work byte is XORed with the work byte its security_key_byte_order entry names / the output is written through security_key_byte_order backwards. The same function and tables as CM848 0x555cc / 0x5839a / 0x583a4 (shared name; was cm550_FUN_0002fbd8; PR #53 round 72).
-0x0002fcdc,validateSecurityKey,Checks the 10-byte security key of a secured request: 0 (pass) when calibration_download_security_key_cal is 0xff; 1 once security_key_failure_count reaches 0x11 (a lockout after 17 misses); else unscrambleSecurityKey gives 6 characters (compared with security_master_password_cal) and a 4-byte hour meter stamp ((meter & ~0xff) - (stamp & ~0xff) < 0x1a): a match clears the count and passes / a miss adds one and fails. Called by writeJ1939DiagnosticMemory (types 3 / 5) and diagnosticCommandDispatcher (J1708 command 3). The same function as CM848 0x5573c (shared name; was sensorRangeValidation; PR #53 round 72).
+0x0002fcdc,validateSecurityKey,Checks the 10-byte security key of a secured request: 0 (pass) when calibration_download_security_key_cal is 0xff; 1 once security_key_failure_count reaches 0x11 (a lockout after 17 misses); else unscrambleSecurityKey gives 6 characters (compared with security_master_password_cal) and a 4-byte hour meter stamp ((meter & ~0xff) - (stamp & ~0xff) < 0x1a): a match clears the count and passes / a miss adds one and fails. Called by writeJ1939DiagnosticMemory (types 3 / 5) and mc68k_dispatchJ1708ReceivedMessages (J1708 command 3). The same function as CM848 0x5573c (shared name; was sensorRangeValidation; PR #53 round 72).
 0x0002fd90,cm550_FUN_0002fd90
 0x0002fddc,cm550_diagnosticTableEntryClear
 0x0002fe38,cm550_diagnosticTableSnapshotCapture
@@ -767,8 +758,8 @@ address,name
 0x0003494a,mc68k_updateTpuChannel3AnglePulseOutput,Recomputes the TPU channel 3 angle pulse's start and end for current_cylinder_index (the same arithmetic as mc68k_setUpTpuChannel3AnglePulseOutput) and writes them to its parameters. No PWM module is involved (was mc68k_pwmTimerMode1Update; PR #53 round 83)
 0x00034a82,mc68k_configureTpuChannelsForSpeedMeasurementMode,Reprograms TPU channels 0 and 3 for speed_measurement_mode: in mode 0 channel 0 parameter 2 = _DAT_00807ec8 / 6 and channel 3 takes function 0xa (CFSR3 bits 15-12) - mode 1 uses the angle pulse output (function 8). No PWM module is involved (was mc68k_pwmTimerModeDispatcher; PR #53 round 83)
 0x00034b20,mc68k_alignCylinderIndexToCrankRevolution,When CMSYSS is 1 it moves current_cylinder_index by 3 (modulo 6) so that it agrees with flag_indicating_crank_rev_1_or_2_of_cam_rev_0_1: cylinders 0 / 4 / 5 on the first crank revolution and 1 / 2 / 3 on the second. No PWM module is involved (was mc68k_pwmTimerCycleAdvance; PR #53 round 83)
-0x00034bba,cm550_watchdogServiceLoop
-0x00034bf8,cm550_FUN_00034bf8
+0x00034bba,mc68k_delayTimeBaseTicksWithWatchdogService,A busy-wait: it reads CTM4_BIUTBR once - then services both watchdogs on every pass until the 16-bit difference CTM4_BIUTBR - start reaches its word argument. Callers push a 2-byte tick count (500 or 10000) between polls of the EEPROM write queue or the VP44 status (was cm550_watchdogServiceLoop; PR #53 round 85)
+0x00034bf8,mc68k_delayTimeBaseTicksWithWatchdogService2,A byte-identical copy of mc68k_delayTimeBaseTicksWithWatchdogService (ROM 0x34BF8-0x34C35 = 0x34BBA-0x34BF7); its only reference is movea.l #0x34BF8,a3 in the restart routine cm550_FUN_0001192a (was cm550_FUN_00034bf8; PR #53 round 85)
 0x00034c36,vp44FaultRegisterBit2Monitor
 0x00034cc4,vp44_liftPumpFuelDeliveryController
 0x00034d52,vp44_FUN_00034d52

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue Nov 24 04:35:13 MST 2026
+// Generated: Tue Nov 24 05:53:51 MST 2026
 
 
 //
@@ -200,8 +200,9 @@ byte mc68k_portPinTestSequence2(void)
 /* Services both watchdogs (SIM_SWSR / CS2_WATCHDOG_SERVICE) and then waits until bit 0 of the chip
    select 2 device's register 0 (0xFFD000) reads 1 in 5 consecutive samples (cm550_busyWaitDelayLoop
    between them) - the same pattern as CM848's cm848_waitForStableIgnitionKeyOn; the signal is not
-   identified (was cm550_FUN_0000395a; PR #53 round 84; mc68k_ because it writes SIM_SWSR - round 84
-   stage B) */
+   identified (was cm550_FUN_0000395a; PR #53 round 84; mc68k_ because it polls the chip select 2
+   device's register 0xFFD000 - the watchdog kick alone would not make it mc68k_ (commit 16143a5c);
+   round 84 stage B / round 85) */
 
 void mc68k_waitForChipSelect2InputBit0High(void)
 
@@ -6204,12 +6205,17 @@ int cm550_diagnosticMemoryAddressResolver(word param_id)
 
 
 //
-// Function: cm550_calibrationDataCopyWithChecksum @ 0x00010e80
+// Function: cm550_loadParameterBlock1FromFlash @ 0x00010e80
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up load of flash parameter block 1: it copies flash 0x4000-0x55B3 into the RAM copy
+   0x804F96-0x806549 - sets calibration_bank_active = 1 and returns 0 - only when the word sum of
+   0x4000-0x55B3 matches EEPROM 0x8 or the marker word 0x55B2 holds 0xA1A1; otherwise it returns 1
+   and copies nothing. Its only hardware access is the inline watchdog kick, so not mc68k_ (commit
+   16143a5c) (was cm550_calibrationDataCopyWithChecksum; PR #53 round 85) */
 
-uint cm550_calibrationDataCopyWithChecksum(void)
+uint cm550_loadParameterBlock1FromFlash(void)
 
 {
   uint uVar1;
@@ -6249,12 +6255,17 @@ uint cm550_calibrationDataCopyWithChecksum(void)
 
 
 //
-// Function: cm550_calibrationDataCopySecondary @ 0x00010f32
+// Function: cm550_loadParameterBlock2FromFlash @ 0x00010f32
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The block 2 loader: it copies flash 0x6000-0x75B3 into the same RAM copy - sets
+   calibration_bank_active = 2 and returns 0 - only when the word sum of 0x6000-0x75B3 matches
+   EEPROM 0xA (no marker exception); otherwise it returns 1. Its only hardware access is the inline
+   watchdog kick, so not mc68k_ (commit 16143a5c) (was cm550_calibrationDataCopySecondary; PR #53
+   round 85) */
 
-uint cm550_calibrationDataCopySecondary(void)
+uint cm550_loadParameterBlock2FromFlash(void)
 
 {
   uint uVar1;
@@ -6294,31 +6305,39 @@ uint cm550_calibrationDataCopySecondary(void)
 
 
 //
-// Function: cm550_eepromCalibrationWriteSecondary @ 0x00010fe0
+// Function: cm550_saveParameterBlock1ToFlash @ 0x00010fe0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Saves the RAM copy (0x804F96) into flash parameter block 1: it bumps
+   calibration_bank1_write_sequence so the bank 1 + bank 2 sum ends odd (block 1 = newest) - erases
+   block 0x4000 with cm550_flashEraseFromRam - programs 0x4000-0x55B1 - stores the new block sum in
+   EEPROM 0x8 and the sequence at 0x803FD8 - and sets calibration_bank_active = 1. Returns 0 saved /
+   2 a program step failed / 1 or 2 after a failed erase. Its only hardware access is the inline
+   watchdog kick, so not mc68k_ (commit 16143a5c) (was cm550_eepromCalibrationWriteSecondary; PR #53
+   round 85) */
 
-int cm550_eepromCalibrationWriteSecondary(void)
+int cm550_saveParameterBlock1ToFlash(void)
 
 {
   ushort extraout_D0u;
-  int iVar1;
-  short sVar2;
+  dword dVar1;
+  short sVar3;
+  int iVar2;
   undefined4 unaff_D2;
-  ushort uVar3;
-  byte bVar4;
+  ushort uVar4;
+  byte bVar5;
   char in_XF;
   char in_NF;
   char in_ZF;
   char in_VF;
   byte in_CF;
-  char cVar5;
+  char cVar6;
   ushort byte_count;
-  undefined2 uVar6;
+  undefined2 uVar7;
   short local_6;
   
-  uVar6 = (undefined2)((uint)unaff_D2 >> 0x10);
+  uVar7 = (undefined2)((uint)unaff_D2 >> 0x10);
   if ((_calibration_bank2_write_sequence + _calibration_bank1_write_sequence & 1U) == 0) {
     local_6 = _calibration_bank1_write_sequence + 1;
   }
@@ -6328,27 +6347,27 @@ int cm550_eepromCalibrationWriteSecondary(void)
   cm550_parameterCircularBufferWrite
             (0x803fd6,(byte *)&local_6,
              (ushort)(byte)(in_XF << 4 | in_NF << 3 | in_ZF << 2 | in_VF << 1 | in_CF));
-  uVar3 = 0;
-  while ((uVar3 < 5000 && (_calibration_bank1_write_sequence != local_6))) {
+  uVar4 = 0;
+  while ((uVar4 < 5000 && (_calibration_bank1_write_sequence != local_6))) {
     cm550_emptyPlaceholderFunction();
-    cm550_watchdogServiceLoop();
-    uVar3 = uVar3 + 1;
+    mc68k_delayTimeBaseTicksWithWatchdogService();
+    uVar4 = uVar4 + 1;
   }
-  iVar1 = cm550_FUN_0001c484(0x4000,0);
-  if (iVar1 == 0) {
+  dVar1 = cm550_flashEraseFromRam(0x4000,0);
+  if (dVar1 == 0) {
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
     CS2_WATCHDOG_SERVICE = 0x55;
     CS2_WATCHDOG_SERVICE = 0xaa;
-    sVar2 = cm550_flashProgramFromRam(0x4000,0x804f96,CONCAT22(2,uVar6));
-    if (sVar2 == 1) {
+    sVar3 = cm550_flashProgramFromRam(0x4000,0x804f96,CONCAT22(2,uVar7));
+    if (sVar3 == 1) {
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
       CS2_WATCHDOG_SERVICE = 0x55;
       CS2_WATCHDOG_SERVICE = 0xaa;
-      sVar2 = cm550_flashProgramFromRam(0x4004,0x804f9a,CONCAT22(0x15ae,uVar6));
-      cVar5 = sVar2 == 0;
-      if (sVar2 == 1) {
+      sVar3 = cm550_flashProgramFromRam(0x4004,0x804f9a,CONCAT22(0x15ae,uVar7));
+      cVar6 = sVar3 == 0;
+      if (sVar3 == 1) {
         SIM_SWSR = 0x55;
         SIM_SWSR = 0xaa;
         CS2_WATCHDOG_SERVICE = 0x55;
@@ -6358,82 +6377,88 @@ int cm550_eepromCalibrationWriteSecondary(void)
         SIM_SWSR = 0xaa;
         CS2_WATCHDOG_SERVICE = 0x55;
         CS2_WATCHDOG_SERVICE = 0xaa;
-        byte_count = (ushort)(byte)(cVar5 << 4 | 8);
+        byte_count = (ushort)(byte)(cVar6 << 4 | 8);
         cm550_parameterCircularBufferWrite(0x803b12,(byte *)&local_6,byte_count);
-        uVar3 = 0;
-        while ((uVar3 < 5000 && (_DAT_00803b12 != local_6))) {
+        uVar4 = 0;
+        while ((uVar4 < 5000 && (_DAT_00803b12 != local_6))) {
           cm550_emptyPlaceholderFunction();
-          cm550_watchdogServiceLoop();
-          uVar3 = uVar3 + 1;
+          mc68k_delayTimeBaseTicksWithWatchdogService();
+          uVar4 = uVar4 + 1;
         }
         cm550_parameterCircularBufferWrite(0x803fd8,&calibration_bank1_write_sequence,byte_count);
-        uVar3 = 0;
-        while ((uVar3 < 5000 && (_DAT_00803fd8 != _calibration_bank1_write_sequence))) {
+        uVar4 = 0;
+        while ((uVar4 < 5000 && (_DAT_00803fd8 != _calibration_bank1_write_sequence))) {
           cm550_emptyPlaceholderFunction();
-          cm550_watchdogServiceLoop();
-          uVar3 = uVar3 + 1;
+          mc68k_delayTimeBaseTicksWithWatchdogService();
+          uVar4 = uVar4 + 1;
         }
         _calibration_bank_active = 1;
         cm550_canMemoryPointerTableInit();
-        iVar1 = (uint)extraout_D0u << 0x10;
+        iVar2 = (uint)extraout_D0u << 0x10;
       }
       else {
-        iVar1 = 2;
+        iVar2 = 2;
       }
     }
     else {
-      iVar1 = 2;
+      iVar2 = 2;
     }
   }
   else {
-    bVar4 = 0;
-    while (bVar4 < 4) {
+    bVar5 = 0;
+    while (bVar5 < 4) {
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
       CS2_WATCHDOG_SERVICE = 0x55;
       CS2_WATCHDOG_SERVICE = 0xaa;
-      injectorTimingCalculation();
-      cm550_watchdogServiceLoop();
-      bVar4 = bVar4 + 1;
+      mc68k_sampleAndDebounceDiscreteInputs();
+      mc68k_delayTimeBaseTicksWithWatchdogService();
+      bVar5 = bVar5 + 1;
     }
     if ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0) {
-      iVar1 = 2;
+      iVar2 = 2;
     }
     else {
-      iVar1 = 1;
+      iVar2 = 1;
     }
   }
-  return iVar1;
+  return iVar2;
 }
 
 
 
 //
-// Function: cm550_FUN_0001125a @ 0x0001125a
+// Function: cm550_saveParameterBlock2ToFlash @ 0x0001125a
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The block 2 saver: the sequence sum ends even (block 2 = newest); it erases block 0x6000 -
+   programs 0x6000-0x75B1 from RAM 0x804F96 - stores the block sum in EEPROM 0xA and the sequence at
+   0x803FE0 - and sets calibration_bank_active = 2. The same return codes as
+   cm550_saveParameterBlock1ToFlash. Its only hardware access is the inline watchdog kick, so not
+   mc68k_ (commit 16143a5c) (was cm550_FUN_0001125a; PR #53 round 85) */
 
-int cm550_FUN_0001125a(void)
+int cm550_saveParameterBlock2ToFlash(void)
 
 {
   ushort extraout_D0u;
-  int iVar1;
-  short sVar2;
+  dword dVar1;
+  short sVar3;
+  int iVar2;
   undefined4 unaff_D2;
-  ushort uVar3;
-  byte bVar4;
+  ushort uVar4;
+  byte bVar5;
   char in_XF;
   char in_NF;
   char in_ZF;
   char in_VF;
   byte in_CF;
-  char cVar5;
+  char cVar6;
   ushort byte_count;
-  undefined2 uVar6;
+  undefined2 uVar7;
   short local_6;
   
-  uVar6 = (undefined2)((uint)unaff_D2 >> 0x10);
+  uVar7 = (undefined2)((uint)unaff_D2 >> 0x10);
   if ((_calibration_bank2_write_sequence + _calibration_bank1_write_sequence & 1U) == 0) {
     local_6 = _calibration_bank2_write_sequence + 2;
   }
@@ -6443,27 +6468,27 @@ int cm550_FUN_0001125a(void)
   cm550_parameterCircularBufferWrite
             (0x803fde,(byte *)&local_6,
              (ushort)(byte)(in_XF << 4 | in_NF << 3 | in_ZF << 2 | in_VF << 1 | in_CF));
-  uVar3 = 0;
-  while ((uVar3 < 5000 && (_calibration_bank2_write_sequence != local_6))) {
+  uVar4 = 0;
+  while ((uVar4 < 5000 && (_calibration_bank2_write_sequence != local_6))) {
     cm550_emptyPlaceholderFunction();
-    cm550_watchdogServiceLoop();
-    uVar3 = uVar3 + 1;
+    mc68k_delayTimeBaseTicksWithWatchdogService();
+    uVar4 = uVar4 + 1;
   }
-  iVar1 = cm550_FUN_0001c484(0x6000,0);
-  if (iVar1 == 0) {
+  dVar1 = cm550_flashEraseFromRam(0x6000,0);
+  if (dVar1 == 0) {
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
     CS2_WATCHDOG_SERVICE = 0x55;
     CS2_WATCHDOG_SERVICE = 0xaa;
-    sVar2 = cm550_flashProgramFromRam(0x6000,0x804f96,CONCAT22(2,uVar6));
-    if (sVar2 == 1) {
+    sVar3 = cm550_flashProgramFromRam(0x6000,0x804f96,CONCAT22(2,uVar7));
+    if (sVar3 == 1) {
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
       CS2_WATCHDOG_SERVICE = 0x55;
       CS2_WATCHDOG_SERVICE = 0xaa;
-      sVar2 = cm550_flashProgramFromRam(0x6004,0x804f9a,CONCAT22(0x15ae,uVar6));
-      cVar5 = sVar2 == 0;
-      if (sVar2 == 1) {
+      sVar3 = cm550_flashProgramFromRam(0x6004,0x804f9a,CONCAT22(0x15ae,uVar7));
+      cVar6 = sVar3 == 0;
+      if (sVar3 == 1) {
         SIM_SWSR = 0x55;
         SIM_SWSR = 0xaa;
         CS2_WATCHDOG_SERVICE = 0x55;
@@ -6473,52 +6498,52 @@ int cm550_FUN_0001125a(void)
         SIM_SWSR = 0xaa;
         CS2_WATCHDOG_SERVICE = 0x55;
         CS2_WATCHDOG_SERVICE = 0xaa;
-        byte_count = (ushort)(byte)(cVar5 << 4 | 8);
+        byte_count = (ushort)(byte)(cVar6 << 4 | 8);
         cm550_parameterCircularBufferWrite(0x803b14,(byte *)&local_6,byte_count);
-        uVar3 = 0;
-        while ((uVar3 < 5000 && (_DAT_00803b14 != local_6))) {
+        uVar4 = 0;
+        while ((uVar4 < 5000 && (_DAT_00803b14 != local_6))) {
           cm550_emptyPlaceholderFunction();
-          cm550_watchdogServiceLoop();
-          uVar3 = uVar3 + 1;
+          mc68k_delayTimeBaseTicksWithWatchdogService();
+          uVar4 = uVar4 + 1;
         }
         cm550_parameterCircularBufferWrite(0x803fe0,&calibration_bank2_write_sequence,byte_count);
-        uVar3 = 0;
-        while ((uVar3 < 5000 && (_DAT_00803fe0 != _calibration_bank2_write_sequence))) {
+        uVar4 = 0;
+        while ((uVar4 < 5000 && (_DAT_00803fe0 != _calibration_bank2_write_sequence))) {
           cm550_emptyPlaceholderFunction();
-          cm550_watchdogServiceLoop();
-          uVar3 = uVar3 + 1;
+          mc68k_delayTimeBaseTicksWithWatchdogService();
+          uVar4 = uVar4 + 1;
         }
         _calibration_bank_active = 2;
         cm550_canMemoryPointerTableInit();
-        iVar1 = (uint)extraout_D0u << 0x10;
+        iVar2 = (uint)extraout_D0u << 0x10;
       }
       else {
-        iVar1 = 2;
+        iVar2 = 2;
       }
     }
     else {
-      iVar1 = 2;
+      iVar2 = 2;
     }
   }
   else {
-    bVar4 = 0;
-    while (bVar4 < 4) {
+    bVar5 = 0;
+    while (bVar5 < 4) {
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
       CS2_WATCHDOG_SERVICE = 0x55;
       CS2_WATCHDOG_SERVICE = 0xaa;
-      injectorTimingCalculation();
-      cm550_watchdogServiceLoop();
-      bVar4 = bVar4 + 1;
+      mc68k_sampleAndDebounceDiscreteInputs();
+      mc68k_delayTimeBaseTicksWithWatchdogService();
+      bVar5 = bVar5 + 1;
     }
     if ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0) {
-      iVar1 = 2;
+      iVar2 = 2;
     }
     else {
-      iVar1 = 1;
+      iVar2 = 1;
     }
   }
-  return iVar1;
+  return iVar2;
 }
 
 
@@ -6543,30 +6568,30 @@ void vp44_validateRedundantSensors(void)
   
   _calibration_bank_active = 0;
   if ((DAT_000055b2 == -0x5e5f) && (DAT_000075b2 == -0x5e5f)) {
-    cm550_calibrationDataCopyWithChecksum();
+    cm550_loadParameterBlock1FromFlash();
     _DAT_00806548 = 0;
   }
   else if ((_calibration_bank1_write_sequence != _DAT_00803fd8) ||
           (_calibration_bank2_write_sequence != _DAT_00803fe0)) {
     if (_calibration_bank1_write_sequence != _DAT_00803fd8) {
       if (_calibration_bank2_write_sequence == _DAT_00803fe0) {
-        cm550_calibrationDataCopySecondary();
+        cm550_loadParameterBlock2FromFlash();
       }
     }
     else {
-      cm550_calibrationDataCopyWithChecksum();
+      cm550_loadParameterBlock1FromFlash();
     }
   }
   else if ((_calibration_bank2_write_sequence + _calibration_bank1_write_sequence & 1U) == 0) {
-    sVar1 = cm550_calibrationDataCopySecondary();
+    sVar1 = cm550_loadParameterBlock2FromFlash();
     if (sVar1 != 0) {
-      cm550_calibrationDataCopyWithChecksum();
+      cm550_loadParameterBlock1FromFlash();
     }
   }
   else {
-    sVar1 = cm550_calibrationDataCopyWithChecksum();
+    sVar1 = cm550_loadParameterBlock1FromFlash();
     if (sVar1 != 0) {
-      cm550_calibrationDataCopySecondary();
+      cm550_loadParameterBlock2FromFlash();
     }
   }
   if (_calibration_bank_active == 0) {
@@ -6603,7 +6628,7 @@ LAB_000115ca:
     uVar2 = 0;
     while ((uVar2 < 5000 && (_DAT_00803fe6 != _hour_meter_tick_divider))) {
       cm550_emptyPlaceholderFunction();
-      cm550_watchdogServiceLoop();
+      mc68k_delayTimeBaseTicksWithWatchdogService();
       uVar2 = uVar2 + 1;
     }
     _hour_meter_tick_divider = _vp44_reset_count + 1;
@@ -6611,7 +6636,7 @@ LAB_000115ca:
     uVar2 = 0;
     while ((uVar2 < 5000 && (_vp44_reset_count != _hour_meter_tick_divider))) {
       cm550_emptyPlaceholderFunction();
-      cm550_watchdogServiceLoop();
+      mc68k_delayTimeBaseTicksWithWatchdogService();
       uVar2 = uVar2 + 1;
     }
     bVar7 = (uVar8 & 0x10) != 0;
@@ -6630,7 +6655,7 @@ LAB_000115ca:
     uVar2 = 0;
     while ((uVar2 < 5000 && (_DAT_00803fe6 != _hour_meter_tick_divider))) {
       cm550_emptyPlaceholderFunction();
-      cm550_watchdogServiceLoop();
+      mc68k_delayTimeBaseTicksWithWatchdogService();
       uVar2 = uVar2 + 1;
     }
     _hour_meter_tick_divider = _DAT_00803fea + 1;
@@ -6638,7 +6663,7 @@ LAB_000115ca:
     uVar2 = 0;
     while ((uVar2 < 5000 && (_DAT_00803fea != _hour_meter_tick_divider))) {
       cm550_emptyPlaceholderFunction();
-      cm550_watchdogServiceLoop();
+      mc68k_delayTimeBaseTicksWithWatchdogService();
       uVar2 = uVar2 + 1;
     }
     bVar7 = _DAT_00803fe6 < _number_of_consecutive_occurances_of_powerdown_data_lost_to_set_1_255;
@@ -6665,7 +6690,7 @@ LAB_000115ca:
   uVar2 = 0;
   while ((uVar2 < 5000 && (_DAT_00803fe2 != _hour_meter_tick_divider))) {
     cm550_emptyPlaceholderFunction();
-    cm550_watchdogServiceLoop();
+    mc68k_delayTimeBaseTicksWithWatchdogService();
     uVar2 = uVar2 + 1;
   }
   return;
@@ -6674,10 +6699,16 @@ LAB_000115ca:
 
 
 //
-// Function: cm550_firmwareDataCopyToWorkingMemory @ 0x000117ec
+// Function: cm550_copyCalibrationFromRomToRam @ 0x000117ec
 //
 
-void cm550_firmwareDataCopyToWorkingMemory(void)
+/* Copies 2401 dwords from ROM 0x61376-0x638F9 (above the dumped 256 KB) into RAM 0x80654A-0x808ACD
+   - the calibration parameters (1757 named e2m rows there) - once at start-up after
+   cm550_clearWorkingMemory. CM848's cm848_copyRomToRamBuffer holds the same start-up slot. Its only
+   hardware access is the inline watchdog kick, so not mc68k_ (commit 16143a5c) (was
+   cm550_firmwareDataCopyToWorkingMemory; PR #53 round 85) */
+
+void cm550_copyCalibrationFromRomToRam(void)
 
 {
   undefined4 *puVar1;
@@ -6858,30 +6889,30 @@ undefined4 cm550_FUN_0001192a(undefined2 param_1,undefined4 param_2)
   if (_smoke_limiter_output_value == 1) {
     while (cVar2 = cm550_circularBufferEmptyCheck(), cVar2 == '\0') {
       cm550_emptyPlaceholderFunction();
-      cm550_FUN_00034bf8((word)((uint)unaff_D2 >> 0x10));
+      mc68k_delayTimeBaseTicksWithWatchdogService2((word)((uint)unaff_D2 >> 0x10));
     }
     local_8 = _hour_meter_ecm_run_time_none;
     cm550_parameterCircularBufferWrite(0x803b3e,(byte *)&local_8,(word)((uint)unaff_D2 >> 0x10));
     if (ram_refresh_enable == RAM_REFRESH_DISABLED) {
-      cm550_FUN_00034bf8((word)((uint)unaff_D2 >> 0x10));
+      mc68k_delayTimeBaseTicksWithWatchdogService2((word)((uint)unaff_D2 >> 0x10));
     }
     else {
       while (_eeprom_hour_meter_buffer != local_8) {
         cm550_emptyPlaceholderFunction();
-        cm550_FUN_00034bf8((word)((uint)unaff_D2 >> 0x10));
+        mc68k_delayTimeBaseTicksWithWatchdogService2((word)((uint)unaff_D2 >> 0x10));
       }
     }
     local_8 = _time_that_the_engine_is_not_in_stop_state_0_2_29;
     cm550_parameterCircularBufferWrite(0x803b50,(byte *)&local_8,(word)((uint)unaff_D2 >> 0x10));
     timer_ticks = (word)((uint)unaff_D2 >> 0x10);
     if (ram_refresh_enable == RAM_REFRESH_DISABLED) {
-      cm550_FUN_00034bf8(timer_ticks);
+      mc68k_delayTimeBaseTicksWithWatchdogService2(timer_ticks);
     }
     else {
       while (timer_ticks = (word)((uint)unaff_D2 >> 0x10), _eeprom_engine_run_time_buffer != local_8
             ) {
         cm550_emptyPlaceholderFunction();
-        cm550_FUN_00034bf8((word)((uint)unaff_D2 >> 0x10));
+        mc68k_delayTimeBaseTicksWithWatchdogService2((word)((uint)unaff_D2 >> 0x10));
       }
     }
     if (param_2._1_1_ == '\0') {
@@ -6890,7 +6921,7 @@ undefined4 cm550_FUN_0001192a(undefined2 param_1,undefined4 param_2)
     else if (param_2._1_1_ == '\x01') {
       cm550_diagnosticMessageQueueWrite((byte)timer_ticks);
     }
-    cm550_FUN_00034bf8(timer_ticks);
+    mc68k_delayTimeBaseTicksWithWatchdogService2(timer_ticks);
     if (DAT_0080bd2e == '\0') {
       DAT_0080bd2e = '\0';
       enable_flag_to_allow_boot_block_programming_enable_disable =
@@ -6963,7 +6994,7 @@ byte commitEepromMirrorToEeprom(void)
     uVar2 = 0;
     while ((uVar2 < 16000 && (circular_buffer_byte_count != 0))) {
       cm550_emptyPlaceholderFunction();
-      cm550_watchdogServiceLoop();
+      mc68k_delayTimeBaseTicksWithWatchdogService();
       uVar2 = uVar2 + 1;
     }
   }
@@ -9668,12 +9699,17 @@ void cm550_initHourMeterSystem(void)
 
 
 //
-// Function: injectorTimingCalculation @ 0x00014fca
+// Function: mc68k_sampleAndDebounceDiscreteInputs @ 0x00014fca
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The discrete input sampler and debouncer - nothing in it concerns injector timing: it reads the
+   chip select 2 device's input bytes 0xFFD000-0xFFD003 / 0xFFD005 / 0xFFD007 and SIM_PORTE0 /
+   SIM_PORTF0 - XORs them with the polarity masks into three 4-sample rings - debounces each byte as
+   (AND of 4) | (OR of 4 & previous) - then decodes the PTO and cruise switches with 25-pass hold
+   counters and two 50-pass switch-pair faults (was injectorTimingCalculation; PR #53 round 85) */
 
-byte injectorTimingCalculation(void)
+byte mc68k_sampleAndDebounceDiscreteInputs(void)
 
 {
   uint uVar1;
@@ -10336,7 +10372,7 @@ void vp44_initVP44StatusMonitoring(void)
   _discrete_input_override_mask_ptr = &switch_override_configuration;
   bVar1 = 0;
   do {
-    injectorTimingCalculation();
+    mc68k_sampleAndDebounceDiscreteInputs();
     bVar1 = bVar1 + 1;
   } while (bVar1 < 4);
   return;
@@ -10457,119 +10493,6 @@ void mc68k_FUN_00015df0(void)
 
 
 //
-// Function: clearModuleSyncFlag @ 0x00015e06
-//
-
-void clearModuleSyncFlag(void)
-
-{
-  byte bVar1;
-  word wVar2;
-  char *pcVar3;
-  byte *in_A1;
-  int unaff_A3;
-  int unaff_A4;
-  
-  if (*(char *)(unaff_A3 + 2) == '\0') {
-    *(char *)(unaff_A3 + 2) = '\0';
-    *in_A1 = *in_A1 & 0xfb;
-  }
-  DAT_00ffd008 = 0xf;
-  DAT_00ffd009 = 0x80;
-  DAT_00ffd00a = 0x80;
-  DAT_00ffd004 = 0;
-  if (*(char *)(unaff_A3 + 0x14) == '\0') {
-    *(undefined1 *)(unaff_A3 + 0x14) = 0;
-    *(byte *)(unaff_A4 + 2) = *(byte *)(unaff_A4 + 2) | 0x10;
-  }
-  bVar1 = DAT_00ffd006;
-  DAT_00ffd006 = bVar1 & 0x7f;
-  wVar2 = TPU_CPR0;
-  TPU_CPR0 = wVar2 & 0xf3ff;
-  wVar2 = TPU_CIER;
-  TPU_CIER = wVar2 & 0xdfff;
-  wVar2 = TPU_CISR;
-  TPU_CISR = wVar2 & 0xdfff;
-  wVar2 = TPU_CFSR0;
-  TPU_CFSR0 = wVar2 & 0xff0f;
-  wVar2 = TPU_CFSR0;
-  TPU_CFSR0 = wVar2 | 0xe0;
-  TPU_CH13_PARAM0 = 0x113;
-  wVar2 = TPU_HSRR0;
-  TPU_HSRR0 = wVar2 & 0xf3ff;
-  wVar2 = TPU_HSRR0;
-  TPU_HSRR0 = wVar2 | 0x800;
-  wVar2 = TPU_CPR0;
-  TPU_CPR0 = wVar2 & 0xf3ff;
-  wVar2 = TPU_CPR0;
-  TPU_CPR0 = wVar2 | 0x400;
-  do {
-    wVar2 = TPU_CH13_PARAM1;
-  } while ((wVar2 & 0x8000) != 0);
-  wVar2 = TPU_HSRR0;
-  TPU_HSRR0 = wVar2 & 0xf3ff;
-  wVar2 = TPU_HSRR0;
-  TPU_HSRR0 = wVar2 | 0x400;
-  do {
-    wVar2 = TPU_CH13_PARAM1;
-  } while ((wVar2 & 0x8000) == 0);
-  wVar2 = TPU_HSRR0;
-  TPU_HSRR0 = wVar2 & 0xf3ff;
-  wVar2 = TPU_HSRR0;
-  TPU_HSRR0 = wVar2 | 0x800;
-  do {
-    wVar2 = TPU_CH13_PARAM1;
-  } while ((wVar2 & 0x8000) != 0);
-  bVar1 = DAT_00ffd006;
-  DAT_00ffd006 = bVar1 | 0x80;
-  wVar2 = TPU_HSRR0;
-  TPU_HSRR0 = wVar2 & 0xf3ff;
-  wVar2 = TPU_HSRR0;
-  TPU_HSRR0 = wVar2 | 0x400;
-  if (*(char *)(unaff_A3 + 7) == '\0') {
-    *(undefined1 *)(unaff_A3 + 7) = 0;
-    *in_A1 = *in_A1 | 0x80;
-  }
-  if (*(char *)(unaff_A3 + 0x2d) == '\0') {
-    *(undefined1 *)(unaff_A3 + 0x2d) = 0;
-    *(byte *)(unaff_A4 + 5) = *(byte *)(unaff_A4 + 5) | 0x20;
-  }
-  if (priority_of_client_currently_overriding_wait_to_start_lamp_00_ff == '\0') {
-    priority_of_client_currently_overriding_wait_to_start_lamp_00_ff = '\0';
-    *in_A1 = *in_A1 & 0xfe;
-  }
-  if (*(char *)(unaff_A3 + 8) == '\0') {
-    *(char *)(unaff_A3 + 8) = '\0';
-    *(byte *)(unaff_A4 + 1) = *(byte *)(unaff_A4 + 1) | 1;
-  }
-  pcVar3 = (char *)(unaff_A3 + 0x1e);
-  if (*pcVar3 == '\0') {
-    *pcVar3 = '\0';
-    *(byte *)(unaff_A4 + 3) = *(byte *)(unaff_A4 + 3) | 0x40;
-  }
-  if (*pcVar3 == '\0') {
-    *pcVar3 = '\0';
-    *(byte *)(unaff_A4 + 3) = *(byte *)(unaff_A4 + 3) | 0x40;
-  }
-  if (*pcVar3 == '\0') {
-    *pcVar3 = '\0';
-    *(byte *)(unaff_A4 + 3) = *(byte *)(unaff_A4 + 3) | 0x40;
-  }
-  if (*pcVar3 == '\0') {
-    *pcVar3 = '\0';
-    *(byte *)(unaff_A4 + 3) = *(byte *)(unaff_A4 + 3) | 0x40;
-  }
-  if (*pcVar3 == '\0') {
-    *pcVar3 = '\0';
-    *(byte *)(unaff_A4 + 3) = *(byte *)(unaff_A4 + 3) | 0x40;
-  }
-  mc68k_ioDriverStrobeHandler();
-  return;
-}
-
-
-
-//
 // Function: emptyStubFunction4 @ 0x00015f8c
 //
 
@@ -10582,12 +10505,18 @@ void emptyStubFunction4(void)
 
 
 //
-// Function: diagnosticCommandDispatcher @ 0x00015f8e
+// Function: mc68k_dispatchJ1708ReceivedMessages @ 0x00015f8e
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Drains the J1708 receive buffer for at most 500 CTM4_BIUTBR ticks: first it sends the deferred
+   reply commitEepromMirrorToEeprom arms (once the EEPROM write queue is empty); each record is
+   [length][message bytes] and the first message byte picks the handler (3 = the 10-byte key through
+   validateSecurityKey and then commands 0x40-0x54 - 4 = control commands 0x64-0x76 - 5 = memory
+   read / write / multipacket). Its old shared name came from a pairing CM848 later dropped (was
+   diagnosticCommandDispatcher; PR #53 round 85) */
 
-void diagnosticCommandDispatcher(void)
+void mc68k_dispatchJ1708ReceivedMessages(void)
 
 {
   undefined1 uVar1;
@@ -10604,8 +10533,8 @@ void diagnosticCommandDispatcher(void)
   byte abStack_16 [10];
   undefined4 local_c;
   undefined4 local_8;
-  word elapsedTimerCount;
   word currentTimerCount;
+  word elapsedTimerCount;
   
   currentTimerCount = CTM4_BIUTBR;
   if ((BYTE_0080dde4 != 0) && (cVar5 = cm550_circularBufferEmptyCheck(), cVar5 != '\0')) {
@@ -13892,8 +13821,9 @@ void cm550_initShutdownLimitVariables(void)
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Sets up TPU channel 10 for the primary speed sensor and fills its pulse period table
    (pulse_period_table_table_containing_main_speed_pulse_per_1000_65535): parameter 1 = DAT_00807ecc
-   << 8 - parameter 0 = 0xb - HSQR0 bits 0x30 - handler vp44_rpmTimerInterruptHandler2. The other
-   mode is mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled. No CAN register is involved (was
+   << 8 - parameter 0 = 0xb - HSQR0 bits 0x30 - handler
+   mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0. The other mode is
+   mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled. No CAN register is involved (was
    mc68k_can1TimerBufferInitDivided; PR #53 round 82) */
 
 word mc68k_initializeTpuChannel10PrimarySpeedInputDivided(void)
@@ -13931,7 +13861,7 @@ word mc68k_initializeTpuChannel10PrimarySpeedInputDivided(void)
   _average_pulse_period_time_period_over_1_cyl_of_primary_s_1000_65535 =
        _initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
        (uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
-  _rpm_timer_isr_function_pointer = vp44_rpmTimerInterruptHandler2;
+  _rpm_timer_isr_function_pointer = mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0;
   wVar1 = TPU_CFSR1;
   TPU_CFSR1 = wVar1 & 0xf0ff;
   wVar1 = TPU_CFSR1;
@@ -13981,7 +13911,7 @@ word mc68k_phase2_slot_0_handler(void)
   _pulse_period_sum_primary =
        *unaff_A4 * (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255;
   _average_pulse_period_time_period_over_1_cyl_of_primary_s_1000_65535 = *unaff_A4 * (uint)*in_A1;
-  _rpm_timer_isr_function_pointer = vp44_rpmTimerInterruptHandler2;
+  _rpm_timer_isr_function_pointer = mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0;
   wVar1 = TPU_CFSR1;
   TPU_CFSR1 = wVar1 & 0xf0ff;
   wVar1 = TPU_CFSR1;
@@ -14038,12 +13968,18 @@ void cm550_emptyStubFunction7(void)
 
 
 //
-// Function: vp44_rpmTimerInterruptHandler2 @ 0x00019acc
+// Function: mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0 @ 0x00019acc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The TPU channel 10 (primary engine speed sensor) interrupt handler for speed_measurement_mode 0
+   (saves d0-d1 / a0-a5 and ends in RTE): it reads the 32-bit pulse period from channel 10
+   parameters 4-5 and clears parameter 4 - updates the pulse period ring with its per-cam and
+   per-cylinder sums - the tooth counter and the lost-sensor timeout - checks the cylinder
+   identification pulse - then runs the main / backup phase comparator and clears TPU_CISR bit 10
+   (was vp44_rpmTimerInterruptHandler2; PR #53 round 85) */
 
-undefined8 vp44_rpmTimerInterruptHandler2(void)
+undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0(void)
 
 {
   word wVar1;
@@ -14184,7 +14120,7 @@ word mc68k_FUN_00019caa(void)
   _average_pulse_period_time_period_over_1_cyl_of_primary_s_1000_65535 =
        _initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
        (uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
-  _rpm_timer_isr_function_pointer = vp44_FUN_00019e90;
+  _rpm_timer_isr_function_pointer = mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1;
   wVar1 = TPU_CFSR1;
   TPU_CFSR1 = wVar1 & 0xf0ff;
   wVar1 = TPU_CFSR1;
@@ -14283,12 +14219,17 @@ void cm550_FUN_00019e8e(void)
 
 
 //
-// Function: vp44_FUN_00019e90 @ 0x00019e90
+// Function: mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1 @ 0x00019e90
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The TPU channel 10 primary speed interrupt handler for speed_measurement_mode 1 (set up with
+   mc68k_initializeTpuChannel0MissingToothInput): the mode 0 period read / ring / sums / lost-sensor
+   timeout without the tooth counter and the cylinder identification check - then the same phase
+   comparator and TPU_CISR bit 10 tail. It is the handler the dumped ECU runs (RAM 0x808F04 =
+   0x19E90) (was vp44_FUN_00019e90; PR #53 round 85) */
 
-undefined8 vp44_FUN_00019e90(void)
+undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1(void)
 
 {
   word wVar1;
@@ -14504,7 +14445,7 @@ void mc68k_FUN_0001a350(void)
   _average_pulse_period_time_period_over_1_cyl_of_primary_s_1000_65535 =
        _initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
        (uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
-  _rpm_timer_isr_function_pointer = vp44_FUN_0001a52c;
+  _rpm_timer_isr_function_pointer = mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2;
   wVar1 = TPU_CFSR1;
   TPU_CFSR1 = wVar1 & 0xf0ff;
   wVar1 = TPU_CFSR1;
@@ -14597,12 +14538,16 @@ void cm550_FUN_0001a52a(void)
 
 
 //
-// Function: vp44_FUN_0001a52c @ 0x0001a52c
+// Function: mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2 @ 0x0001a52c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The TPU channel 10 primary speed interrupt handler for speed_measurement_mode 2: ROM
+   0x1A52C-0x1A6E7 is the same 444 bytes as the mode 0 handler (0x19ACC-0x19C87); only its set-up
+   differs (channel 10 parameter 1 from the per-cam pulse count, paired with the channel 0
+   missing-tooth set-up) (was vp44_FUN_0001a52c; PR #53 round 85) */
 
-undefined8 vp44_FUN_0001a52c(void)
+undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2(void)
 
 {
   word wVar1;
@@ -14740,8 +14685,8 @@ undefined8 mc68k_crankFuelAndTimingBufferStore(void)
 /* The same set-up of TPU channel 10 for the primary speed sensor as
    mc68k_initializeTpuChannel10PrimarySpeedInputDivided but only when _ESSXSNEN bit 0 is set and in
    the other mode: parameter 1 = 0x100 - parameter 0 = 7 - HSQR0 bits 0x20 - handler
-   vp44_FUN_0001a8a4. No CAN register is involved (was mc68k_can1TimerBufferInitConditional; PR #53
-   round 82) */
+   mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3. No CAN register is involved (was
+   mc68k_can1TimerBufferInitConditional; PR #53 round 82) */
 
 uint mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled(void)
 
@@ -14788,7 +14733,7 @@ uint mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled(void)
     TPU_HSRR0 = wVar1 & 0xffcf;
     wVar1 = TPU_HSRR0;
     TPU_HSRR0 = wVar1 | 0x20;
-    _rpm_timer_isr_function_pointer = vp44_FUN_0001a8a4;
+    _rpm_timer_isr_function_pointer = mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3;
     wVar1 = TPU_CFSR1;
     TPU_CFSR1 = wVar1 & 0xf0ff;
     wVar1 = TPU_CFSR1;
@@ -14848,12 +14793,17 @@ void cm550_FUN_0001a8a2(void)
 
 
 //
-// Function: vp44_FUN_0001a8a4 @ 0x0001a8a4
+// Function: mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3 @ 0x0001a8a4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The TPU channel 10 primary speed interrupt handler for speed_measurement_mode 3 (saves d0-d3 /
+   a0-a1 and ends in RTE): it reads the period and the edge time TPU_CH10_PARAM2 - clears parameter
+   4 - passes them to cm550_throttleTimeAccumulatorProcessor (in fact the mode 3 period ring / sync
+   gap processor) - re-arms channel 10 (parameter 0 and HSR 2) - then runs the same phase comparator
+   tail (was vp44_FUN_0001a8a4; PR #53 round 85) */
 
-undefined8 vp44_FUN_0001a8a4(void)
+undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3(void)
 
 {
   word wVar1;
@@ -16084,7 +16034,7 @@ void periodicTaskSet_fuelDemand(void)
   func_0x00040ace();
   func_0x000488e8();
   func_0x00048b1a();
-  injectorTimingCalculation();
+  mc68k_sampleAndDebounceDiscreteInputs();
   validateServiceDataLength();
   func_0x00048c66();
   return;
@@ -16106,7 +16056,7 @@ void vp44_evenPhaseSchedulerTaskSet(void)
   func_0x00040ace();
   func_0x000488e8();
   func_0x00048b1a();
-  injectorTimingCalculation();
+  mc68k_sampleAndDebounceDiscreteInputs();
   validateServiceDataLength();
   func_0x00048c66();
   return;
@@ -16359,7 +16309,7 @@ void cm550_FUN_0001b6e4(void)
 void cm550_FUN_0001b6f2(void)
 
 {
-  oilPressureRpmFaultMonitor();
+  mc68k_monitorPwmOutputReadBackFaults();
   func_0x00042218();
   func_0x00042276();
   func_0x0004204c();
@@ -16469,7 +16419,7 @@ void cm550_shutdownProtectionSlowCycle10Coordinator(void)
 void cm550_camSyncDiagnosticProcessingSlowCycle20Coordinator(void)
 
 {
-  diagnosticCommandDispatcher();
+  mc68k_dispatchJ1708ReceivedMessages();
   return;
 }
 
@@ -17545,14 +17495,21 @@ void cm550_FUN_0001c308(void)
 
 
 //
-// Function: cm550_flashEraseWithWatchdog @ 0x0001c31a
+// Function: mc68k_flashEraseBlock @ 0x0001c31a
 //
 
 /* WARNING: Removing unreachable block (ram,0x0001c46e) */
 /* WARNING: Removing unreachable block (ram,0x0001c47c) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Flash block erase - run only from the 2 KB stack copy cm550_flashEraseFromRam makes: it writes
+   0x2020 / 0xD0D0 (erase set-up / confirm) to *flash_target_address_ptr and polls the status word
+   for bit 7 up to 40000 times. Returns 0 erased / 1 erase error (status bit 5) or timeout / 2
+   suspended (0xB0B0) when the suspend check is on and bit 0 of the chip select 2 device's register
+   0 reads 1 on 4 consecutive reads. The .cpp drops the 0 path and the status commands - read ROM
+   0x1C354 onward. mc68k_ for the 0xFFD000 read (was cm550_flashEraseWithWatchdog; PR #53 round 85)
+    */
 
-undefined4 cm550_flashEraseWithWatchdog(void)
+undefined4 mc68k_flashEraseBlock(void)
 
 {
   byte bVar1;
@@ -17615,41 +17572,54 @@ undefined4 cm550_flashEraseWithWatchdog(void)
 
 
 //
-// Function: cm550_FUN_0001c484 @ 0x0001c484
+// Function: cm550_flashEraseFromRam @ 0x0001c484
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The erase runner - the erase twin of cm550_flashProgramFromRam: it stores the block address in
+   flash_target_address_ptr and the suspend flag at 0x8006A6 (1 = never suspend: the boot block; 0
+   from the parameter block savers), copies mc68k_flashEraseBlock (0x1C31A-0x1C483) into a 2 KB
+   stack buffer and calls the copy. Returns its result: 0 erased / 1 error or timeout / 2 suspended
+   (was cm550_FUN_0001c484; PR #53 round 85) */
 
-void cm550_FUN_0001c484(dword start_address,dword end_address)
+dword cm550_flashEraseFromRam(dword block_address,dword suspend_check_disabled)
 
 {
-  undefined2 *puVar1;
-  code *pcVar2;
+  dword dVar1;
+  undefined2 *puVar2;
+  code *pcVar3;
   undefined1 auStack_804 [2048];
   
-  _flash_target_address_ptr = start_address;
-  _DAT_008006a6 = end_address;
-  puVar1 = (undefined2 *)auStack_804;
-  for (pcVar2 = cm550_flashEraseWithWatchdog; pcVar2 < cm550_FUN_0001c484; pcVar2 = pcVar2 + 2) {
-    *puVar1 = *(undefined2 *)pcVar2;
-    puVar1 = puVar1 + 1;
+  _flash_target_address_ptr = block_address;
+  _DAT_008006a6 = suspend_check_disabled;
+  puVar2 = (undefined2 *)auStack_804;
+  for (pcVar3 = mc68k_flashEraseBlock; pcVar3 < cm550_flashEraseFromRam; pcVar3 = pcVar3 + 2) {
+    *puVar2 = *(undefined2 *)pcVar3;
+    puVar2 = puVar2 + 1;
   }
-  (*(code *)auStack_804)();
-  return;
+  dVar1 = (*(code *)auStack_804)();
+  return dVar1;
 }
 
 
 
 //
-// Function: cm550_flashProgramWordWithWatchdog @ 0x0001c4ba
+// Function: cm550_flashProgramAndVerifyWords @ 0x0001c4ba
 //
 
 /* WARNING: Removing unreachable block (ram,0x0001c560) */
 /* WARNING: Removing unreachable block (ram,0x0001c56a) */
 /* WARNING: Removing unreachable block (ram,0x0001c5e0) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The RAM-run flash programmer (run only from the stack copy cm550_flashProgramFromRam makes): for
+   each word up to the end pointer at 0x8006A2 it writes 0x4040 and the source word - polls the
+   status up to 5000 times - accepts the word only when status & 0xF8F8 = 0x0080 and the read-back
+   matches - and retries a failed word up to 5 times. Returns 1 all words programmed / 0 a word
+   failed (the .cpp's 'return 0' on both exits is wrong). Its only hardware access is the inline
+   watchdog kick, so not mc68k_ (commit 16143a5c) (was cm550_flashProgramWordWithWatchdog; PR #53
+   round 85) */
 
-undefined4 cm550_flashProgramWordWithWatchdog(void)
+undefined4 cm550_flashProgramAndVerifyWords(void)
 
 {
   ushort uVar1;
@@ -17707,7 +17677,7 @@ void cm550_flashProgramFromRam(dword dest_address,dword source_ptr,dword byte_co
   _flash_target_address_ptr = dest_address;
   _DAT_008006a2 = dest_address + (byte_count >> 0x10);
   puVar1 = (undefined2 *)auStack_804;
-  for (pcVar2 = cm550_flashProgramWordWithWatchdog; pcVar2 < cm550_flashProgramFromRam;
+  for (pcVar2 = cm550_flashProgramAndVerifyWords; pcVar2 < cm550_flashProgramFromRam;
       pcVar2 = pcVar2 + 2) {
     *puVar1 = *(undefined2 *)pcVar2;
     puVar1 = puVar1 + 1;
@@ -19115,7 +19085,7 @@ void mc68k_main(void)
   SIM_CSOR9 = 0;
   SIM_CSBAR10 = 0;
   SIM_CSOR10 = 0;
-  vp44_FUN_000284e8();
+  mc68k_applicationMain();
   return;
 }
 
@@ -19374,7 +19344,8 @@ void cm550_serialNodeAddressForwarder(byte node_address)
   
   if ((_can_first_receive_object_index < in_stack_00000005) &&
      (in_stack_00000005 <= _can_last_receive_object_index)) {
-    cm550_FUN_0001e5f0((uint)CONCAT12(in_stack_00000005,(short)((uint)unaff_D2 >> 0x10)));
+    mc68k_queueCanCs4ReceiveMessage
+              ((uint)CONCAT12(in_stack_00000005,(short)((uint)unaff_D2 >> 0x10)));
   }
   return;
 }
@@ -19790,12 +19761,17 @@ uint mc68k_canCs4TransmitNextFrame(void)
 
 
 //
-// Function: cm550_FUN_0001e5f0 @ 0x0001e5f0
+// Function: mc68k_queueCanCs4ReceiveMessage @ 0x0001e5f0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Copies the frame in message object n of the chip select 4 82527 (n = the low byte of its word
+   argument) into the next 18-byte entry of the CAN receive ring: the identifier (arbitration >> 3)
+   - the length - a pointer to the entry's data - the 8 data bytes. Objects 1-14 are re-read while
+   control 1 bit 1 is set again; object 15 is read at 0xFFD8F2 / 0xFFD8F6 / 0xFFD8F7. The ring wraps
+   from past 0x80D884 to 0x80D72E (was cm550_FUN_0001e5f0; PR #53 round 85) */
 
-void cm550_FUN_0001e5f0(dword channel_config)
+void mc68k_queueCanCs4ReceiveMessage(dword message_object)
 
 {
   uint uVar1;
@@ -19806,7 +19782,7 @@ void cm550_FUN_0001e5f0(dword channel_config)
   undefined1 *puVar6;
   
   if (can_receive_buffer_overflow_flag == '\0') {
-    bVar4 = (byte)(channel_config >> 0x10);
+    bVar4 = (byte)(message_object >> 0x10);
     iVar2 = (uint)bVar4 * 0x10;
     if (bVar4 == 0xf) {
       uVar1 = Ram00ffd8f2;
@@ -28772,12 +28748,18 @@ void vp44_hourMeterEventLogger(void)
 
 
 //
-// Function: vp44StatusInitAndWait @ 0x00027af0
+// Function: cm550_restartOnKeyOnDuringPowerDown @ 0x00027af0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Services both watchdogs and re-samples the discrete inputs - adds 1 to the completed power-down
+   count (0x803FEC) and queues the EEPROM write - waits up to 1000 passes - writes the power cycle
+   sequence number 0x803FE2 = the incomplete count (0x803FEA) + the completed count - waits again -
+   and jumps to the application main's restart entry 0x28978. CM848's
+   cm848_restartOnKeyOnDuringPowerDown runs the same steps. Its only hardware access is the inline
+   watchdog kick, so not mc68k_ (commit 16143a5c) (was vp44StatusInitAndWait; PR #53 round 85) */
 
-void vp44StatusInitAndWait(void)
+void cm550_restartOnKeyOnDuringPowerDown(void)
 
 {
   ushort uVar1;
@@ -28804,7 +28786,7 @@ void vp44StatusInitAndWait(void)
   uVar1 = 0;
   while ((uVar1 < 1000 && (_vp44_reset_count != local_6))) {
     cm550_emptyPlaceholderFunction();
-    cm550_watchdogServiceLoop();
+    mc68k_delayTimeBaseTicksWithWatchdogService();
     uVar1 = uVar1 + 1;
   }
   local_6 = _DAT_00803fea + _vp44_reset_count;
@@ -28862,7 +28844,7 @@ void vp44_FUN_00027c20(void)
     uVar3 = 0;
     while ((uVar3 < 16000 && (cVar2 = cm550_circularBufferEmptyCheck(), cVar2 == '\0'))) {
       cm550_emptyPlaceholderFunction();
-      cm550_watchdogServiceLoop();
+      mc68k_delayTimeBaseTicksWithWatchdogService();
       uVar3 = uVar3 + 1;
       bVar1 = DAT_00ffd000;
       if ((bVar1 & 1) == 0) {
@@ -28871,7 +28853,7 @@ void vp44_FUN_00027c20(void)
       else {
         uVar4 = uVar4 + 1;
         if (0x50 < uVar4) {
-          vp44StatusInitAndWait();
+          cm550_restartOnKeyOnDuringPowerDown();
         }
       }
     }
@@ -28882,12 +28864,18 @@ void vp44_FUN_00027c20(void)
 
 
 //
-// Function: vp44_FUN_00027cd0 @ 0x00027cd0
+// Function: cm550_savePowerDownDataToFlashBank @ 0x00027cd0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Writes the RAM power-down data block into the flash bank its word argument names first (1 = bank
+   1 at 0x4000 through cm550_saveParameterBlock1ToFlash; otherwise bank 2 at 0x6000 through
+   cm550_saveParameterBlock2ToFlash) with up to 3 attempts; when all fail it sets 0x803FE8 = 1 and -
+   unless enable_to_protects_parameter_block_data_at_powerdown is set - writes the other bank. Its
+   only hardware access is the inline watchdog kick, so not mc68k_ (commit 16143a5c) (was
+   vp44_FUN_00027cd0; PR #53 round 85) */
 
-void vp44_FUN_00027cd0(undefined4 param_1)
+void cm550_savePowerDownDataToFlashBank(undefined4 param_1)
 
 {
   short sVar1;
@@ -28902,7 +28890,7 @@ void vp44_FUN_00027cd0(undefined4 param_1)
       SIM_SWSR = 0xaa;
       CS2_WATCHDOG_SERVICE = 0x55;
       CS2_WATCHDOG_SERVICE = 0xaa;
-      sVar1 = cm550_eepromCalibrationWriteSecondary();
+      sVar1 = cm550_saveParameterBlock1ToFlash();
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
       CS2_WATCHDOG_SERVICE = 0x55;
@@ -28921,7 +28909,7 @@ void vp44_FUN_00027cd0(undefined4 param_1)
           SIM_SWSR = 0xaa;
           CS2_WATCHDOG_SERVICE = 0x55;
           CS2_WATCHDOG_SERVICE = 0xaa;
-          sVar1 = cm550_FUN_0001125a();
+          sVar1 = cm550_saveParameterBlock2ToFlash();
           SIM_SWSR = 0x55;
           SIM_SWSR = 0xaa;
           CS2_WATCHDOG_SERVICE = 0x55;
@@ -28944,7 +28932,7 @@ void vp44_FUN_00027cd0(undefined4 param_1)
       SIM_SWSR = 0xaa;
       CS2_WATCHDOG_SERVICE = 0x55;
       CS2_WATCHDOG_SERVICE = 0xaa;
-      sVar1 = cm550_FUN_0001125a();
+      sVar1 = cm550_saveParameterBlock2ToFlash();
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
       CS2_WATCHDOG_SERVICE = 0x55;
@@ -28963,7 +28951,7 @@ void vp44_FUN_00027cd0(undefined4 param_1)
           SIM_SWSR = 0xaa;
           CS2_WATCHDOG_SERVICE = 0x55;
           CS2_WATCHDOG_SERVICE = 0xaa;
-          sVar1 = cm550_eepromCalibrationWriteSecondary();
+          sVar1 = cm550_saveParameterBlock1ToFlash();
           SIM_SWSR = 0x55;
           SIM_SWSR = 0xaa;
           CS2_WATCHDOG_SERVICE = 0x55;
@@ -28980,7 +28968,7 @@ void vp44_FUN_00027cd0(undefined4 param_1)
     }
   }
   if (sVar1 == 1) {
-    vp44StatusInitAndWait();
+    cm550_restartOnKeyOnDuringPowerDown();
   }
   if (_DAT_00803fe2 != _DAT_00803fe4) {
     cm550_parameterCircularBufferWrite
@@ -29013,12 +29001,12 @@ void vp44_FUN_00027cd0(undefined4 param_1)
     SIM_SWSR = 0xaa;
     CS2_WATCHDOG_SERVICE = 0x55;
     CS2_WATCHDOG_SERVICE = 0xaa;
-    injectorTimingCalculation();
-    cm550_watchdogServiceLoop();
+    mc68k_sampleAndDebounceDiscreteInputs();
+    mc68k_delayTimeBaseTicksWithWatchdogService();
     bVar2 = bVar2 + 1;
   }
   if ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) != 0) {
-    vp44StatusInitAndWait();
+    cm550_restartOnKeyOnDuringPowerDown();
   }
   return;
 }
@@ -29026,12 +29014,16 @@ void vp44_FUN_00027cd0(undefined4 param_1)
 
 
 //
-// Function: vp44_FUN_00027f9c @ 0x00027f9c
+// Function: mc68k_runPowerDownSequence @ 0x00027f9c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The power-down sequence mc68k_applicationMain runs after its background loop ends (ROM 0x289FA;
+   the .cpp shows no caller because Ghidra prunes the main's exit). CM848's
+   cm848_runPowerDownSequence runs the same sequence with the same constants. mc68k_ for its
+   CTM4_BIUTBR reads (was vp44_FUN_00027f9c; PR #53 round 85) */
 
-void vp44_FUN_00027f9c(void)
+void mc68k_runPowerDownSequence(void)
 
 {
   word wVar1;
@@ -29063,7 +29055,7 @@ void vp44_FUN_00027f9c(void)
   uVar5 = 0;
   while ((uVar5 < 1000 && (cVar3 = cm550_circularBufferEmptyCheck(), cVar3 == '\0'))) {
     cm550_emptyPlaceholderFunction();
-    cm550_watchdogServiceLoop(uVar12);
+    mc68k_delayTimeBaseTicksWithWatchdogService(uVar12);
     uVar5 = uVar5 + 1;
   }
   vp44_FUN_00027c20();
@@ -29096,7 +29088,7 @@ void vp44_FUN_00027f9c(void)
     cVar9 = '\0';
     cVar10 = '\0';
     bVar11 = 0;
-    vp44_FUN_00027cd0();
+    cm550_savePowerDownDataToFlashBank();
   }
   else {
     cVar3 = _calibration_bank_active < 2;
@@ -29105,15 +29097,15 @@ void vp44_FUN_00027f9c(void)
       cVar9 = '\0';
       cVar10 = '\0';
       bVar11 = 0;
-      vp44_FUN_00027cd0();
+      cm550_savePowerDownDataToFlashBank();
     }
     else {
-      vp44_FUN_00027cd0();
+      cm550_savePowerDownDataToFlashBank();
       cVar8 = '\0';
       cVar9 = '\0';
       cVar10 = '\0';
       bVar11 = 0;
-      vp44_FUN_00027cd0();
+      cm550_savePowerDownDataToFlashBank();
     }
   }
   uVar12 = (ushort)(byte)(cVar3 << 4 | cVar8 << 3 | cVar9 << 2 | cVar10 << 1 | bVar11);
@@ -29203,7 +29195,7 @@ void vp44_FUN_00027f9c(void)
       SIM_SWSR = 0xaa;
       CS2_WATCHDOG_SERVICE = 0x55;
       CS2_WATCHDOG_SERVICE = 0xaa;
-      injectorTimingCalculation();
+      mc68k_sampleAndDebounceDiscreteInputs();
       if ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) != 0) {
         if (DAT_0080bd2d == '\0') {
           DAT_0080bd2d = '\0';
@@ -29220,7 +29212,7 @@ void vp44_FUN_00027f9c(void)
         CS2_WATCHDOG_SERVICE = 0x55;
         CS2_WATCHDOG_SERVICE = 0xaa;
         mc68k_ioDriverStrobeHandler();
-        vp44StatusInitAndWait();
+        cm550_restartOnKeyOnDuringPowerDown();
       }
     }
     local_6 = local_6 + 1;
@@ -29254,14 +29246,14 @@ void vp44_FUN_00027f9c(void)
     SIM_SWSR = 0xaa;
     CS2_WATCHDOG_SERVICE = 0x55;
     CS2_WATCHDOG_SERVICE = 0xaa;
-    injectorTimingCalculation();
-    cm550_watchdogServiceLoop();
+    mc68k_sampleAndDebounceDiscreteInputs();
+    mc68k_delayTimeBaseTicksWithWatchdogService();
     bVar11 = bVar11 + 1;
   }
   cVar10 = (value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0;
   bVar11 = cVar3;
   if (!(bool)cVar10) {
-    vp44StatusInitAndWait();
+    cm550_restartOnKeyOnDuringPowerDown();
   }
   local_6 = 1;
   cm550_parameterCircularBufferWrite
@@ -29281,23 +29273,30 @@ void vp44_FUN_00027f9c(void)
     uVar5 = uVar5 + 1;
   }
   while ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0) {
-    injectorTimingCalculation();
+    mc68k_sampleAndDebounceDiscreteInputs();
   }
-  vp44StatusInitAndWait();
+  cm550_restartOnKeyOnDuringPowerDown();
   return;
 }
 
 
 
 //
-// Function: vp44_FUN_000284e8 @ 0x000284e8
+// Function: mc68k_applicationMain @ 0x000284e8
 //
 
 /* WARNING: This function may have set the stack pointer */
 /* WARNING: Removing unreachable block (ram,0x000289ea) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The application main: mc68k_main calls it once (ROM 0x1DCF4) and it never returns. Its start-up
+   clears working RAM (cm550_clearWorkingMemory) after mc68k_loadTpuMicrocode - copies the
+   calibration (cm550_copyCalibrationFromRomToRam) - loads a parameter block - and configures the
+   QSM / SIM / TPU / CTM4 interrupts and channels; then it runs the background loop and
+   mc68k_runPowerDownSequence. 0x28978 inside it is the restart entry
+   cm550_restartOnKeyOnDuringPowerDown jumps to. CM848's cm848_applicationMain has the same skeleton
+   (was vp44_FUN_000284e8; PR #53 round 85) */
 
-void vp44_FUN_000284e8(void)
+void mc68k_applicationMain(void)
 
 {
   char in_XF;
@@ -29355,7 +29354,7 @@ void vp44_FUN_000284e8(void)
   cm550_clearWorkingMemory();
   _DAT_00810ffc = 2;
   _DAT_00810ffe = 0x8628;
-  cm550_firmwareDataCopyToWorkingMemory();
+  cm550_copyCalibrationFromRomToRam();
   run_location = RUN_LOCATION_NORMAL;
   if (DAT_0080bd2d == '\0') {
     DAT_0080bd2d = '\0';
@@ -29747,656 +29746,6 @@ void vp44_FUN_000284e8(void)
 
 
 //
-// Function: vp44_mainSystemInitialization @ 0x00028508
-//
-
-/* WARNING: This function may have set the stack pointer */
-/* WARNING: Removing unreachable block (ram,0x000289ea) */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
-void vp44_mainSystemInitialization(void)
-
-{
-  int unaff_A2;
-  
-  DAT_00ffd00e = 0x80;
-  QSM_QILR = 0;
-  QSM_SCCR1 = 0;
-  SIM_PICR = 0;
-  SIM_PITR = 0;
-  TPU_CIER = 0;
-  CTM4_MCSM2SIC = 0;
-  CTM4_DASM3SIC = 0;
-  CTM4_DASM4SIC = 0;
-  CTM4_PWM5SIC = 0;
-  CTM4_PWM6SIC = 0;
-  CTM4_PWM7SIC = 0;
-  CTM4_PWM8SIC = 0;
-  CTM4_DASM9SIC = 0;
-  CTM4_DASM10SIC = 0;
-  CTM4_MCSM11SIC = 0;
-  CTM4_BIUMCR = 0x1201;
-  CTM4_CPCR = 8;
-  CTM4_MCSM2SIC = 0x200;
-  CTM4_MCSM11SIC = 4;
-  CTM4_DASM3SIC = 8;
-  CTM4_DASM3A = 0;
-  CTM4_DASM3B = 0;
-  CTM4_DASM4SIC = 1;
-  CTM4_DASM9SIC = 1;
-  CTM4_DASM10SIC = 1;
-  CTM4_PWM5A = 0xffff;
-  CTM4_PWM5B = 0;
-  CTM4_PWM5SIC = 8;
-  CTM4_PWM6A = 0xffff;
-  CTM4_PWM6B = 0;
-  CTM4_PWM6SIC = 8;
-  CTM4_PWM7A = 0xffff;
-  CTM4_PWM7B = 0;
-  CTM4_PWM7SIC = 8;
-  CTM4_PWM8A = 0xffff;
-  CTM4_PWM8B = 0;
-  CTM4_PWM8SIC = 8;
-  CTM4_FCSM12SIC = 0x104;
-  mc68k_loadTpuMicrocode();
-  cm550_clearWorkingMemory();
-  cm550_firmwareDataCopyToWorkingMemory();
-  run_location = RUN_LOCATION_NORMAL;
-  if (*(char *)(unaff_A2 + 0x13) == '\0') {
-    *(undefined1 *)(unaff_A2 + 0x13) = 0;
-    enable_flag_to_allow_boot_block_programming_enable_disable =
-         enable_flag_to_allow_boot_block_programming_enable_disable | 8;
-  }
-  cm550_initVectorTable();
-  initQadcModule();
-  QSM_QSMCR = 5;
-  QSM_QILR = 0x13;
-  QSM_QIVR = 0x50;
-  mc68k_FUN_00026854();
-  mc68k_pwmFuelDemandOutputCalculator();
-  vp44_validateRedundantSensors();
-  if (_eeprom_calibration_write_success == 0) {
-    _status_32_word_bit_mapped_system_error_status_word_10_0_1 =
-         _status_32_word_bit_mapped_system_error_status_word_10_0_1 & 0xffbf;
-  }
-  else {
-    _status_32_word_bit_mapped_system_error_status_word_10_0_1 =
-         _status_32_word_bit_mapped_system_error_status_word_10_0_1 | 0x40;
-    _DAT_00806054 = _DAT_00806054 | 0x40;
-  }
-  if (_eeprom_powerdown_status == 0) {
-    _status_32_word_bit_mapped_system_error_status_word_0_0_1 =
-         _status_32_word_bit_mapped_system_error_status_word_0_0_1 & 0xfbff;
-  }
-  else {
-    _status_32_word_bit_mapped_system_error_status_word_0_0_1 =
-         _status_32_word_bit_mapped_system_error_status_word_0_0_1 | 0x400;
-    _fault_first_occurrence_flags_word_0 = _fault_first_occurrence_flags_word_0 | 0x400;
-  }
-  vp44_initVP44StatusMonitoring();
-  cm550_initADCChannelConfiguration();
-  mc68k_FUN_00015df0();
-  cm550_FUN_0003452a();
-  cm550_initFuelSystemOutputDriver();
-  cm550_dmaDescriptorSetup2();
-  cm550_FUN_0000d3b2();
-  cm550_initMultiSystemParameters();
-  cm550_dmaControllerSetup1();
-  vp44_engineProtectionSystemInit();
-  cm550_diagnosticProtectionEvaluator();
-  initializeHighSpeedGovernorGainSet();
-  initializeEngineSpeedLimitDefaults();
-  cm550_engineRpmSourceInit();
-  cm550_canBusTimingInit();
-  cm550_FUN_00026e86();
-  cm550_canControllerConfigInit();
-  cm550_canRpmModeConfigInit();
-  cm550_FUN_00018384();
-  mc68k_scheduler_init();
-  cm550_FUN_00030b0e();
-  func_0x00042ad4();
-  cm550_FUN_00010e06();
-  cm550_initBoostProtectionSystem();
-  cm550_initLoadTrendingSystem();
-  cm550_FUN_00013cc8();
-  vp44_initVp44BufferAddresses();
-  cm550_initHourMeterSystem();
-  vp44_fuelLimitParameterPointerSetup();
-  cm550_FUN_0001ade8();
-  cm550_FUN_0001c7a8();
-  cm550_FUN_0001dbd8();
-  vp44_FUN_0001db8a();
-  cm550_ioControlMaskInit();
-  cm550_iahDisableWaitToStartLamp();
-  cm550_initLookupTablePointers1();
-  cm550_fuelDemandLimitSource2Selector();
-  cm550_FUN_00026b82();
-  func_0x0004cf42();
-  func_0x0004d9dc();
-  cm550_FUN_0002ddbc();
-  cm550_FUN_00030ade();
-  cm550_FUN_00031a68();
-  vp44ControlStructureInit();
-  mc68k_hardwareTimerFlagsInit();
-  cm550_FUN_00026078();
-  cm550_fuelTemperatureLimitingSecondary();
-  cm550_masterSubsystemInit();
-  cm550_FUN_0001e04c();
-  cm550_FUN_0000af70();
-  cm550_canMessageFilterInit();
-  cm550_FUN_0002ed62();
-  cm550_tpuChannelIsrRegister();
-  mc68k_engineSpeedIsrRegister();
-  mc68k_initializeTpuChannel12();
-  mc68k_pwmOutputInit();
-  cm550_serialCommunicationIsrRegister();
-  cm550_canMessageInterruptHandlerSetup();
-  mc68k_dualCanControllerInit();
-  mc68k_initializeJ1708Datalink();
-  cm550_emptyPlaceholderInit();
-  cm550_FUN_0001ddb4();
-  cm550_FUN_0000c880();
-  cm550_interpolationTableSetup();
-  func_0x0004381c();
-  func_0x000442f4();
-  func_0x000432fa();
-  func_0x0004939c();
-  func_0x0004461c();
-  func_0x00044978();
-  func_0x00044c32();
-  func_0x00044d36();
-  func_0x00045196();
-  func_0x0004c934();
-  func_0x00045bbc();
-  func_0x000455f2();
-  func_0x00045e4c();
-  func_0x0004627e();
-  func_0x000468ec();
-  func_0x0004c45e();
-  func_0x00046996();
-  func_0x0004723e();
-  func_0x00047394();
-  func_0x000473a0();
-  func_0x000474ae();
-  func_0x00048886();
-  vp44_FUN_0001cb3c();
-  func_0x00048684();
-  func_0x000478c6();
-  cm550_fuelDemandTablePointersInit();
-  func_0x00048b20();
-  func_0x00048c08();
-  func_0x000488a8();
-  func_0x00048b1c();
-  func_0x00040000();
-  _lsg_breakpoint_speed = _lsg_base_reference_speed_calibration;
-  func_0x00049f5e();
-  func_0x0004a20a();
-  func_0x0004dc14();
-  func_0x0004de9e();
-  func_0x0004e65c();
-  func_0x0004dbf4();
-  vp44_FUN_000133fe();
-  cm550_FUN_00026a2e();
-  cm550_FUN_0001c308();
-  mc68k_pwmFuelDemandOutputCalculator();
-  cm550_clearKickdownControlState();
-  cm550_clearSystemErrorStatus();
-  cm550_ioControlMaskInit();
-  cm550_iahDisableWaitToStartLamp();
-  func_0x000478c6();
-  do {
-    do {
-    } while (_enable_for_the_executive_timing_data_gatherer_enabled_disabled == 0);
-    for (_loop_counter_for_idle_loop_0_65535 = 0;
-        _loop_counter_for_idle_loop_0_65535 < _number_of_loop_delays_cal_0_65535;
-        _loop_counter_for_idle_loop_0_65535 = _loop_counter_for_idle_loop_0_65535 + 1) {
-    }
-  } while( true );
-}
-
-
-
-//
-// Function: vp44_slowCycle4Coordinator @ 0x0002874a
-//
-
-/* WARNING: This function may have set the stack pointer */
-/* WARNING: Removing unreachable block (ram,0x000289ea) */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
-void vp44_slowCycle4Coordinator(void)
-
-{
-  cm550_engineRpmSourceInit();
-  cm550_canBusTimingInit();
-  cm550_FUN_00026e86();
-  cm550_canControllerConfigInit();
-  cm550_canRpmModeConfigInit();
-  cm550_FUN_00018384();
-  mc68k_scheduler_init();
-  cm550_FUN_00030b0e();
-  func_0x00042ad4();
-  cm550_FUN_00010e06();
-  cm550_initBoostProtectionSystem();
-  cm550_initLoadTrendingSystem();
-  cm550_FUN_00013cc8();
-  vp44_initVp44BufferAddresses();
-  cm550_initHourMeterSystem();
-  vp44_fuelLimitParameterPointerSetup();
-  cm550_FUN_0001ade8();
-  cm550_FUN_0001c7a8();
-  cm550_FUN_0001dbd8();
-  vp44_FUN_0001db8a();
-  cm550_ioControlMaskInit();
-  cm550_iahDisableWaitToStartLamp();
-  cm550_initLookupTablePointers1();
-  cm550_fuelDemandLimitSource2Selector();
-  cm550_FUN_00026b82();
-  func_0x0004cf42();
-  func_0x0004d9dc();
-  cm550_FUN_0002ddbc();
-  cm550_FUN_00030ade();
-  cm550_FUN_00031a68();
-  vp44ControlStructureInit();
-  mc68k_hardwareTimerFlagsInit();
-  cm550_FUN_00026078();
-  cm550_fuelTemperatureLimitingSecondary();
-  cm550_masterSubsystemInit();
-  cm550_FUN_0001e04c();
-  cm550_FUN_0000af70();
-  cm550_canMessageFilterInit();
-  cm550_FUN_0002ed62();
-  cm550_tpuChannelIsrRegister();
-  mc68k_engineSpeedIsrRegister();
-  mc68k_initializeTpuChannel12();
-  mc68k_pwmOutputInit();
-  cm550_serialCommunicationIsrRegister();
-  cm550_canMessageInterruptHandlerSetup();
-  mc68k_dualCanControllerInit();
-  mc68k_initializeJ1708Datalink();
-  cm550_emptyPlaceholderInit();
-  cm550_FUN_0001ddb4();
-  cm550_FUN_0000c880();
-  cm550_interpolationTableSetup();
-  func_0x0004381c();
-  func_0x000442f4();
-  func_0x000432fa();
-  func_0x0004939c();
-  func_0x0004461c();
-  func_0x00044978();
-  func_0x00044c32();
-  func_0x00044d36();
-  func_0x00045196();
-  func_0x0004c934();
-  func_0x00045bbc();
-  func_0x000455f2();
-  func_0x00045e4c();
-  func_0x0004627e();
-  func_0x000468ec();
-  func_0x0004c45e();
-  func_0x00046996();
-  func_0x0004723e();
-  func_0x00047394();
-  func_0x000473a0();
-  func_0x000474ae();
-  func_0x00048886();
-  vp44_FUN_0001cb3c();
-  func_0x00048684();
-  func_0x000478c6();
-  cm550_fuelDemandTablePointersInit();
-  func_0x00048b20();
-  func_0x00048c08();
-  func_0x000488a8();
-  func_0x00048b1c();
-  func_0x00040000();
-  _lsg_breakpoint_speed = _lsg_base_reference_speed_calibration;
-  func_0x00049f5e();
-  func_0x0004a20a();
-  func_0x0004dc14();
-  func_0x0004de9e();
-  func_0x0004e65c();
-  func_0x0004dbf4();
-  vp44_FUN_000133fe();
-  cm550_FUN_00026a2e();
-  cm550_FUN_0001c308();
-  mc68k_pwmFuelDemandOutputCalculator();
-  cm550_clearKickdownControlState();
-  cm550_clearSystemErrorStatus();
-  cm550_ioControlMaskInit();
-  cm550_iahDisableWaitToStartLamp();
-  func_0x000478c6();
-  do {
-    do {
-    } while (_enable_for_the_executive_timing_data_gatherer_enabled_disabled == 0);
-    for (_loop_counter_for_idle_loop_0_65535 = 0;
-        _loop_counter_for_idle_loop_0_65535 < _number_of_loop_delays_cal_0_65535;
-        _loop_counter_for_idle_loop_0_65535 = _loop_counter_for_idle_loop_0_65535 + 1) {
-    }
-  } while( true );
-}
-
-
-
-//
-// Function: vp44_engineDiagnosticSystemCoordinator @ 0x00028792
-//
-
-/* WARNING: This function may have set the stack pointer */
-/* WARNING: Removing unreachable block (ram,0x000289ea) */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
-void vp44_engineDiagnosticSystemCoordinator(void)
-
-{
-  cm550_FUN_00013cc8();
-  vp44_initVp44BufferAddresses();
-  cm550_initHourMeterSystem();
-  vp44_fuelLimitParameterPointerSetup();
-  cm550_FUN_0001ade8();
-  cm550_FUN_0001c7a8();
-  cm550_FUN_0001dbd8();
-  vp44_FUN_0001db8a();
-  cm550_ioControlMaskInit();
-  cm550_iahDisableWaitToStartLamp();
-  cm550_initLookupTablePointers1();
-  cm550_fuelDemandLimitSource2Selector();
-  cm550_FUN_00026b82();
-  func_0x0004cf42();
-  func_0x0004d9dc();
-  cm550_FUN_0002ddbc();
-  cm550_FUN_00030ade();
-  cm550_FUN_00031a68();
-  vp44ControlStructureInit();
-  mc68k_hardwareTimerFlagsInit();
-  cm550_FUN_00026078();
-  cm550_fuelTemperatureLimitingSecondary();
-  cm550_masterSubsystemInit();
-  cm550_FUN_0001e04c();
-  cm550_FUN_0000af70();
-  cm550_canMessageFilterInit();
-  cm550_FUN_0002ed62();
-  cm550_tpuChannelIsrRegister();
-  mc68k_engineSpeedIsrRegister();
-  mc68k_initializeTpuChannel12();
-  mc68k_pwmOutputInit();
-  cm550_serialCommunicationIsrRegister();
-  cm550_canMessageInterruptHandlerSetup();
-  mc68k_dualCanControllerInit();
-  mc68k_initializeJ1708Datalink();
-  cm550_emptyPlaceholderInit();
-  cm550_FUN_0001ddb4();
-  cm550_FUN_0000c880();
-  cm550_interpolationTableSetup();
-  func_0x0004381c();
-  func_0x000442f4();
-  func_0x000432fa();
-  func_0x0004939c();
-  func_0x0004461c();
-  func_0x00044978();
-  func_0x00044c32();
-  func_0x00044d36();
-  func_0x00045196();
-  func_0x0004c934();
-  func_0x00045bbc();
-  func_0x000455f2();
-  func_0x00045e4c();
-  func_0x0004627e();
-  func_0x000468ec();
-  func_0x0004c45e();
-  func_0x00046996();
-  func_0x0004723e();
-  func_0x00047394();
-  func_0x000473a0();
-  func_0x000474ae();
-  func_0x00048886();
-  vp44_FUN_0001cb3c();
-  func_0x00048684();
-  func_0x000478c6();
-  cm550_fuelDemandTablePointersInit();
-  func_0x00048b20();
-  func_0x00048c08();
-  func_0x000488a8();
-  func_0x00048b1c();
-  func_0x00040000();
-  _lsg_breakpoint_speed = _lsg_base_reference_speed_calibration;
-  func_0x00049f5e();
-  func_0x0004a20a();
-  func_0x0004dc14();
-  func_0x0004de9e();
-  func_0x0004e65c();
-  func_0x0004dbf4();
-  vp44_FUN_000133fe();
-  cm550_FUN_00026a2e();
-  cm550_FUN_0001c308();
-  mc68k_pwmFuelDemandOutputCalculator();
-  cm550_clearKickdownControlState();
-  cm550_clearSystemErrorStatus();
-  cm550_ioControlMaskInit();
-  cm550_iahDisableWaitToStartLamp();
-  func_0x000478c6();
-  do {
-    do {
-    } while (_enable_for_the_executive_timing_data_gatherer_enabled_disabled == 0);
-    for (_loop_counter_for_idle_loop_0_65535 = 0;
-        _loop_counter_for_idle_loop_0_65535 < _number_of_loop_delays_cal_0_65535;
-        _loop_counter_for_idle_loop_0_65535 = _loop_counter_for_idle_loop_0_65535 + 1) {
-    }
-  } while( true );
-}
-
-
-
-//
-// Function: cm550_fuelDemandUpdateOrchestrator @ 0x00028816
-//
-
-/* WARNING: This function may have set the stack pointer */
-/* WARNING: Removing unreachable block (ram,0x000289ea) */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
-void cm550_fuelDemandUpdateOrchestrator(void)
-
-{
-  cm550_masterSubsystemInit();
-  cm550_FUN_0001e04c();
-  cm550_FUN_0000af70();
-  cm550_canMessageFilterInit();
-  cm550_FUN_0002ed62();
-  cm550_tpuChannelIsrRegister();
-  mc68k_engineSpeedIsrRegister();
-  mc68k_initializeTpuChannel12();
-  mc68k_pwmOutputInit();
-  cm550_serialCommunicationIsrRegister();
-  cm550_canMessageInterruptHandlerSetup();
-  mc68k_dualCanControllerInit();
-  mc68k_initializeJ1708Datalink();
-  cm550_emptyPlaceholderInit();
-  cm550_FUN_0001ddb4();
-  cm550_FUN_0000c880();
-  cm550_interpolationTableSetup();
-  func_0x0004381c();
-  func_0x000442f4();
-  func_0x000432fa();
-  func_0x0004939c();
-  func_0x0004461c();
-  func_0x00044978();
-  func_0x00044c32();
-  func_0x00044d36();
-  func_0x00045196();
-  func_0x0004c934();
-  func_0x00045bbc();
-  func_0x000455f2();
-  func_0x00045e4c();
-  func_0x0004627e();
-  func_0x000468ec();
-  func_0x0004c45e();
-  func_0x00046996();
-  func_0x0004723e();
-  func_0x00047394();
-  func_0x000473a0();
-  func_0x000474ae();
-  func_0x00048886();
-  vp44_FUN_0001cb3c();
-  func_0x00048684();
-  func_0x000478c6();
-  cm550_fuelDemandTablePointersInit();
-  func_0x00048b20();
-  func_0x00048c08();
-  func_0x000488a8();
-  func_0x00048b1c();
-  func_0x00040000();
-  _lsg_breakpoint_speed = _lsg_base_reference_speed_calibration;
-  func_0x00049f5e();
-  func_0x0004a20a();
-  func_0x0004dc14();
-  func_0x0004de9e();
-  func_0x0004e65c();
-  func_0x0004dbf4();
-  vp44_FUN_000133fe();
-  cm550_FUN_00026a2e();
-  cm550_FUN_0001c308();
-  mc68k_pwmFuelDemandOutputCalculator();
-  cm550_clearKickdownControlState();
-  cm550_clearSystemErrorStatus();
-  cm550_ioControlMaskInit();
-  cm550_iahDisableWaitToStartLamp();
-  func_0x000478c6();
-  do {
-    do {
-    } while (_enable_for_the_executive_timing_data_gatherer_enabled_disabled == 0);
-    for (_loop_counter_for_idle_loop_0_65535 = 0;
-        _loop_counter_for_idle_loop_0_65535 < _number_of_loop_delays_cal_0_65535;
-        _loop_counter_for_idle_loop_0_65535 = _loop_counter_for_idle_loop_0_65535 + 1) {
-    }
-  } while( true );
-}
-
-
-
-//
-// Function: cm550_advancedEngineProtectionCoordinator @ 0x00028828
-//
-
-/* WARNING: This function may have set the stack pointer */
-/* WARNING: Removing unreachable block (ram,0x000289ea) */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
-void cm550_advancedEngineProtectionCoordinator(void)
-
-{
-  cm550_canMessageFilterInit();
-  cm550_FUN_0002ed62();
-  cm550_tpuChannelIsrRegister();
-  mc68k_engineSpeedIsrRegister();
-  mc68k_initializeTpuChannel12();
-  mc68k_pwmOutputInit();
-  cm550_serialCommunicationIsrRegister();
-  cm550_canMessageInterruptHandlerSetup();
-  mc68k_dualCanControllerInit();
-  mc68k_initializeJ1708Datalink();
-  cm550_emptyPlaceholderInit();
-  cm550_FUN_0001ddb4();
-  cm550_FUN_0000c880();
-  cm550_interpolationTableSetup();
-  func_0x0004381c();
-  func_0x000442f4();
-  func_0x000432fa();
-  func_0x0004939c();
-  func_0x0004461c();
-  func_0x00044978();
-  func_0x00044c32();
-  func_0x00044d36();
-  func_0x00045196();
-  func_0x0004c934();
-  func_0x00045bbc();
-  func_0x000455f2();
-  func_0x00045e4c();
-  func_0x0004627e();
-  func_0x000468ec();
-  func_0x0004c45e();
-  func_0x00046996();
-  func_0x0004723e();
-  func_0x00047394();
-  func_0x000473a0();
-  func_0x000474ae();
-  func_0x00048886();
-  vp44_FUN_0001cb3c();
-  func_0x00048684();
-  func_0x000478c6();
-  cm550_fuelDemandTablePointersInit();
-  func_0x00048b20();
-  func_0x00048c08();
-  func_0x000488a8();
-  func_0x00048b1c();
-  func_0x00040000();
-  _lsg_breakpoint_speed = _lsg_base_reference_speed_calibration;
-  func_0x00049f5e();
-  func_0x0004a20a();
-  func_0x0004dc14();
-  func_0x0004de9e();
-  func_0x0004e65c();
-  func_0x0004dbf4();
-  vp44_FUN_000133fe();
-  cm550_FUN_00026a2e();
-  cm550_FUN_0001c308();
-  mc68k_pwmFuelDemandOutputCalculator();
-  cm550_clearKickdownControlState();
-  cm550_clearSystemErrorStatus();
-  cm550_ioControlMaskInit();
-  cm550_iahDisableWaitToStartLamp();
-  func_0x000478c6();
-  do {
-    do {
-    } while (_enable_for_the_executive_timing_data_gatherer_enabled_disabled == 0);
-    for (_loop_counter_for_idle_loop_0_65535 = 0;
-        _loop_counter_for_idle_loop_0_65535 < _number_of_loop_delays_cal_0_65535;
-        _loop_counter_for_idle_loop_0_65535 = _loop_counter_for_idle_loop_0_65535 + 1) {
-    }
-  } while( true );
-}
-
-
-
-//
-// Function: cm550_shutdownMinimumSelectorOrchestrator @ 0x00028936
-//
-
-/* WARNING: This function may have set the stack pointer */
-/* WARNING: Removing unreachable block (ram,0x000289ea) */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
-void cm550_shutdownMinimumSelectorOrchestrator(void)
-
-{
-  _lsg_breakpoint_speed = _lsg_base_reference_speed_calibration;
-  func_0x00049f5e();
-  func_0x0004a20a();
-  func_0x0004dc14();
-  func_0x0004de9e();
-  func_0x0004e65c();
-  func_0x0004dbf4();
-  vp44_FUN_000133fe();
-  cm550_FUN_00026a2e();
-  cm550_FUN_0001c308();
-  mc68k_pwmFuelDemandOutputCalculator();
-  cm550_clearKickdownControlState();
-  cm550_clearSystemErrorStatus();
-  cm550_ioControlMaskInit();
-  cm550_iahDisableWaitToStartLamp();
-  func_0x000478c6();
-  do {
-    do {
-    } while (_enable_for_the_executive_timing_data_gatherer_enabled_disabled == 0);
-    for (_loop_counter_for_idle_loop_0_65535 = 0;
-        _loop_counter_for_idle_loop_0_65535 < _number_of_loop_delays_cal_0_65535;
-        _loop_counter_for_idle_loop_0_65535 = _loop_counter_for_idle_loop_0_65535 + 1) {
-    }
-  } while( true );
-}
-
-
-
-//
 // Function: cm550_FUN_00028978 @ 0x00028978
 //
 
@@ -30411,31 +29760,6 @@ void cm550_FUN_00028978(void)
   cm550_clearKickdownControlState();
   cm550_clearSystemErrorStatus();
   cm550_ioControlMaskInit();
-  cm550_iahDisableWaitToStartLamp();
-  func_0x000478c6();
-  do {
-    do {
-    } while (_enable_for_the_executive_timing_data_gatherer_enabled_disabled == 0);
-    for (_loop_counter_for_idle_loop_0_65535 = 0;
-        _loop_counter_for_idle_loop_0_65535 < _number_of_loop_delays_cal_0_65535;
-        _loop_counter_for_idle_loop_0_65535 = _loop_counter_for_idle_loop_0_65535 + 1) {
-    }
-  } while( true );
-}
-
-
-
-//
-// Function: cm550_phase4InitSequence @ 0x00028990
-//
-
-/* WARNING: This function may have set the stack pointer */
-/* WARNING: Removing unreachable block (ram,0x000289ea) */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
-void cm550_phase4InitSequence(void)
-
-{
   cm550_iahDisableWaitToStartLamp();
   func_0x000478c6();
   do {
@@ -30519,19 +29843,24 @@ void mc68k_dualCanControllerInit(void)
   bVar1 = CAN_CS5_CONTROL;
   CAN_CS5_CONTROL = bVar1 & 0xfe;
   mc68k_configureCanCs5MessageObjects();
-  initDiagnosticBufferPointers();
+  mc68k_initializeJ1939Datalink();
   return;
 }
 
 
 
 //
-// Function: initDiagnosticBufferPointers @ 0x00028b80
+// Function: mc68k_initializeJ1939Datalink @ 0x00028b80
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Initializes the J1939 datalink on the chip select 4 82527: the CAN transmit / receive ring
+   pointers - the transport frame buffers - a 4-entry source address list of 0xFE - 21 transmit
+   buffer initializers - 19 periodic schedule entries - and the remaining set-up / registration
+   calls. Its old shared name came from a pairing CM848 later dropped (was
+   initDiagnosticBufferPointers; PR #53 round 85) */
 
-void initDiagnosticBufferPointers(void)
+void mc68k_initializeJ1939Datalink(void)
 
 {
   byte bVar1;
@@ -30697,125 +30026,6 @@ void initDiagnosticBufferPointers(void)
 
 
 //
-// Function: cm550_mainCanTransmissionLoop @ 0x00028e32
-//
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
-void cm550_mainCanTransmissionLoop(void)
-
-{
-  byte bVar1;
-  uint uVar2;
-  byte bVar3;
-  byte bVar4;
-  byte bVar5;
-  byte bVar6;
-  undefined *puVar7;
-  int unaff_A3;
-  int *unaff_A5;
-  
-  cm550_systemControlFunction2();
-  cm550_FUN_00021ef6();
-  cm550_FUN_000226da();
-  cm550_systemFunction1xCaller();
-  cm550_FUN_00021872();
-  cm550_systemFunction8xMaximum();
-  cm550_systemFunction6xParameterized();
-  _can_first_receive_object_index = _can_s_last_message_object_used_0_15 + 1;
-  _can_s_last_message_object_used_0_15 = _can_s_last_message_object_used_0_15 + 0xf;
-  uVar2 = (uint)_can_first_receive_object_index;
-  _can_last_receive_object_index = _can_s_last_message_object_used_0_15;
-  *unaff_A5 = (int)(&CAN_CS4_CONTROL + uVar2 * 0x10);
-  (&CAN_CS4_CONTROL)[uVar2 * 0x10] = 0x55;
-  *(undefined1 *)(*unaff_A5 + 1) = 0xfb;
-  *(undefined1 *)*unaff_A5 = 0xef;
-  *(undefined1 *)(*unaff_A5 + 6) = 4;
-  puVar7 = &DAT_00ffd810 + (uint)_can_first_receive_object_index * 0x10;
-  uVar2 = (uint)_j1939_network_address_for_ecm_as_engine_node_0_255;
-  bVar6 = j1939_engine_node_source_address << 3;
-  bVar3 = 0;
-  bVar5 = 0;
-  for (bVar4 = 0; bVar4 < _can_number_of_engine_destination_specific_rx_objects_0_14;
-      bVar4 = bVar4 + 1) {
-    bVar5 = bVar5 + 1;
-    *puVar7 = 0x99;
-    puVar7[6] = 4;
-    puVar7[1] = 0xdf;
-    puVar7[2] = *(undefined1 *)(unaff_A3 + (uint)bVar3);
-    puVar7[3] = (byte)((int)(uVar2 & 0xe0) >> 5) |
-                *(byte *)(unaff_A3 + (uint)(byte)(bVar3 + 1)) & 0xf8;
-    bVar1 = bVar3 + 3;
-    puVar7[4] = bVar6 | *(byte *)(unaff_A3 + (uint)(byte)(bVar3 + 2)) & 7;
-    bVar3 = bVar3 + 4;
-    puVar7[5] = *(undefined1 *)(unaff_A3 + (uint)bVar1);
-    puVar7 = puVar7 + 0x10;
-  }
-  for (bVar4 = 0; bVar4 < _can_number_of_engine_destination_non_specific_rx_objects_0_14;
-      bVar4 = bVar4 + 1) {
-    bVar5 = bVar5 + 1;
-    *puVar7 = 0x99;
-    puVar7[1] = 0xdf;
-    puVar7[6] = 4;
-    puVar7[2] = *(undefined1 *)(unaff_A3 + (uint)bVar3);
-    puVar7[3] = *(undefined1 *)(unaff_A3 + (uint)(byte)(bVar3 + 1));
-    bVar6 = bVar3 + 3;
-    puVar7[4] = *(undefined1 *)(unaff_A3 + (uint)(byte)(bVar3 + 2));
-    bVar3 = bVar3 + 4;
-    puVar7[5] = *(undefined1 *)(unaff_A3 + (uint)bVar6);
-    puVar7 = puVar7 + 0x10;
-  }
-  uVar2 = (uint)_j1939_network_address_for_ecm_as_engine_retarder_node_0_255;
-  bVar6 = j1939_retarder_node_source_address << 3;
-  for (bVar4 = 0; bVar4 < _can_number_of_retarder_destination_specific_rx_objects_0_14;
-      bVar4 = bVar4 + 1) {
-    bVar5 = bVar5 + 1;
-    *puVar7 = 0x99;
-    puVar7[1] = 0xdf;
-    puVar7[6] = 4;
-    puVar7[2] = *(undefined1 *)(unaff_A3 + (uint)bVar3);
-    puVar7[3] = (byte)((int)(uVar2 & 0xe0) >> 5) |
-                *(byte *)(unaff_A3 + (uint)(byte)(bVar3 + 1)) & 0xf8;
-    bVar1 = bVar3 + 3;
-    puVar7[4] = bVar6 | *(byte *)(unaff_A3 + (uint)(byte)(bVar3 + 2)) & 7;
-    bVar3 = bVar3 + 4;
-    puVar7[5] = *(undefined1 *)(unaff_A3 + (uint)bVar1);
-    puVar7 = puVar7 + 0x10;
-  }
-  for (bVar4 = 0; bVar4 < _can_number_of_retarder_destination_non_specific_rx_objects_0_14;
-      bVar4 = bVar4 + 1) {
-    bVar5 = bVar5 + 1;
-    *puVar7 = 0x99;
-    puVar7[1] = 0xdf;
-    puVar7[6] = 4;
-    puVar7[2] = *(undefined1 *)(unaff_A3 + (uint)bVar3);
-    puVar7[3] = *(undefined1 *)(unaff_A3 + (uint)(byte)(bVar3 + 1));
-    bVar6 = bVar3 + 3;
-    puVar7[4] = *(undefined1 *)(unaff_A3 + (uint)(byte)(bVar3 + 2));
-    bVar3 = bVar3 + 4;
-    puVar7[5] = *(undefined1 *)(unaff_A3 + (uint)bVar6);
-    puVar7 = puVar7 + 0x10;
-  }
-  for (; bVar5 < 0xe; bVar5 = bVar5 + 1) {
-    *puVar7 = 0x99;
-    puVar7[1] = 0xdf;
-    puVar7[6] = 4;
-    puVar7[2] = *(undefined1 *)(unaff_A3 + (uint)bVar3);
-    puVar7[3] = *(undefined1 *)(unaff_A3 + (uint)(byte)(bVar3 + 1));
-    bVar4 = bVar3 + 3;
-    puVar7[4] = *(undefined1 *)(unaff_A3 + (uint)(byte)(bVar3 + 2));
-    bVar3 = bVar3 + 4;
-    puVar7[5] = *(undefined1 *)(unaff_A3 + (uint)bVar4);
-    puVar7 = puVar7 + 0x10;
-  }
-  bVar5 = CAN_CS4_CONTROL;
-  CAN_CS4_CONTROL = bVar5 | 10;
-  return;
-}
-
-
-
-//
 // Function: mc68k_initializeJ1708Datalink @ 0x00029130
 //
 
@@ -30872,14 +30082,14 @@ word mc68k_initializeJ1708Datalink(void)
 /* Reprograms the boot block from boot_block_image: when boot_block_version (ROM 0x16) is non-zero
    and _this_key_must_be_set_to_bad1_before_boot_block_is_programmed_none is 0xbad1 with
    boot_block_version below boot_block_image_version - or 0x1d1d with a different version - it sets
-   the boot block programming enable flag bit 2 - erases (cm550_FUN_0001c484(0 / 1)) - and copies
-   0x291F4 up to this function's address through a 256-byte RAM buffer into flash at address 0 with
-   cm550_flashProgramFromRam (was cm550_FUN_0002ce64; PR #53 round 84) */
+   the boot block programming enable flag bit 2 - erases (cm550_flashEraseFromRam(0 / 1)) - and
+   copies 0x291F4 up to this function's address through a 256-byte RAM buffer into flash at address
+   0 with cm550_flashProgramFromRam (was cm550_FUN_0002ce64; PR #53 round 84) */
 
 void cm550_updateBootBlockFromImage(void)
 
 {
-  int iVar1;
+  dword dVar1;
   undefined4 unaff_D2;
   code *pcVar2;
   code *pcVar3;
@@ -30899,8 +30109,8 @@ void cm550_updateBootBlockFromImage(void)
            enable_flag_to_allow_boot_block_programming_enable_disable | 2;
     }
     mc68k_ioDriverStrobeHandler();
-    iVar1 = cm550_FUN_0001c484(0,1);
-    if (iVar1 == 0) {
+    dVar1 = cm550_flashEraseFromRam(0,1);
+    if (dVar1 == 0) {
       dest_address = (code *)0x0;
       pcVar3 = (code *)&boot_block_image;
       while (pcVar3 < cm550_updateBootBlockFromImage) {
@@ -31731,12 +30941,18 @@ void mc68k_initDiagnosticModeSystem(void)
 
 
 //
-// Function: oilPressureRpmFaultMonitor @ 0x0002dde8
+// Function: mc68k_monitorPwmOutputReadBackFaults @ 0x0002dde8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* A PWM output driver read-back fault monitor - nothing in it reads oil pressure or engine speed:
+   for PWM1 / PWM2 / PWM5 with a non-zero period it compares the read-back pin (bit 7 of DASM10SIC /
+   DASM9SIC / DASM4SIC) with the commanded duty - a high pin at 0 % or a low pin at 100 % counts a
+   driver error and the right level heals it. For its first 6 passes it also steps
+   mc68k_waterInFuelDiagnosticHandler (in fact the PWM 3 / 4 start-up check) (was
+   oilPressureRpmFaultMonitor; PR #53 round 85) */
 
-uint oilPressureRpmFaultMonitor(void)
+uint mc68k_monitorPwmOutputReadBackFaults(void)
 
 {
   word wVar1;
@@ -33455,8 +32671,9 @@ void unscrambleSecurityKey(byte *input_buffer,byte *output_buffer)
    lockout after 17 misses); else unscrambleSecurityKey gives 6 characters (compared with
    security_master_password_cal) and a 4-byte hour meter stamp ((meter & ~0xff) - (stamp & ~0xff) <
    0x1a): a match clears the count and passes / a miss adds one and fails. Called by
-   writeJ1939DiagnosticMemory (types 3 / 5) and diagnosticCommandDispatcher (J1708 command 3). The
-   same function as CM848 0x5573c (shared name; was sensorRangeValidation; PR #53 round 72). */
+   writeJ1939DiagnosticMemory (types 3 / 5) and mc68k_dispatchJ1708ReceivedMessages (J1708 command
+   3). The same function as CM848 0x5573c (shared name; was sensorRangeValidation; PR #53 round 72).
+    */
 
 byte validateSecurityKey(byte *auth_payload_ptr)
 
@@ -37876,10 +37093,15 @@ undefined8 mc68k_alignCylinderIndexToCrankRevolution(void)
 
 
 //
-// Function: cm550_watchdogServiceLoop @ 0x00034bba
+// Function: mc68k_delayTimeBaseTicksWithWatchdogService @ 0x00034bba
 //
 
-void cm550_watchdogServiceLoop(undefined4 param_1)
+/* A busy-wait: it reads CTM4_BIUTBR once - then services both watchdogs on every pass until the
+   16-bit difference CTM4_BIUTBR - start reaches its word argument. Callers push a 2-byte tick count
+   (500 or 10000) between polls of the EEPROM write queue or the VP44 status (was
+   cm550_watchdogServiceLoop; PR #53 round 85) */
+
+void mc68k_delayTimeBaseTicksWithWatchdogService(undefined4 param_1)
 
 {
   word wVar1;
@@ -37898,10 +37120,14 @@ void cm550_watchdogServiceLoop(undefined4 param_1)
 
 
 //
-// Function: cm550_FUN_00034bf8 @ 0x00034bf8
+// Function: mc68k_delayTimeBaseTicksWithWatchdogService2 @ 0x00034bf8
 //
 
-void cm550_FUN_00034bf8(word timer_ticks)
+/* A byte-identical copy of mc68k_delayTimeBaseTicksWithWatchdogService (ROM 0x34BF8-0x34C35 =
+   0x34BBA-0x34BF7); its only reference is movea.l #0x34BF8,a3 in the restart routine
+   cm550_FUN_0001192a (was cm550_FUN_00034bf8; PR #53 round 85) */
+
+void mc68k_delayTimeBaseTicksWithWatchdogService2(word timer_ticks)
 
 {
   word wVar1;
@@ -38367,4 +37593,4 @@ LAB_00035162:
 
 
 
-// Export complete - 767 functions processed
+// Export complete - 758 functions processed

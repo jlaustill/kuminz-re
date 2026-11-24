@@ -74,8 +74,9 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Flash Programming Functions
 # -----------------------------------------------------------------------------
-0x0001c484,flashEraseRamExecutor,0,start_address,uint,Flash start address to erase
-0x0001c484,flashEraseRamExecutor,1,end_address,uint,Flash end address to erase
+0x0001c484,cm550_flashEraseFromRam,0,block_address,uint,The flash block's base address (0x4000 / 0x6000 / 0)
+0x0001c484,cm550_flashEraseFromRam,1,suspend_check_disabled,uint,1 = never suspend the erase (the boot block); 0 = suspend when the chip select 2 device's input bit 0 reads 1 (the parameter block savers) (PR #53 round 85)
+0x0001c484,cm550_flashEraseFromRam,return,,int,The erase result: 0 erased / 1 erase error or timeout / 2 suspended (PR #53 round 85)
 0x0001c5e8,flashProgramFromRam,0,dest_address,int,Flash destination address
 0x0001c5e8,flashProgramFromRam,1,source_ptr,uint,Source data pointer
 0x0001c5e8,flashProgramFromRam,2,byte_count,uint,Number of bytes to program
@@ -143,7 +144,7 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Timing and Delay Functions
 # -----------------------------------------------------------------------------
-0x00034bf8,hardwareTimerDelayLoop,0,timer_ticks,ushort,Number of hardware timer ticks to wait
+0x00034bf8,mc68k_delayTimeBaseTicksWithWatchdogService2,0,timer_ticks,ushort,Number of hardware timer ticks to wait
 
 # -----------------------------------------------------------------------------
 # Serial/UART Functions
@@ -155,7 +156,7 @@ function_address,function_name,param_index,name,type,comment
 # TPU (Timer Processing Unit) Functions
 # -----------------------------------------------------------------------------
 0x0001e266,mc68k_armJ1708BusTimer,return,,void,No parameter: the callers push nothing before the jsr and the body reads no input (the channel_mask parameter row was never read; PR #53 round 77)
-0x0001e5f0,tpuChannelConfigurator,0,channel_config,uint,TPU channel configuration value
+0x0001e5f0,mc68k_queueCanCs4ReceiveMessage,0,message_object,uint,The 82527 message object number (the low byte of a word the callers push) (PR #53 round 85)
 
 # -----------------------------------------------------------------------------
 # Math Utility Functions (limitedDivisionCalculator only - others in Division/Clamping section)
