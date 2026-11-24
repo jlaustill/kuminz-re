@@ -1066,7 +1066,7 @@ sensor_channel_state_t,,held_value,word,2,Output while the channel is held (its 
 sensor_channel_state_t,,held_value_source_priority,byte,1,Priority of the source that last wrote held_value - the J1939 input layer arbitrates with it (the accelerator pedal channel 13 - cm848_processJ1939AcceleratorPedalPosition); not used by the sensor-channel functions,,verified
 sensor_channel_state_t,,spare,byte,1,Not accessed,,verified
 sensor_channel_state_t,,lookup_input,word,2,Table input: raw x sensor_channel_ratio_scale / the supply channel's filtered output (capped at 0x3ff) or the raw reading for type-0 channels,,verified
-# ema_filter_state_t: exponentialMovingAverage's state - each pass the accumulator moves (65536 - coefficient) / 65536 of the way to the new value
+# ema_filter_state_t: cm848_exponentialMovingAverage's state - each pass the accumulator moves (65536 - coefficient) / 65536 of the way to the new value
 # cruise_governor_gain_set_t: one PID gain set of the cruise / road speed governor (e2m 1186, PR #53 round 16):
 # three instances at 0x408e02 / 0x408e18 / 0x408e26; cm848_selectCruiseGovernorGainSet loads the selected one through
 # cruise_governor_gain_set_pointer into cruise_pid_proportional_gain / _integral_gain / _derivative_gain /

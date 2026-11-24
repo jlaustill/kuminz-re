@@ -29,8 +29,9 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Table Interpolation Functions
 # -----------------------------------------------------------------------------
-0x00034f8a,cm550_coreTableInterpolation,0,input_value,ushort,The word at +4 (move.w (8;a6)) (was index 1; PR #53 round 86)
-0x00034f8a,cm550_coreTableInterpolation,1,table_descriptor,void*,The long at +6 (movea.l (10;a6)); 7 callers move.l and 4 pea - the same filter record shape as exponentialMovingAverage's (was index 0 at +4; PR #53 round 86)
+0x00034f8a,cm550_exponentialMovingAverage,return,,word,The rounded integer part of the accumulator
+0x00034f8a,cm550_exponentialMovingAverage,0,new_sample,ushort,The sample - the word at +4 (move.w (8;a6))
+0x00034f8a,cm550_exponentialMovingAverage,1,filter_state,ema_filter_state_t*,The filter record - the long at +6 (movea.l (10;a6)) (PR #53 round 88)
 0x00034de0,lookupTableInterpolation,0,args,table_interp_args_t*,Pointer to table interpolation arguments structure
 0x00035088,twoDimensionalTableInterpolation,0,table_args,short*,Pointer to 2D table arguments structure
 0x00035064,unsignedMultiplyDivide,0,multiplicand,uint,First value to multiply
@@ -39,10 +40,15 @@ function_address,function_name,param_index,name,type,comment
 0x00035076,signedMultiplyDivide64,0,multiplicand,int,First signed value to multiply
 0x00035076,signedMultiplyDivide64,1,multiplier,int,Second signed value to multiply
 0x00035076,signedMultiplyDivide64,2,divisor,int,Signed value to divide the product by
-0x00034e9a,exponentialMovingAverage,0,new_sample,ushort,The sample - the word at +4 (move.w (8;a6)) (was 3 ushort rows at 6 / 10 / 14; PR #53 round 86)
-0x00034e9a,exponentialMovingAverage,1,filter_state,dword*,The filter record: a coefficient word pointer then a Q16.16 accumulator (CM848's ema_filter_state_t shape - a struct lead) - the long at +6 (movea.l (10;a6)); 5 callers pea and 1 move.l (new; PR #53 round 86)
-0x00034f00,cm550_unsignedLinearInterpolation,0,x_input,ushort,The word at +4 (move.w (20;sp)) (was 5 ushort rows; no caller in the dump; PR #53 round 86)
-0x00034f00,cm550_unsignedLinearInterpolation,1,interpolation_state,dword*,The long at +6 (movea.l (22;sp)) (new; PR #53 round 86)
+0x00034f00,cm550_secondOrderFilter,return,,word,The integer part of the new output (swap d2 / move.w d2;d0)
+0x00034f00,cm550_secondOrderFilter,0,input,ushort,The input - the word at +4 (move.w (20;sp) after a movem of 4 registers)
+0x00034f00,cm550_secondOrderFilter,1,filter,second_order_filter_state_t*,The filter record - the long at +6 (movea.l (22;sp)) (PR #53 round 88)
+0x00034fe0,cm550_secondOrderFilterUnsigned,return,,word,The integer part of the new output
+0x00034fe0,cm550_secondOrderFilterUnsigned,0,input,ushort,The input - the word at +4 (after a movem of 4 registers)
+0x00034fe0,cm550_secondOrderFilterUnsigned,1,filter,second_order_filter_state_t*,The filter record - the long at +6 (movea.l (22;sp)) (PR #53 round 88)
+0x00034e9a,cm550_signedFirstOrderFilter,return,,word,The rounded integer part of the accumulator - 0x8000: a signed value (no signed 16-bit prototype type yet)
+0x00034e9a,cm550_signedFirstOrderFilter,0,new_sample,ushort,The sample (signed) - the word at +4 (move.w (8;a6))
+0x00034e9a,cm550_signedFirstOrderFilter,1,filter_state,ema_filter_state_t*,The filter record - the long at +6 (movea.l (10;a6)) (PR #53 round 88)
 
 # -----------------------------------------------------------------------------
 # Division/Clamping Functions

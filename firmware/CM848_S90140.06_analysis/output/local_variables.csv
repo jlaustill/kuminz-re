@@ -4,7 +4,7 @@ function_address,function_name,old_name,new_name,type,comment
 #
 # cm848_sendJ1939Message @ 0x000539fc - Dispatches to single-frame or transport protocol by payload size
 0x000128a0,cm848_calculateDelayedEgrFlowAndFraction,uVar1,delay_volume_term,uint,oxygen_flow_delay_volume_fraction x 120 >> 10 (0xffff above 1.0): with x 1000 / (volumetric efficiency x speed) it gives the oxygen delay in ms
-0x000128a0,cm848_calculateDelayedEgrFlowAndFraction,dVar2,filtered_oxygen_fraction,uint,exponentialMovingAverage output - stored as egr_oxygen_fraction
+0x000128a0,cm848_calculateDelayedEgrFlowAndFraction,dVar2,filtered_oxygen_fraction,uint,cm848_exponentialMovingAverage output - stored as egr_oxygen_fraction
 0x000128a0,cm848_calculateDelayedEgrFlowAndFraction,wVar3,delayed_oxygen_fraction,word,The residual oxygen fraction from oxygen_flow_delay_milliseconds / 10 passes back (cm848_delayUnsignedSample)
 0x000128a0,cm848_calculateDelayedEgrFlowAndFraction,sVar4,delayed_egr_mass_flow,sword,The EGR mass flow before delay from egr_flow_delay_milliseconds / 10 passes back (cm848_delaySignedSample)
 0x000128a0,cm848_calculateDelayedEgrFlowAndFraction,uVar5,volumetric_efficiency_speed_product,uint,engine_volumetric_efficiency x engine speed >> 13 limited to 1600 .. 0xffff: the divisor of the oxygen delay. Committing this name splits the reused register: its later values (the two delays and the EGR fraction) render as a new uVar1 that no row can name (rows match the auto-names before the commit and uVar1 is the delay_volume_term row)
@@ -122,7 +122,7 @@ function_address,function_name,old_name,new_name,type,comment
 0x005012dc,cm848_processUnsignedSensorChannel,uVar10,sensor_value,uint,Reading compared against the thresholds and stored as lookup_input (the register is also reused for the channel bit mask and the dispatch index)
 0x005012dc,cm848_processUnsignedSensorChannel,uVar3,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table
 0x005012dc,cm848_processUnsignedSensorChannel,wVar6,sensor_scratch,word,Raw reading / lookup result / fault status - one register reused across the paths
-0x005012dc,cm848_processUnsignedSensorChannel,dVar4,ema_result,undefined4,exponentialMovingAverage output written to sensor_channel_filtered_output
+0x005012dc,cm848_processUnsignedSensorChannel,dVar4,ema_result,undefined4,cm848_exponentialMovingAverage output written to sensor_channel_filtered_output
 0x005012dc,cm848_processUnsignedSensorChannel,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state fields)
 0x005012dc,cm848_processUnsignedSensorChannel,uVar2,recovery_decrement,ushort,config_ptr->recovery_decrement copy
 0x005012dc,cm848_processUnsignedSensorChannel,unaff_r29,debounce_transition_state,uint,Debounce step outcome - 0 settled / 1 still counting / 2 limit reached
@@ -133,9 +133,9 @@ function_address,function_name,old_name,new_name,type,comment
 0x00501b4c,cm848_initializeUnsignedSensorChannel,uVar9,sensor_value,uint,Lookup input before it is stored in lookup_input (the register is also reused for the channel bit mask and the dispatch index)
 0x00501b4c,cm848_initializeUnsignedSensorChannel,uVar5,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table
 0x00501b4c,cm848_initializeUnsignedSensorChannel,wVar4,sensor_scratch,word,Raw reading / lookup result / fault status - one register reused across the paths
-0x00501b4c,cm848_initializeUnsignedSensorChannel,dVar2,ema_result,undefined4,exponentialMovingAverage output written to sensor_channel_filtered_output
+0x00501b4c,cm848_initializeUnsignedSensorChannel,dVar2,ema_result,undefined4,cm848_exponentialMovingAverage output written to sensor_channel_filtered_output
 0x00501b4c,cm848_initializeUnsignedSensorChannel,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state fields)
-0x005269c0,cm848_detectVehicleSpeedSensorZeroUnderLoad,dVar1,filtered_engine_load,dword,exponentialMovingAverage output of engine_load_percent - also stored to vehicle_speed_zero_under_load_engine_load_filtered
+0x005269c0,cm848_detectVehicleSpeedSensorZeroUnderLoad,dVar1,filtered_engine_load,dword,cm848_exponentialMovingAverage output of engine_load_percent - also stored to vehicle_speed_zero_under_load_engine_load_filtered
 0x005269c0,cm848_detectVehicleSpeedSensorZeroUnderLoad,cVar2,limits_reached_count,byte,How many of the two P0500 limits (accelerator off-idle entries / events) are reached - 2 sets fault 29
 0x00047bd0,cm848_calculateFuelMeteringCommand,local_64,working_proportional_gains,piecewise_linear_gain_t,Stack copy of fuel_pressure_governor_proportional_gains (each gain scaled by its lookup table while cam_timing_alt_mode_enable_cal is 0) passed to cm848_applyPiecewiseLinearGain
 0x00047bd0,cm848_calculateFuelMeteringCommand,local_54,working_integral_gains,piecewise_linear_gain_t,Stack copy of fuel_pressure_governor_integral_gains (scaled the same way) passed to cm848_integrateWithZoneGain

@@ -111,11 +111,8 @@ address,name,type,comment
 0x00800058,timing_table_2_base,undefined,
 0x0080005a,timing_table_2_ptr,undefined,
 0x00800060,timing_table_3_ptr,undefined,
-0x00800066,timing_table_4_ptr,undefined,
-0x0080006c,timing_table_5_ptr,undefined,
-0x00800070,diagnostic_timing_increment_state,undefined,
-0x00800072,diagnostic_timing_increment_reserved,undefined,
-0x00800074,fuel_parameter_pointer_3,undefined,
+0x00800066,engine_acceleration_first_stage_filter_state,ema_filter_state_t,The signed filter record of the engine acceleration first stage: cm550_outputControlTimingGenerator (0xb210) filters the change of current_engine_rpm_filtered since the last pass (0x80a292) into 0x80a294. CM848 names its record the same (0x3fb3b0); coefficient -> engine_acceleration_first_stage_filter_coefficient (0x807a42) (were timing_table_4_ptr at +0 / timing_table_5_ptr at +6; PR #53 round 88)
+0x0080006e,engine_acceleration_second_stage_filter_state,ema_filter_state_t,The signed filter record of the engine acceleration second stage (the same function as the first stage, fed by the first stage's output); coefficient -> engine_acceleration_second_stage_filter_coefficient (0x807a44) (were diagnostic_timing_increment_state at +2 / diagnostic_timing_increment_reserved at +4 / fuel_parameter_pointer_3 at +6; PR #53 round 88)
 0x0080007a,shutdown_protection_rpm_input,undefined,
 0x0080007c,fuel_parameter_pointer_2,undefined,
 0x00800082,shutdown_protection_diag_input,undefined,
@@ -459,11 +456,13 @@ address,name,type,comment
 0x0080054c,discrete_input_override_mask_ptr,undefined,
 0x00800550,discrete_input_sample_index,undefined,
 0x00800552,discrete_input_sample_buffer_0,undefined,
+0x008005aa,engine_speed_filter_state,ema_filter_state_t,The filter record of the engine speed (the 2^n pulse average); coefficient -> engine_speed_filter_coefficient (0x807ea8) (PR #53 round 88)
 0x008005fa,vp44_timing_fault_debounce_counter,undefined,
 0x008005fd,vp44_timing_fault_active,undefined,
 0x00800604,epf_fuel_limit_table_x_input,undefined,
 0x0080060c,epf_source_bitmask,undefined,
 0x0080060e,engine_protection_state_phase_index,undefined,
+0x00800612,engine_protection_speed_limit_filter_state,ema_filter_state_t,The filter record of the engine protection speed limit (Calterm maximum rpm limit filter); coefficient -> engine_protection_speed_limit_filter_coefficient (0x807f3a) (PR #53 round 88)
 0x0080061a,general_counter_1,undefined,
 0x0080061c,engine_protection_shutdown_command_previous,undefined,
 0x00800622,protection_config_table_ptr,undefined,
@@ -478,6 +477,7 @@ address,name,type,comment
 0x00800638,arbitrated_fuel_previous,undefined,
 0x0080063a,governor_rpm_error_previous,undefined,
 0x00800658,sync_miss_counter,undefined,
+0x00800670,engine_deceleration_rate_filter_state,ema_filter_state_t,The filter record of the engine deceleration rate (coefficient: Calterm filtered engine decel rate); coefficient -> engine_deceleration_rate_filter_coefficient (0x807f66) (PR #53 round 88)
 0x00800688,scheduler_phase_elapsed_ticks,undefined,
 0x0080068c,scheduler_phase_index,undefined,
 0x00800690,scheduler_timing_record_ptr,undefined,
@@ -745,9 +745,7 @@ address,name,type,comment
 0x00801a18,fault_lamp_blink_tick_counter,undefined,
 0x00801a1a,fault_lamp2_blink_tick_counter,undefined,
 0x00801a1e,periodic_lamp_flash_tick_counter,undefined,
-0x00801a36,can_transmission_active_count,undefined,
-0x00801a38,retarder_mode_priority_level,undefined,
-0x00801a39,retarder_control_priority_prev,undefined,
+0x00801a32,pedal_fault_mode_engine_speed_filter_state,ema_filter_state_t,The filter record of the pedal fault mode engine speed: preset to current_engine_rpm_filtered << 16 (move.l at 0x258ce); coefficient -> pedal_fault_mode_engine_speed_filter_coefficient (0x80820e) (were can_transmission_active_count at +4 / retarder_mode_priority_level at +6 / retarder_control_priority_prev at +7; PR #53 round 88)
 0x00801a3a,retarder_mode_control_byte_mirror,undefined,
 0x00801a3c,fuel_demand_target,undefined,
 0x00801a3d,retarder_control_priority_byte,undefined,
@@ -759,13 +757,8 @@ address,name,type,comment
 0x00801a50,retarder_mode2_data_ptr,undefined,
 0x00801a54,retarder_mode2_rpm_input,undefined,
 0x00801a56,retarder_mode2_output_ptr,undefined,
-0x00801a5a,retarder_mode3_threshold_table,undefined,
-0x00801a5c,retarder_mode3_data_ptr,undefined,
-0x00801a5e,lsg_speed_error_ema_accumulator,undefined,
-0x00801a60,retarder_mode3_rpm_input,undefined,
-0x00801a62,retarder_mode3_output_ptr,undefined,
-0x00801a66,retarder_mode_timeout_value,undefined,
-0x00801a68,fuel_statistics_fault_counter,undefined,
+0x00801a5a,low_speed_governor_error_filter,ema_filter_state_t,The signed filter record of the low speed governor's speed error: vp44_fuel_timing_calculation_with_fault_checking (0x25b1c, really the low speed governor) filters (reference - engine_rpm_primary) into lsg_filtered_speed_error (0x80dae0) and presets the accumulator at its clamps. CM848 names its record the same (0x3faf66, e2m 14EF); coefficient -> low_speed_governor_error_filter_coefficient (0x80823e) (were retarder_mode3_threshold_table at +0 / retarder_mode3_data_ptr at +2 / lsg_speed_error_ema_accumulator at +4 / retarder_mode3_rpm_input at +6; PR #53 round 88)
+0x00801a62,low_speed_governor_throttle_reference_offset_filter_state,ema_filter_state_t,The filter record of the low speed governor's throttle reference offset (Calterm digital filter time constant used in the throttle deadband fix); coefficient -> low_speed_governor_throttle_reference_offset_filter_coefficient (0x808258) (were retarder_mode3_output_ptr at +0 / retarder_mode_timeout_value at +4 / fuel_statistics_fault_counter at +6; PR #53 round 88)
 0x00801a6a,fuel_economy_sample_1,undefined,
 0x00801a6c,fuel_economy_sample_2,undefined,
 0x00801a6e,fuel_economy_sample_3,undefined,
@@ -836,7 +829,9 @@ address,name,type,comment
 0x00801b0a,active_dtc_list_data_buffer,undefined,
 0x00801b0d,engine_coolant_pgn65226_status,undefined,
 0x00801bfe,closed_loop_rpm_based_gain,undefined,
+0x00801c00,power_take_off_speed_error_filter,ema_filter_state_t,The signed filter record of the power take-off governor's speed error; coefficient -> power_take_off_speed_error_filter_coefficient (0x80889a) (PR #53 round 88)
 0x00801c08,closed_loop_fuel_output_scaled,undefined,
+0x00801c46,power_take_off_reference_filter_state,ema_filter_state_t,The filter record of the power take-off governor reference (coefficient: Calterm reference speed change constant); coefficient -> power_take_off_reference_filter_coefficient (0x8088ac) (PR #53 round 88)
 0x00801c66,can_memory_sync_table_pointer,undefined,
 0x00801c6a,calibration_sync_rom_pointer,undefined,
 0x00801c6e,calibration_sync_ram_pointer,undefined,
@@ -2073,7 +2068,7 @@ address,name,type,comment
 0x00806ac2,fault_latch_status_word_3,undefined,
 0x00806ac4,fault_confirm_status_word_4,undefined,
 0x00806aca,fault_first_occurrence_word_7,undefined,
-0x00806ae2,a_d_digital_filter_constant_for_intake_manifold_temperature_0_1,undefined,
+0x00806ae2,intake_manifold_temperature_sensor_filter_coefficient,word,The filter coefficient of intake_manifold_temperature_sensor_filter_state (0x80a2aa): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was a_d_digital_filter_constant_for_intake_manifold_temperature_0_1; PR #53 round 88)
 0x00806ae4,global_default_value_for_intake_manifold_temperature_50_to_293,undefined,
 0x00806ae6,a_d_fault_clear_counts_for_intake_manifold_temperature_0_32767,undefined,
 0x00806ae8,a_d_fault_decrement_for_intake_manifold_temperature_0_32767,undefined,
@@ -2088,7 +2083,7 @@ address,name,type,comment
 0x00806af7,error_number_storage_for_intake_manifold_temperature_low_error_0_255,undefined,
 0x00806af8,error_number_storage_for_in_range_error_intake_manifold_tempera_none,undefined,
 0x00806af9,ADIMTPSA,undefined,
-0x00806afa,a_d_digital_filter_constant_for_fuel_temperature_0_1,undefined,
+0x00806afa,fuel_temperature_sensor_filter_coefficient,word,The filter coefficient of fuel_temperature_sensor_filter_state (0x80a2c0): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was a_d_digital_filter_constant_for_fuel_temperature_0_1; PR #53 round 88)
 0x00806afc,global_default_value_for_fuel_temperature_50_to_293,undefined,
 0x00806afe,a_d_fault_clear_counts_for_fuel_temperature_0_32767,undefined,
 0x00806b00,a_d_fault_decrement_for_fuel_temperature_0_32767,undefined,
@@ -2103,7 +2098,7 @@ address,name,type,comment
 0x00806b0f,error_number_storage_for_fuel_temperature_low_error_0_255,undefined,
 0x00806b10,error_number_storage_for_in_range_error_fuel_temperature_none,undefined,
 0x00806b11,ADFLTPSA,undefined,
-0x00806b12,coolant_level_a_d_digital_filter_constant_0_1,undefined,
+0x00806b12,coolant_level_sensor_filter_coefficient,word,The filter coefficient of coolant_level_sensor_filter_state (0x80a2d6): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was coolant_level_a_d_digital_filter_constant_0_1; PR #53 round 88)
 0x00806b14,coolant_level_global_default_value_0_2,undefined,
 0x00806b16,coolant_level_channel_address_0_32767,undefined,
 0x00806b18,coolant_level_a_d_fault_decrement_0_32767,undefined,
@@ -2118,7 +2113,7 @@ address,name,type,comment
 0x00806b27,error_number_storage_for_coolant_level_low_error_0_255,undefined,
 0x00806b28,coolant_level_error_number_storage_for_in_range_error_none,undefined,
 0x00806b29,ADCVSA,undefined,
-0x00806b2a,adsyfpcs_param,undefined,
+0x00806b2a,fuel_pressure_sensor_filter_coefficient,word,The filter coefficient of fuel_pressure_sensor_filter_state (0x80a2ec): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was adsyfpcs_param; PR #53 round 88)
 0x00806b2c,adsyfpgd_param,undefined,
 0x00806b2e,adsyfpfc_param,undefined,
 0x00806b30,adsyfpfd_param,undefined,
@@ -2132,7 +2127,7 @@ address,name,type,comment
 0x00806b3f,error_number_storage_for_fuel_pressure_low_error_0_255,undefined,
 0x00806b40,adsyfpte_param,undefined,
 0x00806b41,ADSYFPSR,undefined,
-0x00806b42,a_d_digital_filter_constant_for_oil_pressure_0_1,undefined,
+0x00806b42,oil_pressure_sensor_filter_coefficient,word,The filter coefficient of oil_pressure_sensor_filter_state (0x80a302): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was a_d_digital_filter_constant_for_oil_pressure_0_1; PR #53 round 88)
 0x00806b44,global_default_value_for_oil_pressure_0_100,undefined,
 0x00806b46,a_d_fault_clear_counts_for_oil_pressure_0_32767,undefined,
 0x00806b48,a_d_fault_decrement_for_oil_pressure_0_32767,undefined,
@@ -2147,7 +2142,7 @@ address,name,type,comment
 0x00806b57,error_number_storage_for_oil_pressure_low_error_0_255,undefined,
 0x00806b58,error_number_storage_for_in_range_error_oil_pressure_none,undefined,
 0x00806b59,ADOLPRSA,undefined,
-0x00806b5a,a_d_digital_filter_constant_for_boost_pressure_0_1,undefined,
+0x00806b5a,boost_pressure_sensor_filter_coefficient,word,The filter coefficient of boost_pressure_sensor_filter_state (0x80a318): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was a_d_digital_filter_constant_for_boost_pressure_0_1; PR #53 round 88)
 0x00806b5c,ADDFBSPR,undefined,
 0x00806b5e,a_d_fault_clear_counts_for_boost_pressure_0_32767,undefined,
 0x00806b60,a_d_fault_decrement_for_boost_pressure_0_32767,undefined,
@@ -2162,7 +2157,7 @@ address,name,type,comment
 0x00806b6f,error_number_storage_for_boost_pressure_low_error_0_255,undefined,
 0x00806b70,error_number_storage_for_tri_state_error_boost_pressure_none,undefined,
 0x00806b71,ADBSPRSA,undefined,
-0x00806b72,a_d_digital_filter_constant_for_coolant_temperature_0_1,undefined,
+0x00806b72,coolant_temperature_sensor_filter_coefficient,word,The filter coefficient of coolant_temperature_sensor_filter_state (0x80a32e): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was a_d_digital_filter_constant_for_coolant_temperature_0_1; PR #53 round 88)
 0x00806b74,global_default_value_to_coolant_temperature_50_to_293,undefined,
 0x00806b76,a_d_fault_clear_counts_for_coolant_temperature_0_32767,undefined,
 0x00806b78,a_d_fault_decrement_for_coolant_temperature_0_32767,undefined,
@@ -2177,7 +2172,7 @@ address,name,type,comment
 0x00806b87,error_number_storage_for_coolant_temperature_low_error_0_255,undefined,
 0x00806b88,error_number_storage_for_tri_state_error_coolant_temperature_none,undefined,
 0x00806b89,ADCLTPSA,undefined,
-0x00806b8a,a_d_digital_filter_constant_for_ambient_air_temperature_0_1,undefined,
+0x00806b8a,ambient_air_temperature_sensor_filter_coefficient,word,The filter coefficient of ambient_air_temperature_sensor_filter_state (0x80a344): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was a_d_digital_filter_constant_for_ambient_air_temperature_0_1; PR #53 round 88)
 0x00806b8c,global_default_value_for_ambient_air_temperature_100_255,undefined,
 0x00806b8e,a_d_fault_clear_counts_for_ambient_air_temperature_0_10000,undefined,
 0x00806b90,a_d_fault_decrement_for_ambient_air_temperature_1_100,undefined,
@@ -2192,7 +2187,7 @@ address,name,type,comment
 0x00806b9f,error_storage_number_for_ambient_air_temperature_low_error_0_255,undefined,
 0x00806ba0,error_number_storage_for_tri_state_error_id_none,undefined,
 0x00806ba1,a_d_sample_period_for_ambient_air_temperature_0_4000,undefined,
-0x00806ba2,adpotpcs_param,undefined,
+0x00806ba2,power_steering_temperature_sensor_filter_coefficient,word,The filter coefficient of power_steering_temperature_sensor_filter_state (0x80a35a): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was adpotpcs_param; PR #53 round 88)
 0x00806ba4,global_default_value_50_to_293,undefined,
 0x00806ba6,adpotpcc_param,undefined,
 0x00806ba8,adpotpdt_param,undefined,
@@ -2207,7 +2202,7 @@ address,name,type,comment
 0x00806bb7,error_number_storage_for_power_steering_temperature_low_error_0_255,undefined,
 0x00806bb8,error_number_storage_for_in_range_error_none,undefined,
 0x00806bb9,ADPOTPSA,undefined,
-0x00806bba,adsyepcs_param,undefined,
+0x00806bba,exhaust_pressure_sensor_filter_coefficient,word,The filter coefficient of exhaust_pressure_sensor_filter_state (0x80a370): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was adsyepcs_param; PR #53 round 88)
 0x00806bbc,adsyepgd_param,undefined,
 0x00806bbe,adsyepfc_param,undefined,
 0x00806bc0,adsyepfd_param,undefined,
@@ -2222,7 +2217,7 @@ address,name,type,comment
 0x00806bcf,error_number_storage_for_engine_sync_exhaust_pressure_low_erro_0_255,undefined,
 0x00806bd0,adsyepte_param,undefined,
 0x00806bd1,ADSYEPSR,undefined,
-0x00806bd2,a_d_digital_filter_constant_for_throttle_0_1,undefined,
+0x00806bd2,sampled_throttle_sensor_filter_coefficient,word,The filter coefficient of sampled_throttle_sensor_filter_state (0x80a386): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was a_d_digital_filter_constant_for_throttle_0_1; PR #53 round 88)
 0x00806bd4,global_default_value_for_throttle_0_100,undefined,
 0x00806bd6,a_d_fault_clear_counts_for_sampled_throttle_0_32767,undefined,
 0x00806bd8,a_d_fault_decrement_for_throttle_0_32767,undefined,
@@ -2237,7 +2232,7 @@ address,name,type,comment
 0x00806be7,error_number_storage_for_sampled_throttle_low_error_0_255,undefined,
 0x00806be8,error_number_storage_for_in_range_error_throttle_none,undefined,
 0x00806be9,ADSATHSA,undefined,
-0x00806bea,a_d_digital_filter_constant_for_remote_throttle_0_1,undefined,
+0x00806bea,remote_throttle_sensor_filter_coefficient,word,The filter coefficient of remote_throttle_sensor_filter_state (0x80a39c): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was a_d_digital_filter_constant_for_remote_throttle_0_1; PR #53 round 88)
 0x00806bec,global_default_value_for_remote_throttle_0_100,undefined,
 0x00806bee,a_d_fault_clear_counts_for_remote_throttle_0_32767,undefined,
 0x00806bf0,a_d_fault_decrement_for_remote_throttle_0_32767,undefined,
@@ -2252,7 +2247,7 @@ address,name,type,comment
 0x00806bff,error_number_storage_for_remote_throttle_low_error_0_255,undefined,
 0x00806c00,error_number_storage_for_in_range_error_remote_throttle_none,undefined,
 0x00806c01,ADROTHSA,undefined,
-0x00806c02,a_d_digital_filter_constant_for_ambient_air_pressure_0_1,undefined,
+0x00806c02,ambient_air_pressure_sensor_filter_coefficient,word,The filter coefficient of ambient_air_pressure_sensor_filter_state (0x80a3b2): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was a_d_digital_filter_constant_for_ambient_air_pressure_0_1; PR #53 round 88)
 0x00806c04,ADDFAAPR,undefined,
 0x00806c06,a_d_fault_clear_counts_for_ambient_air_pressure_0_32767,undefined,
 0x00806c08,a_d_fault_decrement_for_ambient_air_pressure_0_32767,undefined,
@@ -2267,7 +2262,7 @@ address,name,type,comment
 0x00806c17,error_number_storage_for_ambient_air_pressure_low_error_0_255,undefined,
 0x00806c18,error_number_storage_for_tri_state_error_ambient_air_pressure_none,undefined,
 0x00806c19,ADAAPRSA,undefined,
-0x00806c1a,a_d_digital_filter_constant_for_battery_voltage_0_1,undefined,
+0x00806c1a,battery_voltage_sensor_filter_coefficient,word,The filter coefficient of battery_voltage_sensor_filter_state (0x80a3c8): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was a_d_digital_filter_constant_for_battery_voltage_0_1; PR #53 round 88)
 0x00806c1c,global_default_value_for_battery_voltage_0_40,undefined,
 0x00806c1e,a_d_fault_clear_counts_for_battery_voltage_0_32767,undefined,
 0x00806c20,a_d_fault_decrement_for_battery_voltage_0_32767,undefined,
@@ -2282,7 +2277,7 @@ address,name,type,comment
 0x00806c2f,error_number_storage_for_battery_voltage_low_error_0_255,undefined,
 0x00806c30,error_number_storage_for_in_range_error_battery_voltage_none,undefined,
 0x00806c31,ADBTVTSA,undefined,
-0x00806c32,adessvcs_param,undefined,
+0x00806c32,engine_speed_sensor_supply_voltage_filter_coefficient,word,The filter coefficient of engine_speed_sensor_supply_voltage_filter_state (0x80a3de): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was adessvcs_param; PR #53 round 88)
 0x00806c34,adessvgd_param,undefined,
 0x00806c36,adessvfc_param,undefined,
 0x00806c38,adessvfd_param,undefined,
@@ -2297,7 +2292,7 @@ address,name,type,comment
 0x00806c47,error_number_storage_for_engine_speed_sv_low_error_0_255,undefined,
 0x00806c48,adessvte_param,undefined,
 0x00806c49,ADESSVSR,undefined,
-0x00806c4a,ADBSPRXA,undefined,
+0x00806c4a,throttle_position_sensor_supply_voltage_filter_coefficient,word,The filter coefficient of throttle_position_sensor_supply_voltage_filter_state (0x80a3f4): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was ADBSPRXA; PR #53 round 88)
 0x00806c4c,ADBSPRXA_entry_1,undefined,
 0x00806c4e,ADBSPRXA_entry_2,undefined,
 0x00806c50,ADBSPRXA_entry_3,undefined,
@@ -2311,7 +2306,7 @@ address,name,type,comment
 0x00806c5f,error_number_storage_for_throttle_position_sv_low_error_0_255,undefined,
 0x00806c60,adthsvte_param,undefined,
 0x00806c61,ADTHSVSR,undefined,
-0x00806c62,advhsvcs_param,undefined,
+0x00806c62,vehicle_connector_sensor_supply_voltage_filter_coefficient,word,The filter coefficient of vehicle_connector_sensor_supply_voltage_filter_state (0x80a40a): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was advhsvcs_param; PR #53 round 88)
 0x00806c64,advhsvgd_param,undefined,
 0x00806c66,advhsvfc_param,undefined,
 0x00806c68,advhsvfd_param,undefined,
@@ -2326,7 +2321,7 @@ address,name,type,comment
 0x00806c77,error_number_storage_for_vehicle_connector_sensors_sv_low_erro_0_255,undefined,
 0x00806c78,advhsvte_param,undefined,
 0x00806c79,ADVHSVSR,undefined,
-0x00806c7a,engine_sensor_supply_voltage_a_d_digital_filter_constant_0_1,undefined,
+0x00806c7a,engine_connector_sensor_supply_voltage_filter_coefficient,word,The filter coefficient of engine_connector_sensor_supply_voltage_filter_state (0x80a420): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was engine_sensor_supply_voltage_a_d_digital_filter_constant_0_1; PR #53 round 88)
 0x00806c7c,engine_sensor_supply_voltage_global_default_value_0_6,undefined,
 0x00806c7e,engine_sensor_supply_voltage_a_d_fault_clear_counts_0_32767,undefined,
 0x00806c80,engine_sensor_supply_voltage_a_d_fault_decrement_1_32767,undefined,
@@ -2341,7 +2336,7 @@ address,name,type,comment
 0x00806c8f,error_number_storage_for_engine_conn_sensors_sv_low_error_0_255,undefined,
 0x00806c90,engine_sensor_supply_voltage_tri_state_error_id_none,undefined,
 0x00806c91,ADECSVSR,undefined,
-0x00806c92,adftsvcs_param,undefined,
+0x00806c92,frequency_throttle_input_supply_voltage_filter_coefficient,word,The filter coefficient of frequency_throttle_input_supply_voltage_filter_state (0x80a436): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was adftsvcs_param; PR #53 round 88)
 0x00806c94,adftsvgd_param,undefined,
 0x00806c96,adftsvfc_param,undefined,
 0x00806c98,adftsvfd_param,undefined,
@@ -2356,7 +2351,7 @@ address,name,type,comment
 0x00806ca7,error_number_storage_for_frequency_throttle_input_sv_low_error_0_255,undefined,
 0x00806ca8,adftsvte_param,undefined,
 0x00806ca9,ADFTSVSR,undefined,
-0x00806caa,a_d_digital_filter_constant_for_cc_switch_mux_0_1,undefined,
+0x00806caa,cruise_control_switch_multiplexer_filter_coefficient,word,The filter coefficient of cruise_control_switch_multiplexer_filter_state (0x80a44c): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was a_d_digital_filter_constant_for_cc_switch_mux_0_1; PR #53 round 88)
 0x00806cac,global_default_value_for_cc_switch_mux_0_5,undefined,
 0x00806cae,a_d_fault_clear_counts_for_cc_switch_mux_0_32767,undefined,
 0x00806cb0,a_d_fault_decrement_for_cc_switch_mux_0_32767,undefined,
@@ -2371,7 +2366,7 @@ address,name,type,comment
 0x00806cbf,error_number_storage_for_cruise_control_switch_mux_low_error_0_255,undefined,
 0x00806cc0,tri_state_error_none_6cc0,undefined,
 0x00806cc1,ADCRSR,undefined,
-0x00806cc2,water_in_fuel_a_d_digital_filter_constant_0_1,undefined,
+0x00806cc2,water_in_fuel_sensor_filter_coefficient,word,The filter coefficient of water_in_fuel_sensor_filter_state (0x80a462): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was water_in_fuel_a_d_digital_filter_constant_0_1; PR #53 round 88)
 0x00806cc4,water_in_fuel_global_default_value_0_3,undefined,
 0x00806cc6,water_in_fuel_a_d_fault_clear_counts_0_32767,undefined,
 0x00806cc8,water_in_fuel_a_d_fault_decrement_0_32767,undefined,
@@ -2386,7 +2381,7 @@ address,name,type,comment
 0x00806cd7,error_number_storage_for_water_in_fuel_low_error_0_255,undefined,
 0x00806cd8,water_in_fuel_tri_state_error_none,undefined,
 0x00806cd9,ADWFSR,undefined,
-0x00806cda,adegcfcs_param,undefined,
+0x00806cda,egr_current_feedback_filter_coefficient,word,The filter coefficient of egr_current_feedback_filter_state (0x80a478): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was adegcfcs_param; PR #53 round 88)
 0x00806cdc,adegcfgd_param,undefined,
 0x00806cde,adegcfcc_param,undefined,
 0x00806ce0,adegcffd_param,undefined,
@@ -2401,7 +2396,7 @@ address,name,type,comment
 0x00806cef,error_number_storage_for_egr_current_feedback_low_error_0_255,undefined,
 0x00806cf0,adegcfte_param,undefined,
 0x00806cf1,ADEGCFSR,undefined,
-0x00806cf2,adpssvcs_param,undefined,
+0x00806cf2,programming_pulse_supply_voltage_filter_coefficient,word,The filter coefficient of programming_pulse_supply_voltage_filter_state (0x80a48e): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was adpssvcs_param; PR #53 round 88)
 0x00806cf4,adpssvgd_param,undefined,
 0x00806cf6,adpssvfc_param,undefined,
 0x00806cf8,adpssvfd_param,undefined,
@@ -2416,7 +2411,7 @@ address,name,type,comment
 0x00806d07,error_number_storage_for_programming_pulse_sv_low_error_0_255,undefined,
 0x00806d08,adpssvte_param,undefined,
 0x00806d09,ADPSSVSR,undefined,
-0x00806d0a,ADHBSVCS,undefined,
+0x00806d0a,high_side_gate_bias_supply_voltage_filter_coefficient,word,The filter coefficient of high_side_gate_bias_supply_voltage_filter_state (0x80a4a4): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was ADHBSVCS; PR #53 round 88)
 0x00806d0c,ADHBSVGD,undefined,
 0x00806d0e,ADHBSVFC,undefined,
 0x00806d10,ADHBSVFD,undefined,
@@ -2431,7 +2426,7 @@ address,name,type,comment
 0x00806d1f,ADHBSVLE,undefined,
 0x00806d20,ADHBSVTE,undefined,
 0x00806d21,ADHBSVSR,undefined,
-0x00806d22,adocsvcs_param,undefined,
+0x00806d22,operational_amplifier_and_comparator_supply_voltage_filter_coefficient,word,The filter coefficient of operational_amplifier_and_comparator_supply_voltage_filter_state (0x80a4ba): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was adocsvcs_param; PR #53 round 88)
 0x00806d24,adocsvgd_param,undefined,
 0x00806d26,adocsvfc_param,undefined,
 0x00806d28,adocsvfd_param,undefined,
@@ -3021,8 +3016,8 @@ address,name,type,comment
 0x00807a3c,timing_increment_added_to_anc_timing_to_ramp_out_the_timing_de_0_720,undefined,
 0x00807a3e,filtered_engine_acceleration_above_which_anc_may_limit_ti_2560_2540,undefined,
 0x00807a40,unfiltered_acceleration_limit_used_to_determine_anc_timi_2560_2540,undefined,
-0x00807a42,engine_acceleration_first_stage_digital_filter_acceleration_time_0_1,undefined,
-0x00807a44,engine_acceleration_second_stage_digital_filter_acceleration_tim_0_1,undefined,
+0x00807a42,engine_acceleration_first_stage_filter_coefficient,word,The filter coefficient of engine_acceleration_first_stage_filter_state (0x800066): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was engine_acceleration_first_stage_digital_filter_acceleration_time_0_1; PR #53 round 88)
+0x00807a44,engine_acceleration_second_stage_filter_coefficient,word,The filter coefficient of engine_acceleration_second_stage_filter_state (0x80006e): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was engine_acceleration_second_stage_digital_filter_acceleration_tim_0_1; PR #53 round 88)
 0x00807a46,upper_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540,undefined,
 0x00807a48,lower_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540,undefined,
 0x00807a4a,duration_anc_speed_limit_will_be_disabled_after_a_bare_engine_a_0_20,undefined,
@@ -3037,7 +3032,7 @@ address,name,type,comment
 0x00807aa6,time_that_must_elapse_without_afc_limiting_before_alpha_may_be_0_900,undefined,
 0x00807aaa,time_alpha_is_latched_to_adalf_after_altitude_derate_stops_fue_0_900,undefined,
 0x00807aae,time_that_must_expire_without_lsg_commanding_fuel_before_alpha_0_900,undefined,
-0x00807ab0,time_constant_of_lb_hr_filter_used_in_the_alpha_fuel_rate_calcula_0_1,undefined,
+0x00807ab0,alpha_fuel_rate_filter_coefficient,word,The filter coefficient of alpha_fuel_rate_filter_state (0x80a91a): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was time_constant_of_lb_hr_filter_used_in_the_alpha_fuel_rate_calcula_0_1; PR #53 round 88)
 0x00807ab2,APRSFLRT,undefined,
 0x00807ab4,APTDFLRT,undefined,
 0x00807aba,engine_speed_above_which_derating_will_occur_when_ambient_air_0_8000,undefined,
@@ -3050,7 +3045,7 @@ address,name,type,comment
 0x00807b00,ASQPCFXA,undefined,
 0x00807b38,ASQICFXA,undefined,
 0x00807b70,ASQDCFXA,undefined,
-0x00807b8c,ASJCFTCS,undefined,
+0x00807b8c,all_speed_governor_j1939_reference_filter_coefficient,word,One of the three coefficients all_speed_governor_reference_filter_state points at (Calterm all_speed_governor_j1939_reference_filter_coefficient ASG JCOMM REFERENCE FILTER CONSTANT (fueling state 2 - TSC1 speed control)); the weight of the previous value in 1/65536. No _cal (was ASJCFTCS; PR #53 round 88)
 0x00807b8e,ASJCFLMX,undefined,
 0x00807b90,ASJCFLMN,undefined,
 0x00807b92,ASJ100PP,undefined,
@@ -3089,7 +3084,7 @@ address,name,type,comment
 0x00807bd4,ASJ111CF,undefined,
 0x00807bd6,ASJ211CF,undefined,
 0x00807bd8,ASJ311CF,undefined,
-0x00807bda,ASFTCF,undefined,
+0x00807bda,all_speed_governor_reference_filter_coefficient,word,One of the three coefficients all_speed_governor_reference_filter_state points at (Calterm all_speed_governor_reference_filter_coefficient ASG REFERENCE FILTER COEFFICIENT CALIBRATION); the weight of the previous value in 1/65536. No _cal (was ASFTCF; PR #53 round 88)
 0x00807bdc,ASCNHILM,undefined,
 0x00807bde,ASCNLOLM,undefined,
 0x00807be0,asg_proportional_gain_1_calibration_0_0_135,undefined,
@@ -3290,7 +3285,7 @@ address,name,type,comment
 0x00807ea2,base_number_of_speed_pulses_per_cam_1_254,undefined,
 0x00807ea3,software_padding_0_7ea3,undefined,
 0x00807ea6,eps_backup_ratio_threshold_for_detection_of_missing_ext_0_1_9921875,undefined,
-0x00807ea8,time_constant_for_the_filter_used_on_the_2_n_pulse_average_0_1,undefined,
+0x00807ea8,engine_speed_filter_coefficient,word,The filter coefficient of engine_speed_filter_state (0x8005aa): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was time_constant_for_the_filter_used_on_the_2_n_pulse_average_0_1; PR #53 round 88)
 0x00807eaa,maximum_pulse_period_timeout_max_reset_value_for_main_lost_co_0_140,undefined,
 0x00807eac,engine_speed_constant_1_conversion_factor_from_tcnts_to_rpm_0_2_29,undefined,
 0x00807eb0,engine_speed_constant_1_backup_conversion_factor_from_tcnts_0_2_29,undefined,
@@ -3357,7 +3352,7 @@ address,name,type,comment
 0x00807f34,period_of_time_after_powerup_during_which_no_oil_pres_faults_0_255,undefined,
 0x00807f36,fills_hole_left_by_making_engine_protection_rpm_delta_a_globa_0_3000,undefined,
 0x00807f38,EPMXDQRP,undefined,
-0x00807f3a,maximum_rpm_limit_filter_time_constant_0_1_0,undefined,
+0x00807f3a,engine_protection_speed_limit_filter_coefficient,word,The filter coefficient of engine_protection_speed_limit_filter_state (0x800612): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was maximum_rpm_limit_filter_time_constant_0_1_0; PR #53 round 88)
 0x00807f3c,max_number_of_shutdowns_before_restart_is_not_allowed_0_255,undefined,
 0x00807f3e,intercept_fueling_between_lsg_ref_and_the_epf_curve_0_100,undefined,
 0x00807f40,intercept_fueling_between_hsg_brkpt_and_the_epf_curve_0_100,undefined,
@@ -3372,7 +3367,7 @@ address,name,type,comment
 0x00807f5e,obs_was_max_crank_sync_error_count_csercumx_0_200,undefined,
 0x00807f60,esdn_backward_compat_0_1,undefined,
 0x00807f62,abs_main_rpm_minus_backup_rpm_must_be_less_than_or_equal_to_0_4500,undefined,
-0x00807f66,filter_constant_in_filtered_engine_decel_rate_calculation_0_1,undefined,
+0x00807f66,engine_deceleration_rate_filter_coefficient,word,The filter coefficient of engine_deceleration_rate_filter_state (0x800670): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was filter_constant_in_filtered_engine_decel_rate_calculation_0_1; PR #53 round 88)
 0x00807f6a,threshold_for_engine_deceleration_rate_to_activate_decel_timer_0_100,undefined,
 0x00807f70,lower_limitation_of_coolant_temperature_to_inhibit_high_hp_50_to_293,undefined,
 0x00807f72,lower_limitation_of_intake_manifold_temperature_to_inhibit_50_to_293,undefined,
@@ -3498,12 +3493,14 @@ address,name,type,comment
 0x00808208,indicates_of_cyl_brakes_driven_by_eb_driver_5_for_j1939_ret_ma_0_6,undefined,
 0x0080820a,indicates_of_cyl_brakes_driven_by_eb_driver_6_for_j1939_ret_ma_0_6,undefined,
 0x0080820d,fault_flash_count_number_of_times_each_fault_code_is_flashed_1_255,undefined,
+0x0080820e,pedal_fault_mode_engine_speed_filter_coefficient,word,The filter coefficient of pedal_fault_mode_engine_speed_filter_state (0x801a32): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (PR #53 round 88)
 0x00808220,delta_rpm_threshold_for_aggressive_gains_activation_deactivat_0_3000,undefined,
 0x00808222,maximum_absolute_error_that_should_occur_in_lslgtztm_to_switc_0_3000,undefined,
 0x0080822c,offset_above_lsrf_to_change_lschst_to_after_first_ce_from_dur_0_3000,undefined,
 0x00808236,added_to_4d_fueling_at_lsg_adjusted_reference_speed_to_det_max_5_5,undefined,
 0x00808238,lsg_fueling_clamp_min_0_100,undefined,
 0x0080823a,added_to_4d_fueling_at_lsg_adj_ref_speed_to_determine_lsg_integ_5_5_823a,undefined,
+0x0080823e,low_speed_governor_error_filter_coefficient,word,The filter coefficient of low_speed_governor_error_filter (0x801a5a): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (PR #53 round 88)
 0x00808242,lsg_filtered_speed_error_upper_limit,undefined,
 0x00808244,lsg_filtered_speed_error_lower_limit,undefined,
 0x00808246,added_to_4d_fueling_at_lsg_adj_ref_speed_to_determine_lsg_integ_5_5_8246,undefined,
@@ -3512,7 +3509,7 @@ address,name,type,comment
 0x00808250,blank_spot_after_removal_of_lsg_db_int_gain_0_0_100_0,undefined,
 0x00808252,blank_spot_after_removal_of_lsg_db_prop_gain_0_0_100_0,undefined,
 0x00808256,the_upper_limit_clamp_for_possible_lsg_reference_speed_300_2000,undefined,
-0x00808258,digital_filter_time_constant_used_in_throttle_deadband_fix_0_1_0,undefined,
+0x00808258,low_speed_governor_throttle_reference_offset_filter_coefficient,word,The filter coefficient of low_speed_governor_throttle_reference_offset_filter_state (0x801a62): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was digital_filter_time_constant_used_in_throttle_deadband_fix_0_1_0; PR #53 round 88)
 0x0080825c,lsg_derivative_filter_coefficient_1_to_1,undefined,
 0x0080825e,flag_to_enable_disable_the_lsg_derivative_gain_adjustment_scheme_0_1,undefined,
 0x00808260,flag_to_enable_disable_the_lsg_proportional_gain_adjustment_sche_0_1,undefined,
@@ -3680,12 +3677,13 @@ address,name,type,comment
 0x00808836,fuel_timing_offset_min_limit,undefined,
 0x00808838,fuel_timing_offset_limit,undefined,
 0x0080888a,crank_debounce_threshold,undefined,
+0x0080889a,power_take_off_speed_error_filter_coefficient,word,The filter coefficient of power_take_off_speed_error_filter (0x801c00): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (PR #53 round 88)
 0x0080889c,max_allowed_error_term_0_1000,undefined,
 0x0080889e,min_allowed_error_term_1000_0,undefined,
 0x008088a0,max_alloved_fueling_0_100,undefined,
 0x008088a2,min_allowed_fueling_0_100,undefined,
 0x008088aa,closed_loop_rpm_step_rate_limit,undefined,
-0x008088ac,reference_speed_change_const_0_1,undefined,
+0x008088ac,power_take_off_reference_filter_coefficient,word,The filter coefficient of power_take_off_reference_filter_state (0x801c46): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was reference_speed_change_const_0_1; PR #53 round 88)
 0x008088b0,pwm_output_frequency_divisor,undefined,
 0x008088b2,pwm_output_period_multiplier,undefined,
 0x008088b3,pwm_output_channel_select,undefined,
@@ -4368,77 +4366,102 @@ address,name,type,comment
 0x0080a2a4,anc_timing_limit_disable_due_to_bare_engine_accel_active_inactive,undefined,
 0x0080a2a6,application_specific_anc_override_flag_1_engage_anc_0_1,undefined,
 0x0080a2a8,application_specific_anc_enable_disable_flag_set_to_false_to_dis_0_1,undefined,
+0x0080a2aa,intake_manifold_temperature_sensor_filter_state,ema_filter_state_t,A/D channel 0's record +0-+7 (0x80a2aa + 22 x 0): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> intake_manifold_temperature_sensor_filter_coefficient (0x806ae2) (PR #53 round 88)
 0x0080a2b2,filtered_and_linearized_intake_manifold_temperature_50_to_293,undefined,
 0x0080a2b4,unfiltered_and_linearized_intake_manifold_temperature_50_to_293,undefined,
 0x0080a2ba,raw_counts_for_intake_manifold_temperature_0_1023,undefined,
+0x0080a2c0,fuel_temperature_sensor_filter_state,ema_filter_state_t,A/D channel 1's record +0-+7 (0x80a2aa + 22 x 1): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> fuel_temperature_sensor_filter_coefficient (0x806afa) (PR #53 round 88)
 0x0080a2c8,filtered_and_linearized_fuel_temperature_50_to_293,undefined,
 0x0080a2ca,unfiltered_and_linearized_fuel_temperature_50_to_293,undefined,
 0x0080a2d0,raw_counts_for_fuel_temperature_0_255,undefined,
+0x0080a2d6,coolant_level_sensor_filter_state,ema_filter_state_t,A/D channel 2's record +0-+7 (0x80a2aa + 22 x 2): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> coolant_level_sensor_filter_coefficient (0x806b12) (PR #53 round 88)
 0x0080a2de,coolant_level_filtered_and_linearized_0_2,undefined,
 0x0080a2e0,coolant_level_linearized_and_unfiltered_0_2,undefined,
 0x0080a2e6,coolant_level_raw_value_from_a_d_converter_channel_7_0_2,undefined,
+0x0080a2ec,fuel_pressure_sensor_filter_state,ema_filter_state_t,A/D channel 3's record +0-+7 (0x80a2aa + 22 x 3): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> fuel_pressure_sensor_filter_coefficient (0x806b2a) (PR #53 round 88)
 0x0080a2f4,adsyfpft_param,undefined,
 0x0080a2f6,adsyfpuf_param,undefined,
 0x0080a2fc,adsyfprc_param,undefined,
+0x0080a302,oil_pressure_sensor_filter_state,ema_filter_state_t,A/D channel 4's record +0-+7 (0x80a2aa + 22 x 4): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> oil_pressure_sensor_filter_coefficient (0x806b42) (PR #53 round 88)
 0x0080a30a,flitered_and_linearized_oil_pressure_0_100,undefined,
 0x0080a30c,unfiltered_and_linearized_oil_pressure_0_100,undefined,
 0x0080a312,raw_counts_for_oil_pressure_0_1023,undefined,
+0x0080a318,boost_pressure_sensor_filter_state,ema_filter_state_t,A/D channel 5's record +0-+7 (0x80a2aa + 22 x 5): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> boost_pressure_sensor_filter_coefficient (0x806b5a) (PR #53 round 88)
 0x0080a320,boost_pressure_0_100,undefined,
 0x0080a322,unfiltered_and_linearized_boost_pressure_0_10,undefined,
 0x0080a328,raw_counts_for_boost_pressure_0_1023,undefined,
+0x0080a32e,coolant_temperature_sensor_filter_state,ema_filter_state_t,A/D channel 6's record +0-+7 (0x80a2aa + 22 x 6): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> coolant_temperature_sensor_filter_coefficient (0x806b72) (PR #53 round 88)
 0x0080a336,filtered_and_linearized_coolant_temperature_50_to_293,undefined,
 0x0080a338,unfiltered_and_linearized_coolant_temperature_50_to_293,undefined,
 0x0080a33e,raw_counts_for_coolant_temperature_0_1023,undefined,
+0x0080a344,ambient_air_temperature_sensor_filter_state,ema_filter_state_t,A/D channel 7's record +0-+7 (0x80a2aa + 22 x 7): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> ambient_air_temperature_sensor_filter_coefficient (0x806b8a) (PR #53 round 88)
 0x0080a34c,ADTTFT,undefined,
 0x0080a34e,ADTTUF,undefined,
 0x0080a354,raw_value_from_a_d_converter_channel_7_0_1023,undefined,
+0x0080a35a,power_steering_temperature_sensor_filter_state,ema_filter_state_t,A/D channel 8's record +0-+7 (0x80a2aa + 22 x 8): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows (only its channel address row names it); coefficient -> power_steering_temperature_sensor_filter_coefficient (0x806ba2) (PR #53 round 88)
 0x0080a362,filtered_and_linearized_50_to_293,undefined,
 0x0080a364,channel_7_linearized_and_unfiltered_50_to_293,undefined,
 0x0080a36a,raw_value_from_a_d_converter_channel_7_0_255,undefined,
+0x0080a370,exhaust_pressure_sensor_filter_state,ema_filter_state_t,A/D channel 9's record +0-+7 (0x80a2aa + 22 x 9): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> exhaust_pressure_sensor_filter_coefficient (0x806bba) (PR #53 round 88)
 0x0080a378,adsyepft_param,undefined,
 0x0080a37a,adsyepuf_param,undefined,
 0x0080a380,adsyeprc_param,undefined,
+0x0080a386,sampled_throttle_sensor_filter_state,ema_filter_state_t,A/D channel 10's record +0-+7 (0x80a2aa + 22 x 10): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> sampled_throttle_sensor_filter_coefficient (0x806bd2) (PR #53 round 88)
 0x0080a38e,ADSATHFT,undefined,
 0x0080a390,unfiltered_and_linearized_throttle_0_100,undefined,
 0x0080a396,raw_counts_for_throttle_0_1023,undefined,
+0x0080a39c,remote_throttle_sensor_filter_state,ema_filter_state_t,A/D channel 11's record +0-+7 (0x80a2aa + 22 x 11): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> remote_throttle_sensor_filter_coefficient (0x806bea) (PR #53 round 88)
 0x0080a3a4,filtered_and_linearized_remote_throttle_0_100,undefined,
 0x0080a3a6,unfiltered_and_linearized_remote_throttle_0_100,undefined,
 0x0080a3ac,raw_counts_for_remote_throttle_0_1023,undefined,
+0x0080a3b2,ambient_air_pressure_sensor_filter_state,ema_filter_state_t,A/D channel 12's record +0-+7 (0x80a2aa + 22 x 12): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> ambient_air_pressure_sensor_filter_coefficient (0x806c02) (PR #53 round 88)
 0x0080a3ba,filtered_ambient_air_pressure_as_read_and_scaled_from_a_d_algor_0_15,undefined,
 0x0080a3bc,unfiltered_and_linearized_ambient_air_pressure_0_15,undefined,
 0x0080a3c2,raw_counts_for_ambient_air_pressure_0_1023,undefined,
+0x0080a3c8,battery_voltage_sensor_filter_state,ema_filter_state_t,A/D channel 13's record +0-+7 (0x80a2aa + 22 x 13): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> battery_voltage_sensor_filter_coefficient (0x806c1a) (PR #53 round 88)
 0x0080a3d0,filtered_and_linearized_battery_voltage_0_40,undefined,
 0x0080a3d2,unfiltered_and_linearized_battery_voltage_0_40,undefined,
 0x0080a3d8,raw_counts_for_battery_voltage_0_1023,undefined,
+0x0080a3de,engine_speed_sensor_supply_voltage_filter_state,ema_filter_state_t,A/D channel 14's record +0-+7 (0x80a2aa + 22 x 14): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> engine_speed_sensor_supply_voltage_filter_coefficient (0x806c32) (PR #53 round 88)
 0x0080a3e6,adessvft_param,undefined,
 0x0080a3e8,adessvuf_param,undefined,
 0x0080a3ee,adessvrc_param,undefined,
+0x0080a3f4,throttle_position_sensor_supply_voltage_filter_state,ema_filter_state_t,A/D channel 15's record +0-+7 (0x80a2aa + 22 x 15): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> throttle_position_sensor_supply_voltage_filter_coefficient (0x806c4a) (PR #53 round 88)
 0x0080a3fc,adthsvft_param,undefined,
 0x0080a3fe,adthsvuf_param,undefined,
 0x0080a404,adthsvrc_param,undefined,
+0x0080a40a,vehicle_connector_sensor_supply_voltage_filter_state,ema_filter_state_t,A/D channel 16's record +0-+7 (0x80a2aa + 22 x 16): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> vehicle_connector_sensor_supply_voltage_filter_coefficient (0x806c62) (PR #53 round 88)
 0x0080a412,advhsvft_param,undefined,
 0x0080a414,advhsvuf_param,undefined,
 0x0080a41a,advhsvrc_param,undefined,
+0x0080a420,engine_connector_sensor_supply_voltage_filter_state,ema_filter_state_t,A/D channel 17's record +0-+7 (0x80a2aa + 22 x 17): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> engine_connector_sensor_supply_voltage_filter_coefficient (0x806c7a) (PR #53 round 88)
 0x0080a428,filtered_engine_sensor_supply_voltage_as_read_and_scaled_from_a_0_6,undefined,
 0x0080a42a,engine_sensor_supply_voltage_unfiltered_and_linearized_0_6,undefined,
 0x0080a430,engine_sensor_supply_voltage_raw_counts_0_1023,undefined,
+0x0080a436,frequency_throttle_input_supply_voltage_filter_state,ema_filter_state_t,A/D channel 18's record +0-+7 (0x80a2aa + 22 x 18): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows (only its channel address row names it); coefficient -> frequency_throttle_input_supply_voltage_filter_coefficient (0x806c92) (PR #53 round 88)
 0x0080a43e,adftsvft_param,undefined,
 0x0080a440,adftsvuf_param,undefined,
 0x0080a446,adftsvrc_param,undefined,
+0x0080a44c,cruise_control_switch_multiplexer_filter_state,ema_filter_state_t,A/D channel 19's record +0-+7 (0x80a2aa + 22 x 19): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> cruise_control_switch_multiplexer_filter_coefficient (0x806caa) (PR #53 round 88)
 0x0080a456,unfiltered_and_linearized_cc_switch_mux_0_5,undefined,
 0x0080a45c,raw_counts_for_cc_switch_mux_0_1023,undefined,
+0x0080a462,water_in_fuel_sensor_filter_state,ema_filter_state_t,A/D channel 20's record +0-+7 (0x80a2aa + 22 x 20): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> water_in_fuel_sensor_filter_coefficient (0x806cc2) (PR #53 round 88)
 0x0080a46a,filtered_water_in_fuel_as_read_and_scaled_from_a_d_algorithm_2_0_3,undefined,
 0x0080a46c,ADWFUF,undefined,
 0x0080a472,water_in_fuel_raw_counts_0_1023,undefined,
+0x0080a478,egr_current_feedback_filter_state,ema_filter_state_t,A/D channel 21's record +0-+7 (0x80a2aa + 22 x 21): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows (only its channel address row names it); coefficient -> egr_current_feedback_filter_coefficient (0x806cda) (PR #53 round 88)
 0x0080a480,adegcfft_param,undefined,
 0x0080a482,adegcfuf_param,undefined,
 0x0080a488,adegcfrc_param,undefined,
+0x0080a48e,programming_pulse_supply_voltage_filter_state,ema_filter_state_t,A/D channel 22's record +0-+7 (0x80a2aa + 22 x 22): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows; coefficient -> programming_pulse_supply_voltage_filter_coefficient (0x806cf2) (PR #53 round 88)
 0x0080a496,adpssvft_param,undefined,
 0x0080a498,adpssvuf_param,undefined,
 0x0080a49e,adpssvrc_param,undefined,
+0x0080a4a4,high_side_gate_bias_supply_voltage_filter_state,ema_filter_state_t,A/D channel 23's record +0-+7 (0x80a2aa + 22 x 23): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows (only its channel address row names it); coefficient -> high_side_gate_bias_supply_voltage_filter_coefficient (0x806d0a) (PR #53 round 88)
 0x0080a4ac,ADHBSVFT,undefined,
 0x0080a4ae,ADHBSVUF,undefined,
 0x0080a4b4,adhbsvrc_param,undefined,
+0x0080a4ba,operational_amplifier_and_comparator_supply_voltage_filter_state,ema_filter_state_t,A/D channel 24's record +0-+7 (0x80a2aa + 22 x 24): the filter record the A/D channel loop passes to cm550_exponentialMovingAverage; the channel is named from its config rows (only its channel address row names it); coefficient -> operational_amplifier_and_comparator_supply_voltage_filter_coefficient (0x806d22) (PR #53 round 88)
 0x0080a4c2,adocsvft_param,undefined,
 0x0080a4c4,adocsvuf_param,undefined,
 0x0080a4ca,adocsvrc_param,undefined,
@@ -4509,6 +4532,7 @@ address,name,type,comment
 0x0080a910,trace_the_time_since_fueling_state_has_left_lsg_state_0_900,undefined,
 0x0080a912,afc_exit_timer_active_flag,undefined,
 0x0080a914,afc_exit_countdown_timer,undefined,
+0x0080a91a,alpha_fuel_rate_filter_state,ema_filter_state_t,The filter record of the alpha fuel rate (the twin calculateAlphaFuelRateResult filters with cm550_exponentialMovingAverage; CM848 names its record alpha_fuel_rate_filter_state); coefficient -> alpha_fuel_rate_filter_coefficient (0x807ab0) (PR #53 round 88)
 0x0080a922,altitude_derate_fuel_limit_0_100,undefined,
 0x0080a924,override_fueling_to_slave_fuel_selection_0_100,undefined,
 0x0080a928,override_timing_to_slave_timing_selection_0_120,undefined,
@@ -4524,7 +4548,7 @@ address,name,type,comment
 0x0080a940,asg_application_specific_reference_speed_0_4500,undefined,
 0x0080a942,asg_application_specific_droop_gain_1_0_2,undefined,
 0x0080a944,asg_application_specific_droop_gain_2_0_2,undefined,
-0x0080a946,asg_application_specific_reference_filter_coefficient_0_1,undefined,
+0x0080a946,all_speed_governor_application_reference_filter_coefficient,word,One of the three coefficients all_speed_governor_reference_filter_state points at (the all-speed governor application specific set's reference filter coefficient); the weight of the previous value in 1/65536. No _cal (was asg_application_specific_reference_filter_coefficient_0_1; PR #53 round 88)
 0x0080a948,asg_application_specific_fueling_high_limit_0_100,undefined,
 0x0080a94a,asg_application_specific_fueling_lower_limit_0_50,undefined,
 0x0080a94c,asg_application_specific_reset_true_false,undefined,
@@ -4554,9 +4578,7 @@ address,name,type,comment
 0x0080a97e,asg_state_x5_100_100,undefined,
 0x0080a980,asg_state_x6_100_100,undefined,
 0x0080a982,stcg_enable_stcg_switch_xor_user_selected_throttle_control_0_1,undefined,
-0x0080a984,asg_droop_compensated_error_2000_2000,undefined,
-0x0080a986,asg_quadratic_derivative_adjustment_100_100,undefined,
-0x0080a98a,qpid_adjusted_asg_droop_compensated_error_derivative_2000_2000,undefined,
+0x0080a984,all_speed_governor_reference_filter_state,ema_filter_state_t,The unsigned filter record of the all-speed governor reference: cm550_engine_speed_governor filters asg_reference_speed_working (0x80a990) into asg_filtered_reference_speed_0_4500 (0x80a972); its coefficient pointer is the selected set's: all_speed_governor_application_reference_filter_coefficient / all_speed_governor_j1939_reference_filter_coefficient / all_speed_governor_reference_filter_coefficient (were asg_droop_compensated_error_2000_2000 at +0 / asg_quadratic_derivative_adjustment_100_100 at +2 / qpid_adjusted_asg_droop_compensated_error_derivative_2000_2000 at +6; PR #53 round 88)
 0x0080a98c,all_speed_governor_reference_speed_based_upon_throttle_positi_0_3000,undefined,
 0x0080a98e,asg_quadratic_integral_adjustment_500_500,undefined,
 0x0080a990,asg_reference_speed_working,undefined,
@@ -5464,7 +5486,8 @@ address,name,type,comment
 0x0080d62e,hsg_proportional_gain_base,undefined,
 0x0080d630,hsg_integral_gain_base,undefined,
 0x0080d632,hsg_derivative_gain_base,undefined,
-0x0080d634,hsg_gain_scheduling_output_hsg_engine_speed_error_filter_time_c_0_1,undefined,
+0x0080d634,high_speed_governor_error_filter_coefficient,word,The filter coefficient of high_speed_governor_error_filter (0x80d636): the weight of the previous value in 1/65536; read with move.w through the record's pointer. Outside the EEPROM mirror, so no _cal (was hsg_gain_scheduling_output_hsg_engine_speed_error_filter_time_c_0_1; PR #53 round 88)
+0x0080d636,high_speed_governor_error_filter,ema_filter_state_t,The signed filter record of the high speed governor's engine speed error (its coefficient points at the selected gain set's filter time constant); coefficient -> high_speed_governor_error_filter_coefficient (0x80d634) (PR #53 round 88)
 0x0080d63e,hsg_adjusted_proportional_gain_0_7_5000,undefined,
 0x0080d640,hsg_adjusted_derivative_gain_0_5_120,undefined,
 0x0080d642,hsg_adjusted_integral_gain_0_6_0000,undefined,

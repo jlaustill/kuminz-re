@@ -1058,6 +1058,8 @@ typedef struct memory_operation_request_t memory_operation_request_t;
 typedef struct q16_fixed_point_t q16_fixed_point_t;
 typedef struct division_operand_t division_operand_t;
 typedef struct sensor_fault_config_t sensor_fault_config_t;
+typedef struct ema_filter_state_t ema_filter_state_t;
+typedef struct second_order_filter_state_t second_order_filter_state_t;
 typedef struct sensor_debounce_state_t sensor_debounce_state_t;
 typedef struct cummins_data_plate_header_t cummins_data_plate_header_t;
 typedef struct module_variant_offsets_t module_variant_offsets_t;
@@ -1157,15 +1159,27 @@ struct sensor_fault_config_t {
     uint8_t debounce_max;  /* Maximum debounce count */
 };
 
+struct ema_filter_state_t {
+    word* coefficient;  /* Points at the filter coefficient word: the weight of the previous value in 1/65536 (0 = no filtering) */
+    uint32_t accumulator;  /* Q16.16 filtered value (offset binary in the signed filter); the filters return its rounded integer part */
+};
+
+struct second_order_filter_state_t {
+    word* coefficient_1;  /* +0: points at coefficient 1 (1/65535): the weight of the new input */
+    word* coefficient_3;  /* +4: points at coefficient 3 (1/65535): the weight of the output before last */
+    uint32_t output;  /* +8: the filter output (its integer part is returned) */
+    uint32_t output_previous;  /* +12: the output of the previous call */
+};
+
 struct sensor_debounce_state_t {
-    uint8_t reserved_00[8];  /* Reserved bytes at offset 0x00-0x07 */
-    uint16_t interpolated_value;  /* Interpolated sensor value */
-    uint16_t lookup_result;  /* Table lookup result */
-    uint16_t debounce_counter;  /* Current debounce count */
-    uint8_t fault_active_flag;  /* Fault currently active flag */
-    uint8_t sample_counter;  /* Sample phase counter */
-    uint16_t adc_raw_value;  /* Raw A/D conversion value */
-    uint8_t reserved_12[4];  /* Reserved bytes at offset 0x12-0x15 */
+    ema_filter_state_t filter;  /* +0: the channel's filter record (its coefficient points at the channel config's +0 filter constant) (was reserved_00; PR #53 round 88) */
+    uint16_t filtered_value;  /* +8: the filter output - or the config default while the fault is active - or the channel's override value (was interpolated_value; PR #53 round 88) */
+    uint16_t lookup_result;  /* +10: the linearized reading (the table lookup result) */
+    int16_t debounce_counter;  /* +12: the fault debounce count (signed: floored at 0) */
+    uint8_t fault_active_flag;  /* +14: fault currently active flag */
+    uint8_t sample_counter;  /* +15: sample phase counter */
+    uint16_t adc_raw_value;  /* +16: raw A/D conversion value */
+    uint8_t reserved_18[4];  /* +18-+21: no access; 0 in all 25 dumped records (was reserved_12 - the hex offset; PR #53 round 88) */
 };
 
 struct cummins_data_plate_header_t {

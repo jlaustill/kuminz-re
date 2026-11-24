@@ -15,6 +15,8 @@ function_address,function_name,old_ghidra_name,new_variable_name,type,comment
 
 # unscrambleSecurityKey @ 0x2fbd8 - Core bit manipulation for security auth
 # Algorithm: Mask table separates bits into forward/backward streams, XOR phase, reorder phase
+0x0000b7bc,validateServiceDataLength,filter_state,channel_record,sensor_debounce_state_t*,The A/D channel record this pass works on (0x80a2aa + 22 x channel; one per channel up to 0x80a4d0): its filter at +0 goes to cm550_exponentialMovingAverage (PR #53 round 88)
+0x0000bcf0,cm550_initADCChannelConfiguration,peVar3,channel_record,sensor_debounce_state_t*,The A/D channel record each of the three start-up loops walks (0x80a2aa + 22 x channel; up to 0x80a4d0) (PR #53 round 88)
 0x0002fbd8,unscrambleSecurityKey,local_10,working_buffer,byte[10],Intermediate buffer for bit manipulation
 0x0002fbd8,unscrambleSecurityKey,local_6,input_byte_index,char,Current input byte being processed 0-9
 0x0002fbd8,unscrambleSecurityKey,current_mask,current_mask,byte,Current mask byte from MASK_TABLE (already named)

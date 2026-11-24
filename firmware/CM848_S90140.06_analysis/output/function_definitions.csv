@@ -387,12 +387,12 @@ function_address,function_name,param_index,name,type,comment
 0x000553ec,mpc555_tpuASetPwmDuty,0,channel,undefined4,TPU-A channel number 0-15
 0x000553ec,mpc555_tpuASetPwmDuty,1,duty,ushort,1/256 % per count (25600 = 100 %)
 
-0x00056594,exponentialMovingAverage,return,,uint,Filtered value: the integer part of the updated accumulator
-0x00056594,exponentialMovingAverage,0,value,uint,New sample (r3)
-0x00056594,exponentialMovingAverage,1,filter_state,ema_filter_state_t *,Filter state (r4) - coefficient pointer and Q16.16 accumulator - updated in place
+0x00056594,cm848_exponentialMovingAverage,return,,uint,Filtered value: the integer part of the updated accumulator
+0x00056594,cm848_exponentialMovingAverage,0,value,uint,New sample (r3)
+0x00056594,cm848_exponentialMovingAverage,1,filter_state,ema_filter_state_t *,Filter state (r4) - coefficient pointer and Q16.16 accumulator - updated in place
 0x0005644c,cm848_signedFirstOrderFilter,return,,sword,Filtered value: the integer part of the updated accumulator (signed)
 0x0005644c,cm848_signedFirstOrderFilter,0,value,int32_t,New sample (r3) - signed
-0x0005644c,cm848_signedFirstOrderFilter,1,filter_state,ema_filter_state_t *,Filter state (r4) - coefficient pointer and Q16.16 accumulator - updated in place; coefficient 0 = no filtering (the signed twin of exponentialMovingAverage)
+0x0005644c,cm848_signedFirstOrderFilter,1,filter_state,ema_filter_state_t *,Filter state (r4) - coefficient pointer and Q16.16 accumulator - updated in place; coefficient 0 = no filtering (the signed twin of cm848_exponentialMovingAverage)
 0x000185cc,cm848_conditionalFirstOrderFilter,return,,sword,The filtered value - or with update_enable 0 the integer part of the accumulator unchanged
 0x000185cc,cm848_conditionalFirstOrderFilter,0,value,int32_t,New sample (r3)
 0x000185cc,cm848_conditionalFirstOrderFilter,1,update_enable,int32_t,0 = only read the filter output (r4)

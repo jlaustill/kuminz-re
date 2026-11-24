@@ -755,9 +755,10 @@ void vp44_liftPumpFuelDeliveryController(void);  // @ 0x00034cc4
 void vp44_FUN_00034d52(void);  // @ 0x00034d52
 void cm550_FUN_00034dba(void);  // @ 0x00034dba
 short lookupTableInterpolation(table_interp_args_t *args);  // @ 0x00034de0
-undefined8 exponentialMovingAverage(word new_sample,dword *filter_state);  // @ 0x00034e9a
-undefined4 cm550_unsignedLinearInterpolation(word x_input,dword *interpolation_state);  // @ 0x00034f00
-undefined8 cm550_coreTableInterpolation(word input_value,void *table_descriptor);  // @ 0x00034f8a
+word cm550_signedFirstOrderFilter(word new_sample,ema_filter_state_t *filter_state);  // @ 0x00034e9a
+word cm550_secondOrderFilter(word input,second_order_filter_state_t *filter);  // @ 0x00034f00
+word cm550_exponentialMovingAverage(word new_sample,ema_filter_state_t *filter_state);  // @ 0x00034f8a
+word cm550_secondOrderFilterUnsigned(word input,second_order_filter_state_t *filter);  // @ 0x00034fe0
 undefined4 cm550_scaleByRatio(dword multiplicand,dword multiplier,dword divisor);  // @ 0x00035064
 undefined4 cm550_scaleByRatioSigned(dword multiplicand,dword multiplier,dword divisor);  // @ 0x00035076
 undefined8 cm550_tableLookup2D(word *table_args);  // @ 0x00035088

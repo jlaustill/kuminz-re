@@ -765,9 +765,10 @@ address,name
 0x00034d52,vp44_FUN_00034d52
 0x00034dba,cm550_FUN_00034dba
 0x00034de0,lookupTableInterpolation
-0x00034e9a,exponentialMovingAverage
-0x00034f00,cm550_unsignedLinearInterpolation
-0x00034f8a,cm550_coreTableInterpolation
+0x00034e9a,cm550_signedFirstOrderFilter,The signed first-order filter on an ema_filter_state_t: the sample is offset binary (+ 0x8000); accumulator = coefficient x accumulator / 65536 + (sample + 0x8000) x (65536 - coefficient); it returns the rounded integer part - 0x8000. By role it pairs with CM848's cm848_signedFirstOrderFilter (0x5644c), a different formulation (a truncated +- |difference| step), so it is a counterpart, not a twin (was exponentialMovingAverage, a name it shared with CM848's UNSIGNED filter 0x56594; PR #53 round 88)
+0x00034f00,cm550_secondOrderFilter,A signed second-order filter on a second_order_filter_state_t (muls.l / divs.l by 0xffff; it saturates to 0x7fffffff / 0x80000000); the counterpart of CM848's cm848_secondOrderFilter (0x564c0, which shifts by 16 and does not saturate). No caller in the dumped ROM (was cm550_unsignedLinearInterpolation; PR #53 round 88)
+0x00034f8a,cm550_exponentialMovingAverage,The unsigned first-order filter (exponential moving average) on an ema_filter_state_t: accumulator = coefficient x accumulator / 65536 + sample x (65536 - coefficient); it returns the rounded integer part. No table or axis: it is the signed filter without the offset-binary step. By role it pairs with CM848's cm848_exponentialMovingAverage (0x56594) - the twin calculateAlphaFuelRateResult calls it in both firmwares - but the formulation differs (a truncated +- |difference| step), so it is a counterpart (was cm550_coreTableInterpolation; PR #53 round 88)
+0x00034fe0,cm550_secondOrderFilterUnsigned,The unsigned version of cm550_secondOrderFilter (mulu.l / divu.l; it clamps to 0 when the products go negative and to 0xffffffff on overflow): the fourth function of the filter module - CM848 has the same four in the same order (0x5644c / 0x564c0 / 0x56594 / 0x56608) - and the counterpart of cm848_secondOrderFilterUnsigned. No reference in the dumped ROM; this row creates the function (PR #53 round 88)
 0x00035064,cm550_scaleByRatio
 0x00035076,cm550_scaleByRatioSigned
 0x00035088,cm550_tableLookup2D

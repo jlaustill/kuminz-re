@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue Nov 24 09:54:21 MST 2026
+// Generated: Tue Nov 24 10:34:50 MST 2026
 
 
 //
@@ -9084,16 +9084,16 @@ LAB_0000e150:
 //
 
 /* Alpha fuel rate result (e2m 104A +8 Alpha_Fuel_Rate, '[APFLRTAP] result of Fuel Rate algorithm'):
-   filters fuel_mass_flow_raw with exponentialMovingAverage (state alpha_fuel_rate_filter_state,
-   coefficient e2m 104B +C Alpha_Fuel_Rate_Filter_Constant at ROM 0x5be66) into
-   alpha_filtered_fuel_delivery_rate (e2m 104A +14 Filtered_Fuel_Delivery_Rate, LB/HR). Result is a
-   hysteresis on that rate: 1 above alpha_threshold_fuel_rate (e2m 104B +1A C_Alpha_Threshold_Rate),
-   0 at or below alpha_reset_fuel_rate (e2m 104B +18 C_Alpha_Reset_Rate), else the previous
-   alpha_fuel_rate_result. While alpha_low_speed_governor_state_detected_flag is 1 and the filtered
-   rate is above the reset rate, the filter accumulator is first pulled down to the reset rate.
-   Called by calculateAlphaBase when bit 0x1000 of algorithm_enable_flags_0_cal (algorithm enable
-   flags word 0, 0x3fd59c) is set; a 1 lets alpha_base ramp toward 1.0. Shared name with CM550
-   0xc404 (the same function). (was cm848_calculateSensorEma) */
+   filters fuel_mass_flow_raw with cm848_exponentialMovingAverage (state
+   alpha_fuel_rate_filter_state, coefficient e2m 104B +C Alpha_Fuel_Rate_Filter_Constant at ROM
+   0x5be66) into alpha_filtered_fuel_delivery_rate (e2m 104A +14 Filtered_Fuel_Delivery_Rate,
+   LB/HR). Result is a hysteresis on that rate: 1 above alpha_threshold_fuel_rate (e2m 104B +1A
+   C_Alpha_Threshold_Rate), 0 at or below alpha_reset_fuel_rate (e2m 104B +18 C_Alpha_Reset_Rate),
+   else the previous alpha_fuel_rate_result. While alpha_low_speed_governor_state_detected_flag is 1
+   and the filtered rate is above the reset rate, the filter accumulator is first pulled down to the
+   reset rate. Called by calculateAlphaBase when bit 0x1000 of algorithm_enable_flags_0_cal
+   (algorithm enable flags word 0, 0x3fd59c) is set; a 1 lets alpha_base ramp toward 1.0. Shared
+   name with CM550 0xc404 (the same function). (was cm848_calculateSensorEma) */
 
 int calculateAlphaFuelRateResult(void)
 
@@ -9105,7 +9105,7 @@ int calculateAlphaFuelRateResult(void)
      (alpha_reset_fuel_rate < alpha_filtered_fuel_delivery_rate)) {
     alpha_fuel_rate_filter_state.accumulator = (uint)alpha_reset_fuel_rate << 0x10;
   }
-  dVar1 = exponentialMovingAverage((uint)fuel_mass_flow_raw,&alpha_fuel_rate_filter_state);
+  dVar1 = cm848_exponentialMovingAverage((uint)fuel_mass_flow_raw,&alpha_fuel_rate_filter_state);
   alpha_filtered_fuel_delivery_rate = (word)dVar1;
   if ((uint)alpha_reset_fuel_rate < (dVar1 & 0xffff)) {
     if ((uint)alpha_threshold_fuel_rate < (dVar1 & 0xffff)) {
@@ -9716,7 +9716,8 @@ LAB_0000ecec:
     governor_reference_speed_filtered = all_speed_governor_reference_non_linear_filter_output;
   }
   else {
-    dVar4 = exponentialMovingAverage((uint)speed_request_unfiltered,&fuel_trim_speed_filter_state);
+    dVar4 = cm848_exponentialMovingAverage
+                      ((uint)speed_request_unfiltered,&fuel_trim_speed_filter_state);
     governor_reference_speed_filtered = (word)dVar4;
     governor_reference_filter_weight = *fuel_trim_speed_filter_state.coefficient >> 2;
   }
@@ -11740,7 +11741,7 @@ void cm848_calculateWastegateDutyRequest(void)
                  (&wastegate_duty_floor_adjustment_by_altitude_cached_axis_offset,
                   barometric_altitude_feet,wastegate_duty_floor_adjustment_by_altitude_axis,
                   wastegate_duty_floor_adjustment_by_altitude_values,3);
-  dVar2 = exponentialMovingAverage
+  dVar2 = cm848_exponentialMovingAverage
                     ((uint)battery_voltage_sensor_filtered,&ema_filter_state_t_003fa19c);
   if (wastegate_duty_ceiling_grid_enable_cal == 0) {
     wastegate_duty_upper_limit_battery_voltage_factor =
@@ -12279,7 +12280,7 @@ void cm848_calculateEgrMassFlowBeforeDelay(void)
    limited to 1600 (200 rpm at 1.0) .. 0xffff counts, and above a fraction of 8192 (1.0) the scaled
    fraction term (fraction x 120 >> 10) is 0xffff instead. (3) residual_oxygen_fraction_before_delay
    goes into the 256-sample delay line egr_oxygen_fraction_delay_line (cm848_delayUnsignedSample);
-   the sample from delay / 10 passes back is filtered by exponentialMovingAverage
+   the sample from delay / 10 passes back is filtered by cm848_exponentialMovingAverage
    (egr_oxygen_fraction_filter_state, coefficient egr_mass_flow_delayed_filter_coefficient = e2m
    177E +0 C_CHP_EGR_Flow_Fil_Cnst) into egr_oxygen_fraction (+0 CHP_O2_Frac_EGR). (4)
    egr_flow_delay_milliseconds (+6 CHP_EGR_Flow_Delay) = the oxygen delay x egr_flow_delay_fraction
@@ -12329,7 +12330,8 @@ void cm848_calculateDelayedEgrFlowAndFraction(void)
                  (&egr_oxygen_fraction_delay_line,residual_oxygen_fraction_before_delay,
                   (uVar1 & 0xffff) / 10);
   filtered_oxygen_fraction =
-       exponentialMovingAverage((uint)delayed_oxygen_fraction,&egr_oxygen_fraction_filter_state);
+       cm848_exponentialMovingAverage
+                 ((uint)delayed_oxygen_fraction,&egr_oxygen_fraction_filter_state);
   egr_flow_estimate_terms.egr_oxygen_fraction = (word)filtered_oxygen_fraction;
   uVar1 = ((uint)egr_flow_estimate_terms.oxygen_flow_delay_milliseconds *
           (uint)egr_flow_delay_fraction) / 0x7fff;
@@ -12483,9 +12485,9 @@ void cm848_calculateVolumetricEfficiency(void)
    (charge_flow_estimate_terms.load_input x 0xa200) >> 10, where load_input is the intake manifold
    temperature in degrees Rankine (e2m 177D +2 CHP_Intake_Manifold_Tmptr_R). The result is limited
    to charge_mass_flow_estimate_minimum .. charge_mass_flow_estimate_maximum (e2m 177C +4
-   C_CHP_Charge_Flow_Min / +2 C_CHP_Charge_Flow_Max) and filtered by exponentialMovingAverage (state
-   charge_mass_flow_filter_state, coefficient charge_mass_flow_filter_coefficient = e2m 177C +0
-   C_CHP_Charge_Flow_Fil_Cnst) into charge_mass_flow_filtered, the divisor of the EGR fraction in
+   C_CHP_Charge_Flow_Min / +2 C_CHP_Charge_Flow_Max) and filtered by cm848_exponentialMovingAverage
+   (state charge_mass_flow_filter_state, coefficient charge_mass_flow_filter_coefficient = e2m 177C
+   +0 C_CHP_Charge_Flow_Fil_Cnst) into charge_mass_flow_filtered, the divisor of the EGR fraction in
    cm848_calculateDelayedEgrFlowAndFraction. Caller cm848_calculateChargeFlowEstimate. (was
    cm848_loadBasedFuelAdjustment) */
 
@@ -12512,7 +12514,7 @@ void cm848_calculateChargeMassFlow(void)
   if ((uVar3 <= uVar1) && (uVar3 = uVar1, charge_mass_flow_estimate_maximum < uVar1)) {
     uVar3 = (uint)charge_mass_flow_estimate_maximum;
   }
-  dVar2 = exponentialMovingAverage(uVar3 & 0xffff,&charge_mass_flow_filter_state);
+  dVar2 = cm848_exponentialMovingAverage(uVar3 & 0xffff,&charge_mass_flow_filter_state);
   charge_mass_flow_filtered = (word)dVar2;
   return;
 }
@@ -12620,9 +12622,9 @@ void cm848_initializeChargeFlows(void)
 
 /* The fresh air mass flow (e2m 177B), called by cm848_calculateChargeFlows:
    charge_mass_flow_filtered - egr_mass_flow_delayed_filtered (0 unless the EGR flow is the
-   smaller), filtered by exponentialMovingAverage (fresh_air_mass_flow_filter_state, coefficient
-   fresh_air_mass_flow_filter_coefficient = e2m 1A0F +0 C_CHP_Fresh_Air_Flow_Fil_Cnst) into
-   charge_flow_estimate_terms.fresh_air_mass_flow_filtered (177B +0 Fresh_Air_Flow);
+   smaller), filtered by cm848_exponentialMovingAverage (fresh_air_mass_flow_filter_state,
+   coefficient fresh_air_mass_flow_filter_coefficient = e2m 1A0F +0 C_CHP_Fresh_Air_Flow_Fil_Cnst)
+   into charge_flow_estimate_terms.fresh_air_mass_flow_filtered (177B +0 Fresh_Air_Flow);
    charge_flow_estimate_terms.fresh_air_flow_source (177B +2) is 0 PRIMARY only while
    charge_flow_source and egr_flow_source are 0. (was cm848_fuelDemandErrorCalculation) */
 
@@ -12638,7 +12640,7 @@ void cm848_calculateFreshAirMassFlow(void)
   else {
     uVar2 = 0;
   }
-  dVar1 = exponentialMovingAverage((uint)uVar2,&fresh_air_mass_flow_filter_state);
+  dVar1 = cm848_exponentialMovingAverage((uint)uVar2,&fresh_air_mass_flow_filter_state);
   charge_flow_estimate_terms.fresh_air_mass_flow_filtered = (word)dVar1;
   if ((charge_flow_estimate_terms.charge_flow_source == SENSOR_VALUE_SOURCE_PRIMARY) &&
      (egr_flow_source == SENSOR_VALUE_SOURCE_PRIMARY)) {
@@ -12927,7 +12929,7 @@ void cm848_estimateChargePressure(void)
       uVar2 = 0x3200;
     }
   }
-  dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&charge_pressure_estimate_filter_state);
+  dVar1 = cm848_exponentialMovingAverage(uVar2 & 0xffff,&charge_pressure_estimate_filter_state);
   charge_pressure_estimate_with_turbocharger_speed = (word)dVar1;
   if (((((algorithm_enable_flags_5_cal.charge_pressure_estimation_enable == 0) ||
         (turbocharger_speed_source == SENSOR_VALUE_SOURCE_DEFAULT)) ||
@@ -16102,7 +16104,7 @@ uint cm848_estimateCompressorOutletTemperature(void)
   else {
     uVar2 = uVar2 + 0xc680;
   }
-  dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&ema_filter_state_t_003fa70a);
+  dVar1 = cm848_exponentialMovingAverage(uVar2 & 0xffff,&ema_filter_state_t_003fa70a);
   return dVar1 & 0xffff;
 }
 
@@ -17186,7 +17188,7 @@ void cm848_updateEgrValveMeanSquaredCurrent(void)
   dword dVar1;
   
   cm848_estimateEgrValveMotorCurrent();
-  dVar1 = exponentialMovingAverage
+  dVar1 = cm848_exponentialMovingAverage
                     ((uint)egr_valve_motor_current * (uint)egr_valve_motor_current >> 0xd & 0xffff,
                      &egr_valve_motor_mean_squared_current_filter_state);
   egr_valve_motor_mean_squared_current = (word)dVar1;
@@ -17293,8 +17295,8 @@ void cm848_updateEgrValveMotorTemperature(void)
     uVar3 = 0xffff;
   }
   egr_valve_motor_winding_temperature_filter_input = (word)uVar3;
-  dVar2 = exponentialMovingAverage(uVar3 & 0xffff,&egr_valve_motor_winding_temperature_filter_state)
-  ;
+  dVar2 = cm848_exponentialMovingAverage
+                    (uVar3 & 0xffff,&egr_valve_motor_winding_temperature_filter_state);
   egr_valve_motor_winding_temperature = (word)dVar2;
   egr_valve_coolant_temperature = coolant_temperature_selected;
   if (coolant_temperature_source != SENSOR_VALUE_SOURCE_PRIMARY) {
@@ -17308,7 +17310,7 @@ void cm848_updateEgrValveMotorTemperature(void)
   uVar3 = (int)(short)egr_valve_coolant_temperature + (uint)egr_valve_housing_temperature_offset +
           ((int)uVar3 >> 10) + (uint)((int)uVar3 < 0 && (uVar3 & 0x3ff) != 0);
   egr_valve_motor_iron_core_temperature_filter_input = (word)uVar3;
-  dVar2 = exponentialMovingAverage
+  dVar2 = cm848_exponentialMovingAverage
                     (uVar3 & 0xffff,&egr_valve_motor_iron_core_temperature_filter_state);
   egr_valve_motor_iron_core_temperature = (word)dVar2;
   egr_valve_motor_temperature_warning_flag =
@@ -17651,7 +17653,7 @@ void cm848_calculateEgrValvePidDuty(void)
   
   egr_valve_position_reference_filter_state.coefficient =
        &egr_valve_position_reference_filter_coefficient;
-  dVar2 = exponentialMovingAverage
+  dVar2 = cm848_exponentialMovingAverage
                     ((uint)egr_valve_position_reference_unfiltered,
                      &egr_valve_position_reference_filter_state);
   egr_valve_position_reference_filtered = (word)dVar2;
@@ -20927,9 +20929,9 @@ void cm848_initFaultSeverityTables(void)
    back to the ROM threshold commanded_throttle_difference_threshold (at or below it while
    increasing, above its negative while decreasing). commanded_throttle_filter_coefficient (+6
    Active_Throttle_Filter_Constant) follows the candidate, but during a transient it only follows a
-   lower one. exponentialMovingAverage (state commanded_throttle_filter_state, whose coefficient is
-   that word) then filters the commanded throttle into commanded_throttle_filtered (+8
-   Filtered_Commanded_Throttle), the throttle input of the 4-D fueling tables. Caller
+   lower one. cm848_exponentialMovingAverage (state commanded_throttle_filter_state, whose
+   coefficient is that word) then filters the commanded throttle into commanded_throttle_filtered
+   (+8 Filtered_Commanded_Throttle), the throttle input of the 4-D fueling tables. Caller
    hpcr_periodicTaskSet_fuelFinal. (was cm848_calculateFuelDemandChangeRate) */
 
 void cm848_filterCommandedThrottle(void)
@@ -20978,7 +20980,7 @@ LAB_0001ebf8:
   {
     commanded_throttle_filter_coefficient = commanded_throttle_filter_coefficient_lookup_result;
   }
-  dVar2 = exponentialMovingAverage
+  dVar2 = cm848_exponentialMovingAverage
                     ((uint)commanded_throttle_state.commanded_throttle,
                      &commanded_throttle_filter_state);
   commanded_throttle_filtered = (word)dVar2;
@@ -29754,7 +29756,7 @@ void cm848_smoothPowerTakeOffReferenceEngineSpeed(void)
     if ((uint)power_take_off_reference_step_limit < (uVar4 & 0xffff)) {
       power_take_off_reference_filter_state.accumulator =
            (uint)power_take_off_governor_smoothed_reference_engine_speed << 0x10;
-      dVar2 = exponentialMovingAverage(uVar3,&power_take_off_reference_filter_state);
+      dVar2 = cm848_exponentialMovingAverage(uVar3,&power_take_off_reference_filter_state);
       uVar3 = dVar2 & 0xffff;
       uVar4 = (uint)power_take_off_governor_smoothed_reference_engine_speed;
       if (uVar4 < uVar3) {
@@ -30929,7 +30931,7 @@ void cm848_estimateTurbochargerSpeed(void)
                     (ulonglong)(uint)compressor_inlet_pressure), 0xfffe < uVar3)) {
     uVar3 = 0xffff;
   }
-  dVar1 = exponentialMovingAverage
+  dVar1 = cm848_exponentialMovingAverage
                     ((uint)engine_speed_state.filtered_engine_speed,&ema_filter_state_t_003fb026);
   turbocharger_speed_estimate_engine_speed_filtered = (word)dVar1;
   turbocharger_speed_estimate_corrected_speed =
@@ -31356,7 +31358,7 @@ void cm848_calculateVariableGeometryTurbochargerPidDuty(void)
   
   variable_geometry_turbocharger_position_reference_filter_state.coefficient =
        &variable_geometry_turbocharger_position_reference_filter_coefficient;
-  dVar2 = exponentialMovingAverage
+  dVar2 = cm848_exponentialMovingAverage
                     ((uint)variable_geometry_turbocharger_position_reference_unfiltered,
                      &variable_geometry_turbocharger_position_reference_filter_state);
   variable_geometry_turbocharger_position_reference_filtered = (word)dVar2;
@@ -33101,7 +33103,8 @@ void cm848_filterVariableGeometryTurbochargerSpan(void)
       uVar3 = wVar4;
     }
   }
-  dVar1 = exponentialMovingAverage((uint)uVar3,&variable_geometry_turbocharger_span_filter_state);
+  dVar1 = cm848_exponentialMovingAverage
+                    ((uint)uVar3,&variable_geometry_turbocharger_span_filter_state);
   variable_geometry_turbocharger_saved_span_cal = (word)dVar1;
   variable_geometry_turbocharger_span_filtered = variable_geometry_turbocharger_saved_span_cal;
   if (fault_detected_cal.variable_geometry_turbocharger_closed_adjustment_error != 0) {
@@ -36008,7 +36011,7 @@ void cm848_updateTransmissionConditionFlags(void)
   ushort uVar5;
   int iVar6;
   
-  dVar3 = exponentialMovingAverage
+  dVar3 = cm848_exponentialMovingAverage
                     ((uint)vehicle_speed_unfiltered,&transmission_vehicle_speed_filter_state);
   wVar2 = governor_pressure_wide_open_throttle_upshift_target_engine_speed_high;
   transmission_vehicle_speed_filtered = (word)dVar3;
@@ -42966,7 +42969,8 @@ void cm848_calculateVehicleSpeed(void)
          (word)(vehicle_speed_conversion_numerator / vehicle_speed_sensor_scaled_period);
     vehicle_speed_rejected_sample_count = 0;
   }
-  dVar1 = exponentialMovingAverage((uint)vehicle_speed_unfiltered,&vehicle_speed_filter_state);
+  dVar1 = cm848_exponentialMovingAverage((uint)vehicle_speed_unfiltered,&vehicle_speed_filter_state)
+  ;
   vehicle_speed = (word)dVar1;
   if (vehicle_speed_rejected_sample_count == 0) {
     vehicle_speed_sensor_reference_period = vehicle_speed_sensor_scaled_period;
@@ -44150,12 +44154,12 @@ LAB_0003f82c:
   transmission_output_speed_in_use_unfiltered = (word)uVar2;
   transmission_output_speed_sensor_unfiltered = transmission_output_speed_in_use_unfiltered;
 LAB_0003f974:
-  dVar1 = exponentialMovingAverage
+  dVar1 = cm848_exponentialMovingAverage
                     ((uint)transmission_output_speed_in_use_unfiltered,
                      (ema_filter_state_t *)
                      &transmission_output_speed_in_use_filter_coefficient_pointer);
   transmission_output_speed_in_use = (word)dVar1;
-  dVar1 = exponentialMovingAverage
+  dVar1 = cm848_exponentialMovingAverage
                     ((uint)transmission_output_speed_sensor_unfiltered,
                      (ema_filter_state_t *)
                      &transmission_output_speed_sensor_filter_coefficient_pointer);
@@ -47309,7 +47313,7 @@ LAB_00044774:
   if (engine_speed_from_backup_sensor_flag == 0) {
     average_engine_speed = main_engine_speed;
   }
-  dVar2 = exponentialMovingAverage((uint)average_engine_speed,&engine_speed_filter_state);
+  dVar2 = cm848_exponentialMovingAverage((uint)average_engine_speed,&engine_speed_filter_state);
   engine_speed_state.engine_speed = (word)dVar2;
   uVar3 = dVar2 & 0xffff;
   if (uVar3 < 0x800) {
@@ -50130,7 +50134,7 @@ LAB_000489d0:
       uVar15 = ((int)(short)fuel_metering_command_filtered * (uint)battery_voltage_sensor_filtered *
                5) / (uint)(sVar8 * 2);
       fuel_metering_coil_resistance_raw = (word)uVar15;
-      dVar2 = exponentialMovingAverage(uVar15 & 0xffff,&fuel_metering_coil_resistance_filter);
+      dVar2 = cm848_exponentialMovingAverage(uVar15 & 0xffff,&fuel_metering_coil_resistance_filter);
       fuel_metering_coil_resistance_filtered = (word)dVar2;
     }
     else {
@@ -50282,7 +50286,7 @@ void cm848_filterEngineSensorValue(void)
 {
   dword dVar1;
   
-  dVar1 = exponentialMovingAverage
+  dVar1 = cm848_exponentialMovingAverage
                     ((uint)battery_voltage_sensor_channel_state.value,
                      &fuel_metering_battery_voltage_filter);
   fuel_pressure_governor_state.filtered_battery_voltage = (word)dVar1;
@@ -60466,10 +60470,16 @@ sword cm848_secondOrderFilter(sword input,second_order_filter_state_t *filter)
 
 
 //
-// Function: exponentialMovingAverage @ 0x00056594
+// Function: cm848_exponentialMovingAverage @ 0x00056594
 //
 
-dword exponentialMovingAverage(dword value,ema_filter_state_t *filter_state)
+/* The unsigned first-order filter (exponential moving average) on an ema_filter_state_t: the
+   accumulator moves by +- |sample - its integer part| x (65536 - coefficient), truncated; it
+   returns the integer part. CM550's role counterpart is cm550_exponentialMovingAverage (0x34f8a), a
+   different formulation, so the name takes the prefix (was exponentialMovingAverage, shared with
+   CM550 0x34e9a - which is the signed filter; PR #53 round 88) */
+
+dword cm848_exponentialMovingAverage(dword value,ema_filter_state_t *filter_state)
 
 {
   uint uVar1;
@@ -61993,14 +62003,15 @@ void cm848_initializeVariableGeometryTurbochargerPositionChannel(void)
 //
 
 /* WARNING: Unable to use type for symbol recovery_decrement */
-/* The periodic pass of the unsigned sensor channels (lookup flags 0, exponentialMovingAverage; lhz
-   loads). Unlike the signed twin it skips the threshold faults of channel 47 (cruise switch) until
-   cruise_control_switches_learned_flag_cal, of channel 71 (A/C pressure) until its learned flag,
-   and of channel 10 (oil pressure) while oil_pressure_switch_only_cal is set (was
-   sensorChannelTypeB_configInit) | earlier note: review-function-readability reviewed 2026-06-12 -
-   Readability MEDIUM (irreducible converging-epilogue gotos + 3 split-remnant scratch temps Ghidra
-   will not let CSV name) Accuracy Confidence High. config_ptr typed as sensor_channel_config_t* (7
-   default/threshold/debounce fields render); DAT_003fd8e8 -> governor_temp_protection_disable (now
+/* The periodic pass of the unsigned sensor channels (lookup flags 0,
+   cm848_exponentialMovingAverage; lhz loads). Unlike the signed twin it skips the threshold faults
+   of channel 47 (cruise switch) until cruise_control_switches_learned_flag_cal, of channel 71 (A/C
+   pressure) until its learned flag, and of channel 10 (oil pressure) while
+   oil_pressure_switch_only_cal is set (was sensorChannelTypeB_configInit) | earlier note:
+   review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible
+   converging-epilogue gotos + 3 split-remnant scratch temps Ghidra will not let CSV name) Accuracy
+   Confidence High. config_ptr typed as sensor_channel_config_t* (7 default/threshold/debounce
+   fields render); DAT_003fd8e8 -> governor_temp_protection_disable (now
    oil_pressure_switch_only_cal); 11 locals named; 2 array globals renamed. 13-param PowerPC
    prototype; params 4-6 passed but unused. */
 
@@ -62037,7 +62048,7 @@ void cm848_processUnsignedSensorChannel
     uVar1 = config_ptr->default_value;
     state_ptr->value = uVar1;
     filter_state_ptr->accumulator = (uint)uVar1 << 0x10;
-    ema_result = exponentialMovingAverage((uint)uVar1,filter_state_ptr);
+    ema_result = cm848_exponentialMovingAverage((uint)uVar1,filter_state_ptr);
     (&sensor_channel_filtered_output)[channel_index] = (word)ema_result;
     *fault_status_output_ptr = 0x100;
     (&fault_detected_cal.faults_0_to_15)[high_fault_word_index] =
@@ -62254,7 +62265,7 @@ LAB_005017a8:
     state_ptr->value = config_ptr->default_value;
     wVar2 = 2;
   }
-  ema_result = exponentialMovingAverage((uint)state_ptr->value,filter_state_ptr);
+  ema_result = cm848_exponentialMovingAverage((uint)state_ptr->value,filter_state_ptr);
   (&sensor_channel_filtered_output)[channel_index] = (word)ema_result;
   *fault_status_output_ptr = wVar2;
 LAB_00501b1c:
@@ -62308,7 +62319,7 @@ void cm848_initializeUnsignedSensorChannel
     uVar1 = config_ptr->default_value;
     state_ptr->value = uVar1;
     filter_state_ptr->accumulator = (uint)uVar1 << 0x10;
-    ema_result = exponentialMovingAverage((uint)uVar1,filter_state_ptr);
+    ema_result = cm848_exponentialMovingAverage((uint)uVar1,filter_state_ptr);
     (&sensor_channel_filtered_output)[channel_index] = (word)ema_result;
     *fault_status_output_ptr = 0x100;
     (&fault_detected_cal.faults_0_to_15)[high_fault_word_index] =
@@ -62905,7 +62916,7 @@ void cm848_calculateAmbientAndCompressorInletConditions(void)
   dword dVar2;
   word wVar3;
   
-  dVar2 = exponentialMovingAverage
+  dVar2 = cm848_exponentialMovingAverage
                     ((uint)charge_flow_estimate_terms.fresh_air_mass_flow_filtered,
                      &ambient_air_flow_filter);
   ambient_air_flow_filtered = (word)dVar2;
@@ -62938,7 +62949,7 @@ void cm848_calculateAmbientAndCompressorInletConditions(void)
   }
   ambient_air_temperature_estimate = wVar1;
   ambient_air_temperature = wVar3;
-  dVar2 = exponentialMovingAverage
+  dVar2 = cm848_exponentialMovingAverage
                     ((uint)charge_flow_estimate_terms.fresh_air_mass_flow_filtered,
                      &compressor_inlet_pressure_drop_air_flow_filter);
   compressor_inlet_pressure_drop =
@@ -63026,7 +63037,7 @@ void cm848_initializeAmbientConditions(void)
   ambient_air_flow_filter.accumulator =
        (uint)charge_flow_estimate_terms.fresh_air_mass_flow_filtered << 0x10;
   ambient_air_flow_filter.coefficient = &ambient_air_flow_filter_coefficient;
-  dVar1 = exponentialMovingAverage
+  dVar1 = cm848_exponentialMovingAverage
                     ((uint)charge_flow_estimate_terms.fresh_air_mass_flow_filtered,
                      &ambient_air_flow_filter);
   ambient_air_flow_filtered = (word)dVar1;
@@ -65967,7 +65978,7 @@ void cm848_estimateExhaustPressure(void)
   else if (0xffff < (int)uVar2) {
     uVar2 = 0xffff;
   }
-  dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&exhaust_pressure_estimate_filter_state);
+  dVar1 = cm848_exponentialMovingAverage(uVar2 & 0xffff,&exhaust_pressure_estimate_filter_state);
   exhaust_pressure_estimate = (word)dVar1;
   if (((algorithm_enable_flags_5_cal.exhaust_pressure_estimate_enable == 0) ||
       (egr_valve_position_source == SENSOR_VALUE_SOURCE_DEFAULT)) ||
@@ -66073,8 +66084,8 @@ void cm848_calculateCombustionTemperatureRise(void)
    TPE_Delta_Exhaust_Tmptr) is that delta, or 0 when invalid. exhaust_temperature (+8 Exhaust_Tmptr,
    0.5 degree F per count) = intake_manifold_temperature_filtered x 2 / 64 plus the rise, not below
    0, and its copy is exhaust_temperature_virtual_sensor_copy (e2m 191B +14).
-   exhaust_metal_temperature (+C Exhaust_Metal_Tmptr) = exponentialMovingAverage of it (state at
-   0x3fbcea). exhaust_temperature_source (+A Exhaust_Tmptr_Source) is 0 (primary) only when the
+   exhaust_metal_temperature (+C Exhaust_Metal_Tmptr) = cm848_exponentialMovingAverage of it (state
+   at 0x3fbcea). exhaust_temperature_source (+A Exhaust_Tmptr_Source) is 0 (primary) only when the
    charge flow, charge pressure and intake manifold temperature sources
    (charge_flow_estimate_terms.reserved_0a, charge_pressure_source,
    intake_manifold_temperature_filtered_source) are all 0 and the model is valid, else 1 (backup).
@@ -66111,7 +66122,7 @@ void cm848_estimateExhaustTemperature(void)
     uVar2 = iVar3 + uVar2;
   }
   exhaust_temperature = (word)uVar2;
-  dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&ema_filter_state_t_003fbcea);
+  dVar1 = cm848_exponentialMovingAverage(uVar2 & 0xffff,&ema_filter_state_t_003fbcea);
   exhaust_metal_temperature = (word)dVar1;
   if ((((charge_flow_estimate_terms.charge_flow_source == SENSOR_VALUE_SOURCE_PRIMARY) &&
        (charge_pressure_source == SENSOR_VALUE_SOURCE_PRIMARY)) &&
@@ -66204,7 +66215,7 @@ void cm848_calculateEgrOrificeTemperatureLeadCompensation(void)
    air_handling_compensation_and_diagnostic_bypass_cal is nonzero or bit 0x8000 of
    algorithm_enable_flags_20_cal is clear (then 0). Runs
    cm848_calculateEgrOrificeTemperatureLeadCompensation (the lead compensation), then two cascaded
-   exponentialMovingAverage filters (states at 0x3fbd00 / 0x3fbd08) over
+   cm848_exponentialMovingAverage filters (states at 0x3fbd00 / 0x3fbd08) over
    egr_orifice_temperature_after_lead into the filtered temperature at 0x3fbcf6, the primary value
    that cm848_selectEgrOrificeTemperature selects; with the compensation off it stores
    egr_orifice_temperature_after_lead unfiltered. Caller cm848_phase_groupB_calculation_2. (was
@@ -66237,10 +66248,10 @@ void cm848_filterEgrOrificeTemperature(void)
   wVar3 = egr_orifice_temperature_after_lead;
   if (((wVar1 == 0) && (air_handling_compensation_and_diagnostic_bypass_cal == 0)) &&
      (algorithm_enable_flags_20_cal.egr_orifice_temperature_lead_compensation_enable != 0)) {
-    dVar2 = exponentialMovingAverage
+    dVar2 = cm848_exponentialMovingAverage
                       ((uint)egr_orifice_temperature_after_lead,&ema_filter_state_t_003fbd00);
     DAT_003fbcfc = (undefined2)dVar2;
-    dVar2 = exponentialMovingAverage(dVar2 & 0xffff,&ema_filter_state_t_003fbd08);
+    dVar2 = cm848_exponentialMovingAverage(dVar2 & 0xffff,&ema_filter_state_t_003fbd08);
     wVar3 = (word)dVar2;
   }
   DAT_003fbcf6 = wVar3;
@@ -66326,7 +66337,7 @@ void cm848_evaluateEgrValvePositionControlDiagnosticConditions(void)
   uint uVar3;
   int iVar4;
   
-  dVar1 = exponentialMovingAverage
+  dVar1 = cm848_exponentialMovingAverage
                     ((uint)egr_valve_position_command_final,
                      &egr_valve_position_command_diagnostic_filter_state);
   egr_valve_position_command_diagnostic_filtered = (word)dVar1;
@@ -67451,7 +67462,7 @@ void cm848_calculateFaultDerateEngineSpeedLimit(void)
     uVar6 = uVar6 + 4 & 0xffff;
     uVar7 = uVar7 + 1 & 0xffff;
   } while (configuration < fault_derate_fuel_limit_by_engine_speed_axis);
-  dVar1 = exponentialMovingAverage
+  dVar1 = cm848_exponentialMovingAverage
                     ((uint)engine_speed_limit_default_cal -
                      (uVar5 * engine_speed_limit_fault_derate_span >> 8) & 0xffff,
                      &ema_filter_state_t_003fbd2e);
@@ -71830,7 +71841,7 @@ void cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit(void)
   uint uVar3;
   
   if (engine_operating_mode == FUELING_STATE_ACCELERATOR_PEDAL_FAULT) {
-    dVar2 = exponentialMovingAverage
+    dVar2 = cm848_exponentialMovingAverage
                       ((uint)engine_speed_state.engine_speed,
                        &pedal_fault_mode_engine_speed_filter_state);
     pedal_fault_mode_target_speed_filtered = (word)dVar2;
@@ -72990,7 +73001,7 @@ void cm848_calculateTurbochargerSpeedSensorValue(void)
   }
   turbocharger_speed_rate_limited = (word)uVar2;
   turbocharger_speed_unfiltered = uVar1;
-  uVar2 = exponentialMovingAverage(uVar2 & 0xffff,&turbocharger_speed_filter_state);
+  uVar2 = cm848_exponentialMovingAverage(uVar2 & 0xffff,&turbocharger_speed_filter_state);
   turbocharger_speed_filtered_limited = (word)uVar2;
   uVar4 = (uint)turbocharger_speed_envelope_filter_buffer_size;
   if (uVar4 != 0) {
@@ -73265,7 +73276,7 @@ void cm848_evaluateVariableGeometryTurbochargerPositionControlDiagnosticConditio
   else {
     variable_geometry_turbocharger_control_diagnostic_enable_flag = 0;
   }
-  dVar1 = exponentialMovingAverage
+  dVar1 = cm848_exponentialMovingAverage
                     ((uint)variable_geometry_turbocharger_position_command_final,
                      &variable_geometry_turbocharger_position_command_diagnostic_filter_state);
   variable_geometry_turbocharger_position_command_diagnostic_filtered = (word)dVar1;
@@ -73552,7 +73563,7 @@ void cm848_updateVariableGeometryTurbochargerMotorTemperature(void)
       uVar3 = 0xffff;
     }
     variable_geometry_turbocharger_motor_winding_temperature_filter_input = (word)uVar3;
-    dVar1 = exponentialMovingAverage
+    dVar1 = cm848_exponentialMovingAverage
                       (uVar3 & 0xffff,
                        &variable_geometry_turbocharger_motor_winding_temperature_filter_state);
     variable_geometry_turbocharger_motor_winding_temperature = (word)dVar1;
@@ -73584,7 +73595,7 @@ void cm848_updateVariableGeometryTurbochargerMotorTemperature(void)
       puVar2 = &DAT_00009600;
     }
     variable_geometry_turbocharger_motor_iron_core_temperature_filter_input = (word)puVar2;
-    dVar1 = exponentialMovingAverage
+    dVar1 = cm848_exponentialMovingAverage
                       ((uint)puVar2 & 0xffff,
                        &variable_geometry_turbocharger_motor_iron_core_temperature_filter_state);
     variable_geometry_turbocharger_motor_iron_core_temperature = (word)dVar1;
@@ -73717,7 +73728,7 @@ void cm848_updateVariableGeometryTurbochargerMeanSquaredCurrent(void)
   
   if (variable_geometry_turbocharger_enable_flag != 0) {
     cm848_estimateVariableGeometryTurbochargerMotorCurrent();
-    dVar1 = exponentialMovingAverage
+    dVar1 = cm848_exponentialMovingAverage
                       ((uint)variable_geometry_turbocharger_motor_current *
                        (uint)variable_geometry_turbocharger_motor_current >> 0xd & 0xffff,
                        &variable_geometry_turbocharger_motor_mean_squared_current_filter_state);
@@ -75160,10 +75171,11 @@ CRUISE_CONTROL_STATE cm848_selectBaseCruiseState(void)
 //
 
 /* e2m 8A0F +2 Cruise_N_V_Ratio: (filtered_engine_speed + cruise_engine_speed_previous) x 128 /
-   vehicle_speed_rise_limited (0xffff when that would overflow) filtered by exponentialMovingAverage
-   with cruise_engine_to_vehicle_speed_ratio_filter_state (coefficient e2m 8A0E +C
-   Cruise_N_V_Calc_Filter_Constant) into cruise_engine_to_vehicle_speed_ratio. The first step of
-   cm848_cruiseControlPeriodicUpdate (was governor_cruise_rpmRatio_ema; PR #53 round 57) */
+   vehicle_speed_rise_limited (0xffff when that would overflow) filtered by
+   cm848_exponentialMovingAverage with cruise_engine_to_vehicle_speed_ratio_filter_state
+   (coefficient e2m 8A0E +C Cruise_N_V_Calc_Filter_Constant) into
+   cruise_engine_to_vehicle_speed_ratio. The first step of cm848_cruiseControlPeriodicUpdate (was
+   governor_cruise_rpmRatio_ema; PR #53 round 57) */
 
 void cm848_filterCruiseEngineToVehicleSpeedRatio(void)
 
@@ -75179,7 +75191,7 @@ void cm848_filterCruiseEngineToVehicleSpeedRatio(void)
   else {
     uVar2 = uVar2 / vehicle_speed_rise_limited;
   }
-  dVar1 = exponentialMovingAverage
+  dVar1 = cm848_exponentialMovingAverage
                     (uVar2 & 0xffff,&cruise_engine_to_vehicle_speed_ratio_filter_state);
   cruise_engine_to_vehicle_speed_ratio = (word)dVar1;
   return;
@@ -77448,7 +77460,7 @@ void cm848_measureRadiatorFanSpeed(void)
                   / (ulonglong)radiator_fan_speed_period_microseconds);
   }
   radiator_fan_speed_unfiltered = (word)uVar3;
-  dVar2 = exponentialMovingAverage(uVar3 & 0xffff,&radiator_fan_speed_filter_state);
+  dVar2 = cm848_exponentialMovingAverage(uVar3 & 0xffff,&radiator_fan_speed_filter_state);
   wVar1 = radiator_fan_speed_history_middle;
   radiator_fan_speed = (word)dVar2;
   if (radiator_fan_speed_override_enable != 0) {
@@ -80001,7 +80013,7 @@ void cm848_processEngineOilPressure(void)
                  (oil_pressure_model_cached_axis_offsets,engine_speed_state.filtered_engine_speed,
                   oil_pressure_model_x_axis,coolant_temperature_sensor_filtered,
                   oil_pressure_model_y_axis,oil_pressure_model_grid,2);
-  dVar1 = exponentialMovingAverage
+  dVar1 = cm848_exponentialMovingAverage
                     ((uint)oil_pressure_model_unfiltered,&engine_oil_pressure_filter_state);
   engine_oil_pressure = (word)dVar1;
   if (low_oil_pressure_check_minimum_rpm < engine_speed_state.filtered_engine_speed) {
@@ -80105,13 +80117,13 @@ void cm848_detectTransferCaseLowRange(void)
   
   if (((algorithm_enable_flags_43_cal.transfer_case_low_range_enable != 0) &&
       (transmission_type_cal == 0)) && (engine_state == ENGINE_STATE_RUNNING)) {
-    dVar1 = exponentialMovingAverage
+    dVar1 = cm848_exponentialMovingAverage
                       ((uint)vehicle_speed_unfiltered,&transfer_case_road_speed_filter);
     transfer_case_road_speed = (word)dVar1;
     if ((uint)transfer_case_ratio_minimum_vehicle_speed < (dVar1 & 0xffff)) {
       uVar2 = ((uint)engine_speed_state.filtered_engine_speed << 8) / (dVar1 & 0xffff);
       transfer_case_engine_to_vehicle_speed_ratio = (word)uVar2;
-      dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&transfer_case_ratio_average_filter);
+      dVar1 = cm848_exponentialMovingAverage(uVar2 & 0xffff,&transfer_case_ratio_average_filter);
       transfer_case_engine_to_vehicle_speed_ratio_average = (word)dVar1;
       uVar2 = (uint)transfer_case_engine_to_vehicle_speed_ratio;
       if ((int)((dVar1 & 0xffff) - uVar2) < 0) {
@@ -80122,7 +80134,7 @@ void cm848_detectTransferCaseLowRange(void)
       }
       uVar2 = ((uVar2 & 0xffff) * 0x6400) / (dVar1 & 0xffff);
       transfer_case_engine_to_vehicle_speed_ratio_change = (word)uVar2;
-      dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&transfer_case_ratio_change_filter);
+      dVar1 = cm848_exponentialMovingAverage(uVar2 & 0xffff,&transfer_case_ratio_change_filter);
     }
     else {
       transfer_case_engine_to_vehicle_speed_ratio = 0;
@@ -87127,7 +87139,7 @@ void cm848_calculateEngineRetarderCruisePermissionPercent(void)
   
   if ((algorithm_enable_flags_6_cal.cruise_engine_retarder_enable != 0) &&
      (cruise_control_engaged_flag != 0)) {
-    dVar1 = exponentialMovingAverage
+    dVar1 = cm848_exponentialMovingAverage
                       ((uint)vehicle_speed_rise_limited,
                        &engine_retarder_cruise_permission_speed_filter_state);
     iVar2 = (dVar1 & 0xffff) - ((uint)cruise_speed_command + (uint)cruise_bottom_droop_width_cal);
@@ -87829,9 +87841,10 @@ void cm848_runCruiseAndRoadSpeedGovernor(void)
   word wStack_36;
   int local_34;
   
-  dVar3 = exponentialMovingAverage((uint)final_fueling,&cruise_droop_fueling_filter);
+  dVar3 = cm848_exponentialMovingAverage((uint)final_fueling,&cruise_droop_fueling_filter);
   cruise_droop_fueling_filtered = (word)dVar3;
-  dVar3 = exponentialMovingAverage((uint)final_fueling,&cruise_governor_preset_fueling_filter);
+  dVar3 = cm848_exponentialMovingAverage((uint)final_fueling,&cruise_governor_preset_fueling_filter)
+  ;
   wVar2 = cruise_governor_filtered_road_speed;
   cruise_governor_preset_fueling_filtered = (word)dVar3;
   cruise_governor_filtered_road_speed =
@@ -88220,7 +88233,8 @@ void cm848_updateDrivetrainRatio(void)
       }
       drivetrain_ratio_filter_state.accumulator = (uint)drivetrain_ratio << 0x10;
       drivetrain_ratio_filter_state.coefficient = local_30;
-      dVar2 = exponentialMovingAverage((uint)drivetrain_ratio_raw,&drivetrain_ratio_filter_state);
+      dVar2 = cm848_exponentialMovingAverage
+                        ((uint)drivetrain_ratio_raw,&drivetrain_ratio_filter_state);
       drivetrain_ratio = (word)dVar2;
       if ((j1939_powertrain_control_state.etc1_out_of_gear_data_valid_flag != 1) ||
          ((vehicle_speed_sensor_type_cal != VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO &&
@@ -88658,7 +88672,7 @@ void cm848_detectVehicleSpeedSensorZeroUnderLoad(void)
     }
     else {
       filtered_engine_load =
-           exponentialMovingAverage
+           cm848_exponentialMovingAverage
                      ((uint)engine_load_percent,
                       &vehicle_speed_zero_under_load_engine_load_filter_state);
       vehicle_speed_zero_under_load_engine_load_filtered = (word)filtered_engine_load;
