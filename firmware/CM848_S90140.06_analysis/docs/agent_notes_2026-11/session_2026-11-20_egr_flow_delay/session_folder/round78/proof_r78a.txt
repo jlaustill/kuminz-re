@@ -1,0 +1,1 @@
+CM550: each old 'global.field' render of the removed structs maps to the address it reached; 11 functions differ at statement level, every change a mapped field, a type-only row's label or a dropped underscore; no underscore gained over the round, 3 lost; verify DETERMINISTIC; no multi-address struct left; headers 0 g++ errors; _cal HARD 0 / MISSING 31.

@@ -650,3 +650,11 @@ Hand work on the round 7 lead.
   functions, flag and prototype), `map_r77a2.csv`.
 - **Proof:** `prove_r77a_cm550.py` and `statements_r77a_cm550.py` (a statement-level comparison that line wrapping
   cannot fool). **Closing:** `apply_r77_closing.py`, `update_large_tar_r77.sh`.
+
+## Round 78: the last CM550 structs with a separate address per field row (`session_folder/round78/`)
+
+- **Stage A (CM550):** `multi_address_detail.py` (each struct's rows, the globals at its field addresses and their
+  field renders), `apply_r78a.py` (the 16 structs removed, their globals typed; `plan_r78a.txt`), `apply_r78a2.py`
+  (the exposed neighbors typed and the coordinate rows replaced), `field_widths.txt`.
+- **Proof:** `prove_r78a_cm550.py` (each old field render mapped to the address it reached, then a statement-level
+  comparison). **Closing:** `apply_r78_closing.py`, `update_large_tar_r78.sh`.

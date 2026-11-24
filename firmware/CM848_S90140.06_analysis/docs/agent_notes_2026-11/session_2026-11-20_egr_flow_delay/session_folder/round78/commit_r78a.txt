@@ -1,0 +1,46 @@
+cm550: round 78 stage A - the last 16 structs with a separate address per field row removed; their globals and the neighbors they covered typed
+
+Round 77 removed the J1708 pair. The other 16 CM550 structs whose field rows each carry their own address are removed
+now (68 rows); multi_address_structs.py reports none in either firmware.
+- Each became one oversize type with an instance at every listed address. The globals that carried the type rendered
+  fake fields:
+  - previous_engine_rpm.previous_sample was dma_desc1_source_ptr (0x800010);
+  - engine_rpm_delta.rpm_delta was data_collector_channel_count (0x80034c);
+  - logical_address_canter_value_..._none.ram_end_addr was logical_address_of_the_last_value_stored_to_the_data_
+    collector_bu_none (0x80aaba);
+  - fuel_arbitrator_throttle_override.* were its neighbors (0x80d038 ...).
+  Only four of the 16 rendered; the other twelve could flip later, as param_circular_buffer_t did in round 76.
+- Every field row's address but three had its own global. The global gets the field's scalar width; the globals that
+  carried a removed type get it too. The three addresses without a global get type-only rows.
+- The diagnostic transmit / receive buffers (0x808B00 / 0x808C00) are byte[256]; nothing else lies in their range. The
+  32-byte "data_buffer" at 0x80965E is not typed: globals start 2 bytes later.
+
+Two follow-ups from reading the first build:
+- The neighbors the oversize types had covered became visible with underscore prefixes (types too narrow). They are
+  typed from their decoded m68k accesses:
+  - dma_descriptor_base1, dma_desc1_source_ptr, data_collector_sample_decimation_counter and
+    data_collector_channel_count are words;
+  - logical_address_of_the_last_value_..._none is a dword.
+- Five coordinate rows named addresses as fields of the removed types (previous_engine_rpm.rpm_delta,
+  engine_rpm_delta.previous_nonzero, ...logical_start / +2, diagnostic_rx_buffer_base.rx_buffer_base[220]). Four
+  become type-only rows of the measured width. The fifth (0x808DDC) goes, because its accesses do not decode.
+- io_control_bit0_state (0x80D03E) is a dword. The removed fuel_arbitrator_diag_t rendered all 15 of its accesses
+  as fuel_arbitrator_throttle_override._8_4_, 4 bytes at 0x80D036 + 8. Three functions add the 32-bit
+  _io_control_handshake_state into it with an overflow check. 0x80D040 (io_control_bit1_state, label-only) lies
+  inside it and has no access of its own. The io_control_* names are older and not checked.
+
+Proof:
+- CM550 verify is DETERMINISTIC after each of the three steps. The scan reports no multi-address struct in either
+  firmware.
+- prove_r78a_cm550.py maps each of the old 'global.field' renders (11 forms) to the address it reached, prints the name
+  that address has now, and compares the functions statement by statement. 11 functions differ, and every change is
+  one of these:
+  - a mapped field becomes the real global's name;
+  - an old raw or piece render (ram0x00800012, DAT_00800348, DAT_0080aabe._0_2_, ._10_4_) becomes its type-only
+    row's label;
+  - an underscore is dropped.
+- Over the round, no underscore-prefixed name is gained and three are lost (the data collector's buffer addresses).
+- The headers regenerate with 0 g++ errors. The _cal audit reports HARD 0 and MISSING 31. test_lookup_tables and
+  test_rename_waves pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

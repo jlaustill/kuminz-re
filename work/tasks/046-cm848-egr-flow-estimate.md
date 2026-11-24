@@ -3577,6 +3577,32 @@ A peer relay started the round; the scripts are in `session_folder/round77/`. Th
   - From round 76: the external devices at 0xFFC800 / 0xFFD000 / 0xFFD800, and the 1280-byte parameter buffer at
     0x80C7A8.
 
+## Done, round 78 (2026-11-23, same PR): the last CM550 structs with a separate address per field row
+
+A peer relay started the round; the scripts are in `session_folder/round78/`. This was round 77's first lead.
+- **Stage A (b9de2fc1), CM550:** the other 16 such structs are removed (68 rows). `multi_address_structs.py` now reports
+  none in either firmware.
+  - Their globals get the fields' scalar widths: a global that carried a removed type gets the field's width at its own
+    address, and the three field addresses without a global get type-only rows.
+  - The diagnostic transmit / receive buffers are `byte[256]`.
+  - The four rendering ones (`data_collector_t`, `engine_rpm_history_t`, `fuel_arbitrator_diag_t`,
+    `diagnostic_buffers_t`) gave 64 fake `global.field` renders of addresses that have their own globals.
+    `prove_r78a_cm550.py` maps each old render to the address it reached and prints the name that address has now.
+  - **Follow-up in the same commit:** the neighbors the oversize types had covered showed with `_` prefixes. They are
+    typed from their decoded accesses (four words and a dword), and `io_control_bit0_state` is a dword (all its
+    accesses were 4 bytes). Five coordinate rows of the removed types became
+    type-only rows of the measured width, except 0x808DDC, whose accesses do not decode; that row is gone.
+  - **Proof:** CM550: each old 'global.field' render of the removed structs maps to the address it reached; 11 functions differ at statement level, every change a mapped field, a type-only row's label or a dropped underscore; no underscore gained over the round, 3 lost; verify DETERMINISTIC; no multi-address struct left; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
+- **firmware/CLAUDE.md:** none.
+- **Leads:**
+  - **The `io_control_*` names at 0x80D038-0x80D046 are older guesses.** 0x80D03E (`io_control_bit0_state`, now a
+    dword) is a 32-bit sum with an overflow check, and its neighbor 0x80D042 is named
+    `accumulated_backup_eps_period_between_vss_interrupts_0_65535`.
+  - **The diagnostic receive buffer:** the code reaches 0x808D00 and 0x808DDC directly, past the 256 bytes typed here.
+    The buffer may be larger, or another buffer may follow it.
+  - From round 77: `j1708_pending_abort_count`; from round 76: the external devices at 0xFFC800 / 0xFFD000 /
+    0xFFD800 and the 1280-byte parameter buffer at 0x80C7A8.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**
