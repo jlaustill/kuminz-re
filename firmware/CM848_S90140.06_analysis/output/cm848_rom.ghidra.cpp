@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue Nov 24 12:31:00 MST 2026
+// Generated: Tue Nov 24 14:28:47 MST 2026
 
 
 //
@@ -23921,12 +23921,11 @@ void cm848_j1939HandlePgn58112Dm7(j1939_rx_msg_t *request_msg)
 {
   j1939_dm7_test_identifier = *request_msg->data_pointer;
   if ((j1939_dm7_test_identifier == 0) && ((supported_non_continuous_monitors_bits & 0x100) != 0)) {
-    cm848_sendPgn65232NonContinuousMonitorTestResultMessage
-              (0,(byte)intake_air_heater_monitor_result);
+    cm848_sendPgn65232NonContinuousMonitorTestResultMessage(0,intake_air_heater_monitor_result);
   }
   else if ((j1939_dm7_test_identifier == 1) &&
           ((supported_non_continuous_monitors_bits & 0x200) != 0)) {
-    cm848_sendPgn65232NonContinuousMonitorTestResultMessage(1,(byte)misfire_monitor_result);
+    cm848_sendPgn65232NonContinuousMonitorTestResultMessage(1,misfire_monitor_result);
   }
   else if (j1939_dm7_test_identifier < 2) {
     cm848_sendJ1939AcknowledgeMessage(request_msg,J1939_NACK);
@@ -25961,23 +25960,23 @@ void cm848_initPgn65230Dm5Handler(void)
 
 /* Sends one test result of the non-continuously monitored systems, PGN 65232 (Test Results for
    Non-continuously Monitored Systems; transmit descriptor j1939_pgn65232_tx_message, 8 bytes, set
-   by cm848_initializePgn65232Dm8Buffer at 0x2560c). param_1 is the test identifier (SPN 1224, byte
-   1: 0 = the intake air heater monitor, 1 = the misfire monitor) and param_2 the 16-bit test value
-   (SPN 1226, byte swapped with cm848_reverseByteOrder16 into bytes 3-4). The test type byte and the
-   limit words keep their 0xff / 0xffff initial values (not available). The only caller is
+   by cm848_initializePgn65232Dm8Buffer at 0x2560c). test_identifier is SPN 1224 (byte 1: 0 = the
+   intake air heater monitor, 1 = the misfire monitor) and test_value the 16-bit SPN 1226 test value
+   (byte swapped with cm848_reverseByteOrder16 into bytes 3-4 of j1939_pgn65232_payload). The test
+   type byte and the limit words keep their 0xff / 0xffff initial values (not available) (PR #53
+   round 90: the parameters were dest_address / fault_count). The only caller is
    cm848_j1939HandlePgn58112Dm7 (0x227a0), the handler of the command for these tests (PGN 58112),
    which passes intake_air_heater_monitor_result for test 0 and misfire_monitor_result for test 1.
    (was cm848_j1939SendDm1ResponseMessage) */
 
-void cm848_sendPgn65232NonContinuousMonitorTestResultMessage(byte dest_address,byte fault_count)
+void cm848_sendPgn65232NonContinuousMonitorTestResultMessage(byte test_identifier,word test_value)
 
 {
-  undefined1 in_register_00000012;
-  undefined2 local_6;
+  word local_6;
   
-  local_6 = CONCAT11(in_register_00000012,fault_count);
-  DAT_003fad6e = dest_address;
-  j1939_pgn65232_param_tx_word = cm848_reverseByteOrder16(&local_6);
+  j1939_pgn65232_payload.test_identifier = test_identifier;
+  local_6 = test_value;
+  j1939_pgn65232_payload.test_value = cm848_reverseByteOrder16(&local_6);
   cm848_sendJ1939Message(&j1939_pgn65232_tx_message);
   return;
 }
@@ -25997,13 +25996,13 @@ void cm848_initializePgn65232Dm8Buffer(void)
   j1939_pgn65232_tx_message.header.can_id =
        CONCAT13(((byte)j1939_pgn65232_priority_cal & 7) << 2,0xfed000);
   j1939_pgn65232_tx_message.header.data_length = 8;
-  j1939_pgn65232_tx_message.data_pointer = &DAT_003fad6e;
+  j1939_pgn65232_tx_message.data_pointer = &j1939_pgn65232_payload.test_identifier;
   j1939_pgn65232_tx_message.status_pointer = &j1939_pgn65232_transmit_status;
   j1939_pgn65232_tx_message.header.can_id =
        CONCAT31(j1939_pgn65232_tx_message.header.can_id._0_3_,(char)j1939_source_address);
-  DAT_003fad6f = 0xff;
-  j1939_pgn65232_field1_init_word = 0xffff;
-  j1939_pgn65232_field2_init_word = 0xffff;
+  j1939_pgn65232_payload.test_type_component_identifier = 0xff;
+  j1939_pgn65232_payload.test_limit_maximum = 0xffff;
+  j1939_pgn65232_payload.test_limit_minimum = 0xffff;
   return;
 }
 

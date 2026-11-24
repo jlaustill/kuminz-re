@@ -1396,9 +1396,6 @@ extern j1939_tx_msg_t j1939_pgn65230_tx_message;  // 0x003fad48
 extern word j1939_feature_config_tx_word;  // 0x003fad5a
 extern word j1939_dm1_active_faults_tx_word;  // 0x003fad5c
 extern j1939_tx_msg_t j1939_pgn65232_tx_message;  // 0x003fad60
-extern word j1939_pgn65232_param_tx_word;  // 0x003fad70
-extern word j1939_pgn65232_field1_init_word;  // 0x003fad72
-extern word j1939_pgn65232_field2_init_word;  // 0x003fad74
 extern byte j1939_status_byte_a;  // 0x003fad7b
 extern j1939_tx_msg_t j1939_pgn61441_tx_message;  // 0x003fad80
 extern byte j1939_engine_status_byte;  // 0x003fad90
@@ -7984,6 +7981,7 @@ extern byte j1939_dm10_transmit_status;  // 0x003fab68
 extern byte j1939_dm2_transmit_status;  // 0x003fac2c
 extern byte j1939_pgn65229_transmit_status;  // 0x003fad46
 extern byte j1939_pgn65230_transmit_status;  // 0x003fad5e
+extern j1939_pgn65232_payload_t j1939_pgn65232_payload;  // 0x003fad6e
 extern byte j1939_pgn65232_transmit_status;  // 0x003fad76
 extern byte j1939_pgn61441_transmit_status;  // 0x003fad8e
 extern byte j1939_pgn61444_transmit_status;  // 0x003fada6

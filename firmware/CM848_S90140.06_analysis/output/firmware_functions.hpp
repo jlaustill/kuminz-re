@@ -579,7 +579,7 @@ void cm848_j1939BuildDm4FreezeFrame(int param_1);  // @ 0x00025110
 void cm848_j1939HandlePgn65229Dm4FreezeFrame(void);  // @ 0x00025390
 void cm848_j1939HandlePgn65230Dm5Readiness(void);  // @ 0x00025458
 void cm848_initPgn65230Dm5Handler(void);  // @ 0x0002553c
-void cm848_sendPgn65232NonContinuousMonitorTestResultMessage(byte dest_address,byte fault_count);  // @ 0x000255c0
+void cm848_sendPgn65232NonContinuousMonitorTestResultMessage(byte test_identifier,word test_value);  // @ 0x000255c0
 void cm848_initializePgn65232Dm8Buffer(void);  // @ 0x0002560c
 void cm848_j1939BuildEngineControlByte(void);  // @ 0x0002567c
 void cm848_initializePgn61441ElectronicBrakeController1Buffer(void);  // @ 0x00025824

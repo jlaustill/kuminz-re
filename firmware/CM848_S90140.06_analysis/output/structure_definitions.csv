@@ -2793,3 +2793,10 @@ discrete_output_override_t,,value,byte,1,"The overridden output's requested stat
 sci_command_dispatch_entry_t,,command,byte,1,The SCI command number (18 / 19 / 20 / 23 / 25 ... 53 / 40 / 43 / 44 / 49 in table order),,verified
 sci_command_dispatch_entry_t,,pad,byte,1,0 in every record,,verified
 sci_command_dispatch_entry_t,,handler,pointer,4,The command's cm848_sciCommand<N> function,,verified
+
+# DM8 (PGN 65232) payload: 8 bytes at 0x3fad6e (j1939_pgn65232_tx_message.data_pointer) (PR #53 round 90)
+j1939_pgn65232_payload_t,0x003fad6e,test_identifier,byte,1,SPN 1224 test identifier (byte 1): 0 = the intake air heater monitor / 1 = the misfire monitor (cm848_j1939HandlePgn58112Dm7),,verified
+j1939_pgn65232_payload_t,0x003fad6e,test_type_component_identifier,byte,1,SPN 1225 test type / component identifier (byte 2): 0xff (not available) - set once by cm848_initializePgn65232Dm8Buffer,,verified
+j1939_pgn65232_payload_t,0x003fad6e,test_value,word,2,SPN 1226 test value (bytes 3-4): the monitor result byte-swapped to J1939 little-endian order by cm848_reverseByteOrder16,,verified
+j1939_pgn65232_payload_t,0x003fad6e,test_limit_maximum,word,2,SPN 1227 test limit maximum (bytes 5-6): 0xffff (not available),,verified
+j1939_pgn65232_payload_t,0x003fad6e,test_limit_minimum,word,2,SPN 1228 test limit minimum (bytes 7-8): 0xffff (not available),,verified

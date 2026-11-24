@@ -134,8 +134,8 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 0x000227a0,cm848_j1939HandlePgn58112Dm7,0,request_msg,j1939_rx_msg_t*,The received DM7 (PGN 58112) request
 
-0x000255c0,cm848_sendPgn65232NonContinuousMonitorTestResultMessage,0,dest_address,byte,Destination address for DM1 response
-0x000255c0,cm848_sendPgn65232NonContinuousMonitorTestResultMessage,1,fault_count,byte,Number of active DTCs to report
+0x000255c0,cm848_sendPgn65232NonContinuousMonitorTestResultMessage,0,test_identifier,byte,SPN 1224: 0 = the intake air heater monitor / 1 = the misfire monitor (was dest_address; PR #53 round 90)
+0x000255c0,cm848_sendPgn65232NonContinuousMonitorTestResultMessage,1,test_value,ushort,SPN 1226: the 16-bit monitor result (the body stores the halfword; was fault_count byte; PR #53 round 90)
 
 0x0002641c,cm848_buildPgn65213FanDrive1Message,return,,void,explicit void(void) - r3 / r4 are written before they are read (lis r3 @ 0x26428 / lis r4 @ 0x26444) - the transmit queue calls it with no arguments - replaces the invented dest_address / status_type rows
 

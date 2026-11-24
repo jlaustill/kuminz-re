@@ -1467,6 +1467,7 @@ typedef struct injector_driver_booster_capacitor_cylinder_record_t injector_driv
 typedef struct fault_status_record_t fault_status_record_t;
 typedef struct discrete_output_override_t discrete_output_override_t;
 typedef struct sci_command_dispatch_entry_t sci_command_dispatch_entry_t;
+typedef struct j1939_pgn65232_payload_t j1939_pgn65232_payload_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -4205,4 +4206,12 @@ struct sci_command_dispatch_entry_t {
     uint8_t command;  /* The SCI command number (18 / 19 / 20 / 23 / 25 ... 53 / 40 / 43 / 44 / 49 in table order) */
     uint8_t pad;  /* 0 in every record */
     void * handler;  /* The command's cm848_sciCommand<N> function */
+};
+
+struct j1939_pgn65232_payload_t {
+    uint8_t test_identifier;  /* SPN 1224 test identifier (byte 1): 0 = the intake air heater monitor / 1 = the misfire monitor (cm848_j1939HandlePgn58112Dm7) */
+    uint8_t test_type_component_identifier;  /* SPN 1225 test type / component identifier (byte 2): 0xff (not available) - set once by cm848_initializePgn65232Dm8Buffer */
+    uint16_t test_value;  /* SPN 1226 test value (bytes 3-4): the monitor result byte-swapped to J1939 little-endian order by cm848_reverseByteOrder16 */
+    uint16_t test_limit_maximum;  /* SPN 1227 test limit maximum (bytes 5-6): 0xffff (not available) */
+    uint16_t test_limit_minimum;  /* SPN 1228 test limit minimum (bytes 7-8): 0xffff (not available) */
 };
