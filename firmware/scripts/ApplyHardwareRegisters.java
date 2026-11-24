@@ -221,8 +221,11 @@ public class ApplyHardwareRegisters extends GhidraScript {
                 Symbol existing = symbolTable.getPrimarySymbol(addr);
                 if (existing != null) {
                     String existingName = existing.getName();
-                    // Skip if already has a meaningful name (not DAT_ prefix)
-                    if (!existingName.startsWith("DAT_") && !existingName.startsWith("_DAT_")) {
+                    // Skip if already has a meaningful name (not DAT_ prefix). The row's own name does not
+                    // count: ImportAnalysis labels every global_variables.csv row before this stage creates
+                    // the register block, so it could not type the register; it is typed here.
+                    if (!existingName.equals(reg.name)
+                            && !existingName.startsWith("DAT_") && !existingName.startsWith("_DAT_")) {
                         result.skipped++;
                         continue;
                     }

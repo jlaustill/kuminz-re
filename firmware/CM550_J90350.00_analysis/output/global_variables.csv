@@ -77,6 +77,7 @@ address,name,type,comment
 0x000345dc,application_memory_region_table,memory_region_t[5],The application's write-permission map (5 x 10 bytes; the lookup's code follows at 0x3460e): main flash 0x0-0x7ffff 4 / RAM 0x800000-0x8091dc 3 / extended RAM 0x8091dc-0x80ffff 0 / EEPROM 0x1000000-0x1001fff 5 / registers 0xffc800-0xffffff 3 while the development mode flag is 1 else 10 - read by lookupApplicationMemoryRegionType (PR #53 round 72)
 0x00034b48,switchD,,
 0x00034b4c,switchdataD_00034b4c,ushort,
+0x000612ee,insite_parameter_schedule_table,,The InSite parameter schedule: up to 30 3-byte insite_parameter_schedule_entry_t records (parameter_id 0 ends the list) read through insite_parameter_table_pointer by vp44_insiteParameterTableIterator and mc68k_initializeJ1708Datalink - past the end of the 256 KB ROM dump, so the contents are unknown and the row is label-only: the address has no memory block, so the importer cannot apply insite_parameter_schedule_entry_t[30] there (PR #53 round 75)
 0x00800000,rpm_rate_limit_countdown,undefined,
 0x00800002,rpm_control_timer_1,undefined,
 0x00800004,high_rpm_threshold_countdown,undefined,
@@ -5692,7 +5693,7 @@ address,name,type,comment
 0x0080dcbe,scratch_pad_data_buffer,undefined,
 0x0080dd86,scratch_pad_directory_table,undefined,
 0x0080ddc2,scratch_pad_write_pointer,undefined,
-0x0080ddc6,j1708_transmit_buffer_2_32_ddc6,dword,PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance (e2m block 1127 J1708_Tx_Buffer in CM550's parameter ID table - 4 bytes; was typed with the struct)
+0x0080ddc6,j1708_transmit_buffer_2_32_ddc6,byte *,Holds a buffer address (typed byte * - was dword; PR #53 round 75). PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance (e2m block 1127 J1708_Tx_Buffer in CM550's parameter ID table - 4 bytes; was typed with the struct)
 0x0080ddca,j1708_receive_buffer_2_32,dword,PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080ddce,,dword,PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance | typed dword (move.l at 0x1ddaa; was byte; PR #53 round 74 stage A2)
 0x0080ddd3,,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
@@ -5711,19 +5712,20 @@ address,name,type,comment
 0x0080ddf6,insite_response_length,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080ddf7,insite_response_space_available,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080ddf8,insite_parameter_data_size,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
-0x0080ddfa,insite_parameter_schedule_pointer,dword,PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
-0x0080ddfe,,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
-0x0080de1e,insite_parameter_table_pointer,dword,PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080ddfa,insite_parameter_schedule_pointer,byte *,Points into insite_parameter_next_due_ticks, one byte per schedule record (typed byte * - was dword; PR #53 round 75). PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080ddfe,insite_parameter_schedule_tick,byte,The InSite parameter schedule's tick: cm550_diagnosticMessageTransmissionManager adds 1 after each vp44_insiteParameterTableIterator pass, which compares it with insite_parameter_next_due_ticks (PR #53 round 75). PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de00,insite_parameter_next_due_ticks,byte[30],One next due schedule tick per insite_parameter_schedule_table record: set to period + first_due_offset at initialization; when it equals insite_parameter_schedule_tick the iterator adds the period and reads the parameter (PR #53 round 75)
+0x0080de1e,insite_parameter_table_pointer,insite_parameter_schedule_entry_t *,Points at the current insite_parameter_schedule_table record (typed insite_parameter_schedule_entry_t * - was dword; PR #53 round 75). PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080de22,insite_multiframe_current_index,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080de23,insite_multiframe_total_frames,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080de24,insite_multiframe_frame_bytes_remaining,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080de25,,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080de26,insite_dtc_command_action_byte,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
-0x0080de28,address_of_scratch_pad_directory_0c000h_0f7efh,dword,PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de28,address_of_scratch_pad_directory_0c000h_0f7efh,byte *,Holds a buffer address (typed byte * - was dword; PR #53 round 75). PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080de2c,number_of_entries_in_the_scratch_pad_0_10,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080de2e,,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080de30,development_mode,DEVELOPMENT_MODE_STATE,e2m block 1328 Development_Mode (CM550's parameter ID table) - CM848's development_mode (was calibration_write_pending_flag; PR #53 round 73) | PR #53 round 74: typed DEVELOPMENT_MODE_STATE - was a field of the misapplied j1708_multipacket_msg_t instance
-0x0080de32,buffer_used_to_store_secure_write_data_until_the_copy_0c000h_0f7efh,dword,PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de32,buffer_used_to_store_secure_write_data_until_the_copy_0c000h_0f7efh,byte *,Holds a buffer address (typed byte * - was dword; PR #53 round 75). PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080de36,,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080de38,flag_indicating_tool_has_updated_scratch_pad_crc_0_false_1_tru,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080de3a,length_in_bytes_of_scratch_pad_buffer_0_200,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
@@ -5762,3 +5764,7 @@ address,name,type,comment
 0x0080fffa,sim_chip_select_option_reg0,,
 0x0080fffc,sim_chip_select_base_reg0,,
 0x0080fffe,init_checkpoint_address,,
+0x00fffc08,QSM_SCCR0,word,MC68336 QSM SCI control register 0 (the baud rate divisor): mc68k_initializeJ1708Datalink writes 0x34 (PR #53 round 75)
+0x00fffc0a,QSM_SCCR1,word,MC68336 QSM SCI control register 1: mc68k_initializeJ1708Datalink writes 0x102c (ILT 0x1000 + RIE 0x20 + TE 0x08 + RE 0x04); mc68k_startJ1708Transmission sets RIE (0x20) to read back its own bytes (PR #53 round 75)
+0x00fffc0c,QSM_SCSR,word,MC68336 QSM SCI status register: mc68k_startJ1708Transmission sends only while bit 0x20 (RAF - receiver active) is clear (PR #53 round 75)
+0x00fffc0e,QSM_SCDR,word,MC68336 QSM SCI data register: mc68k_startJ1708Transmission writes the first J1708 transmit byte here (PR #53 round 75)

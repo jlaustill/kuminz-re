@@ -12,6 +12,7 @@ extern byte j1939_memory_service_header_lengths[14];  // 0x00021956
 extern byte security_key_scramble_mask[10];  // 0x0002fbc4
 extern byte security_key_byte_order[10];  // 0x0002fbce
 extern memory_region_t application_memory_region_table[5];  // 0x000345dc
+extern undefined insite_parameter_schedule_table;  // 0x000612ee
 extern undefined rpm_rate_limit_countdown;  // 0x00800000
 extern undefined rpm_control_timer_1;  // 0x00800002
 extern undefined high_rpm_threshold_countdown;  // 0x00800004
@@ -5617,7 +5618,7 @@ extern undefined j1708_pending_abort_count;  // 0x0080dcbb
 extern undefined scratch_pad_data_buffer;  // 0x0080dcbe
 extern undefined scratch_pad_directory_table;  // 0x0080dd86
 extern undefined scratch_pad_write_pointer;  // 0x0080ddc2
-extern dword j1708_transmit_buffer_2_32_ddc6;  // 0x0080ddc6
+extern byte * j1708_transmit_buffer_2_32_ddc6;  // 0x0080ddc6
 extern dword j1708_receive_buffer_2_32;  // 0x0080ddca
 extern word multipacket_message_id;  // 0x0080ddd6
 extern dword diagnostic_multipacket_data_pointer;  // 0x0080ddd8
@@ -5633,16 +5634,18 @@ extern dword insite_request_read_pointer;  // 0x0080ddf2
 extern byte insite_response_length;  // 0x0080ddf6
 extern byte insite_response_space_available;  // 0x0080ddf7
 extern byte insite_parameter_data_size;  // 0x0080ddf8
-extern dword insite_parameter_schedule_pointer;  // 0x0080ddfa
-extern dword insite_parameter_table_pointer;  // 0x0080de1e
+extern byte * insite_parameter_schedule_pointer;  // 0x0080ddfa
+extern byte insite_parameter_schedule_tick;  // 0x0080ddfe
+extern byte insite_parameter_next_due_ticks[30];  // 0x0080de00
+extern insite_parameter_schedule_entry_t * insite_parameter_table_pointer;  // 0x0080de1e
 extern byte insite_multiframe_current_index;  // 0x0080de22
 extern byte insite_multiframe_total_frames;  // 0x0080de23
 extern byte insite_multiframe_frame_bytes_remaining;  // 0x0080de24
 extern byte insite_dtc_command_action_byte;  // 0x0080de26
-extern dword address_of_scratch_pad_directory_0c000h_0f7efh;  // 0x0080de28
+extern byte * address_of_scratch_pad_directory_0c000h_0f7efh;  // 0x0080de28
 extern word number_of_entries_in_the_scratch_pad_0_10;  // 0x0080de2c
 extern DEVELOPMENT_MODE_STATE development_mode;  // 0x0080de30
-extern dword buffer_used_to_store_secure_write_data_until_the_copy_0c000h_0f7efh;  // 0x0080de32
+extern byte * buffer_used_to_store_secure_write_data_until_the_copy_0c000h_0f7efh;  // 0x0080de32
 extern word flag_indicating_tool_has_updated_scratch_pad_crc_0_false_1_tru;  // 0x0080de38
 extern word length_in_bytes_of_scratch_pad_buffer_0_200;  // 0x0080de3a
 extern word rpm_value_for_tach_if_normal_input_is_overridden_0_4500;  // 0x0080de3c
@@ -5674,3 +5677,7 @@ extern undefined wet_stack_timing_base_value_0_120;  // 0x0080dee8
 extern undefined sim_chip_select_option_reg0;  // 0x0080fffa
 extern undefined sim_chip_select_base_reg0;  // 0x0080fffc
 extern undefined init_checkpoint_address;  // 0x0080fffe
+extern word QSM_SCCR0;  // 0x00fffc08
+extern word QSM_SCCR1;  // 0x00fffc0a
+extern word QSM_SCSR;  // 0x00fffc0c
+extern word QSM_SCDR;  // 0x00fffc0e

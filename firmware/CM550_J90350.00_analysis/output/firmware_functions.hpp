@@ -178,7 +178,7 @@ void cm550_multiPacketReceiveHandler(void);  // @ 0x0001686e
 uint cm550_circularBufferEmptyCheck(void);  // @ 0x00016c2c
 uint cm550_parameterCircularBufferWrite(dword dest_address,byte *source_ptr,word byte_count);  // @ 0x00016c3c
 void cm550_emptyPlaceholderFunction(void);  // @ 0x00016d4c
-void mc68k_tpuTransmissionTrigger(void);  // @ 0x00016d4e
+void mc68k_startJ1708Transmission(void);  // @ 0x00016d4e
 uint cm550_highRpmEngineProtectionStateMachine(void);  // @ 0x00016dd4
 ushort cm550_fuelTemperatureLimitingSecondary(void);  // @ 0x0001709e
 void cm550_FUN_00017120(void);  // @ 0x00017120
@@ -385,7 +385,7 @@ void cm550_modeBasedDataDispatcherWrapper(void);  // @ 0x0001e1be
 undefined8 mc68k_serialPort2IsrHandler(void);  // @ 0x0001e1d0
 void cm550_serialCommunicationIsrRegister(void);  // @ 0x0001e25a
 void mc68k_tpuTimerChannelEnable(word channel_mask);  // @ 0x0001e266
-undefined8 mc68k_epsPositionSensorIsrHandler(void);  // @ 0x0001e288
+undefined8 mc68k_j1708SciInterruptHandler(void);  // @ 0x0001e288
 void cm550_tpuChannelIsrRegister(void);  // @ 0x0001e522
 uint serialTransmitHandler(void);  // @ 0x0001e52e
 void cm550_FUN_0001e5f0(dword channel_config);  // @ 0x0001e5f0
@@ -592,7 +592,7 @@ void cm550_phase4InitSequence(void);  // @ 0x00028990
 void mc68k_dualCanControllerInit(void);  // @ 0x00028a04
 void initDiagnosticBufferPointers(void);  // @ 0x00028b80
 void cm550_mainCanTransmissionLoop(void);  // @ 0x00028e32
-undefined2 mc68k_FUN_00029130(void);  // @ 0x00029130
+word mc68k_initializeJ1708Datalink(void);  // @ 0x00029130
 short cm550_FUN_0002c834(dword tree_buffer);  // @ 0x0002c834
 void cm550_FUN_0002c986(int param_1,undefined4 param_2);  // @ 0x0002c986
 void cm550_FUN_0002ca2a(void);  // @ 0x0002ca2a

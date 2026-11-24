@@ -1105,6 +1105,7 @@ typedef struct can_buffer_setup_t can_buffer_setup_t;
 typedef struct can_message_buffer_t can_message_buffer_t;
 typedef struct data_collector_t data_collector_t;
 typedef struct insite_response_buffer_t insite_response_buffer_t;
+typedef struct insite_parameter_schedule_entry_t insite_parameter_schedule_entry_t;
 typedef struct memory_region_t memory_region_t;
 
 struct j1939_header_t {
@@ -1636,6 +1637,12 @@ struct insite_response_buffer_t {
     uint8_t buffer_index;  /* Buffer index for multi-response */
     uint8_t buffer_length;  /* Current response length */
     uint8_t reserved;  /* Reserved/padding byte */
+};
+
+struct insite_parameter_schedule_entry_t {
+    uint8_t parameter_id;  /* The parameter's ID (0 ends the list) - vp44_insiteParameterTableIterator tests its bit in the 32-byte bitmap at ROM 0x6134a before it calls cm550_activeParamReadFunction */
+    uint8_t period;  /* Schedule ticks between two sends: the iterator adds it to the parameter's next due tick each time that tick comes */
+    uint8_t first_due_offset;  /* Ticks added to the period for the first due tick (the initializer mc68k_initializeJ1708Datalink sets next due = period + this) */
 };
 
 struct memory_region_t {

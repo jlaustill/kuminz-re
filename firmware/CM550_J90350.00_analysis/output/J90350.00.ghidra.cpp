@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Mon Nov 23 18:09:54 MST 2026
+// Generated: Mon Nov 23 19:17:27 MST 2026
 
 
 //
@@ -307,7 +307,7 @@ void mc68k_hardwareInitAndStartup(void)
   Ram00fffc1c = uVar2 & 0xfff0;
   uVar3 = Ram00fffc1c;
   DAT_00fffc04 = 0;
-  Ram00fffc0a = 0;
+  QSM_SCCR1 = 0;
   Ram00fffa22 = 0;
   Ram00fffa24 = 0;
   Ram00fffe0a = 0;
@@ -385,7 +385,7 @@ void mc68k_FUN_00003abe(void)
   Ram00fffc1c = uVar1 & 0xfff0;
   uVar2 = Ram00fffc1c;
   DAT_00fffc04 = 0;
-  Ram00fffc0a = 0;
+  QSM_SCCR1 = 0;
   Ram00fffa22 = 0;
   Ram00fffa24 = 0;
   Ram00fffe0a = 0;
@@ -1191,7 +1191,7 @@ void cm550_diagnosticMessageQueueWrite(byte response_type)
     *_j1708_transmit_buffer_0_2_32 = 2;
     _j1708_transmit_buffer_0_2_32 = local_8;
     *local_8 = 0;
-    mc68k_tpuTransmissionTrigger();
+    mc68k_startJ1708Transmission();
   }
   return;
 }
@@ -3887,18 +3887,18 @@ void vp44_insiteParameterTableIterator(void)
   byte bVar2;
   byte bVar3;
   
-  insite_parameter_table_pointer = (dword)&DAT_000612ee;
-  insite_parameter_schedule_pointer = (dword)&DAT_0080de00;
+  insite_parameter_table_pointer =
+       (insite_parameter_schedule_entry_t *)&insite_parameter_schedule_table;
+  insite_parameter_schedule_pointer = insite_parameter_next_due_ticks;
   insite_response_frame_start = _j1708_transmit_buffer_0_2_32;
   insite_response_write_pointer = _j1708_transmit_buffer_0_2_32;
   insite_full_detail_response_mode = 0;
   insite_response_length = 0;
-  insite_parameter_id = DAT_000612ee;
+  insite_parameter_id = insite_parameter_schedule_table;
   for (bVar2 = 0; (insite_parameter_id != 0 && (bVar2 < 0x1e)); bVar2 = bVar2 + 1) {
-    if (BYTE_0080ddfe == *(byte *)insite_parameter_schedule_pointer) {
-      *(char *)insite_parameter_schedule_pointer =
-           *(char *)(insite_parameter_table_pointer + 1) +
-           *(char *)insite_parameter_schedule_pointer;
+    if (insite_parameter_schedule_tick == *insite_parameter_schedule_pointer) {
+      *insite_parameter_schedule_pointer =
+           insite_parameter_table_pointer->period + *insite_parameter_schedule_pointer;
       bVar3 = '\x01' << (insite_parameter_id & 7);
       sVar1 = (short)((int)(uint)insite_parameter_id >> 3);
       if (((bVar3 & *(byte *)(sVar1 + 0x6134a)) != 0) &&
@@ -3906,8 +3906,8 @@ void vp44_insiteParameterTableIterator(void)
         cm550_activeParamReadFunction();
       }
     }
-    insite_parameter_table_pointer = insite_parameter_table_pointer + 3;
-    insite_parameter_id = *(byte *)insite_parameter_table_pointer;
+    insite_parameter_table_pointer = insite_parameter_table_pointer + 1;
+    insite_parameter_id = insite_parameter_table_pointer->parameter_id;
     insite_parameter_schedule_pointer = insite_parameter_schedule_pointer + 1;
   }
   cm550_responseBufferFinalize();
@@ -3953,7 +3953,7 @@ uint cm550_diagnosticMessageTransmissionManager(void)
        (uVar4 = _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off & 1,
        (_bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off & 1) != 0)) {
       uVar4 = vp44_insiteParameterTableIterator();
-      BYTE_0080ddfe = BYTE_0080ddfe + 1;
+      insite_parameter_schedule_tick = insite_parameter_schedule_tick + 1;
     }
   }
   return uVar4;
@@ -10593,12 +10593,13 @@ void diagnosticCommandDispatcher(void)
   char cVar2;
   ushort uVar3;
   ushort uVar4;
-  char cVar6;
+  word wVar5;
   char cVar7;
-  byte bVar8;
-  short sVar5;
+  char cVar8;
+  byte bVar9;
+  short sVar6;
   undefined4 unaff_D2;
-  byte *pbVar9;
+  byte *pbVar10;
   byte service_id;
   undefined2 local_18;
   byte abStack_16 [10];
@@ -10606,7 +10607,7 @@ void diagnosticCommandDispatcher(void)
   undefined4 local_8;
   
   uVar3 = Ram00fff404;
-  if ((BYTE_0080dde4 != 0) && (cVar6 = cm550_circularBufferEmptyCheck(), cVar6 != '\0')) {
+  if ((BYTE_0080dde4 != 0) && (cVar7 = cm550_circularBufferEmptyCheck(), cVar7 != '\0')) {
     BYTE_0080dde4 = 0;
     cm550_diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
   }
@@ -10617,59 +10618,59 @@ void diagnosticCommandDispatcher(void)
         (j1708_receive_buffer_full_flag_1_true_0_false != '\x01')))) {
       return;
     }
-    cVar6 = *_j1708_receive_buffer_pointer_2_32_dcaa;
+    cVar7 = *_j1708_receive_buffer_pointer_2_32_dcaa;
     local_8._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
-    cVar7 = (char)local_8;
+    cVar8 = (char)local_8;
     local_8._0_3_ = (undefined3)((uint)_j1708_receive_buffer_pointer_2_32_dcaa >> 8);
     local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
     if (*local_8 < 8) {
       if ((_diagnostic_subsystem_enable_flags & 1) != 0) {
-        bVar8 = (byte)((uint)unaff_D2 >> 0x10);
+        bVar9 = (byte)((uint)unaff_D2 >> 0x10);
         switch(*local_8) {
         case 3:
-          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar7 + '\x02');
-          bVar8 = 0;
-          pbVar9 = abStack_16;
+          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar8 + '\x02');
+          bVar9 = 0;
+          pbVar10 = abStack_16;
           do {
-            *pbVar9 = *local_8;
+            *pbVar10 = *local_8;
             local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
-            bVar8 = bVar8 + 1;
-            pbVar9 = pbVar9 + 1;
-          } while (bVar8 < 10);
-          cVar7 = validateSecurityKey(abStack_16);
-          if (cVar7 == '\0') {
+            bVar9 = bVar9 + 1;
+            pbVar10 = pbVar10 + 1;
+          } while (bVar9 < 10);
+          cVar8 = validateSecurityKey(abStack_16);
+          if (cVar8 == '\0') {
             switch(*local_8) {
             case 0x40:
-              bVar8 = enterDevelopmentMode();
+              bVar9 = enterDevelopmentMode();
               break;
             case 0x41:
-              bVar8 = forceExitDevelopmentMode();
+              bVar9 = forceExitDevelopmentMode();
               break;
             case 0x42:
-              bVar8 = cm550_activateHighRpmShutdownFlag();
+              bVar9 = cm550_activateHighRpmShutdownFlag();
               break;
             case 0x43:
-              bVar8 = cm550_triggerDiagnosticSystemReset();
+              bVar9 = cm550_triggerDiagnosticSystemReset();
               break;
             default:
-              bVar8 = 0x18;
+              bVar9 = 0x18;
               break;
             case 0x50:
-              bVar8 = 0;
+              bVar9 = 0;
               break;
             case 0x51:
-              bVar8 = cm550_memoryPatchingSystem();
+              bVar9 = cm550_memoryPatchingSystem();
               break;
             case 0x52:
-              bVar8 = cm550_FUN_00011a68();
+              bVar9 = cm550_FUN_00011a68();
               break;
             case 0x53:
-              bVar8 = 4;
+              bVar9 = 4;
               break;
             case 0x54:
-              bVar8 = commitEepromMirrorToEeprom();
+              bVar9 = commitEepromMirrorToEeprom();
             }
-            if (bVar8 != 0xff) {
+            if (bVar9 != 0xff) {
               cm550_diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
             }
           }
@@ -10678,7 +10679,7 @@ void diagnosticCommandDispatcher(void)
           }
           break;
         case 4:
-          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar7 + '\x02');
+          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar8 + '\x02');
           switch(*local_8) {
           case 100:
             cm550_systemControl64();
@@ -10689,10 +10690,10 @@ void diagnosticCommandDispatcher(void)
             break;
           case 0x66:
             _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off = 0;
-            cm550_diagnosticMessageQueueWrite(bVar8);
+            cm550_diagnosticMessageQueueWrite(bVar9);
             break;
           default:
-            cm550_diagnosticMessageQueueWrite(bVar8);
+            cm550_diagnosticMessageQueueWrite(bVar9);
             break;
           case 0x69:
             exitDevelopmentMode();
@@ -10701,17 +10702,17 @@ void diagnosticCommandDispatcher(void)
           case 0x70:
           case 0x72:
           case 0x76:
-            cm550_diagnosticMessageQueueWrite(bVar8);
+            cm550_diagnosticMessageQueueWrite(bVar9);
             break;
           case 0x71:
             _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off =
                  _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off | 1;
-            cm550_diagnosticMessageQueueWrite(bVar8);
+            cm550_diagnosticMessageQueueWrite(bVar9);
             break;
           case 0x73:
             _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off =
                  _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off | 2;
-            cm550_diagnosticMessageQueueWrite(bVar8);
+            cm550_diagnosticMessageQueueWrite(bVar9);
             break;
           case 0x74:
             cm550_systemControl74();
@@ -10721,41 +10722,41 @@ void diagnosticCommandDispatcher(void)
           }
           break;
         case 5:
-          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar7 + '\x02');
+          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar8 + '\x02');
           if (((*local_8 & 0xf) == 0) && ((*local_8 & 0xf0) != 0xf0)) {
-            cVar2 = cVar6 + -1 + cVar7;
+            cVar2 = cVar7 + -1 + cVar8;
             local_c = (undefined1 *)CONCAT31(local_8._0_3_,cVar2);
             uVar1 = *local_c;
             local_c = (undefined1 *)CONCAT31(local_8._0_3_,cVar2 + '\x01');
             local_18 = CONCAT11(*local_c,uVar1);
-            local_c = (undefined1 *)CONCAT31(local_8._0_3_,cVar7 + '\x03');
-            sVar5 = cm550_crc16Calculate((short)local_c);
-            if (sVar5 != local_18) {
+            local_c = (undefined1 *)CONCAT31(local_8._0_3_,cVar8 + '\x03');
+            sVar6 = cm550_crc16Calculate((short)local_c);
+            if (sVar6 != local_18) {
               cm550_diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
               break;
             }
           }
-          bVar8 = *local_8 & 0xf0;
+          bVar9 = *local_8 & 0xf0;
           service_id = (byte)((uint)unaff_D2 >> 0x10);
-          if (bVar8 == 0x60) {
+          if (bVar9 == 0x60) {
             cm550_diagnosticMemoryReadHandler(service_id);
           }
-          else if (bVar8 == 0xc0) {
+          else if (bVar9 == 0xc0) {
             cm550_diagnosticMemoryReadHandler(service_id);
           }
-          else if (bVar8 == 0x80) {
+          else if (bVar9 == 0x80) {
             cm550_diagnosticMemoryWriteHandler(service_id);
           }
-          else if (bVar8 == 0xe0) {
+          else if (bVar9 == 0xe0) {
             cm550_diagnosticMemoryReadHandler(service_id);
           }
-          else if (bVar8 == 0xa0) {
+          else if (bVar9 == 0xa0) {
             cm550_diagnosticMemoryWriteHandler(service_id);
           }
-          else if (bVar8 == 0xf0) {
+          else if (bVar9 == 0xf0) {
             cm550_multiPacketTransmitHandler();
           }
-          else if (bVar8 == 0xb0) {
+          else if (bVar9 == 0xb0) {
             cm550_multiPacketReceiveHandler();
           }
           else {
@@ -10763,9 +10764,9 @@ void diagnosticCommandDispatcher(void)
           }
           break;
         case 6:
-          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar7 + '\x02');
+          local_8 = (byte *)CONCAT31(local_8._0_3_,cVar8 + '\x02');
           if ((*local_8 == 't') && (j1708_rx_state_t_0080dcaf.buffer_full_flag != 0)) {
-            cm550_diagnosticMessageQueueWrite(bVar8);
+            cm550_diagnosticMessageQueueWrite(bVar9);
             j1708_rx_state_t_0080dcaf.buffer_full_flag =
                  j1708_rx_state_t_0080dcaf.buffer_full_flag - 1;
             multipacket_transmit_active_flag = 0;
@@ -10799,10 +10800,10 @@ void diagnosticCommandDispatcher(void)
       buildPgn65228Dm3ClearInitMessage();
     }
     _j1708_receive_buffer_pointer_2_32_dcaa =
-         (char *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dcaa,cVar6 + '\x01' + DAT_0080dcad);
+         (char *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dcaa,cVar7 + '\x01' + DAT_0080dcad);
     j1708_receive_buffer_full_flag_1_true_0_false = '\0';
-    uVar4 = Ram00fffc0a;
-    Ram00fffc0a = uVar4 | 0x20;
+    wVar5 = QSM_SCCR1;
+    QSM_SCCR1 = wVar5 | 0x20;
   } while( true );
 }
 
@@ -11047,7 +11048,7 @@ void cm550_multiPacketTransmitHandler(void)
           *pbVar3 = bVar10;
           *local_c = 0;
           _j1708_transmit_buffer_0_2_32 = local_c;
-          mc68k_tpuTransmissionTrigger();
+          mc68k_startJ1708Transmission();
           multipacket_transmit_active_flag = 1;
         }
       }
@@ -11334,20 +11335,25 @@ void cm550_emptyPlaceholderFunction(void)
 
 
 //
-// Function: mc68k_tpuTransmissionTrigger @ 0x00016d4e
+// Function: mc68k_startJ1708Transmission @ 0x00016d4e
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Starts a J1708 transmission: with a message pending and the bus idle (QSM_SCSR bit 0x20 RAF
+   clear) it writes the first byte to QSM_SCDR - arms the timer at 0xFFF458 / 0xFFF45A (the CTM4
+   address range) and sets QSM_SCCR1 RIE to read back its own bytes (the J1708 collision check). It
+   drives no TPU channel (was mc68k_tpuTransmissionTrigger; PR #53 round 75) */
 
-void mc68k_tpuTransmissionTrigger(void)
+void mc68k_startJ1708Transmission(void)
 
 {
   ushort uVar1;
+  word wVar2;
   
   if (((j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ == '\x01') &&
-      (uVar1 = Ram00fffc0c, (uVar1 & 0x20) == 0)) &&
+      (wVar2 = QSM_SCSR, (wVar2 & 0x20) == 0)) &&
      ((char)j1708_rx_state_t_0080dcaf.buffer_ptr_3 == '\0')) {
-    Ram00fffc0e = (ushort)*_j1708_transmit_buffer_2_32_dc98;
+    QSM_SCDR = (ushort)*_j1708_transmit_buffer_2_32_dc98;
     j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = '\x01';
     Ram00fff45a = 0xfc8a;
     uVar1 = Ram00fff458;
@@ -11358,8 +11364,8 @@ void mc68k_tpuTransmissionTrigger(void)
     j1708_rx_state_t_0080dcaf._7_4_ = 0;
     j1708_rx_state_t_0080dcaf.buffer_ptr_1._2_1_ = 1;
     j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ = *_j1708_transmit_buffer_2_32_dc98;
-    uVar1 = Ram00fffc0a;
-    Ram00fffc0a = uVar1 | 0x20;
+    wVar2 = QSM_SCCR1;
+    QSM_SCCR1 = wVar2 | 0x20;
   }
   return;
 }
@@ -19141,7 +19147,7 @@ void cm550_diagnosticBufferPointerInit(void)
   _j1708_transmit_buffer_2_32_dc98 = 0x808b01;
   diagnostic_tx_buffer_base = 0;
   j1708_transmit_buffer_full_flag_1_true_0_false = 0;
-  j1708_transmit_buffer_2_32_ddc6 = (dword)&diagnostic_tx_buffer_base;
+  j1708_transmit_buffer_2_32_ddc6 = &diagnostic_tx_buffer_base;
   _j1708_receive_buffer_pointer_2_32_dca6 = 0x808c01;
   diagnostic_rx_buffer_base.tx_buffer_base[0] = 0;
   j1708_receive_buffer_full_flag_1_true_0_false = 0;
@@ -19532,16 +19538,21 @@ void mc68k_tpuTimerChannelEnable(word channel_mask)
 
 
 //
-// Function: mc68k_epsPositionSensorIsrHandler @ 0x0001e288
+// Function: mc68k_j1708SciInterruptHandler @ 0x0001e288
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The J1708 SCI interrupt handler: on QSM_SCSR RDRF (0x40) it reads the byte from QSM_SCDR into the
+   J1708 receive buffer and adds it to the checksum - while transmitting it sends the next transmit
+   byte to QSM_SCDR and at the end the two's complement of the checksum (~sum + 1) - and it clears
+   QSM_SCCR1 RIE when the receive buffer is full. No EPS position sensor is involved (was
+   mc68k_epsPositionSensorIsrHandler; PR #53 round 75) */
 
-undefined8 mc68k_epsPositionSensorIsrHandler(void)
+undefined8 mc68k_j1708SciInterruptHandler(void)
 
 {
   ushort uVar1;
-  undefined2 uVar2;
+  word wVar2;
   byte *pbVar3;
   undefined4 in_D0;
   undefined4 in_D1;
@@ -19552,13 +19563,13 @@ undefined8 mc68k_epsPositionSensorIsrHandler(void)
   pbVar3 = _j1708_transmit_buffer_2_32_dc98;
   local_24 = (undefined2)((uint)in_D0 >> 0x10);
   channel_mask = (word)in_D0;
-  uVar1 = Ram00fffc0c;
-  if ((uVar1 & 0x40) != 0) {
+  wVar2 = QSM_SCSR;
+  if ((wVar2 & 0x40) != 0) {
     j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 0;
     uVar1 = Ram00fff458;
     Ram00fff458 = uVar1 & 0x8fff;
-    uVar2 = Ram00fffc0e;
-    bVar4 = (byte)uVar2;
+    wVar2 = QSM_SCDR;
+    bVar4 = (byte)wVar2;
     if (j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ == '\x01') {
       *_j1708_receive_buffer_pointer_2_32_dca6 = bVar4;
       _j1708_receive_buffer_pointer_2_32_dca6 =
@@ -19576,8 +19587,8 @@ undefined8 mc68k_epsPositionSensorIsrHandler(void)
         }
         else {
           j1708_receive_buffer_full_flag_1_true_0_false = '\x01';
-          uVar1 = Ram00fffc0a;
-          Ram00fffc0a = uVar1 & 0xffdf;
+          wVar2 = QSM_SCCR1;
+          QSM_SCCR1 = wVar2 & 0xffdf;
           if (_j1708_transmit_buffer_0_2_32 != _j1708_transmit_buffer_2_32_dc9c) {
             mc68k_tpuTimerChannelEnable(channel_mask);
             j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 1;
@@ -19595,7 +19606,7 @@ undefined8 mc68k_epsPositionSensorIsrHandler(void)
           _j1708_transmit_buffer_2_32_dc98 =
                (byte *)CONCAT31(_j1708_transmit_buffer_2_32_dc98,
                                 j1708_transmit_buffer_index_low + '\x01');
-          Ram00fffc0e = (ushort)*_j1708_transmit_buffer_2_32_dc98;
+          QSM_SCDR = (ushort)*_j1708_transmit_buffer_2_32_dc98;
           mc68k_tpuTimerChannelEnable(channel_mask);
           j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ =
                *_j1708_transmit_buffer_2_32_dc98 + j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_;
@@ -19617,8 +19628,8 @@ undefined8 mc68k_epsPositionSensorIsrHandler(void)
           *_j1708_receive_buffer_pointer_2_32_dca2 = *_j1708_receive_buffer_pointer_2_32_dca2 + 1;
           if (_j1708_receive_buffer_pointer_2_32_dca6 == _j1708_receive_buffer_pointer_2_32_dcaa) {
             j1708_receive_buffer_full_flag_1_true_0_false = '\x01';
-            uVar1 = Ram00fffc0a;
-            Ram00fffc0a = uVar1 & 0xffdf;
+            wVar2 = QSM_SCCR1;
+            QSM_SCCR1 = wVar2 & 0xffdf;
           }
           else {
             mc68k_tpuTimerChannelEnable(channel_mask);
@@ -19634,7 +19645,7 @@ undefined8 mc68k_epsPositionSensorIsrHandler(void)
         _j1708_transmit_buffer_2_32_dc98 =
              (byte *)CONCAT31(_j1708_transmit_buffer_2_32_dc98,
                               j1708_transmit_buffer_index_low + '\x01');
-        Ram00fffc0e = (ushort)*_j1708_transmit_buffer_2_32_dc98;
+        QSM_SCDR = (ushort)*_j1708_transmit_buffer_2_32_dc98;
         mc68k_tpuTimerChannelEnable(channel_mask);
         j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ =
              *_j1708_transmit_buffer_2_32_dc98 + j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_;
@@ -19645,7 +19656,7 @@ undefined8 mc68k_epsPositionSensorIsrHandler(void)
         }
         break;
       case (BADTYPE)0x2:
-        Ram00fffc0e = ~(ushort)j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ + 1 & 0xff;
+        QSM_SCDR = ~(ushort)j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ + 1 & 0xff;
         mc68k_tpuTimerChannelEnable(channel_mask);
         _j1708_transmit_buffer_2_32_dc98 =
              (byte *)CONCAT31(_j1708_transmit_buffer_2_32_dc98,
@@ -19668,12 +19679,12 @@ undefined8 mc68k_epsPositionSensorIsrHandler(void)
         }
         j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ = '\x01';
         if (j1708_receive_buffer_full_flag_1_true_0_false == '\0') {
-          uVar1 = Ram00fffc0a;
-          Ram00fffc0a = uVar1 | 0x20;
+          wVar2 = QSM_SCCR1;
+          QSM_SCCR1 = wVar2 | 0x20;
         }
         else {
-          uVar1 = Ram00fffc0a;
-          Ram00fffc0a = uVar1 & 0xffdf;
+          wVar2 = QSM_SCCR1;
+          QSM_SCCR1 = wVar2 & 0xffdf;
         }
         if (_j1708_transmit_buffer_0_2_32 != pbVar3) {
           j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 1;
@@ -19698,7 +19709,7 @@ undefined8 mc68k_epsPositionSensorIsrHandler(void)
 void cm550_tpuChannelIsrRegister(void)
 
 {
-  _DAT_00808f1c = mc68k_epsPositionSensorIsrHandler;
+  _DAT_00808f1c = mc68k_j1708SciInterruptHandler;
   return;
 }
 
@@ -19952,7 +19963,7 @@ void cm550_insiteMultiFrameContinuation(void)
   *(undefined1 *)insite_response_write_pointer = 0;
   _j1708_transmit_buffer_0_2_32 = insite_response_write_pointer;
   insite_response_frame_start = insite_response_write_pointer;
-  mc68k_tpuTransmissionTrigger();
+  mc68k_startJ1708Transmission();
   insite_multiframe_current_index = insite_multiframe_current_index + 1;
   if (insite_multiframe_current_index < insite_multiframe_total_frames) {
     insite_multiframe_frame_bytes_remaining = DAT_0080095c;
@@ -20150,7 +20161,7 @@ void cm550_responseBufferFinalize(void)
     *(byte *)insite_response_frame_start = insite_response_length;
     *(undefined1 *)insite_response_write_pointer = 0;
     _j1708_transmit_buffer_0_2_32 = insite_response_write_pointer;
-    mc68k_tpuTransmissionTrigger();
+    mc68k_startJ1708Transmission();
   }
   return;
 }
@@ -20439,7 +20450,7 @@ void cm550_diagnosticMemoryReadHandler(byte service_id)
     *local_c = 0;
     _j1708_transmit_buffer_0_2_32 = local_c;
     *(undefined4 *)(puVar16 + -4) = 0x1f0ac;
-    mc68k_tpuTransmissionTrigger();
+    mc68k_startJ1708Transmission();
   }
   else {
     cm550_diagnosticMessageQueueWrite(response_type);
@@ -20557,7 +20568,7 @@ LAB_0001f204:
   *_j1708_transmit_buffer_0_2_32 = 6;
   *local_8 = 0;
   _j1708_transmit_buffer_0_2_32 = local_8;
-  mc68k_tpuTransmissionTrigger();
+  mc68k_startJ1708Transmission();
   return;
 }
 
@@ -20674,7 +20685,7 @@ void cm550_diagnosticMessage46Builder(void)
     *puVar2 = 0x16;
     *local_8 = 0;
     _j1708_transmit_buffer_0_2_32 = local_8;
-    mc68k_tpuTransmissionTrigger();
+    mc68k_startJ1708Transmission();
   }
   return;
 }
@@ -21130,7 +21141,7 @@ void cm550_diagnosticMessage53Builder(void)
     *_j1708_transmit_buffer_0_2_32 = 2;
     *local_8 = 0;
     _j1708_transmit_buffer_0_2_32 = local_8;
-    mc68k_tpuTransmissionTrigger();
+    mc68k_startJ1708Transmission();
   }
   return;
 }
@@ -21181,7 +21192,7 @@ void cm550_diagnosticMessage54Builder(void)
     *_j1708_transmit_buffer_0_2_32 = 3;
     *local_8 = 0;
     _j1708_transmit_buffer_0_2_32 = local_8;
-    mc68k_tpuTransmissionTrigger();
+    mc68k_startJ1708Transmission();
   }
   return;
 }
@@ -22840,8 +22851,8 @@ undefined4 cm550_diagnosticServiceSecurityValidator(dword msg_ptr)
 {
   byte auth_result;
   int required_param_len;
-  word msg_length;
   byte service_id;
+  word msg_length;
   
   service_id = **(byte **)(msg_ptr + 6);
   msg_length = *(word *)(msg_ptr + 4);
@@ -29276,7 +29287,7 @@ void vp44_FUN_000284e8(void)
   Ram00fffb40 = 0;
   DAT_00ffd00e = 0x80;
   DAT_00fffc04 = 0;
-  Ram00fffc0a = 0;
+  QSM_SCCR1 = 0;
   Ram00fffa22 = 0;
   Ram00fffa24 = 0;
   Ram00fffe0a = 0;
@@ -29548,7 +29559,7 @@ void vp44_FUN_000284e8(void)
   mc68k_dualCanControllerInit();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8864;
-  mc68k_FUN_00029130();
+  mc68k_initializeJ1708Datalink();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x886a;
   cm550_emptyPlaceholderInit();
@@ -29727,7 +29738,7 @@ void vp44_mainSystemInitialization(void)
   
   DAT_00ffd00e = 0x80;
   DAT_00fffc04 = 0;
-  Ram00fffc0a = 0;
+  QSM_SCCR1 = 0;
   Ram00fffa22 = 0;
   Ram00fffa24 = 0;
   Ram00fffe0a = 0;
@@ -29858,7 +29869,7 @@ void vp44_mainSystemInitialization(void)
   cm550_serialCommunicationIsrRegister();
   cm550_canMessageInterruptHandlerSetup();
   mc68k_dualCanControllerInit();
-  mc68k_FUN_00029130();
+  mc68k_initializeJ1708Datalink();
   cm550_emptyPlaceholderInit();
   cm550_FUN_0001ddb4();
   cm550_FUN_0000c880();
@@ -29979,7 +29990,7 @@ void vp44_slowCycle4Coordinator(void)
   cm550_serialCommunicationIsrRegister();
   cm550_canMessageInterruptHandlerSetup();
   mc68k_dualCanControllerInit();
-  mc68k_FUN_00029130();
+  mc68k_initializeJ1708Datalink();
   cm550_emptyPlaceholderInit();
   cm550_FUN_0001ddb4();
   cm550_FUN_0000c880();
@@ -30088,7 +30099,7 @@ void vp44_engineDiagnosticSystemCoordinator(void)
   cm550_serialCommunicationIsrRegister();
   cm550_canMessageInterruptHandlerSetup();
   mc68k_dualCanControllerInit();
-  mc68k_FUN_00029130();
+  mc68k_initializeJ1708Datalink();
   cm550_emptyPlaceholderInit();
   cm550_FUN_0001ddb4();
   cm550_FUN_0000c880();
@@ -30175,7 +30186,7 @@ void cm550_fuelDemandUpdateOrchestrator(void)
   cm550_serialCommunicationIsrRegister();
   cm550_canMessageInterruptHandlerSetup();
   mc68k_dualCanControllerInit();
-  mc68k_FUN_00029130();
+  mc68k_initializeJ1708Datalink();
   cm550_emptyPlaceholderInit();
   cm550_FUN_0001ddb4();
   cm550_FUN_0000c880();
@@ -30259,7 +30270,7 @@ void cm550_advancedEngineProtectionCoordinator(void)
   cm550_serialCommunicationIsrRegister();
   cm550_canMessageInterruptHandlerSetup();
   mc68k_dualCanControllerInit();
-  mc68k_FUN_00029130();
+  mc68k_initializeJ1708Datalink();
   cm550_emptyPlaceholderInit();
   cm550_FUN_0001ddb4();
   cm550_FUN_0000c880();
@@ -30778,21 +30789,25 @@ void cm550_mainCanTransmissionLoop(void)
 
 
 //
-// Function: mc68k_FUN_00029130 @ 0x00029130
+// Function: mc68k_initializeJ1708Datalink @ 0x00029130
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Initializes the J1708 datalink: the secure write scratch pad - the diagnostic buffer pointers
+   (cm550_diagnosticBufferPointerInit) - the J1708 receive state - the multipacket flags - the
+   broadcast enable word (from EEPROM 0x47e) - the InSite parameter schedule (next due ticks from
+   insite_parameter_schedule_table) - then the QSM SCI (QSM_SCCR0 = 0x34 / QSM_SCCR1 = 0x102c). Six
+   startup functions call it (was mc68k_FUN_00029130; PR #53 round 75) */
 
-undefined2 mc68k_FUN_00029130(void)
+word mc68k_initializeJ1708Datalink(void)
 
 {
-  undefined2 uVar1;
+  word wVar1;
   byte bVar2;
   
-  buffer_used_to_store_secure_write_data_until_the_copy_0c000h_0f7efh =
-       (dword)&scratch_pad_data_buffer;
+  buffer_used_to_store_secure_write_data_until_the_copy_0c000h_0f7efh = &scratch_pad_data_buffer;
   length_in_bytes_of_scratch_pad_buffer_0_200 = 200;
-  address_of_scratch_pad_directory_0c000h_0f7efh = (dword)&scratch_pad_directory_table;
+  address_of_scratch_pad_directory_0c000h_0f7efh = &scratch_pad_directory_table;
   number_of_entries_in_the_scratch_pad_0_10 = 0;
   _scratch_pad_write_pointer = &scratch_pad_data_buffer;
   cm550_diagnosticBufferPointerInit();
@@ -30804,20 +30819,20 @@ undefined2 mc68k_FUN_00029130(void)
   multipacket_transmit_active_flag = 0;
   multipacket_receive_active_flag = 0;
   _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off = _DAT_00803f88;
-  insite_parameter_schedule_pointer = (dword)&DAT_0080de00;
-  insite_parameter_table_pointer = (dword)&DAT_000612ee;
-  for (bVar2 = 0; (*(char *)insite_parameter_table_pointer != '\0' && (bVar2 < 0x1e));
+  insite_parameter_schedule_pointer = insite_parameter_next_due_ticks;
+  insite_parameter_table_pointer =
+       (insite_parameter_schedule_entry_t *)&insite_parameter_schedule_table;
+  for (bVar2 = 0; (insite_parameter_table_pointer->parameter_id != 0 && (bVar2 < 0x1e));
       bVar2 = bVar2 + 1) {
-    *(char *)insite_parameter_schedule_pointer =
-         *(char *)(insite_parameter_table_pointer + 2) +
-         *(char *)(insite_parameter_table_pointer + 1);
+    *insite_parameter_schedule_pointer =
+         insite_parameter_table_pointer->first_due_offset + insite_parameter_table_pointer->period;
     insite_parameter_schedule_pointer = insite_parameter_schedule_pointer + 1;
-    insite_parameter_table_pointer = insite_parameter_table_pointer + 3;
+    insite_parameter_table_pointer = insite_parameter_table_pointer + 1;
   }
-  Ram00fffc08 = 0x34;
-  uVar1 = Ram00fffc0c;
-  Ram00fffc0a = 0x102c;
-  return uVar1;
+  QSM_SCCR0 = 0x34;
+  wVar1 = QSM_SCSR;
+  QSM_SCCR1 = 0x102c;
+  return wVar1;
 }
 
 
@@ -31126,7 +31141,7 @@ void mc68k_FUN_0002cc88(void)
   Ram00fffc1c = uVar2 & 0xfff0;
   uVar3 = Ram00fffc1c;
   DAT_00fffc04 = 0;
-  Ram00fffc0a = 0;
+  QSM_SCCR1 = 0;
   Ram00fffa22 = 0;
   Ram00fffa24 = 0;
   Ram00fffe0a = 0;
@@ -31419,7 +31434,7 @@ void cm550_systemControl64(void)
       *_j1708_transmit_buffer_0_2_32 = bVar6;
       *local_8 = 0;
       _j1708_transmit_buffer_0_2_32 = local_8;
-      mc68k_tpuTransmissionTrigger();
+      mc68k_startJ1708Transmission();
     }
     else {
       multipacket_transmit_active_flag = 0;
@@ -33990,9 +34005,10 @@ undefined8 mc68k_tpuChannelStateMachine(void)
 
 {
   ushort uVar1;
-  char cVar2;
+  word wVar2;
+  char cVar3;
   undefined4 in_D0;
-  int iVar3;
+  int iVar4;
   undefined4 in_D1;
   
   j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 0;
@@ -34023,14 +34039,14 @@ undefined8 mc68k_tpuChannelStateMachine(void)
       if (*_j1708_receive_buffer_pointer_2_32_dca6 < 7) {
         if ((int)_j1708_receive_buffer_pointer_2_32_dca2 < _j1708_receive_buffer_pointer_2_32_dcaa)
         {
-          iVar3 = (_j1708_receive_buffer_pointer_2_32_dcaa -
+          iVar4 = (_j1708_receive_buffer_pointer_2_32_dcaa -
                   (int)_j1708_receive_buffer_pointer_2_32_dca2) + -2;
         }
         else {
-          iVar3 = (_j1708_receive_buffer_pointer_2_32_dcaa -
+          iVar4 = (_j1708_receive_buffer_pointer_2_32_dcaa -
                   (int)_j1708_receive_buffer_pointer_2_32_dca2) + 0xfe;
         }
-        if (3 < iVar3) {
+        if (3 < iVar4) {
           j1708_rx_state_t_0080dcaf.buffer_full_flag =
                j1708_rx_state_t_0080dcaf.buffer_full_flag + 1;
           *_j1708_receive_buffer_pointer_2_32_dca2 = 2;
@@ -34042,12 +34058,12 @@ undefined8 mc68k_tpuChannelStateMachine(void)
                (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca2,
                                 j1708_receive_buffer_index_low + '\x01');
           *_j1708_receive_buffer_pointer_2_32_dca2 = 0x74;
-          cVar2 = j1708_receive_buffer_index_low;
+          cVar3 = j1708_receive_buffer_index_low;
           _j1708_receive_buffer_pointer_2_32_dca2 =
                (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca2,
                                 j1708_receive_buffer_index_low + '\x01');
           _j1708_receive_buffer_pointer_2_32_dca6 =
-               (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca6,cVar2 + '\x02');
+               (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca6,cVar3 + '\x02');
         }
       }
       *_j1708_receive_buffer_pointer_2_32_dca2 = 0;
@@ -34069,15 +34085,15 @@ undefined8 mc68k_tpuChannelStateMachine(void)
     Ram00fff458 = uVar1 | 0x4000;
   }
   else if (_j1708_transmit_buffer_0_2_32 != _j1708_transmit_buffer_2_32_dc9c) {
-    uVar1 = Ram00fffc0c;
-    if ((uVar1 & 0x20) == 0) {
-      Ram00fffc0e = (ushort)*_j1708_transmit_buffer_2_32_dc98;
+    wVar2 = QSM_SCSR;
+    if ((wVar2 & 0x20) == 0) {
+      QSM_SCDR = (ushort)*_j1708_transmit_buffer_2_32_dc98;
       j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ = '\0';
       j1708_rx_state_t_0080dcaf._7_4_ = 0;
       j1708_rx_state_t_0080dcaf.buffer_ptr_1._2_1_ = 1;
       j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ = *_j1708_transmit_buffer_2_32_dc98;
-      uVar1 = Ram00fffc0a;
-      Ram00fffc0a = uVar1 | 0x20;
+      wVar2 = QSM_SCCR1;
+      QSM_SCCR1 = wVar2 | 0x20;
     }
     else {
       j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 1;

@@ -183,7 +183,7 @@ address,name
 0x00016c3c,cm550_parameterCircularBufferWrite
 0x00016cd8,cm550_circularBufferWrite
 0x00016d4c,cm550_emptyPlaceholderFunction
-0x00016d4e,mc68k_tpuTransmissionTrigger
+0x00016d4e,mc68k_startJ1708Transmission,Starts a J1708 transmission: with a message pending and the bus idle (QSM_SCSR bit 0x20 RAF clear) it writes the first byte to QSM_SCDR - arms the timer at 0xFFF458 / 0xFFF45A (the CTM4 address range) and sets QSM_SCCR1 RIE to read back its own bytes (the J1708 collision check). It drives no TPU channel (was mc68k_tpuTransmissionTrigger; PR #53 round 75)
 0x00016dd4,cm550_highRpmEngineProtectionStateMachine
 0x0001709e,cm550_fuelTemperatureLimitingSecondary
 0x00017120,cm550_FUN_00017120
@@ -392,7 +392,7 @@ address,name
 0x0001e1d0,mc68k_serialPort2IsrHandler
 0x0001e25a,cm550_serialCommunicationIsrRegister
 0x0001e266,mc68k_tpuTimerChannelEnable
-0x0001e288,mc68k_epsPositionSensorIsrHandler
+0x0001e288,mc68k_j1708SciInterruptHandler,The J1708 SCI interrupt handler: on QSM_SCSR RDRF (0x40) it reads the byte from QSM_SCDR into the J1708 receive buffer and adds it to the checksum - while transmitting it sends the next transmit byte to QSM_SCDR and at the end the two's complement of the checksum (~sum + 1) - and it clears QSM_SCCR1 RIE when the receive buffer is full. No EPS position sensor is involved (was mc68k_epsPositionSensorIsrHandler; PR #53 round 75)
 0x0001e522,cm550_tpuChannelIsrRegister
 0x0001e52e,serialTransmitHandler
 0x0001e5f0,cm550_FUN_0001e5f0
@@ -601,7 +601,7 @@ address,name
 0x00028a04,mc68k_dualCanControllerInit
 0x00028b80,initDiagnosticBufferPointers
 0x00028e32,cm550_mainCanTransmissionLoop
-0x00029130,mc68k_FUN_00029130
+0x00029130,mc68k_initializeJ1708Datalink,Initializes the J1708 datalink: the secure write scratch pad - the diagnostic buffer pointers (cm550_diagnosticBufferPointerInit) - the J1708 receive state - the multipacket flags - the broadcast enable word (from EEPROM 0x47e) - the InSite parameter schedule (next due ticks from insite_parameter_schedule_table) - then the QSM SCI (QSM_SCCR0 = 0x34 / QSM_SCCR1 = 0x102c). Six startup functions call it (was mc68k_FUN_00029130; PR #53 round 75)
 0x0002c834,cm550_FUN_0002c834
 0x0002c986,cm550_FUN_0002c986
 0x0002ca2a,cm550_FUN_0002ca2a

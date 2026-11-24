@@ -589,6 +589,9 @@ insite_response_buffer_t,0x0080D418,buffer_index,byte,1,Buffer index for multi-r
 insite_response_buffer_t,0x0080D41A,buffer_length,byte,1,Current response length,,verified
 insite_response_buffer_t,0x0080D41B,reserved,byte,1,Reserved/padding byte,,verified
 # --- memory_region_t: a write-permission map entry - application_memory_region_table (5 x 10 bytes @ ROM 0x345dc); the first matching entry wins; the layout of CM848's memory_region_t (PR #53 round 72) ---
+insite_parameter_schedule_entry_t,,parameter_id,byte,1,The parameter's ID (0 ends the list) - vp44_insiteParameterTableIterator tests its bit in the 32-byte bitmap at ROM 0x6134a before it calls cm550_activeParamReadFunction,,verified
+insite_parameter_schedule_entry_t,,period,byte,1,Schedule ticks between two sends: the iterator adds it to the parameter's next due tick each time that tick comes,,verified
+insite_parameter_schedule_entry_t,,first_due_offset,byte,1,Ticks added to the period for the first due tick (the initializer mc68k_initializeJ1708Datalink sets next due = period + this),,verified
 memory_region_t,,start_address,dword,4,First address of the region,,verified
 memory_region_t,,end_address,dword,4,Last address of the region (inclusive),,verified
 memory_region_t,,region_type,MEMORY_REGION_TYPE,1,The type while the development mode flag (0x80de30) is 1,,verified
