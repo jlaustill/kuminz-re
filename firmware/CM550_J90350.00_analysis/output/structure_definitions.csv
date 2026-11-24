@@ -128,13 +128,6 @@ cummins_data_plate_t,0x010002C0,ecm_serial_number,dword,4,ECM serial number (T03
 # -----------------------------------------------------------------------------
 
 # VP44 Message State @ RAM 0x800F5E (J90350.00 verified)
-vp44_message_t,0x00800F5E,response_buffer,byte,1,VP44 response buffer byte,,verified
-vp44_message_t,0x00800F5F,sequence_number,byte,1,VP44 message sequence number for retry logic,,verified
-vp44_message_t,0x00800F60,message_id,word,2,VP44 message identifier,,verified
-vp44_message_t,0x00800F62,retry_flag,byte,1,VP44 retry flag (1 when response pending),,verified
-vp44_message_t,0x00800F63,retry_count,byte,1,VP44 actual retry count (max 5),,verified
-vp44_message_t,0x00800F64,timeout_counter,byte,1,VP44 timeout countdown (112 ticks),,verified
-vp44_message_t,0x00800F66,message_data,dword,4,VP44 stored command/data,,verified
 
 # J1939 TX Message Buffer @ RAM 0x803036 (J90350.00 verified)
 j1939_tx_msg_buffer_t,0x00803036,data,byte,8,J1939 message payload data array,,verified
@@ -158,22 +151,10 @@ j1939_vp44_msg_t,,timing_byte6,byte,1,VP44 timing advance data byte 6,,verified
 
 # Diagnostic Mode Buffer @ RAM 0x809658 (J90350.00 verified)
 # Main diagnostic mode state buffer for CLIP service requests
-diagnostic_mode_buffer_t,0x00809658,service_id,byte,1,Current diagnostic service ID,,verified
-diagnostic_mode_buffer_t,0x00809659,sub_function,byte,1,Sub-function code,,verified
-diagnostic_mode_buffer_t,0x0080965A,session_state,word,2,Diagnostic session state machine,,verified
-diagnostic_mode_buffer_t,0x0080965C,timeout_counter,word,2,Session timeout countdown,,verified
-diagnostic_mode_buffer_t,0x0080965E,data_buffer,byte,32,Multi-purpose diagnostic data buffer,,verified
 
 # VP44 Diagnostic Mode State @ RAM 0x8096B6 (J90350.00 verified)
-vp44_diagnostic_mode_t,0x008096B6,mode_state,word,2,VP44 diagnostic mode state machine,,verified
-vp44_diagnostic_mode_t,0x008096B8,command_data,dword,4,VP44 diagnostic command data,,verified
-vp44_diagnostic_mode_t,0x008096BC,response_status,word,2,VP44 diagnostic response status,,verified
 
 # Diagnostic Mode Fuel/Boost @ RAM 0x8096C4 (J90350.00 verified)
-diagnostic_mode_fuel_t,0x008096C4,fuel_adjustment,word,2,Diagnostic mode fuel adjustment value,,verified
-diagnostic_mode_fuel_t,0x008096F6,boost_state,word,2,Diagnostic mode boost state,,verified
-diagnostic_mode_fuel_t,0x008096F8,fuel_state,word,2,Diagnostic mode fuel state,,verified
-diagnostic_mode_fuel_t,0x008096FC,vp44_state_2,word,2,VP44 diagnostic state secondary,,verified
 
 # Diagnostic Service Request
 diag_service_request_t,,message_length,byte,1,Total message length including header,,verified
@@ -244,20 +225,8 @@ fuel_limit_arbitration_t,,comparison_high,word,2,Fuel limit comparison high valu
 fuel_limit_arbitration_t,,rate_limit,word,2,Fuel demand rate limiting value,,verified
 
 # Shutdown Minimum Selector State @ RAM 0x80D496 (J90350.00 verified)
-shutdown_minimum_selector_t,0x0080D496,fuel_value,word,2,Current minimum fuel limit value selected by arbitration,,verified
-shutdown_minimum_selector_t,0x0080D498,init_value,word,2,Shutdown minimum init value,,verified
-shutdown_minimum_selector_t,0x0080D496,source_id,word,2,Source ID that set minimum (17=selector17 etc),,verified
-shutdown_minimum_selector_t,0x0080D496,previous_value,word,2,Previous minimum value for change tracking,,verified
 
 # Fuel Arbitrator Diagnostic State @ RAM 0x80D01A (J90350.00 verified)
-fuel_arbitrator_diag_t,0x0080D01A,control_mode,word,2,Fuel arbitrator control mode,,verified
-fuel_arbitrator_diag_t,0x0080D026,response_timer,word,2,Response timeout timer,,verified
-fuel_arbitrator_diag_t,0x0080D02A,status_counter,word,2,Status update counter,,verified
-fuel_arbitrator_diag_t,0x0080D02E,speed_timer,word,2,Speed control timer,,verified
-fuel_arbitrator_diag_t,0x0080D030,status_timer,word,2,Status timer,,verified
-fuel_arbitrator_diag_t,0x0080D032,session_timer,word,2,Diagnostic session timer,,verified
-fuel_arbitrator_diag_t,0x0080D034,session_counter,word,2,Session counter,,verified
-fuel_arbitrator_diag_t,0x0080D036,throttle_override,word,2,Throttle override value,,verified
 
 # -----------------------------------------------------------------------------
 # Engine Speed/RPM Structures (RAM - J90350.00 Addresses Verified)
@@ -265,25 +234,15 @@ fuel_arbitrator_diag_t,0x0080D036,throttle_override,word,2,Throttle override val
 
 # Engine RPM Circular Buffer @ RAM 0x80C404 (J90350.00 verified)
 # Core engine speed tracking structure
-engine_rpm_buffer_t,0x0080C404,rpm_period_value,word,2,Engine RPM period measurement from EPS,,verified
-engine_rpm_buffer_t,0x0080C408,current_engine_rpm,word,2,Current calculated engine RPM (primary),,verified
-engine_rpm_buffer_t,0x0080C7F0,cranking_threshold,word,2,Engine RPM cranking detection threshold,,verified
 
 # Engine RPM History @ RAM 0x80000C (J90350.00 verified)
 # Historical RPM tracking for rate calculations
-engine_rpm_history_t,0x0080000C,previous_engine_rpm,word,2,Previous RPM sample for delta calculations,,verified
-engine_rpm_history_t,0x008002E6,previous_nonzero,word,2,Previous non-zero RPM value,,verified
-engine_rpm_history_t,0x00800344,previous_sample,word,2,Previous RPM sample for rate of change,,verified
-engine_rpm_history_t,0x00800346,rpm_delta,word,2,RPM change between samples,,verified
 
 # Target Engine RPM @ RAM 0x809CFE (J90350.00 verified)
 engine_rpm_target_t,0x00809CFE,target_engine_rpm,word,2,Commanded/target engine RPM,,verified
 
 # EPS Engine RPM Snapshot @ RAM 0x801712 (J90350.00 verified)
 # Engine Position Sensor derived RPM values
-eps_rpm_snapshot_t,0x00801712,eps_previous_engine_rpm,word,2,EPS-calculated previous engine RPM,,verified
-eps_rpm_snapshot_t,0x00801718,eps_diagnostic_mode_counter,word,2,EPS diagnostic mode counter,,verified
-eps_rpm_snapshot_t,0x0080173C,snapshot_engine_rpm,word,2,Snapshot of engine RPM at event,,verified
 
 # -----------------------------------------------------------------------------
 # Engine Protection Structures
@@ -386,14 +345,6 @@ scheduler_phase_slot_t,,reserved,dword,4,Reserved/padding bytes for alignment,,v
 scheduler_phase_table_t,0x00809782,slots,scheduler_phase_slot_t[],variable,Array of phase slots - size depends on scheduler_phase_slot_count,scheduler_phase_slot_t,verified
 
 # Scheduler Control Variables @ RAM 0x809770-0x809780 (J90350.00 verified)
-scheduler_control_t,0x00809770,overrun_counter,word,2,Count of scheduler overruns detected,,verified
-scheduler_control_t,0x00809772,wait_loop_counter,word,2,Wait loop iteration counter,,verified
-scheduler_control_t,0x00809776,wait_loop_limit,word,2,Maximum wait loop iterations,,verified
-scheduler_control_t,0x00809778,wait_loop_index,word,2,Current wait loop index,,verified
-scheduler_control_t,0x0080977A,phase_slot_count,word,2,Number of scheduler phase slots,,verified
-scheduler_control_t,0x0080977C,phase_timeout,word,2,Phase execution timeout value,,verified
-scheduler_control_t,0x0080977E,overrun_threshold,word,2,Overrun detection threshold,,verified
-scheduler_control_t,0x00809780,tick_interval,word,2,Scheduler tick interval,,verified
 
 # System Callback Table (12 bytes)
 system_callback_table_t,,engine_position_sensor_isr,dword,4,EPS position sensor ISR handler,,verified
@@ -441,8 +392,6 @@ circular_buffer_control_t,,full_flag,byte,1,Buffer full indicator (1=full 0=spac
 # Main parameter logging circular buffer
 
 # QADC Circular Buffer @ RAM 0x801720 (J90350.00 verified)
-qadc_circular_buffer_t,0x00801720,offset,word,2,Current offset into QADC buffer,,verified
-qadc_circular_buffer_t,0x00801730,dest_ptr,dword,4,Destination pointer for QADC data,,verified
 
 # -----------------------------------------------------------------------------
 # Huffman Compression Structures (ROM-based)
@@ -483,14 +432,8 @@ huffman_tree_t,,terminator,word,2,Tree terminator at offset 0xC06 (set to 0xFFFF
 # CLIP diagnostic service buffers
 # -----------------------------------------------------------------------------
 
-diagnostic_buffers_t,0x00808B00,tx_buffer_base,byte,256,Diagnostic transmit buffer (256 bytes),,verified
-diagnostic_buffers_t,0x00808C00,rx_buffer_base,byte,256,Diagnostic receive buffer (256 bytes),,verified
 
 # Diagnostic Buffer Pointers @ RAM 0x80D3E6 (J90350.00 verified)
-diagnostic_buffer_ptrs_t,0x0080D3E6,tx_start_ptr,dword,4,Pointer to start of TX buffer,,verified
-diagnostic_buffer_ptrs_t,0x0080D3EA,rx_start_ptr,dword,4,Pointer to start of RX buffer,,verified
-diagnostic_buffer_ptrs_t,0x0080D3EE,end_address,dword,4,End address of diagnostic buffers,,verified
-diagnostic_buffer_ptrs_t,0x0080D3F3,logger_state,byte,1,CAN buffer logger state,,verified
 
 # -----------------------------------------------------------------------------
 # CAN Buffer Setup Structures @ RAM 0x801A8A (J90350.00 verified)
@@ -508,29 +451,18 @@ can_buffer_setup_t,,data,byte,8,Inline buffer data (8 bytes),,verified
 can_buffer_setup_t,0x00801A8A,,,,can_buffer_setup_t_00801a8a - CAN buffer setup instance (instance marker),,verified
 
 # CAN Message Buffer Range @ RAM 0x8034F8 (J90350.00 verified)
-can_message_buffer_t,0x008034F8,buffer_start,byte,1,Start of CAN message buffer area,,verified
-can_message_buffer_t,0x00803882,buffer_end,byte,1,End of CAN message buffer area,,verified
 
 # -----------------------------------------------------------------------------
 # Data Collector Buffer @ RAM 0x80AAAA (J90350.00 verified)
 # Snapshot/logging data collection
 # -----------------------------------------------------------------------------
 
-data_collector_t,0x0080AAAA,ram_start_addr,dword,4,Actual starting RAM address of data collector buffer,,verified
-data_collector_t,0x0080AAAE,ram_end_addr,dword,4,Physical RAM address of end of buffer,,verified
-data_collector_t,0x0080AAB2,logical_start,dword,4,Logical beginning address of buffer,,verified
-data_collector_t,0x0080AAB6,logical_center,dword,4,Logical center address for trigger point,,verified
 
 # -----------------------------------------------------------------------------
 # Insite Response Buffer @ RAM 0x80D40C (J90350.00 verified)
 # Buffer for Insite diagnostic tool responses
 # -----------------------------------------------------------------------------
 
-insite_response_buffer_t,0x0080D40C,buffer_ptr,dword,4,Pointer to response buffer,,verified
-insite_response_buffer_t,0x0080D417,data_offset,byte,1,Current data offset in buffer,,verified
-insite_response_buffer_t,0x0080D418,buffer_index,byte,1,Buffer index for multi-response,,verified
-insite_response_buffer_t,0x0080D41A,buffer_length,byte,1,Current response length,,verified
-insite_response_buffer_t,0x0080D41B,reserved,byte,1,Reserved/padding byte,,verified
 # --- memory_region_t: a write-permission map entry - application_memory_region_table (5 x 10 bytes @ ROM 0x345dc); the first matching entry wins; the layout of CM848's memory_region_t (PR #53 round 72) ---
 insite_parameter_schedule_entry_t,,parameter_id,byte,1,The parameter's ID (0 ends the list) - vp44_insiteParameterTableIterator tests its bit in the 32-byte bitmap at ROM 0x6134a before it calls cm550_activeParamReadFunction,,verified
 insite_parameter_schedule_entry_t,,period,byte,1,Schedule ticks between two sends: the iterator adds it to the parameter's next due tick each time that tick comes,,verified

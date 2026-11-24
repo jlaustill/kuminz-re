@@ -1056,24 +1056,15 @@ typedef struct sensor_debounce_state_t sensor_debounce_state_t;
 typedef struct cummins_data_plate_header_t cummins_data_plate_header_t;
 typedef struct module_variant_offsets_t module_variant_offsets_t;
 typedef struct cummins_data_plate_t cummins_data_plate_t;
-typedef struct vp44_message_t vp44_message_t;
 typedef struct j1939_tx_msg_buffer_t j1939_tx_msg_buffer_t;
 typedef struct j1939_vp44_msg_t j1939_vp44_msg_t;
-typedef struct diagnostic_mode_buffer_t diagnostic_mode_buffer_t;
-typedef struct vp44_diagnostic_mode_t vp44_diagnostic_mode_t;
-typedef struct diagnostic_mode_fuel_t diagnostic_mode_fuel_t;
 typedef struct diag_service_request_t diag_service_request_t;
 typedef struct diag_tp_state_t diag_tp_state_t;
 typedef struct diag_transfer_state_t diag_transfer_state_t;
 typedef struct fuel_governor_state_t fuel_governor_state_t;
 typedef struct fuel_demand_state_t fuel_demand_state_t;
 typedef struct fuel_limit_arbitration_t fuel_limit_arbitration_t;
-typedef struct shutdown_minimum_selector_t shutdown_minimum_selector_t;
-typedef struct fuel_arbitrator_diag_t fuel_arbitrator_diag_t;
-typedef struct engine_rpm_buffer_t engine_rpm_buffer_t;
-typedef struct engine_rpm_history_t engine_rpm_history_t;
 typedef struct engine_rpm_target_t engine_rpm_target_t;
-typedef struct eps_rpm_snapshot_t eps_rpm_snapshot_t;
 typedef struct engine_operating_mode_t engine_operating_mode_t;
 typedef struct high_rpm_protection_t high_rpm_protection_t;
 typedef struct rpm_fuel_protection_t rpm_fuel_protection_t;
@@ -1083,20 +1074,13 @@ typedef struct vp44_fault_state_t vp44_fault_state_t;
 typedef struct timing_mode_control_t timing_mode_control_t;
 typedef struct scheduler_phase_slot_t scheduler_phase_slot_t;
 typedef struct scheduler_phase_table_t scheduler_phase_table_t;
-typedef struct scheduler_control_t scheduler_control_t;
 typedef struct system_callback_table_t system_callback_table_t;
 typedef struct ad_sensor_config_t ad_sensor_config_t;
 typedef struct address_range_entry_t address_range_entry_t;
 typedef struct circular_buffer_control_t circular_buffer_control_t;
-typedef struct qadc_circular_buffer_t qadc_circular_buffer_t;
 typedef struct huffman_tree_node_t huffman_tree_node_t;
 typedef struct huffman_tree_t huffman_tree_t;
-typedef struct diagnostic_buffers_t diagnostic_buffers_t;
-typedef struct diagnostic_buffer_ptrs_t diagnostic_buffer_ptrs_t;
 typedef struct can_buffer_setup_t can_buffer_setup_t;
-typedef struct can_message_buffer_t can_message_buffer_t;
-typedef struct data_collector_t data_collector_t;
-typedef struct insite_response_buffer_t insite_response_buffer_t;
 typedef struct insite_parameter_schedule_entry_t insite_parameter_schedule_entry_t;
 typedef struct memory_region_t memory_region_t;
 
@@ -1209,16 +1193,6 @@ struct cummins_data_plate_t {
     uint32_t ecm_serial_number;  /* ECM serial number (T03942860) */
 };
 
-struct vp44_message_t {
-    uint8_t response_buffer;  /* VP44 response buffer byte */
-    uint8_t sequence_number;  /* VP44 message sequence number for retry logic */
-    uint16_t message_id;  /* VP44 message identifier */
-    uint8_t retry_flag;  /* VP44 retry flag (1 when response pending) */
-    uint8_t retry_count;  /* VP44 actual retry count (max 5) */
-    uint8_t timeout_counter;  /* VP44 timeout countdown (112 ticks) */
-    uint32_t message_data;  /* VP44 stored command/data */
-};
-
 struct j1939_tx_msg_buffer_t {
     uint8_t data[8];  /* J1939 message payload data array */
     j1939_header_t header;  /* CAN message header (ID + length) */
@@ -1235,27 +1209,6 @@ struct j1939_vp44_msg_t {
     uint8_t timing_byte4;  /* VP44 timing advance data byte 4 */
     uint8_t timing_byte5;  /* VP44 timing advance data byte 5 */
     uint8_t timing_byte6;  /* VP44 timing advance data byte 6 */
-};
-
-struct diagnostic_mode_buffer_t {
-    uint8_t service_id;  /* Current diagnostic service ID */
-    uint8_t sub_function;  /* Sub-function code */
-    uint16_t session_state;  /* Diagnostic session state machine */
-    uint16_t timeout_counter;  /* Session timeout countdown */
-    uint8_t data_buffer[32];  /* Multi-purpose diagnostic data buffer */
-};
-
-struct vp44_diagnostic_mode_t {
-    uint16_t mode_state;  /* VP44 diagnostic mode state machine */
-    uint32_t command_data;  /* VP44 diagnostic command data */
-    uint16_t response_status;  /* VP44 diagnostic response status */
-};
-
-struct diagnostic_mode_fuel_t {
-    uint16_t fuel_adjustment;  /* Diagnostic mode fuel adjustment value */
-    uint16_t boost_state;  /* Diagnostic mode boost state */
-    uint16_t fuel_state;  /* Diagnostic mode fuel state */
-    uint16_t vp44_state_2;  /* VP44 diagnostic state secondary */
 };
 
 struct diag_service_request_t {
@@ -1328,45 +1281,8 @@ struct fuel_limit_arbitration_t {
     uint16_t rate_limit;  /* Fuel demand rate limiting value */
 };
 
-struct shutdown_minimum_selector_t {
-    uint16_t fuel_value;  /* Current minimum fuel limit value selected by arbitration */
-    uint16_t init_value;  /* Shutdown minimum init value */
-    uint16_t source_id;  /* Source ID that set minimum (17=selector17 etc) */
-    uint16_t previous_value;  /* Previous minimum value for change tracking */
-};
-
-struct fuel_arbitrator_diag_t {
-    uint16_t control_mode;  /* Fuel arbitrator control mode */
-    uint16_t response_timer;  /* Response timeout timer */
-    uint16_t status_counter;  /* Status update counter */
-    uint16_t speed_timer;  /* Speed control timer */
-    uint16_t status_timer;  /* Status timer */
-    uint16_t session_timer;  /* Diagnostic session timer */
-    uint16_t session_counter;  /* Session counter */
-    uint16_t throttle_override;  /* Throttle override value */
-};
-
-struct engine_rpm_buffer_t {
-    uint16_t rpm_period_value;  /* Engine RPM period measurement from EPS */
-    uint16_t current_engine_rpm;  /* Current calculated engine RPM (primary) */
-    uint16_t cranking_threshold;  /* Engine RPM cranking detection threshold */
-};
-
-struct engine_rpm_history_t {
-    uint16_t previous_engine_rpm;  /* Previous RPM sample for delta calculations */
-    uint16_t previous_nonzero;  /* Previous non-zero RPM value */
-    uint16_t previous_sample;  /* Previous RPM sample for rate of change */
-    uint16_t rpm_delta;  /* RPM change between samples */
-};
-
 struct engine_rpm_target_t {
     uint16_t target_engine_rpm;  /* Commanded/target engine RPM */
-};
-
-struct eps_rpm_snapshot_t {
-    uint16_t eps_previous_engine_rpm;  /* EPS-calculated previous engine RPM */
-    uint16_t eps_diagnostic_mode_counter;  /* EPS diagnostic mode counter */
-    uint16_t snapshot_engine_rpm;  /* Snapshot of engine RPM at event */
 };
 
 struct engine_operating_mode_t {
@@ -1461,17 +1377,6 @@ struct scheduler_phase_table_t {
     scheduler_phase_slot_t slots[1];  /* Array of phase slots - size depends on scheduler_phase_slot_count */
 };
 
-struct scheduler_control_t {
-    uint16_t overrun_counter;  /* Count of scheduler overruns detected */
-    uint16_t wait_loop_counter;  /* Wait loop iteration counter */
-    uint16_t wait_loop_limit;  /* Maximum wait loop iterations */
-    uint16_t wait_loop_index;  /* Current wait loop index */
-    uint16_t phase_slot_count;  /* Number of scheduler phase slots */
-    uint16_t phase_timeout;  /* Phase execution timeout value */
-    uint16_t overrun_threshold;  /* Overrun detection threshold */
-    uint16_t tick_interval;  /* Scheduler tick interval */
-};
-
 struct system_callback_table_t {
     uint32_t engine_position_sensor_isr;  /* EPS position sensor ISR handler */
     uint32_t tpu_adc_isr;  /* TPU/QADC interrupt handler */
@@ -1504,11 +1409,6 @@ struct circular_buffer_control_t {
     uint8_t full_flag;  /* Buffer full indicator (1=full 0=space available) */
 };
 
-struct qadc_circular_buffer_t {
-    uint16_t offset;  /* Current offset into QADC buffer */
-    uint32_t dest_ptr;  /* Destination pointer for QADC data */
-};
-
 struct huffman_tree_node_t {
     uint16_t frequency;  /* Symbol frequency or combined weight */
     uint16_t left_child;  /* Index of left child node (0-512) */
@@ -1521,43 +1421,11 @@ struct huffman_tree_t {
     uint16_t terminator;  /* Tree terminator at offset 0xC06 (set to 0xFFFF) */
 };
 
-struct diagnostic_buffers_t {
-    uint8_t tx_buffer_base[256];  /* Diagnostic transmit buffer (256 bytes) */
-    uint8_t rx_buffer_base[256];  /* Diagnostic receive buffer (256 bytes) */
-};
-
-struct diagnostic_buffer_ptrs_t {
-    uint32_t tx_start_ptr;  /* Pointer to start of TX buffer */
-    uint32_t rx_start_ptr;  /* Pointer to start of RX buffer */
-    uint32_t end_address;  /* End address of diagnostic buffers */
-    uint8_t logger_state;  /* CAN buffer logger state */
-};
-
 struct can_buffer_setup_t {
     uint32_t state;  /* Buffer state (0=idle 1=ready 2=active) */
     uint32_t data_ptr;  /* Pointer to buffer data area */
     uint32_t unused_ptr;  /* Unused/reserved pointer */
     uint8_t data[8];  /* Inline buffer data (8 bytes) */
-};
-
-struct can_message_buffer_t {
-    uint8_t buffer_start;  /* Start of CAN message buffer area */
-    uint8_t buffer_end;  /* End of CAN message buffer area */
-};
-
-struct data_collector_t {
-    uint32_t ram_start_addr;  /* Actual starting RAM address of data collector buffer */
-    uint32_t ram_end_addr;  /* Physical RAM address of end of buffer */
-    uint32_t logical_start;  /* Logical beginning address of buffer */
-    uint32_t logical_center;  /* Logical center address for trigger point */
-};
-
-struct insite_response_buffer_t {
-    uint32_t buffer_ptr;  /* Pointer to response buffer */
-    uint8_t data_offset;  /* Current data offset in buffer */
-    uint8_t buffer_index;  /* Buffer index for multi-response */
-    uint8_t buffer_length;  /* Current response length */
-    uint8_t reserved;  /* Reserved/padding byte */
 };
 
 struct insite_parameter_schedule_entry_t {

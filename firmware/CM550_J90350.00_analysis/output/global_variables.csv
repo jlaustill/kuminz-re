@@ -84,10 +84,10 @@ address,name,type,comment
 0x00800006,rpm_control_timer_2,undefined,
 0x00800008,rpm_control_timer_previous,undefined,
 0x0080000a,rpm_control_timer_delta,undefined,
-0x0080000c,previous_engine_rpm,engine_rpm_history_t,
-0x0080000e,dma_descriptor_base1,,
-0x00800010,dma_desc1_source_ptr,,
-0x00800012,previous_engine_rpm.rpm_delta,,
+0x0080000c,previous_engine_rpm,word,(typed word from the removed engine_rpm_history_t.previous_engine_rpm - was engine_rpm_history_t; PR #53 round 78)
+0x0080000e,dma_descriptor_base1,word,(typed word: a word between 0x80000c and the move.w-written 0x800010 - the removed oversize structs had covered it; PR #53 round 78)
+0x00800010,dma_desc1_source_ptr,word,(typed word: move.w #imm - the removed oversize structs had covered it; PR #53 round 78)
+0x00800012,,dword,(the code stores the ROM address 0x6086e there; was the coordinate row previous_engine_rpm.rpm_delta, a field of a removed oversize struct; PR #53 round 78)
 0x00800014,rpm_state_lookup_input,undefined,
 0x00800016,dma_desc1_dest_ptr,undefined,
 0x0080001a,dma_descriptor_base2,undefined,
@@ -350,7 +350,7 @@ address,name,type,comment
 0x008002de,protection_threshold_table_ptr,undefined,
 0x008002e0,system_timer_array,undefined,
 0x008002e2,protection_threshold_status_shifted,undefined,
-0x008002e6,engine_rpm_previous_nonzero,engine_rpm_history_t,
+0x008002e6,engine_rpm_previous_nonzero,word,(typed word from the removed engine_rpm_history_t.previous_nonzero - was engine_rpm_history_t; PR #53 round 78)
 0x008002e8,high_rpm_shutdown_previous,,
 0x008002ea,diagnostic_protection_previous,,
 0x008002ec,engine_mode_transition_flag,,
@@ -371,11 +371,11 @@ address,name,type,comment
 0x0080033e,oil_pressure_mode_init_flag,undefined,
 0x00800340,data_collector_buffer_write_stop_address,undefined,
 0x00800342,crank_exit_rpm_threshold,undefined,
-0x00800344,engine_rpm_previous_sample,undefined,
-0x00800346,engine_rpm_delta,engine_rpm_history_t,
-0x00800348,engine_rpm_delta.previous_nonzero,,
-0x0080034a,data_collector_sample_decimation_counter,,
-0x0080034c,data_collector_channel_count,,
+0x00800344,engine_rpm_previous_sample,word,(typed word from the removed engine_rpm_history_t.previous_sample - was undefined; PR #53 round 78)
+0x00800346,engine_rpm_delta,word,(typed word from the removed engine_rpm_history_t.rpm_delta - was engine_rpm_history_t; PR #53 round 78)
+0x00800348,,word,(clr.w / move.w #imm / tst.w; was the coordinate row engine_rpm_delta.previous_nonzero, a field of a removed oversize struct; PR #53 round 78)
+0x0080034a,data_collector_sample_decimation_counter,word,(typed word: addq.w / clr.w / move.w / tst.w - the removed oversize structs had covered it; PR #53 round 78)
+0x0080034c,data_collector_channel_count,word,(typed word: addq.w / clr.w / move.w - the removed oversize structs had covered it; PR #53 round 78)
 0x00800353,trending_sample_rate_divisor,undefined,
 0x00800354,scheduler_phase_execution_time,undefined,
 0x00800356,scheduler_reserved_padding,undefined,
@@ -516,13 +516,13 @@ address,name,type,comment
 0x00800efc,j1939_multi_frame_buffer_ptr,undefined,
 0x00800f04,j1939_multi_frame_active_flag,undefined,
 0x00800f1c,vp44_diag_buffer_2_ptr,undefined,
-0x00800f5e,vp44_response_buffer,undefined,
-0x00800f5f,vp44_sequence_number,undefined,
-0x00800f60,vp44_message_id,undefined,
-0x00800f62,vp44_retry_flag,undefined,
-0x00800f63,vp44_retry_count,undefined,
-0x00800f64,vp44_timeout_counter,undefined,
-0x00800f66,vp44_message_data,vp44_message_t,
+0x00800f5e,vp44_response_buffer,byte,(typed byte from the removed vp44_message_t.response_buffer - was undefined; PR #53 round 78)
+0x00800f5f,vp44_sequence_number,byte,(typed byte from the removed vp44_message_t.sequence_number - was undefined; PR #53 round 78)
+0x00800f60,vp44_message_id,word,(typed word from the removed vp44_message_t.message_id - was undefined; PR #53 round 78)
+0x00800f62,vp44_retry_flag,byte,(typed byte from the removed vp44_message_t.retry_flag - was undefined; PR #53 round 78)
+0x00800f63,vp44_retry_count,byte,(typed byte from the removed vp44_message_t.retry_count - was undefined; PR #53 round 78)
+0x00800f64,vp44_timeout_counter,byte,(typed byte from the removed vp44_message_t.timeout_counter - was undefined; PR #53 round 78)
+0x00800f66,vp44_message_data,dword,(typed dword from the removed vp44_message_t.message_data - was vp44_message_t; PR #53 round 78)
 0x00800f69,vp44_expected_sequence,,
 0x00800f6a,serial_port_config_value,,
 0x00800f6c,serial_buffer_pointer,,
@@ -631,21 +631,21 @@ address,name,type,comment
 0x0080170a,intake_temp_table_2_count,undefined,
 0x0080170c,intake_temp_table_2_y_ptr,undefined,
 0x00801710,eps_rpm_tracking_state,undefined,
-0x00801712,eps_previous_engine_rpm,eps_rpm_snapshot_t,
+0x00801712,eps_previous_engine_rpm,word,(typed word from the removed eps_rpm_snapshot_t.eps_previous_engine_rpm - was eps_rpm_snapshot_t; PR #53 round 78)
 0x00801714,eps_acceleration_timer_1,,
 0x00801716,eps_acceleration_timer_2,,
-0x00801718,eps_diagnostic_mode_counter,eps_rpm_snapshot_t,
+0x00801718,eps_diagnostic_mode_counter,word,(typed word from the removed eps_rpm_snapshot_t.eps_diagnostic_mode_counter - was eps_rpm_snapshot_t; PR #53 round 78)
 0x0080171a,derate_bit5_status_latch,,
 0x0080171b,derate_bit6_status_latch,,
 0x0080171c,fuel_timing_offset_state,,
 0x0080171e,fuel_arbitrator_diag_timer,undefined,
-0x00801720,qadc_circular_buffer_offset,qadc_circular_buffer_t,
+0x00801720,qadc_circular_buffer_offset,word,(typed word from the removed qadc_circular_buffer_t.offset - was qadc_circular_buffer_t; PR #53 round 78)
 0x00801722,qadc_collection_state_machine,,
-0x00801730,qadc_circular_buffer_dest_ptr,qadc_circular_buffer_t,
+0x00801730,qadc_circular_buffer_dest_ptr,dword,(typed dword from the removed qadc_circular_buffer_t.dest_ptr - was qadc_circular_buffer_t; PR #53 round 78)
 0x00801734,qadc_data_collection_ready_flag,,
 0x00801736,rpm_lookup_table_1_arg,undefined,
 0x00801738,rpm_lookup_table_1_ptr,undefined,
-0x0080173c,snapshot_engine_rpm,eps_rpm_snapshot_t,
+0x0080173c,snapshot_engine_rpm,word,(typed word from the removed eps_rpm_snapshot_t.snapshot_engine_rpm - was eps_rpm_snapshot_t; PR #53 round 78)
 0x0080173e,rpm_lookup_table_2_ptr,,
 0x00801742,rpm_lookup_table_2_arg,undefined,
 0x00801744,rpm_lookup_table_3_ptr,undefined,
@@ -1412,7 +1412,7 @@ address,name,type,comment
 0x008034e6,vp44_fso_zero_timing_fault_counter,undefined,
 0x008034e7,vp44_fso_demand_delta_fault_counter,undefined,
 0x008034e8,vp44_fso_rpm_fault_counter,undefined,
-0x008034f8,can_message_buffer_start,can_message_buffer_t,
+0x008034f8,can_message_buffer_start,byte,(typed byte from the removed can_message_buffer_t.buffer_start - was can_message_buffer_t; PR #53 round 78)
 0x008034fa,calibration_validation_buffer,undefined,
 0x00803500,calibration_checksum_expected_1,undefined,
 0x00803502,calibration_checksum_expected_2,undefined,
@@ -1551,7 +1551,7 @@ address,name,type,comment
 0x00803876,oil_pressure_mode_flag_2,undefined,
 0x0080387e,vp44_fault_protection_threshold,undefined,
 0x00803880,rpm_derate_calculation_table_ptr,undefined,
-0x00803882,can_message_buffer_end,can_message_buffer_t,
+0x00803882,can_message_buffer_end,byte,(typed byte from the removed can_message_buffer_t.buffer_end - was can_message_buffer_t; PR #53 round 78)
 0x00803b00,ecu_identity_header,undefined,
 0x00803b0a,ecu_identity_marker_1,undefined,
 0x00803b0c,security_master_password_cal,byte[6],e2m 0005 +0 ECM_PSWD / Master_Password 'security master password' (HEX 6 bytes) = EEPROM 0x2: validateSecurityKey compares the unscrambled key's 6 characters with it (the mirror 0x803b0a + 2) - CM848 keeps it at the same EEPROM offset (was ecu_identity_test_pattern; PR #53 round 73)
@@ -3799,10 +3799,9 @@ address,name,type,comment
 0x00808abc,indicates_if_vss_tamper_algs_are_enabled_when_vss_highway_is_on_0_2_3_8abc,undefined,
 0x00808abe,indicates_if_vss_tamper_algs_are_enabled_when_vss_highway_is_on_0_2_3_8abe,undefined,
 0x00808ac0,threshold_for_determining_if_vehicle_is_on_hill_0_127_5,undefined,
-0x00808b00,diagnostic_tx_buffer_base,undefined,
-0x00808c00,diagnostic_rx_buffer_base,diagnostic_buffers_t,
+0x00808b00,diagnostic_tx_buffer_base,byte[256],(typed byte[256] from the removed diagnostic_buffers_t.tx_buffer_base - was undefined; PR #53 round 78)
+0x00808c00,diagnostic_rx_buffer_base,byte[256],(typed byte[256] from the removed diagnostic_buffers_t.rx_buffer_base - was diagnostic_buffers_t; PR #53 round 78)
 0x00808dc2,vector_table_init_address,,
-0x00808ddc,diagnostic_rx_buffer_base.rx_buffer_base[220],,
 0x00808e32,can_message_isr_register_address,undefined,
 0x00808e36,serial_comm_isr_register_address,undefined,
 0x00808ec2,state_machine_return_address,undefined,
@@ -3955,10 +3954,11 @@ address,name,type,comment
 0x0080964e,adc_channel_25_table_ptr_2,undefined,
 0x00809652,current_fuel_demand_limit,undefined,
 0x00809654,diagnostic_fuel_control_mode,undefined,
-0x00809658,diagnostic_mode_buffer,undefined,
-0x0080965a,fuel_timing_mode_blend_factor_965a,undefined,
-0x0080965c,timing_protection_blend_ramp,undefined,
-0x0080965e,timing_mode_source_selector,diagnostic_mode_buffer_t,
+0x00809658,diagnostic_mode_buffer,byte,(typed byte from the removed diagnostic_mode_buffer_t.service_id - was undefined; PR #53 round 78)
+0x00809659,,byte,The removed diagnostic_mode_buffer_t's field sub_function - no other name (PR #53 round 78)
+0x0080965a,fuel_timing_mode_blend_factor_965a,word,(typed word from the removed diagnostic_mode_buffer_t.session_state - was undefined; PR #53 round 78)
+0x0080965c,timing_protection_blend_ramp,word,(typed word from the removed diagnostic_mode_buffer_t.timeout_counter - was undefined; PR #53 round 78)
+0x0080965e,timing_mode_source_selector,undefined,(typed undefined from the removed diagnostic_mode_buffer_t.data_buffer - was diagnostic_mode_buffer_t; PR #53 round 78)
 0x00809660,timing_transition_result,,
 0x00809662,timing_fuel_blend_result,,
 0x00809664,timing_oil_pressure_result,,
@@ -3998,9 +3998,11 @@ address,name,type,comment
 0x008096b0,fuel_mode_state_selector,undefined,
 0x008096b2,fuel_demand_limit_source_2_flag,undefined,
 0x008096b4,vp44_operating_condition_value,undefined,
-0x008096b6,vp44_diagnostic_mode_state,undefined,
+0x008096b6,vp44_diagnostic_mode_state,word,(typed word from the removed vp44_diagnostic_mode_t.mode_state - was undefined; PR #53 round 78)
+0x008096b8,,dword,The removed vp44_diagnostic_mode_t's field command_data - no other name (PR #53 round 78)
+0x008096bc,,word,The removed vp44_diagnostic_mode_t's field response_status - no other name (PR #53 round 78)
 0x008096c2,protection_param_2,,
-0x008096c4,diagnostic_mode_fuel_adjustment,diagnostic_mode_fuel_t,
+0x008096c4,diagnostic_mode_fuel_adjustment,word,(typed word from the removed diagnostic_mode_fuel_t.fuel_adjustment - was diagnostic_mode_fuel_t; PR #53 round 78)
 0x008096c6,diagnostic_fuel_gain_factor_96c6,,
 0x008096c8,protection_param_1,,
 0x008096ca,protection_param_3,,
@@ -4013,10 +4015,10 @@ address,name,type,comment
 0x008096f0,boost_pressure_control_state,undefined,
 0x008096f2,boost_pressure_diagnostic_timer,undefined,
 0x008096f4,boost_pressure_diagnostic_state,undefined,
-0x008096f6,diagnostic_mode_boost_state,undefined,
-0x008096f8,diagnostic_mode_fuel_state,undefined,
+0x008096f6,diagnostic_mode_boost_state,word,(typed word from the removed diagnostic_mode_fuel_t.boost_state - was undefined; PR #53 round 78)
+0x008096f8,diagnostic_mode_fuel_state,word,(typed word from the removed diagnostic_mode_fuel_t.fuel_state - was undefined; PR #53 round 78)
 0x008096fa,boost_pressure_protection_state_96fa,undefined,
-0x008096fc,vp44_diagnostic_mode_state_2,diagnostic_mode_fuel_t,
+0x008096fc,vp44_diagnostic_mode_state_2,word,(typed word from the removed diagnostic_mode_fuel_t.vp44_state_2 - was diagnostic_mode_fuel_t; PR #53 round 78)
 0x008096fe,vp44_diagnostic_fault_state,,
 0x00809700,fuel_demand_override_state,,
 0x00809702,fuel_temp_limit_state_2,,
@@ -4062,14 +4064,14 @@ address,name,type,comment
 0x0080976a,vp44_injection_timing_state,undefined,
 0x0080976c,vp44_injection_timing_counter,undefined,
 0x0080976e,schedule_armed,undefined,
-0x00809770,scheduler_overrun_counter,undefined,
-0x00809772,scheduler_wait_loop_counter,undefined,
-0x00809776,scheduler_wait_loop_limit,undefined,
-0x00809778,scheduler_wait_loop_index,undefined,
-0x0080977a,scheduler_phase_slot_count,undefined,
-0x0080977c,scheduler_phase_timeout,undefined,
-0x0080977e,scheduler_overrun_threshold,scheduler_control_t,
-0x00809780,scheduler_tick_interval,,
+0x00809770,scheduler_overrun_counter,word,(typed word from the removed scheduler_control_t.overrun_counter - was undefined; PR #53 round 78)
+0x00809772,scheduler_wait_loop_counter,word,(typed word from the removed scheduler_control_t.wait_loop_counter - was undefined; PR #53 round 78)
+0x00809776,scheduler_wait_loop_limit,word,(typed word from the removed scheduler_control_t.wait_loop_limit - was undefined; PR #53 round 78)
+0x00809778,scheduler_wait_loop_index,word,(typed word from the removed scheduler_control_t.wait_loop_index - was undefined; PR #53 round 78)
+0x0080977a,scheduler_phase_slot_count,word,(typed word from the removed scheduler_control_t.phase_slot_count - was undefined; PR #53 round 78)
+0x0080977c,scheduler_phase_timeout,word,(typed word from the removed scheduler_control_t.phase_timeout - was undefined; PR #53 round 78)
+0x0080977e,scheduler_overrun_threshold,word,(typed word from the removed scheduler_control_t.overrun_threshold - was scheduler_control_t; PR #53 round 78)
+0x00809780,scheduler_tick_interval,word,(typed word from the removed scheduler_control_t.tick_interval - was untyped; PR #53 round 78)
 0x00809782,scheduler_phase_table,,
 0x00809a03,output_control_state_flags,undefined,
 0x00809a04,output_control_timer_value,undefined,
@@ -4612,13 +4614,13 @@ address,name,type,comment
 0x0080aaa0,calculated_cylinder_pressure_1500_3000,undefined,
 0x0080aaa2,cylinder_pressure_calculation_method,undefined,
 0x0080aaa6,fss_offset_corrected_soi_before_cyl_maintenance_parameter_120_120,undefined,
-0x0080aaaa,actual_starting_ram_address_of_the_data_collector_buffer_none,undefined,
-0x0080aaae,physical_ram_address_of_the_end_of_the_data_collector_buffer_none,undefined,
-0x0080aab2,logical_beginning_address_of_the_data_collector_buffer_none,undefined,
-0x0080aab6,logical_address_canter_value_stored_to_the_data_collector_buffer_none,data_collector_t,
-0x0080aaba,logical_address_of_the_last_value_stored_to_the_data_collector_bu_none,,
-0x0080aabe,logical_address_canter_value_stored_to_the_data_collector_buffer_none.logical_start,,
-0x0080aac0,logical_address_canter_value_stored_to_the_data_collector_buffer_none.logical_start+2,,
+0x0080aaaa,actual_starting_ram_address_of_the_data_collector_buffer_none,dword,(typed dword from the removed data_collector_t.ram_start_addr - was undefined; PR #53 round 78)
+0x0080aaae,physical_ram_address_of_the_end_of_the_data_collector_buffer_none,dword,(typed dword from the removed data_collector_t.ram_end_addr - was undefined; PR #53 round 78)
+0x0080aab2,logical_beginning_address_of_the_data_collector_buffer_none,dword,(typed dword from the removed data_collector_t.logical_start - was undefined; PR #53 round 78)
+0x0080aab6,logical_address_canter_value_stored_to_the_data_collector_buffer_none,dword,(typed dword from the removed data_collector_t.logical_center - was data_collector_t; PR #53 round 78)
+0x0080aaba,logical_address_of_the_last_value_stored_to_the_data_collector_bu_none,dword,(typed dword: move.l - a pointer into the data collector buffer - the removed oversize structs had covered it; PR #53 round 78)
+0x0080aabe,,word,(clr.w / move.w #imm; was the coordinate row logical_address_canter_value_stored_to_the_data_collector_buffer_none.logical_start, a field of a removed oversize struct; PR #53 round 78)
+0x0080aac0,,dword,(move.l #imm; was the coordinate row logical_address_canter_value_stored_to_the_data_collector_buffer_none.logical_start+2, a field of a removed oversize struct; PR #53 round 78)
 0x0080bac4,snapshot_capture_active_flag,undefined,
 0x0080baca,trending_trigger_detected_flag,undefined,
 0x0080bacc,short_term_map_1_processing_total_0_500_0,undefined,
@@ -4767,9 +4769,9 @@ address,name,type,comment
 0x0080c3fc,circular_buffer_write_index,undefined,
 0x0080c3fe,circular_buffer_count,undefined,
 0x0080c402,parameter_circular_buffer_value,undefined,
-0x0080c404,engine_rpm_period_value,undefined,
+0x0080c404,engine_rpm_period_value,word,(typed word from the removed engine_rpm_buffer_t.rpm_period_value - was undefined; PR #53 round 78)
 0x0080c406,current_rpm_from_timing,undefined,
-0x0080c408,current_engine_rpm,engine_rpm_buffer_t,
+0x0080c408,current_engine_rpm,word,(typed word from the removed engine_rpm_buffer_t.current_engine_rpm - was engine_rpm_buffer_t; PR #53 round 78)
 0x0080c40a,rpm_period_running_sum,,
 0x0080c412,rpm_timing_accumulator,undefined,
 0x0080c41a,throttle_position_buffer_ptr,undefined,
@@ -4829,7 +4831,7 @@ address,name,type,comment
 0x0080c7ea,timing_advance_value,undefined,
 0x0080c7ec,fuel_timing_blend_rpm_component,undefined,
 0x0080c7ee,engine_running_mode_timer,undefined,
-0x0080c7f0,engine_rpm_cranking_threshold,undefined,
+0x0080c7f0,engine_rpm_cranking_threshold,word,(typed word from the removed engine_rpm_buffer_t.cranking_threshold - was undefined; PR #53 round 78)
 0x0080c7f2,fuel_timing_blend_lookup_result,undefined,
 0x0080c7f4,fuel_timing_intake_temp_correction,undefined,
 0x0080c7f6,frictional_load_fuel_offset,undefined,
@@ -4991,23 +4993,23 @@ address,name,type,comment
 0x0080cff2,fuel_parameter_blend_state,undefined,
 0x0080cff4,fuel_mode_selection_state,undefined,
 0x0080cff6,param_system_mode_state,undefined,
-0x0080d01a,fuel_arbitrator_control_mode,undefined,
+0x0080d01a,fuel_arbitrator_control_mode,word,(typed word from the removed fuel_arbitrator_diag_t.control_mode - was undefined; PR #53 round 78)
 0x0080d01e,timer_capture_value,undefined,
 0x0080d022,retarder_control_mode_state,undefined,
-0x0080d026,fuel_arbitrator_response_timer,undefined,
+0x0080d026,fuel_arbitrator_response_timer,word,(typed word from the removed fuel_arbitrator_diag_t.response_timer - was undefined; PR #53 round 78)
 0x0080d028,torque_control_mode_timer,undefined,
-0x0080d02a,fuel_arbitrator_status_counter,undefined,
+0x0080d02a,fuel_arbitrator_status_counter,word,(typed word from the removed fuel_arbitrator_diag_t.status_counter - was undefined; PR #53 round 78)
 0x0080d02c,retarder_control_mode_timer,undefined,
-0x0080d02e,fuel_arbitrator_speed_timer,undefined,
-0x0080d030,fuel_arbitrator_status_timer,undefined,
-0x0080d032,fuel_arbitrator_session_timer,undefined,
-0x0080d034,fuel_arbitrator_session_counter,undefined,
-0x0080d036,fuel_arbitrator_throttle_override,fuel_arbitrator_diag_t,
+0x0080d02e,fuel_arbitrator_speed_timer,word,(typed word from the removed fuel_arbitrator_diag_t.speed_timer - was undefined; PR #53 round 78)
+0x0080d030,fuel_arbitrator_status_timer,word,(typed word from the removed fuel_arbitrator_diag_t.status_timer - was undefined; PR #53 round 78)
+0x0080d032,fuel_arbitrator_session_timer,word,(typed word from the removed fuel_arbitrator_diag_t.session_timer - was undefined; PR #53 round 78)
+0x0080d034,fuel_arbitrator_session_counter,word,(typed word from the removed fuel_arbitrator_diag_t.session_counter - was undefined; PR #53 round 78)
+0x0080d036,fuel_arbitrator_throttle_override,word,(typed word from the removed fuel_arbitrator_diag_t.throttle_override - was fuel_arbitrator_diag_t; PR #53 round 78)
 0x0080d038,retarder_mode_override_flag,,
 0x0080d03a,fuel_demand_change_flag,,
 0x0080d03c,crank_state_transition_flag,,
-0x0080d03e,io_control_bit0_state,,
-0x0080d040,io_control_bit1_state,,
+0x0080d03e,io_control_bit0_state,dword,(typed dword: its 15 accesses were 4 bytes - the removed fuel_arbitrator_diag_t rendered them as fuel_arbitrator_throttle_override._8_4_; three functions add the 32-bit _io_control_handshake_state into it with an overflow check - the name is older and not checked against that; PR #53 round 78)
+0x0080d040,io_control_bit1_state,,(inside the io_control_bit0_state dword - no access of its own found; PR #53 round 78)
 0x0080d042,accumulated_backup_eps_period_between_vss_interrupts_0_65535,,
 0x0080d044,io_control_bit6_state,,
 0x0080d046,io_control_bit4_state,undefined,
@@ -5333,25 +5335,25 @@ address,name,type,comment
 0x0080d3a6,timer_used_to_disable_rsg_when_gear_ratio_changes_0_100,undefined,
 0x0080d3a8,gear_ratio_determined_when_in_gear_and_at_high_load_0_17,undefined,
 0x0080d3e2,can_rx_buffer_ptr,undefined,
-0x0080d3e6,diagnostic_tx_buffer_start_ptr,undefined,
-0x0080d3ea,diagnostic_rx_buffer_start_ptr,undefined,
-0x0080d3ee,diagnostic_buffer_end_address,undefined,
-0x0080d3f3,can_buffer_logger_state,diagnostic_buffer_ptrs_t,
+0x0080d3e6,diagnostic_tx_buffer_start_ptr,dword,(typed dword from the removed diagnostic_buffer_ptrs_t.tx_start_ptr - was undefined; PR #53 round 78)
+0x0080d3ea,diagnostic_rx_buffer_start_ptr,dword,(typed dword from the removed diagnostic_buffer_ptrs_t.rx_start_ptr - was undefined; PR #53 round 78)
+0x0080d3ee,diagnostic_buffer_end_address,dword,(typed dword from the removed diagnostic_buffer_ptrs_t.end_address - was undefined; PR #53 round 78)
+0x0080d3f3,can_buffer_logger_state,byte,(typed byte from the removed diagnostic_buffer_ptrs_t.logger_state - was diagnostic_buffer_ptrs_t; PR #53 round 78)
 0x0080d3f4,water_in_fuel_detection_flag,,
 0x0080d404,diag_multipacket_transmit_pending,undefined,
 0x0080d405,multi_packet_receive_state,undefined,
 0x0080d406,can_buffer_write_pending,undefined,
 0x0080d407,insite_command_byte,undefined,
 0x0080d409,insite_data_valid_flag,undefined,
-0x0080d40c,insite_response_buffer_ptr,insite_response_buffer_t,
+0x0080d40c,insite_response_buffer_ptr,dword,(typed dword from the removed insite_response_buffer_t.buffer_ptr - was insite_response_buffer_t; PR #53 round 78)
 0x0080d40f,insite_response_write_offset,,
 0x0080d410,insite_response_continuation_ptr,,
 0x0080d414,insite_data_read_ptr,undefined,
-0x0080d417,insite_data_buffer_offset,undefined,
-0x0080d418,insite_response_buffer_index,undefined,
+0x0080d417,insite_data_buffer_offset,byte,(typed byte from the removed insite_response_buffer_t.data_offset - was undefined; PR #53 round 78)
+0x0080d418,insite_response_buffer_index,byte,(typed byte from the removed insite_response_buffer_t.buffer_index - was undefined; PR #53 round 78)
 0x0080d419,insite_bytes_remaining,undefined,
-0x0080d41a,insite_response_buffer_length,undefined,
-0x0080d41b,insite_response_buffer_reserved,insite_response_buffer_t,
+0x0080d41a,insite_response_buffer_length,byte,(typed byte from the removed insite_response_buffer_t.buffer_length - was undefined; PR #53 round 78)
+0x0080d41b,insite_response_buffer_reserved,byte,(typed byte from the removed insite_response_buffer_t.reserved - was insite_response_buffer_t; PR #53 round 78)
 0x0080d41c,insite_parameter_checksum_ptr,,
 0x0080d420,insite_parameter_table_current_byte,,
 0x0080d421,insite_parameter_table_reserved,,
@@ -5392,8 +5394,8 @@ address,name,type,comment
 0x0080d490,insite_parameter_lookup_state,undefined,
 0x0080d492,diagnostic_code_clear_handler_state,undefined,
 0x0080d494,shutdown_limit_accumulator,undefined,
-0x0080d496,shutdown_minimum_selector_value,undefined,
-0x0080d498,shutdown_minimum_init_value,shutdown_minimum_selector_t,
+0x0080d496,shutdown_minimum_selector_value,word,(typed word from the removed shutdown_minimum_selector_t.fuel_value - was undefined; PR #53 round 78)
+0x0080d498,shutdown_minimum_init_value,word,(typed word from the removed shutdown_minimum_selector_t.init_value - was shutdown_minimum_selector_t; PR #53 round 78)
 0x0080d49a,cached_parameter_value,,
 0x0080d49c,diagnostic_status_register,,
 0x0080d49e,pwm_timer_cycle_advance_state,,

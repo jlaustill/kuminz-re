@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Mon Nov 23 20:57:25 MST 2026
+// Generated: Mon Nov 23 22:03:09 MST 2026
 
 
 //
@@ -514,20 +514,17 @@ uint cm550_FUN_0000ac3c(void)
       }
       _dma_desc1_dest_ptr = _DAT_0080002c;
       if (_alpha_blend_factor == 0x4000) {
-        _high_rpm_threshold_countdown = cm550_tableLookup2D(&previous_engine_rpm.previous_sample);
+        _high_rpm_threshold_countdown = cm550_tableLookup2D(&dma_desc1_source_ptr);
       }
       else if (_alpha_blend_factor == 0) {
         _high_rpm_threshold_countdown = cm550_tableLookup2D((word *)&dma_descriptor_ptr1);
       }
       else {
-        previous_engine_rpm.previous_engine_rpm =
-             cm550_tableLookup2D(&previous_engine_rpm.previous_sample);
-        previous_engine_rpm.previous_nonzero = cm550_tableLookup2D((word *)&dma_descriptor_ptr1);
+        previous_engine_rpm = cm550_tableLookup2D(&dma_desc1_source_ptr);
+        dma_descriptor_base1 = cm550_tableLookup2D((word *)&dma_descriptor_ptr1);
         _high_rpm_threshold_countdown =
-             (short)((uint)_alpha_blend_factor * (uint)previous_engine_rpm.previous_engine_rpm >>
-                    0xe) +
-             (short)((uint)previous_engine_rpm.previous_nonzero *
-                     (0x4000 - (uint)_alpha_blend_factor) >> 0xe);
+             (short)((uint)_alpha_blend_factor * (uint)previous_engine_rpm >> 0xe) +
+             (short)((uint)dma_descriptor_base1 * (0x4000 - (uint)_alpha_blend_factor) >> 0xe);
       }
     }
     if (_high_rpm_threshold_countdown == _frictional_no_load_fueling) {
@@ -647,8 +644,8 @@ void cm550_FUN_0000af70(void)
   uint *puVar4;
   
   _dma_desc1_dest_ptr = _DCMNLOES;
-  ram0x00800012 = 0x6086e;
-  previous_engine_rpm.previous_sample = 2;
+  DWORD_00800012 = 0x6086e;
+  dma_desc1_source_ptr = 2;
   _DAT_0080001e = 400;
   _dma_descriptor_base2 = 0x6089a;
   _DAT_00800018 = 2;
@@ -8139,50 +8136,44 @@ void cm550_circularBufferWriteWithStatus(void)
   do {
     while( true ) {
       while( true ) {
-        if ((*puVar2 == 0) || (&DAT_00805308 + (uint)engine_rpm_delta.rpm_delta * 4 <= puVar2)) {
+        if ((*puVar2 == 0) || (&DAT_00805308 + (uint)data_collector_channel_count * 4 <= puVar2)) {
           return;
         }
         if (*puVar2 < 0x1000000) break;
-        dVar1 = logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_end_addr +
-                1;
-        *(undefined1 *)
-         logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_end_addr = 0;
-        logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_end_addr = dVar1;
-        dVar1 = logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_end_addr +
-                1;
-        *(undefined1 *)
-         logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_end_addr = 0;
-        logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_end_addr = dVar1;
+        dVar1 = logical_address_of_the_last_value_stored_to_the_data_collector_bu_none + 1;
+        *(undefined1 *)logical_address_of_the_last_value_stored_to_the_data_collector_bu_none = 0;
+        logical_address_of_the_last_value_stored_to_the_data_collector_bu_none = dVar1;
+        dVar1 = logical_address_of_the_last_value_stored_to_the_data_collector_bu_none + 1;
+        *(undefined1 *)logical_address_of_the_last_value_stored_to_the_data_collector_bu_none = 0;
+        logical_address_of_the_last_value_stored_to_the_data_collector_bu_none = dVar1;
         puVar2 = puVar2 + 1;
       }
-      if (engine_rpm_delta.previous_nonzero != 0) break;
-      *(undefined1 *)
-       logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_end_addr =
+      if (WORD_00800348 != 0) break;
+      *(undefined1 *)logical_address_of_the_last_value_stored_to_the_data_collector_bu_none =
            *(undefined1 *)*puVar2;
       puVar2 = puVar2 + 1;
-      engine_rpm_delta.previous_nonzero = 1;
+      WORD_00800348 = 1;
     }
-    logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_end_addr =
-         logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_end_addr + 1;
-    if (_physical_ram_address_of_the_end_of_the_data_collector_buffer_none <
-        logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_end_addr) {
-      logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_end_addr =
-           _actual_starting_ram_address_of_the_data_collector_buffer_none;
+    logical_address_of_the_last_value_stored_to_the_data_collector_bu_none =
+         logical_address_of_the_last_value_stored_to_the_data_collector_bu_none + 1;
+    if (physical_ram_address_of_the_end_of_the_data_collector_buffer_none <
+        logical_address_of_the_last_value_stored_to_the_data_collector_bu_none) {
+      logical_address_of_the_last_value_stored_to_the_data_collector_bu_none =
+           actual_starting_ram_address_of_the_data_collector_buffer_none;
     }
-    *(undefined1 *)
-     logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_end_addr =
+    *(undefined1 *)logical_address_of_the_last_value_stored_to_the_data_collector_bu_none =
          *(undefined1 *)*puVar2;
     puVar2 = puVar2 + 1;
-    if ((logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_end_addr ==
-         _logical_beginning_address_of_the_data_collector_buffer_none) &&
-       (_logical_beginning_address_of_the_data_collector_buffer_none =
-             _logical_beginning_address_of_the_data_collector_buffer_none + 1,
-       _physical_ram_address_of_the_end_of_the_data_collector_buffer_none <
-       _logical_beginning_address_of_the_data_collector_buffer_none)) {
-      _logical_beginning_address_of_the_data_collector_buffer_none =
-           _actual_starting_ram_address_of_the_data_collector_buffer_none;
+    if ((logical_address_of_the_last_value_stored_to_the_data_collector_bu_none ==
+         logical_beginning_address_of_the_data_collector_buffer_none) &&
+       (logical_beginning_address_of_the_data_collector_buffer_none =
+             logical_beginning_address_of_the_data_collector_buffer_none + 1,
+       physical_ram_address_of_the_end_of_the_data_collector_buffer_none <
+       logical_beginning_address_of_the_data_collector_buffer_none)) {
+      logical_beginning_address_of_the_data_collector_buffer_none =
+           actual_starting_ram_address_of_the_data_collector_buffer_none;
     }
-  } while (logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_end_addr !=
+  } while (logical_address_of_the_last_value_stored_to_the_data_collector_bu_none !=
            _data_collector_buffer_write_stop_address);
   _engine_rpm_previous_sample = 3;
   return;
@@ -8213,9 +8204,9 @@ uint vp44_communication_state_machine(undefined4 param_1)
     uVar2 = (undefined2)(uVar4 >> 0x10);
     uVar4 = CONCAT22(uVar2,_DAT_008052fe);
     if ((_DAT_008052fe == param_1._0_2_) && (_DAT_00805308 != 0)) {
-      if (engine_rpm_delta.previous_sample == 0) {
+      if (data_collector_sample_decimation_counter == 0) {
         if (1 < _DAT_00805304) {
-          engine_rpm_delta.previous_sample = 1;
+          data_collector_sample_decimation_counter = 1;
         }
         if ((_engine_rpm_previous_sample == 3) && (_DAT_00805300 == 0)) {
           _engine_rpm_previous_sample = 0;
@@ -8226,24 +8217,23 @@ uint vp44_communication_state_machine(undefined4 param_1)
                            (&switchD_000136a8::switchdataD_000136ac)[_engine_rpm_previous_sample]);
           switch(_engine_rpm_previous_sample) {
           case 0:
-            logical_address_canter_value_stored_to_the_data_collector_buffer_none.logical_start.
-            _0_2_ = 1;
+            WORD_0080aabe = 1;
             for (; (*piVar5 != 0 &&
                    (piVar5 < &duty_cycle_mon_approxiamte_short_term_map_1_start_0_0_50000_0));
                 piVar5 = piVar5 + 1) {
-              engine_rpm_delta.rpm_delta = engine_rpm_delta.rpm_delta + 1;
+              data_collector_channel_count = data_collector_channel_count + 1;
             }
-            iVar1 = _actual_starting_ram_address_of_the_data_collector_buffer_none -
-                    0x1000U % (uint)engine_rpm_delta.rpm_delta;
-            _physical_ram_address_of_the_end_of_the_data_collector_buffer_none = iVar1 + 0xfff;
-            uVar3 = 0x1000 / engine_rpm_delta.rpm_delta;
+            iVar1 = actual_starting_ram_address_of_the_data_collector_buffer_none -
+                    0x1000U % (uint)data_collector_channel_count;
+            physical_ram_address_of_the_end_of_the_data_collector_buffer_none = iVar1 + 0xfff;
+            uVar3 = 0x1000 / data_collector_channel_count;
             _DAT_00800350 = (ushort)uVar3;
-            _DAT_0080034e = _DAT_00800350 * engine_rpm_delta.rpm_delta;
-            logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_end_addr =
-                 _actual_starting_ram_address_of_the_data_collector_buffer_none;
-            _logical_beginning_address_of_the_data_collector_buffer_none =
-                 _actual_starting_ram_address_of_the_data_collector_buffer_none;
-            engine_rpm_delta.previous_nonzero = 0;
+            _DAT_0080034e = _DAT_00800350 * data_collector_channel_count;
+            logical_address_of_the_last_value_stored_to_the_data_collector_bu_none =
+                 actual_starting_ram_address_of_the_data_collector_buffer_none;
+            logical_beginning_address_of_the_data_collector_buffer_none =
+                 actual_starting_ram_address_of_the_data_collector_buffer_none;
+            WORD_00800348 = 0;
             if (_DAT_00805300 == 0) {
               _engine_rpm_previous_sample = 1;
               _data_collector_buffer_write_stop_address = iVar1 + 0x1000;
@@ -8261,14 +8251,14 @@ uint vp44_communication_state_machine(undefined4 param_1)
               else if (_data_collector_capture_mode == 1) {
                 _engine_rpm_previous_sample = 2;
                 _data_collector_buffer_write_stop_address =
-                     (_actual_starting_ram_address_of_the_data_collector_buffer_none +
-                     ((int)uVar3 >> 1) * (uint)engine_rpm_delta.rpm_delta) - 1;
+                     (actual_starting_ram_address_of_the_data_collector_buffer_none +
+                     ((int)uVar3 >> 1) * (uint)data_collector_channel_count) - 1;
                 uVar4 = cm550_circularBufferWriteWithStatus();
               }
               else if (_data_collector_capture_mode == 2) {
                 _engine_rpm_previous_sample = 2;
                 _data_collector_buffer_write_stop_address =
-                     _physical_ram_address_of_the_end_of_the_data_collector_buffer_none;
+                     physical_ram_address_of_the_end_of_the_data_collector_buffer_none;
                 uVar4 = cm550_circularBufferWriteWithStatus();
               }
             }
@@ -8288,20 +8278,17 @@ uint vp44_communication_state_machine(undefined4 param_1)
               }
               else if (_data_collector_capture_mode == 1) {
                 _engine_rpm_previous_sample = 2;
-                logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_start_addr
-                     = logical_address_canter_value_stored_to_the_data_collector_buffer_none.
-                       ram_end_addr + 1;
-                if (_physical_ram_address_of_the_end_of_the_data_collector_buffer_none <
-                    logical_address_canter_value_stored_to_the_data_collector_buffer_none.
-                    ram_start_addr) {
-                  logical_address_canter_value_stored_to_the_data_collector_buffer_none.
-                  ram_start_addr = _actual_starting_ram_address_of_the_data_collector_buffer_none;
+                logical_address_canter_value_stored_to_the_data_collector_buffer_none =
+                     logical_address_of_the_last_value_stored_to_the_data_collector_bu_none + 1;
+                if (physical_ram_address_of_the_end_of_the_data_collector_buffer_none <
+                    logical_address_canter_value_stored_to_the_data_collector_buffer_none) {
+                  logical_address_canter_value_stored_to_the_data_collector_buffer_none =
+                       actual_starting_ram_address_of_the_data_collector_buffer_none;
                 }
                 _data_collector_buffer_write_stop_address =
-                     logical_address_canter_value_stored_to_the_data_collector_buffer_none.
-                     ram_end_addr +
-                     ((int)(uint)_DAT_00800350 >> 1) * (uint)engine_rpm_delta.rpm_delta;
-                if (_physical_ram_address_of_the_end_of_the_data_collector_buffer_none <
+                     logical_address_of_the_last_value_stored_to_the_data_collector_bu_none +
+                     ((int)(uint)_DAT_00800350 >> 1) * (uint)data_collector_channel_count;
+                if (physical_ram_address_of_the_end_of_the_data_collector_buffer_none <
                     _data_collector_buffer_write_stop_address) {
                   _data_collector_buffer_write_stop_address =
                        _data_collector_buffer_write_stop_address - _DAT_0080034e;
@@ -8311,12 +8298,12 @@ uint vp44_communication_state_machine(undefined4 param_1)
               else if (_data_collector_capture_mode == 2) {
                 _engine_rpm_previous_sample = 2;
                 _data_collector_buffer_write_stop_address =
-                     _physical_ram_address_of_the_end_of_the_data_collector_buffer_none;
-                logical_address_canter_value_stored_to_the_data_collector_buffer_none.ram_end_addr =
-                     _actual_starting_ram_address_of_the_data_collector_buffer_none;
-                _logical_beginning_address_of_the_data_collector_buffer_none =
-                     _actual_starting_ram_address_of_the_data_collector_buffer_none;
-                engine_rpm_delta.previous_nonzero = 0;
+                     physical_ram_address_of_the_end_of_the_data_collector_buffer_none;
+                logical_address_of_the_last_value_stored_to_the_data_collector_bu_none =
+                     actual_starting_ram_address_of_the_data_collector_buffer_none;
+                logical_beginning_address_of_the_data_collector_buffer_none =
+                     actual_starting_ram_address_of_the_data_collector_buffer_none;
+                WORD_00800348 = 0;
                 uVar4 = cm550_circularBufferWriteWithStatus();
               }
             }
@@ -8325,17 +8312,16 @@ uint vp44_communication_state_machine(undefined4 param_1)
             uVar4 = cm550_circularBufferWriteWithStatus();
             break;
           case 3:
-            engine_rpm_delta.rpm_delta = 0;
-            logical_address_canter_value_stored_to_the_data_collector_buffer_none.logical_start.
-            _0_2_ = 0;
+            data_collector_channel_count = 0;
+            WORD_0080aabe = 0;
           }
         }
       }
       else {
-        engine_rpm_delta.previous_sample = engine_rpm_delta.previous_sample + 1;
-        uVar4 = CONCAT22(uVar2,engine_rpm_delta.previous_sample);
-        if (_DAT_00805304 <= engine_rpm_delta.previous_sample) {
-          engine_rpm_delta.previous_sample = 0;
+        data_collector_sample_decimation_counter = data_collector_sample_decimation_counter + 1;
+        uVar4 = CONCAT22(uVar2,data_collector_sample_decimation_counter);
+        if (_DAT_00805304 <= data_collector_sample_decimation_counter) {
+          data_collector_sample_decimation_counter = 0;
         }
       }
     }
@@ -8349,13 +8335,11 @@ uint vp44_communication_state_machine(undefined4 param_1)
 // Function: vp44_initVp44BufferAddresses @ 0x000138a0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void vp44_initVp44BufferAddresses(void)
 
 {
-  _actual_starting_ram_address_of_the_data_collector_buffer_none = 0x80aac4;
-  logical_address_canter_value_stored_to_the_data_collector_buffer_none._10_4_ = &DAT_00805308;
+  actual_starting_ram_address_of_the_data_collector_buffer_none = 0x80aac4;
+  DWORD_0080aac0 = (dword)&DAT_00805308;
   return;
 }
 
@@ -14060,9 +14044,8 @@ undefined8 vp44_rpmTimerInterruptHandler2(void)
     _next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
          (uint *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
   }
-  if ((_io_control_handshake_state <= -fuel_arbitrator_throttle_override._8_4_ - 1) &&
-     (fuel_arbitrator_throttle_override._8_4_ =
-           _io_control_handshake_state + fuel_arbitrator_throttle_override._8_4_,
+  if ((_io_control_handshake_state <= -io_control_bit0_state - 1) &&
+     (io_control_bit0_state = _io_control_handshake_state + io_control_bit0_state,
      _io_control_bit4_state != -1)) {
     _io_control_bit4_state = _io_control_bit4_state + 1;
   }
@@ -14301,9 +14284,8 @@ undefined8 vp44_FUN_00019e90(void)
     _next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
          (uint *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
   }
-  if ((_io_control_handshake_state <= -fuel_arbitrator_throttle_override._8_4_ - 1) &&
-     (fuel_arbitrator_throttle_override._8_4_ =
-           _io_control_handshake_state + fuel_arbitrator_throttle_override._8_4_,
+  if ((_io_control_handshake_state <= -io_control_bit0_state - 1) &&
+     (io_control_bit0_state = _io_control_handshake_state + io_control_bit0_state,
      _io_control_bit4_state != -1)) {
     _io_control_bit4_state = _io_control_bit4_state + 1;
   }
@@ -14616,9 +14598,8 @@ undefined8 vp44_FUN_0001a52c(void)
     _next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
          (uint *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
   }
-  if ((_io_control_handshake_state <= -fuel_arbitrator_throttle_override._8_4_ - 1) &&
-     (fuel_arbitrator_throttle_override._8_4_ =
-           _io_control_handshake_state + fuel_arbitrator_throttle_override._8_4_,
+  if ((_io_control_handshake_state <= -io_control_bit0_state - 1) &&
+     (io_control_bit0_state = _io_control_handshake_state + io_control_bit0_state,
      _io_control_bit4_state != -1)) {
     _io_control_bit4_state = _io_control_bit4_state + 1;
   }
@@ -14948,9 +14929,8 @@ int cm550_throttleTimeAccumulatorProcessor(uint param_1,undefined4 param_2)
     _next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
          (uint *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
   }
-  if ((_io_control_handshake_state <= -fuel_arbitrator_throttle_override._8_4_ - 1) &&
-     (fuel_arbitrator_throttle_override._8_4_ =
-           _io_control_handshake_state + fuel_arbitrator_throttle_override._8_4_,
+  if ((_io_control_handshake_state <= -io_control_bit0_state - 1) &&
+     (io_control_bit0_state = _io_control_handshake_state + io_control_bit0_state,
      _io_control_bit4_state != -1)) {
     _io_control_bit4_state = _io_control_bit4_state + 1;
   }
@@ -15066,9 +15046,8 @@ int vp44FaultThresholdTablesInit(void)
     _next_table_position_pointer_to_next_spot_in_pulse_per_800000_83ffff =
          (uint *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
   }
-  if ((_io_control_handshake_state <= -fuel_arbitrator_throttle_override._8_4_ - 1) &&
-     (fuel_arbitrator_throttle_override._8_4_ =
-           _io_control_handshake_state + fuel_arbitrator_throttle_override._8_4_,
+  if ((_io_control_handshake_state <= -io_control_bit0_state - 1) &&
+     (io_control_bit0_state = _io_control_handshake_state + io_control_bit0_state,
      _io_control_bit4_state != -1)) {
     _io_control_bit4_state = _io_control_bit4_state + 1;
   }
@@ -19133,19 +19112,19 @@ void vp44ControlStructureInit(void)
 void cm550_diagnosticBufferPointerInit(void)
 
 {
-  j1708_transmit_buffer_2_32_dc9c = (dword)&diagnostic_tx_buffer_base;
-  j1708_transmit_buffer_0_2_32 = (dword)&diagnostic_tx_buffer_base;
+  j1708_transmit_buffer_2_32_dc9c = (dword)diagnostic_tx_buffer_base;
+  j1708_transmit_buffer_0_2_32 = (dword)diagnostic_tx_buffer_base;
   j1708_transmit_buffer_2_32_dc98 = 0x808b01;
-  diagnostic_tx_buffer_base = 0;
+  diagnostic_tx_buffer_base[0] = 0;
   j1708_transmit_buffer_full_flag_1_true_0_false = 0;
-  j1708_transmit_buffer_2_32_ddc6 = &diagnostic_tx_buffer_base;
+  j1708_transmit_buffer_2_32_ddc6 = diagnostic_tx_buffer_base;
   j1708_receive_buffer_pointer_2_32_dca6 = 0x808c01;
-  diagnostic_rx_buffer_base.tx_buffer_base[0] = 0;
+  diagnostic_rx_buffer_base[0] = 0;
   j1708_receive_buffer_full_flag_1_true_0_false = 0;
-  j1708_receive_buffer_2_32 = (dword)&diagnostic_rx_buffer_base;
+  j1708_receive_buffer_2_32 = (dword)diagnostic_rx_buffer_base;
   DWORD_0080ddce = 0x808cff;
-  j1708_receive_buffer_pointer_2_32_dca2 = (dword)&diagnostic_rx_buffer_base;
-  j1708_receive_buffer_pointer_2_32_dcaa = (dword)&diagnostic_rx_buffer_base;
+  j1708_receive_buffer_pointer_2_32_dca2 = (dword)diagnostic_rx_buffer_base;
+  j1708_receive_buffer_pointer_2_32_dcaa = (dword)diagnostic_rx_buffer_base;
   return;
 }
 
@@ -19870,11 +19849,10 @@ undefined8 cm550_interruptCounter2Increment(void)
 void cm550_initVectorTable(void)
 
 {
-  byte *pbVar1;
+  undefined4 *puVar1;
   
-  for (pbVar1 = diagnostic_rx_buffer_base.rx_buffer_base + 0xdc; pbVar1 < &none_none;
-      pbVar1 = pbVar1 + 4) {
-    *(code **)pbVar1 = cm550_interruptCounter2Increment;
+  for (puVar1 = (undefined4 *)&DAT_00808ddc; puVar1 < &none_none; puVar1 = puVar1 + 1) {
+    *puVar1 = cm550_interruptCounter2Increment;
   }
   return;
 }
