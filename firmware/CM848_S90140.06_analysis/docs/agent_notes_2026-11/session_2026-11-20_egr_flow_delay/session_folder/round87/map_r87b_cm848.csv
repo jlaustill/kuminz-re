@@ -1,0 +1,5 @@
+address,name,old_label,kind,dims
+0x00527958,cm848_writeWorkingRamEndMarker,cm848_timer_state_preservation,function,1
+0x0052796c,cm848_checkWorkingRamEndMarker,cm848_main_loop_initialization,function,1
+0x003fa008,executive_frame_phase,main_loop_scheduler_phase,global,1
+0x0041428e,working_ram_end_marker,DAT_0041428e,global,1

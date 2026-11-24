@@ -1,0 +1,45 @@
+0 failed
+0 skipped (invalid format)
+cm848_anyJ1939InputDataErrorActive @ 00509e58
+cm848_calculateCoolantOverheatTemperatureError @ 00513980
+cm848_calculateCruiseGovernorEngineSpeedError @ 00525134
+cm848_calculateCruiseGovernorSpeedErrorGain @ 005250c0
+cm848_clearJ1939InputDataErrorBit @ 00509d98
+cm848_exceptionHandler @ 00538eac
+cm848_initEngineWarningFlags @ 005134e8
+cm848_monitorFuelPressureTrackingError @ 00531d34
+cm848_resetFuelPressureTrackingErrorAccumulators @ 00531d10
+cm848_resetFuelPressureTrackingErrorMonitor @ 00532208
+cm848_setJ1939InputDataErrorBit @ 00509f18
+cm848_updateEngineWarningFlags @ 00513200
+cm848_updateVariableGeometryTurbochargerPositionControlErrorFault @ 0050fbf8
+ERROR REPORT SCRIPT ERROR:  (HeadlessAnalyzer) ghidra.program.model.mem.MemoryConflictException: Part of range (00300000, 00307fff) already exists in memory.
+Failed:  0
+Failed: 0
+Failed (invalid address): 0
+Not found: 150 (already absent — fine)
+ROM labels from J90280.05 will likely fail to apply
+ROM-TO-RAM THUNKS: made 18, call overrides 14, skipped 43, failed 0
+Skipped: 0
+Skipped: 8
+Skipped (already exists): 1
+Type stats: 0 out-of-range, 0 already match, 0 unmapped type, 3 failed (in code)
+WARN  Decompiling 0000b44c, pcode error at 0000b450: Unable to resolve constructor at 0000b450 (DecompileCallback)  
+WARNING: 1 function imports failed
+Warning: cm848_registerPgnEf00Handler defines 2 param row(s) but Ghidra recovered 0 — applying the CSV's 2 (verify this is intended)
+Warning: cm848_selectLoadNormalizer defines 4 param row(s) but Ghidra recovered 0 — applying the CSV's 4 (verify this is intended)
+Warning: cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling defines 1 param row(s) but Ghidra recovered 2 — applying the CSV's 1 (verify this is intended)
+Warning: cm848_unsignedDivision32 defines 4 param row(s) but Ghidra recovered 0 — applying the CSV's 4 (verify this is intended)
+Warning: mpc555_diagnosticSubcommandDispatcher defines 2 param row(s) but Ghidra recovered 0 — applying the CSV's 2 (verify this is intended)
+Warning: mpc555_dispatchJ1939TransportConnectionManagement defines 2 param row(s) but Ghidra recovered 1 — applying the CSV's 2 (verify this is intended)
+Warning: mpc555_handleJ1939TransportClearToSend defines 2 param row(s) but Ghidra recovered 1 — applying the CSV's 2 (verify this is intended)
+Warning: mpc555_sendJ1939TransportDataPackets defines 1 param row(s) but Ghidra recovered 0 — applying the CSV's 1 (verify this is intended)
+Warning: Variable 'bVar2' not found in cm848_validateBootSecurityKey
+Warning: Variable 'iVar2' not found in mpc555_keyOnStateMachine
+Warning: Variable 'puVar1' not found in cm848_copyBootKernelToRam
+Warning: Variable 'puVar2' not found in cm848_copyBootKernelToRam
+Warning: Variable 'seed_high_byte' not found in mpc555_generateSerialChallenge
+Warning: Variable 'seed_value' not found in mpc555_generateSerialChallenge
+Warning: Variable 'uVar1' not found in mpc555_keyOnStateMachine
+Warning: Variable 'wVar3' not found in mpc555_keyOnStateMachine
+WARN  REPORT: Removed conflicting program file from project: /cm848_rom.bin (HeadlessAnalyzer)  

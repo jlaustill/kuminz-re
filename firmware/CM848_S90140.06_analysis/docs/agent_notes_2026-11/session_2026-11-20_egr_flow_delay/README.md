@@ -724,3 +724,14 @@ Hand work on the round 7 lead.
   `new_token_lines.py` (the new artifact lines, for classification), `apply_r86d.py`.
 - **Closing:** `apply_r86_closing.py`, `apply_r86d_closing.py`, `update_large_tar_r86.sh`; `wave2_result.json` is the
   workflow's proposals and verdicts.
+
+## Round 87: the round 85-86 leads audit; 8 twins share one name (`session_folder/round87/`)
+
+- **The audit:** `audit_result_r87.json` (the workflow's proposals and verdicts), `audit_summary_r87.txt`,
+  `summary.py`, `final_changes.py` / `final_changes.tsv` (the accepted and amended changes).
+- **Stage A:** `precheck.py`, `apply_r87a.py`, `apply_r87a2.py` (comment tidy; the CM848 J1939 defaults copy),
+  `old_name_sweep.py`, `token_diff.py` (a per-function token diff that ignores line wrapping), `fix_map_header.py`,
+  the maps and the proof outputs.
+- **Stage B:** `apply_r87b.py`, `refresh_other_csvs.py` (old names in the four CSVs refresh_references.py does not
+  cover), `fault_pcode.py` (fault number -> OBD P-code).
+- **Closing:** `apply_r87_closing.py`, `update_large_tar_r87.sh`.

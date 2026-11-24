@@ -1,0 +1,9 @@
+0x00010e80: 1 token changes: short => word
+0x00010f32: 1 token changes: short => word
+0x00010fe0: 3 token changes: short => word | 1U => 1 |  => ( byte * )
+0x0001125a: 3 token changes: short => word | 1U => 1 |  => ( byte * )
+0x000114d4: 1 token changes: 1U => 1
+---- census of distinct changes
+   4 short => word
+   3 1U => 1
+   2  => ( byte * )

@@ -8,7 +8,7 @@ fresh air flow records; the e2m never spells it out, so no name guesses an expan
 - **Round 2:** at the user's request the rest of the family is renamed too, on this PR (stages 3 / 4). The scope rule:
   a symbol is in if its e2m record is `CHP_` / `C_CHP_`, or if it is an input that a family function would otherwise
   misname.
-- **Beyond CM848 (rounds 72-86):** the J1939 memory write service and the development mode code are shared:
+- **Beyond CM848 (rounds 72-87):** the J1939 memory write service and the development mode code are shared:
   eleven CM550 functions are CM848 twins and share their names. Round 74 also dismantles a misapplied CM550
   struct, round 75 types CM550's InSite parameter schedule and names its J1708 SCI, and round 76 names CM550's
   MC68336 registers, so CM550's CSVs, the root README and `firmware/feature_comparison.csv` change too.
@@ -936,6 +936,15 @@ state enum, the flag bytes.**
 - **Stage D (009958eb):** a local row that stage C's renumbering had moved is removed; one unused return becomes
   `void`.
 
+**Round 87.**
+- **Stage A (9e2ddc7d):** an audit workflow (5 investigators, 5 skeptics) of round 85-86's leads. 8 cross-firmware
+  twins now share one name (`executiveFrameInterruptHandler` was `main_loop` in both; `restartThroughBootRom`,
+  `clearWorkingRam`, `copyCalibrationFromRomToRam`, ...); CM550's chip select 5 CAN, speed sensing and restart
+  functions; 13 CM550 globals placed by its own parameter ID table.
+- **Stage B (f0ebe1d5):** the skeptics' plate fixes, old names refreshed in four more CSVs,
+  `cm550_initializeDiscreteInputs`, and CM848's working RAM end marker (`cm848_writeWorkingRamEndMarker` /
+  `cm848_checkWorkingRamEndMarker`, fault 462).
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -1027,6 +1036,8 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 87: B: CM550: verify DETERMINISTIC; label-only (0 differing lines; 0 functions removed, added or changed); every new plate rendered; no new build warning (unmapped types 5429 -> 5428: the removed row). CM848: verify DETERMINISTIC; 0 functions removed or added; label-only except 3 functions - one local declaration moved in mpc555_areBootModeStrapPinsHigh, the marker compare prints 0xc0dac0da (was -0x3f253f26) now that working_ram_end_marker is a dword, and clearWorkingRam shows its one 4-byte store per step (was two word stores) with pointer casts; no new build warning. Headers 0 g++ errors in both; _cal HARD 0 in both (CM550 MISSING 28 -> 27: the removed row).
+- [x] Round 87: A: CM550: verify DETERMINISTIC; 0 functions removed or added; label-only except 5 functions, whose only token changes come from the newly typed parameter block words (4 short -> word, 3 1U -> 1, 2 (byte *) casts); no new build warning (unmapped types 5436 -> 5429). CM848: verify DETERMINISTIC; label-only (0 differing lines with the rename map); no new build warning. Headers 0 g++ errors in both; _cal HARD 0 in both (CM550 MISSING 31 -> 28).
 - [x] Round 86: D: CM550 verify DETERMINISTIC; only the two target functions change; the local rows of every changed function checked
 - [x] Round 86: C: CM550: verify DETERMINISTIC; 120 functions placed, no Error / mismatch / exception; 0 functions left with a parameter piece or stack read; param_N pieces 201 -> 0 and in_stack_ 139 -> 2 over the round (the 2: an offset-0 return read); placed rows match the survey's reads and pushes; headers 0 g++ errors.
 - [x] Round 86: A: CM550 verify DETERMINISTIC; CM848 rebuilt byte-identical to its committed .cpp (T1); 60 functions placed with no Error / mismatch / exception; in_stack_ tokens 125 -> 0; the 20 control functions byte-identical; 100 changed functions all with rows or their callers; every predicted call constant rendered; the caller census, the placed-vs-survey check (0 problems) and the log greps clean; 104 unit tests pass; headers 0 g++ errors.
