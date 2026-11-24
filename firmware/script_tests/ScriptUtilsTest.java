@@ -503,4 +503,39 @@ class ScriptUtilsTest {
         assertThrows(IllegalArgumentException.class, () -> ScriptUtils.parseStackParameterLayout(Arrays.asList(
                 "setting,value", "language,L", "first_stack_offset,5", "slot_size,2")));
     }
+
+    // ── imageFromDumpWithGaps ────────────────────────────────────────────────
+
+    private static byte[] bytes(int... values) {
+        byte[] b = new byte[values.length];
+        for (int i = 0; i < values.length; i++) b[i] = (byte) values[i];
+        return b;
+    }
+
+    @Test void dumpImage_gapInTheMiddle_putsLaterBytesBack() {
+        // CM848 cm848_ram.bin: the chunk at 0x40c200 was skipped, so dump byte 4 belongs at image offset 6
+        assertArrayEquals(bytes(1, 2, 3, 4, 0, 0, 5, 6),
+                ScriptUtils.imageFromDumpWithGaps(bytes(1, 2, 3, 4, 5, 6), 0, 8, new int[][]{{4, 2}}, (byte) 0));
+    }
+
+    @Test void dumpImage_droppedPrefixAndGapAtTheStart() {
+        // CM550 extended RAM: drop the dump's uncertain first bytes, leave the uncertain start of the image unknown
+        assertArrayEquals(bytes(0xff, 0xff, 0xff, 0xff, 3, 4, 5),
+                ScriptUtils.imageFromDumpWithGaps(bytes(1, 2, 3, 4, 5), 2, 7, new int[][]{{0, 4}}, (byte) 0xff));
+    }
+
+    @Test void dumpImage_shortDumpLeavesTheTailFilled() {
+        assertArrayEquals(bytes(1, 2, 0, 0),
+                ScriptUtils.imageFromDumpWithGaps(bytes(1, 2), 0, 4, new int[][]{}, (byte) 0));
+    }
+
+    @Test void dumpImage_longDumpIsCutAndGapsAreClipped() {
+        assertArrayEquals(bytes(1, 0, 0),
+                ScriptUtils.imageFromDumpWithGaps(bytes(1, 2, 3, 4), 0, 3, new int[][]{{1, 9}}, (byte) 0));
+    }
+
+    @Test void dumpImage_badGapThrows() {
+        assertThrows(IllegalArgumentException.class,
+                () -> ScriptUtils.imageFromDumpWithGaps(bytes(1), 0, 1, new int[][]{{0}}, (byte) 0));
+    }
 }

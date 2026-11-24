@@ -20,6 +20,13 @@ public class SetupMemoryMap extends GhidraScript {
     // MC68336 CM550 Memory Map
     private static final long RAM_BASE = 0x800000L;
     private static final long EXTENDED_RAM_BASE = 0x8091C2L;
+    private static final long EXTENDED_RAM_END = 0x810000L;     // the EXT_RAM block ends here (exclusive)
+    // J90350.00.extended_ram.bin is 0x80 bytes short: the dump tool skipped a failed 128-byte chunk without padding
+    // - the first (0x8091C2) or the second (0x809242). Under both readings the file's bytes from offset 0x80 on
+    // belong at 0x8092C2 (40 of 100 init-time constant stores match only at address - 0x80, none only at the
+    // address; PR #53 round 87). The image leaves the uncertain 0x8091C2-0x8092C1 0 (PR #53 round 88).
+    private static final int EXTENDED_RAM_DUMP_SKIP = 0x80;     // file bytes not placed
+    private static final int EXTENDED_RAM_UNKNOWN_LENGTH = 0x100;  // 0x8091C2-0x8092C1
     private static final long EEPROM_BASE = 0x1000000L;
 
     @Override
@@ -55,7 +62,12 @@ public class SetupMemoryMap extends GhidraScript {
         String extRamFile = firmwareDir + "/J90350.00.extended_ram.bin";
         if (new File(extRamFile).exists()) {
             println("[2/3] Adding Extended RAM region...");
-            addMemoryRegion(memory, "EXT_RAM", EXTENDED_RAM_BASE, extRamFile, true, true, true);
+            byte[] extRam = ScriptUtils.imageFromDumpWithGaps(readFile(extRamFile), EXTENDED_RAM_DUMP_SKIP,
+                    (int) (EXTENDED_RAM_END - EXTENDED_RAM_BASE), new int[][]{{0, EXTENDED_RAM_UNKNOWN_LENGTH}},
+                    (byte) 0);
+            println(String.format("  Unknown 0x%06x-0x%06x left 0 (the dump skipped a chunk there)",
+                    EXTENDED_RAM_BASE, EXTENDED_RAM_BASE + EXTENDED_RAM_UNKNOWN_LENGTH - 1));
+            addMemoryRegionFromBytes(memory, "EXT_RAM", EXTENDED_RAM_BASE, extRam, true, true, true);
         } else {
             println("[2/3] SKIPPED: Extended RAM file not found: " + extRamFile);
         }
@@ -121,6 +133,39 @@ public class SetupMemoryMap extends GhidraScript {
         println("    Address: " + String.format("0x%08x - 0x%08x", baseAddress, baseAddress + data.length - 1));
         println("    Size:    " + data.length + " bytes (" + (data.length / 1024) + " KB)");
         println("    Perms:   " + (read ? "r" : "-") + (write ? "w" : "-") + (execute ? "x" : "-"));
+    }
+
+    /** Creates an initialized block holding data (a memory image already built from its dump). */
+    private void addMemoryRegionFromBytes(Memory memory, String name, long baseAddress, byte[] data,
+                                          boolean read, boolean write, boolean execute) throws Exception {
+        Address addr = toAddr(baseAddress);
+        MemoryBlock existingBlock = memory.getBlock(addr);
+        if (existingBlock != null) {
+            println("  Removing existing block " + existingBlock.getName() + "...");
+            memory.removeBlock(existingBlock, monitor);
+        }
+        MemoryBlock block = memory.createInitializedBlock(name, addr, data.length, (byte) 0, monitor, false);
+        block.setRead(read);
+        block.setWrite(write);
+        block.setExecute(execute);
+        memory.setBytes(addr, data);
+        println("  Created " + name + " block:");
+        println("    Address: " + String.format("0x%08x - 0x%08x", baseAddress, baseAddress + data.length - 1));
+        println("    Size:    " + data.length + " bytes (" + (data.length / 1024) + " KB)");
+    }
+
+    private static byte[] readFile(String path) throws Exception {
+        File file = new File(path);
+        byte[] data = new byte[(int) file.length()];
+        try (FileInputStream fis = new FileInputStream(file)) {
+            int done = 0;
+            while (done < data.length) {
+                int n = fis.read(data, done, data.length - done);
+                if (n < 0) break;
+                done += n;
+            }
+        }
+        return data;
     }
 
     private void printMemoryMap(Memory memory) {

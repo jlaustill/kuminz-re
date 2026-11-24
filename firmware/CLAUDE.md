@@ -70,7 +70,7 @@ firmware/
 
 **Script utilities:** `firmware/scripts/ScriptUtils.java` and `CsvCommentIndex.java` contain all pure (non-Ghidra) logic — CSV parsing, address parsing, type classification, comment preservation. New scripts should use these rather than copy-pasting. No Ghidra JARs needed to compile or test them.
 
-**Script test suite:** `cd firmware/script_tests && ./run_tests.sh` — 104 JUnit 5 tests covering ScriptUtils and CsvCommentIndex. Tests live in `firmware/script_tests/` (NOT inside `firmware/scripts/`) because Ghidra's `GhidraSourceBundle` recurses into subdirectories when compiling the bundle. Any `.java` file with imports not on Ghidra's classpath (e.g. JUnit) inside `firmware/scripts/` will break ALL script compilation with "class not found" errors.
+**Script test suite:** `cd firmware/script_tests && ./run_tests.sh` — 109 JUnit 5 tests covering ScriptUtils and CsvCommentIndex. Tests live in `firmware/script_tests/` (NOT inside `firmware/scripts/`) because Ghidra's `GhidraSourceBundle` recurses into subdirectories when compiling the bundle. Any `.java` file with imports not on Ghidra's classpath (e.g. JUnit) inside `firmware/scripts/` will break ALL script compilation with "class not found" errors.
 
 ---
 
@@ -925,6 +925,9 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     - The cause: clip-core's `ECUReader::readMemoryService4ALarge` skipped a failed 128-byte chunk without padding.
       Since PR #53 round 88 it pads the chunk with 0xFF and lists it in `<dump>.gaps.txt` (`readInChunks`, with unit tests).
       CM550's extended RAM dump has the same 0x80 shift (its README).
+    - The build puts the bytes back: `SetupMemoryMapCM848.java` builds the RAM block (0x3FA000-0x43FFFF) with
+      `ScriptUtils.imageFromDumpWithGaps`, leaving 0x40c200-0x40c27f 0, and `SetupMemoryMap.java` does the same for
+      CM550's extended RAM.
 - **The CHP charge flow model (2026-11-20, todo 046).** CHP is the e2m prefix of the charge, EGR and fresh air flow
   records; the e2m never spells it out.
   - **The EGR stage:** `cm848_calculateDelayedEgrFlowAndFraction` (0x128a0, was `cm848_throttleBasedFuelCalculation`).

@@ -317,6 +317,31 @@ public class ScriptUtils {
         return offsets;
     }
 
+    // ── Dumps with gaps ──────────────────────────────────────────────────────
+
+    /**
+     * Builds a memory image from a dump that is missing some ranges. A dump tool that skipped a failed chunk without
+     * padding (clip-core's ECUReader before PR #53 round 88) shifts every later byte down by that chunk; this puts each
+     * byte back at its own offset. The image is imageLength bytes: each gap {imageOffset, length} holds fill, and the
+     * dump's bytes from dumpStart on fill every other image byte in order. Dump bytes beyond the image are dropped;
+     * image bytes the dump does not reach stay fill. A gap that reaches outside the image is clipped.
+     */
+    public static byte[] imageFromDumpWithGaps(byte[] dump, int dumpStart, int imageLength, int[][] gaps, byte fill) {
+        if (dumpStart < 0 || imageLength < 0) throw new IllegalArgumentException("negative dump start or image length");
+        byte[] image = new byte[imageLength];
+        java.util.Arrays.fill(image, fill);
+        boolean[] inGap = new boolean[imageLength];
+        for (int[] gap : gaps) {
+            if (gap.length != 2 || gap[1] < 0) throw new IllegalArgumentException("a gap is {imageOffset, length}");
+            for (int i = Math.max(0, gap[0]); i < Math.min(imageLength, gap[0] + gap[1]); i++) inGap[i] = true;
+        }
+        int source = dumpStart;
+        for (int i = 0; i < imageLength && source < dump.length; i++) {
+            if (!inGap[i]) image[i] = dump[source++];
+        }
+        return image;
+    }
+
     // ── Firmware name ────────────────────────────────────────────────────────
 
     /**
