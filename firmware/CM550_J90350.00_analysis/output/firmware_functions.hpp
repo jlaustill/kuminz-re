@@ -3,12 +3,12 @@
 
 // Function Forward Declarations (from decompiled output)
 
-short cm550_huffmanTreeBuilder(int param_1);  // @ 0x00003640
+short cm550_huffmanTreeBuilder(dword tree_buffer);  // @ 0x00003640
 void cm550_huffmanDecompress(dword tree_buffer,word start_node);  // @ 0x00003792
 void cm550_huffmanDecompressMain(void);  // @ 0x00003836
 void cm550_busyWaitDelayLoop(undefined4 param_1);  // @ 0x00003870
 byte mc68k_portPinTestSequence2(void);  // @ 0x0000388a
-void cm550_waitForChipSelect2InputBit0High(void);  // @ 0x0000395a
+void mc68k_waitForChipSelect2InputBit0High(void);  // @ 0x0000395a
 undefined4 mc68k_checkSerialEepromSignature(void);  // @ 0x000039a8
 void mc68k_hardwareInitAndStartup(void);  // @ 0x00003a94
 void mc68k_FUN_00003abe(void);  // @ 0x00003abe
@@ -593,15 +593,6 @@ void mc68k_dualCanControllerInit(void);  // @ 0x00028a04
 void initDiagnosticBufferPointers(void);  // @ 0x00028b80
 void cm550_mainCanTransmissionLoop(void);  // @ 0x00028e32
 word mc68k_initializeJ1708Datalink(void);  // @ 0x00029130
-short cm550_huffmanTreeBuilderImageCopy(dword tree_buffer);  // @ 0x0002c834
-void cm550_huffmanDecompressImageCopy(int param_1,undefined4 param_2);  // @ 0x0002c986
-void cm550_huffmanDecompressMainImageCopy(void);  // @ 0x0002ca2a
-void cm550_busyWaitDelayLoopImageCopy(word loop_count);  // @ 0x0002ca64
-byte mc68k_portPinTestSequence2ImageCopy(void);  // @ 0x0002ca7e
-void cm550_waitForChipSelect2InputBit0HighImageCopy(void);  // @ 0x0002cb4e
-undefined4 mc68k_checkSerialEepromSignatureImageCopy(void);  // @ 0x0002cb9c
-void mc68k_hardwareInitAndStartupImageCopy(void);  // @ 0x0002cc88
-void cm550_ramClearWithWatchdogImageCopy(void);  // @ 0x0002ce14
 void cm550_updateBootBlockFromImage(void);  // @ 0x0002ce64
 void cm550_FUN_0002cf52(undefined1 *param_1,undefined4 param_2);  // @ 0x0002cf52
 uint cm550_FUN_0002cf7e(undefined4 param_1);  // @ 0x0002cf7e

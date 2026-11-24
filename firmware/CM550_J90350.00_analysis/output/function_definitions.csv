@@ -21,7 +21,7 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Huffman Compression Functions
 # -----------------------------------------------------------------------------
-0x0002c834,huffmanTreeBuilder,0,tree_buffer,int,Pointer to huffman tree node buffer (3KB)
+0x00003640,cm550_huffmanTreeBuilder,0,tree_buffer,int,Pointer to huffman tree node buffer (3KB) (was on 0x2C834 - the boot block image's copy - until PR #53 round 84)
 0x00003792,huffmanDecompress,0,tree_buffer,int,Pointer to huffman tree node buffer
 0x00003792,huffmanDecompress,1,start_node,ushort,Starting node index for decompression
 
@@ -143,7 +143,6 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Timing and Delay Functions
 # -----------------------------------------------------------------------------
-0x0002ca64,cm550_busyWaitDelayLoopImageCopy,0,loop_count,ushort,Number of delay loop iterations
 0x00034bf8,hardwareTimerDelayLoop,0,timer_ticks,ushort,Number of hardware timer ticks to wait
 
 # -----------------------------------------------------------------------------

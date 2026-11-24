@@ -65,13 +65,13 @@ address,name,type,comment
 0x0002347e,switchdataD_0002347e,ushort,
 0x000234f6,switchD,,
 0x000234fa,switchdataD_000234fa,ushort,
-0x000291f4,boot_block_image,,A byte-for-byte copy of the boot block ROM 0x0-0x3C6F (15472 bytes, to 0x2CE63): cm550_updateBootBlockFromImage programs it into flash at address 0. The nine functions Ghidra finds inside are named <original>ImageCopy (PR #53 round 84)
+0x000291f4,boot_block_image,,A byte-for-byte copy of the boot block ROM 0x0-0x3C6F (15472 bytes, to 0x2CE63): cm550_updateBootBlockFromImage programs it into flash at address 0. Data here, not code: the nine functions the analysis finds inside (copies of the boot block's at address - 0x291F4; round 84 stage A named them <original>ImageCopy) are in deleted_functions.csv. Their PC-relative references show the boot block's 0x8000 / 0x8062 / 0x80339E as 0x311F4 / 0x31256 / 0x82C592 (PR #53 round 84)
 0x0002920a,boot_block_image_version,dword,The boot block image's version (0x02020300 - the same as boot_block_version - so cm550_updateBootBlockFromImage leaves the boot block alone) (boot_block_image + 0x16 - the image's copy of boot_block_version) (PR #53 round 84)
 0x0002f2c2,switchD,,
 0x0002f2c6,switchdataD_0002f2c6,ushort,
 0x0002fbc4,security_key_scramble_mask,byte[10],The mask unscrambleSecurityKey routes the security key's bits by (46 58 9a 32 70 87 23 99 85 64) - byte-identical with CM848's 0x5839a (PR #53 round 72)
 0x0002fbce,security_key_byte_order,byte[10],The byte order unscrambleSecurityKey XORs and writes the key by (06 08 01 02 00 07 03 09 05 04) - byte-identical with CM848's 0x583a4 (PR #53 round 72)
-0x00030c9c,tpu_microcode_image,dword[342],The TPU microcode: mc68k_loadTpuMicrocode copies the 0x68c bytes from here (to 0x31327) into the TPU RAM at 0xFFE000-0xFFE68B before it runs the TPU from its RAM (TPU_TPUMCR = 0x407). The array stops at 0x311F4: mc68k_hardwareInitAndStartupImageCopy reads 0x311F4 / 0x31256 - but that is the boot block image's PC-relative view of ROM 0x8000 / 0x8062 (the application signature and entry pointer), not a record in the microcode (PR #53 rounds 83-84)
+0x00030c9c,tpu_microcode_image,dword[419],The TPU microcode: mc68k_loadTpuMicrocode copies the 0x68c bytes from here (to 0x31327) into the TPU RAM at 0xFFE000-0xFFE68B before it runs the TPU from its RAM (TPU_TPUMCR = 0x407). dword[419] covers the 0x68C bytes the loader copies, up to tpu_microcode_entry_table. Round 83 stopped the array at 0x311F4 because the boot block image's copy of mc68k_hardwareInitAndStartup read 0x311F4 / 0x31256 - that is the image's PC-relative view of ROM 0x8000 / 0x8062 (the application signature and entry pointer), and the image copies are not functions any more (PR #53 rounds 83-84)
 0x00031328,tpu_microcode_entry_table,word[128],The TPU microcode's entry table: mc68k_loadTpuMicrocode copies these 256 bytes to 0xFFE700-0xFFE7FF - the top of the 2 KB microcode memory - 16 functions x 8 entry words (PR #53 round 83)
 0x00032d00,switchD,,
 0x00032d04,switchdataD_00032d04,ushort,

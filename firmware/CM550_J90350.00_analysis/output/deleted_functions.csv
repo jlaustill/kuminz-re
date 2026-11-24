@@ -1,0 +1,14 @@
+address,reason
+# Function-deletion delta (common.sh cmd_deletions -> ApplyFunctionDeletions.java): the build removes these
+# function records after the auto-analysis. CM550's first rows (PR #53 round 84): the nine functions the
+# analysis finds inside boot_block_image (ROM 0x291F4-0x2CE63, a byte copy of the boot block ROM 0x0-0x3C6F)
+# are data here - cm550_updateBootBlockFromImage programs them into flash at 0 - and only other copies call them.
+0x0002c834,boot_block_image data: the image's copy of the boot block function at 0x00003640 (named cm550_huffmanTreeBuilderImageCopy in round 84 stage A)
+0x0002c986,boot_block_image data: the image's copy of the boot block function at 0x00003792 (named cm550_huffmanDecompressImageCopy in round 84 stage A)
+0x0002ca2a,boot_block_image data: the image's copy of the boot block function at 0x00003836 (named cm550_huffmanDecompressMainImageCopy in round 84 stage A)
+0x0002ca64,boot_block_image data: the image's copy of the boot block function at 0x00003870 (named cm550_busyWaitDelayLoopImageCopy in round 84 stage A)
+0x0002ca7e,boot_block_image data: the image's copy of the boot block function at 0x0000388a (named mc68k_portPinTestSequence2ImageCopy in round 84 stage A)
+0x0002cb4e,boot_block_image data: the image's copy of the boot block function at 0x0000395a (named cm550_waitForChipSelect2InputBit0HighImageCopy in round 84 stage A)
+0x0002cb9c,boot_block_image data: the image's copy of the boot block function at 0x000039a8 (named mc68k_checkSerialEepromSignatureImageCopy in round 84 stage A)
+0x0002cc88,boot_block_image data: the image's copy of the boot block function at 0x00003a94 (named mc68k_hardwareInitAndStartupImageCopy in round 84 stage A)
+0x0002ce14,boot_block_image data: the image's copy of the boot block function at 0x00003c20 (named cm550_ramClearWithWatchdogImageCopy in round 84 stage A)

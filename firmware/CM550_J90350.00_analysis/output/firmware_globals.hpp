@@ -14,7 +14,7 @@ extern undefined boot_block_image;  // 0x000291f4
 extern dword boot_block_image_version;  // 0x0002920a
 extern byte security_key_scramble_mask[10];  // 0x0002fbc4
 extern byte security_key_byte_order[10];  // 0x0002fbce
-extern dword tpu_microcode_image[342];  // 0x00030c9c
+extern dword tpu_microcode_image[419];  // 0x00030c9c
 extern word tpu_microcode_entry_table[128];  // 0x00031328
 extern memory_region_t application_memory_region_table[5];  // 0x000345dc
 extern undefined insite_parameter_schedule_table;  // 0x000612ee
