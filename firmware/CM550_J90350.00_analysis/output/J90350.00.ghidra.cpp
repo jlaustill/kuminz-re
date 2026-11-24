@@ -1,12 +1,12 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue Nov 24 05:53:51 MST 2026
+// Generated: Tue Nov 24 05:59:01 MST 2026
 
 
 //
 // Function: cm550_huffmanTreeBuilder @ 0x00003640
 //
 
-short cm550_huffmanTreeBuilder(dword tree_buffer)
+short cm550_huffmanTreeBuilder(huffman_tree_node_t *tree_buffer)
 
 {
   uint uVar1;
@@ -14,13 +14,13 @@ short cm550_huffmanTreeBuilder(dword tree_buffer)
   uint uVar2;
   uint uVar4;
   
-  *(undefined2 *)(tree_buffer + 0xc06) = 0xffff;
+  tree_buffer[0x201].frequency = 0xffff;
   uVar1 = 0;
   while (uVar3 = (ushort)uVar1, uVar3 < 0x100) {
-    *(ushort *)(tree_buffer + uVar1 * 6) = (ushort)*(byte *)((short)uVar3 + 0x12a);
+    tree_buffer[uVar1].frequency = (ushort)*(byte *)((short)uVar3 + 0x12a);
     uVar1 = (uint)(ushort)(uVar3 + 1);
   }
-  *(undefined2 *)(tree_buffer + 0x600) = 1;
+  tree_buffer[0x100].frequency = 1;
   uVar3 = 0x101;
   while( true ) {
     uVar4 = 0x201;
@@ -32,24 +32,23 @@ short cm550_huffmanTreeBuilder(dword tree_buffer)
       SIM_SWSR = 0xaa;
       CS2_WATCHDOG_SERVICE = 0x55;
       CS2_WATCHDOG_SERVICE = 0xaa;
-      if (*(short *)(tree_buffer + uVar2 * 6) != 0) {
-        if (*(ushort *)(tree_buffer + uVar2 * 6) < *(ushort *)(tree_buffer + uVar4 * 6)) {
+      if (tree_buffer[uVar2].frequency != 0) {
+        if (tree_buffer[uVar2].frequency < tree_buffer[uVar4].frequency) {
           uVar1 = uVar4;
           uVar4 = uVar2;
         }
-        else if (*(ushort *)(tree_buffer + uVar2 * 6) < *(ushort *)(tree_buffer + uVar1 * 6)) {
+        else if (tree_buffer[uVar2].frequency < tree_buffer[uVar1].frequency) {
           uVar1 = uVar2;
         }
       }
       uVar2 = (uint)(ushort)((ushort)uVar2 + 1);
     }
-    if ((short)uVar1 == 0x201) break;
-    *(short *)(tree_buffer + (uint)uVar3 * 6) =
-         *(short *)(tree_buffer + uVar1 * 6) + *(short *)(tree_buffer + uVar4 * 6);
-    *(undefined2 *)(tree_buffer + uVar4 * 6) = 0;
-    *(undefined2 *)(tree_buffer + uVar1 * 6) = 0;
-    *(short *)(tree_buffer + 2 + (uint)uVar3 * 6) = (short)uVar4;
-    *(short *)(tree_buffer + 4 + (uint)uVar3 * 6) = (short)uVar1;
+    if ((word)uVar1 == 0x201) break;
+    tree_buffer[uVar3].frequency = tree_buffer[uVar1].frequency + tree_buffer[uVar4].frequency;
+    tree_buffer[uVar4].frequency = 0;
+    tree_buffer[uVar1].frequency = 0;
+    tree_buffer[uVar3].left_child = (word)uVar4;
+    tree_buffer[uVar3].right_child = (word)uVar1;
     uVar3 = uVar3 + 1;
   }
   return uVar3 - 1;
@@ -61,7 +60,7 @@ short cm550_huffmanTreeBuilder(dword tree_buffer)
 // Function: cm550_huffmanDecompress @ 0x00003792
 //
 
-void cm550_huffmanDecompress(dword tree_buffer,word start_node)
+void cm550_huffmanDecompress(huffman_tree_node_t *tree_buffer,word start_node)
 
 {
   bool bVar1;
@@ -91,10 +90,10 @@ void cm550_huffmanDecompress(dword tree_buffer,word start_node)
         }
       }
       if ((*pbVar4 & (byte)iVar3) == 0) {
-        uVar2 = *(ushort *)(tree_buffer + 2 + (uint)uVar2 * 6);
+        uVar2 = tree_buffer[uVar2].left_child;
       }
       else {
-        uVar2 = *(ushort *)(tree_buffer + 4 + (uint)uVar2 * 6);
+        uVar2 = tree_buffer[uVar2].right_child;
       }
     } while ((0x100 < uVar2) && (!bVar1));
     if (bVar1) break;
@@ -115,17 +114,17 @@ void cm550_huffmanDecompressMain(void)
 {
   word start_node;
   undefined4 unaff_A2;
-  undefined2 *puVar1;
-  undefined2 local_c0a [1539];
+  huffman_tree_node_t *phVar1;
+  huffman_tree_node_t tree_nodes [513];
   
   start_node = (word)((uint)unaff_A2 >> 0x10);
-  for (puVar1 = local_c0a; puVar1 < local_c0a + 0x603; puVar1 = puVar1 + 3) {
-    *puVar1 = 0;
-    puVar1[1] = 0;
-    puVar1[2] = 0;
+  for (phVar1 = tree_nodes; phVar1 < tree_nodes + 0x201; phVar1 = phVar1 + 1) {
+    phVar1->frequency = 0;
+    phVar1->left_child = 0;
+    phVar1->right_child = 0;
   }
-  cm550_huffmanTreeBuilder((dword)local_c0a);
-  cm550_huffmanDecompress((dword)local_c0a,start_node);
+  cm550_huffmanTreeBuilder(tree_nodes);
+  cm550_huffmanDecompress(tree_nodes,start_node);
   return;
 }
 
@@ -6321,7 +6320,7 @@ int cm550_saveParameterBlock1ToFlash(void)
 
 {
   ushort extraout_D0u;
-  dword dVar1;
+  FLASH_ERASE_RESULT FVar1;
   short sVar3;
   int iVar2;
   undefined4 unaff_D2;
@@ -6353,8 +6352,8 @@ int cm550_saveParameterBlock1ToFlash(void)
     mc68k_delayTimeBaseTicksWithWatchdogService();
     uVar4 = uVar4 + 1;
   }
-  dVar1 = cm550_flashEraseFromRam(0x4000,0);
-  if (dVar1 == 0) {
+  FVar1 = cm550_flashEraseFromRam(0x4000,0);
+  if (FVar1 == FLASH_ERASE_DONE) {
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
     CS2_WATCHDOG_SERVICE = 0x55;
@@ -6442,7 +6441,7 @@ int cm550_saveParameterBlock2ToFlash(void)
 
 {
   ushort extraout_D0u;
-  dword dVar1;
+  FLASH_ERASE_RESULT FVar1;
   short sVar3;
   int iVar2;
   undefined4 unaff_D2;
@@ -6474,8 +6473,8 @@ int cm550_saveParameterBlock2ToFlash(void)
     mc68k_delayTimeBaseTicksWithWatchdogService();
     uVar4 = uVar4 + 1;
   }
-  dVar1 = cm550_flashEraseFromRam(0x6000,0);
-  if (dVar1 == 0) {
+  FVar1 = cm550_flashEraseFromRam(0x6000,0);
+  if (FVar1 == FLASH_ERASE_DONE) {
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
     CS2_WATCHDOG_SERVICE = 0x55;
@@ -17509,7 +17508,7 @@ void cm550_FUN_0001c308(void)
    0x1C354 onward. mc68k_ for the 0xFFD000 read (was cm550_flashEraseWithWatchdog; PR #53 round 85)
     */
 
-undefined4 mc68k_flashEraseBlock(void)
+FLASH_ERASE_RESULT mc68k_flashEraseBlock(void)
 
 {
   byte bVar1;
@@ -17531,7 +17530,7 @@ undefined4 mc68k_flashEraseBlock(void)
     uVar3 = uVar5 + 1;
     if (40000 < uVar5) {
       _DAT_00000000 = 0xffff;
-      return 1;
+      return FLASH_ERASE_FAILED;
     }
     bVar1 = DAT_00ffd000;
     if (((bVar1 & 1) == 0) || (_DAT_008006a6 == 1)) {
@@ -17554,7 +17553,7 @@ undefined4 mc68k_flashEraseBlock(void)
           } while (uVar3 < 0xa0);
         }
         _DAT_00000000 = 0xffff;
-        return 2;
+        return FLASH_ERASE_SUSPENDED;
       }
     }
     uVar2 = 0;
@@ -17582,10 +17581,10 @@ undefined4 mc68k_flashEraseBlock(void)
    stack buffer and calls the copy. Returns its result: 0 erased / 1 error or timeout / 2 suspended
    (was cm550_FUN_0001c484; PR #53 round 85) */
 
-dword cm550_flashEraseFromRam(dword block_address,dword suspend_check_disabled)
+FLASH_ERASE_RESULT cm550_flashEraseFromRam(dword block_address,dword suspend_check_disabled)
 
 {
-  dword dVar1;
+  FLASH_ERASE_RESULT FVar1;
   undefined2 *puVar2;
   code *pcVar3;
   undefined1 auStack_804 [2048];
@@ -17597,8 +17596,8 @@ dword cm550_flashEraseFromRam(dword block_address,dword suspend_check_disabled)
     *puVar2 = *(undefined2 *)pcVar3;
     puVar2 = puVar2 + 1;
   }
-  dVar1 = (*(code *)auStack_804)();
-  return dVar1;
+  FVar1 = (*(code *)auStack_804)();
+  return FVar1;
 }
 
 
@@ -30089,7 +30088,7 @@ word mc68k_initializeJ1708Datalink(void)
 void cm550_updateBootBlockFromImage(void)
 
 {
-  dword dVar1;
+  FLASH_ERASE_RESULT FVar1;
   undefined4 unaff_D2;
   code *pcVar2;
   code *pcVar3;
@@ -30109,8 +30108,8 @@ void cm550_updateBootBlockFromImage(void)
            enable_flag_to_allow_boot_block_programming_enable_disable | 2;
     }
     mc68k_ioDriverStrobeHandler();
-    dVar1 = cm550_flashEraseFromRam(0,1);
-    if (dVar1 == 0) {
+    FVar1 = cm550_flashEraseFromRam(0,1);
+    if (FVar1 == FLASH_ERASE_DONE) {
       dest_address = (code *)0x0;
       pcVar3 = (code *)&boot_block_image;
       while (pcVar3 < cm550_updateBootBlockFromImage) {

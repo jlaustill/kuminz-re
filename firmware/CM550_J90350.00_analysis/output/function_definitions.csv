@@ -21,9 +21,9 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Huffman Compression Functions
 # -----------------------------------------------------------------------------
-0x00003640,cm550_huffmanTreeBuilder,0,tree_buffer,int,Pointer to huffman tree node buffer (3KB) (was on 0x2C834 - the boot block image's copy - until PR #53 round 84)
-0x00003792,huffmanDecompress,0,tree_buffer,int,Pointer to huffman tree node buffer
-0x00003792,huffmanDecompress,1,start_node,ushort,Starting node index for decompression
+0x00003640,cm550_huffmanTreeBuilder,0,tree_buffer,huffman_tree_node_t*,Pointer to huffman tree node buffer (3KB) (was on 0x2C834 - the boot block image's copy - until PR #53 round 84)
+0x00003792,cm550_huffmanDecompress,0,tree_buffer,huffman_tree_node_t*,Pointer to huffman tree node buffer
+0x00003792,cm550_huffmanDecompress,1,start_node,ushort,Starting node index for decompression
 
 # -----------------------------------------------------------------------------
 # Table Interpolation Functions
@@ -74,9 +74,10 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Flash Programming Functions
 # -----------------------------------------------------------------------------
+0x0001c31a,mc68k_flashEraseBlock,return,,FLASH_ERASE_RESULT,The erase result - cm550_flashEraseFromRam returns it from the RAM copy (PR #53 round 85)
 0x0001c484,cm550_flashEraseFromRam,0,block_address,uint,The flash block's base address (0x4000 / 0x6000 / 0)
 0x0001c484,cm550_flashEraseFromRam,1,suspend_check_disabled,uint,1 = never suspend the erase (the boot block); 0 = suspend when the chip select 2 device's input bit 0 reads 1 (the parameter block savers) (PR #53 round 85)
-0x0001c484,cm550_flashEraseFromRam,return,,int,The erase result: 0 erased / 1 erase error or timeout / 2 suspended (PR #53 round 85)
+0x0001c484,cm550_flashEraseFromRam,return,,FLASH_ERASE_RESULT,The erase result: 0 erased / 1 erase error or timeout / 2 suspended (PR #53 round 85)
 0x0001c5e8,flashProgramFromRam,0,dest_address,int,Flash destination address
 0x0001c5e8,flashProgramFromRam,1,source_ptr,uint,Source data pointer
 0x0001c5e8,flashProgramFromRam,2,byte_count,uint,Number of bytes to program

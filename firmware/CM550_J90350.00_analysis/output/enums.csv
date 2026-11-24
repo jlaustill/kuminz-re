@@ -839,3 +839,6 @@ RUN_LOCATION,0xeeee,RUN_LOCATION_NORMAL,Normal - set at boot / power-down and on
 # DEVELOPMENT_MODE_STATE - CM848's enum for development_mode (0x80de30 - a word here as in CM848; PR #53 round 73)
 DEVELOPMENT_MODE_STATE,0,DEVELOPMENT_MODE_OFF,Normal operation - cleared by exitDevelopmentMode / forceExitDevelopmentMode and the boot code,2
 DEVELOPMENT_MODE_STATE,1,DEVELOPMENT_MODE_ON,Development mode - set by enterDevelopmentMode (J1708 command 3 subcommand 0x40 after the security key),2
+FLASH_ERASE_RESULT,0,FLASH_ERASE_DONE,The block is erased: status bit 7 (ready) without the erase error bit (PR #53 round 85),4
+FLASH_ERASE_RESULT,1,FLASH_ERASE_FAILED,The erase error bit (status bit 5) or no ready bit after 40000 status reads (PR #53 round 85),4
+FLASH_ERASE_RESULT,2,FLASH_ERASE_SUSPENDED,Suspended with 0xB0B0: the suspend check is on and the chip select 2 device's input bit 0 read 1 on 4 consecutive reads (PR #53 round 85),4

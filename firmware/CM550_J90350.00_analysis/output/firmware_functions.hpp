@@ -3,8 +3,8 @@
 
 // Function Forward Declarations (from decompiled output)
 
-short cm550_huffmanTreeBuilder(dword tree_buffer);  // @ 0x00003640
-void cm550_huffmanDecompress(dword tree_buffer,word start_node);  // @ 0x00003792
+short cm550_huffmanTreeBuilder(huffman_tree_node_t *tree_buffer);  // @ 0x00003640
+void cm550_huffmanDecompress(huffman_tree_node_t *tree_buffer,word start_node);  // @ 0x00003792
 void cm550_huffmanDecompressMain(void);  // @ 0x00003836
 void cm550_busyWaitDelayLoop(undefined4 param_1);  // @ 0x00003870
 byte mc68k_portPinTestSequence2(void);  // @ 0x0000388a
@@ -338,8 +338,8 @@ void cm550_diagnosticFuelLimitInterpolator(void);  // @ 0x0001c03c
 void cm550_FUN_0001c0d4(void);  // @ 0x0001c0d4
 void fuelTimingOilPressureModeController(void);  // @ 0x0001c152
 void cm550_FUN_0001c308(void);  // @ 0x0001c308
-undefined4 mc68k_flashEraseBlock(void);  // @ 0x0001c31a
-dword cm550_flashEraseFromRam(dword block_address,dword suspend_check_disabled);  // @ 0x0001c484
+FLASH_ERASE_RESULT mc68k_flashEraseBlock(void);  // @ 0x0001c31a
+FLASH_ERASE_RESULT cm550_flashEraseFromRam(dword block_address,dword suspend_check_disabled);  // @ 0x0001c484
 undefined4 cm550_flashProgramAndVerifyWords(void);  // @ 0x0001c4ba
 void cm550_flashProgramFromRam(dword dest_address,dword source_ptr,dword byte_count);  // @ 0x0001c5e8
 void cm550_diagnosticStatusDefaultSetter(void);  // @ 0x0001c630

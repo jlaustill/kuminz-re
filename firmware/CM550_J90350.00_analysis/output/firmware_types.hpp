@@ -1041,6 +1041,12 @@ typedef enum {
     DEVELOPMENT_MODE_ON = 1  /* Development mode - set by enterDevelopmentMode (J1708 command 3 subcommand 0x40 after the security key) */
 } DEVELOPMENT_MODE_STATE;
 
+typedef enum {
+    FLASH_ERASE_DONE = 0,  /* The block is erased: status bit 7 (ready) without the erase error bit (PR #53 round 85) */
+    FLASH_ERASE_FAILED = 1,  /* The erase error bit (status bit 5) or no ready bit after 40000 status reads (PR #53 round 85) */
+    FLASH_ERASE_SUSPENDED = 2  /* Suspended with 0xB0B0: the suspend check is on and the chip select 2 device's input bit 0 read 1 on 4 consecutive reads (PR #53 round 85) */
+} FLASH_ERASE_RESULT;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_header_t j1939_header_t;

@@ -82,4 +82,4 @@ function_address,function_name,old_ghidra_name,new_variable_name,type,comment
 # 0x0002238e,diagMemoryReadResponseBuilder,TODO,first_byte,char,First byte of data pointer
 
 # ... (other functions need old names discovered)
-
+0x00003836,cm550_huffmanDecompressMain,local_c0a,tree_nodes,huffman_tree_node_t[513],The tree node array: cleared here (513 nodes) - then built by cm550_huffmanTreeBuilder and walked by cm550_huffmanDecompress (PR #53 round 85)
