@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue Nov 24 09:26:38 MST 2026
+// Generated: Tue Nov 24 09:38:34 MST 2026
 
 
 //
@@ -1890,10 +1890,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
-  word qadc_b_pqb0_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -7602,7 +7602,7 @@ void executiveFrameInterruptHandler(void)
        (word)(algorithm_enable_flags_18_cal.executive_timing_enable != 0);
   wVar4 = USIU_PISCR.PISCR;
   USIU_PISCR.PISCR = wVar4;
-  switch(main_loop_scheduler_phase) {
+  switch(executive_frame_phase) {
   case 0:
     cm848_phase_common_processing();
     cm848_phase_group_a_processing();
@@ -7612,7 +7612,7 @@ void executiveFrameInterruptHandler(void)
     hpcr_periodicTaskGroup25_calibration7();
     cm848_advanceHourMeters();
     executive_frame_timing_pointer = executive_frame_timings;
-    main_loop_scheduler_phase = 1;
+    executive_frame_phase = 1;
     break;
   case 1:
     cm848_phase_common_processing();
@@ -7622,7 +7622,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup13_calibration2();
     cm848_periodicTaskGroup26_calibration8();
     cm848_monitorDiscreteOutputReadBack();
-    main_loop_scheduler_phase = 2;
+    executive_frame_phase = 2;
     break;
   case 2:
     cm848_phase_common_processing();
@@ -7632,7 +7632,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup14_calibration3();
     cm848_periodicTaskGroup27_calibration9();
     cm848_updateOilChangeMonitor();
-    main_loop_scheduler_phase = 3;
+    executive_frame_phase = 3;
     break;
   case 3:
     cm848_phase_common_processing();
@@ -7643,7 +7643,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup28_calibration10();
     hpcr_cbdCalculateCylinderTrims();
     cm848_runCylinderContributionTest();
-    main_loop_scheduler_phase = 4;
+    executive_frame_phase = 4;
     break;
   case 4:
     cm848_phase_common_processing();
@@ -7653,7 +7653,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskSet_protection2();
     cm848_periodicTaskGroup29_calibration11();
     calculateAlpha();
-    main_loop_scheduler_phase = 5;
+    executive_frame_phase = 5;
     break;
   case 5:
     cm848_phase_common_processing();
@@ -7663,7 +7663,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup17_calibration5();
     cm848_periodicTaskGroup30_calibration12();
     cm848_updateEngineWarningFlags();
-    main_loop_scheduler_phase = 6;
+    executive_frame_phase = 6;
     break;
   case 6:
     cm848_phase_common_processing();
@@ -7673,7 +7673,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup18_calibration6();
     cm848_periodicTaskGroup31_calibration13();
     cm848_monitorFuelLevelLowDistance();
-    main_loop_scheduler_phase = 7;
+    executive_frame_phase = 7;
     break;
   case 7:
     cm848_phase_common_processing();
@@ -7682,7 +7682,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskSet_communication();
     cm848_periodicTaskGroup32_calibration14();
     cm848_countEgrValveClosings();
-    main_loop_scheduler_phase = 8;
+    executive_frame_phase = 8;
     break;
   case 8:
     cm848_phase_common_processing();
@@ -7691,7 +7691,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskSet_canTx();
     cm848_periodicTaskSet_protection3();
     cm848_monitorWaterInFuel();
-    main_loop_scheduler_phase = 9;
+    executive_frame_phase = 9;
     break;
   case 9:
     cm848_phase_common_processing();
@@ -7700,7 +7700,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskSet_sensors2();
     cm848_periodicTaskSet_auxiliary();
     cm848_expireSciCommand37Tests();
-    main_loop_scheduler_phase = 10;
+    executive_frame_phase = 10;
     break;
   case 10:
     cm848_phase_common_processing();
@@ -7710,7 +7710,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup12_calibration1();
     periodicTaskSet_fuelDemand();
     cm848_debounceOutputReadBackFaults();
-    main_loop_scheduler_phase = 0xb;
+    executive_frame_phase = 0xb;
     break;
   case 0xb:
     cm848_phase_common_processing();
@@ -7720,7 +7720,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup13_calibration2();
     hpcr_periodicTaskGroup36_calibration15();
     cm848_initColdStartTablePointers();
-    main_loop_scheduler_phase = 0xc;
+    executive_frame_phase = 0xc;
     break;
   case 0xc:
     cm848_phase_common_processing();
@@ -7730,7 +7730,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup14_calibration3();
     cm848_periodicTaskGroup37_calibration16();
     cm848_processColdStartStateMachine();
-    main_loop_scheduler_phase = 0xd;
+    executive_frame_phase = 0xd;
     break;
   case 0xd:
     cm848_phase_common_processing();
@@ -7740,7 +7740,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup15_calibration4();
     cm848_periodicTaskGroup38_calibration17();
     cm848_recordLifetimeDistanceEvery8Miles();
-    main_loop_scheduler_phase = 0xe;
+    executive_frame_phase = 0xe;
     break;
   case 0xe:
     cm848_phase_common_processing();
@@ -7750,7 +7750,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskSet_protection2();
     cm848_periodicTaskSet_diagnostics2();
     cm848_mainLoopDispatcher();
-    main_loop_scheduler_phase = 0xf;
+    executive_frame_phase = 0xf;
     break;
   case 0xf:
     cm848_phase_common_processing();
@@ -7760,7 +7760,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup17_calibration5();
     hpcr_periodicTaskGroup20_calibration();
     cm848_updateStackHighWaterMark();
-    main_loop_scheduler_phase = 0x10;
+    executive_frame_phase = 0x10;
     break;
   case 0x10:
     cm848_phase_common_processing();
@@ -7770,7 +7770,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup18_calibration6();
     cm848_periodicTaskGroup21_calibration();
     cm848_runFaultDerateScheduler();
-    main_loop_scheduler_phase = 0x11;
+    executive_frame_phase = 0x11;
     break;
   case 0x11:
     cm848_phase_common_processing();
@@ -7780,8 +7780,8 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup22_calibration();
     cm848_processFuelLevelChannel();
     cm848_updateFuelLevel();
-    cm848_main_loop_initialization();
-    main_loop_scheduler_phase = 0x12;
+    cm848_checkWorkingRamEndMarker();
+    executive_frame_phase = 0x12;
     break;
   case 0x12:
     cm848_phase_common_processing();
@@ -7790,7 +7790,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskSet_protection();
     hpcr_periodicTaskSet_protection4();
     cm848_updateMilOnRequest();
-    main_loop_scheduler_phase = 0x13;
+    executive_frame_phase = 0x13;
     break;
   case 0x13:
     cm848_phase_common_processing();
@@ -7799,7 +7799,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskSet_timing();
     cm848_periodicTaskSet_outputs2();
     cm848_calculateChiMaximumFuelAtSpeedPoints();
-    main_loop_scheduler_phase = 0x14;
+    executive_frame_phase = 0x14;
     break;
   case 0x14:
     cm848_phase_common_processing();
@@ -7809,7 +7809,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup12_calibration1();
     hpcr_periodicTaskGroup25_calibration7();
     cm848_updateTurbochargerSpeedLimiter();
-    main_loop_scheduler_phase = 0x15;
+    executive_frame_phase = 0x15;
     break;
   case 0x15:
     cm848_phase_common_processing();
@@ -7819,7 +7819,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup13_calibration2();
     cm848_periodicTaskGroup26_calibration8();
     cm848_runEmissionManager();
-    main_loop_scheduler_phase = 0x16;
+    executive_frame_phase = 0x16;
     break;
   case 0x16:
     cm848_phase_common_processing();
@@ -7829,7 +7829,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup14_calibration3();
     cm848_periodicTaskGroup27_calibration9();
     cm848_selectCoolantTemperature();
-    main_loop_scheduler_phase = 0x17;
+    executive_frame_phase = 0x17;
     break;
   case 0x17:
     cm848_phase_common_processing();
@@ -7839,7 +7839,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup15_calibration4();
     cm848_periodicTaskGroup28_calibration10();
     cm848_updateEmissionLevelCapReference();
-    main_loop_scheduler_phase = 0x18;
+    executive_frame_phase = 0x18;
     break;
   case 0x18:
     cm848_phase_common_processing();
@@ -7849,7 +7849,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskSet_protection2();
     cm848_periodicTaskGroup29_calibration11();
     cm848_updateGeneralEngineProtection();
-    main_loop_scheduler_phase = 0x19;
+    executive_frame_phase = 0x19;
     break;
   case 0x19:
     cm848_phase_common_processing();
@@ -7859,7 +7859,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup17_calibration5();
     cm848_periodicTaskGroup30_calibration12();
     cm848_processExhaustThrottlePositionChannel();
-    main_loop_scheduler_phase = 0x1a;
+    executive_frame_phase = 0x1a;
     break;
   case 0x1a:
     cm848_phase_common_processing();
@@ -7869,7 +7869,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup18_calibration6();
     cm848_periodicTaskGroup31_calibration13();
     cm848_calculateWaterVaporAndSaturationTemperatures();
-    main_loop_scheduler_phase = 0x1b;
+    executive_frame_phase = 0x1b;
     break;
   case 0x1b:
     cm848_phase_common_processing();
@@ -7878,7 +7878,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskSet_timing();
     cm848_periodicTaskGroup32_calibration14();
     cm848_updateVariableGeometryTurbochargerMotorTemperature();
-    main_loop_scheduler_phase = 0x1c;
+    executive_frame_phase = 0x1c;
     break;
   case 0x1c:
     cm848_phase_common_processing();
@@ -7887,7 +7887,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskSet_outputs();
     cm848_periodicTaskSet_protection3();
     cm848_processEcmInternalTemperatureChannel();
-    main_loop_scheduler_phase = 0x1d;
+    executive_frame_phase = 0x1d;
     break;
   case 0x1d:
     cm848_phase_common_processing();
@@ -7895,7 +7895,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskSet_sensorProcessing();
     cm848_periodicTaskSet_sensors();
     cm848_periodicTaskSet_auxiliary();
-    main_loop_scheduler_phase = 0x1e;
+    executive_frame_phase = 0x1e;
     break;
   case 0x1e:
     cm848_phase_common_processing();
@@ -7905,7 +7905,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup12_calibration1();
     periodicTaskSet_fuelDemand();
     cm848_calculateCompressorInletDensity();
-    main_loop_scheduler_phase = 0x1f;
+    executive_frame_phase = 0x1f;
     break;
   case 0x1f:
     cm848_phase_common_processing();
@@ -7915,7 +7915,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup13_calibration2();
     hpcr_periodicTaskGroup36_calibration15();
     cm848_updateEgrValveMotorTemperature();
-    main_loop_scheduler_phase = 0x20;
+    executive_frame_phase = 0x20;
     break;
   case 0x20:
     cm848_phase_common_processing();
@@ -7924,7 +7924,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskSet_canTx();
     cm848_periodicTaskGroup14_calibration3();
     cm848_periodicTaskGroup37_calibration16();
-    main_loop_scheduler_phase = 0x21;
+    executive_frame_phase = 0x21;
     break;
   case 0x21:
     cm848_phase_common_processing();
@@ -7933,7 +7933,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskSet_sensors2();
     cm848_periodicTaskGroup15_calibration4();
     cm848_periodicTaskGroup38_calibration17();
-    main_loop_scheduler_phase = 0x22;
+    executive_frame_phase = 0x22;
     break;
   case 0x22:
     cm848_phase_common_processing();
@@ -7942,7 +7942,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskSet_protection();
     cm848_periodicTaskSet_protection2();
     cm848_periodicTaskSet_diagnostics2();
-    main_loop_scheduler_phase = 0x23;
+    executive_frame_phase = 0x23;
     break;
   case 0x23:
     cm848_phase_common_processing();
@@ -7951,7 +7951,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskSet_timing();
     cm848_periodicTaskGroup17_calibration5();
     hpcr_periodicTaskGroup20_calibration();
-    main_loop_scheduler_phase = 0x24;
+    executive_frame_phase = 0x24;
     break;
   case 0x24:
     cm848_phase_common_processing();
@@ -7961,7 +7961,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskGroup18_calibration6();
     cm848_periodicTaskGroup21_calibration();
     cm848_calculatePredictedIntakeManifoldTemperature();
-    main_loop_scheduler_phase = 0x25;
+    executive_frame_phase = 0x25;
     break;
   case 0x25:
     cm848_phase_common_processing();
@@ -7969,7 +7969,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskSet_sensorProcessing();
     cm848_periodicTaskSet_sensors();
     cm848_periodicTaskGroup22_calibration();
-    main_loop_scheduler_phase = 0x26;
+    executive_frame_phase = 0x26;
     break;
   case 0x26:
     cm848_phase_common_processing();
@@ -7978,7 +7978,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskSet_monitoring();
     hpcr_periodicTaskSet_protection4();
     cm848_mainLoopServiceMonitor();
-    main_loop_scheduler_phase = 0x27;
+    executive_frame_phase = 0x27;
     break;
   case 0x27:
     cm848_phase_common_processing();
@@ -7986,10 +7986,10 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskSet_auxiliaryControl();
     cm848_periodicTaskSet_communication();
     cm848_periodicTaskSet_outputs2();
-    main_loop_scheduler_phase = 0;
+    executive_frame_phase = 0;
     break;
   default:
-    main_loop_scheduler_phase = 0;
+    executive_frame_phase = 0;
   }
   peVar3 = executive_frame_timing_pointer;
   if (algorithm_enable_flags_18_cal.executive_timing_enable != 0) {
@@ -22982,12 +22982,13 @@ J1939_DIAGNOSTIC_RESULT cm848_commandEngineShutdown(void)
 /* WARNING: This function may have set the stack pointer */
 /* Software restart into the boot ROM, without a hardware reset. Only in engine_state 1; otherwise
    it returns 7. It waits for the EEPROM write queue, saves key_on_hour_meter and engine_hour_meter
-   to EEPROM (0x30 / 0x42) (waiting for each while a diagnostic session is active), and acknowledges
-   the request on its link (param 2: 0 = J1939 response frame to param 1, 2 = SCI byte 1 via
-   cm848_sciTransmitSingleByteOne). After a delay it sets chip-select 0 (BR0 0x500803 / OR0
-   0xfff00030) and SIUMCR 0x402000, then jumps through the reset vector word at ROM 0x104 to
-   mpc555_hardwareInitialization (0x2694). Was mpc555_processJ1939RxQueue | (was
-   cm848_restartThroughBootRom; PR #53 round 87; the twin of CM550 0x1192a: one shared name) */
+   to EEPROM (0x30 / 0x42) (while ram_refresh_enable is on it waits for each write to reach the
+   EEPROM mirror; otherwise it waits 9 us), and acknowledges the request on its link (param 2: 0 =
+   J1939 response frame to param 1, 2 = SCI byte 1 via cm848_sciTransmitSingleByteOne). After a
+   delay it sets chip-select 0 (BR0 0x500803 / OR0 0xfff00030) and SIUMCR 0x402000, then jumps
+   through the reset vector word at ROM 0x104 to mpc555_hardwareInitialization (0x2694). Was
+   mpc555_processJ1939RxQueue | (was cm848_restartThroughBootRom; PR #53 round 87; the twin of CM550
+   0x1192a: one shared name) */
 
 undefined4 restartThroughBootRom(j1939_rx_msg_t *param_1,int param_2)
 
@@ -58881,7 +58882,7 @@ void cm848_applicationMain(void)
   cm848_initFuelPressureSensor();
   cm848_initializeFuelPressureSetpointState();
   mpc555_initTpuTimingInterrupts();
-  cm848_timer_state_preservation();
+  cm848_writeWorkingRamEndMarker();
   cm848_initRpmSetpointFilters();
   cm848_initProtectionLimitVariables();
   cm848_initTimingFilterStates();
@@ -89188,26 +89189,35 @@ void cm848_accumulateInjectedFuel(void)
 
 
 //
-// Function: cm848_timer_state_preservation @ 0x00527958
+// Function: cm848_writeWorkingRamEndMarker @ 0x00527958
 //
 
-void cm848_timer_state_preservation(void)
+/* Writes 0xC0DAC0DA to working_ram_end_marker (0x41428e) - the dword at the end of the RAM that
+   clearWorkingRam clears. cm848_applicationMain calls it once at start-up, after clearWorkingRam;
+   cm848_checkWorkingRamEndMarker checks it (was cm848_timer_state_preservation; PR #53 round 87) */
+
+void cm848_writeWorkingRamEndMarker(void)
 
 {
-  DAT_0041428e = 0xc0dac0da;
+  working_ram_end_marker = 0xc0dac0da;
   return;
 }
 
 
 
 //
-// Function: cm848_main_loop_initialization @ 0x0052796c
+// Function: cm848_checkWorkingRamEndMarker @ 0x0052796c
 //
 
-void cm848_main_loop_initialization(void)
+/* Once per executive cycle (phase 17): while working_ram_end_marker still holds 0xC0DAC0DA it
+   clears fault 462 (working_ram_end_marker_error) in fault_detected_cal and fault_registered_cal;
+   otherwise it sets the fault in fault_detected_cal. Fault 462 has no DTC slot. Nothing here
+   initializes a main loop (was cm848_main_loop_initialization; PR #53 round 87) */
+
+void cm848_checkWorkingRamEndMarker(void)
 
 {
-  if (DAT_0041428e == -0x3f253f26) {
+  if (working_ram_end_marker == 0xc0dac0da) {
     fault_detected_cal._38_2_ = fault_detected_cal._38_2_ & 0xbfff;
     fault_registered_cal._38_2_ = fault_registered_cal._38_2_ & 0xbfff;
   }
@@ -99411,8 +99421,10 @@ void cm848_initializeDiscreteOutputReadBackChecks(void)
 // Function: clearWorkingRam @ 0x00538974
 //
 
-/* Zeroes working RAM from 0x3fa000 (executive_frame_ticks) up to 0x41428e (two words per step, 256
-   bytes per outer pass) - the first call in cm848_applicationMain after the TPU set-up. Was
+/* Zeroes working RAM from 0x3fa000 (executive_frame_ticks) up to 0x41428e (one 4-byte store per
+   step; each outer pass runs to 256 bytes on, inclusive, so it makes 65 stores = 260 bytes - the
+   CM550 twin's quirk; the last store, at 0x41428c, also clears the first half of
+   working_ram_end_marker) - the first call in cm848_applicationMain after the TPU set-up. Was
    hpcr_exceptionHandler (a second function with the same name as the reset entry) | (was
    cm848_clearWorkingRam; PR #53 round 87; the twin of CM550 0x2e9ac: one shared name) */
 
@@ -99420,19 +99432,18 @@ void clearWorkingRam(void)
 
 {
   word *pwVar1;
-  word *pwVar2;
+  dword *pdVar2;
   
   pwVar1 = &executive_frame_ticks;
   do {
-    pwVar2 = pwVar1 + 0x80;
-    if (&DAT_0041428e < pwVar1 + 0x80) {
-      pwVar2 = (word *)&DAT_0041428e;
+    pdVar2 = (dword *)((int)pwVar1 + 0x100);
+    if (&working_ram_end_marker < (dword *)((int)pwVar1 + 0x100)) {
+      pdVar2 = &working_ram_end_marker;
     }
-    for (; pwVar1 <= pwVar2; pwVar1 = pwVar1 + 2) {
-      pwVar1[0] = 0;
-      pwVar1[1] = 0;
+    for (; pwVar1 <= pdVar2; pwVar1 = (word *)((int)pwVar1 + 4)) {
+      *(dword *)pwVar1 = 0;
     }
-  } while (pwVar1 < &DAT_0041428e);
+  } while (pwVar1 < &working_ram_end_marker);
   return;
 }
 
@@ -100048,10 +100059,11 @@ void cm848_initCanHardware(void)
 //
 
 /* Key came back on during the power-down (called from cm848_saveEepromForPowerDown and 3 places in
-   cm848_runPowerDownSequence): counts the start in completed_power_down_count_cal / writes the new
-   power_cycle_sequence_number_cal (= completed + incomplete counts) / waits up to 1000 x 2500
-   timebase ticks for that EEPROM write / then cm848_restartApplicationWithoutReset - the same
-   bookkeeping cm848_applicationMain does at a reset after a completed power-down. Was
+   cm848_runPowerDownSequence): counts the start in completed_power_down_count_cal (waiting up to
+   1000 x cm848_delayMicroseconds(19) for that EEPROM write) / writes the new
+   power_cycle_sequence_number_cal (= completed + incomplete counts) and waits up to 1000 x 2500
+   timebase ticks for it / then cm848_restartApplicationWithoutReset - the same bookkeeping
+   cm848_applicationMain does at a reset after a completed power-down. Was
    engine_protection_timer_sync | (was cm848_restartOnKeyOnDuringPowerDown; PR #53 round 87; the
    twin of CM550 0x27af0: one shared name) */
 

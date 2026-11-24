@@ -1493,7 +1493,6 @@ extern undefined ecu_identity_marker_1;  // 0x00803b0a
 extern byte security_master_password_cal[6];  // 0x00803b0c
 extern word parameter_block_1_checksum_cal;  // 0x00803b12
 extern word parameter_block_2_checksum_cal;  // 0x00803b14
-extern undefined ecu_serial_number;  // 0x00803b15
 extern undefined eeprom_hour_meter_buffer;  // 0x00803b3e
 extern undefined ecu_unit_marker;  // 0x00803b44
 extern undefined eeprom_engine_run_time_buffer;  // 0x00803b50

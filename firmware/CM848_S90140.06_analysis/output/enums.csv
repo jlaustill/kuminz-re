@@ -502,8 +502,8 @@ J1939_DIAGNOSTIC_SERVICE,0x05,J1939_DIAGNOSTIC_SERVICE_ENABLE_BROADCAST,cm848_ha
 J1939_DIAGNOSTIC_SERVICE,0x06,J1939_DIAGNOSTIC_SERVICE_COMMAND_ENGINE_SHUTDOWN,cm848_commandEngineShutdown: sets engine_shutdown_command_flag (was SYSTEM_SERVICE_06),1
 J1939_DIAGNOSTIC_SERVICE,0x07,J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE,exitDevelopmentMode (was SYSTEM_SERVICE_07),1
 J1939_DIAGNOSTIC_SERVICE,0x0a,J1939_DIAGNOSTIC_SERVICE_ENTER_DEVELOPMENT_MODE,enterDevelopmentMode (was SYSTEM_SERVICE_0A),1
-J1939_DIAGNOSTIC_SERVICE,0x0b,J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM,cm848_handleJ1939RestartService: cm848_restartThroughBootRom (was SYSTEM_SERVICE_0B),1
-J1939_DIAGNOSTIC_SERVICE,0x0c,J1939_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE,Sent by cm848_sendJ1939ResponseFrame for result 0 - then the request's first bytes (cm848_getJ1939DiagnosticResponseEchoLength); cm848_j1939DiagnosticServiceHandler ignores a received one,1
+J1939_DIAGNOSTIC_SERVICE,0x0b,J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM,handleJ1939RestartService: restartThroughBootRom (was SYSTEM_SERVICE_0B),1
+J1939_DIAGNOSTIC_SERVICE,0x0c,J1939_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE,Sent by cm848_sendJ1939ResponseFrame for result 0 - then the request's first bytes (getJ1939DiagnosticResponseEchoLength); cm848_j1939DiagnosticServiceHandler ignores a received one,1
 J1939_DIAGNOSTIC_SERVICE,0x0d,J1939_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE,Sent by cm848_sendJ1939ResponseFrame for a nonzero result other than 0xfe (that sends 0x0e) - then the result code and the request's first bytes; cm848_j1939DiagnosticServiceHandler ignores a received one,1
 J1939_DIAGNOSTIC_SERVICE,0x0f,J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_15,cm848_j1939DiagnosticServiceAcknowledgeNoOperation: accepted and does nothing (was GET_PARAMETERS_BY_ID_ALT),1
 J1939_DIAGNOSTIC_SERVICE,0x10,J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_16,cm848_j1939DiagnosticServiceAcknowledgeNoOperation: accepted and does nothing (was SERVICE_GET_PARAMETERS_BY_ID),1
@@ -823,7 +823,7 @@ J1939_DIAGNOSTIC_RESULT,0x00,J1939_DIAGNOSTIC_RESULT_ACCEPTED,Done - cm848_sendJ
 J1939_DIAGNOSTIC_RESULT,0x02,J1939_DIAGNOSTIC_RESULT_WRONG_LENGTH,The request length is none of 8 / its header and data / that + 10 for the key - or a memory length over 1764 (was DIAG_INVALID_LENGTH),4
 J1939_DIAGNOSTIC_RESULT,0x03,J1939_DIAGNOSTIC_RESULT_KEY_REFUSED,validateSecurityKey refused the request's key (was SECURITY_FAILED),4
 J1939_DIAGNOSTIC_RESULT,0x04,J1939_DIAGNOSTIC_RESULT_CANNOT_COMPLY,Not now or not this: development mode is not on (exitDevelopmentMode) / no transmit record is free (the read worker) / an unknown broadcast item (cm848_updateJ1939BroadcastEnableMask) (was DIAG_NACK_NOT_READY / BUFFER_OVERFLOW),4
-J1939_DIAGNOSTIC_RESULT,0x07,J1939_DIAGNOSTIC_RESULT_NOT_SAFE,Refused in this state: not_safe_to_program_flag set (an EEPROM write / a forced exit from development mode) / the engine not stopped (cm848_restartThroughBootRom) / outside the key and flag gate of cm848_requestClearInactiveFaults (was DIAG_NACK_PROTECTED),4
+J1939_DIAGNOSTIC_RESULT,0x07,J1939_DIAGNOSTIC_RESULT_NOT_SAFE,Refused in this state: not_safe_to_program_flag set (an EEPROM write / a forced exit from development mode) / the engine not stopped (restartThroughBootRom) / outside the key and flag gate of cm848_requestClearInactiveFaults (was DIAG_NACK_PROTECTED),4
 J1939_DIAGNOSTIC_RESULT,0x08,J1939_DIAGNOSTIC_RESULT_UNKNOWN_PARAMETER_ID,cm848_lookupParameterIdAddress does not know the ID (was ADDR_VALIDATION_FAIL),4
 J1939_DIAGNOSTIC_RESULT,0x09,J1939_DIAGNOSTIC_RESULT_UNMAPPED_ADDRESS,No memory region holds the address range (was INVALID_ADDR_RANGE),4
 J1939_DIAGNOSTIC_RESULT,0x0a,J1939_DIAGNOSTIC_RESULT_REGION_REFUSED,The region refuses the access: ROM for a write / the registers outside development mode / the EEPROM mirror RAM while the RAM refresh is on (was INVALID_ADDR_ALT),4

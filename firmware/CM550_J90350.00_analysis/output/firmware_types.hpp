@@ -898,7 +898,7 @@ typedef enum {
     SERVICE_HIGH_RPM_SHUTDOWN_ACTIVATE = 0x06,  /* activateHighRpmShutdownFlag - dispatch @ 0x000118FC - SECURED - RESPONDS! in dispatch table */
     SYSTEM_SERVICE_07 = 0x07,  /* System service 07 - dispatch @ 0x0001188C - SECURED - in dispatch table */
     SYSTEM_SERVICE_0A = 0x0A,  /* System service 0A - dispatch @ 0x000118B2 - SECURED - in dispatch table */
-    SYSTEM_SERVICE_0B = 0x0B,  /* System service 0B - dispatch @ 0x00011908 - SECURED - in dispatch table */
+    J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM = 0x0B,  /* handleJ1939RestartService (0x11908): restartThroughBootRom - SECURED - in dispatch table (was SYSTEM_SERVICE_0B; PR #53 round 87) */
     GET_PARAMETERS_BY_ID_ALT = 0x0F,  /* getParametersByIdHandler - NOT in dispatch table - RESPONDS! (alternate path?) */
     SERVICE_GET_PARAMETERS_BY_ID = 0x10,  /* GetParametersByID - CLIP - NOT in dispatch table - RESPONDS! (alternate path?) */
     GET_ADDRESS_BY_PARAM_ID = 0x15,  /* GetAddressByParameterID - dispatch @ 0x00011A74 - SECURED - in dispatch table */

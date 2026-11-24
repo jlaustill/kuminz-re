@@ -101,7 +101,7 @@ Bank 2 contains utility functions called from Bank 1 (sensor processing, math ro
 
 ### ROM-to-RAM Code Execution (CM848)
 
-`copyCalibrationToRam()` copies ROM 0x3C30-0x7F60 (17KB) to RAM 0x3F9800-0x3FDB30 at boot. Formula: `ROM_addr = 0x3C30 + (RAM_addr - 0x3F9800)`.
+`cm848_copyBootKernelToRam` (0x340) copies ROM 0x3C30-0x7F60 (17KB) to RAM 0x3F9800-0x3FDB30 at boot. Formula: `ROM_addr = 0x3C30 + (RAM_addr - 0x3F9800)`.
 
 **That image is the BOOT REFLASH KERNEL, not application code (verified 2026-11-11, PR #46).** It runs from RAM so flash can be erased/programmed underneath it — not "for performance". Evidence: (1) all 75 branches into the RAM window come from the low boot ROM 0x0-0x3C2F (reset / key-on / EEPROM calibration load+download / flash init); ZERO from application ROM (>= 0x7F60); (2) in the runtime RAM dump NONE of the 67 dump-covered image functions is intact (4-28% byte match = chance), because the running application reuses that RAM for its own variables (PCI timers, QSPI job queues, ...). Contents: its own CAN driver, J1939 transport (RTS/CTS/abort), diagnostic dispatcher with memory-WRITE services 68/69/75/77 (0x44/0x45/0x4B/0x4D), EEPROM/flash transfer, auth-token descramble + write-auth check, transfer CRC, SCI driver, watchdog and its own main loop.
 - Consequences: (a) a global in 0x3F9800-0x3FDB30 and the image function at the same address are BOTH real — they just live at different times (boot vs running app); (b) the runtime RAM dump is useless for reading image code — use the ROM; (c) many image function names were guessed from app-like patterns (`processAdc*`, `processSensor*`, `sensorFaultThresholdCheck`) and are suspect — e.g. 0x5728-0x58e8 were "ADC sensor" names but are the kernel's memory-write services.

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue Nov 24 09:25:07 MST 2026
+// Generated: Tue Nov 24 09:37:04 MST 2026
 
 
 //
@@ -6309,12 +6309,13 @@ uint cm550_loadParameterBlock2FromFlash(void)
 //
 
 /* Saves the RAM copy (0x804F96) into flash parameter block 1: it bumps
-   parameter_block_1_save_start_count_cal so the bank 1 + bank 2 sum ends odd (block 1 = newest) -
-   erases block 0x4000 with cm550_flashEraseFromRam - programs 0x4000-0x55B1 - stores the new block
-   sum in EEPROM 0x8 and the sequence at 0x803FD8 - and sets parameter_block_uploaded = 1. Returns 0
-   saved / 2 a program step failed / 1 or 2 after a failed erase. Its only hardware access is the
-   inline watchdog kick, so not mc68k_ (commit 16143a5c) (was cm550_eepromCalibrationWriteSecondary;
-   PR #53 round 85) */
+   parameter_block_1_save_start_count_cal so the sum of the two blocks' save start counts ends odd
+   (block 1 = newest) - erases block 0x4000 with cm550_flashEraseFromRam - programs 0x4000-0x55B1 -
+   stores the new block sum in parameter_block_1_checksum_cal (EEPROM 0x8) and the start count in
+   parameter_block_1_save_complete_count_cal (0x803FD8) - and sets parameter_block_uploaded = 1.
+   Returns 0 saved / 2 a program step failed / 1 or 2 after a failed erase. Its only hardware access
+   is the inline watchdog kick, so not mc68k_ (commit 16143a5c) (was
+   cm550_eepromCalibrationWriteSecondary; PR #53 round 85) */
 
 int cm550_saveParameterBlock1ToFlash(void)
 
@@ -6419,11 +6420,12 @@ int cm550_saveParameterBlock1ToFlash(void)
 // Function: cm550_saveParameterBlock2ToFlash @ 0x0001125a
 //
 
-/* The block 2 saver: the sequence sum ends even (block 2 = newest); it erases block 0x6000 -
-   programs 0x6000-0x75B1 from RAM 0x804F96 - stores the block sum in EEPROM 0xA and the sequence at
-   0x803FE0 - and sets parameter_block_uploaded = 2. The same return codes as
-   cm550_saveParameterBlock1ToFlash. Its only hardware access is the inline watchdog kick, so not
-   mc68k_ (commit 16143a5c) (was cm550_FUN_0001125a; PR #53 round 85) */
+/* The block 2 saver: the sum of the save start counts ends even (block 2 = newest); it erases block
+   0x6000 - programs 0x6000-0x75B1 from RAM 0x804F96 - stores the block sum in
+   parameter_block_2_checksum_cal (EEPROM 0xA) and the start count in
+   parameter_block_2_save_complete_count_cal (0x803FE0) - and sets parameter_block_uploaded = 2. The
+   same return codes as cm550_saveParameterBlock1ToFlash. Its only hardware access is the inline
+   watchdog kick, so not mc68k_ (commit 16143a5c) (was cm550_FUN_0001125a; PR #53 round 85) */
 
 int cm550_saveParameterBlock2ToFlash(void)
 
@@ -6818,10 +6820,11 @@ void handleJ1939RestartService(dword param_1)
 // Function: cm550_restartThroughBootRomAfterJ1708Request @ 0x0001191a
 //
 
-/* mc68k_dispatchJ1708ReceivedMessages jumps here for J1708 diagnostic command 67 (command - 64 = 3
-   in its 21-entry table at 0x160b8). It calls restartThroughBootRom(0, 1), where acknowledge 1 =
-   the J1708 diagnostic message queue (cm550_diagnosticMessageQueueWrite writes the J1708 transmit
-   ring). (was cm550_triggerDiagnosticSystemReset; PR #53 round 87) */
+/* mc68k_dispatchJ1708ReceivedMessages jumps here for J1708 message type 3, then command 67 (0x43:
+   entry 3 of its 21-entry table at 0x160b8, which covers the commands 0x40-0x54). It calls
+   restartThroughBootRom(0, 1), where acknowledge 1 = the J1708 diagnostic message queue
+   (cm550_diagnosticMessageQueueWrite writes the J1708 transmit ring). (was
+   cm550_triggerDiagnosticSystemReset; PR #53 round 87) */
 
 void cm550_restartThroughBootRomAfterJ1708Request(void)
 
@@ -10295,12 +10298,16 @@ void mc68k_ioDriverStrobeHandler(void)
 
 
 //
-// Function: vp44_initVP44StatusMonitoring @ 0x00015dd0
+// Function: cm550_initializeDiscreteInputs @ 0x00015dd0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The start-up set-up of the discrete inputs: points discrete_input_override_mask_ptr at
+   switch_override_configuration and runs mc68k_sampleAndDebounceDiscreteInputs 4 times. It monitors
+   no VP44 status, and its own body has no hardware access, so cm550_ (was
+   vp44_initVP44StatusMonitoring; PR #53 round 87) */
 
-void vp44_initVP44StatusMonitoring(void)
+void cm550_initializeDiscreteInputs(void)
 
 {
   byte bVar1;
@@ -10320,10 +10327,17 @@ void vp44_initVP44StatusMonitoring(void)
 // Function: mc68k_initializeDiscreteOutputDrivers @ 0x00015df0
 //
 
-/* This is the start-up set-up of the discrete outputs. mc68k_applicationMain calls it once, right
-   after the discrete inputs are primed (0x15dd0 vp44_initVP44StatusMonitoring). It is a direct
-   call, not a pointer: ROM 0x2870a is that jsr's operand. 1. It writes the default output states
-   into the output images at 0x80bcf6..0x80bcfb. (was mc68k_FUN_00015df0; PR #53 round 87) */
+/* The start-up set-up of the discrete outputs. mc68k_applicationMain calls it once (jsr at
+   0x28708), after the discrete input set-up cm550_initializeDiscreteInputs (0x15dd0) and
+   cm550_initADCChannelConfiguration. 1. It writes the default output states into the output images
+   0x80bcf6-0x80bcfb, each only while no client holds that output's override slot (0x80bd1a + n). 2.
+   It sets up the chip select 2 output driver: registers 8 / 9 / 10 = 0x0F / 0x80 / 0x80, output
+   port 1 (0xFFD004) cleared, port 2 bit 7 (0xFFD006) cleared. 3. It starts TPU channel 13 (function
+   0xE, PARAM0 0x113) with a handshake: HSR 2 and wait for PARAM1 bit 15 = 0, HSR 1 and wait for 1,
+   HSR 2 and wait for 0; then it sets port 2 bit 7 and issues HSR 1. 4. It ends with
+   mc68k_ioDriverStrobeHandler, which writes the ports from the images and drives channel 13 from
+   bit 5 of 0x80bcfb (set: HSR 2, clear: HSR 1), most likely the fuel shut-off command (was
+   mc68k_FUN_00015df0; PR #53 round 87) */
 
 void mc68k_initializeDiscreteOutputDrivers(void)
 
@@ -28648,7 +28662,7 @@ void restartOnKeyOnDuringPowerDown(void)
   SIM_SWSR = 0xaa;
   CS2_WATCHDOG_SERVICE = 0x55;
   CS2_WATCHDOG_SERVICE = 0xaa;
-  vp44_initVP44StatusMonitoring();
+  cm550_initializeDiscreteInputs();
   local_6 = _vp44_reset_count + 1;
   cm550_parameterCircularBufferWrite(0x803fec,(byte *)&local_6,2);
   uVar2 = 0;
@@ -28752,9 +28766,10 @@ void vp44_FUN_00027c20(void)
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Writes the RAM power-down data block into the flash bank its word argument names first (1 = bank
    1 at 0x4000 through cm550_saveParameterBlock1ToFlash; otherwise bank 2 at 0x6000 through
-   cm550_saveParameterBlock2ToFlash) with up to 3 attempts; when all fail it sets 0x803FE8 = 1 and -
-   unless enable_to_protects_parameter_block_data_at_powerdown is set - writes the other bank. Its
-   only hardware access is the inline watchdog kick, so not mc68k_ (commit 16143a5c) (was
+   cm550_saveParameterBlock2ToFlash) with up to 3 attempts; when all fail it sets
+   flash_write_failure_flag_cal (0x803FE8) = 1 and - unless
+   enable_to_protects_parameter_block_data_at_powerdown is set - writes the other bank. Its only
+   hardware access is the inline watchdog kick, so not mc68k_ (commit 16143a5c) (was
    vp44_FUN_00027cd0; PR #53 round 85) */
 
 void cm550_savePowerDownDataToFlashBank(byte flash_bank_number)
@@ -29267,7 +29282,7 @@ void mc68k_applicationMain(void)
   }
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8702;
-  vp44_initVP44StatusMonitoring();
+  cm550_initializeDiscreteInputs();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8708;
   cm550_initADCChannelConfiguration();

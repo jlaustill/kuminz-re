@@ -1044,7 +1044,7 @@ extern parameter_id_entry_t boot_parameter_id_table[20];  // 0x003f98ac
 extern word executive_frame_ticks;  // 0x003fa000
 extern dword executive_frame_start_ticks;  // 0x003fa002
 extern word executive_timing_enabled_previous_flag;  // 0x003fa006
-extern dword main_loop_scheduler_phase;  // 0x003fa008
+extern dword executive_frame_phase;  // 0x003fa008
 extern executive_frame_timing_t * executive_frame_timing_pointer;  // 0x003fa00c
 extern executive_frame_timing_t * executive_frame_timing_clear_pointer;  // 0x003fa010
 extern word barometric_pressure_linearization_cached_axis_offset;  // 0x003fa014
@@ -5739,6 +5739,7 @@ extern word tachometer_override_mode;  // 0x0040c260
 extern dword tachometer_signal_period;  // 0x0040c262
 extern void * data_collector_start_address;  // 0x0040c278
 extern void * data_collector_end_address;  // 0x0040c280
+extern dword working_ram_end_marker;  // 0x0041428e
 extern dword flash2_command_register;  // 0x00500000
 extern byte j1939_memory_service_header_lengths[14];  // 0x0053a322
 extern byte j1939_memory_read_reply_services[10];  // 0x0053a330

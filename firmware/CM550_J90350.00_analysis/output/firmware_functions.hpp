@@ -164,7 +164,7 @@ void cm550_insitePidDtcHandler(word spn_byte);  // @ 0x00014f42
 void cm550_initHourMeterSystem(void);  // @ 0x00014fae
 byte mc68k_sampleAndDebounceDiscreteInputs(void);  // @ 0x00014fca
 void mc68k_ioDriverStrobeHandler(void);  // @ 0x000159ee
-void vp44_initVP44StatusMonitoring(void);  // @ 0x00015dd0
+void cm550_initializeDiscreteInputs(void);  // @ 0x00015dd0
 void mc68k_initializeDiscreteOutputDrivers(void);  // @ 0x00015df0
 void emptyStubFunction4(void);  // @ 0x00015f8c
 void mc68k_dispatchJ1708ReceivedMessages(void);  // @ 0x00015f8e

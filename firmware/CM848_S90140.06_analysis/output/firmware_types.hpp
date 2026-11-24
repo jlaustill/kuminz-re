@@ -568,8 +568,8 @@ typedef enum {
     J1939_DIAGNOSTIC_SERVICE_COMMAND_ENGINE_SHUTDOWN = 0x06,  /* cm848_commandEngineShutdown: sets engine_shutdown_command_flag (was SYSTEM_SERVICE_06) */
     J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE = 0x07,  /* exitDevelopmentMode (was SYSTEM_SERVICE_07) */
     J1939_DIAGNOSTIC_SERVICE_ENTER_DEVELOPMENT_MODE = 0x0a,  /* enterDevelopmentMode (was SYSTEM_SERVICE_0A) */
-    J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM = 0x0b,  /* cm848_handleJ1939RestartService: cm848_restartThroughBootRom (was SYSTEM_SERVICE_0B) */
-    J1939_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE = 0x0c,  /* Sent by cm848_sendJ1939ResponseFrame for result 0 - then the request's first bytes (cm848_getJ1939DiagnosticResponseEchoLength); cm848_j1939DiagnosticServiceHandler ignores a received one */
+    J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM = 0x0b,  /* handleJ1939RestartService: restartThroughBootRom (was SYSTEM_SERVICE_0B) */
+    J1939_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE = 0x0c,  /* Sent by cm848_sendJ1939ResponseFrame for result 0 - then the request's first bytes (getJ1939DiagnosticResponseEchoLength); cm848_j1939DiagnosticServiceHandler ignores a received one */
     J1939_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE = 0x0d,  /* Sent by cm848_sendJ1939ResponseFrame for a nonzero result other than 0xfe (that sends 0x0e) - then the result code and the request's first bytes; cm848_j1939DiagnosticServiceHandler ignores a received one */
     J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_15 = 0x0f,  /* cm848_j1939DiagnosticServiceAcknowledgeNoOperation: accepted and does nothing (was GET_PARAMETERS_BY_ID_ALT) */
     J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_16 = 0x10,  /* cm848_j1939DiagnosticServiceAcknowledgeNoOperation: accepted and does nothing (was SERVICE_GET_PARAMETERS_BY_ID) */
@@ -926,7 +926,7 @@ typedef enum {
     J1939_DIAGNOSTIC_RESULT_WRONG_LENGTH = 0x02,  /* The request length is none of 8 / its header and data / that + 10 for the key - or a memory length over 1764 (was DIAG_INVALID_LENGTH) */
     J1939_DIAGNOSTIC_RESULT_KEY_REFUSED = 0x03,  /* validateSecurityKey refused the request's key (was SECURITY_FAILED) */
     J1939_DIAGNOSTIC_RESULT_CANNOT_COMPLY = 0x04,  /* Not now or not this: development mode is not on (exitDevelopmentMode) / no transmit record is free (the read worker) / an unknown broadcast item (cm848_updateJ1939BroadcastEnableMask) (was DIAG_NACK_NOT_READY / BUFFER_OVERFLOW) */
-    J1939_DIAGNOSTIC_RESULT_NOT_SAFE = 0x07,  /* Refused in this state: not_safe_to_program_flag set (an EEPROM write / a forced exit from development mode) / the engine not stopped (cm848_restartThroughBootRom) / outside the key and flag gate of cm848_requestClearInactiveFaults (was DIAG_NACK_PROTECTED) */
+    J1939_DIAGNOSTIC_RESULT_NOT_SAFE = 0x07,  /* Refused in this state: not_safe_to_program_flag set (an EEPROM write / a forced exit from development mode) / the engine not stopped (restartThroughBootRom) / outside the key and flag gate of cm848_requestClearInactiveFaults (was DIAG_NACK_PROTECTED) */
     J1939_DIAGNOSTIC_RESULT_UNKNOWN_PARAMETER_ID = 0x08,  /* cm848_lookupParameterIdAddress does not know the ID (was ADDR_VALIDATION_FAIL) */
     J1939_DIAGNOSTIC_RESULT_UNMAPPED_ADDRESS = 0x09,  /* No memory region holds the address range (was INVALID_ADDR_RANGE) */
     J1939_DIAGNOSTIC_RESULT_REGION_REFUSED = 0x0a,  /* The region refuses the access: ROM for a write / the registers outside development mode / the EEPROM mirror RAM while the RAM refresh is on (was INVALID_ADDR_ALT) */
@@ -2080,7 +2080,7 @@ struct fault_bit_words_t {
     uint16_t fault_459 : 1;  /* bit 11: fault 459 */
     uint16_t fault_460 : 1;  /* bit 12: fault 460 */
     uint16_t fault_461 : 1;  /* bit 13: fault 461 */
-    uint16_t fault_462 : 1;  /* bit 14: fault 462 */
+    uint16_t working_ram_end_marker_error : 1;  /* bit 14: fault 462 (no DTC slot): cm848_checkWorkingRamEndMarker sets it when working_ram_end_marker no longer holds 0xC0DAC0DA (was fault_462; PR #53 round 87) */
     uint16_t fault_463 : 1;  /* bit 15: fault 463 */
     uint16_t fault_464 : 1;  /* bit 0: word faults_464_to_479 (e2m 1036 +3A System_Error_Status_29) bit 0 = fault 464 */
     uint16_t fault_465 : 1;  /* bit 1: fault 465 */
@@ -3389,7 +3389,7 @@ struct algorithm_enable_flags_18_t {
     uint16_t reserved_bit_4 : 1;  /* bit 4: no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). */
     uint16_t reserved_bit_5 : 1;  /* bit 5: no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). */
     uint16_t smart_air_compressor_enable : 1;  /* bit 6: e2m AC_Smart_Enable (ACEN, smart air compressor). No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). (was reserved_bit_6; named from its e2m record in PR #53 round 20, as in algorithm_enable_flags_3_t) */
-    uint16_t executive_timing_enable : 1;  /* bit 7: e2m Executive_Timing_Enable (SSECTMEA, executive timing data gatherer). main_loop (lhz 36(r29) at 0xc0c0, 0xc140, 0xc7b8); the reader agrees by name. Clear in this calibration (0x0008). */
+    uint16_t executive_timing_enable : 1;  /* bit 7: e2m Executive_Timing_Enable (SSECTMEA, executive timing data gatherer). executiveFrameInterruptHandler (lhz 36(r29) at 0xc0c0, 0xc140, 0xc7b8); the reader agrees by name. Clear in this calibration (0x0008). */
     uint16_t high_speed_governor_gear_ratio_gain_enable : 1;  /* bit 8: e2m HSG_Gear_Ratio_Gain_Enable (HSGRGSEN). cm848_loadHighSpeedGovernorWorkingGainSet (lhz at 0x4248c); the reader agrees by name. Clear in this calibration (0x0008). */
     uint16_t programmable_power_enable : 1;  /* bit 9: e2m Programmable_Power_Enable (PPEN). 6 fuel limit, protection and cruise functions: cm848_calculateDualAxisFuelLimit (0x1ec88, 0x1ed88, 0x1ee74), cm848_calculateThrottle100Fuelings (0x1f194), cm848_initializeJ1939ReferenceEngineFuelingAndTorque (0x212e0), cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings (0x21d1c), cm848_updateCruiseAndRoadSpeedGovernorDroops (0x524bdc), cm848_presetCruiseAndRoadSpeedGovernor (0x52544c); the names agree, the bodies were not read. Clear in this calibration (0x0008). */
     uint16_t reserved_bit_10 : 1;  /* bit 10: no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). */

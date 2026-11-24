@@ -1814,8 +1814,8 @@ void cm848_updateCylinderCutoutAndInjectionDemand(void);  // @ 0x0052731c
 void cm848_resetCylinderCutoutState(void);  // @ 0x00527860
 void cm848_captureInjectionQuantityAndTimingSnapshots(void);  // @ 0x005278ac
 void cm848_accumulateInjectedFuel(void);  // @ 0x00527938
-void cm848_timer_state_preservation(void);  // @ 0x00527958
-void cm848_main_loop_initialization(void);  // @ 0x0052796c
+void cm848_writeWorkingRamEndMarker(void);  // @ 0x00527958
+void cm848_checkWorkingRamEndMarker(void);  // @ 0x0052796c
 void cm848_calculateAuxiliaryInjectionTiming(void);  // @ 0x005279d8
 void cm848_initializeAuxiliaryInjectionTimingState(void);  // @ 0x0052801c
 void cm848_armTpuChannel10AtEndOfInjectionLimit(void);  // @ 0x005280a4

@@ -616,7 +616,7 @@ fault_bit_words_t,0x003fe974,fault_458,bitfield:1@10,0,fault 458,,verified
 fault_bit_words_t,0x003fe974,fault_459,bitfield:1@11,0,fault 459,,verified
 fault_bit_words_t,0x003fe974,fault_460,bitfield:1@12,0,fault 460,,verified
 fault_bit_words_t,0x003fe974,fault_461,bitfield:1@13,0,fault 461,,verified
-fault_bit_words_t,0x003fe974,fault_462,bitfield:1@14,0,fault 462,,verified
+fault_bit_words_t,0x003fe974,working_ram_end_marker_error,bitfield:1@14,0,fault 462 (no DTC slot): cm848_checkWorkingRamEndMarker sets it when working_ram_end_marker no longer holds 0xC0DAC0DA (was fault_462; PR #53 round 87),,verified
 fault_bit_words_t,0x003fe974,fault_463,bitfield:1@15,0,fault 463,,verified
 fault_bit_words_t,0x003fe974,fault_464,bitfield:1@0,2,word faults_464_to_479 (e2m 1036 +3A System_Error_Status_29) bit 0 = fault 464,,verified
 fault_bit_words_t,0x003fe974,fault_465,bitfield:1@1,0,fault 465,,verified
@@ -2085,7 +2085,7 @@ algorithm_enable_flags_18_t,,duty_cycle_monitor_enable,bitfield:1@3,0,"duty cycl
 algorithm_enable_flags_18_t,,reserved_bit_4,bitfield:1@4,0,no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x0008).,,verified
 algorithm_enable_flags_18_t,,reserved_bit_5,bitfield:1@5,0,no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x0008).,,verified
 algorithm_enable_flags_18_t,,smart_air_compressor_enable,bitfield:1@6,0,"e2m AC_Smart_Enable (ACEN, smart air compressor). No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). (was reserved_bit_6; named from its e2m record in PR #53 round 20, as in algorithm_enable_flags_3_t)",,verified
-algorithm_enable_flags_18_t,,executive_timing_enable,bitfield:1@7,0,"e2m Executive_Timing_Enable (SSECTMEA, executive timing data gatherer). main_loop (lhz 36(r29) at 0xc0c0, 0xc140, 0xc7b8); the reader agrees by name. Clear in this calibration (0x0008).",,verified
+algorithm_enable_flags_18_t,,executive_timing_enable,bitfield:1@7,0,"e2m Executive_Timing_Enable (SSECTMEA, executive timing data gatherer). executiveFrameInterruptHandler (lhz 36(r29) at 0xc0c0, 0xc140, 0xc7b8); the reader agrees by name. Clear in this calibration (0x0008).",,verified
 algorithm_enable_flags_18_t,,high_speed_governor_gear_ratio_gain_enable,bitfield:1@8,0,e2m HSG_Gear_Ratio_Gain_Enable (HSGRGSEN). cm848_loadHighSpeedGovernorWorkingGainSet (lhz at 0x4248c); the reader agrees by name. Clear in this calibration (0x0008).,,verified
 algorithm_enable_flags_18_t,,programmable_power_enable,bitfield:1@9,0,"e2m Programmable_Power_Enable (PPEN). 6 fuel limit, protection and cruise functions: cm848_calculateDualAxisFuelLimit (0x1ec88, 0x1ed88, 0x1ee74), cm848_calculateThrottle100Fuelings (0x1f194), cm848_initializeJ1939ReferenceEngineFuelingAndTorque (0x212e0), cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings (0x21d1c), cm848_updateCruiseAndRoadSpeedGovernorDroops (0x524bdc), cm848_presetCruiseAndRoadSpeedGovernor (0x52544c); the names agree, the bodies were not read. Clear in this calibration (0x0008).",,verified
 algorithm_enable_flags_18_t,,reserved_bit_10,bitfield:1@10,0,no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x0008).,,verified
