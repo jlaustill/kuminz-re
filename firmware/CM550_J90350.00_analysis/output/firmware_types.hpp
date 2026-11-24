@@ -1015,22 +1015,10 @@ typedef enum {
 } INSITE_CMD;
 
 typedef enum {
-    FACTORY = 0,  /* Factory calibration bank - reads bytes 0-3 of parameter entries (original OEM values) */
-    ACTIVE = 1  /* Active calibration bank - reads bytes 4-7 of parameter entries (tunable values) */
-} CALIBRATION_BANK;
-
-typedef enum {
     NOT_LOADED = 0,  /* Calibration not loaded from flash */
     PRIMARY_FLASH = 1,  /* Loaded from primary flash bank @ 0x4000-0x55b2 */
     SECONDARY_FLASH = 2  /* Loaded from secondary flash bank @ 0x6000-0x75b2 */
 } CALIBRATION_FLASH_SOURCE;
-
-typedef enum {
-    ACTIVE_BANK_SELECTED = 0xEEEE,  /* Active calibration bank is selected */
-    FACTORY_BANK_SELECTED = 0xEAEA,  /* Factory calibration bank is selected */
-    TRANSITION_PENDING = 0xEAEB,  /* Transition to active bank pending */
-    SYNC_COMPLETE = 0xEEEF  /* RAM to flash sync complete */
-} CALIBRATION_STATE_SIGNATURE;
 
 typedef enum {
     WRITES_ALLOWED = 0,  /* EEPROM writes allowed - no restrictions */

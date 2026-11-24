@@ -819,21 +819,13 @@ INSITE_CMD,0xF3,INSITE_COMMAND_VERSION_INFO,insiteVersionInfoBuilder - response 
 # Each 8-byte entry contains: [4 bytes factory addr][4 bytes active addr]
 # calibration_bank_selector controls which address is used for parameter reads
 # This enables "factory tune extraction" - OEM values always accessible regardless of tuning
-# Calibration Bank Selector - calibration_bank_selector @ 0x0080dc6c
-# Controls which address field is read from parameter lookup table at 0x35224
-CALIBRATION_BANK,0,FACTORY,Factory calibration bank - reads bytes 0-3 of parameter entries (original OEM values),1
-CALIBRATION_BANK,1,ACTIVE,Active calibration bank - reads bytes 4-7 of parameter entries (tunable values),1
+# (CALIBRATION_BANK - J90280.05's reading of 0x80dc6c as a factory / active calibration bank - removed in PR #53 round 74: 0x80dc6c is ram_refresh_enable (e2m block 10C7) and RAM_REFRESH_STATE holds its 0 / 1. Its claim that the value picks bytes 0-3 or 4-7 of the parameter table entries at 0x35224 is not checked - a lead)
 # Calibration Flash Source - calibration_flash_source @ 0x0080dc70
 # Indicates which flash bank was loaded at startup
 CALIBRATION_FLASH_SOURCE,0,NOT_LOADED,Calibration not loaded from flash,1
 CALIBRATION_FLASH_SOURCE,1,PRIMARY_FLASH,Loaded from primary flash bank @ 0x4000-0x55b2,1
 CALIBRATION_FLASH_SOURCE,2,SECONDARY_FLASH,Loaded from secondary flash bank @ 0x6000-0x75b2,1
-# Calibration State Signature - calibration_state_signature @ 0x0080dc90
-# Magic values indicating calibration state machine position
-CALIBRATION_STATE_SIGNATURE,0xEEEE,ACTIVE_BANK_SELECTED,Active calibration bank is selected,2
-CALIBRATION_STATE_SIGNATURE,0xEAEA,FACTORY_BANK_SELECTED,Factory calibration bank is selected,2
-CALIBRATION_STATE_SIGNATURE,0xEAEB,TRANSITION_PENDING,Transition to active bank pending,2
-CALIBRATION_STATE_SIGNATURE,0xEEEF,SYNC_COMPLETE,RAM to flash sync complete,2
+# (CALIBRATION_STATE_SIGNATURE - J90280.05's reading of 0x80dc90 - removed in PR #53 round 74: 0x80dc90 is run_location (e2m block 0010) and RUN_LOCATION holds 0xeeee / 0xeaea; no write of its 0xeaeb / 0xeeef was found)
 # Calibration Write Protect State - calibration_write_protect_state @ 0x0080dc92 [PR #53 round 73: that is not_safe_to_program_flag - e2m block 000D SAFE2PRG; 1 blocks the EEPROM writes and the mirror commit]
 # Controls EEPROM write protection based on calibration bank state
 CALIBRATION_WRITE_PROTECT,0,WRITES_ALLOWED,EEPROM writes allowed - no restrictions,1
