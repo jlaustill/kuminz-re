@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue Nov 24 11:55:29 MST 2026
+// Generated: Tue Nov 24 12:31:00 MST 2026
 
 
 //
@@ -6908,7 +6908,7 @@ void hpcr_periodicTaskSet_fuelFinal(void)
   cm848_processAcceleratorPedalPositionSensor2Channel();
   cm848_scanAndDebounceSwitchInputs();
   cm848_checkSwitch31OnTimeFault();
-  cm848_processEngineRpmDerivative();
+  calculateFilteredEngineAcceleration();
   cm848_filterCommandedThrottle();
   cm848_updateAcceleratorPedalSensorFaultFlags();
   cm848_checkAcceleratorPedalChannelAgreement();
@@ -6936,7 +6936,7 @@ void cm848_periodicTaskSet_sensorProcessing(void)
   cm848_runOperatingModeSpeedGovernor();
   cm848_temperatureBasedFuelTrim();
   cm848_updateFourDimensionalFueling();
-  cm848_smoothPowerTakeOffReferenceEngineSpeed();
+  smoothPowerTakeOffReferenceEngineSpeed();
   cm848_runPowerTakeOffGovernor();
   cm848_selectPowerTakeOffOrUserFueling();
   cm848_updateLowSpeedGovernorReferenceSpeed();
@@ -29640,7 +29640,7 @@ void cm848_presetPowerTakeOffGovernorOnEngagement(void)
   uint uVar4;
   
   power_take_off_governor_proportional_derivative_fueling = 0;
-  cm848_presetPowerTakeOffSmoothedReferenceEngineSpeed();
+  presetPowerTakeOffSmoothedReferenceEngineSpeed();
   power_take_off_speed_error_filter.accumulator = 0;
   power_take_off_governor_filtered_speed_error = 0;
   if (power_take_off_gain_adjustment_mode == 0) {
@@ -29720,20 +29720,22 @@ void cm848_runPowerTakeOffGovernor(void)
 
 
 //
-// Function: cm848_initializePowerTakeOffGovernorFiltersAndGains @ 0x0002abc8
+// Function: initializePowerTakeOffGovernorFiltersAndGains @ 0x0002abc8
 //
 
 /* Boot initialization of the power take-off governor: power_take_off_speed_error_filter
    (accumulator 0, coefficient power_take_off_speed_error_filter_coefficient), the reference filter
-   (cm848_initializePowerTakeOffReferenceFilter), the QD / QI / QP gain adjustments = 0x80 (1.0) and
-   the four lookup caches = 2 (was cm848_initProtectionFilterState) */
+   (initializePowerTakeOffReferenceFilter), the QD / QI / QP gain adjustments = 0x80 (1.0) and the
+   four lookup caches = 2 (was cm848_initProtectionFilterState) | (was
+   cm848_initializePowerTakeOffGovernorFiltersAndGains; PR #53 round 89; the twin of CM550 0x2db2a:
+   one shared name) */
 
-void cm848_initializePowerTakeOffGovernorFiltersAndGains(void)
+void initializePowerTakeOffGovernorFiltersAndGains(void)
 
 {
   power_take_off_speed_error_filter.accumulator = 0;
   power_take_off_speed_error_filter.coefficient = &power_take_off_speed_error_filter_coefficient;
-  cm848_initializePowerTakeOffReferenceFilter();
+  initializePowerTakeOffReferenceFilter();
   power_take_off_governor_derivative_gain_adjustment = 0x80;
   power_take_off_governor_integral_gain_adjustment = 0x80;
   power_take_off_governor_proportional_gain_adjustment = 0x80;
@@ -29747,16 +29749,17 @@ void cm848_initializePowerTakeOffGovernorFiltersAndGains(void)
 
 
 //
-// Function: cm848_smoothPowerTakeOffReferenceEngineSpeed @ 0x0002ac44
+// Function: smoothPowerTakeOffReferenceEngineSpeed @ 0x0002ac44
 //
 
 /* Runs the engagement ramp (cm848_rampPowerTakeOffReferenceEngineSpeed:
    power_take_off_target_engine_speed into power_take_off_requested_engine_speed), then smooths
    power_take_off_requested_engine_speed into
    power_take_off_governor_smoothed_reference_engine_speed (minimum step + EMA) (was
-   cm848_smoothProtectionParamTransition) */
+   cm848_smoothProtectionParamTransition) | (was cm848_smoothPowerTakeOffReferenceEngineSpeed; PR
+   #53 round 89; the twin of CM550 0x2dbde: one shared name) */
 
-void cm848_smoothPowerTakeOffReferenceEngineSpeed(void)
+void smoothPowerTakeOffReferenceEngineSpeed(void)
 
 {
   word wVar1;
@@ -29806,14 +29809,16 @@ void cm848_smoothPowerTakeOffReferenceEngineSpeed(void)
 
 
 //
-// Function: cm848_presetPowerTakeOffSmoothedReferenceEngineSpeed @ 0x0002ad28
+// Function: presetPowerTakeOffSmoothedReferenceEngineSpeed @ 0x0002ad28
 //
 
 /* On the first active pass (from cm848_presetPowerTakeOffGovernorOnEngagement):
    power_take_off_governor_smoothed_reference_engine_speed = the engine speed and the reference
-   filter's accumulator = 0 (was cm848_setProtectionParamFromRpm) */
+   filter's accumulator = 0 (was cm848_setProtectionParamFromRpm) | (was
+   cm848_presetPowerTakeOffSmoothedReferenceEngineSpeed; PR #53 round 89; the twin of CM550 0x2dc8c:
+   one shared name) */
 
-void cm848_presetPowerTakeOffSmoothedReferenceEngineSpeed(void)
+void presetPowerTakeOffSmoothedReferenceEngineSpeed(void)
 
 {
   power_take_off_governor_smoothed_reference_engine_speed = engine_speed_state.filtered_engine_speed
@@ -29825,13 +29830,15 @@ void cm848_presetPowerTakeOffSmoothedReferenceEngineSpeed(void)
 
 
 //
-// Function: cm848_initializePowerTakeOffReferenceFilter @ 0x0002ad48
+// Function: initializePowerTakeOffReferenceFilter @ 0x0002ad48
 //
 
 /* Clears power_take_off_reference_filter_state's accumulator and points its coefficient at
-   power_take_off_reference_filter_coefficient (was cm848_initProtectionSmoothingPointer) */
+   power_take_off_reference_filter_coefficient (was cm848_initProtectionSmoothingPointer) | (was
+   cm848_initializePowerTakeOffReferenceFilter; PR #53 round 89; the twin of CM550 0x2dc9e: one
+   shared name) */
 
-void cm848_initializePowerTakeOffReferenceFilter(void)
+void initializePowerTakeOffReferenceFilter(void)
 
 {
   power_take_off_reference_filter_state.accumulator = 0;
@@ -39069,7 +39076,7 @@ void cm848_calculateMainInjectionEndTiming(void)
 
 
 //
-// Function: cm848_processEngineRpmDerivative @ 0x00038760
+// Function: calculateFilteredEngineAcceleration @ 0x00038760
 //
 
 /* Engine acceleration filter: engine_acceleration_unfiltered = change of
@@ -39078,9 +39085,10 @@ void cm848_calculateMainInjectionEndTiming(void)
    engine_acceleration_first_stage_clamp_minimum .. _maximum (the filter accumulator is reset to the
    clamp value), engine_acceleration_second_stage_filtered = second first-order filter. Read by
    cm848_calculatePilotInjectionQuantity (pilot shutoff above an acceleration) and
-   selectHighSpeedGovernorGainSet. */
+   selectHighSpeedGovernorGainSet. | (was cm848_processEngineRpmDerivative; PR #53 round 89; the
+   twin of CM550 0xb210: one shared name) */
 
-void cm848_processEngineRpmDerivative(void)
+void calculateFilteredEngineAcceleration(void)
 
 {
   int iVar1;
@@ -39113,10 +39121,16 @@ LAB_000387f4:
 
 
 //
-// Function: cm848_initEngineRpmFilterPointers @ 0x00038824
+// Function: initializeEngineAccelerationFilters @ 0x00038824
 //
 
-void cm848_initEngineRpmFilterPointers(void)
+/* It clears both engine acceleration filter accumulators, points their coefficients at
+   engine_acceleration_first_stage_filter_coefficient / _second_stage_filter_coefficient and clears
+   engine_acceleration_engine_speed_previous. It gets one shared name, which also replaces the
+   banned 'init'. (was cm848_initEngineRpmFilterPointers; PR #53 round 89; the twin of CM550 0xb5e4:
+   one shared name) */
+
+void initializeEngineAccelerationFilters(void)
 
 {
   engine_acceleration_first_stage_filter_state.accumulator = 0;
@@ -46315,8 +46329,8 @@ void cm848_dispatchModeHandlers(void)
 
 {
   cm848_initLookupTableParams();
-  cm848_initDroopModeStateVariables();
-  cm848_initializePowerTakeOffGovernorFiltersAndGains();
+  initializePedalFaultModeEngineSpeedFilter();
+  initializePowerTakeOffGovernorFiltersAndGains();
   return;
 }
 
@@ -58948,7 +58962,7 @@ void cm848_applicationMain(void)
   cm848_resetIntakeAirHeaterStartTemperatureCapture();
   cm848_initIntakeAirHeaterControl();
   cm848_initializeFuelDemandAndLimitInterpolationStates();
-  cm848_initEngineRpmFilterPointers();
+  initializeEngineAccelerationFilters();
   cm848_initializeCruiseGovernorFilters();
   cm848_initTemperatureTrimCoeff();
   cm848_initializeAirConditioningPressureChannel();
@@ -67064,7 +67078,7 @@ void hpcr_initializeEngineProtection(void)
     fuel_temperature_engine_protection_state.engine_speed_fault_log_pointer =
          fuel_temperature_engine_protection_engine_speed_fault_log_cal;
   }
-  cm848_initializeFaultDerateEngineSpeedLimit();
+  initializeFaultDerateEngineSpeedLimit();
   cm848_resetFaultDerateFuelLimit();
   cm848_resetEngineProtectionShutdownState();
   cm848_resetEngineProtectionShutdownOverrideDetector();
@@ -67530,7 +67544,7 @@ void cm848_calculateFaultDerateEngineSpeedLimit(void)
 
 
 //
-// Function: cm848_initializeFaultDerateEngineSpeedLimit @ 0x005087e4
+// Function: initializeFaultDerateEngineSpeedLimit @ 0x005087e4
 //
 
 /* Initializes the fault derate engine speed limit: engine_speed_limit_fault_derate (source 5 of
@@ -67540,9 +67554,10 @@ void cm848_calculateFaultDerateEngineSpeedLimit(void)
    engine_speed_limit_fault_derate_full_severity (19200 = 2400 rpm). Called with
    cm848_resetFaultDerateFuelLimit by hpcr_initializeEngineProtection;
    cm848_calculateFaultDerateEngineSpeedLimit updates the same filter state. (was
-   engine_torqueLimit_workingState_init) */
+   engine_torqueLimit_workingState_init) | (was cm848_initializeFaultDerateEngineSpeedLimit; PR #53
+   round 89; the twin of CM550 0x18f4c: one shared name) */
 
-void cm848_initializeFaultDerateEngineSpeedLimit(void)
+void initializeFaultDerateEngineSpeedLimit(void)
 
 {
   ema_filter_state_t_003fbd2e.accumulator = (uint)engine_speed_limit_default_cal << 0x10;
@@ -68315,7 +68330,7 @@ void cm848_calculateFaultDerateFuelLimit(void)
 /* Resets the fault derate fuel limit: fault_derate_ramp_times_256 to 0, its lookup state
    fault_derate_fuel_limit_by_engine_speed_cached_axis_offset to 2, fault_derate_fuel_limit to the
    no-limit value fuel_demand_maximum (5888) and fault_derate_active_flag to 0. Called with
-   cm848_initializeFaultDerateEngineSpeedLimit by hpcr_initializeEngineProtection. (was
+   initializeFaultDerateEngineSpeedLimit by hpcr_initializeEngineProtection. (was
    engine_protection_torqueLimit_reset) */
 
 void cm848_resetFaultDerateFuelLimit(void)
@@ -71949,15 +71964,17 @@ void cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit(void)
 
 
 //
-// Function: cm848_presetPedalFaultModeFuelDemand @ 0x0050da7c
+// Function: presetPedalFaultModeFuelDemand @ 0x0050da7c
 //
 
 /* From cm848_transitionEngineOperatingMode: presets the pedal fault mode -
    pedal_fault_mode_fuel_demand_ramp and pedal_fault_mode_fuel_demand_limit_previous take
    final_fueling and pedal_fault_mode_engine_speed_filter_state's accumulator takes the current
-   engine speed (was fuel_demand_periodSnapshot_save; PR #53 round 62) */
+   engine speed (was fuel_demand_periodSnapshot_save; PR #53 round 62) | (was
+   cm848_presetPedalFaultModeFuelDemand; PR #53 round 89; the twin of CM550 0x258b0: one shared
+   name) */
 
-void cm848_presetPedalFaultModeFuelDemand(void)
+void presetPedalFaultModeFuelDemand(void)
 
 {
   pedal_fault_mode_fuel_demand_ramp = final_fueling;
@@ -72001,7 +72018,7 @@ void cm848_transitionEngineOperatingMode(int previous_engine_operating_mode)
 LAB_0050db64:
   engine_operating_mode = FUELING_STATE_ACCELERATOR_PEDAL_FAULT;
   if (previous_engine_operating_mode != 6) {
-    cm848_presetPedalFaultModeFuelDemand();
+    presetPedalFaultModeFuelDemand();
   }
   return;
 }
@@ -72009,10 +72026,16 @@ LAB_0050db64:
 
 
 //
-// Function: cm848_initDroopModeStateVariables @ 0x0050db88
+// Function: initializePedalFaultModeEngineSpeedFilter @ 0x0050db88
 //
 
-void cm848_initDroopModeStateVariables(void)
+/* The twin of CM550 0x258d6: the identical two stores (pedal_fault_mode_engine_speed_filter_state
+   accumulator 0, coefficient pedal_fault_mode_engine_speed_filter_coefficient) and the same
+   position in the three-call parent. The shared name also fixes the old one (no droop, no 'init').
+   (was cm848_initDroopModeStateVariables; PR #53 round 89; the twin of CM550 0x258d6: one shared
+   name) */
+
+void initializePedalFaultModeEngineSpeedFilter(void)
 
 {
   pedal_fault_mode_engine_speed_filter_state.accumulator = 0;

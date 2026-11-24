@@ -1072,7 +1072,7 @@ typedef struct dma_descriptor_t dma_descriptor_t;
 typedef struct memory_operation_request_t memory_operation_request_t;
 typedef struct q16_fixed_point_t q16_fixed_point_t;
 typedef struct division_operand_t division_operand_t;
-typedef struct sensor_fault_config_t sensor_fault_config_t;
+typedef struct sensor_config_t sensor_config_t;
 typedef struct ema_filter_state_t ema_filter_state_t;
 typedef struct second_order_filter_state_t second_order_filter_state_t;
 typedef struct sensor_debounce_state_t sensor_debounce_state_t;
@@ -1098,7 +1098,6 @@ typedef struct timing_mode_control_t timing_mode_control_t;
 typedef struct scheduler_phase_slot_t scheduler_phase_slot_t;
 typedef struct scheduler_phase_table_t scheduler_phase_table_t;
 typedef struct system_callback_table_t system_callback_table_t;
-typedef struct ad_sensor_config_t ad_sensor_config_t;
 typedef struct address_range_entry_t address_range_entry_t;
 typedef struct circular_buffer_control_t circular_buffer_control_t;
 typedef struct huffman_tree_node_t huffman_tree_node_t;
@@ -1174,22 +1173,22 @@ struct division_operand_t {
     uint16_t limit;  /* Secondary 16-bit limit/clamp value */
 };
 
-struct sensor_fault_config_t {
-    uint16_t reserved_00;  /* Reserved/padding at offset 0x00 */
-    uint16_t default_value;  /* Default sensor value on fault */
-    uint16_t clear_threshold;  /* Threshold for fault clear */
-    uint16_t decrement_value;  /* Debounce counter decrement */
-    uint16_t increment_value;  /* Debounce counter increment */
-    uint16_t set_threshold;  /* Threshold for fault set */
-    uint16_t high_limit;  /* High error limit */
-    uint16_t low_limit;  /* Low error limit */
-    uint16_t adc_lookup_index;  /* A/D channel lookup table index */
-    uint8_t reserved_12;  /* Reserved byte */
-    uint8_t alt_fault_enable;  /* Alternative fault enable flag */
-    uint8_t primary_fault_id;  /* Primary fault code */
-    uint8_t secondary_fault_id;  /* Secondary fault code */
-    uint8_t tertiary_fault_id;  /* Tertiary fault code */
-    uint8_t debounce_max;  /* Maximum debounce count */
+struct sensor_config_t {
+    uint16_t filter_coefficient;  /* +0: A/D digital filter constant (1/65536): the weight of the previous value - the channel's ema_filter_state_t.coefficient points here and cm550_exponentialMovingAverage reads it */
+    uint16_t default_value;  /* +2: global default value in the channel's units: filtered_value and the accumulator (<< 16) while the fault is active or on a tri-state reading */
+    int16_t fault_clear_threshold;  /* +4: A/D fault clear counts: debounce_counter at or below it clears fault_active_flag; each high / low status bit (0x806000) clears only while its 0x806040 first-occurrence bit is clear */
+    int16_t debounce_counter_decrement;  /* +6: A/D fault decrement: taken off debounce_counter on each in-range sample (floored at 0) */
+    int16_t debounce_counter_increment;  /* +8: A/D fault increment: added to debounce_counter on each out-of-range sample */
+    int16_t fault_set_threshold;  /* +10: A/D fault set: debounce_counter at or above it sets the fault and is capped there */
+    uint16_t high_error_limit;  /* +12: A/D high error limit in raw counts (0-1023): adc_raw_value above it counts toward high_error_fault_number */
+    uint16_t low_error_limit;  /* +14: A/D low error limit in raw counts: adc_raw_value below it counts toward low_error_fault_number */
+    uint16_t qadc_result_register_index;  /* +16: the QADC result slot (0-39) whose right-justified result register (0xfff2b0 + 2 x n) gives adc_raw_value */
+    uint8_t multiplexer_setting;  /* +18: channel multiplexer setting: no reader in J90350.00 (0 in all 25 records) */
+    uint8_t tri_state_error_enable;  /* +19: tri-state flag: nonzero makes a lookup result of 4 count toward tri_state_error_fault_number (0 in all 25 records) */
+    uint8_t high_error_fault_number;  /* +20: the fault the high limit sets (bit n mod 16 of status word n / 16 at 0x806000 / 0x806040) */
+    uint8_t low_error_fault_number;  /* +21: the fault the low limit sets */
+    uint8_t tri_state_error_fault_number;  /* +22: the in-range / tri-state error: set at the fifth consecutive lookup result of 4 and cleared at the fifth other reading */
+    uint8_t sample_period;  /* +23: the channel runs once every sample_period passes of the A/D loop (0 = not processed); the e2m scale calls a pass 20 ms - not measured */
 };
 
 struct ema_filter_state_t {
@@ -1434,17 +1433,6 @@ struct system_callback_table_t {
     uint32_t engine_position_sensor_isr;  /* EPS position sensor ISR handler */
     uint32_t tpu_adc_isr;  /* TPU/QADC interrupt handler */
     uint32_t main_loop_callback;  /* Main scheduler loop callback */
-};
-
-struct ad_sensor_config_t {
-    uint16_t channel_addr;  /* A/D channel address for sensor input */
-    uint16_t filter_const;  /* Digital filter constant (0-1) */
-    uint16_t fault_clear_count;  /* Fault clear counter threshold */
-    uint16_t fault_decrement;  /* Fault counter decrement value */
-    uint16_t fault_increment;  /* Fault counter increment value */
-    uint16_t fault_set_threshold;  /* Fault set threshold */
-    uint16_t high_error_limit;  /* A/D high error limit (0-1023) */
-    uint16_t low_error_limit;  /* A/D low error limit (0-1023) */
 };
 
 struct address_range_entry_t {

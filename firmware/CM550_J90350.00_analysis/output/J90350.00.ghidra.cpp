@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue Nov 24 11:53:57 MST 2026
+// Generated: Tue Nov 24 12:29:31 MST 2026
 
 
 //
@@ -746,12 +746,16 @@ void cm550_writeHourMeterConversionData(void)
 
 
 //
-// Function: cm550_outputControlTimingGenerator @ 0x0000b210
+// Function: calculateFilteredEngineAcceleration @ 0x0000b210
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* This is the engine acceleration filter, and it is the twin of CM848 0x38760. It computes ESESAC
+   (0x80a292) = the measured speed ESCMES (0x80ccf4) minus the previous pass's speed (0x800048),
+   then stores the speed as the new previous. (was cm550_outputControlTimingGenerator; PR #53 round
+   89; the twin of CM848 0x38760: one shared name) */
 
-void cm550_outputControlTimingGenerator(void)
+void calculateFilteredEngineAcceleration(void)
 
 {
   _DAT_0080a292 = _current_engine_rpm_filtered - _DAT_00800048;
@@ -1042,12 +1046,17 @@ ushort cm550_engineStateFuelLimitInterpolator(void)
 
 
 //
-// Function: cm550_dmaControllerSetup1 @ 0x0000b5e4
+// Function: initializeEngineAccelerationFilters @ 0x0000b5e4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up initializer of the two engine acceleration filter records and the previous speed. It
+   sets engine_acceleration_first_stage_filter_state.accumulator = 0x80000000 (0 in the offset
+   binary of cm550_signedFirstOrderFilter) and .coefficient =
+   &engine_acceleration_first_stage_filter_coefficient (0x807a42, ESFT01TC). (was
+   cm550_dmaControllerSetup1; PR #53 round 89; the twin of CM848 0x38824: one shared name) */
 
-void cm550_dmaControllerSetup1(void)
+void initializeEngineAccelerationFilters(void)
 
 {
   engine_acceleration_first_stage_filter_state.accumulator = 0x80000000;
@@ -1209,12 +1218,17 @@ void cm550_diagnosticMessageQueueWrite(word response_type)
 
 
 //
-// Function: validateServiceDataLength @ 0x0000b7bc
+// Function: mc68k_processAnalogSensorChannels @ 0x0000b7bc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* This is the A/D sensor channel loop; it handles no service and no data length. It walks the 25
+   sensor_debounce_state_t records (22 bytes each, 0x80a2aa to 0x80a4cf), each with its 24-byte
+   config from 0x806ae2 (e2m 1003 +0 ADIMTPCS, channel 0's filter coefficient). For each channel it
+   runs the sample counter against the config's rate byte (+0x17). (was validateServiceDataLength;
+   PR #53 round 89) */
 
-void validateServiceDataLength(void)
+void mc68k_processAnalogSensorChannels(void)
 
 {
   bool bVar1;
@@ -1223,7 +1237,7 @@ void validateServiceDataLength(void)
   short sVar4;
   ushort uVar5;
   ushort uVar6;
-  word *pwVar7;
+  sensor_config_t *psVar7;
   sensor_debounce_state_t *channel_record;
   char *pcVar8;
   char *pcVar9;
@@ -1231,7 +1245,7 @@ void validateServiceDataLength(void)
   
   sVar4 = 0;
   channel_record = (sensor_debounce_state_t *)&intake_manifold_temperature_sensor_filter_state;
-  pwVar7 = &intake_manifold_temperature_sensor_filter_coefficient;
+  psVar7 = &intake_manifold_temperature_sensor_config;
   uVar3 = 1;
   pcVar9 = &governor_integral_accumulator;
   pcVar8 = &DAT_00800076;
@@ -1242,135 +1256,139 @@ void validateServiceDataLength(void)
     if ((sensor_debounce_state_t *)0x80a4cf < channel_record) {
       return;
     }
-    if (*(char *)((int)pwVar7 + 0x17) == '\0') {
+    if (psVar7->sample_period == 0) {
       channel_record->sample_counter = 0;
     }
-    else if (channel_record->sample_counter < *(byte *)((int)pwVar7 + 0x17)) {
+    else if (channel_record->sample_counter < psVar7->sample_period) {
       channel_record->sample_counter = channel_record->sample_counter + 1;
     }
     else {
       channel_record->sample_counter = 1;
       if ((uVar3 & uVar6) == 0) {
         if ((uVar3 & uVar5) == 0) {
-          channel_record->adc_raw_value = *(word *)(&UNK_00fff2b0 + (uint)pwVar7[8] * 2);
+          channel_record->adc_raw_value =
+               *(word *)(&UNK_00fff2b0 + (uint)psVar7->qadc_result_register_index * 2);
         }
         else {
           channel_record->adc_raw_value = *(word *)(&DAT_0080a760 + sVar4 * 2);
         }
-        if (pwVar7[6] < channel_record->adc_raw_value) {
+        if (psVar7->high_error_limit < channel_record->adc_raw_value) {
           if ((((uint)*(ushort *)
                        (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-                       (short)((int)(uint)*(byte *)((int)pwVar7 + 0x15) >> 4) * 2) &
-               1 << (*(byte *)((int)pwVar7 + 0x15) & 0xf)) == 0) ||
+                       (short)((int)(uint)psVar7->low_error_fault_number >> 4) * 2) &
+               1 << (psVar7->low_error_fault_number & 0xf)) == 0) ||
              (((uint)*(ushort *)
                       (&fault_confirm_status_word_0 +
-                      (short)((int)(uint)*(byte *)((int)pwVar7 + 0x15) >> 4) * 2) &
-              1 << (*(byte *)((int)pwVar7 + 0x15) & 0xf)) == 0)) {
+                      (short)((int)(uint)psVar7->low_error_fault_number >> 4) * 2) &
+              1 << (psVar7->low_error_fault_number & 0xf)) == 0)) {
             bVar1 = false;
           }
           else {
             bVar1 = true;
           }
           if (bVar1) goto LAB_0000b94c;
-          channel_record->debounce_counter = pwVar7[4] + channel_record->debounce_counter;
-          if ((short)pwVar7[5] <= channel_record->debounce_counter) {
-            channel_record->debounce_counter = pwVar7[5];
+          channel_record->debounce_counter =
+               psVar7->debounce_counter_increment + channel_record->debounce_counter;
+          if (psVar7->fault_set_threshold <= channel_record->debounce_counter) {
+            channel_record->debounce_counter = psVar7->fault_set_threshold;
             channel_record->fault_active_flag = 1;
             *(ushort *)
              (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-             (short)((int)(uint)*(byte *)(pwVar7 + 10) >> 4) * 2) =
-                 1 << (*(byte *)(pwVar7 + 10) & 0xf) |
+             (short)((int)(uint)psVar7->high_error_fault_number >> 4) * 2) =
+                 1 << (psVar7->high_error_fault_number & 0xf) |
                  *(ushort *)
                   (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-                  (short)((int)(uint)*(byte *)(pwVar7 + 10) >> 4) * 2);
+                  (short)((int)(uint)psVar7->high_error_fault_number >> 4) * 2);
             *(ushort *)
              (&fault_first_occurrence_flags_word_0 +
-             (short)((int)(uint)*(byte *)(pwVar7 + 10) >> 4) * 2) =
-                 1 << (*(byte *)(pwVar7 + 10) & 0xf) |
+             (short)((int)(uint)psVar7->high_error_fault_number >> 4) * 2) =
+                 1 << (psVar7->high_error_fault_number & 0xf) |
                  *(ushort *)
                   (&fault_first_occurrence_flags_word_0 +
-                  (short)((int)(uint)*(byte *)(pwVar7 + 10) >> 4) * 2);
+                  (short)((int)(uint)psVar7->high_error_fault_number >> 4) * 2);
           }
         }
         else {
 LAB_0000b94c:
-          if (channel_record->adc_raw_value < pwVar7[7]) {
+          if (channel_record->adc_raw_value < psVar7->low_error_limit) {
             if ((((uint)*(ushort *)
                          (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-                         (short)((int)(uint)*(byte *)(pwVar7 + 10) >> 4) * 2) &
-                 1 << (*(byte *)(pwVar7 + 10) & 0xf)) == 0) ||
+                         (short)((int)(uint)psVar7->high_error_fault_number >> 4) * 2) &
+                 1 << (psVar7->high_error_fault_number & 0xf)) == 0) ||
                (((uint)*(ushort *)
                         (&fault_confirm_status_word_0 +
-                        (short)((int)(uint)*(byte *)(pwVar7 + 10) >> 4) * 2) &
-                1 << (*(byte *)(pwVar7 + 10) & 0xf)) == 0)) {
+                        (short)((int)(uint)psVar7->high_error_fault_number >> 4) * 2) &
+                1 << (psVar7->high_error_fault_number & 0xf)) == 0)) {
               bVar1 = false;
             }
             else {
               bVar1 = true;
             }
             if (!bVar1) {
-              channel_record->debounce_counter = pwVar7[4] + channel_record->debounce_counter;
-              if ((short)pwVar7[5] <= channel_record->debounce_counter) {
-                channel_record->debounce_counter = pwVar7[5];
+              channel_record->debounce_counter =
+                   psVar7->debounce_counter_increment + channel_record->debounce_counter;
+              if (psVar7->fault_set_threshold <= channel_record->debounce_counter) {
+                channel_record->debounce_counter = psVar7->fault_set_threshold;
                 channel_record->fault_active_flag = 1;
                 *(ushort *)
                  (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-                 (short)((int)(uint)*(byte *)((int)pwVar7 + 0x15) >> 4) * 2) =
-                     1 << (*(byte *)((int)pwVar7 + 0x15) & 0xf) |
+                 (short)((int)(uint)psVar7->low_error_fault_number >> 4) * 2) =
+                     1 << (psVar7->low_error_fault_number & 0xf) |
                      *(ushort *)
                       (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-                      (short)((int)(uint)*(byte *)((int)pwVar7 + 0x15) >> 4) * 2);
+                      (short)((int)(uint)psVar7->low_error_fault_number >> 4) * 2);
                 *(ushort *)
                  (&fault_first_occurrence_flags_word_0 +
-                 (short)((int)(uint)*(byte *)((int)pwVar7 + 0x15) >> 4) * 2) =
-                     1 << (*(byte *)((int)pwVar7 + 0x15) & 0xf) |
+                 (short)((int)(uint)psVar7->low_error_fault_number >> 4) * 2) =
+                     1 << (psVar7->low_error_fault_number & 0xf) |
                      *(ushort *)
                       (&fault_first_occurrence_flags_word_0 +
-                      (short)((int)(uint)*(byte *)((int)pwVar7 + 0x15) >> 4) * 2);
+                      (short)((int)(uint)psVar7->low_error_fault_number >> 4) * 2);
               }
               goto LAB_0000ba4c;
             }
           }
-          channel_record->debounce_counter = channel_record->debounce_counter - pwVar7[3];
+          channel_record->debounce_counter =
+               channel_record->debounce_counter - psVar7->debounce_counter_decrement;
           if (channel_record->debounce_counter < 0) {
             channel_record->debounce_counter = 0;
           }
         }
 LAB_0000ba4c:
-        if (channel_record->debounce_counter <= (short)pwVar7[2]) {
+        if (channel_record->debounce_counter <= psVar7->fault_clear_threshold) {
           channel_record->fault_active_flag = 0;
           if (((uint)*(ushort *)
                       (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-                      (short)((int)(uint)*(byte *)(pwVar7 + 10) >> 4) * 2) &
-              1 << (*(byte *)(pwVar7 + 10) & 0xf)) != 0) {
+                      (short)((int)(uint)psVar7->high_error_fault_number >> 4) * 2) &
+              1 << (psVar7->high_error_fault_number & 0xf)) != 0) {
             if (((uint)*(ushort *)
                         (&fault_first_occurrence_flags_word_0 +
-                        (short)((int)(uint)*(byte *)(pwVar7 + 10) >> 4) * 2) &
-                1 << (*(byte *)(pwVar7 + 10) & 0xf)) == 0) {
+                        (short)((int)(uint)psVar7->high_error_fault_number >> 4) * 2) &
+                1 << (psVar7->high_error_fault_number & 0xf)) == 0) {
               *(ushort *)
                (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-               (short)((int)(uint)*(byte *)(pwVar7 + 10) >> 4) * 2) =
-                   ~(1 << (*(byte *)(pwVar7 + 10) & 0xf)) &
+               (short)((int)(uint)psVar7->high_error_fault_number >> 4) * 2) =
+                   ~(1 << (psVar7->high_error_fault_number & 0xf)) &
                    *(ushort *)
                     (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-                    (short)((int)(uint)*(byte *)(pwVar7 + 10) >> 4) * 2);
+                    (short)((int)(uint)psVar7->high_error_fault_number >> 4) * 2);
             }
           }
           if (((uint)*(ushort *)
                       (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-                      (short)((int)(uint)*(byte *)((int)pwVar7 + 0x15) >> 4) * 2) &
-              1 << (*(byte *)((int)pwVar7 + 0x15) & 0xf)) != 0) {
+                      (short)((int)(uint)psVar7->low_error_fault_number >> 4) * 2) &
+              1 << (psVar7->low_error_fault_number & 0xf)) != 0) {
             if (((uint)*(ushort *)
                         (&fault_first_occurrence_flags_word_0 +
-                        (short)((int)(uint)*(byte *)((int)pwVar7 + 0x15) >> 4) * 2) &
-                1 << (*(byte *)((int)pwVar7 + 0x15) & 0xf)) == 0) {
+                        (short)((int)(uint)psVar7->low_error_fault_number >> 4) * 2) &
+                1 << (psVar7->low_error_fault_number & 0xf)) == 0) {
               *(ushort *)
                (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-               (short)((int)(uint)*(byte *)((int)pwVar7 + 0x15) >> 4) * 2) =
-                   ~(1 << (*(byte *)((int)pwVar7 + 0x15) & 0xf)) &
+               (short)((int)(uint)psVar7->low_error_fault_number >> 4) * 2) =
+                   ~(1 << (psVar7->low_error_fault_number & 0xf)) &
                    *(ushort *)
                     (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-                    (short)((int)(uint)*(byte *)((int)pwVar7 + 0x15) >> 4) * 2);
+                    (short)((int)(uint)psVar7->low_error_fault_number >> 4) * 2);
             }
           }
         }
@@ -1378,30 +1396,30 @@ LAB_0000ba4c:
           local_8->input_value = channel_record->adc_raw_value;
           wVar2 = lookupTableInterpolation(local_8);
           channel_record->lookup_result = wVar2;
-          if (*(char *)((int)pwVar7 + 0x13) == '\0') {
+          if (psVar7->tri_state_error_enable == 0) {
             wVar2 = cm550_exponentialMovingAverage
                               (channel_record->lookup_result,&channel_record->filter);
             channel_record->filtered_value = wVar2;
           }
           else if (channel_record->lookup_result == 4) {
-            channel_record->filtered_value = pwVar7[1];
-            (channel_record->filter).accumulator = (uint)pwVar7[1] << 0x10;
+            channel_record->filtered_value = psVar7->default_value;
+            (channel_record->filter).accumulator = (uint)psVar7->default_value << 0x10;
             *pcVar9 = '\0';
             if (*pcVar8 == '\x04') {
               *(ushort *)
                (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-               (short)((int)(uint)*(byte *)(pwVar7 + 0xb) >> 4) * 2) =
-                   1 << (*(byte *)(pwVar7 + 0xb) & 0xf) |
+               (short)((int)(uint)psVar7->tri_state_error_fault_number >> 4) * 2) =
+                   1 << (psVar7->tri_state_error_fault_number & 0xf) |
                    *(ushort *)
                     (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-                    (short)((int)(uint)*(byte *)(pwVar7 + 0xb) >> 4) * 2);
+                    (short)((int)(uint)psVar7->tri_state_error_fault_number >> 4) * 2);
               *(ushort *)
                (&fault_first_occurrence_flags_word_0 +
-               (short)((int)(uint)*(byte *)(pwVar7 + 0xb) >> 4) * 2) =
-                   1 << (*(byte *)(pwVar7 + 0xb) & 0xf) |
+               (short)((int)(uint)psVar7->tri_state_error_fault_number >> 4) * 2) =
+                   1 << (psVar7->tri_state_error_fault_number & 0xf) |
                    *(ushort *)
                     (&fault_first_occurrence_flags_word_0 +
-                    (short)((int)(uint)*(byte *)(pwVar7 + 0xb) >> 4) * 2);
+                    (short)((int)(uint)psVar7->tri_state_error_fault_number >> 4) * 2);
               *pcVar8 = '\0';
             }
             else {
@@ -1416,11 +1434,11 @@ LAB_0000ba4c:
             if (*pcVar9 == '\x04') {
               *(ushort *)
                (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-               (short)((int)(uint)*(byte *)(pwVar7 + 0xb) >> 4) * 2) =
-                   ~(1 << (*(byte *)(pwVar7 + 0xb) & 0xf)) &
+               (short)((int)(uint)psVar7->tri_state_error_fault_number >> 4) * 2) =
+                   ~(1 << (psVar7->tri_state_error_fault_number & 0xf)) &
                    *(ushort *)
                     (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-                    (short)((int)(uint)*(byte *)(pwVar7 + 0xb) >> 4) * 2);
+                    (short)((int)(uint)psVar7->tri_state_error_fault_number >> 4) * 2);
               *pcVar9 = '\0';
             }
             else {
@@ -1429,8 +1447,8 @@ LAB_0000ba4c:
           }
         }
         else {
-          channel_record->filtered_value = pwVar7[1];
-          (channel_record->filter).accumulator = (uint)pwVar7[1] << 0x10;
+          channel_record->filtered_value = psVar7->default_value;
+          (channel_record->filter).accumulator = (uint)psVar7->default_value << 0x10;
         }
       }
       else {
@@ -1438,7 +1456,7 @@ LAB_0000ba4c:
       }
     }
     channel_record = channel_record + 1;
-    pwVar7 = pwVar7 + 0xc;
+    psVar7 = psVar7 + 1;
     local_8 = (table_interp_args_t *)&local_8[1].x_axis_ptr;
     pcVar8 = pcVar8 + 1;
     pcVar9 = pcVar9 + 1;
@@ -1457,16 +1475,19 @@ LAB_0000ba4c:
 
 
 //
-// Function: cm550_initADCChannelConfiguration @ 0x0000bcf0
+// Function: cm550_initializeAnalogSensorChannels @ 0x0000bcf0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up set-up of the A/D channel loop. It writes the 25 linearization lookup descriptors (size
+   2 plus axis and value pointers at 0x80a792 + 14n). (was cm550_initADCChannelConfiguration; PR #53
+   round 89) */
 
-void cm550_initADCChannelConfiguration(void)
+void cm550_initializeAnalogSensorChannels(void)
 
 {
   bool bVar1;
-  word *pwVar2;
+  sensor_config_t *psVar2;
   sensor_debounce_state_t *channel_record;
   ema_filter_state_t *peVar3;
   
@@ -1545,20 +1566,20 @@ void cm550_initADCChannelConfiguration(void)
   _DAT_0080a8ea = &unnamed_data_702c;
   _DAT_0080a8e4 = 0x807026;
   _DAT_0080a8e2 = 2;
-  pwVar2 = &intake_manifold_temperature_sensor_filter_coefficient;
+  psVar2 = &intake_manifold_temperature_sensor_config;
   for (channel_record = (sensor_debounce_state_t *)&intake_manifold_temperature_sensor_filter_state;
       channel_record < (sensor_debounce_state_t *)0x80a4d0; channel_record = channel_record + 1) {
     (channel_record->filter).accumulator = 0;
-    (channel_record->filter).coefficient = pwVar2;
-    channel_record->sample_counter = *(byte *)((int)pwVar2 + 0x17);
+    (channel_record->filter).coefficient = &psVar2->filter_coefficient;
+    channel_record->sample_counter = psVar2->sample_period;
     if ((((uint)*(ushort *)
                  (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-                 (short)((int)(uint)*(byte *)((int)pwVar2 + 0x15) >> 4) * 2) &
-         1 << (*(byte *)((int)pwVar2 + 0x15) & 0xf)) == 0) ||
+                 (short)((int)(uint)psVar2->low_error_fault_number >> 4) * 2) &
+         1 << (psVar2->low_error_fault_number & 0xf)) == 0) ||
        (((uint)*(ushort *)
                 (&fault_confirm_status_word_0 +
-                (short)((int)(uint)*(byte *)((int)pwVar2 + 0x15) >> 4) * 2) &
-        1 << (*(byte *)((int)pwVar2 + 0x15) & 0xf)) == 0)) {
+                (short)((int)(uint)psVar2->low_error_fault_number >> 4) * 2) &
+        1 << (psVar2->low_error_fault_number & 0xf)) == 0)) {
       bVar1 = false;
     }
     else {
@@ -1566,18 +1587,18 @@ void cm550_initADCChannelConfiguration(void)
     }
     if (bVar1) {
 LAB_0000c020:
-      channel_record->debounce_counter = pwVar2[5];
+      channel_record->debounce_counter = psVar2->fault_set_threshold;
       channel_record->fault_active_flag = 1;
     }
     else {
       if ((((uint)*(ushort *)
                    (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-                   (short)((int)(uint)*(byte *)(pwVar2 + 10) >> 4) * 2) &
-           1 << (*(byte *)(pwVar2 + 10) & 0xf)) == 0) ||
+                   (short)((int)(uint)psVar2->high_error_fault_number >> 4) * 2) &
+           1 << (psVar2->high_error_fault_number & 0xf)) == 0) ||
          (((uint)*(ushort *)
                   (&fault_confirm_status_word_0 +
-                  (short)((int)(uint)*(byte *)(pwVar2 + 10) >> 4) * 2) &
-          1 << (*(byte *)(pwVar2 + 10) & 0xf)) == 0)) {
+                  (short)((int)(uint)psVar2->high_error_fault_number >> 4) * 2) &
+          1 << (psVar2->high_error_fault_number & 0xf)) == 0)) {
         bVar1 = false;
       }
       else {
@@ -1585,9 +1606,9 @@ LAB_0000c020:
       }
       if (bVar1) goto LAB_0000c020;
     }
-    pwVar2 = pwVar2 + 0xc;
+    psVar2 = psVar2 + 1;
   }
-  validateServiceDataLength();
+  mc68k_processAnalogSensorChannels();
   for (peVar3 = &intake_manifold_temperature_sensor_filter_state;
       peVar3 < (ema_filter_state_t *)0x80a4d0;
       peVar3 = (ema_filter_state_t *)((int)&peVar3[2].accumulator + 2)) {
@@ -1596,19 +1617,19 @@ LAB_0000c020:
     *(undefined1 *)((int)&peVar3[1].accumulator + 3) = 0;
   }
   peVar3 = &intake_manifold_temperature_sensor_filter_state;
-  pwVar2 = &intake_manifold_temperature_sensor_filter_coefficient;
+  psVar2 = &intake_manifold_temperature_sensor_config;
   do {
     if ((ema_filter_state_t *)0x80a4cf < peVar3) {
       return;
     }
     if ((((uint)*(ushort *)
                  (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-                 (short)((int)(uint)*(byte *)((int)pwVar2 + 0x15) >> 4) * 2) &
-         1 << (*(byte *)((int)pwVar2 + 0x15) & 0xf)) == 0) ||
+                 (short)((int)(uint)psVar2->low_error_fault_number >> 4) * 2) &
+         1 << (psVar2->low_error_fault_number & 0xf)) == 0) ||
        (((uint)*(ushort *)
                 (&fault_confirm_status_word_0 +
-                (short)((int)(uint)*(byte *)((int)pwVar2 + 0x15) >> 4) * 2) &
-        1 << (*(byte *)((int)pwVar2 + 0x15) & 0xf)) == 0)) {
+                (short)((int)(uint)psVar2->low_error_fault_number >> 4) * 2) &
+        1 << (psVar2->low_error_fault_number & 0xf)) == 0)) {
       bVar1 = false;
     }
     else {
@@ -1616,17 +1637,17 @@ LAB_0000c020:
     }
     if (bVar1) {
 LAB_0000c160:
-      *(word *)&peVar3[1].accumulator = pwVar2[5];
+      *(short *)&peVar3[1].accumulator = psVar2->fault_set_threshold;
     }
     else {
       if ((((uint)*(ushort *)
                    (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-                   (short)((int)(uint)*(byte *)(pwVar2 + 10) >> 4) * 2) &
-           1 << (*(byte *)(pwVar2 + 10) & 0xf)) == 0) ||
+                   (short)((int)(uint)psVar2->high_error_fault_number >> 4) * 2) &
+           1 << (psVar2->high_error_fault_number & 0xf)) == 0) ||
          (((uint)*(ushort *)
                   (&fault_confirm_status_word_0 +
-                  (short)((int)(uint)*(byte *)(pwVar2 + 10) >> 4) * 2) &
-          1 << (*(byte *)(pwVar2 + 10) & 0xf)) == 0)) {
+                  (short)((int)(uint)psVar2->high_error_fault_number >> 4) * 2) &
+          1 << (psVar2->high_error_fault_number & 0xf)) == 0)) {
         bVar1 = false;
       }
       else {
@@ -1636,7 +1657,7 @@ LAB_0000c160:
       *(undefined2 *)&peVar3[1].accumulator = 0;
     }
     peVar3 = (ema_filter_state_t *)((int)&peVar3[2].accumulator + 2);
-    pwVar2 = pwVar2 + 0xc;
+    psVar2 = psVar2 + 1;
   } while( true );
 }
 
@@ -2340,12 +2361,16 @@ void cm550_dzgTimingAndPressureControlStateMachine(void)
 
 
 //
-// Function: cm550_engine_speed_governor @ 0x0000c962
+// Function: cm550_runAllSpeedGovernor @ 0x0000c962
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* This is the all-speed governor (ASG). It runs only while FSDSFLST (0x80ded4, the user fueling
+   state) is 7, 3, 2 or 30. On a state change it presets the reference from the droop and sets
+   all_speed_governor_reference_filter_state.accumulator = reference << 16. (was
+   cm550_engine_speed_governor; PR #53 round 89) */
 
-void cm550_engine_speed_governor(void)
+void cm550_runAllSpeedGovernor(void)
 
 {
   int iVar1;
@@ -10392,12 +10417,12 @@ void cm550_initializeDiscreteInputs(void)
 
 /* The start-up set-up of the discrete outputs. mc68k_applicationMain calls it once (jsr at
    0x28708), after the discrete input set-up cm550_initializeDiscreteInputs (0x15dd0) and
-   cm550_initADCChannelConfiguration. 1. It writes the default output states into the output images
-   0x80bcf6-0x80bcfb, each only while no client holds that output's override slot (0x80bd1a + n). 2.
-   It sets up the chip select 2 output driver: registers 8 / 9 / 10 = 0x0F / 0x80 / 0x80, output
-   port 1 (0xFFD004) cleared, port 2 bit 7 (0xFFD006) cleared. 3. It starts TPU channel 13 (function
-   0xE, PARAM0 0x113) with a handshake: HSR 2 and wait for PARAM1 bit 15 = 0, HSR 1 and wait for 1,
-   HSR 2 and wait for 0; then it sets port 2 bit 7 and issues HSR 1. 4. It ends with
+   cm550_initializeAnalogSensorChannels. 1. It writes the default output states into the output
+   images 0x80bcf6-0x80bcfb, each only while no client holds that output's override slot (0x80bd1a +
+   n). 2. It sets up the chip select 2 output driver: registers 8 / 9 / 10 = 0x0F / 0x80 / 0x80,
+   output port 1 (0xFFD004) cleared, port 2 bit 7 (0xFFD006) cleared. 3. It starts TPU channel 13
+   (function 0xE, PARAM0 0x113) with a handshake: HSR 2 and wait for PARAM1 bit 15 = 0, HSR 1 and
+   wait for 1, HSR 2 and wait for 0; then it sets port 2 bit 7 and issues HSR 1. 4. It ends with
    mc68k_ioDriverStrobeHandler, which writes the ports from the images and drives channel 13 from
    bit 5 of 0x80bcfb (set: HSR 2, clear: HSR 1), most likely the fuel shut-off command (was
    mc68k_FUN_00015df0; PR #53 round 87) */
@@ -11545,12 +11570,16 @@ void cm550_can1PwmTimerInit(void)
 
 
 //
-// Function: cm550_fuel_limit_arbitrator @ 0x000171be
+// Function: cm550_calculateEngineSpeed @ 0x000171be
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* It uses engine_speed_filter_state. It is the engine speed calculation, not a fuel limit. It
+   counts down the main / backup / external lost-signal counters, converts the pulse periods to
+   speeds (0x80cd06 / 0x80cd04 / 0x80cd16) and sets the speed-lost and cam / crank sync faults. (was
+   cm550_fuel_limit_arbitrator; PR #53 round 89) */
 
-uint cm550_fuel_limit_arbitrator(void)
+uint cm550_calculateEngineSpeed(void)
 
 {
   uint uVar1;
@@ -11784,12 +11813,17 @@ uint cm550_fuel_limit_arbitrator(void)
 
 
 //
-// Function: cm550_engineRpmSourceInit @ 0x000176de
+// Function: cm550_initializeEngineSpeedCalculation @ 0x000176de
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up initializer of the engine speed calculation 0x171be, which uses all four of the values
+   it sets. engine_speed_filter_state.accumulator = 0 and .coefficient = 0x807ea8 (100B +0 ESESFTTC
+   'TIME CONSTANT FOR THE FILTER USED ON THE 2^N PULSE AVERAGE'). The main pulse period timeout
+   working value 0x80d06c (misnamed governor_rpm_target_adjusted) = ESMXTM01 (0x807eaa). (was
+   cm550_engineRpmSourceInit; PR #53 round 89) */
 
-void cm550_engineRpmSourceInit(void)
+void cm550_initializeEngineSpeedCalculation(void)
 
 {
   engine_speed_filter_state.accumulator = 0;
@@ -12664,7 +12698,7 @@ uint cm550_engineProtectionMultiStateSlowCycle40Coordinator(void)
       uVar1 = cm550_FUN_00019702();
       break;
     case 3:
-      cm550_FUN_00018e0c();
+      cm550_calculateFaultDerateEngineSpeedLimit();
       uVar1 = cm550_protectionState3bRpmMonitor();
       break;
     case 4:
@@ -12830,7 +12864,7 @@ void vp44_engineProtectionSystemInit(void)
        &min_threshold_for_ambient_air_pressure_rpm_limiting_0_65535;
   _pointer_to_ambient_air_pressure_fuel_fault_log_data_0_2_32 = 0x80576e;
   _pointer_to_ambient_air_pressure_rpm_fault_log_data_0_2_32 = 0x805796;
-  cm550_protectionThresholdPointerInit();
+  initializeFaultDerateEngineSpeedLimit();
   cm550_initShutdownLimitVariables();
   cm550_FUN_000192e0();
   _engine_protection_state_phase_index = 0;
@@ -13106,12 +13140,17 @@ ushort cm550_protectionState1DiagnosticValidator(void)
 
 
 //
-// Function: cm550_FUN_00018e0c @ 0x00018e0c
+// Function: cm550_calculateFaultDerateEngineSpeedLimit @ 0x00018e0c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* It uses engine_protection_speed_limit_filter_state. Over the 9 engine protection channels
+   (configs 0x807032 + 36n, states 0x80d0dc + 46n, severity records 0x8057c0 + 30n) it takes the rpm
+   severity from cm550_protectionThresholdCalculationHelper(..., 1) for each channel whose flag bits
+   (base 0x71 and 0x1a0) are set, and keeps the largest. (was cm550_FUN_00018e0c; PR #53 round 89)
+    */
 
-void cm550_FUN_00018e0c(void)
+void cm550_calculateFaultDerateEngineSpeedLimit(void)
 
 {
   short sVar1;
@@ -13170,12 +13209,17 @@ void cm550_FUN_00018e0c(void)
 
 
 //
-// Function: cm550_protectionThresholdPointerInit @ 0x00018f4c
+// Function: initializeFaultDerateEngineSpeedLimit @ 0x00018f4c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up initializer of the engine protection (EPF) engine speed derate. It sets
+   engine_protection_speed_limit_filter_state.accumulator = the maximum rated engine speed
+   (0x803f40) << 16 and .coefficient = 0x807f3a (10B5 +4 EPRPFTTC 'MAXIMUM RPM LIMIT FILTER TIME
+   CONSTANT'). (was cm550_protectionThresholdPointerInit; PR #53 round 89; the twin of CM848
+   0x5087e4: one shared name) */
 
-void cm550_protectionThresholdPointerInit(void)
+void initializeFaultDerateEngineSpeedLimit(void)
 
 {
   engine_protection_speed_limit_filter_state.accumulator =
@@ -15083,12 +15127,15 @@ int vp44FaultThresholdTablesInit(void)
 
 
 //
-// Function: cm550_FUN_0001abb2 @ 0x0001abb2
+// Function: cm550_updateElectronicSmartPowerTau @ 0x0001abb2
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* It uses engine_deceleration_rate_filter_state. It is the Electronic Smart Power (ESP) logic and
+   runs while calibration_feature_enable_flags_word_9 bit 0x10 is set. It runs the throttle timer
+   SPTHTR01. (was cm550_FUN_0001abb2; PR #53 round 89) */
 
-uint cm550_FUN_0001abb2(void)
+uint cm550_updateElectronicSmartPowerTau(void)
 
 {
   undefined4 in_D0;
@@ -15205,12 +15252,15 @@ uint cm550_FUN_0001abb2(void)
 
 
 //
-// Function: cm550_FUN_0001ade8 @ 0x0001ade8
+// Function: cm550_initializeElectronicSmartPower @ 0x0001ade8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up initializer of Electronic Smart Power (ESP), e2m blocks 11DC / 11DD (bases 0x80d2b0 /
+   0x807f64 from the ROM parameter ID table entries 0x3627c / 0x36284). (was cm550_FUN_0001ade8; PR
+   #53 round 89) */
 
-void cm550_FUN_0001ade8(void)
+void cm550_initializeElectronicSmartPower(void)
 
 {
   _flag_shows_posibility_of_esp_transitioning_between_normal_false_true = 0;
@@ -15219,37 +15269,6 @@ void cm550_FUN_0001ade8(void)
   _timer_to_record_the_time_of_rpm_deceleration_rate_above_a_thre_0_100 = 0;
   _high_horsepower_mode_state = 0;
   _can_transmit_buffer_ptr = 0;
-  engine_deceleration_rate_filter_state.accumulator = 0x80000000;
-  engine_deceleration_rate_filter_state.coefficient = &engine_deceleration_rate_filter_coefficient;
-  return;
-}
-
-
-
-//
-// Function: cm550_initOilPressureModeSystem @ 0x0001ae06
-//
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
-void cm550_initOilPressureModeSystem(void)
-
-{
-  _can_transmit_buffer_ptr = 0;
-  engine_deceleration_rate_filter_state.accumulator = 0x80000000;
-  engine_deceleration_rate_filter_state.coefficient = &engine_deceleration_rate_filter_coefficient;
-  return;
-}
-
-
-
-//
-// Function: cm550_sensorHistoryTablePointerInit @ 0x0001ae0c
-//
-
-void cm550_sensorHistoryTablePointerInit(void)
-
-{
   engine_deceleration_rate_filter_state.accumulator = 0x80000000;
   engine_deceleration_rate_filter_state.coefficient = &engine_deceleration_rate_filter_coefficient;
   return;
@@ -15839,8 +15858,8 @@ void vp44_engine_management_system(void)
   func_0x000473b2();
   func_0x00048b28();
   cm550_faultFlagScannerAndProcessor();
-  cm550_fuel_limit_arbitrator();
-  cm550_outputControlTimingGenerator();
+  cm550_calculateEngineSpeed();
+  calculateFilteredEngineAcceleration();
   cm550_FUN_00026e8e();
   func_0x00049f06();
   func_0x0004245e();
@@ -15891,10 +15910,10 @@ void vp44_periodicTaskSet_governorProtection(void)
 {
   cm550_acceleratorThrottleFaultDetector();
   cm550_engine_protection_coordinator();
-  cm550_engine_speed_governor();
+  cm550_runAllSpeedGovernor();
   cm550_diagnostic_parameter_handler();
-  cm550_FUN_0002dbde();
-  initProtectionParamCalculation();
+  smoothPowerTakeOffReferenceEngineSpeed();
+  cm550_runPowerTakeOffGovernor();
   cm550_oil_pressure_shutdown_controller();
   calculateAlpha();
   func_0x00044c76();
@@ -15916,10 +15935,10 @@ void vp44_periodicTaskSet_governorProtection(void)
 void vp44_engine_control_cycle(void)
 
 {
-  cm550_engine_speed_governor();
+  cm550_runAllSpeedGovernor();
   cm550_diagnostic_parameter_handler();
-  cm550_FUN_0002dbde();
-  initProtectionParamCalculation();
+  smoothPowerTakeOffReferenceEngineSpeed();
+  cm550_runPowerTakeOffGovernor();
   cm550_oil_pressure_shutdown_controller();
   calculateAlpha();
   func_0x00044c76();
@@ -15972,8 +15991,8 @@ void vp44ExtendedFaultDetectionCoordinator(void)
 void cm550_periodicTaskSet_fuelTiming(void)
 
 {
-  cm550_fuel_limit_arbitrator();
-  vp44_fuel_timing_calculation_with_fault_checking();
+  cm550_calculateEngineSpeed();
+  cm550_runLowSpeedGovernor();
   cm550_epsDiagnosticModeHandler();
   cm550_fuelTimingTransitionStateMachine();
   cm550_engineModeTransitionHandler();
@@ -16034,7 +16053,7 @@ void periodicTaskSet_fuelDemand(void)
   func_0x000488e8();
   func_0x00048b1a();
   mc68k_sampleAndDebounceDiscreteInputs();
-  validateServiceDataLength();
+  mc68k_processAnalogSensorChannels();
   func_0x00048c66();
   return;
 }
@@ -16056,7 +16075,7 @@ void vp44_evenPhaseSchedulerTaskSet(void)
   func_0x000488e8();
   func_0x00048b1a();
   mc68k_sampleAndDebounceDiscreteInputs();
-  validateServiceDataLength();
+  mc68k_processAnalogSensorChannels();
   func_0x00048c66();
   return;
 }
@@ -16420,7 +16439,7 @@ void cm550_FUN_0001b732(void)
 void cm550_FUN_0001b73a(void)
 
 {
-  cm550_FUN_0001abb2();
+  cm550_updateElectronicSmartPowerTau();
   func_0x00040f3c();
   func_0x00041050();
   func_0x0004965a();
@@ -16595,7 +16614,7 @@ void cm550_FUN_0001b7e0(void)
 void cm550_FUN_0001b7e2(void)
 
 {
-  cm550_FUN_0002571e();
+  cm550_calculatePedalFaultModeFuelDemand();
   return;
 }
 
@@ -18056,7 +18075,7 @@ uint vp44_FUN_0001cad6(void)
 void vp44_FUN_0001cb3c(void)
 
 {
-  _vp44_fuel_temperature_value = _global_default_value_for_fuel_temperature_50_to_293;
+  _vp44_fuel_temperature_value = fuel_temperature_sensor_config.default_value;
   return;
 }
 
@@ -19079,12 +19098,17 @@ void mc68k_main(void)
 
 
 //
-// Function: vp44ControlStructureInit @ 0x0001dcfc
+// Function: cm550_initializeAlpha @ 0x0001dcfc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up initializer of the alpha state. It sets alpha_fuel_rate_filter_state.accumulator = 0 and
+   .coefficient = 0x807ab0 (e2m 104B +10 APFLFTTC, the alpha fuel rate filter constant). APAPBA, the
+   alpha base (0x80a8fa), the LSG / AFC exit timer active flags (0x80a90e / 0x80a912), 0x80a916 and
+   FSLSSTFG (0x80a908, the semaphore that latches LSG events) are all set to 0. (was
+   vp44ControlStructureInit; PR #53 round 89) */
 
-void vp44ControlStructureInit(void)
+void cm550_initializeAlpha(void)
 
 {
   alpha_fuel_rate_filter_state.accumulator = 0;
@@ -21811,8 +21835,11 @@ void cm550_FUN_000205c4(void)
   
   if ((_DAT_00803cc6 & 8) != 0) {
     _takes_raw_throttle_for_mux_limphome_on_a2d_0_1023 =
-         *(ushort *)(&UNK_00fff2b0 + (uint)_sampled_throttle_channel_address_none * 2);
-    if (*(ushort *)(&UNK_00fff2b0 + (uint)_sampled_throttle_channel_address_none * 2) < 0x169) {
+         *(ushort *)
+          (&UNK_00fff2b0 + (uint)sampled_throttle_sensor_config.qadc_result_register_index * 2);
+    if (*(ushort *)
+         (&UNK_00fff2b0 + (uint)sampled_throttle_sensor_config.qadc_result_register_index * 2) <
+        0x169) {
       DSUSEBSW = DSUSEBSW & 0xfe;
       user_supplied_value_for_ptp_switched_input_input_on_off =
            user_supplied_value_for_ptp_switched_input_input_on_off | 0x80;
@@ -21920,13 +21947,13 @@ uint cm550_FUN_00020784(void)
      _priority_of_client_overriding_final_remote_throttle_0_ff <=
      _j1939_source_address_of_commanding_device)) {
     if (_DAT_00804236 == 0) {
-      _DAT_0080a744 = _global_default_value_for_remote_throttle_0_100;
+      _DAT_0080a744 = remote_throttle_sensor_config.default_value;
       cm550_FUN_00020348(1);
       uVar1 = cm550_FUN_00020310(1);
       return uVar1;
     }
     if (multiplexed_value_for_remote_accelerator_0_100 == 0xfe) {
-      _DAT_0080a744 = _global_default_value_for_remote_throttle_0_100;
+      _DAT_0080a744 = remote_throttle_sensor_config.default_value;
       _status_32_word_bit_mapped_system_error_status_word_0_0_1 =
            _status_32_word_bit_mapped_system_error_status_word_0_0_1 | 1;
       _fault_first_occurrence_flags_word_0 = _fault_first_occurrence_flags_word_0 | 1;
@@ -21936,14 +21963,14 @@ uint cm550_FUN_00020784(void)
        ((0xfa < multiplexed_value_for_remote_accelerator_0_100 &&
         (multiplexed_value_for_remote_accelerator_0_100 < 0xfe)))) {
       uVar1 = setBitInArray(1);
-      _DAT_0080a744 = _global_default_value_for_remote_throttle_0_100;
+      _DAT_0080a744 = remote_throttle_sensor_config.default_value;
       return uVar1;
     }
     if (multiplexed_value_for_remote_accelerator_0_100 < 0xfb) {
       _status_32_word_bit_mapped_system_error_status_word_0_0_1 =
            _status_32_word_bit_mapped_system_error_status_word_0_0_1 & 0xfffe;
       uVar1 = ((uint)multiplexed_value_for_remote_accelerator_0_100 << 4) / 10;
-      _DAT_0080a744 = (undefined2)uVar1;
+      _DAT_0080a744 = (word)uVar1;
     }
   }
   return uVar1;
@@ -22096,18 +22123,18 @@ uint cm550_FUN_00020c98(void)
     if (_DAT_00804242 == 0) {
       cm550_FUN_00020348(7);
       cm550_FUN_00020310(7);
-      _DAT_0080a742 = _global_default_value_for_throttle_0_100;
+      _DAT_0080a742 = sampled_throttle_sensor_config.default_value;
       uVar1 = cm550_FUN_000205c4();
       return uVar1;
     }
     if (JCCMTHMU < 0xfb) {
       if (ivs_parameter_not_properly_configured_not_logged_as_a_faul_true_false != '\0') {
         aps_error_flag_for_throttle_indicating_bad_data_not_logged_true_false = 0;
-        _DAT_0080a742 = _global_default_value_for_throttle_0_100;
+        _DAT_0080a742 = sampled_throttle_sensor_config.default_value;
         _throttle_above_idle_flag = 0;
         return uVar1;
       }
-      _DAT_0080a742 = (undefined2)(((uint)JCCMTHMU << 4) / 10);
+      _DAT_0080a742 = (word)(((uint)JCCMTHMU << 4) / 10);
       _throttle_above_idle_flag = (ushort)(JCCMTHMU != 0);
       uVar1 = _status_32_word_bit_mapped_system_error_status_word_0_0_1 & 0xffff0001;
       if (((_status_32_word_bit_mapped_system_error_status_word_0_0_1 & 1) != 0) &&
@@ -22120,7 +22147,7 @@ uint cm550_FUN_00020c98(void)
     }
     else {
       aps_error_flag_for_throttle_indicating_bad_data_not_logged_true_false = 0;
-      _DAT_0080a742 = _global_default_value_for_throttle_0_100;
+      _DAT_0080a742 = sampled_throttle_sensor_config.default_value;
       if (JCCMTHMU == 0xfe) {
         _status_32_word_bit_mapped_system_error_status_word_0_0_1 =
              _status_32_word_bit_mapped_system_error_status_word_0_0_1 | 1;
@@ -22829,8 +22856,8 @@ undefined4 cm550_diagnosticServiceSecurityValidator(dword msg_ptr)
 {
   byte auth_result;
   int required_param_len;
-  word msg_length;
   byte service_id;
+  word msg_length;
   
   service_id = **(byte **)(msg_ptr + 6);
   msg_length = *(word *)(msg_ptr + 4);
@@ -26296,12 +26323,15 @@ void cm550_clearSystemErrorStatus(void)
 
 
 //
-// Function: cm550_FUN_0002571e @ 0x0002571e
+// Function: cm550_calculatePedalFaultModeFuelDemand @ 0x0002571e
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* It uses pedal_fault_mode_engine_speed_filter_state. While FSDSFLST (0x80ded4) is 6, the
+   accelerator pedal fault mode, it runs cm550_exponentialMovingAverage(ESCMES,
+   &pedal_fault_mode_engine_speed_filter_state). (was cm550_FUN_0002571e; PR #53 round 89) */
 
-void cm550_FUN_0002571e(void)
+void cm550_calculatePedalFaultModeFuelDemand(void)
 
 {
   uint uVar1;
@@ -26363,13 +26393,13 @@ void cm550_FUN_00025806(word previous_user_fueling_state)
           (((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 0x20) != 0 &&
            ((_fault_confirm_status_word_4 & 0x20) != 0)))) &&
          (_FSDSFLST = 6, previous_user_fueling_state != 6)) {
-        cm550_FUN_000258b0();
+        presetPedalFaultModeFuelDemand();
       }
     }
     else if ((pgn_timeout_error_flag_for_aps_ivs_remote_throttle_not_log_true_false != '\0' ||
               aps_error_flag_for_throttle_indicating_bad_data_not_logged_true_false != '\0') &&
             (_FSDSFLST = 6, previous_user_fueling_state != 6)) {
-      cm550_FUN_000258b0();
+      presetPedalFaultModeFuelDemand();
       return;
     }
   }
@@ -26379,12 +26409,16 @@ void cm550_FUN_00025806(word previous_user_fueling_state)
 
 
 //
-// Function: cm550_FUN_000258b0 @ 0x000258b0
+// Function: presetPedalFaultModeFuelDemand @ 0x000258b0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* It uses pedal_fault_mode_engine_speed_filter_state. It is the pedal fault mode preset:
+   fuel_demand_ramped (0x80dab8, the ramp) and fuel_demand_target (0x801a3c, the slewed limit) =
+   current_fuel_demand, and the filter's accumulator = ESCMES (0x80ccf4) << 16. (was
+   cm550_FUN_000258b0; PR #53 round 89; the twin of CM848 0x50da7c: one shared name) */
 
-void cm550_FUN_000258b0(void)
+void presetPedalFaultModeFuelDemand(void)
 
 {
   _fuel_demand_ramped = _current_fuel_demand;
@@ -26397,10 +26431,15 @@ void cm550_FUN_000258b0(void)
 
 
 //
-// Function: cm550_fuelDemandTablePointerInit @ 0x000258d6
+// Function: initializePedalFaultModeEngineSpeedFilter @ 0x000258d6
 //
 
-void cm550_fuelDemandTablePointerInit(void)
+/* It sets pedal_fault_mode_engine_speed_filter_state.accumulator = 0 and then .coefficient =
+   0x80820e (10CE +0 LHESFTTC, the limp home engine speed filter constant), and does nothing else;
+   there is no fuel demand table. (was cm550_fuelDemandTablePointerInit; PR #53 round 89; the twin
+   of CM848 0x50db88: one shared name) */
+
+void initializePedalFaultModeEngineSpeedFilter(void)
 
 {
   pedal_fault_mode_engine_speed_filter_state.accumulator = 0;
@@ -26560,12 +26599,17 @@ void vp44_FUN_00025a34(void)
 
 
 //
-// Function: vp44_fuel_timing_calculation_with_fault_checking @ 0x00025b1c
+// Function: cm550_runLowSpeedGovernor @ 0x00025b1c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* This is the whole low speed governor (LSG). It first computes the throttle deadband reference
+   offset = cm550_exponentialMovingAverage(0x80825a x validated throttle,
+   &low_speed_governor_throttle_reference_offset_filter_state). LSRF lsg_breakpoint_speed is the
+   operator or the datalink breakpoint, and LSAJRFES (the reference adjusted with throttle position)
+   is clamped. (was vp44_fuel_timing_calculation_with_fault_checking; PR #53 round 89) */
 
-void vp44_fuel_timing_calculation_with_fault_checking(void)
+void cm550_runLowSpeedGovernor(void)
 
 {
   word wVar3;
@@ -26770,12 +26814,15 @@ void vp44_fuel_timing_calculation_with_fault_checking(void)
 
 
 //
-// Function: vp44_fuelRpmDeviationCalculator @ 0x00025ff2
+// Function: cm550_presetLowSpeedGovernorSpeedError @ 0x00025ff2
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* It uses low_speed_governor_error_filter. It presets the LSG speed error: LSER (0x80dae0) = gain
+   0x808240 x (LSAJRFES - ENGRPM - offset 0x808264) >> 9, clamped to LSFTMN / LSFTMX. (was
+   vp44_fuelRpmDeviationCalculator; PR #53 round 89) */
 
-void vp44_fuelRpmDeviationCalculator(void)
+void cm550_presetLowSpeedGovernorSpeedError(void)
 
 {
   int iVar1;
@@ -26801,12 +26848,17 @@ void vp44_fuelRpmDeviationCalculator(void)
 
 
 //
-// Function: cm550_FUN_00026078 @ 0x00026078
+// Function: cm550_initializeLowSpeedGovernor @ 0x00026078
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up initializer of the low speed governor. It points
+   low_speed_governor_throttle_reference_offset_filter_state.coefficient at 0x808258 (e2m 1064 +22
+   LSDEFTTC, the throttle deadband fix filter constant) and
+   low_speed_governor_error_filter.coefficient at 0x80823e (1064 +8 LSFTTC). (was
+   cm550_FUN_00026078; PR #53 round 89) */
 
-void cm550_FUN_00026078(void)
+void cm550_initializeLowSpeedGovernor(void)
 
 {
   low_speed_governor_throttle_reference_offset_filter_state.coefficient =
@@ -29350,7 +29402,7 @@ void mc68k_applicationMain(void)
   cm550_initializeDiscreteInputs();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8708;
-  cm550_initADCChannelConfiguration();
+  cm550_initializeAnalogSensorChannels();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x870e;
   mc68k_initializeDiscreteOutputDrivers();
@@ -29371,7 +29423,7 @@ void mc68k_applicationMain(void)
   cm550_initMultiSystemParameters();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8732;
-  cm550_dmaControllerSetup1();
+  initializeEngineAccelerationFilters();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8738;
   vp44_engineProtectionSystemInit();
@@ -29386,7 +29438,7 @@ void mc68k_applicationMain(void)
   initializeEngineSpeedLimitDefaults();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8750;
-  cm550_engineRpmSourceInit();
+  cm550_initializeEngineSpeedCalculation();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8756;
   cm550_canBusTimingInit();
@@ -29434,7 +29486,7 @@ void mc68k_applicationMain(void)
   vp44_fuelLimitParameterPointerSetup();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x87b0;
-  cm550_FUN_0001ade8();
+  cm550_initializeElectronicSmartPower();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x87b6;
   cm550_FUN_0001c7a8();
@@ -29476,13 +29528,13 @@ void mc68k_applicationMain(void)
   cm550_FUN_00031a68();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8804;
-  vp44ControlStructureInit();
+  cm550_initializeAlpha();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x880a;
   mc68k_hardwareTimerFlagsInit();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8810;
-  cm550_FUN_00026078();
+  cm550_initializeLowSpeedGovernor();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8816;
   cm550_fuelTemperatureLimitingSecondary();
@@ -30390,12 +30442,15 @@ uint cm550_memoryPatchingSystem(void)
 
 
 //
-// Function: initProtectionParamCalculation @ 0x0002d3c6
+// Function: cm550_runPowerTakeOffGovernor @ 0x0002d3c6
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* It uses power_take_off_speed_error_filter. It runs the PTO governor while PTSS (0x80dc26) is 1.
+   On the first active pass (previous flag 0x801c0c != 1) it calls the engagement preset 0x2d9d2.
+   (was initProtectionParamCalculation; PR #53 round 89) */
 
-void initProtectionParamCalculation(void)
+void cm550_runPowerTakeOffGovernor(void)
 
 {
   ushort uVar1;
@@ -30411,7 +30466,7 @@ void initProtectionParamCalculation(void)
   
   if (_closed_loop_governor_active_flag == 1) {
     if (_DAT_00801c0c != 1) {
-      cm550_fuelDemandProportionalCalculator();
+      cm550_presetPowerTakeOffGovernorOnEngagement();
     }
     iVar8 = _pid_combined_correction_term;
     uVar1 = _closed_loop_filtered_speed_error;
@@ -30602,19 +30657,23 @@ void cm550_FUN_0002d9a8(void)
 
 
 //
-// Function: cm550_fuelDemandProportionalCalculator @ 0x0002d9d2
+// Function: cm550_presetPowerTakeOffGovernorOnEngagement @ 0x0002d9d2
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* It uses power_take_off_speed_error_filter. It presets the PTO governor when it engages. It clears
+   the combined PD term (0x80dc14) and presets the smoothed reference (0x2dc8c). Then
+   power_take_off_speed_error_filter.accumulator = 0x80000000 and the filtered error = 0. (was
+   cm550_fuelDemandProportionalCalculator; PR #53 round 89) */
 
-void cm550_fuelDemandProportionalCalculator(void)
+void cm550_presetPowerTakeOffGovernorOnEngagement(void)
 
 {
   uint uVar1;
   undefined4 local_8;
   
   _pid_combined_correction_term = 0;
-  cm550_rpmSnapshotCapture();
+  presetPowerTakeOffSmoothedReferenceEngineSpeed();
   power_take_off_speed_error_filter.accumulator = 0x80000000;
   _closed_loop_filtered_speed_error = 0;
   if (_DAT_008088ae == 0) {
@@ -30655,17 +30714,22 @@ void cm550_fuelDemandProportionalCalculator(void)
 
 
 //
-// Function: cm550_FUN_0002db2a @ 0x0002db2a
+// Function: initializePowerTakeOffGovernorFiltersAndGains @ 0x0002db2a
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up initializer of the PTO governor. power_take_off_speed_error_filter.accumulator =
+   0x80000000 (offset-binary 0) and .coefficient = 0x80889a (10AA +2 PTFTTC 'PD GOVERNOR ERROR
+   FILTER CONSTANT'). Then the reference filter initializer 0x2dc9e runs and PTAJDG / PTAJIG /
+   PTAJPG (0x80dc1e / 20 / 22, the D / I / P gain adjustments) are set to 0x80. (was
+   cm550_FUN_0002db2a; PR #53 round 89; the twin of CM848 0x2abc8: one shared name) */
 
-void cm550_FUN_0002db2a(void)
+void initializePowerTakeOffGovernorFiltersAndGains(void)
 
 {
   power_take_off_speed_error_filter.accumulator = 0x80000000;
   power_take_off_speed_error_filter.coefficient = &power_take_off_speed_error_filter_coefficient;
-  cm550_FUN_0002dc9e();
+  initializePowerTakeOffReferenceFilter();
   _DAT_0080dc1e = 0x80;
   _DAT_0080dc20 = 0x80;
   _DAT_0080dc22 = 0x80;
@@ -30687,12 +30751,15 @@ void cm550_FUN_0002db2a(void)
 
 
 //
-// Function: cm550_FUN_0002dbde @ 0x0002dbde
+// Function: smoothPowerTakeOffReferenceEngineSpeed @ 0x0002dbde
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The power take-off (PTO) reference speed smoothing. It first calls 0x4d988, then, while PTSS
+   (0x80dc26) is 1: if |PTDSRF (0x80dc24) - PTRFRP (0x80dc18)| <= PTRFLM (0x8088aa), PTRFRP =
+   PTDSRF. (was cm550_FUN_0002dbde; PR #53 round 89; the twin of CM848 0x2ac44: one shared name) */
 
-void cm550_FUN_0002dbde(void)
+void smoothPowerTakeOffReferenceEngineSpeed(void)
 
 {
   word wVar1;
@@ -30734,12 +30801,17 @@ void cm550_FUN_0002dbde(void)
 
 
 //
-// Function: cm550_rpmSnapshotCapture @ 0x0002dc8c
+// Function: presetPowerTakeOffSmoothedReferenceEngineSpeed @ 0x0002dc8c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* It is the third user of power_take_off_reference_filter_state. It sets PTRFRP (0x80dc18, the
+   smoothed PTO reference) = ENGRPM (0x80ccf6, the filtered engine speed) and clears
+   power_take_off_reference_filter_state.accumulator. Its one caller is the PTO engagement preset
+   0x2d9d2. (was cm550_rpmSnapshotCapture; PR #53 round 89; the twin of CM848 0x2ad28: one shared
+   name) */
 
-void cm550_rpmSnapshotCapture(void)
+void presetPowerTakeOffSmoothedReferenceEngineSpeed(void)
 
 {
   _closed_loop_rpm_snapshot = _engine_rpm_primary;
@@ -30750,10 +30822,16 @@ void cm550_rpmSnapshotCapture(void)
 
 
 //
-// Function: cm550_FUN_0002dc9e @ 0x0002dc9e
+// Function: initializePowerTakeOffReferenceFilter @ 0x0002dc9e
 //
 
-void cm550_FUN_0002dc9e(void)
+/* It sets power_take_off_reference_filter_state.accumulator = 0 and then .coefficient = 0x8088ac
+   (10AA +14 PTRFRMTC 'REFERENCE SPEED CHANGE CONST.'), and does nothing else. Its one caller is the
+   PTO governor initializer 0x2db2a. CM848 0x2ad48 is identical (accumulator 0x3fafd0 = 0, then
+   coefficient 0x3fafcc = 0x4071a0) and is called only by 0x2abc8, so this is a twin. (was
+   cm550_FUN_0002dc9e; PR #53 round 89; the twin of CM848 0x2ad48: one shared name) */
+
+void initializePowerTakeOffReferenceFilter(void)
 
 {
   power_take_off_reference_filter_state.accumulator = 0;
@@ -36612,8 +36690,8 @@ void cm550_initMultiSystemParameters(void)
 
 {
   cm550_fuelBlendTablePointerSetup();
-  cm550_fuelDemandTablePointerInit();
-  cm550_FUN_0002db2a();
+  initializePedalFaultModeEngineSpeedFilter();
+  initializePowerTakeOffGovernorFiltersAndGains();
   return;
 }
 
@@ -37627,4 +37705,4 @@ LAB_00035162:
 
 
 
-// Export complete - 757 functions processed
+// Export complete - 755 functions processed

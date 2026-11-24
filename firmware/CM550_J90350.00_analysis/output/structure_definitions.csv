@@ -73,22 +73,22 @@ division_operand_t,,limit,word,2,Secondary 16-bit limit/clamp value,,verified
 # QSM Serial Port Block @ 0xFFD800 - Serial port register group
 # Accessed at offsets 0, 1, 2 as single bytes
 
-# Sensor Fault Configuration Entry (24 bytes per sensor)
-sensor_fault_config_t,,reserved_00,word,2,Reserved/padding at offset 0x00,,verified
-sensor_fault_config_t,,default_value,word,2,Default sensor value on fault,,verified
-sensor_fault_config_t,,clear_threshold,word,2,Threshold for fault clear,,verified
-sensor_fault_config_t,,decrement_value,word,2,Debounce counter decrement,,verified
-sensor_fault_config_t,,increment_value,word,2,Debounce counter increment,,verified
-sensor_fault_config_t,,set_threshold,word,2,Threshold for fault set,,verified
-sensor_fault_config_t,,high_limit,word,2,High error limit,,verified
-sensor_fault_config_t,,low_limit,word,2,Low error limit,,verified
-sensor_fault_config_t,,adc_lookup_index,word,2,A/D channel lookup table index,,verified
-sensor_fault_config_t,,reserved_12,byte,1,Reserved byte,,verified
-sensor_fault_config_t,,alt_fault_enable,byte,1,Alternative fault enable flag,,verified
-sensor_fault_config_t,,primary_fault_id,byte,1,Primary fault code,,verified
-sensor_fault_config_t,,secondary_fault_id,byte,1,Secondary fault code,,verified
-sensor_fault_config_t,,tertiary_fault_id,byte,1,Tertiary fault code,,verified
-sensor_fault_config_t,,debounce_max,byte,1,Maximum debounce count,,verified
+# A/D channel config record (24 bytes; e2m block 1003 = 25 of them from 0x806ae2 in channel order). Replaces the unused sensor_fault_config_t template (PR #53 round 89)
+sensor_config_t,,filter_coefficient,word,2,+0: A/D digital filter constant (1/65536): the weight of the previous value - the channel's ema_filter_state_t.coefficient points here and cm550_exponentialMovingAverage reads it,,verified
+sensor_config_t,,default_value,word,2,+2: global default value in the channel's units: filtered_value and the accumulator (<< 16) while the fault is active or on a tri-state reading,,verified
+sensor_config_t,,fault_clear_threshold,short,2,+4: A/D fault clear counts: debounce_counter at or below it clears fault_active_flag; each high / low status bit (0x806000) clears only while its 0x806040 first-occurrence bit is clear,,verified
+sensor_config_t,,debounce_counter_decrement,short,2,+6: A/D fault decrement: taken off debounce_counter on each in-range sample (floored at 0),,verified
+sensor_config_t,,debounce_counter_increment,short,2,+8: A/D fault increment: added to debounce_counter on each out-of-range sample,,verified
+sensor_config_t,,fault_set_threshold,short,2,+10: A/D fault set: debounce_counter at or above it sets the fault and is capped there,,verified
+sensor_config_t,,high_error_limit,word,2,+12: A/D high error limit in raw counts (0-1023): adc_raw_value above it counts toward high_error_fault_number,,verified
+sensor_config_t,,low_error_limit,word,2,+14: A/D low error limit in raw counts: adc_raw_value below it counts toward low_error_fault_number,,verified
+sensor_config_t,,qadc_result_register_index,word,2,+16: the QADC result slot (0-39) whose right-justified result register (0xfff2b0 + 2 x n) gives adc_raw_value,,verified
+sensor_config_t,,multiplexer_setting,byte,1,+18: channel multiplexer setting: no reader in J90350.00 (0 in all 25 records),,verified
+sensor_config_t,,tri_state_error_enable,byte,1,+19: tri-state flag: nonzero makes a lookup result of 4 count toward tri_state_error_fault_number (0 in all 25 records),,verified
+sensor_config_t,,high_error_fault_number,byte,1,+20: the fault the high limit sets (bit n mod 16 of status word n / 16 at 0x806000 / 0x806040),,verified
+sensor_config_t,,low_error_fault_number,byte,1,+21: the fault the low limit sets,,verified
+sensor_config_t,,tri_state_error_fault_number,byte,1,+22: the in-range / tri-state error: set at the fifth consecutive lookup result of 4 and cleared at the fifth other reading,,verified
+sensor_config_t,,sample_period,byte,1,+23: the channel runs once every sample_period passes of the A/D loop (0 = not processed); the e2m scale calls a pass 20 ms - not measured,,verified
 
 # Filter records (PR #53 round 88): CM848's ema_filter_state_t layout; cm550_signedFirstOrderFilter / cm550_exponentialMovingAverage take one, cm550_secondOrderFilter / cm550_secondOrderFilterUnsigned the second order record
 ema_filter_state_t,,coefficient,word*,4,Points at the filter coefficient word: the weight of the previous value in 1/65536 (0 = no filtering),,verified
@@ -371,15 +371,7 @@ system_callback_table_t,,main_loop_callback,dword,4,Main scheduler loop callback
 # A/D Sensor Configuration
 # -----------------------------------------------------------------------------
 
-# A/D Sensor Config Block (ambient air pressure sensor pattern)
-ad_sensor_config_t,,channel_addr,word,2,A/D channel address for sensor input,,verified
-ad_sensor_config_t,,filter_const,word,2,Digital filter constant (0-1),,verified
-ad_sensor_config_t,,fault_clear_count,word,2,Fault clear counter threshold,,verified
-ad_sensor_config_t,,fault_decrement,word,2,Fault counter decrement value,,verified
-ad_sensor_config_t,,fault_increment,word,2,Fault counter increment value,,verified
-ad_sensor_config_t,,fault_set_threshold,word,2,Fault set threshold,,verified
-ad_sensor_config_t,,high_error_limit,word,2,A/D high error limit (0-1023),,verified
-ad_sensor_config_t,,low_error_limit,word,2,A/D low error limit (0-1023),,verified
+# (ad_sensor_config_t removed in PR #53 round 89: no user; the A/D channel config record is sensor_config_t)
 
 # -----------------------------------------------------------------------------
 # Address Range Validation (ROM-based)

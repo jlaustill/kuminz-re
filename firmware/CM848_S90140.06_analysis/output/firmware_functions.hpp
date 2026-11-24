@@ -656,10 +656,10 @@ void cm848_runPowerTakeOffGovernorPid(void);  // @ 0x0002a4b0
 void cm848_applyPowerTakeOffTorqueLimit(void);  // @ 0x0002a918
 void cm848_presetPowerTakeOffGovernorOnEngagement(void);  // @ 0x0002a960
 void cm848_runPowerTakeOffGovernor(void);  // @ 0x0002ab2c
-void cm848_initializePowerTakeOffGovernorFiltersAndGains(void);  // @ 0x0002abc8
-void cm848_smoothPowerTakeOffReferenceEngineSpeed(void);  // @ 0x0002ac44
-void cm848_presetPowerTakeOffSmoothedReferenceEngineSpeed(void);  // @ 0x0002ad28
-void cm848_initializePowerTakeOffReferenceFilter(void);  // @ 0x0002ad48
+void initializePowerTakeOffGovernorFiltersAndGains(void);  // @ 0x0002abc8
+void smoothPowerTakeOffReferenceEngineSpeed(void);  // @ 0x0002ac44
+void presetPowerTakeOffSmoothedReferenceEngineSpeed(void);  // @ 0x0002ad28
+void initializePowerTakeOffReferenceFilter(void);  // @ 0x0002ad48
 void cm848_updatePowerTakeOffGovernorJ1939State(void);  // @ 0x0002ad68
 void cm848_runPowerTakeOffGovernorStateMachine(void);  // @ 0x0002afd0
 void cm848_rampPowerTakeOffReferenceEngineSpeed(void);  // @ 0x0002ba7c
@@ -815,8 +815,8 @@ undefined4 cm848_evaluateAlternatorFieldRegulatorRegulationState(void);  // @ 0x
 undefined4 cm848_evaluateAlternatorFieldRegulatorLoadResponseState(void);  // @ 0x0003844c
 void cm848_initializeAlternatorFieldControl(void);  // @ 0x000384d0
 void cm848_calculateMainInjectionEndTiming(void);  // @ 0x0003866c
-void cm848_processEngineRpmDerivative(void);  // @ 0x00038760
-void cm848_initEngineRpmFilterPointers(void);  // @ 0x00038824
+void calculateFilteredEngineAcceleration(void);  // @ 0x00038760
+void initializeEngineAccelerationFilters(void);  // @ 0x00038824
 void cm848_setEngineRpmFromCalibration(void);  // @ 0x00038868
 void cm848_applyFuelPressureGovernorFaultBlend(void);  // @ 0x0003889c
 void cm848_initProtectionFilterLimits(void);  // @ 0x00038a98
@@ -1418,7 +1418,7 @@ void cm848_updateEngineProtectionRestartSeverityIndexes (engine_protection_chann
 void cm848_checkEngineProtectionRestartLimitation (dword channel_index,engine_protection_channel_state_t *state, engine_protection_channel_configuration_t *configuration);  // @ 0x00508408
 void cm848_updateEngineProtectionRestartSeverity(void);  // @ 0x005084b4
 void cm848_calculateFaultDerateEngineSpeedLimit(void);  // @ 0x0050860c
-void cm848_initializeFaultDerateEngineSpeedLimit(void);  // @ 0x005087e4
+void initializeFaultDerateEngineSpeedLimit(void);  // @ 0x005087e4
 void cm848_countEngineProtectionShutdownTime (engine_protection_channel_configuration_t *configuration, engine_protection_channel_state_t *state,dword is_engine_speed);  // @ 0x00508834
 void cm848_updateEngineProtectionShutdown(void);  // @ 0x00508898
 void cm848_resetEngineProtectionShutdownState(void);  // @ 0x00508de8
@@ -1516,9 +1516,9 @@ j1939_tx_msg_t * cm848_selectJ1939TransmitBuffer(int length);  // @ 0x0050d688
 void cm848_initializeJ1939Transport(void);  // @ 0x0050d700
 MEMORY_REGION_TYPE lookupApplicationMemoryRegionType(dword range_start,dword range_length);  // @ 0x0050d784
 void cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit(void);  // @ 0x0050d864
-void cm848_presetPedalFaultModeFuelDemand(void);  // @ 0x0050da7c
+void presetPedalFaultModeFuelDemand(void);  // @ 0x0050da7c
 void cm848_transitionEngineOperatingMode(int previous_engine_operating_mode);  // @ 0x0050daac
-void cm848_initDroopModeStateVariables(void);  // @ 0x0050db88
+void initializePedalFaultModeEngineSpeedFilter(void);  // @ 0x0050db88
 void cm848_calculateNoLoadFuel(void);  // @ 0x0050dba8
 void cm848_initInterpolationStateCounters(void);  // @ 0x0050dd10
 void cm848_updateMilOnRequest(void);  // @ 0x0050dd40

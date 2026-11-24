@@ -19,20 +19,20 @@ address,name
 0x0000ac3c,cm550_FUN_0000ac3c
 0x0000af70,cm550_FUN_0000af70
 0x0000b130,cm550_writeHourMeterConversionData
-0x0000b210,cm550_outputControlTimingGenerator
+0x0000b210,calculateFilteredEngineAcceleration,This is the engine acceleration filter, and it is the twin of CM848 0x38760. It computes ESESAC (0x80a292) = the measured speed ESCMES (0x80ccf4) minus the previous pass's speed (0x800048), then stores the speed as the new previous. (was cm550_outputControlTimingGenerator; PR #53 round 89; the twin of CM848 0x38760: one shared name)
 0x0000b2aa,cm550_rpm_system_state_controller
 0x0000b3b2,cm550_shutdownMinimumSelector21
 0x0000b3d0,cm550_FUN_0000b3d0
 0x0000b4ce,cm550_fuelDemandLimitMinimumUpdater
 0x0000b4f2,cm550_engineStateFuelLimitInterpolator
-0x0000b5e4,cm550_dmaControllerSetup1
+0x0000b5e4,initializeEngineAccelerationFilters,Start-up initializer of the two engine acceleration filter records and the previous speed. It sets engine_acceleration_first_stage_filter_state.accumulator = 0x80000000 (0 in the offset binary of cm550_signedFirstOrderFilter) and .coefficient = &engine_acceleration_first_stage_filter_coefficient (0x807a42, ESFT01TC). (was cm550_dmaControllerSetup1; PR #53 round 89; the twin of CM848 0x38824: one shared name)
 0x0000b614,cm550_rpmParameterPointerSetup
 0x0000b63e,cm550_dmaDescriptorSetup2
 0x0000b666,cm550_initFuelSystemOutputDriver
 0x0000b688,getJ1939DiagnosticResponseEchoLength,Both run the same compare chain with the same constants: below 0x41, services 4 / 5 return 3 and 0x19 returns 5; 0x41-0x4e return the table byte at base + service; anything else returns 1. The 14 table bytes are identical. Each has one caller, its application's PGN 61184 response builder, which uses the result as the echo count. (was cm550_FUN_0000b688; PR #53 round 87; the twin of CM848 0x204a8: one shared name)
 0x0000b6e8,cm550_diagnosticMessageQueueWrite
-0x0000b7bc,validateServiceDataLength
-0x0000bcf0,cm550_initADCChannelConfiguration
+0x0000b7bc,mc68k_processAnalogSensorChannels,This is the A/D sensor channel loop; it handles no service and no data length. It walks the 25 sensor_debounce_state_t records (22 bytes each, 0x80a2aa to 0x80a4cf), each with its 24-byte config from 0x806ae2 (e2m 1003 +0 ADIMTPCS, channel 0's filter coefficient). For each channel it runs the sample counter against the config's rate byte (+0x17). (was validateServiceDataLength; PR #53 round 89)
+0x0000bcf0,cm550_initializeAnalogSensorChannels,Start-up set-up of the A/D channel loop. It writes the 25 linearization lookup descriptors (size 2 plus axis and value pointers at 0x80a792 + 14n). (was cm550_initADCChannelConfiguration; PR #53 round 89)
 0x0000c180,cm550_fuelTimingTransitionStateMachine
 0x0000c246,cm550_fuelTimingModeInit
 0x0000c24c,cm550_diagnosticDataBufferSetup
@@ -57,7 +57,7 @@ address,name
 0x0000c87e,cm550_FUN_0000c87e
 0x0000c880,cm550_FUN_0000c880
 0x0000c8a0,cm550_dzgTimingAndPressureControlStateMachine
-0x0000c962,cm550_engine_speed_governor
+0x0000c962,cm550_runAllSpeedGovernor,This is the all-speed governor (ASG). It runs only while FSDSFLST (0x80ded4, the user fueling state) is 7, 3, 2 or 30. On a state change it presets the reference from the droop and sets all_speed_governor_reference_filter_state.accumulator = reference << 16. (was cm550_engine_speed_governor; PR #53 round 89)
 0x0000d0e2,cm550_diagnosticDataCopyHandler
 0x0000d0fc,cm550_fuelDeliverySystemInit
 0x0000d18a,cm550_diagnosticStatus30Setter
@@ -169,7 +169,7 @@ address,name
 0x00014fca,mc68k_sampleAndDebounceDiscreteInputs,The discrete input sampler and debouncer - nothing in it concerns injector timing: it reads the chip select 2 device's input bytes 0xFFD000-0xFFD003 / 0xFFD005 / 0xFFD007 and SIM_PORTE0 / SIM_PORTF0 - XORs them with the polarity masks into three 4-sample rings - debounces each byte as (AND of 4) | (OR of 4 & previous) - then decodes the PTO and cruise switches with 25-pass hold counters and two 50-pass switch-pair faults (was injectorTimingCalculation; PR #53 round 85)
 0x000159ee,mc68k_ioDriverStrobeHandler
 0x00015dd0,cm550_initializeDiscreteInputs,The start-up set-up of the discrete inputs: points discrete_input_override_mask_ptr at switch_override_configuration and runs mc68k_sampleAndDebounceDiscreteInputs 4 times. It monitors no VP44 status, and its own body has no hardware access, so cm550_ (was vp44_initVP44StatusMonitoring; PR #53 round 87)
-0x00015df0,mc68k_initializeDiscreteOutputDrivers,The start-up set-up of the discrete outputs. mc68k_applicationMain calls it once (jsr at 0x28708), after the discrete input set-up cm550_initializeDiscreteInputs (0x15dd0) and cm550_initADCChannelConfiguration. 1. It writes the default output states into the output images 0x80bcf6-0x80bcfb, each only while no client holds that output's override slot (0x80bd1a + n). 2. It sets up the chip select 2 output driver: registers 8 / 9 / 10 = 0x0F / 0x80 / 0x80, output port 1 (0xFFD004) cleared, port 2 bit 7 (0xFFD006) cleared. 3. It starts TPU channel 13 (function 0xE, PARAM0 0x113) with a handshake: HSR 2 and wait for PARAM1 bit 15 = 0, HSR 1 and wait for 1, HSR 2 and wait for 0; then it sets port 2 bit 7 and issues HSR 1. 4. It ends with mc68k_ioDriverStrobeHandler, which writes the ports from the images and drives channel 13 from bit 5 of 0x80bcfb (set: HSR 2, clear: HSR 1), most likely the fuel shut-off command (was mc68k_FUN_00015df0; PR #53 round 87)
+0x00015df0,mc68k_initializeDiscreteOutputDrivers,The start-up set-up of the discrete outputs. mc68k_applicationMain calls it once (jsr at 0x28708), after the discrete input set-up cm550_initializeDiscreteInputs (0x15dd0) and cm550_initializeAnalogSensorChannels. 1. It writes the default output states into the output images 0x80bcf6-0x80bcfb, each only while no client holds that output's override slot (0x80bd1a + n). 2. It sets up the chip select 2 output driver: registers 8 / 9 / 10 = 0x0F / 0x80 / 0x80, output port 1 (0xFFD004) cleared, port 2 bit 7 (0xFFD006) cleared. 3. It starts TPU channel 13 (function 0xE, PARAM0 0x113) with a handshake: HSR 2 and wait for PARAM1 bit 15 = 0, HSR 1 and wait for 1, HSR 2 and wait for 0; then it sets port 2 bit 7 and issues HSR 1. 4. It ends with mc68k_ioDriverStrobeHandler, which writes the ports from the images and drives channel 13 from bit 5 of 0x80bcfb (set: HSR 2, clear: HSR 1), most likely the fuel shut-off command (was mc68k_FUN_00015df0; PR #53 round 87)
 0x00015f8c,cm550_emptyStubFunction4,Empty function (a single rts); its one call is in mc68k_sampleAndDebounceDiscreteInputs. Its old name emptyStubFunction4 was shared with CM848 0x26f78, which is the CAN transmit-complete hook ignoreCanTransmitInterrupt (the twin of CM550 0xc80c), not this stub (was emptyStubFunction4; PR #53 round 87)
 0x00015f8e,mc68k_dispatchJ1708ReceivedMessages,Drains the J1708 receive buffer for at most 500 CTM4_BIUTBR ticks: first it sends the deferred reply cm550_commitEepromMirrorToEeprom arms (once the EEPROM write queue is empty); each record is [length][message bytes] and the first message byte picks the handler (3 = the 10-byte key through validateSecurityKey and then commands 0x40-0x54 - 4 = control commands 0x64-0x76 - 5 = memory read / write / multipacket). Its old shared name came from a pairing CM848 later dropped (was diagnosticCommandDispatcher; PR #53 round 85)
 0x0001645e,cm550_safeDivideWithClamp
@@ -189,8 +189,8 @@ address,name
 0x00017150,cm550_canControllerConfigInit
 0x0001717a,cm550_derateProtectionSlowCycle20Coordinator
 0x000171aa,cm550_can1PwmTimerInit
-0x000171be,cm550_fuel_limit_arbitrator
-0x000176de,cm550_engineRpmSourceInit
+0x000171be,cm550_calculateEngineSpeed,It uses engine_speed_filter_state. It is the engine speed calculation, not a fuel limit. It counts down the main / backup / external lost-signal counters, converts the pulse periods to speeds (0x80cd06 / 0x80cd04 / 0x80cd16) and sets the speed-lost and cam / crank sync faults. (was cm550_fuel_limit_arbitrator; PR #53 round 89)
+0x000176de,cm550_initializeEngineSpeedCalculation,Start-up initializer of the engine speed calculation 0x171be, which uses all four of the values it sets. engine_speed_filter_state.accumulator = 0 and .coefficient = 0x807ea8 (100B +0 ESESFTTC 'TIME CONSTANT FOR THE FILTER USED ON THE 2^N PULSE AVERAGE'). The main pulse period timeout working value 0x80d06c (misnamed governor_rpm_target_adjusted) = ESMXTM01 (0x807eaa). (was cm550_engineRpmSourceInit; PR #53 round 89)
 0x000177c2,cm550_rpmBasedFuelLimitCalculator
 0x000178b0,cm550_governorFuelModeBlendCalculator
 0x00017a06,cm550_rpmBasedFuelTimingInterpolation
@@ -221,8 +221,8 @@ address,name
 0x00018c1c,cm550_diagnosticProtectionProcessor
 0x00018cb6,cm550_protectionState1DiagnosticValidator
 0x00018dae,cm550_protectionUpdateHandler
-0x00018e0c,cm550_FUN_00018e0c
-0x00018f4c,cm550_protectionThresholdPointerInit
+0x00018e0c,cm550_calculateFaultDerateEngineSpeedLimit,It uses engine_protection_speed_limit_filter_state. Over the 9 engine protection channels (configs 0x807032 + 36n, states 0x80d0dc + 46n, severity records 0x8057c0 + 30n) it takes the rpm severity from cm550_protectionThresholdCalculationHelper(..., 1) for each channel whose flag bits (base 0x71 and 0x1a0) are set, and keeps the largest. (was cm550_FUN_00018e0c; PR #53 round 89)
+0x00018f4c,initializeFaultDerateEngineSpeedLimit,Start-up initializer of the engine protection (EPF) engine speed derate. It sets engine_protection_speed_limit_filter_state.accumulator = the maximum rated engine speed (0x803f40) << 16 and .coefficient = 0x807f3a (10B5 +4 EPRPFTTC 'MAXIMUM RPM LIMIT FILTER TIME CONSTANT'). (was cm550_protectionThresholdPointerInit; PR #53 round 89; the twin of CM848 0x5087e4: one shared name)
 0x00018f86,incrementDiagnosticCounters
 0x00018fcc,processDiagnosticLimitStatus
 0x000192e0,cm550_FUN_000192e0
@@ -255,10 +255,8 @@ address,name
 0x0001a8a4,mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3,The TPU channel 10 primary speed interrupt handler for speed_measurement_mode 3 (saves d0-d3 / a0-a1 and ends in RTE): it reads the period and the edge time TPU_CH10_PARAM2 - clears parameter 4 - passes them to cm550_processPrimarySpeedPulsePeriodWithSyncPulse (in fact the mode 3 period ring / sync gap processor) - re-arms channel 10 (parameter 0 and HSR 2) - then runs the same phase comparator tail (was vp44_FUN_0001a8a4; PR #53 round 85)
 0x0001a95a,cm550_processPrimarySpeedPulsePeriodWithSyncPulse,This is the primary speed sensor period processor for speed_measurement_mode 3, the wheel with a sync pulse. It is the only work function of mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3. It stores the TPU channel 10 period and edge time (0x80d04a / 0x80d052), then asks cm550_detectEngineSpeedSensorSyncPulse(0) whether the period ended on the sync pulse. (was cm550_throttleTimeAccumulatorProcessor; PR #53 round 87)
 0x0001a95e,vp44FaultThresholdTablesInit
-0x0001abb2,cm550_FUN_0001abb2
-0x0001ade8,cm550_FUN_0001ade8
-0x0001ae06,cm550_initOilPressureModeSystem
-0x0001ae0c,cm550_sensorHistoryTablePointerInit
+0x0001abb2,cm550_updateElectronicSmartPowerTau,It uses engine_deceleration_rate_filter_state. It is the Electronic Smart Power (ESP) logic and runs while calibration_feature_enable_flags_word_9 bit 0x10 is set. It runs the throttle timer SPTHTR01. (was cm550_FUN_0001abb2; PR #53 round 89)
+0x0001ade8,cm550_initializeElectronicSmartPower,Start-up initializer of Electronic Smart Power (ESP), e2m blocks 11DC / 11DD (bases 0x80d2b0 / 0x807f64 from the ROM parameter ID table entries 0x3627c / 0x36284). (was cm550_FUN_0001ade8; PR #53 round 89)
 0x0001ae22,mc68k_initializeTpuChannel1BackupSpeedInput,Sets up TPU channel 1 (CFSR3 bits 7-4 / CIER bit 1 / HSRR1 bits 3-2 / parameters 0-3) for the backup speed sensor and fills its pulse period table (pulse_period_table_backup_* / period_meas_per_cam_backup_* / _teeth_per_cam_rev_backup_*). No CAN register is involved (was mc68k_dutyCycleMonitorAltCanInit; PR #53 round 82)
 0x0001af32,mc68k_dutyCycleMonitorIsrHandler
 0x0001b1ea,mc68k_FUN_0001b1ea
@@ -373,7 +371,7 @@ address,name
 0x0001db9a,vp44_fuelArbitratorVariablesReset
 0x0001dbd8,cm550_FUN_0001dbd8
 0x0001dbee,mc68k_main
-0x0001dcfc,vp44ControlStructureInit
+0x0001dcfc,cm550_initializeAlpha,Start-up initializer of the alpha state. It sets alpha_fuel_rate_filter_state.accumulator = 0 and .coefficient = 0x807ab0 (e2m 104B +10 APFLFTTC, the alpha fuel rate filter constant). APAPBA, the alpha base (0x80a8fa), the LSG / AFC exit timer active flags (0x80a90e / 0x80a912), 0x80a916 and FSLSSTFG (0x80a908, the semaphore that latches LSG events) are all set to 0. (was vp44ControlStructureInit; PR #53 round 89)
 0x0001dd2c,cm550_diagnosticBufferPointerInit
 0x0001ddb4,cm550_FUN_0001ddb4
 0x0001de58,cm550_FUN_0001de58
@@ -529,18 +527,18 @@ address,name
 0x00025448,cm550_periodicLampFlashController
 0x000254b6,cm550_FUN_000254b6
 0x00025594,cm550_clearSystemErrorStatus
-0x0002571e,cm550_FUN_0002571e
+0x0002571e,cm550_calculatePedalFaultModeFuelDemand,It uses pedal_fault_mode_engine_speed_filter_state. While FSDSFLST (0x80ded4) is 6, the accelerator pedal fault mode, it runs cm550_exponentialMovingAverage(ESCMES, &pedal_fault_mode_engine_speed_filter_state). (was cm550_FUN_0002571e; PR #53 round 89)
 0x00025806,cm550_FUN_00025806
-0x000258b0,cm550_FUN_000258b0
-0x000258d6,cm550_fuelDemandTablePointerInit
+0x000258b0,presetPedalFaultModeFuelDemand,It uses pedal_fault_mode_engine_speed_filter_state. It is the pedal fault mode preset: fuel_demand_ramped (0x80dab8, the ramp) and fuel_demand_target (0x801a3c, the slewed limit) = current_fuel_demand, and the filter's accumulator = ESCMES (0x80ccf4) << 16. (was cm550_FUN_000258b0; PR #53 round 89; the twin of CM848 0x50da7c: one shared name)
+0x000258d6,initializePedalFaultModeEngineSpeedFilter,It sets pedal_fault_mode_engine_speed_filter_state.accumulator = 0 and then .coefficient = 0x80820e (10CE +0 LHESFTTC, the limp home engine speed filter constant), and does nothing else; there is no fuel demand table. (was cm550_fuelDemandTablePointerInit; PR #53 round 89; the twin of CM848 0x50db88: one shared name)
 0x000258e8,cm550_epsTimingCalculationSlowCycle40Coordinator
 0x00025926,cm550_initLookupTablePointers1
 0x0002595a,cm550_governorFuelPidController
 0x00025a30,cm550_fuel_delivery_controller
 0x00025a34,vp44_FUN_00025a34
-0x00025b1c,vp44_fuel_timing_calculation_with_fault_checking
-0x00025ff2,vp44_fuelRpmDeviationCalculator
-0x00026078,cm550_FUN_00026078
+0x00025b1c,cm550_runLowSpeedGovernor,This is the whole low speed governor (LSG). It first computes the throttle deadband reference offset = cm550_exponentialMovingAverage(0x80825a x validated throttle, &low_speed_governor_throttle_reference_offset_filter_state). LSRF lsg_breakpoint_speed is the operator or the datalink breakpoint, and LSAJRFES (the reference adjusted with throttle position) is clamped. (was vp44_fuel_timing_calculation_with_fault_checking; PR #53 round 89)
+0x00025ff2,cm550_presetLowSpeedGovernorSpeedError,It uses low_speed_governor_error_filter. It presets the LSG speed error: LSER (0x80dae0) = gain 0x808240 x (LSAJRFES - ENGRPM - offset 0x808264) >> 9, clamped to LSFTMN / LSFTMX. (was vp44_fuelRpmDeviationCalculator; PR #53 round 89)
+0x00026078,cm550_initializeLowSpeedGovernor,Start-up initializer of the low speed governor. It points low_speed_governor_throttle_reference_offset_filter_state.coefficient at 0x808258 (e2m 1064 +22 LSDEFTTC, the throttle deadband fix filter constant) and low_speed_governor_error_filter.coefficient at 0x80823e (1064 +8 LSFTTC). (was cm550_FUN_00026078; PR #53 round 89)
 0x0002609c,cm550_epsAccelerationMonitor
 0x00026252,cm550_epsRpmTrackingInit
 0x0002626a,cm550_epsControlModeReset
@@ -599,13 +597,13 @@ address,name
 0x0002d1e0,cm550_systemControl75
 0x0002d1fe,cm550_memoryPatchBufferInit
 0x0002d216,cm550_memoryPatchingSystem
-0x0002d3c6,initProtectionParamCalculation
+0x0002d3c6,cm550_runPowerTakeOffGovernor,It uses power_take_off_speed_error_filter. It runs the PTO governor while PTSS (0x80dc26) is 1. On the first active pass (previous flag 0x801c0c != 1) it calls the engagement preset 0x2d9d2. (was initProtectionParamCalculation; PR #53 round 89)
 0x0002d9a8,cm550_FUN_0002d9a8
-0x0002d9d2,cm550_fuelDemandProportionalCalculator
-0x0002db2a,cm550_FUN_0002db2a
-0x0002dbde,cm550_FUN_0002dbde
-0x0002dc8c,cm550_rpmSnapshotCapture
-0x0002dc9e,cm550_FUN_0002dc9e
+0x0002d9d2,cm550_presetPowerTakeOffGovernorOnEngagement,It uses power_take_off_speed_error_filter. It presets the PTO governor when it engages. It clears the combined PD term (0x80dc14) and presets the smoothed reference (0x2dc8c). Then power_take_off_speed_error_filter.accumulator = 0x80000000 and the filtered error = 0. (was cm550_fuelDemandProportionalCalculator; PR #53 round 89)
+0x0002db2a,initializePowerTakeOffGovernorFiltersAndGains,Start-up initializer of the PTO governor. power_take_off_speed_error_filter.accumulator = 0x80000000 (offset-binary 0) and .coefficient = 0x80889a (10AA +2 PTFTTC 'PD GOVERNOR ERROR FILTER CONSTANT'). Then the reference filter initializer 0x2dc9e runs and PTAJDG / PTAJIG / PTAJPG (0x80dc1e / 20 / 22, the D / I / P gain adjustments) are set to 0x80. (was cm550_FUN_0002db2a; PR #53 round 89; the twin of CM848 0x2abc8: one shared name)
+0x0002dbde,smoothPowerTakeOffReferenceEngineSpeed,The power take-off (PTO) reference speed smoothing. It first calls 0x4d988, then, while PTSS (0x80dc26) is 1: if |PTDSRF (0x80dc24) - PTRFRP (0x80dc18)| <= PTRFLM (0x8088aa), PTRFRP = PTDSRF. (was cm550_FUN_0002dbde; PR #53 round 89; the twin of CM848 0x2ac44: one shared name)
+0x0002dc8c,presetPowerTakeOffSmoothedReferenceEngineSpeed,It is the third user of power_take_off_reference_filter_state. It sets PTRFRP (0x80dc18, the smoothed PTO reference) = ENGRPM (0x80ccf6, the filtered engine speed) and clears power_take_off_reference_filter_state.accumulator. Its one caller is the PTO engagement preset 0x2d9d2. (was cm550_rpmSnapshotCapture; PR #53 round 89; the twin of CM848 0x2ad28: one shared name)
+0x0002dc9e,initializePowerTakeOffReferenceFilter,It sets power_take_off_reference_filter_state.accumulator = 0 and then .coefficient = 0x8088ac (10AA +14 PTRFRMTC 'REFERENCE SPEED CHANGE CONST.'), and does nothing else. Its one caller is the PTO governor initializer 0x2db2a. CM848 0x2ad48 is identical (accumulator 0x3fafd0 = 0, then coefficient 0x3fafcc = 0x4071a0) and is called only by 0x2abc8, so this is a twin. (was cm550_FUN_0002dc9e; PR #53 round 89; the twin of CM848 0x2ad48: one shared name)
 0x0002dcb0,cm550_oil_pressure_shutdown_controller
 0x0002ddbc,cm550_FUN_0002ddbc
 0x0002ddce,mc68k_hardwareTimerFlagsInit
