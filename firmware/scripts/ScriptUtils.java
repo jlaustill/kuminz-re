@@ -252,6 +252,71 @@ public class ScriptUtils {
         return new ArrayTypeSpec(m.group(1), count);
     }
 
+    // ── Stack parameter layout ───────────────────────────────────────────────
+
+    /** A firmware's stack parameter layout (output/stack_parameter_layout.csv). */
+    public static final class StackParameterLayout {
+        public final String language;
+        public final int firstOffset;
+        public final int slotSize;
+
+        public StackParameterLayout(String language, int firstOffset, int slotSize) {
+            this.language = language;
+            this.firstOffset = firstOffset;
+            this.slotSize = slotSize;
+        }
+    }
+
+    /**
+     * Parses stack_parameter_layout.csv: blank and '#' lines are skipped, the first other line is the header, and each
+     * later row is setting,value[,comment]. It needs language, first_stack_offset (even, not negative) and slot_size
+     * (2 or 4). An unknown setting is an error, so a typo cannot pass silently.
+     */
+    public static StackParameterLayout parseStackParameterLayout(List<String> lines) {
+        String language = null;
+        Integer first = null;
+        Integer slot = null;
+        boolean header = true;
+        for (String raw : lines) {
+            String line = raw.trim();
+            if (line.isEmpty() || line.startsWith("#")) continue;
+            if (header) { header = false; continue; }
+            String[] parts = parseCSVLine(line);
+            if (parts.length < 2) throw new IllegalArgumentException("bad row: " + line);
+            String setting = parts[0].trim();
+            String value = parts[1].trim();
+            switch (setting) {
+                case "language": language = value; break;
+                case "first_stack_offset": first = Integer.parseInt(value); break;
+                case "slot_size": slot = Integer.parseInt(value); break;
+                default: throw new IllegalArgumentException("unknown setting '" + setting + "'");
+            }
+        }
+        if (language == null || first == null || slot == null)
+            throw new IllegalArgumentException("needs language, first_stack_offset and slot_size");
+        if (slot != 2 && slot != 4) throw new IllegalArgumentException("slot_size must be 2 or 4");
+        if (first < 0 || first % 2 != 0) throw new IllegalArgumentException("first_stack_offset must be even");
+        return new StackParameterLayout(language, first, slot);
+    }
+
+    /**
+     * Stack offsets for parameters of the given byte lengths, in parameter order: the first starts at firstOffset,
+     * each takes ceil(length / slotSize) slots and sits right-justified in them (big-endian: a byte in a 2-byte slot is
+     * at slot + 1). There is no padding for a type's alignment (the CM550 compiler puts a long at +6 after a word).
+     * slotSize 4 gives 68000.cspec __stdcall's layout (align 4, right-justified) for 1 / 2 / 4 / 8-byte types.
+     */
+    public static int[] packStackParameters(int[] lengths, int firstOffset, int slotSize) {
+        int[] offsets = new int[lengths.length];
+        int next = firstOffset;
+        for (int i = 0; i < lengths.length; i++) {
+            if (lengths[i] <= 0) throw new IllegalArgumentException("parameter " + i + " has no fixed length");
+            int space = (lengths[i] + slotSize - 1) / slotSize * slotSize;
+            offsets[i] = next + space - lengths[i];
+            next += space;
+        }
+        return offsets;
+    }
+
     // ── Firmware name ────────────────────────────────────────────────────────
 
     /**

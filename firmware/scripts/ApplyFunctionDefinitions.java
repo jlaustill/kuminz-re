@@ -11,6 +11,8 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,6 +39,9 @@ public class ApplyFunctionDefinitions extends GhidraScript {
     private FunctionManager functionManager;
     private DataTypeManager dtm;
     private DecompInterface decompiler;
+    /** args[1] (output/stack_parameter_layout.csv), or null. Null (CM848): dynamic storage as before. Set (CM550):
+     *  every typed parameter gets custom stack storage at the offset its compiler passes it at. */
+    private ScriptUtils.StackParameterLayout stackLayout;
 
     /** A parameter as recovered by the decompiler (name + type), captured before we commit a prototype. */
     private static class RecoveredParam {
@@ -71,6 +76,24 @@ public class ApplyFunctionDefinitions extends GhidraScript {
         if (!new File(csvPath).exists()) {
             println("ERROR: function_definitions.csv not found at: " + csvPath);
             return;
+        }
+
+        if (args.length > 1) {
+            try {
+                stackLayout = ScriptUtils.parseStackParameterLayout(Files.readAllLines(Paths.get(args[1])));
+            } catch (Exception e) {
+                println("ERROR: stack parameter layout " + args[1] + ": " + e.getMessage() + " - nothing applied");
+                return;
+            }
+            String language = currentProgram.getLanguageID().getIdAsString();
+            if (!language.equals(stackLayout.language)) {
+                println("ERROR: " + args[1] + " is for " + stackLayout.language + ", the program is " + language +
+                        " - nothing applied");
+                return;
+            }
+            println("Stack parameter layout: the first parameter at sp+" + stackLayout.firstOffset + ", " +
+                    stackLayout.slotSize + "-byte slots, custom storage (" + args[1] + ")");
+            println("");
         }
 
         println("[Phase 1] Parsing function definitions...");
@@ -233,6 +256,22 @@ public class ApplyFunctionDefinitions extends GhidraScript {
                     ScriptUtils.ParamReconciliation decision =
                             ScriptUtils.reconcileParams(definedCount, detectedCount);
 
+                    if (stackLayout != null) {
+                        // The layout places every parameter from its declared length, so a missing or unknown
+                        // row would move every later one. Skip the WHOLE function then (its return row too: a
+                        // locked return with no parameters would strip the call arguments).
+                        String problem = decision == ScriptUtils.ParamReconciliation.PRESERVE_DETECTED
+                                ? "a return-only row but Ghidra recovered " + detectedCount +
+                                  " parameter(s) in the convention's 4-byte slots"
+                                : missingStackParameterRow(positional, maxIndex);
+                        if (problem != null) {
+                            println("  Error: " + firstName + ": " + problem + " - the stack parameter layout " +
+                                    "needs a typed row per parameter; prototype not applied");
+                            result.failed += entry.getValue().size();
+                            continue;
+                        }
+                    }
+
                     if (returnDef != null) {
                         DataType dt = getDataType(returnDef.type);
                         if (dt == null) {
@@ -348,14 +387,70 @@ public class ApplyFunctionDefinitions extends GhidraScript {
             paramList.set(p.paramIndex, newParam);
         }
 
-        function.updateFunction("__stdcall", null, paramList,
-                Function.FunctionUpdateType.DYNAMIC_STORAGE_ALL_PARAMS,
-                true, SourceType.USER_DEFINED);
+        if (stackLayout == null) {
+            function.updateFunction("__stdcall", null, paramList,
+                    Function.FunctionUpdateType.DYNAMIC_STORAGE_ALL_PARAMS,
+                    true, SourceType.USER_DEFINED);
+        } else {
+            List<Parameter> placed = placeOnStack(paramList);
+            function.updateFunction("__stdcall", null, placed,
+                    Function.FunctionUpdateType.CUSTOM_STORAGE,
+                    true, SourceType.USER_DEFINED);
+            // Read back: Ghidra must keep each storage exactly as given.
+            Parameter[] got = function.getParameters();
+            for (int i = 0; i < placed.size(); i++) {
+                Parameter want = placed.get(i);
+                if (i >= got.length || !got[i].isStackVariable() ||
+                        got[i].getStackOffset() != want.getStackOffset() || got[i].getLength() != want.getLength()) {
+                    println("  Error: " + firstName + " parameter " + i + " committed as " +
+                            (i < got.length ? got[i].getVariableStorage() : "missing") + ", intended " +
+                            want.getVariableStorage());
+                }
+            }
+            println("  Placed " + firstName + ": " + describe(placed));
+        }
 
         for (ParamDef p : positional) {
             p.wasApplied = true;
             result.applied++;
         }
+    }
+
+    /** Null when rows 0..maxIndex all exist with a known type, else what is missing. */
+    private String missingStackParameterRow(List<ParamDef> positional, int maxIndex) {
+        DataType[] types = new DataType[maxIndex + 1];
+        for (ParamDef p : positional) {
+            if (p.paramIndex >= 0 && p.paramIndex <= maxIndex) types[p.paramIndex] = getDataType(p.type);
+        }
+        for (int i = 0; i <= maxIndex; i++) {
+            if (types[i] == null) return "parameter " + i + " has no row or an unknown type";
+        }
+        return null;
+    }
+
+    /** The same parameters with stack storage at the layout's offsets (stack_parameter_layout.csv). */
+    private List<Parameter> placeOnStack(List<Parameter> params) throws Exception {
+        int[] lengths = new int[params.size()];
+        for (int i = 0; i < lengths.length; i++) lengths[i] = params.get(i).getDataType().getLength();
+        int[] offsets = ScriptUtils.packStackParameters(lengths, stackLayout.firstOffset, stackLayout.slotSize);
+        List<Parameter> placed = new ArrayList<>();
+        for (int i = 0; i < lengths.length; i++) {
+            Parameter p = params.get(i);
+            Parameter q = new ParameterImpl(p.getName(), p.getDataType(), offsets[i], currentProgram);
+            q.setComment(p.getComment());
+            placed.add(q);
+        }
+        return placed;
+    }
+
+    private static String describe(List<Parameter> params) {
+        StringBuilder text = new StringBuilder();
+        for (Parameter p : params) {
+            if (text.length() > 0) text.append(", ");
+            text.append(p.getName()).append(" sp+").append(p.getStackOffset()).append(":")
+                .append(p.getDataType().getLength());
+        }
+        return text.toString();
     }
 
     private DataType getDataType(String typeString) {

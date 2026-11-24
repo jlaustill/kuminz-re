@@ -457,4 +457,50 @@ class ScriptUtilsTest {
         assertEquals(ScriptUtils.ParamReconciliation.WARN_MISMATCH,
                 ScriptUtils.reconcileParams(3, 0));
     }
+
+    // ── stack parameter layout (CM550: 2-byte slots, PR #53 round 86) ─────────
+
+    private static int[] pack2(int... lengths) { return ScriptUtils.packStackParameters(lengths, 4, 2); }
+
+    @Test void pack_oneWord_atFour() { assertArrayEquals(new int[]{4}, pack2(2)); }          // cm550_busyWaitDelayLoop
+    @Test void pack_oneByte_atTheOddHalf() { assertArrayEquals(new int[]{5}, pack2(1)); }
+    @Test void pack_wordThenLong_longNotAligned() {                                          // exponentialMovingAverage
+        assertArrayEquals(new int[]{4, 6}, pack2(2, 4));
+    }
+    @Test void pack_longThenWord() { assertArrayEquals(new int[]{4, 8}, pack2(4, 2)); }
+    @Test void pack_longLongWordWord() { assertArrayEquals(new int[]{4, 8, 12, 14}, pack2(4, 4, 2, 2)); }
+    @Test void pack_longWordLongLong() { assertArrayEquals(new int[]{4, 8, 10, 14}, pack2(4, 2, 4, 4)); }
+    @Test void pack_threeBytesThenWord() { assertArrayEquals(new int[]{5, 7, 9, 10}, pack2(1, 1, 1, 2)); }
+    @Test void pack_eightBytesThenWord() { assertArrayEquals(new int[]{4, 12}, pack2(8, 2)); }
+    @Test void pack_fourByteSlots_isTheCspecLayout() {
+        assertArrayEquals(new int[]{6, 10, 12, 19}, ScriptUtils.packStackParameters(new int[]{2, 2, 4, 1}, 4, 4));
+    }
+    @Test void pack_noLength_throws() {
+        assertThrows(IllegalArgumentException.class, () -> pack2(2, 0));
+    }
+
+    @Test void layout_parsesTheThreeSettings() {
+        ScriptUtils.StackParameterLayout layout = ScriptUtils.parseStackParameterLayout(Arrays.asList(
+                "setting,value,comment", "# a note", "language,68000:BE:32:CPU32,x",
+                "first_stack_offset,4,y", "slot_size,2,z"));
+        assertEquals("68000:BE:32:CPU32", layout.language);
+        assertEquals(4, layout.firstOffset);
+        assertEquals(2, layout.slotSize);
+    }
+    @Test void layout_unknownSetting_throws() {
+        assertThrows(IllegalArgumentException.class, () -> ScriptUtils.parseStackParameterLayout(Arrays.asList(
+                "setting,value", "language,L", "first_stack_offset,4", "slot_size,2", "slotsize,2")));
+    }
+    @Test void layout_missingSetting_throws() {
+        assertThrows(IllegalArgumentException.class, () -> ScriptUtils.parseStackParameterLayout(Arrays.asList(
+                "setting,value", "language,L", "slot_size,2")));
+    }
+    @Test void layout_slotThree_throws() {
+        assertThrows(IllegalArgumentException.class, () -> ScriptUtils.parseStackParameterLayout(Arrays.asList(
+                "setting,value", "language,L", "first_stack_offset,4", "slot_size,3")));
+    }
+    @Test void layout_oddFirstOffset_throws() {
+        assertThrows(IllegalArgumentException.class, () -> ScriptUtils.parseStackParameterLayout(Arrays.asList(
+                "setting,value", "language,L", "first_stack_offset,5", "slot_size,2")));
+    }
 }
