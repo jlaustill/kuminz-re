@@ -632,3 +632,13 @@ Hand work on the round 7 lead.
   label-only: no memory block past the dump), `apply_r75a3.py` (the SCI registers, the two J1708 functions),
   `apply_r75a4.py` (the mc68k_ prefix), `apply_r75a5.py` (the SCI interrupt handler), `map_r75a3/4/5.csv`.
 - **Proof:** `prove_r75*.py`, `diff_r75*.py`. **Closing:** `apply_r75_closing.py`, `update_large_tar_r75.sh`.
+
+## Round 76: CM550's MC68336 register map (`session_folder/round76/`)
+
+- **Stage A (CM550):** `register_access_sizes.py` (each register's m68k access sizes, decoded with llvm-mc-18;
+  `register_access_sizes.txt`), `apply_r76a.py` (the 141 register rows and the five struct types removed),
+  `apply_r76a2.py` (the 32-bit-only pairs as dwords), `apply_r76a3.py` (the malformed circular buffer struct).
+  The register names come from the MC68336/376 User's Manual, Appendix D (NXP, MC68336376UMD.pdf); the manual
+  itself is not archived here.
+- **Proof:** `prove_r76a_cm550.py`, `residual_r76a_cm550.py`, `diff_r76a_cm550.py`. **Closing:**
+  `apply_r76_closing.py`, `update_large_tar_r76.sh`.

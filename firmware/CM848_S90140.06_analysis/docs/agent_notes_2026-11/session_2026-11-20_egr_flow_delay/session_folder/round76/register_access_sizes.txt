@@ -1,0 +1,141 @@
+0xfff200 {} undecoded 3
+0xfff202 {} undecoded 2
+0xfff204 {'move.w': 1} undecoded 2
+0xfff206 {'move.w': 16} undecoded 3
+0xfff208 {} undecoded 10
+0xfff20a {'move.w': 1} undecoded 2
+0xfff20c {} undecoded 3
+0xfff20e {'move.w': 1} undecoded 2
+0xfff210 {} undecoded 2
+0xfff230 {} undecoded 1
+0xfff400 {'move.w': 3} undecoded 2
+0xfff404 {'move.w': 12} undecoded 0
+0xfff408 {'move.w': 3} undecoded 0
+0xfff410 {'move.w': 1} undecoded 5
+0xfff414 {'move.w': 5} undecoded 0
+0xfff418 {'move.w': 4} undecoded 4
+0xfff41a {'move.l': 4} undecoded 1
+0xfff41c {} undecoded 1
+0xfff420 {'move.w': 5} undecoded 4
+0xfff428 {'move.w': 3} undecoded 4
+0xfff42a {'move.w': 1, 'move.l': 1} undecoded 1
+0xfff42c {} undecoded 1
+0xfff430 {'move.w': 3} undecoded 4
+0xfff432 {'move.w': 1, 'move.l': 1} undecoded 1
+0xfff434 {} undecoded 1
+0xfff438 {'move.w': 4} undecoded 3
+0xfff43a {'move.w': 1, 'move.l': 3} undecoded 3
+0xfff43c {} undecoded 1
+0xfff440 {'move.w': 4} undecoded 3
+0xfff442 {'move.w': 1, 'move.l': 3} undecoded 3
+0xfff444 {} undecoded 1
+0xfff448 {'move.w': 5} undecoded 4
+0xfff450 {'move.w': 5} undecoded 4
+0xfff458 {'move.w': 3} undecoded 17
+0xfff45a {'move.w': 5} undecoded 0
+0xfff460 {'move.w': 3} undecoded 0
+0xfffa00 {'move.w': 3} undecoded 0
+0xfffa04 {'move.w': 3} undecoded 0
+0xfffa11 {'move.b': 6} undecoded 2
+0xfffa15 {'move.b': 3} undecoded 2
+0xfffa17 {'move.b': 3} undecoded 0
+0xfffa19 {'move.b': 9} undecoded 0
+0xfffa1d {'move.b': 3} undecoded 0
+0xfffa1f {'move.b': 3} undecoded 0
+0xfffa21 {'move.b': 3} undecoded 0
+0xfffa22 {'move.w': 1} undecoded 3
+0xfffa24 {'move.w': 1} undecoded 3
+0xfffa27 {'move.b': 128} undecoded 0
+0xfffa44 {'move.w': 3} undecoded 0
+0xfffa46 {} undecoded 3
+0xfffa48 {'move.w': 3} undecoded 0
+0xfffa4a {'move.w': 3} undecoded 0
+0xfffa4c {'move.w': 3} undecoded 0
+0xfffa4e {'move.w': 3} undecoded 0
+0xfffa50 {'move.w': 3} undecoded 0
+0xfffa52 {'move.w': 3} undecoded 0
+0xfffa54 {'move.w': 3} undecoded 0
+0xfffa56 {'move.w': 3} undecoded 0
+0xfffa58 {'move.w': 3} undecoded 0
+0xfffa5a {'move.w': 3} undecoded 0
+0xfffa5c {'move.w': 3} undecoded 0
+0xfffa5e {'move.w': 3} undecoded 0
+0xfffa60 {'move.w': 3} undecoded 0
+0xfffa62 {'move.w': 3} undecoded 0
+0xfffa64 {} undecoded 3
+0xfffa66 {} undecoded 3
+0xfffa68 {'move.w': 3} undecoded 0
+0xfffa6a {'move.w': 3} undecoded 0
+0xfffa6c {} undecoded 3
+0xfffa6e {} undecoded 3
+0xfffa70 {} undecoded 3
+0xfffa72 {} undecoded 3
+0xfffa74 {} undecoded 3
+0xfffa76 {} undecoded 3
+0xfffb04 {'move.w': 1} undecoded 0
+0xfffb40 {} undecoded 1
+0xfffb44 {'move.l': 1} undecoded 0
+0xfffc00 {'move.w': 3} undecoded 0
+0xfffc04 {'move.b': 3} undecoded 3
+0xfffc05 {'move.b': 3} undecoded 0
+0xfffc15 {'move.b': 3} undecoded 0
+0xfffc16 {'move.b': 3} undecoded 0
+0xfffc17 {'move.b': 3} undecoded 0
+0xfffc18 {'move.w': 3} undecoded 0
+0xfffc1a {} undecoded 21
+0xfffc1c {'move.w': 2} undecoded 13
+0xfffc1f {'move.b': 6} undecoded 4
+0xfffd04 {'move.w': 2} undecoded 0
+0xfffd06 {'move.w': 3} undecoded 0
+0xfffd08 {} undecoded 1
+0xfffd20 {'move.w': 2} undecoded 4
+0xfffd22 {} undecoded 3
+0xfffd24 {'move.w': 1} undecoded 2
+0xfffd26 {'move.w': 2} undecoded 0
+0xfffd28 {} undecoded 0
+0xfffd2a {} undecoded 0
+0xfffd40 {'move.b': 3} undecoded 3
+0xfffd41 {'move.b': 3} undecoded 0
+0xfffd42 {'move.b': 1} undecoded 2
+0xfffd43 {'move.b': 2} undecoded 0
+0xfffd44 {} undecoded 0
+0xfffd45 {} undecoded 0
+0xfffe00 {'move.w': 2} undecoded 0
+0xfffe08 {'move.w': 1} undecoded 0
+0xfffe0a {} undecoded 33
+0xfffe0c {} undecoded 4
+0xfffe0e {} undecoded 8
+0xfffe12 {} undecoded 20
+0xfffe14 {} undecoded 8
+0xfffe16 {} undecoded 16
+0xfffe18 {} undecoded 30
+0xfffe1a {} undecoded 22
+0xfffe1c {} undecoded 18
+0xfffe1e {} undecoded 30
+0xfffe20 {} undecoded 30
+0xffff00 {'move.w': 4} undecoded 0
+0xffff02 {'move.w': 4} undecoded 0
+0xffff04 {'move.w': 4} undecoded 0
+0xffff06 {'move.w': 2} undecoded 0
+0xffff08 {} undecoded 1
+0xffff0c {} undecoded 1
+0xffff10 {'move.w': 4} undecoded 0
+0xffff12 {'move.w': 3} undecoded 0
+0xffff16 {} undecoded 3
+0xffff18 {'move.l': 1} undecoded 6
+0xffff1b {'move.b': 1} undecoded 0
+0xffff30 {'move.w': 3} undecoded 0
+0xffff34 {} undecoded 1
+0xffff38 {'move.w': 2, 'move.l': 1} undecoded 0
+0xffff3a {'move.w': 2} undecoded 0
+0xffffa0 {'move.w': 8} undecoded 0
+0xffffa2 {'move.w': 7} undecoded 0
+0xffffa4 {'move.w': 1} undecoded 0
+0xffffa6 {} undecoded 4
+0xffffa8 {'move.l': 4} undecoded 8
+0xffffc0 {'move.w': 1} undecoded 0
+0xffffc4 {'move.l': 2} undecoded 0
+0xffffd0 {'move.w': 1} undecoded 0
+0xffffd2 {'move.w': 3} undecoded 0
+0xfffffc {'move.w': 4} undecoded 0
+0xfffffd {'move.b': 2} undecoded 0

@@ -3486,6 +3486,55 @@ A peer relay started the round; the scripts are in `session_folder/round75/`. Th
   - `j1708_receive_buffer_2_32` holds the address of `diagnostic_rx_buffer_base` (a `diagnostic_buffers_t`); the
     pointer's target type is open.
 
+## Done, round 76 (2026-11-23, same PR): CM550's MC68336 register map
+
+A peer relay started the round; the scripts are in `session_folder/round76/`. This was round 75's first lead.
+- **Stage A (4e0b9ffb), CM550:** all 141 MC68336 module registers that the code reaches now have names. Before this,
+  only round 75's four SCI registers had names, and the rest rendered as raw `Ram00fffXXX` addresses.
+  - **Source:** the MC68336/376 User's Manual, Appendix D (Register Summary, Rev. 15 Oct 2000:
+    https://www.nxp.jp/docs/en/user-guide/MC68336376UMD.pdf). The code addresses the block at $FFF000 (Y = F).
+    - Names follow CM848's `mpc555_registers.csv` form `<module>_<mnemonic>`.
+    - Widths are the manual's. The m68k accesses that llvm-mc decodes agree with them
+      (`register_access_sizes.py`; LLVM's m68k decoder misses some forms such as `ori.w` / `bset`).
+  - **SIM:** the watchdog service `SIM_SWSR` (128 references) and the system protection, periodic interrupt, port E /
+    F and chip-select registers.
+  - **QADC, QSM (QSPI with its RAM entries), CTM4 and TPU:**
+    - QADC: `QADC_PORTQA_PORTQB` is one word, because the code reads and writes both ports together.
+    - CTM4: MCSM2, DASM3 / 4 / 9 / 10, PWMSM5-8, MCSM11 and FCSM12.
+    - TPU: the module registers and the parameter RAM words in use (Table D-57). The code clears `TPU_CH0_PARAM6`,
+      which the table says is not implemented on channels 0-13.
+  - **Dwords for 32-bit-only pairs:** `SRAM_RAMBAH_RAMBAL` and three TPU parameter pairs (channel 0 parameters 4-5,
+    channel 3 parameters 2-3, channel 12 parameters 2-3) are one dword each, since the code reaches them only with one
+    32-bit access.
+  - **Mixed pairs:** eight pairs that the code also reaches as separate words keep word names, and their 32-bit accesses
+    render as the raw address. These are DASM3 A / B, PWMSM5-8 period / pulse width, and the TPU channel 1 / 3 / 10
+    parameter pairs.
+  - **Removed, five register struct types (41 rows):** `mc68336_reg16_t`, `tpu_dscr_block_t`, `tpu_hsq_block_t`,
+    `sim_timer_block_t` and `serial_port_regs_t`. Their instances never applied, because the register space has no
+    memory block when ApplyStructures runs, and their names contradict the manual:
+    - a QSM SCI data register at 0xFFD00E;
+    - TPU blocks on QSM addresses;
+    - TPU parameter RAM on the QSPI command RAM;
+    - a SIM timer on CTM4 BIUTBR.
+  - **Removed, `param_circular_buffer_t` (6 rows):** each of its fields had its own address, so it built one 1544-byte
+    type with an instance at every field address. None rendered before this round. The changed type set let its
+    instance at 0x80C3FE apply, and then a 1280-byte buffer rendered as `circular_buffer_count.metadata[...]`.
+  - **Proof:** CM550: of 775 functions, 33 differ from the round's first build after the register renames with the temporaries renumbered, all explained: the word registers' temporaries become word (3 functions return word, not short), casts drop ((&QSM_TR0)[i] and others), 8 mixed pairs' 32-bit accesses render as the raw address, TPU_CH15_PARAM6's low byte renders as a piece, diagnosticCommandDispatcher's two local rows bind again on the right reads, plus line wrapping and one operand order. No underscore renders; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
+- **firmware/CLAUDE.md:** none.
+- **Leads:**
+  - **Three external devices on chip selects:**
+    - 0xFFC800: an 82527-style CAN controller layout, with message objects every 0x10 bytes; CM550's J1939?
+    - 0xFFD000-0xFFD00F: 0xFFD00F has 128 references, next to the SWSR service.
+    - 0xFFD800: a second controller of the same layout?
+    The CSBARn / CSORn values that the code writes at start-up say which chip select maps each one.
+  - **The 1280-byte parameter buffer at 0x80C7A8:** `cm550_parameterCircularBufferWrite` wraps its index at 0x500, and
+    the QSPI path sends from it through `QSM_TR5`. Its indexes are `_eeprom_circular_buffer_write_index` and
+    `_DAT_0080cca8`. The `circular_buffer_*` labels at 0x80C3FA-0x80C402 still name another model of it.
+  - **Bit fields:** TPU function selections per channel (CFSR0 / 1 / 3), host service requests and priorities could
+    become bitfields or enums once each channel's TPU function is known. The same goes for the CTM4 PWM / DASM modes.
+  - **Misnamed `mc68k_*` functions:** with the registers named, `mc68k_tpuChannelStateMachine`,
+    `mc68k_can1TimerBufferInitDivided`, `mc68k_pwmTimerMode*` and others can be read for what they drive.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

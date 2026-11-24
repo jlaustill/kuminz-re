@@ -1,0 +1,15 @@
+cm550: round 76 closing - task 046, the session archive, the PR body
+
+- work/tasks/046: "Done, round 76" records stage A (4e0b9ffb): CM550's MC68336 register map named from the MC68336/376
+  manual's register summary, the 32-bit-only pairs as dwords, the five wrong register struct types and the malformed
+  circular buffer struct removed. It also records the proof.
+- Leads:
+  - the external devices on chip selects at 0xFFC800 (an 82527-style CAN controller layout), 0xFFD000 and 0xFFD800;
+  - the 1280-byte parameter buffer at 0x80C7A8 and its indexes;
+  - TPU function / host service bitfields;
+  - the mc68k_* functions that the named registers now let a reader check.
+- The PR body: the Round 76 bullet, the "Beyond CM848" bullet for rounds 72-76, and the test plan line.
+- work/todo.md, the session README, session_folder/round76/, the large-files tarball (the round's 3 verify logs),
+  pr_body.md. The manual itself is cited, not archived.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
