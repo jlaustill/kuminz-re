@@ -1,0 +1,26 @@
+cm550: round 81 stage A - four functions renamed for the hardware they drive (the serial EEPROM driver, the CS4 CAN controller); the EEPROM "log" is a write queue
+
+With the registers named in rounds 75-80, hardware_name_check.py compares each function's name with the register
+modules it touches. It finds 16 functions whose names claim hardware they do not touch. Renamed here, the four
+clearest, each keeping CM550's mc68k_ prefix for code that accesses hardware registers:
+- 0x39a8 mc68k_tpuAndQadcVerification -> mc68k_checkSerialEepromSignature. It touches only the QSPI: it queues READ
+  (command 3) at address 0, then returns 0x6000 when the first word received is 0x600d (CM848's
+  ECM_STATUS_CALIBRATION_VALID) and 1 otherwise.
+- 0x266da mc68k_qadcDataCollectionStateMachine -> mc68k_runSerialEepromWriteQueue. It touches only the QSPI: it issues
+  the SPI EEPROM commands 5 (read status: the write-in-progress bit), 6 (write enable), 2 (write) and 3 (read).
+- 0x1e52e serialTransmitHandler -> mc68k_canCs4TransmitNextFrame. It sends the next entry of the CAN transmit ring on
+  the chip select 4 82527 through cm550_canFrameDataCopy(&CAN_CS4_CONTROL).
+- 0x1e0fa cm550_FUN_0001e0fa -> mc68k_canCs4InterruptHandler: the chip select 4 82527's interrupt handler (the twin of
+  round 79's mc68k_canCs5InterruptHandler).
+
+Round 80's "EEPROM log" is a serial EEPROM write queue: mc68k_runSerialEepromWriteQueue sends each entry's word
+(0x80BDA8 + 2 i) as the EEPROM address and its byte (0x80C7A8 + i) as the data. The three queue rows' comments say so.
+
+Left as leads: the six can1* functions that touch only the TPU, the pwmTimerMode* functions (TPU-only, but the TPU can
+generate PWM, so the names may stand), and cm550_serialNodeAddressForwarder / cm550_serialNodeAddressChecker (the CS4
+message object handlers; one compares with _can_first_receive_object_index, so their meaning needs a reading).
+
+Proof: CM550 verify is DETERMINISTIC. With the four renames applied to the old .cpp, the new one differs only in the
+new plate comments. The headers regenerate with 0 g++ errors, and the _cal audit reports HARD 0 and MISSING 31.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

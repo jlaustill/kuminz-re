@@ -3658,6 +3658,29 @@ A peer relay started the round; the scripts are in `session_folder/round80/`. Th
   - From the earlier rounds: the `io_control_*` names, the diagnostic receive buffer past 0x808D00, and
     `j1708_pending_abort_count`.
 
+## Done, round 81 (2026-11-24, same PR): CM550 functions renamed for the hardware they drive
+
+A peer relay started the round; the scripts are in `session_folder/round81/`.
+- **The check:** `hardware_name_check.py` compares each CM550 function's name with the register modules it touches,
+  using the register names from rounds 75-80. It finds 16 functions whose names claim hardware they do not touch.
+- **Stage A (f522aa24), CM550:** the four clearest are renamed.
+  - `mc68k_checkSerialEepromSignature` (was `mc68k_tpuAndQadcVerification`): reads EEPROM word 0 over the QSPI and
+    checks it is 0x600d.
+  - `mc68k_runSerialEepromWriteQueue` (was `mc68k_qadcDataCollectionStateMachine`): SPI EEPROM commands 5 / 6 / 2 / 3.
+  - `mc68k_canCs4TransmitNextFrame` (was `serialTransmitHandler`).
+  - `mc68k_canCs4InterruptHandler` (was `cm550_FUN_0001e0fa`).
+  - **Correction to round 80:** the "EEPROM log" is a serial EEPROM write queue. Each entry is an EEPROM address word
+    (0x80BDA8 + 2 i) and a data byte (0x80C7A8 + i). The queue rows' comments now say so.
+  - **Proof:** CM550: label-only - with the four renames applied the .cpp differs only in the new plate comments; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
+- **firmware/CLAUDE.md:** none.
+- **Leads:**
+  - The six `can1*` functions that touch only the TPU (`mc68k_can1TimerBufferInitDivided`, `mc68k_can1ControllerInit`,
+    ...) need their TPU channels and functions read before they can be renamed. So do the `pwmTimerMode*` functions:
+    they touch only the TPU, which can itself generate PWM, so those names may stand.
+  - `cm550_serialNodeAddressForwarder` / `cm550_serialNodeAddressChecker` are the CS4 message object handlers. One
+    compares with `_can_first_receive_object_index`, and its prototype renders an `in_stack` byte.
+  - The 182 rows inside the EEPROM write queue's range, and the earlier leads.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

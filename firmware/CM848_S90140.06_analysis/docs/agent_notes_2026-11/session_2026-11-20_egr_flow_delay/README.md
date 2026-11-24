@@ -671,3 +671,9 @@ Hand work on the round 7 lead.
 - **Stage A (CM550):** `apply_r80a.py`; `inside_addresses.txt` (the 182 rows inside the log range, each scanned
   for absolute accesses).
 - **Closing:** `apply_r80_closing.py`, `update_large_tar_r80.sh`.
+
+## Round 81: CM550 functions renamed for the hardware they drive (`session_folder/round81/`)
+
+- **Stage A (CM550):** `hardware_name_check.py` (each function's name against the register modules it touches),
+  `apply_r81a.py`, `map_r81a.csv`.
+- **Closing:** `apply_r81_closing.py`, `update_large_tar_r81.sh`.

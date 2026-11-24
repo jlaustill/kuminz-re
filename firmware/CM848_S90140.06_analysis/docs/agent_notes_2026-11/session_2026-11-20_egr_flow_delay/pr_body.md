@@ -8,7 +8,7 @@ fresh air flow records; the e2m never spells it out, so no name guesses an expan
 - **Round 2:** at the user's request the rest of the family is renamed too, on this PR (stages 3 / 4). The scope rule:
   a symbol is in if its e2m record is `CHP_` / `C_CHP_`, or if it is an input that a family function would otherwise
   misname.
-- **Beyond CM848 (rounds 72-80):** the J1939 memory write service and the development mode code are shared:
+- **Beyond CM848 (rounds 72-81):** the J1939 memory write service and the development mode code are shared:
   eleven CM550 functions are CM848 twins and share their names. Round 74 also dismantles a misapplied CM550
   struct, round 75 types CM550's InSite parameter schedule and names its J1708 SCI, and round 76 names CM550's
   MC68336 registers, so CM550's CSVs, the root README and `firmware/feature_comparison.csv` change too.
@@ -843,6 +843,9 @@ state enum, the flag bytes.**
 - **Stage A (18d684a1):** CM550's chip select 2 device has its own watchdog service register (written right after
   `SIM_SWSR` every time); the EEPROM log's read / write indexes and count are typed; the 82527s' bit timing is
   recorded.
+**Round 81.**
+- **Stage A (f522aa24):** four CM550 functions renamed for the hardware they drive (the serial EEPROM driver over the
+  QSPI and the chip select 4 CAN controller); round 80's EEPROM "log" is a write queue (address word + data byte).
 
 ## Test plan
 
@@ -935,6 +938,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 81: A: CM550: label-only - with the four renames applied the .cpp differs only in the new plate comments; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 80: A: CM550: the .cpp changes are the 128 watchdog writes now named CS2_WATCHDOG_SERVICE, the EEPROM log indexes losing their '_' prefixes, one underscore-overlap warning gone and one declaration reordered; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 79: A: CM550: all 45 CAN rows render (no DAT_ / Ram left at a named address); 3 functions differ at statement level, all because the register block is volatile (each CS5 register access is kept instead of being folded as memory); the mask fix and the renames are label-only; verify DETERMINISTIC; CM848 unchanged; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 78: A: CM550: each old 'global.field' render of the removed structs maps to the address it reached; 11 functions differ at statement level, every change a mapped field, a type-only row's label or a dropped underscore; no underscore gained over the round, 3 lost; verify DETERMINISTIC; no multi-address struct left; headers 0 g++ errors; _cal HARD 0 / MISSING 31.

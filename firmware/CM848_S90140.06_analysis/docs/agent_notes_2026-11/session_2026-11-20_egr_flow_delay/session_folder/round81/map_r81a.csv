@@ -1,0 +1,5 @@
+address,name,old_label,kind,dims
+0x000039a8,mc68k_checkSerialEepromSignature,mc68k_tpuAndQadcVerification,function,1
+0x000266da,mc68k_runSerialEepromWriteQueue,mc68k_qadcDataCollectionStateMachine,function,1
+0x0001e52e,mc68k_canCs4TransmitNextFrame,serialTransmitHandler,function,1
+0x0001e0fa,mc68k_canCs4InterruptHandler,cm550_FUN_0001e0fa,function,1
