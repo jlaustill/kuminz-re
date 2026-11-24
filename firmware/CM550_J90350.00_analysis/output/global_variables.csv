@@ -1344,7 +1344,8 @@ address,name,type,comment
 0x00803468,base_timing_fuel_value_input,undefined,
 0x0080346a,vp44_stuck_pump_threshold_ptr,undefined,
 0x0080346e,base_timing_table_lookup_arg_346e,undefined,
-0x00803472,lift_pump_table_lookup_arg_3472,undefined,
+0x00803470,j1939_dm8_test_identifier,byte,DM8 byte 1 is SPN 1224, Test Identifier. The sender stores its first argument there: the test identifier of the DM7 request being answered (0 or 1). It is the base of the DM8 payload that the descriptor's data pointer names. CM848 names the DM7 request byte j1939_dm7_test_identifier (0x3fa97a). Working RAM. Byte (move.b). (was DAT_00803470; PR #53 round 87)
+0x00803472,j1939_dm8_test_value,word,Bytes 3-4 of DM8 (PGN 65232, Test Results for Non-continuously Monitored Systems) carry SPN 1226, Test Value. vp44_diagnosticByteResponseSender stores byteSwap16(response_code) there, which is the native word in J1939's little-endian byte order. (was lift_pump_table_lookup_arg_3472; PR #53 round 87)
 0x00803474,vp44_lift_pump_table_ptr,undefined,
 0x00803478,lift_pump_fuel_demand_input,undefined,
 0x0080347a,vp44_lift_pump_table_2_size,undefined,
@@ -1560,6 +1561,8 @@ address,name,type,comment
 0x00803b00,ecu_identity_header,undefined,
 0x00803b0a,ecu_identity_marker_1,undefined,
 0x00803b0c,security_master_password_cal,byte[6],e2m 0005 +0 ECM_PSWD / Master_Password 'security master password' (HEX 6 bytes) = EEPROM 0x2: validateSecurityKey compares the unscrambled key's 6 characters with it (the mirror 0x803b0a + 2) - CM848 keeps it at the same EEPROM offset (was ecu_identity_test_pattern; PR #53 round 73)
+0x00803b12,parameter_block_1_checksum_cal,word,e2m 1044 +0 Parameter_Block_1_Checksum [SSFHPB01] 'Checksum for Flash parameter block 1' = EEPROM 0x8 (CM550's table: 1044 -> EEPROM 0x8, next block 0001 at EEPROM 0xC). The block 1 loader compares the word sum of flash 0x4000-0x55B3 with it and copies only on a match or on the 0xA1A1 marker. (was DAT_00803b12; PR #53 round 87)
+0x00803b14,parameter_block_2_checksum_cal,word,e2m 1044 +2 Parameter_Block_2_Checksum [SSFHPB02] = EEPROM 0xA. The block 2 loader compares the sum of flash 0x6000-0x75B3 with it (no marker exception); the block 2 saver writes it. EEPROM mirror, so _cal. Word. Nothing in the dumped ROM accesses 0x803b15 except as part of these word accesses. (was DAT_00803b14; PR #53 round 87)
 0x00803b15,ecu_serial_number,undefined,
 0x00803b3e,eeprom_hour_meter_buffer,undefined,
 0x00803b44,ecu_unit_marker,undefined,
@@ -1586,10 +1589,12 @@ address,name,type,comment
 0x00803f40,maximum_rated_engine_speed_0_5000,undefined,
 0x00803fca,lsg_operator_adjust_minimum_speed,undefined,
 0x00803fcc,lsg_operator_adjust_maximum_speed,undefined,
-0x00803fd6,calibration_bank1_write_sequence,undefined,
+0x00803fd6,parameter_block_1_save_start_count_cal,word,e2m 1069 Powerdown_Memory_Save_Start [SDSVSR] 'Count indicating the number of times powerdown memory save has started': the start count of flash parameter block 1's power-down save. The block 1 saver bumps it by 1, or by 2, so that its sum with the block 2 start count ends odd (block 1 newest). It waits for that EEPROM write before it erases block 0x4000. (was calibration_bank1_write_sequence; PR #53 round 87)
+0x00803fd8,parameter_block_1_save_complete_count_cal,word,e2m 1069 Powerdown_Memory_Save_Complete [SDSVCP] 'Count indicating number of times the powerdown memory save has been completed', at CM550 1069 +4 (CM848 +2; see the 0x803fd6 row for the shift). The block 1 saver copies the start count into it as the last EEPROM write of a completed save and waits for it. (was DAT_00803fd8; PR #53 round 87)
 0x00803fda,eeprom_powerdown_status,undefined,
-0x00803fde,calibration_bank2_write_sequence,undefined,
-0x00803fe8,eeprom_calibration_write_success,undefined,
+0x00803fde,parameter_block_2_save_start_count_cal,word,e2m 1069 Powerdown_Memory_Save_Start_2 [SDSVSR02] 'Counts number of times powerdown block 2 save has started', at CM550 1069 +A (CM848 +8; the one-word shift is explained in the 0x803fd6 row). (was calibration_bank2_write_sequence; PR #53 round 87)
+0x00803fe0,parameter_block_2_save_complete_count_cal,word,e2m 1069 Powerdown_Memory_Save_Complete_2 [SDSVCP02] 'Counts number of times powerdown block 2 save has completed', at CM550 1069 +C (CM848 +A). The block 2 saver writes it last; the selector compares it with the block 2 start count. EEPROM mirror, so _cal. Word. (was DAT_00803fe0; PR #53 round 87)
+0x00803fe8,flash_write_failure_flag_cal,word,e2m 1069 Flash_Failure_Flag [SDFHFXFG] 'Flag stored in EEPROM which indicates a Flash write failure has been detected'. CM848 names the same record flash_write_failure_flag_cal (0x3fdc8e, 1069 +12, the block's last word), and 0x803fe8 is CM550's last 1069 word before 106A (0x803fea), so the name is shared. (was eeprom_calibration_write_success; PR #53 round 87)
 0x00803fec,vp44_reset_count,undefined,
 0x00804158,cyl_balance_trim_array,undefined,
 0x00804164,j1939_message_total_timeout_count,undefined,
@@ -5077,7 +5082,8 @@ address,name,type,comment
 0x0080d0c4,io_output_flag_byte_0,undefined,
 0x0080d0c5,io_output_flag_byte_1,undefined,
 0x0080d0c6,asthrfes_calc_input,undefined,
-0x0080d0c8,smoke_limiter_output_value,undefined,
+0x0080d0c8,engine_state,word,This is the Cummins engine state, e2m 1068 +0 FSEGST: CM550's parameter ID table maps block 1068 to 0x80d0c8. (was smoke_limiter_output_value; PR #53 round 87)
+0x0080d0ca,power_down_start_flag,word,e2m 1068 +2 Start_Power_Down. CM550's table bounds 1068 to 0x80d0c8-0x80d0cb (block 1068 -> 0x80d0c8, next block 11A8 at 0x80d0cc), so it is the engine state plus this word. CM848 names it power_down_start_flag (0x40a7c2). (was DAT_0080d0ca; PR #53 round 87)
 0x0080d0cc,CMSYSS,undefined,
 0x0080d0cd,cam_sync_status,undefined,
 0x0080d0ce,CMSYRSFG,undefined,
@@ -5674,8 +5680,8 @@ address,name,type,comment
 0x0080dc68,value_which_designates_the_duty_cycle_requested_for_pwm4_0_100,undefined,
 0x0080dc6a,value_which_designates_the_duty_cycle_requested_of_pwm5_0_100,undefined,
 0x0080dc6c,ram_refresh_enable,RAM_REFRESH_STATE,The RAM refresh switch (a word - tst.w / clr.w / cmpi.w #1; written 0 / 1 only): off in development mode / on again by exitDevelopmentMode and forceExitDevelopmentMode; gates the writer's EEPROM byte write queue - CM848's ram_refresh_enable (e2m 10C7 RAM_Refresh_Enable) by the twin functions (was calibration_data_valid_flag; PR #53 round 73)
-0x0080dc6e,calibration_bank_copy_valid,undefined,
-0x0080dc70,calibration_bank_active,undefined,
+0x0080dc6e,power_down_refresh_enable,word,e2m 10C7 +2 Powerdown_Refresh_Enable [RRPWEA] 'When this flag is FALSE RAM refresh is disabled for part of FLASH parameter blocks'; CM550's table bounds 10C7 to 0x80dc6c-0x80dc71. CM848 names 10C7 +2 power_down_refresh_enable (0x40c04c), and the CM550 users match that record. (was calibration_bank_copy_valid; PR #53 round 87)
+0x0080dc70,parameter_block_uploaded,word,e2m 10C7 +4 Parameter_Block_Uploaded [SSPBUL] 'Number indicating which parameter block was uploaded at powerup, 0=none'. CM550's own parameter ID table proves the placement: block 10C7 -> 0x80dc6c and the next block, 1010, at 0x80dc72, so 10C7 is exactly ram_refresh_enable / 0x80dc6e / 0x80dc70. (was calibration_bank_active; PR #53 round 87)
 0x0080dc74,constant_used_in_sampled_road_speed_calculation_51428_16000000,undefined,
 0x0080dc82,maximum_allowable_vehicle_speed_selected_as_the_rsg_refer_2_255_9961,undefined,
 0x0080dc8e,filtered_percent_load_output_of_gear_down_0_100,undefined,

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue Nov 24 07:43:46 MST 2026
+// Generated: Tue Nov 24 09:25:07 MST 2026
 
 
 //
@@ -490,7 +490,7 @@ uint cm550_FUN_0000ac3c(void)
   ushort *puVar7;
   
   uVar3 = CONCAT22((short)((uint)in_D0 >> 0x10),_feature_enable_flags_word) & 0xffff0008;
-  if (((_feature_enable_flags_word & 8) != 0) && (_smoke_limiter_output_value != 1)) {
+  if (((_feature_enable_flags_word & 8) != 0) && (engine_state != 1)) {
     if (_duty_cycle_monitor_long_term_map_total_time_0_0_100000_0 == 0) {
       _duty_cycle_mon_approximate_long_term_map_start_0_0_50000_0 =
            _time_that_the_engine_is_not_in_stop_state_0_2_29;
@@ -1107,10 +1107,16 @@ void cm550_initFuelSystemOutputDriver(void)
 
 
 //
-// Function: cm550_FUN_0000b688 @ 0x0000b688
+// Function: getJ1939DiagnosticResponseEchoLength @ 0x0000b688
 //
 
-byte cm550_FUN_0000b688(word diagnostic_service)
+/* Both run the same compare chain with the same constants: below 0x41, services 4 / 5 return 3 and
+   0x19 returns 5; 0x41-0x4e return the table byte at base + service; anything else returns 1. The
+   14 table bytes are identical. Each has one caller, its application's PGN 61184 response builder,
+   which uses the result as the echo count. (was cm550_FUN_0000b688; PR #53 round 87; the twin of
+   CM848 0x204a8: one shared name) */
+
+byte getJ1939DiagnosticResponseEchoLength(word diagnostic_service)
 
 {
   byte bVar1;
@@ -1794,8 +1800,7 @@ void cm550_FUN_0000c2ee(void)
 ushort calculateAlpha(void)
 
 {
-  if (((_smoke_limiter_output_value == 1) || (_smoke_limiter_output_value == 2)) ||
-     (_smoke_limiter_output_value == 6)) {
+  if (((engine_state == 1) || (engine_state == 2)) || (engine_state == 6)) {
     _lsg_exit_timer_active_flag = 1;
     _trace_the_time_since_fueling_state_has_left_lsg_state_0_900 =
          _time_that_must_expire_without_lsg_commanding_fuel_before_alpha_0_900;
@@ -2074,8 +2079,7 @@ void cm550_phase2_slot_5_handler(void)
 ushort cm550_rpmHistogramAndProtectionStatisticsAccumulator(void)
 
 {
-  if (((_calibration_feature_enable_flags_word_1 & 0x20) == 0) || (_smoke_limiter_output_value != 3)
-     ) {
+  if (((_calibration_feature_enable_flags_word_1 & 0x20) == 0) || (engine_state != 3)) {
     _altitude_derate_fuel_limit_0_100 = _peak_fueling_calibration_value;
     return _calibration_feature_enable_flags_word_1 & 0x20;
   }
@@ -2181,10 +2185,16 @@ void mc68k_configureCanCs5MessageObjects(void)
 
 
 //
-// Function: cm550_emptyStubFunction1 @ 0x0000c80c
+// Function: ignoreCanTransmitInterrupt @ 0x0000c80c
 //
 
-void cm550_emptyStubFunction1(void)
+/* The body is one rts. Both of its callers are 82527 transmit-interrupt branches, and both push the
+   message object number as a word. vp44_handleCanCs5TransmitInterrupt calls it for any CS5 object
+   with TXIE set. The CS4 transmit branch (cm550_serialNodeAddressChecker) calls it for every object
+   except the one at 0x80D9F4, whose transmit interrupt sends the next queued J1939 frame. (was
+   cm550_emptyStubFunction1; PR #53 round 87; the twin of CM848 0x26f78: one shared name) */
+
+void ignoreCanTransmitInterrupt(void)
 
 {
   return;
@@ -2193,12 +2203,16 @@ void cm550_emptyStubFunction1(void)
 
 
 //
-// Function: cm550_modeBasedDataDispatcher @ 0x0000c80e
+// Function: vp44_dispatchReceivedPumpMessage @ 0x0000c80e
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The function has no 'mode'. It dispatches a frame received on the chip select 5 82527 by message
+   object number, and that controller carries the VP44 pump link. The low byte of its word argument
+   is the message object number (interrupt code - 2). (was cm550_modeBasedDataDispatcher; PR #53
+   round 87) */
 
-void cm550_modeBasedDataDispatcher(word message_object)
+void vp44_dispatchReceivedPumpMessage(word message_object)
 
 {
   char cVar1;
@@ -3077,8 +3091,8 @@ void updateEngineSyncStatus(void)
             _number_of_aux_driver_errors_that_must_be_seen_before_fault_is_1_10) {
           aux_driver_fso_low_side_error_count = aux_driver_fso_low_side_error_count + 1;
           if ((((aux_driver_fso_low_side_error_count == 1) ||
-               (aux_driver_fso_low_side_error_count == 2)) && (_smoke_limiter_output_value != 5)) &&
-             (_smoke_limiter_output_value != 8)) {
+               (aux_driver_fso_low_side_error_count == 2)) && (engine_state != 5)) &&
+             (engine_state != 8)) {
             request_to_strobe_set_0_then_set_1_fso_driver_0_1 = 1;
           }
           else {
@@ -3155,8 +3169,8 @@ void updateEngineSyncStatus(void)
           aux_driver_engine_brake_low_side_error_count =
                aux_driver_engine_brake_low_side_error_count + 1;
           if ((((aux_driver_engine_brake_low_side_error_count == 1) ||
-               (aux_driver_engine_brake_low_side_error_count == 2)) &&
-              (_smoke_limiter_output_value != 5)) && (_smoke_limiter_output_value != 8)) {
+               (aux_driver_engine_brake_low_side_error_count == 2)) && (engine_state != 5)) &&
+             (engine_state != 8)) {
             request_to_strobe_set_0_then_set_1_engine_braker_driver_0_1 = 1;
           }
           else {
@@ -3234,8 +3248,8 @@ void updateEngineSyncStatus(void)
           aux_driver_cold_start_aid1_low_side_error_count =
                aux_driver_cold_start_aid1_low_side_error_count + 1;
           if ((((aux_driver_cold_start_aid1_low_side_error_count == 1) ||
-               (aux_driver_cold_start_aid1_low_side_error_count == 2)) &&
-              (_smoke_limiter_output_value != 5)) && (_smoke_limiter_output_value != 8)) {
+               (aux_driver_cold_start_aid1_low_side_error_count == 2)) && (engine_state != 5)) &&
+             (engine_state != 8)) {
             request_to_strobe_set_0_then_set_1_cold_start_aid_1_driver_0_1 = 1;
           }
           else {
@@ -3314,8 +3328,8 @@ void updateEngineSyncStatus(void)
           aux_driver_cold_start_aid2_low_side_error_count =
                aux_driver_cold_start_aid2_low_side_error_count + 1;
           if ((((aux_driver_cold_start_aid2_low_side_error_count == 1) ||
-               (aux_driver_cold_start_aid2_low_side_error_count == 2)) &&
-              (_smoke_limiter_output_value != 5)) && (_smoke_limiter_output_value != 8)) {
+               (aux_driver_cold_start_aid2_low_side_error_count == 2)) && (engine_state != 5)) &&
+             (engine_state != 8)) {
             request_to_strobe_set_0_then_set_1_cold_start_aid_2_driver_0_1 = 1;
           }
           else {
@@ -3394,8 +3408,8 @@ void updateEngineSyncStatus(void)
           aux_driver_ether_start_low_side_error_count =
                aux_driver_ether_start_low_side_error_count + 1;
           if ((((aux_driver_ether_start_low_side_error_count == 1) ||
-               (aux_driver_ether_start_low_side_error_count == 2)) &&
-              (_smoke_limiter_output_value != 5)) && (_smoke_limiter_output_value != 8)) {
+               (aux_driver_ether_start_low_side_error_count == 2)) && (engine_state != 5)) &&
+             (engine_state != 8)) {
             _request_to_strobe_set_0_then_set_1_ether_start_driver_0_1 = 1;
           }
           else {
@@ -3788,7 +3802,7 @@ uint cm550_FUN_0000e998(void)
   
   uVar2 = CONCAT22((short)((uint)in_D0 >> 0x10),_DAT_00803cca) & 0xffff0010;
   if ((_DAT_00803cca & 0x10) != 0) {
-    if (_smoke_limiter_output_value == 3) {
+    if (engine_state == 3) {
       if (((_status_32_word_bit_mapped_system_error_status_word_1_0_1 & 0x400) == 0) ||
          ((_fault_confirm_status_word_1 & 0x400) == 0)) {
         uVar2 = 0;
@@ -5578,12 +5592,17 @@ uint cm550_bufferThresholdValidator(void)
 
 
 //
-// Function: cm550_retarderModeThresholdCalculator @ 0x0001025c
+// Function: cm550_detectEngineSpeedSensorSyncPulse @ 0x0001025c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* It decides whether the latest engine speed sensor pulse period ended on the sync pulse, the extra
+   tooth. It runs only while the word 0x803d5c is set (1 in the RAM dump). The low byte of
+   backup_sensor_flag picks the sensor. With 0 it uses the primary period 0x80d04a and the primary
+   ring (start 0x80cd1e, next pointer 0x80cd08, last entry 0x80d078), and the threshold 0x8001a4.
+   (was cm550_retarderModeThresholdCalculator; PR #53 round 87) */
 
-word cm550_retarderModeThresholdCalculator(word backup_sensor_flag)
+word cm550_detectEngineSpeedSensorSyncPulse(word backup_sensor_flag)
 
 {
   word wVar1;
@@ -6191,9 +6210,8 @@ int cm550_diagnosticMemoryAddressResolver(word param_id,dword *resolved_address)
 // Function: cm550_loadParameterBlock1FromFlash @ 0x00010e80
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Start-up load of flash parameter block 1: it copies flash 0x4000-0x55B3 into the RAM copy
-   0x804F96-0x806549 - sets calibration_bank_active = 1 and returns 0 - only when the word sum of
+   0x804F96-0x806549 - sets parameter_block_uploaded = 1 and returns 0 - only when the word sum of
    0x4000-0x55B3 matches EEPROM 0x8 or the marker word 0x55B2 holds 0xA1A1; otherwise it returns 1
    and copies nothing. Its only hardware access is the inline watchdog kick, so not mc68k_ (commit
    16143a5c) (was cm550_calibrationDataCopyWithChecksum; PR #53 round 85) */
@@ -6206,7 +6224,7 @@ uint cm550_loadParameterBlock1FromFlash(void)
   undefined4 *puVar3;
   
   uVar1 = cm550_arrayRangeSum((word *)&DAT_00004000,(word *)&DAT_000055b2);
-  if (((short)uVar1 != _DAT_00803b12) && (DAT_000055b2 != -0x5e5f)) {
+  if (((word)uVar1 != parameter_block_1_checksum_cal) && (DAT_000055b2 != -0x5e5f)) {
     return 1;
   }
   puVar2 = (undefined4 *)&DAT_00804f96;
@@ -6231,7 +6249,7 @@ uint cm550_loadParameterBlock1FromFlash(void)
     puVar2 = puVar2 + 1;
     puVar3 = puVar3 + 1;
   }
-  _calibration_bank_active = 1;
+  parameter_block_uploaded = 1;
   return uVar1 & 0xffff0000;
 }
 
@@ -6241,9 +6259,8 @@ uint cm550_loadParameterBlock1FromFlash(void)
 // Function: cm550_loadParameterBlock2FromFlash @ 0x00010f32
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* The block 2 loader: it copies flash 0x6000-0x75B3 into the same RAM copy - sets
-   calibration_bank_active = 2 and returns 0 - only when the word sum of 0x6000-0x75B3 matches
+   parameter_block_uploaded = 2 and returns 0 - only when the word sum of 0x6000-0x75B3 matches
    EEPROM 0xA (no marker exception); otherwise it returns 1. Its only hardware access is the inline
    watchdog kick, so not mc68k_ (commit 16143a5c) (was cm550_calibrationDataCopySecondary; PR #53
    round 85) */
@@ -6256,7 +6273,7 @@ uint cm550_loadParameterBlock2FromFlash(void)
   undefined4 *puVar3;
   
   uVar1 = cm550_arrayRangeSum((word *)&DAT_00006000,&DAT_000075b2);
-  if ((short)uVar1 != _DAT_00803b14) {
+  if ((word)uVar1 != parameter_block_2_checksum_cal) {
     return 1;
   }
   puVar2 = (undefined4 *)&DAT_00804f96;
@@ -6281,7 +6298,7 @@ uint cm550_loadParameterBlock2FromFlash(void)
     puVar2 = puVar2 + 1;
     puVar3 = puVar3 + 1;
   }
-  _calibration_bank_active = 2;
+  parameter_block_uploaded = 2;
   return uVar1 & 0xffff0000;
 }
 
@@ -6291,14 +6308,13 @@ uint cm550_loadParameterBlock2FromFlash(void)
 // Function: cm550_saveParameterBlock1ToFlash @ 0x00010fe0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Saves the RAM copy (0x804F96) into flash parameter block 1: it bumps
-   calibration_bank1_write_sequence so the bank 1 + bank 2 sum ends odd (block 1 = newest) - erases
-   block 0x4000 with cm550_flashEraseFromRam - programs 0x4000-0x55B1 - stores the new block sum in
-   EEPROM 0x8 and the sequence at 0x803FD8 - and sets calibration_bank_active = 1. Returns 0 saved /
-   2 a program step failed / 1 or 2 after a failed erase. Its only hardware access is the inline
-   watchdog kick, so not mc68k_ (commit 16143a5c) (was cm550_eepromCalibrationWriteSecondary; PR #53
-   round 85) */
+   parameter_block_1_save_start_count_cal so the bank 1 + bank 2 sum ends odd (block 1 = newest) -
+   erases block 0x4000 with cm550_flashEraseFromRam - programs 0x4000-0x55B1 - stores the new block
+   sum in EEPROM 0x8 and the sequence at 0x803FD8 - and sets parameter_block_uploaded = 1. Returns 0
+   saved / 2 a program step failed / 1 or 2 after a failed erase. Its only hardware access is the
+   inline watchdog kick, so not mc68k_ (commit 16143a5c) (was cm550_eepromCalibrationWriteSecondary;
+   PR #53 round 85) */
 
 int cm550_saveParameterBlock1ToFlash(void)
 
@@ -6309,17 +6325,17 @@ int cm550_saveParameterBlock1ToFlash(void)
   int iVar2;
   ushort uVar4;
   byte bVar5;
-  short local_6;
+  word local_6;
   
-  if ((_calibration_bank2_write_sequence + _calibration_bank1_write_sequence & 1U) == 0) {
-    local_6 = _calibration_bank1_write_sequence + 1;
+  if ((parameter_block_2_save_start_count_cal + parameter_block_1_save_start_count_cal & 1) == 0) {
+    local_6 = parameter_block_1_save_start_count_cal + 1;
   }
   else {
-    local_6 = _calibration_bank1_write_sequence + 2;
+    local_6 = parameter_block_1_save_start_count_cal + 2;
   }
   cm550_parameterCircularBufferWrite(0x803fd6,(byte *)&local_6,2);
   uVar4 = 0;
-  while ((uVar4 < 5000 && (_calibration_bank1_write_sequence != local_6))) {
+  while ((uVar4 < 5000 && (parameter_block_1_save_start_count_cal != local_6))) {
     cm550_emptyPlaceholderFunction();
     mc68k_delayTimeBaseTicksWithWatchdogService(500);
     uVar4 = uVar4 + 1;
@@ -6349,19 +6365,22 @@ int cm550_saveParameterBlock1ToFlash(void)
         CS2_WATCHDOG_SERVICE = 0xaa;
         cm550_parameterCircularBufferWrite(0x803b12,(byte *)&local_6,2);
         uVar4 = 0;
-        while ((uVar4 < 5000 && (_DAT_00803b12 != local_6))) {
+        while ((uVar4 < 5000 && (parameter_block_1_checksum_cal != local_6))) {
           cm550_emptyPlaceholderFunction();
           mc68k_delayTimeBaseTicksWithWatchdogService(500);
           uVar4 = uVar4 + 1;
         }
-        cm550_parameterCircularBufferWrite(0x803fd8,&calibration_bank1_write_sequence,2);
+        cm550_parameterCircularBufferWrite
+                  (0x803fd8,(byte *)&parameter_block_1_save_start_count_cal,2);
         uVar4 = 0;
-        while ((uVar4 < 5000 && (_DAT_00803fd8 != _calibration_bank1_write_sequence))) {
+        while ((uVar4 < 5000 &&
+               (parameter_block_1_save_complete_count_cal != parameter_block_1_save_start_count_cal)
+               )) {
           cm550_emptyPlaceholderFunction();
           mc68k_delayTimeBaseTicksWithWatchdogService(500);
           uVar4 = uVar4 + 1;
         }
-        _calibration_bank_active = 1;
+        parameter_block_uploaded = 1;
         cm550_canMemoryPointerTableInit();
         iVar2 = (uint)extraout_D0u << 0x10;
       }
@@ -6400,10 +6419,9 @@ int cm550_saveParameterBlock1ToFlash(void)
 // Function: cm550_saveParameterBlock2ToFlash @ 0x0001125a
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* The block 2 saver: the sequence sum ends even (block 2 = newest); it erases block 0x6000 -
    programs 0x6000-0x75B1 from RAM 0x804F96 - stores the block sum in EEPROM 0xA and the sequence at
-   0x803FE0 - and sets calibration_bank_active = 2. The same return codes as
+   0x803FE0 - and sets parameter_block_uploaded = 2. The same return codes as
    cm550_saveParameterBlock1ToFlash. Its only hardware access is the inline watchdog kick, so not
    mc68k_ (commit 16143a5c) (was cm550_FUN_0001125a; PR #53 round 85) */
 
@@ -6416,17 +6434,17 @@ int cm550_saveParameterBlock2ToFlash(void)
   int iVar2;
   ushort uVar4;
   byte bVar5;
-  short local_6;
+  word local_6;
   
-  if ((_calibration_bank2_write_sequence + _calibration_bank1_write_sequence & 1U) == 0) {
-    local_6 = _calibration_bank2_write_sequence + 2;
+  if ((parameter_block_2_save_start_count_cal + parameter_block_1_save_start_count_cal & 1) == 0) {
+    local_6 = parameter_block_2_save_start_count_cal + 2;
   }
   else {
-    local_6 = _calibration_bank2_write_sequence + 1;
+    local_6 = parameter_block_2_save_start_count_cal + 1;
   }
   cm550_parameterCircularBufferWrite(0x803fde,(byte *)&local_6,2);
   uVar4 = 0;
-  while ((uVar4 < 5000 && (_calibration_bank2_write_sequence != local_6))) {
+  while ((uVar4 < 5000 && (parameter_block_2_save_start_count_cal != local_6))) {
     cm550_emptyPlaceholderFunction();
     mc68k_delayTimeBaseTicksWithWatchdogService(500);
     uVar4 = uVar4 + 1;
@@ -6456,19 +6474,22 @@ int cm550_saveParameterBlock2ToFlash(void)
         CS2_WATCHDOG_SERVICE = 0xaa;
         cm550_parameterCircularBufferWrite(0x803b14,(byte *)&local_6,2);
         uVar4 = 0;
-        while ((uVar4 < 5000 && (_DAT_00803b14 != local_6))) {
+        while ((uVar4 < 5000 && (parameter_block_2_checksum_cal != local_6))) {
           cm550_emptyPlaceholderFunction();
           mc68k_delayTimeBaseTicksWithWatchdogService(500);
           uVar4 = uVar4 + 1;
         }
-        cm550_parameterCircularBufferWrite(0x803fe0,&calibration_bank2_write_sequence,2);
+        cm550_parameterCircularBufferWrite
+                  (0x803fe0,(byte *)&parameter_block_2_save_start_count_cal,2);
         uVar4 = 0;
-        while ((uVar4 < 5000 && (_DAT_00803fe0 != _calibration_bank2_write_sequence))) {
+        while ((uVar4 < 5000 &&
+               (parameter_block_2_save_complete_count_cal != parameter_block_2_save_start_count_cal)
+               )) {
           cm550_emptyPlaceholderFunction();
           mc68k_delayTimeBaseTicksWithWatchdogService(500);
           uVar4 = uVar4 + 1;
         }
-        _calibration_bank_active = 2;
+        parameter_block_uploaded = 2;
         cm550_canMemoryPointerTableInit();
         iVar2 = (uint)extraout_D0u << 0x10;
       }
@@ -6515,15 +6536,15 @@ void vp44_validateRedundantSensors(void)
   short sVar1;
   ushort uVar2;
   
-  _calibration_bank_active = 0;
+  parameter_block_uploaded = 0;
   if ((DAT_000055b2 == -0x5e5f) && (DAT_000075b2 == -0x5e5f)) {
     cm550_loadParameterBlock1FromFlash();
     _DAT_00806548 = 0;
   }
-  else if ((_calibration_bank1_write_sequence != _DAT_00803fd8) ||
-          (_calibration_bank2_write_sequence != _DAT_00803fe0)) {
-    if (_calibration_bank1_write_sequence != _DAT_00803fd8) {
-      if (_calibration_bank2_write_sequence == _DAT_00803fe0) {
+  else if ((parameter_block_1_save_start_count_cal != parameter_block_1_save_complete_count_cal) ||
+          (parameter_block_2_save_start_count_cal != parameter_block_2_save_complete_count_cal)) {
+    if (parameter_block_1_save_start_count_cal != parameter_block_1_save_complete_count_cal) {
+      if (parameter_block_2_save_start_count_cal == parameter_block_2_save_complete_count_cal) {
         cm550_loadParameterBlock2FromFlash();
       }
     }
@@ -6531,7 +6552,8 @@ void vp44_validateRedundantSensors(void)
       cm550_loadParameterBlock1FromFlash();
     }
   }
-  else if ((_calibration_bank2_write_sequence + _calibration_bank1_write_sequence & 1U) == 0) {
+  else if ((parameter_block_2_save_start_count_cal + parameter_block_1_save_start_count_cal & 1) ==
+           0) {
     sVar1 = cm550_loadParameterBlock2FromFlash();
     if (sVar1 != 0) {
       cm550_loadParameterBlock1FromFlash();
@@ -6543,7 +6565,7 @@ void vp44_validateRedundantSensors(void)
       cm550_loadParameterBlock2FromFlash();
     }
   }
-  if (_calibration_bank_active == 0) {
+  if (parameter_block_uploaded == 0) {
 LAB_000115ca:
     _status_32_word_bit_mapped_system_error_status_word_0_0_1 =
          _status_32_word_bit_mapped_system_error_status_word_0_0_1 | 0x1000;
@@ -6628,16 +6650,17 @@ LAB_000115ca:
 
 
 //
-// Function: cm550_copyCalibrationFromRomToRam @ 0x000117ec
+// Function: copyCalibrationFromRomToRam @ 0x000117ec
 //
 
 /* Copies 2401 dwords from ROM 0x61376-0x638F9 (above the dumped 256 KB) into RAM 0x80654A-0x808ACD
    - the calibration parameters (1757 named e2m rows there) - once at start-up after
-   cm550_clearWorkingMemory. CM848's cm848_copyRomToRamBuffer holds the same start-up slot. Its only
+   clearWorkingRam. CM848's copyCalibrationFromRomToRam holds the same start-up slot. Its only
    hardware access is the inline watchdog kick, so not mc68k_ (commit 16143a5c) (was
-   cm550_firmwareDataCopyToWorkingMemory; PR #53 round 85) */
+   cm550_firmwareDataCopyToWorkingMemory; PR #53 round 85) | (was cm550_copyCalibrationFromRomToRam;
+   PR #53 round 87; the twin of CM848 0x4bd00: one shared name) */
 
-void cm550_copyCalibrationFromRomToRam(void)
+void copyCalibrationFromRomToRam(void)
 
 {
   undefined4 *puVar1;
@@ -6774,46 +6797,62 @@ undefined1 cm550_activateHighRpmShutdownFlag(void)
 
 
 //
-// Function: cm550_eepromWriteWrapper @ 0x00011908
+// Function: handleJ1939RestartService @ 0x00011908
 //
 
-void cm550_eepromWriteWrapper(dword param_1)
+/* It is registered as J1939 diagnostic service 11 in the same registrar order as CM848 (services 1,
+   7, 10, 22, 6, 11, 24, 21), and its whole body is restartThroughBootRom(request, 0), as CM848's
+   is. It writes no EEPROM itself. (was cm550_eepromWriteWrapper; PR #53 round 87; the twin of CM848
+   0x218dc: one shared name) */
+
+void handleJ1939RestartService(dword param_1)
 
 {
-  cm550_FUN_0001192a(param_1,0);
+  restartThroughBootRom(param_1,0);
   return;
 }
 
 
 
 //
-// Function: cm550_triggerDiagnosticSystemReset @ 0x0001191a
+// Function: cm550_restartThroughBootRomAfterJ1708Request @ 0x0001191a
 //
 
-void cm550_triggerDiagnosticSystemReset(void)
+/* mc68k_dispatchJ1708ReceivedMessages jumps here for J1708 diagnostic command 67 (command - 64 = 3
+   in its 21-entry table at 0x160b8). It calls restartThroughBootRom(0, 1), where acknowledge 1 =
+   the J1708 diagnostic message queue (cm550_diagnosticMessageQueueWrite writes the J1708 transmit
+   ring). (was cm550_triggerDiagnosticSystemReset; PR #53 round 87) */
+
+void cm550_restartThroughBootRomAfterJ1708Request(void)
 
 {
-  cm550_FUN_0001192a(0,1);
+  restartThroughBootRom(0,1);
   return;
 }
 
 
 
 //
-// Function: cm550_FUN_0001192a @ 0x0001192a
+// Function: restartThroughBootRom @ 0x0001192a
 //
 
 /* WARNING: This function may have set the stack pointer */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Software restart into the boot ROM without a hardware reset (the twin of CM848 0x216fc): only in
+   engine_state 1. It polls the EEPROM write queue around
+   mc68k_delayTimeBaseTicksWithWatchdogService2 waits (500 / 250 / 50000 ticks) - acknowledges the
+   request on the link its second argument names (0 the J1939 response frame - 1 the J1708
+   diagnostic message queue; CM848's case 2 is its SCI byte) - and jumps through the ROM vector at
+   0x8 (was cm550_FUN_0001192a; PR #53 round 87; the twin of CM848 0x216fc: one shared name) */
 
-byte cm550_FUN_0001192a(dword request,word acknowledge_datalink)
+byte restartThroughBootRom(dword request,word acknowledge_datalink)
 
 {
   char cVar1;
   byte bVar2;
   int local_8;
   
-  if (_smoke_limiter_output_value == 1) {
+  if (engine_state == 1) {
     while (cVar1 = cm550_circularBufferEmptyCheck(), cVar1 == '\0') {
       cm550_emptyPlaceholderFunction();
       mc68k_delayTimeBaseTicksWithWatchdogService2(500);
@@ -6882,7 +6921,6 @@ undefined1 cm550_FUN_00011a68(void)
 // Function: commitEepromMirrorToEeprom @ 0x00011a74
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Writes the EEPROM mirror 0x803b0a-0x804155 back to the EEPROM: 7 while not_safe_to_program_flag
    is 1; else 16-byte chunks through cm550_circularBufferWrite (the EEPROM byte write queue) with up
    to 16000 waits for the queue each; 0. The same function as CM848 0x21918 (shared name; was
@@ -6925,7 +6963,7 @@ byte commitEepromMirrorToEeprom(void)
   }
   if (puVar4 == (undefined *)0x804156) {
     BYTE_0080dde4 = 1;
-    _calibration_bank_copy_valid = 0;
+    power_down_refresh_enable = 0;
     return 0xff;
   }
   BYTE_0080ddd3 = 0;
@@ -7623,7 +7661,7 @@ void vp44_FUN_000127c2(void)
     }
     _load_trending_table_6_ptr = _current_engine_rpm_filtered;
     if ((((_cyl_balance_gain_percent < 100) || (_DAT_0080728e < _DAT_008002c8)) ||
-        (_oil_pressure_mode_init_flag == 0)) || (_smoke_limiter_output_value != 3)) {
+        (_oil_pressure_mode_init_flag == 0)) || (engine_state != 3)) {
       _DAT_0080922e = 1;
     }
     else {
@@ -7666,7 +7704,7 @@ void vp44_FUN_000127c2(void)
     } while (uVar7 < 0xf);
     if (((_DAT_008091e8 <= _DAT_008072be) && (_current_fuel_demand == 0)) &&
        ((_DAT_00807292 < _current_engine_rpm_filtered &&
-        ((_current_engine_rpm_filtered < _DAT_00807290 && (_smoke_limiter_output_value == 3)))))) {
+        ((_current_engine_rpm_filtered < _DAT_00807290 && (engine_state == 3)))))) {
       sVar9 = _DAT_00809276 -
               (short)((int)((uint)_DAT_0080729a * (int)(short)_DAT_00809276) / 10000);
       sVar1 = _DAT_00809278 -
@@ -8356,7 +8394,7 @@ uint cm550_FUN_000138b6(void)
         uVar1 = cm550_FUN_00013e64();
       }
     }
-    if (_smoke_limiter_output_value == 1) {
+    if (engine_state == 1) {
       _trending_trigger_detected_flag = 0;
       _DAT_0080bac6 = 0;
       _DAT_0080bac8 = 0;
@@ -10058,8 +10096,7 @@ byte mc68k_sampleAndDebounceDiscreteInputs(void)
   bVar3 = debounced_value_for_rear_axle_ratio_switch_on_off & 0x40;
   if ((((debounced_value_for_rear_axle_ratio_switch_on_off & 0x40) == 0) &&
       (bVar3 = debounced_switch_value_for_switch_16_on_off & 0x80,
-      (debounced_switch_value_for_switch_16_on_off & 0x80) != 0)) &&
-     (_smoke_limiter_output_value == 3)) {
+      (debounced_switch_value_for_switch_16_on_off & 0x80) != 0)) && (engine_state == 3)) {
     debounced_value_for_rear_axle_ratio_switch_on_off =
          debounced_value_for_rear_axle_ratio_switch_on_off | 0x40;
   }
@@ -10280,10 +10317,15 @@ void vp44_initVP44StatusMonitoring(void)
 
 
 //
-// Function: mc68k_FUN_00015df0 @ 0x00015df0
+// Function: mc68k_initializeDiscreteOutputDrivers @ 0x00015df0
 //
 
-void mc68k_FUN_00015df0(void)
+/* This is the start-up set-up of the discrete outputs. mc68k_applicationMain calls it once, right
+   after the discrete inputs are primed (0x15dd0 vp44_initVP44StatusMonitoring). It is a direct
+   call, not a pointer: ROM 0x2870a is that jsr's operand. 1. It writes the default output states
+   into the output images at 0x80bcf6..0x80bcfb. (was mc68k_FUN_00015df0; PR #53 round 87) */
+
+void mc68k_initializeDiscreteOutputDrivers(void)
 
 {
   byte bVar1;
@@ -10474,7 +10516,7 @@ void mc68k_dispatchJ1708ReceivedMessages(void)
               bVar6 = cm550_activateHighRpmShutdownFlag();
               break;
             case 0x43:
-              bVar6 = cm550_triggerDiagnosticSystemReset();
+              bVar6 = cm550_restartThroughBootRomAfterJ1708Request();
               break;
             default:
               bVar6 = 0x18;
@@ -11192,8 +11234,7 @@ uint cm550_highRpmEngineProtectionStateMachine(void)
   uint uVar2;
   
   if (((_feature_enable_flags_word & 2) == 0) ||
-     (((_high_rpm_fuel_limit_idle != 0 && (_smoke_limiter_output_value != 1)) ||
-      (_DAT_0080ccc8 != 0)))) {
+     (((_high_rpm_fuel_limit_idle != 0 && (engine_state != 1)) || (_DAT_0080ccc8 != 0)))) {
     _high_rpm_fuel_limit_idle = 1;
     _high_rpm_fuel_limit_active = 0;
     _DAT_0080a8f4 = 0;
@@ -11203,7 +11244,7 @@ uint cm550_highRpmEngineProtectionStateMachine(void)
   }
   uVar2 = (uint)(_feature_enable_flags_word & 2);
   if ((_feature_enable_flags_word & 2) != 0) {
-    if (_smoke_limiter_output_value == 1) {
+    if (engine_state == 1) {
       _timer_counting_against_oil_pressure_threshold_time_0_60 = 0;
       _DAT_0080ccb6 = 0;
       _DAT_0080ccba = 0;
@@ -11230,8 +11271,8 @@ uint cm550_highRpmEngineProtectionStateMachine(void)
       _high_rpm_fuel_limit_value = _peak_fueling_calibration_value;
       return uVar2;
     }
-    if (((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 7)) ||
-       ((_smoke_limiter_output_value == 3 || (_smoke_limiter_output_value == 6)))) {
+    if (((engine_state == 2) || (engine_state == 7)) || ((engine_state == 3 || (engine_state == 6)))
+       ) {
       _DAT_0080ccbe = 0;
       if (_DAT_0080ccba < _maximum_time_engine_warmup_algorithm_will_run_0_100) {
         _DAT_0080ccba = _DAT_0080ccba + 1;
@@ -11349,7 +11390,7 @@ ushort cm550_fuelTemperatureLimitingSecondary(void)
 void cm550_FUN_00017120(void)
 
 {
-  if (((_smoke_limiter_output_value == 3) && (_high_rpm_fuel_limit_active != 0)) &&
+  if (((engine_state == 3) && (_high_rpm_fuel_limit_active != 0)) &&
      (_high_rpm_fuel_limit_value < fuel_limit_shutdown_minimum)) {
     fuel_limit_shutdown_minimum = _high_rpm_fuel_limit_value;
     _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0x21;
@@ -11608,7 +11649,7 @@ uint cm550_fuel_limit_arbitrator(void)
     uVar1 = (uint)_DAT_0080a92c << 0x10;
     _DAT_008005ae = uVar1;
   }
-  if (_smoke_limiter_output_value == 1) {
+  if (engine_state == 1) {
     uVar1 = value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1;
     if ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0) {
       not_safe_to_program_flag = 0;
@@ -11685,8 +11726,7 @@ void cm550_engineRpmSourceInit(void)
 void cm550_rpmBasedFuelLimitCalculator(void)
 
 {
-  if (((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 6)) ||
-     (_smoke_limiter_output_value == 7)) {
+  if (((engine_state == 2) || (engine_state == 6)) || (engine_state == 7)) {
     _crank_adjusted_initial_rpm_0_1000 =
          _eng_spd_val_to_be_added_to_crk_init_fuel_brk_spd_0_1000 +
          _crank_initial_fuel_break_speed_0_1000;
@@ -11781,8 +11821,7 @@ void cm550_governorFuelModeBlendCalculator(void)
 void cm550_rpmBasedFuelTimingInterpolation(void)
 
 {
-  if (((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 6)) ||
-     (_smoke_limiter_output_value == 7)) {
+  if (((engine_state == 2) || (engine_state == 6)) || (engine_state == 7)) {
     cm550_governorFuelModeBlendCalculator();
     if (_engine_rpm_primary <= _crank_initial_advace_break_speed_0_1000) {
       _DAT_0080d09a = _crank_initial_timing_advance_0_120;
@@ -11950,7 +11989,7 @@ void cm550_peakTorqueFuelCorrection(void)
   if (_engine_rpm_primary == 0) {
     _fsmxthfl_calc_input = _crank_initial_reentry_speed_0_1000;
   }
-  _DAT_008005ee = _smoke_limiter_output_value;
+  _DAT_008005ee = engine_state;
   return;
 }
 
@@ -11965,8 +12004,7 @@ void cm550_peakTorqueFuelCorrection(void)
 void cm550_engineModeTransitionStateUpdater(void)
 
 {
-  if (((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 6)) ||
-     (_smoke_limiter_output_value == 7)) {
+  if (((engine_state == 2) || (engine_state == 6)) || (engine_state == 7)) {
     _timing_command_before_cranking_is_envoked_0_120 = fuel_timing_advance_value;
     fuel_timing_advance_value = _DAT_0080d09a;
     _intermediate_timing_state_used_before_final_timing_selction_0_10 = 5;
@@ -11986,14 +12024,14 @@ void cm550_engineModeTransitionStateUpdater(void)
 void cm550_engineModeTransitionHandler(void)
 
 {
-  if (((_DAT_008005f0 == 1) && (_smoke_limiter_output_value == 2)) ||
-     ((_DAT_008005f0 == 3 && (_smoke_limiter_output_value == 7)))) {
+  if (((_DAT_008005f0 == 1) && (engine_state == 2)) || ((_DAT_008005f0 == 3 && (engine_state == 7)))
+     ) {
     cm550_frictionalLoadTorqueInterpolator();
     cm550_FUN_00017baa();
     cm550_rpmSourceSelectorForFrictionalLoad();
   }
   cm550_peakTorqueFuelCorrection();
-  _DAT_008005f0 = _smoke_limiter_output_value;
+  _DAT_008005f0 = engine_state;
   return;
 }
 
@@ -12008,8 +12046,7 @@ void cm550_engineModeTransitionHandler(void)
 void cm550_ioOutputFlagMappingSlowCycle40Coordinator(void)
 
 {
-  if ((_smoke_limiter_output_value == 6) &&
-     (_engine_rpm_primary < _crank_adjusted_initial_rpm_0_1000)) {
+  if ((engine_state == 6) && (_engine_rpm_primary < _crank_adjusted_initial_rpm_0_1000)) {
     if ((int)(uint)_crank_jumpstart_tvo_ramp_rate_0_100 <
         (int)((uint)_peak_fueling_calibration_value -
              (uint)_fueling_val_to_be_added_to_crank_initial_fuel_val_0_100)) {
@@ -12031,11 +12068,11 @@ void cm550_ioOutputFlagMappingSlowCycle40Coordinator(void)
       _eng_spd_val_to_be_added_to_crk_init_fuel_brk_spd_0_1000 = _maximum_rated_engine_speed_0_5000;
     }
   }
-  if ((_DAT_008005f2 == 7) && (_smoke_limiter_output_value == 1)) {
+  if ((_DAT_008005f2 == 7) && (engine_state == 1)) {
     _fueling_val_to_be_added_to_crank_initial_fuel_val_0_100 = 0;
     _eng_spd_val_to_be_added_to_crk_init_fuel_brk_spd_0_1000 = 0;
   }
-  _DAT_008005f2 = _smoke_limiter_output_value;
+  _DAT_008005f2 = engine_state;
   return;
 }
 
@@ -12050,17 +12087,17 @@ void cm550_ioOutputFlagMappingSlowCycle40Coordinator(void)
 void cm550_frictionalLoadTorqueManagementSlowCycle40Coordinator(void)
 
 {
-  if ((((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 6)) &&
+  if ((((engine_state == 2) || (engine_state == 6)) &&
       (_crank_exit_fuel_ramp_rpm_0_1000 < _engine_rpm_primary)) &&
      (_crank_exit_fuel_adjustment_0_100 =
            _crank_exit_fuel_ramp_rate_0_100 + _crank_exit_fuel_adjustment_0_100,
      _crank_exit_fuel_ramp_rate_maximum_0_100 < _crank_exit_fuel_adjustment_0_100)) {
     _crank_exit_fuel_adjustment_0_100 = _crank_exit_fuel_ramp_rate_maximum_0_100;
   }
-  if ((_DAT_008005f4 != 3) && (_smoke_limiter_output_value == 3)) {
+  if ((_DAT_008005f4 != 3) && (engine_state == 3)) {
     _crank_exit_fuel_adjustment_0_100 = 0;
   }
-  _DAT_008005f4 = _smoke_limiter_output_value;
+  _DAT_008005f4 = engine_state;
   return;
 }
 
@@ -12075,22 +12112,21 @@ void cm550_frictionalLoadTorqueManagementSlowCycle40Coordinator(void)
 void cm550_engineOperatingModeStateTrackingSlowCycle40Coordinator(void)
 
 {
-  if (_smoke_limiter_output_value == 3) {
+  if (engine_state == 3) {
     _crank_exit_timer_0_13107 = _crank_exit_timer_0_13107 + 1;
   }
-  if (_smoke_limiter_output_value == 1) {
+  if (engine_state == 1) {
     _crank_exit_timer_0_13107 = 0;
     _DAT_008005b2 = 0;
   }
-  if (_smoke_limiter_output_value == 2) {
+  if (engine_state == 2) {
     _timer_used_to_dictate_a_jumpstart_condition_0_13107 =
          _timer_used_to_dictate_a_jumpstart_condition_0_13107 + 1;
   }
-  else if (((_DAT_008005f6 == 7) && (_smoke_limiter_output_value == 1)) ||
-          (_smoke_limiter_output_value == 8)) {
+  else if (((_DAT_008005f6 == 7) && (engine_state == 1)) || (engine_state == 8)) {
     _timer_used_to_dictate_a_jumpstart_condition_0_13107 = 0;
   }
-  _DAT_008005f6 = _smoke_limiter_output_value;
+  _DAT_008005f6 = engine_state;
   return;
 }
 
@@ -12105,14 +12141,14 @@ void cm550_engineOperatingModeStateTrackingSlowCycle40Coordinator(void)
 void cm550_frictionalLoadTorqueTransitionHandler(void)
 
 {
-  if (((_DAT_008005f8 == 3) && (_smoke_limiter_output_value == 7)) &&
+  if (((_DAT_008005f8 == 3) && (engine_state == 7)) &&
      (_crank_exit_time_0_13107 < _crank_exit_timer_0_13107)) {
     _fueling_val_to_be_added_to_crank_initial_fuel_val_0_100 =
          _crank_exited_initial_fueling_offset_100_100;
     _eng_spd_val_to_be_added_to_crk_init_fuel_brk_spd_0_1000 =
          _crank_exited_initial_rpm_offset_1000_1000;
   }
-  _DAT_008005f8 = _smoke_limiter_output_value;
+  _DAT_008005f8 = engine_state;
   return;
 }
 
@@ -12193,71 +12229,71 @@ void vp44TimingFaultMonitor(void)
     _DAT_00805652 = 0;
     _diagnostic_snapshot_ring_index = (ushort)(_diagnostic_snapshot_ring_index + 1) % 5;
   }
-  switch(_smoke_limiter_output_value) {
+  switch(engine_state) {
   case 1:
     if ((_engine_speed_for_transition_into_out_of_crank_reentr_state_0_300 < _engine_rpm_primary) &&
        (_engine_startup_inhibit_true_false == 0)) {
-      _smoke_limiter_output_value = 2;
+      engine_state = 2;
     }
     else if ((((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0) &&
              (WORD_0080de2e == 0)) || (_engine_protection_shutdown_command == 1)) {
-      _smoke_limiter_output_value = 8;
+      engine_state = 8;
     }
     break;
   case 2:
     if (_engine_speed_for_transition_into_out_of_crank_reentr_state_0_300 < _engine_rpm_primary) {
       if (_engine_rpm_primary < _crank_fuel_limit_source_selector) {
         if (_crank_jumpstart_time_0_13107 < _timer_used_to_dictate_a_jumpstart_condition_0_13107) {
-          _smoke_limiter_output_value = 6;
+          engine_state = 6;
         }
         else if ((((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0) &&
                  (WORD_0080de2e == 0)) || (_engine_protection_shutdown_command == 1)) {
-          _smoke_limiter_output_value = 8;
+          engine_state = 8;
         }
       }
       else {
-        _smoke_limiter_output_value = 3;
+        engine_state = 3;
       }
     }
     else {
-      _smoke_limiter_output_value = 1;
+      engine_state = 1;
     }
     break;
   case 3:
     if ((_DAT_0080a9c8 == 1) && (_DAT_008040c0 == 0)) {
-      _smoke_limiter_output_value = 4;
+      engine_state = 4;
     }
     else if (_fsmxthfl_calc_input < _engine_rpm_primary) {
       if ((((_DAT_0080d356 == 0) &&
            ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0)) &&
           (WORD_0080de2e == 0)) ||
          ((_DAT_0080d356 == 1 || (_engine_protection_shutdown_command == 1)))) {
-        _smoke_limiter_output_value = 8;
+        engine_state = 8;
       }
       else if (vp44_timing_fault_active == '\x01') {
-        _smoke_limiter_output_value = 5;
+        engine_state = 5;
       }
     }
     else {
-      _smoke_limiter_output_value = 7;
+      engine_state = 7;
     }
     break;
   case 4:
     if ((_DAT_0080a9c8 == 0) && (_DAT_008040c0 == 0)) {
-      _smoke_limiter_output_value = 3;
+      engine_state = 3;
     }
     else if ((((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0) &&
              (WORD_0080de2e == 0)) || (_engine_protection_shutdown_command == 1)) {
-      _smoke_limiter_output_value = 8;
+      engine_state = 8;
     }
     break;
   case 5:
     if (vp44_timing_fault_active == '\0') {
-      _smoke_limiter_output_value = 3;
+      engine_state = 3;
     }
     else if ((((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0) &&
              (WORD_0080de2e == 0)) || (_engine_protection_shutdown_command == 1)) {
-      _smoke_limiter_output_value = 8;
+      engine_state = 8;
     }
     break;
   case 6:
@@ -12265,15 +12301,15 @@ void vp44TimingFaultMonitor(void)
       if (_engine_rpm_primary < _crank_fuel_limit_source_selector) {
         if ((((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0) &&
             (WORD_0080de2e == 0)) || (_engine_protection_shutdown_command == 1)) {
-          _smoke_limiter_output_value = 8;
+          engine_state = 8;
         }
       }
       else {
-        _smoke_limiter_output_value = 3;
+        engine_state = 3;
       }
     }
     else {
-      _smoke_limiter_output_value = 1;
+      engine_state = 1;
     }
     break;
   case 7:
@@ -12281,33 +12317,33 @@ void vp44TimingFaultMonitor(void)
       if (_engine_rpm_primary < _crank_fuel_limit_source_selector) {
         if ((((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0) &&
             (WORD_0080de2e == 0)) || (_engine_protection_shutdown_command == 1)) {
-          _smoke_limiter_output_value = 8;
+          engine_state = 8;
         }
       }
       else {
-        _smoke_limiter_output_value = 3;
+        engine_state = 3;
       }
     }
     else {
-      _smoke_limiter_output_value = 1;
+      engine_state = 1;
     }
     break;
   case 8:
     if ((((_engine_protection_shutdown_command == 1) && (_engine_rpm_primary == 0)) ||
         ((_engine_protection_shutdown_command == 0 &&
          ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) != 0)))) &&
-       (((_DAT_0080d356 != 1 && (_smoke_limiter_output_value = 1, _engine_rpm_primary == 0)) &&
+       (((_DAT_0080d356 != 1 && (engine_state = 1, _engine_rpm_primary == 0)) &&
         (_engine_protection_shutdown_command == 1)))) {
       _engine_protection_shutdown_command = 0;
     }
     if (((_engine_rpm_primary == 0) &&
         ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0)) &&
        ((WORD_0080de2e == 0 && (_DAT_0080d356 != 1)))) {
-      _DAT_0080d0ca = 1;
+      power_down_start_flag = 1;
     }
     break;
   default:
-    _smoke_limiter_output_value = 1;
+    engine_state = 1;
   }
   if (((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) != 0) && (DAT_008005fc == '\0')) {
     WORD_0080de2e = 0;
@@ -12328,7 +12364,7 @@ void cm550_FUN_00018384(void)
 
 {
   _DAT_0080d356 = 0;
-  _smoke_limiter_output_value = 1;
+  engine_state = 1;
   DAT_008005fc = 0;
   return;
 }
@@ -13105,12 +13141,12 @@ ushort processDiagnosticLimitStatus(void)
   undefined *puVar7;
   word *threshold_ptr;
   
-  if (_smoke_limiter_output_value == 1) {
+  if (engine_state == 1) {
     _engine_protection_shutdown_command_previous = 0;
   }
   uVar2 = _calibration_feature_enable_flags_word_2 & 1;
-  if ((((_calibration_feature_enable_flags_word_2 & 1) == 0) || (_smoke_limiter_output_value == 8))
-     || (_smoke_limiter_output_value == 1)) {
+  if ((((_calibration_feature_enable_flags_word_2 & 1) == 0) || (engine_state == 8)) ||
+     (engine_state == 1)) {
     _engine_protection_derate_approaching_flag = 0;
     uVar4 = 0;
     puVar7 = &protection_system_sensor_data_ptr;
@@ -14668,9 +14704,9 @@ void cm550_FUN_0001a8a2(void)
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* The TPU channel 10 primary speed interrupt handler for speed_measurement_mode 3 (saves d0-d3 /
    a0-a1 and ends in RTE): it reads the period and the edge time TPU_CH10_PARAM2 - clears parameter
-   4 - passes them to cm550_throttleTimeAccumulatorProcessor (in fact the mode 3 period ring / sync
-   gap processor) - re-arms channel 10 (parameter 0 and HSR 2) - then runs the same phase comparator
-   tail (was vp44_FUN_0001a8a4; PR #53 round 85) */
+   4 - passes them to cm550_processPrimarySpeedPulsePeriodWithSyncPulse (in fact the mode 3 period
+   ring / sync gap processor) - re-arms channel 10 (parameter 0 and HSR 2) - then runs the same
+   phase comparator tail (was vp44_FUN_0001a8a4; PR #53 round 85) */
 
 undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3(void)
 
@@ -14683,7 +14719,7 @@ undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3(void)
   dVar2 = Ram00ffffa8;
   TPU_CH10_PARAM4 = 0;
   wVar1 = TPU_CH10_PARAM2;
-  dVar2 = cm550_throttleTimeAccumulatorProcessor(dVar2,wVar1);
+  dVar2 = cm550_processPrimarySpeedPulsePeriodWithSyncPulse(dVar2,wVar1);
   if (CMSYSS == '\x01') {
     if (dVar2 == 0) {
       TPU_CH10_PARAM0 = 0xffff;
@@ -14714,19 +14750,24 @@ undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3(void)
 
 
 //
-// Function: cm550_throttleTimeAccumulatorProcessor @ 0x0001a95a
+// Function: cm550_processPrimarySpeedPulsePeriodWithSyncPulse @ 0x0001a95a
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* This is the primary speed sensor period processor for speed_measurement_mode 3, the wheel with a
+   sync pulse. It is the only work function of mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3.
+   It stores the TPU channel 10 period and edge time (0x80d04a / 0x80d052), then asks
+   cm550_detectEngineSpeedSensorSyncPulse(0) whether the period ended on the sync pulse. (was
+   cm550_throttleTimeAccumulatorProcessor; PR #53 round 87) */
 
-dword cm550_throttleTimeAccumulatorProcessor(dword pulse_period,word edge_time_stamp)
+dword cm550_processPrimarySpeedPulsePeriodWithSyncPulse(dword pulse_period,word edge_time_stamp)
 
 {
   word wVar1;
   
   _io_control_handshake_state = pulse_period;
   _main_signal_edge_time_stamp_0_65535 = edge_time_stamp;
-  wVar1 = cm550_retarderModeThresholdCalculator(0);
+  wVar1 = cm550_detectEngineSpeedSensorSyncPulse(0);
   if (wVar1 != 0) {
     if (period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 == _sync_miss_counter) {
       CMSYSS = '\x01';
@@ -14843,7 +14884,7 @@ int vp44FaultThresholdTablesInit(void)
   
   _io_control_handshake_state = *(uint *)(unaff_A6 + 8);
   _main_signal_edge_time_stamp_0_65535 = *(undefined2 *)(unaff_A6 + 0xc);
-  wVar1 = cm550_retarderModeThresholdCalculator(0);
+  wVar1 = cm550_detectEngineSpeedSensorSyncPulse(0);
   if (wVar1 != 0) {
     if (period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 == _sync_miss_counter) {
       CMSYSS = '\x01';
@@ -16632,12 +16673,15 @@ void cm550_FUN_0001b862(void)
 
 
 //
-// Function: main_loop @ 0x0001b876
+// Function: executiveFrameInterruptHandler @ 0x0001b876
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The periodic interrupt timer's handler (the twin of CM848 0xc0a0): each interrupt runs one frame
+   of the 40-phase executive and times it with the executive timing gatherer. It is not a loop (was
+   main_loop; PR #53 round 87; the twin of CM848 0xc0a0: one shared name) */
 
-undefined8 main_loop(void)
+undefined8 executiveFrameInterruptHandler(void)
 
 {
   word wVar1;
@@ -17097,7 +17141,7 @@ void mc68k_scheduler_init(void)
   _number_of_loop_delays_cal_0_65535 = 0;
   _DAT_0080068a = 0;
   SIM_PICR = 0x152;
-  _DAT_00808f24 = main_loop;
+  _DAT_00808f24 = executiveFrameInterruptHandler;
   SIM_PITR = 0x27;
   return;
 }
@@ -17271,25 +17315,25 @@ void fuelTimingOilPressureModeController(void)
          fuel_limit_shutdown_minimum;
     _FSLMDSST = _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41;
   }
-  if (_smoke_limiter_output_value == 1) {
+  if (engine_state == 1) {
     _current_fuel_demand = 0;
     _fuel_limit_selection_state = 0x1a;
   }
-  else if (_smoke_limiter_output_value == 8) {
+  else if (engine_state == 8) {
     _current_fuel_demand = _minimum_fueling_value_0_100;
     _fuel_limit_selection_state = 0x1b;
   }
   else {
-    if (_smoke_limiter_output_value == 5) {
+    if (engine_state == 5) {
       _fuel_limit_after_derate_selection = _DAT_00808008;
       _fuel_limit_selection_state = 0x19;
     }
     else if ((_calibration_feature_enable_flags_word_1 & 2) == 0) {
-      if (_smoke_limiter_output_value == 4) {
+      if (engine_state == 4) {
         _fuel_limit_after_derate_selection = _DAT_00808006;
         _fuel_limit_selection_state = 0x18;
       }
-      else if ((_smoke_limiter_output_value == 2) || (_smoke_limiter_output_value == 6)) {
+      else if ((engine_state == 2) || (engine_state == 6)) {
         _fuel_limit_after_derate_selection = _engine_mode_timing_init_flag;
         _fuel_limit_selection_state = 0x16;
       }
@@ -17304,7 +17348,7 @@ void fuelTimingOilPressureModeController(void)
         else {
           cm550_diagnosticFuelLimitInterpolator();
         }
-        if ((_smoke_limiter_output_value == 7) &&
+        if ((engine_state == 7) &&
            (_fuel_limit_after_derate_selection < _engine_mode_timing_init_flag)) {
           _fuel_limit_after_derate_selection = _engine_mode_timing_init_flag;
           _fuel_limit_selection_state = 0x16;
@@ -17845,10 +17889,9 @@ ushort cm550_fuelDemandLimitSelector11(void)
       ((_DAT_0080a9c8 != 0 &&
        (uVar1 = _calibration_feature_enable_flags_word_0 & 0x40,
        (_calibration_feature_enable_flags_word_0 & 0x40) != 0)))) ||
-     (((_smoke_limiter_output_value != 5 ||
+     (((engine_state != 5 ||
        (uVar1 = _calibration_feature_enable_flags_word_9 & 2,
-       (_calibration_feature_enable_flags_word_9 & 2) != 0)) && (_smoke_limiter_output_value == 5)))
-     ) {
+       (_calibration_feature_enable_flags_word_9 & 2) != 0)) && (engine_state == 5)))) {
     if (DAT_0080bd47 == '\0') {
       DAT_0080bd47 = '\0';
       fuel_system_output_driver_control = fuel_system_output_driver_control & 0xdf;
@@ -17882,10 +17925,9 @@ ushort vp44_canPinVp44StatusController(void)
       ((_DAT_0080a9c8 != 0 &&
        (uVar1 = _calibration_feature_enable_flags_word_0 & 0x40,
        (_calibration_feature_enable_flags_word_0 & 0x40) != 0)))) ||
-     (((_smoke_limiter_output_value != 5 ||
+     (((engine_state != 5 ||
        (uVar1 = _calibration_feature_enable_flags_word_9 & 2,
-       (_calibration_feature_enable_flags_word_9 & 2) != 0)) && (_smoke_limiter_output_value == 5)))
-     ) {
+       (_calibration_feature_enable_flags_word_9 & 2) != 0)) && (engine_state == 5)))) {
     if (*(char *)(unaff_A2 + 0x2d) == '\0') {
       *(undefined1 *)(unaff_A2 + 0x2d) = 0;
       fuel_system_output_driver_control = fuel_system_output_driver_control & 0xdf;
@@ -18832,7 +18874,7 @@ uint vp44SensorStatusMonitor(void)
             bit_4_of_master_status_byte_a_0_1 = bit_4_of_master_status_byte_a_0_1 | 0x40;
           }
         }
-        if (_smoke_limiter_output_value == 2) {
+        if (engine_state == 2) {
           _vp44_sensor_monitor_state = 0;
         }
       }
@@ -19189,7 +19231,7 @@ void cm550_serialNodeAddressChecker(word node_address)
     mc68k_canCs4TransmitNextFrame();
     return;
   }
-  cm550_emptyStubFunction1();
+  ignoreCanTransmitInterrupt();
   return;
 }
 
@@ -19286,28 +19328,39 @@ void cm550_canMessageInterruptHandlerSetup(void)
 
 
 //
-// Function: cm550_emptyStubWrapper1 @ 0x0001e1ac
+// Function: vp44_handleCanCs5TransmitInterrupt @ 0x0001e1ac
 //
 
-void cm550_emptyStubWrapper1(word message_object)
+/* This is the transmit branch of mc68k_canCs5InterruptHandler. For a message object whose control 0
+   bit 5 (TXIE) is set, the handler calls it with the object number. It passes the low byte of its
+   word argument on, as a word, to the empty transmit hook 0xc80c. (was cm550_emptyStubWrapper1; PR
+   #53 round 87) */
+
+void vp44_handleCanCs5TransmitInterrupt(word message_object)
 
 {
-  cm550_emptyStubFunction1();
+  ignoreCanTransmitInterrupt();
   return;
 }
 
 
 
 //
-// Function: cm550_modeBasedDataDispatcherWrapper @ 0x0001e1be
+// Function: vp44_handleCanCs5ReceiveInterrupt @ 0x0001e1be
 //
 
-void cm550_modeBasedDataDispatcherWrapper(word message_object)
+/* This is the receive branch of mc68k_canCs5InterruptHandler. For a message object whose interrupt
+   fired and whose control 0 bit 5 (TXIE) is clear, the handler calls it with the object number. It
+   passes the low byte of its word argument on, as a word, to the receive dispatcher
+   (vp44_dispatchReceivedPumpMessage). (was cm550_modeBasedDataDispatcherWrapper; PR #53 round 87)
+    */
+
+void vp44_handleCanCs5ReceiveInterrupt(word message_object)
 
 {
   undefined2 in_D0w;
   
-  cm550_modeBasedDataDispatcher(CONCAT11((char)((ushort)in_D0w >> 8),(char)message_object));
+  vp44_dispatchReceivedPumpMessage(CONCAT11((char)((ushort)in_D0w >> 8),(char)message_object));
   return;
 }
 
@@ -19352,10 +19405,10 @@ undefined8 mc68k_canCs5InterruptHandler(void)
       *pbVar1 = 0xfd;
       uVar3 = (undefined3)((uint)pbVar1 >> 8);
       if ((*pbVar1 & 0x20) == 0) {
-        cm550_modeBasedDataDispatcherWrapper((word)CONCAT31(uVar3,bVar2 - 2));
+        vp44_handleCanCs5ReceiveInterrupt((word)CONCAT31(uVar3,bVar2 - 2));
       }
       else {
-        cm550_emptyStubWrapper1((word)CONCAT31(uVar3,bVar2 - 2));
+        vp44_handleCanCs5TransmitInterrupt((word)CONCAT31(uVar3,bVar2 - 2));
       }
     }
   }
@@ -25693,8 +25746,7 @@ int cm550_faultCodeDisplayController(void)
   uint3 extraout_var_03;
   byte bVar2;
   
-  if (((debounced_switch_value_for_switch_16_on_off & 0x80) == 0) ||
-     (_smoke_limiter_output_value != 1)) {
+  if (((debounced_switch_value_for_switch_16_on_off & 0x80) == 0) || (engine_state != 1)) {
     if (DAT_008019e8 != '\0') {
       DAT_008019e8 = '\0';
       lamp_driver_output_bitmask = lamp_driver_output_bitmask & 0xfffc;
@@ -26100,7 +26152,7 @@ void cm550_FUN_000254b6(void)
     cm550_FUN_000253b0();
   }
   if (((_DAT_00803c42 != 0) && (_set_when_leading_threshold_has_expired_time_to_change_oil_1_0 != 0)
-      ) && (_smoke_limiter_output_value == 3)) {
+      ) && (engine_state == 3)) {
     cm550_periodicLampFlashController();
   }
   DAT_008019eb = -((debounced_switch_value_for_switch_16_on_off & 0x20) != 0) & 1;
@@ -27174,7 +27226,7 @@ void cm550_FUN_00026616(void)
   else {
     bVar1 = true;
   }
-  if (_smoke_limiter_output_value == 1) {
+  if (engine_state == 1) {
     _rpm_histogram_sample_divider = 0;
     if (bVar2) {
       _cold_idle_speed_adder_0_1000 = _cold_idle_speed_300_1000;
@@ -27183,11 +27235,11 @@ void cm550_FUN_00026616(void)
       _cold_idle_speed_adder_0_1000 = 0;
     }
   }
-  else if (_smoke_limiter_output_value != 2) {
+  else if (engine_state != 2) {
     if ((bVar2) && (_rpm_histogram_sample_divider < _cold_idle_time_0_65535)) {
       _rpm_histogram_sample_divider = _rpm_histogram_sample_divider + 1;
     }
-    if ((_smoke_limiter_output_value == 3) &&
+    if ((engine_state == 3) &&
        ((_cold_idle_time_0_65535 <= _rpm_histogram_sample_divider || (!bVar2)))) {
       if (_lsg_idle_ramp_rate_0_1000 < _cold_idle_speed_adder_0_1000) {
         _cold_idle_speed_adder_0_1000 = _cold_idle_speed_adder_0_1000 - _lsg_idle_ramp_rate_0_1000;
@@ -28572,18 +28624,20 @@ void vp44_hourMeterEventLogger(void)
 
 
 //
-// Function: cm550_restartOnKeyOnDuringPowerDown @ 0x00027af0
+// Function: restartOnKeyOnDuringPowerDown @ 0x00027af0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Services both watchdogs and re-samples the discrete inputs - adds 1 to the completed power-down
    count (0x803FEC) and queues the EEPROM write - waits up to 1000 passes - writes the power cycle
    sequence number 0x803FE2 = the incomplete count (0x803FEA) + the completed count - waits again -
-   and jumps to the application main's restart entry 0x28978. CM848's
-   cm848_restartOnKeyOnDuringPowerDown runs the same steps. Its only hardware access is the inline
-   watchdog kick, so not mc68k_ (commit 16143a5c) (was vp44StatusInitAndWait; PR #53 round 85) */
+   and jumps to the application main's restart entry 0x28978. CM848's restartOnKeyOnDuringPowerDown
+   runs the same steps. Its only hardware access is the inline watchdog kick, so not mc68k_ (commit
+   16143a5c) (was vp44StatusInitAndWait; PR #53 round 85) | (was
+   cm550_restartOnKeyOnDuringPowerDown; PR #53 round 87; the twin of CM848 0x539938: one shared
+   name) */
 
-void cm550_restartOnKeyOnDuringPowerDown(void)
+void restartOnKeyOnDuringPowerDown(void)
 
 {
   ushort uVar1;
@@ -28622,7 +28676,7 @@ void cm550_restartOnKeyOnDuringPowerDown(void)
   SIM_SWSR = 0xaa;
   CS2_WATCHDOG_SERVICE = 0x55;
   CS2_WATCHDOG_SERVICE = 0xaa;
-  cm550_FUN_00028978();
+  cm550_restartApplicationWithoutReset();
   return;
 }
 
@@ -28682,7 +28736,7 @@ void vp44_FUN_00027c20(void)
       else {
         uVar5 = uVar5 + 1;
         if (0x50 < uVar5) {
-          cm550_restartOnKeyOnDuringPowerDown();
+          restartOnKeyOnDuringPowerDown();
         }
       }
     }
@@ -28729,7 +28783,7 @@ void cm550_savePowerDownDataToFlashBank(byte flash_bank_number)
       bVar2 = bVar2 + 1;
     } while (bVar2 < 4);
     if (sVar1 == 2) {
-      _eeprom_calibration_write_success = 1;
+      flash_write_failure_flag_cal = 1;
       if (_enable_to_protects_parameter_block_data_at_powerdown_enabled_disabled == 0) {
         bVar2 = 1;
         do {
@@ -28750,7 +28804,7 @@ void cm550_savePowerDownDataToFlashBank(byte flash_bank_number)
       }
     }
     else {
-      _eeprom_calibration_write_success = 0;
+      flash_write_failure_flag_cal = 0;
     }
   }
   else {
@@ -28771,7 +28825,7 @@ void cm550_savePowerDownDataToFlashBank(byte flash_bank_number)
       bVar2 = bVar2 + 1;
     } while (bVar2 < 4);
     if (sVar1 == 2) {
-      _eeprom_calibration_write_success = 1;
+      flash_write_failure_flag_cal = 1;
       if (_enable_to_protects_parameter_block_data_at_powerdown_enabled_disabled == 0) {
         bVar2 = 1;
         do {
@@ -28792,11 +28846,11 @@ void cm550_savePowerDownDataToFlashBank(byte flash_bank_number)
       }
     }
     else {
-      _eeprom_calibration_write_success = 0;
+      flash_write_failure_flag_cal = 0;
     }
   }
   if (sVar1 == 1) {
-    cm550_restartOnKeyOnDuringPowerDown();
+    restartOnKeyOnDuringPowerDown();
   }
   if (_DAT_00803fe2 != _DAT_00803fe4) {
     cm550_parameterCircularBufferWrite(0x803fe4,&DAT_00803fe2,2);
@@ -28829,7 +28883,7 @@ void cm550_savePowerDownDataToFlashBank(byte flash_bank_number)
     bVar2 = bVar2 + 1;
   }
   if ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) != 0) {
-    cm550_restartOnKeyOnDuringPowerDown();
+    restartOnKeyOnDuringPowerDown();
   }
   return;
 }
@@ -28886,9 +28940,9 @@ void mc68k_runPowerDownSequence(void)
          enable_flag_to_allow_boot_block_programming_enable_disable | 4;
   }
   mc68k_ioDriverStrobeHandler();
-  if (_calibration_bank_copy_valid != 0) {
+  if (power_down_refresh_enable != 0) {
     puVar6 = (undefined2 *)&DAT_00806544;
-    if (_calibration_bank_active == 2) {
+    if (parameter_block_uploaded == 2) {
       puVar7 = &DAT_000075ae;
     }
     else {
@@ -28903,8 +28957,8 @@ void mc68k_runPowerDownSequence(void)
   SIM_SWSR = 0xaa;
   CS2_WATCHDOG_SERVICE = 0x55;
   CS2_WATCHDOG_SERVICE = 0xaa;
-  cVar3 = _calibration_bank_active == 0;
-  if (_calibration_bank_active == 1) {
+  cVar3 = parameter_block_uploaded == 0;
+  if (parameter_block_uploaded == 1) {
     cVar8 = '\0';
     cVar9 = '\0';
     cVar10 = '\0';
@@ -28912,8 +28966,8 @@ void mc68k_runPowerDownSequence(void)
     cm550_savePowerDownDataToFlashBank(2);
   }
   else {
-    cVar3 = _calibration_bank_active < 2;
-    if (_calibration_bank_active == 2) {
+    cVar3 = parameter_block_uploaded < 2;
+    if (parameter_block_uploaded == 2) {
       cVar8 = '\0';
       cVar9 = '\0';
       cVar10 = '\0';
@@ -29030,7 +29084,7 @@ void mc68k_runPowerDownSequence(void)
         CS2_WATCHDOG_SERVICE = 0x55;
         CS2_WATCHDOG_SERVICE = 0xaa;
         mc68k_ioDriverStrobeHandler();
-        cm550_restartOnKeyOnDuringPowerDown();
+        restartOnKeyOnDuringPowerDown();
       }
     }
     local_6 = local_6 + 1;
@@ -29065,7 +29119,7 @@ void mc68k_runPowerDownSequence(void)
     bVar11 = bVar11 + 1;
   }
   if ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) != 0) {
-    cm550_restartOnKeyOnDuringPowerDown();
+    restartOnKeyOnDuringPowerDown();
   }
   local_6 = 1;
   cm550_parameterCircularBufferWrite(0x803fda,(byte *)&local_6,2);
@@ -29085,7 +29139,7 @@ void mc68k_runPowerDownSequence(void)
   while ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0) {
     mc68k_sampleAndDebounceDiscreteInputs();
   }
-  cm550_restartOnKeyOnDuringPowerDown();
+  restartOnKeyOnDuringPowerDown();
   return;
 }
 
@@ -29099,12 +29153,11 @@ void mc68k_runPowerDownSequence(void)
 /* WARNING: Removing unreachable block (ram,0x000289ea) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* The application main: mc68k_main calls it once (ROM 0x1DCF4) and it never returns. Its start-up
-   clears working RAM (cm550_clearWorkingMemory) after mc68k_loadTpuMicrocode - copies the
-   calibration (cm550_copyCalibrationFromRomToRam) - loads a parameter block - and configures the
-   QSM / SIM / TPU / CTM4 interrupts and channels; then it runs the background loop and
-   mc68k_runPowerDownSequence. 0x28978 inside it is the restart entry
-   cm550_restartOnKeyOnDuringPowerDown jumps to. CM848's cm848_applicationMain has the same skeleton
-   (was vp44_FUN_000284e8; PR #53 round 85) */
+   clears working RAM (clearWorkingRam) after mc68k_loadTpuMicrocode - copies the calibration
+   (copyCalibrationFromRomToRam) - loads a parameter block - and configures the QSM / SIM / TPU /
+   CTM4 interrupts and channels; then it runs the background loop and mc68k_runPowerDownSequence.
+   0x28978 inside it is the restart entry restartOnKeyOnDuringPowerDown jumps to. CM848's
+   cm848_applicationMain has the same skeleton (was vp44_FUN_000284e8; PR #53 round 85) */
 
 void mc68k_applicationMain(void)
 
@@ -29161,10 +29214,10 @@ void mc68k_applicationMain(void)
   mc68k_loadTpuMicrocode();
   _DAT_00810ffc = 2;
   _DAT_00810ffe = 0x8622;
-  cm550_clearWorkingMemory();
+  clearWorkingRam();
   _DAT_00810ffc = 2;
   _DAT_00810ffe = 0x8628;
-  cm550_copyCalibrationFromRomToRam();
+  copyCalibrationFromRomToRam();
   run_location = RUN_LOCATION_NORMAL;
   if (DAT_0080bd2d == '\0') {
     DAT_0080bd2d = '\0';
@@ -29194,7 +29247,7 @@ void mc68k_applicationMain(void)
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8690;
   vp44_validateRedundantSensors();
-  if (_eeprom_calibration_write_success == 0) {
+  if (flash_write_failure_flag_cal == 0) {
     _status_32_word_bit_mapped_system_error_status_word_10_0_1 =
          _status_32_word_bit_mapped_system_error_status_word_10_0_1 & 0xffbf;
   }
@@ -29220,7 +29273,7 @@ void mc68k_applicationMain(void)
   cm550_initADCChannelConfiguration();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x870e;
-  mc68k_FUN_00015df0();
+  mc68k_initializeDiscreteOutputDrivers();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8714;
   cm550_FUN_0003452a();
@@ -29556,14 +29609,17 @@ void mc68k_applicationMain(void)
 
 
 //
-// Function: cm550_FUN_00028978 @ 0x00028978
+// Function: cm550_restartApplicationWithoutReset @ 0x00028978
 //
 
 /* WARNING: This function may have set the stack pointer */
 /* WARNING: Removing unreachable block (ram,0x000289ea) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* This is the application main's restart entry: a point in mc68k_applicationMain's tail that has
+   its own function row. restartOnKeyOnDuringPowerDown jumps to it. (was cm550_FUN_00028978; PR #53
+   round 87) */
 
-void cm550_FUN_00028978(void)
+void cm550_restartApplicationWithoutReset(void)
 
 {
   mc68k_pwmFuelDemandOutputCalculator();
@@ -30224,7 +30280,7 @@ uint cm550_memoryPatchingSystem(void)
       for (bVar8 = 0; bVar8 < bVar3; bVar8 = bVar8 + 1) {
         if ((((undefined1 *)0x806543 < puVar10) && (puVar10 < (undefined1 *)0x806547)) &&
            (development_mode == DEVELOPMENT_MODE_OFF)) {
-          _calibration_bank_copy_valid = 0;
+          power_down_refresh_enable = 0;
         }
         uVar1 = *_scratch_pad_write_pointer;
         _scratch_pad_write_pointer = _scratch_pad_write_pointer + 1;
@@ -30747,7 +30803,7 @@ void mc68k_initDiagnosticModeSystem(void)
    for PWM1 / PWM2 / PWM5 with a non-zero period it compares the read-back pin (bit 7 of DASM10SIC /
    DASM9SIC / DASM4SIC) with the commanded duty - a high pin at 0 % or a low pin at 100 % counts a
    driver error and the right level heals it. For its first 6 passes it also steps
-   mc68k_waterInFuelDiagnosticHandler (in fact the PWM 3 / 4 start-up check) (was
+   mc68k_stepPwm3AndPwm4OutputStartUpTest (in fact the PWM 3 / 4 start-up check) (was
    oilPressureRpmFaultMonitor; PR #53 round 85) */
 
 uint mc68k_monitorPwmOutputReadBackFaults(void)
@@ -30759,7 +30815,7 @@ uint mc68k_monitorPwmOutputReadBackFaults(void)
   
   if (_pwm_diagnostic_init_counter < 6) {
     _pwm_diagnostic_init_counter = _pwm_diagnostic_init_counter + 1;
-    in_D0 = mc68k_waterInFuelDiagnosticHandler();
+    in_D0 = mc68k_stepPwm3AndPwm4OutputStartUpTest();
   }
   if (_DAT_00808998 != 0) {
     wVar1 = CTM4_DASM10SIC;
@@ -31018,12 +31074,15 @@ uint mc68k_monitorPwmOutputReadBackFaults(void)
 
 
 //
-// Function: mc68k_waterInFuelDiagnosticHandler @ 0x0002e2f4
+// Function: mc68k_stepPwm3AndPwm4OutputStartUpTest @ 0x0002e2f4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Each call runs one step of the start-up test of the PWM 3 and PWM 4 output drivers (CTM4 PWMSM7 /
+   PWMSM8). mc68k_monitorPwmOutputReadBackFaults calls it during its first 6 passes. (was
+   mc68k_waterInFuelDiagnosticHandler; PR #53 round 87) */
 
-ulonglong mc68k_waterInFuelDiagnosticHandler(void)
+ulonglong mc68k_stepPwm3AndPwm4OutputStartUpTest(void)
 
 {
   word wVar1;
@@ -31263,10 +31322,16 @@ void initQadcModule(void)
 
 
 //
-// Function: cm550_clearWorkingMemory @ 0x0002e9ac
+// Function: clearWorkingRam @ 0x0002e9ac
 //
 
-void cm550_clearWorkingMemory(void)
+/* Both run the same chunked clear: test p < limit first, chunk end = p + 256 bytes, clamp the chunk
+   end to the limit, clear dwords while p <= chunk end, repeat. That bound is inclusive in both, so
+   each pass clears 260 bytes and the dword at the limit is cleared too. This shared quirk points to
+   one source. (was cm550_clearWorkingMemory; PR #53 round 87; the twin of CM848 0x538974: one
+   shared name) */
+
+void clearWorkingRam(void)
 
 {
   undefined4 *puVar1;
@@ -31312,7 +31377,7 @@ void cm550_canMemoryPointerTableInit(void)
   _DAT_00801c56 = &DAT_00061376;
   _DAT_00801c5a = &DAT_00806544;
   _DAT_00801c5e = 0x806546;
-  if (_calibration_bank_active == 2) {
+  if (parameter_block_uploaded == 2) {
     _DAT_00801c62 = &DAT_000075ae;
   }
   else {
@@ -31339,7 +31404,7 @@ void cm550_canMemoryPointerTableInit(void)
   _calibration_sync_rom_pointer = &DAT_00061376;
   _DAT_00801c72 = 0;
   ram_refresh_enable = RAM_REFRESH_ENABLED;
-  _calibration_bank_copy_valid = 1;
+  power_down_refresh_enable = 1;
   _DAT_00801c76 = 1;
   return;
 }
@@ -31361,15 +31426,15 @@ void cm550_canMessageMemorySyncController(void)
   if ((_DAT_00801c76 == 0) && (ram_refresh_enable != RAM_REFRESH_DISABLED)) {
     cm550_canMemoryPointerTableInit();
   }
-  if (_calibration_bank_active == 0) {
+  if (parameter_block_uploaded == 0) {
     ram_refresh_enable = RAM_REFRESH_DISABLED;
   }
   if (ram_refresh_enable != RAM_REFRESH_DISABLED) {
     if (((short *)_can_memory_sync_table_pointer[1] <= _calibration_sync_ram_pointer) ||
        ((_can_memory_sync_table_pointer == (undefined4 *)&DAT_00801c5a &&
-        (_calibration_bank_copy_valid == 0)))) {
+        (power_down_refresh_enable == 0)))) {
       puVar1 = _can_memory_sync_table_pointer + 3;
-      if ((puVar1 == (undefined4 *)&DAT_00801c5a) && (_calibration_bank_copy_valid == 0)) {
+      if ((puVar1 == (undefined4 *)&DAT_00801c5a) && (power_down_refresh_enable == 0)) {
         puVar1 = _can_memory_sync_table_pointer + 6;
       }
       _can_memory_sync_table_pointer = puVar1;
@@ -33093,7 +33158,7 @@ void cm550_rpmHistogramAndAveragingStatistics(void)
       }
     }
   }
-  if (((_smoke_limiter_output_value == 8) && (_DAT_00801e90 != 8)) &&
+  if (((engine_state == 8) && (_DAT_00801e90 != 8)) &&
      ((_idle_cooldown_timer_high_speed != 0 || _idle_cooldown_timer_high_load != 0 ||
       (_idle_cooldown_timer_sustained_run != 0)))) {
     _hot_shutdown_event_counter = _hot_shutdown_event_counter + 1;
@@ -33101,7 +33166,7 @@ void cm550_rpmHistogramAndAveragingStatistics(void)
     _idle_cooldown_timer_high_speed = 0;
     _idle_cooldown_timer_sustained_run = 0;
   }
-  _DAT_00801e90 = _smoke_limiter_output_value;
+  _DAT_00801e90 = engine_state;
   if (_fuel_limit_selection_state == 0x12) {
     _DAT_00806192 = _DAT_00806192 + 1;
   }
@@ -33140,14 +33205,14 @@ uint cm550_fuelLimitRestoreFromCapture(void)
       *unaff_A3 = _minimum_time_the_engine_must_idle_before_shutdown_if_at_high_0_1800;
     }
   }
-  if (((_smoke_limiter_output_value == 8) && (_DAT_00801e90 != 8)) &&
+  if (((engine_state == 8) && (_DAT_00801e90 != 8)) &&
      ((uVar1 = (uint)(*in_A1 | *unaff_A4), (*in_A1 | *unaff_A4) != 0 || (*unaff_A3 != 0)))) {
     _hot_shutdown_event_counter = _hot_shutdown_event_counter + 1;
     *unaff_A4 = 0;
     *in_A1 = 0;
     *unaff_A3 = 0;
   }
-  _DAT_00801e90 = _smoke_limiter_output_value;
+  _DAT_00801e90 = engine_state;
   if (_fuel_limit_selection_state == 0x12) {
     _DAT_00806192 = _DAT_00806192 + 1;
   }
@@ -33667,8 +33732,7 @@ ushort cm550_FUN_00031496(void)
   ushort uVar1;
   
   uVar1 = _feature_enable_flags_word & 0x10;
-  if (((uVar1 != 0) && (_smoke_limiter_output_value != 1)) && (_trending_data_capture_active == 1))
-  {
+  if (((uVar1 != 0) && (engine_state != 1)) && (_trending_data_capture_active == 1)) {
     if ((_DAT_00808a80 < _current_engine_rpm_filtered) ||
        (_current_engine_rpm_filtered <= _rpm_divisor_value)) {
       _DAT_00801e98 = 0;
@@ -33739,7 +33803,7 @@ void cm550_FUN_000315be(void)
   
   _DAT_00801ea0 = _DAT_00801ea0 + 1;
   if (((_DAT_00801ea0 == 300) && (_DAT_00801ea0 = 0, (_feature_enable_flags_word & 0x10) != 0)) &&
-     (_smoke_limiter_output_value != 1)) {
+     (engine_state != 1)) {
     if (_trending_presample_interval_counter == 0) {
       _DAT_00804a16 = _DAT_0080617a;
     }
@@ -34293,7 +34357,8 @@ undefined4 cm550_diagnosticMultiPacketResponseBuilder(can_std_rx_desc_t *request
   undefined1 *puVar5;
   undefined1 *puVar6;
   
-  bVar2 = cm550_FUN_0000b688((word)CONCAT31((int3)((uint)in_D0 >> 8),*request->data_ptr));
+  bVar2 = getJ1939DiagnosticResponseEchoLength
+                    ((word)CONCAT31((int3)((uint)in_D0 >> 8),*request->data_ptr));
   cVar3 = (char)result_code;
   if (cVar3 == '\0') {
     data_length = bVar2 + 1;
@@ -34743,13 +34808,11 @@ void cm550_diagnosticDM5PGN_65230_Builder(void)
 // Function: vp44_diagnosticByteResponseSender @ 0x00032b38
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void vp44_diagnosticByteResponseSender(byte first_data_byte,word response_code)
 
 {
-  DAT_00803470 = first_data_byte;
-  _lift_pump_table_lookup_arg_3472 = byteSwap16(&response_code);
+  j1939_dm8_test_identifier = first_data_byte;
+  j1939_dm8_test_value = byteSwap16(&response_code);
   cm550_sendCanMessage((j1939_header_t *)&vp44_timing_table_size);
   return;
 }
@@ -34767,7 +34830,7 @@ void vp44_diagnosticDM8PGN_65232_Builder(void)
 {
   _vp44_timing_table_size = CONCAT13((char)((_DAT_00803f5e & 7) << 2),0xfed000);
   _DAT_00803466 = 8;
-  _base_timing_fuel_value_input = &DAT_00803470;
+  _base_timing_fuel_value_input = &j1939_dm8_test_identifier;
   _DAT_0080346c = &lift_pump_fuel_demand_input;
   _vp44_timing_table_size = CONCAT31(_vp44_timing_table_size,j1939_engine_node_source_address);
   DAT_00803471 = 0xff;
@@ -36327,7 +36390,7 @@ void vp44_FUN_000344ce(void)
 void cm550_FUN_00034512(void)
 
 {
-  if (_smoke_limiter_output_value != 1) {
+  if (engine_state != 1) {
     _time_that_the_engine_is_not_in_stop_state_0_2_29 =
          _time_that_the_engine_is_not_in_stop_state_0_2_29 + 1;
   }
@@ -36934,7 +36997,7 @@ void mc68k_delayTimeBaseTicksWithWatchdogService(word tick_count)
 
 /* A byte-identical copy of mc68k_delayTimeBaseTicksWithWatchdogService (ROM 0x34BF8-0x34C35 =
    0x34BBA-0x34BF7); its only reference is movea.l #0x34BF8,a3 in the restart routine
-   cm550_FUN_0001192a (was cm550_FUN_00034bf8; PR #53 round 85) */
+   restartThroughBootRom (was cm550_FUN_00034bf8; PR #53 round 85) */
 
 void mc68k_delayTimeBaseTicksWithWatchdogService2(word tick_count)
 

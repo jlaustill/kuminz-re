@@ -51,7 +51,7 @@ from binary analysis.
 Separately, the ISR loop calls the broadcast dispatcher every tick:
 
 ```
-main_loop @ ROM[0xC0A0]  — 8-phase MIOS ISR
+executiveFrameInterruptHandler @ ROM[0xC0A0]  — 8-phase MIOS ISR
   └─ cm848_phase_group_b_processing @ ROM[0xB854]
        └─ cm848_processJ1939DiagnosticMessages()   ← receives incoming J1939
           cm848_processJ1939ReceivedMessages()

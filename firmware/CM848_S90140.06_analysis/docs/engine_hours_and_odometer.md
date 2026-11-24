@@ -31,7 +31,7 @@ be re-verified on the bench before being trusted — see
 
 > **Update 2026-11-15 (PR #48): the two hour meters, their scale, and real engine hours.**
 > - **The task:** `cm848_advanceHourMeters` (flash2 0x506780, was `cm848_mainLoop_step_4`) runs in phase 0 of the
->   40-phase `main_loop`. `main_loop` runs one phase per PIT tick: it clears the PIT status flag on every pass, and
+>   40-phase `executiveFrameInterruptHandler`. `executiveFrameInterruptHandler` runs one phase per PIT tick: it clears the PIT status flag on every pass, and
 >   `PITC` = 4999 gives a 5000-count period, which is 5 ms at the usual 1 MHz PIT clock (4 MHz crystal / 4). So each meter
 >   gains **1 count per 40 × 5 ms = 0.200 s**, and hours = counts / 18000.
 > - **The two meters:**
@@ -40,7 +40,7 @@ be re-verified on the bench before being trusted — see
 >   - `engine_hour_meter` (RAM 0x40A794, was `protection_timer_config_a`): +1 only when `cold_start_phase` is not 1
 >     (engine stopped / cranking). It is **engine-running time**; EEPROM copy at **0x42** (`engine_hour_meter_cal`).
 >   - Both are loaded at start (`cm848_loadHourMetersFromEeprom`) and saved at power-down (`cm848_runPowerDownSequence`)
->     and before a reflash restart (`cm848_restartThroughBootRom`).
+>     and before a reflash restart (`restartThroughBootRom`).
 > - **Proof that 0x42 is engine-running time** (the four EEPROM dumps):
 >
 >   | Dump | Key-on 0x30 | Engine-run 0x42 | Key-on delta | Engine-run delta |

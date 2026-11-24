@@ -211,7 +211,7 @@ void cm848_periodicTaskGroup21_calibration(void);  // @ 0x0000c000
 void cm848_periodicTaskGroup22_calibration(void);  // @ 0x0000c028
 void hpcr_periodicTaskSet_protection4(void);  // @ 0x0000c050
 void cm848_periodicTaskSet_outputs2(void);  // @ 0x0000c078
-void main_loop(void);  // @ 0x0000c0a0
+void executiveFrameInterruptHandler(void);  // @ 0x0000c0a0
 void cm848_initSensorDefaults(void);  // @ 0x0000c874
 void cm848_processBarometricPressureChannel(void);  // @ 0x0000c8bc
 void cm848_initializeBarometricPressureChannel(void);  // @ 0x0000c948
@@ -490,7 +490,7 @@ void initializeHighSpeedGovernorGainSet(void);  // @ 0x0001f98c
 void selectHighSpeedGovernorGainSet(void);  // @ 0x0001fa20
 void selectEngineSpeedLimit(void);  // @ 0x0001fd94
 void initializeEngineSpeedLimitDefaults(void);  // @ 0x00020410
-undefined1 cm848_getJ1939DiagnosticResponseEchoLength(int param_1);  // @ 0x000204a8
+undefined1 getJ1939DiagnosticResponseEchoLength(int param_1);  // @ 0x000204a8
 void cm848_calculateJ1939ReferenceEngineFueling(void);  // @ 0x00020500
 uint cm848_calculateEffectiveFuelLimit(void);  // @ 0x00020554
 void cm848_calculateDriverDemandPercentTorque(void);  // @ 0x00020860
@@ -510,9 +510,9 @@ J1939_DIAGNOSTIC_RESULT exitDevelopmentMode(void);  // @ 0x00021624
 J1939_DIAGNOSTIC_RESULT enterDevelopmentMode(void);  // @ 0x00021668
 J1939_DIAGNOSTIC_RESULT forceExitDevelopmentMode(void);  // @ 0x00021694
 J1939_DIAGNOSTIC_RESULT cm848_commandEngineShutdown(void);  // @ 0x000216e8
-undefined4 cm848_restartThroughBootRom(j1939_rx_msg_t *param_1,int param_2);  // @ 0x000216fc
+undefined4 restartThroughBootRom(j1939_rx_msg_t *param_1,int param_2);  // @ 0x000216fc
 undefined1 cm848_restartThroughBootRomAfterSciRequest(void);  // @ 0x000218b0
-undefined1 cm848_handleJ1939RestartService(j1939_rx_msg_t *request);  // @ 0x000218dc
+undefined1 handleJ1939RestartService(j1939_rx_msg_t *request);  // @ 0x000218dc
 J1939_DIAGNOSTIC_RESULT cm848_inhibitKeyOffShutdown(void);  // @ 0x00021904
 J1939_DIAGNOSTIC_RESULT commitEepromMirrorToEeprom(void);  // @ 0x00021918
 void cm848_registerJ1939DiagnosticHandlers(void);  // @ 0x00021a24
@@ -613,7 +613,7 @@ void cm848_j1939HandlePgn65260VehicleId(void);  // @ 0x00026db4
 void cm848_initPgn65260VehicleIdHandler(void);  // @ 0x00026ddc
 void cm848_sendPgn65279WaterInFuelIndicatorMessage(void);  // @ 0x00026e90
 void cm848_initializePgn65279WaterInFuelIndicatorBuffer(void);  // @ 0x00026efc
-void emptyStubFunction4(void);  // @ 0x00026f78
+void ignoreCanTransmitInterrupt(void);  // @ 0x00026f78
 void cm848_emptyStubFunction5(void);  // @ 0x00026f7c
 void cm848_runTsc1LostManagement(void);  // @ 0x00026f80
 void cm848_resetEngineRetarderTsc1Request(void);  // @ 0x00027118
@@ -1028,7 +1028,7 @@ void cm848_selectMainInjectionTiming(void);  // @ 0x0004b5b8
 void cm848_calculateFuelLimitByRpmAndDemand(void);  // @ 0x0004b6cc
 void cm848_applyFuelLimitByRpmAndDemand(void);  // @ 0x0004b9ac
 void cm848_evaluateCalibratedMonitorDisableConditions(void);  // @ 0x0004ba48
-void cm848_copyRomToRamBuffer(void);  // @ 0x0004bd00
+void copyCalibrationFromRomToRam(void);  // @ 0x0004bd00
 bool cm848_isEepromWriteQueueEmpty(void);  // @ 0x0004bd3c
 void cm848_startEepromBlockRead(void);  // @ 0x0004bd5c
 void cm848_writeNextQueuedEepromByte(void);  // @ 0x0004be4c
@@ -1436,7 +1436,7 @@ void cm848_calculateExhaustPressure(void);  // @ 0x00509848
 void cm848_initializeExhaustPressure(void);  // @ 0x00509a2c
 void cm848_updateGeneralEngineProtection(void);  // @ 0x00509a7c
 void cm848_initFlowControlStateVariables(void);  // @ 0x00509b5c
-void cm848_copyROMCalibrationToRAM(void);  // @ 0x00509b74
+void cm848_loadDefaultJ1939NamesAndSourceAddresses(void);  // @ 0x00509b74
 undefined4 cm848_j1939DiagnosticServiceAcknowledgeNoOperation(void);  // @ 0x00509be0
 undefined4 cm848_updateJ1939BroadcastEnableMask(j1939_rx_msg_t *request,dword enable);  // @ 0x00509be8
 undefined1 cm848_handleJ1939DisableBroadcastService(j1939_rx_msg_t *request);  // @ 0x00509ce4
@@ -1952,7 +1952,7 @@ undefined4 cm848_getSensorChannelReferenceSupplyState(int param_1);  // @ 0x0053
 void cm848_checkDiscreteOutputReadBack (dword logical_output,dword read_back_line,dword high_fault_bit,dword low_fault_bit, byte *on_mismatch_count,byte *off_mismatch_count,byte *high_fault_recovery_count, byte *low_fault_recovery_count,word *retry_count);  // @ 0x00537c64
 void cm848_monitorDiscreteOutputReadBack(void);  // @ 0x00538278
 void cm848_initializeDiscreteOutputReadBackChecks(void);  // @ 0x00538748
-void cm848_clearWorkingRam(void);  // @ 0x00538974
+void clearWorkingRam(void);  // @ 0x00538974
 void cm848_initializeRamRefresh(void);  // @ 0x005389c4
 void cm848_refreshRamCalibration(void);  // @ 0x00538a84
 undefined4 cm848_scheduleJ1939PeriodicMessage (int param_1,undefined2 param_2,int param_3,int param_4,undefined4 param_5);  // @ 0x00538c8c
@@ -1963,7 +1963,7 @@ void cm848_dispatchJ1939ReceivedMessages(void);  // @ 0x00538ef4
 void cm848_j1939_system_init(void);  // @ 0x00539190
 undefined4 cm848_lookupParameterIdAddress(uint param_1,uint *param_2);  // @ 0x00539768
 void cm848_initCanHardware(void);  // @ 0x00539868
-void cm848_restartOnKeyOnDuringPowerDown(void);  // @ 0x00539938
+void restartOnKeyOnDuringPowerDown(void);  // @ 0x00539938
 void cm848_saveEepromForPowerDown(void);  // @ 0x00539a78
 void cm848_runPowerDownSequence(void);  // @ 0x00539d18
 void cm848_outputChannelNoneEnable(void);  // @ 0x0053a0fc

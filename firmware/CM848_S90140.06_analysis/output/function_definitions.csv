@@ -517,7 +517,7 @@ function_address,function_name,param_index,name,type,comment
 0x00512f18,cm848_selectDeniedCruiseState,return,,CRUISE_CONTROL_STATE,The cruise state for this pass (r3) - no parameters
 0x00509ce4,cm848_handleJ1939DisableBroadcastService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x00509d0c,cm848_handleJ1939EnableBroadcastService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x000218dc,cm848_handleJ1939RestartService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
+0x000218dc,handleJ1939RestartService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x0050c318,cm848_handleJ1939GetAddressByParameterIdService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x0050c640,cm848_handleJ1939ReadByParameterIdLongLengthService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x0050b228,cm848_handleJ1939WriteByParameterIdService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)

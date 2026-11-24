@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 19:00:40 MST 2026
+// Generated: Tue Nov 24 09:26:38 MST 2026
 
 
 //
@@ -7569,10 +7569,15 @@ void cm848_periodicTaskSet_outputs2(void)
 
 
 //
-// Function: main_loop @ 0x0000c0a0
+// Function: executiveFrameInterruptHandler @ 0x0000c0a0
 //
 
-void main_loop(void)
+/* The periodic interrupt timer's dispatched callback (the twin of CM550 0x1b876; the SIU interrupt
+   dispatcher calls it from table entry 15): it acknowledges the PIT itself (PISCR) and runs one
+   frame of the 40-phase executive. It is not a loop (was main_loop; PR #53 round 87; the twin of
+   CM550 0x1b876: one shared name) */
+
+void executiveFrameInterruptHandler(void)
 
 {
   int iVar1;
@@ -9354,8 +9359,8 @@ void calculateAlphaBase(void)
    alpha_altitude_derate_timer is nonzero while mask 0x20 of algorithm_enable_flags_19_cal is set ->
    3; else 0. The alpha is limited to 16384 and copied to
    four_dimensional_fueling_interpolation_factor (e2m 1053 +2 Fuel_Interp_Factor) unless bit 0x10 of
-   algorithm_enable_flags_12_cal (ESP enable) is set. Caller main_loop. Shared name with CM550
-   0xc326 (the same function). (was hpcr_calculateFuelTrimOutput) */
+   algorithm_enable_flags_12_cal (ESP enable) is set. Caller executiveFrameInterruptHandler. Shared
+   name with CM550 0xc326 (the same function). (was hpcr_calculateFuelTrimOutput) */
 
 void calculateAlpha(void)
 
@@ -15113,8 +15118,8 @@ int cm848_calculateTorqueFromFuelQuantity(word param_1,word param_2)
    0x40a502) and passes each through cm848_calculateTorqueFromFuelQuantity into
    combustion_chi_maximum_torque_at_point_1, combustion_chi_maximum_torque_at_point_2,
    combustion_chi_maximum_torque_at_point_3, combustion_chi_maximum_torque_at_point_4 and
-   combustion_chi_maximum_torque_at_point_5. Called from main_loop; the ten results are read nowhere
-   else. (was cm848_lookupProtectionFuelDemand) */
+   combustion_chi_maximum_torque_at_point_5. Called from executiveFrameInterruptHandler; the ten
+   results are read nowhere else. (was cm848_lookupProtectionFuelDemand) */
 
 void cm848_calculateChiMaximumFuelAtSpeedPoints(void)
 
@@ -22019,16 +22024,18 @@ void initializeEngineSpeedLimitDefaults(void)
 
 
 //
-// Function: cm848_getJ1939DiagnosticResponseEchoLength @ 0x000204a8
+// Function: getJ1939DiagnosticResponseEchoLength @ 0x000204a8
 //
 
 /* How many request bytes a PGN 61184 response repeats after its response byte
    (cm848_sendJ1939ResponseFrame): the service byte and its target but never the length field. 3 for
    services 4 / 5 - 5 for 0x19 - the byte at 0x575dd + service for 0x41-0x4e (at 0x5761e: 3 for the
    ID services without an offset / 5 with a 2-byte offset or a 4-byte address / 7 with a 4-byte
-   offset) - else 1 (was cm848_getLimitCategoryCode; PR #53 round 63) */
+   offset) - else 1 (was cm848_getLimitCategoryCode; PR #53 round 63) | (was
+   cm848_getJ1939DiagnosticResponseEchoLength; PR #53 round 87; the twin of CM550 0xb688: one shared
+   name) */
 
-undefined1 cm848_getJ1939DiagnosticResponseEchoLength(int param_1)
+undefined1 getJ1939DiagnosticResponseEchoLength(int param_1)
 
 {
   if (param_1 < 0x41) {
@@ -22969,7 +22976,7 @@ J1939_DIAGNOSTIC_RESULT cm848_commandEngineShutdown(void)
 
 
 //
-// Function: cm848_restartThroughBootRom @ 0x000216fc
+// Function: restartThroughBootRom @ 0x000216fc
 //
 
 /* WARNING: This function may have set the stack pointer */
@@ -22979,9 +22986,10 @@ J1939_DIAGNOSTIC_RESULT cm848_commandEngineShutdown(void)
    the request on its link (param 2: 0 = J1939 response frame to param 1, 2 = SCI byte 1 via
    cm848_sciTransmitSingleByteOne). After a delay it sets chip-select 0 (BR0 0x500803 / OR0
    0xfff00030) and SIUMCR 0x402000, then jumps through the reset vector word at ROM 0x104 to
-   mpc555_hardwareInitialization (0x2694). Was mpc555_processJ1939RxQueue */
+   mpc555_hardwareInitialization (0x2694). Was mpc555_processJ1939RxQueue | (was
+   cm848_restartThroughBootRom; PR #53 round 87; the twin of CM550 0x1192a: one shared name) */
 
-undefined4 cm848_restartThroughBootRom(j1939_rx_msg_t *param_1,int param_2)
+undefined4 restartThroughBootRom(j1939_rx_msg_t *param_1,int param_2)
 
 {
   char cVar1;
@@ -23035,37 +23043,37 @@ undefined4 cm848_restartThroughBootRom(j1939_rx_msg_t *param_1,int param_2)
 // Function: cm848_restartThroughBootRomAfterSciRequest @ 0x000218b0
 //
 
-/* cm848_restartThroughBootRom(0, 2): restart through the boot ROM and acknowledge with SCI byte 1.
-   Called by SCI command 49 (cm848_sciCommand49Callback) after it wrote the serial reflash hand-off
-   to EEPROM. Was cm848_j1939ProcessRxQueueDefault */
+/* restartThroughBootRom(0, 2): restart through the boot ROM and acknowledge with SCI byte 1. Called
+   by SCI command 49 (cm848_sciCommand49Callback) after it wrote the serial reflash hand-off to
+   EEPROM. Was cm848_j1939ProcessRxQueueDefault */
 
 undefined1 cm848_restartThroughBootRomAfterSciRequest(void)
 
 {
   undefined1 uVar1;
   
-  uVar1 = cm848_restartThroughBootRom(0,2);
+  uVar1 = restartThroughBootRom(0,2);
   return uVar1;
 }
 
 
 
 //
-// Function: cm848_handleJ1939RestartService @ 0x000218dc
+// Function: handleJ1939RestartService @ 0x000218dc
 //
 
 /* J1939 PGN 61184 diagnostic service 11 via the 0x3fa8b2 table (cm848_j1939DiagnosticServiceHandler
    after the cm848_validateJ1939DiagnosticRequest gate; registered by
-   cm848_registerJ1939DiagnosticHandlers): cm848_restartThroughBootRom(requester, 0) - restart
-   through the boot ROM and acknowledge with a J1939 response frame. Was
-   cm848_j1939ProcessRxQueueParam */
+   cm848_registerJ1939DiagnosticHandlers): restartThroughBootRom(requester, 0) - restart through the
+   boot ROM and acknowledge with a J1939 response frame. Was cm848_j1939ProcessRxQueueParam | (was
+   cm848_handleJ1939RestartService; PR #53 round 87; the twin of CM550 0x11908: one shared name) */
 
-undefined1 cm848_handleJ1939RestartService(j1939_rx_msg_t *request)
+undefined1 handleJ1939RestartService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
   
-  uVar1 = cm848_restartThroughBootRom(request,0);
+  uVar1 = restartThroughBootRom(request,0);
   return uVar1;
 }
 
@@ -23172,7 +23180,7 @@ void cm848_registerJ1939DiagnosticHandlers(void)
   cm848_j1939RegisterDiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_COMMAND_ENGINE_SHUTDOWN,cm848_commandEngineShutdown);
   cm848_j1939RegisterDiagnosticService
-            (J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM,cm848_handleJ1939RestartService);
+            (J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM,handleJ1939RestartService);
   cm848_j1939RegisterDiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_INHIBIT_KEY_OFF_SHUTDOWN,cm848_inhibitKeyOffShutdown);
   cm848_j1939RegisterDiagnosticService
@@ -25425,7 +25433,7 @@ void cm848_sendJ1939ResponseFrame(j1939_rx_msg_t *request,dword result_code)
   byte bVar4;
   byte *pbVar5;
   
-  bVar1 = cm848_getJ1939DiagnosticResponseEchoLength(*request->data_pointer);
+  bVar1 = getJ1939DiagnosticResponseEchoLength(*request->data_pointer);
   if (result_code == 0) {
     iVar2 = 1;
   }
@@ -27231,10 +27239,15 @@ void cm848_initializePgn65279WaterInFuelIndicatorBuffer(void)
 
 
 //
-// Function: emptyStubFunction4 @ 0x00026f78
+// Function: ignoreCanTransmitInterrupt @ 0x00026f78
 //
 
-void emptyStubFunction4(void)
+/* The empty transmit-complete hook (a bare blr): cm848_handleCanMailboxTransmitComplete calls it
+   for every mailbox except the one whose transmit sends the next queued J1939 frame - the same step
+   as CM550 0x1e056 and its hook 0xc80c. (was emptyStubFunction4; PR #53 round 87; the twin of CM550
+   0xc80c: one shared name) */
+
+void ignoreCanTransmitInterrupt(void)
 
 {
   return;
@@ -51830,10 +51843,14 @@ LAB_0004bcd0:
 
 
 //
-// Function: cm848_copyRomToRamBuffer @ 0x0004bd00
+// Function: copyCalibrationFromRomToRam @ 0x0004bd00
 //
 
-void cm848_copyRomToRamBuffer(void)
+/* Copies the ROM calibration image (ROM 0x64aea) into its RAM copy 0x3feed0-0x40a046 dword by dword
+   - once at start-up right after clearWorkingRam (the twin of CM550 0x117ec) (was
+   cm848_copyRomToRamBuffer; PR #53 round 87; the twin of CM550 0x117ec: one shared name) */
+
+void copyCalibrationFromRomToRam(void)
 
 {
   word *pwVar1;
@@ -58090,7 +58107,7 @@ void cm848_handleCanMailboxTransmitComplete(uint param_1)
     mpc555_processJ1939TxBufferSend();
   }
   else {
-    emptyStubFunction4();
+    ignoreCanTransmitInterrupt();
   }
   return;
 }
@@ -58707,7 +58724,7 @@ void cm848_applicationMain(void)
   QSMCM_IDSPI_1 = 0;
   qsmcm_sccr1.SCC1R1 = 0;
   mpc555_initTpuConfiguration();
-  cm848_clearWorkingRam();
+  clearWorkingRam();
   exception_reset_status = USIU_SCCR.RSR;
   USIU_SCCR.RSR = 0xffff;
   exception_srr0 = in_SPRG0;
@@ -58715,7 +58732,7 @@ void cm848_applicationMain(void)
   exception_link_register = in_SPRG2;
   exception_dar = in_DAR;
   exception_dsisr = in_DSISR;
-  cm848_copyRomToRamBuffer();
+  copyCalibrationFromRomToRam();
   run_location = RUN_LOCATION_NORMAL;
   initQadcModule();
   qsmcm_sccr0 = 5;
@@ -58961,7 +58978,7 @@ void cm848_applicationMain(void)
   cm848_initVehicleSpeedSensorChannel();
   cm848_initializeVehicleSpeedSensorZeroUnderLoadMonitor();
   cm848_initializeVehicleSpeedAndCruiseState();
-  cm848_copyROMCalibrationToRAM();
+  cm848_loadDefaultJ1939NamesAndSourceAddresses();
   cm848_initJ1939InputProcessing();
   cm848_initializeVariableGeometryTurbochargerPositionChannel();
   cm848_initializeSciCommand37TestTimeouts();
@@ -59097,12 +59114,11 @@ void cm848_applicationMain(void)
 
 /* WARNING: This function may have set the stack pointer */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Re-runs the application without a hardware reset (only caller:
-   cm848_restartOnKeyOnDuringPowerDown): four init calls / disables external interrupts (mtspr EID)
-   and resets the stack pointer to 0x3f9ff8 / re-inits and runs the main run loop
-   (cm848_refreshRamCalibration until power_down_start_flag) / the same post-run fault housekeeping
-   as cm848_applicationMain / cm848_runPowerDownSequence - so it never returns. Was
-   cm848_engineStartCompletionB */
+/* Re-runs the application without a hardware reset (only caller: restartOnKeyOnDuringPowerDown):
+   four init calls / disables external interrupts (mtspr EID) and resets the stack pointer to
+   0x3f9ff8 / re-inits and runs the main run loop (cm848_refreshRamCalibration until
+   power_down_start_flag) / the same post-run fault housekeeping as cm848_applicationMain /
+   cm848_runPowerDownSequence - so it never returns. Was cm848_engineStartCompletionB */
 
 void cm848_restartApplicationWithoutReset(void)
 
@@ -68423,10 +68439,16 @@ void cm848_initFlowControlStateVariables(void)
 
 
 //
-// Function: cm848_copyROMCalibrationToRAM @ 0x00509b74
+// Function: cm848_loadDefaultJ1939NamesAndSourceAddresses @ 0x00509b74
 //
 
-void cm848_copyROMCalibrationToRAM(void)
+/* Copies the default J1939 NAMEs into the working ones (j1939_default_engine_name ->
+   j1939_engine_name and j1939_default_retarder_name -> j1939_engine_retarder_name - 4 entries each)
+   and the default engine / retarder source addresses into j1939_source_address /
+   j1939_engine_retarder_source_address - no calibration (was cm848_copyROMCalibrationToRAM; PR #53
+   round 87) */
+
+void cm848_loadDefaultJ1939NamesAndSourceAddresses(void)
 
 {
   uint uVar1;
@@ -72502,7 +72524,7 @@ void cm848_initializeRemoteThrottle(void)
    fuel_demand_compensation_target_by_pressure_axis / _values. The source flag
    charge_saturation_temperature_source (+A Charge_Saturation_Tmptr_Source, copied to 0x40af74) is 0
    only when the charge pressure, ambient temperature and ambient pressure sources are all 0, else
-   1. Caller main_loop. (was cm848_blendBoostAndThrottleFuelDemand) */
+   1. Caller executiveFrameInterruptHandler. (was cm848_blendBoostAndThrottleFuelDemand) */
 
 void cm848_calculateWaterVaporAndSaturationTemperatures(void)
 
@@ -85383,8 +85405,8 @@ void cm848_sciCommand49Handler(void)
 //
 
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
-   loads sci_buffer[0] = 1 and transmits that single byte (called from cm848_restartThroughBootRom:
-   the SCI acknowledge of a restart through the boot ROM, e.g. after SCI command 49) |
+   loads sci_buffer[0] = 1 and transmits that single byte (called from restartThroughBootRom: the
+   SCI acknowledge of a restart through the boot ROM, e.g. after SCI command 49) |
    review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low */
 
 void cm848_sciTransmitSingleByteOne(void)
@@ -99386,14 +99408,15 @@ void cm848_initializeDiscreteOutputReadBackChecks(void)
 
 
 //
-// Function: cm848_clearWorkingRam @ 0x00538974
+// Function: clearWorkingRam @ 0x00538974
 //
 
 /* Zeroes working RAM from 0x3fa000 (executive_frame_ticks) up to 0x41428e (two words per step, 256
    bytes per outer pass) - the first call in cm848_applicationMain after the TPU set-up. Was
-   hpcr_exceptionHandler (a second function with the same name as the reset entry) */
+   hpcr_exceptionHandler (a second function with the same name as the reset entry) | (was
+   cm848_clearWorkingRam; PR #53 round 87; the twin of CM550 0x2e9ac: one shared name) */
 
-void cm848_clearWorkingRam(void)
+void clearWorkingRam(void)
 
 {
   word *pwVar1;
@@ -100021,7 +100044,7 @@ void cm848_initCanHardware(void)
 
 
 //
-// Function: cm848_restartOnKeyOnDuringPowerDown @ 0x00539938
+// Function: restartOnKeyOnDuringPowerDown @ 0x00539938
 //
 
 /* Key came back on during the power-down (called from cm848_saveEepromForPowerDown and 3 places in
@@ -100029,9 +100052,10 @@ void cm848_initCanHardware(void)
    power_cycle_sequence_number_cal (= completed + incomplete counts) / waits up to 1000 x 2500
    timebase ticks for that EEPROM write / then cm848_restartApplicationWithoutReset - the same
    bookkeeping cm848_applicationMain does at a reset after a completed power-down. Was
-   engine_protection_timer_sync */
+   engine_protection_timer_sync | (was cm848_restartOnKeyOnDuringPowerDown; PR #53 round 87; the
+   twin of CM550 0x27af0: one shared name) */
 
-void cm848_restartOnKeyOnDuringPowerDown(void)
+void restartOnKeyOnDuringPowerDown(void)
 
 {
   int iVar1;
@@ -100083,9 +100107,9 @@ void cm848_restartOnKeyOnDuringPowerDown(void)
 
 /* Power-down EEPROM save (from cm848_runPowerDownSequence): starts the EEPROM mirror save and waits
    for it - a key line held on for more than 80 samples meanwhile sets
-   key_on_during_power_down_save_flag and calls cm848_restartOnKeyOnDuringPowerDown after the save;
-   adds cm848_getEepromVerifyRetryTotal to the EEPROM word at 0x3fdb88; writes the mirror checksum
-   to eeprom_block_checksum_expected_cal; then copies power_cycle_sequence_number_cal into
+   key_on_during_power_down_save_flag and calls restartOnKeyOnDuringPowerDown after the save; adds
+   cm848_getEepromVerifyRetryTotal to the EEPROM word at 0x3fdb88; writes the mirror checksum to
+   eeprom_block_checksum_expected_cal; then copies power_cycle_sequence_number_cal into
    completed_power_down_sequence_number_cal - the marker the next start checks. Was
    engine_start_completion_sequence */
 
@@ -100121,7 +100145,7 @@ void cm848_saveEepromForPowerDown(void)
     sVar7 = cm848_isEepromMirrorSaveIdle();
   }
   if (key_on_during_power_down_save_flag != 0) {
-    cm848_restartOnKeyOnDuringPowerDown();
+    restartOnKeyOnDuringPowerDown();
   }
   local_10[0] = cm848_getEepromVerifyRetryTotal();
   if (local_10[0] != 0) {
@@ -100200,9 +100224,9 @@ void cm848_saveEepromForPowerDown(void)
    cm848_restartApplicationWithoutReset call it last): marks the session active and run_location
    0xee / waits for the EEPROM write queue / cm848_saveEepromForPowerDown / stores two more EEPROM
    dwords / writes power_down_left_ecm_powered_flag_cal = 0 / clears logical output 27 (0x1b) and
-   for 40 short waits restarts (output 27 back on + cm848_restartOnKeyOnDuringPowerDown) if the key
-   line comes back on / sets output 27 again and after a short delay checks the key once more /
-   writes the flag = 1 (the ECM is still powered) / then waits for the key and restarts. Was
+   for 40 short waits restarts (output 27 back on + restartOnKeyOnDuringPowerDown) if the key line
+   comes back on / sets output 27 again and after a short delay checks the key once more / writes
+   the flag = 1 (the ECM is still powered) / then waits for the key and restarts. Was
    cm848_initProtectionTimers */
 
 void cm848_runPowerDownSequence(void)
@@ -100299,7 +100323,7 @@ void cm848_runPowerDownSequence(void)
       wVar4 = mios_mdasm30.SCRD;
       if ((wVar4 & 0x8000) != 0) {
         cm848_setLogicalOutputAndDriveLine(0x1b);
-        cm848_restartOnKeyOnDuringPowerDown();
+        restartOnKeyOnDuringPowerDown();
       }
       uVar6 = TBLr;
     }
@@ -100313,7 +100337,7 @@ void cm848_runPowerDownSequence(void)
   } while (bVar9 < 4);
   wVar4 = mios_mdasm30.SCRD;
   if ((wVar4 & 0x8000) != 0) {
-    cm848_restartOnKeyOnDuringPowerDown();
+    restartOnKeyOnDuringPowerDown();
   }
   local_18[0] = 1;
   cm848_queueEepromByteWritesAtOffset11134(&power_down_left_ecm_powered_flag_cal,local_18,2);
@@ -100337,7 +100361,7 @@ void cm848_runPowerDownSequence(void)
   do {
     wVar4 = mios_mdasm30.SCRD;
   } while ((wVar4 & 0x8000) == 0);
-  cm848_restartOnKeyOnDuringPowerDown();
+  restartOnKeyOnDuringPowerDown();
   return;
 }
 

@@ -26,7 +26,7 @@ void cm550_dmaControllerSetup1(void);  // @ 0x0000b5e4
 void cm550_rpmParameterPointerSetup(void);  // @ 0x0000b614
 void cm550_dmaDescriptorSetup2(void);  // @ 0x0000b63e
 void cm550_initFuelSystemOutputDriver(void);  // @ 0x0000b666
-byte cm550_FUN_0000b688(word diagnostic_service);  // @ 0x0000b688
+byte getJ1939DiagnosticResponseEchoLength(word diagnostic_service);  // @ 0x0000b688
 void cm550_diagnosticMessageQueueWrite(word response_type);  // @ 0x0000b6e8
 void validateServiceDataLength(void);  // @ 0x0000b7bc
 void cm550_initADCChannelConfiguration(void);  // @ 0x0000bcf0
@@ -48,8 +48,8 @@ ushort cm550_rpmHistogramAndProtectionStatisticsAccumulator(void);  // @ 0x0000c
 void cm550_fuelParameterPointerSetup(void);  // @ 0x0000c714
 void cm550_shutdownMinimumSelector15(void);  // @ 0x0000c742
 void mc68k_configureCanCs5MessageObjects(void);  // @ 0x0000c760
-void cm550_emptyStubFunction1(void);  // @ 0x0000c80c
-void cm550_modeBasedDataDispatcher(word message_object);  // @ 0x0000c80e
+void ignoreCanTransmitInterrupt(void);  // @ 0x0000c80c
+void vp44_dispatchReceivedPumpMessage(word message_object);  // @ 0x0000c80e
 void cm550_FUN_0000c87c(void);  // @ 0x0000c87c
 void cm550_FUN_0000c87e(void);  // @ 0x0000c87e
 void cm550_FUN_0000c880(void);  // @ 0x0000c880
@@ -98,7 +98,7 @@ void cm550_ioControlBasedFuelCalculator(void);  // @ 0x0000ff6c
 void cm550_throttleTablePointerSetup(void);  // @ 0x000100da
 uint cm550_bufferDecreasingPatternCheck(void);  // @ 0x0001011c
 uint cm550_bufferThresholdValidator(void);  // @ 0x000101b8
-word cm550_retarderModeThresholdCalculator(word backup_sensor_flag);  // @ 0x0001025c
+word cm550_detectEngineSpeedSensorSyncPulse(word backup_sensor_flag);  // @ 0x0001025c
 void cm550_canBusTimingInit(void);  // @ 0x00010394
 void cm550_sendCanMessage(j1939_header_t *msg_header);  // @ 0x000104e8
 void cm550_sendJ1939MultiFrameWrapper(void);  // @ 0x00010512
@@ -113,15 +113,15 @@ uint cm550_loadParameterBlock2FromFlash(void);  // @ 0x00010f32
 int cm550_saveParameterBlock1ToFlash(void);  // @ 0x00010fe0
 int cm550_saveParameterBlock2ToFlash(void);  // @ 0x0001125a
 void vp44_validateRedundantSensors(void);  // @ 0x000114d4
-void cm550_copyCalibrationFromRomToRam(void);  // @ 0x000117ec
+void copyCalibrationFromRomToRam(void);  // @ 0x000117ec
 undefined1 cm550_FUN_0001183e(void);  // @ 0x0001183e
 byte exitDevelopmentMode(void);  // @ 0x0001188c
 byte enterDevelopmentMode(void);  // @ 0x000118b2
 byte forceExitDevelopmentMode(void);  // @ 0x000118cc
 undefined1 cm550_activateHighRpmShutdownFlag(void);  // @ 0x000118fc
-void cm550_eepromWriteWrapper(dword param_1);  // @ 0x00011908
-void cm550_triggerDiagnosticSystemReset(void);  // @ 0x0001191a
-byte cm550_FUN_0001192a(dword request,word acknowledge_datalink);  // @ 0x0001192a
+void handleJ1939RestartService(dword param_1);  // @ 0x00011908
+void cm550_restartThroughBootRomAfterJ1708Request(void);  // @ 0x0001191a
+byte restartThroughBootRom(dword request,word acknowledge_datalink);  // @ 0x0001192a
 undefined1 cm550_FUN_00011a68(void);  // @ 0x00011a68
 byte commitEepromMirrorToEeprom(void);  // @ 0x00011a74
 void cm550_systemFunction8xMaximum(void);  // @ 0x00011b36
@@ -165,7 +165,7 @@ void cm550_initHourMeterSystem(void);  // @ 0x00014fae
 byte mc68k_sampleAndDebounceDiscreteInputs(void);  // @ 0x00014fca
 void mc68k_ioDriverStrobeHandler(void);  // @ 0x000159ee
 void vp44_initVP44StatusMonitoring(void);  // @ 0x00015dd0
-void mc68k_FUN_00015df0(void);  // @ 0x00015df0
+void mc68k_initializeDiscreteOutputDrivers(void);  // @ 0x00015df0
 void emptyStubFunction4(void);  // @ 0x00015f8c
 void mc68k_dispatchJ1708ReceivedMessages(void);  // @ 0x00015f8e
 int cm550_safeDivideWithClamp(dword dividend,word divisor);  // @ 0x0001645e
@@ -247,7 +247,7 @@ uint mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled(void);  // @ 0x0001a
 void cm550_FUN_0001a89a(void);  // @ 0x0001a89a
 void cm550_FUN_0001a8a2(void);  // @ 0x0001a8a2
 undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3(void);  // @ 0x0001a8a4
-dword cm550_throttleTimeAccumulatorProcessor(dword pulse_period,word edge_time_stamp);  // @ 0x0001a95a
+dword cm550_processPrimarySpeedPulsePeriodWithSyncPulse(dword pulse_period,word edge_time_stamp);  // @ 0x0001a95a
 int vp44FaultThresholdTablesInit(void);  // @ 0x0001a95e
 uint cm550_FUN_0001abb2(void);  // @ 0x0001abb2
 void cm550_FUN_0001ade8(void);  // @ 0x0001ade8
@@ -329,7 +329,7 @@ void cm550_FUN_0001b83e(void);  // @ 0x0001b83e
 void cm550_FUN_0001b846(void);  // @ 0x0001b846
 void vp44DiagnosticControlSlowCycle20Coordinator(void);  // @ 0x0001b85a
 void cm550_FUN_0001b862(void);  // @ 0x0001b862
-undefined8 main_loop(void);  // @ 0x0001b876
+undefined8 executiveFrameInterruptHandler(void);  // @ 0x0001b876
 void mc68k_scheduler_init(void);  // @ 0x0001bf54
 uint cm550_circularBufferPush(dword *buffer_ctrl,byte data_byte);  // @ 0x0001bfa2
 uint cm550_circularBufferPop(dword *buffer_ctrl,byte *data_out);  // @ 0x0001bfde
@@ -379,8 +379,8 @@ void cm550_serialNodeAddressChecker(word node_address);  // @ 0x0001e056
 void cm550_serialNodeAddressForwarder(word node_address);  // @ 0x0001e086
 undefined8 mc68k_canCs4InterruptHandler(void);  // @ 0x0001e0fa
 void cm550_canMessageInterruptHandlerSetup(void);  // @ 0x0001e1a0
-void cm550_emptyStubWrapper1(word message_object);  // @ 0x0001e1ac
-void cm550_modeBasedDataDispatcherWrapper(word message_object);  // @ 0x0001e1be
+void vp44_handleCanCs5TransmitInterrupt(word message_object);  // @ 0x0001e1ac
+void vp44_handleCanCs5ReceiveInterrupt(word message_object);  // @ 0x0001e1be
 undefined8 mc68k_canCs5InterruptHandler(void);  // @ 0x0001e1d0
 void cm550_serialCommunicationIsrRegister(void);  // @ 0x0001e25a
 void mc68k_armJ1708BusTimer(void);  // @ 0x0001e266
@@ -575,12 +575,12 @@ void cm550_insiteVersionInfoBuilder(void);  // @ 0x0002758e
 void cm550_insiteCapacityResponseBuilder(void);  // @ 0x00027706
 void cm550_FUN_000277e6(void);  // @ 0x000277e6
 void vp44_hourMeterEventLogger(void);  // @ 0x00027998
-void cm550_restartOnKeyOnDuringPowerDown(void);  // @ 0x00027af0
+void restartOnKeyOnDuringPowerDown(void);  // @ 0x00027af0
 void vp44_FUN_00027c20(void);  // @ 0x00027c20
 void cm550_savePowerDownDataToFlashBank(byte flash_bank_number);  // @ 0x00027cd0
 void mc68k_runPowerDownSequence(void);  // @ 0x00027f9c
 void mc68k_applicationMain(void);  // @ 0x000284e8
-void cm550_FUN_00028978(void);  // @ 0x00028978
+void cm550_restartApplicationWithoutReset(void);  // @ 0x00028978
 void mc68k_dualCanControllerInit(void);  // @ 0x00028a04
 void mc68k_initializeJ1939Datalink(void);  // @ 0x00028b80
 word mc68k_initializeJ1708Datalink(void);  // @ 0x00029130
@@ -604,10 +604,10 @@ void cm550_FUN_0002ddbc(void);  // @ 0x0002ddbc
 void mc68k_hardwareTimerFlagsInit(void);  // @ 0x0002ddce
 void mc68k_initDiagnosticModeSystem(void);  // @ 0x0002ddd6
 uint mc68k_monitorPwmOutputReadBackFaults(void);  // @ 0x0002dde8
-ulonglong mc68k_waterInFuelDiagnosticHandler(void);  // @ 0x0002e2f4
+ulonglong mc68k_stepPwm3AndPwm4OutputStartUpTest(void);  // @ 0x0002e2f4
 undefined8 mc68k_pwmFuelDemandOutputCalculator(void);  // @ 0x0002e5c0
 void initQadcModule(void);  // @ 0x0002e95e
-void cm550_clearWorkingMemory(void);  // @ 0x0002e9ac
+void clearWorkingRam(void);  // @ 0x0002e9ac
 void cm550_canMemoryPointerTableInit(void);  // @ 0x0002e9f8
 void cm550_canMessageMemorySyncController(void);  // @ 0x0002eadc
 void cm550_FUN_0002ec50(void);  // @ 0x0002ec50

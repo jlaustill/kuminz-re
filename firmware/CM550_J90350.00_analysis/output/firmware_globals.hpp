@@ -1274,7 +1274,8 @@ extern undefined vp44_timing_fault_limit_ptr;  // 0x00803464
 extern undefined base_timing_fuel_value_input;  // 0x00803468
 extern undefined vp44_stuck_pump_threshold_ptr;  // 0x0080346a
 extern undefined base_timing_table_lookup_arg_346e;  // 0x0080346e
-extern undefined lift_pump_table_lookup_arg_3472;  // 0x00803472
+extern byte j1939_dm8_test_identifier;  // 0x00803470
+extern word j1939_dm8_test_value;  // 0x00803472
 extern undefined vp44_lift_pump_table_ptr;  // 0x00803474
 extern undefined lift_pump_fuel_demand_input;  // 0x00803478
 extern undefined vp44_lift_pump_table_2_size;  // 0x0080347a
@@ -1490,6 +1491,8 @@ extern byte can_message_buffer_end;  // 0x00803882
 extern undefined ecu_identity_header;  // 0x00803b00
 extern undefined ecu_identity_marker_1;  // 0x00803b0a
 extern byte security_master_password_cal[6];  // 0x00803b0c
+extern word parameter_block_1_checksum_cal;  // 0x00803b12
+extern word parameter_block_2_checksum_cal;  // 0x00803b14
 extern undefined ecu_serial_number;  // 0x00803b15
 extern undefined eeprom_hour_meter_buffer;  // 0x00803b3e
 extern undefined ecu_unit_marker;  // 0x00803b44
@@ -1516,10 +1519,12 @@ extern undefined part_number_list;  // 0x00803ec2
 extern undefined maximum_rated_engine_speed_0_5000;  // 0x00803f40
 extern undefined lsg_operator_adjust_minimum_speed;  // 0x00803fca
 extern undefined lsg_operator_adjust_maximum_speed;  // 0x00803fcc
-extern undefined calibration_bank1_write_sequence;  // 0x00803fd6
+extern word parameter_block_1_save_start_count_cal;  // 0x00803fd6
+extern word parameter_block_1_save_complete_count_cal;  // 0x00803fd8
 extern undefined eeprom_powerdown_status;  // 0x00803fda
-extern undefined calibration_bank2_write_sequence;  // 0x00803fde
-extern undefined eeprom_calibration_write_success;  // 0x00803fe8
+extern word parameter_block_2_save_start_count_cal;  // 0x00803fde
+extern word parameter_block_2_save_complete_count_cal;  // 0x00803fe0
+extern word flash_write_failure_flag_cal;  // 0x00803fe8
 extern undefined vp44_reset_count;  // 0x00803fec
 extern undefined cyl_balance_trim_array;  // 0x00804158
 extern undefined j1939_message_total_timeout_count;  // 0x00804164
@@ -5002,7 +5007,8 @@ extern undefined param_scaling_factor;  // 0x0080d0c2
 extern undefined io_output_flag_byte_0;  // 0x0080d0c4
 extern undefined io_output_flag_byte_1;  // 0x0080d0c5
 extern undefined asthrfes_calc_input;  // 0x0080d0c6
-extern undefined smoke_limiter_output_value;  // 0x0080d0c8
+extern word engine_state;  // 0x0080d0c8
+extern word power_down_start_flag;  // 0x0080d0ca
 extern undefined CMSYSS;  // 0x0080d0cc
 extern undefined cam_sync_status;  // 0x0080d0cd
 extern undefined CMSYRSFG;  // 0x0080d0ce
@@ -5599,8 +5605,8 @@ extern undefined value_which_designates_the_duty_cycle_requested_for_pwm3_0_100;
 extern undefined value_which_designates_the_duty_cycle_requested_for_pwm4_0_100;  // 0x0080dc68
 extern undefined value_which_designates_the_duty_cycle_requested_of_pwm5_0_100;  // 0x0080dc6a
 extern RAM_REFRESH_STATE ram_refresh_enable;  // 0x0080dc6c
-extern undefined calibration_bank_copy_valid;  // 0x0080dc6e
-extern undefined calibration_bank_active;  // 0x0080dc70
+extern word power_down_refresh_enable;  // 0x0080dc6e
+extern word parameter_block_uploaded;  // 0x0080dc70
 extern undefined constant_used_in_sampled_road_speed_calculation_51428_16000000;  // 0x0080dc74
 extern undefined maximum_allowable_vehicle_speed_selected_as_the_rsg_refer_2_255_9961;  // 0x0080dc82
 extern undefined filtered_percent_load_output_of_gear_down_0_100;  // 0x0080dc8e
