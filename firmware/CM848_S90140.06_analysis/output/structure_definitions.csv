@@ -472,7 +472,7 @@ fault_bit_words_t,0x003fe974,fault_314,bitfield:1@10,0,fault 314,,verified
 fault_bit_words_t,0x003fe974,fault_315,bitfield:1@11,0,fault 315,,verified
 fault_bit_words_t,0x003fe974,fault_316,bitfield:1@12,0,fault 316,,verified
 fault_bit_words_t,0x003fe974,fault_317,bitfield:1@13,0,fault 317,,verified
-fault_bit_words_t,0x003fe974,fault_318,bitfield:1@14,0,fault 318 (P0604),,verified
+fault_bit_words_t,0x003fe974,working_ram_end_marker_error,bitfield:1@14,0,fault 318 (P0604 internal control module RAM error): cm848_checkWorkingRamEndMarker sets it when working_ram_end_marker no longer holds 0xC0DAC0DA (was fault_318; PR #53 round 87),,verified
 fault_bit_words_t,0x003fe974,torque_converter_clutch_rationality_error,bitfield:1@15,0,fault 319: e2m 1036 TCC_Rationality_Error (P1740),,verified
 fault_bit_words_t,0x003fe974,output_speed_sensor_rationality_error,bitfield:1@0,2,word faults_320_to_335 (e2m 1036 +28 System_Error_Status_20) bit 0 = fault 320: e2m 1036 OSS_Rationality_Error (P0720),,verified
 fault_bit_words_t,0x003fe974,fault_321,bitfield:1@1,0,fault 321,,verified
@@ -616,7 +616,7 @@ fault_bit_words_t,0x003fe974,fault_458,bitfield:1@10,0,fault 458,,verified
 fault_bit_words_t,0x003fe974,fault_459,bitfield:1@11,0,fault 459,,verified
 fault_bit_words_t,0x003fe974,fault_460,bitfield:1@12,0,fault 460,,verified
 fault_bit_words_t,0x003fe974,fault_461,bitfield:1@13,0,fault 461,,verified
-fault_bit_words_t,0x003fe974,working_ram_end_marker_error,bitfield:1@14,0,fault 462 (no DTC slot): cm848_checkWorkingRamEndMarker sets it when working_ram_end_marker no longer holds 0xC0DAC0DA (was fault_462; PR #53 round 87),,verified
+fault_bit_words_t,0x003fe974,fault_462,bitfield:1@14,0,fault 462,,verified
 fault_bit_words_t,0x003fe974,fault_463,bitfield:1@15,0,fault 463,,verified
 fault_bit_words_t,0x003fe974,fault_464,bitfield:1@0,2,word faults_464_to_479 (e2m 1036 +3A System_Error_Status_29) bit 0 = fault 464,,verified
 fault_bit_words_t,0x003fe974,fault_465,bitfield:1@1,0,fault 465,,verified

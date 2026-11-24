@@ -1936,7 +1936,7 @@ struct fault_bit_words_t {
     uint16_t fault_315 : 1;  /* bit 11: fault 315 */
     uint16_t fault_316 : 1;  /* bit 12: fault 316 */
     uint16_t fault_317 : 1;  /* bit 13: fault 317 */
-    uint16_t fault_318 : 1;  /* bit 14: fault 318 (P0604) */
+    uint16_t working_ram_end_marker_error : 1;  /* bit 14: fault 318 (P0604 internal control module RAM error): cm848_checkWorkingRamEndMarker sets it when working_ram_end_marker no longer holds 0xC0DAC0DA (was fault_318; PR #53 round 87) */
     uint16_t torque_converter_clutch_rationality_error : 1;  /* bit 15: fault 319: e2m 1036 TCC_Rationality_Error (P1740) */
     uint16_t output_speed_sensor_rationality_error : 1;  /* bit 0: word faults_320_to_335 (e2m 1036 +28 System_Error_Status_20) bit 0 = fault 320: e2m 1036 OSS_Rationality_Error (P0720) */
     uint16_t fault_321 : 1;  /* bit 1: fault 321 */
@@ -2080,7 +2080,7 @@ struct fault_bit_words_t {
     uint16_t fault_459 : 1;  /* bit 11: fault 459 */
     uint16_t fault_460 : 1;  /* bit 12: fault 460 */
     uint16_t fault_461 : 1;  /* bit 13: fault 461 */
-    uint16_t working_ram_end_marker_error : 1;  /* bit 14: fault 462 (no DTC slot): cm848_checkWorkingRamEndMarker sets it when working_ram_end_marker no longer holds 0xC0DAC0DA (was fault_462; PR #53 round 87) */
+    uint16_t fault_462 : 1;  /* bit 14: fault 462 */
     uint16_t fault_463 : 1;  /* bit 15: fault 463 */
     uint16_t fault_464 : 1;  /* bit 0: word faults_464_to_479 (e2m 1036 +3A System_Error_Status_29) bit 0 = fault 464 */
     uint16_t fault_465 : 1;  /* bit 1: fault 465 */

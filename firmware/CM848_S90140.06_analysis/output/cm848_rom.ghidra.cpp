@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue Nov 24 09:38:34 MST 2026
+// Generated: Tue Nov 24 09:54:21 MST 2026
 
 
 //
@@ -89210,9 +89210,10 @@ void cm848_writeWorkingRamEndMarker(void)
 //
 
 /* Once per executive cycle (phase 17): while working_ram_end_marker still holds 0xC0DAC0DA it
-   clears fault 462 (working_ram_end_marker_error) in fault_detected_cal and fault_registered_cal;
-   otherwise it sets the fault in fault_detected_cal. Fault 462 has no DTC slot. Nothing here
-   initializes a main loop (was cm848_main_loop_initialization; PR #53 round 87) */
+   clears fault 318 (working_ram_end_marker_error = P0604, internal control module RAM error) in
+   fault_detected_cal and fault_registered_cal; otherwise it sets the fault in fault_detected_cal
+   (word 19 bit 14: sth at byte 38 of the fault words, 0x5279cc). Nothing here initializes a main
+   loop (was cm848_main_loop_initialization; PR #53 round 87) */
 
 void cm848_checkWorkingRamEndMarker(void)
 

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue Nov 24 09:37:04 MST 2026
+// Generated: Tue Nov 24 09:52:54 MST 2026
 
 
 //
@@ -6842,11 +6842,14 @@ void cm550_restartThroughBootRomAfterJ1708Request(void)
 /* WARNING: This function may have set the stack pointer */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Software restart into the boot ROM without a hardware reset (the twin of CM848 0x216fc): only in
-   engine_state 1. It polls the EEPROM write queue around
-   mc68k_delayTimeBaseTicksWithWatchdogService2 waits (500 / 250 / 50000 ticks) - acknowledges the
-   request on the link its second argument names (0 the J1939 response frame - 1 the J1708
-   diagnostic message queue; CM848's case 2 is its SCI byte) - and jumps through the ROM vector at
-   0x8 (was cm550_FUN_0001192a; PR #53 round 87; the twin of CM848 0x216fc: one shared name) */
+   engine_state 1, otherwise it returns 7. It waits for the EEPROM write queue to drain (500-tick
+   waits), saves the two hour meters to the EEPROM mirror at 0x803b3e / 0x803b50 (while
+   ram_refresh_enable is on it waits for each write to arrive, otherwise it waits 250 ticks),
+   acknowledges the request on the link its second argument names (0 the J1939 response frame - 1
+   the J1708 diagnostic message queue; CM848's case 2 is its SCI byte), waits 50000 ticks, clears
+   output request bit 4 of 0x80bcf8 when 0x80bd2e is 0, strobes the outputs
+   (mc68k_ioDriverStrobeHandler) and jumps through the ROM vector at 0x8 (was cm550_FUN_0001192a; PR
+   #53 round 87; the twin of CM848 0x216fc: one shared name) */
 
 byte restartThroughBootRom(dword request,word acknowledge_datalink)
 
@@ -10089,7 +10092,7 @@ byte mc68k_sampleAndDebounceDiscreteInputs(void)
            _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xfffd;
     }
   }
-  emptyStubFunction4();
+  cm550_emptyStubFunction4();
   if ((debounced_value_for_rear_axle_ratio_switch_on_off & 2) == 0) {
     DAT_0080bcd7 = DAT_0080bcd7 & 0xfe;
   }
@@ -10448,10 +10451,15 @@ void mc68k_initializeDiscreteOutputDrivers(void)
 
 
 //
-// Function: emptyStubFunction4 @ 0x00015f8c
+// Function: cm550_emptyStubFunction4 @ 0x00015f8c
 //
 
-void emptyStubFunction4(void)
+/* Empty function (a single rts); its one call is in mc68k_sampleAndDebounceDiscreteInputs. Its old
+   name emptyStubFunction4 was shared with CM848 0x26f78, which is the CAN transmit-complete hook
+   ignoreCanTransmitInterrupt (the twin of CM550 0xc80c), not this stub (was emptyStubFunction4; PR
+   #53 round 87) */
+
+void cm550_emptyStubFunction4(void)
 
 {
   return;

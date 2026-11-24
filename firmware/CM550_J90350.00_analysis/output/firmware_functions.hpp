@@ -166,7 +166,7 @@ byte mc68k_sampleAndDebounceDiscreteInputs(void);  // @ 0x00014fca
 void mc68k_ioDriverStrobeHandler(void);  // @ 0x000159ee
 void cm550_initializeDiscreteInputs(void);  // @ 0x00015dd0
 void mc68k_initializeDiscreteOutputDrivers(void);  // @ 0x00015df0
-void emptyStubFunction4(void);  // @ 0x00015f8c
+void cm550_emptyStubFunction4(void);  // @ 0x00015f8c
 void mc68k_dispatchJ1708ReceivedMessages(void);  // @ 0x00015f8e
 int cm550_safeDivideWithClamp(dword dividend,word divisor);  // @ 0x0001645e
 uint cm550_clampedDivisionCalculator(dword dividend,division_operand_t divisor,word max_result);  // @ 0x0001651e
