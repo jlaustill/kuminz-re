@@ -3,7 +3,7 @@ function_address,function_name,param_index,name,type,comment
 # J90350.00 Function Parameter Definitions
 # Created: 2024-12-18
 # Defines parameter names and types for improved decompilation readability
-# CM550 parameters are placed by stack_parameter_layout.csv (PR #53 round 86): give every parameter a row (a function with a gap is skipped) and declare the width the callee loads (move.w -> ushort; move.b at the odd byte -> byte; move.l / movea.l -> a 4-byte type).
+# CM550 parameters are placed by stack_parameter_layout.csv (PR #53 round 86): give every parameter a row (a function with a gap is skipped) and declare the width the callee loads (move.w -> ushort; move.b at the odd byte -> byte; move.l / movea.l -> a 4-byte type). Never retype one of these parameters in local_variables.csv: the export then resizes its custom storage.
 # =============================================================================
 
 # -----------------------------------------------------------------------------
