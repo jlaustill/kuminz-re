@@ -3681,6 +3681,29 @@ A peer relay started the round; the scripts are in `session_folder/round81/`.
     compares with `_can_first_receive_object_index`, and its prototype renders an `in_stack` byte.
   - The 182 rows inside the EEPROM write queue's range, and the earlier leads.
 
+## Done, round 82 (2026-11-24, same PR): CM550's TPU set-up functions
+
+A peer relay started the round; the scripts are in `session_folder/round82/`. This was round 81's first lead.
+- **Stage A (e875e603), CM550:** the six CAN-named functions that touch only the TPU are renamed for the TPU channel each
+  sets up and, where the Cummins-named globals they fill show it, the signal.
+  - `mc68k_loadTpuMicrocode` (was `mc68k_initInternalRamAndCAN1`): copies ROM 0x30c9c / 0x31328 into the TPU RAM at
+    0xFFE000 and sets `TPU_TPUMCR = 0x407`, whose bit 0x400 runs the TPU from its RAM. So the TPU's function numbers
+    are Cummins' own.
+  - `mc68k_initializeTpuChannel0MissingToothInput`: the missing-tooth wheel input.
+  - `mc68k_initializeTpuChannel1BackupSpeedInput`: the backup speed sensor.
+  - `mc68k_initializeTpuChannel10PrimarySpeedInputDivided` / `...IfEnabled` (when `_ESSXSNEN` bit 0 is set): the
+    primary speed sensor's two modes.
+  - `mc68k_initializeTpuChannel12`: function 0xb. It also computes `_tach_output_minimum_rpm`, so the channel may be
+    the tachometer output (not checked).
+  - **Proof:** CM550: label-only - with the six renames applied the .cpp differs only in the new plate comments; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
+- **firmware/CLAUDE.md:** none.
+- **Leads:**
+  - The TPU microcode is in ROM at 0x30c9c-0x31327 and 0x31328-0x31427. Its function table and entry points would
+    name each channel's function.
+  - The `pwmTimerMode*` functions (TPU-only).
+  - The CS4 message object handlers.
+  - The 182 rows inside the EEPROM write queue's range.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

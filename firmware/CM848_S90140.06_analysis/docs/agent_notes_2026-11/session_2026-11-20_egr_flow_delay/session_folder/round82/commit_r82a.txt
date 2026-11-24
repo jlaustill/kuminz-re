@@ -1,0 +1,24 @@
+cm550: round 82 stage A - the six CAN-named TPU set-up functions renamed for the channel and signal; the TPU microcode loader
+
+Round 81's hardware name check found six functions named for CAN that touch only the TPU. Each sets up one TPU
+channel, and the Cummins-named globals each one fills show its signal:
+- 0x31428 mc68k_initInternalRamAndCAN1 -> mc68k_loadTpuMicrocode. When TPU_TPUMCR bit 0x400 is clear, it maps the TPU
+  RAM at 0xFFE000 (TPURAM_TRAMBAR = 0xffe0) and copies ROM 0x30c9c and 0x31328 into it. It then sets
+  TPU_TPUMCR = 0x407, whose bit 0x400 runs the TPU from its RAM, so the TPU's function numbers are Cummins' own.
+- 0x19dd0 mc68k_can1MessageTransmitInit2 -> mc68k_initializeTpuChannel0MissingToothInput (the
+  pmm_ratio_tooth_spacing_at_which_missing_tooth_is_found / ..._missing_tooth_... globals).
+- 0x1ae22 mc68k_dutyCycleMonitorAltCanInit -> mc68k_initializeTpuChannel1BackupSpeedInput (the backup speed sensor's
+  pulse period table).
+- 0x1999c mc68k_can1TimerBufferInitDivided -> mc68k_initializeTpuChannel10PrimarySpeedInputDivided, and 0x1a746
+  mc68k_can1TimerBufferInitConditional -> mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled. These are the primary
+  speed sensor's two modes:
+  - Divided: parameter 1 = DAT_00807ecc << 8, handler vp44_rpmTimerInterruptHandler2;
+  - IfEnabled, only when _ESSXSNEN bit 0 is set: parameter 1 = 0x100, handler vp44_FUN_0001a8a4.
+- 0x30342 mc68k_can1ControllerInit -> mc68k_initializeTpuChannel12. It sets channel 12 to function 0xb, then computes
+  _tach_output_minimum_rpm, so the channel may be the tachometer output; that is not checked, and the name leaves it
+  out.
+
+Proof: CM550 verify is DETERMINISTIC. With the six renames applied to the old .cpp, the new one differs only in the
+new plate comments. The headers regenerate with 0 g++ errors, and the _cal audit reports HARD 0 and MISSING 31.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -677,3 +677,8 @@ Hand work on the round 7 lead.
 - **Stage A (CM550):** `hardware_name_check.py` (each function's name against the register modules it touches),
   `apply_r81a.py`, `map_r81a.csv`.
 - **Closing:** `apply_r81_closing.py`, `update_large_tar_r81.sh`.
+
+## Round 82: CM550's TPU set-up functions (`session_folder/round82/`)
+
+- **Stage A (CM550):** `apply_r82a.py`, `map_r82a.csv`; `ch10_a.txt` / `ch10_b.txt` (the two channel 10 modes).
+- **Closing:** `apply_r82_closing.py`, `update_large_tar_r82.sh`.
