@@ -1,0 +1,3 @@
+address,name,old_label,kind,dims
+0x00007370,cm848_validateBootSecurityKey,cm848_validateWriteAuth,function,1
+0x000071f8,cm848_unscrambleBootSecurityKey,cm848_descrambleAuthToken,function,1

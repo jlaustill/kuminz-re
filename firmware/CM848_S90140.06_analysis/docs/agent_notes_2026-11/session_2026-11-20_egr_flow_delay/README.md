@@ -619,3 +619,8 @@ Hand work on the round 7 lead.
 
 - **Stage A0:** `apply_r73a0.py`. **Stage A:** `apply_r73a.py`, `map_r73a_*.csv`, the m68k width scanners `m68k_abs_access.py` / `m68k_register_ops.py`. **Stage B:** `apply_r73b.py`, `apply_r73b_docs.py`, `map_r73b_*.csv`. **Stage C:** `apply_r73c.py`, `map_r73c_cm550.csv`.
 - **Proof:** `prove_r73*.py`, `diff_r73*.py`. **Closing:** `apply_r73_closing.py`, `update_large_tar_r73.sh`.
+
+## Round 74: CM550's misapplied J1708 struct dismantled; the boot kernel's key check (`session_folder/round74/`)
+
+- **Stage A:** `struct_accesses.py` (every access with its address and width), `apply_r74a.py` (+ `patch_r74a_render.py`), `apply_r74a2.py`, `pairs_r74a.json`. **Stage B:** `apply_r74b.py`, `map_r74b_cm848.csv`. **Stage C:** `apply_r74c.py`. **Checks:** `closing_checks_r74.py`, `sweep_r74.py`.
+- **Proof:** `prove_r74*.py`, `diff_r74*.py`. **Closing:** `apply_r74_closing.py`, `update_large_tar_r74.sh`.

@@ -3370,6 +3370,61 @@ A peer relay started the round; the scripts are in `session_folder/round73/`. Th
   - **The skill notes:** `auditing-cal-suffixes` / `editing-firmware-csvs` say CM550 RAM is never `_cal`. The mirror is
     the exception now. That text lives in `.claude/skills` and is not edited here.
 
+## Done, round 74 (2026-11-23, same PR): CM550's misapplied J1708 struct dismantled; the boot kernel's key check
+
+A peer relay started the round; the scripts are in `session_folder/round74/`. These are round 73's leads.
+- **Stage A (6ea1b5c2):** CM550's 256-byte `j1708_multipacket_msg_t` instance at 0x80ddc6 is gone.
+  - **Why it was wrong:** CM550's parameter ID table puts 13 separate e2m blocks inside it. CM848's e2m names them:
+    1127 J1708_Tx_Buffer, 1128 J1708_Rx_Buffer, the scratch pad, Development_Mode and more. Nothing took its address,
+    and the type had no other instance.
+  - **The renders:** its 980 field renders become CM550's existing names (`insite_response_write_pointer`,
+    `insite_parameter_id`, `multipacket_bytes_remaining`, `instantaneous_fuel_rate_raw` ...). Each row is typed with
+    the field's width.
+  - **Removed rows:** the coordinate rows, and two byte rows inside pointers (their names kept in the comments).
+  - **A2, real widths:** removing the struct exposed the real widths that its byte arrays had split, each confirmed in
+    the m68k code. 0x80ddce is a dword; 0x80de50 / 0x80de6e / 0x80de72 are words. `fuel_timing_advance_value` and
+    `timing_control_status_flags` are words, which drops their `_` prefix in 9 functions.
+  - **Proof:** CM550 17 of 775 functions differ after the PAIRS, all explained: the widths the struct's byte arrays had split (0x80ddce's four byte stores become one dword store of 0x808cff; 0x80de50 / 0x80de38 / 0x80de3a / 0x80de6e / 0x80de72 take word stores and copies instead of byte pairs), four (dword)& casts on dword rows that hold addresses (j1708_receive_buffer_2_32 / address_of_scratch_pad_directory / buffer_used_to_store_secure_write_data / insite_parameter_schedule_pointer, whose 0x80de00 constant now names its target), the '_' prefix gone from fuel_timing_advance_value / timing_control_status_flags in 9 functions, and reordered declarations; 28 placeholders fewer and 4 casts more; no struct field render left. CM550 verify byte-identical with round 73's WARNING lines. Headers regenerated (0 g++ errors), tests pass, audit_cal_suffixes.py CM550 HARD 0 / MISSING 31. 6ea1b5c2's message says "all predicted"; the A2 widths came from the build, so "all
+    explained" is the right word.
+- **Stage B (2b24c319):** the boot kernel's copies of the security key check.
+  - **`cm848_validateBootSecurityKey`** (was `cm848_validateWriteAuth`) and **`cm848_unscrambleBootSecurityKey`** (was
+    `cm848_descrambleAuthToken`).
+  - **Their tables** in the boot image: `boot_security_key_byte_order` is the application's, but
+    `boot_security_key_scramble_mask` is not. The reflash kernel scrambles its key differently.
+  - **CM550's subcommands** 0x40 / 0x41 / 0x69 are the development mode functions (enter / force exit / exit), not
+    J90280.05's 'calibration bank' switches.
+  - **Proof:** CM848 3 of 1968 functions differ after the renames: cm848_unscrambleBootSecurityKey (its byte order reads boot_security_key_byte_order[9 - i] for (byte)(&DAT_003f982f)[-i] - one cast fewer; its XOR pointer reads boot_security_key_scramble_mask + 9, one byte before the byte order table, as the application's does) and two reordered declarations. CM550's .cpp is unchanged past the Generated line (the enum members render nowhere); its header carries the six new member names. Both verifies byte-identical with the previous WARNING lines (CM848 thunks 18 / 14, locals Skipped 8). Headers regenerated for both (0 g++ errors), tests pass, lookup tables 0 sizing problems, audit_cal_suffixes.py CM848 HARD 0 / MISSING 210, CM550 HARD 0 / MISSING 31.
+  - **The boot check's tail:** it compares the 6 characters with `eeprom_shadow_header.header_block`, which is the
+    boot kernel's view of the master password. A match clears the count; a miss adds one.
+- **Stage C (03e166a0), from the closing review:** two more J90280.05-era CM550 enums duplicated CM848's.
+  - `CALIBRATION_BANK` (0x80dc6c) duplicated `RAM_REFRESH_STATE`.
+  - `CALIBRATION_STATE_SIGNATURE` (0x80dc90) duplicated `RUN_LOCATION`. No write of its extra 0xeaeb / 0xeeef was
+    found.
+  - Both rendered nowhere and are removed. The bank notes' parameter-table claim stays as a lead.
+  - **Proof:** CM550's .cpp is unchanged past the Generated line (neither enum rendered anywhere or typed any row); the regenerated header no longer declares them (0 g++ errors); CM550 verify byte-identical with stage B's WARNING lines.
+- **firmware/CLAUDE.md:** line 398, the reference refresh's factual rename (`cm848_validateWriteAuth` ->
+  `cm848_validateBootSecurityKey`).
+- **Leads:**
+  - **Pointer types for four dword rows** that hold addresses, which would remove the 4 casts: `j1708_receive_buffer_2_32`,
+    `address_of_scratch_pad_directory_...`, `buffer_used_to_store_secure_write_data_...` and
+    `insite_parameter_schedule_pointer`. Its constant 0x80de00 starts a table it walks (`bVar2 < 0x1e`).
+  - **Names for the former span's type-only rows** (`BYTE_` / `WORD_` / `DWORD_` labels). Examples: 0x80de36 is block
+    0015 Scratch_Pad_CRC; 0x80ddce is set to 0x808cff next to the receive buffer pointer; 0x80ddc6 is block 1127
+    J1708_Tx_Buffer and keeps the old instance name.
+  - **The boot kernel's `eeprom_shadow_header` fields** `version_marker` (the key byte) and `header_block` (the
+    password) may be misnamed. Check them against the EEPROM offsets 0x8e / 0x02.
+  - **The tool side:** `clip-core/src/SecurityAuth.cpp` scrambles with the application tables. They are J90350's,
+    byte-identical to CM848's application tables, so service 0x4b / 0x4d keys work on both. A write through CM848's
+    boot kernel needs `boot_security_key_scramble_mask` (23 24 c0 11 30 0e 46 22 0b c8).
+  - **`WORD_0080de2e` (10 renders)** sits at block 1002 +2. CM848's e2m has Key_Switch_Override there; check it
+    against CM550's e2m.
+  - **Old CM550 enum members** (`CALIBRATION_FLASH_SOURCE` and others) and the parameter table's 'bytes 0-3 / 4-7 by
+    ram_refresh_enable' claim are not checked.
+  - **Left as they are:** the generated snapshots, including CM550's `parameter_id_lookup_table.csv` (old names in its
+    variable column) and the `context_tier1` / `context_tier2` batches.
+  - **`CALIBRATION_WRITE_PROTECT`** (0x80dc92's 0 / 1 / 2) and the CM550 mirror's 31 MISSING names; the writers'
+    locals; `cm550_circularBufferWrite`; the skill notes' CM550 `_cal` line.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**
