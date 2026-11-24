@@ -1111,7 +1111,6 @@ typedef struct huffman_tree_node_t huffman_tree_node_t;
 typedef struct huffman_tree_t huffman_tree_t;
 typedef struct j1708_tx_state_t j1708_tx_state_t;
 typedef struct j1708_rx_state_t j1708_rx_state_t;
-typedef struct j1708_multipacket_msg_t j1708_multipacket_msg_t;
 typedef struct diagnostic_buffers_t diagnostic_buffers_t;
 typedef struct diagnostic_buffer_ptrs_t diagnostic_buffer_ptrs_t;
 typedef struct can_buffer_setup_t can_buffer_setup_t;
@@ -1610,46 +1609,6 @@ struct j1708_rx_state_t {
     uint32_t buffer_ptr_3;  /* Receive buffer pointer 3 (current position) */
     uint8_t buffer_full_flag;  /* Receive buffer full flag (1=full 0=empty) */
     uint8_t buffer_reserved;  /* Reserved/unused byte */
-};
-
-struct j1708_multipacket_msg_t {
-    uint32_t base_ptr;  /* Base pointer (offset 0) */
-    uint8_t reserved_04[12];  /* Reserved bytes 4-15 */
-    uint16_t length_16;  /* Length field at offset 16 */
-    uint32_t data_ptr_18;  /* Data pointer at offset 18 */
-    uint16_t count_22;  /* Count field at offset 22 */
-    uint16_t field_24;  /* Field at offset 24 */
-    uint16_t field_26;  /* Field at offset 26 */
-    uint8_t reserved_28[8];  /* Reserved bytes 28-35 */
-    uint32_t write_ptr;  /* Write pointer at offset 36 (100 uses) */
-    uint32_t next_ptr;  /* Next pointer at offset 40 */
-    uint32_t segment_ptr;  /* Segment pointer at offset 44 */
-    uint8_t reserved_48[4];  /* Reserved bytes 48-51 */
-    uint32_t buffer_ptr;  /* Buffer pointer at offset 52 */
-    uint8_t reserved_56[32];  /* Reserved bytes 56-87 */
-    uint32_t end_ptr;  /* End pointer at offset 88 */
-    uint8_t reserved_92[10];  /* Reserved bytes 92-101 */
-    uint16_t status_102;  /* Status field at offset 102 */
-    uint16_t index_104;  /* Index field at offset 104 */
-    DEVELOPMENT_MODE_STATE development_mode;  /* Development mode at 0x80de30 - e2m block 1328 Development_Mode by CM550's parameter ID table; set by enterDevelopmentMode / cleared by exitDevelopmentMode and forceExitDevelopmentMode; the 256-byte template overlays 13 e2m blocks so this field is a global really (was count_106 'Count field at offset 106'; PR #53 round 73) */
-    uint32_t ctrl_ptr;  /* Control pointer at offset 108 */
-    uint8_t reserved_112[10];  /* Reserved bytes 112-121 */
-    uint32_t state_ptr;  /* State pointer at offset 122 */
-    uint8_t reserved_126[16];  /* Reserved bytes 126-141 */
-    uint32_t msg_ptr;  /* Message pointer at offset 142 */
-    uint8_t reserved_146[8];  /* Reserved bytes 146-153 */
-    uint16_t param_154;  /* Parameter at offset 154 */
-    uint16_t param_156;  /* Parameter at offset 156 */
-    uint16_t param_158;  /* Parameter at offset 158 */
-    uint16_t param_160;  /* Parameter at offset 160 */
-    uint16_t param_162;  /* Parameter at offset 162 */
-    uint16_t param_164;  /* Parameter at offset 164 */
-    uint8_t reserved_166[8];  /* Reserved bytes 166-173 */
-    uint16_t param_174;  /* Parameter at offset 174 */
-    uint16_t param_176;  /* Parameter at offset 176 */
-    uint16_t param_178;  /* Parameter at offset 178 */
-    uint16_t param_180;  /* Parameter at offset 180 */
-    uint8_t tail_data[74];  /* Remaining data bytes 182-255 */
 };
 
 struct diagnostic_buffers_t {

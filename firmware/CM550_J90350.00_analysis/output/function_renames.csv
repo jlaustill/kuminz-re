@@ -119,9 +119,9 @@ address,name
 0x000114d4,vp44_validateRedundantSensors
 0x000117ec,cm550_firmwareDataCopyToWorkingMemory
 0x0001183e,cm550_FUN_0001183e
-0x0001188c,exitDevelopmentMode,Leaves development mode: only while development_mode (0x80de30 - rendered as the j1708_transmit_buffer_2_32_ddc6 field) is 1 - clears it / ram_refresh_enable on / run_location RUN_LOCATION_NORMAL / result 0; else 4. The same function as CM848 0x21624 (shared name; was cm550_waterInFuelDetectionStateInit; PR #53 round 73).
-0x000118b2,enterDevelopmentMode,Enters development mode (J1708 command 3 subcommand 0x40 after the security key): ram_refresh_enable off / development_mode (0x80de30 - rendered as the j1708_transmit_buffer_2_32_ddc6 field) set / run_location RUN_LOCATION_DEVELOPMENT; result 0. The same function as CM848 0x21668 (shared name; was cm550_waterInFuelFaultClear; PR #53 round 73).
-0x000118cc,forceExitDevelopmentMode,Forces an exit from development mode (J1708 command 3 subcommand 0x41 after the security key): 7 while not_safe_to_program_flag is 1; else ram_refresh_enable on and - when run_location is RUN_LOCATION_DEVELOPMENT - run_location RUN_LOCATION_NORMAL and development_mode (0x80de30 - rendered as the j1708_transmit_buffer_2_32_ddc6 field) cleared; result 0. The same function as CM848 0x21694 (shared name; was cm550_FUN_000118cc; PR #53 round 73).
+0x0001188c,exitDevelopmentMode,Leaves development mode: only while development_mode (0x80de30) is 1 - clears it / ram_refresh_enable on / run_location RUN_LOCATION_NORMAL / result 0; else 4. The same function as CM848 0x21624 (shared name; was cm550_waterInFuelDetectionStateInit; PR #53 round 73).
+0x000118b2,enterDevelopmentMode,Enters development mode (J1708 command 3 subcommand 0x40 after the security key): ram_refresh_enable off / development_mode (0x80de30) set / run_location RUN_LOCATION_DEVELOPMENT; result 0. The same function as CM848 0x21668 (shared name; was cm550_waterInFuelFaultClear; PR #53 round 73).
+0x000118cc,forceExitDevelopmentMode,Forces an exit from development mode (J1708 command 3 subcommand 0x41 after the security key): 7 while not_safe_to_program_flag is 1; else ram_refresh_enable on and - when run_location is RUN_LOCATION_DEVELOPMENT - run_location RUN_LOCATION_NORMAL and development_mode (0x80de30) cleared; result 0. The same function as CM848 0x21694 (shared name; was cm550_FUN_000118cc; PR #53 round 73).
 0x000118fc,cm550_activateHighRpmShutdownFlag
 0x00011908,cm550_eepromWriteWrapper
 0x0001191a,cm550_triggerDiagnosticSystemReset

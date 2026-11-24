@@ -5310,9 +5310,9 @@ address,name,type,comment
 0x0080d340,timing_alpha_blend_factor,undefined,
 0x0080d342,maximum_user_fueling_allowed_0_100,undefined,
 0x0080d344,timing_4DTBTA,undefined,
-0x0080d346,fuel_timing_advance_value,undefined,
+0x0080d346,fuel_timing_advance_value,word,typed word (move.w at 0x12492 / 0x30b82 / 0x1c79e / 0x30bde; was undefined; PR #53 round 74 stage A2)
 0x0080d348,intermediate_timing_state_used_before_final_timing_selction_0_10,undefined,
-0x0080d34a,timing_control_status_flags,undefined,
+0x0080d34a,timing_control_status_flags,word,typed word (clr.w at 0x17d24 / move.w #1 at 0x1c798; was undefined; PR #53 round 74 stage A2)
 0x0080d34c,timing_advance_selection_state,undefined,
 0x0080d34e,fso_state_desired_from_fuel_system_specific_algorithms_1_off_on_off,undefined,
 0x0080d350,fss_adjustment_to_compensate_for_delta_between_injected_and_co_0_100,undefined,
@@ -5692,69 +5692,62 @@ address,name,type,comment
 0x0080dcbe,scratch_pad_data_buffer,undefined,
 0x0080dd86,scratch_pad_directory_table,undefined,
 0x0080ddc2,scratch_pad_write_pointer,undefined,
-0x0080ddc6,j1708_transmit_buffer_2_32_ddc6,j1708_multipacket_msg_t,
-0x0080ddca,j1708_receive_buffer_2_32,,
-0x0080ddce,j1708_transmit_buffer_2_32_ddc6.reserved_04[4],,
-0x0080ddd3,j1708_transmit_buffer_2_32_ddc6.reserved_04[9],,
-0x0080ddd6,multipacket_message_id,,
-0x0080ddd7,j1708_transmit_buffer_2_32_ddc6.length_16+1,,
-0x0080ddd8,diagnostic_multipacket_data_pointer,,
-0x0080ddde,multipacket_bytes_remaining,,
-0x0080dddf,j1708_transmit_buffer_2_32_ddc6.field_24+1,,
-0x0080dde0,multipacket_receive_bytes_remaining,,
-0x0080dde1,j1708_transmit_buffer_2_32_ddc6.field_26+1,,
-0x0080dde2,multipacket_transmit_active_flag,,
-0x0080dde3,multipacket_receive_active_flag,,
-0x0080dde4,j1708_transmit_buffer_2_32_ddc6.reserved_28[2],,
-0x0080dde5,insite_parameter_id,,
-0x0080dde7,insite_full_detail_response_mode,,
-0x0080ddea,insite_response_write_pointer,,
-0x0080dded,insite_response_byte_offset,,
-0x0080ddee,insite_response_frame_start,,
-0x0080ddf2,insite_request_read_pointer,,
-0x0080ddf5,insite_request_byte_offset,,
-0x0080ddf6,insite_response_length,,
-0x0080ddf7,insite_response_space_available,,
-0x0080ddf8,insite_parameter_data_size,,
-0x0080ddfa,insite_parameter_schedule_pointer,,
-0x0080ddfe,j1708_transmit_buffer_2_32_ddc6.reserved_56[0],,
-0x0080de00,j1708_transmit_buffer_2_32_ddc6.reserved_56[2],,
-0x0080de1e,insite_parameter_table_pointer,,
-0x0080de22,insite_multiframe_current_index,,
-0x0080de23,insite_multiframe_total_frames,,
-0x0080de24,insite_multiframe_frame_bytes_remaining,,
-0x0080de25,j1708_transmit_buffer_2_32_ddc6.reserved_92[3],,
-0x0080de26,insite_dtc_command_action_byte,,
-0x0080de28,address_of_scratch_pad_directory_0c000h_0f7efh,,
-0x0080de2c,number_of_entries_in_the_scratch_pad_0_10,,
-0x0080de2d,j1708_transmit_buffer_2_32_ddc6.status_102+1,,
-0x0080de2e,j1708_transmit_buffer_2_32_ddc6.index_104,,
-0x0080de30,development_mode,,e2m block 1328 Development_Mode (CM550's parameter ID table) - CM848's development_mode; renders as the j1708_transmit_buffer_2_32_ddc6.development_mode field while that struct instance covers it (was calibration_write_pending_flag; PR #53 round 73)
-0x0080de32,buffer_used_to_store_secure_write_data_until_the_copy_0c000h_0f7efh,,
-0x0080de36,j1708_transmit_buffer_2_32_ddc6.reserved_112[0],,
-0x0080de38,flag_indicating_tool_has_updated_scratch_pad_crc_0_false_1_tru,,
-0x0080de3a,length_in_bytes_of_scratch_pad_buffer_0_200,,
-0x0080de3c,rpm_value_for_tach_if_normal_input_is_overridden_0_4500,,
-0x0080de3e,DRTKODMD,,
-0x0080de40,j1708_transmit_buffer_2_32_ddc6.state_ptr,,
-0x0080de50,j1708_transmit_buffer_2_32_ddc6.reserved_126[12],,
-0x0080de52,j1708_transmit_buffer_2_32_ddc6.reserved_126[14],,
-0x0080de53,j1708_transmit_buffer_2_32_ddc6.reserved_126[15],,
-0x0080de54,instantaneous_fuel_rate_raw,,
+0x0080ddc6,j1708_transmit_buffer_2_32_ddc6,dword,PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance (e2m block 1127 J1708_Tx_Buffer in CM550's parameter ID table - 4 bytes; was typed with the struct)
+0x0080ddca,j1708_receive_buffer_2_32,dword,PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080ddce,,dword,PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance | typed dword (move.l at 0x1ddaa; was byte; PR #53 round 74 stage A2)
+0x0080ddd3,,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080ddd6,multipacket_message_id,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080ddd8,diagnostic_multipacket_data_pointer,dword,PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080ddde,multipacket_bytes_remaining,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080dde0,multipacket_receive_bytes_remaining,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080dde2,multipacket_transmit_active_flag,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080dde3,multipacket_receive_active_flag,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080dde4,,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080dde5,insite_parameter_id,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080dde7,insite_full_detail_response_mode,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080ddea,insite_response_write_pointer,dword,its low byte 0x80dded was the row insite_response_byte_offset | PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080ddee,insite_response_frame_start,dword,PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080ddf2,insite_request_read_pointer,dword,its low byte 0x80ddf5 was the row insite_request_byte_offset | PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080ddf6,insite_response_length,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080ddf7,insite_response_space_available,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080ddf8,insite_parameter_data_size,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080ddfa,insite_parameter_schedule_pointer,dword,PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080ddfe,,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de1e,insite_parameter_table_pointer,dword,PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de22,insite_multiframe_current_index,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de23,insite_multiframe_total_frames,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de24,insite_multiframe_frame_bytes_remaining,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de25,,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de26,insite_dtc_command_action_byte,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de28,address_of_scratch_pad_directory_0c000h_0f7efh,dword,PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de2c,number_of_entries_in_the_scratch_pad_0_10,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de2e,,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de30,development_mode,DEVELOPMENT_MODE_STATE,e2m block 1328 Development_Mode (CM550's parameter ID table) - CM848's development_mode (was calibration_write_pending_flag; PR #53 round 73) | PR #53 round 74: typed DEVELOPMENT_MODE_STATE - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de32,buffer_used_to_store_secure_write_data_until_the_copy_0c000h_0f7efh,dword,PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de36,,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de38,flag_indicating_tool_has_updated_scratch_pad_crc_0_false_1_tru,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de3a,length_in_bytes_of_scratch_pad_buffer_0_200,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de3c,rpm_value_for_tach_if_normal_input_is_overridden_0_4500,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de3e,DRTKODMD,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de40,,dword,PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de50,,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance | typed word (move.w #1 at 0x30704; was byte; PR #53 round 74 stage A2)
+0x0080de52,,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de53,,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de54,instantaneous_fuel_rate_raw,dword,PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de60,instantaneous_fuel_rate_formatted_for_j1587_broadcast_pid_18_0_284421,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de62,instantaneous_fuel_rate_formatted_for_1939_71_broadcast_0_235769,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de64,fuel_statistics_operating_mode,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de66,,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de68,timing_advance_added_to_base_timing_anytime_afc_is_limiting_fu_0_120,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de6a,selected_timing_advance_output_0_120,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de6e,test_variable_used_to_snapshot_the_system_interface_variable_s_0_120,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance | typed word (move.w from 0x80d346 at 0x30b82; was byte; PR #53 round 74 stage A2)
+0x0080de70,timing_advance_limit_as_just_before_modification_by_max_limit_0_120,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de72,flags_of_final_timing_increment_states_0_ff,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance | typed word (move.w (a2) at 0x30bea - the copy of timing_control_status_flags; was byte; PR #53 round 74 stage A2)
+0x0080de74,,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de76,insite_matched_dtc_fault_code,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de78,fault_to_erase_none,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de7a,action_00_no_clear_action_01_clear_inactive_02_clear_active_03_clear_al_0_6,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080de5c,total_time_offset_moved_to_ti_base_adj_h_none,,
-0x0080de60,instantaneous_fuel_rate_formatted_for_j1587_broadcast_pid_18_0_284421,,
-0x0080de62,instantaneous_fuel_rate_formatted_for_1939_71_broadcast_0_235769,,
-0x0080de64,fuel_statistics_operating_mode,,
-0x0080de66,j1708_transmit_buffer_2_32_ddc6.param_160,,
-0x0080de68,timing_advance_added_to_base_timing_anytime_afc_is_limiting_fu_0_120,,
-0x0080de6a,selected_timing_advance_output_0_120,,
-0x0080de6e,test_variable_used_to_snapshot_the_system_interface_variable_s_0_120,,
-0x0080de70,timing_advance_limit_as_just_before_modification_by_max_limit_0_120,,
-0x0080de72,flags_of_final_timing_increment_states_0_ff,,
-0x0080de74,j1708_transmit_buffer_2_32_ddc6.param_174,,
-0x0080de76,insite_matched_dtc_fault_code,,
-0x0080de78,fault_to_erase_none,,
-0x0080de7a,action_00_no_clear_action_01_clear_inactive_02_clear_active_03_clear_al_0_6,,
 0x0080dec8,fuel_limit_shutdown_minimum,word,Running minimum of the fuel limits (each limiter stores its value here when it is smaller). Was hidden behind a duplicate trailing base_ptr field of j1708_multipacket_msg_t
 0x0080deca,indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41,undefined,
 0x0080decc,fuel_system_specific_fuel_derate_that_is_input_to_the_core_sys_0_100,undefined,
