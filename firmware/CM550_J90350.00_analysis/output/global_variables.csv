@@ -4921,9 +4921,9 @@ address,name,type,comment
 0x0080cc6c,high_rpm_protection_state,undefined,
 0x0080cc6e,high_rpm_protection_timer,undefined,
 0x0080cc72,high_rpm_protection_warning_flag,undefined,
-0x0080cca8,eeprom_circular_buffer_read_index,word,The EEPROM log's read index: the QSPI path sends entry [index] through QSM_TR4 (the word at 0x80BDA8) and QSM_TR5 (the byte at 0x80C7A8) and advances it modulo 0x500 (move.w / addq.w; PR #53 round 80)
-0x0080ccaa,eeprom_circular_buffer_write_index,word,The EEPROM log's write index: cm550_parameterCircularBufferWrite stores entry i at 0x80BDA8 + 2 i (word) and 0x80C7A8 + i (byte) and advances it modulo 0x500 (typed word; PR #53 round 80)
-0x0080ccac,circular_buffer_byte_count,word,The EEPROM log's pending entry count: +1 per write - -1 per entry sent (addq.w / move.w / tst.w; typed word; PR #53 round 80)
+0x0080cca8,eeprom_circular_buffer_read_index,word,The serial EEPROM write queue's read index (each entry = an EEPROM address word at 0x80BDA8 + 2 i and a data byte at 0x80C7A8 + i; PR #53 round 81): the QSPI path sends entry [index] through QSM_TR4 (the word at 0x80BDA8) and QSM_TR5 (the byte at 0x80C7A8) and advances it modulo 0x500 (move.w / addq.w; PR #53 round 80)
+0x0080ccaa,eeprom_circular_buffer_write_index,word,The serial EEPROM write queue's write index (an entry = an EEPROM address word and a data byte; PR #53 round 81): cm550_parameterCircularBufferWrite stores entry i at 0x80BDA8 + 2 i (word) and 0x80C7A8 + i (byte) and advances it modulo 0x500 (typed word; PR #53 round 80)
+0x0080ccac,circular_buffer_byte_count,word,The serial EEPROM write queue's pending entry count (PR #53 round 81): +1 per write - -1 per entry sent (addq.w / move.w / tst.w; typed word; PR #53 round 80)
 0x0080ccb0,circular_buffer_last_address_offset,undefined,
 0x0080ccb2,high_rpm_fuel_limit_active,undefined,
 0x0080ccb4,high_rpm_fuel_limit_idle,undefined,

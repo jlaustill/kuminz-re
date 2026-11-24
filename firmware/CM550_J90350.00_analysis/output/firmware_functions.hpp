@@ -9,7 +9,7 @@ void cm550_huffmanDecompressMain(void);  // @ 0x00003836
 void cm550_busyWaitDelayLoop(undefined4 param_1);  // @ 0x00003870
 byte mc68k_portPinTestSequence2(void);  // @ 0x0000388a
 void cm550_FUN_0000395a(void);  // @ 0x0000395a
-undefined4 mc68k_tpuAndQadcVerification(void);  // @ 0x000039a8
+undefined4 mc68k_checkSerialEepromSignature(void);  // @ 0x000039a8
 void mc68k_hardwareInitAndStartup(void);  // @ 0x00003a94
 void mc68k_FUN_00003abe(void);  // @ 0x00003abe
 void cm550_ramClearWithWatchdog(void);  // @ 0x00003c20
@@ -378,7 +378,7 @@ void cm550_subtractAndClampValue(word *fuel_value_ptr);  // @ 0x0001e02a
 void cm550_FUN_0001e04c(void);  // @ 0x0001e04c
 void cm550_serialNodeAddressChecker(byte node_address);  // @ 0x0001e056
 void cm550_serialNodeAddressForwarder(byte node_address);  // @ 0x0001e086
-undefined8 cm550_FUN_0001e0fa(void);  // @ 0x0001e0fa
+undefined8 mc68k_canCs4InterruptHandler(void);  // @ 0x0001e0fa
 void cm550_canMessageInterruptHandlerSetup(void);  // @ 0x0001e1a0
 void cm550_emptyStubWrapper1(void);  // @ 0x0001e1ac
 void cm550_modeBasedDataDispatcherWrapper(void);  // @ 0x0001e1be
@@ -387,7 +387,7 @@ void cm550_serialCommunicationIsrRegister(void);  // @ 0x0001e25a
 void mc68k_armJ1708BusTimer(void);  // @ 0x0001e266
 undefined8 mc68k_j1708SciInterruptHandler(void);  // @ 0x0001e288
 void cm550_tpuChannelIsrRegister(void);  // @ 0x0001e522
-uint serialTransmitHandler(void);  // @ 0x0001e52e
+uint mc68k_canCs4TransmitNextFrame(void);  // @ 0x0001e52e
 void cm550_FUN_0001e5f0(dword channel_config);  // @ 0x0001e5f0
 undefined8 cm550_interruptCounter1Increment(void);  // @ 0x0001e734
 undefined8 cm550_interruptCounter2Increment(void);  // @ 0x0001e76a
@@ -551,7 +551,7 @@ void vp44_initVP44StatusFlags(void);  // @ 0x0002659a
 uint cm550_epsRpmTargetModeChecker(void);  // @ 0x000265e6
 void cm550_FUN_00026616(void);  // @ 0x00026616
 void cm550_timingOffsetCalculatorWrapper(void);  // @ 0x000266d2
-uint mc68k_qadcDataCollectionStateMachine(void);  // @ 0x000266da
+uint mc68k_runSerialEepromWriteQueue(void);  // @ 0x000266da
 undefined8 mc68k_FUN_00026834(void);  // @ 0x00026834
 void cm550_FUN_00026852(void);  // @ 0x00026852
 void mc68k_FUN_00026854(void);  // @ 0x00026854

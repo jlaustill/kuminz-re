@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Mon Nov 23 23:55:56 MST 2026
+// Generated: Tue Nov 24 00:54:53 MST 2026
 
 
 //
@@ -224,10 +224,16 @@ void cm550_FUN_0000395a(void)
 
 
 //
-// Function: mc68k_tpuAndQadcVerification @ 0x000039a8
+// Function: mc68k_checkSerialEepromSignature @ 0x000039a8
 //
 
-undefined4 mc68k_tpuAndQadcVerification(void)
+/* Reads the serial EEPROM's first word over the QSPI and checks it: sets up the QSPI (QSM_SPCR0-2 /
+   QSM_PQSPAR / QSM_DDRQS) - queues READ (command 3) at address 0 and 14 clock bytes - waits for
+   QSM_SPSR - returns 0x6000 when the received QSM_RR2:QSM_RR3 is 0x600d (CM848's
+   ECM_STATUS_CALIBRATION_VALID) and 1 otherwise. No TPU or QADC register is involved (was
+   mc68k_tpuAndQadcVerification; PR #53 round 81) */
+
+undefined4 mc68k_checkSerialEepromSignature(void)
 
 {
   word wVar1;
@@ -341,7 +347,7 @@ void mc68k_hardwareInitAndStartup(void)
   cm550_ramClearWithWatchdog();
   cVar3 = mc68k_portPinTestSequence2();
   if (cVar3 == '\0') {
-    cVar3 = mc68k_tpuAndQadcVerification();
+    cVar3 = mc68k_checkSerialEepromSignature();
     if (cVar3 == '\0') {
       if ((DAT_00008000 == -0x6789abcd) || (DAT_00008000 == -0x6789abce)) {
         pcVar4 = DAT_00008062;
@@ -418,7 +424,7 @@ void mc68k_FUN_00003abe(void)
   cm550_ramClearWithWatchdog();
   cVar3 = mc68k_portPinTestSequence2();
   if (cVar3 == '\0') {
-    cVar3 = mc68k_tpuAndQadcVerification();
+    cVar3 = mc68k_checkSerialEepromSignature();
     if (cVar3 == '\0') {
       if ((DAT_00008000 == -0x6789abcd) || (DAT_00008000 == -0x6789abce)) {
         pcVar4 = DAT_00008062;
@@ -19320,7 +19326,7 @@ void cm550_serialNodeAddressChecker(byte node_address)
   byte in_stack_00000005;
   
   if (in_stack_00000005 == _can_first_receive_object_index) {
-    serialTransmitHandler();
+    mc68k_canCs4TransmitNextFrame();
     return;
   }
   cm550_emptyStubFunction1();
@@ -19351,10 +19357,16 @@ void cm550_serialNodeAddressForwarder(byte node_address)
 
 
 //
-// Function: cm550_FUN_0001e0fa @ 0x0001e0fa
+// Function: mc68k_canCs4InterruptHandler @ 0x0001e0fa
 //
 
-undefined8 cm550_FUN_0001e0fa(void)
+/* The interrupt handler of the 82527 CAN controller on chip select 4: loops while CAN_CS4_INTERRUPT
+   is non-zero - on a status change it reads CAN_CS4_STATUS and resets the controller
+   (CAN_CS4_CONTROL = 1 / waits for CAN_CS4_CPU_INTERFACE bit 7 / restores the control bits) - and
+   passes message object interrupts to cm550_serialNodeAddressForwarder /
+   cm550_serialNodeAddressChecker (was cm550_FUN_0001e0fa; PR #53 round 81) */
+
+undefined8 mc68k_canCs4InterruptHandler(void)
 
 {
   byte bVar1;
@@ -19410,7 +19422,7 @@ undefined8 cm550_FUN_0001e0fa(void)
 void cm550_canMessageInterruptHandlerSetup(void)
 
 {
-  _DAT_00808e4c = cm550_FUN_0001e0fa;
+  _DAT_00808e4c = mc68k_canCs4InterruptHandler;
   return;
 }
 
@@ -19704,12 +19716,16 @@ void cm550_tpuChannelIsrRegister(void)
 
 
 //
-// Function: serialTransmitHandler @ 0x0001e52e
+// Function: mc68k_canCs4TransmitNextFrame @ 0x0001e52e
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Sends the next frame on the 82527 CAN controller on chip select 4: writes a message object's
+   control register through _can_control_register_pointer - copies the next 14-byte entry of the CAN
+   transmit ring (0x80D896-0x80D9A0) with cm550_canFrameDataCopy(&CAN_CS4_CONTROL) and advances the
+   ring pointer. No serial port is involved (was serialTransmitHandler; PR #53 round 81) */
 
-uint serialTransmitHandler(void)
+uint mc68k_canCs4TransmitNextFrame(void)
 
 {
   uint uVar1;
@@ -27375,12 +27391,17 @@ void cm550_timingOffsetCalculatorWrapper(void)
 
 
 //
-// Function: mc68k_qadcDataCollectionStateMachine @ 0x000266da
+// Function: mc68k_runSerialEepromWriteQueue @ 0x000266da
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The serial EEPROM driver over the QSPI: issues the SPI EEPROM commands 5 (read status - tests the
+   write-in-progress bit in QSM_RR3) / 6 (write enable) / 2 (write) / 3 (read). Each write sends the
+   next queue entry: the address word at 0x80BDA8 + 2 x eeprom_circular_buffer_read_index (QSM_TR4)
+   and the data byte at 0x80C7A8 + index (QSM_TR5). No QADC register is involved (was
+   mc68k_qadcDataCollectionStateMachine; PR #53 round 81) */
 
-uint mc68k_qadcDataCollectionStateMachine(void)
+uint mc68k_runSerialEepromWriteQueue(void)
 
 {
   ushort uVar1;
@@ -27477,7 +27498,7 @@ undefined8 mc68k_FUN_00026834(void)
   
   bVar2 = QSM_SPSR;
   QSM_SPSR = bVar2 & 0x7f;
-  mc68k_qadcDataCollectionStateMachine();
+  mc68k_runSerialEepromWriteQueue();
   wVar1 = QSM_SPCR1;
   QSM_SPCR1 = wVar1 | 0x8000;
   return CONCAT44(in_D0,in_D1);
@@ -27563,7 +27584,7 @@ void mc68k_FUN_00026854(void)
       } while ((bVar3 & 0x80) == 0);
       bVar3 = QSM_SPSR;
     } while ((bVar3 & 0xf) != 0xf);
-    mc68k_qadcDataCollectionStateMachine();
+    mc68k_runSerialEepromWriteQueue();
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
     CS2_WATCHDOG_SERVICE = 0x55;
