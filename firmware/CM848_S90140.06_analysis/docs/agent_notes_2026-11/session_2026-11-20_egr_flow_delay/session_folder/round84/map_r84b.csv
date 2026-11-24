@@ -1,0 +1,2 @@
+address,name,old_label,kind,dims
+0x0000395a,mc68k_waitForChipSelect2InputBit0High,cm550_waitForChipSelect2InputBit0High,function,1

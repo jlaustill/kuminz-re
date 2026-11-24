@@ -917,6 +917,8 @@ state enum, the flag bytes.**
 **Round 84.**
 - **Stage A (7c1bb279):** CM550's boot block image (ROM 0x291F4, a byte-for-byte copy of the boot block) and its updater
   `cm550_updateBootBlockFromImage` are named; the nine image copies are named after their originals.
+- **Stage B (0a0965dc):** the image is data, so its nine function copies go into CM550's first `deleted_functions.csv`;
+  `tpu_microcode_image` gets back its whole extent (`dword[419]`); 0x395a takes the `mc68k_` prefix.
 
 ## Test plan
 
@@ -1009,6 +1011,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 84: B: CM550: verify DETERMINISTIC after B and B2; the 9 image functions removed and nothing else (function_set_check.py: 0 added, 0 changed after B; B2 only names cm550_huffmanTreeBuilder's tree_buffer); the 0x2c834 warning gone; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 84: A: CM550: a full-text check (comments stripped, renames applied) leaves only the updater's lines (the image and the two version dwords named, one wrap); verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 83: A: CM550: a full-text check (comments stripped, renames applied) finds 40 differing lines, all in the TPU microcode loader (its two copy sources named, its temporaries dword *); rounds 81-82 re-checked the same way: 0 lines; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 82: A: CM550: label-only - with the six renames applied the .cpp differs only in the new plate comments; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.

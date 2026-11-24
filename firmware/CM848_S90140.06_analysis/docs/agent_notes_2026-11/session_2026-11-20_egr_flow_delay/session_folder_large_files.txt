@@ -361,3 +361,5 @@
    202877 verify_round83a_cm550.log
    202618 verify_round84a2_cm550.log
    202617 verify_round84a_cm550.log
+   214153 verify_round84b2_cm550.log
+   214354 verify_round84b_cm550.log

@@ -1,0 +1,42 @@
+cm550: round 84 stage B - the boot block image's nine function copies recorded as deleted functions; tpu_microcode_image back to its full extent; the mc68k_ prefix on 0x395a
+
+An advisor review of stage A raised three points.
+- The boot block image (ROM 0x291F4-0x2CE63) is data. cm550_updateBootBlockFromImage programs it into flash at 0,
+  and no real code calls into it: prefix_rule_check.py finds only other image copies referencing the nine copies.
+  - Stage A named the functions the analysis finds inside the image <original>ImageCopy.
+  - Stage B lists them in CM550's first deleted_functions.csv, so the build removes them after the analysis.
+  - Their function_renames rows go, and so does the copy's prototype row at 0x2ca64.
+  - boot_block_image's comment keeps the mapping (address - 0x291F4) and the stage A names.
+- tpu_microcode_image is dword[419] again: the 0x68C bytes mc68k_loadTpuMicrocode copies, up to
+  tpu_microcode_entry_table. Round 83 stopped it at 0x311F4 only because the image copy of
+  mc68k_hardwareInitAndStartup read 0x311F4 / 0x31256, the image's PC-relative view of ROM 0x8000 / 0x8062.
+- 0x395a cm550_waitForChipSelect2InputBit0High -> mc68k_waitForChipSelect2InputBit0High. It writes SIM_SWSR, and
+  MC68336-specific code takes the mc68k_ prefix (docs/superpowers/specs/2026-03-17-cross-firmware-convergence-
+  pipeline-design.md).
+- B2: an old prototype row for the Huffman tree builder sat on its copy's address (0x2c834). After the deletion the
+  build warned "No function at 0x2c834", so the row moves to the original, cm550_huffmanTreeBuilder (0x3640). Its
+  only parameter is the base of the 0xC0C-byte tree node buffer it fills (it writes tree_buffer + 0xc06).
+
+Proof:
+- CM550 verify is DETERMINISTIC after B and after B2. The deletion stage logs "Removed" for exactly the nine image
+  functions.
+- function_set_check.py compares the builds function by function, with comments stripped and the 0x395a rename
+  applied:
+  - B: 9 functions removed (the image copies), 0 added, 0 changed. The [419] array renders as before in
+    mc68k_loadTpuMicrocode, and no indexed or piece render of it is left.
+  - B2: cm550_huffmanTreeBuilder's parameter becomes tree_buffer (the importer maps int to dword, as it did on the
+    copy), and its one call's cast follows. One local declaration in diagnosticCommandDispatcher moves, with the same
+    lines.
+- The build's "No function at 0x2c834" warning is gone.
+- The headers regenerate with 0 g++ errors. The _cal audit reports HARD 0 and MISSING 31. test_rename_waves.py:
+  ALL PASS.
+
+Leads (task 046):
+- prefix_rule_check.py: 31 CM550 functions without the mc68k_ prefix still touch MC68336 or chip select device
+  registers. Several only service the watchdog inside a loop; some names look wrong (clearModuleSyncFlag writes
+  TPU_HSRR0 16 times).
+- CM550 passes 16-bit arguments in 2-byte stack slots: the delay loop's caller pushes move.w #2,-(sp) and calls
+  jsr (-0x126,pc). Ghidra's CPU32 prototype puts a word parameter at SP+6, so 72 lines read in_stack_00000004 and
+  79 read param_N._0_2_ (counted after this stage).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

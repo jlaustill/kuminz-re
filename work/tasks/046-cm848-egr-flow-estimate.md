@@ -3752,8 +3752,26 @@ A peer relay started the round; the scripts are in `session_folder/round84/`.
   - `cm550_waitForChipSelect2InputBit0High` (was `cm550_FUN_0000395a`) waits for 5 consecutive 1 samples of bit 0
     at 0xFFD000, the same pattern as CM848's `cm848_waitForStableIgnitionKeyOn`. The signal is not identified.
   - **Proof:** CM550: a full-text check (comments stripped, renames applied) leaves only the updater's lines (the image and the two version dwords named, one wrap); verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
+- **Stage B (0a0965dc), CM550, from an advisor review of stage A:**
+  - **The image is data:** no real code calls into it (`prefix_rule_check.py`: only other image copies reference the
+    nine copies). CM550's first `deleted_functions.csv` lists the nine, so the build removes them after the analysis;
+    their rows go. `boot_block_image`'s comment keeps the mapping and the stage A names.
+  - `tpu_microcode_image` is `dword[419]` again: the whole 0x68C bytes the loader copies. Round 83's cut at 0x311F4 came
+    only from the image copy's PC-relative reads.
+  - `mc68k_waitForChipSelect2InputBit0High` (0x395a): the `mc68k_` prefix, because it writes `SIM_SWSR`.
+  - **B2:** an old prototype row for the Huffman tree builder sat on its copy's address (0x2C834). It moves to the
+    original, `cm550_huffmanTreeBuilder` (0x3640): `tree_buffer`, the base of the 0xC0C-byte node buffer it fills.
+  - **Proof:** CM550: verify DETERMINISTIC after B and B2; the 9 image functions removed and nothing else (function_set_check.py: 0 added, 0 changed after B; B2 only names cm550_huffmanTreeBuilder's tree_buffer); the 0x2c834 warning gone; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - **firmware/CLAUDE.md:** none.
 - **Leads:**
+  - **The prefix rule:** `prefix_rule_check.py` finds 31 CM550 functions without `mc68k_` that touch MC68336 or chip
+    select device registers. Several only service the watchdog inside a loop; some names look wrong
+    (`clearModuleSyncFlag` writes `TPU_HSRR0` 16 times).
+  - **16-bit stack arguments:** CM550 pushes a word argument as 2 bytes (`move.w #2,-(sp)`, then `jsr (-0x126,pc)` to
+    the delay loop). Ghidra's CPU32 prototype puts a word parameter at SP+6, so 72 lines read `in_stack_00000004` and 79
+    read `param_N._0_2_`.
+  - `cm550_FUN_0001c484` copies `cm550_flashEraseWithWatchdog` into a 2 KB stack buffer and runs it there: the erase
+    twin of `cm550_flashProgramFromRam`.
   - The ROM 0x8000 / 0x8062 application signature and entry pointer, and the RAM program at 0x80339E (decompressed by
     `cm550_huffmanDecompressMain`: the service program?).
   - What 0xFFD000 bit 0 is (the key line?).
