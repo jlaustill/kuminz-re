@@ -769,13 +769,13 @@ address,name
 0x0003458c,cm550_engine_protection_coordinator
 0x000345c8,cm550_initMultiSystemParameters
 0x0003460e,lookupApplicationMemoryRegionType,The type (MEMORY_REGION_TYPE) of the first application_memory_region_table entry holding range_start..range_start+range_length-1 - its first type byte while the development mode flag (0x80de30) is 1 else its second - or UNMAPPED (9) for none or a range that wraps: the same function as CM848 0x50d784 (shared name; was cm550_addressRangeValidator; PR #53 round 72)
-0x00034674,mc68k_pwmTimerMode0Init
+0x00034674,mc68k_initializeSpeedMeasurementMode0,When speed_measurement_mode is 0: sets TPU channel 0 to function 0xc (CFSR3 bits 3-0) - parameter 2 = _DAT_00807ec8 / 6 - parameter 1 = 0xe - and the handler pointer _DAT_00808edc = 0x19c88. No PWM module is involved (was mc68k_pwmTimerMode0Init; PR #53 round 83)
 0x00034696,mc68k_timerCaptureHardwareInit
-0x0003478c,mc68k_pwmTimerMode0Reset
-0x0003480e,mc68k_pwmTimerMode1ChannelSetup
-0x0003494a,mc68k_pwmTimerMode1Update
-0x00034a82,mc68k_pwmTimerModeDispatcher
-0x00034b20,mc68k_pwmTimerCycleAdvance
+0x0003478c,mc68k_resetSpeedMeasurementMode0,Resets TPU channel 0's speed measurement mode 0 parameters (0-2) by speed_measurement_mode. No PWM module is involved (was mc68k_pwmTimerMode0Reset; PR #53 round 83)
+0x0003480e,mc68k_setUpTpuChannel3AnglePulseOutput,Sets up the angle-based pulse output on TPU channel 3 (function 8 in CFSR3 bits 15-12): the pulse start and end as a tooth number plus a fraction from index_of_first_tdc_after_missed_pulse_1_6 - _dzg_angle_after_cyl_tdc_angle_after_cyl_tdc_to_put_dzg_first_60_60 - _engine_position_offset_distance_between_tooth_0_and_tdc_1_100_100 - the per-cylinder offsets at 0x80a23a and _dzg_angular_duration_angular_high_duration_of_dzg_pulse_at_tpu_0_60 - modulo the teeth (pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 + 2). The Cummins names call this pulse the DZG pulse. No PWM module is involved (was mc68k_pwmTimerMode1ChannelSetup; PR #53 round 83)
+0x0003494a,mc68k_updateTpuChannel3AnglePulseOutput,Recomputes the TPU channel 3 angle pulse's start and end for current_cylinder_index (the same arithmetic as mc68k_setUpTpuChannel3AnglePulseOutput) and writes them to its parameters. No PWM module is involved (was mc68k_pwmTimerMode1Update; PR #53 round 83)
+0x00034a82,mc68k_configureTpuChannelsForSpeedMeasurementMode,Reprograms TPU channels 0 and 3 for speed_measurement_mode: in mode 0 channel 0 parameter 2 = _DAT_00807ec8 / 6 and channel 3 takes function 0xa (CFSR3 bits 15-12) - mode 1 uses the angle pulse output (function 8). No PWM module is involved (was mc68k_pwmTimerModeDispatcher; PR #53 round 83)
+0x00034b20,mc68k_alignCylinderIndexToCrankRevolution,When CMSYSS is 1 it moves current_cylinder_index by 3 (modulo 6) so that it agrees with flag_indicating_crank_rev_1_or_2_of_cam_rev_0_1: cylinders 0 / 4 / 5 on the first crank revolution and 1 / 2 / 3 on the second. No PWM module is involved (was mc68k_pwmTimerCycleAdvance; PR #53 round 83)
 0x00034bba,cm550_watchdogServiceLoop
 0x00034bf8,cm550_FUN_00034bf8
 0x00034c36,vp44FaultRegisterBit2Monitor

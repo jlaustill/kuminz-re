@@ -759,13 +759,13 @@ void cm550_setDiagnosticSourceFromEngineFlags(void);  // @ 0x00034564
 void cm550_engine_protection_coordinator(void);  // @ 0x0003458c
 void cm550_initMultiSystemParameters(void);  // @ 0x000345c8
 MEMORY_REGION_TYPE lookupApplicationMemoryRegionType(dword range_start,dword range_length);  // @ 0x0003460e
-uint mc68k_pwmTimerMode0Init(void);  // @ 0x00034674
+uint mc68k_initializeSpeedMeasurementMode0(void);  // @ 0x00034674
 uint mc68k_timerCaptureHardwareInit(void);  // @ 0x00034696
-void mc68k_pwmTimerMode0Reset(void);  // @ 0x0003478c
-uint mc68k_pwmTimerMode1ChannelSetup(void);  // @ 0x0003480e
-uint mc68k_pwmTimerMode1Update(void);  // @ 0x0003494a
-void mc68k_pwmTimerModeDispatcher(void);  // @ 0x00034a82
-undefined8 mc68k_pwmTimerCycleAdvance(void);  // @ 0x00034b20
+void mc68k_resetSpeedMeasurementMode0(void);  // @ 0x0003478c
+uint mc68k_setUpTpuChannel3AnglePulseOutput(void);  // @ 0x0003480e
+uint mc68k_updateTpuChannel3AnglePulseOutput(void);  // @ 0x0003494a
+void mc68k_configureTpuChannelsForSpeedMeasurementMode(void);  // @ 0x00034a82
+undefined8 mc68k_alignCylinderIndexToCrankRevolution(void);  // @ 0x00034b20
 void cm550_watchdogServiceLoop(undefined4 param_1);  // @ 0x00034bba
 void cm550_FUN_00034bf8(word timer_ticks);  // @ 0x00034bf8
 ushort vp44FaultRegisterBit2Monitor(void);  // @ 0x00034c36

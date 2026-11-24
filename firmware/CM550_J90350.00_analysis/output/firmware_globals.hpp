@@ -11,6 +11,8 @@ extern ushort USHORT_00013d7e;  // 0x00013d7e
 extern byte j1939_memory_service_header_lengths[14];  // 0x00021956
 extern byte security_key_scramble_mask[10];  // 0x0002fbc4
 extern byte security_key_byte_order[10];  // 0x0002fbce
+extern dword tpu_microcode_image[342];  // 0x00030c9c
+extern word tpu_microcode_entry_table[128];  // 0x00031328
 extern memory_region_t application_memory_region_table[5];  // 0x000345dc
 extern undefined insite_parameter_schedule_table;  // 0x000612ee
 extern undefined rpm_rate_limit_countdown;  // 0x00800000

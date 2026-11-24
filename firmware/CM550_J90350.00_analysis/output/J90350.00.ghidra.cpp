@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue Nov 24 01:55:03 MST 2026
+// Generated: Tue Nov 24 02:58:22 MST 2026
 
 
 //
@@ -14013,7 +14013,7 @@ word mc68k_phase2_slot_0_handler(void)
 void cm550_delayWithWatchdogServiceWrapper2(void)
 
 {
-  mc68k_pwmTimerMode0Init();
+  mc68k_initializeSpeedMeasurementMode0();
   return;
 }
 
@@ -14258,7 +14258,7 @@ void mc68k_initializeTpuChannel0MissingToothInput(void)
   TPU_CPR1 = wVar1 & 0xfffc;
   wVar1 = TPU_CPR1;
   TPU_CPR1 = wVar1 | 1;
-  mc68k_pwmTimerMode0Init();
+  mc68k_initializeSpeedMeasurementMode0();
   return;
 }
 
@@ -14572,7 +14572,7 @@ void mc68k_FUN_0001a47c(void)
   _DAT_00808edc = mc68k_crankFuelAndTimingBufferStore;
   wVar1 = TPU_CIER;
   TPU_CIER = wVar1 | 1;
-  mc68k_pwmTimerMode0Init();
+  mc68k_initializeSpeedMeasurementMode0();
   return;
 }
 
@@ -14718,7 +14718,7 @@ undefined8 mc68k_crankFuelAndTimingBufferStore(void)
     CMSYSS = 2;
     cam_sync_status = 2;
   }
-  mc68k_pwmTimerModeDispatcher();
+  mc68k_configureTpuChannelsForSpeedMeasurementMode();
   wVar1 = TPU_CISR;
   TPU_CISR = wVar1 & 0xfffe;
   return CONCAT44(in_D0,in_D1);
@@ -14823,7 +14823,7 @@ uint mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled(void)
 void cm550_FUN_0001a89a(void)
 
 {
-  mc68k_pwmTimerMode0Init();
+  mc68k_initializeSpeedMeasurementMode0();
   return;
 }
 
@@ -15510,7 +15510,7 @@ undefined8 mc68k_dutyCycleMonitorIsrHandler(void)
          _status_32_word_bit_mapped_system_error_status_word_0_0_1 | 1;
     _fault_first_occurrence_flags_word_0 = _fault_first_occurrence_flags_word_0 | 1;
   }
-  mc68k_pwmTimerMode0Reset();
+  mc68k_resetSpeedMeasurementMode0();
   cm550_FUN_0000c87e();
   wVar1 = TPU_CISR;
   TPU_CISR = wVar1 & 0xfffd;
@@ -15627,7 +15627,7 @@ undefined8 mc68k_FUN_0001b30a(void)
     _eps_period_backup_time_between_the_two_most_recent_eps_200_16777216 =
          _average_pulse_period_backup_time_period_over_1_cyl_of_secondary_2_32;
   }
-  mc68k_pwmTimerMode0Reset();
+  mc68k_resetSpeedMeasurementMode0();
   cm550_FUN_0000c87e();
   wVar1 = TPU_CISR;
   TPU_CISR = wVar1 & 0xfffd;
@@ -15769,7 +15769,7 @@ undefined8 mc68k_FUN_0001b4b2(void)
   undefined4 in_D0;
   undefined4 in_D1;
   
-  mc68k_pwmTimerMode0Reset();
+  mc68k_resetSpeedMeasurementMode0();
   cm550_FUN_0000c87e();
   wVar1 = TPU_CISR;
   TPU_CISR = wVar1 & 0xfffd;
@@ -34975,33 +34975,33 @@ void mc68k_loadTpuMicrocode(void)
 
 {
   word wVar1;
-  undefined4 *puVar2;
-  undefined4 *puVar3;
-  undefined4 *puVar4;
+  dword *pdVar2;
+  dword *pdVar3;
+  dword *pdVar4;
   
   wVar1 = TPU_TPUMCR;
   if ((wVar1 & 0x400) != 0x400) {
     TPURAM_TRAMBAR = 0xffe0;
-    puVar2 = &DAT_00030c9c;
-    puVar3 = (undefined4 *)&DAT_00ffe000;
+    pdVar2 = tpu_microcode_image;
+    pdVar3 = (dword *)&DAT_00ffe000;
     do {
-      puVar4 = puVar3 + 1;
-      *puVar3 = *puVar2;
-      puVar2 = puVar2 + 1;
-      puVar3 = puVar4;
-    } while (puVar4 < &UNK_00ffe68c);
+      pdVar4 = pdVar3 + 1;
+      *pdVar3 = *pdVar2;
+      pdVar2 = pdVar2 + 1;
+      pdVar3 = pdVar4;
+    } while (pdVar4 < &UNK_00ffe68c);
     do {
-      puVar2 = puVar4 + 1;
-      *puVar4 = 0;
-      puVar4 = puVar2;
-    } while (puVar2 < &UNK_00ffe6ff);
-    puVar3 = &DAT_00031328;
+      pdVar2 = pdVar4 + 1;
+      *pdVar4 = 0;
+      pdVar4 = pdVar2;
+    } while (pdVar2 < &UNK_00ffe6ff);
+    pdVar3 = (dword *)tpu_microcode_entry_table;
     do {
-      puVar4 = puVar2 + 1;
-      *puVar2 = *puVar3;
-      puVar3 = puVar3 + 1;
-      puVar2 = puVar4;
-    } while (puVar4 < &UNK_00ffe7ff);
+      pdVar4 = pdVar2 + 1;
+      *pdVar2 = *pdVar3;
+      pdVar3 = pdVar3 + 1;
+      pdVar2 = pdVar4;
+    } while (pdVar4 < &UNK_00ffe7ff);
     TPU_TPUMCR = 0x407;
     TPU_CIER = 0;
     TPU_TICR = 0x440;
@@ -37830,12 +37830,15 @@ MEMORY_REGION_TYPE lookupApplicationMemoryRegionType(dword range_start,dword ran
 
 
 //
-// Function: mc68k_pwmTimerMode0Init @ 0x00034674
+// Function: mc68k_initializeSpeedMeasurementMode0 @ 0x00034674
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* When speed_measurement_mode is 0: sets TPU channel 0 to function 0xc (CFSR3 bits 3-0) - parameter
+   2 = _DAT_00807ec8 / 6 - parameter 1 = 0xe - and the handler pointer _DAT_00808edc = 0x19c88. No
+   PWM module is involved (was mc68k_pwmTimerMode0Init; PR #53 round 83) */
 
-uint mc68k_pwmTimerMode0Init(void)
+uint mc68k_initializeSpeedMeasurementMode0(void)
 
 {
   word wVar1;
@@ -37892,7 +37895,7 @@ uint mc68k_pwmTimerMode0Init(void)
     piVar5 = piVar5 + 1;
   } while (iVar3 < 6);
   _DAT_0080a236 = (uint)base_number_of_speed_pulses_per_cam_1_254 << 0x10;
-  uVar2 = mc68k_pwmTimerMode1Update();
+  uVar2 = mc68k_updateTpuChannel3AnglePulseOutput();
   return uVar2;
 }
 
@@ -37945,10 +37948,13 @@ uint mc68k_timerCaptureHardwareInit(void)
 
 
 //
-// Function: mc68k_pwmTimerMode0Reset @ 0x0003478c
+// Function: mc68k_resetSpeedMeasurementMode0 @ 0x0003478c
 //
 
-void mc68k_pwmTimerMode0Reset(void)
+/* Resets TPU channel 0's speed measurement mode 0 parameters (0-2) by speed_measurement_mode. No
+   PWM module is involved (was mc68k_pwmTimerMode0Reset; PR #53 round 83) */
+
+void mc68k_resetSpeedMeasurementMode0(void)
 
 {
   word wVar1;
@@ -37988,12 +37994,20 @@ void mc68k_pwmTimerMode0Reset(void)
 
 
 //
-// Function: mc68k_pwmTimerMode1ChannelSetup @ 0x0003480e
+// Function: mc68k_setUpTpuChannel3AnglePulseOutput @ 0x0003480e
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Sets up the angle-based pulse output on TPU channel 3 (function 8 in CFSR3 bits 15-12): the pulse
+   start and end as a tooth number plus a fraction from index_of_first_tdc_after_missed_pulse_1_6 -
+   _dzg_angle_after_cyl_tdc_angle_after_cyl_tdc_to_put_dzg_first_60_60 -
+   _engine_position_offset_distance_between_tooth_0_and_tdc_1_100_100 - the per-cylinder offsets at
+   0x80a23a and _dzg_angular_duration_angular_high_duration_of_dzg_pulse_at_tpu_0_60 - modulo the
+   teeth (pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 + 2). The Cummins names call
+   this pulse the DZG pulse. No PWM module is involved (was mc68k_pwmTimerMode1ChannelSetup; PR #53
+   round 83) */
 
-uint mc68k_pwmTimerMode1ChannelSetup(void)
+uint mc68k_setUpTpuChannel3AnglePulseOutput(void)
 
 {
   int iVar1;
@@ -38063,12 +38077,15 @@ uint mc68k_pwmTimerMode1ChannelSetup(void)
 
 
 //
-// Function: mc68k_pwmTimerMode1Update @ 0x0003494a
+// Function: mc68k_updateTpuChannel3AnglePulseOutput @ 0x0003494a
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Recomputes the TPU channel 3 angle pulse's start and end for current_cylinder_index (the same
+   arithmetic as mc68k_setUpTpuChannel3AnglePulseOutput) and writes them to its parameters. No PWM
+   module is involved (was mc68k_pwmTimerMode1Update; PR #53 round 83) */
 
-uint mc68k_pwmTimerMode1Update(void)
+uint mc68k_updateTpuChannel3AnglePulseOutput(void)
 
 {
   int iVar1;
@@ -38127,7 +38144,7 @@ uint mc68k_pwmTimerMode1Update(void)
   TPU_CPR1 = wVar3 & 0xff3f;
   wVar3 = TPU_CPR1;
   TPU_CPR1 = wVar3 | 0x80;
-  _DAT_00808ee8 = mc68k_pwmTimerCycleAdvance;
+  _DAT_00808ee8 = mc68k_alignCylinderIndexToCrankRevolution;
   wVar3 = TPU_CIER;
   TPU_CIER = wVar3 | 8;
   return uVar4;
@@ -38136,12 +38153,16 @@ uint mc68k_pwmTimerMode1Update(void)
 
 
 //
-// Function: mc68k_pwmTimerModeDispatcher @ 0x00034a82
+// Function: mc68k_configureTpuChannelsForSpeedMeasurementMode @ 0x00034a82
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Reprograms TPU channels 0 and 3 for speed_measurement_mode: in mode 0 channel 0 parameter 2 =
+   _DAT_00807ec8 / 6 and channel 3 takes function 0xa (CFSR3 bits 15-12) - mode 1 uses the angle
+   pulse output (function 8). No PWM module is involved (was mc68k_pwmTimerModeDispatcher; PR #53
+   round 83) */
 
-void mc68k_pwmTimerModeDispatcher(void)
+void mc68k_configureTpuChannelsForSpeedMeasurementMode(void)
 
 {
   word wVar1;
@@ -38174,7 +38195,7 @@ void mc68k_pwmTimerModeDispatcher(void)
   }
   if ((pmm_error_type_signifies_the_type_of_sync_error_found_by_pmma_0_ff != '\0') &&
      (speed_measurement_mode == '\x01')) {
-    mc68k_pwmTimerMode1ChannelSetup();
+    mc68k_setUpTpuChannel3AnglePulseOutput();
   }
   return;
 }
@@ -38182,10 +38203,15 @@ void mc68k_pwmTimerModeDispatcher(void)
 
 
 //
-// Function: mc68k_pwmTimerCycleAdvance @ 0x00034b20
+// Function: mc68k_alignCylinderIndexToCrankRevolution @ 0x00034b20
 //
 
-undefined8 mc68k_pwmTimerCycleAdvance(void)
+/* When CMSYSS is 1 it moves current_cylinder_index by 3 (modulo 6) so that it agrees with
+   flag_indicating_crank_rev_1_or_2_of_cam_rev_0_1: cylinders 0 / 4 / 5 on the first crank
+   revolution and 1 / 2 / 3 on the second. No PWM module is involved (was
+   mc68k_pwmTimerCycleAdvance; PR #53 round 83) */
+
+undefined8 mc68k_alignCylinderIndexToCrankRevolution(void)
 
 {
   word wVar1;
@@ -38215,7 +38241,7 @@ undefined8 mc68k_pwmTimerCycleAdvance(void)
   next_injected_cylinder_FLCYCU =
        (char)((current_cylinder_counter_resets_to_this_when_eps_ref_pulse_occu_0_16 + uVar2) % 6) +
        '\x01';
-  mc68k_pwmTimerMode1Update();
+  mc68k_updateTpuChannel3AnglePulseOutput();
   wVar1 = TPU_CISR;
   TPU_CISR = wVar1 & 0xfff7;
   return CONCAT44(in_D0,in_D1);

@@ -68,6 +68,8 @@ address,name,type,comment
 0x0002f2c6,switchdataD_0002f2c6,ushort,
 0x0002fbc4,security_key_scramble_mask,byte[10],The mask unscrambleSecurityKey routes the security key's bits by (46 58 9a 32 70 87 23 99 85 64) - byte-identical with CM848's 0x5839a (PR #53 round 72)
 0x0002fbce,security_key_byte_order,byte[10],The byte order unscrambleSecurityKey XORs and writes the key by (06 08 01 02 00 07 03 09 05 04) - byte-identical with CM848's 0x583a4 (PR #53 round 72)
+0x00030c9c,tpu_microcode_image,dword[342],The TPU microcode: mc68k_loadTpuMicrocode copies the 0x68c bytes from here (to 0x31327) into the TPU RAM at 0xFFE000-0xFFE68B before it runs the TPU from its RAM (TPU_TPUMCR = 0x407). The array stops at 0x311F4 because mc68k_FUN_0002cc88 reads 0x311F4 as a signature (0x98765432 / 0x98765433) and 0x31256 as a code pointer - a record inside the copied block (PR #53 round 83)
+0x00031328,tpu_microcode_entry_table,word[128],The TPU microcode's entry table: mc68k_loadTpuMicrocode copies these 256 bytes to 0xFFE700-0xFFE7FF - the top of the 2 KB microcode memory - 16 functions x 8 entry words (PR #53 round 83)
 0x00032d00,switchD,,
 0x00032d04,switchdataD_00032d04,ushort,
 0x00033932,switchD,,
