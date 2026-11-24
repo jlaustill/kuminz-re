@@ -1,0 +1,14 @@
+3 changed functions have local rows
+  0x15f8e mc68k_dispatchJ1708ReceivedMessages currentTimerCount: same
+  0x21982 cm550_diagnosticServiceSecurityValidator service_id: same
+  0x21982 cm550_diagnosticServiceSecurityValidator msg_length: same
+  0x21982 cm550_diagnosticServiceSecurityValidator required_param_len: same
+  0x21982 cm550_diagnosticServiceSecurityValidator auth_result: same
+  0x2e9ac clearWorkingRam working_ram_pointer: DIFFERENT
+     after:  working_ram_pointer = (dword *)&rpm_rate_limit_countdown;
+     after:  chunk_end = working_ram_pointer + 0x40;
+     after:  for (; working_ram_pointer <= chunk_end; working_ram_pointer = working_ram_pointer + 1) {
+  0x2e9ac clearWorkingRam chunk_end: DIFFERENT
+     after:  chunk_end = working_ram_pointer + 0x40;
+     after:  chunk_end = (dword *)0x80def4;
+     after:  for (; working_ram_pointer <= chunk_end; working_ram_pointer = working_ram_pointer + 1) {

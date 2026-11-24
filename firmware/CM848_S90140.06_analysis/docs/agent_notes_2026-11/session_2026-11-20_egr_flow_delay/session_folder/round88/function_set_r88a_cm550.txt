@@ -1,0 +1,349 @@
+removed 0: 
+added 1: 0x00034fe0 cm550_secondOrderFilterUnsigned
+changed 38
+  0x0000b210 cm550_outputControlTimingGenerator: 12 lines
+      -       cm550_signedFirstOrderFilter(_DAT_0080a292,(dword *)&engine_acceleration_first_stage_filter_state);
+      +       cm550_signedFirstOrderFilter(_DAT_0080a292,&engine_acceleration_first_stage_filter_state);
+      -    _DAT_0080006a =
+      +    engine_acceleration_first_stage_filter_state.accumulator =
+      -         -0x80000000;
+      +         0x80000000;
+      -    _DAT_0080006a =
+      +    engine_acceleration_first_stage_filter_state.accumulator =
+      -         -0x80000000;
+      +         0x80000000;
+      -                  (dword *)&engine_acceleration_second_stage_filter_state);
+      +                  &engine_acceleration_second_stage_filter_state);
+  0x0000b5e4 cm550_dmaControllerSetup1: 8 lines
+      -  _DAT_0080006a = 0x80000000;
+      -  _timing_table_4_ptr = &engine_acceleration_first_stage_filter_coefficient;
+      +  engine_acceleration_first_stage_filter_state.accumulator = 0x80000000;
+      +  engine_acceleration_first_stage_filter_state.coefficient =
+      +       &engine_acceleration_first_stage_filter_coefficient;
+      -  _DAT_0080006e = &engine_acceleration_second_stage_filter_coefficient;
+      +  engine_acceleration_second_stage_filter_state.coefficient =
+      +       &engine_acceleration_second_stage_filter_coefficient;
+  0x0000b7bc validateServiceDataLength: 219 lines
+      -  undefined2 uVar2;
+      +  word wVar2;
+      -  undefined *puVar7;
+      -  undefined *table_descriptor;
+      +  word *pwVar7;
+      +  sensor_debounce_state_t *channel_record;
+      -  table_descriptor = &intake_manifold_temperature_sensor_filter_state;
+      -  puVar7 = &intake_manifold_temperature_sensor_filter_coefficient;
+      +  channel_record = (sensor_debounce_state_t *)&intake_manifold_temperature_sensor_filter_state;
+      +  pwVar7 = &intake_manifold_temperature_sensor_filter_coefficient;
+      -    if ((undefined *)0x80a4cf < table_descriptor) {
+      +    if ((sensor_debounce_state_t *)0x80a4cf < channel_record) {
+      -    if (puVar7[0x17] == '\0') {
+      -      table_descriptor[0xf] = 0;
+      -    }
+      -    else if ((byte)table_descriptor[0xf] < (byte)puVar7[0x17]) {
+      -      table_descriptor[0xf] = table_descriptor[0xf] + '\x01';
+      +    if (*(char *)((int)pwVar7 + 0x17) == '\0') {
+      +      channel_record->sample_counter = 0;
+      +    }
+      +    else if (channel_record->sample_counter < *(byte *)((int)pwVar7 + 0x17)) {
+      +      channel_record->sample_counter = channel_record->sample_counter + 1;
+      -      table_descriptor[0xf] = 1;
+      +      channel_record->sample_counter = 1;
+  0x0000bcf0 cm550_initADCChannelConfiguration: 90 lines
+      -  undefined *puVar2;
+      -  undefined4 *puVar3;
+      -  undefined *puVar4;
+      +  word *pwVar2;
+      +  sensor_debounce_state_t *channel_record;
+      +  ema_filter_state_t *peVar3;
+      -  puVar2 = &intake_manifold_temperature_sensor_filter_coefficient;
+      -  for (puVar3 = (undefined4 *)&intake_manifold_temperature_sensor_filter_state; puVar3 < (undefined4 *)0x80a4d0;
+      -      puVar3 = (undefined4 *)((int)puVar3 + 0x16)) {
+      -    puVar3[1] = 0;
+      -    *puVar3 = puVar2;
+      -    *(undefined *)((int)puVar3 + 0xf) = puVar2[0x17];
+      +  pwVar2 = &intake_manifold_temperature_sensor_filter_coefficient;
+      +  for (channel_record = (sensor_debounce_state_t *)&intake_manifold_temperature_sensor_filter_state;
+      +      channel_record < (sensor_debounce_state_t *)0x80a4d0; channel_record = channel_record + 1) {
+      +    (channel_record->filter).accumulator = 0;
+      +    (channel_record->filter).coefficient = pwVar2;
+      +    channel_record->sample_counter = *(byte *)((int)pwVar2 + 0x17);
+      -                 (short)((int)(uint)(byte)puVar2[0x15] >> 4) * 2) & 1 << (puVar2[0x15] & 0xf)) == 0)
+      -       || (((uint)*(ushort *)
+      -                   (&fault_confirm_status_word_0 + (short)((int)(uint)(byte)puVar2[0x15] >> 4) * 2)
+      -           & 1 << (puVar2[0x15] & 0xf)) == 0)) {
+      +                 (short)((int)(uint)*(byte *)((int)pwVar2 + 0x15) >> 4) * 2) &
+      +         1 << (*(byte *)((int)pwVar2 + 0x15) & 0xf)) == 0) ||
+  0x0000c326 calculateAlpha: 2 lines
+      -    _DAT_0080a91e = 0;
+      +    alpha_fuel_rate_filter_state.accumulator = 0;
+  0x0000c404 calculateAlphaFuelRateResult: 2 lines
+      -    _DAT_0080a91e = (uint)_DAT_0080a90c << 0x10;
+      +    alpha_fuel_rate_filter_state.accumulator = (uint)_DAT_0080a90c << 0x10;
+  0x0000c962 cm550_engine_speed_governor: 6 lines
+      -      _DAT_0080a988 = (uint)_asg_filtered_reference_speed_0_4500 << 0x10;
+      +      all_speed_governor_reference_filter_state.accumulator =
+      +           (uint)_asg_filtered_reference_speed_0_4500 << 0x10;
+      -      _fuel_blend_table_5_ptr = (ushort)((int)(uint)*_asg_droop_compensated_error_2000_2000 >> 2);
+      +      _fuel_blend_table_5_ptr =
+      +           (ushort)((int)(uint)*all_speed_governor_reference_filter_state.coefficient >> 2);
+  0x0000d0e2 cm550_diagnosticDataCopyHandler: 2 lines
+      -    _asg_droop_compensated_error_2000_2000 =
+      +    all_speed_governor_reference_filter_state.coefficient =
+  0x0000d0fc cm550_fuelDeliverySystemInit: 2 lines
+      -  _asg_droop_compensated_error_2000_2000 =
+      +  all_speed_governor_reference_filter_state.coefficient =
+  0x0000d1a4 cm550_diagnosticStatus2Initializer: 3 lines
+      -      _asg_droop_compensated_error_2000_2000 = &all_speed_governor_j1939_reference_filter_coefficient;
+      +      all_speed_governor_reference_filter_state.coefficient =
+      +           &all_speed_governor_j1939_reference_filter_coefficient;
+  0x0000d4ae cm550_FUN_0000d4ae: 3 lines
+      -      _asg_droop_compensated_error_2000_2000 = &all_speed_governor_reference_filter_coefficient;
+      +      all_speed_governor_reference_filter_state.coefficient =
+      +           &all_speed_governor_reference_filter_coefficient;
+  0x000171be cm550_fuel_limit_arbitrator: 19 lines
+      -        _DAT_008005ae = 0;
+      +        engine_speed_filter_state.accumulator = 0;
+      -        _engine_rpm_primary = cm550_exponentialMovingAverage(_DAT_0080cd06,&engine_speed_filter_state);
+      +        _engine_rpm_primary =
+      +             cm550_exponentialMovingAverage(_DAT_0080cd06,&engine_speed_filter_state);
+      -        _DAT_008005ae = 0;
+      +        engine_speed_filter_state.accumulator = 0;
+      -        _engine_rpm_primary = cm550_exponentialMovingAverage(_DAT_0080cd04,&engine_speed_filter_state);
+      +        _engine_rpm_primary =
+      +             cm550_exponentialMovingAverage(_DAT_0080cd04,&engine_speed_filter_state);
+      -        _DAT_008005ae = 0;
+      +        engine_speed_filter_state.accumulator = 0;
+      -        uVar1 = cm550_exponentialMovingAverage(_DAT_0080cd16,&engine_speed_filter_state);
+      -        _current_engine_rpm_filtered = (ushort)uVar1;
+      +        _current_engine_rpm_filtered =
+      +             cm550_exponentialMovingAverage(_DAT_0080cd16,&engine_speed_filter_state);
+      +        uVar1 = (uint)_current_engine_rpm_filtered;
+      -    _DAT_008005ae = uVar1;
+      +    engine_speed_filter_state.accumulator = uVar1;
+  0x000176de cm550_engineRpmSourceInit: 4 lines
+      -  _DAT_008005ae = 0;
+      -  _DAT_008005aa = &engine_speed_filter_coefficient;
+      +  engine_speed_filter_state.accumulator = 0;
+      +  engine_speed_filter_state.coefficient = &engine_speed_filter_coefficient;
+  0x00018e0c cm550_FUN_00018e0c: 3 lines
+      -                       (short)((uint)uVar5 * (uint)_DAT_0080d290 >> 8),&engine_protection_speed_limit_filter_state);
+      +                       (short)((uint)uVar5 * (uint)_DAT_0080d290 >> 8),
+      +                       &engine_protection_speed_limit_filter_state);
+  0x00018f4c cm550_protectionThresholdPointerInit: 6 lines
+      -  _DAT_00800616 = (uint)_maximum_rated_engine_speed_0_5000 << 0x10;
+      -  _DAT_00800612 = &engine_protection_speed_limit_filter_coefficient;
+      +  engine_protection_speed_limit_filter_state.accumulator =
+      +       (uint)_maximum_rated_engine_speed_0_5000 << 0x10;
+      +  engine_protection_speed_limit_filter_state.coefficient =
+      +       &engine_protection_speed_limit_filter_coefficient;
+  0x0001abb2 cm550_FUN_0001abb2: 4 lines
+      -           cm550_signedFirstOrderFilter(_DAT_0080067a,(dword *)&engine_deceleration_rate_filter_state);
+      +           cm550_signedFirstOrderFilter(_DAT_0080067a,&engine_deceleration_rate_filter_state);
+      -          (int)_current_engine_deceleration_rate_100_100) {
+      +          (int)(short)_current_engine_deceleration_rate_100_100) {
+  0x0001ade8 cm550_FUN_0001ade8: 4 lines
+      -  _DAT_00800674 = 0x80000000;
+      -  _DAT_00800670 = &engine_deceleration_rate_filter_coefficient;
+      +  engine_deceleration_rate_filter_state.accumulator = 0x80000000;
+      +  engine_deceleration_rate_filter_state.coefficient = &engine_deceleration_rate_filter_coefficient;
+  0x0001ae06 cm550_initOilPressureModeSystem: 4 lines
+      -  _DAT_00800674 = 0x80000000;
+      -  _DAT_00800670 = &engine_deceleration_rate_filter_coefficient;
+      +  engine_deceleration_rate_filter_state.accumulator = 0x80000000;
+      +  engine_deceleration_rate_filter_state.coefficient = &engine_deceleration_rate_filter_coefficient;
+  0x0001ae0c cm550_sensorHistoryTablePointerInit: 4 lines
+      -  _DAT_00800674 = 0x80000000;
+      -  _DAT_00800670 = &engine_deceleration_rate_filter_coefficient;
+      +  engine_deceleration_rate_filter_state.accumulator = 0x80000000;
+      +  engine_deceleration_rate_filter_state.coefficient = &engine_deceleration_rate_filter_coefficient;
+  0x0001ce7c runHighSpeedGovernorPid: 31 lines
+      -  _hsg_filtered_engine_speed_error = cm550_signedFirstOrderFilter((word)iVar1,(dword *)&high_speed_governor_error_filter);
+      -  if (_hsg_maximum_filtered_engine_speed_error_0_1000 < _hsg_filtered_engine_speed_error) {
+      +  _hsg_filtered_engine_speed_error =
+      +       cm550_signedFirstOrderFilter((word)iVar1,&high_speed_governor_error_filter);
+      +  if ((short)_hsg_maximum_filtered_engine_speed_error_0_1000 <
+      +      (short)_hsg_filtered_engine_speed_error) {
+      -    _DAT_0080d63a = _hsg_maximum_filtered_engine_speed_error_0_1000 * 0x10000 + -0x80000000;
+      +    high_speed_governor_error_filter.accumulator =
+      +         (short)_hsg_maximum_filtered_engine_speed_error_0_1000 * 0x10000 + 0x80000000;
+      -  else if (_hsg_filtered_engine_speed_error < _hsg_minimum_filtered_engine_speed_error_1000_0) {
+      +  else if ((short)_hsg_filtered_engine_speed_error <
+      +           (short)_hsg_minimum_filtered_engine_speed_error_1000_0) {
+      -    _DAT_0080d63a = _hsg_minimum_filtered_engine_speed_error_1000_0 * 0x10000 + -0x80000000;
+      +    high_speed_governor_error_filter.accumulator =
+      +         (short)_hsg_minimum_filtered_engine_speed_error_1000_0 * 0x10000 + 0x80000000;
+      -    _DAT_0080d63a = 0x80000000;
+      +    high_speed_governor_error_filter.accumulator = 0x80000000;
+      -    if (_hsg_filtered_engine_speed_error < 0) {
+      +    if ((short)_hsg_filtered_engine_speed_error < 0) {
+      -    if (_hsg_filtered_engine_speed_error < 0) {
+      +    if ((short)_hsg_filtered_engine_speed_error < 0) {
+      -    if (_hsg_filtered_engine_speed_error < 0) {
+      +    if ((short)_hsg_filtered_engine_speed_error < 0) {
+      -                    ((int)_hsg_filtered_engine_speed_error,
+  0x0001d2e4 initializeHighSpeedGovernorGainSet: 4 lines
+      -  _DAT_0080d63a = 0x80000000;
+      -  _DAT_0080d636 = &high_speed_governor_error_filter_coefficient;
+      +  high_speed_governor_error_filter.accumulator = 0x80000000;
+      +  high_speed_governor_error_filter.coefficient = &high_speed_governor_error_filter_coefficient;
+  0x0001d392 selectHighSpeedGovernorGainSet: 5 lines
+      -        _DAT_0080d636 = &high_speed_governor_error_filter_coefficient;
+      +        high_speed_governor_error_filter.coefficient = &high_speed_governor_error_filter_coefficient
+      +        ;
+      -      _DAT_0080d636 = &high_speed_governor_error_filter_coefficient;
+      +      high_speed_governor_error_filter.coefficient = &high_speed_governor_error_filter_coefficient;
+  0x0001dcfc vp44ControlStructureInit: 4 lines
+      -  _DAT_0080a91e = 0;
+      -  _DAT_0080a91a = &alpha_fuel_rate_filter_coefficient;
+      +  alpha_fuel_rate_filter_state.accumulator = 0;
+      +  alpha_fuel_rate_filter_state.coefficient = &alpha_fuel_rate_filter_coefficient;
+  0x0002571e cm550_FUN_0002571e: 4 lines
+      -    _DAT_0080dabc = cm550_exponentialMovingAverage(_current_engine_rpm_filtered,&pedal_fault_mode_engine_speed_filter_state);
+      +    _DAT_0080dabc =
+      +         cm550_exponentialMovingAverage
+      +                   (_current_engine_rpm_filtered,&pedal_fault_mode_engine_speed_filter_state);
+  0x000258b0 cm550_FUN_000258b0: 3 lines
+      -  pedal_fault_mode_engine_speed_filter_state.accumulator = (uint)_current_engine_rpm_filtered << 0x10;
+      +  pedal_fault_mode_engine_speed_filter_state.accumulator =
+      +       (uint)_current_engine_rpm_filtered << 0x10;
+  0x000258d6 cm550_fuelDemandTablePointerInit: 3 lines
+      -  _DAT_00801a32 = 0x80820e;
+      +  pedal_fault_mode_engine_speed_filter_state.coefficient =
+      +       &pedal_fault_mode_engine_speed_filter_coefficient;
+  0x00025b1c vp44_fuel_timing_calculation_with_fault_checking: 25 lines
+      -  short sVar3;
+      -  word new_sample;
+      +  word wVar3;
+      -  sVar3 = cm550_exponentialMovingAverage
+      +  wVar3 = cm550_exponentialMovingAverage
+      -         sVar3 + _operator_adjusted_lsg_breakpoint_speed_300_1000;
+      +         wVar3 + _operator_adjusted_lsg_breakpoint_speed_300_1000;
+      -      new_sample = 0x8000;
+      +      wVar3 = 0x8000;
+      -      new_sample = (word)iVar1;
+      +      wVar3 = (word)iVar1;
+      -      new_sample = 0x7fff;
+      +      wVar3 = 0x7fff;
+      -      low_speed_governor_error_filter.accumulator = (short)new_sample * 0x10000 + -0x80000000;
+      -      _lsg_filtered_speed_error = new_sample;
+      +      low_speed_governor_error_filter.accumulator = (short)wVar3 * 0x10000 + 0x80000000;
+      +      _lsg_filtered_speed_error = wVar3;
+      -           cm550_signedFirstOrderFilter(new_sample,(dword *)&low_speed_governor_error_filter);
+      +           cm550_signedFirstOrderFilter(wVar3,&low_speed_governor_error_filter);
+      -           (short)_lsg_filtered_speed_error_upper_limit * 0x10000 + -0x80000000;
+      +           (short)_lsg_filtered_speed_error_upper_limit * 0x10000 + 0x80000000;
+      -           (short)_lsg_filtered_speed_error_lower_limit * 0x10000 + -0x80000000;
+      +           (short)_lsg_filtered_speed_error_lower_limit * 0x10000 + 0x80000000;
+      -      low_speed_governor_error_filter.accumulator = -0x80000000;
+  0x00025ff2 vp44_fuelRpmDeviationCalculator: 2 lines
+      -  low_speed_governor_error_filter.accumulator = _lsg_filtered_speed_error * 0x10000 + -0x80000000;
+      +  low_speed_governor_error_filter.accumulator = _lsg_filtered_speed_error * 0x10000 + 0x80000000;
+  0x00026078 cm550_FUN_00026078: 5 lines
+      -  _retarder_mode3_output_ptr = &low_speed_governor_throttle_reference_offset_filter_coefficient;
+      -  _retarder_mode3_threshold_table = 0x80823e;
+      +  low_speed_governor_throttle_reference_offset_filter_state.coefficient =
+      +       &low_speed_governor_throttle_reference_offset_filter_coefficient;
+      +  low_speed_governor_error_filter.coefficient = &low_speed_governor_error_filter_coefficient;
+  0x0002d3c6 initProtectionParamCalculation: 2 lines
+      -         cm550_signedFirstOrderFilter(local_8._2_2_,(dword *)&power_take_off_speed_error_filter);
+      +         cm550_signedFirstOrderFilter(local_8._2_2_,&power_take_off_speed_error_filter);
+  0x0002d9d2 cm550_fuelDemandProportionalCalculator: 2 lines
+      -  _DAT_00801c04 = 0x80000000;
+      +  power_take_off_speed_error_filter.accumulator = 0x80000000;
+  0x0002db2a cm550_FUN_0002db2a: 4 lines
+      -  _DAT_00801c04 = 0x80000000;
+      -  _DAT_00801c00 = 0x80889a;
+      +  power_take_off_speed_error_filter.accumulator = 0x80000000;
+      +  power_take_off_speed_error_filter.coefficient = &power_take_off_speed_error_filter_coefficient;
+  0x0002dbde cm550_FUN_0002dbde: 23 lines
+      -  ushort uVar1;
+      +  word wVar1;
+      +  ushort uVar2;
+      -      uVar1 = _DAT_0080dc24 - _closed_loop_rpm_snapshot;
+      +      uVar2 = _DAT_0080dc24 - _closed_loop_rpm_snapshot;
+      -      uVar1 = _closed_loop_rpm_snapshot - _DAT_0080dc24;
+      +      uVar2 = _closed_loop_rpm_snapshot - _DAT_0080dc24;
+      -    if (uVar1 <= _closed_loop_rpm_step_rate_limit) {
+      +    if (uVar2 <= _closed_loop_rpm_step_rate_limit) {
+      -    _DAT_00801c4a = (uint)_closed_loop_rpm_snapshot << 0x10;
+      -    uVar1 = cm550_exponentialMovingAverage(_DAT_0080dc24,&power_take_off_reference_filter_state);
+      -    if (_closed_loop_rpm_snapshot < uVar1) {
+      -      if ((int)((uint)uVar1 - (uint)_closed_loop_rpm_snapshot) <
+      +    power_take_off_reference_filter_state.accumulator = (uint)_closed_loop_rpm_snapshot << 0x10;
+      +    wVar1 = cm550_exponentialMovingAverage(_DAT_0080dc24,&power_take_off_reference_filter_state);
+      +    if (_closed_loop_rpm_snapshot < wVar1) {
+      +      if ((int)((uint)wVar1 - (uint)_closed_loop_rpm_snapshot) <
+      -      _closed_loop_rpm_snapshot = uVar1;
+      +      _closed_loop_rpm_snapshot = wVar1;
+      -        (int)((uint)_closed_loop_rpm_snapshot - (uint)uVar1)) {
+      -      _closed_loop_rpm_snapshot = uVar1;
+      +        (int)((uint)_closed_loop_rpm_snapshot - (uint)wVar1)) {
+      +      _closed_loop_rpm_snapshot = wVar1;
+  0x0002dc8c cm550_rpmSnapshotCapture: 2 lines
+      -  _DAT_00801c4a = 0;
+      +  power_take_off_reference_filter_state.accumulator = 0;
+  0x0002dc9e cm550_FUN_0002dc9e: 4 lines
+      -  _DAT_00801c4a = 0;
+      -  _DAT_00801c46 = &power_take_off_reference_filter_coefficient;
+      +  power_take_off_reference_filter_state.accumulator = 0;
+      +  power_take_off_reference_filter_state.coefficient = &power_take_off_reference_filter_coefficient;
+  0x00034e9a cm550_signedFirstOrderFilter: 14 lines
+      -undefined8 cm550_signedFirstOrderFilter(word new_sample,dword *filter_state)
+      +word cm550_signedFirstOrderFilter(word new_sample,ema_filter_state_t *filter_state)
+      -  undefined4 in_D1;
+      -  uVar1 = *(ushort *)*filter_state;
+      +  uVar1 = *filter_state->coefficient;
+      -    dVar2 = (uint)*(ushort *)(filter_state + 1) * (uint)uVar1 +
+      -            ((uint)*(ushort *)((int)filter_state + 6) * (uint)uVar1 >> 0x10) +
+      +    dVar2 = (uint)*(ushort *)&filter_state->accumulator * (uint)uVar1 +
+      +            ((uint)(ushort)filter_state->accumulator * (uint)uVar1 >> 0x10) +
+      -  filter_state[1] = dVar2;
+      -  return CONCAT44(CONCAT22((short)((dVar2 + 0x8000) * 0x10000 >> 0x10),
+      -                           (short)(dVar2 + 0x8000 >> 0x10) + -0x8000),in_D1);
+      +  filter_state->accumulator = dVar2;
+      +  return (short)(dVar2 + 0x8000 >> 0x10) + 0x8000;
+  0x00034f00 cm550_secondOrderFilter: 40 lines
+      -undefined4 cm550_secondOrderFilter(word x_input,dword *interpolation_state)
+      +word cm550_secondOrderFilter(word input,second_order_filter_state_t *filter)
+      -  dword dVar4;
+      -  int iVar5;
+      -  lVar3 = (longlong)(int)interpolation_state[2] *
+      -          (longlong)
+      -          (int)(((uint)*(ushort *)interpolation_state[1] - (uint)*(ushort *)*interpolation_state) +
+      -               0xffff) +
+      -          (longlong)(int)(uint)*(ushort *)*interpolation_state *
+      -          (longlong)(int)((uint)x_input << 0x10);
+      +  uint uVar4;
+      +  dword dVar5;
+      +  int iVar6;
+      +  lVar3 = (longlong)(int)filter->output *
+      +          (longlong)(int)(((uint)*filter->coefficient_3 - (uint)*filter->coefficient_1) + 0xffff) +
+      +          (longlong)(int)(uint)*filter->coefficient_1 * (longlong)(int)((uint)input << 0x10);
+      -  lVar2 = (longlong)(int)(uint)*(ushort *)interpolation_state[1] *
+      -          (longlong)(int)interpolation_state[3];
+      -  iVar5 = (int)((ulonglong)lVar3 >> 0x20) -
+      -          ((uint)(uVar1 < (uint)lVar2) + (int)((ulonglong)lVar2 >> 0x20));
+      -  if (iVar5 < 0x8000) {
+      -    if (iVar5 < -0x8000) {
+      -      dVar4 = 0x80000000;
+      +  lVar2 = (longlong)(int)(uint)*filter->coefficient_3 * (longlong)(int)filter->output_previous;
+  0x00034f8a cm550_exponentialMovingAverage: 19 lines
+      -undefined8 cm550_exponentialMovingAverage(word input_value,void *table_descriptor)
+      +word cm550_exponentialMovingAverage(word new_sample,ema_filter_state_t *filter_state)
+      -  int iVar2;
+      -  undefined4 in_D1;
+      -  uVar1 = **(ushort **)table_descriptor;
+      +  dword dVar2;
+      +  uVar1 = *filter_state->coefficient;
+      -    iVar2 = (uint)input_value << 0x10;
+      +    dVar2 = (uint)new_sample << 0x10;
+      -    iVar2 = (uint)uVar1 * (uint)*(ushort *)((int)table_descriptor + 4) +
+      -            ((uint)uVar1 * (uint)*(ushort *)((int)table_descriptor + 6) >> 0x10) +
+      -            (uint)input_value * (uint)(ushort)-uVar1;
+      +    dVar2 = (uint)uVar1 * (uint)*(ushort *)&filter_state->accumulator +
+      +            ((uint)uVar1 * (uint)(ushort)filter_state->accumulator >> 0x10) +
+      +            (uint)new_sample * (uint)(ushort)-uVar1;
+      -  *(int *)((int)table_descriptor + 4) = iVar2;
+      -  return CONCAT44((iVar2 + 0x8000U) * 0x10000 | iVar2 + 0x8000U >> 0x10,in_D1);
+      +  filter_state->accumulator = dVar2;
+      +  return (word)(dVar2 + 0x8000 >> 0x10);

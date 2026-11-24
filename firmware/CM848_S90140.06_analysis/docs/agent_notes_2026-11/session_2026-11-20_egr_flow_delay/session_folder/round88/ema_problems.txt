@@ -1,0 +1,192 @@
+== struct_type  (none - new CM550 type) -> ema_filter_state_t [accept]
+  - Field comment wording: 'every initializer stores 0x80000000' is not true for the low speed governor record 0x801a5a - its initializer cm550_FUN_00026078 (0x26078) stores only the pointer; the governor function presets / resets the accumulator (0x25cf2 move.l #0x80000000,$801a5e; move.l d0 presets at 0x25c30 / 0x25c54 / 0x25c7a / 0x26060). The other five signed initializers (0xb5e4 x2, 0x1ae0c, 0x1d332, 0x2db46) do store 0x80000000
+== struct_type  (none - new CM550 type) -> second_order_filter_state_t [accept]
+  - Field comments must say 1/65535 (CM550 divides by 0xffff and adds 0xffff; the CM848 comments say 1/65536)
+== struct_type  sensor_debounce_state_t -> sensor_debounce_state_t [amend]
+  - Template fix only (it has no instance): offsets 0/4/8/10/12/14/15/16 verified in validateServiceDataLength (0xb7bc) and cm550_initADCChannelConfiguration (clr.l (4,a3) / move.l a2,(a3)); +12 is signed (compared as short, floored at 0); +18..+21 have no access and read 0 in all 25 dumped records
+  - Rename reserved_12 -> reserved_18: the field is at +18 decimal; '12' is the hex offset (project rule: decimal in names)
+  - Do NOT retype the 25 A/D records to this 22-byte type in this change: it swallows 74 named rows at +8 / +10 / +16, which fails the no-swallow struct test - keep it as a lead. It is the fix if the render check on the 0x34f8a row shows the walking pointer degrading
+  - Why the six named-instance removals pass and these 74 do not: those swallow only the record's own pointer / accumulator under an old name or rows with no user, whereas the 74 are live, correctly named rows (filtered value, lookup result, raw counts) that other functions read
+== struct_instance 0x00800066 timing_table_4_ptr -> engine_acceleration_first_stage_filter_state [accept]
+  - Removed rows that are the record's own fields under an old name (their accesses render as the field after the change): timing_table_4_ptr (+0 -> .coefficient, 2 renders). Removed rows with no user: timing_table_5_ptr (+6) - 0 renders in the frozen .cpp and 0 absolute references in the dumped ROM; code above 0x40000 is unseen, so keep the old names as '(was ...)' in the instance comment
+== struct_instance 0x0080006e (no row at +0; renders DAT_0080006e) -> engine_acceleration_second_stage_filter_state [accept]
+  - Removed rows that are the record's own fields under an old name (their accesses render as the field after the change): diagnostic_timing_increment_reserved (+4 -> .accumulator, 1 render). Removed rows with no user: diagnostic_timing_increment_state (+2); fuel_parameter_pointer_3 (+6) - 0 renders in the frozen .cpp and 0 absolute references in the dumped ROM; code above 0x40000 is unseen, so keep the old names as '(was ...)' in the instance comment
+== struct_instance 0x00800670 (no row; renders DAT_00800670) -> engine_deceleration_rate_filter_state [accept]
+
+== struct_instance 0x0080d636 (no row; renders DAT_0080d636) -> high_speed_governor_error_filter [accept]
+
+== struct_instance 0x00801a5a retarder_mode3_threshold_table -> low_speed_governor_error_filter [accept]
+  - The initializer 0x26078 stores only the pointer; the accumulator presets are in the governor itself
+  - Removed rows that are the record's own fields under an old name (their accesses render as the field after the change): retarder_mode3_threshold_table (+0 -> .coefficient, 2 renders); lsg_speed_error_ema_accumulator (+4 -> .accumulator, 5 renders). Removed rows with no user: retarder_mode3_data_ptr (+2); retarder_mode3_rpm_input (+6) - 0 renders in the frozen .cpp and 0 absolute references in the dumped ROM; code above 0x40000 is unseen, so keep the old names as '(was ...)' in the instance comment
+== struct_instance 0x00801c00 (no row; renders DAT_00801c00) -> power_take_off_speed_error_filter [accept]
+
+== struct_instance 0x0080a91a (no row; renders DAT_0080a91a) -> alpha_fuel_rate_filter_state [accept]
+
+== struct_instance 0x0080a984 asg_droop_compensated_error_2000_2000 -> all_speed_governor_reference_filter_state [accept]
+  - Dump reads 0 at +0 / +4; asg_governor_gains_ptr (0x80a9a8, set by the same loaders) is 0 too, consistent with no ASG set loaded in that session
+  - Removed rows that are the record's own fields under an old name (their accesses render as the field after the change): asg_droop_compensated_error_2000_2000 (+0 -> .coefficient, 6 renders). Removed rows with no user: asg_quadratic_derivative_adjustment_100_100 (+2); qpid_adjusted_asg_droop_compensated_error_derivative_2000_2000 (+6) - 0 renders in the frozen .cpp and 0 absolute references in the dumped ROM; code above 0x40000 is unseen, so keep the old names as '(was ...)' in the instance comment
+== struct_instance 0x008005aa (no row; renders DAT_008005aa) -> engine_speed_filter_state [accept]
+
+== struct_instance 0x00800612 (no row; renders DAT_00800612) -> engine_protection_speed_limit_filter_state [accept]
+
+== struct_instance 0x00801a32 (no row at +0; renders DAT_00801a32) -> pedal_fault_mode_engine_speed_filter_state [accept]
+  - Removed rows that are the record's own fields under an old name (their accesses render as the field after the change): can_transmission_active_count (+4 -> .accumulator, 2 renders). Removed rows with no user: retarder_mode_priority_level (+6); retarder_control_priority_prev (+7) - 0 renders in the frozen .cpp and 0 absolute references in the dumped ROM; code above 0x40000 is unseen, so keep the old names as '(was ...)' in the instance comment
+== struct_instance 0x00801a62 retarder_mode3_output_ptr -> low_speed_governor_throttle_reference_offset_filter_state [accept]
+  - Removed rows that are the record's own fields under an old name (their accesses render as the field after the change): retarder_mode3_output_ptr (+0 -> .coefficient, 2 renders). Removed rows with no user: retarder_mode_timeout_value (+4, the accumulator position, written only through the filter); fuel_statistics_fault_counter (+6) - 0 renders in the frozen .cpp and 0 absolute references in the dumped ROM; code above 0x40000 is unseen, so keep the old names as '(was ...)' in the instance comment
+== struct_instance 0x00801c46 (no row; renders DAT_00801c46) -> power_take_off_reference_filter_state [accept]
+
+== struct_instance 0x0080a2aa (no row; A/D channel record 0) -> intake_manifold_temperature_sensor_filter_state [accept]
+  - Render check after the build: validateServiceDataLength (0xb7bc) and cm550_initADCChannelConfiguration (0xbcf0) walk the 22-byte records through the pointer they pass to 0x34f8a; once that parameter is ema_filter_state_t * (and this base is an 8-byte instance) Ghidra will probably render +8..+21 and the +0x16 stride as [1] / [2] member arithmetic (the same function already shows '&local_8[1].x_axis_ptr' for its 14-byte lookup stride over the 12-byte table_interp_args_t). Diff those two walkers and the base-register users 0x1873e, 0x1abb2, 0x2fe38, 0x315be, 0x33e58; the 22-byte sensor_debounce_state_t is the fix if it regresses
+== struct_instance 0x0080a2c0 (no row; A/D channel record 1) -> fuel_temperature_sensor_filter_state [accept]
+  - Sample period (config +23) is 0 in this calibration: the channel is not processed
+== struct_instance 0x0080a2d6 (no row; A/D channel record 2) -> coolant_level_sensor_filter_state [accept]
+
+== struct_instance 0x0080a2ec (no row; A/D channel record 3) -> fuel_pressure_sensor_filter_state [accept]
+  - Identity from the J90350 config rows (fuel pressure error numbers); sample period 0 here
+== struct_instance 0x0080a302 (no row; A/D channel record 4) -> oil_pressure_sensor_filter_state [accept]
+
+== struct_instance 0x0080a318 (no row; A/D channel record 5) -> boost_pressure_sensor_filter_state [accept]
+
+== struct_instance 0x0080a32e (no row; A/D channel record 6) -> coolant_temperature_sensor_filter_state [accept]
+
+== struct_instance 0x0080a344 (no row; A/D channel record 7) -> ambient_air_temperature_sensor_filter_state [accept]
+  - Sample period (config +23) is 0 in this calibration
+== struct_instance 0x0080a35a (no row; A/D channel record 8) -> power_steering_temperature_sensor_filter_state [accept]
+  - Low: identity rests on the config row power_steering_temperature_channel_address_none only; sample period 0 here
+== struct_instance 0x0080a370 (no row; A/D channel record 9) -> exhaust_pressure_sensor_filter_state [accept]
+  - Identity from the J90350 config rows (engine_sync_exhaust_pressure); sample period 0 here
+== struct_instance 0x0080a386 (no row; A/D channel record 10) -> sampled_throttle_sensor_filter_state [accept]
+
+== struct_instance 0x0080a39c (no row; A/D channel record 11) -> remote_throttle_sensor_filter_state [accept]
+
+== struct_instance 0x0080a3b2 (no row; A/D channel record 12) -> ambient_air_pressure_sensor_filter_state [accept]
+  - Sample period (config +23) is 0 in this calibration
+== struct_instance 0x0080a3c8 (no row; A/D channel record 13) -> battery_voltage_sensor_filter_state [accept]
+
+== struct_instance 0x0080a3de (no row; A/D channel record 14) -> engine_speed_sensor_supply_voltage_filter_state [accept]
+
+== struct_instance 0x0080a3f4 (no row; A/D channel record 15) -> throttle_position_sensor_supply_voltage_filter_state [accept]
+
+== struct_instance 0x0080a40a (no row; A/D channel record 16) -> vehicle_connector_sensor_supply_voltage_filter_state [accept]
+
+== struct_instance 0x0080a420 (no row; A/D channel record 17) -> engine_connector_sensor_supply_voltage_filter_state [accept]
+
+== struct_instance 0x0080a436 (no row; A/D channel record 18) -> frequency_throttle_input_supply_voltage_filter_state [accept]
+  - Low: identity rests on the config row frequency_throttle_input_sensor_sv_channel_address_none only; sample period 0 here
+== struct_instance 0x0080a44c (no row; A/D channel record 19) -> cruise_control_switch_multiplexer_filter_state [amend]
+  - 'mux' is not on the allowed abbreviation list (CM848 names spell out multiplex); Calterm CRUISE_CONTROL_SWITCH_MUX -> multiplexer
+== struct_instance 0x0080a462 (no row; A/D channel record 20) -> water_in_fuel_sensor_filter_state [accept]
+
+== struct_instance 0x0080a478 (no row; A/D channel record 21) -> egr_current_feedback_filter_state [accept]
+  - Low: identity rests on the config row egr_current_feedback_channel_address_none only; sample period 0 here
+== struct_instance 0x0080a48e (no row; A/D channel record 22) -> programming_pulse_supply_voltage_filter_state [accept]
+
+== struct_instance 0x0080a4a4 (no row; A/D channel record 23) -> high_side_gate_bias_supply_voltage_filter_state [accept]
+  - Low: J90350 config mnemonics say ADHBSV (high side gate bias SV) but its channel address here is 39 (Calterm 64c6 gives ADHBSVCA 3)
+== struct_instance 0x0080a4ba (no row; A/D channel record 24) -> operational_amplifier_and_comparator_supply_voltage_filter_state [amend]
+  - 'op_amp' is an abbreviation outside the allowed list - spelled out by the same rule as channel 19
+  - Low: identity rests on the config row op_amps_and_comparators_sv_channel_address_none only
+== global 0x00807a42 engine_acceleration_first_stage_digital_filter_acceleration_time_0_1 -> engine_acceleration_first_stage_digital_filter_acceleration_time_0_1 [accept]
+
+== global 0x00807a44 engine_acceleration_second_stage_digital_filter_acceleration_tim_0_1 -> engine_acceleration_second_stage_digital_filter_acceleration_tim_0_1 [accept]
+
+== global 0x00807f66 filter_constant_in_filtered_engine_decel_rate_calculation_0_1 -> filter_constant_in_filtered_engine_decel_rate_calculation_0_1 [accept]
+
+== global 0x0080d634 hsg_gain_scheduling_output_hsg_engine_speed_error_filter_time_c_0_1 -> hsg_gain_scheduling_output_hsg_engine_speed_error_filter_time_c_0_1 [accept]
+
+== global 0x0080823e (no row) -> low_speed_governor_error_filter_coefficient [accept]
+
+== global 0x0080889a (no row) -> power_take_off_speed_error_filter_coefficient [accept]
+
+== global 0x00807ab0 time_constant_of_lb_hr_filter_used_in_the_alpha_fuel_rate_calcula_0_1 -> time_constant_of_lb_hr_filter_used_in_the_alpha_fuel_rate_calcula_0_1 [accept]
+
+== global 0x0080a946 asg_application_specific_reference_filter_coefficient_0_1 -> asg_application_specific_reference_filter_coefficient_0_1 [accept]
+
+== global 0x00807b8c ASJCFTCS -> ASJCFTCS [accept]
+  - Evidence nit: the ROM list holds the address twice (0x3594c and 0x35950 - every address in that list appears twice), not once at 0x35950; it looks like an e2m block base table, which does not change the word width
+== global 0x00807bda ASFTCF -> ASFTCF [accept]
+  - Evidence nit: the ROM list holds the address twice (0x35774 and 0x35778), not once
+== global 0x00807ea8 time_constant_for_the_filter_used_on_the_2_n_pulse_average_0_1 -> time_constant_for_the_filter_used_on_the_2_n_pulse_average_0_1 [accept]
+  - Evidence nit: the ROM list holds the address twice (0x353f4 and 0x353f8), not once
+== global 0x00807f3a maximum_rpm_limit_filter_time_constant_0_1_0 -> maximum_rpm_limit_filter_time_constant_0_1_0 [accept]
+
+== global 0x0080820e (no row) -> pedal_fault_mode_engine_speed_filter_coefficient [accept]
+  - Evidence nit: the ROM list holds the address twice (0x35a0c and 0x35a10), not once
+== global 0x00808258 digital_filter_time_constant_used_in_throttle_deadband_fix_0_1_0 -> digital_filter_time_constant_used_in_throttle_deadband_fix_0_1_0 [accept]
+
+== global 0x008088ac reference_speed_change_const_0_1 -> reference_speed_change_const_0_1 [accept]
+
+== global 0x00806ae2 a_d_digital_filter_constant_for_intake_manifold_temperature_0_1 -> a_d_digital_filter_constant_for_intake_manifold_temperature_0_1 [accept]
+
+== global 0x00806afa a_d_digital_filter_constant_for_fuel_temperature_0_1 -> a_d_digital_filter_constant_for_fuel_temperature_0_1 [accept]
+
+== global 0x00806b12 coolant_level_a_d_digital_filter_constant_0_1 -> coolant_level_a_d_digital_filter_constant_0_1 [accept]
+
+== global 0x00806b2a adsyfpcs_param -> adsyfpcs_param [accept]
+
+== global 0x00806b42 a_d_digital_filter_constant_for_oil_pressure_0_1 -> a_d_digital_filter_constant_for_oil_pressure_0_1 [accept]
+
+== global 0x00806b5a a_d_digital_filter_constant_for_boost_pressure_0_1 -> a_d_digital_filter_constant_for_boost_pressure_0_1 [accept]
+
+== global 0x00806b72 a_d_digital_filter_constant_for_coolant_temperature_0_1 -> a_d_digital_filter_constant_for_coolant_temperature_0_1 [accept]
+
+== global 0x00806b8a a_d_digital_filter_constant_for_ambient_air_temperature_0_1 -> a_d_digital_filter_constant_for_ambient_air_temperature_0_1 [accept]
+
+== global 0x00806ba2 adpotpcs_param -> adpotpcs_param [accept]
+
+== global 0x00806bba adsyepcs_param -> adsyepcs_param [accept]
+
+== global 0x00806bd2 a_d_digital_filter_constant_for_throttle_0_1 -> a_d_digital_filter_constant_for_throttle_0_1 [accept]
+
+== global 0x00806bea a_d_digital_filter_constant_for_remote_throttle_0_1 -> a_d_digital_filter_constant_for_remote_throttle_0_1 [accept]
+
+== global 0x00806c02 a_d_digital_filter_constant_for_ambient_air_pressure_0_1 -> a_d_digital_filter_constant_for_ambient_air_pressure_0_1 [accept]
+
+== global 0x00806c1a a_d_digital_filter_constant_for_battery_voltage_0_1 -> a_d_digital_filter_constant_for_battery_voltage_0_1 [accept]
+
+== global 0x00806c32 adessvcs_param -> adessvcs_param [accept]
+
+== global 0x00806c4a ADBSPRXA -> throttle_position_sensor_supply_voltage_filter_coefficient [accept]
+  - The nine sibling rows ADBSPRXA_entry_1-4 / ADBSPRYA / ADBSPRYA_entry_1-4 (0x806c4c-0x806c5c) stay misnamed after this rename (they are config 15 +2..+19: default, clear / decrement / increment / set counts, high / low limits, channel address, mux setting, tri-state flag) - a follow-up
+== global 0x00806c62 advhsvcs_param -> advhsvcs_param [accept]
+
+== global 0x00806c7a engine_sensor_supply_voltage_a_d_digital_filter_constant_0_1 -> engine_sensor_supply_voltage_a_d_digital_filter_constant_0_1 [accept]
+
+== global 0x00806c92 adftsvcs_param -> adftsvcs_param [accept]
+
+== global 0x00806caa a_d_digital_filter_constant_for_cc_switch_mux_0_1 -> a_d_digital_filter_constant_for_cc_switch_mux_0_1 [accept]
+
+== global 0x00806cc2 water_in_fuel_a_d_digital_filter_constant_0_1 -> water_in_fuel_a_d_digital_filter_constant_0_1 [accept]
+
+== global 0x00806cda adegcfcs_param -> adegcfcs_param [accept]
+
+== global 0x00806cf2 adpssvcs_param -> adpssvcs_param [accept]
+
+== global 0x00806d0a ADHBSVCS -> ADHBSVCS [accept]
+
+== global 0x00806d22 adocsvcs_param -> adocsvcs_param [accept]
+
+== function 0x00034e9a exponentialMovingAverage -> cm550_signedFirstOrderFilter [amend]
+  - Name accepted: ROM 0x34e9a is the offset-binary signed filter (addi.w #0x8000 in and out, rounded via addi.l #0x8000 + swap); CM848 0x56594 is the unsigned one and CM848 0x5644c (signed) truncates and steps by +-|diff| x (65536 - c) - counterpart, not a twin; runHighSpeedGovernorPid / the PTO speed error / the engine acceleration filter pair it with cm848_signedFirstOrderFilter
+  - Return type 'sword' probably will not apply in CM550 (unbuilt): ApplyFunctionDefinitions resolves names outside its switch with findDataTypeByName over the program's own data types, CM848 gets 'sword' into its program types through its i16 globals (ImportAnalysis SignedWordDataType), and CM550 has no i16 global and no 'sword' anywhere in its .cpp - expect an 'Unknown return type' log line. Use word (or seed sword with an i16 global in the same change - untested)
+  - Prefix rule follow-up: with 0x34e9a renamed, CM848 exponentialMovingAverage (0x56594) keeps an unprefixed shared name with no CM550 twin; the companion rename is cm848_exponentialMovingAverage (CM848-wide, not in this proposal)
+== function 0x00034f8a cm550_coreTableInterpolation -> cm550_exponentialMovingAverage [accept]
+  - Prefix rule follow-up: with 0x34e9a renamed, CM848 exponentialMovingAverage (0x56594) keeps an unprefixed shared name with no CM550 twin; the companion rename is cm848_exponentialMovingAverage (CM848-wide, not in this proposal)
+  - Render check after the build: validateServiceDataLength (0xb7bc) and cm550_initADCChannelConfiguration (0xbcf0) walk the 22-byte records through the pointer they pass to 0x34f8a; once that parameter is ema_filter_state_t * (and this base is an 8-byte instance) Ghidra will probably render +8..+21 and the +0x16 stride as [1] / [2] member arithmetic (the same function already shows '&local_8[1].x_axis_ptr' for its 14-byte lookup stride over the 12-byte table_interp_args_t). Diff those two walkers and the base-register users 0x1873e, 0x1abb2, 0x2fe38, 0x315be, 0x33e58; the 22-byte sensor_debounce_state_t is the fix if it regresses
+== function 0x00034f00 cm550_unsignedLinearInterpolation -> cm550_secondOrderFilter [amend]
+  - Name accepted: signed second order filter (muls.l / divs.l #0xffff, saturation 0x7fffffff / 0x80000000) on a second_order_filter_state_t; CM848 cm848_secondOrderFilter (0x564c0) adds 0x10000, shifts >> 16 and does not saturate - counterpart, not a twin; no caller in the dumped ROM
+  - Return type 'sword' probably will not apply in CM550 (unbuilt): ApplyFunctionDefinitions resolves names outside its switch with findDataTypeByName over the program's own data types, CM848 gets 'sword' into its program types through its i16 globals (ImportAnalysis SignedWordDataType), and CM550 has no i16 global and no 'sword' anywhere in its .cpp - expect an 'Unknown return type' log line. Use word (or seed sword with an i16 global in the same change - untested)
+== function 0x00034fe0 (no function; would be FUN_00034fe0) -> cm550_secondOrderFilterUnsigned [accept]
+
+
+== rejected leads
+  - interpolation records: none of the three callees interpolates. 0x34f00 and 0x34f8a walk no table or axis; their records hold coefficient pointers and Q16.16 filter state. The CM550 interpolators are lookupTableInterpolation 0x34de0 (table_interp_args_t) and cm550_tableLookup2D 0x35088.
+  - 0x34e9a as the twin of CM848 exponentialMovingAverage: 0x34e9a is the signed (offset binary) filter and CM848 exponentialMovingAverage the unsigned one; the shared twin calculateAlphaFuelRateResult calls 0x34f8a in CM550. The arithmetic of all four filters also differs from CM848, so they are counterparts, not twins.
+  - 0x800060 timing_table_3_ptr as a filter record: it is +8 (y_axis_ptr) of the table_interp_args_t at 0x800058 (cm550_dmaDescriptorSetup2 0xb63e: index 2, x axis 0x600c6, y axis 0x600da; cm550_FUN_0000b3d0 0xb490-0xb4a0 stores the input at 0x80005e and calls lookupTableInterpolation with pea 0x800058). timing_table_1_ptr 0x800052 is +8 of the record at 0x80004a (0xb614).
+  - fuel_parameter_pointer_* as filter records: fuel_parameter_pointer_3 (0x800074) is +6 of the 0x80006e EMA record (no user). fuel_parameter_pointer_2 (0x80007c) and fuel_parameter_pointer_1 (0x800084) lie in the 25-byte array at 0x800076 that validateServiceDataLength walks with a4 (one byte per A/D channel, the tri-state error set counter; 0x800090 is its clear counter); no absolute user of any row in 0x80007a-0x8000a8.
+  - the zero pointers read at 0x80a91a / 0x80d636 / 0x80a2aa at the nominal extended RAM offset (address - 0x8091C2): that offset is wrong. Every anchor from 0x809eea up (init-code constants at 0x809eea, 0x80a28e, 0x80a91a, 0x80a9ac-0x80a9b8, 0x80aaaa, 0x80d080, 0x80d636, 0x80dad6, 0x80ddc2, 0x80de28) reads at address - 0x809242. The file is 0x6DBE bytes (ends at 0x80FF80, exactly 0x80 short of 0x810000), and 0x80 is the ECUReader chunk size; readMemoryService4ALarge (clip-core/src/ECUReader.cpp ~796-804) skips a failed chunk without padding. Where the missing 0x80 bytes are (or whether the dump started 0x80 late) is not proven, since no anchor below 0x809eea exists. This does not affect the records, which all lie above 0x80a28e.
+  - 0x806c4a-0x806c5c ADBSPRXA / _entry_1-4 / ADBSPRYA / _entry_1-4 as the boost pressure linearization axes: these bytes are A/D channel 15 config (43909 / 0 / 1 / 1 / 1 / 5 / 942 / 767 / channel address 24). The boost channel lookup record 5 (0x80a7d8) points at 0x806e42 / 0x806e4c.
+  - asg_droop_compensated_error_2000_2000 (0x80a984) as an error value: the code stores pointers there (cpp 2604-2605 / 2635-2636 / 2688 / 2952) and dereferences it (cpp 2389).
+  - can_transmission_active_count (0x801a36) as a counter: it is the accumulator of the 0x801a32 record (move.l d0 = current_engine_rpm_filtered << 16 at 0x258ce, clr.l at 0x258d6 are its only users).
+  - sensor_fault_config_t.reserved_00 / debounce_max (existing unused template): +0 is the A/D digital filter constant that each channel EMA record points at, and +23 is the sample period in 20 ms passes (Calterm ADIMTPSA 100 ms -> 5, ADBSPRSA 20 ms -> 1, ADCRSR 40 ms -> 2); +16 adc_lookup_index is the QADC channel address (Calterm ...CA). A lead for a config struct task, not proposed here.
+  - Calterm caldoc_001/002 as the J90350.00 channel map: they are a 64c6.e2m CM550 calibration (CAPS + VP44). Its addresses agree with 20 of the 25 records; addresses 3 / 26 / 36 / 38 / 39 carry other functions there (high side gate bias SV / CAPS map select / CAPS main current / CAPS rear and front pump current). The names of channels 8, 18, 21, 23 and 24 therefore rest only on the J90350 e2m rows.

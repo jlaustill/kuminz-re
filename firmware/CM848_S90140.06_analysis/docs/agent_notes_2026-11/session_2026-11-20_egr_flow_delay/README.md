@@ -738,3 +738,17 @@ Hand work on the round 7 lead.
   target it, in one or more images).
 - **Closing:** `apply_r87_closing.py`, `apply_r87c_closing.py`, `dedupe_r87c.py` (removed the three blocks that a
   second run of `apply_r87c_closing.py` duplicated before its guard was fixed), `update_large_tar_r87.sh`.
+
+## Round 88: the filter library, 6 more twins, ENGINE_STATE, the shifted dumps (`session_folder/round88/`)
+
+- **The audits:** `audit_result_r88.json` / `audit_summary_r88.txt` (the misname audit) and `audit2_result_r88.json`
+  (the filter callers and the A/D config record, for round 89); `audit_changes.py` (accepted / amended changes as a
+  TSV, with the skeptics' notes).
+- **Stage A:** `ema_changes.py`, `precheck_r88a.py`, `apply_r88a.py`, `fix_replaces_notes.py` (refresh_references
+  rewrites a "replaces" note; "were" is protected), `apply_r88a2.py` (the A/D loops' record pointer).
+- **Stage C:** the clip-core change is in the commit; `to_crlf.py` (clip-core is CRLF), `apply_r88c_docs.py`.
+- **Stage D:** `apply_r88d_loaders.py`, `apply_r88d_docs.py`.
+- **Stage B:** `precheck_r88b.py`, `apply_r88b0_clear.py` (clearWorkingRam's locals), `apply_r88b.py`,
+  `quote_enum_comments.py` (enums.csv parses quote-aware), `split_maps.py` / `add_own_only.py` /
+  `refresh_other_csvs.py` (per-firmware refresh for an old name the two rename differently).
+- **Closing:** `apply_r88_closing.py`, `update_large_tar_r88.sh`, `verdicts.py`.

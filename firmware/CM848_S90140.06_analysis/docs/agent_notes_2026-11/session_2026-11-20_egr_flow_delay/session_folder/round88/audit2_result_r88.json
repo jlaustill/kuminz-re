@@ -1,0 +1,1849 @@
+{
+  "summary": "Investigate the misnamed callers / initializers of the CM550 filter records and the A/D channel config record layout, and have a skeptic refute each proposal",
+  "agentCount": 4,
+  "logs": [],
+  "result": [
+    {
+      "group": "filtercallers",
+      "proposal": {
+        "changes": [
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x0000b210",
+            "current": "cm550_outputControlTimingGenerator",
+            "proposed": "calculateFilteredEngineAcceleration",
+            "confidence": "high",
+            "reason": "This is the engine acceleration filter, and it is the twin of CM848 0x38760. It computes ESESAC (0x80a292) = the measured speed ESCMES (0x80ccf4) minus the previous pass's speed (0x800048), then stores the speed as the new previous. ESFT01AC (0x80a294) = cm550_signedFirstOrderFilter(ESESAC, &engine_acceleration_first_stage_filter_state); a value below ESFT01MN (0x807a48) or above ESFT01MX (0x807a46) is clamped and the accumulator is reset to the clamp. ESFT02AC (0x80a296) = the second-stage filter of the first stage. CM848 does the same steps in the same order with the same calibration layout: coefficients at 0x408808 / 0x40880a then max 0x40880c and min 0x40880e, against 0x807a42 / 0x807a44 / 0x807a46 / 0x807a48 here. The one difference is the offset-binary accumulator of CM550's signed filter (subi.l #0x80000000 after the << 16). Twin rule used throughout this output: representation-only differences (offset binary, lookup-descriptor pointers) keep a twin, as initializeHighSpeedGovernorGainSet already does; a real extra or missing step or a different constant makes a counterpart. Run every pass by vp44_engine_management_system right after the engine speed calculation, as CM848 runs it in hpcr_periodicTaskSet_fuelFinal after cm848_updateEngineSpeedFromCrankSignal. Nothing in it is output control or timing.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:743-772; caller vp44_engine_management_system :15777, calls at :15788 (cm550_fuel_limit_arbitrator) then :15789; ROM reference 0x1b542",
+              "ROM 0xb22c 30390080ccf4 move.w (0x80ccf4),d0 / 0xb232 907900800048 sub.w (0x800048),d0 / 0xb238 33c00080a292 / 0xb23e 33f90080ccf400800048",
+              "ROM 0xb24a 3f390080a292 + 0xb248 2f0d (a5=0x800066) + 0xb250 4eb900034e9a jsr cm550_signedFirstOrderFilter; 0xb256 3480 -> 0x80a294",
+              "ROM 0xb258 b054 cmp.w (0x807a48),d0 / 0xb25a 6c16 bge; 0xb262 7210 0xb264 e3a8 lsl.l #16 / 0xb266 048080000000 subi.l #0x80000000 / 0xb26c 2b400004 -> accumulator; 0xb274 b053 cmp (0x807a46) / 0xb276 6f14 ble, same reset at 0xb282 / 0xb288",
+              "ROM 0xb28c 48790080006e pea 0x80006e / 0xb294 4eb900034e9a / 0xb29e 33c00080a296",
+              "CM848 frozen2/cm848/cm848_rom.ghidra.cpp:39049-39087: 0x38780 abdeb7ac lha 0x40b7ac, 0x38788 7c8af050 subf, 0x38790 b08cb290 sth 0x40b290, 0x387b0 4801dc9d bl 0x5644c (r4=0x3fb3b0), 0x387bc a884880e lha min, 0x387d0 5484801e slwi 16, 0x387f0 909e0004 stw accumulator, 0x387dc a884880c max, 0x38800 4801dc4d bl 0x5644c (r4=0x3fb3b8), 0x38808 b06cb28e",
+              "e2m 64t6.e2m through the ROM parameter ID table: 10A4 +6 ESESAC 'CALCULATED ENGINE ACCELERATION' = 0x80a292, +8 ESFT01AC / +A ESFT02AC 'ENGINE ACCELERATION AFTER FIRST / SECOND STAGE LOW PASS FILTERING'; 10A5 +20/+22 ESFT01TC/ESFT02TC = 0x807a42/44, +24 ESFT01MX 'UPPER ACCELERATION BOUND' = 0x807a46, +26 ESFT01MN = 0x807a48",
+              "Comment that cites the old name: global_variables.csv:114 (0x800066 engine_acceleration_first_stage_filter_state)"
+            ]
+          },
+          {
+            "firmware": "CM848",
+            "kind": "function",
+            "address": "0x00038760",
+            "current": "cm848_processEngineRpmDerivative",
+            "proposed": "calculateFilteredEngineAcceleration",
+            "confidence": "high",
+            "reason": "The twin of CM550 0xb210 (see that row), so the two take one shared unprefixed name. Both compute the speed change since the last pass and run two first-order filter stages, with the first stage clamped to its minimum / maximum and its accumulator reset to the clamp. The steps, their order, the calibration layout and the position in the periodic task are the same. The only difference is CM550's offset-binary accumulator.",
+            "evidence": [
+              "frozen2/cm848/cm848_rom.ghidra.cpp:39049-39087; caller hpcr_periodicTaskSet_fuelFinal :6884, call :6911 (after cm848_updateEngineSpeedFromCrankSignal :6896)",
+              "disasm 0x38780 abdeb7ac lha engine_speed_state.engine_speed / 0x38790 b08cb290 sth engine_acceleration_unfiltered / 0x38794 b3df0000 sth previous / 0x387b0 bl 0x5644c / 0x387c4 cmpw min 0x40880e / 0x387e0 cmpw max 0x40880c / 0x387f0 stw accumulator / 0x38800 bl 0x5644c second stage"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x0000b5e4",
+            "current": "cm550_dmaControllerSetup1",
+            "proposed": "initializeEngineAccelerationFilters",
+            "confidence": "high",
+            "reason": "Start-up initializer of the two engine acceleration filter records and the previous speed. It sets engine_acceleration_first_stage_filter_state.accumulator = 0x80000000 (0 in the offset binary of cm550_signedFirstOrderFilter) and .coefficient = &engine_acceleration_first_stage_filter_coefficient (0x807a42, ESFT01TC). The second stage gets the same (0x807a44, ESFT02TC), and the previous engine speed 0x800048 is set to 0. That is all it does; there is no DMA. It is the twin of CM848 0x38824: the same five stores in the same order (accumulator 0, coefficients 0x408808 / 0x40880a, previous speed 0x3fb3ae = 0), and both are called once by the application main.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:1039-1053; caller mc68k_applicationMain :29197, call :29342 (ROM reference 0x2872e)",
+              "ROM 0xb5e4 23fc800000000080006a / 0xb5ee 23fc00807a4200800066 / 0xb5f8 23fc8000000000800072 / 0xb602 23fc00807a440080006e / 0xb60c 427900800048 clr.w (0x800048) / 0xb612 4e75",
+              "CM848 frozen2/cm848/cm848_rom.ghidra.cpp:39093-39106 (caller cm848_applicationMain :58702, call :58913): 0x38830 90640004 stw 0 -> 0x3fb3b4 / 0x3883c 91440000 stw 0x408808 -> 0x3fb3b0 / 0x38848 + 0x38854 the same for 0x3fb3b8 / 0x40880a / 0x38860 b14bb3ae sth 0 -> 0x3fb3ae"
+            ]
+          },
+          {
+            "firmware": "CM848",
+            "kind": "function",
+            "address": "0x00038824",
+            "current": "cm848_initEngineRpmFilterPointers",
+            "proposed": "initializeEngineAccelerationFilters",
+            "confidence": "high",
+            "reason": "The twin of CM550 0xb5e4 (see that row): the same five stores in the same order. It clears both engine acceleration filter accumulators, points their coefficients at engine_acceleration_first_stage_filter_coefficient / _second_stage_filter_coefficient and clears engine_acceleration_engine_speed_previous. It gets one shared name, which also replaces the banned 'init'.",
+            "evidence": [
+              "frozen2/cm848/cm848_rom.ghidra.cpp:39093-39106; call :58913 in cm848_applicationMain",
+              "disasm 0x38824-0x38864 (li r3,0; stw 4(0x3fb3b0); stw 0x408808 -> 0(0x3fb3b0); stw 4(0x3fb3b8); stw 0x40880a; sth 0 -> 0x3fb3ae; blr)"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x00025b1c",
+            "current": "vp44_fuel_timing_calculation_with_fault_checking",
+            "proposed": "cm550_runLowSpeedGovernor",
+            "confidence": "high",
+            "reason": "This is the whole low speed governor (LSG). It first computes the throttle deadband reference offset = cm550_exponentialMovingAverage(0x80825a x validated throttle, &low_speed_governor_throttle_reference_offset_filter_state). LSRF lsg_breakpoint_speed is the operator or the datalink breakpoint, and LSAJRFES (the reference adjusted with throttle position) is clamped. The governor runs while FSGVFLST (0x80a8f2) is 11 (the LSG fueling state), or while LSEXFL (0x80daf6) says the LSG is running and the speed is within reference + offset. Each pass computes the speed error x gain >> 9 and passes it through low_speed_governor_error_filter (cm550_signedFirstOrderFilter), clamped to LSFTMX / LSFTMN with the accumulator reset. On the first pass the filter accumulator is preset in offset binary. Then come the integrator reset, the P / I / D terms, the LSG fueling clamps and lsg_fuel_output_clamped, which goes to lsg_governor_fuel_demand in state 11 (the integrator preset vp44_FUN_00025a34 runs on entry to state 11). It touches neither VP44 nor timing, so the prefix is cm550_ (generic). It is a counterpart, not a twin, of CM848's LSG. CM848 splits the work into cm848_calculateLowSpeedGovernorErrorTerms (0x28ba4) and cm848_runLowSpeedGovernor (0x27ff8) and adds jerk terms, gain adjustments, the alternator load fuel and a reset delay.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:26522-26727; caller cm550_periodicTaskSet_fuelTiming :15915, call :15922 (ROM reference 0x1b5d6)",
+              "ROM 0x25b44 487900801a62 pea throttle offset filter / 0x25b4c 4eb900034f8a jsr cm550_exponentialMovingAverage; 0x25b92 0c79000b0080a8f2 cmpi.w #11,(0x80a8f2); 0x25b9c 4a790080daf6 tst.w LSEXFL",
+              "ROM 0x25c0c 487900801a5a pea error filter / 0x25c14 4eb900034e9a jsr cm550_signedFirstOrderFilter; 0x25c2a 048080000000 + 0x25c30 23c000801a5e (offset-binary preset); 0x25c38 b07900808242 LSFTMX / 0x25c5e b07900808244 LSFTMN",
+              "e2m 64t6: 1065 +2 LSER 0x80dae0, +10 LSAJRFES 'LSG REFERENCE SPEED ADJUSTED WITH THROTTLE POSITION' 0x80daee, +18 LSEXFL 'FLAG WHICH INDICATES THE LSG ALG. IS RUNNING' 0x80daf6; 1067 +0 LSRF 0x80db02; 1064 +C/+E LSFTMX/LSFTMN 0x808242/44; 1045 +2 FSGVFLST 0x80a8f2",
+              "CM848 counterparts frozen2/cm848/cm848_rom.ghidra.cpp:28493 (cm848_calculateLowSpeedGovernorErrorTerms) and :27961 (cm848_runLowSpeedGovernor)",
+              "Comment that cites the old name: global_variables.csv:760 (0x801a5a low_speed_governor_error_filter)"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x00026078",
+            "current": "cm550_FUN_00026078",
+            "proposed": "cm550_initializeLowSpeedGovernor",
+            "confidence": "high",
+            "reason": "Start-up initializer of the low speed governor. It points low_speed_governor_throttle_reference_offset_filter_state.coefficient at 0x808258 (e2m 1064 +22 LSDEFTTC, the throttle deadband fix filter constant) and low_speed_governor_error_filter.coefficient at 0x80823e (1064 +8 LSFTTC). It then runs cm550_epsControlModeInit (0x26308, the LSG gain-set selection reset: gain set 0, default P / I / D gains copied into the override set) and sets LSMXLMFL lsg_fueling_clamp_max_0_100 (0x80dae8) = 0x1700. It sets no accumulator: the LSG presets the error filter when it starts. Its CM848 counterparts are cm848_initializeLowSpeedGovernorParameters (0x28618: gain selection init, three gain adjustments, clamp maximum 0x1700, the alternator load filter) and cm848_setGovernorFilterPointer (0x28d30: only the error filter's coefficient pointer). The steps differ, so neither is a twin.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:26763-26778; caller mc68k_applicationMain call :29453 (ROM reference 0x2880c)",
+              "ROM 0x26078 23fc0080825800801a62 / 0x26082 23fc0080823e00801a5a / 0x2608c 4eb900026308 jsr cm550_epsControlModeInit / 0x26092 33fc17000080dae8 / 0x2609a 4e75",
+              "e2m 64t6: 1064 +22 LSDEFTTC 'DIGITAL FILTER TIME CONSTANT USED IN THROTTLE DEADBAND FIX' 0x808258; 1064 +8 LSFTTC 'LSG ENGINE SPEED ERROR FILTER TIME CONSTANT' 0x80823e; 1065 +A LSMXLMFL 'LSG FUELING CLAMP MAX' 0x80dae8",
+              "CM848 frozen2/cm848/cm848_rom.ghidra.cpp:28193-28210 and :28564-28572 (calls :58860 / :58868)"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x0000c962",
+            "current": "cm550_engine_speed_governor",
+            "proposed": "cm550_runAllSpeedGovernor",
+            "confidence": "high",
+            "reason": "This is the all-speed governor (ASG). It runs only while FSDSFLST (0x80ded4, the user fueling state) is 7, 3, 2 or 30. On a state change it presets the reference from the droop and sets all_speed_governor_reference_filter_state.accumulator = reference << 16. In state 7 it runs cm550_dzgTimingAndPressureControlStateMachine; in the other states it filters the working reference with cm550_exponentialMovingAverage(&all_speed_governor_reference_filter_state) and keeps coefficient >> 2. It then computes the ASG state terms x1..x6, the reset states, the derivative deadband and the fueling limits into ASMXFL / fuel_demand_selected. The old name is snake_case and does not say which governor. It is a counterpart, not a twin, of CM848 cm848_runOperatingModeSpeedGovernor (0xea00). CM848 runs in states 7 / 2 / 30 / 37, adds the no-load fuel call, the negative reference slew and the deadband compensation, and in state 7 runs cm848_calculateGovernorReferenceSpeedBlend. The decompile shows it called from two task sets, but the ROM has one call site: the records 0x1b572 and 0x1b57e overlap (0x1b572 falls into 0x1b57e).",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:2335-2602; call sites :15840 / :15865 are the same instruction, ROM 0x1b57e 4eb90000c962 (references_to.py: 1 reference)",
+              "ROM 0xc978 0c7900070080ded4 / 0xc982 0c7900030080ded4 / 0xc98c 0c7900020080ded4 / 0xc996 0c79001e0080ded4 (states 7 / 3 / 2 / 30) / 0xc9a8 b079008000fe (the previous state)",
+              "e2m 64t6: 1050 +2 FSDSFLST 0x80ded4; 107C +18 ASDPER 'ASG DROOP COMPENSATED ERROR' 0x80a984 (the ASG block that holds the reference filter record)",
+              "CM848 counterpart frozen2/cm848/cm848_rom.ghidra.cpp:9579",
+              "Comment that cites the old name: global_variables.csv:4581 (0x80a984 all_speed_governor_reference_filter_state)"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x0002dbde",
+            "current": "cm550_FUN_0002dbde",
+            "proposed": "smoothPowerTakeOffReferenceEngineSpeed",
+            "confidence": "medium",
+            "reason": "The power take-off (PTO) reference speed smoothing. It first calls 0x4d988, then, while PTSS (0x80dc26) is 1: if |PTDSRF (0x80dc24) - PTRFRP (0x80dc18)| <= PTRFLM (0x8088aa), PTRFRP = PTDSRF. Otherwise it sets the reference filter's accumulator = PTRFRP << 16, filters cm550_exponentialMovingAverage(PTDSRF, &power_take_off_reference_filter_state) and moves PTRFRP toward the result by at least PTRFLM. CM848 0x2ac44 does the same compares (bhi / blt / ble against bgt / bge / ble) and stores in the same order with the same layout: requested speed and active flag adjacent (0x80dc24 / 26 against 0x40af4c / 4e), step and coefficient adjacent (0x8088aa / ac against 0x40719e / a0). Both sit in the same task position: before the PTO governor run and the PTO-or-user fueling selection (CM550 0x2d3c6 then 0x2dcb0, which is misnamed cm550_oil_pressure_shutdown_controller; CM848 cm848_runPowerTakeOffGovernor then cm848_selectPowerTakeOffOrUserFueling). The gap is the first step: 0x4d988 lies in the undumped ROM above 0x40000, so its body cannot be compared with CM848's cm848_rampPowerTakeOffReferenceEngineSpeed (0x2ba7c) at the same place. It fits: PTDSRF has no writer in the dumped ROM. Hence medium confidence for the twin claim. Of the decompile's two call sites, ROM 0x1b58a is the only instruction (overlapping records 0x1b572 / 0x1b57e).",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:30659-30700; call sites :15842 / :15867 = ROM 0x1b58a 4eb90002dbde (references_to.py: 1)",
+              "ROM 0x2dbfa 4eb90004d988 jsr 0x4d988 / 0x2dc00 0c7900010080dc26 / 0x2dc1a b453 cmp.w (0x8088aa),d2 / 0x2dc1c 6208 bhi / 0x2dc1e 3494 PTRFRP=PTDSRF / 0x2dc2c e3a8 + 0x2dc2e 2b400004 accumulator / 0x2dc36 4eb900034f8a / 0x2dc54 6d08 blt / 0x2dc60 d152 add.w step / 0x2dc78 6f08 ble / 0x2dc84 9152 sub.w step",
+              "e2m 64t6: 109E +0 PTDSRF 'ENGINE SPEED REFERENCE SELECTED FOR PTO WHEN ENGAGED', +2 PTSS 'STATUS OF THE PTO ALGORITHM'; 10AB +18 PTRFRP 'REFERENCE ENGINE SPEED TO PTO GOVERNOR'; 10AA +12 PTRFLM 'MIN. STEP CHANGE OF REFERENCE SPEED', +14 PTRFRMTC",
+              "CM848 frozen2/cm848/cm848_rom.ghidra.cpp:29727-29781: 0x2ac54 48000e29 bl 0x2ba7c / 0x2ac60 cmpwi 0x40af4e,1 / 0x2aca8 cmpw vs 0x40719e / 0x2acc4 91640004 stw accumulator / 0x2acc8 4802b8cd bl 0x56594 / 0x2ace8 bge / 0x2ad00 ble; caller cm848_periodicTaskSet_sensorProcessing :6925, call :6939 then :6940 / :6941",
+              "No write to 0x80dc24 in the cpp (only reads at :4452 and :30672-30683)"
+            ]
+          },
+          {
+            "firmware": "CM848",
+            "kind": "function",
+            "address": "0x0002ac44",
+            "current": "cm848_smoothPowerTakeOffReferenceEngineSpeed",
+            "proposed": "smoothPowerTakeOffReferenceEngineSpeed",
+            "confidence": "medium",
+            "reason": "The twin of CM550 0x2dbde (see that row), so it drops the cm848_ prefix for the shared name. Every step after the first call matches in order and layout. The first callee cannot be compared (CM550's 0x4d988 is undumped), hence medium.",
+            "evidence": [
+              "frozen2/cm848/cm848_rom.ghidra.cpp:29727-29781; call :6939",
+              "disasm 0x2ac44-0x2ad24 (bl 0x2ba7c; active flag 0x40af4e == 1; |0x40af40 - 0x40af4c| vs step 0x40719e; accumulator 0x3fafd0 = smoothed << 16; bl 0x56594 cm848_exponentialMovingAverage; +/- step)"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x0002db2a",
+            "current": "cm550_FUN_0002db2a",
+            "proposed": "initializePowerTakeOffGovernorFiltersAndGains",
+            "confidence": "high",
+            "reason": "Start-up initializer of the PTO governor. power_take_off_speed_error_filter.accumulator = 0x80000000 (offset-binary 0) and .coefficient = 0x80889a (10AA +2 PTFTTC 'PD GOVERNOR ERROR FILTER CONSTANT'). Then the reference filter initializer 0x2dc9e runs and PTAJDG / PTAJIG / PTAJPG (0x80dc1e / 20 / 22, the D / I / P gain adjustments) are set to 0x80. Last, the four lookup descriptor sizes are set to 2 (0x801c1c, 0x801c2a, 0x801c38, then 0x801c0e) together with their axis / value pointers. CM848 0x2abc8 does the same in the same order: error filter accumulator 0 and coefficient 0x407190, bl 0x2ad48, 0x80 to 0x40af44 / 46 / 48 (QD / QI / QP), then the caches 0x3fafc6 / c8 / ca and last 0x3fafc4. In both, the lowest address comes last. The only differences are representation: the offset binary and the pointer loads of CM550's lookup descriptors, which initializeHighSpeedGovernorGainSet also shares a name across. Both parents run three initializers in the same order: cm550_initMultiSystemParameters (0x345c8: 0xd59e, 0x258d6, 0x2db2a) and cm848_dispatchModeHandlers (0x42978: 0x10248, 0x50db88, 0x2abc8). So this is a twin.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:30627-30652; parent cm550_initMultiSystemParameters :36543-36553",
+              "ROM 0x2db46 23fc8000000000801c04 / 0x2db50 23fc0080889a00801c00 / 0x2db5a 4eb90002dc9e / 0x2db60 33fc00800080dc1e / 0x2db68 33fc00800080dc20 / 0x2db70 33fc00800080dc22 / 0x2db78 33fc000200801c1c / 0x2db90 33fc000200801c2a / 0x2dba8 33fc000200801c38 / 0x2dbc0 33fc000200801c0e",
+              "ROM 0x345c8 4eb90000d59e / 0x345ce 4eb9000258d6 / 0x345d4 4eb90002db2a / 0x345da 4e75",
+              "e2m 64t6: 10AA +2 PTFTTC 0x80889a; 10AB +1E/+20/+22 PTAJDG/PTAJIG/PTAJPG 'ADJUSTMENT (MULTIPLICATION) OF THE GOVERNOR D / I / P GAIN'",
+              "CM848 frozen2/cm848/cm848_rom.ghidra.cpp:29700-29722: 0x2abe0 91630004 stw 0 / 0x2abec 91430000 stw 0x407190 / 0x2abf0 48000159 bl 0x2ad48 / 0x2abfc 0x2ac04 0x2ac0c sth 0x80 / 0x2ac18 0x2ac20 0x2ac28 0x2ac30 sth 2 -> 0x3fafc6 c8 ca c4; parent :46288-46297 (0x42984 bl 0x10248 / 0x42988 bl 0x50db88 / 0x4298c bl 0x2abc8)"
+            ]
+          },
+          {
+            "firmware": "CM848",
+            "kind": "function",
+            "address": "0x0002abc8",
+            "current": "cm848_initializePowerTakeOffGovernorFiltersAndGains",
+            "proposed": "initializePowerTakeOffGovernorFiltersAndGains",
+            "confidence": "high",
+            "reason": "The twin of CM550 0x2db2a (see that row): it takes the same shared name without the cm848_ prefix. Both have the same stores in the same order and are the third call of their three-call parent.",
+            "evidence": [
+              "frozen2/cm848/cm848_rom.ghidra.cpp:29700-29722; call :46296 in cm848_dispatchModeHandlers"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x0002dc9e",
+            "current": "cm550_FUN_0002dc9e",
+            "proposed": "initializePowerTakeOffReferenceFilter",
+            "confidence": "high",
+            "reason": "It sets power_take_off_reference_filter_state.accumulator = 0 and then .coefficient = 0x8088ac (10AA +14 PTRFRMTC 'REFERENCE SPEED CHANGE CONST.'), and does nothing else. Its one caller is the PTO governor initializer 0x2db2a. CM848 0x2ad48 is identical (accumulator 0x3fafd0 = 0, then coefficient 0x3fafcc = 0x4071a0) and is called only by 0x2abc8, so this is a twin.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:30722-30731; ROM reference 0x2db5c (jsr inside 0x2db2a)",
+              "ROM 0x2dc9e 42b900801c4a clr.l (0x801c4a) / 0x2dca4 23fc008088ac00801c46 / 0x2dcae 4e75",
+              "CM848 frozen2/cm848/cm848_rom.ghidra.cpp:29805-29815 (call :29713): 0x2ad54 91630004 stw 0 / 0x2ad60 91430000 stw 0x4071a0 / 0x2ad64 4e800020"
+            ]
+          },
+          {
+            "firmware": "CM848",
+            "kind": "function",
+            "address": "0x0002ad48",
+            "current": "cm848_initializePowerTakeOffReferenceFilter",
+            "proposed": "initializePowerTakeOffReferenceFilter",
+            "confidence": "high",
+            "reason": "The twin of CM550 0x2dc9e: identical code (accumulator 0, then the coefficient pointer) and the same caller role, so they share one unprefixed name.",
+            "evidence": [
+              "frozen2/cm848/cm848_rom.ghidra.cpp:29805-29815; call :29713"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x0002dc8c",
+            "current": "cm550_rpmSnapshotCapture",
+            "proposed": "presetPowerTakeOffSmoothedReferenceEngineSpeed",
+            "confidence": "high",
+            "reason": "(Extra: not in the task list. It is the third user of power_take_off_reference_filter_state.) It sets PTRFRP (0x80dc18, the smoothed PTO reference) = ENGRPM (0x80ccf6, the filtered engine speed) and clears power_take_off_reference_filter_state.accumulator. Its one caller is the PTO engagement preset 0x2d9d2. CM848 0x2ad28 is identical: power_take_off_governor_smoothed_reference_engine_speed = engine_speed_state.filtered_engine_speed (0x40b7ba), accumulator 0x3fafd0 = 0. Its one caller is cm848_presetPowerTakeOffGovernorOnEngagement, so this is a twin. It captures no rpm snapshot apart from that reference.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:30706-30716; call :30586 in cm550_fuelDemandProportionalCalculator (ROM reference 0x2d9f4)",
+              "ROM 0x2dc8c 33f90080ccf60080dc18 / 0x2dc96 42b900801c4a / 0x2dc9c 4e75",
+              "CM848 frozen2/cm848/cm848_rom.ghidra.cpp:29786-29800 (call :29620): 0x2ad30 a16bb7ba lhz 0x40b7ba / 0x2ad34 b16caf40 sth 0x40af40 / 0x2ad40 912aafd0 stw 0 -> 0x3fafd0",
+              "e2m 64t6: 100C +4 ENGRPM 'FILTERED_ENGINE_SPEED' 0x80ccf6; 10AB +18 PTRFRP 0x80dc18"
+            ]
+          },
+          {
+            "firmware": "CM848",
+            "kind": "function",
+            "address": "0x0002ad28",
+            "current": "cm848_presetPowerTakeOffSmoothedReferenceEngineSpeed",
+            "proposed": "presetPowerTakeOffSmoothedReferenceEngineSpeed",
+            "confidence": "high",
+            "reason": "The twin of CM550 0x2dc8c (identical two stores, the same caller role), so it takes the shared unprefixed name.",
+            "evidence": [
+              "frozen2/cm848/cm848_rom.ghidra.cpp:29786-29800; call :29620"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x0001ae0c",
+            "current": "cm550_sensorHistoryTablePointerInit",
+            "proposed": "cm550_initializeEngineDecelerationRateFilter",
+            "confidence": "medium",
+            "reason": "Deletion preferred: this is not a separate function. The proposed name is only a gate-valid fallback in case the row is kept. 0x1ae0c is the last three instructions of cm550_FUN_0001ade8: 0x1ade8 runs straight through 0x1ae06 and 0x1ae0c to the rts at 0x1ae20, with no prologue at either inner address. What it sets up is engine_deceleration_rate_filter_state (accumulator 0x80000000, coefficient 0x807f66), and that is all. The dumped ROM has no reference to it (references_to.py: 0), and the row came from the J90280.05 relocation map (0x032b00 sensorHistoryTablePointerInit -> 0x01ae0c, 'similar', 64). ROM above 0x40000 is undumped, so a call from there cannot be ruled out, hence medium. To delete: remove the function_renames.csv row and add to deleted_functions.csv '0x0001ae0c,not a function entry: the tail of cm550_FUN_0001ade8 (its engine_deceleration_rate_filter_state set-up after the clears); no reference in the dumped ROM (references_to.py) - the row came from the J90280.05 relocation map (was cm550_sensorHistoryTablePointerInit; PR #53 round 88)'. That is round 85's form for 0x15e06 / 0x28508.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:15193-15203 (and the same stores inside 0x1ade8 at :15154-15171)",
+              "ROM 0x1ae06 42790080d2b4 / 0x1ae0c 23fc8000000000800674 / 0x1ae16 23fc00807f6600800670 / 0x1ae20 4e75 (no rts or link before 0x1ae0c)",
+              "references_to.py J90350.00.rom.bin 1ae0c -> 0 references; relocation_map.csv:758 (0x032b00 -> 0x01ae0c, 64, similar)"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x0001ae06",
+            "current": "cm550_initOilPressureModeSystem",
+            "proposed": "cm550_resetElectronicSmartPowerTauAndDecelerationFilter",
+            "confidence": "medium",
+            "reason": "Deletion preferred: this is not a separate function. The proposed name is a fallback in case the row is kept. 0x1ae06 lies inside cm550_FUN_0001ade8: it clears SPTU (0x80d2b4, the ESP tau, misnamed can_transmit_buffer_ptr) and falls into the engine_deceleration_rate_filter_state set-up at 0x1ae0c. That is all it does, and nothing about oil pressure. The dumped ROM has no reference to it (references_to.py: 0), and the row came from the J90280.05 relocation map (0x016af2 initOilPressureModeSystem -> 0x01ae06, 'similar', 78). ROM above 0x40000 is undumped, hence medium. To delete: remove the function_renames.csv row and add to deleted_functions.csv '0x0001ae06,not a function entry: a fall-through point inside cm550_FUN_0001ade8 (the clear of SPTU before the deceleration rate filter set-up); no reference in the dumped ROM (references_to.py) - the row came from the J90280.05 relocation map (was cm550_initOilPressureModeSystem; PR #53 round 88)'.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:15176-15188",
+              "ROM 0x1ae00 42790080d2b6 / 0x1ae06 42790080d2b4 clr.w (0x80d2b4) / 0x1ae0c 23fc8000000000800674 / 0x1ae20 4e75",
+              "references_to.py 1ae06 -> 0 references; relocation_map.csv:233 (0x016af2 -> 0x01ae06, 78, similar)",
+              "e2m 64t6: 11DC +4 SPTU 'VALUE WHICH DETERMINES ALTERNATE HP RATINGS' = 0x80d2b4 (block 11DC -> 0x80d2b0 at ROM 0x3627c: 0080d2b00080d2b0)"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x0001ade8",
+            "current": "cm550_FUN_0001ade8",
+            "proposed": "cm550_initializeElectronicSmartPower",
+            "confidence": "high",
+            "reason": "Start-up initializer of Electronic Smart Power (ESP), e2m blocks 11DC / 11DD (bases 0x80d2b0 / 0x807f64 from the ROM parameter ID table entries 0x3627c / 0x36284). It clears SPRVTZFG (0x80d2ba), SPHILDFG (0x80d2bc, misnamed can_transmit_length), SPTHTR01 (0x80d2b8), SPESDITR (0x80d2b0), SPTUST (0x80d2b6, the source of the current ESP tau) and SPTU (0x80d2b4, the tau, misnamed can_transmit_buffer_ptr). Then engine_deceleration_rate_filter_state.accumulator = 0x80000000 (offset-binary 0) and .coefficient = 0x807f66 (11DD +2 SPDIFTCS). The ESP tau logic cm550_FUN_0001abb2 runs on this state. It is called once from mc68k_applicationMain. CM848 has no counterpart: electronic_smart_power_tau (0x40a2c4) is only read by calculateAlpha, and a scan of both CM848 images finds no store to it. So the prefix is cm550_.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:15154-15171; call :29405 (ROM 0x287aa 4eb90001ade8, the only reference)",
+              "ROM 0x1ade8 42790080d2ba / 0x1adee 42790080d2bc / 0x1adf4 42790080d2b8 / 0x1adfa 42790080d2b0 / 0x1ae00 42790080d2b6 / 0x1ae06 42790080d2b4 / 0x1ae0c 23fc8000000000800674 / 0x1ae16 23fc00807f6600800670 / 0x1ae20 4e75",
+              "ROM parameter ID table 0x3627c 0080d2b00080d2b0 (11DC), 0x36284 00807f6400807f64 (11DD)",
+              "e2m 64t6: 11DC +0 SPESDITR, +4 SPTU, +6 SPTUST 'INDICATES THE SOURCE OF THE CURRENT ESP_TAU VALUE', +8 SPTHTR01, +A SPRVTZFG, +C SPHILDFG; 11DD +2 SPDIFTCS 'FILTER CONSTANT IN FILTERED ENGINE DECEL. RATE CALCULATION'",
+              "CM848 scan: the only 0xa2c4-displacement access in cm848_rom.bin + cm848_flash2_live.bin is lhz at 0xe5fc (calculateAlpha)"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x00018f4c",
+            "current": "cm550_protectionThresholdPointerInit",
+            "proposed": "initializeFaultDerateEngineSpeedLimit",
+            "confidence": "high",
+            "reason": "Start-up initializer of the engine protection (EPF) engine speed derate. It sets engine_protection_speed_limit_filter_state.accumulator = the maximum rated engine speed (0x803f40) << 16 and .coefficient = 0x807f3a (10B5 +4 EPRPFTTC 'MAXIMUM RPM LIMIT FILTER TIME CONSTANT'). EPESLM (0x80d288, 'MAXIMUM RPM ALLOWED DUE TO EPF DERATING') = the rated speed, and EPRPDC (0x80d290, 'DIFFERENCE BETWEEN NO_DERATE_RPM AND MAXIMUM_DERATE_RPM') = the rated speed - EPMXDQRP (0x807f38). That is all it does; it sets no threshold pointers. CM848 0x5087e4 is identical: the same four stores in the same order (accumulator = engine_speed_limit_default_cal << 16, coefficient 0x5c2f2, engine_speed_limit_fault_derate = the default, the span = default - engine_speed_limit_fault_derate_full_severity, e2m EPMXDQRP in both). The layout matches too (EPMXDQRP and the coefficient adjacent: 0x807f38 / 3a against 0x5c2f0 / f2; limit and span 8 bytes apart: 0x80d288 / 90 against 0x40a780 / 88). Both are called by the engine protection initializer after the channel set-up (vp44_engineProtectionSystemInit / hpcr_initializeEngineProtection). So this is a twin with one shared name, keeping CM848's wording. Lead: CM848's record 0x3fbd2e and coefficient 0x5c2f2 are still unnamed type-only rows (e.g. engine_speed_limit_fault_derate_filter_state / _filter_coefficient).",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:13118-13132; caller vp44_engineProtectionSystemInit :12698, call :12778 (ROM reference 0x1894c)",
+              "ROM 0x18f4e 303900803f40 / 0x18f54 7210 / 0x18f56 e3a8 / 0x18f58 23c000800616 / 0x18f5e 23fc00807f3a00800612 / 0x18f68 33f900803f400080d288 / 0x18f78 907900807f38 / 0x18f7e 33c00080d290 / 0x18f84 4e75",
+              "e2m 64t6: 10B1 +E EPESLM 0x80d288, +16 EPRPDC 0x80d290; 10B5 +2 EPMXDQRP 0x807f38, +4 EPRPFTTC 0x807f3a",
+              "CM848 frozen2/cm848/cm848_rom.ghidra.cpp:67476-67492 (call :67010 in hpcr_initializeEngineProtection :66983): 0x5087f4 a1440000 lhz 0x3fd814 / 0x5087f8 554a801e slwi 16 / 0x5087fc 91430004 stw 4(0x3fbd2e) / 0x508808 91830000 stw 0x5c2f2 / 0x508814 b12ba780 sth 0x40a780 / 0x508824 a16bc2f0 lhz 0x5c2f0 / 0x50882c b18aa788 sth 0x40a788"
+            ]
+          },
+          {
+            "firmware": "CM848",
+            "kind": "function",
+            "address": "0x005087e4",
+            "current": "cm848_initializeFaultDerateEngineSpeedLimit",
+            "proposed": "initializeFaultDerateEngineSpeedLimit",
+            "confidence": "high",
+            "reason": "The twin of CM550 0x18f4c: the same four stores, the same order, the same e2m EPMXDQRP and the same caller role. It drops the cm848_ prefix for the shared name.",
+            "evidence": [
+              "frozen2/cm848/cm848_rom.ghidra.cpp:67476-67492; call :67010"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x00018e0c",
+            "current": "cm550_FUN_00018e0c",
+            "proposed": "cm550_calculateFaultDerateEngineSpeedLimit",
+            "confidence": "high",
+            "reason": "(Extra: not in the task list. It is the user of engine_protection_speed_limit_filter_state.) Over the 9 engine protection channels (configs 0x807032 + 36n, states 0x80d0dc + 46n, severity records 0x8057c0 + 30n) it takes the rpm severity from cm550_protectionThresholdCalculationHelper(..., 1) for each channel whose flag bits (base 0x71 and 0x1a0) are set, and keeps the largest. Then EPESLM = cm550_exponentialMovingAverage(rated speed - severity x EPRPDC >> 8, &engine_protection_speed_limit_filter_state). It does the same as CM848 0x50860c cm848_calculateFaultDerateEngineSpeedLimit, but over a different channel table and with different flag bit bases (CM848: 0x81 and 0x1a4, i.e. starting four channels later). Under this output's rule (different constants make a counterpart) it is a counterpart, cm550_. If the runHighSpeedGovernorPid precedent (different constants accepted) is preferred, the shared name calculateFaultDerateEngineSpeedLimit fits both, with CM848 0x50860c renamed to it.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:13054-13112; caller cm550_engineProtectionMultiStateSlowCycle40Coordinator, call :12612 (ROM reference 0x1866a)",
+              "ROM 0x18e10 267c00807032 / 0x18e16 287c0080d0dc / 0x18e1c 247c008057c0 / 0x18e22 7871 moveq #113 / 0x18e24 343c01a0 / 0x18e94 4eb9000186ae / 0x18f1e c0f90080d290 mulu EPRPDC / 0x18f26 323900803f40 / 0x18f30 487900800612 / 0x18f38 4eb900034f8a / 0x18f40 33c00080d288",
+              "CM848 frozen2/cm848/cm848_rom.ghidra.cpp:67406-67470: 0x508638 3ba00081 li r29,129 / 0x50863c 3be001a4 li r31,420 / 0x5086d8 bl 0x507d50 / 0x5087c4 bl 0x56594",
+              "Comments that cite the old name: function_definitions.csv:249-251 (0x186ae cm550_protectionThresholdCalculationHelper parameters)"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x000258d6",
+            "current": "cm550_fuelDemandTablePointerInit",
+            "proposed": "initializePedalFaultModeEngineSpeedFilter",
+            "confidence": "high",
+            "reason": "It sets pedal_fault_mode_engine_speed_filter_state.accumulator = 0 and then .coefficient = 0x80820e (10CE +0 LHESFTTC, the limp home engine speed filter constant), and does nothing else; there is no fuel demand table. CM848 0x50db88 cm848_initDroopModeStateVariables is identical: accumulator 0x3fcbe0 = 0, then coefficient 0x3fcbdc = 0x5c48e (e2m 10CE +0 Limp_Home_Engine_Speed_Filter_Constant). Both are the second of the three initializers their parent runs (cm550_initMultiSystemParameters at 0x345ce, cm848_dispatchModeHandlers at 0x42988), so this is a twin. The CM848 name is wrong as well, since nothing in it is about droop.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:26359-26369; parent :36543 (ROM 0x345ce 4eb9000258d6, the only reference)",
+              "ROM 0x258d6 42b900801a36 / 0x258dc 23fc0080820e00801a32 / 0x258e6 4e75",
+              "e2m 64t6: 10CE +0 LHESFTTC 'CALIBRATED VALUE USED BY FIRST ORDER FILTER FOR ENGINE [SPEED]' = 0x80820e",
+              "CM848 frozen2/cm848/cm848_rom.ghidra.cpp:71957-71966 (call :46295): 0x50db94 91630004 stw 0 / 0x50dba0 91430000 stw 0x5c48e"
+            ]
+          },
+          {
+            "firmware": "CM848",
+            "kind": "function",
+            "address": "0x0050db88",
+            "current": "cm848_initDroopModeStateVariables",
+            "proposed": "initializePedalFaultModeEngineSpeedFilter",
+            "confidence": "high",
+            "reason": "The twin of CM550 0x258d6: the identical two stores (pedal_fault_mode_engine_speed_filter_state accumulator 0, coefficient pedal_fault_mode_engine_speed_filter_coefficient) and the same position in the three-call parent. The shared name also fixes the old one (no droop, no 'init').",
+            "evidence": [
+              "frozen2/cm848/cm848_rom.ghidra.cpp:71957-71966; call :46295 in cm848_dispatchModeHandlers"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x000258b0",
+            "current": "cm550_FUN_000258b0",
+            "proposed": "presetPedalFaultModeFuelDemand",
+            "confidence": "high",
+            "reason": "(Extra: not in the task list. It is a user of pedal_fault_mode_engine_speed_filter_state.) It is the pedal fault mode preset: fuel_demand_ramped (0x80dab8, the ramp) and fuel_demand_target (0x801a3c, the slewed limit) = current_fuel_demand, and the filter's accumulator = ESCMES (0x80ccf4) << 16. CM848 0x50da7c cm848_presetPedalFaultModeFuelDemand does the same three stores in the same order: ramp 0x40ae6c and limit_previous 0x3fcbe6 = final_fueling, accumulator = engine_speed_state.engine_speed << 16. The layout matches too: the slewed limit sits 10 bytes after the filter record in both (0x801a32 -> 0x801a3c, 0x3fcbdc -> 0x3fcbe6). Both are called only by the mode-6 entry (cm550_FUN_00025806 / cm848_transitionEngineOperatingMode), so this is a twin.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:26341-26353; calls :26325 / :26331 in cm550_FUN_00025806 (ROM references 0x25854, 0x258a6)",
+              "ROM 0x258b0 207c0080d32e / 0x258b6 33d00080dab8 / 0x258bc 33d000801a3c / 0x258c4 30390080ccf4 / 0x258ca 7210 0x258cc e3a8 / 0x258ce 23c000801a36 / 0x258d4 4e75",
+              "CM848 frozen2/cm848/cm848_rom.ghidra.cpp:71897-71910 (call :71949): 0x50da80 a063a2ce lhz 0x40a2ce / 0x50da88 b06bae6c sth / 0x50da90 b06acbe6 sth / 0x50da9c a18cb7ac lhz 0x40b7ac / 0x50daa0 slwi 16 / 0x50daa4 9189cbe0 stw",
+              "Comment that cites the old name: function_definitions.csv:311 (0x25806 parameter comment)"
+            ]
+          },
+          {
+            "firmware": "CM848",
+            "kind": "function",
+            "address": "0x0050da7c",
+            "current": "cm848_presetPedalFaultModeFuelDemand",
+            "proposed": "presetPedalFaultModeFuelDemand",
+            "confidence": "high",
+            "reason": "The twin of CM550 0x258b0: the same three stores, the same order, the same layout and the same mode-6 entry caller. It takes the shared unprefixed name.",
+            "evidence": [
+              "frozen2/cm848/cm848_rom.ghidra.cpp:71897-71910; call :71949"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x0002571e",
+            "current": "cm550_FUN_0002571e",
+            "proposed": "cm550_calculatePedalFaultModeFuelDemand",
+            "confidence": "high",
+            "reason": "(Extra: not in the task list. It is the user of pedal_fault_mode_engine_speed_filter_state.) While FSDSFLST (0x80ded4) is 6, the accelerator pedal fault mode, it runs cm550_exponentialMovingAverage(ESCMES, &pedal_fault_mode_engine_speed_filter_state). From that it sets the fuel limit = offset - slope x speed / 0x8b21 (floored at the minimum), slews the target down by the decrease rate, and ramps the fuel demand by the increment while the throttle is off idle (initial value on the first pass, minimum fueling at idle) into fuel_demand_selected. This is a counterpart, not a twin, of CM848 cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit (0x50d864). CM848 has the same core and the same 0x8b21 divisor, but adds the brake-on limits and engine speed limit source 14 with its road speed derate.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:26258-26300; one reference, ROM 0x1b7e4 (cpp call :16568)",
+              "ROM 0x25722 247c0080dab8 / 0x25728 267c00801a3c / 0x2573a 0c7900060080ded4 cmpi.w #6,FSDSFLST",
+              "CM848 frozen2/cm848/cm848_rom.ghidra.cpp:71814-71890 (call :7411)"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x00025ff2",
+            "current": "vp44_fuelRpmDeviationCalculator",
+            "proposed": "cm550_presetLowSpeedGovernorSpeedError",
+            "confidence": "medium",
+            "reason": "(Extra: not in the task list. It is a user of low_speed_governor_error_filter.) It presets the LSG speed error: LSER (0x80dae0) = gain 0x808240 x (LSAJRFES - ENGRPM - offset 0x808264) >> 9, clamped to LSFTMN / LSFTMX. Then low_speed_governor_error_filter.accumulator = that << 16 in offset binary, it runs cm550_epsInitializationWrapper (0x262fa) and stores the speed in 0x801a70 for the derivative. It touches no VP44 and no fuel, so the prefix is cm550_. It is a real entry (after the rts at 0x25ff0, with a movem prologue) but has no reference in the dumped ROM, so its caller is probably in the undumped ROM above 0x40000; hence medium.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:26732-26758",
+              "ROM 0x25ff0 4e75 / 0x25ff2 48e7203c / 0x26010 30390080daee / 0x26018 3215 (0x80ccf6) / 0x2601c 323900808264 / 0x26026 323900808240 / 0x26038 3013 LSFTMN / 0x26044 3012 LSFTMX / 0x26052 3880 -> 0x80dae0 / 0x2605a 048080000000 / 0x26060 23c000801a5e / 0x26066 4eb9000262fa / 0x2606c 33d500801a70",
+              "references_to.py 25ff2 -> 0 references"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x0001dcfc",
+            "current": "vp44ControlStructureInit",
+            "proposed": "cm550_initializeAlpha",
+            "confidence": "high",
+            "reason": "Start-up initializer of the alpha state. It sets alpha_fuel_rate_filter_state.accumulator = 0 and .coefficient = 0x807ab0 (e2m 104B +10 APFLFTTC, the alpha fuel rate filter constant). APAPBA, the alpha base (0x80a8fa), the LSG / AFC exit timer active flags (0x80a90e / 0x80a912), 0x80a916 and FSLSSTFG (0x80a908, the semaphore that latches LSG events) are all set to 0. It has no VP44 or control structure. Its counterpart is CM848 0xe748 cm848_initializeAlpha (the filter, alpha_base, the two timer flags, alpha_low_speed_governor_state_detected_flag): the same stores in the same order, except CM550's extra clr.w of 0x80a916 (104A +1E, no other reference in the dumped ROM). By this output's rule a real extra step makes a counterpart, hence cm550_. If the selectHighSpeedGovernorGainSet precedent (a twin despite one extra step) is preferred, the shared name initializeAlpha fits both, with CM848 0xe748 cm848_initializeAlpha -> initializeAlpha. That would match the twin alpha family (calculateAlpha / calculateAlphaBase / calculateAlpha*Result).",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:19049-19064; call :29447 (ROM reference 0x28800, the only one)",
+              "ROM 0x1dcfc 42b90080a91e / 0x1dd02 23fc00807ab00080a91a / 0x1dd0c 42790080a8fa / 0x1dd12 42790080a90e / 0x1dd18 42790080a912 / 0x1dd1e 42790080a916 / 0x1dd24 42790080a908 / 0x1dd2a 4e75",
+              "e2m 64t6: 104A +2 APAPBA 0x80a8fa, +10 FSLSSTFG 'SEMAPHORE USED TO LATCH LSG EVENTS' 0x80a908; 104B +10 APFLFTTC 0x807ab0",
+              "CM848 frozen2/cm848/cm848_rom.ghidra.cpp:9437-9457 (call :59082): 0xe754 stw 0 -> 0x3fa0d6 / 0xe760 stw 0x5be66 / 0xe76c sth 0x40a16a / 0xe774 sth 0x3fa0da / 0xe77c sth 0x3fa0dc / 0xe784 sth 0x40a178 / 0xe788 blr (no sixth clear)"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x000176de",
+            "current": "cm550_engineRpmSourceInit",
+            "proposed": "cm550_initializeEngineSpeedCalculation",
+            "confidence": "high",
+            "reason": "Start-up initializer of the engine speed calculation 0x171be, which uses all four of the values it sets. engine_speed_filter_state.accumulator = 0 and .coefficient = 0x807ea8 (100B +0 ESESFTTC 'TIME CONSTANT FOR THE FILTER USED ON THE 2^N PULSE AVERAGE'). The main pulse period timeout working value 0x80d06c (misnamed governor_rpm_target_adjusted) = ESMXTM01 (0x807eaa). The speed sensor selection routine pointer 0x80d08c = 0x1770a, the routine that sets ESSNSE. ESSNSE (0x80cd18, 'SPEED_SENSOR_SELECT') = 0. So it sets up more than the speed source, and 'init' is the banned short form. CM848 does the same filter set-up inside its much larger mpc555_resetEngineTimingAccumulators (0x43ddc), so this is a counterpart with a CM550-only name.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:11739-11754; call :29357 (ROM reference 0x2874c)",
+              "ROM 0x176de 42b9008005ae / 0x176e4 23fc00807ea8008005aa / 0x176ee 33f900807eaa0080d06c / 0x176f8 23fc0001770a0080d08c / 0x17702 42790080cd18 / 0x17708 4e75; 0x1770a-0x177c0 the routine that writes 0x80cd18 (0x17738 4251 / 0x1775c 32bc0002 / 0x177b8 32bc0001)",
+              "e2m 64t6: 100B +0 ESESFTTC 0x807ea8, +2 ESMXTM01 0x807eaa; 100C +26 ESSNSE 0x80cd18",
+              "CM848 frozen2/cm848/cm848_rom.ghidra.cpp:47068"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x000171be",
+            "current": "cm550_fuel_limit_arbitrator",
+            "proposed": "cm550_calculateEngineSpeed",
+            "confidence": "high",
+            "reason": "(Extra: not in the task list. It is the user of engine_speed_filter_state.) It is the engine speed calculation, not a fuel limit. It counts down the main / backup / external lost-signal counters, converts the pulse periods to speeds (0x80cd06 / 0x80cd04 / 0x80cd16) and sets the speed-lost and cam / crank sync faults. It calls the speed sensor selection routine through 0x80d08c, and for the selected sensor (ESSNSE) filters the speed into ENGRPM (0x80ccf6) with cm550_exponentialMovingAverage(&engine_speed_filter_state); a lost sensor gives zeros, and an override gives 0x80a92c. Finally it sets not_safe_to_program_flag by the engine state and scales the pulse period timeouts by speed. It runs right before the engine acceleration filter. A counterpart of CM848 cm848_updateEngineSpeedFromCrankSignal (0x44374); it accesses no MC68336 register directly, so the prefix is cm550_.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:11500-11730; calls :15788 (vp44_engine_management_system) and :15921 (cm550_periodicTaskSet_fuelTiming); ROM references 0x1b53c / 0x1b5d0",
+              "ROM 0x171c2 247c0080ccf6 / 0x171d4 2a7c008005aa / 0x17524 20790080d08c movea.l (0x80d08c),a0 (the call through the pointer) / 0x1757e 0x175ba 0x175f6 4eb900034f8a (the three EMA calls)",
+              "e2m 64t6: 100C +4 ENGRPM 'FILTERED_ENGINE_SPEED: VARIABLE 2^N PULSE AVERAGED AND FILTER[ED]' 0x80ccf6, +12/+14/+24 ESES02/ESES01/ESES03, +26 ESSNSE",
+              "CM848 counterpart frozen2/cm848/cm848_rom.ghidra.cpp:47201 (call :6896)",
+              "Comment that cites the old name: global_variables.csv:5711 (0x80dc92 not_safe_to_program_flag)"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x0002d3c6",
+            "current": "initProtectionParamCalculation",
+            "proposed": "cm550_runPowerTakeOffGovernor",
+            "confidence": "high",
+            "reason": "(Extra: not in the task list. It is the user of power_take_off_speed_error_filter.) It runs the PTO governor while PTSS (0x80dc26) is 1. On the first active pass (previous flag 0x801c0c != 1) it calls the engagement preset 0x2d9d2. It computes the gain adjustment from the smoothed reference (formula or table by PTGM, clamped 0x20c..0x7ccc) and the speed error x gain >> 14 through cm550_signedFirstOrderFilter(&power_take_off_speed_error_filter), clamped. Then come the D / I / P gain adjustment tables, the proportional / derivative / integral terms and the fuel demand output; the output is 0 while inactive. Nothing in it is initialization or protection. The old unprefixed name is a stale shared name: CM848 took it off 0x2a960, its engagement preset, which plays a different role. This is a counterpart of CM848 cm848_runPowerTakeOffGovernor (0x2ab2c), which splits the work into cm848_calculatePowerTakeOffGovernorSpeedError and cm848_runPowerTakeOffGovernorPid and runs only the preset on the first pass, where CM550 also runs the error and PID.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:30362-30555; the decompile's call sites :15843 / :15868 are one instruction, ROM 0x1b590 4eb90002d3c6",
+              "ROM 0x2d3e0 0c7900010080dc26 / 0x2d3ec 0c7900010080 1c0c / 0x2d3f6 4eb90002d9d2 / 0x2d4bc 33fc020c00801bfe (floor 0x20c) / 0x2d4ee 487900801c00 / 0x2d4f8 4eb900034e9a",
+              "CM848 frozen2/cm848/cm848_rom.ghidra.cpp:29670-29696 (call :6940); function_renames.csv:1010 notes 0x2a960 '(was initProtectionParamCalculation)'"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x0002d9d2",
+            "current": "cm550_fuelDemandProportionalCalculator",
+            "proposed": "cm550_presetPowerTakeOffGovernorOnEngagement",
+            "confidence": "high",
+            "reason": "(Extra: not in the task list. It is a user of power_take_off_speed_error_filter.) It presets the PTO governor when it engages. It clears the combined PD term (0x80dc14) and presets the smoothed reference (0x2dc8c). Then power_take_off_speed_error_filter.accumulator = 0x80000000 and the filtered error = 0. It computes the gain adjustment from the reference (PTGM formula or table, capped at 0x7ccc), the integral fueling preset from the current fuel demand, and the fuel demand output = current_fuel_demand. CM848 0x2a960 cm848_presetPowerTakeOffGovernorOnEngagement has the same structure in the same order. The differences are not only representation: CM848 also floors the gain at 0x20c here (CM550 does that only in 0x2d3c6), and the scale constants differ (0x7fff against 0x1d70a3). So this is a counterpart, cm550_.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:30574-30620; one reference, ROM 0x2d3f8 (call :30383)",
+              "ROM 0x2d9ec 42b90080dc14 / 0x2d9f2 4eb90002dc8c / 0x2d9f8 23fc8000000000801c04",
+              "CM848 frozen2/cm848/cm848_rom.ghidra.cpp:29604-29665"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x0001abb2",
+            "current": "cm550_FUN_0001abb2",
+            "proposed": "cm550_updateElectronicSmartPowerTau",
+            "confidence": "high",
+            "reason": "(Extra: not in the task list. It is the user of engine_deceleration_rate_filter_state.) It is the Electronic Smart Power (ESP) logic and runs while calibration_feature_enable_flags_word_9 bit 0x10 is set. It runs the throttle timer SPTHTR01. SPESDIRT (0x80d2b2), the current engine deceleration rate = cm550_signedFirstOrderFilter(previous ENGRPM - ENGRPM, &engine_deceleration_rate_filter_state), drives the deceleration timer SPESDITR. The tau state machine SPTUST (0x80d2b6) sets SPTU (0x80d2b4, the tau: 0, 0x4000 or the 11DD value) within the coolant and intake manifold temperature inhibits. Last, FLINML (0x80d340, 1053 +2, the 4-D fueling interpolation factor; misnamed timing_alpha_blend_factor) = 0x4000 - SPTU. There is no CM848 counterpart (see the 0x1ade8 row), so the prefix is cm550_.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:15032-15150; call :16393 in cm550_FUN_0001b73a (ROM reference 0x1b73c)",
+              "ROM 0x1abb6 247c0080d2b4 / 0x1abc2 287c0080d2b6 / 0x1ac00 34bc4000 tau=0x4000 / 0x1ac92 487900800670 / 0x1ac9e 4eb900034e9a / 0x1aca6 33c00080d2b2 / 0x1addc 33c00080d340",
+              "e2m 64t6: 11DC +2 SPESDIRT 'CURRENT ENGINE DECELERATION RATE', +4 SPTU, +6 SPTUST; 11DD +4 SPDIPE, +6 SPDIRTTD; 1053 +2 FLINML 'INTERPOLATION FACTOR FOR 4-D FUELING, MAX FUELING CALCULATION' 0x80d340"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x0000b7bc",
+            "current": "validateServiceDataLength",
+            "proposed": "mc68k_processAnalogSensorChannels",
+            "confidence": "high",
+            "reason": "This is the A/D sensor channel loop; it handles no service and no data length. It walks the 25 sensor_debounce_state_t records (22 bytes each, 0x80a2aa to 0x80a4cf), each with its 24-byte config from 0x806ae2 (e2m 1003 +0 ADIMTPCS, channel 0's filter coefficient). For each channel it runs the sample counter against the config's rate byte (+0x17). With the channel's override bit set (calibration_feature_enable_flags_word_5 / 0x803ca0) the output is the override value 0x80a72e[n]. Otherwise it reads the raw value: the forced value 0x80a760[n] (bits 0x803cc0 / 0x803cc2), or the QADC right-justified result register 0xFFF2B0 + 2 x the config's channel index. Then come the high / low range debounce and fault bits, the linearization lookup through the descriptor at 0x80a792 + 14n, and cm550_exponentialMovingAverage(&channel_record->filter) into filtered_value (the config default while the fault is set). The prefix is mc68k_ because it reads the MC68336 QADC result registers (RJURR, $YFF2B0) directly. It is a counterpart, not a twin, of CM848's cm848_processUnsignedSensorChannel (0x5012dc), which is called once per channel with 13 parameters and has no loop. When applying: local_variables.csv:18 is keyed '0x0000b7bc,validateServiceDataLength,filter_state,channel_record'; change its function name with the rename.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:1206-1450; callers periodicTaskSet_fuelDemand (call :15983), vp44_evenPhaseSchedulerTaskSet (call :16005), cm550_initADCChannelConfiguration (call :1584)",
+              "ROM 0xb7c6 267c0080a2aa / 0xb7cc 247c00806ae2 / 0xb7f8 4a2a0017 tst.b (23,a2) / 0xb824 207c0080a72e / 0xb83a 207c0080a760 / 0xb852 3770 8170 00fff2b0 0010 move.w (0xfff2b0,a0),(16,a3) (full-format extension: base displacement 0x00fff2b0, index suppressed) / 0xbcdc b7fc0080a4d0 cmpa.l #0x80a4d0,a3 / 0xbce2 6500fb14",
+              "QADC register rows in global_variables.csv: 0xfff200 QADC_QADCMCR ... 0xfff230 QADC_CCW (RJURR at 0xfff2b0 has no row and renders UNK_00fff2b0)",
+              "Name-keyed row: local_variables.csv:18"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x0000bcf0",
+            "current": "cm550_initADCChannelConfiguration",
+            "proposed": "cm550_initializeAnalogSensorChannels",
+            "confidence": "high",
+            "reason": "Start-up set-up of the A/D channel loop. It writes the 25 linearization lookup descriptors (size 2 plus axis and value pointers at 0x80a792 + 14n). For each channel record it sets the filter (accumulator 0, coefficient = its config record 0x806ae2 + 24n), sets the sample counter to the config's rate so that the first pass samples, and sets the debounce counter / fault flag from the confirmed fault bits. It then runs the loop once (0xb7bc), presets every filter accumulator to the first lookup result << 16 and the filtered value to that result, clears the sample counters and sets the debounce counters from the fault state. It configures no ADC hardware and reads no QADC register itself, so the prefix is cm550_; 'init' is also the banned short form. It is called once by mc68k_applicationMain. When applying: local_variables.csv:19 is keyed '0x0000bcf0,cm550_initADCChannelConfiguration,peVar3,channel_record'; function_renames.csv:172 (mc68k_initializeDiscreteOutputDrivers' comment) cites the old name.",
+            "evidence": [
+              "frozen2/cm550/J90350.00.ghidra.cpp:1454-1631; call :29321 in mc68k_applicationMain",
+              "ROM 0xbcf4 2a7c0080a792 / 0xbcfa 2b7c00806d6e0008 / 0xbd02 2b7c00806d3a0002 / 0xbd0a 33fc00020080a792 (first descriptor)",
+              "Name-keyed row: local_variables.csv:19; comment mention: function_renames.csv:172"
+            ]
+          }
+        ],
+        "rejected_leads": [
+          "The twin rule this output applies: representation-only differences keep a twin (CM550's offset-binary accumulator, its lookup-descriptor axis / value pointers, as initializeHighSpeedGovernorGainSet already does). A real extra or missing step, or a different constant, makes a counterpart. Under this rule 0x1dcfc (one extra clr.w 0x80a916) and 0x18e0c (flag bit bases 0x71 / 0x1a0 against 0x81 / 0x1a4) are counterparts. Their rows name the shared names in case the orchestrator prefers the selectHighSpeedGovernorGainSet / runHighSpeedGovernorPid precedents.",
+          "Lead 'cm550_FUN_00026078 stores only the low speed governor filter's pointer': wrong. It stores two coefficient pointers (0x801a62 <- 0x808258 LSDEFTTC, the throttle deadband fix filter; 0x801a5a <- 0x80823e LSFTTC, the error filter), calls cm550_epsControlModeInit (0x26308) and sets LSMXLMFL 0x80dae8 = 0x1700. It sets no accumulator (ROM 0x26078-0x2609a).",
+          "Lead 'cm550_initOilPressureModeSystem (0x1ae06) and cm550_sensorHistoryTablePointerInit (0x1ae0c) are separate record initializers': wrong. They are fall-through points inside cm550_FUN_0001ade8 (one body 0x1ade8-0x1ae20, no prologue at either address) with no reference in the dumped ROM; the rows came from the J90280.05 relocation map (64 / 78 'similar'). Their filter set-up (engine_deceleration_rate_filter_state) belongs to 0x1ade8. No oil pressure or sensor history is involved.",
+          "Lead 'vp44_fuel_timing_calculation_with_fault_checking is VP44 fuel timing with fault checking': wrong. 0x25b1c is the low speed governor (LSER / LSAJRFES / LSEXFL / FSGVFLST 11); it touches no VP44 word, no timing word and no fault bit.",
+          "Lead 'CM848's low speed governor functions are twins of 0x25b1c / 0x26078': checked, they are counterparts. CM848 splits the governor (cm848_calculateLowSpeedGovernorErrorTerms 0x28ba4 + cm848_runLowSpeedGovernor 0x27ff8 with jerk terms, gain adjustments, alternator load fuel, reset delay) and its initializers (cm848_initializeLowSpeedGovernorParameters 0x28618 + cm848_setGovernorFilterPointer 0x28d30) differently.",
+          "Lead 'cm550_engine_speed_governor (0xc962) is the twin of cm848_runOperatingModeSpeedGovernor (0xea00)': counterpart. The states differ (7 / 3 / 2 / 30 against 7 / 2 / 30 / 37), and CM848 adds the no-load fuel call, the negative reference slew and the deadband compensation.",
+          "Lead 'the CM550 offset-binary accumulator (subi.l #0x80000000) makes the engine acceleration filter only a counterpart of CM848 0x38760': rejected. It is the filter library's representation; the initializeHighSpeedGovernorGainSet precedent shares a name across exactly that.",
+          "Lead 'the decompile shows 0xc962 / 0x2dbde / 0x2d3c6 with two callers': each has one call site (ROM 0x1b57e / 0x1b58a / 0x1b590). The task-set records 0x1b572 and 0x1b57e overlap: 0x1b572 runs two calls and falls into 0x1b57e.",
+          "Lead 'initProtectionParamCalculation (0x2d3c6) is still a valid shared name': no. CM848 took the name off 0x2a960 (now cm848_presetPowerTakeOffGovernorOnEngagement), and CM550 0x2d3c6 plays a different role (the PTO governor run, not the engagement preset). It needs its own cm550_ name.",
+          "Lead 'cm550_fuelDemandProportionalCalculator (0x2d9d2) is the twin of cm848_presetPowerTakeOffGovernorOnEngagement (0x2a960)': counterpart. The structure and order are the same, but CM848 floors the gain adjustment at 0x20c in the preset (CM550 only in 0x2d3c6) and the integral scale constants differ (0x7fff against 0x1d70a3).",
+          "Lead 'CM848 sets electronic_smart_power_tau somewhere (so 0x1abb2 / 0x1ade8 would have twins)': no store found. A displacement scan of cm848_rom.bin and cm848_flash2_live.bin finds one access to 0x40a2c4, lhz at 0xe5fc in calculateAlpha. In CM848 calculateAlpha sets four_dimensional_fueling_interpolation_factor (FLINML); in CM550 the ESP routine does (0x1addc).",
+          "Lead 'cm550_FUN_0002571e (pedal fault mode fuel demand) is the twin of cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit': counterpart. CM848 adds the brake-on limits, engine speed limit source 14 and the road speed derate.",
+          "Leads seen but left out of this output: cm550_oil_pressure_shutdown_controller (0x2dcb0) is the PTO-or-user fueling selection (counterpart or twin of cm848_selectPowerTakeOffOrUserFueling). Several ESP / speed globals are misnamed: 0x80d2b4 can_transmit_buffer_ptr = SPTU, 0x80d2bc can_transmit_length = SPHILDFG, 0x80d340 timing_alpha_blend_factor = FLINML, 0x80d06c governor_rpm_target_adjusted = the ESMXTM01 working copy. CM848's fault-derate filter record 0x3fbd2e / coefficient 0x5c2f2 are unnamed. The parents cm550_initMultiSystemParameters (0x345c8) / cm848_dispatchModeHandlers (0x42978) make the same three calls in the same order, but their first calls (0xd59e / 0x10248) differ."
+        ]
+      },
+      "verdicts": {
+        "verdicts": [
+          {
+            "firmware": "CM550",
+            "address": "0x0000b210",
+            "current": "cm550_outputControlTimingGenerator",
+            "verdict": "accept",
+            "final": "calculateFilteredEngineAcceleration",
+            "problems": [
+              "None blocking. I re-read ROM 0xb22c-0xb29e and CM848 0x38780-0x38808. They match step for step: the difference ESCMES (0x80ccf4) minus the previous speed (0x800048), then the previous speed is stored, the first filter, the clamp to the minimum (0x807a48 / 0x40880e) and then to the maximum (0x807a46 / 0x40880c) with the accumulator reset, and the second filter. The only difference is CM550's offset-binary accumulator (subi.l #0x80000000 at 0xb266 / 0xb282). That is the representation the initializeHighSpeedGovernorGainSet precedent shares a name across. Single call site, ROM 0x1b540, right after jsr 0x171be (the speed calculation).",
+              "Update the comment of CM550 global_variables.csv:114 (0x800066), which cites cm550_outputControlTimingGenerator."
+            ]
+          },
+          {
+            "firmware": "CM848",
+            "address": "0x00038760",
+            "current": "cm848_processEngineRpmDerivative",
+            "verdict": "accept",
+            "final": "calculateFilteredEngineAcceleration",
+            "problems": [
+              "Twin confirmed (see the CM550 0xb210 row). Single caller: hpcr_periodicTaskSet_fuelFinal (cpp 6911). That call comes after cm848_updateEngineSpeedFromCrankSignal, though not immediately after it.",
+              "These CM848 comments cite the old name and need the new one: global_variables.csv:1840 (0x3fb3ae), 1841 (0x3fb3b0), 1842 (0x3fb3b8), 3743 (0x40880c), 5463 (0x40b28c), 5464 (0x40b28e), 5465 (0x40b290). The investigator listed none of them."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x0000b5e4",
+            "current": "cm550_dmaControllerSetup1",
+            "verdict": "accept",
+            "final": "initializeEngineAccelerationFilters",
+            "problems": [
+              "None. ROM 0xb5e4-0xb612 has exactly five stores: 0x80006a = 0x80000000, 0x800066 = 0x807a42, 0x800072 = 0x80000000, 0x80006e = 0x807a44, clr.w 0x800048, then rts. CM848 0x38830-0x38860 has the same five stores in the same order. The only ROM reference is 0x2872e (mc68k_applicationMain)."
+            ]
+          },
+          {
+            "firmware": "CM848",
+            "address": "0x00038824",
+            "current": "cm848_initEngineRpmFilterPointers",
+            "verdict": "accept",
+            "final": "initializeEngineAccelerationFilters",
+            "problems": [
+              "Twin confirmed (see the CM550 0xb5e4 row). Single caller: cm848_applicationMain (cpp 58913).",
+              "These CM848 comments cite the old name: global_variables.csv:1840 (0x3fb3ae) and 1841 (0x3fb3b0)."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00025b1c",
+            "current": "vp44_fuel_timing_calculation_with_fault_checking",
+            "verdict": "accept",
+            "final": "cm550_runLowSpeedGovernor",
+            "problems": [
+              "Verified as the LSG through the e2m and the ROM: LSER 0x80dae0, LSAJRFES 0x80daee, LSEXFL 0x80daf6, FSGVFLST == 11 at 0x25b92, the EMA at 0x25b4c and the signed filter at 0x25c14. Its counterpart, not a twin, is CM848's split cm848_calculateLowSpeedGovernorErrorTerms / cm848_runLowSpeedGovernor. No VP44 access, so cm550_ is right.",
+              "Update the comment of CM550 global_variables.csv:760 (0x801a5a), which cites the old name."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00026078",
+            "current": "cm550_FUN_00026078",
+            "verdict": "accept",
+            "final": "cm550_initializeLowSpeedGovernor",
+            "problems": [
+              "None. ROM 0x26078-0x2609a: 0x801a62 = 0x808258 (LSDEFTTC), 0x801a5a = 0x80823e (LSFTTC), jsr 0x26308, LSMXLMFL 0x80dae8 = 0x1700, rts. One reference (0x2880c). It is a counterpart of CM848 0x28618 / 0x28d30, whose steps differ."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x0000c962",
+            "current": "cm550_engine_speed_governor",
+            "verdict": "accept",
+            "final": "cm550_runAllSpeedGovernor",
+            "problems": [
+              "One investigator evidence item does not support the claim: '107C +18 ASDPER 0x80a984'. In 64t6, ASDPER is a word at 0x80a984 and ASQDAJ (4 bytes) is at 0x80a986, but the code uses the 8-byte all_speed_governor_reference_filter_state at 0x80a984-0x80a98b. So 64t6's layout of block 107C does not match this firmware there, and the item should not be cited. The name rests on the code: the asg_* state and FSDSFLST 7 / 3 / 2 / 30 at ROM 0xc978-0xc99e. CM848's enum also calls states 2 and 7 'the all-speed governor PID'.",
+              "Verified: one call site (ROM 0x1b57e; record 0x1b572 has no rts and falls into it). The function first calls 0xd23c (cm550_dualTableLookupSum) before the state test, which the reason text does not mention. It is a counterpart of cm848_runOperatingModeSpeedGovernor (states 7 / 2 / 30 / 37, extra steps).",
+              "Update the comment of CM550 global_variables.csv:4581 (0x80a984), which cites the old name."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x0002dbde",
+            "current": "cm550_FUN_0002dbde",
+            "verdict": "accept",
+            "final": "smoothPowerTakeOffReferenceEngineSpeed",
+            "problems": [
+              "CAVEAT (medium): this twin has one step that cannot be proven. The first call (jsr 0x4d988 at ROM 0x2dbfa) goes into the undumped ROM, so its body cannot be compared with cm848_rampPowerTakeOffReferenceEngineSpeed. Evidence that it is the ramp: PTDSRF 0x80dc24 has no writer in the dumped ROM (its references are reads; byteSwap16 at 0x33f6e only reads through the pointer). All 8 references to PTSS 0x80dc26 are reads. PTST 0x80dc28 / PTDXSS 0x80dc2a have no references. PTAERT (e2m 11B4 +2, the PTO engagement rate, EEPROM 0x4ea = 0x803ff4) has no reader either; it is the same record as CM848's power_take_off_engagement_slew_rate_cal, which the CM848 ramp reads. So the ramp lives above 0x40000. Precedent: shared names already exist whose CM550 bodies call undumped ROM (periodicTaskSet_fuelDemand, executiveFrameInterruptHandler), although those are a task set and the executive handler. Check again when 0x40000+ is dumped. If the orchestrator wants proof first, the fallback is cm550_smoothPowerTakeOffReferenceEngineSpeed, and the CM848 row stays as it is.",
+              "Everything after the call matches CM848 0x2ac58-0x2ad10 instruction for instruction: the active test (== 1), |reference - request| against the step (bhi / bgt), the accumulator = reference << 16 at +4 of the record, the EMA, the move up or down by at least the step (blt / bge, ble / ble). The layout and the task position also match: after the ASG and before the PTO governor and the PTO-or-user selection. One call site, ROM 0x1b58a."
+            ]
+          },
+          {
+            "firmware": "CM848",
+            "address": "0x0002ac44",
+            "current": "cm848_smoothPowerTakeOffReferenceEngineSpeed",
+            "verdict": "accept",
+            "final": "smoothPowerTakeOffReferenceEngineSpeed",
+            "problems": [
+              "Same CAVEAT as the CM550 0x2dbde row: the pair is a twin except for the first callee, which cannot be compared (CM550 0x4d988 is undumped). Keep this pair in lockstep: if the CM550 row falls back to cm550_, this row keeps cm848_smoothPowerTakeOffReferenceEngineSpeed.",
+              "Update the CM848 comment that cites the old name: global_variables.csv:5194 (0x40af40)."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x0002db2a",
+            "current": "cm550_FUN_0002db2a",
+            "verdict": "accept",
+            "final": "initializePowerTakeOffGovernorFiltersAndGains",
+            "problems": [
+              "CM550 has extra stores at ROM 0x2db80-0x2dbd0: the axis and value pointers of the four lookup descriptors. They are the lookup library's representation, because CM848 passes the axis and value pointers at the call. That is the same difference initializeHighSpeedGovernorGainSet shares a name across. It is not an extra state step like 0x1dcfc's clr.w 0x80a916, so the twin verdict here does not conflict with that row's counterpart verdict. Every other store matches CM848 0x2abd4-0x2ac30 in order. The parents' third call: ROM 0x345d4 against CM848 0x4298c."
+            ]
+          },
+          {
+            "firmware": "CM848",
+            "address": "0x0002abc8",
+            "current": "cm848_initializePowerTakeOffGovernorFiltersAndGains",
+            "verdict": "accept",
+            "final": "initializePowerTakeOffGovernorFiltersAndGains",
+            "problems": [
+              "Twin confirmed (see the CM550 0x2db2a row). Single caller: cm848_dispatchModeHandlers (cpp 46296).",
+              "Its own comment (function_renames.csv:1012) cites cm848_initializePowerTakeOffReferenceFilter, which this round renames to initializePowerTakeOffReferenceFilter."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x0002dc9e",
+            "current": "cm550_FUN_0002dc9e",
+            "verdict": "accept",
+            "final": "initializePowerTakeOffReferenceFilter",
+            "problems": [
+              "None. ROM 0x2dc9e: clr.l 0x801c4a, then 0x801c46 = 0x8088ac (PTRFRMTC), then rts. CM848 0x2ad48 is the same: 0x3fafd0 = 0, then 0x3fafcc = 0x4071a0. Each has one caller, its PTO initializer."
+            ]
+          },
+          {
+            "firmware": "CM848",
+            "address": "0x0002ad48",
+            "current": "cm848_initializePowerTakeOffReferenceFilter",
+            "verdict": "accept",
+            "final": "initializePowerTakeOffReferenceFilter",
+            "problems": [
+              "Update the CM848 comment that cites the old name: function_renames.csv:1012 (0x2abc8)."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x0002dc8c",
+            "current": "cm550_rpmSnapshotCapture",
+            "verdict": "accept",
+            "final": "presetPowerTakeOffSmoothedReferenceEngineSpeed",
+            "problems": [
+              "None. ROM 0x2dc8c: PTRFRP 0x80dc18 = ENGRPM 0x80ccf6, then clr.l 0x801c4a. CM848 0x2ad28: 0x40af40 = 0x40b7ba, then 0x3fafd0 = 0. Each has one caller, its engagement preset (ROM 0x2d9f2 / cpp 29620)."
+            ]
+          },
+          {
+            "firmware": "CM848",
+            "address": "0x0002ad28",
+            "current": "cm848_presetPowerTakeOffSmoothedReferenceEngineSpeed",
+            "verdict": "accept",
+            "final": "presetPowerTakeOffSmoothedReferenceEngineSpeed",
+            "problems": [
+              "Update the CM848 comment that cites the old name: global_variables.csv:4029 (0x408ebc)."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x0001ae0c",
+            "current": "cm550_sensorHistoryTablePointerInit",
+            "verdict": "accept",
+            "final": "cm550_initializeEngineDecelerationRateFilter",
+            "problems": [
+              "APPLY AS A DELETION, NOT A RENAME. The name is only the fallback in case the row is kept. Remove CM550 function_renames.csv:261 (0x0001ae0c) and add this deleted_functions.csv row. It cites 0x1ade8 by its new name from this round: '0x0001ae0c,not a function entry: the tail of cm550_initializeElectronicSmartPower (its engine_deceleration_rate_filter_state set-up after the clears); no reference in the dumped ROM (references_to.py) and no pointer to it in the RAM / extended RAM / EEPROM dumps - the row came from the J90280.05 relocation map (was cm550_sensorHistoryTablePointerInit; PR #53 round 88)'.",
+              "Checked beyond the investigator: 0x1ade8 runs straight through 0x1ae06 / 0x1ae0c to the only rts at 0x1ae20, and neither address has a link or movem. Neither address appears as a 32-bit value in J90350.00.ram.bin, extended_ram.bin or eeprom.bin. The J90280.05 sources (0x016af2 and 0x032b00) are about 112 KB apart, so the two 'similar' matches (78 / 64) were pattern matches against a generic clear-plus-filter-set-up tail. A caller in the undumped ROM 0x40000+ cannot be ruled out; that is why this is medium."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x0001ae06",
+            "current": "cm550_initOilPressureModeSystem",
+            "verdict": "accept",
+            "final": "cm550_resetElectronicSmartPowerTauAndDecelerationFilter",
+            "problems": [
+              "APPLY AS A DELETION, NOT A RENAME. The name is only the fallback. Remove CM550 function_renames.csv:260 (0x0001ae06) and add: '0x0001ae06,not a function entry: a fall-through point inside cm550_initializeElectronicSmartPower (the clear of SPTU before the deceleration rate filter set-up); no reference in the dumped ROM (references_to.py) and no pointer to it in the RAM / extended RAM / EEPROM dumps - the row came from the J90280.05 relocation map (was cm550_initOilPressureModeSystem; PR #53 round 88)'. The investigator's text names 0x1ade8 as cm550_FUN_0001ade8, which this round renames.",
+              "The same checks as the 0x1ae0c row. ROM 0x1ae00 clr.w 0x80d2b6 falls into 0x1ae06 clr.w 0x80d2b4 (SPTU, 11DC +4, verified through the parameter ID table entry 0x3627c). Nothing here involves oil pressure."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x0001ade8",
+            "current": "cm550_FUN_0001ade8",
+            "verdict": "accept",
+            "final": "cm550_initializeElectronicSmartPower",
+            "problems": [
+              "None blocking. All six clears map to e2m 11DC (base 0x80d2b0): SPRVTZFG, SPHILDFG, SPTHTR01, SPESDITR, SPTUST, SPTU. The filter set-up is 0x800674 = 0x80000000 and 0x800670 = 0x807f66 (11DD +2 SPDIFTCS). There is one reference (0x287aa). CM848 has no counterpart: the only displacement-0xa2c4 access in both CM848 images is the lhz at 0xe5fc. Once 0x1ae06 / 0x1ae0c are deleted, this function's decompile shows all the stores, and the name covers them."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00018f4c",
+            "current": "cm550_protectionThresholdPointerInit",
+            "verdict": "accept",
+            "final": "initializeFaultDerateEngineSpeedLimit",
+            "problems": [
+              "The evidence is stronger than the investigator gave. The rated speed 0x803f40 is EEPROM 0x436 = e2m 1262 +0 EPNTDQRP (No_Derate_RPM). That is the same record as CM848's engine_speed_limit_default_cal (1262 +0, EEPROM 0x392 = 0x3fd814, from e2m_block_addresses.py). The coefficient is EPRPFTTC in both (CM550 10B5 +4 = 0x807f3a, CM848 10B5 +2 = 0x5c2f2), and the span subtracts EPMXDQRP in both. Four stores in the same order, and each is the first call after the channel set-up in its engine protection initializer.",
+              "Lead, out of scope: CM550 0x803f40 maximum_rated_engine_speed_0_5000 is EEPROM-backed (mirror 0x803b0a-0x804155) but has no _cal."
+            ]
+          },
+          {
+            "firmware": "CM848",
+            "address": "0x005087e4",
+            "current": "cm848_initializeFaultDerateEngineSpeedLimit",
+            "verdict": "accept",
+            "final": "initializeFaultDerateEngineSpeedLimit",
+            "problems": [
+              "Twin confirmed (see the CM550 0x18f4c row). Single caller: hpcr_initializeEngineProtection (cpp 67010).",
+              "These CM848 comments cite the old name: function_renames.csv:1787 (0x509814) and global_variables.csv:311 (0x5c2f0)."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00018e0c",
+            "current": "cm550_FUN_00018e0c",
+            "verdict": "accept",
+            "final": "cm550_calculateFaultDerateEngineSpeedLimit",
+            "problems": [
+              "The single difference from CM848 0x50860c is the channel table, not the algorithm. CM550 loops over nine 36-byte configurations (0x807032-0x807176, starting at coolant level) with flag bit bases 0x71 / 0x1a0. CM848's table holds only one channel (fuel temperature, 0x597b2-0x597d6, so its do-while runs once) with bases 0x81 / 0x1a4. Counterpart by the stated rule. If the orchestrator prefers the runHighSpeedGovernorPid precedent, the shared name calculateFaultDerateEngineSpeedLimit would rename CM848 0x50860c as well.",
+              "Update CM550 function_definitions.csv:249-251, whose parameter comments cite cm550_FUN_00018e0c."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x000258d6",
+            "current": "cm550_fuelDemandTablePointerInit",
+            "verdict": "accept",
+            "final": "initializePedalFaultModeEngineSpeedFilter",
+            "problems": [
+              "None. ROM 0x258d6: clr.l 0x801a36, then 0x801a32 = 0x80820e (10CE +0 LHESFTTC). CM848 0x50db88: 0x3fcbe0 = 0, then 0x3fcbdc = 0x5c48e (10CE +0 Limp_Home_Engine_Speed_Filter_Constant, verified with e2m_block_addresses.py). Each is the second of its parent's three calls (ROM 0x345ce / CM848 0x42988)."
+            ]
+          },
+          {
+            "firmware": "CM848",
+            "address": "0x0050db88",
+            "current": "cm848_initDroopModeStateVariables",
+            "verdict": "accept",
+            "final": "initializePedalFaultModeEngineSpeedFilter",
+            "problems": [
+              "Update the CM848 comment that cites the old name: global_variables.csv:2160 (0x3fcbdc)."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x000258b0",
+            "current": "cm550_FUN_000258b0",
+            "verdict": "accept",
+            "final": "presetPedalFaultModeFuelDemand",
+            "problems": [
+              "None blocking. Same three stores in the same order as CM848 0x50da7c: ramp and limit = current fuel demand, then accumulator = engine speed << 16. Both are called only on entry to mode 6. CM550 has two call sites in 0x25806 (0x25852 / 0x258a4); CM848 has one (cpp 71949).",
+              "Update CM550 function_definitions.csv:311, the 0x25806 parameter comment that cites cm550_FUN_000258b0."
+            ]
+          },
+          {
+            "firmware": "CM848",
+            "address": "0x0050da7c",
+            "current": "cm848_presetPedalFaultModeFuelDemand",
+            "verdict": "accept",
+            "final": "presetPedalFaultModeFuelDemand",
+            "problems": [
+              "These CM848 comments cite the old name: global_variables.csv:2160 (0x3fcbdc), 6395 (0x40ae6c) and 6741 (0x3fcbe6)."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x0002571e",
+            "current": "cm550_FUN_0002571e",
+            "verdict": "accept",
+            "final": "cm550_calculatePedalFaultModeFuelDemand",
+            "problems": [
+              "None. FSDSFLST == 6 test, the EMA of ESCMES, the 0x8b21 divisor, the limit slew and the ramp all verified. CM848 0x50d864 adds the brake-on limits, engine speed limit source 14 and the road speed derate, so it is a counterpart. One reference (0x1b7e4)."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00025ff2",
+            "current": "vp44_fuelRpmDeviationCalculator",
+            "verdict": "accept",
+            "final": "cm550_presetLowSpeedGovernorSpeedError",
+            "problems": [
+              "None blocking. It is a real entry: rts at 0x25ff0, then a movem prologue, then an epilogue and rts at 0x26076. It has no ROM reference and no pointer to it in the RAM / extended RAM / EEPROM dumps, so its caller is presumably above 0x40000. CM848 has no twin: only cm848_calculateLowSpeedGovernorErrorTerms writes low_speed_governor_error_filter.accumulator (cpp 28545)."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x0001dcfc",
+            "current": "vp44ControlStructureInit",
+            "verdict": "accept",
+            "final": "cm550_initializeAlpha",
+            "problems": [
+              "The single difference from CM848 0xe748 cm848_initializeAlpha is the clr.w of 0x80a916 at ROM 0x1dd1e (104A +0x1E). 64t6 has no record there, and nothing else in the dumped ROM references it. All other stores match in order: the filter accumulator 0, the coefficient APFLFTTC, APAPBA, the LSG and AFC timer active flags, and FSLSSTFG (104A +0x10, which is CM848's alpha_low_speed_governor_state_detected_flag). That makes it a counterpart by the stated rule. If the orchestrator prefers the selectHighSpeedGovernorGainSet precedent, the shared name initializeAlpha would rename CM848 0xe748 as well."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x000176de",
+            "current": "cm550_engineRpmSourceInit",
+            "verdict": "accept",
+            "final": "cm550_initializeEngineSpeedCalculation",
+            "problems": [
+              "None. ROM 0x176de-0x17708 verified: the filter, 0x80d06c = ESMXTM01, 0x80d08c = 0x1770a, then clr.w ESSNSE. One reference (0x2874c). No register access."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x000171be",
+            "current": "cm550_fuel_limit_arbitrator",
+            "verdict": "accept",
+            "final": "cm550_calculateEngineSpeed",
+            "problems": [
+              "None blocking. Verified the lost-signal counters, the call through 0x80d08c (jsr (a0) at 0x1752a), the three EMA calls into ENGRPM and the override from MSESOD 0x80a92c. The function has no 0xfffxxx access, so cm550_ is right. It is a counterpart of cm848_updateEngineSpeedFromCrankSignal.",
+              "Update CM550 global_variables.csv:5711 (0x80dc92), which cites the old name. Lead, out of scope: 0x80ccf4 'current_engine_rpm_filtered' is ESCMES (not filtered) and 0x80ccf6 'engine_rpm_primary' is ENGRPM (the filtered speed). Both are misnamed."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x0002d3c6",
+            "current": "initProtectionParamCalculation",
+            "verdict": "accept",
+            "final": "cm550_runPowerTakeOffGovernor",
+            "problems": [
+              "None. The PTSS == 1 test, the engagement preset when 0x801c0c != 1, the 0x20c floor at 0x2d4bc and the signed filter on 0x801c00 at 0x2d4f8 all verified. CM848 0x2ab2c splits the work and runs only the preset on the first pass, so it is a counterpart. The unprefixed old name now exists only in CM550, which the prefix rule does not allow."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x0002d9d2",
+            "current": "cm550_fuelDemandProportionalCalculator",
+            "verdict": "accept",
+            "final": "cm550_presetPowerTakeOffGovernorOnEngagement",
+            "problems": [
+              "None. Same structure as CM848 0x2a960, but that function also floors the gain adjustment at 0x20c and computes the integral preset differently (0x1d70a3 divisor against scaleByRatio 0x8000 / 0x7fff). So it is a counterpart. One reference (0x2d3f6)."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x0001abb2",
+            "current": "cm550_FUN_0001abb2",
+            "verdict": "accept",
+            "final": "cm550_updateElectronicSmartPowerTau",
+            "problems": [
+              "None blocking. The reason text leaves out the tau lock path. When SPTULO (EEPROM 0x41e = 0x803f28) is set, SPTUST is set to SPLOST (0x803f26) and SPTU follows it (0, 0x4000 or SPRVTU 0x807f80). The name still fits. No CM848 counterpart."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x0000b7bc",
+            "current": "validateServiceDataLength",
+            "verdict": "accept",
+            "final": "mc68k_processAnalogSensorChannels",
+            "problems": [
+              "None blocking. I decoded the QADC read at ROM 0xb852 by hand: 3770 8170 00fff2b0 0010 is move.w (0xfff2b0,a0) with the index suppressed into (16,a3). Here a0 = 2 x config+0x10, so the read is QADC RJURR and the mc68k_ prefix is justified. The override path (0x80a72e[d3]) and the forced path (0x80a760[d3]) use brief-format (0,a0,d3.w*2). The loop covers 25 records, 0x80a2aa to 0x80a4d0. The decompile shows two task-set callers, but they are one instruction (ROM 0x1b65a; 0x1b612 falls into 0x1b62a).",
+              "When applying, change the function_name of CM550 local_variables.csv:18 with the rename."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x0000bcf0",
+            "current": "cm550_initADCChannelConfiguration",
+            "verdict": "accept",
+            "final": "cm550_initializeAnalogSensorChannels",
+            "problems": [
+              "None blocking. The body runs from 0xbcf0 to the rts at 0xc17e and has no 0xfffxxx access, so cm550_ is right. Verified: the 25 descriptors, the per-channel set-up, one run of 0xb7bc (ROM reference 0xc03c), and the presets of the accumulator, the filtered value, the sample counter and the debounce counter.",
+              "When applying, change the function_name of CM550 local_variables.csv:19 and the mention in function_renames.csv:172 (mc68k_initializeDiscreteOutputDrivers)."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "group": "adcconfig",
+      "proposal": {
+        "changes": [
+          {
+            "firmware": "CM550",
+            "kind": "struct_type",
+            "address": "",
+            "current": "sensor_fault_config_t",
+            "proposed": "sensor_config_t",
+            "type": "",
+            "fields": "filter_coefficient:word:2; default_value:word:2; fault_clear_threshold:short:2; debounce_counter_decrement:short:2; debounce_counter_increment:short:2; fault_set_threshold:short:2; high_error_limit:word:2; low_error_limit:word:2; qadc_result_register_index:word:2; multiplexer_setting:byte:1; tri_state_error_enable:byte:1; high_error_fault_number:byte:1; low_error_fault_number:byte:1; tri_state_error_fault_number:byte:1; sample_period:byte:1",
+            "reason": "One A/D channel's 24-byte config record: e2m block 1003 is exactly 25 of them (offsets 0-599; the ECU's parameter ID table entry 0x353b4 gives id 0x1003 -> 0x00806ae2), in the order of the sensor_debounce_state_t records (0x80a2aa + 22 x channel; their +0 coefficient pointers in the extended RAM dump are 0x806ae2 + 24 x channel for all 25). validateServiceDataLength (0xb7bc) and cm550_initADCChannelConfiguration (0xbcf0) are the only code that walks it: one pointer in a2 from 0x806ae2 (0xb7cc / 0xbf28 / 0xc074 24 7c 00 80 6a e2) stepped by 24 (moveq #24 + adda.l at 0xbcb4 / 0xc030 / 0xc170). Replaces the unused template sensor_fault_config_t (0 users; its +0 / +16 / +19-+23 meanings are wrong - see rejected leads) under a CM550-only name: CM848's sensor_channel_config_t holds the same parameter family in another 16-byte order (a counterpart, not a twin). Signedness: +4 / +10 are signed by their branches (bgt / blt against the signed debounce_counter) and +6 / +8 by the e2m (S16; add.w / sub.w are sign-agnostic), so the four are short like debounce_counter; +0 / +2 / +12 / +14 / +16 / +23 are unsigned by mulu / zero-extension / bcc / bls; the bytes are zero-extended (moveq #0 + move.b). Field comments (comma-free) to paste: filter_coefficient = \"+0: A/D digital filter constant (e2m ...CS; 1/65536): the weight of the previous value - the channel's ema_filter_state_t.coefficient points here and cm550_exponentialMovingAverage reads it\"; default_value = \"+2: global default value (e2m ...GD / ADDF...; the channel's units): filtered_value and the accumulator (<< 16) while the fault is active or on a tri-state reading\"; fault_clear_threshold = \"+4: A/D fault clear counts: debounce_counter at or below it clears fault_active_flag and the high / low faults\"; debounce_counter_decrement = \"+6: A/D fault decrement: taken off debounce_counter on each in-range sample (floored at 0)\"; debounce_counter_increment = \"+8: A/D fault increment: added to debounce_counter on each out-of-range sample\"; fault_set_threshold = \"+10: A/D fault set: debounce_counter at or above it sets the fault and is capped there; the start-up loops preload it while a high / low fault is confirmed\"; high_error_limit = \"+12: A/D high error limit in raw counts (0-1023): adc_raw_value above it counts toward high_error_fault_number\"; low_error_limit = \"+14: A/D low error limit in raw counts: adc_raw_value below it counts toward low_error_fault_number\"; qadc_result_register_index = \"+16: e2m ...CA channel address: the QADC result slot (0-39) whose right-justified result register (0xfff2b0 + 2 x n) gives adc_raw_value; initQadcModule's command word table (0x2e936) maps the slot to the analog input\"; multiplexer_setting = \"+18: e2m ...MU channel mux setting (0-255): no reader in J90350.00 (0 in all 25 records)\"; tri_state_error_enable = \"+19: e2m ...TS tri-state flag: nonzero makes a lookup result of 4 count toward tri_state_error_fault_number (0 in all 25 records)\"; high_error_fault_number = \"+20: e2m ...HE: the fault the high limit sets (bit n mod 16 of status word n / 16 at 0x806000 / 0x806040; 0x806abc is the confirm word)\"; low_error_fault_number = \"+21: e2m ...LE: the fault the low limit sets\"; tri_state_error_fault_number = \"+22: e2m ...TE in-range / tri-state error: set at the fifth consecutive lookup result of 4 and cleared at the fifth other reading (counters 0x800076 / 0x800090 + channel)\"; sample_period = \"+23: e2m ...SA / ...SR sample period in 20 ms passes (0 = the channel is never read): sample_counter counts to it\". Totals: 25 instances (the 25 +0 rows renamed in place) and 348 rows deleted inside them; 4 of those have users (all reading the field at their offset) and are also global_removal rows, the other 344 have no user and are listed in their instance rows. No row with users sits off a field start. The e2m cited is 42t9_rls: its channel 18 records are ADFTSV like the CSV rows (v74t3_t has ADRTCV there) and it has no record at offset 88, which is why channel 3 shows 14 records and no +16 row; v74t3_t has the same 15-field layout (375 records). The 20 ms unit of +23 rests on the e2m scale (MSEC x 20) and round 87's Calterm values (100 ms -> 5), not on a measured loop rate (validateServiceDataLength has two callers: periodicTaskSet_fuelDemand 0x1b612 and vp44_evenPhaseSchedulerTaskSet 0x1b62a). Also: replace the \"# Sensor Fault Configuration Entry (24 bytes per sensor)\" header line (line 67) and the template rows 68-82; parameter_id_lookup_table.csv row 4099 still names the pre-round-88 +0 row (a reference table, not a build input).",
+            "evidence": [
+              "+0 word unsigned: init 0xbf3c 26 8a move.l a2,(a3) = (channel_record->filter).coefficient = pwVar2 (.cpp 1546); cm550_exponentialMovingAverage 0x34f96 20 51 move.l (a1),a0 + 0x34f98 32 10 move.w (a0),d1 and mulu.w at 0x34fb0 c6 e9 00 06 / 0x34fbc c4 e9 00 04 (.cpp 37342-37349); e2m ADIMTPCS U16 scale 1.526E-5; dump 15998 / 43909 / 65422 / 24109 / 0",
+              "+2 word unsigned: 0xbb8e 37 6a 00 02 00 08 move.w (2,a2),(8,a3) and 0xbb94 70 00 moveq #0 + 0xbb96 30 2a 00 02 + 0xbb9a 72 10 moveq #16 + 0xbb9c e3 a8 lsl.l + 0xbb9e 27 40 00 04 (.cpp 1426-1427 accumulator = (uint)pwVar7[1] << 0x10); same at 0xbbd2-0xbbe2 (.cpp 1381-1382); absolute word readers 0x1cb3c / 0x20d06 / 0x2079a (below)",
+              "+4 short: 0xba4c 30 2b 00 0c move.w (12,a3),d0 + 0xba50 b0 6a 00 04 cmp.w (4,a2),d0 + 0xba54 6e 00 01 32 bgt - signed (.cpp 1334 debounce_counter <= (short)pwVar7[2]); e2m ADIMTPCC S16",
+              "+6 short (e2m S16; sub.w is sign-agnostic): 0xba3a 30 2a 00 06 move.w (6,a2),d0 + 0xba3e 91 6b 00 0c sub.w d0,(12,a3), then 0xba42 4a 6b 00 0c tst.w + 0xba46 6c 04 bge / 0xba48 42 6b 00 0c clr.w (.cpp 1328-1331)",
+              "+8 short (e2m S16; add.w is sign-agnostic): 0xb8d8 / 0xb9c8 30 2a 00 08 move.w (8,a2),d0 + 0xb8dc / 0xb9cc d1 6b 00 0c add.w d0,(12,a3) (.cpp 1269 / 1306)",
+              "+10 short: 0xb8e4 / 0xb9d4 b0 6a 00 0a cmp.w (10,a2),d0 + 0xb8e8 6d 00 01 62 / 0xb9d8 6d 00 00 72 blt - signed (.cpp 1270 / 1307 (short)pwVar7[5] <= debounce_counter); 0xb8ec / 0xb9dc 37 6a 00 0a 00 0c move.w (10,a2),(12,a3) (.cpp 1271 / 1308); init 0xc020 / 0xc160 37 6a 00 0a 00 0c (.cpp 1563 / 1613); e2m ADIMTPSE S16",
+              "+12 word unsigned: 0xb85c 30 2a 00 0c move.w (12,a2),d0 + 0xb860 b0 6b 00 10 cmp.w (16,a3),d0 + 0xb864 64 00 00 e6 bcc (.cpp 1254 pwVar7[6] < adc_raw_value); e2m ADIMTPHL U16 0-1023",
+              "+14 word unsigned: 0xb94c 30 2a 00 0e move.w (14,a2),d0 + 0xb950 b0 6b 00 10 + 0xb954 63 00 00 e4 bls (.cpp 1291 adc_raw_value < pwVar7[7]); e2m ADIMTPLL U16",
+              "+16 word unsigned: 0xb848 70 00 moveq #0,d0 + 0xb84a 30 2a 00 10 move.w (16,a2),d0 + 0xb84e d0 80 add.l d0,d0 + 0xb850 20 40 movea.l d0,a0 + 0xb852 37 70 81 70 00 ff f2 b0 00 10 move.w (0xfff2b0,a0),(16,a3) (.cpp 1249 *(word *)(&UNK_00fff2b0 + (uint)pwVar7[8] * 2)); dump values 0-39 = result slots of the 40-entry command word table that initQadcModule fills from ROM 0x2e936 (.cpp 31358; slot 1 -> input 1, slot 7 -> 3, slot 17 -> 57); e2m ADIMTPCA \"CHANNEL_ADDRESS\" U16",
+              "+18 byte: no reader - the raw bytes of 0xb7bc-0xc180 hold no 00 12 displacement word at any even offset (so no (18,An) operand in either function), and the ROM scan finds no absolute reference to 0x806af4 + 24 n; 0 in all 25 dumped records; the name rests on e2m ADIMTPMU \"CHANNEL MUX SETTING\" U8 alone",
+              "+19 byte: 0xbbc0 4a 2a 00 13 tst.b (19,a2) + 0xbbc4 67 00 00 d8 beq (hand-decoded; llvm prints the tst.b as INVALID) (.cpp 1375 *(char *)((int)pwVar7 + 0x13) == 0); e2m ADIMTPTS \"TRI STATE FLAG ENABLE / DISABLE\" U8",
+              "+20 byte unsigned: 0xb958 70 00 moveq #0 + 0xb95a 10 2a 00 14 move.b (20,a2),d0 (the high-branch set at 0xb8fe-0xb944 ors bit (n & 15) into words 0x806000 + (n >> 4) x 2 and 0x806040 + ...: 83 70 02 00 or.w; .cpp 1273-1286); init 0xbfb4 (.cpp 1567-1574); e2m ADIMTPHE \"HIGH_ERROR\" U8 - dump IMT 13 / 14",
+              "+21 byte unsigned: 0xb868 70 00 + 0xb86a 10 2a 00 15 move.b (21,a2),d0 (.cpp 1255-1262, the high branch skips while the low fault is confirmed); low-branch set 0xb9ee-0xba36 (.cpp 1310-1323); clear 0xbaf2-0xbb86 (.cpp 1353-1368); init 0xbf44 70 00 + 0xbf46 10 2a 00 15 (.cpp 1548-1555); e2m ADIMTPLE \"LOW_ERROR\" U8",
+              "+22 byte unsigned: 0xbbf6 10 2a 00 16 ... 0xbc16 83 70 02 00 or.w (set, .cpp 1385-1398) and 0xbc6e 10 2a 00 16 ... 0xbc90 c3 70 02 00 and.w (clear, .cpp 1411-1417); counters a4 = 0x800076 / a5 = 0x800090 + channel (0xbbe6 42 15 clr.b (a5), 0xbbe8 0c 14 00 04 cmpi.b #4,(a4)); e2m ADIMTPTE \"IN_RANGE_ERROR\" U8",
+              "+23 byte unsigned: 0xb7f8 4a 2a 00 17 tst.b (23,a2) + 0xb7fc 66 08 bne (hand-decoded) (.cpp 1239); 0xb806 10 2b 00 0f move.b (15,a3),d0 + 0xb80a b0 2a 00 17 cmp.b (23,a2),d0 + 0xb80e 64 08 bcc (.cpp 1242); init 0xbf3e 17 6a 00 17 00 0f move.b (23,a2),(15,a3) (.cpp 1547); e2m ADIMTPSA MSEC scale 20 U8 (dump 5 = 100 ms / 1 / 2 / 0)",
+              "stride and base: validateServiceDataLength 0xb7cc 24 7c 00 80 6a e2 (.cpp 1228) and 0xbcb4 70 18 + 0xbcb6 d5 c0 (.cpp 1435 pwVar7 + 0xc); init 0xbf28 / 0xc074 24 7c 00 80 6a e2 (.cpp 1542 / 1593), 0xc030 / 0xc170 70 18 + d5 c0 (.cpp 1582 / 1633)",
+              "every reader: ROM scan for 32-bit values 0x806ae2-0x806d39 finds only 0xb7ce / 0xbf2a / 0xc076 (the two loops), 0x1cb3e / 0x205f0 / 0x2079c / 0x20d08 / 0x20d8e / 0x20da2 (four absolute readers, all word reads of +2 or +16) and the parameter ID table 0x353b4 / 0x353b8; the frozen .cpp has no hex reference into the range; the coefficient pointer path ends in cm550_exponentialMovingAverage (+0 only)",
+              "local_variables.csv rows (no local kind in the schema - also carried by the two function rows): 0x0000b7bc,validateServiceDataLength,pwVar7,channel_config,sensor_config_t*,The A/D channel config record this pass reads (0x806ae2 + 24 x channel in a2: stride 24 at 0xbcb4) | 0x0000bcf0,cm550_initADCChannelConfiguration,pwVar2,channel_config,sensor_config_t*,The A/D channel config record the first and third start-up loops read (0x806ae2 + 24 x channel in a2) - old names valid for the frozen .cpp only (see the function rows)"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806ae2",
+            "current": "intake_manifold_temperature_sensor_filter_coefficient",
+            "proposed": "intake_manifold_temperature_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 0 (0x806ae2 + 24 x 0; intake_manifold_temperature_sensor_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the intake_manifold_temperature_sensor_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806ae2: 3e7e 5280 0001 0001 0001 0014 03fb 001e 0001 0000 0d0e 0005 = 15998 / 21120 / 1 / 1 / 1 / 20 / 1019 / 30 / slot 1 / 0 / 0 / faults 13 14 0 / period 5",
+              "intake_manifold_temperature_sensor_filter_state +0 pointer = 0x00806ae2 (extended RAM dump); e2m block 1003 +0-23: 15 records ADIMTPCS..ADIMTPSA",
+              "+0 row intake_manifold_temperature_sensor_filter_coefficient: renders .cpp 1228 / 1542 / 1593 (loop pointer inits -> &intake_manifold_temperature_sensor_config)",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 global_default_value_for_intake_manifold_temperature_50_to_293; +4 a_d_fault_clear_counts_for_intake_manifold_temperature_0_32767; +6 a_d_fault_decrement_for_intake_manifold_temperature_0_32767; +8 a_d_fault_increment_for_intake_manifold_temperature_0_32767; +10 a_d_fault_set_for_intake_manifold_temperature_0_32767; +12 a_d_high_error_limit_for_intake_manifold_temperature_0_1023; +14 a_d_low_error_limit_for_intake_manifold_temperature_0_1023; +16 intake_manifold_temperature_channel_address_none; +18 adimtpmu_param; +19 tri_state_flag_intake_manifold_temperature_enable_disable; +20 error_number_storage_for_intake_manifold_temperature_high_erro_0_255; +21 error_number_storage_for_intake_manifold_temperature_low_error_0_255; +22 error_number_storage_for_in_range_error_intake_manifold_tempera_none; +23 ADIMTPSA"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806afa",
+            "current": "fuel_temperature_sensor_filter_coefficient",
+            "proposed": "fuel_temperature_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 1 (0x806ae2 + 24 x 1; fuel_temperature_sensor_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (users read their field: global_default_value_for_fuel_temperature_50_to_293 -> fuel_temperature_sensor_config.default_value), refresh the fuel_temperature_sensor_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806afa: 3e7e 4d00 0001 0001 0001 0014 03fb 0022 0007 0000 2526 0000 = 15998 / 19712 / 1 / 1 / 1 / 20 / 1019 / 34 / slot 7 / 0 / 0 / faults 37 38 0 / period 0",
+              "fuel_temperature_sensor_filter_state +0 pointer = 0x00806afa (extended RAM dump); e2m block 1003 +24-47: 15 records ADFLTPCS..ADFLTPSA",
+              "+0 row fuel_temperature_sensor_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 global_default_value_for_fuel_temperature_50_to_293 [USER vp44_FUN_0001cb3c .cpp 18026 -> .default_value]; +4 a_d_fault_clear_counts_for_fuel_temperature_0_32767; +6 a_d_fault_decrement_for_fuel_temperature_0_32767; +8 a_d_fault_increment_for_fuel_temperature_0_32767; +10 a_d_fault_set_for_fuel_temperature_0_32767; +12 a_d_high_error_limit_for_fuel_temperature_0_1023; +14 a_d_low_error_limit_for_fuel_temperature_0_1023; +16 fuel_temperature_channel_address_none; +18 adfltpmu_param; +19 tri_state_flag_fuel_temperature_enable_disable; +20 error_number_storage_for_fuel_temperature_high_error_0_255; +21 error_number_storage_for_fuel_temperature_low_error_0_255; +22 error_number_storage_for_in_range_error_fuel_temperature_none; +23 ADFLTPSA"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806b12",
+            "current": "coolant_level_sensor_filter_coefficient",
+            "proposed": "coolant_level_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 2 (0x806ae2 + 24 x 2; coolant_level_sensor_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the coolant_level_sensor_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror). coolant_level_channel_address_0_32767 (+4) copies an e2m description slip: ADCVCC is the S16 fault clear count; the channel address is +16 (ADCVCA, slot 11).",
+            "evidence": [
+              "RAM dump 0x806b12: ff8e 0048 0001 0001 0001 0014 03ff 0000 000b 0000 1e1f 0005 = 65422 / 72 / 1 / 1 / 1 / 20 / 1023 / 0 / slot 11 / 0 / 0 / faults 30 31 0 / period 5",
+              "coolant_level_sensor_filter_state +0 pointer = 0x00806b12 (extended RAM dump); e2m block 1003 +48-71: 15 records ADCVCS..ADCVSA",
+              "+0 row coolant_level_sensor_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 coolant_level_global_default_value_0_2; +4 coolant_level_channel_address_0_32767; +6 coolant_level_a_d_fault_decrement_0_32767; +8 coolant_level_a_d_fault_increment_0_32767; +10 coolant_level_a_d_fault_set_0_32767; +12 coolant_level_a_d_high_error_limit_0_1023; +14 coolant_level_a_d_low_error_limit_0_1023; +16 coolant_level_channel_address_none; +18 coolant_level_channel_mux_setting_0_255; +19 coolant_level_tri_state_flag_enable_disable; +20 error_number_storage_for_coolant_level_high_error_0_255; +21 error_number_storage_for_coolant_level_low_error_0_255; +22 coolant_level_error_number_storage_for_in_range_error_none; +23 ADCVSA"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806b2a",
+            "current": "fuel_pressure_sensor_filter_coefficient",
+            "proposed": "fuel_pressure_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 3 (0x806ae2 + 24 x 3; fuel_pressure_sensor_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 13 rows inside (no user), refresh the fuel_pressure_sensor_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806b2a: 5e2d 0000 0001 0001 0001 0014 03ff 0000 0000 0000 0000 0000 = 24109 / 0 / 1 / 1 / 1 / 20 / 1023 / 0 / slot 0 / 0 / 0 / faults 0 0 0 / period 0",
+              "fuel_pressure_sensor_filter_state +0 pointer = 0x00806b2a (extended RAM dump); e2m block 1003 +72-95: 14 records ADSYFPCS..ADSYFPSR",
+              "+0 row fuel_pressure_sensor_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 adsyfpgd_param; +4 adsyfpfc_param; +6 adsyfpfd_param; +8 adsyfpfi_param; +10 adsyfpfs_param; +12 adsyfphl_param; +14 adsyfpll_param; +18 adsyfpmu_param; +19 adsyfpts_param; +20 error_number_storage_for_fuel_pressure_high_limit_error_0_255; +21 error_number_storage_for_fuel_pressure_low_error_0_255; +22 adsyfpte_param; +23 ADSYFPSR; no row at +16"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806b42",
+            "current": "oil_pressure_sensor_filter_coefficient",
+            "proposed": "oil_pressure_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 4 (0x806ae2 + 24 x 4; oil_pressure_sensor_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the oil_pressure_sensor_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806b42: 3e7e 1900 0001 0001 0001 0014 03b2 004d 001f 0000 3233 0005 = 15998 / 6400 / 1 / 1 / 1 / 20 / 946 / 77 / slot 31 / 0 / 0 / faults 50 51 0 / period 5",
+              "oil_pressure_sensor_filter_state +0 pointer = 0x00806b42 (extended RAM dump); e2m block 1003 +96-119: 15 records ADOLPRCS..ADOLPRSA",
+              "+0 row oil_pressure_sensor_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 global_default_value_for_oil_pressure_0_100; +4 a_d_fault_clear_counts_for_oil_pressure_0_32767; +6 a_d_fault_decrement_for_oil_pressure_0_32767; +8 a_d_fault_increment_for_oil_pressure_0_32767; +10 a_d_fault_set_for_oil_pressure_0_32767; +12 a_d_high_error_limit_for_oil_pressure_0_1023; +14 a_d_low_error_limit_for_oil_pressure_0_1023; +16 oil_pressure_channel_address_none; +18 adolprmu_param; +19 tri_state_flag_oil_pressure_enable_disable; +20 error_number_storage_for_oil_pressure_high_limit_0_255; +21 error_number_storage_for_oil_pressure_low_error_0_255; +22 error_number_storage_for_in_range_error_oil_pressure_none; +23 ADOLPRSA"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806b5a",
+            "current": "boost_pressure_sensor_filter_coefficient",
+            "proposed": "boost_pressure_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 5 (0x806ae2 + 24 x 5; boost_pressure_sensor_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the boost_pressure_sensor_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806b5a: 0c7f 0000 0001 0001 0001 0064 03b4 004d 0013 0000 191a 0001 = 3199 / 0 / 1 / 1 / 1 / 100 / 948 / 77 / slot 19 / 0 / 0 / faults 25 26 0 / period 1",
+              "boost_pressure_sensor_filter_state +0 pointer = 0x00806b5a (extended RAM dump); e2m block 1003 +120-143: 15 records ADBSPRCS..ADBSPRSA",
+              "+0 row boost_pressure_sensor_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 ADDFBSPR; +4 a_d_fault_clear_counts_for_boost_pressure_0_32767; +6 a_d_fault_decrement_for_boost_pressure_0_32767; +8 a_d_fault_increment_for_boost_pressure_0_32767; +10 a_d_fault_set_for_boost_pressure_0_32767; +12 a_d_high_error_limit_for_boost_pressure_0_1023; +14 a_d_low_error_limit_for_boost_pressure_0_1023; +16 boost_pressure_channel_address_none; +18 adbsprmu_param; +19 tri_state_flag_boost_pressure_enable_disable; +20 error_number_storage_for_boost_pressure_high_error_0_255; +21 error_number_storage_for_boost_pressure_low_error_0_255; +22 error_number_storage_for_tri_state_error_boost_pressure_none; +23 ADBSPRSA"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806b72",
+            "current": "coolant_temperature_sensor_filter_coefficient",
+            "proposed": "coolant_temperature_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 6 (0x806ae2 + 24 x 6; coolant_temperature_sensor_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the coolant_temperature_sensor_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806b72: 3e7e 7f80 0001 0001 0001 0014 03fb 001e 000f 0000 2021 0005 = 15998 / 32640 / 1 / 1 / 1 / 20 / 1019 / 30 / slot 15 / 0 / 0 / faults 32 33 0 / period 5",
+              "coolant_temperature_sensor_filter_state +0 pointer = 0x00806b72 (extended RAM dump); e2m block 1003 +144-167: 15 records ADCLTPCS..ADCLTPSA",
+              "+0 row coolant_temperature_sensor_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 global_default_value_to_coolant_temperature_50_to_293; +4 a_d_fault_clear_counts_for_coolant_temperature_0_32767; +6 a_d_fault_decrement_for_coolant_temperature_0_32767; +8 a_d_fault_increment_for_coolant_temperature_0_32767; +10 a_d_fault_set_for_coolant_temperature_0_32767; +12 a_d_high_error_limit_for_coolant_temperature_0_1023; +14 a_d_low_error_limit_for_coolant_temperature_0_1023; +16 coolant_temperature_channel_address_none; +18 adcltpmu_param; +19 tri_state_flag_coolant_temperature_enable_disable; +20 error_number_storage_for_coolant_temperature_high_error_0_255; +21 error_number_storage_for_coolant_temperature_low_error_0_255; +22 error_number_storage_for_tri_state_error_coolant_temperature_none; +23 ADCLTPSA"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806b8a",
+            "current": "ambient_air_temperature_sensor_filter_coefficient",
+            "proposed": "ambient_air_temperature_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 7 (0x806ae2 + 24 x 7; ambient_air_temperature_sensor_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the ambient_air_temperature_sensor_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806b8a: 5e2d 1900 0001 0001 0001 0064 03fb 001e 0014 0000 9c9d 0000 = 24109 / 6400 / 1 / 1 / 1 / 100 / 1019 / 30 / slot 20 / 0 / 0 / faults 156 157 0 / period 0",
+              "ambient_air_temperature_sensor_filter_state +0 pointer = 0x00806b8a (extended RAM dump); e2m block 1003 +168-191: 15 records ADTTCS..ADTTSA",
+              "+0 row ambient_air_temperature_sensor_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 global_default_value_for_ambient_air_temperature_100_255; +4 a_d_fault_clear_counts_for_ambient_air_temperature_0_10000; +6 a_d_fault_decrement_for_ambient_air_temperature_1_100; +8 a_d_fault_increment_for_ambient_air_temperature_2_1000; +10 a_d_fault_set_for_ambient_air_temperature_400_40000; +12 a_d_high_error_limit_for_raw_ambient_air_temperature_0_1023; +14 ad_low_error_limit_for_ambient_air_temperature_0_1023; +16 ambient_air_temperature_channel_address_none; +18 adttmu_param; +19 tri_state_flag_ambient_air_temperature_enable_disable; +20 error_number_storage_for_ambient_air_temperature_high_error_id_0_255; +21 error_storage_number_for_ambient_air_temperature_low_error_0_255; +22 error_number_storage_for_tri_state_error_id_none; +23 a_d_sample_period_for_ambient_air_temperature_0_4000"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806ba2",
+            "current": "power_steering_temperature_sensor_filter_coefficient",
+            "proposed": "power_steering_temperature_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 8 (0x806ae2 + 24 x 8; power_steering_temperature_sensor_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the power_steering_temperature_sensor_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806ba2: 5e2d 3d00 0001 0001 0001 0014 03fb 001e 001a 0000 3839 0000 = 24109 / 15616 / 1 / 1 / 1 / 20 / 1019 / 30 / slot 26 / 0 / 0 / faults 56 57 0 / period 0",
+              "power_steering_temperature_sensor_filter_state +0 pointer = 0x00806ba2 (extended RAM dump); e2m block 1003 +192-215: 15 records ADPOTPCS..ADPOTPSA",
+              "+0 row power_steering_temperature_sensor_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 global_default_value_50_to_293; +4 adpotpcc_param; +6 adpotpdt_param; +8 adpotpic_param; +10 adpotpse_param; +12 adpotphl_param; +14 adpotpll_param; +16 power_steering_temperature_channel_address_none; +18 adpotpmu_param; +19 tri_state_flag_enable_disable; +20 error_number_storage_for_power_steering_temperature_high_error_0_255; +21 error_number_storage_for_power_steering_temperature_low_error_0_255; +22 error_number_storage_for_in_range_error_none; +23 ADPOTPSA"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806bba",
+            "current": "exhaust_pressure_sensor_filter_coefficient",
+            "proposed": "exhaust_pressure_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 9 (0x806ae2 + 24 x 9; exhaust_pressure_sensor_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the exhaust_pressure_sensor_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806bba: 0000 0000 0001 0001 0001 0014 03ff 0000 0006 0000 0000 0000 = 0 / 0 / 1 / 1 / 1 / 20 / 1023 / 0 / slot 6 / 0 / 0 / faults 0 0 0 / period 0",
+              "exhaust_pressure_sensor_filter_state +0 pointer = 0x00806bba (extended RAM dump); e2m block 1003 +216-239: 15 records ADSYEPCS..ADSYEPSR",
+              "+0 row exhaust_pressure_sensor_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 adsyepgd_param; +4 adsyepfc_param; +6 adsyepfd_param; +8 adsyepfi_param; +10 a_d_fault_set_0_32757; +12 adsyephl_param; +14 adsyepll_param; +16 engine_sync_exhaust_pressure_channel_address_none; +18 adsyepmu_param; +19 adsyepts_param; +20 error_number_storage_for_engine_sync_exhaust_pressure_high_err_0_255; +21 error_number_storage_for_engine_sync_exhaust_pressure_low_erro_0_255; +22 adsyepte_param; +23 ADSYEPSR"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806bd2",
+            "current": "sampled_throttle_sensor_filter_coefficient",
+            "proposed": "sampled_throttle_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 10 (0x806ae2 + 24 x 10; sampled_throttle_sensor_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (users read their field: global_default_value_for_throttle_0_100 -> sampled_throttle_sensor_config.default_value, sampled_throttle_channel_address_none -> sampled_throttle_sensor_config.qadc_result_register_index), refresh the sampled_throttle_sensor_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806bd2: 2ccc 0000 0001 0001 0001 000a 0363 001b 000a 0000 4142 0001 = 11468 / 0 / 1 / 1 / 1 / 10 / 867 / 27 / slot 10 / 0 / 0 / faults 65 66 0 / period 1",
+              "sampled_throttle_sensor_filter_state +0 pointer = 0x00806bd2 (extended RAM dump); e2m block 1003 +240-263: 15 records ADSATHCS..ADSATHSA",
+              "+0 row sampled_throttle_sensor_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 global_default_value_for_throttle_0_100 [USER cm550_FUN_00020c98 .cpp 22061 / 22068 / 22085 -> .default_value]; +4 a_d_fault_clear_counts_for_sampled_throttle_0_32767; +6 a_d_fault_decrement_for_throttle_0_32767; +8 a_d_fault_increment_for_throttle_0_32767; +10 a_d_fault_set_for_throttle_0_32767; +12 a_d_high_error_limit_for_throttle_0_1023; +14 a_d_low_error_limit_for_throttle_0_1023; +16 sampled_throttle_channel_address_none [USER cm550_FUN_000205c4 .cpp 21776 / 21777 -> .qadc_result_register_index]; +18 adsathmu_param; +19 tri_state_flag_throttle_enable_disable; +20 error_number_storage_for_sampled_throttle_high_error_0_255; +21 error_number_storage_for_sampled_throttle_low_error_0_255; +22 error_number_storage_for_in_range_error_throttle_none; +23 ADSATHSA"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806bea",
+            "current": "remote_throttle_sensor_filter_coefficient",
+            "proposed": "remote_throttle_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 11 (0x806ae2 + 24 x 11; remote_throttle_sensor_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (users read their field: global_default_value_for_remote_throttle_0_100 -> remote_throttle_sensor_config.default_value), refresh the remote_throttle_sensor_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806bea: 2ccc 0000 0001 0001 0001 0032 03ff 0000 000e 0000 3a3b 0001 = 11468 / 0 / 1 / 1 / 1 / 50 / 1023 / 0 / slot 14 / 0 / 0 / faults 58 59 0 / period 1",
+              "remote_throttle_sensor_filter_state +0 pointer = 0x00806bea (extended RAM dump); e2m block 1003 +264-287: 15 records ADROTHCS..ADROTHSA",
+              "+0 row remote_throttle_sensor_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 global_default_value_for_remote_throttle_0_100 [USER cm550_FUN_00020784 .cpp 21885 / 21891 / 21901 -> .default_value]; +4 a_d_fault_clear_counts_for_remote_throttle_0_32767; +6 a_d_fault_decrement_for_remote_throttle_0_32767; +8 a_d_fault_increment_for_remote_throttle_0_32767; +10 a_d_fault_set_for_remote_throttle_0_32767; +12 a_d_high_error_limit_for_remote_throttle_0_1023; +14 a_d_low_error_limit_for_remote_throttle_0_1023; +16 remote_throttle_channel_address_none; +18 adrothmu_param; +19 tri_state_flag_remote_throttle_enable_disable; +20 error_number_storage_for_remote_throttle_high_error_0_255; +21 error_number_storage_for_remote_throttle_low_error_0_255; +22 error_number_storage_for_in_range_error_remote_throttle_none; +23 ADROTHSA"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806c02",
+            "current": "ambient_air_pressure_sensor_filter_coefficient",
+            "proposed": "ambient_air_pressure_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 12 (0x806ae2 + 24 x 12; ambient_air_pressure_sensor_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the ambient_air_pressure_sensor_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806c02: 3e7e 0312 0001 0001 0001 0014 03b4 004d 0019 0000 1213 0000 = 15998 / 786 / 1 / 1 / 1 / 20 / 948 / 77 / slot 25 / 0 / 0 / faults 18 19 0 / period 0",
+              "ambient_air_pressure_sensor_filter_state +0 pointer = 0x00806c02 (extended RAM dump); e2m block 1003 +288-311: 15 records ADAAPRCS..ADAAPRSA",
+              "+0 row ambient_air_pressure_sensor_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 ADDFAAPR; +4 a_d_fault_clear_counts_for_ambient_air_pressure_0_32767; +6 a_d_fault_decrement_for_ambient_air_pressure_0_32767; +8 a_d_fault_increment_for_ambient_air_pressure_0_32767; +10 a_d_fault_set_for_ambient_air_pressure_0_32767; +12 a_d_high_error_limit_for_ambient_air_pressure_0_1023; +14 a_d_low_error_limit_for_ambient_air_pressure_0_1023; +16 ambient_air_pressure_channel_address_none; +18 adaaprmu_param; +19 tri_state_flag_ambient_air_pressure_enable_disable; +20 error_number_storage_for_ambient_air_pressure_high_error_0_255; +21 error_number_storage_for_ambient_air_pressure_low_error_0_255; +22 error_number_storage_for_tri_state_error_ambient_air_pressure_none; +23 ADAAPRSA"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806c1a",
+            "current": "battery_voltage_sensor_filter_coefficient",
+            "proposed": "battery_voltage_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 13 (0x806ae2 + 24 x 13; battery_voltage_sensor_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the battery_voltage_sensor_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806c1a: ab85 0000 0001 0001 0001 0064 0367 009a 0011 0000 5b5c 0005 = 43909 / 0 / 1 / 1 / 1 / 100 / 871 / 154 / slot 17 / 0 / 0 / faults 91 92 0 / period 5",
+              "battery_voltage_sensor_filter_state +0 pointer = 0x00806c1a (extended RAM dump); e2m block 1003 +312-335: 15 records ADBTVTCS..ADBTVTSA",
+              "+0 row battery_voltage_sensor_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 global_default_value_for_battery_voltage_0_40; +4 a_d_fault_clear_counts_for_battery_voltage_0_32767; +6 a_d_fault_decrement_for_battery_voltage_0_32767; +8 a_d_fault_increment_for_battery_voltage_0_32767; +10 a_d_fault_set_for_battery_voltage_0_32767; +12 a_d_high_error_limit_for_battery_voltage_0_1023; +14 a_d_low_error_limit_for_battery_voltage_0_1023; +16 battery_voltage_channel_address_none; +18 adbtvtmu_param; +19 tri_state_flag_battery_voltage_enable_disable; +20 error_number_storage_for_battery_voltage_high_error_0_255; +21 error_number_storage_for_battery_voltage_low_error_0_255; +22 error_number_storage_for_in_range_error_battery_voltage_none; +23 ADBTVTSA"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806c32",
+            "current": "engine_speed_sensor_supply_voltage_filter_coefficient",
+            "proposed": "engine_speed_sensor_supply_voltage_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 14 (0x806ae2 + 24 x 14; engine_speed_sensor_supply_voltage_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the engine_speed_sensor_supply_voltage_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806c32: ab85 0000 0001 0001 0001 0014 03ae 02c7 0016 0000 3031 0005 = 43909 / 0 / 1 / 1 / 1 / 20 / 942 / 711 / slot 22 / 0 / 0 / faults 48 49 0 / period 5",
+              "engine_speed_sensor_supply_voltage_filter_state +0 pointer = 0x00806c32 (extended RAM dump); e2m block 1003 +336-359: 15 records ADESSVCS..ADESSVSR",
+              "+0 row engine_speed_sensor_supply_voltage_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 adessvgd_param; +4 adessvfc_param; +6 adessvfd_param; +8 adessvfi_param; +10 adessvfs_param; +12 adessvhl_param; +14 adessvll_param; +16 engine_speed_sensor_sv_channel_address_none; +18 adessvmu_param; +19 adessvts_param; +20 error_number_storage_for_engine_speed_sv_high_error_0_255; +21 error_number_storage_for_engine_speed_sv_low_error_0_255; +22 adessvte_param; +23 ADESSVSR"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806c4a",
+            "current": "throttle_position_sensor_supply_voltage_filter_coefficient",
+            "proposed": "throttle_position_sensor_supply_voltage_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 15 (0x806ae2 + 24 x 15; throttle_position_sensor_supply_voltage_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 13 rows inside (no user), refresh the throttle_position_sensor_supply_voltage_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror). ADBSPRXA_entry_1-4 / ADBSPRYA / ADBSPRYA_entry_1-4 inside are misnames (boost axes): the record reads 43909 / 0 / 1 / 1 / 1 / 5 / 942 / 767 / slot 24 like the other supply voltages.",
+            "evidence": [
+              "RAM dump 0x806c4a: ab85 0000 0001 0001 0001 0005 03ae 02ff 0018 0000 696a 0005 = 43909 / 0 / 1 / 1 / 1 / 5 / 942 / 767 / slot 24 / 0 / 0 / faults 105 106 0 / period 5",
+              "throttle_position_sensor_supply_voltage_filter_state +0 pointer = 0x00806c4a (extended RAM dump); e2m block 1003 +360-383: 15 records ADTHSVCS..ADTHSVSR",
+              "+0 row throttle_position_sensor_supply_voltage_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 ADBSPRXA_entry_1; +4 ADBSPRXA_entry_2; +6 ADBSPRXA_entry_3; +8 ADBSPRXA_entry_4; +10 ADBSPRYA; +12 ADBSPRYA_entry_1; +14 ADBSPRYA_entry_2; +16 ADBSPRYA_entry_3; +18 ADBSPRYA_entry_4; +20 error_number_storage_for_throttle_position_sv_high_error_0_255; +21 error_number_storage_for_throttle_position_sv_low_error_0_255; +22 adthsvte_param; +23 ADTHSVSR; no row at +19"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806c62",
+            "current": "vehicle_connector_sensor_supply_voltage_filter_coefficient",
+            "proposed": "vehicle_connector_sensor_supply_voltage_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 16 (0x806ae2 + 24 x 16; vehicle_connector_sensor_supply_voltage_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the vehicle_connector_sensor_supply_voltage_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806c62: ab85 0000 0001 0001 0001 0014 03ae 02fa 0004 0000 6566 0005 = 43909 / 0 / 1 / 1 / 1 / 20 / 942 / 762 / slot 4 / 0 / 0 / faults 101 102 0 / period 5",
+              "vehicle_connector_sensor_supply_voltage_filter_state +0 pointer = 0x00806c62 (extended RAM dump); e2m block 1003 +384-407: 15 records ADVHSVCS..ADVHSVSR",
+              "+0 row vehicle_connector_sensor_supply_voltage_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 advhsvgd_param; +4 advhsvfc_param; +6 advhsvfd_param; +8 advhsvfi_param; +10 advhsvfs_param; +12 advhsvhl_param; +14 advhsvll_param; +16 vehicle_connector_sensors_sv_channel_address_none; +18 advhsvmu_param; +19 advhsvts_param; +20 error_number_storage_for_vehicle_connector_sensors_sv_high_err_0_255; +21 error_number_storage_for_vehicle_connector_sensors_sv_low_erro_0_255; +22 advhsvte_param; +23 ADVHSVSR"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806c7a",
+            "current": "engine_connector_sensor_supply_voltage_filter_coefficient",
+            "proposed": "engine_connector_sensor_supply_voltage_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 17 (0x806ae2 + 24 x 17; engine_connector_sensor_supply_voltage_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the engine_connector_sensor_supply_voltage_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806c7a: ab85 0000 0001 0001 0001 0014 03ae 02c7 0005 0000 6768 0005 = 43909 / 0 / 1 / 1 / 1 / 20 / 942 / 711 / slot 5 / 0 / 0 / faults 103 104 0 / period 5",
+              "engine_connector_sensor_supply_voltage_filter_state +0 pointer = 0x00806c7a (extended RAM dump); e2m block 1003 +408-431: 15 records ADECSVCS..ADECSVSR",
+              "+0 row engine_connector_sensor_supply_voltage_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 engine_sensor_supply_voltage_global_default_value_0_6; +4 engine_sensor_supply_voltage_a_d_fault_clear_counts_0_32767; +6 engine_sensor_supply_voltage_a_d_fault_decrement_1_32767; +8 engine_sensor_supply_voltage_a_d_fault_increment_0_32767; +10 engine_sensor_supply_voltage_a_d_fault_set_0_32767; +12 engine_sensor_supply_voltage_a_d_high_error_limit_0_1023; +14 engine_sensor_supply_voltage_a_d_low_error_limit_0_1023; +16 engine_conn_sensors_sv_channel_address_none; +18 engine_sensor_supply_voltage_channel_mux_setting_0_255; +19 engine_sensor_supply_voltage_tri_state_error_flag_enable_disable; +20 error_number_storage_for_engine_conn_sensors_sv_high_error_0_255; +21 error_number_storage_for_engine_conn_sensors_sv_low_error_0_255; +22 engine_sensor_supply_voltage_tri_state_error_id_none; +23 ADECSVSR"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806c92",
+            "current": "frequency_throttle_input_supply_voltage_filter_coefficient",
+            "proposed": "frequency_throttle_input_supply_voltage_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 18 (0x806ae2 + 24 x 18; frequency_throttle_input_supply_voltage_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the frequency_throttle_input_supply_voltage_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806c92: ab85 0000 0001 0001 0001 0014 03ff 0000 0003 0000 5d5e 0000 = 43909 / 0 / 1 / 1 / 1 / 20 / 1023 / 0 / slot 3 / 0 / 0 / faults 93 94 0 / period 0",
+              "frequency_throttle_input_supply_voltage_filter_state +0 pointer = 0x00806c92 (extended RAM dump); e2m block 1003 +432-455: 15 records ADFTSVCS..ADFTSVSR",
+              "+0 row frequency_throttle_input_supply_voltage_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 adftsvgd_param; +4 adftsvfc_param; +6 adftsvfd_param; +8 adftsvfi_param; +10 adftsvfs_param; +12 adftsvhl_param; +14 adftsvll_param; +16 frequency_throttle_input_sensor_sv_channel_address_none; +18 adftsvmu_param; +19 adftsvts_param; +20 error_number_storage_for_frequency_throttle_input_sv_high_erro_0_255; +21 error_number_storage_for_frequency_throttle_input_sv_low_error_0_255; +22 adftsvte_param; +23 ADFTSVSR"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806caa",
+            "current": "cruise_control_switch_multiplexer_filter_coefficient",
+            "proposed": "cruise_control_switch_multiplexer_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 19 (0x806ae2 + 24 x 19; cruise_control_switch_multiplexer_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the cruise_control_switch_multiplexer_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806caa: 0000 0000 0001 0001 0001 0064 03ff 0000 0020 0000 1718 0002 = 0 / 0 / 1 / 1 / 1 / 100 / 1023 / 0 / slot 32 / 0 / 0 / faults 23 24 0 / period 2",
+              "cruise_control_switch_multiplexer_filter_state +0 pointer = 0x00806caa (extended RAM dump); e2m block 1003 +456-479: 15 records ADCRFTCS..ADCRSR",
+              "+0 row cruise_control_switch_multiplexer_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 global_default_value_for_cc_switch_mux_0_5; +4 a_d_fault_clear_counts_for_cc_switch_mux_0_32767; +6 a_d_fault_decrement_for_cc_switch_mux_0_32767; +8 a_d_fault_increment_for_cc_switch_mux_0_32767; +10 a_d_fault_set_for_cc_switch_mux_0_32767; +12 a_d_high_error_limit_for_cc_switch_mux_0_1023; +14 a_d_low_error_limit_for_cc_switch_mux_0_1023; +16 cruise_control_switch_mux_channel_address_none; +18 cc_switch_mux_channel_mux_setting_0_255; +19 tri_state_error_for_cc_switch_mux_enable_disable; +20 error_number_storage_for_cruise_control_switch_mux_high_error_0_255; +21 error_number_storage_for_cruise_control_switch_mux_low_error_0_255; +22 tri_state_error_none_6cc0; +23 ADCRSR"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806cc2",
+            "current": "water_in_fuel_sensor_filter_coefficient",
+            "proposed": "water_in_fuel_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 20 (0x806ae2 + 24 x 20; water_in_fuel_sensor_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the water_in_fuel_sensor_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806cc2: ff8e 0000 0001 0001 0001 0014 03ff 0032 0025 0000 3f40 0005 = 65422 / 0 / 1 / 1 / 1 / 20 / 1023 / 50 / slot 37 / 0 / 0 / faults 63 64 0 / period 5",
+              "water_in_fuel_sensor_filter_state +0 pointer = 0x00806cc2 (extended RAM dump); e2m block 1003 +480-503: 15 records ADWFCS..ADWFSR",
+              "+0 row water_in_fuel_sensor_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 water_in_fuel_global_default_value_0_3; +4 water_in_fuel_a_d_fault_clear_counts_0_32767; +6 water_in_fuel_a_d_fault_decrement_0_32767; +8 water_in_fuel_a_d_fault_increment_0_32767; +10 water_in_fuel_a_d_fault_set_0_32767; +12 water_in_fuel_a_d_high_error_limit_0_1023; +14 water_in_fuel_a_d_low_error_limit_0_1023; +16 water_in_fuel_channel_address_none; +18 water_in_fuel_channel_mux_setting_0_255; +19 water_in_fuel_tri_state_error_enable_disable; +20 error_number_storage_for_water_in_fuel_high_error_0_255; +21 error_number_storage_for_water_in_fuel_low_error_0_255; +22 water_in_fuel_tri_state_error_none; +23 ADWFSR"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806cda",
+            "current": "egr_current_feedback_filter_coefficient",
+            "proposed": "egr_current_feedback_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 21 (0x806ae2 + 24 x 21; egr_current_feedback_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the egr_current_feedback_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806cda: 3e7e 0000 0001 0001 0001 0014 03ff 0000 0024 0000 5051 0000 = 15998 / 0 / 1 / 1 / 1 / 20 / 1023 / 0 / slot 36 / 0 / 0 / faults 80 81 0 / period 0",
+              "egr_current_feedback_filter_state +0 pointer = 0x00806cda (extended RAM dump); e2m block 1003 +504-527: 15 records ADEGCFCS..ADEGCFSR",
+              "+0 row egr_current_feedback_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 adegcfgd_param; +4 adegcfcc_param; +6 adegcffd_param; +8 adegcffi_param; +10 adegcffs_param; +12 adegcfhl_param; +14 adegcfll_param; +16 egr_current_feedback_channel_address_none; +18 adegcfmu_param; +19 adegcfts_param; +20 error_number_storage_for_egr_current_feedback_high_error_0_255; +21 error_number_storage_for_egr_current_feedback_low_error_0_255; +22 adegcfte_param; +23 ADEGCFSR"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806cf2",
+            "current": "programming_pulse_supply_voltage_filter_coefficient",
+            "proposed": "programming_pulse_supply_voltage_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 22 (0x806ae2 + 24 x 22; programming_pulse_supply_voltage_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the programming_pulse_supply_voltage_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806cf2: ab85 0000 0001 0001 0001 0014 034b 0000 0002 0000 6364 0005 = 43909 / 0 / 1 / 1 / 1 / 20 / 843 / 0 / slot 2 / 0 / 0 / faults 99 100 0 / period 5",
+              "programming_pulse_supply_voltage_filter_state +0 pointer = 0x00806cf2 (extended RAM dump); e2m block 1003 +528-551: 15 records ADPSSVCS..ADPSSVSR",
+              "+0 row programming_pulse_supply_voltage_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 adpssvgd_param; +4 adpssvfc_param; +6 adpssvfd_param; +8 adpssvfi_param; +10 adpssvfs_param; +12 adpssvhl_param; +14 adpssvll_param; +16 programming_pulse_sv_channel_address_none; +18 adpssvmu_param; +19 adpssvts_param; +20 error_number_storage_for_programming_pulse_sv_high_error_0_255; +21 error_number_storage_for_programming_pulse_sv_low_error_0_255; +22 adpssvte_param; +23 ADPSSVSR"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806d0a",
+            "current": "high_side_gate_bias_supply_voltage_filter_coefficient",
+            "proposed": "high_side_gate_bias_supply_voltage_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 23 (0x806ae2 + 24 x 23; high_side_gate_bias_supply_voltage_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the high_side_gate_bias_supply_voltage_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806d0a: ab85 0000 0001 0001 0001 0032 03b5 00eb 0027 0000 5f60 0005 = 43909 / 0 / 1 / 1 / 1 / 50 / 949 / 235 / slot 39 / 0 / 0 / faults 95 96 0 / period 5",
+              "high_side_gate_bias_supply_voltage_filter_state +0 pointer = 0x00806d0a (extended RAM dump); e2m block 1003 +552-575: 15 records ADHBSVCS..ADHBSVSR",
+              "+0 row high_side_gate_bias_supply_voltage_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 ADHBSVGD; +4 ADHBSVFC; +6 ADHBSVFD; +8 ADHBSVFI; +10 ADHBSVFS; +12 adhbsvhl_param; +14 adhbsvll_param; +16 ADHBSVCA; +18 ADHBSVMU; +19 ADHBSVTS; +20 ADHBSVHE; +21 ADHBSVLE; +22 ADHBSVTE; +23 ADHBSVSR"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "struct_instance",
+            "address": "0x00806d22",
+            "current": "operational_amplifier_and_comparator_supply_voltage_filter_coefficient",
+            "proposed": "operational_amplifier_and_comparator_supply_voltage_sensor_config",
+            "type": "sensor_config_t",
+            "reason": "Channel 24 (0x806ae2 + 24 x 24; operational_amplifier_and_comparator_supply_voltage_filter_state). Edit the +0 row in place (field filter_coefficient), delete the 14 rows inside (no user), refresh the operational_amplifier_and_comparator_supply_voltage_filter_state comment (it cites the +0 name). No _cal (outside the EEPROM mirror).",
+            "evidence": [
+              "RAM dump 0x806d22: ab85 0000 0001 0001 0001 0014 03c3 022c 0026 0000 6162 0005 = 43909 / 0 / 1 / 1 / 1 / 20 / 963 / 556 / slot 38 / 0 / 0 / faults 97 98 0 / period 5",
+              "operational_amplifier_and_comparator_supply_voltage_filter_state +0 pointer = 0x00806d22 (extended RAM dump); e2m block 1003 +576-599: 15 records ADOCSVCS..ADOCSVSR",
+              "+0 row operational_amplifier_and_comparator_supply_voltage_filter_coefficient: 0 renders",
+              "inside, all deleted (each is its offset's field; 0 renders unless USER): +2 adocsvgd_param; +4 adocsvfc_param; +6 adocsvfd_param; +8 adocsvfi_param; +10 adocsvfs_param; +12 adocsvhl_param; +14 adocsvll_param; +16 op_amps_and_comparators_sv_channel_address_none; +18 adocsvmu_param; +19 adocsvts_param; +20 error_number_storage_for_op_amps_and_comparators_sv_high_error_0_255; +21 error_number_storage_for_op_amps_and_comparators_sv_low_error_0_255; +22 adocsvte_param; +23 ADOCSVSR"
+            ],
+            "confidence": "high"
+          },
+          {
+            "firmware": "CM550",
+            "kind": "global_removal",
+            "address": "0x00806afc",
+            "current": "global_default_value_for_fuel_temperature_50_to_293",
+            "proposed": "",
+            "type": "",
+            "confidence": "high",
+            "reason": "Inside fuel_temperature_sensor_config at +2: it IS field default_value (word), so it goes with the instance (one of the 348 rows inside the 25 instances, all deleted; the other 344 have no user and are listed in their instance rows). Its reader then renders fuel_temperature_sensor_config.default_value.",
+            "evidence": [
+              "vp44_FUN_0001cb3c: 0x1cb3c 33 f9 00 80 6a fc 00 80 a2 54 move.w $806afc,$80a254 (.cpp 18026)",
+              "width: the reader is a word access, matching default_value (word)"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "global_removal",
+            "address": "0x00806bd4",
+            "current": "global_default_value_for_throttle_0_100",
+            "proposed": "",
+            "type": "",
+            "confidence": "high",
+            "reason": "Inside sampled_throttle_sensor_config at +2: it IS field default_value (word), so it goes with the instance (one of the 348 rows inside the 25 instances, all deleted; the other 344 have no user and are listed in their instance rows). Its reader then renders sampled_throttle_sensor_config.default_value.",
+            "evidence": [
+              "cm550_FUN_00020c98: 0x20d06 / 0x20d8c / 0x20da0 38 b9 00 80 6b d4 move.w $806bd4,(a4) (a4 = 0x80a742) (.cpp 22061 / 22068 / 22085)",
+              "width: the reader is a word access, matching default_value (word)"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "global_removal",
+            "address": "0x00806be2",
+            "current": "sampled_throttle_channel_address_none",
+            "proposed": "",
+            "type": "",
+            "confidence": "high",
+            "reason": "Inside sampled_throttle_sensor_config at +16: it IS field qadc_result_register_index (word), so it goes with the instance (one of the 348 rows inside the 25 instances, all deleted; the other 344 have no user and are listed in their instance rows). Its reader then renders sampled_throttle_sensor_config.qadc_result_register_index.",
+            "evidence": [
+              "cm550_FUN_000205c4: 0x205ec 70 00 moveq #0,d0 + 0x205ee 30 39 00 80 6b e2 move.w $806be2,d0 + 0x205f4 d0 80 add.l d0,d0 + 0x205f8 33 f0 81 70 00 ff f2 b0 move.w (0xfff2b0,a0) - the QADC result register read (.cpp 21776 / 21777)",
+              "width: the reader is a word access, matching qadc_result_register_index (word)"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "global_removal",
+            "address": "0x00806bec",
+            "current": "global_default_value_for_remote_throttle_0_100",
+            "proposed": "",
+            "type": "",
+            "confidence": "high",
+            "reason": "Inside remote_throttle_sensor_config at +2: it IS field default_value (word), so it goes with the instance (one of the 348 rows inside the 25 instances, all deleted; the other 344 have no user and are listed in their instance rows). Its reader then renders remote_throttle_sensor_config.default_value.",
+            "evidence": [
+              "cm550_FUN_00020784: 0x2079a 2a 7c 00 80 6b ec movea.l #0x806bec,a5 + 0x207f8 / 0x2081e / 0x2085c 36 95 move.w (a5),(a3) (.cpp 21885 / 21891 / 21901)",
+              "width: the reader is a word access, matching default_value (word)"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x0000b7bc",
+            "current": "validateServiceDataLength",
+            "proposed": "validateServiceDataLength",
+            "type": "",
+            "confidence": "medium",
+            "reason": "NO RENAME (proposed = current): this row carries the local_variables.csv row the schema has no kind for: 0x0000b7bc,validateServiceDataLength,pwVar7,channel_config,sensor_config_t*,The A/D channel config record this pass reads (0x806ae2 + 24 x channel in a2: stride 24 at 0xbcb4). pwVar7 is the frozen .cpp auto-name (line 1220). The pointer takes its type from the base global it is loaded with (pre_r88a_cm550.cpp: undefined *puVar7 while 0x806ae2 was undefined; word *pwVar7 once round 88 typed it word), so once the instances are typed expect sensor_config_t * under a new auto-name (likely psVar7): build with the struct and instances first, then add the row with that build's name. The row then only supplies the name.",
+            "evidence": [
+              ".cpp 1220 word *pwVar7; 1228 pwVar7 = &intake_manifold_temperature_sensor_filter_coefficient; 1435 pwVar7 = pwVar7 + 0xc",
+              "one register for the whole loop: a2 is loaded once at 0xb7cc and only stepped (0xbcb6 d5 c0)"
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "kind": "function",
+            "address": "0x0000bcf0",
+            "current": "cm550_initADCChannelConfiguration",
+            "proposed": "cm550_initADCChannelConfiguration",
+            "type": "",
+            "confidence": "medium",
+            "reason": "NO RENAME (proposed = current): carries the local_variables.csv row 0x0000bcf0,cm550_initADCChannelConfiguration,pwVar2,channel_config,sensor_config_t*,The A/D channel config record the first and third start-up loops read (0x806ae2 + 24 x channel in a2). pwVar2 (.cpp 1463) is both config loops' pointer (1542 / 1593), but a2 holds the second loop's limit 0x80a4d0 between them (0xc046 24 7c 00 80 a4 d0), and this function already split on its channel_record row (loops 2-3 still render peVar3, .cpp 1585-1632), so the committed name may bind only the first loop and the third loop's pointer render as a fresh temp. As for 0xb7bc, the auto-name will change once the instances are typed; take it from a build with the instances and check both loops.",
+            "evidence": [
+              ".cpp 1463 word *pwVar2; 1542 / 1593 pwVar2 = &intake_manifold_temperature_sensor_filter_coefficient; 1546 (channel_record->filter).coefficient = pwVar2; 1582 / 1633 pwVar2 = pwVar2 + 0xc",
+              "a2 timeline: 0xbf28 config base, 0xc046 loop limit 0x80a4d0, 0xc074 config base again"
+            ]
+          }
+        ],
+        "rejected_leads": [
+          "sensor_fault_config_t reused as is: its 24 bytes fit, but reserved_00 (+0) is the A/D filter constant every channel's ema_filter_state_t points at (dump pointers 0x806ae2 + 24 x channel; mulu.w in 0x34f8a); adc_lookup_index (+16) indexes the QADC result registers at 0xfff2b0 (0xb852), not a lookup table; alt_fault_enable (+19) is the tri-state check enable (tst.b at 0xbbc0); primary / secondary / tertiary_fault_id are the high / low / tri-state fault numbers (high limit sets +20, low sets +21, lookup 4 sets +22); debounce_max (+23) is the sample period (cmp.b against sample_counter at 0xb80a, e2m MSEC x 20); and +4-+10 are signed (bgt / blt, e2m S16). Replaced by sensor_config_t; it has 0 users.",
+          "ad_sensor_config_t (structure_definitions.csv lines 366-373 under the header at 365, 16 bytes, channel_addr first) as this record: the channel address is at +16 (0xb84a) and +0 holds the filter constant (dump 15998 / 43909 / 65422), and the loops step 24 bytes. It has 0 users (no global / local / prototype row, 0 renders) - delete it with this change so CM550 keeps one A/D config type.",
+          "CM848 sensor_channel_config_t as a shared name: a counterpart, not a twin - 16 bytes (filter_coefficient / default_value / high_threshold / low_threshold / debounce_step / recovery_decrement / debounce_limit / debounce_clear_threshold) against CM550's 24 (clear / decrement / increment / set at +4-+10, limits at +12 / +14, then QADC slot, mux, tri-state flag, three fault numbers and the sample period); a shared type name would claim one layout.",
+          "one sensor_config_t[25] array at 0x806ae2: the four absolute readers each read one channel (fuel temperature +2, sampled throttle +2 and +16, remote throttle +2), which read best as <channel>_sensor_config.<field>, and the 25 filter records are already per-channel instances.",
+          "a config reader through the channel records' coefficient pointer: of the 25 <channel>_filter_state names only channel 0's renders, and only in the two loops (.cpp 1227 / 1543 / 1585 / 1592); every ROM reference into 0x80a2aa-0x80a4cf other than the record base is a +8 filtered value; the five other functions that load the base 0x80a2aa (vp44_engineProtectionSystemInit 0x18742, cm550_FUN_0001abb2 0x1abbc, cm550_diagnosticTableSnapshotCapture 0x2fe44, cm550_FUN_000315be 0x315c8, cm550_FUN_00033e58 0x33e66) address +8 fields in the parts checked (pointers built as base + 0x60 / + 0x8c, reads at (8,An) / (118,An)); the only coefficient-pointer reader is cm550_exponentialMovingAverage, which reads +0 only.",
+          "ADBSPRXA_entry_1-4 / ADBSPRYA / ADBSPRYA_entry_1-4 (0x806c4c-0x806c5c) as the boost pressure axes: they are channel 15 config +2-+18 (e2m ADTHSVGD ... ADTHSVMU at offsets 362-378); no user; deleted with throttle_position_sensor_supply_voltage_sensor_config (round 87 already rejected the axes reading).",
+          "coolant_level_channel_address_0_32767 (0x806b16, channel 2 +4) as a channel address: the e2m description of ADCVCC says CHANNEL ADDRESS but the record is S16 at +4, which the loop reads as the fault clear count for every channel; the coolant level channel address is ADCVCA at +16 (slot 11 in the dump).",
+          "+18 as a code-backed field: no instruction reads +18 (no (18,a2) operand in either loop, no absolute reference, ROM scan); multiplexer_setting rests on e2m ...MU alone and is 0 in all 25 records.",
+          "+16 as the QADC analog input number: it indexes the 40 result registers (dump values 0-39); the input comes from the command word table initQadcModule copies from ROM 0x2e936 (slot 17 -> input 57, slot 24 -> 59), so the name is qadc_result_register_index.",
+          "linearization_table_ch15_x_axis (0x806d3a) as channel 15's table: cm550_initADCChannelConfiguration writes it into lookup record 0 (0x80a792 + 2, .cpp 1468), which validateServiceDataLength uses for channel 0 (local_8 starts at 0x80a792 and steps 14 per channel: 0xbcb8 70 0e + d1 ae ff fc) - the intake manifold temperature table. Those 25 lookup records are 14 bytes while table_interp_args_t is 12 (.cpp 1436 renders the step as &local_8[1].x_axis_ptr). Not proposed here.",
+          "governor_integral_accumulator (0x800090) as a governor accumulator: validateServiceDataLength uses it only as the base of a 25-byte per-channel count (a5, addq.l #1 at 0xbcc0) of consecutive non-tri-state readings that clears tri_state_error_fault_number; DAT_00800076 (a4) is the matching tri-state reading count. The 17 other named rows inside 0x800076-0x8000a8 have 0 renders. Not proposed here."
+        ]
+      },
+      "verdicts": {
+        "verdicts": [
+          {
+            "firmware": "CM550",
+            "address": "",
+            "current": "sensor_fault_config_t",
+            "verdict": "accept",
+            "final": "sensor_config_t",
+            "final_type": "",
+            "problems": [
+              "The +4 comment oversimplifies the clear. At or below the threshold fault_active_flag clears, but each high or low status bit (0x806000) clears only while its 0x806040 first-occurrence bit is clear (0xba5c-0xbb86).",
+              "The +23 unit '20 ms passes' comes from the e2m scale (MSEC x 20) and was not measured. The loop runs once per periodicTaskSet_fuelDemand call, which is every fourth scheduler phase (switch cases 3, 7, 11 and so on). validateServiceDataLength has exactly two call sites: 0xc03a (the init) and 0x1b65a (the tail that 0x1b612 falls into). 0x1b62a has no caller of its own and reuses 0x1b4d8's name vp44_evenPhaseSchedulerTaskSet.",
+              "Deleting ad_sensor_config_t (structure_definitions.csv lines 362-373; 0 users, verified) appears only in rejected_leads. List it as its own change if it is wanted.",
+              "Not a defect, everything else checked out. All 15 field widths and signs match every access. No (18,An) operand and no absolute reference to +18 exists. All 25 dumped coefficient pointers equal 0x806ae2 + 24 x channel. The e2m block 1003 is 25 x 24 bytes in both e2m families. CM848's 16-byte sensor_channel_config_t has a different field order, so it is a counterpart and no type name is shared."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806ae2",
+            "current": "intake_manifold_temperature_sensor_filter_coefficient",
+            "verdict": "accept",
+            "final": "intake_manifold_temperature_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806afa",
+            "current": "fuel_temperature_sensor_filter_coefficient",
+            "verdict": "accept",
+            "final": "fuel_temperature_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806b12",
+            "current": "coolant_level_sensor_filter_coefficient",
+            "verdict": "accept",
+            "final": "coolant_level_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806b2a",
+            "current": "fuel_pressure_sensor_filter_coefficient",
+            "verdict": "accept",
+            "final": "fuel_pressure_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806b42",
+            "current": "oil_pressure_sensor_filter_coefficient",
+            "verdict": "accept",
+            "final": "oil_pressure_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806b5a",
+            "current": "boost_pressure_sensor_filter_coefficient",
+            "verdict": "accept",
+            "final": "boost_pressure_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806b72",
+            "current": "coolant_temperature_sensor_filter_coefficient",
+            "verdict": "accept",
+            "final": "coolant_temperature_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806b8a",
+            "current": "ambient_air_temperature_sensor_filter_coefficient",
+            "verdict": "accept",
+            "final": "ambient_air_temperature_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": [
+              "The channel identity depends on the e2m family and is not proven by code. 42t9_rls (the e2m this proposal cites), 44t9, Phase4 and Isbp400 name block 1003 +168-191 ADTT* with TRANSMISSION_TEMPERATURE descriptions. 64t4, 64t6, Isbp600, v64t6_s and the 74 series name it ADAATP (AMBIENT AIR TEMPERATURE). CM550's own rows at 0x80a34c / 0x80a34e are ADTTFT / ADTTUF. The evidence line '15 records ADTTCS..ADTTSA' therefore contradicts the name it is offered for.",
+              "Nothing in J90350.00 reads channel 7: its sample period is 0 and the ROM has no reference to 0x80a344 / 0x80a34c / 0x80a34e. The name rests only on the established ambient_air_temperature_sensor_filter_state and the override rows (0x80a76e ambient_air_temperature_raw_user_value_0_1023, 0x80a6d8 / 0x80a70a priorities). I accepted it for consistency with those rows."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806ba2",
+            "current": "power_steering_temperature_sensor_filter_coefficient",
+            "verdict": "accept",
+            "final": "power_steering_temperature_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806bba",
+            "current": "exhaust_pressure_sensor_filter_coefficient",
+            "verdict": "accept",
+            "final": "exhaust_pressure_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806bd2",
+            "current": "sampled_throttle_sensor_filter_coefficient",
+            "verdict": "accept",
+            "final": "sampled_throttle_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806bea",
+            "current": "remote_throttle_sensor_filter_coefficient",
+            "verdict": "accept",
+            "final": "remote_throttle_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806c02",
+            "current": "ambient_air_pressure_sensor_filter_coefficient",
+            "verdict": "accept",
+            "final": "ambient_air_pressure_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806c1a",
+            "current": "battery_voltage_sensor_filter_coefficient",
+            "verdict": "accept",
+            "final": "battery_voltage_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806c32",
+            "current": "engine_speed_sensor_supply_voltage_filter_coefficient",
+            "verdict": "accept",
+            "final": "engine_speed_sensor_supply_voltage_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806c4a",
+            "current": "throttle_position_sensor_supply_voltage_filter_coefficient",
+            "verdict": "accept",
+            "final": "throttle_position_sensor_supply_voltage_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806c62",
+            "current": "vehicle_connector_sensor_supply_voltage_filter_coefficient",
+            "verdict": "accept",
+            "final": "vehicle_connector_sensor_supply_voltage_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806c7a",
+            "current": "engine_connector_sensor_supply_voltage_filter_coefficient",
+            "verdict": "accept",
+            "final": "engine_connector_sensor_supply_voltage_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806c92",
+            "current": "frequency_throttle_input_supply_voltage_filter_coefficient",
+            "verdict": "accept",
+            "final": "frequency_throttle_input_supply_voltage_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806caa",
+            "current": "cruise_control_switch_multiplexer_filter_coefficient",
+            "verdict": "accept",
+            "final": "cruise_control_switch_multiplexer_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806cc2",
+            "current": "water_in_fuel_sensor_filter_coefficient",
+            "verdict": "accept",
+            "final": "water_in_fuel_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": [
+              "Not a defect: RAM 0x801c6e (calibration_sync_ram_pointer) holds 0x00806cd2 (this record +16). It is a block-copy cursor (the ROM source 0x61afe lies above the 256 KB dump), not a reader of the field."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806cda",
+            "current": "egr_current_feedback_filter_coefficient",
+            "verdict": "accept",
+            "final": "egr_current_feedback_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806cf2",
+            "current": "programming_pulse_supply_voltage_filter_coefficient",
+            "verdict": "accept",
+            "final": "programming_pulse_supply_voltage_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806d0a",
+            "current": "high_side_gate_bias_supply_voltage_filter_coefficient",
+            "verdict": "accept",
+            "final": "high_side_gate_bias_supply_voltage_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806d22",
+            "current": "operational_amplifier_and_comparator_supply_voltage_filter_coefficient",
+            "verdict": "accept",
+            "final": "operational_amplifier_and_comparator_supply_voltage_sensor_config",
+            "final_type": "sensor_config_t",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806afc",
+            "current": "global_default_value_for_fuel_temperature_50_to_293",
+            "verdict": "accept",
+            "final": "",
+            "final_type": "",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806bd4",
+            "current": "global_default_value_for_throttle_0_100",
+            "verdict": "accept",
+            "final": "",
+            "final_type": "",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806be2",
+            "current": "sampled_throttle_channel_address_none",
+            "verdict": "accept",
+            "final": "",
+            "final_type": "",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x00806bec",
+            "current": "global_default_value_for_remote_throttle_0_100",
+            "verdict": "accept",
+            "final": "",
+            "final_type": "",
+            "problems": []
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x0000b7bc",
+            "current": "validateServiceDataLength",
+            "verdict": "amend",
+            "final": "mc68k_processAnalogSensorChannels",
+            "final_type": "",
+            "problems": [
+              "The kept name fails both naming rules. validateServiceDataLength has no CM848 row, so it is CM550-only, yet it has no prefix. Its code is one pass over the 25 A/D channels (sample period gate, QADC read, high / low limit debounce with fault set and clear, table lookup, filter, tri-state counting). Nothing in it is a service or a data length.",
+              "mc68k_ applies because it reads the MC68336 QADC right-justified result registers (0xfff2b0 + 2 x slot; the extension word is at 0xb856). CM848's per-channel cm848_process{Signed,Unsigned}SensorChannel (16-byte config) is a counterpart, not a twin.",
+              "work2/filter-users item 16 proposes the same rename. Apply it once, not in two groups.",
+              "The local row is keyed by address: ApplyLocalVariables.java uses getFunctionAt(address) and then matches the old name, so the function_name column is only informational and should carry the final name. Take the old_ghidra_name from a build with the instances typed, because pwVar7 will change."
+            ]
+          },
+          {
+            "firmware": "CM550",
+            "address": "0x0000bcf0",
+            "current": "cm550_initADCChannelConfiguration",
+            "verdict": "amend",
+            "final": "cm550_initializeAnalogSensorChannels",
+            "final_type": "",
+            "problems": [
+              "The kept name says 'init' (the rule for new names is 'initialize') and 'Configuration'. The function only reads the config records. It builds the 25 lookup records (0x80a792 + 14 x n), initializes the 25 channel records, runs one pass (jsr 0xb7bc at 0xc03a), and presets the filters and debounce counters.",
+              "It touches no MC68336 register: its only 0x00fffxxx byte patterns are andi.l #0xffff immediates at odd offsets. So cm550_ is the right prefix. work2/filter-users item 17 proposes the same rename; apply it once.",
+              "Refresh function_renames.csv line 172: the comment of mc68k_initializeDiscreteOutputDrivers cites cm550_initADCChannelConfiguration.",
+              "pwVar2 serves loops 1 and 3, but a2 holds the limit 0x80a4d0 in loop 2 (0xc046), so Ghidra may split the variable. After the build, check that the local row names both config loops."
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Investigate"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Verify"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "investigate: filtercallers",
+      "phaseIndex": 1,
+      "phaseTitle": "Investigate",
+      "agentId": "a9051fc787faae481",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1795542701597,
+      "queuedAt": 1795542701585,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "CONTEXT - every path is READ-ONLY for you (never edit a repository file, never run ./analyze.sh); scratch files only under /home/linux/.claude/jobs/374b0424/tmp/w15/r88/work2/<your label>/\n- CM550 (Cummins, MC68336 / CPU32, Ghidra 12.2): FROZEN copies in /home/linux/.claude/jobs/374b0424/tmp/w15/r88/frozen2/cm550/ - J90350.00.ghidra.cpp (\"// Function: <name> @ <address>\" starts each function), fun…",
+      "promptFramed": true,
+      "lastProgressAt": 1795545012547,
+      "tokens": 473319,
+      "toolCalls": 148,
+      "durationMs": 2310950,
+      "resultPreview": "{\"changes\":[{\"firmware\":\"CM550\",\"kind\":\"function\",\"address\":\"0x0000b210\",\"current\":\"cm550_outputControlTimingGenerator\",\"proposed\":\"calculateFilteredEngineAcceleration\",\"confidence\":\"high\",\"reason\":\"This is the engine acceleration filter, and it is the twin of CM848 0x38760. It computes ESESAC (0x80a292) = the measured speed ESCMES (0x80ccf4) minus the previous pass's speed (0x800048), then stores…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "investigate: adcconfig",
+      "phaseIndex": 1,
+      "phaseTitle": "Investigate",
+      "agentId": "ab6d0d49c849c7670",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1795542701597,
+      "queuedAt": 1795542701585,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "CONTEXT - every path is READ-ONLY for you (never edit a repository file, never run ./analyze.sh); scratch files only under /home/linux/.claude/jobs/374b0424/tmp/w15/r88/work2/<your label>/\n- CM550 (Cummins, MC68336 / CPU32, Ghidra 12.2): FROZEN copies in /home/linux/.claude/jobs/374b0424/tmp/w15/r88/frozen2/cm550/ - J90350.00.ghidra.cpp (\"// Function: <name> @ <address>\" starts each function), fun…",
+      "promptFramed": true,
+      "lastProgressAt": 1795545004880,
+      "tokens": 467154,
+      "toolCalls": 129,
+      "durationMs": 2299216,
+      "resultPreview": "{\"changes\":[{\"firmware\":\"CM550\",\"kind\":\"struct_type\",\"address\":\"\",\"current\":\"sensor_fault_config_t\",\"proposed\":\"sensor_config_t\",\"type\":\"\",\"fields\":\"filter_coefficient:word:2; default_value:word:2; fault_clear_threshold:short:2; debounce_counter_decrement:short:2; debounce_counter_increment:short:2; fault_set_threshold:short:2; high_error_limit:word:2; low_error_limit:word:2; qadc_result_register_…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "verify: adcconfig",
+      "phaseIndex": 2,
+      "phaseTitle": "Verify",
+      "agentId": "a51e3b504dd6639f9",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1795545004900,
+      "queuedAt": 1795545004892,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "CONTEXT - every path is READ-ONLY for you (never edit a repository file, never run ./analyze.sh); scratch files only under /home/linux/.claude/jobs/374b0424/tmp/w15/r88/work2/<your label>/\n- CM550 (Cummins, MC68336 / CPU32, Ghidra 12.2): FROZEN copies in /home/linux/.claude/jobs/374b0424/tmp/w15/r88/frozen2/cm550/ - J90350.00.ghidra.cpp (\"// Function: <name> @ <address>\" starts each function), fun…",
+      "promptFramed": true,
+      "lastProgressAt": 1795546345603,
+      "tokens": 301698,
+      "toolCalls": 78,
+      "durationMs": 1340703,
+      "resultPreview": "{\"verdicts\":[{\"firmware\":\"CM550\",\"address\":\"\",\"current\":\"sensor_fault_config_t\",\"verdict\":\"accept\",\"final\":\"sensor_config_t\",\"final_type\":\"\",\"problems\":[\"The +4 comment oversimplifies the clear. At or below the threshold fault_active_flag clears, but each high or low status bit (0x806000) clears only while its 0x806040 first-occurrence bit is clear (0xba5c-0xbb86).\",\"The +23 unit '20 ms passes' co…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 4,
+      "label": "verify: filtercallers",
+      "phaseIndex": 2,
+      "phaseTitle": "Verify",
+      "agentId": "a42d63572f79847fa",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1795545012565,
+      "queuedAt": 1795545012562,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "CONTEXT - every path is READ-ONLY for you (never edit a repository file, never run ./analyze.sh); scratch files only under /home/linux/.claude/jobs/374b0424/tmp/w15/r88/work2/<your label>/\n- CM550 (Cummins, MC68336 / CPU32, Ghidra 12.2): FROZEN copies in /home/linux/.claude/jobs/374b0424/tmp/w15/r88/frozen2/cm550/ - J90350.00.ghidra.cpp (\"// Function: <name> @ <address>\" starts each function), fun…",
+      "promptFramed": true,
+      "lastProgressAt": 1795546525324,
+      "tokens": 370546,
+      "toolCalls": 135,
+      "durationMs": 1512759,
+      "resultPreview": "{\"verdicts\":[{\"firmware\":\"CM550\",\"address\":\"0x0000b210\",\"current\":\"cm550_outputControlTimingGenerator\",\"verdict\":\"accept\",\"final\":\"calculateFilteredEngineAcceleration\",\"problems\":[\"None blocking. I re-read ROM 0xb22c-0xb29e and CM848 0x38780-0x38808. They match step for step: the difference ESCMES (0x80ccf4) minus the previous speed (0x800048), then the previous speed is stored, the first filter, …"
+    }
+  ],
+  "totalTokens": 1612717,
+  "totalToolCalls": 490
+}

@@ -1,0 +1,44 @@
+removed 0: 
+added 0: 
+changed 5
+  0x00021a24 registerJ1939DiagnosticHandlers: 4 lines
+      -  registerJ1939DiagnosticService
+      -            (J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE,exitDevelopmentMode);
+      +  registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE,exitDevelopmentMode)
+      +  ;
+  0x00038ac8 cm848_checkPciMessageTimeouts: 2 lines
+      +  ushort receive_interval;
+      -  ushort receive_interval;
+  0x00053720 mpc555_queueCanReceiveMessage: 8 lines
+      -    if (0 < (int)((uint)j1939_last_receive_message_object_number - (uint)j1939_transmit_message_object_number)) {
+      +    if (0 < (int)((uint)j1939_last_receive_message_object_number -
+      +                 (uint)j1939_transmit_message_object_number)) {
+      -      } while ((int)uVar3 < (int)((uint)j1939_last_receive_message_object_number - (uint)j1939_transmit_message_object_number)
+      -              );
+      +      } while ((int)uVar3 <
+      +               (int)((uint)j1939_last_receive_message_object_number -
+      +                    (uint)j1939_transmit_message_object_number));
+  0x00538974 clearWorkingRam: 18 lines
+      -  word *pwVar1;
+      -  dword *pdVar2;
+      -  pwVar1 = &executive_frame_ticks;
+      +  dword *working_ram_pointer;
+      +  dword *chunk_end;
+      +  working_ram_pointer = (dword *)&executive_frame_ticks;
+      -    pdVar2 = (dword *)((int)pwVar1 + 0x100);
+      -    if (&working_ram_end_marker < (dword *)((int)pwVar1 + 0x100)) {
+      -      pdVar2 = &working_ram_end_marker;
+      +    chunk_end = working_ram_pointer + 0x40;
+      +    if (&working_ram_end_marker < working_ram_pointer + 0x40) {
+      +      chunk_end = &working_ram_end_marker;
+      -    for (; pwVar1 <= pdVar2; pwVar1 = (word *)((int)pwVar1 + 4)) {
+      -      *(dword *)pwVar1 = 0;
+      +    for (; working_ram_pointer <= chunk_end; working_ram_pointer = working_ram_pointer + 1) {
+      +      *working_ram_pointer = 0;
+      -  } while (pwVar1 < &working_ram_end_marker);
+      +  } while (working_ram_pointer < &working_ram_end_marker);
+  0x00538ef4 cm848_dispatchJ1939ReceivedMessages: 4 lines
+      -        for (uVar6 = j1939_transmit_message_object_number; (uVar6 & 0xff) < j1939_last_receive_message_object_number;
+      -            uVar6 = (uVar6 & 0xff) + 1) {
+      +        for (uVar6 = j1939_transmit_message_object_number;
+      +            (uVar6 & 0xff) < j1939_last_receive_message_object_number; uVar6 = (uVar6 & 0xff) + 1) {

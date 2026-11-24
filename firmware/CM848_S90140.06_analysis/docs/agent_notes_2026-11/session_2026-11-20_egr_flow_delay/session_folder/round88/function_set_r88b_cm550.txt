@@ -1,0 +1,1094 @@
+removed 2: 0x0001b666 emptyStubFunction3, 0x0001b6e2 emptyStubFunction2
+added 0: 
+changed 132
+  0x0000ac3c cm550_FUN_0000ac3c: 2 lines
+      -  if (((_feature_enable_flags_word & 8) != 0) && (engine_state != 1)) {
+      +  if (((_feature_enable_flags_word & 8) != 0) && (engine_state != ENGINE_STATE_STOPPED)) {
+  0x0000c326 calculateAlpha: 3 lines
+      -  if (((engine_state == 1) || (engine_state == 2)) || (engine_state == 6)) {
+      +  if (((engine_state == ENGINE_STATE_STOPPED) || (engine_state == ENGINE_STATE_CRANKING)) ||
+      +     (engine_state == ENGINE_STATE_JUMP_START)) {
+  0x0000c66a cm550_rpmHistogramAndProtectionStatisticsAccumulator: 3 lines
+      -  if (((_calibration_feature_enable_flags_word_1 & 0x20) == 0) || (engine_state != 3)) {
+      +  if (((_calibration_feature_enable_flags_word_1 & 0x20) == 0) ||
+      +     (engine_state != ENGINE_STATE_RUNNING)) {
+  0x0000d610 updateEngineSyncStatus: 25 lines
+      -               (aux_driver_fso_low_side_error_count == 2)) && (engine_state != 5)) &&
+      -             (engine_state != 8)) {
+      +               (aux_driver_fso_low_side_error_count == 2)) &&
+      +              (engine_state != ENGINE_STATE_OVERSPEED)) && (engine_state != ENGINE_STATE_SHUTDOWN))
+      +          {
+      -               (aux_driver_engine_brake_low_side_error_count == 2)) && (engine_state != 5)) &&
+      -             (engine_state != 8)) {
+      +               (aux_driver_engine_brake_low_side_error_count == 2)) &&
+      +              (engine_state != ENGINE_STATE_OVERSPEED)) && (engine_state != ENGINE_STATE_SHUTDOWN))
+      +          {
+      -               (aux_driver_cold_start_aid1_low_side_error_count == 2)) && (engine_state != 5)) &&
+      -             (engine_state != 8)) {
+      +               (aux_driver_cold_start_aid1_low_side_error_count == 2)) &&
+      +              (engine_state != ENGINE_STATE_OVERSPEED)) && (engine_state != ENGINE_STATE_SHUTDOWN))
+      +          {
+      -               (aux_driver_cold_start_aid2_low_side_error_count == 2)) && (engine_state != 5)) &&
+      -             (engine_state != 8)) {
+      +               (aux_driver_cold_start_aid2_low_side_error_count == 2)) &&
+      +              (engine_state != ENGINE_STATE_OVERSPEED)) && (engine_state != ENGINE_STATE_SHUTDOWN))
+      +          {
+      -               (aux_driver_ether_start_low_side_error_count == 2)) && (engine_state != 5)) &&
+      -             (engine_state != 8)) {
+      +               (aux_driver_ether_start_low_side_error_count == 2)) &&
+      +              (engine_state != ENGINE_STATE_OVERSPEED)) && (engine_state != ENGINE_STATE_SHUTDOWN))
+  0x0000e998 cm550_FUN_0000e998: 2 lines
+      -    if (engine_state == 3) {
+      +    if (engine_state == ENGINE_STATE_RUNNING) {
+  0x000104e8 cm550_sendCanMessage: 8 lines
+      -void cm550_sendCanMessage(j1939_header_t *msg_header)
+      +void cm550_sendCanMessage(j1939_tx_msg_t *msg)
+      -  if (msg_header->length < 9) {
+      -    cm550_sendCanSingleFrame(msg_header->id);
+      +  if ((msg->header).data_length < 9) {
+      +    cm550_sendCanSingleFrame((msg->header).can_id);
+      -  sendJ1939MultiFrame(msg_header);
+      +  sendJ1939MultiFrame(msg);
+  0x00010512 cm550_sendJ1939MultiFrameWrapper: 3 lines
+      -  sendJ1939MultiFrame();
+      +  j1939_tx_msg_t *unaff_A2;
+      +  sendJ1939MultiFrame(unaff_A2);
+  0x000114d4 cm550_loadParameterBlockAndUpdatePowerDownCounts: 31 lines
+      -        if (engine_run_with_all_power_down_data_lost_flag == 0)
+      -        goto LAB_000115ca;
+      +        if (engine_run_with_all_power_down_data_lost_flag == 0) goto LAB_000115ca;
+      -    cm550_parameterCircularBufferWrite(0x803fe6,&power_down_count_eeprom_write_value,2);
+      +    cm550_parameterCircularBufferWrite(0x803fe6,(byte *)&power_down_count_eeprom_write_value,2);
+      -    while ((uVar2 < 5000 && (consecutive_incomplete_power_down_count_cal != power_down_count_eeprom_write_value))) {
+      +    while ((uVar2 < 5000 &&
+      +           (consecutive_incomplete_power_down_count_cal != power_down_count_eeprom_write_value))) {
+      -    cm550_parameterCircularBufferWrite(0x803fec,&power_down_count_eeprom_write_value,2);
+      +    cm550_parameterCircularBufferWrite(0x803fec,(byte *)&power_down_count_eeprom_write_value,2);
+      -    while ((uVar2 < 5000 && (completed_power_down_count_cal != power_down_count_eeprom_write_value))) {
+      +    while ((uVar2 < 5000 && (completed_power_down_count_cal != power_down_count_eeprom_write_value))
+      +          ) {
+      -    cm550_parameterCircularBufferWrite(0x803fe6,&power_down_count_eeprom_write_value,2);
+      +    cm550_parameterCircularBufferWrite(0x803fe6,(byte *)&power_down_count_eeprom_write_value,2);
+      -    while ((uVar2 < 5000 && (consecutive_incomplete_power_down_count_cal != power_down_count_eeprom_write_value))) {
+      +    while ((uVar2 < 5000 &&
+      +           (consecutive_incomplete_power_down_count_cal != power_down_count_eeprom_write_value))) {
+      -    cm550_parameterCircularBufferWrite(0x803fea,&power_down_count_eeprom_write_value,2);
+      +    cm550_parameterCircularBufferWrite(0x803fea,(byte *)&power_down_count_eeprom_write_value,2);
+      -    while ((uVar2 < 5000 && (incomplete_power_down_count_cal != power_down_count_eeprom_write_value))) {
+      +    while ((uVar2 < 5000 && (incomplete_power_down_count_cal != power_down_count_eeprom_write_value)
+      +           )) {
+      -  power_down_count_eeprom_write_value = incomplete_power_down_count_cal + completed_power_down_count_cal;
+  0x0001192a restartThroughBootRom: 7 lines
+      -  int local_8;
+      -  if (engine_state == 1) {
+      +  dword local_8;
+      +  if (engine_state == ENGINE_STATE_STOPPED) {
+      -      port_e_output_image =
+      -           port_e_output_image & 0xef;
+      +      port_e_output_image = port_e_output_image & 0xef;
+  0x00011a68 inhibitKeyOffShutdown: 2 lines
+      -  WORD_0080de2e = 1;
+      +  key_off_shutdown_inhibit_flag = 1;
+  0x00011a74 cm550_commitEepromMirrorToEeprom: 2 lines
+      -    BYTE_0080dde4 = 1;
+      +    eeprom_mirror_commit_j1708_reply_pending_flag = 1;
+  0x000127c2 vp44_FUN_000127c2: 5 lines
+      -        (_oil_pressure_mode_init_flag == 0)) || (engine_state != 3)) {
+      +        (_oil_pressure_mode_init_flag == 0)) || (engine_state != ENGINE_STATE_RUNNING)) {
+      -        ((_current_engine_rpm_filtered < _DAT_00807290 && (engine_state == 3)))))) {
+      +        ((_current_engine_rpm_filtered < _DAT_00807290 && (engine_state == ENGINE_STATE_RUNNING)))))
+      +       ) {
+  0x000138b6 cm550_FUN_000138b6: 2 lines
+      -    if (engine_state == 1) {
+      +    if (engine_state == ENGINE_STATE_STOPPED) {
+  0x000144bc cm550_diagnosticCodeDebounceHandler: 8 lines
+      -         (uint)(key_on_hour_meter -
+      -               *(int *)(&DGFUCUBF + (short)((code_index & 0xff) * 5) * 2)))) ||
+      +         key_on_hour_meter - *(int *)(&DGFUCUBF + (short)((code_index & 0xff) * 5) * 2))) ||
+      -         (uint)(key_on_hour_meter -
+      -               *(int *)((short)((code_index & 0xff) * 5) * 2 + 0x805a20)))))) {
+      +         key_on_hour_meter - *(int *)((short)((code_index & 0xff) * 5) * 2 + 0x805a20))))) {
+      -      *(int *)(sVar2 + 0x805a20) = key_on_hour_meter;
+      +      *(dword *)(sVar2 + 0x805a20) = key_on_hour_meter;
+  0x00014872 cm550_FUN_00014872: 4 lines
+      -        *(undefined4 *)(&DGFUCUBF + (short)(uVar5 * 5) * 2) = key_on_hour_meter;
+      +        *(dword *)(&DGFUCUBF + (short)(uVar5 * 5) * 2) = key_on_hour_meter;
+      -          *(undefined4 *)(&DGFUCUBF + (short)(uVar5 * 5) * 2) = key_on_hour_meter;
+      +          *(dword *)(&DGFUCUBF + (short)(uVar5 * 5) * 2) = key_on_hour_meter;
+  0x00014dc6 cm550_faultFlagScannerAndProcessor: 2 lines
+      -  if (0x18 < (uint)(key_on_hour_meter - _DAT_0080052e)) {
+      +  if (0x18 < key_on_hour_meter - _DAT_0080052e) {
+  0x00014fca mc68k_sampleAndDebounceDiscreteInputs: 3 lines
+      -      (debounced_switch_value_for_switch_16_on_off & 0x80) != 0)) && (engine_state == 3)) {
+      +      (debounced_switch_value_for_switch_16_on_off & 0x80) != 0)) &&
+      +     (engine_state == ENGINE_STATE_RUNNING)) {
+  0x000159ee mc68k_ioDriverStrobeHandler: 3 lines
+      -  SIM_PORTE0 = port_e_output_image & 0xdf |
+      -               ~port_e_output_image & 0x20;
+      +  SIM_PORTE0 = port_e_output_image & 0xdf | ~port_e_output_image & 0x20;
+  0x00015df0 mc68k_initializeDiscreteOutputDrivers: 3 lines
+      -    port_e_output_image =
+      -         port_e_output_image | 0x10;
+      +    port_e_output_image = port_e_output_image | 0x10;
+  0x00015f8e mc68k_dispatchJ1708ReceivedMessages: 5 lines
+      -  if ((BYTE_0080dde4 != 0) && (cVar4 = cm550_circularBufferEmptyCheck(), cVar4 != '\0')) {
+      -    BYTE_0080dde4 = 0;
+      +  if ((eeprom_mirror_commit_j1708_reply_pending_flag != 0) &&
+      +     (cVar4 = cm550_circularBufferEmptyCheck(), cVar4 != '\0')) {
+      +    eeprom_mirror_commit_j1708_reply_pending_flag = 0;
+  0x00016dd4 cm550_highRpmEngineProtectionStateMachine: 9 lines
+      -     (((_high_rpm_fuel_limit_idle != 0 && (engine_state != 1)) || (_DAT_0080ccc8 != 0)))) {
+      +     (((_high_rpm_fuel_limit_idle != 0 && (engine_state != ENGINE_STATE_STOPPED)) ||
+      +      (_DAT_0080ccc8 != 0)))) {
+      -    if (engine_state == 1) {
+      +    if (engine_state == ENGINE_STATE_STOPPED) {
+      -    if (((engine_state == 2) || (engine_state == 7)) || ((engine_state == 3 || (engine_state == 6)))
+      -       ) {
+      +    if (((engine_state == ENGINE_STATE_CRANKING) || (engine_state == ENGINE_STATE_REENTRY)) ||
+      +       ((engine_state == ENGINE_STATE_RUNNING || (engine_state == ENGINE_STATE_JUMP_START)))) {
+  0x00017120 cm550_FUN_00017120: 2 lines
+      -  if (((engine_state == 3) && (_high_rpm_fuel_limit_active != 0)) &&
+      +  if (((engine_state == ENGINE_STATE_RUNNING) && (_high_rpm_fuel_limit_active != 0)) &&
+  0x000171be cm550_fuel_limit_arbitrator: 2 lines
+      -  if (engine_state == 1) {
+      +  if (engine_state == ENGINE_STATE_STOPPED) {
+  0x000177c2 cm550_rpmBasedFuelLimitCalculator: 9 lines
+      -  if (((engine_state == 2) || (engine_state == 6)) || (engine_state == 7)) {
+      +  if (((engine_state == ENGINE_STATE_CRANKING) || (engine_state == ENGINE_STATE_JUMP_START)) ||
+      +     (engine_state == ENGINE_STATE_REENTRY)) {
+      -                  (uint)(ushort)(crank_exit_speed -
+      -                                _crank_adjusted_initial_rpm_0_1000)) +
+      +                  (uint)(ushort)(crank_exit_speed - _crank_adjusted_initial_rpm_0_1000)) +
+      -                  (uint)(ushort)(crank_exit_speed -
+      -                                _crank_adjusted_initial_rpm_0_1000));
+      +                  (uint)(ushort)(crank_exit_speed - _crank_adjusted_initial_rpm_0_1000));
+  0x00017a06 cm550_rpmBasedFuelTimingInterpolation: 6 lines
+      -  if (((engine_state == 2) || (engine_state == 6)) || (engine_state == 7)) {
+      +  if (((engine_state == ENGINE_STATE_CRANKING) || (engine_state == ENGINE_STATE_JUMP_START)) ||
+      +     (engine_state == ENGINE_STATE_REENTRY)) {
+      -                  (int)(short)(crank_exit_speed -
+      -                              _crank_initial_advace_break_speed_0_1000));
+      +                  (int)(short)(crank_exit_speed - _crank_initial_advace_break_speed_0_1000));
+  0x00017b8a cm550_rpmSourceSelectorForFrictionalLoad: 3 lines
+      -    crank_exit_speed =
+      -         _engine_speed_at_which_the_algorithm_stops_commanding_fuel_0_1400;
+      +    crank_exit_speed = _engine_speed_at_which_the_algorithm_stops_commanding_fuel_0_1400;
+  0x00017cf0 cm550_engineModeTransitionStateUpdater: 3 lines
+      -  if (((engine_state == 2) || (engine_state == 6)) || (engine_state == 7)) {
+      +  if (((engine_state == ENGINE_STATE_CRANKING) || (engine_state == ENGINE_STATE_JUMP_START)) ||
+      +     (engine_state == ENGINE_STATE_REENTRY)) {
+  0x00017d2a cm550_engineModeTransitionHandler: 4 lines
+      -  if (((_DAT_008005f0 == 1) && (engine_state == 2)) || ((_DAT_008005f0 == 3 && (engine_state == 7)))
+      -     ) {
+      +  if (((_DAT_008005f0 == 1) && (engine_state == ENGINE_STATE_CRANKING)) ||
+      +     ((_DAT_008005f0 == 3 && (engine_state == ENGINE_STATE_REENTRY)))) {
+  0x00017d6a cm550_ioOutputFlagMappingSlowCycle40Coordinator: 5 lines
+      -  if ((engine_state == 6) && (_engine_rpm_primary < _crank_adjusted_initial_rpm_0_1000)) {
+      +  if ((engine_state == ENGINE_STATE_JUMP_START) &&
+      +     (_engine_rpm_primary < _crank_adjusted_initial_rpm_0_1000)) {
+      -  if ((_DAT_008005f2 == 7) && (engine_state == 1)) {
+      +  if ((_DAT_008005f2 == 7) && (engine_state == ENGINE_STATE_STOPPED)) {
+  0x00017e06 cm550_frictionalLoadTorqueManagementSlowCycle40Coordinator: 4 lines
+      -  if ((((engine_state == 2) || (engine_state == 6)) &&
+      +  if ((((engine_state == ENGINE_STATE_CRANKING) || (engine_state == ENGINE_STATE_JUMP_START)) &&
+      -  if ((_DAT_008005f4 != 3) && (engine_state == 3)) {
+      +  if ((_DAT_008005f4 != 3) && (engine_state == ENGINE_STATE_RUNNING)) {
+  0x00017e62 cm550_engineOperatingModeStateTrackingSlowCycle40Coordinator: 12 lines
+      -  if (engine_state == 3) {
+      +  if (engine_state == ENGINE_STATE_RUNNING) {
+      -  if (engine_state == 1) {
+      +  if (engine_state == ENGINE_STATE_STOPPED) {
+      -  if (engine_state == 2) {
+      -    crank_jump_start_timer =
+      -         crank_jump_start_timer + 1;
+      +  if (engine_state == ENGINE_STATE_CRANKING) {
+      +    crank_jump_start_timer = crank_jump_start_timer + 1;
+      -  else if (((_DAT_008005f6 == 7) && (engine_state == 1)) || (engine_state == 8)) {
+      +  else if (((_DAT_008005f6 == 7) && (engine_state == ENGINE_STATE_STOPPED)) ||
+      +          (engine_state == ENGINE_STATE_SHUTDOWN)) {
+  0x00017eba cm550_frictionalLoadTorqueTransitionHandler: 2 lines
+      -  if (((_DAT_008005f8 == 3) && (engine_state == 7)) &&
+      +  if (((_DAT_008005f8 == 3) && (engine_state == ENGINE_STATE_REENTRY)) &&
+  0x00017f7c cm550_updateEngineState: 117 lines
+      -  if (engine_overspeed_active_flag == '\0') {
+      +  if (engine_overspeed_active_flag == 0) {
+      -        engine_overspeed_active_flag = '\x01';
+      +        engine_overspeed_active_flag = 1;
+      -          *(undefined4 *)(&engine_overspeed_log + (short)engine_overspeed_log_index * 8) =
+      +          engine_overspeed_log[(short)engine_overspeed_log_index].start_key_on_hour_meter =
+      -          *(undefined2 *)
+      -           (&fuel_arbitrator_rpm_target_history + (short)engine_overspeed_log_index * 8) = 0;
+      -          *(ushort *)(&vp44_sensor_diag_state_1 + (short)engine_overspeed_log_index * 8) =
+      +          engine_overspeed_log[(short)engine_overspeed_log_index].duration = 0;
+      +          engine_overspeed_log[(short)engine_overspeed_log_index].engine_speed_at_detection =
+      -        else if (*(ushort *)(&vp44_sensor_diag_state_1 + (short)engine_overspeed_log_index * 8)
+      -                 < _engine_rpm_primary) {
+      -          *(ushort *)(&vp44_sensor_diag_state_1 + (short)engine_overspeed_log_index * 8) =
+      +        else if (engine_overspeed_log[(short)engine_overspeed_log_index].engine_speed_at_detection <
+      +                 _engine_rpm_primary) {
+      +          engine_overspeed_log[(short)engine_overspeed_log_index].engine_speed_at_detection =
+      -    engine_overspeed_active_flag = '\0';
+      +    engine_overspeed_active_flag = 0;
+      -    *(short *)(&fuel_arbitrator_rpm_target_history + (short)engine_overspeed_log_index * 8) =
+      -         _DAT_0080bda6 -
+      -         *(short *)(&diagnostic_snapshot_fuel_mode_0 + (short)engine_overspeed_log_index * 8);
+      +    engine_overspeed_log[(short)engine_overspeed_log_index].duration =
+      +         key_on_hour_meter._2_2_ -
+  0x00018384 initializeEngineState: 2 lines
+      -  engine_state = 1;
+      +  engine_state = ENGINE_STATE_STOPPED;
+  0x00018fcc processDiagnosticLimitStatus: 9 lines
+      -  if (engine_state == 1) {
+      +  if (engine_state == ENGINE_STATE_STOPPED) {
+      -  if ((((_calibration_feature_enable_flags_word_2 & 1) == 0) || (engine_state == 8)) ||
+      -     (engine_state == 1)) {
+      +  if ((((_calibration_feature_enable_flags_word_2 & 1) == 0) ||
+      +      (engine_state == ENGINE_STATE_SHUTDOWN)) || (engine_state == ENGINE_STATE_STOPPED)) {
+      -    if ((engine_shutdown_command_flag != 0) &&
+      -       (engine_shutdown_command_flag_previous == 0)) {
+      +    if ((engine_shutdown_command_flag != 0) && (engine_shutdown_command_flag_previous == 0)) {
+  0x00019332 protectionStateProcessor: 12 lines
+      -  undefined4 *puVar1;
+      +  dword *pdVar1;
+      -    puVar1 = (undefined4 *)(iVar7 + (uint)uVar4 * 8);
+      -    *puVar1 = key_on_hour_meter;
+      -    *(undefined2 *)((int)puVar1 + 6) = 0;
+      +    pdVar1 = (dword *)(iVar7 + (uint)uVar4 * 8);
+      +    *pdVar1 = key_on_hour_meter;
+      +    *(undefined2 *)((int)pdVar1 + 6) = 0;
+      -      *(undefined2 *)(puVar1 + 1) = 0;
+      +      *(undefined2 *)(pdVar1 + 1) = 0;
+      -      *(undefined2 *)(puVar1 + 1) = 0xffff;
+      +      *(undefined2 *)(pdVar1 + 1) = 0xffff;
+  0x00019436 protectionStateValidator: 2 lines
+      -             _DAT_0080bda6 - (short)*(undefined4 *)(iVar6 + (uint)*puVar5 * 8);
+      +             key_on_hour_meter._2_2_ - (short)*(undefined4 *)(iVar6 + (uint)*puVar5 * 8);
+  0x0001952c cm550_protectionState3bRpmMonitor: 2 lines
+      -          *(undefined4 *)(_bit_pattern_index_result + 5) = key_on_hour_meter;
+      +          *(dword *)(_bit_pattern_index_result + 5) = key_on_hour_meter;
+  0x0001c152 fuelTimingOilPressureModeController: 13 lines
+      -  if (engine_state == 1) {
+      +  if (engine_state == ENGINE_STATE_STOPPED) {
+      -  else if (engine_state == 8) {
+      +  else if (engine_state == ENGINE_STATE_SHUTDOWN) {
+      -    if (engine_state == 5) {
+      +    if (engine_state == ENGINE_STATE_OVERSPEED) {
+      -      if (engine_state == 4) {
+      +      if (engine_state == ENGINE_STATE_ENGINE_BRAKE) {
+      -      else if ((engine_state == 2) || (engine_state == 6)) {
+      +      else if ((engine_state == ENGINE_STATE_CRANKING) || (engine_state == ENGINE_STATE_JUMP_START))
+      +      {
+      -        if ((engine_state == 7) &&
+      +        if ((engine_state == ENGINE_STATE_REENTRY) &&
+  0x0001ca54 cm550_fuelDemandLimitSelector11: 5 lines
+      -     (((engine_state != 5 ||
+      +     (((engine_state != ENGINE_STATE_OVERSPEED ||
+      -       (_calibration_feature_enable_flags_word_9 & 2) != 0)) && (engine_state == 5)))) {
+      +       (_calibration_feature_enable_flags_word_9 & 2) != 0)) &&
+      +      (engine_state == ENGINE_STATE_OVERSPEED)))) {
+  0x0001ca5c vp44_canPinVp44StatusController: 5 lines
+      -     (((engine_state != 5 ||
+      +     (((engine_state != ENGINE_STATE_OVERSPEED ||
+      -       (_calibration_feature_enable_flags_word_9 & 2) != 0)) && (engine_state == 5)))) {
+      +       (_calibration_feature_enable_flags_word_9 & 2) != 0)) &&
+      +      (engine_state == ENGINE_STATE_OVERSPEED)))) {
+  0x0001d9b4 vp44SensorStatusMonitor: 2 lines
+      -        if (engine_state == 2) {
+      +        if (engine_state == ENGINE_STATE_CRANKING) {
+  0x0001e056 handleJ1939CanTransmitInterrupt: 4 lines
+      -void handleJ1939CanTransmitInterrupt(word node_address)
+      +void handleJ1939CanTransmitInterrupt(word message_object_number)
+      -  if ((node_address & 0xff) == j1939_transmit_message_object_number) {
+      +  if ((message_object_number & 0xff) == j1939_transmit_message_object_number) {
+  0x0001e086 cm550_handleJ1939CanReceiveInterrupt: 8 lines
+      -void cm550_handleJ1939CanReceiveInterrupt(word node_address)
+      +void cm550_handleJ1939CanReceiveInterrupt(word message_object_number)
+      -  if ((j1939_transmit_message_object_number < (node_address & 0xff)) &&
+      -     ((node_address & 0xff) <= j1939_last_receive_message_object_number)) {
+      -    mc68k_queueCanCs4ReceiveMessage(node_address & 0xff);
+      +  if ((j1939_transmit_message_object_number < (message_object_number & 0xff)) &&
+      +     ((message_object_number & 0xff) <= j1939_last_receive_message_object_number)) {
+      +    mc68k_queueCanCs4ReceiveMessage(message_object_number & 0xff);
+  0x0001e5f0 mc68k_queueCanCs4ReceiveMessage: 33 lines
+      -  undefined *puVar5;
+      -  undefined1 *puVar6;
+      +  word wVar5;
+      +  undefined *puVar6;
+      +  undefined1 *puVar7;
+      -      puVar6 = (undefined1 *)((int)_can_receive_buffer_write_pointer + 10);
+      -      puVar5 = &UNK_00ffd8f7;
+      +      puVar7 = (undefined1 *)((int)_can_receive_buffer_write_pointer + 10);
+      +      puVar6 = &UNK_00ffd8f7;
+      -        *puVar6 = *puVar5;
+      +        *puVar7 = *puVar6;
+      +        puVar7 = puVar7 + 1;
+      -        puVar5 = puVar5 + 1;
+      -        puVar6 = (undefined1 *)((int)_can_receive_buffer_write_pointer + 10);
+      -        puVar5 = &UNK_00ffd807 + iVar3;
+      +        puVar7 = (undefined1 *)((int)_can_receive_buffer_write_pointer + 10);
+      +        puVar6 = &UNK_00ffd807 + iVar3;
+      -          *puVar6 = *puVar5;
+      +          *puVar7 = *puVar6;
+      +          puVar7 = puVar7 + 1;
+      -          puVar5 = puVar5 + 1;
+      -      puVar5 = &DAT_00ffd810 + (uint)j1939_transmit_message_object_number * 0x10;
+      -      uVar4 = j1939_transmit_message_object_number;
+      -      while (uVar4 = uVar4 + 1, uVar4 <= j1939_last_receive_message_object_number) {
+  0x0001fdc0 cm550_j1939MessageTypeCounter: 2 lines
+      -uint cm550_j1939MessageTypeCounter(word control_mode)
+      +dword cm550_j1939MessageTypeCounter(word control_mode)
+  0x000212b2 mc68k_FUN_000212b2: 2 lines
+      -        bVar6 = DAT_0080d9f5;
+      +        bVar6 = (byte)j1939_transmit_message_object_number;
+  0x00021982 cm550_diagnosticServiceSecurityValidator: 2 lines
+      +  word msg_length;
+      -  word msg_length;
+  0x0002238e cm550_diagMemoryReadResponseBuilder: 22 lines
+      -  undefined1 *puVar1;
+      +  undefined *puVar1;
+      -  j1939_header_t *msg_header;
+      +  j1939_tx_msg_t *msg;
+      -  msg_header = cm550_multiPacketBufferAllocator(range_length + bVar6 + 1);
+      -  if (msg_header == (j1939_header_t *)0x0) {
+      +  msg = cm550_multiPacketBufferAllocator(range_length + bVar6 + 1);
+      +  if (msg == (j1939_tx_msg_t *)0x0) {
+      -  puVar1 = (undefined1 *)msg_header[1].id;
+      -  msg_header->id = 0xef0000;
+      +  puVar1 = msg->data_pointer;
+      +  (msg->header).can_id = 0xef0000;
+      -  *(byte *)&msg_header->id = *(byte *)&msg_header->id & 0xe3;
+      -  *(byte *)&msg_header->id = bVar4 & 0x1c | *(byte *)&msg_header->id;
+      -  *(byte *)((int)&msg_header->id + 2) = request_ptr[3];
+      -  *(byte *)((int)&msg_header->id + 3) = request_ptr[2];
+      +  *(byte *)&(msg->header).can_id = *(byte *)&(msg->header).can_id & 0xe3;
+      +  *(byte *)&(msg->header).can_id = bVar4 & 0x1c | *(byte *)&(msg->header).can_id;
+      +  *(byte *)((int)&(msg->header).can_id + 2) = request_ptr[3];
+      +  *(byte *)((int)&(msg->header).can_id + 3) = request_ptr[2];
+      -  cm550_sendCanMessage(msg_header);
+      +  cm550_sendCanMessage(msg);
+  0x00022726 sendJ1939MultiFrame: 104 lines
+      -void sendJ1939MultiFrame(uint *param_1)
+      +void sendJ1939MultiFrame(j1939_tx_msg_t *msg)
+      -  byte bVar3;
+      -  ushort uVar4;
+      -  undefined1 *puVar5;
+      -  char *pcVar6;
+      +  byte *pbVar3;
+      +  byte bVar4;
+      +  byte bVar5;
+      +  ushort uVar6;
+      +  undefined1 *puVar7;
+      +  char *pcVar8;
+      -  bVar3 = *(byte *)((int)param_1 + 1);
+      -  cStack_5 = (char)*(undefined2 *)((int)param_1 + 1);
+      -  if ((bVar3 < 0xf0) && (cStack_5 != -1)) {
+      +  pbVar3 = (byte *)((int)&(msg->header).can_id + 1);
+      +  bVar4 = *pbVar3;
+      +  bVar5 = (byte)(msg->header).can_id;
+      +  cStack_5 = (char)*(undefined2 *)pbVar3;
+      +  if ((bVar4 < 0xf0) && (cStack_5 != -1)) {
+      -      _multiframe_tx_pgn_high_byte = (ushort)bVar3 << 8;
+      -      _DAT_008012a2 = *(ushort *)(param_1 + 1);
+      +      _multiframe_tx_pgn_high_byte = (ushort)bVar4 << 8;
+      +      _DAT_008012a2 = (msg->header).data_length;
+  0x00023130 cm550_multiPacketBufferAllocator: 20 lines
+      -j1939_header_t * cm550_multiPacketBufferAllocator(word data_length)
+      +j1939_tx_msg_t * cm550_multiPacketBufferAllocator(word data_length)
+      -    _DAT_00801238 = 0x801242;
+      -    _DAT_00801236 = data_length;
+      -    _DAT_0080123c = 0x801240;
+      -    return (j1939_header_t *)0x801232;
+      +    j1939_single_frame_tx_message.data_pointer = &DAT_00801242;
+      +    j1939_single_frame_tx_message.header.data_length = data_length;
+      +    j1939_single_frame_tx_message.status_pointer = &j1939_single_frame_transmit_status;
+      +    return &j1939_single_frame_tx_message;
+      -    _DAT_00800b20 = 0x800b2a;
+      -    _DAT_00800b1e = data_length;
+      -    _DAT_00800b24 = &j1939_transport_transmit_status;
+      -    return (j1939_header_t *)0x800b1a;
+      +    j1939_transport_tx_message.data_pointer = &DAT_00800b2a;
+      +    j1939_transport_tx_message.header.data_length = data_length;
+      +    j1939_transport_tx_message.status_pointer = &j1939_transport_transmit_status;
+      +    return &j1939_transport_tx_message;
+      -  return (j1939_header_t *)0x0;
+      +  return (j1939_tx_msg_t *)0x0;
+  0x00024d40 cm550_faultCodeDisplayController: 3 lines
+      -  if (((debounced_switch_value_for_switch_16_on_off & 0x80) == 0) || (engine_state != 1)) {
+      +  if (((debounced_switch_value_for_switch_16_on_off & 0x80) == 0) ||
+      +     (engine_state != ENGINE_STATE_STOPPED)) {
+  0x000254b6 cm550_FUN_000254b6: 2 lines
+      -      ) && (engine_state == 3)) {
+      +      ) && (engine_state == ENGINE_STATE_RUNNING)) {
+  0x00026616 cm550_FUN_00026616: 6 lines
+      -  if (engine_state == 1) {
+      +  if (engine_state == ENGINE_STATE_STOPPED) {
+      -  else if (engine_state != 2) {
+      +  else if (engine_state != ENGINE_STATE_CRANKING) {
+      -    if ((engine_state == 3) &&
+      +    if ((engine_state == ENGINE_STATE_RUNNING) &&
+  0x00027af0 restartOnKeyOnDuringPowerDown: 2 lines
+      -  short local_6;
+      +  word local_6;
+  0x00027cd0 cm550_savePowerDownDataToFlashBank: 5 lines
+      -    cm550_parameterCircularBufferWrite(0x803fe4,&power_cycle_sequence_number_cal,2);
+      +    cm550_parameterCircularBufferWrite(0x803fe4,(byte *)&power_cycle_sequence_number_cal,2);
+      -    while ((uVar4 < 1000 && (power_cycle_sequence_number_cal != completed_power_down_sequence_number_cal))) {
+      +    while ((uVar4 < 1000 &&
+      +           (power_cycle_sequence_number_cal != completed_power_down_sequence_number_cal))) {
+  0x00027f9c mc68k_runPowerDownSequence: 31 lines
+      -  byte *source_ptr;
+      -  int local_a;
+      -  ushort local_6;
+      +  dword *source_ptr;
+      +  dword local_a;
+      +  word local_6;
+      -    port_e_output_image =
+      -         port_e_output_image | 4;
+      +    port_e_output_image = port_e_output_image | 4;
+      -  source_ptr = (byte *)&local_a;
+      +  source_ptr = &local_a;
+      -  cm550_parameterCircularBufferWrite(0x803b3e,source_ptr,4);
+      +  cm550_parameterCircularBufferWrite(0x803b3e,(byte *)source_ptr,4);
+      -    port_e_output_image =
+      -         port_e_output_image & 0xf7;
+      +    port_e_output_image = port_e_output_image & 0xf7;
+      -    port_e_output_image =
+      -         port_e_output_image & 0xfb;
+      +    port_e_output_image = port_e_output_image & 0xfb;
+      -          port_e_output_image =
+      -               port_e_output_image | 8;
+      +          port_e_output_image = port_e_output_image | 8;
+      -          port_e_output_image =
+      -               port_e_output_image & 0xfb;
+  0x000284e8 mc68k_applicationMain: 3 lines
+      -    port_e_output_image =
+      -         port_e_output_image | 8;
+      +    port_e_output_image = port_e_output_image | 8;
+  0x00028b80 mc68k_initializeJ1939Datalink: 3 lines
+      -  _can_control_register_pointer = &CAN_CS4_CONTROL + (uint)j1939_transmit_message_object_number * 0x10;
+      +  _can_control_register_pointer =
+      +       &CAN_CS4_CONTROL + (uint)j1939_transmit_message_object_number * 0x10;
+  0x0002ce64 cm550_updateBootBlockFromImage: 6 lines
+      -      port_e_output_image =
+      -           port_e_output_image | 2;
+      +      port_e_output_image = port_e_output_image | 2;
+      -      port_e_output_image =
+      -           port_e_output_image & 0xfd;
+      +      port_e_output_image = port_e_output_image & 0xfd;
+  0x0002e9ac clearWorkingRam: 18 lines
+      -  undefined4 *puVar1;
+      -  undefined4 *puVar2;
+      -  puVar2 = (undefined4 *)&rpm_rate_limit_countdown;
+      -  while (puVar2 < (undefined4 *)0x80def4) {
+      -    puVar1 = puVar2 + 0x40;
+      -    if ((undefined4 *)0x80def4 < puVar1) {
+      -      puVar1 = (undefined4 *)0x80def4;
+      +  dword *chunk_end;
+      +  dword *working_ram_pointer;
+      +  working_ram_pointer = (dword *)&rpm_rate_limit_countdown;
+      +  while (working_ram_pointer < (dword *)0x80def4) {
+      +    chunk_end = working_ram_pointer + 0x40;
+      +    if ((dword *)0x80def4 < chunk_end) {
+      +      chunk_end = (dword *)0x80def4;
+      -    for (; puVar2 <= puVar1; puVar2 = puVar2 + 1) {
+      -      *puVar2 = 0;
+      +    for (; working_ram_pointer <= chunk_end; working_ram_pointer = working_ram_pointer + 1) {
+      +      *working_ram_pointer = 0;
+  0x0002e9f8 cm550_initializeRamRefresh: 16 lines
+      -  int iVar1;
+      +  undefined *puVar1;
+      -  int *piVar4;
+      +  undefined **ppuVar4;
+      -  for (piVar4 = (int *)&DAT_00801c4e; piVar4 < &ram_refresh_current_block_pointer; piVar4 = piVar4 + 3)
+      -  {
+      -    iVar1 = *piVar4;
+      -    if (iVar1 < 0) {
+      -      iVar1 = iVar1 + 1;
+      +  for (ppuVar4 = (undefined **)&DAT_00801c4e; ppuVar4 < &ram_refresh_current_block_pointer;
+      +      ppuVar4 = ppuVar4 + 3) {
+      +    puVar1 = *ppuVar4;
+      +    if ((int)puVar1 < 0) {
+      +      puVar1 = puVar1 + 1;
+      -    uVar3 = ((short)(iVar2 >> 1) - (short)(iVar1 >> 1)) + uVar3;
+      +    uVar3 = ((short)(iVar2 >> 1) - (short)((int)puVar1 >> 1)) + uVar3;
+  0x0002eadc cm550_refreshRamCalibration: 35 lines
+      -  undefined4 *puVar1;
+      +  undefined *puVar1;
+      -    if (((short *)ram_refresh_current_block_pointer[1] <= ram_refresh_target_pointer) ||
+      -       ((ram_refresh_current_block_pointer == (undefined4 *)&DAT_00801c5a &&
+      -        (power_down_refresh_enable == 0)))) {
+      -      puVar1 = ram_refresh_current_block_pointer + 3;
+      -      if ((puVar1 == (undefined4 *)&DAT_00801c5a) && (power_down_refresh_enable == 0)) {
+      -        puVar1 = ram_refresh_current_block_pointer + 6;
+      +    if ((*(undefined **)(ram_refresh_current_block_pointer + 4) <= ram_refresh_target_pointer) ||
+      +       ((ram_refresh_current_block_pointer == &DAT_00801c5a && (power_down_refresh_enable == 0)))) {
+      +      puVar1 = ram_refresh_current_block_pointer + 0xc;
+      +      if ((puVar1 == &DAT_00801c5a) && (power_down_refresh_enable == 0)) {
+      +        puVar1 = ram_refresh_current_block_pointer + 0x18;
+      -      if ((undefined4 *)0x801c65 < ram_refresh_current_block_pointer) {
+      -        ram_refresh_current_block_pointer = (undefined4 *)&DAT_00801c4e;
+      +      if ((undefined *)0x801c65 < ram_refresh_current_block_pointer) {
+      +        ram_refresh_current_block_pointer = &DAT_00801c4e;
+      -      ram_refresh_target_pointer = (short *)*ram_refresh_current_block_pointer;
+      -      ram_refresh_source_pointer = (short *)ram_refresh_current_block_pointer[2];
+      +      ram_refresh_target_pointer = *(undefined **)ram_refresh_current_block_pointer;
+      +      ram_refresh_source_pointer = *(undefined **)(ram_refresh_current_block_pointer + 8);
+      -    psVar2 = ram_refresh_target_pointer + ram_refresh_words_per_pass;
+      -    if ((short *)ram_refresh_current_block_pointer[1] < psVar2) {
+      -      psVar2 = (short *)ram_refresh_current_block_pointer[1];
+  0x0002eea2 cm550_diagnosticServiceDispatcher: 12 lines
+      -  char *pcVar3;
+      -  pcVar3 = &j1939_diagnostic_service_table;
+      +  j1939_diagnostic_service_entry_t *pjVar3;
+      +  pjVar3 = j1939_diagnostic_service_table;
+      -    in_D0w = CONCAT11((char)((ushort)in_D0w >> 8),*pcVar3);
+      -    if (*pcVar3 == **(char **)(msg_ptr + 6)) {
+      +    in_D0w = CONCAT11((char)((ushort)in_D0w >> 8),pjVar3->service_id);
+      +    if (pjVar3->service_id == **(J1939_DIAGNOSTIC_SERVICE **)(msg_ptr + 6)) {
+      -        in_D0w = (**(code **)(pcVar3 + 2))((short)msg_ptr);
+      +        in_D0w = (*(code *)pjVar3->handler)((short)msg_ptr);
+      -    pcVar3 = pcVar3 + 6;
+      +    pjVar3 = pjVar3 + 1;
+  0x0002fe38 cm550_diagnosticTableSnapshotCapture: 4 lines
+      -    *(undefined4 *)(sVar1 + 0x80462a) = key_on_hour_meter;
+      +    *(dword *)(sVar1 + 0x80462a) = key_on_hour_meter;
+      -    *(undefined4 *)(sVar1 + 0x80426a) = key_on_hour_meter;
+      +    *(dword *)(sVar1 + 0x80426a) = key_on_hour_meter;
+  0x000304f4 cm550_rpmHistogramAndAveragingStatistics: 2 lines
+      -  if (((engine_state == 8) && (_DAT_00801e90 != 8)) &&
+      +  if (((engine_state == ENGINE_STATE_SHUTDOWN) && (_DAT_00801e90 != 8)) &&
+  0x0003061a cm550_fuelLimitRestoreFromCapture: 2 lines
+      -  if (((engine_state == 8) && (_DAT_00801e90 != 8)) &&
+      +  if (((engine_state == ENGINE_STATE_SHUTDOWN) && (_DAT_00801e90 != 8)) &&
+  0x00031496 cm550_FUN_00031496: 3 lines
+      -  if (((uVar1 != 0) && (engine_state != 1)) && (_trending_data_capture_active == 1)) {
+      +  if (((uVar1 != 0) && (engine_state != ENGINE_STATE_STOPPED)) &&
+      +     (_trending_data_capture_active == 1)) {
+  0x000315be cm550_FUN_000315be: 2 lines
+      -     (engine_state != 1)) {
+      +     (engine_state != ENGINE_STATE_STOPPED)) {
+  0x00031b22 cm550_diagnosticCanResponseSender: 7 lines
+      -  j1939_pgn59392_tx_message = CONCAT13((char)((_DAT_00803f4e & 7) << 2),0xe8ff00);
+      -  _DAT_00801ea6 = CONCAT11((char)request->id,*(undefined1 *)((int)&request->id + 2));
+      +  j1939_pgn59392_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f4e & 7) << 2),0xe8ff00);
+      +  j1939_pgn59392_tx_message.header.can_id._2_2_ =
+      +       CONCAT11((char)request->id,*(undefined1 *)((int)&request->id + 2));
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn59392_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn59392_tx_message);
+  0x00031b96 cm550_canBufferSetup1: 6 lines
+      -  _DAT_00801ea8 = 8;
+      -  _DAT_00801eaa = &DAT_00801eb2;
+      -  _DAT_00801eae = 0x801eba;
+      +  j1939_pgn59392_tx_message.header.data_length = 8;
+      +  j1939_pgn59392_tx_message.data_pointer = &DAT_00801eb2;
+      +  j1939_pgn59392_tx_message.status_pointer = &j1939_pgn59392_transmit_status;
+  0x00031bce cm550_FUN_00031bce: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65269_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn65269_tx_message);
+  0x00031c1a cm550_j1939MessageSetup_PGN_65265: 11 lines
+      -  j1939_pgn65269_tx_message = CONCAT13((char)((_DAT_00803f50 & 7) << 2),0xfef500);
+      -  _DAT_00801ec0 = 8;
+      -  _DAT_00801ec2 = &DAT_00801eca;
+      -  _DAT_00801ec6 = 0x801ed2;
+      -  j1939_pgn65269_tx_message = CONCAT31(j1939_pgn65269_tx_message,j1939_engine_node_source_address);
+      +  j1939_pgn65269_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f50 & 7) << 2),0xfef500);
+      +  j1939_pgn65269_tx_message.header.data_length = 8;
+      +  j1939_pgn65269_tx_message.data_pointer = &DAT_00801eca;
+      +  j1939_pgn65269_tx_message.status_pointer = &j1939_pgn65269_transmit_status;
+      +  j1939_pgn65269_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65269_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x00031c84 j1939HandlePgn65265CruiseVehicleSpeed: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65265_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn65265_tx_message);
+  0x00031ed2 cm550_FUN_00031ed2: 11 lines
+      -  j1939_pgn65265_tx_message = CONCAT13((char)((_DAT_00803f52 & 7) << 2),0xfef100);
+      -  j1939_pgn65265_tx_message = CONCAT31(j1939_pgn65265_tx_message,j1939_engine_node_source_address);
+      -  _DAT_00801ed8 = 8;
+      -  _DAT_00801eda = &ccvs_message_byte_0;
+      -  _DAT_00801ede = 0x801eea;
+      +  j1939_pgn65265_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f52 & 7) << 2),0xfef100);
+      +  j1939_pgn65265_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65265_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+      +  j1939_pgn65265_tx_message.header.data_length = 8;
+      +  j1939_pgn65265_tx_message.data_pointer = &ccvs_message_byte_0;
+      +  j1939_pgn65265_tx_message.status_pointer = &j1939_pgn65265_transmit_status;
+  0x00031f30 j1939HandlePgn65261CruiseControlSetup: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65261_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn65261_tx_message);
+  0x00031fee initPgn65261CruiseControlSetupStruct: 11 lines
+      -  j1939_pgn65261_tx_message = CONCAT13((char)((_DAT_00803f52 & 7) << 2),0xfeed00);
+      -  _DAT_00801ef0 = 8;
+      -  _DAT_00801ef2 = &DAT_00801efa;
+      -  _DAT_00801ef6 = 0x801f02;
+      -  j1939_pgn65261_tx_message = CONCAT31(j1939_pgn65261_tx_message,j1939_engine_node_source_address);
+      +  j1939_pgn65261_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f52 & 7) << 2),0xfeed00);
+      +  j1939_pgn65261_tx_message.header.data_length = 8;
+      +  j1939_pgn65261_tx_message.data_pointer = &DAT_00801efa;
+      +  j1939_pgn65261_tx_message.status_pointer = &j1939_pgn65261_transmit_status;
+      +  j1939_pgn65261_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65261_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x00032052 cm550_FUN_00032052: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65259_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn65259_tx_message);
+  0x000320f6 cm550_engineSerialNumberPGN_65259_Builder: 11 lines
+      -  j1939_pgn65259_tx_message = CONCAT13((char)((_DAT_00803f54 & 7) << 2),0xfeeb00);
+      -  _DAT_00801f08 = 0x28;
+      -  _DAT_00801f0a = &DAT_00801f12;
+      -  _DAT_00801f0e = 0x801f3a;
+      -  j1939_pgn65259_tx_message = CONCAT31(j1939_pgn65259_tx_message,j1939_engine_node_source_address);
+      +  j1939_pgn65259_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f54 & 7) << 2),0xfeeb00);
+      +  j1939_pgn65259_tx_message.header.data_length = 0x28;
+      +  j1939_pgn65259_tx_message.data_pointer = &DAT_00801f12;
+      +  j1939_pgn65259_tx_message.status_pointer = &j1939_pgn65259_transmit_status;
+      +  j1939_pgn65259_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65259_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x0003216a cm550_diagnosticMultiPacketResponseBuilder: 20 lines
+      -  j1939_header_t *msg_header;
+      +  j1939_tx_msg_t *msg;
+      -  msg_header = cm550_multiPacketBufferAllocator(data_length);
+      +  msg = cm550_multiPacketBufferAllocator(data_length);
+      -  if (msg_header != (j1939_header_t *)0x0) {
+      -    msg_header->id = 0xef0000;
+      +  if (msg != (j1939_tx_msg_t *)0x0) {
+      +    (msg->header).can_id = 0xef0000;
+      -    *(byte *)&msg_header->id = *(byte *)&msg_header->id & 0xe3;
+      -    *(byte *)&msg_header->id = bVar4 & 0x1c | *(byte *)&msg_header->id;
+      -    *(char *)((int)&msg_header->id + 2) = (char)request->id;
+      -    *(undefined1 *)((int)&msg_header->id + 3) = *(undefined1 *)((int)&request->id + 2);
+      -    puVar6 = (undefined1 *)msg_header[1].id;
+      +    *(byte *)&(msg->header).can_id = *(byte *)&(msg->header).can_id & 0xe3;
+      +    *(byte *)&(msg->header).can_id = bVar4 & 0x1c | *(byte *)&(msg->header).can_id;
+      +    *(char *)((int)&(msg->header).can_id + 2) = (char)request->id;
+      +    *(undefined1 *)((int)&(msg->header).can_id + 3) = *(undefined1 *)((int)&request->id + 2);
+      +    puVar6 = msg->data_pointer;
+      -    uVar1 = cm550_sendCanMessage(msg_header);
+      +    uVar1 = cm550_sendCanMessage(msg);
+  0x00032244 cm550_diagnosticDM11PGN_65234_Builder: 11 lines
+      -  j1939_dm10_tx_message = CONCAT13((char)((_DAT_00803f60 & 7) << 2),0xfed200);
+      -  _DAT_00801f42 = 2;
+      -  _DAT_00801f44 = &DAT_00801f4c;
+      -  _DAT_00801f48 = 0x801f54;
+      -  j1939_dm10_tx_message = CONCAT31(j1939_dm10_tx_message,j1939_engine_node_source_address);
+      +  j1939_dm10_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f60 & 7) << 2),0xfed200);
+      +  j1939_dm10_tx_message.header.data_length = 2;
+      +  j1939_dm10_tx_message.data_pointer = &DAT_00801f4c;
+      +  j1939_dm10_tx_message.status_pointer = &j1939_dm10_transmit_status;
+      +  j1939_dm10_tx_message.header.can_id =
+      +       CONCAT31(j1939_dm10_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x000322ae j1939HandlePgn65226Dm1ActiveDtc: 10 lines
+      -  _DAT_00801f60 = &j1939_dm1_transmit_status;
+      +  j1939_dm1_tx_message.status_pointer = &j1939_dm1_transmit_status;
+      -    _DAT_00801f5a = 2;
+      +    j1939_dm1_tx_message.header.data_length = 2;
+      -      _DAT_00801f5a = 6;
+      +      j1939_dm1_tx_message.header.data_length = 6;
+      -          _DAT_00801f5a = _DAT_00801f5a + 4;
+      +          j1939_dm1_tx_message.header.data_length = j1939_dm1_tx_message.header.data_length + 4;
+      -    uVar2 = cm550_sendCanMessage((j1939_header_t *)&j1939_dm1_tx_message);
+      +    uVar2 = cm550_sendCanMessage(&j1939_dm1_tx_message);
+  0x000323be cm550_engineCoolantPGN_65226_Builder: 9 lines
+      -  j1939_dm1_tx_message = CONCAT13((char)((_DAT_00803f56 & 7) << 2),0xfeca00);
+      -  _DAT_00801f5c = &DAT_00801f64;
+      -  _DAT_00801f60 = &j1939_dm1_transmit_status;
+      -  j1939_dm1_tx_message = CONCAT31(j1939_dm1_tx_message,j1939_engine_node_source_address);
+      +  j1939_dm1_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f56 & 7) << 2),0xfeca00);
+      +  j1939_dm1_tx_message.data_pointer = &DAT_00801f64;
+      +  j1939_dm1_tx_message.status_pointer = &j1939_dm1_transmit_status;
+      +  j1939_dm1_tx_message.header.can_id =
+      +       CONCAT31(j1939_dm1_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x0003241c cm550_previousDtcListBuilder: 8 lines
+      -    _dm2_message_byte_count = 2;
+      +    j1939_dm2_tx_message.header.data_length = 2;
+      -      _dm2_message_byte_count = _dm2_message_byte_count + 4;
+      +      j1939_dm2_tx_message.header.data_length = j1939_dm2_tx_message.header.data_length + 4;
+      -          _dm2_message_byte_count = _dm2_message_byte_count + 4;
+      +          j1939_dm2_tx_message.header.data_length = j1939_dm2_tx_message.header.data_length + 4;
+      -    uVar2 = cm550_sendCanMessage((j1939_header_t *)&j1939_dm2_tx_message);
+      +    uVar2 = cm550_sendCanMessage(&j1939_dm2_tx_message);
+  0x0003252c cm550_diagnosticDM2PGN_65227_Builder: 9 lines
+      -  j1939_dm2_tx_message = CONCAT13((char)((_DAT_00803f58 & 7) << 2),0xfecb00);
+      -  _DAT_00802662 = &DAT_0080266a;
+      -  _DAT_00802666 = &j1939_dm2_transmit_status;
+      -  j1939_dm2_tx_message = CONCAT31(j1939_dm2_tx_message,j1939_engine_node_source_address);
+      +  j1939_dm2_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f58 & 7) << 2),0xfecb00);
+      +  j1939_dm2_tx_message.data_pointer = &DAT_0080266a;
+      +  j1939_dm2_tx_message.status_pointer = &j1939_dm2_transmit_status;
+      +  j1939_dm2_tx_message.header.can_id =
+      +       CONCAT31(j1939_dm2_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x0003258a evaluateTemperatureDiagnosticState: 9 lines
+      -    _DAT_00802d66 = 0;
+      +    j1939_pgn65229_tx_message.header.data_length = 0;
+      -      _DAT_00802d66 = 8;
+      +      j1939_pgn65229_tx_message.header.data_length = 8;
+      -          _DAT_00802d66 = _DAT_00802d66 + 0x49;
+      +          j1939_pgn65229_tx_message.header.data_length =
+      +               j1939_pgn65229_tx_message.header.data_length + 0x49;
+      -    uVar3 = cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65229_tx_message);
+      +    uVar3 = cm550_sendCanMessage(&j1939_pgn65229_tx_message);
+  0x000329d2 cm550_diagnosticDM4PGN_65229_Builder: 9 lines
+      -  j1939_pgn65229_tx_message = CONCAT13((char)((_DAT_00803f5a & 7) << 2),0xfecd00);
+      -  _DAT_00802d68 = &DAT_00802d70;
+      -  _DAT_00802d6c = &j1939_pgn65229_transmit_status;
+      -  j1939_pgn65229_tx_message = CONCAT31(j1939_pgn65229_tx_message,j1939_engine_node_source_address);
+      +  j1939_pgn65229_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f5a & 7) << 2),0xfecd00);
+      +  j1939_pgn65229_tx_message.data_pointer = &DAT_00802d70;
+      +  j1939_pgn65229_tx_message.status_pointer = &j1939_pgn65229_transmit_status;
+      +  j1939_pgn65229_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65229_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x00032a42 vp44_diagnosticDM5DataBuilder: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65230_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn65230_tx_message);
+  0x00032ae2 cm550_diagnosticDM5PGN_65230_Builder: 11 lines
+      -  j1939_pgn65230_tx_message = CONCAT13((char)((_DAT_00803f5c & 7) << 2),0xfece00);
+      -  _oil_pressure_table_3_ptr = 8;
+      -  _DAT_00803450 = &DAT_00803458;
+      -  _DAT_00803454 = &j1939_pgn65230_transmit_status;
+      -  j1939_pgn65230_tx_message = CONCAT31(j1939_pgn65230_tx_message,j1939_engine_node_source_address);
+      +  j1939_pgn65230_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f5c & 7) << 2),0xfece00);
+      +  j1939_pgn65230_tx_message.header.data_length = 8;
+      +  j1939_pgn65230_tx_message.data_pointer = &DAT_00803458;
+      +  j1939_pgn65230_tx_message.status_pointer = &j1939_pgn65230_transmit_status;
+      +  j1939_pgn65230_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65230_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x00032b38 vp44_diagnosticByteResponseSender: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65232_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn65232_tx_message);
+  0x00032b64 vp44_diagnosticDM8PGN_65232_Builder: 11 lines
+      -  j1939_pgn65232_tx_message = CONCAT13((char)((_DAT_00803f5e & 7) << 2),0xfed000);
+      -  _DAT_00803466 = 8;
+      -  _base_timing_fuel_value_input = &j1939_dm8_test_identifier;
+      -  _DAT_0080346c = &j1939_pgn65232_transmit_status;
+      -  j1939_pgn65232_tx_message = CONCAT31(j1939_pgn65232_tx_message,j1939_engine_node_source_address);
+      +  j1939_pgn65232_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f5e & 7) << 2),0xfed000);
+      +  j1939_pgn65232_tx_message.header.data_length = 8;
+      +  j1939_pgn65232_tx_message.data_pointer = &j1939_dm8_test_identifier;
+      +  j1939_pgn65232_tx_message.status_pointer = &j1939_pgn65232_transmit_status;
+      +  j1939_pgn65232_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65232_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x00032c22 vp44_FUN_00032c22: 12 lines
+      -  j1939_pgn61441_tx_message = CONCAT13((char)((_DAT_00803f90 & 7) << 2),0xf00100);
+      -  j1939_pgn61441_tx_message =
+      -       CONCAT31(j1939_pgn61441_tx_message,j1939_engine_node_source_address);
+      -  _lift_pump_table_lookup_arg_3486 = 5;
+      +  j1939_pgn61441_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f90 & 7) << 2),0xf00100);
+      +  j1939_pgn61441_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn61441_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+      +  j1939_pgn61441_tx_message.header.data_length = 5;
+      -  _DAT_00803488 = &vp44_lift_pump_table_2_size;
+      -  _vp44_can_msg_timeout_counter = &j1939_pgn61441_transmit_status;
+      +  j1939_pgn61441_tx_message.data_pointer = &vp44_lift_pump_table_2_size;
+      +  j1939_pgn61441_tx_message.status_pointer = &j1939_pgn61441_transmit_status;
+  0x00032c76 sendPgn61444ElectronicEngineController1Message: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn61444_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn61444_tx_message);
+  0x00032c7a vp44Message300FaultFlagProcessor: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn61444_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn61444_tx_message);
+  0x00032e08 vp44Command0x100Builder: 12 lines
+      -  j1939_pgn61444_tx_message = CONCAT13((char)((_DAT_00803f62 & 7) << 2),0xf00400);
+      -  j1939_pgn61444_tx_message =
+      -       CONCAT31(j1939_pgn61444_tx_message,j1939_engine_node_source_address);
+      -  _DAT_0080349e = 5;
+      -  _vp44_fso_fault_active_flag = &vp44_torque_speed_control_status;
+      -  _derate_threshold_change_counter = &j1939_pgn61444_transmit_status;
+      +  j1939_pgn61444_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f62 & 7) << 2),0xf00400);
+      +  j1939_pgn61444_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn61444_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+      +  j1939_pgn61444_tx_message.header.data_length = 5;
+      +  j1939_pgn61444_tx_message.data_pointer = &vp44_torque_speed_control_status;
+      +  j1939_pgn61444_tx_message.status_pointer = &j1939_pgn61444_transmit_status;
+  0x00032e4c j1939HandlePgn61443Eec2: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn61443_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn61443_tx_message);
+  0x00033064 vp44_cumminsProprietaryDM_983_Builder: 11 lines
+      -  j1939_pgn61443_tx_message = CONCAT13((char)((_DAT_00803f64 & 7) << 2),0xf00300);
+      -  j1939_pgn61443_tx_message = CONCAT31(j1939_pgn61443_tx_message,j1939_engine_node_source_address);
+      -  _fso_fault_debounce_counter = 5;
+      -  _fso_high_cmd_fault_debounce_counter = &vp44_feedback_pulse_low_fault_counter;
+      -  _vp44_fso_range2_fault_counter = &j1939_pgn61443_transmit_status;
+      +  j1939_pgn61443_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f64 & 7) << 2),0xf00300);
+      +  j1939_pgn61443_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn61443_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+      +  j1939_pgn61443_tx_message.header.data_length = 5;
+      +  j1939_pgn61443_tx_message.data_pointer = &vp44_feedback_pulse_low_fault_counter;
+      +  j1939_pgn61443_tx_message.status_pointer = &j1939_pgn61443_transmit_status;
+  0x000330c4 vp44_configParamCanBuilder: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65247_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn65247_tx_message);
+  0x00033120 vp44_secondaryParamPGN_65247_Builder: 12 lines
+      -  j1939_pgn65247_tx_message = CONCAT13((char)((_DAT_00803f66 & 7) << 2),0xfedf00);
+      -  j1939_pgn65247_tx_message =
+      -       CONCAT31(j1939_pgn65247_tx_message,j1939_engine_node_source_address);
+      -  _vp44_fso_timing_fault_counter = 4;
+      -  _vp44_fso_bit0_fault_counter = &fso_range_fault_high_counter;
+      -  _vp44_fso_bit15_fault_counter = &j1939_pgn65247_transmit_status;
+      +  j1939_pgn65247_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f66 & 7) << 2),0xfedf00);
+      +  j1939_pgn65247_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65247_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+      +  j1939_pgn65247_tx_message.header.data_length = 4;
+      +  j1939_pgn65247_tx_message.data_pointer = &fso_range_fault_high_counter;
+      +  j1939_pgn65247_tx_message.status_pointer = &j1939_pgn65247_transmit_status;
+  0x00033164 vp44_FUN_00033164: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65263_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn65263_tx_message);
+  0x000331ae vp44_engineFluidLevelPGN_65263_Builder: 12 lines
+      -  j1939_pgn65263_tx_message = CONCAT13((char)((_DAT_00803f6a & 7) << 2),0xfeef00);
+      -  _vp44_fso_multibit_fault_accumulator = 8;
+      -  _vp44_fso_multibit_fault_state = &vp44_fso_rpm_fault_counter;
+      -  _vp44_fso_stuck_high_recovery_counter = 0x8034f0;
+      -  j1939_pgn65263_tx_message =
+      -       CONCAT31(j1939_pgn65263_tx_message,j1939_engine_node_source_address);
+      +  j1939_pgn65263_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f6a & 7) << 2),0xfeef00);
+      +  j1939_pgn65263_tx_message.header.data_length = 8;
+      +  j1939_pgn65263_tx_message.data_pointer = &vp44_fso_rpm_fault_counter;
+      +  j1939_pgn65263_tx_message.status_pointer = &j1939_pgn65263_transmit_status;
+      +  j1939_pgn65263_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65263_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x0003366a cm550_FUN_0003366a: 2 lines
+      -    bVar1 = cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65251_tx_message);
+      +    bVar1 = cm550_sendCanMessage(&j1939_pgn65251_tx_message);
+  0x00033692 initializePgn65251EngineConfiguration1Buffer: 11 lines
+      -  j1939_pgn65251_tx_message = CONCAT13((char)((_DAT_00803f68 & 7) << 2),0xfee300);
+      -  j1939_pgn65251_tx_message = CONCAT31(j1939_pgn65251_tx_message,j1939_engine_node_source_address);
+      -  _DAT_0080352e = 0x1c;
+      -  _DAT_00803530 = &DAT_008034f2;
+      -  _DAT_00803534 = &j1939_pgn65251_transmit_status;
+      +  j1939_pgn65251_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f68 & 7) << 2),0xfee300);
+      +  j1939_pgn65251_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65251_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+      +  j1939_pgn65251_tx_message.header.data_length = 0x1c;
+      +  j1939_pgn65251_tx_message.data_pointer = &DAT_008034f2;
+      +  j1939_pgn65251_tx_message.status_pointer = &j1939_pgn65251_transmit_status;
+  0x00033716 cm550_FUN_00033716: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65253_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn65253_tx_message);
+  0x00033754 cm550_FUN_00033754: 11 lines
+      -  j1939_pgn65253_tx_message = CONCAT13((char)((_DAT_00803f8c & 7) << 2),0xfee500);
+      -  _DAT_0080353e = 8;
+      -  _DAT_00803540 = &DAT_00803548;
+      -  _DAT_00803544 = 0x803550;
+      -  j1939_pgn65253_tx_message = CONCAT31(j1939_pgn65253_tx_message,j1939_engine_node_source_address);
+      +  j1939_pgn65253_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f8c & 7) << 2),0xfee500);
+      +  j1939_pgn65253_tx_message.header.data_length = 8;
+      +  j1939_pgn65253_tx_message.data_pointer = &DAT_00803548;
+      +  j1939_pgn65253_tx_message.status_pointer = &j1939_pgn65253_transmit_status;
+      +  j1939_pgn65253_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65253_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x000337c4 cm550_FUN_000337c4: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65262_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn65262_tx_message);
+  0x00033880 cm550_engineTemperaturePGN_65262_Builder: 11 lines
+      -  j1939_pgn65262_tx_message = CONCAT13((char)((_DAT_00803f70 & 7) << 2),0xfeee00);
+      -  _DAT_00803556 = 8;
+      -  _DAT_00803558 = &DAT_00803560;
+      -  _DAT_0080355c = 0x803568;
+      -  j1939_pgn65262_tx_message = CONCAT31(j1939_pgn65262_tx_message,j1939_engine_node_source_address);
+      +  j1939_pgn65262_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f70 & 7) << 2),0xfeee00);
+      +  j1939_pgn65262_tx_message.header.data_length = 8;
+      +  j1939_pgn65262_tx_message.data_pointer = &DAT_00803560;
+      +  j1939_pgn65262_tx_message.status_pointer = &j1939_pgn65262_transmit_status;
+      +  j1939_pgn65262_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65262_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x000338ea cm550_dutyCycleMonitorAltIsrHandler: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn61440_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn61440_tx_message);
+  0x000339b0 cm550_cumminsProprietaryTSC_PGN_15728640_Builder: 11 lines
+      -  j1939_pgn61440_tx_message = CONCAT13((char)((_DAT_00803f6e & 7) << 2),0xf00000);
+      -  j1939_pgn61440_tx_message = CONCAT31(j1939_pgn61440_tx_message,j1939_retarder_node_source_address);
+      +  j1939_pgn61440_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f6e & 7) << 2),0xf00000);
+      +  j1939_pgn61440_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn61440_tx_message.header.can_id._0_3_,j1939_retarder_node_source_address);
+      -  _DAT_00803576 = 2;
+      -  _DAT_00803578 = &retarder_tsc_status_byte;
+      -  _DAT_0080357c = 0x803580;
+      +  j1939_pgn61440_tx_message.header.data_length = 2;
+      +  j1939_pgn61440_tx_message.data_pointer = &retarder_tsc_status_byte;
+      +  j1939_pgn61440_tx_message.status_pointer = &j1939_pgn61440_transmit_status;
+  0x00033a1e cm550_FUN_00033a1e: 11 lines
+      -  j1939_pgn65213_tx_message = CONCAT13((char)((_DAT_00803f92 & 7) << 2),0xfebd00);
+      -  j1939_pgn65213_tx_message = CONCAT31(j1939_pgn65213_tx_message,j1939_engine_node_source_address);
+      -  _DAT_0080358e = 2;
+      -  _DAT_00803590 = 0x803582;
+      -  _DAT_00803594 = 0x803598;
+      +  j1939_pgn65213_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f92 & 7) << 2),0xfebd00);
+      +  j1939_pgn65213_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65213_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+      +  j1939_pgn65213_tx_message.header.data_length = 2;
+      +  j1939_pgn65213_tx_message.data_pointer = &DAT_00803582;
+      +  j1939_pgn65213_tx_message.status_pointer = &j1939_pgn65213_transmit_status;
+  0x00033a62 cm550_FUN_00033a62: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65257_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn65257_tx_message);
+  0x00033aea cm550_retarderConfigPGN_65249_Builder: 11 lines
+      -  j1939_pgn65257_tx_message = CONCAT13((char)((_DAT_00803f72 & 7) << 2),0xfee900);
+      -  _DAT_0080359e = 8;
+      -  _DAT_008035a0 = &DAT_008035a8;
+      -  _DAT_008035a4 = 0x8035b0;
+      -  j1939_pgn65257_tx_message = CONCAT31(j1939_pgn65257_tx_message,j1939_engine_node_source_address);
+      +  j1939_pgn65257_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f72 & 7) << 2),0xfee900);
+      +  j1939_pgn65257_tx_message.header.data_length = 8;
+      +  j1939_pgn65257_tx_message.data_pointer = &DAT_008035a8;
+      +  j1939_pgn65257_tx_message.status_pointer = &j1939_pgn65257_transmit_status;
+      +  j1939_pgn65257_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65257_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x00033b40 cm550_fuelEconomyDataBuilder: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65266_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn65266_tx_message);
+  0x00033c28 cm550_fuelEconomyPGN_65266_Builder: 11 lines
+      -  j1939_pgn65266_tx_message = CONCAT13((char)((_DAT_00803f74 & 7) << 2),0xfef200);
+      -  j1939_pgn65266_tx_message = CONCAT31(j1939_pgn65266_tx_message,j1939_engine_node_source_address);
+      -  _DAT_008035c0 = 6;
+      -  _DAT_008035c2 = &DAT_008035b4;
+      -  _DAT_008035c6 = 0x8035ca;
+      +  j1939_pgn65266_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f74 & 7) << 2),0xfef200);
+      +  j1939_pgn65266_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65266_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+      +  j1939_pgn65266_tx_message.header.data_length = 6;
+      +  j1939_pgn65266_tx_message.data_pointer = &DAT_008035b4;
+      +  j1939_pgn65266_tx_message.status_pointer = &j1939_pgn65266_transmit_status;
+  0x00033c6c cm550_ioControlDataBuilder: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65244_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn65244_tx_message);
+  0x00033ce2 vp44_ioControlPGN_65244_Builder: 11 lines
+      -  j1939_pgn65244_tx_message = CONCAT13((char)((_DAT_00803f76 & 7) << 2),0xfedc00);
+      -  _vp44_status_flags_1 = 8;
+      -  _fuel_demand_control_flags = &DAT_008035de;
+      -  _engine_operating_state_flags = 0x8035e6;
+      -  j1939_pgn65244_tx_message = CONCAT31(j1939_pgn65244_tx_message,j1939_engine_node_source_address);
+      +  j1939_pgn65244_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f76 & 7) << 2),0xfedc00);
+      +  j1939_pgn65244_tx_message.header.data_length = 8;
+      +  j1939_pgn65244_tx_message.data_pointer = &DAT_008035de;
+      +  j1939_pgn65244_tx_message.status_pointer = &j1939_pgn65244_transmit_status;
+      +  j1939_pgn65244_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65244_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x00033dfa vp44_engineHoursPGN_65252_Builder: 11 lines
+      -  j1939_pgn65252_tx_message = CONCAT13((char)((_DAT_00803f78 & 7) << 2),0xfee400);
+      -  _vp44_status_flags_2 = 8;
+      -  _DAT_008035ee = &DAT_008035f6;
+      -  _DAT_008035f2 = 0x8035fe;
+      -  j1939_pgn65252_tx_message = CONCAT31(j1939_pgn65252_tx_message,j1939_engine_node_source_address);
+      +  j1939_pgn65252_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f78 & 7) << 2),0xfee400);
+      +  j1939_pgn65252_tx_message.header.data_length = 8;
+      +  j1939_pgn65252_tx_message.data_pointer = &DAT_008035f6;
+      +  j1939_pgn65252_tx_message.status_pointer = &j1939_pgn65252_transmit_status;
+      +  j1939_pgn65252_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65252_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x00033e58 cm550_FUN_00033e58: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65270_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn65270_tx_message);
+  0x00033eee cm550_intakeManifoldPGN_65526_Builder: 11 lines
+      -  j1939_pgn65270_tx_message = CONCAT13((char)((_DAT_00803f7a & 7) << 2),0xfef600);
+      -  _DAT_00803604 = 8;
+      -  _DAT_00803606 = &DAT_0080360e;
+      -  _DAT_0080360a = 0x803616;
+      -  j1939_pgn65270_tx_message = CONCAT31(j1939_pgn65270_tx_message,j1939_engine_node_source_address);
+      +  j1939_pgn65270_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f7a & 7) << 2),0xfef600);
+      +  j1939_pgn65270_tx_message.header.data_length = 8;
+      +  j1939_pgn65270_tx_message.data_pointer = &DAT_0080360e;
+      +  j1939_pgn65270_tx_message.status_pointer = &j1939_pgn65270_transmit_status;
+      +  j1939_pgn65270_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65270_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x00033f5a cm550_FUN_00033f5a: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65264_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn65264_tx_message);
+  0x0003401a cm550_cruiseControlPGN_65264_Builder: 12 lines
+      -  j1939_pgn65264_tx_message = CONCAT13((char)((_DAT_00803f7e & 7) << 2),0xfef000);
+      -  _DAT_0080361c = 8;
+      -  _DAT_0080361e = &DAT_00803626;
+      -  _DAT_00803622 = 0x80362e;
+      -  j1939_pgn65264_tx_message =
+      -       CONCAT31(j1939_pgn65264_tx_message,j1939_engine_node_source_address);
+      +  j1939_pgn65264_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f7e & 7) << 2),0xfef000);
+      +  j1939_pgn65264_tx_message.header.data_length = 8;
+      +  j1939_pgn65264_tx_message.data_pointer = &DAT_00803626;
+      +  j1939_pgn65264_tx_message.status_pointer = &j1939_pgn65264_transmit_status;
+      +  j1939_pgn65264_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65264_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x0003407a vp44CanMessage100ResponseBuilder: 2 lines
+      -    uVar1 = cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65249_tx_message);
+      +    uVar1 = cm550_sendCanMessage(&j1939_pgn65249_tx_message);
+  0x000341e6 cm550_FUN_000341e6: 11 lines
+      -  j1939_pgn65249_tx_message = CONCAT13((char)((_DAT_00803f80 & 7) << 2),0xfee100);
+      -  j1939_pgn65249_tx_message = CONCAT31(j1939_pgn65249_tx_message,j1939_retarder_node_source_address);
+      -  _DAT_00803648 = 0x13;
+      -  _DAT_0080364a = &DAT_00803630;
+      -  _DAT_0080364e = &j1939_pgn65249_transmit_status;
+      +  j1939_pgn65249_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f80 & 7) << 2),0xfee100);
+      +  j1939_pgn65249_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65249_tx_message.header.can_id._0_3_,j1939_retarder_node_source_address);
+      +  j1939_pgn65249_tx_message.header.data_length = 0x13;
+      +  j1939_pgn65249_tx_message.data_pointer = &DAT_00803630;
+      +  j1939_pgn65249_tx_message.status_pointer = &j1939_pgn65249_transmit_status;
+  0x00034232 cm550_FUN_00034232: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65248_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn65248_tx_message);
+  0x0003429a cm550_vehicleDistancePGN_65248_Builder: 11 lines
+      -  j1939_pgn65248_tx_message = CONCAT13((char)((_DAT_00803f82 & 7) << 2),0xfee000);
+      -  _DAT_00803658 = 8;
+      -  _DAT_0080365a = &DAT_00803662;
+      -  _DAT_0080365e = 0x80366a;
+      -  j1939_pgn65248_tx_message = CONCAT31(j1939_pgn65248_tx_message,j1939_engine_node_source_address);
+      +  j1939_pgn65248_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f82 & 7) << 2),0xfee000);
+      +  j1939_pgn65248_tx_message.header.data_length = 8;
+      +  j1939_pgn65248_tx_message.data_pointer = &DAT_00803662;
+      +  j1939_pgn65248_tx_message.status_pointer = &j1939_pgn65248_transmit_status;
+      +  j1939_pgn65248_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65248_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x000342f0 cm550_retarderDataBuilder: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65271_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn65271_tx_message);
+  0x00034334 cm550_electronicBrakePGN_65527_Builder: 11 lines
+      -  j1939_pgn65271_tx_message = CONCAT13((char)((_DAT_00803f84 & 7) << 2),0xfef700);
+      -  _DAT_00803670 = 8;
+      -  _DAT_00803672 = &eeprom_calibration_write_state;
+      -  _DAT_00803676 = &j1939_pgn65271_transmit_status;
+      -  j1939_pgn65271_tx_message = CONCAT31(j1939_pgn65271_tx_message,j1939_engine_node_source_address);
+      +  j1939_pgn65271_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f84 & 7) << 2),0xfef700);
+      +  j1939_pgn65271_tx_message.header.data_length = 8;
+      +  j1939_pgn65271_tx_message.data_pointer = &eeprom_calibration_write_state;
+      +  j1939_pgn65271_tx_message.status_pointer = &j1939_pgn65271_transmit_status;
+      +  j1939_pgn65271_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65271_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x00034394 cm550_FUN_00034394: 2 lines
+      -  cm550_sendCanMessage((j1939_header_t *)&j1939_pgn65255_tx_message);
+      +  cm550_sendCanMessage(&j1939_pgn65255_tx_message);
+  0x000343d2 vp44_vehicleHoursPGN_65255_Builder: 12 lines
+      -  j1939_pgn65255_tx_message = CONCAT13((char)((_DAT_00803f86 & 7) << 2),0xfee700);
+      -  _vp44_comm_test_sensor_value = 8;
+      -  _redundant_sensor_param_1 = &protection_flag_source_2;
+      -  _redundant_sensor_param_3 = &j1939_pgn65255_transmit_status;
+      -  j1939_pgn65255_tx_message =
+      -       CONCAT31(j1939_pgn65255_tx_message,j1939_engine_node_source_address);
+      +  j1939_pgn65255_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f86 & 7) << 2),0xfee700);
+      +  j1939_pgn65255_tx_message.header.data_length = 8;
+      +  j1939_pgn65255_tx_message.data_pointer = &protection_flag_source_2;
+      +  j1939_pgn65255_tx_message.status_pointer = &j1939_pgn65255_transmit_status;
+      +  j1939_pgn65255_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65255_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x00034440 cm550_FUN_00034440: 11 lines
+      -  j1939_pgn65260_tx_message = CONCAT13((char)((_DAT_00803f8e & 7) << 2),0xfeec00);
+      -  _DAT_008036a0 = 0x14;
+      -  _oil_pressure_rpm_limit_max = 0x803e7f;
+      -  _DAT_008036a6 = 0x8036aa;
+      -  j1939_pgn65260_tx_message = CONCAT31(j1939_pgn65260_tx_message,j1939_engine_node_source_address);
+      +  j1939_pgn65260_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f8e & 7) << 2),0xfeec00);
+      +  j1939_pgn65260_tx_message.header.data_length = 0x14;
+      +  j1939_pgn65260_tx_message.data_pointer = &DAT_00803e7f;
+      +  j1939_pgn65260_tx_message.status_pointer = &j1939_pgn65260_transmit_status;
+      +  j1939_pgn65260_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65260_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+  0x000344ce vp44_FUN_000344ce: 11 lines
+      -  j1939_pgn65279_tx_message = CONCAT13((char)((_DAT_00803f94 & 7) << 2),0xfeff00);
+      -  j1939_pgn65279_tx_message = CONCAT31(j1939_pgn65279_tx_message,j1939_engine_node_source_address);
+      -  _DAT_008036b8 = 1;
+      -  _vp44_comm_fault_monitor_state = &DAT_008036ac;
+      -  _DAT_008036be = 0x8036c2;
+      +  j1939_pgn65279_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f94 & 7) << 2),0xfeff00);
+      +  j1939_pgn65279_tx_message.header.can_id =
+      +       CONCAT31(j1939_pgn65279_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
+      +  j1939_pgn65279_tx_message.header.data_length = 1;
+      +  j1939_pgn65279_tx_message.data_pointer = &DAT_008036ac;
+      +  j1939_pgn65279_tx_message.status_pointer = &j1939_pgn65279_transmit_status;
+  0x00034512 cm550_FUN_00034512: 2 lines
+      -  if (engine_state != 1) {
+      +  if (engine_state != ENGINE_STATE_STOPPED) {

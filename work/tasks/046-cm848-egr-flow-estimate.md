@@ -3950,6 +3950,58 @@ with the audit's proposals and verdicts (`audit_result_r87.json`, `audit_summary
   - `emptyStubFunction2` / `emptyStubFunction3` are shared names on empty stubs; nobody has checked their pairing
     (no CM550 caller in the `.cpp`).
 
+## Done, round 88 (2026-11-24, same PR): the filter library; 6 more twins; ENGINE_STATE; the shifted dumps
+
+Peer relays started and continued the round (10:19, 10:50, 11:20, 11:50). The scripts are in `session_folder/round88/`,
+with both audit workflows' proposals and verdicts (`audit_result_r88.json`, `audit2_result_r88.json`).
+- **Stage A (ecb02353), the filter library (round 87's verified fifth group):** the shared name
+  `exponentialMovingAverage` paired CM550's signed filter (0x34e9a) with CM848's unsigned one (0x56594); the two
+  pairs use different formulations, so all four are prefixed: `cm550_signedFirstOrderFilter`,
+  `cm550_exponentialMovingAverage` (was `cm550_coreTableInterpolation`), `cm550_secondOrderFilter`,
+  `cm550_secondOrderFilterUnsigned` (0x34fe0, new) and `cm848_exponentialMovingAverage`. CM550 gains
+  `ema_filter_state_t` / `second_order_filter_state_t`, 38 filter records (13 filters and the 25 A/D channel records)
+  and 40 coefficient words (37 named `<record>_filter_coefficient`); two local rows type the A/D loops' record pointer
+  `sensor_debounce_state_t *`.
+  - **Proof:** CM550 verify DETERMINISTIC; 1 function added (0x34fe0), 0 removed; the 38 changed functions are the
+    filters, the A/D loops and the record users; caller artifacts in_ 8 -> 4, CONCAT 10 -> 6; no existing local row
+    moved. CM848 label-only (22 lines re-wrapped). Headers 0 errors; _cal HARD 0.
+- **Stage C (c964a479), clip-core:** `ECUReader::readMemoryService4ALarge` skipped a failed 128-byte chunk without
+  padding (and could loop on an empty reply), which is why `cm848_ram.bin` misses 0x40c200-0x40c27f and CM550's
+  extended RAM dump reads at address - 0x80. The new `readInChunks` (clip/ChunkedRead.h) retries, pads with 0xFF,
+  records gaps (`<dump>.gaps.txt`) and stops after 5 failed chunks in a row; 8 unit tests (clip-core-tests / ctest),
+  9 of whose checks fail against the old skip behaviour.
+- **Stage D (46b9036e), the loaders:** `ScriptUtils.imageFromDumpWithGaps` (5 JUnit tests; 109 in all) puts the two
+  shifted dumps' bytes at their addresses: CM848 RAM 0x3FA000-0x43FFFF with the chunk at 0x40c200 left 0, CM550
+  EXT_RAM 0x8091C2-0x80FFFF with the file's bytes from offset 0x80 at 0x8092C2. Both .cpp outputs stayed
+  byte-identical (the decompilations do not read these RAM bytes).
+- **Stage B (abe06453), the misname audit (4 investigators, 4 skeptics; 179 changes):** 6 new twins
+  (`registerJ1939DiagnosticHandlers`, `registerJ1939DiagnosticService`, `commandEngineShutdown`,
+  `inhibitKeyOffShutdown`, `initializeEngineState`, `handleJ1939CanTransmitInterrupt`); the shared
+  `commitEepromMirrorToEeprom` split into counterparts; CM550's power-down bookkeeping, engine state machine
+  (`cm550_updateEngineState`, an `ENGINE_STATE` enum), RAM refresh and overspeed log; 37 J1939 transmit descriptors
+  as `j1939_tx_msg_t` (CM848's type; `j1939_header_t` became `j1939_msg_hdr_t`); the J1939 service table; CM848's
+  register save / restore helpers (two were named as table lookups). Two CM550 stub rows (rts tails of other
+  functions) moved to deleted_functions.csv. `clearWorkingRam`'s locals in both twins.
+  - **Proof:** CM550 verify DETERMINISTIC; 2 functions removed on purpose, 0 added; the non-label changes are the
+    struct fields, the ENGINE_STATE members, removed casts and the CAN ID source-address CONCAT31 (as CM848 renders
+    it); no existing local row moved. CM848 label-only apart from `clearWorkingRam`. Headers 0 errors; _cal HARD 0.
+- **firmware/CLAUDE.md:** stage A refreshed three lines to `cm848_exponentialMovingAverage`; stage C added the cause of
+  the CM848 RAM dump gap; stage D added the loader lines and changed the test count to 109 (full lines in the commits).
+- **Leads (round 89):**
+  - The second audit (`audit2_result_r88.json`, verified, not applied): the filter records' users and initializers
+    (twins `calculateFilteredEngineAcceleration`, `initializeEngineAccelerationFilters`,
+    `smoothPowerTakeOffReferenceEngineSpeed`, `initializePowerTakeOffGovernorFiltersAndGains`,
+    `initializePowerTakeOffReferenceFilter`, `presetPowerTakeOffSmoothedReferenceEngineSpeed`,
+    `initializeFaultDerateEngineSpeedLimit`, `initializePedalFaultModeEngineSpeedFilter`,
+    `presetPedalFaultModeFuelDemand`; CM550 `cm550_runLowSpeedGovernor`, `cm550_runAllSpeedGovernor`,
+    `cm550_calculateEngineSpeed`, `mc68k_processAnalogSensorChannels` ...) and the 24-byte A/D channel config record
+    (`sensor_config_t`, 25 instances, 4 rows with no user removed).
+  - Follow-ups the skeptics listed: CM848's DM8 payload words (0x3fad6f / 0x3fad72 / 0x3fad74) take SPN names; CM550
+    enums DIAG_SECURED_SUBFUNC / DIAG_SERVICE_3_CMD 0x42 / 0x52 / 0x54 are wrong for J1708 commands 66 / 82 / 84; the
+    legacy descriptor rows at 0x801ab6-0x801b0d; `cm550_peakTorqueFuelCorrection` (0x17ca6, sets
+    crank_reentry_speed); `cm550_j1939TorqueControlMode*` (0x1ffd6 / 0x200a4 / 0x200b4) are services 4 / 5 (disable /
+    enable broadcast); `cm848_mathMultiplyDivide32` runs on into the routine at 0x573dc; 0x80ddd3 has no reader.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

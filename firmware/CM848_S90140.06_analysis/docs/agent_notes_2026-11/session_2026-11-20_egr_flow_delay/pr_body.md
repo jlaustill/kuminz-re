@@ -8,7 +8,7 @@ fresh air flow records; the e2m never spells it out, so no name guesses an expan
 - **Round 2:** at the user's request the rest of the family is renamed too, on this PR (stages 3 / 4). The scope rule:
   a symbol is in if its e2m record is `CHP_` / `C_CHP_`, or if it is an input that a family function would otherwise
   misname.
-- **Beyond CM848 (rounds 72-87):** the J1939 memory write service and the development mode code are shared:
+- **Beyond CM848 (rounds 72-88):** the J1939 memory write service and the development mode code are shared:
   eleven CM550 functions are CM848 twins and share their names. Round 74 also dismantles a misapplied CM550
   struct, round 75 types CM550's InSite parameter schedule and names its J1708 SCI, and round 76 names CM550's
   MC68336 registers, so CM550's CSVs, the root README and `firmware/feature_comparison.csv` change too.
@@ -948,6 +948,18 @@ state enum, the flag bytes.**
   offset is a decimal byte offset); `cm550_emptyStubFunction4` (its old name was CM848 0x26f78's); the CM550
   restart routine's plate.
 
+**Round 88.**
+- **Stage A (ecb02353):** the filter library. `exponentialMovingAverage` paired CM550's signed filter with
+  CM848's unsigned one; all four filters take prefixed names. CM550's `ema_filter_state_t` and 38 filter records,
+  37 coefficient words named after CM848's convention.
+- **Stage C (c964a479):** clip-core keeps chunked dumps aligned (`readInChunks`: retry, pad, list the gaps; unit
+  tests). The old reader skipped a failed chunk, which shifted CM848's RAM dump and CM550's extended RAM dump.
+- **Stage D (46b9036e):** the Ghidra loaders put those two dumps' bytes at their addresses
+  (`ScriptUtils.imageFromDumpWithGaps`).
+- **Stage B (abe06453):** a second audit workflow: 6 more twins, the split `commitEepromMirrorToEeprom`, CM550's
+  `ENGINE_STATE` enum, 37 J1939 transmit descriptors as `j1939_tx_msg_t`, the power-down bookkeeping, CM848's
+  register save / restore helpers.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -1039,6 +1051,10 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 88: B: CM550 verify DETERMINISTIC (2 rts-tail functions deleted on purpose; the non-label changes are struct fields, ENGINE_STATE members, removed casts and the CAN ID source-address CONCAT31); CM848 label-only apart from clearWorkingRam; no existing local row moved; headers 0 g++ errors; _cal HARD 0.
+- [x] Round 88: D: CM550 and CM848 verify DETERMINISTIC with the new RAM blocks; both .cpp byte-identical to stage A's; 109 JUnit tests pass.
+- [x] Round 88: C: clip-core builds; ctest 1/1 (8 tests; 9 checks fail against the old skip behaviour); kuminz-cli builds.
+- [x] Round 88: A: CM550 verify DETERMINISTIC (1 function added, 0 removed; caller artifacts down; no local row moved); CM848 label-only; headers 0 g++ errors; _cal HARD 0.
 - [x] Round 87: C: CM550 and CM848: verify DETERMINISTIC; label-only (0 differing lines; 0 functions removed, added or changed); the corrected plates render (fault 318 at 0x52796c, no "fault 462" left in the CM848 .cpp; the 0x1192a and 0x15f8c plates); no new build warning. Headers 0 g++ errors in both; _cal HARD 0 in both.
 - [x] Round 87: B: CM550: verify DETERMINISTIC; label-only (0 differing lines; 0 functions removed, added or changed); every new plate rendered; no new build warning (unmapped types 5429 -> 5428: the removed row). CM848: verify DETERMINISTIC; 0 functions removed or added; label-only except 3 functions - one local declaration moved in mpc555_areBootModeStrapPinsHigh, the marker compare prints 0xc0dac0da (was -0x3f253f26) now that working_ram_end_marker is a dword, and clearWorkingRam shows its one 4-byte store per step (was two word stores) with pointer casts; no new build warning. Headers 0 g++ errors in both; _cal HARD 0 in both (CM550 MISSING 28 -> 27: the removed row).
 - [x] Round 87: A: CM550: verify DETERMINISTIC; 0 functions removed or added; label-only except 5 functions, whose only token changes come from the newly typed parameter block words (4 short -> word, 3 1U -> 1, 2 (byte *) casts); no new build warning (unmapped types 5436 -> 5429). CM848: verify DETERMINISTIC; label-only (0 differing lines with the rename map); no new build warning. Headers 0 g++ errors in both; _cal HARD 0 in both (CM550 MISSING 31 -> 28).

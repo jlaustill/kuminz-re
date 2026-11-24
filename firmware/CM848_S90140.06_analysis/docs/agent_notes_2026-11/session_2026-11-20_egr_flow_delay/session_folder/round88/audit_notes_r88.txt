@@ -1,0 +1,458 @@
+== [powerdown] CM550 function 0x000114d4 vp44_validateRedundantSensors -> cm550_loadParameterBlockAndUpdatePowerDownCounts [accept]
+  - Not refuted. My disassembly of 0x114d4-0x117ea matches each claim: clr.w 0x80dc70. If 0x55b2 and 0x75b2 both hold 0xa1a1: jsr 0x10e80 and clr.w 0x806548 (the RAM copy of flash 0x55b2; the loader copies 0x4000-0x55b3 to 0x804f96-0x806549). Otherwise the start / complete count tests pick the block, and when both blocks are complete the odd / even start-count sum picks it. Status bits 0x1000 / 0x800 are set in 0x806000 and 0x806040. 0x8057be is set or cleared. The completed / incomplete branches follow, then sequence <- 0x803fec + 0x803fea. Each write goes through jsr 0x16c3c and waits up to 5000 passes of 500 ticks (jsr 0x34bba). Each wait has andi.w #$f1ff,sr.
+  - Only caller: 0x2868a in mc68k_applicationMain (the only long 0x000114d4 in the ROM). It is followed by tst.w 0x803fe8 and tst.w 0x803fda. No 0xFFFxxx access and no inline watchdog kick. 26 other cm550_ functions use the same SR masking, so SR is not an mc68k_ trigger. The prefix cm550_ is right.
+  - Counterpart, not twin, confirmed. CM848 does this inline (cm848_applicationMain .cpp:58745-58813; raw bytes 0x545c8 lhz 0x3fdc8a, 0x546c0 lhz 0x645ba, cmpwi r31,5000 after each write). CM848 also sets power_off_without_ignition_off_error and high_idle_override_flag, and it clears both the detected and the registered fault bits. A D-form scan of both CM848 images finds no access to 1069 +0/+2/+6/+8/+A, only to +4 (0x548d4 and 0x539ec0), so CM848 has no flash block loader.
+  - Reason wording (the name is not affected): 0x806abc (fault_confirm_status_word_0) is inside 0x80654a-0x808acd, which copyCalibrationFromRomToRam fills before this function runs, and many functions index it as a word array. The 'confirmed (0x806abc bit 0x1000)' test is therefore probably against a calibration mask word, not a run-time confirm status. Do not copy 'confirmed' into the CSV comment as fact.
+  - Minor: the other block is a fallback only when both blocks are complete. When only one block is complete, only that block is tried.
+== [powerdown] CM550 function 0x00003abe mc68k_FUN_00003abe -> mc68k_restartBootRomWithoutReset [accept]
+  - Not refuted. ROM 0x0-0xb is 00810000 / 0000001e / 00003abe, and the header text starts at 0xc. In restartThroughBootRom, 0x11a42-0x11a54 is ori.w #$700,sr / movea.l #$811000,a0 / movea.l a0,a7 / movea.l $8,a2 / jsr (a2). On the cold path, 0x124 jsr 0x3a94(pc) writes 0xffd008=0x40 and 0xffd00e=0x80, calls jsr 0x395a, sets DDRE / PORTE bit 3 at 0x3aae / 0x3ab6, and falls through into 0x3abe.
+  - Body from 0x3abe verified: the QSPI stop (andi 0x7f / 0x7fff / 0x7fff / 0xfff0), the clears (QILR, SCCR1, PICR, PITR, TPU CIER at 0xfffe0a, QADC 0xfff200-0xfff210, CTM4 0xfff400-0xfff458), the set-up writes (BIUMCR 0x1601, CPCR 8, MCSM11SIC 4, FCSM12SIC 0x104, QSMCR 5, QILR 0x13, QIVR 0x50), then jsr 0x3c20 / 0x388a / 0x39a8. The kernel at 0x80339e (after jsr 0x3836) starts when the pin test returns non-zero or the EEPROM check returns 1, which is a signature other than 0x600d. Otherwise the program is selected by the 0x8000 signature (dump 0x98765432) through the long at 0x8062 = 0x1dbee, or else through the long at 0x20000. It writes MC68336 module registers, so mc68k_ is right.
+  - Only two longs in the ROM equal 0x3abe: at 0x8 and at 0x291fc. 0x291f4-0x2d063 is a byte-for-byte copy of 0x0-0x3c6f. A scan finds no PC-relative reference. The name parallels cm550_restartApplicationWithoutReset (0x28978).
+  - Counterpart, not twin, confirmed. CM848 jumps to mpc555_hardwareInitialization through the long at ROM 0x104 (= 0x2694). That function sets BR0-3 / OR0-3 / SIUMCR / MIOS, stops the TPU modules, does the flash2 identification, reads the EEPROM before the strap test and jumps through flash_operational_code_entry_pointer. The order and the program selection differ.
+  - Note: the code from 0x3abe also runs on every cold boot by fall-through. The name describes the entry's role, reached only through the ROM 0x8 pointer. While VBR = 0 in the boot block, 0x8 is also the bus-error vector slot, and that use is consistent with a restart.
+== [powerdown] CM550 global 0x00803fda eeprom_powerdown_status -> power_down_left_ecm_powered_flag_cal [accept]
+  - Not refuted. 64t6.e2m (and v64t6_s / 64c6 / 74t6 / 63t10r4) lists SDENER at 1069 +6. CM550's table entry at 0x356e4 = 010004ca gives 1069 -> 0x803fd4, so +6 = 0x803fda. That is the same SDENER mnemonic as CM848 1069 +4 = 0x3fdc80 (resolver).
+  - Absolute references: 0x2821a pea after clr.w -2(a6) (write 0) and 0x2845e pea after move.w #1,-2(a6) (write 1), each with a 1000-pass wait (move.w 0x803fda at 0x28270 / 0x284b4). Reader: 0x286c6 tst.w, which sets or clears 0x806000 bit 0x400 (and 0x806040). Every access is a word.
+  - The sequence has the same structure as cm848_runPowerDownSequence: write 0, clear the output (bit 3 of 0x80bcf8 / logical output 27), 40 passes of a key-on check, set the output again, 4 delays, a key check, write 1. Dump 0 in RAM and in EEPROM 0x4d0. In the mirror, so _cal.
+== [powerdown] CM550 global 0x00803fe2 DAT_00803fe2 -> power_cycle_sequence_number_cal [accept]
+  - Not refuted. SDRMIMSR is at 1069 +E in all CM550 e2m files, the same mnemonic as CM848 1069 +C = 0x3fdc88. References: 0x114d4 (compare with 0x803fe4 at 0x11626; write = 0x803fec + 0x803fea at 0x117a0-0x117ba), restartOnKeyOnDuringPowerDown (0x27b76-0x27b8c, after completed count +1, as CM848 0x539938 does), and cm550_savePowerDownDataToFlashBank (0x27e98-0x27ec2, source of the copy into 0x803fe4). All are word accesses. Dump RAM / EEPROM 0x4d8 = 10193 = 89 + 10104.
+== [powerdown] CM550 global 0x00803fe4 DAT_00803fe4 -> completed_power_down_sequence_number_cal [accept]
+  - Not refuted. SDRMIMCP is at 1069 +10, the same mnemonic as CM848 +E = 0x3fdc8a. cm550_savePowerDownDataToFlashBank pushes len 2, then pea 0x803fe2 (source), then pea 0x803fe4 (destination) at 0x27eb2-0x27ec2, after the flash block save, and waits up to 1000 passes. CM848 cm848_saveEepromForPowerDown does the same copy. 0x114d4 compares at 0x1162c. Only word accesses. Dump 10168.
+== [powerdown] CM550 global 0x00803fe6 DAT_00803fe6 -> consecutive_incomplete_power_down_count_cal [accept]
+  - Not refuted. SDDLCU is at 1069 +12, the same as CM848 +10 = 0x3fdc8c. It has only one user, 0x114d4: clr.w (a2) then write at 0x1170c-0x1171a (completed), +1 at 0x11640-0x11656 (incomplete), and cmp.w 0x808480 / bls at 0x116c2-0x116ce, then ori.w #$800 on 0x806000 / 0x806040. The CM848 branch structure and the limit < count test are the same. Word. Dump 23.
+== [powerdown] CM550 global 0x00803fea DAT_00803fea -> incomplete_power_down_count_cal [accept]
+  - Not refuted. CM550 table 0x356ec = 010004e0 gives 106A -> 0x803fea, and NRESETSE is at 106A +0 in both firmwares (CM848 0x3fdc90 = incomplete_power_down_count_cal). Uses: +1 in the incomplete branch of 0x114d4 (0x11680-0x11696), and add.w into the sequence number at 0x117a6 and in restartOnKeyOnDuringPowerDown at 0x27b7c. Word. Dump 89. The name follows the behaviour (as in CM848) rather than the e2m text 'non-power up resets'; the two agree.
+== [powerdown] CM550 global 0x00803fec vp44_reset_count -> completed_power_down_count_cal [accept]
+  - Not refuted. SSPURSCU is at 106A +2, the same as CM848 0x3fdc92. Writers: +1 in the completed branch of 0x114d4 (0x11744-0x1175a) and +1 in restartOnKeyOnDuringPowerDown (0x27b2c-0x27b44). Readers: the two sequence-number sums. No VP44 or reset code references it, so the current name is wrong. Word. Dump 10104.
+== [powerdown] CM550 global 0x00803fdc DAT_00803fdc -> eeprom_write_failure_flag_cal [accept]
+  - Medium confidence, accepted. The meaning rests on the e2m text (SDEEWRFU at 1069 +8, 'failure of one or more EEPROM cells to program'; CM848 EEPROM_Failed_To_Program, no row) and on CM550's own table placement. The neighbours verified by code (0x803fd6 / d8 / de / e0 / e2 / e4 / e6 / e8) confirm the one-word PDBLKSPT shift.
+  - The dumped 256 KB has no writer. The only absolute reference is the tst.w at 0x30a70, in the function cm550_FUN_00030a5e. That function is called first by mc68k_runPowerDownSequence (jsr at 0x27fb0), and it sets bits 0x2|0x80 of 0x80614e when bit 0x200 of 0x803c9a is set and this word is non-zero. A write through mirror base + 0x4d2, or from code above 0x40000 (not dumped), is not excluded.
+== [powerdown] CM550 global 0x00808480 number_of_consecutive_occurances_of_powerdown_data_lost_to_set_1_255 -> consecutive_incomplete_power_down_limit [accept]
+  - Not refuted. Table 0x364ec = 00808480 gives 122A, with SDDLERLM at +0 (CM848 0x645ba consecutive_incomplete_power_down_limit). It has one code use: cmp.w at 0x116c8 followed by bls, so the error sets when count > limit, as in CM848. The other match, at 0x364ec, is the table entry itself (data). It is in the ROM-copied calibration RAM (0x80654a-0x808acd), not the EEPROM mirror, so no _cal. Dump 0 is outside the e2m range 1-255; only observed, and the name does not depend on it.
+== [powerdown] CM550 global 0x00808482 enable_to_protects_parameter_block_data_at_powerdown_enabled_disabled -> parameter_block_protection_enable [accept]
+  - Not refuted. SDFHPNEA is at 122A +2 (CM848 Parameter_Block_Protection_Enable, 'ENABLE=preserve 1 block'). Its only reference is movea.l #$808482,a2 at 0x27cd8 in cm550_savePowerDownDataToFlashBank. After 3 failed attempts on the first block, the code sets flash_write_failure_flag_cal = 1, and tst.w (a2) / bne (0x27d50, 0x27e26) skips the save of the other block when the word is non-zero. A non-zero value therefore keeps the other block intact. The name says what is protected. Word. Calibration RAM, so no _cal. Dump 1.
+== [powerdown] CM550 global 0x00808484 flag_indicating_if_engine_should_be_ran_if_all_powerdown_da_true_false -> engine_run_with_all_power_down_data_lost_flag [accept]
+  - Not refuted. SSDXLTRN is at 122A +4 (CM848 All_Powerdown_Data_Lost_Run). Its only references are the two tst.w in 0x114d4 (0x115c0, 0x1160e). When it is 0 and bit 0x1000 is set in both 0x806000 and 0x806abc, the error bit stays set and 0x8057be = 1 (start inhibit). When it is non-zero, the bit clears after a block load and the start is never inhibited. Word. Calibration RAM, so no _cal. Dump 1.
+  - The name fits. 'allow_engine_run_with_all_power_down_data_lost_flag' would make it clearer that this is a permission, not an event. Same caveat as the 0x114d4 row: 0x806abc is a word in the ROM-copied calibration RAM, so the 'confirmed' half of the test is probably a calibration mask.
+== [powerdown] CM550 global 0x008001d2 hour_meter_tick_divider -> power_down_count_eeprom_write_value [accept]
+  - Not refuted. The only absolute references are movea.l #$8001d2 into a2 (0x114d8) and into a5 (0x114ea), both in 0x114d4. a5 is the source pointer of each 2-byte cm550_parameterCircularBufferWrite (that function queues mirror-relative EEPROM bytes). The wait loops use (a2) with move.w / clr.w / cmp.w.
+  - No displacement reach checked: the 0x8001c4 bases (a4 in 0x10568, a3 in 0x10822) use only (An). The 0x8001d4 base (a2 in cm550_initLoadTrendingSystem 0x124d2) uses only offsets +2 to +16. The 0x8001d4 table descriptor passed to cm550_tableLookup2D (0x35088) is never accessed at a negative offset. The .cpp references are all in 0x114d4.
+  - Dump 0x27d1 = 10193, the sequence number, which is the last value written. The name loosely covers the final sequence-number write as a 'count'; acceptable. Working RAM, so no _cal.
+== [services] CM550 function 0x00011b36 cm550_systemFunction8xMaximum -> registerJ1939DiagnosticHandlers [accept]
+
+== [services] CM848 function 0x00021a24 cm848_registerJ1939DiagnosticHandlers -> registerJ1939DiagnosticHandlers [accept]
+  - Stale references: the comments of CM848 function_renames.csv rows 852, 860 and 862 cite cm848_registerJ1939DiagnosticHandlers and need the new name.
+== [services] CM550 function 0x0002ee62 cm550_coreSystemFunction -> registerJ1939DiagnosticService [accept]
+  - Not a blocker: the frozen .cpp has no Function block for 0x2ee62. The rename applies by address. A function_definitions prototype is optional and would make the registrars' calls show (service, handler): byte return, a word service slot with its low byte stored, and a long handler.
+== [services] CM848 function 0x000220e4 cm848_j1939RegisterDiagnosticService -> registerJ1939DiagnosticService [accept]
+  - CM848 function_definitions.csv rows 218-219 use the old name, so the build will log name-mismatch warnings until they are updated.
+  - Comments that cite cm848_j1939RegisterDiagnosticService: enums.csv:494, structure_definitions.csv:1159, global_variables.csv:1435 and 1436, and function_renames.csv rows 1793, 1795, 1796, 1821-1826, 1844, 1848-1852 and 2261.
+== [services] CM550 function 0x000118fc cm550_activateHighRpmShutdownFlag -> commandEngineShutdown [accept]
+  - Follow-up outside this list: CM550 enums.csv:179 (DIAG_SECURED_SUBFUNC 0x42 HIGH_RPM_SHUTDOWN_ACTIVATE) and enums.csv:757 (DIAG_SERVICE_3_CMD 0x42 HIGH_RPM_SHUTDOWN) give J1708 command 66 the same wrong high-rpm reading. Command 66 jumps to 0x118fc (table 0x160b8 -> 0x160f6: jsr 0x118fc).
+== [services] CM848 function 0x000216e8 cm848_commandEngineShutdown -> commandEngineShutdown [accept]
+  - CM848 function_definitions.csv:234 uses the old name (name-mismatch warning). The comments at enums.csv:502 and global_variables.csv:4915 cite cm848_commandEngineShutdown.
+== [services] CM550 function 0x00011a68 cm550_FUN_00011a68 -> inhibitKeyOffShutdown [accept]
+  - The real same-record proof, which the investigator did not cite: CM550's parameter ID table entry for block 1002 (ROM 0x353ac = 00 80 de 2c) puts the block at 0x80de2c, so 0x80de2e is e2m 1002 +2 SSKYOD 'KEY SWITCH OVERRIDE FLAG' (Isbp600.e2m). CM848 0x40aa98 is the same record, 1002 +2 Key_Switch_Override.
+  - Follow-up outside this list: CM550 enums.csv:183 (DIAG_SECURED_SUBFUNC 0x52 SECURED_SHUTDOWN_REQUEST) and enums.csv:761 (DIAG_SERVICE_3_CMD 0x52 SECURED_SHUTDOWN) are wrong for J1708 command 82. That command jumps to 0x11a68, which inhibits the key-off shutdown and does not request one.
+== [services] CM848 function 0x00021904 cm848_inhibitKeyOffShutdown -> inhibitKeyOffShutdown [accept]
+  - CM848 function_definitions.csv:235 uses the old name (name-mismatch warning). The comments at enums.csv:512 and global_variables.csv:4992 cite cm848_inhibitKeyOffShutdown.
+  - The same-record proof is e2m 1002 +2 SSKYOD in both firmwares (CM550 block 1002 = 0x80de2c, CM848 1002 +2 = 0x40aa98).
+== [services] CM550 function 0x0001183e cm550_FUN_0001183e -> cm550_requestClearInactiveFaults [accept]
+
+== [services] CM550 function 0x00011a74 commitEepromMirrorToEeprom -> cm550_commitEepromMirrorToEeprom [accept]
+  - CM550 function_definitions.csv:207 uses the old name, and its comment '(0 accepted / 4 cannot comply / 7 not safe)' is wrong. The bytes give three results: 7 (not safe), 0xff (success: no J1939 response, J1708 reply deferred through 0x80dde4) and 11 (two failed queue writes). The function_renames.csv:130 comment ends in '; 0.', which is also wrong.
+  - Stale reference: function_renames.csv:174, the comment of mc68k_dispatchJ1708ReceivedMessages.
+  - Follow-up outside this list: CM550 enums.csv:185 (DIAG_SECURED_SUBFUNC 0x54 CAN_BUFFER_LOGGER) and enums.csv:763 (DIAG_SERVICE_3_CMD 0x54 CAN_BUFFER_LOG) are wrong for J1708 command 84. That command jumps to this commit (0x16126: jsr 0x11a74).
+  - Optional: the cm550_circularBufferWrite call (0x16cd8) pushes three arguments: word offset d3, long pointer a2 and word length d2. CM848's cm848_queueEepromByteWrites takes the same three, but the .cpp shows two because the prototype is missing.
+== [services] CM848 function 0x00021918 commitEepromMirrorToEeprom -> cm848_commitEepromMirrorToEeprom [accept]
+  - CM848 function_definitions.csv:236 uses the old name (name-mismatch warning). Its comment lists only 0 and 7, but the function also returns 11 (EEPROM_WRITE_QUEUE_FULL; li r30,11 at 0x21a08).
+  - Stale references: enums.csv:510, function_renames.csv:1024 (cm848_updateNotSafeToProgramFlag) and global_variables.csv:6094 (power_down_refresh_enable). Its own function_renames.csv:863 comment 'The same function as CM550 0x11a74 (shared name...)' also has to be rewritten.
+== [services] CM550 global 0x0080de2e WORD_0080de2e -> key_off_shutdown_inhibit_flag [accept]
+  - Put the real same-record proof in the row comment: the CM550 parameter ID table entry for block 1002 (ROM 0x353ac = 00 80 de 2c) gives 0x80de2c + 2 = e2m 1002 +2 SSKYOD 'KEY SWITCH OVERRIDE FLAG', the record behind CM848's key_off_shutdown_inhibit_flag. Sitting 2 bytes below development_mode is only a consequence of that.
+== [services] CM550 global 0x0080d28c engine_protection_shutdown_command -> engine_shutdown_command_flag [accept]
+  - Follow-up: 0x80061c engine_protection_shutdown_command_previous (global_variables.csv:468) keeps the old stem. processDiagnosticLimitStatus uses it as the previous value of this flag.
+== [services] CM550 global 0x0080de7a action_00_no_clear_action_01_clear_inactive_02_clear_active_03_clear_al_0_6 -> diagnostic_clear_request_state [accept]
+
+== [services] CM550 struct_type  j1939_diagnostic_service_entry_t -> j1939_diagnostic_service_entry_t [accept]
+
+== [services] CM550 global 0x00801c7a DAT_00801c7a -> j1939_diagnostic_service_table [accept]
+  - Correction to the evidence: the neighbour 0x801c78 remote_throttle_active_flag is a word, not 1 byte (move.w #1 / clr.w / cmpi.w at 0x2ed00-0x2ed62). It ends at 0x801c79, so it still does not overlap the table. The base 0x801d3c (movea.l at 0x2ef52) lies after the count byte, outside the table.
+== [services] CM550 global 0x00801d3a DAT_00801d3a -> j1939_diagnostic_handler_count [accept]
+
+== [services] CM550 global 0x0080dde4 BYTE_0080dde4 -> eeprom_mirror_commit_j1708_reply_pending_flag [accept]
+
+== [services] CM550 enum_member 0x01 J1939_DIAGNOSTIC_SERVICE.SERVICE_QUERY_TERMINATE -> J1939_DIAGNOSTIC_SERVICE_CLEAR_INACTIVE_FAULTS [accept]
+
+== [services] CM550 enum_member 0x04 J1939_DIAGNOSTIC_SERVICE.SYSTEM_SERVICE_04 -> J1939_DIAGNOSTIC_SERVICE_DISABLE_BROADCAST [accept]
+  - Row comment: name the handler by address (0x200a4 -> 0x1ffd6 with enable 0). Its current name, cm550_j1939TorqueControlModeClear, is wrong, as the investigator's open lead says.
+== [services] CM550 enum_member 0x05 J1939_DIAGNOSTIC_SERVICE.SYSTEM_SERVICE_05 -> J1939_DIAGNOSTIC_SERVICE_ENABLE_BROADCAST [accept]
+  - Row comment: name the handler by address (0x200b4 -> 0x1ffd6 with enable 1). Its current name, cm550_j1939TorqueControlModeSet, is wrong (open lead).
+== [services] CM550 enum_member 0x06 J1939_DIAGNOSTIC_SERVICE.SERVICE_HIGH_RPM_SHUTDOWN_ACTIVATE -> J1939_DIAGNOSTIC_SERVICE_COMMAND_ENGINE_SHUTDOWN [accept]
+
+== [services] CM550 enum_member 0x07 J1939_DIAGNOSTIC_SERVICE.SYSTEM_SERVICE_07 -> J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE [accept]
+
+== [services] CM550 enum_member 0x0A J1939_DIAGNOSTIC_SERVICE.SYSTEM_SERVICE_0A -> J1939_DIAGNOSTIC_SERVICE_ENTER_DEVELOPMENT_MODE [accept]
+
+== [services] CM550 enum_member 0x0F J1939_DIAGNOSTIC_SERVICE.GET_PARAMETERS_BY_ID_ALT -> J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_15 [accept]
+
+== [services] CM550 enum_member 0x10 J1939_DIAGNOSTIC_SERVICE.SERVICE_GET_PARAMETERS_BY_ID -> J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_16 [accept]
+
+== [services] CM550 enum_member 0x15 J1939_DIAGNOSTIC_SERVICE.GET_ADDRESS_BY_PARAM_ID -> J1939_DIAGNOSTIC_SERVICE_COMMIT_EEPROM_MIRROR [accept]
+
+== [services] CM550 enum_member 0x16 J1939_DIAGNOSTIC_SERVICE.SYSTEM_SERVICE_16 -> J1939_DIAGNOSTIC_SERVICE_FORCE_EXIT_DEVELOPMENT_MODE [accept]
+
+== [services] CM550 enum_member 0x18 J1939_DIAGNOSTIC_SERVICE.SYSTEM_SERVICE_18 -> J1939_DIAGNOSTIC_SERVICE_INHIBIT_KEY_OFF_SHUTDOWN [accept]
+  - Header comment: CM550 enums.csv:648 '# Dispatch table: 20 entries' should say 24 (the dump's count byte at 0x801d3a is 0x18).
+== [enginestate] CM550 function 0x00017f7c vp44TimingFaultMonitor -> cm550_updateEngineState [amend]
+  - Name and counterpart verdict confirmed; comment fix only. Callers: there is ONE call site, jsr $17f7c at ROM 0x1b564. vp44_engine_management_system (0x1b518) has no rts and falls through into vp44ControlSystemCoordinator (0x1b558), so the two .cpp call lines (15778 / 15794) are the same call reached through two Ghidra entries, not two callers.
+  - Stale old-name citation: relocation_map.csv (historical J90280.05 map) row source 0x0344e8 cites vp44TimingFaultMonitor -> 0x017f7c.
+== [enginestate] CM550 function 0x00018384 cm550_FUN_00018384 -> initializeEngineState [accept]
+
+== [enginestate] CM848 function 0x0001c978 cm848_initCrankingLimits -> initializeEngineState [accept]
+
+== [enginestate] CM550 function 0x00011a68 cm550_FUN_00011a68 -> inhibitKeyOffShutdown [accept]
+
+== [enginestate] CM848 function 0x00021904 cm848_inhibitKeyOffShutdown -> inhibitKeyOffShutdown [accept]
+
+== [enginestate] CM550 function 0x000118fc cm550_activateHighRpmShutdownFlag -> commandEngineShutdown [accept]
+
+== [enginestate] CM848 function 0x000216e8 cm848_commandEngineShutdown -> commandEngineShutdown [accept]
+
+== [enginestate] CM550 function 0x0002e9f8 cm550_canMemoryPointerTableInit -> cm550_initializeRamRefresh [amend]
+  - Name and counterpart verdict confirmed; comment fix only. Block 2 is ONE word: RAM 0x806544 (the end 0x806546 is exclusive) = e2m MEMMRK06 "memory marker for start of refreshed parameter block" (ROM ID table id 122D -> 0x806544; 122C MEMMRK07 -> 0x806546). It sits at offset 0x15aa of the 0x15ae-byte flash parameter block (the second-to-last word, not the tail word) and is compared with flash 0x55ae / 0x75ae. Dump: total 4802 words -> words per pass 241 (0x801c74 = 0x00f1).
+== [enginestate] CM550 function 0x0002eadc cm550_canMessageMemorySyncController -> cm550_refreshRamCalibration [accept]
+
+== [enginestate] CM550 global 0x008005fd vp44_timing_fault_active -> engine_overspeed_active_flag [accept]
+
+== [enginestate] CM550 global 0x008005fa vp44_timing_fault_debounce_counter -> engine_overspeed_debounce_count [accept]
+
+== [enginestate] CM550 global 0x008005fc DAT_008005fc -> engine_state_key_on_previous_flag [accept]
+
+== [enginestate] CM848 global 0x003fa862 mios_timer_active_flag -> engine_state_key_on_previous_flag [accept]
+
+== [enginestate] CM550 global 0x00807f1c intake_manifold_temp_threshold -> engine_overspeed_set_rpm_threshold [accept]
+
+== [enginestate] CM550 global 0x00807f1e throttle_position_raw_threshold -> engine_overspeed_clear_rpm_threshold [accept]
+
+== [enginestate] CM550 global 0x00807f20 intake_temp_upper_threshold -> engine_overspeed_debounce_limit [accept]
+
+== [enginestate] CM550 global 0x00807f22 engine_speed_for_transition_into_out_of_crank_reentr_state_0_300 -> engine_stopped_speed [accept]
+
+== [enginestate] CM550 struct_type  engine_overspeed_event_t -> engine_overspeed_event_t [amend]
+  - Layout confirmed against every access (0x18030 dword +0; 0x17ffe / 0x18014 / 0x18054 word +4; 0x1809a word +2 = low half of +0; 0x18044 / 0x180aa word +6). Comment fix: +4 engine_speed_at_detection is written only on the pass the overspeed latch sets. A new record takes the current engine_rpm_primary. If a record is still open (the open flag is in the non-volatile flash parameter block, the latch 0x8005fd is not), a later detection replaces it only with a higher speed. While the latch stays set every pass takes the clear path, so +4 is NOT "the highest engine_rpm_primary seen while it is open".
+== [enginestate] CM550 struct_instance 0x0080553a DGRPOSLF -> engine_overspeed_log [accept]
+
+== [enginestate] CM550 global 0x00805652 DAT_00805652 -> engine_overspeed_log_entry_open_flag [accept]
+
+== [enginestate] CM550 global 0x00805654 diagnostic_snapshot_ring_index -> engine_overspeed_log_index [accept]
+
+== [enginestate] CM550 global 0x0080bda4 hour_meter_ecm_run_time_none -> key_on_hour_meter [amend]
+  - Name and type confirmed; comment fix. The ROM lookup does cover ID 0004: cm550 0x10e20 indexes IDs 0x00-0x2e directly (entry 0x35224 + id * 8; 0x35244 = 0x80bda4, and id 0x1c -> 0x35304 = 0x80bda4), IDs 0x1000-0x1478 by id - 0xfd1 and IDs 0x8000-0x8265 by id - 0x7b58. So 0004 -> 0x80bda4 is ROM-proven, not only from parameter_id_lookup_table.csv.
+  - Stale old-name citations to update: function_definitions.csv 0x0001fdc0 (cm550_j1939MessageTypeCounter, control_mode) comment "stamp hour_meter_ecm_run_time_none", and parameter_id_lookup_table.csv rows 0x0004 and 0x001C (firmware_variable column).
+== [enginestate] CM550 global 0x008057be engine_startup_inhibit_true_false -> engine_startup_inhibit [accept]
+
+== [enginestate] CM550 global 0x0080d28c engine_protection_shutdown_command -> engine_shutdown_command_flag [accept]
+
+== [enginestate] CM550 global 0x0080061c engine_protection_shutdown_command_previous -> engine_shutdown_command_flag_previous [amend]
+  - Name confirmed; comment addition. While it is nonzero, processDiagnosticLimitStatus skips the protection evaluation and sets engine_shutdown_command_flag = 1 on every pass (else branch, cpp:13304-13305). So it also holds the shutdown on until STOPPED (cpp:13166-13167) or cm550_FUN_000192e0 zeroes it.
+== [enginestate] CM550 global 0x0080d0ac crank_fuel_limit_source_selector -> crank_exit_speed [accept]
+
+== [enginestate] CM550 global 0x0080d0aa fsmxthfl_calc_input -> crank_reentry_speed [accept]
+
+== [enginestate] CM550 global 0x0080d0a0 timer_used_to_dictate_a_jumpstart_condition_0_13107 -> crank_jump_start_timer [accept]
+
+== [enginestate] CM550 global 0x00807f0a crank_jumpstart_time_0_13107 -> crank_jump_start_time [accept]
+
+== [enginestate] CM550 global 0x0080a9c8 DAT_0080a9c8 -> engine_retarder_active_flag [accept]
+
+== [enginestate] CM550 global 0x008040c0 DAT_008040c0 -> engine_brake_driveline_brake_type_cal [amend]
+  - Name and _cal confirmed (ROM ID table 1192 -> 0x10005aa, +0xC = EEPROM 0x5b6 = mirror 0x8040c0; EEPROM and RAM dump both 0x0000). Comment fix: CM848 record 1180 +16 EB_Driveline_Brake_Type has no bracketed mnemonic in CHR_CC_11.45.01.07.e2m. It matches CM550 EBDLBKTY by its description text ("type of driveline brake (0=Exhaust/Engine Brake, 1= Retarder)"), not by "the same mnemonic".
+== [enginestate] CM550 global 0x0080d356 DAT_0080d356 -> key_off_shutdown_mode [accept]
+
+== [enginestate] CM550 global 0x0080de2e WORD_0080de2e -> key_off_shutdown_inhibit_flag [accept]
+
+== [enginestate] CM550 enum_member 0 ENGINE_STATE.ENGINE_STATE_UNINITIALIZED -> ENGINE_STATE_UNINITIALIZED [accept]
+
+== [enginestate] CM550 enum_member 1 ENGINE_STATE.ENGINE_STATE_STOPPED -> ENGINE_STATE_STOPPED [accept]
+
+== [enginestate] CM550 enum_member 2 ENGINE_STATE.ENGINE_STATE_CRANKING -> ENGINE_STATE_CRANKING [accept]
+
+== [enginestate] CM550 enum_member 3 ENGINE_STATE.ENGINE_STATE_RUNNING -> ENGINE_STATE_RUNNING [accept]
+
+== [enginestate] CM550 enum_member 4 ENGINE_STATE.ENGINE_STATE_ENGINE_BRAKE -> ENGINE_STATE_ENGINE_BRAKE [accept]
+
+== [enginestate] CM550 enum_member 5 ENGINE_STATE.ENGINE_STATE_OVERSPEED -> ENGINE_STATE_OVERSPEED [accept]
+
+== [enginestate] CM550 enum_member 6 ENGINE_STATE.ENGINE_STATE_JUMP_START -> ENGINE_STATE_JUMP_START [accept]
+
+== [enginestate] CM550 enum_member 7 ENGINE_STATE.ENGINE_STATE_REENTRY -> ENGINE_STATE_REENTRY [accept]
+
+== [enginestate] CM550 enum_member 8 ENGINE_STATE.ENGINE_STATE_SHUTDOWN -> ENGINE_STATE_SHUTDOWN [accept]
+
+== [enginestate] CM550 global 0x0080d0c8 engine_state -> engine_state [amend]
+  - Type confirmed; count fix. My sweep finds 33 absolute cmpi.w #N,$80d0c8 (N = 1, 2, 3, 5, 6, 7, 8), not 35. The member rows list the same 33. Also 1 move.w #1 store (0x1838a), 2 copies (0x17ce4, 0x306aa), 13 movea.l #$80d0c8,An loads (all (An) immediates 1-8) and the 1068 table entry (0x356dc).
+== [enginestate] CM550 global 0x00801c66 can_memory_sync_table_pointer -> ram_refresh_current_block_pointer [accept]
+
+== [enginestate] CM550 global 0x00801c6a calibration_sync_rom_pointer -> ram_refresh_source_pointer [accept]
+
+== [enginestate] CM550 global 0x00801c6e calibration_sync_ram_pointer -> ram_refresh_target_pointer [accept]
+
+== [enginestate] CM550 global 0x00801c72 DAT_00801c72 -> ram_refresh_word_rewritten_flag [accept]
+
+== [enginestate] CM550 global 0x00801c74 DAT_00801c74 -> ram_refresh_words_per_pass [accept]
+
+== [enginestate] CM550 global 0x00801c76 DAT_00801c76 -> ram_refresh_enable_previous [accept]
+
+== [enginestate] CM550 global 0x0080bcf8 enable_flag_to_allow_boot_block_programming_enable_disable -> port_e_output_image [accept]
+
+== [cantwins] CM550 function 0x1e056 cm550_serialNodeAddressChecker -> handleJ1939CanTransmitInterrupt [accept]
+  - Action (both firmwares, one shared name): also update function_definitions.csv:154 (function name, parameter node_address -> message_object_number; it is the 82527 interrupt code - 2).
+  - Action: the comments of ignoreCanTransmitInterrupt (CM550 function_renames.csv:54) and mc68k_canCs4InterruptHandler (:387) name cm550_serialNodeAddressChecker / cm550_serialNodeAddressForwarder.
+  - Caveat: the transmit-next callees (mc68k_canCs4TransmitNextFrame 0x1e52e / mpc555_processJ1939TxBufferSend 0x535e8) are hardware counterparts, not twins (same outline: completed flag = 1, reset the object interrupt, stop the object when the ring is empty and not full, else copy the next entry / clear the full flag / advance with wrap; different fault clear) - the twin is this level only.
+  - Lead (out of scope): in that callee the pointer advanced after a transmit is CM550 0x80d9b2 can_transmit_buffer_write_pointer, but it is the dequeue pointer - cm550_sendCanSingleFrame enqueues through 0x80d9ae (unnamed); CM848 names the pair can_transmit_queue_enqueue_pointer / _dequeue_pointer.
+== [cantwins] CM848 function 0x53aa8 cm848_handleCanMailboxTransmitComplete -> handleJ1939CanTransmitInterrupt [accept]
+  - Action: the comment of ignoreCanTransmitInterrupt (CM848 function_renames.csv:969) names cm848_handleCanMailboxTransmitComplete.
+  - Caveat (does not break the twin): mpc555_canTransmitInterruptHandler already compares the mailbox with the transmit number before the call, so the else (ignoreCanTransmitInterrupt) is unreachable from the only caller; the step is still in the body, which is what the twin rule compares.
+== [cantwins] CM550 global 0x80d9f4 can_first_receive_object_index -> j1939_transmit_message_object_number [accept]
+
+== [cantwins] CM550 global 0x80d9f6 can_last_receive_object_index -> j1939_last_receive_message_object_number [accept]
+
+== [cantwins] CM848 global 0x40ad68 can_tx_mailbox_start_index -> j1939_transmit_message_object_number [accept]
+  - Action: the comment of can_last_message_object_used (0x40adf2, CM848 global_variables.csv:7070) names can_tx_mailbox_start_index / can_tx_mailbox_end_index and calls them transmit mailboxes.
+== [cantwins] CM848 global 0x40ad6a can_tx_mailbox_end_index -> j1939_last_receive_message_object_number [accept]
+  - Action: same comment as 0x40ad68 (global_variables.csv:7070).
+== [cantwins] CM550 function 0x1e086 cm550_serialNodeAddressForwarder -> cm550_handleJ1939CanReceiveInterrupt [accept]
+  - Action: also update function_definitions.csv:155 (function name, parameter node_address -> message_object_number).
+== [cantwins] CM848 function 0x53ae0 cm848_handleCanMailboxTransmitRange -> cm848_handleJ1939CanReceiveInterrupt [accept]
+
+== [cantwins] CM550 function 0x1b6e2 emptyStubFunction2 -> cm550_emptyStubFunction2 [accept]
+  - ACTION = DELETE: remove function_renames.csv:303 and add a deleted_functions.csv row (the round 85 'not a function entry' wording fits: the closing rts of cm550_FUN_0001b6d6, 0 references, from relocation_map.csv:478). final is only the fallback name if the deletion is refused (cm550_emptyStubFunction2 is free).
+  - Checked beyond the investigator: no 32-bit pointer to 0x1b6e2 in the ROM, the RAM dump or the extended RAM dump; the two 16-bit 0xb6e2 hits are boot block data (0x1d32 and its image copy 0x2af26).
+== [cantwins] CM550 function 0x1b666 emptyStubFunction3 -> cm550_emptyStubFunction3 [accept]
+  - ACTION = DELETE: remove function_renames.csv:287 and add a deleted_functions.csv row (the shared closing rts of periodicTaskSet_fuelDemand / its mid-entry 0x1b62a, 0 references, from relocation_map.csv:508 and :359). final is only the fallback name (cm550_emptyStubFunction3 is free).
+  - Checked beyond the investigator: no 32-bit pointer to 0x1b666 in the ROM or either RAM dump; the 16-bit hit at 0x28718 is part of jsr $b666.
+== [cantwins] CM848 function 0x57520 emptyStubFunction2 -> cm848_restoreRegisters26To31AndReturn [accept]
+  - Follow-up (as the investigator says): Ghidra treats the bl at 0x573d8 as returning, so cm848_mathMultiplyDivide32 runs on into the routine at 0x573dc (its own prologue: addi r11,r1,0 ; stwu ; mflr ; bl 0x575a0) - mark 0x57520 / 0x57524 no-return or start a function at 0x573dc.
+== [cantwins] CM848 function 0x1806c emptyStubFunction3 -> cm848_emptyStubFunction3 [accept]
+
+== [cantwins] CM848 function 0x57524 cm848_calibrationTableLookup1D -> cm848_restoreRegisters27To31AndReturn [accept]
+
+== [cantwins] CM848 function 0x575a0 cm848_calibrationTableLookup2D -> cm848_saveRegisters27To31 [accept]
+
+== [cantwins] CM848 function 0x5759c cm848_saveRegistersToStack -> cm848_saveRegisters26To31 [accept]
+
+== [cantwins] CM550 struct_type  j1939_header_t -> j1939_msg_hdr_t [accept]
+  - Naming-rule exception, stated outright: msg / hdr / tx are abbreviations the spell-words-out rule does not allow. Accepted only because j1939_msg_hdr_t / j1939_tx_msg_t are CM848's existing type names and one shared type is the point of this change; the same exception covers the 35 *_tx_message instance names (CM848's pattern). Note the same proposal renames CM848 can_tx_mailbox_* partly to drop 'tx'. Compliant follow-up: a both-firmware rename (for example j1939_message_header_t / j1939_transmit_message_t and *_transmit_message instances).
+  - Action: rename the fields too (id uint32_t -> can_id dword, length uint16_t -> data_length word).
+  - Action: structure_definitions.csv:134 (j1939_tx_msg_buffer_t.header) names j1939_header_t in BOTH its type and dependency columns - update both; function_definitions.csv:12 and :285 move to j1939_tx_msg_t * (their rows). local_variables_actual.csv:112 also names j1939_header_t but is an export, not a build input.
+== [cantwins] CM550 struct_type  (new type) -> j1939_tx_msg_t [accept]
+  - Naming-rule exception, stated outright: msg / hdr / tx are abbreviations the spell-words-out rule does not allow. Accepted only because j1939_msg_hdr_t / j1939_tx_msg_t are CM848's existing type names and one shared type is the point of this change; the same exception covers the 35 *_tx_message instance names (CM848's pattern). Note the same proposal renames CM848 can_tx_mailbox_* partly to drop 'tx'. Compliant follow-up: a both-firmware rename (for example j1939_message_header_t / j1939_transmit_message_t and *_transmit_message instances).
+  - Caveat: CM550's structure_definitions.csv writes pointers as ptr:uint8_t; the proposed 'pointer' type is also accepted by the shared ApplyStructures.java (CM848 uses it), and the header field's dependency column should name j1939_msg_hdr_t as CM550's row 134 does for its nested header.
+  - Follow-up: legacy J90280.05-era rows describe descriptors at the old addresses next to the real ones - 0x801ab6-0x801ac4 j1939_pgn_65265_header / _size / _data_ptr / _unused_ptr, 0x801ace-0x801ad8 j1939_message_buffer_pgn65259 / j1939_pgn65259_msg_size / _data_ptr / _unused_ptr, 0x801afa-0x801b0d j1939_message_buffer_pgn65226 / j1939_pgn65226_data_ptr / ...; 0 ROM references (one data-like 32-bit hit to 0x801abc at 0x1b150). They will sit beside the new j1939_pgn65265 / 65259 / dm1 instances with near-identical names - rename or remove them.
+== [cantwins] CM550 struct_instance 0x801ebc DAT_00801ebc -> j1939_pgn65269_tx_message [accept]
+
+== [cantwins] CM550 global 0x801ed2 DAT_00801ed2 -> j1939_pgn65269_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x801ed4 DAT_00801ed4 -> j1939_pgn65265_tx_message [accept]
+  - Follow-up: the legacy rows 0x801ab6-0x801ac4 (j1939_pgn_65265_header / _size / _data_ptr / _unused_ptr) describe a 65265 descriptor that is not used at that address in J90350.00.
+== [cantwins] CM550 global 0x801eea DAT_00801eea -> j1939_pgn65265_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x801eec DAT_00801eec -> j1939_pgn65261_tx_message [accept]
+
+== [cantwins] CM550 global 0x801f02 DAT_00801f02 -> j1939_pgn65261_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x801f04 DAT_00801f04 -> j1939_pgn65259_tx_message [accept]
+  - Follow-up: the legacy rows 0x801ace-0x801ad8 (j1939_message_buffer_pgn65259 / j1939_pgn65259_msg_size / _data_ptr / _unused_ptr, 0 references) describe a 65259 descriptor at an old address.
+== [cantwins] CM550 global 0x801f3a DAT_00801f3a -> j1939_pgn65259_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x801f3e DAT_00801f3e -> j1939_dm10_tx_message [accept]
+
+== [cantwins] CM550 global 0x801f54 DAT_00801f54 -> j1939_dm10_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x80344a oil_pressure_table_2_ptr -> j1939_pgn65230_tx_message [accept]
+  - Action: remove / replace the covered rows the proposal lists for this instance (the list is complete: no other row starts inside the 14 bytes and none of them has another use).
+== [cantwins] CM550 global 0x803460 base_timing_rpm_input -> j1939_pgn65230_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x803462 vp44_timing_table_size -> j1939_pgn65232_tx_message [accept]
+  - Action: remove / replace the covered rows the proposal lists for this instance (the list is complete: no other row starts inside the 14 bytes and none of them has another use).
+== [cantwins] CM550 global 0x803478 lift_pump_fuel_demand_input -> j1939_pgn65232_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x803482 vp44_lift_pump_table_3_ptr -> j1939_pgn61441_tx_message [accept]
+  - Action: remove / replace the covered rows the proposal lists for this instance (the list is complete: no other row starts inside the 14 bytes and none of them has another use).
+== [cantwins] CM550 global 0x803490 vp44_timing_expected_table_ptr -> j1939_pgn61441_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x80349a vp44_diagnostic_threshold_state -> j1939_pgn61444_tx_message [accept]
+  - Action: remove / replace the covered rows the proposal lists for this instance (the list is complete: no other row starts inside the 14 bytes and none of them has another use).
+  - Follow-up (not a problem with the instance): the one send (pea at 0x32df2) renders twice because two overlapping functions contain it - sendPgn61444ElectronicEngineController1Message 0x32c76 and vp44Message300FaultFlagProcessor 0x32c7a, four bytes apart.
+== [cantwins] CM550 global 0x8034a8 vp44_timing_min_fault_counter -> j1939_pgn61444_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x8034b2 fso_fault_latched_value -> j1939_pgn61443_tx_message [accept]
+  - Action: remove / replace the covered rows the proposal lists for this instance (the list is complete: no other row starts inside the 14 bytes and none of them has another use).
+== [cantwins] CM550 global 0x8034c0 vp44_fso_bit1_recovery_counter -> j1939_pgn61443_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x8034ca vp44_fso_condition_counter -> j1939_pgn65247_tx_message [accept]
+  - Action: remove / replace the covered rows the proposal lists for this instance (the list is complete: no other row starts inside the 14 bytes and none of them has another use).
+== [cantwins] CM550 global 0x8034d8 vp44_fso_bit15_recovery_counter -> j1939_pgn65247_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x8034da vp44_fso_multibit_fault_debounce_counter -> j1939_pgn65263_tx_message [accept]
+  - Action: remove / replace the covered rows the proposal lists for this instance (the list is complete: no other row starts inside the 14 bytes and none of them has another use).
+== [cantwins] CM550 global 0x8034f0 DAT_008034f0 -> j1939_pgn65263_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x80352a DAT_0080352a -> j1939_pgn65251_tx_message [accept]
+  - Action: remove / replace the covered rows the proposal lists for this instance (the list is complete: no other row starts inside the 14 bytes and none of them has another use).
+== [cantwins] CM550 global 0x803538 DAT_00803538 -> j1939_pgn65251_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x80353a DAT_0080353a -> j1939_pgn65253_tx_message [accept]
+
+== [cantwins] CM550 global 0x803550 DAT_00803550 -> j1939_pgn65253_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x803552 DAT_00803552 -> j1939_pgn65262_tx_message [accept]
+
+== [cantwins] CM550 global 0x803568 DAT_00803568 -> j1939_pgn65262_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x803572 DAT_00803572 -> j1939_pgn61440_tx_message [accept]
+
+== [cantwins] CM550 global 0x803580 DAT_00803580 -> j1939_pgn61440_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x80358a DAT_0080358a -> j1939_pgn65213_tx_message [accept]
+
+== [cantwins] CM550 global 0x803598 DAT_00803598 -> j1939_pgn65213_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x80359a DAT_0080359a -> j1939_pgn65257_tx_message [accept]
+
+== [cantwins] CM550 global 0x8035b0 DAT_008035b0 -> j1939_pgn65257_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x8035bc DAT_008035bc -> j1939_pgn65266_tx_message [accept]
+
+== [cantwins] CM550 global 0x8035ca DAT_008035ca -> j1939_pgn65266_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x8035d0 DAT_008035d0 -> j1939_pgn65244_tx_message [accept]
+  - Action: remove / replace the covered rows the proposal lists for this instance (the list is complete: no other row starts inside the 14 bytes and none of them has another use).
+  - Follow-up: enums.csv:335-341 (VP44_STATUS_FLAGS_1) documents the covered row +4 vp44_status_flags_1 as a VP44 status register 'checked in fuel control'; nothing in J90350.00 reads 0x8035d4 and the enum renders nowhere - a stale J90280.05 enum to delete or re-home.
+== [cantwins] CM550 global 0x8035e6 DAT_008035e6 -> j1939_pgn65244_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x8035e8 DAT_008035e8 -> j1939_pgn65252_tx_message [accept]
+  - Action: remove / replace the covered rows the proposal lists for this instance (the list is complete: no other row starts inside the 14 bytes and none of them has another use).
+  - Follow-up: enums.csv:742-744 and :785-789 (DIAG_ENABLE_FLAGS, defined a second time at :302-304) say diagnostic services are gated by diagnostic_service_enable_flags @ 0x8035EA, and :342-343 (VP44_STATUS_FLAGS_2) documents vp44_status_flags_2 @ 0x8035ec; no J90350.00 code reads either address (the dump holds the CAN id bytes e4 00 at 0x8035ea) - stale comments / enums to correct.
+== [cantwins] CM550 global 0x8035fe DAT_008035fe -> j1939_pgn65252_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x803600 DAT_00803600 -> j1939_pgn65270_tx_message [accept]
+
+== [cantwins] CM550 global 0x803616 DAT_00803616 -> j1939_pgn65270_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x803618 engine_operating_mode_flags -> j1939_pgn65264_tx_message [accept]
+  - Action: remove / replace the covered rows the proposal lists for this instance (the list is complete: no other row starts inside the 14 bytes and none of them has another use).
+== [cantwins] CM550 global 0x80362e DAT_0080362e -> j1939_pgn65264_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x803644 DAT_00803644 -> j1939_pgn65249_tx_message [accept]
+
+== [cantwins] CM550 global 0x803652 DAT_00803652 -> j1939_pgn65249_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x803654 DAT_00803654 -> j1939_pgn65248_tx_message [accept]
+
+== [cantwins] CM550 global 0x80366a DAT_0080366a -> j1939_pgn65248_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x80366c DAT_0080366c -> j1939_pgn65271_tx_message [accept]
+  - Action: remove / replace the covered rows the proposal lists for this instance (the list is complete: no other row starts inside the 14 bytes and none of them has another use).
+== [cantwins] CM550 global 0x803682 eeprom_calibration_check_value_2 -> j1939_pgn65271_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x803684 eeprom_calibration_check_value_3 -> j1939_pgn65255_tx_message [accept]
+  - Action: remove / replace the covered rows the proposal lists for this instance (the list is complete: no other row starts inside the 14 bytes and none of them has another use).
+== [cantwins] CM550 global 0x80369a fuel_demand_rate_limit_init -> j1939_pgn65255_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x80369c DAT_0080369c -> j1939_pgn65260_tx_message [accept]
+  - Action: remove / replace the covered rows the proposal lists for this instance (the list is complete: no other row starts inside the 14 bytes and none of them has another use).
+== [cantwins] CM550 global 0x8036aa DAT_008036aa -> j1939_pgn65260_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x8036b4 DAT_008036b4 -> j1939_pgn65279_tx_message [accept]
+  - Action: remove / replace the covered rows the proposal lists for this instance (the list is complete: no other row starts inside the 14 bytes and none of them has another use).
+== [cantwins] CM550 global 0x8036c2 DAT_008036c2 -> j1939_pgn65279_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x801ea4 DAT_00801ea4 -> j1939_pgn59392_tx_message [accept]
+
+== [cantwins] CM550 global 0x801eba DAT_00801eba -> j1939_pgn59392_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x801f56 DAT_00801f56 -> j1939_dm1_tx_message [accept]
+  - Follow-up: the legacy rows 0x801afa-0x801b0d (j1939_message_buffer_pgn65226 / j1939_pgn65226_data_ptr / active_dtc_list_header_ptr / engine_coolant_pgn65226_status ..., 0 references) describe a DM1 descriptor at an old address; the DM1 builder is also misnamed cm550_engineCoolantPGN_65226_Builder.
+== [cantwins] CM550 global 0x80265a DAT_0080265a -> j1939_dm1_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x80265c DAT_0080265c -> j1939_dm2_tx_message [accept]
+  - Action: remove / replace the covered rows the proposal lists for this instance (the list is complete: no other row starts inside the 14 bytes and none of them has another use).
+== [cantwins] CM550 global 0x802d60 DAT_00802d60 -> j1939_dm2_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x802d62 DAT_00802d62 -> j1939_pgn65229_tx_message [accept]
+
+== [cantwins] CM550 global 0x803448 DAT_00803448 -> j1939_pgn65229_transmit_status [accept]
+
+== [cantwins] CM550 struct_instance 0x801232 DAT_00801232 -> j1939_single_frame_tx_message [accept]
+
+== [cantwins] CM550 struct_instance 0x800b1a DAT_00800b1a -> j1939_transport_tx_message [accept]
+
+== [cantwins] CM550 global 0x801240 DAT_00801240 -> j1939_single_frame_transmit_status [accept]
+
+== [cantwins] CM550 global 0x800b28 DAT_00800b28 -> j1939_transport_transmit_status [accept]
+
+== [cantwins] CM550 global 0x803471 DAT_00803471 -> j1939_dm8_test_type_component_identifier [amend]
+  - Amended name: DM8 byte 2 is SPN 1225 'Test Type/Component Identifier' (local j1939 database, PGN 65232). The neighbours carry their full SPN names (j1939_dm8_test_identifier SPN 1224, j1939_dm8_test_value SPN 1226); j1939_dm8_test_type drops the component-identifier half, so it reads as a test type only. The rest of the proposal (byte, its only write 0x32ba8 move.b #$ff,(1,a1)) stands.
+  - Follow-up: the CM848 counterparts do not match these names yet - 0x3fad6f is unnamed and 0x3fad72 / 0x3fad74 are j1939_pgn65232_field1_init_word / j1939_pgn65232_field2_init_word (bytes 5-6 / 7-8 of j1939_pgn65232_tx_message's payload); give them the same SPN names.
+  - Optional lead: the 8-byte payload 0x803470-0x803477 (SPNs 1224-1228) is struct-shaped.
+== [cantwins] CM550 global 0x803474 vp44_lift_pump_table_ptr -> j1939_dm8_test_limit_maximum [accept]
+  - Follow-up: the CM848 counterparts do not match these names yet - 0x3fad6f is unnamed and 0x3fad72 / 0x3fad74 are j1939_pgn65232_field1_init_word / j1939_pgn65232_field2_init_word (bytes 5-6 / 7-8 of j1939_pgn65232_tx_message's payload); give them the same SPN names.
+== [cantwins] CM550 global 0x803476 DAT_00803476 -> j1939_dm8_test_limit_minimum [accept]
+  - Follow-up: the CM848 counterparts do not match these names yet - 0x3fad6f is unnamed and 0x3fad72 / 0x3fad74 are j1939_pgn65232_field1_init_word / j1939_pgn65232_field2_init_word (bytes 5-6 / 7-8 of j1939_pgn65232_tx_message's payload); give them the same SPN names.
+== [cantwins] CM550 function 0x104e8 cm550_sendCanMessage -> cm550_sendCanMessage [accept]
+  - Action (prototype only, name unchanged): function_definitions.csv:12 parameter 0 msg_header j1939_header_t* -> msg j1939_tx_msg_t*; the same row's function_name column still reads sendCanMessage - correct it to cm550_sendCanMessage while editing.
+== [cantwins] CM550 function 0x23130 cm550_multiPacketBufferAllocator -> cm550_multiPacketBufferAllocator [accept]
+  - Action (prototype only): function_definitions.csv:285 return j1939_header_t* -> j1939_tx_msg_t*; row :286 unchanged; the row comment's 'struct lead' wording can be closed.
+== [cantwins] CM550 function 0x22726 sendJ1939MultiFrame -> sendJ1939MultiFrame [accept]
+  - Action (prototype only): add function_definitions.csv row 0x00022726,sendJ1939MultiFrame,0,msg,j1939_tx_msg_t*; the body reads only one argument ((8,a6) after link a6 = entry sp+4), so one row covers every parameter as stack_parameter_layout.csv requires.
+
+== rejected leads
+  - [powerdown] vp44_validateRedundantSensors as a sensor validator: 0x114d4 reads no sensor and no VP44 data. It loads a parameter block and keeps the power-down counts (see the change row).
+  - [powerdown] 0x114d4 as a twin of a CM848 function: CM848 does the bookkeeping inline in cm848_applicationMain (0x545c0-0x54860, frozen .cpp:58745-58813). The CM848 code also sets fault_detected_cal.power_off_without_ignition_off_error and high_idle_override_flag. CM848 1069 +0/+2/+8/+A (0x3fdc7c/7e/84/86) have no reference in the frozen CM848 .cpp, so CM848 has no flash parameter block loader. Counterpart, not twin.
+  - [powerdown] 0x3abe as a twin of CM848 mpc555_hardwareInitialization (0x2694): the skeleton matches (QSPI stop constants, 0x600d check, four-pin strap test, kernel or application, pointer after the reset vector at 0x8 / 0x104). But the steps differ: CM848 adds BR0-3 / OR0-3 / SIUMCR, MIOS, the TPU module stop and the flash2 identification; CM550 adds PIT, CTM4 and the QSM interrupt set-up. The order of the pin test and the EEPROM read differs, and the program selection differs. Counterpart, not twin (kept mc68k_).
+  - [powerdown] 0x3abe as a bus-error handler: the long at ROM 0x8 is the vector 2 slot only while VBR = 0 during boot. mc68k_applicationMain sets VBR to 0x808ddc at 0x28650 (20 7c 00 80 8d dc / 4e 7b 88 01 movec a0,vbr), and cm550_initVectorTable fills that table with cm550_interruptCounter2Increment. ROM 0xC onward is boot block header data (88 94 77 6c '040798'). The restart use through restartThroughBootRom gives the name.
+  - [powerdown] ROM 0x291fc (00 00 3a be) as a second caller of 0x3abe: wrong. 0x291f4 holds a byte-for-byte copy of the boot block 0x0-0x3c6f (the boot block image), not code that references it.
+  - [powerdown] 0x803fd4 (1069 +0 PDBLKSPT 'blank spot replacing key_off_count'), 0x803fee (106A +4 SWPS 'cumulative count of power cycles started') and 0x803ff0 (106A +6 SWRWPD 'cumulative count of resets without a powerdown'): the dumped 256 KB has no absolute-long reference to them, and no code loads 0x803fd4 or 0x803fea as a base for displaced access. They are 0 in the RAM and EEPROM dumps, so there is no access width and no code meaning. Not named (evidence-or-skip).
+  - [powerdown] Matching CM550 1069 by CM848 offsets: wrong. CM550 1069 has PDBLKSPT at +0, so each CM848 1069 offset is +2 in CM550 (SDENER +6 vs +4, SDRMIMSR +E vs +C, SDDLCU +12 vs +10, SDFHFXFG +14 vs +12). Only 106A has the same offsets in both. CM550's own table (0x356e4 / 0x356ec) and 64t6.e2m resolve it.
+  - [powerdown] Existing e2m-derived labels for these records elsewhere: parameter_id_lookup_table.csv labels only the first record of each block (blank_spot_replacing_key_off_count_0_65535 for 1069, cumulative_count_of_non_power_up_resets_none for 106A). No global row, struct or .cpp symbol carries them, and a grep of global_variables.csv for powerdown / power_cycle / non_power_up / resets_without / key_off_count finds no row for these records at another address.
+  - [powerdown] cm550_protectionFlagAccumulator (0x30a64), the .cpp reader of 0x803fdc, as a separate function: wrong. It has no caller. cm550_FUN_00030a5e (0x30a5e: 20 7c 00 80 6a bc movea.l #0x806abc,a0) falls into it and is the real function, called once at ROM 0x27fb0 from mc68k_runPowerDownSequence. It was not renamed here because that is outside this task; a later round should merge it and name it. Its target dword 0x80614e (fuel_statistics_overflow_flags) also looks misnamed.
+  - [powerdown] Using the dump to prove the consecutive count: 0x803fe2 - 0x803fe4 = 25, but 0x803fe6 = 23. The two need not agree, because restartOnKeyOnDuringPowerDown advances the sequence number without touching the consecutive count. Only the identity 89 + 10104 = 10193 is cited as support; 23 is reported as observed.
+  - [services] cm550_activateHighRpmShutdownFlag / SERVICE_HIGH_RPM_SHUTDOWN_ACTIVATE (a high-rpm shutdown): wrong. 0x118fc only stores word 1 in e2m 10B1 +12 SHSS (33 fc 00 01 00 80 d2 8c 42 00 4e 75) and tests no rpm. It is the engine shutdown command, the twin of cm848_commandEngineShutdown.
+  - [services] SERVICE_QUERY_TERMINATE for service 1 (a CLIP query / terminate): wrong. Handler 0x1183e advances the CLEAR_INACTIVE bit of e2m 1080 +2 DGJCFUCC and returns 0 / 7.
+  - [services] GET_ADDRESS_BY_PARAM_ID for service 0x15: wrong. 0x15's handler is the EEPROM mirror commit 0x11a74. Get-address-by-parameter-ID is service 0x41 (live table entry 5 = 41 00 00 02 22 b4).
+  - [services] GET_PARAMETERS_BY_ID_ALT / SERVICE_GET_PARAMETERS_BY_ID for 0x0F / 0x10, and the 'NOT in dispatch table' comments on 0x04 / 0x05 / 0x0F / 0x10: wrong. The live table at 0x801c7a holds 0x0F and 0x10 -> 0x1ffd2 (42 00 4e 75, a no-op returning 0) and 0x04 -> 0x200a4 / 0x05 -> 0x200b4 as entries 20-23. The enum header's '20 entries' is 24 in the dump (count byte 0x801d3a = 0x18).
+  - [services] OPEN (not rejected): cm550_j1939TorqueControlModeParser / _Clear / _Set (0x1ffd6 / 0x200a4 / 0x200b4) are not torque control. They are services 4 / 5 (disable / enable broadcast): 0x1ffd6 sets or clears bits of _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off with the same item / target constants as CM848 cm848_updateJ1939BroadcastEnableMask (0x509be8), and 0x200a4 / 0x200b4 pass 0 / 1 as CM848 0x509ce4 / 0x509d0c do. cm550_systemFunction6xParameterized (0x200c6) registers 15, 16, 4, 5 in the order of CM848 cm848_registerJ1939BroadcastAndNoOperationServices (0x509d34). They are NOT renamed here: they are outside this task's list, and a twin claim for 0x1ffd6 needs a byte-level compare with 0x509be8 first (the decompiles test the 0xfd-target items in a different order). 0x1ffd2 has no Ghidra function (no block in the .cpp).
+  - [services] A twin claim for the dispatchers (cm550_diagnosticServiceDispatcher 0x2eea2 vs cm848_j1939DiagnosticServiceHandler 0x22128): rejected, they are counterparts. CM848 answers nothing to a received 0x0c / 0x0d (0x22150: 2c 03 00 0c 41 82 00 0c 2c 03 00 0d 40 82 00 0c 3b e0 00 ff), and CM550 has no such test. Otherwise both scan the same way (default result 24, validator, handler, no response on 0xff). The CM550 prefixed name stays.
+  - [services] Round 73's shared name commitEepromMirrorToEeprom for service 21: rejected (see the two counterpart rows). The CM550 success path returns 0xff and arms a J1708 reply (0x80dde4); CM848's returns 0. The CM550 row comment's final '0' is wrong (success 0xff, failure 11).
+  - [services] CONFIRMED, no change: services 7 / 10 / 22 handlers (exitDevelopmentMode 0x1188c / enterDevelopmentMode 0x118b2 / forceExitDevelopmentMode 0x118cc): checked against CM848 0x21624 / 0x21668 / 0x21694 and still twins: the same writes in the same order and the same results (0 / 4 / 7). run_location 0xeeee / 0xeaea against 0xee / 0xea is the RUN_LOC record width (2 bytes in Isbp600 / Isbp700.e2m, 1 byte in CHR_CC_11.45.01.07.e2m). No change.
+  - [services] CONFIRMED, no change: service 11 (handleJ1939RestartService 0x11908) is already the verified twin; its bytes 20 6f 00 04 42 67 2f 08 4e b9 00 01 19 2a 5c 8f 4e 75 = restartThroughBootRom(request, 0). No change.
+  - [services] OPEN (not rejected): 0x80ddd3 (cleared by cm550_commitEepromMirrorToEeprom on its failure path, 42 39 00 80 dd d3 at 0x11b28): no reader found by absolute-address or base-register search (the 0x80ddc2 base in cm550_memoryPatchCountDecrement is used only as (a2)). Left unnamed.
+  - [services] OPEN (not rejected): vp44TimingFaultMonitor (0x17f7c), the CM550 consumer of key_off_shutdown_inhibit_flag and engine_shutdown_command_flag, holds after its VP44 timing-fault block the whole engine_state machine (J90350.00.ghidra.cpp:12254-12373, the counterpart of cm848_updateEngineState 0x1c28c's switch). Its name covers only the first block. Not renamed here (outside this task).
+  - [services] OPEN (not rejected): cm550_FUN_00014812 (0x14812) processes the clear request (it erases the inactive faults when not_safe_to_program_flag is 2, then sets diagnostic_clear_request_state 0; J90350.00.ghidra.cpp:9309-9330), and cm550_diagnosticResponseHandler2 (0x2ef1c) sets the record to 1 without a gate and answers 0. These are counterpart candidates of CM848 cm848_clearDiagnosticState / the DM3 handler. Not compared or renamed here.
+  - [enginestate] vp44TimingFaultMonitor (0x17f7c) as a TWIN of CM848 cm848_updateEngineState: rejected, it is a counterpart. CM848 adds the crank / run time captures (cpp:19473-19497), engine_is_active_flag / engine_is_starting_flag (19581 / 19587) and the ecm_power_down_timer / delay logic (19553-19562); CM550 sets power_down_start_flag directly at 0x18342. The ENGINE_BRAKE exit differs (0x1828a tests two words), and the fault bookkeeping differs (CM550 sets 0x806004 + 0x806044 and clears 0x806004; CM848 sets fault_detected_cal and clears detected + registered).
+  - [enginestate] The RAM refresh pair (0x2e9f8 / 0x2eadc) as TWINS of cm848_initializeRamRefresh / cm848_refreshRamCalibration: rejected, they are counterparts. Two blocks vs one, a total/20 + 1 chunk vs fixed 100 bytes, CM550's parameter_block_uploaded gate and power_down_refresh_enable skip (CM848 never reads that flag), CM848's cycle counter and edge fault clear, fault bit 1 vs bit 0, and an interrupt phase vs the background loop.
+  - [enginestate] CM550 counterparts of CM848's engine_state_crank_time / engine_state_run_time / engine_is_active_flag / engine_is_starting_flag / ecm_power_down_timer: none. CM550's table bounds block 1068 to 0x80d0c8-0x80d0cb (1068 -> 0x80d0c8 at ROM 0x356dc; the next block 11A8 starts at 0x80d0cc = CMSYSS). The function captures no time base and writes no such flags. 18 CM550 e2m files list 1068 +4 SDDYTR (power-down timer), but in J90350.00 that address is CMSYSS, so those files belong to later calibrations.
+  - [enginestate] The current CM550 names of e2m 1032 +0 / +2 / +4 (intake_manifold_temp_threshold, throttle_position_raw_threshold, intake_temp_upper_threshold): wrong. The records are FSOSLMES / FSOSHYES / FSOSEN (engine overspeed set speed / hysteresis / time) in all 36 CM550 e2m files, with dump values 28000 / 24000 / 3.
+  - [enginestate] 'VP44 timing fault' as the meaning of the latch at 0x8005fd: wrong. It is the engine overspeed latch (FSOSLMES); the log behind it is DGRPOSLF (engine speed overspeed).
+  - [enginestate] 'CAN' in the RAM refresh function and global names: no CAN register, buffer or message is touched; they walk the refresh block table 0x801c4e and compare RAM with ROM / flash.
+  - [enginestate] 0x80bcf8 as only a boot block programming enable flag: the SSBBPGEA e2m record names only the 0x02 bit (some tools call it 'bit 2'; it is mask 0x02 = bit 1). The byte is the whole Port E output image, and SSVTEA names the 0x04 bit.
+  - [enginestate] Port E mask 0x10 meaning: not proven. CM848's restartThroughBootRom drops no logical output before the hand-over; it reprograms USIU_BR0 / OR0 / SIUMCR instead (cm848 cpp, end of restartThroughBootRom), so there is no counterpart to name it from.
+  - [enginestate] A bitfield struct for 0x80bcf8: not proposed. CM550 has no bitfield struct yet, two of the bits are not proven, and the fields format cannot carry bitfield:1@n cleanly; the bit meanings are in the global's reason instead.
+  - [enginestate] engine_state values outside 1-8: none in the dumped 256 KB (0x0-0x3ffff), checked by both an absolute sweep and an address-register sweep. Code above 0x40000 (the func_0x0004xxxx targets) is not checkable. The previous-state copies 0x8005ee / 0x8005f0 / 0x8005f2 / 0x8005f4 / 0x8005f6 / 0x8005f8 / 0x801e90 also compare only with 1-8; they could be typed ENGINE_STATE later, but they are not proposed here.
+  - [enginestate] _cal on engine_overspeed_log / engine_overspeed_log_entry_open_flag / engine_overspeed_log_index / engine_startup_inhibit (CM848 keeps its log in the EEPROM mirror): not applied, per the brief's EEPROM-mirror rule. In CM550 they sit in the flash parameter block RAM 0x804f9a-0x806547, which is non-volatile through the power-down flash save (cpp:6350-6356), not in the EEPROM mirror 0x803b0a-0x804155. FLAG for the orchestrator: decide whether the _cal rule should cover the flash parameter block.
+  - [enginestate] cm550_peakTorqueFuelCorrection (0x17ca6) name: misleading. It sets crank_reentry_speed (the initial reentry speed, plus the offset after the crank exit time) and saves the previous engine state (cpp:12001-12015). Not renamed here (out of scope).
+  - [enginestate] cm550_systemFunction8xMaximum (0x11b36) / cm550_coreSystemFunction (0x2ee62): this is the diagnostic service registrar list with the same 8 IDs in the same order as cm848_registerJ1939DiagnosticHandlers / cm848_j1939RegisterDiagnosticService. Not renamed here: the callee 0x2ee62 was not compared with CM848 0x220e4.
+  - [cantwins] cm550_serialNodeAddressChecker / cm550_serialNodeAddressForwarder handle "serial node addresses": wrong - the word argument is the 82527 message object number (interrupt code - 2, or 15 for code 2), and the two functions are the J1939 CAN transmit / receive branches of mc68k_canCs4InterruptHandler (0x1e122-0x1e15a).
+  - [cantwins] can_first_receive_object_index (CM550 0x80d9f4) is the first receive object: wrong - it is the transmit object; every receive loop and range test starts at it + 1 (J90350.00.ghidra.cpp:19271, :19770-19772, :22411-22413).
+  - [cantwins] can_tx_mailbox_start_index / _end_index (CM848) bound a range of transmit mailboxes: wrong - start is the only transmit mailbox and (start, end] are the receive mailboxes.
+  - [cantwins] CM550 0x1e086 and CM848 0x53ae0 are twins like the transmit handlers: no - CM848 adds an else call to the empty hook 0x26f7c (bl at 0x53b14) that CM550 lacks (0x1e0aa bgt straight to the epilogue): counterparts, prefixed names.
+  - [cantwins] mc68k_canCs4TransmitNextFrame (0x1e52e) and mpc555_processJ1939TxBufferSend (0x535e8) as twins: no - same outline but different hardware access and ring entry size (14 vs 12 bytes) and a different fault clear (CM550 tests status word 5 bit 0x200 against the first-occurrence word; CM848 clears j1939_link_cannot_transmit_error in both fault words): hardware counterparts, their prefixes stay.
+  - [cantwins] emptyStubFunction2 / emptyStubFunction3 name one empty function in each firmware: wrong for 3 of the 4 rows - CM550 0x1b6e2 and 0x1b666 are rts tails of other functions with 0 references (J90280.05 relocation map rows, similar 72 / 69), CM848 0x57520 is the r26 entry of the register restore helper; only CM848 0x1806c is a real empty function. No pair has a shared role.
+  - [cantwins] CM848 0x57524 / 0x575a0 are calibration table lookups (cm848_calibrationTableLookup1D / 2D): wrong - the register restore / save helpers (rows above).
+  - [cantwins] CM848 0x1806c has a CM550 counterpart among the empty start-up calls of mc68k_applicationMain (0x30b0e / 0x26b82 / 0x1ffd0): not provable - the neighbouring initializers do not correspond, so cm848_emptyStubFunction3.
+  - [cantwins] The rows inside 0x80344a-0x8036c3 (oil_pressure_table_*_ptr, vp44_timing_*, base_timing_*, lift_pump_*, vp44_fso_*, fso_*, vp44_comm_*, redundant_sensor_param_*, eeprom_calibration_check_value_2/3, vp44_status_flags_1/2, ...) are VP44 / lift pump / oil pressure variables: wrong - they are fields or interior bytes of the J1939 transmit descriptors or their status bytes; their only .cpp uses are the descriptor builders' stores and the senders' casts, and no ROM instruction names any interior descriptor byte (absolute-operand scan of D+1..D+13 for all 35 descriptors: none).
+  - [cantwins] OPEN LEAD, not a rejection - the lead that these CM550 rows are empty stubs is wrong; they are more rows of the same kind (checked with references_to.py, not proposed here): 0x1b62a vp44_evenPhaseSchedulerTaskSet (a mid-entry of periodicTaskSet_fuelDemand, 0 references; the name is also used at 0x1b4d8), 0x1b6c6 cm550_emptySlowCycle8PlaceholderCase7, 0x1b6d4 cm550_empty_debug_hook and 0x1b70a cm550_emptySlowCycle20PlaceholderCase15 (rts tails after a jsr, 0 references), 0x25a30 cm550_fuel_delivery_controller (unlk a6 ; rts epilogue, 0 references), 0x303c8 cm550_emptyStubFunction9 (0 references, live-in registers) and 0x303d2 cm550_emptyInitPlaceholder (only a bcc.b target at 0x303ce) - candidates for deleted_functions.csv.
+  - [cantwins] j1939_tx_msg_buffer (CM550 0x803036, j1939_tx_msg_buffer_t) as a J1939 transmit buffer: no evidence - 0 ROM references to 0x803036 / 0x80303e / 0x803044 and zeros in the dump; it does not have the descriptor shape (data first); a removal candidate, not an instance.
+  - [cantwins] cm550_FUN_0002faa4 (called in the mc68k_initializeJ1939Datalink builder list) as a transmit descriptor builder: no - it fills 14-byte records at 0x801e30-0x801e70 with a word 2 and two ROM pointers (0x6052a / 0x605xx), not a CAN id / length / data / status layout; the builder-signature scan finds no CAN id store in it.
+  - [cantwins] The CM550 DM7 handler cm550_FUN_0002ef4a as a twin of cm848_j1939HandlePgn58112Dm7: rejected - CM550 passes the constants 0x100 / 0x200 as the test values, CM848 the monitor results. The DM8 sender / builder pairs (CM550 0x32b38 / 0x32b64 vs CM848 0x255c0 / 0x2560c) do match step for step - that part is an OPEN LEAD (a twin candidate for a later round), not a rejection.
