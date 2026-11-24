@@ -356,6 +356,10 @@ public class ApplyLocalVariables extends GhidraScript {
 
         // Handle primitive types
         switch (typeString.toLowerCase()) {
+            case "bool":
+                // A 1-byte boolean (the decompiler's own bool). Before PR #53 round 90 it was an unknown type, so a
+                // bool row never applied.
+                return BooleanDataType.dataType;
             case "uint8_t":
             case "byte":
             case "char":

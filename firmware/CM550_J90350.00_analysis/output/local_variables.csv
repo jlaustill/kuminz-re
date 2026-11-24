@@ -35,14 +35,12 @@ function_address,function_name,old_ghidra_name,new_variable_name,type,comment
 
 # validateSecurityKey @ 0x2fcdc - Validates auth payload against security key + hour meter
 # Returns 0 on success, 1 on failure. Lockout after 17 (0x11) failed attempts.
-0x0002fcdc,validateSecurityKey,bVar1,all_keys_match,bool,True if all 6 key bytes match stored key
-0x0002fcdc,validateSecurityKey,uVar2,validation_result,byte,Return value 0=success 1=failure
-0x0002fcdc,validateSecurityKey,key_matches,copy_counter,bool,Reused as byte copy loop counter 0-4
-0x0002fcdc,validateSecurityKey,cVar3,key_byte_index,char,Loop counter 0-5 for key comparison
-0x0002fcdc,validateSecurityKey,puVar4,hour_meter_dest_ptr,uint*,Destination for hour meter copy
-0x0002fcdc,validateSecurityKey,pbVar5,key_compare_ptr,byte*,Pointer walking through extracted_key
-0x0002fcdc,validateSecurityKey,puVar6,hour_meter_src_ptr,byte*,Source for hour meter copy
-0x0002fcdc,validateSecurityKey,extracted_hour_meter,extracted_hour_meter,uint,Hour meter from auth (already named)
+0x0002fcdc,validateSecurityKey,bVar1,all_keys_match,bool,True while every key byte so far matches security_master_password_cal
+0x0002fcdc,validateSecurityKey,uVar2,validation_result,byte,Return value 0 = accepted / 1 = refused
+0x0002fcdc,validateSecurityKey,bVar3,hour_meter_byte_count,byte,Counts the hour meter bytes copied into extracted_hour_meter (1-3) (PR #53 round 90)
+0x0002fcdc,validateSecurityKey,cVar4,key_byte_index,char,Loop counter 0-5 for the key comparison (PR #53 round 90)
+0x0002fcdc,validateSecurityKey,puVar5,hour_meter_copy_destination,uint*,Walks extracted_hour_meter byte by byte (PR #53 round 90)
+0x0002fcdc,validateSecurityKey,local_12,extracted_hour_meter,uint,The hour meter from the auth payload: its top three bytes are compared with key_on_hour_meter's (a difference below 26 is accepted) (PR #53 round 90)
 0x0002fcdc,validateSecurityKey,abStack_e,extracted_key,byte[6],6-byte key from auth payload
 0x0002fcdc,validateSecurityKey,auStack_8,hour_meter_bytes,byte[4],4-byte hour meter from auth payload
 

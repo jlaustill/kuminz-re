@@ -37,11 +37,11 @@ void cm550_shutdownMinimumSelector16(void);  // @ 0x0000c2a0
 void cm550_diagnosticTimingIncrementController(void);  // @ 0x0000c2be
 void cm550_FUN_0000c2ee(void);  // @ 0x0000c2ee
 ushort calculateAlpha(void);  // @ 0x0000c326
-undefined2 calculateAlphaFuelRateResult(void);  // @ 0x0000c404
+word calculateAlphaFuelRateResult(void);  // @ 0x0000c404
 uint calculateAlphaOnGovernorResult(void);  // @ 0x0000c496
 int calculateAlphaLowSpeedGovernorResult(void);  // @ 0x0000c4b2
 int calculateAlphaAirFuelControlResult(void);  // @ 0x0000c504
-undefined2 calculateAlphaLowAmbientAirPressureResult(void);  // @ 0x0000c556
+word calculateAlphaLowAmbientAirPressureResult(void);  // @ 0x0000c556
 uint calculateAlphaBase(void);  // @ 0x0000c582
 void cm550_phase2_slot_5_handler(void);  // @ 0x0000c658
 ushort cm550_rpmHistogramAndProtectionStatisticsAccumulator(void);  // @ 0x0000c66a
