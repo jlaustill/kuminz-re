@@ -943,7 +943,10 @@ state enum, the flag bytes.**
   functions; 13 CM550 globals placed by its own parameter ID table.
 - **Stage B (f0ebe1d5):** the skeptics' plate fixes, old names refreshed in four more CSVs,
   `cm550_initializeDiscreteInputs`, and CM848's working RAM end marker (`cm848_writeWorkingRamEndMarker` /
-  `cm848_checkWorkingRamEndMarker`, fault 462).
+  `cm848_checkWorkingRamEndMarker`, fault 318 = P0604).
+- **Stage C (542184f2):** the marker check's fault is 318 (P0604), not 462 as stage B said (Ghidra's `_38_2_` piece
+  offset is a decimal byte offset); `cm550_emptyStubFunction4` (its old name was CM848 0x26f78's); the CM550
+  restart routine's plate.
 
 ## Test plan
 
@@ -1036,6 +1039,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 87: C: CM550 and CM848: verify DETERMINISTIC; label-only (0 differing lines; 0 functions removed, added or changed); the corrected plates render (fault 318 at 0x52796c, no "fault 462" left in the CM848 .cpp; the 0x1192a and 0x15f8c plates); no new build warning. Headers 0 g++ errors in both; _cal HARD 0 in both.
 - [x] Round 87: B: CM550: verify DETERMINISTIC; label-only (0 differing lines; 0 functions removed, added or changed); every new plate rendered; no new build warning (unmapped types 5429 -> 5428: the removed row). CM848: verify DETERMINISTIC; 0 functions removed or added; label-only except 3 functions - one local declaration moved in mpc555_areBootModeStrapPinsHigh, the marker compare prints 0xc0dac0da (was -0x3f253f26) now that working_ram_end_marker is a dword, and clearWorkingRam shows its one 4-byte store per step (was two word stores) with pointer casts; no new build warning. Headers 0 g++ errors in both; _cal HARD 0 in both (CM550 MISSING 28 -> 27: the removed row).
 - [x] Round 87: A: CM550: verify DETERMINISTIC; 0 functions removed or added; label-only except 5 functions, whose only token changes come from the newly typed parameter block words (4 short -> word, 3 1U -> 1, 2 (byte *) casts); no new build warning (unmapped types 5436 -> 5429). CM848: verify DETERMINISTIC; label-only (0 differing lines with the rename map); no new build warning. Headers 0 g++ errors in both; _cal HARD 0 in both (CM550 MISSING 31 -> 28).
 - [x] Round 86: D: CM550 verify DETERMINISTIC; only the two target functions change; the local rows of every changed function checked

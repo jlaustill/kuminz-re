@@ -1,0 +1,1 @@
+CM550 and CM848: verify DETERMINISTIC; label-only (0 differing lines; 0 functions removed, added or changed); the corrected plates render (fault 318 at 0x52796c, no "fault 462" left in the CM848 .cpp; the 0x1192a and 0x15f8c plates); no new build warning. Headers 0 g++ errors in both; _cal HARD 0 in both.

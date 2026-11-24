@@ -734,4 +734,7 @@ Hand work on the round 7 lead.
   the maps and the proof outputs.
 - **Stage B:** `apply_r87b.py`, `refresh_other_csvs.py` (old names in the four CSVs refresh_references.py does not
   cover), `fault_pcode.py` (fault number -> OBD P-code).
-- **Closing:** `apply_r87_closing.py`, `update_large_tar_r87.sh`.
+- **Stage C:** `apply_r87c.py`, `find_pointer.py` (big-endian pointers to an address and the PowerPC branches that
+  target it, in one or more images).
+- **Closing:** `apply_r87_closing.py`, `apply_r87c_closing.py`, `dedupe_r87c.py` (removed the three blocks that a
+  second run of `apply_r87c_closing.py` duplicated before its guard was fixed), `update_large_tar_r87.sh`.

@@ -375,3 +375,5 @@
    401960 verify_round87a_cm848.log
    241818 verify_round87b_cm550.log
    401951 verify_round87b_cm848.log
+   241819 verify_round87c_cm550.log
+   401952 verify_round87c_cm848.log

@@ -3905,10 +3905,23 @@ with the audit's proposals and verdicts (`audit_result_r87.json`, `audit_summary
     access of its own).
   - CM848: the working RAM end marker. `cm848_writeWorkingRamEndMarker` (was `cm848_timer_state_preservation`) writes
     0xC0DAC0DA to `working_ram_end_marker` (0x41428e, the end of the RAM that `clearWorkingRam` clears) at start-up;
-    `cm848_checkWorkingRamEndMarker` (was `cm848_main_loop_initialization`) sets fault 462
-    (`working_ram_end_marker_error`, no DTC slot) when it is gone. `executive_frame_phase` (was
+    `cm848_checkWorkingRamEndMarker` (was `cm848_main_loop_initialization`) sets fault 318
+    (`working_ram_end_marker_error`, P0604 internal control module RAM error) when it is gone; stage B said
+    fault 462, which stage C corrected. `executive_frame_phase` (was
     `main_loop_scheduler_phase`).
   - **Proof:** CM550: verify DETERMINISTIC; label-only (0 differing lines; 0 functions removed, added or changed); every new plate rendered; no new build warning (unmapped types 5429 -> 5428: the removed row). CM848: verify DETERMINISTIC; 0 functions removed or added; label-only except 3 functions - one local declaration moved in mpc555_areBootModeStrapPinsHigh, the marker compare prints 0xc0dac0da (was -0x3f253f26) now that working_ram_end_marker is a dword, and clearWorkingRam shows its one 4-byte store per step (was two word stores) with pointer casts; no new build warning. Headers 0 g++ errors in both; _cal HARD 0 in both (CM550 MISSING 28 -> 27: the removed row).
+- **Stage C (542184f2), from an advisor review of stages A-B:**
+  - The marker check's fault is 318 (P0604), not 462. The store is `sth r11,38(r3)` at 0x5279cc off the fault
+    word base, and Ghidra's piece offset in `fault_detected_cal._38_2_` is a decimal byte offset: byte 38 = word
+    19, bit 14 = fault 318. Stage B had matched the e2m "+38" of word 28, which is hex. Word 28 bit 14 is
+    `fault_462` again.
+  - CM550 0x15f8c `emptyStubFunction4` -> `cm550_emptyStubFunction4`: its old shared name belonged to CM848
+    0x26f78, which stage A made `ignoreCanTransmitInterrupt` (one `bl` at 0x53acc and no pointer in either image
+    reach 0x26f78, `find_pointer.py`); 0x15f8c is another empty stub, called once from
+    `mc68k_sampleAndDebounceDiscreteInputs`.
+  - CM550 0x1192a's plate states what its body does (the waits, the hour meter saves, the `ram_refresh_enable`
+    branch).
+  - **Proof:** CM550 and CM848: verify DETERMINISTIC; label-only (0 differing lines; 0 functions removed, added or changed); the corrected plates render (fault 318 at 0x52796c, no "fault 462" left in the CM848 .cpp; the 0x1192a and 0x15f8c plates); no new build warning. Headers 0 g++ errors in both; _cal HARD 0 in both.
 - **firmware/CLAUDE.md:** stage A renamed the CM848 functions in three lines; stage B corrected the ROM-to-RAM line (the
   copy is `cm848_copyBootKernelToRam`, 0x340, not `copyCalibrationToRam()`). Old and new lines are in the commits.
 - **Leads (round 88):**
@@ -3934,6 +3947,8 @@ with the audit's proposals and verdicts (`audit_result_r87.json`, `audit_summary
     calibration RAM image's ends.
   - `clearWorkingRam` in both twins: `dword *` local rows would drop the pointer casts that the marker's dword type
     brought into CM848's loop, and CM550's twin still ends at a raw 0x80def4.
+  - `emptyStubFunction2` / `emptyStubFunction3` are shared names on empty stubs; nobody has checked their pairing
+    (no CM550 caller in the `.cpp`).
 
 ## Leads (not in this PR)
 
