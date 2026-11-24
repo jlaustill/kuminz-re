@@ -922,6 +922,9 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     - Read 0x40c280 and up at address - 0x80; there is no data for 0x40c200-0x40c27f.
     - The proof: the collector end pointer 0x40c28a, then 0 and the table address 0x3fddc4, sit at dump 0x40c200, and
       the file is exactly 0x80 short of 0x440000.
+    - The cause: clip-core's `ECUReader::readMemoryService4ALarge` skipped a failed 128-byte chunk without padding.
+      Since PR #53 round 88 it pads the chunk with 0xFF and lists it in `<dump>.gaps.txt` (`readInChunks`, with unit tests).
+      CM550's extended RAM dump has the same 0x80 shift (its README).
 - **The CHP charge flow model (2026-11-20, todo 046).** CHP is the e2m prefix of the charge, EGR and fresh air flow
   records; the e2m never spells it out.
   - **The EGR stage:** `cm848_calculateDelayedEgrFlowAndFraction` (0x128a0, was `cm848_throttleBasedFuelCalculation`).

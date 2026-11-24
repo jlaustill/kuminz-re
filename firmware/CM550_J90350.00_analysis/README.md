@@ -136,9 +136,11 @@ See [docs/memory_map.md](docs/memory_map.md) for full details including peripher
 |--------|---------------|------|-------------|--------|
 | ROM | 0x000000-0x03FFFF | 256KB | rx | Extracted |
 | RAM | 0x800000-0x8091C1 | 37KB | rwx | Extracted |
-| EXT_RAM | 0x8091C2-0x80FF7F | 28KB | rwx | Extracted |
+| EXT_RAM | 0x8091C2-0x80FFFF | 28KB | rwx | Extracted, 0x80 bytes short (below) |
 | EEPROM | 0x1000000-0x1000FFF | 4KB | rw- | Extracted |
 | MC68336 Peripherals | 0xFFD000-0xFFFFFF | 12KB | - | Hardware registers (not extractable) |
+
+**The extended RAM dump is 0x80 bytes short.** `J90350.00.extended_ram.bin` (0x6DBE bytes) was read in 128-byte chunks from 0x8091C2, and the dump tool skipped one failed chunk - the first (0x8091C2) or the second (0x809242) - without padding. So from 0x8092C2 on, each value sits at file offset address - 0x809242 (address - 0x80 from the region start): of 100 init-time constant stores, 40 match the dump only at address - 0x80 and none only at the address (PR #53 round 87). 0x8091C2-0x8092C1 is uncertain. clip-core's `ECUReader` pads a failed chunk with 0xFF and lists it in `<dump>.gaps.txt` since PR #53 round 88, so new dumps stay aligned. `SetupMemoryMap.java` still loads this file at 0x8091C2.
 
 **Total extracted: 325KB** - 100% of data memory regions.
 
