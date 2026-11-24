@@ -1051,11 +1051,6 @@ typedef struct dma_descriptor_t dma_descriptor_t;
 typedef struct memory_operation_request_t memory_operation_request_t;
 typedef struct q16_fixed_point_t q16_fixed_point_t;
 typedef struct division_operand_t division_operand_t;
-typedef struct mc68336_reg16_t mc68336_reg16_t;
-typedef struct sim_timer_block_t sim_timer_block_t;
-typedef struct tpu_dscr_block_t tpu_dscr_block_t;
-typedef struct tpu_hsq_block_t tpu_hsq_block_t;
-typedef struct serial_port_regs_t serial_port_regs_t;
 typedef struct sensor_fault_config_t sensor_fault_config_t;
 typedef struct sensor_debounce_state_t sensor_debounce_state_t;
 typedef struct cummins_data_plate_header_t cummins_data_plate_header_t;
@@ -1093,7 +1088,6 @@ typedef struct system_callback_table_t system_callback_table_t;
 typedef struct ad_sensor_config_t ad_sensor_config_t;
 typedef struct address_range_entry_t address_range_entry_t;
 typedef struct circular_buffer_control_t circular_buffer_control_t;
-typedef struct param_circular_buffer_t param_circular_buffer_t;
 typedef struct qadc_circular_buffer_t qadc_circular_buffer_t;
 typedef struct huffman_tree_node_t huffman_tree_node_t;
 typedef struct huffman_tree_t huffman_tree_t;
@@ -1155,52 +1149,6 @@ struct q16_fixed_point_t {
 struct division_operand_t {
     uint16_t value;  /* Primary 16-bit value (used for division) */
     uint16_t limit;  /* Secondary 16-bit limit/clamp value */
-};
-
-struct mc68336_reg16_t {
-    uint8_t lo;  /* Low byte at offset 0 */
-    uint8_t hi;  /* High byte at offset 1 */
-};
-
-struct sim_timer_block_t {
-    uint16_t timer_count;  /* Timer counter value (offset 0) */
-    uint16_t reserved_02;  /* Reserved (offset 2) */
-    uint16_t timer_config;  /* Timer configuration (offset 4) */
-    uint16_t reserved_06;  /* Reserved (offset 6) */
-    uint32_t reserved_08;  /* Reserved (offset 8-11) */
-    uint16_t timer_compare;  /* Timer compare value (offset 12) */
-    uint16_t reserved_14;  /* Reserved (offset 14) */
-    uint16_t timer_capture;  /* Timer capture value (offset 16) */
-    uint16_t reserved_18;  /* Reserved (offset 18) */
-    uint16_t timer_status;  /* Timer status register (offset 20) */
-    uint32_t timer_control;  /* Timer control value (offset 22) */
-};
-
-struct tpu_dscr_block_t {
-    uint8_t control_lo;  /* TPU DSCR control low byte (offset 0) */
-    uint8_t control_hi;  /* TPU DSCR control high byte (offset 1) */
-    uint16_t reserved_02;  /* Reserved (offset 2) */
-    uint16_t dscr_config;  /* DSCR configuration (offset 4) */
-    uint16_t dscr_status;  /* DSCR status register (offset 6) */
-    uint16_t dscr_data;  /* DSCR data register (offset 8) */
-    uint16_t dscr_addr;  /* DSCR address register (offset 10) */
-};
-
-struct tpu_hsq_block_t {
-    uint8_t hsqr0_lo;  /* TPU host sequence register 0 low (offset 0) */
-    uint8_t hsqr0_hi;  /* TPU host sequence register 0 high (offset 1) */
-    uint8_t hsqr1_lo;  /* TPU host sequence register 1 low (offset 2) */
-    uint8_t hsqr1_hi;  /* TPU host sequence register 1 high (offset 3) */
-    uint16_t hsq_config;  /* HSQ configuration (offset 4) */
-    uint16_t hsq_status;  /* HSQ status register (offset 6) */
-    uint16_t hsq_data;  /* HSQ data register (offset 8) */
-};
-
-struct serial_port_regs_t {
-    uint8_t status;  /* Serial port status register (offset 0) */
-    uint8_t config;  /* Serial port configuration (offset 1) */
-    uint8_t data;  /* Serial port data register (offset 2) */
-    uint8_t reserved;  /* Reserved (offset 3) */
 };
 
 struct sensor_fault_config_t {
@@ -1556,15 +1504,6 @@ struct circular_buffer_control_t {
     uint32_t base_ptr;  /* Start address of buffer data */
     uint32_t end_ptr;  /* End address of buffer data */
     uint8_t full_flag;  /* Buffer full indicator (1=full 0=space available) */
-};
-
-struct param_circular_buffer_t {
-    uint8_t metadata[1024];  /* Buffer metadata storage area */
-    uint8_t data[512];  /* Actual circular buffer data storage */
-    uint16_t read_index;  /* Current read index into buffer */
-    uint16_t write_index;  /* Current write index into buffer */
-    uint16_t count;  /* Number of entries in buffer */
-    uint16_t current_value;  /* Most recent parameter value */
 };
 
 struct qadc_circular_buffer_t {

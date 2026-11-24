@@ -228,12 +228,12 @@ void cm550_protectionState3bRpmMonitor(void);  // @ 0x0001952c
 void cm550_shutdownMinimumSelector29(void);  // @ 0x000196e4
 void cm550_FUN_00019702(void);  // @ 0x00019702
 void cm550_initShutdownLimitVariables(void);  // @ 0x00019960
-short mc68k_can1TimerBufferInitDivided(void);  // @ 0x0001999c
-short mc68k_phase2_slot_0_handler(void);  // @ 0x000199fa
+word mc68k_can1TimerBufferInitDivided(void);  // @ 0x0001999c
+word mc68k_phase2_slot_0_handler(void);  // @ 0x000199fa
 void cm550_delayWithWatchdogServiceWrapper2(void);  // @ 0x00019ac2
 void cm550_emptyStubFunction7(void);  // @ 0x00019aca
 undefined8 vp44_rpmTimerInterruptHandler2(void);  // @ 0x00019acc
-short mc68k_FUN_00019caa(void);  // @ 0x00019caa
+word mc68k_FUN_00019caa(void);  // @ 0x00019caa
 void mc68k_can1MessageTransmitInit2(void);  // @ 0x00019dd0
 void cm550_FUN_00019e8e(void);  // @ 0x00019e8e
 undefined8 vp44_FUN_00019e90(void);  // @ 0x00019e90
