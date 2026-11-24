@@ -1091,8 +1091,6 @@ typedef struct circular_buffer_control_t circular_buffer_control_t;
 typedef struct qadc_circular_buffer_t qadc_circular_buffer_t;
 typedef struct huffman_tree_node_t huffman_tree_node_t;
 typedef struct huffman_tree_t huffman_tree_t;
-typedef struct j1708_tx_state_t j1708_tx_state_t;
-typedef struct j1708_rx_state_t j1708_rx_state_t;
 typedef struct diagnostic_buffers_t diagnostic_buffers_t;
 typedef struct diagnostic_buffer_ptrs_t diagnostic_buffer_ptrs_t;
 typedef struct can_buffer_setup_t can_buffer_setup_t;
@@ -1521,22 +1519,6 @@ struct huffman_tree_t {
     huffman_tree_node_t nodes;  /* Array of 513 tree nodes (256 leaves + 257 internal) */
     uint16_t root_marker;  /* Root node marker at offset 0x600 */
     uint16_t terminator;  /* Tree terminator at offset 0xC06 (set to 0xFFFF) */
-};
-
-struct j1708_tx_state_t {
-    uint32_t buffer_ptr;  /* Current transmit buffer pointer */
-    uint32_t buffer_2;  /* Secondary transmit buffer pointer */
-    uint32_t buffer_end;  /* End of transmit buffer */
-    uint8_t buffer_full_flag;  /* Transmit buffer full flag (1=full 0=empty) */
-    uint8_t buffer_reserved;  /* Reserved/unused byte */
-};
-
-struct j1708_rx_state_t {
-    uint32_t buffer_ptr_1;  /* Receive buffer pointer 1 */
-    uint32_t buffer_ptr_2;  /* Receive buffer pointer 2 */
-    uint32_t buffer_ptr_3;  /* Receive buffer pointer 3 (current position) */
-    uint8_t buffer_full_flag;  /* Receive buffer full flag (1=full 0=empty) */
-    uint8_t buffer_reserved;  /* Reserved/unused byte */
 };
 
 struct diagnostic_buffers_t {

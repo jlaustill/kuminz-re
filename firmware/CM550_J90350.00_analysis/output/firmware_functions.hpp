@@ -384,7 +384,7 @@ void cm550_emptyStubWrapper1(void);  // @ 0x0001e1ac
 void cm550_modeBasedDataDispatcherWrapper(void);  // @ 0x0001e1be
 undefined8 mc68k_serialPort2IsrHandler(void);  // @ 0x0001e1d0
 void cm550_serialCommunicationIsrRegister(void);  // @ 0x0001e25a
-void mc68k_tpuTimerChannelEnable(word channel_mask);  // @ 0x0001e266
+void mc68k_armJ1708BusTimer(void);  // @ 0x0001e266
 undefined8 mc68k_j1708SciInterruptHandler(void);  // @ 0x0001e288
 void cm550_tpuChannelIsrRegister(void);  // @ 0x0001e522
 uint serialTransmitHandler(void);  // @ 0x0001e52e
@@ -655,7 +655,7 @@ byte validateSecurityKey(byte *auth_payload_ptr);  // @ 0x0002fcdc
 void cm550_FUN_0002fd90(undefined4 param_1);  // @ 0x0002fd90
 void cm550_diagnosticTableEntryClear(undefined4 param_1);  // @ 0x0002fddc
 void cm550_diagnosticTableSnapshotCapture(undefined4 param_1);  // @ 0x0002fe38
-undefined8 mc68k_tpuChannelStateMachine(void);  // @ 0x000300d4
+undefined8 mc68k_j1708BusTimerInterruptHandler(void);  // @ 0x000300d4
 void mc68k_engineSpeedIsrRegister(void);  // @ 0x00030274
 void mc68k_engineRpmHardwareTimerSetup(void);  // @ 0x00030290
 void mc68k_can1ControllerInit(void);  // @ 0x00030342

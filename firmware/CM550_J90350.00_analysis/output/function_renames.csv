@@ -391,7 +391,7 @@ address,name
 0x0001e1be,cm550_modeBasedDataDispatcherWrapper
 0x0001e1d0,mc68k_serialPort2IsrHandler
 0x0001e25a,cm550_serialCommunicationIsrRegister
-0x0001e266,mc68k_tpuTimerChannelEnable
+0x0001e266,mc68k_armJ1708BusTimer,Arms the J1708 bus timer: sets j1708_bus_timer_armed_flag - loads CTM4_MCSM11CNT with 0xfc8a - clears CTM4_MCSM11SIC bit 15 and sets its bit 14 (an interrupt level). It drives no TPU channel and takes no parameter (was mc68k_tpuTimerChannelEnable; PR #53 round 77)
 0x0001e288,mc68k_j1708SciInterruptHandler,The J1708 SCI interrupt handler: on QSM_SCSR RDRF (0x40) it reads the byte from QSM_SCDR into the J1708 receive buffer and adds it to the checksum - while transmitting it sends the next transmit byte to QSM_SCDR and at the end the two's complement of the checksum (~sum + 1) - and it clears QSM_SCCR1 RIE when the receive buffer is full. No EPS position sensor is involved (was mc68k_epsPositionSensorIsrHandler; PR #53 round 75)
 0x0001e522,cm550_tpuChannelIsrRegister
 0x0001e52e,serialTransmitHandler
@@ -665,7 +665,7 @@ address,name
 0x0002fd90,cm550_FUN_0002fd90
 0x0002fddc,cm550_diagnosticTableEntryClear
 0x0002fe38,cm550_diagnosticTableSnapshotCapture
-0x000300d4,mc68k_tpuChannelStateMachine
+0x000300d4,mc68k_j1708BusTimerInterruptHandler,The CTM4 MCSM11 interrupt handler of the J1708 driver (no caller - reached through the vector table): clears CTM4_MCSM11SIC's interrupt level and bit 15 and j1708_bus_timer_armed_flag - closes the received message (drops messages of fewer than 3 bytes and checks j1708_message_checksum) - and writes a pending transmit byte to QSM_SCDR. It drives no TPU channel (was mc68k_tpuChannelStateMachine; PR #53 round 77)
 0x00030274,mc68k_engineSpeedIsrRegister
 0x00030290,mc68k_engineRpmHardwareTimerSetup
 0x00030342,mc68k_can1ControllerInit

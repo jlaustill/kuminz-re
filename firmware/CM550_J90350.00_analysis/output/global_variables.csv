@@ -5673,23 +5673,23 @@ address,name,type,comment
 0x0080dc8e,filtered_percent_load_output_of_gear_down_0_100,undefined,
 0x0080dc90,run_location,RUN_LOCATION,Where the code runs (a word - cmpi.w #0xeaea / move.w #0xeeee; written 0xeeee / 0xeaea only): RUN_LOCATION_DEVELOPMENT in development mode / RUN_LOCATION_NORMAL at boot and power-down and on leaving it - CM848's run_location (e2m 0010 RUN_LOC) by the twin functions (was water_in_fuel_state_code; PR #53 round 73)
 0x0080dc92,not_safe_to_program_flag,word,e2m block 000D SAFE2PRG (CM550's parameter ID table) - CM848's not_safe_to_program_flag: 1 = not safe to program - the twins return 7 on it; CM550 also writes 2 (cm550_fuel_limit_arbitrator: stopped with a switch bit set) which every '== 1' test treats as safe (cmpi.w / move.w / clr.w) (was diagnostic_session_state; PR #53 round 73)
-0x0080dc94,j1708_transmit_buffer_0_2_32,undefined,
-0x0080dc98,j1708_transmit_buffer_2_32_dc98,undefined,
+0x0080dc94,j1708_transmit_buffer_0_2_32,dword,the J1708 transmit buffer pointer (move.l) (typed dword - was undefined; PR #53 round 77)
+0x0080dc98,j1708_transmit_buffer_2_32_dc98,dword,the J1708 transmit pointer - the SCI interrupt handler sends *pointer (move.l) (typed dword - was undefined; PR #53 round 77)
 0x0080dc9b,j1708_transmit_buffer_index_low,undefined,
-0x0080dc9c,j1708_transmit_buffer_2_32_dc9c,undefined,
-0x0080dca0,j1708_transmit_buffer_full_flag_1_true_0_false,undefined,
-0x0080dca2,j1708_receive_buffer_pointer_2_32_dca2,undefined,
+0x0080dc9c,j1708_transmit_buffer_2_32_dc9c,dword,the J1708 transmit buffer end pointer (move.l) (typed dword - was undefined; PR #53 round 77)
+0x0080dca0,j1708_transmit_buffer_full_flag_1_true_0_false,byte,the J1708 transmit buffer full flag (typed byte - was undefined; PR #53 round 77)
+0x0080dca2,j1708_receive_buffer_pointer_2_32_dca2,dword,the J1708 receive buffer pointer (move.l) (typed dword - was undefined; PR #53 round 77)
 0x0080dca5,j1708_receive_buffer_index_low,undefined,
-0x0080dca6,j1708_receive_buffer_pointer_2_32_dca6,undefined,
-0x0080dcaa,j1708_receive_buffer_pointer_2_32_dcaa,undefined,
-0x0080dcae,j1708_receive_buffer_full_flag_1_true_0_false,undefined,
-0x0080dcb0,j1708_receive_mode_flag,,
-0x0080dcb1,j1708_transmit_byte_count,,
-0x0080dcb3,j1708_rx_state_t_0080dcaf.buffer_ptr_2,,
-0x0080dcb6,j1708_transmit_state,,
-0x0080dcba,j1708_tpu_channel_active,,
-0x0080dcbb,j1708_pending_abort_count,,
-0x0080dcbc,j1708_rx_state_t_0080dcaf.buffer_reserved,,
+0x0080dca6,j1708_receive_buffer_pointer_2_32_dca6,dword,the J1708 receive write pointer - the SCI interrupt handler stores each received byte at *pointer (typed dword - was undefined; PR #53 round 77)
+0x0080dcaa,j1708_receive_buffer_pointer_2_32_dcaa,dword,the J1708 receive buffer pointer the end-of-message code compares with (typed dword - was undefined; PR #53 round 77)
+0x0080dcae,j1708_receive_buffer_full_flag_1_true_0_false,byte,the J1708 receive buffer full flag (typed byte - was undefined; PR #53 round 77)
+0x0080dcb0,j1708_receive_mode_flag,byte,1 while the J1708 driver listens: the SCI interrupt handler stores received bytes only then, and mc68k_startJ1708Transmission needs it at 1 and clears it (clr.b / tst.b / cmpi.b / move.b) (typed byte - was untyped; PR #53 round 77)
+0x0080dcb1,j1708_transmit_byte_count,byte,addq.b / move.b (typed byte - was untyped; PR #53 round 77)
+0x0080dcb3,j1708_message_checksum,byte,The J1708 message checksum: the SCI interrupt handler adds every received and transmitted byte to it and sends ~sum + 1 at the end of a transmission; the end-of-message code checks it for 0 (clr.b) (was the coordinate row j1708_rx_state_t_0080dcaf.buffer_ptr_2; PR #53 round 77)
+0x0080dcb6,j1708_transmit_state,dword,the J1708 transmit state the SCI interrupt handler switches on (clr.l / move.l) (typed dword - was untyped; PR #53 round 77)
+0x0080dcba,j1708_bus_timer_armed_flag,byte,1 while the CTM4 MCSM11 timer is armed: mc68k_armJ1708BusTimer and mc68k_startJ1708Transmission set it when they arm the timer - mc68k_j1708SciInterruptHandler clears it when a byte arrives and mc68k_j1708BusTimerInterruptHandler when the timer expires - mc68k_startJ1708Transmission sends only while it is 0 (clr.b / move.b; was j1708_tpu_channel_active - no TPU channel is involved; PR #53 round 77)
+0x0080dcbb,j1708_pending_abort_count,byte,mc68k_j1708BusTimerInterruptHandler adds 1 when it closes a received message of at least 3 bytes and writes a 2 / 6 / 0x74 record into the receive buffer - the name is older and not checked against that (addq.b / clr.b / tst.b; typed byte - was untyped; PR #53 round 77)
+0x0080dcbc,,byte,Cleared once by mc68k_initializeJ1708Datalink - no other access found (clr.b; was the coordinate row j1708_rx_state_t_0080dcaf.buffer_reserved; PR #53 round 77)
 0x0080dcbe,scratch_pad_data_buffer,undefined,
 0x0080dd86,scratch_pad_directory_table,undefined,
 0x0080ddc2,scratch_pad_write_pointer,undefined,

@@ -466,18 +466,8 @@ huffman_tree_t,,terminator,word,2,Tree terminator at offset 0xC06 (set to 0xFFFF
 # -----------------------------------------------------------------------------
 
 # J1708 Transmit State
-j1708_tx_state_t,0x0080DC94,buffer_ptr,dword,4,Current transmit buffer pointer,,verified
-j1708_tx_state_t,0x0080DC98,buffer_2,dword,4,Secondary transmit buffer pointer,,verified
-j1708_tx_state_t,0x0080DC9C,buffer_end,dword,4,End of transmit buffer,,verified
-j1708_tx_state_t,0x0080DCA0,buffer_full_flag,byte,1,Transmit buffer full flag (1=full 0=empty),,verified
-j1708_tx_state_t,0x0080DCA1,buffer_reserved,byte,1,Reserved/unused byte,,verified
 
 # J1708 Receive State
-j1708_rx_state_t,0x0080DCA2,buffer_ptr_1,dword,4,Receive buffer pointer 1,,verified
-j1708_rx_state_t,0x0080DCA6,buffer_ptr_2,dword,4,Receive buffer pointer 2,,verified
-j1708_rx_state_t,0x0080DCAA,buffer_ptr_3,dword,4,Receive buffer pointer 3 (current position),,verified
-j1708_rx_state_t,0x0080DCAE,buffer_full_flag,byte,1,Receive buffer full flag (1=full 0=empty),,verified
-j1708_rx_state_t,0x0080DCAF,buffer_reserved,byte,1,Reserved/unused byte,,verified
 
 # J1708 Multi-Packet Message Structure (256 bytes)
 # This is the structured layout of the J1708 transmit/receive buffers

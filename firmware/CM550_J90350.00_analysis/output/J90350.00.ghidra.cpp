@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Mon Nov 23 20:19:21 MST 2026
+// Generated: Mon Nov 23 20:57:25 MST 2026
 
 
 //
@@ -1149,11 +1149,11 @@ void cm550_diagnosticMessageQueueWrite(byte response_type)
   ushort in_stack_00000004;
   undefined4 local_8;
   
-  if ((int)_j1708_transmit_buffer_0_2_32 < _j1708_transmit_buffer_2_32_dc9c) {
-    iVar2 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + -2;
+  if ((int)j1708_transmit_buffer_0_2_32 < (int)j1708_transmit_buffer_2_32_dc9c) {
+    iVar2 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) + -2;
   }
   else {
-    iVar2 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + 0xfe;
+    iVar2 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) + 0xfe;
   }
   if (iVar2 < 3) {
     _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
@@ -1161,9 +1161,9 @@ void cm550_diagnosticMessageQueueWrite(byte response_type)
     _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
   }
   else {
-    local_8._3_1_ = (char)_j1708_transmit_buffer_0_2_32;
+    local_8._3_1_ = (char)j1708_transmit_buffer_0_2_32;
     cVar1 = (char)local_8;
-    local_8._0_3_ = (undefined3)((uint)_j1708_transmit_buffer_0_2_32 >> 8);
+    local_8._0_3_ = (undefined3)(j1708_transmit_buffer_0_2_32 >> 8);
     local_8 = (undefined1 *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
     if (in_stack_00000004 == 0) {
       uVar3 = 100;
@@ -1186,8 +1186,8 @@ void cm550_diagnosticMessageQueueWrite(byte response_type)
     local_8 = (undefined1 *)CONCAT31(local_8._0_3_,cVar1 + '\x02');
     *local_8 = uVar3;
     local_8 = (undefined1 *)CONCAT31(local_8._0_3_,cVar1 + '\x03');
-    *_j1708_transmit_buffer_0_2_32 = 2;
-    _j1708_transmit_buffer_0_2_32 = local_8;
+    *(undefined1 *)j1708_transmit_buffer_0_2_32 = 2;
+    j1708_transmit_buffer_0_2_32 = (dword)local_8;
     *local_8 = 0;
     mc68k_startJ1708Transmission();
   }
@@ -3876,8 +3876,6 @@ uint cm550_FUN_0000e998(void)
 // Function: vp44_insiteParameterTableIterator @ 0x0000eaec
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void vp44_insiteParameterTableIterator(void)
 
 {
@@ -3888,8 +3886,8 @@ void vp44_insiteParameterTableIterator(void)
   insite_parameter_table_pointer =
        (insite_parameter_schedule_entry_t *)&insite_parameter_schedule_table;
   insite_parameter_schedule_pointer = insite_parameter_next_due_ticks;
-  insite_response_frame_start = _j1708_transmit_buffer_0_2_32;
-  insite_response_write_pointer = _j1708_transmit_buffer_0_2_32;
+  insite_response_frame_start = j1708_transmit_buffer_0_2_32;
+  insite_response_write_pointer = j1708_transmit_buffer_0_2_32;
   insite_full_detail_response_mode = 0;
   insite_response_length = 0;
   insite_parameter_id = insite_parameter_schedule_table;
@@ -10613,14 +10611,14 @@ void diagnosticCommandDispatcher(void)
   do {
     elapsedTimerCount = CTM4_BIUTBR;
     if ((499 < (int)((uint)elapsedTimerCount - (uint)currentTimerCount)) ||
-       ((_j1708_receive_buffer_pointer_2_32_dca2 == _j1708_receive_buffer_pointer_2_32_dcaa &&
-        (j1708_receive_buffer_full_flag_1_true_0_false != '\x01')))) {
+       ((j1708_receive_buffer_pointer_2_32_dca2 == j1708_receive_buffer_pointer_2_32_dcaa &&
+        (j1708_receive_buffer_full_flag_1_true_0_false != 1)))) {
       return;
     }
-    cVar5 = *_j1708_receive_buffer_pointer_2_32_dcaa;
-    local_8._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
+    cVar5 = *(char *)j1708_receive_buffer_pointer_2_32_dcaa;
+    local_8._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dcaa;
     cVar6 = (char)local_8;
-    local_8._0_3_ = (undefined3)((uint)_j1708_receive_buffer_pointer_2_32_dcaa >> 8);
+    local_8._0_3_ = (undefined3)(j1708_receive_buffer_pointer_2_32_dcaa >> 8);
     local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
     if (*local_8 < 8) {
       if ((_diagnostic_subsystem_enable_flags & 1) != 0) {
@@ -10764,10 +10762,9 @@ void diagnosticCommandDispatcher(void)
           break;
         case 6:
           local_8 = (byte *)CONCAT31(local_8._0_3_,cVar6 + '\x02');
-          if ((*local_8 == 't') && (j1708_rx_state_t_0080dcaf.buffer_full_flag != 0)) {
+          if ((*local_8 == 't') && (j1708_pending_abort_count != 0)) {
             cm550_diagnosticMessageQueueWrite(bVar7);
-            j1708_rx_state_t_0080dcaf.buffer_full_flag =
-                 j1708_rx_state_t_0080dcaf.buffer_full_flag - 1;
+            j1708_pending_abort_count = j1708_pending_abort_count - 1;
             multipacket_transmit_active_flag = 0;
             if (multipacket_receive_active_flag != 0) {
               cm550_memoryPatchCountDecrement();
@@ -10798,9 +10795,10 @@ void diagnosticCommandDispatcher(void)
     else if ((_diagnostic_subsystem_enable_flags & 2) != 0) {
       buildPgn65228Dm3ClearInitMessage();
     }
-    _j1708_receive_buffer_pointer_2_32_dcaa =
-         (char *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dcaa,cVar5 + '\x01' + DAT_0080dcad);
-    j1708_receive_buffer_full_flag_1_true_0_false = '\0';
+    j1708_receive_buffer_pointer_2_32_dcaa =
+         CONCAT31(j1708_receive_buffer_pointer_2_32_dcaa._0_3_,
+                  cVar5 + '\x01' + (char)j1708_receive_buffer_pointer_2_32_dcaa);
+    j1708_receive_buffer_full_flag_1_true_0_false = 0;
     wVar3 = QSM_SCCR1;
     QSM_SCCR1 = wVar3 | 0x20;
   } while( true );
@@ -10966,105 +10964,104 @@ void cm550_multiPacketTransmitHandler(void)
 
 {
   undefined1 uVar1;
-  byte bVar2;
-  byte *pbVar3;
-  char cVar4;
-  char cVar6;
-  int iVar5;
-  MEMORY_REGION_TYPE MVar7;
+  dword dVar2;
+  char cVar3;
+  char cVar5;
+  int iVar4;
+  MEMORY_REGION_TYPE MVar6;
   undefined4 unaff_D2;
+  byte bVar7;
   byte bVar8;
   byte bVar9;
-  byte bVar10;
-  undefined1 uVar11;
+  undefined1 uVar10;
   undefined4 local_c;
   undefined4 local_8;
   
-  pbVar3 = _j1708_transmit_buffer_0_2_32;
-  uVar11 = (undefined1)((uint)unaff_D2 >> 0x18);
-  bVar8 = (byte)((uint)unaff_D2 >> 0x10);
+  dVar2 = j1708_transmit_buffer_0_2_32;
+  uVar10 = (undefined1)((uint)unaff_D2 >> 0x18);
+  bVar7 = (byte)((uint)unaff_D2 >> 0x10);
   multipacket_transmit_active_flag = 0;
-  if (*_j1708_receive_buffer_pointer_2_32_dcaa == '\x06') {
-    local_8._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
-    cVar4 = (char)local_8;
-    local_8._0_3_ = (undefined3)((uint)_j1708_receive_buffer_pointer_2_32_dcaa >> 8);
+  if (*(char *)j1708_receive_buffer_pointer_2_32_dcaa == '\x06') {
+    local_8._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dcaa;
+    cVar3 = (char)local_8;
+    local_8._0_3_ = (undefined3)(j1708_receive_buffer_pointer_2_32_dcaa >> 8);
     local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x03');
     uVar1 = *local_8;
-    local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\x04');
+    local_8 = (byte *)CONCAT31(local_8._0_3_,cVar3 + '\x04');
     multipacket_message_id = CONCAT11(*local_8,uVar1);
-    local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\x05');
-    cVar6 = cm550_diagnosticMemoryAddressResolver(0x80);
-    if (cVar6 == '\0') {
-      bVar9 = *local_8;
-      local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\x06');
-      multipacket_bytes_remaining = CONCAT11(*local_8,bVar9);
+    local_8 = (byte *)CONCAT31(local_8._0_3_,cVar3 + '\x05');
+    cVar5 = cm550_diagnosticMemoryAddressResolver(0x80);
+    if (cVar5 == '\0') {
+      bVar8 = *local_8;
+      local_8 = (byte *)CONCAT31(local_8._0_3_,cVar3 + '\x06');
+      multipacket_bytes_remaining = CONCAT11(*local_8,bVar8);
       if (multipacket_bytes_remaining < 0xf) {
-        bVar10 = bVar9 + 6;
+        bVar9 = bVar8 + 6;
       }
       else {
-        bVar10 = 0x14;
-        bVar9 = 0xe;
+        bVar9 = 0x14;
+        bVar8 = 0xe;
         multipacket_transmit_active_flag = 1;
       }
-      if ((int)pbVar3 < _j1708_transmit_buffer_2_32_dc9c) {
-        iVar5 = (_j1708_transmit_buffer_2_32_dc9c - (int)pbVar3) + -2;
+      if ((int)dVar2 < (int)j1708_transmit_buffer_2_32_dc9c) {
+        iVar4 = (j1708_transmit_buffer_2_32_dc9c - dVar2) + -2;
       }
       else {
-        iVar5 = (_j1708_transmit_buffer_2_32_dc9c - (int)pbVar3) + 0xfe;
+        iVar4 = (j1708_transmit_buffer_2_32_dc9c - dVar2) + 0xfe;
       }
-      if ((int)(uint)bVar10 < iVar5) {
-        local_c._3_1_ = (char)pbVar3;
-        cVar4 = (char)local_c;
-        local_c._0_3_ = (undefined3)((uint)pbVar3 >> 8);
+      if ((int)(uint)bVar9 < iVar4) {
+        local_c._3_1_ = (char)dVar2;
+        cVar3 = (char)local_c;
+        local_c._0_3_ = (undefined3)(dVar2 >> 8);
         local_c = (byte *)CONCAT31(local_c._0_3_,(char)local_c + '\x01');
         *local_c = 7;
-        local_c = (byte *)CONCAT31(local_c._0_3_,cVar4 + '\x02');
-        *local_c = bVar9 | 0xb0;
-        local_c = (byte *)CONCAT31(local_c._0_3_,cVar4 + '\x03');
-        MVar7 = lookupApplicationMemoryRegionType
+        local_c = (byte *)CONCAT31(local_c._0_3_,cVar3 + '\x02');
+        *local_c = bVar8 | 0xb0;
+        local_c = (byte *)CONCAT31(local_c._0_3_,cVar3 + '\x03');
+        MVar6 = lookupApplicationMemoryRegionType
                           (diagnostic_multipacket_data_pointer,
-                           CONCAT31(CONCAT21(multipacket_bytes_remaining,uVar11),bVar8));
-        if ((MVar7 == MEMORY_REGION_TYPE_UNMAPPED) || (MVar7 == MEMORY_REGION_TYPE_REFUSED)) {
-          cm550_diagnosticMessageQueueWrite(bVar8);
+                           CONCAT31(CONCAT21(multipacket_bytes_remaining,uVar10),bVar7));
+        if ((MVar6 == MEMORY_REGION_TYPE_UNMAPPED) || (MVar6 == MEMORY_REGION_TYPE_REFUSED)) {
+          cm550_diagnosticMessageQueueWrite(bVar7);
           multipacket_transmit_active_flag = 0;
         }
         else {
           *local_c = (undefined1)multipacket_message_id;
-          local_c = (byte *)CONCAT31(local_c._0_3_,cVar4 + '\x04');
+          local_c = (byte *)CONCAT31(local_c._0_3_,cVar3 + '\x04');
           *local_c = multipacket_message_id._0_1_;
-          local_c = (byte *)CONCAT31(local_c._0_3_,cVar4 + '\x05');
+          local_c = (byte *)CONCAT31(local_c._0_3_,cVar3 + '\x05');
           *local_c = (undefined1)multipacket_bytes_remaining;
-          local_c = (byte *)CONCAT31(local_c._0_3_,cVar4 + '\x06');
+          local_c = (byte *)CONCAT31(local_c._0_3_,cVar3 + '\x06');
           *local_c = multipacket_bytes_remaining._0_1_;
-          local_c = (byte *)CONCAT31(local_c._0_3_,cVar4 + '\a');
-          for (bVar8 = 0; bVar8 < bVar9; bVar8 = bVar8 + 1) {
-            bVar2 = *(byte *)diagnostic_multipacket_data_pointer;
+          local_c = (byte *)CONCAT31(local_c._0_3_,cVar3 + '\a');
+          for (bVar7 = 0; bVar7 < bVar8; bVar7 = bVar7 + 1) {
+            uVar10 = *(undefined1 *)diagnostic_multipacket_data_pointer;
             diagnostic_multipacket_data_pointer = diagnostic_multipacket_data_pointer + 1;
-            *local_c = bVar2;
+            *local_c = uVar10;
             local_c = (byte *)CONCAT31(local_c._0_3_,(char)local_c + '\x01');
           }
-          multipacket_bytes_remaining = multipacket_bytes_remaining - bVar9;
-          *pbVar3 = bVar10;
+          multipacket_bytes_remaining = multipacket_bytes_remaining - bVar8;
+          *(byte *)dVar2 = bVar9;
           *local_c = 0;
-          _j1708_transmit_buffer_0_2_32 = local_c;
+          j1708_transmit_buffer_0_2_32 = (dword)local_c;
           mc68k_startJ1708Transmission();
           multipacket_transmit_active_flag = 1;
         }
       }
       else {
         multipacket_transmit_active_flag = 0;
-        cm550_diagnosticMessageQueueWrite(bVar8);
+        cm550_diagnosticMessageQueueWrite(bVar7);
         _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
              _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
         _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
       }
     }
     else {
-      cm550_diagnosticMessageQueueWrite(bVar8);
+      cm550_diagnosticMessageQueueWrite(bVar7);
     }
   }
   else {
-    cm550_diagnosticMessageQueueWrite(bVar8);
+    cm550_diagnosticMessageQueueWrite(bVar7);
   }
   return;
 }
@@ -11097,13 +11094,13 @@ void cm550_multiPacketReceiveHandler(void)
   
   uVar10 = (undefined1)((uint)unaff_D2 >> 0x18);
   response_type = (byte)((uint)unaff_D2 >> 0x10);
-  local_8._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
+  local_8._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dcaa;
   cVar8 = (char)local_8;
-  local_8._0_3_ = (undefined3)((uint)_j1708_receive_buffer_pointer_2_32_dcaa >> 8);
+  local_8._0_3_ = (undefined3)(j1708_receive_buffer_pointer_2_32_dcaa >> 8);
   local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x02');
   bVar3 = *local_8 & 0xf;
   if (multipacket_receive_active_flag == 1) {
-    if ((uint)*_j1708_receive_buffer_pointer_2_32_dcaa - (uint)bVar3 == 4) {
+    if ((uint)*(byte *)j1708_receive_buffer_pointer_2_32_dcaa - (uint)bVar3 == 4) {
       local_8 = (byte *)CONCAT31(local_8._0_3_,cVar8 + '\x03');
       uVar2 = *local_8;
       local_8 = (byte *)CONCAT31(local_8._0_3_,cVar8 + '\x04');
@@ -11176,7 +11173,7 @@ void cm550_multiPacketReceiveHandler(void)
       cm550_diagnosticMessageQueueWrite(response_type);
     }
   }
-  else if ((uint)*_j1708_receive_buffer_pointer_2_32_dcaa - (uint)bVar3 == 6) {
+  else if ((uint)*(byte *)j1708_receive_buffer_pointer_2_32_dcaa - (uint)bVar3 == 6) {
     local_8 = (byte *)CONCAT31(local_8._0_3_,cVar8 + '\x03');
     uVar2 = *local_8;
     local_8 = (byte *)CONCAT31(local_8._0_3_,cVar8 + '\x04');
@@ -11337,7 +11334,6 @@ void cm550_emptyPlaceholderFunction(void)
 // Function: mc68k_startJ1708Transmission @ 0x00016d4e
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Starts a J1708 transmission: with a message pending and the bus idle (QSM_SCSR bit 0x20 RAF
    clear) it writes the first byte to QSM_SCDR - arms the timer at 0xFFF458 / 0xFFF45A (the CTM4
    address range) and sets QSM_SCCR1 RIE to read back its own bytes (the J1708 collision check). It
@@ -11348,20 +11344,19 @@ void mc68k_startJ1708Transmission(void)
 {
   word wVar1;
   
-  if (((j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ == '\x01') &&
-      (wVar1 = QSM_SCSR, (wVar1 & 0x20) == 0)) &&
-     ((char)j1708_rx_state_t_0080dcaf.buffer_ptr_3 == '\0')) {
-    QSM_SCDR = (ushort)*_j1708_transmit_buffer_2_32_dc98;
-    j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = '\x01';
+  if (((j1708_receive_mode_flag == 1) && (wVar1 = QSM_SCSR, (wVar1 & 0x20) == 0)) &&
+     (j1708_bus_timer_armed_flag == 0)) {
+    QSM_SCDR = (ushort)*(byte *)j1708_transmit_buffer_2_32_dc98;
+    j1708_bus_timer_armed_flag = 1;
     CTM4_MCSM11CNT = 0xfc8a;
     wVar1 = CTM4_MCSM11SIC;
     CTM4_MCSM11SIC = wVar1 & 0x7fff;
     wVar1 = CTM4_MCSM11SIC;
     CTM4_MCSM11SIC = wVar1 | 0x4000;
-    j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ = '\0';
-    j1708_rx_state_t_0080dcaf._7_4_ = 0;
-    j1708_rx_state_t_0080dcaf.buffer_ptr_1._2_1_ = 1;
-    j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ = *_j1708_transmit_buffer_2_32_dc98;
+    j1708_receive_mode_flag = 0;
+    j1708_transmit_state = 0;
+    j1708_transmit_byte_count = 1;
+    j1708_message_checksum = *(byte *)j1708_transmit_buffer_2_32_dc98;
     wVar1 = QSM_SCCR1;
     QSM_SCCR1 = wVar1 | 0x20;
   }
@@ -19135,24 +19130,22 @@ void vp44ControlStructureInit(void)
 // Function: cm550_diagnosticBufferPointerInit @ 0x0001dd2c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm550_diagnosticBufferPointerInit(void)
 
 {
-  _j1708_transmit_buffer_2_32_dc9c = &diagnostic_tx_buffer_base;
-  _j1708_transmit_buffer_0_2_32 = &diagnostic_tx_buffer_base;
-  _j1708_transmit_buffer_2_32_dc98 = 0x808b01;
+  j1708_transmit_buffer_2_32_dc9c = (dword)&diagnostic_tx_buffer_base;
+  j1708_transmit_buffer_0_2_32 = (dword)&diagnostic_tx_buffer_base;
+  j1708_transmit_buffer_2_32_dc98 = 0x808b01;
   diagnostic_tx_buffer_base = 0;
   j1708_transmit_buffer_full_flag_1_true_0_false = 0;
   j1708_transmit_buffer_2_32_ddc6 = &diagnostic_tx_buffer_base;
-  _j1708_receive_buffer_pointer_2_32_dca6 = 0x808c01;
+  j1708_receive_buffer_pointer_2_32_dca6 = 0x808c01;
   diagnostic_rx_buffer_base.tx_buffer_base[0] = 0;
   j1708_receive_buffer_full_flag_1_true_0_false = 0;
   j1708_receive_buffer_2_32 = (dword)&diagnostic_rx_buffer_base;
   DWORD_0080ddce = 0x808cff;
-  _j1708_receive_buffer_pointer_2_32_dca2 = &diagnostic_rx_buffer_base;
-  _j1708_receive_buffer_pointer_2_32_dcaa = &diagnostic_rx_buffer_base;
+  j1708_receive_buffer_pointer_2_32_dca2 = (dword)&diagnostic_rx_buffer_base;
+  j1708_receive_buffer_pointer_2_32_dcaa = (dword)&diagnostic_rx_buffer_base;
   return;
 }
 
@@ -19516,15 +19509,19 @@ void cm550_serialCommunicationIsrRegister(void)
 
 
 //
-// Function: mc68k_tpuTimerChannelEnable @ 0x0001e266
+// Function: mc68k_armJ1708BusTimer @ 0x0001e266
 //
 
-void mc68k_tpuTimerChannelEnable(word channel_mask)
+/* Arms the J1708 bus timer: sets j1708_bus_timer_armed_flag - loads CTM4_MCSM11CNT with 0xfc8a -
+   clears CTM4_MCSM11SIC bit 15 and sets its bit 14 (an interrupt level). It drives no TPU channel
+   and takes no parameter (was mc68k_tpuTimerChannelEnable; PR #53 round 77) */
+
+void mc68k_armJ1708BusTimer(void)
 
 {
   word wVar1;
   
-  j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 1;
+  j1708_bus_timer_armed_flag = 1;
   CTM4_MCSM11CNT = 0xfc8a;
   wVar1 = CTM4_MCSM11SIC;
   CTM4_MCSM11SIC = wVar1 & 0x7fff;
@@ -19550,122 +19547,118 @@ undefined8 mc68k_j1708SciInterruptHandler(void)
 
 {
   word wVar1;
-  byte *pbVar2;
+  dword dVar2;
   undefined4 in_D0;
   undefined4 in_D1;
   byte bVar3;
-  undefined2 local_24;
-  word channel_mask;
   
-  pbVar2 = _j1708_transmit_buffer_2_32_dc98;
-  local_24 = (undefined2)((uint)in_D0 >> 0x10);
-  channel_mask = (word)in_D0;
+  dVar2 = j1708_transmit_buffer_2_32_dc98;
   wVar1 = QSM_SCSR;
   if ((wVar1 & 0x40) != 0) {
-    j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 0;
+    j1708_bus_timer_armed_flag = 0;
     wVar1 = CTM4_MCSM11SIC;
     CTM4_MCSM11SIC = wVar1 & 0x8fff;
     wVar1 = QSM_SCDR;
     bVar3 = (byte)wVar1;
-    if (j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ == '\x01') {
-      *_j1708_receive_buffer_pointer_2_32_dca6 = bVar3;
-      _j1708_receive_buffer_pointer_2_32_dca6 =
-           (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca6,DAT_0080dca9 + '\x01');
-      *_j1708_receive_buffer_pointer_2_32_dca2 = *_j1708_receive_buffer_pointer_2_32_dca2 + 1;
-      j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ =
-           bVar3 + j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_;
-      if (_j1708_receive_buffer_pointer_2_32_dcaa == _j1708_receive_buffer_pointer_2_32_dca6) {
-        if (_j1708_receive_buffer_pointer_2_32_dca2 == _j1708_receive_buffer_pointer_2_32_dcaa) {
-          *_j1708_receive_buffer_pointer_2_32_dca2 = 0;
-          j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ = 0;
-          _j1708_receive_buffer_pointer_2_32_dca6 =
-               (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca6,
-                                j1708_receive_buffer_index_low + '\x01');
+    if (j1708_receive_mode_flag == 1) {
+      *(byte *)j1708_receive_buffer_pointer_2_32_dca6 = bVar3;
+      j1708_receive_buffer_pointer_2_32_dca6 =
+           CONCAT31(j1708_receive_buffer_pointer_2_32_dca6._0_3_,
+                    (char)j1708_receive_buffer_pointer_2_32_dca6 + '\x01');
+      *(char *)j1708_receive_buffer_pointer_2_32_dca2 =
+           *(char *)j1708_receive_buffer_pointer_2_32_dca2 + '\x01';
+      j1708_message_checksum = bVar3 + j1708_message_checksum;
+      if (j1708_receive_buffer_pointer_2_32_dcaa == j1708_receive_buffer_pointer_2_32_dca6) {
+        if (j1708_receive_buffer_pointer_2_32_dca2 == j1708_receive_buffer_pointer_2_32_dcaa) {
+          *(undefined1 *)j1708_receive_buffer_pointer_2_32_dca2 = 0;
+          j1708_message_checksum = 0;
+          j1708_receive_buffer_pointer_2_32_dca6 =
+               CONCAT31(j1708_receive_buffer_pointer_2_32_dca6._0_3_,
+                        (char)j1708_receive_buffer_pointer_2_32_dca2 + '\x01');
         }
         else {
-          j1708_receive_buffer_full_flag_1_true_0_false = '\x01';
+          j1708_receive_buffer_full_flag_1_true_0_false = 1;
           wVar1 = QSM_SCCR1;
           QSM_SCCR1 = wVar1 & 0xffdf;
-          if (_j1708_transmit_buffer_0_2_32 != _j1708_transmit_buffer_2_32_dc9c) {
-            mc68k_tpuTimerChannelEnable(channel_mask);
-            j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 1;
+          if (j1708_transmit_buffer_0_2_32 != j1708_transmit_buffer_2_32_dc9c) {
+            mc68k_armJ1708BusTimer();
+            j1708_bus_timer_armed_flag = 1;
           }
         }
       }
       else {
-        mc68k_tpuTimerChannelEnable(channel_mask);
+        mc68k_armJ1708BusTimer();
       }
     }
     else {
-      switch(j1708_rx_state_t_0080dcaf._7_4_) {
-      case (BADTYPE)0x0:
-        if (bVar3 == *_j1708_transmit_buffer_2_32_dc98) {
-          _j1708_transmit_buffer_2_32_dc98 =
-               (byte *)CONCAT31(_j1708_transmit_buffer_2_32_dc98,
-                                j1708_transmit_buffer_index_low + '\x01');
-          QSM_SCDR = (ushort)*_j1708_transmit_buffer_2_32_dc98;
-          mc68k_tpuTimerChannelEnable(channel_mask);
-          j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ =
-               *_j1708_transmit_buffer_2_32_dc98 + j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_;
-          j1708_rx_state_t_0080dcaf.buffer_ptr_1._2_1_ =
-               j1708_rx_state_t_0080dcaf.buffer_ptr_1._2_1_ + 1;
-          if (j1708_rx_state_t_0080dcaf.buffer_ptr_1._2_1_ == *_j1708_transmit_buffer_2_32_dc9c) {
-            j1708_rx_state_t_0080dcaf._7_4_ = 2;
+      switch(j1708_transmit_state) {
+      case 0:
+        if (bVar3 == *(byte *)j1708_transmit_buffer_2_32_dc98) {
+          j1708_transmit_buffer_2_32_dc98 =
+               CONCAT31(j1708_transmit_buffer_2_32_dc98._0_3_,
+                        (char)j1708_transmit_buffer_2_32_dc98 + '\x01');
+          QSM_SCDR = (ushort)*(byte *)j1708_transmit_buffer_2_32_dc98;
+          mc68k_armJ1708BusTimer();
+          j1708_message_checksum = *(char *)j1708_transmit_buffer_2_32_dc98 + j1708_message_checksum
+          ;
+          j1708_transmit_byte_count = j1708_transmit_byte_count + 1;
+          if (j1708_transmit_byte_count == *(byte *)j1708_transmit_buffer_2_32_dc9c) {
+            j1708_transmit_state = 2;
           }
           else {
-            j1708_rx_state_t_0080dcaf._7_4_ = 1;
+            j1708_transmit_state = 1;
           }
         }
-        else if (j1708_receive_buffer_full_flag_1_true_0_false == '\0') {
-          j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ = '\x01';
-          j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ = bVar3;
-          *_j1708_receive_buffer_pointer_2_32_dca6 = bVar3;
-          _j1708_receive_buffer_pointer_2_32_dca6 =
-               (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca6,DAT_0080dca9 + '\x01');
-          *_j1708_receive_buffer_pointer_2_32_dca2 = *_j1708_receive_buffer_pointer_2_32_dca2 + 1;
-          if (_j1708_receive_buffer_pointer_2_32_dca6 == _j1708_receive_buffer_pointer_2_32_dcaa) {
-            j1708_receive_buffer_full_flag_1_true_0_false = '\x01';
+        else if (j1708_receive_buffer_full_flag_1_true_0_false == 0) {
+          j1708_receive_mode_flag = 1;
+          j1708_message_checksum = bVar3;
+          *(byte *)j1708_receive_buffer_pointer_2_32_dca6 = bVar3;
+          j1708_receive_buffer_pointer_2_32_dca6 =
+               CONCAT31(j1708_receive_buffer_pointer_2_32_dca6._0_3_,
+                        (char)j1708_receive_buffer_pointer_2_32_dca6 + '\x01');
+          *(char *)j1708_receive_buffer_pointer_2_32_dca2 =
+               *(char *)j1708_receive_buffer_pointer_2_32_dca2 + '\x01';
+          if (j1708_receive_buffer_pointer_2_32_dca6 == j1708_receive_buffer_pointer_2_32_dcaa) {
+            j1708_receive_buffer_full_flag_1_true_0_false = 1;
             wVar1 = QSM_SCCR1;
             QSM_SCCR1 = wVar1 & 0xffdf;
           }
           else {
-            mc68k_tpuTimerChannelEnable(channel_mask);
+            mc68k_armJ1708BusTimer();
           }
         }
         else {
-          j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ = '\x01';
-          j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ = 0;
-          mc68k_tpuTimerChannelEnable(channel_mask);
+          j1708_receive_mode_flag = 1;
+          j1708_message_checksum = 0;
+          mc68k_armJ1708BusTimer();
         }
         break;
-      case (BADTYPE)0x1:
-        _j1708_transmit_buffer_2_32_dc98 =
-             (byte *)CONCAT31(_j1708_transmit_buffer_2_32_dc98,
-                              j1708_transmit_buffer_index_low + '\x01');
-        QSM_SCDR = (ushort)*_j1708_transmit_buffer_2_32_dc98;
-        mc68k_tpuTimerChannelEnable(channel_mask);
-        j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ =
-             *_j1708_transmit_buffer_2_32_dc98 + j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_;
-        j1708_rx_state_t_0080dcaf.buffer_ptr_1._2_1_ =
-             j1708_rx_state_t_0080dcaf.buffer_ptr_1._2_1_ + 1;
-        if (j1708_rx_state_t_0080dcaf.buffer_ptr_1._2_1_ == *_j1708_transmit_buffer_2_32_dc9c) {
-          j1708_rx_state_t_0080dcaf._7_4_ = 2;
+      case 1:
+        j1708_transmit_buffer_2_32_dc98 =
+             CONCAT31(j1708_transmit_buffer_2_32_dc98._0_3_,
+                      (char)j1708_transmit_buffer_2_32_dc98 + '\x01');
+        QSM_SCDR = (ushort)*(byte *)j1708_transmit_buffer_2_32_dc98;
+        mc68k_armJ1708BusTimer();
+        j1708_message_checksum = *(char *)j1708_transmit_buffer_2_32_dc98 + j1708_message_checksum;
+        j1708_transmit_byte_count = j1708_transmit_byte_count + 1;
+        if (j1708_transmit_byte_count == *(byte *)j1708_transmit_buffer_2_32_dc9c) {
+          j1708_transmit_state = 2;
         }
         break;
-      case (BADTYPE)0x2:
-        QSM_SCDR = ~(ushort)j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ + 1 & 0xff;
-        mc68k_tpuTimerChannelEnable(channel_mask);
-        _j1708_transmit_buffer_2_32_dc98 =
-             (byte *)CONCAT31(_j1708_transmit_buffer_2_32_dc98,
-                              j1708_transmit_buffer_index_low + '\x01');
-        j1708_rx_state_t_0080dcaf._7_4_ = 3;
+      case 2:
+        QSM_SCDR = ~(ushort)j1708_message_checksum + 1 & 0xff;
+        mc68k_armJ1708BusTimer();
+        j1708_transmit_buffer_2_32_dc98 =
+             CONCAT31(j1708_transmit_buffer_2_32_dc98._0_3_,
+                      (char)j1708_transmit_buffer_2_32_dc98 + '\x01');
+        j1708_transmit_state = 3;
         break;
-      case (BADTYPE)0x3:
-        _j1708_transmit_buffer_2_32_dc9c = _j1708_transmit_buffer_2_32_dc98;
-        _j1708_transmit_buffer_2_32_dc98 =
-             (byte *)CONCAT31(_j1708_transmit_buffer_2_32_dc98,
-                              j1708_transmit_buffer_index_low + '\x01');
-        j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ = 0;
+      case 3:
+        j1708_transmit_buffer_2_32_dc9c = j1708_transmit_buffer_2_32_dc98;
+        j1708_transmit_buffer_2_32_dc98 =
+             CONCAT31(j1708_transmit_buffer_2_32_dc98._0_3_,
+                      (char)j1708_transmit_buffer_2_32_dc98 + '\x01');
+        j1708_message_checksum = 0;
         j1708_transmit_buffer_full_flag_1_true_0_false = 0;
         if (((((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 4) != 0) &&
              ((_fault_first_occurrence_word_7 & 4) != 0)) &&
@@ -19674,8 +19667,8 @@ undefined8 mc68k_j1708SciInterruptHandler(void)
           _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
                _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xfffb;
         }
-        j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ = '\x01';
-        if (j1708_receive_buffer_full_flag_1_true_0_false == '\0') {
+        j1708_receive_mode_flag = 1;
+        if (j1708_receive_buffer_full_flag_1_true_0_false == 0) {
           wVar1 = QSM_SCCR1;
           QSM_SCCR1 = wVar1 | 0x20;
         }
@@ -19683,8 +19676,8 @@ undefined8 mc68k_j1708SciInterruptHandler(void)
           wVar1 = QSM_SCCR1;
           QSM_SCCR1 = wVar1 & 0xffdf;
         }
-        if (_j1708_transmit_buffer_0_2_32 != pbVar2) {
-          j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 1;
+        if (j1708_transmit_buffer_0_2_32 != dVar2) {
+          j1708_bus_timer_armed_flag = 1;
           wVar1 = CTM4_MCSM11SIC;
           CTM4_MCSM11SIC = wVar1 | 0x4000;
           CTM4_MCSM11CNT = 0xfcbe;
@@ -19692,7 +19685,7 @@ undefined8 mc68k_j1708SciInterruptHandler(void)
       }
     }
   }
-  return CONCAT44(CONCAT22(local_24,channel_mask),in_D1);
+  return CONCAT44(in_D0,in_D1);
 }
 
 
@@ -19915,11 +19908,11 @@ uint cm550_insiteMultiFrameResponseBuilder(undefined4 param_1)
   insite_multiframe_current_index = 0;
   insite_multiframe_frame_bytes_remaining = param_1._1_1_;
   insite_response_length = param_1._1_1_ + 6;
-  if (_j1708_transmit_buffer_0_2_32 < _j1708_transmit_buffer_2_32_dc9c) {
-    uVar2 = (_j1708_transmit_buffer_2_32_dc9c - _j1708_transmit_buffer_0_2_32) - 2;
+  if ((int)j1708_transmit_buffer_0_2_32 < (int)j1708_transmit_buffer_2_32_dc9c) {
+    uVar2 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) - 2;
   }
   else {
-    uVar2 = (_j1708_transmit_buffer_2_32_dc9c - _j1708_transmit_buffer_0_2_32) + 0xfe;
+    uVar2 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) + 0xfe;
   }
   if ((int)(uint)(byte)(insite_multiframe_last_frame_bytes + 5 + cVar3) < (int)uVar2) {
     *(undefined1 *)insite_response_write_pointer = 0xc0;
@@ -19951,14 +19944,12 @@ uint cm550_insiteMultiFrameResponseBuilder(undefined4 param_1)
 // Function: cm550_insiteMultiFrameContinuation @ 0x0001e89e
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm550_insiteMultiFrameContinuation(void)
 
 {
   *(byte *)insite_response_frame_start = insite_response_length;
   *(undefined1 *)insite_response_write_pointer = 0;
-  _j1708_transmit_buffer_0_2_32 = insite_response_write_pointer;
+  j1708_transmit_buffer_0_2_32 = insite_response_write_pointer;
   insite_response_frame_start = insite_response_write_pointer;
   mc68k_startJ1708Transmission();
   insite_multiframe_current_index = insite_multiframe_current_index + 1;
@@ -19996,8 +19987,6 @@ void cm550_insiteMultiFrameContinuation(void)
 // Function: buildPgn65228Dm3ClearInitMessage @ 0x0001e956
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void buildPgn65228Dm3ClearInitMessage(void)
 
 {
@@ -20010,16 +19999,15 @@ void buildPgn65228Dm3ClearInitMessage(void)
   byte bVar7;
   char *pcVar8;
   
-  insite_request_read_pointer = (dword)_j1708_receive_buffer_pointer_2_32_dcaa;
-  insite_response_frame_start = _j1708_transmit_buffer_0_2_32;
-  insite_response_write_pointer = _j1708_transmit_buffer_0_2_32;
+  insite_request_read_pointer = j1708_receive_buffer_pointer_2_32_dcaa;
+  insite_response_frame_start = j1708_transmit_buffer_0_2_32;
+  insite_response_write_pointer = j1708_transmit_buffer_0_2_32;
   insite_full_detail_response_mode = 1;
-  bVar1 = *_j1708_receive_buffer_pointer_2_32_dcaa;
+  bVar1 = *(byte *)j1708_receive_buffer_pointer_2_32_dcaa;
   if (bVar1 < 0x15) {
-    insite_request_read_pointer._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
+    insite_request_read_pointer._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dcaa;
     cVar5 = (char)insite_request_read_pointer;
-    insite_request_read_pointer._0_3_ =
-         (undefined3)((uint)_j1708_receive_buffer_pointer_2_32_dcaa >> 8);
+    insite_request_read_pointer._0_3_ = (undefined3)(j1708_receive_buffer_pointer_2_32_dcaa >> 8);
     insite_request_read_pointer =
          CONCAT31(insite_request_read_pointer._0_3_,(char)insite_request_read_pointer + '\x01');
     cVar2 = *(char *)insite_request_read_pointer;
@@ -20127,7 +20115,7 @@ void cm550_responseBufferSpaceCheck(void)
 {
   byte bVar1;
   
-  bVar1 = (DAT_0080dc9f - DAT_0080dc97) - 2;
+  bVar1 = ((char)j1708_transmit_buffer_2_32_dc9c - (char)j1708_transmit_buffer_0_2_32) - 2;
   if (bVar1 < 5) {
     insite_response_space_available = 0;
     _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
@@ -20136,7 +20124,8 @@ void cm550_responseBufferSpaceCheck(void)
     return;
   }
   if (bVar1 < 0x16) {
-    insite_response_space_available = (DAT_0080dc9f - DAT_0080dc97) - 4;
+    insite_response_space_available =
+         ((char)j1708_transmit_buffer_2_32_dc9c - (char)j1708_transmit_buffer_0_2_32) - 4;
     return;
   }
   insite_response_space_available = 0x13;
@@ -20149,15 +20138,13 @@ void cm550_responseBufferSpaceCheck(void)
 // Function: cm550_responseBufferFinalize @ 0x0001ec08
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm550_responseBufferFinalize(void)
 
 {
   if (1 < insite_response_length) {
     *(byte *)insite_response_frame_start = insite_response_length;
     *(undefined1 *)insite_response_write_pointer = 0;
-    _j1708_transmit_buffer_0_2_32 = insite_response_write_pointer;
+    j1708_transmit_buffer_0_2_32 = insite_response_write_pointer;
     mc68k_startJ1708Transmission();
   }
   return;
@@ -20168,8 +20155,6 @@ void cm550_responseBufferFinalize(void)
 //
 // Function: cm550_diagnosticMemoryWriteHandler @ 0x0001ec3c
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm550_diagnosticMemoryWriteHandler(byte service_id)
 
@@ -20193,10 +20178,10 @@ void cm550_diagnosticMemoryWriteHandler(byte service_id)
   
   uVar9 = (undefined1)((uint)unaff_D2 >> 0x18);
   response_type = (byte)((uint)unaff_D2 >> 0x10);
-  local_9 = *_j1708_receive_buffer_pointer_2_32_dcaa;
-  local_8._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
+  local_9 = *(byte *)j1708_receive_buffer_pointer_2_32_dcaa;
+  local_8._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dcaa;
   cVar2 = (char)local_8;
-  local_8._0_3_ = (undefined3)((uint)_j1708_receive_buffer_pointer_2_32_dcaa >> 8);
+  local_8._0_3_ = (undefined3)(j1708_receive_buffer_pointer_2_32_dcaa >> 8);
   local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x02');
   bVar5 = *local_8 & 0xf;
   bVar8 = bVar5 == 0;
@@ -20315,12 +20300,12 @@ void cm550_diagnosticMemoryReadHandler(byte service_id)
   else {
     iVar12 = 2;
   }
-  local_10 = _j1708_transmit_buffer_0_2_32;
-  local_c = _j1708_transmit_buffer_0_2_32;
-  bVar14 = *_j1708_receive_buffer_pointer_2_32_dcaa;
-  local_8._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
+  local_10 = (byte *)j1708_transmit_buffer_0_2_32;
+  local_c = (byte *)j1708_transmit_buffer_0_2_32;
+  bVar14 = *(byte *)j1708_receive_buffer_pointer_2_32_dcaa;
+  local_8._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dcaa;
   cVar2 = (char)local_8;
-  local_8._0_3_ = (undefined3)((uint)_j1708_receive_buffer_pointer_2_32_dcaa >> 8);
+  local_8._0_3_ = (undefined3)(j1708_receive_buffer_pointer_2_32_dcaa >> 8);
   uVar3 = local_8._0_3_;
   local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x02');
   bVar11 = *local_8 & 0xf;
@@ -20349,17 +20334,17 @@ void cm550_diagnosticMemoryReadHandler(byte service_id)
     bVar14 = (bVar11 + bVar13) * cVar7 + 2;
     local_17 = '\0';
   }
-  if ((int)_j1708_transmit_buffer_0_2_32 < _j1708_transmit_buffer_2_32_dc9c) {
-    iVar5 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + -2;
+  if ((int)j1708_transmit_buffer_0_2_32 < (int)j1708_transmit_buffer_2_32_dc9c) {
+    iVar5 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) + -2;
   }
   else {
-    iVar5 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + 0xfe;
+    iVar5 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) + 0xfe;
   }
   if ((int)(uint)bVar14 < iVar5) {
     local_8 = (byte *)CONCAT31(uVar3,cVar2 + '\x03');
-    local_c._3_1_ = (char)_j1708_transmit_buffer_0_2_32;
+    local_c._3_1_ = (char)j1708_transmit_buffer_0_2_32;
     cVar2 = (char)local_c;
-    local_c._0_3_ = (undefined3)((uint)_j1708_transmit_buffer_0_2_32 >> 8);
+    local_c._0_3_ = (undefined3)(j1708_transmit_buffer_0_2_32 >> 8);
     local_c = (byte *)CONCAT31(local_c._0_3_,(char)local_c + '\x01');
     *local_c = 7;
     local_c = (byte *)CONCAT31(local_c._0_3_,cVar2 + '\x02');
@@ -20445,7 +20430,7 @@ void cm550_diagnosticMemoryReadHandler(byte service_id)
     }
     *local_10 = bVar14;
     *local_c = 0;
-    _j1708_transmit_buffer_0_2_32 = local_c;
+    j1708_transmit_buffer_0_2_32 = (dword)local_c;
     *(undefined4 *)(puVar16 + -4) = 0x1f0ac;
     mc68k_startJ1708Transmission();
   }
@@ -20482,11 +20467,11 @@ void cm550_diagnosticMessage45Builder(void)
     _DAT_0080096a = _reference_speed_before_droop_calculation_1400_4500;
     _DAT_0080096c = _lsg_breakpoint_speed;
   }
-  if ((int)_j1708_transmit_buffer_0_2_32 < _j1708_transmit_buffer_2_32_dc9c) {
-    iVar3 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + -2;
+  if ((int)j1708_transmit_buffer_0_2_32 < (int)j1708_transmit_buffer_2_32_dc9c) {
+    iVar3 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) + -2;
   }
   else {
-    iVar3 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + 0xfe;
+    iVar3 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) + 0xfe;
   }
   if (iVar3 < 7) {
     _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
@@ -20494,9 +20479,9 @@ void cm550_diagnosticMessage45Builder(void)
     _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
     return;
   }
-  local_8._3_1_ = (char)_j1708_transmit_buffer_0_2_32;
+  local_8._3_1_ = (char)j1708_transmit_buffer_0_2_32;
   cVar2 = (char)local_8;
-  local_8._0_3_ = (undefined3)((uint)_j1708_transmit_buffer_0_2_32 >> 8);
+  local_8._0_3_ = (undefined3)(j1708_transmit_buffer_0_2_32 >> 8);
   local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
   *local_8 = 0x45;
   local_8 = (byte *)CONCAT31(local_8._0_3_,cVar2 + '\x02');
@@ -20562,9 +20547,9 @@ LAB_0001f204:
   local_8 = (byte *)CONCAT31(local_8._0_3_,cVar2 + '\x06');
   *local_8 = DAT_00808181;
   local_8 = (byte *)CONCAT31(local_8._0_3_,cVar2 + '\a');
-  *_j1708_transmit_buffer_0_2_32 = 6;
+  *(undefined1 *)j1708_transmit_buffer_0_2_32 = 6;
   *local_8 = 0;
-  _j1708_transmit_buffer_0_2_32 = local_8;
+  j1708_transmit_buffer_0_2_32 = (dword)local_8;
   mc68k_startJ1708Transmission();
   return;
 }
@@ -20581,19 +20566,19 @@ void cm550_diagnosticMessage46Builder(void)
 
 {
   short sVar1;
-  undefined1 *puVar2;
+  dword dVar2;
   char cVar3;
   int iVar4;
   undefined1 local_e;
   undefined1 uStack_d;
   undefined4 local_8;
   
-  puVar2 = _j1708_transmit_buffer_0_2_32;
-  if ((int)_j1708_transmit_buffer_0_2_32 < _j1708_transmit_buffer_2_32_dc9c) {
-    iVar4 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + -2;
+  dVar2 = j1708_transmit_buffer_0_2_32;
+  if ((int)j1708_transmit_buffer_0_2_32 < (int)j1708_transmit_buffer_2_32_dc9c) {
+    iVar4 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) + -2;
   }
   else {
-    iVar4 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + 0xfe;
+    iVar4 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) + 0xfe;
   }
   if (iVar4 < 0x17) {
     _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
@@ -20601,9 +20586,9 @@ void cm550_diagnosticMessage46Builder(void)
     _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
   }
   else {
-    local_8._3_1_ = (char)_j1708_transmit_buffer_0_2_32;
+    local_8._3_1_ = (char)j1708_transmit_buffer_0_2_32;
     cVar3 = (char)local_8;
-    local_8._0_3_ = (undefined3)((uint)_j1708_transmit_buffer_0_2_32 >> 8);
+    local_8._0_3_ = (undefined3)(j1708_transmit_buffer_0_2_32 >> 8);
     local_8 = (undefined1 *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
     *local_8 = 0x46;
     local_8 = (undefined1 *)CONCAT31(local_8._0_3_,cVar3 + '\x02');
@@ -20679,9 +20664,9 @@ void cm550_diagnosticMessage46Builder(void)
     uStack_d = (undefined1)((int)(uint)_DAT_00808144 >> 7);
     *local_8 = uStack_d;
     local_8 = (undefined1 *)CONCAT31(local_8._0_3_,cVar3 + '\x17');
-    *puVar2 = 0x16;
+    *(undefined1 *)dVar2 = 0x16;
     *local_8 = 0;
-    _j1708_transmit_buffer_0_2_32 = local_8;
+    j1708_transmit_buffer_0_2_32 = (dword)local_8;
     mc68k_startJ1708Transmission();
   }
   return;
@@ -20711,10 +20696,10 @@ uint cm550_FUN_0001f4e8(void)
   undefined2 local_a;
   undefined4 local_8;
   
-  cVar1 = *_j1708_receive_buffer_pointer_2_32_dcaa;
-  local_8._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
+  cVar1 = *(char *)j1708_receive_buffer_pointer_2_32_dcaa;
+  local_8._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dcaa;
   cVar5 = (char)local_8;
-  local_8._0_3_ = (undefined3)((uint)_j1708_receive_buffer_pointer_2_32_dcaa >> 8);
+  local_8._0_3_ = (undefined3)(j1708_receive_buffer_pointer_2_32_dcaa >> 8);
   local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x02');
   uVar4 = *local_8 & 3;
   uVar7 = cm550_diagnosticMessageValidator(0x4a);
@@ -20882,9 +20867,9 @@ void cm550_fuelDemandScaleFactorCalculator(void)
 {
   undefined4 local_8;
   
-  if (*_j1708_receive_buffer_pointer_2_32_dcaa == '\x02') {
-    local_8._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
-    local_8 = (byte *)CONCAT31((int3)((uint)_j1708_receive_buffer_pointer_2_32_dcaa >> 8),
+  if (*(char *)j1708_receive_buffer_pointer_2_32_dcaa == '\x02') {
+    local_8._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dcaa;
+    local_8 = (byte *)CONCAT31((int3)(j1708_receive_buffer_pointer_2_32_dcaa >> 8),
                                (char)local_8 + '\x02');
     if ((*local_8 & 1) != 0) {
       cm550_diagnosticMessage46Builder();
@@ -20929,10 +20914,10 @@ uint cm550_engineFluidLevelDataBuilder(void)
   ushort local_a;
   undefined4 local_8;
   
-  cVar1 = *_j1708_receive_buffer_pointer_2_32_dcaa;
-  local_8._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
+  cVar1 = *(char *)j1708_receive_buffer_pointer_2_32_dcaa;
+  local_8._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dcaa;
   cVar4 = (char)local_8;
-  local_8._0_3_ = (undefined3)((uint)_j1708_receive_buffer_pointer_2_32_dcaa >> 8);
+  local_8._0_3_ = (undefined3)(j1708_receive_buffer_pointer_2_32_dcaa >> 8);
   local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x02');
   uVar6 = *local_8 & 4;
   if ((*local_8 & 4) == 0) {
@@ -21073,16 +21058,14 @@ uint cm550_engineFluidLevelDataBuilder(void)
 // Function: cm550_extendedDiagnosticService51 @ 0x0001fbb0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm550_extendedDiagnosticService51(void)
 
 {
   undefined4 local_8;
   
-  if (*_j1708_receive_buffer_pointer_2_32_dcaa == '\x02') {
-    local_8._3_1_ = (char)_j1708_receive_buffer_pointer_2_32_dcaa;
-    local_8 = (byte *)CONCAT31((int3)((uint)_j1708_receive_buffer_pointer_2_32_dcaa >> 8),
+  if (*(char *)j1708_receive_buffer_pointer_2_32_dcaa == '\x02') {
+    local_8._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dcaa;
+    local_8 = (byte *)CONCAT31((int3)(j1708_receive_buffer_pointer_2_32_dcaa >> 8),
                                (char)local_8 + '\x02');
     if ((*local_8 & 1) != 0) {
       cm550_diagnosticMessage46Builder();
@@ -21111,11 +21094,11 @@ void cm550_diagnosticMessage53Builder(void)
   undefined1 uVar3;
   undefined4 local_8;
   
-  if ((int)_j1708_transmit_buffer_0_2_32 < _j1708_transmit_buffer_2_32_dc9c) {
-    iVar2 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + -2;
+  if ((int)j1708_transmit_buffer_0_2_32 < (int)j1708_transmit_buffer_2_32_dc9c) {
+    iVar2 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) + -2;
   }
   else {
-    iVar2 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + 0xfe;
+    iVar2 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) + 0xfe;
   }
   if (iVar2 < 3) {
     _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
@@ -21123,9 +21106,9 @@ void cm550_diagnosticMessage53Builder(void)
     _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
   }
   else {
-    local_8._3_1_ = (char)_j1708_transmit_buffer_0_2_32;
+    local_8._3_1_ = (char)j1708_transmit_buffer_0_2_32;
     cVar1 = (char)local_8;
-    local_8._0_3_ = (undefined3)((uint)_j1708_transmit_buffer_0_2_32 >> 8);
+    local_8._0_3_ = (undefined3)(j1708_transmit_buffer_0_2_32 >> 8);
     local_8 = (undefined1 *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
     *local_8 = 0x53;
     local_8 = (undefined1 *)CONCAT31(local_8._0_3_,cVar1 + '\x02');
@@ -21135,9 +21118,9 @@ void cm550_diagnosticMessage53Builder(void)
     }
     *local_8 = uVar3;
     local_8 = (undefined1 *)CONCAT31(local_8._0_3_,cVar1 + '\x03');
-    *_j1708_transmit_buffer_0_2_32 = 2;
+    *(undefined1 *)j1708_transmit_buffer_0_2_32 = 2;
     *local_8 = 0;
-    _j1708_transmit_buffer_0_2_32 = local_8;
+    j1708_transmit_buffer_0_2_32 = (dword)local_8;
     mc68k_startJ1708Transmission();
   }
   return;
@@ -21158,11 +21141,11 @@ void cm550_diagnosticMessage54Builder(void)
   int iVar2;
   undefined4 local_8;
   
-  if ((int)_j1708_transmit_buffer_0_2_32 < _j1708_transmit_buffer_2_32_dc9c) {
-    iVar2 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + -2;
+  if ((int)j1708_transmit_buffer_0_2_32 < (int)j1708_transmit_buffer_2_32_dc9c) {
+    iVar2 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) + -2;
   }
   else {
-    iVar2 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + 0xfe;
+    iVar2 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) + 0xfe;
   }
   if (iVar2 < 4) {
     _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
@@ -21170,9 +21153,9 @@ void cm550_diagnosticMessage54Builder(void)
     _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
   }
   else {
-    local_8._3_1_ = (char)_j1708_transmit_buffer_0_2_32;
+    local_8._3_1_ = (char)j1708_transmit_buffer_0_2_32;
     cVar1 = (char)local_8;
-    local_8._0_3_ = (undefined3)((uint)_j1708_transmit_buffer_0_2_32 >> 8);
+    local_8._0_3_ = (undefined3)(j1708_transmit_buffer_0_2_32 >> 8);
     local_8 = (undefined1 *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
     *local_8 = 0x54;
     local_8 = (undefined1 *)CONCAT31(local_8._0_3_,cVar1 + '\x02');
@@ -21186,9 +21169,9 @@ void cm550_diagnosticMessage54Builder(void)
     *local_8 = (char)(((uint)_jcomm_reference_retarder_torque_reference_ret_torque_that_co_0_64255 *
                       0x2e1) / 10000);
     local_8 = (undefined1 *)CONCAT31(local_8._0_3_,cVar1 + '\x04');
-    *_j1708_transmit_buffer_0_2_32 = 3;
+    *(undefined1 *)j1708_transmit_buffer_0_2_32 = 3;
     *local_8 = 0;
-    _j1708_transmit_buffer_0_2_32 = local_8;
+    j1708_transmit_buffer_0_2_32 = (dword)local_8;
     mc68k_startJ1708Transmission();
   }
   return;
@@ -28360,8 +28343,8 @@ void cm550_insiteFaultDetailBuilder(void)
         }
         if (insite_multiframe_current_index == insite_multiframe_total_frames) {
           cm550_responseBufferFinalize();
-          insite_response_frame_start = _j1708_transmit_buffer_0_2_32;
-          insite_response_write_pointer = _j1708_transmit_buffer_0_2_32;
+          insite_response_frame_start = j1708_transmit_buffer_0_2_32;
+          insite_response_write_pointer = j1708_transmit_buffer_0_2_32;
           insite_multiframe_current_index = insite_multiframe_current_index + 1;
           insite_response_length = 0;
         }
@@ -30808,11 +30791,11 @@ word mc68k_initializeJ1708Datalink(void)
   number_of_entries_in_the_scratch_pad_0_10 = 0;
   _scratch_pad_write_pointer = &scratch_pad_data_buffer;
   cm550_diagnosticBufferPointerInit();
-  j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ = 0;
-  j1708_rx_state_t_0080dcaf.buffer_full_flag = 0;
-  j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ = 1;
-  j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 0;
-  j1708_rx_state_t_0080dcaf.buffer_reserved = 0;
+  j1708_message_checksum = 0;
+  j1708_pending_abort_count = 0;
+  j1708_receive_mode_flag = 1;
+  j1708_bus_timer_armed_flag = 0;
+  BYTE_0080dcbc = 0;
   multipacket_transmit_active_flag = 0;
   multipacket_receive_active_flag = 0;
   _bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off = _DAT_00803f88;
@@ -31381,7 +31364,7 @@ uint cm550_FUN_0002cf7e(undefined4 param_1)
 void cm550_systemControl64(void)
 
 {
-  byte bVar1;
+  undefined1 uVar1;
   char cVar2;
   int iVar3;
   undefined4 unaff_D2;
@@ -31400,16 +31383,16 @@ void cm550_systemControl64(void)
       bVar6 = 0x13;
       bVar5 = 0xf;
     }
-    if ((int)_j1708_transmit_buffer_0_2_32 < _j1708_transmit_buffer_2_32_dc9c) {
-      iVar3 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + -2;
+    if ((int)j1708_transmit_buffer_0_2_32 < (int)j1708_transmit_buffer_2_32_dc9c) {
+      iVar3 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) + -2;
     }
     else {
-      iVar3 = (_j1708_transmit_buffer_2_32_dc9c - (int)_j1708_transmit_buffer_0_2_32) + 0xfe;
+      iVar3 = (j1708_transmit_buffer_2_32_dc9c - j1708_transmit_buffer_0_2_32) + 0xfe;
     }
     if ((int)(uint)bVar6 < iVar3) {
-      local_8._3_1_ = (char)_j1708_transmit_buffer_0_2_32;
+      local_8._3_1_ = (char)j1708_transmit_buffer_0_2_32;
       cVar2 = (char)local_8;
-      local_8._0_3_ = (undefined3)((uint)_j1708_transmit_buffer_0_2_32 >> 8);
+      local_8._0_3_ = (undefined3)(j1708_transmit_buffer_0_2_32 >> 8);
       local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
       *local_8 = 7;
       local_8 = (byte *)CONCAT31(local_8._0_3_,cVar2 + '\x02');
@@ -31420,15 +31403,15 @@ void cm550_systemControl64(void)
       *local_8 = multipacket_message_id._0_1_;
       local_8 = (byte *)CONCAT31(local_8._0_3_,cVar2 + '\x05');
       for (bVar4 = 0; bVar4 < bVar5; bVar4 = bVar4 + 1) {
-        bVar1 = *(byte *)diagnostic_multipacket_data_pointer;
+        uVar1 = *(undefined1 *)diagnostic_multipacket_data_pointer;
         diagnostic_multipacket_data_pointer = diagnostic_multipacket_data_pointer + 1;
-        *local_8 = bVar1;
+        *local_8 = uVar1;
         local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
       }
       multipacket_bytes_remaining = multipacket_bytes_remaining - bVar5;
-      *_j1708_transmit_buffer_0_2_32 = bVar6;
+      *(byte *)j1708_transmit_buffer_0_2_32 = bVar6;
       *local_8 = 0;
-      _j1708_transmit_buffer_0_2_32 = local_8;
+      j1708_transmit_buffer_0_2_32 = (dword)local_8;
       mc68k_startJ1708Transmission();
     }
     else {
@@ -33992,12 +33975,16 @@ void cm550_diagnosticTableSnapshotCapture(undefined4 param_1)
 
 
 //
-// Function: mc68k_tpuChannelStateMachine @ 0x000300d4
+// Function: mc68k_j1708BusTimerInterruptHandler @ 0x000300d4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The CTM4 MCSM11 interrupt handler of the J1708 driver (no caller - reached through the vector
+   table): clears CTM4_MCSM11SIC's interrupt level and bit 15 and j1708_bus_timer_armed_flag -
+   closes the received message (drops messages of fewer than 3 bytes and checks
+   j1708_message_checksum) - and writes a pending transmit byte to QSM_SCDR. It drives no TPU
+   channel (was mc68k_tpuChannelStateMachine; PR #53 round 77) */
 
-undefined8 mc68k_tpuChannelStateMachine(void)
+undefined8 mc68k_j1708BusTimerInterruptHandler(void)
 
 {
   word wVar1;
@@ -34006,92 +33993,92 @@ undefined8 mc68k_tpuChannelStateMachine(void)
   int iVar3;
   undefined4 in_D1;
   
-  j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 0;
+  j1708_bus_timer_armed_flag = 0;
   wVar1 = CTM4_MCSM11SIC;
   CTM4_MCSM11SIC = wVar1 & 0x8fff;
   wVar1 = CTM4_MCSM11SIC;
   CTM4_MCSM11SIC = wVar1 & 0x7fff;
-  if (((j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ == '\x01') &&
-      (*_j1708_receive_buffer_pointer_2_32_dca2 != 0)) &&
-     (j1708_receive_buffer_full_flag_1_true_0_false == '\0')) {
-    if (*_j1708_receive_buffer_pointer_2_32_dca2 < 3) {
-      _j1708_receive_buffer_pointer_2_32_dca6 =
-           (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca6,
-                            j1708_receive_buffer_index_low + '\x01');
-      *_j1708_receive_buffer_pointer_2_32_dca2 = 0;
-      j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ = 0;
+  if (((j1708_receive_mode_flag == 1) && (*(char *)j1708_receive_buffer_pointer_2_32_dca2 != '\0'))
+     && (j1708_receive_buffer_full_flag_1_true_0_false == 0)) {
+    if (*(byte *)j1708_receive_buffer_pointer_2_32_dca2 < 3) {
+      j1708_receive_buffer_pointer_2_32_dca6 =
+           CONCAT31(j1708_receive_buffer_pointer_2_32_dca6._0_3_,
+                    (char)j1708_receive_buffer_pointer_2_32_dca2 + '\x01');
+      *(undefined1 *)j1708_receive_buffer_pointer_2_32_dca2 = 0;
+      j1708_message_checksum = 0;
     }
-    else if (j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ == 0) {
-      *_j1708_receive_buffer_pointer_2_32_dca2 = *_j1708_receive_buffer_pointer_2_32_dca2 - 1;
-      _j1708_receive_buffer_pointer_2_32_dca2 =
-           (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca2,DAT_0080dca9 + -1);
-      *_j1708_receive_buffer_pointer_2_32_dca2 = 0;
+    else if (j1708_message_checksum == 0) {
+      *(char *)j1708_receive_buffer_pointer_2_32_dca2 =
+           *(char *)j1708_receive_buffer_pointer_2_32_dca2 + -1;
+      j1708_receive_buffer_pointer_2_32_dca2 =
+           CONCAT31(j1708_receive_buffer_pointer_2_32_dca2._0_3_,
+                    (char)j1708_receive_buffer_pointer_2_32_dca6 + -1);
+      *(undefined1 *)j1708_receive_buffer_pointer_2_32_dca2 = 0;
     }
     else {
-      _j1708_receive_buffer_pointer_2_32_dca6 =
-           (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca6,
-                            j1708_receive_buffer_index_low + '\x01');
-      if (*_j1708_receive_buffer_pointer_2_32_dca6 < 7) {
-        if ((int)_j1708_receive_buffer_pointer_2_32_dca2 < _j1708_receive_buffer_pointer_2_32_dcaa)
-        {
-          iVar3 = (_j1708_receive_buffer_pointer_2_32_dcaa -
-                  (int)_j1708_receive_buffer_pointer_2_32_dca2) + -2;
+      j1708_receive_buffer_pointer_2_32_dca6 =
+           CONCAT31(j1708_receive_buffer_pointer_2_32_dca6._0_3_,
+                    (char)j1708_receive_buffer_pointer_2_32_dca2 + '\x01');
+      if (*(byte *)j1708_receive_buffer_pointer_2_32_dca6 < 7) {
+        if ((int)j1708_receive_buffer_pointer_2_32_dca2 <
+            (int)j1708_receive_buffer_pointer_2_32_dcaa) {
+          iVar3 = (j1708_receive_buffer_pointer_2_32_dcaa - j1708_receive_buffer_pointer_2_32_dca2)
+                  + -2;
         }
         else {
-          iVar3 = (_j1708_receive_buffer_pointer_2_32_dcaa -
-                  (int)_j1708_receive_buffer_pointer_2_32_dca2) + 0xfe;
+          iVar3 = (j1708_receive_buffer_pointer_2_32_dcaa - j1708_receive_buffer_pointer_2_32_dca2)
+                  + 0xfe;
         }
         if (3 < iVar3) {
-          j1708_rx_state_t_0080dcaf.buffer_full_flag =
-               j1708_rx_state_t_0080dcaf.buffer_full_flag + 1;
-          *_j1708_receive_buffer_pointer_2_32_dca2 = 2;
-          _j1708_receive_buffer_pointer_2_32_dca2 =
-               (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca2,
-                                j1708_receive_buffer_index_low + '\x01');
-          *_j1708_receive_buffer_pointer_2_32_dca2 = 6;
-          _j1708_receive_buffer_pointer_2_32_dca2 =
-               (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca2,
-                                j1708_receive_buffer_index_low + '\x01');
-          *_j1708_receive_buffer_pointer_2_32_dca2 = 0x74;
-          cVar2 = j1708_receive_buffer_index_low;
-          _j1708_receive_buffer_pointer_2_32_dca2 =
-               (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca2,
-                                j1708_receive_buffer_index_low + '\x01');
-          _j1708_receive_buffer_pointer_2_32_dca6 =
-               (byte *)CONCAT31(_j1708_receive_buffer_pointer_2_32_dca6,cVar2 + '\x02');
+          j1708_pending_abort_count = j1708_pending_abort_count + 1;
+          *(undefined1 *)j1708_receive_buffer_pointer_2_32_dca2 = 2;
+          j1708_receive_buffer_pointer_2_32_dca2 =
+               CONCAT31(j1708_receive_buffer_pointer_2_32_dca2._0_3_,
+                        (char)j1708_receive_buffer_pointer_2_32_dca2 + '\x01');
+          *(undefined1 *)j1708_receive_buffer_pointer_2_32_dca2 = 6;
+          j1708_receive_buffer_pointer_2_32_dca2 =
+               CONCAT31(j1708_receive_buffer_pointer_2_32_dca2._0_3_,
+                        (char)j1708_receive_buffer_pointer_2_32_dca2 + '\x01');
+          *(undefined1 *)j1708_receive_buffer_pointer_2_32_dca2 = 0x74;
+          cVar2 = (char)j1708_receive_buffer_pointer_2_32_dca2;
+          j1708_receive_buffer_pointer_2_32_dca2 =
+               CONCAT31(j1708_receive_buffer_pointer_2_32_dca2._0_3_,
+                        (char)j1708_receive_buffer_pointer_2_32_dca2 + '\x01');
+          j1708_receive_buffer_pointer_2_32_dca6 =
+               CONCAT31(j1708_receive_buffer_pointer_2_32_dca6._0_3_,cVar2 + '\x02');
         }
       }
-      *_j1708_receive_buffer_pointer_2_32_dca2 = 0;
-      j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ = 0;
+      *(undefined1 *)j1708_receive_buffer_pointer_2_32_dca2 = 0;
+      j1708_message_checksum = 0;
     }
   }
-  if (j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ == '\0') {
-    j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ = 0;
-    j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ = '\x01';
-    j1708_transmit_buffer_index_low = (char)_j1708_transmit_buffer_2_32_dc9c;
-    _j1708_transmit_buffer_2_32_dc98 =
-         (byte *)CONCAT31((int3)((uint)_j1708_transmit_buffer_2_32_dc9c >> 8),
-                          j1708_transmit_buffer_index_low + '\x01');
-    j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 1;
+  if (j1708_receive_mode_flag == 0) {
+    j1708_message_checksum = 0;
+    j1708_receive_mode_flag = 1;
+    j1708_transmit_buffer_2_32_dc98._3_1_ = (char)j1708_transmit_buffer_2_32_dc9c;
+    j1708_transmit_buffer_2_32_dc98 =
+         CONCAT31((int3)(j1708_transmit_buffer_2_32_dc9c >> 8),
+                  (char)j1708_transmit_buffer_2_32_dc98 + '\x01');
+    j1708_bus_timer_armed_flag = 1;
     CTM4_MCSM11CNT = 0xfcbe;
     wVar1 = CTM4_MCSM11SIC;
     CTM4_MCSM11SIC = wVar1 & 0x7fff;
     wVar1 = CTM4_MCSM11SIC;
     CTM4_MCSM11SIC = wVar1 | 0x4000;
   }
-  else if (_j1708_transmit_buffer_0_2_32 != _j1708_transmit_buffer_2_32_dc9c) {
+  else if (j1708_transmit_buffer_0_2_32 != j1708_transmit_buffer_2_32_dc9c) {
     wVar1 = QSM_SCSR;
     if ((wVar1 & 0x20) == 0) {
-      QSM_SCDR = (ushort)*_j1708_transmit_buffer_2_32_dc98;
-      j1708_rx_state_t_0080dcaf.buffer_ptr_1._1_1_ = '\0';
-      j1708_rx_state_t_0080dcaf._7_4_ = 0;
-      j1708_rx_state_t_0080dcaf.buffer_ptr_1._2_1_ = 1;
-      j1708_rx_state_t_0080dcaf.buffer_ptr_2._0_1_ = *_j1708_transmit_buffer_2_32_dc98;
+      QSM_SCDR = (ushort)*(byte *)j1708_transmit_buffer_2_32_dc98;
+      j1708_receive_mode_flag = 0;
+      j1708_transmit_state = 0;
+      j1708_transmit_byte_count = 1;
+      j1708_message_checksum = *(byte *)j1708_transmit_buffer_2_32_dc98;
       wVar1 = QSM_SCCR1;
       QSM_SCCR1 = wVar1 | 0x20;
     }
     else {
-      j1708_rx_state_t_0080dcaf.buffer_ptr_3._3_1_ = 1;
+      j1708_bus_timer_armed_flag = 1;
       CTM4_MCSM11CNT = 0xfc8a;
       wVar1 = CTM4_MCSM11SIC;
       CTM4_MCSM11SIC = wVar1 & 0x7fff;
@@ -34115,7 +34102,7 @@ void mc68k_engineSpeedIsrRegister(void)
 {
   word wVar1;
   
-  _DAT_00809008 = mc68k_tpuChannelStateMachine;
+  _DAT_00809008 = mc68k_j1708BusTimerInterruptHandler;
   wVar1 = CTM4_MCSM11SIC;
   CTM4_MCSM11SIC = wVar1 & 0x8fff;
   wVar1 = CTM4_MCSM11SIC;

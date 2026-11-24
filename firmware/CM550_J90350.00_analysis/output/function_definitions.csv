@@ -155,7 +155,7 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # TPU (Timer Processing Unit) Functions
 # -----------------------------------------------------------------------------
-0x0001e266,tpuTimerChannelEnable,0,channel_mask,ushort,TPU channel enable bitmask
+0x0001e266,mc68k_armJ1708BusTimer,return,,void,No parameter: the callers push nothing before the jsr and the body reads no input (the channel_mask parameter row was never read; PR #53 round 77)
 0x0001e5f0,tpuChannelConfigurator,0,channel_config,uint,TPU channel configuration value
 
 # -----------------------------------------------------------------------------
