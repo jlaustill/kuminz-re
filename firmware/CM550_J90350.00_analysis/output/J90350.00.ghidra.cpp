@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue Nov 24 07:30:21 MST 2026
+// Generated: Tue Nov 24 07:43:46 MST 2026
 
 
 //
@@ -10420,11 +10420,10 @@ void mc68k_dispatchJ1708ReceivedMessages(void)
 {
   undefined1 uVar1;
   char cVar2;
-  word wVar3;
   char cVar4;
   char cVar5;
   byte bVar6;
-  word elapsedTimerCount;
+  word wVar3;
   byte *pbVar7;
   undefined2 local_18;
   byte abStack_16 [10];
@@ -10555,11 +10554,11 @@ void mc68k_dispatchJ1708ReceivedMessages(void)
             local_c = (undefined1 *)CONCAT31(local_8._0_3_,cVar2 + '\x01');
             local_18 = CONCAT11(*local_c,uVar1);
             local_c = (undefined1 *)CONCAT31(local_8._0_3_,cVar5 + '\x03');
-            elapsedTimerCount =
-                 cm550_crc16Calculate
-                           ((byte *)CONCAT22((short)(j1708_receive_buffer_pointer_2_32_dcaa >> 0x10)
-                                             ,(short)local_c),(ushort)(byte)(cVar4 - 4));
-            if (elapsedTimerCount != local_18) {
+            wVar3 = cm550_crc16Calculate
+                              ((byte *)CONCAT22((short)(j1708_receive_buffer_pointer_2_32_dcaa >>
+                                                       0x10),(short)local_c),
+                               (ushort)(byte)(cVar4 - 4));
+            if (wVar3 != local_18) {
               cm550_diagnosticMessageQueueWrite(0x14);
               break;
             }
@@ -23175,8 +23174,7 @@ void cm550_systemFunction1xCaller(void)
 // Function: cm550_diagMemoryReadResponseBuilder @ 0x0002238e
 //
 
-undefined4
-cm550_diagMemoryReadResponseBuilder(byte *request_ptr,dword start_address,dword read_length)
+void cm550_diagMemoryReadResponseBuilder(byte *request_ptr,dword start_address,dword read_length)
 
 {
   undefined1 *puVar1;
@@ -23195,17 +23193,17 @@ cm550_diagMemoryReadResponseBuilder(byte *request_ptr,dword start_address,dword 
   
   cVar3 = **(char **)(request_ptr + 6);
   if (0x6e4 < read_length) {
-    return 2;
+    return;
   }
   bVar6 = getJ1939MemoryServiceHeaderLength((word)CONCAT31((int3)((uint)in_D0 >> 8),cVar3));
   if (((*(short *)(request_ptr + 4) != 8) && (*(ushort *)(request_ptr + 4) != (ushort)bVar6)) &&
      (*(short *)(request_ptr + 4) != (ushort)(bVar6 + 10))) {
-    return 2;
+    return;
   }
   range_length = (ushort)read_length;
   MVar7 = lookupApplicationMemoryRegionType(start_address,range_length);
   if ((MVar7 == MEMORY_REGION_TYPE_REFUSED) || (MVar7 == MEMORY_REGION_TYPE_UNMAPPED)) {
-    return CONCAT31(extraout_var,MVar7);
+    return;
   }
   if ((cVar3 == 'C') && (range_length < 0x100)) {
     uVar8 = 0x44;
@@ -23220,7 +23218,7 @@ cm550_diagMemoryReadResponseBuilder(byte *request_ptr,dword start_address,dword 
   bVar6 = bVar6 - 1;
   msg_header = cm550_multiPacketBufferAllocator(range_length + bVar6 + 1);
   if (msg_header == (j1939_header_t *)0x0) {
-    return 4;
+    return;
   }
   puVar1 = (undefined1 *)msg_header[1].id;
   msg_header->id = 0xef0000;
@@ -23238,7 +23236,7 @@ cm550_diagMemoryReadResponseBuilder(byte *request_ptr,dword start_address,dword 
   }
   cm550_memcpy(destination + bVar6,(byte *)start_address,range_length);
   cm550_sendCanMessage(msg_header);
-  return 0xff;
+  return;
 }
 
 

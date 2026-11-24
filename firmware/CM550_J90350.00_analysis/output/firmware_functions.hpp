@@ -464,7 +464,7 @@ void cm550_diagnosticGroupSnapshotCapture(byte command_record_index);  // @ 0x00
 uint cm550_memoryRegisterController(void);  // @ 0x00022070
 undefined4 cm550_canDiagnosticResponseSender(byte *param_1);  // @ 0x000222b4
 void cm550_systemFunction1xCaller(void);  // @ 0x00022370
-undefined4 cm550_diagMemoryReadResponseBuilder(byte *request_ptr,dword start_address,dword read_length);  // @ 0x0002238e
+void cm550_diagMemoryReadResponseBuilder(byte *request_ptr,dword start_address,dword read_length);  // @ 0x0002238e
 void cm550_FUN_00022530(int param_1);  // @ 0x00022530
 void cm550_FUN_0002257c(int param_1);  // @ 0x0002257c
 void cm550_FUN_000225e0(int param_1);  // @ 0x000225e0
