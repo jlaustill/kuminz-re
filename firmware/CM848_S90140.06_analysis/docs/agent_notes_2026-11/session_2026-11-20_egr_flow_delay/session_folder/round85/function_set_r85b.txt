@@ -1,0 +1,89 @@
+removed 0: 
+added 0: 
+changed 8
+  0x00003640 cm550_huffmanTreeBuilder: 27 lines
+      -short cm550_huffmanTreeBuilder(dword tree_buffer)
+      +short cm550_huffmanTreeBuilder(huffman_tree_node_t *tree_buffer)
+      -  *(undefined2 *)(tree_buffer + 0xc06) = 0xffff;
+      +  tree_buffer[0x201].frequency = 0xffff;
+      -    *(ushort *)(tree_buffer + uVar1 * 6) = (ushort)*(byte *)((short)uVar3 + 0x12a);
+      +    tree_buffer[uVar1].frequency = (ushort)*(byte *)((short)uVar3 + 0x12a);
+      -  *(undefined2 *)(tree_buffer + 0x600) = 1;
+      +  tree_buffer[0x100].frequency = 1;
+      -      if (*(short *)(tree_buffer + uVar2 * 6) != 0) {
+      -        if (*(ushort *)(tree_buffer + uVar2 * 6) < *(ushort *)(tree_buffer + uVar4 * 6)) {
+      +      if (tree_buffer[uVar2].frequency != 0) {
+      +        if (tree_buffer[uVar2].frequency < tree_buffer[uVar4].frequency) {
+      -        else if (*(ushort *)(tree_buffer + uVar2 * 6) < *(ushort *)(tree_buffer + uVar1 * 6)) {
+      +        else if (tree_buffer[uVar2].frequency < tree_buffer[uVar1].frequency) {
+      -    if ((short)uVar1 == 0x201) break;
+      -    *(short *)(tree_buffer + (uint)uVar3 * 6) =
+      -         *(short *)(tree_buffer + uVar1 * 6) + *(short *)(tree_buffer + uVar4 * 6);
+      -    *(undefined2 *)(tree_buffer + uVar4 * 6) = 0;
+      -    *(undefined2 *)(tree_buffer + uVar1 * 6) = 0;
+      -    *(short *)(tree_buffer + 2 + (uint)uVar3 * 6) = (short)uVar4;
+      -    *(short *)(tree_buffer + 4 + (uint)uVar3 * 6) = (short)uVar1;
+      +    if ((word)uVar1 == 0x201) break;
+      +    tree_buffer[uVar3].frequency = tree_buffer[uVar1].frequency + tree_buffer[uVar4].frequency;
+      +    tree_buffer[uVar4].frequency = 0;
+  0x00003792 cm550_huffmanDecompress: 6 lines
+      -void cm550_huffmanDecompress(dword tree_buffer,word start_node)
+      +void cm550_huffmanDecompress(huffman_tree_node_t *tree_buffer,word start_node)
+      -        uVar2 = *(ushort *)(tree_buffer + 2 + (uint)uVar2 * 6);
+      +        uVar2 = tree_buffer[uVar2].left_child;
+      -        uVar2 = *(ushort *)(tree_buffer + 4 + (uint)uVar2 * 6);
+      +        uVar2 = tree_buffer[uVar2].right_child;
+  0x00003836 cm550_huffmanDecompressMain: 16 lines
+      -  undefined2 *puVar1;
+      -  undefined2 local_c0a [1539];
+      +  huffman_tree_node_t *phVar1;
+      +  huffman_tree_node_t tree_nodes [513];
+      -  for (puVar1 = local_c0a; puVar1 < local_c0a + 0x603; puVar1 = puVar1 + 3) {
+      -    *puVar1 = 0;
+      -    puVar1[1] = 0;
+      -    puVar1[2] = 0;
+      +  for (phVar1 = tree_nodes; phVar1 < tree_nodes + 0x201; phVar1 = phVar1 + 1) {
+      +    phVar1->frequency = 0;
+      +    phVar1->left_child = 0;
+      +    phVar1->right_child = 0;
+      -  cm550_huffmanTreeBuilder((dword)local_c0a);
+      -  cm550_huffmanDecompress((dword)local_c0a,start_node);
+      +  cm550_huffmanTreeBuilder(tree_nodes);
+      +  cm550_huffmanDecompress(tree_nodes,start_node);
+  0x00010fe0 cm550_saveParameterBlock1ToFlash: 6 lines
+      -  dword dVar1;
+      +  FLASH_ERASE_RESULT FVar1;
+      -  dVar1 = cm550_flashEraseFromRam(0x4000,0);
+      -  if (dVar1 == 0) {
+      +  FVar1 = cm550_flashEraseFromRam(0x4000,0);
+      +  if (FVar1 == FLASH_ERASE_DONE) {
+  0x0001125a cm550_saveParameterBlock2ToFlash: 6 lines
+      -  dword dVar1;
+      +  FLASH_ERASE_RESULT FVar1;
+      -  dVar1 = cm550_flashEraseFromRam(0x6000,0);
+      -  if (dVar1 == 0) {
+      +  FVar1 = cm550_flashEraseFromRam(0x6000,0);
+      +  if (FVar1 == FLASH_ERASE_DONE) {
+  0x0001c31a mc68k_flashEraseBlock: 6 lines
+      -undefined4 mc68k_flashEraseBlock(void)
+      +FLASH_ERASE_RESULT mc68k_flashEraseBlock(void)
+      -      return 1;
+      +      return FLASH_ERASE_FAILED;
+      -        return 2;
+      +        return FLASH_ERASE_SUSPENDED;
+  0x0001c484 cm550_flashEraseFromRam: 8 lines
+      -dword cm550_flashEraseFromRam(dword block_address,dword suspend_check_disabled)
+      +FLASH_ERASE_RESULT cm550_flashEraseFromRam(dword block_address,dword suspend_check_disabled)
+      -  dword dVar1;
+      +  FLASH_ERASE_RESULT FVar1;
+      -  dVar1 = (*(code *)auStack_804)();
+      -  return dVar1;
+      +  FVar1 = (*(code *)auStack_804)();
+      +  return FVar1;
+  0x0002ce64 cm550_updateBootBlockFromImage: 6 lines
+      -  dword dVar1;
+      +  FLASH_ERASE_RESULT FVar1;
+      -    dVar1 = cm550_flashEraseFromRam(0,1);
+      -    if (dVar1 == 0) {
+      +    FVar1 = cm550_flashEraseFromRam(0,1);
+      +    if (FVar1 == FLASH_ERASE_DONE) {

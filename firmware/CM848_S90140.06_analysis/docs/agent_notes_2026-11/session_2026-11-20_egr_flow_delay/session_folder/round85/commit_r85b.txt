@@ -1,0 +1,26 @@
+cm550: round 85 stage B - the Huffman tree node struct applied; FLASH_ERASE_RESULT
+
+- The boot block's Huffman decompressor works on an array of 6-byte nodes. The type already existed
+  (huffman_tree_node_t: frequency / left_child / right_child, since commit 7fc4f336), but nothing used it.
+  - cm550_huffmanTreeBuilder and cm550_huffmanDecompress take huffman_tree_node_t *tree_buffer.
+  - cm550_huffmanDecompressMain's stack array is huffman_tree_node_t tree_nodes[513]. It clears the array, builds the
+    tree in it and walks it: on a 0 bit to left_child, on a 1 bit to right_child, until the node index is 0x100 or
+    below.
+  - Node 0x201 is the builder's 0xFFFF sentinel and node 0x100 the end symbol (frequency 1).
+- FLASH_ERASE_RESULT (4 bytes) is the 0 / 1 / 2 result of the RAM-run erase routine: FLASH_ERASE_DONE,
+  FLASH_ERASE_FAILED (the error bit or no ready bit after 40000 reads), FLASH_ERASE_SUSPENDED (0xB0B0 on the chip
+  select 2 input). It is the return type of mc68k_flashEraseBlock and of cm550_flashEraseFromRam, which returns the
+  result from its RAM copy.
+
+Proof:
+- CM550 verify is DETERMINISTIC.
+- function_set_check.py, with comments stripped: 0 functions removed or added, 8 changed, all as intended.
+  - The three Huffman functions now read struct fields (tree_buffer[i].frequency / .left_child / .right_child,
+    phVar1->frequency ...) and drop the (dword) casts at the two calls.
+  - The three erase callers test FVar1 == FLASH_ERASE_DONE.
+  - mc68k_flashEraseBlock returns FLASH_ERASE_FAILED / FLASH_ERASE_SUSPENDED.
+- The build log has no new warning.
+- The headers regenerate with 0 g++ errors. The _cal audit reports HARD 0 and MISSING 31. test_rename_waves.py:
+  ALL PASS.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

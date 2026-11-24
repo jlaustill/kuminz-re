@@ -697,3 +697,13 @@ Hand work on the round 7 lead.
   `apply_r84b2.py`, `map_r84b.csv`, `apply_r84b_closing.py`.
 - **Closing:** `apply_r84_closing.py`, `update_large_tar_r84.sh`, `fix_pr_body_round_headings_r84.py` (the PR
   body's round 24-84 headings had no blank line above them, so GitHub showed each inside the bullet above it).
+
+## Round 85: the CM550 prefix rule audit, the Huffman tree struct (`session_folder/round85/`)
+
+- **Stage A (CM550):** `audit_table.py` / `audit_records.py` (the audit workflow's result as a table / as full
+  records, `audit_records.txt`), `hardware_access_kinds.py` (watchdog-only vs real hardware access),
+  `references_to.py` (every m68k reference form to an address), `apply_r85a.py`, `map_r85a.csv`.
+- **Stage B (CM550):** `apply_r85b.py`.
+- **Research:** `stack_argument_survey/` (a CPU32 decoder and call-site walker that classifies CM550's small
+  stack arguments; its scripts and text outputs).
+- **Closing:** `apply_r85_closing.py`, `update_large_tar_r85.sh`.

@@ -8,7 +8,7 @@ fresh air flow records; the e2m never spells it out, so no name guesses an expan
 - **Round 2:** at the user's request the rest of the family is renamed too, on this PR (stages 3 / 4). The scope rule:
   a symbol is in if its e2m record is `CHP_` / `C_CHP_`, or if it is an input that a family function would otherwise
   misname.
-- **Beyond CM848 (rounds 72-84):** the J1939 memory write service and the development mode code are shared:
+- **Beyond CM848 (rounds 72-85):** the J1939 memory write service and the development mode code are shared:
   eleven CM550 functions are CM848 twins and share their names. Round 74 also dismantles a misapplied CM550
   struct, round 75 types CM550's InSite parameter schedule and names its J1708 SCI, and round 76 names CM550's
   MC68336 registers, so CM550's CSVs, the root README and `firmware/feature_comparison.csv` change too.
@@ -920,6 +920,12 @@ state enum, the flag bytes.**
 - **Stage B (0a0965dc):** the image is data, so its nine function copies go into CM550's first `deleted_functions.csv`;
   `tpu_microcode_image` gets back its whole extent (`dword[419]`); 0x395a takes the `mc68k_` prefix.
 
+**Round 85.**
+- **Stage A (5fd9219c):** a workflow audit of CM550's hardware-touching functions. 23 are renamed for what they do
+  (11 take `mc68k_`; the watchdog-only ones stay `cm550_` under commit 16143a5c), and 9 spurious function records
+  are deleted.
+- **Stage B (808a338b):** the Huffman tree node struct is applied; `FLASH_ERASE_RESULT`.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -1011,6 +1017,8 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 85: B: CM550: verify DETERMINISTIC; 8 functions changed as intended (struct fields in the 3 Huffman functions, FLASH_ERASE_RESULT at the 3 erase callers and the 2 erase functions), none removed or added; no new build warning; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
+- [x] Round 85: A: CM550: verify DETERMINISTIC; 9 records removed and nothing added, 7 functions changed - all from the two prototype fixes (function_set_check.py); no new build warning; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 84: B: CM550: verify DETERMINISTIC after B and B2; the 9 image functions removed and nothing else (function_set_check.py: 0 added, 0 changed after B; B2 only names cm550_huffmanTreeBuilder's tree_buffer); the 0x2c834 warning gone; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 84: A: CM550: a full-text check (comments stripped, renames applied) leaves only the updater's lines (the image and the two version dwords named, one wrap); verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 83: A: CM550: a full-text check (comments stripped, renames applied) finds 40 differing lines, all in the TPU microcode loader (its two copy sources named, its temporaries dword *); rounds 81-82 re-checked the same way: 0 lines; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.

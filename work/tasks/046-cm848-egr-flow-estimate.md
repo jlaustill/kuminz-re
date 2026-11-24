@@ -3778,6 +3778,57 @@ A peer relay started the round; the scripts are in `session_folder/round84/`.
   - The other placeholder-named hardware functions (the speed sensor handlers `vp44_FUN_00019e90` / `_0001a52c` /
     `_0001a8a4`, `mc68k_FUN_00015df0` ...).
 
+## Done, round 85 (2026-11-24, same PR): the CM550 prefix rule audit, the Huffman tree struct, FLASH_ERASE_RESULT
+
+Peer relays started and continued the round (04:50, 05:20, 05:50). Ultracode was on, so the audit and the research ran
+as workflows. The scripts are in `session_folder/round85/`.
+- **Stage A (5fd9219c), the prefix rule audit:** a workflow of 6 read-only investigators and 6 skeptics audited the 31
+  functions round 84's `prefix_rule_check.py` listed, plus `cm550_FUN_0001c484`. Every proposal survived its skeptic.
+  - **The rule:** commit 16143a5c (2026-03-17) says a function whose only hardware access is the inline watchdog kick
+    is generic code, not `mc68k_`. `hardware_access_kinds.py` splits each body's accesses, unnamed 0xFFxxxx addresses
+    included, so 12 of the proposed `mc68k_` names keep `cm550_`.
+  - **23 renames, 11 `mc68k_` and 12 `cm550_`**, for example:
+    - `injectorTimingCalculation` -> `mc68k_sampleAndDebounceDiscreteInputs`;
+    - `oilPressureRpmFaultMonitor` -> `mc68k_monitorPwmOutputReadBackFaults`;
+    - the four TPU channel 10 primary speed handlers, one per `speed_measurement_mode`;
+    - `mc68k_applicationMain` and `mc68k_runPowerDownSequence`;
+    - the parameter block loaders and savers;
+    - `cm550_flashEraseFromRam`.
+  - **9 spurious function records deleted** (`deleted_functions.csv`): mid-function points with no reference
+    (`references_to.py`), rows inherited from the J90280.05 relocation map. Their parents' bodies do not change; the
+    records only showed duplicates of their tails.
+  - `relocation_map.csv` is the historical J90280.05 -> J90350.00 map, not CM550 -> CM848.
+  - **Proof:** CM550: verify DETERMINISTIC; 9 records removed and nothing added, 7 functions changed - all from the two prototype fixes (function_set_check.py); no new build warning; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
+- **Stage B (808a338b):**
+  - The existing `huffman_tree_node_t` is applied: the `tree_buffer` pointers and the 513-node stack array.
+  - `FLASH_ERASE_RESULT` is the return type of the erase routine and of its runner.
+  - **Proof:** CM550: verify DETERMINISTIC; 8 functions changed as intended (struct fields in the 3 Huffman functions, FLASH_ERASE_RESULT at the 3 erase callers and the 2 erase functions), none removed or added; no new build warning; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
+- **Research for round 86: CM550's small stack arguments** (a read-only workflow; `stack_argument_survey/`):
+  - **The compiler:** every byte or word argument takes a 2-byte slot (a byte sits at the odd address). Longs and
+    pointers take 4 bytes and are not 4-aligned. 89 functions are affected, and no call site contradicts this.
+  - **Ghidra:** `68000.cspec` right-justifies stack parameters in 4-byte slots (pentry align 4, and `<stackpointer>` has
+    no `reversejustify`), so a word lands at +6. That gives `in_stack_00000004` and `param_N._0_2_`. A spec extension
+    cannot change the justification; it can add a prototype.
+- **firmware/CLAUDE.md:** none.
+- **Leads:**
+  - **Twins for a two-firmware rename:**
+    - `cm550_restartOnKeyOnDuringPowerDown` / `cm848_restartOnKeyOnDuringPowerDown`;
+    - `mc68k_runPowerDownSequence` / `cm848_runPowerDownSequence`;
+    - `mc68k_applicationMain` / `cm848_applicationMain`;
+    - `cm550_copyCalibrationFromRomToRam` / `cm848_copyRomToRamBuffer`.
+  - `main_loop` (shared with CM848) is the 40-phase executive's periodic interrupt handler, not a loop.
+  - **Still to name:**
+    - `mc68k_FUN_00015df0` (the chip select 2 output set-up and the TPU channel 13 handshake);
+    - `cm550_FUN_00028978` (the application main's restart entry);
+    - `cm550_FUN_0001192a` (the restart routine).
+  - **Wrong vocabulary:**
+    - `calibration_bank_*` are the parameter block words;
+    - `eeprom_calibration_write_success` (0x803FE8) is a save-failed flag;
+    - `mc68k_waterInFuelDiagnosticHandler` is the PWM 3 / 4 start-up check;
+    - `cm550_throttleTimeAccumulatorProcessor` is the mode 3 period ring / sync gap processor.
+  - **Unreliable renders:** the .cpp drops blocks in `mc68k_flashEraseBlock` and `cm550_flashProgramAndVerifyWords`;
+    read the ROM.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

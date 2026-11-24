@@ -1,0 +1,439 @@
+0x03792 cm550_huffmanDecompress
+    layout: long@+4 [long]; word@+8 [word]
+    cpp: in_stack_00000008(+8,w2)x1 | sites 1 (walker 1, scan 0)
+    callee: 00379a 226e0008 movea.l (8,a6),a1; 0037ce 342e000c move.w (12,a6),d2
+    call 003864: 00385e 3e 80 ; 003860 48 6e f3 fa / 4e ba ff 2c / 24 6e f3 f4
+0x03870 cm550_busyWaitDelayLoop
+    layout: word@+4 [word]
+    cpp: param_1._0_2_(+4,w2)x1 | sites 5 (walker 5, scan 0)
+    callee: 003882 b26f0004 cmp.w (4,sp),d1
+    call 0038a0: 00389c 3f 3c 00 01 / 4e bb 81 70 ff ff ff ce / 34 39 00 ff f2 06
+0x0b688 cm550_FUN_0000b688
+    layout: word@+4 [word]
+    cpp: param_1._1_1_(+5,w1)x6 | sites 1 (walker 1, scan 0)
+    callee: 00b68a 342f0008 move.w (8,sp),d2
+    call 03217e: 03217c 3f 00 / 4e b9 00 00 b6 88 / 16 00
+0x0b6e8 cm550_diagnosticMessageQueueWrite
+    layout: word@+4 [word]
+    cpp: in_stack_00000004(+4,w2)x6 | sites 39 (walker 39, scan 0)
+    callee: 00b6f0 342e0008 move.w (8,a6),d2
+    call 011a10: 011a0e 42 67 / 4e b9 00 00 b6 e8 / 54 8f
+0x0c80e cm550_modeBasedDataDispatcher
+    layout: word@+4 [word]
+    cpp: param_1._1_1_(+5,w1)x3 | sites 1 (walker 1, scan 0)
+    callee: 00c812 342f0010 move.w (16,sp),d2
+    call 01e1c6: 01e1c4 3f 00 / 4e b9 00 00 c8 0e / 54 8f
+0x0d1a4 cm550_diagnosticStatus2Initializer
+    layout: word@+4 [word]
+    cpp: param_1._0_2_(+4,w2)x1 | sites 1 (walker 1, scan 0)
+    callee: 00d1da 0c6f00020004 cmpi.w #0x2,(4,sp)
+    call 0345a4: 0345a2 3f 02 / 4e b9 00 00 d1 a4 / 61 b8
+0x0d4ae cm550_FUN_0000d4ae
+    layout: word@+4 [word]
+    cpp: param_1._0_2_(+4,w2)x2 | sites 1 (walker 1, scan 0)
+    callee: 00d4b2 342f0010 move.w (16,sp),d2
+    call 0345b6: 0345b4 3e 82 / 4e b9 00 00 d4 ae / 58 8f
+0x0ed34 cm550_diagnosticCodeTableSearch
+    layout: word@+4 [word]
+    cpp: param_1._1_1_(+5,w1)x1 | sites 9 (walker 9, scan 0)
+    callee: 00ed36 322f0008 move.w (8,sp),d1
+    call 00edf0: 00edee 3f 00 / 61 00 ff 42 / 54 8f
+0x0faa6 cm550_calculateGovernorDroopSpeed
+    layout: word@+4 [word]; word@+6 [low byte]
+    cpp: in_stack_00000004(+4,w2)x3 | sites 4 (walker 4, scan 0)
+    callee: 00faaa 342f000c move.w (12,sp),d2; 00fb04 4a2f000f tst.b (15,sp)
+    call 00fcc8: 00fcbe 3f 3c 00 01 ; 00fcc2 3f 39 00 80 81 6c / 61 00 fd dc / 58 8f
+0x0fbe4 vp44_fuelSourceOilPressureConditionChecker
+    layout: no argument read in the body (not a callee-argument case)
+    cpp: in_stack_00000000(+0,w2)x1 | sites 0 (walker 0, scan 0)
+    callee: 
+0x1025c cm550_retarderModeThresholdCalculator
+    layout: word@+4 [word]
+    cpp: param_1._1_1_(+5,w1)x3 | sites 1 (walker 1, scan 0)
+    callee: 010260 362f001c move.w (28,sp),d3
+    call 01a988: 01a986 42 67 / 4e b9 00 01 02 5c / 54 8f
+0x10e16 cm550_diagnosticMemoryAddressResolver
+    layout: word@+4 [word]; long@+6 [long]
+    cpp: in_stack_00000004(+4,w2)x12; in_stack_00000008(+8,w2)x0 | sites 9 (walker 9, scan 0)
+    callee: 010e18 322f0008 move.w (8,sp),d1; 010e1c 246f000a movea.l (10,sp),a2
+    call 013de4: 013dd8 2f 0a ; 013de0 3f 30 20 00 / 4e b9 00 01 0e 16 / 5c 8f
+0x1192a cm550_FUN_0001192a
+    layout: long@+4 [long]; word@+8 [word]
+    cpp: param_2._1_1_(+9,w1)x2 | sites 2 (walker 2, scan 0)
+    callee: 011932 342e000c move.w (12,a6),d2; 0119fa 2f2e0008 move.l (8,a6),-(sp)
+    call 011910: 01190c 42 67 ; 01190e 2f 08 / 4e b9 00 01 19 2a / 5c 8f
+0x11da6 cm550_crc16Calculate
+    layout: long@+4 [&addr@+7, byte 3 of long(rw), long]; word@+8 [word]
+    cpp: param_1._0_3_(+4,w3)x1; param_2._0_2_(+8,w2)x1 | sites 2 (walker 2, scan 0)
+    callee: 011dae 362e000c move.w (12,a6),d3; 011db4 43ee000b lea (11,a6),a1; 011dc0 206e0008 movea.l (8,a6),a0; 011de2 5211 addq.b #1,(a1)
+    call 0162b6: 0162b0 3f 00 ; 0162b2 2f 2e ff f8 / 4e b9 00 01 1d a6 / 5c 8f
+0x13616 vp44_communication_state_machine
+    layout: word@+4 [word]
+    cpp: param_1._0_2_(+4,w2)x1 | sites 5 (walker 5, scan 0)
+    callee: 013644 b06e0008 cmp.w (8,a6),d0
+    call 019c6c: 019c68 3f 3c 00 01 / 4e b9 00 01 36 16 / 54 8f
+0x13ed8 cm550_FUN_00013ed8
+    layout: word@+4 [word]
+    cpp: param_1._1_1_(+5,w1)x32 | sites 2 (walker 2, scan 0)
+    callee: 013edc 362f0014 move.w (20,sp),d3
+    call 01397c: 01397a 3f 00 / 4e b9 00 01 3e d8 / 54 8f
+0x142a8 cm550_canBusConfigTypeSelector
+    layout: word@+4 [word]
+    cpp: in_stack_00000005(+5,w1)x3 | sites 5 (walker 5, scan 0)
+    callee: 0142a8 322f0004 move.w (4,sp),d1
+    call 02f300: 02f2fe 3f 00 / 4e b9 00 01 42 a8 / 54 8f
+0x142d4 cm550_FUN_000142d4
+    layout: word@+4 [word]; word@+6 [word]
+    cpp: in_stack_00000004(+4,w2)x1; in_stack_00000006(+6,w1)x1 | sites 5 (walker 5, scan 0)
+    callee: 0142e2 356e00080006 move.w (8,a6),(6,a2); 014304 342e000a move.w (10,a6),d2
+    call 0143ec: 0143e0 3f 39 00 80 bc 82 ; 0143e6 3f 39 00 80 db 02 / 4e 92 / 33 c0 00 80 bc 7e
+0x144bc cm550_diagnosticCodeDebounceHandler
+    layout: word@+4 [word]
+    cpp: in_stack_00000005(+5,w1)x11 | sites 1 (walker 1, scan 0)
+    callee: 0144c0 342f0024 move.w (36,sp),d2
+    call 014690: 01468e 3f 00 / 61 00 fe 2a / 54 8f
+0x146b4 cm550_oldestDiagnosticTimestampSearch
+    layout: word@+4 [word]
+    cpp: param_1._0_2_(+4,w2)x1 | sites 2 (walker 2, scan 0)
+    callee: 0146ec 322f001c move.w (28,sp),d1
+    call 014788: 014784 3f 3c 00 02 / 61 00 ff 2a / 54 8f
+0x14720 cm550_diagnosticCodeRegistrar
+    layout: word@+4 [word]
+    cpp: in_stack_00000004(+4,w2)x1 | sites 1 (walker 1, scan 0)
+    callee: 014724 382f0014 move.w (20,sp),d4
+    call 014948: 014946 3f 02 / 4e b9 00 01 47 20 / 54 8f
+0x14f42 cm550_insitePidDtcHandler
+    layout: word@+4 [word]
+    cpp: param_1._1_1_(+5,w1)x1 | sites 1 (walker 1, scan 0)
+    callee: 014f46 322f001c move.w (28,sp),d1
+    call 01eb3c: 01eb3a 3f 00 / 4e b9 00 01 4f 42 / 54 8f
+0x14fae cm550_initHourMeterSystem
+    layout: no argument read in the body (not a callee-argument case)
+    cpp: in_stack_00000000(+0,w2)x1 | sites 1 (walker 1, scan 0)
+    callee: 
+    call 02879e:  / 4e b9 00 01 4f ae / 4e b9 00 01 7e f8
+0x165f2 cm550_param_address_calc
+    layout: long@+4 [long]; word@+8 [word]
+    cpp: param_2._0_2_(+8,w2)x3 | sites 4 (walker 4, scan 0)
+    callee: 0165f6 342f0010 move.w (16,sp),d2; 0165fa 262f000c move.l (12,sp),d3
+    call 00f8ac: 00f8a8 3f 03 ; 00f8aa 2f 02 / 4e b9 00 01 65 f2 / 5c 8f
+0x16628 cm550_limitedDivisionCalculator
+    layout: callee reads only (no direct caller in the dump): r 4@+4, r 2@+8, r 2@+10, r 2@+12
+    cpp: divisor._0_2_(+8,w2)x2; divisor._2_2_(+10,w2)x1; limit_value._0_2_(+12,w2)x2 | sites 0 (walker 0, scan 0)
+    callee: 01662c 242f0014 move.l (20,sp),d2; 016630 362f001c move.w (28,sp),d3; 016634 382f001a move.w (26,sp),d4; 016638 3a2f0018 move.w (24,sp),d5
+0x16c3c cm550_parameterCircularBufferWrite
+    layout: long@+4 [long]; long@+8 [long]; word@+12 [word]
+    cpp: in_stack_0000000c(+12,w2)x4 | sites 21 (walker 21, scan 0)
+    callee: 016c40 342f001c move.w (28,sp),d2; 016c44 246f0014 movea.l (20,sp),a2; 016c48 266f0018 movea.l (24,sp),a3
+    call 011044: 011036 3f 3c 00 02 ; 01103a 48 6e ff fe ; 01103e 48 79 00 80 3f d6 / 4e 95 / 4f ef 00 0a
+0x186ae cm550_protectionThresholdCalculationHelper
+    layout: long@+4 [long]; long@+8 [long]; long@+12 [long]; word@+16 [word]
+    cpp: param_4._0_2_(+None,w2)x1 | sites 2 (walker 2, scan 0)
+    callee: 0186b2 246f0010 movea.l (16,sp),a2; 0186b6 226f0018 movea.l (24,sp),a1; 0186ba 206f0014 movea.l (20,sp),a0; 0186be 4a6f001c tst.w (28,sp)
+    call 018e94: 018e8a 3f 3c 00 01 ; 018e8e 2f 0a ; 018e90 2f 0c ; 018e92 2f 0b / 4e b9 00 01 86 ae / 4f ef 00 0e
+0x18708 cm550_protectionPercentageCalculator
+    layout: word@+4 [word]; word@+6 [word]; word@+8 [word]
+    cpp: param_1._0_2_(+4,w2)x1; param_1._2_2_(+6,w2)x2; param_2._0_2_(+8,w2)x1 | sites 2 (walker 2, scan 0)
+    callee: 01870a 342f000a move.w (10,sp),d2; 01870e 302f0008 move.w (8,sp),d0; 018718 322f000c move.w (12,sp),d1
+    call 018c74: 018c6a 3f 10 ; 018c70 3f 10 ; 018c72 3f 03 / 4e b9 00 01 87 08 / 5c 8f
+0x18968 cm550_protectionConditionEvaluator
+    layout: long@+4 [long]; long@+8 [long]; word@+12 [word]; word@+14 [word]
+    cpp: in_stack_0000000c(+12,w2)x1 | sites 8 (walker 8, scan 0)
+    callee: 01896c 342f0022 move.w (34,sp),d2; 018970 246f001c movea.l (28,sp),a2; 018974 226f0018 movea.l (24,sp),a1; 0189b2 4a6f0020 tst.w (32,sp)
+    call 018a58: 018a50 42 67 ; 018a52 42 67 ; 018a54 2f 0a ; 018a56 2f 0b / 61 00 ff 0e / 4f ef 00 0c
+0x18f86 incrementDiagnosticCounters
+    layout: long@+4 [long]; long@+8 [long]; word@+12 [word]
+    cpp: in_stack_0000000c(+12,w2)x2 | sites 4 (walker 4, scan 0)
+    callee: 018f86 302f000c move.w (12,sp),d0; 018f8a 226f0008 movea.l (8,sp),a1; 018f8e 206f0004 movea.l (4,sp),a0
+    call 0190e6: 0190e0 42 67 ; 0190e2 2f 0a ; 0190e4 2f 0b / 61 00 fe 9e / 4f ef 00 0a
+0x192f2 cm550_protectionCalculationHelper
+    layout: word@+4 [word]; word@+6 [word]; word@+8 [word]
+    cpp: param_1._0_2_(+4,w2)x2; param_1._2_2_(+6,w2)x2 | sites 2 (walker 2, scan 0)
+    callee: 0192f6 342f0010 move.w (16,sp),d2; 0192fa 362f000e move.w (14,sp),d3; 0192fe 322f000c move.w (12,sp),d1
+    call 019410: 0193fc 3f 10 ; 019402 3f 33 0e 04 ; 01940e 3f 10 / 4e b9 00 01 92 f2 / 4a 40
+0x19332 protectionStateProcessor
+    layout: word@+4 [word]
+    cpp: param_1._0_2_(+4,w2)x1 | sites 3 (walker 3, scan 0)
+    callee: 019340 4a6e0008 tst.w (8,a6)
+    call 019628: 019626 42 67 / 4e b9 00 01 93 32 / 54 8f
+0x19436 protectionStateValidator
+    layout: word@+4 [word]
+    cpp: param_1._0_2_(+4,w2)x1 | sites 5 (walker 5, scan 0)
+    callee: 019440 4a6f0018 tst.w (24,sp)
+    call 019634: 019632 42 67 / 4e b9 00 01 94 36 / 54 8f
+0x1a95a cm550_throttleTimeAccumulatorProcessor
+    layout: long@+4 [long]; word@+8 [word]
+    cpp: param_2._0_2_(+8,w2)x1 | sites 1 (walker 1, scan 0)
+    callee: 01a97a 24ae0008 move.l (8,a6),(a2); 01a97e 33ee000c0080d052 move.w (12,a6),(0x80d052).l
+    call 01a8be: 01a8ba 3f 03 ; 01a8bc 2f 02 / 4e b9 00 01 a9 5a / 24 00
+0x1b4c2 mc68k_phase2_slot_8_handler
+    layout: no argument read in the body (not a callee-argument case)
+    cpp: in_stack_00000000(+0,wNone)x1 | sites 0 (walker 0, scan 0)
+    callee: 
+0x1bfa2 cm550_circularBufferPush
+    layout: long@+4 [long]; word@+8 [low byte]
+    cpp: in_stack_00000009(+9,w1)x1 | sites 2 (walker 2, scan 0)
+    callee: 01bfa2 226f0004 movea.l (4,sp),a1; 01bfb0 10af0009 move.b (9,sp),(a0)
+    call 014ad8: 014ad0 3f 00 ; 014ad2 48 79 00 80 bc 8c / 4e b9 00 01 bf a2 / 5c 8f
+0x1cb76 cm550_calculateBlendedTableValue
+    layout: word@+4 [word]; word@+6 [word]
+    cpp: in_stack_00000004(+4,w2)x2 | sites 9 (walker 9, scan 0)
+    callee: 01cb7e 342e0008 move.w (8,a6),d2; 01cb82 362e000a move.w (10,a6),d3
+    call 01c8fa: 01c8f0 3f 3c 01 90 ; 01c8f4 3f 39 00 80 da 38 / 4e 92 / 3c 00
+0x1e056 cm550_serialNodeAddressChecker
+    layout: word@+4 [word]
+    cpp: in_stack_00000005(+5,w1)x1 | sites 1 (walker 1, scan 0)
+    callee: 01e058 342f0008 move.w (8,sp),d2
+    call 01e134: 01e132 3f 00 / 61 00 ff 20 / 54 8f
+0x1e086 cm550_serialNodeAddressForwarder
+    layout: word@+4 [word]
+    cpp: in_stack_00000005(+5,w1)x3 | sites 2 (walker 2, scan 0)
+    callee: 01e088 342f0008 move.w (8,sp),d2
+    call 01e144: 01e142 3f 00 / 61 00 ff 40 / 54 8f
+0x1e79a cm550_insiteMultiFrameResponseBuilder
+    layout: word@+4 [word]; word@+6 [word]
+    cpp: param_1._1_1_(+5,w1)x4 | sites 6 (walker 6, scan 0)
+    callee: 01e79e 382f002a move.w (42,sp),d4; 01e7a2 3a2f0028 move.w (40,sp),d5
+    call 026f76: 026f6e 3f 3c 00 0f ; 026f72 3f 3c 00 0e / 4e b9 00 01 e7 9a / 58 8f
+0x1ec3c cm550_diagnosticMemoryWriteHandler
+    layout: word@+4 [word]
+    cpp: in_stack_00000005(+5,w1)x4 | sites 2 (walker 2, scan 0)
+    callee: 01ec44 3a2e0008 move.w (8,a6),d5
+    call 01633c: 016338 3f 3c 00 04 / 4e b9 00 01 ec 3c / 54 8f
+0x1edae cm550_diagnosticMemoryReadHandler
+    layout: word@+4 [word]
+    cpp: in_stack_00000005(+5,w1)x6 | sites 3 (walker 3, scan 0)
+    callee: 01edb6 3c2e0008 move.w (8,a6),d6
+    call 01631c: 016318 3f 3c 00 03 / 4e b9 00 01 ed ae / 54 8f
+0x1fdc0 cm550_j1939MessageTypeCounter
+    layout: word@+4 [word]
+    cpp: param_1._0_2_(+4,w2)x4 | sites 2 (walker 2, scan 0)
+    callee: 01fdd2 302f0004 move.w (4,sp),d0
+    call 0231fc: 0231fa 3f 13 / 4e b9 00 01 fd c0 / 54 8f
+0x1ffd6 cm550_j1939TorqueControlModeParser
+    layout: long@+4 [long]; word@+8 [low byte]
+    cpp: param_2._1_1_(+9,w1)x1 | sites 2 (walker 2, scan 0)
+    callee: 01ffda 246f0010 movea.l (16,sp),a2; 020088 0c2f00010015 cmpi.b #0x1,(21,sp)
+    call 0200ac: 0200a8 42 67 ; 0200aa 2f 08 / 61 00 ff 28 / 5c 8f
+0x201d6 cm550_FUN_000201d6
+    layout: word@+4 [word]
+    cpp: param_1._1_1_(+5,w1)x3 | sites 7 (walker 7, scan 0)
+    callee: 0201da 342f000c move.w (12,sp),d2
+    call 02039a: 020396 3f 3c 00 05 / 61 00 fe 3a / 3e bc 00 05
+0x20210 cm550_FUN_00020210
+    layout: word@+4 [word]
+    cpp: param_1._1_1_(+5,w1)x3 | sites 3 (walker 3, scan 0)
+    callee: 020214 342f000c move.w (12,sp),d2
+    call 0204e0: 0204dc 3e bc 00 06 / 61 00 fd 2e / 54 8f
+0x2024a cm550_FUN_0002024a
+    layout: word@+4 [word]
+    cpp: param_1._1_1_(+5,w1)x3 | sites 7 (walker 7, scan 0)
+    callee: 02024e 342f000c move.w (12,sp),d2
+    call 0203a2: 02039e 3e bc 00 05 / 61 00 fe a6 / 54 8f
+0x202d8 setBitInArray
+    layout: word@+4 [word]
+    cpp: param_1._1_1_(+5,w1)x3 | sites 8 (walker 8, scan 0)
+    callee: 0202dc 342f000c move.w (12,sp),d2
+    call 020410: 02040c 3f 3c 00 05 / 61 00 fe c6 / 54 8f
+0x20310 cm550_FUN_00020310
+    layout: word@+4 [word]
+    cpp: param_1._1_1_(+5,w1)x3 | sites 3 (walker 3, scan 0)
+    callee: 020314 342f000c move.w (12,sp),d2
+    call 02052c: 020528 3e bc 00 06 / 61 00 fd e2 / 54 8f
+0x20348 cm550_FUN_00020348
+    layout: word@+4 [word]
+    cpp: param_1._1_1_(+5,w1)x3 | sites 7 (walker 7, scan 0)
+    callee: 02034c 342f000c move.w (12,sp),d2
+    call 0203d4: 0203d0 3f 3c 00 05 / 61 00 ff 72 / 54 8f
+0x20890 cm550_FUN_00020890
+    layout: word@+4 [word]
+    cpp: in_stack_00000004(+4,w2)x29 | sites 1 (walker 1, scan 0)
+    callee: 020894 362f0020 move.w (32,sp),d3
+    call 02107e: 02107c 3f 02 / 4e b9 00 02 08 90 / 54 8f
+0x21964 getJ1939MemoryServiceHeaderLength
+    layout: word@+4 [word]
+    cpp: param_1._1_1_(+5,w1)x2 | sites 3 (walker 3, scan 0)
+    callee: 021964 322f0004 move.w (4,sp),d1
+    call 0214bc: 0214ba 3f 00 / 4e b9 00 02 19 64 / 54 8f
+0x21f4e cm550_diagnosticGroupPositionBufferStore
+    layout: word@+4 [low byte]
+    cpp: param_1._1_1_(+5,w1)x1 | sites 5 (walker 5, scan 0)
+    callee: 021f86 4a2f000d tst.b (13,sp)
+    call 0220ee: 0220ec 42 67 / 61 00 fe 5e / 54 8f
+0x21fac cm550_diagnosticGroupSnapshotCapture
+    layout: word@+4 [low byte]
+    cpp: param_1._1_1_(+5,w1)x1 | sites 4 (walker 4, scan 0)
+    callee: 021fc8 4a2f000d tst.b (13,sp)
+    call 022170: 02216e 42 57 / 61 00 fe 3a / 54 8f
+0x229ea cm550_messageErrorHandler
+    layout: word@+4 [low byte]; word@+6 [word]
+    cpp: param_1._1_1_(+5,w1)x1 | sites 4 (walker 4, scan 0)
+    callee: 0229fc 136e00090002 move.b (9,a6),(2,a1); 022a1a 3d6e000affe6 move.w (10,a6),(-26,a6)
+    call 022bac: 022ba4 3f 2e ff fe ; 022baa 3f 00 / 61 00 fe 3c / 60 6a
+0x22a58 vp44CanFrameBuilder
+    layout: word@+4 [low byte]; word@+6 [word]
+    cpp: param_1._1_1_(+5,w1)x1 | sites 1 (walker 1, scan 0)
+    callee: 022a72 176e00090002 move.b (9,a6),(2,a3); 022a90 3d6e000affe6 move.w (10,a6),(-26,a6)
+    call 022cf8: 022cf2 3f 15 ; 022cf6 3f 00 / 61 00 fd 5e / 42 39 00 80 12 c4
+0x22ad8 vp44MessageTransmitter
+    layout: word@+4 [low byte]; word@+6 [low byte]; word@+8 [low byte]; word@+10 [word]
+    cpp: param_1._1_1_(+5,w1)x1 | sites 3 (walker 3, scan 0)
+    callee: 022aec 176e00090002 move.b (9,a6),(2,a3); 022b0a 3d6e000effe6 move.w (14,a6),(-26,a6); 022b14 14ee000d move.b (13,a6),(a2)+; 022b18 14ee000b move.b (11,a6),(a2)+
+    call 022c02: 022bf0 3f 15 ; 022bf6 3f 00 ; 022bfc 3f 00 ; 022c00 3f 00 / 61 00 fe d4 / 50 8f
+0x23130 cm550_multiPacketBufferAllocator
+    layout: word@+4 [word]
+    cpp: param_1._0_2_(+4,w2)x3 | sites 2 (walker 2, scan 0)
+    callee: 023130 322f0004 move.w (4,sp),d1
+    call 022464: 022462 3f 05 / 4e b9 00 02 31 30 / 58 8f
+0x23820 cm550_diagnosticMessageValidator
+    layout: word@+4 [word]; word@+6 [word]; word@+8 [word]
+    cpp: param_1._0_2_(+4,w2)x1; param_2._0_2_(+8,w2)x1 | sites 3 (walker 3, scan 0)
+    callee: 023824 382f0018 move.w (24,sp),d4; 023828 3a2f0016 move.w (22,sp),d5; 02382c 322f0014 move.w (20,sp),d1
+    call 01f522: 01f51a 3f 04 ; 01f51c 3f 3c 00 4a ; 01f520 42 67 / 4e b9 00 02 38 20 / 5c 8f
+0x23870 cm550_ioControlTimeoutTableLookup
+    layout: word@+4 [word]
+    cpp: param_1._1_1_(+5,w1)x1 | sites 1 (walker 1, scan 0)
+    callee: 023874 322f000c move.w (12,sp),d1
+    call 02f886: 02f884 3f 00 / 4e b9 00 02 38 70 / 54 8f
+0x238ac cm550_ioControlEntryAdd
+    layout: word@+4 [word]; word@+6 [low byte]; word@+8 [word]
+    cpp: param_1._0_2_(+4,w2)x1; param_2._0_2_(+8,w2)x1 | sites 2 (walker 2, scan 0)
+    callee: 0238d0 34af0008 move.w (8,sp),(a2); 0238d4 156f000b0002 move.b (11,sp),(2,a2); 0238da 356f000c0004 move.w (12,sp),(4,a2)
+    call 02352a: 02351c 3f 3c 00 01 ; 023526 3f 00 ; 023528 3f 15 / 4e b9 00 02 38 ac / 5c 8f
+0x238ec cm550_ioControlTimeoutEntryAdd
+    layout: word@+4 [low byte]
+    cpp: param_1._1_1_(+5,w1)x1 | sites 1 (walker 1, scan 0)
+    callee: 023910 14af0009 move.b (9,sp),(a2)
+    call 02368a: 023688 3f 00 / 4e b9 00 02 38 ec / 54 8f
+0x239d2 cm550_diagnosticStateInitializer
+    layout: word@+4 [word]; word@+6 [word]
+    cpp: param_1._0_2_(+4,w2)x1 | sites 7 (walker 7, scan 0)
+    callee: 0239d6 362f001a move.w (26,sp),d3; 0239da 322f0018 move.w (24,sp),d1
+    call 01f62e: 01f628 3f 3c 00 4a ; 01f62c 42 67 / 4e b9 00 02 39 d2 / 58 8f
+0x23a3c cm550_ioControlEntryRemove
+    layout: word@+4 [word]
+    cpp: param_1._1_1_(+5,w1)x1 | sites 1 (walker 1, scan 0)
+    callee: 023a40 322f0014 move.w (20,sp),d1
+    call 02f878: 02f876 3f 00 / 4e b9 00 02 3a 3c / 54 8f
+0x24b4e cm550_ioControlDigitDisplaySequencer
+    layout: word@+4 [word]
+    cpp: param_1._0_2_(+4,w2)x3 | sites 1 (walker 1, scan 0)
+    callee: 024b52 342f0018 move.w (24,sp),d2
+    call 024ef8: 024ef4 3f 30 02 00 / 4e b9 00 02 4b 4e / 54 8f
+0x24c5a cm550_FUN_00024c5a
+    layout: word@+4 [low byte]
+    cpp: param_1._1_1_(+5,w1)x5 | sites 3 (walker 3, scan 0)
+    callee: 024c6e 142f000d move.b (13,sp),d2
+    call 024da0: 024d9c 3f 3c 00 7d / 4e b9 00 02 4c 5a / 54 8f
+0x24cd2 cm550_FUN_00024cd2
+    layout: word@+4 [low byte]
+    cpp: param_1._1_1_(+5,w1)x5 | sites 1 (walker 1, scan 0)
+    callee: 024ce6 142f000d move.b (13,sp),d2
+    call 024e4c: 024e4a 3f 00 / 4e b9 00 02 4c d2 / 54 8f
+0x25806 cm550_FUN_00025806
+    layout: word@+4 [word]
+    cpp: param_1._0_2_(+4,w2)x2 | sites 1 (walker 1, scan 0)
+    callee: 02580a 342f0014 move.w (20,sp),d2
+    call 0345ae: 0345ac 3f 02 / 4e b9 00 02 58 06 / 3e 82
+0x26272 cm550_epsOverrideChecker
+    layout: word@+4 [word]
+    cpp: param_1._0_2_(+4,w2)x1 | sites 1 (walker 1, scan 0)
+    callee: 026278 4a6f0004 tst.w (4,sp)
+    call 0262be: 0262bc 3f 02 / 61 b2 / 54 8f
+0x26a64 cm550_memcpy
+    layout: long@+4 [long]; long@+8 [long]; word@+12 [word]
+    cpp: param_3._0_2_(+12,w2)x1 | sites 24 (walker 24, scan 0)
+    callee: 026a64 302f000c move.w (12,sp),d0; 026a68 226f0008 movea.l (8,sp),a1; 026a6c 206f0004 movea.l (4,sp),a0
+    call 02153c: 021536 3f 02 ; 021538 2f 0c ; 02153a 2f 0b / 4e 95 / 4f ef 00 0a
+0x27cd0 vp44_FUN_00027cd0
+    layout: word@+4 [low byte]
+    cpp: param_1._1_1_(+5,w1)x1 | sites 4 (walker 4, scan 0)
+    callee: 027cde 0c2e00010009 cmpi.b #0x1,(9,a6)
+    call 0280aa: 0280a6 3f 3c 00 02 / 4e b9 00 02 7c d0 / 54 8f
+0x2cf52 cm550_FUN_0002cf52
+    layout: callee reads only (no direct caller in the dump): r 4@+4, rw 1@+7, r 2@+8
+    cpp: param_1._0_3_(+4,w3)x1; param_2._0_2_(+8,w2)x1 | sites 0 (walker 0, scan 0)
+    callee: 02cf58 302e000c move.w (12,a6),d0; 02cf64 43ee000b lea (11,a6),a1; 02cf6a 206e0008 movea.l (8,a6),a0; 02cf70 5211 addq.b #1,(a1)
+0x2cf7e cm550_FUN_0002cf7e
+    layout: word@+4 [word]
+    cpp: param_1._1_1_(+5,w1)x2 | sites 1 (walker 1, scan 0)
+    callee: 02cf86 3a2e0008 move.w (8,a6),d5
+    call 01ed88: 01ed86 3f 00 / 4e b9 00 02 cf 7e / 54 8f
+0x2f4be cm550_FUN_0002f4be
+    layout: callee reads only (no direct caller in the dump): r 4@+4
+    cpp: in_stack_00000004(+4,w3)x7 | sites 0 (walker 0, scan 0)
+    callee: 02f4c2 266f0018 movea.l (24,sp),a3
+0x2f606 cm550_FUN_0002f606
+    layout: word@+4 [word]
+    cpp: param_1._1_1_(+5,w1)x3 | sites 2 (walker 2, scan 0)
+    callee: 02f608 342f0008 move.w (8,sp),d2
+    call 02f980: 02f97e 3f 00 / 61 00 fc 84 / 54 8f
+0x2fd90 cm550_FUN_0002fd90
+    layout: word@+4 [word]
+    cpp: param_1._0_2_(+4,w2)x1 | sites 1 (walker 1, scan 0)
+    callee: 02fd94 322f0010 move.w (16,sp),d1
+    call 02fe22: 02fe20 3f 03 / 61 00 ff 6c / 54 8f
+0x2fddc cm550_diagnosticTableEntryClear
+    layout: word@+4 [word]
+    cpp: param_1._0_2_(+4,w2)x7 | sites 2 (walker 2, scan 0)
+    callee: 02fde0 362f0010 move.w (16,sp),d3
+    call 0145ec: 0145ea 3f 00 / 4e b9 00 02 fd dc / 54 8f
+0x2fe38 cm550_diagnosticTableSnapshotCapture
+    layout: word@+4 [word]; word@+6 [word]
+    cpp: param_1._0_2_(+4,w2)x26; param_1._2_2_(+6,w2)x4 | sites 4 (walker 4, scan 0)
+    callee: 02fe3c 362f001e move.w (30,sp),d3; 02fe40 382f001c move.w (28,sp),d4
+    call 014742: 01473e 3f 04 ; 014740 3f 02 / 4e 92 / 58 8f
+0x31ace cm550_diagnosticSessionValidator
+    layout: word@+4 [word]; word@+6 [word]
+    cpp: param_1._0_2_(+4,w2)x2 | sites 9 (walker 9, scan 0)
+    callee: 031ad2 362f000c move.w (12,sp),d3; 031ad6 322f000e move.w (14,sp),d1
+    call 01f58c: 01f586 3f 3c 00 4a ; 01f58a 42 67 / 4e b9 00 03 1a ce / 58 8f
+0x31b22 cm550_diagnosticCanResponseSender
+    layout: long@+4 [long]; word@+8 [word]
+    cpp: param_2._1_1_(+9,w1)x1 | sites 3 (walker 3, scan 0)
+    callee: 031b26 322f0010 move.w (16,sp),d1; 031b2a 246f000c movea.l (12,sp),a2
+    call 02ef2c: 02ef28 42 67 ; 02ef2a 2f 08 / 4e b9 00 03 1b 22 / 5c 8f
+0x3216a cm550_diagnosticMultiPacketResponseBuilder
+    layout: long@+4 [long]; word@+8 [word]
+    cpp: param_2._1_1_(+9,w1)x3 | sites 3 (walker 2, scan 1)
+    callee: 03216e 342f0020 move.w (32,sp),d2; 032172 266f001c movea.l (28,sp),a3
+    call 0119fe: 0119f8 42 67 ; 0119fa 2f 2e 00 08 / 4e b9 00 03 21 6a / 5c 8f
+0x32b38 vp44_diagnosticByteResponseSender
+    layout: word@+4 [low byte]; word@+6 [&addr@+6]
+    cpp: in_stack_00000005(+5,w1)x1 | sites 2 (walker 2, scan 0)
+    callee: 032b3c 13ee000900803470 move.b (9,a6),(0x803470).l; 032b44 486e000a pea (10,a6)
+    call 02ef76: 02ef6e 3f 3c 01 00 ; 02ef74 3f 00 / 4e b9 00 03 2b 38 / 58 8f
+0x333d6 cm550_FUN_000333d6
+    layout: word@+4 [word]; word@+6 [word]
+    cpp: param_1._0_2_(+4,w2)x7; param_1._2_2_(+6,w2)x1 | sites 6 (walker 6, scan 0)
+    callee: 0333da 342f000e move.w (14,sp),d2; 0333de 362f000c move.w (12,sp),d3
+    call 03353a: 03352e 3e b9 00 80 34 f2 ; 033534 3f 39 00 80 35 0e / 4e 95 / 58 8f
+0x33460 cm550_FUN_00033460
+    layout: word@+4 [word]; word@+6 [word]
+    cpp: param_1._1_1_(+5,w1)x7 | sites 6 (walker 6, scan 0)
+    callee: 033464 342f000e move.w (14,sp),d2; 033468 362f000c move.w (12,sp),d3
+    call 033552: 03354a 3f 00 ; 033550 3f 00 / 4e 94 / 58 8f
+0x34bba cm550_watchdogServiceLoop
+    layout: word@+4 [word]
+    cpp: param_1._0_2_(+4,w2)x1 | sites 19 (walker 19, scan 0)
+    callee: 034bbc 322f0008 move.w (8,sp),d1
+    call 011054: 011050 3f 3c 01 f4 / 4e 93 / 54 8f
+0x34bf8 cm550_FUN_00034bf8
+    layout: word@+4 [word]
+    cpp: in_stack_00000004(+4,w2)x1 | sites 6 (walker 6, scan 0)
+    callee: 034bfa 322f0008 move.w (8,sp),d1
+    call 01195a: 011956 3f 3c 01 f4 / 4e 93 / 54 8f
+0x34e9a exponentialMovingAverage
+    layout: word@+4 [word]; long@+6 [long]
+    cpp: in_stack_00000004(+4,w2)x2; in_stack_00000008(+8,w2)x0 | sites 6 (walker 6, scan 0)
+    callee: 034ea2 206e000a movea.l (10,a6),a0; 034eb2 302e0008 move.w (8,a6),d0; 034edc 302e0008 move.w (8,a6),d0
+    call 00b250: 00b248 2f 0d ; 00b24a 3f 39 00 80 a2 92 / 4e b9 00 03 4e 9a / 34 80
+0x34f00 cm550_unsignedLinearInterpolation
+    layout: callee reads only (no direct caller in the dump): r 2@+4, r 4@+6
+    cpp: in_stack_00000004(+4,w2)x1; in_stack_00000008(+8,w2)x0 | sites 0 (walker 0, scan 0)
+    callee: 034f04 226f0016 movea.l (22,sp),a1; 034f2e 302f0014 move.w (20,sp),d0
+0x34f8a cm550_coreTableInterpolation
+    layout: word@+4 [word]; long@+6 [long]
+    cpp: table_descriptor._0_2_(+4,w2)x2; table_descriptor._2_2_(+6,w2)x1; in_stack_00000008(+8,w2)x1 | sites 11 (walker 11, scan 0)
+    callee: 034f92 226e000a movea.l (10,a6),a1; 034fa4 302e0008 move.w (8,a6),d0; 034fc4 302e0008 move.w (8,a6),d0
+    call 00bc52: 00bc4c 2f 0b ; 00bc4e 3f 2b 00 0a / 4e b9 00 03 4f 8a / 5c 8f
