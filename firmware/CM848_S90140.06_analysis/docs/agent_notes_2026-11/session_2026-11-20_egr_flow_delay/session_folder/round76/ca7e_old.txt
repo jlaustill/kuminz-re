@@ -1,0 +1,29 @@
+=== mc68k_FUN_0002ca7e
+byte mc68k_FUN_0002ca7e(void)
+{
+  uVar1 = DDRQA;
+  DDRQA = uVar1 | 0x700;
+  PQAB = 0x600;
+  wVar5 = 1;
+  cm550_FUN_0002ca64((word)((uint)unaff_D2 >> 0x10));
+  uVar1 = PQAB;
+  uVar2 = DDRQA;
+  DDRQA = uVar2 | 0x700;
+  PQAB = 0x400;
+  loop_count = 1;
+  cm550_FUN_0002ca64(wVar5);
+  uVar2 = PQAB;
+  uVar3 = DDRQA;
+  DDRQA = uVar3 | 0x700;
+  PQAB = 0x300;
+  wVar5 = 1;
+  cm550_FUN_0002ca64(loop_count);
+  uVar3 = PQAB;
+  uVar4 = DDRQA;
+  DDRQA = uVar4 | 0x700;
+  PQAB = 0x200;
+  cm550_FUN_0002ca64(wVar5);
+  uVar4 = PQAB;
+  return -((uVar4 & 1) != 0) & 1U &
+         -((uVar3 & 2) != 0) & 1U & -((uVar2 & 1) != 0) & 1U & -((uVar1 & 1) != 0) & 1U;
+}

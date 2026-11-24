@@ -447,8 +447,8 @@ The marker row's empty `field_name`/`type`/`size` registers the address for appl
 
 The same applies when the fields live in a type-only template (rows with an empty address). An instance row that repeats a field appends a second copy of it. CM550 had seven such structs (`mc68336_reg16_t` was 14 bytes instead of 2).
 All seven now use markers (PR #48).
-- **The five 0xfffxxx register structs** never applied (no memory block when `ApplyStructures` runs), so their fix left the `.cpp` unchanged.
-- **The two RAM structs:** `j1708_multipacket_msg_t` (260 → 256 bytes) and `can_buffer_setup_t` (20 → 16) had covered `fuel_limit_shutdown_minimum` and `ambient_conditions_msg_header`.
+- **The five 0xfffxxx register structs** never applied (no memory block when `ApplyStructures` runs), so their fix left the `.cpp` unchanged. PR #53 round 76 removed them: their names contradicted the MC68336 manual, and the registers are `global_variables.csv` rows now.
+- **The two RAM structs:** `j1708_multipacket_msg_t` (260 → 256 bytes) and `can_buffer_setup_t` (20 → 16) had covered `fuel_limit_shutdown_minimum` and `ambient_conditions_msg_header`. PR #53 round 74 removed `j1708_multipacket_msg_t`: 13 separate e2m blocks lived inside its one instance.
 - **When a struct changes size, diff the build:** the change can uncover an instance the old size was blocking. Shrinking `j1708_multipacket_msg_t` let a guessed `j1708_rx_buffer_t` apply over 11 fuel-limit globals, so that row was removed.
 
 ### global_variables.csv Maintenance

@@ -3519,8 +3519,19 @@ A peer relay started the round; the scripts are in `session_folder/round76/`. Th
   - **Removed, `param_circular_buffer_t` (6 rows):** each of its fields had its own address, so it built one 1544-byte
     type with an instance at every field address. None rendered before this round. The changed type set let its
     instance at 0x80C3FE apply, and then a 1280-byte buffer rendered as `circular_buffer_count.metadata[...]`.
+  - **Corrections (follow-up commit):**
+    - The `param_circular_buffer_t` cause above, and in 4e0b9ffb, is not established. Both builds report 'Applied
+      89 structure instances', so the 0x80C3FE instance most likely applied before this round too. What changed is
+      the decompiler's choice to render the two buffer stores through it. Why it changed is not known.
+    - `mc68k_FUN_0002ca7e`'s reordered diff lines are not a move. The old and new bodies make the same calls in the
+      same order. Only `loop_count` (the parameter name in `busyWaitDelayLoop`'s prototype at 0x2ca64, which the
+      decompiler copies onto the caller temporary that feeds the call) sits on the other of two temporaries that
+      both hold 1.
+    - The local rows: all 33 CM550 local rows were checked. Only the two `diagnosticCommandDispatcher` rows bind
+      differently (ApplyLocalVariables Applied: 15 -> 17), and they land on the two CTM4_BIUTBR reads.
   - **Proof:** CM550: of 775 functions, 33 differ from the round's first build after the register renames with the temporaries renumbered, all explained: the word registers' temporaries become word (3 functions return word, not short), casts drop ((&QSM_TR0)[i] and others), 8 mixed pairs' 32-bit accesses render as the raw address, TPU_CH15_PARAM6's low byte renders as a piece, diagnosticCommandDispatcher's two local rows bind again on the right reads, plus line wrapping and one operand order. No underscore renders; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
-- **firmware/CLAUDE.md:** none.
+- **firmware/CLAUDE.md:** two factual notes in the struct-instance section (follow-up commit): round 76 removed the
+  five 0xfffxxx register structs, and round 74 removed `j1708_multipacket_msg_t`.
 - **Leads:**
   - **Three external devices on chip selects:**
     - 0xFFC800: an 82527-style CAN controller layout, with message objects every 0x10 bytes; CM550's J1939?
