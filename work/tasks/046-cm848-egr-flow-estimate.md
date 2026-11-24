@@ -3603,6 +3603,38 @@ A peer relay started the round; the scripts are in `session_folder/round78/`. Th
   - From round 77: `j1708_pending_abort_count`; from round 76: the external devices at 0xFFC800 / 0xFFD000 /
     0xFFD800 and the 1280-byte parameter buffer at 0x80C7A8.
 
+## Done, round 79 (2026-11-23, same PR): CM550's two 82527 CAN controllers
+
+A peer relay started the round; the scripts are in `session_folder/round79/`. This is round 76's external device
+lead.
+- **Stage A (c1820e23), CM550:** the devices on chip selects 5 (0xFFC800) and 4 (0xFFD800) are two Intel 82527 CAN
+  controllers.
+  - `SIM_CSBAR5 = 0xffc8` and `SIM_CSBAR4 = 0xffd8` share the option word 0x5bf0.
+  - Every offset the code touches is in the 82527 address map (Intel's 82527 Architectural Overview, section 4.1:
+    https://star.inp.nsk.su/~kozak/canbus/82527ao.pdf), and the code uses them as one:
+    - the interrupt handler loops on the 5FH interrupt register and reaches message object n - 2 at
+      interrupt * 0x10 + base - 0x20;
+    - the control pairs are written as bit pairs (0x9955 / 0x5559).
+  - **The names:** 45 rows, `CAN_CS5_*` / `CAN_CS4_*`.
+    - The CS5 controller's message objects 1-6 are named (control word, arbitration word, configuration byte).
+    - The CS4 controller's message objects are reached by index from a base, so they are left for a struct.
+  - **`ApplyHardwareRegisters.java`:** the register block now starts at 0xFFC800. Because it is volatile, the
+    decompiler stopped folding CS5 register accesses as if they were memory. Before, it read CPU interface bit 7 back
+    as the RAM byte written there, and three functions now render the real accesses.
+  - **Renamed:** `mc68k_configureCanCs5MessageObjects` (was `mc68k_tpuTimerInitializer`). It configures receive
+    identifiers 0x112 / 0x512 / 0x712 and transmit 0x100 / 0x500 / 0x700, all 11-bit. `mc68k_canCs5InterruptHandler`
+    (was `mc68k_serialPort2IsrHandler`).
+  - **Proof:** CM550: all 45 CAN rows render (no DAT_ / Ram left at a named address); 3 functions differ at statement level, all because the register block is volatile (each CS5 register access is kept instead of being folded as memory); the mask fix and the renames are label-only; verify DETERMINISTIC; CM848 unchanged; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
+- **firmware/CLAUDE.md:** none.
+- **Leads:**
+  - **Which bus each controller carries:** CS5 uses 11-bit identifiers 0x100-0x712, which J1939's 29-bit identifiers
+    rule out, so perhaps the VP44 pump link. CS4 sets an extended mask, so perhaps J1939.
+  - **A 16-byte 82527 message object struct** for CS4's indexed accesses (`&DAT_00ffd810 + index * 0x10`,
+    `(&DAT_00ffd806)[i]`).
+  - The device on chip select 2 (0xFFD000-0xFFD00F; 0xFFD00F has 128 references next to the watchdog service).
+  - From the earlier rounds: the `io_control_*` names, the diagnostic receive buffer past 0x808D00,
+    `j1708_pending_abort_count`, and the parameter buffer at 0x80C7A8.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

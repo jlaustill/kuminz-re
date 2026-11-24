@@ -658,3 +658,10 @@ Hand work on the round 7 lead.
   (the exposed neighbors typed and the coordinate rows replaced), `field_widths.txt`.
 - **Proof:** `prove_r78a_cm550.py` (each old field render mapped to the address it reached, then a statement-level
   comparison). **Closing:** `apply_r78_closing.py`, `update_large_tar_r78.sh`.
+
+## Round 79: CM550's two 82527 CAN controllers (`session_folder/round79/`)
+
+- **Stage A (CM550):** `apply_r79a.py` (the 45 register rows), `apply_r79a3.py` (the two CS5 functions),
+  `map_r79a3.csv`. The register map comes from Intel's 82527 Architectural Overview; the document itself is not
+  archived here.
+- **Proof:** `prove_r79a_cm550.py`. **Closing:** `apply_r79_closing.py`, `update_large_tar_r79.sh`.

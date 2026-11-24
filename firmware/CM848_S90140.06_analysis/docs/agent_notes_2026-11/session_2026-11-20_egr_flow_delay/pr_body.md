@@ -8,7 +8,7 @@ fresh air flow records; the e2m never spells it out, so no name guesses an expan
 - **Round 2:** at the user's request the rest of the family is renamed too, on this PR (stages 3 / 4). The scope rule:
   a symbol is in if its e2m record is `CHP_` / `C_CHP_`, or if it is an input that a family function would otherwise
   misname.
-- **Beyond CM848 (rounds 72-78):** the J1939 memory write service and the development mode code are shared:
+- **Beyond CM848 (rounds 72-79):** the J1939 memory write service and the development mode code are shared:
   eleven CM550 functions are CM848 twins and share their names. Round 74 also dismantles a misapplied CM550
   struct, round 75 types CM550's InSite parameter schedule and names its J1708 SCI, and round 76 names CM550's
   MC68336 registers, so CM550's CSVs, the root README and `firmware/feature_comparison.csv` change too.
@@ -835,6 +835,10 @@ state enum, the flag bytes.**
 - **Stage A (b9de2fc1):** the last 16 CM550 structs with a separate address on each field row are removed (one
   oversize type each, with fake field renders of other globals); their globals and the neighbors they covered are
   typed from their accesses.
+**Round 79.**
+- **Stage A (c1820e23):** CM550's two external Intel 82527 CAN controllers (chip selects 5 / 4) are named from the
+  82527 register map; the register block now covers chip select 5, and the CS5 controller's two functions are
+  named for what they drive.
 
 ## Test plan
 
@@ -927,6 +931,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 79: A: CM550: all 45 CAN rows render (no DAT_ / Ram left at a named address); 3 functions differ at statement level, all because the register block is volatile (each CS5 register access is kept instead of being folded as memory); the mask fix and the renames are label-only; verify DETERMINISTIC; CM848 unchanged; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 78: A: CM550: each old 'global.field' render of the removed structs maps to the address it reached; 11 functions differ at statement level, every change a mapped field, a type-only row's label or a dropped underscore; no underscore gained over the round, 3 lost; verify DETERMINISTIC; no multi-address struct left; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 77: A: CM550: of 775 functions, 8 differ after the round's renames; statement by statement each change is explained (the pointer low bytes render as parts of their typed dwords at the same addresses, the bogus channel_mask / local_24 locals are gone, the switch labels lose their (BADTYPE) casts, local declaration types). No j1708_*_state_t render left; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 76: A: CM550: of 775 functions, 33 differ from the round's first build after the register renames with the temporaries renumbered, all explained: the word registers' temporaries become word (3 functions return word, not short), casts drop ((&QSM_TR0)[i] and others), 8 mixed pairs' 32-bit accesses render as the raw address, TPU_CH15_PARAM6's low byte renders as a piece, diagnosticCommandDispatcher's two local rows bind again on the right reads, plus line wrapping and one operand order. No underscore renders; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
