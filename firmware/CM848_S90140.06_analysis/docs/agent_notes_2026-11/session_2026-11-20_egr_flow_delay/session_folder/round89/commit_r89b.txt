@@ -1,0 +1,42 @@
+cm550 + cm848: round 89 stage B - the filter records' users and initializers (9 twins); sensor_config_t
+
+Round 88's third audit (2 investigators, 2 skeptics; it read a copy taken before round 88 stage B, so everything is
+applied by address - each address still had the audited name):
+- 9 twin pairs take one shared name: calculateFilteredEngineAcceleration (CM550 0xb210, was
+  cm550_outputControlTimingGenerator / CM848 0x38760, was cm848_processEngineRpmDerivative),
+  initializeEngineAccelerationFilters (0xb5e4, was cm550_dmaControllerSetup1 / 0x38824),
+  smoothPowerTakeOffReferenceEngineSpeed, initializePowerTakeOffGovernorFiltersAndGains,
+  initializePowerTakeOffReferenceFilter, presetPowerTakeOffSmoothedReferenceEngineSpeed,
+  initializeFaultDerateEngineSpeedLimit (0x18f4c, was cm550_protectionThresholdPointerInit),
+  initializePedalFaultModeEngineSpeedFilter (0x258d6, was cm550_fuelDemandTablePointerInit / CM848
+  cm848_initDroopModeStateVariables), presetPedalFaultModeFuelDemand. The skeptic: the PTO reference smoother's first
+  callee lies in CM550's undumped ROM, so that pair is a twin on every step that can be compared.
+- CM550 counterparts: cm550_runLowSpeedGovernor (0x25b1c, was vp44_fuel_timing_calculation_with_fault_checking),
+  cm550_runAllSpeedGovernor (was cm550_engine_speed_governor), cm550_runPowerTakeOffGovernor (was
+  initProtectionParamCalculation), cm550_calculateEngineSpeed (0x171be, was cm550_fuel_limit_arbitrator),
+  cm550_calculateFaultDerateEngineSpeedLimit, cm550_calculatePedalFaultModeFuelDemand, cm550_initializeAlpha,
+  cm550_initializeEngineSpeedCalculation, cm550_initializeLowSpeedGovernor, cm550_initializeElectronicSmartPower,
+  cm550_updateElectronicSmartPowerTau, cm550_presetLowSpeedGovernorSpeedError,
+  cm550_presetPowerTakeOffGovernorOnEngagement, mc68k_processAnalogSensorChannels (0xb7bc, was
+  validateServiceDataLength: one pass over the 25 A/D channels, reading the QADC result registers) and
+  cm550_initializeAnalogSensorChannels (0xbcf0, was cm550_initADCChannelConfiguration).
+- 0x1ae0c / 0x1ae06 (cm550_sensorHistoryTablePointerInit / cm550_initOilPressureModeSystem) are fall-through points
+  inside cm550_initializeElectronicSmartPower (no link / movem, no reference): deleted_functions.csv rows.
+- sensor_config_t: the 24-byte A/D channel config record (e2m block 1003 = 25 of them from 0x806ae2; 15 fields,
+  every width and sign checked against every access by the skeptic) replaces the unused sensor_fault_config_t
+  template; the unused ad_sensor_config_t template goes. 25 instances <channel>_sensor_config replace their +0
+  coefficient rows (round 88's <channel>_filter_coefficient, now the field filter_coefficient) and 348 Calterm-named
+  rows inside them (no user, or the records' own fields). The A/D loops' config pointers infer sensor_config_t *,
+  so *(byte *)(pwVar7 + 10) reads psVar7->high_error_fault_number.
+- Not kept: local rows naming those two config pointers. Build B2 showed both failing (one never applied - committing
+  channel_record renumbers the auto-names - and the other split the pointer between the loops), so the pointers keep
+  one auto-named variable each. The committed output is build 1's.
+
+Proof:
+- CM550: verify DETERMINISTIC (build 1, the committed CSV state); 2 functions removed (the two fall-through rows, on
+  purpose), 0 added; 7 functions changed beyond labels: the two A/D loops (config fields) and five default-value
+  users; caller artifacts unchanged (0 -> 0); no local row moved; no new build warning (unmapped types 5246 -> 4898).
+- CM848: verify DETERMINISTIC; label-only (0 changed functions after the rename map); no new build warning.
+- Headers 0 g++ errors in both; _cal HARD 0 in both.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

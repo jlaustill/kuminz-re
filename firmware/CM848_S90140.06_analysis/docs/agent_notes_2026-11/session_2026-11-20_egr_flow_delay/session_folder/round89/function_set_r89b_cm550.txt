@@ -1,0 +1,85 @@
+removed 2: 0x0001ae06 cm550_initOilPressureModeSystem, 0x0001ae0c cm550_sensorHistoryTablePointerInit
+added 0: 
+changed 7
+  0x0000b7bc mc68k_processAnalogSensorChannels: 156 lines
+      -  word *pwVar7;
+      +  sensor_config_t *psVar7;
+      -  pwVar7 = &intake_manifold_temperature_sensor_config.filter_coefficient;
+      +  psVar7 = &intake_manifold_temperature_sensor_config;
+      -    if (*(char *)((int)pwVar7 + 0x17) == '\0') {
+      +    if (psVar7->sample_period == 0) {
+      -    else if (channel_record->sample_counter < *(byte *)((int)pwVar7 + 0x17)) {
+      +    else if (channel_record->sample_counter < psVar7->sample_period) {
+      -          channel_record->adc_raw_value = *(word *)(&UNK_00fff2b0 + (uint)pwVar7[8] * 2);
+      +          channel_record->adc_raw_value =
+      +               *(word *)(&UNK_00fff2b0 + (uint)psVar7->qadc_result_register_index * 2);
+      -        if (pwVar7[6] < channel_record->adc_raw_value) {
+      +        if (psVar7->high_error_limit < channel_record->adc_raw_value) {
+      -                       (short)((int)(uint)*(byte *)((int)pwVar7 + 0x15) >> 4) * 2) &
+      -               1 << (*(byte *)((int)pwVar7 + 0x15) & 0xf)) == 0) ||
+      +                       (short)((int)(uint)psVar7->low_error_fault_number >> 4) * 2) &
+      +               1 << (psVar7->low_error_fault_number & 0xf)) == 0) ||
+      -                      (short)((int)(uint)*(byte *)((int)pwVar7 + 0x15) >> 4) * 2) &
+      -              1 << (*(byte *)((int)pwVar7 + 0x15) & 0xf)) == 0)) {
+      +                      (short)((int)(uint)psVar7->low_error_fault_number >> 4) * 2) &
+      +              1 << (psVar7->low_error_fault_number & 0xf)) == 0)) {
+      -          channel_record->debounce_counter = pwVar7[4] + channel_record->debounce_counter;
+      -          if ((short)pwVar7[5] <= channel_record->debounce_counter) {
+      -            channel_record->debounce_counter = pwVar7[5];
+  0x0000bcf0 cm550_initializeAnalogSensorChannels: 50 lines
+      -  word *pwVar2;
+      +  sensor_config_t *psVar2;
+      -  pwVar2 = &intake_manifold_temperature_sensor_config.filter_coefficient;
+      +  psVar2 = &intake_manifold_temperature_sensor_config;
+      -    (channel_record->filter).coefficient = pwVar2;
+      -    channel_record->sample_counter = *(byte *)((int)pwVar2 + 0x17);
+      +    (channel_record->filter).coefficient = &psVar2->filter_coefficient;
+      +    channel_record->sample_counter = psVar2->sample_period;
+      -                 (short)((int)(uint)*(byte *)((int)pwVar2 + 0x15) >> 4) * 2) &
+      -         1 << (*(byte *)((int)pwVar2 + 0x15) & 0xf)) == 0) ||
+      +                 (short)((int)(uint)psVar2->low_error_fault_number >> 4) * 2) &
+      +         1 << (psVar2->low_error_fault_number & 0xf)) == 0) ||
+      -                (short)((int)(uint)*(byte *)((int)pwVar2 + 0x15) >> 4) * 2) &
+      -        1 << (*(byte *)((int)pwVar2 + 0x15) & 0xf)) == 0)) {
+      +                (short)((int)(uint)psVar2->low_error_fault_number >> 4) * 2) &
+      +        1 << (psVar2->low_error_fault_number & 0xf)) == 0)) {
+      -      channel_record->debounce_counter = pwVar2[5];
+      +      channel_record->debounce_counter = psVar2->fault_set_threshold;
+      -                   (short)((int)(uint)*(byte *)(pwVar2 + 10) >> 4) * 2) &
+      -           1 << (*(byte *)(pwVar2 + 10) & 0xf)) == 0) ||
+      +                   (short)((int)(uint)psVar2->high_error_fault_number >> 4) * 2) &
+      +           1 << (psVar2->high_error_fault_number & 0xf)) == 0) ||
+      -                  (short)((int)(uint)*(byte *)(pwVar2 + 10) >> 4) * 2) &
+      -          1 << (*(byte *)(pwVar2 + 10) & 0xf)) == 0)) {
+  0x0001cb3c vp44_FUN_0001cb3c: 2 lines
+      -  _vp44_fuel_temperature_value = _global_default_value_for_fuel_temperature_50_to_293;
+      +  _vp44_fuel_temperature_value = fuel_temperature_sensor_config.default_value;
+  0x000205c4 cm550_FUN_000205c4: 7 lines
+      -         *(ushort *)(&UNK_00fff2b0 + (uint)_sampled_throttle_channel_address_none * 2);
+      -    if (*(ushort *)(&UNK_00fff2b0 + (uint)_sampled_throttle_channel_address_none * 2) < 0x169) {
+      +         *(ushort *)
+      +          (&UNK_00fff2b0 + (uint)sampled_throttle_sensor_config.qadc_result_register_index * 2);
+      +    if (*(ushort *)
+      +         (&UNK_00fff2b0 + (uint)sampled_throttle_sensor_config.qadc_result_register_index * 2) <
+      +        0x169) {
+  0x00020784 cm550_FUN_00020784: 8 lines
+      -      _DAT_0080a744 = _global_default_value_for_remote_throttle_0_100;
+      +      _DAT_0080a744 = remote_throttle_sensor_config.default_value;
+      -      _DAT_0080a744 = _global_default_value_for_remote_throttle_0_100;
+      +      _DAT_0080a744 = remote_throttle_sensor_config.default_value;
+      -      _DAT_0080a744 = _global_default_value_for_remote_throttle_0_100;
+      +      _DAT_0080a744 = remote_throttle_sensor_config.default_value;
+      -      _DAT_0080a744 = (undefined2)uVar1;
+      +      _DAT_0080a744 = (word)uVar1;
+  0x00020c98 cm550_FUN_00020c98: 8 lines
+      -      _DAT_0080a742 = _global_default_value_for_throttle_0_100;
+      +      _DAT_0080a742 = sampled_throttle_sensor_config.default_value;
+      -        _DAT_0080a742 = _global_default_value_for_throttle_0_100;
+      +        _DAT_0080a742 = sampled_throttle_sensor_config.default_value;
+      -      _DAT_0080a742 = (undefined2)(((uint)JCCMTHMU << 4) / 10);
+      +      _DAT_0080a742 = (word)(((uint)JCCMTHMU << 4) / 10);
+      -      _DAT_0080a742 = _global_default_value_for_throttle_0_100;
+      +      _DAT_0080a742 = sampled_throttle_sensor_config.default_value;
+  0x00021982 cm550_diagnosticServiceSecurityValidator: 2 lines
+      +  byte service_id;
+      -  byte service_id;

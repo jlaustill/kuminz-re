@@ -4002,6 +4002,56 @@ with both audit workflows' proposals and verdicts (`audit_result_r88.json`, `aud
     crank_reentry_speed); `cm550_j1939TorqueControlMode*` (0x1ffd6 / 0x200a4 / 0x200b4) are services 4 / 5 (disable /
     enable broadcast); `cm848_mathMultiplyDivide32` runs on into the routine at 0x573dc; 0x80ddd3 has no reader.
 
+## Done, round 89 (2026-11-24, same PR): the filter callers; sensor_config_t / sensor_state_t; the Calterm names
+
+Peer relays started and continued the round (12:19, 12:50). The scripts are in `session_folder/round89/`.
+- **Stage A (7167490a):** round 88's generated comments lost their "(frozen J90350.00.ghidra.cpp:N)" citations and
+  audit framing; three stale script comments; the dump provenance (kuminz-cli asks for 0x46000 / 0x6E3E bytes and each
+  file is exactly 0x80 short) in firmware/CLAUDE.md, the CM550 README and memory_map.md.
+- **Stage B (72416e1a), round 88's verified second audit (2 investigators, 2 skeptics), applied by address:** 9 twin
+  pairs share one name (`calculateFilteredEngineAcceleration`, `initializeEngineAccelerationFilters`,
+  `smoothPowerTakeOffReferenceEngineSpeed`, `initializePowerTakeOffGovernorFiltersAndGains`,
+  `initializePowerTakeOffReferenceFilter`, `presetPowerTakeOffSmoothedReferenceEngineSpeed`,
+  `initializeFaultDerateEngineSpeedLimit`, `initializePedalFaultModeEngineSpeedFilter`, `presetPedalFaultModeFuelDemand`);
+  CM550's governors and their initializers (`cm550_runLowSpeedGovernor`, `cm550_runAllSpeedGovernor`,
+  `cm550_runPowerTakeOffGovernor`, `cm550_calculateEngineSpeed` - was `cm550_fuel_limit_arbitrator` - ...), the A/D
+  loop `mc68k_processAnalogSensorChannels` (was `validateServiceDataLength`) and `cm550_initializeAnalogSensorChannels`.
+  0x1ae0c / 0x1ae06 are fall-through points inside `cm550_initializeElectronicSmartPower` (deleted_functions.csv).
+  `sensor_config_t` (24 bytes, e2m block 1003) replaces the unused `sensor_fault_config_t`; `ad_sensor_config_t` goes;
+  25 `<channel>_sensor_config` instances replace 373 rows.
+  - **Proof:** CM550 verify DETERMINISTIC; 2 functions removed on purpose; 7 changed beyond labels (the A/D loops'
+    config fields, five default-value readers); caller artifacts unchanged. CM848 label-only. Two local rows for the
+    config pointers were tried and dropped (one never applied, the other split the pointer).
+- **Stage C (5222d5a1), the runtime records:** `sensor_debounce_state_t` is `sensor_state_t` (`lookup_result` ->
+  `unfiltered_value`: Calterm's ...UF "unfiltered and linearized"; `reserved_18` one dword) with 25
+  `<channel>_sensor_state` instances (e2m block 1004) replacing the filter records and 74 e2m-named rows. Readers print
+  `coolant_temperature_sensor_state.filtered_value` (31 renders; it was the untyped
+  `_filtered_and_linearized_coolant_temperature_50_to_293`), and the start-up loops share one typed pointer (round 88's
+  garbled `peVar3` stride is gone; their local rows split the pointers, so they were removed). The Calterm names come
+  back from `e2m-analysis/originals/v64t6_s.e2m` (its block 1003 / 1004 layout agrees with 410 of the 447 old e2m
+  rows): suffixes in the field comments, stems in the instance comments, every name in the new
+  `CM550_J90350.00_analysis/docs/analog_sensor_channels.md`. `ApplyLocalVariables` builds `T[N]` array types itself
+  (it found an array only when something else had created it, so `byte[4]` broke with `reserved_18`).
+  - **Proof:** CM550 verify DETERMINISTIC; 0 removed / added; 39 changed (the A/D loops and 37 readers); caller
+    artifacts unchanged; only the two walker rows render differently. CM848 byte-identical (the shared script).
+    Script tests 109 / 109; headers 0 errors; _cal HARD 0.
+- **Stage D (92f1ba9d):** CM550's README and npm scripts still ran the removed partial pipeline (`ghidra:full`, `init` ...
+  `export`; 11 of 13 npm scripts failed); they now follow build / verify, with recounted state.
+- **firmware/CLAUDE.md:** stage A added the dump request size to the RAM dump gap bullet (full lines in the commit).
+- **Leads (round 90):**
+  - CM550 `output/parameter_id_lookup_table.csv`: its `firmware_variable` column is stale (42 rows name an old global,
+    99 empty rows now have one; nothing regenerates it).
+  - CM550's 20 `unnamed_data_<address>` rows at 0x806e24 and up: the parameter ID table maps e2m blocks onto them
+    (0x1011 -> 0x806F08 ...), so the e2m files can name them.
+  - `validateSecurityKey`'s `bool` local rows: `ApplyLocalVariables` has no `bool` keyword (Unknown type), and the
+    `copy_counter` row types a 0-4 loop counter `bool`.
+  - The A/D array-end bound renders `((int)&operational_amplifier_and_comparator_supply_voltage_sensor_state.reserved_18 + 3)`
+    in both loops; CM550's `analyze.sh` hwregs stage still prints "Run '$0 export'".
+  - Carried: the misnamed PGN builders; `linearization_table_ch15_x_axis` is channel 0's table; 0x803f40 needs `_cal`;
+    ESCMES / ENGRPM names; CM848's DM8 words; the DIAG enum members 0x42 / 0x52 / 0x54; the descriptor rows
+    0x801ab6-0x801b0d; `cm550_peakTorqueFuelCorrection`; `cm550_j1939TorqueControlMode*` (services 4 / 5);
+    `cm848_mathMultiplyDivide32`'s fall-through; 0x80ddd3.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

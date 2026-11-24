@@ -384,3 +384,11 @@
    402033 verify_round88b_cm848.log
    242569 verify_round88d_cm550.log
    402034 verify_round88d_cm848.log
+   242661 verify_round89b2_cm550.log
+   242432 verify_round89b_cm550.log
+   402024 verify_round89b_cm848.log
+   242472 verify_round89c2_cm550.log
+   242603 verify_round89c3_cm550.log
+   242398 verify_round89c4_cm550.log
+   402040 verify_round89c4_cm848.log
+   242591 verify_round89c_cm550.log

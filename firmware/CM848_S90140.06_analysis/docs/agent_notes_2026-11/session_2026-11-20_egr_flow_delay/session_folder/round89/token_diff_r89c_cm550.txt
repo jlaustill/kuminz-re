@@ -1,0 +1,103 @@
+0x0000b3d0: 10 token changes: ushort uVar1 => word wVar1 | uVar1 => wVar1 | uVar1 => wVar1 | uVar1 => wVar1 | _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value | _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value | uVar1 => wVar1 | uVar1 => wVar1 | uVar1 => wVar1 | uVar1 => wVar1
+0x0000b7bc: 75 token changes: psVar7 => channel_config | pcVar8 => pcVar7 | pcVar9 => pcVar8 | ( sensor_state_t * ) =>  | . filter =>  | psVar7 => channel_config | pcVar9 => pcVar8 | pcVar8 => pcVar7 | 0x80a4cf => ( ( int ) & operational_amplifier_and_comparator_supply_voltage_sensor_state . reserved_18 + 3 ) | psVar7 => channel_config | psVar7 => channel_config | psVar7 => channel_config | psVar7 => channel_config | psVar7 => channel_config | psVar7 => channel_config | psVar7 => channel_config | psVar7 => channel_config | psVar7 => channel_config | psVar7 => channel_config | psVar7 => channel_config | psVar7 => channel_co
+0x0000bcf0: 35 token changes: channel_record ; ema_filter_state_t * peVar3 => psVar3 | channel_record => psVar3 | ( sensor_state_t * ) =>  | . filter =>  | channel_record => psVar3 | channel_record => psVar3 | channel_record => psVar3 | channel_record => psVar3 | channel_record => psVar3 | channel_record => psVar3 | channel_record => psVar3 | channel_record => psVar3 | peVar3 => psVar3 | . filter =>  | peVar3 => psVar3 | ema_filter_state_t => sensor_state_t | peVar3 => psVar3 | ( ema_filter_state_t * ) ( ( int ) & peVar3 [ 2 ] . accumulator => psVar3 | 2 ) => 1 | peVar3 => ( psVar3 |  => filter ) . | * ( ushort * ) ( ( int
+0x0000c180: 2 token changes: _boost_pressure_0_100 => boost_pressure_sensor_state . filtered_value | _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value
+0x0000c556: 2 token changes: _filtered_ambient_air_pressure_as_read_and_scaled_from_a_d_algor_0_15 => ambient_air_pressure_sensor_state . filtered_value | _filtered_ambient_air_pressure_as_read_and_scaled_from_a_d_algor_0_15 => ambient_air_pressure_sensor_state . filtered_value
+0x0000c66a: 1 token changes: _filtered_ambient_air_pressure_as_read_and_scaled_from_a_d_algor_0_15 => ambient_air_pressure_sensor_state . filtered_value
+0x0000d23c: 1 token changes: _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value
+0x0000e998: 1 token changes: _boost_pressure_0_100 => boost_pressure_sensor_state . filtered_value
+0x0000ed64: 93 token changes:  => int iVar1 ; | uVar1 => uVar2 | uVar2 => uVar3 | bVar4 => bVar5 | uVar3 => uVar4 | uVar5 => uVar6 | uVar1 => uVar2 | bVar4 => bVar5 | bVar4 => bVar5 | bVar4 => bVar5 | bVar4 => bVar5 | bVar4 => bVar5 | uVar2 => uVar3 | bVar4 => bVar5 | uVar2 => uVar3 | uVar2 => uVar3 | bVar4 => bVar5 | uVar2 => uVar3 | bVar4 => bVar5 | bVar4 => bVar5 | bVar4 => bVar5 | bVar4 => bVar5 | bVar4 => bVar5 | bVar4 => bVar5 | bVar4 => bVar5 | bVar4 => bVar5 | uVar2 => uVar3 | bVar4 => bVar5 | uVar2 => uVar3 | bVar4 => bVar5 | uVar2 => uVar3 | bVar4 => bVar5 | if ( ( ushort ) ( => iVar1 = | * ( ushort * ) =>  | + =
+0x000101b8: 1 token changes: _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value
+0x0001025c: 1 token changes: _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value
+0x00010568: 4 token changes: _ADSATHFT => sampled_throttle_sensor_state . filtered_value | _ADSATHFT => sampled_throttle_sensor_state . filtered_value | _ADSATHFT => sampled_throttle_sensor_state . filtered_value | _ADSATHFT => sampled_throttle_sensor_state . filtered_value
+0x00010822: 1 token changes: _ADSATHFT => sampled_throttle_sensor_state . filtered_value
+0x00011e5e: 5 token changes: _filtered_ambient_air_pressure_as_read_and_scaled_from_a_d_algor_0_15 => ambient_air_pressure_sensor_state . filtered_value | _boost_pressure_0_100 => boost_pressure_sensor_state . filtered_value | _boost_pressure_0_100 => boost_pressure_sensor_state . filtered_value | _filtered_and_linearized_intake_manifold_temperature_50_to_293 => intake_manifold_temperature_sensor_state . filtered_value | _filtered_and_linearized_intake_manifold_temperature_50_to_293 => intake_manifold_temperature_sensor_state . filtered_value
+0x000127c2: 2 token changes: _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value | _filtered_and_linearized_intake_manifold_temperature_50_to_293 => intake_manifold_temperature_sensor_state . filtered_value
+0x000143b6: 1 token changes: _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value
+0x00016dd4: 2 token changes: _flitered_and_linearized_oil_pressure_0_100 => oil_pressure_sensor_state . filtered_value | _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value
+0x00017a8e: 6 token changes: _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value | _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value | _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value | _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value | _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value | _filtered_and_linearized_coolant_temperature_50_to
+0x00017baa: 6 token changes: _filtered_and_linearized_intake_manifold_temperature_50_to_293 => intake_manifold_temperature_sensor_state . filtered_value | _filtered_and_linearized_intake_manifold_temperature_50_to_293 => intake_manifold_temperature_sensor_state . filtered_value | _filtered_and_linearized_intake_manifold_temperature_50_to_293 => intake_manifold_temperature_sensor_state . filtered_value | _filtered_and_linearized_intake_manifold_temperature_50_to_293 => intake_manifold_temperature_sensor_state . filtered_value | _filtered_and_linearized_intake_manifold_temperature_50_to_293 => intake_manifold_temperature_se
+0x0001873e: 6 token changes: & coolant_temperature_sensor_state . filtered_value => 0x80a336 | & oil_pressure_sensor_state . filtered_value => 0x80a30a | & water_in_fuel_sensor_state . filtered_value => 0x80a46a | & boost_pressure_sensor_state . filtered_value => 0x80a320 | & fuel_pressure_sensor_state . filtered_value => 0x80a2f4 | & ambient_air_pressure_sensor_state . filtered_value => 0x80a3ba
+0x0001abb2: 8 token changes: _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value | _filtered_and_linearized_intake_manifold_temperature_50_to_293 => intake_manifold_temperature_sensor_state . filtered_value | _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value | _filtered_and_linearized_intake_manifold_temperature_50_to_293 => intake_manifold_temperature_sensor_state . filtered_value | _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value | _filtered_and_line
+0x0001cad6: 1 token changes: _filtered_and_linearized_fuel_temperature_50_to_293 => fuel_temperature_sensor_state . filtered_value
+0x0001cc72: 1 token changes: _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value
+0x0001d5a0: 1 token changes: _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value
+0x00026616: 1 token changes: _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value
+0x00026ab8: 1 token changes: _boost_pressure_0_100 => boost_pressure_sensor_state . filtered_value
+0x00026b3a: 1 token changes: _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value
+0x0002ec50: 5 token changes: _filtered_and_linearized_remote_throttle_0_100 => remote_throttle_sensor_state . filtered_value | _filtered_and_linearized_remote_throttle_0_100 => remote_throttle_sensor_state . filtered_value | _filtered_and_linearized_remote_throttle_0_100 => remote_throttle_sensor_state . filtered_value | _filtered_and_linearized_remote_throttle_0_100 => remote_throttle_sensor_state . filtered_value | _filtered_and_linearized_remote_throttle_0_100 => remote_throttle_sensor_state . filtered_value
+0x0002fe38: 24 token changes: undefined2 => word | _boost_pressure_0_100 => boost_pressure_sensor_state . filtered_value | undefined2 => word | _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value | undefined2 => word | _filtered_and_linearized_intake_manifold_temperature_50_to_293 => intake_manifold_temperature_sensor_state . filtered_value | undefined2 => word | _flitered_and_linearized_oil_pressure_0_100 => oil_pressure_sensor_state . filtered_value | undefined2 => word | _filtered_and_linearized_battery_voltage_0_40 => battery_voltage_sensor_state . filtered_value 
+0x00031496: 4 token changes: _filtered_and_linearized_intake_manifold_temperature_50_to_293 => intake_manifold_temperature_sensor_state . filtered_value | _filtered_and_linearized_intake_manifold_temperature_50_to_293 => intake_manifold_temperature_sensor_state . filtered_value | _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value | _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value
+0x000315be: 8 token changes: undefined2 => word | _flitered_and_linearized_oil_pressure_0_100 => oil_pressure_sensor_state . filtered_value | undefined2 => word | _boost_pressure_0_100 => boost_pressure_sensor_state . filtered_value | undefined2 => word | _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value | undefined2 => word | _flitered_and_linearized_oil_pressure_0_100 => oil_pressure_sensor_state . filtered_value
+0x00031bce: 1 token changes: _filtered_ambient_air_pressure_as_read_and_scaled_from_a_d_algor_0_15 => ambient_air_pressure_sensor_state . filtered_value
+0x00032e4c: 2 token changes: _filtered_and_linearized_remote_throttle_0_100 => remote_throttle_sensor_state . filtered_value | _filtered_and_linearized_remote_throttle_0_100 => remote_throttle_sensor_state . filtered_value
+0x00033164: 1 token changes: _flitered_and_linearized_oil_pressure_0_100 => oil_pressure_sensor_state . filtered_value
+0x000337c4: 1 token changes: _filtered_and_linearized_coolant_temperature_50_to_293 => ( short ) coolant_temperature_sensor_state . filtered_value
+0x00033e58: 2 token changes: _boost_pressure_0_100 => boost_pressure_sensor_state . filtered_value | _filtered_and_linearized_intake_manifold_temperature_50_to_293 => ( short ) intake_manifold_temperature_sensor_state . filtered_value
+0x000342f0: 1 token changes: _filtered_and_linearized_battery_voltage_0_40 => battery_voltage_sensor_state . filtered_value
+0x00034c36: 1 token changes: _filtered_water_in_fuel_as_read_and_scaled_from_a_d_algorithm_2_0_3 => water_in_fuel_sensor_state . filtered_value
+0x00034cc4: 2 token changes: _filtered_and_linearized_intake_manifold_temperature_50_to_293 => intake_manifold_temperature_sensor_state . filtered_value | _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value
+---- census of distinct changes
+  58 psVar7 => channel_config
+  44 bVar4 => bVar5
+  31 _filtered_and_linearized_coolant_temperature_50_to_293 => coolant_temperature_sensor_state . filtered_value
+  20 _filtered_and_linearized_intake_manifold_temperature_50_to_293 => intake_manifold_temperature_sensor_state . filtered_value
+  16 undefined2 => word
+  12 uVar5 => uVar6
+  11 _boost_pressure_0_100 => boost_pressure_sensor_state . filtered_value
+   9 channel_record => psVar3
+   8 uVar2 => uVar3
+   7 uVar1 => wVar1
+   7 _flitered_and_linearized_oil_pressure_0_100 => oil_pressure_sensor_state . filtered_value
+   7 _filtered_and_linearized_remote_throttle_0_100 => remote_throttle_sensor_state . filtered_value
+   6 peVar3 => psVar3
+   6 _filtered_ambient_air_pressure_as_read_and_scaled_from_a_d_algor_0_15 => ambient_air_pressure_sensor_state . filtered_value
+   6 uVar1 => uVar2
+   5 uVar3 => uVar4
+   5 _filtered_and_linearized_battery_voltage_0_40 => battery_voltage_sensor_state . filtered_value
+   5 _ADSATHFT => sampled_throttle_sensor_state . filtered_value
+   4 . filter => 
+   3 lookup_result => unfiltered_value
+   2 pcVar8 => pcVar7
+   2 pcVar9 => pcVar8
+   2 ( sensor_state_t * ) => 
+   2 0x80a4cf => ( ( int ) & operational_amplifier_and_comparator_supply_voltage_sensor_state . reserved_18 + 3 )
+   2 ema_filter_state_t => sensor_state_t
+   2 ( ema_filter_state_t * ) ( ( int ) & peVar3 [ 2 ] . accumulator => psVar3
+   2 2 ) => 1
+   2 _DAT_0080a454 => cruise_control_switch_multiplexer_sensor_state . filtered_value
+   1 ushort uVar1 => word wVar1
+   1 pcVar9 => pcVar8 = ' \ 0 ' ; if ( * pcVar7 == ' \ x04 ' ) { * ( ushort * ) ( & status_32_word_bit_mapped_system_error_status_word_0_0_1 + ( short ) ( ( int ) ( uint ) channel_config -> tri_state_error
+   1  => ~ (
+   1 | => ) &
+   1 psVar7 -> tri_state_error_fault_number >> 4 ) * 2 ) ; * ( ushort * ) ( & fault_first_occurrence_flags_word_0 + ( short ) ( ( int ) ( uint ) psVar7 -> tri_state_error_fault_number >> 4 ) * 2 ) = 1 << (
+   1 else { wVar2 = cm550_exponentialMovingAverage ( channel_record -> lookup_result , & channel_record -> filter ) ; channel_record -> filtered_value = wVar2 ; * pcVar8 = ' \ 0 ' ; if ( * pcVar9 == ' \ x0
+   1  => pcVar7 = pcVar7 + 1 ;
+   1 + 1 ; pcVar9 = pcVar9 => 
+   1 channel_record ; ema_filter_state_t * peVar3 => psVar3
+   1 peVar3 => ( psVar3
+   1  => filter ) .
+   1 * ( ushort * ) ( ( int ) & peVar3 [ 1 ] . coefficient + 2 ) => psVar3 -> unfiltered_value
+   1 * ( undefined2 * ) & peVar3 [ 1 ] . coefficient => psVar3 -> filtered_value
+   1 * ( undefined2 * ) ( ( int ) & peVar3 [ 1 ] . coefficient + 2 ) => psVar3 -> unfiltered_value
+   1 * ( undefined1 * ) ( ( int ) & peVar3 [ 1 ] . accumulator + 3 ) => psVar3 -> sample_counter
+   1 * ( short * ) & peVar3 [ 1 ] . accumulator => psVar3 -> debounce_counter
+   1 * ( undefined2 * ) & peVar3 [ 1 ] . accumulator => psVar3 -> debounce_counter
+   1  => int iVar1 ;
+   1 if ( ( ushort ) ( => iVar1 =
+   1 * ( ushort * ) => 
+   1 + => ) [
+   1 * 2 ) => ]
+   1  => ; if ( ( ushort
+   1  => iVar1
+   1 ( ( int ) ( uint ) * ( ushort * ) ( & intake_manifold_temperature_sensor_state . filtered_value + ( short ) ( ( ushort ) DAT_0080d283 * 3 + ( ushort ) DAT_0080d283 * 8 ) * 2 ) >> 4 ) => iVar1
+   1 & coolant_temperature_sensor_state . filtered_value => 0x80a336
+   1 & oil_pressure_sensor_state . filtered_value => 0x80a30a
+   1 & water_in_fuel_sensor_state . filtered_value => 0x80a46a
+   1 & boost_pressure_sensor_state . filtered_value => 0x80a320
+   1 & fuel_pressure_sensor_state . filtered_value => 0x80a2f4
+   1 & ambient_air_pressure_sensor_state . filtered_value => 0x80a3ba
+   1 _filtered_and_linearized_fuel_temperature_50_to_293 => fuel_temperature_sensor_state . filtered_value
+   1 _filtered_and_linearized_coolant_temperature_50_to_293 => ( short ) coolant_temperature_sensor_state . filtered_value
+   1 _filtered_and_linearized_intake_manifold_temperature_50_to_293 => ( short ) intake_manifold_temperature_sensor_state . filtered_value
+   1 _filtered_water_in_fuel_as_read_and_scaled_from_a_d_algorithm_2_0_3 => water_in_fuel_sensor_state . filtered_value

@@ -8,7 +8,7 @@ fresh air flow records; the e2m never spells it out, so no name guesses an expan
 - **Round 2:** at the user's request the rest of the family is renamed too, on this PR (stages 3 / 4). The scope rule:
   a symbol is in if its e2m record is `CHP_` / `C_CHP_`, or if it is an input that a family function would otherwise
   misname.
-- **Beyond CM848 (rounds 72-88):** the J1939 memory write service and the development mode code are shared:
+- **Beyond CM848 (rounds 72-89):** the J1939 memory write service and the development mode code are shared:
   eleven CM550 functions are CM848 twins and share their names. Round 74 also dismantles a misapplied CM550
   struct, round 75 types CM550's InSite parameter schedule and names its J1708 SCI, and round 76 names CM550's
   MC68336 registers, so CM550's CSVs, the root README and `firmware/feature_comparison.csv` change too.
@@ -960,6 +960,16 @@ state enum, the flag bytes.**
   `ENGINE_STATE` enum, 37 J1939 transmit descriptors as `j1939_tx_msg_t`, the power-down bookkeeping, CM848's
   register save / restore helpers.
 
+**Round 89.**
+- **Stage A (7167490a):** round 88's generated comments cleaned; the dump provenance documented.
+- **Stage B (72416e1a):** round 88's second audit: 9 more twins (the filter records' users and initializers),
+  CM550's governors, its A/D channel loop (was `validateServiceDataLength`) and the 24-byte `sensor_config_t`
+  (e2m block 1003, 25 instances).
+- **Stage C (5222d5a1):** the A/D runtime records as `sensor_state_t` (e2m block 1004, 25 instances), so readers
+  print `coolant_temperature_sensor_state.filtered_value`; the Calterm names from the e2m files
+  (`docs/analog_sensor_channels.md`); `ApplyLocalVariables` builds array types.
+- **Stage D (92f1ba9d):** CM550's README and npm scripts follow the one deterministic build.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -1051,6 +1061,10 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 89: D: docs only (no build input changed); package.json parses.
+- [x] Round 89: C: CM550 verify DETERMINISTIC (0 functions removed / added; 39 changed: the A/D loops and 37 readers; caller artifacts unchanged; only the two walker rows render differently); CM848 verify DETERMINISTIC and byte-identical (ApplyLocalVariables change); 109 JUnit tests pass; headers 0 g++ errors; _cal HARD 0.
+- [x] Round 89: B: CM550 verify DETERMINISTIC (2 fall-through rows deleted on purpose; 7 functions changed beyond labels; caller artifacts unchanged); CM848 label-only; headers 0 g++ errors; _cal HARD 0.
+- [x] Round 89: A: comments and docs only.
 - [x] Round 88: B: CM550 verify DETERMINISTIC (2 rts-tail functions deleted on purpose; the non-label changes are struct fields, ENGINE_STATE members, removed casts and the CAN ID source-address CONCAT31); CM848 label-only apart from clearWorkingRam; no existing local row moved; headers 0 g++ errors; _cal HARD 0.
 - [x] Round 88: D: CM550 and CM848 verify DETERMINISTIC with the new RAM blocks; both .cpp byte-identical to stage A's; 109 JUnit tests pass.
 - [x] Round 88: C: clip-core builds; ctest 1/1 (8 tests; 9 checks fail against the old skip behaviour); kuminz-cli builds.

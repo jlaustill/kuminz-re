@@ -1,0 +1,332 @@
+removed 0: 
+added 0: 
+changed 39
+  0x0000b3d0 cm550_FUN_0000b3d0: 18 lines
+      -  ushort uVar1;
+      -  uVar1 = 0;
+      +  word wVar1;
+      +  wVar1 = 0;
+      -    uVar1 = _engine_acceleration_after_first_stage_low_pass_filtering_2560_2540;
+      +    wVar1 = _engine_acceleration_after_first_stage_low_pass_filtering_2560_2540;
+      -        (uVar1 = _filtered_and_linearized_coolant_temperature_50_to_293,
+      -        _filtered_and_linearized_coolant_temperature_50_to_293 <=
+      +        (wVar1 = coolant_temperature_sensor_state.filtered_value,
+      +        coolant_temperature_sensor_state.filtered_value <=
+      -       ((uVar1 = _engine_acceleration_after_first_stage_low_pass_filtering_2560_2540,
+      +       ((wVar1 = _engine_acceleration_after_first_stage_low_pass_filtering_2560_2540,
+      -        (uVar1 = _engine_acceleration_after_second_stage_low_pass_filtering_2560_2540,
+      +        (wVar1 = _engine_acceleration_after_second_stage_low_pass_filtering_2560_2540,
+      -      uVar1 = _timing_increment_added_to_anc_timing_to_ramp_out_the_timing_de_0_720;
+      +      wVar1 = _timing_increment_added_to_anc_timing_to_ramp_out_the_timing_de_0_720;
+      -  return uVar1;
+      +  return wVar1;
+  0x0000b7bc mc68k_processAnalogSensorChannels: 14 lines
+      -  channel_record = (sensor_state_t *)&intake_manifold_temperature_sensor_state.filter;
+      +  channel_record = &intake_manifold_temperature_sensor_state;
+      -    if ((sensor_state_t *)0x80a4cf < channel_record) {
+      +    if ((sensor_state_t *)
+      +        (operational_amplifier_and_comparator_supply_voltage_sensor_state.reserved_18 + 3) <
+      +        channel_record) {
+      -          channel_record->lookup_result = wVar2;
+      +          channel_record->unfiltered_value = wVar2;
+      -                              (channel_record->lookup_result,&channel_record->filter);
+      +                              (channel_record->unfiltered_value,&channel_record->filter);
+      -          else if (channel_record->lookup_result == 4) {
+      +          else if (channel_record->unfiltered_value == 4) {
+      -                              (channel_record->lookup_result,&channel_record->filter);
+      +                              (channel_record->unfiltered_value,&channel_record->filter);
+  0x0000bcf0 cm550_initializeAnalogSensorChannels: 40 lines
+      -  sensor_state_t *channel_record;
+      -  ema_filter_state_t *peVar3;
+      +  sensor_state_t *psVar3;
+      -  for (channel_record = (sensor_state_t *)&intake_manifold_temperature_sensor_state.filter;
+      -      channel_record < (sensor_state_t *)0x80a4d0; channel_record = channel_record + 1) {
+      -    (channel_record->filter).accumulator = 0;
+      -    (channel_record->filter).coefficient = &psVar2->filter_coefficient;
+      -    channel_record->sample_counter = psVar2->sample_period;
+      +  for (psVar3 = &intake_manifold_temperature_sensor_state; psVar3 < (sensor_state_t *)0x80a4d0;
+      +      psVar3 = psVar3 + 1) {
+      +    (psVar3->filter).accumulator = 0;
+      +    (psVar3->filter).coefficient = &psVar2->filter_coefficient;
+      +    psVar3->sample_counter = psVar2->sample_period;
+      -      channel_record->debounce_counter = psVar2->fault_set_threshold;
+      -      channel_record->fault_active_flag = 1;
+      +      psVar3->debounce_counter = psVar2->fault_set_threshold;
+      +      psVar3->fault_active_flag = 1;
+      -  for (peVar3 = &intake_manifold_temperature_sensor_state.filter;
+      -      peVar3 < (ema_filter_state_t *)0x80a4d0;
+      -      peVar3 = (ema_filter_state_t *)((int)&peVar3[2].accumulator + 2)) {
+      -    peVar3->accumulator = (uint)*(ushort *)((int)&peVar3[1].coefficient + 2) << 0x10;
+      -    *(undefined2 *)&peVar3[1].coefficient = *(undefined2 *)((int)&peVar3[1].coefficient + 2);
+      -    *(undefined1 *)((int)&peVar3[1].accumulator + 3) = 0;
+      +  for (psVar3 = &intake_manifold_temperature_sensor_state; psVar3 < (sensor_state_t *)0x80a4d0;
+  0x0000c180 cm550_fuelTimingTransitionStateMachine: 4 lines
+      -    _diagnostic_table_pointer_2 = _boost_pressure_0_100;
+      +    _diagnostic_table_pointer_2 = boost_pressure_sensor_state.filtered_value;
+      -    _DAT_008000c6 = _filtered_and_linearized_coolant_temperature_50_to_293;
+      +    _DAT_008000c6 = coolant_temperature_sensor_state.filtered_value;
+  0x0000c556 calculateAlphaLowAmbientAirPressureResult: 4 lines
+      -  if (_filtered_ambient_air_pressure_as_read_and_scaled_from_a_d_algor_0_15 < _DAT_00807ab8) {
+      +  if (ambient_air_pressure_sensor_state.filtered_value < _DAT_00807ab8) {
+      -  if (_DAT_00807ab6 < _filtered_ambient_air_pressure_as_read_and_scaled_from_a_d_algor_0_15) {
+      +  if (_DAT_00807ab6 < ambient_air_pressure_sensor_state.filtered_value) {
+  0x0000c66a cm550_rpmHistogramAndProtectionStatisticsAccumulator: 3 lines
+      -    _diagnostic_data_intake_temp_ptr =
+      -         _filtered_ambient_air_pressure_as_read_and_scaled_from_a_d_algor_0_15;
+      +    _diagnostic_data_intake_temp_ptr = ambient_air_pressure_sensor_state.filtered_value;
+  0x0000d23c cm550_dualTableLookupSum: 2 lines
+      -  _throttle_validation_state = _filtered_and_linearized_coolant_temperature_50_to_293;
+      +  _throttle_validation_state = coolant_temperature_sensor_state.filtered_value;
+  0x0000e998 cm550_FUN_0000e998: 3 lines
+      -              if (_boost_threshold_for_bir_high_error_0_100 < _boost_pressure_0_100) {
+      +              if (_boost_threshold_for_bir_high_error_0_100 <
+      +                  boost_pressure_sensor_state.filtered_value) {
+  0x0000ed64 insiteCommandByteDispatcher: 171 lines
+      -  undefined4 uVar1;
+      +  int iVar1;
+      +  undefined4 uVar2;
+      -  undefined3 uVar2;
+      +  undefined3 uVar3;
+      -  byte bVar4;
+      -  uint uVar3;
+      -  undefined1 uVar5;
+      +  byte bVar5;
+      +  uint uVar4;
+      +  undefined1 uVar6;
+      -  uVar1 = _accumulated_amount_of_fuel_used_during_vehicle_operatio_0_0_10000000;
+      +  uVar2 = _accumulated_amount_of_fuel_used_during_vehicle_operatio_0_0_10000000;
+      -          bVar4 = cm550_diagnosticCodeTableSearch((ushort)DAT_008065f7);
+      -          if (bVar4 == 0) {
+      -            bVar4 = cm550_diagnosticCodeTableSearch((word)CONCAT31(extraout_var,DAT_008065f5));
+      -            if (bVar4 == 0) {
+      -              bVar4 = cm550_diagnosticCodeTableSearch((word)CONCAT31(extraout_var_00,DAT_008065f3));
+      -              uVar2 = extraout_var_01;
+      -              if (bVar4 != 0) {
+      +          bVar5 = cm550_diagnosticCodeTableSearch((ushort)DAT_008065f7);
+      +          if (bVar5 == 0) {
+      +            bVar5 = cm550_diagnosticCodeTableSearch((word)CONCAT31(extraout_var,DAT_008065f5));
+      +            if (bVar5 == 0) {
+  0x000101b8 cm550_bufferThresholdValidator: 2 lines
+      -  if (_filtered_and_linearized_coolant_temperature_50_to_293 <
+      +  if (coolant_temperature_sensor_state.filtered_value <
+  0x0001025c cm550_detectEngineSpeedSensorSyncPulse: 2 lines
+      -    else if ((_filtered_and_linearized_coolant_temperature_50_to_293 <
+      +    else if ((coolant_temperature_sensor_state.filtered_value <
+  0x00010568 vp44_rpmDerateCalculationController: 11 lines
+      -      _vp44_block_size = _ADSATHFT;
+      +      _vp44_block_size = sampled_throttle_sensor_state.filtered_value;
+      -      _validated_percent_throttle_commanded_by_driver_0_100 = _ADSATHFT;
+      +      _validated_percent_throttle_commanded_by_driver_0_100 =
+      +           sampled_throttle_sensor_state.filtered_value;
+      -      _intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100 = _ADSATHFT;
+      +      _intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100 =
+      +           sampled_throttle_sensor_state.filtered_value;
+      -        _validated_percent_throttle_commanded_by_driver_0_100 = _ADSATHFT;
+      +        _validated_percent_throttle_commanded_by_driver_0_100 =
+      +             sampled_throttle_sensor_state.filtered_value;
+  0x00010822 vp44_derateThresholdMonitorAndFaultController: 2 lines
+      -      _vp44_block_size = _ADSATHFT;
+      +      _vp44_block_size = sampled_throttle_sensor_state.filtered_value;
+  0x00011e5e cm550_coldStartFuelControlSlowCycle40Coordinator: 14 lines
+      -               _filtered_ambient_air_pressure_as_read_and_scaled_from_a_d_algor_0_15 +
+      -               _boost_pressure_0_100;
+      -        }
+      -        else {
+      -          _manifold_temp_table_3_type = _boost_pressure_0_100;
+      +               ambient_air_pressure_sensor_state.filtered_value +
+      +               boost_pressure_sensor_state.filtered_value;
+      +        }
+      +        else {
+      +          _manifold_temp_table_3_type = boost_pressure_sensor_state.filtered_value;
+      -          (uint)_filtered_and_linearized_intake_manifold_temperature_50_to_293 < (uVar3 & 0xffff)) {
+      -        sVar1 = _filtered_and_linearized_intake_manifold_temperature_50_to_293 -
+      +          (uint)intake_manifold_temperature_sensor_state.filtered_value < (uVar3 & 0xffff)) {
+      +        sVar1 = intake_manifold_temperature_sensor_state.filtered_value -
+  0x000127c2 vp44_FUN_000127c2: 4 lines
+      -        ((_DAT_008072ea < _filtered_and_linearized_coolant_temperature_50_to_293 &&
+      -         (_DAT_008072ec < _filtered_and_linearized_intake_manifold_temperature_50_to_293)))))) {
+      +        ((_DAT_008072ea < coolant_temperature_sensor_state.filtered_value &&
+      +         (_DAT_008072ec < intake_manifold_temperature_sensor_state.filtered_value)))))) {
+  0x000143b6 cm550_multiSpeedParameterInterpolation: 2 lines
+      -  _DAT_0080db34 = _filtered_and_linearized_coolant_temperature_50_to_293;
+      +  _DAT_0080db34 = coolant_temperature_sensor_state.filtered_value;
+  0x00016dd4 cm550_highRpmEngineProtectionStateMachine: 4 lines
+      -        if (_flitered_and_linearized_oil_pressure_0_100 <
+      +        if (oil_pressure_sensor_state.filtered_value <
+      -          _DAT_00800594 = _filtered_and_linearized_coolant_temperature_50_to_293;
+      +          _DAT_00800594 = coolant_temperature_sensor_state.filtered_value;
+  0x00017a8e cm550_frictionalLoadTorqueInterpolator: 14 lines
+      -     (_filtered_and_linearized_coolant_temperature_50_to_293 <
+      -      _crank_low_coolant_temperature_50_to_293)) {
+      +     (coolant_temperature_sensor_state.filtered_value < _crank_low_coolant_temperature_50_to_293)) {
+      -  if (_crank_high_coolant_temperature_50_to_293 <
+      -      _filtered_and_linearized_coolant_temperature_50_to_293) {
+      +  if (_crank_high_coolant_temperature_50_to_293 < coolant_temperature_sensor_state.filtered_value) {
+      -                (uint)_filtered_and_linearized_coolant_temperature_50_to_293) *
+      +                (uint)coolant_temperature_sensor_state.filtered_value) *
+      -       (short)((((uint)_filtered_and_linearized_coolant_temperature_50_to_293 -
+      +       (short)((((uint)coolant_temperature_sensor_state.filtered_value -
+      -           (uint)_filtered_and_linearized_coolant_temperature_50_to_293) *
+      +           (uint)coolant_temperature_sensor_state.filtered_value) *
+      -       (short)((((uint)_filtered_and_linearized_coolant_temperature_50_to_293 -
+      +       (short)((((uint)coolant_temperature_sensor_state.filtered_value -
+  0x00017baa cm550_FUN_00017baa: 12 lines
+      -     (_filtered_and_linearized_intake_manifold_temperature_50_to_293 <
+      +     (intake_manifold_temperature_sensor_state.filtered_value <
+      -      _filtered_and_linearized_intake_manifold_temperature_50_to_293) {
+      +      intake_manifold_temperature_sensor_state.filtered_value) {
+      -                (uint)_filtered_and_linearized_intake_manifold_temperature_50_to_293) *
+      +                (uint)intake_manifold_temperature_sensor_state.filtered_value) *
+      -       (short)((((uint)_filtered_and_linearized_intake_manifold_temperature_50_to_293 -
+      +       (short)((((uint)intake_manifold_temperature_sensor_state.filtered_value -
+      -           (uint)_filtered_and_linearized_intake_manifold_temperature_50_to_293) *
+      +           (uint)intake_manifold_temperature_sensor_state.filtered_value) *
+      -       (short)((((uint)_filtered_and_linearized_intake_manifold_temperature_50_to_293 -
+      +       (short)((((uint)intake_manifold_temperature_sensor_state.filtered_value -
+  0x0001873e vp44_engineProtectionSystemInit: 12 lines
+      -  _DAT_0080d10a = &coolant_temperature_sensor_state.filtered_value;
+      +  _DAT_0080d10a = 0x80a336;
+      -  _DAT_0080d166 = &oil_pressure_sensor_state.filtered_value;
+      +  _DAT_0080d166 = 0x80a30a;
+      -  _DAT_0080d194 = &water_in_fuel_sensor_state.filtered_value;
+      +  _DAT_0080d194 = 0x80a46a;
+      -  _DAT_0080d1c2 = &boost_pressure_sensor_state.filtered_value;
+      +  _DAT_0080d1c2 = 0x80a320;
+      -  _DAT_0080d1f0 = &fuel_pressure_sensor_state.filtered_value;
+      +  _DAT_0080d1f0 = 0x80a2f4;
+      -  _DAT_0080d24c = &ambient_air_pressure_sensor_state.filtered_value;
+      +  _DAT_0080d24c = 0x80a3ba;
+  0x0001abb2 cm550_updateElectronicSmartPowerTau: 16 lines
+      -             (_filtered_and_linearized_coolant_temperature_50_to_293 <
+      +             (coolant_temperature_sensor_state.filtered_value <
+      -           (_filtered_and_linearized_intake_manifold_temperature_50_to_293 <
+      +           (intake_manifold_temperature_sensor_state.filtered_value <
+      -            _filtered_and_linearized_coolant_temperature_50_to_293 <
+      +            coolant_temperature_sensor_state.filtered_value <
+      -            _filtered_and_linearized_intake_manifold_temperature_50_to_293 <
+      +            intake_manifold_temperature_sensor_state.filtered_value <
+      -            _filtered_and_linearized_coolant_temperature_50_to_293)) ||
+      +            coolant_temperature_sensor_state.filtered_value)) ||
+      -           _filtered_and_linearized_intake_manifold_temperature_50_to_293)) {
+      +           intake_manifold_temperature_sensor_state.filtered_value)) {
+      -            _filtered_and_linearized_coolant_temperature_50_to_293)) ||
+      +            coolant_temperature_sensor_state.filtered_value)) ||
+      -           _filtered_and_linearized_intake_manifold_temperature_50_to_293)) {
+      +           intake_manifold_temperature_sensor_state.filtered_value)) {
+  0x0001cad6 vp44_FUN_0001cad6: 2 lines
+      -    _vp44_fuel_temperature_value = _filtered_and_linearized_fuel_temperature_50_to_293;
+      +    _vp44_fuel_temperature_value = fuel_temperature_sensor_state.filtered_value;
+  0x0001cc72 cm550_FUN_0001cc72: 2 lines
+      -      _DAT_00800706 = _filtered_and_linearized_coolant_temperature_50_to_293;
+      +      _DAT_00800706 = coolant_temperature_sensor_state.filtered_value;
+  0x0001d5a0 selectEngineSpeedLimit: 2 lines
+      -        _DAT_0080db34 = _filtered_and_linearized_coolant_temperature_50_to_293;
+      +        _DAT_0080db34 = coolant_temperature_sensor_state.filtered_value;
+  0x00026616 cm550_FUN_00026616: 4 lines
+      -  bVar2 = _filtered_and_linearized_coolant_temperature_50_to_293 <
+      -          _cold_idle_coolant_temperature_50_to_293;
+      +  bVar2 = coolant_temperature_sensor_state.filtered_value < _cold_idle_coolant_temperature_50_to_293
+      +  ;
+  0x00026ab8 cm550_rpmLoadParameterLookup: 2 lines
+      -    _engine_air_inlet_temp = _boost_pressure_0_100;
+      +    _engine_air_inlet_temp = boost_pressure_sensor_state.filtered_value;
+  0x00026b3a cm550_FUN_00026b3a: 2 lines
+      -  _DAT_0080db34 = _filtered_and_linearized_coolant_temperature_50_to_293;
+      +  _DAT_0080db34 = coolant_temperature_sensor_state.filtered_value;
+  0x0002ec50 cm550_FUN_0002ec50: 10 lines
+      -      _alternate_throttle_command = _filtered_and_linearized_remote_throttle_0_100;
+      +      _alternate_throttle_command = remote_throttle_sensor_state.filtered_value;
+      -      if ((_filtered_and_linearized_remote_throttle_0_100 <=
+      +      if ((remote_throttle_sensor_state.filtered_value <=
+      -           _filtered_and_linearized_remote_throttle_0_100) &&
+      +           remote_throttle_sensor_state.filtered_value) &&
+      -             _filtered_and_linearized_remote_throttle_0_100) {
+      +             remote_throttle_sensor_state.filtered_value) {
+      -        _alternate_throttle_command = _filtered_and_linearized_remote_throttle_0_100;
+      +        _alternate_throttle_command = remote_throttle_sensor_state.filtered_value;
+  0x0002fe38 cm550_diagnosticTableSnapshotCapture: 26 lines
+      -    *(undefined2 *)(&DAT_0080463a + sVar1) = _boost_pressure_0_100;
+      +    *(word *)(&DAT_0080463a + sVar1) = boost_pressure_sensor_state.filtered_value;
+      -    *(undefined2 *)(&DAT_0080463c + sVar1) = _filtered_and_linearized_coolant_temperature_50_to_293;
+      -    *(undefined2 *)(sVar1 + 0x80463e) =
+      -         _filtered_and_linearized_intake_manifold_temperature_50_to_293;
+      -    *(undefined2 *)(sVar1 + 0x804640) = _flitered_and_linearized_oil_pressure_0_100;
+      +    *(word *)(&DAT_0080463c + sVar1) = coolant_temperature_sensor_state.filtered_value;
+      +    *(word *)(sVar1 + 0x80463e) = intake_manifold_temperature_sensor_state.filtered_value;
+      +    *(word *)(sVar1 + 0x804640) = oil_pressure_sensor_state.filtered_value;
+      -    *(undefined2 *)(sVar1 + 0x80464a) = _filtered_and_linearized_battery_voltage_0_40;
+      +    *(word *)(sVar1 + 0x80464a) = battery_voltage_sensor_state.filtered_value;
+      -    *(undefined2 *)(sVar1 + 0x804654) = _DAT_0080a454;
+      +    *(word *)(sVar1 + 0x804654) = cruise_control_switch_multiplexer_sensor_state.filtered_value;
+      -    *(undefined2 *)(sVar1 + 0x80427a) = _boost_pressure_0_100;
+      +    *(word *)(sVar1 + 0x80427a) = boost_pressure_sensor_state.filtered_value;
+      -    *(undefined2 *)(sVar1 + 0x80427c) = _filtered_and_linearized_coolant_temperature_50_to_293;
+      -    *(undefined2 *)(sVar1 + 0x80427e) =
+      -         _filtered_and_linearized_intake_manifold_temperature_50_to_293;
+      -    *(undefined2 *)(sVar1 + 0x804280) = _flitered_and_linearized_oil_pressure_0_100;
+      +    *(word *)(sVar1 + 0x80427c) = coolant_temperature_sensor_state.filtered_value;
+      +    *(word *)(sVar1 + 0x80427e) = intake_manifold_temperature_sensor_state.filtered_value;
+      +    *(word *)(sVar1 + 0x804280) = oil_pressure_sensor_state.filtered_value;
+      -    *(undefined2 *)(sVar1 + 0x80428a) = _filtered_and_linearized_battery_voltage_0_40;
+      +    *(word *)(sVar1 + 0x80428a) = battery_voltage_sensor_state.filtered_value;
+  0x00031496 cm550_FUN_00031496: 8 lines
+      -    if ((_DAT_00808a88 < _filtered_and_linearized_intake_manifold_temperature_50_to_293) ||
+      -       (_filtered_and_linearized_intake_manifold_temperature_50_to_293 <= _DAT_00808a8a)) {
+      +    if ((_DAT_00808a88 < intake_manifold_temperature_sensor_state.filtered_value) ||
+      +       (intake_manifold_temperature_sensor_state.filtered_value <= _DAT_00808a8a)) {
+      -    if ((_DAT_00808a8c < _filtered_and_linearized_coolant_temperature_50_to_293) ||
+      -       (_filtered_and_linearized_coolant_temperature_50_to_293 <= _DAT_00808a8e)) {
+      +    if ((_DAT_00808a8c < coolant_temperature_sensor_state.filtered_value) ||
+      +       (coolant_temperature_sensor_state.filtered_value <= _DAT_00808a8e)) {
+  0x000315be cm550_FUN_000315be: 16 lines
+      -        *(undefined2 *)(&histogram_stored_ticks + (short)(_trending_write_index * 7) * 2) =
+      -             _flitered_and_linearized_oil_pressure_0_100;
+      -        *(undefined2 *)(&engine_runtime_total_counter + (short)(_trending_write_index * 7) * 2) =
+      -             _boost_pressure_0_100;
+      -        *(undefined2 *)((short)(_trending_write_index * 7) * 2 + 0x804a1e) =
+      -             _filtered_and_linearized_coolant_temperature_50_to_293;
+      +        *(word *)(&histogram_stored_ticks + (short)(_trending_write_index * 7) * 2) =
+      +             oil_pressure_sensor_state.filtered_value;
+      +        *(word *)(&engine_runtime_total_counter + (short)(_trending_write_index * 7) * 2) =
+      +             boost_pressure_sensor_state.filtered_value;
+      +        *(word *)((short)(_trending_write_index * 7) * 2 + 0x804a1e) =
+      +             coolant_temperature_sensor_state.filtered_value;
+      -          *(undefined2 *)(&histogram_stored_ticks + (short)(_trending_write_index * 7) * 2) =
+      -               _flitered_and_linearized_oil_pressure_0_100;
+      +          *(word *)(&histogram_stored_ticks + (short)(_trending_write_index * 7) * 2) =
+      +               oil_pressure_sensor_state.filtered_value;
+  0x00031bce cm550_FUN_00031bce: 5 lines
+      -                 ((int)(((uint)(ushort)(
+      -                                       _filtered_ambient_air_pressure_as_read_and_scaled_from_a_d_algor_0_15
+      -                                       * 2) * 0x1afa) / 1000 & 0xffff) >> 7);
+      +                 ((int)(((uint)(ushort)(ambient_air_pressure_sensor_state.filtered_value * 2) *
+      +                        0x1afa) / 1000 & 0xffff) >> 7);
+  0x00032e4c j1939HandlePgn61443Eec2: 4 lines
+      -    DAT_008034ad = (char)((int)(uint)_filtered_and_linearized_remote_throttle_0_100 >> 1) +
+      -                   (char)((int)(uint)_filtered_and_linearized_remote_throttle_0_100 >> 3);
+      +    DAT_008034ad = (char)((int)(uint)remote_throttle_sensor_state.filtered_value >> 1) +
+      +                   (char)((int)(uint)remote_throttle_sensor_state.filtered_value >> 3);
+  0x00033164 vp44_FUN_00033164: 4 lines
+      -                 ((int)((uint)(((int)(uint)_flitered_and_linearized_oil_pressure_0_100 >> 7) *
+      -                              0x1afa) / 1000) >> 2);
+      +                 ((int)((uint)(((int)(uint)oil_pressure_sensor_state.filtered_value >> 7) * 0x1afa)
+      +                       / 1000) >> 2);
+  0x000337c4 cm550_FUN_000337c4: 2 lines
+      -  iVar1 = ((short)(_filtered_and_linearized_coolant_temperature_50_to_293 + -0x1900 >> 7) * 5 +
+      +  iVar1 = ((short)((short)coolant_temperature_sensor_state.filtered_value + -0x1900 >> 7) * 5 +
+  0x00033e58 cm550_FUN_00033e58: 4 lines
+      -  uVar2 = cm550_scaleByRatio((uint)_boost_pressure_0_100,0x1afa,0x1f400);
+      +  uVar2 = cm550_scaleByRatio((uint)boost_pressure_sensor_state.filtered_value,0x1afa,0x1f400);
+      -  iVar1 = ((short)(_filtered_and_linearized_intake_manifold_temperature_50_to_293 + -0x1900 >> 7) *
+      +  iVar1 = ((short)((short)intake_manifold_temperature_sensor_state.filtered_value + -0x1900 >> 7) *
+  0x000342f0 cm550_retarderDataBuilder: 2 lines
+      -  local_6 = (undefined2)((uint)_filtered_and_linearized_battery_voltage_0_40 * 5 >> 1);
+      +  local_6 = (undefined2)((uint)battery_voltage_sensor_state.filtered_value * 5 >> 1);
+  0x00034c36 vp44FaultRegisterBit2Monitor: 2 lines
+      -    if (_filtered_water_in_fuel_as_read_and_scaled_from_a_d_algorithm_2_0_3 == 1) {
+      +    if (water_in_fuel_sensor_state.filtered_value == 1) {
+  0x00034cc4 vp44_liftPumpFuelDeliveryController: 4 lines
+      -  _DAT_008036cc = _filtered_and_linearized_intake_manifold_temperature_50_to_293;
+      +  _DAT_008036cc = intake_manifold_temperature_sensor_state.filtered_value;
+      -  _DAT_008036da = _filtered_and_linearized_coolant_temperature_50_to_293;
+      +  _DAT_008036da = coolant_temperature_sensor_state.filtered_value;

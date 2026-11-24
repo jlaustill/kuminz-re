@@ -752,3 +752,18 @@ Hand work on the round 7 lead.
   `quote_enum_comments.py` (enums.csv parses quote-aware), `split_maps.py` / `add_own_only.py` /
   `refresh_other_csvs.py` (per-firmware refresh for an old name the two rename differently).
 - **Closing:** `apply_r88_closing.py`, `update_large_tar_r88.sh`, `verdicts.py`.
+
+## Round 89: the filter callers, sensor_config_t / sensor_state_t, the Calterm names (`session_folder/round89/`)
+
+- **Stage A:** `apply_r89a.py` (round 88's generated comments, three script comments, the dump provenance).
+- **Stage B:** `check_current.py` (the audit's current names against HEAD), `precheck_r89b.py`, `apply_r89b.py`,
+  `fix_extra_notes.py` (the audit's framing), `apply_r89b2.py` / `revert_r89b2.py` (the config-pointer rows that
+  failed).
+- **Stage C:** `calterm_stems_r89.py` (which e2m original carries J90350.00's block 1003 / 1004 layout, and each
+  channel's Calterm names), `precheck_r89c.py`, `apply_r89c.py` + `patch_apply_r89c.py` (second pass) +
+  `run_r89c.sh` (refresh with the Calterm-named old labels kept), `apply_r89c2.py` / `drop_bcf0_rows_r89.py`
+  (the walker rows), `apply_r89c3.py` (reserved_18 as a dword). The ApplyLocalVariables change is in the commit.
+- **Stage D:** `apply_r89d.py`.
+- **Round 90 leads:** `check_parameter_table_r89.py` / `parameter_table_r89.tsv` (the parameter ID table's stale
+  firmware_variable column).
+- **Closing:** `apply_r89_closing.py`, `update_large_tar_r89.sh`.
