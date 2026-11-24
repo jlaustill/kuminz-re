@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue Nov 24 13:11:59 MST 2026
+// Generated: Tue Nov 24 13:59:39 MST 2026
 
 
 //
@@ -6224,10 +6224,19 @@ void cm550_FUN_00010e06(void)
 
 
 //
-// Function: cm550_diagnosticMemoryAddressResolver @ 0x00010e16
+// Function: cm550_lookupParameterIdAddress @ 0x00010e16
 //
 
-int cm550_diagnosticMemoryAddressResolver(word param_id,dword *resolved_address)
+/* The parameter ID -> address lookup: the counterpart of CM848's cm848_lookupParameterIdAddress (a
+   hash over 6-byte [id][address] records in flash2). CM550 indexes parameter_id_table (0x35224) by
+   id range: index = id for 0x0000-0x002E / id - 0xFD1 for 0x1000-0x1478 / id + 0x84A8 (mod 0x10000)
+   for 0x8000-0x8265 (1806 entries); an id outside them or a 0 address returns 1. It reads
+   address_ram_refresh_disabled while ram_refresh_enable is RAM_REFRESH_DISABLED (development mode)
+   and address_ram_refresh_enabled otherwise - equal in all 1806 J90350.00 entries. The e2m block
+   ids are entries too (block 1003 -> 0x806ae2) so an e2m record's address is table[block] + its
+   offset. (was cm550_diagnosticMemoryAddressResolver; PR #53 round 90) */
+
+int cm550_lookupParameterIdAddress(word param_id,dword *resolved_address)
 
 {
   if ((param_id < 0x8000) || (0x8265 < param_id)) {
@@ -6244,10 +6253,10 @@ int cm550_diagnosticMemoryAddressResolver(word param_id,dword *resolved_address)
     param_id = param_id + 0x84a8;
   }
   if (ram_refresh_enable == RAM_REFRESH_DISABLED) {
-    *resolved_address = *(dword *)(&DAT_00035224 + (uint)param_id * 8);
+    *resolved_address = parameter_id_table[param_id].address_ram_refresh_disabled;
   }
   else {
-    *resolved_address = *(dword *)(&DAT_00035228 + (uint)param_id * 8);
+    *resolved_address = parameter_id_table[param_id].address_ram_refresh_enabled;
   }
   if (*resolved_address == 0) {
     return 1;
@@ -8781,7 +8790,7 @@ void cm550_FUN_00013dbe(void)
   sVar1 = 0;
   do {
     if (*(short *)(&DAT_00803d66 + sVar1) == 0) {
-      cm550_diagnosticMemoryAddressResolver(*(word *)(&DAT_00803d6a + sVar1),resolved_address);
+      cm550_lookupParameterIdAddress(*(word *)(&DAT_00803d6a + sVar1),resolved_address);
       *resolved_address = (uint)*(ushort *)(&DAT_00803d6c + sVar1) + *resolved_address;
     }
     sVar1 = sVar1 + 0x10;
@@ -8809,7 +8818,7 @@ void cm550_FUN_00013e12(void)
   resolved_address = (dword *)&DAT_00800508;
   sVar1 = 0;
   for (bVar2 = 0; bVar2 < _DAT_00803dc8; bVar2 = bVar2 + 1) {
-    cm550_diagnosticMemoryAddressResolver(*(word *)(&DAT_00803da6 + sVar1),resolved_address);
+    cm550_lookupParameterIdAddress(*(word *)(&DAT_00803da6 + sVar1),resolved_address);
     *resolved_address = (uint)*(ushort *)(&DAT_00803da8 + sVar1) + *resolved_address;
     sVar1 = sVar1 + 6;
     resolved_address = resolved_address + 1;
@@ -10961,7 +10970,7 @@ void cm550_multiPacketTransmitHandler(void)
     local_8 = (byte *)CONCAT31(local_8._0_3_,cVar3 + '\x04');
     multipacket_message_id = CONCAT11(*local_8,uVar1);
     local_8 = (byte *)CONCAT31(local_8._0_3_,cVar3 + '\x05');
-    cVar5 = cm550_diagnosticMemoryAddressResolver
+    cVar5 = cm550_lookupParameterIdAddress
                       (multipacket_message_id,&diagnostic_multipacket_data_pointer);
     if (cVar5 == '\0') {
       bVar8 = *local_8;
@@ -11148,7 +11157,7 @@ void cm550_multiPacketReceiveHandler(void)
     local_8 = (byte *)CONCAT31(local_8._0_3_,cVar8 + '\x06');
     multipacket_receive_bytes_remaining = CONCAT11(*local_8,uVar2);
     local_8 = (byte *)CONCAT31(local_8._0_3_,cVar8 + '\a');
-    cVar8 = cm550_diagnosticMemoryAddressResolver
+    cVar8 = cm550_lookupParameterIdAddress
                       (multipacket_message_id,&diagnostic_multipacket_data_pointer);
     if (cVar8 == '\0') {
       switch(multipacket_message_id) {
@@ -20256,7 +20265,7 @@ void cm550_diagnosticMemoryWriteHandler(word service_id)
       if (local_e._0_2_ == 0x15) {
         flag_indicating_tool_has_updated_scratch_pad_crc_0_false_1_tru = 1;
       }
-      cVar1 = cm550_diagnosticMemoryAddressResolver(local_e._0_2_,&local_e);
+      cVar1 = cm550_lookupParameterIdAddress(local_e._0_2_,&local_e);
       if (cVar1 != '\0') {
         cm550_diagnosticMessageQueueWrite(8);
         return;
@@ -20408,7 +20417,7 @@ void cm550_diagnosticMemoryReadHandler(word service_id)
         local_c = (byte *)CONCAT31(local_c._0_3_,(char)local_c + '\x01');
       }
       if ((cVar15 == '\x01') || (cVar15 == '\x03')) {
-        cVar7 = cm550_diagnosticMemoryAddressResolver(local_1c._0_2_,&local_1c);
+        cVar7 = cm550_lookupParameterIdAddress(local_1c._0_2_,&local_1c);
         if (cVar7 != '\0') {
           cm550_diagnosticMessageQueueWrite(8);
           return;
@@ -23292,7 +23301,7 @@ undefined4 cm550_canDiagnosticResponseSender(byte *param_1)
   uVar1 = *(undefined1 *)(*(int *)(param_1 + 6) + 1);
   uVar2 = *(undefined1 *)(*(int *)(param_1 + 6) + 2);
   local_20 = CONCAT11(uVar1,uVar2);
-  cVar4 = cm550_diagnosticMemoryAddressResolver(local_20,(dword *)&local_1e);
+  cVar4 = cm550_lookupParameterIdAddress(local_20,(dword *)&local_1e);
   if (cVar4 == '\0') {
     local_12 = CONCAT13(*param_1 & 0x1c,0xef0000);
     local_12 = CONCAT31(CONCAT21(local_12._0_2_,param_1[3]),param_1[2]);

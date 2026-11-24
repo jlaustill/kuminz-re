@@ -90,8 +90,8 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 0x000144bc,cm550_diagnosticCodeDebounceHandler,0,code_index,ushort,Diagnostic code index - the word at +4 (move.w (36;sp)) (was byte; PR #53 round 86)
 0x00014720,cm550_diagnosticCodeRegistrar,0,code_index,ushort,Diagnostic code index - the word at +4 (move.w (20;sp)) (was byte; PR #53 round 86)
-0x00010e16,cm550_diagnosticMemoryAddressResolver,0,param_id,ushort,Parameter ID to resolve address for - the word at +4 (move.w (8;sp))
-0x00010e16,cm550_diagnosticMemoryAddressResolver,1,resolved_address,uint*,Receives the parameter's address from the 8-byte record table at 0x35224 / 0x35228 (by ram_refresh_enable) - the long at +6 (movea.l (10;sp)); 6 callers pea it and 3 move.l (new; PR #53 round 86)
+0x00010e16,cm550_lookupParameterIdAddress,0,param_id,ushort,Parameter ID to resolve address for - the word at +4 (move.w (8;sp))
+0x00010e16,cm550_lookupParameterIdAddress,1,resolved_address,uint*,Receives the parameter's address from the 8-byte record table at 0x35224 / 0x35228 (by ram_refresh_enable) - the long at +6 (movea.l (10;sp)); 6 callers pea it and 3 move.l (new; PR #53 round 86)
 0x0000b6e8,cm550_diagnosticMessageQueueWrite,0,response_type,ushort,Type of diagnostic response (0 / 1 / a code) - the word at sp+4: the body loads it with move.w (8;a6) after link and all 39 callers push a word (32 move.w / 7 clr.w) (was byte; PR #53 round 86)
 0x0001ec3c,cm550_diagnosticMemoryWriteHandler,0,service_id,ushort,Diagnostic service ID - the word at +4 (move.w (8;a6)) (was byte; PR #53 round 86)
 0x0001edae,cm550_diagnosticMemoryReadHandler,0,service_id,ushort,Diagnostic service ID - the word at +4 (move.w (8;a6)) (was byte; PR #53 round 86)

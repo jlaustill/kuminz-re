@@ -17,6 +17,7 @@ extern byte security_key_byte_order[10];  // 0x0002fbce
 extern dword tpu_microcode_image[419];  // 0x00030c9c
 extern word tpu_microcode_entry_table[128];  // 0x00031328
 extern memory_region_t application_memory_region_table[5];  // 0x000345dc
+extern parameter_id_table_entry_t parameter_id_table[1806];  // 0x00035224
 extern undefined insite_parameter_schedule_table;  // 0x000612ee
 extern undefined rpm_rate_limit_countdown;  // 0x00800000
 extern undefined rpm_control_timer_1;  // 0x00800002

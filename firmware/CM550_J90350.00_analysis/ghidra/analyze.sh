@@ -62,10 +62,7 @@ cmd_hwregs() {
 
     run_script ApplyHardwareRegisters.java "$VARS_CSV"
 
-    print_success "Hardware register names applied"
-    echo ""
-    echo "Run '$0 export' to see changes like:"
-    echo "  DAT_00fffa27 -> REG_SIM_SWSR (Software Watchdog Service Register)"
+    print_success "Hardware register names applied (e.g. DAT_00fffa27 -> REG_SIM_SWSR, the software watchdog service register)"
 }
 
 # The ONE deterministic build: fresh binary -> apply EVERY CSV -> decompilation.

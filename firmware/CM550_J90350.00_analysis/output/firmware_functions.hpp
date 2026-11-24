@@ -107,7 +107,7 @@ void cm550_memoryPatchCountDecrement(void);  // @ 0x00010536
 uint vp44_rpmDerateCalculationController(void);  // @ 0x00010568
 ulonglong vp44_derateThresholdMonitorAndFaultController(void);  // @ 0x00010822
 void cm550_FUN_00010e06(void);  // @ 0x00010e06
-int cm550_diagnosticMemoryAddressResolver(word param_id,dword *resolved_address);  // @ 0x00010e16
+int cm550_lookupParameterIdAddress(word param_id,dword *resolved_address);  // @ 0x00010e16
 uint cm550_loadParameterBlock1FromFlash(void);  // @ 0x00010e80
 uint cm550_loadParameterBlock2FromFlash(void);  // @ 0x00010f32
 int cm550_saveParameterBlock1ToFlash(void);  // @ 0x00010fe0

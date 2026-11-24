@@ -1105,6 +1105,7 @@ typedef struct huffman_tree_t huffman_tree_t;
 typedef struct can_buffer_setup_t can_buffer_setup_t;
 typedef struct insite_parameter_schedule_entry_t insite_parameter_schedule_entry_t;
 typedef struct memory_region_t memory_region_t;
+typedef struct parameter_id_table_entry_t parameter_id_table_entry_t;
 
 struct j1939_msg_hdr_t {
     uint32_t can_id;  /* The CAN identifier: priority / PGN / source address (was j1939_header_t.id; CM848's type name; PR #53 round 88) */
@@ -1480,4 +1481,9 @@ struct memory_region_t {
     uint32_t end_address;  /* Last address of the region (inclusive) */
     MEMORY_REGION_TYPE region_type;  /* The type while the development mode flag (0x80de30) is 1 */
     MEMORY_REGION_TYPE development_mode_off_region_type;  /* The type while the development mode flag is not 1 (the registers become REFUSED) */
+};
+
+struct parameter_id_table_entry_t {
+    uint32_t address_ram_refresh_disabled;  /* +0: the parameter's address while ram_refresh_enable is RAM_REFRESH_DISABLED (development mode); 0 = no parameter */
+    uint32_t address_ram_refresh_enabled;  /* +4: the address otherwise; equal to +0 in all 1806 J90350.00 entries */
 };

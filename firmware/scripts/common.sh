@@ -616,7 +616,7 @@ cmd_deletions() {
     echo "Source: $del_csv"
     echo ""
     run_script ApplyFunctionDeletions.java "$del_csv"
-    print_success "Deletions applied — run 'import' (recovers freed globals) then 'export'."
+    print_success "Deletions applied — the build's next import stage recovers the freed globals."
 }
 
 cmd_listfuncs() {

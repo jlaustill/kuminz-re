@@ -479,3 +479,7 @@ memory_region_t,,start_address,dword,4,First address of the region,,verified
 memory_region_t,,end_address,dword,4,Last address of the region (inclusive),,verified
 memory_region_t,,region_type,MEMORY_REGION_TYPE,1,The type while the development mode flag (0x80de30) is 1,,verified
 memory_region_t,,development_mode_off_region_type,MEMORY_REGION_TYPE,1,The type while the development mode flag is not 1 (the registers become REFUSED),,verified
+
+# Parameter ID table entry (8 bytes; parameter_id_table at 0x35224, read by cm550_lookupParameterIdAddress) (PR #53 round 90)
+parameter_id_table_entry_t,,address_ram_refresh_disabled,dword,4,+0: the parameter's address while ram_refresh_enable is RAM_REFRESH_DISABLED (development mode); 0 = no parameter,,verified
+parameter_id_table_entry_t,,address_ram_refresh_enabled,dword,4,+4: the address otherwise; equal to +0 in all 1806 J90350.00 entries,,verified
