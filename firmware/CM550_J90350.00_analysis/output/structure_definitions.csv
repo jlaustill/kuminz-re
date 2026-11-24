@@ -547,7 +547,7 @@ j1708_multipacket_msg_t,,end_ptr,dword,4,End pointer at offset 88,,verified
 j1708_multipacket_msg_t,,reserved_92,byte,10,Reserved bytes 92-101,,verified
 j1708_multipacket_msg_t,,status_102,word,2,Status field at offset 102,,verified
 j1708_multipacket_msg_t,,index_104,word,2,Index field at offset 104,,verified
-j1708_multipacket_msg_t,,count_106,word,2,Count field at offset 106,,verified
+j1708_multipacket_msg_t,,development_mode,DEVELOPMENT_MODE_STATE,2,Development mode at 0x80de30 - e2m block 1328 Development_Mode by CM550's parameter ID table; set by enterDevelopmentMode / cleared by exitDevelopmentMode and forceExitDevelopmentMode; the 256-byte template overlays 13 e2m blocks so this field is a global really (was count_106 'Count field at offset 106'; PR #53 round 73),,verified
 j1708_multipacket_msg_t,,ctrl_ptr,dword,4,Control pointer at offset 108,,verified
 j1708_multipacket_msg_t,,reserved_112,byte,10,Reserved bytes 112-121,,verified
 j1708_multipacket_msg_t,,state_ptr,dword,4,State pointer at offset 122,,verified

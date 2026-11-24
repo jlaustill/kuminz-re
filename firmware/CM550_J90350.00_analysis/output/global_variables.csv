@@ -5671,7 +5671,7 @@ address,name,type,comment
 0x0080dc82,maximum_allowable_vehicle_speed_selected_as_the_rsg_refer_2_255_9961,undefined,
 0x0080dc8e,filtered_percent_load_output_of_gear_down_0_100,undefined,
 0x0080dc90,run_location,RUN_LOCATION,Where the code runs (a word - cmpi.w #0xeaea / move.w #0xeeee; written 0xeeee / 0xeaea only): RUN_LOCATION_DEVELOPMENT in development mode / RUN_LOCATION_NORMAL at boot and power-down and on leaving it - CM848's run_location (e2m 0010 RUN_LOC) by the twin functions (was water_in_fuel_state_code; PR #53 round 73)
-0x0080dc92,diagnostic_session_state,undefined,
+0x0080dc92,not_safe_to_program_flag,word,e2m block 000D SAFE2PRG (CM550's parameter ID table) - CM848's not_safe_to_program_flag: 1 = not safe to program - the twins return 7 on it; CM550 also writes 2 (cm550_fuel_limit_arbitrator: stopped with a switch bit set) which every '== 1' test treats as safe (cmpi.w / move.w / clr.w) (was diagnostic_session_state; PR #53 round 73)
 0x0080dc94,j1708_transmit_buffer_0_2_32,undefined,
 0x0080dc98,j1708_transmit_buffer_2_32_dc98,undefined,
 0x0080dc9b,j1708_transmit_buffer_index_low,undefined,
@@ -5729,7 +5729,7 @@ address,name,type,comment
 0x0080de2c,number_of_entries_in_the_scratch_pad_0_10,,
 0x0080de2d,j1708_transmit_buffer_2_32_ddc6.status_102+1,,
 0x0080de2e,j1708_transmit_buffer_2_32_ddc6.index_104,,
-0x0080de30,calibration_write_pending_flag,,
+0x0080de30,development_mode,,e2m block 1328 Development_Mode (CM550's parameter ID table) - CM848's development_mode; renders as the j1708_transmit_buffer_2_32_ddc6.development_mode field while that struct instance covers it (was calibration_write_pending_flag; PR #53 round 73)
 0x0080de32,buffer_used_to_store_secure_write_data_until_the_copy_0c000h_0f7efh,,
 0x0080de36,j1708_transmit_buffer_2_32_ddc6.reserved_112[0],,
 0x0080de38,flag_indicating_tool_has_updated_scratch_pad_crc_0_false_1_tru,,

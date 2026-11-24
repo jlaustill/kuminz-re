@@ -921,7 +921,7 @@ typedef enum {
 typedef enum {
     INVALID_LENGTH = 0x02,  /* diagnosticServiceSecurityValidator - message length mismatch */
     ERROR_SECURITY_FAILED = 0x03,  /* diagnosticServiceSecurityValidator - systemSecurityCheck returned non-zero */
-    CONDITION_NOT_MET = 0x07,  /* writeJ1939DiagnosticMemory - the 0x80dc92 state is 1 (CM848: not safe to program) while ram_refresh_enable is on (was read as a system_logging_state check; PR #53 round 73) */
+    CONDITION_NOT_MET = 0x07,  /* writeJ1939DiagnosticMemory - not_safe_to_program_flag is 1 while ram_refresh_enable is on (was read as a system_logging_state check; PR #53 round 73) */
     ADDR_LOOKUP_FAIL = 0x08,  /* j1939MemoryDataCopyResolver - initial address lookup at 0xeaf0 failed */
     ADDR_RANGE_INVALID = 0x09,  /* lookupApplicationMemoryRegionType @ 0x3460e (MEMORY_REGION_TYPE_UNMAPPED) - the range is in no application_memory_region_table entry (J90280.05: addressRangeValidator @ 0x2b544; PR #53 round 72) */
     ADDR_ACCESS_DENIED = 0x0A,  /* lookupApplicationMemoryRegionType @ 0x3460e (MEMORY_REGION_TYPE_REFUSED) - the registers 0xffc800-0xffffff while the development mode flag is not 1 (J90280.05: addressRangeValidator @ 0x2b544; PR #53 round 72) */
@@ -936,7 +936,7 @@ typedef enum {
     MEMORY_OPERATION_SUCCESS = 0x00,  /* Memory operation completed successfully (masked from memcpy return) */
     MEMORY_OPERATION_INVALID_LENGTH = 0x02,  /* Message length mismatch - expected calculated_msg_length or +10 for auth */
     MEMORY_OPERATION_AUTH_FAILED = 0x03,  /* validateSecurityKey returned non-zero (auth payload invalid) */
-    CALIBRATION_WRITE_BLOCKED = 0x07,  /* EEPROM write refused - the 0x80dc92 state is 1 (CM848: not safe to program) while ram_refresh_enable is on (J90280.05 read them as calibration_write_protect_state / calibration_bank_selector; PR #53 round 73) */
+    CALIBRATION_WRITE_BLOCKED = 0x07,  /* EEPROM write refused - not_safe_to_program_flag is 1 while ram_refresh_enable is on (J90280.05 read them as calibration_write_protect_state / calibration_bank_selector; PR #53 round 73) */
     MEMORY_OPERATION_WRITE_DENIED = 0x0A,  /* Region type 4 (ROM/Flash) - write operations not permitted */
     MEMORY_OPERATION_BUFFER_WRITE_FAIL = 0x0B,  /* circularBufferWrite returned error during EEPROM logging */
     MEMORY_OPERATION_AUTH_REQUIRED_MISSING = 0x1A  /* EEPROM write (region type 5) requires auth but has_auth_payload=false */
@@ -1047,6 +1047,11 @@ typedef enum {
     RUN_LOCATION_DEVELOPMENT = 0xeaea,  /* Development - set by enterDevelopmentMode (CM848: 0xea) */
     RUN_LOCATION_NORMAL = 0xeeee  /* Normal - set at boot / power-down and on leaving development mode (CM848: 0xee) */
 } RUN_LOCATION;
+
+typedef enum {
+    DEVELOPMENT_MODE_OFF = 0,  /* Normal operation - cleared by exitDevelopmentMode / forceExitDevelopmentMode and the boot code */
+    DEVELOPMENT_MODE_ON = 1  /* Development mode - set by enterDevelopmentMode (J1708 command 3 subcommand 0x40 after the security key) */
+} DEVELOPMENT_MODE_STATE;
 
 /* ---- Structures ---- */
 
@@ -1626,7 +1631,7 @@ struct j1708_multipacket_msg_t {
     uint8_t reserved_92[10];  /* Reserved bytes 92-101 */
     uint16_t status_102;  /* Status field at offset 102 */
     uint16_t index_104;  /* Index field at offset 104 */
-    uint16_t count_106;  /* Count field at offset 106 */
+    DEVELOPMENT_MODE_STATE development_mode;  /* Development mode at 0x80de30 - e2m block 1328 Development_Mode by CM550's parameter ID table; set by enterDevelopmentMode / cleared by exitDevelopmentMode and forceExitDevelopmentMode; the 256-byte template overlays 13 e2m blocks so this field is a global really (was count_106 'Count field at offset 106'; PR #53 round 73) */
     uint32_t ctrl_ptr;  /* Control pointer at offset 108 */
     uint8_t reserved_112[10];  /* Reserved bytes 112-121 */
     uint32_t state_ptr;  /* State pointer at offset 122 */

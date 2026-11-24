@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Mon Nov 23 17:11:09 MST 2026
+// Generated: Mon Nov 23 17:20:41 MST 2026
 
 
 //
@@ -6720,14 +6720,12 @@ void cm550_firmwareDataCopyToWorkingMemory(void)
 // Function: cm550_FUN_0001183e @ 0x0001183e
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined1 cm550_FUN_0001183e(void)
 
 {
   undefined1 uVar1;
   
-  if (_diagnostic_session_state == 2) {
+  if (not_safe_to_program_flag == 2) {
     switch(j1708_transmit_buffer_2_32_ddc6.param_180) {
     case 0:
       j1708_transmit_buffer_2_32_ddc6.param_180 = 1;
@@ -6755,16 +6753,16 @@ undefined1 cm550_FUN_0001183e(void)
 // Function: exitDevelopmentMode @ 0x0001188c
 //
 
-/* Leaves development mode: only while the development mode flag at 0x80de30 (still rendered as
-   j1708_transmit_buffer_2_32_ddc6.count_106) is 1 - clears it / ram_refresh_enable on /
-   run_location RUN_LOCATION_NORMAL / result 0; else 4. The same function as CM848 0x21624 (shared
-   name; was cm550_waterInFuelDetectionStateInit; PR #53 round 73). */
+/* Leaves development mode: only while development_mode (0x80de30 - rendered as the
+   j1708_transmit_buffer_2_32_ddc6 field) is 1 - clears it / ram_refresh_enable on / run_location
+   RUN_LOCATION_NORMAL / result 0; else 4. The same function as CM848 0x21624 (shared name; was
+   cm550_waterInFuelDetectionStateInit; PR #53 round 73). */
 
 byte exitDevelopmentMode(void)
 
 {
-  if (j1708_transmit_buffer_2_32_ddc6.count_106 == 1) {
-    j1708_transmit_buffer_2_32_ddc6.count_106 = 0;
+  if (j1708_transmit_buffer_2_32_ddc6.development_mode == DEVELOPMENT_MODE_ON) {
+    j1708_transmit_buffer_2_32_ddc6.development_mode = DEVELOPMENT_MODE_OFF;
     ram_refresh_enable = RAM_REFRESH_ENABLED;
     run_location = RUN_LOCATION_NORMAL;
     return 0;
@@ -6779,16 +6777,16 @@ byte exitDevelopmentMode(void)
 //
 
 /* Enters development mode (J1708 command 3 subcommand 0x40 after the security key):
-   ram_refresh_enable off / the development mode flag at 0x80de30 (still rendered as
-   j1708_transmit_buffer_2_32_ddc6.count_106) set / run_location RUN_LOCATION_DEVELOPMENT; result 0.
-   The same function as CM848 0x21668 (shared name; was cm550_waterInFuelFaultClear; PR #53 round
-   73). */
+   ram_refresh_enable off / development_mode (0x80de30 - rendered as the
+   j1708_transmit_buffer_2_32_ddc6 field) set / run_location RUN_LOCATION_DEVELOPMENT; result 0. The
+   same function as CM848 0x21668 (shared name; was cm550_waterInFuelFaultClear; PR #53 round 73).
+    */
 
 byte enterDevelopmentMode(void)
 
 {
   ram_refresh_enable = RAM_REFRESH_DISABLED;
-  j1708_transmit_buffer_2_32_ddc6.count_106 = 1;
+  j1708_transmit_buffer_2_32_ddc6.development_mode = DEVELOPMENT_MODE_ON;
   run_location = RUN_LOCATION_DEVELOPMENT;
   return 0;
 }
@@ -6799,24 +6797,22 @@ byte enterDevelopmentMode(void)
 // Function: forceExitDevelopmentMode @ 0x000118cc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Forces an exit from development mode (J1708 command 3 subcommand 0x41 after the security key): 7
-   while the 0x80dc92 state is 1 (CM848: not safe to program); else ram_refresh_enable on and - when
-   run_location is RUN_LOCATION_DEVELOPMENT - run_location RUN_LOCATION_NORMAL and the development
-   mode flag at 0x80de30 (still rendered as j1708_transmit_buffer_2_32_ddc6.count_106) cleared;
-   result 0. The same function as CM848 0x21694 (shared name; was cm550_FUN_000118cc; PR #53 round
-   73). */
+   while not_safe_to_program_flag is 1; else ram_refresh_enable on and - when run_location is
+   RUN_LOCATION_DEVELOPMENT - run_location RUN_LOCATION_NORMAL and development_mode (0x80de30 -
+   rendered as the j1708_transmit_buffer_2_32_ddc6 field) cleared; result 0. The same function as
+   CM848 0x21694 (shared name; was cm550_FUN_000118cc; PR #53 round 73). */
 
 byte forceExitDevelopmentMode(void)
 
 {
-  if (_diagnostic_session_state == 1) {
+  if (not_safe_to_program_flag == 1) {
     return 7;
   }
   ram_refresh_enable = RAM_REFRESH_ENABLED;
   if (run_location == RUN_LOCATION_DEVELOPMENT) {
     run_location = RUN_LOCATION_NORMAL;
-    j1708_transmit_buffer_2_32_ddc6.count_106 = 0;
+    j1708_transmit_buffer_2_32_ddc6.development_mode = DEVELOPMENT_MODE_OFF;
   }
   return 0;
 }
@@ -6952,10 +6948,10 @@ undefined1 cm550_FUN_00011a68(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Writes the EEPROM mirror 0x803b0a-0x804155 back to the EEPROM: 7 while the 0x80dc92 state is 1
-   (CM848: not safe to program); else 16-byte chunks through cm550_circularBufferWrite (the EEPROM
-   byte write queue) with up to 16000 waits for the queue each; 0. The same function as CM848
-   0x21918 (shared name; was cm550_FUN_00011a74; PR #53 round 73). */
+/* Writes the EEPROM mirror 0x803b0a-0x804155 back to the EEPROM: 7 while not_safe_to_program_flag
+   is 1; else 16-byte chunks through cm550_circularBufferWrite (the EEPROM byte write queue) with up
+   to 16000 waits for the queue each; 0. The same function as CM848 0x21918 (shared name; was
+   cm550_FUN_00011a74; PR #53 round 73). */
 
 byte commitEepromMirrorToEeprom(void)
 
@@ -6965,7 +6961,7 @@ byte commitEepromMirrorToEeprom(void)
   ushort uVar3;
   undefined *puVar4;
   
-  if (_diagnostic_session_state == 1) {
+  if (not_safe_to_program_flag == 1) {
     return 7;
   }
   uVar3 = 0;
@@ -9377,7 +9373,7 @@ void cm550_FUN_00014812(void)
 {
   byte bVar1;
   
-  if (_diagnostic_session_state == 2) {
+  if (not_safe_to_program_flag == 2) {
     for (bVar1 = 1; bVar1 <= DGIEFUBF; bVar1 = bVar1 + 1) {
       cm550_diagnosticTableEntryClear();
     }
@@ -11856,14 +11852,14 @@ uint cm550_fuel_limit_arbitrator(void)
   if (_smoke_limiter_output_value == 1) {
     uVar1 = value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1;
     if ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) == 0) {
-      _diagnostic_session_state = 0;
+      not_safe_to_program_flag = 0;
     }
     else {
-      _diagnostic_session_state = 2;
+      not_safe_to_program_flag = 2;
     }
   }
   else {
-    _diagnostic_session_state = 1;
+    not_safe_to_program_flag = 1;
   }
   if (_current_engine_rpm_filtered < 0x800) {
     _governor_rpm_target_adjusted =
@@ -22621,15 +22617,14 @@ ushort cm550_FUN_0002142c(void)
 // Function: writeJ1939DiagnosticMemory @ 0x0002148a
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Writes memory for a PGN 61184 write request (services 0x4b / 0x4d): a length cap of 1764 / an
    optional 10-byte key after the data / the region from lookupApplicationMemoryRegionType - 0
    copied / 3 copied after validateSecurityKey (3 when the key is missing or refused) / 4 refused
-   (10) / 5 EEPROM: 7 while EEPROM writes are blocked then the key (0x1a missing / 3 refused) then
-   cm550_circularBufferWrite (0x0b when full) and the mirror copy / the other codes passed back. The
-   same function as CM848 0x50af58 (shared name - CM848 returns 0x1a for a type 3 write without the
-   key / refuses (10) type 3 writes into its calibration RAM while RAM refresh is on / has Bank 2;
-   was cm550_memoryOperationDispatcher; PR #53 round 72). */
+   (10) / 5 EEPROM: 7 while not safe to program with RAM refresh on then the key (0x1a missing / 3
+   refused) then cm550_circularBufferWrite (0x0b when full) and the mirror copy / the other codes
+   passed back. The same function as CM848 0x50af58 (shared name - CM848 returns 0x1a for a type 3
+   write without the key / refuses (10) type 3 writes into its calibration RAM while RAM refresh is
+   on / has Bank 2; was cm550_memoryOperationDispatcher; PR #53 round 72). */
 
 byte writeJ1939DiagnosticMemory(dword request,dword address,dword length)
 
@@ -22673,7 +22668,7 @@ byte writeJ1939DiagnosticMemory(dword request,dword address,dword length)
   case MEMORY_REGION_TYPE_MAIN_FLASH:
     return 10;
   case MEMORY_REGION_TYPE_EEPROM:
-    if ((_diagnostic_session_state == 1) && (ram_refresh_enable != RAM_REFRESH_DISABLED)) {
+    if ((not_safe_to_program_flag == 1) && (ram_refresh_enable != RAM_REFRESH_DISABLED)) {
       return 7;
     }
     if (calibration_download_security_key_cal != 0xff) {
@@ -29192,7 +29187,7 @@ void vp44_FUN_00027f9c(void)
   DAT_00fffa27 = 0xaa;
   DAT_00ffd00f = 0x55;
   DAT_00ffd00f = 0xaa;
-  j1708_transmit_buffer_2_32_ddc6.count_106 = 0;
+  j1708_transmit_buffer_2_32_ddc6.development_mode = DEVELOPMENT_MODE_OFF;
   ram_refresh_enable = RAM_REFRESH_ENABLED;
   run_location = RUN_LOCATION_NORMAL;
   uVar12 = (ushort)(byte)(in_XF << 4 | 8);
@@ -31683,7 +31678,7 @@ uint cm550_memoryPatchingSystem(void)
   if (j1708_transmit_buffer_2_32_ddc6.status_102 == 0) {
     return in_D0 & 0xffffff00;
   }
-  if ((_diagnostic_session_state == 1) && (ram_refresh_enable != RAM_REFRESH_DISABLED)) {
+  if ((not_safe_to_program_flag == 1) && (ram_refresh_enable != RAM_REFRESH_DISABLED)) {
     puVar12 = (uint *)(&scratch_pad_directory_table +
                       (short)(((j1708_transmit_buffer_2_32_ddc6.status_102 & 0xff) * 2 +
                               (j1708_transmit_buffer_2_32_ddc6.status_102 & 0xff)) * 2));
@@ -31702,7 +31697,7 @@ uint cm550_memoryPatchingSystem(void)
       }
     }
   }
-  if ((j1708_transmit_buffer_2_32_ddc6.count_106 == 0) &&
+  if ((j1708_transmit_buffer_2_32_ddc6.development_mode == DEVELOPMENT_MODE_OFF) &&
      ((j1708_transmit_buffer_2_32_ddc6.reserved_112._2_2_ == 0 ||
       (sVar6 = cm550_memoryPatchCrcCalculate(),
       sVar6 != j1708_transmit_buffer_2_32_ddc6.reserved_112._0_2_)))) {
@@ -31726,7 +31721,7 @@ uint cm550_memoryPatchingSystem(void)
     if (puVar10 < (undefined1 *)0x1000000) {
       for (bVar8 = 0; bVar8 < bVar3; bVar8 = bVar8 + 1) {
         if ((((undefined1 *)0x806543 < puVar10) && (puVar10 < (undefined1 *)0x806547)) &&
-           (j1708_transmit_buffer_2_32_ddc6.count_106 == 0)) {
+           (j1708_transmit_buffer_2_32_ddc6.development_mode == DEVELOPMENT_MODE_OFF)) {
           _calibration_bank_copy_valid = 0;
         }
         uVar1 = *_scratch_pad_write_pointer;
@@ -37951,7 +37946,7 @@ MEMORY_REGION_TYPE lookupApplicationMemoryRegionType(dword range_start,dword ran
       return MEMORY_REGION_TYPE_UNMAPPED;
     }
   }
-  if (j1708_transmit_buffer_2_32_ddc6.count_106 == 1) {
+  if (j1708_transmit_buffer_2_32_ddc6.development_mode == DEVELOPMENT_MODE_ON) {
     return pmVar3->region_type;
   }
   return pmVar3->development_mode_off_region_type;

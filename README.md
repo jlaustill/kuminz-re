@@ -150,7 +150,7 @@ The following diagram shows the complete authentication process for writing to s
 | 0x00   | SUCCESS                | Write completed                |
 | 0x02   | INVALID_LENGTH         | Message length wrong           |
 | 0x03   | AUTH_FAILED            | Security check failed          |
-| 0x07   | NOT_SAFE               | EEPROM write refused: not safe to program (the 0x80dc92 state is 1) while RAM refresh is on - CM848's J1939_DIAGNOSTIC_RESULT_NOT_SAFE |
+| 0x07   | NOT_SAFE               | EEPROM write refused: not safe to program (`not_safe_to_program_flag` is 1) while RAM refresh is on - CM848's J1939_DIAGNOSTIC_RESULT_NOT_SAFE |
 | 0x0A   | WRITE_DENIED           | ROM region - blocked           |
 | 0x1A   | AUTH_REQUIRED_MISSING  | EEPROM write without the key (a type 3 write without it returns 0x03 here; CM848 returns 0x1A for both - PR #53 round 73) |
 

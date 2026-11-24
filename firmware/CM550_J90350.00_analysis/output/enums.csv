@@ -681,7 +681,7 @@ J1939_DIAGNOSTIC_SERVICE,0x4D,SERVICE_4D,Service 4D - dispatch @ 0x00021826 - UN
 # Error code flows: handler → diagnosticMultiPacketResponseBuilder → [0x0D][error_code][service_id]...
 DIAG_ERROR_SOURCE,0x02,INVALID_LENGTH,diagnosticServiceSecurityValidator - message length mismatch,1
 DIAG_ERROR_SOURCE,0x03,ERROR_SECURITY_FAILED,diagnosticServiceSecurityValidator - systemSecurityCheck returned non-zero,1
-DIAG_ERROR_SOURCE,0x07,CONDITION_NOT_MET,writeJ1939DiagnosticMemory - the 0x80dc92 state is 1 (CM848: not safe to program) while ram_refresh_enable is on (was read as a system_logging_state check; PR #53 round 73),1
+DIAG_ERROR_SOURCE,0x07,CONDITION_NOT_MET,writeJ1939DiagnosticMemory - not_safe_to_program_flag is 1 while ram_refresh_enable is on (was read as a system_logging_state check; PR #53 round 73),1
 DIAG_ERROR_SOURCE,0x08,ADDR_LOOKUP_FAIL,j1939MemoryDataCopyResolver - initial address lookup at 0xeaf0 failed,1
 DIAG_ERROR_SOURCE,0x09,ADDR_RANGE_INVALID,lookupApplicationMemoryRegionType @ 0x3460e (MEMORY_REGION_TYPE_UNMAPPED) - the range is in no application_memory_region_table entry (J90280.05: addressRangeValidator @ 0x2b544; PR #53 round 72),1
 DIAG_ERROR_SOURCE,0x0A,ADDR_ACCESS_DENIED,lookupApplicationMemoryRegionType @ 0x3460e (MEMORY_REGION_TYPE_REFUSED) - the registers 0xffc800-0xffffff while the development mode flag is not 1 (J90280.05: addressRangeValidator @ 0x2b544; PR #53 round 72),1
@@ -698,7 +698,7 @@ DIAG_ERROR_SOURCE,0x1A,AUTH_REQUIRED_MISSING,writeJ1939DiagnosticMemory - EEPROM
 MEMORY_OP_RESULT,0x00,MEMORY_OPERATION_SUCCESS,Memory operation completed successfully (masked from memcpy return),1
 MEMORY_OP_RESULT,0x02,MEMORY_OPERATION_INVALID_LENGTH,Message length mismatch - expected calculated_msg_length or +10 for auth,1
 MEMORY_OP_RESULT,0x03,MEMORY_OPERATION_AUTH_FAILED,validateSecurityKey returned non-zero (auth payload invalid),1
-MEMORY_OP_RESULT,0x07,CALIBRATION_WRITE_BLOCKED,EEPROM write refused - the 0x80dc92 state is 1 (CM848: not safe to program) while ram_refresh_enable is on (J90280.05 read them as calibration_write_protect_state / calibration_bank_selector; PR #53 round 73),1
+MEMORY_OP_RESULT,0x07,CALIBRATION_WRITE_BLOCKED,EEPROM write refused - not_safe_to_program_flag is 1 while ram_refresh_enable is on (J90280.05 read them as calibration_write_protect_state / calibration_bank_selector; PR #53 round 73),1
 MEMORY_OP_RESULT,0x0A,MEMORY_OPERATION_WRITE_DENIED,Region type 4 (ROM/Flash) - write operations not permitted,1
 MEMORY_OP_RESULT,0x0B,MEMORY_OPERATION_BUFFER_WRITE_FAIL,circularBufferWrite returned error during EEPROM logging,1
 MEMORY_OP_RESULT,0x1A,MEMORY_OPERATION_AUTH_REQUIRED_MISSING,EEPROM write (region type 5) requires auth but has_auth_payload=false,1
@@ -750,7 +750,7 @@ DIAG_SERVICE_ID,0x4C,EXTENDED_4C,extendedDiagnosticService4C,1
 DIAG_SERVICE_ID,0x4F,SERVICE_79_EXTENDED,extendedDiagnosticService4F,1
 DIAG_SERVICE_ID,0x51,SERVICE_81_EXTENDED,extendedDiagnosticService51,1
 # Service 0x03 Subfunction Codes (Secured Commands - diagnosticCommandDispatcher switch @ 0x125a6)
-# IMPORTANT: Commands 0x40-0x41 control CALIBRATION BANK SELECTION (factory vs active tuning)
+# IMPORTANT: Commands 0x40-0x41 control CALIBRATION BANK SELECTION (factory vs active tuning) [PR #53 round 73: 0x80dc6c is ram_refresh_enable - e2m block 10C7 RAM_Refresh_Enable in CM550's parameter ID table - and 0x40 / 0x41 are enterDevelopmentMode / forceExitDevelopmentMode (CM848's twins); the 'bank' reading is J90280.05's]
 # calibration_bank_selector @ 0x0080dc6c: 0=factory bank (read-only OEM values) 1=active bank (tunable values)
 DIAG_SERVICE_3_CMD,0x40,SERVICE_3_SWITCH_TO_FACTORY_BANK,switchToFactoryCalibrationBank - select factory calibration bank (calibration_bank_selector=0),1
 DIAG_SERVICE_3_CMD,0x41,SERVICE_3_FORCE_ACTIVE_BANK,forceActiveCalibrationBank - force active calibration bank if write protect allows,1
@@ -813,7 +813,7 @@ INSITE_CMD,0xF3,INSITE_COMMAND_VERSION_INFO,insiteVersionInfoBuilder - response 
 # Standard: [CMD][LEN][DATA...]
 # Multi-frame: Uses insiteMultiFrameResponseBuilder for responses > 0x14 bytes
 # -----------------------------------------------------------------------------
-# Calibration Bank System - Factory vs Active Tuning
+# Calibration Bank System - Factory vs Active Tuning [PR #53 round 73: 0x80dc6c is ram_refresh_enable - e2m block 10C7 RAM_Refresh_Enable in CM550's parameter ID table - and 0x40 / 0x41 are enterDevelopmentMode / forceExitDevelopmentMode (CM848's twins); the 'bank' reading is J90280.05's]
 # -----------------------------------------------------------------------------
 # The ECU maintains dual calibration addresses in the parameter lookup table at 0x35224
 # Each 8-byte entry contains: [4 bytes factory addr][4 bytes active addr]
@@ -834,7 +834,7 @@ CALIBRATION_STATE_SIGNATURE,0xEEEE,ACTIVE_BANK_SELECTED,Active calibration bank 
 CALIBRATION_STATE_SIGNATURE,0xEAEA,FACTORY_BANK_SELECTED,Factory calibration bank is selected,2
 CALIBRATION_STATE_SIGNATURE,0xEAEB,TRANSITION_PENDING,Transition to active bank pending,2
 CALIBRATION_STATE_SIGNATURE,0xEEEF,SYNC_COMPLETE,RAM to flash sync complete,2
-# Calibration Write Protect State - calibration_write_protect_state @ 0x0080dc92
+# Calibration Write Protect State - calibration_write_protect_state @ 0x0080dc92 [PR #53 round 73: that is not_safe_to_program_flag - e2m block 000D SAFE2PRG; 1 blocks the EEPROM writes and the mirror commit]
 # Controls EEPROM write protection based on calibration bank state
 CALIBRATION_WRITE_PROTECT,0,WRITES_ALLOWED,EEPROM writes allowed - no restrictions,1
 CALIBRATION_WRITE_PROTECT,1,WRITES_BLOCKED_IF_ACTIVE,EEPROM writes blocked when active bank selected,1
@@ -844,3 +844,6 @@ RAM_REFRESH_STATE,0,RAM_REFRESH_DISABLED,RAM refresh off (development mode - set
 RAM_REFRESH_STATE,1,RAM_REFRESH_ENABLED,RAM refresh on - set by exitDevelopmentMode / forceExitDevelopmentMode and the boot code,2
 RUN_LOCATION,0xeaea,RUN_LOCATION_DEVELOPMENT,Development - set by enterDevelopmentMode (CM848: 0xea),2
 RUN_LOCATION,0xeeee,RUN_LOCATION_NORMAL,Normal - set at boot / power-down and on leaving development mode (CM848: 0xee),2
+# DEVELOPMENT_MODE_STATE - CM848's enum for development_mode (0x80de30 - a word here as in CM848; PR #53 round 73)
+DEVELOPMENT_MODE_STATE,0,DEVELOPMENT_MODE_OFF,Normal operation - cleared by exitDevelopmentMode / forceExitDevelopmentMode and the boot code,2
+DEVELOPMENT_MODE_STATE,1,DEVELOPMENT_MODE_ON,Development mode - set by enterDevelopmentMode (J1708 command 3 subcommand 0x40 after the security key),2

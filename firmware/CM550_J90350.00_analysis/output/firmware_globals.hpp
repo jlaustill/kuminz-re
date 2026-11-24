@@ -5598,7 +5598,7 @@ extern undefined constant_used_in_sampled_road_speed_calculation_51428_16000000;
 extern undefined maximum_allowable_vehicle_speed_selected_as_the_rsg_refer_2_255_9961;  // 0x0080dc82
 extern undefined filtered_percent_load_output_of_gear_down_0_100;  // 0x0080dc8e
 extern RUN_LOCATION run_location;  // 0x0080dc90
-extern undefined diagnostic_session_state;  // 0x0080dc92
+extern word not_safe_to_program_flag;  // 0x0080dc92
 extern undefined j1708_transmit_buffer_0_2_32;  // 0x0080dc94
 extern undefined j1708_transmit_buffer_2_32_dc98;  // 0x0080dc98
 extern undefined j1708_transmit_buffer_index_low;  // 0x0080dc9b
@@ -5643,7 +5643,7 @@ extern undefined insite_multiframe_frame_bytes_remaining;  // 0x0080de24
 extern undefined insite_dtc_command_action_byte;  // 0x0080de26
 extern undefined address_of_scratch_pad_directory_0c000h_0f7efh;  // 0x0080de28
 extern undefined number_of_entries_in_the_scratch_pad_0_10;  // 0x0080de2c
-extern undefined calibration_write_pending_flag;  // 0x0080de30
+extern undefined development_mode;  // 0x0080de30
 extern undefined buffer_used_to_store_secure_write_data_until_the_copy_0c000h_0f7efh;  // 0x0080de32
 extern undefined flag_indicating_tool_has_updated_scratch_pad_crc_0_false_1_tru;  // 0x0080de38
 extern undefined length_in_bytes_of_scratch_pad_buffer_0_200;  // 0x0080de3a
