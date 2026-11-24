@@ -711,3 +711,13 @@ Hand work on the round 7 lead.
 - **Closing:** `apply_r85_closing.py`, `update_large_tar_r85.sh`; the fix-up `apply_r85c_docs.py` (the 14 / 9 split, the
   class Z leads, the J1708 dispatcher's old name in comments, CLAUDE.md's relocation map section) with
   `rom_hardware_operands.py` (each watchdog-only function's ROM bytes scanned for other 0x00FFxxxx operands).
+
+## Round 86: CM550's stack parameters in 2-byte slots (`session_folder/round86/`)
+
+- **Stage A:** `apply_r86a_rows.py` (the design's wave 0 / 1 rows; `fix_design/` holds its inputs),
+  `compare_rows.py`, `check_r86a.py` (the design's T3 checks), `caller_census.py` (call-site artifacts before /
+  after), `placed_vs_survey.py` (each placed prototype against the survey's reads and pushes),
+  `classify_changes.py`, `remaining_and_hazard.py`, `list_remaining.py`.
+- **Stage B:** `apply_r86b_docs.py`.
+- **Stage C:** `wave2_summary.py`, `apply_r86c_rows.py`, `applied_r86c.csv`.
+- **Closing:** `apply_r86_closing.py`, `update_large_tar_r86.sh`.

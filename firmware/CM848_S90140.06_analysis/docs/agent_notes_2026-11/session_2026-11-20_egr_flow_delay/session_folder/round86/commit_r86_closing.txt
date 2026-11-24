@@ -1,0 +1,20 @@
+cm550: round 86 closing - task 046, the session archive, the PR body
+
+- work/tasks/046 "Done, round 86" records the three stages and their proofs:
+  - stage A (11298ed3): custom parameter storage from stack_parameter_layout.csv, the design's wave 0 / 1 rows;
+  - stage B (d1b75a77): the two firmware/CLAUDE.md corrections;
+  - stage C (4b6911cb): the wave 2 workflow's 60 more prototypes.
+  Over the round, param_N pieces fell 201 -> 0 and in_stack_ tokens 139 -> 2.
+- New leads:
+  - the editing-firmware-csvs skill's return-only rule;
+  - the stale-high-byte callers;
+  - the EMA filter records at 0x800066 / 0x80006e;
+  - the undefined8 returns;
+  - three wave 2 naming leads.
+- The PR body: the Round 86 bullets, "Beyond CM848" for rounds 72-86, and the test plan lines.
+- work/todo.md, the session README, session_folder/round86/:
+  - fix_design/: the round 85 design's proposed rows, ranked candidates and scripts (not Ghidra's source);
+  - wave2_result.json: the workflow's proposals and verdicts.
+- The large-files tarball (the round's verify / build logs), pr_body.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

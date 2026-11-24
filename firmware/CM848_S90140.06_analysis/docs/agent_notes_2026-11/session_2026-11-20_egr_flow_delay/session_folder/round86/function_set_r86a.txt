@@ -1,0 +1,1365 @@
+removed 0: 
+added 0: 
+changed 100
+  0x00003792 cm550_huffmanDecompress: 3 lines
+      -  ushort in_stack_00000008;
+      -    uVar2 = in_stack_00000008;
+      +    uVar2 = start_node;
+  0x00003836 cm550_huffmanDecompressMain: 4 lines
+      -  undefined4 unaff_A2;
+      -  start_node = (word)((uint)unaff_A2 >> 0x10);
+      -  cm550_huffmanTreeBuilder(tree_nodes);
+      +  start_node = cm550_huffmanTreeBuilder(tree_nodes);
+  0x00003870 cm550_busyWaitDelayLoop: 4 lines
+      -void cm550_busyWaitDelayLoop(undefined4 param_1)
+      +void cm550_busyWaitDelayLoop(word pass_count)
+      -  for (uVar2 = 0; uVar2 < param_1._0_2_; uVar2 = uVar2 + 1) {
+      +  for (uVar2 = 0; uVar2 < pass_count; uVar2 = uVar2 + 1) {
+  0x0000388a mc68k_portPinTestSequence2: 13 lines
+      -  undefined2 uVar5;
+      -  undefined2 uVar6;
+      -  uVar6 = 1;
+      -  cm550_busyWaitDelayLoop();
+      +  cm550_busyWaitDelayLoop(1);
+      -  uVar5 = 1;
+      -  cm550_busyWaitDelayLoop(uVar6);
+      +  cm550_busyWaitDelayLoop(1);
+      -  uVar6 = 1;
+      -  cm550_busyWaitDelayLoop(uVar5);
+      +  cm550_busyWaitDelayLoop(1);
+      -  cm550_busyWaitDelayLoop(uVar6);
+      +  cm550_busyWaitDelayLoop(1);
+  0x0000395a mc68k_waitForChipSelect2InputBit0High: 2 lines
+      -    cm550_busyWaitDelayLoop();
+      +    cm550_busyWaitDelayLoop(2);
+  0x0000b210 cm550_outputControlTimingGenerator: 24 lines
+      -  undefined4 unaff_A2;
+      -  undefined4 unaff_A3;
+      -  word new_sample;
+      -  word smoothing_factor;
+      -  smoothing_factor = 0x66;
+      -  new_sample = _DAT_0080a292;
+      -       exponentialMovingAverage(0x80,(word)((uint)unaff_A2 >> 0x10),(word)((uint)unaff_A3 >> 0x10));
+      -  if (_engine_acceleration_after_first_stage_low_pass_filtering_2560_2540 <
+      -      _lower_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540) {
+      +       exponentialMovingAverage(_DAT_0080a292,(dword *)&timing_table_4_ptr);
+      +  if ((short)_engine_acceleration_after_first_stage_low_pass_filtering_2560_2540 <
+      +      (short)_lower_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540) {
+      -         _lower_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540 * 0x10000 +
+      +         (short)_lower_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540 * 0x10000 +
+      -  else if (_upper_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540 <
+      -           _engine_acceleration_after_first_stage_low_pass_filtering_2560_2540) {
+      +  else if ((short)_upper_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540 <
+      +           (short)_engine_acceleration_after_first_stage_low_pass_filtering_2560_2540) {
+      -         _upper_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540 * 0x10000 +
+      +         (short)_upper_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540 * 0x10000 +
+      -       exponentialMovingAverage(0x80,new_sample,smoothing_factor);
+      +       exponentialMovingAverage
+      +                 (_engine_acceleration_after_first_stage_low_pass_filtering_2560_2540,
+      +                  (dword *)&DAT_0080006e);
+  0x0000b6e8 cm550_diagnosticMessageQueueWrite: 15 lines
+      -void cm550_diagnosticMessageQueueWrite(byte response_type)
+      +void cm550_diagnosticMessageQueueWrite(word response_type)
+      -  ushort in_stack_00000004;
+      -    if (in_stack_00000004 == 0) {
+      +    if (response_type == 0) {
+      -    else if (in_stack_00000004 == 1) {
+      +    else if (response_type == 1) {
+      -      _completion_status_of_data_link_command_invalid_password = in_stack_00000004;
+      +      _completion_status_of_data_link_command_invalid_password = response_type;
+      -      if (in_stack_00000004 < 0x12) {
+      -        _completion_status_of_data_link_command_invalid_password = in_stack_00000004;
+      +      if (response_type < 0x12) {
+      +        _completion_status_of_data_link_command_invalid_password = response_type;
+      -             *(ushort *)((short)in_stack_00000004 * 2 + 0xb6b8);
+      +             *(word *)((short)response_type * 2 + 0xb6b8);
+  0x0000b7bc validateServiceDataLength: 140 lines
+      -  undefined4 unaff_D2;
+      -  undefined4 unaff_D3;
+      -  undefined *puVar8;
+      +  undefined *table_descriptor;
+      +  char *pcVar8;
+      -  char *pcVar10;
+      -  word input_value;
+      -  word scaling_factor;
+      -  puVar8 = &DAT_0080a2aa;
+      +  table_descriptor = &DAT_0080a2aa;
+      -  pcVar10 = &governor_integral_accumulator;
+      -  pcVar9 = &DAT_00800076;
+      +  pcVar9 = &governor_integral_accumulator;
+      +  pcVar8 = &DAT_00800076;
+      -    if ((undefined *)0x80a4cf < puVar8) {
+      +    if ((undefined *)0x80a4cf < table_descriptor) {
+      -      puVar8[0xf] = 0;
+      -    }
+      -    else if ((byte)puVar8[0xf] < (byte)puVar7[0x17]) {
+      -      puVar8[0xf] = puVar8[0xf] + '\x01';
+      +      table_descriptor[0xf] = 0;
+      +    }
+      +    else if ((byte)table_descriptor[0xf] < (byte)puVar7[0x17]) {
+      +      table_descriptor[0xf] = table_descriptor[0xf] + '\x01';
+  0x0000c404 calculateAlphaFuelRateResult: 7 lines
+      -  undefined4 unaff_D2;
+      -  undefined4 unaff_D3;
+      -  _DAT_0080a90c =
+      -       cm550_coreTableInterpolation
+      -                 ((void *)CONCAT22(_DAT_0080d35a,0x80),(word)((uint)unaff_D2 >> 0x10),
+      -                  (word)((uint)unaff_D3 >> 0x10));
+      +  _DAT_0080a90c = cm550_coreTableInterpolation(_DAT_0080d35a,&DAT_0080a91a);
+  0x0000c962 cm550_engine_speed_governor: 9 lines
+      -  word input_value;
+      -  undefined4 unaff_D2;
+      -  word scaling_factor;
+      -  undefined4 unaff_D3;
+      -  scaling_factor = (word)((uint)unaff_D3 >> 0x10);
+      -  input_value = (word)((uint)unaff_D2 >> 0x10);
+      -                     ((void *)CONCAT22(_asg_reference_speed_working,0x80),input_value,scaling_factor
+      -                     );
+      +                     (_asg_reference_speed_working,&asg_droop_compensated_error_2000_2000);
+  0x0000faa6 cm550_calculateGovernorDroopSpeed: 9 lines
+      -void cm550_calculateGovernorDroopSpeed(byte torque_index)
+      +void cm550_calculateGovernorDroopSpeed(word breakpoint_fueling,byte torque_index)
+      -  short in_stack_00000004;
+      -            (((uint)(ushort)((_full_fueling_value_at_hsg_bef_droop_speed_0_100 - in_stack_00000004)
+      +            (((uint)(ushort)((_full_fueling_value_at_hsg_bef_droop_speed_0_100 - breakpoint_fueling)
+      -  _torque_curve_fueling_at_point_2_speed_breakpoint_0_100 = in_stack_00000004;
+      -  _torque_curve_fueling_at_point_5_speed_breakpoint_0_100 = in_stack_00000004;
+      +  _torque_curve_fueling_at_point_2_speed_breakpoint_0_100 = breakpoint_fueling;
+      +  _torque_curve_fueling_at_point_5_speed_breakpoint_0_100 = breakpoint_fueling;
+  0x0000fb26 vp44_fuelLimitExceedanceStatisticsAccumulator: 71 lines
+      -  division_operand_t max_result;
+      -  undefined4 unaff_D2;
+      -  char cVar4;
+      -  dword dVar2;
+      -  dword dVar3;
+      +  char cVar2;
+      -  ushort uVar5;
+      -  uVar5 = (ushort)((uint)unaff_D2 >> 0x10);
+      -    cVar4 = '\x04';
+      +    cVar2 = '\x04';
+      -    cVar4 = '\0';
+      +    cVar2 = '\0';
+      -    cVar4 = cVar4 + '\x02';
+      +    cVar2 = cVar2 + '\x02';
+      -    cVar4 = cVar4 + '\x01';
+      +    cVar2 = cVar2 + '\x01';
+      -  switch(cVar4) {
+      +  switch(cVar2) {
+      -      cm550_calculateGovernorDroopSpeed(1);
+      -    }
+      -    else {
+      -      cm550_calculateGovernorDroopSpeed(0);
+      +      cm550_calculateGovernorDroopSpeed
+      +                (_jcomm_fueling_value_at_pt_4_in_engine_config_message_when_to_0_100,1);
+  0x0000fbe4 vp44_fuelSourceOilPressureConditionChecker: 47 lines
+      -  dword dVar2;
+      -  dword dVar3;
+      -  division_operand_t max_result;
+      -  ushort in_stack_00000000;
+      -      cm550_calculateGovernorDroopSpeed(1);
+      +      cm550_calculateGovernorDroopSpeed
+      +                (_jcomm_fueling_value_at_pt_4_in_engine_config_message_when_to_0_100,1);
+      -      cm550_calculateGovernorDroopSpeed(0);
+      +      cm550_calculateGovernorDroopSpeed
+      +                (_jcomm_fueling_value_at_pt_5_in_engine_config_message_when_to_0_100,0);
+      -      cm550_calculateGovernorDroopSpeed(1);
+      +      cm550_calculateGovernorDroopSpeed
+      +                (_jcomm_fueling_value_at_pt_4_in_engine_config_message_when_to_0_100,1);
+      -      cm550_calculateGovernorDroopSpeed(0);
+      +      cm550_calculateGovernorDroopSpeed
+      +                (_jcomm_fueling_value_at_pt_5_in_engine_config_message_when_to_0_100,0);
+      -  dVar2 = ((uint)_torque_curve_fueling_at_idle_speed_breakpoint_0_100 -
+      -          (uint)_maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400;
+      -  max_result.value = 0;
+      -  max_result.limit = in_stack_00000000;
+      -       cm550_clampedDivisionCalculator(dVar2,divisor_03,max_result);
+      -  dVar3 = ((uint)*unaff_A3 - (uint)_maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400;
+      +       cm550_clampedDivisionCalculator
+      +                 (((uint)_torque_curve_fueling_at_idle_speed_breakpoint_0_100 -
+  0x00010e16 cm550_diagnosticMemoryAddressResolver: 22 lines
+      -int cm550_diagnosticMemoryAddressResolver(word param_id)
+      +int cm550_diagnosticMemoryAddressResolver(word param_id,dword *resolved_address)
+      -  ushort in_stack_00000004;
+      -  undefined2 in_stack_00000008;
+      -  if ((in_stack_00000004 < 0x8000) || (0x8265 < in_stack_00000004)) {
+      -    if ((in_stack_00000004 < 0x1000) || (0x1478 < in_stack_00000004)) {
+      -      if (0x2e < in_stack_00000004) {
+      +  if ((param_id < 0x8000) || (0x8265 < param_id)) {
+      +    if ((param_id < 0x1000) || (0x1478 < param_id)) {
+      +      if (0x2e < param_id) {
+      -      in_stack_00000004 = in_stack_00000004 - 0xfd1;
+      +      param_id = param_id - 0xfd1;
+      -    in_stack_00000004 = in_stack_00000004 + 0x84a8;
+      +    param_id = param_id + 0x84a8;
+      -    *_param_id = *(int *)(&DAT_00035224 + (uint)in_stack_00000004 * 8);
+      +    *resolved_address = *(dword *)(&DAT_00035224 + (uint)param_id * 8);
+      -    *_param_id = *(int *)(&DAT_00035228 + (uint)in_stack_00000004 * 8);
+      +    *resolved_address = *(dword *)(&DAT_00035228 + (uint)param_id * 8);
+      -  if (*_param_id == 0) {
+      +  if (*resolved_address == 0) {
+      -  return (uint)(byte)(in_stack_00000004 >> 8) << 8;
+      +  return (uint)(byte)(param_id >> 8) << 8;
+  0x00010fe0 cm550_saveParameterBlock1ToFlash: 32 lines
+      -  undefined4 unaff_D2;
+      -  char in_XF;
+      -  char in_NF;
+      -  char in_ZF;
+      -  char in_VF;
+      -  byte in_CF;
+      -  char cVar6;
+      -  ushort byte_count;
+      -  undefined2 uVar7;
+      -  uVar7 = (undefined2)((uint)unaff_D2 >> 0x10);
+      -  cm550_parameterCircularBufferWrite
+      -            (0x803fd6,(byte *)&local_6,
+      -             (ushort)(byte)(in_XF << 4 | in_NF << 3 | in_ZF << 2 | in_VF << 1 | in_CF));
+      +  cm550_parameterCircularBufferWrite(0x803fd6,(byte *)&local_6,2);
+      -    mc68k_delayTimeBaseTicksWithWatchdogService();
+      +    mc68k_delayTimeBaseTicksWithWatchdogService(500);
+      -    sVar3 = cm550_flashProgramFromRam(0x4000,0x804f96,CONCAT22(2,uVar7));
+      +    sVar3 = cm550_flashProgramFromRam(0x4000,0x804f96,2);
+      -      sVar3 = cm550_flashProgramFromRam(0x4004,0x804f9a,CONCAT22(0x15ae,uVar7));
+      -      cVar6 = sVar3 == 0;
+      +      sVar3 = cm550_flashProgramFromRam(0x4004,0x804f9a,0x15ae);
+      -        byte_count = (ushort)(byte)(cVar6 << 4 | 8);
+      -        cm550_parameterCircularBufferWrite(0x803b12,(byte *)&local_6,byte_count);
+      +        cm550_parameterCircularBufferWrite(0x803b12,(byte *)&local_6,2);
+  0x0001125a cm550_saveParameterBlock2ToFlash: 32 lines
+      -  undefined4 unaff_D2;
+      -  char in_XF;
+      -  char in_NF;
+      -  char in_ZF;
+      -  char in_VF;
+      -  byte in_CF;
+      -  char cVar6;
+      -  ushort byte_count;
+      -  undefined2 uVar7;
+      -  uVar7 = (undefined2)((uint)unaff_D2 >> 0x10);
+      -  cm550_parameterCircularBufferWrite
+      -            (0x803fde,(byte *)&local_6,
+      -             (ushort)(byte)(in_XF << 4 | in_NF << 3 | in_ZF << 2 | in_VF << 1 | in_CF));
+      +  cm550_parameterCircularBufferWrite(0x803fde,(byte *)&local_6,2);
+      -    mc68k_delayTimeBaseTicksWithWatchdogService();
+      +    mc68k_delayTimeBaseTicksWithWatchdogService(500);
+      -    sVar3 = cm550_flashProgramFromRam(0x6000,0x804f96,CONCAT22(2,uVar7));
+      +    sVar3 = cm550_flashProgramFromRam(0x6000,0x804f96,2);
+      -      sVar3 = cm550_flashProgramFromRam(0x6004,0x804f9a,CONCAT22(0x15ae,uVar7));
+      -      cVar6 = sVar3 == 0;
+      +      sVar3 = cm550_flashProgramFromRam(0x6004,0x804f9a,0x15ae);
+      -        byte_count = (ushort)(byte)(cVar6 << 4 | 8);
+      -        cm550_parameterCircularBufferWrite(0x803b14,(byte *)&local_6,byte_count);
+      +        cm550_parameterCircularBufferWrite(0x803b14,(byte *)&local_6,2);
+  0x000114d4 vp44_validateRedundantSensors: 46 lines
+      -  bool bVar3;
+      -  bool bVar4;
+      -  bool bVar5;
+      -  bool bVar6;
+      -  bool bVar7;
+      -  ushort uVar8;
+      -  bVar7 = _DAT_00803fe2 < _DAT_00803fe4;
+      -  bVar3 = (short)(_DAT_00803fe2 - _DAT_00803fe4) < 0;
+      -    uVar8 = (ushort)(byte)(bVar7 << 4 | bVar3 << 3 | 4U | SBORROW2(_DAT_00803fe2,_DAT_00803fe4) << 1
+      -                          | bVar7);
+      -    cm550_parameterCircularBufferWrite(0x803fe6,&hour_meter_tick_divider,uVar8);
+      +    cm550_parameterCircularBufferWrite(0x803fe6,&hour_meter_tick_divider,2);
+      -      mc68k_delayTimeBaseTicksWithWatchdogService();
+      +      mc68k_delayTimeBaseTicksWithWatchdogService(500);
+      -    cm550_parameterCircularBufferWrite(0x803fec,&hour_meter_tick_divider,uVar8);
+      +    cm550_parameterCircularBufferWrite(0x803fec,&hour_meter_tick_divider,2);
+      -      mc68k_delayTimeBaseTicksWithWatchdogService();
+      +      mc68k_delayTimeBaseTicksWithWatchdogService(500);
+      -    bVar7 = (uVar8 & 0x10) != 0;
+      -    bVar4 = (uVar8 & 8) != 0;
+      -    bVar5 = (uVar8 & 4) != 0;
+      -    bVar6 = (uVar8 & 2) != 0;
+      -    bVar3 = (uVar8 & 1) != 0;
+      -    uVar8 = (ushort)(byte)(bVar7 << 4 | bVar3 << 3 | SBORROW2(_DAT_00803fe2,_DAT_00803fe4) << 1 |
+  0x0001192a cm550_FUN_0001192a: 24 lines
+      -  undefined4 unaff_D2;
+      -  word timer_ticks;
+      -      mc68k_delayTimeBaseTicksWithWatchdogService2((word)((uint)unaff_D2 >> 0x10));
+      +      mc68k_delayTimeBaseTicksWithWatchdogService2(500);
+      -    cm550_parameterCircularBufferWrite(0x803b3e,(byte *)&local_8,(word)((uint)unaff_D2 >> 0x10));
+      +    cm550_parameterCircularBufferWrite(0x803b3e,(byte *)&local_8,4);
+      -      mc68k_delayTimeBaseTicksWithWatchdogService2((word)((uint)unaff_D2 >> 0x10));
+      +      mc68k_delayTimeBaseTicksWithWatchdogService2(0xfa);
+      -        mc68k_delayTimeBaseTicksWithWatchdogService2((word)((uint)unaff_D2 >> 0x10));
+      +        mc68k_delayTimeBaseTicksWithWatchdogService2(500);
+      -    cm550_parameterCircularBufferWrite(0x803b50,(byte *)&local_8,(word)((uint)unaff_D2 >> 0x10));
+      -    timer_ticks = (word)((uint)unaff_D2 >> 0x10);
+      +    cm550_parameterCircularBufferWrite(0x803b50,(byte *)&local_8,4);
+      -      mc68k_delayTimeBaseTicksWithWatchdogService2(timer_ticks);
+      +      mc68k_delayTimeBaseTicksWithWatchdogService2(0xfa);
+      -      while (timer_ticks = (word)((uint)unaff_D2 >> 0x10), _eeprom_engine_run_time_buffer != local_8
+      -            ) {
+      +      while (_eeprom_engine_run_time_buffer != local_8) {
+      -        mc68k_delayTimeBaseTicksWithWatchdogService2((word)((uint)unaff_D2 >> 0x10));
+      +        mc68k_delayTimeBaseTicksWithWatchdogService2(500);
+      -      cm550_diagnosticMessageQueueWrite((byte)timer_ticks);
+      +      cm550_diagnosticMessageQueueWrite(0);
+      -    mc68k_delayTimeBaseTicksWithWatchdogService2(timer_ticks);
+      +    mc68k_delayTimeBaseTicksWithWatchdogService2(50000);
+  0x00011a74 commitEepromMirrorToEeprom: 2 lines
+      -      mc68k_delayTimeBaseTicksWithWatchdogService();
+      +      mc68k_delayTimeBaseTicksWithWatchdogService(500);
+  0x00013dbe cm550_FUN_00013dbe: 10 lines
+      -  int *piVar3;
+      +  dword *resolved_address;
+      -  piVar3 = (int *)&scheduler_reserved_padding;
+      +  resolved_address = (dword *)&scheduler_reserved_padding;
+      -      cm550_diagnosticMemoryAddressResolver((word)((uint)piVar3 >> 0x10));
+      -      *piVar3 = (uint)*(ushort *)(&DAT_00803d6c + sVar1) + *piVar3;
+      +      cm550_diagnosticMemoryAddressResolver(*(word *)(&DAT_00803d6a + sVar1),resolved_address);
+      +      *resolved_address = (uint)*(ushort *)(&DAT_00803d6c + sVar1) + *resolved_address;
+      -    piVar3 = piVar3 + 1;
+      +    resolved_address = resolved_address + 1;
+  0x00013e12 cm550_FUN_00013e12: 10 lines
+      -  int *piVar3;
+      -  piVar3 = (int *)&DAT_00800508;
+      +  dword *resolved_address;
+      +  resolved_address = (dword *)&DAT_00800508;
+      -    cm550_diagnosticMemoryAddressResolver((word)((uint)piVar3 >> 0x10));
+      -    *piVar3 = (uint)*(ushort *)(&DAT_00803da8 + sVar1) + *piVar3;
+      +    cm550_diagnosticMemoryAddressResolver(*(word *)(&DAT_00803da6 + sVar1),resolved_address);
+      +    *resolved_address = (uint)*(ushort *)(&DAT_00803da8 + sVar1) + *resolved_address;
+      -    piVar3 = piVar3 + 1;
+      +    resolved_address = resolved_address + 1;
+  0x000142a8 cm550_canBusConfigTypeSelector: 11 lines
+      -undefined4 cm550_canBusConfigTypeSelector(byte config_type)
+      +undefined4 cm550_canBusConfigTypeSelector(word config_type)
+      -  char in_stack_00000005;
+      -  if (in_stack_00000005 == DAT_00060f83) {
+      +  char cVar1;
+      +  cVar1 = (char)config_type;
+      +  if (cVar1 == DAT_00060f83) {
+      -  if (in_stack_00000005 == DAT_00060f85) {
+      +  if (cVar1 == DAT_00060f85) {
+      -  if (in_stack_00000005 == DAT_00060f87) {
+      +  if (cVar1 == DAT_00060f87) {
+  0x000142d4 cm550_FUN_000142d4: 19 lines
+      -void cm550_FUN_000142d4(byte calc_mode)
+      +void cm550_FUN_000142d4(word fuel_table_x_input,word lookup_result_offset)
+      -  division_operand_t divisor;
+      -  undefined2 in_stack_00000004;
+      -  undefined1 in_stack_00000006;
+      -  word *fuel_value_ptr;
+      -  _DAT_0080d378 = in_stack_00000004;
+      +  _DAT_0080d378 = fuel_table_x_input;
+      -  fuel_value_ptr = &local_6;
+      -  cm550_subtractAndClampValue(fuel_value_ptr);
+      -  divisor.value =
+      -       _jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100 -
+      -       _frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88;
+      -  divisor.limit = (word)((uint)fuel_value_ptr >> 0x10);
+      +  cm550_subtractAndClampValue(&local_6);
+      -            ((short)(local_6 - (_DAT_0080052c + _in_stack_00000006)) * 0x6400,divisor);
+      +            ((short)(local_6 - (_DAT_0080052c + lookup_result_offset)) * 0x6400,
+      +             _jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100 -
+      +             _frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88);
+  0x000143b6 cm550_multiSpeedParameterInterpolation: 11 lines
+      -       cm550_FUN_000142d4((byte)
+      +       cm550_FUN_000142d4(_lsg_breakpoint_speed,
+      -       cm550_FUN_000142d4((byte)_frictional_load_torque_in_fueling_at_rated_engine_rpm_0_100_bc84);
+      +       cm550_FUN_000142d4(_shutdown_protection_step_2,
+      +                          _frictional_load_torque_in_fueling_at_rated_engine_rpm_0_100_bc84);
+      -       cm550_FUN_000142d4((byte)
+      +       cm550_FUN_000142d4(_shutdown_protection_step_1,
+      -       cm550_FUN_000142d4((byte)
+      +       cm550_FUN_000142d4(_engine_running_timer_threshold,
+      -       cm550_FUN_000142d4((byte)
+      +       cm550_FUN_000142d4(_frictional_load_torque_table_value,
+  0x0001444e cm550_fuelDemandPercentageCalculator: 10 lines
+      -  division_operand_t divisor;
+      -  word wVar1;
+      -  wVar1 = 0x80;
+      -  divisor.value =
+      -       _jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100 -
+      -       _frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88;
+      -  divisor.limit = wVar1;
+      -                  0x6400,divisor);
+      +                  0x6400,_jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100 -
+      +                         _frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88);
+  0x000144bc cm550_diagnosticCodeDebounceHandler: 28 lines
+      -void cm550_diagnosticCodeDebounceHandler(byte code_index)
+      +void cm550_diagnosticCodeDebounceHandler(word code_index)
+      -  byte in_stack_00000005;
+      -  if (((((&diagnostic_fault_status_table)[(short)((ushort)in_stack_00000005 * 5) * 2] & 1) == 0) &&
+      -      (*(char *)((uint)in_stack_00000005 * 6 + 0x8067c9) != '\0')) &&
+      -     ((&diagnostic_fault_occurrence_count)[(short)((ushort)in_stack_00000005 * 5) * 2] != '\0')) {
+      -    iVar1 = (int)(short)((ushort)*(byte *)((uint)in_stack_00000005 * 6 + 0x8067c9) << 3);
+      -    if (((*(int *)((short)((ushort)in_stack_00000005 * 5) * 2 + 0x805a20) == 0) &&
+      +  byte bVar3;
+      +  bVar3 = (byte)code_index;
+      +  if (((((&diagnostic_fault_status_table)[(short)((code_index & 0xff) * 5) * 2] & 1) == 0) &&
+      +      (*(char *)((uint)bVar3 * 6 + 0x8067c9) != '\0')) &&
+      +     ((&diagnostic_fault_occurrence_count)[(short)((code_index & 0xff) * 5) * 2] != '\0')) {
+      +    iVar1 = (int)(short)((ushort)*(byte *)((uint)bVar3 * 6 + 0x8067c9) << 3);
+      +    if (((*(int *)((short)((code_index & 0xff) * 5) * 2 + 0x805a20) == 0) &&
+      -               *(int *)(&DGFUCUBF + (short)((ushort)in_stack_00000005 * 5) * 2)))) ||
+      -       ((*(int *)((short)((ushort)in_stack_00000005 * 5) * 2 + 0x805a20) != 0 &&
+      +               *(int *)(&DGFUCUBF + (short)((code_index & 0xff) * 5) * 2)))) ||
+      +       ((*(int *)((short)((code_index & 0xff) * 5) * 2 + 0x805a20) != 0 &&
+      -               *(int *)((short)((ushort)in_stack_00000005 * 5) * 2 + 0x805a20)))))) {
+      -      sVar2 = (ushort)in_stack_00000005 * 10;
+      +               *(int *)((short)((code_index & 0xff) * 5) * 2 + 0x805a20)))))) {
+      +      sVar2 = (code_index & 0xff) * 10;
+      -        if (((&fault_definition_spn_byte)[(uint)in_stack_00000005 * 6] != '\0') &&
+  0x00014670 cm550_FUN_00014670: 5 lines
+      -  undefined4 unaff_D2;
+      -    cm550_diagnosticCodeDebounceHandler((byte)((uint)unaff_D2 >> 0x10));
+      +    cm550_diagnosticCodeDebounceHandler
+      +              (CONCAT11((char)(_inactive_fault_debounce_scan_index >> 8),
+      +                        (&DGIEFUBF)[(short)_inactive_fault_debounce_scan_index]));
+  0x00014720 cm550_diagnosticCodeRegistrar: 13 lines
+      -void cm550_diagnosticCodeRegistrar(byte code_index)
+      +void cm550_diagnosticCodeRegistrar(word code_index)
+      -  short in_stack_00000004;
+      -    if (in_stack_00000004 == *(short *)(&diagnostic_fault_code_table + sVar3)) {
+      -      cm550_diagnosticTableSnapshotCapture();
+      +    if (code_index == *(word *)(&diagnostic_fault_code_table + sVar3)) {
+      +      cm550_diagnosticTableSnapshotCapture(code_index);
+      -      cm550_diagnosticTableSnapshotCapture();
+      +      cm550_diagnosticTableSnapshotCapture(code_index);
+      -    cm550_diagnosticTableSnapshotCapture();
+      +    cm550_diagnosticTableSnapshotCapture(code_index);
+      -    cm550_diagnosticTableSnapshotCapture();
+      +    cm550_diagnosticTableSnapshotCapture(code_index);
+  0x00014872 cm550_FUN_00014872: 16 lines
+      -  undefined4 unaff_D2;
+      +  byte data_byte;
+      -        while (!bVar6) {
+      +        while (data_byte = (byte)uVar5, !bVar6) {
+      -                cm550_circularBufferPush((dword *)0x80bc8c,(byte)((uint)unaff_D2 >> 0x10));
+      +                cm550_circularBufferPush((dword *)0x80bc8c,data_byte);
+      -          (&DGIEFUBF)[_inactive_fault_list_count] = (char)uVar5;
+      +          (&DGIEFUBF)[_inactive_fault_list_count] = data_byte;
+      -                 (char)uVar5;
+      +                 data_byte;
+      -          cm550_diagnosticCodeRegistrar((byte)((uint)unaff_D2 >> 0x10));
+      +          cm550_diagnosticCodeRegistrar(uVar5);
+      -          (&DGAEFUBF)[_active_fault_list_count] = (char)uVar5;
+      +          (&DGAEFUBF)[_active_fault_list_count] = (byte)uVar5;
+      -              cm550_circularBufferPush((dword *)0x80bc8c,(byte)((uint)unaff_D2 >> 0x10));
+      +              cm550_circularBufferPush((dword *)0x80bc8c,(byte)uVar5 | 0x80);
+  0x00014fae cm550_initHourMeterSystem: 3 lines
+      -  undefined2 in_stack_00000000;
+      -  cm550_circularBufferInit((dword *)0x80bc8c,0x80bc9e,CONCAT22(10,in_stack_00000000));
+      +  cm550_circularBufferInit((dword *)0x80bc8c,0x80bc9e,10);
+  0x00015f8e mc68k_dispatchJ1708ReceivedMessages: 44 lines
+      -  undefined4 unaff_D2;
+      -  byte service_id;
+      -    cm550_diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
+      +    cm550_diagnosticMessageQueueWrite(0);
+      -        bVar7 = (byte)((uint)unaff_D2 >> 0x10);
+      -              cm550_diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
+      +              cm550_diagnosticMessageQueueWrite((ushort)bVar7);
+      -            cm550_diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
+      +            cm550_diagnosticMessageQueueWrite(3);
+      -            cm550_FUN_0001183e();
+      -            cm550_diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
+      +            bVar7 = cm550_FUN_0001183e();
+      +            cm550_diagnosticMessageQueueWrite((ushort)bVar7);
+      -            cm550_diagnosticMessageQueueWrite(bVar7);
+      +            cm550_diagnosticMessageQueueWrite(0);
+      -            cm550_diagnosticMessageQueueWrite(bVar7);
+      +            cm550_diagnosticMessageQueueWrite(0x18);
+      -            exitDevelopmentMode();
+      -            cm550_diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
+      +            bVar7 = exitDevelopmentMode();
+      +            cm550_diagnosticMessageQueueWrite((ushort)bVar7);
+      -            cm550_diagnosticMessageQueueWrite(bVar7);
+      +            cm550_diagnosticMessageQueueWrite(4);
+      -            cm550_diagnosticMessageQueueWrite(bVar7);
+  0x0001645e cm550_safeDivideWithClamp: 22 lines
+      -int cm550_safeDivideWithClamp(dword dividend,division_operand_t divisor)
+      +int cm550_safeDivideWithClamp(dword dividend,word divisor)
+      -  if (((-1 < (int)dividend) && (-1 < (int)divisor)) || (((int)dividend < 0 && ((int)divisor < 0))))
+      -  {
+      -    if ((short)divisor.value * 0x7fff < 0) {
+      -      uVar1 = (short)divisor.value * -0x7fff;
+      +  if (((-1 < (int)dividend) && (-1 < (short)divisor)) ||
+      +     (((int)dividend < 0 && ((short)divisor < 0)))) {
+      +    if ((short)divisor * 0x7fff < 0) {
+      +      uVar1 = (short)divisor * -0x7fff;
+      -      uVar1 = (short)divisor.value * 0x7fff;
+      +      uVar1 = (short)divisor * 0x7fff;
+      -      return (int)dividend / (int)(short)divisor.value;
+      +      return (int)dividend / (int)(short)divisor;
+      -  if ((short)divisor.value * -0x8000 < 0) {
+      -    uVar1 = (short)divisor.value * 0x8000;
+      +  if ((short)divisor * -0x8000 < 0) {
+      +    uVar1 = (short)divisor * 0x8000;
+      -    uVar1 = (short)divisor.value * -0x8000;
+      +    uVar1 = (short)divisor * -0x8000;
+      -    return (int)dividend / (int)(short)divisor.value;
+      +    return (int)dividend / (int)(short)divisor;
+  0x0001651e cm550_clampedDivisionCalculator: 19 lines
+      -uint cm550_clampedDivisionCalculator
+      -               (dword dividend,division_operand_t divisor,division_operand_t max_result)
+      +uint cm550_clampedDivisionCalculator(dword dividend,division_operand_t divisor,word max_result)
+      -    if (-1 < (int)max_result) {
+      -      return (uint)max_result.value;
+      +    if (-1 < (short)max_result) {
+      +      return (uint)max_result;
+      -    if ((int)(short)divisor.value * (int)(short)max_result.value < 0) {
+      -      uVar1 = -((int)(short)divisor.value * (int)(short)max_result.value);
+      +    if ((int)(short)divisor.value * (int)(short)max_result < 0) {
+      +      uVar1 = -((int)(short)divisor.value * (int)(short)max_result);
+      -      uVar1 = (int)(short)divisor.value * (int)(short)max_result.value;
+      +      uVar1 = (int)(short)divisor.value * (int)(short)max_result;
+      -      return (uint)max_result.value;
+      +      return (uint)max_result;
+      -  if ((short)max_result.value < (short)((int)dividend / (int)(short)divisor.value)) {
+      +  if ((short)max_result < (short)((int)dividend / (int)(short)divisor.value)) {
+      -  return (uint)max_result.value;
+      +  return (uint)max_result;
+  0x00016628 cm550_limitedDivisionCalculator: 12 lines
+      -uint cm550_limitedDivisionCalculator(dword dividend,dword divisor,dword limit_value)
+      +uint cm550_limitedDivisionCalculator(dword dividend,division_operand_t divisor,word limit_value)
+      -  uVar1 = (uint)divisor._0_2_ * (divisor & 0xffff);
+      +  uVar1 = (uint)divisor.value * (uint)divisor.limit;
+      -    return CONCAT22((short)(uVar1 >> 0x10),divisor._2_2_);
+      +    return CONCAT22((short)(uVar1 >> 0x10),divisor.limit);
+      -  uVar1 = dividend / divisor._0_2_;
+      -  if (limit_value._0_2_ < (ushort)uVar1) {
+      +  uVar1 = dividend / divisor.value;
+      +  if (limit_value < (ushort)uVar1) {
+      -  return CONCAT22((short)(uVar1 >> 0x10),limit_value._0_2_);
+      +  return CONCAT22((short)(uVar1 >> 0x10),limit_value);
+  0x0001666c cm550_multiPacketTransmitHandler: 22 lines
+      -  undefined4 unaff_D2;
+      -  undefined1 uVar10;
+      -  uVar10 = (undefined1)((uint)unaff_D2 >> 0x18);
+      -  bVar7 = (byte)((uint)unaff_D2 >> 0x10);
+      -    cVar5 = cm550_diagnosticMemoryAddressResolver(0x80);
+      +    cVar5 = cm550_diagnosticMemoryAddressResolver
+      +                      (multipacket_message_id,&diagnostic_multipacket_data_pointer);
+      -                          (diagnostic_multipacket_data_pointer,
+      -                           CONCAT31(CONCAT21(multipacket_bytes_remaining,uVar10),bVar7));
+      +                          (diagnostic_multipacket_data_pointer,multipacket_bytes_remaining);
+      -          cm550_diagnosticMessageQueueWrite(bVar7);
+      +          cm550_diagnosticMessageQueueWrite((ushort)MVar6);
+      -            uVar10 = *(undefined1 *)diagnostic_multipacket_data_pointer;
+      +            uVar1 = *(undefined1 *)diagnostic_multipacket_data_pointer;
+      -            *local_c = uVar10;
+      +            *local_c = uVar1;
+      -        cm550_diagnosticMessageQueueWrite(bVar7);
+      +        cm550_diagnosticMessageQueueWrite(4);
+      -      cm550_diagnosticMessageQueueWrite(bVar7);
+      +      cm550_diagnosticMessageQueueWrite(8);
+      -    cm550_diagnosticMessageQueueWrite(bVar7);
+      +    cm550_diagnosticMessageQueueWrite(4);
+  0x0001686e cm550_multiPacketReceiveHandler: 35 lines
+      -  undefined4 unaff_D2;
+      -  undefined1 uVar10;
+      -  byte response_type;
+      -  uVar10 = (undefined1)((uint)unaff_D2 >> 0x18);
+      -  response_type = (byte)((uint)unaff_D2 >> 0x10);
+      -                            (diagnostic_multipacket_data_pointer,
+      -                             CONCAT31(CONCAT21(multipacket_receive_bytes_remaining,uVar10),
+      -                                      response_type));
+      +                            (diagnostic_multipacket_data_pointer,multipacket_receive_bytes_remaining
+      +                            );
+      -        cm550_diagnosticMessageQueueWrite(response_type);
+      +        cm550_diagnosticMessageQueueWrite(0);
+      -        cm550_diagnosticMessageQueueWrite(response_type);
+      +        cm550_diagnosticMessageQueueWrite(4);
+      -      cm550_diagnosticMessageQueueWrite(response_type);
+      +      cm550_diagnosticMessageQueueWrite(4);
+      -    cVar8 = cm550_diagnosticMemoryAddressResolver(0x80);
+      +    cVar8 = cm550_diagnosticMemoryAddressResolver
+      +                      (multipacket_message_id,&diagnostic_multipacket_data_pointer);
+      -                          (diagnostic_multipacket_data_pointer,
+      -                           CONCAT31(CONCAT21(multipacket_receive_bytes_remaining,uVar10),
+      -                                    response_type));
+      +                          (diagnostic_multipacket_data_pointer,multipacket_receive_bytes_remaining);
+      -            cm550_diagnosticMessageQueueWrite(response_type);
+  0x00016c3c cm550_parameterCircularBufferWrite: 5 lines
+      -  ushort in_stack_0000000c;
+      -  if (0x500 < (uint)in_stack_0000000c + (uint)circular_buffer_byte_count) {
+      +  if (0x500 < (uint)byte_count + (uint)circular_buffer_byte_count) {
+      -  for (; in_stack_0000000c != 0; in_stack_0000000c = in_stack_0000000c - 1) {
+      +  for (; byte_count != 0; byte_count = byte_count - 1) {
+  0x000171be cm550_fuel_limit_arbitrator: 25 lines
+      -  undefined4 unaff_D2;
+      -  undefined4 unaff_A2;
+      -  word input_value;
+      -  word scaling_factor;
+      -  scaling_factor = (word)((uint)unaff_A2 >> 0x10);
+      -  input_value = (word)((uint)unaff_D2 >> 0x10);
+      -         (ushort)(_engine_speed_constant_1_conversion_factor_from_tcnts_to_rpm_0_2_29 /
+      -                 _average_pulse_period_time_period_over_1_cyl_of_primary_s_1000_65535);
+      +         (word)(_engine_speed_constant_1_conversion_factor_from_tcnts_to_rpm_0_2_29 /
+      +               _average_pulse_period_time_period_over_1_cyl_of_primary_s_1000_65535);
+      -           (ushort)(_engine_speed_constant_1_backup_conversion_factor_from_tcnts_0_2_29 /
+      -                   _average_pulse_period_backup_time_period_over_1_cyl_of_secondary_2_32);
+      +           (word)(_engine_speed_constant_1_backup_conversion_factor_from_tcnts_0_2_29 /
+      +                 _average_pulse_period_backup_time_period_over_1_cyl_of_secondary_2_32);
+      -        _engine_rpm_primary =
+      -             cm550_coreTableInterpolation
+      -                       ((void *)CONCAT22(_DAT_0080cd06,0x80),input_value,scaling_factor);
+      +        _engine_rpm_primary = cm550_coreTableInterpolation(_DAT_0080cd06,&DAT_008005aa);
+      -        _engine_rpm_primary =
+      -             cm550_coreTableInterpolation
+      -                       ((void *)CONCAT22(_DAT_0080cd04,0x80),input_value,scaling_factor);
+      +        _engine_rpm_primary = cm550_coreTableInterpolation(_DAT_0080cd04,&DAT_008005aa);
+      -        uVar1 = cm550_coreTableInterpolation
+      -                          ((void *)CONCAT22(_DAT_0080cd16,0x80),input_value,scaling_factor);
+  0x00018968 cm550_protectionConditionEvaluator: 6 lines
+      -uint cm550_protectionConditionEvaluator(word *threshold_ptr,dword *state_ptr,word sensor_value)
+      +uint cm550_protectionConditionEvaluator
+      +               (word *threshold_ptr,dword *state_ptr,word threshold_set_select,word sensor_value)
+      -  short in_stack_0000000c;
+      -    if (in_stack_0000000c == 0) {
+      +    if (threshold_set_select == 0) {
+  0x00018a26 protectionState0FaultDurationCounter: 4 lines
+      -        sVar2 = cm550_protectionConditionEvaluator(threshold_ptr,state_ptr,0);
+      +        sVar2 = cm550_protectionConditionEvaluator(threshold_ptr,state_ptr,0,0);
+      -        sVar2 = cm550_protectionConditionEvaluator(threshold_ptr,state_ptr,0);
+      +        sVar2 = cm550_protectionConditionEvaluator(threshold_ptr,state_ptr,1,0);
+  0x00018ac4 cm550_diagnosticProtectionEvaluator: 4 lines
+      -                          (threshold_ptr,(dword *)(&protection_system_sensor_data_ptr + iVar2),0);
+      +                          (threshold_ptr,(dword *)(&protection_system_sensor_data_ptr + iVar2),0,0);
+      -                          (threshold_ptr,(dword *)(&protection_system_sensor_data_ptr + iVar2),0);
+      +                          (threshold_ptr,(dword *)(&protection_system_sensor_data_ptr + iVar2),1,0);
+  0x00018c1c cm550_diagnosticProtectionProcessor: 4 lines
+      -    sVar2 = cm550_protectionConditionEvaluator(config_ptr,(dword *)state_offset,0);
+      +    sVar2 = cm550_protectionConditionEvaluator(config_ptr,(dword *)state_offset,0,0);
+      -    sVar2 = cm550_protectionConditionEvaluator(config_ptr,(dword *)state_offset,0);
+      +    sVar2 = cm550_protectionConditionEvaluator(config_ptr,(dword *)state_offset,1,0);
+  0x00018e0c cm550_FUN_00018e0c: 7 lines
+      -  undefined4 unaff_D2;
+      -  undefined4 unaff_D3;
+      -                      ((void *)CONCAT22(_maximum_rated_engine_speed_0_5000 -
+      -                                        (short)((uint)uVar5 * (uint)_DAT_0080d290 >> 8),0x80),
+      -                       (word)((uint)unaff_D2 >> 0x10),(word)((uint)unaff_D3 >> 0x10));
+      +                      (_maximum_rated_engine_speed_0_5000 -
+      +                       (short)((uint)uVar5 * (uint)_DAT_0080d290 >> 8),&DAT_00800612);
+  0x00018f86 incrementDiagnosticCounters: 5 lines
+      -  short in_stack_0000000c;
+      -  if (in_stack_0000000c == 0) {
+      +  if (condition_flag == 0) {
+      -    if (in_stack_0000000c == 0) {
+      +    if (condition_flag == 0) {
+  0x00018fcc processDiagnosticLimitStatus: 17 lines
+      -  undefined4 unaff_D2;
+      -            sVar1 = cm550_protectionConditionEvaluator(threshold_ptr,state_ptr,3);
+      +            sVar1 = cm550_protectionConditionEvaluator(threshold_ptr,state_ptr,0,3);
+      -              incrementDiagnosticCounters
+      -                        ((dword)threshold_ptr,(dword)state_ptr,(word)((uint)unaff_D2 >> 0x10));
+      +              incrementDiagnosticCounters((dword)threshold_ptr,(dword)state_ptr,0);
+      -            incrementDiagnosticCounters
+      -                      ((dword)threshold_ptr,(dword)state_ptr,(word)((uint)unaff_D2 >> 0x10));
+      +            incrementDiagnosticCounters((dword)threshold_ptr,(dword)state_ptr,0);
+      -            sVar1 = cm550_protectionConditionEvaluator(threshold_ptr,state_ptr,3);
+      +            sVar1 = cm550_protectionConditionEvaluator(threshold_ptr,state_ptr,1,3);
+      -              incrementDiagnosticCounters
+      -                        ((dword)threshold_ptr,(dword)state_ptr,(word)((uint)unaff_D2 >> 0x10));
+      +              incrementDiagnosticCounters((dword)threshold_ptr,(dword)state_ptr,1);
+      -            incrementDiagnosticCounters
+      -                      ((dword)threshold_ptr,(dword)state_ptr,(word)((uint)unaff_D2 >> 0x10));
+      +            incrementDiagnosticCounters((dword)threshold_ptr,(dword)state_ptr,1);
+  0x0001abb2 cm550_FUN_0001abb2: 5 lines
+      -  undefined4 unaff_A2;
+      -  undefined4 unaff_A3;
+      -           exponentialMovingAverage
+      -                     (0x80,(word)((uint)unaff_A2 >> 0x10),(word)((uint)unaff_A3 >> 0x10));
+      +           exponentialMovingAverage(_DAT_0080067a,(dword *)&DAT_00800670);
+  0x0001bfa2 cm550_circularBufferPush: 3 lines
+      -  undefined1 in_stack_00000009;
+      -  *(undefined1 *)buffer_ctrl[1] = in_stack_00000009;
+      +  *(byte *)buffer_ctrl[1] = data_byte;
+  0x0001c016 cm550_circularBufferInit: 4 lines
+      -void cm550_circularBufferInit(dword *buffer_ctrl,dword base_address,dword buffer_size)
+      +void cm550_circularBufferInit(dword *buffer_ctrl,dword base_address,word buffer_size)
+      -  buffer_ctrl[3] = buffer_ctrl[2] + (buffer_size >> 0x10);
+      +  buffer_ctrl[3] = buffer_ctrl[2] + (uint)buffer_size;
+  0x0001c5e8 cm550_flashProgramFromRam: 4 lines
+      -void cm550_flashProgramFromRam(dword dest_address,dword source_ptr,dword byte_count)
+      +void cm550_flashProgramFromRam(dword dest_address,dword source_ptr,word byte_count)
+      -  _DAT_008006a2 = dest_address + (byte_count >> 0x10);
+      +  _DAT_008006a2 = dest_address + byte_count;
+  0x0001c8a0 cm550_FUN_0001c8a0: 12 lines
+      -    uVar1 = cm550_calculateBlendedTableValue(400);
+      -    uVar2 = cm550_calculateBlendedTableValue(400);
+      -    uVar3 = cm550_calculateBlendedTableValue(400);
+      -    uVar4 = cm550_calculateBlendedTableValue(400);
+      -    uVar5 = cm550_calculateBlendedTableValue(400);
+      +    uVar1 = cm550_calculateBlendedTableValue
+      +                      (_torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000,400);
+      +    uVar2 = cm550_calculateBlendedTableValue
+      +                      (_torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000,400);
+      +    uVar3 = cm550_calculateBlendedTableValue(_torque_curve_speed_at_breakpoint_3_0_5000,400);
+      +    uVar4 = cm550_calculateBlendedTableValue(_torque_curve_speed_at_breakpoint_4_0_5000,400);
+      +    uVar5 = cm550_calculateBlendedTableValue(_torque_curve_speed_at_breakpoint_5_0_5000,400);
+  0x0001cb76 cm550_calculateBlendedTableValue: 11 lines
+      -short cm550_calculateBlendedTableValue(word rpm_index)
+      +short cm550_calculateBlendedTableValue(word fuel_table_x_input,word throttle_input)
+      -  undefined2 in_stack_00000004;
+      -    _DAT_0080d378 = in_stack_00000004;
+      -    _fuel_table_primary_throttle_input = rpm_index;
+      +    _DAT_0080d378 = fuel_table_x_input;
+      +    _fuel_table_primary_throttle_input = throttle_input;
+      -    _DAT_0080d38e = in_stack_00000004;
+      -    _fuel_table_secondary_throttle_input = rpm_index;
+      +    _DAT_0080d38e = fuel_table_x_input;
+      +    _fuel_table_secondary_throttle_input = throttle_input;
+  0x0001cc72 cm550_FUN_0001cc72: 8 lines
+      -    _fueling_value_at_100_throttle_0_100 = cm550_calculateBlendedTableValue(400);
+      -    sVar2 = cm550_calculateBlendedTableValue(400);
+      +    _fueling_value_at_100_throttle_0_100 = cm550_calculateBlendedTableValue(_engine_rpm_primary,400)
+      +    ;
+      +    sVar2 = cm550_calculateBlendedTableValue
+      +                      (_the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000,400);
+      -         cm550_calculateBlendedTableValue(400);
+      +         cm550_calculateBlendedTableValue(_engine_rpm_primary,400);
+  0x0001ce7c runHighSpeedGovernorPid: 73 lines
+      -  dword multiplier;
+      +  int iVar1;
+      -  uint uVar1;
+      -  int iVar2;
+      -  dword multiplicand;
+      +  uint uVar2;
+      -  multiplier = (dword)_DAT_0080803e;
+      -  multiplicand = (uint)_hsg_reference_speed_after_droop - (uint)_DAT_0080d60a;
+      -  cm550_scaleByRatioSigned(multiplicand,multiplier,0x200);
+      -  _hsg_filtered_engine_speed_error =
+      -       exponentialMovingAverage(0x80,(word)(multiplicand >> 0x10),(word)(multiplier >> 0x10));
+      +  iVar1 = cm550_scaleByRatioSigned
+      +                    ((uint)_hsg_reference_speed_after_droop - (uint)_DAT_0080d60a,(int)_DAT_0080803e
+      +                     ,0x200);
+      +  if (iVar1 < 0x7fff) {
+      +    if (iVar1 < -0x7fff) {
+      +      iVar1 = 0x8000;
+      +    }
+      +  }
+      +  else {
+      +    iVar1 = 0x7fff;
+      +  }
+      +  _hsg_filtered_engine_speed_error = exponentialMovingAverage((word)iVar1,(dword *)&DAT_0080d636);
+      -    uVar1 = cm550_scaleByRatio((uint)_hsg_derivative_gain_base,(int)sVar3,0x100);
+  0x0001d5a0 selectEngineSpeedLimit: 12 lines
+      -  division_operand_t max_result;
+      -  undefined4 unaff_D2;
+      -  word wVar4;
+      -  wVar4 = (word)((uint)unaff_D2 >> 0x10);
+      -        _DAT_0080d36e = cm550_calculateBlendedTableValue(400);
+      +        _DAT_0080d36e =
+      +             cm550_calculateBlendedTableValue
+      +                       (_hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000,400);
+      -        max_result.value = 0x8000;
+      -        max_result.limit = wVar4;
+      -                        * 0x1111,divisor,max_result);
+      +                        * 0x1111,divisor,0x8000);
+  0x0001e056 cm550_serialNodeAddressChecker: 5 lines
+      -void cm550_serialNodeAddressChecker(byte node_address)
+      +void cm550_serialNodeAddressChecker(word node_address)
+      -  byte in_stack_00000005;
+      -  if (in_stack_00000005 == _can_first_receive_object_index) {
+      +  if ((node_address & 0xff) == _can_first_receive_object_index) {
+  0x0001e086 cm550_serialNodeAddressForwarder: 11 lines
+      -void cm550_serialNodeAddressForwarder(byte node_address)
+      +void cm550_serialNodeAddressForwarder(word node_address)
+      -  undefined4 unaff_D2;
+      -  byte in_stack_00000005;
+      -  if ((_can_first_receive_object_index < in_stack_00000005) &&
+      -     (in_stack_00000005 <= _can_last_receive_object_index)) {
+      -    mc68k_queueCanCs4ReceiveMessage
+      -              ((uint)CONCAT12(in_stack_00000005,(short)((uint)unaff_D2 >> 0x10)));
+      +  if ((_can_first_receive_object_index < (node_address & 0xff)) &&
+      +     ((node_address & 0xff) <= _can_last_receive_object_index)) {
+      +    mc68k_queueCanCs4ReceiveMessage(node_address & 0xff);
+  0x0001e0fa mc68k_canCs4InterruptHandler: 44 lines
+      -  byte bVar1;
+      +  byte *pbVar1;
+      +  byte bVar2;
+      +  undefined3 uVar3;
+      +  undefined4 uVar4;
+      -  undefined1 local_1c;
+      -  byte node_address;
+      -  undefined2 uStack_1a;
+      -  local_1c = (undefined1)((uint)in_D0 >> 0x18);
+      -  node_address = (byte)((uint)in_D0 >> 0x10);
+      -  uStack_1a = (undefined2)in_D0;
+      -  while (bVar1 = CAN_CS4_INTERRUPT, bVar1 != 0) {
+      -    if ((bVar1 < 3) || (0x10 < bVar1)) {
+      -      if (bVar1 == 2) {
+      -        cm550_serialNodeAddressForwarder(node_address);
+      +  uVar4 = in_D0;
+      +  while (bVar2 = CAN_CS4_INTERRUPT, bVar2 != 0) {
+      +    if ((bVar2 < 3) || (0x10 < bVar2)) {
+      +      if (bVar2 == 2) {
+      +        uVar4 = cm550_serialNodeAddressForwarder((word)CONCAT31((int3)((uint)uVar4 >> 8),0xf));
+      -            bVar1 = CAN_CS4_CPU_INTERFACE;
+      -          } while ((bVar1 & 0x80) != 0);
+      -          bVar1 = CAN_CS4_CONTROL;
+      -          CAN_CS4_CONTROL = bVar1 | 10;
+  0x0001e5f0 mc68k_queueCanCs4ReceiveMessage: 43 lines
+      -void mc68k_queueCanCs4ReceiveMessage(dword message_object)
+      +void mc68k_queueCanCs4ReceiveMessage(word message_object)
+      -  int iVar2;
+      -  byte bVar4;
+      -  ushort uVar3;
+      +  byte bVar2;
+      +  int iVar3;
+      +  ushort uVar4;
+      -    bVar4 = (byte)(message_object >> 0x10);
+      -    iVar2 = (uint)bVar4 * 0x10;
+      -    if (bVar4 == 0xf) {
+      +    iVar3 = (uint)(byte)message_object * 0x10;
+      +    if ((byte)message_object == 0xf) {
+      -      bVar4 = UNK_00ffd8f6;
+      -      *(short *)(_can_receive_buffer_write_pointer + 1) = (short)((int)(bVar4 & 0xf0) >> 4);
+      +      bVar2 = UNK_00ffd8f6;
+      +      *(short *)(_can_receive_buffer_write_pointer + 1) = (short)((int)(bVar2 & 0xf0) >> 4);
+      -      uVar3 = 0;
+      +      uVar4 = 0;
+      -        uVar3 = uVar3 + 1;
+      +        uVar4 = uVar4 + 1;
+      -      } while (uVar3 < 8);
+      +      } while (uVar4 < 8);
+      -        (&CAN_CS4_STATUS)[iVar2] = 0xfd;
+  0x0001ec3c cm550_diagnosticMemoryWriteHandler: 95 lines
+      -void cm550_diagnosticMemoryWriteHandler(byte service_id)
+      +void cm550_diagnosticMemoryWriteHandler(word service_id)
+      -  MEMORY_REGION_TYPE MVar1;
+      -  char cVar2;
+      -  undefined4 unaff_D2;
+      +  char cVar1;
+      +  MEMORY_REGION_TYPE MVar2;
+      -  dword *pdVar6;
+      -  byte *pbVar7;
+      -  bool bVar8;
+      -  byte in_stack_00000005;
+      -  undefined1 uVar9;
+      -  byte response_type;
+      +  byte bVar6;
+      +  dword *pdVar7;
+      +  byte *pbVar8;
+      +  bool bVar9;
+      -  uVar9 = (undefined1)((uint)unaff_D2 >> 0x18);
+      -  response_type = (byte)((uint)unaff_D2 >> 0x10);
+      -  cVar2 = (char)local_8;
+      +  cVar1 = (char)local_8;
+      -  bVar5 = *local_8 & 0xf;
+      -  bVar8 = bVar5 == 0;
+      -  if (bVar8) {
+  0x0001edae cm550_diagnosticMemoryReadHandler: 68 lines
+      -void cm550_diagnosticMemoryReadHandler(byte service_id)
+      +void cm550_diagnosticMemoryReadHandler(word service_id)
+      -  undefined4 unaff_D2;
+      -  byte *pbVar15;
+      -  undefined1 *puVar16;
+      -  char in_stack_00000005;
+      +  char cVar15;
+      +  byte *pbVar16;
+      +  undefined1 *puVar17;
+      -  undefined1 uVar17;
+      -  byte response_type;
+      -  puVar16 = auStackY_ca + 0x86;
+      -  uVar17 = (undefined1)((uint)unaff_D2 >> 0x18);
+      -  response_type = (byte)((uint)unaff_D2 >> 0x10);
+      -  if (in_stack_00000005 == '\x02') {
+      +  puVar17 = auStackY_ca + 0x86;
+      +  cVar15 = (char)service_id;
+      +  if (cVar15 == '\x02') {
+      -      cm550_diagnosticMessageQueueWrite(response_type);
+      +      cm550_diagnosticMessageQueueWrite(2);
+      -      cm550_diagnosticMessageQueueWrite(response_type);
+      +      cm550_diagnosticMessageQueueWrite(2);
+      -    if (in_stack_00000005 == '\x02') {
+      +    if (cVar15 == '\x02') {
+  0x00020890 cm550_FUN_00020890: 62 lines
+      -uint cm550_FUN_00020890(byte input_index)
+      +uint cm550_FUN_00020890(word input_index)
+      -  short in_stack_00000004;
+      -  iVar1 = in_stack_00000004 * 10;
+      -  uVar4 = (undefined2)CONCAT31((int3)((uint)(in_stack_00000004 * 5) >> 8),(&DAT_0002010c)[iVar1]);
+      +  iVar1 = (short)input_index * 10;
+      +  uVar4 = (undefined2)CONCAT31((int3)((uint)((short)input_index * 5) >> 8),(&DAT_0002010c)[iVar1]);
+      -     (uVar3 = (uint)*(byte *)(*(int *)(&DAT_0002010e + in_stack_00000004 * 10) + 0x80bd4a),
+      +     (uVar3 = (uint)*(byte *)(*(int *)(&DAT_0002010e + (short)input_index * 10) + 0x80bd4a),
+      -    if (*(byte *)(*(int *)(&DAT_0002010e + in_stack_00000004 * 10) + 0x80bd4a) <=
+      +    if (*(byte *)(*(int *)(&DAT_0002010e + (short)input_index * 10) + 0x80bd4a) <=
+      -      *(undefined1 *)(*(int *)(&DAT_0002010e + in_stack_00000004 * 10) + 0x80bd4a) =
+      +      *(undefined1 *)(*(int *)(&DAT_0002010e + (short)input_index * 10) + 0x80bd4a) =
+      -    if (*(short *)(&DAT_00804234 + (short)(char)(&DAT_0002010c)[in_stack_00000004 * 10] * 2) == 0) {
+      +    if (*(short *)(&DAT_00804234 + (short)(char)(&DAT_0002010c)[(short)input_index * 10] * 2) == 0)
+      +    {
+      -      uVar3 = *(uint *)(&DAT_0002010e + in_stack_00000004 * 10);
+      +      uVar3 = *(uint *)(&DAT_0002010e + (short)input_index * 10);
+      -        iVar1 = in_stack_00000004 * 10;
+      +        iVar1 = (short)input_index * 10;
+      -    else if (**(char **)(&DAT_00020108 + in_stack_00000004 * 10) == '\x03') {
+      +    else if (**(char **)(&DAT_00020108 + (short)input_index * 10) == '\x03') {
+      -      uVar3 = *(uint *)(&DAT_0002010e + in_stack_00000004 * 10);
+      +      uVar3 = *(uint *)(&DAT_0002010e + (short)input_index * 10);
+  0x00021070 cm550_FUN_00021070: 10 lines
+      -  undefined4 unaff_D2;
+      -  sVar1 = 0;
+      +  word input_index;
+      +  input_index = 0;
+      -    cm550_FUN_00020890((byte)((uint)unaff_D2 >> 0x10));
+      -    sVar1 = sVar1 + 1;
+      -  } while (sVar1 < 0x11);
+      +    cm550_FUN_00020890(input_index);
+      +    input_index = input_index + 1;
+      +  } while ((short)input_index < 0x11);
+  0x0002148a writeJ1939DiagnosticMemory: 59 lines
+      -  int iVar1;
+      -  bool bVar2;
+      -  byte bVar3;
+      -  MEMORY_REGION_TYPE MVar4;
+      -  char cVar5;
+      -  undefined4 unaff_D2;
+      -  short sVar6;
+      -  undefined2 uVar7;
+      -  uVar7 = (undefined2)((uint)unaff_D2 >> 0x10);
+      +  byte *source;
+      +  bool bVar1;
+      +  byte bVar2;
+      +  MEMORY_REGION_TYPE MVar3;
+      +  char cVar4;
+      +  word range_length;
+      -  sVar6 = (short)length;
+      -  bVar3 = getJ1939MemoryServiceHeaderLength();
+      -  if ((*(short *)(request + 4) == 8) ||
+      -     ((ushort)(sVar6 + (ushort)bVar3) == *(ushort *)(request + 4))) {
+      -    bVar2 = false;
+      +  range_length = (word)length;
+      +  bVar2 = getJ1939MemoryServiceHeaderLength();
+      +  if ((*(short *)(request + 4) == 8) || ((word)(range_length + bVar2) == *(ushort *)(request + 4)))
+      +  {
+  0x0002167e cm550_j1939DataCopyWrapper2Byte: 4 lines
+      -  undefined1 local_6 [2];
+      -  cm550_memcpy(local_6,*(int *)(param_1 + 6) + 1);
+      +  byte local_6 [2];
+      +  cm550_memcpy(local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
+  0x000216c6 cm550_FUN_000216c6: 8 lines
+      -  undefined1 local_a [4];
+      -  undefined1 local_6 [2];
+      -  cm550_memcpy(local_6,*(int *)(param_1 + 6) + 1);
+      -  cm550_memcpy(local_a,*(int *)(param_1 + 6) + 3);
+      +  byte local_a [4];
+      +  byte local_6 [2];
+      +  cm550_memcpy(local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
+      +  cm550_memcpy(local_a,(byte *)(*(int *)(param_1 + 6) + 3),4);
+  0x00021714 cm550_j1939DataCopyWrapperExtended: 4 lines
+      -  undefined1 local_6 [2];
+      -  cm550_memcpy(local_6,*(int *)(param_1 + 6) + 1);
+      +  byte local_6 [2];
+      +  cm550_memcpy(local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
+  0x00021778 cm550_FUN_00021778: 12 lines
+      -  undefined1 local_e [4];
+      -  undefined1 local_a [4];
+      -  undefined1 local_6 [2];
+      -  cm550_memcpy(local_6,*(int *)(param_1 + 6) + 1);
+      -  cm550_memcpy(local_a,*(int *)(param_1 + 6) + 3);
+      -  cm550_memcpy(local_e,*(int *)(param_1 + 6) + 7);
+      +  byte local_e [4];
+      +  byte local_a [4];
+      +  byte local_6 [2];
+      +  cm550_memcpy(local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
+      +  cm550_memcpy(local_a,(byte *)(*(int *)(param_1 + 6) + 3),4);
+      +  cm550_memcpy(local_e,(byte *)(*(int *)(param_1 + 6) + 7),4);
+  0x000217de handleJ1939WriteMemoryService: 2 lines
+      -  cm550_memcpy(&address,*(int *)(request + 6) + 1);
+      +  cm550_memcpy((byte *)&address,(byte *)(*(int *)(request + 6) + 1),4);
+  0x00021826 handleJ1939WriteMemoryLongLengthService: 4 lines
+      -  cm550_memcpy(&address,*(int *)(request + 6) + 1);
+      -  cm550_memcpy(&length,*(int *)(request + 6) + 5);
+      +  cm550_memcpy((byte *)&address,(byte *)(*(int *)(request + 6) + 1),4);
+      +  cm550_memcpy((byte *)&length,(byte *)(*(int *)(request + 6) + 5),4);
+  0x000222b4 cm550_canDiagnosticResponseSender: 4 lines
+      +  undefined2 local_20;
+      -  cVar4 = cm550_diagnosticMemoryAddressResolver((word)((uint)&local_1e >> 0x10));
+      +  local_20 = CONCAT11(uVar1,uVar2);
+      +  cVar4 = cm550_diagnosticMemoryAddressResolver(local_20,(dword *)&local_1e);
+  0x0002238e cm550_diagMemoryReadResponseBuilder: 72 lines
+      +  undefined1 *puVar1;
+      +  int iVar2;
+      -  undefined3 uVar1;
+      -  byte bVar4;
+      -  MEMORY_REGION_TYPE MVar5;
+      -  undefined2 uVar2;
+      -  char cVar6;
+      +  undefined3 uVar3;
+      +  byte bVar5;
+      +  MEMORY_REGION_TYPE MVar6;
+      +  undefined2 uVar4;
+      +  char cVar7;
+      -  ushort uVar3;
+      -  undefined4 unaff_D2;
+      -  undefined1 uVar7;
+      -  int iVar8;
+      -  undefined1 *puVar9;
+      -  undefined1 *puVar10;
+      -  uVar2 = (undefined2)((uint)unaff_D2 >> 0x10);
+      -  cVar6 = **(char **)(request_ptr + 6);
+      +  undefined1 uVar8;
+      +  ushort range_length;
+      +  byte *destination;
+      +  cVar7 = **(char **)(request_ptr + 6);
+  0x00022530 cm550_FUN_00022530: 8 lines
+      -  undefined1 local_a [4];
+      -  undefined1 local_6 [2];
+      -  cm550_memcpy(local_6,*(int *)(param_1 + 6) + 1);
+      -  cm550_memcpy(local_a,*(int *)(param_1 + 6) + 3);
+      +  byte local_a [4];
+      +  byte local_6 [2];
+      +  cm550_memcpy(local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
+      +  cm550_memcpy(local_a,(byte *)(*(int *)(param_1 + 6) + 3),4);
+  0x0002257c cm550_FUN_0002257c: 4 lines
+      -  undefined1 local_6 [2];
+      -  cm550_memcpy(local_6,*(int *)(param_1 + 6) + 1);
+      +  byte local_6 [2];
+      +  cm550_memcpy(local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
+  0x000225e0 cm550_FUN_000225e0: 12 lines
+      -  undefined1 local_e [4];
+      -  undefined1 local_a [4];
+      -  undefined1 local_6 [2];
+      -  cm550_memcpy(local_6,*(int *)(param_1 + 6) + 1);
+      -  cm550_memcpy(local_a,*(int *)(param_1 + 6) + 3);
+      -  cm550_memcpy(local_e,*(int *)(param_1 + 6) + 7);
+      +  byte local_e [4];
+      +  byte local_a [4];
+      +  byte local_6 [2];
+      +  cm550_memcpy(local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
+      +  cm550_memcpy(local_a,(byte *)(*(int *)(param_1 + 6) + 3),4);
+      +  cm550_memcpy(local_e,(byte *)(*(int *)(param_1 + 6) + 7),4);
+  0x00022646 cm550_FUN_00022646: 2 lines
+      -  cm550_memcpy(&local_8,*(int *)(param_1 + 6) + 1);
+      +  cm550_memcpy((byte *)&local_8,(byte *)(*(int *)(param_1 + 6) + 1),4);
+  0x0002268e cm550_FUN_0002268e: 4 lines
+      -  cm550_memcpy(&local_8,*(int *)(param_1 + 6) + 1);
+      -  cm550_memcpy(&local_c,*(int *)(param_1 + 6) + 5);
+      +  cm550_memcpy((byte *)&local_8,(byte *)(*(int *)(param_1 + 6) + 1),4);
+      +  cm550_memcpy((byte *)&local_c,(byte *)(*(int *)(param_1 + 6) + 5),4);
+  0x0002571e cm550_FUN_0002571e: 7 lines
+      -  undefined4 unaff_D2;
+      -  undefined4 unaff_A2;
+      -    _DAT_0080dabc =
+      -         cm550_coreTableInterpolation
+      -                   ((void *)CONCAT22(_current_engine_rpm_filtered,0x80),
+      -                    (word)((uint)unaff_D2 >> 0x10),(word)((uint)unaff_A2 >> 0x10));
+      +    _DAT_0080dabc = cm550_coreTableInterpolation(_current_engine_rpm_filtered,&DAT_00801a32);
+  0x00025b1c vp44_fuel_timing_calculation_with_fault_checking: 52 lines
+      +  word new_sample;
+      -  word input_value;
+      -  undefined4 unaff_D2;
+      -  word scaling_factor;
+      -  undefined4 unaff_D3;
+      -  short sVar5;
+      -  scaling_factor = (word)((uint)unaff_D3 >> 0x10);
+      -  input_value = (word)((uint)unaff_D2 >> 0x10);
+      +  word wVar5;
+      -                    ((void *)CONCAT22(_DAT_0080825a *
+      -                                      _validated_percent_throttle_commanded_by_driver_0_100,0x80),
+      -                     input_value,scaling_factor);
+      -  sVar5 = _lsg_filtered_speed_error;
+      +                    (_DAT_0080825a * _validated_percent_throttle_commanded_by_driver_0_100,
+      +                     &retarder_mode3_output_ptr);
+      +  wVar5 = _lsg_filtered_speed_error;
+      -      sVar3 = -0x8000;
+      +      new_sample = 0x8000;
+      -      sVar3 = (short)iVar1;
+      +      new_sample = (word)iVar1;
+      -      sVar3 = 0x7fff;
+      +      new_sample = 0x7fff;
+      -      _lsg_speed_error_ema_accumulator = sVar3 * 0x10000 + -0x80000000;
+      -      _lsg_filtered_speed_error = sVar3;
+  0x00026a64 cm550_memcpy: 10 lines
+      -void cm550_memcpy(undefined1 *param_1,undefined1 *param_2,undefined4 param_3)
+      +void cm550_memcpy(byte *destination,byte *source,word byte_count)
+      -  for (uVar1 = 0; uVar1 < param_3._0_2_; uVar1 = uVar1 + 1) {
+      -    *param_1 = *param_2;
+      -    param_1 = param_1 + 1;
+      -    param_2 = param_2 + 1;
+      +  for (uVar1 = 0; uVar1 < byte_count; uVar1 = uVar1 + 1) {
+      +    *destination = *source;
+      +    destination = destination + 1;
+      +    source = source + 1;
+  0x00027af0 cm550_restartOnKeyOnDuringPowerDown: 36 lines
+      -  char in_XF;
+      -  char cVar2;
+      -  char cVar3;
+      -  char cVar4;
+      -  byte bVar5;
+      -  ushort uVar6;
+      +  ushort uVar2;
+      -  cVar2 = '\x01';
+      -  cVar3 = '\0';
+      -  cVar4 = '\0';
+      -  bVar5 = 0;
+      -  uVar6 = (ushort)(byte)(in_XF << 4 | cVar2 << 3 | cVar3 << 2 | cVar4 << 1 | bVar5);
+      -  cm550_parameterCircularBufferWrite(0x803fec,(byte *)&local_6,uVar6);
+      -  uVar1 = 0;
+      -  while ((uVar1 < 1000 && (_vp44_reset_count != local_6))) {
+      +  cm550_parameterCircularBufferWrite(0x803fec,(byte *)&local_6,2);
+      +  uVar2 = 0;
+      +  while ((uVar2 < 1000 && (_vp44_reset_count != local_6))) {
+      -    mc68k_delayTimeBaseTicksWithWatchdogService();
+      -    uVar1 = uVar1 + 1;
+      +    mc68k_delayTimeBaseTicksWithWatchdogService(500);
+      +    uVar2 = uVar2 + 1;
+      -  cm550_parameterCircularBufferWrite(0x803fe2,(byte *)&local_6,uVar6);
+      -  uVar1 = 0;
+  0x00027c20 vp44_FUN_00027c20: 48 lines
+      -  char cVar2;
+      -  undefined4 unaff_D2;
+      -  ushort uVar3;
+      +  uint uVar2;
+      +  char cVar3;
+      +  word byte_count;
+      +  ushort uVar5;
+      -  uVar4 = 0;
+      +  uVar5 = 0;
+      -  while ((source_ptr < 0x804f92 && (unaff_D4w < 2))) {
+      -    cVar2 = cm550_parameterCircularBufferWrite
+      -                      (source_ptr,(byte *)source_ptr,(word)((uint)unaff_D2 >> 0x10));
+      -    if (cVar2 == '\0') {
+      +  do {
+      +    if ((0x804f91 < source_ptr) || (1 < unaff_D4w)) {
+      +      return;
+      +    }
+      +    if (source_ptr + 0x10 < 0x804f93) {
+      +      byte_count = 0x10;
+      +    }
+      +    else {
+      +      uVar2 = source_ptr;
+      +      if ((int)source_ptr < 0) {
+      +        uVar2 = source_ptr + 1;
+  0x00027cd0 cm550_savePowerDownDataToFlashBank: 9 lines
+      -    cm550_parameterCircularBufferWrite
+      -              (0x803fe4,&DAT_00803fe2,
+      -               (ushort)(byte)((_DAT_00803fe2 < _DAT_00803fe4) << 4 |
+      -                              ((short)(_DAT_00803fe2 - _DAT_00803fe4) < 0) << 3 |
+      -                              SBORROW2(_DAT_00803fe2,_DAT_00803fe4) << 1 |
+      -                             _DAT_00803fe2 < _DAT_00803fe4));
+      +    cm550_parameterCircularBufferWrite(0x803fe4,&DAT_00803fe2,2);
+      -    mc68k_delayTimeBaseTicksWithWatchdogService();
+      +    mc68k_delayTimeBaseTicksWithWatchdogService(10000);
+  0x00027f9c mc68k_runPowerDownSequence: 50 lines
+      -  char in_XF;
+      +  byte *source_ptr;
+      -  uVar12 = (ushort)(byte)(in_XF << 4 | 8);
+      -    mc68k_delayTimeBaseTicksWithWatchdogService(uVar12);
+      +    mc68k_delayTimeBaseTicksWithWatchdogService(500);
+      +  source_ptr = (byte *)&local_a;
+      -  cm550_parameterCircularBufferWrite(0x803b3e,(byte *)&local_a,uVar12);
+      +  cm550_parameterCircularBufferWrite(0x803b3e,source_ptr,4);
+      -    cm550_emptyPlaceholderFunction();
+      +    cm550_emptyPlaceholderFunction(puVar13,(short)source_ptr,uVar12);
+      -  cm550_parameterCircularBufferWrite(0x803b50,(byte *)&local_a,(word)((uint)puVar13 >> 0x10));
+      +  cm550_parameterCircularBufferWrite(0x803b50,(byte *)&local_a,4);
+      -    uVar4 = 0;
+      -    do {
+      -      SIM_SWSR = 0x55;
+      -      SIM_SWSR = 0xaa;
+      -      CS2_WATCHDOG_SERVICE = 0x55;
+      -      CS2_WATCHDOG_SERVICE = 0xaa;
+      -      uVar4 = uVar4 + 1;
+      -    } while (uVar4 < 0xa0);
+      +    uVar12 = 0;
+      +    do {
+      +      SIM_SWSR = 0x55;
+      +      SIM_SWSR = 0xaa;
+  0x0002ce64 cm550_updateBootBlockFromImage: 6 lines
+      -  undefined4 unaff_D2;
+      -  undefined2 uVar4;
+      -  uVar4 = (undefined2)((uint)unaff_D2 >> 0x10);
+      -                  ((dword)dest_address,(dword)auStack_104,
+      -                   CONCAT22((short)pcVar2 - (short)auStack_104,uVar4));
+      +                  ((dword)dest_address,(dword)auStack_104,(short)pcVar2 - (short)auStack_104);
+  0x0002d09e cm550_systemControl64: 3 lines
+      -  undefined4 unaff_D2;
+      -      cm550_diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
+      +      cm550_diagnosticMessageQueueWrite(4);
+  0x0002d3c6 initProtectionParamCalculation: 93 lines
+      -  short sVar1;
+      +  ushort uVar1;
+      -  int iVar3;
+      +  uint uVar3;
+      -  dword dVar6;
+      -  int iVar7;
+      -  undefined4 unaff_D2;
+      -  undefined4 unaff_D3;
+      -  ushort uVar8;
+      -  word new_sample;
+      -  word smoothing_factor;
+      +  int iVar6;
+      +  dword dVar7;
+      +  int iVar8;
+      +  ushort uVar9;
+      -  smoothing_factor = (word)((uint)unaff_D3 >> 0x10);
+      -  new_sample = (word)((uint)unaff_D2 >> 0x10);
+      -    iVar7 = _pid_combined_correction_term;
+      -    sVar1 = _closed_loop_filtered_speed_error;
+      +    iVar8 = _pid_combined_correction_term;
+      +    uVar1 = _closed_loop_filtered_speed_error;
+      +    uVar3 = (uint)_closed_loop_rpm_snapshot - (uint)_engine_rpm_primary;
+      +    if ((int)(short)_max_allowed_error_term_0_1000 < (int)uVar3) {
+      +      uVar3 = (uint)_max_allowed_error_term_0_1000;
+  0x0002dbde cm550_FUN_0002dbde: 9 lines
+      -  word input_value;
+      -  undefined4 unaff_D2;
+      -  word scaling_factor;
+      -  undefined4 unaff_A2;
+      -  scaling_factor = (word)((uint)unaff_A2 >> 0x10);
+      -  input_value = (word)((uint)unaff_D2 >> 0x10);
+      -    uVar1 = cm550_coreTableInterpolation
+      -                      ((void *)CONCAT22(_DAT_0080dc24,0x80),input_value,scaling_factor);
+      +    uVar1 = cm550_coreTableInterpolation(_DAT_0080dc24,&DAT_00801c46);
+  0x0002ef4a cm550_FUN_0002ef4a: 6 lines
+      -    vp44_diagnosticByteResponseSender(0x100);
+      +    vp44_diagnosticByteResponseSender(0,0x100);
+      -    vp44_diagnosticByteResponseSender(0x200);
+      +    vp44_diagnosticByteResponseSender(1,0x200);
+      -  cm550_diagnosticCanResponseSender((short)msg_ptr);
+      +  cm550_diagnosticCanResponseSender((char)msg_ptr);
+  0x0002f128 processEngineTsc1Request: 15 lines
+      -  undefined4 unaff_D2;
+      -  byte config_type;
+      -  config_type = (byte)((uint)unaff_D2 >> 0x10);
+      -           cm550_canBusConfigTypeSelector(config_type);
+      +           cm550_canBusConfigTypeSelector
+      +                     (CONCAT11((char)((ushort)_datalink_command_timeout_counter >> 8),
+      +                               *(undefined1 *)(param_1 + 3)));
+      -           cm550_canBusConfigTypeSelector(config_type);
+      +           cm550_canBusConfigTypeSelector
+      +                     (CONCAT11((char)((ushort)_datalink_command_timeout_counter >> 8),
+      +                               *(undefined1 *)(param_1 + 3)));
+      -           cm550_canBusConfigTypeSelector(config_type);
+      +           cm550_canBusConfigTypeSelector
+      +                     (CONCAT11((char)((ushort)_datalink_command_timeout_counter >> 8),
+      +                               *(undefined1 *)(param_1 + 3)));
+  0x0002f4be cm550_FUN_0002f4be: 16 lines
+      -void cm550_FUN_0002f4be(byte cmd_index)
+      +void cm550_FUN_0002f4be(can_std_rx_desc_t *rx_msg)
+      -  undefined3 in_stack_00000004;
+      -  if ((*(char *)(_in_stack_00000004 + 2) == j1939_engine_node_source_address) ||
+      -     (*(char *)(_in_stack_00000004 + 2) == -1)) {
+      +  if ((*(char *)((int)&rx_msg->id + 2) == j1939_engine_node_source_address) ||
+      +     (*(char *)((int)&rx_msg->id + 2) == -1)) {
+      -      if ((pcVar2[1] == **(char **)(_in_stack_00000004 + 6)) &&
+      -         (*(char *)(*(int *)(_in_stack_00000004 + 6) + 1) == *pcVar2)) {
+      -        (**(code **)(pcVar2 + 2))((short)_in_stack_00000004);
+      +      if ((pcVar2[1] == *rx_msg->data_ptr) && (rx_msg->data_ptr[1] == *pcVar2)) {
+      +        (**(code **)(pcVar2 + 2))((short)rx_msg);
+      -    if ((bVar1 == DAT_00801e1a) && (*(char *)(_in_stack_00000004 + 2) != -1)) {
+      -      cm550_diagnosticCanResponseSender((short)_in_stack_00000004);
+      +    if ((bVar1 == DAT_00801e1a) && (*(char *)((int)&rx_msg->id + 2) != -1)) {
+      +      cm550_diagnosticCanResponseSender((short)rx_msg);
+  0x0002f538 cm550_diagnosticDataDump: 3 lines
+      -  word unaff_A2w;
+      -  cm550_diagnosticDM11PGN_65234_Builder(unaff_A2w);
+      +  cm550_diagnosticDM11PGN_65234_Builder();
+  0x0002f7e6 cm550_retarderControlModeHandler: 13 lines
+      -  ushort uVar6;
+      -  undefined4 unaff_D2;
+      -  byte config_type;
+      -  config_type = (byte)((uint)unaff_D2 >> 0x10);
+      -                 cm550_canBusConfigTypeSelector(config_type);
+      +                 cm550_canBusConfigTypeSelector
+      +                           (CONCAT11((char)((ushort)_retarder_command_timeout_counter >> 8),
+      +                                     *(undefined1 *)(param_1 + 3)));
+      -        uVar6 = (ushort)*(byte *)(param_1 + 3);
+      -             cm550_canBusConfigTypeSelector(config_type);
+      -        _jcomm_req_torque_braking_override_or_limit_value_0_125 = cm550_FUN_0002f606(uVar6);
+      +             cm550_canBusConfigTypeSelector((ushort)*(byte *)(param_1 + 3));
+      +        _jcomm_req_torque_braking_override_or_limit_value_0_125 = cm550_FUN_0002f606();
+  0x00032244 cm550_diagnosticDM11PGN_65234_Builder: 2 lines
+      -void cm550_diagnosticDM11PGN_65234_Builder(word dtc_count)
+      +void cm550_diagnosticDM11PGN_65234_Builder(void)
+  0x00032b38 vp44_diagnosticByteResponseSender: 5 lines
+      -void vp44_diagnosticByteResponseSender(word response_code)
+      +void vp44_diagnosticByteResponseSender(byte first_data_byte,word response_code)
+      -  undefined1 in_stack_00000005;
+      -  DAT_00803470 = in_stack_00000005;
+      +  DAT_00803470 = first_data_byte;
+  0x0003460e lookupApplicationMemoryRegionType: 4 lines
+      -MEMORY_REGION_TYPE lookupApplicationMemoryRegionType(dword range_start,dword range_length)
+      +MEMORY_REGION_TYPE lookupApplicationMemoryRegionType(dword range_start,word range_length)
+      -  uVar2 = (range_start + (range_length >> 0x10)) - 1;
+      +  uVar2 = (range_start + range_length) - 1;
+  0x00034bba mc68k_delayTimeBaseTicksWithWatchdogService: 4 lines
+      -void mc68k_delayTimeBaseTicksWithWatchdogService(undefined4 param_1)
+      +void mc68k_delayTimeBaseTicksWithWatchdogService(word tick_count)
+      -  while (wVar2 = CTM4_BIUTBR, (ushort)(wVar2 - wVar1) < param_1._0_2_) {
+      +  while (wVar2 = CTM4_BIUTBR, (ushort)(wVar2 - wVar1) < tick_count) {
+  0x00034bf8 mc68k_delayTimeBaseTicksWithWatchdogService2: 5 lines
+      -void mc68k_delayTimeBaseTicksWithWatchdogService2(word timer_ticks)
+      +void mc68k_delayTimeBaseTicksWithWatchdogService2(word tick_count)
+      -  ushort in_stack_00000004;
+      -  while (wVar2 = CTM4_BIUTBR, (ushort)(wVar2 - wVar1) < in_stack_00000004) {
+      +  while (wVar2 = CTM4_BIUTBR, (ushort)(wVar2 - wVar1) < tick_count) {
+  0x00034e9a exponentialMovingAverage: 22 lines
+      -undefined8 exponentialMovingAverage(word current_avg,word new_sample,word smoothing_factor)
+      +undefined8 exponentialMovingAverage(word new_sample,dword *filter_state)
+      -  int iVar2;
+      +  dword dVar2;
+      -  short in_stack_00000004;
+      -  undefined2 in_stack_00000008;
+      -  uVar1 = *(ushort *)*_current_avg;
+      +  uVar1 = *(ushort *)*filter_state;
+      -    iVar2 = (uint)(ushort)(in_stack_00000004 + 0x8000) << 0x10;
+      +    dVar2 = (uint)(ushort)(new_sample + 0x8000) << 0x10;
+      -    iVar2 = (uint)*(ushort *)(_current_avg + 1) * (uint)uVar1 +
+      -            ((uint)*(ushort *)((int)_current_avg + 6) * (uint)uVar1 >> 0x10) +
+      -            (uint)(ushort)(in_stack_00000004 + 0x8000) * (uint)(ushort)-uVar1;
+      +    dVar2 = (uint)*(ushort *)(filter_state + 1) * (uint)uVar1 +
+      +            ((uint)*(ushort *)((int)filter_state + 6) * (uint)uVar1 >> 0x10) +
+      +            (uint)(ushort)(new_sample + 0x8000) * (uint)(ushort)-uVar1;
+      -  _current_avg[1] = iVar2;
+      -  return CONCAT44(CONCAT22((short)((uint)((iVar2 + 0x8000) * 0x10000) >> 0x10),
+      -                           (short)((uint)(iVar2 + 0x8000) >> 0x10) + -0x8000),in_D1);
+      +  filter_state[1] = dVar2;
+      +  return CONCAT44(CONCAT22((short)((dVar2 + 0x8000) * 0x10000 >> 0x10),
+      +                           (short)(dVar2 + 0x8000 >> 0x10) + -0x8000),in_D1);
+  0x00034f00 cm550_unsignedLinearInterpolation: 33 lines
+      -undefined4
+      -cm550_unsignedLinearInterpolation(word x_low,word x_high,word y_low,word y_high,word x_input)
+      +undefined4 cm550_unsignedLinearInterpolation(word x_input,dword *interpolation_state)
+      -  undefined4 uVar4;
+      +  dword dVar4;
+      -  ushort in_stack_00000004;
+      -  undefined2 in_stack_00000008;
+      -  lVar3 = (longlong)(int)_x_low[2] *
+      -          (longlong)(int)(((uint)*(ushort *)_x_low[1] - (uint)*(ushort *)*_x_low) + 0xffff) +
+      -          (longlong)(int)(uint)*(ushort *)*_x_low * (longlong)(int)((uint)in_stack_00000004 << 0x10)
+      -  ;
+      +  lVar3 = (longlong)(int)interpolation_state[2] *
+      +          (longlong)
+      +          (int)(((uint)*(ushort *)interpolation_state[1] - (uint)*(ushort *)*interpolation_state) +
+      +               0xffff) +
+      +          (longlong)(int)(uint)*(ushort *)*interpolation_state *
+      +          (longlong)(int)((uint)x_input << 0x10);
+      -  lVar2 = (longlong)(int)(uint)*(ushort *)_x_low[1] * (longlong)(int)_x_low[3];
+      +  lVar2 = (longlong)(int)(uint)*(ushort *)interpolation_state[1] *
+      +          (longlong)(int)interpolation_state[3];
+      -      uVar4 = 0x80000000;
+      +      dVar4 = 0x80000000;
+      -      uVar4 = (undefined4)
+      -              (((longlong)iVar5 << 0x20 | (longlong)(int)(uVar1 - (uint)lVar2)) / 0xffff);
+  0x00034f8a cm550_coreTableInterpolation: 21 lines
+      -undefined8 cm550_coreTableInterpolation(void *table_descriptor,word input_value,word scaling_factor)
+      +undefined8 cm550_coreTableInterpolation(word input_value,void *table_descriptor)
+      -  undefined4 *puVar2;
+      -  int iVar3;
+      +  int iVar2;
+      -  undefined2 in_stack_00000008;
+      -  puVar2 = (undefined4 *)CONCAT22(table_descriptor._2_2_,in_stack_00000008);
+      -  uVar1 = *(ushort *)*puVar2;
+      +  uVar1 = **(ushort **)table_descriptor;
+      -    iVar3 = (uint)table_descriptor._0_2_ << 0x10;
+      +    iVar2 = (uint)input_value << 0x10;
+      -    iVar3 = (uint)uVar1 * (uint)*(ushort *)(puVar2 + 1) +
+      -            ((uint)uVar1 * (uint)*(ushort *)((int)puVar2 + 6) >> 0x10) +
+      -            (uint)table_descriptor._0_2_ * (uint)(ushort)-uVar1;
+      +    iVar2 = (uint)uVar1 * (uint)*(ushort *)((int)table_descriptor + 4) +
+      +            ((uint)uVar1 * (uint)*(ushort *)((int)table_descriptor + 6) >> 0x10) +
+      +            (uint)input_value * (uint)(ushort)-uVar1;
+      -  puVar2[1] = iVar3;
+      -  return CONCAT44((iVar3 + 0x8000U) * 0x10000 | iVar3 + 0x8000U >> 0x10,in_D1);
+      +  *(int *)((int)table_descriptor + 4) = iVar2;
+      +  return CONCAT44((iVar2 + 0x8000U) * 0x10000 | iVar2 + 0x8000U >> 0x10,in_D1);

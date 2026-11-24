@@ -1,0 +1,16 @@
+docs: round 86 stage B - firmware/CLAUDE.md made true again after the stack parameter layout; the CM550 local-variable storage rule
+
+Factual corrections for two statements stage A (11298ed3) made false, from an advisor review:
+- firmware/CLAUDE.md: the script test suite has 104 JUnit 5 tests, not 89 (stage A added 15).
+- firmware/CLAUDE.md, the funcdefs bullet: "a return-only row is auto-handled (import preserves Ghidra-recovered
+  params ...)" is no longer true on CM550. Its stack_parameter_layout.csv places every parameter from its row, so
+  the importer skips, with an Error, a function that has a return-only row with recovered params or a gap in its
+  parameter rows.
+- The CM550 function_definitions.csv header gains the storage hazard the fix design found: a local_variables.csv row
+  that retypes a parameter of a placed function makes the export resize its custom storage. No current row does that
+  (remaining_and_hazard.py). The line is a '#' comment, which ApplyFunctionDefinitions.java skips (line 143), so the
+  build output cannot change.
+
+The editing-firmware-csvs skill says the same as the old funcdefs bullet. It is not changed here; the user decides.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

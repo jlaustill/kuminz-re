@@ -3834,6 +3834,36 @@ as workflows. The scripts are in `session_folder/round85/`.
   - **Round 86:** the stack argument fix (the research reports are `session_folder/round85/research_*.txt`). Re-derive the design's
     wave-0 rows and its counts (89 functions, 72 / 79 lines) from the current .cpp first.
 
+## Done, round 86 (2026-11-24, same PR): CM550's stack parameters in 2-byte slots
+
+Peer relays started and continued the round (06:20, 06:50, 07:20). The scripts are in `session_folder/round86/`.
+- **Stage A (11298ed3), the fix from round 85's research and design:**
+  - `ScriptUtils.java` gains `parseStackParameterLayout()` and `packStackParameters()`, with 15 unit tests.
+  - `ApplyFunctionDefinitions.java` takes an optional layout file. With it, each typed parameter gets custom stack
+    storage at its packed offset, read back and checked. A function with a gap or an unknown row is skipped with an
+    Error.
+  - `common.sh` passes CM550's new `stack_parameter_layout.csv` (first offset 4, 2-byte slots).
+  - CM550's rows: the design's wave 0 (26 functions re-typed, re-indexed or reshaped) and wave 1 (3 new prototypes).
+  - **Proof:** CM550 verify DETERMINISTIC; CM848 rebuilt byte-identical to its committed .cpp (T1); 60 functions placed with no Error / mismatch / exception; in_stack_ tokens 125 -> 0; the 20 control functions byte-identical; 100 changed functions all with rows or their callers; every predicted call constant rendered; the caller census, the placed-vs-survey check (0 problems) and the log greps clean; 104 unit tests pass; headers 0 g++ errors.
+- **Stage B (d1b75a77), docs:** two firmware/CLAUDE.md statements that stage A made false (the test count, and the
+  return-only / gap rule on CM550), and the local-variable storage rule in the CM550 prototype file's header.
+- **Stage C (4b6911cb), wave 2:** a workflow of 6 read-only investigators and 6 skeptics proposed and verified rows for
+  the 58 functions that still showed stack-argument pieces: 50 accepted, 8 amended (comments only), 88 parameter rows.
+  - **Proof:** CM550: verify DETERMINISTIC; 120 functions placed, no Error / mismatch / exception; 0 functions left with a parameter piece or stack read; param_N pieces 201 -> 0 and in_stack_ 139 -> 2 over the round (the 2: an offset-0 return read); placed rows match the survey's reads and pushes; headers 0 g++ errors.
+- **firmware/CLAUDE.md:** the two corrections in stage B (old and new lines in its commit).
+- **Leads:**
+  - No function is left with a stack-argument piece (param_N pieces 201 -> 0 over the round); the 2 in_stack_ tokens left are an offset-0 return read in mc68k_phase2_slot_8_handler.
+  - The `editing-firmware-csvs` skill still says a return-only row is auto-handled; on CM550 it is now skipped.
+  - Callers that push a word with a stale high byte (the compiler replaced only the low byte) render a CONCAT now that
+    the callee takes the whole word; `cm550_serialNodeAddressChecker` uses only `node_address & 0xff`.
+  - The EMA filter records at 0x800066 / 0x80006e (a coefficient pointer, then an accumulator) are misnamed
+    `timing_table_4_ptr` and so on: CM848's `ema_filter_state_t` shape, a struct lead.
+  - The `undefined8` returns of the EMA and interpolation helpers (the D0:D1 join) are a separate return-row issue.
+  - Wave 2's naming leads: 0xb688 is the same code as CM848's `cm848_getJ1939DiagnosticResponseEchoLength`;
+    `cm550_modeBasedDataDispatcher` is the chip select 5 CAN receive message object dispatcher, and its two wrappers
+    read their own word argument; `cm550_retarderModeThresholdCalculator` works on the engine speed pulse period
+    rings.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

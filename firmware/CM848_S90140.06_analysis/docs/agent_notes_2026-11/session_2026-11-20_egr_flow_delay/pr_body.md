@@ -8,7 +8,7 @@ fresh air flow records; the e2m never spells it out, so no name guesses an expan
 - **Round 2:** at the user's request the rest of the family is renamed too, on this PR (stages 3 / 4). The scope rule:
   a symbol is in if its e2m record is `CHP_` / `C_CHP_`, or if it is an input that a family function would otherwise
   misname.
-- **Beyond CM848 (rounds 72-85):** the J1939 memory write service and the development mode code are shared:
+- **Beyond CM848 (rounds 72-86):** the J1939 memory write service and the development mode code are shared:
   eleven CM550 functions are CM848 twins and share their names. Round 74 also dismantles a misapplied CM550
   struct, round 75 types CM550's InSite parameter schedule and names its J1708 SCI, and round 76 names CM550's
   MC68336 registers, so CM550's CSVs, the root README and `firmware/feature_comparison.csv` change too.
@@ -926,6 +926,13 @@ state enum, the flag bytes.**
   are deleted.
 - **Stage B (808a338b):** the Huffman tree node struct is applied; `FLASH_ERASE_RESULT`.
 
+**Round 86.**
+- **Stage A (11298ed3):** CM550's stack arguments in 2-byte slots. `ApplyFunctionDefinitions` places each parameter
+  itself (custom storage) from the new `stack_parameter_layout.csv`, so the 125 `in_stack_` tokens are gone and the
+  calls show their arguments. CM848's output is unchanged.
+- **Stage B (d1b75a77):** two firmware/CLAUDE.md corrections.
+- **Stage C (4b6911cb):** wave 2 - rows for 58 more functions, proposed and verified by a workflow.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -1017,6 +1024,8 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 86: C: CM550: verify DETERMINISTIC; 120 functions placed, no Error / mismatch / exception; 0 functions left with a parameter piece or stack read; param_N pieces 201 -> 0 and in_stack_ 139 -> 2 over the round (the 2: an offset-0 return read); placed rows match the survey's reads and pushes; headers 0 g++ errors.
+- [x] Round 86: A: CM550 verify DETERMINISTIC; CM848 rebuilt byte-identical to its committed .cpp (T1); 60 functions placed with no Error / mismatch / exception; in_stack_ tokens 125 -> 0; the 20 control functions byte-identical; 100 changed functions all with rows or their callers; every predicted call constant rendered; the caller census, the placed-vs-survey check (0 problems) and the log greps clean; 104 unit tests pass; headers 0 g++ errors.
 - [x] Round 85: B: CM550: verify DETERMINISTIC; 8 functions changed as intended (struct fields in the 3 Huffman functions, FLASH_ERASE_RESULT at the 3 erase callers and the 2 erase functions), none removed or added; no new build warning; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 85: A: CM550: verify DETERMINISTIC; 9 records removed and nothing added, 7 functions changed - all from the two prototype fixes (function_set_check.py); no new build warning; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
 - [x] Round 84: B: CM550: verify DETERMINISTIC after B and B2; the 9 image functions removed and nothing else (function_set_check.py: 0 added, 0 changed after B; B2 only names cm550_huffmanTreeBuilder's tree_buffer); the 0x2c834 warning gone; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
