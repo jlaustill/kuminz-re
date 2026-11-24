@@ -3546,6 +3546,37 @@ A peer relay started the round; the scripts are in `session_folder/round76/`. Th
   - **Misnamed `mc68k_*` functions:** with the registers named, `mc68k_tpuChannelStateMachine`,
     `mc68k_can1TimerBufferInitDivided`, `mc68k_pwmTimerMode*` and others can be read for what they drive.
 
+## Done, round 77 (2026-11-23, same PR): CM550's malformed J1708 state structs; the J1708 bus timer
+
+A peer relay started the round; the scripts are in `session_folder/round77/`. These are round 76's leads.
+- **The scan:** `multi_address_structs.py` lists the structs whose field rows each carry their own address.
+  ApplyStructures builds one type from all of a name's rows and puts an instance at every listed address. CM550 had 18
+  such structs and CM848 has none.
+- **Stage A (4e84a68c), CM550:** the worst two, `j1708_tx_state_t` / `j1708_rx_state_t`, are removed.
+  - The receive type's instance at its last field's address, 0x80DCAF, covered the J1708 globals at 0x80DCB0-0x80DCBC.
+    Their 61 accesses rendered as pieces of it.
+  - The globals are typed from their m68k accesses: the six buffer pointers are dwords, the flags and counters bytes,
+    and the transmit state a dword. That drops the pointers' `_` prefixes.
+  - `j1708_message_checksum` (0x80DCB3): the SCI interrupt handler adds every byte and sends ~sum + 1.
+  - `j1708_bus_timer_armed_flag` (0x80DCBA, was `j1708_tpu_channel_active`).
+  - Two functions are renamed for what they drive, the CTM4 MCSM11 timer rather than a TPU channel:
+    - `mc68k_armJ1708BusTimer` (was `mc68k_tpuTimerChannelEnable`). Its void prototype replaces a never-read
+      `channel_mask` parameter, which had given the SCI interrupt handler a bogus `channel_mask = (word)in_D0`.
+    - `mc68k_j1708BusTimerInterruptHandler` (was `mc68k_tpuChannelStateMachine`): the MCSM11 interrupt handler, which
+      closes received messages and starts pending transmissions.
+  - **Proof:** CM550: of 775 functions, 8 differ after the round's renames; statement by statement each change is explained (the pointer low bytes render as parts of their typed dwords at the same addresses, the bogus channel_mask / local_24 locals are gone, the switch labels lose their (BADTYPE) casts, local declaration types). No j1708_*_state_t render left; verify DETERMINISTIC; headers 0 g++ errors; _cal HARD 0 / MISSING 31.
+- **firmware/CLAUDE.md:** none.
+- **Leads:**
+  - **The other 16 multi-address structs:** most are the declared types of existing globals (`engine_rpm_buffer_t` on
+    `current_engine_rpm`, `scheduler_control_t`, `fuel_arbitrator_diag_t`, ...). Each needs its own reading: a real
+    struct with one address and markers, or flat globals.
+  - `j1708_pending_abort_count`: the bus timer interrupt handler adds 1 when it closes a message of 3 or more bytes and
+    writes a 2 / 6 / 0x74 record. The name is not checked against that.
+  - The pointer low-byte labels inside the typed pointers (`j1708_receive_buffer_index_low`,
+    `j1708_transmit_buffer_index_low`) no longer render; their roles are in the pointer comments.
+  - From round 76: the external devices at 0xFFC800 / 0xFFD000 / 0xFFD800, and the 1280-byte parameter buffer at
+    0x80C7A8.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

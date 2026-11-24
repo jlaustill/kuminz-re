@@ -346,3 +346,4 @@
    203317 verify_round76a2_cm550.log
    203317 verify_round76a3_cm550.log
    203317 verify_round76a_cm550.log
+   202607 verify_round77a_cm550.log

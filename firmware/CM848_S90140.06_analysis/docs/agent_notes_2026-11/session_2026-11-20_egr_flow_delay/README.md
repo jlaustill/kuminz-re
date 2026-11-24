@@ -642,3 +642,11 @@ Hand work on the round 7 lead.
   itself is not archived here.
 - **Proof:** `prove_r76a_cm550.py`, `residual_r76a_cm550.py`, `diff_r76a_cm550.py`. **Closing:**
   `apply_r76_closing.py`, `update_large_tar_r76.sh`.
+
+## Round 77: CM550's malformed J1708 state structs; the J1708 bus timer (`session_folder/round77/`)
+
+- **Stage A (CM550):** `multi_address_structs.py` (structs whose field rows carry several addresses),
+  `apply_r77a.py` (the two J1708 state structs removed and the globals typed), `apply_r77a2.py` (the bus timer
+  functions, flag and prototype), `map_r77a2.csv`.
+- **Proof:** `prove_r77a_cm550.py` and `statements_r77a_cm550.py` (a statement-level comparison that line wrapping
+  cannot fool). **Closing:** `apply_r77_closing.py`, `update_large_tar_r77.sh`.
