@@ -21,7 +21,7 @@ The rest of this page predates these findings. Where it disagrees, these hold:
 - **Service 0x46 is registered** by the application (`cm848_registerJ1939MemoryReadServices`). The boot kernel does
   not register it.
 - **0x10 and 0x15 are not stubs of one kind.** 0x0F / 0x10 are accepted no-ops (they return 0). 0x15 commits the
-  EEPROM mirror (`cm848_commitEepromMirrorToEeprom`).
+  EEPROM mirror (`commitEepromMirrorToEeprom`, shared with CM550 since PR #53 round 73; was `cm848_commitEepromMirrorToEeprom`).
 - **The service IDs** are the `J1939_DIAGNOSTIC_SERVICE` enum (was `EF00_SERVICE_ID`) in `output/enums.csv`. Its
   header lists the reply pairs and the boot kernel's own table.
 - **Open:** clip-core's `ECUReader::readParameterService43` sends bytes 3-6 as an offset. On CM848 that asks for a

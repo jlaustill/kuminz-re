@@ -41,7 +41,7 @@ CM848_REGIONS = [
 CM550_REGIONS = [
     ("EEPROM",        0x01000000,   0x01001000,   True,    "eeprom"),
     # RAM mirror of EEPROM 0x0-0x64b (RAM = 0x803B0A + EEPROM offset): the memory services translate by - 0x7FC4F6
-    # and 0x11a74 stores it back in 16-byte chunks (the twin of cm848_commitEepromMirrorToEeprom); PR #53 round 73.
+    # and 0x11a74 stores it back in 16-byte chunks (the twin of commitEepromMirrorToEeprom in CM848); PR #53 round 73.
     # Listed before RAM: the first matching region wins.
     ("EEPROM_SHADOW", 0x00803B0A,   0x00804156,   True,    "eeprom"),
     ("ROM",           0x00000000,   0x00040000,   False,   "rom"),

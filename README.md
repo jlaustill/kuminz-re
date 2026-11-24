@@ -67,26 +67,26 @@ The following diagram shows the complete authentication process for writing to s
 │    ▼               ▼               ▼               ▼               ▼         │
 │  ┌─────┐       ┌─────┐         ┌─────┐         ┌─────┐         ┌─────┐       │
 │  │0x00 │       │0x03 │         │0x04 │         │0x05 │         │0x09 │       │
-│  │DIRECT│      │SECURED│       │DENIED│        │LOGGING│       │INVALID│     │
+│  │DIRECT│      │SECURED│       │DENIED│        │EEPROM │       │INVALID│     │
 │  └──┬──┘       └──┬──┘         └──┬──┘         └──┬──┘         └──┬──┘       │
 │     │             │               │               │               │          │
 │     ▼             ▼               ▼               ▼               ▼          │
 │  Write         Check if        Return          Check            Return       │
-│  directly      auth payload    0x0A            logging          0x09         │
+│  directly      auth payload    0x0A            not-safe         0x09         │
 │  to RAM        present         (WRITE_         state            (RANGE_      │
 │                                DENIED)                          INVALID)     │
 │     │             │                               │                          │
 │     │             ▼                               ▼                          │
 │     │      ┌──────────────┐              ┌──────────────┐                    │
-│     │      │ Auth payload │              │ Logging      │                    │
-│     │      │ present?     │              │ state = 1?   │                    │
+│     │      │ Auth payload │              │ Not safe and │                    │
+│     │      │ present?     │              │ refresh on?  │                    │
 │     │      └──────┬───────┘              └──────┬───────┘                    │
-│     │         YES │ NO                      YES │ NO                         │
+│     │         YES │ NO                      NO │ YES                         │
 │     │             │  │                          │  │                         │
 │     │             ▼  ▼                          ▼  ▼                         │
-│     │     ┌────────┐ Return 0x1A         Write   Return 0x07                 │
-│     │     │ validateSecurityKey          to      (LOGGING_                   │
-│     │     │ @ 0x2fcdc                    EEPROM  STATE_ERROR)                 │
+│     │     ┌────────┐ Return 0x03         Write   Return 0x07                 │
+│     │     │ validateSecurityKey          to      (NOT_SAFE)                  │
+│     │     │ @ 0x2fcdc                    EEPROM                               │
 │     │     │                       │         │                                │
 │     │     │ 1. Check retry count  │         │                                │
 │     │     │    (< 17 attempts)    │         │                                │
@@ -133,12 +133,15 @@ The following diagram shows the complete authentication process for writing to s
 
 ### Memory Region Table
 
-| Address Range           | Flag   | Behavior                      |
-|-------------------------|--------|-------------------------------|
-| 0x000000 - 0x03FFFF     | 0x04   | ROM - Write DENIED            |
-| 0x800000 - 0x8091C1     | 0x03   | Main RAM - Requires AUTH      |
-| 0x8091C2 - 0x80FFFF     | 0x00   | Extended RAM - Direct write   |
-| 0x010000 - 0x010FFF     | 0x05   | EEPROM - Requires logging state |
+`application_memory_region_table` at ROM 0x345dc (`MEMORY_REGION_TYPE`; the first matching entry wins; the type while development mode is on / off - PR #53 round 73):
+
+| Address Range             | Type        | Behavior |
+|---------------------------|-------------|----------|
+| 0x000000 - 0x07FFFF       | 0x04        | Main flash - write refused (0x0A) |
+| 0x800000 - 0x8091DC       | 0x03        | Main RAM - copied after the security key |
+| 0x8091DC - 0x80FFFF       | 0x00        | Extended RAM - copied without a check |
+| 0x1000000 - 0x1001FFF     | 0x05        | EEPROM - refused (0x07) while not safe to program with RAM refresh on; else after the key through the EEPROM byte write queue and the mirror at 0x803B0A |
+| 0xFFC800 - 0xFFFFFF       | 0x03 / 0x0A | Registers - after the key in development mode, else refused (0x0A) |
 
 ### Return Codes
 
@@ -147,9 +150,9 @@ The following diagram shows the complete authentication process for writing to s
 | 0x00   | SUCCESS                | Write completed                |
 | 0x02   | INVALID_LENGTH         | Message length wrong           |
 | 0x03   | AUTH_FAILED            | Security check failed          |
-| 0x07   | LOGGING_STATE_ERROR    | EEPROM logging not active      |
+| 0x07   | NOT_SAFE               | EEPROM write refused: not safe to program (the 0x80dc92 state is 1) while RAM refresh is on - CM848's J1939_DIAGNOSTIC_RESULT_NOT_SAFE |
 | 0x0A   | WRITE_DENIED           | ROM region - blocked           |
-| 0x1A   | AUTH_REQUIRED_MISSING  | Secured region, no auth provided |
+| 0x1A   | AUTH_REQUIRED_MISSING  | EEPROM write without the key (a type 3 write without it returns 0x03 here; CM848 returns 0x1A for both - PR #53 round 73) |
 
 ### unscrambleSecurityKey Lookup Tables (ROM @ 0x2fbc4)
 

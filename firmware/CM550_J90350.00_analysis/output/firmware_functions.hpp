@@ -115,15 +115,15 @@ int cm550_FUN_0001125a(void);  // @ 0x0001125a
 void vp44_validateRedundantSensors(void);  // @ 0x000114d4
 void cm550_firmwareDataCopyToWorkingMemory(void);  // @ 0x000117ec
 undefined1 cm550_FUN_0001183e(void);  // @ 0x0001183e
-uint cm550_waterInFuelDetectionStateInit(void);  // @ 0x0001188c
-undefined1 cm550_waterInFuelFaultClear(void);  // @ 0x000118b2
-uint cm550_FUN_000118cc(void);  // @ 0x000118cc
+byte exitDevelopmentMode(void);  // @ 0x0001188c
+byte enterDevelopmentMode(void);  // @ 0x000118b2
+byte forceExitDevelopmentMode(void);  // @ 0x000118cc
 undefined1 cm550_activateHighRpmShutdownFlag(void);  // @ 0x000118fc
 void cm550_eepromWriteWrapper(undefined4 param_1);  // @ 0x00011908
 void cm550_triggerDiagnosticSystemReset(void);  // @ 0x0001191a
 undefined4 cm550_FUN_0001192a(undefined2 param_1,undefined4 param_2);  // @ 0x0001192a
 undefined1 cm550_FUN_00011a68(void);  // @ 0x00011a68
-undefined4 cm550_FUN_00011a74(void);  // @ 0x00011a74
+byte commitEepromMirrorToEeprom(void);  // @ 0x00011a74
 void cm550_systemFunction8xMaximum(void);  // @ 0x00011b36
 undefined4 cm550_crc16Calculate(byte *param_1,undefined4 param_2);  // @ 0x00011da6
 undefined4 cm550_memoryPatchCrcCalculate(void);  // @ 0x00011df8

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 17:04:11 MST 2026
+// Generated: Mon Nov 23 17:10:42 MST 2026
 
 
 //
@@ -22845,10 +22845,11 @@ J1939_DIAGNOSTIC_RESULT cm848_requestClearInactiveFaults(void)
 
 
 //
-// Function: cm848_exitDevelopmentMode @ 0x00021624
+// Function: exitDevelopmentMode @ 0x00021624
 //
 
-/* Leaves development mode and turns the RAM refresh back on (J1939 diagnostic service 7): accepted
+/* The same function as CM550 0x1188c (shared name; was cm848_exitDevelopmentMode; PR #53 round 73).
+   Leaves development mode and turns the RAM refresh back on (J1939 diagnostic service 7): accepted
    only while development_mode is DEVELOPMENT_MODE_ON (e2m 1328 +0 Development_Mode = 1), otherwise
    it returns J1939_DIAGNOSTIC_RESULT_CANNOT_COMPLY. Then it sets development_mode =
    DEVELOPMENT_MODE_OFF (development mode 0), ram_refresh_enable = ACTIVE (e2m 10C7 +0
@@ -22857,7 +22858,7 @@ J1939_DIAGNOSTIC_RESULT cm848_requestClearInactiveFaults(void)
    variant (service 22, 0x21694) requires the engine to be stopped but not development mode. (was
    cm848_activateDiagnosticSession) | jlaustill reviewed - hopefully accurate */
 
-J1939_DIAGNOSTIC_RESULT cm848_exitDevelopmentMode(void)
+J1939_DIAGNOSTIC_RESULT exitDevelopmentMode(void)
 
 {
   J1939_DIAGNOSTIC_RESULT result;
@@ -22875,10 +22876,11 @@ J1939_DIAGNOSTIC_RESULT cm848_exitDevelopmentMode(void)
 
 
 //
-// Function: cm848_enterDevelopmentMode @ 0x00021668
+// Function: enterDevelopmentMode @ 0x00021668
 //
 
-/* Enters development mode (J1939 diagnostic service 10, also called by
+/* The same function as CM550 0x118b2 (shared name; was cm848_enterDevelopmentMode; PR #53 round
+   73). Enters development mode (J1939 diagnostic service 10, also called by
    cm848_processPciDiagnosticRequest right after the PCI security key has been accepted): disables
    the RAM refresh (ram_refresh_enable = INACTIVE, e2m 10C7 +0 RAM_Refresh_Enable = 0), sets
    development_mode = DEVELOPMENT_MODE_ON (e2m 1328 +0 Development_Mode = 1) and run_location = 0xea
@@ -22891,7 +22893,7 @@ J1939_DIAGNOSTIC_RESULT cm848_exitDevelopmentMode(void)
    stopped, service 22 (0x21694). (was cm848_resetDiagnosticSession) | jlaustill review 2026-05-25 -
    hopefully accurate */
 
-J1939_DIAGNOSTIC_RESULT cm848_enterDevelopmentMode(void)
+J1939_DIAGNOSTIC_RESULT enterDevelopmentMode(void)
 
 {
   ram_refresh_enable = RAM_REFRESH_DISABLED;
@@ -22903,11 +22905,12 @@ J1939_DIAGNOSTIC_RESULT cm848_enterDevelopmentMode(void)
 
 
 //
-// Function: cm848_forceExitDevelopmentMode @ 0x00021694
+// Function: forceExitDevelopmentMode @ 0x00021694
 //
 
-/* Forces an exit from development mode when it is safe to program (J1939 diagnostic service 22):
-   with not_safe_to_program_flag clear (engine stopped) it always turns the RAM refresh on
+/* The same function as CM550 0x118cc (shared name; was cm848_forceExitDevelopmentMode; PR #53 round
+   73). Forces an exit from development mode when it is safe to program (J1939 diagnostic service
+   22): with not_safe_to_program_flag clear (engine stopped) it always turns the RAM refresh on
    (ram_refresh_enable = ACTIVE, e2m 10C7 +0 RAM_Refresh_Enable = 1) and, only if run_location is
    0xea (development mode), also restores run_location = 0xee and development_mode =
    DEVELOPMENT_MODE_OFF (e2m 1328 +0 Development_Mode = 0); it returns
@@ -22916,7 +22919,7 @@ J1939_DIAGNOSTIC_RESULT cm848_enterDevelopmentMode(void)
    require development mode to be on. (was cm848_forceActivateDiagnosticSession) | jlaustill
    reviewed 2026-05-25 - frustrated about != 1 and == 0xea/0xee not working as enums */
 
-J1939_DIAGNOSTIC_RESULT cm848_forceExitDevelopmentMode(void)
+J1939_DIAGNOSTIC_RESULT forceExitDevelopmentMode(void)
 
 {
   J1939_DIAGNOSTIC_RESULT result;
@@ -23074,15 +23077,16 @@ J1939_DIAGNOSTIC_RESULT cm848_inhibitKeyOffShutdown(void)
 
 
 //
-// Function: cm848_commitEepromMirrorToEeprom @ 0x00021918
+// Function: commitEepromMirrorToEeprom @ 0x00021918
 //
 
-/* handles J1939 PGN 61184 diag service id 21 via the 0x3fa8b2 table
+/* The same function as CM550 0x11a74 (shared name; was cm848_commitEepromMirrorToEeprom; PR #53
+   round 73). handles J1939 PGN 61184 diag service id 21 via the 0x3fa8b2 table
    (cm848_j1939DiagnosticServiceHandler) - writes only the leading eeprom_mirror block EEPROM 0x0 to
    eeprom_checksummed_block_start via cm848_queueEepromByteWrites - does not validate (was
    cm848_validateCalibrationMemory) | registration-table-sweep reviewed 2026-11-13 */
 
-J1939_DIAGNOSTIC_RESULT cm848_commitEepromMirrorToEeprom(void)
+J1939_DIAGNOSTIC_RESULT commitEepromMirrorToEeprom(void)
 
 {
   char cVar1;
@@ -23147,11 +23151,11 @@ void cm848_registerJ1939DiagnosticHandlers(void)
   cm848_j1939RegisterDiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_CLEAR_INACTIVE_FAULTS,cm848_requestClearInactiveFaults);
   cm848_j1939RegisterDiagnosticService
-            (J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE,cm848_exitDevelopmentMode);
+            (J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE,exitDevelopmentMode);
   cm848_j1939RegisterDiagnosticService
-            (J1939_DIAGNOSTIC_SERVICE_ENTER_DEVELOPMENT_MODE,cm848_enterDevelopmentMode);
+            (J1939_DIAGNOSTIC_SERVICE_ENTER_DEVELOPMENT_MODE,enterDevelopmentMode);
   cm848_j1939RegisterDiagnosticService
-            (J1939_DIAGNOSTIC_SERVICE_FORCE_EXIT_DEVELOPMENT_MODE,cm848_forceExitDevelopmentMode);
+            (J1939_DIAGNOSTIC_SERVICE_FORCE_EXIT_DEVELOPMENT_MODE,forceExitDevelopmentMode);
   cm848_j1939RegisterDiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_COMMAND_ENGINE_SHUTDOWN,cm848_commandEngineShutdown);
   cm848_j1939RegisterDiagnosticService
@@ -23159,7 +23163,7 @@ void cm848_registerJ1939DiagnosticHandlers(void)
   cm848_j1939RegisterDiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_INHIBIT_KEY_OFF_SHUTDOWN,cm848_inhibitKeyOffShutdown);
   cm848_j1939RegisterDiagnosticService
-            (J1939_DIAGNOSTIC_SERVICE_COMMIT_EEPROM_MIRROR,cm848_commitEepromMirrorToEeprom);
+            (J1939_DIAGNOSTIC_SERVICE_COMMIT_EEPROM_MIRROR,commitEepromMirrorToEeprom);
   return;
 }
 
@@ -30444,7 +30448,7 @@ void cm848_initializePgn65264PowerTakeOffInformationBuffer(void)
    = safe for program, 1 = not safe)'): 1 while engine_state is not ENGINE_STATE_STOPPED, else 0.
    Runs every pass of cm848_periodicTaskSet_auxiliaryControl. Input: engine_state. Output:
    not_safe_to_program_flag. While it is 1 the force-activate diagnostic service answers
-   J1939_DIAGNOSTIC_RESULT_NOT_SAFE, cm848_commitEepromMirrorToEeprom refuses, the diagnostic EEPROM
+   J1939_DIAGNOSTIC_RESULT_NOT_SAFE, commitEepromMirrorToEeprom refuses, the diagnostic EEPROM
    writes (writeJ1939DiagnosticMemory, the PCI write service) answer 7 unless ram_refresh_enable is
    INACTIVE, and cm848_lookupParameterIdAddress maps EEPROM parameter addresses to the RAM mirror.
    It handles no fault and no key-off event. (was cm848_updateFaultOnKeyoff) */
@@ -40866,7 +40870,7 @@ void cm848_processPciDiagnosticRequest(void)
                   return;
                 }
                 pci_security_unlocked_flag = 1;
-                cm848_enterDevelopmentMode();
+                enterDevelopmentMode();
                 pci_security_lockout_timer = 0;
                 pci_security_failed_key_count = 0;
               }

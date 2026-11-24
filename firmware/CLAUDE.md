@@ -912,8 +912,8 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
       percent peak torque and PGN 65251 torque curve; J1939 control sessions; the data collector; engine protection
       shutdown.
     - `ram_refresh_enable` (RAM_REFRESH_STATE), `development_mode` (DEVELOPMENT_MODE_STATE) and `run_location`
-      (RUN_LOCATION: 0xee normal / 0xea development, e2m 0010 RUN_LOC); `cm848_exitDevelopmentMode` /
-      `cm848_enterDevelopmentMode` / `cm848_forceExitDevelopmentMode` (stage 9b).
+      (RUN_LOCATION: 0xee normal / 0xea development, e2m 0010 RUN_LOC); `exitDevelopmentMode` /
+      `enterDevelopmentMode` / `forceExitDevelopmentMode` (stage 9b).
     - Stage 9b: nine twins share one unprefixed name with CM550 (`calculateAlpha`, `calculateAlphaBase`, the
       five `calculateAlpha*Result`, `buildPgn65251EngineConfiguration1Payload`,
       `sendPgn61444ElectronicEngineController1Message`). `charge_flow_estimate_terms_t` and the 7-byte

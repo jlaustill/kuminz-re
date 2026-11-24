@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Mon Nov 23 17:02:29 MST 2026
+// Generated: Mon Nov 23 17:11:09 MST 2026
 
 
 //
@@ -6189,8 +6189,6 @@ void cm550_FUN_00010e06(void)
 // Function: cm550_diagnosticMemoryAddressResolver @ 0x00010e16
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 int cm550_diagnosticMemoryAddressResolver(word param_id)
 
 {
@@ -6210,7 +6208,7 @@ int cm550_diagnosticMemoryAddressResolver(word param_id)
   else {
     in_stack_00000004 = in_stack_00000004 + 0x84a8;
   }
-  if (_calibration_data_valid_flag == 0) {
+  if (ram_refresh_enable == RAM_REFRESH_DISABLED) {
     *_param_id = *(int *)(&DAT_00035224 + (uint)in_stack_00000004 * 8);
   }
   else {
@@ -6754,21 +6752,22 @@ undefined1 cm550_FUN_0001183e(void)
 
 
 //
-// Function: cm550_waterInFuelDetectionStateInit @ 0x0001188c
+// Function: exitDevelopmentMode @ 0x0001188c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Leaves development mode: only while the development mode flag at 0x80de30 (still rendered as
+   j1708_transmit_buffer_2_32_ddc6.count_106) is 1 - clears it / ram_refresh_enable on /
+   run_location RUN_LOCATION_NORMAL / result 0; else 4. The same function as CM848 0x21624 (shared
+   name; was cm550_waterInFuelDetectionStateInit; PR #53 round 73). */
 
-uint cm550_waterInFuelDetectionStateInit(void)
+byte exitDevelopmentMode(void)
 
 {
-  uint in_D0;
-  
   if (j1708_transmit_buffer_2_32_ddc6.count_106 == 1) {
     j1708_transmit_buffer_2_32_ddc6.count_106 = 0;
-    _calibration_data_valid_flag = 1;
-    _water_in_fuel_state_code = 0xeeee;
-    return in_D0 & 0xffffff00;
+    ram_refresh_enable = RAM_REFRESH_ENABLED;
+    run_location = RUN_LOCATION_NORMAL;
+    return 0;
   }
   return 4;
 }
@@ -6776,42 +6775,50 @@ uint cm550_waterInFuelDetectionStateInit(void)
 
 
 //
-// Function: cm550_waterInFuelFaultClear @ 0x000118b2
+// Function: enterDevelopmentMode @ 0x000118b2
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Enters development mode (J1708 command 3 subcommand 0x40 after the security key):
+   ram_refresh_enable off / the development mode flag at 0x80de30 (still rendered as
+   j1708_transmit_buffer_2_32_ddc6.count_106) set / run_location RUN_LOCATION_DEVELOPMENT; result 0.
+   The same function as CM848 0x21668 (shared name; was cm550_waterInFuelFaultClear; PR #53 round
+   73). */
 
-undefined1 cm550_waterInFuelFaultClear(void)
+byte enterDevelopmentMode(void)
 
 {
-  _calibration_data_valid_flag = 0;
+  ram_refresh_enable = RAM_REFRESH_DISABLED;
   j1708_transmit_buffer_2_32_ddc6.count_106 = 1;
-  _water_in_fuel_state_code = 0xeaea;
+  run_location = RUN_LOCATION_DEVELOPMENT;
   return 0;
 }
 
 
 
 //
-// Function: cm550_FUN_000118cc @ 0x000118cc
+// Function: forceExitDevelopmentMode @ 0x000118cc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Forces an exit from development mode (J1708 command 3 subcommand 0x41 after the security key): 7
+   while the 0x80dc92 state is 1 (CM848: not safe to program); else ram_refresh_enable on and - when
+   run_location is RUN_LOCATION_DEVELOPMENT - run_location RUN_LOCATION_NORMAL and the development
+   mode flag at 0x80de30 (still rendered as j1708_transmit_buffer_2_32_ddc6.count_106) cleared;
+   result 0. The same function as CM848 0x21694 (shared name; was cm550_FUN_000118cc; PR #53 round
+   73). */
 
-uint cm550_FUN_000118cc(void)
+byte forceExitDevelopmentMode(void)
 
 {
-  uint in_D0;
-  
   if (_diagnostic_session_state == 1) {
     return 7;
   }
-  _calibration_data_valid_flag = 1;
-  if (_water_in_fuel_state_code == -0x1516) {
-    _water_in_fuel_state_code = -0x1112;
+  ram_refresh_enable = RAM_REFRESH_ENABLED;
+  if (run_location == RUN_LOCATION_DEVELOPMENT) {
+    run_location = RUN_LOCATION_NORMAL;
     j1708_transmit_buffer_2_32_ddc6.count_106 = 0;
   }
-  return in_D0 & 0xffffff00;
+  return 0;
 }
 
 
@@ -6880,7 +6887,7 @@ undefined4 cm550_FUN_0001192a(undefined2 param_1,undefined4 param_2)
     }
     local_8 = _hour_meter_ecm_run_time_none;
     cm550_parameterCircularBufferWrite(0x803b3e,(byte *)&local_8,(word)((uint)unaff_D2 >> 0x10));
-    if (_calibration_data_valid_flag == 0) {
+    if (ram_refresh_enable == RAM_REFRESH_DISABLED) {
       cm550_FUN_00034bf8((word)((uint)unaff_D2 >> 0x10));
     }
     else {
@@ -6892,7 +6899,7 @@ undefined4 cm550_FUN_0001192a(undefined2 param_1,undefined4 param_2)
     local_8 = _time_that_the_engine_is_not_in_stop_state_0_2_29;
     cm550_parameterCircularBufferWrite(0x803b50,(byte *)&local_8,(word)((uint)unaff_D2 >> 0x10));
     timer_ticks = (word)((uint)unaff_D2 >> 0x10);
-    if (_calibration_data_valid_flag == 0) {
+    if (ram_refresh_enable == RAM_REFRESH_DISABLED) {
       cm550_FUN_00034bf8(timer_ticks);
     }
     else {
@@ -6941,12 +6948,16 @@ undefined1 cm550_FUN_00011a68(void)
 
 
 //
-// Function: cm550_FUN_00011a74 @ 0x00011a74
+// Function: commitEepromMirrorToEeprom @ 0x00011a74
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Writes the EEPROM mirror 0x803b0a-0x804155 back to the EEPROM: 7 while the 0x80dc92 state is 1
+   (CM848: not safe to program); else 16-byte chunks through cm550_circularBufferWrite (the EEPROM
+   byte write queue) with up to 16000 waits for the queue each; 0. The same function as CM848
+   0x21918 (shared name; was cm550_FUN_00011a74; PR #53 round 73). */
 
-undefined4 cm550_FUN_00011a74(void)
+byte commitEepromMirrorToEeprom(void)
 
 {
   char cVar1;
@@ -10622,9 +10633,9 @@ void diagnosticCommandDispatcher(void)
   ushort uVar4;
   char cVar6;
   char cVar7;
+  byte bVar8;
   short sVar5;
   undefined4 unaff_D2;
-  byte bVar8;
   byte *pbVar9;
   byte service_id;
   undefined2 local_18;
@@ -10668,36 +10679,36 @@ void diagnosticCommandDispatcher(void)
           if (cVar7 == '\0') {
             switch(*local_8) {
             case 0x40:
-              cVar7 = cm550_waterInFuelFaultClear();
+              bVar8 = enterDevelopmentMode();
               break;
             case 0x41:
-              cVar7 = cm550_FUN_000118cc();
+              bVar8 = forceExitDevelopmentMode();
               break;
             case 0x42:
-              cVar7 = cm550_activateHighRpmShutdownFlag();
+              bVar8 = cm550_activateHighRpmShutdownFlag();
               break;
             case 0x43:
-              cVar7 = cm550_triggerDiagnosticSystemReset();
+              bVar8 = cm550_triggerDiagnosticSystemReset();
               break;
             default:
-              cVar7 = '\x18';
+              bVar8 = 0x18;
               break;
             case 0x50:
-              cVar7 = '\0';
+              bVar8 = 0;
               break;
             case 0x51:
-              cVar7 = cm550_memoryPatchingSystem();
+              bVar8 = cm550_memoryPatchingSystem();
               break;
             case 0x52:
-              cVar7 = cm550_FUN_00011a68();
+              bVar8 = cm550_FUN_00011a68();
               break;
             case 0x53:
-              cVar7 = '\x04';
+              bVar8 = 4;
               break;
             case 0x54:
-              cVar7 = cm550_FUN_00011a74();
+              bVar8 = commitEepromMirrorToEeprom();
             }
-            if (cVar7 != -1) {
+            if (bVar8 != 0xff) {
               cm550_diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
             }
           }
@@ -10723,7 +10734,7 @@ void diagnosticCommandDispatcher(void)
             cm550_diagnosticMessageQueueWrite(bVar8);
             break;
           case 0x69:
-            cm550_waterInFuelDetectionStateInit();
+            exitDevelopmentMode();
             cm550_diagnosticMessageQueueWrite((byte)((uint)unaff_D2 >> 0x10));
             break;
           case 0x70:
@@ -22662,7 +22673,7 @@ byte writeJ1939DiagnosticMemory(dword request,dword address,dword length)
   case MEMORY_REGION_TYPE_MAIN_FLASH:
     return 10;
   case MEMORY_REGION_TYPE_EEPROM:
-    if ((_diagnostic_session_state == 1) && (_calibration_data_valid_flag != 0)) {
+    if ((_diagnostic_session_state == 1) && (ram_refresh_enable != RAM_REFRESH_DISABLED)) {
       return 7;
     }
     if (calibration_download_security_key_cal != 0xff) {
@@ -22675,7 +22686,7 @@ byte writeJ1939DiagnosticMemory(dword request,dword address,dword length)
         return 3;
       }
     }
-    if ((_calibration_data_valid_flag == 1) &&
+    if ((ram_refresh_enable == RAM_REFRESH_ENABLED) &&
        (cVar5 = cm550_circularBufferWrite((short)((uint)iVar1 >> 0x10),sVar6), cVar5 == '\x01')) {
       return 0xb;
     }
@@ -27521,7 +27532,7 @@ uint mc68k_qadcDataCollectionStateMachine(void)
     puVar5 = (undefined2 *)&DAT_00fffd08;
     bVar4 = 4;
     do {
-      if (_calibration_data_valid_flag != 0) {
+      if (ram_refresh_enable != RAM_REFRESH_DISABLED) {
         *(undefined2 *)(can_buffer_setup1_size.data_ptr + _diagnostic_can_response_header) = *puVar5
         ;
       }
@@ -27647,7 +27658,7 @@ void mc68k_FUN_00026854(void)
     uVar1 = (short)uVar3 + 1;
     uVar3 = (uint)uVar1;
   } while (uVar1 < 0x10);
-  _calibration_data_valid_flag = 1;
+  ram_refresh_enable = RAM_REFRESH_ENABLED;
   can_buffer_setup1_size.state = 0;
   can_buffer_setup1_size.data_ptr = (dword)&ecu_identity_marker_1;
   _diag_can_response_pgn = 0x148a;
@@ -29182,8 +29193,8 @@ void vp44_FUN_00027f9c(void)
   DAT_00ffd00f = 0x55;
   DAT_00ffd00f = 0xaa;
   j1708_transmit_buffer_2_32_ddc6.count_106 = 0;
-  _calibration_data_valid_flag = 1;
-  _water_in_fuel_state_code = 0xeeee;
+  ram_refresh_enable = RAM_REFRESH_ENABLED;
+  run_location = RUN_LOCATION_NORMAL;
   uVar12 = (ushort)(byte)(in_XF << 4 | 8);
   uVar5 = 0;
   while ((uVar5 < 1000 && (cVar3 = cm550_circularBufferEmptyCheck(), cVar3 == '\0'))) {
@@ -29481,7 +29492,7 @@ void vp44_FUN_000284e8(void)
   _DAT_00810ffc = 2;
   _DAT_00810ffe = 0x8628;
   cm550_firmwareDataCopyToWorkingMemory();
-  _water_in_fuel_state_code = 0xeeee;
+  run_location = RUN_LOCATION_NORMAL;
   if (DAT_0080bd2d == '\0') {
     DAT_0080bd2d = '\0';
     enable_flag_to_allow_boot_block_programming_enable_disable =
@@ -29926,7 +29937,7 @@ void vp44_mainSystemInitialization(void)
   mc68k_initInternalRamAndCAN1();
   cm550_clearWorkingMemory();
   cm550_firmwareDataCopyToWorkingMemory();
-  _water_in_fuel_state_code = 0xeeee;
+  run_location = RUN_LOCATION_NORMAL;
   if (*(char *)(unaff_A2 + 0x13) == '\0') {
     *(undefined1 *)(unaff_A2 + 0x13) = 0;
     enable_flag_to_allow_boot_block_programming_enable_disable =
@@ -31672,7 +31683,7 @@ uint cm550_memoryPatchingSystem(void)
   if (j1708_transmit_buffer_2_32_ddc6.status_102 == 0) {
     return in_D0 & 0xffffff00;
   }
-  if ((_diagnostic_session_state == 1) && (_calibration_data_valid_flag != 0)) {
+  if ((_diagnostic_session_state == 1) && (ram_refresh_enable != RAM_REFRESH_DISABLED)) {
     puVar12 = (uint *)(&scratch_pad_directory_table +
                       (short)(((j1708_transmit_buffer_2_32_ddc6.status_102 & 0xff) * 2 +
                               (j1708_transmit_buffer_2_32_ddc6.status_102 & 0xff)) * 2));
@@ -31725,7 +31736,7 @@ uint cm550_memoryPatchingSystem(void)
       }
     }
     else {
-      if ((_calibration_data_valid_flag == 1) &&
+      if ((ram_refresh_enable == RAM_REFRESH_ENABLED) &&
          (cVar7 = cm550_circularBufferWrite((short)((uint)_scratch_pad_write_pointer >> 0x10),bVar3)
          , cVar7 == '\x01')) {
         cm550_memoryPatchBufferInit();
@@ -32825,7 +32836,7 @@ void cm550_canMemoryPointerTableInit(void)
   _calibration_sync_ram_pointer = &DAT_0080654a;
   _calibration_sync_rom_pointer = &DAT_00061376;
   _DAT_00801c72 = 0;
-  _calibration_data_valid_flag = 1;
+  ram_refresh_enable = RAM_REFRESH_ENABLED;
   _calibration_bank_copy_valid = 1;
   _DAT_00801c76 = 1;
   return;
@@ -32845,13 +32856,13 @@ void cm550_canMessageMemorySyncController(void)
   undefined4 *puVar1;
   short *psVar2;
   
-  if ((_DAT_00801c76 == 0) && (_calibration_data_valid_flag != 0)) {
+  if ((_DAT_00801c76 == 0) && (ram_refresh_enable != RAM_REFRESH_DISABLED)) {
     cm550_canMemoryPointerTableInit();
   }
   if (_calibration_bank_active == 0) {
-    _calibration_data_valid_flag = 0;
+    ram_refresh_enable = RAM_REFRESH_DISABLED;
   }
-  if (_calibration_data_valid_flag != 0) {
+  if (ram_refresh_enable != RAM_REFRESH_DISABLED) {
     if (((short *)_can_memory_sync_table_pointer[1] <= _calibration_sync_ram_pointer) ||
        ((_can_memory_sync_table_pointer == (undefined4 *)&DAT_00801c5a &&
         (_calibration_bank_copy_valid == 0)))) {
@@ -32892,7 +32903,7 @@ void cm550_canMessageMemorySyncController(void)
       _calibration_sync_rom_pointer = _calibration_sync_rom_pointer + 1;
     }
   }
-  _DAT_00801c76 = _calibration_data_valid_flag;
+  _DAT_00801c76 = ram_refresh_enable;
   return;
 }
 

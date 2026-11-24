@@ -119,15 +119,15 @@ address,name
 0x000114d4,vp44_validateRedundantSensors
 0x000117ec,cm550_firmwareDataCopyToWorkingMemory
 0x0001183e,cm550_FUN_0001183e
-0x0001188c,cm550_waterInFuelDetectionStateInit
-0x000118b2,cm550_waterInFuelFaultClear
-0x000118cc,cm550_FUN_000118cc
+0x0001188c,exitDevelopmentMode,Leaves development mode: only while the development mode flag at 0x80de30 (still rendered as j1708_transmit_buffer_2_32_ddc6.count_106) is 1 - clears it / ram_refresh_enable on / run_location RUN_LOCATION_NORMAL / result 0; else 4. The same function as CM848 0x21624 (shared name; was cm550_waterInFuelDetectionStateInit; PR #53 round 73).
+0x000118b2,enterDevelopmentMode,Enters development mode (J1708 command 3 subcommand 0x40 after the security key): ram_refresh_enable off / the development mode flag at 0x80de30 (still rendered as j1708_transmit_buffer_2_32_ddc6.count_106) set / run_location RUN_LOCATION_DEVELOPMENT; result 0. The same function as CM848 0x21668 (shared name; was cm550_waterInFuelFaultClear; PR #53 round 73).
+0x000118cc,forceExitDevelopmentMode,Forces an exit from development mode (J1708 command 3 subcommand 0x41 after the security key): 7 while the 0x80dc92 state is 1 (CM848: not safe to program); else ram_refresh_enable on and - when run_location is RUN_LOCATION_DEVELOPMENT - run_location RUN_LOCATION_NORMAL and the development mode flag at 0x80de30 (still rendered as j1708_transmit_buffer_2_32_ddc6.count_106) cleared; result 0. The same function as CM848 0x21694 (shared name; was cm550_FUN_000118cc; PR #53 round 73).
 0x000118fc,cm550_activateHighRpmShutdownFlag
 0x00011908,cm550_eepromWriteWrapper
 0x0001191a,cm550_triggerDiagnosticSystemReset
 0x0001192a,cm550_FUN_0001192a
 0x00011a68,cm550_FUN_00011a68
-0x00011a74,cm550_FUN_00011a74
+0x00011a74,commitEepromMirrorToEeprom,Writes the EEPROM mirror 0x803b0a-0x804155 back to the EEPROM: 7 while the 0x80dc92 state is 1 (CM848: not safe to program); else 16-byte chunks through cm550_circularBufferWrite (the EEPROM byte write queue) with up to 16000 waits for the queue each; 0. The same function as CM848 0x21918 (shared name; was cm550_FUN_00011a74; PR #53 round 73).
 0x00011b36,cm550_systemFunction8xMaximum
 0x00011da6,cm550_crc16Calculate
 0x00011df8,cm550_memoryPatchCrcCalculate

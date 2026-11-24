@@ -5664,13 +5664,13 @@ address,name,type,comment
 0x0080dc66,value_which_designates_the_duty_cycle_requested_for_pwm3_0_100,undefined,
 0x0080dc68,value_which_designates_the_duty_cycle_requested_for_pwm4_0_100,undefined,
 0x0080dc6a,value_which_designates_the_duty_cycle_requested_of_pwm5_0_100,undefined,
-0x0080dc6c,calibration_data_valid_flag,undefined,
+0x0080dc6c,ram_refresh_enable,RAM_REFRESH_STATE,The RAM refresh switch (a word - tst.w / clr.w / cmpi.w #1; written 0 / 1 only): off in development mode / on again by exitDevelopmentMode and forceExitDevelopmentMode; gates the writer's EEPROM byte write queue - CM848's ram_refresh_enable (e2m 10C7 RAM_Refresh_Enable) by the twin functions (was calibration_data_valid_flag; PR #53 round 73)
 0x0080dc6e,calibration_bank_copy_valid,undefined,
 0x0080dc70,calibration_bank_active,undefined,
 0x0080dc74,constant_used_in_sampled_road_speed_calculation_51428_16000000,undefined,
 0x0080dc82,maximum_allowable_vehicle_speed_selected_as_the_rsg_refer_2_255_9961,undefined,
 0x0080dc8e,filtered_percent_load_output_of_gear_down_0_100,undefined,
-0x0080dc90,water_in_fuel_state_code,undefined,
+0x0080dc90,run_location,RUN_LOCATION,Where the code runs (a word - cmpi.w #0xeaea / move.w #0xeeee; written 0xeeee / 0xeaea only): RUN_LOCATION_DEVELOPMENT in development mode / RUN_LOCATION_NORMAL at boot and power-down and on leaving it - CM848's run_location (e2m 0010 RUN_LOC) by the twin functions (was water_in_fuel_state_code; PR #53 round 73)
 0x0080dc92,diagnostic_session_state,undefined,
 0x0080dc94,j1708_transmit_buffer_0_2_32,undefined,
 0x0080dc98,j1708_transmit_buffer_2_32_dc98,undefined,

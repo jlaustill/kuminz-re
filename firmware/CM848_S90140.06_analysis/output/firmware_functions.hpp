@@ -506,15 +506,15 @@ void cm848_initializeJ1939ReferenceEngineFuelingAndTorque(void);  // @ 0x000212d
 void cm848_calculateEngineRetarderTorque(void);  // @ 0x00021314
 void cm848_initializeEngineRetarderTorqueLookupCache(void);  // @ 0x0002156c
 J1939_DIAGNOSTIC_RESULT cm848_requestClearInactiveFaults(void);  // @ 0x00021584
-J1939_DIAGNOSTIC_RESULT cm848_exitDevelopmentMode(void);  // @ 0x00021624
-J1939_DIAGNOSTIC_RESULT cm848_enterDevelopmentMode(void);  // @ 0x00021668
-J1939_DIAGNOSTIC_RESULT cm848_forceExitDevelopmentMode(void);  // @ 0x00021694
+J1939_DIAGNOSTIC_RESULT exitDevelopmentMode(void);  // @ 0x00021624
+J1939_DIAGNOSTIC_RESULT enterDevelopmentMode(void);  // @ 0x00021668
+J1939_DIAGNOSTIC_RESULT forceExitDevelopmentMode(void);  // @ 0x00021694
 J1939_DIAGNOSTIC_RESULT cm848_commandEngineShutdown(void);  // @ 0x000216e8
 undefined4 cm848_restartThroughBootRom(j1939_rx_msg_t *param_1,int param_2);  // @ 0x000216fc
 undefined1 cm848_restartThroughBootRomAfterSciRequest(void);  // @ 0x000218b0
 undefined1 cm848_handleJ1939RestartService(j1939_rx_msg_t *request);  // @ 0x000218dc
 J1939_DIAGNOSTIC_RESULT cm848_inhibitKeyOffShutdown(void);  // @ 0x00021904
-J1939_DIAGNOSTIC_RESULT cm848_commitEepromMirrorToEeprom(void);  // @ 0x00021918
+J1939_DIAGNOSTIC_RESULT commitEepromMirrorToEeprom(void);  // @ 0x00021918
 void cm848_registerJ1939DiagnosticHandlers(void);  // @ 0x00021a24
 undefined2 cm848_lookupMaximumTorqueAtEngineSpeed(word param_1);  // @ 0x00021ac0
 uint cm848_getHighestPriorityBit(void);  // @ 0x00021bf8

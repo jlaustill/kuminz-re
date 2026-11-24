@@ -5591,13 +5591,13 @@ extern undefined value_which_designates_the_duty_cycle_requested_of_pwm2_0_100; 
 extern undefined value_which_designates_the_duty_cycle_requested_for_pwm3_0_100;  // 0x0080dc66
 extern undefined value_which_designates_the_duty_cycle_requested_for_pwm4_0_100;  // 0x0080dc68
 extern undefined value_which_designates_the_duty_cycle_requested_of_pwm5_0_100;  // 0x0080dc6a
-extern undefined calibration_data_valid_flag;  // 0x0080dc6c
+extern RAM_REFRESH_STATE ram_refresh_enable;  // 0x0080dc6c
 extern undefined calibration_bank_copy_valid;  // 0x0080dc6e
 extern undefined calibration_bank_active;  // 0x0080dc70
 extern undefined constant_used_in_sampled_road_speed_calculation_51428_16000000;  // 0x0080dc74
 extern undefined maximum_allowable_vehicle_speed_selected_as_the_rsg_refer_2_255_9961;  // 0x0080dc82
 extern undefined filtered_percent_load_output_of_gear_down_0_100;  // 0x0080dc8e
-extern undefined water_in_fuel_state_code;  // 0x0080dc90
+extern RUN_LOCATION run_location;  // 0x0080dc90
 extern undefined diagnostic_session_state;  // 0x0080dc92
 extern undefined j1708_transmit_buffer_0_2_32;  // 0x0080dc94
 extern undefined j1708_transmit_buffer_2_32_dc98;  // 0x0080dc98

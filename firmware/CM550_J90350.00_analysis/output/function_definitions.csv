@@ -198,3 +198,7 @@ function_address,function_name,param_index,name,type,comment
 
 # diagnosticServiceDispatcher @ 0x2eea2 - Routes diagnostic services via dispatch table @ 0x801c7a
 0x0002eea2,diagnosticServiceDispatcher,0,msg_ptr,int,Pointer to diagnostic message structure
+0x000118b2,enterDevelopmentMode,return,,byte,The result as CM848's J1939_DIAGNOSTIC_RESULT numbers (0 accepted / 4 cannot comply / 7 not safe) - a byte so the 4-byte register does not show (PR #53 round 73)
+0x0001188c,exitDevelopmentMode,return,,byte,The result as CM848's J1939_DIAGNOSTIC_RESULT numbers (0 accepted / 4 cannot comply / 7 not safe) - a byte so the 4-byte register does not show (PR #53 round 73)
+0x000118cc,forceExitDevelopmentMode,return,,byte,The result as CM848's J1939_DIAGNOSTIC_RESULT numbers (0 accepted / 4 cannot comply / 7 not safe) - a byte so the 4-byte register does not show (PR #53 round 73)
+0x00011a74,commitEepromMirrorToEeprom,return,,byte,The result as CM848's J1939_DIAGNOSTIC_RESULT numbers (0 accepted / 4 cannot comply / 7 not safe) - a byte so the 4-byte register does not show (PR #53 round 73)
