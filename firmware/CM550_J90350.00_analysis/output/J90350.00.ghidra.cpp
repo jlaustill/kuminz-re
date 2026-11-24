@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue Nov 24 00:54:53 MST 2026
+// Generated: Tue Nov 24 01:55:03 MST 2026
 
 
 //
@@ -11550,13 +11550,13 @@ void cm550_canControllerConfigInit(void)
 {
   switch(speed_measurement_mode) {
   case 0:
-    mc68k_can1TimerBufferInitDivided();
+    mc68k_initializeTpuChannel10PrimarySpeedInputDivided();
     cm550_delayWithWatchdogServiceWrapper2();
     cm550_emptyStubFunction7();
     return;
   case 1:
     mc68k_FUN_00019caa();
-    mc68k_can1MessageTransmitInit2();
+    mc68k_initializeTpuChannel0MissingToothInput();
     cm550_FUN_00019e8e();
     return;
   case 2:
@@ -11565,7 +11565,7 @@ void cm550_canControllerConfigInit(void)
     cm550_FUN_0001a52a();
     return;
   case 3:
-    mc68k_can1TimerBufferInitConditional();
+    mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled();
     cm550_FUN_0001a89a();
     cm550_FUN_0001a8a2();
   }
@@ -11594,7 +11594,7 @@ void cm550_derateProtectionSlowCycle20Coordinator(void)
 void cm550_can1PwmTimerInit(void)
 
 {
-  mc68k_can1TimerBufferInitConditional();
+  mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled();
   cm550_FUN_0001a89a();
   cm550_FUN_0001a8a2();
   return;
@@ -12538,7 +12538,7 @@ void cm550_canRpmModeConfigInit(void)
 
 {
   if (_determines_how_engine_position_is_sync_d_to_cam_0 == 1) {
-    mc68k_dutyCycleMonitorAltCanInit();
+    mc68k_initializeTpuChannel1BackupSpeedInput();
     return;
   }
   if (_determines_how_engine_position_is_sync_d_to_cam_0 == 2) {
@@ -13880,12 +13880,17 @@ void cm550_initShutdownLimitVariables(void)
 
 
 //
-// Function: mc68k_can1TimerBufferInitDivided @ 0x0001999c
+// Function: mc68k_initializeTpuChannel10PrimarySpeedInputDivided @ 0x0001999c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Sets up TPU channel 10 for the primary speed sensor and fills its pulse period table
+   (pulse_period_table_table_containing_main_speed_pulse_per_1000_65535): parameter 1 = DAT_00807ecc
+   << 8 - parameter 0 = 0xb - HSQR0 bits 0x30 - handler vp44_rpmTimerInterruptHandler2. The other
+   mode is mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled. No CAN register is involved (was
+   mc68k_can1TimerBufferInitDivided; PR #53 round 82) */
 
-word mc68k_can1TimerBufferInitDivided(void)
+word mc68k_initializeTpuChannel10PrimarySpeedInputDivided(void)
 
 {
   word wVar1;
@@ -14205,12 +14210,17 @@ word mc68k_FUN_00019caa(void)
 
 
 //
-// Function: mc68k_can1MessageTransmitInit2 @ 0x00019dd0
+// Function: mc68k_initializeTpuChannel0MissingToothInput @ 0x00019dd0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Sets up TPU channel 0 (its CIER / HSRR1 bits and parameters 2-6) for the missing-tooth wheel
+   input: it uses pmm_ratio_tooth_spacing_at_which_missing_tooth_is_found_0_1_9921875 /
+   pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 /
+   tooth_count_at_which_missing_tooth_not_detct_err_0_255. No CAN register is involved (was
+   mc68k_can1MessageTransmitInit2; PR #53 round 82) */
 
-void mc68k_can1MessageTransmitInit2(void)
+void mc68k_initializeTpuChannel0MissingToothInput(void)
 
 {
   word wVar1;
@@ -14717,12 +14727,17 @@ undefined8 mc68k_crankFuelAndTimingBufferStore(void)
 
 
 //
-// Function: mc68k_can1TimerBufferInitConditional @ 0x0001a746
+// Function: mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled @ 0x0001a746
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The same set-up of TPU channel 10 for the primary speed sensor as
+   mc68k_initializeTpuChannel10PrimarySpeedInputDivided but only when _ESSXSNEN bit 0 is set and in
+   the other mode: parameter 1 = 0x100 - parameter 0 = 7 - HSQR0 bits 0x20 - handler
+   vp44_FUN_0001a8a4. No CAN register is involved (was mc68k_can1TimerBufferInitConditional; PR #53
+   round 82) */
 
-uint mc68k_can1TimerBufferInitConditional(void)
+uint mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled(void)
 
 {
   word wVar1;
@@ -15288,12 +15303,16 @@ void cm550_sensorHistoryTablePointerInit(void)
 
 
 //
-// Function: mc68k_dutyCycleMonitorAltCanInit @ 0x0001ae22
+// Function: mc68k_initializeTpuChannel1BackupSpeedInput @ 0x0001ae22
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Sets up TPU channel 1 (CFSR3 bits 7-4 / CIER bit 1 / HSRR1 bits 3-2 / parameters 0-3) for the
+   backup speed sensor and fills its pulse period table (pulse_period_table_backup_* /
+   period_meas_per_cam_backup_* / _teeth_per_cam_rev_backup_*). No CAN register is involved (was
+   mc68k_dutyCycleMonitorAltCanInit; PR #53 round 82) */
 
-void mc68k_dutyCycleMonitorAltCanInit(void)
+void mc68k_initializeTpuChannel1BackupSpeedInput(void)
 
 {
   word wVar1;
@@ -29324,7 +29343,7 @@ void vp44_FUN_000284e8(void)
   CTM4_FCSM12SIC = 0x104;
   _DAT_00810ffc = 2;
   _DAT_00810ffe = 0x861c;
-  mc68k_initInternalRamAndCAN1();
+  mc68k_loadTpuMicrocode();
   _DAT_00810ffc = 2;
   _DAT_00810ffe = 0x8622;
   cm550_clearWorkingMemory();
@@ -29542,7 +29561,7 @@ void vp44_FUN_000284e8(void)
   mc68k_engineSpeedIsrRegister();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8846;
-  mc68k_can1ControllerInit();
+  mc68k_initializeTpuChannel12();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x884c;
   mc68k_pwmOutputInit();
@@ -29773,7 +29792,7 @@ void vp44_mainSystemInitialization(void)
   CTM4_PWM8B = 0;
   CTM4_PWM8SIC = 8;
   CTM4_FCSM12SIC = 0x104;
-  mc68k_initInternalRamAndCAN1();
+  mc68k_loadTpuMicrocode();
   cm550_clearWorkingMemory();
   cm550_firmwareDataCopyToWorkingMemory();
   run_location = RUN_LOCATION_NORMAL;
@@ -29862,7 +29881,7 @@ void vp44_mainSystemInitialization(void)
   cm550_FUN_0002ed62();
   cm550_tpuChannelIsrRegister();
   mc68k_engineSpeedIsrRegister();
-  mc68k_can1ControllerInit();
+  mc68k_initializeTpuChannel12();
   mc68k_pwmOutputInit();
   cm550_serialCommunicationIsrRegister();
   cm550_canMessageInterruptHandlerSetup();
@@ -29983,7 +30002,7 @@ void vp44_slowCycle4Coordinator(void)
   cm550_FUN_0002ed62();
   cm550_tpuChannelIsrRegister();
   mc68k_engineSpeedIsrRegister();
-  mc68k_can1ControllerInit();
+  mc68k_initializeTpuChannel12();
   mc68k_pwmOutputInit();
   cm550_serialCommunicationIsrRegister();
   cm550_canMessageInterruptHandlerSetup();
@@ -30092,7 +30111,7 @@ void vp44_engineDiagnosticSystemCoordinator(void)
   cm550_FUN_0002ed62();
   cm550_tpuChannelIsrRegister();
   mc68k_engineSpeedIsrRegister();
-  mc68k_can1ControllerInit();
+  mc68k_initializeTpuChannel12();
   mc68k_pwmOutputInit();
   cm550_serialCommunicationIsrRegister();
   cm550_canMessageInterruptHandlerSetup();
@@ -30179,7 +30198,7 @@ void cm550_fuelDemandUpdateOrchestrator(void)
   cm550_FUN_0002ed62();
   cm550_tpuChannelIsrRegister();
   mc68k_engineSpeedIsrRegister();
-  mc68k_can1ControllerInit();
+  mc68k_initializeTpuChannel12();
   mc68k_pwmOutputInit();
   cm550_serialCommunicationIsrRegister();
   cm550_canMessageInterruptHandlerSetup();
@@ -30263,7 +30282,7 @@ void cm550_advancedEngineProtectionCoordinator(void)
   cm550_FUN_0002ed62();
   cm550_tpuChannelIsrRegister();
   mc68k_engineSpeedIsrRegister();
-  mc68k_can1ControllerInit();
+  mc68k_initializeTpuChannel12();
   mc68k_pwmOutputInit();
   cm550_serialCommunicationIsrRegister();
   cm550_canMessageInterruptHandlerSetup();
@@ -34171,13 +34190,18 @@ void mc68k_engineRpmHardwareTimerSetup(void)
 
 
 //
-// Function: mc68k_can1ControllerInit @ 0x00030342
+// Function: mc68k_initializeTpuChannel12 @ 0x00030342
 //
 
 /* WARNING: Removing unreachable block (ram,0x000303c0) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Sets up TPU channel 12: clears its priority / interrupt enable / interrupt status - function 0xb
+   (CFSR0 bits 3-0) - parameter 0 = 0x92 - parameters 2-3 = 0xffff - host service request 2 -
+   priority 1. Then it computes _tach_output_minimum_rpm, so the channel may be the tachometer
+   output (not checked). No CAN register is involved (was mc68k_can1ControllerInit; PR #53 round 82)
+    */
 
-void mc68k_can1ControllerInit(void)
+void mc68k_initializeTpuChannel12(void)
 
 {
   word wVar1;
@@ -34938,10 +34962,16 @@ void cm550_masterSubsystemInit(void)
 
 
 //
-// Function: mc68k_initInternalRamAndCAN1 @ 0x00031428
+// Function: mc68k_loadTpuMicrocode @ 0x00031428
 //
 
-void mc68k_initInternalRamAndCAN1(void)
+/* Loads the TPU microcode into the TPU RAM: when TPU_TPUMCR bit 0x400 is clear it maps the TPU RAM
+   at 0xFFE000 (TPURAM_TRAMBAR = 0xffe0) - copies ROM 0x30c9c to 0xFFE000-0xFFE68B - clears up to
+   0xFFE6FF - copies ROM 0x31328 to 0xFFE700-0xFFE7FF - then sets TPU_TPUMCR = 0x407 (bit 0x400 =
+   the TPU runs from its RAM) / TPU_CIER = 0 / TPU_TICR = 0x440. So the TPU function numbers are
+   Cummins' own. No CAN register is involved (was mc68k_initInternalRamAndCAN1; PR #53 round 82) */
+
+void mc68k_loadTpuMicrocode(void)
 
 {
   word wVar1;

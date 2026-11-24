@@ -228,13 +228,13 @@ void cm550_protectionState3bRpmMonitor(void);  // @ 0x0001952c
 void cm550_shutdownMinimumSelector29(void);  // @ 0x000196e4
 void cm550_FUN_00019702(void);  // @ 0x00019702
 void cm550_initShutdownLimitVariables(void);  // @ 0x00019960
-word mc68k_can1TimerBufferInitDivided(void);  // @ 0x0001999c
+word mc68k_initializeTpuChannel10PrimarySpeedInputDivided(void);  // @ 0x0001999c
 word mc68k_phase2_slot_0_handler(void);  // @ 0x000199fa
 void cm550_delayWithWatchdogServiceWrapper2(void);  // @ 0x00019ac2
 void cm550_emptyStubFunction7(void);  // @ 0x00019aca
 undefined8 vp44_rpmTimerInterruptHandler2(void);  // @ 0x00019acc
 word mc68k_FUN_00019caa(void);  // @ 0x00019caa
-void mc68k_can1MessageTransmitInit2(void);  // @ 0x00019dd0
+void mc68k_initializeTpuChannel0MissingToothInput(void);  // @ 0x00019dd0
 void cm550_FUN_00019e8e(void);  // @ 0x00019e8e
 undefined8 vp44_FUN_00019e90(void);  // @ 0x00019e90
 void cm550_rpmTimingDeltaComparatorWithReturn(void);  // @ 0x0001a1e0
@@ -244,7 +244,7 @@ void mc68k_FUN_0001a47c(void);  // @ 0x0001a47c
 void cm550_FUN_0001a52a(void);  // @ 0x0001a52a
 undefined8 vp44_FUN_0001a52c(void);  // @ 0x0001a52c
 undefined8 mc68k_crankFuelAndTimingBufferStore(void);  // @ 0x0001a6e8
-uint mc68k_can1TimerBufferInitConditional(void);  // @ 0x0001a746
+uint mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled(void);  // @ 0x0001a746
 void cm550_FUN_0001a89a(void);  // @ 0x0001a89a
 void cm550_FUN_0001a8a2(void);  // @ 0x0001a8a2
 undefined8 vp44_FUN_0001a8a4(void);  // @ 0x0001a8a4
@@ -254,7 +254,7 @@ uint cm550_FUN_0001abb2(void);  // @ 0x0001abb2
 void cm550_FUN_0001ade8(void);  // @ 0x0001ade8
 void cm550_initOilPressureModeSystem(void);  // @ 0x0001ae06
 void cm550_sensorHistoryTablePointerInit(void);  // @ 0x0001ae0c
-void mc68k_dutyCycleMonitorAltCanInit(void);  // @ 0x0001ae22
+void mc68k_initializeTpuChannel1BackupSpeedInput(void);  // @ 0x0001ae22
 undefined8 mc68k_dutyCycleMonitorIsrHandler(void);  // @ 0x0001af32
 uint mc68k_FUN_0001b1ea(void);  // @ 0x0001b1ea
 undefined8 mc68k_FUN_0001b30a(void);  // @ 0x0001b30a
@@ -658,7 +658,7 @@ void cm550_diagnosticTableSnapshotCapture(undefined4 param_1);  // @ 0x0002fe38
 undefined8 mc68k_j1708BusTimerInterruptHandler(void);  // @ 0x000300d4
 void mc68k_engineSpeedIsrRegister(void);  // @ 0x00030274
 void mc68k_engineRpmHardwareTimerSetup(void);  // @ 0x00030290
-void mc68k_can1ControllerInit(void);  // @ 0x00030342
+void mc68k_initializeTpuChannel12(void);  // @ 0x00030342
 void cm550_emptyStubFunction9(void);  // @ 0x000303c8
 void cm550_emptyInitPlaceholder(void);  // @ 0x000303d2
 undefined4 cm550_accumulatorWithOverflowCarry(uint *param_1,uint *param_2);  // @ 0x000303d4
@@ -680,7 +680,7 @@ void cm550_shutdownMinimumSelector28(void);  // @ 0x00030bf6
 void cm550_shutdownMinimumSelector20(void);  // @ 0x00030c14
 void cm550_FUN_00030c3c(void);  // @ 0x00030c3c
 void cm550_masterSubsystemInit(void);  // @ 0x00030c78
-void mc68k_initInternalRamAndCAN1(void);  // @ 0x00031428
+void mc68k_loadTpuMicrocode(void);  // @ 0x00031428
 ushort cm550_FUN_00031496(void);  // @ 0x00031496
 void cm550_FUN_000315be(void);  // @ 0x000315be
 ushort cm550_FUN_00031a68(void);  // @ 0x00031a68
