@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Mon Nov 23 23:08:55 MST 2026
+// Generated: Mon Nov 23 23:55:56 MST 2026
 
 
 //
@@ -30,8 +30,8 @@ short cm550_huffmanTreeBuilder(int param_1)
       if (uVar3 <= (ushort)uVar2) break;
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
-      DAT_00ffd00f = 0x55;
-      DAT_00ffd00f = 0xaa;
+      CS2_WATCHDOG_SERVICE = 0x55;
+      CS2_WATCHDOG_SERVICE = 0xaa;
       if (*(short *)(param_1 + uVar2 * 6) != 0) {
         if (*(ushort *)(param_1 + uVar2 * 6) < *(ushort *)(param_1 + uVar4 * 6)) {
           uVar1 = uVar4;
@@ -78,8 +78,8 @@ void cm550_huffmanDecompress(dword tree_buffer,word start_node)
   while( true ) {
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
-    DAT_00ffd00f = 0x55;
-    DAT_00ffd00f = 0xaa;
+    CS2_WATCHDOG_SERVICE = 0x55;
+    CS2_WATCHDOG_SERVICE = 0xaa;
     uVar2 = in_stack_00000008;
     do {
       iVar3 = iVar3 >> 1;
@@ -205,8 +205,8 @@ void cm550_FUN_0000395a(void)
   
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
-  DAT_00ffd00f = 0x55;
-  DAT_00ffd00f = 0xaa;
+  CS2_WATCHDOG_SERVICE = 0x55;
+  CS2_WATCHDOG_SERVICE = 0xaa;
   bVar2 = 0;
   while (bVar2 < 5) {
     bVar1 = DAT_00ffd000;
@@ -459,8 +459,8 @@ void cm550_ramClearWithWatchdog(void)
     }
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
-    DAT_00ffd00f = 0x55;
-    DAT_00ffd00f = 0xaa;
+    CS2_WATCHDOG_SERVICE = 0x55;
+    CS2_WATCHDOG_SERVICE = 0xaa;
   }
   return;
 }
@@ -6214,8 +6214,8 @@ uint cm550_calibrationDataCopyWithChecksum(void)
     *puVar2 = *puVar3;
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
-    DAT_00ffd00f = 0x55;
-    DAT_00ffd00f = 0xaa;
+    CS2_WATCHDOG_SERVICE = 0x55;
+    CS2_WATCHDOG_SERVICE = 0xaa;
     puVar2 = puVar2 + 1;
     puVar3 = puVar3 + 1;
   }
@@ -6225,8 +6225,8 @@ uint cm550_calibrationDataCopyWithChecksum(void)
     *puVar2 = *puVar3;
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
-    DAT_00ffd00f = 0x55;
-    DAT_00ffd00f = 0xaa;
+    CS2_WATCHDOG_SERVICE = 0x55;
+    CS2_WATCHDOG_SERVICE = 0xaa;
     puVar2 = puVar2 + 1;
     puVar3 = puVar3 + 1;
   }
@@ -6259,8 +6259,8 @@ uint cm550_calibrationDataCopySecondary(void)
     *puVar2 = *puVar3;
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
-    DAT_00ffd00f = 0x55;
-    DAT_00ffd00f = 0xaa;
+    CS2_WATCHDOG_SERVICE = 0x55;
+    CS2_WATCHDOG_SERVICE = 0xaa;
     puVar2 = puVar2 + 1;
     puVar3 = puVar3 + 1;
   }
@@ -6270,8 +6270,8 @@ uint cm550_calibrationDataCopySecondary(void)
     *puVar2 = *puVar3;
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
-    DAT_00ffd00f = 0x55;
-    DAT_00ffd00f = 0xaa;
+    CS2_WATCHDOG_SERVICE = 0x55;
+    CS2_WATCHDOG_SERVICE = 0xaa;
     puVar2 = puVar2 + 1;
     puVar3 = puVar3 + 1;
   }
@@ -6326,26 +6326,26 @@ int cm550_eepromCalibrationWriteSecondary(void)
   if (iVar1 == 0) {
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
-    DAT_00ffd00f = 0x55;
-    DAT_00ffd00f = 0xaa;
+    CS2_WATCHDOG_SERVICE = 0x55;
+    CS2_WATCHDOG_SERVICE = 0xaa;
     sVar2 = cm550_flashProgramFromRam(0x4000,0x804f96,CONCAT22(2,uVar6));
     if (sVar2 == 1) {
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
-      DAT_00ffd00f = 0x55;
-      DAT_00ffd00f = 0xaa;
+      CS2_WATCHDOG_SERVICE = 0x55;
+      CS2_WATCHDOG_SERVICE = 0xaa;
       sVar2 = cm550_flashProgramFromRam(0x4004,0x804f9a,CONCAT22(0x15ae,uVar6));
       cVar5 = sVar2 == 0;
       if (sVar2 == 1) {
         SIM_SWSR = 0x55;
         SIM_SWSR = 0xaa;
-        DAT_00ffd00f = 0x55;
-        DAT_00ffd00f = 0xaa;
+        CS2_WATCHDOG_SERVICE = 0x55;
+        CS2_WATCHDOG_SERVICE = 0xaa;
         local_6 = cm550_arrayRangeSum((word *)&DAT_00004000,&DAT_000055b2);
         SIM_SWSR = 0x55;
         SIM_SWSR = 0xaa;
-        DAT_00ffd00f = 0x55;
-        DAT_00ffd00f = 0xaa;
+        CS2_WATCHDOG_SERVICE = 0x55;
+        CS2_WATCHDOG_SERVICE = 0xaa;
         byte_count = (ushort)(byte)(cVar5 << 4 | 8);
         cm550_parameterCircularBufferWrite(0x803b12,(byte *)&local_6,byte_count);
         uVar3 = 0;
@@ -6378,8 +6378,8 @@ int cm550_eepromCalibrationWriteSecondary(void)
     while (bVar4 < 4) {
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
-      DAT_00ffd00f = 0x55;
-      DAT_00ffd00f = 0xaa;
+      CS2_WATCHDOG_SERVICE = 0x55;
+      CS2_WATCHDOG_SERVICE = 0xaa;
       injectorTimingCalculation();
       cm550_watchdogServiceLoop();
       bVar4 = bVar4 + 1;
@@ -6441,26 +6441,26 @@ int cm550_FUN_0001125a(void)
   if (iVar1 == 0) {
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
-    DAT_00ffd00f = 0x55;
-    DAT_00ffd00f = 0xaa;
+    CS2_WATCHDOG_SERVICE = 0x55;
+    CS2_WATCHDOG_SERVICE = 0xaa;
     sVar2 = cm550_flashProgramFromRam(0x6000,0x804f96,CONCAT22(2,uVar6));
     if (sVar2 == 1) {
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
-      DAT_00ffd00f = 0x55;
-      DAT_00ffd00f = 0xaa;
+      CS2_WATCHDOG_SERVICE = 0x55;
+      CS2_WATCHDOG_SERVICE = 0xaa;
       sVar2 = cm550_flashProgramFromRam(0x6004,0x804f9a,CONCAT22(0x15ae,uVar6));
       cVar5 = sVar2 == 0;
       if (sVar2 == 1) {
         SIM_SWSR = 0x55;
         SIM_SWSR = 0xaa;
-        DAT_00ffd00f = 0x55;
-        DAT_00ffd00f = 0xaa;
+        CS2_WATCHDOG_SERVICE = 0x55;
+        CS2_WATCHDOG_SERVICE = 0xaa;
         local_6 = cm550_arrayRangeSum((word *)&DAT_00006000,&DAT_000075b2);
         SIM_SWSR = 0x55;
         SIM_SWSR = 0xaa;
-        DAT_00ffd00f = 0x55;
-        DAT_00ffd00f = 0xaa;
+        CS2_WATCHDOG_SERVICE = 0x55;
+        CS2_WATCHDOG_SERVICE = 0xaa;
         byte_count = (ushort)(byte)(cVar5 << 4 | 8);
         cm550_parameterCircularBufferWrite(0x803b14,(byte *)&local_6,byte_count);
         uVar3 = 0;
@@ -6493,8 +6493,8 @@ int cm550_FUN_0001125a(void)
     while (bVar4 < 4) {
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
-      DAT_00ffd00f = 0x55;
-      DAT_00ffd00f = 0xaa;
+      CS2_WATCHDOG_SERVICE = 0x55;
+      CS2_WATCHDOG_SERVICE = 0xaa;
       injectorTimingCalculation();
       cm550_watchdogServiceLoop();
       bVar4 = bVar4 + 1;
@@ -6675,8 +6675,8 @@ void cm550_firmwareDataCopyToWorkingMemory(void)
   for (puVar2 = (undefined4 *)&DAT_0080654a; puVar2 < (undefined4 *)0x808acc; puVar2 = puVar2 + 1) {
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
-    DAT_00ffd00f = 0x55;
-    DAT_00ffd00f = 0xaa;
+    CS2_WATCHDOG_SERVICE = 0x55;
+    CS2_WATCHDOG_SERVICE = 0xaa;
     *puVar2 = *puVar1;
     puVar1 = puVar1 + 1;
   }
@@ -6949,7 +6949,7 @@ byte commitEepromMirrorToEeprom(void)
       uVar3 = uVar3 + 1;
     }
     uVar2 = 0;
-    while ((uVar2 < 16000 && (_circular_buffer_byte_count != 0))) {
+    while ((uVar2 < 16000 && (circular_buffer_byte_count != 0))) {
       cm550_emptyPlaceholderFunction();
       cm550_watchdogServiceLoop();
       uVar2 = uVar2 + 1;
@@ -10256,8 +10256,8 @@ void mc68k_ioDriverStrobeHandler(void)
              (byte)_protection_state_config_table & ~bVar8;
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
-  DAT_00ffd00f = 0x55;
-  DAT_00ffd00f = 0xaa;
+  CS2_WATCHDOG_SERVICE = 0x55;
+  CS2_WATCHDOG_SERVICE = 0xaa;
   local_a._3_1_ = (byte)uVar1;
   DAT_0080bcfe = (byte)local_a & ~_discrete_input_override_mask_ptr[1] |
                  user_supplied_value_for_ptp_switched_input_input_on_off &
@@ -11261,14 +11261,12 @@ void cm550_multiPacketReceiveHandler(void)
 // Function: cm550_circularBufferEmptyCheck @ 0x00016c2c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 uint cm550_circularBufferEmptyCheck(void)
 
 {
   uint in_D0;
   
-  if (_circular_buffer_byte_count == 0) {
+  if (circular_buffer_byte_count == 0) {
     return 1;
   }
   return in_D0 & 0xffffff00;
@@ -11288,20 +11286,20 @@ uint cm550_parameterCircularBufferWrite(dword dest_address,byte *source_ptr,word
   uint uVar1;
   ushort in_stack_0000000c;
   
-  if (0x500 < (uint)in_stack_0000000c + (uint)_circular_buffer_byte_count) {
+  if (0x500 < (uint)in_stack_0000000c + (uint)circular_buffer_byte_count) {
     return 1;
   }
   _circular_buffer_last_address_offset = (short)(dest_address - 0x803b08) + -2;
   uVar1 = CONCAT22((short)(dest_address - 0x803b08 >> 0x10),_circular_buffer_last_address_offset);
-  *(short *)((uint)_eeprom_circular_buffer_write_index * 2 + 0x80bda8) =
+  *(short *)((uint)eeprom_circular_buffer_write_index * 2 + 0x80bda8) =
        _circular_buffer_last_address_offset;
   for (; in_stack_0000000c != 0; in_stack_0000000c = in_stack_0000000c - 1) {
-    *(byte *)((short)_eeprom_circular_buffer_write_index + 0x80c7a8) = *source_ptr;
-    *(short *)((uint)_eeprom_circular_buffer_write_index * 2 + 0x80bda8) =
+    *(byte *)((short)eeprom_circular_buffer_write_index + 0x80c7a8) = *source_ptr;
+    *(short *)((uint)eeprom_circular_buffer_write_index * 2 + 0x80bda8) =
          (short)dest_address + -0x3b0a;
-    _eeprom_circular_buffer_write_index = (ushort)(_eeprom_circular_buffer_write_index + 1) % 0x500;
+    eeprom_circular_buffer_write_index = (ushort)(eeprom_circular_buffer_write_index + 1) % 0x500;
     uVar1 = 0;
-    _circular_buffer_byte_count = _circular_buffer_byte_count + 1;
+    circular_buffer_byte_count = circular_buffer_byte_count + 1;
     dest_address = dest_address + 1;
     source_ptr = source_ptr + 1;
   }
@@ -17229,8 +17227,8 @@ undefined8 main_loop(void)
   }
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
-  DAT_00ffd00f = 0x55;
-  DAT_00ffd00f = 0xaa;
+  CS2_WATCHDOG_SERVICE = 0x55;
+  CS2_WATCHDOG_SERVICE = 0xaa;
   return CONCAT44(in_D0,in_D1);
 }
 
@@ -17534,8 +17532,8 @@ undefined4 cm550_flashEraseWithWatchdog(void)
   
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
-  DAT_00ffd00f = 0x55;
-  DAT_00ffd00f = 0xaa;
+  CS2_WATCHDOG_SERVICE = 0x55;
+  CS2_WATCHDOG_SERVICE = 0xaa;
   uVar4 = 0;
   *_flash_target_address_ptr = 0x2020;
   *_flash_target_address_ptr = 0xd0d0;
@@ -17561,8 +17559,8 @@ undefined4 cm550_flashEraseWithWatchdog(void)
           do {
             SIM_SWSR = 0x55;
             SIM_SWSR = 0xaa;
-            DAT_00ffd00f = 0x55;
-            DAT_00ffd00f = 0xaa;
+            CS2_WATCHDOG_SERVICE = 0x55;
+            CS2_WATCHDOG_SERVICE = 0xaa;
             uVar3 = uVar3 + 1;
             uVar4 = uVar5;
           } while (uVar3 < 0xa0);
@@ -17575,8 +17573,8 @@ undefined4 cm550_flashEraseWithWatchdog(void)
     do {
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
-      DAT_00ffd00f = 0x55;
-      DAT_00ffd00f = 0xaa;
+      CS2_WATCHDOG_SERVICE = 0x55;
+      CS2_WATCHDOG_SERVICE = 0xaa;
       uVar2 = uVar2 + 1;
       uVar5 = uVar3;
     } while (uVar2 < 0xa0);
@@ -17630,8 +17628,8 @@ undefined4 cm550_flashProgramWordWithWatchdog(void)
   uVar1 = 0;
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
-  DAT_00ffd00f = 0x55;
-  DAT_00ffd00f = 0xaa;
+  CS2_WATCHDOG_SERVICE = 0x55;
+  CS2_WATCHDOG_SERVICE = 0xaa;
   while( true ) {
     if (_DAT_008006a2 <= _flash_target_address_ptr) {
       _DAT_00000000 = 0xffff;
@@ -17643,8 +17641,8 @@ undefined4 cm550_flashProgramWordWithWatchdog(void)
     do {
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
-      DAT_00ffd00f = 0x55;
-      DAT_00ffd00f = 0xaa;
+      CS2_WATCHDOG_SERVICE = 0x55;
+      CS2_WATCHDOG_SERVICE = 0xaa;
       bVar3 = uVar2 < 5000;
       uVar2 = uVar2 + 1;
     } while (bVar3);
@@ -17652,8 +17650,8 @@ undefined4 cm550_flashProgramWordWithWatchdog(void)
     uVar1 = uVar1 + 1;
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
-    DAT_00ffd00f = 0x55;
-    DAT_00ffd00f = 0xaa;
+    CS2_WATCHDOG_SERVICE = 0x55;
+    CS2_WATCHDOG_SERVICE = 0xaa;
   }
   _DAT_00000000 = 0xffff;
   return 0;
@@ -22830,8 +22828,8 @@ undefined4 cm550_diagnosticServiceSecurityValidator(dword msg_ptr)
 {
   byte auth_result;
   int required_param_len;
-  word msg_length;
   byte service_id;
+  word msg_length;
   
   service_id = **(byte **)(msg_ptr + 6);
   msg_length = *(word *)(msg_ptr + 4);
@@ -27396,7 +27394,7 @@ uint mc68k_qadcDataCollectionStateMachine(void)
     if (wVar2 == 5) {
       wVar2 = QSM_RR3;
       if ((wVar2 & 1) == 0) {
-        if (_circular_buffer_byte_count == 0) {
+        if (circular_buffer_byte_count == 0) {
           can_buffer_setup1_size.state = 0;
           _diagnostic_can_response_header = _circular_buffer_last_address_offset;
           QSM_TR2 = 3;
@@ -27436,7 +27434,7 @@ uint mc68k_qadcDataCollectionStateMachine(void)
       pwVar5 = pwVar5 + 1;
       bVar4 = bVar4 + 1;
     } while (bVar4 < 0x10);
-    if (_circular_buffer_byte_count == 0) {
+    if (circular_buffer_byte_count == 0) {
       QSM_TR3 = _diagnostic_can_response_header;
       QSM_CR3 = 0xfd;
     }
@@ -27450,14 +27448,14 @@ uint mc68k_qadcDataCollectionStateMachine(void)
     QSM_CR2 = 0x3d;
     QSM_TR3 = 2;
     QSM_CR3 = 0xbd;
-    QSM_TR4 = *(word *)((short)_DAT_0080cca8 * 2 + 0x80bda8);
+    QSM_TR4 = *(word *)((short)eeprom_circular_buffer_read_index * 2 + 0x80bda8);
     QSM_CR4 = 0xfd;
-    QSM_TR5 = (ushort)*(byte *)((short)_DAT_0080cca8 + 0x80c7a8);
+    QSM_TR5 = (ushort)*(byte *)((short)eeprom_circular_buffer_read_index + 0x80c7a8);
     QSM_CR5 = 0x3d;
     can_buffer_setup1_size.state = 2;
-    uVar1 = _DAT_0080cca8 + 1;
-    _circular_buffer_byte_count = _circular_buffer_byte_count + -1;
-    _DAT_0080cca8 = uVar1 % 0x500;
+    uVar1 = eeprom_circular_buffer_read_index + 1;
+    circular_buffer_byte_count = circular_buffer_byte_count - 1;
+    eeprom_circular_buffer_read_index = uVar1 % 0x500;
     uVar3 = uVar1 / 0x500;
   }
   return uVar3;
@@ -27568,8 +27566,8 @@ void mc68k_FUN_00026854(void)
     mc68k_qadcDataCollectionStateMachine();
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
-    DAT_00ffd00f = 0x55;
-    DAT_00ffd00f = 0xaa;
+    CS2_WATCHDOG_SERVICE = 0x55;
+    CS2_WATCHDOG_SERVICE = 0xaa;
   }
   wVar2 = QSM_SPCR1;
   QSM_SPCR1 = wVar2 & 0xff00;
@@ -28747,8 +28745,8 @@ void vp44StatusInitAndWait(void)
   
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
-  DAT_00ffd00f = 0x55;
-  DAT_00ffd00f = 0xaa;
+  CS2_WATCHDOG_SERVICE = 0x55;
+  CS2_WATCHDOG_SERVICE = 0xaa;
   cVar2 = '\x01';
   cVar3 = '\0';
   cVar4 = '\0';
@@ -28772,16 +28770,16 @@ void vp44StatusInitAndWait(void)
     do {
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
-      DAT_00ffd00f = 0x55;
-      DAT_00ffd00f = 0xaa;
+      CS2_WATCHDOG_SERVICE = 0x55;
+      CS2_WATCHDOG_SERVICE = 0xaa;
       uVar6 = uVar6 + 1;
     } while (uVar6 < 0xa0);
     uVar1 = uVar1 + 1;
   }
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
-  DAT_00ffd00f = 0x55;
-  DAT_00ffd00f = 0xaa;
+  CS2_WATCHDOG_SERVICE = 0x55;
+  CS2_WATCHDOG_SERVICE = 0xaa;
   cm550_FUN_00028978();
   return;
 }
@@ -28856,13 +28854,13 @@ void vp44_FUN_00027cd0(undefined4 param_1)
     do {
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
-      DAT_00ffd00f = 0x55;
-      DAT_00ffd00f = 0xaa;
+      CS2_WATCHDOG_SERVICE = 0x55;
+      CS2_WATCHDOG_SERVICE = 0xaa;
       sVar1 = cm550_eepromCalibrationWriteSecondary();
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
-      DAT_00ffd00f = 0x55;
-      DAT_00ffd00f = 0xaa;
+      CS2_WATCHDOG_SERVICE = 0x55;
+      CS2_WATCHDOG_SERVICE = 0xaa;
       if (sVar1 != 2) {
         bVar2 = 3;
       }
@@ -28875,13 +28873,13 @@ void vp44_FUN_00027cd0(undefined4 param_1)
         do {
           SIM_SWSR = 0x55;
           SIM_SWSR = 0xaa;
-          DAT_00ffd00f = 0x55;
-          DAT_00ffd00f = 0xaa;
+          CS2_WATCHDOG_SERVICE = 0x55;
+          CS2_WATCHDOG_SERVICE = 0xaa;
           sVar1 = cm550_FUN_0001125a();
           SIM_SWSR = 0x55;
           SIM_SWSR = 0xaa;
-          DAT_00ffd00f = 0x55;
-          DAT_00ffd00f = 0xaa;
+          CS2_WATCHDOG_SERVICE = 0x55;
+          CS2_WATCHDOG_SERVICE = 0xaa;
           if (sVar1 != 2) {
             bVar2 = 3;
           }
@@ -28898,13 +28896,13 @@ void vp44_FUN_00027cd0(undefined4 param_1)
     do {
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
-      DAT_00ffd00f = 0x55;
-      DAT_00ffd00f = 0xaa;
+      CS2_WATCHDOG_SERVICE = 0x55;
+      CS2_WATCHDOG_SERVICE = 0xaa;
       sVar1 = cm550_FUN_0001125a();
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
-      DAT_00ffd00f = 0x55;
-      DAT_00ffd00f = 0xaa;
+      CS2_WATCHDOG_SERVICE = 0x55;
+      CS2_WATCHDOG_SERVICE = 0xaa;
       if (sVar1 != 2) {
         bVar2 = 3;
       }
@@ -28917,13 +28915,13 @@ void vp44_FUN_00027cd0(undefined4 param_1)
         do {
           SIM_SWSR = 0x55;
           SIM_SWSR = 0xaa;
-          DAT_00ffd00f = 0x55;
-          DAT_00ffd00f = 0xaa;
+          CS2_WATCHDOG_SERVICE = 0x55;
+          CS2_WATCHDOG_SERVICE = 0xaa;
           sVar1 = cm550_eepromCalibrationWriteSecondary();
           SIM_SWSR = 0x55;
           SIM_SWSR = 0xaa;
-          DAT_00ffd00f = 0x55;
-          DAT_00ffd00f = 0xaa;
+          CS2_WATCHDOG_SERVICE = 0x55;
+          CS2_WATCHDOG_SERVICE = 0xaa;
           if (sVar1 != 2) {
             bVar2 = 3;
           }
@@ -28947,8 +28945,8 @@ void vp44_FUN_00027cd0(undefined4 param_1)
                              _DAT_00803fe2 < _DAT_00803fe4));
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
-    DAT_00ffd00f = 0x55;
-    DAT_00ffd00f = 0xaa;
+    CS2_WATCHDOG_SERVICE = 0x55;
+    CS2_WATCHDOG_SERVICE = 0xaa;
     uVar4 = 0;
     while ((uVar4 < 1000 && (_DAT_00803fe2 != _DAT_00803fe4))) {
       cm550_emptyPlaceholderFunction();
@@ -28956,8 +28954,8 @@ void vp44_FUN_00027cd0(undefined4 param_1)
       do {
         SIM_SWSR = 0x55;
         SIM_SWSR = 0xaa;
-        DAT_00ffd00f = 0x55;
-        DAT_00ffd00f = 0xaa;
+        CS2_WATCHDOG_SERVICE = 0x55;
+        CS2_WATCHDOG_SERVICE = 0xaa;
         uVar3 = uVar3 + 1;
       } while (uVar3 < 0xa0);
       uVar4 = uVar4 + 1;
@@ -28967,8 +28965,8 @@ void vp44_FUN_00027cd0(undefined4 param_1)
   while (bVar2 < 4) {
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
-    DAT_00ffd00f = 0x55;
-    DAT_00ffd00f = 0xaa;
+    CS2_WATCHDOG_SERVICE = 0x55;
+    CS2_WATCHDOG_SERVICE = 0xaa;
     injectorTimingCalculation();
     cm550_watchdogServiceLoop();
     bVar2 = bVar2 + 1;
@@ -29010,8 +29008,8 @@ void vp44_FUN_00027f9c(void)
   cm550_FUN_00030a5e();
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
-  DAT_00ffd00f = 0x55;
-  DAT_00ffd00f = 0xaa;
+  CS2_WATCHDOG_SERVICE = 0x55;
+  CS2_WATCHDOG_SERVICE = 0xaa;
   development_mode = DEVELOPMENT_MODE_OFF;
   ram_refresh_enable = RAM_REFRESH_ENABLED;
   run_location = RUN_LOCATION_NORMAL;
@@ -29044,8 +29042,8 @@ void vp44_FUN_00027f9c(void)
   }
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
-  DAT_00ffd00f = 0x55;
-  DAT_00ffd00f = 0xaa;
+  CS2_WATCHDOG_SERVICE = 0x55;
+  CS2_WATCHDOG_SERVICE = 0xaa;
   cVar3 = _calibration_bank_active == 0;
   if (_calibration_bank_active == 1) {
     cVar8 = '\0';
@@ -29078,8 +29076,8 @@ void vp44_FUN_00027f9c(void)
   cm550_parameterCircularBufferWrite(0x803b3e,(byte *)&local_a,uVar12);
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
-  DAT_00ffd00f = 0x55;
-  DAT_00ffd00f = 0xaa;
+  CS2_WATCHDOG_SERVICE = 0x55;
+  CS2_WATCHDOG_SERVICE = 0xaa;
   uVar5 = 0;
   while ((uVar5 < 1000 && (_eeprom_hour_meter_buffer != local_a))) {
     cm550_emptyPlaceholderFunction();
@@ -29087,8 +29085,8 @@ void vp44_FUN_00027f9c(void)
     do {
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
-      DAT_00ffd00f = 0x55;
-      DAT_00ffd00f = 0xaa;
+      CS2_WATCHDOG_SERVICE = 0x55;
+      CS2_WATCHDOG_SERVICE = 0xaa;
       uVar4 = uVar4 + 1;
     } while (uVar4 < 0xa0);
     uVar5 = uVar5 + 1;
@@ -29097,8 +29095,8 @@ void vp44_FUN_00027f9c(void)
   cm550_parameterCircularBufferWrite(0x803b50,(byte *)&local_a,(word)((uint)puVar13 >> 0x10));
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
-  DAT_00ffd00f = 0x55;
-  DAT_00ffd00f = 0xaa;
+  CS2_WATCHDOG_SERVICE = 0x55;
+  CS2_WATCHDOG_SERVICE = 0xaa;
   uVar5 = 0;
   while ((uVar5 < 1000 && (_eeprom_engine_run_time_buffer != local_a))) {
     cm550_emptyPlaceholderFunction();
@@ -29106,8 +29104,8 @@ void vp44_FUN_00027f9c(void)
     do {
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
-      DAT_00ffd00f = 0x55;
-      DAT_00ffd00f = 0xaa;
+      CS2_WATCHDOG_SERVICE = 0x55;
+      CS2_WATCHDOG_SERVICE = 0xaa;
       uVar4 = uVar4 + 1;
     } while (uVar4 < 0xa0);
     uVar5 = uVar5 + 1;
@@ -29125,8 +29123,8 @@ void vp44_FUN_00027f9c(void)
     do {
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
-      DAT_00ffd00f = 0x55;
-      DAT_00ffd00f = 0xaa;
+      CS2_WATCHDOG_SERVICE = 0x55;
+      CS2_WATCHDOG_SERVICE = 0xaa;
       uVar12 = uVar12 + 1;
     } while (uVar12 < 0xa0);
     uVar5 = uVar5 + 1;
@@ -29134,8 +29132,8 @@ void vp44_FUN_00027f9c(void)
   cm550_FUN_0002ce64();
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
-  DAT_00ffd00f = 0x55;
-  DAT_00ffd00f = 0xaa;
+  CS2_WATCHDOG_SERVICE = 0x55;
+  CS2_WATCHDOG_SERVICE = 0xaa;
   if (DAT_0080bd2d == '\0') {
     DAT_0080bd2d = '\0';
     enable_flag_to_allow_boot_block_programming_enable_disable =
@@ -29148,8 +29146,8 @@ void vp44_FUN_00027f9c(void)
   }
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
-  DAT_00ffd00f = 0x55;
-  DAT_00ffd00f = 0xaa;
+  CS2_WATCHDOG_SERVICE = 0x55;
+  CS2_WATCHDOG_SERVICE = 0xaa;
   mc68k_ioDriverStrobeHandler();
   local_6 = 0;
   do {
@@ -29157,8 +29155,8 @@ void vp44_FUN_00027f9c(void)
     while (wVar2 = CTM4_BIUTBR, (ushort)(wVar2 - wVar1) < 500) {
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
-      DAT_00ffd00f = 0x55;
-      DAT_00ffd00f = 0xaa;
+      CS2_WATCHDOG_SERVICE = 0x55;
+      CS2_WATCHDOG_SERVICE = 0xaa;
       injectorTimingCalculation();
       if ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) != 0) {
         if (DAT_0080bd2d == '\0') {
@@ -29173,8 +29171,8 @@ void vp44_FUN_00027f9c(void)
         }
         SIM_SWSR = 0x55;
         SIM_SWSR = 0xaa;
-        DAT_00ffd00f = 0x55;
-        DAT_00ffd00f = 0xaa;
+        CS2_WATCHDOG_SERVICE = 0x55;
+        CS2_WATCHDOG_SERVICE = 0xaa;
         mc68k_ioDriverStrobeHandler();
         vp44StatusInitAndWait();
       }
@@ -29193,13 +29191,13 @@ void vp44_FUN_00027f9c(void)
   }
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
-  DAT_00ffd00f = 0x55;
-  DAT_00ffd00f = 0xaa;
+  CS2_WATCHDOG_SERVICE = 0x55;
+  CS2_WATCHDOG_SERVICE = 0xaa;
   mc68k_ioDriverStrobeHandler();
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
-  DAT_00ffd00f = 0x55;
-  DAT_00ffd00f = 0xaa;
+  CS2_WATCHDOG_SERVICE = 0x55;
+  CS2_WATCHDOG_SERVICE = 0xaa;
   bVar11 = 0;
   while( true ) {
     cVar3 = bVar11 < 4;
@@ -29208,8 +29206,8 @@ void vp44_FUN_00027f9c(void)
     if (!(bool)cVar3) break;
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
-    DAT_00ffd00f = 0x55;
-    DAT_00ffd00f = 0xaa;
+    CS2_WATCHDOG_SERVICE = 0x55;
+    CS2_WATCHDOG_SERVICE = 0xaa;
     injectorTimingCalculation();
     cm550_watchdogServiceLoop();
     bVar11 = bVar11 + 1;
@@ -29230,8 +29228,8 @@ void vp44_FUN_00027f9c(void)
     do {
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
-      DAT_00ffd00f = 0x55;
-      DAT_00ffd00f = 0xaa;
+      CS2_WATCHDOG_SERVICE = 0x55;
+      CS2_WATCHDOG_SERVICE = 0xaa;
       uVar12 = uVar12 + 1;
     } while (uVar12 < 0xa0);
     uVar5 = uVar5 + 1;
@@ -30848,8 +30846,8 @@ short cm550_FUN_0002c834(dword tree_buffer)
       if (uVar3 <= (ushort)uVar2) break;
       SIM_SWSR = 0x55;
       SIM_SWSR = 0xaa;
-      DAT_00ffd00f = 0x55;
-      DAT_00ffd00f = 0xaa;
+      CS2_WATCHDOG_SERVICE = 0x55;
+      CS2_WATCHDOG_SERVICE = 0xaa;
       if (*(short *)(tree_buffer + uVar2 * 6) != 0) {
         if (*(ushort *)(tree_buffer + uVar2 * 6) < *(ushort *)(tree_buffer + uVar4 * 6)) {
           uVar1 = uVar4;
@@ -30895,8 +30893,8 @@ void cm550_FUN_0002c986(int param_1,undefined4 param_2)
   while( true ) {
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
-    DAT_00ffd00f = 0x55;
-    DAT_00ffd00f = 0xaa;
+    CS2_WATCHDOG_SERVICE = 0x55;
+    CS2_WATCHDOG_SERVICE = 0xaa;
     uVar2 = param_2._0_2_;
     do {
       iVar3 = iVar3 >> 1;
@@ -31021,8 +31019,8 @@ void cm550_FUN_0002cb4e(void)
   
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
-  DAT_00ffd00f = 0x55;
-  DAT_00ffd00f = 0xaa;
+  CS2_WATCHDOG_SERVICE = 0x55;
+  CS2_WATCHDOG_SERVICE = 0xaa;
   bVar2 = 0;
   while (bVar2 < 5) {
     bVar1 = DAT_00ffd000;
@@ -31198,8 +31196,8 @@ void cm550_FUN_0002ce14(void)
     }
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
-    DAT_00ffd00f = 0x55;
-    DAT_00ffd00f = 0xaa;
+    CS2_WATCHDOG_SERVICE = 0x55;
+    CS2_WATCHDOG_SERVICE = 0xaa;
   }
   return;
 }
@@ -32605,8 +32603,8 @@ void cm550_clearWorkingMemory(void)
     }
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
-    DAT_00ffd00f = 0x55;
-    DAT_00ffd00f = 0xaa;
+    CS2_WATCHDOG_SERVICE = 0x55;
+    CS2_WATCHDOG_SERVICE = 0xaa;
   }
   return;
 }
@@ -38188,8 +38186,8 @@ void cm550_watchdogServiceLoop(undefined4 param_1)
   while (wVar2 = CTM4_BIUTBR, (ushort)(wVar2 - wVar1) < param_1._0_2_) {
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
-    DAT_00ffd00f = 0x55;
-    DAT_00ffd00f = 0xaa;
+    CS2_WATCHDOG_SERVICE = 0x55;
+    CS2_WATCHDOG_SERVICE = 0xaa;
   }
   return;
 }
@@ -38211,8 +38209,8 @@ void cm550_FUN_00034bf8(word timer_ticks)
   while (wVar2 = CTM4_BIUTBR, (ushort)(wVar2 - wVar1) < in_stack_00000004) {
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
-    DAT_00ffd00f = 0x55;
-    DAT_00ffd00f = 0xaa;
+    CS2_WATCHDOG_SERVICE = 0x55;
+    CS2_WATCHDOG_SERVICE = 0xaa;
   }
   return;
 }

@@ -4846,8 +4846,9 @@ extern undefined high_rpm_protection_fault_flag;  // 0x0080cc6a
 extern undefined high_rpm_protection_state;  // 0x0080cc6c
 extern undefined high_rpm_protection_timer;  // 0x0080cc6e
 extern undefined high_rpm_protection_warning_flag;  // 0x0080cc72
-extern undefined eeprom_circular_buffer_write_index;  // 0x0080ccaa
-extern undefined circular_buffer_byte_count;  // 0x0080ccac
+extern word eeprom_circular_buffer_read_index;  // 0x0080cca8
+extern word eeprom_circular_buffer_write_index;  // 0x0080ccaa
+extern word circular_buffer_byte_count;  // 0x0080ccac
 extern undefined circular_buffer_last_address_offset;  // 0x0080ccb0
 extern undefined high_rpm_fuel_limit_active;  // 0x0080ccb2
 extern undefined high_rpm_fuel_limit_idle;  // 0x0080ccb4
@@ -5678,6 +5679,7 @@ extern undefined wet_stack_timing_base_value_0_120;  // 0x0080dee8
 extern undefined sim_chip_select_option_reg0;  // 0x0080fffa
 extern undefined sim_chip_select_base_reg0;  // 0x0080fffc
 extern undefined init_checkpoint_address;  // 0x0080fffe
+extern byte CS2_WATCHDOG_SERVICE;  // 0x00ffd00f
 extern word QSM_SCCR0;  // 0x00fffc08
 extern word QSM_SCCR1;  // 0x00fffc0a
 extern word QSM_SCSR;  // 0x00fffc0c

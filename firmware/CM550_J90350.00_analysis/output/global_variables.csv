@@ -4921,8 +4921,9 @@ address,name,type,comment
 0x0080cc6c,high_rpm_protection_state,undefined,
 0x0080cc6e,high_rpm_protection_timer,undefined,
 0x0080cc72,high_rpm_protection_warning_flag,undefined,
-0x0080ccaa,eeprom_circular_buffer_write_index,undefined,
-0x0080ccac,circular_buffer_byte_count,undefined,
+0x0080cca8,eeprom_circular_buffer_read_index,word,The EEPROM log's read index: the QSPI path sends entry [index] through QSM_TR4 (the word at 0x80BDA8) and QSM_TR5 (the byte at 0x80C7A8) and advances it modulo 0x500 (move.w / addq.w; PR #53 round 80)
+0x0080ccaa,eeprom_circular_buffer_write_index,word,The EEPROM log's write index: cm550_parameterCircularBufferWrite stores entry i at 0x80BDA8 + 2 i (word) and 0x80C7A8 + i (byte) and advances it modulo 0x500 (typed word; PR #53 round 80)
+0x0080ccac,circular_buffer_byte_count,word,The EEPROM log's pending entry count: +1 per write - -1 per entry sent (addq.w / move.w / tst.w; typed word; PR #53 round 80)
 0x0080ccb0,circular_buffer_last_address_offset,undefined,
 0x0080ccb2,high_rpm_fuel_limit_active,undefined,
 0x0080ccb4,high_rpm_fuel_limit_idle,undefined,
@@ -5766,6 +5767,7 @@ address,name,type,comment
 0x0080fffa,sim_chip_select_option_reg0,,
 0x0080fffc,sim_chip_select_base_reg0,,
 0x0080fffe,init_checkpoint_address,,
+0x00ffd00f,CS2_WATCHDOG_SERVICE,byte,The watchdog service register of the device on chip select 2 (SIM_CSBAR2 = 0xffd0 - an output driver): every watchdog service writes 0x55 then 0xaa here right after SIM_SWSR (64 + 64 writes) (PR #53 round 80)
 0x00fffc08,QSM_SCCR0,word,MC68336 QSM SCI control register 0 (the baud rate divisor): mc68k_initializeJ1708Datalink writes 0x34 (PR #53 round 75)
 0x00fffc0a,QSM_SCCR1,word,MC68336 QSM SCI control register 1: mc68k_initializeJ1708Datalink writes 0x102c (ILT 0x1000 + RIE 0x20 + TE 0x08 + RE 0x04); mc68k_startJ1708Transmission sets RIE (0x20) to read back its own bytes (PR #53 round 75)
 0x00fffc0c,QSM_SCSR,word,MC68336 QSM SCI status register: mc68k_startJ1708Transmission sends only while bit 0x20 (RAF - receiver active) is clear (PR #53 round 75)
@@ -5930,11 +5932,11 @@ address,name,type,comment
 0x00ffc830,CAN_CS5_MESSAGE_3_CONTROL,word,82527 CAN controller on chip select 5: message object 3 Control 0 and Control 1 (30H-31H, written together as bit pairs) (Intel 82527 Architectural Overview 4.1; PR #53 round 79)
 0x00ffc832,CAN_CS5_MESSAGE_3_ARBITRATION,word,82527 CAN controller on chip select 5: message object 3 Arbitration 0 and 1 (32H-33H: an 11-bit identifier) (Intel 82527 Architectural Overview 4.1; PR #53 round 79)
 0x00ffc836,CAN_CS5_MESSAGE_3_CONFIGURATION,byte,82527 CAN controller on chip select 5: message object 3 Message Configuration (36H: 0x80 receive / 0x88 transmit - 8 data bytes) (Intel 82527 Architectural Overview 4.1; PR #53 round 79)
-0x00ffc83f,CAN_CS5_BIT_TIMING_0,byte,82527 CAN controller on chip select 5: Bit Timing Register 0 (3FH) (Intel 82527 Architectural Overview 4.1; PR #53 round 79)
+0x00ffc83f,CAN_CS5_BIT_TIMING_0,byte,82527 CAN controller on chip select 5: Bit Timing Register 0 (3FH) (Intel 82527 Architectural Overview 4.1; PR #53 round 79; RAM dump: CPU interface 0x41 (DSC 1) / BTR0 0x01 (BRP 1) / BTR1 0x1c (TSEG1 12 / TSEG2 1) on both 82527s - XTAL / 64 = 250 kbit/s with a 16 MHz crystal; PR #53 round 80)
 0x00ffc840,CAN_CS5_MESSAGE_4_CONTROL,word,82527 CAN controller on chip select 5: message object 4 Control 0 and Control 1 (40H-41H, written together as bit pairs) (Intel 82527 Architectural Overview 4.1; PR #53 round 79)
 0x00ffc842,CAN_CS5_MESSAGE_4_ARBITRATION,word,82527 CAN controller on chip select 5: message object 4 Arbitration 0 and 1 (42H-43H: an 11-bit identifier) (Intel 82527 Architectural Overview 4.1; PR #53 round 79)
 0x00ffc846,CAN_CS5_MESSAGE_4_CONFIGURATION,byte,82527 CAN controller on chip select 5: message object 4 Message Configuration (46H: 0x80 receive / 0x88 transmit - 8 data bytes) (Intel 82527 Architectural Overview 4.1; PR #53 round 79)
-0x00ffc84f,CAN_CS5_BIT_TIMING_1,byte,82527 CAN controller on chip select 5: Bit Timing Register 1 (4FH) (Intel 82527 Architectural Overview 4.1; PR #53 round 79)
+0x00ffc84f,CAN_CS5_BIT_TIMING_1,byte,82527 CAN controller on chip select 5: Bit Timing Register 1 (4FH) (Intel 82527 Architectural Overview 4.1; PR #53 round 79; RAM dump: CPU interface 0x41 (DSC 1) / BTR0 0x01 (BRP 1) / BTR1 0x1c (TSEG1 12 / TSEG2 1) on both 82527s - XTAL / 64 = 250 kbit/s with a 16 MHz crystal; PR #53 round 80)
 0x00ffc850,CAN_CS5_MESSAGE_5_CONTROL,word,82527 CAN controller on chip select 5: message object 5 Control 0 and Control 1 (50H-51H, written together as bit pairs) (Intel 82527 Architectural Overview 4.1; PR #53 round 79)
 0x00ffc852,CAN_CS5_MESSAGE_5_ARBITRATION,word,82527 CAN controller on chip select 5: message object 5 Arbitration 0 and 1 (52H-53H: an 11-bit identifier) (Intel 82527 Architectural Overview 4.1; PR #53 round 79)
 0x00ffc856,CAN_CS5_MESSAGE_5_CONFIGURATION,byte,82527 CAN controller on chip select 5: message object 5 Message Configuration (56H: 0x80 receive / 0x88 transmit - 8 data bytes) (Intel 82527 Architectural Overview 4.1; PR #53 round 79)
@@ -5952,6 +5954,6 @@ address,name,type,comment
 0x00ffd80c,CAN_CS4_MESSAGE_15_MASK,dword,82527 CAN controller on chip select 4: Message 15 Mask Register (0C-0FH) - written as one dword from mask_used_for_can_msg_object_15_0_ffffffff_84b0 (Intel 82527 Architectural Overview 4.1; PR #53 round 79)
 0x00ffd81f,CAN_CS4_CLOCK_OUT,byte,82527 CAN controller on chip select 4: CLKOUT Register (1FH) (Intel 82527 Architectural Overview 4.1; PR #53 round 79)
 0x00ffd82f,CAN_CS4_BUS_CONFIGURATION,byte,82527 CAN controller on chip select 4: Bus Configuration Register (2FH) (Intel 82527 Architectural Overview 4.1; PR #53 round 79)
-0x00ffd83f,CAN_CS4_BIT_TIMING_0,byte,82527 CAN controller on chip select 4: Bit Timing Register 0 (3FH) (Intel 82527 Architectural Overview 4.1; PR #53 round 79)
-0x00ffd84f,CAN_CS4_BIT_TIMING_1,byte,82527 CAN controller on chip select 4: Bit Timing Register 1 (4FH) (Intel 82527 Architectural Overview 4.1; PR #53 round 79)
+0x00ffd83f,CAN_CS4_BIT_TIMING_0,byte,82527 CAN controller on chip select 4: Bit Timing Register 0 (3FH) (Intel 82527 Architectural Overview 4.1; PR #53 round 79; RAM dump: CPU interface 0x41 (DSC 1) / BTR0 0x01 (BRP 1) / BTR1 0x1c (TSEG1 12 / TSEG2 1) on both 82527s - XTAL / 64 = 250 kbit/s with a 16 MHz crystal; PR #53 round 80)
+0x00ffd84f,CAN_CS4_BIT_TIMING_1,byte,82527 CAN controller on chip select 4: Bit Timing Register 1 (4FH) (Intel 82527 Architectural Overview 4.1; PR #53 round 79; RAM dump: CPU interface 0x41 (DSC 1) / BTR0 0x01 (BRP 1) / BTR1 0x1c (TSEG1 12 / TSEG2 1) on both 82527s - XTAL / 64 = 250 kbit/s with a 16 MHz crystal; PR #53 round 80)
 0x00ffd85f,CAN_CS4_INTERRUPT,byte,82527 CAN controller on chip select 4: Interrupt Register (5FH): 0 none / 1 status change / 2 message 15 / n + 2 message n (Intel 82527 Architectural Overview 4.1; PR #53 round 79)
