@@ -143,7 +143,7 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Timing and Delay Functions
 # -----------------------------------------------------------------------------
-0x0002ca64,busyWaitDelayLoop,0,loop_count,ushort,Number of delay loop iterations
+0x0002ca64,cm550_busyWaitDelayLoopImageCopy,0,loop_count,ushort,Number of delay loop iterations
 0x00034bf8,hardwareTimerDelayLoop,0,timer_ticks,ushort,Number of hardware timer ticks to wait
 
 # -----------------------------------------------------------------------------

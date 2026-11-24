@@ -4,11 +4,14 @@
 // Global Variable Declarations (from global_variables.csv)
 // Ghidra artifact entries (switchD, caseD_, etc.) are excluded.
 
+extern dword boot_block_version;  // 0x00000016
 extern ushort USHORT_0000fc3a;  // 0x0000fc3a
 extern ushort USHORT_0000fc3c;  // 0x0000fc3c
 extern void * PTR_DAT_00011ba6;  // 0x00011ba6
 extern ushort USHORT_00013d7e;  // 0x00013d7e
 extern byte j1939_memory_service_header_lengths[14];  // 0x00021956
+extern undefined boot_block_image;  // 0x000291f4
+extern dword boot_block_image_version;  // 0x0002920a
 extern byte security_key_scramble_mask[10];  // 0x0002fbc4
 extern byte security_key_byte_order[10];  // 0x0002fbce
 extern dword tpu_microcode_image[342];  // 0x00030c9c

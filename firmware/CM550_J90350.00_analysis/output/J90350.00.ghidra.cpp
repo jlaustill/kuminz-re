@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue Nov 24 02:58:22 MST 2026
+// Generated: Tue Nov 24 04:03:37 MST 2026
 
 
 //
@@ -194,10 +194,15 @@ byte mc68k_portPinTestSequence2(void)
 
 
 //
-// Function: cm550_FUN_0000395a @ 0x0000395a
+// Function: cm550_waitForChipSelect2InputBit0High @ 0x0000395a
 //
 
-void cm550_FUN_0000395a(void)
+/* Services both watchdogs (SIM_SWSR / CS2_WATCHDOG_SERVICE) and then waits until bit 0 of the chip
+   select 2 device's register 0 (0xFFD000) reads 1 in 5 consecutive samples (cm550_busyWaitDelayLoop
+   between them) - the same pattern as CM848's cm848_waitForStableIgnitionKeyOn; the signal is not
+   identified (was cm550_FUN_0000395a; PR #53 round 84) */
+
+void cm550_waitForChipSelect2InputBit0High(void)
 
 {
   byte bVar1;
@@ -297,7 +302,7 @@ void mc68k_hardwareInitAndStartup(void)
   
   DAT_00ffd008 = 0x40;
   DAT_00ffd00e = 0x80;
-  cm550_FUN_0000395a();
+  cm550_waitForChipSelect2InputBit0High();
   bVar1 = SIM_DDRE;
   SIM_DDRE = bVar1 | 8;
   bVar1 = SIM_PORTE0;
@@ -29169,7 +29174,7 @@ void vp44_FUN_00027f9c(void)
     } while (uVar12 < 0xa0);
     uVar5 = uVar5 + 1;
   }
-  cm550_FUN_0002ce64();
+  cm550_updateBootBlockFromImage();
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
   CS2_WATCHDOG_SERVICE = 0x55;
@@ -30859,10 +30864,15 @@ word mc68k_initializeJ1708Datalink(void)
 
 
 //
-// Function: cm550_FUN_0002c834 @ 0x0002c834
+// Function: cm550_huffmanTreeBuilderImageCopy @ 0x0002c834
 //
 
-short cm550_FUN_0002c834(dword tree_buffer)
+/* A copy inside boot_block_image (byte-for-byte ROM 0x0-0x3C6F at 0x291F4) of
+   cm550_huffmanTreeBuilder at 0x00003640: data that cm550_updateBootBlockFromImage programs into
+   the boot block - not code run here. Its PC-relative references show the original's addresses +
+   0x291F4 (was cm550_FUN_0002c834; PR #53 round 84) */
+
+short cm550_huffmanTreeBuilderImageCopy(dword tree_buffer)
 
 {
   uint uVar1;
@@ -30914,10 +30924,15 @@ short cm550_FUN_0002c834(dword tree_buffer)
 
 
 //
-// Function: cm550_FUN_0002c986 @ 0x0002c986
+// Function: cm550_huffmanDecompressImageCopy @ 0x0002c986
 //
 
-void cm550_FUN_0002c986(int param_1,undefined4 param_2)
+/* A copy inside boot_block_image (byte-for-byte ROM 0x0-0x3C6F at 0x291F4) of
+   cm550_huffmanDecompress at 0x00003792: data that cm550_updateBootBlockFromImage programs into the
+   boot block - not code run here. Its PC-relative references show the original's addresses +
+   0x291F4 (was cm550_FUN_0002c986; PR #53 round 84) */
+
+void cm550_huffmanDecompressImageCopy(int param_1,undefined4 param_2)
 
 {
   bool bVar1;
@@ -30962,10 +30977,15 @@ void cm550_FUN_0002c986(int param_1,undefined4 param_2)
 
 
 //
-// Function: cm550_FUN_0002ca2a @ 0x0002ca2a
+// Function: cm550_huffmanDecompressMainImageCopy @ 0x0002ca2a
 //
 
-void cm550_FUN_0002ca2a(void)
+/* A copy inside boot_block_image (byte-for-byte ROM 0x0-0x3C6F at 0x291F4) of
+   cm550_huffmanDecompressMain at 0x00003836: data that cm550_updateBootBlockFromImage programs into
+   the boot block - not code run here. Its PC-relative references show the original's addresses +
+   0x291F4 (was cm550_FUN_0002ca2a; PR #53 round 84) */
+
+void cm550_huffmanDecompressMainImageCopy(void)
 
 {
   undefined2 *puVar1;
@@ -30976,18 +30996,23 @@ void cm550_FUN_0002ca2a(void)
     puVar1[1] = 0;
     puVar1[2] = 0;
   }
-  cm550_FUN_0002c834((dword)local_c0a);
-  cm550_FUN_0002c986((short)local_c0a);
+  cm550_huffmanTreeBuilderImageCopy((dword)local_c0a);
+  cm550_huffmanDecompressImageCopy((short)local_c0a);
   return;
 }
 
 
 
 //
-// Function: cm550_FUN_0002ca64 @ 0x0002ca64
+// Function: cm550_busyWaitDelayLoopImageCopy @ 0x0002ca64
 //
 
-void cm550_FUN_0002ca64(word loop_count)
+/* A copy inside boot_block_image (byte-for-byte ROM 0x0-0x3C6F at 0x291F4) of
+   cm550_busyWaitDelayLoop at 0x00003870: data that cm550_updateBootBlockFromImage programs into the
+   boot block - not code run here. Its PC-relative references show the original's addresses +
+   0x291F4 (was cm550_FUN_0002ca64; PR #53 round 84) */
+
+void cm550_busyWaitDelayLoopImageCopy(word loop_count)
 
 {
   ushort uVar1;
@@ -31004,10 +31029,15 @@ void cm550_FUN_0002ca64(word loop_count)
 
 
 //
-// Function: mc68k_FUN_0002ca7e @ 0x0002ca7e
+// Function: mc68k_portPinTestSequence2ImageCopy @ 0x0002ca7e
 //
 
-byte mc68k_FUN_0002ca7e(void)
+/* A copy inside boot_block_image (byte-for-byte ROM 0x0-0x3C6F at 0x291F4) of
+   mc68k_portPinTestSequence2 at 0x0000388a: data that cm550_updateBootBlockFromImage programs into
+   the boot block - not code run here. Its PC-relative references show the original's addresses +
+   0x291F4 (was mc68k_FUN_0002ca7e; PR #53 round 84) */
+
+byte mc68k_portPinTestSequence2ImageCopy(void)
 
 {
   word wVar1;
@@ -31021,24 +31051,24 @@ byte mc68k_FUN_0002ca7e(void)
   QADC_DDRQA = wVar1 | 0x700;
   QADC_PORTQA_PORTQB = 0x600;
   wVar4 = 1;
-  cm550_FUN_0002ca64((word)((uint)unaff_D2 >> 0x10));
+  cm550_busyWaitDelayLoopImageCopy((word)((uint)unaff_D2 >> 0x10));
   wVar1 = QADC_PORTQA_PORTQB;
   wVar2 = QADC_DDRQA;
   QADC_DDRQA = wVar2 | 0x700;
   QADC_PORTQA_PORTQB = 0x400;
   wVar3 = 1;
-  cm550_FUN_0002ca64(wVar4);
+  cm550_busyWaitDelayLoopImageCopy(wVar4);
   wVar2 = QADC_PORTQA_PORTQB;
   wVar4 = QADC_DDRQA;
   QADC_DDRQA = wVar4 | 0x700;
   QADC_PORTQA_PORTQB = 0x300;
   loop_count = 1;
-  cm550_FUN_0002ca64(wVar3);
+  cm550_busyWaitDelayLoopImageCopy(wVar3);
   wVar4 = QADC_PORTQA_PORTQB;
   wVar3 = QADC_DDRQA;
   QADC_DDRQA = wVar3 | 0x700;
   QADC_PORTQA_PORTQB = 0x200;
-  cm550_FUN_0002ca64(loop_count);
+  cm550_busyWaitDelayLoopImageCopy(loop_count);
   wVar3 = QADC_PORTQA_PORTQB;
   return -((wVar3 & 1) != 0) & 1U &
          -((wVar4 & 2) != 0) & 1U & -((wVar2 & 1) != 0) & 1U & -((wVar1 & 1) != 0) & 1U;
@@ -31047,10 +31077,15 @@ byte mc68k_FUN_0002ca7e(void)
 
 
 //
-// Function: cm550_FUN_0002cb4e @ 0x0002cb4e
+// Function: cm550_waitForChipSelect2InputBit0HighImageCopy @ 0x0002cb4e
 //
 
-void cm550_FUN_0002cb4e(void)
+/* A copy inside boot_block_image (byte-for-byte ROM 0x0-0x3C6F at 0x291F4) of
+   cm550_waitForChipSelect2InputBit0High at 0x0000395a: data that cm550_updateBootBlockFromImage
+   programs into the boot block - not code run here. Its PC-relative references show the original's
+   addresses + 0x291F4 (was cm550_FUN_0002cb4e; PR #53 round 84) */
+
+void cm550_waitForChipSelect2InputBit0HighImageCopy(void)
 
 {
   byte bVar1;
@@ -31070,7 +31105,7 @@ void cm550_FUN_0002cb4e(void)
     else {
       bVar2 = bVar2 + 1;
     }
-    cm550_FUN_0002ca64((word)((uint)unaff_D2 >> 0x10));
+    cm550_busyWaitDelayLoopImageCopy((word)((uint)unaff_D2 >> 0x10));
   }
   return;
 }
@@ -31078,10 +31113,15 @@ void cm550_FUN_0002cb4e(void)
 
 
 //
-// Function: mc68k_FUN_0002cb9c @ 0x0002cb9c
+// Function: mc68k_checkSerialEepromSignatureImageCopy @ 0x0002cb9c
 //
 
-undefined4 mc68k_FUN_0002cb9c(void)
+/* A copy inside boot_block_image (byte-for-byte ROM 0x0-0x3C6F at 0x291F4) of
+   mc68k_checkSerialEepromSignature at 0x000039a8: data that cm550_updateBootBlockFromImage programs
+   into the boot block - not code run here. Its PC-relative references show the original's addresses
+   + 0x291F4 (was mc68k_FUN_0002cb9c; PR #53 round 84) */
+
+undefined4 mc68k_checkSerialEepromSignatureImageCopy(void)
 
 {
   word wVar1;
@@ -31132,10 +31172,15 @@ undefined4 mc68k_FUN_0002cb9c(void)
 
 
 //
-// Function: mc68k_FUN_0002cc88 @ 0x0002cc88
+// Function: mc68k_hardwareInitAndStartupImageCopy @ 0x0002cc88
 //
 
-void mc68k_FUN_0002cc88(void)
+/* A copy inside boot_block_image (byte-for-byte ROM 0x0-0x3C6F at 0x291F4) of
+   mc68k_hardwareInitAndStartup at 0x00003a94: data that cm550_updateBootBlockFromImage programs
+   into the boot block - not code run here. Its PC-relative references show the original's addresses
+   + 0x291F4 (was mc68k_FUN_0002cc88; PR #53 round 84) */
+
+void mc68k_hardwareInitAndStartupImageCopy(void)
 
 {
   byte bVar1;
@@ -31145,7 +31190,7 @@ void mc68k_FUN_0002cc88(void)
   
   DAT_00ffd008 = 0x40;
   DAT_00ffd00e = 0x80;
-  cm550_FUN_0002cb4e();
+  cm550_waitForChipSelect2InputBit0HighImageCopy();
   bVar1 = SIM_DDRE;
   SIM_DDRE = bVar1 | 8;
   bVar1 = SIM_PORTE0;
@@ -31192,10 +31237,10 @@ void mc68k_FUN_0002cc88(void)
   QSM_QSMCR = 5;
   QSM_QILR = 0x13;
   QSM_QIVR = 0x50;
-  cm550_FUN_0002ce14();
-  cVar3 = mc68k_FUN_0002ca7e();
+  cm550_ramClearWithWatchdogImageCopy();
+  cVar3 = mc68k_portPinTestSequence2ImageCopy();
   if (cVar3 == '\0') {
-    cVar3 = mc68k_FUN_0002cb9c();
+    cVar3 = mc68k_checkSerialEepromSignatureImageCopy();
     if (cVar3 == '\0') {
       if ((DAT_000311f4 == -0x6789abcd) || (DAT_000311f4 == -0x6789abce)) {
         pcVar4 = DAT_00031256;
@@ -31206,7 +31251,7 @@ void mc68k_FUN_0002cc88(void)
       goto LAB_0002ce0e;
     }
   }
-  cm550_FUN_0002ca2a();
+  cm550_huffmanDecompressMainImageCopy();
   pcVar4 = (code *)&SUB_0082c592;
 LAB_0002ce0e:
   (*pcVar4)();
@@ -31216,10 +31261,15 @@ LAB_0002ce0e:
 
 
 //
-// Function: cm550_FUN_0002ce14 @ 0x0002ce14
+// Function: cm550_ramClearWithWatchdogImageCopy @ 0x0002ce14
 //
 
-void cm550_FUN_0002ce14(void)
+/* A copy inside boot_block_image (byte-for-byte ROM 0x0-0x3C6F at 0x291F4) of
+   cm550_ramClearWithWatchdog at 0x00003c20: data that cm550_updateBootBlockFromImage programs into
+   the boot block - not code run here. Its PC-relative references show the original's addresses +
+   0x291F4 (was cm550_FUN_0002ce14; PR #53 round 84) */
+
+void cm550_ramClearWithWatchdogImageCopy(void)
 
 {
   undefined4 *puVar1;
@@ -31245,12 +31295,18 @@ void cm550_FUN_0002ce14(void)
 
 
 //
-// Function: cm550_FUN_0002ce64 @ 0x0002ce64
+// Function: cm550_updateBootBlockFromImage @ 0x0002ce64
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Reprograms the boot block from boot_block_image: when boot_block_version (ROM 0x16) is non-zero
+   and _this_key_must_be_set_to_bad1_before_boot_block_is_programmed_none is 0xbad1 with
+   boot_block_version below boot_block_image_version - or 0x1d1d with a different version - it sets
+   the boot block programming enable flag bit 2 - erases (cm550_FUN_0001c484(0 / 1)) - and copies
+   0x291F4 up to this function's address through a 256-byte RAM buffer into flash at address 0 with
+   cm550_flashProgramFromRam (was cm550_FUN_0002ce64; PR #53 round 84) */
 
-void cm550_FUN_0002ce64(void)
+void cm550_updateBootBlockFromImage(void)
 
 {
   int iVar1;
@@ -31262,11 +31318,11 @@ void cm550_FUN_0002ce64(void)
   undefined1 auStack_104 [256];
   
   uVar4 = (undefined2)((uint)unaff_D2 >> 0x10);
-  if ((DAT_00000016 != 0) &&
+  if ((boot_block_version != 0) &&
      (((_this_key_must_be_set_to_bad1_before_boot_block_is_programmed_none == -0x452f &&
-       (DAT_00000016 < DAT_0002920a)) ||
+       (boot_block_version < boot_block_image_version)) ||
       ((_this_key_must_be_set_to_bad1_before_boot_block_is_programmed_none == 0x1d1d &&
-       (DAT_0002920a != DAT_00000016)))))) {
+       (boot_block_image_version != boot_block_version)))))) {
     if (DAT_0080bd2b == '\0') {
       DAT_0080bd2b = '\0';
       enable_flag_to_allow_boot_block_programming_enable_disable =
@@ -31276,11 +31332,11 @@ void cm550_FUN_0002ce64(void)
     iVar1 = cm550_FUN_0001c484(0,1);
     if (iVar1 == 0) {
       dest_address = (code *)0x0;
-      pcVar3 = (code *)&DAT_000291f4;
-      while (pcVar3 < cm550_FUN_0002ce64) {
+      pcVar3 = (code *)&boot_block_image;
+      while (pcVar3 < cm550_updateBootBlockFromImage) {
         pcVar2 = (code *)auStack_104;
-        for (; (pcVar2 < auStack_104 + 0x100 && (pcVar3 < cm550_FUN_0002ce64)); pcVar3 = pcVar3 + 1)
-        {
+        for (; (pcVar2 < auStack_104 + 0x100 && (pcVar3 < cm550_updateBootBlockFromImage));
+            pcVar3 = pcVar3 + 1) {
           *pcVar2 = *pcVar3;
           pcVar2 = pcVar2 + 1;
         }
