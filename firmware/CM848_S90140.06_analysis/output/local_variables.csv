@@ -20,16 +20,16 @@ function_address,function_name,old_name,new_name,type,comment
 0x00022d60,processEngineTsc1Request,bVar1,sender_source_address,byte,the TSC1 sender's source address (msg->source_address)
 0x00022d60,processEngineTsc1Request,sVar2,result,short,Function call return value
 # mpc555_generateSerialChallenge @ 0x000032dc - Generate serial handshake challenge and queue response
-# cm848_validateWriteAuth @ 0x00007370 - Validate scrambled auth token for calibration writes
-0x00007370,cm848_validateWriteAuth,param_1,scrambled_token,undefined4,Pointer to 10-byte scrambled auth data from tool
-0x00007370,cm848_validateWriteAuth,bVar2,attempt_count,byte,Current value of eeprom_block_tracking.failed_write_authorization_count (was write_auth_attempt_counter
-0x00007370,cm848_validateWriteAuth,dVar2,current_runtime,dword,Snapshot of ecu_power_state_flags.runtime_counter for timestamp check
-0x00007370,cm848_validateWriteAuth,bVar1,key_matches,byte,Whether all 6 descrambled key bytes match EEPROM header
-0x00007370,cm848_validateWriteAuth,cVar8,compare_index,char,Loop counter for 6-byte key comparison
-0x00007370,cm848_validateWriteAuth,bVar7,copy_count,byte,Loop counter for 3-byte timestamp extraction
-0x00007370,cm848_validateWriteAuth,uVar6,result,undefined4,Return value: 0=authorized 1=denied
-0x00007370,cm848_validateWriteAuth,pbVar4,timestamp_src,byte *,Source pointer for timestamp byte copy
-0x00007370,cm848_validateWriteAuth,pbVar5,timestamp_dest,byte *,Destination pointer for timestamp byte copy
+# cm848_validateBootSecurityKey @ 0x00007370 - Validate scrambled auth token for calibration writes
+0x00007370,cm848_validateBootSecurityKey,param_1,scrambled_token,undefined4,Pointer to 10-byte scrambled auth data from tool
+0x00007370,cm848_validateBootSecurityKey,bVar2,attempt_count,byte,Current value of eeprom_block_tracking.failed_write_authorization_count (was write_auth_attempt_counter
+0x00007370,cm848_validateBootSecurityKey,dVar2,current_runtime,dword,Snapshot of ecu_power_state_flags.runtime_counter for timestamp check
+0x00007370,cm848_validateBootSecurityKey,bVar1,key_matches,byte,Whether all 6 descrambled key bytes match EEPROM header
+0x00007370,cm848_validateBootSecurityKey,cVar8,compare_index,char,Loop counter for 6-byte key comparison
+0x00007370,cm848_validateBootSecurityKey,bVar7,copy_count,byte,Loop counter for 3-byte timestamp extraction
+0x00007370,cm848_validateBootSecurityKey,uVar6,result,undefined4,Return value: 0=authorized 1=denied
+0x00007370,cm848_validateBootSecurityKey,pbVar4,timestamp_src,byte *,Source pointer for timestamp byte copy
+0x00007370,cm848_validateBootSecurityKey,pbVar5,timestamp_dest,byte *,Destination pointer for timestamp byte copy
 # mpc555_tickTransferTimeoutAndRuntimeCounter @ 0x00007608 - Watchdog prescaler and runtime accumulator tick
 0x00007608,mpc555_tickTransferTimeoutAndRuntimeCounter,bVar3,prescaler_count,byte,Current prescaler value (0-39)
 0x00007608,mpc555_tickTransferTimeoutAndRuntimeCounter,dVar1,runtime_value,dword,Runtime snapshot before increment

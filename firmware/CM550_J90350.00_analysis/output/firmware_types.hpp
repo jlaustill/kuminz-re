@@ -316,8 +316,8 @@ typedef enum {
 } DIAG_SERVICE_ID;
 
 typedef enum {
-    SWITCH_TO_FACTORY_BANK = 0x40,  /* Switch to factory calibration bank - sets calibration_bank_selector=0 (switchToFactoryCalibrationBank) */
-    FORCE_ACTIVE_BANK = 0x41,  /* Force switch to active calibration bank (forceActiveCalibrationBank) */
+    ENTER_DEVELOPMENT_MODE = 0x40,  /* enterDevelopmentMode after the security key (was SWITCH_TO_FACTORY_BANK - J90280.05 read it as a calibration bank switch; PR #53 round 74) */
+    FORCE_EXIT_DEVELOPMENT_MODE = 0x41,  /* forceExitDevelopmentMode after the security key (was FORCE_ACTIVE_BANK; PR #53 round 74) */
     HIGH_RPM_SHUTDOWN_ACTIVATE = 0x42,  /* Activate high RPM shutdown flag (activateHighRpmShutdownFlag) */
     SYSTEM_RESET_TRIGGER = 0x43,  /* Trigger diagnostic system reset (triggerDiagnosticSystemReset) */
     NOP_ACK = 0x50,  /* No operation - returns success (0) */
@@ -331,7 +331,7 @@ typedef enum {
     SYSTEM_CONTROL_100 = 0x64,  /* System control function 100 (systemControl64) */
     FAULT_SCANNER_ENABLE = 0x65,  /* Enable fault flag scanner (enableFaultFlagScanner) */
     CLEAR_COMMAND_STATE = 0x66,  /* Clear diagnostic_command_state to 0 */
-    SWITCH_TO_ACTIVE_BANK = 0x69,  /* Switch to active calibration bank - sets calibration_bank_selector=1 (switchToActiveCalibrationBank) */
+    EXIT_DEVELOPMENT_MODE = 0x69,  /* exitDevelopmentMode (was SWITCH_TO_ACTIVE_BANK; PR #53 round 74) */
     RESERVED_112 = 0x70,  /* Reserved - returns error code 4 */
     SET_COMMAND_STATE_BIT0 = 0x71,  /* Set bit 0 of diagnostic_command_state */
     RESERVED_114 = 0x72,  /* Reserved - returns error code 4 */
@@ -961,8 +961,8 @@ typedef enum {
 } SECURITY_BYPASS;
 
 typedef enum {
-    SERVICE_3_SWITCH_TO_FACTORY_BANK = 0x40,  /* switchToFactoryCalibrationBank - select factory calibration bank (calibration_bank_selector=0) */
-    SERVICE_3_FORCE_ACTIVE_BANK = 0x41,  /* forceActiveCalibrationBank - force active calibration bank if write protect allows */
+    SERVICE_3_ENTER_DEVELOPMENT_MODE = 0x40,  /* enterDevelopmentMode after the security key (was SERVICE_3_SWITCH_TO_FACTORY_BANK; PR #53 round 74) */
+    SERVICE_3_FORCE_EXIT_DEVELOPMENT_MODE = 0x41,  /* forceExitDevelopmentMode - when not_safe_to_program_flag allows (was SERVICE_3_FORCE_ACTIVE_BANK; PR #53 round 74) */
     HIGH_RPM_SHUTDOWN = 0x42,  /* activateHighRpmShutdownFlag - trigger high RPM shutdown */
     SYSTEM_RESET = 0x43,  /* triggerDiagnosticSystemReset - diagnostic system reset */
     NOP = 0x50,  /* No operation - returns success (0x00) */
@@ -976,7 +976,7 @@ typedef enum {
     CONTROL_64 = 0x64,  /* systemControl64 - system control function */
     FAULT_SCANNER = 0x65,  /* enableFaultFlagScanner - enable fault flag scanning */
     STATE_RESET = 0x66,  /* Reset diagnostic_command_state to 0 */
-    SERVICE_4_SWITCH_TO_ACTIVE_BANK = 0x69,  /* switchToActiveCalibrationBank - select active calibration bank (calibration_bank_selector=1) */
+    SERVICE_4_EXIT_DEVELOPMENT_MODE = 0x69,  /* exitDevelopmentMode (was SERVICE_4_SWITCH_TO_ACTIVE_BANK; PR #53 round 74) */
     RESERVED_70 = 0x70,  /* Reserved - returns error 0x04 */
     STATE_BIT0 = 0x71,  /* Set diagnostic_command_state bit 0 */
     RESERVED_72 = 0x72,  /* Reserved - returns error 0x04 */

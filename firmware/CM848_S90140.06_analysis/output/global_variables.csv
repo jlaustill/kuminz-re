@@ -1104,6 +1104,8 @@ address,name,type,comment
 0x00307424,TOUCAN_B_IFLAG,byte,
 0x00307f80,toucan_can_ext_ctrl,word,
 0x003f9800,calibration_ram_start,undefined4,
+0x003f981c,boot_security_key_scramble_mask,byte[10],The mask cm848_unscrambleBootSecurityKey routes the boot key's bits by - in the boot image (ROM 0x3c4c): 23 24 c0 11 30 0e 46 22 0b c8; NOT the application's security_key_scramble_mask (46 58 9a 32 70 87 23 99 85 64) (PR #53 round 74)
+0x003f9826,boot_security_key_byte_order,byte[10],The byte order cm848_unscrambleBootSecurityKey XORs and writes the boot key by - in the boot image (ROM 0x3c56): 06 08 01 02 00 07 03 09 05 04, the same bytes as the application's security_key_byte_order (PR #53 round 74)
 0x003f9830,boot_memory_region_table,memory_region_t,Boot reflash kernel write-permission map (6 regions) - region 0 = main flash 0x0-0x6ffff type 4 (was memory_region_table; PR #53 round 71)
 0x003f98ac,boot_parameter_id_table,parameter_id_entry_t[20],The boot kernel's parameter ID table: ROM 0x3CDC copied to RAM 0x3F98AC at boot - 20 records sorted by ID (0x0 -> EEPROM 0x1000036 ... 0x12a9 -> ROM 0x108); cm848_lookupBootParameterIdAddress scans it to 0x3f9924 for the boot diagnostic services. In the ROM-to-RAM window (was param_id_lookup_table; PR #53 round 60)
 0x003fa000,executive_frame_ticks,word,The pass's time in timebase ticks (TBLr - executive_frame_start_ticks), stored by main_loop. Its address is also the start of working RAM for cm848_clearWorkingRam and cm848_evaluateCalibratedMonitorDisableConditions (was scheduler_task_stat_value_working) (PR #53 round 25)

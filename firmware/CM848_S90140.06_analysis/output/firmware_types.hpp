@@ -612,7 +612,7 @@ typedef enum {
 typedef enum {
     BOOT_DIAGNOSTIC_RESULT_ACCEPTED = 0x00,  /* Done - cm848_sendDiagServiceResponse answers with 0x0c */
     BOOT_DIAGNOSTIC_RESULT_WRONG_LENGTH = 0x02,  /* The request length does not fit the service (the validator) or a memory length is over 1764 (the read and write workers) */
-    BOOT_DIAGNOSTIC_RESULT_KEY_REFUSED = 0x03,  /* cm848_validateWriteAuth refused the request's token */
+    BOOT_DIAGNOSTIC_RESULT_KEY_REFUSED = 0x03,  /* cm848_validateBootSecurityKey refused the request's token */
     BOOT_DIAGNOSTIC_RESULT_CANNOT_COMPLY = 0x04,  /* No response buffer is free (cm848_allocateDiagnosticResponseBuffer returned 0) */
     BOOT_DIAGNOSTIC_RESULT_UNKNOWN_SERVICE = 0x05,  /* No handler is registered for the service byte (cm848_dispatchDiagnosticService - the application answers this with 0x18) */
     BOOT_DIAGNOSTIC_RESULT_UNKNOWN_PARAMETER_ID = 0x08,  /* cm848_lookupBootParameterIdAddress does not know the ID */
@@ -635,7 +635,7 @@ typedef enum {
 typedef enum {
     MEMORY_REGION_TYPE_RAM = 0x00,  /* Written by a plain copy: boot 0x302000-0x3fffff (the first match - so the TPU / TouCAN registers from 0x304000 resolve here too) / application 0x40c26e-0x43ffff */
     MEMORY_REGION_TYPE_BANK_2_FLASH = 0x02,  /* Bank 2 flash from 0x500000: the boot worker writes it through eeprom_xfer_state.flash2_write_callback (the boot lookup answers UNMAPPED instead while flash2_writes_enabled is 0); the application writer passes the code back - which J1939_DIAGNOSTIC_RESULT reads as 0x02 WRONG_LENGTH (the codes coincide) */
-    MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED = 0x03,  /* Written after the write authorization (cm848_validateWriteAuth / validateSecurityKey): boot 0x2fc000-0x301fff (its entry reads 0x2fc000-0x307fff but the RAM entry matches the rest first) / application 0x3fa000-0x40c26e and - in development mode - its register ranges */
+    MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED = 0x03,  /* Written after the write authorization (cm848_validateBootSecurityKey / validateSecurityKey): boot 0x2fc000-0x301fff (its entry reads 0x2fc000-0x307fff but the RAM entry matches the rest first) / application 0x3fa000-0x40c26e and - in development mode - its register ranges */
     MEMORY_REGION_TYPE_MAIN_FLASH = 0x04,  /* Main flash 0x0-0x6ffff: the boot worker programs it (cm848_dataTransferBufferWrite); the application writer refuses it (J1939_DIAGNOSTIC_RESULT_REGION_REFUSED) */
     MEMORY_REGION_TYPE_EEPROM = 0x05,  /* EEPROM from 0x1000000: written after the write authorization (boot eeprom_xfer_state.eeprom_write_callback / application cm848_queueEepromByteWrites) */
     MEMORY_REGION_TYPE_UNMAPPED = 0x09,  /* No entry holds the range - the application map leaves out the dual-port TPU RAM 0x302000-0x3037ff that emulation mode takes from the CPU - or Bank 2 in the boot kernel while flash2_writes_enabled is 0; the readers and writers pass it back as the result (J1939_DIAGNOSTIC_RESULT_UNMAPPED_ADDRESS / BOOT_DIAGNOSTIC_RESULT_ADDRESS_NOT_ACCEPTED) */
@@ -3096,7 +3096,7 @@ struct eeprom_xfer_state_t {
 
 struct eeprom_block_tracking_t {
     uint16_t key_off_duration_ticks;  /* Counted with the runtime counter by mpc555_tickTransferTimeoutAndRuntimeCounter (every 41 calls) - mpc555_keyOnStateMachine zeroes it while SCRD bit 15 (key on - PR #48) is set and saves the runtime counter once it passes 0x2903 (was watchdog_counter 'Transfer watchdog counter (reset each block)'; PR #53 round 67) */
-    uint8_t failed_write_authorization_count;  /* cm848_validateWriteAuth's count of failed write authorizations: at 0x11 every check fails / a matching token resets it / a mismatch adds 1 (was _pad2; PR #53 round 35) */
+    uint8_t failed_write_authorization_count;  /* cm848_validateBootSecurityKey's count of failed write authorizations: at 0x11 every check fails / a matching token resets it / a mismatch adds 1 (was _pad2; PR #53 round 35) */
     uint32_t last_write_addr;  /* Previous block write address for continuity validation */
     uint32_t block_start_addr;  /* Start address of current EEPROM transfer range */
     uint16_t block_count;  /* Finished download blocks in download_block_list (10 at most - cm848_finishDownloadBlock answers DOWNLOAD_INVALID when it is full; PR #53 round 67) */

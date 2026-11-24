@@ -1760,7 +1760,7 @@ eeprom_xfer_state_t,0x00302878,transfer_timer,word,2,Transfer timeout countdown 
 # Note: last_write_addr and block_start_addr are UNALIGNED dwords (packed struct)
 # =============================================================================
 eeprom_block_tracking_t,0x003028a6,key_off_duration_ticks,word,2,Counted with the runtime counter by mpc555_tickTransferTimeoutAndRuntimeCounter (every 41 calls) - mpc555_keyOnStateMachine zeroes it while SCRD bit 15 (key on - PR #48) is set and saves the runtime counter once it passes 0x2903 (was watchdog_counter 'Transfer watchdog counter (reset each block)'; PR #53 round 67),,verified
-eeprom_block_tracking_t,0x003028a6,failed_write_authorization_count,byte,1,cm848_validateWriteAuth's count of failed write authorizations: at 0x11 every check fails / a matching token resets it / a mismatch adds 1 (was _pad2; PR #53 round 35),,verified
+eeprom_block_tracking_t,0x003028a6,failed_write_authorization_count,byte,1,cm848_validateBootSecurityKey's count of failed write authorizations: at 0x11 every check fails / a matching token resets it / a mismatch adds 1 (was _pad2; PR #53 round 35),,verified
 eeprom_block_tracking_t,0x003028a6,last_write_addr,dword,4,Previous block write address for continuity validation,,verified
 eeprom_block_tracking_t,0x003028a6,block_start_addr,dword,4,Start address of current EEPROM transfer range,,verified
 eeprom_block_tracking_t,0x003028a6,block_count,word,2,Finished download blocks in download_block_list (10 at most - cm848_finishDownloadBlock answers DOWNLOAD_INVALID when it is full; PR #53 round 67),,verified

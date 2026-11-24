@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 17:10:42 MST 2026
+// Generated: Mon Nov 23 18:15:52 MST 2026
 
 
 //
@@ -1890,10 +1890,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word direction_register_value;
-  word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
+  word direction_register_value;
+  word qadc_b_pqb0_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -4303,7 +4303,8 @@ byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword
         if (!bVar1) {
           return 0x1a;
         }
-        cVar8 = cm848_validateWriteAuth(request->data_pointer + (uint)local_20[0] + (uVar5 & 0xff));
+        cVar8 = cm848_validateBootSecurityKey
+                          (request->data_pointer + (uint)local_20[0] + (uVar5 & 0xff));
         if (cVar8 != '\0') {
           return 3;
         }
@@ -4343,7 +4344,8 @@ byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword
       if (!bVar1) {
         return 3;
       }
-      cVar8 = cm848_validateWriteAuth(request->data_pointer + (uint)local_20[0] + (uVar5 & 0xff));
+      cVar8 = cm848_validateBootSecurityKey
+                        (request->data_pointer + (uint)local_20[0] + (uVar5 & 0xff));
       if (cVar8 != '\0') {
         return 3;
       }
@@ -4548,7 +4550,7 @@ undefined1 cm848_getBootMemoryServiceHeaderLength(int param_1)
 
 /* Boot reflash kernel: per-service length + auth-token check: services 2/11/16/24 need length 11 +
    token at offset 1 / 25 needs 15 + token at 5 / 7/15 need 11 or 8; token checked by
-   cm848_validateWriteAuth unless the EEPROM is blank; returns 0xff ok / 2 bad length / 3 auth
+   cm848_validateBootSecurityKey unless the EEPROM is blank; returns 0xff ok / 2 bad length / 3 auth
    failed / 26 token missing | review-function-readability reviewed 2026-11-11 - Readability Medium
    Accuracy Confidence High */
 
@@ -4629,7 +4631,7 @@ LAB_00005a58:
         return BOOT_DIAGNOSTIC_RESULT_KEY_MISSING;
       }
       if (uVar2 == uVar4) {
-        cVar3 = cm848_validateWriteAuth(request->data_pointer + (uVar4 - 10));
+        cVar3 = cm848_validateBootSecurityKey(request->data_pointer + (uVar4 - 10));
         if (cVar3 == '\0') {
           return 0xff;
         }
@@ -6030,10 +6032,15 @@ LAB_000071c8:
 
 
 //
-// Function: cm848_descrambleAuthToken @ 0x000071f8
+// Function: cm848_unscrambleBootSecurityKey @ 0x000071f8
 //
 
-void cm848_descrambleAuthToken(int param_1,int param_2)
+/* The boot kernel's copy of unscrambleSecurityKey - the same bit routing / XOR / reorder with its
+   own tables: boot_security_key_byte_order is the application's but boot_security_key_scramble_mask
+   is not (the reflash kernel scrambles its key differently) (was cm848_descrambleAuthToken; PR #53
+   round 74) */
+
+void cm848_unscrambleBootSecurityKey(int param_1,int param_2)
 
 {
   byte bVar1;
@@ -6065,7 +6072,7 @@ void cm848_descrambleAuthToken(int param_1,int param_2)
   iVar11 = 0;
   do {
     uVar7 = 0;
-    bVar1 = (&DAT_003f981c)[iVar11];
+    bVar1 = boot_security_key_scramble_mask[iVar11];
     do {
       uVar2 = (uint)*(byte *)(param_1 + iVar11) << (uVar7 & 0x3f) & 0x80;
       if (((uint)bVar1 << (uVar7 & 0x3f) & 0x80) == 0) {
@@ -6098,7 +6105,7 @@ void cm848_descrambleAuthToken(int param_1,int param_2)
   } while (iVar11 < 10);
   iVar11 = 0;
   pbVar10 = local_38;
-  pbVar3 = (byte *)0x3f9825;
+  pbVar3 = boot_security_key_scramble_mask + 9;
   do {
     pbVar3 = pbVar3 + 1;
     *pbVar10 = *pbVar10 ^ local_38[*pbVar3];
@@ -6109,7 +6116,7 @@ void cm848_descrambleAuthToken(int param_1,int param_2)
   puVar8 = &uStack_39;
   do {
     puVar8 = puVar8 + 1;
-    *(undefined1 *)(param_2 + (uint)(byte)(&DAT_003f982f)[-iVar11]) = *puVar8;
+    *(undefined1 *)(param_2 + (uint)boot_security_key_byte_order[9 - iVar11]) = *puVar8;
     iVar11 = iVar11 + 1;
   } while (iVar11 < 10);
   return;
@@ -6118,10 +6125,16 @@ void cm848_descrambleAuthToken(int param_1,int param_2)
 
 
 //
-// Function: cm848_validateWriteAuth @ 0x00007370
+// Function: cm848_validateBootSecurityKey @ 0x00007370
 //
 
-undefined4 cm848_validateWriteAuth(undefined4 scrambled_token)
+/* The boot kernel's copy of validateSecurityKey - the same steps over the boot's variables: 0
+   (pass) when eeprom_shadow_header.version_marker is 0xff / 1 once
+   eeprom_block_tracking.failed_write_authorization_count is 0x11 (17 misses) / else
+   cm848_unscrambleBootSecurityKey gives 6 characters and a runtime stamp ((runtime & ~0xff) - stamp
+   < 0x1a) and the characters are compared (was cm848_validateWriteAuth; PR #53 round 74) */
+
+undefined4 cm848_validateBootSecurityKey(undefined4 scrambled_token)
 
 {
   byte bVar1;
@@ -6146,7 +6159,7 @@ undefined4 cm848_validateWriteAuth(undefined4 scrambled_token)
       result = 1;
     }
     else {
-      cm848_descrambleAuthToken(scrambled_token,local_30);
+      cm848_unscrambleBootSecurityKey(scrambled_token,local_30);
       copy_count = 1;
       timestamp_src = local_30 + 5;
       timestamp_dest = &bStack_25;
@@ -6285,9 +6298,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
+  byte prescaler_count;
   dword runtime_value;
   word counter_value;
-  byte prescaler_count;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {

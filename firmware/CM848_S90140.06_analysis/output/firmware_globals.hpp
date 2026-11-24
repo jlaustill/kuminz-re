@@ -1037,6 +1037,8 @@ extern byte TOUCAN_B_IMASK;  // 0x00307422
 extern byte TOUCAN_B_IFLAG;  // 0x00307424
 extern word toucan_can_ext_ctrl;  // 0x00307f80
 extern undefined4 calibration_ram_start;  // 0x003f9800
+extern byte boot_security_key_scramble_mask[10];  // 0x003f981c
+extern byte boot_security_key_byte_order[10];  // 0x003f9826
 extern memory_region_t boot_memory_region_table;  // 0x003f9830
 extern parameter_id_entry_t boot_parameter_id_table[20];  // 0x003f98ac
 extern word executive_frame_ticks;  // 0x003fa000

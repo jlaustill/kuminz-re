@@ -155,8 +155,8 @@ void cm848_dispatchDiagnosticService(j1939_rx_msg_t *request);  // @ 0x00006d24
 void cm848_sendSerialDownloadStatusResponse(void);  // @ 0x00006e1c
 void mpc555_sciHandleDownloadStart(void);  // @ 0x00006eac
 void mpc555_sciHandleDownloadDataBlock(void);  // @ 0x00006f54
-void cm848_descrambleAuthToken(int param_1,int param_2);  // @ 0x000071f8
-undefined4 cm848_validateWriteAuth(undefined4 scrambled_token);  // @ 0x00007370
+void cm848_unscrambleBootSecurityKey(int param_1,int param_2);  // @ 0x000071f8
+undefined4 cm848_validateBootSecurityKey(undefined4 scrambled_token);  // @ 0x00007370
 void cm848_sendDiagServiceResponse(j1939_rx_msg_t *request,dword result_code);  // @ 0x000074a0
 void cm848_sendDiagResponsePending(j1939_rx_msg_t *param_1,word param_2);  // @ 0x000075dc
 void mpc555_tickTransferTimeoutAndRuntimeCounter(void);  // @ 0x00007608
