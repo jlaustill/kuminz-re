@@ -50,7 +50,7 @@ address,name
 0x0000c66a,cm550_rpmHistogramAndProtectionStatisticsAccumulator
 0x0000c714,cm550_fuelParameterPointerSetup
 0x0000c742,cm550_shutdownMinimumSelector15
-0x0000c760,mc68k_tpuTimerInitializer
+0x0000c760,mc68k_configureCanCs5MessageObjects,Sets up the 82527 CAN controller on chip select 5: stores its base &CAN_CS5_CONTROL in 0x8000f0 - sets _can_1_chip_s_last_message_object_used_0_15 to 6 - sets CAN_CS5_CONTROL bits 0x0a - and configures message objects 1-6: 1 / 3 / 5 receive (configuration 0x80) 11-bit identifiers 0x112 / 0x512 / 0x712 and 2 / 4 / 6 transmit (0x88) 0x100 / 0x500 / 0x700. No TPU register is involved (was mc68k_tpuTimerInitializer; PR #53 round 79)
 0x0000c80c,cm550_emptyStubFunction1
 0x0000c80e,cm550_modeBasedDataDispatcher
 0x0000c87c,cm550_FUN_0000c87c
@@ -389,7 +389,7 @@ address,name
 0x0001e1a0,cm550_canMessageInterruptHandlerSetup
 0x0001e1ac,cm550_emptyStubWrapper1
 0x0001e1be,cm550_modeBasedDataDispatcherWrapper
-0x0001e1d0,mc68k_serialPort2IsrHandler
+0x0001e1d0,mc68k_canCs5InterruptHandler,The interrupt handler of the 82527 CAN controller on chip select 5: loops while CAN_CS5_INTERRUPT is non-zero - codes below 3 are the status change / message 15 cases (reads CAN_CS5_STATUS and resets CAN_CS5_CONTROL) - code n reaches message object n - 2 at CAN_CS5_INTERRUPT * 0x10 + 0xffc7e0. No serial port is involved (was mc68k_serialPort2IsrHandler; PR #53 round 79)
 0x0001e25a,cm550_serialCommunicationIsrRegister
 0x0001e266,mc68k_armJ1708BusTimer,Arms the J1708 bus timer: sets j1708_bus_timer_armed_flag - loads CTM4_MCSM11CNT with 0xfc8a - clears CTM4_MCSM11SIC bit 15 and sets its bit 14 (an interrupt level). It drives no TPU channel and takes no parameter (was mc68k_tpuTimerChannelEnable; PR #53 round 77)
 0x0001e288,mc68k_j1708SciInterruptHandler,The J1708 SCI interrupt handler: on QSM_SCSR RDRF (0x40) it reads the byte from QSM_SCDR into the J1708 receive buffer and adds it to the checksum - while transmitting it sends the next transmit byte to QSM_SCDR and at the end the two's complement of the checksum (~sum + 1) - and it clears QSM_SCCR1 RIE when the receive buffer is full. No EPS position sensor is involved (was mc68k_epsPositionSensorIsrHandler; PR #53 round 75)

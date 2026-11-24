@@ -47,7 +47,7 @@ void cm550_phase2_slot_5_handler(void);  // @ 0x0000c658
 ushort cm550_rpmHistogramAndProtectionStatisticsAccumulator(void);  // @ 0x0000c66a
 void cm550_fuelParameterPointerSetup(void);  // @ 0x0000c714
 void cm550_shutdownMinimumSelector15(void);  // @ 0x0000c742
-void mc68k_tpuTimerInitializer(void);  // @ 0x0000c760
+void mc68k_configureCanCs5MessageObjects(void);  // @ 0x0000c760
 void cm550_emptyStubFunction1(void);  // @ 0x0000c80c
 void cm550_modeBasedDataDispatcher(undefined4 param_1);  // @ 0x0000c80e
 void cm550_FUN_0000c87c(void);  // @ 0x0000c87c
@@ -382,7 +382,7 @@ undefined8 cm550_FUN_0001e0fa(void);  // @ 0x0001e0fa
 void cm550_canMessageInterruptHandlerSetup(void);  // @ 0x0001e1a0
 void cm550_emptyStubWrapper1(void);  // @ 0x0001e1ac
 void cm550_modeBasedDataDispatcherWrapper(void);  // @ 0x0001e1be
-undefined8 mc68k_serialPort2IsrHandler(void);  // @ 0x0001e1d0
+undefined8 mc68k_canCs5InterruptHandler(void);  // @ 0x0001e1d0
 void cm550_serialCommunicationIsrRegister(void);  // @ 0x0001e25a
 void mc68k_armJ1708BusTimer(void);  // @ 0x0001e266
 undefined8 mc68k_j1708SciInterruptHandler(void);  // @ 0x0001e288

@@ -103,10 +103,11 @@ public class ApplyHardwareRegisters extends GhidraScript {
     private void ensurePeripheralMemoryRegion() throws Exception {
         Memory memory = currentProgram.getMemory();
 
-        // MC68336 peripheral register space: 0x00FFD000 - 0x00FFFFFF (12KB)
-        // This includes SIM, QSM, QADC, TPU modules
-        long PERIPH_BASE = 0x00FFD000L;
-        long PERIPH_SIZE = 0x3000L;  // 12KB
+        // MC68336 peripheral register space: 0x00FFC800 - 0x00FFFFFF (14KB)
+        // This includes SIM, QSM, QADC, TPU modules, and the external devices on chip selects 5 / 2 / 4
+        // (0xFFC800 / 0xFFD000 / 0xFFD800, 2KB each: CM550's two 82527 CAN controllers sit at 0xFFC800 and 0xFFD800)
+        long PERIPH_BASE = 0x00FFC800L;
+        long PERIPH_SIZE = 0x3800L;  // 14KB
 
         Address addr = toAddr(PERIPH_BASE);
         MemoryBlock existingBlock = memory.getBlock(addr);
@@ -180,7 +181,7 @@ public class ApplyHardwareRegisters extends GhidraScript {
 
                     // Filter for MC68336 peripheral register space (0x00FFxxxx)
                     // Also include 0x00FDxxxx (SIM module)
-                    if ((address >= 0x00FFD000 && address <= 0x00FFFFFF) ||
+                    if ((address >= 0x00FFC800 && address <= 0x00FFFFFF) ||
                         (address >= 0x00FD0000 && address <= 0x00FDFFFF)) {
 
                         RegisterDef reg = new RegisterDef();

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Mon Nov 23 22:03:09 MST 2026
+// Generated: Mon Nov 23 23:08:55 MST 2026
 
 
 //
@@ -2150,35 +2150,43 @@ void cm550_shutdownMinimumSelector15(void)
 
 
 //
-// Function: mc68k_tpuTimerInitializer @ 0x0000c760
+// Function: mc68k_configureCanCs5MessageObjects @ 0x0000c760
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Sets up the 82527 CAN controller on chip select 5: stores its base &CAN_CS5_CONTROL in 0x8000f0 -
+   sets _can_1_chip_s_last_message_object_used_0_15 to 6 - sets CAN_CS5_CONTROL bits 0x0a - and
+   configures message objects 1-6: 1 / 3 / 5 receive (configuration 0x80) 11-bit identifiers 0x112 /
+   0x512 / 0x712 and 2 / 4 / 6 transmit (0x88) 0x100 / 0x500 / 0x700. No TPU register is involved
+   (was mc68k_tpuTimerInitializer; PR #53 round 79) */
 
-void mc68k_tpuTimerInitializer(void)
+void mc68k_configureCanCs5MessageObjects(void)
 
 {
-  _DAT_008000f0 = &DAT_00ffc800;
+  byte bVar1;
+  
+  _DAT_008000f0 = &CAN_CS5_CONTROL;
   _can_1_chip_s_last_message_object_used_0_15 = 6;
-  _DAT_00ffc812 = 0x2240;
-  DAT_00ffc816 = 0x80;
-  _DAT_00ffc810 = 0x9955;
-  _DAT_00ffc822 = 0x2000;
-  DAT_00ffc826 = 0x88;
-  _DAT_00ffc820 = 0x5559;
-  _DAT_00ffc832 = 0xa240;
-  DAT_00ffc836 = 0x80;
-  _DAT_00ffc830 = 0x9955;
-  _DAT_00ffc842 = 0xa000;
-  DAT_00ffc846 = 0x88;
-  _DAT_00ffc840 = 0x5559;
-  _DAT_00ffc852 = 0xe240;
-  DAT_00ffc856 = 0x80;
-  _DAT_00ffc850 = 0x9955;
-  _DAT_00ffc862 = 0xe000;
-  DAT_00ffc866 = 0x88;
-  _DAT_00ffc860 = 0x5559;
-  DAT_00ffc800 = DAT_00ffc800 | 10;
+  bVar1 = CAN_CS5_CONTROL;
+  CAN_CS5_CONTROL = bVar1 | 10;
+  CAN_CS5_MESSAGE_1_ARBITRATION = 0x2240;
+  CAN_CS5_MESSAGE_1_CONFIGURATION = 0x80;
+  CAN_CS5_MESSAGE_1_CONTROL = 0x9955;
+  CAN_CS5_MESSAGE_2_ARBITRATION = 0x2000;
+  CAN_CS5_MESSAGE_2_CONFIGURATION = 0x88;
+  CAN_CS5_MESSAGE_2_CONTROL = 0x5559;
+  CAN_CS5_MESSAGE_3_ARBITRATION = 0xa240;
+  CAN_CS5_MESSAGE_3_CONFIGURATION = 0x80;
+  CAN_CS5_MESSAGE_3_CONTROL = 0x9955;
+  CAN_CS5_MESSAGE_4_ARBITRATION = 0xa000;
+  CAN_CS5_MESSAGE_4_CONFIGURATION = 0x88;
+  CAN_CS5_MESSAGE_4_CONTROL = 0x5559;
+  CAN_CS5_MESSAGE_5_ARBITRATION = 0xe240;
+  CAN_CS5_MESSAGE_5_CONFIGURATION = 0x80;
+  CAN_CS5_MESSAGE_5_CONTROL = 0x9955;
+  CAN_CS5_MESSAGE_6_ARBITRATION = 0xe000;
+  CAN_CS5_MESSAGE_6_CONFIGURATION = 0x88;
+  CAN_CS5_MESSAGE_6_CONTROL = 0x5559;
   return;
 }
 
@@ -19361,22 +19369,22 @@ undefined8 cm550_FUN_0001e0fa(void)
   local_1c = (undefined1)((uint)in_D0 >> 0x18);
   node_address = (byte)((uint)in_D0 >> 0x10);
   uStack_1a = (undefined2)in_D0;
-  while (bVar1 = DAT_00ffd85f, bVar1 != 0) {
+  while (bVar1 = CAN_CS4_INTERRUPT, bVar1 != 0) {
     if ((bVar1 < 3) || (0x10 < bVar1)) {
       if (bVar1 == 2) {
         cm550_serialNodeAddressForwarder(node_address);
       }
       else {
-        DAT_0080aa1a = DAT_00ffd801;
+        DAT_0080aa1a = CAN_CS4_STATUS;
         if ((DAT_0080aa1a & 0x80) != 0) {
-          DAT_00ffd800 = 1;
+          CAN_CS4_CONTROL = 1;
           do {
-            bVar1 = DAT_00ffd802;
+            bVar1 = CAN_CS4_CPU_INTERFACE;
           } while ((bVar1 & 0x80) != 0);
-          bVar1 = DAT_00ffd800;
-          DAT_00ffd800 = bVar1 | 10;
-          bVar1 = DAT_00ffd800;
-          DAT_00ffd800 = bVar1 & 0xfe;
+          bVar1 = CAN_CS4_CONTROL;
+          CAN_CS4_CONTROL = bVar1 | 10;
+          bVar1 = CAN_CS4_CONTROL;
+          CAN_CS4_CONTROL = bVar1 & 0xfe;
         }
       }
     }
@@ -19437,27 +19445,40 @@ void cm550_modeBasedDataDispatcherWrapper(void)
 
 
 //
-// Function: mc68k_serialPort2IsrHandler @ 0x0001e1d0
+// Function: mc68k_canCs5InterruptHandler @ 0x0001e1d0
 //
 
-undefined8 mc68k_serialPort2IsrHandler(void)
+/* The interrupt handler of the 82527 CAN controller on chip select 5: loops while CAN_CS5_INTERRUPT
+   is non-zero - codes below 3 are the status change / message 15 cases (reads CAN_CS5_STATUS and
+   resets CAN_CS5_CONTROL) - code n reaches message object n - 2 at CAN_CS5_INTERRUPT * 0x10 +
+   0xffc7e0. No serial port is involved (was mc68k_serialPort2IsrHandler; PR #53 round 79) */
+
+undefined8 mc68k_canCs5InterruptHandler(void)
 
 {
   byte *pbVar1;
+  byte bVar2;
   undefined4 in_D0;
   undefined4 in_D1;
   
-  while (DAT_00ffc85f != 0) {
-    if ((DAT_00ffc85f < 3) || (0x10 < DAT_00ffc85f)) {
-      DAT_0080aa1b = DAT_00ffc801;
-      if ((DAT_00ffc801 & 0x80) != 0) {
+  while( true ) {
+    bVar2 = CAN_CS5_INTERRUPT;
+    if (bVar2 == 0) break;
+    if ((bVar2 < 3) || (0x10 < bVar2)) {
+      DAT_0080aa1b = CAN_CS5_STATUS;
+      if ((DAT_0080aa1b & 0x80) != 0) {
+        CAN_CS5_CONTROL = 1;
         do {
-        } while ((DAT_00ffc802 & 0x80) != 0);
-        DAT_00ffc800 = 10;
+          bVar2 = CAN_CS5_CPU_INTERFACE;
+        } while ((bVar2 & 0x80) != 0);
+        bVar2 = CAN_CS5_CONTROL;
+        CAN_CS5_CONTROL = bVar2 | 10;
+        bVar2 = CAN_CS5_CONTROL;
+        CAN_CS5_CONTROL = bVar2 & 0xfe;
       }
     }
     else {
-      pbVar1 = (byte *)((uint)DAT_00ffc85f * 0x10 + 0xffc7e0);
+      pbVar1 = (byte *)((uint)bVar2 * 0x10 + 0xffc7e0);
       *pbVar1 = 0xfd;
       if ((*pbVar1 & 0x20) == 0) {
         cm550_modeBasedDataDispatcherWrapper();
@@ -19481,7 +19502,7 @@ undefined8 mc68k_serialPort2IsrHandler(void)
 void cm550_serialCommunicationIsrRegister(void)
 
 {
-  _DAT_00808e50 = mc68k_serialPort2IsrHandler;
+  _DAT_00808e50 = mc68k_canCs5InterruptHandler;
   return;
 }
 
@@ -19702,7 +19723,7 @@ uint serialTransmitHandler(void)
     *_can_control_register_pointer = 0x7f;
   }
   else {
-    cm550_canFrameDataCopy(&DAT_00ffd800);
+    cm550_canFrameDataCopy(&CAN_CS4_CONTROL);
     DAT_0080d9be = '\0';
     uVar1 = _can_transmit_buffer_write_pointer + 0xe;
     _can_transmit_buffer_write_pointer = uVar1;
@@ -19769,8 +19790,8 @@ void cm550_FUN_0001e5f0(dword channel_config)
     }
     else {
       do {
-        (&DAT_00ffd801)[iVar2] = 0xfd;
-        *_can_receive_buffer_write_pointer = *(uint *)(&DAT_00ffd802 + iVar2) >> 3;
+        (&CAN_CS4_STATUS)[iVar2] = 0xfd;
+        *_can_receive_buffer_write_pointer = *(uint *)(&CAN_CS4_CPU_INTERFACE + iVar2) >> 3;
         *(short *)(_can_receive_buffer_write_pointer + 1) =
              (short)((int)((byte)(&DAT_00ffd806)[iVar2] & 0xf0) >> 4);
         *(uint *)((int)_can_receive_buffer_write_pointer + 6) =
@@ -19784,7 +19805,7 @@ void cm550_FUN_0001e5f0(dword channel_config)
           puVar6 = puVar6 + 1;
           puVar5 = puVar5 + 1;
         } while (uVar3 < 8);
-      } while (((&DAT_00ffd801)[iVar2] & 2) != 0);
+      } while (((&CAN_CS4_STATUS)[iVar2] & 2) != 0);
     }
     _can_receive_buffer_write_pointer = (uint *)((int)_can_receive_buffer_write_pointer + 0x12);
     if ((uint *)0x80d884 < _can_receive_buffer_write_pointer) {
@@ -22809,8 +22830,8 @@ undefined4 cm550_diagnosticServiceSecurityValidator(dword msg_ptr)
 {
   byte auth_result;
   int required_param_len;
-  byte service_id;
   word msg_length;
+  byte service_id;
   
   service_id = **(byte **)(msg_ptr + 6);
   msg_length = *(word *)(msg_ptr + 4);
@@ -30394,62 +30415,66 @@ void cm550_phase4InitSequence(void)
 void mc68k_dualCanControllerInit(void)
 
 {
-  undefined1 uVar1;
-  byte bVar2;
-  undefined *puVar3;
-  undefined1 *puVar4;
+  byte bVar1;
+  undefined *puVar2;
+  word *pwVar3;
   
   do {
-    DAT_00ffd802 = DAT_008084a3;
-    bVar2 = DAT_00ffd802;
-  } while ((bVar2 & 0x80) != 0);
-  DAT_00ffd800 = 0x41;
-  uVar1 = DAT_00ffd801;
-  DAT_00ffd808 = the_can_extended_mask_0x0_0xffffffff;
-  DAT_00ffd809 = DAT_008084ab;
-  DAT_00ffd80a = DAT_008084ac;
-  DAT_00ffd80b = DAT_008084ad;
+    CAN_CS4_CPU_INTERFACE = DAT_008084a3;
+    bVar1 = CAN_CS4_CPU_INTERFACE;
+  } while ((bVar1 & 0x80) != 0);
+  CAN_CS4_CONTROL = 0x41;
+  bVar1 = CAN_CS4_STATUS;
+  CAN_CS4_GLOBAL_MASK_EXTENDED_0 = the_can_extended_mask_0x0_0xffffffff;
+  CAN_CS4_GLOBAL_MASK_EXTENDED_1 = DAT_008084ab;
+  CAN_CS4_GLOBAL_MASK_EXTENDED_2 = DAT_008084ac;
+  CAN_CS4_GLOBAL_MASK_EXTENDED_3 = DAT_008084ad;
   Ram00ffd806 = _can_global_mask_0_65535;
-  Ram00ffd80c = _mask_used_for_can_msg_object_15_0_ffffffff_84b0;
-  DAT_00ffd82f = DAT_008084a5;
-  DAT_00ffd83f = DAT_008084a7;
-  DAT_00ffd84f = DAT_008084a9;
-  DAT_00ffd81f = 0;
-  bVar2 = DAT_00ffd800;
-  DAT_00ffd800 = bVar2 & 0xbf;
-  puVar3 = &DAT_00ffd810;
-  bVar2 = 1;
+  CAN_CS4_MESSAGE_15_MASK = _mask_used_for_can_msg_object_15_0_ffffffff_84b0;
+  CAN_CS4_BUS_CONFIGURATION = DAT_008084a5;
+  CAN_CS4_BIT_TIMING_0 = DAT_008084a7;
+  CAN_CS4_BIT_TIMING_1 = DAT_008084a9;
+  CAN_CS4_CLOCK_OUT = 0;
+  bVar1 = CAN_CS4_CONTROL;
+  CAN_CS4_CONTROL = bVar1 & 0xbf;
+  puVar2 = &DAT_00ffd810;
+  bVar1 = 1;
   do {
-    *puVar3 = 0x55;
-    puVar3[1] = 0x55;
-    puVar3 = puVar3 + 0x10;
-    bVar2 = bVar2 + 1;
-  } while (bVar2 < 0x10);
-  bVar2 = DAT_00ffd800;
-  DAT_00ffd800 = bVar2 & 0xfe;
+    *puVar2 = 0x55;
+    puVar2[1] = 0x55;
+    puVar2 = puVar2 + 0x10;
+    bVar1 = bVar1 + 1;
+  } while (bVar1 < 0x10);
+  bVar1 = CAN_CS4_CONTROL;
+  CAN_CS4_CONTROL = bVar1 & 0xfe;
   do {
-    DAT_00ffc802 = DAT_00808491;
-  } while ((DAT_00808491 & 0x80) != 0);
-  DAT_00ffc808 = the_can_1_extended_mask_0x0_0xffffffff;
-  DAT_00ffc809 = DAT_00808499;
-  DAT_00ffc80a = DAT_0080849a;
-  DAT_00ffc80b = DAT_0080849b;
-  _DAT_00ffc806 = _the_can_1_standard_mask_0_65535;
-  _DAT_00ffc80c = _mask_used_for_can_msg_object_15_0_ffffffff_849e;
-  DAT_00ffc82f = DAT_00808493;
-  DAT_00ffc83f = DAT_00808495;
-  DAT_00ffc84f = DAT_00808497;
-  DAT_00ffc81f = 0;
-  DAT_00ffc800 = 0;
-  puVar4 = &DAT_00ffc810;
-  bVar2 = 1;
+    CAN_CS5_CPU_INTERFACE = DAT_00808491;
+    bVar1 = CAN_CS5_CPU_INTERFACE;
+  } while ((bVar1 & 0x80) != 0);
+  CAN_CS5_CONTROL = 0x41;
+  bVar1 = CAN_CS5_STATUS;
+  CAN_CS5_GLOBAL_MASK_EXTENDED_0 = the_can_1_extended_mask_0x0_0xffffffff;
+  CAN_CS5_GLOBAL_MASK_EXTENDED_1 = DAT_00808499;
+  CAN_CS5_GLOBAL_MASK_EXTENDED_2 = DAT_0080849a;
+  CAN_CS5_GLOBAL_MASK_EXTENDED_3 = DAT_0080849b;
+  CAN_CS5_GLOBAL_MASK_STANDARD = _the_can_1_standard_mask_0_65535;
+  CAN_CS5_MESSAGE_15_MASK = _mask_used_for_can_msg_object_15_0_ffffffff_849e;
+  CAN_CS5_BUS_CONFIGURATION = DAT_00808493;
+  CAN_CS5_BIT_TIMING_0 = DAT_00808495;
+  CAN_CS5_BIT_TIMING_1 = DAT_00808497;
+  CAN_CS5_CLOCK_OUT = 0;
+  bVar1 = CAN_CS5_CONTROL;
+  CAN_CS5_CONTROL = bVar1 & 0xbf;
+  pwVar3 = &CAN_CS5_MESSAGE_1_CONTROL;
+  bVar1 = 1;
   do {
-    *puVar4 = 0x7d;
-    puVar4 = puVar4 + 0x10;
-    bVar2 = bVar2 + 1;
-  } while (bVar2 < 0x10);
-  DAT_00ffc800 = DAT_00ffc800 & 0xfe;
-  mc68k_tpuTimerInitializer();
+    *(undefined1 *)pwVar3 = 0x7d;
+    pwVar3 = pwVar3 + 8;
+    bVar1 = bVar1 + 1;
+  } while (bVar1 < 0x10);
+  bVar1 = CAN_CS5_CONTROL;
+  CAN_CS5_CONTROL = bVar1 & 0xfe;
+  mc68k_configureCanCs5MessageObjects();
   initDiagnosticBufferPointers();
   return;
 }
@@ -30539,7 +30564,7 @@ void initDiagnosticBufferPointers(void)
   cm550_systemFunction6xParameterized();
   _can_first_receive_object_index = _can_s_last_message_object_used_0_15 + 1;
   _can_s_last_message_object_used_0_15 = _can_s_last_message_object_used_0_15 + 0xf;
-  _can_control_register_pointer = &DAT_00ffd800 + (uint)_can_first_receive_object_index * 0x10;
+  _can_control_register_pointer = &CAN_CS4_CONTROL + (uint)_can_first_receive_object_index * 0x10;
   _can_last_receive_object_index = _can_s_last_message_object_used_0_15;
   *_can_control_register_pointer = 0x55;
   _can_control_register_pointer[1] = 0xfb;
@@ -30620,8 +30645,8 @@ void initDiagnosticBufferPointers(void)
     puVar7[5] = *(undefined1 *)(bVar5 + 0x8084c0);
     puVar7 = puVar7 + 0x10;
   }
-  bVar4 = DAT_00ffd800;
-  DAT_00ffd800 = bVar4 | 10;
+  bVar4 = CAN_CS4_CONTROL;
+  CAN_CS4_CONTROL = bVar4 | 10;
   return;
 }
 
@@ -30657,8 +30682,8 @@ void cm550_mainCanTransmissionLoop(void)
   _can_s_last_message_object_used_0_15 = _can_s_last_message_object_used_0_15 + 0xf;
   uVar2 = (uint)_can_first_receive_object_index;
   _can_last_receive_object_index = _can_s_last_message_object_used_0_15;
-  *unaff_A5 = (int)(&DAT_00ffd800 + uVar2 * 0x10);
-  (&DAT_00ffd800)[uVar2 * 0x10] = 0x55;
+  *unaff_A5 = (int)(&CAN_CS4_CONTROL + uVar2 * 0x10);
+  (&CAN_CS4_CONTROL)[uVar2 * 0x10] = 0x55;
   *(undefined1 *)(*unaff_A5 + 1) = 0xfb;
   *(undefined1 *)*unaff_A5 = 0xef;
   *(undefined1 *)(*unaff_A5 + 6) = 4;
@@ -30739,8 +30764,8 @@ void cm550_mainCanTransmissionLoop(void)
     puVar7[5] = *(undefined1 *)(unaff_A3 + (uint)bVar4);
     puVar7 = puVar7 + 0x10;
   }
-  bVar5 = DAT_00ffd800;
-  DAT_00ffd800 = bVar5 | 10;
+  bVar5 = CAN_CS4_CONTROL;
+  CAN_CS4_CONTROL = bVar5 | 10;
   return;
 }
 
