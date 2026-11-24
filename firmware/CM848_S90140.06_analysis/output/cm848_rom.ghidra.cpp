@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 18:15:52 MST 2026
+// Generated: Mon Nov 23 19:00:40 MST 2026
 
 
 //
@@ -74,9 +74,9 @@ void mpc555_keyOnStateMachine(void)
         if (eeprom_config_write_triggered_flag == 0) {
           eeprom_write_buffer = ecu_power_state_flags.runtime_counter;
           eeprom_config_write_triggered_flag = 1;
-          mpc555_eepromWriteWords(0x3fee2a,(word *)&eeprom_config_block,4);
+          mpc555_eepromWriteWords(0x3fee2a,(word *)&eeprom_key_on_hour_meter_cal,4);
         }
-        if (eeprom_shadow_header.config_dword == eeprom_write_buffer) {
+        if (eeprom_shadow_header.key_on_hour_meter == eeprom_write_buffer) {
           dVar1 = ecu_power_state_flags.capability_flags;
           ecu_power_state_flags.capability_flags = dVar1 & 0xfffffffd;
         }
@@ -89,7 +89,7 @@ void mpc555_keyOnStateMachine(void)
         if (eeprom_config_write_triggered_flag == 0) {
           eeprom_write_buffer = ecu_power_state_flags.runtime_counter;
           eeprom_config_write_triggered_flag = 1;
-          mpc555_eepromWriteWords(0x3fee2a,(word *)&eeprom_config_block,4);
+          mpc555_eepromWriteWords(0x3fee2a,(word *)&eeprom_key_on_hour_meter_cal,4);
         }
         cm848_forceSupervisorWatchdogReset();
         mpc555_reset_vector();
@@ -210,11 +210,11 @@ undefined4 cm848_bootDiagnosticServiceAcknowledgeNoOperation(void)
    count / start addresses / lengths; PR #53 round 69) - a mismatch answers DOWNLOAD_INVALID (the
    serial channel then resets); a match writes CALIBRATION_VALID (the serial channel also sets bit 3
    and clears bit 1 of serial_reflash_status_flags_cal and counts serial_reflash_success_count_cal)
-   / the runtime counter to eeprom_config_block / answers 0 / resets when MIOS MDASM30 SCRD bit 15
-   is set. Any other status answers DOWNLOAD_INVALID. Clears bit 7 of eeprom_service_mode_flags
-   first Here intake_air_heater_saved_values_cal.redundant_preheat_request and
-   engine_off_time_saved_values_cal.previous_trip_value are the boot kernel's copies of EEPROM 0x50
-   and 0x52 (it time-shares the application's EEPROM mirror; PR #53 round 68) (was
+   / the runtime counter to eeprom_key_on_hour_meter_cal / answers 0 / resets when MIOS MDASM30 SCRD
+   bit 15 is set. Any other status answers DOWNLOAD_INVALID. Clears bit 7 of
+   eeprom_service_mode_flags first Here intake_air_heater_saved_values_cal.redundant_preheat_request
+   and engine_off_time_saved_values_cal.previous_trip_value are the boot kernel's copies of EEPROM
+   0x50 and 0x52 (it time-shares the application's EEPROM mirror; PR #53 round 68) (was
    mpc555_loadEepromCalibration; PR #53 round 67) */
 
 void mpc555_verifyDownloadedCalibration(j1939_rx_msg_t *request,BOOT_REQUEST_CHANNEL channel)
@@ -361,7 +361,7 @@ void mpc555_verifyDownloadedCalibration(j1939_rx_msg_t *request,BOOT_REQUEST_CHA
         mpc555_runPacedSerialService();
       }
       local_34[0] = ecu_power_state_flags.runtime_counter;
-      mpc555_eepromWriteWords((dword)local_34,(word *)&eeprom_config_block,4);
+      mpc555_eepromWriteWords((dword)local_34,(word *)&eeprom_key_on_hour_meter_cal,4);
       if (channel == BOOT_REQUEST_CHANNEL_SERIAL) {
         uVar7 = 0;
         do {
@@ -754,11 +754,11 @@ void cm848_loadCalibrationFromEeprom(void)
 void cm848_loadVersionConfigFromEeprom(void)
 
 {
-  mpc555_eepromReadWords(&eeprom_version_marker,&eeprom_shadow_header,2);
+  mpc555_eepromReadWords(&eeprom_security_key_copy_cal,&eeprom_shadow_header,2);
   mpc555_eepromReadWords(0x1000000,0x3fee0a,2);
-  mpc555_eepromReadWords(&eeprom_security_key,0x3fee0c,6);
-  mpc555_eepromReadWords(&eeprom_config_block,0x3fee12,4);
-  mpc555_eepromReadWords(&eeprom_serial_number,0x3fee16,2);
+  mpc555_eepromReadWords(eeprom_security_master_password_cal,0x3fee0c,6);
+  mpc555_eepromReadWords(&eeprom_key_on_hour_meter_cal,0x3fee12,4);
+  mpc555_eepromReadWords(&eeprom_calibration_download_security_key_cal,0x3fee16,2);
   return;
 }
 
@@ -1989,10 +1989,10 @@ void mpc555_systemInitialization(void)
   ecu_power_state_flags.state = 0;
   system_initialization_flags.initialization_sentinel = 0xbbbb;
   system_initialization_flags.initialization_counter = 0;
-  mpc555_eepromReadWords(&eeprom_config_block,0x3fee12,4);
+  mpc555_eepromReadWords(&eeprom_key_on_hour_meter_cal,0x3fee12,4);
   mpc555_loadRuntimeCounterFromEepromShadow();
-  mpc555_eepromReadWords(&eeprom_serial_number,0x3fee16,2);
-  mpc555_eepromWriteWords(0x3fee16,(word *)&eeprom_version_marker,2);
+  mpc555_eepromReadWords(&eeprom_calibration_download_security_key_cal,0x3fee16,2);
+  mpc555_eepromWriteWords(0x3fee16,&eeprom_security_key_copy_cal,2);
   eeprom_xfer_state.eeprom_write_callback = 0xbec;
   mpc555_eepromReadWords(&serial_reflash_unlock_request_cal,&boot_serial_reflash_unlock_request,2);
   mpc555_initDiagnosticSession();
@@ -2319,7 +2319,7 @@ byte * cm848_lookupEepromParameterAddress(byte parameter)
   piVar2 = (intake_air_heater_saved_values_t *)&DAT_003fee38;
   if (parameter - 1 < 4) {
     piVar2 = (intake_air_heater_saved_values_t *)
-             (eeprom_shadow_header.header_block + parameter + 0xb);
+             (eeprom_shadow_header.security_master_password + parameter + 0xb);
   }
   else if (parameter == 0x17) {
     piVar2 = &intake_air_heater_saved_values_cal;
@@ -4299,7 +4299,7 @@ byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword
       if (MVar7 != MEMORY_REGION_TYPE_EEPROM) {
         return MVar7;
       }
-      if (eeprom_shadow_header.version_marker != 0xff) {
+      if (eeprom_shadow_header.security_key_copy != 0xff) {
         if (!bVar1) {
           return 0x1a;
         }
@@ -4340,7 +4340,7 @@ byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword
     return 0xff;
   }
   if (MVar7 == MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED) {
-    if (eeprom_shadow_header.version_marker != 0xff) {
+    if (eeprom_shadow_header.security_key_copy != 0xff) {
       if (!bVar1) {
         return 3;
       }
@@ -4621,7 +4621,7 @@ LAB_00005a20:
     uVar4 = 0xb;
     bVar1 = true;
 LAB_00005a58:
-    if ((eeprom_shadow_header.version_marker == 0xff) || (!bVar1)) {
+    if ((eeprom_shadow_header.security_key_copy == 0xff) || (!bVar1)) {
       if ((uVar2 == uVar4) || (uVar2 == 8)) {
         return 0xff;
       }
@@ -6129,8 +6129,8 @@ void cm848_unscrambleBootSecurityKey(int param_1,int param_2)
 //
 
 /* The boot kernel's copy of validateSecurityKey - the same steps over the boot's variables: 0
-   (pass) when eeprom_shadow_header.version_marker is 0xff / 1 once
-   eeprom_block_tracking.failed_write_authorization_count is 0x11 (17 misses) / else
+   (pass) when eeprom_shadow_header.security_key_copy (EEPROM 0x34 - a copy of the security key) is
+   0xff / 1 once eeprom_block_tracking.failed_write_authorization_count is 0x11 (17 misses) / else
    cm848_unscrambleBootSecurityKey gives 6 characters and a runtime stamp ((runtime & ~0xff) - stamp
    < 0x1a) and the characters are compared (was cm848_validateWriteAuth; PR #53 round 74) */
 
@@ -6150,7 +6150,7 @@ undefined4 cm848_validateBootSecurityKey(undefined4 scrambled_token)
   dword current_runtime;
   byte key_matches;
   
-  if (eeprom_shadow_header.version_marker == 0xff) {
+  if (eeprom_shadow_header.security_key_copy == 0xff) {
     result = 0;
   }
   else {
@@ -6176,7 +6176,7 @@ undefined4 cm848_validateBootSecurityKey(undefined4 scrambled_token)
         compare_index = 0;
         do {
           if (local_30[(char)compare_index] !=
-              eeprom_shadow_header.header_block[(char)compare_index]) {
+              eeprom_shadow_header.security_master_password[(char)compare_index]) {
             key_matches = 0;
           }
           compare_index = compare_index + 1;
@@ -6339,7 +6339,7 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 void mpc555_loadRuntimeCounterFromEepromShadow(void)
 
 {
-  ecu_power_state_flags.runtime_counter = eeprom_shadow_header.config_dword;
+  ecu_power_state_flags.runtime_counter = eeprom_shadow_header.key_on_hour_meter;
   return;
 }
 

@@ -2657,9 +2657,9 @@ address,name,type,comment
 0x003fee05,serial_download_region_type,MEMORY_REGION_TYPE,Boot kernel: the region type of the serial download block - mpc555_sciHandleDownloadDataBlock stores cm848_lookupBootMemoryRegionType's answer and branches on it (Bank 2 / main flash / EEPROM) | application side: the EEPROM mirror byte 0x1983 - no application use found (was sensor_fault_threshold_state; PR #53 round 71)
 0x003fee08,eeprom_shadow_header,eeprom_header_t,RAM shadow of EEPROM header loaded at boot (the boot kernel's) - 0x3fee08-0x3fee17; the words after it are the application's EEPROM mirror (fuel_level_saved_values_cal and on) (PR #53 round 68: the struct ran to 0x3fee29)
 0x003fee0a,eeprom_shadow_header.ecm_status,,(was eeprom_shadow_header.magic; PR #53 round 67)
-0x003fee0c,eeprom_shadow_header.header_block[0],,
-0x003fee12,eeprom_shadow_header.config_dword,,
-0x003fee16,eeprom_shadow_header.config_word,,
+0x003fee0c,eeprom_shadow_header.security_master_password[0],,(was header_block[0]; PR #53 round 75)
+0x003fee12,eeprom_shadow_header.key_on_hour_meter,,(was config_dword; PR #53 round 75)
+0x003fee16,eeprom_shadow_header.calibration_download_security_key,,(was config_word; PR #53 round 75)
 0x003fee18,fuel_level_saved_values_cal,fuel_level_saved_values_t,e2m 8A24 Fuel_Lvl_*: the fuel level bytes kept over a power down - EEPROM 0x1996 in the application's mirror (was eeprom_shadow_header.calibration_block1[0] - the boot kernel's struct ran over it; PR #53 round 68)
 0x003fee19,fuel_level_saved_values_cal.last_valid_percent,,(was eeprom_shadow_header.calibration_block1[1]; PR #53 round 68)
 0x003fee1a,fuel_level_saved_values_cal.percent_tank_full_average,,(was eeprom_shadow_header.calibration_block1[2]; PR #53 round 68)
@@ -6159,16 +6159,16 @@ address,name,type,comment
 0x0053af76,parameter_id_table_bucket_start,word[1889],The bucket index of parameter_id_table: bucket = parameter ID mod 1889 (0x761); the word is the bucket's first record (0xffff = empty) and the next bucket's word - or the table end 0x53ea6c - ends it (cm848_lookupParameterIdAddress). 1889 words end where the table starts; largest entry 1885 (PR #53 round 60)
 0x0053be38,parameter_id_table,parameter_id_entry_t[1441],The application's parameter ID table: e2m block ID -> address (record = table[block] + offset). The code bounds it at 0x53ea6c = 1886 records; the flash2 dump ends after record 1440, so 1441 are typed. firmware/scripts/e2m_block_addresses.py resolves it from the binary (PR #53 round 60)
 0x0053ea6c,bank2_image_last_word,word,The Bank 2 image's last word: checksum_region_table.second_region.end_address (block_data_structure.block_length[2] = 0x3ea6e from 0x500000) - and one past parameter_id_table's 1886 records, so cm848_lookupParameterIdAddress ends its last bucket at its address. Both flash2 dumps end before it (at 0x53d4e9 and 0x53dfff) (PR #53 round 69)
-0x01000002,eeprom_security_key,byte,
+0x01000002,eeprom_security_master_password_cal,byte[6],EEPROM 0x2-0x7: e2m 0005 ECM_PSWD / Master_Password - the source the boot kernel reads into eeprom_shadow_header.security_master_password (was eeprom_security_key byte; PR #53 round 75)
 0x0100000c,ecm_part_number_cal,dword,EEPROM 0x0c: e2m 0001 +0 ECM_Part_Number 'Module Part Number' (HEX - 4 bytes) - the boot kernel copies it to boot_ecm_part_number (was eeprom_status_block; PR #53 round 68)
-0x01000030,eeprom_config_block,byte,
-0x01000034,eeprom_version_marker,byte,
+0x01000030,eeprom_key_on_hour_meter_cal,dword,EEPROM 0x30: the key-on hour meter (the mirror's key_on_hour_meter_cal) - read into eeprom_shadow_header.key_on_hour_meter / written back by mpc555_keyOnStateMachine and mpc555_verifyDownloadedCalibration (was eeprom_config_block byte; PR #53 round 75)
+0x01000034,eeprom_security_key_copy_cal,word,EEPROM 0x34 (no e2m record): the copy of the security key that the boot service loop mpc555_systemInitialization writes from EEPROM 0x8e each time it starts - the boot kernel's key gate (was eeprom_version_marker byte; PR #53 round 75)
 0x0100004a,eeprom_calibration_block,byte,
 0x01000050,serial_reflash_status_flags_cal,word,EEPROM 0x50: the boot kernel's serial reflash flags - cm848_beginSerialReflash clears bits 1 and 3 and a verified serial download sets bit 3 and clears bit 1 (mpc555_verifyDownloadedCalibration) - read into the boot shadow 0x3fee1e by cm848_loadCalibrationFromEeprom (was eeprom_cal_word1; PR #53 round 67)
 0x01000052,serial_reflash_success_count_cal,word,EEPROM 0x52: counted by mpc555_verifyDownloadedCalibration after each verified serial download - read into the boot shadow 0x3fee20 (was eeprom_cal_word2; PR #53 round 67)
 0x01000054,serial_reflash_attempt_count_cal,word,EEPROM 0x54: counted by cm848_beginSerialReflash at each serial reflash start - read into the boot shadow 0x3fee22 (was eeprom_cal_word3; PR #53 round 67)
 0x01000056,serial_reflash_unlock_request_cal,word,EEPROM 0x56: one-shot serial reflash hand-off from the application. SCI command 49 (cm848_sciCommand49Callback, with sci_security_state 1 and engine_state 1 or end_of_line_test_settings_cal.field_mode_register 5100) writes 1 here and the boot-kernel magic 0x1d0a at EEPROM 0x00, then restarts through the boot ROM (cm848_restartThroughBootRomAfterSciRequest). The boot ROM loads it into boot_serial_reflash_unlock_request, and mpc555_initDiagnosticSession clears it and starts the boot SCI session unlocked. 0 in the EEPROM dump. Was eeprom_cal_word4 (byte)
-0x0100008e,eeprom_serial_number,byte,
+0x0100008e,eeprom_calibration_download_security_key_cal,word,EEPROM 0x8e: e2m 1000 Security_Key 'Key which provides access to calibration dl.' (the mirror's calibration_download_security_key_cal) - not a serial number (was eeprom_serial_number byte; PR #53 round 75)
 # protection_control_state_flags: 10-channel rolling 2-bit edge-detection register (dword)
 # Updated each call by cm848_processProtectionControlStateMachine (0x0002afd0):
 #   Step 1: (flags & 0x55555) * 2  → shifts current-state even bits → previous-state odd bits

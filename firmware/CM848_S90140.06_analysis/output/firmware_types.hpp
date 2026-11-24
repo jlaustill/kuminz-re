@@ -1569,11 +1569,11 @@ struct engine_speed_state_t {
 };
 
 struct eeprom_header_t {
-    uint16_t version_marker;  /* EEPROM data version marker */
+    uint16_t security_key_copy;  /* EEPROM 0x34: the copy of the security key (EEPROM 0x8e) that the boot service loop mpc555_systemInitialization writes each time it starts - the boot kernel's key gate: cm848_validateBootSecurityKey passes every key while it is 0xff (was version_marker 'EEPROM data version marker'; PR #53 round 75) */
     ECM_STATUS ecm_status;  /* e2m 000B +0 ECM_Status (EEPROM 0x0) - the calibration status the boot ROM reads before it jumps to the operational code (was magic; PR #53 round 67) */
-    uint8_t header_block[6];  /* EEPROM header data block */
-    uint32_t config_dword;  /* EEPROM configuration dword */
-    uint16_t config_word;  /* EEPROM configuration word */
+    uint8_t security_master_password[6];  /* EEPROM 0x2-0x7: e2m 0005 ECM_PSWD / Master_Password (the application's security_master_password_cal) - cm848_validateBootSecurityKey compares the unscrambled key's 6 characters with it (was header_block 'EEPROM header data block'; PR #53 round 75) */
+    uint32_t key_on_hour_meter;  /* EEPROM 0x30: the key-on hour meter (the application's key_on_hour_meter_cal) - mpc555_loadRuntimeCounterFromEepromShadow loads ecu_power_state_flags.runtime_counter from it (was config_dword 'EEPROM configuration dword'; PR #53 round 75) */
+    uint16_t calibration_download_security_key;  /* EEPROM 0x8e: e2m 1000 Security_Key (the application's calibration_download_security_key_cal) - mpc555_systemInitialization copies it to EEPROM 0x34 (was config_word 'EEPROM configuration word'; PR #53 round 75) */
 };
 
 struct fuel_level_saved_values_t {

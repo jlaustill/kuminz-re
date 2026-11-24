@@ -112,8 +112,8 @@ The real, live ECM run-time counter is `0x01000030` (rises across every dump).
 
 ### Firmware-traced `0x01000030` re-confirmed (static)
 
-`mpc555_eepromWriteWords(0x3fee2a,&eeprom_config_block,4)` and `eeprom_config_block`
-is at EEPROM `0x01000030` — consistent with the 2026-04-09 trace of
+`mpc555_eepromWriteWords(0x3fee2a,(word *)&eeprom_key_on_hour_meter_cal,4)` and `eeprom_key_on_hour_meter_cal`
+(was `eeprom_config_block`; PR #53 round 75) is at EEPROM `0x01000030` — consistent with the 2026-04-09 trace of
 `ecu_power_state_flags.runtime_counter → 0x01000030`. Still bench-unverified.
 
 ### Naming conflicts to reconcile on the next bench
@@ -265,16 +265,17 @@ S90140.06. Add a `tools/read_odometer.sh` that only does the read.
 `mpc555_keyOnStateMachine` @ 0x184 saves to EEPROM in two scenarios:
 1. **Periodic save:** `key_off_duration_ticks > 0x2903` (10,499 ticks)
 2. **Key-off save:** `mios_mdasm30.SCRD` bit 15 set AND
-   `eeprom_version_marker.magic == 0x600d`
+   `eeprom_shadow_header.ecm_status == ECM_STATUS_CALIBRATION_VALID` (0x600d; was `eeprom_version_marker.magic`)
    *(2026-11-13, PR #48: bit 15 = 1 means key ON — the reset code waits for it — so this branch is really the key-back-on save before the watchdog reset / restart, and scenario 1 runs while bit 15 reads 0 = key off.)*
 
 Save path: `ecu_power_state_flags.runtime_counter` → `eeprom_runtime_write_staging`
-(0x003fee2a) → `mpc555_eepromWriteWords(0x3fee2a, &DAT_01000030, 4)`
+(0x003fee2a) → `mpc555_eepromWriteWords(0x3fee2a, (word *)&eeprom_key_on_hour_meter_cal, 4)`
 → **EEPROM 0x01000030**.
 
 On boot, `mpc555_loadRuntimeCounterFromEepromShadow` @ 0x76B4 reloads
-`ecu_power_state_flags.runtime_counter` from `eeprom_version_marker.config_dword`,
-which is read from EEPROM 0x01000034 (line 669).
+`ecu_power_state_flags.runtime_counter` from `eeprom_shadow_header.key_on_hour_meter`,
+which `cm848_loadVersionConfigFromEeprom` reads from EEPROM 0x01000030. (An older note here said 0x01000034: that
+word is the boot kernel's copy of the security key, which the boot service loop writes from EEPROM 0x8e; PR #53 round 75.)
 
 ```bash
 # Read EEPROM runtime counter (firmware-traced, needs truck verification)

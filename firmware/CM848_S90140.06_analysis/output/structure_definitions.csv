@@ -107,11 +107,11 @@ engine_speed_state_t,0x0040b7ac,filtered_engine_speed,word,2,"e2m 819B +2C Filte
 # EEPROM Header Block - calibration validation and configuration
 # Located in RAM copy of EEPROM data at 0x003fee08
 # Total size: 16 bytes (0x003fee08-0x003fee17) - the words after it are the application's EEPROM mirror (PR #53 round 68: was 32 bytes to 0x3fee27 while the fields ran to 0x3fee29)
-eeprom_header_t,0x003fee08,version_marker,word,2,EEPROM data version marker,,verified
+eeprom_header_t,0x003fee08,security_key_copy,word,2,EEPROM 0x34: the copy of the security key (EEPROM 0x8e) that the boot service loop mpc555_systemInitialization writes each time it starts - the boot kernel's key gate: cm848_validateBootSecurityKey passes every key while it is 0xff (was version_marker 'EEPROM data version marker'; PR #53 round 75),,verified
 eeprom_header_t,0x003fee08,ecm_status,ECM_STATUS,2,e2m 000B +0 ECM_Status (EEPROM 0x0) - the calibration status the boot ROM reads before it jumps to the operational code (was magic; PR #53 round 67),,verified
-eeprom_header_t,0x003fee08,header_block,byte,6,EEPROM header data block,,verified
-eeprom_header_t,0x003fee08,config_dword,dword,4,EEPROM configuration dword,,verified
-eeprom_header_t,0x003fee08,config_word,word,2,EEPROM configuration word,,verified
+eeprom_header_t,0x003fee08,security_master_password,byte,6,EEPROM 0x2-0x7: e2m 0005 ECM_PSWD / Master_Password (the application's security_master_password_cal) - cm848_validateBootSecurityKey compares the unscrambled key's 6 characters with it (was header_block 'EEPROM header data block'; PR #53 round 75),,verified
+eeprom_header_t,0x003fee08,key_on_hour_meter,dword,4,EEPROM 0x30: the key-on hour meter (the application's key_on_hour_meter_cal) - mpc555_loadRuntimeCounterFromEepromShadow loads ecu_power_state_flags.runtime_counter from it (was config_dword 'EEPROM configuration dword'; PR #53 round 75),,verified
+eeprom_header_t,0x003fee08,calibration_download_security_key,word,2,EEPROM 0x8e: e2m 1000 Security_Key (the application's calibration_download_security_key_cal) - mpc555_systemInitialization copies it to EEPROM 0x34 (was config_word 'EEPROM configuration word'; PR #53 round 75),,verified
 # fuel_level_saved_values_t - e2m 8A24 (EEPROM 0x1996-0x1999 = the application's mirror 0x3fee18): the fuel level bytes kept over a power down (PR #53 round 68). The boot kernel time-shares 0x3fee18-0x3fee1d for its copy of EEPROM 0x4a-0x4f (eeprom_calibration_block - cm848_loadCalibrationFromEeprom) and reads it back only by address: cm848_lookupEepromParameterAddress returns its bytes for parameters 1-4 / 0x17 / 0x18
 fuel_level_saved_values_t,0x003fee18,in_range_filtered_percent,byte,1,e2m 8A24 +0 Fuel_Lvl_In_Range_Filtered [%] 'Filtered Fuel Level Goods Readings' (1/2.55 % per count) - seeds fuel_level_fast_filter at power up,,verified
 fuel_level_saved_values_t,0x003fee18,last_valid_percent,byte,1,e2m 8A24 +1 Fuel_Lvl_Last_Valid_Percent [%] 'Last Valid Fuel_Lvl_Percent_Tank_Full_Avg that was sent on the bus' - seeds fuel_level_slow_filter_reference,,verified
