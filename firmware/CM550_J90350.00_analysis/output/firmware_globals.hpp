@@ -772,6 +772,7 @@ extern undefined torque_control_percent_byte;  // 0x00801d4f
 extern undefined retarder_torque_demand_scaled;  // 0x00801e26
 extern undefined retarder_torque_level_stepped;  // 0x00801e2a
 extern undefined retarder_torque_threshold_interpolated;  // 0x00801e2e
+extern byte security_key_failure_count;  // 0x00801e76
 extern undefined tach_output_minimum_rpm;  // 0x00801e78
 extern undefined fuel_statistics_fault_timer;  // 0x00801e7a
 extern undefined non_idle_run_time_counter;  // 0x00801e86
@@ -1482,12 +1483,13 @@ extern undefined rpm_derate_calculation_table_ptr;  // 0x00803880
 extern can_message_buffer_t can_message_buffer_end;  // 0x00803882
 extern undefined ecu_identity_header;  // 0x00803b00
 extern undefined ecu_identity_marker_1;  // 0x00803b0a
-extern undefined ecu_identity_test_pattern;  // 0x00803b0c
+extern byte security_master_password_cal[6];  // 0x00803b0c
 extern undefined ecu_serial_number;  // 0x00803b15
 extern undefined eeprom_hour_meter_buffer;  // 0x00803b3e
 extern undefined ecu_unit_marker;  // 0x00803b44
 extern undefined eeprom_engine_run_time_buffer;  // 0x00803b50
 extern undefined ecu_build_date;  // 0x00803b88
+extern word calibration_download_security_key_cal;  // 0x00803b98
 extern undefined lsg_base_reference_speed_calibration;  // 0x00803b9e
 extern undefined calibration_feature_enable_flags_word_0;  // 0x00803c94
 extern undefined calibration_feature_enable_flags_word_1;  // 0x00803c96

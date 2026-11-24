@@ -1989,7 +1989,7 @@ extern byte retarder_tsc1_ignored_request_entries;  // 0x003fb966
 extern byte engine_tsc1_ignored_request_count;  // 0x003fb9a2
 extern byte retarder_tsc1_ignored_request_count;  // 0x003fb9a3
 extern word scheduler_task_flags_snapshot;  // 0x003fb9a6
-extern byte security_sequence_step;  // 0x003fb9a8
+extern byte security_key_failure_count;  // 0x003fb9a8
 extern word tachometer_minimum_engine_speed;  // 0x003fb9aa
 extern word coolant_temperature_linearization_cached_axis_offset;  // 0x003fb9ac
 extern ema_filter_state_t coolant_temperature_sensor_filter_state;  // 0x003fb9ae
@@ -2092,6 +2092,7 @@ extern void * sensor_cal_rom_read_ptr;  // 0x003fd2d4
 extern void * sensor_cal_ram_write_ptr;  // 0x003fd2d8
 extern j1939_receive_handler_entry_t j1939_receive_handler_table[17];  // 0x003fd414
 extern byte eeprom_mirror;  // 0x003fd482
+extern byte security_master_password_cal[6];  // 0x003fd484
 extern dword key_on_hour_meter_cal;  // 0x003fd4b2
 extern word ecm_hardware_type_identifier_cal;  // 0x003fd4b8
 extern dword engine_hour_meter_cal;  // 0x003fd4c4

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Mon Nov 23 16:25:46 MST 2026
+// Generated: Mon Nov 23 17:02:29 MST 2026
 
 
 //
@@ -22665,7 +22665,7 @@ byte writeJ1939DiagnosticMemory(dword request,dword address,dword length)
     if ((_diagnostic_session_state == 1) && (_calibration_data_valid_flag != 0)) {
       return 7;
     }
-    if (_DAT_00803b98 != 0xff) {
+    if (calibration_download_security_key_cal != 0xff) {
       if (!bVar2) {
         return 0x1a;
       }
@@ -22682,7 +22682,7 @@ byte writeJ1939DiagnosticMemory(dword request,dword address,dword length)
     cm550_memcpy((short)(address - 0x7fc4f6),uVar7);
     return 0;
   }
-  if (_DAT_00803b98 != 0xff) {
+  if (calibration_download_security_key_cal != 0xff) {
     if (!bVar2) {
       return 3;
     }
@@ -22922,15 +22922,13 @@ uint getJ1939MemoryServiceHeaderLength(undefined4 param_1)
 // Function: cm550_diagnosticServiceSecurityValidator @ 0x00021982
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 undefined4 cm550_diagnosticServiceSecurityValidator(dword msg_ptr)
 
 {
   byte auth_result;
   int required_param_len;
-  word msg_length;
   byte service_id;
+  word msg_length;
   
   service_id = **(byte **)(msg_ptr + 6);
   msg_length = *(word *)(msg_ptr + 4);
@@ -22947,7 +22945,7 @@ undefined4 cm550_diagnosticServiceSecurityValidator(dword msg_ptr)
     required_param_len = 1;
   }
   if ((('\x01' << (service_id & 7) & *(byte *)(((int)(uint)service_id >> 3) + 0x60f98)) == 0) ||
-     (_DAT_00803b98 == 0xff)) {
+     (calibration_download_security_key_cal == 0xff)) {
     if ((msg_length == 8) || ((uint)msg_length == required_param_len + 10U)) {
       return 0xff;
     }
@@ -33953,13 +33951,13 @@ void unscrambleSecurityKey(byte *input_buffer,byte *output_buffer)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Checks the 10-byte security key of a secured request: 0 (pass) when the key byte 0x803b98 is
-   0xff; 1 once the failure count 0x801e76 reaches 0x11 (a lockout after 17 misses); else
-   unscrambleSecurityKey gives 6 characters (compared with ecu_identity_test_pattern) and a 4-byte
-   hour meter stamp ((meter & ~0xff) - (stamp & ~0xff) < 0x1a): a match clears the count and passes
-   / a miss adds one and fails. Called by writeJ1939DiagnosticMemory (types 3 / 5) and
-   diagnosticCommandDispatcher (J1708 command 3). The same function as CM848 0x5573c (shared name;
-   was sensorRangeValidation; PR #53 round 72). */
+/* Checks the 10-byte security key of a secured request: 0 (pass) when
+   calibration_download_security_key_cal is 0xff; 1 once security_key_failure_count reaches 0x11 (a
+   lockout after 17 misses); else unscrambleSecurityKey gives 6 characters (compared with
+   security_master_password_cal) and a 4-byte hour meter stamp ((meter & ~0xff) - (stamp & ~0xff) <
+   0x1a): a match clears the count and passes / a miss adds one and fails. Called by
+   writeJ1939DiagnosticMemory (types 3 / 5) and diagnosticCommandDispatcher (J1708 command 3). The
+   same function as CM848 0x5573c (shared name; was sensorRangeValidation; PR #53 round 72). */
 
 byte validateSecurityKey(byte *auth_payload_ptr)
 
@@ -33971,17 +33969,17 @@ byte validateSecurityKey(byte *auth_payload_ptr)
   uint *puVar4;
   byte *pbVar5;
   uint local_12;
-  byte abStack_e [6];
+  byte extracted_key [6];
   byte hour_meter_bytes [4];
   
-  if (_DAT_00803b98 == 0xff) {
+  if (calibration_download_security_key_cal == 0xff) {
     validation_result = 0;
   }
-  else if (DAT_00801e76 == '\x11') {
+  else if (security_key_failure_count == 0x11) {
     validation_result = 1;
   }
   else {
-    unscrambleSecurityKey(auth_payload_ptr,abStack_e);
+    unscrambleSecurityKey(auth_payload_ptr,extracted_key);
     bVar2 = 1;
     puVar4 = &local_12;
     pbVar5 = hour_meter_bytes;
@@ -33994,26 +33992,26 @@ byte validateSecurityKey(byte *auth_payload_ptr)
                     /* Constant: HOUR_METER_TOLERANCE = 0x19 */
     if ((_hour_meter_ecm_run_time_none & 0xffffff00) - (local_12 & 0xffffff00) < 0x1a) {
       bVar1 = true;
-      pbVar5 = abStack_e;
+      pbVar5 = extracted_key;
       for (cVar3 = '\0'; (bVar1 && (cVar3 < '\x06')); cVar3 = cVar3 + '\x01') {
                     /* Constant: SECURITY_KEY_LENGTH = 0x06 */
-        if ((&ecu_identity_test_pattern)[(short)cVar3] != *pbVar5) {
+        if (security_master_password_cal[(short)cVar3] != *pbVar5) {
           bVar1 = false;
         }
         pbVar5 = pbVar5 + 1;
       }
       if (bVar1) {
         validation_result = 0;
-        DAT_00801e76 = '\0';
+        security_key_failure_count = 0;
       }
       else {
         validation_result = 1;
-        DAT_00801e76 = DAT_00801e76 + '\x01';
+        security_key_failure_count = security_key_failure_count + 1;
       }
     }
     else {
       validation_result = 1;
-      DAT_00801e76 = DAT_00801e76 + '\x01';
+      security_key_failure_count = security_key_failure_count + 1;
     }
   }
   return validation_result;

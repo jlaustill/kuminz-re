@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 23 16:27:25 MST 2026
+// Generated: Mon Nov 23 17:04:11 MST 2026
 
 
 //
@@ -1890,10 +1890,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
-  word direction_register_value;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -6285,9 +6285,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
+  dword runtime_value;
   word counter_value;
   byte prescaler_count;
-  dword runtime_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -59748,63 +59748,63 @@ void unscrambleSecurityKey(int param_1,int param_2)
 //
 
 /* Checks the 10-byte security key of a secured request: 0 (pass) when
-   calibration_download_security_key_cal is 0xff; 1 once security_sequence_step - the failure count
-   - reaches 0x11 (a lockout after 17 misses); else unscrambleSecurityKey gives 6 characters
-   (compared with the EEPROM string at 0x3fd484) and a 4-byte hour meter stamp ((key_on_hour_meter &
-   ~0xff) - (stamp & ~0xff) < 0x1a): a match clears the count and passes / a miss adds one and
-   fails. Called by writeJ1939DiagnosticMemory (types 3 / 5) and
-   cm848_validateJ1939DiagnosticRequest. The same function as CM550 0x2fcdc (shared name; was
-   cm848_processSecurityCodeConversion; PR #53 round 72). */
+   calibration_download_security_key_cal is 0xff; 1 once security_key_failure_count reaches 0x11 (a
+   lockout after 17 misses); else unscrambleSecurityKey gives 6 characters (compared with
+   security_master_password_cal) and a 4-byte hour meter stamp ((key_on_hour_meter & ~0xff) - (stamp
+   & ~0xff) < 0x1a): a match clears the count and passes / a miss adds one and fails. Called by
+   writeJ1939DiagnosticMemory (types 3 / 5) and cm848_validateJ1939DiagnosticRequest. The same
+   function as CM550 0x2fcdc (shared name; was cm848_processSecurityCodeConversion; PR #53 round
+   72). */
 
 undefined4 validateSecurityKey(undefined4 param_1)
 
 {
   bool bVar1;
   byte bVar2;
-  char *pcVar3;
-  char *pcVar4;
+  byte *pbVar3;
+  byte *pbVar4;
   undefined4 uVar5;
   byte bVar6;
   char cVar7;
-  char cStack_19;
+  byte bStack_19;
   uint local_18;
-  char local_14 [6];
-  char local_e [6];
+  byte local_14 [6];
+  byte local_e [6];
   
-  bVar2 = security_sequence_step;
+  bVar2 = security_key_failure_count;
   if (calibration_download_security_key_cal == 0xff) {
     uVar5 = 0;
   }
-  else if (security_sequence_step == 0x11) {
+  else if (security_key_failure_count == 0x11) {
     uVar5 = 1;
   }
   else {
     unscrambleSecurityKey(param_1,local_14);
     bVar6 = 1;
-    pcVar3 = local_14 + 5;
-    pcVar4 = &cStack_19;
+    pbVar3 = local_14 + 5;
+    pbVar4 = &bStack_19;
     do {
-      pcVar3 = pcVar3 + 1;
-      pcVar4 = pcVar4 + 1;
-      *pcVar4 = *pcVar3;
+      pbVar3 = pbVar3 + 1;
+      pbVar4 = pbVar4 + 1;
+      *pbVar4 = *pbVar3;
       bVar6 = bVar6 + 1;
     } while (bVar6 < 4);
     if ((key_on_hour_meter & 0xffffff00) - (local_18 & 0xffffff00) < 0x1a) {
       bVar1 = true;
       cVar7 = '\0';
       do {
-        if (local_14[cVar7] != s_ABCDEF_003fd484[cVar7]) {
+        if (local_14[cVar7] != security_master_password_cal[cVar7]) {
           bVar1 = false;
         }
         cVar7 = cVar7 + '\x01';
       } while ((bVar1) && (cVar7 < '\x06'));
       if (bVar1) {
-        security_sequence_step = 0;
+        security_key_failure_count = 0;
         return 0;
       }
     }
     uVar5 = 1;
-    security_sequence_step = bVar2 + 1;
+    security_key_failure_count = bVar2 + 1;
   }
   return uVar5;
 }
