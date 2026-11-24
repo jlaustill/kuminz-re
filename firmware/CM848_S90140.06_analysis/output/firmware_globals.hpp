@@ -1311,7 +1311,7 @@ extern ENGINE_STATE engine_state_prev_state_machine;  // 0x003fa85a
 extern ENGINE_STATE engine_state_prev_rpm;  // 0x003fa85c
 extern ENGINE_STATE engine_state_prev_fuel;  // 0x003fa85e
 extern word engine_overspeed_debounce_count;  // 0x003fa860
-extern byte mios_timer_active_flag;  // 0x003fa862
+extern byte engine_state_key_on_previous_flag;  // 0x003fa862
 extern byte engine_overspeed_active_flag;  // 0x003fa863
 extern dword fault_event_timing_prev;  // 0x003fa864
 extern word active_fault_scan_counter;  // 0x003fa868
@@ -4703,8 +4703,8 @@ extern word engine_retarder_controlling_tsc1_control_byte;  // 0x0040ad60
 extern word engine_retarder_torque_limit_percent;  // 0x0040ad62
 extern word engine_retarder_torque_request_percent;  // 0x0040ad64
 extern word engine_retarder_requested_torque_percent;  // 0x0040ad66
-extern word can_tx_mailbox_start_index;  // 0x0040ad68
-extern word can_tx_mailbox_end_index;  // 0x0040ad6a
+extern word j1939_transmit_message_object_number;  // 0x0040ad68
+extern word j1939_last_receive_message_object_number;  // 0x0040ad6a
 extern word j1939_engine_name;  // 0x0040ad6c
 extern word j1939_source_address;  // 0x0040ad74
 extern word j1939_engine_retarder_name;  // 0x0040ad76

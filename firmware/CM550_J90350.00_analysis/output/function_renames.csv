@@ -14,7 +14,7 @@ address,name
 0x0000395a,mc68k_waitForChipSelect2InputBit0High,Services both watchdogs (SIM_SWSR / CS2_WATCHDOG_SERVICE) and then waits until bit 0 of the chip select 2 device's register 0 (0xFFD000) reads 1 in 5 consecutive samples (cm550_busyWaitDelayLoop between them) - the same pattern as CM848's cm848_waitForStableIgnitionKeyOn; the signal is not identified (was cm550_FUN_0000395a; PR #53 round 84; mc68k_ because it polls the chip select 2 device's register 0xFFD000 - the watchdog kick alone would not make it mc68k_ (commit 16143a5c); round 84 stage B / round 85)
 0x000039a8,mc68k_checkSerialEepromSignature,Reads the serial EEPROM's first word over the QSPI and checks it: sets up the QSPI (QSM_SPCR0-2 / QSM_PQSPAR / QSM_DDRQS) - queues READ (command 3) at address 0 and 14 clock bytes - waits for QSM_SPSR - returns 0x6000 when the received QSM_RR2:QSM_RR3 is 0x600d (CM848's ECM_STATUS_CALIBRATION_VALID) and 1 otherwise. No TPU or QADC register is involved (was mc68k_tpuAndQadcVerification; PR #53 round 81)
 0x00003a94,mc68k_hardwareInitAndStartup
-0x00003abe,mc68k_FUN_00003abe
+0x00003abe,mc68k_restartBootRomWithoutReset,This is the boot ROM's software-restart entry: a point inside the body of mc68k_hardwareInitAndStartup that has its own function row, like cm550_restartApplicationWithoutReset (0x28978) inside mc68k_applicationMain. How it is reached: (a) restartThroughBootRom (0x1192a, twin of CM848 0x216fc) masks interrupts, sets SP to 0x811000, loads the long at ROM 0x8 and jumps to it. (b) (was mc68k_FUN_00003abe; PR #53 round 88)
 0x00003c20,cm550_ramClearWithWatchdog
 0x0000ac3c,cm550_FUN_0000ac3c
 0x0000af70,cm550_FUN_0000af70
@@ -51,7 +51,7 @@ address,name
 0x0000c714,cm550_fuelParameterPointerSetup
 0x0000c742,cm550_shutdownMinimumSelector15
 0x0000c760,mc68k_configureCanCs5MessageObjects,Sets up the 82527 CAN controller on chip select 5: stores its base &CAN_CS5_CONTROL in 0x8000f0 - sets _can_1_chip_s_last_message_object_used_0_15 to 6 - sets CAN_CS5_CONTROL bits 0x0a - and configures message objects 1-6: 1 / 3 / 5 receive (configuration 0x80) 11-bit identifiers 0x112 / 0x512 / 0x712 and 2 / 4 / 6 transmit (0x88) 0x100 / 0x500 / 0x700. No TPU register is involved (was mc68k_tpuTimerInitializer; PR #53 round 79)
-0x0000c80c,ignoreCanTransmitInterrupt,The body is one rts. Both of its callers are 82527 transmit-interrupt branches, and both push the message object number as a word. vp44_handleCanCs5TransmitInterrupt calls it for any CS5 object with TXIE set. The CS4 transmit branch (cm550_serialNodeAddressChecker) calls it for every object except the one at 0x80D9F4, whose transmit interrupt sends the next queued J1939 frame. (was cm550_emptyStubFunction1; PR #53 round 87; the twin of CM848 0x26f78: one shared name)
+0x0000c80c,ignoreCanTransmitInterrupt,The body is one rts. Both of its callers are 82527 transmit-interrupt branches, and both push the message object number as a word. vp44_handleCanCs5TransmitInterrupt calls it for any CS5 object with TXIE set. The CS4 transmit branch (handleJ1939CanTransmitInterrupt) calls it for every object except the one at 0x80D9F4, whose transmit interrupt sends the next queued J1939 frame. (was cm550_emptyStubFunction1; PR #53 round 87; the twin of CM848 0x26f78: one shared name)
 0x0000c80e,vp44_dispatchReceivedPumpMessage,The function has no 'mode'. It dispatches a frame received on the chip select 5 82527 by message object number, and that controller carries the VP44 pump link. The low byte of its word argument is the message object number (interrupt code - 2). (was cm550_modeBasedDataDispatcher; PR #53 round 87)
 0x0000c87c,cm550_FUN_0000c87c
 0x0000c87e,cm550_FUN_0000c87e
@@ -116,19 +116,19 @@ address,name
 0x00010f32,cm550_loadParameterBlock2FromFlash,The block 2 loader: it copies flash 0x6000-0x75B3 into the same RAM copy - sets parameter_block_uploaded = 2 and returns 0 - only when the word sum of 0x6000-0x75B3 matches EEPROM 0xA (no marker exception); otherwise it returns 1. Its only hardware access is the inline watchdog kick, so not mc68k_ (commit 16143a5c) (was cm550_calibrationDataCopySecondary; PR #53 round 85)
 0x00010fe0,cm550_saveParameterBlock1ToFlash,Saves the RAM copy (0x804F96) into flash parameter block 1: it bumps parameter_block_1_save_start_count_cal so the sum of the two blocks' save start counts ends odd (block 1 = newest) - erases block 0x4000 with cm550_flashEraseFromRam - programs 0x4000-0x55B1 - stores the new block sum in parameter_block_1_checksum_cal (EEPROM 0x8) and the start count in parameter_block_1_save_complete_count_cal (0x803FD8) - and sets parameter_block_uploaded = 1. Returns 0 saved / 2 a program step failed / 1 or 2 after a failed erase. Its only hardware access is the inline watchdog kick, so not mc68k_ (commit 16143a5c) (was cm550_eepromCalibrationWriteSecondary; PR #53 round 85)
 0x0001125a,cm550_saveParameterBlock2ToFlash,The block 2 saver: the sum of the save start counts ends even (block 2 = newest); it erases block 0x6000 - programs 0x6000-0x75B1 from RAM 0x804F96 - stores the block sum in parameter_block_2_checksum_cal (EEPROM 0xA) and the start count in parameter_block_2_save_complete_count_cal (0x803FE0) - and sets parameter_block_uploaded = 2. The same return codes as cm550_saveParameterBlock1ToFlash. Its only hardware access is the inline watchdog kick, so not mc68k_ (commit 16143a5c) (was cm550_FUN_0001125a; PR #53 round 85)
-0x000114d4,vp44_validateRedundantSensors
+0x000114d4,cm550_loadParameterBlockAndUpdatePowerDownCounts,No sensor is read. The function has two parts. (1) It clears parameter_block_uploaded and loads a flash parameter block. When both marker words 0x55B2 and 0x75B2 hold 0xA1A1, it loads block 1 and clears the RAM copy of the marker at 0x806548. (was vp44_validateRedundantSensors; PR #53 round 88)
 0x000117ec,copyCalibrationFromRomToRam,Copies 2401 dwords from ROM 0x61376-0x638F9 (above the dumped 256 KB) into RAM 0x80654A-0x808ACD - the calibration parameters (1757 named e2m rows there) - once at start-up after clearWorkingRam. CM848's copyCalibrationFromRomToRam holds the same start-up slot. Its only hardware access is the inline watchdog kick, so not mc68k_ (commit 16143a5c) (was cm550_firmwareDataCopyToWorkingMemory; PR #53 round 85) | (was cm550_copyCalibrationFromRomToRam; PR #53 round 87; the twin of CM848 0x4bd00: one shared name)
-0x0001183e,cm550_FUN_0001183e
+0x0001183e,cm550_requestClearInactiveFaults,Counterpart, not a twin, of CM848 0x21584 cm848_requestClearInactiveFaults. The step is the same: the CLEAR_INACTIVE bit of e2m 1080 +2 DGJCFUCC (diagnostic_clear_request_state) goes 0 -> 1, 1 -> 1, 2 -> 3, 3 -> 3. The results are the same: 0 accepted, 7 not safe. The acceptance gate differs. (was cm550_FUN_0001183e; PR #53 round 88)
 0x0001188c,exitDevelopmentMode,Leaves development mode: only while development_mode (0x80de30) is 1 - clears it / ram_refresh_enable on / run_location RUN_LOCATION_NORMAL / result 0; else 4. The same function as CM848 0x21624 (shared name; was cm550_waterInFuelDetectionStateInit; PR #53 round 73).
 0x000118b2,enterDevelopmentMode,Enters development mode (J1708 command 3 subcommand 0x40 after the security key): ram_refresh_enable off / development_mode (0x80de30) set / run_location RUN_LOCATION_DEVELOPMENT; result 0. The same function as CM848 0x21668 (shared name; was cm550_waterInFuelFaultClear; PR #53 round 73).
 0x000118cc,forceExitDevelopmentMode,Forces an exit from development mode (J1708 command 3 subcommand 0x41 after the security key): 7 while not_safe_to_program_flag is 1; else ram_refresh_enable on and - when run_location is RUN_LOCATION_DEVELOPMENT - run_location RUN_LOCATION_NORMAL and development_mode (0x80de30) cleared; result 0. The same function as CM848 0x21694 (shared name; was cm550_FUN_000118cc; PR #53 round 73).
-0x000118fc,cm550_activateHighRpmShutdownFlag
+0x000118fc,commandEngineShutdown,Twin of CM848 0x216e8 commandEngineShutdown (one shared name; the CM848 row follows). Both store word 1 in the e2m 10B1 +12 SHSS record ('TURN OFF ALL SOLENOIDS': engine_shutdown_command_flag) and return 0, as service 6, fifth in the same registrar. Nothing in it tests rpm, so the old high-rpm name is wrong. CM550 also reaches it as J1708 command 66. (was cm550_activateHighRpmShutdownFlag; PR #53 round 88; the twin of CM848 0x216e8: one shared name)
 0x00011908,handleJ1939RestartService,It is registered as J1939 diagnostic service 11 in the same registrar order as CM848 (services 1, 7, 10, 22, 6, 11, 24, 21), and its whole body is restartThroughBootRom(request, 0), as CM848's is. It writes no EEPROM itself. (was cm550_eepromWriteWrapper; PR #53 round 87; the twin of CM848 0x218dc: one shared name)
 0x0001191a,cm550_restartThroughBootRomAfterJ1708Request,mc68k_dispatchJ1708ReceivedMessages jumps here for J1708 message type 3, then command 67 (0x43: entry 3 of its 21-entry table at 0x160b8, which covers the commands 0x40-0x54). It calls restartThroughBootRom(0, 1), where acknowledge 1 = the J1708 diagnostic message queue (cm550_diagnosticMessageQueueWrite writes the J1708 transmit ring). (was cm550_triggerDiagnosticSystemReset; PR #53 round 87)
 0x0001192a,restartThroughBootRom,Software restart into the boot ROM without a hardware reset (the twin of CM848 0x216fc): only in engine_state 1, otherwise it returns 7. It waits for the EEPROM write queue to drain (500-tick waits), saves the two hour meters to the EEPROM mirror at 0x803b3e / 0x803b50 (while ram_refresh_enable is on it waits for each write to arrive, otherwise it waits 250 ticks), acknowledges the request on the link its second argument names (0 the J1939 response frame - 1 the J1708 diagnostic message queue; CM848's case 2 is its SCI byte), waits 50000 ticks, clears output request bit 4 of 0x80bcf8 when 0x80bd2e is 0, strobes the outputs (mc68k_ioDriverStrobeHandler) and jumps through the ROM vector at 0x8 (was cm550_FUN_0001192a; PR #53 round 87; the twin of CM848 0x216fc: one shared name)
-0x00011a68,cm550_FUN_00011a68
-0x00011a74,commitEepromMirrorToEeprom,Writes the EEPROM mirror 0x803b0a-0x804155 back to the EEPROM: 7 while not_safe_to_program_flag is 1; else 16-byte chunks through cm550_circularBufferWrite (the EEPROM byte write queue) with up to 16000 waits for the queue each; 0. The same function as CM848 0x21918 (shared name; was cm550_FUN_00011a74; PR #53 round 73).
-0x00011b36,cm550_systemFunction8xMaximum
+0x00011a68,inhibitKeyOffShutdown,Twin of CM848 0x21904 inhibitKeyOffShutdown (one shared name; the CM848 row follows). Both store word 1 in key_off_shutdown_inhibit_flag (CM550 0x80de2e, the same record; see its global row) and return 0, as service 24, seventh in the same registrar. CM550 also reaches it as J1708 command 82. (was cm550_FUN_00011a68; PR #53 round 88; the twin of CM848 0x21904: one shared name)
+0x00011a74,cm550_commitEepromMirrorToEeprom,Writes the EEPROM mirror 0x803b0a-0x804155 back to the EEPROM (J1939 diagnostic service 21; J1708 command 84): 7 while not_safe_to_program_flag is 1; otherwise 16-byte chunks through cm550_circularBufferWrite (the EEPROM byte write queue) with up to 16000 waits each, and two failed queue writes end it (11, clearing 0x80ddd3). On success it clears power_down_refresh_enable, arms a deferred J1708 reply (0x80dde4 = 1) and returns 0xff, so the J1939 dispatcher sends no response frame. Counterpart, not a twin, of CM848's cm848_commitEepromMirrorToEeprom, which answers the J1939 request (0) (was commitEepromMirrorToEeprom, a name round 73 shared with CM848 0x21918; PR #53 round 88)
+0x00011b36,registerJ1939DiagnosticHandlers,Twin of CM848 0x21a24 registerJ1939DiagnosticHandlers (one shared name; the CM848 row follows). Same steps in the same order: 8 calls of the same registration helper (0x2ee62, the twin of CM848 0x220e4) with the same service constants 1, 7, 10, 22, 6, 11, 24, 21 and the corresponding handlers (services 7/10/22/11 are already shared twins). (was cm550_systemFunction8xMaximum; PR #53 round 88; the twin of CM848 0x21a24: one shared name)
 0x00011da6,cm550_crc16Calculate
 0x00011df8,cm550_memoryPatchCrcCalculate
 0x00011e5e,cm550_coldStartFuelControlSlowCycle40Coordinator
@@ -171,7 +171,7 @@ address,name
 0x00015dd0,cm550_initializeDiscreteInputs,The start-up set-up of the discrete inputs: points discrete_input_override_mask_ptr at switch_override_configuration and runs mc68k_sampleAndDebounceDiscreteInputs 4 times. It monitors no VP44 status, and its own body has no hardware access, so cm550_ (was vp44_initVP44StatusMonitoring; PR #53 round 87)
 0x00015df0,mc68k_initializeDiscreteOutputDrivers,The start-up set-up of the discrete outputs. mc68k_applicationMain calls it once (jsr at 0x28708), after the discrete input set-up cm550_initializeDiscreteInputs (0x15dd0) and cm550_initADCChannelConfiguration. 1. It writes the default output states into the output images 0x80bcf6-0x80bcfb, each only while no client holds that output's override slot (0x80bd1a + n). 2. It sets up the chip select 2 output driver: registers 8 / 9 / 10 = 0x0F / 0x80 / 0x80, output port 1 (0xFFD004) cleared, port 2 bit 7 (0xFFD006) cleared. 3. It starts TPU channel 13 (function 0xE, PARAM0 0x113) with a handshake: HSR 2 and wait for PARAM1 bit 15 = 0, HSR 1 and wait for 1, HSR 2 and wait for 0; then it sets port 2 bit 7 and issues HSR 1. 4. It ends with mc68k_ioDriverStrobeHandler, which writes the ports from the images and drives channel 13 from bit 5 of 0x80bcfb (set: HSR 2, clear: HSR 1), most likely the fuel shut-off command (was mc68k_FUN_00015df0; PR #53 round 87)
 0x00015f8c,cm550_emptyStubFunction4,Empty function (a single rts); its one call is in mc68k_sampleAndDebounceDiscreteInputs. Its old name emptyStubFunction4 was shared with CM848 0x26f78, which is the CAN transmit-complete hook ignoreCanTransmitInterrupt (the twin of CM550 0xc80c), not this stub (was emptyStubFunction4; PR #53 round 87)
-0x00015f8e,mc68k_dispatchJ1708ReceivedMessages,Drains the J1708 receive buffer for at most 500 CTM4_BIUTBR ticks: first it sends the deferred reply commitEepromMirrorToEeprom arms (once the EEPROM write queue is empty); each record is [length][message bytes] and the first message byte picks the handler (3 = the 10-byte key through validateSecurityKey and then commands 0x40-0x54 - 4 = control commands 0x64-0x76 - 5 = memory read / write / multipacket). Its old shared name came from a pairing CM848 later dropped (was diagnosticCommandDispatcher; PR #53 round 85)
+0x00015f8e,mc68k_dispatchJ1708ReceivedMessages,Drains the J1708 receive buffer for at most 500 CTM4_BIUTBR ticks: first it sends the deferred reply cm550_commitEepromMirrorToEeprom arms (once the EEPROM write queue is empty); each record is [length][message bytes] and the first message byte picks the handler (3 = the 10-byte key through validateSecurityKey and then commands 0x40-0x54 - 4 = control commands 0x64-0x76 - 5 = memory read / write / multipacket). Its old shared name came from a pairing CM848 later dropped (was diagnosticCommandDispatcher; PR #53 round 85)
 0x0001645e,cm550_safeDivideWithClamp
 0x0001651e,cm550_clampedDivisionCalculator
 0x000165f2,cm550_param_address_calc
@@ -205,8 +205,8 @@ address,name
 0x00017e62,cm550_engineOperatingModeStateTrackingSlowCycle40Coordinator
 0x00017eba,cm550_frictionalLoadTorqueTransitionHandler
 0x00017ef8,vp44_fuelLimitParameterPointerSetup
-0x00017f7c,vp44TimingFaultMonitor
-0x00018384,cm550_FUN_00018384
+0x00017f7c,cm550_updateEngineState,This is the engine state update, not a VP44 timing fault monitor. (1) (was vp44TimingFaultMonitor; PR #53 round 88)
+0x00018384,initializeEngineState,Twin of CM848 0x1c978 (initializeEngineState). Both do the same 3 stores in the same order with the same widths and constants: key_off_shutdown_mode (e2m 120C +4) = 0, engine_state = 1 (STOPPED), engine_state_key_on_previous_flag = 0. Both are called once from the application main's start-up init list. One shared unprefixed name. (was cm550_FUN_00018384; PR #53 round 88; the twin of CM848 0x1c978: one shared name)
 0x0001839a,cm550_canRpmModeConfigInit
 0x000183cc,cm550_FUN_000183cc
 0x000184c6,cm550_FUN_000184c6
@@ -284,7 +284,6 @@ address,name
 0x0001b60a,cm550_diagnosticDataTransmissionSlowCycle10Coordinator
 0x0001b612,periodicTaskSet_fuelDemand
 0x0001b62a,vp44_evenPhaseSchedulerTaskSet
-0x0001b666,emptyStubFunction3
 0x0001b668,cm550_FUN_0001b668
 0x0001b66a,cm550_FUN_0001b66a
 0x0001b678,cm550_FUN_0001b678
@@ -300,7 +299,6 @@ address,name
 0x0001b6ce,cm550_slowCycle20Coordinator
 0x0001b6d4,cm550_empty_debug_hook
 0x0001b6d6,cm550_FUN_0001b6d6
-0x0001b6e2,emptyStubFunction2
 0x0001b6e4,cm550_FUN_0001b6e4
 0x0001b6f2,cm550_FUN_0001b6f2
 0x0001b6f8,vp44ProtectionSlowCycle20Coordinator
@@ -381,10 +379,10 @@ address,name
 0x0001de58,cm550_FUN_0001de58
 0x0001e02a,cm550_subtractAndClampValue
 0x0001e04c,cm550_FUN_0001e04c
-0x0001e056,cm550_serialNodeAddressChecker
-0x0001e086,cm550_serialNodeAddressForwarder
+0x0001e056,handleJ1939CanTransmitInterrupt,TWIN (one shared name, a row in each firmware). (was cm550_serialNodeAddressChecker; PR #53 round 88; the twin of CM848 0x53aa8: one shared name)
+0x0001e086,cm550_handleJ1939CanReceiveInterrupt,ADJACENT (the sibling of item 1, same dispatcher): the receive branch of the CS4 82527 interrupt handler (called for object 15 / interrupt code 2, and for objects 1-14 with TXIE clear): if transmit index < n <= last receive object it queues the frame (mc68k_queueCanCs4ReceiveMessage); no serial node address is involved. (was cm550_serialNodeAddressForwarder; PR #53 round 88)
 0x0001e0bc,cm550_canFrameDataCopy
-0x0001e0fa,mc68k_canCs4InterruptHandler,The interrupt handler of the 82527 CAN controller on chip select 4: loops while CAN_CS4_INTERRUPT is non-zero - on a status change it reads CAN_CS4_STATUS and resets the controller (CAN_CS4_CONTROL = 1 / waits for CAN_CS4_CPU_INTERFACE bit 7 / restores the control bits) - and passes message object interrupts to cm550_serialNodeAddressForwarder / cm550_serialNodeAddressChecker (was cm550_FUN_0001e0fa; PR #53 round 81)
+0x0001e0fa,mc68k_canCs4InterruptHandler,The interrupt handler of the 82527 CAN controller on chip select 4: loops while CAN_CS4_INTERRUPT is non-zero - on a status change it reads CAN_CS4_STATUS and resets the controller (CAN_CS4_CONTROL = 1 / waits for CAN_CS4_CPU_INTERFACE bit 7 / restores the control bits) - and passes message object interrupts to cm550_handleJ1939CanReceiveInterrupt / handleJ1939CanTransmitInterrupt (was cm550_FUN_0001e0fa; PR #53 round 81)
 0x0001e1a0,cm550_canMessageInterruptHandlerSetup
 0x0001e1ac,vp44_handleCanCs5TransmitInterrupt,This is the transmit branch of mc68k_canCs5InterruptHandler. For a message object whose control 0 bit 5 (TXIE) is set, the handler calls it with the object number. It passes the low byte of its word argument on, as a word, to the empty transmit hook 0xc80c. (was cm550_emptyStubWrapper1; PR #53 round 87)
 0x0001e1be,vp44_handleCanCs5ReceiveInterrupt,This is the receive branch of mc68k_canCs5InterruptHandler. For a message object whose interrupt fired and whose control 0 bit 5 (TXIE) is clear, the handler calls it with the object number. It passes the low byte of its word argument on, as a word, to the receive dispatcher (vp44_dispatchReceivedPumpMessage). (was cm550_modeBasedDataDispatcherWrapper; PR #53 round 87)
@@ -617,13 +615,13 @@ address,name
 0x0002e5c0,mc68k_pwmFuelDemandOutputCalculator
 0x0002e95e,initQadcModule
 0x0002e9ac,clearWorkingRam,Both run the same chunked clear: test p < limit first, chunk end = p + 256 bytes, clamp the chunk end to the limit, clear dwords while p <= chunk end, repeat. That bound is inclusive in both, so each pass clears 260 bytes and the dword at the limit is cleared too. This shared quirk points to one source. (was cm550_clearWorkingMemory; PR #53 round 87; the twin of CM848 0x538974: one shared name)
-0x0002e9f8,cm550_canMemoryPointerTableInit
-0x0002eadc,cm550_canMessageMemorySyncController
+0x0002e9f8,cm550_initializeRamRefresh,This is the RAM refresh initializer, and it does nothing with CAN. It fills two 12-byte (RAM start, RAM end, source) refresh blocks at 0x801c4e. Block 1 is RAM 0x80654a-0x808acc from ROM 0x61376 (the copyCalibrationFromRomToRam ranges). (was cm550_canMemoryPointerTableInit; PR #53 round 88)
+0x0002eadc,cm550_refreshRamCalibration,This is the RAM refresh pass. It re-initializes on an enable edge and turns the refresh off while parameter_block_uploaded is 0. While the refresh is on, it walks the refresh blocks (it skips block 2 while power_down_refresh_enable is 0, which matches the RRPWEA text) and compares up to words-per-pass words with their source, rewriting each RAM word that differs. (was cm550_canMessageMemorySyncController; PR #53 round 88)
 0x0002ec50,cm550_FUN_0002ec50
 0x0002ed62,cm550_FUN_0002ed62
 0x0002ed6a,cm550_insiteParameterParser
 0x0002edb2,cm550_parameterLookupForInsite
-0x0002ee62,cm550_coreSystemFunction
+0x0002ee62,registerJ1939DiagnosticService,Twin of CM848 0x220e4 registerJ1939DiagnosticService (one shared name; the CM848 row follows). The same steps: it returns 1 when the count byte is 32; otherwise entry = table + count * 6, count + 1, entry byte 0 = the service, entry + 2 = the handler (long), and it returns 0. (was cm550_coreSystemFunction; PR #53 round 88; the twin of CM848 0x220e4: one shared name)
 0x0002eea2,cm550_diagnosticServiceDispatcher
 0x0002ef08,cm550_systemControlFunction1
 0x0002ef1c,cm550_diagnosticResponseHandler2

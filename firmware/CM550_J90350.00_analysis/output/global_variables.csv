@@ -263,7 +263,7 @@ address,name,type,comment
 0x008001ca,engine_runtime_histogram_accumulator,undefined,
 0x008001cc,hour_meter_conversion_state,undefined,
 0x008001d0,hour_meter_tick_counter,undefined,
-0x008001d2,hour_meter_tick_divider,undefined,
+0x008001d2,power_down_count_eeprom_write_value,word,It holds the value that 0x114d4 queues for each EEPROM write of the bookkeeping words; CM848 uses a stack local (local_20) for the same purpose. Its only references are 0x114d4's two movea.l #0x8001d2 into a2 and a5. (was hour_meter_tick_divider; PR #53 round 88)
 0x008001d4,engine_runtime_histogram_interpolation_b,undefined,
 0x008001d6,engine_runtime_histogram_config_type_a,undefined,
 0x008001d8,hour_meter_table_1_ptr,undefined,
@@ -457,14 +457,15 @@ address,name,type,comment
 0x00800550,discrete_input_sample_index,undefined,
 0x00800552,discrete_input_sample_buffer_0,undefined,
 0x008005aa,engine_speed_filter_state,ema_filter_state_t,The filter record of the engine speed (the 2^n pulse average); coefficient -> engine_speed_filter_coefficient (0x807ea8) (PR #53 round 88)
-0x008005fa,vp44_timing_fault_debounce_counter,undefined,
-0x008005fd,vp44_timing_fault_active,undefined,
+0x008005fa,engine_overspeed_debounce_count,word,The count of passes in a row with engine_rpm_primary at or above engine_overspeed_set_rpm_threshold. It is zeroed below the threshold and when the latch sets. Same role and static slot as CM848 engine_overspeed_debounce_count (0x3fa860, word). Only this function touches it. (was vp44_timing_fault_debounce_counter; PR #53 round 88)
+0x008005fc,engine_state_key_on_previous_flag,byte,The key switch state (SWITCHES bit 0, e2m 000E DSKYSWSS 'status of the vehicle key switch - debounced') saved at the end of each engine state pass. A 0 -> 1 change (a key-on edge) clears key_off_shutdown_inhibit_flag. initializeEngineState zeroes it. CM848 holds the same thing at 0x3fa862 (renamed in the CM848 row). (PR #53 round 88)
+0x008005fd,engine_overspeed_active_flag,byte,The engine overspeed latch, the same role and static slot as CM848 engine_overspeed_active_flag (0x3fa863, byte). It is set when the debounce passes engine_overspeed_debounce_limit and cleared below engine_overspeed_clear_rpm_threshold. While it is 1, RUNNING moves to OVERSPEED, and OVERSPEED returns to RUNNING when it is 0. Nothing in it is VP44-specific. (was vp44_timing_fault_active; PR #53 round 88)
 0x00800604,epf_fuel_limit_table_x_input,undefined,
 0x0080060c,epf_source_bitmask,undefined,
 0x0080060e,engine_protection_state_phase_index,undefined,
 0x00800612,engine_protection_speed_limit_filter_state,ema_filter_state_t,The filter record of the engine protection speed limit (Calterm maximum rpm limit filter); coefficient -> engine_protection_speed_limit_filter_coefficient (0x807f3a) (PR #53 round 88)
 0x0080061a,general_counter_1,undefined,
-0x0080061c,engine_protection_shutdown_command_previous,undefined,
+0x0080061c,engine_shutdown_command_flag_previous,word,Extra (droppable): it follows the 0x80d28c rename. It is the previous value of the shutdown command, copied from it at the end of processDiagnosticLimitStatus. That function uses it to count new shutdowns on the 0 -> 1 edge, and it is zeroed in STOPPED and by cm550_FUN_000192e0. (was engine_protection_shutdown_command_previous; PR #53 round 88)
 0x00800622,protection_config_table_ptr,undefined,
 0x00800624,diagnostic_buffer_write_pointer,undefined,
 0x00800626,protection_state_data_ptr,undefined,
@@ -505,6 +506,8 @@ address,name,type,comment
 0x0080095d,insite_multiframe_last_frame_bytes,undefined,
 0x00800aac,idle_switch_debounce_timer,undefined,
 0x00800b00,diagnostic_request_buffer,undefined,
+0x00800b1a,j1939_transport_tx_message,j1939_tx_msg_t,The transmit record cm550_multiPacketBufferAllocator hands out for a reply over 8 bytes, only while its status byte 0x800b28 has a clear 0xf0 nibble: length at +4, data_pointer = 0x800b2a, status_pointer = 0x800b28; sent through sendJ1939MultiFrame. CM848 counterpart: j1939_transport_tx_message (0x3fc4ad). No CSV row inside its 14 bytes. (PR #53 round 88)
+0x00800b28,j1939_transport_transmit_status,byte,The status byte of j1939_transport_tx_message: sendJ1939MultiFrame writes the session codes there, and the allocator refuses the record while its 0xf0 nibble is set (a session running). The dump holds 9, CM848's "9 complete" code of a destination-specific (RTS / CTS) session. CM848 name: j1939_transport_transmit_status (0x3fc4bb). (PR #53 round 88)
 0x00800ed0,multi_packet_small_size,undefined,
 0x00800ed2,multi_packet_small_data_ptr,undefined,
 0x00800ed6,multi_packet_small_status_ptr,undefined,
@@ -531,6 +534,8 @@ address,name,type,comment
 0x00800f69,vp44_expected_sequence,,
 0x00800f6a,serial_port_config_value,,
 0x00800f6c,serial_buffer_pointer,,
+0x00801232,j1939_single_frame_tx_message,j1939_tx_msg_t,The transmit record cm550_multiPacketBufferAllocator (0x23130) hands out for a reply of up to 8 bytes: it stores the length at +4, data_pointer = 0x801242 and status_pointer = 0x801240, and the callers write the CAN id at +0 and pass it to cm550_sendCanMessage. CM848's counterpart record and name: j1939_single_frame_tx_message (0x3fcbc4, from cm848_selectJ1939TransmitBuffer). (PR #53 round 88)
+0x00801240,j1939_single_frame_transmit_status,byte,The status byte of j1939_single_frame_tx_message (its status_pointer target; cm550_sendCanSingleFrame writes 0 / 1 / 4 there). CM848 name: j1939_single_frame_transmit_status (0x3fcbd2). (PR #53 round 88)
 0x0080129a,j1939_multiframe_tx_active,undefined,
 0x0080129b,multiframe_tx_destination_address,undefined,
 0x0080129c,multiframe_tx_pgn_high_byte,undefined,
@@ -832,10 +837,15 @@ address,name,type,comment
 0x00801c00,power_take_off_speed_error_filter,ema_filter_state_t,The signed filter record of the power take-off governor's speed error; coefficient -> power_take_off_speed_error_filter_coefficient (0x80889a) (PR #53 round 88)
 0x00801c08,closed_loop_fuel_output_scaled,undefined,
 0x00801c46,power_take_off_reference_filter_state,ema_filter_state_t,The filter record of the power take-off governor reference (coefficient: Calterm reference speed change constant); coefficient -> power_take_off_reference_filter_coefficient (0x8088ac) (PR #53 round 88)
-0x00801c66,can_memory_sync_table_pointer,undefined,
-0x00801c6a,calibration_sync_rom_pointer,undefined,
-0x00801c6e,calibration_sync_ram_pointer,undefined,
+0x00801c66,ram_refresh_current_block_pointer,pointer,Extra (droppable). It points at the current 12-byte block of the RAM refresh table (0x801c4e or 0x801c5a) and wraps to 0x801c4e after the last block. Nothing about CAN. Typed pointer, as CM848 types its refresh cursors. (was can_memory_sync_table_pointer; PR #53 round 88)
+0x00801c6a,ram_refresh_source_pointer,pointer,Extra (droppable). The source cursor of the RAM refresh: the ROM / flash word that the next RAM word is compared with and copied from (block +8). Renamed to match the other refresh names. (was calibration_sync_rom_pointer; PR #53 round 88)
+0x00801c6e,ram_refresh_target_pointer,pointer,Extra (droppable). The RAM cursor of the refresh: the next RAM word to compare and rewrite (block +0). The current block is finished when the cursor reaches the block's end (+4). (was calibration_sync_ram_pointer; PR #53 round 88)
+0x00801c72,ram_refresh_word_rewritten_flag,word,Extra (droppable). Set to 1 when a RAM word differed from its source and was rewritten. At the end of each cycle it decides the fault: 1 sets fault word 0 bit 1, 0 clears it. Then it is reset. CM848's counterpart is sensor_cal_write_dirty_flag. (PR #53 round 88)
+0x00801c74,ram_refresh_words_per_pass,word,Extra (droppable). The number of words one refresh pass checks: the total words in the refresh blocks / 20 + 1, computed by the initializer. CM848 uses a fixed 100 bytes instead. (PR #53 round 88)
+0x00801c76,ram_refresh_enable_previous,word,Extra (droppable). ram_refresh_enable as it was at the end of the last pass. 0 with the refresh now enabled re-runs the initializer. CM848's counterpart is sensor_cal_session_state_prev. (PR #53 round 88)
 0x00801c78,remote_throttle_active_flag,undefined,
+0x00801c7a,j1939_diagnostic_service_table,j1939_diagnostic_service_entry_t[32],CM848's j1939_diagnostic_service_table (0x3fa8b2, j1939_diagnostic_service_entry_t[32]): the PGN 61184 service table that registerJ1939DiagnosticService appends to (at most 32) and cm550_diagnosticServiceDispatcher scans. 0x801c7a + 32 * 6 = 0x801d3a, the count byte, which is CM848's layout too. It has no global_variables.csv row now. (PR #53 round 88)
+0x00801d3a,j1939_diagnostic_handler_count,byte,CM848's j1939_diagnostic_handler_count (0x3fa972, byte): the entry count of j1939_diagnostic_service_table, compared with 32 and incremented by the registration helper and used as the scan bound by the dispatcher. It sits directly after the 32-entry table in both firmwares. The CM550 dump holds 24, and CM848's row comment says its live value is 24. (PR #53 round 88)
 0x00801d44,tsc1_message_byte_0,undefined,
 0x00801d48,tsc1_message_control_byte,undefined,
 0x00801d4c,torque_control_message_byte_0,undefined,
@@ -852,9 +862,22 @@ address,name,type,comment
 0x00801e8e,idle_cooldown_timer_sustained_run,undefined,
 0x00801e92,lifetime_rpm_running_average,undefined,
 0x00801e94,trip_rpm_running_average,undefined,
+0x00801ea4,j1939_pgn59392_tx_message,j1939_tx_msg_t,PGN 59392 Acknowledgement (ACK / NACK) transmit descriptor. cm550_canBufferSetup1 (0x31b96, called from mc68k_initializeJ1939Datalink) sets header.data_length = 8, data_pointer = 0x801eb2 (the payload: control byte, bytes 1-4 = 0xff, the PGN in bytes 5-7) and status_pointer = 0x801eba; per reply cm550_diagnosticCanResponseSender (0x31b22, 3 callers) writes header.can_id = 0x00e8ff00 + the priority from word 0x803f4e, puts the request's destination byte into byte 3 (our source address) and the requester into byte 2, and sends it with a1 = the descriptor. (PR #53 round 88)
+0x00801eba,j1939_pgn59392_transmit_status,byte,ACK status byte (status_pointer target; references_to.py: 1 reference, the init store at 0x31bac). Dump 0x00. Named as CM848 names it. (PR #53 round 88)
+0x00801ebc,j1939_pgn65269_tx_message,j1939_tx_msg_t,PGN 65269 (AMB Ambient Conditions) transmit descriptor, the j1939_tx_msg_t layout: cm550_j1939MessageSetup_PGN_65265 (frozen J90350.00.ghidra.cpp:34103) writes header.can_id = 0x00fef500 with the priority from word 0x803f50 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 8, data_pointer = 0x801eca, status_pointer = 0x801ed2; the sender at 0x31c08 pushes it to cm550_sendCanMessage. (PR #53 round 88)
+0x00801ed2,j1939_pgn65269_transmit_status,byte,Status byte of j1939_pgn65269_tx_message (its status_pointer target), named as CM848 names them. (PR #53 round 88)
+0x00801ed4,j1939_pgn65265_tx_message,j1939_tx_msg_t,PGN 65265 (CCVS1 Cruise Control/Vehicle Speed 1) transmit descriptor, the j1939_tx_msg_t layout: cm550_FUN_00031ed2 (frozen J90350.00.ghidra.cpp:34221) writes header.can_id = 0x00fef100 with the priority from word 0x803f52 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 8, data_pointer = 0x801ee2, status_pointer = 0x801eea; the sender at 0x31ebc pushes it to cm550_sendCanMessage. (PR #53 round 88)
 0x00801ee2,ccvs_message_byte_0,undefined,
 0x00801ee5,ccvs_message_byte_3,undefined,
 0x00801ee6,ccvs_message_byte_4,undefined,
+0x00801eea,j1939_pgn65265_transmit_status,byte,Status byte of j1939_pgn65265_tx_message (its status_pointer target), named as CM848 names them. (PR #53 round 88)
+0x00801eec,j1939_pgn65261_tx_message,j1939_tx_msg_t,PGN 65261 (CCSS Cruise Control/Vehicle Speed Setup) transmit descriptor, the j1939_tx_msg_t layout: initPgn65261CruiseControlSetupStruct (frozen J90350.00.ghidra.cpp:34275) writes header.can_id = 0x00feed00 with the priority from word 0x803f52 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 8, data_pointer = 0x801efa, status_pointer = 0x801f02; the sender at 0x31fda pushes it to cm550_sendCanMessage. (PR #53 round 88)
+0x00801f02,j1939_pgn65261_transmit_status,byte,Status byte of j1939_pgn65261_tx_message (its status_pointer target), named as CM848 names them. (PR #53 round 88)
+0x00801f04,j1939_pgn65259_tx_message,j1939_tx_msg_t,PGN 65259 (CI Component Identification) transmit descriptor, the j1939_tx_msg_t layout: cm550_engineSerialNumberPGN_65259_Builder (frozen J90350.00.ghidra.cpp:34347) writes header.can_id = 0x00feeb00 with the priority from word 0x803f54 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 40, data_pointer = 0x801f12, status_pointer = 0x801f3a; the sender at 0x320e4 pushes it to cm550_sendCanMessage. (PR #53 round 88)
+0x00801f3a,j1939_pgn65259_transmit_status,byte,Status byte of j1939_pgn65259_tx_message (its status_pointer target), named as CM848 names them. (PR #53 round 88)
+0x00801f3e,j1939_dm10_tx_message,j1939_tx_msg_t,PGN 65234 (DM10 Non-Continuously Monitored Systems Test Identifiers Support) transmit descriptor, the j1939_tx_msg_t layout: cm550_diagnosticDM11PGN_65234_Builder (frozen J90350.00.ghidra.cpp:34434) writes header.can_id = 0x00fed200 with the priority from word 0x803f60 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 2, data_pointer = 0x801f4c, status_pointer = 0x801f54; the sender at 0x32234 pushes it to cm550_sendCanMessage. (PR #53 round 88)
+0x00801f54,j1939_dm10_transmit_status,byte,Status byte of j1939_dm10_tx_message (its status_pointer target), named as CM848 names them. (PR #53 round 88)
+0x00801f56,j1939_dm1_tx_message,j1939_tx_msg_t,PGN 65226 DM1 (active diagnostic trouble codes) transmit descriptor. (PR #53 round 88)
 0x008021fe,j1939_transport_protocol_header,undefined,
 0x00802200,j1939_message_buffer_pgn65227,undefined,
 0x00802204,throttle_fault_handler_state,undefined,
@@ -864,7 +887,8 @@ address,name,type,comment
 0x0080220f,dm2_pgn65227_reserved,undefined,
 0x00802210,dm2_pgn65227_data_buffer,undefined,
 0x00802213,dm2_pgn65227_control_byte,undefined,
-0x00802660,dm2_message_byte_count,undefined,
+0x0080265a,j1939_dm1_transmit_status,byte,DM1 status byte: status_pointer target (stored by the builder at 0x323ec and again by the sender at 0x322bc). Dump 0x05 = CM848's BAM complete code (the 50-byte DM1 went out as a broadcast). Named as CM848 names it. (PR #53 round 88)
+0x0080265c,j1939_dm2_tx_message,j1939_tx_msg_t,PGN 65227 DM2 (previously active codes) transmit descriptor. cm550_diagnosticDM2PGN_65227_Builder (0x3252c, called from cm550_diagnosticDataDump) writes header.can_id = 0x00fecb00 + priority word 0x803f58 + 0x80da01, data_pointer = 0x80266a, status_pointer = 0x802d60, payload byte 1 = 0xff, and registers the DM2 sender cm550_previousDtcListBuilder (0x3241c) for PGN 65227. (were dm2_message_byte_count at +4; PR #53 round 88)
 0x00802904,dm2_pgn65227_unused_byte,undefined,
 0x00802906,j1939_message_buffer_pgn65229,undefined,
 0x0080290a,diagnostic_dtc_response_length,undefined,
@@ -875,6 +899,8 @@ address,name,type,comment
 0x00802919,dtc_response_spn_mid_byte,undefined,
 0x0080291a,dtc_response_spn_low_byte,undefined,
 0x0080291c,dtc_response_fmi_byte,undefined,
+0x00802d60,j1939_dm2_transmit_status,byte,DM2 status byte (status_pointer target; references_to.py: the builder store at 0x3255a and the sender's 0xf0 nibble test at 0x3242a). Dump 0x00. Named as CM848 names it. (PR #53 round 88)
+0x00802d62,j1939_pgn65229_tx_message,j1939_tx_msg_t,PGN 65229 DM4 (freeze frame parameters) transmit descriptor. cm550_diagnosticDM4PGN_65229_Builder (0x329d2, called from cm550_diagnosticDataDump) writes header.can_id = 0x00fecd00 + priority word 0x803f5a + 0x80da01, data_pointer = 0x802d70, status_pointer = 0x803448, initializes 20 freeze frame records of 73 bytes and registers the DM4 sender (0x3258a, misnamed evaluateTemperatureDiagnosticState) for PGN 65229. (PR #53 round 88)
 0x00802fec,dm4_pgn65229_status_byte,undefined,
 0x00802fee,j1939_message_buffer_pgn65230,undefined,
 0x00802ff2,dm5_pgn65230_msg_size,undefined,
@@ -1327,66 +1353,36 @@ address,name,type,comment
 0x00803440,sensor_status_validation_counter,undefined,
 0x00803442,oil_pressure_protection_table_ptr,undefined,
 0x00803446,oil_pressure_table_1_ptr,undefined,
-0x0080344a,oil_pressure_table_2_ptr,undefined,
-0x0080344e,oil_pressure_table_3_ptr,undefined,
-0x00803452,oil_pressure_table_4_ptr,undefined,
-0x00803456,oil_pressure_table_5_ptr,undefined,
+0x00803448,j1939_pgn65229_transmit_status,byte,DM4 status byte (status_pointer target; references_to.py: the builder store at 0x32a02 and the sender's 0xf0 nibble test at 0x3259e). Dump 0x00. Named as CM848 names it. (PR #53 round 88)
+0x0080344a,j1939_pgn65230_tx_message,j1939_tx_msg_t,PGN 65230 (DM5 Diagnostic Readiness 1) transmit descriptor, the j1939_tx_msg_t layout: cm550_diagnosticDM5PGN_65230_Builder (frozen J90350.00.ghidra.cpp:34811) writes header.can_id = 0x00fece00 with the priority from word 0x803f5c (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 8, data_pointer = 0x803458, status_pointer = 0x803460; the sender at 0x32acc pushes it to cm550_sendCanMessage. (were oil_pressure_table_2_ptr at +0 / oil_pressure_table_3_ptr at +4 / oil_pressure_table_4_ptr at +8 / oil_pressure_table_5_ptr at +12; PR #53 round 88)
 0x0080345a,base_timing_table_lookup_arg_345a,undefined,
 0x0080345c,vp44_timing_idle_cmd_ptr,undefined,
-0x00803460,base_timing_rpm_input,undefined,
-0x00803462,vp44_timing_table_size,undefined,
-0x00803464,vp44_timing_fault_limit_ptr,undefined,
-0x00803468,base_timing_fuel_value_input,undefined,
-0x0080346a,vp44_stuck_pump_threshold_ptr,undefined,
-0x0080346e,base_timing_table_lookup_arg_346e,undefined,
+0x00803460,j1939_pgn65230_transmit_status,byte,Status byte of j1939_pgn65230_tx_message (its status_pointer target), named as CM848 names them. The old name base_timing_rpm_input has no other use. (was base_timing_rpm_input; PR #53 round 88)
+0x00803462,j1939_pgn65232_tx_message,j1939_tx_msg_t,PGN 65232 (DM8 Test Results for Non-continuously Monitored Systems) transmit descriptor, the j1939_tx_msg_t layout: vp44_diagnosticDM8PGN_65232_Builder (frozen J90350.00.ghidra.cpp:34846) writes header.can_id = 0x00fed000 with the priority from word 0x803f5e (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 8, data_pointer = 0x803470, status_pointer = 0x803478; the sender at 0x32b54 pushes it to cm550_sendCanMessage. (were vp44_timing_table_size at +0 / vp44_timing_fault_limit_ptr at +2 / base_timing_fuel_value_input at +6 / vp44_stuck_pump_threshold_ptr at +8 / base_timing_table_lookup_arg_346e at +12; PR #53 round 88)
 0x00803470,j1939_dm8_test_identifier,byte,DM8 byte 1 is SPN 1224, Test Identifier. The sender stores its first argument there: the test identifier of the DM7 request being answered (0 or 1). It is the base of the DM8 payload that the descriptor's data pointer names. CM848 names the DM7 request byte j1939_dm7_test_identifier (0x3fa97a). Working RAM. Byte (move.b). (was DAT_00803470; PR #53 round 87)
+0x00803471,j1939_dm8_test_type_component_identifier,byte,DM8 byte 2, SPN 1225 Test Type / Component Identifier: the DM8 builder sets it to 0xff (not available) and nothing else writes it. Completes the round 87 payload names (j1939_dm8_test_identifier / _test_value). CM848 counterpart: DAT_003fad6f (set to 0xff by cm848_initializePgn65232Dm8Buffer). (PR #53 round 88)
 0x00803472,j1939_dm8_test_value,word,Bytes 3-4 of DM8 (PGN 65232, Test Results for Non-continuously Monitored Systems) carry SPN 1226, Test Value. vp44_diagnosticByteResponseSender stores byteSwap16(response_code) there, which is the native word in J1939's little-endian byte order. (was lift_pump_table_lookup_arg_3472; PR #53 round 87)
-0x00803474,vp44_lift_pump_table_ptr,undefined,
-0x00803478,lift_pump_fuel_demand_input,undefined,
+0x00803474,j1939_dm8_test_limit_maximum,word,DM8 bytes 5-6, SPN 1227 Test Limit Maximum: the DM8 builder's move.w #$ffff,(4,a1) (not available) is its only write and nothing reads it as a lift pump table pointer (0 absolute references; the only .cpp use is that store). Word. CM848 counterpart: j1939_pgn65232_field1_init_word (0x3fad72). (was vp44_lift_pump_table_ptr; PR #53 round 88)
+0x00803476,j1939_dm8_test_limit_minimum,word,DM8 bytes 7-8, SPN 1228 Test Limit Minimum: set to 0xffff (not available) by the DM8 builder, its only write. Word. CM848 counterpart: j1939_pgn65232_field2_init_word (0x3fad74). (PR #53 round 88)
+0x00803478,j1939_pgn65232_transmit_status,byte,Status byte of j1939_pgn65232_tx_message (its status_pointer target), named as CM848 names them. The old name lift_pump_fuel_demand_input has no other use. (was lift_pump_fuel_demand_input; PR #53 round 88)
 0x0080347a,vp44_lift_pump_table_2_size,undefined,
 0x0080347c,vp44_lift_pump_table_2_ptr,undefined,
 0x00803480,lift_pump_fuel_value_input,undefined,
-0x00803482,vp44_lift_pump_table_3_ptr,undefined,
-0x00803486,lift_pump_table_lookup_arg_3486,undefined,
-0x0080348a,vp44_can_msg_100_received_flag,undefined,
-0x0080348b,vp44_can_msg_100_retry_counter,undefined,
-0x0080348c,vp44_can_msg_timeout_counter,undefined,
-0x0080348e,lift_pump_diagnostic_mode_flag,undefined,
-0x0080348f,vp44_fso_circuit_fault_flag,undefined,
-0x00803490,vp44_timing_expected_table_ptr,undefined,
+0x00803482,j1939_pgn61441_tx_message,j1939_tx_msg_t,PGN 61441 (EBC1 Electronic Brake Controller 1) transmit descriptor, the j1939_tx_msg_t layout: vp44_FUN_00032c22 (frozen J90350.00.ghidra.cpp:34868) writes header.can_id = 0x00f00100 with the priority from word 0x803f90 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 5, data_pointer = 0x80347a, status_pointer = 0x803490; the sender at 0x32c12 pushes it to cm550_sendCanMessage. (were vp44_lift_pump_table_3_ptr at +0 / lift_pump_table_lookup_arg_3486 at +4 / vp44_can_msg_100_received_flag at +8 / vp44_can_msg_100_retry_counter at +9 / j1939_pgn61441_tx_message.status_pointer at +10 / lift_pump_diagnostic_mode_flag at +12 / vp44_fso_circuit_fault_flag at +13; PR #53 round 88)
+0x00803490,j1939_pgn61441_transmit_status,byte,Status byte of j1939_pgn61441_tx_message (its status_pointer target), named as CM848 names them. The old name vp44_timing_expected_table_ptr has no other use. (was vp44_timing_expected_table_ptr; PR #53 round 88)
 0x00803492,vp44_torque_speed_control_status,undefined,
 0x00803494,vp44_timing_expected_init,undefined,
 0x00803498,vp44_timing_actual_table_ptr,undefined,
-0x0080349a,vp44_diagnostic_threshold_state,undefined,
-0x0080349c,vp44_timing_actual_init,undefined,
-0x008034a0,vp44_fso_fault_active_flag,undefined,
-0x008034a1,vp44_fso_fault_detection_enable,undefined,
-0x008034a2,vp44_fso_warmup_counter,undefined,
-0x008034a4,derate_threshold_change_counter,undefined,
-0x008034a5,vp44_timing_negative_fault_counter,undefined,
-0x008034a6,vp44_timing_max_fault_counter,undefined,
-0x008034a7,vp44_fuel_demand_range_fault_counter,undefined,
-0x008034a8,vp44_timing_min_fault_counter,undefined,
+0x0080349a,j1939_pgn61444_tx_message,j1939_tx_msg_t,PGN 61444 (EEC1 Electronic Engine Controller 1) transmit descriptor, the j1939_tx_msg_t layout: vp44Command0x100Builder (frozen J90350.00.ghidra.cpp:35107) writes header.can_id = 0x00f00400 with the priority from word 0x803f62 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 5, data_pointer = 0x803492, status_pointer = 0x8034a8; the sender at 0x32df2 pushes it to cm550_sendCanMessage. (were vp44_diagnostic_threshold_state at +0 / vp44_timing_actual_init at +2 / vp44_fso_fault_active_flag at +6 / vp44_fso_fault_detection_enable at +7 / vp44_fso_warmup_counter at +8 / j1939_pgn61444_tx_message.status_pointer at +10 / vp44_timing_negative_fault_counter at +11 / vp44_timing_max_fault_counter at +12 / vp44_fuel_demand_range_fault_counter at +13; PR #53 round 88)
+0x008034a8,j1939_pgn61444_transmit_status,byte,Status byte of j1939_pgn61444_tx_message (its status_pointer target), named as CM848 names them. The old name vp44_timing_min_fault_counter has no other use. (was vp44_timing_min_fault_counter; PR #53 round 88)
 0x008034a9,vp44_timing_decrease_fault_counter,undefined,
 0x008034aa,vp44_feedback_pulse_low_fault_counter,undefined,
 0x008034ab,vp44_feedback_pulse_high_fault_counter,undefined,
 0x008034ac,lift_pump_timing_smoothed,undefined,
 0x008034ae,derate_threshold_previous,undefined,
 0x008034b0,fso_fault_previous_value,undefined,
-0x008034b2,fso_fault_latched_value,undefined,
-0x008034b4,fso_bit5_fault_set_counter,undefined,
-0x008034b5,fso_bit5_fault_clear_counter,undefined,
-0x008034b6,fso_fault_debounce_counter,undefined,
-0x008034b7,fso_bit6_fault_clear_counter,undefined,
-0x008034b8,fso_high_cmd_fault_debounce_counter,undefined,
-0x008034b9,fso_low_cmd_fault_clear_counter,undefined,
-0x008034ba,fso_stuck_fault_debounce_counter,undefined,
-0x008034bb,vp44_fso_range1_fault_counter,undefined,
-0x008034bc,vp44_fso_range2_fault_counter,undefined,
-0x008034bd,vp44_fso_recovery_counter,undefined,
-0x008034be,vp44_fso_bit1_range1_fault_counter,undefined,
-0x008034bf,vp44_fso_bit1_range2_fault_counter,undefined,
-0x008034c0,vp44_fso_bit1_recovery_counter,undefined,
+0x008034b2,j1939_pgn61443_tx_message,j1939_tx_msg_t,PGN 61443 (EEC2 Electronic Engine Controller 2) transmit descriptor, the j1939_tx_msg_t layout: vp44_cumminsProprietaryDM_983_Builder (frozen J90350.00.ghidra.cpp:35222) writes header.can_id = 0x00f00300 with the priority from word 0x803f64 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 5, data_pointer = 0x8034aa, status_pointer = 0x8034c0; the sender at 0x33050 pushes it to cm550_sendCanMessage. (were fso_fault_latched_value at +0 / fso_bit5_fault_set_counter at +2 / fso_bit5_fault_clear_counter at +3 / fso_fault_debounce_counter at +4 / fso_bit6_fault_clear_counter at +5 / j1939_pgn61443_tx_message.data_pointer at +6 / fso_low_cmd_fault_clear_counter at +7 / fso_stuck_fault_debounce_counter at +8 / vp44_fso_range1_fault_counter at +9 / j1939_pgn61443_tx_message.status_pointer at +10 / vp44_fso_recovery_counter at +11 / vp44_fso_bit1_range1_fault_counter at +12 / vp44_fso_bit1_range2_fault_counter at +13; PR #53 round 88)
+0x008034c0,j1939_pgn61443_transmit_status,byte,Status byte of j1939_pgn61443_tx_message (its status_pointer target), named as CM848 names them. The old name vp44_fso_bit1_recovery_counter has no other use. (was vp44_fso_bit1_recovery_counter; PR #53 round 88)
 0x008034c1,fso_range_fault_low_counter,undefined,
 0x008034c2,fso_range_fault_high_counter,undefined,
 0x008034c3,fso_range_fault_clear_counter,undefined,
@@ -1396,59 +1392,61 @@ address,name,type,comment
 0x008034c7,vp44_timing_mode_3_low_counter,undefined,
 0x008034c8,vp44_timing_mode_267_low_counter,undefined,
 0x008034c9,vp44_fso_fault_latch_flag,undefined,
-0x008034ca,vp44_fso_condition_counter,undefined,
-0x008034cc,vp44_fso_duration_counter,undefined,
-0x008034ce,vp44_fso_timing_fault_counter,undefined,
-0x008034d0,vp44_fso_bit0_fault_counter,undefined,
-0x008034d2,vp44_fso_bit0_recovery_counter,undefined,
-0x008034d4,vp44_fso_bit15_fault_counter,undefined,
-0x008034d6,vp44_fso_bit15_limit_counter,undefined,
-0x008034d8,vp44_fso_bit15_recovery_counter,undefined,
-0x008034da,vp44_fso_multibit_fault_debounce_counter,undefined,
-0x008034dc,vp44_fso_multibit_clear_flag,undefined,
-0x008034de,vp44_fso_multibit_fault_accumulator,undefined,
-0x008034e0,vp44_fso_multibit_fault_state,undefined,
-0x008034e2,vp44_fso_stuck_high_state,undefined,
-0x008034e4,vp44_fso_stuck_high_recovery_counter,undefined,
-0x008034e6,vp44_fso_zero_timing_fault_counter,undefined,
-0x008034e7,vp44_fso_demand_delta_fault_counter,undefined,
+0x008034ca,j1939_pgn65247_tx_message,j1939_tx_msg_t,PGN 65247 (EEC3 Electronic Engine Controller 3) transmit descriptor, the j1939_tx_msg_t layout: vp44_secondaryParamPGN_65247_Builder (frozen J90350.00.ghidra.cpp:35270) writes header.can_id = 0x00fedf00 with the priority from word 0x803f66 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 4, data_pointer = 0x8034c2, status_pointer = 0x8034d8; the sender at 0x3310a pushes it to cm550_sendCanMessage. (were vp44_fso_condition_counter at +0 / vp44_fso_duration_counter at +2 / vp44_fso_timing_fault_counter at +4 / vp44_fso_bit0_fault_counter at +6 / vp44_fso_bit0_recovery_counter at +8 / j1939_pgn65247_tx_message.status_pointer at +10 / vp44_fso_bit15_limit_counter at +12; PR #53 round 88)
+0x008034d8,j1939_pgn65247_transmit_status,byte,Status byte of j1939_pgn65247_tx_message (its status_pointer target), named as CM848 names them. The old name vp44_fso_bit15_recovery_counter has no other use. (was vp44_fso_bit15_recovery_counter; PR #53 round 88)
+0x008034da,j1939_pgn65263_tx_message,j1939_tx_msg_t,PGN 65263 (EFL/P1 Engine Fluid Level/Pressure 1) transmit descriptor, the j1939_tx_msg_t layout: vp44_engineFluidLevelPGN_65263_Builder (frozen J90350.00.ghidra.cpp:35308) writes header.can_id = 0x00feef00 with the priority from word 0x803f6a (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 8, data_pointer = 0x8034e8, status_pointer = 0x8034f0; the sender at 0x3319c pushes it to cm550_sendCanMessage. (were vp44_fso_multibit_fault_debounce_counter at +0 / vp44_fso_multibit_clear_flag at +2 / vp44_fso_multibit_fault_accumulator at +4 / j1939_pgn65263_tx_message.data_pointer at +6 / vp44_fso_stuck_high_state at +8 / j1939_pgn65263_tx_message.status_pointer at +10 / vp44_fso_zero_timing_fault_counter at +12 / vp44_fso_demand_delta_fault_counter at +13; PR #53 round 88)
 0x008034e8,vp44_fso_rpm_fault_counter,undefined,
+0x008034f0,j1939_pgn65263_transmit_status,byte,Status byte of j1939_pgn65263_tx_message (its status_pointer target), named as CM848 names them. (PR #53 round 88)
 0x008034f8,can_message_buffer_start,byte,(typed byte from the removed can_message_buffer_t.buffer_start - was can_message_buffer_t; PR #53 round 78)
 0x008034fa,calibration_validation_buffer,undefined,
 0x00803500,calibration_checksum_expected_1,undefined,
 0x00803502,calibration_checksum_expected_2,undefined,
-0x0080352c,loop_counter_reference,undefined,
+0x0080352a,j1939_pgn65251_tx_message,j1939_tx_msg_t,PGN 65251 (EC1 Engine Configuration 1) transmit descriptor, the j1939_tx_msg_t layout: initializePgn65251EngineConfiguration1Buffer (frozen J90350.00.ghidra.cpp:35618) writes header.can_id = 0x00fee300 with the priority from word 0x803f68 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 28, data_pointer = 0x8034f2, status_pointer = 0x803538; the sender at 0x33688 pushes it to cm550_sendCanMessage. (were loop_counter_reference at +2; PR #53 round 88)
+0x00803538,j1939_pgn65251_transmit_status,byte,Status byte of j1939_pgn65251_tx_message (its status_pointer target), named as CM848 names them. The EC1 sender tests its 0xf0 nibble first (move.b ($803538).l,d0 ; andi.b #$f0,d0 ; bne skip); dump 0x05 = CM848's BAM complete code 5. (PR #53 round 88)
+0x0080353a,j1939_pgn65253_tx_message,j1939_tx_msg_t,PGN 65253 (HOURS Engine Hours, Revolutions) transmit descriptor, the j1939_tx_msg_t layout: cm550_FUN_00033754 (frozen J90350.00.ghidra.cpp:35667) writes header.can_id = 0x00fee500 with the priority from word 0x803f8c (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 8, data_pointer = 0x803548, status_pointer = 0x803550; the sender at 0x33744 pushes it to cm550_sendCanMessage. (PR #53 round 88)
+0x00803550,j1939_pgn65253_transmit_status,byte,Status byte of j1939_pgn65253_tx_message (its status_pointer target), named as CM848 names them. (PR #53 round 88)
+0x00803552,j1939_pgn65262_tx_message,j1939_tx_msg_t,PGN 65262 (ET1 Engine Temperature 1) transmit descriptor, the j1939_tx_msg_t layout: cm550_engineTemperaturePGN_65262_Builder (frozen J90350.00.ghidra.cpp:35737) writes header.can_id = 0x00feee00 with the priority from word 0x803f70 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 8, data_pointer = 0x803560, status_pointer = 0x803568; the sender at 0x3386e pushes it to cm550_sendCanMessage. (PR #53 round 88)
+0x00803568,j1939_pgn65262_transmit_status,byte,Status byte of j1939_pgn65262_tx_message (its status_pointer target), named as CM848 names them. (PR #53 round 88)
 0x0080356a,retarder_tsc_status_byte,undefined,
+0x00803572,j1939_pgn61440_tx_message,j1939_tx_msg_t,PGN 61440 (ERC1 Electronic Retarder Controller 1) transmit descriptor, the j1939_tx_msg_t layout: cm550_cumminsProprietaryTSC_PGN_15728640_Builder (frozen J90350.00.ghidra.cpp:35815) writes header.can_id = 0x00f00000 with the priority from word 0x803f6e (& 7) << 2 in byte 0 and j1939 retarder source address byte 0x80da0b (0x29 in the dump) in byte 3, header.data_length = 2, data_pointer = 0x80356a, status_pointer = 0x803580; the sender at 0x3399c pushes it to cm550_sendCanMessage. (PR #53 round 88)
+0x00803580,j1939_pgn61440_transmit_status,byte,Status byte of j1939_pgn61440_tx_message (its status_pointer target), named as CM848 names them. (PR #53 round 88)
 0x00803586,security_bypass_flag,undefined,
-0x008035d4,vp44_status_flags_1,undefined,
-0x008035d6,fuel_demand_control_flags,undefined,
-0x008035d8,protection_system_flags,undefined,
-0x008035da,engine_operating_state_flags,undefined,
-0x008035dc,diagnostic_status_flags,undefined,
+0x0080358a,j1939_pgn65213_tx_message,j1939_tx_msg_t,PGN 65213 (FD1 Fan Drive 1) transmit descriptor, the j1939_tx_msg_t layout: cm550_FUN_00033a1e (frozen J90350.00.ghidra.cpp:35835) writes header.can_id = 0x00febd00 with the priority from word 0x803f92 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 2, data_pointer = 0x803582, status_pointer = 0x803598; the sender at 0x33a0e pushes it to cm550_sendCanMessage. (PR #53 round 88)
+0x00803598,j1939_pgn65213_transmit_status,byte,Status byte of j1939_pgn65213_tx_message (its status_pointer target), named as CM848 names them. (PR #53 round 88)
+0x0080359a,j1939_pgn65257_tx_message,j1939_tx_msg_t,PGN 65257 (LFC1 Fuel Consumption (Liquid)) transmit descriptor, the j1939_tx_msg_t layout: cm550_retarderConfigPGN_65249_Builder (frozen J90350.00.ghidra.cpp:35877) writes header.can_id = 0x00fee900 with the priority from word 0x803f72 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 8, data_pointer = 0x8035a8, status_pointer = 0x8035b0; the sender at 0x33ad4 pushes it to cm550_sendCanMessage. (PR #53 round 88)
+0x008035b0,j1939_pgn65257_transmit_status,byte,Status byte of j1939_pgn65257_tx_message (its status_pointer target), named as CM848 names them. (PR #53 round 88)
+0x008035bc,j1939_pgn65266_tx_message,j1939_tx_msg_t,PGN 65266 (LFE1 Fuel Economy (Liquid)) transmit descriptor, the j1939_tx_msg_t layout: cm550_fuelEconomyPGN_65266_Builder (frozen J90350.00.ghidra.cpp:35940) writes header.can_id = 0x00fef200 with the priority from word 0x803f74 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 6, data_pointer = 0x8035b4, status_pointer = 0x8035ca; the sender at 0x33c12 pushes it to cm550_sendCanMessage. (PR #53 round 88)
+0x008035ca,j1939_pgn65266_transmit_status,byte,Status byte of j1939_pgn65266_tx_message (its status_pointer target), named as CM848 names them. (PR #53 round 88)
+0x008035d0,j1939_pgn65244_tx_message,j1939_tx_msg_t,PGN 65244 (IO Idle Operation) transmit descriptor, the j1939_tx_msg_t layout: vp44_ioControlPGN_65244_Builder (frozen J90350.00.ghidra.cpp:35981) writes header.can_id = 0x00fedc00 with the priority from word 0x803f76 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 8, data_pointer = 0x8035de, status_pointer = 0x8035e6; the sender at 0x33cce pushes it to cm550_sendCanMessage. (were vp44_status_flags_1 at +4 / fuel_demand_control_flags at +6 / protection_system_flags at +8 / engine_operating_state_flags at +10 / diagnostic_status_flags at +12; PR #53 round 88)
 0x008035e0,fuel_temp_control_flags,undefined,
 0x008035e2,protection_state_enable_flags,undefined,
-0x008035ea,diagnostic_service_enable_flags,undefined,
-0x008035ec,vp44_status_flags_2,undefined,
+0x008035e6,j1939_pgn65244_transmit_status,byte,Status byte of j1939_pgn65244_tx_message (its status_pointer target), named as CM848 names them. (PR #53 round 88)
+0x008035e8,j1939_pgn65252_tx_message,j1939_tx_msg_t,PGN 65252 (SHUTDN Shutdown) transmit descriptor, the j1939_tx_msg_t layout: vp44_engineHoursPGN_65252_Builder (frozen J90350.00.ghidra.cpp:36001) writes header.can_id = 0x00fee400 with the priority from word 0x803f78 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 8, data_pointer = 0x8035f6, status_pointer = 0x8035fe; the sender at 0x33dea pushes it to cm550_sendCanMessage. (were diagnostic_service_enable_flags at +2 / vp44_status_flags_2 at +4; PR #53 round 88)
+0x008035fe,j1939_pgn65252_transmit_status,byte,Status byte of j1939_pgn65252_tx_message (its status_pointer target), named as CM848 names them. (PR #53 round 88)
+0x00803600,j1939_pgn65270_tx_message,j1939_tx_msg_t,PGN 65270 (IC1 Inlet/Exhaust Conditions 1) transmit descriptor, the j1939_tx_msg_t layout: cm550_intakeManifoldPGN_65526_Builder (frozen J90350.00.ghidra.cpp:36057) writes header.can_id = 0x00fef600 with the priority from word 0x803f7a (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 8, data_pointer = 0x80360e, status_pointer = 0x803616; the sender at 0x33ed8 pushes it to cm550_sendCanMessage. (PR #53 round 88)
 0x00803614,derate_percentage_active,undefined,
-0x00803618,engine_operating_mode_flags,undefined,
+0x00803616,j1939_pgn65270_transmit_status,byte,Status byte of j1939_pgn65270_tx_message (its status_pointer target), named as CM848 names them. (PR #53 round 88)
+0x00803618,j1939_pgn65264_tx_message,j1939_tx_msg_t,PGN 65264 (PTO Power Takeoff Information) transmit descriptor, the j1939_tx_msg_t layout: cm550_cruiseControlPGN_65264_Builder (frozen J90350.00.ghidra.cpp:36118) writes header.can_id = 0x00fef000 with the priority from word 0x803f7e (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 8, data_pointer = 0x803626, status_pointer = 0x80362e; the sender at 0x34006 pushes it to cm550_sendCanMessage. (were engine_operating_mode_flags at +0; PR #53 round 88)
+0x0080362e,j1939_pgn65264_transmit_status,byte,Status byte of j1939_pgn65264_tx_message (its status_pointer target), named as CM848 names them. (PR #53 round 88)
 0x00803631,engine_brake_cylinders_per_step,undefined,
-0x00803678,vp44_comm_bit0_counter,undefined,
+0x00803644,j1939_pgn65249_tx_message,j1939_tx_msg_t,PGN 65249 (RC Retarder Configuration) transmit descriptor, the j1939_tx_msg_t layout: cm550_FUN_000341e6 (frozen J90350.00.ghidra.cpp:36225) writes header.can_id = 0x00fee100 with the priority from word 0x803f80 (& 7) << 2 in byte 0 and j1939 retarder source address byte 0x80da0b (0x29 in the dump) in byte 3, header.data_length = 19, data_pointer = 0x803630, status_pointer = 0x803652; the sender at 0x341d0 pushes it to cm550_sendCanMessage. (PR #53 round 88)
+0x00803652,j1939_pgn65249_transmit_status,byte,Status byte of j1939_pgn65249_tx_message (its status_pointer target), named as CM848 names them. The RC sender tests its 0xf0 nibble first (move.b ($803652).l,d0 ; andi.b #$f0,d0 ; bne skip); dump 0x05 = CM848's BAM complete code 5. (PR #53 round 88)
+0x00803654,j1939_pgn65248_tx_message,j1939_tx_msg_t,PGN 65248 (VD Vehicle Distance) transmit descriptor, the j1939_tx_msg_t layout: cm550_vehicleDistancePGN_65248_Builder (frozen J90350.00.ghidra.cpp:36266) writes header.can_id = 0x00fee000 with the priority from word 0x803f82 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 8, data_pointer = 0x803662, status_pointer = 0x80366a; the sender at 0x3428a pushes it to cm550_sendCanMessage. (PR #53 round 88)
+0x0080366a,j1939_pgn65248_transmit_status,byte,Status byte of j1939_pgn65248_tx_message (its status_pointer target), named as CM848 names them. (PR #53 round 88)
+0x0080366c,j1939_pgn65271_tx_message,j1939_tx_msg_t,PGN 65271 (VEP1 Vehicle Electrical Power 1) transmit descriptor, the j1939_tx_msg_t layout: cm550_electronicBrakePGN_65527_Builder (frozen J90350.00.ghidra.cpp:36305) writes header.can_id = 0x00fef700 with the priority from word 0x803f84 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 8, data_pointer = 0x80367a, status_pointer = 0x803682; the sender at 0x34320 pushes it to cm550_sendCanMessage. (were vp44_comm_bit0_counter at +12; PR #53 round 88)
 0x0080367a,eeprom_calibration_write_state,undefined,
 0x0080367c,eeprom_calibration_check_value_1,undefined,
 0x0080367e,loop_termination_flag,undefined,
 0x00803680,protection_flag_source_1,undefined,
-0x00803682,eeprom_calibration_check_value_2,undefined,
-0x00803684,eeprom_calibration_check_value_3,undefined,
-0x00803686,vp44_comm_test_flag,undefined,
-0x00803688,vp44_comm_test_sensor_value,undefined,
-0x0080368a,redundant_sensor_param_1,undefined,
-0x0080368c,redundant_sensor_param_2,undefined,
-0x0080368e,redundant_sensor_param_3,undefined,
+0x00803682,j1939_pgn65271_transmit_status,byte,Status byte of j1939_pgn65271_tx_message (its status_pointer target), named as CM848 names them. The old name eeprom_calibration_check_value_2 has no other use. (was eeprom_calibration_check_value_2; PR #53 round 88)
+0x00803684,j1939_pgn65255_tx_message,j1939_tx_msg_t,PGN 65255 (VH Vehicle Hours) transmit descriptor, the j1939_tx_msg_t layout: vp44_vehicleHoursPGN_65255_Builder (frozen J90350.00.ghidra.cpp:36347) writes header.can_id = 0x00fee700 with the priority from word 0x803f86 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 8, data_pointer = 0x803692, status_pointer = 0x80369a; the sender at 0x343c2 pushes it to cm550_sendCanMessage. (were eeprom_calibration_check_value_3 at +0 / vp44_comm_test_flag at +2 / vp44_comm_test_sensor_value at +4 / redundant_sensor_param_1 at +6 / redundant_sensor_param_2 at +8 / j1939_pgn65255_tx_message.status_pointer at +10; PR #53 round 88)
 0x00803692,protection_flag_source_2,undefined,
 0x00803698,governor_rpm_error_init_value,undefined,
-0x0080369a,fuel_demand_rate_limit_init,undefined,
-0x008036a2,oil_pressure_rpm_limit_max,undefined,
-0x008036ba,vp44_comm_fault_monitor_state,undefined,
+0x0080369a,j1939_pgn65255_transmit_status,byte,Status byte of j1939_pgn65255_tx_message (its status_pointer target), named as CM848 names them. The old name fuel_demand_rate_limit_init has no other use. (was fuel_demand_rate_limit_init; PR #53 round 88)
+0x0080369c,j1939_pgn65260_tx_message,j1939_tx_msg_t,PGN 65260 (VI Vehicle Identification) transmit descriptor, the j1939_tx_msg_t layout: cm550_FUN_00034440 (frozen J90350.00.ghidra.cpp:36369) writes header.can_id = 0x00feec00 with the priority from word 0x803f8e (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 20, data_pointer = 0x803e7f, status_pointer = 0x8036aa; the sender at 0x34430 pushes it to cm550_sendCanMessage. (were oil_pressure_rpm_limit_max at +6; PR #53 round 88)
+0x008036aa,j1939_pgn65260_transmit_status,byte,Status byte of j1939_pgn65260_tx_message (its status_pointer target), named as CM848 names them. (PR #53 round 88)
+0x008036b4,j1939_pgn65279_tx_message,j1939_tx_msg_t,PGN 65279 (OI Operator Indicators (water in fuel)) transmit descriptor, the j1939_tx_msg_t layout: vp44_FUN_000344ce (frozen J90350.00.ghidra.cpp:36389) writes header.can_id = 0x00feff00 with the priority from word 0x803f94 (& 7) << 2 in byte 0 and the engine source address byte 0x80da01 in byte 3, header.data_length = 1, data_pointer = 0x8036ac, status_pointer = 0x8036c2; the sender at 0x344be pushes it to cm550_sendCanMessage. (were vp44_comm_fault_monitor_state at +6; PR #53 round 88)
+0x008036c2,j1939_pgn65279_transmit_status,byte,Status byte of j1939_pgn65279_tx_message (its status_pointer target), named as CM848 names them. (PR #53 round 88)
 0x008036ea,diagnostic_mode_7_enable_flag,undefined,
 0x008036fc,high_rpm_protection_initial_timer,undefined,
 0x00803706,oil_pressure_rpm_target_low,undefined,
@@ -1585,11 +1583,17 @@ address,name,type,comment
 0x00803fcc,lsg_operator_adjust_maximum_speed,undefined,
 0x00803fd6,parameter_block_1_save_start_count_cal,word,e2m 1069 Powerdown_Memory_Save_Start [SDSVSR] 'Count indicating the number of times powerdown memory save has started': the start count of flash parameter block 1's power-down save. The block 1 saver bumps it by 1, or by 2, so that its sum with the block 2 start count ends odd (block 1 newest). It waits for that EEPROM write before it erases block 0x4000. (was calibration_bank1_write_sequence; PR #53 round 87)
 0x00803fd8,parameter_block_1_save_complete_count_cal,word,e2m 1069 Powerdown_Memory_Save_Complete [SDSVCP] 'Count indicating number of times the powerdown memory save has been completed', at CM550 1069 +4 (CM848 +2; see the 0x803fd6 row for the shift). The block 1 saver copies the start count into it as the last EEPROM write of a completed save and waits for it. (was DAT_00803fd8; PR #53 round 87)
-0x00803fda,eeprom_powerdown_status,undefined,
+0x00803fda,power_down_left_ecm_powered_flag_cal,word,This is the same record as CM848's power_down_left_ecm_powered_flag_cal: e2m 1069 SDENER 'a status indicator saved to EEPROM indicating power was commanded off and is still on' (CM848 Poweroff_Command_Ignored). (was eeprom_powerdown_status; PR #53 round 88)
+0x00803fdc,eeprom_write_failure_flag_cal,word,e2m 1069 +8 SDEEWRFU 'a status indicator saved to EEPROM indicating a failure of one or more EEPROM cells to program' (CM848 1069 +6 EEPROM_Failed_To_Program, 0x3fdc82; no CM848 row and no reference in the frozen CM848 .cpp). The name parallels its neighbour flash_write_failure_flag_cal (1069 +14). It has one reader: the power-down step at 0x30a5e. (PR #53 round 88)
 0x00803fde,parameter_block_2_save_start_count_cal,word,e2m 1069 Powerdown_Memory_Save_Start_2 [SDSVSR02] 'Counts number of times powerdown block 2 save has started', at CM550 1069 +A (CM848 +8; the one-word shift is explained in the 0x803fd6 row). (was calibration_bank2_write_sequence; PR #53 round 87)
 0x00803fe0,parameter_block_2_save_complete_count_cal,word,e2m 1069 Powerdown_Memory_Save_Complete_2 [SDSVCP02] 'Counts number of times powerdown block 2 save has completed', at CM550 1069 +C (CM848 +A). The block 2 saver writes it last; the selector compares it with the block 2 start count. EEPROM mirror, so _cal. Word. (was DAT_00803fe0; PR #53 round 87)
+0x00803fe2,power_cycle_sequence_number_cal,word,Same record as CM848's power_cycle_sequence_number_cal (0x3fdc88): e2m 1069 SDRMIMSR (Parameter_Block_Image_Start), at CM550 1069 +E (CM848 +C). It has the three uses CM848 has. (PR #53 round 88)
+0x00803fe4,completed_power_down_sequence_number_cal,word,Same record as CM848's completed_power_down_sequence_number_cal (0x3fdc8a): e2m 1069 SDRMIMCP (Parameter_Block_Image_Complete), at CM550 1069 +10 (CM848 +E). cm550_savePowerDownDataToFlashBank writes power_cycle_sequence_number_cal into it once the parameter block save is done, as cm848_saveEepromForPowerDown does. (PR #53 round 88)
+0x00803fe6,consecutive_incomplete_power_down_count_cal,word,Same record as CM848's consecutive_incomplete_power_down_count_cal (0x3fdc8c): e2m 1069 SDDLCU 'number of consecutive occurances of powerdown data lost, updated each powerup', at CM550 1069 +12 (CM848 +10). Only 0x114d4 uses it. It is set to 0 after a completed power-down and +1 after an incomplete one. (PR #53 round 88)
 0x00803fe8,flash_write_failure_flag_cal,word,e2m 1069 Flash_Failure_Flag [SDFHFXFG] 'Flag stored in EEPROM which indicates a Flash write failure has been detected'. CM848 names the same record flash_write_failure_flag_cal (0x3fdc8e, 1069 +12, the block's last word), and 0x803fe8 is CM550's last 1069 word before 106A (0x803fea), so the name is shared. It is set to 1 when all 3 attempts failed to erase or program the flash (0x27d48 / 0x27e1e) and cleared at 0x27db4 / 0x27e86; the boot reader at 0x28690 sets error status word 10 bit 0x40. (was eeprom_calibration_write_success; PR #53 round 87)
-0x00803fec,vp44_reset_count,undefined,
+0x00803fea,incomplete_power_down_count_cal,word,Same record as CM848's incomplete_power_down_count_cal (0x3fdc90 = 106A +0 Reset_Count): e2m 106A +0 NRESETSE 'cumulative count of non-power up resets'. CM550's table puts 106A at EEPROM 0x4E0 = 0x803fea. 0x114d4 adds 1 to it when the previous power-down did not complete. (PR #53 round 88)
+0x00803fec,completed_power_down_count_cal,word,Same record as CM848's completed_power_down_count_cal (0x3fdc92): e2m 106A +2 SSPURSCU 'cumulative count of power cycles' (CM848 Powerup_Count). It has the same two writers as in CM848. 0x114d4 adds 1 at a start after a completed power-down. restartOnKeyOnDuringPowerDown (twin of CM848 0x539938) adds 1 before the restart. Nothing VP44- or reset-related touches it. (was vp44_reset_count; PR #53 round 88)
+0x008040c0,engine_brake_driveline_brake_type_cal,word,e2m 1192 +C EBDLBKTY 'type of driveline brake (0 = exhaust / engine brake, 1 = retarder)', the same mnemonic as CM848 engine_brake_driveline_brake_type_cal (1180 +16 EB_Driveline_Brake_Type). CM550's table maps 1192 to EEPROM 0x10005aa, and +0xC = EEPROM 0x5b6 = mirror 0x803b0a + 0x5b6. Inside the EEPROM mirror, so _cal applies. (PR #53 round 88)
 0x00804158,cyl_balance_trim_array,undefined,
 0x00804164,j1939_message_total_timeout_count,undefined,
 0x00804166,j1939_last_message_hour_meter,undefined,
@@ -1671,25 +1675,7 @@ address,name,type,comment
 0x008054b4,loop_counter_snapshot_1,undefined,
 0x008054b8,rpm_histogram_overflow_counter,undefined,
 0x008054ba,loop_counter_snapshot_2,undefined,
-0x0080553a,DGRPOSLF,undefined,
-0x0080553b,diagnostic_snapshot_limited_byte,undefined,
-0x0080553c,diagnostic_snapshot_fuel_mode_0,undefined,
-0x0080553e,vp44_sensor_diag_state_1,undefined,
-0x00805540,fuel_arbitrator_rpm_target_history,undefined,
-0x00805542,diagnostic_snapshot_zero_0,undefined,
-0x00805544,diagnostic_snapshot_zero_1,undefined,
-0x00805546,diagnostic_snapshot_zero_2,undefined,
-0x00805548,fuel_arbitrator_rpm_history_index,undefined,
-0x0080554a,loop_counter_capture_start_2,undefined,
-0x0080554e,loop_counter_elapsed_time_2,undefined,
-0x00805554,diagnostic_snapshot_position_flag,undefined,
-0x00805555,diagnostic_snapshot_byte_1,undefined,
-0x00805556,diagnostic_snapshot_fuel_mode_1,undefined,
-0x00805558,vp44_sensor_diag_state_2,undefined,
-0x0080555a,fuel_arbitrator_state_history,undefined,
-0x0080555c,diagnostic_snapshot_zero_3,undefined,
-0x0080555e,diagnostic_snapshot_zero_4,undefined,
-0x00805560,diagnostic_snapshot_zero_5,undefined,
+0x0080553a,engine_overspeed_log,engine_overspeed_event_t[5],e2m 10DA +0 engine_overspeed_log 'fault log for engine speed overspeed conditions' (40 bytes), the same record as CM848 engine_overspeed_log_cal. CM550's table maps 10DA to 0x80553a. No _cal: it is in the flash parameter block (RAM 0x804f9a-0x806547, saved to flash 0x4004 / 0x6004 at power-down), not the EEPROM mirror 0x803b0a-0x804155. Flag this for the orchestrator. (were DGRPOSLF at +0 / diagnostic_snapshot_limited_byte at +1 / diagnostic_snapshot_fuel_mode_0 at +2 / vp44_sensor_diag_state_1 at +4 / fuel_arbitrator_rpm_target_history at +6 / diagnostic_snapshot_zero_0 at +8 / diagnostic_snapshot_zero_1 at +10 / diagnostic_snapshot_zero_2 at +12 / fuel_arbitrator_rpm_history_index at +14 / loop_counter_capture_start_2 at +16 / loop_counter_elapsed_time_2 at +20 / diagnostic_snapshot_position_flag at +26 / diagnostic_snapshot_byte_1 at +27 / diagnostic_snapshot_fuel_mode_1 at +28 / vp44_sensor_diag_state_2 at +30 / fuel_arbitrator_state_history at +32 / diagnostic_snapshot_zero_3 at +34 / diagnostic_snapshot_zero_4 at +36 / diagnostic_snapshot_zero_5 at +38; PR #53 round 88)
 0x00805562,DGCLLVLF,undefined,
 0x00805564,loop_counter_capture_start_1,undefined,
 0x00805568,loop_counter_elapsed_time_1,undefined,
@@ -1713,10 +1699,11 @@ address,name,type,comment
 0x0080561e,fault_code_active_list_count,undefined,
 0x00805620,hour_meter_event_log_array,undefined,
 0x00805621,hour_meter_event_log_array_1,undefined,
-0x00805654,diagnostic_snapshot_ring_index,undefined,
+0x00805652,engine_overspeed_log_entry_open_flag,word,e2m 10DA +118 DGRPOSFG 'fault log recording flag for engine speed overspeed error', the same record as CM848 engine_overspeed_log_entry_open_flag_cal. It is 1 while an engine_overspeed_log record is open: set when the latch sets with no record open, and cleared when the overspeed clears. 0x80553a + 0x118 = 0x805652. (PR #53 round 88)
+0x00805654,engine_overspeed_log_index,word,e2m 10DA +11A DGRPOSIN 'fault log index into engine speed overspeed error log' (0-4), the same record as CM848 engine_overspeed_log_index_cal. It selects the engine_overspeed_log record and advances modulo 5 when an overspeed ends. Only this function uses it. No _cal: flash parameter block. (was diagnostic_snapshot_ring_index; PR #53 round 88)
 0x00805670,dtc_active_fault_count,undefined,
 0x00805676,dtc_timestamp_array,undefined,
-0x008057be,engine_startup_inhibit_true_false,undefined,
+0x008057be,engine_startup_inhibit,word,e2m 1096 +0 CKEGSRIH 'engine startup inhibit', the same record as CM848 engine_startup_inhibit_cal. While it is nonzero, STOPPED never moves to CRANKING. In CM550, cm550_loadParameterBlockAndUpdatePowerDownCounts sets it at start-up when the parameter-block fault (word 0 bit 12) is active and confirmed and the 'run if power-down data lost' flag is 0. (was engine_startup_inhibit_true_false; PR #53 round 88)
 0x008057c0,coolant_level_fueling_severity_index_0_0_1_0,undefined,
 0x008057c2,severity_index_for_epf_coolant_level_fault_0_0_1_0,undefined,
 0x008057c4,coolant_level_fueling_restart_severity_index_0_0_1_0,undefined,
@@ -3328,7 +3315,7 @@ address,name,type,comment
 0x00807f04,crank_low_intake_manifold_temperature_rpm_0_1000,undefined,
 0x00807f06,crank_initial_reentry_speed_0_1000,undefined,
 0x00807f08,crank_reentry_speed_offset_1000_1000,undefined,
-0x00807f0a,crank_jumpstart_time_0_13107,undefined,
+0x00807f0a,crank_jump_start_time,word,e2m 105F +20 CKCNJSTM 'crank jumpstart time', the same record as CM848 crank_jump_start_time (105F +2A [CKCNJSTM]). It is the limit crank_jump_start_timer must pass before JUMP_START. Dump value 5. (was crank_jumpstart_time_0_13107; PR #53 round 88)
 0x00807f0c,crank_jumpstart_tvo_ramp_rate_0_100,undefined,
 0x00807f0e,crank_jumpstart_rpm_ramp_rate_0_1000,undefined,
 0x00807f10,crank_exit_time_0_13107,undefined,
@@ -3337,10 +3324,10 @@ address,name,type,comment
 0x00807f16,crank_exit_fuel_ramp_rpm_0_1000,undefined,
 0x00807f18,crank_exit_fuel_ramp_rate_0_100,undefined,
 0x00807f1a,crank_exit_fuel_ramp_rate_maximum_0_100,undefined,
-0x00807f1c,intake_manifold_temp_threshold,undefined,
-0x00807f1e,throttle_position_raw_threshold,undefined,
-0x00807f20,intake_temp_upper_threshold,undefined,
-0x00807f22,engine_speed_for_transition_into_out_of_crank_reentr_state_0_300,undefined,
+0x00807f1c,engine_overspeed_set_rpm_threshold,word,e2m 1032 +0 FSOSLMES 'engine speed max. used by software to lock fuel to overspeed' (RPM, 0.125), the same record as CM848 engine_overspeed_set_rpm_threshold. It has nothing to do with intake manifold temperature. CM550's table maps 1032 to 0x807f1c. The dump value is 28000 = 3500 rpm. (was intake_manifold_temp_threshold; PR #53 round 88)
+0x00807f1e,engine_overspeed_clear_rpm_threshold,word,e2m 1032 +2 FSOSHYES 'engine overspeed limit hysteresis', the same record as CM848 engine_overspeed_clear_rpm_threshold. The code compares the speed with it directly (an absolute clear speed): below it, the overspeed latch clears. The dump value is 24000 = 3000 rpm. It has nothing to do with throttle position. (was throttle_position_raw_threshold; PR #53 round 88)
+0x00807f20,engine_overspeed_debounce_limit,word,e2m 1032 +4 FSOSEN 'time before triggering engine overspeed' (MSEC, 20 per count), the same record as CM848 engine_overspeed_debounce_limit. The latch needs the debounce count to exceed it. The dump value is 3, the same as CM848's. (was intake_temp_upper_threshold; PR #53 round 88)
+0x00807f22,engine_stopped_speed,word,e2m 1032 +6 CKSPRP 'engine speed for transition into/out of crank (reentry) state', the same record as CM848 engine_stopped_speed (Engine_Stopped_Speed [CKSPRP]). STOPPED -> CRANKING happens above it, and CRANKING / JUMP_START / REENTRY -> STOPPED happens at or below it. The dump value is 80 = 10 rpm. (was engine_speed_for_transition_into_out_of_crank_reentr_state_0_300; PR #53 round 88)
 0x00807f24,software_padding_0_7f24,undefined,
 0x00807f25,software_padding_0_7f25,undefined,
 0x00807f26,determines_how_engine_position_is_sync_d_to_cam_0,undefined,
@@ -3559,9 +3546,9 @@ address,name,type,comment
 0x0080847a,intercept_of_rpm_vs_phase_lag_line_defining_time_offset_for_syn_0_16,undefined,
 0x0080847c,slope_of_rpm_vs_phase_lag_line_defining_time_offset_for_s_0_0_031136,undefined,
 0x0080847e,fuel_rpm_deviation_calc_param,undefined,
-0x00808480,number_of_consecutive_occurances_of_powerdown_data_lost_to_set_1_255,undefined,
-0x00808482,enable_to_protects_parameter_block_data_at_powerdown_enabled_disabled,undefined,
-0x00808484,flag_indicating_if_engine_should_be_ran_if_all_powerdown_da_true_false,undefined,
+0x00808480,consecutive_incomplete_power_down_limit,word,Same record as CM848's consecutive_incomplete_power_down_limit (0x645ba): e2m 122A +0 SDDLERLM 'number of consecutive occurances of powerdown data lost to set (system error)'. CM550's table maps 122A -> 0x808480. 0x114d4 compares it with consecutive_incomplete_power_down_count_cal and sets status word 0 bit 0x800 when the count is above it; this is CM848's 'limit < count' test. (was number_of_consecutive_occurances_of_powerdown_data_lost_to_set_1_255; PR #53 round 88)
+0x00808482,parameter_block_protection_enable,word,e2m 122A +2 SDFHPNEA 'enable to protects parameter block data at powerdown' (CM848 e2m Parameter_Block_Protection_Enable, 'ENABLE=preserve 1 block'; no CM848 row). Its only reader is cm550_savePowerDownDataToFlashBank. When all 3 attempts on the first block fail, that function sets flash_write_failure_flag_cal = 1, and it writes the other block too only while this word is 0. (was enable_to_protects_parameter_block_data_at_powerdown_enabled_disabled; PR #53 round 88)
+0x00808484,engine_run_with_all_power_down_data_lost_flag,word,e2m 122A +4 SSDXLTRN 'flag indicating if engine should be ran if All_Powerdown_Data_Lost_Error is true' (CM848 e2m All_Powerdown_Data_Lost_Run; no CM848 row). 0x114d4 reads it twice. While it is 0, a confirmed all-power-down-data-lost error (status word 0 bit 0x1000) stays set even after a block loads, and engine_startup_inhibit = 1. (was flag_indicating_if_engine_should_be_ran_if_all_powerdown_da_true_false; PR #53 round 88)
 0x00808486,load_descriminator_to_determine_lugback_0_100_8486,undefined,
 0x00808488,load_descriminator_to_determine_lugback_0_100_8488,undefined,
 0x0080848a,arbitrated_fuel_limit_min,undefined,
@@ -4596,6 +4583,7 @@ address,name,type,comment
 0x0080a9a8,asg_governor_gains_ptr,undefined,
 0x0080a9c2,steady_state_approximation_of_user_fuel_0_100,undefined,
 0x0080a9c4,cruise_control_active_flag,undefined,
+0x0080a9c8,engine_retarder_active_flag,word,e2m 117D +4 EBSS 'status of whether operating conditions indicate desire for brake activation', the same record as CM848 engine_retarder_active_flag (E_Brake_Status [EBSS]). RUNNING enters ENGINE_BRAKE while it is 1, and ENGINE_BRAKE returns to RUNNING when it is 0. (PR #53 round 88)
 0x0080a9d0,sampled_road_speed_after_it_has_been_filtered_0_255_9961,undefined,
 0x0080a9d2,filtered_transmission_gear_ratio_0_1_15_999,undefined,
 0x0080a9d8,vss_tamper_derate_rpm_0_3000,undefined,
@@ -4695,7 +4683,7 @@ address,name,type,comment
 0x0080bced,binary_value_of_not_idle_switch_off_on,undefined,
 0x0080bcf6,bit_6_which_enables_the_warning_lamp_driver_enable_disable,undefined,
 0x0080bcf7,commanded_driver_true_on_0_1,undefined,
-0x0080bcf8,enable_flag_to_allow_boot_block_programming_enable_disable,undefined,
+0x0080bcf8,port_e_output_image,byte,The output image of the SIM Port E pins, and an output request byte. It is e2m 000E +2A, byte 2 (outputs 16-23) of the 6-byte output image array 0x80bcf6-0x80bcfb. mc68k_ioDriverStrobeHandler writes it to SIM_PORTE0 with bit 5 inverted. Each writer sets or clears its bit only while that output's override slot (0x80bd1a + output number) is 0, then calls the strobe handler. (was enable_flag_to_allow_boot_block_programming_enable_disable; PR #53 round 88)
 0x0080bcf9,bit_4_of_master_status_byte_a_0_1,undefined,
 0x0080bcfb,fuel_system_output_driver_control,undefined,
 0x0080bd02,status_of_the_water_in_fuel_lamp_output_on_off,undefined,
@@ -4769,7 +4757,7 @@ address,name,type,comment
 0x0080bd9e,manifold_temp_lookup_result_2,undefined,
 0x0080bda0,boost_pressure_protection_state_bda0,undefined,
 0x0080bda2,DPFLPSWD,undefined,
-0x0080bda4,hour_meter_ecm_run_time_none,undefined,
+0x0080bda4,key_on_hour_meter,dword,e2m 0004 +0 CMECTR / RUN_TIME 'time key switch is on and ECM is running boot or application' (SEC, 0.2 s per count, 4 bytes), the same record as CM848 key_on_hour_meter. (was hour_meter_ecm_run_time_none; PR #53 round 88)
 0x0080bdc0,fault_flag_snapshot_register_3,undefined,
 0x0080bdc2,fault_flag_snapshot_register_2,undefined,
 0x0080bdc4,fault_flag_snapshot_register_1,undefined,
@@ -5083,12 +5071,12 @@ address,name,type,comment
 0x0080d098,engine_mode_timing_init_flag,undefined,
 0x0080d09c,four_d_timing_output_by_crank_0_120,undefined,
 0x0080d09e,crank_exit_timer_0_13107,undefined,
-0x0080d0a0,timer_used_to_dictate_a_jumpstart_condition_0_13107,undefined,
+0x0080d0a0,crank_jump_start_timer,word,e2m 105E +8 CKJSTM 'timer used to dictate a jumpstart condition', the same record as CM848 crank_jump_start_timer (105E +24 [CKJSTM]). CRANKING moves to JUMP_START when it exceeds crank_jump_start_time. cm550_engineOperatingModeStateTrackingSlowCycle40Coordinator counts it. (was timer_used_to_dictate_a_jumpstart_condition_0_13107; PR #53 round 88)
 0x0080d0a2,coolant_advance_timing_output_by_crank_0_700,undefined,
 0x0080d0a4,wet_stack_timing_outputed_by_crank_0_120,undefined,
 0x0080d0a8,crank_initial_timing_advance_0_120,undefined,
-0x0080d0aa,fsmxthfl_calc_input,undefined,
-0x0080d0ac,crank_fuel_limit_source_selector,undefined,
+0x0080d0aa,crank_reentry_speed,word,e2m 105E +12 CKREES 're-entry RPM for crank routine', the same record as CM848 crank_reentry_speed (105E +26 [CKREES]). RUNNING drops to REENTRY at or below it. cm550_peakTorqueFuelCorrection sets it to the crank initial reentry speed (105F +1C), plus the reentry offset (105F +1E) once the crank exit time has passed. Dump value 5200 = 650 rpm. (was fsmxthfl_calc_input; PR #53 round 88)
+0x0080d0ac,crank_exit_speed,word,e2m 105E +14 CKEXES 'exit RPM for crank routine', the same record (mnemonic) as CM848 crank_exit_speed (105E +12 Crank_Exit_Speed [CKEXES]). CRANKING / JUMP_START / REENTRY move to RUNNING at it. CM550's table maps 105E to 0x80d098. It is not a source selector. (was crank_fuel_limit_source_selector; PR #53 round 88)
 0x0080d0ae,crank_adjusted_initial_fuel_0_100,undefined,
 0x0080d0b0,crank_adjusted_initial_rpm_0_1000,undefined,
 0x0080d0b2,crank_initial_fuel_break_speed_0_1000,undefined,
@@ -5103,7 +5091,7 @@ address,name,type,comment
 0x0080d0c4,io_output_flag_byte_0,undefined,
 0x0080d0c5,io_output_flag_byte_1,undefined,
 0x0080d0c6,asthrfes_calc_input,undefined,
-0x0080d0c8,engine_state,word,This is the Cummins engine state, e2m 1068 +0 FSEGST: CM550's parameter ID table maps block 1068 to 0x80d0c8. (was smoke_limiter_output_value; PR #53 round 87)
+0x0080d0c8,engine_state,ENGINE_STATE,This is the Cummins engine state, e2m 1068 +0 FSEGST: CM550's parameter ID table maps block 1068 to 0x80d0c8. (was smoke_limiter_output_value; PR #53 round 87) | typed ENGINE_STATE: Type the word with the new ENGINE_STATE enum (size 2). Every compare and store of engine_state in the dumped 256 KB (0x0-0x3ffff) uses only 1-8. There are 35 absolute cmpi.w #N,$80d0c8 and 1 move.w #1 store, 13 functions that use it through an address register (byte-scanned: cmpi.w #N,(An) and move.w #N,(An) only), the switch read, and 2 copies into previous-state words. (PR #53 round 88)
 0x0080d0ca,power_down_start_flag,word,e2m 1068 +2 Start_Power_Down. CM550's table bounds 1068 to 0x80d0c8-0x80d0cb (block 1068 -> 0x80d0c8, next block 11A8 at 0x80d0cc), so it is the engine state plus this word. CM848 names it power_down_start_flag (0x40a7c2). (was DAT_0080d0ca; PR #53 round 87)
 0x0080d0cc,CMSYSS,undefined,
 0x0080d0cd,cam_sync_status,undefined,
@@ -5274,7 +5262,7 @@ address,name,type,comment
 0x0080d284,engine_protection_fuel_limit,undefined,
 0x0080d286,indicator_from_engine_protection_that_fuel_derate_1_active_0_inact,undefined,
 0x0080d288,EPESLM,undefined,
-0x0080d28c,engine_protection_shutdown_command,undefined,
+0x0080d28c,engine_shutdown_command_flag,word,e2m 10B1 +12 SHSS ('TURN OFF ALL SOLENOIDS. 1=TRUE ; 0=FALSE'), the record CM848 names engine_shutdown_command_flag (0x40a784 = 0x40a772 + 0x12). It is set by service 6 (commandEngineShutdown) and by the engine protection code. At 1 it moves engine_state to 8 (shutdown), and it is cleared at engine speed 0 in state 8, as in CM848. Every access is a word. (was engine_protection_shutdown_command; PR #53 round 88)
 0x0080d28e,engine_protection_derate_approaching_flag,undefined,
 0x0080d292,tooth_count_at_which_error_was_found_by_pmm_0_255,undefined,
 0x0080d293,pmm_error_type_signifies_the_type_of_sync_error_found_by_pmma_0_ff,undefined,
@@ -5353,6 +5341,7 @@ address,name,type,comment
 0x0080d34e,fso_state_desired_from_fuel_system_specific_algorithms_1_off_on_off,undefined,
 0x0080d350,fss_adjustment_to_compensate_for_delta_between_injected_and_co_0_100,undefined,
 0x0080d352,quantity_of_fuel_to_be_injected_during_next_injection_cycle_0_100,undefined,
+0x0080d356,key_off_shutdown_mode,word,e2m 120C +4 SOKYSD, the same record as CM848 key_off_shutdown_mode (FSS_Key_Off_Shutdown [SOKYSD]). The CM550 e2m text is '0 = not used, 1 = shutdown from key-off in process, 2 = running normal'. (PR #53 round 88)
 0x0080d358,JCFSTLFG,undefined,
 0x0080d368,fueling_value_at_100_throttle_0_100,undefined,
 0x0080d36a,fueling_provided_if_engine_were_using_low_hp_curve_0_100,undefined,
@@ -5558,8 +5547,8 @@ address,name,type,comment
 0x0080d9ee,retarder_torque_percent,undefined,
 0x0080d9f0,retarder_torque_torque_limit_command_in_percent_of_peak_retard_0_255,undefined,
 0x0080d9f2,jcomm_req_torque_braking_override_or_limit_value_0_125,undefined,
-0x0080d9f4,can_first_receive_object_index,undefined,
-0x0080d9f6,can_last_receive_object_index,undefined,
+0x0080d9f4,j1939_transmit_message_object_number,word,The J1939 transmit message object number of the chip select 4 82527 (word; the CSV type undefined renders it as j1939_transmit_message_object_number). mc68k_initializeJ1939Datalink sets it to can_s_last_message_object_used_0_15 + 1 and points can_control_register_pointer at that object (&CAN_CS4_CONTROL + n x 16); the transmit handler (0x1e056) sends the next J1939 frame when the interrupting object equals it, and the receive handler, the overflow loop in mc68k_queueCanCs4ReceiveMessage and the re-enable loop in mc68k_FUN_000212b2 all start one ABOVE it. (was can_first_receive_object_index; PR #53 round 88)
+0x0080d9f6,j1939_last_receive_message_object_number,word,The last J1939 receive message object number (word; the undefined type renders it with a leading _): mc68k_initializeJ1939Datalink sets it to can_s_last_message_object_used_0_15 + 15 (and stores that back into the last-used word); the receive handler accepts transmit index < n <= this, the queue overflow and re-enable loops end at it. (was can_last_receive_object_index; PR #53 round 88)
 0x0080da00,j1939_network_address_for_ecm_as_engine_node_0_255,undefined,
 0x0080da01,j1939_engine_node_source_address,undefined,
 0x0080da0a,j1939_network_address_for_ecm_as_engine_retarder_node_0_255,undefined,
@@ -5739,7 +5728,7 @@ address,name,type,comment
 0x0080dde0,multipacket_receive_bytes_remaining,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080dde2,multipacket_transmit_active_flag,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080dde3,multipacket_receive_active_flag,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
-0x0080dde4,,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080dde4,eeprom_mirror_commit_j1708_reply_pending_flag,byte,It is working RAM outside the EEPROM mirror, so it takes no _cal. The global_variables.csv row 5719 has an empty name. (PR #53 round 88)
 0x0080dde5,insite_parameter_id,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080dde7,insite_full_detail_response_mode,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080ddea,insite_response_write_pointer,dword,its low byte 0x80dded was the row insite_response_byte_offset | PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
@@ -5759,7 +5748,7 @@ address,name,type,comment
 0x0080de26,insite_dtc_command_action_byte,byte,PR #53 round 74: typed byte - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080de28,address_of_scratch_pad_directory_0c000h_0f7efh,byte *,Holds a buffer address (typed byte * - was dword; PR #53 round 75). PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080de2c,number_of_entries_in_the_scratch_pad_0_10,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
-0x0080de2e,,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de2e,key_off_shutdown_inhibit_flag,word,The same record as CM848's key_off_shutdown_inhibit_flag (0x40aa98). It is set to 1 only by service 24 (inhibitKeyOffShutdown). The engine_state machine moves to state 8 (shutdown) on a key-off only while it is 0, and the power-down start in state 8 also waits for it. It is cleared on the key-on rising edge. Those are the same three uses as in cm848_updateEngineState. (PR #53 round 88)
 0x0080de30,development_mode,DEVELOPMENT_MODE_STATE,e2m block 1328 Development_Mode (CM550's parameter ID table) - CM848's development_mode (was calibration_write_pending_flag; PR #53 round 73) | PR #53 round 74: typed DEVELOPMENT_MODE_STATE - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080de32,buffer_used_to_store_secure_write_data_until_the_copy_0c000h_0f7efh,byte *,Holds a buffer address (typed byte * - was dword; PR #53 round 75). PR #53 round 74: typed dword - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080de36,,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
@@ -5784,7 +5773,7 @@ address,name,type,comment
 0x0080de74,,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080de76,insite_matched_dtc_fault_code,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
 0x0080de78,fault_to_erase_none,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
-0x0080de7a,action_00_no_clear_action_01_clear_inactive_02_clear_active_03_clear_al_0_6,word,PR #53 round 74: typed word - was a field of the misapplied j1708_multipacket_msg_t instance
+0x0080de7a,diagnostic_clear_request_state,word,e2m 1080 +2 DGJCFUCC ('00=NO_CLEAR_ACTION 01=CLEAR_INACTIVE 02=CLEAR_ACTIVE 03=CLEAR_ALL'), the record CM848 names diagnostic_clear_request_state (e2m 1080 +2 DL_to_Fault_Handler_Command). Service 1 (cm550_requestClearInactiveFaults) sets its CLEAR_INACTIVE bit, and cm550_FUN_00014812 acts on it and clears it, as CM848's clear processing does. Every access is a word. (was action_00_no_clear_action_01_clear_inactive_02_clear_active_03_clear_al_0_6; PR #53 round 88)
 0x0080de5c,total_time_offset_moved_to_ti_base_adj_h_none,,
 0x0080dec8,fuel_limit_shutdown_minimum,word,Running minimum of the fuel limits (each limiter stores its value here when it is smaller). Was hidden behind a duplicate trailing base_ptr field of j1708_multipacket_msg_t
 0x0080deca,indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41,undefined,

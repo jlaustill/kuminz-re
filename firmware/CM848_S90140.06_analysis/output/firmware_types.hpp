@@ -565,7 +565,7 @@ typedef enum {
     J1939_DIAGNOSTIC_SERVICE_CLEAR_INACTIVE_FAULTS = 0x01,  /* cm848_requestClearInactiveFaults: sets the CLEAR_INACTIVE bit of diagnostic_clear_request_state as DM3 does (was SERVICE_QUERY_TERMINATE) */
     J1939_DIAGNOSTIC_SERVICE_DISABLE_BROADCAST = 0x04,  /* cm848_handleJ1939DisableBroadcastService: cm848_updateJ1939BroadcastEnableMask with enable 0 (was SYSTEM_SERVICE_04) */
     J1939_DIAGNOSTIC_SERVICE_ENABLE_BROADCAST = 0x05,  /* cm848_handleJ1939EnableBroadcastService: cm848_updateJ1939BroadcastEnableMask with enable 1 (was SYSTEM_SERVICE_05) */
-    J1939_DIAGNOSTIC_SERVICE_COMMAND_ENGINE_SHUTDOWN = 0x06,  /* cm848_commandEngineShutdown: sets engine_shutdown_command_flag (was SYSTEM_SERVICE_06) */
+    J1939_DIAGNOSTIC_SERVICE_COMMAND_ENGINE_SHUTDOWN = 0x06,  /* commandEngineShutdown: sets engine_shutdown_command_flag (was SYSTEM_SERVICE_06) */
     J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE = 0x07,  /* exitDevelopmentMode (was SYSTEM_SERVICE_07) */
     J1939_DIAGNOSTIC_SERVICE_ENTER_DEVELOPMENT_MODE = 0x0a,  /* enterDevelopmentMode (was SYSTEM_SERVICE_0A) */
     J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM = 0x0b,  /* handleJ1939RestartService: restartThroughBootRom (was SYSTEM_SERVICE_0B) */
@@ -573,9 +573,9 @@ typedef enum {
     J1939_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE = 0x0d,  /* Sent by cm848_sendJ1939ResponseFrame for a nonzero result other than 0xfe (that sends 0x0e) - then the result code and the request's first bytes; cm848_j1939DiagnosticServiceHandler ignores a received one */
     J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_15 = 0x0f,  /* cm848_j1939DiagnosticServiceAcknowledgeNoOperation: accepted and does nothing (was GET_PARAMETERS_BY_ID_ALT) */
     J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_16 = 0x10,  /* cm848_j1939DiagnosticServiceAcknowledgeNoOperation: accepted and does nothing (was SERVICE_GET_PARAMETERS_BY_ID) */
-    J1939_DIAGNOSTIC_SERVICE_COMMIT_EEPROM_MIRROR = 0x15,  /* commitEepromMirrorToEeprom (was GET_ADDRESS_BY_PARAM_ID) */
+    J1939_DIAGNOSTIC_SERVICE_COMMIT_EEPROM_MIRROR = 0x15,  /* cm848_commitEepromMirrorToEeprom (was GET_ADDRESS_BY_PARAM_ID) */
     J1939_DIAGNOSTIC_SERVICE_FORCE_EXIT_DEVELOPMENT_MODE = 0x16,  /* forceExitDevelopmentMode (was SYSTEM_SERVICE_16) */
-    J1939_DIAGNOSTIC_SERVICE_INHIBIT_KEY_OFF_SHUTDOWN = 0x18,  /* cm848_inhibitKeyOffShutdown (was SYSTEM_SERVICE_18) */
+    J1939_DIAGNOSTIC_SERVICE_INHIBIT_KEY_OFF_SHUTDOWN = 0x18,  /* inhibitKeyOffShutdown (was SYSTEM_SERVICE_18) */
     J1939_DIAGNOSTIC_SERVICE_GET_ADDRESS_BY_PARAMETER_ID = 0x41,  /* cm848_handleJ1939GetAddressByParameterIdService: the ID (2 bytes); answered with 0x42 - the ID and its 4-byte address (was DIAG_ADDR_RESOLVER) */
     J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_LENGTH = 0x43,  /* cm848_handleJ1939ReadByParameterIdLongLengthService: the ID (2 bytes) and a length (4) read from the ID's address (was MEM_READ_2B_PARAM_4B_OFFSET) */
     J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID = 0x44,  /* cm848_handleJ1939WriteByParameterIdService: the ID (2 bytes) and a length (1) then the data (was SERVICE_44) */

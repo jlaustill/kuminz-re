@@ -215,8 +215,8 @@ function_address,function_name,param_index,name,type,comment
 # EF00 Service Dispatch System - J1939 PGN 0xEF00 handler registration
 # Two dispatch tables: ef00_service_dispatch_table (0x3FA8B2) and diag_service_dispatch_table (0x3FDB30)
 # -----------------------------------------------------------------------------
-0x000220e4,cm848_j1939RegisterDiagnosticService,0,service_id,J1939_DIAGNOSTIC_SERVICE,The PGN 61184 service byte to register (was EF00 service ID to register - EF00 is the PGN in hex; PR #53 round 63)
-0x000220e4,cm848_j1939RegisterDiagnosticService,1,handler_ptr,void*,Function pointer for service handler
+0x000220e4,registerJ1939DiagnosticService,0,service_id,J1939_DIAGNOSTIC_SERVICE,The PGN 61184 service byte to register (was EF00 service ID to register - EF00 is the PGN in hex; PR #53 round 63)
+0x000220e4,registerJ1939DiagnosticService,1,handler_ptr,void*,Function pointer for service handler
 
 0x00002c94,cm848_registerDiagnosticService,0,service_id,BOOT_DIAGNOSTIC_SERVICE,Diagnostic service ID (0x43/0x4A/0x4C)
 0x00002c94,cm848_registerDiagnosticService,1,handler_ptr,void*,Function pointer for service handler
@@ -231,9 +231,9 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 0x00021584,cm848_requestClearInactiveFaults,return,,J1939_DIAGNOSTIC_RESULT,Returns J1939_DIAGNOSTIC_RESULT_ACCEPTED(0) or J1939_DIAGNOSTIC_RESULT_NOT_SAFE(7)
 0x00021668,enterDevelopmentMode,return,,J1939_DIAGNOSTIC_RESULT,Always J1939_DIAGNOSTIC_RESULT_ACCEPTED - unconditional state clear
-0x000216e8,cm848_commandEngineShutdown,return,,J1939_DIAGNOSTIC_RESULT,Always J1939_DIAGNOSTIC_RESULT_ACCEPTED - unconditional flag set
-0x00021904,cm848_inhibitKeyOffShutdown,return,,J1939_DIAGNOSTIC_RESULT,Always J1939_DIAGNOSTIC_RESULT_ACCEPTED - unconditional flag set
-0x00021918,commitEepromMirrorToEeprom,return,,J1939_DIAGNOSTIC_RESULT,Returns J1939_DIAGNOSTIC_RESULT_ACCEPTED(0) or J1939_DIAGNOSTIC_RESULT_NOT_SAFE(7)
+0x000216e8,commandEngineShutdown,return,,J1939_DIAGNOSTIC_RESULT,Always J1939_DIAGNOSTIC_RESULT_ACCEPTED - unconditional flag set
+0x00021904,inhibitKeyOffShutdown,return,,J1939_DIAGNOSTIC_RESULT,Always J1939_DIAGNOSTIC_RESULT_ACCEPTED - unconditional flag set
+0x00021918,cm848_commitEepromMirrorToEeprom,return,,J1939_DIAGNOSTIC_RESULT,Returns J1939_DIAGNOSTIC_RESULT_ACCEPTED(0) or J1939_DIAGNOSTIC_RESULT_NOT_SAFE(7)
 
 # -----------------------------------------------------------------------------
 # J1939 RX Message Handlers - all receive j1939_rx_msg_t* as first param

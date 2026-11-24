@@ -384,7 +384,7 @@ void cm848_selectCompressorOutletTemperature(void);  // @ 0x00017d54
 void mpc555_initFuelFlowRateVariables(void);  // @ 0x00017e54
 void cm848_calculateEngineOutputTorque(void);  // @ 0x00017eb8
 void cm848_calculateEgrDeltaPressures(void);  // @ 0x00017f50
-void emptyStubFunction3(void);  // @ 0x0001806c
+void cm848_emptyStubFunction3(void);  // @ 0x0001806c
 int cm848_calculateJ1939PercentPeakTorqueAtSpeed(word param_1,short param_2);  // @ 0x00018070
 void cm848_calculateJ1939FrictionLoadFuelingAtBreakpoints(void);  // @ 0x0001811c
 void cm848_calculateJ1939PercentPeakTorquePoints(void);  // @ 0x0001820c
@@ -450,7 +450,7 @@ void cm848_coldStartRpmTableLookup(void);  // @ 0x0001c114
 void cm848_coldStartFuelFactorLookup(void);  // @ 0x0001c1a4
 void cm848_selectColdStartFactor(void);  // @ 0x0001c23c
 void cm848_updateEngineState(void);  // @ 0x0001c28c
-void cm848_initCrankingLimits(void);  // @ 0x0001c978
+void initializeEngineState(void);  // @ 0x0001c978
 void cm848_faultTimeoutHandler(byte param_1);  // @ 0x0001c9a0
 void cm848_clearFaultFromActiveList(byte param_1);  // @ 0x0001cb94
 void cm848_activeFaultScanProcessor(void);  // @ 0x0001cd1c
@@ -509,20 +509,20 @@ J1939_DIAGNOSTIC_RESULT cm848_requestClearInactiveFaults(void);  // @ 0x00021584
 J1939_DIAGNOSTIC_RESULT exitDevelopmentMode(void);  // @ 0x00021624
 J1939_DIAGNOSTIC_RESULT enterDevelopmentMode(void);  // @ 0x00021668
 J1939_DIAGNOSTIC_RESULT forceExitDevelopmentMode(void);  // @ 0x00021694
-J1939_DIAGNOSTIC_RESULT cm848_commandEngineShutdown(void);  // @ 0x000216e8
+J1939_DIAGNOSTIC_RESULT commandEngineShutdown(void);  // @ 0x000216e8
 undefined4 restartThroughBootRom(j1939_rx_msg_t *param_1,int param_2);  // @ 0x000216fc
 undefined1 cm848_restartThroughBootRomAfterSciRequest(void);  // @ 0x000218b0
 undefined1 handleJ1939RestartService(j1939_rx_msg_t *request);  // @ 0x000218dc
-J1939_DIAGNOSTIC_RESULT cm848_inhibitKeyOffShutdown(void);  // @ 0x00021904
-J1939_DIAGNOSTIC_RESULT commitEepromMirrorToEeprom(void);  // @ 0x00021918
-void cm848_registerJ1939DiagnosticHandlers(void);  // @ 0x00021a24
+J1939_DIAGNOSTIC_RESULT inhibitKeyOffShutdown(void);  // @ 0x00021904
+J1939_DIAGNOSTIC_RESULT cm848_commitEepromMirrorToEeprom(void);  // @ 0x00021918
+void registerJ1939DiagnosticHandlers(void);  // @ 0x00021a24
 undefined2 cm848_lookupMaximumTorqueAtEngineSpeed(word param_1);  // @ 0x00021ac0
 uint cm848_getHighestPriorityBit(void);  // @ 0x00021bf8
 void cm848_updateProtectionThresholdsIfLow(void);  // @ 0x00021c3c
 void cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings(void);  // @ 0x00021cd4
 void cm848_receivePgn56576AntiTheftRequestMessage(j1939_rx_msg_t *message);  // @ 0x00021fc4
 void cm848_initJ1939DiagnosticCallback(void);  // @ 0x000220b4
-bool cm848_j1939RegisterDiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *handler_ptr);  // @ 0x000220e4
+bool registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *handler_ptr);  // @ 0x000220e4
 void cm848_j1939DiagnosticServiceHandler(j1939_rx_msg_t *rx_msg);  // @ 0x00022128
 void cm848_initJ1939DiagnosticServiceHandler(void);  // @ 0x000221f0
 void cm848_tickJ1939Dm13Timers(void);  // @ 0x00022220
@@ -1236,8 +1236,8 @@ void mpc555_queueCanReceiveMessage(int param_1);  // @ 0x00053720
 void mpc555_sendJ1939SingleFrame(dword can_id,word data_length,byte *data,byte *result);  // @ 0x00053858
 void cm848_sendJ1939Message(j1939_tx_msg_t *msg);  // @ 0x000539fc
 J1939_CONTROL_DEVICE cm848_lookupJ1939ControlDevice(dword source_address);  // @ 0x00053a4c
-void cm848_handleCanMailboxTransmitComplete(uint param_1);  // @ 0x00053aa8
-void cm848_handleCanMailboxTransmitRange(int param_1);  // @ 0x00053ae0
+void handleJ1939CanTransmitInterrupt(uint param_1);  // @ 0x00053aa8
+void cm848_handleJ1939CanReceiveInterrupt(int param_1);  // @ 0x00053ae0
 void cm848_writeCanControllerTxMailbox(int can_module,dword mailbox_number,word *frame_words);  // @ 0x00053b28
 void mpc555_canTransmitInterruptHandler(void);  // @ 0x00053b68
 void cm848_emptyStub3(void);  // @ 0x00053c60
@@ -1301,10 +1301,10 @@ dword cm848_signedDivision32(dword dividend_hi,dword dividend_lo,dword divisor_h
 dword cm848_unsignedDivision32 (dword dividend_hi,dword dividend_lo,dword divisor_hi,dword divisor_lo);  // @ 0x000571b0
 void cm848_mathMultiplyDivide32(undefined4 param_1,undefined4 param_2,uint param_3,uint param_4);  // @ 0x00057204
 dword cm848_conditionalMultiplyDivide (dword dividend_hi,dword dividend_lo,dword divisor_hi,dword divisor_lo);  // @ 0x00057498
-void emptyStubFunction2(void);  // @ 0x00057520
-void cm848_calibrationTableLookup1D(void);  // @ 0x00057524
-void cm848_saveRegistersToStack(void);  // @ 0x0005759c
-void cm848_calibrationTableLookup2D(void);  // @ 0x000575a0
+void cm848_restoreRegisters26To31AndReturn(void);  // @ 0x00057520
+void cm848_restoreRegisters27To31AndReturn(void);  // @ 0x00057524
+void cm848_saveRegisters26To31(void);  // @ 0x0005759c
+void cm848_saveRegisters27To31(void);  // @ 0x000575a0
 void cm848_processCoolantTemperatureChannel(void);  // @ 0x00500004
 void cm848_initializeCoolantTemperatureChannel(void);  // @ 0x00500090
 void cm848_processExhaustThrottlePositionChannel(void);  // @ 0x0050011c

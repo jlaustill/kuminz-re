@@ -892,18 +892,18 @@ typedef enum {
 } SECURITY_ENABLED;
 
 typedef enum {
-    SERVICE_QUERY_TERMINATE = 0x01,  /* QueryTerminate - CLIP - dispatch @ 0x0001183E - SECURED - in dispatch table */
-    SYSTEM_SERVICE_04 = 0x04,  /* System service 04 - NOT in dispatch table (handled elsewhere?) */
-    SYSTEM_SERVICE_05 = 0x05,  /* System service 05 - NOT in dispatch table (handled elsewhere?) */
-    SERVICE_HIGH_RPM_SHUTDOWN_ACTIVATE = 0x06,  /* activateHighRpmShutdownFlag - dispatch @ 0x000118FC - SECURED - RESPONDS! in dispatch table */
-    SYSTEM_SERVICE_07 = 0x07,  /* System service 07 - dispatch @ 0x0001188C - SECURED - in dispatch table */
-    SYSTEM_SERVICE_0A = 0x0A,  /* System service 0A - dispatch @ 0x000118B2 - SECURED - in dispatch table */
+    J1939_DIAGNOSTIC_SERVICE_CLEAR_INACTIVE_FAULTS = 0x01,  /* CM848's member name for service 1. The service does the same job in both firmwares: it sets the CLEAR_INACTIVE bit of e2m 1080 +2. (was SERVICE_QUERY_TERMINATE; PR #53 round 88) */
+    J1939_DIAGNOSTIC_SERVICE_DISABLE_BROADCAST = 0x04,  /* CM848's member name for service 4. CM550's handler 0x200a4 calls 0x1ffd6(request, 0), which clears the request's item bits in the J1939 broadcast enable word (_bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off). (was SYSTEM_SERVICE_04; PR #53 round 88) */
+    J1939_DIAGNOSTIC_SERVICE_ENABLE_BROADCAST = 0x05,  /* CM848's member name for service 5. CM550's handler 0x200b4 calls 0x1ffd6(request, 1), which sets the request's item bits in the J1939 broadcast enable word, as CM848's 0x509d0c does through cm848_updateJ1939BroadcastEnableMask(request, 1). (was SYSTEM_SERVICE_05; PR #53 round 88) */
+    J1939_DIAGNOSTIC_SERVICE_COMMAND_ENGINE_SHUTDOWN = 0x06,  /* CM848's member name for service 6. The handler is the twin commandEngineShutdown (0x118fc), which sets the e2m 10B1 +12 SHSS shutdown command. There is no rpm test. The row's comment should name commandEngineShutdown. (was SERVICE_HIGH_RPM_SHUTDOWN_ACTIVATE; PR #53 round 88) */
+    J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE = 0x07,  /* CM848's member name for service 7. The handler is the twin exitDevelopmentMode (0x1188c, shared since round 73), re-checked. (was SYSTEM_SERVICE_07; PR #53 round 88) */
+    J1939_DIAGNOSTIC_SERVICE_ENTER_DEVELOPMENT_MODE = 0x0A,  /* CM848's member name for service 10. The handler is the twin enterDevelopmentMode (0x118b2), re-checked. It sets ram_refresh_enable 0, development_mode 1 and run_location 0xeaea, and returns 0. CM550 also reaches it as J1708 command 64. (was SYSTEM_SERVICE_0A; PR #53 round 88) */
     J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM = 0x0B,  /* handleJ1939RestartService (0x11908): restartThroughBootRom - SECURED - in dispatch table (was SYSTEM_SERVICE_0B; PR #53 round 87) */
-    GET_PARAMETERS_BY_ID_ALT = 0x0F,  /* getParametersByIdHandler - NOT in dispatch table - RESPONDS! (alternate path?) */
-    SERVICE_GET_PARAMETERS_BY_ID = 0x10,  /* GetParametersByID - CLIP - NOT in dispatch table - RESPONDS! (alternate path?) */
-    GET_ADDRESS_BY_PARAM_ID = 0x15,  /* GetAddressByParameterID - dispatch @ 0x00011A74 - SECURED - in dispatch table */
-    SYSTEM_SERVICE_16 = 0x16,  /* System service 16 - dispatch @ 0x000118CC - SECURED - in dispatch table */
-    SYSTEM_SERVICE_18 = 0x18,  /* System service 18 - dispatch @ 0x00011A68 - SECURED - in dispatch table */
+    J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_15 = 0x0F,  /* CM848's member name for service 15. CM550's handler 0x1ffd2 is clr.b d0; rts: it is accepted and does nothing, like CM848's cm848_j1939DiagnosticServiceAcknowledgeNoOperation (li r3,0; blr). That explains the bench note 'RESPONDS!'. (was GET_PARAMETERS_BY_ID_ALT; PR #53 round 88) */
+    J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_16 = 0x10,  /* CM848's member name for service 16. It uses the same no-operation handler 0x1ffd2 as service 15 (accepted, does nothing), as CM848 registers 16 to the same no-operation handler. The live table holds it (entry 21). (was SERVICE_GET_PARAMETERS_BY_ID; PR #53 round 88) */
+    J1939_DIAGNOSTIC_SERVICE_COMMIT_EEPROM_MIRROR = 0x15,  /* CM848's member name for service 21. Its handler commits the EEPROM mirror in both firmwares. The handler is a counterpart because of the reply path (cm550_commitEepromMirrorToEeprom), but the service's job is the same. (was GET_ADDRESS_BY_PARAM_ID; PR #53 round 88) */
+    J1939_DIAGNOSTIC_SERVICE_FORCE_EXIT_DEVELOPMENT_MODE = 0x16,  /* CM848's member name for service 22. The handler is the twin forceExitDevelopmentMode (0x118cc), re-checked. It returns 7 while not_safe_to_program_flag is 1. (was SYSTEM_SERVICE_16; PR #53 round 88) */
+    J1939_DIAGNOSTIC_SERVICE_INHIBIT_KEY_OFF_SHUTDOWN = 0x18,  /* CM848's member name for service 24. The handler is the twin inhibitKeyOffShutdown (0x11a68), which sets key_off_shutdown_inhibit_flag. The enum header's '# Dispatch table: 20 entries' comment should say 24: the dump's count byte is 0x18. (was SYSTEM_SERVICE_18; PR #53 round 88) */
     DIAG_ADDR_RESOLVER = 0x41,  /* canDiagnosticResponseSender - dispatch @ 0x000222B4 - UNSECURED - RESPONDS! in dispatch table */
     MEM_READ_2B_PARAM_4B_OFFSET = 0x43,  /* Memory read - dispatch @ 0x00022530 - UNSECURED - RESPONDS! Format: [43][Param:2][Offset:4] */
     SERVICE_44 = 0x44,  /* Service 44 - dispatch @ 0x0002167E - UNSECURED - in dispatch table */
@@ -1047,9 +1047,24 @@ typedef enum {
     FLASH_ERASE_SUSPENDED = 2  /* Suspended with 0xB0B0: the suspend check is on and the chip select 2 device's input bit 0 read 1 on 4 consecutive reads (PR #53 round 85) */
 } FLASH_ERASE_RESULT;
 
+typedef enum {
+    ENGINE_STATE_UNINITIALIZED = 0,  /* New CM550 enum ENGINE_STATE, size 2, with CM848's member names. This member exists only for parity with CM848: no CM550 code in the dumped 256 KB compares with or stores 0. (PR #53 round 88) */
+    ENGINE_STATE_STOPPED = 1,  /* e2m 1068 FSEGST 1=STOP. (PR #53 round 88) */
+    ENGINE_STATE_CRANKING = 2,  /* e2m 2=CRANK. Entered from STOPPED. It leaves to RUNNING at crank_exit_speed, to JUMP_START when crank_jump_start_timer exceeds crank_jump_start_time, and to STOPPED at engine_stopped_speed. (PR #53 round 88) */
+    ENGINE_STATE_RUNNING = 3,  /* e2m 3=RUN. Entered at crank_exit_speed from CRANKING / JUMP_START / REENTRY, and from ENGINE_BRAKE / OVERSPEED when their condition ends. (PR #53 round 88) */
+    ENGINE_STATE_ENGINE_BRAKE = 4,  /* e2m 4=ENGBRAKE. Entered from RUNNING while engine_retarder_active_flag (117D +4 EBSS) is 1 and engine_brake_driveline_brake_type_cal is 0. It returns to RUNNING when both are 0. (PR #53 round 88) */
+    ENGINE_STATE_OVERSPEED = 5,  /* e2m 5=OVERSPED. Entered from RUNNING while engine_overspeed_active_flag is 1. It returns to RUNNING when the flag clears. (PR #53 round 88) */
+    ENGINE_STATE_JUMP_START = 6,  /* e2m 6=JUMPSTRT. Entered from CRANKING after crank_jump_start_timer passes crank_jump_start_time. It leaves like CRANKING, without the jump start test. The consumers treat it like CRANKING. (PR #53 round 88) */
+    ENGINE_STATE_REENTRY = 7,  /* e2m 7=REENTRY. Entered from RUNNING when engine_rpm_primary falls to crank_reentry_speed. It leaves like JUMP_START: to RUNNING at crank_exit_speed, to STOPPED at engine_stopped_speed. (PR #53 round 88) */
+    ENGINE_STATE_SHUTDOWN = 8  /* e2m 8=SHUTDOWN. (PR #53 round 88) */
+} ENGINE_STATE;
+
 /* ---- Structures ---- */
 
-typedef struct j1939_header_t j1939_header_t;
+typedef struct j1939_msg_hdr_t j1939_msg_hdr_t;
+typedef struct j1939_tx_msg_t j1939_tx_msg_t;
+typedef struct engine_overspeed_event_t engine_overspeed_event_t;
+typedef struct j1939_diagnostic_service_entry_t j1939_diagnostic_service_entry_t;
 typedef struct can_std_rx_desc_t can_std_rx_desc_t;
 typedef struct param_lookup_args_t param_lookup_args_t;
 typedef struct table_interp_args_t table_interp_args_t;
@@ -1092,9 +1107,27 @@ typedef struct can_buffer_setup_t can_buffer_setup_t;
 typedef struct insite_parameter_schedule_entry_t insite_parameter_schedule_entry_t;
 typedef struct memory_region_t memory_region_t;
 
-struct j1939_header_t {
-    uint32_t id;  /* CAN identifier containing PGN and addressing info */
-    uint16_t length;  /* Message data length for single/multi-frame decision */
+struct j1939_msg_hdr_t {
+    uint32_t can_id;  /* The CAN identifier: priority / PGN / source address (was j1939_header_t.id; CM848's type name; PR #53 round 88) */
+    uint16_t data_length;  /* The payload length in bytes: above 8 goes out as a transport session (was j1939_header_t.length; PR #53 round 88) */
+};
+
+struct j1939_tx_msg_t {
+    j1939_msg_hdr_t header;  /* The CAN identifier and the payload length */
+    void * data_pointer;  /* Points at the first payload byte */
+    void * status_pointer;  /* Points at the message's status byte j1939_<message>_transmit_status: the send result or the transport session code (CM848's layout; PR #53 round 88) */
+};
+
+struct engine_overspeed_event_t {
+    uint32_t start_key_on_hour_meter;  /* key_on_hour_meter when the overspeed began */
+    uint16_t engine_speed_at_detection;  /* engine_rpm_primary on the pass the overspeed latch set */
+    uint16_t duration;  /* The passes the overspeed lasted (PR #53 round 88) */
+};
+
+struct j1939_diagnostic_service_entry_t {
+    J1939_DIAGNOSTIC_SERVICE service_id;  /* The PGN 61184 service byte */
+    uint8_t pad;  /* Unused */
+    void * handler;  /* The service handler registerJ1939DiagnosticService stored (PR #53 round 88) */
 };
 
 struct can_std_rx_desc_t {
@@ -1215,7 +1248,7 @@ struct cummins_data_plate_t {
 
 struct j1939_tx_msg_buffer_t {
     uint8_t data[8];  /* J1939 message payload data array */
-    j1939_header_t header;  /* CAN message header (ID + length) */
+    j1939_msg_hdr_t header;  /* CAN message header (ID + length) */
 };
 
 struct j1939_vp44_msg_t {

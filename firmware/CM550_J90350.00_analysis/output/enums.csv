@@ -332,14 +332,14 @@ VP44_COMM_STATE,3,VP44_COMM_IDLE,Idle/complete - transmission inactive,1
 VP44_COMM_MODE,0,VP44_COMMUNICATION_IDLE,Idle mode - transition to state 3,1
 VP44_COMM_MODE,1,VP44_COMMUNICATION_ACTIVE,Active mode - perform mid-buffer transmission,1
 VP44_COMM_MODE,2,VP44_COMMUNICATION_RESET,Reset mode - transmit to end address and reset pointers,1
-# VP44 Status Flags 1 bit definitions - vp44_status_flags_1 register
+# VP44 Status Flags 1 bit definitions - j1939_pgn65244_tx_message.header.data_length register
 VP44_STATUS_FLAGS_1,0x8000,STATUS_BIT15,VP44 status flag bit 15 - checked in fuel control,2
 VP44_STATUS_FLAGS_1,0x4000,STATUS_BIT14,VP44 status flag bit 14 - protection mode check,2
 VP44_STATUS_FLAGS_1,0x2000,STATUS_BIT13,VP44 status flag bit 13,2
 VP44_STATUS_FLAGS_1,0x1000,STATUS_BIT12,VP44 status flag bit 12,2
 VP44_STATUS_FLAGS_1,0x0800,STATUS_BIT11,VP44 status flag bit 11,2
 VP44_STATUS_FLAGS_1,0x0400,STATUS_BIT10,VP44 status flag bit 10,2
-# VP44 Status Flags 2 bit definitions - vp44_status_flags_2 register
+# VP44 Status Flags 2 bit definitions - j1939_pgn65252_tx_message.header.data_length register
 VP44_STATUS_FLAGS_2,0x08,OVERRIDE_FUEL_MODE,VP44 override fuel mode active,1
 # VP44 Flag Register 1 bit definitions - vp44_flag_register_1
 VP44_FLAG_REGISTER_1,0x4000,FLAG_BIT14,VP44 flag register bit 14 - fuel control decision,2
@@ -651,18 +651,18 @@ SECURITY_ENABLED,0xFF,FALSE,Security checks are SKIPPED - all services accessibl
 # Security key @ 0x803b0c = "ABCDEF" (factory default on bench ECU)
 # --- SECURED SERVICES (ID <= 0x19) - require authentication ---
 # J1939_DIAGNOSTIC_SERVICE (was EF00_SERVICE_ID - EF00 is the PGN in hex): renamed with CM848's in PR #53 round 63. The members below are CM550's own and unreviewed against its handlers
-J1939_DIAGNOSTIC_SERVICE,0x01,SERVICE_QUERY_TERMINATE,QueryTerminate - CLIP - dispatch @ 0x0001183E - SECURED - in dispatch table,1
-J1939_DIAGNOSTIC_SERVICE,0x04,SYSTEM_SERVICE_04,System service 04 - NOT in dispatch table (handled elsewhere?),1
-J1939_DIAGNOSTIC_SERVICE,0x05,SYSTEM_SERVICE_05,System service 05 - NOT in dispatch table (handled elsewhere?),1
-J1939_DIAGNOSTIC_SERVICE,0x06,SERVICE_HIGH_RPM_SHUTDOWN_ACTIVATE,activateHighRpmShutdownFlag - dispatch @ 0x000118FC - SECURED - RESPONDS! in dispatch table,1
-J1939_DIAGNOSTIC_SERVICE,0x07,SYSTEM_SERVICE_07,System service 07 - dispatch @ 0x0001188C - SECURED - in dispatch table,1
-J1939_DIAGNOSTIC_SERVICE,0x0A,SYSTEM_SERVICE_0A,System service 0A - dispatch @ 0x000118B2 - SECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x01,J1939_DIAGNOSTIC_SERVICE_CLEAR_INACTIVE_FAULTS,CM848's member name for service 1. The service does the same job in both firmwares: it sets the CLEAR_INACTIVE bit of e2m 1080 +2. (was SERVICE_QUERY_TERMINATE; PR #53 round 88),1
+J1939_DIAGNOSTIC_SERVICE,0x04,J1939_DIAGNOSTIC_SERVICE_DISABLE_BROADCAST,"CM848's member name for service 4. CM550's handler 0x200a4 calls 0x1ffd6(request, 0), which clears the request's item bits in the J1939 broadcast enable word (_bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off). (was SYSTEM_SERVICE_04; PR #53 round 88)",1
+J1939_DIAGNOSTIC_SERVICE,0x05,J1939_DIAGNOSTIC_SERVICE_ENABLE_BROADCAST,"CM848's member name for service 5. CM550's handler 0x200b4 calls 0x1ffd6(request, 1), which sets the request's item bits in the J1939 broadcast enable word, as CM848's 0x509d0c does through cm848_updateJ1939BroadcastEnableMask(request, 1). (was SYSTEM_SERVICE_05; PR #53 round 88)",1
+J1939_DIAGNOSTIC_SERVICE,0x06,J1939_DIAGNOSTIC_SERVICE_COMMAND_ENGINE_SHUTDOWN,"CM848's member name for service 6. The handler is the twin commandEngineShutdown (0x118fc), which sets the e2m 10B1 +12 SHSS shutdown command. There is no rpm test. The row's comment should name commandEngineShutdown. (was SERVICE_HIGH_RPM_SHUTDOWN_ACTIVATE; PR #53 round 88)",1
+J1939_DIAGNOSTIC_SERVICE,0x07,J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE,"CM848's member name for service 7. The handler is the twin exitDevelopmentMode (0x1188c, shared since round 73), re-checked. (was SYSTEM_SERVICE_07; PR #53 round 88)",1
+J1939_DIAGNOSTIC_SERVICE,0x0A,J1939_DIAGNOSTIC_SERVICE_ENTER_DEVELOPMENT_MODE,"CM848's member name for service 10. The handler is the twin enterDevelopmentMode (0x118b2), re-checked. It sets ram_refresh_enable 0, development_mode 1 and run_location 0xeaea, and returns 0. CM550 also reaches it as J1708 command 64. (was SYSTEM_SERVICE_0A; PR #53 round 88)",1
 J1939_DIAGNOSTIC_SERVICE,0x0B,J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM,handleJ1939RestartService (0x11908): restartThroughBootRom - SECURED - in dispatch table (was SYSTEM_SERVICE_0B; PR #53 round 87),1
-J1939_DIAGNOSTIC_SERVICE,0x0F,GET_PARAMETERS_BY_ID_ALT,getParametersByIdHandler - NOT in dispatch table - RESPONDS! (alternate path?),1
-J1939_DIAGNOSTIC_SERVICE,0x10,SERVICE_GET_PARAMETERS_BY_ID,GetParametersByID - CLIP - NOT in dispatch table - RESPONDS! (alternate path?),1
-J1939_DIAGNOSTIC_SERVICE,0x15,GET_ADDRESS_BY_PARAM_ID,GetAddressByParameterID - dispatch @ 0x00011A74 - SECURED - in dispatch table,1
-J1939_DIAGNOSTIC_SERVICE,0x16,SYSTEM_SERVICE_16,System service 16 - dispatch @ 0x000118CC - SECURED - in dispatch table,1
-J1939_DIAGNOSTIC_SERVICE,0x18,SYSTEM_SERVICE_18,System service 18 - dispatch @ 0x00011A68 - SECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x0F,J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_15,"CM848's member name for service 15. CM550's handler 0x1ffd2 is clr.b d0; rts: it is accepted and does nothing, like CM848's cm848_j1939DiagnosticServiceAcknowledgeNoOperation (li r3,0; blr). That explains the bench note 'RESPONDS!'. (was GET_PARAMETERS_BY_ID_ALT; PR #53 round 88)",1
+J1939_DIAGNOSTIC_SERVICE,0x10,J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_16,"CM848's member name for service 16. It uses the same no-operation handler 0x1ffd2 as service 15 (accepted, does nothing), as CM848 registers 16 to the same no-operation handler. The live table holds it (entry 21). (was SERVICE_GET_PARAMETERS_BY_ID; PR #53 round 88)",1
+J1939_DIAGNOSTIC_SERVICE,0x15,J1939_DIAGNOSTIC_SERVICE_COMMIT_EEPROM_MIRROR,"CM848's member name for service 21. Its handler commits the EEPROM mirror in both firmwares. The handler is a counterpart because of the reply path (cm550_commitEepromMirrorToEeprom), but the service's job is the same. (was GET_ADDRESS_BY_PARAM_ID; PR #53 round 88)",1
+J1939_DIAGNOSTIC_SERVICE,0x16,J1939_DIAGNOSTIC_SERVICE_FORCE_EXIT_DEVELOPMENT_MODE,"CM848's member name for service 22. The handler is the twin forceExitDevelopmentMode (0x118cc), re-checked. It returns 7 while not_safe_to_program_flag is 1. (was SYSTEM_SERVICE_16; PR #53 round 88)",1
+J1939_DIAGNOSTIC_SERVICE,0x18,J1939_DIAGNOSTIC_SERVICE_INHIBIT_KEY_OFF_SHUTDOWN,"CM848's member name for service 24. The handler is the twin inhibitKeyOffShutdown (0x11a68), which sets key_off_shutdown_inhibit_flag. The enum header's '# Dispatch table: 20 entries' comment should say 24: the dump's count byte is 0x18. (was SYSTEM_SERVICE_18; PR #53 round 88)",1
 # --- UNSECURED SERVICES (ID > 0x19) - bypass authentication ---
 J1939_DIAGNOSTIC_SERVICE,0x41,DIAG_ADDR_RESOLVER,canDiagnosticResponseSender - dispatch @ 0x000222B4 - UNSECURED - RESPONDS! in dispatch table,1
 J1939_DIAGNOSTIC_SERVICE,0x43,MEM_READ_2B_PARAM_4B_OFFSET,Memory read - dispatch @ 0x00022530 - UNSECURED - RESPONDS! Format: [43][Param:2][Offset:4],1
@@ -842,3 +842,13 @@ DEVELOPMENT_MODE_STATE,1,DEVELOPMENT_MODE_ON,Development mode - set by enterDeve
 FLASH_ERASE_RESULT,0,FLASH_ERASE_DONE,The block is erased: status bit 7 (ready) without the erase error bit (PR #53 round 85),4
 FLASH_ERASE_RESULT,1,FLASH_ERASE_FAILED,The erase error bit (status bit 5) or no ready bit after 40000 status reads (PR #53 round 85),4
 FLASH_ERASE_RESULT,2,FLASH_ERASE_SUSPENDED,Suspended with 0xB0B0: the suspend check is on and the chip select 2 device's input bit 0 read 1 on 4 consecutive reads (PR #53 round 85),4
+# ENGINE_STATE: e2m 1068 +0 FSEGST, the same members as CM848's (PR #53 round 88)
+ENGINE_STATE,0,ENGINE_STATE_UNINITIALIZED,"New CM550 enum ENGINE_STATE, size 2, with CM848's member names. This member exists only for parity with CM848: no CM550 code in the dumped 256 KB compares with or stores 0. (PR #53 round 88)",2
+ENGINE_STATE,1,ENGINE_STATE_STOPPED,e2m 1068 FSEGST 1=STOP. (PR #53 round 88),2
+ENGINE_STATE,2,ENGINE_STATE_CRANKING,"e2m 2=CRANK. Entered from STOPPED. It leaves to RUNNING at crank_exit_speed, to JUMP_START when crank_jump_start_timer exceeds crank_jump_start_time, and to STOPPED at engine_stopped_speed. (PR #53 round 88)",2
+ENGINE_STATE,3,ENGINE_STATE_RUNNING,"e2m 3=RUN. Entered at crank_exit_speed from CRANKING / JUMP_START / REENTRY, and from ENGINE_BRAKE / OVERSPEED when their condition ends. (PR #53 round 88)",2
+ENGINE_STATE,4,ENGINE_STATE_ENGINE_BRAKE,e2m 4=ENGBRAKE. Entered from RUNNING while engine_retarder_active_flag (117D +4 EBSS) is 1 and engine_brake_driveline_brake_type_cal is 0. It returns to RUNNING when both are 0. (PR #53 round 88),2
+ENGINE_STATE,5,ENGINE_STATE_OVERSPEED,e2m 5=OVERSPED. Entered from RUNNING while engine_overspeed_active_flag is 1. It returns to RUNNING when the flag clears. (PR #53 round 88),2
+ENGINE_STATE,6,ENGINE_STATE_JUMP_START,"e2m 6=JUMPSTRT. Entered from CRANKING after crank_jump_start_timer passes crank_jump_start_time. It leaves like CRANKING, without the jump start test. The consumers treat it like CRANKING. (PR #53 round 88)",2
+ENGINE_STATE,7,ENGINE_STATE_REENTRY,"e2m 7=REENTRY. Entered from RUNNING when engine_rpm_primary falls to crank_reentry_speed. It leaves like JUMP_START: to RUNNING at crank_exit_speed, to STOPPED at engine_stopped_speed. (PR #53 round 88)",2
+ENGINE_STATE,8,ENGINE_STATE_SHUTDOWN,e2m 8=SHUTDOWN. (PR #53 round 88),2

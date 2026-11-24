@@ -1156,7 +1156,7 @@ j1939_powertrain_messages_received_t,0x003fa982,tsc1_accepted_requested_torque,b
 parameter_id_entry_t,,parameter_id,word,2,"The ID looked up: a boot service parameter (0x0000-0x12A9) in the boot table, an e2m block ID (e2m column 3, e.g. 0x105E / 0x8A0F) in the flash2 table (lhz) - was param_id (PR #53 round 60)",,verified
 parameter_id_entry_t,,address,dword,4,"The resolved address: EEPROM 0x01000000 + offset (the application maps it to the RAM mirror 0x3fd482 + offset) / ROM / RAM / MPC555 registers (lwz at +2; a dword: as a pointer it would add about 1460 references)",,verified
 
-# J1939 diagnostic service entry (6 bytes): j1939_diagnostic_service_table (RAM 0x3fa8b2 - 32 slots) - cm848_j1939RegisterDiagnosticService appends {service - handler} and cm848_j1939DiagnosticServiceHandler scans it for a PGN 61184 request's service byte (was ef00_dispatch_entry_t; PR #53 round 61)
+# J1939 diagnostic service entry (6 bytes): j1939_diagnostic_service_table (RAM 0x3fa8b2 - 32 slots) - registerJ1939DiagnosticService appends {service - handler} and cm848_j1939DiagnosticServiceHandler scans it for a PGN 61184 request's service byte (was ef00_dispatch_entry_t; PR #53 round 61)
 j1939_diagnostic_service_entry_t,,service_id,J1939_DIAGNOSTIC_SERVICE,1,The PGN 61184 diagnostic service byte (the request's first data byte; typed J1939_DIAGNOSTIC_SERVICE - was EF00_SERVICE_ID in this comment; PR #53 round 63),,verified
 j1939_diagnostic_service_entry_t,,pad,byte,1,Never written: the registrar stores only the service byte and the handler,,verified
 j1939_diagnostic_service_entry_t,,handler,pointer,4,The service handler: called with the received j1939_rx_msg_t once cm848_validateJ1939DiagnosticRequest accepts the request,,verified

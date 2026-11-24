@@ -3,7 +3,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 1,0x0001,16777228,0x0100000C,EEPROM,,
 2,0x0002,16,0x00000010,ROM,,
 3,0x0003,16777344,0x01000080,EEPROM,,
-4,0x0004,8437156,0x0080BDA4,RAM,hour_meter_ecm_run_time_none,
+4,0x0004,8437156,0x0080BDA4,RAM,key_on_hour_meter,
 5,0x0005,16777218,0x01000002,EEPROM,,
 6,0x0006,16777920,0x010002C0,EEPROM,,
 7,0x0007,16777682,0x010001D2,EEPROM,,DISRSLEN
@@ -26,7 +26,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 25,0x0019,8423898,0x008089DA,RAM,special_engine_monitor_broadcast_table_none,
 26,0x001A,8445048,0x0080DC78,RAM,,
 27,0x001B,8430478,0x0080A38E,RAM,ADSATHFT,ADSATHFT
-28,0x001C,8437156,0x0080BDA4,RAM,hour_meter_ecm_run_time_none,
+28,0x001C,8437156,0x0080BDA4,RAM,key_on_hour_meter,
 29,0x001D,16777812,0x01000254,EEPROM,,
 30,0x001E,16778530,0x01000522,EEPROM,,
 31,0x001F,16778536,0x01000528,EEPROM,,
@@ -66,7 +66,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4142,0x102E,8432146,0x0080AA12,RAM,bit_2_0_15_enables_j1939_71_engine_broadcast_1_on_0_off,EBDRLV
 4143,0x102F,8423868,0x008089BC,RAM,,JCRDP5TQ
 4145,0x1031,8411676,0x00805A1C,RAM,,
-4146,0x1032,8421148,0x00807F1C,RAM,intake_manifold_temp_threshold,
+4146,0x1032,8421148,0x00807F1C,RAM,engine_overspeed_set_rpm_threshold,
 4147,0x1033,8442714,0x0080D35A,RAM,,
 4148,0x1034,8421406,0x0080801E,RAM,conversion_offset_of_line_converting_cubic_millimeter_fuel_to_0_100,
 4149,0x1035,8421388,0x0080800C,RAM,debounce_count_for_fpc_faults_none,
@@ -161,7 +161,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4243,0x1093,8425948,0x008091DC,RAM,none_none,
 4244,0x1094,8444574,0x0080DA9E,RAM,determined_state_of_operation_of_lamp_1_on_off_short,
 4245,0x1095,8442794,0x0080D3AA,RAM,,GROGOSTR
-4246,0x1096,8411070,0x008057BE,RAM,engine_startup_inhibit_true_false,
+4246,0x1096,8411070,0x008057BE,RAM,engine_startup_inhibit,
 4247,0x1097,8411348,0x008058D4,RAM,DGAEFUBF,DGAEFUBF
 4248,0x1098,397818,0x000611FA,ROM,,
 4249,0x1099,397838,0x0006120E,ROM,,
@@ -405,7 +405,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4645,0x1225,8413788,0x0080625C,RAM,,
 4647,0x1227,8444430,0x0080DA0E,RAM,,
 4648,0x1228,397216,0x00060FA0,ROM,,
-4650,0x122A,8422528,0x00808480,RAM,number_of_consecutive_occurances_of_powerdown_data_lost_to_set_1_255,
+4650,0x122A,8422528,0x00808480,RAM,consecutive_incomplete_power_down_limit,
 4651,0x122B,20470,0x00004FF6,ROM,,
 4652,0x122C,8414534,0x00806546,RAM,,
 4653,0x122D,8414532,0x00806544,RAM,,

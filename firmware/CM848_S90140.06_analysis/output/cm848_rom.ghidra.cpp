@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue Nov 24 10:34:50 MST 2026
+// Generated: Tue Nov 24 11:55:29 MST 2026
 
 
 //
@@ -16271,10 +16271,15 @@ void cm848_calculateEgrDeltaPressures(void)
 
 
 //
-// Function: emptyStubFunction3 @ 0x0001806c
+// Function: cm848_emptyStubFunction3 @ 0x0001806c
 //
 
-void emptyStubFunction3(void)
+/* A real empty function (one blr) with no known role and no twin: its only reference is one call in
+   cm848_applicationMain's start-up list (bl at 0x54c84), between
+   cm848_initializeCoolantTemperatureSource (0x505bd8) and cm848_initialization_step_14 (0x5071dc) -
+   an initialization step compiled empty. (was emptyStubFunction3; PR #53 round 88) */
+
+void cm848_emptyStubFunction3(void)
 
 {
   return;
@@ -19576,7 +19581,7 @@ LAB_0001c754:
   }
 LAB_0001c8b8:
   wVar2 = mios_mdasm30.SCRD;
-  if (((wVar2 & 0x8000) != 0) && (mios_timer_active_flag == 0)) {
+  if (((wVar2 & 0x8000) != 0) && (engine_state_key_on_previous_flag == 0)) {
     key_off_shutdown_inhibit_flag = 0;
   }
   if (engine_state == ENGINE_STATE_RUNNING) {
@@ -19592,22 +19597,27 @@ LAB_0001c8b8:
     engine_is_starting_flag = 0;
   }
   wVar2 = mios_mdasm30.SCRD;
-  mios_timer_active_flag = 1 - ((wVar2 & 0x8000) == 0);
+  engine_state_key_on_previous_flag = 1 - ((wVar2 & 0x8000) == 0);
   return;
 }
 
 
 
 //
-// Function: cm848_initCrankingLimits @ 0x0001c978
+// Function: initializeEngineState @ 0x0001c978
 //
 
-void cm848_initCrankingLimits(void)
+/* The twin rename of CM550 0x18384. It sets no cranking limits: it stores key_off_shutdown_mode =
+   0, engine_state = ENGINE_STATE_STOPPED and engine_state_key_on_previous_flag
+   (engine_state_key_on_previous_flag) = 0. (was cm848_initCrankingLimits; PR #53 round 88; the twin
+   of CM550 0x18384: one shared name) */
+
+void initializeEngineState(void)
 
 {
   key_off_shutdown_mode = 0;
   engine_state = ENGINE_STATE_STOPPED;
-  mios_timer_active_flag = 0;
+  engine_state_key_on_previous_flag = 0;
   return;
 }
 
@@ -22833,10 +22843,10 @@ void cm848_initializeEngineRetarderTorqueLookupCache(void)
    diagnostic_clear_request_state (e2m 1080 +2: 0 -> 1 / 2 -> 3) and returns
    J1939_DIAGNOSTIC_RESULT_ACCEPTED - else J1939_DIAGNOSTIC_RESULT_NOT_SAFE. The DM3 handler
    cm848_j1939HandlePgn65228Dm3ClearInactiveFaults does the same. Registered by
-   cm848_registerJ1939DiagnosticHandlers (was cm848_advanceDiagnosticActionState; PR #53 round 63) |
+   registerJ1939DiagnosticHandlers (was cm848_advanceDiagnosticActionState; PR #53 round 63) |
    earlier note: handles J1939 PGN 61184 diagnostic service id 1 via the 0x3fa8b2 table
    (cm848_j1939DiagnosticServiceHandler after the cm848_validateJ1939DiagnosticRequest
-   length/security gate returns -1) - registered by cm848_registerJ1939DiagnosticHandlers */
+   length/security gate returns -1) - registered by registerJ1939DiagnosticHandlers */
 
 J1939_DIAGNOSTIC_RESULT cm848_requestClearInactiveFaults(void)
 
@@ -22961,14 +22971,15 @@ J1939_DIAGNOSTIC_RESULT forceExitDevelopmentMode(void)
 
 
 //
-// Function: cm848_commandEngineShutdown @ 0x000216e8
+// Function: commandEngineShutdown @ 0x000216e8
 //
 
 /* J1939 PGN 61184 diagnostic service handler: sets engine_shutdown_command_flag (was
    cm848_setEngineStarting) | jlaustill reviewed 2026-5-25 - annoyed that = 1 rejects bool = TRUE,
-   but otherwise hoping accurate */
+   but otherwise hoping accurate | (was cm848_commandEngineShutdown; PR #53 round 88; the twin of
+   CM550 0x118fc: one shared name) */
 
-J1939_DIAGNOSTIC_RESULT cm848_commandEngineShutdown(void)
+J1939_DIAGNOSTIC_RESULT commandEngineShutdown(void)
 
 {
   engine_shutdown_command_flag = 1;
@@ -23067,8 +23078,8 @@ undefined1 cm848_restartThroughBootRomAfterSciRequest(void)
 
 /* J1939 PGN 61184 diagnostic service 11 via the 0x3fa8b2 table (cm848_j1939DiagnosticServiceHandler
    after the cm848_validateJ1939DiagnosticRequest gate; registered by
-   cm848_registerJ1939DiagnosticHandlers): restartThroughBootRom(requester, 0) - restart through the
-   boot ROM and acknowledge with a J1939 response frame. Was cm848_j1939ProcessRxQueueParam | (was
+   registerJ1939DiagnosticHandlers): restartThroughBootRom(requester, 0) - restart through the boot
+   ROM and acknowledge with a J1939 response frame. Was cm848_j1939ProcessRxQueueParam | (was
    cm848_handleJ1939RestartService; PR #53 round 87; the twin of CM550 0x11908: one shared name) */
 
 undefined1 handleJ1939RestartService(j1939_rx_msg_t *request)
@@ -23083,15 +23094,16 @@ undefined1 handleJ1939RestartService(j1939_rx_msg_t *request)
 
 
 //
-// Function: cm848_inhibitKeyOffShutdown @ 0x00021904
+// Function: inhibitKeyOffShutdown @ 0x00021904
 //
 
 /* handles J1939 PGN 61184 diagnostic service id 24 via the 0x3fa8b2 table
    (cm848_j1939DiagnosticServiceHandler) - sets key_off_shutdown_inhibit_flag: until the next key-on
-   edge a key-off does not shut the engine down - registered by
-   cm848_registerJ1939DiagnosticHandlers (was cm848_setColdStartMode2Flag) */
+   edge a key-off does not shut the engine down - registered by registerJ1939DiagnosticHandlers (was
+   cm848_setColdStartMode2Flag) | (was cm848_inhibitKeyOffShutdown; PR #53 round 88; the twin of
+   CM550 0x11a68: one shared name) */
 
-J1939_DIAGNOSTIC_RESULT cm848_inhibitKeyOffShutdown(void)
+J1939_DIAGNOSTIC_RESULT inhibitKeyOffShutdown(void)
 
 {
   key_off_shutdown_inhibit_flag = 1;
@@ -23101,16 +23113,18 @@ J1939_DIAGNOSTIC_RESULT cm848_inhibitKeyOffShutdown(void)
 
 
 //
-// Function: commitEepromMirrorToEeprom @ 0x00021918
+// Function: cm848_commitEepromMirrorToEeprom @ 0x00021918
 //
 
-/* The same function as CM550 0x11a74 (shared name; was cm848_commitEepromMirrorToEeprom; PR #53
-   round 73). handles J1939 PGN 61184 diag service id 21 via the 0x3fa8b2 table
+/* handles J1939 PGN 61184 diag service id 21 via the 0x3fa8b2 table
    (cm848_j1939DiagnosticServiceHandler) - writes only the leading eeprom_mirror block EEPROM 0x0 to
    eeprom_checksummed_block_start via cm848_queueEepromByteWrites - does not validate (was
-   cm848_validateCalibrationMemory) | registration-table-sweep reviewed 2026-11-13 */
+   cm848_validateCalibrationMemory) | registration-table-sweep reviewed 2026-11-13 | counterpart,
+   not a twin, of CM550 0x11a74: CM848 answers the J1939 request on success (result 0); CM550 arms a
+   J1708 reply and returns 0xff (was commitEepromMirrorToEeprom, the name round 73 shared with
+   CM550; PR #53 round 88) */
 
-J1939_DIAGNOSTIC_RESULT commitEepromMirrorToEeprom(void)
+J1939_DIAGNOSTIC_RESULT cm848_commitEepromMirrorToEeprom(void)
 
 {
   char cVar1;
@@ -23166,28 +23180,35 @@ J1939_DIAGNOSTIC_RESULT commitEepromMirrorToEeprom(void)
 
 
 //
-// Function: cm848_registerJ1939DiagnosticHandlers @ 0x00021a24
+// Function: registerJ1939DiagnosticHandlers @ 0x00021a24
 //
 
-void cm848_registerJ1939DiagnosticHandlers(void)
+/* Twin of CM550 0x11b36 (see the CM550 row): the same 8 registrations (services 1, 7, 10, 22, 6,
+   11, 24, 21) through the twin helper, in the same order and at the same place in the J1939
+   start-up. Two of the registered handlers (services 1 and 21) are counterparts; the twin claim
+   rests on the registrar's own code. One shared unprefixed name. (was
+   cm848_registerJ1939DiagnosticHandlers; PR #53 round 88; the twin of CM550 0x11b36: one shared
+   name) */
+
+void registerJ1939DiagnosticHandlers(void)
 
 {
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_CLEAR_INACTIVE_FAULTS,cm848_requestClearInactiveFaults);
-  cm848_j1939RegisterDiagnosticService
-            (J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE,exitDevelopmentMode);
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE,exitDevelopmentMode)
+  ;
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_ENTER_DEVELOPMENT_MODE,enterDevelopmentMode);
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_FORCE_EXIT_DEVELOPMENT_MODE,forceExitDevelopmentMode);
-  cm848_j1939RegisterDiagnosticService
-            (J1939_DIAGNOSTIC_SERVICE_COMMAND_ENGINE_SHUTDOWN,cm848_commandEngineShutdown);
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_COMMAND_ENGINE_SHUTDOWN,commandEngineShutdown);
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM,handleJ1939RestartService);
-  cm848_j1939RegisterDiagnosticService
-            (J1939_DIAGNOSTIC_SERVICE_INHIBIT_KEY_OFF_SHUTDOWN,cm848_inhibitKeyOffShutdown);
-  cm848_j1939RegisterDiagnosticService
-            (J1939_DIAGNOSTIC_SERVICE_COMMIT_EEPROM_MIRROR,commitEepromMirrorToEeprom);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_INHIBIT_KEY_OFF_SHUTDOWN,inhibitKeyOffShutdown);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_COMMIT_EEPROM_MIRROR,cm848_commitEepromMirrorToEeprom);
   return;
 }
 
@@ -23498,14 +23519,16 @@ void cm848_initJ1939DiagnosticCallback(void)
 
 
 //
-// Function: cm848_j1939RegisterDiagnosticService @ 0x000220e4
+// Function: registerJ1939DiagnosticService @ 0x000220e4
 //
 
 /* REGISTRAR for j1939_diagnostic_service_table (0x3fa8b2) - appends a service-id / handler entry up
    to 32 - not a request processor - scanned by cm848_j1939DiagnosticServiceHandler (was
-   cm848_processJ1939DiagnosticRequest) | registration-table-sweep reviewed 2026-11-13 */
+   cm848_processJ1939DiagnosticRequest) | registration-table-sweep reviewed 2026-11-13 | (was
+   cm848_j1939RegisterDiagnosticService; PR #53 round 88; the twin of CM550 0x2ee62: one shared
+   name) */
 
-bool cm848_j1939RegisterDiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *handler_ptr)
+bool registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *handler_ptr)
 
 {
   uint uVar1;
@@ -27245,10 +27268,10 @@ void cm848_initializePgn65279WaterInFuelIndicatorBuffer(void)
 // Function: ignoreCanTransmitInterrupt @ 0x00026f78
 //
 
-/* The empty transmit-complete hook (a bare blr): cm848_handleCanMailboxTransmitComplete calls it
-   for every mailbox except the one whose transmit sends the next queued J1939 frame - the same step
-   as CM550 0x1e056 and its hook 0xc80c. (was emptyStubFunction4; PR #53 round 87; the twin of CM550
-   0xc80c: one shared name) */
+/* The empty transmit-complete hook (a bare blr): handleJ1939CanTransmitInterrupt calls it for every
+   mailbox except the one whose transmit sends the next queued J1939 frame - the same step as CM550
+   0x1e056 and its hook 0xc80c. (was emptyStubFunction4; PR #53 round 87; the twin of CM550 0xc80c:
+   one shared name) */
 
 void ignoreCanTransmitInterrupt(void)
 
@@ -30477,7 +30500,7 @@ void cm848_initializePgn65264PowerTakeOffInformationBuffer(void)
    = safe for program, 1 = not safe)'): 1 while engine_state is not ENGINE_STATE_STOPPED, else 0.
    Runs every pass of cm848_periodicTaskSet_auxiliaryControl. Input: engine_state. Output:
    not_safe_to_program_flag. While it is 1 the force-activate diagnostic service answers
-   J1939_DIAGNOSTIC_RESULT_NOT_SAFE, commitEepromMirrorToEeprom refuses, the diagnostic EEPROM
+   J1939_DIAGNOSTIC_RESULT_NOT_SAFE, cm848_commitEepromMirrorToEeprom refuses, the diagnostic EEPROM
    writes (writeJ1939DiagnosticMemory, the PCI write service) answer 7 unless ram_refresh_enable is
    INACTIVE, and cm848_lookupParameterIdAddress maps EEPROM parameter addresses to the RAM mirror.
    It handles no fault and no key-off event. (was cm848_updateFaultOnKeyoff) */
@@ -39219,8 +39242,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  byte all_transmits_overdue;
   ushort receive_interval;
+  byte all_transmits_overdue;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
@@ -57883,14 +57906,14 @@ void mpc555_processJ1939TxBufferSend(void)
   
   can_transmit_completed_flag = 1;
   wVar1 = toucan_a.IFLAG;
-  toucan_a.IFLAG = wVar1 & ~(ushort)(1 << (can_tx_mailbox_start_index + 0xffff & 0x3f));
+  toucan_a.IFLAG = wVar1 & ~(ushort)(1 << (j1939_transmit_message_object_number + 0xffff & 0x3f));
   if ((can_transmit_queue_enqueue_pointer == (undefined *)can_transmit_queue_dequeue_pointer) &&
      (can_transmit_queue_full_flag != 1)) {
     can_transmit_mailbox_pointer[1] = 0;
   }
   else {
     cm848_writeCanControllerTxMailbox
-              (&toucan_a,can_tx_mailbox_start_index & 0xff,
+              (&toucan_a,j1939_transmit_message_object_number & 0xff,
                (word *)can_transmit_queue_dequeue_pointer);
     can_transmit_queue_full_flag = 0;
     can_transmit_queue_dequeue_pointer = can_transmit_queue_dequeue_pointer + 0xc;
@@ -57948,16 +57971,18 @@ void mpc555_queueCanReceiveMessage(int param_1)
   }
   if (can_receive_queue_write_pointer == can_receive_queue_read_pointer) {
     can_receive_queue_full_flag = 1;
-    iVar4 = 1 << (can_tx_mailbox_start_index + 1 & 0x3f);
+    iVar4 = 1 << (j1939_transmit_message_object_number + 1 & 0x3f);
     uVar3 = 0;
-    if (0 < (int)((uint)can_tx_mailbox_end_index - (uint)can_tx_mailbox_start_index)) {
+    if (0 < (int)((uint)j1939_last_receive_message_object_number -
+                 (uint)j1939_transmit_message_object_number)) {
       do {
         wVar1 = toucan_a.IMASK;
         toucan_a.IMASK = wVar1 & ~(ushort)iVar4;
         iVar4 = iVar4 * 2;
         uVar3 = uVar3 + 1 & 0xffff;
-      } while ((int)uVar3 < (int)((uint)can_tx_mailbox_end_index - (uint)can_tx_mailbox_start_index)
-              );
+      } while ((int)uVar3 <
+               (int)((uint)j1939_last_receive_message_object_number -
+                    (uint)j1939_transmit_message_object_number));
     }
   }
   return;
@@ -58034,7 +58059,7 @@ void mpc555_sendJ1939SingleFrame(dword can_id,word data_length,byte *data,byte *
     }
     else {
       cm848_writeCanControllerTxMailbox
-                (&toucan_a,can_tx_mailbox_start_index & 0xff,(word *)&local_18);
+                (&toucan_a,j1939_transmit_message_object_number & 0xff,(word *)&local_18);
     }
     bVar8 = 0;
   }
@@ -58102,13 +58127,20 @@ J1939_CONTROL_DEVICE cm848_lookupJ1939ControlDevice(dword source_address)
 
 
 //
-// Function: cm848_handleCanMailboxTransmitComplete @ 0x00053aa8
+// Function: handleJ1939CanTransmitInterrupt @ 0x00053aa8
 //
 
-void cm848_handleCanMailboxTransmitComplete(uint param_1)
+/* Twin of CM550 0x1e056 - the same shared name; the full step-by-step proof is in that row. Here:
+   lhz the transmit index 0x40ad68, cmpw with r3 (the mailbox number), equal -> bl
+   mpc555_processJ1939TxBufferSend, else bl ignoreCanTransmitInterrupt with r3 unchanged; the only
+   caller is mpc555_canTransmitInterruptHandler (bl at 0x53bf0). (was
+   cm848_handleCanMailboxTransmitComplete; PR #53 round 88; the twin of CM550 0x1e056: one shared
+   name) */
+
+void handleJ1939CanTransmitInterrupt(uint param_1)
 
 {
-  if (can_tx_mailbox_start_index == param_1) {
+  if (j1939_transmit_message_object_number == param_1) {
     mpc555_processJ1939TxBufferSend();
   }
   else {
@@ -58120,14 +58152,20 @@ void cm848_handleCanMailboxTransmitComplete(uint param_1)
 
 
 //
-// Function: cm848_handleCanMailboxTransmitRange @ 0x00053ae0
+// Function: cm848_handleJ1939CanReceiveInterrupt @ 0x00053ae0
 //
 
-void cm848_handleCanMailboxTransmitRange(int param_1)
+/* ADJACENT (the sibling of item 1): misnamed - its in-range branch (transmit index < n <=
+   j1939_last_receive_message_object_number) calls mpc555_queueCanReceiveMessage, so it handles
+   J1939 RECEIVE mailboxes; out of range it calls the empty hook cm848_emptyStubFunction5 (0x26f7c,
+   whose only caller is this bl at 0x53b14 - a role lead for that stub: the unexpected-mailbox
+   hook). (was cm848_handleCanMailboxTransmitRange; PR #53 round 88) */
+
+void cm848_handleJ1939CanReceiveInterrupt(int param_1)
 
 {
-  if (((int)(uint)can_tx_mailbox_start_index < param_1) &&
-     (param_1 <= (int)(uint)can_tx_mailbox_end_index)) {
+  if (((int)(uint)j1939_transmit_message_object_number < param_1) &&
+     (param_1 <= (int)(uint)j1939_last_receive_message_object_number)) {
     mpc555_queueCanReceiveMessage();
   }
   else {
@@ -58190,11 +58228,11 @@ void mpc555_canTransmitInterruptHandler(void)
     }
     do {
       toucan_a.IFLAG = ~(ushort)(1 << (uVar2 + 0xffff & 0x3f));
-      if ((uVar2 & 0xffff) == (uint)can_tx_mailbox_start_index) {
-        cm848_handleCanMailboxTransmitComplete(uVar2 & 0xff);
+      if ((uVar2 & 0xffff) == (uint)j1939_transmit_message_object_number) {
+        handleJ1939CanTransmitInterrupt(uVar2 & 0xff);
       }
       else {
-        cm848_handleCanMailboxTransmitRange(uVar2 & 0xff);
+        cm848_handleJ1939CanReceiveInterrupt(uVar2 & 0xff);
       }
       wVar1 = toucan_a.IFLAG;
       if (wVar1 == 0) {
@@ -58849,7 +58887,7 @@ void cm848_applicationMain(void)
   cm848_loadHourMetersFromEeprom();
   cm848_dispatchModeHandlers();
   cm848_initializeHighSpeedGovernorCompensatedEngineSpeed();
-  cm848_initCrankingLimits();
+  initializeEngineState();
   cm848_initSensorDefaults();
   cm848_initFuelFilterCoefficients();
   cm848_initializeCommandedThrottleState();
@@ -59042,7 +59080,7 @@ void cm848_applicationMain(void)
   cm848_initialization_step_7();
   cm848_initializeCompressorInletTemperature();
   cm848_initializeCoolantTemperatureSource();
-  emptyStubFunction3();
+  cm848_emptyStubFunction3();
   cm848_initialization_step_14();
   hpcr_initializeTimerRegisters();
   cm848_initializeExhaustPressure();
@@ -60945,7 +60983,7 @@ dword cm848_unsignedDivision64by32
   uint uVar7;
   ulonglong uVar8;
   
-  uVar8 = cm848_calibrationTableLookup2D();
+  uVar8 = cm848_saveRegisters27To31();
   uVar7 = (uint)(uVar8 >> 0x20);
   uVar3 = (uint)uVar8;
   if ((divisor_hi & (divisor_hi - 1) + (uint)(divisor_lo != 0)) == 0 &&
@@ -61041,7 +61079,7 @@ dword cm848_unsignedDivision64by32
     }
   }
                     /* WARNING: Subroutine does not return */
-  cm848_calibrationTableLookup1D((int)(uVar2 >> 0x20),(int)uVar2);
+  cm848_restoreRegisters27To31AndReturn((int)(uVar2 >> 0x20),(int)uVar2);
 }
 
 
@@ -61064,7 +61102,7 @@ dword cm848_signedDivision32(dword dividend_hi,dword dividend_lo,dword divisor_h
   int iVar6;
   ulonglong uVar7;
   
-  uVar7 = cm848_calibrationTableLookup2D();
+  uVar7 = cm848_saveRegisters27To31();
   uVar4 = (uint)(uVar7 >> 0x20);
   bVar2 = 0x7fffffff < uVar4;
   uVar3 = uVar7;
@@ -61101,7 +61139,7 @@ dword cm848_signedDivision32(dword dividend_hi,dword dividend_lo,dword divisor_h
   }
 LAB_000571a0:
                     /* WARNING: Subroutine does not return */
-  cm848_calibrationTableLookup1D(iVar5,iVar6);
+  cm848_restoreRegisters27To31AndReturn(iVar5,iVar6);
 }
 
 
@@ -61142,7 +61180,7 @@ void cm848_mathMultiplyDivide32(undefined4 param_1,undefined4 param_2,uint param
   ulonglong uVar8;
   undefined8 uVar9;
   
-  uVar7 = cm848_saveRegistersToStack();
+  uVar7 = cm848_saveRegisters26To31();
   uVar2 = (uint)(uVar7 >> 0x20);
   uVar4 = (uint)uVar7;
   if ((param_3 & (param_3 - 1) + (uint)(param_4 != 0)) == 0 && (param_4 & param_4 - 1) == 0) {
@@ -61213,8 +61251,8 @@ void cm848_mathMultiplyDivide32(undefined4 param_1,undefined4 param_2,uint param
       }
     }
   }
-  emptyStubFunction2((int)(uVar7 >> 0x20),(int)uVar7);
-  uVar8 = cm848_calibrationTableLookup2D();
+  cm848_restoreRegisters26To31AndReturn((int)(uVar7 >> 0x20),(int)uVar7);
+  uVar8 = cm848_saveRegisters27To31();
   uVar7 = uVar8;
   if (0x7fffffffffffffff < uVar8) {
     uVar7 = CONCAT44(-((uint)((int)uVar8 != 0) + (int)(uVar8 >> 0x20)),-(int)uVar8);
@@ -61243,7 +61281,7 @@ void cm848_mathMultiplyDivide32(undefined4 param_1,undefined4 param_2,uint param
   }
 LAB_00057488:
                     /* WARNING: Subroutine does not return */
-  cm848_calibrationTableLookup1D((int)((ulonglong)uVar9 >> 0x20),(int)uVar9);
+  cm848_restoreRegisters27To31AndReturn((int)((ulonglong)uVar9 >> 0x20),(int)uVar9);
 }
 
 
@@ -61270,10 +61308,14 @@ dword cm848_conditionalMultiplyDivide
 
 
 //
-// Function: emptyStubFunction2 @ 0x00057520
+// Function: cm848_restoreRegisters26To31AndReturn @ 0x00057520
 //
 
-void emptyStubFunction2(void)
+/* NOT an empty stub and no twin of CM550 0x1b6e2: 0x57520 is an entry point of the compiler's
+   register restore epilogue helper (0x574f0-0x57544, EABI _restgpr_N_x style). (was
+   emptyStubFunction2; PR #53 round 88) */
+
+void cm848_restoreRegisters26To31AndReturn(void)
 
 {
   return;
@@ -61282,10 +61324,15 @@ void emptyStubFunction2(void)
 
 
 //
-// Function: cm848_calibrationTableLookup1D @ 0x00057524
+// Function: cm848_restoreRegisters27To31AndReturn @ 0x00057524
 //
 
-void cm848_calibrationTableLookup1D(void)
+/* ADJACENT (the same helper as 0x57520, found while proving item 2): not a table lookup. The entry
+   one word after 0x57520: lwz r0,4(r11) ; lwz r27..r31 ; mtlr r0 ; ori r1,r11,0 ; blr - restores
+   r27-r31 and returns to the caller's caller. (was cm848_calibrationTableLookup1D; PR #53 round 88)
+    */
+
+void cm848_restoreRegisters27To31AndReturn(void)
 
 {
   return;
@@ -61294,10 +61341,15 @@ void cm848_calibrationTableLookup1D(void)
 
 
 //
-// Function: cm848_saveRegistersToStack @ 0x0005759c
+// Function: cm848_saveRegisters26To31 @ 0x0005759c
 //
 
-void cm848_saveRegistersToStack(void)
+/* ADJACENT, consistency only (the old name is not wrong): the r26 entry of the save helper (stw
+   r26,-24(r11) then falls into 0x575a0), the partner of 0x57520. Naming the four entries by
+   register range keeps the pairs readable (save 26-31 / restore 26-31, save 27-31 / restore 27-31).
+   (was cm848_saveRegistersToStack; PR #53 round 88) */
+
+void cm848_saveRegisters26To31(void)
 
 {
   undefined4 in_r0;
@@ -61322,10 +61374,15 @@ void cm848_saveRegistersToStack(void)
 
 
 //
-// Function: cm848_calibrationTableLookup2D @ 0x000575a0
+// Function: cm848_saveRegisters27To31 @ 0x000575a0
 //
 
-void cm848_calibrationTableLookup2D(void)
+/* ADJACENT (the save half of the same helper pair): not a table lookup. Its body (the decompile
+   shows it) stores r27-r31 at r11-20..-4 and r0 (the LR) at r11+4, then blr; its 3 calls are
+   prologues (addi r11,r1,0 ; stwu r1,-N(r1) ; mflr r0 ; bl 0x575a0) paired with the 0x57524
+   epilogues. (was cm848_calibrationTableLookup2D; PR #53 round 88) */
+
+void cm848_saveRegisters27To31(void)
 
 {
   undefined4 in_r0;
@@ -68486,9 +68543,9 @@ void cm848_loadDefaultJ1939NamesAndSourceAddresses(void)
    application's twin of the boot kernel's cm848_bootDiagnosticServiceAcknowledgeNoOperation.
    Registered by cm848_registerJ1939BroadcastAndNoOperationServices (was
    j1939_diagService15And16Handler; PR #53 round 62) | earlier note: Application CLIP diagnostic
-   service handler registered with cm848_j1939RegisterDiagnosticService: services 0x0F and 0x10 -
-   returns 0 (accepted / no action) | review-function-readability reviewed 2026-11-12 - Readability
-   Low Accuracy Confidence Medium */
+   service handler registered with registerJ1939DiagnosticService: services 0x0F and 0x10 - returns
+   0 (accepted / no action) | review-function-readability reviewed 2026-11-12 - Readability Low
+   Accuracy Confidence Medium */
 
 undefined4 cm848_j1939DiagnosticServiceAcknowledgeNoOperation(void)
 
@@ -68573,9 +68630,8 @@ undefined4 cm848_updateJ1939BroadcastEnableMask(j1939_rx_msg_t *request,dword en
    cm848_updateJ1939BroadcastEnableMask with enable 0. Registered by
    cm848_registerJ1939BroadcastAndNoOperationServices (was j1939_diagService4DisableBroadcast; PR
    #53 round 63) | earlier note: Application CLIP diagnostic service handler registered with
-   cm848_j1939RegisterDiagnosticService: service 4 - cm848_updateJ1939BroadcastEnableMask with
-   enable 0 | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence
-   High */
+   registerJ1939DiagnosticService: service 4 - cm848_updateJ1939BroadcastEnableMask with enable 0 |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
 
 undefined1 cm848_handleJ1939DisableBroadcastService(j1939_rx_msg_t *request)
 
@@ -68596,9 +68652,8 @@ undefined1 cm848_handleJ1939DisableBroadcastService(j1939_rx_msg_t *request)
    cm848_updateJ1939BroadcastEnableMask with enable 1. Registered by
    cm848_registerJ1939BroadcastAndNoOperationServices (was j1939_diagService5EnableBroadcast; PR #53
    round 63) | earlier note: Application CLIP diagnostic service handler registered with
-   cm848_j1939RegisterDiagnosticService: service 5 - cm848_updateJ1939BroadcastEnableMask with
-   enable 1 | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence
-   High */
+   registerJ1939DiagnosticService: service 5 - cm848_updateJ1939BroadcastEnableMask with enable 1 |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
 
 undefined1 cm848_handleJ1939EnableBroadcastService(j1939_rx_msg_t *request)
 
@@ -68623,15 +68678,15 @@ undefined1 cm848_handleJ1939EnableBroadcastService(j1939_rx_msg_t *request)
 void cm848_registerJ1939BroadcastAndNoOperationServices(void)
 
 {
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_15,
              cm848_j1939DiagnosticServiceAcknowledgeNoOperation);
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_16,
              cm848_j1939DiagnosticServiceAcknowledgeNoOperation);
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_DISABLE_BROADCAST,cm848_handleJ1939DisableBroadcastService);
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_ENABLE_BROADCAST,cm848_handleJ1939EnableBroadcastService);
   return;
 }
@@ -69618,9 +69673,9 @@ byte cm848_writeJ1939DiagnosticMemoryByParameterId
    written at the ID's address (offset 0) through cm848_writeJ1939DiagnosticMemoryByParameterId.
    Registered by cm848_registerJ1939MemoryWriteServices (was
    j1939_diagService68_memoryWriteByParameterId; PR #53 round 63) | earlier note: Application CLIP
-   diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x44 -
-   write by parameter ID (cm848_writeJ1939DiagnosticMemoryByParameterId) |
-   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
+   diagnostic service handler registered with registerJ1939DiagnosticService: service 0x44 - write
+   by parameter ID (cm848_writeJ1939DiagnosticMemoryByParameterId) | review-function-readability
+   reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
 
 undefined1 cm848_handleJ1939WriteByParameterIdService(j1939_rx_msg_t *request)
 
@@ -69645,9 +69700,9 @@ undefined1 cm848_handleJ1939WriteByParameterIdService(j1939_rx_msg_t *request)
    written at the ID's address (offset 0) through cm848_writeJ1939DiagnosticMemoryByParameterId.
    Registered by cm848_registerJ1939MemoryWriteServices (was
    j1939_diagService69_memoryWriteByParameterIdExt; PR #53 round 63) | earlier note: Application
-   CLIP diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service
-   0x45 - write by parameter ID with a long length | review-function-readability reviewed 2026-11-12
-   - Readability Low Accuracy Confidence High */
+   CLIP diagnostic service handler registered with registerJ1939DiagnosticService: service 0x45 -
+   write by parameter ID with a long length | review-function-readability reviewed 2026-11-12 -
+   Readability Low Accuracy Confidence High */
 
 undefined1 cm848_handleJ1939WriteByParameterIdLongLengthService(j1939_rx_msg_t *request)
 
@@ -69673,8 +69728,8 @@ undefined1 cm848_handleJ1939WriteByParameterIdLongLengthService(j1939_rx_msg_t *
    cm848_writeJ1939DiagnosticMemoryByParameterId. Registered by
    cm848_registerJ1939MemoryWriteServices (was j1939_diagService71Handler; PR #53 round 63) |
    earlier note: Application CLIP diagnostic service handler registered with
-   cm848_j1939RegisterDiagnosticService: service 0x47 (header length 6) |
-   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Low */
+   registerJ1939DiagnosticService: service 0x47 (header length 6) | review-function-readability
+   reviewed 2026-11-12 - Readability Low Accuracy Confidence Low */
 
 undefined1 cm848_handleJ1939WriteByParameterIdShortOffsetService(j1939_rx_msg_t *request)
 
@@ -69702,7 +69757,7 @@ undefined1 cm848_handleJ1939WriteByParameterIdShortOffsetService(j1939_rx_msg_t 
    cm848_writeJ1939DiagnosticMemoryByParameterId. Registered by
    cm848_registerJ1939MemoryWriteServices (was j1939_diagService73_memoryWriteByParameterId; PR #53
    round 63) | earlier note: Application CLIP diagnostic service handler registered with
-   cm848_j1939RegisterDiagnosticService: service 0x49 (header length 11) - write by parameter ID |
+   registerJ1939DiagnosticService: service 0x49 (header length 11) - write by parameter ID |
    review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
 
 undefined1 cm848_handleJ1939WriteByParameterIdLongOffsetService(j1939_rx_msg_t *request)
@@ -69730,8 +69785,8 @@ undefined1 cm848_handleJ1939WriteByParameterIdLongOffsetService(j1939_rx_msg_t *
    round 72). PGN 61184 service 0x4b: request bytes 1-4 the address and 5 the length then the data -
    written through writeJ1939DiagnosticMemory. Registered by cm848_registerJ1939MemoryWriteServices
    (was j1939_diagService75_memoryWrite; PR #53 round 63) | earlier note: Application CLIP
-   diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x4B -
-   write by address (writeJ1939DiagnosticMemory) | review-function-readability reviewed 2026-11-12 -
+   diagnostic service handler registered with registerJ1939DiagnosticService: service 0x4B - write
+   by address (writeJ1939DiagnosticMemory) | review-function-readability reviewed 2026-11-12 -
    Readability Low Accuracy Confidence High */
 
 byte handleJ1939WriteMemoryService(j1939_rx_msg_t *request)
@@ -69758,9 +69813,9 @@ byte handleJ1939WriteMemoryService(j1939_rx_msg_t *request)
    bytes 1-4 the address and 5-8 the length then the data - written through
    writeJ1939DiagnosticMemory. Registered by cm848_registerJ1939MemoryWriteServices (was
    j1939_diagService77_memoryWriteExt; PR #53 round 63) | earlier note: Application CLIP diagnostic
-   service handler registered with cm848_j1939RegisterDiagnosticService: service 0x4D - write by
-   address with a long length | review-function-readability reviewed 2026-11-12 - Readability Low
-   Accuracy Confidence High */
+   service handler registered with registerJ1939DiagnosticService: service 0x4D - write by address
+   with a long length | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
+   Confidence High */
 
 byte handleJ1939WriteMemoryLongLengthService(j1939_rx_msg_t *request)
 
@@ -69788,21 +69843,21 @@ byte handleJ1939WriteMemoryLongLengthService(j1939_rx_msg_t *request)
 void cm848_registerJ1939MemoryWriteServices(void)
 
 {
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID,
              cm848_handleJ1939WriteByParameterIdService);
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_LENGTH,
              cm848_handleJ1939WriteByParameterIdLongLengthService);
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY,handleJ1939WriteMemoryService);
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH,
              handleJ1939WriteMemoryLongLengthService);
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_SHORT_OFFSET,
              cm848_handleJ1939WriteByParameterIdShortOffsetService);
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_OFFSET,
              cm848_handleJ1939WriteByParameterIdLongOffsetService);
   return;
@@ -70562,7 +70617,7 @@ LAB_0050c2f4:
    one 7-byte frame (mpc555_sendJ1939SingleFrame). Registered by
    cm848_registerJ1939GetAddressByParameterIdService (was
    j1939_diagService65_getAddressByParameterId; PR #53 round 63) | earlier note: Application CLIP
-   diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x41 -
+   diagnostic service handler registered with registerJ1939DiagnosticService: service 0x41 -
    resolves a parameter ID (cm848_lookupParameterIdAddress) to an address |
    review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
 
@@ -70624,7 +70679,7 @@ undefined4 cm848_handleJ1939GetAddressByParameterIdService(j1939_rx_msg_t *reque
 void cm848_registerJ1939GetAddressByParameterIdService(void)
 
 {
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_GET_ADDRESS_BY_PARAMETER_ID,
              cm848_handleJ1939GetAddressByParameterIdService);
   return;
@@ -70757,8 +70812,8 @@ cm848_readJ1939DiagnosticMemoryByParameterId
    ID's address (offset 0) through cm848_readJ1939DiagnosticMemoryByParameterId. Registered by
    cm848_registerJ1939MemoryReadServices. The reply is 0x45 (0x44 under 256 bytes) (was
    j1939_diagService67_memoryReadByParameterId; PR #53 round 63) | earlier note: Application CLIP
-   diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x43 -
-   read by parameter ID (cm848_readJ1939DiagnosticMemoryByParameterId) | review-function-readability
+   diagnostic service handler registered with registerJ1939DiagnosticService: service 0x43 - read by
+   parameter ID (cm848_readJ1939DiagnosticMemoryByParameterId) | review-function-readability
    reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
 
 undefined1 cm848_handleJ1939ReadByParameterIdLongLengthService(j1939_rx_msg_t *request)
@@ -70784,8 +70839,8 @@ undefined1 cm848_handleJ1939ReadByParameterIdLongLengthService(j1939_rx_msg_t *r
    from the ID's address + offset through cm848_readJ1939DiagnosticMemoryByParameterId. Registered
    by cm848_registerJ1939MemoryReadServices. The reply is 0x47 (was j1939_diagService70Handler; PR
    #53 round 63) | earlier note: Application CLIP diagnostic service handler registered with
-   cm848_j1939RegisterDiagnosticService: service 0x46 | review-function-readability reviewed
-   2026-11-12 - Readability Low Accuracy Confidence Low */
+   registerJ1939DiagnosticService: service 0x46 | review-function-readability reviewed 2026-11-12 -
+   Readability Low Accuracy Confidence Low */
 
 undefined1 cm848_handleJ1939ReadByParameterIdShortOffsetService(j1939_rx_msg_t *request)
 
@@ -70812,8 +70867,8 @@ undefined1 cm848_handleJ1939ReadByParameterIdShortOffsetService(j1939_rx_msg_t *
    read from the ID's address + offset through cm848_readJ1939DiagnosticMemoryByParameterId.
    Registered by cm848_registerJ1939MemoryReadServices. The reply is 0x49 (was
    j1939_diagService72_memoryReadByParameterId; PR #53 round 63) | earlier note: Application CLIP
-   diagnostic service handler registered with cm848_j1939RegisterDiagnosticService: service 0x48 -
-   read by parameter ID | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
+   diagnostic service handler registered with registerJ1939DiagnosticService: service 0x48 - read by
+   parameter ID | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
    Confidence Medium */
 
 undefined1 cm848_handleJ1939ReadByParameterIdLongOffsetService(j1939_rx_msg_t *request)
@@ -70841,7 +70896,7 @@ undefined1 cm848_handleJ1939ReadByParameterIdLongOffsetService(j1939_rx_msg_t *r
    cm848_readJ1939DiagnosticMemoryAndRespond. The reply is 0x4b. Registered by
    cm848_registerJ1939MemoryReadServices (was j1939_diagService74_memoryRead; PR #53 round 63) |
    earlier note: Application CLIP diagnostic service handler registered with
-   cm848_j1939RegisterDiagnosticService: service 0x4A - read by address
+   registerJ1939DiagnosticService: service 0x4A - read by address
    (cm848_readJ1939DiagnosticMemoryAndRespond) | review-function-readability reviewed 2026-11-12 -
    Readability Low Accuracy Confidence High */
 
@@ -70868,7 +70923,7 @@ undefined1 cm848_handleJ1939ReadMemoryService(j1939_rx_msg_t *request)
    cm848_readJ1939DiagnosticMemoryAndRespond. The reply is 0x4d. Registered by
    cm848_registerJ1939MemoryReadServices (was j1939_diagService76_memoryReadExt; PR #53 round 63) |
    earlier note: Application CLIP diagnostic service handler registered with
-   cm848_j1939RegisterDiagnosticService: service 0x4C - read by address with a long length |
+   registerJ1939DiagnosticService: service 0x4C - read by address with a long length |
    review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
 
 undefined1 cm848_handleJ1939ReadMemoryLongLengthService(j1939_rx_msg_t *request)
@@ -70897,18 +70952,18 @@ undefined1 cm848_handleJ1939ReadMemoryLongLengthService(j1939_rx_msg_t *request)
 void cm848_registerJ1939MemoryReadServices(void)
 
 {
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_LENGTH,
              cm848_handleJ1939ReadByParameterIdLongLengthService);
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_READ_MEMORY,cm848_handleJ1939ReadMemoryService);
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH,
              cm848_handleJ1939ReadMemoryLongLengthService);
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_SHORT_OFFSET,
              cm848_handleJ1939ReadByParameterIdShortOffsetService);
-  cm848_j1939RegisterDiagnosticService
+  registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_OFFSET,
              cm848_handleJ1939ReadByParameterIdLongOffsetService);
   return;
@@ -99446,19 +99501,19 @@ void cm848_initializeDiscreteOutputReadBackChecks(void)
 void clearWorkingRam(void)
 
 {
-  word *pwVar1;
-  dword *pdVar2;
+  dword *working_ram_pointer;
+  dword *chunk_end;
   
-  pwVar1 = &executive_frame_ticks;
+  working_ram_pointer = (dword *)&executive_frame_ticks;
   do {
-    pdVar2 = (dword *)((int)pwVar1 + 0x100);
-    if (&working_ram_end_marker < (dword *)((int)pwVar1 + 0x100)) {
-      pdVar2 = &working_ram_end_marker;
+    chunk_end = working_ram_pointer + 0x40;
+    if (&working_ram_end_marker < working_ram_pointer + 0x40) {
+      chunk_end = &working_ram_end_marker;
     }
-    for (; pwVar1 <= pdVar2; pwVar1 = (word *)((int)pwVar1 + 4)) {
-      *(dword *)pwVar1 = 0;
+    for (; working_ram_pointer <= chunk_end; working_ram_pointer = working_ram_pointer + 1) {
+      *working_ram_pointer = 0;
     }
-  } while (pwVar1 < &working_ram_end_marker);
+  } while (working_ram_pointer < &working_ram_end_marker);
   return;
 }
 
@@ -99693,8 +99748,8 @@ void cm848_exceptionHandler(void)
 
 /* Appends a PGN and its handler to the J1939 receive handler table at 0x3fd414 (6-byte entries - at
    most 17; the count is j1939_receive_handler_count) that cm848_dispatchJ1939ReceivedMessages
-   searches. Returns true when full. The receive side twin of cm848_j1939RegisterDiagnosticService
-   (was j1939_handlerInitializer; PR #53 round 65) */
+   searches. Returns true when full. The receive side twin of registerJ1939DiagnosticService (was
+   j1939_handlerInitializer; PR #53 round 65) */
 
 bool cm848_registerJ1939ReceiveHandler(word pgn_key,void *handler)
 
@@ -99794,9 +99849,9 @@ LAB_00539060:
       }
       if (can_receive_queue_full_flag == 1) {
         can_receive_queue_full_flag = 0;
-        iVar5 = 1 << (can_tx_mailbox_start_index & 0x3f);
-        for (uVar6 = can_tx_mailbox_start_index; (uVar6 & 0xff) < can_tx_mailbox_end_index;
-            uVar6 = (uVar6 & 0xff) + 1) {
+        iVar5 = 1 << (j1939_transmit_message_object_number & 0x3f);
+        for (uVar6 = j1939_transmit_message_object_number;
+            (uVar6 & 0xff) < j1939_last_receive_message_object_number; uVar6 = (uVar6 & 0xff) + 1) {
           wVar3 = toucan_a.IMASK;
           toucan_a.IMASK = (ushort)iVar5 | wVar3;
           iVar5 = iVar5 * 2;
@@ -99908,19 +99963,19 @@ void cm848_j1939_system_init(void)
   cm848_registerJ1939MemoryReadServices();
   cm848_registerJ1939GetAddressByParameterIdService();
   cm848_registerJ1939MemoryWriteServices();
-  cm848_registerJ1939DiagnosticHandlers();
+  registerJ1939DiagnosticHandlers();
   cm848_registerJ1939BroadcastAndNoOperationServices();
   wVar1 = j1939_engine_destination_specific_receive_message_object_count;
   uVar3 = (uint)can_last_message_object_used;
   iVar2 = uVar3 + 1;
-  can_tx_mailbox_start_index = (word)iVar2;
-  can_tx_mailbox_end_index = can_last_message_object_used + 0xf;
+  j1939_transmit_message_object_number = (word)iVar2;
+  j1939_last_receive_message_object_number = can_last_message_object_used + 0xf;
   uVar5 = iVar2 * 0x10 & 0xffff0;
   can_transmit_mailbox_pointer = &UNK_003070f0 + uVar5;
   iVar2 = (int)&toucan_a_message_buffers[0].CONTROL_STATUS + uVar5;
   uVar5 = 0;
   uVar6 = 0;
-  can_last_message_object_used = can_tx_mailbox_end_index;
+  can_last_message_object_used = j1939_last_receive_message_object_number;
   if (j1939_engine_destination_specific_receive_message_object_count != 0) {
     uVar4 = (uint)j1939_source_address;
     do {
