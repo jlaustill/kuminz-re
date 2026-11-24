@@ -1,0 +1,52 @@
+cm848+cm550: round 73 stage B - the development mode functions and the EEPROM mirror commit share names in both firmwares; CM550's ram_refresh_enable / run_location get CM848's names and enums
+
+Four more twin pairs; both bodies were read:
+- enterDevelopmentMode (CM848 0x21668 / CM550 0x118b2, was cm550_waterInFuelFaultClear): RAM refresh off, development
+  mode on, run location development (CM848 0xea / CM550 0xeaea), result 0.
+- exitDevelopmentMode (0x21624 / 0x1188c, was cm550_waterInFuelDetectionStateInit): only while development mode is on
+  - off, RAM refresh on, run location normal, 0. Otherwise 4.
+- forceExitDevelopmentMode (0x21694 / 0x118cc, was cm550_FUN_000118cc):
+  - 7 while the not-safe state is 1;
+  - RAM refresh on;
+  - when the run location is development: normal, and development mode off;
+  - 0.
+- commitEepromMirrorToEeprom (0x21918 / 0x11a74, was cm550_FUN_00011a74):
+  - 7 while not safe;
+  - the mirror in 16-byte chunks through the EEPROM byte write queue;
+  - up to 16000 waits for the queue.
+- CM550's 'water in fuel' names were wrong: J1708 command 3 runs subcommands 0x40 / 0x41 after the security key, and
+  they are enter / force exit.
+
+CM550 globals:
+- 0x80dc6c -> ram_refresh_enable (RAM_REFRESH_STATE, was calibration_data_valid_flag): a word (tst.w / clr.w /
+  cmpi.w #1), written 0 / 1 only.
+- 0x80dc90 -> run_location (RUN_LOCATION, was water_in_fuel_state_code): a word (cmpi.w #0xeaea / move.w #0xeeee),
+  written 0xeeee / 0xeaea only. The boot / power-down code also sets 0xeeee, as in CM848.
+- CM550 gets RAM_REFRESH_STATE and RUN_LOCATION. Both are 2-byte enums; CM550's run location holds CM848's byte values
+  doubled (0xeaea / 0xeeee).
+- The four CM550 functions get a byte result. Their bodies had returned 'in_D0 & 0xffffff00' / a uint for 0 / 4 / 7.
+Not renamed:
+- CM550 0x80dc92 (_diagnostic_session_state). Its value 1 is CM848's not-safe state, but CM550 also writes 2 (when
+  stopped with a switch bit set, in cm550_fuel_limit_arbitrator), which CM848's flag does not have.
+- The development mode flag at 0x80de30. It still renders as j1708_transmit_buffer_2_32_ddc6.count_106, because a
+  256-byte j1708_multipacket_msg_t instance covers it - a lead.
+
+Docs:
+- README.md: the 0x07 result is NOT_SAFE (not safe to program while RAM refresh is on), not "logging".
+  - The diagram's EEPROM branch now asks 'not safe and refresh on?' and its YES / NO now match the code.
+  - The type 3 branch returns 0x03, not 0x1A: only an EEPROM write without the key returns 0x1A here.
+  - The region table is J90350's (it held J90280.05's bounds).
+- CM550's MEMORY_OP_RESULT / DIAG_ERROR_SOURCE 0x07 comments say the same.
+- firmware/CM848_S90140.06_analysis/docs/parameter_by_id_system.md and stage A0's auditor comment use the shared name.
+- firmware/CLAUDE.md lines 915-916: the reference refresh renamed the stage 9b mention of the three CM848 functions (a
+  factual rename).
+
+Proof (prove_r73b.py / prove_r73b_cm550.py): CM848 0 of 1968 functions differ after the renames (a pure rename). CM550
+16 of 775 differ: the four twins (byte results - 'return 0 / 4 / 7' replaces the in_D0 masks - and RAM_REFRESH_DISABLED
+/ RUN_LOCATION_DEVELOPMENT ...) and the 12 other users of ram_refresh_enable / run_location (the enum members in place
+of 0 / 1 / 0xeeee; the J1708 command dispatcher's result variable is a byte now); casts and placeholders unchanged in
+the 12; 28 RAM_REFRESH_STATE / RUN_LOCATION member renders. Both verifies byte-identical with stage A's WARNING lines
+(CM848 thunks 18 / 14, locals Skipped 8). Headers regenerated for both (0 g++ errors), tests pass, audit_cal_suffixes.py
+CM848 HARD 0 / MISSING 210, CM550 HARD 0 / MISSING 31.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

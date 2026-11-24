@@ -191,6 +191,7 @@
   102352 build_round72b1_cm550.log
   102095 build_round72b2_cm550.log
   104465 build_round72_cm550_base.log
+  101972 build_round73b_cm550.log
   104456 cm550_base_build_round63.log
    23475 cm848_runCruiseAndRoadSpeedGovernor_round16.asm
  1071916 e2m_audit_round16a.csv
@@ -323,3 +324,8 @@
   401928 verify_round72b.log
   401926 verify_round72b2.log
   204493 verify_round72b_cm550.log
+  401934 verify_round73a.log
+  204251 verify_round73a_cm550.log
+  401931 verify_round73b.log
+  204248 verify_round73b_cm550.log
+  204231 verify_round73c_cm550.log

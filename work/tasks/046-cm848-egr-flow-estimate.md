@@ -3311,6 +3311,65 @@ name (the stage 9b rule).
   - **CM550 request struct:** CM550's 6-byte `j1939_header_t` against the request layout (+4 length / +6 data pointer
     = CM848's `j1939_rx_msg_t`).
 
+## Done, round 73 (2026-11-23, same PR): CM550's EEPROM mirror, the security key variables, development mode twins
+
+A peer relay started the round; the scripts are in `session_folder/round73/`. These are round 72's leads.
+- **Stage A0 (e165ebe3):** `audit_cal_suffixes.py` learns CM550's EEPROM RAM mirror, 0x803b0a-0x804155 = EEPROM
+  0x0-0x64b.
+  - **Evidence:** the memory services translate EEPROM addresses into it by `- 0x7fc4f6`. CM550 0x11a74 stores it back
+    in 16-byte chunks, the twin of CM848's `commitEepromMirrorToEeprom`. CM848's EEPROM offsets land on the same roles:
+    0x02 the master password and 0x8e the security key word.
+  - **The rule** is unchanged (EEPROM-backed = `_cal`); the auditor's CM550 map was incomplete.
+  - **The audit:** CM550 goes from 0 / 0 / 0 to MISSING 32, a backlog like CM848's 210. None were renamed.
+- **Stage A (722b2aee):** the security key variables share names in both firmwares.
+  - `security_key_failure_count`: CM848 0x3fb9a8 (was `security_sequence_step`) / CM550 0x801e76.
+  - `security_master_password_cal`: e2m 0005 `ECM_PSWD` / `Master_Password`, 6 bytes at EEPROM 0x2. CM848 0x3fd484 /
+    CM550 0x803b0c, was `ecu_identity_test_pattern`.
+  - `calibration_download_security_key_cal` for CM550 0x803b98: EEPROM 0x8e, a word (`cmpi.w`).
+  - **Proof:** CM848 3 of 1968 functions differ after the renames: validateSecurityKey (the key buffers byte not char - the password is byte[6]) and two declarations reordered (mpc555_areBootModeStrapPinsHigh / mpc555_tickTransferTimeoutAndRuntimeCounter). CM550 2 of 775: validateSecurityKey (security_master_password_cal[i]; 0x11 / 0 / 1 for the char literals; its existing 'extracted_key' local row now applies - the unscrambled key buffer) and a declaration reordered (cm550_diagnosticServiceSecurityValidator). Both verifies byte-identical with round 72's WARNING lines (CM848 thunks 18 / 14, locals Skipped 8). Headers regenerated for both (0 g++ errors), tests pass, lookup tables 0 sizing problems, audit_cal_suffixes.py CM848 HARD 0 / MISSING 210, CM550 HARD 0 / MISSING 31 (32 after stage A0; the password now has _cal).
+- **Stage B (aa841ca9):** four more twin pairs, each with one shared name.
+  - **The functions:** `enterDevelopmentMode` / `exitDevelopmentMode` / `forceExitDevelopmentMode` (CM550 0x118b2 /
+    0x1188c / 0x118cc - its 'water in fuel' names were wrong) and `commitEepromMirrorToEeprom` (0x21918 / 0x11a74).
+  - **CM550 globals:** 0x80dc6c becomes `ram_refresh_enable` (`RAM_REFRESH_STATE`) and 0x80dc90 becomes `run_location`
+    (`RUN_LOCATION`, words 0xeaea / 0xeeee - CM848's bytes doubled).
+  - **README:** result 0x07 is NOT_SAFE, not "logging". The diagram's EEPROM branch follows the code. The type 3
+    branch returns 0x03, not 0x1A. The region table is J90350's.
+  - **CM550 notes:** both 0x07 comments say the same.
+  - **Proof:** CM848 0 of 1968 functions differ after the renames (a pure rename). CM550 16 of 775 differ: the four twins (byte results - 'return 0 / 4 / 7' replaces the in_D0 masks - and RAM_REFRESH_DISABLED / RUN_LOCATION_DEVELOPMENT ...) and the 12 other users of ram_refresh_enable / run_location (the enum members in place of 0 / 1 / 0xeeee; the J1708 command dispatcher's result variable is a byte now); casts and placeholders unchanged in the 12; 28 RAM_REFRESH_STATE / RUN_LOCATION member renders. Both verifies byte-identical with stage A's WARNING lines (CM848 thunks 18 / 14, locals Skipped 8). Headers regenerated for both (0 g++ errors), tests pass, audit_cal_suffixes.py CM848 HARD 0 / MISSING 210, CM550 HARD 0 / MISSING 31.
+- **Stage C (9326cf14), from the closing review:** CM550's own `parameter_id_lookup_table.csv` is indexed by e2m block
+  id, as CM848's table is.
+  - **Blocks:** 000D SAFE2PRG -> 0x80dc92, 0010 RUN_LOC -> 0x80dc90, 10C7 RAM_Refresh_Enable -> 0x80dc6c and 1328
+    Development_Mode -> 0x80de30. That confirms stage B's two names.
+  - **0x80dc92** is `not_safe_to_program_flag` after all. CM550's value 2 is an extension that the `== 1` tests
+    treat as safe.
+  - **0x80de30:** the struct field `count_106` is `development_mode` (`DEVELOPMENT_MODE_STATE`). The row there,
+    `calibration_write_pending_flag`, is renamed too.
+  - **The old notes:** the J90280.05-era 'calibration bank' notes are annotated.
+  - **Proof:** CM550 6 of 775 functions differ after the renames: the three development mode twins, the lookup, cm550_memoryPatchingSystem and vp44_FUN_00027f9c - each now names DEVELOPMENT_MODE_ON / DEVELOPMENT_MODE_OFF (8 renders; no count_106 left; not_safe_to_program_flag renders 11 times). CM550 verify byte-identical with stage B's WARNING lines; CM848 unchanged by this stage. Headers regenerated (0 g++ errors), tests pass, audit_cal_suffixes.py CM550 HARD 0 / MISSING 31.
+- **firmware/CLAUDE.md:** lines 915-916, the reference refresh's factual rename of the stage 9b mention
+  (`cm848_exitDevelopmentMode` / `cm848_enterDevelopmentMode` / `cm848_forceExitDevelopmentMode` -> the shared names).
+- **Leads:**
+  - **The `j1708_multipacket_msg_t` instance at 0x80ddc6 (256 bytes) is misapplied.**
+    - CM550's parameter ID table maps 13 e2m blocks inside its span: 1127 at +0, 1128 at +4, 1001, 1002, 1328
+      (`development_mode`), 0013, 0014, 0015, 116B ...
+    - Replacing it with the separate globals changes many renders: 980 field renders of 34 fields in CM550's
+      `.cpp`. It is its own stage.
+  - **CM550's old enum members:** the 'calibration bank' ones (`DIAG_SERVICE_3_CMD` 0x40 / 0x41, `DIAG_SECURED_SUBFUNC`
+    / `DIAG_CONTROL_SUBFUNC`) and `CALIBRATION_WRITE_PROTECT` (0x80dc92's 0 / 1 / 2).
+    - They render nowhere. Renaming them after the development mode twins / SAFE2PRG is open.
+    - Also open: do CM550's 8-byte parameter table entries (two addresses each) pick an address by
+      `ram_refresh_enable`, as the old notes claimed?
+  - **A candidate twin inside CM848:** the boot worker calls `cm848_validateWriteAuth` where the application calls
+    `validateSecurityKey`.
+  - **The CM550 mirror's other 31 names** lack `_cal`, the new backlog. One of them, `lsg_base_reference_speed_calibration`
+    at EEPROM 0x94, disagrees with CM848's e2m (`ESP_Override_Alpha` there).
+  - **`cm550_circularBufferWrite` (0x16cd8)** is the EEPROM byte write queue by its role in both twin pairs, but it has
+    no body in the `.cpp`.
+  - **The writers' locals, both firmwares,** and the candidate pair `cm550_diagnosticServiceSecurityValidator` /
+    `cm848_validateJ1939DiagnosticRequest` (not read in full).
+  - **The skill notes:** `auditing-cal-suffixes` / `editing-firmware-csvs` say CM550 RAM is never `_cal`. The mirror is
+    the exception now. That text lives in `.claude/skills` and is not edited here.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

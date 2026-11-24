@@ -614,3 +614,8 @@ Hand work on the round 7 lead.
 
 - **Stage A:** `apply_r72a.py` / `apply_r72a2.py` / `apply_r72a3.py` / `apply_r72a4.py`, the maps `map_r72a_cm848.csv` / `map_r72a_cm550.csv`. **Stage B1:** `apply_r72b1.py` / `apply_r72b1b.py` / `apply_r72b1c.py` / `apply_r72b1d.py`, `map_r72b_*.csv`.
 - **Proof:** `prove_r72*.py` (renamed functions keyed by their new name; boundary-aware renames), `diff_r72*.py`. **Closing:** `apply_r72_closing.py`, `update_large_tar_r72.sh`.
+
+## Round 73: CM550's EEPROM mirror, the security key variables, development mode twins (`session_folder/round73/`)
+
+- **Stage A0:** `apply_r73a0.py`. **Stage A:** `apply_r73a.py`, `map_r73a_*.csv`, the m68k width scanners `m68k_abs_access.py` / `m68k_register_ops.py`. **Stage B:** `apply_r73b.py`, `apply_r73b_docs.py`, `map_r73b_*.csv`. **Stage C:** `apply_r73c.py`, `map_r73c_cm550.csv`.
+- **Proof:** `prove_r73*.py`, `diff_r73*.py`. **Closing:** `apply_r73_closing.py`, `update_large_tar_r73.sh`.

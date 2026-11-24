@@ -1,0 +1,31 @@
+cm848+cm550: round 73 stage A - the security key variables share names in both firmwares: security_key_failure_count, security_master_password_cal, calibration_download_security_key_cal
+
+The two firmwares keep these at the same EEPROM offsets, and the same key check reads them (validateSecurityKey,
+round 72):
+- security_key_failure_count:
+  - CM848 0x3fb9a8 (was security_sequence_step; lbz / stb);
+  - CM550 0x801e76 (cmpi.b #0x11 / clr.b / addq.b through a4).
+  Only validateSecurityKey touches it, in both firmwares: one added per miss, cleared on a match, and at 0x11 (17
+  misses) every key fails.
+- security_master_password_cal: e2m 0005 +0 ECM_PSWD / Master_Password 'security master password' (HEX, 6 bytes),
+  at EEPROM 0x2.
+  - CM848 0x3fd484, the mirror + 2. It had no row and rendered as the RAM image's string label s_ABCDEF_003fd484.
+  - CM550 0x803b0c, the mirror 0x803b0a + 2 (was ecu_identity_test_pattern).
+  validateSecurityKey compares the unscrambled key's 6 characters with it.
+- calibration_download_security_key_cal in CM550 0x803b98: EEPROM 0x8e, where CM848 has e2m 1000 +0 Security_Key.
+  - It is a word: cmpi.w #0xff at all four uses (the writer twice, cm550_diagnosticServiceSecurityValidator,
+    validateSecurityKey). It had rendered as _DAT_00803b98.
+  - 0x00ff = no key needed.
+The _cal names follow stage A0's mirror range, so CM550's audit counts no new contradiction. The two plates name the
+variables.
+
+Proof (prove_r73a.py / prove_r73a_cm550.py): CM848 3 of 1968 functions differ after the renames: validateSecurityKey
+(the key buffers byte not char - the password is byte[6]) and two declarations reordered
+(mpc555_areBootModeStrapPinsHigh / mpc555_tickTransferTimeoutAndRuntimeCounter). CM550 2 of 775: validateSecurityKey
+(security_master_password_cal[i]; 0x11 / 0 / 1 for the char literals; its existing 'extracted_key' local row now applies
+- the unscrambled key buffer) and a declaration reordered (cm550_diagnosticServiceSecurityValidator). Both verifies
+byte-identical with round 72's WARNING lines (CM848 thunks 18 / 14, locals Skipped 8). Headers regenerated for both (0
+g++ errors), tests pass, lookup tables 0 sizing problems, audit_cal_suffixes.py CM848 HARD 0 / MISSING 210, CM550 HARD 0
+/ MISSING 31 (32 after stage A0; the password now has _cal).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

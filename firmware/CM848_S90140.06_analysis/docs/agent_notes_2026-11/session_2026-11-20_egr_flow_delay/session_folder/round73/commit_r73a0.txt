@@ -1,0 +1,21 @@
+firmware/scripts: round 73 stage A0 - audit_cal_suffixes.py learns CM550's EEPROM RAM mirror (0x803b0a-0x804155)
+
+The _cal rule is unchanged: an EEPROM-backed value is _cal. The auditor's CM550 memory map lacked the RAM mirror of
+the EEPROM, so it treated those addresses as plain RAM. The mirror is RAM 0x803b0a-0x804155 = EEPROM 0x0-0x64b
+(RAM = 0x803b0a + EEPROM offset):
+- The memory services translate an EEPROM address into it by - 0x7fc4f6 (EEPROM 0x1000000 -> RAM 0x803b0a):
+  writeJ1939DiagnosticMemory and three more functions.
+- CM550 0x11a74 stores 0x803b0a-0x804155 back to EEPROM in 16-byte chunks. It is the twin of CM848's
+  cm848_commitEepromMirrorToEeprom over CM848's mirror: 7 when not safe to program, 16-byte chunks through the EEPROM
+  byte write queue, and up to 16000 waits for the queue.
+- CM848's EEPROM offsets land on the same CM550 roles:
+  - 0x02 is the security key password;
+  - 0x8e is the calibration download security key, a word in both (cmpi.w in CM550).
+- The range ends where the store-back ends. CM848's commit also covers only the leading block of its mirror, so
+  CM550's mirror may reach further; this range is the confirmed part.
+
+The region sits before CM550's RAM entry, because the first match wins. The CM550 audit goes from 0 / 0 / 0 to
+HARD 0 / SOFT 0 / MISSING 32: the 32 named globals in the mirror have no _cal. That is a backlog, like CM848's 210;
+none are renamed here. CM848's audit is unchanged at 210.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

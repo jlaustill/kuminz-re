@@ -1,0 +1,5 @@
+address,name,old_label,kind,dims
+0x00021668,enterDevelopmentMode,cm848_enterDevelopmentMode,function,1
+0x00021624,exitDevelopmentMode,cm848_exitDevelopmentMode,function,1
+0x00021694,forceExitDevelopmentMode,cm848_forceExitDevelopmentMode,function,1
+0x00021918,commitEepromMirrorToEeprom,cm848_commitEepromMirrorToEeprom,function,1
