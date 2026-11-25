@@ -4147,6 +4147,50 @@ Peer relays started and continued the round (15:49, 16:19, 16:49). The scripts a
     `cm550_peakTorqueFuelCorrection`; `cm550_j1939TorqueControlMode*`; `cm848_mathMultiplyDivide32`'s fall-through;
     0x80ddd3; the A/D array-end bound render; the one stage C type that could not be applied.
 
+## Done, round 92 (2026-11-24, same PR): CM550's fueling state enum; the algorithm enable words as bitfields
+
+Peer relays started and continued the round (17:19, 17:50, 17:58, 19:19, 19:49, 20:19, 20:49). The scripts and the
+workflow's batches (`batch_W1..W4.json`: each proposal with its skeptic verdicts) are in `session_folder/round92/`.
+- **Stage B (79bac6ef), `FUELING_STATE` for CM550:** CM550's e2m (FSFNFLST) labels codes 0x00-0x29 with CM848's
+  numbering, so the enum is CM848's twin: 32 codes take CM848's member names; 10 have no CM848 member (4 named from
+  plain labels, 6 `FUELING_STATE_UNIDENTIFIED_<n>`). Seven carriers are typed; four take CM848's names for the same
+  e2m records (`final_fueling_state`, `adjusted_user_fueling_state`, `torque_derate_fuel_source_code`,
+  `power_take_off_or_user_fueling_state`).
+  - **Proof:** CM550 verify DETERMINISTIC; 43 functions changed by the four renames and 166 member renders; no value
+    renders as an OR of members; caller artifacts unchanged.
+- **Stage A (bd662d12), the algorithm enable words (e2m 106B, CM550 0x803c92):** workflow wf_5794b4eb-1ec, an
+  investigator and a skeptic per batch of words. Four of its agents were refused by a weekly usage limit; the run was
+  resumed after the session's model changed. 437 elements confirmed, 28 amended (27 comment texts, one field name),
+  none refuted.
+  - Every row is `algorithm_enable_flags_<n>_cal` (11 renamed - the old names used five patterns and one wrong
+    number - and 18 new).
+  - 4 words share CM848's type bit for bit (1, 4, 11, 25); 14 get `cm550_algorithm_enable_flags_<n>_t`; 11 stay
+    plain words (the length, word 0 - the base of the indexed bit tests - and the words reached only by index).
+  - CM848 gains four field names from its own e2m (word 3 bits 12-14: the acceleration noise control enables; word
+    12 bit 1: `overspeed_fuel_shutoff_enable`), and word 3 bit 8 is `gear_down_protection_enable`.
+  - Two previous-pass copies: `user_fueling_state_previous_pass`, `final_fueling_state_prev`.
+  - **Proof:** CM550 verify DETERMINISTIC; 90 functions changed; all 132 mask tests in the census became the field
+    of exactly that bit on the same word (`mask_exact_r92.py`); no store renders as a piece; caller artifacts
+    unchanged. CM848 label-only. Tests pass; headers 0 errors; _cal HARD 0 (CM550 MISSING 25 -> 14).
+- **firmware/CLAUDE.md:** one sentence in the bitfield bullet: CM550's Ghidra 12.2 renders bitfield names too.
+- **Leads (round 93):**
+  - Function names the bitfield agents found wrong (`bitfield_notes_r92.txt` and the field comments):
+    - `vp44SensorStatusMonitor` (0x1d9ca) is the idle shutdown state machine;
+    - `cm550_engineRunTimeHistogramAccumulator` (0x1ff4e) is the J1939 periodic transmit schedule;
+    - `mc68k_FUN_000212b2` is the J1939 receive dispatch;
+    - `vp44_communication_state_machine` (0x13616) is the data collector sampler;
+    - `cm550_j1939MessageTypeCounter` / `cm550_memoryRegisterController` record the J1922 / J1939 control session
+      history.
+  - The six `FUELING_STATE_UNIDENTIFIED_<n>` labels (PSSPEED, ANCDERAT, EPF, ESUOILLM, PTPDERAT, T2DERAT): name them
+    from the code that stores each state.
+  - The fault snapshot records: 48-byte slots at 0x80426e / 0x80462e (the final fueling state at +26).
+  - Enable words 10, 21, 24, 29-31 and 34 have no reference and no row; about 28 places print
+    `(ushort)algorithm_enable_flags_<n>_cal & mask` where the code keeps the masked value.
+  - Carried: indexed struct-array reads printing as byte arithmetic; the audit's disagreeing rows; the misnamed PGN
+    builders; `linearization_table_ch15_x_axis`; 0x803f40 `_cal`; ESCMES / ENGRPM; the DIAG enum members 0x42 / 0x52 /
+    0x54; the descriptor rows 0x801ab6-0x801b0d; `cm550_peakTorqueFuelCorrection`; `cm550_j1939TorqueControlMode*`;
+    `cm848_mathMultiplyDivide32`'s fall-through; 0x80ddd3; the A/D array-end bound render.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

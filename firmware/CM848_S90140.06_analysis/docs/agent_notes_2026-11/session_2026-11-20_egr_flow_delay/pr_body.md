@@ -8,7 +8,7 @@ fresh air flow records; the e2m never spells it out, so no name guesses an expan
 - **Round 2:** at the user's request the rest of the family is renamed too, on this PR (stages 3 / 4). The scope rule:
   a symbol is in if its e2m record is `CHP_` / `C_CHP_`, or if it is an input that a family function would otherwise
   misname.
-- **Beyond CM848 (rounds 72-91):** the J1939 memory write service and the development mode code are shared:
+- **Beyond CM848 (rounds 72-92):** the J1939 memory write service and the development mode code are shared:
   eleven CM550 functions are CM848 twins and share their names. Round 74 also dismantles a misapplied CM550
   struct, round 75 types CM550's InSite parameter schedule and names its J1708 SCI, and round 76 names CM550's
   MC68336 registers, so CM550's CSVs, the root README and `firmware/feature_comparison.csv` change too.
@@ -986,6 +986,13 @@ state enum, the flag bytes.**
     as twins of CM848's, with one name in both;
   - `refresh_references.py` keeps a long history list intact.
 
+**Round 92.**
+- **Stage B (79bac6ef):** CM550's `FUELING_STATE` enum, the twin of CM848's (the same Calterm labels), and its
+  seven carriers.
+- **Stage A (bd662d12):** CM550's algorithm enable words (e2m 106B) as bitfield structs from a skeptic-verified
+  workflow: `algorithm_enable_flags_<n>_cal`, 4 types shared with CM848, 14 `cm550_` types, 11 plain words; four
+  CM848 reserved bits named from its own e2m.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -1077,6 +1084,8 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 92: A: CM550 verify DETERMINISTIC (0 functions removed / added; 90 changed; 132 of 132 mask tests became the field of that exact bit on the same word; no piece render; caller artifacts unchanged); CM848 verify DETERMINISTIC, label-only; test suites pass; headers 0 g++ errors; _cal HARD 0.
+- [x] Round 92: B: CM550 verify DETERMINISTIC (43 functions changed by 4 renames and 166 enum member renders; no OR render; caller artifacts unchanged); headers 0 g++ errors; _cal HARD 0.
 - [x] Round 91: CM550 verify DETERMINISTIC (the 0x1452e split removed and the 2 receive handlers added on purpose; 42 functions changed; caller artifacts unchanged); CM848 verify DETERMINISTIC, label-only; test suites pass (a new refresh test fails on the old 120-character window); headers 0 g++ errors; _cal HARD 0.
 - [x] Round 90: D: CM848 verify DETERMINISTIC (3 functions changed: the DM8 builder, its initializer, the DM7 handler); headers 0 g++ errors; _cal HARD 0.
 - [x] Round 90: C: CM550 verify DETERMINISTIC (0 functions removed / added; 124 changed by the names / types; caller artifacts unchanged; validateSecurityKey's build error and 6 warnings gone); test suites pass; headers 0 g++ errors; _cal HARD 0.

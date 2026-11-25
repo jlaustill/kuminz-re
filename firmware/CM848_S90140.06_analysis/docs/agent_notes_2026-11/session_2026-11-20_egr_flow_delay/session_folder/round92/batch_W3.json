@@ -1,0 +1,1271 @@
+{
+ "proposal": {
+  "batch": "W3",
+  "words": [
+   {
+    "word": 15,
+    "address": "0x00803cb2",
+    "current_name": "none (no row; no access by its own address)",
+    "proposed_name": "algorithm_enable_flags_15_cal",
+    "proposed_type": "word",
+    "shared_with_cm848": false,
+    "row_comment": "Algorithm enable flags word 15 (EEPROM 0x1a8; e2m 106B +20 LAMP_CON / AUX_DRVR): the client feedback override enables of the 16 discrete driver outputs - bit n overrides output n's read-back. Low byte = lamp port read-back 0xFFD005 (outputs 0-7), high byte = driver port read-back 0xFFD007 (outputs 8-15). mc68k_sampleAndDebounceDiscreteInputs (0x80bcd2 / 0x80bcd3) and mc68k_ioDriverStrobeHandler (0x80bd02 / auxiliary_driver_feedback_bits) apply discrete_input_override_mask_ptr[5] (bits 0-7) and [4] (bits 8-15) as read-back & ~mask | value & mask with the values 0x80bcdc / 0x80bcdd; cm550_FUN_000206a8 tests bits 0 and 1 by index (table bits 240 / 241). 0x1 wait to start lamp, 0x2 stop engine lamp, 0x4 water in fuel lamp, 0x8 no record, 0x10 engine protection lamp, 0x20 solenoid A, 0x40 warning lamp, 0x80 fuel shutoff (FSO / VP44 pump enable), 0x100 engine brake relay (RLY1), 0x200 / 0x400 cold start aid relays 1 / 2 (RLY2 / RLY3), 0x800 relay 7 (A/C clutch), 0x1000 relay 5 (prime pump), 0x2000 relay 6 (ether start), 0x4000 relay 4, 0x8000 fan clutch (SOL1). Plain word: nothing reads it by its own address so a bitfield would render nowhere. Dump 0x0000. (no row before; PR #53 round 92)",
+    "code_tests": "No reference to 0x803cb2 / 0x803cb3 in the dumped 256 KB ROM. Byte masks through discrete_input_override_mask_ptr (= &switch_override_configuration 0x803cae; set by cm550_initializeDiscreteInputs): [5] = 0x803cb3 (bits 0-7) and [4] = 0x803cb2 (bits 8-15) in mc68k_sampleAndDebounceDiscreteInputs and mc68k_ioDriverStrobeHandler. Indexed single-bit tests on base 0x803c94: cm550_FUN_000206a8(0x20, 0) and (0x21, 6), called from cm550_FUN_00021070, test table bits 0xd0 + 0x20 = 240 (bit 0) and 241 (bit 1).",
+    "writes": "none (no store / bset / bclr / ori / andi on the address; only the generic EEPROM mirror and tool memory writers)",
+    "differences_from_cm848": "CM848 has no row, no e2m record (none of the 23 CHR e2m files has 106B +0020) and no reader; no CM848 counterpart.",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "wait_to_start_lamp_feedback_override_enable",
+      "comment": "Output 0 (wait to start lamp) read-back override: lamp port 0xFFD005 bit 0. e2m LCWTFBOD / WSLPFBUO 0x01; value LCWTFBUV 0x80bcdc bit 0; priority 12A8 +20 LCWTFBPZ. Code: byte mask [5] bit 0; cm550_FUN_000206a8(0x20 0) tests table bit 240; output 0 is the wait to start lamp in processProtectionFlagConditions. Clear in the dump"
+     },
+     {
+      "bit": 1,
+      "name": "stop_engine_lamp_feedback_override_enable",
+      "comment": "Output 1 (stop engine lamp) read-back override: lamp port bit 1. e2m LCSPFBOD / SELPFBUO 0x02; value LCSLFBUV 0x80bcdc bit 1; 12A8 +21 STEGLPFP / LCSLFBPZ. Code: byte mask [5] bit 1; cm550_FUN_000206a8(0x21 6) tests table bit 241; output 1 is the stop engine lamp in processProtectionFlagConditions. Clear"
+     },
+     {
+      "bit": 2,
+      "name": "water_in_fuel_lamp_feedback_override_enable",
+      "comment": "Output 2 (water in fuel lamp) read-back override: lamp port bit 2. e2m LCWFFBOD / WFLPFBUO 0x04; value in clien_specified_value_for_water_in_fuel_lamp_feedback_on_off 0x80bcdc; 12A8 +22 LCWFFBPZ. Code: byte mask [5] bit 2; output 2 is the water in fuel lamp (water_in_fuel_lamp_override_priority). Clear"
+     },
+     {
+      "bit": 3,
+      "name": "reserved_bit_3",
+      "comment": "Byte mask [5] bit 3 over lamp port read-back bit 3 (output 3; logical input 35). No 106B record with this mask; guess from 12A8 +23: DGLPFBPZ diagnostic lamp or LCL4FBPZ lamp 4. No code drives output 3. Clear"
+     },
+     {
+      "bit": 4,
+      "name": "engine_protection_lamp_feedback_override_enable",
+      "comment": "Output 4 (engine protection lamp) read-back override: lamp port bit 4. e2m EPLPFBUO 0x10; status EPLPFDBK 0x80bd02 bit 4; 12A8 +24 EPLPFBPZ. Code: byte mask [5] bit 4; output 4 is the engine protection lamp (engine_protection_lamp_override_priority). Clear"
+     },
+     {
+      "bit": 5,
+      "name": "solenoid_a_feedback_override_enable",
+      "comment": "Output 5 read-back override: lamp port bit 5. e2m LPSAFBUO 0x20 'SOLENOID_A FEEDBACK' with value LPSAFBUV 0x80bcdc bit 5 and status LPSAFB 0x80bd02 bit 5 (the 88 records call slot 37 lamp 6: LCL6FBPZ). Code: byte mask [5] bit 5; no code drives output 5. Clear"
+     },
+     {
+      "bit": 6,
+      "name": "warning_lamp_feedback_override_enable",
+      "comment": "Output 6 (warning lamp) read-back override: lamp port bit 6. e2m LCWNFBOD 0x40 'WARNING LAMP' (DGLPFBUO calls it the diagnostic lamp); 12A8 +26 LCWLFBPZ. Code: byte mask [5] bit 6; output 6 is the amber warning lamp (warning_lamp_override_priority). Clear"
+     },
+     {
+      "bit": 7,
+      "name": "fuel_shutoff_feedback_override_enable",
+      "comment": "Output 7 read-back override: lamp port bit 7. e2m DRFSFBOD 0x80 'BIT 7' FSO (VPENFBUO calls it the VP44 pump enable); value DRFSFBUV / VPENFBUV 0x80bcdc bit 7; 12A8 +27 DRFSFBPZ / VPENFBPZ. Code: byte mask [5] bit 7; output 7 is the fuel shutoff driver strobe (fso_driver_strobe_state). Clear"
+     },
+     {
+      "bit": 8,
+      "name": "engine_brake_relay_feedback_override_enable",
+      "comment": "Output 8 (relay 1 = engine brake) read-back override: driver port 0xFFD007 bit 0. e2m EGBKFBUO / DRR1FBOD 0x100 'BIT 8'; status DSEBFB 0x80bd03 bit 0; 12A8 +28. Code: byte mask [4] bit 0; output 8 is engine_brake_driver_strobe_state (commanded_driver_true_on_0_1 bit 0). Clear"
+     },
+     {
+      "bit": 9,
+      "name": "cold_start_aid_1_relay_feedback_override_enable",
+      "comment": "Output 9 (relay 2 = cold start aid 1) read-back override: driver port bit 1. e2m CSA1FBUO / DRR2FBOD 0x200 'BIT 9'; status DSCD01FB; 12A8 +29. Code: byte mask [4] bit 1; output 9 is cold start aid 1 (cold_start_aid_1_driver_override_priority). Clear"
+     },
+     {
+      "bit": 10,
+      "name": "cold_start_aid_2_relay_feedback_override_enable",
+      "comment": "Output 10 (relay 3 = cold start aid 2) read-back override: driver port bit 2. e2m CSA2FBUO / DRR3FBOD 0x400 'BIT 10'; status DSCD02FB; 12A8 +2A. Code: byte mask [4] bit 2; output 10 is cold start aid 2 (cold_start_aid_2_driver_override_priority). Clear"
+     },
+     {
+      "bit": 11,
+      "name": "air_conditioner_clutch_relay_feedback_override_enable",
+      "comment": "Output 11 (relay 7) read-back override: driver port bit 3. e2m ACCLFBUO / DRR7FBOD mask 0x800 (their text says BIT 14; the mask agrees with value DRR7FBUV 0x08 and status DSACFB 0x08 'AC_CLUTCH DRIVER'); RYSBFBUO names the same mask solenoid B; 12A8 +2B ACCLFBPZ 'RLY7'. Code: byte mask [4] bit 3; no code drives output 11. Clear"
+     },
+     {
+      "bit": 12,
+      "name": "prime_pump_relay_feedback_override_enable",
+      "comment": "Output 12 (relay 5 = prime pump) read-back override: driver port bit 4. e2m PPFBUO / DRR5FBOD 0x1000 'BIT 12'; status DSPUFB 'PRIME_PUMP DRIVER'; 12A8 +2C PPFBPZ. Code: byte mask [4] bit 4; no code drives output 12. Clear"
+     },
+     {
+      "bit": 13,
+      "name": "ether_start_relay_feedback_override_enable",
+      "comment": "Output 13 (relay 6) read-back override: driver port bit 5. e2m DRR6FBOD 0x2000 'BIT 13' (no 87 record); 12A8 +2D DRR6FBPZ. Code: byte mask [4] bit 5; output 13 is the ether start driver (ether_start_driver_override_priority; the aux_driver_ether_start diagnostic). Clear"
+     },
+     {
+      "bit": 14,
+      "name": "relay_4_feedback_override_enable",
+      "comment": "Output 14 (relay 4) read-back override: driver port bit 6. e2m DRR4FBOD mask 0x4000 (text says BIT 11; the mask agrees with value DRR4FBUV 0x40 and status DRR4FB 0x40); 12A8 +2E DRR4FBPZ. Code: byte mask [4] bit 6; no functional name in the e2m and no code drives output 14. Clear"
+     },
+     {
+      "bit": 15,
+      "name": "fan_clutch_feedback_override_enable",
+      "comment": "Output 15 (solenoid 1 = fan clutch) read-back override: driver port bit 7. e2m FNCHFBUO / DRS1FBOD 0x8000; status DSFMCHFB 'FAN_CLUTCH_FEEDBACK'; 12A8 +2F FNCHFBPZ / DRS1FBPZ. Code: byte mask [4] bit 7; no code drives output 15 (mc68k_initializeDiscreteOutputDrivers only toggles port 2 bit 7 at start-up). Clear"
+     }
+    ]
+   },
+   {
+    "word": 16,
+    "address": "0x00803cb4",
+    "current_name": "switch_input_override_enable_flags",
+    "proposed_name": "algorithm_enable_flags_16_cal",
+    "proposed_type": "cm550_algorithm_enable_flags_16_t",
+    "shared_with_cm848": false,
+    "row_comment": "Algorithm enable flags word 16 (EEPROM 0x1aa; e2m 106B +22 DIG_SIG): user override enables of the decoded cruise switch byte 0x80bcd4 (bits 0-7 = logical inputs 48-55) and power take-off switch byte power_take_off_switch_state_bits 0x80bcd5 (bits 8-15 = logical inputs 56-63). Set: mc68k_sampleAndDebounceDiscreteInputs takes that status bit from the override values 0x80bcde / 0x80bcdf instead of the debounced switch inputs; cm550_FUN_00020890 tests the same bits (table bit 208 + input) before it stores a J1939 multiplexed switch there. The code puts the power take-off resume override at bit 8 although the 106B record DSPTRUUO says 0x2000. Dump 0x0000. (was switch_input_override_enable_flags; PR #53 round 92)",
+    "code_tests": "6 direct tests in mc68k_sampleAndDebounceDiscreteInputs (move.w $803cb4 + andi.w): #0x1000 at 0x15394, #0x0400 at 0x153c8, #0x0100 at 0x153fc, #0x0010 at 0x155ec, #0x0004 at 0x1561a, #0x0001 at 0x15648 (all plain if tests). Indexed (base 0x803c94, table bit 0xd0 + logical input): cm550_FUN_00020890 for J1939 descriptor entries 2 and 16 (bit 6), 11 (bit 8), 12 (bit 10), 10 (bit 12); cm550_FUN_000206a8(0x36, 1 / 4 / 2) from cm550_FUN_00021070 (bit 6). Not used through discrete_input_override_mask_ptr ([6] / [7] are never read).",
+    "writes": "none",
+    "differences_from_cm848": "CM848 has no row, no e2m record at 106B +0022 (no CHR file) and no reader; no CM848 counterpart.",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "cruise_control_resume_switch_override_enable",
+      "comment": "Set: the decoded cruise resume bit 0x80bcd4 bit 0 (e2m 000E +6 CRRESUSW) comes from the override value 0x80bcde bit 0 instead of switch input 0x80bcce bit 1. mc68k_sampleAndDebounceDiscreteInputs andi.w #0x0001 at 0x15648. Logical input 48; no 106B record. Unlike word 13's DSCRRUUO (raw switch) this overrides the debounced status byte. Clear"
+     },
+     {
+      "bit": 1,
+      "name": "reserved_bit_1",
+      "comment": "No reader in the dumped ROM and no 106B record; by the logical input layout (49) the cruise accelerate bit 0x80bcd4 bit 1 (CRACELSW). Clear"
+     },
+     {
+      "bit": 2,
+      "name": "cruise_control_set_switch_override_enable",
+      "comment": "Set: the decoded cruise set bit 0x80bcd4 bit 2 (CRSETSW) comes from 0x80bcde bit 2 instead of switch input 0x80bcce bit 2. andi.w #0x0004 at 0x1561a. Logical input 50; no 106B record. Clear"
+     },
+     {
+      "bit": 3,
+      "name": "reserved_bit_3",
+      "comment": "No reader and no 106B record; by the layout (51) the cruise coast bit 0x80bcd4 bit 3 (CRCOASSW). Clear"
+     },
+     {
+      "bit": 4,
+      "name": "cruise_control_on_switch_override_enable",
+      "comment": "Set: the decoded cruise on bit 0x80bcd4 bit 4 (CRONSW) comes from 0x80bcde bit 4 instead of switch input 0x80bcce bit 3. andi.w #0x0010 at 0x155ec. Logical input 52; no 106B record. Clear"
+     },
+     {
+      "bit": 5,
+      "name": "reserved_bit_5",
+      "comment": "No reader and no 106B record; by the layout (53) the cruise set and resume bit 0x80bcd4 bit 5 (CRSERUSW). Clear"
+     },
+     {
+      "bit": 6,
+      "name": "auxiliary_shutdown_switch_override_enable",
+      "comment": "e2m DSAUSHUO 0x40 'USER OVERRIDE ENABLE FLAG FOR THE AUXILIARY SHUTDOWN SW'. Code: table bit 262 (logical input 54) tested by cm550_FUN_00020890 for J1939 descriptor entry 2 (j1939_received_engine_auxiliary_shutdown_switch) and by cm550_FUN_000206a8(0x36 ...) three times. Caveats: entry 16 (engine derate switch) also points at 54; the e2m value / status / priority records (DSAUSHUC E +11 0x40; DSAUSHSW E +7 0x40; 12A8 +3E DSPZAUSH) sit at logical input 62 = bit 14. Clear"
+     },
+     {
+      "bit": 7,
+      "name": "reserved_bit_7",
+      "comment": "No reader and no record; logical input 55 = 0x80bcd4 bit 7 (no e2m name). Clear"
+     },
+     {
+      "bit": 8,
+      "name": "power_take_off_resume_switch_override_enable",
+      "comment": "Set: the power take-off resume bit (power_take_off_switch_state_bits 0x80bcd5 bit 0; DSPTRUSW) comes from 0x80bcdf bit 0 (DSPTRUUC 0x01) instead of switch input 0x80bcce bit 1. andi.w #0x0100 at 0x153fc; J1939 entry 11 (logical input 56 = table bit 264); 12A8 +38 DSPZPTRU. The 106B record DSPTRUUO claims mask 0x2000 but the code uses this bit. Clear"
+     },
+     {
+      "bit": 9,
+      "name": "reserved_bit_9",
+      "comment": "No reader and no 106B record; by the layout (57) the power take-off accelerate bit 0x80bcd5 bit 1 (PTACELSW). Clear"
+     },
+     {
+      "bit": 10,
+      "name": "power_take_off_set_switch_override_enable",
+      "comment": "Set: 0x80bcd5 bit 2 (DSPTSESW) comes from 0x80bcdf bit 2 (DSPTSEUC 0x04) instead of switch input 0x80bcce bit 2. e2m DSPTSEUO 0x400 'PTO SET SWITCH'; andi.w #0x0400 at 0x153c8; J1939 entry 12 (logical input 58); 12A8 +3A DSPZPTSE. Clear"
+     },
+     {
+      "bit": 11,
+      "name": "reserved_bit_11",
+      "comment": "No reader and no 106B record; by the layout (59) the power take-off coast bit 0x80bcd5 bit 3 (PTCOASSW). Clear"
+     },
+     {
+      "bit": 12,
+      "name": "power_take_off_on_switch_override_enable",
+      "comment": "Set: 0x80bcd5 bit 4 (DSPTONSW) comes from 0x80bcdf bit 4 (DSPTONUC 0x10) instead of switch input 0x80bcce bit 3. e2m DSPTONUO 0x1000 'PTO ENABLE SWITCH'; andi.w #0x1000 at 0x15394; J1939 entry 10 (logical input 60); 12A8 +3C DSPZPTON. Clear"
+     },
+     {
+      "bit": 13,
+      "name": "reserved_bit_13",
+      "comment": "e2m DSPTRUUO 0x2000 'USER OVERRIDE ENABLE FLAG FOR THE PTO RESUME SWITCH' but the code reads the power take-off resume override at bit 8; no reader here; by the layout (61) the set and resume bit 0x80bcd5 bit 5 (PTSERUSW). Clear"
+     },
+     {
+      "bit": 14,
+      "name": "reserved_bit_14",
+      "comment": "No reader and no 106B record; by the layout (62) the auxiliary shutdown status 0x80bcd5 bit 6 (DSAUSHSW; 12A8 +3E DSPZAUSH; value DSAUSHUC 0x80bcdf bit 6) - see bit 6. Clear"
+     },
+     {
+      "bit": 15,
+      "name": "reserved_bit_15",
+      "comment": "No reader and no record; logical input 63 = 0x80bcd5 bit 7. Clear"
+     }
+    ]
+   },
+   {
+    "word": 17,
+    "address": "0x00803cb6",
+    "current_name": "none (no row; no access by its own address)",
+    "proposed_name": "algorithm_enable_flags_17_cal",
+    "proposed_type": "word",
+    "shared_with_cm848": false,
+    "row_comment": "Algorithm enable flags word 17 (EEPROM 0x1ac; e2m 106B +24 DIG_SIG): user override enables of logical inputs 64-79. 0x1 torque derate switch (DSTQSWUO): mc68k_sampleAndDebounceDiscreteInputs applies the low byte (discrete_input_override_mask_ptr[9] = 0x803cb7) as a byte mask over switch_status_for_torque_derate_feature_on_off 0x80bcd6 with user_supplied_value_for_the_torque_derate_switch_on_off 0x80bce0. 0x100 air conditioner pressure switch (no e2m record): cm550_FUN_00020890 tests it (table bit 280) for J1939 descriptor entry 0 (j1939_received_air_conditioner_high_pressure_fan_switch, logical input 72). Other bits: no reader and no record. Plain word: nothing reads it by its own address. Dump 0x0000. (no row before; PR #53 round 92)",
+    "code_tests": "No reference to 0x803cb6 / 0x803cb7 in the dumped 256 KB ROM. Byte mask discrete_input_override_mask_ptr[9] = 0x803cb7 (bits 0-7) in mc68k_sampleAndDebounceDiscreteInputs over 0x80bcd6. Indexed: cm550_FUN_00020890 tests table bit 0xd0 + 72 = 280 (bit 8) for J1939 descriptor entry 0. The high byte ([8]) is never used as a mask.",
+    "writes": "none",
+    "differences_from_cm848": "CM848 has no row, no e2m record at 106B +0024 and no reader.",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "torque_derate_switch_override_enable",
+      "comment": "e2m DSTQSWUO 0x01 'USER OVERRIDE ENABLE FLAG FOR THE TORQUE DERATE SWITCH'. Code: byte mask [9] bit 0 in mc68k_sampleAndDebounceDiscreteInputs over switch_status_for_torque_derate_feature_on_off 0x80bcd6 bit 0 (DSTQDQSW) with value 0x80bce0 bit 0 (DSTQSWUC 0x01); logical input 64; 12A8 +40 DSPZTQSW. Clear"
+     },
+     {
+      "bit": 1,
+      "name": "reserved_bit_1",
+      "comment": "Byte mask [9] bit 1 over 0x80bcd6 bit 1 (logical input 65) which has no e2m name; no 106B record. Clear"
+     },
+     {
+      "bit": 2,
+      "name": "reserved_bit_2",
+      "comment": "Byte mask [9] bit 2 over 0x80bcd6 bit 2 (logical input 66) which has no e2m name; no 106B record. Clear"
+     },
+     {
+      "bit": 3,
+      "name": "reserved_bit_3",
+      "comment": "Byte mask [9] bit 3 over 0x80bcd6 bit 3 (logical input 67) which has no e2m name; no 106B record. Clear"
+     },
+     {
+      "bit": 4,
+      "name": "reserved_bit_4",
+      "comment": "Byte mask [9] bit 4 over 0x80bcd6 bit 4 (logical input 68) which has no e2m name; no 106B record. Clear"
+     },
+     {
+      "bit": 5,
+      "name": "reserved_bit_5",
+      "comment": "Byte mask [9] bit 5 over 0x80bcd6 bit 5 (logical input 69) which has no e2m name; no 106B record. Clear"
+     },
+     {
+      "bit": 6,
+      "name": "reserved_bit_6",
+      "comment": "Byte mask [9] bit 6 over 0x80bcd6 bit 6 (logical input 70) which has no e2m name; no 106B record. Clear"
+     },
+     {
+      "bit": 7,
+      "name": "reserved_bit_7",
+      "comment": "Byte mask [9] bit 7 over 0x80bcd6 bit 7 (logical input 71) which has no e2m name; no 106B record. Clear"
+     },
+     {
+      "bit": 8,
+      "name": "air_conditioner_pressure_switch_override_enable",
+      "comment": "No 106B record; code only: J1939 descriptor entry 0 (j1939_received_air_conditioner_high_pressure_fan_switch; PGN 65252 SPN 985) drives logical input 72 and cm550_FUN_00020890 tests table bit 280 = this bit before it writes the J1939 state into the override value 0x80bce1 bit 0; the status by the layout is 0x80bcd7 bit 0 (e2m 000E +9 DSAKPRSW 'SOFTWARE VALUE OF AIR CONDITIONER PRESSURE S'). Clear"
+     },
+     {
+      "bit": 9,
+      "name": "reserved_bit_9",
+      "comment": "No reader and no record; logical input 73 = 0x80bcd7 bit 1. Clear"
+     },
+     {
+      "bit": 10,
+      "name": "reserved_bit_10",
+      "comment": "No reader and no record; logical input 74 = 0x80bcd7 bit 2. Clear"
+     },
+     {
+      "bit": 11,
+      "name": "reserved_bit_11",
+      "comment": "No reader and no record; logical input 75 = 0x80bcd7 bit 3. Clear"
+     },
+     {
+      "bit": 12,
+      "name": "reserved_bit_12",
+      "comment": "No reader and no record; logical input 76 = 0x80bcd7 bit 4. Clear"
+     },
+     {
+      "bit": 13,
+      "name": "reserved_bit_13",
+      "comment": "No reader and no record; logical input 77 = 0x80bcd7 bit 5. Clear"
+     },
+     {
+      "bit": 14,
+      "name": "reserved_bit_14",
+      "comment": "No reader and no record; logical input 78 = 0x80bcd7 bit 6. Clear"
+     },
+     {
+      "bit": 15,
+      "name": "reserved_bit_15",
+      "comment": "No reader and no record; logical input 79 = 0x80bcd7 bit 7. Clear"
+     }
+    ]
+   },
+   {
+    "word": 18,
+    "address": "0x00803cb8",
+    "current_name": "feature_enable_flags_word",
+    "proposed_name": "algorithm_enable_flags_18_cal",
+    "proposed_type": "cm550_algorithm_enable_flags_18_t",
+    "shared_with_cm848": false,
+    "row_comment": "Algorithm enable flags word 18 (EEPROM 0x1ae; e2m 106B +26, the descriptions say word 12h): CM848's word 18 layout (same mnemonics on bits 0, 2, 3, 6, 8, 9, 11-15; selectHighSpeedGovernorGainSet tests bit 0 in both firmwares) plus three CM550-only bits: 1 engine warmup protection (WPEAFG), 4 trending (TRAGEN), 5 datalogger (UDEN); bit 7 (CM848 executive timing) has no CM550 record or reader. 20 single-bit tests, no writes. Dump 0x303a: bits 1, 3, 4, 5, 12, 13 set. (was feature_enable_flags_word; PR #53 round 92)",
+    "code_tests": "20 direct tests (move.w $803cb8 + andi.w / andi.l, one bit each): bit 0 selectHighSpeedGovernorGainSet 0x1d3ae; bit 1 cm550_highRpmEngineProtectionStateMachine 0x16df0 0x16e32 and cm550_fuelTemperatureLimitingSecondary 0x170c0; bit 3 cm550_FUN_0000ac3c 0xac52; bit 4 cm550_FUN_00031496 0x314b2, cm550_FUN_000315be 0x315e6, cm550_FUN_00031a68 0x31a68; bit 5 cm550_updateDataloggerTriggers 0x138f4 and cm550_recordDataloggerSamples 0x13a70; bit 9 cm550_FUN_0000ff48 0xff48, cm550_FUN_0001c8a0 0x1c8d8, cm550_FUN_0001cc72 0x1cc8e, cm550_FUN_0001de58 0x1de70 0x1df10 0x1df90; bit 12 cm550_FUN_00020784 0x207c0, cm550_FUN_0002ec50 0x2ec6c, j1939HandlePgn61443Eec2 0x32fca; bit 13 cm550_FUN_0002ec50 0x2ec90. No multi-bit mask. Value uses of the masked word (CONCAT22 / return / assignment forms at .cpp lines 498 5455 8538 8662 11518 11520 11654 18724 22134 34251 34503) may print as pieces once typed.",
+    "writes": "none",
+    "differences_from_cm848": "Bits 0 2 3 6 8 9 11-15 match CM848's algorithm_enable_flags_18_t (field names reused) and bit 10 is reserved in both. CM550 names bits 1 (WPEAFG engine warmup protection), 4 (TRAGEN trending) and 5 (UDEN datalogger), each code-tested and set in the dump, where CM848 has reserved_bit_1 / 4 / 5 (no CHR record and no CM848 reader). CM848 names bit 7 executive_timing_enable (CHR SSECTMEA, read by its executive frame interrupt handler); CM550 has no record or reader for it. So the type is cm550_algorithm_enable_flags_18_t, not shared. CM848 also reads bits 8 and 14, which CM550 does not.",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "high_speed_governor_gain_scheduling_enable",
+      "comment": "e2m HSGNSDEN (N) 'BIT 0 OF 0-15 OF WORD 12H ENABLES HSG GAIN SCHEDULING' (HS_GOV); CM848 same name and bit. Code: selectHighSpeedGovernorGainSet andi.w #0x0001 at 0x1d3ae (the cross-firmware twin of CM848 0x1fa20 which tests the same bit). Clear in the dump (0x303a)"
+     },
+     {
+      "bit": 1,
+      "name": "engine_warmup_protection_enable",
+      "comment": "e2m WPEAFG (N) 'ENABLE ENGINE WARMUP PROTECTION ALGORITHM WORD 12 BIT 1' (EWP_HDR). Code: cm550_highRpmEngineProtectionStateMachine (0x16df0 0x16e32; the oil drain-back time and maximum warmup time state machine) and cm550_fuelTemperatureLimitingSecondary (0x170c0). CM848 leaves it reserved_bit_1 (no CHR record). Set in the dump"
+     },
+     {
+      "bit": 2,
+      "name": "driver_reward_enable",
+      "comment": "e2m DREN (N) 'WORD 12H BIT 2 OF 0 TO 15 DRIVER REWARD ENABLE' (DRVRWD07); CM848 same name and bit. No reference in the dumped 256 KB ROM (none in CM848 either). Clear"
+     },
+     {
+      "bit": 3,
+      "name": "duty_cycle_monitor_enable",
+      "comment": "e2m DCMNEN (N) 'DUTY CYCLE MONITOR ENABLE BIT 3 OF 0-15' and DMAGEN 0x08 (DCMN); CM848 same name and bit. Code: cm550_FUN_0000ac3c andi.w #0x0008 at 0xac52 (the duty cycle monitor long and short term maps). Set in the dump"
+     },
+     {
+      "bit": 4,
+      "name": "trending_enable",
+      "comment": "e2m TRAGEN 0x10 'ENABLE FLAG FOR TRENDING ALGORITHM' (TRENDING group). Code: cm550_FUN_00031496 (0x314b2) cm550_FUN_000315be (0x315e6) and cm550_FUN_00031a68 (0x31a68) - the trending capture (_trending_data_capture_active / _trending_total_sample_count). CM848 leaves it reserved_bit_4 (no CHR record). Set in the dump"
+     },
+     {
+      "bit": 5,
+      "name": "datalogger_enable",
+      "comment": "e2m UDEN (N) 'TRIM FOR ENABLING THE DATALOGGER. BIT 5 OF 0-15.' (USERDATA). Code: cm550_updateDataloggerTriggers (0x138f4; clear = triggers and set-up cleared) and cm550_recordDataloggerSamples (0x13a70). CM848 leaves it reserved_bit_5 (no CHR record). Set in the dump"
+     },
+     {
+      "bit": 6,
+      "name": "smart_air_compressor_enable",
+      "comment": "e2m ACEN (N) 'WORD 12H BIT 6 OF 0 TO 15 - SMART AIR COMPRESSOR ENABLE' (AIRCOMP7); CM848 same name and bit. No reference in the dumped ROM (none in CM848 either). Clear"
+     },
+     {
+      "bit": 7,
+      "name": "reserved_bit_7",
+      "comment": "No CM550 e2m record and no reference in the dumped ROM. Guess: CM848 names this bit executive_timing_enable (CHR Executive_Timing_Enable SSECTMEA; read by its executive frame interrupt handler). Clear"
+     },
+     {
+      "bit": 8,
+      "name": "high_speed_governor_gear_ratio_gain_enable",
+      "comment": "e2m HSGRGSEN (N) 'GEAR RATIO BASED GAIN SET SELECTION (ENABLED/DISABLED) BIT 8' (HSGGRGS); CM848 same name and bit (read by cm848_loadHighSpeedGovernorWorkingGainSet). No reference in the CM550 dumped ROM. Clear"
+     },
+     {
+      "bit": 9,
+      "name": "programmable_power_enable",
+      "comment": "e2m PPEN (N) 'PROGRAMMABLE POWER BIT 9 OF 0 TO 15 WORD 12H/18D' (PROG_PWR); CM848 same name and bit. Code: cm550_FUN_0000ff48 (0xff48; clear = J1939 reference peak fueling) cm550_FUN_0001c8a0 (0x1c8d8) cm550_FUN_0001cc72 (0x1cc8e) and cm550_FUN_0001de58 (0x1de70 0x1df10 0x1df90) - torque curve and fueling paths. Clear"
+     },
+     {
+      "bit": 10,
+      "name": "reserved_bit_10",
+      "comment": "No e2m record in either firmware and no reader in either. Clear"
+     },
+     {
+      "bit": 11,
+      "name": "cruise_control_auto_resume_enable",
+      "comment": "e2m AREN (N) 'BIT 11 OF 0-15. CRUISE CONTROL AUTO RESUME ENABLE/DISABLE' (CC_AR); CM848 same name and bit. No reference in the dumped ROM (none in CM848 either). Clear"
+     },
+     {
+      "bit": 12,
+      "name": "remote_throttle_enable",
+      "comment": "e2m CTRMTHEN 0x1000 'REMOTE THROTTLE ENABLE BIT 12 OF 0-15' (APL_ADJ); CM848 same name and bit. Code: cm550_FUN_00020784 (0x207c0; J1939 remote accelerator into analog_sensor_override_values[11]) cm550_FUN_0002ec50 (0x2ec6c; alternate throttle arbitration) and j1939HandlePgn61443Eec2 (0x32fca). Set in the dump"
+     },
+     {
+      "bit": 13,
+      "name": "remote_throttle_transition_verification_enable",
+      "comment": "e2m CTRTTZEN 0x2000 'ENABLES REMTHROT/THROT PERC CALC BEFORE TRANS. BIT 13/15 WORD C'; CM848 same name and bit. Code: cm550_FUN_0002ec50 andi.l #0x2000 at 0x2ec90 (the remote throttle hand-over branch). Set in the dump"
+     },
+     {
+      "bit": 14,
+      "name": "engine_retarder_service_brake_activate_enable",
+      "comment": "e2m EBBREN (N) 'WORD 12H BIT E OF 0-F - SERVICE BRAKE MUST BE TAPPED' (ENGBRK05 engine brake); CM848 same name and bit (read by cm848_updateEngineRetarderAllowedState). No reference in the CM550 dumped ROM. Clear"
+     },
+     {
+      "bit": 15,
+      "name": "engine_retarder_rate_limit_enable",
+      "comment": "e2m EBRTLMEA (N) 'BIT 15 OF 0-15 - RATE LIMIT BETWEEN CURRENT AND DESIRED EB LEVELS'; CM848 same name and bit. No reference in the dumped ROM (none in CM848 either). Clear"
+     }
+    ]
+   },
+   {
+    "word": 19,
+    "address": "0x00803cba",
+    "current_name": "none (no row)",
+    "proposed_name": "algorithm_enable_flags_19_cal",
+    "proposed_type": "word",
+    "shared_with_cm848": false,
+    "row_comment": "Algorithm enable flags word 19 (EEPROM 0x1b0; e2m 106B +28, the descriptions say word 13): 0x1 FSALCFEN alternate torque curve fueling points, 0x2 FSALTQEN alternate torque curve feature, 0x4 FCREN fuel consumption rate, 0x8 SC2OEN dual outputs, 0x10 DGAPIPEN out of range algorithm for OEM parameters, 0x40 THDGSWEN throttle activated diagnostic switch, 0x80 THDGEREN throttle related error handler; 0x20 and 0x100-0x8000 have no record. No reference in the dumped 256 KB ROM (code above 0x40000 is not dumped): no absolute reference, outside the discrete_input_override_mask_ptr bytes and outside every indexed base. Only bit 0 matches CM848's word 19; CM848 keeps THDGSWEN / THDGEREN at word 29 bits 10 / 11. Dump 0x00c0 (THDGSWEN and THDGEREN set). (no row before; PR #53 round 92)",
+    "code_tests": "None in the dumped 256 KB ROM: no 4-byte reference to 0x803cba / 0x803cbb, not reached by discrete_input_override_mask_ptr (bytes [0]-[9] = words 13-17) and not by the indexed tests (bases 0x70-0x73 and 0x1a0 for the protection channels, 0xd0 + k with k <= 72 for the switch inputs).",
+    "writes": "none",
+    "differences_from_cm848": "CM848 types word 19 as algorithm_enable_flags_19_t with a different layout: only bit 0 (alternate_curve_configuration_enable / FSALCFEN) matches. CM550 bits 1 / 3 / 6 / 7 are FSALTQEN / SC2OEN / THDGSWEN / THDGEREN where CM848 has switched rear axle anti-tamper / wastegate monitor / EGR condensation / compressor outlet temperature estimate; CM848 bits 2 and 4 are reserved and its CHR files have no record there. Not shared; and with no CM550 reader the word stays plain.",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "alternate_curve_configuration_enable",
+      "comment": "e2m FSALCFEN (N) 'ALTERNATE TORQUE CURVE FUELING POINTS ENABLE FLAG BIT 0 OF WORD 0(x13)' (FUELCTRL); same mnemonic bit and name as CM848 algorithm_enable_flags_19_t bit 0. No reference in the dumped ROM. Clear (dump 0x00c0)"
+     },
+     {
+      "bit": 1,
+      "name": "alternate_torque_curve_enable",
+      "comment": "e2m FSALTQEN (N) 'ALTERNATE TORQUE CURVE FEATURE ENABLE W 13 BIT 1' (APL_ADJ); CM848 bit 1 is switched_rear_axle_anti_tamper_enable instead. No reference in the dumped ROM. Clear"
+     },
+     {
+      "bit": 2,
+      "name": "fuel_consumption_rate_enable",
+      "comment": "e2m FCREN (N) 'FUEL CONSUMPTION RATE FEATURE ENABLE W 13 BIT 2' (TRIPINFO); CM848 reserved_bit_2 with no CHR record. No reference in the dumped ROM. Clear"
+     },
+     {
+      "bit": 3,
+      "name": "dual_outputs_enable",
+      "comment": "e2m SC2OEN 0x08 'DUAL OUTPUTS FEATURE ENABLE - BIT 3 OF 0-15 IN WORD 13' (SWNSYS08); CM848 bit 3 is wastegate_monitor_enable instead. No reference in the dumped ROM. Clear"
+     },
+     {
+      "bit": 4,
+      "name": "original_equipment_manufacturer_parameter_out_of_range_enable",
+      "comment": "e2m DGAPIPEN 0x10 'ENABLE OUT OF RANGE ALGORITHIM FOR OEM PARAMETERS W 13' (SWNSYS08); CM848 reserved_bit_4 with no CHR record. No reference in the dumped ROM. Clear"
+     },
+     {
+      "bit": 5,
+      "name": "reserved_bit_5",
+      "comment": "No CM550 e2m record and no reference (CM848 uses this bit for alpha_altitude_derate_override_enable - a different layout). Clear"
+     },
+     {
+      "bit": 6,
+      "name": "throttle_activated_diagnostic_switch_enable",
+      "comment": "e2m THDGSWEN 0x40 'ENABLE/DISABLE PARAMETER FOR THE THROTTLE ACTIVATED DIA(GNOSTIC SWITCH)' (DIAGNOSE); CM848 has the same mnemonic and name at word 29 bit 10. No reference in the dumped ROM. Set in the dump"
+     },
+     {
+      "bit": 7,
+      "name": "throttle_related_error_handler_enable",
+      "comment": "e2m THDGEREN 0x80 'ENABLE/DISABLE PARAMETER WHICH DEFINES HOW TO HANDLE T(HROTTLE ERRORS)' (DIAGNOSE); CM848 has the same mnemonic and name at word 29 bit 11. No reference in the dumped ROM. Set in the dump"
+     },
+     {
+      "bit": 8,
+      "name": "reserved_bit_8",
+      "comment": "No CM550 e2m record and no reference. Clear"
+     },
+     {
+      "bit": 9,
+      "name": "reserved_bit_9",
+      "comment": "No CM550 e2m record and no reference. Clear"
+     },
+     {
+      "bit": 10,
+      "name": "reserved_bit_10",
+      "comment": "No CM550 e2m record and no reference. Clear"
+     },
+     {
+      "bit": 11,
+      "name": "reserved_bit_11",
+      "comment": "No CM550 e2m record and no reference. Clear"
+     },
+     {
+      "bit": 12,
+      "name": "reserved_bit_12",
+      "comment": "No CM550 e2m record and no reference. Clear"
+     },
+     {
+      "bit": 13,
+      "name": "reserved_bit_13",
+      "comment": "No CM550 e2m record and no reference. Clear"
+     },
+     {
+      "bit": 14,
+      "name": "reserved_bit_14",
+      "comment": "No CM550 e2m record and no reference. Clear"
+     },
+     {
+      "bit": 15,
+      "name": "reserved_bit_15",
+      "comment": "No CM550 e2m record and no reference. Clear"
+     }
+    ]
+   },
+   {
+    "word": 22,
+    "address": "0x00803cc0",
+    "current_name": "none (no row; renders _DAT_00803cc0)",
+    "proposed_name": "algorithm_enable_flags_22_cal",
+    "proposed_type": "word",
+    "shared_with_cm848": false,
+    "row_comment": "Algorithm enable flags word 22 (EEPROM 0x1b6; e2m 106B +2E SENSOR 'OVERRIDE RAW ENABLE'): the raw (A/D count) override enables of A/D channels 0-15 - bit n set: mc68k_processAnalogSensorChannels stores analog_sensor_raw_override_values[n] as channel n's adc_raw_value instead of the QADC result. 0x1 intake manifold temperature, 0x2 fuel temperature, 0x4 coolant level, 0x8 fuel pressure, 0x10 oil pressure, 0x20 boost pressure, 0x40 coolant temperature, 0x80 ambient air temperature, 0x100 power steering temperature, 0x200 exhaust pressure (spare channel 1), 0x400 sampled throttle, 0x800 remote throttle, 0x1000 ambient air pressure, 0x2000 battery voltage, 0x4000 engine speed sensor supply voltage, 0x8000 throttle position sensor supply voltage (e2m AD*OR records). Plain word: loaded whole (move.w $803cc0,d4 at 0xb7d8) and tested with the loop mask 1 << channel. Dump 0x0000. (no row before; PR #53 round 92)",
+    "code_tests": "mc68k_processAnalogSensorChannels @ 0xb7bc: move.w $803cc0,d4 at 0xb7d8 (uVar5); the channel loop tests (1 << channel) & word for channels 0-15 - a variable mask on the whole word (Ghidra: (uVar3 & uVar5) == 0). Word 5 (0x803c9e) is the engineering-value override mask in the same loop.",
+    "writes": "none",
+    "differences_from_cm848": "CM848 has no row, no e2m record at 106B +002E and no reader.",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "intake_manifold_temperature_raw_override_enable",
+      "comment": "Channel 0 (intake_manifold_temperature_sensor_state): e2m ADIMTPOR 0x01 'INTAKE MANIFOLD TEMPERATURE OVERRIDE RAW ENABLE'; raw value ADIMTPUR = analog_sensor_raw_override_values[0]. Code: channel loop mask 0x1. Clear"
+     },
+     {
+      "bit": 1,
+      "name": "fuel_temperature_raw_override_enable",
+      "comment": "Channel 1 (fuel_temperature_sensor_state): e2m ADFTOR 0x02; raw value ADFTUR. Code: loop mask 0x2. Clear"
+     },
+     {
+      "bit": 2,
+      "name": "coolant_level_raw_override_enable",
+      "comment": "Channel 2 (coolant_level_sensor_state): e2m ADCVOR 0x04 'COOLANT LEVEL OVERRIDE RAW ENABLE'. Code: loop mask 0x4. Clear"
+     },
+     {
+      "bit": 3,
+      "name": "fuel_pressure_raw_override_enable",
+      "comment": "Channel 3 (fuel_pressure_sensor_state): e2m ADFPOR 0x08; raw value ADFPUR. Code: loop mask 0x8. Clear"
+     },
+     {
+      "bit": 4,
+      "name": "oil_pressure_raw_override_enable",
+      "comment": "Channel 4 (oil_pressure_sensor_state): e2m ADOPOR 0x10; raw value ADOPUR. Code: loop mask 0x10. Clear"
+     },
+     {
+      "bit": 5,
+      "name": "boost_pressure_raw_override_enable",
+      "comment": "Channel 5 (boost_pressure_sensor_state): e2m ADBSPROR 0x20; raw value ADBSPRUR. Code: loop mask 0x20. Clear"
+     },
+     {
+      "bit": 6,
+      "name": "coolant_temperature_raw_override_enable",
+      "comment": "Channel 6 (coolant_temperature_sensor_state): e2m ADCLTPOR 0x40; raw value ADCLTPUR. Code: loop mask 0x40. Clear"
+     },
+     {
+      "bit": 7,
+      "name": "ambient_air_temperature_raw_override_enable",
+      "comment": "Channel 7 (ambient_air_temperature_sensor_state): e2m ADAATPOR 0x80; raw value ADAATPUR. Code: loop mask 0x80. Clear"
+     },
+     {
+      "bit": 8,
+      "name": "power_steering_temperature_raw_override_enable",
+      "comment": "Channel 8 (power_steering_temperature_sensor_state): e2m ADPOTPOR 0x100; raw value ADPOTPUR. Code: loop mask 0x100. Clear"
+     },
+     {
+      "bit": 9,
+      "name": "exhaust_pressure_raw_override_enable",
+      "comment": "Channel 9 (exhaust_pressure_sensor_state): e2m ADSYEPOR 0x200 'ENABLES THE USER TO OVERRIDE THE SPARE SWITCH RAW VALUE' - the ADSYEP channel is 'SPARE_CHANNEL_1' / 'ENGINE_SYNC_EXHAUST_PRESSURE'. Code: loop mask 0x200. Clear"
+     },
+     {
+      "bit": 10,
+      "name": "sampled_throttle_raw_override_enable",
+      "comment": "Channel 10 (sampled_throttle_sensor_state): e2m ADSTOR 0x400; raw value ADSTUR. Code: loop mask 0x400. Clear"
+     },
+     {
+      "bit": 11,
+      "name": "remote_throttle_raw_override_enable",
+      "comment": "Channel 11 (remote_throttle_sensor_state): e2m ADRTOR 0x800; raw value ADRTUR. Code: loop mask 0x800. Clear"
+     },
+     {
+      "bit": 12,
+      "name": "ambient_air_pressure_raw_override_enable",
+      "comment": "Channel 12 (ambient_air_pressure_sensor_state): e2m ADAAPROR 0x1000; raw value ADAAPRUR. Code: loop mask 0x1000. Clear"
+     },
+     {
+      "bit": 13,
+      "name": "battery_voltage_raw_override_enable",
+      "comment": "Channel 13 (battery_voltage_sensor_state): e2m ADBTVTOR 0x2000; raw value ADBTVTUR. Code: loop mask 0x2000. Clear"
+     },
+     {
+      "bit": 14,
+      "name": "engine_speed_sensor_supply_voltage_raw_override_enable",
+      "comment": "Channel 14 (engine_speed_sensor_supply_voltage_sensor_state): e2m ADESSVOR 0x4000; raw value ADESSVUR. Code: loop mask 0x4000. Clear"
+     },
+     {
+      "bit": 15,
+      "name": "throttle_position_sensor_supply_voltage_raw_override_enable",
+      "comment": "Channel 15 (throttle_position_sensor_supply_voltage_sensor_state): e2m ADTPSVOR 0x8000; raw value ADTPSVUR. Code: loop mask 0x8000. Clear"
+     }
+    ]
+   },
+   {
+    "word": 23,
+    "address": "0x00803cc2",
+    "current_name": "none (no row; renders _DAT_00803cc2)",
+    "proposed_name": "algorithm_enable_flags_23_cal",
+    "proposed_type": "word",
+    "shared_with_cm848": false,
+    "row_comment": "Algorithm enable flags word 23 (EEPROM 0x1b8; e2m 106B +30 SENSOR 'OVERRIDE RAW ENABLE'): the raw override enables of A/D channels 16-24 - bit n set: mc68k_processAnalogSensorChannels uses analog_sensor_raw_override_values[16 + n] as the channel's adc_raw_value. 0x1 vehicle connector sensor supply voltage, 0x2 engine connector sensor supply voltage, 0x4 frequency throttle input supply voltage, 0x8 cruise control switch multiplexer, 0x10 water in fuel, 0x20 EGR current feedback, 0x40 programming pulse supply voltage, 0x80 high side gate bias supply voltage, 0x100 operational amplifier and comparator supply voltage; 0x200-0x8000 no channel (the loop ends at channel 24). Plain word: loaded whole (move.w $803cc2,d4 at 0xbcd2) and tested with the loop mask. Dump 0x0000. (no row before; PR #53 round 92)",
+    "code_tests": "mc68k_processAnalogSensorChannels: move.w $803cc2,d4 at 0xbcd2 when the channel index reaches 16 (uVar5 = _DAT_00803cc2, the mask restarts at 1); channels 16-24 test bits 0-8 with the variable mask. Word 6 (0x803ca0) is the engineering-value mask for the same channels.",
+    "writes": "none",
+    "differences_from_cm848": "CM848 has no row, no e2m record at 106B +0030 and no reader.",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "vehicle_connector_sensor_supply_voltage_raw_override_enable",
+      "comment": "Channel 16 (vehicle_connector_sensor_supply_voltage_sensor_state): e2m ADVCSVOR 0x01; raw value ADVCSVUR. Code: loop mask 0x1 after the switch to word 23. Clear"
+     },
+     {
+      "bit": 1,
+      "name": "engine_connector_sensor_supply_voltage_raw_override_enable",
+      "comment": "Channel 17 (engine_connector_sensor_supply_voltage_sensor_state): e2m ADECSVOR 0x02; raw value ADECSVUR. Code: loop mask 0x2. Clear"
+     },
+     {
+      "bit": 2,
+      "name": "frequency_throttle_input_supply_voltage_raw_override_enable",
+      "comment": "Channel 18 (frequency_throttle_input_supply_voltage_sensor_state): e2m ADFTSVOR 0x04; raw value ADFTSVUR. Code: loop mask 0x4. Clear"
+     },
+     {
+      "bit": 3,
+      "name": "cruise_control_switch_multiplexer_raw_override_enable",
+      "comment": "Channel 19 (cruise_control_switch_multiplexer_sensor_state): e2m ADCCSWOR 0x08 'CRUISE CONTROL SWITCH MUX OVERRIDE RAW ENABLE'; raw value ADCCSWUR. Code: loop mask 0x8. Clear"
+     },
+     {
+      "bit": 4,
+      "name": "water_in_fuel_raw_override_enable",
+      "comment": "Channel 20 (water_in_fuel_sensor_state): e2m ADWFOR 0x10; raw value ADWFUR. Code: loop mask 0x10. Clear"
+     },
+     {
+      "bit": 5,
+      "name": "egr_current_feedback_raw_override_enable",
+      "comment": "Channel 21 (egr_current_feedback_sensor_state): e2m ADEGCEOR 0x20; raw value ADEGCEUR. Code: loop mask 0x20. Clear"
+     },
+     {
+      "bit": 6,
+      "name": "programming_pulse_supply_voltage_raw_override_enable",
+      "comment": "Channel 22 (programming_pulse_supply_voltage_sensor_state): e2m ADPPSVOR 0x40; raw value ADPPSVUR. Code: loop mask 0x40. Clear"
+     },
+     {
+      "bit": 7,
+      "name": "high_side_gate_bias_supply_voltage_raw_override_enable",
+      "comment": "Channel 23 (high_side_gate_bias_supply_voltage_sensor_state): e2m ADHSSVOR 0x80; raw value ADHSSVUR. Code: loop mask 0x80. Clear"
+     },
+     {
+      "bit": 8,
+      "name": "operational_amplifier_and_comparator_supply_voltage_raw_override_enable",
+      "comment": "Channel 24 (operational_amplifier_and_comparator_supply_voltage_sensor_state; the last channel): e2m ADOCSVOR 0x100; raw value ADOCSVUR. Code: loop mask 0x100. Clear"
+     },
+     {
+      "bit": 9,
+      "name": "reserved_bit_9",
+      "comment": "No channel (the A/D loop returns after channel 24) and no e2m record. Clear"
+     },
+     {
+      "bit": 10,
+      "name": "reserved_bit_10",
+      "comment": "No channel and no e2m record. Clear"
+     },
+     {
+      "bit": 11,
+      "name": "reserved_bit_11",
+      "comment": "No channel and no e2m record. Clear"
+     },
+     {
+      "bit": 12,
+      "name": "reserved_bit_12",
+      "comment": "No channel and no e2m record. Clear"
+     },
+     {
+      "bit": 13,
+      "name": "reserved_bit_13",
+      "comment": "No channel and no e2m record. Clear"
+     },
+     {
+      "bit": 14,
+      "name": "reserved_bit_14",
+      "comment": "No channel and no e2m record. Clear"
+     },
+     {
+      "bit": 15,
+      "name": "reserved_bit_15",
+      "comment": "No channel and no e2m record. Clear"
+     }
+    ]
+   }
+  ],
+  "cm848_field_renames": [],
+  "notes": "Batch W3 covers CM550 e2m 106B words 15 16 17 18 19 22 23 (0x803cb2-0x803cc3, EEPROM 0x1a8-0x1b9). Every ROM reference is a move.w read, so none of the seven words is written.\n\nTYPES: words 16 and 18 become cm550_ bitfields, because they have direct single-bit andi.w / andi.l tests and no writes. Words 15 17 19 22 23 stay plain words, following CM848's precedent: it keeps words 0 / 7 / 8 / 26 as words when nothing tests them through their own address.\n- Words 15 and 17 are read only as byte masks through discrete_input_override_mask_ptr (= &switch_override_configuration 0x803cae: [4]/[5] = word 15 high/low, [9] = word 17 low), plus indexed bit tests through word 0's base.\n- Word 19 has no reference anywhere in the dumped 256 KB ROM. Code above 0x40000 is not dumped, so 'no reader' is limited to the dump. The EEPROM holds 0x00c0 there.\n- Words 22 and 23 are loaded whole into d4 and tested with a variable channel mask, so a bitfield would print as a piece.\nFields are still listed for the plain words so they can go into the row comments.\n\nLOGICAL INPUT RULE (also covers words 13 and 14, outside this batch): logical input k has\n- status byte 0x80bcce + k/8, bit k%8 (e2m 000E + k/8)\n- user value 0x80bcd8 + k/8 (000E +0xA + k/8)\n- priority 0x80bd4a + k (e2m 12A8 + k)\n- enable = table bit 208 + k = word 13 + k/16, bit k%16. On this big-endian CPU the mask byte for inputs 8j..8j+7 is 0x803cae + 2*(j/2) + (1 - j%2).\ncm550_FUN_00020890 uses the rule for the 17-entry j1939_input_signal_descriptor_table (ROM 0x20108). Logical inputs: 72 9 54 11 10 3 1 2 14 13 60 56 58 20 19 15 54. cm550_FUN_000206a8(k, j) is called with (0x36,1) (0x36,4) (0x21,6) (0x20,0) (0x36,2). Words 15-17 map as follows:\n- word 15 = output read-back overrides (bit n = output n; lamp port 0xFFD005 / driver port 0xFFD007)\n- word 16 = decoded cruise byte 0x80bcd4 and power take-off byte 0x80bcd5\n- word 17 = torque derate byte 0x80bcd6 and A/C pressure byte 0x80bcd7\n\nWHERE THE E2M DISAGREES WITH THE CODE:\n- Word 16, power take-off resume: the code uses bit 8 (andi #0x100 at 0x153fc with value 0x80bcdf bit 0; J1939 entry 11 = logical input 56; 12A8 +38 DSPZPTRU). The 106B record DSPTRUUO's 0x2000 is wrong for this build, so bit 13 is reserved.\n- Word 16 bit 6 is the auxiliary shutdown, per DSAUSHUO 0x40 and J1939 entry 2. However, the e2m's own value, status and priority records sit at logical input 62 (bit 14). J1939 entry 16 (engine derate switch) also points at 54; the torque derate's own slot is 64 = word 17 bit 0, so entry 16 looks like a firmware table quirk.\n- Word 17 bit 8 has no e2m enable record; only the code (J1939 entry 0) names it.\n- Word 15: the 0x800 / 0x4000 records say BIT 14 / BIT 11. The masks are the correct ones, because they line up with the value byte E +F and the status byte E +35. Where the two record sets name a bit differently (87 functional names vs 88 RLYn / LAMPn names), the field names use the functional names this CSV already uses and keep the RLYn / LAMPn mnemonic in the comment.\n- Column 15 of the e2m (8700199999 vs 8800199999) looks like a YYDDD start date followed by 99999. It does not select a variant, so it cannot settle these conflicts; the code does.\n\nCM848: no field renames. None of the 23 CHR e2m files has a 106B +0026 record at 0x2 / 0x10 / 0x20 or a +0028 record at 0x4 / 0x10, and the CM848 .cpp renders none of those reserved bits. CM848 also has no row and no record for words 15 16 17 22 23. Word 18 is not shared: CM550 adds bits 1 / 4 / 5 and lacks CM848's bit 7 executive_timing_enable.\n\nRENDERING CAVEATS:\n- Besides its if tests, word 18 has value uses (CONCAT22 / return / assignment forms at .cpp lines 498 5455 8538 8662 11518 11520 11654 18724 22134 34251 34503). These are the same forms as the round 92 word 2 pilot and may print as pieces. Word 16 has only plain if tests.\n- The 15 indexed tests go through calibration_feature_enable_flags_word_0 (0x803c94). If word 0 is ever typed as a struct, they will print as pieces; CM848 keeps algorithm_enable_flags_0_cal a plain word for this reason.\n\nFOLLOW-UP NAMES (out of scope):\n- 0x80bcdf user_supplied_value_for_the_pto_set_switch_on_off holds every power take-off and auxiliary shutdown override value (inputs 56-63).\n- 0x80bcdc and 0x80bcdd hold the 8 lamp and 8 driver feedback override values.\n- 0x80bcde (unnamed) holds the cruise status override values.\n- 0x80bcd8 is the base of the value array.\n\nDUMP VALUES: word 15 0, word 16 0, word 17 0, word 18 0x303a (bits 1 3 4 5 12 13), word 19 0x00c0 (bits 6 7), word 22 0, word 23 0. The table length word is 0x0046.\n\nScratch tools are in /home/linux/.claude/jobs/374b0424/tmp/w15/r92/scratch/W3/tools: mkelf.py, xref_opcodes.py, after_refs.py, which_function.py."
+ },
+ "verdict": {
+  "batch": "W3",
+  "overall": "Every bit position, mask, address, EEPROM offset and dump value in W3 checks out, and no word is written; three comment-only amendments, no name / type / bit change, nothing refuted.\n\nHow it was checked: capstone disassembly of J90350.00.rom.bin (llvm-mc-18 cannot decode andi.w / btst for m68k; capstone was used read-only from an existing install, nothing installed), the raw v64t6_s.e2m records, the EEPROM and RAM dumps, CM848's structure_definitions.csv and all 23 CHR e2m files. Scratch is in /home/linux/.claude/jobs/374b0424/tmp/w15/r92/scratch/W3/skeptic/ (verdict_table.txt, cdis.py, refs.py, after.py, addr_loads.py, e2m_raw.py).\n\nWhat holds:\n- Reference census (every 4-byte operand in 0x803c92-0x803cc3, odd addresses included): word 16 has 6 move.w + andi.w reads, word 18 has 20 single-bit reads, words 22 / 23 one move.w into d4 each, words 15 / 17 / 19 none. No store / bset / bclr / ori / andi to memory on any of them, and no assignment in the .cpp.\n- The indexed test is word-wise (move.w (a0,dN.w*2) on 0x803c94, mask 1 << (n % 16)), so table bits 240 / 241 / 262 / 264 / 266 / 268 / 280 land where the proposal says. All 15 indexed sites are reads; the 13 protection-channel sites stop at table bit 147 (9 channels) plus 0x1a0 + n.\n- The mask pointer 0x80054c is written once (0x803cae at 0x15dd2); only constant indices 0-5 and 9 are read, so [5] = word 15 bits 0-7 (0xFFD005 read-back), [4] = bits 8-15 (0xFFD007), [9] = word 17 bits 0-7.\n- Dumps (EEPROM and RAM bins agree): words 15 / 16 / 17 / 22 / 23 = 0, word 18 = 0x303a, word 19 = 0x00c0, length word 0x0046.\n- CM848: algorithm_enable_flags_18_t matches on bits 0 2 3 6 8 9 11-15, differs on 1 4 5 7; no CHR file has a +26 record on 0x2 / 0x10 / 0x20 or a +28 record on 0x4 / 0x10, so no CM848 rename. The e2m group labels cited in the comments (LAMP_CON, AUX_DRVR, DIG_SIG, SENSOR, HS_GOV, EWP_HDR, ...) match the records' group ids.\n\nThe three amendments:\n- Word 15 bit 3: the comment and the row comment's '0x8 no record' omit the seven unmasked LCLnFBOD records and that the e2m numbers this lamp both 4 and 7.\n- Word 16 row comment and the comments of bits 0 / 2 / 4 / 8 / 10 / 12: with the enable set the sampler ORs the override value bit into the status byte (or.b); it does not copy it and never clears it there.\n- Word 16 bit 6: name kept (e2m DSAUSHUO 0x40 plus J1939 entry 2), but the comment must say that the value bit has no reader in the dumped ROM, that lamp commands are stored into it too, and that status bit 54 is a power take-off latch sent as the CCVS1 parking brake switch.\n\nLimits and leads for the other batches:\n- Every 'no reader' / 'no code drives output n' claim is for the dumped 256 KB only; cm550_ioControlMaskStateMachine drives outputs from a table at 0x611a8, outside the dump.\n- Seven CHR_B2 files do have 106B +2E / +30 records (other meanings, e.g. ETC_Enable, CAC_Temperature_Estimator_Enable); 'no record' for words 22 / 23 holds for the 16 CHR_CC (CM848) files only.\n- Word 16 bits 0 and 2 get the same field names W2 proposes for word 13 bits 1 and 2 (cruise_control_resume / set_switch_override_enable). Legal, but word 13 overrides the raw switch and word 16 the decoded status bit.\n- The e2m also puts the air conditioner pressure switch at logical input 26 (12A8 +1A DSPZAKPR, 12FC DSDFAKPR mask 0x4000000), which bears on W2's word 14 bit 10 (switch_27_override_enable).\n- The notes' 'functional names this CSV already uses' is true only as one row comment (auxiliary_driver_feedback_bits) for word 15 bits 11 / 12 / 15 and not for bit 5; this does not matter while word 15 stays a plain word.\n- cm550_FUN_000206a8(k, j) checks priority 0x80bd4a + j, the logical input priority table, with an output number j (firmware quirk). Word 28 bit 4 (ISTAEN) is tested at 0x15470 in the sampler.\n- The .cpp line numbers quoted for word 18's value uses are a few lines off in the committed file (498, 5460, 8543, 8667, 11523, 11525, 11659, 18725, 22135, 34258, 34510).",
+  "verdicts": [
+   {
+    "element": "word 15",
+    "verdict": "CONFIRMED",
+    "reason": "Name algorithm_enable_flags_15_cal and plain word are right: no instruction in the dumped ROM names 0x803cb2 / 0x803cb3. The word is used only as byte masks through discrete_input_override_mask_ptr (0x80054c, written once = 0x803cae at 0x15dd2): [5] = 0x803cb3 = bits 0-7 over the 0xFFD005 read-back (sampler 0x1528e -> 0x80bcd2, strobe handler 0x15cec -> 0x80bd02, value 0x80bcdc) and [4] = 0x803cb2 = bits 8-15 over 0xFFD007 (-> 0x80bcd3 / 0x80bd03, value 0x80bcdd), plus the word-wise indexed tests of bits 0 / 1 (table bits 240 / 241). The diagnostics compare read-back bit n with latch bit n for all 16 outputs, so 'bit n = output n' holds. No writes. EEPROM 0x1a8, dump 0x0000 in both bins. Not shared: no CHR file has 106B +20 and CM848 has no row. The row comment takes the bit 3 amendment ('0x8 no record'). 'No code drives output n' is true for the dumped ROM only."
+   },
+   {
+    "element": "word 15 bit 0",
+    "verdict": "CONFIRMED",
+    "reason": "LCWTFBOD / WSLPFBUO are S records with mask 0x01 at 106B +20; byte mask [5] bit 0 covers 0xFFD005 bit 0; cm550_FUN_000206a8(0x20, 0) tests table bit 240 = word 15 bit 0 and copies output image bit 0 into the value bit. Output 0 = wait to start lamp: E +28 LCWTSRLP 0x01, E +34 WASTLPFB 0x01, 12A7 +0 WASTLPPZ. Minor: LCWTFBUV is an N record with no mask. Dump clear."
+   },
+   {
+    "element": "word 15 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "LCSPFBOD / SELPFBUO mask 0x02; value LCSLFBUV 0x02, status STEGLPFB 0x02, 12A8 +21. Output 1 is the red stop lamp by code: cm550_FUN_00021920 maps output image bit 1 to the DM1 red stop lamp bits and diagnosticMainStateProcessor compares read-back bit 1 with latch bit 1. Worth adding to the comment: cm550_FUN_000206a8(0x21, 6) tests table bit 241 but stores output 6's (warning lamp) command into this value bit. Dump clear."
+   },
+   {
+    "element": "word 15 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "LCWFFBOD / WFLPFBUO mask 0x04; status WFLPFDBK 0x04; 12A8 +22 LCWFFBPZ. Output 2 is driven by processProtectionFlagConditions under water_in_fuel_lamp_override_priority. Byte mask [5] bit 2. Dump clear."
+   },
+   {
+    "element": "word 15 bit 3",
+    "verdict": "AMENDED",
+    "amendment": "name unchanged: reserved_bit_3; bit unchanged: 3. Field comment: replace 'No 106B record with this mask; guess from 12A8 +23: DGLPFBPZ diagnostic lamp or LCL4FBPZ lamp 4. No code drives output 3.' with 'No masked 106B record: the seven N records LCL1FBOD-LCL7FBOD at +20 carry no mask and no bit text. The e2m numbers this lamp two ways: lamp 4 by 12A8 +23 LCL4FBPZ / DGLPFBPZ and E +28 LCLP04EA (BIT 3), lamp 7 by E +28 DSLP7 mask 0x08 and 12A7 +3 LCL7PZ (the masks swap lamps 4 and 7 as they swap relays 4 and 7; DGLPFBUO puts the diagnostic lamp at 0x40). diagnosticMainStateProcessor compares read-back bit 3 with latch bit 3; no code in the dumped ROM drives output 3.' Row comment of word 15: replace '0x8 no record' with '0x8 no masked record (lamp 4 or lamp 7 - the e2m numbers it both ways)'.",
+    "reason": "reserved_bit_3 is right, but the comment's evidence is incomplete and its guess one-sided. 106B +20 holds seven unmasked N records (LCL1FBOD-LCL7FBOD) that the proposal does not mention. Bit 3 is lamp 4 by the N-record texts and 12A8, but lamp 7 by the masked command record DSLP7 0x08 and the output priority table 12A7 +3 LCL7PZ; the diagnostic lamp of the guess has mask 0x40 in its own enable record. Byte mask [5] bit 3 does apply. Dump clear."
+   },
+   {
+    "element": "word 15 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "EPLPFBUO mask 0x10; status EPLPFDBK 0x10 (E +34); 12A8 +24 EPLPFBPZ. Output 4 is the protect lamp by code: cm550_FUN_00021920 maps output image bit 4 to the DM1 protect lamp and MIL bits. Byte mask [5] bit 4. Dump clear."
+   },
+   {
+    "element": "word 15 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "LPSAFBUO is the only masked 106B record on 0x20 ('SOLENOID_A FEEDB'); value LPSAFBUV 0x20, status LPSAFB 0x20 and command LPSACM 0x20 agree. Caveats: both solenoid A priority records sit at slot 0 (12A8 +20 LPSAFBPZ, 12A7 +0 LPSAPZ), the other record set calls bit 5 lamp 6 (DSLP6 0x20, LCLP06EA 'BIT 5', 12A7 +5, 12A8 +25), and nothing in the dumped ROM drives output 5, so the function is e2m-only. Acceptable in a plain word's row comment. Dump clear."
+   },
+   {
+    "element": "word 15 bit 6",
+    "verdict": "CONFIRMED",
+    "reason": "DGLPFBUO (diagnostic lamp) and LCWNFBOD (warning lamp) both have mask 0x40; value LCWLFBUV 0x40, status DGLPFDBK 0x40, 12A8 +26 LCWLFBPZ. Code: output 6 is the amber warning lamp (cm550_FUN_00021920 -> DM1 amber bits; warning_lamp_override_priority). Byte mask [5] bit 6. Dump clear."
+   },
+   {
+    "element": "word 15 bit 7",
+    "verdict": "CONFIRMED",
+    "reason": "DRFSFBOD / VPENFBUO mask 0x80; value DRFSFBUV / VPENFBUV 0x80; status DRFSFB / VPENFDBK 0x80; 12A8 +27. Code: the FSO strobe toggles output image bit 7, and updateEngineSyncStatus compares read-back bit 7 (0x80bd02 & 0x80) with the fuel shut-off command for the aux_driver_fso counts. Byte mask [5] bit 7. Dump clear."
+   },
+   {
+    "element": "word 15 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "EGBKFBUO / DRR1FBOD mask 0x100; value 0x01 (E +F), status DSEBFB 0x01 (E +35), 12A8 +28. Byte mask [4] (0x803cb2 = bits 8-15) covers the 0xFFD007 read-back; the engine brake strobe (e2m 8224 +1) toggles 0x80bcf7 bit 0 = output 8. Dump clear."
+   },
+   {
+    "element": "word 15 bit 9",
+    "verdict": "CONFIRMED",
+    "reason": "CSA1FBUO / DRR2FBOD mask 0x200; value 0x02, status DSCD01FB 0x02 'COLD_START_AID_RELAY_1', 12A8 +29. The cold start aid 1 strobe toggles 0x80bcf7 bit 1 under cold_start_aid_1_driver_override_priority. Byte mask [4] bit 1. Dump clear."
+   },
+   {
+    "element": "word 15 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "CSA2FBUO / DRR3FBOD mask 0x400; value 0x04, status DSCD02FB 0x04 'COLD_START_AID_RELAY_2', 12A8 +2A. The cold start aid 2 strobe toggles 0x80bcf7 bit 2 under cold_start_aid_2_driver_override_priority. Byte mask [4] bit 2. Dump clear."
+   },
+   {
+    "element": "word 15 bit 11",
+    "verdict": "CONFIRMED",
+    "reason": "The masks are right and the 'BIT 14' text is wrong: ACCLFBUO / DRR7FBOD 0x800, DRR7FBUV 0x08, DRR7FB / DSACFB 0x08, command DREA07 'RELAY 7 DRIVER BIT 3' / DSDRAC 0x08, 12A8 +2B and 12A7 +B all put relay 7 at driver bit 3. Unproven part: the e2m also names this bit solenoid B (RYSBFBUO 0x800, RYSBFBUV 0x08, RYSBFB 0x08, RYSBDR 0x08), ACCLFBUV has the outlier mask 0x04, and no code in the dumped ROM drives output 11. Acceptable because the word stays plain and the row comment prints 'relay 7 (A/C clutch)'. Byte mask [4] bit 3. Dump clear."
+   },
+   {
+    "element": "word 15 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "PPFBUO / DRR5FBOD mask 0x1000; value PPFBUV / DRR5FBUV 0x10; status DSPUFB 0x10 'PRIME_PUMP DRIVER'; 12A8 +2C PPFBPZ, 12A7 +C PRPMPZ. Byte mask [4] bit 4. The function is e2m-only: no driver in the dumped ROM. Dump clear."
+   },
+   {
+    "element": "word 15 bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "DRR6FBOD mask 0x2000 (relay 6); value 0x20, status DRR6FB 0x20, 12A8 +2D. Ether start is code-proven: the strobe request e2m 8224 +4 DRETRSRQ 'ETHER START DRIVER' (0x8091e4) toggles 0x80bcf7 bit 5 under priority slot 13 (12A7 +D DRR6PZ) in mc68k_ioDriverStrobeHandler. Byte mask [4] bit 5. Dump clear."
+   },
+   {
+    "element": "word 15 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "DRR4FBOD mask 0x4000; its text 'BIT 11' is wrong, since value DRR4FBUV 0x40, status DRR4FB 0x40, command DREA04 'RELAY 4 DRIVER BIT 6', 12A8 +2E and 12A7 +E all say driver bit 6. No functional e2m name, so relay_4 is the right neutral name. Byte mask [4] bit 6. Dump clear."
+   },
+   {
+    "element": "word 15 bit 15",
+    "verdict": "CONFIRMED",
+    "reason": "FNCHFBUO / DRS1FBOD mask 0x8000; value 0x80; status DSFMCHFB / DRS1FB 0x80; 12A8 +2F FNCHFBPZ, 12A7 +F FNCHPZ (the solenoid B priority records RYSBFBPZ / RYSBPZ also sit at +2F / +F, against RYSB's own 0x800 masks). Byte mask [4] bit 7. The function is e2m-only. Dump clear."
+   },
+   {
+    "element": "word 16",
+    "verdict": "AMENDED",
+    "amendment": "name unchanged: algorithm_enable_flags_16_cal; type unchanged: cm550_algorithm_enable_flags_16_t; shared_with_cm848 unchanged: false. Row comment: replace 'Set: mc68k_sampleAndDebounceDiscreteInputs takes that status bit from the override values 0x80bcde / 0x80bcdf instead of the debounced switch inputs' with 'Set (bits 0 / 2 / 4 / 8 / 10 / 12, the six the sampler tests): mc68k_sampleAndDebounceDiscreteInputs ORs that bit of the override values 0x80bcde / 0x80bcdf into the status byte (or.b; it never clears the bit there) instead of copying the debounced switch input'. The same wording fix applies to the field comments of bits 0 / 2 / 4 / 8 / 10 / 12: 'comes from the override value ...' becomes 'is ORed in from the override value ... (set only, not cleared)'.",
+    "reason": "Name, bitfield type and bit layout are right: 6 direct tests, all move.w $803cb4 + andi.w + beq in mc68k_sampleAndDebounceDiscreteInputs (0x1000 at 0x15394, 0x400 at 0x153c8, 0x100 at 0x153fc, 0x10 at 0x155ec, 0x4 at 0x1561a, 0x1 at 0x15648), no writes, and the indexed tests go through word 0's base (inputs 54 / 56 / 58 / 60). [6] / [7] of the mask pointer are never read. EEPROM 0x1aa, dump 0x0000; no CHR file has 106B +22 and CM848 has no row. The amendment is the behaviour: each override branch is 'or.b d0,(a5)' or 'or.b d0,7(a4)' after masking the value byte, so a 0 in the override value leaves the status bit as it was."
+   },
+   {
+    "element": "word 16 bit 0",
+    "verdict": "CONFIRMED",
+    "reason": "Code only, as stated: andi.w #0x0001 at 0x15648; set -> or.b ($80bcde & 0x01),(a5 = 0x80bcd4), clear -> bit copied from raw switch 0x80bcce bit 1. The status bit is e2m E +6 CRRESUSW 'BIT 0'. No 106B +22 record on 0x01. Wording: see the word 16 amendment. W2 proposes the same field name for word 13 bit 1 (the raw switch). Dump clear."
+   },
+   {
+    "element": "word 16 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no reader in the dumped ROM (direct masks are 0x1000 0x400 0x100 0x10 0x4 0x1; indexed inputs are 54 / 56 / 58 / 60) and no 106B +22 record on 0x02. The guess (E +6 CRACELSW 'BIT 1') is in the comment. Dump clear."
+   },
+   {
+    "element": "word 16 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "andi.w #0x0004 at 0x1561a; set -> or.b ($80bcde & 0x04),(a5), clear -> raw switch 0x80bcce bit 2. Status bit = E +6 CRSETSW 'BIT 2'. No 106B record. W2 proposes the same field name for word 13 bit 2. Dump clear."
+   },
+   {
+    "element": "word 16 bit 3",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no reader in the dumped ROM and no 106B +22 record on 0x08; guess E +6 CRCOASSW 'BIT 3' is in the comment. Dump clear."
+   },
+   {
+    "element": "word 16 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "andi.w #0x0010 at 0x155ec; set -> or.b ($80bcde & 0x10),(a5), clear -> raw switch 0x80bcce bit 3. Status bit = E +6 CRONSW 'BIT 4'. No 106B record. Dump clear."
+   },
+   {
+    "element": "word 16 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no reader in the dumped ROM and no 106B +22 record on 0x20; guess E +6 CRSERUSW 'BIT 5' is in the comment. Dump clear."
+   },
+   {
+    "element": "word 16 bit 6",
+    "verdict": "AMENDED",
+    "amendment": "name unchanged: auxiliary_shutdown_switch_override_enable; type unchanged: bitfield:1@6. Field comment: append 'In the dumped ROM the override value bit 54 (0x80bcde bit 6) has no reader, and cm550_FUN_000206a8(0x36, 1 / 4 / 2) also stores output image bits 1 / 4 / 2 (the stop / engine protection / water in fuel lamp commands) into it after the J1939 entries. The status bit 54 (0x80bcd4 bit 6) is no auxiliary shutdown status: mc68k_sampleAndDebounceDiscreteInputs sets it on the power take-off on switch's rising edge at zero road speed while word 28 bit 4 (e2m ISTAEN) is set and clears it on set / resume, and j1939HandlePgn65265CruiseVehicleSpeed sends it as the CCVS1 parking brake switch (byte 1 0xF7 instead of 0xF3).'",
+    "reason": "The name stands at face value: DSAUSHUO is an S record with exactly mask 0x40, and J1939 descriptor entry 2 (auxiliary shutdown switch, logical input 54 at ROM 0x20108 + 20 + 8) tests exactly table bit 262 = word 16 bit 6. The field never renders, because only indexed tests touch the bit. The comment understates the contrary facts: entry 16 (derate switch, whose real slot by the e2m and the sampler is 64) and three lamp mirror calls write the same value bit, nothing reads that bit, the sibling e2m records sit at input 62, and status bit 54 is used for something else. Dump clear."
+   },
+   {
+    "element": "word 16 bit 7",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no reader in the dumped ROM, no 106B +22 record on 0x80 and no E +6 record for bit 7. Dump clear."
+   },
+   {
+    "element": "word 16 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "Three code paths agree on bit 8: andi.w #0x0100 at 0x153fc gates or.b ($80bcdf & 0x01),7(a4) (0x80bcd5 bit 0 = DSPTRUSW 0x01; value DSPTRUUC 0x01) against raw switch 0x80bcce bit 1; J1939 entry 11 -> logical input 56 -> table bit 264; 12A8 +38 DSPZPTRU. The e2m enable DSPTRUUO 0x2000 is the outlier and has no reader. Dump clear."
+   },
+   {
+    "element": "word 16 bit 9",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no reader in the dumped ROM and no 106B +22 record on 0x200; guess E +7 PTACELSW 'BIT 1' is in the comment. Dump clear."
+   },
+   {
+    "element": "word 16 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "DSPTSEUO mask 0x400; andi.w #0x0400 at 0x153c8 gates or.b ($80bcdf & 0x04),7(a4) (0x80bcd5 bit 2 = DSPTSESW 0x04; value DSPTSEUC 0x04) against raw switch bit 2; J1939 entry 12 -> logical input 58 -> table bit 266; 12A8 +3A DSPZPTSE. Dump clear."
+   },
+   {
+    "element": "word 16 bit 11",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no reader in the dumped ROM and no 106B +22 record on 0x800; guess E +7 PTCOASSW 'BIT 3' is in the comment. Dump clear."
+   },
+   {
+    "element": "word 16 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "DSPTONUO mask 0x1000; andi.w #0x1000 at 0x15394 gates or.b ($80bcdf & 0x10),7(a4) (0x80bcd5 bit 4 = DSPTONSW 0x10; value DSPTONUC 0x10) against raw switch bit 3; J1939 entry 10 -> logical input 60 -> table bit 268; 12A8 +3C DSPZPTON. Dump clear."
+   },
+   {
+    "element": "word 16 bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: DSPTRUUO has mask 0x2000 but nothing in the dumped ROM reads bit 13, and the code puts the power take-off resume override at bit 8 (see bit 8). The e2m record stays in the comment. Dump clear."
+   },
+   {
+    "element": "word 16 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no reader in the dumped ROM and no 106B +22 record on 0x4000. The auxiliary shutdown value / status / priority records (E +11 0x40, E +7 0x40, 12A8 +3E) would map here by the layout, but no code touches 0x80bcd5 bit 6 or 0x80bcdf bit 6. Dump clear."
+   },
+   {
+    "element": "word 16 bit 15",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no reader in the dumped ROM, no 106B +22 record on 0x8000, no E +7 record for bit 7. Dump clear."
+   },
+   {
+    "element": "word 17",
+    "verdict": "CONFIRMED",
+    "reason": "Name algorithm_enable_flags_17_cal and plain word are right: no instruction names 0x803cb6 / 0x803cb7. Readers are the byte mask [9] = 0x803cb7 = bits 0-7 in mc68k_sampleAndDebounceDiscreteInputs (0x15324-0x15350: the PORTF0-derived ring byte -> 0x80bcd6 with value 0x80bce0) and the indexed test of table bit 280 = bit 8 for J1939 entry 0. [8] = 0x803cb6 is never read. No writes. EEPROM 0x1ac, dump 0x0000. 106B +24 has one record (DSTQSWUO 0x01); no CHR file has +24 and CM848 has no row."
+   },
+   {
+    "element": "word 17 bit 0",
+    "verdict": "CONFIRMED",
+    "reason": "DSTQSWUO mask 0x01; byte mask [9] bit 0 over 0x80bcd6 bit 0 (E +8 DSTQDQSW 0x01) with value 0x80bce0 bit 0 (E +12 DSTQSWUC 0x01); logical input 64; 12A8 +40 DSPZTQSW. Dump clear."
+   },
+   {
+    "element": "word 17 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: [9] masks all eight bits of 0x80bcd6, but 106B +24 has no record on 0x02 and E +8 names bit 0 only, so logical input 65 has no name. Dump clear."
+   },
+   {
+    "element": "word 17 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: byte mask [9] bit 2 applies, but no 106B +24 record on 0x04 and no E +8 name for logical input 66. Dump clear."
+   },
+   {
+    "element": "word 17 bit 3",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: byte mask [9] bit 3 applies, but no 106B +24 record on 0x08 and no E +8 name for logical input 67. Dump clear."
+   },
+   {
+    "element": "word 17 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: byte mask [9] bit 4 applies, but no 106B +24 record on 0x10 and no E +8 name for logical input 68. Dump clear."
+   },
+   {
+    "element": "word 17 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: byte mask [9] bit 5 applies, but no 106B +24 record on 0x20 and no E +8 name for logical input 69. Dump clear."
+   },
+   {
+    "element": "word 17 bit 6",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: byte mask [9] bit 6 applies, but no 106B +24 record on 0x40 and no E +8 name for logical input 70. Dump clear."
+   },
+   {
+    "element": "word 17 bit 7",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: byte mask [9] bit 7 applies, but no 106B +24 record on 0x80 and no E +8 name for logical input 71. Dump clear."
+   },
+   {
+    "element": "word 17 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "Code only, as stated: J1939 descriptor entry 0 (pointer 0x80d70f j1939_received_air_conditioner_high_pressure_fan_switch, logical switch word 0x0048 = 72) makes cm550_FUN_00020890 test table bit 280 = word 17 bit 8 before it writes value bit 72 (0x80bce1 bit 0); the status slot is E +9 DSAKPRSW 0x01. Worth adding: in the dumped ROM 0x80bce1 has no reader and the sampler copies 0x80bcd7 bit 0 from switch 18 (0x80bcd0 bit 1). Dump clear."
+   },
+   {
+    "element": "word 17 bit 9",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no reader in the dumped ROM ([8] = 0x803cb6 is never read; no table index reaches bit 281) and no 106B +24 record on 0x200. Dump clear."
+   },
+   {
+    "element": "word 17 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no reader in the dumped ROM ([8] never read; table bit 282 unreached) and no 106B +24 record on 0x400. Dump clear."
+   },
+   {
+    "element": "word 17 bit 11",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no reader in the dumped ROM ([8] never read; table bit 283 unreached) and no 106B +24 record on 0x800. Dump clear."
+   },
+   {
+    "element": "word 17 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no reader in the dumped ROM ([8] never read; table bit 284 unreached) and no 106B +24 record on 0x1000. Dump clear."
+   },
+   {
+    "element": "word 17 bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no reader in the dumped ROM ([8] never read; table bit 285 unreached) and no 106B +24 record on 0x2000. Dump clear."
+   },
+   {
+    "element": "word 17 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no reader in the dumped ROM ([8] never read; table bit 286 unreached) and no 106B +24 record on 0x4000. Dump clear."
+   },
+   {
+    "element": "word 17 bit 15",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no reader in the dumped ROM ([8] never read; table bit 287 unreached) and no 106B +24 record on 0x8000. Dump clear."
+   },
+   {
+    "element": "word 18",
+    "verdict": "CONFIRMED",
+    "reason": "Name, cm550_algorithm_enable_flags_18_t and 'not shared' are right. 20 references to 0x803cb8, each move.w + andi.w / andi.l with one bit (0x8 at 0xac52; 0x200 at 0xff48 0x1c8d8 0x1cc8e 0x1de70 0x1df10 0x1df90; 0x20 at 0x138f4 0x13a70; 0x2 at 0x16df0 0x16e32 0x170c0; 0x1 at 0x1d3ae; 0x1000 at 0x207c0 0x2ec6c 0x32fca; 0x2000 at 0x2ec90; 0x10 at 0x314b2 0x315e6 0x31a68). No writes, no multi-bit mask. CM848's struct has the same names on bits 0 2 3 6 8 9 11-15, reserved_bit_1 / 4 / 5 / 10 and executive_timing_enable on bit 7; CM550 keeps SSECTMEA in its own block 81D7, so bit 7 has no CM550 record. No CHR file has a +26 record on 0x2 / 0x10 / 0x20, so no CM848 rename. EEPROM 0x1ae, dump 0x303a = bits 1 3 4 5 12 13."
+   },
+   {
+    "element": "word 18 bit 0",
+    "verdict": "CONFIRMED",
+    "reason": "HSGNSDEN (N) 'BIT 0 OF 0-15 OF WORD 12H'; selectHighSpeedGovernorGainSet andi.w #0x0001 at 0x1d3ae; CM848 bit 0 has the same name and its twin function at 0x1fa20 reads it. Clear in the dump."
+   },
+   {
+    "element": "word 18 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "WPEAFG (N) 'WORD 12 BIT 1'; andi #0x2 at 0x16df0 / 0x16e32 (cm550_highRpmEngineProtectionStateMachine, which runs the oil drain-back and maximum warmup time counters) and 0x170c0. CM848 bit 1 is reserved and no CHR file has a record on 0x2, so no rename there. Set in the dump."
+   },
+   {
+    "element": "word 18 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "DREN (N) 'WORD 12H, BIT 2 OF 0 TO 15 DRIVER REWARD ENABLE'; no reference with mask 0x4 in the dumped ROM; CM848 bit 2 driver_reward_enable. Clear in the dump."
+   },
+   {
+    "element": "word 18 bit 3",
+    "verdict": "CONFIRMED",
+    "reason": "DCMNEN (N) 'BIT 3 OF 0-15' and DMAGEN (S) mask 0x08; andi.w #0x0008 at 0xac52 in cm550_FUN_0000ac3c, which works on the duty cycle monitor maps; CM848 bit 3 duty_cycle_monitor_enable. Set in the dump."
+   },
+   {
+    "element": "word 18 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "TRAGEN (S) mask 0x10 'ENABLE FLAG FOR TRENDING ALGORITHM'; andi.w #0x10 at 0x314b2 / 0x315e6 / 0x31a68 in the three trending capture functions. CM848 bit 4 is reserved with no CHR record on 0x10. Set in the dump."
+   },
+   {
+    "element": "word 18 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "UDEN (N) 'BIT 5 OF 0-15' datalogger; andi #0x20 at 0x138f4 (cm550_updateDataloggerTriggers) and 0x13a70 (cm550_recordDataloggerSamples). CM848 bit 5 is reserved with no CHR record on 0x20. Set in the dump."
+   },
+   {
+    "element": "word 18 bit 6",
+    "verdict": "CONFIRMED",
+    "reason": "ACEN (N) 'WORD 12H, BIT 6 OF 0 TO 15 - SMART AIR COMPRESSOR ENABLE'; no reference with mask 0x40 in the dumped ROM; CM848 bit 6 smart_air_compressor_enable. Clear in the dump."
+   },
+   {
+    "element": "word 18 bit 7",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no CM550 106B +26 record on 0x80 (CM550's SSECTMEA is e2m 81D7 +0, a separate word) and no reference with mask 0x80 in the dumped ROM. CM848's executive_timing_enable is the guess in the comment and the reason the type is not shared. Clear in the dump."
+   },
+   {
+    "element": "word 18 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "HSGRGSEN (N) 'BIT 8'; no reference with mask 0x100 in the dumped ROM; CM848 bit 8 has the same name (CHR mask 0x100, read by cm848_loadHighSpeedGovernorWorkingGainSet). Clear in the dump."
+   },
+   {
+    "element": "word 18 bit 9",
+    "verdict": "CONFIRMED",
+    "reason": "PPEN (N) 'BIT 9 OF 0 TO 15, WORD 12H/18D'; andi.l #0x200 at 0xff48, 0x1c8d8, 0x1cc8e, 0x1de70, 0x1df10 and 0x1df90 (torque curve and J1939 reference fueling paths, the twins of CM848's readers); CM848 bit 9 programmable_power_enable. Clear in the dump."
+   },
+   {
+    "element": "word 18 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved in both firmwares: no CM550 record, no CHR record on 0x400, no reference with mask 0x400 in the dumped ROM. Clear in the dump."
+   },
+   {
+    "element": "word 18 bit 11",
+    "verdict": "CONFIRMED",
+    "reason": "AREN (N) 'BIT 11 OF 0-15. CRUISE CONTROL AUTO RESUME'; no reference with mask 0x800 in the dumped ROM; CM848 bit 11 cruise_control_auto_resume_enable. Clear in the dump."
+   },
+   {
+    "element": "word 18 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "CTRMTHEN (S) mask 0x1000; andi.l #0x1000 at 0x207c0 (J1939 remote accelerator into the channel 11 override), 0x2ec6c (remote throttle priority) and 0x32fca (EEC2 builder); CM848 bit 12 remote_throttle_enable. Set in the dump."
+   },
+   {
+    "element": "word 18 bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "CTRTTZEN (S) mask 0x2000 (its text says 'BIT 13/15'); andi.l #0x2000 at 0x2ec90 in the remote throttle function; CM848 bit 13 has the same name. Set in the dump."
+   },
+   {
+    "element": "word 18 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "EBBREN (N) 'WORD 12H, BIT E OF 0-F'; no reference with mask 0x4000 in the dumped ROM. CM848's bit rests on its mask and reader, not on its text: CHR EB_Service_Brake_Activate_Enable has mask 0x4000 (its text says 'Word 13h, bit 0') and cm848_updateEngineRetarderAllowedState reads it. Clear in the dump."
+   },
+   {
+    "element": "word 18 bit 15",
+    "verdict": "CONFIRMED",
+    "reason": "EBRTLMEA (N) 'BIT 15 OF 0-15'; no reference with mask 0x8000 in the dumped ROM; CM848 bit 15 engine_retarder_rate_limit_enable (CHR mask 0x8000). Clear in the dump."
+   },
+   {
+    "element": "word 19",
+    "verdict": "CONFIRMED",
+    "reason": "Name and plain word are right: no reference to 0x803cba / 0x803cbb in the dumped ROM, the mask pointer reaches 0x803cae-0x803cb7 only, and no indexed test reaches table bits 304-319. No writes. EEPROM 0x1b0, dump 0x00c0 in both bins. CM848's algorithm_enable_flags_19_t matches on bit 0 only (bits 1 / 3 / 6 / 7 are other features, 2 / 4 reserved with no CHR record on 0x4 / 0x10 in any of the 23 files), so not shared and no CM848 rename. 'No reader' is for the dumped 256 KB only."
+   },
+   {
+    "element": "word 19 bit 0",
+    "verdict": "CONFIRMED",
+    "reason": "FSALCFEN (N) 'BIT 0 OF WORD 0(x13)'; same mnemonic and name as CM848 word 19 bit 0 (CHR mask 0x1). No reference in the dumped ROM. Clear in the dump."
+   },
+   {
+    "element": "word 19 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "FSALTQEN (N) 'ALTERNATE TORQUE CURVE FEATURE ENABLE W 13 BIT 1'; CM848 bit 1 is switched_rear_axle_anti_tamper_enable and its e2m has no FSALTQEN. No reference in the dumped ROM. Clear in the dump."
+   },
+   {
+    "element": "word 19 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "FCREN (N) 'FUEL CONSUMPTION RATE FEATURE ENABLE W 13 BIT 2'; CM848 bit 2 is reserved and no CHR file has a +28 record on 0x4. No reference in the dumped ROM. Clear in the dump."
+   },
+   {
+    "element": "word 19 bit 3",
+    "verdict": "CONFIRMED",
+    "reason": "SC2OEN (S) mask 0x08 'DUAL OUTPUTS FEATURE ENABLE - BIT 3'; CM848 bit 3 is wastegate_monitor_enable. No reference in the dumped ROM. Clear in the dump."
+   },
+   {
+    "element": "word 19 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "DGAPIPEN (S) mask 0x10 'ENABLE OUT OF RANGE ALGORITHIM FOR OEM PARAMETERS'; the name spells OEM out; CM848 bit 4 is reserved and no CHR file has a +28 record on 0x10. No reference in the dumped ROM. Clear in the dump."
+   },
+   {
+    "element": "word 19 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no CM550 106B +28 record on 0x20 and no reference in the dumped ROM; CM848 uses the bit for alpha_altitude_derate_override_enable. Clear in the dump."
+   },
+   {
+    "element": "word 19 bit 6",
+    "verdict": "CONFIRMED",
+    "reason": "THDGSWEN (S) mask 0x40; CM848 has the same mnemonic and field name at word 29 bit 10 (CHR 106B +3C mask 0x400). No reference in the dumped ROM. Set in the dump (0x00c0)."
+   },
+   {
+    "element": "word 19 bit 7",
+    "verdict": "CONFIRMED",
+    "reason": "THDGEREN (S) mask 0x80; CM848 has the same mnemonic and field name at word 29 bit 11 (CHR 106B +3C mask 0x800). No reference in the dumped ROM. Set in the dump (0x00c0)."
+   },
+   {
+    "element": "word 19 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no CM550 106B +28 record on 0x100 and no reference to 0x803cba in the dumped ROM. Clear in the dump."
+   },
+   {
+    "element": "word 19 bit 9",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no CM550 106B +28 record on 0x200 and no reference in the dumped ROM. Clear in the dump."
+   },
+   {
+    "element": "word 19 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no CM550 106B +28 record on 0x400 and no reference in the dumped ROM. Clear in the dump."
+   },
+   {
+    "element": "word 19 bit 11",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no CM550 106B +28 record on 0x800 and no reference in the dumped ROM. Clear in the dump."
+   },
+   {
+    "element": "word 19 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no CM550 106B +28 record on 0x1000 and no reference in the dumped ROM. Clear in the dump."
+   },
+   {
+    "element": "word 19 bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no CM550 106B +28 record on 0x2000 and no reference in the dumped ROM. Clear in the dump."
+   },
+   {
+    "element": "word 19 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no CM550 106B +28 record on 0x4000 and no reference in the dumped ROM. Clear in the dump."
+   },
+   {
+    "element": "word 19 bit 15",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no CM550 106B +28 record on 0x8000 and no reference in the dumped ROM. Clear in the dump."
+   },
+   {
+    "element": "word 22",
+    "verdict": "CONFIRMED",
+    "reason": "Name and plain word are right: the one reference is move.w $803cc0,d4 at 0xb7d8 in mc68k_processAnalogSensorChannels, tested as and.w d2,d0 with the loop mask d2 (1, doubled per channel), so a bitfield would not render. Bit n set -> move.w (0x80a760 + 2n) into adc_raw_value (0x10 of the state record) instead of the QADC result. No writes. EEPROM 0x1b6, dump 0x0000. All 16 masks match the channel order of the state records 0x80a2aa + 22n. CM848: no row, and the 16 CHR_CC files have no 106B +2E record; the 7 CHR_B2 files do have +2E records with other meanings."
+   },
+   {
+    "element": "word 22 bit 0",
+    "verdict": "CONFIRMED",
+    "reason": "ADIMTPOR mask 0x01; channel 0 = intake_manifold_temperature_sensor_state (0x80a2aa); raw value ADIMTPUR at 12D3 +0. Loop mask 0x1. Dump clear."
+   },
+   {
+    "element": "word 22 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "ADFTOR mask 0x02; channel 1 = fuel_temperature_sensor_state (0x80a2c0); raw value ADFTUR at 12D3 +2. Loop mask 0x2. Dump clear."
+   },
+   {
+    "element": "word 22 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "ADCVOR mask 0x04 'COOLANT LEVEL OVERRIDE RAW ENABLE'; channel 2 = coolant_level_sensor_state (0x80a2d6); the e2m has no raw value record at 12D3 +4, and the comment cites none. Loop mask 0x4. Dump clear."
+   },
+   {
+    "element": "word 22 bit 3",
+    "verdict": "CONFIRMED",
+    "reason": "ADFPOR mask 0x08; channel 3 = fuel_pressure_sensor_state (0x80a2ec); raw value ADFPUR at 12D3 +6. Loop mask 0x8. Dump clear."
+   },
+   {
+    "element": "word 22 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "ADOPOR mask 0x10; channel 4 = oil_pressure_sensor_state (0x80a302); raw value ADOPUR at 12D3 +8. Loop mask 0x10. Dump clear."
+   },
+   {
+    "element": "word 22 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "ADBSPROR mask 0x20; channel 5 = boost_pressure_sensor_state (0x80a318); raw value ADBSPRUR at 12D3 +A. Loop mask 0x20. Dump clear."
+   },
+   {
+    "element": "word 22 bit 6",
+    "verdict": "CONFIRMED",
+    "reason": "ADCLTPOR mask 0x40; channel 6 = coolant_temperature_sensor_state (0x80a32e); raw value ADCLTPUR at 12D3 +C. Loop mask 0x40. Dump clear."
+   },
+   {
+    "element": "word 22 bit 7",
+    "verdict": "CONFIRMED",
+    "reason": "ADAATPOR mask 0x80; channel 7 = ambient_air_temperature_sensor_state (0x80a344); raw value ADAATPUR at 12D3 +E. Loop mask 0x80. Dump clear."
+   },
+   {
+    "element": "word 22 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "ADPOTPOR mask 0x100; channel 8 = power_steering_temperature_sensor_state (0x80a35a); raw value ADPOTPUR at 12D3 +10. Loop mask 0x100. Dump clear."
+   },
+   {
+    "element": "word 22 bit 9",
+    "verdict": "CONFIRMED",
+    "reason": "ADSYEPOR mask 0x200; channel 9 = exhaust_pressure_sensor_state (0x80a370), whose config and state records are the ADSYEP stem (1003 +D8..EF 'ENGINE_SYNC_EXHAUST_PRESSURE', 1004 +CE) and whose value override ADSYEPOD has mask 0x200 in word 5. The name follows the CSV channel; the 106B text says 'SPARE SWITCH RAW VALUE'. The e2m slips on the raw value: ADSYEPUR sits at 12D3 +28 (channel 20's slot), not +12; the comment cites neither. Loop mask 0x200. Dump clear."
+   },
+   {
+    "element": "word 22 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "ADSTOR mask 0x400; channel 10 = sampled_throttle_sensor_state (0x80a386); raw value ADSTUR at 12D3 +14. Loop mask 0x400. Dump clear."
+   },
+   {
+    "element": "word 22 bit 11",
+    "verdict": "CONFIRMED",
+    "reason": "ADRTOR mask 0x800; channel 11 = remote_throttle_sensor_state (0x80a39c); raw value ADRTUR at 12D3 +16. Loop mask 0x800. Dump clear."
+   },
+   {
+    "element": "word 22 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "ADAAPROR mask 0x1000; channel 12 = ambient_air_pressure_sensor_state (0x80a3b2); raw value ADAAPRUR at 12D3 +18. Loop mask 0x1000. Dump clear."
+   },
+   {
+    "element": "word 22 bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "ADBTVTOR mask 0x2000; channel 13 = battery_voltage_sensor_state (0x80a3c8); raw value ADBTVTUR at 12D3 +1A. Loop mask 0x2000. Dump clear."
+   },
+   {
+    "element": "word 22 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "ADESSVOR mask 0x4000; channel 14 = engine_speed_sensor_supply_voltage_sensor_state (0x80a3de); raw value ADESSVUR at 12D3 +1C. Loop mask 0x4000. Dump clear."
+   },
+   {
+    "element": "word 22 bit 15",
+    "verdict": "CONFIRMED",
+    "reason": "ADTPSVOR mask 0x8000; channel 15 = throttle_position_sensor_supply_voltage_sensor_state (0x80a3f4); raw value ADTPSVUR at 12D3 +1E. Loop mask 0x8000. Dump clear."
+   },
+   {
+    "element": "word 23",
+    "verdict": "CONFIRMED",
+    "reason": "Name and plain word are right: the one reference is move.w $803cc2,d4 at 0xbcd2, taken when the channel counter reaches 16 (cmpi.w #0x10,d3 at 0xbcc4; the mask restarts at 1 and d5 reloads word 6). The loop ends when the state pointer reaches 0x80a4d0 (25 records of 22 bytes), so only bits 0-8 are tested. No writes. EEPROM 0x1b8, dump 0x0000. All 9 masks match channels 16-24. CM848: no row, and the 16 CHR_CC files have no 106B +30 record; the 7 CHR_B2 files do have +30 records with other meanings."
+   },
+   {
+    "element": "word 23 bit 0",
+    "verdict": "CONFIRMED",
+    "reason": "ADVCSVOR mask 0x01; channel 16 = vehicle_connector_sensor_supply_voltage_sensor_state (0x80a40a); raw value ADVCSVUR at 12D3 +20. Loop mask 0x1 after the reload. Dump clear."
+   },
+   {
+    "element": "word 23 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "ADECSVOR mask 0x02; channel 17 = engine_connector_sensor_supply_voltage_sensor_state (0x80a420); raw value ADECSVUR at 12D3 +22. Loop mask 0x2. Dump clear."
+   },
+   {
+    "element": "word 23 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "ADFTSVOR mask 0x04; channel 18 = frequency_throttle_input_supply_voltage_sensor_state (0x80a436); raw value ADFTSVUR at 12D3 +24. Loop mask 0x4. Dump clear."
+   },
+   {
+    "element": "word 23 bit 3",
+    "verdict": "CONFIRMED",
+    "reason": "ADCCSWOR mask 0x08 'CRUISE CONTROL SWITCH MUX'; channel 19 = cruise_control_switch_multiplexer_sensor_state (0x80a44c); raw value ADCCSWUR at 12D3 +26. Loop mask 0x8. Dump clear."
+   },
+   {
+    "element": "word 23 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "ADWFOR mask 0x10; channel 20 = water_in_fuel_sensor_state (0x80a462); raw value ADWFUR at 12D3 +28. Loop mask 0x10. Dump clear."
+   },
+   {
+    "element": "word 23 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "ADEGCEOR mask 0x20; channel 21 = egr_current_feedback_sensor_state (0x80a478); raw value ADEGCEUR at 12D3 +2A. Loop mask 0x20. Dump clear."
+   },
+   {
+    "element": "word 23 bit 6",
+    "verdict": "CONFIRMED",
+    "reason": "ADPPSVOR mask 0x40; channel 22 = programming_pulse_supply_voltage_sensor_state (0x80a48e); raw value ADPPSVUR at 12D3 +2C. Loop mask 0x40. Dump clear."
+   },
+   {
+    "element": "word 23 bit 7",
+    "verdict": "CONFIRMED",
+    "reason": "ADHSSVOR mask 0x80; channel 23 = high_side_gate_bias_supply_voltage_sensor_state (0x80a4a4); raw value ADHSSVUR at 12D3 +2E. Loop mask 0x80. Dump clear."
+   },
+   {
+    "element": "word 23 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "ADOCSVOR mask 0x100; channel 24 = operational_amplifier_and_comparator_supply_voltage_sensor_state (0x80a4ba), the last record before 0x80a4d0; raw value ADOCSVUR at 12D3 +30. Loop mask 0x100. Dump clear."
+   },
+   {
+    "element": "word 23 bit 9",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no channel 25 (the loop ends at 0x80a4d0, so the mask never reaches 0x200) and no CM550 106B +30 record on 0x200. Dump clear."
+   },
+   {
+    "element": "word 23 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: the loop mask never reaches 0x400 (25 channels) and no CM550 106B +30 record on 0x400. Dump clear."
+   },
+   {
+    "element": "word 23 bit 11",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: the loop mask never reaches 0x800 (25 channels) and no CM550 106B +30 record on 0x800. Dump clear."
+   },
+   {
+    "element": "word 23 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: the loop mask never reaches 0x1000 (25 channels) and no CM550 106B +30 record on 0x1000. Dump clear."
+   },
+   {
+    "element": "word 23 bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: the loop mask never reaches 0x2000 (25 channels) and no CM550 106B +30 record on 0x2000. Dump clear."
+   },
+   {
+    "element": "word 23 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: the loop mask never reaches 0x4000 (25 channels) and no CM550 106B +30 record on 0x4000. Dump clear."
+   },
+   {
+    "element": "word 23 bit 15",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: the loop mask never reaches 0x8000 (25 channels) and no CM550 106B +30 record on 0x8000. Dump clear."
+   }
+  ]
+ }
+}

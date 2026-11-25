@@ -788,3 +788,14 @@ Hand work on the round 7 lead.
   amendments), `keep_lists_r91.py`, `run_r91.sh` (apply + refresh), `review_refresh_r91.py` (every refresh change
   against the post-apply snapshot), `fix_phase_index_docs_r91.py`.
 - **Closing:** `apply_r91_closing.py`, `update_large_tar_r91.sh`.
+
+## Round 92: CM550's fueling state enum and algorithm enable bitfields (`session_folder/round92/`)
+
+- **Stage B:** `compare_fueling_state_r92.py` (CM848's members against CM550's Calterm labels), `apply_r92b.py`.
+- **Stage A:** `enable_words_r92.py` (the e2m records of each word), `pilot_bitfield_r92.py` (the thrown-away pilot:
+  bitfield names render on CM550), `batch_W1..W4.json` (the workflow's proposals and verdicts),
+  `dump_words_r92.py` / `check_shared_r92.py`, `make_amend_r92a.py` -> `amend_r92a.json` (the skeptics' amendments
+  as exact values), `apply_r92a.py`, `fix_cm848_word3_comment_r92.py`, `apply_r92a_prev.py` / `abs_refs_r92.py` (the
+  two previous-pass rows and their access widths), `apply_r92a_word20.py`, `mask_exact_r92.py` (the proof that each
+  mask test became the field of that bit), `bitfield_notes_r92.txt`, `scratch/` (the agents' own scripts).
+- **Closing:** `apply_r92_claude_md.py`, `apply_r92_closing.py`, `update_large_tar_r92.sh`.

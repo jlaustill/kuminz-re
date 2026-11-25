@@ -1,0 +1,15 @@
+W4 draft findings (scratch, read-only investigation)
+ROM refs (all move.w (abs).l,d0 + andi #mask; no writes; no odd-byte refs; no long reads spanning):
+ w25 0x803cc6: 0x20440 andi.w #0x8000 cm550_FUN_0002041c (J1939 CM1 fan request, twin of cm848_processJ1939EngineFanRequestedSpeed)
+               0x205e0 andi.w #0x8 cm550_FUN_000205c4 (raw throttle idle switches, twin of cm848_updateIdleSwitchesFromLocalInputs)
+ w26 0x803cc8: no direct ref; bit 416+n (move.w #0x1a0,d2; movea.l #0x803c94,a0) in cm550_calculateFaultDerateEngineSpeedLimit 0x18e0c
+               and cm550_FUN_00019702 (fuel twin); 9 channels: CV CQ IM O2 WF BS FP FT AA (configs 0x807032+36n, e2m 10B7/112B-1132)
+ w27 0x803cca: 0xd306 andi.l #8 cm550_acceleratorThrottleFaultDetector; 0xd4e8 andi.l #8 cm550_FUN_0000d4ae;
+               0xe9b4 andi.w #0x10 cm550_FUN_0000e998 (BIR high); 0x1da6c andi.l #0x400 vp44SensorStatusMonitor (idle shutdown SM)
+ w28 0x803ccc: 0x15470 andi.l #0x10 mc68k_sampleAndDebounceDiscreteInputs; 0x1d9da andi.l #0x10 vp44SensorStatusMonitor
+ w32 0x803cd4: 0xc1d4 #0x4000 cm550_fuelTimingTransitionStateMachine; 0x150c6 #0x400 / 0x150ea #0x800 mc68k_sampleAndDebounceDiscreteInputs;
+               0x1cc9e #0x8000 cm550_FUN_0001cc72; 0x25ab0 #0x200 vp44_FUN_00025a34; 0x25f72 #0x200 cm550_runLowSpeedGovernor;
+               0x26ac0 #1 cm550_rpmLoadParameterLookup; 0x26b0c #1 vp44OperatingConditionChecker
+ w33 0x803cd6: 0x1510e #1 / 0x1512e #2 / 0x1514e #4 mc68k_sampleAndDebounceDiscreteInputs (XOR 2/4/8 into discrete sample);
+               0x203a8 #0x10 cm550_FUN_00020380 (J1939 EBC1 retarder selection, twin of cm848_processJ1939EngineRetarderSelection)
+Bench EEPROM/RAM: w25 0x0180 w26 0 w27 0x2010 w28 0 w32 0xf241 w33 0 (length word 0x46)

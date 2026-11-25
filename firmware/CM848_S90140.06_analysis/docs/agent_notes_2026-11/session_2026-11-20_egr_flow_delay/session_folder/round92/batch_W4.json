@@ -1,0 +1,1094 @@
+{
+ "proposal": {
+  "batch": "W4",
+  "words": [
+   {
+    "word": 25,
+    "address": "0x803cc6",
+    "current_name": "(no row; renders _DAT_00803cc6)",
+    "proposed_name": "algorithm_enable_flags_25_cal",
+    "proposed_type": "algorithm_enable_flags_25_t",
+    "shared_with_cm848": true,
+    "code_tests": "bit 3: move.w (0x803cc6).l,d0 + andi.w #8 at 0x205e0 in cm550_FUN_000205c4 (twin of cm848_updateIdleSwitchesFromLocalInputs). bit 15: move.w + andi.w #0x8000 at 0x20440 in cm550_FUN_0002041c (twin of cm848_processJ1939EngineFanRequestedSpeed). Only 2 abs.l references in the ROM and none to 0x803cc7.",
+    "writes": "none in the dumped ROM (both references are move.w reads followed by andi + branch)",
+    "differences_from_cm848": "none: every bit has the same position and meaning. v64t6_s (and the other 5x/6x e2m files) file MXLPANEA under +0x36, but the J90350.00 code tests word 25 bit 3 with the raw-throttle limp-home logic, and the 18 7x/8x ISB e2m files plus CM848's CHR e2m put it at +0x34 mask 8.",
+    "row_comment": "Algorithm enable flags word 25 (EEPROM 0x1bc = RAM 0x803B0A + 0x1bc; e2m 106B +34 'WORD 19H'): engine retarder rate limit defeat / powertrain protection / J1939 limp home throttle / smart road speed governor / fan clutch 1 and 2 inputs / manual fan level override. Bench EEPROM and RAM 0x0180 (fan clutch 1 coolant temperature + intake manifold temperature). The dumped ROM tests bit 3 (cm550_FUN_000205c4) and bit 15 (cm550_FUN_0002041c) and never writes it. Same 16 bits as CM848 algorithm_enable_flags_25_cal (shared type); v64t6_s files MXLPANEA under +36 but the code reads it here.",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "engine_retarder_rate_limit_defeat_enable",
+      "comment": "e2m EBRTDFEN 'BIT 0 OF 0-15 - ENABLE BRAKE RATE LIMIT DEFEAT DURING ON/OFF TRANS'; no test in the dumped ROM; clear in the bench EEPROM (0x0180); same as CM848"
+     },
+     {
+      "bit": 1,
+      "name": "powertrain_protection_enable",
+      "comment": "e2m TCEN 'POWERTRAIN PROTECTION ENABLE WORD 19H BIT 1 OF 0 TO 15'; no test in the dumped ROM; clear; same as CM848"
+     },
+     {
+      "bit": 2,
+      "name": "powertrain_protection_lugback_enable",
+      "comment": "e2m TCLDEN 'POWERTRAIN PROTECTION LUGBACK ENABLE WORD 19H BIT 2 OF 0 TO 15'; no test in the dumped ROM; clear; same as CM848"
+     },
+     {
+      "bit": 3,
+      "name": "j1939_multiplex_limp_home_on_analog_throttle_enable",
+      "comment": "e2m MXLPANEA (mask 8) 'BIT 3 ENABLED INDICATES LIMPHOME VIA MUXING SHALL USE RAW SAMPLED THROTTLE' (v64t6_s puts it at +36 but the 7x/8x ISB e2m files and CM848's CHR e2m have +34); read by cm550_FUN_000205c4 (andi.w #8 at 0x205e0): set = idle switch states from the raw sampled throttle ADC (takes_raw_throttle_for_mux_limphome_on_a2d_0_1023 below 0x169 = at idle) / clear = the debounced hardware idle switch (timer 100 minus 50 per pass) - the twin of cm848_updateIdleSwitchesFromLocalInputs; clear in the bench EEPROM"
+     },
+     {
+      "bit": 4,
+      "name": "reserved_bit_4",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess ISTSRVEN 'ENABLE TO FORCE THE RPM TO RAMP UP TO IS_TAS_PEAK_IDLE' (mask 0x10 at +34 in 13 7x/8x ISB e2m files); CM848 keeps reserved_bit_4 too; clear"
+     },
+     {
+      "bit": 5,
+      "name": "smart_road_speed_governor_enable",
+      "comment": "e2m SREN 'SMART RSG ENABLE WORD 19H BIT 5 OF 0 TO 15' (RSG = road speed governor); no test in the dumped ROM; clear; same as CM848"
+     },
+     {
+      "bit": 6,
+      "name": "fan_clutch_1_air_conditioning_enable",
+      "comment": "e2m FCAKINEN 'AC INPUT ENABLE BIT 6 OF WORD 19H'; no test in the dumped ROM; clear; same as CM848"
+     },
+     {
+      "bit": 7,
+      "name": "fan_clutch_1_coolant_temperature_enable",
+      "comment": "e2m FCCLINEN 'CT INPUT ENABLE BIT 7 OF WORD 19H'; no test in the dumped ROM (a fan clutch reader may sit in the undumped code above 0x40000); SET in the bench EEPROM; same as CM848"
+     },
+     {
+      "bit": 8,
+      "name": "fan_clutch_1_intake_manifold_temperature_enable",
+      "comment": "e2m FCIMINEN 'IMT INPUT ENABLE BIT 8 OF WORD 19H'; no test in the dumped ROM; SET in the bench EEPROM; same as CM848"
+     },
+     {
+      "bit": 9,
+      "name": "fan_clutch_2_air_conditioning_enable",
+      "comment": "e2m FCAKI2EN 'AC INPUT ENABLE BIT 9 OF WORD 19H'; no test in the dumped ROM; clear; same as CM848"
+     },
+     {
+      "bit": 10,
+      "name": "fan_clutch_2_air_conditioning_pressure_enable",
+      "comment": "e2m FCAK02EN 'AC SWITCH ENABLE BIT 10 OF WORD 19H' (CM848's CHR e2m names the same mnemonic Fan_Clutch_2_AC_Pressure_Enable); no test in the dumped ROM; clear"
+     },
+     {
+      "bit": 11,
+      "name": "fan_clutch_2_coolant_temperature_enable",
+      "comment": "e2m FCCLI2EN 'CT INPUT ENABLE BIT 11 OF WORD 19H'; no test in the dumped ROM; clear; same as CM848"
+     },
+     {
+      "bit": 12,
+      "name": "fan_clutch_2_engine_retarder_enable",
+      "comment": "e2m FCEBINEN 'FAN_CLUTCH_2_EB_ENABLE BIT 12 OF WORD 19H' (EB = engine brake); no test in the dumped ROM; clear; same as CM848"
+     },
+     {
+      "bit": 13,
+      "name": "fan_clutch_2_intake_manifold_temperature_enable",
+      "comment": "e2m FCIMI2EN 'IMT INPUT ENABLE BIT 13 OF WORD 19H'; no test in the dumped ROM; clear; same as CM848"
+     },
+     {
+      "bit": 14,
+      "name": "fan_clutch_2_manual_input_enable",
+      "comment": "e2m FCSW02EN 'FAN_CLUTCH_2_MANUAL_INPUT_ENABLE BIT 14 OF WORD 19H'; no test in the dumped ROM; clear; same as CM848"
+     },
+     {
+      "bit": 15,
+      "name": "manual_fan_level_override",
+      "comment": "e2m ADMNFMOD (mask 0x8000) 'A/D OVERRIDE FOR MANUAL FAN LEVEL (REQUESTED % FAN SPEED)'; read by cm550_FUN_0002041c (andi.w #0x8000 at 0x20440): set and the commanding source priority at least a_d_priority_for_manual_fan_level_requested_fan_speed_0_ff = user_value_for_manual_fan_level_requested_fan_speed_0_100 from the J1939 CM1 fan request (raw x 16 / 10; timeout or 0xfe = the global default) - the twin of cm848_processJ1939EngineFanRequestedSpeed; clear"
+     }
+    ]
+   },
+   {
+    "word": 26,
+    "address": "0x803cc8",
+    "current_name": "(no row; renders DAT_00803cc8 nowhere - no direct reference)",
+    "proposed_name": "algorithm_enable_flags_26_cal",
+    "proposed_type": "word",
+    "shared_with_cm848": false,
+    "code_tests": "no direct reference (no abs.l 0x803cc8 / 0x803cc9 in the ROM). cm550_calculateFaultDerateEngineSpeedLimit (0x18e0c) and its fuel-limit twin cm550_FUN_00019702 (0x19702) load move.w #0x1a0,d2 and movea.l #0x803c94,a0 and read word (bit >> 4) bit (bit & 15) for bit 416 + channel over the 9 engine protection channels (configs 0x807032 + 36n up to load_breakpoint_table 0x807176) = word 26 bits 0-8. A set bit keeps the channel severity (history) but leaves it out of the derate maximum and the restart-severity floor. Bits 9-15 are never read.",
+    "writes": "none in the dumped ROM",
+    "differences_from_cm848": "CM848 also keeps word 26 a plain word (same reason: only indexed from word 0). Bits 0-3 match (coolant level / coolant temperature / intake manifold temperature / oil pressure). CM848 bits 4-6 are fuel temperature / C_Out temperature / T_In temperature (CM848's loop starts at bit 420 = its fuel temperature channel); CM550 bits 4-8 follow its own channel order (water in fuel / boost pressure / engine sync fuel pressure / fuel temperature / ambient air pressure). Plain word in both, so no shared type.",
+    "row_comment": "Algorithm enable flags word 26 (EEPROM 0x1be; e2m 106B +36): engine protection history-only (no derate) enables - bit n = protection channel n: 0 coolant level / 1 coolant temperature / 2 intake manifold temperature / 3 oil pressure / 4 water in fuel / 5 boost pressure / 6 engine sync fuel pressure / 7 fuel temperature / 8 ambient air pressure (configs 0x807032 + 36n). No direct reader: cm550_calculateFaultDerateEngineSpeedLimit and cm550_FUN_00019702 index the block from calibration_feature_enable_flags_word_0 at bit 416 + n; a set bit keeps the channel severity for history but leaves it out of the derate. Bits 9-15 unused. e2m EPO3DXEN calls bit 4 oil temperature but this build has no oil temperature channel; v64t6_s also files MXLPANEA (mask 8) here though the code reads it in word 25. Bench 0x0000. Plain word like CM848 algorithm_enable_flags_26_cal (the bit names below are for this comment only).",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "coolant_level_history_only_enable",
+      "comment": "e2m EPCVDXEN 'BIT 0 OF 0-15. EPF COOLANT LEVEL ENABLE FOR HISTORY ONLY DATA'; read as bit 416 + 0 by cm550_calculateFaultDerateEngineSpeedLimit and cm550_FUN_00019702 (channel 0 = config 0x807032 e2m 10B7 EPCVCG); set = severity kept for history but not derated; clear in the bench EEPROM (0x0000); CM848 bit 0 is the same"
+     },
+     {
+      "bit": 1,
+      "name": "coolant_temperature_history_only_enable",
+      "comment": "e2m EPCQDXEN 'BIT 1 OF 0-15. EPF COOLANT TEMPERATURE ENABLE FOR HISTORY ONLY'; bit 416 + 1 (channel 1 = config 0x807056 e2m 112B EPCQCG); clear; CM848 bit 1 is the same"
+     },
+     {
+      "bit": 2,
+      "name": "intake_manifold_temperature_history_only_enable",
+      "comment": "e2m EPIMDXEN 'BIT 2 OF 0-15. EPF IMT ENABLE FOR HISTORY ONLY DATA'; bit 416 + 2 (channel 2 = config 0x80707a e2m 112C EPIMCG); clear; CM848 bit 2 is the same"
+     },
+     {
+      "bit": 3,
+      "name": "oil_pressure_history_only_enable",
+      "comment": "e2m EPO2DXEN 'BIT 3 OF 0-15. EPF OIL PRESSURE ENABLE FOR HISTORY ONLY DATA'; bit 416 + 3 (channel 3 = config 0x80709e e2m 112D EPO2CG); v64t6_s also files MXLPANEA (mask 8) here but the code reads that bit in word 25; clear; CM848 bit 3 is the same"
+     },
+     {
+      "bit": 4,
+      "name": "water_in_fuel_history_only_enable",
+      "comment": "e2m EPO3DXEN says 'BIT 4 OF 0-15. EPF OIL TEMPERATURE ENABLE FOR HISTORY ONLY DATA' but J90350.00 has no oil temperature channel (no EPO3 block in v64t6_s); the loops read bit 416 + 4 for channel 4 = config 0x8070c2 (e2m 112E EPWFCG water in fuel; its EPWFFLEN..EPWFRYEN enables are word 8 bits 0-3 = bit 112 + 4 x 4); clear; CM848 bit 4 is fuel temperature"
+     },
+     {
+      "bit": 5,
+      "name": "boost_pressure_history_only_enable",
+      "comment": "no e2m record; read as bit 416 + 5 for channel 5 = config 0x8070e6 (e2m 112F EPBSCG boost pressure); clear; CM848 bit 5 is C_Out temperature"
+     },
+     {
+      "bit": 6,
+      "name": "engine_sync_fuel_pressure_history_only_enable",
+      "comment": "no e2m record; read as bit 416 + 6 for channel 6 = config 0x80710a (e2m 1130 EPFPCG engine sync fuel pressure); clear; CM848 bit 6 is T_In temperature"
+     },
+     {
+      "bit": 7,
+      "name": "fuel_temperature_history_only_enable",
+      "comment": "no e2m record; read as bit 416 + 7 for channel 7 = config 0x80712e (e2m 1131 EPFTCG fuel temperature); clear; CM848 bit 7 has no record"
+     },
+     {
+      "bit": 8,
+      "name": "ambient_air_pressure_history_only_enable",
+      "comment": "no e2m record; read as bit 416 + 8 for channel 8 = config 0x807152 (e2m 1132 EPAACG ambient air pressure; the last channel before load_breakpoint_table 0x807176); clear"
+     },
+     {
+      "bit": 9,
+      "name": "reserved_bit_9",
+      "comment": "no e2m record and no reader (the derate loops stop at channel 8); clear"
+     },
+     {
+      "bit": 10,
+      "name": "reserved_bit_10",
+      "comment": "no e2m record and no reader; clear"
+     },
+     {
+      "bit": 11,
+      "name": "reserved_bit_11",
+      "comment": "no e2m record and no reader; clear"
+     },
+     {
+      "bit": 12,
+      "name": "reserved_bit_12",
+      "comment": "no e2m record and no reader; clear"
+     },
+     {
+      "bit": 13,
+      "name": "reserved_bit_13",
+      "comment": "no e2m record and no reader; clear"
+     },
+     {
+      "bit": 14,
+      "name": "reserved_bit_14",
+      "comment": "no e2m record and no reader; clear"
+     },
+     {
+      "bit": 15,
+      "name": "reserved_bit_15",
+      "comment": "no e2m record and no reader; clear"
+     }
+    ]
+   },
+   {
+    "word": 27,
+    "address": "0x803cca",
+    "current_name": "(no row; renders _DAT_00803cca)",
+    "proposed_name": "algorithm_enable_flags_27_cal",
+    "proposed_type": "cm550_algorithm_enable_flags_27_t",
+    "shared_with_cm848": false,
+    "code_tests": "bit 3: andi.l #8 at 0xd306 (cm550_acceleratorThrottleFaultDetector) and 0xd4e8 (cm550_FUN_0000d4ae). bit 4: andi.w #0x10 at 0xe9b4 (cm550_FUN_0000e998, the boost in-range high diagnostic). bit 10: andi.l #0x400 at 0x1da6c (vp44SensorStatusMonitor, really the idle shutdown state machine). All four references are move.w (0x803cca).l,d0 reads.",
+    "writes": "none in the dumped ROM",
+    "differences_from_cm848": "bits 0-10 have CM848's positions and meanings, so CM848's field names are reused (0 and 1 reserved in both). Bits 11-13 are named in CM848 (anti_theft_enable / anti_theft_automatic_lock_enable / road_speed_governor_reference_speed_ramp_enable, from its CHR e2m) but J90350.00's e2m has no record and the dumped ROM no test for them, so they stay reserved and the type is cm550_. 18 7x/8x ISB e2m files carry AT01EN 0x800 / ATAULOEN 0x1000 / SRRMEN 0x2000, and bit 13 is SET in the bench EEPROM (0x2010): if sibling e2m files are accepted as proof, the word could take CM848's type. Also: v64t6_s's AHEN / TBAMEN / TBSPTMEN / TUWGEN / TUWGOVEN are N records whose text gives two bit numbers (5-9 and 11-15); bits 5-9 follow the leading number and the S-record masks of the later files and CM848.",
+    "row_comment": "Algorithm enable flags word 27 (EEPROM 0x1c0; e2m 106B +38): engine retarder fuel delay / switched throttle control governor select / boost in-range diagnostic / air handling / wastegate / idle shutdown temperature. Bench 0x2010 (bits 4 and 13). The dumped ROM tests bits 3 / 4 / 10 and never writes it. Bits 0-10 have CM848's positions and names; bits 11-13 (CM848 anti-theft / automatic lock / road speed governor reference ramp) have no J90350.00 record or test so they stay reserved.",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "reserved_bit_0",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess RTEN 'ENABLES/DISABLE REAL TIME CLOCK FUNCTION' (mask 1 at +38 in 21 other ISB e2m files); CM848 reserved_bit_0 too; clear in the bench EEPROM (0x2010)"
+     },
+     {
+      "bit": 1,
+      "name": "reserved_bit_1",
+      "comment": "e2m CRMFOGEA 'IF ENABLED USES CC/RSG MIN FUEL TRANSTION RAMP DURING' (N record with no bit; mask 2 in CM848's CHR e2m and 18 later ISB files) - OOG is never spelled out; no test in the dumped ROM; CM848 keeps reserved_bit_1 for the same reason; clear"
+     },
+     {
+      "bit": 2,
+      "name": "engine_retarder_fuel_to_brake_delay_enable",
+      "comment": "e2m EBAEDYEN 'BIT 2 TO DELAY ON E-BRAKE TRANSITION'; no test in the dumped ROM; clear; same as CM848"
+     },
+     {
+      "bit": 3,
+      "name": "switched_throttle_control_governor_select",
+      "comment": "e2m STCGASDS 'SWITCHED THROTTLE CONTROL GOVERNOR SELECT (BIT 3 OF 0 - 15)'; read by cm550_acceleratorThrottleFaultDetector (0xd306: clear + throttle interlock switch bit 1 = the switch toggles the all speed governor throttle source) and cm550_FUN_0000d4ae (0xd4e8: set + interlock switch = the switch toggles the switched throttle control governor enable); clear; same as CM848"
+     },
+     {
+      "bit": 4,
+      "name": "boost_pressure_in_range_diagnostic_enable",
+      "comment": "e2m DGBSIREN 'ENABLE FLAG FOR BOOST PRESSURE IN-RANGE DIAGNOSTIC ALGORITHM' (N record with no bit; mask 0x10 in CM848's CHR e2m); read by cm550_FUN_0000e998 (andi.w #0x10 at 0xe9b4): the boost in-range high check (boost_threshold_for_bir_high_error_0_100 / time_needed_for_out_of_range_high_boost_for_setting_birh_error_0_60) while RUNNING; SET in the bench EEPROM; same as CM848"
+     },
+     {
+      "bit": 5,
+      "name": "air_handling_enable",
+      "comment": "e2m AHEN 'BIT 5 ENABLE/DISABLE FOR AIR HANDELING FEATURE. BIT 11' (two bit numbers in the text; 0x20 in CM848's CHR e2m and the 7x/8x S records); no test in the dumped ROM; clear"
+     },
+     {
+      "bit": 6,
+      "name": "air_mass_calculation_enable",
+      "comment": "e2m TBAMEN 'BIT 6 ENABLE/DISABLE FOR AIRMASS CALCULATION. BIT 12 OF 0-15' (two bit numbers; 0x40 in CM848 and the later S records); no test in the dumped ROM; clear"
+     },
+     {
+      "bit": 7,
+      "name": "turbine_speed_and_temperature_calculation_enable",
+      "comment": "e2m TBSPTMEN 'BIT 7 ENABLE/DISABLE TURBIN SPEED /TEMP. CALC. BIT 13 OF 0-15' (two bit numbers; 0x80 in CM848 and the later S records); no test in the dumped ROM; clear"
+     },
+     {
+      "bit": 8,
+      "name": "four_step_wastegate_control_enable",
+      "comment": "e2m TUWGEN 'ENABLE/DISABLE FOR 4 STEP WG CONTROL. BIT8 15 OF 0-15' (two bit numbers; 0x100 in CM848 and the later S records); no test in the dumped ROM; clear"
+     },
+     {
+      "bit": 9,
+      "name": "wastegate_tool_override_enable",
+      "comment": "e2m TUWGOVEN 'BIT9 ENABLE/DISABLE FOR TOOL OVERRIDE OF WASTEGATES. BIT 14 OF' (two bit numbers; 0x200 in CM848 and the later S records); no test in the dumped ROM; clear"
+     },
+     {
+      "bit": 10,
+      "name": "idle_shutdown_temperature_enable",
+      "comment": "e2m ISAATPEN (mask 0x400) 'BIT 10 OF 15. SELECTS THE TEMP. INTERACTION OPTION FOR I[DLE SHUTDOWN]'; read by vp44SensorStatusMonitor (andi.l #0x400 at 0x1da6c; the idle shutdown state machine): set with its temperature condition flag (vp44_sensor_secondary_fault = 1) sends state 1 to the 600-pass wait state 3 instead of counting down to the warning state 2; clear; same as CM848"
+     },
+     {
+      "bit": 11,
+      "name": "reserved_bit_11",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess AT01EN 'BIT 11 OF 15. ENABLES THE ANTI THEFT AT_AUTO MODULE' (0x800 in 18 7x/8x ISB e2m files; CM848 anti_theft_enable) or AHEN's second number; clear"
+     },
+     {
+      "bit": 12,
+      "name": "reserved_bit_12",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess ATAULOEN 'BIT 12 OF 15. ENABLES THE AUTOMATIC LOCKING FUNCTIONALITY' (0x1000 in 18 later ISB e2m files; CM848 anti_theft_automatic_lock_enable) or TBAMEN's second number; clear"
+     },
+     {
+      "bit": 13,
+      "name": "reserved_bit_13",
+      "comment": "no record in v64t6_s and no test in the dumped ROM but SET in the bench EEPROM (0x2010); guess SRRMEN 'IF ENABLED RSG REF SPEED IS ALLOWED TO RAMP' (0x2000 in 18 later ISB e2m files; CM848 road_speed_governor_reference_speed_ramp_enable) or TBSPTMEN's second number (BIT 13 OF 0-15)"
+     },
+     {
+      "bit": 14,
+      "name": "reserved_bit_14",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess CZEN continuous oil replacement system enable (0x4000 in one later ISB e2m) or TUWGOVEN's second number (BIT 14); CM848 reserved_bit_14 too; clear"
+     },
+     {
+      "bit": 15,
+      "name": "reserved_bit_15",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess OMEN oil level monitor enable (0x8000 in one later ISB e2m) or TUWGEN's second number (15 OF 0-15); CM848 reserved_bit_15 too; clear"
+     }
+    ]
+   },
+   {
+    "word": 28,
+    "address": "0x803ccc",
+    "current_name": "(no row; renders _DAT_00803ccc)",
+    "proposed_name": "algorithm_enable_flags_28_cal",
+    "proposed_type": "cm550_algorithm_enable_flags_28_t",
+    "shared_with_cm848": false,
+    "code_tests": "bit 4 only: andi.l #0x10 at 0x15470 (mc68k_sampleAndDebounceDiscreteInputs) and at 0x1d9da (vp44SensorStatusMonitor, the idle shutdown state machine). Both are move.w (0x803ccc).l,d0 reads.",
+    "writes": "none in the dumped ROM",
+    "differences_from_cm848": "CM848 names bits 3 / 5 / 7 / 8 / 10 / 12 / 13 (keyless restart / alarm during automatic start / starter lockout / wastegate table control / J1939 multiplex / anti-theft random number generator / starter lockout normally open contact) from its CHR e2m and reads bit 10 in its J1939 input layer; J90350.00's e2m has only ISTAEN (0x10) and the dumped ROM tests only bit 4. CM848 keeps bit 4 reserved (no record at 0x10 and no reader there), so no CM848 rename.",
+    "row_comment": "Algorithm enable flags word 28 (EEPROM 0x1c2; e2m 106B +3A): only ISTAEN (bit 4 integrated idle management) has a J90350.00 record; tested twice (mc68k_sampleAndDebounceDiscreteInputs and the idle shutdown state machine vp44SensorStatusMonitor); never written. Bench 0x0000. CM848's word 28 names seven other bits from its own e2m.",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "reserved_bit_0",
+      "comment": "no record in any e2m and no test in the dumped ROM; CM848 reserved_bit_0 too; clear in the bench EEPROM (0x0000)"
+     },
+     {
+      "bit": 1,
+      "name": "reserved_bit_1",
+      "comment": "no record in any e2m and no test in the dumped ROM; CM848 reserved_bit_1 too; clear"
+     },
+     {
+      "bit": 2,
+      "name": "reserved_bit_2",
+      "comment": "no record in any e2m and no test in the dumped ROM; CM848 reserved_bit_2 too; clear"
+     },
+     {
+      "bit": 3,
+      "name": "reserved_bit_3",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess ESNKASEN 'ALLOWS ENGINE TO RUN WHILE KEYSWITCH IS OFF' (0x8 in 18 7x/8x ISB e2m files; CM848 keyless_restart_enable); clear"
+     },
+     {
+      "bit": 4,
+      "name": "integrated_idle_management_enable",
+      "comment": "e2m ISTAEN (mask 0x10) 'ENABLES TAS FEATURE.' in group 133 IIMSGR0 'INTEGRATED IDLE MANAGEMENT' (TAS is never spelled out in any e2m; CM848's STLOCKEN says starter lockout is exclusive of ISTAEN); read by vp44SensorStatusMonitor (0x1d9da: the idle shutdown state machine runs only while word 3 bit 1 ISAGEN is set and this bit is clear) and mc68k_sampleAndDebounceDiscreteInputs (0x15470: set + a rising edge of power_take_off_switch_state_bits bit 0x10 at zero road speed sets bit 0x40 of switch_status_cruise_coast_switch_bit_3_on_off); clear in the bench EEPROM; CM848 reserved_bit_4"
+     },
+     {
+      "bit": 5,
+      "name": "reserved_bit_5",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess ESALASEN 'ENABLES ALARM SOUNDING FOR AUTO-START KEYSWITCH ON' (0x20 in 18 later ISB e2m files; CM848 alarm_during_automatic_start_enable); clear"
+     },
+     {
+      "bit": 6,
+      "name": "reserved_bit_6",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess ISEKGEN 'SELECTS PULSED SIGNAL TAMPER DETERRENCE FOR BUNK THERMO[STAT]' (0x40 in 18 later ISB e2m files); CM848 reserved_bit_6; clear"
+     },
+     {
+      "bit": 7,
+      "name": "reserved_bit_7",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess STLOCKEN 'ENABLES STARTER LOCKOUT FEATURE (EXCLUSIVE OF ISTAEN)' (0x80 in 18 later ISB e2m files; CM848 starter_lockout_enable); clear"
+     },
+     {
+      "bit": 8,
+      "name": "reserved_bit_8",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess TCWGTCEN 'ENABLE/DISABLE DIRECT TABLE CONTROL OF WG' (0x100 in 18 later ISB e2m files; CM848 wastegate_table_control_enable); clear"
+     },
+     {
+      "bit": 9,
+      "name": "reserved_bit_9",
+      "comment": "no record in any e2m and no test in the dumped ROM; CM848 reserved_bit_9 too; clear"
+     },
+     {
+      "bit": 10,
+      "name": "reserved_bit_10",
+      "comment": "no record in v64t6_s and no test in the dumped ROM (J90350.00's J1939 input handlers gate on word 25 bit 15 / word 33 bit 4 instead); guess JC39MXEA 'BIT 10 OF 0-15 ENABLES OR DISABLES MULTIPLEX PROCESSING' (0x400 in 18 later ISB e2m files; CM848 j1939_multiplex_enable); clear"
+     },
+     {
+      "bit": 11,
+      "name": "reserved_bit_11",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess ISBKDLEN 'ENABLE TO TURN ON SENSING OF THE BUNK THERMOSTAT DATALINK' (0x800 in 18 later ISB e2m files) or AILSISEN alternate idle function enable (4 files); CM848 reserved_bit_11; clear"
+     },
+     {
+      "bit": 12,
+      "name": "reserved_bit_12",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess ATRNGNEN 'ENABLE FOR GENERATION OF RANDOM NUMBERS (FOR VAT)' (0x1000 in 18 later ISB e2m files; CM848 anti_theft_random_number_generator_enable); clear"
+     },
+     {
+      "bit": 13,
+      "name": "reserved_bit_13",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess SLNOCTEN 'ENABLES NORMALLY OPEN CONTACTS FOR SL RELAY' (0x2000 in 18 later ISB e2m files; CM848 starter_lockout_normally_open_contact_enable); clear"
+     },
+     {
+      "bit": 14,
+      "name": "reserved_bit_14",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess OTIRDGEN 'SELECTS OIL TEMPERATURE STUCK IN RANGE DIAGNOSTIC' (0x4000 in 13 later ISB e2m files); CM848 reserved_bit_14; clear"
+     },
+     {
+      "bit": 15,
+      "name": "reserved_bit_15",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess LSQAIHEN 'WHEN ENABLED LSG QPID IS INHIBITED FOR MIDDLE AND HIGH GEAR GAIN' (0x8000 in 13 later ISB e2m files; CM848 reserved_bit_15 for the same unexpanded QPID); clear"
+     }
+    ]
+   },
+   {
+    "word": 32,
+    "address": "0x803cd4",
+    "current_name": "timing_governor_feature_enable_flags",
+    "proposed_name": "algorithm_enable_flags_32_cal",
+    "proposed_type": "cm550_algorithm_enable_flags_32_t",
+    "shared_with_cm848": false,
+    "code_tests": "bit 0: andi.w #1 at 0x26ac0 (cm550_rpmLoadParameterLookup) and andi.l #1 at 0x26b0c (vp44OperatingConditionChecker; cm550_FUN_00026af0 decompiles the same code). bit 9: andi.w #0x200 at 0x25ab0 (vp44_FUN_00025a34) and 0x25f72 (cm550_runLowSpeedGovernor). bits 10 / 11: andi.w #0x400 at 0x150c6 and #0x800 at 0x150ea (mc68k_sampleAndDebounceDiscreteInputs). bit 14: andi.l #0x4000 at 0xc1d4 (cm550_fuelTimingTransitionStateMachine). bit 15: andi.l #0x8000 at 0x1cc9e (cm550_FUN_0001cc72). 8 move.w reads in all.",
+    "writes": "none in the dumped ROM",
+    "differences_from_cm848": "nothing in common with CM848's word 32 (CM848: bit 0 intake air heater control / 1 end of injection limit / 2 equivalent throttle / 4 intake air heater 24 V, the rest reserved). CM550 has intake air heater control at bit 6 and the other bits are different features. CM848's CHR e2m has no records at bits 5-15, so no CM848 rename.",
+    "row_comment": "Algorithm enable flags word 32 (EEPROM 0x1ca; e2m 106B +42 'W 020H'; was timing_governor_feature_enable_flags): misfire timing limit / Ford air conditioning / cooling system and turbocharger monitors / intake air heater / low speed governor no-load fuel / clutch and brake switch inversion cancels / oil pressure high error disable / VP44 governor watchdog / coolant temperature fuel adjustments. Bench 0xf241 (bits 0 6 9 12 13 14 15). The dumped ROM tests bits 0 / 9 / 10 / 11 / 14 / 15 and never writes it. No bit in common with CM848's word 32.",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "misfire_timing_limit_enable",
+      "comment": "e2m BSTALMEN (mask 01) 'MISFIRE TIMING LIMIT ALGORITHM ENABLE'; read by cm550_rpmLoadParameterLookup (0x26ac0: output_of_the_misfire_timing_limit_table_60_to_60 from the boost pressure x engine speed table e2m 8191 BSTATBZA) and vp44OperatingConditionChecker (0x26b0c: raises the timing advance to that limit and sets intermediate timing state 11); SET in the bench EEPROM (0xf241)"
+     },
+     {
+      "bit": 1,
+      "name": "reserved_bit_1",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess MPCACGEN 'ENABLES CASE SYSTEM CONFIGURATION MESSAGE PROCESSING' (0x2 in 16 later ISB e2m files); CM848 bit 1 is end_of_injection_limit_enable (different build); clear"
+     },
+     {
+      "bit": 2,
+      "name": "reserved_bit_2",
+      "comment": "no record in any ISB e2m and no test in the dumped ROM; CM848 bit 2 is equivalent_throttle_enable (different build); clear"
+     },
+     {
+      "bit": 3,
+      "name": "reserved_bit_3",
+      "comment": "no record in any e2m and no test in the dumped ROM; CM848 reserved_bit_3 too; clear"
+     },
+     {
+      "bit": 4,
+      "name": "ford_air_conditioning_enable",
+      "comment": "e2m ACFDEN (mask 0x10) 'WHETHER OR NOT AND HOW THE FORD AC IS ENABLED'; no test in the dumped ROM; clear; CM848 bit 4 is intake_air_heater_24_volt_enable"
+     },
+     {
+      "bit": 5,
+      "name": "cooling_system_monitor_enable",
+      "comment": "e2m CLMREN (mask 0x20) 'WHETHER OR NOT THE COOLING SYSTEM MONITOR IS ENABLED'; no test in the dumped ROM; clear"
+     },
+     {
+      "bit": 6,
+      "name": "intake_air_heater_control_enable",
+      "comment": "e2m IHEN (mask 0x40) 'INTAKE AIR HEATER CONTROL ALGORITHM ENABLE'; no test in the dumped ROM (a reader may sit in the undumped code above 0x40000); SET in the bench EEPROM; CM848 has the same flag at bit 0"
+     },
+     {
+      "bit": 7,
+      "name": "reserved_bit_7",
+      "comment": "e2m IHMREN (mask 0x80) 'WHETHER OR NOT AND HOW THE MISFIRE MONITOR IS ENA[BLED]' but the mnemonic reads intake heater monitor (IH as in IHEN / MR as in TBMREN and CLMREN); no test in the dumped ROM; guess misfire monitor enable or intake air heater monitor enable; clear"
+     },
+     {
+      "bit": 8,
+      "name": "turbocharger_monitor_enable",
+      "comment": "e2m TBMREN (mask 0x100) 'TURBOCHARGER MONITOR ENABLE'; no test in the dumped ROM; clear"
+     },
+     {
+      "bit": 9,
+      "name": "low_speed_governor_no_load_fuel_enable",
+      "comment": "e2m LSNLFLEN (mask 0x200) '(BIT X OF WORD Y) LSG USE OF LSG_NO_LOAD_FUEL_ENABLE'; read by vp44_FUN_00025a34 (0x25ab0: subtracts frictional_no_load_fueling from the low speed governor integrator preset) and cm550_runLowSpeedGovernor (0x25f72: adds it to the low speed governor PID output before the clamp); SET in the bench EEPROM"
+     },
+     {
+      "bit": 10,
+      "name": "clutch_switch_inversion_cancel_enable",
+      "comment": "e2m CHSWICEN (mask 0x400) 'TO CANCEL CLUTCH_SWITCH INVERSION'; read by mc68k_sampleAndDebounceDiscreteInputs (andi.w #0x400 at 0x150c6): XORs 0x400 into the discrete input sample; clear"
+     },
+     {
+      "bit": 11,
+      "name": "brake_switch_inversion_cancel_enable",
+      "comment": "e2m BRSWICEN (mask 0x800) 'TO CANCEL BRAKE_SWITCH INVERSION'; read by mc68k_sampleAndDebounceDiscreteInputs (andi.w #0x800 at 0x150ea): XORs 0x800 into the discrete input sample; clear"
+     },
+     {
+      "bit": 12,
+      "name": "oil_pressure_high_error_disable",
+      "comment": "e2m ADO2DBEN (mask 0x1000) 'FLAG (B12 W 020H) OIL PR. HIGH ERROR DISABLE FEAT[URE]'; no test in the dumped ROM; SET in the bench EEPROM"
+     },
+     {
+      "bit": 13,
+      "name": "vp44_governor_watchdog_enable",
+      "comment": "e2m VPGVWDEN (mask 0x2000) 'FLAG (B13 W 020H) VP44 GOVERNOR WATCHDOG FEATURE' (VP44 = the Bosch VP44 injection pump; one later file repeats the record as ADO2DBEN); no test in the dumped ROM; SET in the bench EEPROM"
+     },
+     {
+      "bit": 14,
+      "name": "air_fuel_control_coolant_temperature_adjustment_enable",
+      "comment": "e2m AFCLAJEN (mask 0x4000) 'ENABLES ADDITION OF COOLANT TEMP FUEL TO AFC' (AFC = air fuel control); read by cm550_fuelTimingTransitionStateMachine (andi.l #0x4000 at 0xc1d4): adds the coolant temperature x engine speed table to afc_derate_fuel_adjustment unless system error status word 2 bits 0 / 1 / 4 are latched; SET in the bench EEPROM"
+     },
+     {
+      "bit": 15,
+      "name": "full_fueling_coolant_temperature_adjustment_enable",
+      "comment": "e2m 5DCLAJEN (mask 0x8000) 'ENABLES ADDITION OF COOLANT TEMP FUEL TO 100% FUE[LING]'; read by cm550_FUN_0001cc72 (andi.l #0x8000 at 0x1cc9e): adds the coolant temperature x engine speed table to the 100 % throttle fueling at the high speed governor droop speed (full_fueling_value_at_hsg_bef_droop_speed_0_100) unless system error status word 2 bits 0 / 1 / 4 are latched; SET in the bench EEPROM"
+     }
+    ]
+   },
+   {
+    "word": 33,
+    "address": "0x803cd6",
+    "current_name": "(no row; renders _DAT_00803cd6)",
+    "proposed_name": "algorithm_enable_flags_33_cal",
+    "proposed_type": "cm550_algorithm_enable_flags_33_t",
+    "shared_with_cm848": false,
+    "code_tests": "bits 0 / 1 / 2: andi.w #1 at 0x1510e / #2 at 0x1512e / #4 at 0x1514e (mc68k_sampleAndDebounceDiscreteInputs). bit 4: andi.w #0x10 at 0x203a8 (cm550_FUN_00020380, the twin of cm848_processJ1939EngineRetarderSelection). 4 move.w reads.",
+    "writes": "none in the dumped ROM",
+    "differences_from_cm848": "CM848 has no row and no CHR e2m record for its word 33 (0x3fd5de). CM848 keeps the same engine brake datalink override (ADEBLVOD) at algorithm_enable_flags_13_t bit 0 (engine_retarder_switch_level_override, read by cm848_processJ1939EngineRetarderSelection); CM550 bit 4 takes that field name.",
+    "row_comment": "Algorithm enable flags word 33 (EEPROM 0x1cc; e2m 106B +44): cruise resume / set / on switch inversion cancels / battery voltage low at cranking / J1939 engine brake level override / actual sensor values / variable geometry turbocharger / turbocharger speed / low speed governor temperature idle adjust override / missing tooth found / ambient pressure control. Bench 0x0000. The dumped ROM tests bits 0 / 1 / 2 / 4 and never writes it. CM848 has no row or e2m record for its word 33.",
+    "fields": [
+     {
+      "bit": 0,
+      "name": "cruise_resume_switch_inversion_cancel_enable",
+      "comment": "e2m RUSWICEN (mask 01) 'TO CANCEL CRUISE_RESUME_SWITCH INVERSION'; read by mc68k_sampleAndDebounceDiscreteInputs (andi.w #1 at 0x1510e): XORs 2 into the discrete input sample; clear in the bench EEPROM (0x0000)"
+     },
+     {
+      "bit": 1,
+      "name": "cruise_set_switch_inversion_cancel_enable",
+      "comment": "e2m SESWICEN (mask 02) 'TO CANCEL CRUISE_SET_SWITCH INVERSION'; read by mc68k_sampleAndDebounceDiscreteInputs (andi.w #2 at 0x1512e): XORs 4 into the discrete input sample; clear"
+     },
+     {
+      "bit": 2,
+      "name": "cruise_on_switch_inversion_cancel_enable",
+      "comment": "e2m CRSWICEN (mask 04) 'TO CANCEL CRUISE_ON_SWITCH INVERSION'; read by mc68k_sampleAndDebounceDiscreteInputs (andi.w #4 at 0x1514e): XORs 8 into the discrete input sample; clear"
+     },
+     {
+      "bit": 3,
+      "name": "battery_voltage_low_at_cranking_enable",
+      "comment": "e2m DGBTCKEN (mask 08) 'BATTERY VOLTAGE LOW AT CRANKING FEATURE ENABLE FLAG'; no test in the dumped ROM; clear"
+     },
+     {
+      "bit": 4,
+      "name": "engine_retarder_switch_level_override",
+      "comment": "no record in v64t6_s; ADEBLVOD 'A/D OVERRIDE FOR ENGINE BRAKE SWITCH LEVEL' sits at +44 mask 0x10 in 10 later ISB e2m files (74be62rls .. Isbp700) and is CM848's algorithm_enable_flags_13_t bit 0 (same field name); read by cm550_FUN_00020380 (andi.w #0x10 at 0x203a8): set and the commanding source priority at least priority_of_client_which_is_currently_overriding_engine_brake_swi_0_ff = user_value_for_engine_brake_0_100 from the J1939 EBC1 engine retarder selection (raw x 4 / 10; timeout or 0xfe = global_default_for_engine_brake_0_100) - the twin of cm848_processJ1939EngineRetarderSelection; clear"
+     },
+     {
+      "bit": 5,
+      "name": "reserved_bit_5",
+      "comment": "no record in any ISB e2m and no test in the dumped ROM; clear"
+     },
+     {
+      "bit": 6,
+      "name": "actual_sensor_values_enable",
+      "comment": "e2m ADACSNEN (mask 40) 'ENABLE FLAG FOR ACTUAL SENSOR VALUES ALGORITHM'; no test in the dumped ROM; clear"
+     },
+     {
+      "bit": 7,
+      "name": "variable_geometry_turbocharger_enable",
+      "comment": "e2m VGAGEN (mask 80) 'ENABLE FLAG FOR VGT ALGORITHM' (VGT = variable geometry turbocharger; 4 other files put VPTPMREN fuel temperature monitor here); no test in the dumped ROM; clear"
+     },
+     {
+      "bit": 8,
+      "name": "turbocharger_speed_enable",
+      "comment": "e2m TBAGEN (mask 100) 'ENABLE FLAG FOR TURBOCHARGER SPEED ALGORITHM'; no test in the dumped ROM; clear"
+     },
+     {
+      "bit": 9,
+      "name": "low_speed_governor_temperature_idle_adjust_override_enable",
+      "comment": "e2m LSTPIHEN (mask 200) 'ENABLE FOR OVERRIDING THE TEMP IDLE ADJUST IN THE LSG' (LSG = low speed governor); no test in the dumped ROM; clear"
+     },
+     {
+      "bit": 10,
+      "name": "missing_tooth_found_enable",
+      "comment": "e2m MSTTFNEN (mask 400) 'MISSING TOOTH FOUND ENABLED = 1'; no test in the dumped ROM; clear"
+     },
+     {
+      "bit": 11,
+      "name": "reserved_bit_11",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess EQTHEN 'EQUIVALENT THROTTLE FEATURE ENABLE FLAG' (0x800 in 20 other ISB e2m files) or EXRSDVEN exhaust restrictor device (3 files); clear"
+     },
+     {
+      "bit": 12,
+      "name": "reserved_bit_12",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess MPCARSEN 'ENABLES CASE ASG AUTOMATIC RESCALING ALGORITHM' (0x1000 in 18 later ISB e2m files) or IHAAPREN ambient air pressure for the intake heater (3 files); clear"
+     },
+     {
+      "bit": 13,
+      "name": "reserved_bit_13",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess PTFTEN 'FIRE TRUCK SET/RESUME PTO ENABLE FLAG' (0x2000 in 18 later ISB e2m files) or TCSTLEN torque converter stall torque management (3 files); clear"
+     },
+     {
+      "bit": 14,
+      "name": "reserved_bit_14",
+      "comment": "no record in v64t6_s and no test in the dumped ROM; guess SMS_EN shift management system (0x4000 in 13 later files) / TCTCPTEN powertrain protection torque converter (4) / VSBKSWEN brake switch diagnostics (3); clear"
+     },
+     {
+      "bit": 15,
+      "name": "ambient_pressure_control_enable",
+      "comment": "e2m AAPRCOEN (mask 8000) 'AMBIENT PRESSURE CONTROL ALGORITHM ENABLE'; no test in the dumped ROM; clear"
+     }
+    ]
+   }
+  ],
+  "cm848_field_renames": [],
+  "notes": "Method: every abs.l reference to 0x803cc6-0x803cd7 in J90350.00.rom.bin (scratch hits68k.py), each hand-decoded. All 20 are move.w (abs).l,d0 + andi #single-bit-mask + branch. No writes, no odd-byte (btst) or long accesses, no tst. Indexed accesses from word 0 (movea.l #0x803c94,a0) reach only words 7-9 (bit 112+4n), words 13-14 (logical switch + 0xd0, cm550_FUN_000206a8 / cm550_FUN_00020890) and word 26 (bit 416+n, the two derate loops). llvm-mc-18 drops clr / addq / andi / moveq on m68k and loses address sync, so it is not reliable for whole functions here.\n\n'No test' always means none in the dumped 256 KB. 109 call targets above 0x40000 are undumped, and the bench EEPROM sets bits nothing in the dump tests: word 25 0x0180, word 27 bit 13, word 32 bits 6 / 12 / 13.\n\nBench EEPROM and RAM mirror agree: w25 0x0180, w26 0, w27 0x2010, w28 0, w32 0xf241, w33 0. The length word 0x803c92 reads 0x46 (70 bytes = words 0-34).\n\ne2m quirks:\n- v64t6_s (and every 5x/6x e2m) files MXLPANEA under +0x36. The code and the 7x/8x files say +0x34.\n- EPO3DXEN (word 26 bit 4, 'oil temperature') does not match the code's channel table: channel 4 is water in fuel, and v64t6_s has no EPO3 block.\n- Word 27's AHEN / TBAMEN / TBSPTMEN / TUWGEN / TUWGOVEN N records carry two bit numbers (5-9 and 11-15). I followed 5-9 (the leading number and every S-record mask). No CM550 code reads either set.\n\nJudgment calls the orchestrator can overrule cheaply:\n- Word 27 is cm550_ only because bits 11-13 have no J90350.00 proof. They match CM848 in 18 later ISB e2m files.\n- Word 28 bit 4 is named from the e2m group header 'INTEGRATED IDLE MANAGEMENT'. TAS is never spelled out.\n- Word 32 bit 7 (IHMREN) is reserved because its mnemonic and description disagree.\n- Word 33 bit 4 uses CM848's word-13 name for the same ADEBLVOD function.\n\nNo CM848 renames. CM848 word 28 reserved_bit_4 could add the ISTAEN guess to its comment: 27 ISB e2m files have 0x10, but CM848 itself has no record and no reader there.\n\nMisname and twin leads (not renamed here):\n- vp44SensorStatusMonitor (0x1d9b4) is the idle shutdown state machine: gated by word 3 bit 1 ISAGEN, suppressed by word 28 bit 4, and state 5 sets engine_shutdown_command_flag. Its _vp44_sensor_* globals are the idle shutdown timers.\n- cm550_FUN_0002041c / cm550_FUN_00020380 / cm550_FUN_000205c4 are the twins of cm848_processJ1939EngineFanRequestedSpeed / cm848_processJ1939EngineRetarderSelection / cm848_updateIdleSwitchesFromLocalInputs.\n- cm550_FUN_00019702 is the fault derate fuel-limit twin of cm550_calculateFaultDerateEngineSpeedLimit.\n- cm550_rpmLoadParameterLookup and vp44OperatingConditionChecker are the misfire timing limit (e2m BSTA*).\n- cm550_fuelTimingTransitionStateMachine computes the AFC derate fuel adjustment.\n- vp44_FUN_00025a34 is the low speed governor integrator preset.\n\nScratch (read-only work): /home/linux/.claude/jobs/374b0424/tmp/w15/r92/scratch/W4/ (hits68k.py, survey_e2m.py, survey_*.txt, cm848_106B.txt, findings_draft.txt)."
+ },
+ "verdict": {
+  "batch": "W4",
+  "verdicts": [
+   {
+    "element": "word 25",
+    "verdict": "CONFIRMED",
+    "reason": "0x803cc6 = 0x803c94 + 2 x 25 (e2m 106B +34, EEPROM 0x1bc; EEPROM and RAM dumps both 0x0180). Exactly 2 ROM references, both move.w (0x803cc6).l,d0 + andi.w (#0x8000 at 0x20440, #8 at 0x205e0); none to 0x803cc7, no write, no indexed reach (the 15 movea.l #0x803c94,a0 readers use bits 112-147, 208-280 and 416-424 only). All 16 field names equal CM848 algorithm_enable_flags_25_t and each bit has the same mnemonic (13 N records with the bit in the text, ADMNFMOD S mask 8000) or the same code twin (bits 3 and 15); bit 4 is reserved in both, so the shared type holds."
+   },
+   {
+    "element": "word 25 bit 0",
+    "verdict": "CONFIRMED",
+    "reason": "v64t6_s EBRTDFEN N record 'BIT 0 OF 0-15 - ENABLE BRAKE RATE LIMIT DEFEAT DURING ON/OFF TRANS' (S mask 1 in 18 later files); same mnemonic and text as CM848 bit 0; no CM550 test, clear in 0x0180."
+   },
+   {
+    "element": "word 25 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "TCEN 'POWERTRAIN PROTECTION ENABLE WORD 19H, BIT 1 OF 0 TO 15' (group PTP_07 powertrain protection; S mask 2 in 18 later files); same record as CM848 bit 1."
+   },
+   {
+    "element": "word 25 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "TCLDEN 'POWERTRAIN PROTECTION LUGBACK ENABLE WORD 19H, BIT 2 OF 0 TO 15' (S mask 4 later); same record as CM848 bit 2."
+   },
+   {
+    "element": "word 25 bit 3",
+    "verdict": "CONFIRMED",
+    "reason": "Code decides it: 30 39 00 80 3c c6 / 02 40 00 08 / 67 48 at 0x205e0 (cm550_FUN_000205c4): set = stores the raw throttle A/D in takes_raw_throttle_for_mux_limphome_on_a2d_0_1023 and compares it with 0x169, clear = the 100 / -50 debounce of the idle switch - the same structure as cm848_updateIdleSwitchesFromLocalInputs. v64t6_s and the other 13 5x/6x files file MXLPANEA at +36 mask 08, where it collides with EPO2DXEN bit 3 that the derate loops really read; the 18 7x/8x files and CM848 have +34 mask 8."
+   },
+   {
+    "element": "word 25 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "reserved_bit_4 is right: no v64t6_s record, no test; ISTSRVEN S mask 10 at +34 exists in 13 later files only; CM848 has no record or reader either (reserved_bit_4)."
+   },
+   {
+    "element": "word 25 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "SREN 'SMART RSG ENABLE WORD 19H, BIT 5 OF 0 TO 15' (group CRUISE CONTROL / ROAD SPEED GOVERNOR; S mask 20 later); same record as CM848 bit 5."
+   },
+   {
+    "element": "word 25 bit 6",
+    "verdict": "CONFIRMED",
+    "reason": "FCAKINEN 'AC INPUT ENABLE, BIT 6 OF WORD 19H' (group FAN_DRV fan clutch driver; S mask 40 later); same record as CM848 Fan_Clutch_1_AC_Enable."
+   },
+   {
+    "element": "word 25 bit 7",
+    "verdict": "CONFIRMED",
+    "reason": "FCCLINEN 'CT INPUT ENABLE, BIT 7 OF WORD 19H' (S mask 80 later); set in EEPROM and RAM (0x0180); same record as CM848 bit 7."
+   },
+   {
+    "element": "word 25 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "FCIMINEN 'IMT INPUT ENABLE, BIT 8 OF WORD 19H' (S mask 100 later); set in EEPROM and RAM (0x0180); same record as CM848 bit 8."
+   },
+   {
+    "element": "word 25 bit 9",
+    "verdict": "CONFIRMED",
+    "reason": "FCAKI2EN 'AC INPUT ENABLE, BIT 9 OF WORD 19H' (S mask 200 later); same record as CM848 bit 9."
+   },
+   {
+    "element": "word 25 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "FCAK02EN 'AC SWITCH ENABLE, BIT 10 OF WORD 19H' (S mask 400 later); 'pressure' comes from CM848's label Fan_Clutch_2_AC_Pressure_Enable for the same mnemonic and text."
+   },
+   {
+    "element": "word 25 bit 11",
+    "verdict": "CONFIRMED",
+    "reason": "FCCLI2EN 'CT INPUT ENABLE, BIT 11 OF WORD 19H' (S mask 800 later); same record as CM848 bit 11."
+   },
+   {
+    "element": "word 25 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "FCEBINEN 'FAN_CLUTCH_2_EB_ENABLE, BIT 12 OF WORD 19H' (S mask 1000 later); same record as CM848 bit 12."
+   },
+   {
+    "element": "word 25 bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "FCIMI2EN 'IMT INPUT ENABLE, BIT 13 OF WORD 19H' (S mask 2000 later); same record as CM848 bit 13."
+   },
+   {
+    "element": "word 25 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "FCSW02EN 'FAN_CLUTCH_2_MANUAL_INPUT_ENABLE, BIT 14 OF WORD 19H' (S mask 4000 later); same record as CM848 bit 14."
+   },
+   {
+    "element": "word 25 bit 15",
+    "verdict": "CONFIRMED",
+    "reason": "ADMNFMOD S mask 8000 in v64t6_s; code 30 39 00 80 3c c6 / 02 40 80 00 / 67 5e at 0x20440 (cm550_FUN_0002041c) gates the ADMNFMPZ priority compare and the fan request raw x 16 / 10 - the same body as cm848_processJ1939EngineFanRequestedSpeed, which tests this field."
+   },
+   {
+    "element": "word 26",
+    "verdict": "AMENDED",
+    "amendment": "Comment only; name algorithm_enable_flags_26_cal and type word unchanged. In the row comment replace 'calibration_feature_enable_flags_word_0' with 'algorithm_enable_flags_0_cal' (once batch W1's rename of word 0 lands in this same change), and replace '(the bit names below are for this comment only)' with '(plain word: the bit list above is documentation, no field is typed)' - a global row has nothing below it.",
+    "reason": "No reference to 0x803cc8 / 0x803cc9 anywhere in the ROM. The only reach is the bit index 0x1a0 + n: move.w #0x1a0,d2 at 0x18e24 (cm550_calculateFaultDerateEngineSpeedLimit) and 0x1971a (cm550_FUN_00019702), mask 1 << (d2 & 15) of word d2 >> 4 from 0x803c94, addq.w #1,d2 per 36-byte config from 0x807032 to 0x807176 = 9 channels = bits 0-8. A set bit skips the restart floor and the maximum, as the comment says. Plain word matches CM848 (its loops start at 0x1a4). EEPROM and RAM 0x0000."
+   },
+   {
+    "element": "word 26 bit 0",
+    "verdict": "CONFIRMED",
+    "reason": "EPCVDXEN 'BIT 0 OF 0-15. EPF COOLANT LEVEL ENABLE FOR HISTORY ONLY DATA.'; channel 0 config 0x807032 = e2m 10B7 EPCVCG coolant level; read as bit 416 + 0."
+   },
+   {
+    "element": "word 26 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "EPCQDXEN 'BIT 1 OF 0-15. EPF COOLANT TEMPERATURE ...'; channel 1 config 0x807056 = e2m 112B EPCQCG."
+   },
+   {
+    "element": "word 26 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "EPIMDXEN 'BIT 2 OF 0-15. EPF IMT ...'; channel 2 config 0x80707a = e2m 112C EPIMCG."
+   },
+   {
+    "element": "word 26 bit 3",
+    "verdict": "CONFIRMED",
+    "reason": "EPO2DXEN 'BIT 3 OF 0-15. EPF OIL PRESSURE ...'; channel 3 config 0x80709e = e2m 112D EPO2CG; the MXLPANEA record v64t6_s files here (mask 08) is read in word 25 by the code."
+   },
+   {
+    "element": "word 26 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "Code over e2m text: channel 4 config 0x8070c2 = e2m 112E EPWFCG water in fuel, and its EPWFFLEN..EPWFRYEN enables are word 8 masks 01-08 = bit 112 + 4 x 4, the index the same loops use. EPO3DXEN 'BIT 4 ... OIL TEMPERATURE' is the only EPO3 record in v64t6_s (builds with that channel carry 49). Comment-only name, fine."
+   },
+   {
+    "element": "word 26 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "No e2m record; by the loop bit 416 + 5 = channel 5 config 0x8070e6 = e2m 112F EPBSCG boost pressure (enables EPBS* at word 8 masks 10-80)."
+   },
+   {
+    "element": "word 26 bit 6",
+    "verdict": "CONFIRMED",
+    "reason": "No e2m record; channel 6 config 0x80710a = e2m 1130 EPFPCG engine sync fuel pressure (enables EPFP* at word 8 masks 100-800)."
+   },
+   {
+    "element": "word 26 bit 7",
+    "verdict": "CONFIRMED",
+    "reason": "No e2m record; channel 7 config 0x80712e = e2m 1131 EPFTCG fuel temperature (enables EPFT* word 8 bits 12-15)."
+   },
+   {
+    "element": "word 26 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "No e2m record; channel 8 config 0x807152 = e2m 1132 EPAACG ambient air pressure (enables EPAA* word 9 masks 01-08); the last config before 0x807176."
+   },
+   {
+    "element": "word 26 bit 9",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: the loops end at 0x807176 after channel 8, and no record in any e2m file."
+   },
+   {
+    "element": "word 26 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: no reader and no record."
+   },
+   {
+    "element": "word 26 bit 11",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: no reader and no record."
+   },
+   {
+    "element": "word 26 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: no reader and no record."
+   },
+   {
+    "element": "word 26 bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: no reader and no record."
+   },
+   {
+    "element": "word 26 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: no reader and no record."
+   },
+   {
+    "element": "word 26 bit 15",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: no reader and no record."
+   },
+   {
+    "element": "word 27",
+    "verdict": "CONFIRMED",
+    "reason": "0x803cca (e2m +38, EEPROM 0x1c0; EEPROM and RAM 0x2010). 4 ROM references, all move.w (abs).l,d0 reads: andi.l #8 at 0xd306 and 0xd4e8, andi.w #0x10 at 0xe9b4, andi.l #0x400 at 0x1da6c; no write, no odd-byte or indexed access. cm550_ type is right by the rule: CM848 names bits 11-13 but J90350.00 has no record or test for them (bit 13 is even set in the EEPROM with nothing to explain it). The names of bits 2-10 equal CM848's for the same mnemonics."
+   },
+   {
+    "element": "word 27 bit 0",
+    "verdict": "AMENDED",
+    "amendment": "Comment only; name reserved_bit_0 and bit unchanged. Replace '(mask 1 at +38 in 21 other ISB e2m files)' with '(an S record with mask 1 at +38 in 11 other e2m files; an N record with no bit in 10 more)'.",
+    "reason": "RTEN at +38 is S mask 1 in 11 files (63t10r4, 74be*, 74te4rls, 74te5rls, Isbp700) and an N record in 10 (63c5, 64c6, 74c0, 74c5, 74c6, 74t5, 74t6, 74te3rls, 84t0, v74t3_t); the '1' counted for those is the N record's scale column, not a mask. Reserved is right: no v64t6_s record and no test."
+   },
+   {
+    "element": "word 27 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: CRMFOGEA is an N record with no bit in v64t6_s (S mask 2 in 18 later files and CM848), OOG is never expanded, and CM848 keeps reserved_bit_1 for the same record; no test."
+   },
+   {
+    "element": "word 27 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "EBAEDYEN 'BIT 2, TO DELAY ON E-BRAKE TRANSITION' (group ENGBRK05; S mask 4 in 18 later files); same mnemonic as CM848 bit 2; no CM550 test."
+   },
+   {
+    "element": "word 27 bit 3",
+    "verdict": "CONFIRMED",
+    "reason": "STCGASDS '... (BIT 3 OF 0 - 15)'; 30 39 00 80 3c ca / 02 80 00 00 00 08 at 0xd306 (bne: clear + interlock switch bit 1 toggles the all speed governor throttle source) and 0xd4e8 (beq: set + interlock switch toggles stcg_enable_...); matches CM848 '0=ASG_DROOP, 1=STCG'."
+   },
+   {
+    "element": "word 27 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "DGBSIREN is an N record with no bit in v64t6_s; the code fixes it: andi.w #0x10 at 0xe9b4 (cm550_FUN_0000e998) guards the whole BIR-high check (boost_threshold_for_bir_high_error, time_needed_for_out_of_range_high_boost_for_setting_birh_error); S mask 10 in 18 later files and CM848; set in the EEPROM (0x2010)."
+   },
+   {
+    "element": "word 27 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "AHEN 'BIT 5 ENABLE/DISABLE FOR AIR HANDELING FEATURE. BIT 11 ...' (N record, two numbers). The identical text sits beside S mask 20 in 18 later files and CM848, where 0x800 belongs to AT01EN, so the trailing number cannot be the position. No CM550 code tests either bit; clear in 0x2010."
+   },
+   {
+    "element": "word 27 bit 6",
+    "verdict": "CONFIRMED",
+    "reason": "TBAMEN 'BIT 6 ... AIRMASS CALCULATION. BIT 12 OF 0-15'; same text with S mask 40 in 18 later files and CM848 (0x1000 there is ATAULOEN); no CM550 test."
+   },
+   {
+    "element": "word 27 bit 7",
+    "verdict": "CONFIRMED",
+    "reason": "TBSPTMEN 'BIT 7 ... TURBIN SPEED /TEMP. CALC. BIT 13 OF 0-15'; same text with S mask 80 in 18 later files and CM848 (0x2000 there is SRRMEN); no CM550 test."
+   },
+   {
+    "element": "word 27 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "TUWGEN '... 4 STEP WG CONTROL. BIT8 15 OF 0-15' (group '4 STEP WG CONTROLER'); same text with S mask 100 in 18 later files and CM848; no CM550 test."
+   },
+   {
+    "element": "word 27 bit 9",
+    "verdict": "CONFIRMED",
+    "reason": "TUWGOVEN 'BIT9 ... TOOL OVERRIDE OF WASTEGATES. BIT 14 OF'; same text with S mask 200 in 18 later files and CM848; no CM550 test."
+   },
+   {
+    "element": "word 27 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "ISAATPEN S mask 400 'BIT 10 OF 15. SELECTS THE TEMP. INTERACTION OPTION FOR I...' (group IDLE_D08 idle shutdown); andi.l #0x400 at 0x1da6c in state 1 of the state machine gated by ISAGEN (word 3 mask 02) that counts down ISTMLM (0x803c02) and warns at ISWRTMLM (0x808150): set + the condition flag = state 3 (600 passes) instead of state 2."
+   },
+   {
+    "element": "word 27 bit 11",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no v64t6_s record, no test; AT01EN S mask 800 exists in 18 later files only, and AHEN's trailing 'BIT 11' adds doubt."
+   },
+   {
+    "element": "word 27 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right: no v64t6_s record, no test; ATAULOEN S mask 1000 in 18 later files only."
+   },
+   {
+    "element": "word 27 bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is right although the bit is SET in EEPROM and RAM (0x2010): no v64t6_s record, no test in the dumped ROM; SRRMEN S mask 2000 in 18 later files is the likely meaning but not proven for this build."
+   },
+   {
+    "element": "word 27 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: no v64t6_s record, no test; CZEN mask 4000 in v74t3_t only; CM848 reserved too."
+   },
+   {
+    "element": "word 27 bit 15",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: no v64t6_s record, no test; OMEN mask 8000 in v74t3_t only; CM848 reserved too."
+   },
+   {
+    "element": "word 28",
+    "verdict": "CONFIRMED",
+    "reason": "0x803ccc (e2m +3A, EEPROM 0x1c2; EEPROM and RAM 0x0000). 2 ROM references, both move.w (abs).l,d0 + andi.l #0x10 (0x15470 beq, 0x1d9da bne); no write. v64t6_s has only ISTAEN at +3A, so one named bit and a cm550_ type are right (CM848 names 7 other bits and keeps bit 4 reserved)."
+   },
+   {
+    "element": "word 28 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "ISTAEN S mask 10 'ENABLES TAS FEATURE.' is the only member of v64t6_s group 133 IIMSGR0 'INTEGRATED IDLE MANAGEMENT', so the name is the e2m's own. Code agrees: at 0x1d9da the bit set skips the ISAGEN idle shutdown state machine; at 0x15470 the bit set + a rising edge of the on switch (sample bit 3) at zero road speed latches 0x40, consistent with ISTASSW 'VIRTUAL SWITCH MAPPED FROM CRUISE_ON_SWITCH. INDICATES IIMS ON.' in later files. TAS itself is never expanded in any file."
+   },
+   {
+    "element": "word 28 bit 0",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: no record at mask 1 in any e2m file, no test."
+   },
+   {
+    "element": "word 28 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: no record at mask 2 in any e2m file, no test."
+   },
+   {
+    "element": "word 28 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: no record at mask 4 in any e2m file, no test."
+   },
+   {
+    "element": "word 28 bit 3",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: ESNKASEN mask 8 in 18 later files only; no v64t6_s record, no test."
+   },
+   {
+    "element": "word 28 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: ESALASEN mask 20 in 18 later files only; no v64t6_s record, no test."
+   },
+   {
+    "element": "word 28 bit 6",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: ISEKGEN mask 40 in 18 later files only; no v64t6_s record, no test."
+   },
+   {
+    "element": "word 28 bit 7",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: STLOCKEN mask 80 in 18 later files only; no v64t6_s record, no test."
+   },
+   {
+    "element": "word 28 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: TCWGTCEN mask 100 in 18 later files only; no v64t6_s record, no test."
+   },
+   {
+    "element": "word 28 bit 9",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: no record at mask 200 in any e2m file, no test."
+   },
+   {
+    "element": "word 28 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: JC39MXEA mask 400 in 18 later files only; the dumped ROM has no andi #0x400 on 0x803ccc (CM848 reads its bit 10; CM550 does not)."
+   },
+   {
+    "element": "word 28 bit 11",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: ISBKDLEN mask 800 in 18 later files, AILSISEN mask 800 in 4 (63c5, 63t10r4, 63t5, v63t5_s); neither in v64t6_s, no test."
+   },
+   {
+    "element": "word 28 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: ATRNGNEN mask 1000 in 18 later files only; no test."
+   },
+   {
+    "element": "word 28 bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: SLNOCTEN mask 2000 in 18 later files only; no test."
+   },
+   {
+    "element": "word 28 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: OTIRDGEN mask 4000 in 13 later files only; no test."
+   },
+   {
+    "element": "word 28 bit 15",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: LSQAIHEN mask 8000 in 13 later files only; no test."
+   },
+   {
+    "element": "word 32",
+    "verdict": "CONFIRMED",
+    "reason": "0x803cd4 (e2m +42 'W 020H', EEPROM 0x1ca; EEPROM and RAM 0xf241 = bits 0 6 9 12 13 14 15). 8 ROM references, all move.w (abs).l,d0 + andi: #1 at 0x26ac0 (w) and 0x26b0c (l), #0x200 at 0x25ab0 and 0x25f72, #0x400 at 0x150c6, #0x800 at 0x150ea, #0x4000 at 0xc1d4, #0x8000 at 0x1cc9e; no write. The row timing_governor_feature_enable_flags is the only use of that name in output/*.csv (the archived context_tier2 result CSVs also carry it). No bit shared with CM848's word 32 (its e2m has masks 1 / 2 / 7 / 10 only and its code reads only those four fields), so cm550_ type and no CM848 rename."
+   },
+   {
+    "element": "word 32 bit 0",
+    "verdict": "CONFIRMED",
+    "reason": "BSTALMEN S mask 01 'MISFIRE TIMING LIMIT ALGORITHM ENABLE'; andi.w #1 at 0x26ac0 gates the lookup into output_of_the_misfire_timing_limit_table_60_to_60 and andi.l #1 at 0x26b0c the raise of the timing to it (state 11); set in the EEPROM."
+   },
+   {
+    "element": "word 32 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: MPCACGEN mask 2 in 16 other files only; no v64t6_s record, no test."
+   },
+   {
+    "element": "word 32 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: no record at mask 4 in any CM550-family e2m file, no test."
+   },
+   {
+    "element": "word 32 bit 3",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: no record at mask 8 in any e2m file, no test."
+   },
+   {
+    "element": "word 32 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "ACFDEN S mask 10 'WHETHER OR NOT AND HOW THE FORD AC IS ENABLED' (31 files); no test; clear."
+   },
+   {
+    "element": "word 32 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "CLMREN S mask 20 'WHETHER OR NOT THE COOLING SYSTEM MONITOR IS ENABLED'; no test; clear."
+   },
+   {
+    "element": "word 32 bit 6",
+    "verdict": "CONFIRMED",
+    "reason": "IHEN S mask 40 'INTAKE AIR HEATER CONTROL ALGORITHM ENABLE' (31 files); no test in the dumped ROM; set in the EEPROM."
+   },
+   {
+    "element": "word 32 bit 7",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved is defensible: IHMREN S mask 80 says 'MISFIRE MONITOR' but every other IH mnemonic in v64t6_s (IHEN, IHPH*, IHUO ...) is the intake air heater and the file has no misfire monitor group; no code test resolves it."
+   },
+   {
+    "element": "word 32 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "TBMREN S mask 100 'TURBOCHARGER MONITOR ENABLE' (all 36 files); no test; clear."
+   },
+   {
+    "element": "word 32 bit 9",
+    "verdict": "AMENDED",
+    "amendment": "Comment only; name low_speed_governor_no_load_fuel_enable and bit unchanged. Quote the record as '(BIT X OF WORD Y) LSG USE OF LSG_NO_LOAD_FUEL_ENA[BLE]' (brackets as in the other truncated quotes).",
+    "reason": "LSNLFLEN S mask 200; andi.w #0x200 at 0x25ab0 (subtracts frictional_no_load_fueling in the integrator preset) and 0x25f72 (adds it to the low speed governor output before the clamp); set in the EEPROM. v64t6_s truncates the text at 'LSG_NO_LOAD_FUEL_ENA'; the full 'ENABLE' is only in 42t9_rls / 44t9 / Isbp400 / Phase4."
+   },
+   {
+    "element": "word 32 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "CHSWICEN S mask 400 'TO CANCEL CLUTCH_SWITCH INVERSION'; andi.w #0x400 at 0x150c6 XORs 0x400 into the first sample dword = 1 << logical switch 10, the clutch switch (j1939_input_signal_descriptor_table entry 4)."
+   },
+   {
+    "element": "word 32 bit 11",
+    "verdict": "CONFIRMED",
+    "reason": "BRSWICEN S mask 800 'TO CANCEL BRAKE_SWITCH INVERSION'; andi.w #0x800 at 0x150ea XORs 0x800 = 1 << logical switch 11, the brake switch (descriptor entry 3)."
+   },
+   {
+    "element": "word 32 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "ADO2DBEN S mask 1000 'FLAG (B12 W 020H) OIL PR. HIGH ERROR DISABLE FEAT'; no test; set in the EEPROM."
+   },
+   {
+    "element": "word 32 bit 13",
+    "verdict": "AMENDED",
+    "amendment": "Comment only; name vp44_governor_watchdog_enable and bit unchanged. Replace 'one later file repeats the record as ADO2DBEN' with 'the sibling file 64t4 carries the same record under the mnemonic ADO2DBEN'.",
+    "reason": "VPGVWDEN S mask 2000 'FLAG (B13 W 020H) VP44 GOVERNOR WATCHDOG FEATURE' in 26 files; the one ADO2DBEN duplicate at mask 2000 is in 64t4, a 6x sibling of v64t6_s, not a later file. No test; set in the EEPROM."
+   },
+   {
+    "element": "word 32 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "AFCLAJEN S mask 0x4000 'ENABLES ADDITION OF COOLANT TEMP FUEL TO AFC'; andi.l #0x4000 at 0xc1d4 adds the coolant temperature x speed lookup to afc_derate_fuel_adjustment unless status word 2 bits 1 / 0 / 4 are latched; set in the EEPROM. AFC is spelled out."
+   },
+   {
+    "element": "word 32 bit 15",
+    "verdict": "AMENDED",
+    "amendment": "Comment only; name full_fueling_coolant_temperature_adjustment_enable and bit unchanged. Replace 'adds the coolant temperature x engine speed table to the 100 % throttle fueling at the high speed governor droop speed (full_fueling_value_at_hsg_bef_droop_speed_0_100)' with 'adds the coolant temperature x engine speed table to all three full fueling values it computes: fueling_value_at_100_throttle_0_100, full_fueling_value_at_hsg_bef_droop_speed_0_100 and fueling_provided_if_engine_were_using_low_hp_curve_0_100 (the block runs only while word 18 bit 9 is clear)'.",
+    "reason": "5DCLAJEN S mask 0x8000 'ENABLES ADDITION OF COOLANT TEMP FUEL TO 100% FUE'; andi.l #0x8000 at 0x1cc9e selects the table value sVar1, which cm550_FUN_0001cc72 then adds to three outputs, not one; the comment names only the high speed governor one."
+   },
+   {
+    "element": "word 33",
+    "verdict": "CONFIRMED",
+    "reason": "0x803cd6 (e2m +44, EEPROM 0x1cc; EEPROM and RAM 0x0000; inside the 0x46-byte table). 4 ROM references, all move.w (abs).l,d0 + andi.w: #1 at 0x1510e, #2 at 0x1512e, #4 at 0x1514e, #0x10 at 0x203a8; no write. CM848 has no row, no e2m record (+0044 is empty) and no reference to 0x3fd5de, so a cm550_ type is right."
+   },
+   {
+    "element": "word 33 bit 0",
+    "verdict": "CONFIRMED",
+    "reason": "RUSWICEN S mask 01 'TO CANCEL CRUISE_RESUME_SWITCH INVERSION'; andi.w #1 at 0x1510e XORs 2 = 1 << logical switch 1, the cruise control resume switch (descriptor entry 6)."
+   },
+   {
+    "element": "word 33 bit 1",
+    "verdict": "CONFIRMED",
+    "reason": "SESWICEN S mask 02 'TO CANCEL CRUISE_SET_SWITCH INVERSION'; andi.w #2 at 0x1512e XORs 4 = 1 << logical switch 2, the cruise control set switch (descriptor entry 7)."
+   },
+   {
+    "element": "word 33 bit 2",
+    "verdict": "CONFIRMED",
+    "reason": "CRSWICEN S mask 04 'TO CANCEL CRUISE_ON_SWITCH INVERSION'; andi.w #4 at 0x1514e XORs 8 = 1 << logical switch 3, the cruise control enable switch (descriptor entry 5)."
+   },
+   {
+    "element": "word 33 bit 3",
+    "verdict": "CONFIRMED",
+    "reason": "DGBTCKEN S mask 08 'BATTERY VOLTAGE LOW AT CRANKING FEATURE ENABLE FLAG'; no test; clear."
+   },
+   {
+    "element": "word 33 bit 4",
+    "verdict": "CONFIRMED",
+    "reason": "30 39 00 80 3c d6 / 02 40 00 10 / 67 62 at 0x203a8 (cm550_FUN_00020380) gates the compare with ADEBLVPZ (v64t6_s 12F7 +1A 'PRIORITY OF CLIENT WHICH IS CURRENTLY OVERRIDING ENGINE BRAKE SWI') and the EBC1 retarder selection raw x 4 / 10 - the body of cm848_processJ1939EngineRetarderSelection, whose gate is CM848's ADEBLVOD field of this name. ADEBLVOD is S mask 10 at +44 in 10 later files; v64t6_s lacks the record, the code supplies the proof."
+   },
+   {
+    "element": "word 33 bit 5",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: no record at mask 20 in any e2m file, no test."
+   },
+   {
+    "element": "word 33 bit 6",
+    "verdict": "CONFIRMED",
+    "reason": "ADACSNEN S mask 40 'ENABLE FLAG FOR ACTUAL SENSOR VALUES ALGORITHM'; no test; clear."
+   },
+   {
+    "element": "word 33 bit 7",
+    "verdict": "CONFIRMED",
+    "reason": "VGAGEN S mask 80 'ENABLE FLAG FOR VGT ALGORITHM' (19 files; 4 older files have VPTPMREN there); VGT spelled out; no test; clear."
+   },
+   {
+    "element": "word 33 bit 8",
+    "verdict": "CONFIRMED",
+    "reason": "TBAGEN S mask 100 'ENABLE FLAG FOR TURBOCHARGER SPEED ALGORITHM'; no test; clear."
+   },
+   {
+    "element": "word 33 bit 9",
+    "verdict": "CONFIRMED",
+    "reason": "LSTPIHEN S mask 200 'ENABLE FOR OVERRIDING THE TEMP IDLE ADJUST IN THE LSG'; LSG spelled out; no test; clear."
+   },
+   {
+    "element": "word 33 bit 10",
+    "verdict": "CONFIRMED",
+    "reason": "MSTTFNEN S mask 400 'MISSING TOOTH FOUND ENABLED = 1'; no test; clear."
+   },
+   {
+    "element": "word 33 bit 11",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: EQTHEN mask 800 in 20 other files and EXRSDVEN in 3, none in v64t6_s; no test."
+   },
+   {
+    "element": "word 33 bit 12",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: MPCARSEN mask 1000 in 18 other files and IHAAPREN in 3, none in v64t6_s; no test."
+   },
+   {
+    "element": "word 33 bit 13",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: PTFTEN mask 2000 in 18 other files and TCSTLEN in 3, none in v64t6_s; no test."
+   },
+   {
+    "element": "word 33 bit 14",
+    "verdict": "CONFIRMED",
+    "reason": "Reserved: SMS_EN mask 4000 in 13 files, TCTCPTEN in 4, VSBKSWEN in 3, none in v64t6_s; no test."
+   },
+   {
+    "element": "word 33 bit 15",
+    "verdict": "CONFIRMED",
+    "reason": "AAPRCOEN S mask 8000 'AMBIENT PRESSURE CONTROL ALGORITHM ENABLE'; no test; clear."
+   }
+  ],
+  "overall": "Nothing refuted. I reproduced every reference from the ROM bytes: 20 absolute references to 0x803cc6-0x803cd7, all 30 39 (move.w (abs).l,d0) followed by andi.w / andi.l with one bit and beq / bne; none to an odd address, to 0x803cc8 / 0x803cc9, or to the EEPROM addresses 0x010001bc-0x010001cd; no write, tst, btst or pointer to any of the six words (the block as a whole has 137 move.w reads, 15 movea.l #0x803c94,a0 indexed reads and one pointer to word 13). Masks, addresses and andi sizes in the proposal all match. EEPROM and RAM dumps: 0x0180 / 0 / 0x2010 / 0 / 0xf241 / 0, length 0x46. Word 25's 16 names and word 27's bits 0-10 are character-identical to CM848's types. Five comment-only amendments: word 26 row (stale name of word 0), word 27 bit 0 (RTEN count), word 32 bit 9 (truncated quote), word 32 bit 13 (64t4 is a sibling, not later), word 32 bit 15 (three outputs). The empty cm848_field_renames list is right: CM848's CHR e2m has no record at +3A mask 0x10 (ISTAEN appears only inside STLOCKEN's text) and its .cpp renders only j1939_multiplex_enable for word 28, so its reserved_bit_4 stays; CM848 word 32 bits 5-15 likewise have no record and no reader (only fields 0 / 1 / 2 / 4 are rendered). Corrections outside the elements: (1) the notes say the indexed accesses reach only words 7-9, 13-14 and 26; logical switch + 0xd0 reaches words 13-17: the descriptor table at 0x20108 holds switches 72 / 60 / 58 / 56 / 54 (bits 280 / 268 / 266 / 264 / 262 = word 17 bit 8 and word 16 bits 12 / 10 / 8 / 6) and cm550_FUN_000206a8 is called with 0x36 / 0x21 / 0x20 (word 16 bit 6, word 15 bits 1 / 0). Harmless for W4 (the maximum is bit 280) but it bears on W3's words 15 and 17 'no access by its own address'. (2) Cosmetic: each 'andi ... at 0x...' address in the comments is the move.w that starts the test; the andi is 6 bytes later. Two facts for the record, no verdict change: the code reads MXLPANEA at +34 where v64t6_s files it at +36, and it tests +44 mask 10 although v64t6_s has no ADEBLVOD record (it does have the companion ADEBLVPZ); both agree with the 7x-generation e2m files. The bits known only from those later files (word 27 bits 11-13, word 28 bits 3 / 5-8 / 10-15, word 33 bits 11-14) are still unproven for this build, and reserved is the right call. Scratch (read-only work, nothing in the repository touched): /home/linux/.claude/jobs/374b0424/tmp/w15/r92/scratch/W4/sk2_scan.py, sk2_bases.py, sk2_func.py, sk2_survey.py, sk2_compare.py, sk2_validate.py, sk2_verdicts.json."
+ }
+}
