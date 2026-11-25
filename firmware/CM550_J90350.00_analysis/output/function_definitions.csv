@@ -13,12 +13,12 @@ function_address,function_name,param_index,name,type,comment
 0x00022726,sendJ1939MultiFrame,0,msg,j1939_tx_msg_t*,The transmit descriptor - the long at +4 ((8;a6) after link a6) (PR #53 round 88)
 0x00022e5e,vp44CanMessageDispatcher,0,rx_msg,can_std_rx_desc_t*,Pointer to received CAN message descriptor
 0x00022b50,vp44FuelTempHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to VP44 fuel temp CAN message
-0x00022956,diagnosticParamRequestHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to diagnostic parameter request message
-0x00022d8e,diagnosticStatusRequestHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to diagnostic status request message
-0x00022de2,diagnosticErrorHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to diagnostic error message
+0x00022956,cm550_diagnosticParamRequestHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to diagnostic parameter request message
+0x00022d8e,cm550_diagnosticStatusRequestHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to diagnostic status request message
+0x00022de2,vp44_diagnosticErrorHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to diagnostic error message
 0x00032b38,vp44_diagnosticByteResponseSender,0,first_data_byte,byte,The low byte of the word at +4 (move.b (9;a6)) - stored to 0x803470 - the transmit message's first data byte (new; PR #53 round 86)
 0x00032b38,vp44_diagnosticByteResponseSender,1,response_code,ushort,Diagnostic response code to send - the word at +6 - its address goes to byteSwap16 (pea (10;a6)) (was index 0 - it sat on +6 only through the 4-byte slots; PR #53 round 86)
-0x0002ef4a,diagnosticByteResponseDispatcher,0,msg_ptr,int,Pointer to diagnostic message structure
+0x0002ef4a,cm550_FUN_0002ef4a,0,msg_ptr,int,Pointer to diagnostic message structure
 
 # -----------------------------------------------------------------------------
 # Huffman Compression Functions
@@ -34,13 +34,13 @@ function_address,function_name,param_index,name,type,comment
 0x00034f8a,cm550_exponentialMovingAverage,0,new_sample,ushort,The sample - the word at +4 (move.w (8;a6))
 0x00034f8a,cm550_exponentialMovingAverage,1,filter_state,ema_filter_state_t*,The filter record - the long at +6 (movea.l (10;a6)) (PR #53 round 88)
 0x00034de0,lookupTableInterpolation,0,args,table_interp_args_t*,Pointer to table interpolation arguments structure
-0x00035088,twoDimensionalTableInterpolation,0,table_args,short*,Pointer to 2D table arguments structure
-0x00035064,unsignedMultiplyDivide,0,multiplicand,uint,First value to multiply
-0x00035064,unsignedMultiplyDivide,1,multiplier,uint,Second value to multiply
-0x00035064,unsignedMultiplyDivide,2,divisor,uint,Value to divide the product by
-0x00035076,signedMultiplyDivide64,0,multiplicand,int,First signed value to multiply
-0x00035076,signedMultiplyDivide64,1,multiplier,int,Second signed value to multiply
-0x00035076,signedMultiplyDivide64,2,divisor,int,Signed value to divide the product by
+0x00035088,cm550_tableLookup2D,0,table_args,short*,Pointer to 2D table arguments structure
+0x00035064,cm550_scaleByRatio,0,multiplicand,uint,First value to multiply
+0x00035064,cm550_scaleByRatio,1,multiplier,uint,Second value to multiply
+0x00035064,cm550_scaleByRatio,2,divisor,uint,Value to divide the product by
+0x00035076,cm550_scaleByRatioSigned,0,multiplicand,int,First signed value to multiply
+0x00035076,cm550_scaleByRatioSigned,1,multiplier,int,Second signed value to multiply
+0x00035076,cm550_scaleByRatioSigned,2,divisor,int,Signed value to divide the product by
 0x00034f00,cm550_secondOrderFilter,return,,word,The integer part of the new output (swap d2 / move.w d2;d0)
 0x00034f00,cm550_secondOrderFilter,0,input,ushort,The input - the word at +4 (move.w (20;sp) after a movem of 4 registers)
 0x00034f00,cm550_secondOrderFilter,1,filter,second_order_filter_state_t*,The filter record - the long at +6 (movea.l (22;sp)) (PR #53 round 88)
@@ -66,13 +66,13 @@ function_address,function_name,param_index,name,type,comment
 0x0001c016,cm550_circularBufferInit,0,buffer_ctrl,uint*,Pointer to circular buffer control structure
 0x0001c016,cm550_circularBufferInit,1,base_address,uint,Base memory address for buffer data
 0x0001c016,cm550_circularBufferInit,2,buffer_size,ushort,Size of buffer in bytes - the word at +12 (move.w (12;sp)); cm550_initHourMeterSystem pushes move.w #10 (was uint; PR #53 round 86)
-0x0001bfa2,circularBufferPush,0,buffer_ctrl,uint*,Pointer to circular buffer control structure
-0x0001bfa2,circularBufferPush,1,data_byte,byte,Byte value to push onto buffer
-0x0001bfde,circularBufferPop,0,buffer_ctrl,uint*,Pointer to circular buffer control structure
-0x0001bfde,circularBufferPop,1,data_out,byte*,Pointer to store popped byte value
-0x00016c3c,parameterCircularBufferWrite,0,dest_address,int,Destination EEPROM/RAM address
-0x00016c3c,parameterCircularBufferWrite,1,source_ptr,byte*,Pointer to source data
-0x00016c3c,parameterCircularBufferWrite,2,byte_count,ushort,Number of bytes to write
+0x0001bfa2,cm550_circularBufferPush,0,buffer_ctrl,uint*,Pointer to circular buffer control structure
+0x0001bfa2,cm550_circularBufferPush,1,data_byte,byte,Byte value to push onto buffer
+0x0001bfde,cm550_circularBufferPop,0,buffer_ctrl,uint*,Pointer to circular buffer control structure
+0x0001bfde,cm550_circularBufferPop,1,data_out,byte*,Pointer to store popped byte value
+0x00016c3c,cm550_parameterCircularBufferWrite,0,dest_address,int,Destination EEPROM/RAM address
+0x00016c3c,cm550_parameterCircularBufferWrite,1,source_ptr,byte*,Pointer to source data
+0x00016c3c,cm550_parameterCircularBufferWrite,2,byte_count,ushort,Number of bytes to write
 
 # -----------------------------------------------------------------------------
 # Flash Programming Functions
@@ -104,21 +104,21 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Protection System Functions
 # -----------------------------------------------------------------------------
-0x00018f86,protectionStateUpdater,0,source_ptr,int,Pointer to source protection state data
-0x00018f86,protectionStateUpdater,1,dest_ptr,int,Pointer to destination statistics structure
-0x00018f86,protectionStateUpdater,2,condition_flag,ushort,Protection condition flag (0=normal 1=fault)
+0x00018f86,incrementDiagnosticCounters,0,source_ptr,int,Pointer to source protection state data
+0x00018f86,incrementDiagnosticCounters,1,dest_ptr,int,Pointer to destination statistics structure
+0x00018f86,incrementDiagnosticCounters,2,condition_flag,ushort,Protection condition flag (0=normal 1=fault)
 0x00018968,cm550_protectionConditionEvaluator,0,threshold_ptr,ushort*,Pointer to threshold configuration
 0x00018968,cm550_protectionConditionEvaluator,1,state_ptr,uint*,Pointer to protection state data
 0x00018968,cm550_protectionConditionEvaluator,2,threshold_set_select,ushort,The word at +12 (tst.w (32;sp)): 0 reads state_ptr + 10 / threshold_ptr[8] / [0x10] - otherwise state_ptr + 0x12 / [9] (new; PR #53 round 86)
 0x00018968,cm550_protectionConditionEvaluator,3,sensor_value,ushort,Current sensor value to evaluate - the word at +14 (move.w (34;sp)) (was index 2 - it sat on +14 only through the 4-byte slots; PR #53 round 86)
-0x00018c1c,diagnosticProtectionProcessor,0,config_ptr,ushort*,Pointer to protection configuration
-0x00018c1c,diagnosticProtectionProcessor,1,state_offset,int,Offset into protection state table
-0x00018c1c,diagnosticProtectionProcessor,2,threshold_value,int,Threshold value for comparison
+0x00018c1c,cm550_diagnosticProtectionProcessor,0,config_ptr,ushort*,Pointer to protection configuration
+0x00018c1c,cm550_diagnosticProtectionProcessor,1,state_offset,int,Offset into protection state table
+0x00018c1c,cm550_diagnosticProtectionProcessor,2,threshold_value,int,Threshold value for comparison
 
 # -----------------------------------------------------------------------------
 # Fueling Control Functions
 # -----------------------------------------------------------------------------
-0x0001e02a,fuelingValueClamp,0,fuel_value_ptr,short*,Pointer to fueling value to clamp (0-5888)
+0x0001e02a,cm550_subtractAndClampValue,0,fuel_value_ptr,short*,Pointer to fueling value to clamp (0-5888)
 0x0001cb76,cm550_calculateBlendedTableValue,0,fuel_table_x_input,ushort,Stored to 0x80d378 / 0x80d38e (both table descriptors + 6) - the word at +4 (move.w (8;a6)) (new; PR #53 round 86)
 0x0001cb76,cm550_calculateBlendedTableValue,1,throttle_input,ushort,The word at +6 (move.w (10;a6)) - stored to fuel_table_primary / secondary_throttle_input (was rpm_index; PR #53 round 86)
 0x0000faa6,cm550_calculateGovernorDroopSpeed,0,breakpoint_fueling,ushort,The fueling written to torque curve breakpoints 2 and 5 and subtracted from the full fueling at the droop start - the word at +4 (move.w (12;sp) after a movem of 2 registers) (new; PR #53 round 86)
@@ -147,8 +147,8 @@ function_address,function_name,param_index,name,type,comment
 0x0003460e,lookupApplicationMemoryRegionType,return,,MEMORY_REGION_TYPE,The first application_memory_region_table entry holding the range - UNMAPPED for none (PR #53 round 72)
 0x0003460e,lookupApplicationMemoryRegionType,0,range_start,uint,The range's first address - the long at +4 (movea.l (12;sp)) (unchanged; was target_address; PR #53 round 72)
 0x0003460e,lookupApplicationMemoryRegionType,1,range_length,ushort,Its length in bytes - the word at +8 (move.w (16;sp)); the 7 callers push a word (was uint with the upper-half workaround; PR #53 round 86)
-0x00010520,arrayRangeSum,0,start_ptr,short*,Pointer to start of array
-0x00010520,arrayRangeSum,1,end_ptr,short*,Pointer to end of array
+0x00010520,cm550_arrayRangeSum,0,start_ptr,short*,Pointer to start of array
+0x00010520,cm550_arrayRangeSum,1,end_ptr,short*,Pointer to end of array
 
 # -----------------------------------------------------------------------------
 # Timing and Delay Functions
@@ -204,10 +204,10 @@ function_address,function_name,param_index,name,type,comment
 
 # diagnosticServiceSecurityValidator @ 0x21982 - Checks if service requires auth and validates
 # Returns 0xFF on success (auth passed or not needed), error code on failure
-0x00021982,diagnosticServiceSecurityValidator,0,msg_ptr,int,Pointer to diagnostic message structure with service request
+0x00021982,cm550_diagnosticServiceSecurityValidator,0,msg_ptr,int,Pointer to diagnostic message structure with service request
 
 # diagnosticServiceDispatcher @ 0x2eea2 - Routes diagnostic services via dispatch table @ 0x801c7a
-0x0002eea2,diagnosticServiceDispatcher,0,msg_ptr,int,Pointer to diagnostic message structure
+0x0002eea2,cm550_diagnosticServiceDispatcher,0,msg_ptr,int,Pointer to diagnostic message structure
 0x000118b2,enterDevelopmentMode,return,,byte,The result as CM848's J1939_DIAGNOSTIC_RESULT numbers (0 accepted / 4 cannot comply / 7 not safe) - a byte so the 4-byte register does not show (PR #53 round 73)
 0x0001188c,exitDevelopmentMode,return,,byte,The result as CM848's J1939_DIAGNOSTIC_RESULT numbers (0 accepted / 4 cannot comply / 7 not safe) - a byte so the 4-byte register does not show (PR #53 round 73)
 0x000118cc,forceExitDevelopmentMode,return,,byte,The result as CM848's J1939_DIAGNOSTIC_RESULT numbers (0 accepted / 4 cannot comply / 7 not safe) - a byte so the 4-byte register does not show (PR #53 round 73)

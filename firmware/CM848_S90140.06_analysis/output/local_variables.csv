@@ -12,8 +12,6 @@ function_address,function_name,old_name,new_name,type,comment
 # lookupJ1939ControlDevice @ 0x00053a4c - Returns 1-3 if SA matches a calibrated address, 4 if unknown
 0x00053a4c,lookupJ1939ControlDevice,JVar1,control_device,J1939_CONTROL_DEVICE,the control device the source address maps to (was address_index on wVar1)
 # copyCalibrationToRam @ 0x00000340 - Copies ROM calibration defaults to RAM
-0x00000340,cm848_copyBootKernelToRam,puVar1,src_ptr,undefined4 *,Source pointer (ROM calibration data)
-0x00000340,cm848_copyBootKernelToRam,puVar2,dest_ptr,undefined4 *,Destination pointer (RAM working copy)
 # cm848_j1939ProcessPgn61442Etc1 @ 0x00022d60 - Handle ETC1 (Electronic Transmission Controller 1) PGN 61442 messages
 0x00022d60,processEngineTsc1Request,bVar3,control_mode,byte,ETC1 byte1 bits1-2 SPN560 driveline engaged state (0=undef 1=disengaged 2=engaged 3=NA)
 0x00022d60,processEngineTsc1Request,bVar4,priority_bits,byte,ETC1 byte5 SPN607 progressive shift disable bits
@@ -21,34 +19,19 @@ function_address,function_name,old_name,new_name,type,comment
 0x00022d60,processEngineTsc1Request,sVar2,result,short,Function call return value
 # mpc555_generateSerialChallenge @ 0x000032dc - Generate serial handshake challenge and queue response
 # cm848_validateBootSecurityKey @ 0x00007370 - Validate scrambled auth token for calibration writes
-0x00007370,cm848_validateBootSecurityKey,param_1,scrambled_token,undefined4,Pointer to 10-byte scrambled auth data from tool
-0x00007370,cm848_validateBootSecurityKey,bVar2,attempt_count,byte,Current value of eeprom_block_tracking.failed_write_authorization_count (was write_auth_attempt_counter
-0x00007370,cm848_validateBootSecurityKey,dVar2,current_runtime,dword,Snapshot of ecu_power_state_flags.runtime_counter for timestamp check
-0x00007370,cm848_validateBootSecurityKey,bVar1,key_matches,byte,Whether all 6 descrambled key bytes match EEPROM header
-0x00007370,cm848_validateBootSecurityKey,cVar8,compare_index,char,Loop counter for 6-byte key comparison
-0x00007370,cm848_validateBootSecurityKey,bVar7,copy_count,byte,Loop counter for 3-byte timestamp extraction
-0x00007370,cm848_validateBootSecurityKey,uVar6,result,undefined4,Return value: 0=authorized 1=denied
-0x00007370,cm848_validateBootSecurityKey,pbVar4,timestamp_src,byte *,Source pointer for timestamp byte copy
-0x00007370,cm848_validateBootSecurityKey,pbVar5,timestamp_dest,byte *,Destination pointer for timestamp byte copy
 # mpc555_tickTransferTimeoutAndRuntimeCounter @ 0x00007608 - Watchdog prescaler and runtime accumulator tick
 0x00007608,mpc555_tickTransferTimeoutAndRuntimeCounter,bVar3,prescaler_count,byte,Current prescaler value (0-39)
 0x00007608,mpc555_tickTransferTimeoutAndRuntimeCounter,dVar1,runtime_value,dword,Runtime snapshot before increment
 0x00007608,mpc555_tickTransferTimeoutAndRuntimeCounter,wVar2,counter_value,word,Reused for timeout countdown and keyon counter
 # mpc555_keyOnStateMachine @ 0x00000184 - Key-on/key-off state machine with runtime EEPROM save
-0x00000184,mpc555_keyOnStateMachine,iVar2,keyon_phase,int,State machine phase: 0=waiting for key-on 1=running
-0x00000184,mpc555_keyOnStateMachine,wVar3,signal_value,word,Reused for MIOS key-off signal and keyon counter
-0x00000184,mpc555_keyOnStateMachine,uVar1,power_flags,uint,Copy of ecu_power_state_flags for bit manipulation
-0x000032dc,mpc555_generateSerialChallenge,seed_value,challenge_value,dword,Copy of serial_challenge_value for byte extraction
-0x000032dc,mpc555_generateSerialChallenge,seed_high_byte,challenge_high_byte,byte,Upper byte of 16-bit challenge (bits 15-8)
-0x000032dc,mpc555_generateSerialChallenge,uVar3,write_pos,uint,Current write position in diag_serial_buffer
 # cm848_activateDiagnosticSession / cm848_forceActivateDiagnosticSession response codes
 0x00021624,exitDevelopmentMode,uVar1,result,J1939_DIAGNOSTIC_RESULT,J1939_DIAGNOSTIC_RESULT: ACK(0) if standby→active transition succeeded NACK_NOT_READY(4) if not in standby
 0x00021694,forceExitDevelopmentMode,uVar1,result,J1939_DIAGNOSTIC_RESULT,J1939_DIAGNOSTIC_RESULT: ACK(0) if activated NACK_PROTECTED(7) if protection mode blocked
 # cm848_j1939DispatchPgnHandler @ 0x000231cc - linear search through j1939_pgn_dispatch_table
 0x000231cc,cm848_j1939DispatchPgnHandler,bVar1,search_idx,byte,Index of current entry being tested; equals j1939_pgn_handler_count on exit if no handler matched
 0x000231cc,cm848_j1939DispatchPgnHandler,pjVar2,entry,j1939_pgn_handler_entry_t *,Pointer to current dispatch table entry under test
-0x005267f4,cm848_fuelTrimFromOutputShaftSpeed,uVar2,fuel_temp_trim_uncapped,uint,Shaft-speed-derived fuel-temp estimate before capping - named _uncapped not _working to avoid collision with global fuel_temp_trim_working at 0x003fb4d8
-0x005267f4,cm848_fuelTrimFromOutputShaftSpeed,uVar1,fuel_temp_trim_result,uint,Final capped result stored to fuel_temp_trim_raw - the lesser of the uncapped estimate and fuel_temp_cap_from_shaft_speed
+0x005267f4,cm848_calculateVehicleSpeedFromOutputShaft,uVar2,fuel_temp_trim_uncapped,uint,Shaft-speed-derived fuel-temp estimate before capping - named _uncapped not _working to avoid collision with global fuel_temp_trim_working at 0x003fb4d8
+0x005267f4,cm848_calculateVehicleSpeedFromOutputShaft,uVar1,fuel_temp_trim_result,uint,Final capped result stored to fuel_temp_trim_raw - the lesser of the uncapped estimate and fuel_temp_cap_from_shaft_speed
 # mpc555_processDiagnosticAndEepromRequests @ 0x00001fa4 - Main diagnostic/EEPROM request dispatcher
 0x00001fa4,mpc555_processDiagnosticAndEepromRequests,wVar1,erase_result,short,mpc555_beginReflash(serial)'s result - nonzero when both erases succeeded (0x73 into diag_session_state_byte; 0 gives 0x22) (was eeprom_init_result whose note said 0=success; PR #53 round 67)
 0x00001fa4,mpc555_processDiagnosticAndEepromRequests,bVar2,diag_response_code,byte,Diagnostic response code to send (0x11=invalid service 0x12=invalid state)
@@ -160,3 +143,18 @@ function_address,function_name,old_name,new_name,type,comment
 0x0050b408,handleJ1939WriteMemoryService,local_10,length,uint,The byte count - request byte 5 (PR #53 round 72)
 0x0050b474,handleJ1939WriteMemoryLongLengthService,local_10,address,byte *,The address - request bytes 1-4 (PR #53 round 72)
 0x0050b474,handleJ1939WriteMemoryLongLengthService,local_c,length,dword,The byte count - request bytes 5-8 (PR #53 round 72)
+# PR #53 round 94: rows re-targeted at each body's own auto-names (a build without them showed the names)
+0x00000340,cm848_copyBootKernelToRam,pdVar1,source_pointer,dword*,The next dword of the boot kernel image in ROM (boot_kernel_rom_start up to boot_kernel_rom_end) (PR #53 round 94)
+0x00000340,cm848_copyBootKernelToRam,pdVar2,destination_pointer,dword*,The RAM copy's write pointer (pre-incremented from 0x3f97fc: the first dword goes to 0x3f9800) (PR #53 round 94)
+0x000032dc,mpc555_generateSerialChallenge,dVar1,challenge_value,dword,Copy of the challenge (crc16_working_value: 0 while unlocked / else the runtime counter with a zero low word made 1) (PR #53 round 94)
+0x000032dc,mpc555_generateSerialChallenge,bVar2,challenge_high_byte,byte,Bits 15-8 of the challenge (PR #53 round 94)
+0x000032dc,mpc555_generateSerialChallenge,uVar3,response_write_position,uint,The write position in diag_serial_buffer (mod 256) (PR #53 round 94)
+0x00007370,cm848_validateBootSecurityKey,param_1,scrambled_token,undefined4,The 10-byte scrambled key from the tool (passed to cm848_unscrambleBootSecurityKey) (PR #53 round 94)
+0x00007370,cm848_validateBootSecurityKey,bVar3,attempt_count,byte,eeprom_block_tracking.failed_write_authorization_count read once (17 = locked out: denied) (PR #53 round 94)
+0x00007370,cm848_validateBootSecurityKey,dVar2,current_runtime,dword,Snapshot of ecu_power_state_flags.runtime_counter for the timestamp check (PR #53 round 94)
+0x00007370,cm848_validateBootSecurityKey,bVar1,key_matches,bool,Whether all six unscrambled key bytes match eeprom_shadow_header.security_master_password (PR #53 round 94)
+0x00007370,cm848_validateBootSecurityKey,cVar8,compare_index,char,Loop index of the six-byte key comparison (PR #53 round 94)
+0x00007370,cm848_validateBootSecurityKey,bVar7,copy_count,byte,Loop counter of the three-byte timestamp copy (PR #53 round 94)
+0x00007370,cm848_validateBootSecurityKey,uVar6,result,undefined4,Return value: 0 = authorized / 1 = denied (PR #53 round 94)
+0x00007370,cm848_validateBootSecurityKey,pbVar4,timestamp_source_pointer,byte*,Source of the timestamp byte copy (PR #53 round 94)
+0x00007370,cm848_validateBootSecurityKey,pbVar5,timestamp_destination_pointer,byte*,Destination of the timestamp byte copy (PR #53 round 94)

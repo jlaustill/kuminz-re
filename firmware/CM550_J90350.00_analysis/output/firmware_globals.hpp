@@ -379,7 +379,6 @@ extern byte vp44_retry_flag;  // 0x00800f62
 extern byte vp44_retry_count;  // 0x00800f63
 extern byte vp44_timeout_counter;  // 0x00800f64
 extern dword vp44_message_data;  // 0x00800f66
-extern undefined vp44_expected_sequence;  // 0x00800f69
 extern undefined serial_port_config_value;  // 0x00800f6a
 extern undefined serial_buffer_pointer;  // 0x00800f6c
 extern j1939_tx_msg_t j1939_single_frame_tx_message;  // 0x00801232
@@ -757,16 +756,6 @@ extern undefined dm11_pgn65234_unused_ptr;  // 0x00803024
 extern undefined dm11_pgn65234_data_buffer_ptr;  // 0x00803028
 extern undefined dm11_pgn65234_unused_buffer;  // 0x0080302c
 extern j1939_tx_msg_buffer_t j1939_tx_msg_buffer;  // 0x00803036
-extern undefined j1939_vp44_fuel_high;  // 0x00803037
-extern undefined j1939_vp44_fuel_low;  // 0x00803038
-extern undefined j1939_vp44_rpm_low;  // 0x00803039
-extern undefined j1939_vp44_rpm_high;  // 0x0080303a
-extern undefined vp44_cmd_msg_buffer;  // 0x0080303e
-extern undefined vp44_fuel_amount_high;  // 0x0080303f
-extern undefined vp44_fuel_amount_low;  // 0x00803040
-extern undefined vp44_timing_byte3;  // 0x00803041
-extern undefined vp44_timing_byte4;  // 0x00803042
-extern undefined vp44_timing_byte5;  // 0x00803043
 extern undefined vp44_timing_byte6;  // 0x00803044
 extern undefined vp44_rpm_low;  // 0x00803045
 extern undefined vp44_rpm_high;  // 0x00803046
@@ -4191,13 +4180,6 @@ extern undefined fuel_delivery_state_variable;  // 0x0080cc42
 extern undefined fuel_limit_source_id;  // 0x0080cc4a
 extern undefined fuel_demand_limited;  // 0x0080cc4c
 extern fuel_limit_arbitration_t fuel_limit_arbitration_threshold;  // 0x0080cc4e
-extern undefined fuel_demand_delta;  // 0x0080cc50
-extern undefined fuel_demand_maximum_limit;  // 0x0080cc52
-extern undefined fuel_limit_offset_value;  // 0x0080cc54
-extern undefined fuel_limit_comparison_low;  // 0x0080cc56
-extern undefined fuel_limit_comparison_high;  // 0x0080cc58
-extern undefined fuel_demand_rate_limit;  // 0x0080cc5a
-extern undefined param_pointer_set_1;  // 0x0080cc5e
 extern undefined param_pointer_set_2;  // 0x0080cc62
 extern undefined param_pointer_set_3;  // 0x0080cc66
 extern undefined high_rpm_protection_fault_flag;  // 0x0080cc6a
@@ -4302,7 +4284,6 @@ extern undefined retarder_mode_override_flag;  // 0x0080d038
 extern undefined fuel_demand_change_flag;  // 0x0080d03a
 extern undefined crank_state_transition_flag;  // 0x0080d03c
 extern dword io_control_bit0_state;  // 0x0080d03e
-extern undefined io_control_bit1_state;  // 0x0080d040
 extern undefined accumulated_backup_eps_period_between_vss_interrupts_0_65535;  // 0x0080d042
 extern undefined io_control_bit6_state;  // 0x0080d044
 extern word io_control_bit4_state;  // 0x0080d046
@@ -4641,7 +4622,6 @@ extern undefined can_buffer_write_pending;  // 0x0080d406
 extern undefined insite_command_byte;  // 0x0080d407
 extern undefined insite_data_valid_flag;  // 0x0080d409
 extern dword insite_response_buffer_ptr;  // 0x0080d40c
-extern undefined insite_response_write_offset;  // 0x0080d40f
 extern undefined insite_response_continuation_ptr;  // 0x0080d410
 extern undefined insite_data_read_ptr;  // 0x0080d414
 extern byte insite_data_buffer_offset;  // 0x0080d417
@@ -4984,11 +4964,9 @@ extern RUN_LOCATION run_location;  // 0x0080dc90
 extern word not_safe_to_program_flag;  // 0x0080dc92
 extern dword j1708_transmit_buffer_0_2_32;  // 0x0080dc94
 extern dword j1708_transmit_buffer_2_32_dc98;  // 0x0080dc98
-extern undefined j1708_transmit_buffer_index_low;  // 0x0080dc9b
 extern dword j1708_transmit_buffer_2_32_dc9c;  // 0x0080dc9c
 extern byte j1708_transmit_buffer_full_flag_1_true_0_false;  // 0x0080dca0
 extern dword j1708_receive_buffer_pointer_2_32_dca2;  // 0x0080dca2
-extern undefined j1708_receive_buffer_index_low;  // 0x0080dca5
 extern dword j1708_receive_buffer_pointer_2_32_dca6;  // 0x0080dca6
 extern dword j1708_receive_buffer_pointer_2_32_dcaa;  // 0x0080dcaa
 extern byte j1708_receive_buffer_full_flag_1_true_0_false;  // 0x0080dcae

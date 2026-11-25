@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Wed Nov 25 09:14:23 MST 2026
+// Generated: Wed Nov 25 09:39:44 MST 2026
 
 
 //
@@ -31429,17 +31429,17 @@ void initQadcModule(void)
 void clearWorkingRam(void)
 
 {
-  sdword *psVar1;
-  sdword *psVar2;
+  dword *chunk_end;
+  dword *working_ram_pointer;
   
-  psVar2 = &duty_cycle_monitor_load_ratio;
-  while (psVar2 < (sdword *)0x80def4) {
-    psVar1 = psVar2 + 0x40;
-    if ((sdword *)0x80def4 < psVar1) {
-      psVar1 = (sdword *)0x80def4;
+  working_ram_pointer = (dword *)&duty_cycle_monitor_load_ratio;
+  while (working_ram_pointer < (dword *)0x80def4) {
+    chunk_end = working_ram_pointer + 0x40;
+    if ((dword *)0x80def4 < chunk_end) {
+      chunk_end = (dword *)0x80def4;
     }
-    for (; psVar2 <= psVar1; psVar2 = psVar2 + 1) {
-      *psVar2 = 0;
+    for (; working_ram_pointer <= chunk_end; working_ram_pointer = working_ram_pointer + 1) {
+      *working_ram_pointer = 0;
     }
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
@@ -32516,89 +32516,91 @@ void unscrambleSecurityKey(byte *input_buffer,byte *output_buffer)
 
 {
   byte bVar1;
-  byte bVar2;
-  char cVar3;
-  char cVar4;
-  byte bit_position;
-  byte bVar5;
-  byte bVar6;
-  byte bVar7;
-  char cVar8;
-  byte *backward_write_ptr;
-  byte *pbVar9;
-  byte *pbVar10;
+  int input_byte_offset;
+  char cVar2;
+  byte backward_byte_index;
+  byte output_bit;
+  byte bVar3;
+  byte input_bit_position;
+  byte backward_bit_count;
+  byte forward_byte_index;
+  byte *pbVar4;
+  byte *pbVar5;
+  byte *forward_write_pointer;
   byte working_buffer [10];
   byte input_byte_index;
+  byte input_bit;
   
-  cVar3 = '\0';
-  pbVar9 = working_buffer;
+  cVar2 = '\0';
+  pbVar4 = working_buffer;
   do {
-    *pbVar9 = 0;
-    cVar3 = cVar3 + '\x01';
-    pbVar9 = pbVar9 + 1;
-  } while (cVar3 < '\n');
-  bVar7 = 0;
-  cVar8 = '\0';
-  cVar3 = '\0';
-  cVar4 = '\t';
+    *pbVar4 = 0;
+    cVar2 = cVar2 + '\x01';
+    pbVar4 = pbVar4 + 1;
+  } while (cVar2 < '\n');
+  backward_bit_count = 0;
+  forward_byte_index = 0;
+  cVar2 = '\0';
+  backward_byte_index = 9;
   input_byte_index = 0;
-  backward_write_ptr = security_key_scramble_mask;
+  pbVar4 = security_key_scramble_mask;
   do {
-    bVar6 = 0;
-    bVar1 = *backward_write_ptr;
-    pbVar9 = working_buffer + (short)cVar4;
-    pbVar10 = working_buffer + (short)cVar8;
+    input_bit_position = 0;
+    bVar1 = *pbVar4;
+    pbVar5 = working_buffer + (short)(char)backward_byte_index;
+    forward_write_pointer = working_buffer + (short)(char)forward_byte_index;
+    input_byte_offset = (int)(char)input_byte_index;
     do {
-      bVar2 = input_buffer[(char)input_byte_index] << (bVar6 & 0x3f) & 0x80;
-      if (((uint)bVar1 << ((int)(char)bVar6 & 0x3fU) & 0x80) == 0) {
-        bVar5 = 0;
-        if (bVar2 != 0) {
-          bVar5 = '\x01' << (7U - cVar3 & 0x3f);
+      input_bit = input_buffer[input_byte_offset] << (input_bit_position & 0x3f) & 0x80;
+      if (((uint)bVar1 << ((int)(char)input_bit_position & 0x3fU) & 0x80) == 0) {
+        bVar3 = 0;
+        if (input_bit != 0) {
+          bVar3 = '\x01' << (7U - cVar2 & 0x3f);
         }
-        *pbVar10 = bVar5 | *pbVar10;
-        cVar3 = cVar3 + '\x01';
-        if (cVar3 == '\b') {
-          cVar3 = '\0';
-          pbVar10 = pbVar10 + 1;
-          cVar8 = cVar8 + '\x01';
+        *forward_write_pointer = bVar3 | *forward_write_pointer;
+        cVar2 = cVar2 + '\x01';
+        if (cVar2 == '\b') {
+          cVar2 = '\0';
+          forward_write_pointer = forward_write_pointer + 1;
+          forward_byte_index = forward_byte_index + 1;
         }
       }
       else {
-        bit_position = 0;
-        if (bVar2 != 0) {
-          bit_position = '\x01' << (bVar7 & 0x3f);
+        output_bit = 0;
+        if (input_bit != 0) {
+          output_bit = '\x01' << (backward_bit_count & 0x3f);
         }
-        *pbVar9 = bit_position | *pbVar9;
-        bVar7 = bVar7 + 1;
-        if (bVar7 == 8) {
-          bVar7 = 0;
-          pbVar9 = pbVar9 + -1;
-          cVar4 = cVar4 + -1;
+        *pbVar5 = output_bit | *pbVar5;
+        backward_bit_count = backward_bit_count + 1;
+        if (backward_bit_count == 8) {
+          backward_bit_count = 0;
+          pbVar5 = pbVar5 + -1;
+          backward_byte_index = backward_byte_index - 1;
         }
       }
-      bVar6 = bVar6 + 1;
-    } while ((char)bVar6 < '\b');
+      input_bit_position = input_bit_position + 1;
+    } while ((char)input_bit_position < '\b');
     input_byte_index = input_byte_index + 1;
-    backward_write_ptr = backward_write_ptr + 1;
+    pbVar4 = pbVar4 + 1;
   } while ((char)input_byte_index < '\n');
-  cVar3 = '\0';
-  pbVar9 = working_buffer;
-  pbVar10 = security_key_byte_order;
+  cVar2 = '\0';
+  pbVar4 = working_buffer;
+  pbVar5 = security_key_byte_order;
   do {
-    *pbVar9 = working_buffer[(short)(ushort)*pbVar10] ^ *pbVar9;
-    cVar3 = cVar3 + '\x01';
-    pbVar9 = pbVar9 + 1;
-    pbVar10 = pbVar10 + 1;
-  } while (cVar3 < '\n');
-  cVar3 = '\0';
-  pbVar10 = security_key_byte_order + 9;
-  pbVar9 = working_buffer;
+    *pbVar4 = working_buffer[(short)(ushort)*pbVar5] ^ *pbVar4;
+    cVar2 = cVar2 + '\x01';
+    pbVar4 = pbVar4 + 1;
+    pbVar5 = pbVar5 + 1;
+  } while (cVar2 < '\n');
+  cVar2 = '\0';
+  pbVar5 = security_key_byte_order + 9;
+  pbVar4 = working_buffer;
   do {
-    output_buffer[*pbVar10] = *pbVar9;
-    pbVar10 = pbVar10 + -1;
-    cVar3 = cVar3 + '\x01';
-    pbVar9 = pbVar9 + 1;
-  } while (cVar3 < '\n');
+    output_buffer[*pbVar5] = *pbVar4;
+    pbVar5 = pbVar5 + -1;
+    cVar2 = cVar2 + '\x01';
+    pbVar4 = pbVar4 + 1;
+  } while (cVar2 < '\n');
   return;
 }
 

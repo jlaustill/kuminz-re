@@ -445,7 +445,6 @@ address,name,type,comment
 0x00800f63,vp44_retry_count,byte,(typed byte from the removed vp44_message_t.retry_count - was undefined; PR #53 round 78)
 0x00800f64,vp44_timeout_counter,byte,(typed byte from the removed vp44_message_t.timeout_counter - was undefined; PR #53 round 78)
 0x00800f66,vp44_message_data,dword,(typed dword from the removed vp44_message_t.message_data - was vp44_message_t; PR #53 round 78)
-0x00800f69,vp44_expected_sequence,,
 0x00800f6a,serial_port_config_value,,
 0x00800f6c,serial_buffer_pointer,,
 0x00801232,j1939_single_frame_tx_message,j1939_tx_msg_t,The transmit record cm550_multiPacketBufferAllocator (0x23130) hands out for a reply of up to 8 bytes: it stores the length at +4, data_pointer = 0x801242 and status_pointer = 0x801240, and the callers write the CAN id at +0 and pass it to cm550_sendCanMessage. CM848's counterpart record and name: j1939_single_frame_tx_message (0x3fcbc4, from cm848_selectJ1939TransmitBuffer). (PR #53 round 88)
@@ -823,16 +822,6 @@ address,name,type,comment
 0x00803028,dm11_pgn65234_data_buffer_ptr,undefined,
 0x0080302c,dm11_pgn65234_unused_buffer,undefined,
 0x00803036,j1939_tx_msg_buffer,j1939_tx_msg_buffer_t,
-0x00803037,j1939_vp44_fuel_high,,
-0x00803038,j1939_vp44_fuel_low,,
-0x00803039,j1939_vp44_rpm_low,,
-0x0080303a,j1939_vp44_rpm_high,,
-0x0080303e,vp44_cmd_msg_buffer,,
-0x0080303f,vp44_fuel_amount_high,,
-0x00803040,vp44_fuel_amount_low,,
-0x00803041,vp44_timing_byte3,,
-0x00803042,vp44_timing_byte4,,
-0x00803043,vp44_timing_byte5,,
 0x00803044,vp44_timing_byte6,undefined,
 0x00803045,vp44_rpm_low,undefined,
 0x00803046,vp44_rpm_high,undefined,
@@ -4262,13 +4251,6 @@ address,name,type,comment
 0x0080cc4a,fuel_limit_source_id,undefined,
 0x0080cc4c,fuel_demand_limited,undefined,
 0x0080cc4e,fuel_limit_arbitration_threshold,fuel_limit_arbitration_t,
-0x0080cc50,fuel_demand_delta,,
-0x0080cc52,fuel_demand_maximum_limit,,
-0x0080cc54,fuel_limit_offset_value,,
-0x0080cc56,fuel_limit_comparison_low,,
-0x0080cc58,fuel_limit_comparison_high,,
-0x0080cc5a,fuel_demand_rate_limit,,
-0x0080cc5e,param_pointer_set_1,,
 0x0080cc62,param_pointer_set_2,undefined,
 0x0080cc66,param_pointer_set_3,undefined,
 0x0080cc6a,high_rpm_protection_fault_flag,undefined,
@@ -4373,7 +4355,6 @@ address,name,type,comment
 0x0080d03a,fuel_demand_change_flag,,
 0x0080d03c,crank_state_transition_flag,,
 0x0080d03e,io_control_bit0_state,dword,(typed dword: its 15 accesses were 4 bytes - the removed fuel_arbitrator_diag_t rendered them as fuel_arbitrator_throttle_override._8_4_; three functions add the 32-bit _io_control_handshake_state into it with an overflow check - the name is older and not checked against that; PR #53 round 78)
-0x0080d040,io_control_bit1_state,,(inside the io_control_bit0_state dword - no access of its own found; PR #53 round 78)
 0x0080d042,accumulated_backup_eps_period_between_vss_interrupts_0_65535,,
 0x0080d044,io_control_bit6_state,,
 0x0080d046,io_control_bit4_state,word,typed word: 8 word accesses in the ROM and no other (PR #53 round 93)
@@ -4712,7 +4693,6 @@ address,name,type,comment
 0x0080d407,insite_command_byte,undefined,
 0x0080d409,insite_data_valid_flag,undefined,
 0x0080d40c,insite_response_buffer_ptr,dword,(typed dword from the removed insite_response_buffer_t.buffer_ptr - was insite_response_buffer_t; PR #53 round 78)
-0x0080d40f,insite_response_write_offset,,
 0x0080d410,insite_response_continuation_ptr,,
 0x0080d414,insite_data_read_ptr,undefined,
 0x0080d417,insite_data_buffer_offset,byte,(typed byte from the removed insite_response_buffer_t.data_offset - was undefined; PR #53 round 78)
@@ -5055,11 +5035,9 @@ address,name,type,comment
 0x0080dc92,not_safe_to_program_flag,word,e2m block 000D SAFE2PRG (CM550's parameter ID table) - CM848's not_safe_to_program_flag: 1 = not safe to program - the twins return 7 on it; CM550 also writes 2 (cm550_calculateEngineSpeed: stopped with a switch bit set) which every '== 1' test treats as safe (cmpi.w / move.w / clr.w) (was diagnostic_session_state; PR #53 round 73)
 0x0080dc94,j1708_transmit_buffer_0_2_32,dword,the J1708 transmit buffer pointer (move.l) (typed dword - was undefined; PR #53 round 77)
 0x0080dc98,j1708_transmit_buffer_2_32_dc98,dword,the J1708 transmit pointer - the SCI interrupt handler sends *pointer (move.l) (typed dword - was undefined; PR #53 round 77)
-0x0080dc9b,j1708_transmit_buffer_index_low,undefined,
 0x0080dc9c,j1708_transmit_buffer_2_32_dc9c,dword,the J1708 transmit buffer end pointer (move.l) (typed dword - was undefined; PR #53 round 77)
 0x0080dca0,j1708_transmit_buffer_full_flag_1_true_0_false,byte,the J1708 transmit buffer full flag (typed byte - was undefined; PR #53 round 77)
 0x0080dca2,j1708_receive_buffer_pointer_2_32_dca2,dword,the J1708 receive buffer pointer (move.l) (typed dword - was undefined; PR #53 round 77)
-0x0080dca5,j1708_receive_buffer_index_low,undefined,
 0x0080dca6,j1708_receive_buffer_pointer_2_32_dca6,dword,the J1708 receive write pointer - the SCI interrupt handler stores each received byte at *pointer (typed dword - was undefined; PR #53 round 77)
 0x0080dcaa,j1708_receive_buffer_pointer_2_32_dcaa,dword,the J1708 receive buffer pointer the end-of-message code compares with (typed dword - was undefined; PR #53 round 77)
 0x0080dcae,j1708_receive_buffer_full_flag_1_true_0_false,byte,the J1708 receive buffer full flag (typed byte - was undefined; PR #53 round 77)

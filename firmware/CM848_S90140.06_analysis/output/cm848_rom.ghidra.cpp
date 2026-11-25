@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 09:19:33 MST 2026
+// Generated: Wed Nov 25 09:38:07 MST 2026
 
 
 //
@@ -113,16 +113,16 @@ void mpc555_keyOnStateMachine(void)
 void cm848_copyBootKernelToRam(void)
 
 {
-  dword *pdVar1;
-  dword *pdVar2;
+  dword *source_pointer;
+  dword *destination_pointer;
   
-  pdVar1 = &boot_kernel_rom_start;
-  pdVar2 = (dword *)0x3f97fc;
+  source_pointer = &boot_kernel_rom_start;
+  destination_pointer = (dword *)0x3f97fc;
   do {
-    pdVar2 = pdVar2 + 1;
-    *pdVar2 = *pdVar1;
-    pdVar1 = pdVar1 + 1;
-  } while (pdVar1 < &boot_kernel_rom_end);
+    destination_pointer = destination_pointer + 1;
+    *destination_pointer = *source_pointer;
+    source_pointer = source_pointer + 1;
+  } while (source_pointer < &boot_kernel_rom_end);
   return;
 }
 
@@ -2655,9 +2655,9 @@ void mpc555_generateSerialChallenge(void)
 
 {
   uint uVar1;
-  dword dVar2;
-  byte bVar3;
-  dword write_pos;
+  byte challenge_high_byte;
+  dword response_write_position;
+  dword challenge_value;
   
   if (boot_sci_security_state == 1) {
     crc16_working_value = 0;
@@ -2668,14 +2668,15 @@ void mpc555_generateSerialChallenge(void)
       crc16_working_value = crc16_working_value + 1;
     }
   }
-  dVar2 = crc16_working_value;
-  bVar3 = (byte)(crc16_working_value >> 8);
-  diag_serial_buffer[boot_sci_session_state.response_write_index] = bVar3;
+  challenge_value = crc16_working_value;
+  challenge_high_byte = (byte)(crc16_working_value >> 8);
+  diag_serial_buffer[boot_sci_session_state.response_write_index] = challenge_high_byte;
   uVar1 = boot_sci_session_state.response_write_index + 1 & 0xff;
-  diag_serial_buffer[uVar1] = (byte)dVar2;
-  write_pos = uVar1 + 1;
-  diag_serial_buffer[write_pos & 0xff] = bVar3 + 0x2b + (byte)dVar2;
-  boot_sci_session_state.response_write_index = (char)write_pos + 1;
+  diag_serial_buffer[uVar1] = (byte)challenge_value;
+  response_write_position = uVar1 + 1;
+  diag_serial_buffer[response_write_position & 0xff] =
+       challenge_high_byte + 0x2b + (byte)challenge_value;
+  boot_sci_session_state.response_write_index = (char)response_write_position + 1;
   diagnostic_callback_ptr = cm848_dispatchBootSciDiagnosticCommand;
   cm848_processTimerInterrupt();
   mpc555_sciBeginUnchecksummedResponseTransmit();
@@ -6137,9 +6138,8 @@ void cm848_unscrambleBootSecurityKey(int param_1,int param_2)
 undefined4 cm848_validateBootSecurityKey(undefined4 scrambled_token)
 
 {
-  byte bVar1;
-  byte *timestamp_src;
-  byte *timestamp_dest;
+  byte *timestamp_source_pointer;
+  byte *timestamp_destination_pointer;
   undefined4 result;
   byte copy_count;
   byte compare_index;
@@ -6147,47 +6147,48 @@ undefined4 cm848_validateBootSecurityKey(undefined4 scrambled_token)
   byte local_2a [5];
   byte bStack_25;
   uint local_24 [7];
+  byte attempt_count;
   dword current_runtime;
-  byte key_matches;
+  bool key_matches;
   
   if (eeprom_shadow_header.security_key_copy == 0xff) {
     result = 0;
   }
   else {
-    bVar1 = eeprom_block_tracking.failed_write_authorization_count;
-    if (bVar1 == 0x11) {
+    attempt_count = eeprom_block_tracking.failed_write_authorization_count;
+    if (attempt_count == 0x11) {
       result = 1;
     }
     else {
       cm848_unscrambleBootSecurityKey(scrambled_token,local_30);
       copy_count = 1;
-      timestamp_src = local_30 + 5;
-      timestamp_dest = &bStack_25;
+      timestamp_source_pointer = local_30 + 5;
+      timestamp_destination_pointer = &bStack_25;
       do {
-        timestamp_src = timestamp_src + 1;
-        timestamp_dest = timestamp_dest + 1;
-        *timestamp_dest = *timestamp_src;
+        timestamp_source_pointer = timestamp_source_pointer + 1;
+        timestamp_destination_pointer = timestamp_destination_pointer + 1;
+        *timestamp_destination_pointer = *timestamp_source_pointer;
         copy_count = copy_count + 1;
       } while (copy_count < 4);
       local_24[0] = local_24[0] & 0xffffff00;
       current_runtime = ecu_power_state_flags.runtime_counter;
       if ((current_runtime & 0xffffff00) - local_24[0] < 0x1a) {
-        key_matches = 1;
+        key_matches = true;
         compare_index = 0;
         do {
           if (local_30[(char)compare_index] !=
               eeprom_shadow_header.security_master_password[(char)compare_index]) {
-            key_matches = 0;
+            key_matches = false;
           }
           compare_index = compare_index + 1;
-        } while (((bool)key_matches) && ((char)compare_index < '\x06'));
-        if ((bool)key_matches) {
+        } while ((key_matches) && ((char)compare_index < '\x06'));
+        if (key_matches) {
           eeprom_block_tracking.failed_write_authorization_count = 0;
           return 0;
         }
       }
       result = 1;
-      eeprom_block_tracking.failed_write_authorization_count = bVar1 + 1;
+      eeprom_block_tracking.failed_write_authorization_count = attempt_count + 1;
     }
   }
   return result;
@@ -39427,8 +39428,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  ushort receive_interval;
   byte all_transmits_overdue;
+  ushort receive_interval;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
