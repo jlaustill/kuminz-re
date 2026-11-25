@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue Nov 24 22:41:14 MST 2026
+// Generated: Wed Nov 25 05:56:21 MST 2026
 
 
 //
@@ -8975,9 +8975,9 @@ void cm550_fuelDemandPercentageCalculator(void)
   jcomm_percent_peak_torque_based_on_current_engine_speed_and_128_127 =
        cm550_safeDivideWithClamp
                  (((int)(short)final_fueling -
-                  (int)(short)jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100) *
-                  0x6400,jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100 -
-                         frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88);
+                  (int)jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100) * 0x6400
+                  ,jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100 -
+                   frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88);
   return;
 }
 
@@ -9282,9 +9282,9 @@ void cm550_processFaultScanGroup(void)
             }
             active_dtc_list[0] = active_dtc_list[0] - 1;
             active_dtc_cummins_fault_codes[0] = active_dtc_cummins_fault_codes[0] - 1;
-            active_dtc_list[(short)(ushort)bVar7] = active_dtc_list[active_fault_list_count];
-            iVar2 = (int)active_fault_list_count;
-            active_fault_list_count = active_fault_list_count + -1;
+            active_dtc_list[(short)(ushort)bVar7] = active_dtc_list[(short)active_fault_list_count];
+            iVar2 = (int)(short)active_fault_list_count;
+            active_fault_list_count = active_fault_list_count - 1;
             active_dtc_cummins_fault_codes[(short)(ushort)bVar7] =
                  active_dtc_cummins_fault_codes[iVar2];
           }
@@ -9362,8 +9362,8 @@ void cm550_processFaultScanGroup(void)
           active_dtc_list[0] = active_dtc_list[0] + 1;
           active_dtc_cummins_fault_codes[0] = active_dtc_cummins_fault_codes[0] + 1;
           active_fault_list_count = active_fault_list_count + 1;
-          active_dtc_list[active_fault_list_count] = (byte)uVar5;
-          active_dtc_cummins_fault_codes[active_fault_list_count] =
+          active_dtc_list[(short)active_fault_list_count] = (byte)uVar5;
+          active_dtc_cummins_fault_codes[(short)active_fault_list_count] =
                *(word *)(&DAT_008067c4 + (uint)uVar5 * 6);
           if ((&fault_definition_spn_byte)[(uint)uVar5 * 6] != '\0') {
             if ((*(ushort *)(&fault_definition_flags_word + (uint)uVar5 * 6) & 0x40) == 0) {
@@ -11834,12 +11834,12 @@ uint cm550_FUN_00017baa(void)
        (uVar2 = CONCAT22((short)(uVar2 >> 0x10),_fault_confirm_status_word_0) & 0xffff4000,
        (_fault_confirm_status_word_0 & 0x4000) != 0)))) ||
      (intake_manifold_temperature_sensor_state.filtered_value <
-      (ushort)crank_low_intake_manifold_temperature_50_to_293)) {
+      crank_low_intake_manifold_temperature_50_to_293)) {
     crank_initial_timing_advance_0_120 = crank_low_intake_manifold_temperature_tvc_0_120;
     crank_initial_advace_break_speed_0_1000 = crank_low_intake_manifold_temperature_rpm_0_1000;
     return uVar2;
   }
-  if ((ushort)crank_high_intake_manifold_temperature_50_to_293 <
+  if (crank_high_intake_manifold_temperature_50_to_293 <
       intake_manifold_temperature_sensor_state.filtered_value) {
     crank_initial_timing_advance_0_120 = crank_high_intake_manifold_temperature_timing_0_120;
     crank_initial_advace_break_speed_0_1000 = crank_high_intake_manifold_temperature_rpm_0_1000;
@@ -11848,19 +11848,19 @@ uint cm550_FUN_00017baa(void)
   uVar1 = crank_high_intake_manifold_temperature_50_to_293 -
           crank_low_intake_manifold_temperature_50_to_293;
   crank_initial_timing_advance_0_120 =
-       (short)((((uint)(ushort)crank_high_intake_manifold_temperature_50_to_293 -
+       (short)((((uint)crank_high_intake_manifold_temperature_50_to_293 -
                 (uint)intake_manifold_temperature_sensor_state.filtered_value) *
                (uint)crank_low_intake_manifold_temperature_tvc_0_120) / (uint)uVar1) +
        (short)((((uint)intake_manifold_temperature_sensor_state.filtered_value -
-                (uint)(ushort)crank_low_intake_manifold_temperature_50_to_293) *
+                (uint)crank_low_intake_manifold_temperature_50_to_293) *
                (uint)crank_high_intake_manifold_temperature_timing_0_120) / (uint)uVar1);
-  uVar2 = (((uint)(ushort)crank_high_intake_manifold_temperature_50_to_293 -
+  uVar2 = (((uint)crank_high_intake_manifold_temperature_50_to_293 -
            (uint)intake_manifold_temperature_sensor_state.filtered_value) *
           (uint)crank_low_intake_manifold_temperature_rpm_0_1000) / (uint)uVar1;
   crank_initial_advace_break_speed_0_1000 =
        (short)uVar2 +
        (short)((((uint)intake_manifold_temperature_sensor_state.filtered_value -
-                (uint)(ushort)crank_low_intake_manifold_temperature_50_to_293) *
+                (uint)crank_low_intake_manifold_temperature_50_to_293) *
                (uint)crank_high_intake_manifold_temperature_rpm_0_1000) / (uint)uVar1);
   return uVar2;
 }
@@ -12782,9 +12782,9 @@ uint cm550_diagnosticProtectionEvaluator(void)
             max_number_of_shutdowns_before_restart_is_not_allowed_0_255 <=
             engine_protection_consecutive_shutdown_count)) {
     threshold_ptr =
-         (word *)(&engine_protection_config_table_base +
-                 (short)engine_protection_active_fault_index * 0x24);
-    iVar2 = (short)engine_protection_active_fault_index * 0x2e;
+         (word *)(&engine_protection_config_table_base + engine_protection_active_fault_index * 0x24
+                 );
+    iVar2 = engine_protection_active_fault_index * 0x2e;
     uVar1 = engine_protection_active_fault_index * 4 + 0x70;
     uVar4 = 0;
     if ((((uint)(&algorithm_enable_flags_0_cal)[(short)((int)(uVar1 + 2) >> 4)] &
@@ -12886,7 +12886,7 @@ ushort cm550_protectionState1DiagnosticValidator(void)
     uVar3 = 0;
     for (config_ptr = (word *)&engine_protection_config_table_base;
         config_ptr < &load_breakpoint_table; config_ptr = config_ptr + 0x12) {
-      if ((((int)(short)engine_protection_active_fault_index == uVar3) &&
+      if ((((int)engine_protection_active_fault_index == uVar3) &&
           (((uint)(&algorithm_enable_flags_0_cal)[(short)((int)(uVar2 + 2) >> 4)] &
            1 << (uVar2 + 2) % 0x10) != 0)) &&
          (((uint)(&algorithm_enable_flags_0_cal)[(short)((int)(uVar2 + 3) >> 4)] &
@@ -13041,7 +13041,7 @@ ushort processDiagnosticLimitStatus(void)
   short sVar1;
   ushort uVar2;
   uint uVar3;
-  word wVar4;
+  short sVar4;
   ushort uVar5;
   uint uVar6;
   short sVar7;
@@ -13081,14 +13081,14 @@ ushort processDiagnosticLimitStatus(void)
     sVar7 = 0;
     for (; threshold_ptr < &load_breakpoint_table; threshold_ptr = threshold_ptr + 0x12) {
       uVar2 = *threshold_ptr;
-      wVar4 = (word)uVar3;
+      sVar4 = (short)uVar3;
       if (((uint)(&algorithm_enable_flags_0_cal)[(short)((int)uVar6 >> 4)] & 1 << (uVar6 & 0xf)) ==
           0) {
         *(undefined2 *)((int)state_ptr + 0x1a) = 0;
         *(undefined2 *)(state_ptr + 7) = 0;
       }
       else {
-        if ((((int)(short)engine_protection_active_fault_index == uVar3) &&
+        if ((((int)engine_protection_active_fault_index == uVar3) &&
             (*(short *)(&coolant_level_fueling_severity_index_0_0_1_0 + sVar7) == 0)) &&
            (*(short *)(&severity_index_for_epf_coolant_level_fault_0_0_1_0 + sVar7) == 0)) {
           engine_protection_active_fault_index = 0xff;
@@ -13121,7 +13121,7 @@ ushort processDiagnosticLimitStatus(void)
           if ((uint)threshold_ptr[0xf] + (uint)*(ushort *)((int)state_ptr + 0x1e) <
               (uint)*(ushort *)((int)state_ptr + 0x1a)) {
             engine_shutdown_command_flag = 1;
-            engine_protection_active_fault_index = wVar4;
+            engine_protection_active_fault_index = sVar4;
           }
         }
         if (((uVar2 & 0xc00) == 0) || (*(short *)((int)state_ptr + 0x16) == 0)) {
@@ -13151,14 +13151,14 @@ ushort processDiagnosticLimitStatus(void)
           if ((uint)threshold_ptr[0xf] + (uint)*(ushort *)(state_ptr + 8) <
               (uint)*(ushort *)(state_ptr + 7)) {
             engine_shutdown_command_flag = 1;
-            engine_protection_active_fault_index = wVar4;
+            engine_protection_active_fault_index = sVar4;
           }
         }
       }
       state_ptr = (dword *)((int)state_ptr + 0x2e);
       uVar6 = (uint)(ushort)((short)uVar6 + 4);
       sVar7 = sVar7 + 0x1e;
-      uVar3 = (uint)(ushort)(wVar4 + 1);
+      uVar3 = (uint)(ushort)(sVar4 + 1);
     }
     if (_DAT_0080d28a != 0 ||
         epf_shutdown_approaching_command_from_restart_limitat_1_true_0_false != 0) {
@@ -17806,7 +17806,8 @@ void runHighSpeedGovernorPid(void)
     _hsg_integrator_fuel_output = (int)hsg_maximum_integrator_fuel_output_0_100;
   }
   hsg_pid_fuel_output_previous = _DAT_00800718;
-  iVar1 = (int)_DAT_00800718 + (int)_DAT_0080d62a + (int)hsg_pid_proportional_fueling_contribution;
+  iVar1 = (int)(short)_DAT_00800718 +
+          (int)_DAT_0080d62a + (int)hsg_pid_proportional_fueling_contribution;
   if ((int)(uint)hsg_fueling_clamp_max_0_100 < iVar1) {
     _DAT_0080d624 = hsg_fueling_clamp_max_0_100;
     return;
@@ -18155,12 +18156,12 @@ void selectEngineSpeedLimit(void)
       }
       else {
         if (maximum_allowable_fuel_that_may_be_used_to_determine_hsg_droop_0_100 <
-            (ushort)hsg_pid_fuel_output_previous) {
+            hsg_pid_fuel_output_previous) {
           wVar4 = maximum_allowable_fuel_that_may_be_used_to_determine_hsg_droop_0_100;
         }
         else {
           wVar4 = hsg_pid_fuel_output_previous;
-          if ((ushort)hsg_pid_fuel_output_previous <
+          if (hsg_pid_fuel_output_previous <
               minimum_allowable_fuel_that_may_be_used_to_determine_hsg_droop_0_100) {
             wVar4 = minimum_allowable_fuel_that_may_be_used_to_determine_hsg_droop_0_100;
           }
@@ -25170,7 +25171,7 @@ byte cm550_FUN_00024c5a(byte current_fault_index)
     while (bVar1 = bVar1 + 1, bVar1 <= active_dtc_list[0]) {
       if ((current_fault_index == 0x7d) ||
          (fault_list_navigation_index = fault_list_navigation_index + 1,
-         (ushort)active_fault_list_count < (ushort)fault_list_navigation_index)) {
+         active_fault_list_count < fault_list_navigation_index)) {
         fault_list_navigation_index = 1;
       }
       current_fault_index = active_dtc_list[(short)(ushort)fault_list_navigation_index];
@@ -25995,7 +25996,7 @@ void cm550_runLowSpeedGovernor(void)
     lsg_breakpoint_speed = operator_adjusted_lsg_breakpoint_speed_300_1000;
     lsg_reference_speed_adjusted_with_throttle_position_300_2000 =
          wVar3 + operator_adjusted_lsg_breakpoint_speed_300_1000;
-    if ((ushort)the_upper_limit_clamp_for_possible_lsg_reference_speed_300_2000 <
+    if (the_upper_limit_clamp_for_possible_lsg_reference_speed_300_2000 <
         lsg_reference_speed_adjusted_with_throttle_position_300_2000) {
       lsg_reference_speed_adjusted_with_throttle_position_300_2000 =
            the_upper_limit_clamp_for_possible_lsg_reference_speed_300_2000;
@@ -27008,19 +27009,19 @@ void cm550_fuelDemandTablePointersInit(void)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-sword cm550_rpmLoadParameterLookup(void)
+word cm550_rpmLoadParameterLookup(void)
 
 {
-  sword sVar1;
+  word wVar1;
   
-  sVar1 = 0;
+  wVar1 = 0;
   if (algorithm_enable_flags_32_cal.misfire_timing_limit_enable != 0) {
     _engine_air_inlet_temp = boost_pressure_sensor_state.filtered_value;
     _DAT_00801ab8 = engine_rpm_primary;
-    sVar1 = cm550_tableLookup2D((word *)&DAT_00801aaa);
-    output_of_the_misfire_timing_limit_table_60_to_60 = sVar1;
+    wVar1 = cm550_tableLookup2D((word *)&DAT_00801aaa);
+    output_of_the_misfire_timing_limit_table_60_to_60 = wVar1;
   }
-  return sVar1;
+  return wVar1;
 }
 
 
@@ -27039,7 +27040,7 @@ ushort cm550_FUN_00026af0(void)
      (intermediate_timing_state_used_before_final_timing_selction_0_10 == 0)) {
     injection_timing_before_misfire_limit = fuel_timing_advance_value;
     uVar1 = output_of_the_misfire_timing_limit_table_60_to_60;
-    if (fuel_timing_advance_value < (ushort)output_of_the_misfire_timing_limit_table_60_to_60) {
+    if (fuel_timing_advance_value < output_of_the_misfire_timing_limit_table_60_to_60) {
       fuel_timing_advance_value = output_of_the_misfire_timing_limit_table_60_to_60;
       timing_control_status_flags = timing_control_status_flags & 0xfffe;
       intermediate_timing_state_used_before_final_timing_selction_0_10 = 0xb;
@@ -31371,8 +31372,8 @@ void processEngineTsc1Request(int param_1)
       datalink_torque_demand_fueling =
            maximum_fueling_value_that_does_not_inject_fuel_0_100 +
            (short)(((int)_datalink_torque_demand_percent *
-                   ((int)(short)jcomm_peak_fueling_ref_fuel_for_all_indicated_percent_peak_tor_0_100
-                   - (int)(short)maximum_fueling_value_that_does_not_inject_fuel_0_100)) / 0x6400);
+                   ((int)jcomm_peak_fueling_ref_fuel_for_all_indicated_percent_peak_tor_0_100 -
+                   (int)(short)maximum_fueling_value_that_does_not_inject_fuel_0_100)) / 0x6400);
       if (datalink_torque_demand_fueling < 0) {
         datalink_torque_demand_fueling = 0;
         return;
@@ -31393,8 +31394,8 @@ void processEngineTsc1Request(int param_1)
       jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100 =
            maximum_fueling_value_that_does_not_inject_fuel_0_100 +
            (short)(((int)(short)((ushort)torque_control_percent_byte * 0x100 + -32000) *
-                   ((int)(short)jcomm_peak_fueling_ref_fuel_for_all_indicated_percent_peak_tor_0_100
-                   - (int)(short)maximum_fueling_value_that_does_not_inject_fuel_0_100)) / 0x6400);
+                   ((int)jcomm_peak_fueling_ref_fuel_for_all_indicated_percent_peak_tor_0_100 -
+                   (int)(short)maximum_fueling_value_that_does_not_inject_fuel_0_100)) / 0x6400);
       if ((short)jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100 < 0) {
         jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100 = 0;
         return;

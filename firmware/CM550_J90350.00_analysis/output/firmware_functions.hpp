@@ -511,7 +511,7 @@ void cm550_FUN_000269f2(void);  // @ 0x000269f2
 void cm550_FUN_00026a2e(void);  // @ 0x00026a2e
 void cm550_memcpy(byte *destination,byte *source,word byte_count);  // @ 0x00026a64
 void cm550_fuelDemandTablePointersInit(void);  // @ 0x00026a7e
-sword cm550_rpmLoadParameterLookup(void);  // @ 0x00026ab8
+word cm550_rpmLoadParameterLookup(void);  // @ 0x00026ab8
 ushort cm550_FUN_00026af0(void);  // @ 0x00026af0
 void cm550_FUN_00026b3a(void);  // @ 0x00026b3a
 void cm550_FUN_00026b82(void);  // @ 0x00026b82

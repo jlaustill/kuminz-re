@@ -51,7 +51,9 @@ try:
 except ValueError:
     pass
 check("cm550 EEPROM mirror", m.cm550_ram_address(0x0100003A), 0x803B44)
-check("cm550 EEPROM past the mirror", m.cm550_ram_address(0x01000720), 0x01000720)
+check("cm550 EEPROM past the committed part", m.cm550_ram_address(0x01000720), 0x80422A)
+check("cm550 freeze frame block (e2m 107F DGFUSITB)", m.cm550_ram_address(0x01000760), 0x80426A)
+check("cm550 past the 4 KB EEPROM", m.cm550_ram_address(0x01001000), 0x01001000)
 check("cm550 RAM passes through", m.cm550_ram_address(0x806AE2), 0x806AE2)
 check("cm550 ROM past the dump", m.cm550_region(0x611A0), "ROM")
 if os.path.exists(m.CM550_DEFAULTS["rom"]):

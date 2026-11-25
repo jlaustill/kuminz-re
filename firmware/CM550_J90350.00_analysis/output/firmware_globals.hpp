@@ -1719,13 +1719,13 @@ extern word fault_log_recording_flag_for_ambient_air_pressure_fueling_0_1;  // 0
 extern word index_into_epf_fault_log_for_ambient_air_pressure_fueling_0_4;  // 0x008058c8
 extern word fault_log_recording_flag_for_ambient_air_pressure_rpm_0_1;  // 0x008058ca
 extern word index_into_epf_fault_log_for_ambient_air_pressure_0_4;  // 0x008058cc
-extern word engine_protection_active_fault_index;  // 0x008058ce
+extern int16_t engine_protection_active_fault_index;  // 0x008058ce
 extern word engine_protection_consecutive_shutdown_count;  // 0x008058d0
 extern byte active_dtc_list[32];  // 0x008058d4
 extern byte previously_active_dtc_list[32];  // 0x008058f4
 extern word active_dtc_cummins_fault_codes[32];  // 0x00805914
 extern word previously_active_dtc_cummins_fault_codes[32];  // 0x00805954
-extern int16_t active_fault_list_count;  // 0x00805994
+extern word active_fault_list_count;  // 0x00805994
 extern int16_t inactive_fault_list_count;  // 0x00805996
 extern word active_j1922_reportable_fault_count;  // 0x00805998
 extern word inactive_fault_j1587_reportable_count;  // 0x0080599a
@@ -2806,8 +2806,8 @@ extern word max_crank_sync_backup_lost_duration_amount_of_time_crank_lost_1_20; 
 extern word engine_speed_at_which_the_algorithm_stops_commanding_fuel_0_1400;  // 0x00807eea
 extern word crank_high_coolant_temperature_50_to_293;  // 0x00807eec
 extern word crank_low_coolant_temperature_50_to_293;  // 0x00807eee
-extern int16_t crank_high_intake_manifold_temperature_50_to_293;  // 0x00807ef0
-extern int16_t crank_low_intake_manifold_temperature_50_to_293;  // 0x00807ef2
+extern word crank_high_intake_manifold_temperature_50_to_293;  // 0x00807ef0
+extern word crank_low_intake_manifold_temperature_50_to_293;  // 0x00807ef2
 extern word crank_high_coolant_temperature_fueling_0_100;  // 0x00807ef6
 extern word crank_low_coolant_temperature_fueling_0_100;  // 0x00807ef8
 extern word crank_high_coolant_temperature_rpm_0_1000;  // 0x00807efa
@@ -2951,7 +2951,7 @@ extern undefined j1939_source_address_of_commanding_device;  // 0x00808158
 extern byte j1939_switch_override_source_address;  // 0x00808159
 extern word global_default_for_engine_brake_0_100;  // 0x0080815a
 extern word global_default_for_manual_fan_level_requested_fan_speed_0_100;  // 0x0080815c
-extern word jcomm_peak_fueling_ref_fuel_for_all_indicated_percent_peak_tor_0_100;  // 0x0080815e
+extern int16_t jcomm_peak_fueling_ref_fuel_for_all_indicated_percent_peak_tor_0_100;  // 0x0080815e
 extern word jcomm_reference_engine_torque_reference_engine_torque_that_c_0_64255;  // 0x00808160
 extern word j1939_engine_speed_at_point_3;  // 0x00808162
 extern word j1939_engine_speed_at_point_4;  // 0x00808164
@@ -3001,7 +3001,7 @@ extern int16_t offset_to_lsg_reference_speed_over_which_lsg_integrator_m_1000_10
 extern word engine_fueling_below_which_the_lsg_integrator_may_be_reset_0_72_46;  // 0x0080824e
 extern word blank_spot_after_removal_of_lsg_db_int_gain_0_0_100_0;  // 0x00808250
 extern word blank_spot_after_removal_of_lsg_db_prop_gain_0_0_100_0;  // 0x00808252
-extern int16_t the_upper_limit_clamp_for_possible_lsg_reference_speed_300_2000;  // 0x00808256
+extern word the_upper_limit_clamp_for_possible_lsg_reference_speed_300_2000;  // 0x00808256
 extern word low_speed_governor_throttle_reference_offset_filter_coefficient;  // 0x00808258
 extern undefined lsg_derivative_filter_coefficient_1_to_1;  // 0x0080825c
 extern word flag_to_enable_disable_the_lsg_derivative_gain_adjustment_scheme_0_1;  // 0x0080825e
@@ -3811,7 +3811,7 @@ extern undefined vp44_fuel_temperature_value;  // 0x0080a254
 extern word temp_signal_used_in_postheat_0_imt_1_battery_temp_for_chrysler_0_1;  // 0x0080a262
 extern undefined pre_processed_imt_for_epf_due_to_exhaust_brake_on_50_to_293;  // 0x0080a26a
 extern word timer_used_to_disable_imt_epf_when_exhaust_brake_on_0_65535;  // 0x0080a26c
-extern int16_t output_of_the_misfire_timing_limit_table_60_to_60;  // 0x0080a26e
+extern word output_of_the_misfire_timing_limit_table_60_to_60;  // 0x0080a26e
 extern word injection_timing_before_misfire_limit;  // 0x0080a270
 extern word the_percent_load_override_as_the_output_signal_for_the_transmis_0_255;  // 0x0080a274
 extern word DRTXCSKD;  // 0x0080a27a
@@ -4050,7 +4050,7 @@ extern byte duty_cycle_monitor_current_operating_map_region_1_50;  // 0x0080bad6
 extern byte duty_cycle_monitor_active_short_term_map;  // 0x0080bad7
 extern word duty_cycle_monitor_short_term_processing_map_1_byte_count;  // 0x0080bad8
 extern word duty_cycle_monitor_short_term_processing_map_2_byte_count;  // 0x0080bba6
-extern word jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100;  // 0x0080bc74
+extern int16_t jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100;  // 0x0080bc74
 extern int16_t jcomm_percent_peak_torque_based_on_current_engine_speed_and_128_127;  // 0x0080bc76
 extern int16_t jcomm_percent_peak_torque_at_breakpoint_3_percent_peak_torq_128_127;  // 0x0080bc78
 extern int16_t jcomm_percent_peak_torque_at_breakpoint_4_percent_peak_torq_128_127;  // 0x0080bc7a
@@ -4880,7 +4880,7 @@ extern word defines_hsg_gain_set_that_has_been_chosen_0_31;  // 0x0080d61a
 extern word hsg_speed_dependant_engine_speed_error_filter_time_constant_0_1;  // 0x0080d622
 extern int16_t hsg_filtered_engine_speed_error;  // 0x0080d626
 extern int16_t hsg_pid_proportional_fueling_contribution;  // 0x0080d628
-extern int16_t hsg_pid_fuel_output_previous;  // 0x0080d62c
+extern word hsg_pid_fuel_output_previous;  // 0x0080d62c
 extern word hsg_proportional_gain_base;  // 0x0080d62e
 extern word hsg_integral_gain_base;  // 0x0080d630
 extern word hsg_derivative_gain_base;  // 0x0080d632

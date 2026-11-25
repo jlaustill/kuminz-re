@@ -17,7 +17,7 @@ CM550 (`--firmware cm550`, PR #53 round 90): J90350.00's ROM holds `parameter_id
 cm550_lookupParameterIdAddress (0x10e16) indexes by id range: index = id for 0x0000-0x002E, id - 0xFD1 for
 0x1000-0x1478, id - 0x7B58 for 0x8000-0x8265 (1806 entries of 8 bytes: the address while RAM refresh is disabled,
 then the address otherwise - equal in every entry). An address of 0 is no entry. EEPROM entries (0x01000000 +
-offset) map to CM550's EEPROM RAM mirror at 0x803B0A + offset. `e2m-analysis/originals/v64t6_s.e2m` carries
+offset, 0x0-0xFFF) map to CM550's RAM image of the EEPROM at 0x803B0A + offset. `e2m-analysis/originals/v64t6_s.e2m` carries
 J90350.00's block layout (round 89: it agrees with blocks 1003 / 1004). `--write-table CSV` writes the table with the
 current global at each address (EEPROM entries: at the mirror) and the e2m records with storage there (types N / S /
 B / T / X / Y / Z; not block 0, whose system records all say offset 0) - CM550's `output/parameter_id_lookup_table.csv`.
@@ -79,13 +79,18 @@ def parse_cm550_table(rom):
     return table
 
 
-CM550_EEPROM_MIRROR, CM550_MIRROR_LENGTH = 0x803B0A, 0x64C
+CM550_EEPROM_MIRROR, CM550_MIRROR_LENGTH = 0x803B0A, 0x64C   # 0x64C: the part the bulk commit (service 21) writes back
+CM550_EEPROM_LENGTH = 0x1000                                 # the EEPROM address space the memory services image in RAM
 
 
 def cm550_ram_address(address):
-    """CM550's application reads EEPROM from its RAM mirror 0x803B0A-0x804155 (RAM = 0x803B0A + EEPROM offset;
-    audit_cal_suffixes.py, PR #53 round 73)."""
-    if EEPROM_BASE <= address < EEPROM_BASE + CM550_MIRROR_LENGTH:
+    """CM550 images its whole EEPROM address space in RAM: RAM = 0x803B0A + EEPROM offset for offsets 0x0-0xFFF. The
+    memory services translate any EEPROM address with no upper bound (0x224b6; the tool write path 0x2d30a), and the
+    code uses the RAM images of the parameter ID table's entries above 0x64C (e2m 107F DGFUSITB at EEPROM 0x760 =
+    RAM 0x80426a, the fault freeze frames). Only 0x0-0x64B is written back by the bulk commit
+    (cm550_commitEepromMirrorToEeprom); the _cal window of audit_cal_suffixes.py is a separate question (PR #53
+    rounds 73 / 94)."""
+    if EEPROM_BASE <= address < EEPROM_BASE + CM550_EEPROM_LENGTH:
         return CM550_EEPROM_MIRROR + (address - EEPROM_BASE)
     return address
 
