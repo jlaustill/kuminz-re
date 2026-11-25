@@ -315,7 +315,7 @@ DIAG_ENABLE_FLAGS,0x08,SPECIAL_MODE,Special diagnostic mode enabled,1
 INSITE_PARAM_CODE,0x02,DTC_STATUS_FLAGS,DTC search result status flags,1
 INSITE_PARAM_CODE,0x03,DERATE_STATUS,Derate status byte bit flags,1
 # Engine protection status (0x47-0x53)
-INSITE_PARAM_CODE,0x47,HIGH_RPM_PROTECTION_STATUS,High RPM protection status flags,1
+INSITE_PARAM_CODE,0x47,IDLE_SHUTDOWN_TIMER_STATUS,J1587 PID 71 Idle Shutdown Timer Status: the response byte (CM550 builds it at 0xefa2-0xf004: 0x80 timer active / 0x08 function enabled / 0x04 override active / 0x02 engine shut down by the idle timer / 0x01 driver alert); was HIGH_RPM_PROTECTION_STATUS (PR #53 round 94),1
 INSITE_PARAM_CODE,0x4A,BOOST_PRESSURE_TARGET,Boost pressure target pointer (scaled >>7),1
 INSITE_PARAM_CODE,0x53,DIAGNOSTIC_FUEL_MODE_FLAG,Diagnostic fuel control mode flag (0x80 if mode==10),1
 # Single-byte scaled values (0x54-0x58)
@@ -716,20 +716,6 @@ SENSOR_HISTORY_STATE,3,RECOVERY,Recovery countdown state,2
 SYNC_STATE,0,NO_SYNC,No synchronization established,1
 SYNC_STATE,1,HAVE_SYNC,Synchronization established and maintained,1
 SYNC_STATE,2,LOST_SYNC,Synchronization was established but lost,1
-
-# High RPM Protection State Machine
-HIGH_RPM_PROTECTION_STATE,0,MONITORING,Initial state - monitoring conditions for entry,2
-HIGH_RPM_PROTECTION_STATE,1,TIMER_COUNTING,Timer countdown active - conditions met,2
-HIGH_RPM_PROTECTION_STATE,2,RPM_PROTECTION_WARNING_ACTIVE,Warning threshold reached - protection active,2
-HIGH_RPM_PROTECTION_STATE,3,FAULT_TRIGGERED,Fault triggered - derate change detected,2
-HIGH_RPM_PROTECTION_STATE,4,SHUTDOWN_PENDING,Shutdown pending - timer expired waiting for idle,2
-
-# High RPM Protection Flags
-HIGH_RPM_PROTECTION_FLAGS,0x80,TIMER_ACTIVE,High RPM protection timer is running,1
-HIGH_RPM_PROTECTION_FLAGS,0x08,HIGH_RPM_DIAG_FLAG,Diagnostic system flags bit 1 is set,1
-HIGH_RPM_PROTECTION_FLAGS,0x04,FAULT_WITH_DIAG,High RPM fault + diagnostic flag bit 2,1
-HIGH_RPM_PROTECTION_FLAGS,0x02,SHUTDOWN_TIMER_ZERO,Shutdown active and timer expired,1
-HIGH_RPM_PROTECTION_FLAGS,0x01,HIGH_RPM_WARNING_ACTIVE,High RPM protection warning flag set,1
 
 # Fuel Demand Source IDs
 FUEL_DEMAND_SOURCE,0,TABLE_BLEND_CALC,Table interpolation blend calculation result,2

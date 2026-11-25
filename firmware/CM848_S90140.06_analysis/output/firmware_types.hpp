@@ -372,7 +372,7 @@ typedef enum {
 typedef enum {
     DTC_STATUS_FLAGS = 0x02,  /* DTC search result status flags */
     DERATE_STATUS = 0x03,  /* Derate status byte bit flags */
-    HIGH_RPM_PROTECTION_STATUS = 0x47,  /* High RPM protection status flags */
+    IDLE_SHUTDOWN_TIMER_STATUS = 0x47,  /* J1587 PID 71 Idle Shutdown Timer Status: the response byte (CM550 builds it at 0xefa2-0xf004: 0x80 timer active / 0x08 function enabled / 0x04 override active / 0x02 engine shut down by the idle timer / 0x01 driver alert); was HIGH_RPM_PROTECTION_STATUS (PR #53 round 94) */
     BOOST_PRESSURE_TARGET = 0x4A,  /* Boost pressure target pointer (scaled >>7) */
     DIAGNOSTIC_FUEL_MODE_FLAG = 0x53,  /* Diagnostic fuel control mode flag (0x80 if mode==10) */
     THROTTLE_POSITION = 0x54,  /* Throttle position value (scaled >>7) */
@@ -802,22 +802,6 @@ typedef enum {
     HAVE_SYNC = 1,  /* Synchronization established and maintained */
     LOST_SYNC = 2  /* Synchronization was established but lost */
 } SYNC_STATE;
-
-typedef enum {
-    MONITORING = 0,  /* Initial state - monitoring conditions for entry */
-    TIMER_COUNTING = 1,  /* Timer countdown active - conditions met */
-    RPM_PROTECTION_WARNING_ACTIVE = 2,  /* Warning threshold reached - protection active */
-    FAULT_TRIGGERED = 3,  /* Fault triggered - derate change detected */
-    SHUTDOWN_PENDING = 4  /* Shutdown pending - timer expired waiting for idle */
-} HIGH_RPM_PROTECTION_STATE;
-
-typedef enum {
-    TIMER_ACTIVE = 0x80,  /* High RPM protection timer is running */
-    HIGH_RPM_DIAG_FLAG = 0x08,  /* Diagnostic system flags bit 1 is set */
-    FAULT_WITH_DIAG = 0x04,  /* High RPM fault + diagnostic flag bit 2 */
-    SHUTDOWN_TIMER_ZERO = 0x02,  /* Shutdown active and timer expired */
-    HIGH_RPM_WARNING_ACTIVE = 0x01  /* High RPM protection warning flag set */
-} HIGH_RPM_PROTECTION_FLAGS;
 
 typedef enum {
     TABLE_BLEND_CALC = 0,  /* Table interpolation blend calculation result */
@@ -3370,7 +3354,7 @@ struct algorithm_enable_flags_12_t {
     uint16_t air_fuel_control_override_enable : 1;  /* bit 3: e2m AFC_Override_Enable (AFENMAN). cm848_calculateAirFuelControlFuelLimit (lhz 24(r26) at 0xdcf4): while clear it computes the limit from air_fuel_control_fuel_limit_grid, so set overrides it. Code agrees. Clear in this calibration (0x2e06). */
     uint16_t electronic_smart_power_enable : 1;  /* bit 4: e2m ESP_Enable (SPAGEN; ESP = Electronic Smart Power per e2m Group_ESP_8). hpcr_calculateFuelTrimOutput (lhz at 0xe71c) and cm848_calculateThrottle100Fuelings (lhz at 0x1f290): while set the four_dimensional_fueling_interpolation_factor is zeroed around cm848_calculateMaximumFuelCurve. A reader exists but its behaviour is not tied to the e2m label. Clear in this calibration (0x2e06). */
     uint16_t reverse_electronic_smart_power_enable : 1;  /* bit 5: e2m Reverse_ESP_Enable (SPRVEN, Electronic Smart Power launch application). No reader in either bank (sweep of both banks). Clear in this calibration (0x2e06). (was reserved_bit_5; named from its e2m record in PR #53 round 20, as in algorithm_enable_flags_3_t) */
-    uint16_t low_speed_governor_droop_enable : 1;  /* bit 6: e2m LSG_Droop_Enable (LSDPEN). cm848_updateProtectionParameters (lhz at 0x20b90) and cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints (lhz at 0x507a70): while set the governor integrator output is reduced by governor_integrator_correction_term times ROM 0x5c352 divided by 167 (a droop). Code agrees. Clear in this calibration (0x2e06). */
+    uint16_t low_speed_governor_droop_enable : 1;  /* bit 6: e2m LSG_Droop_Enable (LSDPEN). cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling (lhz at 0x20b90) and cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints (lhz at 0x507a70): while set the governor integrator output is reduced by governor_integrator_correction_term times ROM 0x5c352 divided by 167 (a droop). Code agrees. Clear in this calibration (0x2e06). */
     uint16_t accelerator_interlock_enable : 1;  /* bit 7: e2m Accelerator_Interlock_Enable (ANEN). cm848_claimAcceleratorInterlockThrottleOverride (lhz at 0x403e8: with switch 26 set it forces the fuel demand override to its minimum) and cm848_j1939BuildEngineControlByte (lhz 24(r5) at 0x25788). Code agrees. Clear in this calibration (0x2e06). */
     uint16_t vehicle_speed_sensor_signal_loss_enable : 1;  /* bit 8: e2m VSS_Moving_Enable (VSMVEN): the sensor drops to 0 while the filtered speed is still above 10 mph. Named after the detector it gates. cm848_detectVehicleSpeedSensorSignalLoss (lhz at 0x526950, P0500 path 1) and cm848_clearHealedVehicleSpeedSensorFault (lhz at 0x526be8). Code agrees. Clear in this calibration (0x2e06). */
     uint16_t vehicle_speed_sensor_zero_under_load_enable : 1;  /* bit 9: e2m VSS_Stopped_Enable (VSSTEN): the sensor reads stopped (0) while the engine is under load. Named after the detector it gates. cm848_detectVehicleSpeedSensorZeroUnderLoad (lhz at 0x5269fc, P0500 path 2) and cm848_clearHealedVehicleSpeedSensorFault (lhz at 0x526bd8). Code agrees: the sensor reads 0 while the engine is under load. Set in this calibration (0x2e06). */

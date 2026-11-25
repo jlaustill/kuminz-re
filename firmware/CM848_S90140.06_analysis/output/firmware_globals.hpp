@@ -1779,7 +1779,7 @@ extern word torque_management_entry_ramp_flag;  // 0x003fb4f8
 extern word torque_management_exit_delay_timer;  // 0x003fb4fa
 extern word torque_management_table_fuel_limit;  // 0x003fb4fc
 extern word torque_management_gear_ratio_stage;  // 0x003fb4fe
-extern word subsystem_init_code;  // 0x003fb500
+extern dword torque_management_transmission_type_3_code;  // 0x003fb500
 extern word transmission_temperature_adc_unchanged_reading_counter;  // 0x003fb504
 extern word transmission_output_speed_pulse_timeout_counter;  // 0x003fb506
 extern word transmission_output_speed_sensor_unfiltered;  // 0x003fb508
@@ -4816,9 +4816,9 @@ extern word low_speed_governor_filtered_speed_error;  // 0x0040aede
 extern word low_speed_governor_adjusted_reference_speed;  // 0x0040aee0
 extern word low_speed_governor_derivative_error_term;  // 0x0040aee2
 extern word low_speed_governor_jerk_error_term;  // 0x0040aee4
-extern word fuel_demand_filter_dimension;  // 0x0040aee6
+extern word maximum_torque_at_current_engine_speed;  // 0x0040aee6
 extern int16_t injection_timing_main_misfire_limit;  // 0x0040aee8
-extern word injection_timing_pid_init_flag;  // 0x0040aeea
+extern int16_t main_injection_timing_before_misfire_limit;  // 0x0040aeea
 extern word no_load_fuel_quantity;  // 0x0040aeec
 extern word engine_speed_limit_droop_no_load_fuel_quantity;  // 0x0040aeee
 extern word friction_fuel_adjustment_for_coolant_temperature;  // 0x0040aef0
@@ -7919,6 +7919,8 @@ extern word accelerator_pedal_off_idle_deadband;  // 0x0005c28e
 extern word accelerator_pedal_idle_hysteresis;  // 0x0005c290
 extern word accelerator_pedal_throttle_range;  // 0x0005c292
 extern word accelerator_pedal_autozero_time_limit;  // 0x0005c2a6
+extern word duty_cycle_monitor_engine_speed_axis[10];  // 0x0005c2c0
+extern word duty_cycle_monitor_load_axis[12];  // 0x0005c2d4
 extern word power_take_off_disengaged_delay_limit;  // 0x00064302
 extern word obd_battery_voltage_in_range_low_limit;  // 0x00064304
 extern word obd_battery_voltage_in_range_high_limit;  // 0x00064306

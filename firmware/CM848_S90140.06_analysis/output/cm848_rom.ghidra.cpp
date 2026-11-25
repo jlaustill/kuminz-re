@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 08:57:14 MST 2026
+// Generated: Wed Nov 25 09:19:33 MST 2026
 
 
 //
@@ -7073,10 +7073,17 @@ void cm848_periodicTaskSet_sensors2(void)
 
 
 //
-// Function: cm848_periodicTaskSet_protection @ 0x0000bb68
+// Function: cm848_runEvery8FramesTaskSetPhase2 @ 0x0000bb68
 //
 
-void cm848_periodicTaskSet_protection(void)
+/* Executive frame task set: runs every 8 frames (40 ms), at frames 2, 10, 18, 26 and 34 of the
+   40-frame cycle, as call 4 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_runTorqueManagement, cm848_cruiseControlPeriodicUpdate, cm848_filterEngineSensorValue (was
+   cm848_periodicTaskSet_protection; named by slot like CM550's
+   cm550_runEvery<N>FramesTaskSetPhase<M> sets). (was cm848_periodicTaskSet_protection; PR #53 round
+   94) */
+
+void cm848_runEvery8FramesTaskSetPhase2(void)
 
 {
   cm848_runTorqueManagement();
@@ -7219,10 +7226,16 @@ void cm848_periodicTaskGroup15_calibration4(void)
 
 
 //
-// Function: cm848_periodicTaskSet_protection2 @ 0x0000bce8
+// Function: cm848_runEvery10FramesTaskSetPhase4 @ 0x0000bce8
 //
 
-void cm848_periodicTaskSet_protection2(void)
+/* Executive frame task set: runs every 10 frames (50 ms), at frames 4, 14, 24 and 34 of the
+   40-frame cycle, as call 5 of those frames in executiveFrameInterruptHandler. Calls only
+   cm848_startEepromBlockRead, the periodic EEPROM mirror reload: one 30-word block per call, copied
+   in by cm848_onEepromBlockRead (was cm848_periodicTaskSet_protection2). (was
+   cm848_periodicTaskSet_protection2; PR #53 round 94) */
+
+void cm848_runEvery10FramesTaskSetPhase4(void)
 
 {
   cm848_startEepromBlockRead();
@@ -7313,7 +7326,7 @@ void cm848_periodicTaskGroup28_calibration10(void)
 
 {
   cm848_calculateEngineLoadPercentages();
-  cm848_validateFuelDemandRelativeToTiming();
+  cm848_calculateEngineLoadLowHorsepowerCurvePercent();
   cm848_monitorGovernorPressureSensorOffset();
   cm848_runFuelPressureGovernorMonitors();
   return;
@@ -7386,10 +7399,17 @@ void cm848_periodicTaskGroup32_calibration14(void)
 
 
 //
-// Function: cm848_periodicTaskSet_protection3 @ 0x0000beb4
+// Function: cm848_runEvery20FramesTaskSetPhase8 @ 0x0000beb4
 //
 
-void cm848_periodicTaskSet_protection3(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 8 and 28 of the 40-frame
+   cycle, as call 5 of those frames in executiveFrameInterruptHandler (the 10-frame slot is empty
+   there). Calls, in order: cm848_calculateChargingVoltageTarget,
+   cm848_monitorChargingSystemVoltageHighAndLow, cm848_updateFuelPressureFaultReactionRequests,
+   cm848_applyFuelLimitsForFuelPressureFaults (was cm848_periodicTaskSet_protection3). (was
+   cm848_periodicTaskSet_protection3; PR #53 round 94) */
+
+void cm848_runEvery20FramesTaskSetPhase8(void)
 
 {
   cm848_calculateChargingVoltageTarget();
@@ -7539,10 +7559,17 @@ void cm848_periodicTaskGroup22_calibration(void)
 
 
 //
-// Function: hpcr_periodicTaskSet_protection4 @ 0x0000c050
+// Function: cm848_runEvery20FramesTaskSetPhase18 @ 0x0000c050
 //
 
-void hpcr_periodicTaskSet_protection4(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 18 and 38 of the 40-frame
+   cycle, as call 5 of those frames in executiveFrameInterruptHandler (the 10-frame slot is empty
+   there). Calls, in order: cm848_updateSwitch31FromAcceleratorPedal,
+   cm848_calculateEngineRetarderCruisePermissionPercent, cm848_monitorFuelSystemHardwareShutdown
+   (was hpcr_periodicTaskSet_protection4). (was hpcr_periodicTaskSet_protection4; PR #53 round 94)
+    */
+
+void cm848_runEvery20FramesTaskSetPhase18(void)
 
 {
   cm848_updateSwitch31FromAcceleratorPedal();
@@ -7628,7 +7655,7 @@ void executiveFrameInterruptHandler(void)
     cm848_phase_common_processing();
     cm848_phase_group_a_processing();
     cm848_periodicTaskSet_controlLoop();
-    cm848_periodicTaskSet_protection();
+    cm848_runEvery8FramesTaskSetPhase2();
     cm848_periodicTaskGroup14_calibration3();
     cm848_periodicTaskGroup27_calibration9();
     cm848_updateOilChangeMonitor();
@@ -7650,7 +7677,7 @@ void executiveFrameInterruptHandler(void)
     cm848_phase_group_a_processing();
     hpcr_periodicTaskSet_fuelFinal();
     cm848_periodicTaskSet_outputs();
-    cm848_periodicTaskSet_protection2();
+    cm848_runEvery10FramesTaskSetPhase4();
     cm848_periodicTaskGroup29_calibration11();
     calculateAlpha();
     executive_frame_phase = 5;
@@ -7689,7 +7716,7 @@ void executiveFrameInterruptHandler(void)
     cm848_phase_group_a_processing();
     hpcr_periodicTaskSet_fuelFinal();
     cm848_periodicTaskSet_canTx();
-    cm848_periodicTaskSet_protection3();
+    cm848_runEvery20FramesTaskSetPhase8();
     cm848_monitorWaterInFuel();
     executive_frame_phase = 9;
     break;
@@ -7706,7 +7733,7 @@ void executiveFrameInterruptHandler(void)
     cm848_phase_common_processing();
     cm848_phase_group_a_processing();
     cm848_periodicTaskSet_controlLoop();
-    cm848_periodicTaskSet_protection();
+    cm848_runEvery8FramesTaskSetPhase2();
     cm848_periodicTaskGroup12_calibration1();
     periodicTaskSet_fuelDemand();
     cm848_debounceOutputReadBackFaults();
@@ -7747,7 +7774,7 @@ void executiveFrameInterruptHandler(void)
     cm848_phase_group_a_processing();
     cm848_periodicTaskSet_controlLoop();
     cm848_periodicTaskSet_monitoring();
-    cm848_periodicTaskSet_protection2();
+    cm848_runEvery10FramesTaskSetPhase4();
     cm848_periodicTaskSet_diagnostics2();
     cm848_mainLoopDispatcher();
     executive_frame_phase = 0xf;
@@ -7787,8 +7814,8 @@ void executiveFrameInterruptHandler(void)
     cm848_phase_common_processing();
     cm848_phase_group_a_processing();
     cm848_periodicTaskSet_controlLoop();
-    cm848_periodicTaskSet_protection();
-    hpcr_periodicTaskSet_protection4();
+    cm848_runEvery8FramesTaskSetPhase2();
+    cm848_runEvery20FramesTaskSetPhase18();
     cm848_updateMilOnRequest();
     executive_frame_phase = 0x13;
     break;
@@ -7846,7 +7873,7 @@ void executiveFrameInterruptHandler(void)
     cm848_phase_group_a_processing();
     hpcr_periodicTaskSet_fuelFinal();
     cm848_periodicTaskSet_canTx();
-    cm848_periodicTaskSet_protection2();
+    cm848_runEvery10FramesTaskSetPhase4();
     cm848_periodicTaskGroup29_calibration11();
     cm848_updateGeneralEngineProtection();
     executive_frame_phase = 0x19;
@@ -7865,7 +7892,7 @@ void executiveFrameInterruptHandler(void)
     cm848_phase_common_processing();
     cm848_phase_group_a_processing();
     cm848_periodicTaskSet_controlLoop();
-    cm848_periodicTaskSet_protection();
+    cm848_runEvery8FramesTaskSetPhase2();
     cm848_periodicTaskGroup18_calibration6();
     cm848_periodicTaskGroup31_calibration13();
     cm848_calculateWaterVaporAndSaturationTemperatures();
@@ -7885,7 +7912,7 @@ void executiveFrameInterruptHandler(void)
     cm848_phase_group_a_processing();
     hpcr_periodicTaskSet_fuelFinal();
     cm848_periodicTaskSet_outputs();
-    cm848_periodicTaskSet_protection3();
+    cm848_runEvery20FramesTaskSetPhase8();
     cm848_processEcmInternalTemperatureChannel();
     executive_frame_phase = 0x1d;
     break;
@@ -7939,8 +7966,8 @@ void executiveFrameInterruptHandler(void)
     cm848_phase_common_processing();
     cm848_phase_group_a_processing();
     cm848_periodicTaskSet_controlLoop();
-    cm848_periodicTaskSet_protection();
-    cm848_periodicTaskSet_protection2();
+    cm848_runEvery8FramesTaskSetPhase2();
+    cm848_runEvery10FramesTaskSetPhase4();
     cm848_periodicTaskSet_diagnostics2();
     executive_frame_phase = 0x23;
     break;
@@ -7976,7 +8003,7 @@ void executiveFrameInterruptHandler(void)
     cm848_phase_group_a_processing();
     cm848_periodicTaskSet_controlLoop();
     cm848_periodicTaskSet_monitoring();
-    hpcr_periodicTaskSet_protection4();
+    cm848_runEvery20FramesTaskSetPhase18();
     cm848_mainLoopServiceMonitor();
     executive_frame_phase = 0x27;
     break;
@@ -16186,8 +16213,8 @@ void mpc555_initFuelFlowRateVariables(void)
 /* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
 /* Engine output torque in lb-ft into 0x40a622: (final_fueling minus friction fuel
    no_load_fuel_quantity) / (injection_quantity_combustion_chi_maximum minus friction fuel) x
-   fuel_demand_filter_dimension (maximum torque at this speed) - clamped 0 to that maximum (was
-   cm848_calculateOilPressureProtection) | review-function-readability reviewed 2026-11-13 -
+   maximum_torque_at_current_engine_speed (maximum torque at this speed) - clamped 0 to that maximum
+   (was cm848_calculateOilPressureProtection) | review-function-readability reviewed 2026-11-13 -
    Readability Medium Accuracy Confidence High */
 
 void cm848_calculateEngineOutputTorque(void)
@@ -16200,7 +16227,7 @@ void cm848_calculateEngineOutputTorque(void)
   
   iVar2 = (uint)injection_quantity_combustion_chi_maximum - (uint)no_load_fuel_quantity;
   if (0 < iVar2) {
-    uVar3 = (uint)fuel_demand_filter_dimension;
+    uVar3 = (uint)maximum_torque_at_current_engine_speed;
     iVar1 = (uint)final_fueling - (uint)no_load_fuel_quantity;
     uVar4 = (uint)(CONCAT44((int)((ulonglong)((longlong)iVar1 * (longlong)(int)uVar3) >> 0x20),
                             iVar1 * uVar3) / (longlong)iVar2);
@@ -20692,24 +20719,35 @@ void cm848_clearFuelDemandFlag(void)
 
 
 //
-// Function: cm848_calculateProtectionRateLimited @ 0x0001e4e8
+// Function: cm848_convertTorqueDerateTorqueLimitToFuelLimit @ 0x0001e4e8
 //
 
 /* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+/* Turns torque_derate_torque_limit (e2m 1051 +A Torque_Derate_Torque, lb-ft; 0xffff = none) into a
+   fuel limit: no_load_fuel_quantity + torque_derate_torque_limit x
+   (throttle_100_fueling_without_programmable_power - no_load_fuel_quantity) / the maximum torque at
+   the current engine speed (0x40aee6, forced to at least 1), clamped at 0. When that is below
+   torque_derate_fuel_quantity (105D +0) it becomes the limit, and torque_derate_fuel_source_code
+   takes torque_derate_torque_limit_state (1051 +C). cm848_arbitrateRequestedFueling calls it right
+   after cm848_runFuelLimitChains and resets the torque limit to 0xffff / NO_DERATE before that
+   chain. Counterpart of CM550 0x1c0d4, which resets the torque limit itself after the conversion
+   (was cm848_calculateProtectionRateLimited). (was cm848_calculateProtectionRateLimited; PR #53
+   round 94) */
 
-void cm848_calculateProtectionRateLimited(void)
+void cm848_convertTorqueDerateTorqueLimitToFuelLimit(void)
 
 {
   int iVar1;
   
-  if (fuel_demand_filter_dimension == 0) {
-    fuel_demand_filter_dimension = 1;
+  if (maximum_torque_at_current_engine_speed == 0) {
+    maximum_torque_at_current_engine_speed = 1;
   }
   iVar1 = (uint)throttle_100_fueling_without_programmable_power - (uint)no_load_fuel_quantity;
   iVar1 = (int)(CONCAT44((int)((ulonglong)
                                ((longlong)(int)(uint)torque_derate_torque_limit * (longlong)iVar1)
                               >> 0x20),(uint)torque_derate_torque_limit * iVar1) /
-               (longlong)(ulonglong)fuel_demand_filter_dimension) + (uint)no_load_fuel_quantity;
+               (longlong)(ulonglong)maximum_torque_at_current_engine_speed) +
+          (uint)no_load_fuel_quantity;
   if (iVar1 < 0) {
     iVar1 = 0;
   }
@@ -20740,8 +20778,8 @@ void cm848_arbitrateRequestedFueling(void)
   if (algorithm_enable_flags_1_cal.torque_derate_override_enable == 0) {
     torque_derate_torque_limit = 0xffff;
     torque_derate_torque_limit_state = FUELING_STATE_NO_DERATE;
-    cm848_processProtectionLimits();
-    cm848_calculateProtectionRateLimited();
+    cm848_runFuelLimitChains();
+    cm848_convertTorqueDerateTorqueLimitToFuelLimit();
   }
   else {
     torque_derate_fuel_quantity = torque_derate_override_fuel_quantity_cal;
@@ -20943,10 +20981,17 @@ void cm848_calculateFourDimensionalInjectionTiming(void)
 
 
 //
-// Function: cm848_initProtectionTableSizes @ 0x0001ea6c
+// Function: cm848_initializeFourDimensionalInjectionTimingLookupCaches @ 0x0001ea6c
 //
 
-void cm848_initProtectionTableSizes(void)
+/* Sets both words of four_dimensional_injection_timing_map_a_cached_axis_offsets and
+   four_dimensional_injection_timing_map_b_cached_axis_offsets to 2 (the first segment). These are
+   the 2-D lookup caches of the two 4D timing maps that
+   cm848_calculateFourDimensionalInjectionTiming blends (e2m 103B Four_D_Timing). Called once from
+   cm848_applicationMain (was cm848_initProtectionTableSizes). (was cm848_initProtectionTableSizes;
+   PR #53 round 94) */
+
+void cm848_initializeFourDimensionalInjectionTimingLookupCaches(void)
 
 {
   four_dimensional_injection_timing_map_a_cached_axis_offsets[0] = 2;
@@ -22130,13 +22175,13 @@ undefined1 getJ1939DiagnosticResponseEchoLength(int param_1)
    +1C Jcomm_Reference_Engine_Fueling, 'Determined Peak Engine Fueling', MM3S) when bit 11 of
    algorithm_enable_flags_41_cal is set (guessed e2m Torque_Normalization_Enable; set in this
    calibration): (injection_quantity_combustion_chi_maximum - friction_fueling) x 10000 /
-   ((fuel_demand_filter_dimension x 13558) / reference_engine_torque_working).
-   fuel_demand_filter_dimension is the maximum torque in lb-ft at the current engine speed (e2m
-   MT_Max_Torque_Map, cm848_calculateFuelDemandFilter at 0x29c98); x 13558 / 10000 turns it into
-   N*m, so the net full load fuel is scaled by the reference engine torque (e2m 1102 +1E, 850 N*m)
-   over that torque. RAM dump (key on, engine stopped): (1030 - 397) x 10000 / ((290 x 13558) / 850)
-   = 1368 = j1939_reference_engine_fueling, against 1501 = j1939_peak_fueling (ROM, e2m 1104 +0)
-   that cm848_initializeJ1939ReferenceEngineFuelingAndTorque (0x212dc) loads. Called from
+   ((maximum_torque_at_current_engine_speed x 13558) / reference_engine_torque_working).
+   maximum_torque_at_current_engine_speed is the maximum torque in lb-ft at the current engine speed
+   (e2m MT_Max_Torque_Map, cm848_calculateFuelDemandFilter at 0x29c98); x 13558 / 10000 turns it
+   into N*m, so the net full load fuel is scaled by the reference engine torque (e2m 1102 +1E, 850
+   N*m) over that torque. RAM dump (key on, engine stopped): (1030 - 397) x 10000 / ((290 x 13558) /
+   850) = 1368 = j1939_reference_engine_fueling, against 1501 = j1939_peak_fueling (ROM, e2m 1104
+   +0) that cm848_initializeJ1939ReferenceEngineFuelingAndTorque (0x212dc) loads. Called from
    cm848_periodicTaskSet_sensorProcessing. (was cm848_calculateProtectionActivationDelay) */
 
 void cm848_calculateJ1939ReferenceEngineFueling(void)
@@ -22145,7 +22190,7 @@ void cm848_calculateJ1939ReferenceEngineFueling(void)
   if (algorithm_enable_flags_41_cal.torque_normalization_enable != 0) {
     j1939_reference_engine_fueling =
          (word)((((uint)injection_quantity_combustion_chi_maximum - (uint)friction_fueling) * 10000)
-               / (((uint)fuel_demand_filter_dimension * 0x34f6) /
+               / (((uint)maximum_torque_at_current_engine_speed * 0x34f6) /
                  (uint)reference_engine_torque_working));
   }
   return;
@@ -22462,10 +22507,22 @@ void cm848_calculateNominalFrictionPercentTorque(void)
 
 
 //
-// Function: cm848_updateProtectionParameters @ 0x00020b84
+// Function: cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling @ 0x00020b84
 //
 
-void cm848_updateProtectionParameters(void)
+/* Sets point 1 of the J1939 engine configuration torque curve (PGN 65251, e2m 1102) for the derate
+   cases. j1939_torque_curve_speed_at_point_1 (1102 +22 Jcomm_RPM_At_Point_1) =
+   low_speed_governor_reference.reference_speed; while
+   algorithm_enable_flags_12_cal.low_speed_governor_droop_enable is set and
+   governor_integrator_correction_term is nonzero, that term x j1939_derated_fueling_at_idle / 167
+   is subtracted (a negative result gives 0). j1939_torque_curve_fueling_at_point_1 (1102 +2C) =
+   j1939_derated_fueling_at_idle (1104 +A Jcomm_Derated_Fueling_at_Idle);
+   governor_integrator_correction_term is only ever cleared, so the droop never applies in this
+   build. Called by cm848_updateJ1939EngineConfigurationTorqueCurve (cases 2 and 3) and by
+   cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling (was cm848_updateProtectionParameters). (was
+   cm848_updateProtectionParameters; PR #53 round 94) */
+
+void cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling(void)
 
 {
   j1939_torque_curve_speed_at_point_1 = low_speed_governor_reference.reference_speed;
@@ -22485,13 +22542,22 @@ void cm848_updateProtectionParameters(void)
 
 
 //
-// Function: cm848_updateProtectionInputs @ 0x00020bfc
+// Function: cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling @ 0x00020bfc
 //
 
-void cm848_updateProtectionInputs(void)
+/* Runs cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling, then sets point 3 of the J1939 engine
+   configuration torque curve (PGN 65251, e2m 1102 +26 / +30). Point 3 takes point 1's speed and
+   fueling when j1939_torque_curve_speed_at_point_3 is below j1939_torque_curve_speed_at_point_1,
+   otherwise j1939_engine_speed_at_point_3 (1104 +4 Jcomm_Engine_Speed_at_Point_3) and
+   j1939_derated_fueling_at_point_3 (1104 +C). Called by
+   cm848_updateJ1939EngineConfigurationTorqueCurve in its cases 6 and 7: a derate while the low
+   speed governor reference is outside its band (was cm848_updateProtectionInputs). (was
+   cm848_updateProtectionInputs; PR #53 round 94) */
+
+void cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling(void)
 
 {
-  cm848_updateProtectionParameters();
+  cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling();
   if (j1939_torque_curve_speed_at_point_3 < j1939_torque_curve_speed_at_point_1) {
     j1939_torque_curve_speed_at_point_3 = j1939_torque_curve_speed_at_point_1;
     j1939_torque_curve_fueling_at_point_3 = j1939_torque_curve_fueling_at_point_1;
@@ -22569,11 +22635,13 @@ void cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling(j1939_rx_msg_t *rx_m
    (engine_speed_limit_arbitration.limiting_source_number) is 1 / 2 / 4 / 5 / 12. Its cases load the
    point speeds and fuelings from the derated ROM values (e2m 1104 Jcomm_Engine_Speed_at_Point_3-5,
    Jcomm_Derated_Fueling_at_Idle-Point_5 and the tau 0 / tau 1 derated point 2, chosen by
-   four_dimensional_fueling_interpolation_factor) with cm848_updateProtectionParameters (0x20b84),
-   cm848_updateProtectionInputs (0x20bfc) and cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling
-   (0x20c64). Each percent torque is (fueling at the point - zero_torque_fueling) x 0x6400 /
-   (reference fueling at the point - zero) clamped to plus or minus 32000, with the reference
-   fuelings j1939_torque_curve_reference_fueling_at_point_1..e (+40 .. +48), into
+   four_dimensional_fueling_interpolation_factor) with
+   cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling (0x20b84),
+   cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling (0x20bfc) and
+   cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling (0x20c64). Each percent torque is (fueling
+   at the point - zero_torque_fueling) x 0x6400 / (reference fueling at the point - zero) clamped to
+   plus or minus 32000, with the reference fuelings
+   j1939_torque_curve_reference_fueling_at_point_1..e (+40 .. +48), into
    j1939_indicated_percent_torque_at_idle_times_256, _point_2_,
    j1939_indicated_percent_torque_at_point_3_times_256,
    j1939_indicated_percent_torque_at_point_4_times_256 and _point_5_ (+8 .. +10). It caches the
@@ -22629,7 +22697,7 @@ void cm848_updateJ1939EngineConfigurationTorqueCurve(void)
   case 1:
     goto LAB_00020fc0;
   case 2:
-    cm848_updateProtectionParameters();
+    cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling();
     if (unaff_r30 == 0) {
       j1939_torque_curve_speed_at_point_2 = j1939_low_power_derated_engine_speed_at_point_2;
       j1939_torque_curve_fueling_at_point_2 = j1939_low_power_derated_fueling_at_point_2;
@@ -22642,7 +22710,7 @@ void cm848_updateJ1939EngineConfigurationTorqueCurve(void)
     j1939_torque_curve_fueling_at_point_3 = j1939_derated_fueling_at_point_3;
     goto LAB_0002105c;
   case 3:
-    cm848_updateProtectionParameters();
+    cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling();
     if ((int)uVar1 < (int)(uint)j1939_low_power_point_5_intersection_engine_speed) {
       cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling
                 ((j1939_rx_msg_t *)(uint)j1939_derated_fueling_at_point_4);
@@ -22672,7 +22740,7 @@ LAB_00020fc0:
     }
     break;
   case 6:
-    cm848_updateProtectionInputs();
+    cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling();
     if (unaff_r30 == 0) {
       j1939_torque_curve_speed_at_point_2 = j1939_low_power_derated_engine_speed_at_point_2;
       j1939_torque_curve_fueling_at_point_2 = j1939_low_power_derated_fueling_at_point_2;
@@ -22688,7 +22756,7 @@ LAB_0002105c:
     j1939_torque_curve_speed_at_point_5 = j1939_engine_speed_at_point_5;
     break;
   case 7:
-    cm848_updateProtectionInputs();
+    cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling();
     if ((int)uVar1 < (int)(uint)j1939_low_power_point_5_intersection_engine_speed) {
       cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling
                 ((j1939_rx_msg_t *)(uint)j1939_derated_fueling_at_point_4);
@@ -23285,7 +23353,7 @@ void registerJ1939DiagnosticHandlers(void)
    (0x14528) by the chi and alpha of combustion_reference_state, as
    cm848_lookupChiMaximumFuelAtSpeed (0x164e4) does for the maximum fuel.
    cm848_calculateFuelDemandFilter (0x29c98) does the same at the current engine speed into
-   fuel_demand_filter_dimension. Called by
+   maximum_torque_at_current_engine_speed. Called by
    cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings (0x21cd4) with the five torque curve
    speeds. (was cm848_initUdsServiceHandlers) */
 
@@ -23358,10 +23426,22 @@ uint cm848_getHighestPriorityBit(void)
 
 
 //
-// Function: cm848_updateProtectionThresholdsIfLow @ 0x00021c3c
+// Function: cm848_setThrottle100J1939TorqueCurveSpeedPoints @ 0x00021c3c
 //
 
-void cm848_updateProtectionThresholdsIfLow(void)
+/* Sets the five speed points of the J1939 engine configuration torque curve (PGN 65251, e2m 1102
+   +22 .. +2A) for the throttle 100 request. It returns at once when
+   j1939_pgn65251_speed_points_request_flags (12BB +0 Active_Speed_Points_State) holds a request bit
+   above 1 << throttle_100_priority_bit_index (12BD +A Throttle_100_Priority). Point 1 =
+   low_speed_governor_reference.reference_speed +
+   j1939_pgn65251_speed_at_point_1_low_speed_governor_offset (12BD +0; a negative sum gives 0),
+   point 2 = engine_speed_limit_ramped (the high speed governor speed before droop), points 3 to 5 =
+   j1939_pgn65251_speed_at_point_3 / _4 / _5 (12BD +2 / +4 / +6 Throttle_Speed_At_Point_3-5). Called
+   by cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings after it sets the throttle 100 bit
+   (was cm848_updateProtectionThresholdsIfLow). (was cm848_updateProtectionThresholdsIfLow; PR #53
+   round 94) */
+
+void cm848_setThrottle100J1939TorqueCurveSpeedPoints(void)
 
 {
   uint uVar1;
@@ -23393,9 +23473,9 @@ void cm848_updateProtectionThresholdsIfLow(void)
    them into percent torque, e2m block 1102, for the throttle 100 request of PGN 65251. On first use
    throttle_100_speed_points_request_bit = 1 << throttle_100_priority_bit_index (e2m 12BD +A
    Throttle_100_Priority). While programmable_power_enable is 0 it sets that bit in
-   j1939_pgn65251_speed_points_request_flags, lets cm848_updateProtectionThresholdsIfLow (0x21c3c)
-   write the point speeds from the broadcast overrides when no higher priority bit is set, and takes
-   the maximum fuel of the chi curve at each of the five point speeds
+   j1939_pgn65251_speed_points_request_flags, lets cm848_setThrottle100J1939TorqueCurveSpeedPoints
+   (0x21c3c) write the point speeds from the broadcast overrides when no higher priority bit is set,
+   and takes the maximum fuel of the chi curve at each of the five point speeds
    (cm848_lookupChiMaximumFuelAtSpeed, 0x164e4). The reference fuelings
    j1939_torque_curve_reference_fueling_at_point_1..e (1102 +40 .. +48
    Jcomm_Reference_Fueling_At_Point_1-5) are j1939_reference_engine_fueling at every point when
@@ -23434,7 +23514,7 @@ void cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings(void)
   if (algorithm_enable_flags_18_cal.programmable_power_enable == 0) {
     j1939_pgn65251_speed_points_request_flags =
          j1939_pgn65251_speed_points_request_flags | throttle_100_speed_points_request_bit;
-    cm848_updateProtectionThresholdsIfLow();
+    cm848_setThrottle100J1939TorqueCurveSpeedPoints();
     wVar2 = cm848_lookupChiMaximumFuelAtSpeed(j1939_torque_curve_speed_at_point_1);
     wVar3 = cm848_lookupChiMaximumFuelAtSpeed(j1939_torque_curve_speed_at_point_2);
     wVar4 = cm848_lookupChiMaximumFuelAtSpeed(j1939_torque_curve_speed_at_point_3);
@@ -24803,10 +24883,21 @@ LAB_00023878:
 
 
 //
-// Function: cm848_initGovernorProtectionState @ 0x00023a9c
+// Function: cm848_initializeEngineRetarderTsc1RequestState @ 0x00023a9c
 //
 
-void cm848_initGovernorProtectionState(void)
+/* Power-up initialization of the engine retarder TSC1 path (TSC1 frames addressed to the engine
+   retarder, handled by cm848_processEngineRetarderTsc1Request). It sets
+   engine_retarder_torque_limit_percent = 100, engine_retarder_override_control_mode =
+   TSC1_OVERRIDE_OFF, engine_retarder_control_device_indicator = J1939_CONTROL_DEVICE_NONE (e2m 10E6
+   +2) and engine_retarder_stage_count = the sum of engine_retarder_driver_1..6_cylinder_count (e2m
+   13D8; 1 here). It sets the five stage table lookup caches
+   engine_retarder_torque_stage_1..5_cached_axis_offset of cm848_selectEngineRetarderStagePercent to
+   2. Called by cm848_j1939_system_init after the ERC1 and retarder configuration buffers are set up
+   (was cm848_initGovernorProtectionState). (was cm848_initGovernorProtectionState; PR #53 round 94)
+    */
+
+void cm848_initializeEngineRetarderTsc1RequestState(void)
 
 {
   engine_retarder_torque_limit_percent = 100;
@@ -26161,8 +26252,8 @@ void cm848_initializePgn61441ElectronicBrakeController1Buffer(void)
 
 /* Builds and sends the ECM's own EEC1 broadcast, PGN 61444: the transmit descriptor
    j1939_pgn61444_tx_message (can_id built from 0xf00400, 5 bytes, set by cm848_initEec1TxDescriptor
-   at 0x25ab8) is registered in the periodic transmit queue with cm848_scheduleJ1939PeriodicMessage.
-   Byte 1 is the engine torque mode (SPN 899): while a TSC1 override is active
+   at 0x25ab8) is registered in the periodic transmit queue with scheduleJ1939PeriodicMessage. Byte
+   1 is the engine torque mode (SPN 899): while a TSC1 override is active
    (j1939_powertrain_control_state.tsc1_override_control_mode non-zero in the TSC1 fueling states)
    0xf6 / 0xf7 / 0xf5 for the sender index 1 / 2 / 3 (transmission / ABS / ASR), otherwise from
    final_fueling_state: 0xf8 (torque limiting) when torque_derate_fuel_source_code equals it, 0xf0
@@ -27058,7 +27149,7 @@ void cm848_initPgn65242SoftwareIdHandler(void)
 
 /* handles the J1939 request for PGN 65504 Proprietary B (PDU2 range 65280-65535 - Proprietary A is
    61184) via j1939_pgn_dispatch_table (cm848_j1939DispatchPgnHandler) - also broadcasts every 200
-   ms via cm848_scheduleJ1939PeriodicMessage (was cm848_j1939HandlePgn65504ProprietaryA) |
+   ms via scheduleJ1939PeriodicMessage (was cm848_j1939HandlePgn65504ProprietaryA) |
    registration-table-sweep reviewed 2026-11-13 */
 
 void cm848_j1939HandlePgn65504ProprietaryB(void)
@@ -27180,7 +27271,7 @@ void cm848_initPgn65248VehicleDistanceHandler(void)
 
 /* handles the J1939 request for PGN 65271 vehicle electrical power via j1939_pgn_dispatch_table
    (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - also a periodic broadcast builder via
-   cm848_scheduleJ1939PeriodicMessage every 1000 ms */
+   scheduleJ1939PeriodicMessage every 1000 ms */
 
 void cm848_j1939HandlePgn65271VehicleElectrical(void)
 
@@ -29228,13 +29319,13 @@ void cm848_calculateFuelDemandFilter(void)
                     (maximum_torque_map_chi_upper_cached_axis_offsets,
                      engine_speed_state.filtered_engine_speed,maximum_torque_map_x_axis,(word)uVar4,
                      maximum_torque_map_y_axis,maximum_torque_map_grid,0);
-  fuel_demand_filter_dimension =
+  maximum_torque_at_current_engine_speed =
        cm848_interpolateAlphaChiValue
                  (wVar2,wVar3,wVar1,combustion_chi_lower_map_number,combustion_chi_upper_map_number,
                   combustion_reference_state.chi_hundredths,combustion_reference_state.alpha_percent
                  );
-  if (fuel_demand_filter_dimension == 0) {
-    fuel_demand_filter_dimension = 1;
+  if (maximum_torque_at_current_engine_speed == 0) {
+    maximum_torque_at_current_engine_speed = 1;
   }
   return;
 }
@@ -29248,7 +29339,7 @@ void cm848_calculateFuelDemandFilter(void)
 void cm848_initFuelDemandFilterDimensions(void)
 
 {
-  fuel_demand_filter_dimension = 1;
+  maximum_torque_at_current_engine_speed = 1;
   maximum_torque_map_alpha_0_cached_axis_offsets[0] = 2;
   maximum_torque_map_alpha_0_cached_axis_offsets[1] = 2;
   maximum_torque_map_chi_lower_cached_axis_offsets[0] = 2;
@@ -29261,15 +29352,24 @@ void cm848_initFuelDemandFilterDimensions(void)
 
 
 //
-// Function: cm848_initProtectionFilterAccumulators @ 0x00029e24
+// Function: cm848_initializeInjectionTimingMainMisfireLimit @ 0x00029e24
 //
 
-void cm848_initProtectionFilterAccumulators(void)
+/* Power-up initialization of the misfire timing limit (e2m 8A3D). It sets both words of
+   injection_timing_main_misfire_limit_cached_axis_offsets (the 2-D lookup cache of
+   cm848_calculateInjectionTimingMainMisfireLimit) to 2. It clears
+   injection_timing_main_misfire_limit (8A3D +0 Misfire_Timing_Limit) and
+   main_injection_timing_before_misfire_limit (8A3D +2 SOI_Before_MST, 'desired SOI before being
+   limited by misfire algorithm'). Called once from cm848_applicationMain (was
+   cm848_initProtectionFilterAccumulators). (was cm848_initProtectionFilterAccumulators; PR #53
+   round 94) */
+
+void cm848_initializeInjectionTimingMainMisfireLimit(void)
 
 {
   injection_timing_main_misfire_limit_cached_axis_offsets[1] = 2;
   injection_timing_main_misfire_limit_cached_axis_offsets[0] = 2;
-  injection_timing_pid_init_flag = 0;
+  main_injection_timing_before_misfire_limit = 0;
   injection_timing_main_misfire_limit = 0;
   return;
 }
@@ -30663,10 +30763,16 @@ void cm848_emptyStubFunction6(void)
 
 
 //
-// Function: cm848_initProtectionLimitVariables @ 0x0002c100
+// Function: cm848_initializeAllSpeedGovernorTuningSetBlendWeight @ 0x0002c100
 //
 
-void cm848_initProtectionLimitVariables(void)
+/* Copies governor_tuning_set_default_blend_weight_cal (EEPROM 0xa4, e2m 1387 +8 ASG_Droop_Flag_Trim
+   'select droop source') into governor_tuning_set_blend_weight. That word is the 0..128 weight
+   between the all-speed governor's two tuning sets; cm848_blendAllSpeedGovernorReferenceSpeeds
+   later picks it from drivetrain_ratio. Called once from cm848_applicationMain (was
+   cm848_initProtectionLimitVariables). (was cm848_initProtectionLimitVariables; PR #53 round 94) */
+
+void cm848_initializeAllSpeedGovernorTuningSetBlendWeight(void)
 
 {
   governor_tuning_set_blend_weight = governor_tuning_set_default_blend_weight_cal;
@@ -39282,10 +39388,16 @@ LAB_00038a4c:
 
 
 //
-// Function: cm848_initProtectionFilterLimits @ 0x00038a98
+// Function: cm848_initializeFuelPressureGovernorFaultBlend @ 0x00038a98
 //
 
-void cm848_initProtectionFilterLimits(void)
+/* Power-up initialization of cm848_applyFuelPressureGovernorFaultBlend (fueling state 62):
+   safety_fuel_limit_cached_axis_offset = 2, safety_fuel_blend_output and
+   safety_blend_fuel_demand_prev = 5888 (400 mm3, no limit), safety_fuel_blend_fraction = 0. Called
+   once from cm848_applicationMain (was cm848_initProtectionFilterLimits). (was
+   cm848_initProtectionFilterLimits; PR #53 round 94) */
+
+void cm848_initializeFuelPressureGovernorFaultBlend(void)
 
 {
   safety_fuel_limit_cached_axis_offset = 2;
@@ -43683,15 +43795,24 @@ void cm848_initializeConverterSlipEngineSpeedLimit(void)
 
 
 //
-// Function: cm848_setThermalProtectionMode5 @ 0x0003eccc
+// Function: cm848_setTorqueManagementTransmissionType3Code @ 0x0003eccc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Stores 5 as a 32-bit word in torque_management_transmission_type_3_code (0x3fb500, next to
+   torque_management_gear_ratio_stage). Its only caller is the transmission_type_cal 3 branch of
+   cm848_evaluateTorqueManagementRequired, which then returns without setting the required flag or
+   the stage (type 0 sets the flag and the stage, types 1 and 2 the flag; any other value also
+   returns without either). Nothing reads the word (no other access in ROM or flash2, no e2m record,
+   0 in the RAM dump), and the call never happens: cm848_runTorqueManagement, the only caller of
+   cm848_evaluateTorqueManagementRequired, skips torque management when transmission_type_cal is 3
+   (3 in this calibration; the app never writes that EEPROM word). The code does not show what 5
+   means. Nothing thermal (was cm848_setThermalProtectionMode5). (was
+   cm848_setThermalProtectionMode5; PR #53 round 94) */
 
-void cm848_setThermalProtectionMode5(void)
+void cm848_setTorqueManagementTransmissionType3Code(void)
 
 {
-  _subsystem_init_code = 5;
+  torque_management_transmission_type_3_code = 5;
   return;
 }
 
@@ -43759,7 +43880,7 @@ void cm848_evaluateTorqueManagementRequired(void)
   else {
     if (transmission_type_cal != 2) {
       if (transmission_type_cal == 3) {
-        cm848_setThermalProtectionMode5();
+        cm848_setTorqueManagementTransmissionType3Code();
         return;
       }
       return;
@@ -43967,7 +44088,7 @@ void cm848_selectTorqueManagementFuelLimitOutsideTransitions(void)
 // Function: cm848_runTorqueManagement @ 0x0003f2b0
 //
 
-/* Torque management pass (cm848_periodicTaskSet_protection): when neither enable bit 0x1000
+/* Torque management pass (cm848_runEvery8FramesTaskSetPhase2): when neither enable bit 0x1000
    (algorithm_enable_flags_40_cal, algorithm_enable_flags_42_cal) is set, or transmission_type_cal
    is 3, the limit is 0x1700 (no limit); otherwise it evaluates the requirement, the table limit,
    the exit delay, the exit ramp and the entry ramp, selects the limit and stores the previous-pass
@@ -44003,7 +44124,7 @@ void cm848_runTorqueManagement(void)
 
 /* If torque_management_fuel_limit is below the running fuel limit torque_derate_fuel_quantity,
    takes it and records source code 45 (0x2d) in torque_derate_fuel_source_code; called from
-   cm848_processProtectionLimits (cm848_calculateEffectiveFuelLimit also takes the minimum with
+   cm848_runFuelLimitChains (cm848_calculateEffectiveFuelLimit also takes the minimum with
    torque_management_fuel_limit directly). (was cm848_applyThermalFuelLimit) */
 
 void cm848_applyTorqueManagementFuelLimit(void)
@@ -46233,7 +46354,7 @@ void cm848_copyMainInjectionTiming(void)
 /* Folds the rail pressure fault fuel limit fuel_pressure_fault_fuel_limit_working (set by
    cm848_applyFuelLimitsForFuelPressureFaults; 5888 = none) into the running minimum fuel limit
    torque_derate_fuel_quantity and records source code 28 in torque_derate_fuel_source_code when it
-   is the lower one. One of the fuel limit steps run by cm848_processProtectionLimits; its sibling
+   is the lower one. One of the fuel limit steps run by cm848_runFuelLimitChains; its sibling
    applyFaultDerateFuelLimit does the same for the fault derate fuel limit with code 29. (was
    cm848_applyProtectionTorqueLimit) | the twin of CM550 0x00030bf6: one shared name (was
    cm848_applyFuelPressureFaultFuelLimit; PR #53 round 94) */
@@ -46274,10 +46395,25 @@ void applyTsc1TorqueLimit(void)
 
 
 //
-// Function: cm848_processProtectionLimits @ 0x0004280c
+// Function: cm848_runFuelLimitChains @ 0x0004280c
 //
 
-void cm848_processProtectionLimits(void)
+/* Runs the fuel limit chains that produce torque_derate_fuel_quantity /
+   torque_derate_fuel_source_code (e2m 105D +0 / +2) and the group 2 minimum
+   fuel_demand_minimum_tracked (105D +6 / +8). The steps, with their fueling state codes:
+   initializeFuelLimitChains (19 / 40), applyPowerTakeOffTorqueLimit (34),
+   applyAirFuelControlFuelLimit (16), applyAltitudeDerateFuelLimit (15), applyFaultDerateFuelLimit
+   (29), applyTsc1TorqueLimit (20), applyFuelSystemDerateFuelLimit (28),
+   cm848_applyCoolantOverheatFuelDerate (46), cm848_applyTorqueManagementFuelLimit (45),
+   cm848_applyFuelLimitByRpmAndDemand (42), cm848_applyNetTorqueFuelLimit (59),
+   cm848_limitFuelQuantityOnRailPressureShortfall (61), cm848_applyFuelPressureGovernorFaultBlend
+   (62). Called by cm848_arbitrateRequestedFueling before
+   cm848_convertTorqueDerateTorqueLimitToFuelLimit. Counterpart of cm550_runFuelLimitChains
+   (0x30c3c): the same seven shared steps in the same order, without CM550's steps 17 / 33 and with
+   six newer limiters (was cm848_processProtectionLimits). (was cm848_processProtectionLimits; PR
+   #53 round 94) */
+
+void cm848_runFuelLimitChains(void)
 
 {
   initializeFuelLimitChains();
@@ -50719,7 +50855,7 @@ void cm848_updateFuelPressureDiagnosticCountersAndCheckFeedbackCircuit(void)
 /* Builds fault_reaction_request_bits from the registered faults 317, 290, 324, 408 and 352 (each
    ORs in its own fault_NNN_reaction_request_mask; bit 3 of the previous value is kept) and requests
    logical output 54 while bit 3 is set. Runs before cm848_applyFuelLimitsForFuelPressureFaults in
-   cm848_periodicTaskSet_protection3. (was cm848_protectionInputValidator) */
+   cm848_runEvery20FramesTaskSetPhase8. (was cm848_protectionInputValidator) */
 
 void cm848_updateFuelPressureFaultReactionRequests(void)
 
@@ -55671,10 +55807,17 @@ void cm848_scanAndDebounceSwitchInputs(void)
 
 
 //
-// Function: hpcr_initProtectionAndOutputCycle @ 0x0004eeb8
+// Function: cm848_initializeSwitchInputStates @ 0x0004eeb8
 //
 
-void hpcr_initProtectionAndOutputCycle(void)
+/* Power-up initialization of the logical switch inputs. It copies the 4 bytes of
+   j1939_switch_input_default_state_bits (ROM, all 0) into switch_input_state_bits, takes one input
+   line snapshot (cm848_refreshInputLineImage) and runs cm848_scanAndDebounceSwitchInputs 4 times,
+   so the 4-sample debounce starts from the real line states. Called once from cm848_applicationMain
+   before the sensor channel initializers (was hpcr_initProtectionAndOutputCycle). (was
+   hpcr_initProtectionAndOutputCycle; PR #53 round 94) */
+
+void cm848_initializeSwitchInputStates(void)
 
 {
   ushort uVar1;
@@ -57878,7 +58021,7 @@ void cm848_refreshOutputPortsAndReadback(void)
 /* Snapshots every discrete input port into input_line_image in one pass: the MIOS port data (lines
    8-23) / SIU_SGPIODT1-2 (24-87) / the MDASM11-15 and 27-30 pin bits (120-128) / the supervisor
    chip lines 130-151 / the serial output driver status byte (152-159); run by
-   hpcr_periodicTaskSet_fuelFinal and hpcr_initProtectionAndOutputCycle -
+   hpcr_periodicTaskSet_fuelFinal and cm848_initializeSwitchInputStates -
    cm848_readDiscreteInputLine refreshes a single line. Not injector timing (was
    hpcr_injectorPulseWidthCalc) */
 
@@ -58948,7 +59091,7 @@ void cm848_applicationMain(void)
   else {
     fault_detected_cal._10_2_ = fault_detected_cal._10_2_ | 0x800;
   }
-  hpcr_initProtectionAndOutputCycle();
+  cm848_initializeSwitchInputStates();
   cm848_processProtectionFaultsAndTiming();
   cm848_initializeSensorReferenceVoltageCChannel();
   cm848_initializeSensorReferenceVoltageBChannel();
@@ -58965,7 +59108,7 @@ void cm848_applicationMain(void)
   cm848_initializeAcceleratorPedalChannel();
   cm848_initializeWaterInFuelChannel();
   cm848_initializeAmbientAirTemperatureChannel();
-  cm848_loadHourMetersFromEeprom();
+  loadHourMetersFromEeprom();
   cm848_dispatchModeHandlers();
   cm848_initializeHighSpeedGovernorCompensatedEngineSpeed();
   initializeEngineState();
@@ -58973,7 +59116,7 @@ void cm848_applicationMain(void)
   cm848_initFuelFilterCoefficients();
   cm848_initializeCommandedThrottleState();
   cm848_selectColdStartFactor();
-  cm848_initProtectionTableSizes();
+  cm848_initializeFourDimensionalInjectionTimingLookupCaches();
   cm848_initializePowerTakeOffGovernorState();
   cm848_initializePowerTakeOffThrottleOverride();
   cm848_initializeLowSpeedGovernorParameters();
@@ -59007,7 +59150,7 @@ void cm848_applicationMain(void)
   mpc555_initTpuTimingInterrupts();
   cm848_writeWorkingRamEndMarker();
   cm848_initRpmSetpointFilters();
-  cm848_initProtectionLimitVariables();
+  cm848_initializeAllSpeedGovernorTuningSetBlendWeight();
   cm848_initTimingFilterStates();
   cm848_resetEngineProtectionShutdownOverrideDetector();
   cm848_stubFunction3();
@@ -59025,7 +59168,7 @@ void cm848_applicationMain(void)
   mpc555_enableSchedulerMiosOutput();
   mpc555_resetEngineTimingAccumulators();
   cm848_enableSensorFilterUpdate();
-  cm848_initProtectionFilterAccumulators();
+  cm848_initializeInjectionTimingMainMisfireLimit();
   cm848_resetIntakeAirHeaterStartTemperatureCapture();
   cm848_initIntakeAirHeaterControl();
   cm848_initializeFuelDemandAndLimitInterpolationStates();
@@ -59202,7 +59345,7 @@ void cm848_applicationMain(void)
   cm848_initializeRailPressureShortfallFuelLimit();
   cm848_startTurbochargerSpeedLimiter();
   cm848_initializeFuelPressureSensorPlausibilityState();
-  cm848_initProtectionFilterLimits();
+  cm848_initializeFuelPressureGovernorFaultBlend();
   cm848_initializeFuelPressureGovernorMonitorState();
   cm848_initializeDiscreteOutputReadBackChecks();
   cm848_initialization_step_2();
@@ -65788,7 +65931,7 @@ void cm848_updateDutyCycleMonitorLoadHistogram(void)
       wVar2 = cm848_lookupChiMaximumFuelAtSpeed(duty_cycle_monitor_high_cutoff_engine_speed);
     }
     fuel_demand_histogram_axis_endpoint = wVar2;
-    uVar3 = DAT_0005c2ea;
+    uVar3 = duty_cycle_monitor_load_axis[0xb];
     if (fuel_demand_histogram_axis_endpoint != no_load_fuel_quantity) {
       uVar3 = cm848_clampedDivisionWithBounds
                         (((int)(short)final_fueling - (int)(short)no_load_fuel_quantity) * 10000,
@@ -65811,7 +65954,8 @@ void cm848_updateDutyCycleMonitorLoadHistogram(void)
       bVar1 = false;
       uVar9 = 1;
       do {
-        if (engine_speed_state.filtered_engine_speed <= *(ushort *)(uVar9 * 2 + 0x5c2c0)) {
+        if (engine_speed_state.filtered_engine_speed <= duty_cycle_monitor_engine_speed_axis[uVar9])
+        {
           bVar1 = true;
           if (uVar9 == 1) {
             iVar4 = 1;
@@ -65825,7 +65969,7 @@ void cm848_updateDutyCycleMonitorLoadHistogram(void)
       bVar1 = false;
       uVar9 = 1;
       do {
-        if (fuel_demand_histogram_load_ratio <= *(ushort *)(uVar9 * 2 + 0x5c2d4)) {
+        if (fuel_demand_histogram_load_ratio <= duty_cycle_monitor_load_axis[uVar9]) {
           bVar1 = true;
           if (uVar9 == 1) {
             iVar6 = 1;
@@ -65895,13 +66039,14 @@ void advanceHourMeters(void)
 
 
 //
-// Function: cm848_loadHourMetersFromEeprom @ 0x005067bc
+// Function: loadHourMetersFromEeprom @ 0x005067bc
 //
 
 /* Loads key_on_hour_meter / engine_hour_meter from their EEPROM copies (0x30 / 0x42) - called from
-   cm848_applicationMain. Was hpcr_exception_process_2 */
+   cm848_applicationMain. Was hpcr_exception_process_2 | the twin of CM550 0x0003452a: one shared
+   name (was cm848_loadHourMetersFromEeprom; PR #53 round 94) */
 
-void cm848_loadHourMetersFromEeprom(void)
+void loadHourMetersFromEeprom(void)
 
 {
   key_on_hour_meter = key_on_hour_meter_cal;
@@ -72397,12 +72542,21 @@ void cm848_calculateEngineLoadPercentages(void)
 
 
 //
-// Function: cm848_validateFuelDemandRelativeToTiming @ 0x0050e000
+// Function: cm848_calculateEngineLoadLowHorsepowerCurvePercent @ 0x0050e000
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* Percent load on the low horsepower torque curve (e2m 10BF +4 Tau_0_Percent_Load [SPT0PCLD], 1/256
+   percent), every 100 ms from cm848_periodicTaskGroup28_calibration10, right after
+   cm848_calculateEngineLoadPercentages. When final_fueling (1051 +0) and
+   throttle_100_fueling_low_horsepower_curve (105A +2 FST0MXFL) are both above no_load_fuel_quantity
+   (109C +0) it stores (final_fueling - no_load) x 25600 / (the low horsepower curve fueling -
+   no_load), clamped at 0xff00; otherwise it stores 0. Counterpart of
+   cm550_calculateEngineLoadLowHorsepowerCurvePercent (0x26e2c), which compares unsigned and does
+   not clamp (was cm848_validateFuelDemandRelativeToTiming). (was
+   cm848_validateFuelDemandRelativeToTiming; PR #53 round 94) */
 
-void cm848_validateFuelDemandRelativeToTiming(void)
+void cm848_calculateEngineLoadLowHorsepowerCurvePercent(void)
 
 {
   uint uVar1;
@@ -99694,7 +99848,7 @@ void cm848_initializeRamRefresh(void)
    RAM word that differs (sensor_cal_write_dirty_flag = 1). The one block is the sensor channel
    calibration block (sensor_channel_cal_block_start .. sensor_channel_ram_start, 0x3feed0-0x40a046)
    against ROM 0x64aea (the EEPROM mirror ends before it, at 0x3feec1); the EEPROM side of the
-   refresh is the periodic mirror reload (cm848_periodicTaskSet_protection2 ->
+   refresh is the periodic mirror reload (cm848_runEvery10FramesTaskSetPhase4 ->
    cm848_startEepromBlockRead, 30 words per read, copied in by cm848_onEepromBlockRead only while
    ram_refresh_enable is not INACTIVE). When a cycle through all blocks ends it sets fault bit 0
    (fault_detected_cal.faults_0_to_15 |= 1, e2m 1036 +0 RAM_Image_Word_Error 'RAM refresh generated
@@ -99758,17 +99912,18 @@ void cm848_refreshRamCalibration(void)
 
 
 //
-// Function: cm848_scheduleJ1939PeriodicMessage @ 0x00538c8c
+// Function: scheduleJ1939PeriodicMessage @ 0x00538c8c
 //
 
 /* Adds a periodic J1939 broadcast to transmit queue 0 (20 entries at 0x3fd2e2) or 1 (10 entries at
    0x3fd3aa): the PGN / the period (ms - kept in 10 ms ticks) / the first send (the queue's current
    tick + the offset ms in ticks) / the builder. Returns 1 when the queue is full.
    cm848_j1939_system_init schedules each broadcast (PGN 65265 every 100 ms from 70 ms ...) (was
-   diag_record_queue_add_entry; PR #53 round 65) */
+   diag_record_queue_add_entry; PR #53 round 65) | the twin of CM550 0x0001fe84: one shared name
+   (was cm848_scheduleJ1939PeriodicMessage; PR #53 round 94) */
 
 undefined4
-cm848_scheduleJ1939PeriodicMessage
+scheduleJ1939PeriodicMessage
           (int param_1,undefined2 param_2,int param_3,int param_4,undefined4 param_5)
 
 {
@@ -100032,7 +100187,7 @@ void cm848_j1939_system_init(void)
   cm848_initializePgn65213FanDrive1Buffer();
   cm848_initializePgn65241AuxiliaryInputOutputStatus1Buffer();
   cm848_initializePgn65249RetarderConfigurationBuffer();
-  cm848_initGovernorProtectionState();
+  cm848_initializeEngineRetarderTsc1RequestState();
   cm848_initializePgn56320AntiTheftStatusBuffer();
   cm848_initJ1939AmbientConditionsBuffer();
   cm848_initJ1939FluidLevelPressureBuffer();
@@ -100043,39 +100198,31 @@ void cm848_j1939_system_init(void)
   cm848_initJ1939ProprietaryPgn65504Buffer();
   cm848_initPgn65226Dm1Handler();
   cm848_initializePgn65232Dm8Buffer();
-  cm848_scheduleJ1939PeriodicMessage
+  scheduleJ1939PeriodicMessage
             (0,0xfef1,100,0x46,cm848_buildPgn65265CruiseControlVehicleSpeedMessage);
-  cm848_scheduleJ1939PeriodicMessage(0,0xf004,0x14,0,sendPgn61444ElectronicEngineController1Message)
-  ;
-  cm848_scheduleJ1939PeriodicMessage
+  scheduleJ1939PeriodicMessage(0,0xf004,0x14,0,sendPgn61444ElectronicEngineController1Message);
+  scheduleJ1939PeriodicMessage
             (0,0xf003,0x14,10,cm848_buildPgn61443ElectronicEngineController2Message);
-  cm848_scheduleJ1939PeriodicMessage
+  scheduleJ1939PeriodicMessage
             (0,0xfedf,0x32,0x1e,cm848_buildPgn65247ElectronicEngineController3Message);
-  cm848_scheduleJ1939PeriodicMessage
-            (0,0xfee3,5000,0x6e,cm848_sendPgn65251EngineConfiguration1Message);
-  cm848_scheduleJ1939PeriodicMessage
+  scheduleJ1939PeriodicMessage(0,0xfee3,5000,0x6e,cm848_sendPgn65251EngineConfiguration1Message);
+  scheduleJ1939PeriodicMessage
             (1,0xf000,100,0x32,cm848_buildPgn61440ElectronicRetarderController1Message);
-  cm848_scheduleJ1939PeriodicMessage
-            (1,0xfee1,5000,0x12d,cm848_buildPgn65249RetarderConfigurationMessage);
-  cm848_scheduleJ1939PeriodicMessage
-            (0,0xfeee,1000,0x1ae,cm848_buildPgn65262EngineTemperature1Message);
-  cm848_scheduleJ1939PeriodicMessage
+  scheduleJ1939PeriodicMessage(1,0xfee1,5000,0x12d,cm848_buildPgn65249RetarderConfigurationMessage);
+  scheduleJ1939PeriodicMessage(0,0xfeee,1000,0x1ae,cm848_buildPgn65262EngineTemperature1Message);
+  scheduleJ1939PeriodicMessage
             (0,0xfed9,0xfa,200,cm848_buildPgn65241AuxiliaryInputOutputStatus1Message);
-  cm848_scheduleJ1939PeriodicMessage
+  scheduleJ1939PeriodicMessage
             (0,0xfeef,500,0x82,cm848_buildPgn65263EngineFluidLevelPressure1Message);
-  cm848_scheduleJ1939PeriodicMessage
-            (0,0xfef0,100,0x96,cm848_buildPgn65264PowerTakeOffInformationMessage);
-  cm848_scheduleJ1939PeriodicMessage(0,0xfef5,1000,0xaa,cm848_buildPgn65269AmbientConditionsMessage)
-  ;
-  cm848_scheduleJ1939PeriodicMessage
-            (0,0xfef6,500,0xbe,cm848_buildPgn65270InletExhaustConditions1Message);
-  cm848_scheduleJ1939PeriodicMessage(0,0xfef7,1000,0xd2,cm848_j1939HandlePgn65271VehicleElectrical);
-  cm848_scheduleJ1939PeriodicMessage(0,0xffe0,200,0xfa,cm848_j1939HandlePgn65504ProprietaryB);
-  cm848_scheduleJ1939PeriodicMessage(0,0xfeca,1000,500,cm848_processDm1FaultBroadcast);
-  cm848_scheduleJ1939PeriodicMessage(0,0xfebd,1000,0x32,cm848_buildPgn65213FanDrive1Message);
-  cm848_scheduleJ1939PeriodicMessage(0,0xf001,100,0x14,cm848_j1939BuildEngineControlByte);
-  cm848_scheduleJ1939PeriodicMessage
-            (0,0xfeff,10000,0x28,cm848_sendPgn65279WaterInFuelIndicatorMessage);
+  scheduleJ1939PeriodicMessage(0,0xfef0,100,0x96,cm848_buildPgn65264PowerTakeOffInformationMessage);
+  scheduleJ1939PeriodicMessage(0,0xfef5,1000,0xaa,cm848_buildPgn65269AmbientConditionsMessage);
+  scheduleJ1939PeriodicMessage(0,0xfef6,500,0xbe,cm848_buildPgn65270InletExhaustConditions1Message);
+  scheduleJ1939PeriodicMessage(0,0xfef7,1000,0xd2,cm848_j1939HandlePgn65271VehicleElectrical);
+  scheduleJ1939PeriodicMessage(0,0xffe0,200,0xfa,cm848_j1939HandlePgn65504ProprietaryB);
+  scheduleJ1939PeriodicMessage(0,0xfeca,1000,500,cm848_processDm1FaultBroadcast);
+  scheduleJ1939PeriodicMessage(0,0xfebd,1000,0x32,cm848_buildPgn65213FanDrive1Message);
+  scheduleJ1939PeriodicMessage(0,0xf001,100,0x14,cm848_j1939BuildEngineControlByte);
+  scheduleJ1939PeriodicMessage(0,0xfeff,10000,0x28,cm848_sendPgn65279WaterInFuelIndicatorMessage);
   cm848_initJ1939DiagnosticServiceHandler();
   cm848_initJ1939AddressDispatcher();
   cm848_initJ1939Pgn61442Etc1Handler();

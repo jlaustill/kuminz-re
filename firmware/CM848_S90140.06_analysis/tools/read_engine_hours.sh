@@ -28,7 +28,7 @@
 #     (powered time, an over-estimate of engine hours). Live copy: RAM 0x0040A64C
 #     (key_on_hour_meter). The boot ROM keeps its own copy at RAM 0x00302012
 #     (+1 every 41 PIT ticks = 0.205 s while in the boot ROM only).
-#   Both are loaded at start (cm848_loadHourMetersFromEeprom) and saved back at
+#   Both are loaded at start (loadHourMetersFromEeprom) and saved back at
 #   power-down (cm848_runPowerDownSequence) and before a reflash restart
 #   (restartThroughBootRom).
 #

@@ -39,7 +39,7 @@ be re-verified on the bench before being trusted — see
 >     EEPROM copy at **0x30** (`key_on_hour_meter_cal`).
 >   - `engine_hour_meter` (RAM 0x40A794, was `protection_timer_config_a`): +1 only when `cold_start_phase` is not 1
 >     (engine stopped / cranking). It is **engine-running time**; EEPROM copy at **0x42** (`engine_hour_meter_cal`).
->   - Both are loaded at start (`cm848_loadHourMetersFromEeprom`) and saved at power-down (`cm848_runPowerDownSequence`)
+>   - Both are loaded at start (`loadHourMetersFromEeprom`) and saved at power-down (`cm848_runPowerDownSequence`)
 >     and before a reflash restart (`restartThroughBootRom`).
 > - **Proof that 0x42 is engine-running time** (the four EEPROM dumps):
 >

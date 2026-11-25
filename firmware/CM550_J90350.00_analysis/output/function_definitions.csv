@@ -185,7 +185,7 @@ function_address,function_name,param_index,name,type,comment
 # CAN Bus Configuration
 # -----------------------------------------------------------------------------
 0x000142a8,lookupJ1939ControlDevice,0,config_type,ushort,CAN bus configuration type - the word at +4 (move.w (4;sp)); the 5 callers push a word (was byte; PR #53 round 86)
-0x000142d4,cm550_FUN_000142d4,0,fuel_table_x_input,ushort,Stored to 0x80d378 (fuel_table_primary_descriptor + 6) before the table lookup - the word at +4 (move.w (8;a6)) (new; PR #53 round 86)
+0x000142d4,cm550_FUN_000142d4,0,fuel_table_x_input,ushort,Stored to 0x80d378 (four_dimensional_fueling_steady_state_lookup + 6) before the table lookup - the word at +4 (move.w (8;a6)) (new; PR #53 round 86)
 0x000142d4,cm550_FUN_000142d4,1,lookup_result_offset,ushort,The word at +6 (move.w (10;a6)) - added to 0x80052c and subtracted from the lookup result (was calc_mode - not a mode; PR #53 round 86)
 
 # -----------------------------------------------------------------------------

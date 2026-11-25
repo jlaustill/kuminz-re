@@ -221,7 +221,7 @@ FUEL_ARB_MODE,3,FUEL_LIMIT_MODE,Fuel limit control mode
 INSITE_PARAM_CODE,0x02,DTC_STATUS_FLAGS,DTC search result status flags,1
 INSITE_PARAM_CODE,0x03,DERATE_STATUS,Derate status byte bit flags,1
 # Engine protection status (0x47-0x53)
-INSITE_PARAM_CODE,0x47,HIGH_RPM_PROTECTION_STATUS,High RPM protection status flags,1
+INSITE_PARAM_CODE,0x47,IDLE_SHUTDOWN_TIMER_STATUS,J1587 PID 71 Idle Shutdown Timer Status: the response byte (CM550 builds it at 0xefa2-0xf004: 0x80 timer active / 0x08 function enabled / 0x04 override active / 0x02 engine shut down by the idle timer / 0x01 driver alert); was HIGH_RPM_PROTECTION_STATUS (PR #53 round 94),1
 INSITE_PARAM_CODE,0x4A,BOOST_PRESSURE_TARGET,Boost pressure target pointer (scaled >>7),1
 INSITE_PARAM_CODE,0x53,DIAGNOSTIC_FUEL_MODE_FLAG,Diagnostic fuel control mode flag (0x80 if mode==10),1
 # Single-byte scaled values (0x54-0x58)
@@ -404,12 +404,6 @@ PROP_DIAG_STATUS,0xF1,PROP_DIAG_STATUS_F1,Status F1 - specific condition
 PROP_DIAG_STATUS,0xF4,STATUS_LOAD_HIGH,Load above threshold
 PROP_DIAG_STATUS,0xF8,STATUS_FAULT_ACTIVE,Critical fault active (fault 67 or 69)
 PROP_DIAG_STATUS,0x01,STATUS_BIT0_LOAD_INACTIVE,Bit 0 set when load calculation inactive
-# High RPM Protection Status Flags - response byte for INSITE command 0x47
-HIGH_RPM_PROTECTION_FLAGS,0x80,TIMER_ACTIVE,High RPM protection timer is running,1
-HIGH_RPM_PROTECTION_FLAGS,0x08,HIGH_RPM_DIAG_FLAG_BIT1,Diagnostic system flags bit 1 (0x02) is set,1
-HIGH_RPM_PROTECTION_FLAGS,0x04,FAULT_WITH_DIAG,High RPM fault + diagnostic flag bit 2,1
-HIGH_RPM_PROTECTION_FLAGS,0x02,SHUTDOWN_TIMER_ZERO,Shutdown active and timer expired,1
-HIGH_RPM_PROTECTION_FLAGS,0x01,HIGH_RPM_WARNING_ACTIVE,High RPM protection warning flag set,1
 # Fault Flag Array Indices (fault word 4 at offset 0x08 from base)
 FAULT_WORD_4_BITS,0x08,FAULT_67_BIT,Fault ID 67 - critical fault affecting load status
 FAULT_WORD_4_BITS,0x10,FAULT_68_BIT,Fault ID 68 - affects FSO detection
@@ -528,13 +522,6 @@ VP44_DIAG_MODE,6,SENSOR_TYPE_1_MODE,Sensor type 1 mode (vp44_sensor_type_selecto
 VP44_DIAG_MODE,7,PROTECTION_CONTINUE,Protection system continue state,2
 VP44_DIAG_MODE,8,EXIT_DISABLED,Exit/disabled state - protection clearing,2
 VP44_DIAG_MODE,256,UNINITIALIZED,Transitional/uninitialized state (0x100),2
-# High RPM Protection State - engine protection state machine in highRpmEngineProtectionStateMachine
-# Tracked in high_rpm_protection_state, manages high RPM warning and shutdown sequence
-HIGH_RPM_PROTECTION_STATE,0,MONITORING,Initial state - monitoring conditions for entry,2
-HIGH_RPM_PROTECTION_STATE,1,TIMER_COUNTING,Timer countdown active - conditions met,2
-HIGH_RPM_PROTECTION_STATE,2,RPM_PROTECTION_WARNING_ACTIVE,Warning threshold reached - protection active,2
-HIGH_RPM_PROTECTION_STATE,3,FAULT_TRIGGERED,Fault triggered - derate change detected during protection,2
-HIGH_RPM_PROTECTION_STATE,4,SHUTDOWN_PENDING,Shutdown pending - timer expired waiting for idle,2
 # TPU Transmission State Machine - CAN/serial transmission state machine
 # Tracked in tpu_transmission_state_machine, controls byte transmission sequence
 TPU_TRANSMISSION_STATE,0,INIT_SEND,Initial send state - start transmission,1

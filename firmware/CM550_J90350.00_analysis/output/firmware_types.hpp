@@ -375,7 +375,7 @@ typedef enum {
 typedef enum {
     DTC_STATUS_FLAGS = 0x02,  /* DTC search result status flags */
     DERATE_STATUS = 0x03,  /* Derate status byte bit flags */
-    HIGH_RPM_PROTECTION_STATUS = 0x47,  /* High RPM protection status flags */
+    IDLE_SHUTDOWN_TIMER_STATUS = 0x47,  /* J1587 PID 71 Idle Shutdown Timer Status: the response byte (CM550 builds it at 0xefa2-0xf004: 0x80 timer active / 0x08 function enabled / 0x04 override active / 0x02 engine shut down by the idle timer / 0x01 driver alert); was HIGH_RPM_PROTECTION_STATUS (PR #53 round 94) */
     BOOST_PRESSURE_TARGET = 0x4A,  /* Boost pressure target pointer (scaled >>7) */
     DIAGNOSTIC_FUEL_MODE_FLAG = 0x53,  /* Diagnostic fuel control mode flag (0x80 if mode==10) */
     THROTTLE_POSITION = 0x54,  /* Throttle position value (scaled >>7) */
@@ -606,14 +606,6 @@ typedef enum {
 } PROP_DIAG_STATUS;
 
 typedef enum {
-    TIMER_ACTIVE = 0x80,  /* High RPM protection timer is running */
-    HIGH_RPM_DIAG_FLAG_BIT1 = 0x08,  /* Diagnostic system flags bit 1 (0x02) is set */
-    FAULT_WITH_DIAG = 0x04,  /* High RPM fault + diagnostic flag bit 2 */
-    SHUTDOWN_TIMER_ZERO = 0x02,  /* Shutdown active and timer expired */
-    HIGH_RPM_WARNING_ACTIVE = 0x01  /* High RPM protection warning flag set */
-} HIGH_RPM_PROTECTION_FLAGS;
-
-typedef enum {
     FAULT_67_BIT = 0x08,  /* Fault ID 67 - critical fault affecting load status */
     FAULT_68_BIT = 0x10,  /* Fault ID 68 - affects FSO detection */
     FAULT_69_BIT = 0x20  /* Fault ID 69 - critical fault affecting load status */
@@ -757,14 +749,6 @@ typedef enum {
     EXIT_DISABLED = 8,  /* Exit/disabled state - protection clearing */
     UNINITIALIZED = 256  /* Transitional/uninitialized state (0x100) */
 } VP44_DIAG_MODE;
-
-typedef enum {
-    MONITORING = 0,  /* Initial state - monitoring conditions for entry */
-    TIMER_COUNTING = 1,  /* Timer countdown active - conditions met */
-    RPM_PROTECTION_WARNING_ACTIVE = 2,  /* Warning threshold reached - protection active */
-    FAULT_TRIGGERED = 3,  /* Fault triggered - derate change detected during protection */
-    SHUTDOWN_PENDING = 4  /* Shutdown pending - timer expired waiting for idle */
-} HIGH_RPM_PROTECTION_STATE;
 
 typedef enum {
     INIT_SEND = 0,  /* Initial send state - start transmission */
@@ -1813,7 +1797,7 @@ struct cm550_algorithm_enable_flags_12_t {
     uint16_t overspeed_fuel_shutoff_enable : 1;  /* bit 1: EPOSFSO 'IF T FSO CLOSES WHEN OVRSPD DETECTED BY MAIN MICRO. BI(T 1 OF 0 - 15 OF WORD C)' (FSO = fuel shut off: e2m DRFSEA 'CONTROLS FUEL SHUT OFF DRIVER'); andi.l #0x2 at 0x1ca9a (cm550_commandFuelShutoffDriver): in ENGINE_STATE_OVERSPEED the fuel shutoff driver bit 0x20 of fuel_system_output_driver_control is cleared only while set; CM848 reserved_bit_1 with the same record (rename proposed); set */
     uint16_t water_in_fuel_enable : 1;  /* bit 2: WFAGEN 'BIT 2 ENABLE FLAG USED FOR WATER_IN_FUEL ALGORITHM.'; andi.w #0x4 at 0x34c3e (vp44FaultRegisterBit2Monitor): set = a wet water_in_fuel_sensor_state sets fault status word 4 bit 0x2000 and lamp driver bit 0x10 - clear = that fault bit is cleared; CM848 field name; set */
     uint16_t air_fuel_control_override_enable : 1;  /* bit 3: AFENMAN 'BIT 3 OF 0-15 IN WORD C'; andi.w #0x8 at 0xc19c (cm550_fuelTimingTransitionStateMachine): set takes the derate fuel adjustment from afc_fueling_derate_value_when_afc_override_is_enabled_0_100 instead of the engine speed x boost pressure table; CM848 field name; clear */
-    uint16_t electronic_smart_power_enable : 1;  /* bit 4: SPAGEN '0 - DISBALE 1 - ENABLE ESP ALGORITHM BIT 4 OF 0 - 15.' (e2m group ESP_08 'ELECTRONIC SMART POWER GROUP'); andi #0x10 at 0x1abcc (gates cm550_updateElectronicSmartPowerTau) / 0xc3ea (calculateAlpha copies the alpha into the timing alpha only while clear) / 0x1cd96 (cm550_FUN_0001cc72: the maximum fueling without programmable power comes from the low horsepower curve while set); CM848 field name; clear */
+    uint16_t electronic_smart_power_enable : 1;  /* bit 4: SPAGEN '0 - DISBALE 1 - ENABLE ESP ALGORITHM BIT 4 OF 0 - 15.' (e2m group ESP_08 'ELECTRONIC SMART POWER GROUP'); andi #0x10 at 0x1abcc (gates cm550_updateElectronicSmartPowerTau) / 0xc3ea (calculateAlpha copies the alpha into the timing alpha only while clear) / 0x1cd96 (cm550_calculateThrottle100Fuelings: the maximum fueling without programmable power comes from the low horsepower curve while set); CM848 field name; clear */
     uint16_t reverse_electronic_smart_power_enable : 1;  /* bit 5: SPRVEN '0 - DISBALE 1 - ENABLE ESP LAUNCH APPLICATION ALGORITH(M BIT 5 OF 0 - 15.)' (CM848 label Reverse_ESP_Enable S mask 0x20); andi.l #0x20 at 0x1ad52: cm550_updateElectronicSmartPowerTau enters ESP tau source state 1 (e2m 11DC +6 SPTUST lists NORMAL / LAUNCH / STEEP) only while set; CM848 field name; clear */
     uint16_t low_speed_governor_droop_enable : 1;  /* bit 6: LSDPEN 'LSG DROOP ENABLE BIT 6 OF 0 - 15 IN WORD C'; andi.l #0x40 at 0xfa1c (vp44State2TransitionHandler) and 0x1850e (cm550_FUN_000184c6): set lowers the torque curve speed point 1 by fueling x the selected droop slope 0x80daf4 (e2m LSDPSE) / 167 - the same droop as CM848's reader; CM848 field name; clear */
     uint16_t accelerator_interlock_enable : 1;  /* bit 7: ANEN 'BIT 7 OF 0-15 IN WORD C ACCELERATOR INTERLOCK ENABLE B(IT)'; no reader in the dumped ROM; CM848 field name; set */
@@ -1886,7 +1870,7 @@ struct cm550_algorithm_enable_flags_16_t {
 
 struct cm550_algorithm_enable_flags_18_t {
     uint16_t high_speed_governor_gain_scheduling_enable : 1;  /* bit 0: e2m HSGNSDEN (N) 'BIT 0 OF 0-15 OF WORD 12H ENABLES HSG GAIN SCHEDULING' (HS_GOV); CM848 same name and bit. Code: selectHighSpeedGovernorGainSet andi.w #0x0001 at 0x1d3ae (the cross-firmware twin of CM848 0x1fa20 which tests the same bit). Clear in the dump (0x303a) */
-    uint16_t engine_warmup_protection_enable : 1;  /* bit 1: e2m WPEAFG (N) 'ENABLE ENGINE WARMUP PROTECTION ALGORITHM WORD 12 BIT 1' (EWP_HDR). Code: cm550_highRpmEngineProtectionStateMachine (0x16df0 0x16e32; the oil drain-back time and maximum warmup time state machine) and cm550_fuelTemperatureLimitingSecondary (0x170c0). CM848 leaves it reserved_bit_1 (no CHR record). Set in the dump */
+    uint16_t engine_warmup_protection_enable : 1;  /* bit 1: e2m WPEAFG (N) 'ENABLE ENGINE WARMUP PROTECTION ALGORITHM WORD 12 BIT 1' (EWP_HDR). Code: cm550_runEngineWarmupProtection (0x16df0 0x16e32; the oil drain-back time and maximum warmup time state machine) and cm550_initializeEngineWarmupProtection (0x170c0). CM848 leaves it reserved_bit_1 (no CHR record). Set in the dump */
     uint16_t driver_reward_enable : 1;  /* bit 2: e2m DREN (N) 'WORD 12H BIT 2 OF 0 TO 15 DRIVER REWARD ENABLE' (DRVRWD07); CM848 same name and bit. No reference in the dumped 256 KB ROM (none in CM848 either). Clear */
     uint16_t duty_cycle_monitor_enable : 1;  /* bit 3: e2m DCMNEN (N) 'DUTY CYCLE MONITOR ENABLE BIT 3 OF 0-15' and DMAGEN 0x08 (DCMN); CM848 same name and bit. Code: cm550_updateDutyCycleMonitorLoadHistogram andi.w #0x0008 at 0xac52 (the duty cycle monitor long and short term maps). Set in the dump */
     uint16_t trending_enable : 1;  /* bit 4: e2m TRAGEN 0x10 'ENABLE FLAG FOR TRENDING ALGORITHM' (TRENDING group). Code: cm550_FUN_00031496 (0x314b2) cm550_FUN_000315be (0x315e6) and cm550_FUN_00031a68 (0x31a68) - the trending capture (_trending_data_capture_active / _trending_total_sample_count). CM848 leaves it reserved_bit_4 (no CHR record). Set in the dump */
@@ -1894,7 +1878,7 @@ struct cm550_algorithm_enable_flags_18_t {
     uint16_t smart_air_compressor_enable : 1;  /* bit 6: e2m ACEN (N) 'WORD 12H BIT 6 OF 0 TO 15 - SMART AIR COMPRESSOR ENABLE' (AIRCOMP7); CM848 same name and bit. No reference in the dumped ROM (none in CM848 either). Clear */
     uint16_t reserved_bit_7 : 1;  /* bit 7: No CM550 e2m record and no reference in the dumped ROM. Guess: CM848 names this bit executive_timing_enable (CHR Executive_Timing_Enable SSECTMEA; read by its executive frame interrupt handler). Clear */
     uint16_t high_speed_governor_gear_ratio_gain_enable : 1;  /* bit 8: e2m HSGRGSEN (N) 'GEAR RATIO BASED GAIN SET SELECTION (ENABLED/DISABLED) BIT 8' (HSGGRGS); CM848 same name and bit (read by cm848_loadHighSpeedGovernorWorkingGainSet). No reference in the CM550 dumped ROM. Clear */
-    uint16_t programmable_power_enable : 1;  /* bit 9: e2m PPEN (N) 'PROGRAMMABLE POWER BIT 9 OF 0 TO 15 WORD 12H/18D' (PROG_PWR); CM848 same name and bit. Code: cm550_FUN_0000ff48 (0xff48; clear = J1939 reference peak fueling) cm550_FUN_0001c8a0 (0x1c8d8) cm550_FUN_0001cc72 (0x1cc8e) and cm550_FUN_0001de58 (0x1de70 0x1df10 0x1df90) - torque curve and fueling paths. Clear */
+    uint16_t programmable_power_enable : 1;  /* bit 9: e2m PPEN (N) 'PROGRAMMABLE POWER BIT 9 OF 0 TO 15 WORD 12H/18D' (PROG_PWR); CM848 same name and bit. Code: cm550_FUN_0000ff48 (0xff48; clear = J1939 reference peak fueling) cm550_FUN_0001c8a0 (0x1c8d8) cm550_calculateThrottle100Fuelings (0x1cc8e) and cm550_FUN_0001de58 (0x1de70 0x1df10 0x1df90) - torque curve and fueling paths. Clear */
     uint16_t reserved_bit_10 : 1;  /* bit 10: No e2m record in either firmware and no reader in either. Clear */
     uint16_t cruise_control_auto_resume_enable : 1;  /* bit 11: e2m AREN (N) 'BIT 11 OF 0-15. CRUISE CONTROL AUTO RESUME ENABLE/DISABLE' (CC_AR); CM848 same name and bit. No reference in the dumped ROM (none in CM848 either). Clear */
     uint16_t remote_throttle_enable : 1;  /* bit 12: e2m CTRMTHEN 0x1000 'REMOTE THROTTLE ENABLE BIT 12 OF 0-15' (APL_ADJ); CM848 same name and bit. Code: cm550_processJ1939RemoteAcceleratorPedalPosition (0x207c0; J1939 remote accelerator into analog_sensor_override_values[11]) cm550_FUN_0002ec50 (0x2ec6c; alternate throttle arbitration) and j1939HandlePgn61443Eec2 (0x32fca). Set in the dump */
@@ -1961,7 +1945,7 @@ struct cm550_algorithm_enable_flags_28_t {
 };
 
 struct cm550_algorithm_enable_flags_32_t {
-    uint16_t misfire_timing_limit_enable : 1;  /* bit 0: e2m BSTALMEN (mask 01) 'MISFIRE TIMING LIMIT ALGORITHM ENABLE'; read by cm550_rpmLoadParameterLookup (0x26ac0: output_of_the_misfire_timing_limit_table_60_to_60 from the boost pressure x engine speed table e2m 8191 BSTATBZA) and cm550_applyMisfireTimingLimit (0x26b0c: raises the timing advance to that limit and sets intermediate timing state 11); SET in the bench EEPROM (0xf241) */
+    uint16_t misfire_timing_limit_enable : 1;  /* bit 0: e2m BSTALMEN (mask 01) 'MISFIRE TIMING LIMIT ALGORITHM ENABLE'; read by cm550_calculateInjectionTimingMisfireLimit (0x26ac0: injection_timing_misfire_limit from the boost pressure x engine speed table e2m 8191 BSTATBZA) and cm550_applyMisfireTimingLimit (0x26b0c: raises the timing advance to that limit and sets intermediate timing state 11); SET in the bench EEPROM (0xf241) */
     uint16_t reserved_bit_1 : 1;  /* bit 1: no record in v64t6_s and no test in the dumped ROM; guess MPCACGEN 'ENABLES CASE SYSTEM CONFIGURATION MESSAGE PROCESSING' (0x2 in 16 later ISB e2m files); CM848 bit 1 is end_of_injection_limit_enable (different build); clear */
     uint16_t reserved_bit_2 : 1;  /* bit 2: no record in any ISB e2m and no test in the dumped ROM; CM848 bit 2 is equivalent_throttle_enable (different build); clear */
     uint16_t reserved_bit_3 : 1;  /* bit 3: no record in any e2m and no test in the dumped ROM; CM848 reserved_bit_3 too; clear */
@@ -1976,7 +1960,7 @@ struct cm550_algorithm_enable_flags_32_t {
     uint16_t oil_pressure_high_error_disable : 1;  /* bit 12: e2m ADO2DBEN (mask 0x1000) 'FLAG (B12 W 020H) OIL PR. HIGH ERROR DISABLE FEAT[URE]'; no test in the dumped ROM; SET in the bench EEPROM */
     uint16_t vp44_governor_watchdog_enable : 1;  /* bit 13: e2m VPGVWDEN (mask 0x2000) 'FLAG (B13 W 020H) VP44 GOVERNOR WATCHDOG FEATURE' (VP44 = the Bosch VP44 injection pump; the sibling file 64t4 carries the same record under the mnemonic ADO2DBEN); no test in the dumped ROM; SET in the bench EEPROM */
     uint16_t air_fuel_control_coolant_temperature_adjustment_enable : 1;  /* bit 14: e2m AFCLAJEN (mask 0x4000) 'ENABLES ADDITION OF COOLANT TEMP FUEL TO AFC' (AFC = air fuel control); read by cm550_fuelTimingTransitionStateMachine (andi.l #0x4000 at 0xc1d4): adds the coolant temperature x engine speed table to air_fuel_control_fuel_limit unless system error status word 2 bits 0 / 1 / 4 are latched; SET in the bench EEPROM */
-    uint16_t full_fueling_coolant_temperature_adjustment_enable : 1;  /* bit 15: e2m 5DCLAJEN (mask 0x8000) 'ENABLES ADDITION OF COOLANT TEMP FUEL TO 100% FUE[LING]'; read by cm550_FUN_0001cc72 (andi.l #0x8000 at 0x1cc9e): adds the coolant temperature x engine speed table to all three full fueling values it computes: throttle_100_fueling, full_fueling_value_at_hsg_bef_droop_speed_0_100 and throttle_100_fueling_low_horsepower_curve (the block runs only while word 18 bit 9 is clear) unless system error status word 2 bits 0 / 1 / 4 are latched; SET in the bench EEPROM */
+    uint16_t full_fueling_coolant_temperature_adjustment_enable : 1;  /* bit 15: e2m 5DCLAJEN (mask 0x8000) 'ENABLES ADDITION OF COOLANT TEMP FUEL TO 100% FUE[LING]'; read by cm550_calculateThrottle100Fuelings (andi.l #0x8000 at 0x1cc9e): adds the coolant temperature x engine speed table to all three full fueling values it computes: throttle_100_fueling, engine_speed_limit_ramped_maximum_fuel_quantity and throttle_100_fueling_low_horsepower_curve (the block runs only while word 18 bit 9 is clear) unless system error status word 2 bits 0 / 1 / 4 are latched; SET in the bench EEPROM */
 };
 
 struct cm550_algorithm_enable_flags_33_t {

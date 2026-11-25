@@ -258,8 +258,8 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4357,0x1105,8423842,0x008089A2,RAM,blank_spot_for_pwm_a_period_0_7,PWMBKSPT
 4379,0x111B,397212,0x00060F9C,ROM,,JC39ENFG
 4380,0x111C,8420632,0x00807D18,RAM,duty_cycle_monitor_high_cutoff_engine_speed,DCMNHIES
-4381,0x111D,8420638,0x00807D1E,RAM,,DCMNESTB
-4382,0x111E,8420658,0x00807D32,RAM,DCMNLDTB,DCMNLDTB
+4381,0x111D,8420638,0x00807D1E,RAM,duty_cycle_monitor_engine_speed_axis,DCMNESTB
+4382,0x111E,8420658,0x00807D32,RAM,duty_cycle_monitor_load_axis,DCMNLDTB
 4383,0x111F,8436428,0x0080BACC,RAM,short_term_map_1_processing_total_0_500_0,DCPR01TL
 4384,0x1120,8436440,0x0080BAD8,RAM,duty_cycle_monitor_short_term_processing_map_1_byte_count,DCSHPR01
 4385,0x1121,8436646,0x0080BBA6,RAM,duty_cycle_monitor_short_term_processing_map_2_byte_count,DCSHPR02
@@ -380,7 +380,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4583,0x11E7,8423822,0x0080898E,RAM,number_of_errors_to_be_detected_on_pwm1_driver_before_pwm1_error_0_255,DRPW01CN
 4585,0x11E9,8413182,0x00805FFE,RAM,commanded_enable_for_pwm5_enable_disable,DRPW01EA / DRPW02EA / DRPW03EA / DRPW04EA / DRPW05EA / DRPWEA
 4586,0x11EA,8441010,0x0080CCB2,RAM,engine_warmup_protection_fuel_limiting_flag,WPLMFG
-4587,0x11EB,8420820,0x00807DD4,RAM,calibratible_threshold_for_rifle_oil_pressure_for_engine_warmu_0_100,WPO2TDCN
+4587,0x11EB,8420820,0x00807DD4,RAM,engine_warmup_protection_oil_pressure_threshold,WPO2TDCN
 4588,0x11EC,395292,0x0006081C,ROM,,WPFLDQYA
 4589,0x11ED,395250,0x000607F2,ROM,,WPESXA
 4590,0x11EE,395354,0x0006085A,ROM,,WPDYTMYA
@@ -603,7 +603,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 5134,0x140E,8422214,0x00808346,RAM,maximum_torque_map_x_axis,MTTQMPXA
 5191,0x1447,8422258,0x00808372,RAM,maximum_torque_map_y_axis,MTTQMPYA
 5216,0x1460,8422268,0x0080837C,RAM,maximum_torque_map_grid,MTTQMPZA
-5217,0x1461,8444698,0x0080DB1A,RAM,max_torque_at_current_rpm_in_foot_pounds_0_10000,MTMPRPFL
+5217,0x1461,8444698,0x0080DB1A,RAM,maximum_torque_at_current_engine_speed,MTMPRPFL
 5240,0x1478,8444428,0x0080DA0C,RAM,,JC39NEAE
 32776,0x8008,8416674,0x00806DA2,RAM,,ADFLTPXA
 32777,0x8009,8416718,0x00806DCE,RAM,,ADFLTPYA
@@ -658,7 +658,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 33163,0x818B,8430206,0x0080A27E,RAM,command_to_a_c_compressor_clutch_solenoid_on_off,ACCHEA
 33164,0x818C,8419868,0x00807A1C,RAM,first_order_filter_coeff_for_limited_veh_accel_0_1,VAACFTTC
 33165,0x818D,8430216,0x0080A288,RAM,filtered_vehicle_acceleration_1200_1200,VAVSACFT
-33166,0x818E,8430190,0x0080A26E,RAM,output_of_the_misfire_timing_limit_table_60_to_60,BSTAMNLM
+33166,0x818E,8430190,0x0080A26E,RAM,injection_timing_misfire_limit,BSTAMNLM
 33167,0x818F,8419642,0x0080793A,RAM,injection_timing_misfire_limit_x_axis,BSTABSXA
 33168,0x8190,8419652,0x00807944,RAM,injection_timing_misfire_limit_y_axis,BSTAESYA
 33169,0x8191,8419662,0x0080794E,RAM,injection_timing_misfire_limit_grid,BSTATBZA
@@ -698,12 +698,12 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 33316,0x8224,8425952,0x008091E0,RAM,request_to_strobe_set_0_then_set_1_fso_driver_0_1,DRFSRSRQ
 33318,0x8226,8418036,0x008072F4,RAM,rpm_breakpoint_table,CBDTT1
 33319,0x8227,8418070,0x00807316,RAM,,CBDTT2
-33320,0x8228,8418104,0x00807338,RAM,,CBDCSV
-33321,0x8229,8418110,0x0080733E,RAM,,CBDC3FV
-33322,0x822A,8418116,0x00807344,RAM,,CBDCAT
-33323,0x822B,8418124,0x0080734C,RAM,vp44_state_debounce_threshold,CBDSCSV
-33324,0x822C,8418130,0x00807352,RAM,,CBDSCFV
-33325,0x822D,8418136,0x00807358,RAM,,CBDSCT
+33320,0x8228,8418104,0x00807338,RAM,cylinder_balance_component_3_adjustment_x_axis,CBDCSV
+33321,0x8229,8418110,0x0080733E,RAM,cylinder_balance_component_3_adjustment_y_axis,CBDC3FV
+33322,0x822A,8418116,0x00807344,RAM,cylinder_balance_component_3_adjustment_grid,CBDCAT
+33323,0x822B,8418124,0x0080734C,RAM,cylinder_balance_stop_compensation_x_axis,CBDSCSV
+33324,0x822C,8418130,0x00807352,RAM,cylinder_balance_stop_compensation_y_axis,CBDSCFV
+33325,0x822D,8418136,0x00807358,RAM,cylinder_balance_stop_compensation_grid,CBDSCT
 33326,0x822E,8418144,0x00807360,RAM,,CBDESBV
 33327,0x822F,8418160,0x00807370,RAM,,CBDESBT
 33328,0x8230,8418176,0x00807380,RAM,,CBDDFBV
