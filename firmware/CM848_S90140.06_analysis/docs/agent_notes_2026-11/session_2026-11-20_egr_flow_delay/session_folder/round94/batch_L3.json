@@ -1,0 +1,667 @@
+{
+ "batch": "L3",
+ "proposal": {
+  "batch": "L3",
+  "summary": "cm550_tableLookup2D (0x35088) is CM550's 2-D table interpolation. Each caller owns a 22-byte table_lookup_2d_arguments_t in RAM. An initializer fills it with the Calterm table pointers (x axis, y axis and z grid; each axis starts with a byte count word) and cached offsets of 2. Before each call the caller writes the x and y inputs at +6 and +0xe. The dumped ROM holds 27 references to 0x35088 (25 jsr (0x35088).l and 2 movea.l #0x35088,a5 for jsr (a5); there are no PC-relative calls), and they cover 19 records. Four are typed already; the other 15 are proposed here, each named from the e2m records of the tables its dumped pointers point at and from what the caller does with the result. Every absolute reference into each record is the lookup, its two input stores or its initializer, so the old automatic rows inside the records are removed. The duty cycle monitor axes are whole Calterm T records: DCMNESTB is word[10] (count 18 + 9 speeds) and DCMNLDTB is word[8] (count 14 + 7 loads), which confirms the lead's sizes. CM848 has the same two records at ROM 0x5c2c0 (word[10]) and 0x5c2d4 (word[12], 11 points), with no rows yet.",
+  "functions": [],
+  "skipped": [],
+  "globals": [
+   {
+    "firmware": "CM550",
+    "address": "0x008000aa",
+    "current_name": "target_rpm_rate_limiter_reserved_aa",
+    "proposed_name": "air_fuel_control_fuel_limit_lookup",
+    "proposed_type": "table_lookup_2d_arguments_t",
+    "comment": "The cm550_tableLookup2D argument record of the air fuel control (AFC) fuel limit table: e2m 104F AFFLLMZA 'AFC look-up table defining fueling limit as a function of boos(t)' (MM3S) over engine speed (104E AFFLLMXA) and boost pressure (104D AFFLLMYA); the RAM dump holds x_axis_pointer 0x6010c / y_axis_pointer 0x600ee / z_values_pointer 0x60138 (undumped ROM). cm550_fuelTimingModeInit (0xc246) fills it; cm550_fuelTimingTransitionStateMachine looks it up (pea at 0xc1c4) with x input = engine_rpm_primary and y input = the filtered boost pressure 0x80a320 (e2m 1004 +76 BSTPRS) into air_fuel_control_fuel_limit while algorithm_enable_flags_12_cal.air_fuel_control_override_enable is clear. CM848 names the same table air_fuel_control_fuel_limit_grid. The rows inside are removed (were 0x8000ac diagnostic_table_pointer_4 / 0x8000ae diagnostic_table_5_ptr / 0x8000b2 diag_mode_0_target_rpm_arg / 0x8000b4 diagnostic_table_pointer_3 / 0x8000b8 diagnostic_table_pointer_2 / 0x8000ba diagnostic_table_6_ptr / 0x8000be diag_mode_1_target_rpm_arg). (was target_rpm_rate_limiter_reserved_aa; PR #53 round 94)",
+    "evidence": "abs_refs 0x35088: pea (0x8000aa).l at 0xc1c4, jsr (0x35088).l at 0xc1ca, move.w d0,(a5) at 0xc1d2 (a5 = 0x80a8f6 air_fuel_control_fuel_limit, movea at 0xc196). Inputs: move.w (0x80ccf6).l,(0x8000b0).l at 0xc1b0 (+6) and move.w (0x80a320).l,(0x8000b8).l at 0xc1ba (+0xe). Gate andi.w #0x8 of 0x803cac at 0xc19c (set: (a5) = 0x807a5a). Init 0xc24c movea.l #0x8000aa,a0; move.l #0x6010c,(0x2,a0); move.w #0x2,(0x8000aa).l; move.l #0x600ee,(0xa,a0); move.w #0x2,(0x8,a0); move.l #0x60138,(0x10,a0). RAM dump: 2 / 0x6010c / 0 / 2 / 0x600ee / 0 / 0x60138 / 0. e2m_block_addresses --address: 0x6010c = 104E AFFLLMXA 'engine speed axis used by AFC to determine fueling limit', 0x600ee = 104D AFFLLMYA 'boost pressure axis used by AFC to determine fuel limit', 0x60138 = 104F AFFLLMZA. Every ROM reference to a byte in 0x8000aa-0x8000bf is one of these sites.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008000c0",
+    "current_name": "diagnostic_table_pointer_1",
+    "proposed_name": "air_fuel_control_cold_temperature_fuel_increment_lookup",
+    "proposed_type": "table_lookup_2d_arguments_t",
+    "comment": "The cm550_tableLookup2D argument record of the cold temperature fuel increment that the AFC adds to its fuel limit: e2m 81F0 FLCDICZA 'cold temp incremental fuel table' (MM3S) over coolant temperature (81EE FLCDTPXA) and engine speed (81EF FLCDESYA); the RAM dump holds x_axis_pointer 0x6124a / y_axis_pointer 0x6125e / z_values_pointer 0x6126a. cm550_fuelTimingModeInit (0xc246) fills it; cm550_fuelTimingTransitionStateMachine (a3 = 0x8000c0) looks it up with x input = the filtered coolant temperature 0x80a336 (e2m 1004 +8C ADCLTPFT) and y input = engine_rpm_primary while algorithm_enable_flags_32_cal.air_fuel_control_coolant_temperature_adjustment_enable (AFCLAJEN) is set and none of bits 0 / 1 / 4 of system error status word 2 is both set and latched, and adds the result to air_fuel_control_fuel_limit. full_fueling_cold_temperature_fuel_increment_lookup (0x800700) looks up the same table for the 100 percent fueling values. The rows inside are removed (were 0x8000c4 tpu_timer_channel_config / 0x8000c8 io_can_fault_monitor_state / 0x8000c9 can_pin_fault_persistence_counter / 0x8000ca io_control_fault_persistence_counter_1 / 0x8000cb io_control_fault_persistence_counter_2 / 0x8000cc can_fault_monitor_counter / 0x8000cd io_control_fault_persistence_counter_4 / 0x8000ce io_control_fault_persistence_counter_5 / 0x8000cf io_control_fault_persistence_counter_6 / 0x8000d0 accelerator_throttle_fault_counter / 0x8000d1 io_control_fault_persistence_counter_7 / 0x8000d2 accel_throttle_fault_delay_counter / 0x8000d4 accelerator_throttle_fault_state). (was diagnostic_table_pointer_1; PR #53 round 94)",
+    "evidence": "movea.l #0x8000c0,a3 at 0xc18a; move.w (0x80a336).l,(0x6,a3) at 0xc21e; move.w (0x80ccf6).l,(0xe,a3) at 0xc226; move.l a3,-(a7) / jsr (0x35088).l at 0xc22e / 0xc230; move.w d0,d2 at 0xc238, then add.w d2,(a5) at 0xc23e (a5 = 0x80a8f6). Gate: andi.l #0x4000 of 0x803cd4 at 0xc1da, then the 0x806004 and (a2) = 0x806ac0 tests of bits 0x2 / 0x1 / 0x10 at 0xc1e2-0xc21c (any bit set in both: d2 = 0). Init 0xc246 movea.l #0x8000c0,a1; move.l #0x6124a,(0x2,a1); move.w #0x2,(0x8000c0).l at 0xc280; move.l #0x6125e,(0xa,a1); move.w #0x2,(0x8,a1); move.l #0x6126a,(0x10,a1). RAM dump: 2 / 0x6124a / 0 / 2 / 0x6125e / 0 / 0x6126a / 0. e2m: 0x6124a = 81EE FLCDTPXA 'coolant temp axis for cold temp fuel increment', 0x6125e = 81EF FLCDESYA 'speed axis for cold temp fuel increment', 0x6126a = 81F0 FLCDICZA. AFCLAJEN mask 0x4000 is the bitfield's Calterm record. No other ROM reference into 0x8000c0-0x8000d5.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008000da",
+    "current_name": "diagnostic_data_table_1_ptr",
+    "proposed_name": "altitude_derate_fuel_limit_lookup",
+    "proposed_type": "table_lookup_2d_arguments_t",
+    "comment": "The cm550_tableLookup2D argument record of the altitude derate fuel limit table: e2m 10A3 ATFLLMZA 'table of fuel limit values used by altitude derate (21x4 values)' (MM3S) over engine speed (10A1 ATESXA) and ambient air pressure (10A2 ATAAPRYA); the RAM dump holds x_axis_pointer 0x60384 / y_axis_pointer 0x603b0 / z_values_pointer 0x603ba. cm550_fuelParameterPointerSetup (0xc714) fills it; cm550_rpmHistogramAndProtectionStatisticsAccumulator (a3 = 0x8000da) looks it up with x input = engine_rpm_primary and y input = the filtered ambient air pressure 0x80a3ba (e2m 1004 +110 ADAAPRFT) into altitude_derate_fuel_limit. It runs while algorithm_enable_flags_1_cal.altitude_derate_enable is set, engine_state is RUNNING and bits 2 / 3 of system error status word 1 are not both set and confirmed. The rows inside are removed (were 0x8000de param_lookup_rpm_input / 0x8000e0 diagnostic_data_table_1_base / 0x8000e2 diagnostic_data_table_2_ptr / 0x8000e6 diagnostic_data_table_limit / 0x8000e8 diagnostic_data_intake_temp_ptr / 0x8000ec fuel_blend_table_1_base / 0x8000ee fuel_blend_table_1_ptr). (was diagnostic_data_table_1_ptr; PR #53 round 94)",
+    "evidence": "movea.l #0x8000da,a3 at 0xc674; move.w (a4),(0x6,a3) at 0xc6ea (a4 = 0x80ccf6 from 0xc67a); move.w (0x80a3ba).l,(0xe,a3) at 0xc6ee; move.l a3,-(a7) / jsr (0x35088).l at 0xc6f6 / 0xc6f8; move.w d0,(a2) at 0xc700 (a2 = 0x80a922 altitude_derate_fuel_limit). Gate: andi.w #0x20 of 0x803c96 at 0xc686, cmpi.w #0x3,(0x80d0c8).l at 0xc692, then bits 4 / 8 of 0x806002 and (0x2,a5) = 0x806abe at 0xc69c-0xc6c6. Init cm550_fuelParameterPointerSetup: movea.l #0x8000da,a0 at 0xc714; move.w #0x2,(0x8000da).l; move.l #0x60384,(0x2,a0); move.w #0x2,(0x8,a0); move.l #0x603b0,(0xa,a0); move.l #0x603ba,(0x10,a0). RAM dump: 2 / 0x60384 / 0 / 2 / 0x603b0 / 0 / 0x603ba / 0. e2m: 10A1 ATESXA / 10A2 ATAAPRYA / 10A3 ATFLLMZA at those addresses. The only other matches in 0x8000da-0x8000ef are ori.l immediates (0x8000ec0000 / 0x8000eb0000) in sendJ1939MultiFrame, not addresses.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008001d4",
+    "current_name": "engine_runtime_histogram_interpolation_b",
+    "proposed_name": "desired_cylinder_pressure_lookup",
+    "proposed_type": "table_lookup_2d_arguments_t",
+    "comment": "The cm550_tableLookup2D argument record of the desired cylinder pressure table: e2m 108A CPDSZA 'data axis for desired cylinder pressure table' (PSIA 1500-3000) over engine speed (1088 CPDSXA) and fueling (1089 CPDSYA); the RAM dump holds x_axis_pointer 0x60678 / y_axis_pointer 0x60694 / z_values_pointer 0x606a4. cm550_initLoadTrendingSystem (0x124d2) fills it. The cylinder pressure maintenance pass of cm550_coldStartFuelControlSlowCycle40Coordinator (gate algorithm_enable_flags_3_cal.cylinder_pressure_maintenance_enable) looks it up with x input = engine_rpm_primary and y input = final_fueling. The result is the desired pressure that calculated_cylinder_pressure_1500_3000 (1090 +4 CPCYPR) is compared with; a difference above min_diff_between_desired_cylinder_pressure_and_calculated_cy_0_200 (108F +2 CPDCMN) makes the timing correction. The rows inside are removed (were 0x8001d6 engine_runtime_histogram_config_type_a / 0x8001d8 hour_meter_table_1_ptr / 0x8001dc rpm_histogram_threshold_saved / 0x8001de hour_meter_table_2_base / 0x8001e0 hour_meter_table_2_ptr / 0x8001e4 hour_meter_table_1_limit / 0x8001e6 hour_meter_intake_temp_ptr). (was engine_runtime_histogram_interpolation_b; PR #53 round 94)",
+    "evidence": "pea (0x8001d4).l at 0x11ff6, jsr (0x35088).l at 0x11ffc, move.w d0,d2 at 0x12002. Inputs: move.w d0,(0x8001da).l at 0x11edc (engine_rpm_primary in the decompile) and move.w (0x80d32e).l,(0x8001e2).l at 0x11ee2. Init cm550_initLoadTrendingSystem: movea.l #0x8001d4,a2 at 0x124d6; move.w (a1),(0x6,a2) (a1 = 0x80ccf6); move.l #0x60678,(0x2,a2); move.w #0x2,(0x8001d4).l at 0x1256a; move.w (0x80d32e).l,(0xe,a2); move.l #0x60694,(0xa,a2); move.w #0x2,(0x8,a2); move.l #0x606a4,(0x10,a2). RAM dump: 2 / 0x60678 / 0 / 2 / 0x60694 / 0 / 0x606a4 / 0. e2m: 1088 CPDSXA 'engine speed reference axis for desired cylinder pressure table', 1089 CPDSYA 'fueling reference axis', 108A CPDSZA. Decompile (line ~7009): uVar6 = the lookup, compared with calculated_cylinder_pressure_1500_3000 against min_diff_...; cm550_scaleByRatioSigned of the difference is limited to +-0xaa. No other ROM reference into 0x8001d4-0x8001e9.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008001f8",
+    "current_name": "hour_meter_table_3_limit",
+    "proposed_name": "compression_ratio_raised_to_polytropic_exponent_lookup",
+    "proposed_type": "table_lookup_2d_arguments_t",
+    "comment": "The cm550_tableLookup2D argument record of the cylinder pressure maintenance compression table: e2m 11D2 CPCS02YA 'data axis for compression ratio raised to power of a polytropi(c exponent)' (30-70) over engine speed (11D0 CPCS02XA) and absolute boost pressure (11D1 CPCS02BS); the RAM dump holds x_axis_pointer 0x605ce / y_axis_pointer 0x605ea / z_values_pointer 0x605f2. cm550_initLoadTrendingSystem (0x124d2) fills it. cm550_coldStartFuelControlSlowCycle40Coordinator looks it up with x input = engine_rpm_primary and y input = the absolute intake manifold pressure 0x80021e (the filtered boost pressure plus the ambient air pressure, or boost alone when the boost sensor is absolute). calculated_cylinder_pressure_1500_3000 = that pressure x the result / 1024 (cm550_scaleByRatio, limited to 48000). The rows inside are removed (were 0x8001fa hour_meter_table_5_ptr / 0x8001fe manifold_temp_table_1_type / 0x800200 manifold_temp_table_1_x_ptr / 0x800204 speed_diff_interp_input / 0x800206 manifold_temp_table_1_y_type / 0x800208 manifold_temp_table_1_y_ptr / 0x80020c manifold_temp_table_1_count). (was hour_meter_table_3_limit; PR #53 round 94)",
+    "evidence": "pea (0x8001f8).l at 0x11fe8, jsr (0x35088).l at 0x11fee, move.w d0,d3 at 0x11ff4; then pea (0x400).w, d3 and (0x80021e) are pushed, jsr (0x35064).l cm550_scaleByRatio at 0x12018, cmpi.l #0xbb80,d3 at 0x12024. Inputs: move.w d0,(0x8001fe).l at 0x11ed0; move.w (0x80021e).l,(0x800206).l at 0x11fd0. 0x80021e = 0x80a320 + 0x80a3ba (0x11fb2-0x11fbe), or 0x80a320 alone when tst.w (0x807d12).l is nonzero (0x11fc6). Init cm550_initLoadTrendingSystem: movea.l #0x8001f8,a3 at 0x124dc; move.w (a1),(0x6,a3); move.l #0x605ce,(0x2,a3); move.w #0x2,(0x8001f8).l at 0x1251c; move.w (0x80021e).l,(0xe,a3); move.l #0x605ea,(0xa,a3); move.w #0x2,(0x8,a3); move.l #0x605f2,(0x10,a3). RAM dump: 2 / 0x605ce / 0 / 2 / 0x605ea / 0 / 0x605f2 / 0. e2m: 11D0 CPCS02XA 'reference axis for compression ratio raised to power of a pol(ytropic exponent)', 11D1 CPCS02BS 'abs. boost reference axis', 11D2 CPCS02YA. No other ROM reference into 0x8001f8-0x80020d.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800222",
+    "current_name": "",
+    "proposed_name": "cylinder_balance_stop_compensation_lookup",
+    "proposed_type": "table_lookup_2d_arguments_t",
+    "comment": "The cm550_tableLookup2D argument record of the cylinder balancing stop compensation table: e2m 822D CBDSCT 'cylinder balancing stop compensation table' (0-1 at 0.01) over engine speed (822B CBDSCSV) and fueling (822C CBDSCFV); x_axis_pointer 0x80734c / y_axis_pointer 0x807352 / z_values_pointer 0x807358 (the RAM tables cylinder_balance_stop_compensation_x_axis / _y_axis / _grid, 2 x 2 points in the dump). vp44_FUN_000133fe fills it (0x1348e-0x134b2). vp44_FUN_000127c2 looks it up (pea at 0x1291e) with x input = current_engine_rpm_filtered and y input = the cylinder balancing filtered fueling 0x8091e8 (823D +0 CBDFFL). The result, limited to 100, is the active trim gain cyl_balance_gain_percent (823D +FA CBDATG); a gain below 100 is one of the conditions that set the stop compensation flag 0x80922e (823D +46 CBDSCF). CM848 names the same tables cylinder_balance_stop_compensation_x_axis / _y_axis / _grid. The rows inside are removed (were 0x800224 multi_speed_throttle_input / 0x800226 manifold_temp_table_3_z_ptr / 0x80022a speed_difference_interpolation_result / 0x80022c fault_scanner_loop_timestamp / 0x800230 diagnostic_queue_index / 0x800232 diagnostic_fault_group_index / 0x800234 vp44_comm_bit0_prev_state / 0x800236 vp44_comm_bit2_debounce_timer). (new row, was DAT_00800222; PR #53 round 94)",
+    "evidence": "vp44_FUN_000127c2: move.w (0x80ccf4).l,(0x800228).l at 0x1290a (+6); move.w (0x8091e8).l,(0x800230).l at 0x12914 (+0xe); pea (0x800222).l at 0x1291e; jsr (0x35088).l at 0x12924; andi.l #0xffff and the limit moveq #100 at 0x12930-0x12938; the decompile stores it in _cyl_balance_gain_percent (0x8092e2) and sets 0x80922e when it is below 100. Init vp44_FUN_000133fe: move.w #0x2,(0x800222).l 0x1348e; move.l #0x80734c,(0x800224).l 0x13496; move.w #0x2,(0x80022a).l 0x134a0; move.l #0x807352,(0x80022c).l 0x134a8; move.l #0x807358,(0x800232).l 0x134b2. RAM dump: x axis 0x80734c = count 4, 7600 / 16000; y 0x807352 = count 4, 421 / 1122; grid 0x807358 = 100 / 0 / 0 / 0. e2m: 822B CBDSCSV / 822C CBDSCFV / 822D CBDSCT; 0x8091e8 = 823D +0 CBDFFL; 0x8092e2 = 823D +FA CBDATG; 0x80922e = 823D +46 CBDSCF. No other ROM reference into 0x800222-0x800237.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800238",
+    "current_name": "vp44_comm_bit1_debounce_timer",
+    "proposed_name": "cylinder_balance_component_3_adjustment_lookup",
+    "proposed_type": "table_lookup_2d_arguments_t",
+    "comment": "The cm550_tableLookup2D argument record of the cylinder balancing component 3 adjustment table: e2m 822A CBDCAT 'cylinder balancing component_3 adjustment table' (-10000..10000, stored plus 10000) over engine speed (8228 CBDCSV) and fueling (8229 CBDC3FV); x_axis_pointer 0x807338 / y_axis_pointer 0x80733e / z_values_pointer 0x807344 (RAM tables, 2 x 2 points in the dump). vp44_FUN_000133fe fills it (0x134bc-0x134e0). vp44_FUN_000127c2 looks it up (pea at 0x12c6e) with x input = current_engine_rpm_filtered and y input = the cylinder balancing filtered fueling 0x8091e8. It stores the result minus 10000 in 0x8092e0 (823D +F8 CBDC3ADJ 'cylinder balancing comp_3 adjustment'). The rows inside are removed (were 0x80023a vp44_sensor_fault_debounce_timer / 0x80023c vp44_derate_fault_debounce_timer / 0x80023e vp44_status_mask_array / 0x800242 vp44_buffer_index / 0x800243 vp44_buffer_index_reserved / 0x800244 vp44_status_data_table). (was vp44_comm_bit1_debounce_timer; PR #53 round 94)",
+    "evidence": "vp44_FUN_000127c2: move.w (0x80ccf4).l,(0x80023e).l at 0x12c5a (+6); move.w (0x8091e8).l,(0x800246).l at 0x12c64 (+0xe); pea (0x800238).l at 0x12c6e; jsr (0x35088).l at 0x12c74; addi.w #0xd8f0,d0 at 0x12c86; move.w d0,(0x8092e0).l at 0x12c8a. Init vp44_FUN_000133fe: move.w #0x2,(0x800238).l 0x134bc; move.l #0x807338,(0x80023a).l 0x134c4; move.w #0x2,(0x800240).l 0x134ce; move.l #0x80733e,(0x800242).l 0x134d6; move.l #0x807344,(0x800248).l 0x134e0. RAM dump: x 0x807338 = count 4, 3200 / 15200; y 0x80733e = count 4, 0 / 7009; grid 0x807344 = 10000 x 4. e2m: 8228 CBDCSV / 8229 CBDC3FV / 822A CBDCAT; 0x8092e0 = 823D +F8 CBDC3ADJ. No other ROM reference into 0x800238-0x80024d.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080d372",
+    "current_name": "fuel_table_primary_descriptor",
+    "proposed_name": "four_dimensional_fueling_steady_state_lookup",
+    "proposed_type": "table_lookup_2d_arguments_t",
+    "comment": "The cm550_tableLookup2D argument record of the steady state 4D fueling table: e2m 1056 5DFL01ZA 'SS fuel look-up table used by 4D fueling to determine throt(tle command fuel)' (MM3S stored plus 800; cm550_subtractAndClampValue removes the offset) over engine speed (1055 5DFL01XA) and throttle (1054 5DFL01YA, 400 = 100 percent). The RAM dump holds x_axis_pointer 0x6086e / y_axis_pointer 0x6089a / z_values_pointer 0x608a4. cm550_FUN_0001ddb4 (0x1ddb4) fills it. Four functions look it up: cm550_calculateBlendedTableValue (its engine speed and throttle arguments, blended with four_dimensional_fueling_transient_lookup by timing_alpha_blend_factor, 0x4000 = steady state only), cm550_FUN_0001de58 (engine_rpm_primary with the commanded throttle, then 0 and 400 to bound it), cm550_FUN_000142d4 (its argument at throttle 400) and cm550_governorFuelPidController (lsg_reference_speed_adjusted_with_throttle_position at throttle 400). CM848 names the same tables four_dimensional_fueling_steady_state_x_axis / _y_axis / _grid. The row inside is removed (was 0x80d380 fuel_table_primary_throttle_input, the y input). (was fuel_table_primary_descriptor; PR #53 round 94)",
+    "evidence": "Init cm550_FUN_0001ddb4: movea.l #0x80d372,a3 at 0x1ddbe; move.l #0x6086e,(0x2,a3); move.w #0x2,(0x80d372).l at 0x1ddd8; move.l #0x6089a,(0xa,a3); move.w #0x2,(0x8,a3); move.l #0x608a4,(0x10,a3). Lookups: cm550_FUN_000142d4 movea.l #0x80d372,a2 0x142dc, (0x6,a2) <- argument, (0xe,a2) <- #0x190, jsr 0x142f0. cm550_calculateBlendedTableValue movea.l #0x80d372,a4 0x1cb92, (0x6,a4) / (0xe,a4) <- d2 / d3, jsr 0x1cbac. cm550_FUN_0001de58: move.w (0x80ccf6).l,(0x80d378).l 0x1debe, y via movea.l #0x80d380,a2 0x1dec8, pea (0x80d372).l at 0x1ded0 / 0x1dee4 / 0x1defa with jsr (a5) (a5 = 0x35088). cm550_governorFuelPidController: move.w (0x80daee).l,(0x80d378).l 0x2597c; move.w #0x190,(0x80d380).l 0x25986; pea 0x2598e. Each result goes to jsr (0x1e02a) cm550_subtractAndClampValue: + 0xd200 (= -11776 = -800 mm3 at 0.0679348, the e2m offset), clamped 0..0x1700. Blend: tst.w / cmpi.w #0x4000 of 0x80d340. RAM dump: 2 / 0x6086e / 0 / 2 / 0x6089a / 0 / 0x608a4 / 0. e2m: 1055 5DFL01XA / 1054 5DFL01YA / 1056 5DFL01ZA. The only other text reference is function_definitions.csv 0x142d4 (a parameter comment naming fuel_table_primary_descriptor).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080d388",
+    "current_name": "fuel_table_secondary_descriptor",
+    "proposed_name": "four_dimensional_fueling_transient_lookup",
+    "proposed_type": "table_lookup_2d_arguments_t",
+    "comment": "The cm550_tableLookup2D argument record of the transient 4D fueling table: e2m 1059 5DFL00ZA 'transient fuel look-up table used by 4D fueling to determin(e throttle command fuel)' (MM3S stored plus 800) over engine speed (1058 5DFL00XA) and throttle (1057 5DFL00YA). The RAM dump holds x_axis_pointer 0x6094c / y_axis_pointer 0x60978 / z_values_pointer 0x60982. cm550_FUN_0001ddb4 fills it. cm550_calculateBlendedTableValue, cm550_FUN_0001de58 and cm550_governorFuelPidController look it up next to four_dimensional_fueling_steady_state_lookup whenever timing_alpha_blend_factor is below 0x4000 (0 = transient only). CM848 names the same tables four_dimensional_fueling_transient_x_axis / _y_axis / _grid. The row inside is removed (was 0x80d396 fuel_table_secondary_throttle_input, the y input). (was fuel_table_secondary_descriptor; PR #53 round 94)",
+    "evidence": "Init cm550_FUN_0001ddb4: movea.l #0x80d388,a2 at 0x1ddb8; move.l #0x6094c,(0x2,a2); move.w #0x2,(0x80d388).l at 0x1ddfe; move.l #0x60978,(0xa,a2); move.w #0x2,(0x8,a2); move.l #0x60982,(0x10,a2). Lookups: cm550_calculateBlendedTableValue movea.l #0x80d388,a3 0x1cb8c, jsr 0x1cbd2. cm550_FUN_0001de58: move.w (0x80ccf6).l,(0x80d38e).l 0x1df44, y via movea.l #0x80d396,a2 0x1df4e, pea (0x80d388).l 0x1df56 / 0x1df68 / 0x1df7e. cm550_governorFuelPidController: movea.l #0x80d388,a5 0x25972, (0x6,a5) <- 0x80daee 0x259b0, (0xe,a5) <- 0x190 0x259b8, jsr 0x259c0 behind cmpi.w #0x4000,(a2) / bcc at 0x259aa. RAM dump: 2 / 0x6094c / 0 / 8 / 0x60978 / 400 / 0x60982 / 0. e2m: 1058 5DFL00XA / 1057 5DFL00YA / 1059 5DFL00ZA. No other ROM reference into 0x80d388-0x80d39d.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008005c2",
+    "current_name": "",
+    "proposed_name": "crank_four_dimensional_timing_steady_state_lookup",
+    "proposed_type": "table_lookup_2d_arguments_t",
+    "comment": "The cm550_tableLookup2D argument record of the crank routine's steady state 4D timing lookup: e2m 103E 4DTA01ZA 'timing advance look-up table for steady state engine operation' (DADV) over engine speed (103D 4DTA01XA) and fueling (103C 4DTA01YA). The RAM dump holds x_axis_pointer 0x60a2a / y_axis_pointer 0x60a52 / z_values_pointer 0x60a74 (the same tables as four_dimensional_injection_timing_steady_state_lookup). vp44_fuelLimitParameterPointerSetup (0x17ef8) fills it. cm550_governorFuelModeBlendCalculator (a3 = 0x8005c2) looks it up with x input = crank_exit_speed (105E +14 CKEXES) and y input = the crank exit fuel 0x807ef4 (105F +A CKEXFL) plus crank_exit_fuel_adjustment_0_100 (105E +1E CKEXFLAJ). It blends the result with crank_four_dimensional_timing_transient_lookup by alpha_blend_factor (0x4000 = steady state only) into four_d_timing_output_by_crank_0_120 (105E +4 CK4DTA '4D timing output by crank'). No rows lie inside. (new row, was DAT_008005c2; PR #53 round 94)",
+    "evidence": "cm550_governorFuelModeBlendCalculator: movea.l #0x8005c2,a3 at 0x178ba; move.w (0x80d0ac).l,(0x6,a3) at 0x178d6 / 0x17944; (0x807ef4).l + (a5) (a5 = 0x80d0b6) -> (0xe,a3) at 0x178de-0x178e6 / 0x1794c-0x17954; jsr (0x35088).l at 0x178ec / 0x1795a. With 0x80a8f8 = 0x4000 the result goes to (a4) = 0x80d09c at 0x178f4, otherwise it is blended (mulu / lsr #14 from 0x17982). Init vp44_fuelLimitParameterPointerSetup: movea.l #0x8005c2,a1 0x17f00; move.l #0x60a2a,(0x2,a1); move.w #0x2,(0x8005c2).l 0x17f2c; move.l #0x60a52,(0xa,a1); move.w #0x2,(0x8,a1); move.l #0x60a74,(0x10,a1). RAM dump: 2 / 0x60a2a / 0 / 2 / 0x60a52 / 0 / 0x60a74 / 0. e2m: 103D 4DTA01XA / 103C 4DTA01YA / 103E 4DTA01ZA; 0x80d0ac = 105E +14 CKEXES, 0x807ef4 = 105F +A CKEXFL, 0x80d0b6 = 105E +1E CKEXFLAJ, 0x80d09c = 105E +4 CK4DTA. No global row in 0x8005c2-0x8005d7 and no other ROM reference.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008005d8",
+    "current_name": "",
+    "proposed_name": "crank_four_dimensional_timing_transient_lookup",
+    "proposed_type": "table_lookup_2d_arguments_t",
+    "comment": "The cm550_tableLookup2D argument record of the crank routine's transient 4D timing lookup: e2m 1041 4DTA00ZA 'timing advance look-up table for transient engine operation' (DADV) over engine speed (1040 4DTA00XA) and fueling (103F 4DTA00YA). The RAM dump holds x_axis_pointer 0x60cd4 / y_axis_pointer 0x60cfc / z_values_pointer 0x60d1e (the same tables as four_dimensional_injection_timing_transient_lookup). vp44_fuelLimitParameterPointerSetup (0x17ef8) fills it. cm550_governorFuelModeBlendCalculator (a2 = 0x8005d8) looks it up with the crank exit speed and the crank exit fuel plus its adjustment, like crank_four_dimensional_timing_steady_state_lookup, whenever alpha_blend_factor is not 0x4000. Its share of four_d_timing_output_by_crank_0_120 is the result x (0x4000 - alpha) / 0x4000. No rows lie inside. (new row, was DAT_008005d8; PR #53 round 94)",
+    "evidence": "movea.l #0x8005d8,a2 at 0x178b4; inputs (0x6,a2) / (0xe,a2) at 0x17902-0x17912 and 0x17962-0x17972; jsr (0x35088).l at 0x17918 / 0x17978; for alpha 0: d2 x (0x4000 - 0x80a8f8) >> 14 -> (a4) = 0x80d09c at 0x17920-0x17940. Init: movea.l #0x8005d8,a2 0x17efa; move.l #0x60cd4,(0x2,a2); move.w #0x2,(0x8005d8).l 0x17f52; move.l #0x60cfc,(0xa,a2); move.w #0x2,(0x8,a2); move.l #0x60d1e,(0x10,a2). RAM dump: 2 / 0x60cd4 / 0 / 2 / 0x60cfc / 0 / 0x60d1e / 0. e2m: 1040 4DTA00XA / 103F 4DTA00YA / 1041 4DTA00ZA. No row in 0x8005d8-0x8005ed and no other ROM reference.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008006b8",
+    "current_name": "",
+    "proposed_name": "four_dimensional_injection_timing_steady_state_lookup",
+    "proposed_type": "table_lookup_2d_arguments_t",
+    "comment": "The cm550_tableLookup2D argument record of the steady state 4D timing table: e2m 103E 4DTA01ZA 'timing advance look-up table for steady state engine operation' (DADV) over engine speed (103D 4DTA01XA) and fueling (103C 4DTA01YA). The RAM dump holds x_axis_pointer 0x60a2a / y_axis_pointer 0x60a52 / z_values_pointer 0x60a74. cm550_FUN_0001c7a8 (0x1c7a8) fills it. cm550_fuelDemandTableBlendCalculator looks it up while algorithm_enable_flags_4_cal.user_commanded_timing_enable is clear: x input = engine_rpm_primary, y input = final_fueling (or its DPFPTB / DPTVOTB mapping through the 1-D record 0x8006aa when 0x80d706 is 1). It blends the result with four_dimensional_injection_timing_transient_lookup by alpha_blend_factor into timing_4DTBTA (103B 4DTBTA) and fuel_timing_advance_value. CM848 names the same tables four_dimensional_injection_timing_map_a_x_axis / _y_axis / _grid. No rows lie inside. (new row, was DAT_008006b8; PR #53 round 94)",
+    "evidence": "cm550_fuelDemandTableBlendCalculator: movea.l #0x8006b8,a4 at 0x1c66e; movea.l #0x35088,a5 at 0x1c674; move.l a4,-(a7) / jsr (a5) at 0x1c6da and 0x1c71e. Decompile: _DAT_008006be (+6) = engine_rpm_primary, _DAT_008006c6 (+0xe) = final_fueling or the lookupTableInterpolation(0x8006aa) result; the lookup goes to timing_4DTBTA (0x80d344) alone when alpha_blend_factor = 0x4000, otherwise it is blended. Gate: algorithm_enable_flags_4_cal bit 8 (andi 0x100 at 0x1c67a). Init cm550_FUN_0001c7a8: movea.l #0x8006b8,a1 0x1c7b0; move.l #0x60a2a,(0x2,a1); move.w #0x2,(0x8006b8).l 0x1c7dc; move.l #0x60a52,(0xa,a1); move.w #0x2,(0x8,a1); move.l #0x60a74,(0x10,a1). RAM dump: 2 / 0x60a2a / 0 / 2 / 0x60a52 / 0 / 0x60a74 / 0. e2m: 103D / 103C / 103E 4DTA01; 0x80d344 = 103B 4DTBTA; 0x607d6 / 0x607e4 = 1084 DPFPTB / 1085 DPTVOTB. No row in 0x8006b8-0x8006cd and no other ROM reference.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008006ce",
+    "current_name": "",
+    "proposed_name": "four_dimensional_injection_timing_transient_lookup",
+    "proposed_type": "table_lookup_2d_arguments_t",
+    "comment": "The cm550_tableLookup2D argument record of the transient 4D timing table: e2m 1041 4DTA00ZA 'timing advance look-up table for transient engine operation' (DADV) over engine speed (1040 4DTA00XA) and fueling (103F 4DTA00YA). The RAM dump holds x_axis_pointer 0x60cd4 / y_axis_pointer 0x60cfc / z_values_pointer 0x60d1e. cm550_FUN_0001c7a8 fills it. cm550_fuelDemandTableBlendCalculator looks it up with the same inputs as four_dimensional_injection_timing_steady_state_lookup (engine_rpm_primary and the timing fueling) whenever alpha_blend_factor is not 0x4000. Alone (alpha 0), or weighted by (0x4000 - alpha) / 0x4000, it becomes timing_4DTBTA. CM848 names the same tables four_dimensional_injection_timing_map_b_x_axis / _y_axis / _grid. No rows lie inside. (new row, was DAT_008006ce; PR #53 round 94)",
+    "evidence": "movea.l #0x8006ce,a3 at 0x1c668; move.l a3,-(a7) / jsr (a5) at 0x1c6fa and 0x1c730 (a5 = 0x35088). Decompile: _DAT_008006d4 (+6) = engine_rpm_primary, _DAT_008006dc (+0xe) = the timing fueling; alpha 0 gives timing_4DTBTA = the lookup, otherwise it is blended. Init cm550_FUN_0001c7a8: movea.l #0x8006ce,a2 0x1c7aa; move.l #0x60cd4,(0x2,a2); move.w #0x2,(0x8006ce).l 0x1c802; move.l #0x60cfc,(0xa,a2); move.w #0x2,(0x8,a2); move.l #0x60d1e,(0x10,a2). RAM dump: 2 / 0x60cd4 / 0 / 2 / 0x60cfc / 0 / 0x60d1e / 0. e2m: 1040 / 103F / 1041 4DTA00. No row in 0x8006ce-0x8006e3 and no other ROM reference.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008006ea",
+    "current_name": "",
+    "proposed_name": "throttle_100_fueling_low_horsepower_curve_lookup",
+    "proposed_type": "table_lookup_2d_arguments_t",
+    "comment": "The cm550_tableLookup2D argument record of the steady state 4D fueling table at 100 percent throttle: e2m 1056 5DFL01ZA over engine speed (1055 5DFL01XA) and throttle (1054 5DFL01YA). These are the same tables as four_dimensional_fueling_steady_state_lookup, but the y input is fixed at 400 (100 percent) and there is no transient blend. cm550_FUN_0001cdf8 sets the pointers 0x6086e / 0x6089a / 0x608a4 and writes the y input; nothing else writes it. cm550_FUN_0001cc72 looks it up with x input = engine_rpm_primary. With programmable power disabled the result (through cm550_subtractAndClampValue, plus the cold temperature increment) is throttle_100_fueling_low_horsepower_curve (105A +2 FST0MXFL 'fueling provided if engine were using low HP curve'). With algorithm_enable_flags_12_cal.electronic_smart_power_enable set it is max_fueling_without_programmable_power_for_esp_tau_0_0_100 (105A +8 FSMTFLNP). No rows lie inside. (new row, was DAT_008006ea; PR #53 round 94)",
+    "evidence": "cm550_FUN_0001cc72: move.w (a4),(0x8006f0).l at 0x1cd52 / 0x1cdb0 (engine_rpm_primary in the decompile); pea (0x8006ea).l at 0x1cd58 / 0x1cdb6, jsr (0x35088).l at 0x1cd5e / 0x1cdbc. The results go to throttle_100_fueling_low_horsepower_curve (0x80d36a) and, with ESP set (andi #0x10 at 0x1cd96), to max_fueling_without_programmable_power_for_esp_tau_0_0_100 (0x80d370); both then go through cm550_subtractAndClampValue. Init cm550_FUN_0001cdf8: movea.l #0x8006ea,a1 0x1cdf8; move.l #0x6086e,(0x2,a1); move.w #0x2,(0x8006ea).l 0x1ce0c; move.w #0x190,(0xe,a1) 0x1ce14 (the only write of +0xe: abs_refs 0x8006f8 finds none); move.l #0x6089a,(0xa,a1); move.w #0x2,(0x8,a1); move.l #0x608a4,(0x10,a1). RAM dump: 2 / 0x6086e / 0 / 8 / 0x6089a / 400 / 0x608a4 / 0. e2m: 1055 / 1054 / 1056 5DFL01 (1054 throttle at 0.25 percent per count, so 400 = 100 percent); 0x80d36a = 105A +2 FST0MXFL, 0x80d370 = 105A +8 FSMTFLNP. No row in 0x8006ea-0x8006ff and no other ROM reference.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800700",
+    "current_name": "",
+    "proposed_name": "full_fueling_cold_temperature_fuel_increment_lookup",
+    "proposed_type": "table_lookup_2d_arguments_t",
+    "comment": "The cm550_tableLookup2D argument record of the cold temperature fuel increment added to the 100 percent fueling values: e2m 81F0 FLCDICZA 'cold temp incremental fuel table' over coolant temperature (81EE FLCDTPXA) and engine speed (81EF FLCDESYA). These are the same tables as air_fuel_control_cold_temperature_fuel_increment_lookup; the RAM dump holds x_axis_pointer 0x6124a / y_axis_pointer 0x6125e / z_values_pointer 0x6126a. cm550_FUN_0001cdf8 (0x1cdf8) fills it. cm550_FUN_0001cc72 looks it up with x input = the filtered coolant temperature 0x80a336 and y input = engine_rpm_primary. This happens while programmable power is disabled, algorithm_enable_flags_32_cal.full_fueling_coolant_temperature_adjustment_enable (5DCLAJEN) is set, and none of bits 0 / 1 / 4 of system error status word 2 is both set and latched. The result is added to throttle_100_fueling, full_fueling_value_at_hsg_bef_droop_speed_0_100 and throttle_100_fueling_low_horsepower_curve. No rows lie inside. (new row, was DAT_00800700; PR #53 round 94)",
+    "evidence": "cm550_FUN_0001cc72: move.w (0x80a336).l,(0x800706).l at 0x1ccf4 (+6); move.w (a4),(0x80070e).l at 0x1ccfe (+0xe); pea (0x800700).l at 0x1cd04; jsr at 0x1cd0a; the decompile adds the result (sVar1) to the three full fueling values. Gates: programmable_power_enable clear (0x1cc8e) and andi.l #0x8000 of algorithm_enable_flags_32_cal at 0x1cc9e. Init cm550_FUN_0001cdf8: movea.l #0x800700,a0 0x1cdfe; move.l #0x6124a,(0x2,a0); move.w #0x2,(0x800700).l 0x1ce38; move.l #0x6125e,(0xa,a0); move.w #0x2,(0x8,a0); move.l #0x6126a,(0x10,a0). RAM dump: 2 / 0x6124a / 0 / 2 / 0x6125e / 0 / 0x6126a / 0. e2m: 81EE FLCDTPXA / 81EF FLCDESYA / 81F0 FLCDICZA. No row in 0x800700-0x800715 and no other ROM reference.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807d1e",
+    "current_name": "",
+    "proposed_name": "duty_cycle_monitor_engine_speed_axis",
+    "proposed_type": "word[10]",
+    "comment": "e2m 111D +0 DCMNESTB 'duty cycle monitor x-axis RPM values for mapping' (a T record, 0.125 rpm per count): in the dump, the byte count 18 then 9 engine speeds 0 / 8000 / 10400 / 12800 / 15200 / 16800 / 18400 / 20000 / 22400 (0-2800 rpm). cm550_updateDutyCycleMonitorLoadHistogram compares engine_rpm_primary with its first 8 values for the speed bin of duty_cycle_monitor_operating_region; the 9th value is never compared. The same record and name as CM848's duty_cycle_monitor_engine_speed_axis (ROM 0x5c2c0). The rows inside are removed (were 0x807d20 rpm_timer_interrupt_threshold_7d20 / 0x807d2c rpm_source_selector_init / 0x807d2e throttle_frictional_load_upper_threshold / 0x807d30 throttle_frictional_load_lower_threshold). (new row; PR #53 round 94)",
+    "evidence": "RAM dump at 0x807d1e: 18, 0, 8000, 10400, 12800, 15200, 16800, 18400, 20000, 22400; 0x807d32 = 111E +0 DCMNLDTB starts right after (20 bytes = word[10]). e2m_block_addresses --address 0x807d1e = 111D +0 DCMNESTB (type T). The only code reference into 0x807d1e-0x807d31 is movea.l #0x807d20,a2 at 0xae5c in cm550_updateDutyCycleMonitorLoadHistogram: cmp.w (a2)+,d4 at 0xae6a with d4 = engine_rpm_primary, d2 from 1 while d2 < 9 (cmpi.b #0x9,d2 at 0xae82), so 8 compares, default bin 8. The hits at 0x35c84 / 0x35c88 are parameter_id_table data. The rows inside have no ROM reference at all.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807d32",
+    "current_name": "DCMNLDTB",
+    "proposed_name": "duty_cycle_monitor_load_axis",
+    "proposed_type": "word[8]",
+    "comment": "e2m 111E +0 DCMNLDTB 'duty cycle mon y-axis %load values for mapping' (a T record, 0.01 percent per count): in the dump, the byte count 14 then 7 loads 0 / 1000 / 3000 / 5000 / 7000 / 9000 / 10000 (0-100 percent). cm550_updateDutyCycleMonitorLoadHistogram compares the load ratio with its first 6 values for the load bin. It takes the 7th value (10000 at 0x807d40) as the load ratio when duty_cycle_monitor_full_throttle_fueling equals no_load_fuel_quantity. The same record and name as CM848's duty_cycle_monitor_load_axis (ROM 0x5c2d4, 11 points there). The rows inside are removed (were 0x807d34 intake_temp_frictional_load_threshold / 0x807d36 rpm_fuel_limit_blend_offset / 0x807d38 frictional_load_fuel_init / 0x807d3a rpm_fuel_limit_threshold_max / 0x807d3c frictional_load_state_init / 0x807d3e rpm_fuel_limit_state_max / 0x807d40 frictional_load_torque_init). (was DCMNLDTB; PR #53 round 94)",
+    "evidence": "RAM dump at 0x807d32: 14, 0, 1000, 3000, 5000, 7000, 9000, 10000; 0x807d42 = 10DF +0 JCFCLD06, a different block, so the table is 16 bytes = word[8]. e2m 111E +0 DCMNLDTB (type T). Code references: movea.l #0x807d34,a2 at 0xae90, cmp.w (a2)+,d4 at 0xae9e (d4 = 0x80bad4 load factor), d2 from 1 while d2 < 7 (cmpi.b #0x7,d2 at 0xaeb6), so 6 compares, default bin 6; region = (6 - load bin) x 8 + speed bin at 0xaec0-0xaec8. move.w (0x807d40).l,d0 at 0xadd2 runs when (0x800004) equals (0x80db1c) (cmp.w at 0xadc8), and d0 goes to the load ratio 0x800000. Otherwise the load ratio is (final_fueling - 0x80db1c) x 10000 / (0x800004 - 0x80db1c), computed at 0xade0-0xae18. The hits at 0x35c8c / 0x35c90 are parameter_id_table data.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x0005c2c0",
+    "current_name": "",
+    "proposed_name": "duty_cycle_monitor_engine_speed_axis",
+    "proposed_type": "word[10]",
+    "comment": "e2m 111D +0 DC_Mon_RPM_Axis '[DCMNESTB] Duty Cycle Monitor X-Axis RPM Values for Mapping' (RPM 0.125 per count; the dumped parameter ID table resolves the address): in the ROM, the byte count 18 then 9 engine speeds 0 / 6400 / 9600 / 12800 / 16000 / 19200 / 22400 / 25600 / 28800 (0-3600 rpm). cm848_updateDutyCycleMonitorLoadHistogram compares engine_speed_state.filtered_engine_speed with values 1-8 for the speed bin of duty_cycle_monitor_operating_region. The same record and name as CM550's duty_cycle_monitor_engine_speed_axis (0x807d1e). ROM, no _cal. (new row; PR #53 round 94)",
+    "evidence": "e2m_block_addresses 111D -> 0x05c2c0 DC_Mon_RPM_Axis (no row). ROM 0x5c2c0: 18, 0, 6400, 9600, 12800, 16000, 19200, 22400, 25600, 28800; 0x5c2d4 = 111E starts right after (20 bytes). cm848_rom.ghidra.cpp line 65814 in cm848_updateDutyCycleMonitorLoadHistogram: engine_speed_state.filtered_engine_speed <= *(ushort *)(uVar9 * 2 + 0x5c2c0) with uVar9 from 1 while < 9. No row lies in 0x5c2c0-0x5c2d3: the neighbours are 0x5c2be duty_cycle_monitor_low_cutoff_engine_speed (word) and 0x5c2d4. The name is unique in CM848 global_variables.csv.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x0005c2d4",
+    "current_name": "",
+    "proposed_name": "duty_cycle_monitor_load_axis",
+    "proposed_type": "word[12]",
+    "comment": "e2m 111E +0 DC_Mon_Load_Axis '[DCMNLDTB] Duty Cycle Mon Y-Axis %Load Values for Mapping' (0.01 percent per count): in the ROM, the byte count 22 then 11 loads 0 / 1000 / 2000 / ... / 10000 (0-100 percent in 10 percent steps). cm848_updateDutyCycleMonitorLoadHistogram compares fuel_demand_histogram_load_ratio with values 1-10 for the load bin. It takes the 11th value (10000 at 0x5c2ea) as the load ratio when fuel_demand_histogram_axis_endpoint equals no_load_fuel_quantity. The same record and name as CM550's duty_cycle_monitor_load_axis (0x807d32, 7 points there). ROM, no _cal. (new row; PR #53 round 94)",
+    "evidence": "e2m_block_addresses 111E -> 0x05c2d4 DC_Mon_Load_Axis (no row). ROM 0x5c2d4: 22, 0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000 (24 bytes = word[12]); 0x5c2ec is the next row, engine_protection_fueling_index_ramp_rate (e2m 10B4). cpp line 65828: fuel_demand_histogram_load_ratio <= *(ushort *)(uVar9 * 2 + 0x5c2d4), uVar9 from 1 while < 0xb (line 65838); line 65791 uVar3 = DAT_0005c2ea is the default load ratio when fuel_demand_histogram_axis_endpoint == no_load_fuel_quantity. Region = (10 - load bin) x 8 + speed bin (iVar6 * -8 + 0x50 + iVar4). The name is unique in CM848.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807338",
+    "current_name": "",
+    "proposed_name": "cylinder_balance_component_3_adjustment_x_axis",
+    "proposed_type": "word[3]",
+    "comment": "e2m 8228 +0 CBDCSV 'cylinder balancing compensation_3 speed vector' (rpm, 0.125 per count): in the dump, the byte count 4 then 3200 / 15200 (400 / 1900 rpm). It is the x axis of cylinder_balance_component_3_adjustment_lookup; vp44_FUN_000133fe stores the pointer at 0x134c4. (new row; PR #53 round 94)",
+    "evidence": "RAM dump 0x807338: 4, 3200, 15200; 0x80733e = 8229 CBDC3FV starts right after (6 bytes). e2m_block_addresses --address 0x807338 = 8228 +0 CBDCSV (type X). The only ROM references into 0x807338-0x80735f are the record initializer move.l #imm,(abs).l at 0x13496 / 0x134a8 / 0x134b2 / 0x134c4 / 0x134d6 / 0x134e0; the 0x388a4-0x388d0 hits are parameter_id_table data.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080733e",
+    "current_name": "",
+    "proposed_name": "cylinder_balance_component_3_adjustment_y_axis",
+    "proposed_type": "word[3]",
+    "comment": "e2m 8229 +0 CBDC3FV 'cylinder balancing compensation_3 fueling vector' (MM3S, 0.0713 per count): in the dump, the byte count 4 then 0 / 7009. It is the y axis of cylinder_balance_component_3_adjustment_lookup; the pointer is stored at 0x134d6. (new row; PR #53 round 94)",
+    "evidence": "RAM dump 0x80733e: 4, 0, 7009; 0x807344 = 822A CBDCAT follows. e2m 8229 +0 CBDC3FV (type Y). Pointer store: move.l #0x80733e,(0x800242).l at 0x134d6 (y_axis_pointer of record 0x800238).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807344",
+    "current_name": "",
+    "proposed_name": "cylinder_balance_component_3_adjustment_grid",
+    "proposed_type": "word[4]",
+    "comment": "e2m 822A +0 CBDCAT 'cylinder balancing component_3 adjustment table' (-10000..10000, stored plus 10000): 2 x 2 values with no header, each 10000 (0 adjustment) in the dump. These are the z values of cylinder_balance_component_3_adjustment_lookup; the pointer is stored at 0x134e0. The row inside is removed (was 0x80734a sensor_fault_rpm_selector_param). (new row; PR #53 round 94)",
+    "evidence": "RAM dump 0x807344: 10000, 10000, 10000, 10000; 0x80734c = 822B CBDSCSV follows (8 bytes = 2 x 2 for the 2-point axes). e2m 822A +0 CBDCAT (type Z). Pointer store move.l #0x807344,(0x800248).l at 0x134e0; addi.w #0xd8f0 after the lookup at 0x12c86 removes the 10000 offset. 0x80734a has no ROM reference.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080734c",
+    "current_name": "vp44_state_debounce_threshold",
+    "proposed_name": "cylinder_balance_stop_compensation_x_axis",
+    "proposed_type": "word[3]",
+    "comment": "e2m 822B +0 CBDSCSV 'cylinder balancing stop compensation speed vector' (rpm, 0.125 per count): in the dump, the byte count 4 then 7600 / 16000 (950 / 2000 rpm). It is the x axis of cylinder_balance_stop_compensation_lookup; the pointer is stored at 0x13496. This is CM848's cylinder_balance_stop_compensation_x_axis (word[3]). The rows inside are removed (were 0x80734e vp44_state_processing_timeout_reload / 0x807350 vp44_state2_transition_param). (was vp44_state_debounce_threshold; PR #53 round 94)",
+    "evidence": "RAM dump 0x80734c: 4, 7600, 16000; 0x807352 = 822C follows. e2m 822B +0 CBDSCSV (type X) resolves to this row. Pointer store move.l #0x80734c,(0x800224).l at 0x13496. The rows 0x80734c / 0x80734e / 0x807350 have no other ROM reference. CM848 0x408f32 cylinder_balance_stop_compensation_x_axis word[3] is the same e2m record (81B1).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807352",
+    "current_name": "",
+    "proposed_name": "cylinder_balance_stop_compensation_y_axis",
+    "proposed_type": "word[3]",
+    "comment": "e2m 822C +0 CBDSCFV 'cylinder balancing stop compensation fueling vector' (MM3S, 0.0713 per count): in the dump, the byte count 4 then 421 / 1122. It is the y axis of cylinder_balance_stop_compensation_lookup; the pointer is stored at 0x134a8. This is CM848's cylinder_balance_stop_compensation_y_axis (word[3]). (new row; PR #53 round 94)",
+    "evidence": "RAM dump 0x807352: 4, 421, 1122; 0x807358 = 822D follows. e2m 822C +0 CBDSCFV (type Y). Pointer store move.l #0x807352,(0x80022c).l at 0x134a8.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807358",
+    "current_name": "",
+    "proposed_name": "cylinder_balance_stop_compensation_grid",
+    "proposed_type": "word[4]",
+    "comment": "e2m 822D +0 CBDSCT 'cylinder balancing stop compensation table' (0-1 at 0.01 per count): 2 x 2 values with no header, 100 / 0 / 0 / 0 in the dump. These are the z values of cylinder_balance_stop_compensation_lookup; the pointer is stored at 0x134b2. This is CM848's cylinder_balance_stop_compensation_grid (word[4]). (new row; PR #53 round 94)",
+    "evidence": "RAM dump 0x807358: 100, 0, 0, 0; 0x807360 = 822E CBDESBV follows (8 bytes). e2m 822D +0 CBDSCT (type Z). Pointer store move.l #0x807358,(0x800232).l at 0x134b2.",
+    "confidence": "high"
+   }
+  ],
+  "enum_members": [],
+  "cm848_functions": [],
+  "notes": "Notes and scripts: /home/linux/.claude/jobs/374b0424/tmp/w15/r94/scratch/L3/investigator/ (notes.md; decode_record.py decodes a record from the RAM dumps and lists the rows inside it; record_refs.py lists every ROM reference into a byte range; scan_records.py scans the RAM dumps for blocks shaped like the record).\n1) The call census is complete for the dumped ROM. abs_refs.py 0x35088 finds 27 references, and a scan for bsr / jsr (d16,pc) / bsr.l to 0x35088 finds none. They cover 19 records. 4 are typed already (0x800010 / 0x800026 / 0x801a94 / 0x801aaa); the other 15 are in globals[].\n2) Leads, not proposed (the dumped ROM never uses them): scan_records.py finds 5 more blocks in RAM with the exact record shape (offsets 2, Calterm table pointers, flag 0). No reference anywhere in 0x0-0x3ffff touches them or the pointers inside them, so their users and initializers are in the undumped code at 0x40000 and above. 0x8036e4 = 8014 FLFLTBZA 'table for converting fuel units to mg/stroke' over 8012 FLFLESXA / 8013 FLFLFLYA (RAM tables 0x8074d6 / 0x8074f6 / 0x807516); the row 0x8036ea diagnostic_mode_7_enable_flag is inside it. 0x8036fe = 8017 FLTATBZA 'line delay timing offset table' over 8015 / 8016 (0x8076d8 / 0x8076f2 / 0x80770c); the rows 0x803706 oil_pressure_rpm_target_low and 0x80370a oil_pressure_rpm_target_high are inside it. 0x803896 = the steady state 4D fueling tables with y input 400. 0x8038ac = x pointer 5DFL01XA (the steady state speed axis) with the transient y and z (5DFL00YA / 5DFL00ZA). 0x8039ae = 81B2 IHPHTMZA 'IAH postheat time' over 81B0 / 81B1 (0x80789a / 0x8078aa / 0x8078b4). Type them when the 0x40000+ dump exists, or now if the judge accepts shape + e2m as enough.\n3) The 1-D lookups are a similar backlog: lookupTableInterpolation (0x34de0, table_interp_args_t, 12 bytes) has 44 ROM references, and no row is typed table_interp_args_t. Examples next to this batch: 0x8001ea (CPCS01 108B/108C), 0x80020e (CPCS03 108D/108E), 0x8006aa (1084 DPFPTB / 1085 DPTVOTB), 0x8005b4 (1075 WSIMAI / 1076 WSTATB, wet stack timing), 0x80db20 / 0x80db2e (1098/1099 and 109A/109B no load fuel). Each has bogus rows inside.\n4) Function name leads (for a later function batch; not analysed for CM848 twins). cm550_fuelTimingTransitionStateMachine 0xc180 computes air_fuel_control_fuel_limit (the AFC table or the override value, plus the cold temperature increment); CM848 has cm848_calculateAirFuelControlFuelLimit. cm550_rpmHistogramAndProtectionStatisticsAccumulator 0xc66a computes altitude_derate_fuel_limit. cm550_coldStartFuelControlSlowCycle40Coordinator 0x11e5e is cylinder pressure maintenance. cm550_governorFuelModeBlendCalculator 0x178b0 computes the crank 4D timing (CK4DTA) and crank_exit_advance. cm550_fuelDemandTableBlendCalculator 0x1c65e computes the 4D injection timing. vp44_FUN_000127c2 / vp44_FUN_000133fe are cylinder balancing and its initializer; nothing in the code they touch is VP44. The record initializers are cm550_fuelTimingModeInit, cm550_fuelParameterPointerSetup, cm550_initLoadTrendingSystem, vp44_fuelLimitParameterPointerSetup (crank 4D timing + wet stack; not a VP44 or fuel limit function), cm550_FUN_0001c7a8, cm550_FUN_0001cdf8 and cm550_FUN_0001ddb4.\n5) When applying: function_definitions.csv row 0x142d4 has a parameter comment that names fuel_table_primary_descriptor; update the text. parameter_id_lookup_table.csv still shows DCMNLDTB and vp44_state_debounce_threshold until it is regenerated (e2m_block_addresses.py --write-table).\n6) Judgment calls. I named the crank records after CM848's crank_four_dimensional_timing (CK4DTA) and the main timing records after CM848's four_dimensional_injection_timing (4DTBTA); CM848 calls the steady state / transient tables map_a / map_b, and I used the Calterm words instead. 0x8006ea is named for its use (the low horsepower or tau 0 curve at 100 percent throttle), because four records share its steady state table. I added the 6 cylinder balancing RAM tables and the 2 CM848 duty cycle axes because the same evidence proves them: e2m address, dump byte counts and adjacency, and the only code references."
+ },
+ "blind": {
+  "batch": "L3",
+  "roles": [
+   {
+    "address": "0x008000aa",
+    "role": "table_lookup_2d_arguments_t record of the air fuel control fuel limit table, e2m 104F AFFLLMZA 'AFC LOOK-UP TABLE DEFINING FUELING LIMIT AS A FUNCTION OF BOOS[T]' (mm3), over engine speed (104E AFFLLMXA, x) and boost pressure (104D AFFLLMYA, y). cm550_fuelTimingModeInit (0xc246) writes the pointers 0x6010c / 0x600ee / 0x60138 and the offsets 2, and the RAM dump holds the same values. cm550_fuelTimingTransitionStateMachine sets x_input (0x8000b0) = engine_rpm_primary and y_input (0x8000b8) = boost_pressure_sensor_state.filtered_value, looks the record up (pea 0x8000aa, jsr at 0xc1ca) and stores the result in air_fuel_control_fuel_limit while algorithm_enable_flags_12_cal.air_fuel_control_override_enable is clear. The new row replaces 0x8000aa target_rpm_rate_limiter_reserved_aa. Rows inside to remove: 0x8000ac diagnostic_table_pointer_4, 0x8000ae diagnostic_table_5_ptr, 0x8000b2 diag_mode_0_target_rpm_arg, 0x8000b4 diagnostic_table_pointer_3, 0x8000b8 diagnostic_table_pointer_2, 0x8000ba diagnostic_table_6_ptr, 0x8000be diag_mode_1_target_rpm_arg. Only the initializer and the lookup use any of them.",
+    "discriminator": "It is the only record on the AFFLLM tables and the only one with boost pressure as its y input. Its result is the AFC limit itself. Record 0x8000c0, in the same function, only adds the coolant increment to that limit.",
+    "suggested_name": "air_fuel_control_fuel_limit_lookup",
+    "confidence": "high",
+    "cm848_counterpart": "air_fuel_control_fuel_limit_cached_axis_offsets @ 0x3fa0c4 (cm848_calculateAirFuelControlFuelLimit @ 0xdcdc). Counterpart: the same e2m tables (CM848 air_fuel_control_fuel_limit_x_axis / _y_axis / _grid) and the same inputs. CM848 passes the cache and the tables as separate arguments and adds a low boost grid blend."
+   },
+   {
+    "address": "0x008000c0",
+    "role": "table_lookup_2d_arguments_t record of the cold temperature incremental fuel table, e2m 81F0 FLCDICZA 'COLD TEMP INCREMENTAL FUEL TABLE' (mm3), over coolant temperature (81EE FLCDTPXA, x) and engine speed (81EF FLCDESYA, y). cm550_fuelTimingModeInit (0xc246) writes the pointers 0x6124a / 0x6125e / 0x6126a. cm550_fuelTimingTransitionStateMachine (a3 = 0x8000c0, jsr at 0xc230) sets x_input (0x8000c6) = coolant_temperature_sensor_state.filtered_value and y_input (0x8000ce) = engine_rpm_primary. It adds the result to air_fuel_control_fuel_limit while two conditions hold: algorithm_enable_flags_32_cal.air_fuel_control_coolant_temperature_adjustment_enable (AFCLAJEN 'ENABLES ADDITION OF COOLANT TEMP FUEL TO AFC') is set, and none of the status word 2 faults 0x1 / 0x2 / 0x10 is latched. Otherwise it adds 0. The new row replaces 0x8000c0 diagnostic_table_pointer_1. Rows inside to remove: 0x8000c4 tpu_timer_channel_config, 0x8000c8 io_can_fault_monitor_state, 0x8000c9 can_pin_fault_persistence_counter, 0x8000ca io_control_fault_persistence_counter_1, 0x8000cb io_control_fault_persistence_counter_2, 0x8000cc can_fault_monitor_counter, 0x8000cd io_control_fault_persistence_counter_4, 0x8000ce io_control_fault_persistence_counter_5, 0x8000cf io_control_fault_persistence_counter_6, 0x8000d0 accelerator_throttle_fault_counter, 0x8000d1 io_control_fault_persistence_counter_7, 0x8000d2 accel_throttle_fault_delay_counter, 0x8000d4 accelerator_throttle_fault_state. Only the initializer and the lookup use any of them.",
+    "discriminator": "Record 0x800700 uses the same FLCD tables. This record's result goes into the AFC fuel limit (enable bit AFCLAJEN). The result of 0x800700 goes into the 100 percent throttle fuelings (enable bit 5DCLAJEN).",
+    "suggested_name": "air_fuel_control_cold_temperature_fuel_increment_lookup",
+    "confidence": "high",
+    "cm848_counterpart": "cold_delta_fuel_cached_axis_offsets @ 0x3fb35c (cm848_calculateColdDeltaFuel @ 0x373b0). Counterpart: the same coolant temperature x engine speed fuel increment. CM848 looks up its own Cold_Delta_Fuel_Table (e2m 8AA2) once, and AFC and the torque curve both use the one cold_delta_fuel."
+   },
+   {
+    "address": "0x008000da",
+    "role": "table_lookup_2d_arguments_t record of the altitude derate fuel limit table, e2m 10A3 ATFLLMZA 'TABLE OF FUEL LIMIT VALUES USED BY ALTITUDE DERATE (21X4 VALUES)', over engine speed (10A1 ATESXA, x) and ambient air pressure (10A2 ATAAPRYA, y). cm550_fuelParameterPointerSetup (0xc714) writes the pointers 0x60384 / 0x603b0 / 0x603ba. cm550_rpmHistogramAndProtectionStatisticsAccumulator (a3, jsr at 0xc6f8) sets x_input (0x8000e0) = engine_rpm_primary and y_input (0x8000e8) = ambient_air_pressure_sensor_state.filtered_value. It stores the result in altitude_derate_fuel_limit while algorithm_enable_flags_1_cal.altitude_derate_enable is set, engine_state is ENGINE_STATE_RUNNING and neither status word 1 fault 0x4 / 0x8 is confirmed. The new row replaces 0x8000da diagnostic_data_table_1_ptr. Rows inside to remove: 0x8000de param_lookup_rpm_input, 0x8000e0 diagnostic_data_table_1_base, 0x8000e2 diagnostic_data_table_2_ptr, 0x8000e6 diagnostic_data_table_limit, 0x8000e8 diagnostic_data_intake_temp_ptr, 0x8000ec fuel_blend_table_1_base, 0x8000ee fuel_blend_table_1_ptr. The ROM hits at +0x11 / +0x12 in sendJ1939MultiFrame are ori.l #0x00ec0000 / #0x00eb0000 immediates, so they are not references.",
+    "discriminator": "It is the only record on the AT tables and the only one with ambient air pressure as an input.",
+    "suggested_name": "altitude_derate_fuel_limit_lookup",
+    "confidence": "high",
+    "cm848_counterpart": "fuel_limit_barometric_ambient_air_cached_axis_offsets @ 0x3fb9ca. Counterpart: CM848 holds the same e2m tables 10A1 / 10A2 / 10A3 (fuel_limit_barometric_engine_speed_x_axis / _pressure_y_axis / _cool_ambient_air_grid). Its cache is shared with a hot ambient air grid that CM550 does not have."
+   },
+   {
+    "address": "0x008001d4",
+    "role": "table_lookup_2d_arguments_t record of the desired cylinder pressure table, e2m 108A CPDSZA 'DATA AXIS FOR DESIRED CYLINDER PRESSURE TABLE' (psia, 1500-3000), over engine speed (1088 CPDSXA, x) and fueling (1089 CPDSYA, y). cm550_initLoadTrendingSystem (0x124d2) writes the pointers 0x60678 / 0x60694 / 0x606a4 and seeds the inputs. cm550_coldStartFuelControlSlowCycle40Coordinator uses it. That pass runs only while cylinder_pressure_maintenance_enable is set (andi.l #0x800 at 0x11e74). The pass sets x_input (0x8001da) = engine_rpm_primary and y_input (0x8001e2) = final_fueling, looks the record up (pea, jsr at 0x11ffc) and compares the result with calculated_cylinder_pressure_1500_3000. A difference above min_diff_between_desired_cylinder_pressure_and_calculated_cy_0_200 drives the timing correction. The new row replaces 0x8001d4 engine_runtime_histogram_interpolation_b. Rows inside to remove: 0x8001d6 engine_runtime_histogram_config_type_a, 0x8001d8 hour_meter_table_1_ptr, 0x8001dc rpm_histogram_threshold_saved, 0x8001de hour_meter_table_2_base, 0x8001e0 hour_meter_table_2_ptr, 0x8001e4 hour_meter_table_1_limit, 0x8001e6 hour_meter_intake_temp_ptr.",
+    "discriminator": "Record 0x8001f8 in the same pass gives the compression ratio factor from absolute boost. This record gives the target pressure from final_fueling, and the pass compares the calculated pressure against it.",
+    "suggested_name": "desired_cylinder_pressure_lookup",
+    "confidence": "high",
+    "cm848_counterpart": "none: CM848 has no cylinder pressure maintenance rows or tables"
+   },
+   {
+    "address": "0x008001f8",
+    "role": "table_lookup_2d_arguments_t record of e2m 11D2 CPCS02YA 'DATA AXIS FOR COMPRESSION RATIO RAISED TO POWER OF A POLYTROPI[C]' (30-70), over engine speed (11D0 CPCS02XA, x) and absolute boost pressure (11D1 CPCS02BS, psia, y). cm550_initLoadTrendingSystem (0x124d2) writes the pointers 0x605ce / 0x605ea / 0x605f2. cm550_coldStartFuelControlSlowCycle40Coordinator sets x_input (0x8001fe) = engine_rpm_primary and y_input (0x800206) = manifold_temp_table_3_type (0x80021e). 0x80021e holds the boost pressure plus the ambient air pressure, unless the boost sensor is absolute. The function looks the record up (jsr at 0x11fee) and sets calculated_cylinder_pressure_1500_3000 = cm550_scaleByRatio(0x80021e, result, 0x400), capped at 48000. The new row replaces 0x8001f8 hour_meter_table_3_limit. Rows inside to remove: 0x8001fa hour_meter_table_5_ptr, 0x8001fe manifold_temp_table_1_type, 0x800200 manifold_temp_table_1_x_ptr, 0x800204 speed_diff_interp_input, 0x800206 manifold_temp_table_1_y_type, 0x800208 manifold_temp_table_1_y_ptr, 0x80020c manifold_temp_table_1_count.",
+    "discriminator": "It is the only record with absolute boost as its y input. Its result multiplies a pressure to give the compression pressure. Record 0x8001d4 in the same pass gives the desired pressure.",
+    "suggested_name": "compression_ratio_polytropic_power_lookup",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x00800222",
+    "role": "table_lookup_2d_arguments_t record of the cylinder balancing stop compensation table, e2m 822D CBDSCT (0-1), over engine speed (822B CBDSCSV, x) and fueling (822C CBDSCFV, y). The tables are in RAM at 0x80734c / 0x807352 / 0x807358, a 2 x 2 grid that is 100 only at x 7600 (950 rpm) and y 421 and 0 elsewhere. vp44_FUN_000133fe (0x133fe) writes the pointers with absolute moves. vp44_FUN_000127c2 sets x_input (0x800228) = current_engine_rpm_filtered and y_input (0x800230) = CBDFFL (0x8091e8, e2m 823D +0 'CYLINDER BALANCING FILTERED FUELING') and looks the record up (jsr at 0x12924). It limits the result to 0..100 and stores it in cyl_balance_gain_percent (0x8092e2, e2m 823D +FA CBDATG 'CYLINDER BALANCING ACTIVE TRIM GAIN'). A gain below 100 sets 0x80922e (CBDSCF stop compensation flag). No row exists at 0x800222 (the decompiler shows DAT_00800222). Rows inside to remove: 0x800224 multi_speed_throttle_input, 0x800226 manifold_temp_table_3_z_ptr, 0x80022a speed_difference_interpolation_result, 0x80022c fault_scanner_loop_timestamp, 0x800230 diagnostic_queue_index, 0x800232 diagnostic_fault_group_index, 0x800234 vp44_comm_bit0_prev_state, 0x800236 vp44_comm_bit2_debounce_timer.",
+    "discriminator": "It has the same inputs as 0x800238. This table's result is the active trim gain (0..100) and sets the stop flag. The result of 0x800238 is the component 3 offset.",
+    "suggested_name": "cylinder_balance_stop_compensation_lookup",
+    "confidence": "high",
+    "cm848_counterpart": "cylinder_balance_stop_compensation_cached_axis_offsets @ 0x3fb592 (hpcr_cbdCalculateCylinderTrims). Counterpart: the same stop compensation table concept and the same engine speed x filtered fueling inputs (CM848 e2m 81B1-81B3). CM848 uses the result against 0 / 128 thresholds."
+   },
+   {
+    "address": "0x00800238",
+    "role": "table_lookup_2d_arguments_t record of the cylinder balancing component 3 adjustment table, e2m 822A CBDCAT 'CYLINDER BALANCING COMPONENT_3 ADJUSTMENT TABLE' (-10000..10000), over engine speed (8228 CBDCSV, x) and fueling (8229 CBDC3FV, y). The tables are in RAM at 0x807338 / 0x80733e / 0x807344, a 2 x 2 grid that is all 10000 in the dump. vp44_FUN_000133fe writes the pointers. vp44_FUN_000127c2 sets x_input (0x80023e) = current_engine_rpm_filtered and y_input (0x800246) = CBDFFL (0x8091e8) and looks the record up (jsr at 0x12c74). It stores result - 10000 in 0x8092e0 (e2m 823D +F8 CBDC3ADJ 'CYLINDER BALANCING COMP_3 ADJUSTMENT'), then subtracts that from 0x809218 into 0x80927a (CBDARC3). The new row replaces 0x800238 vp44_comm_bit1_debounce_timer. Rows inside to remove: 0x80023a vp44_sensor_fault_debounce_timer, 0x80023c vp44_derate_fault_debounce_timer, 0x80023e vp44_status_mask_array, 0x800242 vp44_buffer_index, 0x800243 vp44_buffer_index_reserved, 0x800244 vp44_status_data_table.",
+    "discriminator": "It has the same inputs as 0x800222. Its result minus 10000 is the component 3 adjustment offset.",
+    "suggested_name": "cylinder_balance_component_3_adjustment_lookup",
+    "confidence": "high",
+    "cm848_counterpart": "none: CM848's cylinder_balance_component_3_adjustment (0x408f1c, e2m 81AE +3A) is a calibration constant, not a table output (same concept name)"
+   },
+   {
+    "address": "0x008005c2",
+    "role": "table_lookup_2d_arguments_t record of the steady state timing advance table, e2m 103E 4DTA01ZA 'TIMING ADVANCE LOOK-UP TABLE FOR STEADY STATE ENGINE OPERATION', over engine speed (103D 4DTA01XA, x) and fueling (103C 4DTA01YA, y). vp44_fuelLimitParameterPointerSetup (0x17ef8) writes the pointers 0x60a2a / 0x60a52 / 0x60a74. cm550_governorFuelModeBlendCalculator (a3, jsr at 0x178ec / 0x1795a) sets x_input (0x8005c8) = crank_exit_speed and y_input (0x8005d0) = CKEXFL (0x807ef4, e2m 105F +A 'CRANK EXIT FUEL') + crank_exit_fuel_adjustment_0_100. The result goes to four_d_timing_output_by_crank_0_120 (e2m 105E +4 CK4DTA '4D TIMING OUTPUT BY CRANK'): alone when alpha_blend_factor is 0x4000, otherwise blended with the transient record 0x8005d8 by alpha_blend_factor. No row lies inside it.",
+    "discriminator": "Record 0x8006b8 uses the same 4DTA01 tables. This record is looked up at the crank exit point (crank_exit_speed, crank exit fuel) to give CK4DTA. Record 0x8006b8 is looked up at the running engine speed and final_fueling to give 4DTBTA.",
+    "suggested_name": "crank_four_dimensional_timing_steady_state_lookup",
+    "confidence": "high",
+    "cm848_counterpart": "none: CM848 only seeds crank_four_dimensional_timing (0x40a79c) and has no crank 4D timing lookup"
+   },
+   {
+    "address": "0x008005d8",
+    "role": "table_lookup_2d_arguments_t record of the transient timing advance table, e2m 1041 4DTA00ZA 'TIMING ADVANCE LOOK-UP TABLE FOR TRANSIENT ENGINE OPERATION', over engine speed (1040 4DTA00XA, x) and fueling (103F 4DTA00YA, y). vp44_fuelLimitParameterPointerSetup (0x17ef8) writes the pointers 0x60cd4 / 0x60cfc / 0x60d1e. cm550_governorFuelModeBlendCalculator (a2, jsr at 0x17918 / 0x17978) sets x_input (0x8005de) = crank_exit_speed and y_input (0x8005e6) = CKEXFL + crank_exit_fuel_adjustment_0_100. The result goes to four_d_timing_output_by_crank_0_120 (CK4DTA): alone when alpha_blend_factor is 0, otherwise blended with 0x8005c2. No row lies inside it.",
+    "discriminator": "It is the transient (4DTA00) partner of 0x8005c2. Record 0x8006ce uses the same tables but is looked up at the running engine point, not the crank exit point.",
+    "suggested_name": "crank_four_dimensional_timing_transient_lookup",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x008006b8",
+    "role": "table_lookup_2d_arguments_t record of the steady state timing advance table 4DTA01 (e2m 103D / 103C / 103E). cm550_FUN_0001c7a8 (0x1c7a8) writes the pointers 0x60a2a / 0x60a52 / 0x60a74. cm550_fuelDemandTableBlendCalculator (a4 = 0x8006b8, jsr (a5) at 0x1c6dc / 0x1c720) sets x_input (0x8006be) = engine_rpm_primary and y_input (0x8006c6) = final_fueling. While 0x80d706 = 1, the y input is final_fueling mapped through the 1-D record 0x8006aa (e2m 1084 / 1085 DPFPTB / DPTVOTB). The result goes to timing_4DTBTA (e2m 103B 4DTBTA): alone when alpha_blend_factor is 0x4000, otherwise blended with 0x8006ce. The function skips the lookup while algorithm_enable_flags_4_cal.user_commanded_timing_enable is set. No row lies inside it.",
+    "discriminator": "It is the running engine lookup of 4DTA01 that gives 4DTBTA. Record 0x8005c2 is the crank exit lookup of the same tables.",
+    "suggested_name": "four_dimensional_injection_timing_steady_state_lookup",
+    "confidence": "high",
+    "cm848_counterpart": "four_dimensional_injection_timing_map_a_cached_axis_offsets @ 0x3fa878 (cm848_calculateFourDimensionalInjectionTiming @ 0x1e870). Counterpart: the same e2m tables (CM848 four_dimensional_injection_timing_map_a_*), engine speed x final_fueling, and the same alpha blend. CM848 has no 1-D fueling mapping step."
+   },
+   {
+    "address": "0x008006ce",
+    "role": "table_lookup_2d_arguments_t record of the transient timing advance table 4DTA00 (e2m 1040 / 103F / 1041). cm550_FUN_0001c7a8 writes the pointers 0x60cd4 / 0x60cfc / 0x60d1e. cm550_fuelDemandTableBlendCalculator (a3 = 0x8006ce, jsr (a5) at 0x1c6fc / 0x1c732) sets x_input (0x8006d4) = engine_rpm_primary and y_input (0x8006dc) = the same fueling value as 0x8006b8. The result goes to timing_4DTBTA: alone when alpha_blend_factor is 0, otherwise blended with 0x8006b8. No row lies inside it.",
+    "discriminator": "It is the running engine lookup of 4DTA00. Record 0x8005d8 is the crank exit lookup of the same tables.",
+    "suggested_name": "four_dimensional_injection_timing_transient_lookup",
+    "confidence": "high",
+    "cm848_counterpart": "four_dimensional_injection_timing_map_b_cached_axis_offsets @ 0x3fa87c (cm848_calculateFourDimensionalInjectionTiming). Counterpart, as for 0x8006b8."
+   },
+   {
+    "address": "0x008006ea",
+    "role": "table_lookup_2d_arguments_t record of the steady state 4D fueling table, e2m 1056 5DFL01ZA, over engine speed (1055 5DFL01XA) and throttle (1054 5DFL01YA). Its y_input is fixed at 400 (100 percent throttle). cm550_FUN_0001cdf8 (0x1cdf8) writes 400 to +0xe together with the pointers 0x6086e / 0x6089a / 0x608a4, and no code writes +0xe again. cm550_FUN_0001cc72 sets x_input (0x8006f0) = engine_rpm_primary and looks the record up twice, using the steady state table alone with no FLINML blend. The lookup at 0x1cd5e gives throttle_100_fueling_low_horsepower_curve (e2m 105A +2 FST0MXFL 'FUELING PROVIDED IF ENGINE WERE USING LOW HP CURVE') while algorithm_enable_flags_18_cal.programmable_power_enable is clear. The lookup at 0x1cdbc gives max_fueling_without_programmable_power_for_esp_tau_0_0_100 (105A +8 FSMTFLNP) while algorithm_enable_flags_12_cal.electronic_smart_power_enable is set. No row lies inside it.",
+    "discriminator": "Records 0x80d372 and 0x800010 use the same 5DFL01 tables. This is the only record with a constant throttle input (400), and it serves only the low horsepower curve and ESP tau 0 fuelings.",
+    "suggested_name": "four_dimensional_fueling_steady_state_throttle_100_lookup",
+    "confidence": "high",
+    "cm848_counterpart": "four_dimensional_fueling_steady_state_cached_axis_offsets_2 @ 0x3fa88c (cm848_calculateThrottle100Fuelings @ 0x1f17c, throttle 400). Counterpart: the same table and the same role for throttle_100_fueling_low_horsepower_curve. CM848's ESP branch zeroes the interpolation factor instead."
+   },
+   {
+    "address": "0x00800700",
+    "role": "table_lookup_2d_arguments_t record of the cold temperature incremental fuel table FLCDICZA (e2m 81EE FLCDTPXA coolant temperature x, 81EF FLCDESYA engine speed y, 81F0). cm550_FUN_0001cdf8 (0x1cdf8) writes the pointers 0x6124a / 0x6125e / 0x6126a. cm550_FUN_0001cc72 sets x_input (0x800706) = coolant_temperature_sensor_state.filtered_value and y_input (0x80070e) = engine_rpm_primary, and looks the record up (pea, jsr at 0x1cd0a) while three conditions hold: algorithm_enable_flags_18_cal.programmable_power_enable is clear; algorithm_enable_flags_32_cal.full_fueling_coolant_temperature_adjustment_enable (5DCLAJEN 'ENABLES ADDITION OF COOLANT TEMP FUEL TO 100% FUE[LING]') is set; and none of the status word 2 faults 0x1 / 0x2 / 0x10 is latched. It adds the result to throttle_100_fueling, full_fueling_value_at_hsg_bef_droop_speed_0_100 and throttle_100_fueling_low_horsepower_curve. No row lies inside it.",
+    "discriminator": "Record 0x8000c0 uses the same FLCD tables. This result goes into the 100 percent throttle fuelings. The result of 0x8000c0 goes into the AFC fuel limit.",
+    "suggested_name": "throttle_100_cold_temperature_fuel_increment_lookup",
+    "confidence": "high",
+    "cm848_counterpart": "cold_delta_fuel_cached_axis_offsets @ 0x3fb35c (cm848_calculateColdDeltaFuel). Counterpart: CM848 adds cold_delta_fuel to throttle_100_fueling under algorithm_enable_flags_41_cal.throttle_100_cold_increment_enable. Its value comes from one lookup of CM848's own table 8AA2."
+   },
+   {
+    "address": "0x0080d372",
+    "role": "table_lookup_2d_arguments_t record of the steady state 4D fueling table 5DFL01 (e2m 1055 / 1054 / 1056). cm550_FUN_0001ddb4 (0x1ddb4) writes the pointers 0x6086e / 0x6089a / 0x608a4. Four 4D fueling calculations share this record, with x_input at +6 (0x80d378) and y_input at +0xe (0x80d380): cm550_calculateBlendedTableValue (its speed and throttle arguments, jsr at 0x1cbac); cm550_FUN_0001de58 (engine_rpm_primary at the commanded throttle, at 0 and at 400; jsr (a5) at 0x1ded6 / 0x1deea / 0x1df00); cm550_governorFuelPidController (lsg_reference_speed_adjusted_with_throttle_position_300_2000 at 400, 0x25994); cm550_FUN_000142d4 (its speed argument at 400, 0x142f0). The first three blend the result with the transient record 0x80d388 by timing_alpha_blend_factor (e2m 1053 +2 FLINML; 0x4000 means this table alone). The new row replaces 0x80d372 fuel_table_primary_descriptor. Row inside to remove: 0x80d380 fuel_table_primary_throttle_input.",
+    "discriminator": "It is the general lookup of 5DFL01, used by four functions. Records 0x800010 (duty cycle monitor) and 0x8006ea (100 percent throttle, steady state table alone) are dedicated records on the same tables.",
+    "suggested_name": "four_dimensional_fueling_steady_state_lookup",
+    "confidence": "high",
+    "cm848_counterpart": "four_dimensional_fueling_steady_state_cached_axis_offsets @ 0x40a8a1 (cm848_calculateMaximumFuelCurve @ 0x1f03c and the other 4D fueling users). Counterpart: the same e2m tables (four_dimensional_fueling_steady_state_x_axis / _y_axis / _grid) and the same FLINML blend. CM848 passes the cache and the tables separately."
+   },
+   {
+    "address": "0x0080d388",
+    "role": "table_lookup_2d_arguments_t record of the transient 4D fueling table 5DFL00 (e2m 1058 5DFL00XA / 1057 5DFL00YA / 1059 5DFL00ZA). cm550_FUN_0001ddb4 writes the pointers 0x6094c / 0x60978 / 0x60982. Three functions look it up with x_input at +6 (0x80d38e) and y_input at +0xe (0x80d396): cm550_calculateBlendedTableValue (0x1cbd2), cm550_FUN_0001de58 (0x1df5c / 0x1df6e / 0x1df84) and cm550_governorFuelPidController (a5, 0x259c0). Each blends the result with 0x80d372 by timing_alpha_blend_factor (0 means this table alone). The new row replaces 0x80d388 fuel_table_secondary_descriptor. Row inside to remove: 0x80d396 fuel_table_secondary_throttle_input.",
+    "discriminator": "It is the general lookup of 5DFL00. Record 0x800026 is the duty cycle monitor's dedicated record on the same tables.",
+    "suggested_name": "four_dimensional_fueling_transient_lookup",
+    "confidence": "high",
+    "cm848_counterpart": "four_dimensional_fueling_transient_cached_axis_offsets @ 0x40a8a5 (cm848_calculateMaximumFuelCurve and the others). Counterpart, as for 0x80d372."
+   },
+   {
+    "address": "0x00807d1e",
+    "role": "Type word[10]: e2m 111D DCMNESTB 'DUTY CYCLE MONITOR X-AXIS RPM VALUES FOR MAPPING' (T record, 0.125 rpm per count). The dump holds the byte count word 18 and 9 engine speeds: 0 / 8000 / 10400 / 12800 / 15200 / 16800 / 18400 / 20000 / 22400 (0-2800 rpm). The next e2m record, 111E, starts at 0x807d32 = base + 20. cm550_updateDutyCycleMonitorLoadHistogram is the only reader. It loads movea.l #0x807d20,a2 at 0xae5c and runs cmp.w (a2)+ over values 1-8 (0x807d20-0x807d2e) to find the speed bin. No code reads the count word or value 9 (0x807d30); only the parameter ID table (0x35c88) lists the base. Rows inside to remove: 0x807d20 rpm_timer_interrupt_threshold_7d20, 0x807d2c rpm_source_selector_init, 0x807d2e throttle_frictional_load_upper_threshold, 0x807d30 throttle_frictional_load_lower_threshold. It lies outside the EEPROM image, so the name takes no _cal. This proves the lead's proposal.",
+    "discriminator": "It holds the speed (x) bins of the duty cycle map. 0x807d32 holds the load bins.",
+    "suggested_name": "duty_cycle_monitor_engine_speed_axis",
+    "confidence": "high",
+    "cm848_counterpart": "ROM 0x5c2c0 (e2m 111D DC_Mon_RPM_Axis, no row; byte count 18, 9 values), read by cm848_updateDutyCycleMonitorLoadHistogram (values 1-8). Counterpart on the same e2m record; the same name fits it as word[10]."
+   },
+   {
+    "address": "0x00807d32",
+    "role": "Type word[8]: e2m 111E DCMNLDTB 'DUTY CYCLE MON Y-AXIS %LOAD VALUES FOR MAPPING' (0.01 percent per count). The dump holds the byte count word 14 and 7 loads: 0 / 1000 / 3000 / 5000 / 7000 / 9000 / 10000 (0-100 percent). The next e2m record, 10DF JCFCLD06, starts at 0x807d42 = base + 16. cm550_updateDutyCycleMonitorLoadHistogram is the only reader. It loads movea.l #0x807d34,a2 at 0xae90 and runs cmp.w (a2)+ over values 1-6 (0x807d34-0x807d3e) to find the load bin. At 0xadd2, move.w (0x807d40).l takes value 7 (10000) as the load ratio when duty_cycle_monitor_full_throttle_fueling equals no_load_fuel_quantity. The new row replaces the row at the base, 0x807d32 'DCMNLDTB' (type undefined), which the lead's list did not name. Rows inside to remove: 0x807d34 intake_temp_frictional_load_threshold, 0x807d36 rpm_fuel_limit_blend_offset, 0x807d38 frictional_load_fuel_init, 0x807d3a rpm_fuel_limit_threshold_max, 0x807d3c frictional_load_state_init, 0x807d3e rpm_fuel_limit_state_max, 0x807d40 frictional_load_torque_init. The name takes no _cal. This proves the lead's proposal.",
+    "discriminator": "It holds the load (y) bins of the duty cycle map. 0x807d1e holds the speed bins.",
+    "suggested_name": "duty_cycle_monitor_load_axis",
+    "confidence": "high",
+    "cm848_counterpart": "ROM 0x5c2d4 (e2m 111E DC_Mon_Load_Axis, no row; byte count 22, 11 values, so word[12]). cm848_updateDutyCycleMonitorLoadHistogram reads values 1-10, and reads value 11 (DAT_0005c2ea = 10000) the same way CM550 reads 0x807d40. Counterpart."
+   }
+  ],
+  "enum_roles": [],
+  "notes": "The globals are in roles[], because the schema has no globals[] field. There are 15 new table_lookup_2d_arguments_t records and the 2 duty cycle monitor axis tables. Call count: the ROM holds 25 `jsr (0x35088).l`. It also holds `movea.l #0x35088,a5` in cm550_fuelDemandTableBlendCalculator (followed by 4 `jsr (a5)`) and in cm550_FUN_0001de58 (followed by 6 `jsr (a5)`). That makes 35 call sites. There are no pc-relative calls, and 0x00035088 does not occur in the RAM, extended RAM or EEPROM dumps. Code above ROM 0x40000 is not dumped, so it cannot be checked. The 35 calls use 19 distinct records: the 4 already typed and 15 new ones. The lead expected about twenty more; there are 15. One initializer writes every pointer field as a constant: cm550_fuelTimingModeInit 0xc246 (0x8000aa, 0x8000c0); cm550_fuelParameterPointerSetup 0xc714 (0x8000da); cm550_initLoadTrendingSystem 0x124d2 (0x8001f8, 0x8001d4); vp44_FUN_000133fe 0x133fe (0x800222, 0x800238); vp44_fuelLimitParameterPointerSetup 0x17ef8 (0x8005c2, 0x8005d8); cm550_FUN_0001c7a8 (0x8006b8, 0x8006ce); cm550_FUN_0001cdf8 (0x8006ea, 0x800700); cm550_FUN_0001ddb4 (0x80d372, 0x80d388). The RAM dumps hold the same pointer values. Every absolute reference into each record comes from that initializer or from the record's lookup callers. So does every decompiled use of every row name inside the record. No other code shares the record memory. Each record's x / y order matches the e2m X / Y types of its axes. Naming: where CM848 has names for the same e2m tables, the proposals reuse them (air_fuel_control_fuel_limit, four_dimensional_fueling_steady_state / _transient, four_dimensional_injection_timing, crank_four_dimensional_timing, cylinder_balance_stop_compensation, cylinder_balance_component_3). Otherwise they use the CM550 e2m words. Some tables have more than one record, and the user tells the records apart: 0x8000c0 / 0x800700; 0x8005c2 / 0x8006b8; 0x8005d8 / 0x8006ce; 0x80d372 / 0x8006ea / 0x800010; 0x80d388 / 0x800026. No proposed name exists in either firmware's global_variables.csv. No record lies in an EEPROM image, so no name takes _cal. Duty cycle monitor axes: the evidence proves the lead's word[10] at 0x807d1e and word[8] at 0x807d32. The byte counts are 18 and 14, and the next e2m records start at base + 20 and base + 16. The row 0x807d32 'DCMNLDTB' sits at the base of the load axis and is replaced too. Optional CM848 follow-up: the same two names fit CM848 ROM 0x5c2c0 (word[10]) and 0x5c2d4 (word[12], 11 load values), which have no rows. Observations outside this batch, not proven twins: cm550_calculateBlendedTableValue matches cm848_calculateMaximumFuelCurve (0x1f03c), and CM550 also adds 5DFLAJ 0x803f3a. cm550_fuelDemandTableBlendCalculator matches cm848_calculateFourDimensionalInjectionTiming (0x1e870), and CM550 adds the 1-D fueling mapping 0x8006aa. cm550_FUN_0001cc72 matches cm848_calculateThrottle100Fuelings (0x1f17c). The initializers cm550_FUN_0001ddb4 / cm550_FUN_0001c7a8 / cm550_FUN_0001cdf8 do the work of cm848_initFaultSeverityTables (0x1ea94) / cm848_initProtectionTableSizes (0x1ea6c) / cm848_initFuelDemandTableDimensions (0x1f300); those CM848 names do not describe what the functions do. Scratch scripts and notes are in /home/linux/.claude/jobs/374b0424/tmp/w15/r94/scratch/L3/describer/ (notes.md, find_calls.py, dump_records.py, record_refs.py, rows_inside.py, row_uses.py)."
+ },
+ "verdict": {
+  "batch": "L3",
+  "overall": "I checked every element myself. All 25 elements hold: 21 CONFIRMED, 4 AMENDED (comment text only), none REFUTED.\n\nCall census (complete for the dumped ROM):\n- abs_refs finds 27 references to 0x35088: 25 jsr (0x35088).l, plus 2 movea.l #0x35088,a5 (0x1c674, 0x1de6a) that feed 4 + 6 jsr (a5). a5 is not reloaded between those calls.\n- My own scan (judge/pcrel_scan.py) finds no bsr / bra / jsr (d16,pc) / lea (d16,pc) to 0x35088. The RAM, extended RAM and EEPROM dumps hold no copy of 0x00035088.\n- That gives 35 calls on 19 records, which matches the 35 cm550_tableLookup2D calls in the decompile. 4 records are already typed, so 15 are new (not the ~20 the lead expected).\n\nEach of the 15 records:\n- Its dump pointers equal its initializer's constants.\n- The e2m records at those pointers name the tables.\n- Every ROM reference into its 22 bytes (judge/range_refs.py) is the initializer, a +6 / +0xe input store or the base push.\n- The 4 hits at 0x227b8 / 0x22828 / 0x228ca / 0x2293a are ori.l #0xec0000 / #0xeb0000 J1939 identifier immediates (PGNs 60416 / 60160), not addresses.\n- When a record base is held in an address register, it is used only for (0x6,aN), (0xe,aN) and move.l aN,-(a7). I read the tails of 0x142d4, 0x178b0, 0x1de58 and 0x2595a to confirm this.\n- cm550_tableLookup2D itself writes only +0 and +8 (the cached offsets).\n\nRows inside the records:\n- The rows inside each record are exactly the investigator's lists.\n- Their names appear in no other frozen CSV except a parameter comment in function_definitions.csv 0x142d4 that names fuel_table_primary_descriptor. Its text should become four_dimensional_fueling_steady_state_lookup.x_input when the rows are applied.\n- parameter_id_lookup_table.csv must be regenerated (--write-table) for DCMNLDTB and vp44_state_debounce_threshold.\n- No struct, enum or local row is anchored inside any new row in either firmware.\n- Every enable-bit name in the comments matches its bitfield (flags_12 bits 3 / 4, flags_32 bits 14 / 15, flags_1 bit 5, flags_3 bit 11, flags_4 bit 8, flags_18 bit 9). ENGINE_STATE 3 is RUNNING.\n- 5DFL01ZA / 5DFL00ZA have offset -800 mm3 (11776 counts), which cm550_subtractAndClampValue removes with +0xd200 and a clamp to 0..0x1700. CBDCAT has offset -10000.\n\nDuty cycle monitor axes:\n- CM550 dump: 0x807d1e holds byte count 18 then 9 speeds, so word[10]. 0x807d32 holds 14 then 7 loads, so word[8]. The next e2m records start at +20 (111E) and +16 (10DF JCFCLD06).\n- The only CM550 readers are 0xae5c (compares values 1-8), 0xae90 (values 1-6) and 0xadd2 (the 7th load value 10000).\n- CM848 ROM: 0x5c2c0 holds 18 then 9 speeds (word[10]) and 0x5c2d4 holds 22 then 11 loads (word[12]). The next row is 0x5c2ec (10B4). Only cm848_updateDutyCycleMonitorLoadHistogram reads them.\n\nCylinder balancing RAM tables:\n- Their sizes come from the dump byte counts and the parameter_id_table block starts at ROM 0x388a4.\n- Their only references are the initializer stores at 0x13496-0x134e0.\n\nNames:\n- Every name is unique in its firmware. Only the three CM848 stop compensation table names already exist in CM848, as the counterparts the comments cite.\n- I kept the investigator's names over the describer's alternatives:\n  - 0x8001f8: compression_ratio_raised_to_polytropic_exponent is clearer.\n  - 0x8006ea: both of its outputs are tau 0 / low horsepower curve fuelings. CM848's e2m labels FST0MXFL as Tau_0_Throttle_100_Fueling and FSMTFLNP as the ESP tau 0 value.\n  - 0x800700: the name follows its enable bit full_fueling_coolant_temperature_adjustment_enable.\n\nComment amendments:\n- 0x8000da: the gate wording was ambiguous. The lookup runs when neither bit 2 nor bit 3 is both set and confirmed.\n- 0x8001f8: pressure x result / 1024 is only the first step. When the start of injection advance at 0x80aaa6 is positive, the code multiplies by 1 + advance x the CPCS01 ratio per degree (1-D record 0x8001ea).\n- 0x807352 / 0x807358: CM848's tables are blocks 81B2 / 81B3, scaled 0.0679 mm3 per count and 1/128 per count, against CM550's 0.0713 and 0.01. So 'This is CM848's ...' was too strong.\n\nSkipped and leads:\n- The investigator's skipped[] is empty and its functions[] is empty, so no function verdicts are needed.\n- The five record-shaped RAM blocks it reports as leads should stay out: 0x8036e4, 0x8036fe, 0x803896, 0x8038ac and 0x8039ae. Nothing in the dumped ROM references them (range_refs: none), so no reader proves the type or the role. Revisit them when the 0x40000+ dump exists.\n- The lookupTableInterpolation (1-D, table_interp_args_t) records are a separate backlog.\n- Aside: function_definitions.csv row 0x35088 still says twoDimensionalTableInterpolation / short*. That is name drift, task 41.\n\nNotes and scripts are in /home/linux/.claude/jobs/374b0424/tmp/w15/r94/scratch/L3/judge/ (notes.md, pcrel_scan.py, records.py, range_refs.py).",
+  "verdicts": [
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008000aa",
+    "verdict": "CONFIRMED",
+    "final_name": "air_fuel_control_fuel_limit_lookup",
+    "final_type": "table_lookup_2d_arguments_t",
+    "own_role": "2-D lookup record of the AFC fuel limit table 104F over 104E engine speed x 104D boost: cm550_fuelTimingTransitionStateMachine stores engine_rpm_primary at +6 (0xc1b0) and boost 0x80a320 at +0xe (0xc1ba), pea 0x8000aa / jsr at 0xc1ca, result to air_fuel_control_fuel_limit 0x80a8f6 unless algorithm_enable_flags_12_cal bit 3 (override) sets it to 0x807a5a.",
+    "reason": "Disassembly 0xc180-0xc29e matches: init 0xc24c-0xc270 writes 2 / 0x6010c / 2 / 0x600ee / 0x60138, the same as the dump. e2m at the pointers: 104E AFFLLMXA / 104D AFFLLMYA / 104F AFFLLMZA. The only refs into 0x8000aa-0x8000bf are 0xc1b0 / 0xc1ba / 0xc1c4 / 0xc24c / 0xc25a. The 8 rows inside (0x8000aa base + the 7 listed) have no other CSV use. CM848 104F = air_fuel_control_fuel_limit_grid. The name is unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008000c0",
+    "verdict": "CONFIRMED",
+    "final_name": "air_fuel_control_cold_temperature_fuel_increment_lookup",
+    "final_type": "table_lookup_2d_arguments_t",
+    "own_role": "2-D lookup record of the cold temperature incremental fuel table 81F0 over 81EE coolant temperature x 81EF engine speed. It is looked up in the AFC function (a3 = 0x8000c0, x = coolant 0x80a336, y = engine_rpm_primary, jsr at 0xc230) only when flags_32 bit 14 AFCLAJEN is set and none of status word 2 bits 0x2 / 0x1 / 0x10 is set in both 0x806004 and fault_latch_status_word_2. The result is added to air_fuel_control_fuel_limit (add.w d2,(a5) at 0xc23e).",
+    "reason": "Disassembly and dump agree: pointers 0x6124a / 0x6125e / 0x6126a are written at 0xc278-0xc296. e2m 81EE FLCDTPXA / 81EF FLCDESYA / 81F0 FLCDICZA. Refs are only 0xc18a / 0xc246 / 0xc280. The 14 rows (base + 13 listed) are used nowhere else. The discriminator against 0x800700 is the AFC output and the AFCLAJEN bit. The name is unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008000da",
+    "verdict": "AMENDED",
+    "final_name": "altitude_derate_fuel_limit_lookup",
+    "final_type": "table_lookup_2d_arguments_t",
+    "final_comment": "The cm550_tableLookup2D argument record of the altitude derate fuel limit table: e2m 10A3 ATFLLMZA 'table of fuel limit values used by altitude derate (21x4 values)' (MM3S) over engine speed (10A1 ATESXA) and ambient air pressure (10A2 ATAAPRYA); the RAM dump holds x_axis_pointer 0x60384 / y_axis_pointer 0x603b0 / z_values_pointer 0x603ba. cm550_fuelParameterPointerSetup (0xc714) fills it; cm550_rpmHistogramAndProtectionStatisticsAccumulator (a3 = 0x8000da) looks it up with x input = engine_rpm_primary and y input = the filtered ambient air pressure 0x80a3ba (e2m 1004 +110 ADAAPRFT) into altitude_derate_fuel_limit. It runs while algorithm_enable_flags_1_cal.altitude_derate_enable is set, engine_state is RUNNING and neither bit 2 nor bit 3 of system error status word 1 is both set and confirmed. The rows inside are removed (were 0x8000de param_lookup_rpm_input / 0x8000e0 diagnostic_data_table_1_base / 0x8000e2 diagnostic_data_table_2_ptr / 0x8000e6 diagnostic_data_table_limit / 0x8000e8 diagnostic_data_intake_temp_ptr / 0x8000ec fuel_blend_table_1_base / 0x8000ee fuel_blend_table_1_ptr). (was diagnostic_data_table_1_ptr; PR #53 round 94)",
+    "own_role": "2-D lookup record of the altitude derate fuel limit table 10A3 over 10A1 engine speed x 10A2 ambient pressure: x = engine_rpm_primary (a4), y = 0x80a3ba, result to altitude_derate_fuel_limit 0x80a922. It runs only when flags_1 bit 5 is set, engine_state = 3 (RUNNING), and neither bit 0x4 nor bit 0x8 is set in both 0x806002 and 0x806abe. Otherwise the limit is the default fueling 0x807abc or fuel_demand_maximum.",
+    "reason": "Name, type, rows and evidence verified (init 0xc714-0xc740, lookup 0xc6ea-0xc700). The 4 hits at 0x227b8 / 0x22828 / 0x228ca / 0x2293a are ori.l J1939 identifier immediates. Only one comment sentence changes. 'bits 2 / 3 ... are not both set and confirmed' can be read as 'not both bits'. The code (0xc69c-0xc6c6) runs the lookup only when NEITHER bit is set in both status word 1 and fault_confirm_status_word_1."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008001d4",
+    "verdict": "CONFIRMED",
+    "final_name": "desired_cylinder_pressure_lookup",
+    "final_type": "table_lookup_2d_arguments_t",
+    "own_role": "2-D lookup record of the desired cylinder pressure table 108A over 1088 engine speed x 1089 fueling. The cylinder pressure maintenance pass (flags_3 bit 11) sets x = engine_rpm_primary (0x11edc) and y = final_fueling (0x11ee2) and looks it up at 0x11ffc. The result (d2) is compared with calculated_cylinder_pressure_1500_3000 against the minimum difference 0x807cfa. The limited difference becomes increment_timing_value_output_by_cylinder_pressure_maintenance.",
+    "reason": "Init 0x124d6-0x12588 writes 0x60678 / 0x60694 / 0x606a4, matching the dump. e2m 1088 CPDSXA / 1089 CPDSYA / 108A CPDSZA. Refs 0x11edc / 0x11ee2 / 0x11ff6 / 0x124d6 / 0x1256a only. The decompile confirms the timing correction output. The 8 rows are used nowhere else. The name is unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008001f8",
+    "verdict": "AMENDED",
+    "final_name": "compression_ratio_raised_to_polytropic_exponent_lookup",
+    "final_type": "table_lookup_2d_arguments_t",
+    "final_comment": "The cm550_tableLookup2D argument record of the cylinder pressure maintenance compression table: e2m 11D2 CPCS02YA 'data axis for compression ratio raised to power of a polytropi(c exponent)' (30-70) over engine speed (11D0 CPCS02XA) and absolute boost pressure (11D1 CPCS02BS); the RAM dump holds x_axis_pointer 0x605ce / y_axis_pointer 0x605ea / z_values_pointer 0x605f2. cm550_initLoadTrendingSystem (0x124d2) fills it. cm550_coldStartFuelControlSlowCycle40Coordinator looks it up with x input = engine_rpm_primary and y input = the absolute intake manifold pressure 0x80021e (the filtered boost pressure plus the ambient air pressure, or boost alone when the boost sensor is absolute). That pressure x the result / 1024 (cm550_scaleByRatio) is the compression pressure. While fss_offset_corrected_soi_before_cyl_maintenance_parameter_120_120 is positive, the function multiplies it by 1 + that advance x the CPCS01 ratio per degree (e2m 108B / 108C, the 1-D record 0x8001ea). The result, limited to 48000, is calculated_cylinder_pressure_1500_3000. The rows inside are removed (were 0x8001fa hour_meter_table_5_ptr / 0x8001fe manifold_temp_table_1_type / 0x800200 manifold_temp_table_1_x_ptr / 0x800204 speed_diff_interp_input / 0x800206 manifold_temp_table_1_y_type / 0x800208 manifold_temp_table_1_y_ptr / 0x80020c manifold_temp_table_1_count). (was hour_meter_table_3_limit; PR #53 round 94)",
+    "own_role": "2-D lookup record of the compression ratio ^ polytropic exponent table 11D2 over 11D0 engine speed x 11D1 absolute boost. x = engine_rpm_primary (0x11ed0); y = 0x80021e = boost 0x80a320 + ambient 0x80a3ba, or boost alone when 0x807d12 is nonzero (0x11fd0). Looked up at 0x11fee. The result times that pressure / 0x400 is the compression pressure, which is then corrected for timing into calculated_cylinder_pressure_1500_3000.",
+    "reason": "Name (clearer than the describer's compression_ratio_polytropic_power_lookup), type, rows and init (0x124dc-0x1253a: 0x605ce / 0x605ea / 0x605f2) verified. e2m 11D0 / 11D1 / 11D2. Refs only 0x11ed0 / 0x11fd0 / 0x11fe8 / 0x124dc / 0x1251c. One sentence corrected. The decompile and 0x12036-0x12094 show that the scaleByRatio value is only the first step. When 0x80aaa6 (fss_offset_corrected_soi...) is positive, the code multiplies it by (1 + advance x CPCS01 / 0x4444), with CPCS01 from 1-D record 0x8001ea (108B / 108C 'ratio of cyl. press. to compression press. per degree'), and limits it to 48000 again."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00800222",
+    "verdict": "CONFIRMED",
+    "final_name": "cylinder_balance_stop_compensation_lookup",
+    "final_type": "table_lookup_2d_arguments_t",
+    "own_role": "2-D lookup record of the cylinder balancing stop compensation table 822D over 822B speed x 822C fueling (RAM tables 0x80734c / 0x807352 / 0x807358). In vp44_FUN_000127c2: x = current_engine_rpm_filtered 0x80ccf4 (0x1290a), y = CBDFFL 0x8091e8 (0x12914), looked up at 0x12924. The result is limited to 100 and stored in cyl_balance_gain_percent 0x8092e2 (CBDATG). A gain below 100 (bcs at 0x12982) sets 0x80922e CBDSCF.",
+    "reason": "Init vp44_FUN_000133fe 0x1348e-0x134b2 uses absolute stores that match the dump (2 / 0x80734c / 2 / 0x807352 / 0x807358). e2m 822B / 822C / 822D, 823D +0 / +FA / +46. Refs are only the lookup stores and the init. 8 rows inside; no base row. The name is unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00800238",
+    "verdict": "CONFIRMED",
+    "final_name": "cylinder_balance_component_3_adjustment_lookup",
+    "final_type": "table_lookup_2d_arguments_t",
+    "own_role": "2-D lookup record of the cylinder balancing component 3 adjustment table 822A over 8228 speed x 8229 fueling (RAM 0x807338 / 0x80733e / 0x807344). Same inputs as 0x800222 (0x12c5a / 0x12c64), looked up at 0x12c74. The result + 0xd8f0 (-10000) goes to 0x8092e0 CBDC3ADJ, then 0x809218 - that goes to 0x80927a.",
+    "reason": "Disassembly 0x12c5a-0x12c9c and init 0x134bc-0x134e0 match the dump. e2m 8228 / 8229 / 822A, 823D +F8. Refs only the lookup and init. The 7 rows (base + 6) are used nowhere else. The discriminator against 0x800222 is the table and the output. The name is unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080d372",
+    "verdict": "CONFIRMED",
+    "final_name": "four_dimensional_fueling_steady_state_lookup",
+    "final_type": "table_lookup_2d_arguments_t",
+    "own_role": "General 2-D lookup record of the steady state 4D fueling table 1056 over 1055 speed x 1054 throttle, filled by cm550_FUN_0001ddb4. Users:\n- cm550_FUN_000142d4: x = argument, y = 400.\n- cm550_calculateBlendedTableValue: x / y = its arguments; blended with 0x80d388 by FLINML 0x80d340.\n- cm550_FUN_0001de58: x = engine_rpm_primary; y = commanded throttle (0x80aa82, capped at 0x608a0 when programmable power is on), then 0, then 400.\n- cm550_governorFuelPidController: x = 0x80daee, y = 400.\nEach result goes through cm550_subtractAndClampValue (+0xd200, clamped to 0..0x1700).",
+    "reason": "Every site disassembled: 0x142dc, 0x1cb92, 0x1debe-0x1df0a (jsr (a5), a5 = 0x35088), 0x2597c-0x259a2. The init 0x1ddbe-0x1ddee pointers 0x6086e / 0x6089a / 0x608a4 match the dump. e2m 1055 / 1054 / 1056 (offset -800 mm3 = 0xd200 counts). The refs sweep is clean. The rows inside are 0x80d372 base and 0x80d380. CM848 four_dimensional_fueling_steady_state_* exist. The name is unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080d388",
+    "verdict": "CONFIRMED",
+    "final_name": "four_dimensional_fueling_transient_lookup",
+    "final_type": "table_lookup_2d_arguments_t",
+    "own_role": "General 2-D lookup record of the transient 4D fueling table 1059 over 1058 speed x 1057 throttle. It is looked up next to 0x80d372 in cm550_calculateBlendedTableValue, cm550_FUN_0001de58 and cm550_governorFuelPidController whenever FLINML 0x80d340 is below 0x4000 (0 = transient only).",
+    "reason": "Init 0x1ddb8 / 0x1ddf6-0x1de14 writes 0x6094c / 0x60978 / 0x60982, matching the dump (y_off 8 / y_in 400 left by the last call). Sites 0x1cb8c / 0x1df44-0x1df8e / 0x25972-0x259cc verified. e2m 1058 / 1057 / 1059. The rows inside are the base and 0x80d396. The name is unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008005c2",
+    "verdict": "CONFIRMED",
+    "final_name": "crank_four_dimensional_timing_steady_state_lookup",
+    "final_type": "table_lookup_2d_arguments_t",
+    "own_role": "2-D lookup record of the steady state timing advance table 103E (4DTA01) at the crank exit point. In cm550_governorFuelModeBlendCalculator (a3): x = crank_exit_speed 0x80d0ac, y = CKEXFL 0x807ef4 + crank_exit_fuel_adjustment 0x80d0b6. It feeds four_d_timing_output_by_crank_0_120 (CK4DTA): alone when ALPHA 0x80a8f8 = 0x4000, otherwise blended with 0x8005d8.",
+    "reason": "Disassembly 0x178b0-0x179b2 and init vp44_fuelLimitParameterPointerSetup 0x17f00-0x17f42 (0x60a2a / 0x60a52 / 0x60a74) match the dump. e2m 103D / 103C / 103E and 105E +4 / +14 / +1E, 105F +A. Refs only 0x178ba / 0x17f00 / 0x17f2c. No rows inside. The discriminator against 0x8006b8 is the crank exit inputs and the CK4DTA output. CM848 crank_four_dimensional_timing exists. The name is unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008005d8",
+    "verdict": "CONFIRMED",
+    "final_name": "crank_four_dimensional_timing_transient_lookup",
+    "final_type": "table_lookup_2d_arguments_t",
+    "own_role": "2-D lookup record of the transient timing advance table 1041 (4DTA00) at the crank exit point, with the same inputs as 0x8005c2 (a2). Alone into CK4DTA when ALPHA = 0, otherwise weighted by (0x4000 - ALPHA) >> 14.",
+    "reason": "Sites 0x17902-0x17940 / 0x17962-0x179b2 and init 0x17efa / 0x17f4a-0x17f68 (0x60cd4 / 0x60cfc / 0x60d1e) match the dump. e2m 1040 / 103F / 1041. Refs only the lookup base and init. No rows inside. The name is unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008006b8",
+    "verdict": "CONFIRMED",
+    "final_name": "four_dimensional_injection_timing_steady_state_lookup",
+    "final_type": "table_lookup_2d_arguments_t",
+    "own_role": "2-D lookup record of the steady state timing advance table 103E at the running point. In cm550_fuelDemandTableBlendCalculator (a4): x = engine_rpm_primary, y = final_fueling, or the 1-D record 0x8006aa (DPFPTB / DPTVOTB) of it when 0x80d706 = 1. It is skipped when flags_4 bit 8 user_commanded_timing_enable is set. Blended by ALPHA with 0x8006ce into timing_4DTBTA 0x80d344, which is then copied to fuel_timing_advance_value 0x80d346 (TSOI).",
+    "reason": "Disassembly 0x1c65e-0x1c7a6 (jsr (a5), a5 = 0x35088) and init 0x1c7b0-0x1c7f2 (0x60a2a / 0x60a52 / 0x60a74) match the dump. e2m 103D / 103C / 103E, 103B +0 / +2, 1084 / 1085. Refs only 0x1c66e / 0x1c7b0 / 0x1c7dc. No rows inside. CM848 four_dimensional_injection_timing (4DTBTA) / map_a tables exist. The name is unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008006ce",
+    "verdict": "CONFIRMED",
+    "final_name": "four_dimensional_injection_timing_transient_lookup",
+    "final_type": "table_lookup_2d_arguments_t",
+    "own_role": "2-D lookup record of the transient timing advance table 1041 at the running point (a3), with the same inputs as 0x8006b8. Alone into timing_4DTBTA when ALPHA = 0, otherwise weighted by (0x4000 - ALPHA) >> 14.",
+    "reason": "Sites 0x1c6ee-0x1c70e / 0x1c724-0x1c768 and init 0x1c7aa / 0x1c7fa-0x1c818 (0x60cd4 / 0x60cfc / 0x60d1e) match the dump. e2m 1040 / 103F / 1041. Refs only the base and init. No rows inside (0x8006e6 torque_curve_feature_bitmask lies after the end, 0x8006e4). The name is unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x008006ea",
+    "verdict": "CONFIRMED",
+    "final_name": "throttle_100_fueling_low_horsepower_curve_lookup",
+    "final_type": "table_lookup_2d_arguments_t",
+    "own_role": "2-D lookup record of the steady state 4D fueling table 1056 with its y input fixed at 400 (100 percent throttle) by cm550_FUN_0001cdf8 (0x1ce14). It is the only record with a fixed input and no transient blend. cm550_FUN_0001cc72 sets x = engine_rpm_primary and uses the result two ways:\n- With flags_18 bit 9 programmable_power clear (0x1cd5e): into throttle_100_fueling_low_horsepower_curve 0x80d36a (FST0MXFL, CM848 'Tau_0_Throttle_100_Fueling'), plus the cold increment.\n- With flags_12 bit 4 ESP set (0x1cdbc): into max_fueling_without_programmable_power_for_esp_tau_0_0_100 0x80d370 (FSMTFLNP).",
+    "reason": "Disassembly 0x1cc72-0x1ce48 verified. The dump holds y_off 8 / y_in 400. cm550_tableLookup2D writes only +0 / +8, and the range sweep finds no other write of +0xe. Both outputs are the tau 0 / low horsepower curve 100 percent fueling, so the investigator's name is supported; the describer's four_dimensional_fueling_steady_state_throttle_100_lookup is also valid but not needed. No rows inside. The name is unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00800700",
+    "verdict": "CONFIRMED",
+    "final_name": "full_fueling_cold_temperature_fuel_increment_lookup",
+    "final_type": "table_lookup_2d_arguments_t",
+    "own_role": "2-D lookup record of the cold temperature incremental fuel table 81F0 used for the 100 percent fuelings. In cm550_FUN_0001cc72: x = coolant 0x80a336, y = engine_rpm_primary. It runs while programmable power is clear, flags_32 bit 15 5DCLAJEN is set, and no status word 2 bit 0x2 / 0x1 / 0x10 is set in both 0x806004 and 0x806ac0. d2 is added to full_fueling_value_at_hsg_bef_droop_speed_0_100 0x80d36c, throttle_100_fueling 0x80d368 and throttle_100_fueling_low_horsepower_curve 0x80d36a.",
+    "reason": "Disassembly 0x1cc9e-0x1cd7c and init 0x1cdfe / 0x1ce30-0x1ce48 (0x6124a / 0x6125e / 0x6126a) match the dump. e2m 81EE / 81EF / 81F0, 5DCLAJEN mask 0x8000. Refs only 0x1ccf4 / 0x1ccfe / 0x1cd04 / init. No rows inside (0x800716 hsg_integrator_fuel_output is just after). The name parallels its enable bit full_fueling_coolant_temperature_adjustment_enable and its sibling 0x8000c0. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807d1e",
+    "verdict": "CONFIRMED",
+    "final_name": "duty_cycle_monitor_engine_speed_axis",
+    "final_type": "word[10]",
+    "own_role": "The duty cycle monitor's engine speed axis (e2m 111D DCMNESTB, T record): byte count 18 + 9 speeds (0-2800 rpm). cm550_updateDutyCycleMonitorLoadHistogram compares engine_rpm_primary with values 1-8 (movea.l #0x807d20,a2 at 0xae5c, d2 1..8) for the speed bin of duty_cycle_monitor_operating_region (a5 = 0x80bad6).",
+    "reason": "Dump 0x807d1e: 18, 0, 8000 ... 22400. The next block 111E starts at +20 (parameter_id_table block starts 0x35c84 / 0x35c8c). The only code reference is 0xae5c; the other hits are parameter_id_table data. The 4 rows inside are as listed. CM848's 111D is the same record (same mnemonic and scale). Outside the EEPROM image, so no _cal. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807d32",
+    "verdict": "CONFIRMED",
+    "final_name": "duty_cycle_monitor_load_axis",
+    "final_type": "word[8]",
+    "own_role": "The duty cycle monitor's load axis (e2m 111E DCMNLDTB): byte count 14 + 7 loads (0-100 percent). cm550_updateDutyCycleMonitorLoadHistogram compares duty_cycle_monitor_load_factor (the load ratio's low word) with values 1-6 (0xae90, d2 1..6). It reads value 7 (10000 at 0x807d40, 0xadd2) as duty_cycle_monitor_load_ratio when duty_cycle_monitor_full_throttle_fueling equals no_load_fuel_quantity.",
+    "reason": "Dump 0x807d32: 14, 0, 1000, 3000, 5000, 7000, 9000, 10000. 0x807d42 = 10DF JCFCLD06. The only code reads are 0xae90 and 0xadd2. The base row DCMNLDTB (undefined) is replaced and the 7 rows inside are as listed. CM848 111E is the same record. No _cal. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x0005c2c0",
+    "verdict": "CONFIRMED",
+    "final_name": "duty_cycle_monitor_engine_speed_axis",
+    "final_type": "word[10]",
+    "own_role": "CM848 ROM copy of e2m 111D DC_Mon_RPM_Axis [DCMNESTB]: byte count 18 + 9 speeds 0..28800 (0-3600 rpm). cm848_updateDutyCycleMonitorLoadHistogram compares engine_speed_state.filtered_engine_speed with values 1-8 (*(ushort *)(i*2 + 0x5c2c0), i 1..8).",
+    "reason": "e2m_block_addresses 111D resolves to 0x5c2c0. ROM words match. 0x5c2d4 (111E) follows at +20. The decompile (lines 65814 / 65791 / 65828) holds the only uses. No row and no CSV anchor in 0x5c2c0-0x5c2d3. The ROM is not in the ROM->RAM copy range, so no _cal. The name is unique and shared with CM550's same record."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x0005c2d4",
+    "verdict": "CONFIRMED",
+    "final_name": "duty_cycle_monitor_load_axis",
+    "final_type": "word[12]",
+    "own_role": "CM848 ROM copy of e2m 111E DC_Mon_Load_Axis [DCMNLDTB]: byte count 22 + 11 loads 0..10000 in steps of 1000. cm848_updateDutyCycleMonitorLoadHistogram compares fuel_demand_histogram_load_ratio with values 1-10. DAT_0005c2ea (value 11 = 10000) is the default ratio when fuel_demand_histogram_axis_endpoint == no_load_fuel_quantity.",
+    "reason": "ROM 0x5c2d4: 22, 0, 1000 ... 10000 (24 bytes). The next row is 0x5c2ec engine_protection_fueling_index_ramp_rate (10B4 +0). The decompile loop runs uVar9 1..10 (< 0xb). No row inside and no CSV anchor. Unique. Same scale (0.01) as CM550's 111E."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807338",
+    "verdict": "CONFIRMED",
+    "final_name": "cylinder_balance_component_3_adjustment_x_axis",
+    "final_type": "word[3]",
+    "own_role": "x axis (e2m 8228 CBDCSV speed vector) of cylinder_balance_component_3_adjustment_lookup: byte count 4 + 3200 / 15200.",
+    "reason": "Dump 4, 3200, 15200. The block start table at ROM 0x388a4 puts 8229 at 0x80733e (+6). The only code reference is the pointer store at 0x134c4. Follows the CM550 <record>_x_axis convention (as injection_timing_misfire_limit_x_axis). Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080733e",
+    "verdict": "CONFIRMED",
+    "final_name": "cylinder_balance_component_3_adjustment_y_axis",
+    "final_type": "word[3]",
+    "own_role": "y axis (e2m 8229 CBDC3FV fueling vector, 0.0713 mm3 per count) of cylinder_balance_component_3_adjustment_lookup: byte count 4 + 0 / 7009.",
+    "reason": "Dump 4, 0, 7009. 822A starts at 0x807344 (+6). The only reference is the pointer store at 0x134d6. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807344",
+    "verdict": "CONFIRMED",
+    "final_name": "cylinder_balance_component_3_adjustment_grid",
+    "final_type": "word[4]",
+    "own_role": "z grid (e2m 822A CBDCAT, stored + 10000) of cylinder_balance_component_3_adjustment_lookup: 2 x 2 values, all 10000 in the dump.",
+    "reason": "Dump 10000 x 4. 822B starts at 0x80734c (+8 = 2 x 2 words for the 2-point axes). The only reference is the pointer store at 0x134e0. addi.w #0xd8f0 at 0x12c86 removes the offset. The row inside, 0x80734a sensor_fault_rpm_selector_param, has no other use. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080734c",
+    "verdict": "CONFIRMED",
+    "final_name": "cylinder_balance_stop_compensation_x_axis",
+    "final_type": "word[3]",
+    "own_role": "x axis (e2m 822B CBDSCSV speed vector, 0.125 rpm per count) of cylinder_balance_stop_compensation_lookup: byte count 4 + 7600 / 16000.",
+    "reason": "Dump 4, 7600, 16000. 822C starts at 0x807352. The only reference is the pointer store at 0x13496. The base row vp44_state_debounce_threshold and the inner rows 0x80734e / 0x807350 have no other use (only parameter_id_lookup_table.csv text, to regenerate). CM848's cylinder_balance_stop_compensation_x_axis (81B1) uses the same 0.125 rpm scale and word[3], so the comment stands. Unique in CM550."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807352",
+    "verdict": "AMENDED",
+    "final_name": "cylinder_balance_stop_compensation_y_axis",
+    "final_type": "word[3]",
+    "final_comment": "e2m 822C +0 CBDSCFV 'cylinder balancing stop compensation fueling vector' (MM3S, 0.0713 per count): in the dump, the byte count 4 then 421 / 1122. It is the y axis of cylinder_balance_stop_compensation_lookup; the pointer is stored at 0x134a8. The same Calterm table as CM848's cylinder_balance_stop_compensation_y_axis (word[3]; e2m 81B2 there, which counts 0.0679 mm3 per count). (new row; PR #53 round 94)",
+    "own_role": "y axis (e2m 822C CBDSCFV fueling vector) of cylinder_balance_stop_compensation_lookup: byte count 4 + 421 / 1122.",
+    "reason": "Name, type and evidence verified: dump 4, 421, 1122; 822D at 0x807358; the only reference is the pointer store at 0x134a8. The comment's 'This is CM848's cylinder_balance_stop_compensation_y_axis' was too strong. CM848's table is e2m block 81B2 scaled 0.0679348 mm3 per count, while CM550's 822C is 0.0713, so the comment now says it is the same Calterm table with a different scale."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807358",
+    "verdict": "AMENDED",
+    "final_name": "cylinder_balance_stop_compensation_grid",
+    "final_type": "word[4]",
+    "final_comment": "e2m 822D +0 CBDSCT 'cylinder balancing stop compensation table' (0-1 at 0.01 per count): 2 x 2 values with no header, 100 / 0 / 0 / 0 in the dump. These are the z values of cylinder_balance_stop_compensation_lookup; the pointer is stored at 0x134b2. The same Calterm table as CM848's cylinder_balance_stop_compensation_grid (word[4]; e2m 81B3 there, which counts 1/128 per count, so 1.0 is 128 there and 100 here). (new row; PR #53 round 94)",
+    "own_role": "z grid (e2m 822D CBDSCT, 0.01 per count) of cylinder_balance_stop_compensation_lookup: 2 x 2 values 100 / 0 / 0 / 0.",
+    "reason": "Name, type and evidence verified: dump 100, 0, 0, 0; 822E CBDESBV at 0x807360 (+8); the only reference is the pointer store at 0x134b2. The comment's 'This is CM848's cylinder_balance_stop_compensation_grid' was too strong. CM848's CBD_Stop_Compensation_Table (81B3) is scaled 0.0078125 (1/128), while CM550's CBDSCT is 0.01, so the comment now states the scale difference."
+   }
+  ]
+ }
+}

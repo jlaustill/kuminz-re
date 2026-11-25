@@ -1,0 +1,199 @@
+=== cm848_trackJ1939ControlSessions
+void cm848_trackJ1939ControlSessions(void)
+{
+  CONTROL_NETWORK *pCVar1;
+  TSC1_OVERRIDE_MODE *pTVar2;
+  word *pwVar3;
+  CONTROL_NETWORK *pCVar4;
+  byte bVar6;
+  byte *pbVar5;
+  byte *pbVar7;
+  word *pwVar8;
+  TSC1_OVERRIDE_MODE *pTVar9;
+  bVar6 = j1939_powertrain_control_state.tsc1_controlling_source_address;
+  if (algorithm_enable_flags_2_cal.j1939_monitor_enable == 0) {
+    return;
+  }
+  pTVar2 = &j1939_monitor_engine_override_control_mode_previous;
+  pCVar1 = &j1939_monitor_engine_control_data_link_previous;
+  if (((j1939_powertrain_control_state.tsc1_override_control_mode !=
+        j1939_monitor_engine_override_control_mode_previous) ||
+      (j1939_powertrain_control_state.tsc1_controlling_data_link !=
+       j1939_monitor_engine_control_data_link_previous)) ||
+     (pCVar4 = pCVar1,
+     j1939_monitor_engine_controlling_source_address_previous !=
+     j1939_powertrain_control_state.tsc1_controlling_source_address)) {
+    pCVar4 = &j1939_monitor_engine_control_data_link_previous;
+    if (j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_OVERRIDE_OFF) {
+      if ((j1939_monitor_engine_override_control_mode_previous != TSC1_OVERRIDE_OFF) &&
+         (j1939_monitor_engine_control_data_link_previous == CONTROL_NETWORK_J1939)) {
+        j1939_active_engine_control_session_cal.duration =
+             key_on_hour_meter - j1939_active_engine_control_session_cal.start_time;
+LAB_0050c1a0:
+        j1939_engine_control_active_flag_cal = 0;
+        cm848_storeJ1939ControlSessionInHistoryTable(0);
+        pCVar4 = pCVar1;
+      }
+    }
+    else if (j1939_powertrain_control_state.tsc1_controlling_data_link == CONTROL_NETWORK_J1939) {
+      if (j1939_engine_control_active_flag_cal == 1) {
+        if (j1939_monitor_engine_controlling_source_address_previous ==
+            j1939_powertrain_control_state.tsc1_controlling_source_address) {
+          if (j1939_active_engine_control_session_cal.override_control_mode_count < 5) {
+            j1939_active_engine_control_session_cal.override_control_modes
+            [j1939_active_engine_control_session_cal.override_control_mode_count] =
+                 j1939_powertrain_control_state.tsc1_override_control_mode;
+            j1939_active_engine_control_session_cal.override_control_mode_count =
+                 j1939_active_engine_control_session_cal.override_control_mode_count + 1;
+          }
+          else {
+            pTVar9 = j1939_active_engine_control_session_cal.override_control_modes;
+            do {
+              *pTVar9 = pTVar9[1];
+              pTVar9 = pTVar9 + 1;
+            } while (pTVar9 < j1939_active_engine_control_session_cal.override_control_modes + 4);
+            j1939_active_engine_control_session_cal.override_control_modes[4] =
+                 j1939_powertrain_control_state.tsc1_override_control_mode;
+          }
+          goto LAB_0050c1a8;
+        }
+        j1939_active_engine_control_session_cal.duration =
+             key_on_hour_meter - j1939_active_engine_control_session_cal.start_time;
+        cm848_storeJ1939ControlSessionInHistoryTable(0);
+      }
+      cm848_startJ1939ControlSession(0);
+      pCVar4 = pCVar1;
+    }
+    else if (j1939_monitor_engine_control_data_link_previous == CONTROL_NETWORK_J1939)
+    goto LAB_0050c1a0;
+  }
+LAB_0050c1a8:
+  *pTVar2 = j1939_powertrain_control_state.tsc1_override_control_mode;
+  *pCVar4 = j1939_powertrain_control_state.tsc1_controlling_data_link;
+  pTVar2 = &j1939_monitor_retarder_override_control_mode_previous;
+  pwVar8 = &engine_retarder_controlling_source_address;
+  pbVar7 = &j1939_monitor_retarder_controlling_source_address_previous;
+  j1939_monitor_engine_controlling_source_address_previous = bVar6;
+  if ((engine_retarder_override_control_mode !=
+       j1939_monitor_retarder_override_control_mode_previous) ||
+     (pwVar3 = pwVar8, pbVar5 = pbVar7,
+     engine_retarder_controlling_source_address !=
+     j1939_monitor_retarder_controlling_source_address_previous)) {
+    pwVar3 = &engine_retarder_controlling_source_address;
+    pbVar5 = &j1939_monitor_retarder_controlling_source_address_previous;
+    if (engine_retarder_override_control_mode == TSC1_OVERRIDE_OFF) {
+      if (j1939_monitor_retarder_override_control_mode_previous != TSC1_OVERRIDE_OFF) {
+        j1939_retarder_control_active_flag_cal = 0;
+        j1939_active_retarder_control_session_cal.duration =
+             key_on_hour_meter - j1939_active_retarder_control_session_cal.start_time;
+        cm848_storeJ1939ControlSessionInHistoryTable(1);
+        pwVar3 = pwVar8;
+        pbVar5 = pbVar7;
+      }
+    }
+    else {
+      if (j1939_retarder_control_active_flag_cal == 1) {
+        if (engine_retarder_controlling_source_address ==
+            j1939_monitor_retarder_controlling_source_address_previous) {
+          if (j1939_active_retarder_control_session_cal.override_control_mode_count < 5) {
+            j1939_active_retarder_control_session_cal.override_control_modes
+            [j1939_active_retarder_control_session_cal.override_control_mode_count] =
+                 engine_retarder_override_control_mode;
+            j1939_active_retarder_control_session_cal.override_control_mode_count =
+                 j1939_active_retarder_control_session_cal.override_control_mode_count + 1;
+          }
+          else {
+            pTVar9 = j1939_active_retarder_control_session_cal.override_control_modes;
+            do {
+              *pTVar9 = pTVar9[1];
+              pTVar9 = pTVar9 + 1;
+            } while (pTVar9 < j1939_active_retarder_control_session_cal.override_control_modes + 4);
+            j1939_active_retarder_control_session_cal.override_control_modes[4] =
+                 engine_retarder_override_control_mode;
+          }
+          goto LAB_0050c2f4;
+        }
+        j1939_active_retarder_control_session_cal.duration =
+             key_on_hour_meter - j1939_active_retarder_control_session_cal.start_time;
+        cm848_storeJ1939ControlSessionInHistoryTable(1);
+      }
+      cm848_startJ1939ControlSession(1);
+      pwVar3 = pwVar8;
+      pbVar5 = pbVar7;
+    }
+  }
+LAB_0050c2f4:
+  *pTVar2 = engine_retarder_override_control_mode;
+  *pbVar5 = (byte)*pwVar3;
+  return;
+}
+=== cm848_startJ1939ControlSession
+void cm848_startJ1939ControlSession(int session_kind)
+{
+  if (session_kind == 0) {
+    j1939_engine_control_active_flag_cal = 1;
+    j1939_engine_control_source_cal = engine_control_device_indicator;
+    j1939_active_engine_control_session_cal.session_kind = 0;
+    j1939_active_engine_control_session_cal.controlling_source_address =
+         j1939_powertrain_control_state.tsc1_controlling_source_address;
+    j1939_active_engine_control_session_cal.control_device = engine_control_device_indicator;
+    j1939_active_engine_control_session_cal.override_control_mode_count = 1;
+    j1939_active_engine_control_session_cal.override_control_modes[0] =
+         j1939_powertrain_control_state.tsc1_override_control_mode;
+    j1939_active_engine_control_session_cal.override_control_modes[4] = TSC1_OVERRIDE_OFF;
+    j1939_active_engine_control_session_cal.override_control_modes[3] = TSC1_OVERRIDE_OFF;
+    j1939_active_engine_control_session_cal.override_control_modes[2] = TSC1_OVERRIDE_OFF;
+    j1939_active_engine_control_session_cal.override_control_modes[1] = TSC1_OVERRIDE_OFF;
+    j1939_active_engine_control_session_cal.start_time = key_on_hour_meter;
+    j1939_active_engine_control_session_cal.duration = 0;
+  }
+  else {
+    j1939_retarder_control_active_flag_cal = 1;
+    j1939_retarder_control_source_cal = engine_retarder_control_device_indicator;
+    j1939_active_retarder_control_session_cal.session_kind = 1;
+    j1939_active_retarder_control_session_cal.controlling_source_address =
+         (byte)engine_retarder_controlling_source_address;
+    j1939_active_retarder_control_session_cal.control_device =
+         engine_retarder_control_device_indicator;
+    j1939_active_retarder_control_session_cal.override_control_mode_count = 1;
+    j1939_active_retarder_control_session_cal.override_control_modes[0] =
+         engine_retarder_override_control_mode;
+    j1939_active_retarder_control_session_cal.override_control_modes[4] = TSC1_OVERRIDE_OFF;
+    j1939_active_retarder_control_session_cal.override_control_modes[3] = TSC1_OVERRIDE_OFF;
+    j1939_active_retarder_control_session_cal.override_control_modes[2] = TSC1_OVERRIDE_OFF;
+    j1939_active_retarder_control_session_cal.override_control_modes[1] = TSC1_OVERRIDE_OFF;
+    j1939_active_retarder_control_session_cal.start_time = key_on_hour_meter;
+    j1939_active_retarder_control_session_cal.duration = 0;
+  }
+  return;
+}
+=== cm848_storeJ1939ControlSessionInHistoryTable
+void cm848_storeJ1939ControlSessionInHistoryTable(int session_kind)
+{
+  j1939_control_session_t *session_record;
+  word *source_word;
+  dword history_entry;
+  word *history_word;
+  byte copied_word_count;
+  history_entry = (dword)j1939_control_session_history_next_entry_cal;
+  j1939_control_session_history_next_entry_cal = j1939_control_session_history_next_entry_cal + 1;
+  if (4 < j1939_control_session_history_next_entry_cal) {
+    j1939_control_session_history_next_entry_cal = 0;
+  }
+  if (session_kind == 0) {
+    session_record = &j1939_active_engine_control_session_cal;
+  }
+  else {
+    session_record = &j1939_active_retarder_control_session_cal;
+  }
+  copied_word_count = 0;
+  source_word = (word *)((int)&session_record[-1].duration + 2);
+  history_word = j1939_input_signal_timeouts + history_entry * 0xc + 0x18;
+  do {
+    source_word = source_word + 1;
+    history_word = history_word + 1;
+    *history_word = *source_word;
+    copied_word_count = copied_word_count + 1;
+  } while (copied_word_count < 0xc);
+  return;
+}

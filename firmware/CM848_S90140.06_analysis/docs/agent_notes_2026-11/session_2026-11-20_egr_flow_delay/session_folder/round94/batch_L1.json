@@ -1,0 +1,937 @@
+{
+ "batch": "L1",
+ "proposal": {
+  "batch": "L1",
+  "summary": "Batch L1 is CM550's fuel limit side paths around cm550_selectFinalFueling and the start-up list. 0x16dd4 is not a high RPM protection. It is the engine warmup protection (e2m 11EA / 11EB): after the engine has been off long enough for the oil to drain back (3 min here), the next start is fuel limited from an engine speed table. The limit stays until oil pressure has been above a threshold for a set time and a coolant-temperature based rifle to turbocharger oil delay has passed, or until the overall or fault time runs out. 0x1709e is its start-up initializer and the already named 0x17120 applies the limit. 0x1c0d4 converts the torque derate torque limit (lb-ft) into a fuel limit and resets it. It is the counterpart of CM848 0x1e4e8, which does the same conversion but leaves the reset to its caller. 0x1c308 initializes that limit at start-up. 0x1cc72 computes the e2m 105A 100 percent throttle fuelings, the counterpart of cm848_calculateThrottle100Fuelings. 0x3452a is the exact twin of CM848's hour meter loader. The HIGH_RPM_PROTECTION_STATE / HIGH_RPM_PROTECTION_FLAGS enums have no user in either firmware and should be deleted. The FLAGS masks are the J1587 PID 71 idle shutdown timer status byte that CM550 builds in a register at 0xefa2.",
+  "functions": [
+   {
+    "address": "0x00016dd4",
+    "current_name": "cm550_highRpmEngineProtectionStateMachine",
+    "proposed_name": "cm550_runEngineWarmupProtection",
+    "role": "One 50 ms pass of the engine warmup protection state machine: arms the protection after the oil drain-back time with the engine stopped, ends it on established oil pressure plus the coolant-based rifle to turbocharger delay (or the overall / fault time) and sets engine_warmup_protection_fuel_limit.",
+    "discriminator": "The only body with the engine_state switch and the five warmup timers (WPRYTM, WPTMMX, WPFUTM, WPO2TDTM, WPDYTM), and the only writer of engine_warmup_protection_fuel_limit (stores at 0x16e22 / 0x16eb2 / 0x16fd4 / 0x1706a / 0x17092, from the engine speed table or fuel_demand_maximum). 0x1709e reads the same enable bit but runs once at start-up and only seeds the flags and lookup descriptors. 0x17120 only applies the limit to torque_derate_fuel_quantity.",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "The engine warmup protection state machine (e2m 11EA / 11EB, enable WPEAFG = algorithm_enable_flags_18_cal bit 1), one pass per 50 ms from cm550_runEvery10FramesTaskSetPhase0. With the engine STOPPED it counts engine_warmup_protection_oil_drain_back_timer up to engine_warmup_protection_oil_drain_back_time (3 min here). At that time it arms the protection: engine_warmup_protection_fuel_limiting_flag 1, completed 0, WPACFT 1, and low_speed_governor_lock_flag when LSLOCN is set. While cranking / running / jump start / reentry it ends the protection (completed 1, limiting 0) at the maximum overall time, at the maximum time with an active and latched coolant or oil pressure fault, or when the rifle to turbocharger delay has run out; that delay is looked up from coolant temperature (WPCQXA / WPDYTMYA) once oil pressure has stayed at or above WPO2TDCN for WPO2TMCN. While limiting it sets engine_warmup_protection_fuel_limit (WPTQLM) from the engine speed table (WPESXA / WPFLDQYA); it sets fuel_demand_maximum otherwise, and also when the feature is disabled, inhibited (WPIHFG), or completed with the engine running; cm550_applyEngineWarmupProtectionFuelLimit applies it (was cm550_highRpmEngineProtectionStateMachine - nothing in it is about high engine speed).",
+    "evidence": "Disassembly 0x16dd4-0x1709c: a5 = 0x80ccb4 WPSSFG, a3 = 0x80ccb2 WPLMFG, a4 = 0x80d0c8 engine_state. 0x16df0 andi.l #2 of 0x803cb8 -> exit path 0x16e10 (move.w #1,(a5); clr.w (a3); clr.w 0x80a8f4 / 0x80ccca; move.w 0x808004 -> 0x80ccc6). Same exit when completed and engine_state != 1 (0x16dfe-0x16e06) or when tst.w 0x80ccc8 is nonzero (0x16e08). STOPPED (cmpi.w #1 @0x16e40): clr.w 0x80ccc4 / 0x80ccb6 / 0x80ccba / 0x80ccbc. 0x80ccbe counts up to 0x807ddc (0x16e5e-0x16e6c), then clr.w (a5), move.w #1,(a3), clr.w 0x80ccc0, move.w #1 to 0x80ccca and, when tst.w 0x807dde is nonzero, move.w #1 to 0x80a8f4 (0x16e74-0x16e90). Running states 2 / 7 / 3 / 6 (0x16ec2-0x16ed8; 4 / 5 / 8 exit unchanged): 0x80ccba counts to 0x807dd8 (0x16ee2-0x16ef0). Fault bits word 3 0x806006 & 4 / 8 / 0x20 / 0x40 with latch (6,a2), word 2 0x806004 & 2 / 1 with (4,a2), word 6 0x80600c & 0x2000 with (0xc,a2) (a2 = 0x806abc) let 0x80ccbc count to 0x807dda (0x16f92-0x16fa0). Either limit -> end 0x16fc2. WPDYFG 0x80ccc2 clear: oil 0x80a30a vs 0x807dd4 -> 0x80ccc4 +1 or clear. Above 0x807dd6: WPDYFG = 1, 0x800594 = coolant 0x80a336, jsr 0x34de0(0x80058e) -> 0x80ccb8 (0x16fec-0x17036). WPDYFG set: 0x80ccb6 counts to 0x80ccb8, then ends (0x1703e-0x17060). tst.w (a3): 0 -> 0x80ccc6 = 0x808004, else 0x8005a2 = engine_rpm_primary 0x80ccf6 and jsr 0x34de0(0x80059c) -> 0x80ccc6 (0x17066-0x17092). Only caller: jsr @0x1b6c0 in cm550_runEvery10FramesTaskSetPhase0, followed by rts (d0 unused). RAM dump: engine_state 1, WPRYTM 3600 = WPRYTMCN 3600, limiting 1, completed 0, WPACFT 1, LSLOFG 1. CM848: the CHR e2m has no WP* record (only the ESUOILLM label inside the fueling state lists) and cm550_applyEngineWarmupProtectionFuelLimit's step has no CM848 equivalent -> standalone.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0001709e",
+    "current_name": "cm550_fuelTemperatureLimitingSecondary",
+    "proposed_name": "cm550_initializeEngineWarmupProtection",
+    "role": "Start-up initializer of the engine warmup protection: seeds the limiting / completed / low speed governor lock flags from the enable bit, clears the inhibit flag and loads the two lookup descriptors.",
+    "discriminator": "Runs once (the only caller is jsr @0x28810 in mc68k_applicationMain). It is the only writer of the two lookup descriptors 0x80058e / 0x80059c and the only code that sets limiting 1 / completed 0 straight from the enable bit with no timing. The pass function 0x16dd4 reads the same bit but runs the timers.",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "Start-up initialization of the engine warmup protection, called once from mc68k_applicationMain after cm550_initializeLowSpeedGovernor. It clears engine_warmup_protection_inhibit_flag (e2m 11EA +16 WPIHFG). With WPEAFG (algorithm_enable_flags_18_cal bit 1) set it arms the protection for the first start: engine_warmup_protection_fuel_limiting_flag 1, engine_warmup_protection_completed_flag 0, and low_speed_governor_lock_flag 1 when engine_warmup_protection_low_speed_governor_lock_enable is set. With the bit clear it sets limiting 0 and completed 1. It also sets up the two lookupTableInterpolation descriptors of cm550_runEngineWarmupProtection: 0x80058e maps coolant temperature (11EF WPCQXA at 0x60846) to the rifle to turbocharger delay time (11EE WPDYTMYA at 0x6085a), and 0x80059c maps engine speed (11ED WPESXA at 0x607f2) to the fueling derate (11EC WPFLDQYA at 0x6081c). No fuel temperature is involved (was cm550_fuelTemperatureLimitingSecondary).",
+    "evidence": "Disassembly 0x1709e-0x1711e: a2 = 0x80059c, a3 = 0x80058e, a1 = 0x80ccb4, a0 = 0x80ccb2. clr.w 0x80ccc8 @0x170ba. andi.w #2 of 0x803cb8 @0x170c0: set -> move.w #1,(a0), clr.w (a1), and when tst.w 0x807dde is nonzero move.w #1 to 0x80a8f4 (0x170cc-0x170da); clear -> clr.w (a0), move.w #1,(a1) (0x170e4). Then move.l #0x60846,(2,a3); move.w #2 to 0x80058e; move.l #0x6085a,(8,a3); move.l #0x607f2,(2,a2); move.w #2 to 0x80059c; move.l #0x6081c,(8,a2) (0x170ea-0x17112). e2m_block_addresses --address: 0x60846 = 11EF WPCQXA, 0x6085a = 11EE WPDYTMYA, 0x607f2 = 11ED WPESXA, 0x6081c = 11EC WPFLDQYA. Only caller jsr @0x28810 (mc68k_applicationMain), followed by jsr 0x30c78 (d0 unused). No CM848 warmup protection exists (CHR e2m has no WP* record).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0001c0d4",
+    "current_name": "cm550_FUN_0001c0d4",
+    "proposed_name": "cm550_convertTorqueDerateTorqueLimitToFuelLimit",
+    "role": "Converts the torque derate torque limit (lb-ft) into a fuel quantity, lowers torque_derate_fuel_quantity with it, then resets the torque limit to no limit for the next pass.",
+    "discriminator": "The only body that turns torque_derate_torque_limit into fuel: no load + limit x (throttle_100_fueling_without_programmable_power - no load) / maximum torque at the current speed. It is also the per-pass writer of the 0xFFFF / 40 reset. applyPowerTakeOffTorqueLimit only lowers the torque limit; the other chain steps lower torque_derate_fuel_quantity directly.",
+    "relation": "counterpart",
+    "cm848_address": "0x0001e4e8",
+    "cm848_current_name": "cm848_calculateProtectionRateLimited",
+    "plate_comment": "Converts the torque derate torque limit (e2m 1051 +A TQDQTQ, lb-ft, 0xFFFF = none) into a fuel limit. It interpolates on the line from no_load_fuel_quantity at zero torque to throttle_100_fueling_without_programmable_power (105A +8 FSMTFLNP) at maximum_torque_at_current_engine_speed (1461 +0 MTMPRPFL; a 0 there is first replaced by 1): no load + limit x (FSMTFLNP - no load) / maximum torque through cm550_scaleByRatioSigned, floored at 0. When the result is below torque_derate_fuel_quantity it becomes the new minimum with torque_derate_torque_limit_state as torque_derate_fuel_source_code. The limit is then reset to 0xFFFF and FUELING_STATE_NO_DERATE (40) for the next pass. Called by cm550_selectFinalFueling right after cm550_runFuelLimitChains, where applyPowerTakeOffTorqueLimit lowers the limit. Counterpart of CM848 0x1e4e8, which converts the same way but leaves the reset to its caller cm848_arbitrateRequestedFueling, which resets before the chain (was cm550_FUN_0001c0d4).",
+    "evidence": "CM550 0x1c0d4-0x1c150 (a2 = 0x80db1a, a3 = 0x80d33a, a4 = 0x80dec8, a5 = 0x80db1c): cmpi.w #1,(a2); bcc; move.w #1,(a2) (0 -> 1). Pushes the long max torque (a2), 0x80d370 - (a5), then 0x80d338, and jsr 0x35076 cm550_scaleByRatioSigned (= limit x (FSMTFLNP - no load) / max torque). add.l (a5); bge or 0; cmp.l with (a4); bge skips, else move.w d2,(a4) and move.w (a3),0x80deca. Then move.w #0xffff,0x80d338 @0x1c140 and move.w #0x28,(a3) @0x1c148. CM848 0x1e4e8-0x1e5a0: lhz 0x40aee6, 0 -> li 1 sth; (lhz 0x40a89f - lhz 0x40aeec) mulhw/mullw lhz 0x40a2d8; bl 0x570f0 (64-bit divide) by 0x40aee6; add no load; floor 0. If lhz 0x40afac > result: sth 0x40afac and lha 0x40a2da -> sth 0x40afae. Then blr, with no reset. Steps 1-4 match one for one; CM550's step 5 (the reset) is absent, so the code differs: counterpart. CM848 cm848_arbitrateRequestedFueling 0x1e5a4 stores 0xffff / FUELING_STATE_NO_DERATE before cm848_processProtectionLimits then calls 0x1e4e8. CM550 callers: bsr.w @0x1c190 only (cm550_selectFinalFueling, only while torque_derate_override_enable is clear). Same records on both sides: 1051 +A / +C, 105A +8 FSMTFLNP (CM550 0x80d370 / CM848 0x40a89f), 109C +0 NLFL. RAM dump: limit 0xFFFF, state 40, max torque 330, no load 88.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0001c308",
+    "current_name": "cm550_FUN_0001c308",
+    "proposed_name": "cm550_initializeTorqueDerateTorqueLimit",
+    "role": "Start-up initialization of the torque derate torque limit pair to no limit (0xFFFF) and FUELING_STATE_NO_DERATE.",
+    "discriminator": "Writes only the torque limit pair and is called only once at start-up (jsr @0x28970 in mc68k_applicationMain). The per-pass reset of the same pair happens inside cm550_convertTorqueDerateTorqueLimitToFuelLimit, after the conversion.",
+    "relation": "standalone",
+    "cm848_address": "",
+    "cm848_current_name": "",
+    "plate_comment": "Start-up initialization of the torque derate torque limit, called once from mc68k_applicationMain. It sets torque_derate_torque_limit (e2m 1051 +A TQDQTQ) to 0xFFFF (no limit) and torque_derate_torque_limit_state (1051 +C TQDQTQST) to FUELING_STATE_NO_DERATE (40), so the first pass of the fuel limit chains starts unlimited. cm550_convertTorqueDerateTorqueLimitToFuelLimit repeats the same reset after every pass. CM848 has no start-up writer of the pair: its per-pass reset is in cm848_arbitrateRequestedFueling (was cm550_FUN_0001c308).",
+    "evidence": "Disassembly 0x1c308: move.w #0xffff,(0x80d338).l; move.w #0x28,(0x80d33a).l; rts. Only caller jsr @0x28970 (mc68k_applicationMain, after jsr 0x26a2e, the maximum torque map descriptor set-up). CM848 .cpp: torque_derate_torque_limit is stored only in cm848_arbitrateRequestedFueling (0xffff, line 20741) and applyPowerTakeOffTorqueLimit (line 29677), so it has no start-up initializer -> no counterpart.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0001cc72",
+    "current_name": "cm550_FUN_0001cc72",
+    "proposed_name": "cm550_calculateThrottle100Fuelings",
+    "role": "Computes the e2m 105A 100 percent throttle fuelings: throttle_100_fueling, the low horsepower curve value, the fuel at the ramped engine speed limit and the fuel without programmable power, with the cold temperature fuel increment.",
+    "discriminator": "The only writer of 105A +0 / +2 / +4 / +8 (0x80d368 / 0x80d36a / 0x80d36c / 0x80d370). Its siblings only read them: initializeFuelLimitChains reads throttle_100_fueling, cm550_updateElectronicSmartPowerTau reads the low horsepower curve, cm550_convertTorqueDerateTorqueLimitToFuelLimit reads +8. It is also the only reader of full_fueling_coolant_temperature_adjustment_enable (cold increment table 81EE-81F0).",
+    "relation": "counterpart",
+    "cm848_address": "0x0001f17c",
+    "cm848_current_name": "cm848_calculateThrottle100Fuelings",
+    "plate_comment": "The 100 percent throttle fuelings (e2m 105A, throttle 400 = 100 percent), once per 20 ms as the last call of cm550_runEvery4FramesTaskSetPhase1. While programmable_power_enable is clear it stores three values. throttle_100_fueling (+0 FSMXTHFL) = cm550_calculateBlendedTableValue(engine_rpm_primary, 400). engine_speed_limit_ramped_maximum_fuel_quantity (+4 FSMXBFDP) = the same curve at engine_speed_limit_ramped. throttle_100_fueling_low_horsepower_curve (+2 FST0MXFL) = the steady state 4D fueling table (5DFL01) through cm550_subtractAndClampValue. Each value gets the cold temperature fuel increment (81F0 FLCDICZA over coolant x engine speed) when full_fueling_coolant_temperature_adjustment_enable is set and no coolant fault (status word 2 bits 0x1 / 0x2 / 0x10) is active and latched. Each is then raised to at least fuel_demand_minimum. It always stores throttle_100_fueling_without_programmable_power (+8 FSMTFLNP), raised to at least fuel_demand_minimum: the steady state table value while electronic_smart_power_enable is set, else the blended curve at throttle 400. Counterpart of CM848 cm848_calculateThrottle100Fuelings (0x1f17c), which adds cold_delta_fuel, also writes +6 and forces the interpolation factor to 0 for ESP. CM550 writes +6 (FSMXBK) in selectEngineSpeedLimit (was cm550_FUN_0001cc72).",
+    "evidence": "CM550 0x1cc72-0x1cdf6 (a2 = 0x80800a fuel_demand_minimum, a3 = 0x80d370, a4 = 0x80ccf6 rpm, a5 = 0x80d36a). andi.l #0x200 of 0x803cb8 bne.w 0x1cd96 skips the curves. Cold d2 = 0 unless 0x803cd4 & 0x8000 is set and none of 0x806004 & 2 / 1 / 0x10 is set together with latch 0x806ac0. In that case d2 = jsr 0x35088(0x800700) with 0x800706 = coolant 0x80a336 and 0x80070e = rpm (0x1cc9e-0x1cd12). jsr 0x1cb76(rpm, 0x190) -> 0x80d368 @0x1cd22. jsr 0x1cb76(0x80d654, 0x190) -> 0x80d36c @0x1cd36, + d2, floored at (a2). 0x8006f0 = rpm, jsr 0x35088(0x8006ea) -> (a5), jsr 0x1e02a(&0x80d36a), then add.w d2 to 0x80d368 and (a5) and floor both (0x1cd52-0x1cd94). andi.l #0x10 of 0x803cac: set -> 0x35088(0x8006ea) -> (a3), 0x1e02a(&0x80d370), floor; else 0x1cb76(rpm, 0x190) -> (a3); final floor (0x1cd96-0x1cdf0). Tables via cm550_FUN_0001cdf8: 0x8006ea = 5DFL01XA / YA / ZA (0x6086e / 0x6089a / 0x608a4) with y input 400; 0x800700 = FLCDTPXA / FLCDESYA / FLCDICZA (0x6124a / 0x6125e / 0x6126a). CM848 0x1f17c: cold_delta_fuel with algorithm_enable_flags_41_cal bit 0x1000; 0x1f03c(speed, 400) -> throttle_100_fueling; 0x164e4(engine_speed_limit_reference) -> sth 0x40a89d (+6); 0x164e4(engine_speed_limit_ramped) -> sth 0x40a89b (+4); 0x566cc steady state grid -> low horsepower curve + 0x1ec48 clamp; for ESP it saves four_dimensional_fueling_interpolation_factor, forces it to 0 around 0x1f03c -> sth 0x40a89f and restores it. Different steps: counterpart. CM550 +6 0x80d36e is written in selectEngineSpeedLimit @0x1d7b6 (0x1cb76(0x80d64e, 400) floored). Only caller jsr @0x1b5c8.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0003452a",
+    "current_name": "cm550_FUN_0003452a",
+    "proposed_name": "loadHourMetersFromEeprom",
+    "role": "At start-up copies the two EEPROM hour meter words into the running key-on and engine hour meters.",
+    "discriminator": "The only start-up writer of key_on_hour_meter / engine_hour_meter from the EEPROM mirror words 0x803b3e / 0x803b50. Its neighbour advanceHourMeters (0x34512) increments the meters. mc68k_runPowerDownSequence and restartThroughBootRom copy them back into the mirror.",
+    "relation": "twin",
+    "cm848_address": "0x005067bc",
+    "cm848_current_name": "cm848_loadHourMetersFromEeprom",
+    "plate_comment": "Start-up: loads the running hour meters from their EEPROM copies, called once from mc68k_applicationMain after the input and output channel set-up. key_on_hour_meter = key_on_hour_meter_cal (EEPROM 0x34, mirror 0x803b3e), then engine_hour_meter = engine_hour_meter_cal (EEPROM 0x46, mirror 0x803b50), both in 0.2 s counts. mc68k_runPowerDownSequence and restartThroughBootRom save the two words back. The twin of CM848 0x5067bc (the same two long copies in the same order, placed right after the twin advanceHourMeters in both ROMs): one shared name (was cm550_FUN_0003452a / cm848_loadHourMetersFromEeprom).",
+    "evidence": "Step by step. CM550 0x3452a: move.l (0x803b3e).l,(0x80bda4).l; move.l (0x803b50).l,(0x80ccee).l; rts @0x3453e. CM848 0x5067bc: lwz r11 0x3fd4b2 (key_on_hour_meter_cal) / stw 0x40a64c (key_on_hour_meter); lwz r9 0x3fd4c4 (engine_hour_meter_cal) / stw 0x40a794 (engine_hour_meter); blr. Step 1 is the key-on meter, step 2 the engine meter, with nothing else and no constants. Position: each body directly follows the shared twin advanceHourMeters (CM550 0x34512 / CM848 0x506780). Each has one caller, the application start-up: CM550 jsr @0x2870e in mc68k_applicationMain after mc68k_initializeDiscreteOutputDrivers; CM848 cm848_applicationMain after cm848_initializeAmbientAirTemperatureChannel. The EEPROM offsets keep the same 0x12 spacing (CM550 0x34 / 0x46, CM848 0x30 / 0x42). EEPROM dump: offset 0x34 = 227512040 = RAM 0x803b3e, offset 0x46 = 226203089 = RAM 0x803b50 = engine_hour_meter (the engine was stopped). Live key_on_hour_meter 227515497 has run on since the last save. Neither firmware has another row named loadHourMetersFromEeprom; CM848 0x5067bc has no function_definitions row.",
+    "confidence": "high"
+   }
+  ],
+  "globals": [
+   {
+    "firmware": "CM550",
+    "address": "0x0080ccb6",
+    "current_name": "",
+    "proposed_name": "engine_warmup_protection_rifle_to_turbocharger_delay_timer",
+    "proposed_type": "word",
+    "comment": "e2m 11EA +4 WPDYTM 'TIME COUNTING AGAINST RIFLE_TO_TURBO_DELAY_TIME' (SEC, 0.05 s per count = one 50 ms pass). cm550_runEngineWarmupProtection counts it up to engine_warmup_protection_rifle_to_turbocharger_delay_time once the delay has started and ends the protection there. Cleared while the engine is stopped.",
+    "evidence": "e2m_block_addresses --firmware cm550 11EA: +4 -> 0x80ccb6 (no row). clr.w @0x16e4c; move.w @0x1703e; cmp.w 0x80ccb8 @0x17044; addq.w @0x1704c. Word accesses only.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080ccb8",
+    "current_name": "",
+    "proposed_name": "engine_warmup_protection_rifle_to_turbocharger_delay_time",
+    "proposed_type": "word",
+    "comment": "e2m 11EA +6 WPO2DY 'CALCULATED TIME BASED ON COOLANT_TEMPERATURE TO ALLOW OIL TO RE(ACH THE TURBO)' (SEC 0.05). The coolant temperature lookup (11EF WPCQXA -> 11EE WPDYTMYA, descriptor 0x80058e), taken once oil pressure has stayed above the threshold for the calibrated time. The delay timer counts up to it.",
+    "evidence": "11EA +6 -> 0x80ccb8. move.w d0,(0x80ccb8) @0x17036 after jsr 0x34de0(0x80058e) @0x1702e with 0x800594 = 0x80a336 coolant (@0x1701e). cmp.w @0x17044.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080ccba",
+    "current_name": "",
+    "proposed_name": "engine_warmup_protection_overall_timer",
+    "proposed_type": "word",
+    "comment": "e2m 11EA +8 WPTMMX 'TIMER COUNTING AGAINST MAX_OVERALL_TIME_OUT' (SEC 0.05). Adds 1 per pass while cranking / running / jump start / reentry, up to engine_warmup_protection_maximum_time (11EB +4 WPMXTMCN, 1200 = 60 s here). At that limit the protection ends. Cleared while stopped.",
+    "evidence": "11EA +8 -> 0x80ccba. clr.w @0x16e52; move.w @0x16ee2, cmp.w 0x807dd8 @0x16ee8, addq.w @0x16ef0; move.w @0x16fa6 / cmp.w @0x16fac -> end @0x16fc2.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080ccbc",
+    "current_name": "",
+    "proposed_name": "engine_warmup_protection_fault_timer",
+    "proposed_type": "word",
+    "comment": "e2m 11EA +A WPFUTM 'TIMER COUNTING AGAINST FAULT_TIME_OUT' (SEC 0.05). Adds 1 per running pass while one of seven fault bits is active and latched: status word 3 0x4 / 0x8 / 0x20 / 0x40, word 2 0x2 / 0x1, word 6 0x2000 (the 'active coolant or oil pressure fault' of 11EB +6 WPFUTMCN). Counts up to engine_warmup_protection_maximum_time_with_fault; at that limit the protection ends. Cleared while stopped.",
+    "evidence": "11EA +A -> 0x80ccbc. clr.w @0x16e58; fault tests 0x16ef6-0x16f90 (0x806006 / 0x806004 / 0x80600c with latches at 0x806abc + 6 / 4 / 0xc); move.w @0x16f92, cmp.w 0x807dda @0x16f98, addq.w @0x16fa0; move.w @0x16fb4 / cmp.w @0x16fba.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080ccbe",
+    "current_name": "",
+    "proposed_name": "engine_warmup_protection_oil_drain_back_timer",
+    "proposed_type": "word",
+    "comment": "e2m 11EA +C WPRYTM 'TIMER COUNTING AGAINST OIL_BLEEDDOWN_TIME' (MIN, 0.000833 min = one 50 ms pass). Adds 1 per pass while engine_state is STOPPED, up to engine_warmup_protection_oil_drain_back_time (11EB +8 WPRYTMCN, 3600 = 3 min here). Reaching it arms the protection for the next start. Cleared while cranking or running. Dump 3600 (armed).",
+    "evidence": "11EA +C -> 0x80ccbe. move.w @0x16e5e, cmp.w 0x807ddc @0x16e64, addq.w @0x16e6c; clr.w @0x16edc. RAM dump 0x0e10.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080ccc0",
+    "current_name": "",
+    "proposed_name": "engine_warmup_protection_run_state_achieved_flag",
+    "proposed_type": "word",
+    "comment": "e2m 11EA +E WPSTFG 'RUN_STATE HAS BEEN ACHIEVED DURING EXECUTION OF ENGINE WARMUP ALGO(RITHM)'. Cleared when the drain-back time arms the protection. While the engine is stopped a nonzero value ends the protection (completed 1, limiting 0, WPACFT 0). The dumped ROM has no writer of 1.",
+    "evidence": "11EA +E -> 0x80ccc0. Only two references: clr.w @0x16e7a and tst.w @0x16e98.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080ccc2",
+    "current_name": "",
+    "proposed_name": "engine_warmup_protection_rifle_to_turbocharger_delay_started_flag",
+    "proposed_type": "word",
+    "comment": "e2m 11EA +10 WPDYFG 'FLAG INDICATING THAT RIFLE_TO_TURBO_DELAY_TIME DELAY STARTED IF 1'. Set when the oil pressure timer passes 11EB +2 WPO2TMCN, at the same time as the delay time is looked up. While it is set the delay timer counts in place of the oil pressure timer. Cleared while stopped.",
+    "evidence": "11EA +10 -> 0x80ccc2. clr.w @0x16eac; tst.w @0x16fe4; move.w #1 @0x17016.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080ccc4",
+    "current_name": "timer_counting_against_oil_pressure_threshold_time_0_60",
+    "proposed_name": "engine_warmup_protection_oil_pressure_timer",
+    "proposed_type": "word",
+    "comment": "e2m 11EA +12 WPO2TDTM 'TIMER COUNTING AGAINST OIL_PRESSURE_THRESHOLD_TIME' (SEC 0.05). Adds 1 per running pass while oil_pressure_sensor_state.filtered_value is at or above engine_warmup_protection_oil_pressure_threshold, else resets to 0. Above engine_warmup_protection_oil_pressure_time it starts the rifle to turbocharger delay. Cleared while stopped.",
+    "evidence": "11EA +12 -> 0x80ccc4. clr.w @0x16e46 / @0x17002; cmp 0x80a30a vs 0x807dd4 @0x16fec-0x16ff8 then addq.w @0x16ffa; cmp.w 0x807dd6 @0x17008-0x17014.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080ccc8",
+    "current_name": "",
+    "proposed_name": "engine_warmup_protection_inhibit_flag",
+    "proposed_type": "word",
+    "comment": "e2m 11EA +16 WPIHFG 'ENGINE WARMUP PROTECTION ALGORITHM INHIBITED WHEN 1'. A nonzero value ends the protection on every pass (completed 1, limiting 0, limit = fuel_demand_maximum). Cleared at start-up by cm550_initializeEngineWarmupProtection. The dumped ROM has no writer of 1.",
+    "evidence": "11EA +16 -> 0x80ccc8. tst.w @0x16e08; clr.w @0x170ba (only two references).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080ccca",
+    "current_name": "",
+    "proposed_name": "engine_warmup_protection_torque_or_speed_limiting_flag",
+    "proposed_type": "word",
+    "comment": "e2m 11EA +18 WPACFT 'WARMUP PROTECTION LIMITING TORQUE/RPM IF 1'. Set together with the limiting flag when the drain-back time arms the protection, and cleared wherever the protection ends. Unlike engine_warmup_protection_fuel_limiting_flag it is not set at start-up. The dumped ROM has no reader. Dump 1.",
+    "evidence": "11EA +18 -> 0x80ccca. move.w #1 @0x16e80; clr.w @0x16e1c / 0x16ea6 / 0x16fce / 0x17060; not referenced by 0x1709e. RAM dump 0x0001.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080a8f4",
+    "current_name": "",
+    "proposed_name": "low_speed_governor_lock_flag",
+    "proposed_type": "word",
+    "comment": "e2m 1045 +4 LSLOFG 'WHEN 1 TRANSITION FROM LSG TO NO ADJUST FUEL IS PROHIBITED' (the LSG_LOCK_FLAG named by 11EB +A LSLOCN). Set when the warmup protection is armed (at start-up or after the drain-back time) while engine_warmup_protection_low_speed_governor_lock_enable is nonzero. Cleared when the protection ends. Only the two warmup functions write it, and the dumped ROM has no reader. CM848's 1045 +4 is a different record (LSG_Running_Flag). Dump 1.",
+    "evidence": "e2m_block_addresses --firmware cm550 --address 0x0080a8f4 -> 1045 +4 LSLOFG (no row). move.w #1 @0x16e90 / @0x170da; clr.w @0x16e16 / 0x16fc8 / 0x1705a; no other absolute reference. RAM dump 1.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807dde",
+    "current_name": "",
+    "proposed_name": "engine_warmup_protection_low_speed_governor_lock_enable",
+    "proposed_type": "word",
+    "comment": "e2m 11EB +A LSLOCN 'CALIBRATIBLE OPTION TO ALLOW LSG_LOCK_FLAG TO LOCK LOW IDLE GOV.' (T/F, in the warmup protection calibration block). When it is nonzero, the warmup protection sets low_speed_governor_lock_flag while armed. Dump 1. Outside the EEPROM image, so no _cal.",
+    "evidence": "11EB +A -> 0x807dde (no row). tst.w @0x16e88 and @0x170d2, the only references. RAM dump 0x0001.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807dd4",
+    "current_name": "calibratible_threshold_for_rifle_oil_pressure_for_engine_warmu_0_100",
+    "proposed_name": "engine_warmup_protection_oil_pressure_threshold",
+    "proposed_type": "word",
+    "comment": "e2m 11EB +0 WPO2TDCN 'CALIBRATIBLE THRESHOLD FOR RIFLE OIL PRESSURE FOR ENGINE WARMU(P)' (PSIG, 0.0078125 per count; 1024 = 8 psi here). engine_warmup_protection_oil_pressure_timer counts while oil pressure is at or above it.",
+    "evidence": "11EB +0 -> 0x807dd4. cmp.w (0x807dd4) vs oil 0x80a30a @0x16ff2, the only code use.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807dd6",
+    "current_name": "time_oil_pressure_must_continuously_be_above_oil_pressure_thres_0_60",
+    "proposed_name": "engine_warmup_protection_oil_pressure_time",
+    "proposed_type": "word",
+    "comment": "e2m 11EB +2 WPO2TMCN 'TIME OIL PRESSURE MUST CONTINUOUSLY BE ABOVE OIL_PRESSURE_THRES(HOLD)' (SEC 0.05; 10 = 0.5 s here). When engine_warmup_protection_oil_pressure_timer exceeds it, the rifle to turbocharger delay starts.",
+    "evidence": "11EB +2 -> 0x807dd6. cmp.w @0x1700e; bls.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807dd8",
+    "current_name": "maximum_time_engine_warmup_algorithm_will_run_0_100",
+    "proposed_name": "engine_warmup_protection_maximum_time",
+    "proposed_type": "word",
+    "comment": "e2m 11EB +4 WPMXTMCN 'MAXIMUM TIME ENGINE WARMUP ALGORITHM WILL RUN' (SEC 0.05; 1200 = 60 s here). The limit of engine_warmup_protection_overall_timer; reaching it ends the protection.",
+    "evidence": "11EB +4 -> 0x807dd8. cmp.w @0x16ee8 and @0x16fac.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807dda",
+    "current_name": "max_time_algorithm_will_run_with_active_cool_or_oil_press_fa_0_100",
+    "proposed_name": "engine_warmup_protection_maximum_time_with_fault",
+    "proposed_type": "word",
+    "comment": "e2m 11EB +6 WPFUTMCN 'MAX TIME ALGORITHM WILL RUN WITH ACTIVE COOL. OR OIL PRESS. FA(ULT)' (SEC 0.05; 120 = 6 s here). The limit of engine_warmup_protection_fault_timer; reaching it ends the protection.",
+    "evidence": "11EB +6 -> 0x807dda. cmp.w @0x16f98 and @0x16fba.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00807ddc",
+    "current_name": "time_for_oil_to_drain_back_to_sump_with_engine_off_0_54",
+    "proposed_name": "engine_warmup_protection_oil_drain_back_time",
+    "proposed_type": "word",
+    "comment": "e2m 11EB +8 WPRYTMCN 'TIME FOR OIL TO DRAIN BACK TO SUMP WITH ENGINE OFF' (MIN, 0.000833 per count; 3600 = 3 min here). The engine-off time after which the next start is protected.",
+    "evidence": "11EB +8 -> 0x807ddc. cmp.w @0x16e64, the only code use. RAM 0x0e10.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803b3e",
+    "current_name": "eeprom_hour_meter_buffer",
+    "proposed_name": "key_on_hour_meter_cal",
+    "proposed_type": "dword",
+    "comment": "EEPROM 0x34 (mirror): the EEPROM copy of key_on_hour_meter (0.2 s counts; 227512040 = 12639.6 h in the dump). loadHourMetersFromEeprom loads it at start-up. mc68k_runPowerDownSequence (0x280e2-0x2816e) and restartThroughBootRom save the running meter into it through the EEPROM write 0x16c3c and wait until the mirror matches. The same role and name as CM848 key_on_hour_meter_cal (EEPROM 0x30).",
+    "evidence": "Long accesses only: move.l @0x3452a, @0x1199a, @0x28164; pea @0x11976 / @0x280f2 (the write source pointer). Inside the EEPROM image 0x803b0a-0x804f93: offset 0x34, and EEPROM dump offset 0x34 = 227512040 = RAM 0x803b3e. The next row is 0x803b44, so there is no overlap.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803b50",
+    "current_name": "eeprom_engine_run_time_buffer",
+    "proposed_name": "engine_hour_meter_cal",
+    "proposed_type": "dword",
+    "comment": "EEPROM 0x46 (mirror): the EEPROM copy of engine_hour_meter (e2m 11BC +0 CMEGTR, 0.2 s counts; 226203089 = 12566.8 h in the dump). loadHourMetersFromEeprom loads it at start-up. mc68k_runPowerDownSequence (0x28170-0x28200) and restartThroughBootRom save it. The same role and name as CM848 engine_hour_meter_cal (EEPROM 0x42).",
+    "evidence": "Long accesses only: move.l @0x34534, @0x119e0, @0x281f6; pea @0x119bc / @0x28180. EEPROM dump offset 0x46 = 226203089 = RAM 0x803b50 = engine_hour_meter 0x80ccee (engine stopped).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080d370",
+    "current_name": "max_fueling_without_programmable_power_for_esp_tau_0_0_100",
+    "proposed_name": "throttle_100_fueling_without_programmable_power",
+    "proposed_type": "word",
+    "comment": "e2m 105A +8 FSMTFLNP 'MAX FUELING WITHOUT PROGRAMMABLE POWER FOR ESP TAU 0' (0.0679 mm3 per count; 1619 in the dump). cm550_calculateThrottle100Fuelings sets it every pass to the steady state 4D fueling table value while electronic_smart_power_enable is set, else to the blended maximum fuel curve at throttle 400, raised to at least fuel_demand_minimum. cm550_convertTorqueDerateTorqueLimitToFuelLimit uses it as the full load end of the torque to fuel line. The same record and name as CM848 0x40a89f.",
+    "evidence": "105A +8 -> 0x80d370 in both e2m resolutions (CM848: 105A +8 Throttle_100_Fueling_No_PP -> 0x40a89f). Word accesses only: move.w @0x1c102, (a3) word stores @0x1cdc2 / 0x1cdd8 / 0x1cde8 / 0x1cdf0 (a3 = 0x80d370 @0x1cc7c), pea for cm550_subtractAndClampValue(word *) @0x1cdc4. Typing it word removes the '_' wide-read rendering.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080d36c",
+    "current_name": "full_fueling_value_at_hsg_bef_droop_speed_0_100",
+    "proposed_name": "engine_speed_limit_ramped_maximum_fuel_quantity",
+    "proposed_type": "word",
+    "comment": "e2m 105A +4 FSMXBFDP '100% FUELING VALUE AT HSG_BEF_DROOP_SPEED' (1436 in the dump). cm550_calculateThrottle100Fuelings stores the blended maximum fuel curve at engine_speed_limit_ramped (throttle 400) plus the cold temperature increment, raised to at least fuel_demand_minimum. Read by cm550_calculateGovernorDroopSpeed, selectEngineSpeedLimit and cm550_calculateEngineLoadPercentages. The same record and name as CM848 0x40a89b.",
+    "evidence": "105A +4 -> 0x80d36c (CM848 105A +4 Throttle_100_Fuel_At_HSG_Bef_Droop_Speed -> 0x40a89b engine_speed_limit_ramped_maximum_fuel_quantity). move.w d0 @0x1cd36 after jsr 0x1cb76(0x80d654, 0x190); add.w d2 @0x1cd3c; floor @0x1cd4c. Readers @0xfaca, 0x18572, 0x1d884, 0x26d96, 0x26dc4; word accesses only.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080d654",
+    "current_name": "the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000",
+    "proposed_name": "engine_speed_limit_ramped",
+    "proposed_type": "word",
+    "comment": "e2m 1063 +10 HSRFBFDP 'THE ACTUAL HSG DERATE SPEED USED IN HSG DROOP CALCULATION' (engine speed x 8; 20240 = 2530 rpm in the dump). In selectEngineSpeedLimit it rises by the step 0x808138 (1063 HSRFRMRT) each pass toward the reference before droop 0x80d648 (HSRFBEDP) and drops to it at once. initializeEngineSpeedLimitDefaults starts it from 0x803ba0. cm550_calculateThrottle100Fuelings looks up engine_speed_limit_ramped_maximum_fuel_quantity at it. The same record, behaviour and name as CM848 0x40a308.",
+    "evidence": "1063 +10 -> 0x80d654 in both firmwares (CM848 HSG_Before_Droop_Speed -> 0x40a308 engine_speed_limit_ramped). selectEngineSpeedLimit 0x1d5a0 (a twin): a4 = 0x80d654 @0x1d5b0; move.w (a4) / move.w 0x808138 / add.w d0,(a4) @0x1d740-0x1d74c; move.w (a2),(a4) @0x1d754 (a2 = 0x80d648). initializeEngineSpeedLimitDefaults move.w (0x803ba0),(0x80d654) @0x1d958. Read @0x1cd2c, 0x1c874, 0x26d50, 0x26d7c. This global is not owned by the batch functions: included so 0x80d36c reads consistently.",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080db1a",
+    "current_name": "max_torque_at_current_rpm_in_foot_pounds_0_10000",
+    "proposed_name": "maximum_torque_at_current_engine_speed",
+    "proposed_type": "word",
+    "comment": "e2m 1461 +0 MTMPRPFL 'MAX TORQUE AT CURRENT RPM IN FOOT-POUNDS' (330 in the dump). cm550_FUN_000269f2 looks it up from maximum_torque_map_lookup (engine_rpm_primary x alpha_blend_factor) and replaces a 0 by 1. cm550_FUN_00026a2e initializes it to 1 at start-up. cm550_convertTorqueDerateTorqueLimitToFuelLimit divides by it. The same role as CM848 0x40aee6.",
+    "evidence": "1461 +0 -> 0x80db1a. Writes in cm550_FUN_000269f2 (via a2 @0x269f8) and cm550_FUN_00026a2e (@0x26a38); 0x1c0d4 cmpi.w #1,(a2) / move.w #1,(a2) and the divisor push @0x1c0fc. The parameter ID table entries @0x376a4 / 0x376a8. Word accesses.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x0040aee6",
+    "current_name": "fuel_demand_filter_dimension",
+    "proposed_name": "maximum_torque_at_current_engine_speed",
+    "proposed_type": "word",
+    "comment": "Maximum engine torque in lb-ft at the current engine speed (the CHR e2m record 1461 +0 MT_Max_Torque_At_RPM_Ftlb 'max torque at current rpm in foot-pounds'; block 1461 is not in the dumped parameter ID table). cm848_calculateFuelDemandFilter (0x29c98) interpolates it from maximum_torque_map_grid over engine speed and the chi maps and replaces a 0 by 1. cm848_initFuelDemandFilterDimensions sets it to 1 at start-up. Divisor of cm848_calculateProtectionRateLimited (torque to fuel), scale of cm848_calculateEngineOutputTorque, and x 13558 / 10000 (to N*m) in cm848_calculateJ1939ReferenceEngineFueling. It is no fuel demand filter (row had no comment).",
+    "evidence": "CM848 0x1e4e8: lhz / li 1 / sth at 0x40aee6 (r30 = 0x410000 - 20762) and the divisor of bl 0x570f0. .cpp line 29231: 0x29c98 stores cm848_interpolateAlphaChiValue of two maximum torque map lookups. Line 29251: 0x29de0 stores 1. The plates of 0x17eb8 and 0x20500 already call it the maximum torque at this speed. Same role as CM550 0x80db1a (MTMPRPFL). Overlap risk with batch L4 (cm848_calculateProtectionRateLimited) and L3 (the maximum torque map lookups).",
+    "confidence": "medium"
+   }
+  ],
+  "enum_members": [],
+  "skipped": [],
+  "notes": "ENUMS (decision: delete both, in both firmwares; no enum_members proposed).\n(1) HIGH_RPM_PROTECTION_STATE and HIGH_RPM_PROTECTION_FLAGS have no user. No row in global_variables / structure_definitions / function_definitions / local_variables(_actual) / arrays of either firmware is typed with them, no line of either .cpp shows a member, and ApplyEnums.java only creates the types. Only the generated firmware_types.hpp files list them.\nDelete these rows: CM550 enums.csv 407-412 (the comment line and the FLAGS rows) and 531-537 (the two comment lines and the STATE rows). CM848 enums.csv 720-725 and 727-732 (with their comment lines). The CM848 copies came from commit 1100dce0 'Port 115 fuel/protection/sensor enums from CM550 to CM848' without CM848 evidence, and CM848 has no idle shutdown machine (it only receives PGN 65252 for the A/C fan switch).\n(2) The FLAGS masks are the J1587 PID 71 (Idle Shutdown Timer Status) byte, built in register d2 at CM550 0xefa2-0xf004 in insiteCommandByteDispatcher (insite_parameter_id == 0x47):\n- 0x80: idle_shutdown_timer 0x80d676 nonzero and below idle_shutdown_period_cal 0x803c02 (SPN 590 timer state).\n- 0x08: algorithm_enable_flags_3_cal bit 0x2 idle_shutdown_enable (SPN 591 function enabled).\n- 0x04: idle_shutdown_overridden_flag 0x80d672 together with override enable bit 0x4 (SPN 592 override).\n- 0x02: engine_shutdown_command_flag 0x80d28c with the timer at 0 (SPN 593 has shut down engine).\n- 0x01: idle_shutdown_warning_lamp_request 0x80d67a (SPN 594 driver alert).\nBecause the byte is a register local that holds other PIDs too, no row could carry an enum. If the parent wants a documentation enum anyway, it needs a new name, for example J1587_IDLE_SHUTDOWN_TIMER_STATUS with members ..._TIMER_ACTIVE / _FUNCTION_ENABLED / _OVERRIDE_ACTIVE / _ENGINE_SHUT_DOWN / _DRIVER_ALERT_ACTIVE.\n(3) STATE 0-4 was an old misreading of the idle shutdown machine, now covered by IDLE_SHUTDOWN_STATE 0-5 (e2m 10CD ISST, round 94).\nRelated leftovers, no proposal:\n- CM550 struct high_rpm_protection_t (structure_definitions 272-276) is used by no global.\n- The CM550 rows 0x80cc6a / 0x80cc6c / 0x80cc6e / 0x80cc72 (high_rpm_protection_*), 0x8036fc high_rpm_protection_initial_timer and 0x80c994 high_rpm_protection_triggered_flag have no absolute reference in the dumped ROM: I searched every 4-byte value 0x80cbf0-0x80ccb2 at any alignment. Their names have no code support. Per the xref memory note, build and diff before any deletion.\n- INSITE_PARAM_CODE (both firmwares, unused too) holds J1587 PIDs: 0x47 = PID 71, 0x4A = PID 74 maximum road speed limit, 0x53 = PID 83 road speed limit status, 0x2C / 0x2D = PIDs 44 / 45. Its member names (HIGH_RPM_PROTECTION_STATUS, BOOST_PRESSURE_TARGET, DIAGNOSTIC_FUEL_MODE_FLAG ...) are wrong, and insiteCommandByteDispatcher is the J1587 PID responder. A lead for a J1587 round.\n\nFUNCTION_DEFINITIONS: add 'return,,void' rows for 0x16dd4 and 0x1709e. Their only callers (jsr @0x1b6c0 then rts; jsr @0x28810 then jsr) ignore d0, and the .cpp now shows 'return (ushort)algorithm_enable_flags_18_cal & 2'.\n\nTWIN 0x3452a: both rows change to loadHourMetersFromEeprom. The CM848 plate (0x5067bc) should add 'the twin of CM550 0x3452a: one shared name'.\n\nCOUNTERPART CM848 NAMES (leads, not changed here):\n- CM848 0x1e4e8 cm848_calculateProtectionRateLimited does no rate limiting. It is the torque derate torque limit to fuel conversion, and its name has the bare word protection (batch L4). It could take the stem of the CM550 name, for example cm848_convertTorqueDerateTorqueLimitToFuelLimit.\n- CM848 0x29c98 cm848_calculateFuelDemandFilter and 0x29de0 cm848_initFuelDemandFilterDimensions are the maximum torque map lookup and its initializer. Their CM550 counterparts cm550_FUN_000269f2 / cm550_FUN_00026a2e are also unnamed (L3 owns maximum_torque_map_lookup).\n- If 0x40aee6 is renamed, the plates of CM848 0x17eb8 / 0x20500 / 0x29c98 that quote fuel_demand_filter_dimension need the comment sweep.\n\nL3 LEADS:\n- lookupTableInterpolation 0x34de0 reads (0xc,a2) at 0x34e4a, a no-interpolation word. table_interp_args_t (12 bytes) lacks that +12 field. The descriptors are 14-byte records, which agrees with cm550_initializeAnalogSensorChannels' '0x80a792 + 14n'.\n- The warmup descriptors 0x80058e (coolant -> rifle to turbocharger delay) and 0x80059c (engine speed -> fuel limit) have no rows. Both are such 14-byte records.\n- 0x8006ea (the steady state 4D fueling table at throttle 400) and 0x800700 (cold temperature fuel increment FLCDTPXA / FLCDESYA / FLCDICZA) are table_lookup_2d_arguments_t records, set up by cm550_FUN_0001cdf8 and read by 0x1cc72.\n\nOTHER LEADS:\n- 0x80d36e (105A +6 FSMXBK, no row) is written in selectEngineSpeedLimit at 0x1d7b6 as 0x1cb76(0x80d64e HSBKRFAE, 400) raised to at least fuel_demand_minimum. That is CM848's engine_speed_limit_reference_maximum_fuel_quantity, and 0x80d64e is CM848's engine_speed_limit_reference.\n- cm550_calculateBlendedTableValue 0x1cb76 is CM550's maximum fuel curve, the counterpart of cm848_calculateMaximumFuelCurve 0x1f03c.\n- 0x807dd2 (1297 +0 WPMXRS 'highest road speed that will allow engine warmup protection', no row) is referenced only by the parameter ID table at 0x36854, so the dumped ROM has no reader.\n- WPSTFG 0x80ccc0, WPIHFG 0x80ccc8 and LSLOFG 0x80a8f4 have no writer of 1 (or no reader) in the dumped ROM. Those writers / readers are likely above 0x40000.\n\nJUDGMENT CALLS:\n- 0x16dd4 is named cm550_runEngineWarmupProtection, not ...StateMachine: the states are flag-encoded (limiting / completed / delay started), and the plate says it is the state machine.\n- 0x1c0d4 is a counterpart, not a twin: steps 1-4 match CM848 0x1e4e8 one for one, but CM550's body adds the reset (step 5), which CM848 does in its caller before the chain.\n- 0x80d654 (engine_speed_limit_ramped) and CM848 0x40aee6 are not owned by the batch functions. They are included at medium confidence so that the owned names read consistently.\n\nScratch notes: /home/linux/.claude/jobs/374b0424/tmp/w15/r94/scratch/L1/investigator/notes.md"
+ },
+ "blind": {
+  "batch": "L1",
+  "roles": [
+   {
+    "address": "0x0001c0d4",
+    "role": "Converts the torque derate torque limit (e2m 1051 +A TQDQTQ, lb-ft) into a fuel limit. It first raises the maximum torque at current rpm (0x80db1a, e2m 1461 +0 MTMPRPFL) to 1 when it is below 1. Then it computes fuel = no_load_fuel_quantity + cm550_scaleByRatioSigned(torque_derate_torque_limit, 105A +8 FSMTFLNP 0x80d370 - no_load_fuel_quantity, max torque), a 64-bit signed scale, and floors the result at 0. When the result is below torque_derate_fuel_quantity, it becomes the new limit and torque_derate_fuel_source_code = torque_derate_torque_limit_state. Last, it resets torque_derate_torque_limit = 0xFFFF and its state = 40 FUELING_STATE_NO_DERATE (asm 0x1c140 / 0x1c148). Its only caller is the bsr.w at 0x1c190 in cm550_selectFinalFueling, right after jsr cm550_runFuelLimitChains, and only while torque_derate_override_enable is clear.",
+    "discriminator": "It is the only step that turns the torque limit into fuel, through the maximum torque at current rpm and the 100 percent fueling without programmable power. applyPowerTakeOffTorqueLimit only lowers the torque limit. The apply*FuelLimit steps fold fuel limits that are already fuel. This body also uses the torque limit up and clears it, and 0x1c308 sets that clear state at start-up.",
+    "suggested_name": "cm550_convertTorqueDerateTorqueLimitToFuelLimit",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_calculateProtectionRateLimited @ 0x1e4e8 is a COUNTERPART, not a twin. It does the same arithmetic steps with the same guard, clamp, compare and store (mulhw/mullw, then the 64/32 divide at 0x570f0, divisor 0x40aee6), but its body has no reset. CM848 stores 0xffff / FUELING_STATE_NO_DERATE in the caller cm848_arbitrateRequestedFueling BEFORE cm848_processProtectionLimits, so CM848 has no start-up clear and the CM550 body has two more stores. The CM848 name has a bare 'Protection' and 'RateLimited' is wrong. cm848_convertTorqueDerateTorqueLimitToFuelLimit fits (this overlaps batch L4)."
+   },
+   {
+    "address": "0x0001c308",
+    "role": "Start-up clear of the torque derate torque limit: torque_derate_torque_limit (0x80d338, 1051 +A) = 0xFFFF (no limit) and torque_derate_torque_limit_state (0x80d33a, 1051 +C) = 40 FUELING_STATE_NO_DERATE (asm 0x1c308-0x1c318, nothing else). It is called once from mc68k_applicationMain's start-up list (jsr at 0x28972, the last call before the restart entry 0x28978, just after cm550_FUN_00026a2e, which sets the max torque word 0x80db1a to 1). So the first pass of 0x1c0d4 starts from no limit.",
+    "discriminator": "It writes the same two words and constants as the end of 0x1c0d4, but it does no conversion and it runs only once, from the application main's start-up list.",
+    "suggested_name": "cm550_initializeTorqueDerateTorqueLimit",
+    "confidence": "high",
+    "cm848_counterpart": "none. CM848 has no start-up writer of torque_derate_torque_limit. cm848_arbitrateRequestedFueling (0x1e5a4) writes 0xffff / NO_DERATE in line on every pass."
+   },
+   {
+    "address": "0x0003452a",
+    "role": "Start-up load of the two hour meters from the EEPROM mirror: key_on_hour_meter (0x80bda4, e2m 0004 +0 CMECTR) = the dword at 0x803b3e, then engine_hour_meter (0x80ccee, 11BC +0 CMEGTR) = the dword at 0x803b50 (asm 0x3452a-0x3453e: two move.l, rts). It is called once from mc68k_applicationMain (jsr at 0x28710), after the EEPROM mirror load and right after the discrete, analog and output initializers. advanceHourMeters (0x34512) counts the two meters up. mc68k_runPowerDownSequence (0x280f4-0x281f8) and restartThroughBootRom (0x11978-0x119e2) write them back to the same two EEPROM words.",
+    "discriminator": "It is the load side of the hour meters: two 32-bit copies from the EEPROM image. It does not count (advanceHourMeters) and does not save (power-down and restart paths).",
+    "suggested_name": "loadHourMetersFromEeprom",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_loadHourMetersFromEeprom @ 0x5067bc is a TWIN. It makes the same two 32-bit copies in the same order: key-on first from the EEPROM mirror 0x3fd4b2 (EEPROM 0x30), then engine from 0x3fd4c4 (0x42). The two EEPROM words are 0x12 apart in both firmwares (CM550 EEPROM offsets 0x34 / 0x46). It is called once by cm848_applicationMain, right after the analog channel initializers, which is the same start-up slot. Use one shared name, loadHourMetersFromEeprom (the CM848 row changes too), as was done for the twin advanceHourMeters."
+   },
+   {
+    "address": "0x00016dd4",
+    "role": "Runs the engine warmup protection (e2m group EWP 'ENGINE WARMUP PROTECTION GROUP': working block 11EA, calibrations 11EB, tables 11EC-11EF) every 50 ms (cm550_runEvery10FramesTaskSetPhase0; the e2m timers count 0.05 s). Off path: when the enable bit is clear (algorithm_enable_flags_18_cal bit 1, WPEAFG), or the protection has completed and engine_state is not STOPPED, or WPIHFG 0x80ccc8 (inhibited) is set, it sets completed WPSSFG=1, limiting WPLMFG=0, LSLOFG 0x80a8f4=0, WPACFT 0x80ccca=0 and limit WPTQLM = fuel_demand_maximum. STOPPED: it clears the oil pressure, delay, overall and fault timers and counts the oil drain-back timer WPRYTM 0x80ccbe up to WPRYTMCN 0x807ddc (3600 = 3 min in the dump). At that value it ARMS the protection: completed=0, limiting=1, WPSTFG=0, WPACFT=1, and the LSG lock 0x80a8f4=1 when LSLOCN 0x807dde is set. A set WPSTFG ends the protection. It clears WPDYFG and sets the limit to maximum. CRANKING / RUNNING / JUMP_START / REENTRY (2/3/6/7): it clears the drain-back timer and counts the overall timer WPTMMX up to WPMXTMCN (60 s). It counts the fault timer WPFUTM up to WPFUTMCN (6 s) while any of 7 fault pairs is active (status bit and latch bit; status word 3 bits 0x4/0x8/0x20/0x40, word 2 bits 0x2/0x1, word 6 bit 0x2000; the e2m calls them active coolant or oil pressure faults). Either timer at its maximum ends the protection. Before the delay starts, the oil pressure timer WPO2TDTM counts while filtered oil pressure is at or above WPO2TDCN (8 psig) and resets to 0 below it. When it exceeds WPO2TMCN (0.5 s), WPDYFG=1 and WPO2DY = lookupTableInterpolation(record 0x80058e, coolant temperature), the oil-rifle-to-turbocharger delay time. After the delay starts, WPDYTM counts up to WPO2DY and then ends the protection. While limiting, the limit = lookupTableInterpolation(record 0x80059c, engine_rpm_primary), else fuel_demand_maximum. Engine states 4/5/8 change nothing. The return value is d0 left over from the last operation and no caller uses it. In the RAM dump (engine stopped) the protection is armed: WPRYTM = WPRYTMCN = 3600, WPLMFG 1, WPACFT 1, LSLOFG 1, limit 5888.",
+    "discriminator": "This is the per-pass body. It is the only code that runs the 11EA timers and flags and computes engine_warmup_protection_fuel_limit from the engine speed table. 0x1709e only initializes, and 0x17120 only folds the limit into the chain with state 33. It has no high-rpm logic and no numbered state word, so the current name and the HIGH_RPM_PROTECTION_STATE enum do not apply.",
+    "suggested_name": "cm550_runEngineWarmupProtection",
+    "confidence": "high",
+    "cm848_counterpart": "none. No CHR (CM848) e2m has a WP* / 11EA-11EF record; they exist only in the CM550-family e2m files. cm848_updateEngineStartWarmupProtection 0x5055a0 is a different feature, the EMO 'Engine Starting and Warmup Protection AECD' emission level cap (blocks 19B2 / 19B3), with no oil pressure timers and no fuel table."
+   },
+   {
+    "address": "0x0001709e",
+    "role": "Start-up initializer of the engine warmup protection (asm 0x1709e-0x1711e). It clears WPIHFG 0x80ccc8 (inhibited). When algorithm_enable_flags_18_cal bit 1 (engine_warmup_protection_enable) is set, it ARMS the protection: WPLMFG 0x80ccb2 = 1, WPSSFG 0x80ccb4 = 0, and the LSG lock flag LSLOFG 0x80a8f4 = 1 when LSLOCN 0x807dde is set. Otherwise WPLMFG = 0 and WPSSFG = 1. It then builds the two lookupTableInterpolation records: 0x80058e {index 2, x 0x60846 WPCQXA coolant temperature axis, y 0x6085a WPDYTMYA rifle-to-turbo delay time} and 0x80059c {index 2, x 0x607f2 WPESXA engine speed axis, y 0x6081c WPFLDQYA fuel derate values}. The axis addresses are the parameter ID table entries of blocks 11EF / 11EE / 11ED / 11EC. It is called once from mc68k_applicationMain (jsr at 0x28812). The return value is d0 left over from the last operation and no caller uses it.",
+    "discriminator": "It runs once at start-up. It arms the protection at every power-up (the time the engine was off is unknown) and sets up the two table records that 0x16dd4 uses. No fuel temperature is involved anywhere, so 'fuelTemperatureLimitingSecondary' has no support.",
+    "suggested_name": "cm550_initializeEngineWarmupProtection",
+    "confidence": "high",
+    "cm848_counterpart": "none (CM848 has no engine warmup protection; see 0x16dd4)."
+   },
+   {
+    "address": "0x0001cc72",
+    "role": "Calculates the 100 percent throttle fuelings of e2m block 105A every 20 ms, as the last call of cm550_runEvery4FramesTaskSetPhase1, after runHighSpeedGovernorPid and 0x42496. While programmable_power_enable (algorithm_enable_flags_18_cal bit 9) is clear: cold term = cm550_tableLookup2D(record 0x800700, the cold temperature incremental fuel table FLCDICZA over coolant temperature FLCDTPXA x engine speed FLCDESYA). The cold term is 0 when full_fueling_coolant_temperature_adjustment_enable (algorithm_enable_flags_32_cal bit 15, 5DCLAJEN) is clear or one of three fault pairs is active (status word 2 bits 0x2/0x1/0x10 with their latch bits). Then +0 throttle_100_fueling = cm550_calculateBlendedTableValue(engine_rpm_primary, 400) + cold; +4 0x80d36c = cold + the same curve at the HSG before-droop speed 0x80d654 (1063 +10 HSRFBFDP); +2 throttle_100_fueling_low_horsepower_curve = the steady state 4D fueling table at throttle 400 (record 0x8006ea) through cm550_subtractAndClampValue (removes the -800 mm3 table offset and clamps to 0..5888), + cold. Each of these is floored at fuel_demand_minimum. On every pass: +8 0x80d370 = the blended curve at engine speed and 400, or, while electronic_smart_power_enable (algorithm_enable_flags_12_cal bit 4) is set, the steady state 4D table value after subtractAndClamp, floored at fuel_demand_minimum. The two records are built by cm550_FUN_0001cdf8 (called from cm550_masterSubsystemInit).",
+    "discriminator": "In the dumped ROM it is the only writer of 105A +0 / +2 / +4 / +8. It does NOT write +6 FSMXBK (0x80d36e); another function writes that word at 0x1d7b6. It has two enable gates (programmable power, electronic smart power) and uses throttle 400 = 100 percent.",
+    "suggested_name": "cm550_calculateThrottle100Fuelings",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_calculateThrottle100Fuelings @ 0x1f17c is a COUNTERPART. It has the same outputs (105A +0/+2/+4/+8), the same gates (programmable_power_enable, electronic_smart_power_enable), throttle 400, and the same slot after the HSG PID in cm848_periodicTaskSet_controlLoop. The steps differ. CM848 adds the separately computed cold_delta_fuel (gated by algorithm_enable_flags_41_cal) where CM550 does an in-line coolant x speed table lookup with fault checks. CM848 also writes +6 here, computes +4 / +6 with cm848_lookupChiMaximumFuelAtSpeed, adds no cold term to +8, and for ESP forces four_dimensional_fueling_interpolation_factor to 0 around cm848_calculateMaximumFuelCurve. So the CM550 function keeps the cm550_ prefix with the same base name, as for the cm550_/cm848_selectFinalFueling pair."
+   },
+   {
+    "address": "0x0080d370",
+    "role": "e2m 105A +8 FSMTFLNP 'MAX FUELING WITHOUT PROGRAMMABLE POWER FOR ESP TAU 0': the full-load fuel at the current engine speed without the programmable power curve. Only 0x1cc72 writes it (word stores at 0x1cdc2 / 0x1cdd8 / 0x1cde8 / 0x1cdf0), and only 0x1c0d4 reads it (move.w at 0x1c102), as the full-torque end of the torque-to-fuel line. All accesses are words. The row is typed undefined today, so it renders as _max_fueling_without_programmable_power_for_esp_tau_0_0_100. 1619 in the dump, equal to +0.",
+    "discriminator": "It is +8 of 105A and differs from +0 throttle_100_fueling: it has no cold term, and under ESP it takes the steady-state table value.",
+    "suggested_name": "throttle_100_fueling_without_programmable_power",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 0x40a89f throttle_100_fueling_without_programmable_power (the same record 105A +8 FSMTFLNP), so it takes the same name. Retype the row to word."
+   },
+   {
+    "address": "0x0080d36c",
+    "role": "e2m 105A +4 FSMXBFDP '100% FUELING VALUE AT HSG_BEF_DROOP_SPEED': 0x1cc72 writes the cold term + the maximum fuel curve (throttle 400) at 0x80d654 (1063 +10 HSRFBFDP, the HSG before-droop speed), floored at fuel_demand_minimum. It is read at 0xfaca, 0x18572, 0x1d884, 0x26d96 and 0x26dc4. 1436 in the dump.",
+    "discriminator": "It is +4 of 105A: the 100 percent fueling at the HSG before-droop speed, not at the current engine speed.",
+    "suggested_name": "engine_speed_limit_ramped_maximum_fuel_quantity",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 0x40a89b engine_speed_limit_ramped_maximum_fuel_quantity (the same record 105A +4 Throttle_100_Fuel_At_HSG_Bef_Droop_Speed; its input engine_speed_limit_ramped 0x40a308 is 1063 +10 HSRFBFDP, the same as CM550 0x80d654)."
+   },
+   {
+    "address": "0x00803b3e",
+    "role": "EEPROM mirror dword (EEPROM offset 0x34; inside 0x803b0a-0x804f93): the saved key-on hour meter. 0x3452a loads it into key_on_hour_meter, and mc68k_runPowerDownSequence (0x280f4 / 0x28164) and restartThroughBootRom (0x11978 / 0x1199a) save it back. Long accesses only. The row is typed undefined today (eeprom_hour_meter_buffer). 0x0d8f8ee8 in the dump.",
+    "discriminator": "It is the key-on meter's EEPROM copy, the first of the two loads.",
+    "suggested_name": "key_on_hour_meter_cal",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 0x3fd4b2 key_on_hour_meter_cal (EEPROM 0x30), the same role, so it takes the same name. Type dword."
+   },
+   {
+    "address": "0x00803b50",
+    "role": "EEPROM mirror dword (EEPROM offset 0x46): the saved engine hour meter. 0x3452a loads it into engine_hour_meter, and the power-down sequence (0x281f6) and restartThroughBootRom (0x119e0) save it back. Long accesses only. The row is typed undefined today (eeprom_engine_run_time_buffer).",
+    "discriminator": "It is the engine-running meter's EEPROM copy, the second load.",
+    "suggested_name": "engine_hour_meter_cal",
+    "confidence": "high",
+    "cm848_counterpart": "CM848 0x3fd4c4 engine_hour_meter_cal (EEPROM 0x42), so it takes the same name. Type dword."
+   },
+   {
+    "address": "0x0080ccb6",
+    "role": "e2m 11EA +4 WPDYTM 'TIME COUNTING AGAINST RIFLE_TO_TURBO_DELAY_TIME' (0.05 s per count): 0x16dd4 clears it while the engine is stopped. After the delay has started it adds 1 per pass up to WPO2DY 0x80ccb8, and at that value the protection ends. Word, new row.",
+    "discriminator": "It is the counter of the oil-rifle-to-turbocharger delay. WPO2DY 0x80ccb8 is its target.",
+    "suggested_name": "engine_warmup_protection_oil_rifle_to_turbocharger_delay_timer",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0080ccb8",
+    "role": "e2m 11EA +6 WPO2DY 'CALCULATED TIME BASED ON COOLANT_TEMPERATURE TO ALLOW OIL TO RE[ACH THE TURBO]' (0.05 s): stored once when the oil pressure condition is met (0x17036), = lookupTableInterpolation(record 0x80058e) of coolant temperature. Word, new row.",
+    "discriminator": "It is the computed delay target, the only lookup result of the coolant temperature table.",
+    "suggested_name": "engine_warmup_protection_oil_rifle_to_turbocharger_delay_time",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0080ccba",
+    "role": "e2m 11EA +8 WPTMMX 'TIMER COUNTING AGAINST MAX_OVERALL_TIME_OUT' (0.05 s): cleared while stopped; +1 per running pass up to WPMXTMCN 0x807dd8, and at that value the protection ends. Word, new row.",
+    "discriminator": "It is the overall run time of the protection. It counts whatever the faults or the oil pressure are.",
+    "suggested_name": "engine_warmup_protection_overall_timer",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0080ccbc",
+    "role": "e2m 11EA +A WPFUTM 'TIMER COUNTING AGAINST FAULT_TIME_OUT' (0.05 s): cleared while stopped; +1 per running pass while one of the 7 coolant or oil pressure fault pairs is active, up to WPFUTMCN 0x807dda, and at that value the protection ends. Word, new row.",
+    "discriminator": "It counts only while a fault is active.",
+    "suggested_name": "engine_warmup_protection_fault_timer",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0080ccbe",
+    "role": "e2m 11EA +C WPRYTM 'TIMER COUNTING AGAINST OIL_BLEEDDOWN_TIME' (shown in minutes; 0.05 s per count): +1 per pass while the engine is stopped, up to WPRYTMCN 0x807ddc, and at that value the protection is armed. It is cleared when the engine is cranking or running. 3600 (= the limit) in the dump. Word, new row.",
+    "discriminator": "It is the only timer that counts with the engine stopped. It decides when the oil has drained back so that the next start is protected.",
+    "suggested_name": "engine_warmup_protection_oil_drain_back_timer",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0080ccc0",
+    "role": "e2m 11EA +E WPSTFG 'RUN_STATE HAS BEEN ACHIEVED DURING EXECUTION OF ENGINE WARMUP ALGO': 0x16dd4 clears it when arming and, while the engine is stopped, ends the protection when it is set. No code in the dumped ROM sets it to 1: only 0x16dd4 touches it (2 references). Word, new row.",
+    "discriminator": "It is the stopped-state exit flag. It is separate from the completed flag WPSSFG.",
+    "suggested_name": "engine_warmup_protection_run_state_achieved_flag",
+    "confidence": "medium"
+   },
+   {
+    "address": "0x0080ccc2",
+    "role": "e2m 11EA +10 WPDYFG 'FLAG INDICATING THAT RIFLE_TO_TURBO_DELAY_TIME DELAY STARTED': set when the oil pressure timer passes WPO2TMCN (0x17016), cleared while stopped. While it is 0 the oil pressure timer runs; while it is 1 the delay timer runs. Word, new row.",
+    "discriminator": "It switches between the two phases of the running branch.",
+    "suggested_name": "engine_warmup_protection_oil_rifle_to_turbocharger_delay_started_flag",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0080ccc4",
+    "role": "e2m 11EA +12 WPO2TDTM 'TIMER COUNTING AGAINST OIL_PRESSURE_THRESHOLD_TIME' (0.05 s): +1 per pass while filtered oil pressure >= WPO2TDCN 0x807dd4, 0 below it and while stopped. Exceeding WPO2TMCN 0x807dd6 starts the delay. It already has a row (timer_counting_against_oil_pressure_threshold_time_0_60, word), so this is a rename only.",
+    "discriminator": "It is the oil pressure qualification timer of the running branch.",
+    "suggested_name": "engine_warmup_protection_oil_pressure_timer",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0080ccc8",
+    "role": "e2m 11EA +16 WPIHFG 'ENGINE WARMUP PROTECTION ALGORITHM INHIBITED WHEN 1': 0x1709e clears it at start-up, and 0x16dd4 takes the off path while it is set. No writer of 1 in the dumped ROM. Word, new row.",
+    "discriminator": "It is the inhibit input of the off-path test.",
+    "suggested_name": "engine_warmup_protection_inhibited_flag",
+    "confidence": "medium"
+   },
+   {
+    "address": "0x0080ccca",
+    "role": "e2m 11EA +18 WPACFT 'WARMUP PROTECTION LIMITING TORQUE/RPM IF 1': set to 1 when the protection arms while stopped, cleared on every end or off path. 0x1709e does not touch it. No reader in the dumped ROM. 1 in the dump. Word, new row.",
+    "discriminator": "It is a status output. Unlike WPLMFG, it is not set by the start-up arming.",
+    "suggested_name": "engine_warmup_protection_active_flag",
+    "confidence": "medium"
+   },
+   {
+    "address": "0x00807dd4",
+    "role": "e2m 11EB +0 WPO2TDCN 'CALIBRATIBLE THRESHOLD FOR RIFLE OIL PRESSURE FOR ENGINE WARMUP' (psig, 1/128 per count; 1024 = 8 psig in the dump): the oil pressure the qualification timer needs. ROM calibration copy outside the EEPROM mirror, so no _cal. Rename of calibratible_threshold_for_rifle_oil_pressure_for_engine_warmu_0_100.",
+    "discriminator": "It is the pressure threshold. The other 11EB words are times.",
+    "suggested_name": "engine_warmup_protection_oil_pressure_threshold",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00807dd6",
+    "role": "e2m 11EB +2 WPO2TMCN 'TIME OIL PRESSURE MUST CONTINUOUSLY BE ABOVE OIL_PRESSURE_THRESHOLD' (0.05 s; 10 = 0.5 s): the limit of the oil pressure timer. Rename of time_oil_pressure_must_continuously_be_above_oil_pressure_thres_0_60.",
+    "discriminator": "It is the target of 0x80ccc4.",
+    "suggested_name": "engine_warmup_protection_oil_pressure_time",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00807dd8",
+    "role": "e2m 11EB +4 WPMXTMCN 'MAXIMUM TIME ENGINE WARMUP ALGORITHM WILL RUN' (0.05 s; 1200 = 60 s): the limit of the overall timer. Rename of maximum_time_engine_warmup_algorithm_will_run_0_100.",
+    "discriminator": "It is the target of 0x80ccba.",
+    "suggested_name": "engine_warmup_protection_maximum_time",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00807dda",
+    "role": "e2m 11EB +6 WPFUTMCN 'MAX TIME ALGORITHM WILL RUN WITH ACTIVE COOL. OR OIL PRESS. FAULT' (0.05 s; 120 = 6 s): the limit of the fault timer. Rename of max_time_algorithm_will_run_with_active_cool_or_oil_press_fa_0_100.",
+    "discriminator": "It is the target of 0x80ccbc.",
+    "suggested_name": "engine_warmup_protection_maximum_time_with_active_fault",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00807ddc",
+    "role": "e2m 11EB +8 WPRYTMCN 'TIME FOR OIL TO DRAIN BACK TO SUMP WITH ENGINE OFF' (0.05 s per count; 3600 = 3 min): the limit of the drain-back timer. Rename of time_for_oil_to_drain_back_to_sump_with_engine_off_0_54.",
+    "discriminator": "It is the target of 0x80ccbe.",
+    "suggested_name": "engine_warmup_protection_oil_drain_back_time",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00807dde",
+    "role": "e2m 11EB +A LSLOCN 'CALIBRATIBLE OPTION TO ALLOW LSG_LOCK_FLAG TO LOCK LOW IDLE GOV.' (1 in the dump): when it is set, the warmup protection's arming (0x16e88, and 0x170d2 at start-up) also sets the LSG lock flag 0x80a8f4. Word, new row, outside the EEPROM mirror, so no _cal.",
+    "discriminator": "It is the only enable that gates the LSG lock.",
+    "suggested_name": "engine_warmup_protection_low_speed_governor_lock_enable",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0080a8f4",
+    "role": "e2m 1045 +4 LSLOFG 'WHEN 1 TRANSITION FROM LSG TO NO ADJUST FUEL IS PROHIBITED': in the dumped ROM it is written only by the warmup protection (set to 1 on arming when LSLOCN is set, 0 when the protection ends). No reader in the dumped ROM; the low speed governor side is probably in the undumped 0x40000+ code. 1 in the dump. Word, new row.",
+    "discriminator": "It is the third word of the governed fuel block 1045 (after adjusted_user_fueling / _state).",
+    "suggested_name": "low_speed_governor_lock_flag",
+    "confidence": "high"
+   },
+   {
+    "address": "0x0080058e",
+    "role": "lookupTableInterpolation record (table_interp_args_t: index word 2, x 0x60846 WPCQXA coolant temperature axis, input word at 0x800594 = coolant temperature, y 0x6085a WPDYTMYA rifle-to-turbo delay times). 0x1709e builds it, and 0x16dd4 fills it and looks it up to get WPO2DY. The table naming scheme belongs to batch L3.",
+    "discriminator": "It is the coolant temperature to delay time lookup.",
+    "suggested_name": "engine_warmup_protection_oil_rifle_to_turbocharger_delay_time_lookup",
+    "confidence": "medium"
+   },
+   {
+    "address": "0x0080059c",
+    "role": "lookupTableInterpolation record (table_interp_args_t: index 2, x 0x607f2 WPESXA engine speed axis, input at 0x8005a2 = engine_rpm_primary, y 0x6081c WPFLDQYA fuel derate values). 0x1709e builds it, and 0x16dd4 looks it up to get engine_warmup_protection_fuel_limit while limiting.",
+    "discriminator": "It is the engine speed to fuel limit lookup.",
+    "suggested_name": "engine_warmup_protection_fuel_limit_lookup",
+    "confidence": "medium"
+   }
+  ],
+  "enum_roles": [
+   {
+    "enum_name": "HIGH_RPM_PROTECTION_FLAGS",
+    "value": 128,
+    "meaning": "J1587 PID 71 (Idle Shutdown Timer Status) bit 8: the idle shutdown timer is active. No row in either firmware is typed with this enum. If the CM550 enum is kept: IDLE_SHUTDOWN_TIMER_STATUS_FLAGS member IDLE_SHUTDOWN_TIMER_STATUS_TIMER_ACTIVE (old TIMER_ACTIVE)",
+    "evidence": "insiteCommandByteDispatcher case 0x47 at 0xefa2: clr.b d2; 0xefa4-0xefba tst.w idle_shutdown_timer 0x80d676 / cmp.w idle_shutdown_period_cal 0x803c02 / ori.b #0x80,d2 (timer nonzero and below the period). J1939 equivalent SPN 590 Engine Idle Shutdown Timer State (PGN 65252, local j1939 database)"
+   },
+   {
+    "enum_name": "HIGH_RPM_PROTECTION_FLAGS",
+    "value": 8,
+    "meaning": "PID 71 bit 4: the idle shutdown function is enabled in the calibration. If kept: IDLE_SHUTDOWN_TIMER_STATUS_FUNCTION_ENABLED (old HIGH_RPM_DIAG_FLAG_BIT1, CM848 HIGH_RPM_DIAG_FLAG)",
+    "evidence": "0xefbe-0xefca: move.w algorithm_enable_flags_3_cal 0x803c9a / andi.w #0x2 (idle_shutdown_enable, ISAGEN) / ori.b #0x8,d2. The old comment 'diagnostic system flags bit 1 (0x02)' is that same bit. SPN 591 Engine Idle Shutdown Timer Function"
+   },
+   {
+    "enum_name": "HIGH_RPM_PROTECTION_FLAGS",
+    "value": 4,
+    "meaning": "PID 71 bit 3: the idle shutdown override is active. If kept: IDLE_SHUTDOWN_TIMER_STATUS_OVERRIDE_ACTIVE (old FAULT_WITH_DIAG)",
+    "evidence": "0xefce-0xefe4: tst.w idle_shutdown_overridden_flag 0x80d672 (ISOD) and 0x803c9a & 0x4 (idle_shutdown_override_enable, ISODEN) / ori.b #0x4,d2. SPN 592 Engine Idle Shutdown Timer Override"
+   },
+   {
+    "enum_name": "HIGH_RPM_PROTECTION_FLAGS",
+    "value": 2,
+    "meaning": "PID 71 bit 2: the idle timer has shut down the engine. If kept: IDLE_SHUTDOWN_TIMER_STATUS_ENGINE_SHUT_DOWN (old SHUTDOWN_TIMER_ZERO)",
+    "evidence": "0xefe8-0xeff8: tst.w engine_shutdown_command_flag 0x80d28c (SHSS) set and idle_shutdown_timer 0x80d676 = 0 / ori.b #0x2,d2. SPN 593 Engine Idle Shutdown has Shutdown Engine"
+   },
+   {
+    "enum_name": "HIGH_RPM_PROTECTION_FLAGS",
+    "value": 1,
+    "meaning": "PID 71 bit 1: driver alert mode is active (the idle shutdown warning). If kept: IDLE_SHUTDOWN_TIMER_STATUS_DRIVER_ALERT_ACTIVE (old HIGH_RPM_WARNING_ACTIVE)",
+    "evidence": "0xeffc-0xf004: tst.w idle_shutdown_warning_lamp_request 0x80d67a (ISWRRQ) / ori.b #0x1,d2. SPN 594 Engine Idle Shutdown Driver Alert Mode. The byte is built in d2 / the dispatcher's shared response local, so no variable can carry this enum. CM848 has no such byte: its SCI command 0x47 (cm848_sciCommand20Callback 0x51f0b8) is an empty case"
+   },
+   {
+    "enum_name": "HIGH_RPM_PROTECTION_STATE",
+    "value": 0,
+    "meaning": "No user: no code stores or compares this value as this state. Delete the enum in both firmwares (old MONITORING)",
+    "evidence": "No global, struct field, local or function definition in either firmware is typed HIGH_RPM_PROTECTION_STATE, and no member name appears in either .cpp. The 0x16dd4 named in its header has no state word (asm 0x16dd4-0x1709c: flags and timers only; it is the engine warmup protection)"
+   },
+   {
+    "enum_name": "HIGH_RPM_PROTECTION_STATE",
+    "value": 1,
+    "meaning": "No user; delete (old TIMER_COUNTING)",
+    "evidence": "The header's global high_rpm_protection_state (CM550 0x80cc6c, inside the old struct high_rpm_protection_t 0x80cc6a-0x80cc72) lies inside the serial EEPROM write queue's data byte array 0x80c7a8 + i, i < 0x500 (cm550_parameterCircularBufferWrite '% 0x500'; indexed move.b at 0x16c92). The ROM holds no 4-byte occurrence of any address from 0x80c7a9 to 0x80cca7"
+   },
+   {
+    "enum_name": "HIGH_RPM_PROTECTION_STATE",
+    "value": 2,
+    "meaning": "No user; delete (old RPM_PROTECTION_WARNING_ACTIVE)",
+    "evidence": "The idle shutdown machine that the old pass probably misread already has its own enum IDLE_SHUTDOWN_STATE with 6 states (0 RESET, 1 COUNT, 2 WARNING, 3 DELAY, 4 OVERRIDE, 5 SHUTDOWN), typed on idle_shutdown_state 0x80d674. Values 3 and 4 of this enum do not match it, and value 5 is missing"
+   },
+   {
+    "enum_name": "HIGH_RPM_PROTECTION_STATE",
+    "value": 3,
+    "meaning": "No user; delete (old FAULT_TRIGGERED)",
+    "evidence": "same as value 0: no typed row and no member text in either firmware"
+   },
+   {
+    "enum_name": "HIGH_RPM_PROTECTION_STATE",
+    "value": 4,
+    "meaning": "No user; delete (old SHUTDOWN_PENDING)",
+    "evidence": "same as value 0. In CM848 the rows are copies of CM550's text and have no code counterpart at all (no idle shutdown or high rpm state code is named there)"
+   }
+  ],
+  "notes": "Describer notes file: /home/linux/.claude/jobs/374b0424/tmp/w15/r94/scratch/L1/describer/notes.md (asm ranges, RAM dump values, e2m records).\n\nDECISIONS\n- 0x1c0d4 vs CM848 0x1e4e8 is a COUNTERPART. The arithmetic core is identical, but the CM550 body also clears torque_derate_torque_limit / _state after use (0x1c140 / 0x1c148) and needs the start-up clear 0x1c308. CM848 clears in its caller cm848_arbitrateRequestedFueling BEFORE the chain and has no start-up clear. In both firmwares the only code that lowers the torque limit in the dumped ROM is the twin applyPowerTakeOffTorqueLimit. CM550's chain also calls the undumped 0x45252 / 0x455c8, which could not be checked.\n- 0x3452a is a TWIN of CM848 0x5067bc. Use the shared name loadHourMetersFromEeprom, and rename the CM848 row too.\n- 0x16dd4 / 0x1709e are the CM550-only engine warmup protection (run / initialize). The lead is right. No high rpm logic and no numbered state exist; this is a flag and timer sequence. The e2m 11EA records name all of its working words (most have no row yet).\n- 0x1cc72 is a COUNTERPART of cm848_calculateThrottle100Fuelings 0x1f17c. Its cold term comes from the in-line table (FLCDICZA) instead of CM848's cold_delta_fuel, it does not write +6, and its ESP branch differs.\n\nENUMS\nNo row in either firmware uses HIGH_RPM_PROTECTION_STATE or HIGH_RPM_PROTECTION_FLAGS (grep of every CSV and .cpp).\n- Delete STATE in both firmwares.\n- Delete FLAGS in CM848: no PID 71 code exists there; SCI 0x47 is an empty case.\n- In CM550 the FLAGS masks are exactly the J1587 PID 71 Idle Shutdown Timer Status byte built at 0xefa2 (0x80 / 0x08 / 0x04 / 0x02 / 0x01 = timer active / function enabled / override active / engine shut down by the idle timer / driver alert; J1939 SPN 590-594). The byte lives in a register / the dispatcher's shared local, so the enum cannot be applied. I prefer to delete it and put the bit map into insiteCommandByteDispatcher's plate comment. If it is kept: rename it to IDLE_SHUTDOWN_TIMER_STATUS_FLAGS with the members in enum_roles.\n\nINPUTS SEEN, NOT OWNED BY THIS BATCH (candidates)\n- CM550 0x80db1a max_torque_at_current_rpm_in_foot_pounds_0_10000 (e2m 1461 +0 MTMPRPFL) is the same role as CM848 0x40aee6 fuel_demand_filter_dimension. A misleading name in CM848: the word is the maximum torque map output in cm848_calculateFuelDemandFilter 0x29c98, init 1 in 0x29de0. The CM550 writers are cm550_FUN_000269f2 / cm550_FUN_00026a2e. A shared name 'maximum_torque_at_current_rpm' fits both (CM848 block 1461 is not in its dumped parameter table, but the code proves the role).\n- CM550 0x80d36e (105A +6 FSMXBK, no row) = CM848 engine_speed_limit_reference_maximum_fuel_quantity.\n- CM550 0x80d654 (1063 +10 HSRFBFDP) = CM848 engine_speed_limit_ramped.\n- The 0x1cc72 lookup records 0x8006ea (steady state 4D fueling at throttle 400) and 0x800700 (cold temperature fuel increment) and their builder cm550_FUN_0001cdf8 are for L3.\n\nOTHER LEFTOVERS FROM THE OLD PASS (out of scope)\n- INSITE_PARAM_CODE 0x47 HIGH_RPM_PROTECTION_STATUS in both enums.csv: this is PID 71, idle shutdown timer status.\n- CM550 DIAGNOSTIC_SYSTEM_FLAGS_1 0x02 / 0x04 'high RPM protection' are algorithm_enable_flags_3_cal idle_shutdown_enable / idle_shutdown_override_enable.\n- CM550 struct high_rpm_protection_t and the rows 0x80cc6a-0x80cc72 sit inside the EEPROM write queue data bytes.\n- The rows 0x80c994 / 0x80c996 / 0x8036fc / 0x8032c6 / 0x8002e8 (high_rpm_*) have no 4-byte address occurrence in the dumped ROM.\n- The CM550 e2m gives FSMTFLNP the unit %FU with scale 0.01698 (a quarter of MM3S). The code subtracts no_load_fuel_quantity from it, and the dump value equals +0, so it is the same fuel count as MM3S."
+ },
+ "verdict": {
+  "batch": "L1",
+  "overall": "I judged L1 against the frozen copies. The frozen enums.csv files are identical to the repository's. My evidence: my own CPU32 disassembly of 0x16dd4-0x1711e, 0x1c0d4-0x1c150, 0x1c308, 0x1cc72-0x1cdf6, 0x3452a, 0x280e2-0x28202, 0x11968-0x119f0 and 0xefa2-0xf032; PowerPC disassembly of CM848 0x1e4e8 and 0x5067bc; abs_refs for every global; a caller scan (jsr, bsr and pea: each batch function has exactly one caller); the e2m records through e2m_block_addresses and the raw v64t6_s / CHR lines; and the RAM and EEPROM dumps.\n\nFUNCTIONS. The investigator and the describer agree on all six roles and on five of the six names, and the code confirms them.\n- 0x16dd4 / 0x1709e are the CM550-only engine warmup protection: e2m group EWP_HDR, blocks 11EA-11EF. There is no high engine speed logic and no numbered state. CM848 0x5055a0 is the unrelated emission AECD cap, so both are standalone. The name of 0x16dd4 stays. Its plate is AMENDED for three precision errors: (1) 'completed with the engine running' is really 'completed while engine_state is not STOPPED'; (2) the table limit is computed only in states 2/3/6/7, while stopped it is fuel_demand_maximum, and states 4/5/8 change nothing; (3) the oil pressure timer must exceed WPO2TMCN, not just reach it.\n- 0x1c0d4 is a COUNTERPART of CM848 0x1e4e8. Steps 1-4 are the same (0->1 guard, limit x (FSMTFLNP - no load) / maximum torque, floor at 0, minimum with source). CM550 then resets the limit to 0xFFFF / 40, a step CM848 does in its caller cm848_arbitrateRequestedFueling before the chain.\n- 0x1c308 is the start-up half of that reset. Standalone.\n- 0x1cc72 is a COUNTERPART of cm848_calculateThrottle100Fuelings. The two differ in the cold term (in-line 81EE-81F0 table here), the missing +6 write and the ESP branch. The 'coolant fault' gate is supported by analogy: CM848's cm848_calculateColdDeltaFuel zeroes the same term on its three coolant temperature faults. I re-checked the discriminator: 0x1cc72 is the only writer of 105A +0/+2/+4/+8 (0xadb8 only reads +0).\n- 0x3452a is a TWIN of CM848 0x5067bc: the same two long copies in the same order (key-on, then engine), EEPROM words 0x12 apart in both, directly after the twin advanceHourMeters, and the same start-up slot after the analog channel initializers. Both rows take loadHourMetersFromEeprom. The CM848 plate should add the twin line.\n- skipped[] is empty, so nothing needs to stay skipped.\n\nGLOBALS. Every address, width, user list and e2m record checks out. No new row overlaps a named row. _cal is right on the two EEPROM mirror dwords and absent everywhere else. Three comments are AMENDED:\n- 0x80d654: the ramp step 0x808138 is e2m 1062 +0 HSRFRMRT, not 1063.\n- 0x80d36c: the reader list missed 0x18572 in 0x184c6.\n- 0x80a8f4: the run-state-achieved exit while stopped does not clear it.\nFSMTFLNP's %FU scale (100/5888) is the same count as MM3S (400/5888), so the investigator's unit is right. The CM550 0x80db1a / CM848 0x40aee6 name maximum_torque_at_current_engine_speed is also proposed by L2 (0x80db1a) and L4 (0x40aee6). L4 also names CM848 0x1e4e8 cm848_convertTorqueDerateTorqueLimitToFuelLimit. There is no conflict, so apply each change once.\n\nENUMS. Delete HIGH_RPM_PROTECTION_STATE and HIGH_RPM_PROTECTION_FLAGS in both firmwares. No global, struct field, local, definition or .cpp line uses any member. Only enums.csv and the generated firmware_types.hpp list them. The rows to delete:\n- CM550 enums.csv 407-412 (comment line + FLAGS) and 531-537 (two comment lines + STATE).\n- CM848 enums.csv 720-725 and 727-732 (with their comment lines; also the blank separators 719 / 726).\n- Regenerate both firmware_types.hpp.\nThe FLAGS masks are exactly the J1587 PID 71 Idle Shutdown Timer Status byte, built in d2 at CM550 0xefa2-0xf004:\n- 0x80: timer active\n- 0x08: function enabled\n- 0x04: override active\n- 0x02: engine shut down by the idle timer\n- 0x01: driver alert\nThat byte goes through the shared response pointer (0xf028-0xf032), so no row can carry the enum. Put the bit map into insiteCommandByteDispatcher's plate instead. CM848 has no idle shutdown code at all. STATE is superseded by IDLE_SHUTDOWN_STATE 0-5.\n\nSIDE NOTES FOR THE PARENT.\n- The 'return,,void' function_definitions rows for 0x16dd4 / 0x1709e are right: 0x1b6c0 is followed by the rts of a void task set, and 0x28810 by the next jsr.\n- Old names and comments to sweep:\n  - the plates of 0x1b6b4 / 0x1b572;\n  - the engine_warmup_protection_enable bitfield comment;\n  - the torque_derate_torque_limit / engine_warmup_protection_* row comments;\n  - every CM848 comment that quotes fuel_demand_filter_dimension (0x17eb8, 0x20500, 0x21ac0, 0x29c98 plates and the 0x40a622 row).\n- The 0x40aee6 comment names cm848_calculateProtectionRateLimited, which L4 renames.\nNotes: /home/linux/.claude/jobs/374b0424/tmp/w15/r94/scratch/L1/judge/notes.md",
+  "verdicts": [
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00016dd4",
+    "verdict": "AMENDED",
+    "final_name": "cm550_runEngineWarmupProtection",
+    "final_relation": "standalone",
+    "final_cm848_address": "",
+    "final_type": "",
+    "final_comment": "The engine warmup protection state machine (e2m 11EA / 11EB, enable WPEAFG = algorithm_enable_flags_18_cal bit 1), one pass per 50 ms from cm550_runEvery10FramesTaskSetPhase0. Off path: with the feature disabled, with engine_warmup_protection_inhibit_flag (WPIHFG) set, or once the protection has completed while engine_state is not STOPPED, it ends the protection (completed 1, limiting 0, low_speed_governor_lock_flag 0, WPACFT 0) and sets engine_warmup_protection_fuel_limit (WPTQLM) to fuel_demand_maximum. With the engine STOPPED it clears the oil pressure, delay, overall and fault timers and the delay started flag and counts engine_warmup_protection_oil_drain_back_timer up to engine_warmup_protection_oil_drain_back_time (3 min here). At that time it arms the protection for the next start: engine_warmup_protection_fuel_limiting_flag 1, completed 0, WPACFT 1, and low_speed_governor_lock_flag 1 when LSLOCN is set (a set WPSTFG ends it again). While stopped the limit stays at fuel_demand_maximum. While cranking / running / jump start / reentry it ends the protection (completed 1, limiting 0) when the overall timer reaches the maximum time, when the fault timer (counting while one of seven coolant or oil pressure fault bits is active and latched) reaches the maximum time with a fault, or when the rifle to turbocharger delay has run out. That delay is looked up from coolant temperature (WPCQXA / WPDYTMYA) once oil pressure has stayed at or above WPO2TDCN for more than WPO2TMCN. In these states the limit is the engine speed table value (WPESXA / WPFLDQYA) while limiting, else fuel_demand_maximum. Engine brake, overspeed and shutdown change nothing. cm550_applyEngineWarmupProtectionFuelLimit applies the limit (was cm550_highRpmEngineProtectionStateMachine - nothing in it is about high engine speed).",
+    "own_role": "One 50 ms pass of the CM550-only engine warmup protection (e2m 11EA/11EB). The off path (disabled, inhibited, or completed while not stopped) ends it with limit = fuel_demand_maximum. While stopped it clears the run timers, counts the oil drain-back timer and arms the protection at the drain-back time. In cranking/running/jump start/reentry the overall or fault time-out ends it, or oil pressure qualification starts the coolant-based rifle-to-turbocharger delay, whose end ends it. While limiting there, the limit is the engine speed table value.",
+    "reason": "My disassembly of 0x16dd4-0x1709c matches both reports step for step. Enable test at 0x16df0. Exit at 0x16e10-0x16e22. Stopped branch at 0x16e40-0x16eb2 (clr ccc4/ccb6/ccba/ccbc, drain-back count to 0x807ddc, arm, WPSTFG end, clr ccc2, limit = 0x808004). States 2/7/3/6 at 0x16ec2-0x16ed8; 4/5/8 go straight to rts. The time-outs, the oil pressure timer (bls at 0x17014, so the timer must exceed WPO2TMCN), the coolant lookup through 0x80058e and the engine speed lookup through 0x80059c follow. It is the only writer of 0x80ccc6 (5 stores) and the only body with these timers (abs_refs). There is no high rpm logic. CM848 has no WP* e2m record, and 0x5055a0 is the unrelated emission AECD, so it is standalone. The name is unique and matches the describer's. The plate is amended for three errors: 'completed with the engine running' (the code tests engine_state != STOPPED), 'while limiting it sets ... from the table' (only in states 2/3/6/7; stopped gives fuel_demand_maximum and 4/5/8 leave it unchanged), and 'for WPO2TMCN' (it must be more than that)."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x0001709e",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_initializeEngineWarmupProtection",
+    "final_relation": "standalone",
+    "final_cm848_address": "",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Start-up initializer of the engine warmup protection. It clears WPIHFG and, from WPEAFG, arms (limiting 1, completed 0, LSG lock 1 when LSLOCN) or disarms (limiting 0, completed 1). It builds the two lookupTableInterpolation records: 0x80058e (x 0x60846 WPCQXA coolant, y 0x6085a WPDYTMYA delay) and 0x80059c (x 0x607f2 WPESXA engine speed, y 0x6081c WPFLDQYA fuel derate).",
+    "reason": "Disassembly 0x1709e-0x1711e: clr.w 0x80ccc8, then the andi.w #2 of 0x803cb8 arm/disarm, then the six descriptor stores. The e2m addresses resolve to 11EF/11EE/11ED/11EC. It is the only writer of the two descriptors. Its only caller is jsr @0x28810 in mc68k_applicationMain, right after cm550_initializeLowSpeedGovernor. It runs no timers, so it differs from 0x16dd4, which reads the same bit. No fuel temperature is involved anywhere. CM848 has no warmup protection, so it is standalone. Unique name; both reports agree; the plate is accurate."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x0001c0d4",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_convertTorqueDerateTorqueLimitToFuelLimit",
+    "final_relation": "counterpart",
+    "final_cm848_address": "",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Turns torque_derate_torque_limit (lb-ft) into fuel: no_load + limit x (FSMTFLNP - no_load) / maximum torque at the current speed (0 -> 1 first), floored at 0. When that is lower, it lowers torque_derate_fuel_quantity with the limit's state as source. Then it resets the limit to 0xFFFF and the state to 40.",
+    "reason": "CM550 0x1c0d4-0x1c150: cmpi.w #1 / move.w #1 on 0x80db1a, then pushes and jsr 0x35076 (muls.l/divs.l = arg1*arg2/arg3), add no load, bge floor, cmp.l/bge against 0x80dec8, store + 0x80d33a -> 0x80deca, then move.w #0xffff,0x80d338 and #0x28,(a3). CM848 0x1e4e8 does steps 1-4 identically (0x40aee6 0->1, (0x40a89f - 0x40aeec) * 0x40a2d8 / 0x40aee6 through 0x570f0, floor, min with 0x40afac and source 0x40a2da) and ends with blr. Its reset sits in the caller cm848_arbitrateRequestedFueling before cm848_processProtectionLimits. CM550 has an extra step, so it is a counterpart, not a twin. The only caller is bsr.w @0x1c190 after jsr cm550_runFuelLimitChains in cm550_selectFinalFueling. The name is unique, and the describer and L4 (cm848_ stem for 0x1e4e8) agree."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x0001c308",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_initializeTorqueDerateTorqueLimit",
+    "final_relation": "standalone",
+    "final_cm848_address": "",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Start-up initialization of the torque derate torque limit pair: torque_derate_torque_limit = 0xFFFF (no limit) and torque_derate_torque_limit_state = 40 FUELING_STATE_NO_DERATE.",
+    "reason": "0x1c308: move.w #0xffff,(0x80d338); move.w #0x28,(0x80d33a); rts. Its single caller is jsr @0x28970 in mc68k_applicationMain's start-up list, after cm550_FUN_00026a2e. It does no conversion, which separates it from 0x1c0d4. CM848 writes torque_derate_torque_limit only per pass, in cm848_arbitrateRequestedFueling (cpp 20741), and in applyPowerTakeOffTorqueLimit, so there is no start-up counterpart. The name is unique; both reports agree."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x0001cc72",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_calculateThrottle100Fuelings",
+    "final_relation": "counterpart",
+    "final_cm848_address": "",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Every 20 ms (last call of cm550_runEvery4FramesTaskSetPhase1) it computes the 105A 100 percent throttle fuelings. With programmable power off: +0 = blended curve at rpm/400, +4 = curve at engine_speed_limit_ramped/400, +2 = steady state 4D table at 400 through subtractAndClamp, each plus the cold increment (in-line coolant x speed table, gated by the enable bit and three status word 2 fault bits) and floored at fuel_demand_minimum. Always: +8 = the steady state table (ESP) or the curve at 400, floored.",
+    "reason": "Disassembly 0x1cc72-0x1cdf6 matches the plate: andi.l #0x200 of 0x803cb8 skips +0/+2/+4; the cold d2 is gated by 0x803cd4 & 0x8000 and 0x806004 bits 2/1/0x10 with latch 0x806ac0; ESP is 0x803cac & 0x10. It is the only writer of 0x80d368/36a/36c/370 (0xadb8 and 0x26cc8 only read). +6 0x80d36e is written in selectEngineSpeedLimit at 0x1d7b6. CM848 0x1f17c uses cold_delta_fuel (flags_41), writes +6 and uses chi maximum fuel lookups for +4/+6, and for ESP forces four_dimensional_fueling_interpolation_factor to 0. Different steps, so it is a counterpart with the cm550_ prefix on CM848's base name. The 'coolant fault' wording is backed by cm848_calculateColdDeltaFuel, which zeroes the same term on the three coolant temperature faults. The single caller is jsr @0x1b5c6. Unique name."
+   },
+   {
+    "kind": "function",
+    "firmware": "both",
+    "address": "0x0003452a",
+    "verdict": "CONFIRMED",
+    "final_name": "loadHourMetersFromEeprom",
+    "final_relation": "twin",
+    "final_cm848_address": "0x005067bc",
+    "final_type": "",
+    "final_comment": "",
+    "own_role": "Start-up load of the two hour meters from the EEPROM mirror: key_on_hour_meter = dword 0x803b3e (EEPROM 0x34), then engine_hour_meter = dword 0x803b50 (EEPROM 0x46).",
+    "reason": "CM550 0x3452a: move.l 0x803b3e -> 0x80bda4; move.l 0x803b50 -> 0x80ccee; rts. CM848 0x5067bc: lwz 0x3fd4b2 / stw 0x40a64c; lwz 0x3fd4c4 / stw 0x40a794; blr. The steps, the order and the meter pair are the same, and the EEPROM offsets are 0x12 apart in both (0x34/0x46 vs 0x30/0x42). Both bodies sit directly after the twin advanceHourMeters, and each has one start-up caller right after the analog channel initializers (CM550 jsr @0x2870e; CM848 after cm848_initializeAmbientAirTemperatureChannel). The EEPROM dump at 0x34 / 0x46 equals RAM 0x803b3e / 0x803b50. The shared unprefixed name follows the advanceHourMeters precedent and is free in both firmwares; the CM848 row changes too."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080ccb6",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_warmup_protection_rifle_to_turbocharger_delay_timer",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 11EA +4 WPDYTM resolves here (no row). Word-only accesses, all in 0x16dd4: clr.w @0x16e4c, move.w @0x1703e, addq.w @0x1704c. It counts up to 0x80ccb8 and ends the protection at that value. Unique; it overlaps no row. The describer adds 'oil_' but either is faithful to RIFLE_TO_TURBO."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080ccb8",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_warmup_protection_rifle_to_turbocharger_delay_time",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 11EA +6 WPO2DY. move.w d0 @0x17036 after jsr 0x34de0 on 0x80058e, with input 0x800594 = coolant 0x80a336. Compared at 0x17044. Word only. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080ccba",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_warmup_protection_overall_timer",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 11EA +8 WPTMMX. clr.w @0x16e52 while stopped; move/cmp 0x807dd8/addq at 0x16ee2-0x16ef0 in states 2/3/6/7; the time-out test at 0x16fa6. Word only. 1200 = 60 s matches the dump. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080ccbc",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_warmup_protection_fault_timer",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 11EA +A WPFUTM. clr.w @0x16e58. It counts at 0x16f92-0x16fa0 only after one of the seven status/latch pairs (word 3 0x4/0x8/0x20/0x40, word 2 0x2/0x1, word 6 0x2000) and is tested at 0x16fb4. Word only. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080ccbe",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_warmup_protection_oil_drain_back_timer",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 11EA +C WPRYTM (MIN 0.000833 = 0.05 s). Counts while STOPPED at 0x16e5e-0x16e6c up to 0x807ddc and is cleared at 0x16edc in states 2/3/6/7. Dump 3600 = WPRYTMCN (armed). Word only. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080ccc0",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_warmup_protection_run_state_achieved_flag",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 11EA +E WPSTFG. Only two references: clr.w @0x16e7a (arm) and tst.w @0x16e98 (stopped exit: completed 1, limiting 0, WPACFT 0). No base-register access, because the a-register bases 0x80ccb2/0x80ccb4 are used only as (an). The comment states correctly that nothing in the dumped ROM writes 1. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080ccc2",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_warmup_protection_rifle_to_turbocharger_delay_started_flag",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 11EA +10 WPDYFG. clr.w @0x16eac while stopped; tst.w @0x16fe4 selects the oil pressure phase or the delay phase; move.w #1 @0x17016 when the oil pressure timer exceeds WPO2TMCN. Word only. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080ccc4",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_warmup_protection_oil_pressure_timer",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 11EA +12 WPO2TDTM resolves to the existing row (rename only). clr.w @0x16e46 / @0x17002. addq.w @0x16ffa while oil 0x80a30a >= 0x807dd4 (bcs to clear). cmp with 0x807dd6 at 0x1700e. Word only. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080ccc8",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_warmup_protection_inhibit_flag",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 11EA +16 WPIHFG. Only two references: tst.w @0x16e08 (off path) and clr.w @0x170ba (start-up). '_inhibit_flag' is the convention of both CSVs. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080ccca",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_warmup_protection_torque_or_speed_limiting_flag",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 11EA +18 WPACFT 'limiting torque/rpm if 1'. move.w #1 only at the drain-back arm (0x16e80). Cleared at all four ends (0x16e1c / 0x16ea6 / 0x16fce / 0x17060). 0x1709e does not touch it, which separates it from the limiting flag. No reader. Dump 1. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080a8f4",
+    "verdict": "AMENDED",
+    "final_name": "low_speed_governor_lock_flag",
+    "final_type": "word",
+    "final_comment": "e2m 1045 +4 LSLOFG 'WHEN 1 TRANSITION FROM LSG TO NO ADJUST FUEL IS PROHIBITED' (the LSG_LOCK_FLAG named by 11EB +A LSLOCN). Set when the warmup protection is armed (at start-up or after the drain-back time) while engine_warmup_protection_low_speed_governor_lock_enable is nonzero. Cleared on the off path, at the overall or fault time-out and at the end of the rifle to turbocharger delay (the run state achieved exit while stopped leaves it set). Only the two warmup functions write it, and the dumped ROM has no reader. CM848's 1045 +4 is a different record (LSG_Running_Flag). Dump 1.",
+    "reason": "e2m 1045 +4 LSLOFG resolves here (no row); CM848 1045 +4 is LSRNFL. Writers: move.w #1 @0x16e90 / @0x170da, clr.w @0x16e16 / 0x16fc8 / 0x1705a. No other absolute reference and no base-register reader: 0x80a8f0 is never a base, and 0xf79a's a2 = 0x80a8f2 is used only as (a2). The name is right and unique. The comment is amended because the WPSTFG end at 0x16ea0-0x16ea6 does not clear it, so 'cleared when the protection ends' was too broad."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807dde",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_warmup_protection_low_speed_governor_lock_enable",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 11EB +A LSLOCN. tst.w @0x16e88 and @0x170d2 are its only references; each gates the LSG lock set. Dump 1. Outside the EEPROM image, so no _cal. No overlap: 0x807ddc is a word and the next row is 0x807de2. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807dd4",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_warmup_protection_oil_pressure_threshold",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 11EB +0 WPO2TDCN (PSIG 0.0078125; dump 1024 = 8 psi). Its only code use is cmp.w @0x16ff2 against oil 0x80a30a; the other references are the parameter ID table. Not in the EEPROM image. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807dd6",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_warmup_protection_oil_pressure_time",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 11EB +2 WPO2TMCN (0.05 s; dump 10 = 0.5 s). cmp.w @0x1700e / bls: the delay starts when the oil pressure timer exceeds it. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807dd8",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_warmup_protection_maximum_time",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 11EB +4 WPMXTMCN (0.05 s; dump 1200 = 60 s). cmp.w @0x16ee8 (count limit) and @0x16fac (time-out end). Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807dda",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_warmup_protection_maximum_time_with_fault",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 11EB +6 WPFUTMCN (0.05 s; dump 120 = 6 s). cmp.w @0x16f98 and @0x16fba. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00807ddc",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_warmup_protection_oil_drain_back_time",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 11EB +8 WPRYTMCN (MIN 0.000833; dump 3600 = 3 min). Its only code use is cmp.w @0x16e64. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803b3e",
+    "verdict": "CONFIRMED",
+    "final_name": "key_on_hour_meter_cal",
+    "final_type": "dword",
+    "final_comment": "",
+    "reason": "EEPROM image offset 0x34. Long accesses only: move.l @0x3452a / @0x1199a / @0x28164, plus the 4-byte write source pea @0x11976 / @0x280f2 into cm550_parameterCircularBufferWrite. Both save paths (power-down 0x280e2-0x2816e and restartThroughBootRom 0x11968-0x119a4) wait for the mirror to match. The EEPROM dump at 0x34 = 227512040 = RAM. The next row is 0x803b44, so the dword overlaps nothing. Same role and name as CM848 key_on_hour_meter_cal. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00803b50",
+    "verdict": "CONFIRMED",
+    "final_name": "engine_hour_meter_cal",
+    "final_type": "dword",
+    "final_comment": "",
+    "reason": "EEPROM offset 0x46. Long accesses only: move.l @0x34534 / @0x119e0 / @0x281f6 and pea @0x119bc / @0x28180. The dump 226203089 equals EEPROM 0x46 and engine_hour_meter. The next row is 0x803b88. Same role and name as CM848 engine_hour_meter_cal. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080d370",
+    "verdict": "CONFIRMED",
+    "final_name": "throttle_100_fueling_without_programmable_power",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 105A +8 FSMTFLNP in both firmwares; the CM848 row 0x40a89f has this name. Word stores through a3 in 0x1cc72 and the word* pea to cm550_subtractAndClampValue. Its only reader is move.w @0x1c102 in 0x1c0d4. The next row is 0x80d372, so no overlap. The CM550 e2m's %FU scale 0.016983696 = 100/5888 is the same count as MM3S 0.0679 = 400/5888, so the comment's unit is right. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080d36c",
+    "verdict": "AMENDED",
+    "final_name": "engine_speed_limit_ramped_maximum_fuel_quantity",
+    "final_type": "word",
+    "final_comment": "e2m 105A +4 FSMXBFDP '100% FUELING VALUE AT HSG_BEF_DROOP_SPEED' (1436 in the dump). cm550_calculateThrottle100Fuelings stores the blended maximum fuel curve at engine_speed_limit_ramped (throttle 400) plus the cold temperature increment, raised to at least fuel_demand_minimum. Read by cm550_calculateGovernorDroopSpeed (0xfaca), 0x184c6 (the J1939 torque curve breakpoint 2 speed while the engine protection fuel derate is active, 0x18572), selectEngineSpeedLimit (0x1d884) and cm550_calculateEngineLoadPercentages (0x26d96 / 0x26dc4). The same record and name as CM848 0x40a89b.",
+    "reason": "105A +4 resolves here, and CM848 105A +4 is 0x40a89b engine_speed_limit_ramped_maximum_fuel_quantity. Writes are only in 0x1cc72 (0x1cd36 / 0x1cd3c / 0x1cd4c); word only. The name is right and unique. The comment is amended because its reader list missed 0x18572 in cm550_FUN_000184c6, the CM550 side of CM848's fault derate torque curve speed points."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080d654",
+    "verdict": "AMENDED",
+    "final_name": "engine_speed_limit_ramped",
+    "final_type": "word",
+    "final_comment": "e2m 1063 +10 HSRFBFDP 'THE ACTUAL HSG DERATE SPEED USED IN HSG DROOP CALCULATION' (engine speed x 8; 20240 = 2530 rpm in the dump). In selectEngineSpeedLimit it rises by the step 0x808138 (e2m 1062 +0 HSRFRMRT) each pass toward the reference before droop 0x80d648 (1063 +4 HSRFBEDP) and drops to it at once. initializeEngineSpeedLimitDefaults starts it from engine_speed_limit_reference_default_cal (0x803ba0). cm550_calculateThrottle100Fuelings looks up engine_speed_limit_ramped_maximum_fuel_quantity at it. The same record, behaviour and name as CM848 0x40a308.",
+    "reason": "1063 +10 HSRFBFDP is this word in CM550 and 0x40a308 engine_speed_limit_ramped in CM848. In the twin selectEngineSpeedLimit (a4 = 0x80d654, a2 = 0x80d648 at 0x1d5a4-0x1d5b0), 0x1d740-0x1d754 adds the step while below and clamps down at once. The twin initializeEngineSpeedLimitDefaults copies 0x803ba0 at 0x1d958, which is the same behaviour as CM848's row. Word only; unique. The comment is amended because 0x808138 is e2m 1062 +0 HSRFRMRT, not block 1063."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080db1a",
+    "verdict": "CONFIRMED",
+    "final_name": "maximum_torque_at_current_engine_speed",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "e2m 1461 +0 MTMPRPFL resolves here (dump 330). cm550_FUN_000269f2 stores the maximum_torque_map_lookup result (rpm x alpha) and replaces 0 by 1; cm550_FUN_00026a2e sets it to 1 at start-up; 0x1c0d4 divides by it. Word only. CM848 0x40aee6 has the same role and CHR record 1461 +0. L2 proposes the same name for this address. Unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x0040aee6",
+    "verdict": "CONFIRMED",
+    "final_name": "maximum_torque_at_current_engine_speed",
+    "final_type": "word",
+    "final_comment": "",
+    "reason": "cm848_calculateFuelDemandFilter 0x29c98 stores cm848_interpolateAlphaChiValue of three maximum_torque_map_grid lookups at the filtered engine speed, with 0 -> 1. cm848_initFuelDemandFilterDimensions 0x29de0 (cm848_applicationMain) sets 1. 0x1e4e8 divides by it; cm848_calculateEngineOutputTorque scales and clamps with it; cm848_calculateJ1939ReferenceEngineFueling multiplies it by 13558 (lb-ft to N*m x 10000). The CHR e2m has 1461 +0 MT_Max_Torque_At_RPM_Ftlb (not in the dumped table), and CM550 0x80db1a has the same role. Nothing filters fuel demand, so the old name is wrong. L4 proposes the identical change. Unique in CM848. After L4's rename of 0x1e4e8, the comment's function name and the plates quoting fuel_demand_filter_dimension need the old-name sweep."
+   }
+  ]
+ }
+}

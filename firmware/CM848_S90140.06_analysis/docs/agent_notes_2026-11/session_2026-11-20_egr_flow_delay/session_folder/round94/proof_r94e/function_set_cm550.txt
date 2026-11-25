@@ -1,0 +1,587 @@
+removed 0: 
+added 1: 0x00033d38 cm550_buildPgn65252ShutdownMessage
+changed 43
+  0x0000ac3c cm550_updateDutyCycleMonitorLoadHistogram: 16 lines
+      -  ushort *puVar7;
+      +  word *pwVar7;
+      -      puVar7 = (ushort *)&duty_cycle_monitor_engine_speed_axis[1];
+      -      while ((bVar4 < 9 && (!bVar1))) {
+      -        if (engine_rpm_primary <= *puVar7) {
+      +      pwVar7 = duty_cycle_monitor_engine_speed_axis;
+      +      while ((pwVar7 = pwVar7 + 1, bVar4 < 9 && (!bVar1))) {
+      +        if (engine_rpm_primary <= *pwVar7) {
+      -        puVar7 = puVar7 + 1;
+      -      puVar7 = (ushort *)&duty_cycle_monitor_load_axis[1];
+      -      while ((bVar4 < 7 && (!bVar1))) {
+      -        if (duty_cycle_monitor_load_ratio._2_2_ <= *puVar7) {
+      +      pwVar7 = duty_cycle_monitor_load_axis;
+      +      while ((pwVar7 = pwVar7 + 1, bVar4 < 7 && (!bVar1))) {
+      +        if (duty_cycle_monitor_load_ratio._2_2_ <= *pwVar7) {
+      -        puVar7 = puVar7 + 1;
+  0x0000b7bc mc68k_processAnalogSensorChannels: 10 lines
+      -             (((uint)*(ushort *)
+      -                      (&fault_processing_enable_flags +
+      -                      (short)((int)(uint)channel_config->low_error_fault_number >> 4) * 2) &
+      +             (((uint)fault_processing_enable_flags
+      +                     [(short)((int)(uint)channel_config->low_error_fault_number >> 4)] &
+      -               (((uint)*(ushort *)
+      -                        (&fault_processing_enable_flags +
+      -                        (short)((int)(uint)channel_config->high_error_fault_number >> 4) * 2) &
+      +               (((uint)fault_processing_enable_flags
+      +                       [(short)((int)(uint)channel_config->high_error_fault_number >> 4)] &
+  0x0000bcf0 cm550_initializeAnalogSensorChannels: 20 lines
+      -       (((uint)*(ushort *)
+      -                (&fault_processing_enable_flags +
+      -                (short)((int)(uint)psVar2->low_error_fault_number >> 4) * 2) &
+      +       (((uint)fault_processing_enable_flags
+      +               [(short)((int)(uint)psVar2->low_error_fault_number >> 4)] &
+      -         (((uint)*(ushort *)
+      -                  (&fault_processing_enable_flags +
+      -                  (short)((int)(uint)psVar2->high_error_fault_number >> 4) * 2) &
+      +         (((uint)fault_processing_enable_flags
+      +                 [(short)((int)(uint)psVar2->high_error_fault_number >> 4)] &
+      -       (((uint)*(ushort *)
+      -                (&fault_processing_enable_flags +
+      -                (short)((int)(uint)psVar2->low_error_fault_number >> 4) * 2) &
+      +       (((uint)fault_processing_enable_flags
+      +               [(short)((int)(uint)psVar2->low_error_fault_number >> 4)] &
+      -         (((uint)*(ushort *)
+      -                  (&fault_processing_enable_flags +
+      -                  (short)((int)(uint)psVar2->high_error_fault_number >> 4) * 2) &
+      +         (((uint)fault_processing_enable_flags
+      +                 [(short)((int)(uint)psVar2->high_error_fault_number >> 4)] &
+  0x0000c180 cm550_fuelTimingTransitionStateMachine: 24 lines
+      -    _DAT_008000b0 = engine_rpm_primary;
+      +    air_fuel_control_fuel_limit_lookup.x_input = engine_rpm_primary;
+      -    air_fuel_control_fuel_limit = cm550_tableLookup2D((word *)&air_fuel_control_fuel_limit_lookup);
+      +    air_fuel_control_fuel_limit =
+      +         cm550_tableLookup2D(&air_fuel_control_fuel_limit_lookup.x_axis_offset);
+      -           (uVar1 = (uint)(fault_processing_enable_flags[2] & 2), (fault_processing_enable_flags[2] & 2) != 0)))
+      -       ) || (((status_32_word_bit_mapped_system_error_status_word_2_0_1 & 1) != 0 &&
+      -             (uVar1 = fault_processing_enable_flags[2] & 0xffff0001, (fault_processing_enable_flags[2] & 1) != 0
+      -             )))) ||
+      +           (uVar1 = (uint)(fault_processing_enable_flags[2] & 2),
+      +           (fault_processing_enable_flags[2] & 2) != 0)))) ||
+      +      (((status_32_word_bit_mapped_system_error_status_word_2_0_1 & 1) != 0 &&
+      +       (uVar1 = fault_processing_enable_flags[2] & 0xffff0001,
+      +       (fault_processing_enable_flags[2] & 1) != 0)))) ||
+      -      (uVar1 = fault_processing_enable_flags[2] & 0xffff0010, (fault_processing_enable_flags[2] & 0x10) != 0))))
+      -  {
+      +      (uVar1 = fault_processing_enable_flags[2] & 0xffff0010,
+      +      (fault_processing_enable_flags[2] & 0x10) != 0)))) {
+      -    _DAT_008000c6 = coolant_temperature_sensor_state.filtered_value;
+      +    air_fuel_control_cold_temperature_fuel_increment_lookup.x_input =
+      +         coolant_temperature_sensor_state.filtered_value;
+      -    uVar1 = cm550_tableLookup2D((word *)&air_fuel_control_cold_temperature_fuel_increment_lookup);
+      +    uVar1 = cm550_tableLookup2D(&air_fuel_control_cold_temperature_fuel_increment_lookup.
+      +                                 x_axis_offset);
+  0x0000c246 cm550_fuelTimingModeInit: 16 lines
+      -  air_fuel_control_fuel_limit_lookup.x_axis_pointer = 0x6010c;
+      -  air_fuel_control_fuel_limit_lookup = 2;
+      -  air_fuel_control_fuel_limit_lookup.y_axis_pointer = 0x600ee;
+      +  air_fuel_control_fuel_limit_lookup.x_axis_pointer = (word *)&DAT_0006010c;
+      +  air_fuel_control_fuel_limit_lookup.x_axis_offset = 2;
+      +  air_fuel_control_fuel_limit_lookup.y_axis_pointer = (word *)&DAT_000600ee;
+      -  air_fuel_control_fuel_limit_lookup.z_values_pointer = 0x60138;
+      -  _DAT_008000c2 = 0x6124a;
+      -  air_fuel_control_cold_temperature_fuel_increment_lookup = 2;
+      -  air_fuel_control_cold_temperature_fuel_increment_lookup.y_axis_pointer = 0x6125e;
+      +  air_fuel_control_fuel_limit_lookup.z_values_pointer = (word *)&DAT_00060138;
+      +  air_fuel_control_cold_temperature_fuel_increment_lookup.x_axis_pointer = (word *)&DAT_0006124a;
+      +  air_fuel_control_cold_temperature_fuel_increment_lookup.x_axis_offset = 2;
+      +  air_fuel_control_cold_temperature_fuel_increment_lookup.y_axis_pointer = (word *)&DAT_0006125e;
+      -  air_fuel_control_cold_temperature_fuel_increment_lookup.z_values_pointer = 0x6126a;
+      +  air_fuel_control_cold_temperature_fuel_increment_lookup.z_values_pointer = (word *)&DAT_0006126a;
+  0x0000c66a cm550_rpmHistogramAndProtectionStatisticsAccumulator: 3 lines
+      -    altitude_derate_fuel_limit = cm550_tableLookup2D((word *)&altitude_derate_fuel_limit_lookup);
+      +    altitude_derate_fuel_limit =
+      +         cm550_tableLookup2D(&altitude_derate_fuel_limit_lookup.x_axis_offset);
+  0x0000c714 cm550_fuelParameterPointerSetup: 8 lines
+      -  altitude_derate_fuel_limit_lookup = 2;
+      -  _DAT_008000dc = 0x60384;
+      +  altitude_derate_fuel_limit_lookup.x_axis_offset = 2;
+      +  altitude_derate_fuel_limit_lookup.x_axis_pointer = (word *)&DAT_00060384;
+      -  _DAT_008000e4 = 0x603b0;
+      -  _DAT_008000ea = 0x603ba;
+      +  altitude_derate_fuel_limit_lookup.y_axis_pointer = (word *)&DAT_000603b0;
+      +  altitude_derate_fuel_limit_lookup.z_values_pointer = (word *)&DAT_000603ba;
+  0x00010568 vp44_rpmDerateCalculationController: 15 lines
+      -              (uVar1 = (uint)*(ushort *)(&fault_processing_enable_flags + sVar2 * 2),
+      -              (uVar1 & 1 << (uVar4 & 0xf)) == 0)) &&
+      -             ((sVar2 = (short)((int)uVar3 >> 4),
+      -              ((uint)*(ushort *)
+      -                      (&status_32_word_bit_mapped_system_error_status_word_0_0_1 + sVar2 * 2) &
+      -              1 << (uVar3 & 0xf)) == 0 ||
+      -              (uVar1 = (uint)*(ushort *)(&fault_processing_enable_flags + sVar2 * 2),
+      -              (uVar1 & 1 << (uVar3 & 0xf)) == 0)))) &&
+      +              (uVar1 = (uint)fault_processing_enable_flags[sVar2], (uVar1 & 1 << (uVar4 & 0xf)) == 0
+      +              )) && ((sVar2 = (short)((int)uVar3 >> 4),
+      +                     ((uint)*(ushort *)
+      +                             (&status_32_word_bit_mapped_system_error_status_word_0_0_1 + sVar2 * 2)
+      +                     & 1 << (uVar3 & 0xf)) == 0 ||
+      +                     (uVar1 = (uint)fault_processing_enable_flags[sVar2],
+      +                     (uVar1 & 1 << (uVar3 & 0xf)) == 0)))) &&
+  0x00010822 vp44_derateThresholdMonitorAndFaultController: 6 lines
+      -      uVar4 = (uint)*(ushort *)(&fault_processing_enable_flags + sVar2 * 2) & 1 << (uVar4 & 0xf);
+      +      uVar4 = (uint)fault_processing_enable_flags[sVar2] & 1 << (uVar4 & 0xf);
+      -      uVar4 = (uint)*(ushort *)(&fault_processing_enable_flags + sVar2 * 2) & 1 << (uVar6 & 0xf);
+      +      uVar4 = (uint)fault_processing_enable_flags[sVar2] & 1 << (uVar6 & 0xf);
+      -         ((_DAT_00806ac8 & 0x400) == 0)))))) {
+      +         ((fault_processing_enable_flags[6] & 0x400) == 0)))))) {
+  0x000114d4 cm550_loadParameterBlockAndUpdatePowerDownCounts: 4 lines
+      -      if ((fault_processing_enable_flags & 0x1000) != 0) {
+      +      if ((fault_processing_enable_flags[0] & 0x1000) != 0) {
+      -      ((fault_processing_enable_flags & 0x1000) == 0)) ||
+      +      ((fault_processing_enable_flags[0] & 0x1000) == 0)) ||
+  0x00011e5e cm550_coldStartFuelControlSlowCycle40Coordinator: 17 lines
+      -  _DAT_008001da = engine_rpm_primary;
+      -  _DAT_008001e2 = final_fueling;
+      +  desired_cylinder_pressure_lookup.x_input = engine_rpm_primary;
+      +  desired_cylinder_pressure_lookup.y_input = final_fueling;
+      -        uVar5 = cm550_tableLookup2D((word *)&compression_ratio_raised_to_polytropic_exponent_lookup);
+      -        uVar6 = cm550_tableLookup2D((word *)&desired_cylinder_pressure_lookup);
+      +        uVar5 = cm550_tableLookup2D(&compression_ratio_raised_to_polytropic_exponent_lookup.
+      +                                     x_axis_offset);
+      +        uVar6 = cm550_tableLookup2D(&desired_cylinder_pressure_lookup.x_axis_offset);
+      -     ((fault_processing_enable_flags & 0x2000) == 0)) {
+      +     ((fault_processing_enable_flags[0] & 0x2000) == 0)) {
+      -       ((fault_processing_enable_flags & 0x4000) == 0)) {
+      +       ((fault_processing_enable_flags[0] & 0x4000) == 0)) {
+      -     ((fault_processing_enable_flags & 0x2000) == 0)) {
+      +     ((fault_processing_enable_flags[0] & 0x2000) == 0)) {
+      -       ((fault_processing_enable_flags & 0x4000) == 0)) {
+      +       ((fault_processing_enable_flags[0] & 0x4000) == 0)) {
+  0x000124d2 cm550_initLoadTrendingSystem: 20 lines
+      -  compression_ratio_raised_to_polytropic_exponent_lookup.x_axis_pointer = 0x605ce;
+      -  compression_ratio_raised_to_polytropic_exponent_lookup = 2;
+      +  compression_ratio_raised_to_polytropic_exponent_lookup.x_axis_pointer = (word *)&DAT_000605ce;
+      +  compression_ratio_raised_to_polytropic_exponent_lookup.x_axis_offset = 2;
+      -  _DAT_00800202 = 0x605ea;
+      +  compression_ratio_raised_to_polytropic_exponent_lookup.y_axis_pointer = (word *)&DAT_000605ea;
+      -  compression_ratio_raised_to_polytropic_exponent_lookup.z_values_pointer = 0x605f2;
+      +  compression_ratio_raised_to_polytropic_exponent_lookup.z_values_pointer = (word *)&DAT_000605f2;
+      -  _DAT_008001da = engine_rpm_primary;
+      -  desired_cylinder_pressure_lookup.x_axis_pointer = 0x60678;
+      -  desired_cylinder_pressure_lookup = 2;
+      -  _DAT_008001e2 = final_fueling;
+      -  desired_cylinder_pressure_lookup.y_axis_pointer = 0x60694;
+      +  desired_cylinder_pressure_lookup.x_input = engine_rpm_primary;
+      +  desired_cylinder_pressure_lookup.x_axis_pointer = (word *)&DAT_00060678;
+      +  desired_cylinder_pressure_lookup.x_axis_offset = 2;
+      +  desired_cylinder_pressure_lookup.y_input = final_fueling;
+      +  desired_cylinder_pressure_lookup.y_axis_pointer = (word *)&DAT_00060694;
+      -  desired_cylinder_pressure_lookup.z_values_pointer = 0x606a4;
+      +  desired_cylinder_pressure_lookup.z_values_pointer = (word *)&DAT_000606a4;
+  0x000127c2 vp44_FUN_000127c2: 10 lines
+      -    _DAT_00800228 = current_engine_rpm_filtered;
+      +    cylinder_balance_stop_compensation_lookup.x_input = current_engine_rpm_filtered;
+      -    _cyl_balance_gain_percent = cm550_tableLookup2D((word *)&DAT_00800222);
+      +    _cyl_balance_gain_percent =
+      +         cm550_tableLookup2D(&cylinder_balance_stop_compensation_lookup.x_axis_offset);
+      -    _DAT_00800246 = _DAT_008091e8;
+      -    _DAT_008092e0 = cm550_tableLookup2D((word *)&cylinder_balance_component_3_adjustment_lookup);
+      +    cylinder_balance_component_3_adjustment_lookup.y_input = _DAT_008091e8;
+      +    _DAT_008092e0 =
+      +         cm550_tableLookup2D(&cylinder_balance_component_3_adjustment_lookup.x_axis_offset);
+  0x000133fe vp44_FUN_000133fe: 24 lines
+      -  _DAT_00800222 = 2;
+      -  cylinder_balance_stop_compensation_lookup.x_axis_pointer = &cylinder_balance_stop_compensation_x_axis;
+      +  cylinder_balance_stop_compensation_lookup.x_axis_offset = 2;
+      +  cylinder_balance_stop_compensation_lookup.x_axis_pointer =
+      +       cylinder_balance_stop_compensation_x_axis;
+      -  cylinder_balance_stop_compensation_lookup.y_axis_pointer = 0x807352;
+      -  cylinder_balance_stop_compensation_lookup.z_values_pointer = 0x807358;
+      -  cylinder_balance_component_3_adjustment_lookup = 2;
+      -  cylinder_balance_component_3_adjustment_lookup.x_axis_pointer = 0x807338;
+      -  _DAT_00800240 = 2;
+      -  cylinder_balance_component_3_adjustment_lookup.y_axis_pointer = 0x80733e;
+      -  _DAT_00800248 = 0x807344;
+      +  cylinder_balance_stop_compensation_lookup.y_axis_pointer =
+      +       cylinder_balance_stop_compensation_y_axis;
+      +  cylinder_balance_stop_compensation_lookup.z_values_pointer =
+      +       cylinder_balance_stop_compensation_grid;
+      +  cylinder_balance_component_3_adjustment_lookup.x_axis_offset = 2;
+      +  cylinder_balance_component_3_adjustment_lookup.x_axis_pointer =
+      +       cylinder_balance_component_3_adjustment_x_axis;
+      +  cylinder_balance_component_3_adjustment_lookup.y_axis_offset = 2;
+      +  cylinder_balance_component_3_adjustment_lookup.y_axis_pointer =
+      +       cylinder_balance_component_3_adjustment_y_axis;
+      +  cylinder_balance_component_3_adjustment_lookup.z_values_pointer =
+      +       cylinder_balance_component_3_adjustment_grid;
+  0x000142d4 cm550_FUN_000142d4: 4 lines
+      -  _DAT_0080d378 = fuel_table_x_input;
+      +  four_dimensional_fueling_steady_state_lookup.x_input = fuel_table_x_input;
+      -  local_6 = cm550_tableLookup2D((word *)&four_dimensional_fueling_steady_state_lookup);
+      +  local_6 = cm550_tableLookup2D(&four_dimensional_fueling_steady_state_lookup.x_axis_offset);
+  0x00014872 cm550_processFaultScanGroup: 6 lines
+      -          ((uVar8 & *(ushort *)(&fault_processing_enable_flags + _fault_status_word_scan_index * 2))
+      -           != 0)) &&
+      +          ((uVar8 & fault_processing_enable_flags[_fault_status_word_scan_index]) != 0)) &&
+      -          ((uVar8 & *(ushort *)(&fault_processing_enable_flags + _fault_status_word_scan_index * 2))
+      -           != 0)))) {
+      +          ((uVar8 & fault_processing_enable_flags[_fault_status_word_scan_index]) != 0)))) {
+  0x00014fca mc68k_sampleAndDebounceDiscreteInputs: 4 lines
+      -    DAT_0080bcd7 = DAT_0080bcd7 & 0xfe;
+      +    air_conditioner_pressure_switch_state = air_conditioner_pressure_switch_state & 0xfe;
+      -    DAT_0080bcd7 = DAT_0080bcd7 | 1;
+      +    air_conditioner_pressure_switch_state = air_conditioner_pressure_switch_state | 1;
+  0x00016dd4 cm550_runEngineWarmupProtection: 82 lines
+      -      (_DAT_0080ccc8 != 0)))) {
+      +      (engine_warmup_protection_inhibit_flag != 0)))) {
+      -    _DAT_0080a8f4 = 0;
+      -    _DAT_0080ccca = 0;
+      +    low_speed_governor_lock_flag = 0;
+      +    engine_warmup_protection_torque_or_speed_limiting_flag = 0;
+      -      _DAT_0080ccb6 = 0;
+      -      _DAT_0080ccba = 0;
+      -      _DAT_0080ccbc = 0;
+      -      uVar2 = (uint)_DAT_0080ccbe;
+      -      if (_DAT_0080ccbe < engine_warmup_protection_oil_drain_back_time) {
+      -        _DAT_0080ccbe = _DAT_0080ccbe + 1;
+      +      engine_warmup_protection_rifle_to_turbocharger_delay_timer = 0;
+      +      engine_warmup_protection_overall_timer = 0;
+      +      engine_warmup_protection_fault_timer = 0;
+      +      uVar2 = (uint)engine_warmup_protection_oil_drain_back_timer;
+      +      if (engine_warmup_protection_oil_drain_back_timer <
+      +          engine_warmup_protection_oil_drain_back_time) {
+      +        engine_warmup_protection_oil_drain_back_timer =
+      +             engine_warmup_protection_oil_drain_back_timer + 1;
+      -        _DAT_0080ccc0 = 0;
+      -        _DAT_0080ccca = 1;
+      -        if (_DAT_00807dde != 0) {
+      -          _DAT_0080a8f4 = 1;
+  0x0001709e cm550_initializeEngineWarmupProtection: 6 lines
+      -  _DAT_0080ccc8 = 0;
+      +  engine_warmup_protection_inhibit_flag = 0;
+      -    if (_DAT_00807dde != 0) {
+      -      _DAT_0080a8f4 = 1;
+      +    if (engine_warmup_protection_low_speed_governor_lock_enable != 0) {
+      +      low_speed_governor_lock_flag = 1;
+  0x000178b0 cm550_governorFuelModeBlendCalculator: 29 lines
+      -    _DAT_008005c8 = crank_exit_speed;
+      -    _DAT_008005d0 = crank_exit_fuel_adjustment_0_100 + _DAT_00807ef4;
+      -    four_d_timing_output_by_crank_0_120 = cm550_tableLookup2D((word *)&DAT_008005c2);
+      +    crank_four_dimensional_timing_steady_state_lookup.x_input = crank_exit_speed;
+      +    crank_four_dimensional_timing_steady_state_lookup.y_input =
+      +         crank_exit_fuel_adjustment_0_100 + _DAT_00807ef4;
+      +    four_d_timing_output_by_crank_0_120 =
+      +         cm550_tableLookup2D(&crank_four_dimensional_timing_steady_state_lookup.x_axis_offset);
+      -    _DAT_008005de = crank_exit_speed;
+      -    _DAT_008005e6 = crank_exit_fuel_adjustment_0_100 + _DAT_00807ef4;
+      -    uVar1 = cm550_tableLookup2D((word *)&DAT_008005d8);
+      +    crank_four_dimensional_timing_transient_lookup.x_input = crank_exit_speed;
+      +    crank_four_dimensional_timing_transient_lookup.y_input =
+      +         crank_exit_fuel_adjustment_0_100 + _DAT_00807ef4;
+      +    uVar1 = cm550_tableLookup2D(&crank_four_dimensional_timing_transient_lookup.x_axis_offset);
+      -    _DAT_008005c8 = crank_exit_speed;
+      -    _DAT_008005d0 = crank_exit_fuel_adjustment_0_100 + _DAT_00807ef4;
+      -    uVar1 = cm550_tableLookup2D((word *)&DAT_008005c2);
+      -    _DAT_008005de = crank_exit_speed;
+      -    _DAT_008005e6 = crank_exit_fuel_adjustment_0_100 + _DAT_00807ef4;
+      -    uVar2 = cm550_tableLookup2D((word *)&DAT_008005d8);
+      +    crank_four_dimensional_timing_steady_state_lookup.x_input = crank_exit_speed;
+      +    crank_four_dimensional_timing_steady_state_lookup.y_input =
+      +         crank_exit_fuel_adjustment_0_100 + _DAT_00807ef4;
+  0x00017baa cm550_FUN_00017baa: 8 lines
+      -       (uVar2 = CONCAT22((short)(in_D0 >> 0x10),fault_processing_enable_flags) & 0xffff2000,
+      -       (fault_processing_enable_flags & 0x2000) != 0)) ||
+      +       (uVar2 = CONCAT22((short)(in_D0 >> 0x10),fault_processing_enable_flags[0]) & 0xffff2000,
+      +       (fault_processing_enable_flags[0] & 0x2000) != 0)) ||
+      -       (uVar2 = CONCAT22((short)(uVar2 >> 0x10),fault_processing_enable_flags) & 0xffff4000,
+      -       (fault_processing_enable_flags & 0x4000) != 0)))) ||
+      +       (uVar2 = CONCAT22((short)(uVar2 >> 0x10),fault_processing_enable_flags[0]) & 0xffff4000,
+      +       (fault_processing_enable_flags[0] & 0x4000) != 0)))) ||
+  0x00017ef8 vp44_fuelLimitParameterPointerSetup: 20 lines
+      -  _DAT_008005c4 = 0x60a2a;
+      -  _DAT_008005c2 = 2;
+      -  _DAT_008005cc = 0x60a52;
+      -  _DAT_008005ca = 2;
+      -  _DAT_008005d2 = 0x60a74;
+      -  _DAT_008005da = 0x60cd4;
+      -  _DAT_008005d8 = 2;
+      -  _DAT_008005e2 = 0x60cfc;
+      -  _DAT_008005e0 = 2;
+      -  _DAT_008005e8 = 0x60d1e;
+      +  crank_four_dimensional_timing_steady_state_lookup.x_axis_pointer = (word *)&DAT_00060a2a;
+      +  crank_four_dimensional_timing_steady_state_lookup.x_axis_offset = 2;
+      +  crank_four_dimensional_timing_steady_state_lookup.y_axis_pointer = (word *)&DAT_00060a52;
+      +  crank_four_dimensional_timing_steady_state_lookup.y_axis_offset = 2;
+      +  crank_four_dimensional_timing_steady_state_lookup.z_values_pointer = (word *)&DAT_00060a74;
+      +  crank_four_dimensional_timing_transient_lookup.x_axis_pointer = (word *)&DAT_00060cd4;
+      +  crank_four_dimensional_timing_transient_lookup.x_axis_offset = 2;
+      +  crank_four_dimensional_timing_transient_lookup.y_axis_pointer = (word *)&DAT_00060cfc;
+      +  crank_four_dimensional_timing_transient_lookup.y_axis_offset = 2;
+      +  crank_four_dimensional_timing_transient_lookup.z_values_pointer = (word *)&DAT_00060d1e;
+  0x0001c0d4 cm550_convertTorqueDerateTorqueLimitToFuelLimit: 3 lines
+      -                     (uint)no_load_fuel_quantity,
+      -                     (uint)maximum_torque_at_current_engine_speed);
+      +                     (uint)no_load_fuel_quantity,(uint)maximum_torque_at_current_engine_speed);
+  0x0001c65e cm550_fuelDemandTableBlendCalculator: 27 lines
+      -      _DAT_008006be = engine_rpm_primary;
+      -      _DAT_008006c6 = wVar2;
+      -      cm550_tableLookup2D((word *)&DAT_008006b8);
+      +      four_dimensional_injection_timing_steady_state_lookup.x_input = engine_rpm_primary;
+      +      four_dimensional_injection_timing_steady_state_lookup.y_input = wVar2;
+      +      cm550_tableLookup2D(&four_dimensional_injection_timing_steady_state_lookup.x_axis_offset);
+      -      _DAT_008006d4 = engine_rpm_primary;
+      -      _DAT_008006dc = wVar2;
+      -      timing_4DTBTA = cm550_tableLookup2D((word *)&DAT_008006ce);
+      +      four_dimensional_injection_timing_transient_lookup.x_input = engine_rpm_primary;
+      +      four_dimensional_injection_timing_transient_lookup.y_input = wVar2;
+      +      timing_4DTBTA =
+      +           cm550_tableLookup2D(&four_dimensional_injection_timing_transient_lookup.x_axis_offset);
+      -      _DAT_008006be = engine_rpm_primary;
+      -      _DAT_008006c6 = wVar2;
+      -      uVar3 = cm550_tableLookup2D((word *)&DAT_008006b8);
+      -      _DAT_008006d4 = engine_rpm_primary;
+      -      _DAT_008006dc = wVar2;
+      -      uVar4 = cm550_tableLookup2D((word *)&DAT_008006ce);
+      +      four_dimensional_injection_timing_steady_state_lookup.x_input = engine_rpm_primary;
+      +      four_dimensional_injection_timing_steady_state_lookup.y_input = wVar2;
+      +      uVar3 = cm550_tableLookup2D(&four_dimensional_injection_timing_steady_state_lookup.
+      +                                   x_axis_offset);
+      +      four_dimensional_injection_timing_transient_lookup.x_input = engine_rpm_primary;
+  0x0001c7a8 cm550_FUN_0001c7a8: 20 lines
+      -  _DAT_008006ba = 0x60a2a;
+      -  _DAT_008006b8 = 2;
+      -  _DAT_008006c2 = 0x60a52;
+      -  _DAT_008006c0 = 2;
+      -  _DAT_008006c8 = 0x60a74;
+      -  _DAT_008006d0 = 0x60cd4;
+      -  _DAT_008006ce = 2;
+      -  _DAT_008006d8 = 0x60cfc;
+      -  _DAT_008006d6 = 2;
+      -  _DAT_008006de = 0x60d1e;
+      +  four_dimensional_injection_timing_steady_state_lookup.x_axis_pointer = (word *)&DAT_00060a2a;
+      +  four_dimensional_injection_timing_steady_state_lookup.x_axis_offset = 2;
+      +  four_dimensional_injection_timing_steady_state_lookup.y_axis_pointer = (word *)&DAT_00060a52;
+      +  four_dimensional_injection_timing_steady_state_lookup.y_axis_offset = 2;
+      +  four_dimensional_injection_timing_steady_state_lookup.z_values_pointer = (word *)&DAT_00060a74;
+      +  four_dimensional_injection_timing_transient_lookup.x_axis_pointer = (word *)&DAT_00060cd4;
+      +  four_dimensional_injection_timing_transient_lookup.x_axis_offset = 2;
+      +  four_dimensional_injection_timing_transient_lookup.y_axis_pointer = (word *)&DAT_00060cfc;
+      +  four_dimensional_injection_timing_transient_lookup.y_axis_offset = 2;
+      +  four_dimensional_injection_timing_transient_lookup.z_values_pointer = (word *)&DAT_00060d1e;
+  0x0001c824 cm550_FUN_0001c824: 3 lines
+      -    torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000 =
+      -         engine_speed_limit_ramped;
+      +    torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000 = engine_speed_limit_ramped;
+  0x0001cb76 cm550_calculateBlendedTableValue: 8 lines
+      -    _DAT_0080d378 = fuel_table_x_input;
+      +    four_dimensional_fueling_steady_state_lookup.x_input = fuel_table_x_input;
+      -    local_8 = cm550_tableLookup2D((word *)&four_dimensional_fueling_steady_state_lookup);
+      +    local_8 = cm550_tableLookup2D(&four_dimensional_fueling_steady_state_lookup.x_axis_offset);
+      -    _DAT_0080d38e = fuel_table_x_input;
+      +    four_dimensional_fueling_transient_lookup.x_input = fuel_table_x_input;
+      -    local_6 = cm550_tableLookup2D((word *)&four_dimensional_fueling_transient_lookup);
+      +    local_6 = cm550_tableLookup2D(&four_dimensional_fueling_transient_lookup.x_axis_offset);
+  0x0001cc72 cm550_calculateThrottle100Fuelings: 23 lines
+      -      _DAT_00800706 = coolant_temperature_sensor_state.filtered_value;
+      -      _DAT_0080070e = engine_rpm_primary;
+      -      sVar1 = cm550_tableLookup2D((word *)&DAT_00800700);
+      +      full_fueling_cold_temperature_fuel_increment_lookup.x_input =
+      +           coolant_temperature_sensor_state.filtered_value;
+      +      full_fueling_cold_temperature_fuel_increment_lookup.y_input = engine_rpm_primary;
+      +      sVar1 = cm550_tableLookup2D(&full_fueling_cold_temperature_fuel_increment_lookup.x_axis_offset
+      +                                 );
+      -    sVar2 = cm550_calculateBlendedTableValue
+      -                      (engine_speed_limit_ramped,400);
+      +    sVar2 = cm550_calculateBlendedTableValue(engine_speed_limit_ramped,400);
+      -    _DAT_008006f0 = engine_rpm_primary;
+      -    throttle_100_fueling_low_horsepower_curve = cm550_tableLookup2D((word *)&DAT_008006ea);
+      +    throttle_100_fueling_low_horsepower_curve_lookup.x_input = engine_rpm_primary;
+      +    throttle_100_fueling_low_horsepower_curve =
+      +         cm550_tableLookup2D(&throttle_100_fueling_low_horsepower_curve_lookup.x_axis_offset);
+      -    _DAT_008006f0 = engine_rpm_primary;
+      +    throttle_100_fueling_low_horsepower_curve_lookup.x_input = engine_rpm_primary;
+      -         cm550_tableLookup2D((word *)&DAT_008006ea);
+      -    cm550_subtractAndClampValue((word *)&throttle_100_fueling_without_programmable_power)
+      -    ;
+      +         cm550_tableLookup2D(&throttle_100_fueling_low_horsepower_curve_lookup.x_axis_offset);
+      +    cm550_subtractAndClampValue(&throttle_100_fueling_without_programmable_power);
+  0x0001cdf8 cm550_FUN_0001cdf8: 22 lines
+      -  _DAT_008006ec = &DAT_0006086e;
+      -  _DAT_008006ea = 2;
+      -  _DAT_008006f8 = 400;
+      -  _DAT_008006f4 = &DAT_0006089a;
+      -  _DAT_008006f2 = 2;
+      -  _DAT_008006fa = &DAT_000608a4;
+      -  _DAT_00800702 = 0x6124a;
+      -  _DAT_00800700 = 2;
+      -  _DAT_0080070a = 0x6125e;
+      -  _DAT_00800708 = 2;
+      -  _DAT_00800710 = 0x6126a;
+      +  throttle_100_fueling_low_horsepower_curve_lookup.x_axis_pointer = (word *)&DAT_0006086e;
+      +  throttle_100_fueling_low_horsepower_curve_lookup.x_axis_offset = 2;
+      +  throttle_100_fueling_low_horsepower_curve_lookup.y_input = 400;
+      +  throttle_100_fueling_low_horsepower_curve_lookup.y_axis_pointer = (word *)&DAT_0006089a;
+      +  throttle_100_fueling_low_horsepower_curve_lookup.y_axis_offset = 2;
+      +  throttle_100_fueling_low_horsepower_curve_lookup.z_values_pointer = (word *)&DAT_000608a4;
+      +  full_fueling_cold_temperature_fuel_increment_lookup.x_axis_pointer = (word *)&DAT_0006124a;
+      +  full_fueling_cold_temperature_fuel_increment_lookup.x_axis_offset = 2;
+      +  full_fueling_cold_temperature_fuel_increment_lookup.y_axis_pointer = (word *)&DAT_0006125e;
+      +  full_fueling_cold_temperature_fuel_increment_lookup.y_axis_offset = 2;
+      +  full_fueling_cold_temperature_fuel_increment_lookup.z_values_pointer = (word *)&DAT_0006126a;
+  0x0001d5a0 selectEngineSpeedLimit: 25 lines
+      -    if (engine_speed_limit_ramped <
+      -        reference_speed_before_droop_calculation_1400_4500) {
+      +    if (engine_speed_limit_ramped < reference_speed_before_droop_calculation_1400_4500) {
+      -    if (reference_speed_before_droop_calculation_1400_4500 <
+      -        engine_speed_limit_ramped) {
+      -      engine_speed_limit_ramped =
+      -           reference_speed_before_droop_calculation_1400_4500;
+      +    if (reference_speed_before_droop_calculation_1400_4500 < engine_speed_limit_ramped) {
+      +      engine_speed_limit_ramped = reference_speed_before_droop_calculation_1400_4500;
+      -      hsg_reference_speed_after_droop =
+      -           engine_speed_limit_ramped;
+      +      hsg_reference_speed_after_droop = engine_speed_limit_ramped;
+      -        hsg_reference_speed_after_droop =
+      -             engine_speed_limit_ramped;
+      +        hsg_reference_speed_after_droop = engine_speed_limit_ramped;
+      -        if ((uint)engine_speed_limit_ramped + iVar1 <
+      -            0x10000) {
+      -          _DAT_0080d64a =
+      -               (ushort)((uint)engine_speed_limit_ramped +
+      -                       iVar1);
+      +        if ((uint)engine_speed_limit_ramped + iVar1 < 0x10000) {
+      +          _DAT_0080d64a = (ushort)((uint)engine_speed_limit_ramped + iVar1);
+      -          hsg_reference_speed_after_droop =
+      -               engine_speed_limit_ramped;
+  0x0001d94e initializeEngineSpeedLimitDefaults: 3 lines
+      -  engine_speed_limit_ramped =
+      -       engine_speed_limit_reference_default_cal;
+      +  engine_speed_limit_ramped = engine_speed_limit_reference_default_cal;
+  0x0001ddb4 cm550_FUN_0001ddb4: 20 lines
+      -  _DAT_0080d374 = &DAT_0006086e;
+      -  four_dimensional_fueling_steady_state_lookup = 2;
+      -  _DAT_0080d37c = &DAT_0006089a;
+      -  _DAT_0080d37a = 2;
+      -  _DAT_0080d382 = &DAT_000608a4;
+      -  _DAT_0080d38a = &DAT_0006094c;
+      -  four_dimensional_fueling_transient_lookup = 2;
+      -  _DAT_0080d392 = &DAT_00060978;
+      -  _DAT_0080d390 = 2;
+      -  _DAT_0080d398 = &DAT_00060982;
+      +  four_dimensional_fueling_steady_state_lookup.x_axis_pointer = (word *)&DAT_0006086e;
+      +  four_dimensional_fueling_steady_state_lookup.x_axis_offset = 2;
+      +  four_dimensional_fueling_steady_state_lookup.y_axis_pointer = (word *)&DAT_0006089a;
+      +  four_dimensional_fueling_steady_state_lookup.y_axis_offset = 2;
+      +  four_dimensional_fueling_steady_state_lookup.z_values_pointer = (word *)&DAT_000608a4;
+      +  four_dimensional_fueling_transient_lookup.x_axis_pointer = (word *)&DAT_0006094c;
+      +  four_dimensional_fueling_transient_lookup.x_axis_offset = 2;
+      +  four_dimensional_fueling_transient_lookup.y_axis_pointer = (word *)&DAT_00060978;
+      +  four_dimensional_fueling_transient_lookup.y_axis_offset = 2;
+      +  four_dimensional_fueling_transient_lookup.z_values_pointer = (word *)&DAT_00060982;
+  0x0001de58 cm550_FUN_0001de58: 16 lines
+      -      _DAT_0080d378 = engine_rpm_primary;
+      +      four_dimensional_fueling_steady_state_lookup.x_input = engine_rpm_primary;
+      -      local_6 = cm550_tableLookup2D((word *)&four_dimensional_fueling_steady_state_lookup);
+      +      local_6 = cm550_tableLookup2D(&four_dimensional_fueling_steady_state_lookup.x_axis_offset);
+      -      local_c = cm550_tableLookup2D((word *)&four_dimensional_fueling_steady_state_lookup);
+      +      local_c = cm550_tableLookup2D(&four_dimensional_fueling_steady_state_lookup.x_axis_offset);
+      -      local_a = cm550_tableLookup2D((word *)&four_dimensional_fueling_steady_state_lookup);
+      +      local_a = cm550_tableLookup2D(&four_dimensional_fueling_steady_state_lookup.x_axis_offset);
+      -      _DAT_0080d38e = engine_rpm_primary;
+      +      four_dimensional_fueling_transient_lookup.x_input = engine_rpm_primary;
+      -      local_8 = cm550_tableLookup2D((word *)&four_dimensional_fueling_transient_lookup);
+      +      local_8 = cm550_tableLookup2D(&four_dimensional_fueling_transient_lookup.x_axis_offset);
+      -      local_10 = cm550_tableLookup2D((word *)&four_dimensional_fueling_transient_lookup);
+      +      local_10 = cm550_tableLookup2D(&four_dimensional_fueling_transient_lookup.x_axis_offset);
+      -      local_e = cm550_tableLookup2D((word *)&four_dimensional_fueling_transient_lookup);
+      +      local_e = cm550_tableLookup2D(&four_dimensional_fueling_transient_lookup.x_axis_offset);
+  0x0001e52e mc68k_canCs4TransmitNextFrame: 4 lines
+      -      (uVar1 = CONCAT22((short)(uVar1 >> 0x10),_DAT_00806ac6) & 0xffff0200,
+      -      (_DAT_00806ac6 & 0x200) != 0)) &&
+      +      (uVar1 = CONCAT22((short)(uVar1 >> 0x10),fault_processing_enable_flags[5]) & 0xffff0200,
+      +      (fault_processing_enable_flags[5] & 0x200) != 0)) &&
+  0x00023244 cm550_runJ1939PowertrainControlTimeouts: 3 lines
+      -       (uVar4 = _DAT_00806ac6, (_DAT_00806ac6 & 0x400) == 0)) {
+      +       (uVar4 = fault_processing_enable_flags[5], (fault_processing_enable_flags[5] & 0x400) == 0))
+      +    {
+  0x0002595a cm550_governorFuelPidController: 10 lines
+      -    _DAT_0080d378 = lsg_reference_speed_adjusted_with_throttle_position_300_2000;
+      +    four_dimensional_fueling_steady_state_lookup.x_input =
+      +         lsg_reference_speed_adjusted_with_throttle_position_300_2000;
+      -    local_6 = cm550_tableLookup2D((word *)&four_dimensional_fueling_steady_state_lookup);
+      +    local_6 = cm550_tableLookup2D(&four_dimensional_fueling_steady_state_lookup.x_axis_offset);
+      -    _DAT_0080d38e = lsg_reference_speed_adjusted_with_throttle_position_300_2000;
+      +    four_dimensional_fueling_transient_lookup.x_input =
+      +         lsg_reference_speed_adjusted_with_throttle_position_300_2000;
+      -    local_8 = cm550_tableLookup2D((word *)&four_dimensional_fueling_transient_lookup);
+      +    local_8 = cm550_tableLookup2D(&four_dimensional_fueling_transient_lookup.x_axis_offset);
+  0x00026cc8 cm550_calculateEngineLoadPercentages: 6 lines
+      -    if ((engine_speed_limit_ramped < engine_rpm_primary)
+      -       && (hsg_droop_active_flag != 0)) {
+      -      uVar1 = ((uint)engine_rpm_primary -
+      -              (uint)engine_speed_limit_ramped) * 0x1111;
+      +    if ((engine_speed_limit_ramped < engine_rpm_primary) && (hsg_droop_active_flag != 0)) {
+      +      uVar1 = ((uint)engine_rpm_primary - (uint)engine_speed_limit_ramped) * 0x1111;
+  0x00027f9c mc68k_runPowerDownSequence: 6 lines
+      -  undefined *puVar12;
+      +  dword *pdVar12;
+      -  puVar12 = &key_on_hour_meter_cal;
+      +  pdVar12 = &key_on_hour_meter_cal;
+      -    cm550_emptyPlaceholderFunction(puVar12,(short)source_ptr,bVar11);
+      +    cm550_emptyPlaceholderFunction(pdVar12,(short)source_ptr,bVar11);
+  0x00028b80 mc68k_initializeJ1939Datalink: 38 lines
+      -  FUN_0001fe84(0,100);
+      -  FUN_0001fe84(0,0x14);
+      -  FUN_0001fe84(0,0x32);
+      -  FUN_0001fe84(0,0xfa);
+      -  FUN_0001fe84(0,5000);
+      -  FUN_0001fe84(1,100);
+      -  FUN_0001fe84(0,100);
+      -  FUN_0001fe84(1,5000);
+      -  FUN_0001fe84(0,1000);
+      -  FUN_0001fe84(0,1000);
+      -  FUN_0001fe84(0,500);
+      -  FUN_0001fe84(0,100);
+      -  FUN_0001fe84(0,1000);
+      -  FUN_0001fe84(0,500);
+      -  FUN_0001fe84(0,1000);
+      -  FUN_0001fe84(0,1000);
+      -  FUN_0001fe84(0,1000);
+      -  FUN_0001fe84(0,100);
+      -  FUN_0001fe84(0,10000);
+      +  scheduleJ1939PeriodicMessage(0,100);
+      +  scheduleJ1939PeriodicMessage(0,0x14);
+      +  scheduleJ1939PeriodicMessage(0,0x32);
+      +  scheduleJ1939PeriodicMessage(0,0xfa);
+      +  scheduleJ1939PeriodicMessage(0,5000);
+  0x0002f128 processEngineTsc1Request: 35 lines
+      -    DAT_00801d4e = *(undefined1 *)(*(int *)(param_1 + 6) + 1);
+      -    DAT_00801d4d = *(undefined1 *)(*(int *)(param_1 + 6) + 2);
+      +    j1939_received_tsc1_requested_speed[1] = *(byte *)(*(int *)(param_1 + 6) + 1);
+      +    j1939_received_tsc1_requested_speed[0] = *(byte *)(*(int *)(param_1 + 6) + 2);
+      -        if (DAT_00801d54 < bVar2) {
+      +        if (tsc1_accepted_priority < bVar2) {
+      -        if (bVar2 == DAT_00801d54) {
+      +        if (bVar2 == tsc1_accepted_priority) {
+      -            if (DAT_00801d58 < j1939_received_tsc1_requested_torque) {
+      +            if (tsc1_accepted_requested_torque < j1939_received_tsc1_requested_torque) {
+      -            if ((DAT_00801d58 == j1939_received_tsc1_requested_torque) &&
+      -               (_DAT_00801d56 <= CONCAT11(DAT_00801d4d,DAT_00801d4e))) {
+      +            if ((tsc1_accepted_requested_torque == j1939_received_tsc1_requested_torque) &&
+      +               (tsc1_accepted_requested_speed <=
+      +                CONCAT11(j1939_received_tsc1_requested_speed[0],
+      +                         j1939_received_tsc1_requested_speed[1]))) {
+      -    DAT_00801d54 = bVar2;
+      +    tsc1_accepted_priority = bVar2;
+      -      datalink_commanded_speed_reference = CONCAT11(DAT_00801d4d,DAT_00801d4e);
+      -      _DAT_00801d56 = datalink_commanded_speed_reference;
+      +      datalink_commanded_speed_reference =
+      +           CONCAT11(j1939_received_tsc1_requested_speed[0],j1939_received_tsc1_requested_speed[1]);
+      +      tsc1_accepted_requested_speed = datalink_commanded_speed_reference;
+      -      DAT_00801d58 = j1939_received_tsc1_requested_torque;
+  0x0002fcdc validateSecurityKey: 2 lines
+      +  bool all_keys_match;
+      -  bool all_keys_match;
+  0x00030a5e cm550_FUN_00030a5e: 4 lines
+      -       ((fault_processing_enable_flags & 0x800) != 0)) {
+      +       ((fault_processing_enable_flags[0] & 0x800) != 0)) {
+      -       (uVar1 = fault_processing_enable_flags & 0x1000, uVar1 != 0)) {
+      +       (uVar1 = fault_processing_enable_flags[0] & 0x1000, uVar1 != 0)) {
+  0x00033dfa cm550_initializePgn65252ShutdownBuffer: 3 lines
+      -  j1939_pgn65252_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f78 & 7) << 2),0xfee400);
+      +  j1939_pgn65252_tx_message.header.can_id =
+      +       CONCAT13((char)((j1939_pgn65252_priority_cal & 7) << 2),0xfee400);

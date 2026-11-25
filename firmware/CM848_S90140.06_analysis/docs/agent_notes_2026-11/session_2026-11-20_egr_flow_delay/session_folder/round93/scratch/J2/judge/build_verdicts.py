@@ -1,0 +1,292 @@
+"""Builds the J2 judge verdict JSON from the proposal plus the judge's decisions; validates coverage."""
+import json
+
+SRC = '/home/linux/.claude/jobs/374b0424/tmp/w15/r94/batch_J2.json'
+OUT = '/home/linux/.claude/jobs/374b0424/tmp/w15/r93/scratch/J2/judge/verdicts.json'
+d = json.load(open(SRC))
+p = d['proposal']
+
+# ---------------------------------------------------------------- functions
+# address -> (verdict, own_role, reason, overrides)
+F = {
+    '0x1fdc0': ('CONFIRMED',
+                'J1922 monitor recorder: with algorithm_enable_flags_2_cal bit 0x80 it adds 1 to the total count 0x804164 and to the count of mode 1 / 2 / 3 (0x804170 / 0x804176 / 0x80416a) and stamps key_on_hour_meter into that mode\'s time and 0x804166; any other mode changes nothing.',
+                'asm 0x1fdc0-0x1fe3e matches both roles; the only writer of the e2m 1101 cells (0x1fd6c only clears them). CM848 never reads j1922_monitor_enable (0 hits in its decompile, the bit is marked no reader), so standalone with cm550_ is right. Name unique.',
+                {}),
+    '0x1ff38': ('CONFIRMED',
+                'J1939 periodic transmit scheduler (second call of the odd 10 ms task set 0x1b504): with J1939 enabled it walks queue 0 (0x80096e, count 0x800a9a) on broadcast bit 2 and queue 1 (0x800a36, count 0x800a9b) on bit 3, calls each entry whose next tick equals the queue tick, adds its period, then advances the tick.',
+                'asm 0x1ff38-0x1ffce; CM848 0x538d3c runs the same two loops but also needs j1939_dm13_broadcast_enable_flags bits 2 / 3 -> counterpart, CM848 base name with cm550_. Unique.',
+                {}),
+    '0x212b2': ('CONFIRMED',
+                'J1939 receive dispatcher (first call of the even 10 ms set 0x1b4d8): drains the 18-byte CAN receive ring for at most 250 CTM4 time base counts, builds the PGN key (PS cleared for PF 0 to the engine / retarder node or 0xFF and for PF < 0xF0 to the engine node or 0xFF), stores the source address, drops sources listed in 0x80d9e0 and calls the j1939_receive_handler_table handler; after a full ring it re-enables the 82527 receive objects (0xFB to 0xffd810 + 16 n).',
+                'Decompile and asm agree; CM848 0x538ef4 adds the DM13 hook, a TBL budget of 9 and TouCAN IMASK writes -> counterpart. It reads CTM4 0xfff404 and writes the chip-select 82527, so mc68k_ is the right prefix. Reached only by jsr at 0x1b4d8 (operand 0x1b4da).',
+                {}),
+    '0x2142c': ('CONFIRMED',
+                'Retarder shift assist end: with bit 0x1000 of algorithm_enable_flags_2_cal, retarder mode 2 from device 1 and engine mode 1 from device 1, it ends the retarder request (mode 0, torque 125, 0x80da8e and 0x80da90 cleared) once fuel_demand_selected reaches 0x8089a8.',
+                'Twin: asm 0x2142c-0x21488 against CM848 0x50aec0-0x50af54 has the same six tests in the same order with the same constants (0x1000, 2, 1, 1, 1, >= limit) and the same four stores; both run directly before the periodic queue runner in the 10 ms J1939 list. Unprefixed name free in both CSVs.',
+                {}),
+    '0x216c6': ('CONFIRMED',
+                'PGN 61184 service 0x45 handler: memcpy 2 bytes (parameter ID) from data + 1 and 4 bytes (length) from data + 3, then 0x21642(request, ID, 0, length).',
+                'Twin: asm 0x216c6-0x21712 against CM848 0x50b298 - the same two copies, offset 0 and the same helper call; registered for 0x45 second in both registrars.',
+                {}),
+    '0x21778': ('CONFIRMED',
+                'PGN 61184 service 0x49 handler: copies the ID (2 bytes, data + 1), the offset (4, data + 3) and the length (4, data + 7) and calls 0x21642(request, ID, offset, length).',
+                'Twin: asm 0x21778-0x217dc against CM848 0x50b38c - the same three copies and call; registered for 0x49 last in both registrars.',
+                {}),
+    '0x21872': ('CONFIRMED',
+                'Registers the six PGN 61184 memory write services (0x44, 0x45, 0x4b, 0x4d, 0x47, 0x49 -> 0x2167e, 0x216c6, 0x217de, 0x21826, 0x21714, 0x21778) with registerJ1939DiagnosticService.',
+                'Twin: asm 0x21872-0x218c8 against CM848 0x50b4d8 - the same six service numbers in the same order with the corresponding (twin) handlers; in both J1939 start-ups it is the call right before registerJ1939DiagnosticHandlers.',
+                {}),
+    '0x21920': ('CONFIRMED',
+                'Builds the DM1 / DM2 lamp status byte from the lamp command byte 0x80bcf6: bit 4 -> 0x40 and 0x01, bit 1 -> 0x10, bit 6 -> 0x04.',
+                'asm 0x21920-0x21954; CM848 0x50b5b4 produces the same four bits in the same order from four separate flag words -> counterpart. Callers DM1 / DM2 builders in both. Unique.',
+                {}),
+    '0x21f4e': ('CONFIRMED',
+                'Files a finished session: reads the history index 0x804232, stores index + 1, entry = 0x80417e + 24 x old index, wraps the index at 5, picks the engine record 0x8041f8 (argument 0) or the retarder record 0x804212 and copies 12 words.',
+                'Twin: asm 0x21f4e-0x21faa against CM848 0x50be6c - the same steps, constants 24 / 5 / 12 and the tracker as the only caller in both.',
+                {}),
+    '0x21fac': ('CONFIRMED',
+                'Opens a session record: argument 0 sets 0x80422a = 1, 0x80422e = device 0x80da4e and fills 0x8041f8 (kind 0, source 0x80da70, device, count 1, mode 0x80da50, four cleared modes, start = key_on_hour_meter, duration 0); otherwise the same for the retarder (0x80422c / 0x804230 / 0x804212, kind 1, source byte 0x80d9e9, device 0x80d9e6, mode 0x80d9e4).',
+                'Twin: asm 0x21fac-0x2206e against CM848 0x50beec - the same stores to the same offsets in the same order; only the four cleared mode words are written ascending here and descending in CM848 (compiler scheduling, no effect). Only caller the tracker in both.',
+                {}),
+    '0x22070': ('AMENDED',
+                'J1939 monitor (bit 0x800): compares the engine mode / network / source and the retarder mode / source with the copies 0x800b12-0x800b19; opens (0x21fac), extends (mode list append or shift) and closes (duration + 0x21f4e) the engine and retarder session records, engine sessions only on network 1, then saves the copies.',
+                'Twin confirmed: asm 0x22070-0x222b2 against CM848 0x50bff4 is the same decision tree branch for branch (same constants, network test only in the engine half, same order of the copy saves) and the third call of the 10 ms J1939 list in both. Name kept; the plate comment is corrected: on a source change the code stores the duration, files and reopens (it does not clear the status), and a control that moves off network 1 is filed without a duration.',
+                {'final_comment': 'J1939 monitor (algorithm_enable_flags_2_cal.j1939_monitor_enable, e2m JC39MREA), third call of the even frame task set 0x1b4d8. Engine half (control mode 0x80da50, network type 0x80da68, source address 0x80da70 against the copies 0x800b12 / 0x800b16 / 0x800b18): a non-zero mode on network 1 opens a session record (startJ1939ControlSession) when none is open; a new mode from the same source is appended to the record\'s five mode words (shifted when full); a new source stores the duration, files the record (storeJ1939ControlSessionInHistoryTable) and opens a new one; mode 0 after a network 1 control clears the control status 0x80422a, stores the duration and files the record; a control on another network after network 1 clears the status and files the record without a duration. The retarder half does the same for retarder_control_mode and the source address word 0x80d9e8 (copies 0x800b14 / 0x800b19, status 0x80422c, record 0x804212) with no network test. Twin of CM848 0x50bff4.'}),
+    '0x231da': ('CONFIRMED',
+                'Engine request reset: saves the control mode in 0x801982, clears the mode 0x80da50, the device 0x80da4e and the speed control status 0x80da60, calls the J1922 recorder 0x1fdc0 with the saved mode, then clears the request timeout 0x80da80 and the time limit timer 0x80da7e.',
+                'asm 0x231da-0x23214; five callers, all in 0x23244. CM848 does these stores inside cm848_runTsc1LostManagement after its TSC1 lost ramps and has no J1922 call -> counterpart (prefixed). The name parallels the retarder twin resetEngineRetarderTsc1Request; tsc1_ covers the J1922 command as in the existing CM550 tsc1_source_configuration_* rows. Unique.',
+                {}),
+    '0x23244': ('CONFIRMED',
+                'Datalink powertrain control timer runner (second call of the even 10 ms set): counts down the high idle override, progressive shift disable, out of gear, retarder zero torque and VSS type 4 / 5 timers, times the engine and retarder requests against the previous-pass copies (timeout -> reset, time limit -> ignored list + reset, change -> time limit reload and J1922 occurrence), and keeps the J1708 / J1939 link timeout counts, fault bits (word 7 mask 0x8 / word 5 mask 0x400) and clear requests.',
+                'asm 0x23244-0x2381e matches; CM848 0x2715c has the same skeleton in the same order plus ETC1 / ETC2 / lockup / shaft speed timers, blocked message bits and TSC1 lost management -> counterpart with CM848 base name. It touches no fuel demand or limit. Unique.',
+                {}),
+    '0x23216': ('CONFIRMED',
+                'Retarder request reset: retarder mode 0, device 0, torque 125, and 0x80da84 / 0x80da82 / 0x80da8e / 0x80da90 cleared; no call.',
+                'Twin: asm 0x23216-0x23242 against CM848 0x27118 - the same seven stores in the same order with 125; callers only the timeout runner in both.',
+                {}),
+    '0x21642': ('CONFIRMED',
+                'Write by parameter ID: cm550_lookupParameterIdAddress(ID, &address); non-zero -> return 8; else writeJ1939DiagnosticMemory(request, address + offset, length).',
+                'Twin: asm 0x21642-0x2167c against CM848 0x50b1b8 - lookup, 8, address + offset, the same write call and the same four callers; the lookup callee is each firmware\'s own counterpart, which does not change this function\'s steps.',
+                {}),
+    '0x238ac': ('CONFIRMED',
+                'Appends (network type, source address, mode, countdown = 0x808188) to the 8-byte engine ignored request list 0x801994 unless the count byte 0x8019d0 is already 5.',
+                'asm 0x238ac-0x238ea equals CM848 0x53d3c step for step except the capacity constant 5 against 10, and CM848 has extra callers (cm848_updateParkNeutralFlagAndTsc1Activity) -> counterpart under the same-constants rule (round 91 called a 5 / 10 table-size case a twin; the investigator\'s conservative choice is kept). Unique.',
+                {}),
+    '0x238ec': ('CONFIRMED',
+                'Appends (source address, countdown = 0x808188) to the 4-byte retarder ignored request list 0x8019bc unless the count byte 0x8019d1 is 5.',
+                'asm 0x238ec-0x2391e; CM848 0x53d84 has 6-byte entries with a mode word and two arguments -> counterpart. Unique.',
+                {}),
+    '0x2167e': ('CONFIRMED',
+                'PGN 61184 service 0x44 handler: copies the ID from data + 1, takes data byte 3 as the length, then 0x21642(request, ID, 0, length).',
+                'Twin: asm 0x2167e-0x216c4 against CM848 0x50b228 - the same copy, the same zero-extended byte length and call; registered for 0x44 first in both.',
+                {}),
+    '0x21714': ('CONFIRMED',
+                'PGN 61184 service 0x47 handler: ID from data + 1, offset = data bytes 3-4, length = data byte 5, then 0x21642(request, ID, offset, length).',
+                'Twin: asm 0x21714-0x21776 against CM848 0x50b300 - the same reads and call; registered for 0x47 in the same slot in both.',
+                {}),
+    '0x1fd6c': ('CONFIRMED',
+                'J1922 monitor clear: with bit 0x100 and 0x804166 + 0x808190 below key_on_hour_meter it zeroes the eight J1922 records.',
+                'asm 0x1fd6c-0x1fdbe; caller the task set 0x1b6d6 (jsr operand 0x1b6d8); nothing J1939 or timeout related; no CM848 code -> standalone. The row 0x1fd8e is a label inside it. Unique.',
+                {}),
+    '0x142a8': ('CONFIRMED',
+                'Control device lookup: compares the source address with the low bytes of 0x60f82 / 0x60f84 / 0x60f86 and returns 1 / 2 / 3, else 4.',
+                'Twin: asm 0x142a8-0x142d2 against CM848 0x53a4c - the same three low-byte compares on the same e2m records (10E3 +4 / +6 / +8) and the same results; callers processEngineTsc1Request x3 and the retarder handler x2 in both.',
+                {}),
+    '0x23820': ('CONFIRMED',
+                'Finds an engine ignored request entry with (network type, source address, mode) = its three arguments, reloads its countdown from 0x808188 and returns 1; else 0.',
+                'Twin: asm 0x23820-0x2386e against CM848 0x53c68 - the same three compares (word 0, byte 2, word 4), reload of word 6, step 8, return 1 / 0. Common caller processEngineTsc1Request; CM550 adds its J1922 command handlers, as accepted for findTsc1SourceConfiguration.',
+                {}),
+    '0x23870': ('CONFIRMED',
+                'Finds a retarder ignored request entry by source address, reloads its countdown from 0x808188 and returns 1; else 0.',
+                'asm 0x23870-0x238aa; CM848 0x53cd8 also matches the mode in 6-byte entries -> counterpart. Unique.',
+                {}),
+    '0x23920': ('CONFIRMED',
+                'Counts every engine and retarder ignored request entry down by 1 (last entry first) and removes those reaching 0 by copying the last entry into the gap.',
+                'asm 0x23920-0x239d0, third call of the odd set 0x1b504; CM848 0x53dc8 also clears the high idle override flag and blocked message bits on expiry -> counterpart. Unique.',
+                {}),
+    '0x239d2': ('CONFIRMED',
+                'Removes the engine ignored request entries whose network type and source address match its two arguments (any mode), copying the last entry into each gap.',
+                'Twin: asm 0x239d2-0x23a3a against CM848 0x53fa8 - the same backward loop, two-field match and four-field copy. Common caller processEngineTsc1Request; the extra callers (CM550 J1922 handlers, CM848 park / neutral activity) come from features of each firmware.',
+                {}),
+    '0x23a3c': ('CONFIRMED',
+                'Removes the retarder ignored request entries with the given source address (4-byte entries), copying the last entry into each gap.',
+                'asm 0x23a3c-0x23a8e; CM848 0x54064 does the same on 6-byte entries (three fields copied) -> counterpart. Unique.',
+                {}),
+}
+
+TWIN_CM848 = {
+    '0x2142c': '0x50aec0', '0x216c6': '0x50b298', '0x21778': '0x50b38c', '0x21872': '0x50b4d8',
+    '0x21f4e': '0x50be6c', '0x21fac': '0x50beec', '0x22070': '0x50bff4', '0x23216': '0x27118',
+    '0x21642': '0x50b1b8', '0x2167e': '0x50b228', '0x21714': '0x50b300', '0x142a8': '0x53a4c',
+    '0x23820': '0x53c68', '0x239d2': '0x53fa8',
+}
+
+# ---------------------------------------------------------------- globals
+# (firmware, address) -> (verdict, reason, overrides)
+J1922_CELL = 'abs_refs: the writes in 0x1fdc0 and the clears in 0x1fd6c only, at this width; e2m 1101 record at the address (EEPROM 0x65A + offset); outside the stated mirror window, so no _cal. Unique.'
+G = {
+    ('CM550', '0x804164'): ('CONFIRMED', 'addq.w at 0x1fdec / 0x1fe08 / 0x1fe24 and clr.w at 0x1fd8e only; e2m 1101 +0 JC22CU. ' + J1922_CELL, {}),
+    ('CM550', '0x804166'): ('CONFIRMED', 'move.l stores in the three mode branches, move.l read and clr.l in 0x1fd6c; e2m 1101 +2 JC22TM. ' + J1922_CELL, {}),
+    ('CM550', '0x80416a'): ('CONFIRMED', 'addq.w at 0x1fe2a (mode 3) / clr.w; e2m 1101 +6 JC22LMCU. ' + J1922_CELL, {}),
+    ('CM550', '0x80416c'): ('CONFIRMED', 'move.l at 0x1fe32 (mode 3) / clr.l; e2m 1101 +8 JC22LMTM. ' + J1922_CELL, {}),
+    ('CM550', '0x804170'): ('CONFIRMED', 'addq.w at 0x1fdf2 (mode 1) / clr.w; e2m 1101 +C JC22RPCU. ' + J1922_CELL, {}),
+    ('CM550', '0x804172'): ('CONFIRMED', 'move.l at 0x1fdfa (mode 1) / clr.l; e2m 1101 +E JC22RPTM. ' + J1922_CELL, {}),
+    ('CM550', '0x804176'): ('CONFIRMED', 'addq.w at 0x1fe0e (mode 2) / clr.w; e2m 1101 +12 JC22TQCU. ' + J1922_CELL, {}),
+    ('CM550', '0x804178'): ('CONFIRMED', 'move.l at 0x1fe16 (mode 2) / clr.l; e2m 1101 +14 JC22TQTM. ' + J1922_CELL, {}),
+    ('CM550', '0x808190'): ('CONFIRMED', 'Only reference add.l (0x808190),d0 at 0x1fd80 (dword); e2m 10E7 +12 JC22CCTM; RAM calibration block, not the EEPROM mirror, so no _cal. Replaces a description name. Unique.', {}),
+    ('CM550', '0x80417e'): ('CONFIRMED', 'Only access the 12-word copy to 0x80417e + 24 x index (0-4) in 0x21f4e, so it holds five copies of the session records; 120 bytes end at 0x8041f5, before the 10FE length word 0x8041f6; no named row inside. e2m 10FD resolves to the length word 0x80417c (0x0078 in the RAM dump). The new CM550 struct j1939_control_session_t (24 bytes, investigator note 4) is proven by every access of 0x21fac / 0x22070 / 0x21f4e. Unique.', {}),
+    ('CM550', '0x8041f8'): ('CONFIRMED', 'Layout proven from every access (0x21fac all fields, 0x22070 +4 / +6 indexed / +0xe / +0x10 / +0x14, 0x21f4e 12-word copy). It swallows the row 0x8041fc datalink_speed_snapshot_mode_count, which is its +4 mode count with no absolute reference: that row must be removed. e2m 10FE (length word 0x8041f6 = 0x0018). Unique.', {}),
+    ('CM550', '0x804212'): ('CONFIRMED', 'Same layout as 0x8041f8 (kind 1); swallows the row 0x804216 retarder_snapshot_mode_count (its +4 count, no absolute reference): remove that row. e2m 10FF (length word 0x804210). Unique.', {}),
+    ('CM550', '0x80422a'): ('CONFIRMED', 'move.w #1 at 0x21fce, cmpi.w #1 at 0x22104, clr.w at 0x220d8 / 0x2218c; e2m 1100 +0 JCEGCOSS; CM848 record name without _cal (outside the stated window). Unique.', {}),
+    ('CM550', '0x80422c'): ('CONFIRMED', 'move.w #1 at 0x2201a, cmpi.w #1 at 0x22210, clr.w at 0x221ee; e2m 1100 +2 JCRDCOSS. Unique.', {}),
+    ('CM550', '0x80422e'): ('CONFIRMED', 'Single reference move.w (a1),(0x80422e) at 0x21fd6 (a1 = 0x80da4e); e2m 1100 +4 JCEGCOSA (device codes). Unique.', {}),
+    ('CM550', '0x804230'): ('CONFIRMED', 'Single reference move.w (0x80d9e6),(0x804230) at 0x22022; e2m 1100 +6 JCRDCOSA. Unique.', {}),
+    ('CM550', '0x804232'): ('CONFIRMED', 'move.w read, addq.w, cmpi.w #5, clr.w in 0x21f4e only; e2m 1100 +8 JCHSTBPO. Unique.', {}),
+    ('CM550', '0x800b12'): ('CONFIRMED', 'cmp.w / tst.w / move.w store in 0x22070 only; the twin tracker uses CM848 0x3fbd6c the same way (same order of the five copies). Unique in CM550.', {}),
+    ('CM550', '0x800b14'): ('CONFIRMED', 'cmp.w / tst.w / move.w in 0x22070 only (copy of 0x80d9e4); CM848 0x3fbd6e. Unique.', {}),
+    ('CM550', '0x800b16'): ('CONFIRMED', 'cmp.w and two cmpi.w #1 plus the store in 0x22070 (copy of 0x80da68); CM848 0x3fbd70. Unique.', {}),
+    ('CM550', '0x800b18'): ('CONFIRMED', 'cmp.b at 0x220b0 / 0x22114 and move.b store at 0x221ae (byte copy of 0x80da70); CM848 0x3fbd72. Unique.', {}),
+    ('CM550', '0x800b19'): ('CONFIRMED', 'move.b reads at 0x221d0 / 0x22226 and the store at 0x222a4 (low byte of 0x80d9e8); CM848 0x3fbd73. Unique.', {}),
+    ('CM550', '0x801982'): ('CONFIRMED', 'Written by 0x231da (move.w (a2),(a3)) and at 0x235ba, compared at 0x23448, pushed for 0x1fdc0 at 0x234bc; word. CM848 0x3faf34 same record. Unique.', {}),
+    ('CM550', '0x801984'): ('CONFIRMED', 'cmp.w at 0x23452, tst.w at 0x234b2 (0 = J1922 -> recorder), store at 0x235c4; CM848 0x3faf36. Unique.', {}),
+    ('CM550', '0x801986'): ('CONFIRMED', 'cmp.b at 0x23460 and move.b store at 0x235ca (byte copy of 0x80da70); CM848 0x3faf38. Unique.', {}),
+    ('CM550', '0x801988'): ('CONFIRMED', 'move.w read at 0x23268 (rise of 0x80da54 loads the time limit) and store at 0x235d4; CM848 0x3faf39. Unique.', {}),
+    ('CM550', '0x80198a'): ('CONFIRMED', 'Read at 0x23386 / 0x235f4, stored at 0x236b2 (copy of retarder_control_mode); CM848 0x3faf3b same record; the name says nothing the code contradicts. Unique.', {}),
+    ('CM550', '0x80198c'): ('CONFIRMED', 'move.b read at 0x23606 and store at 0x236b8 (low byte 0x80d9e9); the hit at 0x2393a is the engine list base - 8, not an access. CM848 0x3faf3d. Unique.', {}),
+    ('CM550', '0x80198e'): ('AMENDED', 'Role confirmed (read at 0x23306, stored at 0x235de: the copy of 0x80da58), but the etc1_ name claims an ETC1-only flag: in CM550 the J1708 message handler 0x1f84e sets 0x80da58 too (0x1f8a2). Neutral name after the amended flag name, as CM550 keeps high_idle_override_active_flag_previous. Unique in both CSVs, the live CSV and the other batches.',
+                              {'final_name': 'progressive_shift_disable_flag_previous', 'final_type': 'word',
+                               'final_comment': 'progressive_shift_disable_flag (0x80da58) at the end of the last cm550_runJ1939PowertrainControlTimeouts pass; while the progressive shift disable timeout timer runs, a rise of the flag to 1 counts as a new control request. CM848\'s etc1_progressive_shift_disable_previous is the same record (ETC1 is its only writer there).'}),
+    ('CM550', '0x801990'): ('AMENDED', 'Role confirmed (read at 0x23346, stored at 0x235e8: the copy of driveline_disengaged_flag 0x80da56), but etc1_out_of_gear_flag_previous names an ETC1-only flag that CM550 calls driveline_disengaged_flag and that the J1922 command handler 0x1f4e8 also sets (0x1f830, network type 0 in 0x80da6a). Named after the CM550 flag. Unique.',
+                              {'final_name': 'driveline_disengaged_flag_previous', 'final_type': 'word',
+                               'final_comment': 'driveline_disengaged_flag (0x80da56, e2m 10E8 +A JCOG out of gear; set by the ETC1 handler 0x2efd0 and by the J1922 command handler 0x1f4e8) at the end of the last cm550_runJ1939PowertrainControlTimeouts pass; while driveline_disengage_timeout_timer runs, a rise of the flag to 1 counts as a new control request. CM848\'s etc1_out_of_gear_flag_previous is the same record.'}),
+    ('CM550', '0x801992'): ('CONFIRMED', 'Byte through a4 (move.b #1 / clr.b / cmpi.b #1 in 0x23244): set on a new or changed J1939 request (and retarder mode 2 / 3 change), cleared after a J1939 timeout count or when the word 5 mask 0x400 fault can be cleared; no timeout sets it. CM848 0x3faf42 same record. Unique.', {}),
+    ('CM550', '0x801993'): ('CONFIRMED', 'Byte: move.b #1 at 0x235b2 (request on network 0), cmpi.b / clr.b at 0x23708-0x23774 with the word 7 mask 0x8 clear path and the 0x804266 reset. CM848 0x3faf43. Unique.', {}),
+    ('CM550', '0x80da7e'): ('CONFIRMED', 'Through a2 in 0x23244: reloaded from tsc1_source_configuration_pointer +6 / +0xa + 1 (modes 1 / 2) or 0 on a change, counted down, at 1 -> 0x238ac + 0x231da; cleared by 0x231da. Same record as CM848 +0x28 (timer order 0x80da7e-0x80da92 matches CM848 +0x28..+0x3c). Unique.', {}),
+    ('CM550', '0x80da86'): ('AMENDED', 'Name confirmed (decremented in 0x23244, at 1 the override and the recovery flag end; reloaded with the recovery time + 1 when the time limit expires), but the comment lists only the ETC1 loader: the J1922 command handler 0x1f4e8 also loads it with its request timeout when it sets the override (0x1f802). Comment corrected. Unique.',
+                              {'final_name': 'high_idle_override_timeout_timer', 'final_type': 'word',
+                               'final_comment': 'CM848\'s j1939_powertrain_control_state.high_idle_override_timeout_timer: the high idle override\'s message timeout. Loaded with (0x808182, e2m JCEGOSTM) + 1 by the ETC1 handler 0x2efd0 on each ETC1 with SPN 606 = 01 (with the recovery time 0x808188 + 1 instead while high_idle_override_recovery_flag is set), with the J1922 request timeout by the J1922 command handler 0x1f4e8 when it sets the override, and with the recovery time + 1 by cm550_runJ1939PowertrainControlTimeouts when the time limit expires; at 1 the override and the recovery end. It does not time the override\'s duration (was high_idle_override_duration_timer).'}),
+    ('CM550', '0x80da88'): ('CONFIRMED', 'Loaded with (0x808184) + 1 on a rise of high_idle_override_active_flag (0x23280), counted down, at 1 -> override 0, recovery flag 1, timeout timer = recovery + 1; cleared by the ETC1 handler (0x2f078). A time limit. Unique.', {}),
+    ('CM550', '0x80da8c'): ('AMENDED', 'Role confirmed (counted down in 0x23300, at 1 it and 0x80da58 are cleared), but it is loaded by the ETC1 handler (0x2f0a8, JCPSTM + 1) and by the J1708 message handler 0x1f84e (0x1f8a6, JCPSTM without + 1), so the etc1_ prefix over-claims. Neutral name parallel to the CM550 sibling driveline_disengage_timeout_timer and the e2m JCPSTM text (time out for Jcomm_Progressive_Shift_Disable). Unique.',
+                              {'final_name': 'progressive_shift_disable_timeout_timer', 'final_type': 'word',
+                               'final_comment': 'The progressive shift disable command\'s timeout: loaded with (0x80818c, e2m 10E7 +E JCPSTM \'TIME OUT FOR JCOMM_PROGRESSIVE_SHIFT_DISABLE\') + 1 by the ETC1 handler 0x2efd0 while ETC1 SPN 607 = 01 and with JCPSTM by the J1708 message handler 0x1f84e while its bit 7 is set (both clear it with the flag otherwise); cm550_runJ1939PowertrainControlTimeouts counts it down and at 1 clears it and progressive_shift_disable_flag. CM848\'s j1939_powertrain_control_state.etc1_progressive_shift_disable_timer is the same record (ETC1 only there).'}),
+    ('CM550', '0x80da58'): ('AMENDED', 'The record is e2m 10E8 +C JCPSDB progressive shift disable (not an engine brake flag), but etc1_spn607_ claims ETC1 SPN 607 as its source: the J1708 message handler 0x1f84e (J1708 receive buffer 0x80dcaa, dispatched at 0x16408 next to the J1922 command handlers) also sets and clears it (0x1f8a2 / 0x1f8ae). Neutral name like its CM550 siblings high_idle_override_active_flag and driveline_disengaged_flag. Word (cmpi.w / clr.w / move.w). Unique.',
+                              {'final_name': 'progressive_shift_disable_flag', 'final_type': 'word',
+                               'final_comment': 'e2m 10E8 +C JCPSDB \'JCOMM PROGRESSIVE SHIFT DISABLE 1=TRUE, DISABLE PROG SHIFT\': 1 while a progressive shift disable command is in force. The ETC1 (PGN 61442) handler 0x2efd0 sets it when byte 5 bits 3-4 (SPN 607) = 01 and the J1708 message handler 0x1f84e when its bit 7 is set, each with progressive_shift_disable_timeout_timer; both clear it otherwise, and cm550_runJ1939PowertrainControlTimeouts clears it when the timer reaches 1. CM848\'s j1939_powertrain_control_state.etc1_spn607_progressive_shift_disable is the same record (ETC1 only there). Not an engine brake flag (was engine_brake_override_flag).'}),
+    ('CM550', '0x80da98'): ('CONFIRMED', 'move.w #1 at 0x232e2 (time limit expired), clr.w at 0x232b0 (timeout expired), tst.w in the ETC1 handler 0x2f024 (recovery reload); word. CM848 +0x52 field. Unique.', {}),
+    ('CM550', '0x80da90'): ('REFUTED', 'Every access is a clr.w (0x21482, 0x2323c, 0x2fa30, 0x2fa8a) and nothing reads it, so the CM550 code shows no role; the name only copies CM848\'s field, which CM848 itself marks inferred (no reader, always 0). The twins prove it is the same record, not what it is. Leave it unnamed.', {}),
+    ('CM550', '0x80da4e'): ('CONFIRMED', 'e2m 10E8 +2 JCEGCOID device codes; set by processEngineTsc1Request (lookupJ1939ControlDevice result) and the J1922 handlers, tested for 1 in 0x2142c / 0x2f044, cleared by 0x231da, copied by 0x21fac; word. CM848 0x40adf6 same record. Replaces a description name. Unique.', {}),
+    ('CM550', '0x80d9e6'): ('CONFIRMED', 'e2m 10E6 +2 JCRDCOID; tested at 0x21446, cleared by 0x23216, stored by the retarder handler, copied by 0x21fac; word. CM848 0x40ad5c. Unique.', {}),
+    ('CM550', '0x80da60'): ('CONFIRMED', 'e2m 10E8 +14 JCRPGVSS; cleared by 0x231da and set 1 / 0 by processEngineTsc1Request and the J1922 handlers per mode; word. CM848 field of the same e2m record; tsc1_ covers the shared J1939 / J1922 request as in the existing CM550 tsc1_* rows. Unique.', {}),
+    ('CM550', '0x80d9e8'): ('CONFIRMED', 'Type only: move.w reads at 0x221c8 / 0x2221e / 0x235fe / 0x2f89e and the move.w store at 0x2f92c; the low byte 0x80d9e9 is read as a byte and needs no row.', {}),
+    ('CM550', '0x803d4a'): ('CONFIRMED', 'e2m 1180 +10 VSRSSNTY at EEPROM 0x240 (inside the mirror window, so _cal); its only references are cmpi.w #4 / #5 / #4 in 0x23244; CM848 0x3fdda6 same record. Unique.', {}),
+    ('CM550', '0x80096e'): ('CONFIRMED', 'Layout from both users: the registrar 0x1fe84 writes +0 key / +2 period / +4 next tick / +6 builder (capacity 20) and 0x1ff38 reads +4 / +2 and calls +6; the RAM dump holds 17 entries with PGN 65265, 61444 ... at +0. 200 bytes end at 0x800a35, no named row inside. New struct j1939_periodic_transmit_entry_t (10 bytes). Unique.', {}),
+    ('CM550', '0x800a36'): ('CONFIRMED', 'Same layout, capacity 10 in 0x1fe84; 100 bytes end at 0x800a99 before the count byte 0x800a9a; RAM dump: PGN 61440 and 65249 (retarder node). Unique.', {}),
+    ('CM550', '0x800a9a'): ('CONFIRMED', 'Byte: cmpi.b #20 / addq.b in 0x1fe84, cmp.b in 0x1ff38; 17 in the dump; CM848 0x3fd40e. Unique.', {}),
+    ('CM550', '0x800a9b'): ('CONFIRMED', 'Byte: cmpi.b #10 / addq.b in 0x1fe84, cmp.b in 0x1ff38; CM848 0x3fd40f. Unique.', {}),
+    ('CM550', '0x800a9c'): ('CONFIRMED', 'Word through a4 in 0x1ff38 (cmp.w, addq.w) and move.w read in 0x1fe84; CM848 0x3fd410. Unique.', {}),
+    ('CM550', '0x800a9e'): ('CONFIRMED', 'Word through a3 in 0x1ff38 and read in 0x1fe84; CM848 0x3fd412. Unique.', {}),
+    ('CM550', '0x80aa12'): ('CONFIRMED', 'e2m 102E JCBCFGLC with bit records JC87EN / JC22EN / JCEGBCEA / JCRDBCEA; word (andi.w through a5, clr.w, copied from 0x803f88 at 0x2919c); CM848 0x40adee same record. Replaces a description name. Unique.', {}),
+    ('CM550', '0x80d9e0'): ('CONFIRMED', 'The dispatcher compares the source address with these 4 bytes (0xFE ends) and skips the handler on a match; the J1939 init fills them with 0xFE; no other reference. e2m 10E4 JCSABLTB resolves to 0x80d9de in front. Unique.', {}),
+    ('CM550', '0x80d9de'): ('CONFIRMED', 'move.w #4,(0x80d9de) at 0x28bc0 is the only code reference (its address is also in the parameter ID table at 0x35abc for Calterm); the e2m T-record length word of JCSABLTB. Unique.', {}),
+    ('CM848', '0x40ad56'): ('CONFIRMED', 'CM848 0x539024-0x5390bc: a listed source address (0xFE ends the 4-byte list) sets the flag that skips the handler scan; the init fills it with 0xFE; nothing accepts by it, so whitelist is the opposite of the code. e2m 10E4 Jcomm_Source_Address_Blocking_Table resolves to the length word 0x40ad54. Same name as the CM550 record; unique in CM848.', {}),
+    ('CM550', '0x801994'): ('CONFIRMED', 'Layout proven from every access in 0x23820 / 0x238ac / 0x23920 / 0x239d2 (word 0, byte 2, word 4, word 6, step 8, at most 5): new struct engine_tsc1_ignored_request_t (8 bytes, +3 pad). The 40 bytes swallow the rows 0x801998, 0x80199a, 0x8019a2, 0x8019a6, 0x8019aa-0x8019ad, 0x8019b2, 0x8019b4, 0x8019b6 and 0x8019b8, none of which has an absolute reference (they only appear as base + index in these functions; 0x8019b8 is the retarder list base - 4 at 0x2398e): those rows must be removed. Unique.', {}),
+    ('CM550', '0x8019bc'): ('CONFIRMED', 'Layout proven in 0x23870 / 0x238ec / 0x23920 / 0x23a3c (byte 0, word 2, step 4, at most 5): new struct retarder_tsc1_ignored_request_t (4 bytes); 20 bytes end at 0x8019cf before the count bytes. Unique.', {}),
+    ('CM550', '0x8019d0'): ('CONFIRMED', 'Byte count of the engine list (cmpi.b #5 / addq.b / subq.b / move.b in the four engine list functions only); CM848 0x3fb9a2. Unique.', {}),
+    ('CM550', '0x8019d1'): ('CONFIRMED', 'Byte count of the retarder list (the four retarder list functions only); CM848 0x3fb9a3. Unique.', {}),
+    ('CM550', '0x8089a8'): ('CONFIRMED', 'cmp.w with fuel_demand_selected at 0x2146a and 0x2f9c6; e2m 10FC +2 JCEBSILM; CM848 0x5c36c same record; not EEPROM, no _cal. Unique.', {}),
+    ('CM550', '0x808188'): ('CONFIRMED', 'move.w reads at 0x232ea / 0x2f080 (recovery + 1) and in the four list functions (countdown); e2m 10E7 +A JCTMRCTM; CM848 0x5c38c. j1939_ is the shared Jcomm prefix. Unique.', {}),
+    ('CM550', '0x808184'): ('AMENDED', 'Record and width confirmed (e2m 10E7 +6 JCEGOSTL, move.w at 0x23280 and 0x33332), but pgn61442 ties it to ETC1: in CM550 the time limit is loaded on any rise of high_idle_override_active_flag, which the J1922 command handler 0x1f4e8 also sets (0x1f7fa), and it is broadcast in EC1 (PGN 65251) byte 24, not ETC1. Named after the e2m text and the CM550 sibling j1939_high_idle_override_speed (JCHSODES). Unique.',
+                              {'final_name': 'j1939_high_idle_override_time_limit', 'final_type': 'word',
+                               'final_comment': 'e2m 10E7 +6 JCEGOSTL \'JCOMM ENGINE OVERSPEED TL - TIME LIMIT FOR JCOMM_HIGH_IDLE_OVERRIDE\' (10 ms counts): cm550_runJ1939PowertrainControlTimeouts loads it + 1 into high_idle_override_time_limit_timer when high_idle_override_active_flag rises, whichever network set the flag (ETC1 SPN 606 or the J1922 command handler 0x1f4e8); buildPgn65251EngineConfiguration1Payload sends it / 10 as EC1 byte 24 (0x33332). CM848\'s j1939_pgn61442_engine_overspeed_enable_time_limit is the same record (ETC1 only there).'}),
+    ('CM550', '0x8081fc'): ('CONFIRMED', 'move.w read at 0x236d4 (J1708 count against limit - 1) and cmp.w at 0x23788 (J1939 count); e2m 10E7 +7E JCTMERLM; CM848 0x5c39c uses it the same way for both links, j1939_ being the shared Jcomm prefix. Replaces a description name. Unique.', {}),
+    ('CM550', '0x80da50'): ('CONFIRMED', 'e2m 10E8 +4 JCEGMD control mode 0-3 (not a speed mode); word (cmpi.w / move.w / tst.w / clr.w); the twins pair it with CM848 0x40adf8 (endRetarderShiftAssistAboveFuelDemandLimit, startJ1939ControlSession, trackJ1939ControlSessions). Unique.', {}),
+    ('CM550', '0x80da82'): ('CONFIRMED', 'move.w (0x10,retarder configuration) + 1 at 0x23622 on a mode 2 change, clr.w otherwise and in 0x23216, counted down, at 1 -> 0x238ec + 0x23216; a time limit, not inactivity. CM848 +0x2c same record. Unique.', {}),
+    ('CM550', '0x60f82'): ('CONFIRMED', 'e2m 10E3 +4 JCTRSA; cmp.b on the low byte in 0x142a8 (-> 1) and move.w / cmpi.w #0xff in the ETC1 handler and the retarder handler; ROM above the dump (rows exist there, e.g. 0x60fa8), no _cal; CM848 0x5a470 same record. Unique.', {}),
+    ('CM550', '0x60f84'): ('CONFIRMED', 'e2m 10E3 +6 JCABSA; cmp.b on 0x60f85 in 0x142a8 (-> 2); 2-byte e2m record, so word; CM848 0x5a472. Unique.', {}),
+    ('CM550', '0x60f86'): ('CONFIRMED', 'e2m 10E3 +8 JCARSA; cmp.b on 0x60f87 in 0x142a8 (-> 3); word; CM848 0x5a474. Unique.', {}),
+}
+
+E = {
+    68: 'Registered at 0x2187a for 0x2167e (service 0x44: ID + 1-byte length), verified in asm; CM848\'s member for the same service; unique in CM550\'s enum; the enum\'s only typed use is j1939_diagnostic_service_entry_t.service_id, compared with a variable.',
+    69: 'Registered at 0x21886 for 0x216c6 (ID + 4-byte length), verified; CM848\'s member; unique.',
+    71: 'Registered at 0x218aa for 0x21714 (ID + 2-byte offset + 1-byte length), verified; CM848\'s member; unique.',
+    73: 'Registered at 0x218b6 for 0x21778 (ID + 4-byte offset + 4-byte length), verified; CM848\'s member; unique.',
+    75: 'Registered at 0x21892 for handleJ1939WriteMemoryService (4-byte address + 1-byte length), verified; CM848\'s member; unique.',
+    77: 'Registered at 0x2189e for handleJ1939WriteMemoryLongLengthService (4-byte address + 4-byte length), verified; CM848\'s member; unique.',
+}
+
+verdicts = []
+seen_f = set()
+for f in p['functions']:
+    a = f['address']
+    seen_f.add(a)
+    v, role, reason, ov = F[a]
+    rel = f['relation']
+    rec = {
+        'kind': 'function',
+        'firmware': 'both' if rel == 'twin' else 'CM550',
+        'address': a,
+        'verdict': v,
+        'final_name': ov.get('final_name', f['proposed_name']),
+        'final_relation': ov.get('final_relation', rel),
+        'own_role': role,
+        'reason': reason,
+        'final_comment': ov.get('final_comment', ''),
+    }
+    if rel == 'twin':
+        assert TWIN_CM848[a] == f['cm848_address'], (a, f.get('cm848_address'))
+        rec['final_cm848_address'] = TWIN_CM848[a]
+    verdicts.append(rec)
+assert seen_f == set(F), set(F) ^ seen_f
+
+seen_g = set()
+for g in p['globals']:
+    key = (g['firmware'], g['address'])
+    seen_g.add(key)
+    v, reason, ov = G[key]
+    if v == 'REFUTED':
+        name = g['current_name']
+        typ = ''
+    else:
+        name = ov.get('final_name', g['proposed_name'])
+        typ = ov.get('final_type', g['proposed_type'])
+    verdicts.append({
+        'kind': 'global',
+        'firmware': g['firmware'],
+        'address': g['address'],
+        'verdict': v,
+        'final_name': name,
+        'final_type': typ,
+        'reason': reason,
+        'final_comment': ov.get('final_comment', ''),
+    })
+assert seen_g == set(G), set(G) ^ seen_g
+
+for e in p['enum_members']:
+    verdicts.append({
+        'kind': 'enum_member',
+        'firmware': e['firmware'],
+        'address': f"{e['enum_name']}:{e['value']}",
+        'verdict': 'CONFIRMED',
+        'final_name': e['proposed_member'],
+        'reason': E[e['value']],
+        'final_comment': '',
+    })
+
+overall = (
+    'Batch J2 checked against the disassembly of both firmwares. 26 functions: 25 CONFIRMED, 1 AMENDED (0x22070: plate comment only). All 14 twins re-derived instruction by instruction (0x2142c, 0x216c6, 0x21778, 0x21872, 0x21f4e, 0x21fac, 0x22070, 0x23216, 0x21642, 0x2167e, 0x21714, 0x142a8, 0x23820, 0x239d2). For each, the CM848 row takes the same unprefixed name, and the CM848 function_definitions / local_variables rows keyed by the old cm848_ names must follow (8 of the 14 have rows). '
+    '0x238ac stays a counterpart: its code equals CM848 0x53d3c except the capacity 5 against 10. '
+    '67 globals: 60 CONFIRMED, 6 AMENDED, 1 REFUTED. The amended names (0x80da58, 0x80da8c, 0x80198e, 0x801990, 0x808184) drop etc1_ / pgn61442_, because in CM550 the J1922 command handler 0x1f4e8 and the J1708 message handler 0x1f84e drive the same flags, so they take neutral names like their siblings high_idle_override_active_flag and driveline_disengaged_flag. 0x80da86 keeps its name with a corrected comment (J1922 loader). 0x80da90 is REFUTED: it is only ever cleared. '
+    'The new structs are proven from every access: j1939_control_session_t 24, j1939_periodic_transmit_entry_t 10, engine_tsc1_ignored_request_t 8 and retarder_tsc1_ignored_request_t 4 (definitions in the investigator result_full.json note 4). The apply step must remove the swallowed rows 0x8041fc, 0x804216 and 0x801998-0x8019b8, which are fields of those records. '
+    'The 6 J1939_DIAGNOSTIC_SERVICE members are CONFIRMED. The 11 new-enum members (TSC1_OVERRIDE_MODE / J1939_CONTROL_DEVICE / CONTROL_NETWORK) are only in result_full.json, not in the proposal, and were not judged. '
+    'skipped[] is empty, so there is nothing to keep skipped. '
+    'The ROM \'table\' 0x1b4da-0x1b4e9 is code: the operands of the first three jsr (abs).l of the 10 ms task set 0x1b4d8 (live name cm550_runEvery2FramesTaskSetPhase0). No code walks it. executiveFrameInterruptHandler calls 0x1b4d8 with bsr.w at 20 frame sites (0x1b960-0x1be4c) and the odd set 0x1b504 (live ...Phase1: 0x2142c, 0x1ff38, 0x23920) at 20 others. CM848 runs the same order from cm848_phase_group_a_processing. '
+    'Leads: FUN_0001fe84 has no row; mc68k_initializeJ1939Datalink reaches it through movea.l #0x1fe84,a4 (operand 0x28b8c), and it is the counterpart of cm848_scheduleJ1939PeriodicMessage. 0x801d44 / 0x801d48 (tsc1_message_*) are the ETC1 bytes of 0x2efd0. '
+    '_cal: the monitor cells 0x804164-0x804233 are EEPROM-backed (EEPROM 0x65A-0x729) but lie past the stated window end 0x804155, so they carry no _cal. Whether the window is longer is still open.'
+)
+
+out = {'batch': 'J2', 'overall': overall, 'verdicts': verdicts}
+json.dump(out, open(OUT, 'w'), indent=1)
+from collections import Counter
+print(len(verdicts), Counter((x['kind'], x['verdict']) for x in verdicts))

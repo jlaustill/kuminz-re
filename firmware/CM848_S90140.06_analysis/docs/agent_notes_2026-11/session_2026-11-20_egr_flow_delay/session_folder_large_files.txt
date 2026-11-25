@@ -420,3 +420,17 @@
    240551 verify_round93_ty2_cm550.log
    240551 verify_round93_ty3_cm550.log
    240551 verify_round93_ty_cm550.log
+   240595 verify_round94_b2_cm550.log
+   240583 verify_round94_b_cm550.log
+   241038 verify_round94_c2_cm550.log
+   241066 verify_round94_c_cm550.log
+   401766 verify_round94_c_cm848.log
+   241071 verify_round94_d_cm550.log
+   401790 verify_round94_d_cm848.log
+   241033 verify_round94_e_cm550.log
+   401730 verify_round94_e_cm848.log
+   233041 verify_round94_f2_cm550.log
+   233058 verify_round94_f_cm550.log
+   399787 verify_round94_f_cm848.log
+   240578 verify_round94_sg2_cm550.log
+   240580 verify_round94_sg_cm550.log

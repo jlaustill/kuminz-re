@@ -1,0 +1,35 @@
+== 0x80d372
+  0x142de: prev words 48 e7 30 20 24 7c | ?
+  0x1cb94: prev words 00 80 d3 88 28 7c | ?
+  0x1ddc0: prev words 00 80 d3 88 26 7c | ?
+  0x1dddc: prev words 00 02 33 fc 00 02 | ?
+  0x1ded2: prev words d3 80 34 83 48 79 | ?
+  0x1dee6: prev words 4e 94 42 52 48 79 | ?
+  0x1defc: prev words 34 bc 01 90 48 79 | ?
+  0x25990: prev words 00 80 d3 80 48 79 | ?
+== 0x80d388
+  0x1cb8e: prev words 00 80 d3 40 26 7c | ?
+  0x1ddba: prev words 48 e7 00 30 24 7c | ?
+  0x1de02: prev words 00 02 33 fc 00 02 | ?
+  0x1df58: prev words d3 96 34 83 48 79 | ?
+  0x1df6a: prev words 4e 94 42 52 48 79 | ?
+  0x1df80: prev words 34 bc 01 90 48 79 | ?
+  0x25974: prev words 00 80 1a 6e 2a 7c | ?
+== 0x80d378
+  0x1dec4: prev words 33 f9 00 80 cc f6 | move.w (abs).l,(abs).l (destination) @0x1debe
+  0x25982: prev words 33 f9 00 80 da ee | move.w (abs).l,(abs).l (destination) @0x2597c
+== 0x80d380
+  0x1deca: prev words 00 80 d3 78 24 7c | ?
+  0x2598a: prev words d3 78 33 fc 01 90 | ?
+== 0x80d38e
+  0x1df4a: prev words 33 f9 00 80 cc f6 | move.w (abs).l,(abs).l (destination) @0x1df44
+== 0x80d396
+  0x1df50: prev words 00 80 d3 8e 24 7c | ?
+== 0x80d374
+== 0x80d37c
+== 0x80d382
+== 0x80d386
+== 0x80d38a
+== 0x80d392
+== 0x80d398
+== 0x80d39c

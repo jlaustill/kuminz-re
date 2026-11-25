@@ -1,0 +1,75 @@
+## 40a897
+105A +0000 Throttle_100_Fueling [MM3S] -> 0x40a897 throttle_100_fueling word; [FSMXTHFL] Fueling value at 100% throttle.
+## 40afac
+105D +0000 Torque_Derate_Fueling [MM3S] -> 0x40afac torque_derate_fuel_quantity word; [FSLMFL] Smallest derate fueling value produced by the derate algorithms
+## 40afae
+105D +0002 Torque_Derate_Fueling_State [UNITLESS] -> 0x40afae torque_derate_fuel_source_code FUELING_STATE; [FSLMFLST] Indicator as to which algorithm is controlling fuel after it has been limited
+## 40afb0
+105D +0004 FSS_Fueling_Derate [MM3S] -> 0x40afb0 fuel_pressure_fault_fuel_limit_working word; [FSAPLMFL] Fuel system specific fuel derate that is input to the core system
+## 40afb2
+105D +0006 Torque_Derate_Fueling_2 [MM3S] -> 0x40afb2 fuel_demand_minimum_tracked word; [FLLMAHFL] Smallest derate fueling value among group 2 (AH) derate algorithms
+## 40afb4
+105D +0008 Torque_Derate_Fueling_State_2 [UNITLESS] -> 0x40afb4 fuel_demand_minimum_tracked_state FUELING_STATE; [FSLMAHST] Indicator as to which algorithm is controlling fuel in group 2 (AH)
+## 40af4e
+109E +0002 PTO_Status [UNITLESS] -> 0x40af4e power_take_off_governor_active_flag word; [PTSS] Status of the PTO algorithm based on switch activation and cab interaction
+## 40a2d8
+1051 +000A Torque_Derate_Torque [FT_LB] -> 0x40a2d8 torque_derate_torque_limit word; [TQDQTQ] min torque limit in foot-pounds
+## 40a2da
+1051 +000C Torque_Derate_Torque_State [UNITLESS] -> 0x40a2da torque_derate_torque_limit_state FUELING_STATE; [TQDQTQST] indicates origin of TQDQTA value
+## 3fd89e
+1268 +0000 PTO_Max_Engine_Load [FT*LB] -> EEPROM 0x41c = 0x3fd89e power_take_off_maximum_torque_cal word; [PTMXEGLD] Maximum Engine Load allowed during PTO operation
+## 40a158
+104C +0000 AFC_Fueling [MM3S] -> 0x40a158 air_fuel_control_fuel_limit word; [AFFL] fueling limit as calculated by AFC Fueling algorithm
+## 40a18c
+109F +0000 Altitude_Derate_Fueling [MM3S] -> 0x40a18c altitude_derate_fuel_limit word; [ATFLLM] Fueling limit as determined though Altitude Derate table look-up
+## 40a77c
+10B1 +000A Engine_Protection_Derate_Fueling [MM3S] -> 0x40a77c fault_derate_fuel_limit word; [EPFLLM] Maximum fueling permitted by the engine protection features.
+## 40adf8
+10E8 +0004 Jcomm_Engine_Control_Mode [UNITLESS] -> 0x40adf8 j1939_powertrain_control_state j1939_powertrain_control_state_t; [JCEGMD] JCOMM CONTROL MODE 0 = DISABLE 1 = SPEED 2 = TORQUE 3 = LIMIT
+## 40ae08
+10E8 +0014 Jcomm_Torque_Derate_Fueling [MM3S] -> 0x40ae08 j1939_powertrain_control_state.tsc1_torque_limit_fueling (no row); [JCTQLMFL] Jcomm Torque Derate Fueling maximum allowed fuel as per link user
+## 40a7c0
+1068 +0000 Engine_State [UNITLESS] -> 0x40a7c0 engine_state ENGINE_STATE; [FSEGST] Current state of the engine
+## 40a794
+11BC +0000 Engine_Run_Time [SEC] -> 0x40a794 engine_hour_meter dword; [CMEGTR] Time that the engine is not in stop state
+## 40a64c
+0004 +0000 ECM_Run_Time [SEC] -> 0x40a64c key_on_hour_meter dword; Time key switch is on and ECM is running boot or application code
+0004 +0000 RUN_TIME [SEC] -> 0x40a64c key_on_hour_meter dword; Time key switch is on and ECM is running boot or application code
+001C +0000 Hour_Meter [MIN] -> 0x40a64c key_on_hour_meter dword; HOUR METER (ECM RUN TIME)
+001C +0000 Software_HOUR_MTR [MIN] -> 0x40a64c key_on_hour_meter dword; HOUR METER (ECM RUN TIME)
+## 40a152
+1045 +0000 Adjusted_User_Fueling [MM3S] -> 0x40a152 adjusted_user_fueling word; [FSGVFL] Fueling as limited by limiting governors (LSG, HSG)
+## 40a154
+1045 +0002 Adjusted_User_Fueling_State [UNITLESS] -> 0x40a154 adjusted_user_fueling_state FUELING_STATE; [FSGVFLST] Indicator as to which algorithm is in control of fueling after it is governed
+## 40a2ce
+1051 +0000 Final_Fueling [MM3S] -> 0x40a2ce final_fueling word; [FSFNFL] Final fueling value
+## 40a2d0
+1051 +0002 Fueling_Control_State [UNITLESS] -> 0x40a2d0 final_fueling_state FUELING_STATE; [FSFNFLST] Final fueling state
+## 40a2d2
+1051 +0004 Requested_Fueling [MM3S] -> 0x40a2d2 requested_fueling word; [FSLMDSFL] Desired engine fueling after derate without Air Handl. derate
+## 40a2d4
+1051 +0006 Requested_Fueling_State [UNITLESS] -> 0x40a2d4 requested_fueling_state FUELING_STATE; [FSLMDSST] Indicator as to which algorithm is controlling requisted fueling.
+## 40a2d6
+1051 +0008 MS_Control_Flag [UNITLESS] -> 0x40a2d6 master_slave_control_flag word; [MSCNFG] Flag in MASTER/SLAVE identifying fueling and timing override in SLAVE.
+## 5c306
+1052 +0000 Maximum_Fueling [MM3S] -> 0x05c306 fuel_demand_maximum word; [FSMXFL] The calibrated maximum fueling that the system may output
+## 5c308
+1052 +0002 E_Brake_Fueling [MM3S] -> 0x05c308 engine_brake_fueling word; [EBFL] Calibratible constant fueling value to be output when brake solenoid is on
+## 5c30a
+1052 +0004 Overspeed_Fueling [MM3S] -> 0x05c30a engine_overspeed_fueling word; [FSOSFL] Fueling value commanded if the engine overspeed limit is exceeded
+## 5c30c
+1052 +0006 Minimum_Fueling [MM3S] -> 0x05c30c fuel_demand_minimum word; [FSMNFL] Minimum fueling value allowed for the system
+## 40a7ac
+105E +0014 Crank_Fuel [MM3S] -> 0x40a7ac crank_fuel word; [CKFL] FINAL FUEL OUTPUTED BY CRANK
+## 3fd802
+125E +0000 Torque_Derate_Override [MM3S] -> EEPROM 0x380 = 0x3fd802 torque_derate_override_fuel_quantity_cal word; [FSTQDQUO] Engineering torque derate fueling override
+## 3fd804
+125E +0002 User_Override_Fueling [MM3S] -> EEPROM 0x382 = 0x3fd804 user_override_fueling_cal word; [FSUOFL] Engineering fueling override
+## 40a178
+104A +0010 Fueling_LSG_State_Detected [UNITLESS] -> 0x40a178 alpha_low_speed_governor_state_detected_flag word; [FSLSSTFG] semaphore used to latch LSG events that occur between alpha executions
+## 40a87b
+11D4 +0000 MS_Final_Override_Fueling [MM3S] -> 0x40a87b master_slave_final_override_fueling word; [MSFNODFL] Override fueling to slave fuel selection
+## 40a87d
+11D4 +0002 MS_Override_Enable [HEX] -> 0x40a87d master_slave_override_enable_flag word; [MSODEN] Enable overriding slave Final_Fueling, Final_Timing
+## 3fa86c
+## 40aee6

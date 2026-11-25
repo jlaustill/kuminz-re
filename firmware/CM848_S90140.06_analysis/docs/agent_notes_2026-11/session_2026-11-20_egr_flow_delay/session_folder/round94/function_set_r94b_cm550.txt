@@ -1,0 +1,81 @@
+removed 0: 
+added 0: 
+changed 6
+  0x0000ed64 insiteCommandByteDispatcher: 3 lines
+      -        local_6._1_1_ =
+      -             (byte)(((uint)commanded_throttle_state.commanded_throttle * 0xfa) / 400);
+      +        local_6._1_1_ = (byte)(((uint)commanded_throttle_state.commanded_throttle * 0xfa) / 400);
+  0x00010568 vp44_rpmDerateCalculationController: 24 lines
+      -    if (_DAT_0080aa9a == 0) {
+      +    if (commanded_throttle_state.frequency_throttle_active_flag == 0) {
+      -    if (commanded_throttle_state.alternate_throttle_priority == 0) {
+      +    if (commanded_throttle_state.commanded_throttle_state_alternate_throttle_priority == 0) {
+      -         (_DAT_0080aa96 == 0)) {
+      +         (commanded_throttle_state.idle_validation_inhibit_flag == 0)) {
+      -      commanded_throttle_state.selected_alternate_throttle_priority = commanded_throttle_state.alternate_throttle_priority;
+      -      commanded_throttle_state.alternate_throttle_priority = 0;
+      +      commanded_throttle_state.selected_alternate_throttle_priority =
+      +           commanded_throttle_state.commanded_throttle_state_alternate_throttle_priority;
+      +      commanded_throttle_state.commanded_throttle_state_alternate_throttle_priority = 0;
+      -      commanded_throttle_state.commanded_throttle =
+      -           sampled_throttle_sensor_state.filtered_value;
+      +      commanded_throttle_state.commanded_throttle = sampled_throttle_sensor_state.filtered_value;
+      -      if (commanded_throttle_state.alternate_throttle_priority == 0) {
+      +      if (commanded_throttle_state.commanded_throttle_state_alternate_throttle_priority == 0) {
+      -        commanded_throttle_state.commanded_throttle =
+      -             sampled_throttle_sensor_state.filtered_value;
+      +        commanded_throttle_state.commanded_throttle = sampled_throttle_sensor_state.filtered_value;
+      -        commanded_throttle_state.selected_alternate_throttle_priority = commanded_throttle_state.alternate_throttle_priority;
+      -        commanded_throttle_state.alternate_throttle_priority = 0;
+      +        commanded_throttle_state.selected_alternate_throttle_priority =
+      +             commanded_throttle_state.commanded_throttle_state_alternate_throttle_priority;
+      +        commanded_throttle_state.commanded_throttle_state_alternate_throttle_priority = 0;
+  0x00010822 vp44_derateThresholdMonitorAndFaultController: 19 lines
+      -     (_DAT_0080aa96 == 0)) {
+      -    if (_DAT_0080aa9a == 0) {
+      +     (commanded_throttle_state.idle_validation_inhibit_flag == 0)) {
+      +    if (commanded_throttle_state.frequency_throttle_active_flag == 0) {
+      -    if (((commanded_throttle_state.idle_validation_state == 1) || (commanded_throttle_state.idle_validation_state == 3))
+      -       || (commanded_throttle_state.idle_validation_state == 5)) {
+      +    if (((commanded_throttle_state.idle_validation_state == 1) ||
+      +        (commanded_throttle_state.idle_validation_state == 3)) ||
+      +       (commanded_throttle_state.idle_validation_state == 5)) {
+      -        commanded_throttle_state.throttle_minimum_confidence_counter = time_to_delay_before_setting_a_new_throttle_min_0_25500;
+      +        commanded_throttle_state.throttle_minimum_confidence_counter =
+      +             time_to_delay_before_setting_a_new_throttle_min_0_25500;
+      -          commanded_throttle_state.throttle_minimum_confidence_counter = commanded_throttle_state.throttle_minimum_confidence_counter - 1;
+      +          commanded_throttle_state.throttle_minimum_confidence_counter =
+      +               commanded_throttle_state.throttle_minimum_confidence_counter - 1;
+      -      if ((commanded_throttle_state.idle_validation_state == 6) || (commanded_throttle_state.idle_validation_state == 5)
+      -         ) {
+      +      if ((commanded_throttle_state.idle_validation_state == 6) ||
+      +         (commanded_throttle_state.idle_validation_state == 5)) {
+  0x0001f0de cm550_diagnosticMessage45Builder: 3 lines
+      -        *local_8 = (char)(((uint)commanded_throttle_state.commanded_throttle * 0xff) / 400)
+      -        ;
+      +        *local_8 = (char)(((uint)commanded_throttle_state.commanded_throttle * 0xff) / 400);
+  0x00020c98 cm550_FUN_00020c98: 3 lines
+      -      commanded_throttle_state.accelerator_off_idle = (word)(j1939_received_accelerator_pedal_position_1 != 0);
+      +      commanded_throttle_state.accelerator_off_idle =
+      +           (word)(j1939_received_accelerator_pedal_position_1 != 0);
+  0x0002ec50 cm550_FUN_0002ec50: 20 lines
+      -    if (commanded_throttle_state.alternate_throttle_priority ==
+      +    if (commanded_throttle_state.commanded_throttle_state_alternate_throttle_priority ==
+      -      commanded_throttle_state.alternate_throttle_priority = 0;
+      +      commanded_throttle_state.commanded_throttle_state_alternate_throttle_priority = 0;
+      -      if (commanded_throttle_state.alternate_throttle_priority ==
+      +      if (commanded_throttle_state.commanded_throttle_state_alternate_throttle_priority ==
+      -        commanded_throttle_state.alternate_throttle_priority = 0;
+      +        commanded_throttle_state.commanded_throttle_state_alternate_throttle_priority = 0;
+      -    else if (commanded_throttle_state.alternate_throttle_priority <
+      +    else if (commanded_throttle_state.commanded_throttle_state_alternate_throttle_priority <
+      -      commanded_throttle_state.alternate_throttle_priority =
+      +      commanded_throttle_state.commanded_throttle_state_alternate_throttle_priority =
+      -      if (commanded_throttle_state.alternate_throttle_priority <
+      +      if (commanded_throttle_state.commanded_throttle_state_alternate_throttle_priority <
+      -        commanded_throttle_state.alternate_throttle_priority =
+      +        commanded_throttle_state.commanded_throttle_state_alternate_throttle_priority =
+      -    else if (commanded_throttle_state.alternate_throttle_priority ==
+      +    else if (commanded_throttle_state.commanded_throttle_state_alternate_throttle_priority ==
+      -      commanded_throttle_state.alternate_throttle_priority = 0;
+      +      commanded_throttle_state.commanded_throttle_state_alternate_throttle_priority = 0;

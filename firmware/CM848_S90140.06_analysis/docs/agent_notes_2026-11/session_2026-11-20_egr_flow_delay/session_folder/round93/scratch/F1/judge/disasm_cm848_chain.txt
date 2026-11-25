@@ -1,0 +1,211 @@
+#### 0x1f318
+# cm848_initializeFuelLimitChains @ 0x1f318..0x1f34c  (cm848_rom.bin)
+
+/home/linux/code/kuminz-re/.claude/worktrees/cm848-egr-flow-delay/firmware/scripts/../CM848_S90140.06_analysis/originals/cm848_rom.bin:     file format binary
+
+
+Disassembly of section .data:
+
+0001f318 <.data+0x1f318>:
+   1f318:	3c 60 00 41 	lis     r3,65
+   1f31c:	a0 63 a8 97 	lhz     r3,-22377(r3)
+   1f320:	3d 60 00 41 	lis     r11,65
+   1f324:	b0 6b af ac 	sth     r3,-20564(r11)
+   1f328:	3d 40 00 41 	lis     r10,65
+   1f32c:	39 20 00 13 	li      r9,19
+   1f330:	b1 2a af ae 	sth     r9,-20562(r10)
+   1f334:	3d 80 00 41 	lis     r12,65
+   1f338:	b0 6c af b2 	sth     r3,-20558(r12)
+   1f33c:	3d 60 00 41 	lis     r11,65
+   1f340:	39 40 00 28 	li      r10,40
+   1f344:	b1 4b af b4 	sth     r10,-20556(r11)
+   1f348:	4e 80 00 20 	blr
+#### 0x2a918
+# cm848_applyPowerTakeOffTorqueLimit @ 0x2a918..0x2a960  (cm848_rom.bin)
+
+/home/linux/code/kuminz-re/.claude/worktrees/cm848-egr-flow-delay/firmware/scripts/../CM848_S90140.06_analysis/originals/cm848_rom.bin:     file format binary
+
+
+Disassembly of section .data:
+
+0002a918 <.data+0x2a918>:
+   2a918:	3d 80 00 41 	lis     r12,65
+   2a91c:	a1 8c af 4e 	lhz     r12,-20658(r12)
+   2a920:	2c 0c 00 01 	cmpwi   r12,1
+   2a924:	40 82 00 38 	bne     0x2a95c
+   2a928:	3c 60 00 41 	lis     r3,65
+   2a92c:	38 63 a2 d8 	addi    r3,r3,-23848
+   2a930:	3c 80 00 40 	lis     r4,64
+   2a934:	38 84 d8 9e 	addi    r4,r4,-10082
+   2a938:	a1 44 00 00 	lhz     r10,0(r4)
+   2a93c:	a1 23 00 00 	lhz     r9,0(r3)
+   2a940:	7c 0a 48 00 	cmpw    r10,r9
+   2a944:	40 80 00 18 	bge     0x2a95c
+   2a948:	a1 84 00 00 	lhz     r12,0(r4)
+   2a94c:	b1 83 00 00 	sth     r12,0(r3)
+   2a950:	3d 60 00 41 	lis     r11,65
+   2a954:	39 40 00 22 	li      r10,34
+   2a958:	b1 4b a2 da 	sth     r10,-23846(r11)
+   2a95c:	4e 80 00 20 	blr
+#### 0xe0c4
+# cm848_applyAirFuelControlFuelLimit @ 0xe0c4..0xe0f4  (cm848_rom.bin)
+
+/home/linux/code/kuminz-re/.claude/worktrees/cm848-egr-flow-delay/firmware/scripts/../CM848_S90140.06_analysis/originals/cm848_rom.bin:     file format binary
+
+
+Disassembly of section .data:
+
+0000e0c4 <.data+0xe0c4>:
+    e0c4:	3c 60 00 41 	lis     r3,65
+    e0c8:	38 63 af b2 	addi    r3,r3,-20558
+    e0cc:	3c 80 00 41 	lis     r4,65
+    e0d0:	a0 84 a1 58 	lhz     r4,-24232(r4)
+    e0d4:	a1 43 00 00 	lhz     r10,0(r3)
+    e0d8:	7c 0a 20 00 	cmpw    r10,r4
+    e0dc:	40 81 00 14 	ble     0xe0f0
+    e0e0:	b0 83 00 00 	sth     r4,0(r3)
+    e0e4:	3d 80 00 41 	lis     r12,65
+    e0e8:	39 60 00 10 	li      r11,16
+    e0ec:	b1 6c af b4 	sth     r11,-20556(r12)
+    e0f0:	4e 80 00 20 	blr
+#### 0x502af4
+# cm848_applyAltitudeDerateFuelLimit @ 0x502af4..0x502b24  (cm848_flash2_live.bin)
+
+/home/linux/code/kuminz-re/.claude/worktrees/cm848-egr-flow-delay/firmware/scripts/../CM848_S90140.06_analysis/originals/cm848_flash2_live.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00502af4 <.data+0x2af4>:
+  502af4:	3c 60 00 41 	lis     r3,65
+  502af8:	38 63 af ac 	addi    r3,r3,-20564
+  502afc:	3c 80 00 41 	lis     r4,65
+  502b00:	a0 84 a1 8c 	lhz     r4,-24180(r4)
+  502b04:	a1 43 00 00 	lhz     r10,0(r3)
+  502b08:	7c 0a 20 00 	cmpw    r10,r4
+  502b0c:	40 81 00 14 	ble     0x502b20
+  502b10:	b0 83 00 00 	sth     r4,0(r3)
+  502b14:	3d 80 00 41 	lis     r12,65
+  502b18:	39 60 00 0f 	li      r11,15
+  502b1c:	b1 6c af ae 	sth     r11,-20562(r12)
+  502b20:	4e 80 00 20 	blr
+#### 0x509510
+# cm848_applyFaultDerateFuelLimit @ 0x509510..0x509540  (cm848_flash2_live.bin)
+
+/home/linux/code/kuminz-re/.claude/worktrees/cm848-egr-flow-delay/firmware/scripts/../CM848_S90140.06_analysis/originals/cm848_flash2_live.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00509510 <.data+0x9510>:
+  509510:	3c 60 00 41 	lis     r3,65
+  509514:	38 63 af ac 	addi    r3,r3,-20564
+  509518:	3c 80 00 41 	lis     r4,65
+  50951c:	a0 84 a7 7c 	lhz     r4,-22660(r4)
+  509520:	a1 43 00 00 	lhz     r10,0(r3)
+  509524:	7c 0a 20 00 	cmpw    r10,r4
+  509528:	40 81 00 14 	ble     0x50953c
+  50952c:	b0 83 00 00 	sth     r4,0(r3)
+  509530:	3d 80 00 41 	lis     r12,65
+  509534:	39 60 00 1d 	li      r11,29
+  509538:	b1 6c af ae 	sth     r11,-20562(r12)
+  50953c:	4e 80 00 20 	blr
+#### 0x427cc
+# cm848_applyTsc1TorqueLimit @ 0x427cc..0x4280c  (cm848_rom.bin)
+
+/home/linux/code/kuminz-re/.claude/worktrees/cm848-egr-flow-delay/firmware/scripts/../CM848_S90140.06_analysis/originals/cm848_rom.bin:     file format binary
+
+
+Disassembly of section .data:
+
+000427cc <.data+0x427cc>:
+   427cc:	3d 80 00 41 	lis     r12,65
+   427d0:	a9 8c ad f8 	lha     r12,-21000(r12)
+   427d4:	2c 0c 00 03 	cmpwi   r12,3
+   427d8:	40 82 00 30 	bne     0x42808
+   427dc:	3c 60 00 41 	lis     r3,65
+   427e0:	38 63 af ac 	addi    r3,r3,-20564
+   427e4:	3c 80 00 41 	lis     r4,65
+   427e8:	a0 84 ae 08 	lhz     r4,-20984(r4)
+   427ec:	a1 43 00 00 	lhz     r10,0(r3)
+   427f0:	7c 0a 20 00 	cmpw    r10,r4
+   427f4:	40 81 00 14 	ble     0x42808
+   427f8:	b0 83 00 00 	sth     r4,0(r3)
+   427fc:	3d 80 00 41 	lis     r12,65
+   42800:	39 60 00 14 	li      r11,20
+   42804:	b1 6c af ae 	sth     r11,-20562(r12)
+   42808:	4e 80 00 20 	blr
+#### 0x4279c
+# cm848_applyFuelPressureFaultFuelLimit @ 0x4279c..0x427cc  (cm848_rom.bin)
+
+/home/linux/code/kuminz-re/.claude/worktrees/cm848-egr-flow-delay/firmware/scripts/../CM848_S90140.06_analysis/originals/cm848_rom.bin:     file format binary
+
+
+Disassembly of section .data:
+
+0004279c <.data+0x4279c>:
+   4279c:	3c 60 00 41 	lis     r3,65
+   427a0:	38 63 af ac 	addi    r3,r3,-20564
+   427a4:	3c 80 00 41 	lis     r4,65
+   427a8:	a0 84 af b0 	lhz     r4,-20560(r4)
+   427ac:	a1 43 00 00 	lhz     r10,0(r3)
+   427b0:	7c 0a 20 00 	cmpw    r10,r4
+   427b4:	40 81 00 14 	ble     0x427c8
+   427b8:	b0 83 00 00 	sth     r4,0(r3)
+   427bc:	3d 80 00 41 	lis     r12,65
+   427c0:	39 60 00 1c 	li      r11,28
+   427c4:	b1 6c af ae 	sth     r11,-20562(r12)
+   427c8:	4e 80 00 20 	blr
+#### 0x4280c
+# cm848_processProtectionLimits @ 0x4280c..0x4285c  (cm848_rom.bin)
+
+/home/linux/code/kuminz-re/.claude/worktrees/cm848-egr-flow-delay/firmware/scripts/../CM848_S90140.06_analysis/originals/cm848_rom.bin:     file format binary
+
+
+Disassembly of section .data:
+
+0004280c <.data+0x4280c>:
+   4280c:	94 21 ff f8 	stwu    r1,-8(r1)
+   42810:	7c 08 02 a6 	mflr    r0
+   42814:	90 01 00 0c 	stw     r0,12(r1)
+   42818:	4b fd cb 01 	bl      0x1f318
+   4281c:	4b fe 80 fd 	bl      0x2a918
+   42820:	4b fc b8 a5 	bl      0xe0c4
+   42824:	48 4c 02 d1 	bl      0x502af4
+   42828:	48 4c 6c e9 	bl      0x509510
+   4282c:	4b ff ff a1 	bl      0x427cc
+   42830:	4b ff ff 6d 	bl      0x4279c
+   42834:	48 4d 15 a9 	bl      0x513ddc
+   42838:	4b ff cb 25 	bl      0x3f35c
+   4283c:	48 00 91 71 	bl      0x4b9ac
+   42840:	4b ff a6 bd 	bl      0x3cefc
+   42844:	48 4d 75 e9 	bl      0x519e2c
+   42848:	4b ff 60 55 	bl      0x3889c
+   4284c:	80 01 00 0c 	lwz     r0,12(r1)
+   42850:	7c 08 03 a6 	mtlr    r0
+   42854:	38 21 00 08 	addi    r1,r1,8
+   42858:	4e 80 00 20 	blr
+#### 0x506780
+# cm848_advanceHourMeters @ 0x506780..0x5067bc  (cm848_flash2_live.bin)
+
+/home/linux/code/kuminz-re/.claude/worktrees/cm848-egr-flow-delay/firmware/scripts/../CM848_S90140.06_analysis/originals/cm848_flash2_live.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00506780 <.data+0x6780>:
+  506780:	3d 80 00 41 	lis     r12,65
+  506784:	a9 8c a7 c0 	lha     r12,-22592(r12)
+  506788:	2c 0c 00 01 	cmpwi   r12,1
+  50678c:	41 82 00 18 	beq     0x5067a4
+  506790:	3c 60 00 41 	lis     r3,65
+  506794:	38 63 a7 94 	addi    r3,r3,-22636
+  506798:	81 63 00 00 	lwz     r11,0(r3)
+  50679c:	39 6b 00 01 	addi    r11,r11,1
+  5067a0:	91 63 00 00 	stw     r11,0(r3)
+  5067a4:	3c 60 00 41 	lis     r3,65
+  5067a8:	38 63 a6 4c 	addi    r3,r3,-22964
+  5067ac:	81 63 00 00 	lwz     r11,0(r3)
+  5067b0:	39 6b 00 01 	addi    r11,r11,1
+  5067b4:	91 63 00 00 	stw     r11,0(r3)
+  5067b8:	4e 80 00 20 	blr

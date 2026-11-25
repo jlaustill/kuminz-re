@@ -1,0 +1,28 @@
+cm550: round 94 stage B - the commanded throttle block is one struct (e2m 1047, cm550_commanded_throttle_state_t)
+
+e2m 1047 THROTTLE is 13 words at 0x80aa82-0x80aa9b. Eleven of them were flat rows with Calterm-text names
+(validated_percent_throttle_commanded_by_driver_0_100, intermediate_calculated_value_of_commanded_throttle_
+based_on_s_0_100, ...) and two had no row (_DAT_0080aa96, _DAT_0080aa9a). CM848 keeps the same block as
+commanded_throttle_state (commanded_throttle_state_t), so CM550 takes CM848's field names:
+
+- +0x0-+0x12 are CM848's ten fields at the same offsets (commanded_throttle ... selected_alternate_throttle_
+  priority), each record and mnemonic the same;
+- +0x14 idle_validation_inhibit_flag (CTIVIH) is CM550 only;
+- +0x16 sampled_frequency_throttle and +0x18 frequency_throttle_active_flag are CM848's +0x14 / +0x16.
+
+The type is cm550_-prefixed because the layout differs (the inserted CTIVIH word, no delta words). The instance
+commanded_throttle_state at 0x80aa82 replaces the 11 rows; the parameter ID table's block 1047 now names it.
+
+Proof (CM550 built twice, deterministic; CM848 untouched):
+- function set unchanged (0 added, 0 removed); every token change is in the map (map_r94b_cm550_full.csv:
+  11 old rows + the two _DAT_ addresses -> commanded_throttle_state.<field>); 138 field uses, no pieces;
+- statement counts equal in every function; the caller census shows no rise (extraout_ 19 -> 19,
+  CONCAT 65 -> 65);
+- headers regenerated (g++ 0 errors), _cal audit 0 hard / 0 soft, the five Python suites and 109 JUnit tests pass.
+
+Tooling (session scratch, archived with round 94): the first build showed the field as
+commanded_throttle_state_alternate_throttle_priority. r88/refresh_other_csvs.py had replaced the old global name
+alternate_throttle_priority in every column of structure_definitions.csv, the field name too. The tool now edits
+only comment columns and '#' lines, and the function-name column for function renames; both cases are tested.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,179 @@
+0x0000ac3c: 14 token changes: ushort => word | puVar7 => pwVar7 | puVar7 => pwVar7 | ( ushort * ) & =>  | [ 1 ] =>  |  => pwVar7 = pwVar7 + 1 , | puVar7 => pwVar7 | puVar7 = puVar7 + 1 ; =>  | puVar7 => pwVar7 | ( ushort * ) & =>  | [ 1 ] =>  |  => pwVar7 = pwVar7 + 1 , | puVar7 => pwVar7 | + 1 ; puVar7 = puVar7 => 
+0x0000b7bc: 6 token changes: * ( ushort * ) ( & =>  | + => [ | * 2 ) => ] | * ( ushort * ) ( & =>  | + => [ | * 2 ) => ]
+0x0000bcf0: 12 token changes: * ( ushort * ) ( & =>  | + => [ | * 2 ) => ] | * ( ushort * ) ( & =>  | + => [ | * 2 ) => ] | * ( ushort * ) ( & =>  | + => [ | * 2 ) => ] | * ( ushort * ) ( & =>  | + => [ | * 2 ) => ]
+0x0000c180: 6 token changes: _DAT_008000b0 => air_fuel_control_fuel_limit_lookup . x_input | ( word * ) =>  |  => . x_axis_offset | _DAT_008000c6 => air_fuel_control_cold_temperature_fuel_increment_lookup . x_input | ( word * ) =>  |  => . x_axis_offset
+0x0000c246: 7 token changes: 0x6010c => ( word * ) & DAT_0006010c |  => . x_axis_offset | 0x600ee => ( word * ) & DAT_000600ee | 0x60138 ; _DAT_008000c2 = 0x6124a => ( word * ) & DAT_00060138 |  => . x_axis_pointer = ( word * ) & DAT_0006124a ; air_fuel_control_cold_temperature_fuel_increment_lookup . x_axis_offset | 0x6125e => ( word * ) & DAT_0006125e | 0x6126a => ( word * ) & DAT_0006126a
+0x0000c66a: 2 token changes: ( word * ) =>  |  => . x_axis_offset
+0x0000c714: 7 token changes:  => . x_axis_offset | _DAT_008000dc => altitude_derate_fuel_limit_lookup . x_axis_pointer | 0x60384 => ( word * ) & DAT_00060384 | _DAT_008000e4 => altitude_derate_fuel_limit_lookup . y_axis_pointer | 0x603b0 => ( word * ) & DAT_000603b0 | _DAT_008000ea => altitude_derate_fuel_limit_lookup . z_values_pointer | 0x603ba => ( word * ) & DAT_000603ba
+0x00010568: 6 token changes: * ( ushort * ) ( & =>  | + => [ | * 2 ) => ] | * ( ushort * ) ( & =>  | + => [ | * 2 ) => ]
+0x00010822: 7 token changes: * ( ushort * ) ( & =>  | + => [ | * 2 ) => ] | * ( ushort * ) ( & =>  | + => [ | * 2 ) => ] | _DAT_00806ac8 => fault_processing_enable_flags [ 6 ]
+0x000114d4: 2 token changes:  => [ 0 ] |  => [ 0 ]
+0x00011e5e: 10 token changes: _DAT_008001da => desired_cylinder_pressure_lookup . x_input | _DAT_008001e2 => desired_cylinder_pressure_lookup . y_input | ( word * ) =>  |  => . x_axis_offset | ( word * ) =>  |  => . x_axis_offset |  => [ 0 ] |  => [ 0 ] |  => [ 0 ] |  => [ 0 ]
+0x000124d2: 11 token changes: 0x605ce => ( word * ) & DAT_000605ce |  => . x_axis_offset | _DAT_00800202 => compression_ratio_raised_to_polytropic_exponent_lookup . y_axis_pointer | 0x605ea => ( word * ) & DAT_000605ea | 0x605f2 => ( word * ) & DAT_000605f2 | _DAT_008001da => desired_cylinder_pressure_lookup . x_input | 0x60678 => ( word * ) & DAT_00060678 |  => . x_axis_offset | _DAT_008001e2 => desired_cylinder_pressure_lookup . y_input | 0x60694 => ( word * ) & DAT_00060694 | 0x606a4 => ( word * ) & DAT_000606a4
+0x000127c2: 6 token changes: _DAT_00800228 => cylinder_balance_stop_compensation_lookup . x_input | ( word * ) =>  | DAT_00800222 => cylinder_balance_stop_compensation_lookup . x_axis_offset | _DAT_00800246 => cylinder_balance_component_3_adjustment_lookup . y_input | ( word * ) =>  |  => . x_axis_offset
+0x000133fe: 10 token changes: _DAT_00800222 => cylinder_balance_stop_compensation_lookup . x_axis_offset | & =>  | 0x807352 => cylinder_balance_stop_compensation_y_axis | 0x807358 => cylinder_balance_stop_compensation_grid |  => . x_axis_offset | 0x807338 => cylinder_balance_component_3_adjustment_x_axis | _DAT_00800240 => cylinder_balance_component_3_adjustment_lookup . y_axis_offset | 0x80733e => cylinder_balance_component_3_adjustment_y_axis | _DAT_00800248 => cylinder_balance_component_3_adjustment_lookup . z_values_pointer | 0x807344 => cylinder_balance_component_3_adjustment_grid
+0x000142d4: 3 token changes: _DAT_0080d378 => four_dimensional_fueling_steady_state_lookup . x_input | ( word * ) =>  |  => . x_axis_offset
+0x00014872: 6 token changes: * ( ushort * ) ( & =>  | + => [ | * 2 ) => ] | * ( ushort * ) ( & =>  | + => [ | * 2 ) => ]
+0x00014fca: 4 token changes: DAT_0080bcd7 => air_conditioner_pressure_switch_state | DAT_0080bcd7 => air_conditioner_pressure_switch_state | DAT_0080bcd7 => air_conditioner_pressure_switch_state | DAT_0080bcd7 => air_conditioner_pressure_switch_state
+0x00016dd4: 42 token changes: _DAT_0080ccc8 => engine_warmup_protection_inhibit_flag | _DAT_0080a8f4 => low_speed_governor_lock_flag | _DAT_0080ccca => engine_warmup_protection_torque_or_speed_limiting_flag | _DAT_0080ccb6 => engine_warmup_protection_rifle_to_turbocharger_delay_timer | _DAT_0080ccba => engine_warmup_protection_overall_timer | _DAT_0080ccbc => engine_warmup_protection_fault_timer | _DAT_0080ccbe => engine_warmup_protection_oil_drain_back_timer | _DAT_0080ccbe => engine_warmup_protection_oil_drain_back_timer | _DAT_0080ccbe => engine_warmup_protection_oil_drain_back_timer | _DAT_0080ccbe => engine_warmup_pro
+0x0001709e: 3 token changes: _DAT_0080ccc8 => engine_warmup_protection_inhibit_flag | _DAT_00807dde => engine_warmup_protection_low_speed_governor_lock_enable | _DAT_0080a8f4 => low_speed_governor_lock_flag
+0x000178b0: 16 token changes: _DAT_008005c8 => crank_four_dimensional_timing_steady_state_lookup . x_input | _DAT_008005d0 => crank_four_dimensional_timing_steady_state_lookup . y_input | ( word * ) =>  | DAT_008005c2 => crank_four_dimensional_timing_steady_state_lookup . x_axis_offset | _DAT_008005de => crank_four_dimensional_timing_transient_lookup . x_input | _DAT_008005e6 => crank_four_dimensional_timing_transient_lookup . y_input | ( word * ) =>  | DAT_008005d8 => crank_four_dimensional_timing_transient_lookup . x_axis_offset | _DAT_008005c8 => crank_four_dimensional_timing_steady_state_lookup . x_input | _DAT_008005d
+0x00017baa: 4 token changes:  => [ 0 ] |  => [ 0 ] |  => [ 0 ] |  => [ 0 ]
+0x00017ef8: 16 token changes: _DAT_008005c4 => crank_four_dimensional_timing_steady_state_lookup . x_axis_pointer | 0x60a2a => ( word * ) & DAT_00060a2a | _DAT_008005c2 => crank_four_dimensional_timing_steady_state_lookup . x_axis_offset | _DAT_008005cc => crank_four_dimensional_timing_steady_state_lookup . y_axis_pointer | 0x60a52 => ( word * ) & DAT_00060a52 | _DAT_008005ca => crank_four_dimensional_timing_steady_state_lookup . y_axis_offset | _DAT_008005d2 => crank_four_dimensional_timing_steady_state_lookup . z_values_pointer | 0x60a74 => ( word * ) & DAT_00060a74 | _DAT_008005da => crank_four_dimensional_timing_transi
+0x0001c65e: 16 token changes: _DAT_008006be => four_dimensional_injection_timing_steady_state_lookup . x_input | _DAT_008006c6 => four_dimensional_injection_timing_steady_state_lookup . y_input | ( word * ) =>  | DAT_008006b8 => four_dimensional_injection_timing_steady_state_lookup . x_axis_offset | _DAT_008006d4 => four_dimensional_injection_timing_transient_lookup . x_input | _DAT_008006dc => four_dimensional_injection_timing_transient_lookup . y_input | ( word * ) =>  | DAT_008006ce => four_dimensional_injection_timing_transient_lookup . x_axis_offset | _DAT_008006be => four_dimensional_injection_timing_steady_state_loo
+0x0001c7a8: 16 token changes: _DAT_008006ba => four_dimensional_injection_timing_steady_state_lookup . x_axis_pointer | 0x60a2a => ( word * ) & DAT_00060a2a | _DAT_008006b8 => four_dimensional_injection_timing_steady_state_lookup . x_axis_offset | _DAT_008006c2 => four_dimensional_injection_timing_steady_state_lookup . y_axis_pointer | 0x60a52 => ( word * ) & DAT_00060a52 | _DAT_008006c0 => four_dimensional_injection_timing_steady_state_lookup . y_axis_offset | _DAT_008006c8 => four_dimensional_injection_timing_steady_state_lookup . z_values_pointer | 0x60a74 => ( word * ) & DAT_00060a74 | _DAT_008006d0 => four_dimensional
+0x0001cb76: 6 token changes: _DAT_0080d378 => four_dimensional_fueling_steady_state_lookup . x_input | ( word * ) =>  |  => . x_axis_offset | _DAT_0080d38e => four_dimensional_fueling_transient_lookup . x_input | ( word * ) =>  |  => . x_axis_offset
+0x0001cc72: 11 token changes: _DAT_00800706 => full_fueling_cold_temperature_fuel_increment_lookup . x_input | _DAT_0080070e => full_fueling_cold_temperature_fuel_increment_lookup . y_input | ( word * ) =>  | DAT_00800700 => full_fueling_cold_temperature_fuel_increment_lookup . x_axis_offset | _DAT_008006f0 => throttle_100_fueling_low_horsepower_curve_lookup . x_input | ( word * ) =>  | DAT_008006ea => throttle_100_fueling_low_horsepower_curve_lookup . x_axis_offset | _DAT_008006f0 => throttle_100_fueling_low_horsepower_curve_lookup . x_input | ( word * ) =>  | DAT_008006ea => throttle_100_fueling_low_horsepower_curve_look
+0x0001cdf8: 17 token changes: _DAT_008006ec => throttle_100_fueling_low_horsepower_curve_lookup . x_axis_pointer |  => ( word * ) | _DAT_008006ea => throttle_100_fueling_low_horsepower_curve_lookup . x_axis_offset | _DAT_008006f8 => throttle_100_fueling_low_horsepower_curve_lookup . y_input | _DAT_008006f4 => throttle_100_fueling_low_horsepower_curve_lookup . y_axis_pointer |  => ( word * ) | _DAT_008006f2 => throttle_100_fueling_low_horsepower_curve_lookup . y_axis_offset | _DAT_008006fa => throttle_100_fueling_low_horsepower_curve_lookup . z_values_pointer |  => ( word * ) | _DAT_00800702 => full_fueling_cold_temperature
+0x0001ddb4: 16 token changes: _DAT_0080d374 => four_dimensional_fueling_steady_state_lookup . x_axis_pointer |  => ( word * ) |  => . x_axis_offset | _DAT_0080d37c => four_dimensional_fueling_steady_state_lookup . y_axis_pointer |  => ( word * ) | _DAT_0080d37a => four_dimensional_fueling_steady_state_lookup . y_axis_offset | _DAT_0080d382 => four_dimensional_fueling_steady_state_lookup . z_values_pointer |  => ( word * ) | _DAT_0080d38a => four_dimensional_fueling_transient_lookup . x_axis_pointer |  => ( word * ) |  => . x_axis_offset | _DAT_0080d392 => four_dimensional_fueling_transient_lookup . y_axis_pointer |  => ( w
+0x0001de58: 14 token changes: _DAT_0080d378 => four_dimensional_fueling_steady_state_lookup . x_input | ( word * ) =>  |  => . x_axis_offset | ( word * ) =>  |  => . x_axis_offset | ( word * ) =>  |  => . x_axis_offset | _DAT_0080d38e => four_dimensional_fueling_transient_lookup . x_input | ( word * ) =>  |  => . x_axis_offset | ( word * ) =>  |  => . x_axis_offset | ( word * ) =>  |  => . x_axis_offset
+0x0001e52e: 2 token changes: _DAT_00806ac6 => fault_processing_enable_flags [ 5 ] | _DAT_00806ac6 => fault_processing_enable_flags [ 5 ]
+0x00023244: 2 token changes: _DAT_00806ac6 => fault_processing_enable_flags [ 5 ] | _DAT_00806ac6 => fault_processing_enable_flags [ 5 ]
+0x0002595a: 6 token changes: _DAT_0080d378 => four_dimensional_fueling_steady_state_lookup . x_input | ( word * ) =>  |  => . x_axis_offset | _DAT_0080d38e => four_dimensional_fueling_transient_lookup . x_input | ( word * ) =>  |  => . x_axis_offset
+0x00027f9c: 4 token changes: undefined => dword | puVar12 => pdVar12 | puVar12 => pdVar12 | puVar12 => pdVar12
+0x00028b80: 19 token changes: FUN_0001fe84 => scheduleJ1939PeriodicMessage | FUN_0001fe84 => scheduleJ1939PeriodicMessage | FUN_0001fe84 => scheduleJ1939PeriodicMessage | FUN_0001fe84 => scheduleJ1939PeriodicMessage | FUN_0001fe84 => scheduleJ1939PeriodicMessage | FUN_0001fe84 => scheduleJ1939PeriodicMessage | FUN_0001fe84 => scheduleJ1939PeriodicMessage | FUN_0001fe84 => scheduleJ1939PeriodicMessage | FUN_0001fe84 => scheduleJ1939PeriodicMessage | FUN_0001fe84 => scheduleJ1939PeriodicMessage | FUN_0001fe84 => scheduleJ1939PeriodicMessage | FUN_0001fe84 => scheduleJ1939PeriodicMessage | FUN_0001fe84 => scheduleJ1939Periodi
+0x0002f128: 21 token changes: DAT_00801d4e => j1939_received_tsc1_requested_speed [ 1 ] | undefined1 => byte | DAT_00801d4d => j1939_received_tsc1_requested_speed [ 0 ] | undefined1 => byte | DAT_00801d54 => tsc1_accepted_priority | DAT_00801d54 => tsc1_accepted_priority | DAT_00801d58 => tsc1_accepted_requested_torque | DAT_00801d58 => tsc1_accepted_requested_torque | _DAT_00801d56 => tsc1_accepted_requested_speed | DAT_00801d4d => j1939_received_tsc1_requested_speed [ 0 ] | DAT_00801d4e => j1939_received_tsc1_requested_speed [ 1 ] | DAT_00801d54 => tsc1_accepted_priority | DAT_00801d4d => j1939_received_tsc1_requested_sp
+0x0002fcdc: 2 token changes:  => bool all_keys_match ; | ; bool all_keys_match => 
+0x00030a5e: 2 token changes:  => [ 0 ] |  => [ 0 ]
+0x00033dfa: 1 token changes: _DAT_00803f78 => j1939_pgn65252_priority_cal
+---- census of distinct changes
+  30 ( word * ) => 
+  24  => . x_axis_offset
+  19 FUN_0001fe84 => scheduleJ1939PeriodicMessage
+  12 * ( ushort * ) ( & => 
+  12 + => [
+  12 * 2 ) => ]
+  12  => [ 0 ]
+   9  => ( word * )
+   6 _DAT_0080ccba => engine_warmup_protection_overall_timer
+   6 _DAT_0080ccbc => engine_warmup_protection_fault_timer
+   5 puVar7 => pwVar7
+   5 _DAT_0080a8f4 => low_speed_governor_lock_flag
+   5 _DAT_0080ccca => engine_warmup_protection_torque_or_speed_limiting_flag
+   5 _DAT_0080ccb6 => engine_warmup_protection_rifle_to_turbocharger_delay_timer
+   5 _DAT_0080ccbe => engine_warmup_protection_oil_drain_back_timer
+   4 _DAT_0080d378 => four_dimensional_fueling_steady_state_lookup . x_input
+   4 DAT_0080bcd7 => air_conditioner_pressure_switch_state
+   4 _DAT_00806ac6 => fault_processing_enable_flags [ 5 ]
+   4 DAT_00801d4e => j1939_received_tsc1_requested_speed [ 1 ]
+   4 DAT_00801d4d => j1939_received_tsc1_requested_speed [ 0 ]
+   4 DAT_00801d58 => tsc1_accepted_requested_torque
+   4 _DAT_00801d56 => tsc1_accepted_requested_speed
+   3 _DAT_0080ccc2 => engine_warmup_protection_rifle_to_turbocharger_delay_started_flag
+   3 _DAT_0080d38e => four_dimensional_fueling_transient_lookup . x_input
+   3 puVar12 => pdVar12
+   3 DAT_00801d54 => tsc1_accepted_priority
+   2 ushort => word
+   2 ( ushort * ) & => 
+   2 [ 1 ] => 
+   2  => pwVar7 = pwVar7 + 1 ,
+   2 0x6125e => ( word * ) & DAT_0006125e
+   2 0x6126a => ( word * ) & DAT_0006126a
+   2 _DAT_00806ac8 => fault_processing_enable_flags [ 6 ]
+   2 _DAT_008001da => desired_cylinder_pressure_lookup . x_input
+   2 _DAT_008001e2 => desired_cylinder_pressure_lookup . y_input
+   2 _DAT_0080ccc8 => engine_warmup_protection_inhibit_flag
+   2 _DAT_0080ccc0 => engine_warmup_protection_run_state_achieved_flag
+   2 _DAT_00807dde => engine_warmup_protection_low_speed_governor_lock_enable
+   2 _DAT_0080ccb8 => engine_warmup_protection_rifle_to_turbocharger_delay_time
+   2 _DAT_008005c8 => crank_four_dimensional_timing_steady_state_lookup . x_input
+   2 _DAT_008005d0 => crank_four_dimensional_timing_steady_state_lookup . y_input
+   2 DAT_008005c2 => crank_four_dimensional_timing_steady_state_lookup . x_axis_offset
+   2 _DAT_008005de => crank_four_dimensional_timing_transient_lookup . x_input
+   2 _DAT_008005e6 => crank_four_dimensional_timing_transient_lookup . y_input
+   2 DAT_008005d8 => crank_four_dimensional_timing_transient_lookup . x_axis_offset
+   2 0x60a2a => ( word * ) & DAT_00060a2a
+   2 0x60a52 => ( word * ) & DAT_00060a52
+   2 0x60a74 => ( word * ) & DAT_00060a74
+   2 0x60cd4 => ( word * ) & DAT_00060cd4
+   2 0x60cfc => ( word * ) & DAT_00060cfc
+   2 0x60d1e => ( word * ) & DAT_00060d1e
+   2 _DAT_008006be => four_dimensional_injection_timing_steady_state_lookup . x_input
+   2 _DAT_008006c6 => four_dimensional_injection_timing_steady_state_lookup . y_input
+   2 DAT_008006b8 => four_dimensional_injection_timing_steady_state_lookup . x_axis_offset
+   2 _DAT_008006d4 => four_dimensional_injection_timing_transient_lookup . x_input
+   2 _DAT_008006dc => four_dimensional_injection_timing_transient_lookup . y_input
+   2 DAT_008006ce => four_dimensional_injection_timing_transient_lookup . x_axis_offset
+   2 _DAT_008006f0 => throttle_100_fueling_low_horsepower_curve_lookup . x_input
+   2 DAT_008006ea => throttle_100_fueling_low_horsepower_curve_lookup . x_axis_offset
+   2 undefined1 => byte
+   1 puVar7 = puVar7 + 1 ; => 
+   1 + 1 ; puVar7 = puVar7 => 
+   1 _DAT_008000b0 => air_fuel_control_fuel_limit_lookup . x_input
+   1 _DAT_008000c6 => air_fuel_control_cold_temperature_fuel_increment_lookup . x_input
+   1 0x6010c => ( word * ) & DAT_0006010c
+   1 0x600ee => ( word * ) & DAT_000600ee
+   1 0x60138 ; _DAT_008000c2 = 0x6124a => ( word * ) & DAT_00060138
+   1  => . x_axis_pointer = ( word * ) & DAT_0006124a ; air_fuel_control_cold_temperature_fuel_increment_lookup . x_axis_offset
+   1 _DAT_008000dc => altitude_derate_fuel_limit_lookup . x_axis_pointer
+   1 0x60384 => ( word * ) & DAT_00060384
+   1 _DAT_008000e4 => altitude_derate_fuel_limit_lookup . y_axis_pointer
+   1 0x603b0 => ( word * ) & DAT_000603b0
+   1 _DAT_008000ea => altitude_derate_fuel_limit_lookup . z_values_pointer
+   1 0x603ba => ( word * ) & DAT_000603ba
+   1 0x605ce => ( word * ) & DAT_000605ce
+   1 _DAT_00800202 => compression_ratio_raised_to_polytropic_exponent_lookup . y_axis_pointer
+   1 0x605ea => ( word * ) & DAT_000605ea
+   1 0x605f2 => ( word * ) & DAT_000605f2
+   1 0x60678 => ( word * ) & DAT_00060678
+   1 0x60694 => ( word * ) & DAT_00060694
+   1 0x606a4 => ( word * ) & DAT_000606a4
+   1 _DAT_00800228 => cylinder_balance_stop_compensation_lookup . x_input
+   1 DAT_00800222 => cylinder_balance_stop_compensation_lookup . x_axis_offset
+   1 _DAT_00800246 => cylinder_balance_component_3_adjustment_lookup . y_input
+   1 _DAT_00800222 => cylinder_balance_stop_compensation_lookup . x_axis_offset
+   1 & => 
+   1 0x807352 => cylinder_balance_stop_compensation_y_axis
+   1 0x807358 => cylinder_balance_stop_compensation_grid
+   1 0x807338 => cylinder_balance_component_3_adjustment_x_axis
+   1 _DAT_00800240 => cylinder_balance_component_3_adjustment_lookup . y_axis_offset
+   1 0x80733e => cylinder_balance_component_3_adjustment_y_axis
+   1 _DAT_00800248 => cylinder_balance_component_3_adjustment_lookup . z_values_pointer
+   1 0x807344 => cylinder_balance_component_3_adjustment_grid
+   1 _DAT_008005c4 => crank_four_dimensional_timing_steady_state_lookup . x_axis_pointer
+   1 _DAT_008005c2 => crank_four_dimensional_timing_steady_state_lookup . x_axis_offset
+   1 _DAT_008005cc => crank_four_dimensional_timing_steady_state_lookup . y_axis_pointer
+   1 _DAT_008005ca => crank_four_dimensional_timing_steady_state_lookup . y_axis_offset
+   1 _DAT_008005d2 => crank_four_dimensional_timing_steady_state_lookup . z_values_pointer
+   1 _DAT_008005da => crank_four_dimensional_timing_transient_lookup . x_axis_pointer
+   1 _DAT_008005d8 => crank_four_dimensional_timing_transient_lookup . x_axis_offset
+   1 _DAT_008005e2 => crank_four_dimensional_timing_transient_lookup . y_axis_pointer
+   1 _DAT_008005e0 => crank_four_dimensional_timing_transient_lookup . y_axis_offset
+   1 _DAT_008005e8 => crank_four_dimensional_timing_transient_lookup . z_values_pointer
+   1 _DAT_008006ba => four_dimensional_injection_timing_steady_state_lookup . x_axis_pointer
+   1 _DAT_008006b8 => four_dimensional_injection_timing_steady_state_lookup . x_axis_offset
+   1 _DAT_008006c2 => four_dimensional_injection_timing_steady_state_lookup . y_axis_pointer
+   1 _DAT_008006c0 => four_dimensional_injection_timing_steady_state_lookup . y_axis_offset
+   1 _DAT_008006c8 => four_dimensional_injection_timing_steady_state_lookup . z_values_pointer
+   1 _DAT_008006d0 => four_dimensional_injection_timing_transient_lookup . x_axis_pointer
+   1 _DAT_008006ce => four_dimensional_injection_timing_transient_lookup . x_axis_offset
+   1 _DAT_008006d8 => four_dimensional_injection_timing_transient_lookup . y_axis_pointer
+   1 _DAT_008006d6 => four_dimensional_injection_timing_transient_lookup . y_axis_offset
+   1 _DAT_008006de => four_dimensional_injection_timing_transient_lookup . z_values_pointer
+   1 _DAT_00800706 => full_fueling_cold_temperature_fuel_increment_lookup . x_input
+   1 _DAT_0080070e => full_fueling_cold_temperature_fuel_increment_lookup . y_input
+   1 DAT_00800700 => full_fueling_cold_temperature_fuel_increment_lookup . x_axis_offset
+   1 _DAT_008006ec => throttle_100_fueling_low_horsepower_curve_lookup . x_axis_pointer
+   1 _DAT_008006ea => throttle_100_fueling_low_horsepower_curve_lookup . x_axis_offset
+   1 _DAT_008006f8 => throttle_100_fueling_low_horsepower_curve_lookup . y_input
+   1 _DAT_008006f4 => throttle_100_fueling_low_horsepower_curve_lookup . y_axis_pointer
+   1 _DAT_008006f2 => throttle_100_fueling_low_horsepower_curve_lookup . y_axis_offset
+   1 _DAT_008006fa => throttle_100_fueling_low_horsepower_curve_lookup . z_values_pointer
+   1 _DAT_00800702 => full_fueling_cold_temperature_fuel_increment_lookup . x_axis_pointer
+   1 0x6124a => ( word * ) & DAT_0006124a
+   1 _DAT_00800700 => full_fueling_cold_temperature_fuel_increment_lookup . x_axis_offset
+   1 _DAT_0080070a => full_fueling_cold_temperature_fuel_increment_lookup . y_axis_pointer
+   1 _DAT_00800708 => full_fueling_cold_temperature_fuel_increment_lookup . y_axis_offset
+   1 _DAT_00800710 => full_fueling_cold_temperature_fuel_increment_lookup . z_values_pointer
+   1 _DAT_0080d374 => four_dimensional_fueling_steady_state_lookup . x_axis_pointer
+   1 _DAT_0080d37c => four_dimensional_fueling_steady_state_lookup . y_axis_pointer
+   1 _DAT_0080d37a => four_dimensional_fueling_steady_state_lookup . y_axis_offset
+   1 _DAT_0080d382 => four_dimensional_fueling_steady_state_lookup . z_values_pointer
+   1 _DAT_0080d38a => four_dimensional_fueling_transient_lookup . x_axis_pointer
+   1 _DAT_0080d392 => four_dimensional_fueling_transient_lookup . y_axis_pointer
+   1 _DAT_0080d390 => four_dimensional_fueling_transient_lookup . y_axis_offset
+   1 _DAT_0080d398 => four_dimensional_fueling_transient_lookup . z_values_pointer
+   1 undefined => dword
+   1  => bool all_keys_match ;
+   1 ; bool all_keys_match => 
+   1 _DAT_00803f78 => j1939_pgn65252_priority_cal

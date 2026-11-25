@@ -1,0 +1,68 @@
+Round 93 batch F1 - investigator notes (read-only work; scratch only)
+=====================================================================
+
+1. FUEL DERATE CHAIN (CM550 runner 0x30c3c  <->  CM848 runner 0x4280c cm848_processProtectionLimits)
+   caller: CM550 0x1c18a jsr (0x30c3c) then bsr 0x1c0d4, both under (0x803c96 & 0x10) == 0  (FSTQUOEN torque derate override enable)
+           CM848 cm848_arbitrateRequestedFueling 0x1e5a4: same guard, cm848_processProtectionLimits then cm848_calculateProtectionRateLimited
+   step order
+     CM550 0x30c3c: 0x1ce58, 0x2d9a8, 0xb3b2, 0xc2a0, 0xc742, 0x196e4, bsr 0x30c14, bsr 0x30bf6, 0x17120, 0x45252 (undumped), 0x455c8 (undumped)
+     CM848 0x4280c: 0x1f318, 0x2a918, 0xe0c4, 0x502af4, 0x509510, 0x427cc, 0x4279c, 0x513ddc (46), 0x3f35c (45), 0x4b9ac (42), 0x3cefc (59), 0x519e2c (61), 0x3889c (62)
+   per step (CM550 address / limit record / running minimum / stamped state / guard  ==  CM848 address)
+     0x1ce58  105A+0 FSMXTHFL 0x80d368 -> 105D+0 FSLMFL 0x80dec8 (state 19 -> 105D+2 0x80deca) and -> 105D+6 FLLMAHFL 0x80dece (state 40 -> 105D+8 0x80ded0)   == 0x1f318 (li 19 / li 40, same four stores in the same order)   TWIN
+     0x2d9a8  1268 PTMXEGLD 0x80400e (EEPROM mirror) -> 1051+A TQDQTQ 0x80d338, state 34 -> 1051+C TQDQTQST 0x80d33a, guard 109E+2 PTSS 0x80dc26 == 1   == 0x2a918 (cmpwi 1 / li 34)   TWIN
+     0xb3b2   10A4+0 NZFLLM 0x80a28c -> FSLMFL, state 17                                         no CM848 step (CM848 has no NZFLLM record, no member 17)   STANDALONE
+     0xc2a0   104C+0 AFFL 0x80a8f6 -> FLLMAHFL 0x80dece, state 16 -> 0x80ded0                     == 0xe0c4 (li 16)   TWIN
+     0xc742   109F+0 ATFLLM 0x80a922 -> FSLMFL, state 15                                         == 0x502af4 (li 15)   TWIN
+     0x196e4  10B1+A EPFLLM 0x80d284 -> FSLMFL, state 29                                         == 0x509510 (li 29)   TWIN
+     0x30c14  10E8 JCTQLMFL 0x80da62 -> FSLMFL, state 20, guard 10E8+4 JCEGMD 0x80da50 == 3       == 0x427cc (cmpwi 3 / li 20)   TWIN
+     0x30bf6  105D+4 FSAPLMFL 0x80decc -> FSLMFL, state 28                                       == 0x4279c (li 28)   TWIN
+     0x17120  11EA+14 WPTQLM 0x80ccc6 -> FSLMFL, state 33, guards engine_state == 3 and 11EA+0 WPLMFG 0x80ccb2 != 0     no CM848 step (no 11EA block)   STANDALONE
+   compare sense: CM550 cmp.w (a1),d0 ; bcc (unsigned, limit < minimum)   CM848 lhz / cmpw / ble (zero-extended, same)
+   module order also matches: CM550 0x30b62 final timing | 0x30bf6 (28) | 0x30c14 (20) | 0x30c3c runner ; CM848 0x42784 cm848_copyMainInjectionTiming | 0x4279c (28) | 0x427cc (20) | 0x4280c runner
+
+2. FINAL FUELING 0x1c152 (called jsr at 0x1b5fe by the task set 0x1b5ce)
+   = CM848 cm848_arbitrateRequestedFueling 0x1e5a4 (first half) + cm848_selectFinalFueling 0x1e22c (second half); CM848 runs the combustion manager between them
+   0x1c16e flags_1 & 0x10 -> FSLMFL = 125E+0 FSTQDQUO 0x803f2a, state 13 ; else chain + 0x1c0d4 (torque limit TQDQTQ -> fuel, CM848 0x1e4e8)
+   0x1c194 requested fueling 1051+4 0x80d332 = min(1045+0 FSGVFL 0x80a8f0, FSLMFL) with state 1045+2 or 105D+2 -> 1051+6 0x80d334
+   0x1c1c4 engine_state 1 -> final fueling 1051+0 FSFNFL 0x80d32e = 0, state 26 ; 8 -> FSMNFL 0x80800a, 27 ; 5 -> FSOSFL 0x808008, 25 ; flags_1 & 2 -> FSUOFL 0x803f2c, 23 ;
+            4 -> EBFL 0x808006, 24 ; 2 / 6 -> CKFL 0x80d098, 22 ; else LSG special (11) or bsr 0x1c03c (group 2 / master-slave 32) ; 7 -> floor CKFL, 22
+   0x1c28e clamp working value 0x800698 to FSMNFL..FSMXFL 0x808004 -> FSFNFL
+   0x1c2c0 fold group 2 minimum into FSLMFL / FSLMFLST (not when 13)
+   0x1c2e4 LSG entry latch 104A+10 FSLSSTFG 0x80a908 ; 0x1c2fc final_fueling_state_prev
+   0x1c308 (separate function, start-up jsr at 0x28972): TQDQTQ = 0xffff, TQDQTQST = 40
+
+3. TIMING CHAIN (runner 0x30b34, bsr at 0x30b7e in the final timing selection 0x30b62) - works on 103B+2 TSOI 0x80d346, stamps 103B+4 TSTPTAST 0x80d348
+   timing state labels (CHR e2m SOI_State / Final_Timing_State): 0 FOUR_D 1 WETSTACK 2 USERCOMD 3 ANC 4 MAX 5 CRANK 6 ENGBRAKE 7 USEROVRD 8 STOP 9 OVERSPED A SHUTDOWN B MISFIRE C MSOVRIDE D WTSTCOOL
+   0x26af0  flags_32 bit 0 and state == 0: 818E+2 BSTABELM 0x80a270 = TSOI ; if 818E+0 BSTAMNLM 0x80a26e > TSOI: TSOI = it, TSSTIC 0x80d34a &= ~1, state 11 (MISFIRE)
+   0xc2ee   TSOI += 105B+0 AFCNICTA 0x80de68 (signed, floor 0) ; TSSTIC bit 4 <- 0x8000d6 (0xc2be sets 4 while final_fueling_state == 16)
+   0x12484  1090+8 TSAJ4DTA 0x80aaa4 = TSOI ; TSOI += 1090+2 CPTAIC 0x80aa9e (clamp 0..0x400) ; TSSTIC bit 8 <- 0x80021c
+   0x34dba  1077+2 TSBEWSTA 0x80dee6 = TSOI ; if 1077+0 WSTA 0x80dee4 > TSOI: TSOI = WSTA, state = 0x8036e2 (1 or 13, set by 0x34cc4)
+   0xb4ce   10A4+12 TSBENZTA 0x80a29e = TSOI ; if 10A4+2 NZTALM 0x80a28e < TSOI: TSOI = it, state 3 (ANC)
+   0x30b10  if TSOI > 105C+6 TSMXTA 0x808a74: 105B+8 TSBEMLTA 0x80de70 = TSOI, TSOI = TSMXTA, state 4 (MAX)
+   0x17cf0  cranking states: TSOI = 105E+2 CKTA 0x80d09a, state 5 (CRANK), TSSTIC = 0
+   0x49f32  undumped
+   final selection 0x30b62: 27 SHUTDOWN -> TSSOTA, 10 ; 25 OVERSPEED -> TSOSTA, 9 ; 26 STOPPED -> 0, 8 ; flags_1 & 8 -> TSUOTA 0x804024, 7 ; else TSOI + state
+
+4. UNIDENTIFIED FUELING_STATE MEMBERS
+   17 ANCDERAT  stored 0xb3c6 (move.w #0x11,(0x80deca)) with NZFLLM ; e2m group ACCNOISE 'ACCELERATION NOISE CONTROL GROUP', NZFLAGEN 'ENABLE FOR FUEL LIMITING OF THE ACCELERATION NOISE C'
+   33 ESUOILLM  stored 0x17146 (move.w #0x21,(0x80deca)) with WPTQLM under WPLMFG ; e2m group EWP_HDR 'ENGINE WARMUP PROTECTION GROUP'
+   18 EPF       compared 0x306b4 (cmpi.w #0x12,(0x80d330)) -> addq.l #1,(0x806192) = 1216+6C TIT3DQTM 'TIME THE FUELING HAS BEEN UNDER CONTROL OF ENGINE PROTECTION SINCE LAS(T TRIP RESET)' ; never stored
+   3  PSSPEED   compared 0xc982 (ASG runs in 7 / 3 / 2 / 30), 0x2dcde (1 / 2 / 30 / 3 bypass power take-off), 0xf7f6 (8 / 3 / 7 driver demand), EEC1 table 0x32d04 (with 1 2 7 8 30 37 -> 0xF1 / 0xFB) ; never stored
+                e2m ASRFST range '2,3,7,30,37' ; PSAGEN 'CUSTOMER TRIM FLAG TO ENABLE/DISABLE PROG. SHIFT FEATURE' in group PRGSHFT2 'PROGRESSIVE SHIFT GROUP' ; JCPSDB 'JCOMM PROGRESSIVE SHIFT DISABLE'
+                (other PS prefixes exist in other families: PSLH* 'PRESS SENSOR LIMPHOME', PSPEN 'POWERSPEC')
+   37 T2SPD     CM848 0xea3c: the all-speed governor runs in 7 / 2 / 30 / 37 ; with 38 next to 1 / 2 at 0x208fc 0x2bc04 0x407b8 0x412c4 0x5253f4 0x5255c4 ; CM550 only EEC1 table (37 with 1 2 3 7 8 30)
+   38 T2TORQ    CM848 same sites as 37 except the ASG ; CM550 EEC1 table (38 in the 0xF8 torque limiting group)
+                e2m T2* = TOP2: group TOP208 'TOP2 CALIBRATIONS AND DATA', T2HGSXDR 'TOP2 SPICER TRANSMISSION HIGH GEAR DRIVER SOLENOID', T2SISXDR '0=(1 GEAR DOWN OR BELOW)/1=(TOP GEAR)'
+   36 PTPDERAT  only the EEC1 table (0xF8 group) ; e2m PTP_07 'GROUP CONTAINING ELECTRONIC CONSTANTS FOR POWERTRAIN PROTECTION', TCFL 12B4+0 0x80dc46 'POWERTRAIN PROTECTION FUELING' has no reader in the dumped ROM
+   39 T2DERAT   only the EEC1 table (0xF8 group)
+   CM848 49 OFCSTATE / 50 AFRSTATE: only compared (0xea00 ASG with 16 / 19 ; 0x529f58 with 16 / 58) - class only, stay
+
+5. OTHER FUNCTIONS
+   0x1ca54  fuel shut-off driver command: bit 0x20 of 0x80bcfb (000E+2D DRFSEA) ; one caller jsr 0x1b63c ; 0x1ca5c is a mid-body row (no reference)
+   0x2658c  LSG idle adjustment start-up: 0x801a82 = 1073+0 LSICBKRF 0x805f0a if flags_12 bit 0 (LSISSVEN) else both 0 ; 1049+6 LSCIOD 0x80db08 = 0 ; clamps 131E+2 / +4 trims to 1066+8 / +A
+   0x30ade  trip information start-up: 1215+12 TIEGST 0x80de64 = 0 ; 0x801e82 = 1216+74 TIITFU ; 0x801e92 = 1216+60 TIEGAVLD ; 0x801e94 = 1216+62 TIAVLD
+   0x30b0e  lone rts ; jsr 0x28774 after mc68k_scheduler_init
+   0x34512  twin of CM848 0x506780 cm848_advanceHourMeters: engine_state != 1 -> addq.l #1 11BC+0 CMEGTR 0x80ccee ; addq.l #1 0004+0 0x80bda4 ; last call of executive phase 0 (jsr 0x1b974)
+
+6. SCORED CANDIDATES
+   0x1ce58 -> 0x1f318 verified (twin) ; 0x2d9a8 -> 0x2a918 verified (twin) ; 0xc2ee -> 0x37f28 cm848_monitorChargingSystemVoltageHighAndLow rejected ; 0x1ca54 -> 0x6ab8 mpc555_sciPollDuringEepromWrite rejected

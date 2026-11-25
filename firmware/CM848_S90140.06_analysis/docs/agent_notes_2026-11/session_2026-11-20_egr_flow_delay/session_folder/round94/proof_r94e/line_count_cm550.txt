@@ -1,0 +1,16 @@
+0x0ac3c cm550_updateDutyCycleMonitorLoadHistogram: statements 63 -> 61, lines 165 -> 163
+     @@ -10 +10 @@
+     -  ushort *puVar7;
+     +  word *pwVar7;
+     @@ -64 +64 @@
+     -      duty_cycle_monitor_load_ratio = (sdword)frictional_load_torque_init;
+     +      duty_cycle_monitor_load_ratio = (sdword)duty_cycle_monitor_load_axis[7];
+     @@ -86,3 +86,3 @@
+     -      puVar7 = (ushort *)&rpm_timer_interrupt_threshold_7d20;
+     -      while ((bVar4 < 9 && (!bVar1))) {
+     -        if (engine_rpm_primary <= *puVar7) {
+     +      pwVar7 = duty_cycle_monitor_engine_speed_axis;
+     +      while ((pwVar7 = pwVar7 + 1, bVar4 < 9 && (!bVar1))) {
+     +        if (engine_rpm_primary <= *pwVar7) {
+     @@ -98 +97,0 @@
+1 functions with a different statement count

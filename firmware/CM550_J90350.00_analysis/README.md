@@ -1,6 +1,6 @@
 # J90350.00 Firmware Analysis
 
-**Status: analysis in progress** - 552 named functions of 711, 5,377 RAM variable rows (2,821 global rows typed), full decompilation available.
+**Status: analysis in progress** - 610 named functions of 713, 5,221 RAM variable rows (2,906 global rows typed), full decompilation available.
 
 ## ECU Details
 
@@ -24,14 +24,14 @@
 
 ## Current Analysis State
 
-Counted from the CSVs for PR #53 round 93 (2026-11-24):
+Counted from the CSVs for PR #53 round 94 (2026-11-25):
 
 | Metric | Count |
 |--------|-------|
-| Function rows | 711 (552 named, 159 placeholders) |
-| Global variable rows | 5,466 (5,377 in RAM and extended RAM; 2,821 typed) |
-| Structure types | 72 (600 fields) |
-| Decompiled C code | 1.3 MB |
+| Function rows | 713 (610 named, 103 placeholders) |
+| Global variable rows | 5,313 (5,221 in RAM and extended RAM; 2,906 typed) |
+| Structure types | 77 (636 fields) |
+| Decompiled C code | 1.4 MB |
 | Memory regions | 4 (ROM + RAM + EXT_RAM + EEPROM) |
 
 ## Files

@@ -1,0 +1,165 @@
+== 0x1fdc0
+  0x231fc: jsr  in cm550_fuelArbitratorResetHandler@0x231da
+  0x234c2: jsr  in cm550_fuelDemandLimitOrchestrator@0x23244
+== 0x1ff38
+  0x1b50a: jsr  in cm550_oddPhaseSchedulerTaskSet@0x1b504
+== 0x212b2
+  0x1b4d8: jsr  in vp44_evenPhaseSchedulerTaskSet@0x1b4d8
+== 0x2142c
+  0x1b504: jsr  in cm550_oddPhaseSchedulerTaskSet@0x1b504
+== 0x216c6
+  0x21886: pea  in cm550_FUN_00021872@0x21872
+== 0x21778
+  0x218b6: pea  in cm550_FUN_00021872@0x21872
+== 0x21872
+  0x28e4a: jsr  in mc68k_initializeJ1939Datalink@0x28b80
+== 0x21920
+  0x322f2: jsr  in j1939HandlePgn65226Dm1ActiveDtc@0x322ae
+  0x3243c: jsr  in cm550_previousDtcListBuilder@0x3241c
+== 0x21f4e
+  0x220ee: bsr.w  in cm550_memoryRegisterController@0x22070
+  0x2216a: bsr.w  in cm550_memoryRegisterController@0x22070
+  0x22194: bsr.w  in cm550_memoryRegisterController@0x22070
+  0x22206: bsr.w  in cm550_memoryRegisterController@0x22070
+  0x22280: bsr.w  in cm550_memoryRegisterController@0x22070
+== 0x21fac
+  0x22170: bsr.w  in cm550_memoryRegisterController@0x22070
+  0x2217a: bsr.w  in cm550_memoryRegisterController@0x22070
+  0x22288: bsr.w  in cm550_memoryRegisterController@0x22070
+  0x22294: bsr.w  in cm550_memoryRegisterController@0x22070
+== 0x22070
+  0x1b4e4: jsr  in vp44_evenPhaseSchedulerTaskSet@0x1b4d8
+== 0x231da
+  0x2350c: jsr  in cm550_fuelDemandLimitOrchestrator@0x23244
+  0x23532: jsr  in cm550_fuelDemandLimitOrchestrator@0x23244
+  0x23544: jsr  in cm550_fuelDemandLimitOrchestrator@0x23244
+  0x23572: jsr  in cm550_fuelDemandLimitOrchestrator@0x23244
+  0x23584: jsr  in cm550_fuelDemandLimitOrchestrator@0x23244
+== 0x23244
+  0x1b4de: jsr  in vp44_evenPhaseSchedulerTaskSet@0x1b4d8
+== 0x23216
+  0x2366e: jsr  in cm550_fuelDemandLimitOrchestrator@0x23244
+  0x23692: jsr  in cm550_fuelDemandLimitOrchestrator@0x23244
+  0x236aa: jsr  in cm550_fuelDemandLimitOrchestrator@0x23244
+== 0x21642
+  0x216bc: bsr.s  in cm550_j1939DataCopyWrapper2Byte@0x2167e
+  0x21708: bsr.w  in cm550_FUN_000216c6@0x216c6
+  0x2176c: bsr.w  in cm550_j1939DataCopyWrapperExtended@0x21714
+  0x217d2: bsr.w  in cm550_FUN_00021778@0x21778
+== 0x238ac
+  0x2352a: jsr  in cm550_fuelDemandLimitOrchestrator@0x23244
+  0x2356a: jsr  in cm550_fuelDemandLimitOrchestrator@0x23244
+== 0x238ec
+  0x2368a: jsr  in cm550_fuelDemandLimitOrchestrator@0x23244
+== 0x2167e
+  0x2187a: pea  in cm550_FUN_00021872@0x21872
+== 0x21714
+  0x218aa: pea  in cm550_FUN_00021872@0x21872
+== 0x1fd6c
+  0x1b6d6: jsr  in cm550_FUN_0001b6d6@0x1b6d6
+== 0x1fe84
+  0x28b8a: movea a4  in mc68k_initializeJ1939Datalink@0x28b80
+== 0x23820
+  0x1f522: jsr  in cm550_FUN_0001f4e8@0x1f4e8
+  0x1f904: jsr  in cm550_engineFluidLevelDataBuilder@0x1f8bc
+  0x2f1ac: jsr  in processEngineTsc1Request@0x2f128
+== 0x23870
+  0x2f886: jsr  in cm550_retarderControlModeHandler@0x2f7e6
+== 0x23920
+  0x1b510: jsr  in cm550_oddPhaseSchedulerTaskSet@0x1b504
+== 0x239d2
+  0x1f62e: jsr  in cm550_FUN_0001f4e8@0x1f4e8
+  0x1f686: jsr  in cm550_FUN_0001f4e8@0x1f4e8
+  0x1f71c: jsr  in cm550_FUN_0001f4e8@0x1f4e8
+  0x1f9fc: jsr  in cm550_engineFluidLevelDataBuilder@0x1f8bc
+  0x1fa50: jsr  in cm550_engineFluidLevelDataBuilder@0x1f8bc
+  0x1fae6: jsr  in cm550_engineFluidLevelDataBuilder@0x1f8bc
+  0x2f198: jsr  in processEngineTsc1Request@0x2f128
+== 0x23a3c
+  0x2f878: jsr  in cm550_retarderControlModeHandler@0x2f7e6
+== 0x2322a
+== 0x1b4d8
+  0x1b960: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1b9b2: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1b9fa: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1ba3c: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1ba7e: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bac6: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bb0e: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bb56: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bbaa: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bbec: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bc2e: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bc6a: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bca6: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bce2: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bd1e: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bd5a: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bd9c: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bdd8: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1be14: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1be4c: bsr.w  in executiveFrameInterruptHandler@0x1b876
+== 0x1b504
+  0x1b98e: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1b9d6: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1ba18: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1ba5a: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1baa8: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1baea: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bb32: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bb7a: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bbce: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bc10: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bc4c: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bc88: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bcc4: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bd00: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bd3c: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bd78: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bdba: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1bdf6: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1be30: bsr.w  in executiveFrameInterruptHandler@0x1b876
+  0x1be6e: bsr.w  in executiveFrameInterruptHandler@0x1b876
+== 0x2148a
+  0x21672: bsr.w  in cm550_j1939MemoryDataCopyResolver@0x21642
+  0x2181a: bsr.w  in handleJ1939WriteMemoryService@0x217de
+  0x21866: bsr.w  in handleJ1939WriteMemoryLongLengthService@0x21826
+== 0x26a64
+  0x2149a: movea a5  in writeJ1939DiagnosticMemory@0x2148a
+  0x21698: jsr  in cm550_j1939DataCopyWrapper2Byte@0x2167e
+  0x216e0: jsr  in cm550_FUN_000216c6@0x216c6
+  0x216f6: jsr  in cm550_FUN_000216c6@0x216c6
+  0x2172e: jsr  in cm550_j1939DataCopyWrapperExtended@0x21714
+  0x21792: jsr  in cm550_FUN_00021778@0x21778
+  0x217a8: jsr  in cm550_FUN_00021778@0x21778
+  0x217be: jsr  in cm550_FUN_00021778@0x21778
+  0x217f8: jsr  in handleJ1939WriteMemoryService@0x217de
+  0x21840: jsr  in handleJ1939WriteMemoryLongLengthService@0x21826
+  0x21856: jsr  in handleJ1939WriteMemoryLongLengthService@0x21826
+  0x224b0: jsr  in cm550_diagMemoryReadResponseBuilder@0x2238e
+  0x224d8: jsr  in cm550_diagMemoryReadResponseBuilder@0x2238e
+  0x2254a: jsr  in cm550_FUN_00022530@0x22530
+  0x22560: jsr  in cm550_FUN_00022530@0x22530
+  0x22596: jsr  in cm550_FUN_0002257c@0x2257c
+  0x225fa: jsr  in cm550_FUN_000225e0@0x225e0
+  0x22610: jsr  in cm550_FUN_000225e0@0x225e0
+  0x22626: jsr  in cm550_FUN_000225e0@0x225e0
+  0x22660: jsr  in cm550_FUN_00022646@0x22646
+  0x226a8: jsr  in cm550_FUN_0002268e@0x2268e
+  0x226be: jsr  in cm550_FUN_0002268e@0x2268e
+== 0x10e16
+  0x13de4: jsr  in cm550_resolveDataloggerTriggerAddresses@0x13dbe
+  0x13e2e: jsr  in cm550_resolveDataloggerDataParameterAddresses@0x13e12
+  0x166d8: jsr  in cm550_multiPacketTransmitHandler@0x1666c
+  0x16a84: jsr  in cm550_multiPacketReceiveHandler@0x1686e
+  0x1ecea: jsr  in cm550_diagnosticMemoryWriteHandler@0x1ec3c
+  0x1ef92: jsr  in cm550_diagnosticMemoryReadHandler@0x1edae
+  0x21650: jsr  in cm550_j1939MemoryDataCopyResolver@0x21642
+  0x222e6: jsr  in cm550_canDiagnosticResponseSender@0x222b4
+  0x22502: jsr  in cm550_diagMemoryReadResponseBuilder@0x2238e
+== 0x142a8
+  0x2f300: jsr  in processEngineTsc1Request@0x2f128
+  0x2f370: jsr  in processEngineTsc1Request@0x2f128
+  0x2f3fe: jsr  in processEngineTsc1Request@0x2f128
+  0x2fa04: jsr  in cm550_retarderControlModeHandler@0x2f7e6
+  0x2fa46: jsr  in cm550_retarderControlModeHandler@0x2f7e6

@@ -1,0 +1,76 @@
+0x0ac3c cm550_updateDutyCycleMonitorLoadHistogram: statements 67 -> 63, lines 151 -> 165
+     @@ -1 +1 @@
+     -uint cm550_FUN_0000ac3c(void)
+     +uint cm550_updateDutyCycleMonitorLoadHistogram(void)
+     @@ -3,2 +3 @@
+     -  int *piVar1;
+     -  bool bVar2;
+     +  bool bVar1;
+     @@ -6,3 +5,4 @@
+     -  dword dVar3;
+     -  uint uVar4;
+     -  byte bVar5;
+     +  dword dVar2;
+     +  uint uVar3;
+     +  byte bVar4;
+0x21f4e storeJ1939ControlSessionInHistoryTable: statements 19 -> 22, lines 29 -> 32
+     @@ -1 +1 @@
+     -void cm550_diagnosticGroupPositionBufferStore(byte session_kind)
+     +void storeJ1939ControlSessionInHistoryTable(byte session_kind)
+     @@ -6,5 +6,6 @@
+     -  undefined2 *puVar4;
+     -  undefined2 *puVar5;
+     -  uVar1 = _DAT_00804232 + 1;
+     -  uVar2 = (uint)_DAT_00804232;
+     -  _DAT_00804232 = uVar1;
+     +  byte bVar4;
+     +  j1939_control_session_t *pjVar5;
+     +  j1939_control_session_t *pjVar6;
+     +  uVar1 = j1939_control_session_history_next_entry + 1;
+     +  uVar2 = (uint)j1939_control_session_history_next_entry;
+0x23920 cm550_processTsc1IgnoredRequestTimeouts: statements 31 -> 30, lines 50 -> 52
+     @@ -1 +1 @@
+     -void cm550_phase3_countdown_timer_manager(void)
+     +void cm550_processTsc1IgnoredRequestTimeouts(void)
+     @@ -3,14 +3,14 @@
+     -  short sVar1;
+     -  int iVar2;
+     -  uint uVar3;
+     -  byte bVar4;
+     -  undefined2 *puVar5;
+     -  undefined *puVar6;
+     -  if (io_control_entry_count != 0) {
+     -    puVar5 = (undefined2 *)(&DAT_0080198c + (uint)io_control_entry_count * 8);
+     -    for (bVar4 = io_control_entry_count; bVar4 != 0; bVar4 = bVar4 - 1) {
+     -      sVar1 = puVar5[3] + -1;
+0x26a2e cm550_FUN_00026a2e: statements 11 -> 7, lines 14 -> 10
+     @@ -4,9 +4,5 @@
+     -  can_buffer_setup1_size.data[0] = 0;
+     -  can_buffer_setup1_size.data[1] = 0x80;
+     -  can_buffer_setup1_size.data[2] = 0x83;
+     -  can_buffer_setup1_size.data[3] = 0x46;
+     -  can_buffer_setup1_size.unused_ptr._2_2_ = 2;
+     -  ambient_conditions_msg_header = 0x808372;
+     -  can_buffer_setup1_size.data[6] = 0;
+     -  can_buffer_setup1_size.data[7] = 2;
+     -  _ambient_conditions_data_ptr = 0x80837c;
+     +  maximum_torque_map_lookup.x_axis_pointer = maximum_torque_map_x_axis;
+     +  maximum_torque_map_lookup.x_axis_offset = 2;
+     +  maximum_torque_map_lookup.y_axis_pointer = maximum_torque_map_y_axis;
+     +  maximum_torque_map_lookup.y_axis_offset = 2;
+0x28b80 mc68k_initializeJ1939Datalink: statements 152 -> 153, lines 161 -> 162
+     @@ -9 +9,2 @@
+     -  undefined *puVar7;
+     +  byte *pbVar7;
+     +  undefined *puVar8;
+     @@ -15 +16 @@
+     -  _DAT_0080d9de = 4;
+     +  j1939_source_address_blocking_table_byte_length = 4;
+     @@ -17 +18 @@
+     -  puVar7 = &DAT_0080d9e0;
+     +  pbVar7 = j1939_source_address_blocking_table;
+     @@ -19 +20 @@
+     -    *puVar7 = 0xfe;
+     +    *pbVar7 = 0xfe;
+     @@ -21 +22 @@
+5 functions with a different statement count

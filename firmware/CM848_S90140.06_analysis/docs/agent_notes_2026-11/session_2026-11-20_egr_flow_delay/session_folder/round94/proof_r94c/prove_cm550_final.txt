@@ -1,0 +1,59 @@
+######## cm550
+removed 0: 
+added 0: 
+changed 111
+-- token diff: 81 functions with unmapped changes
+---- census of distinct changes
+  47 puVar7 => puVar8
+  33 ' \ => 
+  33 ' => 
+  15  => [ 0 ]
+  13 puVar2 => pTVar2
+  12 * ( uint * ) => 
+  12 ( => [
+  12 ) * 4 ) => ]
+  11 bVar4 => bVar3
+  10 uVar1 => dVar1
+  10 + 0x80bd4a ) => ]
+   9 _DAT_0080da7e => tsc1_request_time_limit_timer
+   9 puVar5 => pwVar4
+   8 puVar2 => psVar2
+   8 dVar3 => dVar2
+   8 _DAT_0080da8c => progressive_shift_disable_timeout_timer
+   8 0 => TSC1_OVERRIDE_OFF
+   8 . state => 
+   8 working_ram_pointer => psVar2
+   7 uint => dword
+   7 0 => IDLE_SHUTDOWN_STATE_RESET
+   7 input_state => logical_input
+   6  => . x_axis_offset
+   6 iVar4 => pjVar4
+   6 * => 
+   6 sVar1 => wVar2
+   5 puVar1 => psVar1
+   5 bVar5 => bVar4
+   5 . _1_1_ => 
+   5 _retarder_command_source_address => retarder_command_source_address
+   5 _DAT_00801a22 => lamp_control_power_up_tick_count
+   5 eeprom_byte_write_state => maximum_torque_map_lookup
+   5 dword => sdword
+   5 chunk_end => psVar1
+   4 bVar2 => bVar1
+   4 puVar8 => puVar7
+   4 _DAT_0080002c => duty_cycle_monitor_transient_fueling_lookup . x_input
+   4 ( word * ) => 
+   4 0 => FUELING_STATE_NOT_SELECTED
+   4 _DAT_00803c02 => idle_shutdown_period_cal
+   4 _DAT_0080d672 => idle_shutdown_overridden_flag
+   4 DAT_00800aa0 + ( uint => j1939_input_data_error_bitmap
+   4 DAT_00800aa8 + ( uint => j1939_pedal_input_timeout_bitmap
+   4 DAT_00800aa4 + ( uint => j1939_input_timeout_bitmap
+-- statements: 0x0ac3c cm550_updateDutyCycleMonitorLoadHistogram: statements 67 -> 63, lines 151 -> 165
+totals over the changed functions (before -> after): unaff_ 13 -> 13, extraout_ 27 -> 27, in_ 24 -> 24, uStack 0 -> 0, CONCAT 132 -> 132
+0 functions with a count that went up:
+-- pieces:
+pieces total 496 -> 494 (4 removed, 2 added)
+  +2  duty_cycle_monitor_load_ratio  (0 -> 2)
+######## overlaps
+CM550: 22 rows inside another row's span, 0 new since HEAD
+CM848: 507 rows inside another row's span, 0 new since HEAD

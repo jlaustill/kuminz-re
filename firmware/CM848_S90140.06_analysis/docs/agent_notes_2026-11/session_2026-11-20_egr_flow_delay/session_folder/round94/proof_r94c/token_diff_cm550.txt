@@ -1,0 +1,429 @@
+0x00003792: 4 token changes: undefined => sdword |  => ( char * ) |  => ( sdword * ) ( ( int ) |  => )
+0x00003c20: 17 token changes: undefined4 => sdword | puVar1 => psVar1 | undefined4 => sdword | puVar2 => psVar2 | puVar2 => psVar2 | ( undefined4 * ) =>  | puVar2 => psVar2 | puVar1 => psVar1 | puVar2 => psVar2 | puVar1 => psVar1 | puVar1 => psVar1 | undefined4 => sdword | puVar2 => psVar2 | puVar1 => psVar1 | puVar2 => psVar2 | puVar2 => psVar2 | puVar2 => psVar2
+0x0000ac3c: 53 token changes: int * piVar1 ; =>  | bVar2 => bVar1 | dVar3 => dVar2 | uVar4 => uVar3 | bVar5 => bVar4 ; char cVar5 | char cVar7 ; =>  | puVar8 => puVar7 | dVar3 => dVar2 | _DAT_0080002c => duty_cycle_monitor_transient_fueling_lookup . x_input | _DAT_0080002c => duty_cycle_monitor_transient_fueling_lookup . x_input | _DAT_0080002c => duty_cycle_monitor_transient_fueling_lookup . x_input |  => . x_axis_offset | ( word * ) =>  |  => . x_axis_offset |  => . x_axis_offset | ( word * ) =>  |  => . x_axis_offset | uint => sdword | ( int ) =>  | cVar7 => cVar6 | cVar6 => cVar5 | bVar2 => bVar1 | bVar5 => bVar4 | puV
+0x0000af70: 27 token changes: uint => dword | puVar3 => pdVar3 | uint => dword | puVar4 => pdVar4 | DWORD_00800012 => duty_cycle_monitor_steady_state_fueling_lookup . x_axis_pointer | 0x6086e => ( word * ) & DAT_0006086e |  => . x_axis_offset | _DAT_0080001e => duty_cycle_monitor_steady_state_fueling_lookup . y_input | 0x6089a => ( word * ) & DAT_0006089a | _DAT_00800018 => duty_cycle_monitor_steady_state_fueling_lookup . y_axis_offset | 0x608a4 => ( word * ) & DAT_000608a4 | _DAT_0080002c => duty_cycle_monitor_transient_fueling_lookup . x_input | _DAT_00800028 => duty_cycle_monitor_transient_fueling_lookup . x_axis_pointe
+0x0000b130: 14 token changes: int => dword | piVar3 => pdVar3 | int => dword | piVar4 => pdVar4 | piVar3 => pdVar4 | ( int * ) & DAT_0080bade => duty_cycle_monitor_short_term_processing_map_2_counts | piVar4 => pdVar3 | ( int * ) & DAT_0080bbac => duty_cycle_monitor_short_term_processing_map_1_counts |  => pdVar4 = pdVar4 + 1 ; pdVar3 = pdVar3 + 1 ; | piVar3 => pdVar3 | 18000U => 18000 | piVar4 => pdVar4 | 18000U => 18000 | piVar3 = piVar3 + 1 ; piVar4 = piVar4 + 1 ; => 
+0x0000c326: 1 token changes: _DAT_0080a926 => master_slave_override_enable_flag
+0x0000d0e2: 2 token changes: 0 => FUELING_STATE_NOT_SELECTED | 0x1e => FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION
+0x0000d18a: 1 token changes: 0x1e => FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION
+0x0000d1a4: 1 token changes: 2 => FUELING_STATE_TSC1_SPEED_CONTROL
+0x0000d218: 2 token changes: 0 => FUELING_STATE_NOT_SELECTED | 2 => FUELING_STATE_TSC1_SPEED_CONTROL
+0x0000d2be: 1 token changes: 0 => FUELING_STATE_NOT_SELECTED
+0x0000d584: 2 token changes: 0 => FUELING_STATE_NOT_SELECTED | 7 => FUELING_STATE_VARIABLE_SPEED_GOVERNOR
+0x0000e998: 1 token changes: _DAT_00807c08 => boost_pressure_sensor_high_reading_maximum_engine_load
+0x0000ed64: 2 token changes: _DAT_00803c02 => idle_shutdown_period_cal | _DAT_0080d672 => idle_shutdown_overridden_flag
+0x0000f716: 1 token changes: 7 => FUELING_STATE_VARIABLE_SPEED_GOVERNOR
+0x00011e5e: 1 token changes: _DAT_0080aaa4 => timing_advance_before_cylinder_pressure_maintenance
+0x00012484: 1 token changes: _DAT_0080aaa4 => timing_advance_before_cylinder_pressure_maintenance
+0x00014fca: 3 token changes: uint => dword |  => [ 0 ] | uint => dword
+0x000159ee: 2 token changes:  => [ 0 ] |  => [ 0 ]
+0x00015df0: 20 token changes: ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' => 
+0x0001c03c: 2 token changes: _DAT_0080a926 => master_slave_override_enable_flag | _DAT_0080d336 => master_slave_control_flag
+0x0001c0d4: 1 token changes: 0x28 => FUELING_STATE_NO_DERATE
+0x0001c152: 4 token changes: _DAT_00803f2a => torque_derate_override_fuel_quantity_cal | _DAT_00808008 => engine_overspeed_fueling | _DAT_00808006 => engine_brake_fueling | _DAT_00803f2c => user_override_fueling_cal
+0x0001c308: 1 token changes: 0x28 => FUELING_STATE_NO_DERATE
+0x0001cc72: 1 token changes: ( word * ) => 
+0x0001cdf8: 3 token changes: 0x6086e => & DAT_0006086e | 0x6089a => & DAT_0006089a | 0x608a4 => & DAT_000608a4
+0x0001d9b4: 38 token changes: word wVar1 => IDLE_SHUTDOWN_STATE IVar1 | wVar1 => IVar1 | 0 => IDLE_SHUTDOWN_STATE_RESET | _DAT_00803c02 => idle_shutdown_period_cal | _DAT_0080d672 => idle_shutdown_overridden_flag | ' \ =>  | ' =>  | ' \ =>  | ' =>  | 1 => IDLE_SHUTDOWN_STATE_COUNT | 1 => IDLE_SHUTDOWN_STATE_COUNT | 0 => IDLE_SHUTDOWN_STATE_RESET | _DAT_00808150 => idle_shutdown_warning_period | 2 => IDLE_SHUTDOWN_STATE_WARNING | 3 => IDLE_SHUTDOWN_STATE_DELAY | 2 => IDLE_SHUTDOWN_STATE_WARNING | _DAT_0080d67e => idle_shutdown_reset_from_warning_flag | 0 => IDLE_SHUTDOWN_STATE_RESET | _DAT_00808150 => idle_shutdown_warning_
+0x0001db8a: 7 token changes: _DAT_0080d672 => idle_shutdown_overridden_flag | _DAT_00803c02 => idle_shutdown_period_cal | 0 => IDLE_SHUTDOWN_STATE_RESET | ' \ =>  | ' =>  | ' \ =>  | ' => 
+0x0001ddb4: 6 token changes: 0x6086e => & DAT_0006086e | 0x6089a => & DAT_0006089a | 0x608a4 => & DAT_000608a4 | 0x6094c => & DAT_0006094c | 0x60978 => & DAT_00060978 | 0x60982 => & DAT_00060982
+0x0001f84e: 2 token changes: _DAT_0080da8c => progressive_shift_disable_timeout_timer | _DAT_0080da8c => progressive_shift_disable_timeout_timer
+0x0001fd6c: 6 token changes: _DAT_00804170 => j1922_speed_control_count | _DAT_00804172 => j1922_speed_control_last_time | _DAT_00804176 => j1922_torque_control_count | _DAT_00804178 => j1922_torque_control_last_time | _DAT_0080416a => j1922_limit_control_count | _DAT_0080416c => j1922_limit_control_last_time
+0x0001fdc0: 9 token changes: _DAT_00804170 => j1922_speed_control_count | _DAT_00804170 => j1922_speed_control_count | _DAT_00804172 => j1922_speed_control_last_time | _DAT_00804176 => j1922_torque_control_count | _DAT_00804176 => j1922_torque_control_count | _DAT_00804178 => j1922_torque_control_last_time | _DAT_0080416a => j1922_limit_control_count | _DAT_0080416a => j1922_limit_control_count | _DAT_0080416c => j1922_limit_control_last_time
+0x0001ff38: 31 token changes: int iVar4 => j1939_periodic_transmit_entry_t * pjVar4 | iVar4 => pjVar4 | 0x80096e => j1939_periodic_queue0_entries | DAT_00800a9a => j1939_periodic_queue0_count | * ( short * ) ( iVar4 + 4 ) => pjVar4 -> next_tick | _DAT_00800a9c => j1939_periodic_queue0_current_tick | * ( short * ) ( iVar4 => pjVar4 -> next_tick = pjVar4 -> interval_ticks | 4 ) = * ( short * ) ( iVar4 + 2 ) + * ( short * ) ( iVar4 + 4 ) => pjVar4 -> next_tick | * =>  | * =>  | ( iVar4 + 6 ) => pjVar4 -> builder | iVar4 => pjVar4 | iVar4 => pjVar4 | 10 => 1 | _DAT_00800a9c => j1939_periodic_queue0_current_tick | _DAT_00800a9c
+0x000201d6: 8 token changes: * ( uint * ) =>  | DAT_00800aa0 + ( uint => j1939_input_data_error_bitmap | ( => [ | ) * 4 ) => ] | * ( uint * ) =>  | DAT_00800aa0 + ( uint => j1939_input_data_error_bitmap | ( => [ | ) * 4 ) => ]
+0x00020210: 8 token changes: * ( uint * ) =>  | DAT_00800aa8 + ( uint => j1939_pedal_input_timeout_bitmap | ( => [ | ) * 4 ) => ] | * ( uint * ) =>  | DAT_00800aa8 + ( uint => j1939_pedal_input_timeout_bitmap | ( => [ | ) * 4 ) => ]
+0x0002024a: 8 token changes: * ( uint * ) =>  | DAT_00800aa4 + ( uint => j1939_input_timeout_bitmap | ( => [ | ) * 4 ) => ] | * ( uint * ) =>  | DAT_00800aa4 + ( uint => j1939_input_timeout_bitmap | ( => [ | ) * 4 ) => ]
+0x00020284: 1 token changes: _DAT_00800aa0 => j1939_input_data_error_bitmap
+0x000202a0: 1 token changes: _DAT_00800aa8 => j1939_pedal_input_timeout_bitmap
+0x000202bc: 1 token changes: _DAT_00800aa4 => j1939_input_timeout_bitmap
+0x000202d8: 8 token changes: * ( uint * ) =>  | DAT_00800aa0 + ( uint => j1939_input_data_error_bitmap | ( => [ | ) * 4 ) => ] | * ( uint * ) =>  | DAT_00800aa0 + ( uint => j1939_input_data_error_bitmap | ( => [ | ) * 4 ) => ]
+0x00020310: 8 token changes: * ( uint * ) =>  | DAT_00800aa8 + ( uint => j1939_pedal_input_timeout_bitmap | ( => [ | ) * 4 ) => ] | * ( uint * ) =>  | DAT_00800aa8 + ( uint => j1939_pedal_input_timeout_bitmap | ( => [ | ) * 4 ) => ]
+0x00020348: 8 token changes: * ( uint * ) =>  | DAT_00800aa4 + ( uint => j1939_input_timeout_bitmap | ( => [ | ) * 4 ) => ] | * ( uint * ) =>  | DAT_00800aa4 + ( uint => j1939_input_timeout_bitmap | ( => [ | ) * 4 ) => ]
+0x000204b0: 22 token changes: uint => dword | uint uVar1 => dword dVar1 | uVar1 => dVar1 | uVar1 => dVar1 | uint => dword | uVar1 => dVar1 | uVar1 => dVar1 | uint => dword | uVar1 => dVar1 |  => ( byte ) | . _1_1_ =>  | uVar1 => dVar1 | uVar1 => dVar1 | uVar1 => dVar1 |  => [ 0 ] |  => [ 0 ] |  => [ 0 ] |  => [ 0 ] |  => [ 0 ] |  => [ 0 ] | uVar1 => dVar1 | uVar1 => dVar1
+0x000205c4: 4 token changes: DAT_00800aaf => switch_9_to_16_polarity_bits_snapshot | DAT_00800aaf => switch_9_to_16_polarity_bits_snapshot | DAT_00800aae => accelerator_idle_switch_previous_state | DAT_00800aae => accelerator_idle_switch_previous_state
+0x000206a8: 20 token changes: input_state => logical_input | debounce_mask => output_number | input_state => logical_input | input_state => logical_input | * ( byte * ) ( debounce_mask + 0x80bd4a ) => switch_input_source_priority [ output_number ] | * ( byte * ) ( input_state + 0x80bd4a ) => switch_input_source_priority [ logical_input ] | * => switch_input_source_priority [ logical_input ] = | * =>  | ( input_state + 0x80bd4a ) = =>  | . _1_1_ =>  | * ( char * ) ( input_state + 0x80bd4a ) => switch_input_source_priority [ logical_input ] | ' \ =>  | ' =>  | * ( undefined1 * ) ( input_state + 0x80bd4a ) => switch_input_sou
+0x00020890: 41 token changes: * ( byte * ) ( => switch_input_source_priority [ | + 0x80bd4a ) => ] | * ( byte * ) ( => switch_input_source_priority [ | + 0x80bd4a ) => ] | * ( byte * ) ( => switch_input_source_priority [ | + 0x80bd4a => ] = ( byte | = =>  | . _1_1_ =>  | * ( char * ) ( => switch_input_source_priority [ | + 0x80bd4a ) => ] | ' \ =>  | ' =>  | * ( undefined1 * ) ( => switch_input_source_priority [ | + 0x80bd4a ) => ] | * ( uint * ) ( & =>  | + => [ | * 4 ) => ] | * ( char * ) ( => switch_input_source_priority [ | + 0x80bd4a ) => ] | ' \ =>  | ' =>  | * ( undefined1 * ) ( => switch_input_source_priority [ | +
+0x00020e14: 10 token changes:  => ( byte ) | . _1_1_ =>  |  => ( byte ) | . _1_1_ =>  |  => [ 0 ] |  => [ 0 ] |  => [ 0 ] |  => [ 0 ] |  => [ 0 ] |  => [ 0 ]
+0x000212b2: 2 token changes: & DAT_0080d9e0 => j1939_source_address_blocking_table | ( byte * ) 0x80d9e3 => j1939_source_address_blocking_table + 3
+0x00021f4e: 18 token changes: undefined2 => byte bVar4 ; j1939_control_session_t | puVar4 => pjVar5 | undefined2 => j1939_control_session_t | puVar5 => pjVar6 | _DAT_00804232 => j1939_control_session_history_next_entry | _DAT_00804232 => j1939_control_session_history_next_entry | _DAT_00804232 => j1939_control_session_history_next_entry | _DAT_00804232 => j1939_control_session_history_next_entry | puVar5 => pjVar6 | ( undefined2 * ) =>  | DAT_008041f8 => j1939_active_engine_control_session | puVar5 => pjVar6 = & j1939_active_retarder_control_session ; } bVar4 = 0 ; pjVar5 = j1939_control_session_history + uVar2 ; do { bVar
+0x00021fac: 33 token changes: _DAT_0080422a => j1939_engine_control_active_flag | _DAT_0080422e => j1939_engine_control_source | DAT_008041f8 => j1939_active_engine_control_session . session_kind | DAT_008041f9 => j1939_active_engine_control_session . controlling_source_address | _DAT_008041fa => j1939_active_engine_control_session . control_device | _DAT_008041fe => j1939_active_engine_control_session . override_control_modes [ 0 ] | _DAT_00804200 => j1939_active_engine_control_session . override_control_modes [ 1 ] | 0 => TSC1_OVERRIDE_OFF | _DAT_00804202 => j1939_active_engine_control_session . override_control_modes [ 
+0x00022070: 56 token changes: undefined2 => TSC1_OVERRIDE_MODE | puVar2 => pTVar2 | _DAT_00800b12 => j1939_monitor_engine_override_control_mode_previous | _DAT_00800b16 => j1939_monitor_engine_control_data_link_previous | DAT_00800b18 => j1939_monitor_engine_controlling_source_address_previous | _DAT_00800b12 => j1939_monitor_engine_override_control_mode_previous | _DAT_00800b16 => j1939_monitor_engine_control_data_link_previous | _DAT_0080422a => j1939_engine_control_active_flag | _DAT_0080420c => j1939_active_engine_control_session . duration | _DAT_00804208 => j1939_active_engine_control_session . start_time | _DAT_0080
+0x000231da: 2 token changes: _DAT_00801982 => tsc1_override_control_mode_previous | _DAT_0080da7e => tsc1_request_time_limit_timer
+0x00023244: 48 token changes: _DAT_00801988 => high_idle_override_active_flag_previous | + =>  | _DAT_0080da98 => high_idle_override_recovery_flag | _DAT_0080da98 => high_idle_override_recovery_flag | _DAT_0080da8c => progressive_shift_disable_timeout_timer | _DAT_0080da8c => progressive_shift_disable_timeout_timer | _DAT_0080da8c + => progressive_shift_disable_timeout_timer | _DAT_0080198e => progressive_shift_disable_flag_previous | _DAT_0080da8c => progressive_shift_disable_timeout_timer | _DAT_0080da8c => progressive_shift_disable_timeout_timer | _DAT_00801990 => driveline_disengaged_flag_previous | _DAT_0080198a => en
+0x00023820: 12 token changes: word => engine_tsc1_ignored_request_t | pwVar2 => peVar2 | pwVar2 => peVar2 | ( word * ) & DAT_00801994 => engine_tsc1_ignored_request_entries | * pwVar2 => peVar2 -> data_link | char => byte | * ( char * ) ( pwVar2 + 1 ) => peVar2 -> source_address | pwVar2 [ 2 ] => peVar2 -> control_mode | pwVar2 => peVar2 | pwVar2 => peVar2 | 4 => 1 | pwVar2 [ 3 ] => peVar2 -> countdown
+0x00023870: 8 token changes: char => cm550_retarder_tsc1_ignored_request_t | & DAT_008019bc => retarder_tsc1_ignored_request_entries | char => byte | * =>  |  => -> source_address | 4 => 1 | * ( word * ) ( =>  | + 2 ) => -> countdown
+0x000238ac: 13 token changes: int iVar1 => uint uVar1 | iVar1 => uVar1 | * 8 =>  | * ( word * ) ( & DAT_00801994 + iVar1 ) => engine_tsc1_ignored_request_entries [ uVar1 ] . data_link | ( & DAT_00801996 ) => engine_tsc1_ignored_request_entries | iVar1 => uVar1 |  => . source_address | * ( word * ) ( & =>  | 0 => uVar1 | + iVar1 ) =>  | * ( word * ) ( & =>  | 0 => uVar1 | + iVar1 ) => 
+0x000238ec: 5 token changes: ( & DAT_008019bc ) => retarder_tsc1_ignored_request_entries | * 4 =>  |  => . source_address | * ( word * ) ( & DAT_008019be + => retarder_tsc1_ignored_request_entries [ | * 4 ) => ] . countdown
+0x00023920: 65 token changes: short sVar1 => byte bVar1 | int iVar2 ; uint uVar3 => word wVar2 | bVar4 => bVar3 | undefined2 => word | puVar5 => pwVar4 | undefined => engine_tsc1_ignored_request_t | puVar6 => peVar5 | puVar5 => pwVar4 | undefined2 => word | DAT_0080198c => engine_retarder_controlling_source_address_previous | bVar4 => bVar3 | bVar4 => bVar3 | bVar4 => bVar3 | bVar4 => bVar3 | sVar1 => wVar2 | puVar5 => pwVar4 | + =>  | puVar5 => pwVar4 | sVar1 => wVar2 | sVar1 => wVar2 | bVar4 => bVar3 | engine_tsc1_ignored_request_count => bVar1 | iVar2 => engine_tsc1_ignored_request_count | ( uint ) engine_tsc1_ignored_r
+0x000239d2: 18 token changes: int iVar1 => byte bVar1 | DAT_0080198c => engine_retarder_controlling_source_address_previous | char => byte | char => byte | engine_tsc1_ignored_request_count => bVar1 | iVar1 => engine_tsc1_ignored_request_count | ( uint ) engine_tsc1_ignored_request_count * 8 => bVar1 | * ( word * ) ( & DAT_00801994 + iVar1 ) => engine_tsc1_ignored_request_entries [ bVar1 ] . data_link | undefined => byte | ( & DAT_00801996 ) => engine_tsc1_ignored_request_entries | iVar1 => bVar1 |  => . source_address | * ( word * ) ( & =>  | 0 => bVar1 | + iVar1 ) =>  | * ( word * ) ( & =>  | 0 => bVar1 | + iVar1 ) => 
+0x00023a3c: 16 token changes: uint uVar1 => byte bVar1 | char => engine_tsc1_ignored_request_t | pcVar3 => peVar3 | pcVar3 => peVar3 |  => ( engine_tsc1_ignored_request_t * ) ( | 4 => 2 ) | pcVar3 => ( char * ) & peVar3 -> data_link | retarder_tsc1_ignored_request_count => bVar1 | uVar1 => retarder_tsc1_ignored_request_count | ( uint ) retarder_tsc1_ignored_request_count ; * pcVar3 = ( & DAT_008019bc ) [ uVar1 * 4 ] => bVar1 | undefined2 => byte * ) & peVar3 -> data_link = retarder_tsc1_ignored_request_entries [ bVar1 ] . source_address ; * ( word * ) & peVar3 -> source_address = retarder_tsc1_ignored_request_entries [ bVa
+0x00023a90: 16 token changes: ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' =>  | ' \ =>  | ' => 
+0x0002482e: 1 token changes: DAT_008019d2 => power_up_lamp_sequence_active_flag
+0x00024858: 1 token changes: DAT_008019d2 => power_up_lamp_sequence_active_flag
+0x000253b0: 2 token changes: DAT_00801a1c => oil_change_monitor_reset_flash_active_flag | DAT_00801a1c => oil_change_monitor_reset_flash_active_flag
+0x000254b6: 13 token changes: DAT_008019d2 => power_up_lamp_sequence_active_flag | ' \ =>  | ' =>  | _DAT_00801a22 => lamp_control_power_up_tick_count | _DAT_00801a22 => lamp_control_power_up_tick_count | _DAT_00801a22 => lamp_control_power_up_tick_count | _DAT_00801a22 => lamp_control_power_up_tick_count | _DAT_00801a22 => lamp_control_power_up_tick_count | _DAT_0080dab0 => oil_change_monitor_reset_flag | DAT_00801a1c => oil_change_monitor_reset_flash_active_flag | ' \ =>  | ' =>  | _DAT_00803c42 => oil_change_monitor_running_warning_enable_cal
+0x000266da: 16 token changes: . state =>  | 2 => EEPROM_BYTE_WRITE_STATE_WAIT_FOR_COMPLETION | . state =>  | 0 => EEPROM_BYTE_WRITE_STATE_IDLE | . state =>  | 1 => EEPROM_BYTE_WRITE_STATE_SEND_WRITE | . state =>  | 0 => EEPROM_BYTE_WRITE_STATE_IDLE | eeprom_byte_write_state . data_ptr => eeprom_mirror_base_pointer | eeprom_byte_write_state . unused_ptr . _0_1_ => eeprom_mirror_loaded_flag | . state =>  | 1 => EEPROM_BYTE_WRITE_STATE_SEND_WRITE | . state =>  | 1 => EEPROM_BYTE_WRITE_STATE_SEND_WRITE | . state =>  | 2 => EEPROM_BYTE_WRITE_STATE_WAIT_FOR_COMPLETION
+0x00026854: 7 token changes: . state =>  | 0 => EEPROM_BYTE_WRITE_STATE_IDLE | eeprom_byte_write_state . data_ptr => eeprom_mirror_base_pointer | ( dword ) =>  | eeprom_byte_write_state . unused_ptr . _0_1_ => eeprom_mirror_loaded_flag | ' \ =>  | ' => 
+0x000269f2: 6 token changes: eeprom_byte_write_state => maximum_torque_map_lookup | data . _4_2_ => x_input | _ambient_conditions_msg_length => maximum_torque_map_lookup . y_input | ( word * ) ( ( int ) =>  | eeprom_byte_write_state => maximum_torque_map_lookup | unused_ptr + 2 ) => x_axis_offset
+0x00026a2e: 11 token changes: eeprom_byte_write_state => maximum_torque_map_lookup | data [ 0 ] => x_axis_pointer | 0 => maximum_torque_map_x_axis | eeprom_byte_write_state => maximum_torque_map_lookup | data [ 1 ] = 0x80 ; eeprom_byte_write_state . data [ 2 ] = 0x83 ; eeprom_byte_write_state . data [ 3 ] = 0x46 ; eeprom_byte_write_state . unused_ptr . _2_2_ => x_axis_offset | ambient_conditions_msg_header => maximum_torque_map_lookup . y_axis_pointer | 0x808372 => maximum_torque_map_y_axis | eeprom_byte_write_state => maximum_torque_map_lookup | data [ 6 ] = 0 ; eeprom_byte_write_state . data [ 7 ] => y_axis_offset | _amb
+0x00026a7e: 7 token changes: _ambient_conditions_reserved => injection_timing_misfire_limit_lookup . y_axis_offset | _ambient_conditions_buffer_end => injection_timing_misfire_limit_lookup . y_axis_pointer | & =>  | _DAT_00801aaa => injection_timing_misfire_limit_lookup . x_axis_offset | _ambient_conditions_data_start => injection_timing_misfire_limit_lookup . x_axis_pointer | 0x80793a => injection_timing_misfire_limit_x_axis | _j1939_pgn_65265_size => injection_timing_misfire_limit_lookup . z_values_pointer
+0x00026ab8: 4 token changes: _engine_air_inlet_temp => injection_timing_misfire_limit_lookup . x_input | _DAT_00801ab8 => injection_timing_misfire_limit_lookup . y_input | ( word * ) =>  | DAT_00801aaa => injection_timing_misfire_limit_lookup . x_axis_offset
+0x00028b80: 54 token changes:  => byte * pbVar7 ; | puVar7 => puVar8 | _DAT_0080d9de => j1939_source_address_blocking_table_byte_length | puVar7 => pbVar7 | & DAT_0080d9e0 => j1939_source_address_blocking_table | puVar7 => pbVar7 | puVar7 => pbVar7 | puVar7 => pbVar7 | puVar7 => puVar8 | puVar7 => puVar8 | puVar7 => puVar8 | puVar7 => puVar8 | puVar7 => puVar8 | puVar7 => puVar8 | puVar7 => puVar8 | puVar7 => puVar8 | puVar7 => puVar8 | puVar7 => puVar8 | puVar7 => puVar8 | puVar7 => puVar8 | puVar7 => puVar8 | puVar7 => puVar8 | puVar7 => puVar8 | puVar7 => puVar8 | puVar7 => puVar8 | puVar7 => puVar8 | puVar7 => puVar8 |
+0x0002d9a8: 3 token changes: _DAT_0080400e => power_take_off_maximum_torque_cal | _DAT_0080400e => power_take_off_maximum_torque_cal | 0x22 => FUELING_STATE_POWER_TAKE_OFF_DERATE
+0x0002e9ac: 19 token changes: dword => sdword | chunk_end => psVar1 | dword => sdword | working_ram_pointer => psVar2 | working_ram_pointer => psVar2 | ( dword * ) =>  | working_ram_pointer => psVar2 | dword => sdword | chunk_end => psVar1 | working_ram_pointer => psVar2 | dword => sdword | chunk_end => psVar1 | chunk_end => psVar1 | dword => sdword | working_ram_pointer => psVar2 | chunk_end => psVar1 | working_ram_pointer => psVar2 | working_ram_pointer => psVar2 | working_ram_pointer => psVar2
+0x0002efd0: 5 token changes: _DAT_00060f82 => _j1939_transmission_source_address | _DAT_00060f82 => _j1939_transmission_source_address | _DAT_0080da98 => high_idle_override_recovery_flag | _DAT_0080da8c => progressive_shift_disable_timeout_timer | _DAT_0080da8c => progressive_shift_disable_timeout_timer
+0x0002f7e6: 5 token changes: _DAT_00060f82 => _j1939_transmission_source_address | _retarder_command_source_address => retarder_command_source_address | _retarder_command_source_address => retarder_command_source_address | ushort => word | _DAT_00060f82 => _j1939_transmission_source_address
+0x0002fcdc: 2 token changes: bool all_keys_match ; =>  |  => ; bool all_keys_match
+0x000306ca: 2 token changes: _DAT_00801e82 => integrated_fuel_delivered_previous | _DAT_00801e82 => integrated_fuel_delivered_previous
+0x00030ade: 1 token changes: _DAT_00801e82 => integrated_fuel_delivered_previous
+0x00034cc4: 2 token changes: _DAT_008036e2 => wet_stack_timing_state | _DAT_008036e2 => wet_stack_timing_state
+0x00034dba: 1 token changes: _DAT_008036e2 => wet_stack_timing_state
+---- census of distinct changes
+  47 puVar7 => puVar8
+  33 ' \ => 
+  33 ' => 
+  15  => [ 0 ]
+  13 puVar2 => pTVar2
+  12 * ( uint * ) => 
+  12 ( => [
+  12 ) * 4 ) => ]
+  11 bVar4 => bVar3
+  10 uVar1 => dVar1
+  10 + 0x80bd4a ) => ]
+   9 _DAT_0080da7e => tsc1_request_time_limit_timer
+   9 puVar5 => pwVar4
+   8 puVar2 => psVar2
+   8 dVar3 => dVar2
+   8 _DAT_0080da8c => progressive_shift_disable_timeout_timer
+   8 0 => TSC1_OVERRIDE_OFF
+   8 . state => 
+   8 working_ram_pointer => psVar2
+   7 uint => dword
+   7 0 => IDLE_SHUTDOWN_STATE_RESET
+   7 input_state => logical_input
+   6  => . x_axis_offset
+   6 iVar4 => pjVar4
+   6 * => 
+   6 sVar1 => wVar2
+   5 puVar1 => psVar1
+   5 bVar5 => bVar4
+   5 . _1_1_ => 
+   5 _retarder_command_source_address => retarder_command_source_address
+   5 _DAT_00801a22 => lamp_control_power_up_tick_count
+   5 eeprom_byte_write_state => maximum_torque_map_lookup
+   5 dword => sdword
+   5 chunk_end => psVar1
+   4 bVar2 => bVar1
+   4 puVar8 => puVar7
+   4 _DAT_0080002c => duty_cycle_monitor_transient_fueling_lookup . x_input
+   4 ( word * ) => 
+   4 0 => FUELING_STATE_NOT_SELECTED
+   4 _DAT_00803c02 => idle_shutdown_period_cal
+   4 _DAT_0080d672 => idle_shutdown_overridden_flag
+   4 DAT_00800aa0 + ( uint => j1939_input_data_error_bitmap
+   4 DAT_00800aa8 + ( uint => j1939_pedal_input_timeout_bitmap
+   4 DAT_00800aa4 + ( uint => j1939_input_timeout_bitmap
+   4 * ( char * ) ( => switch_input_source_priority [
+   4 * ( undefined1 * ) ( => switch_input_source_priority [
+   4 _DAT_00804232 => j1939_control_session_history_next_entry
+   4 _DAT_0080422a => j1939_engine_control_active_flag
+   4 DAT_0080d9e9 => ( byte ) retarder_command_source_address
+   4 _DAT_00800b16 => j1939_monitor_engine_control_data_link_previous
+   4 _DAT_00801982 => tsc1_override_control_mode_previous
+   4 ' \ x01 ' => 1
+   4 DAT_0080198c => engine_retarder_controlling_source_address_previous
+   4 pwVar2 => peVar2
+   4 char => byte
+   4  => . source_address
+   4 * ( word * ) ( & => 
+   4 + iVar1 ) => 
+   4 0 => bVar1
+   4 puVar7 => pbVar7
+   4 _DAT_00060f82 => _j1939_transmission_source_address
+   3 undefined4 => sdword
+   3 uVar4 => uVar3
+   3 ; * piVar1 = * piVar1 => ( ushort ) duty_cycle_monitor_operating_region ]
+   3 4 => IDLE_SHUTDOWN_STATE_OVERRIDE
+   3 _DAT_00804170 => j1922_speed_control_count
+   3 _DAT_00804176 => j1922_torque_control_count
+   3 _DAT_0080416a => j1922_limit_control_count
+   3 _DAT_00800a9c => j1939_periodic_queue0_current_tick
+   3 _DAT_00800a9e => j1939_periodic_queue1_current_tick
+   3  => ( byte )
+   3 debounce_mask => output_number
+   3 * ( byte * ) ( => switch_input_source_priority [
+   3 * ( uint * ) ( & => 
+   3 + => [
+   3 * 4 ) => ]
+   3 undefined2 => j1939_control_session_t
+   3 _DAT_00804208 => j1939_active_engine_control_session . start_time
+   3 _DAT_0080420c => j1939_active_engine_control_session . duration
+   3 _DAT_0080422c => j1939_retarder_control_active_flag
+   3 _DAT_00804222 => j1939_active_retarder_control_session . start_time
+   3 _DAT_00804226 => j1939_active_retarder_control_session . duration
+   3 _DAT_00800b12 => j1939_monitor_engine_override_control_mode_previous
+   3 DAT_00800b18 => j1939_monitor_engine_controlling_source_address_previous
+   3 _DAT_00800b14 => j1939_monitor_retarder_override_control_mode_previous
+   3 DAT_00800b19 => j1939_monitor_retarder_controlling_source_address_previous
+   3 _DAT_0080da98 => high_idle_override_recovery_flag
+   3 _DAT_0080198a => engine_retarder_override_control_mode_previous
+   3 _DAT_00803d4a => vehicle_speed_sensor_type_cal
+   3 _DAT_00801984 => tsc1_controlling_data_link_previous
+   3 ( & DAT_00801996 ) => engine_tsc1_ignored_request_entries
+   3 DAT_008019d2 => power_up_lamp_sequence_active_flag
+   3 DAT_00801a1c => oil_change_monitor_reset_flash_active_flag
+   3 0 => EEPROM_BYTE_WRITE_STATE_IDLE
+   3 1 => EEPROM_BYTE_WRITE_STATE_SEND_WRITE
+   3 _DAT_00801e82 => integrated_fuel_delivered_previous
+   3 _DAT_008036e2 => wet_stack_timing_state
+   2 cVar7 => cVar6
+   2 cVar6 => cVar5
+   2 puVar3 => pdVar3
+   2 puVar4 => pdVar4
+   2  => pdVar4 = pdVar4 + 1 ; pdVar3 = pdVar3 + 1 ;
+   2 int => dword
+   2 piVar3 => pdVar3
+   2 piVar4 => pdVar4
+   2 18000U => 18000
+   2 _DAT_0080a926 => master_slave_override_enable_flag
+   2 0x1e => FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION
+   2 2 => FUELING_STATE_TSC1_SPEED_CONTROL
+   2 7 => FUELING_STATE_VARIABLE_SPEED_GOVERNOR
+   2 _DAT_0080aaa4 => timing_advance_before_cylinder_pressure_maintenance
+   2 0x28 => FUELING_STATE_NO_DERATE
+   2 0x6086e => & DAT_0006086e
+   2 0x6089a => & DAT_0006089a
+   2 0x608a4 => & DAT_000608a4
+   2 wVar1 => IVar1
+   2 1 => IDLE_SHUTDOWN_STATE_COUNT
+   2 _DAT_00808150 => idle_shutdown_warning_period
+   2 2 => IDLE_SHUTDOWN_STATE_WARNING
+   2 3 => IDLE_SHUTDOWN_STATE_DELAY
+   2 5 => IDLE_SHUTDOWN_STATE_SHUTDOWN
+   2 _DAT_00800752 => idle_shutdown_state_previous
+   2 _DAT_00804172 => j1922_speed_control_last_time
+   2 _DAT_00804178 => j1922_torque_control_last_time
+   2 _DAT_0080416c => j1922_limit_control_last_time
+   2 * ( short * ) ( iVar4 + 4 ) => pjVar4 -> next_tick
+   2 * ( short * ) ( iVar4 => pjVar4 -> next_tick = pjVar4 -> interval_ticks
+   2 4 ) = * ( short * ) ( iVar4 + 2 ) + * ( short * ) ( iVar4 + 4 ) => pjVar4 -> next_tick
+   2 ( iVar4 + 6 ) => pjVar4 -> builder
+   2 10 => 1
+   2 DAT_00800aaf => switch_9_to_16_polarity_bits_snapshot
+   2 DAT_00800aae => accelerator_idle_switch_previous_state
+   2 & DAT_0080d9e0 => j1939_source_address_blocking_table
+   2 puVar5 => pjVar6
+   2 _DAT_00804206 => j1939_active_engine_control_session . override_control_modes [ 4 ]
+   2 _DAT_00804220 => j1939_active_retarder_control_session . override_control_modes [ 4 ]
+   2 * 2 ) => ]
+   2 _DAT_00801988 => high_idle_override_active_flag_previous
+   2 + => 
+   2 _DAT_0080198e => progressive_shift_disable_flag_previous
+   2 _DAT_00801990 => driveline_disengaged_flag_previous
+   2 DAT_00801986 => tsc1_controlling_source_address_previous
+   2 4 => 1
+   2 iVar1 => uVar1
+   2 0 => uVar1
+   2 undefined2 => word
+   2 puVar6 => peVar5
+   2 engine_tsc1_ignored_request_count => bVar1
+   2 ( uint ) engine_tsc1_ignored_request_count * 8 => bVar1
+   2 * ( undefined2 * ) ( & => 
+   2 + iVar2 ) => 
+   2  => ( engine_tsc1_ignored_request_t * ) (
+   2 4 => 2 )
+   2 short => word
+   2 retarder_tsc1_ignored_request_count => bVar1
+   2 undefined2 * => int
+   2 pcVar3 => peVar3
+   2 2 => EEPROM_BYTE_WRITE_STATE_WAIT_FOR_COMPLETION
+   2 eeprom_byte_write_state . data_ptr => eeprom_mirror_base_pointer
+   2 eeprom_byte_write_state . unused_ptr . _0_1_ => eeprom_mirror_loaded_flag
+   2 _DAT_0080400e => power_take_off_maximum_torque_cal
+   1 undefined => sdword
+   1  => ( char * )
+   1  => ( sdword * ) ( ( int )
+   1  => )
+   1 ( undefined4 * ) => 
+   1 int * piVar1 ; => 
+   1 bVar5 => bVar4 ; char cVar5
+   1 char cVar7 ; => 
+   1 uint => sdword
+   1 ( int ) => 
+   1 bVar5 == 1 ) { cVar7 = ' \ x01 ' ; } else { cVar7 = bVar5 - 1 ; } } bVar5 = bVar5 + 1 ; puVar8 = puVar8 + 1 ; } bVar2 = false ; bVar5 = 1 ; puVar8 = ( ushort * ) & intake_temp_frictional_load_threshol
+   1 puVar8 => puVar7 + 1 ; } bVar1 = false ; bVar4 = 1 ; puVar7 = ( ushort * ) & intake_temp_frictional_load_threshold ; while ( ( bVar4 < 7 && ( ! bVar1 ) ) ) { if ( duty_cycle_monitor_load_ratio . _2_2_
+   1 piVar1 = ( int * ) ( => duty_cycle_monitor_long_term_map_counts [
+   1 * 4 + 0x80546e => ] = duty_cycle_monitor_long_term_map_counts [ ( short
+   1 piVar1 = ( int * ) ( => duty_cycle_monitor_short_term_processing_map_1_counts [
+   1 * 4 + 0x80bada => ] = duty_cycle_monitor_short_term_processing_map_1_counts [ ( short
+   1 piVar1 = ( int * ) ( => duty_cycle_monitor_short_term_processing_map_2_counts [
+   1 * 4 + 0x80bba8 => ] = duty_cycle_monitor_short_term_processing_map_2_counts [ ( short
+   1 DWORD_00800012 => duty_cycle_monitor_steady_state_fueling_lookup . x_axis_pointer
+   1 0x6086e => ( word * ) & DAT_0006086e
+   1 _DAT_0080001e => duty_cycle_monitor_steady_state_fueling_lookup . y_input
+   1 0x6089a => ( word * ) & DAT_0006089a
+   1 _DAT_00800018 => duty_cycle_monitor_steady_state_fueling_lookup . y_axis_offset
+   1 0x608a4 => ( word * ) & DAT_000608a4
+   1 _DAT_00800028 => duty_cycle_monitor_transient_fueling_lookup . x_axis_pointer
+   1 0x6094c => ( word * ) & DAT_0006094c
+   1 _DAT_00800034 => duty_cycle_monitor_transient_fueling_lookup . y_input
+   1 _DAT_00800030 => duty_cycle_monitor_transient_fueling_lookup . y_axis_pointer
+   1 0x60978 => ( word * ) & DAT_00060978
+   1 0x60982 => ( word * ) & DAT_00060982
+   1 puVar3 => pdVar4
+   1 ( uint * ) & DAT_0080bade => duty_cycle_monitor_short_term_processing_map_2_counts
+   1 puVar4 => pdVar3
+   1 ( uint * ) & DAT_0080bbac => duty_cycle_monitor_short_term_processing_map_1_counts
+   1 puVar3 = puVar3 + 1 ; puVar4 = puVar4 + 1 ; => 
+   1 piVar3 => pdVar4
+   1 ( int * ) & DAT_0080bade => duty_cycle_monitor_short_term_processing_map_2_counts
+   1 piVar4 => pdVar3
+   1 ( int * ) & DAT_0080bbac => duty_cycle_monitor_short_term_processing_map_1_counts
+   1 piVar3 = piVar3 + 1 ; piVar4 = piVar4 + 1 ; => 
+   1 _DAT_00807c08 => boost_pressure_sensor_high_reading_maximum_engine_load
+   1 _DAT_0080d336 => master_slave_control_flag
+   1 _DAT_00803f2a => torque_derate_override_fuel_quantity_cal
+   1 _DAT_00808008 => engine_overspeed_fueling
+   1 _DAT_00808006 => engine_brake_fueling
+   1 _DAT_00803f2c => user_override_fueling_cal
+   1 word wVar1 => IDLE_SHUTDOWN_STATE IVar1
+   1 _DAT_0080d67e => idle_shutdown_reset_from_warning_flag
+   1 _DAT_0080d680 => idle_shutdown_reset_from_override_flag
+   1 0x6094c => & DAT_0006094c
+   1 0x60978 => & DAT_00060978
+   1 0x60982 => & DAT_00060982
+   1 int iVar4 => j1939_periodic_transmit_entry_t * pjVar4
+   1 0x80096e => j1939_periodic_queue0_entries
+   1 DAT_00800a9a => j1939_periodic_queue0_count
+   1 0x800a36 => j1939_periodic_queue1_entries
+   1 DAT_00800a9b => j1939_periodic_queue1_count
+   1 _DAT_00800aa0 => j1939_input_data_error_bitmap
+   1 _DAT_00800aa8 => j1939_pedal_input_timeout_bitmap
+   1 _DAT_00800aa4 => j1939_input_timeout_bitmap
+   1 uint uVar1 => dword dVar1
+   1 * ( byte * ) ( debounce_mask + 0x80bd4a ) => switch_input_source_priority [ output_number ]
+   1 * ( byte * ) ( input_state + 0x80bd4a ) => switch_input_source_priority [ logical_input ]
+   1 * => switch_input_source_priority [ logical_input ] =
+   1 ( input_state + 0x80bd4a ) = => 
+   1 * ( char * ) ( input_state + 0x80bd4a ) => switch_input_source_priority [ logical_input ]
+   1 * ( undefined1 * ) ( input_state + 0x80bd4a ) => switch_input_source_priority [ logical_input ]
+   1 + 0x80bd4a => ] = ( byte
+   1 = => 
+   1 ( byte * ) 0x80d9e3 => j1939_source_address_blocking_table + 3
+   1 undefined2 => byte bVar4 ; j1939_control_session_t
+   1 puVar4 => pjVar5
+   1 ( undefined2 * ) => 
+   1 DAT_008041f8 => j1939_active_engine_control_session
+   1 puVar5 => pjVar6 = & j1939_active_retarder_control_session ; } bVar4 = 0 ; pjVar5 = j1939_control_session_history + uVar2 ; do { bVar3 = pjVar6 -> controlling_source_address ; pjVar5 -> session_kind =
+   1 DAT_00804212 => pjVar5 -> control_device
+   1 } bVar3 = 0 ; puVar4 => pjVar6
+   1 ( uVar2 * 0x18 + 0x80417e ) ; do { * puVar4 = * puVar5 ; bVar3 = bVar3 + 1 ; puVar4 = puVar4 + 1 ; puVar5 = puVar5 + 1 => & pjVar6 -> control_device
+   1 bVar3 => bVar4
+   1 _DAT_0080422e => j1939_engine_control_source
+   1 DAT_008041f8 => j1939_active_engine_control_session . session_kind
+   1 DAT_008041f9 => j1939_active_engine_control_session . controlling_source_address
+   1 _DAT_008041fa => j1939_active_engine_control_session . control_device
+   1 _DAT_008041fe => j1939_active_engine_control_session . override_control_modes [ 0 ]
+   1 _DAT_00804200 => j1939_active_engine_control_session . override_control_modes [ 1 ]
+   1 _DAT_00804202 => j1939_active_engine_control_session . override_control_modes [ 2 ]
+   1 _DAT_00804204 => j1939_active_engine_control_session . override_control_modes [ 3 ]
+   1 _DAT_00804230 => j1939_retarder_control_source
+   1 DAT_00804212 => j1939_active_retarder_control_session . session_kind
+   1 DAT_00804213 => j1939_active_retarder_control_session . controlling_source_address
+   1 _DAT_00804214 => j1939_active_retarder_control_session . control_device
+   1 _DAT_00804218 => j1939_active_retarder_control_session . override_control_modes [ 0 ]
+   1 _DAT_0080421a => j1939_active_retarder_control_session . override_control_modes [ 1 ]
+   1 _DAT_0080421c => j1939_active_retarder_control_session . override_control_modes [ 2 ]
+   1 _DAT_0080421e => j1939_active_retarder_control_session . override_control_modes [ 3 ]
+   1 undefined2 => TSC1_OVERRIDE_MODE
+   1 * ( word * ) ( & DAT_008041fe + => j1939_active_engine_control_session . override_control_modes [
+   1 ( undefined2 * ) & DAT_008041fe => j1939_active_engine_control_session . override_control_modes
+   1 & DAT_00804206 => j1939_active_engine_control_session . override_control_modes + 4
+   1 * ( word * ) ( & DAT_00804218 + => j1939_active_retarder_control_session . override_control_modes [
+   1 ( undefined2 * ) & DAT_00804218 => j1939_active_retarder_control_session . override_control_modes
+   1 & DAT_00804220 => j1939_active_retarder_control_session . override_control_modes + 4
+   1 _DAT_0080da8c + => progressive_shift_disable_timeout_timer
+   1 _DAT_0080da7e + => tsc1_request_time_limit_timer
+   1 word => engine_tsc1_ignored_request_t
+   1 ( word * ) & DAT_00801994 => engine_tsc1_ignored_request_entries
+   1 * pwVar2 => peVar2 -> data_link
+   1 * ( char * ) ( pwVar2 + 1 ) => peVar2 -> source_address
+   1 pwVar2 [ 2 ] => peVar2 -> control_mode
+   1 pwVar2 [ 3 ] => peVar2 -> countdown
+   1 char => cm550_retarder_tsc1_ignored_request_t
+   1 & DAT_008019bc => retarder_tsc1_ignored_request_entries
+   1  => -> source_address
+   1 * ( word * ) ( => 
+   1 + 2 ) => -> countdown
+   1 int iVar1 => uint uVar1
+   1 * 8 => 
+   1 * ( word * ) ( & DAT_00801994 + iVar1 ) => engine_tsc1_ignored_request_entries [ uVar1 ] . data_link
+   1 ( & DAT_008019bc ) => retarder_tsc1_ignored_request_entries
+   1 * 4 => 
+   1 * ( word * ) ( & DAT_008019be + => retarder_tsc1_ignored_request_entries [
+   1 * 4 ) => ] . countdown
+   1 short sVar1 => byte bVar1
+   1 int iVar2 ; uint uVar3 => word wVar2
+   1 undefined => engine_tsc1_ignored_request_t
+   1 iVar2 => engine_tsc1_ignored_request_count
+   1  => engine_tsc1_ignored_request_entries [ bVar1 ] . data_link ;
+   1 undefined2 => byte
+   1 & DAT_00801994 + iVar2 ) ; * ( undefined * ) ( puVar5 => pwVar4
+   1 iVar2 => bVar1
+   1 ( puVar6 + 2 ) + => & peVar5 -> source_address
+   1 ( puVar6 + 2 ) => & peVar5 -> source_address
+   1 uVar3 => retarder_tsc1_ignored_request_count
+   1 ( uint ) retarder_tsc1_ignored_request_count ; * puVar6 = ( & DAT_008019bc ) [ uVar3 * 4 ] => bVar1
+   1 undefined2 => byte * ) & peVar5 -> data_link = retarder_tsc1_ignored_request_entries [ bVar1 ] . source_address ; * ( word * ) & peVar5 -> source_address = retarder_tsc1_ignored_request_entries [ bVar
+   1 puVar6 + 2 ) = * => 
+   1 & DAT_008019be => peVar5
+   1 uVar3 * => 0xffffffff ) +
+   1 ; } } puVar6 = puVar6 + - 4 => 
+   1 int iVar1 => byte bVar1
+   1 iVar1 => engine_tsc1_ignored_request_count
+   1 * ( word * ) ( & DAT_00801994 + iVar1 ) => engine_tsc1_ignored_request_entries [ bVar1 ] . data_link
+   1 undefined => byte
+   1 iVar1 => bVar1
+   1 uint uVar1 => byte bVar1
+   1 char => engine_tsc1_ignored_request_t
+   1 pcVar3 => ( char * ) & peVar3 -> data_link
+   1 uVar1 => retarder_tsc1_ignored_request_count
+   1 ( uint ) retarder_tsc1_ignored_request_count ; * pcVar3 = ( & DAT_008019bc ) [ uVar1 * 4 ] => bVar1
+   1 undefined2 => byte * ) & peVar3 -> data_link = retarder_tsc1_ignored_request_entries [ bVar1 ] . source_address ; * ( word * ) & peVar3 -> source_address = retarder_tsc1_ignored_request_entries [ bVar
+   1 pcVar3 + 2 ) = * => 
+   1 & DAT_008019be => peVar3
+   1 uVar1 * => 0xffffffff ) +
+   1 ; } } pcVar3 = pcVar3 + - 4 => 
+   1 _DAT_0080dab0 => oil_change_monitor_reset_flag
+   1 _DAT_00803c42 => oil_change_monitor_running_warning_enable_cal
+   1 ( dword ) => 
+   1 data . _4_2_ => x_input
+   1 _ambient_conditions_msg_length => maximum_torque_map_lookup . y_input
+   1 ( word * ) ( ( int ) => 
+   1 unused_ptr + 2 ) => x_axis_offset
+   1 data [ 0 ] => x_axis_pointer
+   1 0 => maximum_torque_map_x_axis
+   1 data [ 1 ] = 0x80 ; eeprom_byte_write_state . data [ 2 ] = 0x83 ; eeprom_byte_write_state . data [ 3 ] = 0x46 ; eeprom_byte_write_state . unused_ptr . _2_2_ => x_axis_offset
+   1 ambient_conditions_msg_header => maximum_torque_map_lookup . y_axis_pointer
+   1 0x808372 => maximum_torque_map_y_axis
+   1 data [ 6 ] = 0 ; eeprom_byte_write_state . data [ 7 ] => y_axis_offset
+   1 _ambient_conditions_data_ptr => maximum_torque_map_lookup . z_values_pointer
+   1 0x80837c => maximum_torque_map_grid
+   1 _ambient_conditions_reserved => injection_timing_misfire_limit_lookup . y_axis_offset
+   1 _ambient_conditions_buffer_end => injection_timing_misfire_limit_lookup . y_axis_pointer
+   1 & => 
+   1 _DAT_00801aaa => injection_timing_misfire_limit_lookup . x_axis_offset
+   1 _ambient_conditions_data_start => injection_timing_misfire_limit_lookup . x_axis_pointer
+   1 0x80793a => injection_timing_misfire_limit_x_axis
+   1 _j1939_pgn_65265_size => injection_timing_misfire_limit_lookup . z_values_pointer
+   1 _engine_air_inlet_temp => injection_timing_misfire_limit_lookup . x_input
+   1 _DAT_00801ab8 => injection_timing_misfire_limit_lookup . y_input
+   1 DAT_00801aaa => injection_timing_misfire_limit_lookup . x_axis_offset
+   1  => byte * pbVar7 ;
+   1 _DAT_0080d9de => j1939_source_address_blocking_table_byte_length
+   1 0x22 => FUELING_STATE_POWER_TAKE_OFF_DERATE
+   1 ( dword * ) => 
+   1 ushort => word
+   1 bool all_keys_match ; => 
+   1  => ; bool all_keys_match

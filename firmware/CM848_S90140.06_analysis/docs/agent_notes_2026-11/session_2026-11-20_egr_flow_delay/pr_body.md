@@ -8,7 +8,7 @@ fresh air flow records; the e2m never spells it out, so no name guesses an expan
 - **Round 2:** at the user's request the rest of the family is renamed too, on this PR (stages 3 / 4). The scope rule:
   a symbol is in if its e2m record is `CHP_` / `C_CHP_`, or if it is an input that a family function would otherwise
   misname.
-- **Beyond CM848 (rounds 72-93):** the J1939 memory write service and the development mode code are shared:
+- **Beyond CM848 (rounds 72-94):** the J1939 memory write service and the development mode code are shared:
   eleven CM550 functions are CM848 twins and share their names. Round 74 also dismantles a misapplied CM550
   struct, round 75 types CM550's InSite parameter schedule and names its J1708 SCI, and round 76 names CM550's
   MC68336 registers, so CM550's CSVs, the root README and `firmware/feature_comparison.csv` change too.
@@ -1002,6 +1002,29 @@ state enum, the flag bytes.**
 - **Typing (31f911b4, bf0c580d):** 1943 CM550 global rows typed from the ROM, the decompiler and Calterm.
 - **Fix (1f9043ef):** seven CM848 plate comments that round 91 had overwritten.
 
+**Round 94.**
+- **Naming workflows applied (9b467c63, 2117349b):** round 93's workflow (an investigator, an independent describer and an
+  adversarial judge per call-graph family; 316 elements, 283 CONFIRMED / 32 AMENDED / 1 REFUTED) and round 94's leads
+  workflow (96 elements, 80 / 16 / 0). Together:
+  - 110 CM550 function names, 33 of them twins that share one name with CM848; 17 more CM848 functions that were
+    named with a bare 'protection' or 'init';
+  - 257 globals and 19 `cm550_tableLookup2D` argument records (`table_lookup_2d_arguments_t`, each named from the
+    Calterm tables its pointers point at);
+  - the CM550 structs `j1939_periodic_transmit_entry_t`, `engine_tsc1_ignored_request_t` and
+    `cm550_retarder_tsc1_ignored_request_t`, plus CM848's `j1939_control_session_t` and its two enums as twins;
+  - the enums `IDLE_SHUTDOWN_STATE` and `EEPROM_BYTE_WRITE_STATE`.
+  `can_buffer_setup_t` and both `HIGH_RPM_PROTECTION` enums are gone (wrong), and 231 rows that sat inside the new
+  types or were bogus are removed.
+- **CM550's EEPROM image is 0x148a bytes (f8ead481):** `mc68k_initializeSerialEepromDriverAndLoadMirror` loads EEPROM
+  0x0-0x1489 into RAM 0x803b0a-0x804f93 at start-up and then refreshes 0x0-0x64b. The `_cal` window, the address tool
+  and `kuminz-cli --dump-eeprom` (CM550_EEPROM_SIZE) follow; 71 CM550 rows and CM848's twin
+  `j1939_input_signal_timeouts_cal` take `_cal`.
+- **The commanded throttle block (5e07d963):** `cm550_commanded_throttle_state_t` (e2m 1047), CM848's
+  `commanded_throttle_state_t` with CTIVIH inserted.
+- **One sign rule (74d9789f):** a typed row's signedness comes from both renders, and mixed uses take Calterm's flag.
+- **Cleanups (94670245):** the definition rows' function names, six functions' local rows re-derived, 22 rows inside
+  typed rows.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -1093,6 +1116,20 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 94: F (cleanups): both verify DETERMINISTIC; `prove_r94f.py`: only the six functions' local names change
+  (CM848 also swaps two declarations in `cm848_checkPciMessageTimeouts`); every other function is byte-identical; the
+  build logs show 'Skipped: 0' local rows in both.
+- [x] Round 94: E (the leads batches): both verify DETERMINISTIC; CM550 704 -> 705 functions (the new 0x33d38 row);
+  the token changes outside the map are typing effects (classified); pieces 494 = 494; CM848 changes outside the map
+  only in the duty cycle axes; no old name left in the code.
+- [x] Round 94: D (the EEPROM image): both verify DETERMINISTIC; label-only (0 unmapped tokens); `_cal` audit 0 hard /
+  0 soft; kuminz-cli and clip-core build and clip-core's test passes.
+- [x] Round 94: C (round 93's batches): both verify DETERMINISTIC; CM848 label-only; CM550 typing effects classified,
+  five statement count changes explained, pieces 496 -> 494 (the two new are the expected low-word reads).
+- [x] Round 94: B (the throttle struct): CM550 verify DETERMINISTIC; every token change in the map; statement counts
+  equal.
+- [x] Round 94: A (the sign rule): CM550 verify DETERMINISTIC; 13 functions changed by casts only; statement counts
+  equal.
 - [x] Round 93: typing: CM550 verify DETERMINISTIC twice (614 + 1329 rows; no typed row prints with an underscore or as a piece; 0 functions removed / added; statement counts equal but for one temporary in 5 functions each pass; caller artifacts unchanged).
 - [x] Round 93: task sets: CM550 verify DETERMINISTIC (45 names, 0 other token changes); schedule read from the ROM's 40-case switch.
 - [x] Round 93: freeze frames: CM550 verify DETERMINISTIC (57 functions changed by names and field renders; every field store pairs with its source); CM848 verify DETERMINISTIC, label-only.
@@ -1216,6 +1253,7 @@ state enum, the flag bytes.**
 
 ## Still open (task 046)
 
+- **Open after round 94** (task 046): prototype rows for `scheduleJ1939PeriodicMessage` and `cm550_tableLookup2D`, the 1-D `table_interp_args_t` records, five record-shaped RAM blocks with no reader in the dumped ROM (they need the 0x40000+ dump), CM848's other task sets by slot, and a CM550 EEPROM re-dump at 0x148a bytes.
 - **What 0x128a0 still shows:** it rates Readability Medium. One `uVar1` (the reused register's later values) remains.
 - **The engine speed module's functions** have mixed prefixes: `hpcr_processEngineSyncPulses`,
   `mpc555_handleCamSignalInterrupt`, `mpc555_updateEngineRunState` and the run state handlers.
