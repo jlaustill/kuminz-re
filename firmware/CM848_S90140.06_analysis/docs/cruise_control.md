@@ -2,7 +2,7 @@
 
 This file covers what the S90140.06 firmware does for cruise control. It comes from a read-only review on 2026-11-22.
 
-**Names and addresses follow PR #53 at `88dd3c6e` (round 91).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
+**Names and addresses follow PR #53 at `bdf1fdf8` (round 95).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
 
 Evidence tags:
 
@@ -181,7 +181,7 @@ Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrU
 ## Vehicle speed
 
 - **The sensor.** `vehicle_speed` (0x40a272) comes from the sensor on TPU-B channel 2 at 8000 pulses per mile [notes]. `vehicle_speed_sensor_type_cal` = 1 (inductive) in every image [review].
-- **Type 4 doesn't work.** `cm848_calculateVehicleSpeed` (0x3dfb8) runs unconditionally from `cm848_periodicTaskSet_canTx` (0xbb18) and never tests the sensor type [code]. So a type 4 speed (J1939 with gear ratio) never reaches the filtered `vehicle_speed` [round 26].
+- **Type 4 doesn't work.** `cm848_calculateVehicleSpeed` (0x3dfb8) runs unconditionally from `cm848_runEvery8FramesTaskSetPhase0` (0xbb18), every 40 ms, and never tests the sensor type [code]. So a type 4 speed (J1939 with gear ratio) never reaches the filtered `vehicle_speed` [round 26].
 - **Road speed governor and PTO.** The road speed governor limits speed to 106 mph (EEPROM 0xaa). PTO is enabled and shares the ladder, but can't engage while EEPROM 0x480 = 0. [review]
 
 ## Calibration words
