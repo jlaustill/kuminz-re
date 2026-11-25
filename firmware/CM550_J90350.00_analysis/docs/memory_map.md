@@ -125,7 +125,7 @@ private static final long EEPROM_BASE = 0x1000000L;
 - Diagnostic mode buffers
 - Parameter circular buffers
 - QADC result storage
-- A/D channel configuration records: 25 `sensor_config_t` from 0x806ae2 (e2m block 1003; [analog_sensor_channels.md](analog_sensor_channels.md))
+- A/D channel configuration records: 25 `sensor_configuration_t` from 0x806ae2 (e2m block 1003; [analog_sensor_channels.md](analog_sensor_channels.md))
 
 ### EXT_RAM (0x8091C2-0x80FFFF)
 

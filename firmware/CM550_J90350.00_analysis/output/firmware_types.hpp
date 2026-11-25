@@ -1133,24 +1133,24 @@ typedef struct j1939_message_header_t j1939_message_header_t;
 typedef struct j1939_transmit_message_t j1939_transmit_message_t;
 typedef struct engine_overspeed_event_t engine_overspeed_event_t;
 typedef struct j1939_diagnostic_service_entry_t j1939_diagnostic_service_entry_t;
-typedef struct can_std_rx_desc_t can_std_rx_desc_t;
-typedef struct param_lookup_args_t param_lookup_args_t;
+typedef struct can_standard_receive_descriptor_t can_standard_receive_descriptor_t;
+typedef struct parameter_lookup_arguments_t parameter_lookup_arguments_t;
 typedef struct dma_descriptor_t dma_descriptor_t;
 typedef struct memory_operation_request_t memory_operation_request_t;
 typedef struct q16_fixed_point_t q16_fixed_point_t;
 typedef struct division_operand_t division_operand_t;
-typedef struct sensor_config_t sensor_config_t;
+typedef struct sensor_configuration_t sensor_configuration_t;
 typedef struct ema_filter_state_t ema_filter_state_t;
 typedef struct second_order_filter_state_t second_order_filter_state_t;
 typedef struct sensor_state_t sensor_state_t;
 typedef struct cummins_data_plate_header_t cummins_data_plate_header_t;
 typedef struct module_variant_offsets_t module_variant_offsets_t;
 typedef struct cummins_data_plate_t cummins_data_plate_t;
-typedef struct j1939_tx_msg_buffer_t j1939_tx_msg_buffer_t;
-typedef struct j1939_vp44_msg_t j1939_vp44_msg_t;
-typedef struct diag_service_request_t diag_service_request_t;
-typedef struct diag_tp_state_t diag_tp_state_t;
-typedef struct diag_transfer_state_t diag_transfer_state_t;
+typedef struct j1939_transmit_message_buffer_t j1939_transmit_message_buffer_t;
+typedef struct j1939_vp44_message_t j1939_vp44_message_t;
+typedef struct diagnostic_service_request_t diagnostic_service_request_t;
+typedef struct diagnostic_transport_protocol_state_t diagnostic_transport_protocol_state_t;
+typedef struct diagnostic_transfer_state_t diagnostic_transfer_state_t;
 typedef struct fuel_governor_state_t fuel_governor_state_t;
 typedef struct fuel_demand_state_t fuel_demand_state_t;
 typedef struct fuel_limit_arbitration_t fuel_limit_arbitration_t;
@@ -1237,13 +1237,13 @@ struct j1939_diagnostic_service_entry_t {
     void * handler;  /* The service handler registerJ1939DiagnosticService stored (PR #53 round 88) */
 };
 
-struct can_std_rx_desc_t {
+struct can_standard_receive_descriptor_t {
     uint32_t id;  /* 11-bit CAN ID stored in 32-bit (ABI) */
     uint16_t length;  /* DLC */
     uint8_t * data_pointer;  /* Pointer to payload bytes */
 };
 
-struct param_lookup_args_t {
+struct parameter_lookup_arguments_t {
     uint32_t calculated_block;  /* Block x 256 x 4 calculation result */
     uint16_t offset;  /* Parameter offset within block */
     uint16_t result_value;  /* Retrieved parameter value (capped at 32000) */
@@ -1274,7 +1274,7 @@ struct division_operand_t {
     uint16_t limit;  /* Secondary 16-bit limit/clamp value */
 };
 
-struct sensor_config_t {
+struct sensor_configuration_t {
     uint16_t filter_coefficient;  /* +0: A/D digital filter constant (1/65536): the weight of the previous value - the channel's sensor_state_t.filter.coefficient points here and cm550_exponentialMovingAverage reads it (Calterm ...CS) */
     uint16_t default_value;  /* +2: global default value in the channel's units: filtered_value and the accumulator (<< 16) while the fault is active or on a tri-state reading (Calterm ...GD or ADDF + the channel code) */
     int16_t fault_clear_threshold;  /* +4: A/D fault clear counts: debounce_counter at or below it clears fault_active_flag; each high / low status bit (0x806000) clears only while its 0x806040 first-occurrence bit is clear (Calterm ...CC or ...FC) */
@@ -1346,12 +1346,12 @@ struct cummins_data_plate_t {
     uint32_t ecm_serial_number;  /* ECM serial number (T03942860) */
 };
 
-struct j1939_tx_msg_buffer_t {
+struct j1939_transmit_message_buffer_t {
     uint8_t data[8];  /* J1939 message payload data array */
     j1939_message_header_t header;  /* CAN message header (ID + length) */
 };
 
-struct j1939_vp44_msg_t {
+struct j1939_vp44_message_t {
     uint8_t j1939_status_byte;  /* J1939 transmission message status/header byte */
     uint8_t fuel_amount_high;  /* Fuel amount high byte */
     uint8_t fuel_amount_low;  /* Fuel amount low byte */
@@ -1364,14 +1364,14 @@ struct j1939_vp44_msg_t {
     uint8_t timing_byte6;  /* VP44 timing advance data byte 6 */
 };
 
-struct diag_service_request_t {
+struct diagnostic_service_request_t {
     uint8_t message_length;  /* Total message length including header */
     uint8_t service_id;  /* Service identifier (3=secured 4=control 5=memory) */
     uint8_t sub_function;  /* Sub-function code for service routing */
     uint8_t data_payload[16];  /* Variable-length request data payload */
 };
 
-struct diag_tp_state_t {
+struct diagnostic_transport_protocol_state_t {
     uint8_t diagnostic_state;  /* State flag: 0=idle 1=active */
     uint8_t expected_id_low;  /* Expected low byte of std CAN ID */
     uint16_t expected_guard;  /* Guard word; must match (payload[6]<<8) */
@@ -1389,7 +1389,7 @@ struct diag_tp_state_t {
     uint8_t * transmit_connection_management_buffer;  /* Scratch 8-byte CM/DT buffer */
 };
 
-struct diag_transfer_state_t {
+struct diagnostic_transfer_state_t {
     uint16_t target_address;  /* Target memory address for transfer */
     uint32_t data_pointer;  /* Pointer to source/dest data buffer */
     uint16_t remaining_length;  /* Remaining bytes to transfer */

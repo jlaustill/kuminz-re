@@ -16,7 +16,7 @@ function_address,function_name,old_ghidra_name,new_variable_name,type,comment
 # unscrambleSecurityKey @ 0x2fbd8 - Core bit manipulation for security auth
 # Algorithm: Mask table separates bits into forward/backward streams, XOR phase, reorder phase
 0x0000b7bc,mc68k_processAnalogSensorChannels,filter_state,channel_record,sensor_state_t*,The A/D channel record this pass works on (0x80a2aa + 22 x channel; one per channel up to 0x80a4d0): its filter at +0 goes to cm550_exponentialMovingAverage (PR #53 round 88)
-0x0000b7bc,mc68k_processAnalogSensorChannels,psVar7,channel_configuration,sensor_config_t*,The A/D channel config record this pass reads (0x806ae2 + 24 x channel; stepped with channel_record) (PR #53 round 89)
+0x0000b7bc,mc68k_processAnalogSensorChannels,psVar7,channel_configuration,sensor_configuration_t*,The A/D channel config record this pass reads (0x806ae2 + 24 x channel; stepped with channel_record) (PR #53 round 89)
 
 # validateSecurityKey @ 0x2fcdc - Validates auth payload against security key + hour meter
 # Returns 0 on success, 1 on failure. Lockout after 17 (0x11) failed attempts.

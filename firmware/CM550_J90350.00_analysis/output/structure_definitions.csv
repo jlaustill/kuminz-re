@@ -23,14 +23,14 @@ j1939_diagnostic_service_entry_t,,pad,byte,1,Unused,,verified
 j1939_diagnostic_service_entry_t,,handler,pointer,4,The service handler registerJ1939DiagnosticService stored (PR #53 round 88),,verified
 
 # Standard CAN RX Descriptor
-can_std_rx_desc_t,,id,uint32_t,4,11-bit CAN ID stored in 32-bit (ABI),,verified
-can_std_rx_desc_t,,length,uint16_t,2,DLC,,verified
-can_std_rx_desc_t,,data_pointer,ptr:uint8_t,4,Pointer to payload bytes,,verified
+can_standard_receive_descriptor_t,,id,uint32_t,4,11-bit CAN ID stored in 32-bit (ABI),,verified
+can_standard_receive_descriptor_t,,length,uint16_t,2,DLC,,verified
+can_standard_receive_descriptor_t,,data_pointer,ptr:uint8_t,4,Pointer to payload bytes,,verified
 
 # Parameter Lookup Arguments - used by param_address_calc
-param_lookup_args_t,,calculated_block,dword,4,Block x 256 x 4 calculation result,,verified
-param_lookup_args_t,,offset,word,2,Parameter offset within block,,verified
-param_lookup_args_t,,result_value,word,2,Retrieved parameter value (capped at 32000),,verified
+parameter_lookup_arguments_t,,calculated_block,dword,4,Block x 256 x 4 calculation result,,verified
+parameter_lookup_arguments_t,,offset,word,2,Parameter offset within block,,verified
+parameter_lookup_arguments_t,,result_value,word,2,Retrieved parameter value (capped at 32000),,verified
 
 # DMA Descriptor
 dma_descriptor_t,,source_address,dword,4,DMA transfer source memory address,,verified
@@ -68,21 +68,21 @@ division_operand_t,,limit,word,2,Secondary 16-bit limit/clamp value,,verified
 # Accessed at offsets 0, 1, 2 as single bytes
 
 # A/D channel config record (24 bytes; e2m block 1003 = 25 of them from 0x806ae2 in channel order). Replaces the unused sensor_fault_config_t template (PR #53 round 89)
-sensor_config_t,,filter_coefficient,word,2,+0: A/D digital filter constant (1/65536): the weight of the previous value - the channel's sensor_state_t.filter.coefficient points here and cm550_exponentialMovingAverage reads it (Calterm ...CS),,verified
-sensor_config_t,,default_value,word,2,+2: global default value in the channel's units: filtered_value and the accumulator (<< 16) while the fault is active or on a tri-state reading (Calterm ...GD or ADDF + the channel code),,verified
-sensor_config_t,,fault_clear_threshold,short,2,+4: A/D fault clear counts: debounce_counter at or below it clears fault_active_flag; each high / low status bit (0x806000) clears only while its 0x806040 first-occurrence bit is clear (Calterm ...CC or ...FC),,verified
-sensor_config_t,,debounce_counter_decrement,short,2,+6: A/D fault decrement: taken off debounce_counter on each in-range sample (floored at 0) (Calterm ...DT or ...FD),,verified
-sensor_config_t,,debounce_counter_increment,short,2,+8: A/D fault increment: added to debounce_counter on each out-of-range sample (Calterm ...IC or ...FI),,verified
-sensor_config_t,,fault_set_threshold,short,2,+10: A/D fault set: debounce_counter at or above it sets the fault and is capped there (Calterm ...SE or ...FS),,verified
-sensor_config_t,,high_error_limit,word,2,+12: A/D high error limit in raw counts (0-1023): adc_raw_value above it counts toward high_error_fault_number (Calterm ...HL),,verified
-sensor_config_t,,low_error_limit,word,2,+14: A/D low error limit in raw counts: adc_raw_value below it counts toward low_error_fault_number (Calterm ...LL),,verified
-sensor_config_t,,qadc_result_register_index,word,2,+16: the QADC result slot (0-39) whose right-justified result register (0xfff2b0 + 2 x n) gives adc_raw_value (Calterm ...CA: channel address),,verified
-sensor_config_t,,multiplexer_setting,byte,1,+18: channel multiplexer setting: no reader in J90350.00 (0 in all 25 records) (Calterm ...MU),,verified
-sensor_config_t,,tri_state_error_enable,byte,1,+19: tri-state flag: nonzero makes a lookup result of 4 count toward tri_state_error_fault_number (0 in all 25 records) (Calterm ...TS),,verified
-sensor_config_t,,high_error_fault_number,byte,1,+20: the fault the high limit sets (bit n mod 16 of status word n / 16 at 0x806000 / 0x806040) (Calterm ...HE),,verified
-sensor_config_t,,low_error_fault_number,byte,1,+21: the fault the low limit sets (Calterm ...LE),,verified
-sensor_config_t,,tri_state_error_fault_number,byte,1,+22: the in-range / tri-state error: set at the fifth consecutive lookup result of 4 and cleared at the fifth other reading (Calterm ...TE),,verified
-sensor_config_t,,sample_period,byte,1,+23: the channel runs once every sample_period passes of the A/D loop (0 = not processed); the e2m scale calls a pass 20 ms - not measured (Calterm ...SA or ...SR),,verified
+sensor_configuration_t,,filter_coefficient,word,2,+0: A/D digital filter constant (1/65536): the weight of the previous value - the channel's sensor_state_t.filter.coefficient points here and cm550_exponentialMovingAverage reads it (Calterm ...CS),,verified
+sensor_configuration_t,,default_value,word,2,+2: global default value in the channel's units: filtered_value and the accumulator (<< 16) while the fault is active or on a tri-state reading (Calterm ...GD or ADDF + the channel code),,verified
+sensor_configuration_t,,fault_clear_threshold,short,2,+4: A/D fault clear counts: debounce_counter at or below it clears fault_active_flag; each high / low status bit (0x806000) clears only while its 0x806040 first-occurrence bit is clear (Calterm ...CC or ...FC),,verified
+sensor_configuration_t,,debounce_counter_decrement,short,2,+6: A/D fault decrement: taken off debounce_counter on each in-range sample (floored at 0) (Calterm ...DT or ...FD),,verified
+sensor_configuration_t,,debounce_counter_increment,short,2,+8: A/D fault increment: added to debounce_counter on each out-of-range sample (Calterm ...IC or ...FI),,verified
+sensor_configuration_t,,fault_set_threshold,short,2,+10: A/D fault set: debounce_counter at or above it sets the fault and is capped there (Calterm ...SE or ...FS),,verified
+sensor_configuration_t,,high_error_limit,word,2,+12: A/D high error limit in raw counts (0-1023): adc_raw_value above it counts toward high_error_fault_number (Calterm ...HL),,verified
+sensor_configuration_t,,low_error_limit,word,2,+14: A/D low error limit in raw counts: adc_raw_value below it counts toward low_error_fault_number (Calterm ...LL),,verified
+sensor_configuration_t,,qadc_result_register_index,word,2,+16: the QADC result slot (0-39) whose right-justified result register (0xfff2b0 + 2 x n) gives adc_raw_value (Calterm ...CA: channel address),,verified
+sensor_configuration_t,,multiplexer_setting,byte,1,+18: channel multiplexer setting: no reader in J90350.00 (0 in all 25 records) (Calterm ...MU),,verified
+sensor_configuration_t,,tri_state_error_enable,byte,1,+19: tri-state flag: nonzero makes a lookup result of 4 count toward tri_state_error_fault_number (0 in all 25 records) (Calterm ...TS),,verified
+sensor_configuration_t,,high_error_fault_number,byte,1,+20: the fault the high limit sets (bit n mod 16 of status word n / 16 at 0x806000 / 0x806040) (Calterm ...HE),,verified
+sensor_configuration_t,,low_error_fault_number,byte,1,+21: the fault the low limit sets (Calterm ...LE),,verified
+sensor_configuration_t,,tri_state_error_fault_number,byte,1,+22: the in-range / tri-state error: set at the fifth consecutive lookup result of 4 and cleared at the fifth other reading (Calterm ...TE),,verified
+sensor_configuration_t,,sample_period,byte,1,+23: the channel runs once every sample_period passes of the A/D loop (0 = not processed); the e2m scale calls a pass 20 ms - not measured (Calterm ...SA or ...SR),,verified
 
 # Filter records (PR #53 round 88): CM848's ema_filter_state_t layout; cm550_signedFirstOrderFilter / cm550_exponentialMovingAverage take one, cm550_secondOrderFilter / cm550_secondOrderFilterUnsigned the second order record
 ema_filter_state_t,,coefficient,word*,4,Points at the filter coefficient word: the weight of the previous value in 1/65536 (0 = no filtering),,verified
@@ -91,7 +91,7 @@ second_order_filter_state_t,,coefficient_1,word*,4,+0: points at coefficient 1 (
 second_order_filter_state_t,,coefficient_3,word*,4,+4: points at coefficient 3 (1/65535): the weight of the output before last,,verified
 second_order_filter_state_t,,output,dword,4,+8: the filter output (its integer part is returned),,verified
 second_order_filter_state_t,,output_previous,dword,4,+12: the output of the previous call,,verified
-# A/D channel runtime record (22 bytes; e2m block 1004 = 25 of them from 0x80a2aa in channel order; the pair of sensor_config_t) (was sensor_debounce_state_t; PR #53 round 89)
+# A/D channel runtime record (22 bytes; e2m block 1004 = 25 of them from 0x80a2aa in channel order; the pair of sensor_configuration_t) (was sensor_debounce_state_t; PR #53 round 89)
 sensor_state_t,,filter,ema_filter_state_t,8,+0: the channel's filter record (its coefficient points at the channel config's +0 filter constant) (was reserved_00; PR #53 round 88),,verified
 sensor_state_t,,filtered_value,word,2,+8: the filter output - or the config default while the fault is active - or the channel's override value (Calterm ...FT: filtered and linearized) (was interpolated_value; PR #53 round 88),,verified
 sensor_state_t,,unfiltered_value,word,2,+10: the linearized reading before the filter - the table lookup result (Calterm ...UF: unfiltered and linearized) (was lookup_result; PR #53 round 89),,verified
@@ -140,20 +140,20 @@ cummins_data_plate_t,0x010002C0,ecm_serial_number,dword,4,ECM serial number (T03
 # VP44 Message State @ RAM 0x800F5E (J90350.00 verified)
 
 # J1939 TX Message Buffer @ RAM 0x803036 (J90350.00 verified)
-j1939_tx_msg_buffer_t,0x00803036,data,byte,8,J1939 message payload data array,,verified
-j1939_tx_msg_buffer_t,0x00803036,header,j1939_message_header_t,6,CAN message header (ID + length),j1939_message_header_t,verified
+j1939_transmit_message_buffer_t,0x00803036,data,byte,8,J1939 message payload data array,,verified
+j1939_transmit_message_buffer_t,0x00803036,header,j1939_message_header_t,6,CAN message header (ID + length),j1939_message_header_t,verified
 
 # J1939/VP44 Dual Protocol Message (generic - addresses vary by usage)
-j1939_vp44_msg_t,,j1939_status_byte,byte,1,J1939 transmission message status/header byte,,verified
-j1939_vp44_msg_t,,fuel_amount_high,byte,1,Fuel amount high byte,,verified
-j1939_vp44_msg_t,,fuel_amount_low,byte,1,Fuel amount low byte,,verified
-j1939_vp44_msg_t,,rpm_low,byte,1,Engine RPM low byte,,verified
-j1939_vp44_msg_t,,rpm_high,byte,1,Engine RPM high byte,,verified
-j1939_vp44_msg_t,,vp44_header,dword,4,VP44 0x100 command message header,,verified
-j1939_vp44_msg_t,,timing_byte3,byte,1,VP44 timing advance data byte 3,,verified
-j1939_vp44_msg_t,,timing_byte4,byte,1,VP44 timing advance data byte 4,,verified
-j1939_vp44_msg_t,,timing_byte5,byte,1,VP44 timing advance data byte 5,,verified
-j1939_vp44_msg_t,,timing_byte6,byte,1,VP44 timing advance data byte 6,,verified
+j1939_vp44_message_t,,j1939_status_byte,byte,1,J1939 transmission message status/header byte,,verified
+j1939_vp44_message_t,,fuel_amount_high,byte,1,Fuel amount high byte,,verified
+j1939_vp44_message_t,,fuel_amount_low,byte,1,Fuel amount low byte,,verified
+j1939_vp44_message_t,,rpm_low,byte,1,Engine RPM low byte,,verified
+j1939_vp44_message_t,,rpm_high,byte,1,Engine RPM high byte,,verified
+j1939_vp44_message_t,,vp44_header,dword,4,VP44 0x100 command message header,,verified
+j1939_vp44_message_t,,timing_byte3,byte,1,VP44 timing advance data byte 3,,verified
+j1939_vp44_message_t,,timing_byte4,byte,1,VP44 timing advance data byte 4,,verified
+j1939_vp44_message_t,,timing_byte5,byte,1,VP44 timing advance data byte 5,,verified
+j1939_vp44_message_t,,timing_byte6,byte,1,VP44 timing advance data byte 6,,verified
 
 # -----------------------------------------------------------------------------
 # Diagnostic/CLIP Structures (RAM - J90350.00 Addresses Verified)
@@ -167,35 +167,35 @@ j1939_vp44_msg_t,,timing_byte6,byte,1,VP44 timing advance data byte 6,,verified
 # Diagnostic Mode Fuel/Boost @ RAM 0x8096C4 (J90350.00 verified)
 
 # Diagnostic Service Request
-diag_service_request_t,,message_length,byte,1,Total message length including header,,verified
-diag_service_request_t,,service_id,byte,1,Service identifier (3=secured 4=control 5=memory),,verified
-diag_service_request_t,,sub_function,byte,1,Sub-function code for service routing,,verified
-diag_service_request_t,,data_payload,byte,16,Variable-length request data payload,,verified
+diagnostic_service_request_t,,message_length,byte,1,Total message length including header,,verified
+diagnostic_service_request_t,,service_id,byte,1,Service identifier (3=secured 4=control 5=memory),,verified
+diagnostic_service_request_t,,sub_function,byte,1,Sub-function code for service routing,,verified
+diagnostic_service_request_t,,data_payload,byte,16,Variable-length request data payload,,verified
 
 # Diagnostic Transport Protocol State
-diag_tp_state_t,,diagnostic_state,byte,1,State flag: 0=idle 1=active,,verified
-diag_tp_state_t,,expected_id_low,byte,1,Expected low byte of std CAN ID,,verified
-diag_tp_state_t,,expected_guard,word,2,Guard word; must match (payload[6]<<8),,verified
-diag_tp_state_t,,total_packets,byte,1,((total_bytes-1)/7)+1,,verified
-diag_tp_state_t,,request_start,byte,1,Current sequence index (1-based),,verified
-diag_tp_state_t,,request_count,byte,1,Remaining packets to send,,verified
-diag_tp_state_t,,pre_status,byte,1,Abort/status flag (non-zero aborts with 7),,verified
-diag_tp_state_t,,total_bytes,word,2,Total payload length,,verified
-diag_tp_state_t,,source_data_pointer,ptr:uint8_t,4,Pointer to source payload,,verified
-diag_tp_state_t,,response_byte_pointer,ptr:uint8_t,4,Pointer to 1-byte response/status,,verified
-diag_tp_state_t,,status_code,byte,1,Countdown/NACK (0x37 init or 0x70 delay),,verified
-diag_tp_state_t,,reserved_0x47,byte,1,Padding,,verified
-diag_tp_state_t,,transmit_header_id,uint32_t,4,Composed CAN ID for TP.CM/TP.DT,,verified
-diag_tp_state_t,,transmit_length,uint16_t,2,DLC for frame (8 or tail),,verified
-diag_tp_state_t,,transmit_connection_management_buffer,ptr:uint8_t,4,Scratch 8-byte CM/DT buffer,,verified
+diagnostic_transport_protocol_state_t,,diagnostic_state,byte,1,State flag: 0=idle 1=active,,verified
+diagnostic_transport_protocol_state_t,,expected_id_low,byte,1,Expected low byte of std CAN ID,,verified
+diagnostic_transport_protocol_state_t,,expected_guard,word,2,Guard word; must match (payload[6]<<8),,verified
+diagnostic_transport_protocol_state_t,,total_packets,byte,1,((total_bytes-1)/7)+1,,verified
+diagnostic_transport_protocol_state_t,,request_start,byte,1,Current sequence index (1-based),,verified
+diagnostic_transport_protocol_state_t,,request_count,byte,1,Remaining packets to send,,verified
+diagnostic_transport_protocol_state_t,,pre_status,byte,1,Abort/status flag (non-zero aborts with 7),,verified
+diagnostic_transport_protocol_state_t,,total_bytes,word,2,Total payload length,,verified
+diagnostic_transport_protocol_state_t,,source_data_pointer,ptr:uint8_t,4,Pointer to source payload,,verified
+diagnostic_transport_protocol_state_t,,response_byte_pointer,ptr:uint8_t,4,Pointer to 1-byte response/status,,verified
+diagnostic_transport_protocol_state_t,,status_code,byte,1,Countdown/NACK (0x37 init or 0x70 delay),,verified
+diagnostic_transport_protocol_state_t,,reserved_0x47,byte,1,Padding,,verified
+diagnostic_transport_protocol_state_t,,transmit_header_id,uint32_t,4,Composed CAN ID for TP.CM/TP.DT,,verified
+diagnostic_transport_protocol_state_t,,transmit_length,uint16_t,2,DLC for frame (8 or tail),,verified
+diagnostic_transport_protocol_state_t,,transmit_connection_management_buffer,ptr:uint8_t,4,Scratch 8-byte CM/DT buffer,,verified
 
 # Multi-packet Transfer State
-diag_transfer_state_t,,target_address,word,2,Target memory address for transfer,,verified
-diag_transfer_state_t,,data_pointer,dword,4,Pointer to source/dest data buffer,,verified
-diag_transfer_state_t,,remaining_length,word,2,Remaining bytes to transfer,,verified
-diag_transfer_state_t,,byte_count,word,2,Total byte count for operation,,verified
-diag_transfer_state_t,,transmit_active_flag,byte,1,Transmit operation active (0/1),,verified
-diag_transfer_state_t,,receive_active_flag,byte,1,Receive operation active (0/1),,verified
+diagnostic_transfer_state_t,,target_address,word,2,Target memory address for transfer,,verified
+diagnostic_transfer_state_t,,data_pointer,dword,4,Pointer to source/dest data buffer,,verified
+diagnostic_transfer_state_t,,remaining_length,word,2,Remaining bytes to transfer,,verified
+diagnostic_transfer_state_t,,byte_count,word,2,Total byte count for operation,,verified
+diagnostic_transfer_state_t,,transmit_active_flag,byte,1,Transmit operation active (0/1),,verified
+diagnostic_transfer_state_t,,receive_active_flag,byte,1,Receive operation active (0/1),,verified
 
 # -----------------------------------------------------------------------------
 # Fuel Control Structures
@@ -365,7 +365,7 @@ system_callback_table_t,,main_loop_callback,dword,4,Main scheduler loop callback
 # A/D Sensor Configuration
 # -----------------------------------------------------------------------------
 
-# (ad_sensor_config_t removed in PR #53 round 89: no user; the A/D channel config record is sensor_config_t)
+# (ad_sensor_config_t removed in PR #53 round 89: no user; the A/D channel config record is sensor_configuration_t)
 
 # -----------------------------------------------------------------------------
 # Address Range Validation (ROM-based)

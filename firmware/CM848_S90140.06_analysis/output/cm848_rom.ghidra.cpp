@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 15:25:37 MST 2026
+// Generated: Wed Nov 25 15:34:05 MST 2026
 
 
 //
@@ -62391,11 +62391,11 @@ void cm848_initializeExhaustThrottlePositionChannel(void)
    sensorChannelConfigInit) */
 
 void cm848_processSignedSensorChannel
-               (sensor_channel_config_t *configuration_pointer,sensor_channel_state_t *state_pointer
-               ,word *cached_axis_offset,word *x_axis,word *y_data,dword flags,
-               ema_filter_state_t *filter_state_pointer,dword channel_index,dword high_fault_bit,
-               dword low_fault_bit,word *value_output_pointer,word *default_value_output_pointer,
-               word *fault_status_output_pointer)
+               (sensor_channel_configuration_t *configuration_pointer,
+               sensor_channel_state_t *state_pointer,word *cached_axis_offset,word *x_axis,
+               word *y_data,dword flags,ema_filter_state_t *filter_state_pointer,dword channel_index
+               ,dword high_fault_bit,dword low_fault_bit,word *value_output_pointer,
+               word *default_value_output_pointer,word *fault_status_output_pointer)
 
 {
   ushort uVar1;
@@ -62632,11 +62632,11 @@ LAB_00500a1c:
    cm848_applicationMain (was updateSensorChannelWithConfig) */
 
 void cm848_initializeSignedSensorChannel
-               (sensor_channel_config_t *configuration_pointer,sensor_channel_state_t *state_pointer
-               ,word *cached_axis_offset,word *x_axis,word *y_data,dword flags,
-               ema_filter_state_t *filter_state_pointer,dword channel_index,dword high_fault_bit,
-               dword low_fault_bit,word *value_output_pointer,word *default_value_output_pointer,
-               word *fault_status_output_pointer)
+               (sensor_channel_configuration_t *configuration_pointer,
+               sensor_channel_state_t *state_pointer,word *cached_axis_offset,word *x_axis,
+               word *y_data,dword flags,ema_filter_state_t *filter_state_pointer,dword channel_index
+               ,dword high_fault_bit,dword low_fault_bit,word *value_output_pointer,
+               word *default_value_output_pointer,word *fault_status_output_pointer)
 
 {
   word wVar1;
@@ -62951,17 +62951,17 @@ void cm848_initializeVariableGeometryTurbochargerPositionChannel(void)
    oil_pressure_switch_only_cal is set (was sensorChannelTypeB_configInit) | earlier note:
    review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible
    converging-epilogue gotos + 3 split-remnant scratch temps Ghidra will not let CSV name) Accuracy
-   Confidence High. configuration_pointer typed as sensor_channel_config_t* (7
+   Confidence High. configuration_pointer typed as sensor_channel_configuration_t* (7
    default/threshold/debounce fields render); DAT_003fd8e8 -> governor_temp_protection_disable (now
    oil_pressure_switch_only_cal); 11 locals named; 2 array globals renamed. 13-param PowerPC
    prototype; params 4-6 passed but unused. */
 
 void cm848_processUnsignedSensorChannel
-               (sensor_channel_config_t *configuration_pointer,sensor_channel_state_t *state_pointer
-               ,word *cached_axis_offset,word *x_axis,word *y_data,dword flags,
-               ema_filter_state_t *filter_state_pointer,dword channel_index,dword high_fault_bit,
-               dword low_fault_bit,word *value_output_pointer,word *default_value_output_pointer,
-               word *fault_status_output_pointer)
+               (sensor_channel_configuration_t *configuration_pointer,
+               sensor_channel_state_t *state_pointer,word *cached_axis_offset,word *x_axis,
+               word *y_data,dword flags,ema_filter_state_t *filter_state_pointer,dword channel_index
+               ,dword high_fault_bit,dword low_fault_bit,word *value_output_pointer,
+               word *default_value_output_pointer,word *fault_status_output_pointer)
 
 {
   ushort uVar1;
@@ -63231,11 +63231,11 @@ LAB_00501b1c:
    prototype. */
 
 void cm848_initializeUnsignedSensorChannel
-               (sensor_channel_config_t *configuration_pointer,sensor_channel_state_t *state_pointer
-               ,word *cached_axis_offset,word *x_axis,word *y_data,dword flags,
-               ema_filter_state_t *filter_state_pointer,dword channel_index,dword high_fault_bit,
-               dword low_fault_bit,word *value_output_pointer,word *default_value_output_pointer,
-               word *fault_status_output_pointer)
+               (sensor_channel_configuration_t *configuration_pointer,
+               sensor_channel_state_t *state_pointer,word *cached_axis_offset,word *x_axis,
+               word *y_data,dword flags,ema_filter_state_t *filter_state_pointer,dword channel_index
+               ,dword high_fault_bit,dword low_fault_bit,word *value_output_pointer,
+               word *default_value_output_pointer,word *fault_status_output_pointer)
 
 {
   ushort uVar1;

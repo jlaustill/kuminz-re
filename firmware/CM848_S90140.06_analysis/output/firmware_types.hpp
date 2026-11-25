@@ -1314,7 +1314,7 @@ typedef struct engine_speed_limit_arbitration_t engine_speed_limit_arbitration_t
 typedef struct operating_mode_governor_output_t operating_mode_governor_output_t;
 typedef struct transmission_lockup_timers_t transmission_lockup_timers_t;
 typedef struct j1939_message_header_t j1939_message_header_t;
-typedef struct sensor_channel_config_t sensor_channel_config_t;
+typedef struct sensor_channel_configuration_t sensor_channel_configuration_t;
 typedef struct sensor_channel_state_t sensor_channel_state_t;
 typedef struct cruise_governor_gain_set_t cruise_governor_gain_set_t;
 typedef struct second_order_filter_state_t second_order_filter_state_t;
@@ -1365,7 +1365,7 @@ typedef struct qsmcm_transmit_ram_t qsmcm_transmit_ram_t;
 typedef struct keyon_flags_t keyon_flags_t;
 typedef struct boot_can_transmit_frame_t boot_can_transmit_frame_t;
 typedef struct can_ring_state_t can_ring_state_t;
-typedef struct diag_write_request_state_t diag_write_request_state_t;
+typedef struct diagnostic_write_request_state_t diagnostic_write_request_state_t;
 typedef struct can_slot_range_t can_slot_range_t;
 typedef struct can_receive_channel_t can_receive_channel_t;
 typedef struct system_initialization_flags_t system_initialization_flags_t;
@@ -1376,7 +1376,7 @@ typedef struct j1939_transport_transmit_session_t j1939_transport_transmit_sessi
 typedef struct boot_state_t boot_state_t;
 typedef struct mios_mpiosm_t mios_mpiosm_t;
 typedef struct mios1_interrupt_registers_t mios1_interrupt_registers_t;
-typedef struct diag_clear_flags_t diag_clear_flags_t;
+typedef struct diagnostic_clear_flags_t diagnostic_clear_flags_t;
 typedef struct j1939_pgn65261_payload_t j1939_pgn65261_payload_t;
 typedef struct pci_message_descriptor_t pci_message_descriptor_t;
 typedef struct qspi_job_t qspi_job_t;
@@ -2490,7 +2490,7 @@ struct j1939_message_header_t {
     uint16_t data_length;  /* CAN DLC - payload byte count for TX message */
 };
 
-struct sensor_channel_config_t {
+struct sensor_channel_configuration_t {
     uint16_t filter_coefficient;  /* EMA coefficient: the weight of the previous filtered value in 1/65536 (0 = no filtering) - the channel's ema_filter_state_t.coefficient points here (was config_word0) */
     uint16_t default_value;  /* Nominal/fault fallback value (written to filtered output and state_pointer[1]) */
     uint16_t high_threshold;  /* Upper limit - sensor value above this trips the high fault path */
@@ -3028,7 +3028,7 @@ struct can_ring_state_t {
     uint32_t transmit_message_buffer_pointer;  /* The transmit message buffer: mpc555_initializeDiagnosticSubsystem sets it to TouCAN A buffer 0x3070f0 + 16 x n; the empty-ring path of mpc555_manageCan1TransmitBuffer clears its control byte (was toucan_mb_ptr) | earlier note: Active TouCAN mailbox base pointer for diagnostic session */
 };
 
-struct diag_write_request_state_t {
+struct diagnostic_write_request_state_t {
     uint32_t pending_request;  /* Boot reflash kernel: request whose positive response is deferred until the flash write completes (was adc_trigger_t.sensor_param_ptr) */
     uint32_t address_mode;  /* 0 = parameter-ID addressing (services 68/69) / 1 = absolute address (75/77); stored as a dword (was adc_scan_active word + _pad6) */
 };
@@ -3100,7 +3100,7 @@ struct mios1_interrupt_registers_t {
     uint16_t EN;  /* MIOS1 interrupt enable register (channel mask) */
 };
 
-struct diag_clear_flags_t {
+struct diagnostic_clear_flags_t {
     uint8_t diagnostic_response_write_count;  /* Diagnostic response write count pending */
     uint8_t diagnostic_eeprom_work_byte;  /* EEPROM channel scratch byte */
     uint16_t learned_output_speed_to_vehicle_speed_ratio;  /* e2m 8BB3 +0 RE_Axle_Ratio_Factor_Learned 'Ratio of transmission output shaft speed to road speed (NV ratio)' (0.0078125 per count = rpm per mph; 5141 = 40.16 in the dump; the default 8BB2 +0 output_speed_to_vehicle_speed_default_ratio = 42 on the same scale; EEPROM 0x197c) (PR #53 round 52): EEPROM-backed learned ratio = output shaft speed x 4096 / vehicle_speed (5141 = 40.2 rpm per mph) clamped 4480-6656; synthesizes the output shaft speed on sensor fault; 0x3fedfb bit 0 marks it learned (was fuel_temp_protection_ratio) */

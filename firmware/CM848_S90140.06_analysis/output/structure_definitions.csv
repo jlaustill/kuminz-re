@@ -1050,14 +1050,14 @@ j1939_message_header_t,,data_length,word,2,CAN DLC - payload byte count for TX m
 # Table Interpolation Arguments - generic lookup table input structure
 # Note: CM848 passes these as function parameters, not a structure pointer
 # Per-sensor-channel calibration config (ROM). Pointer-passed to cm848_processUnsignedSensorChannel / cm848_initializeUnsignedSensorChannel; field offsets verified from the threshold/debounce logic at 0x005012dc
-sensor_channel_config_t,,filter_coefficient,word,2,EMA coefficient: the weight of the previous filtered value in 1/65536 (0 = no filtering) - the channel's ema_filter_state_t.coefficient points here (was config_word0),,verified
-sensor_channel_config_t,,default_value,word,2,Nominal/fault fallback value (written to filtered output and state_pointer[1]),,verified
-sensor_channel_config_t,,high_threshold,word,2,Upper limit - sensor value above this trips the high fault path,,verified
-sensor_channel_config_t,,low_threshold,word,2,Lower limit - sensor value below this trips the low fault path,,verified
-sensor_channel_config_t,,debounce_step,word,2,Per-cycle increment added to the debounce counter while ramping toward the limit,,verified
-sensor_channel_config_t,,recovery_decrement,word,2,Per-cycle decrement applied to the debounce counter when back in range,,verified
-sensor_channel_config_t,,debounce_limit,word,2,Debounce counter target - reached = fault confirmed,,verified
-sensor_channel_config_t,,debounce_clear_threshold,word,2,Counter at or below this clears the confirmed-fault flags,,verified
+sensor_channel_configuration_t,,filter_coefficient,word,2,EMA coefficient: the weight of the previous filtered value in 1/65536 (0 = no filtering) - the channel's ema_filter_state_t.coefficient points here (was config_word0),,verified
+sensor_channel_configuration_t,,default_value,word,2,Nominal/fault fallback value (written to filtered output and state_pointer[1]),,verified
+sensor_channel_configuration_t,,high_threshold,word,2,Upper limit - sensor value above this trips the high fault path,,verified
+sensor_channel_configuration_t,,low_threshold,word,2,Lower limit - sensor value below this trips the low fault path,,verified
+sensor_channel_configuration_t,,debounce_step,word,2,Per-cycle increment added to the debounce counter while ramping toward the limit,,verified
+sensor_channel_configuration_t,,recovery_decrement,word,2,Per-cycle decrement applied to the debounce counter when back in range,,verified
+sensor_channel_configuration_t,,debounce_limit,word,2,Debounce counter target - reached = fault confirmed,,verified
+sensor_channel_configuration_t,,debounce_clear_threshold,word,2,Counter at or below this clears the confirmed-fault flags,,verified
 # sensor_channel_state_t: the 12-byte RAM state of one sensor channel (cm848_processSignedSensorChannel / cm848_initializeSignedSensorChannel / cm848_processUnsignedSensorChannel / cm848_initializeUnsignedSensorChannel)
 sensor_channel_state_t,,raw_adc_counts,word,2,QADC result read this pass (sensor_channel_diag_override while diagnostics override the channel),,verified
 sensor_channel_state_t,,value,word,2,Engineering value: the table lookup of lookup_input (config default_value while the channel is disabled or faulted) - filtered into sensor_channel_filtered_output[channel],,verified
@@ -1684,8 +1684,8 @@ can_ring_state_t,0x003024c6,transmit_message_buffer_pointer,dword,4,The transmit
 # sensor_param_ptr: pointer to active sensor parameter block (set in ADC init)
 # adc_scan_active: flag indicating ADC sensor scan is in progress (0/1)
 # =============================================================================
-diag_write_request_state_t,0x003024f4,pending_request,dword,4,Boot reflash kernel: request whose positive response is deferred until the flash write completes (was adc_trigger_t.sensor_param_ptr),,verified
-diag_write_request_state_t,0x003024f4,address_mode,dword,4,0 = parameter-ID addressing (services 68/69) / 1 = absolute address (75/77); stored as a dword (was adc_scan_active word + _pad6),,verified
+diagnostic_write_request_state_t,0x003024f4,pending_request,dword,4,Boot reflash kernel: request whose positive response is deferred until the flash write completes (was adc_trigger_t.sensor_param_ptr),,verified
+diagnostic_write_request_state_t,0x003024f4,address_mode,dword,4,0 = parameter-ID addressing (services 68/69) / 1 = absolute address (75/77); stored as a dword (was adc_scan_active word + _pad6),,verified
 # =============================================================================
 # CAN mailbox slot assignment range @ 0x302510
 # Configured in mpc555_initializeDiagnosticSubsystem to (mailbox_index, mailbox_index+4)
@@ -1811,9 +1811,9 @@ mios1_interrupt_registers_t,0x00306c00,EN,word,2,MIOS1 interrupt enable register
 # Originally one bogus 4-byte pointer (sensor_channel_cmd_address).
 # These bytes serve different roles in different execution contexts (type-punned).
 # ==============================================================================
-diag_clear_flags_t,0x003fedfc,diagnostic_response_write_count,byte,1,Diagnostic response write count pending,,best_guess
-diag_clear_flags_t,0x003fedfc,diagnostic_eeprom_work_byte,byte,1,EEPROM channel scratch byte,,best_guess
-diag_clear_flags_t,0x003fedfc,learned_output_speed_to_vehicle_speed_ratio,word,2,e2m 8BB3 +0 RE_Axle_Ratio_Factor_Learned 'Ratio of transmission output shaft speed to road speed (NV ratio)' (0.0078125 per count = rpm per mph; 5141 = 40.16 in the dump; the default 8BB2 +0 output_speed_to_vehicle_speed_default_ratio = 42 on the same scale; EEPROM 0x197c) (PR #53 round 52): EEPROM-backed learned ratio = output shaft speed x 4096 / vehicle_speed (5141 = 40.2 rpm per mph) clamped 4480-6656; synthesizes the output shaft speed on sensor fault; 0x3fedfb bit 0 marks it learned (was fuel_temp_protection_ratio),,best_guess
+diagnostic_clear_flags_t,0x003fedfc,diagnostic_response_write_count,byte,1,Diagnostic response write count pending,,best_guess
+diagnostic_clear_flags_t,0x003fedfc,diagnostic_eeprom_work_byte,byte,1,EEPROM channel scratch byte,,best_guess
+diagnostic_clear_flags_t,0x003fedfc,learned_output_speed_to_vehicle_speed_ratio,word,2,e2m 8BB3 +0 RE_Axle_Ratio_Factor_Learned 'Ratio of transmission output shaft speed to road speed (NV ratio)' (0.0078125 per count = rpm per mph; 5141 = 40.16 in the dump; the default 8BB2 +0 output_speed_to_vehicle_speed_default_ratio = 42 on the same scale; EEPROM 0x197c) (PR #53 round 52): EEPROM-backed learned ratio = output shaft speed x 4096 / vehicle_speed (5141 = 40.2 rpm per mph) clamped 4480-6656; synthesizes the output shaft speed on sensor fault; 0x3fedfb bit 0 marks it learned (was fuel_temp_protection_ratio),,best_guess
 # ==============================================================================
 # Dual-axis lookup table dimension descriptor
 # Passed as first arg to cm848_dualAxisTableInterpolation to describe table size

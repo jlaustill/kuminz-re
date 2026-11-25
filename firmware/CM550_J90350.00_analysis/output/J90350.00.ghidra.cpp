@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Wed Nov 25 15:28:17 MST 2026
+// Generated: Wed Nov 25 15:36:59 MST 2026
 
 
 //
@@ -1304,7 +1304,7 @@ void mc68k_processAnalogSensorChannels(void)
   short sVar4;
   word wVar5;
   cm550_algorithm_enable_flags_5_t cVar6;
-  sensor_config_t *channel_configuration;
+  sensor_configuration_t *channel_configuration;
   sensor_state_t *channel_record;
   char *pcVar7;
   char *pcVar8;
@@ -1559,7 +1559,7 @@ void cm550_initializeAnalogSensorChannels(void)
 
 {
   bool bVar1;
-  sensor_config_t *psVar2;
+  sensor_configuration_t *psVar2;
   sensor_state_t *psVar3;
   
   intake_manifold_temperature_linearization_lookup.y_values_pointer =
@@ -6918,7 +6918,7 @@ byte restartThroughBootRom(dword request,word acknowledge_datalink)
       }
     }
     if ((char)acknowledge_datalink == '\0') {
-      cm550_diagnosticMultiPacketResponseBuilder((can_std_rx_desc_t *)request,0);
+      cm550_diagnosticMultiPacketResponseBuilder((can_standard_receive_descriptor_t *)request,0);
     }
     else if ((char)acknowledge_datalink == '\x01') {
       cm550_diagnosticMessageQueueWrite(0);
@@ -21747,7 +21747,7 @@ void cm550_emptyPlaceholderInitialization(void)
 // Function: cm550_j1939TorqueControlModeParser @ 0x0001ffd6
 //
 
-byte cm550_j1939TorqueControlModeParser(can_std_rx_desc_t *request,byte enable)
+byte cm550_j1939TorqueControlModeParser(can_standard_receive_descriptor_t *request,byte enable)
 
 {
   char cVar1;
@@ -21808,7 +21808,7 @@ byte cm550_j1939TorqueControlModeParser(can_std_rx_desc_t *request,byte enable)
 // Function: cm550_j1939TorqueControlModeClear @ 0x000200a4
 //
 
-void cm550_j1939TorqueControlModeClear(can_std_rx_desc_t *param_1)
+void cm550_j1939TorqueControlModeClear(can_standard_receive_descriptor_t *param_1)
 
 {
   cm550_j1939TorqueControlModeParser(param_1,0);
@@ -21821,7 +21821,7 @@ void cm550_j1939TorqueControlModeClear(can_std_rx_desc_t *param_1)
 // Function: cm550_j1939TorqueControlModeSet @ 0x000200b4
 //
 
-void cm550_j1939TorqueControlModeSet(can_std_rx_desc_t *param_1)
+void cm550_j1939TorqueControlModeSet(can_standard_receive_descriptor_t *param_1)
 
 {
   cm550_j1939TorqueControlModeParser(param_1,1);
@@ -24457,7 +24457,7 @@ void sendJ1939MultiFrame(j1939_transmit_message_t *message)
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* (was cm550_diagnosticParamRequestHandler; PR #53 round 97) */
 
-void cm550_diagnosticParameterRequestHandler(can_std_rx_desc_t *received_message)
+void cm550_diagnosticParameterRequestHandler(can_standard_receive_descriptor_t *received_message)
 
 {
   byte bVar1;
@@ -24621,7 +24621,7 @@ byte vp44MessageTransmitter
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* (was vp44FuelTempHandler; PR #53 round 97) */
 
-void vp44FuelTemperatureHandler(can_std_rx_desc_t *received_message)
+void vp44FuelTemperatureHandler(can_standard_receive_descriptor_t *received_message)
 
 {
   undefined *puVar1;
@@ -24749,7 +24749,7 @@ void vp44MultiFrameResponseHandler(int param_1)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cm550_diagnosticStatusRequestHandler(can_std_rx_desc_t *received_message)
+void cm550_diagnosticStatusRequestHandler(can_standard_receive_descriptor_t *received_message)
 
 {
   short local_6;
@@ -24773,7 +24773,7 @@ void cm550_diagnosticStatusRequestHandler(can_std_rx_desc_t *received_message)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void vp44_diagnosticErrorHandler(can_std_rx_desc_t *received_message)
+void vp44_diagnosticErrorHandler(can_standard_receive_descriptor_t *received_message)
 
 {
   char cVar1;
@@ -24799,7 +24799,7 @@ void vp44_diagnosticErrorHandler(can_std_rx_desc_t *received_message)
 // Function: vp44CanMessageDispatcher @ 0x00022e5e
 //
 
-void vp44CanMessageDispatcher(can_std_rx_desc_t *received_message)
+void vp44CanMessageDispatcher(can_standard_receive_descriptor_t *received_message)
 
 {
   char cVar1;
@@ -24837,7 +24837,7 @@ void vp44CanMessageDispatcher(can_std_rx_desc_t *received_message)
 void cm550_diagnosticParameterRequestHandlerWrapper(void)
 
 {
-  can_std_rx_desc_t *unaff_A2;
+  can_standard_receive_descriptor_t *unaff_A2;
   
   cm550_diagnosticParameterRequestHandler(unaff_A2);
   return;
@@ -24854,7 +24854,7 @@ void cm550_diagnosticParameterRequestHandlerWrapper(void)
 void vp44FuelTemperatureHandlerWrapper(void)
 
 {
-  can_std_rx_desc_t *unaff_A2;
+  can_standard_receive_descriptor_t *unaff_A2;
   
   vp44FuelTemperatureHandler(unaff_A2);
   return;
@@ -24869,7 +24869,7 @@ void vp44FuelTemperatureHandlerWrapper(void)
 void cm550_diagnosticStatusRequestHandlerWrapper(void)
 
 {
-  can_std_rx_desc_t *unaff_A2;
+  can_standard_receive_descriptor_t *unaff_A2;
   
   cm550_diagnosticStatusRequestHandler(unaff_A2);
   return;
@@ -24884,7 +24884,7 @@ void cm550_diagnosticStatusRequestHandlerWrapper(void)
 void cm550_diagnosticErrorHandlerWrapper(void)
 
 {
-  can_std_rx_desc_t *unaff_A2;
+  can_standard_receive_descriptor_t *unaff_A2;
   
   vp44_diagnosticErrorHandler(unaff_A2);
   return;
@@ -32913,7 +32913,8 @@ void cm550_diagnosticServiceDispatcher(dword message)
 LAB_0002eeee:
       if (cVar1 != -1) {
         cm550_diagnosticMultiPacketResponseBuilder
-                  ((can_std_rx_desc_t *)message,CONCAT11((char)((ushort)in_D0w >> 8),cVar1));
+                  ((can_standard_receive_descriptor_t *)message,
+                   CONCAT11((char)((ushort)in_D0w >> 8),cVar1));
       }
       return;
     }
@@ -32964,7 +32965,8 @@ void registerJ1939DiagnosticServiceDispatcher(void)
    moves the state 0->1 / 2->3 and answers ACK or NACK. (was cm550_diagnosticResponseHandler2; PR
    #53 round 96) */
 
-void cm550_j1939HandlePgn65228Dm3ClearInactiveFaults(can_std_rx_desc_t *request_message)
+void cm550_j1939HandlePgn65228Dm3ClearInactiveFaults
+               (can_standard_receive_descriptor_t *request_message)
 
 {
   diagnostic_clear_request_state = 1;
@@ -33006,7 +33008,7 @@ void registerJ1939Dm3RequestHandler(void)
    and NACKs only identifiers 0 and 1. (was cm550_FUN_0002ef4a; PR #53 round 96) */
 
 void cm550_receivePgn58112Dm7CommandNonContinuouslyMonitoredTestMessage
-               (can_std_rx_desc_t *request_message)
+               (can_standard_receive_descriptor_t *request_message)
 
 {
   j1939_dm7_test_identifier = *request_message->data_pointer;
@@ -33355,7 +33357,7 @@ byte registerJ1939PgnRequestHandler(word pgn,void *handler)
    cm848_dispatchJ1939PgnRequest (0x231cc), which also sets j1939_dm1_active_flag before the call.
    (was cm550_FUN_0002f4be; PR #53 round 96) */
 
-void cm550_dispatchJ1939PgnRequest(can_std_rx_desc_t *received_message)
+void cm550_dispatchJ1939PgnRequest(can_standard_receive_descriptor_t *received_message)
 
 {
   byte bVar1;
@@ -33782,7 +33784,7 @@ void cm550_initializeEngineRetarderTsc1RequestState(void)
    cm550_processEngineRetarderTsc1Request. Twin of CM848 0x23b38: one shared name. (was
    cm550_torqueControlAddressDispatcher; PR #53 round 96) */
 
-void dispatchTsc1ByDestinationAddress(can_std_rx_desc_t *message)
+void dispatchTsc1ByDestinationAddress(can_standard_receive_descriptor_t *message)
 
 {
   byte bVar1;
@@ -35505,7 +35507,8 @@ word findTsc1SourceConfiguration(word data_link,word source_address)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void cm550_diagnosticCanResponseSender(can_std_rx_desc_t *request,word acknowledgement_type)
+void cm550_diagnosticCanResponseSender
+               (can_standard_receive_descriptor_t *request,word acknowledgement_type)
 
 {
   j1939_pgn59392_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f4e & 7) << 2),0xe8ff00);
@@ -35893,7 +35896,9 @@ void cm550_engineSerialNumberPGN_65259_Builder(void)
 // Function: cm550_diagnosticMultiPacketResponseBuilder @ 0x0003216a
 //
 
-undefined4 cm550_diagnosticMultiPacketResponseBuilder(can_std_rx_desc_t *request,word result_code)
+undefined4
+cm550_diagnosticMultiPacketResponseBuilder
+          (can_standard_receive_descriptor_t *request,word result_code)
 
 {
   undefined4 in_D0;

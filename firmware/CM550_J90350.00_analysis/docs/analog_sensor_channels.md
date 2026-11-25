@@ -4,12 +4,12 @@ The A/D channel loop `mc68k_processAnalogSensorChannels` (0xb7bc) and its start-
 
 | Array | Type | First record | Stride | e2m block |
 |---|---|---|---|---|
-| Configuration | `sensor_config_t` | 0x806ae2 | 24 bytes | 1003 |
+| Configuration | `sensor_configuration_t` | 0x806ae2 | 24 bytes | 1003 |
 | Runtime state | `sensor_state_t` | 0x80a2aa | 22 bytes | 1004 |
 
 The Calterm names come from `e2m-analysis/originals/v64t6_s.e2m`. Its block 1003 / 1004 layout agrees with every J90350.00 global that carried an e2m name before PR #53 round 89 (410 of 447 rows). The other 37: the 25 filter constants that round 88 had renamed, ambient air temperature's older mnemonics (ADTTFT / ADTTUF / ADTTMU) and nine throttle position sensor supply voltage config rows that carried boost pressure table names (ADBSPRXA / ADBSPRYA entries) that do not belong there. The ECU's parameter ID table gives the two blocks' addresses (`output/parameter_id_lookup_table.csv`: 0x1003 -> 0x806ae2 and 0x1004 -> 0x80a2aa; `firmware/scripts/e2m_block_addresses.py` resolves CM848 only).
 
-CM848 is a counterpart, not a twin: `sensor_channel_config_t` holds the same parameter family in another order, and its filter records are standalone `ema_filter_state_t` globals outside its 12-byte `sensor_channel_state_t` records.
+CM848 is a counterpart, not a twin: `sensor_channel_configuration_t` holds the same parameter family in another order, and its filter records are standalone `ema_filter_state_t` globals outside its 12-byte `sensor_channel_state_t` records.
 
 ## Fields and their Calterm suffixes
 
