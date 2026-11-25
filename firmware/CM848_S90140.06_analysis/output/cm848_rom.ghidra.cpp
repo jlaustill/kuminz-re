@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue Nov 24 20:47:47 MST 2026
+// Generated: Tue Nov 24 21:34:45 MST 2026
 
 
 //
@@ -70069,8 +70069,14 @@ J1939_DIAGNOSTIC_RESULT cm848_validateJ1939DiagnosticRequest(j1939_rx_msg_t *rx_
 // Function: receivePgn57344CabMessage1 @ 0x0050b734
 //
 
-/* APPEND to the current comment: | (was cm848_receivePgn57344CabMessage1; PR #53 round 91; the twin
-   of CM550 0x21a5c: one shared name) (was cm848_receivePgn57344CabMessage1; PR #53 round 91) */
+/* J1939 PGN 57344 Cab Message 1 (CM1): byte 1 (the requested percent fan speed) into
+   j1939_received_engine_fan_requested_percent_speed when the source passes
+   j1939_input_source_address_filter_cal slot 0 (signal timeout 500). Registered with
+   registerJ1939ReceiveHandler (was j1939_receivePgn57344Handler; PR #53 round 65) | earlier note:
+   J1939 receive handler registered with registerJ1939ReceiveHandler for PGN 57344: unpacks the
+   message into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named)
+   | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Low | the
+   twin of CM550 0x21a5c: one shared name (was cm848_receivePgn57344CabMessage1; PR #53 round 91) */
 
 void receivePgn57344CabMessage1(j1939_rx_msg_t *message)
 
@@ -70089,8 +70095,13 @@ void receivePgn57344CabMessage1(j1939_rx_msg_t *message)
 // Function: receivePgn61441ElectronicBrakeController1Message @ 0x0050b77c
 //
 
-/* APPEND to the current comment: | (was cm848_receivePgn61441ElectronicBrakeController1Message; PR
-   #53 round 91; the twin of CM550 0x21a8c: one shared name) (was
+/* J1939 PGN 61441 Electronic Brake Controller 1 (EBC1): unpacks its signals for the sources that
+   pass j1939_input_source_address_filter_cal. Registered with registerJ1939ReceiveHandler (was
+   j1939_receivePgn61441Handler; PR #53 round 65) | earlier note: J1939 receive handler registered
+   with registerJ1939ReceiveHandler for PGN 61441 (EBC1): unpacks the message into working RAM
+   (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named) |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium |
+   the twin of CM550 0x21a8c: one shared name (was
    cm848_receivePgn61441ElectronicBrakeController1Message; PR #53 round 91) */
 
 void receivePgn61441ElectronicBrakeController1Message(j1939_rx_msg_t *message)
@@ -70130,8 +70141,13 @@ void receivePgn61441ElectronicBrakeController1Message(j1939_rx_msg_t *message)
 // Function: receivePgn61443ElectronicEngineController2Message @ 0x0050b8a4
 //
 
-/* APPEND to the current comment: | (was cm848_receivePgn61443ElectronicEngineController2Message; PR
-   #53 round 91; the twin of CM550 0x21b88: one shared name) (was
+/* J1939 PGN 61443 Electronic Engine Controller 2 (EEC2): unpacks its signals for the sources that
+   pass j1939_input_source_address_filter_cal. Registered with registerJ1939ReceiveHandler (was
+   j1939_receivePgn61443Handler; PR #53 round 65) | earlier note: J1939 receive handler registered
+   with registerJ1939ReceiveHandler for PGN 61443 (EEC2): unpacks the message into working RAM
+   (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named) |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium |
+   the twin of CM550 0x21b88: one shared name (was
    cm848_receivePgn61443ElectronicEngineController2Message; PR #53 round 91) */
 
 void receivePgn61443ElectronicEngineController2Message(j1939_rx_msg_t *message)
@@ -70166,8 +70182,14 @@ void receivePgn61443ElectronicEngineController2Message(j1939_rx_msg_t *message)
 // Function: receivePgn65252ShutdownMessage @ 0x0050b98c
 //
 
-/* APPEND to the current comment: | (was cm848_receivePgn65252ShutdownMessage; PR #53 round 91; the
-   twin of CM550 0x21c3c: one shared name) (was cm848_receivePgn65252ShutdownMessage; PR #53 round
+/* J1939 PGN 65252 Shutdown (SHUTDN): byte 3 bits 1-2 (the A/C high pressure fan switch) into
+   j1939_received_air_conditioner_high_pressure_fan_switch when the source passes
+   j1939_input_source_address_filter_cal slot 10 (signal timeout 500). Registered with
+   registerJ1939ReceiveHandler (was j1939_receivePgn65252Handler; PR #53 round 65) | earlier note:
+   J1939 receive handler registered with registerJ1939ReceiveHandler for PGN 65252: unpacks the
+   message into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named)
+   | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Low | the
+   twin of CM550 0x21c3c: one shared name (was cm848_receivePgn65252ShutdownMessage; PR #53 round
    91) */
 
 void receivePgn65252ShutdownMessage(j1939_rx_msg_t *message)
@@ -70187,8 +70209,13 @@ void receivePgn65252ShutdownMessage(j1939_rx_msg_t *message)
 // Function: receivePgn65264PowerTakeoffInformationMessage @ 0x0050b9d8
 //
 
-/* APPEND to the current comment: | (was cm848_receivePgn65264PowerTakeoffInformationMessage; PR #53
-   round 91; the twin of CM550 0x21c74: one shared name) (was
+/* J1939 PGN 65264 Power Takeoff Information (PTO): the remote PTO / PTO on / resume / set switches
+   for the sources that pass j1939_input_source_address_filter_cal slots 11-14 (signal timeout 50).
+   Registered with registerJ1939ReceiveHandler (was j1939_receivePgn65264Handler; PR #53 round 65) |
+   earlier note: J1939 receive handler registered with registerJ1939ReceiveHandler for PGN 65264
+   (PTO): unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aabf /
+   0x3feaa6-0x3fead0 not yet named) | review-function-readability reviewed 2026-11-12 - Readability
+   Low Accuracy Confidence Medium | the twin of CM550 0x21c74: one shared name (was
    cm848_receivePgn65264PowerTakeoffInformationMessage; PR #53 round 91) */
 
 void receivePgn65264PowerTakeoffInformationMessage(j1939_rx_msg_t *message)
@@ -70223,8 +70250,13 @@ void receivePgn65264PowerTakeoffInformationMessage(j1939_rx_msg_t *message)
 // Function: receivePgn65265CruiseControlVehicleSpeedMessage @ 0x0050bacc
 //
 
-/* APPEND to the current comment: | (was cm848_receivePgn65265CruiseControlVehicleSpeedMessage; PR
-   #53 round 91; the twin of CM550 0x21d44: one shared name) (was
+/* J1939 PGN 65265 Cruise Control/Vehicle Speed 1 (CCVS1): unpacks its signals for the sources that
+   pass j1939_input_source_address_filter_cal. Registered with registerJ1939ReceiveHandler (was
+   j1939_receivePgn65265Handler; PR #53 round 65) | earlier note: J1939 receive handler registered
+   with registerJ1939ReceiveHandler for PGN 65265 (CCVS - cruise control / vehicle speed): unpacks
+   the message into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet
+   named) | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence
+   Medium | the twin of CM550 0x21d44: one shared name (was
    cm848_receivePgn65265CruiseControlVehicleSpeedMessage; PR #53 round 91) */
 
 void receivePgn65265CruiseControlVehicleSpeedMessage(j1939_rx_msg_t *message)
@@ -99765,9 +99797,11 @@ void cm848_exceptionHandler(void)
 // Function: registerJ1939ReceiveHandler @ 0x00538eb0
 //
 
-/* APPEND to the current comment: | (was cm848_registerJ1939ReceiveHandler; PR #53 round 91; the
-   twin of CM550 0x21272, whose table holds 16: one shared name) (was
-   cm848_registerJ1939ReceiveHandler; PR #53 round 91) */
+/* Appends a PGN and its handler to the J1939 receive handler table at 0x3fd414 (6-byte entries - at
+   most 17; the count is j1939_receive_handler_count) that cm848_dispatchJ1939ReceivedMessages
+   searches. Returns true when full. The receive side twin of registerJ1939DiagnosticService (was
+   j1939_handlerInitializer; PR #53 round 65) | the twin of CM550 0x21272, whose table holds 16: one
+   shared name (was cm848_registerJ1939ReceiveHandler; PR #53 round 91) */
 
 bool registerJ1939ReceiveHandler(word pgn_key,void *handler)
 
