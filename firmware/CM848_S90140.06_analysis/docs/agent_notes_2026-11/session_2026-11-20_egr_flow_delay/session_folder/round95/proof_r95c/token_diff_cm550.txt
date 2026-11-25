@@ -1,0 +1,902 @@
+0x0000ac3c: 4 token changes: . x_axis_offset =>  | . x_axis_offset =>  | . x_axis_offset =>  | . x_axis_offset => 
+0x0000b2aa: 3 token changes: _DAT_00800050 => acceleration_noise_control_fuel_limit_lookup . x_input | ( table_interp_args_t * ) =>  | DAT_0080004a => acceleration_noise_control_fuel_limit_lookup
+0x0000b3d0: 2 token changes: _DAT_0080005e => acceleration_noise_control_timing_limit_lookup . x_input | ( table_interp_args_t * ) => 
+0x0000b614: 4 token changes: _DAT_0080004a => acceleration_noise_control_fuel_limit_lookup . x_axis_offset | _DAT_0080004c => acceleration_noise_control_fuel_limit_lookup . x_axis_pointer | 0x6009e => ( word * ) & acceleration_noise_control_fuel_limit_axis | 0x600b2 => ( word * ) & acceleration_noise_control_fuel_limit_values
+0x0000b63e: 3 token changes:  => . x_axis_offset | 0x600c6 => ( word * ) & acceleration_noise_control_timing_limit_axis | 0x600da => ( word * ) & acceleration_noise_control_timing_limit_values
+0x0000b6e8: 19 token changes:  => int iVar1 ; | cVar1 ; int iVar2 => cVar2 | iVar2 => iVar1 | ( j1708_transmit_buffer_read_pointer - j1708_transmit_buffer_write_pointer ) + =>  |  => - ( int ) j1708_transmit_buffer_write_pointer | iVar2 => iVar1 |  => 0xfe - | j1708_transmit_buffer_read_pointer - => int ) | ) + 0xfe =>  | iVar2 => ( int ) ( j1708_transmit_buffer_read_pointer + iVar1 ) | cVar1 => cVar2 |  => ( uint ) | undefined1 => byte | undefined1 => byte | cVar1 => cVar2 | undefined1 => byte | cVar1 => cVar2 | ( undefined1 * ) =>  | ( dword ) => 
+0x0000b7bc: 7 token changes: table_interp_args_t => table_lookup_1d_arguments_t | ( table_interp_args_t * ) =>  | DAT_0080a792 => intake_manifold_temperature_linearization_lookup | input_value => x_input | ( table_interp_args_t * ) & =>  | [ => + | ] . x_axis_ptr => 
+0x0000bcf0: 103 token changes: _DAT_0080a79a => intake_manifold_temperature_linearization_lookup . y_values_pointer | 0x806d6e => intake_manifold_temperature_linearization_values | _DAT_0080a794 => intake_manifold_temperature_linearization_lookup . x_axis_pointer | & =>  | _DAT_0080a792 => intake_manifold_temperature_linearization_lookup . x_axis_offset | _DAT_0080a7a8 => fuel_temperature_linearization_lookup . y_values_pointer | 0x806dce => fuel_temperature_linearization_values | _DAT_0080a7a2 => fuel_temperature_linearization_lookup . x_axis_pointer | 0x806da2 => fuel_temperature_linearization_axis | _DAT_0080a7a0 => fuel
+0x0000c180: 20 token changes: uint => ushort | uint uVar1 => word wVar1 | short sVar2 => ushort uVar2 | . x_axis_offset =>  | uVar1 => uVar2 | uVar1 => uVar2 | ( uint ) ( =>  | ) =>  | ( fault_processing_enable_flags [ 2 ] & 2 ) => uVar2 | uVar1 => uVar2 | 0xffff0001 => 1 | uVar1 => uVar2 | 0xffff0010 => 0x10 | sVar2 => wVar1 | uVar1 => wVar1 | . x_axis_offset =>  | sVar2 => uVar2 | ( short ) uVar1 => wVar1 | sVar2 => wVar1 | uVar1 => uVar2
+0x0000c66a: 1 token changes: . x_axis_offset => 
+0x0000c880: 4 token changes:  => . x_axis_offset | _DAT_00800104 => speed_request_blend_weight_by_speed_difference_lookup . x_axis_pointer | 0x807acc => speed_request_blend_weight_by_speed_difference_axis | 0x807ad8 => speed_request_blend_weight_by_speed_difference_values
+0x0000c8a0: 1 token changes: ( table_interp_args_t * ) => 
+0x0000d23c: 10 token changes: short sVar1 => word wVar1 | short sVar2 => word wVar2 | _DAT_0080011e => all_speed_governor_friction_fuel_lookup . x_input | sVar1 => wVar1 | ( table_interp_args_t * ) =>  | sVar2 => wVar2 | ( table_interp_args_t * ) =>  | DAT_00800118 => all_speed_governor_friction_fuel_lookup | sVar1 => wVar1 | sVar2 => wVar2
+0x0000d280: 7 token changes: 0x807230 => all_speed_governor_friction_fuel_axis | 0x807242 => all_speed_governor_friction_fuel_values | _DAT_00800118 => all_speed_governor_friction_fuel_lookup . x_axis_offset | 0x807254 => all_speed_governor_coolant_fuel_adjustment_axis | _DAT_0080012e => all_speed_governor_coolant_fuel_adjustment_lookup . y_values_pointer | & =>  |  => . x_axis_offset
+0x0000d3e6: 3 token changes: ( table_interp_args_t * ) =>  | ( table_interp_args_t * ) =>  | DAT_00800136 => all_speed_governor_alternate_droop_lookup
+0x0000d59e: 7 token changes: _DAT_00800136 => all_speed_governor_alternate_droop_lookup . x_axis_offset | 0x60462 => ( word * ) & all_speed_governor_alternate_droop_axis | _DAT_0080013e => all_speed_governor_alternate_droop_lookup . y_values_pointer | 0x60472 => ( word * ) & all_speed_governor_alternate_droop_values |  => . x_axis_offset | 0x60482 => ( word * ) & all_speed_governor_droop_axis | 0x60492 => ( word * ) & all_speed_governor_droop_values
+0x0000eaec: 2 token changes:  => ( dword ) |  => ( dword )
+0x0000ed64: 3 token changes: _DAT_00804fa4 => trip_fuel_consumed | _DAT_00804fc0 => total_engine_operating_time | _DAT_00804fa0 => total_fuel_consumed
+0x0000ff6c: 21 token changes: short sVar1 => word wVar1 | short sVar2 => word wVar2 | 0x6052a => ( word * ) & engine_retarder_torque_engine_speed_axis | _DAT_00800194 => engine_retarder_full_scale_torque_lookup . x_axis_pointer | 0x6052a => ( word * ) & engine_retarder_torque_engine_speed_axis | 0x60566 => ( word * ) & engine_retarder_torque_stage_6_values | 0x60534 => ( word * ) & engine_retarder_torque_stage_1_values | 0x6053e => ( word * ) & engine_retarder_torque_stage_2_values | 0x60548 => ( word * ) & engine_retarder_torque_stage_3_values | 0x60552 => ( word * ) & engine_retarder_torque_stage_4_values | 0x6055c => ( 
+0x000100da: 7 token changes:  => . x_axis_offset | 0x6052a => ( word * ) & engine_retarder_torque_engine_speed_axis | 0x60566 => ( word * ) & engine_retarder_torque_stage_6_values |  => . x_axis_offset | _DAT_00800194 => engine_retarder_full_scale_torque_lookup . x_axis_pointer | 0x6052a => ( word * ) & engine_retarder_torque_engine_speed_axis | 0x60566 => ( word * ) & engine_retarder_torque_stage_6_values
+0x00011e5e: 44 token changes: ushort uVar4 => word wVar4 | ushort uVar5 => word wVar5 | ushort uVar6 => word wVar6 | word wVar7 ; =>  |  => ; ushort uVar7 | wVar7 => wVar4 | wVar7 => wVar4 | wVar7 => wVar4 | wVar7 => wVar4 | wVar7 => wVar4 | uVar4 => wVar4 | ( table_interp_args_t * ) =>  | uVar5 => wVar5 | . x_axis_offset =>  | uVar6 => wVar6 | . x_axis_offset =>  | uVar5 => wVar5 | wVar7 => wVar5 | uVar4 => wVar4 | uVar6 => wVar6 | uVar5 => uVar7 | uVar6 => wVar6 | uVar5 => uVar7 | uVar6 => wVar6 | uVar5 => uVar7 | wVar7 => wVar5 | uVar4 => wVar4 | uVar6 => wVar6 | uVar4 => wVar4 | wVar7 => wVar5 | uVar4 => wVar4 | ( tabl
+0x000124d2: 6 token changes: 0x60596 => ( word * ) & cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_axis | 0x605b2 => ( word * ) & cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_values |  => . x_axis_offset | _DAT_00800210 => cylinder_pressure_maintenance_timing_per_temperature_degree_lookup . x_axis_pointer | 0x60640 ; _DAT_00800216 = 0x6065c => ( word * ) & cylinder_pressure_maintenance_timing_per_temperature_degree_axis |  => . y_values_pointer = ( word * ) & cylinder_pressure_maintenance_timing_per_temperature_degree_values ; cylinder_pressure_maintenance_timing_per_temperature_degree_l
+0x000127c2: 291 token changes: wVar3 => wVar4 | uint uVar4 ; uint uVar5 => word wVar5 | iVar6 => iVar3 | uVar7 => uVar6 | puVar8 => puVar7 | dVar9 => dVar8 | sVar10 ; ushort * puVar11 => sVar9 | piVar12 => piVar10 | pdVar13 => pdVar11 | pbVar14 => pbVar12 | pwVar15 => pwVar13 | psVar16 => psVar14 | puVar17 => puVar15 | puVar18 => puVar16 ; short * psVar17 ; sdword * psVar18 | sdword => word | psVar20 ; undefined2 * puVar21 ; short * psVar22 ; undefined2 * puVar23 => pwVar20 | uVar7 => uVar6 | pdVar13 => pdVar11 | piVar12 => piVar10 | psVar20 => psVar18 | psVar20 => psVar18 | piVar12 => piVar10 | pdVar13 => pdVar11 | uVar7 =
+0x000133fe: 39 token changes: undefined2 => word | puVar4 => pwVar4 | undefined2 => word | puVar5 => pwVar5 | puVar4 => pwVar4 | ( undefined2 * ) & DAT_00809e9e => cylinder_balance_real_2_dynamics_compensation_values | puVar5 => pwVar5 | ( undefined2 * ) & DAT_00809ebe => cylinder_balance_imaginary_2_dynamics_compensation_values | puVar4 => pwVar4 | puVar5 => pwVar5 | puVar4 => pwVar4 | puVar4 => pwVar4 | puVar5 => pwVar5 | puVar5 => pwVar5 | _DAT_0080024e => cylinder_balance_threshold_lookup . x_axis_offset | _DAT_00800250 => cylinder_balance_threshold_lookup . x_axis_pointer | & =>  | _DAT_00800256 => cylinder_balance_th
+0x000142d4: 1 token changes: . x_axis_offset => 
+0x00014348: 5 token changes: ( table_interp_args_t * ) =>  | ( table_interp_args_t * ) =>  | ( table_interp_args_t * ) =>  | ( table_interp_args_t * ) =>  | ( table_interp_args_t * ) => 
+0x000143b6: 3 token changes: _DAT_0080db34 => friction_fuel_correction_by_coolant_temperature_lookup . x_input | ( table_interp_args_t * ) =>  | DAT_0080db2e => friction_fuel_correction_by_coolant_temperature_lookup
+0x0001444e: 1 token changes: ( table_interp_args_t * ) => 
+0x00015f8e: 27 token changes:  => byte bVar1 ; | uVar1 => uVar2 | cVar2 ; char cVar4 => cVar3 | wVar3 => wVar4 | cVar4 => cVar5 | cVar4 => cVar5 | wVar3 => wVar4 | wVar3 => wVar4 | cVar4 => bVar1 | ( char * ) =>  |  => ( uint ) | cVar2 => cVar3 | cVar4 + => ( bVar1 |  => ) | cVar2 => cVar3 | uVar1 => uVar2 | cVar2 => cVar3 | uVar1 => uVar2 | wVar3 => wVar4 |  => ( uint ) | cVar4 => bVar1 | wVar3 => wVar4 |  => ( byte * ) | cVar4 => bVar1 | ' \ x01 ' => 1 | wVar3 => wVar4 | wVar3 => wVar4
+0x0001666c: 57 token changes: dword dVar2 => byte bVar2 | char cVar3 => int iVar3 ; byte * pbVar4 | int iVar4 => char cVar6 | MVar6 ; byte bVar7 => MVar7 |  => byte bVar10 ; | dVar2 => pbVar4 | ( char * ) =>  | ' \ x06 ' => 6 | cVar3 => cVar5 |  => ( uint ) | cVar3 => cVar5 | cVar3 => cVar5 | cVar5 => cVar6 | cVar5 => cVar6 | bVar8 => bVar9 | cVar3 => cVar5 | bVar8 => bVar9 |  => bVar10 = | = bVar8 =>  | bVar9 => bVar10 | bVar8 => bVar9 | dVar2 => pbVar4 | iVar4 => iVar3 | ( j1708_transmit_buffer_read_pointer - dVar2 ) + =>  |  => - ( int ) pbVar4 | iVar4 => iVar3 |  => 0xfe - | j1708_transmit_buffer_read_pointer - dVar2 =
+0x0001686e: 3 token changes:  => ( uint ) | ( byte * ) =>  | ( byte * ) => 
+0x00016d4e: 2 token changes: ( byte * ) =>  | ( byte * ) => 
+0x00016dd4: 33 token changes: uint => ushort |  => word wVar1 ; word wVar2 ; | uVar1 ; uint uVar2 => uVar3 | uVar2 => uVar3 | ( uint ) ( =>  | ) =>  | uVar2 => uVar3 | ( uint ) =>  | uVar2 => uVar3 | uVar1 => wVar1 | uVar1 => wVar1 | ( uint ) uVar1 => wVar1 |  => wVar1 = engine_warmup_protection_rifle_to_turbocharger_delay_timer ; | uVar2 => wVar2 | ( uint ) =>  | _DAT_00800594 => engine_warmup_protection_rifle_to_turbocharger_delay_time_lookup . x_input | uVar2 => engine_warmup_protection_rifle_to_turbocharger_delay_time | ( table_interp_args_t * ) =>  | DAT_0080058e => engine_warmup_protection_rifle_to_turbocharger_delay
+0x0001709e: 10 token changes: _DAT_00800590 => engine_warmup_protection_rifle_to_turbocharger_delay_time_lookup . x_axis_pointer | 0x60846 => ( word * ) & engine_warmup_protection_rifle_to_turbocharger_delay_time_axis | _DAT_0080058e => engine_warmup_protection_rifle_to_turbocharger_delay_time_lookup . x_axis_offset | _DAT_00800596 => engine_warmup_protection_rifle_to_turbocharger_delay_time_lookup . y_values_pointer | 0x6085a => ( word * ) & engine_warmup_protection_rifle_to_turbocharger_delay_time_values | _DAT_0080059e => engine_warmup_protection_fuel_limit_lookup . x_axis_pointer | 0x607f2 => ( word * ) & engine_warmup
+0x000178b0: 12 token changes: ushort uVar1 => word wVar1 | ushort uVar2 => word wVar2 | . x_axis_offset =>  | uVar1 => wVar1 | . x_axis_offset =>  | uVar1 => wVar1 | uVar1 => wVar1 | . x_axis_offset =>  | uVar2 => wVar2 | . x_axis_offset =>  | uVar1 => wVar1 | uVar2 => wVar2
+0x00017ef8: 5 token changes: _DAT_008005b6 => crank_wet_stack_timing_by_intake_manifold_temperature_lookup . x_axis_pointer | & =>  | _DAT_008005bc => crank_wet_stack_timing_by_intake_manifold_temperature_lookup . y_values_pointer | 0x8071f6 => wet_stack_timing_by_intake_manifold_temperature_values | _DAT_008005b4 => crank_wet_stack_timing_by_intake_manifold_temperature_lookup . x_axis_offset
+0x000183cc: 44 token changes: ushort => void | ushort uVar1 => word wVar1 | ushort uVar2 => word wVar2 | ushort uVar3 => word wVar3 | ushort uVar4 => word wVar4 | ushort uVar5 ; ushort uVar6 => word wVar5 | uVar1 => wVar1 | ( table_interp_args_t * ) =>  | DAT_008005fe => fault_derate_fuel_limit_at_torque_curve_points_lookup | uVar2 => wVar2 | ( table_interp_args_t * ) =>  | DAT_008005fe => fault_derate_fuel_limit_at_torque_curve_points_lookup | uVar3 => wVar3 | ( table_interp_args_t * ) =>  | DAT_008005fe => fault_derate_fuel_limit_at_torque_curve_points_lookup | uVar4 => wVar4 | ( table_interp_args_t * ) =>  | DAT_008005f
+0x000185f0: 5 token changes: _DAT_008005fe => fault_derate_fuel_limit_at_torque_curve_points_lookup . x_axis_offset | _DAT_00800600 => fault_derate_fuel_limit_at_torque_curve_points_lookup . x_axis_pointer | & =>  | _DAT_00800606 => fault_derate_fuel_limit_at_torque_curve_points_lookup . y_values_pointer | 0x8071a8 => fault_derate_fuel_limit_by_engine_speed_values
+0x00018a26: 1 token changes: & => 
+0x00018cb6: 1 token changes: & => 
+0x00018e0c: 1 token changes: & => 
+0x00018fcc: 1 token changes: & => 
+0x0001952c: 1 token changes: & => 
+0x00019702: 41 token changes:  => short sVar2 ; | uVar2 => uVar3 | short sVar3 => word wVar4 | uVar4 => uVar5 | uVar5 => uVar6 | uVar6 => uVar7 | uVar5 => uVar6 | uVar4 => uVar5 | uVar6 => uVar7 | & =>  | sVar3 => sVar2 | uVar4 => uVar5 | uVar5 => uVar6 | uVar5 => uVar6 | sVar3 => sVar2 | uVar4 => uVar5 | uVar2 => uVar3 | uVar2 => uVar3 | uVar2 => uVar3 | uVar2 => uVar3 | uVar2 => uVar3 | sVar3 => sVar2 | uVar4 => uVar5 | uVar2 => uVar3 | uVar2 => uVar3 | uVar6 => uVar7 | uVar2 => uVar3 | sVar3 => sVar2 | uVar4 => uVar5 | uVar6 => uVar7 |  => uVar6 = ( uint ) ( ushort ) ( ( short ) uVar6 + 4 ) ; | + 4 ) ; uVar4 = ( uint ) 
+0x00019960: 4 token changes: _DAT_00800632 => fault_derate_fuel_limit_by_engine_speed_lookup . x_axis_offset | _DAT_00800634 => fault_derate_fuel_limit_by_engine_speed_lookup . x_axis_pointer | & =>  | 0x8071a8 => fault_derate_fuel_limit_by_engine_speed_values
+0x00019acc: 2 token changes: uint => dword | uint => dword
+0x00019e90: 2 token changes: uint => dword | uint => dword
+0x0001a52c: 2 token changes: uint => dword | uint => dword
+0x0001a95a: 2 token changes: uint => dword | uint => dword
+0x0001c65e: 34 token changes:  => ushort uVar1 ; | wVar2 => wVar3 | extraout_D0w ; ushort uVar3 ; ushort uVar4 => wVar4 |  => uVar2 ; | ; uVar3 =>  | _DAT_008006b0 => double_pulsing_fueling_mapping_lookup . x_input | wVar2 => wVar3 | ( table_interp_args_t * ) =>  | DAT_008006aa => double_pulsing_fueling_mapping_lookup | wVar2 => wVar3 | wVar2 => wVar3 |  => timing_4DTBTA = | . x_axis_offset =>  | uVar3 => uVar1 | ; timing_4DTBTA = extraout_D0w =>  | wVar2 => wVar3 | . x_axis_offset =>  | uVar3 => uVar1 | wVar2 => wVar3 | uVar3 => wVar4 | . x_axis_offset =>  | wVar2 => wVar3 | uVar4 => wVar3 | . x_axis_offset =>  | uVar1 =>
+0x0001c7a8: 5 token changes: _DAT_008006ac => double_pulsing_fueling_mapping_lookup . x_axis_pointer | 0x607d6 => ( word * ) & double_pulsing_fueling_mapping_axis | _DAT_008006b2 => double_pulsing_fueling_mapping_lookup . y_values_pointer | 0x607e4 => ( word * ) & double_pulsing_fueling_mapping_values | _DAT_008006aa => double_pulsing_fueling_mapping_lookup . x_axis_offset
+0x0001cb76: 2 token changes: . x_axis_offset =>  | . x_axis_offset => 
+0x0001cc72: 9 token changes: short sVar1 => word wVar1 | sVar1 => wVar1 | sVar1 => wVar1 | . x_axis_offset =>  | sVar1 => wVar1 | . x_axis_offset =>  | sVar1 => wVar1 | sVar1 => wVar1 | . x_axis_offset => 
+0x0001ce7c: 19 token changes: short sVar3 => word wVar3 | _DAT_00800724 => high_speed_governor_derivative_gain_adjustment_multiplier_lookup . x_input | _DAT_00800724 => high_speed_governor_derivative_gain_adjustment_multiplier_lookup . x_input | sVar3 => wVar3 | ( table_interp_args_t * ) =>  | DAT_0080071e => high_speed_governor_derivative_gain_adjustment_multiplier_lookup | sVar3 => ( short ) wVar3 | _DAT_00800732 => high_speed_governor_proportional_gain_adjustment_multiplier_lookup . x_input | _DAT_00800732 => high_speed_governor_proportional_gain_adjustment_multiplier_lookup . x_input | sVar3 => wVar3 | ( table_interp_a
+0x0001d2e4: 12 token changes: _DAT_00800720 => high_speed_governor_derivative_gain_adjustment_multiplier_lookup . x_axis_pointer | 0x808068 => high_speed_governor_derivative_gain_adjustment_error_axis | _DAT_0080071e => high_speed_governor_derivative_gain_adjustment_multiplier_lookup . x_axis_offset | _DAT_00800726 => high_speed_governor_derivative_gain_adjustment_multiplier_lookup . y_values_pointer | _DAT_0080072e => high_speed_governor_proportional_gain_adjustment_multiplier_lookup . x_axis_pointer | 0x8080a0 => high_speed_governor_proportional_gain_adjustment_error_axis | _DAT_0080072c => high_speed_governor_proportion
+0x0001d5a0: 15 token changes: short sVar2 => word wVar2 | short sVar3 => word wVar3 | ; word wVar4 =>  | _DAT_0080db34 => friction_fuel_correction_by_coolant_temperature_lookup . x_input | sVar2 => wVar2 | ( table_interp_args_t * ) =>  | DAT_0080db2e => friction_fuel_correction_by_coolant_temperature_lookup | sVar3 => wVar3 | ( table_interp_args_t * ) =>  | sVar2 => wVar2 | sVar3 => wVar3 | wVar4 => wVar2 | wVar4 => wVar2 | wVar4 => wVar2 | wVar4 => wVar2
+0x0001dd2c: 9 token changes: ( dword ) =>  | ( dword ) =>  | 0x808b01 => diagnostic_tx_buffer_base + 1 | 0x808c01 => diagnostic_rx_buffer_base + 1 | ( dword ) =>  | DWORD_0080ddce => j1708_receive_buffer_last_byte_address | 0x808cff => diagnostic_rx_buffer_base + 0xff | ( dword ) =>  | ( dword ) => 
+0x0001ddb4: 8 token changes: _DAT_0080db22 => friction_fuel_by_engine_speed_lookup . x_axis_pointer | 0x611fa ; _DAT_0080db28 = 0x6120e => ( word * ) & friction_fuel_by_engine_speed_axis |  => . y_values_pointer = ( word * ) & friction_fuel_by_engine_speed_values ; friction_fuel_by_engine_speed_lookup . x_axis_offset | _DAT_0080db30 => friction_fuel_correction_by_coolant_temperature_lookup . x_axis_pointer | 0x61222 => ( word * ) & friction_fuel_correction_by_coolant_temperature_axis | _DAT_0080db36 => friction_fuel_correction_by_coolant_temperature_lookup . y_values_pointer | 0x61236 => ( word * ) & friction_fuel_correct
+0x0001de58: 10 token changes: ushort => word | ushort => word | ushort => word | ushort => word | . x_axis_offset =>  | . x_axis_offset =>  | . x_axis_offset =>  | . x_axis_offset =>  | . x_axis_offset =>  | . x_axis_offset => 
+0x0001e288: 26 token changes: dword dVar2 => byte * pbVar2 | dVar2 => pbVar2 | ( byte * ) =>  |  => ( byte * ) | ( char * ) =>  | ( char * ) =>  | ' \ x01 ' => 1 | ( undefined1 * ) =>  |  => ( byte * ) | ( byte * ) =>  |  => ( byte * ) | ( byte * ) =>  | ( char * ) =>  | ( byte * ) =>  | ( byte * ) =>  |  => ( byte * ) | ( char * ) =>  | ( char * ) =>  | ' \ x01 ' => 1 |  => ( byte * ) | ( byte * ) =>  | ( char * ) =>  | ( byte * ) =>  |  => ( byte * ) |  => ( byte * ) | dVar2 => pbVar2
+0x0001e79a: 7 token changes: ( j1708_transmit_buffer_read_pointer - j1708_transmit_buffer_write_pointer ) + =>  |  => - ( int ) j1708_transmit_buffer_write_pointer |  => 0xfe - | j1708_transmit_buffer_read_pointer - => int ) | ) + 0xfe =>  |  => ( int ) ( j1708_transmit_buffer_read_pointer + |  => )
+0x0001e89e: 1 token changes:  => ( byte * )
+0x0001e956: 5 token changes:  => ( dword ) |  => ( dword ) |  => ( dword ) | ( byte * ) =>  |  => ( uint )
+0x0001ec08: 1 token changes:  => ( byte * )
+0x0001ec3c: 2 token changes: ( byte * ) =>  |  => ( uint )
+0x0001edae: 25 token changes:  => int iVar3 ; | uVar3 => uVar4 | uVar4 ; int iVar5 => uVar5 | ( byte * ) =>  | ( byte * ) =>  | ( byte * ) =>  |  => ( uint ) | uVar3 => uVar4 | uVar4 => uVar5 | uVar4 => uVar5 | uVar4 => uVar5 | uVar4 => uVar5 | uVar4 => uVar5 | uVar4 => uVar5 | iVar5 => iVar3 | ( j1708_transmit_buffer_read_pointer - j1708_transmit_buffer_write_pointer ) + =>  |  => - ( int ) j1708_transmit_buffer_write_pointer | iVar5 => iVar3 |  => 0xfe - | j1708_transmit_buffer_read_pointer - => int ) | ) + 0xfe =>  | iVar5 => ( int ) ( j1708_transmit_buffer_read_pointer + iVar3 ) | uVar3 => uVar4 |  => ( uint ) | ( dwor
+0x0001f0de: 20 token changes:  => int iVar2 ; | cVar2 ; int iVar3 => cVar3 | iVar3 => iVar2 | ( j1708_transmit_buffer_read_pointer - j1708_transmit_buffer_write_pointer ) + =>  |  => - ( int ) j1708_transmit_buffer_write_pointer | iVar3 => iVar2 |  => 0xfe - | j1708_transmit_buffer_read_pointer - => int ) | ) + 0xfe =>  | iVar3 => ( int ) ( j1708_transmit_buffer_read_pointer + iVar2 ) | cVar2 => cVar3 |  => ( uint ) | cVar2 => cVar3 | cVar2 => cVar3 | cVar2 => cVar3 | cVar2 => cVar3 | cVar2 => cVar3 | cVar2 => cVar3 | ( undefined1 * ) =>  | ( dword ) => 
+0x0001f2d0: 60 token changes: dword dVar2 => int iVar2 ; byte * pbVar3 | cVar3 ; int iVar4 => cVar4 | dVar2 => pbVar3 | iVar4 => iVar2 | ( j1708_transmit_buffer_read_pointer - j1708_transmit_buffer_write_pointer ) + =>  |  => - ( int ) j1708_transmit_buffer_write_pointer | iVar4 => iVar2 |  => 0xfe - | j1708_transmit_buffer_read_pointer - => int ) | ) + 0xfe =>  | iVar4 => ( int ) ( j1708_transmit_buffer_read_pointer + iVar2 ) | cVar3 => cVar4 |  => ( uint ) | undefined1 => byte | undefined1 => byte | cVar3 => cVar4 | undefined1 => byte | cVar3 => cVar4 | undefined1 => byte | cVar3 => cVar4 | undefined1 => byte | cVar3 => 
+0x0001f4e8: 60 token changes: char cVar1 => byte bVar1 | byte bVar3 ; =>  | uVar4 => uVar3 | cVar5 => cVar4 | wVar7 => wVar6 | ptVar6 => ptVar5 | bVar8 => bVar7 | cVar1 => bVar1 | ( char * ) =>  | cVar5 => cVar4 |  => ( uint ) | uVar4 => uVar3 | wVar7 => wVar6 | uVar4 => uVar3 | wVar7 => wVar6 | wVar7 => wVar6 | uVar4 => uVar3 | ptVar6 => ptVar5 | uVar4 => uVar3 | uVar4 => uVar3 | cVar1 => bVar1 | ' \ x03 ' => 3 | ptVar6 => ptVar5 | cVar1 => bVar1 | ' \ x04 ' => 4 | ptVar6 => ptVar5 | cVar1 => bVar1 | ' \ x05 ' => 5 | ptVar6 => ptVar5 | wVar7 => wVar6 | wVar7 => wVar6 | wVar7 => wVar6 | wVar7 => wVar6 | wVar7 => wVar6 | wV
+0x0001f84e: 3 token changes: ( char * ) =>  | ' \ x02 ' => 2 |  => ( uint )
+0x0001f8bc: 41 token changes: char cVar1 ; =>  | bVar2 => bVar1 | cVar3 => cVar2 | wVar5 => wVar4 | ptVar4 => ptVar3 | cVar1 => bVar1 | ( char * ) =>  | cVar3 => cVar2 |  => ( uint ) | ptVar4 => ptVar3 | wVar5 => wVar4 | ptVar4 => ptVar3 | wVar5 => wVar4 | wVar5 => wVar4 | cVar1 => bVar1 | ' \ x02 ' => 2 | cVar1 => bVar1 | ' \ x03 ' => 3 | wVar5 => wVar4 | wVar5 => wVar4 | wVar5 => wVar4 | wVar5 => wVar4 | wVar5 => wVar4 | wVar5 => wVar4 | wVar5 => wVar4 | wVar5 => wVar4 | cVar3 => cVar2 | wVar5 => wVar4 | cVar3 => cVar2 | wVar5 => wVar4 | wVar5 => wVar4 | cVar3 => cVar2 | bVar2 => bVar1 | bVar2 => bVar1 | bVar2 => bVar1 |
+0x0001fbb0: 3 token changes: ( char * ) =>  | ' \ x02 ' => 2 |  => ( uint )
+0x0001fbf4: 19 token changes:  => int iVar1 ; | cVar1 ; int iVar2 => cVar2 | iVar2 => iVar1 | ( j1708_transmit_buffer_read_pointer - j1708_transmit_buffer_write_pointer ) + =>  |  => - ( int ) j1708_transmit_buffer_write_pointer | iVar2 => iVar1 |  => 0xfe - | j1708_transmit_buffer_read_pointer - => int ) | ) + 0xfe =>  | iVar2 => ( int ) ( j1708_transmit_buffer_read_pointer + iVar1 ) | cVar1 => cVar2 |  => ( uint ) | undefined1 => byte | undefined1 => byte | cVar1 => cVar2 | undefined1 => byte | cVar1 => cVar2 | ( undefined1 * ) =>  | ( dword ) => 
+0x0001fc9c: 21 token changes:  => int iVar1 ; | cVar1 ; int iVar2 => cVar2 | iVar2 => iVar1 | ( j1708_transmit_buffer_read_pointer - j1708_transmit_buffer_write_pointer ) + =>  |  => - ( int ) j1708_transmit_buffer_write_pointer | iVar2 => iVar1 |  => 0xfe - | j1708_transmit_buffer_read_pointer - => int ) | ) + 0xfe =>  | iVar2 => ( int ) ( j1708_transmit_buffer_read_pointer + iVar1 ) | cVar1 => cVar2 |  => ( uint ) | undefined1 => byte | undefined1 => byte | cVar1 => cVar2 | undefined1 => byte | cVar1 => cVar2 | undefined1 => byte | cVar1 => cVar2 | ( undefined1 * ) =>  | ( dword ) => 
+0x00020fac: 3 token changes: _DAT_00806d3c => intake_manifold_temperature_linearization_axis [ 1 ] | _DAT_00806d3c => intake_manifold_temperature_linearization_axis [ 1 ] | _DAT_00806d3c => intake_manifold_temperature_linearization_axis [ 1 ]
+0x000258e8: 5 token changes: ( table_interp_args_t * ) =>  | DAT_00801a3e => engine_protection_low_oil_pressure_limit_lookup | _DAT_00801a52 => engine_protection_very_low_oil_pressure_limit_lookup . x_input | ( table_interp_args_t * ) =>  | DAT_00801a4c => engine_protection_very_low_oil_pressure_limit_lookup
+0x00025926: 8 token changes: _DAT_00801a46 => engine_protection_low_oil_pressure_limit_lookup . y_values_pointer | 0x611de => ( word * ) & engine_protection_low_oil_pressure_limit_values | _DAT_00801a40 => engine_protection_low_oil_pressure_limit_lookup . x_axis_pointer | 0x611d0 => ( word * ) & engine_protection_oil_pressure_limit_engine_speed_axis | _DAT_00801a3e => engine_protection_low_oil_pressure_limit_lookup . x_axis_offset | 0x611ec => ( word * ) & engine_protection_very_low_oil_pressure_limit_values | 0x611d0 => ( word * ) & engine_protection_oil_pressure_limit_engine_speed_axis | _DAT_00801a4c => engine_protecti
+0x0002595a: 4 token changes: ushort => word | ushort => word | . x_axis_offset =>  | . x_axis_offset => 
+0x000269f2: 1 token changes: . x_axis_offset => 
+0x00026ab8: 1 token changes: . x_axis_offset => 
+0x00026b3a: 10 token changes: short sVar1 => word wVar1 | short sVar2 => word wVar2 | _DAT_0080db34 => friction_fuel_correction_by_coolant_temperature_lookup . x_input | sVar1 => wVar1 | ( table_interp_args_t * ) =>  | DAT_0080db2e => friction_fuel_correction_by_coolant_temperature_lookup | sVar2 => wVar2 | ( table_interp_args_t * ) =>  | sVar1 => wVar1 | sVar2 => wVar2
+0x00026fea: 2 token changes:  => ( dword ) |  => ( dword )
+0x000277e6: 42 token changes: undefined => byte | puVar3 => pbVar3 ; byte * pbVar4 | puVar4 => puVar5 | undefined1 => byte | * ( undefined1 * ) ( => component_identification_make_cal [ | + 0x803dcc ) => ] | undefined1 => byte | * ( undefined1 * ) ( => component_identification_model_cal [ | + 0x803dd1 ) => ] | undefined1 => byte | * ( undefined1 * ) ( => component_identification_serial_number_cal [ | + 0x803de2 ) => ] | puVar4 => pbVar4 | puVar3 => pbVar3 | puVar4 => pbVar4 | puVar3 => pbVar3 | * ( undefined1 * ) ( => component_identification_make_cal [ | + 0x803dcc ) => ] | puVar4 => pbVar4 | puVar3 => pbVar3 | puVar3 => p
+0x00028b80: 38 token changes: 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xfef1 |  => , 0x46 , j1939HandlePgn65265CruiseVehicleSpeed |  => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xf004 , 0x14 , | 0x14 => sendPgn61444ElectronicEngineController1Message | 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xf003 |  => , 10 , j1939HandlePgn61443Eec2 | 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xfedf |  => , 0x1e , vp44_configParamCanBuilder | 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xfee3 |  => , 0x6e , sendPgn65251EngineConfiguration1Message | 1 => J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER , 0xf000 |  => , 0x32 , cm550_dutyCycle
+0x0002d09e: 21 token changes: undefined1 uVar1 => byte bVar1 ; int iVar2 | cVar2 ; int iVar3 => cVar3 | iVar3 => iVar2 | ( j1708_transmit_buffer_read_pointer - j1708_transmit_buffer_write_pointer ) + =>  |  => - ( int ) j1708_transmit_buffer_write_pointer | iVar3 => iVar2 |  => 0xfe - | j1708_transmit_buffer_read_pointer - => int ) | ) + 0xfe =>  | iVar3 => ( int ) ( j1708_transmit_buffer_read_pointer + iVar2 ) | cVar2 => cVar3 |  => ( uint ) | cVar2 => cVar3 | cVar2 => cVar3 | cVar2 => cVar3 | cVar2 => cVar3 | uVar1 => bVar1 | undefined1 => byte | uVar1 => bVar1 | ( byte * ) =>  | ( dword ) => 
+0x0002d3c6: 48 token changes:  => word wVar8 ; | uint uVar4 => int iVar4 | int iVar7 ; =>  | dVar8 => dVar7 | uVar4 => uVar3 | uVar4 => uVar3 | uVar4 => uVar3 | uVar4 => uVar3 | uVar4 => uVar3 | _DAT_00801c14 => power_take_off_gain_adjustment_lookup . x_input | uVar3 => wVar8 | ( table_interp_args_t * ) =>  | DAT_00801c0e => power_take_off_gain_adjustment_lookup | uVar3 & 0xffff => uint |  => wVar8 | uVar4 => uVar3 | _DAT_00801c22 => power_take_off_governor_derivative_gain_adjustment_lookup . x_input | ( table_interp_args_t * ) =>  | DAT_00801c1c => power_take_off_governor_derivative_gain_adjustment_lookup | _DAT_00801c30 
+0x0002d9d2: 7 token changes:  => word wVar2 ; | _DAT_00801c14 => power_take_off_gain_adjustment_lookup . x_input | uVar1 => wVar2 | ( table_interp_args_t * ) =>  | DAT_00801c0e => power_take_off_gain_adjustment_lookup | uVar1 & 0xffff => uint |  => wVar2
+0x0002db2a: 17 token changes: _DAT_00801c1c => power_take_off_governor_derivative_gain_adjustment_lookup . x_axis_offset | _DAT_00801c1e => power_take_off_governor_derivative_gain_adjustment_lookup . x_axis_pointer | & =>  | _DAT_00801c24 => power_take_off_governor_derivative_gain_adjustment_lookup . y_values_pointer | _DAT_00801c2a => power_take_off_governor_integral_gain_adjustment_lookup . x_axis_offset | _DAT_00801c2c => power_take_off_governor_integral_gain_adjustment_lookup . x_axis_pointer | 0x8088e8 => power_take_off_governor_integral_gain_adjustment_axis | _DAT_00801c32 => power_take_off_governor_integral_gain_adj
+0x0002efd0: 5 token changes:  => . etc1_status_byte_1 |  => . etc1_status_byte_1 |  => . etc1_status_byte_1 |  => . etc1_status_byte_1 |  => . etc1_status_byte_1
+0x0002f632: 15 token changes: _DAT_00801e36 => engine_retarder_torque_stage_1_lookup . x_input | ( table_interp_args_t * ) =>  | DAT_00801e30 => engine_retarder_torque_stage_1_lookup | _DAT_00801e44 => engine_retarder_torque_stage_2_lookup . x_input | ( table_interp_args_t * ) =>  | DAT_00801e3e => engine_retarder_torque_stage_2_lookup | _DAT_00801e52 => engine_retarder_torque_stage_3_lookup . x_input | ( table_interp_args_t * ) =>  | DAT_00801e4c => engine_retarder_torque_stage_3_lookup | _DAT_00801e60 => engine_retarder_torque_stage_4_lookup . x_input | ( table_interp_args_t * ) =>  | DAT_00801e5a => engine_retarder_torq
+0x0002faa4: 25 token changes: _DAT_00801e32 => engine_retarder_torque_stage_1_lookup . x_axis_pointer | 0x6052a => ( word * ) & engine_retarder_torque_engine_speed_axis | _DAT_00801e38 => engine_retarder_torque_stage_1_lookup . y_values_pointer | 0x60534 => ( word * ) & engine_retarder_torque_stage_1_values | _DAT_00801e30 => engine_retarder_torque_stage_1_lookup . x_axis_offset | _DAT_00801e40 => engine_retarder_torque_stage_2_lookup . x_axis_pointer | 0x6052a => ( word * ) & engine_retarder_torque_engine_speed_axis | _DAT_00801e46 => engine_retarder_torque_stage_2_lookup . y_values_pointer | 0x6053e => ( word * ) & engin
+0x000300d4: 38 token changes:  => int iVar2 ; | cVar2 => cVar3 | ; int iVar3 =>  | ( char * ) =>  | ' \ =>  | ' =>  | ( byte * ) =>  |  => ( byte * ) | ( undefined1 * ) =>  | ( char * ) =>  | ( char * ) =>  | + =>  |  => ( byte * ) | ( undefined1 * ) =>  |  => ( byte * ) | ( byte * ) =>  | iVar3 => iVar2 | ( j1708_receive_buffer_read_pointer - j1708_receive_buffer_write_pointer ) + =>  |  => - ( int ) j1708_receive_buffer_write_pointer | iVar3 => iVar2 |  => 0xfe - | j1708_receive_buffer_read_pointer - => int ) | ) + 0xfe =>  | iVar3 => ( int ) ( j1708_receive_buffer_read_pointer + iVar2 ) | ( undefined1 * ) =>  |  => ( by
+0x00030498: 4 token changes: _DAT_0080615e => trip_engine_brake_time | _DAT_0080615e => trip_engine_brake_time | _DAT_00806176 => lifetime_engine_brake_time | _DAT_00806176 => lifetime_engine_brake_time
+0x000306ca: 29 token changes: WORD_0080de66 => trip_counters_reset_pending_flag | WORD_0080de66 => trip_counters_reset_pending_flag | _DAT_0080615e => trip_engine_brake_time | _DAT_00806162 => trip_engine_run_time | _DAT_0080617e => trip_electronic_smart_power_high_horsepower_time | _DAT_00804fa4 => trip_fuel_consumed | 0 => TRIP_INFORMATION_ENGINE_STATE_ENGINE_OFF | 2 => TRIP_INFORMATION_ENGINE_STATE_POWER_TAKE_OFF | 1 => TRIP_INFORMATION_ENGINE_STATE_IDLE | 3 => TRIP_INFORMATION_ENGINE_STATE_DRIVING | 0 => TRIP_INFORMATION_ENGINE_STATE_ENGINE_OFF | _DAT_00806162 => trip_engine_run_time | _DAT_00806162 => trip_engine_run_
+0x00030ade: 1 token changes: 0 => TRIP_INFORMATION_ENGINE_STATE_ENGINE_OFF
+0x00031496: 19 token changes: _DAT_00808a80 => trending_engine_speed_upper_limit | _DAT_00801e98 => trending_engine_speed_trigger_satisfied_flag | _DAT_00801e98 => trending_engine_speed_trigger_satisfied_flag | _DAT_00801e9a => trending_engine_load_trigger_satisfied_flag | _DAT_00801e9a => trending_engine_load_trigger_satisfied_flag | _DAT_00808a88 => trending_intake_manifold_temperature_upper_limit | _DAT_00808a8a => trending_intake_manifold_temperature_lower_limit | _DAT_00801e9c => trending_intake_manifold_temperature_trigger_satisfied_flag | _DAT_00801e9c => trending_intake_manifold_temperature_trigger_satisfied_flag |
+0x000315be: 64 token changes: _DAT_00801ea0 => trending_minute_divider_counter | _DAT_00801ea0 => trending_minute_divider_counter | _DAT_00801ea0 => trending_minute_divider_counter | _DAT_00801ea0 => trending_minute_divider_counter | _DAT_00804a16 => trending_lifetime_fuel_used_snapshot_cal | _DAT_00808a7c => trending_sample_interval_hours | _DAT_008049f6 => trending_interval_window_length_cal | _DAT_008049f6 => trending_interval_window_length_cal | _DAT_00804a06 => trending_interval_window_active_previous_cal |  => ( & trending_storage_table_cal [ 0 ] . oil_pressure ) [ ( short ) ( trending_write_index_cal * 7 ) ] = 0 ; (
+0x00031a68: 4 token changes: _DAT_008049ea => trending_engine_rebuild_flag_cal | _DAT_00804a06 => trending_interval_window_active_previous_cal | _DAT_008049ea => trending_engine_rebuild_flag_cal | _DAT_008049fe => trending_sample_count_before_rebuild_cal
+0x00031bce: 2 token changes: DAT_00801eca => j1939_pgn65269_barometric_pressure | undefined1 => byte
+0x00031c1a: 1 token changes: DAT_00801eca => j1939_pgn65269_barometric_pressure
+0x00032052: 34 token changes: undefined => byte | puVar2 => pbVar2 | puVar2 => pbVar2 | & DAT_00801f12 => j1939_pgn65259_payload | puVar2 => pbVar2 | * ( undefined1 * ) ( => component_identification_make_cal [ | + 0x803dcc ) => ] | puVar2 => pbVar2 | puVar2 => pbVar2 | DAT_00801f17 => j1939_pgn65259_payload [ 5 ] | puVar2 => pbVar2 | & DAT_00801f18 => j1939_pgn65259_payload + 6 | puVar2 => pbVar2 | * ( undefined1 * ) ( => component_identification_model_cal [ | + 0x803dd1 ) => ] | puVar2 => pbVar2 | puVar2 => pbVar2 | DAT_00801f29 => j1939_pgn65259_payload [ 0x17 ] | puVar2 => pbVar2 | & DAT_00801f2a => j1939_pgn65259_paylo
+0x000320f6: 1 token changes: & DAT_00801f12 => j1939_pgn65259_payload
+0x00033164: 2 token changes: DAT_008034eb => j1939_pgn65263_engine_oil_pressure | undefined1 => byte
+0x00033716: 2 token changes: _DAT_00804fc0 => total_engine_operating_time | _DAT_00803548 => j1939_pgn65253_total_engine_hours
+0x00033754: 2 token changes:  => ( undefined * ) | DAT_00803548 => j1939_pgn65253_total_engine_hours
+0x000337c4: 15 token changes: DAT_00803560 => j1939_pgn65262_engine_coolant_temperature | ' \ =>  | ' =>  | DAT_00803560 => j1939_pgn65262_engine_coolant_temperature | ' ( ' => 0x28 | DAT_00803560 => j1939_pgn65262_engine_coolant_temperature | - 6 => 0xfa | DAT_00803561 => j1939_pgn65262_fuel_temperature | ' \ =>  | ' =>  | DAT_00803561 => j1939_pgn65262_fuel_temperature | ' ( ' => 0x28 | DAT_00803561 => j1939_pgn65262_fuel_temperature | - 6 => 0xfa | _DAT_00803562 => j1939_pgn65262_engine_oil_temperature
+0x00033880: 1 token changes: DAT_00803560 => j1939_pgn65262_engine_coolant_temperature
+0x00033a62: 4 token changes: _DAT_00804fa4 => trip_fuel_consumed | _DAT_008035a8 => j1939_pgn65257_trip_fuel | _DAT_00804fa0 => total_fuel_consumed | _DAT_008035ac => j1939_pgn65257_total_fuel_used
+0x00033aea: 2 token changes:  => ( undefined * ) | DAT_008035a8 => j1939_pgn65257_trip_fuel
+0x00033e58: 9 token changes: DAT_0080360f => j1939_pgn65270_boost_pressure | undefined1 => byte | DAT_00803610 => j1939_pgn65270_intake_manifold_temperature | ' \ =>  | ' =>  | DAT_00803610 => j1939_pgn65270_intake_manifold_temperature | ' ( ' => 0x28 | DAT_00803610 => j1939_pgn65270_intake_manifold_temperature | - 6 => 0xfa
+0x00033f5a: 12 token changes: DAT_0080362a => j1939_pgn65264_power_take_off_set_speed [ 1 ] | undefined1 => byte | DAT_00803629 => j1939_pgn65264_power_take_off_set_speed [ 0 ] | undefined1 => byte | DAT_0080362b => j1939_pgn65264_enable_and_remote_switches_byte | DAT_0080362b => j1939_pgn65264_enable_and_remote_switches_byte | DAT_0080362b => j1939_pgn65264_enable_and_remote_switches_byte | DAT_0080362b => j1939_pgn65264_enable_and_remote_switches_byte | DAT_0080362c => j1939_pgn65264_set_and_resume_switches_byte | DAT_0080362c => j1939_pgn65264_set_and_resume_switches_byte | DAT_0080362c => j1939_pgn65264_set_and_resume_
+0x00034232: 2 token changes: _DAT_00803662 => j1939_pgn65248_trip_distance | _DAT_00803666 => j1939_pgn65248_total_vehicle_distance
+0x0003429a: 2 token changes:  => ( undefined * ) | DAT_00803662 => j1939_pgn65248_trip_distance
+0x00034394: 1 token changes: _DAT_00803696 => j1939_pgn65255_total_power_take_off_hours
+0x000343d2: 1 token changes:  => ( undefined * )
+0x00034440: 1 token changes: & DAT_00803e7f => vehicle_vin_string_cal
+0x000344ce: 1 token changes: DAT_008036ac => j1939_pgn65279_water_in_fuel_indicator_byte
+0x00034cc4: 19 token changes: ushort uVar1 => word wVar1 | _DAT_008036c6 => wet_stack_timing_by_intake_manifold_temperature_lookup . x_axis_offset | _DAT_008036c8 => wet_stack_timing_by_intake_manifold_temperature_lookup . x_axis_pointer | & =>  | _DAT_008036cc => wet_stack_timing_by_intake_manifold_temperature_lookup . x_input | _DAT_008036ce => wet_stack_timing_by_intake_manifold_temperature_lookup . y_values_pointer | 0x8071f6 => wet_stack_timing_by_intake_manifold_temperature_values | _DAT_008036d4 => wet_stack_timing_by_coolant_temperature_lookup . x_axis_offset | _DAT_008036d6 => wet_stack_timing_by_coolant_temperatu
+0x00034d52: 2 token changes: _DAT_00808ac4 => wet_stack_timing_advance_minimum | _DAT_00808ac4 => wet_stack_timing_advance_minimum
+0x00034de0: 37 token changes: short => word | table_interp_args_t => table_lookup_1d_arguments_t | args => arguments | short => word | psVar1 => pwVar1 | psVar1 => pwVar1 | ( short * ) args => arguments | x_axis_ptr => x_axis_pointer | psVar1 => pwVar1 | args => arguments | current_index => x_axis_offset | args => arguments | input_value => x_input | ( ushort ) psVar1 => pwVar1 | ( ushort * ) ( psVar1 => pwVar1 | ) =>  | psVar1 => pwVar1 |  => ( short ) | psVar1 => pwVar1 | psVar1 => pwVar1 |  => ( short ) | psVar1 => pwVar1 | psVar1 => pwVar1 | args => arguments | current_index => x_axis_offset | psVar1 => pwVar1 | args =
+0x00035088: 80 token changes: undefined8 => word |  => table_lookup_2d_arguments_t * lookup ) { | table_args ) { short => pwVar1 ; word | psVar1 => pwVar2 | short * psVar2 ; undefined4 in_D0 => ushort uVar3 | ; uint uVar3 ; undefined4 in_D1 =>  | undefined2 => ushort | uVar7 => * puVar7 | uVar8 => * puVar8 | ushort * puVar11 ; ushort * puVar12 => bool bVar11 | bVar13 => bVar12 | bool bVar14 => pwVar1 = lookup -> x_axis_pointer | psVar1 => puVar7 | * =>  | short * => ushort | table_args => ( int ) pwVar1 | 1 => ( int ) ( short ) * pwVar1 | psVar1 => pwVar1 | * psVar1 => ( short ) lookup -> x_axis_offset | puVar11 => uVar5 =
+---- census of distinct changes
+  86 uVar7 => uVar6
+  52 ( table_interp_args_t * ) => 
+  43 undefined1 => byte
+  35 . x_axis_offset => 
+  29 iVar6 => iVar3
+  25 puVar17 => puVar15
+  23 cVar3 => cVar4
+  21 & => 
+  21 ( byte * ) => 
+  20 uVar4 => uVar3
+  19  => ( uint )
+  18 cVar2 => cVar3
+  18  => ( byte * )
+  18 wVar7 => wVar6
+  18 wVar5 => wVar4
+  17 psVar16 => psVar14
+  17 puVar2 => pbVar2
+  15 ( char * ) => 
+  14 uVar1 => uVar2
+  14 uVar1 => wVar1
+  13 ( dword ) => 
+  13 puVar8 => puVar7
+  13 uVar2 => uVar3
+  12 uVar4 => uVar5
+  11 ( undefined1 * ) => 
+  11 uVar4 => wVar4
+  11 uVar4 => uVar7
+  11 pwVar15 => pwVar13
+  11 cVar3 => cVar5
+  10  => 0xfe -
+  10 cVar1 => cVar2
+  10 sVar1 => wVar1
+  10 piVar12 => piVar10
+  10 pdVar13 => pdVar11
+  10 * 2 ) => ]
+  10 puVar4 => pbVar4
+  10 puVar3 => pbVar3
+  10 psVar1 => pwVar1
+   9 ) + 0xfe => 
+   9 0x6052a => ( word * ) & engine_retarder_torque_engine_speed_axis
+   9 wVar3 => wVar4
+   9 uVar2 => wVar2
+   8 ( j1708_transmit_buffer_read_pointer - j1708_transmit_buffer_write_pointer ) + => 
+   8  => - ( int ) j1708_transmit_buffer_write_pointer
+   8 j1708_transmit_buffer_read_pointer - => int )
+   8 sVar10 => sVar9
+   8 uVar6 => uVar7
+   8 uint => dword
+   7  => . x_axis_offset
+   7 sVar2 => wVar2
+   7  => ( dword )
+   7 uVar5 => wVar5
+   7 wVar2 => wVar3
+   7 cVar5 => cVar4
+   7 cVar1 => bVar1
+   7 dVar8 => dVar7
+   6 iVar2 => iVar1
+   6 undefined2 => word
+   6 ushort => word
+   6 iVar3 => iVar2
+   6 iVar7 => iVar6
+   6 ' \ => 
+   6 ' => 
+   5 wVar7 => wVar4
+   5 uVar6 => wVar6
+   5 pbVar14 => pbVar12
+   5 puVar4 => pwVar4
+   5 puVar5 => pwVar5
+   5 ' \ x01 ' => 1
+   5 bVar8 => bVar9
+   5 DAT_008005fe => fault_derate_fuel_limit_at_torque_curve_points_lookup
+   5 uVar5 => uVar6
+   5 sVar3 => wVar3
+   5 ptVar6 => ptVar5
+   5 bVar2 => bVar1
+   5 cVar3 => cVar2
+   5 ptVar4 => ptVar3
+   5 puVar4 => puVar5
+   5  => . etc1_status_byte_1
+   5 args => arguments
+   5 puVar12 => puVar10
+   4 short sVar1 => word wVar1
+   4 short sVar2 => word wVar2
+   4 _DAT_00804fa4 => trip_fuel_consumed
+   4 _DAT_00804fc0 => total_engine_operating_time
+   4 0x60566 => ( word * ) & engine_retarder_torque_stage_6_values
+   4 dVar9 => dVar8
+   4 psVar20 => psVar18
+   4 rpm_speed_bin_index * 2 ) => 1 ]
+   4 puVar18 => puVar16
+   4 puVar21 => pwVar13
+   4 puVar23 => pwVar20
+   4 MVar6 => MVar7
+   4 uVar3 => wVar3
+   4 sVar3 => sVar2
+   4 uVar3 => uVar1
+   4 wVar4 => wVar2
+   4 uVar3 => uVar4
+   4 bVar8 => bVar7
+   4 bVar3 => bVar1
+   4 _DAT_00806162 => trip_engine_run_time
+   4 _DAT_00801e98 => trending_engine_speed_trigger_satisfied_flag
+   4 _DAT_00801e9a => trending_engine_load_trigger_satisfied_flag
+   4 _DAT_00801e9c => trending_intake_manifold_temperature_trigger_satisfied_flag
+   4 _DAT_00801e9e => trending_coolant_temperature_trigger_satisfied_flag
+   4 _DAT_00801ea0 => trending_minute_divider_counter
+   4 _DAT_00804a06 => trending_interval_window_active_previous_cal
+   4 DAT_00801ea2 => trending_sample_ready_flag
+   4 * ( word * ) => 
+   4  => ( undefined * )
+   4 DAT_00803560 => j1939_pgn65262_engine_coolant_temperature
+   4 DAT_0080362b => j1939_pgn65264_enable_and_remote_switches_byte
+   4 DAT_0080362c => j1939_pgn65264_set_and_resume_switches_byte
+   4 short => word
+   3  => int iVar1 ;
+   3 cVar1 ; int iVar2 => cVar2
+   3 iVar2 => ( int ) ( j1708_transmit_buffer_read_pointer + iVar1 )
+   3 ) => 
+   3 _DAT_00804fa0 => total_fuel_consumed
+   3 wVar7 => wVar5
+   3 uVar5 => uVar7
+   3 _DAT_0080db34 => friction_fuel_correction_by_coolant_temperature_lookup . x_input
+   3 DAT_0080db2e => friction_fuel_correction_by_coolant_temperature_lookup
+   3 cVar4 => bVar1
+   3 dVar2 => pbVar4
+   3 bVar9 => bVar10
+   3 bVar7 => bVar8
+   3 ( uint ) => 
+   3 ushort uVar1 => word wVar1
+   3 sVar3 => wVar4
+   3 sVar3 => ( short ) wVar3
+   3 ' \ x02 ' => 2
+   3 _DAT_00806d3c => intake_manifold_temperature_linearization_axis [ 1 ]
+   3 * ( undefined1 * ) ( => component_identification_make_cal [
+   3 + 0x803dcc ) => ]
+   3 * ( undefined1 * ) ( => component_identification_model_cal [
+   3 + 0x803dd1 ) => ]
+   3 * ( undefined1 * ) ( => component_identification_serial_number_cal [
+   3 + 0x803de2 ) => ]
+   3 iVar5 => iVar4
+   3 iVar6 => iVar5
+   3 _DAT_0080615e => trip_engine_brake_time
+   3 _DAT_0080617e => trip_electronic_smart_power_high_horsepower_time
+   3 0 => TRIP_INFORMATION_ENGINE_STATE_ENGINE_OFF
+   3 + => [ 0 ] . oil_pressure ) [
+   3 + => ) [
+   3 * => 
+   3 ' ( ' => 0x28
+   3 - 6 => 0xfa
+   3 DAT_00803561 => j1939_pgn65262_fuel_temperature
+   3 DAT_00803610 => j1939_pgn65270_intake_manifold_temperature
+   3 current_index => x_axis_offset
+   3 args => ( int ) arguments
+   3 y_axis_ptr => y_values_pointer
+   3 psVar1 => pwVar2
+   3 puVar11 => puVar9
+   2 table_interp_args_t => table_lookup_1d_arguments_t
+   2 input_value => x_input
+   2 uint => ushort
+   2 ( uint ) ( => 
+   2 sVar2 => wVar1
+   2 _DAT_00800194 => engine_retarder_full_scale_torque_lookup . x_axis_pointer
+   2 0x60534 => ( word * ) & engine_retarder_torque_stage_1_values
+   2 0x6053e => ( word * ) & engine_retarder_torque_stage_2_values
+   2 0x60548 => ( word * ) & engine_retarder_torque_stage_3_values
+   2 0x60552 => ( word * ) & engine_retarder_torque_stage_4_values
+   2 0x6055c => ( word * ) & engine_retarder_torque_stage_5_values
+   2 sVar1 => ( short ) wVar1
+   2 sVar2 => ( short ) wVar2
+   2 ushort uVar4 => word wVar4
+   2 puVar11 => pwVar13
+   2 ( undefined2 * ) & DAT_00809ebe => cylinder_balance_imaginary_2_dynamics_compensation_values
+   2 ( undefined2 * ) & DAT_00809e9e => cylinder_balance_real_2_dynamics_compensation_values
+   2 _DAT_008092e0 => wVar4
+   2 cVar4 => cVar5
+   2  => )
+   2 cVar5 => cVar6
+   2 iVar4 => iVar3
+   2 uVar1 => bVar2
+   2 = ( word ) uVar2 => 
+   2 ushort uVar2 => word wVar2
+   2 0x8071f6 => wet_stack_timing_by_intake_manifold_temperature_values
+   2 uVar6 => 
+   2 0x8071a8 => fault_derate_fuel_limit_by_engine_speed_values
+   2 uVar3 => wVar4
+   2 uVar4 => wVar3
+   2 short sVar3 => word wVar3
+   2 _DAT_00800724 => high_speed_governor_derivative_gain_adjustment_multiplier_lookup . x_input
+   2 _DAT_00800732 => high_speed_governor_proportional_gain_adjustment_multiplier_lookup . x_input
+   2 _DAT_00800740 => high_speed_governor_integral_gain_adjustment_multiplier_lookup . x_input
+   2 dVar2 => pbVar2
+   2 iVar5 => iVar3
+   2  => int iVar2 ;
+   2 cVar2 ; int iVar3 => cVar3
+   2 iVar3 => ( int ) ( j1708_transmit_buffer_read_pointer + iVar2 )
+   2 iVar4 => iVar2
+   2 ' \ x03 ' => 3
+   2 0x611d0 => ( word * ) & engine_protection_oil_pressure_limit_engine_speed_axis
+   2 undefined => byte
+   2 uVar1 => bVar1
+   2 _DAT_00801c14 => power_take_off_gain_adjustment_lookup . x_input
+   2 DAT_00801c0e => power_take_off_gain_adjustment_lookup
+   2 _DAT_00806176 => lifetime_engine_brake_time
+   2 WORD_0080de66 => trip_counters_reset_pending_flag
+   2 2 => TRIP_INFORMATION_ENGINE_STATE_POWER_TAKE_OFF
+   2 1 => TRIP_INFORMATION_ENGINE_STATE_IDLE
+   2 3 => TRIP_INFORMATION_ENGINE_STATE_DRIVING
+   2 _DAT_0080401e => engine_run_time_tool_offset_cal
+   2 _DAT_00806182 => lifetime_electronic_smart_power_high_horsepower_time
+   2 _DAT_00804a08 => trending_all_triggers_satisfied_flag_cal
+   2 _DAT_00804a16 => trending_lifetime_fuel_used_snapshot_cal
+   2 _DAT_008049f6 => trending_interval_window_length_cal
+   2 _DAT_00804a12 => trending_torque_curve_maximum_fueling_cal
+   2 ( => [
+   2 * 2 + 0x804a1e ) => ]
+   2 * ( undefined2 * ) => 
+   2 _DAT_008049ea => trending_engine_rebuild_flag_cal
+   2 DAT_00801eca => j1939_pgn65269_barometric_pressure
+   2 & DAT_00801f12 => j1939_pgn65259_payload
+   2 _DAT_00808ac4 => wet_stack_timing_advance_minimum
+   2  => ( short )
+   1 _DAT_00800050 => acceleration_noise_control_fuel_limit_lookup . x_input
+   1 DAT_0080004a => acceleration_noise_control_fuel_limit_lookup
+   1 _DAT_0080005e => acceleration_noise_control_timing_limit_lookup . x_input
+   1 _DAT_0080004a => acceleration_noise_control_fuel_limit_lookup . x_axis_offset
+   1 _DAT_0080004c => acceleration_noise_control_fuel_limit_lookup . x_axis_pointer
+   1 0x6009e => ( word * ) & acceleration_noise_control_fuel_limit_axis
+   1 0x600b2 => ( word * ) & acceleration_noise_control_fuel_limit_values
+   1 0x600c6 => ( word * ) & acceleration_noise_control_timing_limit_axis
+   1 0x600da => ( word * ) & acceleration_noise_control_timing_limit_values
+   1 DAT_0080a792 => intake_manifold_temperature_linearization_lookup
+   1 ( table_interp_args_t * ) & => 
+   1 [ => +
+   1 ] . x_axis_ptr => 
+   1 _DAT_0080a79a => intake_manifold_temperature_linearization_lookup . y_values_pointer
+   1 0x806d6e => intake_manifold_temperature_linearization_values
+   1 _DAT_0080a794 => intake_manifold_temperature_linearization_lookup . x_axis_pointer
+   1 _DAT_0080a792 => intake_manifold_temperature_linearization_lookup . x_axis_offset
+   1 _DAT_0080a7a8 => fuel_temperature_linearization_lookup . y_values_pointer
+   1 0x806dce => fuel_temperature_linearization_values
+   1 _DAT_0080a7a2 => fuel_temperature_linearization_lookup . x_axis_pointer
+   1 0x806da2 => fuel_temperature_linearization_axis
+   1 _DAT_0080a7a0 => fuel_temperature_linearization_lookup . x_axis_offset
+   1 _DAT_0080a7b6 => coolant_level_linearization_lookup . y_values_pointer
+   1 0x806e0c => coolant_level_linearization_values
+   1 _DAT_0080a7b0 => coolant_level_linearization_lookup . x_axis_pointer
+   1 0x806dfa => coolant_level_linearization_axis
+   1 _DAT_0080a7ae => coolant_level_linearization_lookup . x_axis_offset
+   1 _DAT_0080a7c4 => fuel_pressure_linearization_lookup . y_values_pointer
+   1 _DAT_0080a7be => fuel_pressure_linearization_lookup . x_axis_pointer
+   1 _DAT_0080a7bc => fuel_pressure_linearization_lookup . x_axis_offset
+   1 _DAT_0080a7d2 => oil_pressure_linearization_lookup . y_values_pointer
+   1 _DAT_0080a7cc => oil_pressure_linearization_lookup . x_axis_pointer
+   1 0x806e2a => oil_pressure_linearization_axis
+   1 _DAT_0080a7ca => oil_pressure_linearization_lookup . x_axis_offset
+   1 _DAT_0080a7e0 => boost_pressure_linearization_lookup . y_values_pointer
+   1 _DAT_0080a7da => boost_pressure_linearization_lookup . x_axis_pointer
+   1 0x806e42 => boost_pressure_linearization_axis
+   1 _DAT_0080a7d8 => boost_pressure_linearization_lookup . x_axis_offset
+   1 _DAT_0080a7ee => coolant_temperature_linearization_lookup . y_values_pointer
+   1 _DAT_0080a7e8 => coolant_temperature_linearization_lookup . x_axis_pointer
+   1 0x806e56 => coolant_temperature_linearization_axis
+   1 _DAT_0080a7e6 => coolant_temperature_linearization_lookup . x_axis_offset
+   1 _DAT_0080a7fc => ambient_air_temperature_linearization_lookup . y_values_pointer
+   1 _DAT_0080a7f6 => ambient_air_temperature_linearization_lookup . x_axis_pointer
+   1 0x806ebe => ambient_air_temperature_linearization_axis
+   1 _DAT_0080a7f4 => ambient_air_temperature_linearization_lookup . x_axis_offset
+   1 _DAT_0080a80a => power_steering_temperature_linearization_lookup . y_values_pointer
+   1 _DAT_0080a804 => power_steering_temperature_linearization_lookup . x_axis_pointer
+   1 0x806ee2 => power_steering_temperature_linearization_axis
+   1 _DAT_0080a802 => power_steering_temperature_linearization_lookup . x_axis_offset
+   1 _DAT_0080a818 => exhaust_pressure_linearization_lookup . y_values_pointer
+   1 _DAT_0080a812 => exhaust_pressure_linearization_lookup . x_axis_pointer
+   1 0x806eee => exhaust_pressure_linearization_axis
+   1 _DAT_0080a810 => exhaust_pressure_linearization_lookup . x_axis_offset
+   1 _DAT_0080a826 => sampled_throttle_linearization_lookup . y_values_pointer
+   1 _DAT_0080a820 => sampled_throttle_linearization_lookup . x_axis_pointer
+   1 0x806efa => sampled_throttle_linearization_axis
+   1 _DAT_0080a81e => sampled_throttle_linearization_lookup . x_axis_offset
+   1 _DAT_0080a834 => remote_throttle_linearization_lookup . y_values_pointer
+   1 _DAT_0080a82e => remote_throttle_linearization_lookup . x_axis_pointer
+   1 0x806f16 => remote_throttle_linearization_axis
+   1 _DAT_0080a82c => remote_throttle_linearization_lookup . x_axis_offset
+   1 _DAT_0080a842 => ambient_air_pressure_linearization_lookup . y_values_pointer
+   1 _DAT_0080a83c => ambient_air_pressure_linearization_lookup . x_axis_pointer
+   1 0x806f32 => ambient_air_pressure_linearization_axis
+   1 _DAT_0080a83a => ambient_air_pressure_linearization_lookup . x_axis_offset
+   1 _DAT_0080a850 => battery_voltage_linearization_lookup . y_values_pointer
+   1 _DAT_0080a84a => battery_voltage_linearization_lookup . x_axis_pointer
+   1 0x806f46 => battery_voltage_linearization_axis
+   1 _DAT_0080a848 => battery_voltage_linearization_lookup . x_axis_offset
+   1 _DAT_0080a85e => engine_speed_sensor_supply_voltage_linearization_lookup . y_values_pointer
+   1 _DAT_0080a858 => engine_speed_sensor_supply_voltage_linearization_lookup . x_axis_pointer
+   1 0x806f52 => engine_speed_sensor_supply_voltage_linearization_axis
+   1 _DAT_0080a856 => engine_speed_sensor_supply_voltage_linearization_lookup . x_axis_offset
+   1 _DAT_0080a86c => throttle_position_sensor_supply_voltage_linearization_lookup . y_values_pointer
+   1 _DAT_0080a866 => throttle_position_sensor_supply_voltage_linearization_lookup . x_axis_pointer
+   1 0x806f5e => throttle_position_sensor_supply_voltage_linearization_axis
+   1 _DAT_0080a864 => throttle_position_sensor_supply_voltage_linearization_lookup . x_axis_offset
+   1 _DAT_0080a87a => vehicle_connector_sensor_supply_voltage_linearization_lookup . y_values_pointer
+   1 _DAT_0080a874 => vehicle_connector_sensor_supply_voltage_linearization_lookup . x_axis_pointer
+   1 0x806f6a => vehicle_connector_sensor_supply_voltage_linearization_axis
+   1 _DAT_0080a872 => vehicle_connector_sensor_supply_voltage_linearization_lookup . x_axis_offset
+   1 _DAT_0080a888 => engine_connector_sensor_supply_voltage_linearization_lookup . y_values_pointer
+   1 _DAT_0080a882 => engine_connector_sensor_supply_voltage_linearization_lookup . x_axis_pointer
+   1 0x806f76 => engine_connector_sensor_supply_voltage_linearization_axis
+   1 _DAT_0080a880 => engine_connector_sensor_supply_voltage_linearization_lookup . x_axis_offset
+   1 _DAT_0080a896 => frequency_throttle_input_supply_voltage_linearization_lookup . y_values_pointer
+   1 _DAT_0080a890 => frequency_throttle_input_supply_voltage_linearization_lookup . x_axis_pointer
+   1 0x806f82 => frequency_throttle_input_supply_voltage_linearization_axis
+   1 _DAT_0080a88e => frequency_throttle_input_supply_voltage_linearization_lookup . x_axis_offset
+   1 _DAT_0080a8a4 => cruise_control_switch_multiplexer_linearization_lookup . y_values_pointer
+   1 _DAT_0080a89e => cruise_control_switch_multiplexer_linearization_lookup . x_axis_pointer
+   1 0x806f8e => cruise_control_switch_multiplexer_linearization_axis
+   1 _DAT_0080a89c => cruise_control_switch_multiplexer_linearization_lookup . x_axis_offset
+   1 _DAT_0080a8b2 => water_in_fuel_linearization_lookup . y_values_pointer
+   1 _DAT_0080a8ac => water_in_fuel_linearization_lookup . x_axis_pointer
+   1 0x806fda => water_in_fuel_linearization_axis
+   1 _DAT_0080a8aa => water_in_fuel_linearization_lookup . x_axis_offset
+   1 _DAT_0080a8c0 => egr_current_feedback_linearization_lookup . y_values_pointer
+   1 _DAT_0080a8ba => egr_current_feedback_linearization_lookup . x_axis_pointer
+   1 0x806ffe => egr_current_feedback_linearization_axis
+   1 _DAT_0080a8b8 => egr_current_feedback_linearization_lookup . x_axis_offset
+   1 _DAT_0080a8ce => programming_pulse_supply_voltage_linearization_lookup . y_values_pointer
+   1 _DAT_0080a8c8 => programming_pulse_supply_voltage_linearization_lookup . x_axis_pointer
+   1 0x80700e => programming_pulse_supply_voltage_linearization_axis
+   1 _DAT_0080a8c6 => programming_pulse_supply_voltage_linearization_lookup . x_axis_offset
+   1 _DAT_0080a8dc => high_side_gate_bias_supply_voltage_linearization_lookup . y_values_pointer
+   1 _DAT_0080a8d6 => high_side_gate_bias_supply_voltage_linearization_lookup . x_axis_pointer
+   1 0x80701a => high_side_gate_bias_supply_voltage_linearization_axis
+   1 _DAT_0080a8d4 => high_side_gate_bias_supply_voltage_linearization_lookup . x_axis_offset
+   1 _DAT_0080a8ea => operational_amplifier_and_comparator_supply_voltage_linearization_lookup . y_values_pointer
+   1 _DAT_0080a8e4 => operational_amplifier_and_comparator_supply_voltage_linearization_lookup . x_axis_pointer
+   1 0x807026 => operational_amplifier_and_comparator_supply_voltage_linearization_axis
+   1 _DAT_0080a8e2 => operational_amplifier_and_comparator_supply_voltage_linearization_lookup . x_axis_offset
+   1 uint uVar1 => word wVar1
+   1 short sVar2 => ushort uVar2
+   1 ( fault_processing_enable_flags [ 2 ] & 2 ) => uVar2
+   1 0xffff0001 => 1
+   1 0xffff0010 => 0x10
+   1 sVar2 => uVar2
+   1 ( short ) uVar1 => wVar1
+   1 _DAT_00800104 => speed_request_blend_weight_by_speed_difference_lookup . x_axis_pointer
+   1 0x807acc => speed_request_blend_weight_by_speed_difference_axis
+   1 0x807ad8 => speed_request_blend_weight_by_speed_difference_values
+   1 _DAT_0080011e => all_speed_governor_friction_fuel_lookup . x_input
+   1 DAT_00800118 => all_speed_governor_friction_fuel_lookup
+   1 0x807230 => all_speed_governor_friction_fuel_axis
+   1 0x807242 => all_speed_governor_friction_fuel_values
+   1 _DAT_00800118 => all_speed_governor_friction_fuel_lookup . x_axis_offset
+   1 0x807254 => all_speed_governor_coolant_fuel_adjustment_axis
+   1 _DAT_0080012e => all_speed_governor_coolant_fuel_adjustment_lookup . y_values_pointer
+   1 DAT_00800136 => all_speed_governor_alternate_droop_lookup
+   1 _DAT_00800136 => all_speed_governor_alternate_droop_lookup . x_axis_offset
+   1 0x60462 => ( word * ) & all_speed_governor_alternate_droop_axis
+   1 _DAT_0080013e => all_speed_governor_alternate_droop_lookup . y_values_pointer
+   1 0x60472 => ( word * ) & all_speed_governor_alternate_droop_values
+   1 0x60482 => ( word * ) & all_speed_governor_droop_axis
+   1 0x60492 => ( word * ) & all_speed_governor_droop_values
+   1 * ( word * ) ( _DAT_00800194 + 8 ) => engine_retarder_full_scale_torque_lookup . x_axis_pointer [ 4 ]
+   1 ushort uVar5 => word wVar5
+   1 ushort uVar6 => word wVar6
+   1 word wVar7 ; => 
+   1  => ; ushort uVar7
+   1 0x60596 => ( word * ) & cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_axis
+   1 0x605b2 => ( word * ) & cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_values
+   1 _DAT_00800210 => cylinder_pressure_maintenance_timing_per_temperature_degree_lookup . x_axis_pointer
+   1 0x60640 ; _DAT_00800216 = 0x6065c => ( word * ) & cylinder_pressure_maintenance_timing_per_temperature_degree_axis
+   1  => . y_values_pointer = ( word * ) & cylinder_pressure_maintenance_timing_per_temperature_degree_values ; cylinder_pressure_maintenance_timing_per_temperature_degree_lookup . x_axis_offset
+   1 uint uVar4 ; uint uVar5 => word wVar5
+   1 sVar10 ; ushort * puVar11 => sVar9
+   1 puVar18 => puVar16 ; short * psVar17 ; sdword * psVar18
+   1 sdword => word
+   1 psVar20 ; undefined2 * puVar21 ; short * psVar22 ; undefined2 * puVar23 => pwVar20
+   1 _DAT_00800262 => cylinder_balance_real_2_dynamics_compensation_lookup . x_input
+   1 DAT_0080025c => cylinder_balance_real_2_dynamics_compensation_lookup
+   1 DAT_0080026a => cylinder_balance_imaginary_2_dynamics_compensation_lookup
+   1 uVar4 & 0xffff => uint
+   1  => wVar4
+   1 uVar5 & 0xffff => uint
+   1  => wVar5
+   1 ( ushort * ) & DAT_008072f6 => cylinder_balance_engine_speed_axis
+   1  => pwVar13 = pwVar13 + 1 ;
+   1 uVar7 + 1 ; puVar11 = puVar11 => uVar6
+   1 * ( short * ) ( & DAT_00809e9e + => cylinder_balance_real_2_dynamics_compensation_values [
+   1 * ( short * ) ( & DAT_00809ea0 => cylinder_balance_real_2_dynamics_compensation_values [ rpm_speed_bin_index
+   1 * ( short * ) ( & DAT_00809ebe + => cylinder_balance_imaginary_2_dynamics_compensation_values [
+   1 * ( short * ) ( & DAT_00809ec0 => cylinder_balance_imaginary_2_dynamics_compensation_values [ rpm_speed_bin_index
+   1 * ( undefined2 * ) ( & DAT_00809e9e + => cylinder_balance_real_2_dynamics_compensation_values [
+   1 * ( undefined2 * ) ( & DAT_00809ea0 => cylinder_balance_real_2_dynamics_compensation_values [ rpm_speed_bin_index
+   1 * ( undefined2 * ) ( & DAT_00809ebe + => cylinder_balance_imaginary_2_dynamics_compensation_values [
+   1 * ( undefined2 * ) ( & DAT_00809ec0 => cylinder_balance_imaginary_2_dynamics_compensation_values [ rpm_speed_bin_index
+   1 - 10000 => 0xd8f0
+   1 _DAT_00800254 => cylinder_balance_threshold_lookup . x_input
+   1 DAT_0080024e => cylinder_balance_threshold_lookup
+   1 psVar19 => psVar17
+   1 psVar22 => psVar19
+   1  => psVar17 * sVar9 + *
+   1 sVar10 + * psVar22 * wVar3 => wVar4
+   1 psVar16 => psVar14 + 1 ; psVar17 = psVar17
+   1 psVar22 => pwVar13
+   1 psVar22 + 1 ; pwVar15 = pwVar15 => pwVar13
+   1 _DAT_0080024e => cylinder_balance_threshold_lookup . x_axis_offset
+   1 _DAT_00800250 => cylinder_balance_threshold_lookup . x_axis_pointer
+   1 _DAT_00800256 => cylinder_balance_threshold_lookup . y_values_pointer
+   1 0x807316 => cylinder_balance_threshold_values
+   1 _DAT_0080025c => cylinder_balance_real_2_dynamics_compensation_lookup . x_axis_offset
+   1 _DAT_0080025e => cylinder_balance_real_2_dynamics_compensation_lookup . x_axis_pointer
+   1 _DAT_00800264 => cylinder_balance_real_2_dynamics_compensation_lookup . y_values_pointer
+   1 & DAT_00809e9e => cylinder_balance_real_2_dynamics_compensation_values
+   1 _DAT_0080026a => cylinder_balance_imaginary_2_dynamics_compensation_lookup . x_axis_offset
+   1 ( dword ) & => 
+   1 _DAT_00800272 => cylinder_balance_imaginary_2_dynamics_compensation_lookup . y_values_pointer
+   1 & DAT_00809ebe => cylinder_balance_imaginary_2_dynamics_compensation_values
+   1 _DAT_00800278 => cylinder_balance_engine_speed_breakpoint_lookup . x_axis_offset
+   1 _DAT_0080027a => cylinder_balance_engine_speed_breakpoint_lookup . x_axis_pointer
+   1 0x807360 => cylinder_balance_engine_speed_breakpoint_axis
+   1 0x807370 => cylinder_balance_engine_speed_breakpoint_values
+   1 _DAT_00800286 => cylinder_balance_delta_fueling_breakpoint_lookup . x_axis_offset
+   1 0x807380 => cylinder_balance_delta_fueling_breakpoint_axis
+   1 _DAT_0080028e => cylinder_balance_delta_fueling_breakpoint_lookup . y_values_pointer
+   1 _DAT_00800294 => cylinder_balance_filtered_fueling_breakpoint_lookup . x_axis_offset
+   1  => byte bVar1 ;
+   1 cVar2 ; char cVar4 => cVar3
+   1 cVar4 + => ( bVar1
+   1 dword dVar2 => byte bVar2
+   1 char cVar3 => int iVar3 ; byte * pbVar4
+   1 int iVar4 => char cVar6
+   1 MVar6 ; byte bVar7 => MVar7
+   1  => byte bVar10 ;
+   1 ' \ x06 ' => 6
+   1  => bVar10 =
+   1 = bVar8 => 
+   1 ( j1708_transmit_buffer_read_pointer - dVar2 ) + => 
+   1  => - ( int ) pbVar4
+   1 j1708_transmit_buffer_read_pointer - dVar2 => int
+   1 + 0xfe => pbVar4
+   1 iVar4 => ( int ) ( j1708_transmit_buffer_read_pointer + iVar3 )
+   1 dVar2 => ( uint ) pbVar4
+   1  => bVar9 ;
+   1 ; bVar7 => 
+   1 ( byte * ) dVar2 => pbVar4
+   1  => word wVar1 ; word wVar2 ;
+   1 uVar1 ; uint uVar2 => uVar3
+   1 ( uint ) uVar1 => wVar1
+   1  => wVar1 = engine_warmup_protection_rifle_to_turbocharger_delay_timer ;
+   1 _DAT_00800594 => engine_warmup_protection_rifle_to_turbocharger_delay_time_lookup . x_input
+   1 uVar2 => engine_warmup_protection_rifle_to_turbocharger_delay_time
+   1 DAT_0080058e => engine_warmup_protection_rifle_to_turbocharger_delay_time_lookup
+   1  => wVar1 = engine_warmup_protection_rifle_to_turbocharger_delay_timer ; wVar2 =
+   1 engine_warmup_protection_rifle_to_turbocharger_delay_timer => wVar1
+   1  => engine_warmup_protection_rifle_to_turbocharger_delay_timer = wVar1 ;
+   1 _DAT_008005a2 => engine_warmup_protection_fuel_limit_lookup . x_input
+   1 uVar2 => engine_warmup_protection_fuel_limit
+   1 DAT_0080059c => engine_warmup_protection_fuel_limit_lookup
+   1  => uVar3 =
+   1 _DAT_00800590 => engine_warmup_protection_rifle_to_turbocharger_delay_time_lookup . x_axis_pointer
+   1 0x60846 => ( word * ) & engine_warmup_protection_rifle_to_turbocharger_delay_time_axis
+   1 _DAT_0080058e => engine_warmup_protection_rifle_to_turbocharger_delay_time_lookup . x_axis_offset
+   1 _DAT_00800596 => engine_warmup_protection_rifle_to_turbocharger_delay_time_lookup . y_values_pointer
+   1 0x6085a => ( word * ) & engine_warmup_protection_rifle_to_turbocharger_delay_time_values
+   1 _DAT_0080059e => engine_warmup_protection_fuel_limit_lookup . x_axis_pointer
+   1 0x607f2 => ( word * ) & engine_warmup_protection_fuel_limit_axis
+   1 _DAT_0080059c => engine_warmup_protection_fuel_limit_lookup . x_axis_offset
+   1 _DAT_008005a4 => engine_warmup_protection_fuel_limit_lookup . y_values_pointer
+   1 0x6081c => ( word * ) & engine_warmup_protection_fuel_limit_values
+   1 _DAT_008005b6 => crank_wet_stack_timing_by_intake_manifold_temperature_lookup . x_axis_pointer
+   1 _DAT_008005bc => crank_wet_stack_timing_by_intake_manifold_temperature_lookup . y_values_pointer
+   1 _DAT_008005b4 => crank_wet_stack_timing_by_intake_manifold_temperature_lookup . x_axis_offset
+   1 ushort => void
+   1 ushort uVar3 => word wVar3
+   1 ushort uVar5 ; ushort uVar6 => word wVar5
+   1 uVar6 = => if ( (
+   1 ; if ( uVar6 => )
+   1 uVar6 = => if ( ( (
+   1 ; if ( ( uVar6 => )
+   1 uVar6 = => (
+   1 , uVar6 => )
+   1 _DAT_008005fe => fault_derate_fuel_limit_at_torque_curve_points_lookup . x_axis_offset
+   1 _DAT_00800600 => fault_derate_fuel_limit_at_torque_curve_points_lookup . x_axis_pointer
+   1 _DAT_00800606 => fault_derate_fuel_limit_at_torque_curve_points_lookup . y_values_pointer
+   1  => short sVar2 ;
+   1 short sVar3 => word wVar4
+   1  => uVar6 = ( uint ) ( ushort ) ( ( short ) uVar6 + 4 ) ;
+   1 + 4 ) ; uVar4 = ( uint ) ( ushort ) ( ( short ) uVar4 => 
+   1 DAT_00800632 => fault_derate_fuel_limit_by_engine_speed_lookup
+   1 _DAT_00800632 => fault_derate_fuel_limit_by_engine_speed_lookup . x_axis_offset
+   1 _DAT_00800634 => fault_derate_fuel_limit_by_engine_speed_lookup . x_axis_pointer
+   1  => ushort uVar1 ;
+   1 extraout_D0w ; ushort uVar3 ; ushort uVar4 => wVar4
+   1  => uVar2 ;
+   1 ; uVar3 => 
+   1 _DAT_008006b0 => double_pulsing_fueling_mapping_lookup . x_input
+   1 DAT_008006aa => double_pulsing_fueling_mapping_lookup
+   1  => timing_4DTBTA =
+   1 ; timing_4DTBTA = extraout_D0w => 
+   1 _DAT_008006ac => double_pulsing_fueling_mapping_lookup . x_axis_pointer
+   1 0x607d6 => ( word * ) & double_pulsing_fueling_mapping_axis
+   1 _DAT_008006b2 => double_pulsing_fueling_mapping_lookup . y_values_pointer
+   1 0x607e4 => ( word * ) & double_pulsing_fueling_mapping_values
+   1 _DAT_008006aa => double_pulsing_fueling_mapping_lookup . x_axis_offset
+   1 DAT_0080071e => high_speed_governor_derivative_gain_adjustment_multiplier_lookup
+   1 DAT_0080072c => high_speed_governor_proportional_gain_adjustment_multiplier_lookup
+   1 DAT_0080073a => high_speed_governor_integral_gain_adjustment_multiplier_lookup
+   1 _DAT_00800720 => high_speed_governor_derivative_gain_adjustment_multiplier_lookup . x_axis_pointer
+   1 0x808068 => high_speed_governor_derivative_gain_adjustment_error_axis
+   1 _DAT_0080071e => high_speed_governor_derivative_gain_adjustment_multiplier_lookup . x_axis_offset
+   1 _DAT_00800726 => high_speed_governor_derivative_gain_adjustment_multiplier_lookup . y_values_pointer
+   1 _DAT_0080072e => high_speed_governor_proportional_gain_adjustment_multiplier_lookup . x_axis_pointer
+   1 0x8080a0 => high_speed_governor_proportional_gain_adjustment_error_axis
+   1 _DAT_0080072c => high_speed_governor_proportional_gain_adjustment_multiplier_lookup . x_axis_offset
+   1 _DAT_00800734 => high_speed_governor_proportional_gain_adjustment_multiplier_lookup . y_values_pointer
+   1 _DAT_0080073c => high_speed_governor_integral_gain_adjustment_multiplier_lookup . x_axis_pointer
+   1 0x8080d8 => high_speed_governor_integral_gain_adjustment_error_axis
+   1 _DAT_0080073a => high_speed_governor_integral_gain_adjustment_multiplier_lookup . x_axis_offset
+   1 _DAT_00800742 => high_speed_governor_integral_gain_adjustment_multiplier_lookup . y_values_pointer
+   1 ; word wVar4 => 
+   1 0x808b01 => diagnostic_tx_buffer_base + 1
+   1 0x808c01 => diagnostic_rx_buffer_base + 1
+   1 DWORD_0080ddce => j1708_receive_buffer_last_byte_address
+   1 0x808cff => diagnostic_rx_buffer_base + 0xff
+   1 _DAT_0080db22 => friction_fuel_by_engine_speed_lookup . x_axis_pointer
+   1 0x611fa ; _DAT_0080db28 = 0x6120e => ( word * ) & friction_fuel_by_engine_speed_axis
+   1  => . y_values_pointer = ( word * ) & friction_fuel_by_engine_speed_values ; friction_fuel_by_engine_speed_lookup . x_axis_offset
+   1 _DAT_0080db30 => friction_fuel_correction_by_coolant_temperature_lookup . x_axis_pointer
+   1 0x61222 => ( word * ) & friction_fuel_correction_by_coolant_temperature_axis
+   1 _DAT_0080db36 => friction_fuel_correction_by_coolant_temperature_lookup . y_values_pointer
+   1 0x61236 => ( word * ) & friction_fuel_correction_by_coolant_temperature_values
+   1 _DAT_0080db2e => friction_fuel_correction_by_coolant_temperature_lookup . x_axis_offset
+   1 dword dVar2 => byte * pbVar2
+   1  => ( int ) ( j1708_transmit_buffer_read_pointer +
+   1  => int iVar3 ;
+   1 uVar4 ; int iVar5 => uVar5
+   1 iVar5 => ( int ) ( j1708_transmit_buffer_read_pointer + iVar3 )
+   1 dword dVar2 => int iVar2 ; byte * pbVar3
+   1 cVar3 ; int iVar4 => cVar4
+   1 dVar2 => pbVar3
+   1 iVar4 => ( int ) ( j1708_transmit_buffer_read_pointer + iVar2 )
+   1 ( undefined1 * ) dVar2 => pbVar3
+   1 char cVar1 => byte bVar1
+   1 byte bVar3 ; => 
+   1 ' \ x04 ' => 4
+   1 ' \ x05 ' => 5
+   1 char cVar1 ; => 
+   1 DAT_00801a3e => engine_protection_low_oil_pressure_limit_lookup
+   1 _DAT_00801a52 => engine_protection_very_low_oil_pressure_limit_lookup . x_input
+   1 DAT_00801a4c => engine_protection_very_low_oil_pressure_limit_lookup
+   1 _DAT_00801a46 => engine_protection_low_oil_pressure_limit_lookup . y_values_pointer
+   1 0x611de => ( word * ) & engine_protection_low_oil_pressure_limit_values
+   1 _DAT_00801a40 => engine_protection_low_oil_pressure_limit_lookup . x_axis_pointer
+   1 _DAT_00801a3e => engine_protection_low_oil_pressure_limit_lookup . x_axis_offset
+   1 0x611ec => ( word * ) & engine_protection_very_low_oil_pressure_limit_values
+   1 _DAT_00801a4c => engine_protection_very_low_oil_pressure_limit_lookup . x_axis_offset
+   1 puVar3 => pbVar3 ; byte * pbVar4
+   1 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xfef1
+   1  => , 0x46 , j1939HandlePgn65265CruiseVehicleSpeed
+   1  => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xf004 , 0x14 ,
+   1 0x14 => sendPgn61444ElectronicEngineController1Message
+   1 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xf003
+   1  => , 10 , j1939HandlePgn61443Eec2
+   1 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xfedf
+   1  => , 0x1e , vp44_configParamCanBuilder
+   1 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xfee3
+   1  => , 0x6e , sendPgn65251EngineConfiguration1Message
+   1 1 => J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER , 0xf000
+   1  => , 0x32 , cm550_dutyCycleMonitorAltIsrHandler
+   1 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xfef2
+   1  => , 0x5a , cm550_fuelEconomyDataBuilder
+   1 1 => J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER , 0xfee1
+   1  => , 0x12d , vp44CanMessage100ResponseBuilder
+   1 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xfeee
+   1  => , 0x1ae , cm550_buildPgn65262EngineTemperature1Message
+   1 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xfee4
+   1  => , 0x6e , cm550_buildPgn65252ShutdownMessage
+   1 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xfeef
+   1  => , 0x82 , cm550_buildPgn65263EngineFluidLevelPressure1Message
+   1 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xfef0
+   1  => , 0x96 , cm550_buildPgn65264PowerTakeOffInformationMessage
+   1 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xfef5
+   1  => , 0xaa , cm550_buildPgn65269AmbientConditionsMessage
+   1 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xfef6
+   1  => , 0xbe , cm550_buildPgn65270InletExhaustConditions1Message
+   1 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xfef7
+   1  => , 0xd2 , cm550_retarderDataBuilder
+   1 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xfeca
+   1  => , 500 , & LAB_0003229a
+   1 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xfebd
+   1  => , 0x32 , & LAB_000339fe
+   1 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xf001
+   1  => , 0x14 , & LAB_00032bbc
+   1 0 => J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE , 0xfeff
+   1  => , 0x28 , & LAB_00034496
+   1 undefined1 uVar1 => byte bVar1 ; int iVar2
+   1  => word wVar8 ;
+   1 uint uVar4 => int iVar4
+   1 int iVar7 ; => 
+   1 uVar3 => wVar8
+   1 uVar3 & 0xffff => uint
+   1  => wVar8
+   1 _DAT_00801c22 => power_take_off_governor_derivative_gain_adjustment_lookup . x_input
+   1 DAT_00801c1c => power_take_off_governor_derivative_gain_adjustment_lookup
+   1 _DAT_00801c30 => power_take_off_governor_integral_gain_adjustment_lookup . x_input
+   1 DAT_00801c2a => power_take_off_governor_integral_gain_adjustment_lookup
+   1 _DAT_00801c3e => power_take_off_governor_proportional_gain_adjustment_lookup . x_input
+   1 DAT_00801c38 => power_take_off_governor_proportional_gain_adjustment_lookup
+   1  => if ( ( int ) _closed_loop_fuel_output_scaled < iVar4 ) {
+   1 if ( ( int ) _closed_loop_fuel_output_scaled < iVar6 ) { => 
+   1  => word wVar2 ;
+   1 uVar1 => wVar2
+   1 uVar1 & 0xffff => uint
+   1  => wVar2
+   1 _DAT_00801c1c => power_take_off_governor_derivative_gain_adjustment_lookup . x_axis_offset
+   1 _DAT_00801c1e => power_take_off_governor_derivative_gain_adjustment_lookup . x_axis_pointer
+   1 _DAT_00801c24 => power_take_off_governor_derivative_gain_adjustment_lookup . y_values_pointer
+   1 _DAT_00801c2a => power_take_off_governor_integral_gain_adjustment_lookup . x_axis_offset
+   1 _DAT_00801c2c => power_take_off_governor_integral_gain_adjustment_lookup . x_axis_pointer
+   1 0x8088e8 => power_take_off_governor_integral_gain_adjustment_axis
+   1 _DAT_00801c32 => power_take_off_governor_integral_gain_adjustment_lookup . y_values_pointer
+   1 _DAT_00801c38 => power_take_off_governor_proportional_gain_adjustment_lookup . x_axis_offset
+   1 _DAT_00801c3a => power_take_off_governor_proportional_gain_adjustment_lookup . x_axis_pointer
+   1 _DAT_00801c40 => power_take_off_governor_proportional_gain_adjustment_lookup . y_values_pointer
+   1 _DAT_00801c0e => power_take_off_gain_adjustment_lookup . x_axis_offset
+   1 _DAT_00801c10 => power_take_off_gain_adjustment_lookup . x_axis_pointer
+   1 _DAT_00801c16 => power_take_off_gain_adjustment_lookup . y_values_pointer
+   1 0x80896e => power_take_off_gain_adjustment_values
+   1 _DAT_00801e36 => engine_retarder_torque_stage_1_lookup . x_input
+   1 DAT_00801e30 => engine_retarder_torque_stage_1_lookup
+   1 _DAT_00801e44 => engine_retarder_torque_stage_2_lookup . x_input
+   1 DAT_00801e3e => engine_retarder_torque_stage_2_lookup
+   1 _DAT_00801e52 => engine_retarder_torque_stage_3_lookup . x_input
+   1 DAT_00801e4c => engine_retarder_torque_stage_3_lookup
+   1 _DAT_00801e60 => engine_retarder_torque_stage_4_lookup . x_input
+   1 DAT_00801e5a => engine_retarder_torque_stage_4_lookup
+   1 _DAT_00801e6e => engine_retarder_torque_stage_5_lookup . x_input
+   1 DAT_00801e68 => engine_retarder_torque_stage_5_lookup
+   1 _DAT_00801e32 => engine_retarder_torque_stage_1_lookup . x_axis_pointer
+   1 _DAT_00801e38 => engine_retarder_torque_stage_1_lookup . y_values_pointer
+   1 _DAT_00801e30 => engine_retarder_torque_stage_1_lookup . x_axis_offset
+   1 _DAT_00801e40 => engine_retarder_torque_stage_2_lookup . x_axis_pointer
+   1 _DAT_00801e46 => engine_retarder_torque_stage_2_lookup . y_values_pointer
+   1 _DAT_00801e3e => engine_retarder_torque_stage_2_lookup . x_axis_offset
+   1 _DAT_00801e4e => engine_retarder_torque_stage_3_lookup . x_axis_pointer
+   1 _DAT_00801e54 => engine_retarder_torque_stage_3_lookup . y_values_pointer
+   1 _DAT_00801e4c => engine_retarder_torque_stage_3_lookup . x_axis_offset
+   1 _DAT_00801e5c => engine_retarder_torque_stage_4_lookup . x_axis_pointer
+   1 _DAT_00801e62 => engine_retarder_torque_stage_4_lookup . y_values_pointer
+   1 _DAT_00801e5a => engine_retarder_torque_stage_4_lookup . x_axis_offset
+   1 _DAT_00801e6a => engine_retarder_torque_stage_5_lookup . x_axis_pointer
+   1 _DAT_00801e70 => engine_retarder_torque_stage_5_lookup . y_values_pointer
+   1 _DAT_00801e68 => engine_retarder_torque_stage_5_lookup . x_axis_offset
+   1 ; int iVar3 => 
+   1 + => 
+   1 ( j1708_receive_buffer_read_pointer - j1708_receive_buffer_write_pointer ) + => 
+   1  => - ( int ) j1708_receive_buffer_write_pointer
+   1 j1708_receive_buffer_read_pointer - => int )
+   1 iVar3 => ( int ) ( j1708_receive_buffer_read_pointer + iVar2 )
+   1 1U => 1
+   1 - 1 => 0xffffffff
+   1 _DAT_00808a80 => trending_engine_speed_upper_limit
+   1 _DAT_00808a88 => trending_intake_manifold_temperature_upper_limit
+   1 _DAT_00808a8a => trending_intake_manifold_temperature_lower_limit
+   1 _DAT_00808a8c => trending_coolant_temperature_upper_limit
+   1 _DAT_00808a8e => trending_coolant_temperature_lower_limit
+   1 _DAT_00808a7c => trending_sample_interval_hours
+   1  => ( & trending_storage_table_cal [ 0 ] . oil_pressure ) [ ( short ) ( trending_write_index_cal * 7 ) ] = 0 ; ( & trending_storage_table_cal [ 0 ] . boost_pressure ) [ ( short ) ( trending_write_inde
+   1 undefined2 => dword
+   1  => ( int )
+   1  => [ 0 ] . time_stamp
+   1 0 ; * ( undefined2 * ) ( & trending_storage_table_cal [ 0 ] . boost_pressure + ( short ) ( trending_write_index_cal * 7 ) * 2 ) = 0 ; * ( undefined2 * ) ( ( short ) ( trending_write_index_cal * 7 ) * 
+   1 word * => & trending_storage_table_cal [ 0 ] . coolant_temperature
+   1 undefined2 * => & trending_storage_table_cal [ 0 ] . coolant_temperature
+   1  => ( & trending_storage_table_cal [ 0 ] . average_load ) [ ( short ) ( trending_write_index_cal * 7 ) ] = trending_interval_average_load_cal ; trending_sample_time_stamp_cal = engine_hour_meter & 0xf
+   1 word => dword
+   1  => ( int ) & trending_storage_table_cal [ 0 ] . time_stamp +
+   1 + 0x804a22 => 
+   1 trending_interval_average_load_cal ; _DAT_008049f0 = engine_hour_meter & 0xffffff00 ; _DAT_00804a12 = throttle_100_fueling & 0xff00 ; * ( uint * ) ( ( short ) ( trending_write_index_cal * 7 ) * 2 + 0x
+   1 _DAT_008049fe => trending_sample_count_before_rebuild_cal
+   1 DAT_00801f17 => j1939_pgn65259_payload [ 5 ]
+   1 & DAT_00801f18 => j1939_pgn65259_payload + 6
+   1 DAT_00801f29 => j1939_pgn65259_payload [ 0x17 ]
+   1 & DAT_00801f2a => j1939_pgn65259_payload + 0x18
+   1 DAT_00801f2e => j1939_pgn65259_payload [ 0x1c ]
+   1 & DAT_00801f2f => j1939_pgn65259_payload + 0x1d
+   1 * ( undefined1 * ) ( => component_identification_unit_number_cal [
+   1 + 0x803ebb ) => ]
+   1 DAT_00801f39 => j1939_pgn65259_payload [ 0x27 ]
+   1 DAT_008034eb => j1939_pgn65263_engine_oil_pressure
+   1 _DAT_00803548 => j1939_pgn65253_total_engine_hours
+   1 DAT_00803548 => j1939_pgn65253_total_engine_hours
+   1 _DAT_00803562 => j1939_pgn65262_engine_oil_temperature
+   1 _DAT_008035a8 => j1939_pgn65257_trip_fuel
+   1 _DAT_008035ac => j1939_pgn65257_total_fuel_used
+   1 DAT_008035a8 => j1939_pgn65257_trip_fuel
+   1 DAT_0080360f => j1939_pgn65270_boost_pressure
+   1 DAT_0080362a => j1939_pgn65264_power_take_off_set_speed [ 1 ]
+   1 DAT_00803629 => j1939_pgn65264_power_take_off_set_speed [ 0 ]
+   1 _DAT_00803662 => j1939_pgn65248_trip_distance
+   1 _DAT_00803666 => j1939_pgn65248_total_vehicle_distance
+   1 DAT_00803662 => j1939_pgn65248_trip_distance
+   1 _DAT_00803696 => j1939_pgn65255_total_power_take_off_hours
+   1 & DAT_00803e7f => vehicle_vin_string_cal
+   1 DAT_008036ac => j1939_pgn65279_water_in_fuel_indicator_byte
+   1 _DAT_008036c6 => wet_stack_timing_by_intake_manifold_temperature_lookup . x_axis_offset
+   1 _DAT_008036c8 => wet_stack_timing_by_intake_manifold_temperature_lookup . x_axis_pointer
+   1 _DAT_008036cc => wet_stack_timing_by_intake_manifold_temperature_lookup . x_input
+   1 _DAT_008036ce => wet_stack_timing_by_intake_manifold_temperature_lookup . y_values_pointer
+   1 _DAT_008036d4 => wet_stack_timing_by_coolant_temperature_lookup . x_axis_offset
+   1 _DAT_008036d6 => wet_stack_timing_by_coolant_temperature_lookup . x_axis_pointer
+   1 0x80720c => wet_stack_timing_by_coolant_temperature_axis
+   1 _DAT_008036da => wet_stack_timing_by_coolant_temperature_lookup . x_input
+   1 _DAT_008036dc => wet_stack_timing_by_coolant_temperature_lookup . y_values_pointer
+   1 DAT_008036c6 => wet_stack_timing_by_intake_manifold_temperature_lookup
+   1 DAT_008036d4 => wet_stack_timing_by_coolant_temperature_lookup
+   1 ( short * ) args => arguments
+   1 x_axis_ptr => x_axis_pointer
+   1 ( ushort ) psVar1 => pwVar1
+   1 ( ushort * ) ( psVar1 => pwVar1
+   1 args [ 1 ] . current_index => arguments -> no_interpolation_flag
+   1 undefined8 => word
+   1  => table_lookup_2d_arguments_t * lookup ) {
+   1 table_args ) { short => pwVar1 ; word
+   1 short * psVar2 ; undefined4 in_D0 => ushort uVar3
+   1 ; uint uVar3 ; undefined4 in_D1 => 
+   1 undefined2 => ushort
+   1 uVar7 => * puVar7
+   1 uVar8 => * puVar8
+   1 ushort * puVar11 ; ushort * puVar12 => bool bVar11
+   1 bVar13 => bVar12
+   1 bool bVar14 => pwVar1 = lookup -> x_axis_pointer
+   1 psVar1 => puVar7
+   1 short * => ushort
+   1 table_args => ( int ) pwVar1
+   1 1 => ( int ) ( short ) * pwVar1
+   1 * psVar1 => ( short ) lookup -> x_axis_offset
+   1 puVar11 => uVar5 = lookup -> x_input ; if ( uVar5 < * puVar9 ) { if ( uVar5 < pwVar1 [ 1 ] ) { puVar9 = pwVar1 + 1 ; uVar5 = * puVar9 ; goto LAB_000350d2 ; } do { puVar9 = puVar9 + - 1 ; bVar11 = uVar
+   1 table_args => pwVar2
+   1 uVar5 = table_args [ 3 ] ; if ( uVar5 < * puVar11 ) { if ( uVar5 < ( ushort ) psVar1 [ 1 ] ) { puVar11 => puVar10
+   1 psVar1 => ( int ) pwVar2
+   1 1 => ( int ) ( short ) lookup -> y_axis_offset
+   1  => lookup -> y_input ; if ( uVar6 <
+   1 puVar11 ; LAB_000350d2 : for => puVar10 ) { if
+   1 ; puVar11 => uVar6 < pwVar2
+   1 <= uVar5 ; puVar11 => ) { puVar10
+   1 puVar11 => pwVar2
+   1 ) => ; uVar6 = * puVar10 ; goto LAB_00035138 ; } do
+   1 } bVar13 => puVar10
+   1 uVar5 => puVar10 + - 1 ; bVar12 = uVar6
+   1 puVar11 => puVar10
+   1 puVar11 => puVar10 ; } while ( uVar6 < * puVar10 )
+   1 do => if ( * puVar9 <= uVar6 )
+   1 puVar11 = puVar11 + - 1 ; bVar13 = uVar5 == * puVar11 ; puVar9 = puVar11 ; } while ( uVar5 < * puVar11 ) ; } * table_args => lookup -> y_axis_offset
+   1 } else { if ( uVar5 < * puVar9 ) goto LAB_000350d2 ; * table_args = ( short ) puVar9 - ( short ) psVar1 ; bVar13 = true ; } uVar6 = 0 ; psVar2 = * ( short * * ) ( table_args + 5 ) ; puVar11 = ( ushort
+   1 bVar14 => bVar12
+   1 table_args [ 4 ] => lookup -> y_axis_offset
+   1 psVar2 => pwVar2
+   1 puVar12 => puVar10 = ( ushort * ) ( ( int ) lookup -> z_values_pointer + ( int ) ( short ) lookup -> x_axis_offset + ( int ) ( short ) ( ( ushort ) ( lookup -> y_axis_offset - 2 ) >> 1 ) * ( int ) ( s
+   1 table_args + * ( int * ) ( table_args + 8 ) => pwVar1
+   1  => puVar8 ) ; uVar3 = * puVar8 ; if ( ! bVar11 ) { uVar3 = * puVar8 ; if ( puVar8 [ 1 ] < uVar3 ) { uVar3 = uVar3 -
+   1  => ( uint ) (
+   1 table_args => uVar3 - puVar8
+   1 4 => 1
+   1 - 2 ) >> 1 => 
+   1 int => uint ) uVar5 ) / ( unaff_D2 & 0xffff ) ) ; } else { uVar3 = uVar3 + ( short ) ( ( ( uint ) ( ushort ) ( puVar8 [ 1 ] - uVar3
+   1 psVar1 => ( uint ) uVar5 ) / ( unaff_D2 & 0xffff )
+   1 puVar10 = puVar12 + - 1 ; => } }
+   1 table_args [ 10 ] == 0 => uVar3 < uVar4
+   1 uVar8 => uVar4
+   1  => uVar4 - ( short ) ( ( ( uint ) ( ushort ) ( uVar4 - uVar3 )
+   1 puVar10 ; if => 
+   1 ! bVar13 => uint
+   1 { unaff_D2 = => ( ushort ) ( uVar6 - * puVar9 ) ) /
+   1 ) ; uVar5 = uVar5 - * puVar9 ; if ( * puVar12 < uVar8 ) { uVar8 = uVar8 - ( short ) ( ( ( uint ) ( ushort ) ( uVar8 - * puVar12 ) * ( uint ) uVar5 ) / unaff_D2 ) ; } else { uVar8 = ( short ) ( ( ( uin
+   1 puVar10 [ 1 ] - uVar4 ) * ( uint ) uVar5 ) / ( unaff_D2 & 0xffff ) ) ; } } uVar5 = puVar11 [ 1 ] - * puVar11 ; if ( uVar4 < uVar8 ) { => 
+   1 = CONCAT22 ( uVar6 , uVar8 - ( short ) ( ( ( uint ) ( ushort ) ( uVar8 => 
+   1 ( uint ) uVar5 ) ) ; } else { uVar3 = => 
+   1 uVar4 - uVar8 ) * ( uint ) ( ushort ) ( uVar7 => puVar9 [ 1 ]
+   1 puVar11 ) ; uVar3 = CONCAT22 ( ( short ) ( uVar3 % ( uint ) uVar5 ) , uVar8 + ( short ) ( uVar3 / uVar5 => puVar9
+   1 CONCAT22 ( ( short ) ( ( uint ) in_D0 >> 0x10 ) , => 
+   1 puVar10 ) => puVar8
+   1 CONCAT44 ( uVar3 , in_D1 ) => uVar4

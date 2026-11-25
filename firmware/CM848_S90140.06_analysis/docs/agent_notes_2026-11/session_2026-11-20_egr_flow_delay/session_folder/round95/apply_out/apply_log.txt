@@ -1,0 +1,5 @@
+N2 NOTE verdict with no proposal element: ('prototype', '', '0x00034de0')
+N3 NOTE verdict with no proposal element: ('prototype', '', '0x0001fe84')
+N3 NOTE verdict with no proposal element: ('prototype', '', '0x00538c8c')
+N3 NOTE verdict with no proposal element: ('prototype', '', '0x00035088')
+559 report lines; 8 files written; maps: {'CM550': 279, 'CM848': 22}

@@ -1,0 +1,200 @@
+=== record 0x80a792: offset 2 x_axis_pointer 0x806d3a input 0 values_pointer 0x806d6e no_interpolation_flag 0
+  rows inside: none
+  axis 0x806d3a: byte count 50 -> 25 points [0, 30, 31, 34, 43, 55, 70, 92, 120, 157, 206, 270, 349, 444, 549, 691, 807, 881, 935, 963, 996, 1012, 1018, 1019, 1023]
+     e2m: 101B +0000 ADIMTPXA [CNTS] -> 0x806d3a linearization_table_ch15_x_axis undefined; INTAKE MANIFOLD TEMPERATURE LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: 0x806d3a linearization_table_ch15_x_axis (undefined)
+  values 0x806d6e: byte count 50 -> 25 points [21120, 21120, 43904, 43904, 41600, 39296, 36992, 34688, 32384, 30080, 27776, 25472, 23168, 20864, 18560, 15488, 12672, 10368, 8064, 6400, 3200, 0, 0, 21120, 21120]
+     e2m: 1019 +0000 ADIMTPYA [DEGF] -> 0x806d6e (no name) (no row); INTAKE MANIFOLD TEMPERATURE LINEARIZATION TABLE, Y-AXIS~-50 TO 293
+     rows at pointer: none
+=== record 0x80a7a0: offset 2 x_axis_pointer 0x806da2 input 0 values_pointer 0x806dce no_interpolation_flag 0
+  rows inside: none
+  axis 0x806da2: byte count 42 -> 21 points [0, 75, 76, 80, 101, 129, 164, 210, 267, 337, 420, 514, 612, 708, 795, 866, 921, 960, 964, 965, 1023]
+     e2m: 8008 +0000 ADFLTPXA [CNTS] -> 0x806da2 (no name) (no row); LINEARIZATION TABLE, FUEL TEMPERATURE X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x806dce: byte count 42 -> 21 points [42240, 42240, 43904, 41600, 39296, 36992, 34688, 32384, 30080, 27776, 25472, 23168, 20864, 18560, 16256, 13952, 11648, 9344, 9344, 8960, 8960]
+     e2m: 8009 +0000 ADFLTPYA [DEGF] -> 0x806dce (no name) (no row); Y - AXIS LINEARIZATION TABLE FOR FUEL TEMPERATURE~-50 TO 293
+     rows at pointer: none
+=== record 0x80a7ae: offset 16 x_axis_pointer 0x806dfa input 1023 values_pointer 0x806e0c no_interpolation_flag 0
+  rows inside: none
+  axis 0x806dfa: byte count 16 -> 8 points [0, 50, 51, 716, 717, 962, 963, 1023]
+     e2m: 800A +0000 ADCVXA [CNTS] -> 0x806dfa (no name) (no row); COOLANT LEVEL X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x806e0c: byte count 16 -> 8 points [0, 0, 1, 1, 2, 2, 2, 2]
+     e2m: 800B +0000 ADCVYA [NONE] -> 0x806e0c (no name) (no row); COOLANT LEVEL Y-AXIS~0 - 2
+     rows at pointer: none
+=== record 0x80a7bc: offset 2 x_axis_pointer 0x806e1e input 0 values_pointer 0x806e24 no_interpolation_flag 0
+  rows inside: none
+  axis 0x806e1e: byte count 4 -> 2 points [0, 1023]
+     e2m: 801F +0000 ADFPLZXA [CNTS] -> 0x806e1e diagnostic_transition_limit undefined; LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: 0x806e1e diagnostic_transition_limit (undefined)
+  values 0x806e24: byte count 4 -> 2 points [0, 1023]
+     e2m: 801E +0000 ADFPLZYA [  ] -> 0x806e24 fuel_pressure_linearization_values word[3]; LINEARIZATION TABLE, Y-AXIS~
+     rows at pointer: 0x806e24 fuel_pressure_linearization_values (word[3])
+=== record 0x80a7ca: offset 2 x_axis_pointer 0x806e2a input 0 values_pointer 0x806e36 no_interpolation_flag 0
+  rows inside: none
+  axis 0x806e2a: byte count 10 -> 5 points [0, 101, 102, 947, 1023]
+     e2m: 1018 +0000 ADOLPRXA [CNTS] -> 0x806e2a (no name) (no row); OIL PRESSURE LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x806e36: byte count 10 -> 5 points [0, 0, 0, 13184, 13184]
+     e2m: 1017 +0000 ADOLPRYA [PSIG] -> 0x806e36 oil_pressure_linearization_values word[6]; OIL PRESSURE LINEARIZATION TABLE, Y-AXIS~0 - 100
+     rows at pointer: 0x806e36 oil_pressure_linearization_values (word[6])
+=== record 0x80a7d8: offset 2 x_axis_pointer 0x806e42 input 0 values_pointer 0x806e4c no_interpolation_flag 0
+  rows inside: none
+  axis 0x806e42: byte count 8 -> 4 points [0, 102, 948, 1023]
+     e2m: 1016 +0000 ADBSPRXA [CNTS] -> 0x806e42 (no name) (no row); BOOST PRESSURE LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x806e4c: byte count 8 -> 4 points [0, 0, 6438, 6438]
+     e2m: 1015 +0000 ADBSPRYA [INHG] -> 0x806e4c boost_pressure_linearization_values word[5]; BOOST PRESSURE LINEARIZATION TABLE, Y-AXIS~0 - 50
+     rows at pointer: 0x806e4c boost_pressure_linearization_values (word[5])
+=== record 0x80a7e6: offset 2 x_axis_pointer 0x806e56 input 0 values_pointer 0x806e8a no_interpolation_flag 0
+  rows inside: none
+  axis 0x806e56: byte count 50 -> 25 points [0, 30, 31, 34, 43, 55, 70, 92, 120, 157, 206, 270, 349, 444, 549, 691, 807, 881, 935, 963, 996, 1012, 1018, 1019, 1023]
+     e2m: 1014 +0000 ADCLTPXA [CNTS] -> 0x806e56 (no name) (no row); COOLANT TEMPERATURE LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x806e8a: byte count 50 -> 25 points [32640, 32640, 43904, 43904, 41600, 39296, 36992, 34688, 32384, 30080, 27776, 25472, 23168, 20864, 18560, 15488, 12672, 10368, 8064, 6400, 3200, 0, 0, 32640, 32640]
+     e2m: 1013 +0000 ADCLTPYA [DEGF] -> 0x806e8a coolant_temperature_linearization_values word[26]; COOLANT TEMPERATURE LINEARIZATION TABLE, Y-AXIS~-50 TO 293
+     rows at pointer: 0x806e8a coolant_temperature_linearization_values (word[26])
+=== record 0x80a7f4: offset 2 x_axis_pointer 0x806ebe input 0 values_pointer 0x806ed0 no_interpolation_flag 0
+  rows inside: none
+  axis 0x806ebe: byte count 16 -> 8 points [0, 80, 92, 100, 902, 910, 1015, 1023]
+     e2m: 8021 +0000 ADAATXA [CNTS] -> 0x806ebe (no name) (no row); X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x806ed0: byte count 16 -> 8 points [0, 0, 0, 0, 1920, 1920, 1920, 1920]
+     e2m: 8020 +0000 ADAATYA [DEGF] -> 0x806ed0 ambient_air_temperature_linearization_values word[9]; Y-AXIS~-100 - 255
+     rows at pointer: 0x806ed0 ambient_air_temperature_linearization_values (word[9])
+=== record 0x80a802: offset 2 x_axis_pointer 0x806ee2 input 0 values_pointer 0x806ee8 no_interpolation_flag 0
+  rows inside: none
+  axis 0x806ee2: byte count 4 -> 2 points [0, 1023]
+     e2m: 8023 +0000 ADPOTPXA [CNTS] -> 0x806ee2 (no name) (no row); X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x806ee8: byte count 4 -> 2 points [6400, 32000]
+     e2m: 8022 +0000 ADPOTPYA [DEGF] -> 0x806ee8 power_steering_temperature_linearization_values word[3]; Y-AXIS~-50 TO 293
+     rows at pointer: 0x806ee8 power_steering_temperature_linearization_values (word[3])
+=== record 0x80a810: offset 2 x_axis_pointer 0x806eee input 0 values_pointer 0x806ef4 no_interpolation_flag 0
+  rows inside: none
+  axis 0x806eee: byte count 4 -> 2 points [0, 1023]
+     e2m: 8025 +0000 ADEPLZXA [CNTS] -> 0x806eee (no name) (no row); LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x806ef4: byte count 4 -> 2 points [0, 16]
+     e2m: 8024 +0000 ADEPLZYA [NONE] -> 0x806ef4 exhaust_pressure_linearization_values word[3]; LINEARIZATION TABLE, Y-AXIS~
+     rows at pointer: 0x806ef4 exhaust_pressure_linearization_values (word[3])
+=== record 0x80a81e: offset 2 x_axis_pointer 0x806efa input 0 values_pointer 0x806f08 no_interpolation_flag 0
+  rows inside: none
+  axis 0x806efa: byte count 12 -> 6 points [0, 39, 839, 866, 867, 1023]
+     e2m: 1012 +0000 ADSATHXA [CNTS] -> 0x806efa (no name) (no row); THROTTLE LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x806f08: byte count 12 -> 6 points [0, 0, 400, 400, 0, 0]
+     e2m: 1011 +0000 ADSATHYA [%] -> 0x806f08 sampled_throttle_linearization_values word[7]; THROTTLE LINEARIZATION TABLE, Y-AXIS~0 - 100
+     rows at pointer: 0x806f08 sampled_throttle_linearization_values (word[7])
+=== record 0x80a82c: offset 2 x_axis_pointer 0x806f16 input 0 values_pointer 0x806f24 no_interpolation_flag 0
+  rows inside: none
+  axis 0x806f16: byte count 12 -> 6 points [0, 205, 648, 866, 867, 1023]
+     e2m: 1023 +0000 ADROTHXA [CNTS] -> 0x806f16 (no name) (no row); REMOTE THROTTLE LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x806f24: byte count 12 -> 6 points [0, 0, 400, 400, 0, 0]
+     e2m: 1022 +0000 ADROTHYA [%] -> 0x806f24 remote_throttle_linearization_values word[7]; REMOTE THROTTLE LINEARIZATION TABLE, Y-AXIS~0 - 100
+     rows at pointer: 0x806f24 remote_throttle_linearization_values (word[7])
+=== record 0x80a83a: offset 2 x_axis_pointer 0x806f32 input 0 values_pointer 0x806f3c no_interpolation_flag 0
+  rows inside: none
+  axis 0x806f32: byte count 8 -> 4 points [0, 95, 923, 1023]
+     e2m: 101D +0000 ADAAPRXA [CNTS] -> 0x806f32 (no name) (no row); AMBIENT AIR LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x806f3c: byte count 8 -> 4 points [629, 629, 1924, 1924]
+     e2m: 101C +0000 ADAAPRYA [INHG] -> 0x806f3c ambient_air_pressure_linearization_values word[5]; AMBIENT AIR PRESSURE LINEARIZATION TABLE, Y-AXIS~0 - 15
+     rows at pointer: 0x806f3c ambient_air_pressure_linearization_values (word[5])
+=== record 0x80a848: offset 2 x_axis_pointer 0x806f46 input 355 values_pointer 0x806f4c no_interpolation_flag 0
+  rows inside: none
+  axis 0x806f46: byte count 4 -> 2 points [0, 1023]
+     e2m: 1027 +0000 ADBTVTXA [CNTS] -> 0x806f46 (no name) (no row); BATTERY VOLTAGE LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x806f4c: byte count 4 -> 2 points [0, 307]
+     e2m: 1026 +0000 ADBTVTYA [VOLT] -> 0x806f4c battery_voltage_linearization_values word[3]; BATTERY VOLTAGE LINEARIZATION TABLE, Y-AXIS~6 - 32
+     rows at pointer: 0x806f4c battery_voltage_linearization_values (word[3])
+=== record 0x80a856: offset 2 x_axis_pointer 0x806f52 input 852 values_pointer 0x806f58 no_interpolation_flag 0
+  rows inside: none
+  axis 0x806f52: byte count 4 -> 2 points [0, 1023]
+     e2m: 800C +0000 ADESLZXA [CNTS] -> 0x806f52 (no name) (no row); LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x806f58: byte count 4 -> 2 points [0, 6]
+     e2m: 800D +0000 ADESLZYA [NONE] -> 0x806f58 engine_speed_sensor_supply_voltage_linearization_values word[3]; LINEARIZATION TABLE, Y-AXIS~
+     rows at pointer: 0x806f58 engine_speed_sensor_supply_voltage_linearization_values (word[3])
+=== record 0x80a864: offset 2 x_axis_pointer 0x806f5e input 852 values_pointer 0x806f64 no_interpolation_flag 0
+  rows inside: none
+  axis 0x806f5e: byte count 4 -> 2 points [0, 1023]
+     e2m: 8029 +0000 ADTHLIXA [CNTS] -> 0x806f5e (no name) (no row); LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x806f64: byte count 4 -> 2 points [0, 6]
+     e2m: 8028 +0000 ADTHLIYA [NONE] -> 0x806f64 throttle_position_sensor_supply_voltage_linearization_values word[3]; LINEARIZATION TABLE, Y-AXIS~
+     rows at pointer: 0x806f64 throttle_position_sensor_supply_voltage_linearization_values (word[3])
+=== record 0x80a872: offset 2 x_axis_pointer 0x806f6a input 853 values_pointer 0x806f70 no_interpolation_flag 0
+  rows inside: none
+  axis 0x806f6a: byte count 4 -> 2 points [0, 1023]
+     e2m: 802B +0000 ADVHLZXA [CNTS] -> 0x806f6a (no name) (no row); LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x806f70: byte count 4 -> 2 points [0, 6]
+     e2m: 802A +0000 ADVHLZYA [  ] -> 0x806f70 vehicle_connector_sensor_supply_voltage_linearization_values word[3]; LINEARIZATION TABLE, Y-AXIS~
+     rows at pointer: 0x806f70 vehicle_connector_sensor_supply_voltage_linearization_values (word[3])
+=== record 0x80a880: offset 2 x_axis_pointer 0x806f76 input 854 values_pointer 0x806f7c no_interpolation_flag 0
+  rows inside: none
+  axis 0x806f76: byte count 4 -> 2 points [0, 1023]
+     e2m: 802D +0000 ADECLZXA [CNTS] -> 0x806f76 (no name) (no row); ENGINE SENSOR SUPPLY VOLTAGE LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x806f7c: byte count 4 -> 2 points [0, 6]
+     e2m: 802C +0000 ADECLZYA [NONE] -> 0x806f7c engine_connector_sensor_supply_voltage_linearization_values word[3]; ENGINE SENSOR SUPPLY VOLTAGE LINEARIZATION TABLE, Y-AXIS~0 - 6
+     rows at pointer: 0x806f7c engine_connector_sensor_supply_voltage_linearization_values (word[3])
+=== record 0x80a88e: offset 2 x_axis_pointer 0x806f82 input 0 values_pointer 0x806f88 no_interpolation_flag 0
+  rows inside: none
+  axis 0x806f82: byte count 4 -> 2 points [0, 1023]
+     e2m: 802F +0000 ADFTLZXA [CNTS] -> 0x806f82 (no name) (no row); LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x806f88: byte count 4 -> 2 points [0, 48]
+     e2m: 802E +0000 ADFTLZYA [  ] -> 0x806f88 frequency_throttle_input_supply_voltage_linearization_values word[3]; LINEARIZATION TABLE, Y-AXIS~
+     rows at pointer: 0x806f88 frequency_throttle_input_supply_voltage_linearization_values (word[3])
+=== record 0x80a89c: offset 30 x_axis_pointer 0x806f8e input 982 values_pointer 0x806fb4 no_interpolation_flag 0
+  rows inside: none
+  axis 0x806f8e: byte count 36 -> 18 points [0, 50, 51, 61, 62, 250, 251, 261, 262, 540, 541, 551, 552, 830, 831, 1012, 1013, 1023]
+     e2m: 800E +0000 ADCRLZXA [CNTS] -> 0x806f8e (no name) (no row); CC SWITCH MUX LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x806fb4: byte count 36 -> 18 points [0, 0, 4, 4, 1, 1, 4, 4, 2, 2, 4, 4, 3, 3, 4, 4, 5, 5]
+     e2m: 800F +0000 ADCRLZYA [NONE] -> 0x806fb4 cruise_control_switch_multiplexer_linearization_values word[19]; CC SWITCH MUX LINEARIZATION TABLE, Y-AXIS~0 - 5
+     rows at pointer: 0x806fb4 cruise_control_switch_multiplexer_linearization_values (word[19])
+=== record 0x80a8aa: offset 16 x_axis_pointer 0x806fda input 1023 values_pointer 0x806fec no_interpolation_flag 0
+  rows inside: none
+  axis 0x806fda: byte count 16 -> 8 points [0, 50, 51, 920, 921, 962, 963, 1023]
+     e2m: 8027 +0000 ADWFLZXA [CNTS] -> 0x806fda (no name) (no row); WATER IN FUEL LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x806fec: byte count 16 -> 8 points [0, 0, 1, 1, 2, 2, 2, 2]
+     e2m: 8026 +0000 ADWFLZYA [NONE] -> 0x806fec water_in_fuel_linearization_values word[9]; WATER IN FUEL LINEARIZATION TABLE, Y-AXIS~0 - 3
+     rows at pointer: 0x806fec water_in_fuel_linearization_values (word[9])
+=== record 0x80a8b8: offset 2 x_axis_pointer 0x806ffe input 0 values_pointer 0x807006 no_interpolation_flag 0
+  rows inside: none
+  axis 0x806ffe: byte count 6 -> 3 points [0, 921, 1023]
+     e2m: 8010 +0000 ADEGLZXA [CNTS] -> 0x806ffe (no name) (no row); LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x807006: byte count 6 -> 3 points [0, 32, 32]
+     e2m: 8011 +0000 ADEGLZYA [NONE] -> 0x807006 egr_current_feedback_linearization_values word[4]; LINEARIZATION TABLE, Y-AXIS~
+     rows at pointer: 0x807006 egr_current_feedback_linearization_values (word[4])
+=== record 0x80a8c6: offset 2 x_axis_pointer 0x80700e input 1 values_pointer 0x807014 no_interpolation_flag 0
+  rows inside: none
+  axis 0x80700e: byte count 4 -> 2 points [0, 1023]
+     e2m: 8031 +0000 ADPSLIXA [CNTS] -> 0x80700e (no name) (no row); LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x807014: byte count 4 -> 2 points [0, 16]
+     e2m: 8030 +0000 ADPSLIYA [NONE] -> 0x807014 programming_pulse_supply_voltage_linearization_values word[3]; LINEARIZATION TABLE, Y-AXIS~
+     rows at pointer: 0x807014 programming_pulse_supply_voltage_linearization_values (word[3])
+=== record 0x80a8d4: offset 2 x_axis_pointer 0x80701a input 463 values_pointer 0x807020 no_interpolation_flag 0
+  rows inside: none
+  axis 0x80701a: byte count 4 -> 2 points [0, 1023]
+     e2m: 8033 +0000 ADHBLZXA [CNTS] -> 0x80701a (no name) (no row); LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x807020: byte count 4 -> 2 points [0, 55]
+     e2m: 8032 +0000 ADHBLZYA [NONE] -> 0x807020 high_side_gate_bias_supply_voltage_linearization_values word[3]; LINEARIZATION TABLE, Y-AXIS~
+     rows at pointer: 0x807020 high_side_gate_bias_supply_voltage_linearization_values (word[3])
+=== record 0x80a8e2: offset 2 x_axis_pointer 0x807026 input 726 values_pointer 0x80702c no_interpolation_flag 0
+  rows inside: none
+  axis 0x807026: byte count 4 -> 2 points [0, 1023]
+     e2m: 8035 +0000 ADOCLIXA [CNTS] -> 0x807026 (no name) (no row); LINEARIZATION TABLE, X-AXIS~0 - 1023
+     rows at pointer: none
+  values 0x80702c: byte count 4 -> 2 points [0, 22]
+     e2m: 8034 +0000 ADOCLIYA [NONE] -> 0x80702c operational_amplifier_and_comparator_supply_voltage_linearization_values word[3]; LINEARIZATION TABLE, Y-AXIS~
+     rows at pointer: 0x80702c operational_amplifier_and_comparator_supply_voltage_linearization_values (word[3])

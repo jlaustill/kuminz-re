@@ -1,0 +1,7 @@
+0x00038ac8: 2 token changes:  => ushort receive_interval ; | ; ushort receive_interval => 
+0x00054ec4: 2 token changes: modulus_start_value => modulus_period_value | modulus_period_value => modulus_start_value
+---- census of distinct changes
+   1  => ushort receive_interval ;
+   1 ; ushort receive_interval => 
+   1 modulus_start_value => modulus_period_value
+   1 modulus_period_value => modulus_start_value

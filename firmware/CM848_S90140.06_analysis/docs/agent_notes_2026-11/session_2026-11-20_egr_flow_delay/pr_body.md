@@ -8,7 +8,7 @@ fresh air flow records; the e2m never spells it out, so no name guesses an expan
 - **Round 2:** at the user's request the rest of the family is renamed too, on this PR (stages 3 / 4). The scope rule:
   a symbol is in if its e2m record is `CHP_` / `C_CHP_`, or if it is an input that a family function would otherwise
   misname.
-- **Beyond CM848 (rounds 72-94):** the J1939 memory write service and the development mode code are shared:
+- **Beyond CM848 (rounds 72-95):** the J1939 memory write service and the development mode code are shared:
   eleven CM550 functions are CM848 twins and share their names. Round 74 also dismantles a misapplied CM550
   struct, round 75 types CM550's InSite parameter schedule and names its J1708 SCI, and round 76 names CM550's
   MC68336 registers, so CM550's CSVs, the root README and `firmware/feature_comparison.csv` change too.
@@ -1025,6 +1025,30 @@ state enum, the flag bytes.**
 - **Cleanups (94670245):** the definition rows' function names, six functions' local rows re-derived, 22 rows inside
   typed rows.
 
+**Round 95.**
+- **CM848's executive task sets by schedule slot (98c5f90b):** the 38 role-guessed / numbered task sets are
+  `cm848_runEveryFrameTaskSet` / `cm848_runEvery<N>FramesTaskSetPhase<P>` (CM550's scheme), read from the ROM jump table
+  at 0xc198 and the decompiled switch, which agree for all 40 frames.
+- **The MPC555 register blocks follow the MPC555 User's Manual (699816aa):**
+  - `ApplyMPC555Registers.java` had thrown in its first phase on every build since 2026-05-23 (its 0x300000 block
+    overlaps the memory map's 0x302000 block), so `mpc555_registers.csv` never applied, and the build still printed
+    "Hardware register naming complete". The stage now runs and never splits typed data, and `run_script` stops the
+    build on any SCRIPT ERROR.
+  - MIOS1 `SCRD` -> `SCR` (SCRD is the +4 duplicate address), QADC64 `CCW` / `RJURR` / `LJSRR` / `LJURR` ->
+    `QACR0-2` / `QASR0`, the TPU3 module registers' pads -> TCR / DSCR / DSSR / LR / SGLR / DCNR / TPUMCR2 / TPUMCR3, and
+    five rendered globals with wrong register names (`USIU_INITCFG` = SGPIOCR ...). Instances are named for their block
+    (`tpu_a`, `qadc64_a`, `usiu_memory_controller`; 1048 renders were `tpu_a_mcr` / `tpu_b_mcr`). 125 rows that only
+    shadowed typed data or sat at reserved addresses are gone.
+- **The round 95 workflow (a6107f03):** an investigator, an independent describer and a judge per batch; nothing refuted.
+  - CM550's 29 placeholders in 0x30000-0x34fff: the trip information task, the engine data trending feature
+    (`trending_sample_record_t`), the J1939 builders and set-ups (three twins renamed in CM848 too).
+  - CM550's 1-D lookup `cm550_lookupTableInterpolation` takes a 14-byte `table_lookup_1d_arguments_t`; its 66 records
+    and their 89 tables are typed and named.
+  - `scheduleJ1939PeriodicMessage`'s full prototype in both firmwares (`J1939_PERIODIC_TRANSMIT_QUEUE`), so its calls
+    show the PGN, interval, offset and builder; `cm550_tableLookup2D` takes its record.
+  - CM550's J1708 pointer record and `cm550_j1939_powertrain_messages_received_t`; CM848's maximum torque pair, the dead
+    leaf 0x29ecc and the fuel pressure governor fault blend words (were `safety_*`).
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -1116,6 +1140,13 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 95: C (the round 95 workflow): both verify DETERMINISTIC; CM550 705 -> 706 functions (0x1fe84) and CM848
+  1968 -> 1969 (0x29ecc); the token changes outside the map are typing effects; no function's unaff_ / extraout_ / in_
+  / CONCAT count went up; pieces equal in both; local rows 'Skipped: 0'; every new name renders.
+- [x] Round 95: B (the register blocks): both verify DETERMINISTIC; no SCRIPT ERROR; the register stage logs Applied 1
+  / Skipped 251 named / 36 inside typed data / Failed 0; CM848 changes outside the map only in local declaration order;
+  CM550 byte-identical apart from the Generated line.
+- [x] Round 95: A (the task sets): CM848 verify DETERMINISTIC; label-only (0 unmapped tokens); statement counts equal.
 - [x] Round 94: F (cleanups): both verify DETERMINISTIC; `prove_r94f.py`: only the six functions' local names change
   (CM848 also swaps two declarations in `cm848_checkPciMessageTimeouts`); every other function is byte-identical; the
   build logs show 'Skipped: 0' local rows in both.
@@ -1253,6 +1284,7 @@ state enum, the flag bytes.**
 
 ## Still open (task 046)
 
+- **Open after round 95** (task 046): CM550's J1939 builders that render as `&LAB_...` in the scheduler calls (no function yet), the boot kernel's CMF step tables named `qadc_*` (0x3fdbb2-0x3fdc1e), the oil change monitor's boot / application time-shared record 0x3fee34, the QADC CCW tables as arrays, and spelled-out peripheral type names.
 - **Open after round 94** (task 046): prototype rows for `scheduleJ1939PeriodicMessage` and `cm550_tableLookup2D`, the 1-D `table_interp_args_t` records, five record-shaped RAM blocks with no reader in the dumped ROM (they need the 0x40000+ dump), CM848's other task sets by slot, and a CM550 EEPROM re-dump at 0x148a bytes.
 - **What 0x128a0 still shows:** it rates Readability Medium. One `uVar1` (the reused register's later values) remains.
 - **The engine speed module's functions** have mixed prefixes: `hpcr_processEngineSyncPulses`,

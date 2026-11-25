@@ -1,0 +1,1552 @@
+[
+ {
+  "firmware": "CM550",
+  "address": "0x0080004a",
+  "current_name": "",
+  "proposed_name": "acceleration_noise_control_fuel_limit_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis acceleration_noise_control_fuel_limit_axis (0x6009e, 10A6 NZFLLMXA) and y values acceleration_noise_control_fuel_limit_values (0x600b2, 10A7 NZFLLMYA) (pointers from the RAM dump). cm550_rpmParameterPointerSetup (0xb614) sets x_axis_offset 2 and both pointers. cm550_rpm_system_state_controller (jsr at 0xb386) writes x_input = current_engine_rpm_filtered and stores the result in acceleration_noise_control_fuel_limit (e2m 10A4 +0 NZFLLM) while the ANC fuel limit conditions hold (algorithm_enable_flags_3_cal.acceleration_noise_control_fuel_limit_enable). The rows inside are removed (were 0x800052 timing_table_1_ptr). (new row, was DAT_0080004a; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x6009e / +6 0 / +8 0x600b2 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00800058",
+  "current_name": "timing_table_2_base",
+  "proposed_name": "acceleration_noise_control_timing_limit_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis acceleration_noise_control_timing_limit_axis (0x600c6, 10A8 NZTALMXA) and y values acceleration_noise_control_timing_limit_values (0x600da, 10A9 NZTALMYA) (pointers from the RAM dump). cm550_dmaDescriptorSetup2 (0xb63e) sets x_axis_offset 2 and both pointers. cm550_FUN_0000b3d0 (jsr at 0xb4a0) writes x_input = current_engine_rpm_filtered and stores the result in acceleration_noise_control_timing_limit (10A4 +2 NZTALM) while the ANC timing limit conditions hold (algorithm_enable_flags_3_cal.acceleration_noise_control_timing_limit_enable). The rows inside are removed (were 0x80005a timing_table_2_ptr / 0x800060 timing_table_3_ptr). (was timing_table_2_base; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x600c6 / +6 0 / +8 0x600da / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00800102",
+  "current_name": "fuel_blend_table_3_ptr",
+  "proposed_name": "speed_request_blend_weight_by_speed_difference_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis speed_request_blend_weight_by_speed_difference_axis (0x807acc, 1326 ASTHPFXA) and y values speed_request_blend_weight_by_speed_difference_values (0x807ad8, 1327 ASTHPFYA) (pointers from the RAM dump). cm550_FUN_0000c880 (0xc880) sets x_axis_offset 2 and both pointers. cm550_dzgTimingAndPressureControlStateMachine (jsr at 0xc92c) writes x_input = the absolute difference between the rate-limited ASG reference and asg_filtered_reference_speed_0_4500 (0x800108); the result (0x800110, a 1/16384 weight) blends asg_filtered_reference_speed_0_4500 with asg_reference_speed_working (>> 14). CM848's counterpart cm848_calculateGovernorReferenceSpeedBlend reads the same tables. The rows inside are removed (were 0x800106 fuel_blend_lookup_input_2 / 0x800108 fuel_blend_table_4_base / 0x80010a fuel_blend_table_4_ptr / 0x80010e fuel_blend_table_3_limit). (was fuel_blend_table_3_ptr; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x807acc / +6 0 / +8 0x807ad8 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00800118",
+  "current_name": "",
+  "proposed_name": "all_speed_governor_friction_fuel_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis all_speed_governor_friction_fuel_axis (0x807230, 1321 ASNLFLXA) and y values all_speed_governor_friction_fuel_values (0x807242, 1323 ASNLFLYA) (pointers from the RAM dump). cm550_interpolationTableSetup (0xd280) sets x_axis_offset 2 and both pointers. cm550_dualTableLookupSum (a3, jsr at 0xd268) writes x_input = asg_reference_speed_working (0x80a990) and adds the result to the coolant adjustment of all_speed_governor_coolant_fuel_adjustment_lookup into 0x8091de (e2m ASNLFL, the ASG no load fuel; row rpm_control_override_flag). The rows inside are removed (were 0x80011a io_control_fuel_rpm_input / 0x80011c retarder_lookup_table_ptr / 0x800120 io_control_fuel_table_2_lookup_arg / 0x800122 retarder_lookup_table_pointer). (new row, was DAT_00800118; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x807230 / +6 5200 / +8 0x807242 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00800126",
+  "current_name": "io_control_fuel_table_param",
+  "proposed_name": "all_speed_governor_coolant_fuel_adjustment_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis all_speed_governor_coolant_fuel_adjustment_axis (0x807254, 1324 ASCLNLXA) and y values all_speed_governor_coolant_fuel_adjustment_values (0x807268, 1325 ASCLNLYA) (pointers from the RAM dump). cm550_interpolationTableSetup (0xd280) sets x_axis_offset 2 and both pointers. cm550_dualTableLookupSum (a2, jsr at 0xd25e) writes x_input = the filtered coolant temperature 0x80a336 and adds the result to all_speed_governor_friction_fuel_lookup's into 0x8091de (ASNLFL). The rows inside are removed (were 0x800128 io_control_fuel_calculator_ptr / 0x80012c throttle_validation_state / 0x800130 throttle_position_raw_value). (was io_control_fuel_table_param; PR #53 round 95)",
+  "evidence": "dump +0 18 / +2 0x807254 / +6 32640 / +8 0x807268 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00800136",
+  "current_name": "",
+  "proposed_name": "all_speed_governor_alternate_droop_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis all_speed_governor_alternate_droop_axis (0x60462, 116C ASALDPXA) and y values all_speed_governor_alternate_droop_values (0x60472, 116D ASALDPYA) (pointers from the RAM dump). cm550_fuelBlendTablePointerSetup (0xd59e) sets x_axis_offset 2 and both pointers. cm550_diagnosticMode10FuelController (jsr at 0xd444) uses it while asg_throttle_source_selector is 0: x_input = asg_reference_speed_working, result = asg_selected_droop_slope_0_30 (e2m 107A +E ASSLDP 'ASG SELECTED DROOP SLOPE'). all_speed_governor_droop_lookup serves selector 1. CM848 names these tables all_speed_governor_droop_blend_0_axis / _values (0x5974e / 0x5975e) but blends the two tables where CM550 selects one. The rows inside are removed (were 0x800138 throttle_buffer_validation_value / 0x80013c throttle_buffer_decreasing_value / 0x800140 throttle_position_validation_buffer). (new row, was DAT_00800136; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x60462 / +6 0 / +8 0x60472 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00800144",
+  "current_name": "derate_fault_counter_1",
+  "proposed_name": "all_speed_governor_droop_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis all_speed_governor_droop_axis (0x60482, 116E ASDPTBXA) and y values all_speed_governor_droop_values (0x60492, 116F ASDPTBYA) (pointers from the RAM dump). cm550_fuelBlendTablePointerSetup (0xd59e) sets x_axis_offset 2 and both pointers. cm550_diagnosticMode10FuelController (jsr at 0xd420) uses it while asg_throttle_source_selector is 1: x_input = asg_reference_speed_working, result = asg_selected_droop_slope_0_30 (ASSLDP). CM848 names these tables all_speed_governor_droop_blend_128_axis / _values (0x5976e / 0x5977e). The rows inside are removed (were 0x800146 derate_fault_counter_2 / 0x800148 derate_fault_counter_3 / 0x80014a derate_target_snapshot / 0x80014c derate_lower_limit / 0x80014e derate_upper_limit / 0x800150 current_derate_target). (was derate_fault_counter_1; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x60482 / +6 0 / +8 0x60492 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00800184",
+  "current_name": "anc_altitude_table_1_size",
+  "proposed_name": "engine_retarder_torque_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis engine_retarder_torque_engine_speed_axis (0x6052a, 13D6 JCBCRPXA) and y values engine_retarder_torque_stage_6_values (0x60566, 13D5 JC6CTQYA) (pointers from the RAM dump). cm550_throttleTablePointerSetup (0x100da) sets x_axis_offset 2 and both pointers. cm550_ioControlBasedFuelCalculator (a2, jsr at 0x10072) points y_values_pointer at the stage table of engine_brake_active_cylinder_count (1-6 cylinders: engine_retarder_torque_stage_1_values .. _stage_6_values, 0x60534 .. 0x60566), writes x_input = engine_rpm_primary and divides the result x 0x6400 by engine_retarder_reference_torque_lookup's result into jcomm_ind_retarder_torque_amount_of_torque_provided_by_retarde_0_125 (JCINRDTQ, at most 32000). CM848's single lookup of cm848_calculateEngineRetarderTorque uses engine_retarder_torque_cached_axis_offset the same way. The rows inside are removed (were 0x800186 anc_duty_cycle_ptr / 0x80018a cold_start_rpm_snapshot_2 / 0x80018c anc_min_active_time_ptr / 0x800190 anc_disable_duration_table_size). (was anc_altitude_table_1_size; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x6052a / +6 0 / +8 0x60566 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00800192",
+  "current_name": "anc_disable_duration_ptr",
+  "proposed_name": "engine_retarder_reference_torque_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis engine_retarder_torque_engine_speed_axis (0x6052a, 13D6 JCBCRPXA) and y values engine_retarder_torque_stage_6_values (0x60566, 13D5 JC6CTQYA) (pointers from the RAM dump). cm550_throttleTablePointerSetup (0x100da) sets x_axis_offset 2 and both pointers. cm550_ioControlBasedFuelCalculator (pea, jsr at 0x1009a) writes x_input = the last point of the engine speed axis (*(x_axis_pointer + 8)) and looks up the 6 cylinder stage table: the reference torque the active torque is divided by. The rows inside are removed (were 0x800196 cold_start_rpm_snapshot_3 / 0x800198 anc_altitude_table_1_base / 0x80019a anc_altitude_table_1_ptr / 0x80019e cold_start_sensor_sum_saved). (was anc_disable_duration_ptr; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x6052a / +6 0 / +8 0x60566 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008001ea",
+  "current_name": "hour_meter_table_3_size",
+  "proposed_name": "cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_axis (0x60596, 108B CPCS01XA) and y values cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_values (0x605b2, 108C CPCS01YA) (pointers from the RAM dump). cm550_initLoadTrendingSystem (0x124d2) sets x_axis_offset 2 and both pointers. cm550_coldStartFuelControlSlowCycle40Coordinator (jsr at 0x11fe0) writes x_input = engine_rpm_primary in the cylinder pressure maintenance pass (algorithm_enable_flags_3_cal.cylinder_pressure_maintenance_enable). The result is the cylinder to compression pressure ratio per timing degree: with method 1 the timing correction is (desired - calculated_cylinder_pressure_1500_3000) x 0x4444 / (ratio x the compression pressure), and the start of injection advance scales the calculated pressure by it. The rows inside are removed (were 0x8001ec hour_meter_table_3_ptr / 0x8001f0 engine_rpm_histogram_threshold_select / 0x8001f2 hour_meter_table_4_base / 0x8001f4 hour_meter_table_4_ptr). (was hour_meter_table_3_size; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x60596 / +6 0 / +8 0x605b2 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080020e",
+  "current_name": "manifold_temp_table_1_z_ptr",
+  "proposed_name": "cylinder_pressure_maintenance_temperature_per_timing_degree_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis cylinder_pressure_maintenance_temperature_per_timing_degree_axis (0x60640, 108D CPCS03XA) and y values cylinder_pressure_maintenance_temperature_per_timing_degree_values (0x6065c, 108E CPCS03YA) (pointers from the RAM dump). cm550_initLoadTrendingSystem (0x124d2) sets x_axis_offset 2 and both pointers. cm550_coldStartFuelControlSlowCycle40Coordinator (jsr at 0x122c6) writes x_input = engine_rpm_primary; with method 2 (cylinder_pressure_calculation_method 2, the boost path faulted) the timing correction is the result x (intake manifold temperature - expected_intake_temperature_based_on_mass_fuel_rate_calcula_50_to_293) / 0x7800, limited to +-0xaa. The rows inside are removed (were 0x800212 manifold_temp_table_2_type / 0x800214 manifold_temp_table_2_x_ptr / 0x800218 speed_based_parameter_lookup_result / 0x80021a manifold_temp_table_2_z_ptr). (was manifold_temp_table_1_z_ptr; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x60640 / +6 0 / +8 0x6065c / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080024e",
+  "current_name": "",
+  "proposed_name": "cylinder_balance_threshold_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis cylinder_balance_threshold_axis (0x8072f4, 8226 CBDTT1) and y values cylinder_balance_threshold_values (0x807316, 8227 CBDTT2) (pointers from the RAM dump). vp44_FUN_000133fe (0x133fe) sets x_axis_offset 2 and both pointers. vp44_FUN_000127c2 (jsr at 0x13000) writes x_input = current_engine_rpm_filtered and stores the result in 0x809230 (e2m 823D +48 CBDFT 'CYLINDER BALANCING FFT THRESHOLD'), which it compares with 0x809232 / 0x809234 / 0x809236 (CBDFM1 ..) to pick the trim gains. No other rows lie inside. (new row, was DAT_0080024e; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x8072f4 / +6 0 / +8 0x807316 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080025c",
+  "current_name": "",
+  "proposed_name": "cylinder_balance_real_2_dynamics_compensation_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis cylinder_balance_threshold_axis (0x8072f4, 8226 CBDTT1) and y values cylinder_balance_real_2_dynamics_compensation_values (0x809e9e, 823E CBDDCT) (pointers from the RAM dump). vp44_FUN_000133fe (0x133fe) sets x_axis_offset 2 and both pointers. vp44_FUN_000127c2 (jsr at 0x129ca) writes x_input = current_engine_rpm_filtered and subtracts the result from the real component 0x80920e (CBDFRC2) + 10000 into 0x809276 (CBDARC2 'CYLINDER BALANCING ADJUSTED REAL COMP_2', limited to +-10000). The rows inside are removed (were 0x800268 vp44_third_array_1). (new row, was DAT_0080025c; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x8072f4 / +6 0 / +8 0x809e9e / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080026a",
+  "current_name": "",
+  "proposed_name": "cylinder_balance_imaginary_2_dynamics_compensation_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis cylinder_balance_threshold_axis (0x8072f4, 8226 CBDTT1) and y values cylinder_balance_imaginary_2_dynamics_compensation_values (0x809ebe, 823F CBDI2DCT) (pointers from the RAM dump). vp44_FUN_000133fe (0x133fe) sets x_axis_offset 2 and both pointers. vp44_FUN_000127c2 (jsr at 0x129e8) writes x_input = current_engine_rpm_filtered and subtracts the result from the imaginary component 0x809212 (CBDFIC2) + 10000 into 0x809278 (CBDAIC2 'ADJUSTED IMAG COMP_2', limited to +-10000). The rows inside are removed (were 0x80026c vp44_third_array_2 / 0x800270 vp44_third_array_3). (new row, was DAT_0080026a; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x8072f4 / +6 0 / +8 0x809ebe / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00800278",
+  "current_name": "",
+  "proposed_name": "cylinder_balance_engine_speed_breakpoint_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis cylinder_balance_engine_speed_breakpoint_axis (0x807360, 822E CBDESBV) and y values cylinder_balance_engine_speed_breakpoint_values (0x807370, 822F CBDESBT) (pointers from the RAM dump). vp44_FUN_000133fe (0x134ea-0x134fc) sets x_axis_offset 2 and both pointers. No lookup of it in the dumped ROM: the set-up's two writes are its only absolute references and no decompiled call passes it (its reader may be in the undumped ROM above 0x40000). The x axis holds the indexes 0-6, so it maps a speed bin index to its engine speed breakpoint. The rows inside are removed (were 0x800280 engine_rpm_source_max_ptr / 0x800284 engine_rpm_source_init_value). (new row, was DAT_00800278; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x807360 / +6 0 / +8 0x807370 / +0xc 0; abs_refs.py: only the set-up's writes reference it; no decompiled call and none of the 44 references to 0x34de0 passes it",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00800286",
+  "current_name": "",
+  "proposed_name": "cylinder_balance_delta_fueling_breakpoint_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis cylinder_balance_delta_fueling_breakpoint_axis (0x807380, 8230 CBDDFBV) and y values cylinder_balance_delta_fueling_breakpoint_values (0x80738e, 8231 CBDDFBT) (pointers from the RAM dump). vp44_FUN_000133fe (0x13506-0x13518) sets x_axis_offset 2 and both pointers. No lookup of it in the dumped ROM (the set-up writes are its only references); the x axis holds the indexes 0-5, so it maps an index to its delta fueling breakpoint. The rows inside are removed (were 0x800288 peak_torque_correction_applied_flag / 0x80028a load_trending_table_1_size / 0x80028c load_trending_kickdown_ptr / 0x800290 fuel_timing_blend_throttle_input / 0x800292 load_trending_accel_ptr). (new row, was DAT_00800286; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x807380 / +6 0 / +8 0x80738e / +0xc 0; abs_refs.py: only the set-up's writes reference it; no decompiled call and none of the 44 references to 0x34de0 passes it",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00800294",
+  "current_name": "",
+  "proposed_name": "cylinder_balance_filtered_fueling_breakpoint_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis cylinder_balance_filtered_fueling_breakpoint_axis (0x80739c, 8232 CBDFFBV) and y values cylinder_balance_filtered_fueling_breakpoint_values (0x8073aa, 8233 CBDFFBT) (pointers from the RAM dump). vp44_FUN_000133fe (0x13522-0x13534) sets x_axis_offset 2 and both pointers. No lookup of it in the dumped ROM (the set-up writes are its only references); the x axis holds the indexes 0-5, so it maps an index to its filtered fueling breakpoint. The rows inside are removed (were 0x800296 load_trending_lower_limit_size / 0x800298 load_trending_lower_limit_ptr / 0x80029c fuel_timing_intake_temp_input / 0x80029e load_trending_count_min_ptr). (new row, was DAT_00800294; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x80739c / +6 0 / +8 0x8073aa / +0xc 0; abs_refs.py: only the set-up's writes reference it; no decompiled call and none of the 44 references to 0x34de0 passes it",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080058e",
+  "current_name": "",
+  "proposed_name": "engine_warmup_protection_rifle_to_turbocharger_delay_time_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis engine_warmup_protection_rifle_to_turbocharger_delay_time_axis (0x60846, 11EF WPCQXA) and y values engine_warmup_protection_rifle_to_turbocharger_delay_time_values (0x6085a, 11EE WPDYTMYA) (pointers from the RAM dump). cm550_initializeEngineWarmupProtection (0x1709e) sets x_axis_offset 2 and both pointers. cm550_runEngineWarmupProtection (jsr at 0x1702e) writes x_input = the filtered coolant temperature when the rifle to turbocharger delay starts and stores the result in engine_warmup_protection_rifle_to_turbocharger_delay_time (e2m 11EA +6 WPO2DY). No other rows lie inside. (new row, was DAT_0080058e; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x60846 / +6 0 / +8 0x6085a / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080059c",
+  "current_name": "",
+  "proposed_name": "engine_warmup_protection_fuel_limit_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis engine_warmup_protection_fuel_limit_axis (0x607f2, 11ED WPESXA) and y values engine_warmup_protection_fuel_limit_values (0x6081c, 11EC WPFLDQYA) (pointers from the RAM dump). cm550_initializeEngineWarmupProtection (0x1709e) sets x_axis_offset 2 and both pointers. cm550_runEngineWarmupProtection (jsr at 0x1708a) writes x_input = engine_rpm_primary and stores the result in engine_warmup_protection_fuel_limit (11EA +14 WPTQLM). No other rows lie inside. (new row, was DAT_0080059c; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x607f2 / +6 0 / +8 0x6081c / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008005b4",
+  "current_name": "",
+  "proposed_name": "crank_wet_stack_timing_by_intake_manifold_temperature_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis wet_stack_timing_by_intake_manifold_temperature_axis (0x8071e0, 1075 WSIMAI) and y values wet_stack_timing_by_intake_manifold_temperature_values (0x8071f6, 1076 WSTATB) (pointers from the RAM dump). vp44_fuelLimitParameterPointerSetup (0x17f06-0x17f1c, with the crank 4D timing records 0x8005c2 / 0x8005d8) sets x_axis_offset 2 and both pointers. No lookup of it in the dumped ROM: the set-up writes are its only absolute references (0x17f08 / 0x17f20). The crank routine takes its wet stack timing from wet_stack_timing_base_value_0_120 (wet_stack_timing_by_intake_manifold_temperature_lookup / _by_coolant_temperature_lookup) instead. Same tables as wet_stack_timing_by_intake_manifold_temperature_lookup. No other rows lie inside. (new row, was DAT_008005b4; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x8071e0 / +6 0 / +8 0x8071f6 / +0xc 0; abs_refs.py: only the set-up's writes reference it; no decompiled call and none of the 44 references to 0x34de0 passes it",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008005fe",
+  "current_name": "",
+  "proposed_name": "fault_derate_fuel_limit_at_torque_curve_points_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis fault_derate_fuel_limit_by_engine_speed_axis (0x807176, 10BA EPFLVSAI) and y values fault_derate_fuel_limit_by_engine_speed_values (0x8071a8, 10BB EPFLTB) (pointers from the RAM dump). cm550_FUN_000185f0 (0x185f0) sets x_axis_offset 2 and both pointers. cm550_FUN_000183cc (a4 = 0x34de0 at 0x183da, five jsr (a4)) writes x_input = torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000 .. _5_0_5000 in turn and stores the five results in torque_curve_fueling_at_idle_speed_breakpoint_0_100 .. _point_5_ (copied, or kept as the minimum when the EPF J1939 breakpoint flags say so). CM848's counterpart cm848_applyFaultDerateToJ1939TorqueCurveFuelings looks up the same table with fault_derate_fuel_limit_by_engine_speed_cached_axis_offset_2. Same tables as fault_derate_fuel_limit_by_engine_speed_lookup. The rows inside are removed (were 0x800604 epf_fuel_limit_table_x_input). (new row, was DAT_008005fe; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x807176 / +6 0 / +8 0x8071a8 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00800632",
+  "current_name": "",
+  "proposed_name": "fault_derate_fuel_limit_by_engine_speed_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis fault_derate_fuel_limit_by_engine_speed_axis (0x807176, 10BA EPFLVSAI) and y values fault_derate_fuel_limit_by_engine_speed_values (0x8071a8, 10BB EPFLTB) (pointers from the RAM dump). cm550_initShutdownLimitVariables (0x19960) sets x_axis_offset 2 and both pointers. cm550_FUN_00019702 (jsr at 0x1990c) writes x_input = engine_rpm_primary while engine_protection_fueling_severity_filtered is nonzero; fault_derate_fuel_limit (e2m 10B1 +A EPFLLM) = result + (256 - severity) x (throttle_100_fueling - result) / 256. CM848's counterpart cm848_calculateFaultDerateFuelLimit uses fault_derate_fuel_limit_by_engine_speed_cached_axis_offset. The rows inside are removed (were 0x800638 arbitrated_fuel_previous / 0x80063a governor_rpm_error_previous). (new row, was DAT_00800632; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x807176 / +6 0 / +8 0x8071a8 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008006aa",
+  "current_name": "",
+  "proposed_name": "double_pulsing_fueling_mapping_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis double_pulsing_fueling_mapping_axis (0x607d6, 1084 DPFPTB) and y values double_pulsing_fueling_mapping_values (0x607e4, 1085 DPTVOTB) (pointers from the RAM dump). cm550_FUN_0001c7a8 (0x1c7a8) sets x_axis_offset 2 and both pointers. cm550_fuelDemandTableBlendCalculator (jsr at 0x1c6b2) writes x_input = final_fueling while 0x80d706 is 1 (only a cmpi.w #1 at 0x1c698 in the dumped ROM, no writer) and uses the result instead of final_fueling as the y input of the two 4D timing lookups. Note the code uses the FPW table (DPFPTB, e2m type Y) as the axis and the TVO table (DPTVOTB, e2m type X) as the values: the reverse of the e2m pairing. No other rows lie inside. (new row, was DAT_008006aa; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x607d6 / +6 0 / +8 0x607e4 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080071e",
+  "current_name": "",
+  "proposed_name": "high_speed_governor_derivative_gain_adjustment_multiplier_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis high_speed_governor_derivative_gain_adjustment_error_axis (0x808068, 12E1 HSDVCFXA) and y values high_speed_governor_derivative_gain_adjustment_multiplier_values (12E2 HSDVCFYA) (pointers from the RAM dump). initializeHighSpeedGovernorGainSet (0x1d2e4) sets x_axis_offset 2 and both pointers. runHighSpeedGovernorPid (jsr at 0x1cfb8) writes x_input = |hsg_filtered_engine_speed_error| and scales hsg_derivative_gain_base by the result / 256 into hsg_adjusted_derivative_gain_0_5_120 (at most 0xffff). CM848's cache word is high_speed_governor_derivative_gain_adjustment_multiplier_cached_axis_offset. No other rows lie inside. (new row, was DAT_0080071e; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x808068 / +6 0 / +8 0x808084 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080072c",
+  "current_name": "",
+  "proposed_name": "high_speed_governor_proportional_gain_adjustment_multiplier_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis high_speed_governor_proportional_gain_adjustment_error_axis (0x8080a0, 12E3 HSPPCFXA) and y values high_speed_governor_proportional_gain_adjustment_multiplier_values (12E4 HSPPCFYA) (pointers from the RAM dump). initializeHighSpeedGovernorGainSet (0x1d2e4) sets x_axis_offset 2 and both pointers. runHighSpeedGovernorPid (jsr at 0x1d02a) writes x_input = |hsg_filtered_engine_speed_error| and scales hsg_proportional_gain_base by the result / 256 into hsg_adjusted_proportional_gain_0_7_5000 (at most 0x1e00). CM848's cache word is high_speed_governor_proportional_gain_adjustment_multiplier_cached_axis_offset. No other rows lie inside. (new row, was DAT_0080072c; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x8080a0 / +6 0 / +8 0x8080bc / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080073a",
+  "current_name": "",
+  "proposed_name": "high_speed_governor_integral_gain_adjustment_multiplier_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis high_speed_governor_integral_gain_adjustment_error_axis (0x8080d8, 12E5 HSITCFXA) and y values high_speed_governor_integral_gain_adjustment_multiplier_values (12E6 HSITCFYA) (pointers from the RAM dump). initializeHighSpeedGovernorGainSet (0x1d2e4) sets x_axis_offset 2 and both pointers. runHighSpeedGovernorPid (jsr at 0x1d08a) writes x_input = |hsg_filtered_engine_speed_error| and scales hsg_integral_gain_base by the result / 256 into hsg_adjusted_integral_gain_0_6_0000 (at most 0x7ae). CM848's cache word is high_speed_governor_integral_gain_adjustment_multiplier_cached_axis_offset. No other rows lie inside. (new row, was DAT_0080073a; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x8080d8 / +6 0 / +8 0x8080f4 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00801a3e",
+  "current_name": "",
+  "proposed_name": "engine_protection_low_oil_pressure_limit_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis engine_protection_oil_pressure_limit_axis (0x611d0, 10BC EPO2VSAI) and y values engine_protection_low_oil_pressure_limit_values (0x611de, 10BD EPO2LOTB) (pointers from the RAM dump). cm550_initLookupTablePointers1 (0x25926) sets x_axis_offset 2 and both pointers. cm550_epsTimingCalculationSlowCycle40Coordinator (a2 = 0x801a3e, jsr at 0x258fe) writes x_input = engine_rpm_primary and stores the result in low_oil_pressure_limit_as_calculated_for_present_engine_speed_0_100 (0x80dabe). The rows inside are removed (were 0x801a42 retarder_mode1_threshold_table / 0x801a44 retarder_mode1_data_ptr / 0x801a48 retarder_mode1_rpm_input / 0x801a4a retarder_mode1_output_ptr). (new row, was DAT_00801a3e; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x611d0 / +6 0 / +8 0x611de / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00801a4c",
+  "current_name": "",
+  "proposed_name": "engine_protection_very_low_oil_pressure_limit_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis engine_protection_oil_pressure_limit_axis (0x611d0, 10BC EPO2VSAI) and y values engine_protection_very_low_oil_pressure_limit_values (0x611ec, 10BE EPO2VLTB) (pointers from the RAM dump). cm550_initLookupTablePointers1 (0x25926) sets x_axis_offset 2 and both pointers. cm550_epsTimingCalculationSlowCycle40Coordinator (pea (0xe,a2) with a2 = 0x801a3e, jsr at 0x25912) writes x_input = engine_rpm_primary and stores the result in very_low_oil_pressure_is_calculated_for_present_engine_speed_0_100 (0x80dac0). The rows inside are removed (were 0x801a4e retarder_mode2_threshold_table / 0x801a50 retarder_mode2_data_ptr / 0x801a54 retarder_mode2_rpm_input / 0x801a56 retarder_mode2_output_ptr). (new row, was DAT_00801a4c; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x611d0 / +6 0 / +8 0x611ec / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00801c0e",
+  "current_name": "",
+  "proposed_name": "power_take_off_gain_adjustment_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis power_take_off_gain_adjustment_axis (0x808958, 13B2 PTSPAX) and y values power_take_off_gain_adjustment_values (0x80896e, 13B3 PTGNTB) (pointers from the RAM dump). initializePowerTakeOffGovernorFiltersAndGains (0x2db2a) sets x_axis_offset 2 and both pointers. cm550_runPowerTakeOffGovernor (jsr at 0x2d48e) and cm550_presetPowerTakeOffGovernorOnEngagement (jsr at 0x2da56) write x_input = closed_loop_rpm_snapshot while 0x8088ae (e2m 10AA +16 PTGM 'CONTROL THE GAIN ADJUSTMENT CALCULATION (0=CALCULATED 1=TABLE)') is nonzero; the result << 9, limited, becomes closed_loop_rpm_based_gain (0x801bfe). CM848's cache word is power_take_off_gain_adjustment_cached_axis_offset. No other rows lie inside. (new row, was DAT_00801c0e; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x808958 / +6 0 / +8 0x80896e / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00801c1c",
+  "current_name": "",
+  "proposed_name": "power_take_off_governor_derivative_gain_adjustment_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis power_take_off_governor_derivative_gain_adjustment_axis (0x8088b0, 13AC PTERQDAX) and y values power_take_off_governor_derivative_gain_adjustment_values (13AD PTGNQDTB) (pointers from the RAM dump). initializePowerTakeOffGovernorFiltersAndGains (0x2db2a) sets x_axis_offset 2 and both pointers. cm550_runPowerTakeOffGovernor (jsr at 0x2d584) writes x_input = the droop compensated error 0x80dc1c (e2m 10AB +1C PTDRER) + 16000 while 0x804012 (1268 +6 PTQDEN 'ENABLE/DISABLE FOR QUADRATIC D-GAIN ADJUSTMENT') is nonzero and stores the result in 0x80dc1e (10AB +1E PTAJDG 'ADJUSTMENT (MULTIPLICATION) OF THE GOVERNER D GAIN'). No other rows lie inside. (new row, was DAT_00801c1c; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x8088b0 / +6 0 / +8 0x8088cc / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00801c2a",
+  "current_name": "",
+  "proposed_name": "power_take_off_governor_integral_gain_adjustment_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis power_take_off_governor_integral_gain_adjustment_axis (0x8088e8, 13AE PTERQIAX) and y values power_take_off_governor_integral_gain_adjustment_values (13AF PTGNQITB) (pointers from the RAM dump). initializePowerTakeOffGovernorFiltersAndGains (0x2db2a) sets x_axis_offset 2 and both pointers. cm550_runPowerTakeOffGovernor (jsr at 0x2d5b0) writes x_input = 0x80dc1c (PTDRER) + 16000 while 0x804014 (PTQIEN) is nonzero and stores the result in 0x80dc20 (PTAJIG, the I gain multiplication). No other rows lie inside. (new row, was DAT_00801c2a; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x8088e8 / +6 0 / +8 0x808904 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00801c38",
+  "current_name": "",
+  "proposed_name": "power_take_off_governor_proportional_gain_adjustment_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis power_take_off_governor_proportional_gain_adjustment_axis (0x808920, 13B0 PTERQPAX) and y values power_take_off_governor_proportional_gain_adjustment_values (13B1 PTGNQPTB) (pointers from the RAM dump). initializePowerTakeOffGovernorFiltersAndGains (0x2db2a) sets x_axis_offset 2 and both pointers. cm550_runPowerTakeOffGovernor (jsr at 0x2d5dc) writes x_input = 0x80dc1c (PTDRER) + 16000 while 0x804016 (PTQPEN) is nonzero and stores the result in 0x80dc22 (PTAJPG, the P gain multiplication), which scales the proportional term. No other rows lie inside. (new row, was DAT_00801c38; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x808920 / +6 0 / +8 0x80893c / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00801e30",
+  "current_name": "",
+  "proposed_name": "engine_retarder_torque_stage_1_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis engine_retarder_torque_engine_speed_axis (0x6052a, 13D6 JCBCRPXA) and y values engine_retarder_torque_stage_1_values (0x60534, 13D0 JC1CTQYA) (pointers from the RAM dump). cm550_FUN_0002faa4 (0x2faa4) sets x_axis_offset 2 and both pointers. j1939FormatMultiFrameResponse (0x2f632, jsr at 0x2f6bc) writes x_input = engine_rpm_primary and compares the result with the requested braking torque (jcomm_req_torque_braking_override_or_limit_value_0_125 x the reference torque / 100) to choose the stepped retarder level (0 / 0x11 ..); the 2-5 stage lookups follow. CM848's counterpart cm848_selectEngineRetarderStagePercent uses engine_retarder_torque_stage_1_cached_axis_offset. No other rows lie inside. (new row, was DAT_00801e30; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x6052a / +6 0 / +8 0x60534 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00801e3e",
+  "current_name": "",
+  "proposed_name": "engine_retarder_torque_stage_2_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis engine_retarder_torque_engine_speed_axis (0x6052a, 13D6 JCBCRPXA) and y values engine_retarder_torque_stage_2_values (0x6053e, 13D1 JC2CTQYA) (pointers from the RAM dump). cm550_FUN_0002faa4 (0x2faa4) sets x_axis_offset 2 and both pointers. j1939FormatMultiFrameResponse (jsr at 0x2f6f4) writes x_input = engine_rpm_primary; the second stage threshold of the stepped retarder level (0x11 / 0x21). CM848: engine_retarder_torque_stage_2_cached_axis_offset. No other rows lie inside. (new row, was DAT_00801e3e; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x6052a / +6 0 / +8 0x6053e / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00801e4c",
+  "current_name": "",
+  "proposed_name": "engine_retarder_torque_stage_3_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis engine_retarder_torque_engine_speed_axis (0x6052a, 13D6 JCBCRPXA) and y values engine_retarder_torque_stage_3_values (0x60548, 13D2 JC3CTQYA) (pointers from the RAM dump). cm550_FUN_0002faa4 (0x2faa4) sets x_axis_offset 2 and both pointers. j1939FormatMultiFrameResponse (jsr at 0x2f72e) writes x_input = engine_rpm_primary; the third stage threshold (0x21 / 0x32). CM848: engine_retarder_torque_stage_3_cached_axis_offset. No other rows lie inside. (new row, was DAT_00801e4c; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x6052a / +6 0 / +8 0x60548 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00801e5a",
+  "current_name": "",
+  "proposed_name": "engine_retarder_torque_stage_4_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis engine_retarder_torque_engine_speed_axis (0x6052a, 13D6 JCBCRPXA) and y values engine_retarder_torque_stage_4_values (0x60552, 13D3 JC4CTQYA) (pointers from the RAM dump). cm550_FUN_0002faa4 (0x2faa4) sets x_axis_offset 2 and both pointers. j1939FormatMultiFrameResponse (jsr at 0x2f768) writes x_input = engine_rpm_primary; the fourth stage threshold (0x32 / 0x43). CM848: engine_retarder_torque_stage_4_cached_axis_offset. No other rows lie inside. (new row, was DAT_00801e5a; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x6052a / +6 0 / +8 0x60552 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00801e68",
+  "current_name": "",
+  "proposed_name": "engine_retarder_torque_stage_5_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis engine_retarder_torque_engine_speed_axis (0x6052a, 13D6 JCBCRPXA) and y values engine_retarder_torque_stage_5_values (0x6055c, 13D4 JC5CTQYA) (pointers from the RAM dump). cm550_FUN_0002faa4 (0x2faa4) sets x_axis_offset 2 and both pointers. j1939FormatMultiFrameResponse (jsr at 0x2f7a2) writes x_input = engine_rpm_primary; the fifth stage threshold (0x43 / 0x53 / 100). CM848: engine_retarder_torque_stage_5_cached_axis_offset. No other rows lie inside. (new row, was DAT_00801e68; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x6052a / +6 0 / +8 0x6055c / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008036c6",
+  "current_name": "",
+  "proposed_name": "wet_stack_timing_by_intake_manifold_temperature_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis wet_stack_timing_by_intake_manifold_temperature_axis (0x8071e0, 1075 WSIMAI) and y values wet_stack_timing_by_intake_manifold_temperature_values (0x8071f6, 1076 WSTATB) (pointers from the RAM dump). vp44_liftPumpFuelDeliveryController (0x34cc4), before every lookup, sets x_axis_offset 2 and both pointers. vp44_liftPumpFuelDeliveryController (a3, jsr at 0x34d22) writes x_input = the filtered intake manifold temperature; when the result is at least the coolant one it becomes wet_stack_timing_base_value_0_120 (WSADTA) with wet_stack_timing_state 1. No other rows lie inside. (new row, was DAT_008036c6; PR #53 round 95)",
+  "evidence": "dump +0 18 / +2 0x8071e0 / +6 21120 / +8 0x8071f6 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008036d4",
+  "current_name": "",
+  "proposed_name": "wet_stack_timing_by_coolant_temperature_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis wet_stack_timing_by_coolant_temperature_axis (0x80720c, 12CB WSCLAI) and y values wet_stack_timing_by_coolant_temperature_values (12CC WSCLTATB) (pointers from the RAM dump). vp44_liftPumpFuelDeliveryController (0x34cc4), before every lookup, sets x_axis_offset 2 and both pointers. vp44_liftPumpFuelDeliveryController (a2, jsr at 0x34d2c) writes x_input = the filtered coolant temperature and stores the result in wet_stack_timing_base_value_0_120; it stays there with wet_stack_timing_state 13 when it exceeds the intake manifold one. No other rows lie inside. (new row, was DAT_008036d4; PR #53 round 95)",
+  "evidence": "dump +0 12 / +2 0x80720c / +6 32640 / +8 0x80721e / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080db20",
+  "current_name": "no_load_fueling_curve_descriptor",
+  "proposed_name": "friction_fuel_by_engine_speed_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis friction_fuel_by_engine_speed_axis (0x611fa, 1098 NLFCFLXA) and y values friction_fuel_by_engine_speed_values (0x6120e, 1099 NLFCFLYA) (pointers from the RAM dump). cm550_FUN_0001ddb4 (0x1ddb4) sets x_axis_offset 2 and both pointers. Four callers, eight calls: cm550_FUN_00026b3a (jsr at 0x26b66, x_input = engine_rpm_primary; no_load_fuel_quantity = this + the coolant correction), cm550_FUN_00014348 (a4 = 0x34de0 at 0x14352, five jsr (a4) at lsg_breakpoint_speed and the four torque curve speeds -> frictional_load_*), cm550_fuelDemandPercentageCalculator (jsr at 0x14472) and selectEngineSpeedLimit (jsr at 0x1d7f8, at the HSG droop line no load point). CM848's cache word is friction_fuel_by_engine_speed_cached_axis_offset. The rows inside are removed (were 0x80db26 no_load_fueling_curve_rpm_input). (was no_load_fueling_curve_descriptor; PR #53 round 95)",
+  "evidence": "dump +0 2 / +2 0x611fa / +6 0 / +8 0x6120e / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080db2e",
+  "current_name": "",
+  "proposed_name": "friction_fuel_correction_by_coolant_temperature_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "The cm550_lookupTableInterpolation record (table_lookup_1d_arguments_t) of x axis friction_fuel_correction_by_coolant_temperature_axis (0x61222, 109A ADCLFLBP) and y values friction_fuel_correction_by_coolant_temperature_values (0x61236, 109B NLCLFLYA) (pointers from the RAM dump). cm550_FUN_0001ddb4 (0x1ddb4) sets x_axis_offset 2 and both pointers. cm550_FUN_00026b3a (jsr at 0x26b5c), cm550_multiSpeedParameterInterpolation (jsr at 0x143d0, result 0x80052c) and selectEngineSpeedLimit (jsr at 0x1d7e8) write x_input = the filtered coolant temperature; the result is added to the friction fuel by engine speed (no_load_fuel_quantity, no_load_fueling_curve_value_at_hsg_active_no_load_rpm_0_100). No other rows lie inside. (new row, was DAT_0080db2e; PR #53 round 95)",
+  "evidence": "dump +0 16 / +2 0x61222 / +6 32640 / +8 0x61236 / +0xc 0; users.py: the set-up writes +0 / +2 / +8 and the caller +6; abs_refs.py: nothing writes +0xc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a792",
+  "current_name": "",
+  "proposed_name": "intake_manifold_temperature_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 0 (intake manifold temperature) linearization record (table_lookup_1d_arguments_t, descriptor 0 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer intake_manifold_temperature_linearization_axis (0x806d3a) / y_values_pointer intake_manifold_temperature_linearization_values (0x806d6e); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = intake_manifold_temperature_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. CM848's cache word for the same axis record: intake_manifold_temperature_linearization_cached_axis_offset. (new row, was DAT_0080a792; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a792 = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x806d3a / +8 0x806d6e / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a7a0",
+  "current_name": "",
+  "proposed_name": "fuel_temperature_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 1 (fuel temperature) linearization record (table_lookup_1d_arguments_t, descriptor 1 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer fuel_temperature_linearization_axis (0x806da2) / y_values_pointer fuel_temperature_linearization_values (0x806dce); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = fuel_temperature_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. (new row, was DAT_0080a7a0; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a7a0 = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x806da2 / +8 0x806dce / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a7ae",
+  "current_name": "",
+  "proposed_name": "coolant_level_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 2 (coolant level) linearization record (table_lookup_1d_arguments_t, descriptor 2 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer coolant_level_linearization_axis (0x806dfa) / y_values_pointer coolant_level_linearization_values (0x806e0c); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = coolant_level_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. (new row, was DAT_0080a7ae; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a7ae = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 16 / +2 0x806dfa / +8 0x806e0c / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a7bc",
+  "current_name": "",
+  "proposed_name": "fuel_pressure_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 3 (fuel pressure) linearization record (table_lookup_1d_arguments_t, descriptor 3 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer fuel_pressure_linearization_axis (0x806e1e) / y_values_pointer fuel_pressure_linearization_values (0x806e24); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = fuel_pressure_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. (new row, was DAT_0080a7bc; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a7bc = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x806e1e / +8 0x806e24 / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a7ca",
+  "current_name": "",
+  "proposed_name": "oil_pressure_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 4 (oil pressure) linearization record (table_lookup_1d_arguments_t, descriptor 4 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer oil_pressure_linearization_axis (0x806e2a) / y_values_pointer oil_pressure_linearization_values (0x806e36); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = oil_pressure_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. CM848's cache word for the same axis record: oil_pressure_linearization_cached_axis_offset. (new row, was DAT_0080a7ca; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a7ca = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x806e2a / +8 0x806e36 / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a7d8",
+  "current_name": "",
+  "proposed_name": "boost_pressure_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 5 (boost pressure) linearization record (table_lookup_1d_arguments_t, descriptor 5 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer boost_pressure_linearization_axis (0x806e42) / y_values_pointer boost_pressure_linearization_values (0x806e4c); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = boost_pressure_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. CM848's cache word for the same axis record: boost_pressure_linearization_cached_axis_offset. (new row, was DAT_0080a7d8; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a7d8 = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x806e42 / +8 0x806e4c / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a7e6",
+  "current_name": "",
+  "proposed_name": "coolant_temperature_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 6 (coolant temperature) linearization record (table_lookup_1d_arguments_t, descriptor 6 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer coolant_temperature_linearization_axis (0x806e56) / y_values_pointer coolant_temperature_linearization_values (0x806e8a); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = coolant_temperature_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. CM848's cache word for the same axis record: coolant_temperature_linearization_cached_axis_offset. (new row, was DAT_0080a7e6; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a7e6 = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x806e56 / +8 0x806e8a / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a7f4",
+  "current_name": "",
+  "proposed_name": "ambient_air_temperature_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 7 (ambient air temperature) linearization record (table_lookup_1d_arguments_t, descriptor 7 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer ambient_air_temperature_linearization_axis (0x806ebe) / y_values_pointer ambient_air_temperature_linearization_values (0x806ed0); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = ambient_air_temperature_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. (new row, was DAT_0080a7f4; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a7f4 = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x806ebe / +8 0x806ed0 / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a802",
+  "current_name": "",
+  "proposed_name": "power_steering_temperature_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 8 (power steering temperature) linearization record (table_lookup_1d_arguments_t, descriptor 8 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer power_steering_temperature_linearization_axis (0x806ee2) / y_values_pointer power_steering_temperature_linearization_values (0x806ee8); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = power_steering_temperature_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. (new row, was DAT_0080a802; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a802 = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x806ee2 / +8 0x806ee8 / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a810",
+  "current_name": "",
+  "proposed_name": "exhaust_pressure_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 9 (exhaust pressure) linearization record (table_lookup_1d_arguments_t, descriptor 9 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer exhaust_pressure_linearization_axis (0x806eee) / y_values_pointer exhaust_pressure_linearization_values (0x806ef4); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = exhaust_pressure_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. (new row, was DAT_0080a810; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a810 = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x806eee / +8 0x806ef4 / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a81e",
+  "current_name": "",
+  "proposed_name": "sampled_throttle_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 10 (sampled throttle) linearization record (table_lookup_1d_arguments_t, descriptor 10 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer sampled_throttle_linearization_axis (0x806efa) / y_values_pointer sampled_throttle_linearization_values (0x806f08); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = sampled_throttle_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. CM848's cache word for the same axis record: accelerator_pedal_linearization_cached_axis_offset. (new row, was DAT_0080a81e; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a81e = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x806efa / +8 0x806f08 / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a82c",
+  "current_name": "",
+  "proposed_name": "remote_throttle_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 11 (remote throttle) linearization record (table_lookup_1d_arguments_t, descriptor 11 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer remote_throttle_linearization_axis (0x806f16) / y_values_pointer remote_throttle_linearization_values (0x806f24); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = remote_throttle_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. CM848's cache word for the same axis record: remote_accelerator_pedal_linearization_cached_axis_offset. (new row, was DAT_0080a82c; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a82c = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x806f16 / +8 0x806f24 / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a83a",
+  "current_name": "",
+  "proposed_name": "ambient_air_pressure_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 12 (ambient air pressure) linearization record (table_lookup_1d_arguments_t, descriptor 12 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer ambient_air_pressure_linearization_axis (0x806f32) / y_values_pointer ambient_air_pressure_linearization_values (0x806f3c); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = ambient_air_pressure_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. CM848's cache word for the same axis record: barometric_pressure_linearization_cached_axis_offset. (new row, was DAT_0080a83a; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a83a = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x806f32 / +8 0x806f3c / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a848",
+  "current_name": "",
+  "proposed_name": "battery_voltage_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 13 (battery voltage) linearization record (table_lookup_1d_arguments_t, descriptor 13 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer battery_voltage_linearization_axis (0x806f46) / y_values_pointer battery_voltage_linearization_values (0x806f4c); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = battery_voltage_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. CM848's cache word for the same axis record: battery_voltage_linearization_cached_axis_offset. (new row, was DAT_0080a848; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a848 = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x806f46 / +8 0x806f4c / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a856",
+  "current_name": "",
+  "proposed_name": "engine_speed_sensor_supply_voltage_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 14 (engine speed sensor supply voltage) linearization record (table_lookup_1d_arguments_t, descriptor 14 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer engine_speed_sensor_supply_voltage_linearization_axis (0x806f52) / y_values_pointer engine_speed_sensor_supply_voltage_linearization_values (0x806f58); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = engine_speed_sensor_supply_voltage_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. (new row, was DAT_0080a856; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a856 = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x806f52 / +8 0x806f58 / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a864",
+  "current_name": "",
+  "proposed_name": "throttle_position_sensor_supply_voltage_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 15 (throttle position sensor supply voltage) linearization record (table_lookup_1d_arguments_t, descriptor 15 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer throttle_position_sensor_supply_voltage_linearization_axis (0x806f5e) / y_values_pointer throttle_position_sensor_supply_voltage_linearization_values (0x806f64); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = throttle_position_sensor_supply_voltage_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. (new row, was DAT_0080a864; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a864 = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x806f5e / +8 0x806f64 / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a872",
+  "current_name": "",
+  "proposed_name": "vehicle_connector_sensor_supply_voltage_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 16 (vehicle connector sensor supply voltage) linearization record (table_lookup_1d_arguments_t, descriptor 16 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer vehicle_connector_sensor_supply_voltage_linearization_axis (0x806f6a) / y_values_pointer vehicle_connector_sensor_supply_voltage_linearization_values (0x806f70); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = vehicle_connector_sensor_supply_voltage_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. (new row, was DAT_0080a872; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a872 = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x806f6a / +8 0x806f70 / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a880",
+  "current_name": "",
+  "proposed_name": "engine_connector_sensor_supply_voltage_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 17 (engine connector sensor supply voltage) linearization record (table_lookup_1d_arguments_t, descriptor 17 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer engine_connector_sensor_supply_voltage_linearization_axis (0x806f76) / y_values_pointer engine_connector_sensor_supply_voltage_linearization_values (0x806f7c); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = engine_connector_sensor_supply_voltage_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. (new row, was DAT_0080a880; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a880 = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x806f76 / +8 0x806f7c / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a88e",
+  "current_name": "",
+  "proposed_name": "frequency_throttle_input_supply_voltage_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 18 (frequency throttle input supply voltage) linearization record (table_lookup_1d_arguments_t, descriptor 18 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer frequency_throttle_input_supply_voltage_linearization_axis (0x806f82) / y_values_pointer frequency_throttle_input_supply_voltage_linearization_values (0x806f88); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = frequency_throttle_input_supply_voltage_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. (new row, was DAT_0080a88e; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a88e = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x806f82 / +8 0x806f88 / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a89c",
+  "current_name": "",
+  "proposed_name": "cruise_control_switch_multiplexer_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 19 (cruise control switch multiplexer) linearization record (table_lookup_1d_arguments_t, descriptor 19 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer cruise_control_switch_multiplexer_linearization_axis (0x806f8e) / y_values_pointer cruise_control_switch_multiplexer_linearization_values (0x806fb4); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = cruise_control_switch_multiplexer_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. (new row, was DAT_0080a89c; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a89c = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 30 / +2 0x806f8e / +8 0x806fb4 / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a8aa",
+  "current_name": "",
+  "proposed_name": "water_in_fuel_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 20 (water in fuel) linearization record (table_lookup_1d_arguments_t, descriptor 20 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer water_in_fuel_linearization_axis (0x806fda) / y_values_pointer water_in_fuel_linearization_values (0x806fec); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = water_in_fuel_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. (new row, was DAT_0080a8aa; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a8aa = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 16 / +2 0x806fda / +8 0x806fec / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a8b8",
+  "current_name": "",
+  "proposed_name": "egr_current_feedback_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 21 (egr current feedback) linearization record (table_lookup_1d_arguments_t, descriptor 21 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer egr_current_feedback_linearization_axis (0x806ffe) / y_values_pointer egr_current_feedback_linearization_values (0x807006); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = egr_current_feedback_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. (new row, was DAT_0080a8b8; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a8b8 = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x806ffe / +8 0x807006 / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a8c6",
+  "current_name": "",
+  "proposed_name": "programming_pulse_supply_voltage_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 22 (programming pulse supply voltage) linearization record (table_lookup_1d_arguments_t, descriptor 22 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer programming_pulse_supply_voltage_linearization_axis (0x80700e) / y_values_pointer programming_pulse_supply_voltage_linearization_values (0x807014); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = programming_pulse_supply_voltage_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. (new row, was DAT_0080a8c6; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a8c6 = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x80700e / +8 0x807014 / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a8d4",
+  "current_name": "",
+  "proposed_name": "high_side_gate_bias_supply_voltage_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 23 (high side gate bias supply voltage) linearization record (table_lookup_1d_arguments_t, descriptor 23 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer high_side_gate_bias_supply_voltage_linearization_axis (0x80701a) / y_values_pointer high_side_gate_bias_supply_voltage_linearization_values (0x807020); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = high_side_gate_bias_supply_voltage_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. (new row, was DAT_0080a8d4; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a8d4 = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x80701a / +8 0x807020 / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080a8e2",
+  "current_name": "",
+  "proposed_name": "operational_amplifier_and_comparator_supply_voltage_linearization_lookup",
+  "proposed_type": "table_lookup_1d_arguments_t",
+  "comment": "A/D channel 24 (operational amplifier and comparator supply voltage) linearization record (table_lookup_1d_arguments_t, descriptor 24 of the 25 at 0x80a792 + 14n): cm550_initializeAnalogSensorChannels (0xbcf0) sets x_axis_offset 2 / x_axis_pointer operational_amplifier_and_comparator_supply_voltage_linearization_axis (0x807026) / y_values_pointer operational_amplifier_and_comparator_supply_voltage_linearization_values (0x80702c); mc68k_processAnalogSensorChannels (jsr at 0xbbb4, 14-byte steps) looks it up with x_input = operational_amplifier_and_comparator_supply_voltage_sensor_state.adc_raw_value into its unfiltered_value while fault_active_flag is 0. (new row, was DAT_0080a8e2; PR #53 round 95)",
+  "evidence": "init: _DAT_0080a8e2 = 2 and the two pointers; loop: local_8 starts at 0x80a792, input_value = adc_raw_value, local_8 += 14 (&local_8[1].x_axis_ptr); dump +0 2 / +2 0x807026 / +8 0x80702c / +0xc 0; 25 x 14 bytes end at 0x80a8f0 (adjusted_user_fueling); no rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0006009e",
+  "current_name": "",
+  "proposed_name": "acceleration_noise_control_fuel_limit_axis",
+  "proposed_type": "word[10]",
+  "comment": "e2m 10A6 +0 NZFLLMXA 'ENGINE SPEED AXIS USED BY ANC TO DETERMINE TABLE LOOK-UP T' (RPM): the x axis of acceleration_noise_control_fuel_limit_lookup; ROM beyond the dump (no values): word[10] by the e2m layout (next record NZFLLMYA at 0x600b2). (new row, was DAT_0006009e; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record NZFLLMYA at 0x600b2 -> word[10]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x000600b2",
+  "current_name": "",
+  "proposed_name": "acceleration_noise_control_fuel_limit_values",
+  "proposed_type": "word[10]",
+  "comment": "e2m 10A7 +0 NZFLLMYA 'ANC FUELING LIMIT TABLE (1 X 9 VALUES)' (MM3S): the y values of acceleration_noise_control_fuel_limit_lookup; ROM beyond the dump (no values): word[10] by the e2m layout (next record NZTALMXA at 0x600c6), as its text says ('1 X 9 VALUES'). (new row, was DAT_000600b2; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record NZTALMXA at 0x600c6 -> word[10]; above the 0x40000 dump",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x000600c6",
+  "current_name": "",
+  "proposed_name": "acceleration_noise_control_timing_limit_axis",
+  "proposed_type": "word[10]",
+  "comment": "e2m 10A8 +0 NZTALMXA 'ENGINE SPEED AXIS USED BY ANC TO DETERMINE TIMING ADVANCE' (RPM): the x axis of acceleration_noise_control_timing_limit_lookup; ROM beyond the dump (no values): word[10] by the e2m layout (next record NZTALMYA at 0x600da). (new row, was DAT_000600c6; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record NZTALMYA at 0x600da -> word[10]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x000600da",
+  "current_name": "",
+  "proposed_name": "acceleration_noise_control_timing_limit_values",
+  "proposed_type": "word[10]",
+  "comment": "e2m 10A9 +0 NZTALMYA 'ANC TIMING ADVANCE LIMIT TABLE (1 X 9 VALUES)' (DADV): the y values of acceleration_noise_control_timing_limit_lookup; ROM beyond the dump (no values): word[10] by the e2m layout (next record AFFLLMYA at 0x600ee), as its text says ('1 X 9 VALUES'). (new row, was DAT_000600da; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record AFFLLMYA at 0x600ee -> word[10]; above the 0x40000 dump",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807acc",
+  "current_name": "",
+  "proposed_name": "speed_request_blend_weight_by_speed_difference_axis",
+  "proposed_type": "word[6]",
+  "comment": "e2m 1326 +0 ASTHPFXA 'ASG THROTTLE PREFILTER COEF. CALCULATION TABLE (X-AXIS)' (RPM): the x axis of speed_request_blend_weight_by_speed_difference_lookup; dump: byte count 10, 5 points (0 .. 9600). CM848 names the same record speed_request_blend_weight_by_speed_difference_axis (0x5c272). (new row, was DAT_00807acc; PR #53 round 95)",
+  "evidence": "dump word 0x807acc = 10 -> word[6]; next e2m record ASTHPFYA at 0x807ad8",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807ad8",
+  "current_name": "",
+  "proposed_name": "speed_request_blend_weight_by_speed_difference_values",
+  "proposed_type": "word[6]",
+  "comment": "e2m 1327 +0 ASTHPFYA 'ASG THROTTLE PREFILTER COEF. CALCULATION TABLE (Y-AXIS)' (NONE): the y values of speed_request_blend_weight_by_speed_difference_lookup; dump: byte count 10, 5 points (15073 .. 11469). CM848 names the same record speed_request_blend_weight_by_speed_difference_values (0x5c27e). (new row, was DAT_00807ad8; PR #53 round 95)",
+  "evidence": "dump word 0x807ad8 = 10 -> word[6]; next e2m record ASQPCFXA at 0x807ae4",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807230",
+  "current_name": "",
+  "proposed_name": "all_speed_governor_friction_fuel_axis",
+  "proposed_type": "word[9]",
+  "comment": "e2m 1321 +0 ASNLFLXA 'ASG NO LOAD FUEL BREAKPOINT TABLE' (RPM): the x axis of all_speed_governor_friction_fuel_lookup; dump: byte count 16, 8 points (6400 .. 28000). CM848 names the same record all_speed_governor_friction_fuel_blend_128_axis (0x5c21e). (new row, was DAT_00807230; PR #53 round 95)",
+  "evidence": "dump word 0x807230 = 16 -> word[9]; next e2m record ASNLFLYA at 0x807242",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807242",
+  "current_name": "",
+  "proposed_name": "all_speed_governor_friction_fuel_values",
+  "proposed_type": "word[9]",
+  "comment": "e2m 1323 +0 ASNLFLYA 'ASG NO LOAD FUEL BASED ON SELECTED (ASG REF) ENGINE SPEED' (MM3S): the y values of all_speed_governor_friction_fuel_lookup; dump: byte count 16, 8 points (88 .. 368). CM848 names the same record all_speed_governor_friction_fuel_blend_128_values (0x5c230). (new row, was DAT_00807242; PR #53 round 95)",
+  "evidence": "dump word 0x807242 = 16 -> word[9]; next e2m record ASCLNLXA at 0x807254",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807254",
+  "current_name": "",
+  "proposed_name": "all_speed_governor_coolant_fuel_adjustment_axis",
+  "proposed_type": "word[10]",
+  "comment": "e2m 1324 +0 ASCLNLXA 'ASG - COOLANT TEMP ADJUST BREAKPOINT TABLE FOR NO LOAD FUEL' (DEGF): the x axis of all_speed_governor_coolant_fuel_adjustment_lookup; dump: byte count 18, 9 points (6400 .. 29440). CM848 names the same record all_speed_governor_coolant_fuel_adjustment_axis (0x5c242). The rows inside are removed (were 0x80725a output_control_decrement_step / 0x80725c diagnostic_fuel_override_param / 0x80725e vp44_injection_timing_limit / 0x807260 output_timing_interpolation_base_ptr / 0x807262 output_control_fuel_threshold / 0x807264 output_control_cycle_limit / 0x807266 output_control_timing_reset_countdown). (new row, was DAT_00807254; PR #53 round 95)",
+  "evidence": "dump word 0x807254 = 18 -> word[10]; next e2m record ASCLNLYA at 0x807268; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807268",
+  "current_name": "retarder_input_threshold_for_state",
+  "proposed_name": "all_speed_governor_coolant_fuel_adjustment_values",
+  "proposed_type": "word[10]",
+  "comment": "e2m 1325 +0 ASCLNLYA 'ASG - COOLANT TEMP BASED FUEL ADJUSTMENT TO NO LOAD FUEL' (MM3S): the y values of all_speed_governor_coolant_fuel_adjustment_lookup; dump: byte count 18, 9 points (318 .. 0). CM848 names the same record all_speed_governor_coolant_fuel_adjustment_values (0x5c25a). The rows inside are removed (were 0x80726c output_sequence_rpm_threshold / 0x80726e output_sequence_rpm_hysteresis / 0x807270 output_control_rpm_offset / 0x807272 throttle_position_threshold_for_output / 0x807274 output_control_throttle_limit / 0x807276 output_control_rpm_limit). (was retarder_input_threshold_for_state; PR #53 round 95)",
+  "evidence": "dump word 0x807268 = 18 -> word[10]; next e2m record DGBTCKLL at 0x80727c; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00060462",
+  "current_name": "",
+  "proposed_name": "all_speed_governor_alternate_droop_axis",
+  "proposed_type": "word[8]",
+  "comment": "e2m 116C +0 ASALDPXA 'ASG ALTERNATE DROOP TABLE INPUT AXIS' (RPM): the x axis of all_speed_governor_alternate_droop_lookup; ROM beyond the dump (no values): word[8] by the e2m layout (next record ASALDPYA at 0x60472). CM848 names the same record all_speed_governor_droop_blend_0_axis (0x5974e). (new row, was DAT_00060462; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record ASALDPYA at 0x60472 -> word[8]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00060472",
+  "current_name": "",
+  "proposed_name": "all_speed_governor_alternate_droop_values",
+  "proposed_type": "word[8]",
+  "comment": "e2m 116D +0 ASALDPYA 'ASG ALTERNATE DROOP TABLE OUTPUT AXIS (F(REFERENCE SPEED))' (R/%F): the y values of all_speed_governor_alternate_droop_lookup; ROM beyond the dump (no values): word[8] by the e2m layout (next record ASDPTBXA at 0x60482). CM848 names the same record all_speed_governor_droop_blend_0_values (0x5975e). (new row, was DAT_00060472; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record ASDPTBXA at 0x60482 -> word[8]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00060482",
+  "current_name": "",
+  "proposed_name": "all_speed_governor_droop_axis",
+  "proposed_type": "word[8]",
+  "comment": "e2m 116E +0 ASDPTBXA 'ASG DROOP TABLE INPUT AXIS (F(REFERENCE SPEED))' (RPM): the x axis of all_speed_governor_droop_lookup; ROM beyond the dump (no values): word[8] by the e2m layout (next record ASDPTBYA at 0x60492). CM848 names the same record all_speed_governor_droop_blend_128_axis (0x5976e). (new row, was DAT_00060482; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record ASDPTBYA at 0x60492 -> word[8]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00060492",
+  "current_name": "",
+  "proposed_name": "all_speed_governor_droop_values",
+  "proposed_type": "word[8]",
+  "comment": "e2m 116F +0 ASDPTBYA 'ASG DROOP TABLE OUTPUT AXIS (F(REFERENCE SPEED)' (R/%F): the y values of all_speed_governor_droop_lookup; ROM beyond the dump (no values): word[8] by the e2m layout (next record FSTQXA at 0x604a2). CM848 names the same record all_speed_governor_droop_blend_128_values (0x5977e). (new row, was DAT_00060492; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record FSTQXA at 0x604a2 -> word[8]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0006052a",
+  "current_name": "",
+  "proposed_name": "engine_retarder_torque_engine_speed_axis",
+  "proposed_type": "word[5]",
+  "comment": "e2m 13D6 +0 JCBCRPXA 'JCOMM BRAKE CONTROL RPM INDEP. AXIS USED FOR J1939 RETARDER MAP' (RPM): the x axis of engine_retarder_torque_lookup / engine_retarder_reference_torque_lookup / engine_retarder_torque_stage_1_lookup .. _stage_5_lookup; ROM beyond the dump (no values): word[5] by the e2m layout (next record JC1CTQYA at 0x60534). CM848 names the same record engine_retarder_torque_engine_speed_axis (0x5a426). (new row, was DAT_0006052a; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record JC1CTQYA at 0x60534 -> word[5]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00060566",
+  "current_name": "",
+  "proposed_name": "engine_retarder_torque_stage_6_values",
+  "proposed_type": "word[5]",
+  "comment": "e2m 13D5 +0 JC6CTQYA 'JCOMM BRAKE MAP 6 AXIS DEP. AXIS THAT DEFINES 6 CYL. BRAKING TO' (N-M): the y values of engine_retarder_reference_torque_lookup and of engine_retarder_torque_lookup with 6 active cylinders; ROM beyond the dump (no values): word[5] by the e2m layout (next record CABLSPT1 at 0x60570). CM848 names the same record engine_retarder_torque_stage_6_values (0x5a462). (new row, was DAT_00060566; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record CABLSPT1 at 0x60570 -> word[5]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00060596",
+  "current_name": "",
+  "proposed_name": "cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_axis",
+  "proposed_type": "word[14]",
+  "comment": "e2m 108B +0 CPCS01XA 'REF. AXIS FOR RATIO OF CYL. PRESS. TO COMPRESSION PRESS. PER' (RPM): the x axis of cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_lookup; ROM beyond the dump (no values): word[14] by the e2m layout (next record CPCS01YA at 0x605b2). (new row, was DAT_00060596; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record CPCS01YA at 0x605b2 -> word[14]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x000605b2",
+  "current_name": "",
+  "proposed_name": "cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_values",
+  "proposed_type": "word[14]",
+  "comment": "e2m 108C +0 CPCS01YA 'DATA AXIS FOR RATIO OF CYL. PRESS. TO COMPRESSION PRESS. PER' (/DEG): the y values of cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_lookup; ROM beyond the dump (no values): word[14] by the e2m layout (next record CPCS02XA at 0x605ce). (new row, was DAT_000605b2; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record CPCS02XA at 0x605ce -> word[14]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00060640",
+  "current_name": "",
+  "proposed_name": "cylinder_pressure_maintenance_temperature_per_timing_degree_axis",
+  "proposed_type": "word[14]",
+  "comment": "e2m 108D +0 CPCS03XA 'REFERENCE AXIS FOR RATIO OF DEG. F TO DEG. TVC TABLE' (RPM): the x axis of cylinder_pressure_maintenance_temperature_per_timing_degree_lookup; ROM beyond the dump (no values): word[14] by the e2m layout (next record CPCS03YA at 0x6065c). (new row, was DAT_00060640; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record CPCS03YA at 0x6065c -> word[14]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0006065c",
+  "current_name": "",
+  "proposed_name": "cylinder_pressure_maintenance_temperature_per_timing_degree_values",
+  "proposed_type": "word[14]",
+  "comment": "e2m 108E +0 CPCS03YA 'DATA AXIS FOR RATIO OF DEG. F TO DEG. TVC TABLE' (C/F): the y values of cylinder_pressure_maintenance_temperature_per_timing_degree_lookup; ROM beyond the dump (no values): word[14] by the e2m layout (next record CPDSXA at 0x60678). (new row, was DAT_0006065c; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record CPDSXA at 0x60678 -> word[14]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008072f4",
+  "current_name": "rpm_breakpoint_table",
+  "proposed_name": "cylinder_balance_threshold_axis",
+  "proposed_type": "word[17]",
+  "comment": "e2m 8226 +0 CBDTT1 'CYLINDER BALANCING THRESHOLD SPEED VECTOR' (RPM): the x axis of cylinder_balance_threshold_lookup / cylinder_balance_real_2_dynamics_compensation_lookup / cylinder_balance_imaginary_2_dynamics_compensation_lookup (the engine speed axis of all three); dump: byte count 32, 16 points (3200 .. 15200). (was rpm_breakpoint_table; PR #53 round 95)",
+  "evidence": "dump word 0x8072f4 = 32 -> word[17]; next e2m record CBDTT2 at 0x807316",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807316",
+  "current_name": "",
+  "proposed_name": "cylinder_balance_threshold_values",
+  "proposed_type": "word[17]",
+  "comment": "e2m 8227 +0 CBDTT2 'CYLINDER BALANCING THRESHOLD TABLE' (N): the y values of cylinder_balance_threshold_lookup; dump: byte count 32, 16 points (1000 .. 30). (new row, was DAT_00807316; PR #53 round 95)",
+  "evidence": "dump word 0x807316 = 32 -> word[17]; next e2m record CBDCSV at 0x807338",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00809e9e",
+  "current_name": "",
+  "proposed_name": "cylinder_balance_real_2_dynamics_compensation_values",
+  "proposed_type": "word[16]",
+  "comment": "e2m 823E +0 CBDDCT 'CYLINDER BALANCING DYNAMICS COMPENSATION TABLE' (NONE; e2m type T): the y values of cylinder_balance_real_2_dynamics_compensation_lookup; 16 values with no byte count word (all 10000 = 0 in the dump; minimum -10000, stored plus 10000); the next record starts 32 bytes on. vp44_FUN_000127c2 writes it at index 0x800320 (0x12b2e-0x12c1a) and resets it to 10000 from its first word (0x12c42). With the 16-point axis the lookup reads values + 2 .. + 32, so its last point reads the word after the table (a firmware quirk). (new row, was DAT_00809e9e; PR #53 round 95)",
+  "evidence": "e2m 823E CBDDCT at 0x809e9e and 823F CBDI2DCT at 0x809ebe are 32 bytes apart, the next record SSECTMEA at 0x809ede; writer 0x12b2e-0x12c1a movea.l #0x809e9e / #0x809ea0 / #0x809ebe / #0x809ec0 with index (0x800320).w*2; reset 0x12c42 move.w #0x2710,(a5)+ from 0x809e9e",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00809ebe",
+  "current_name": "",
+  "proposed_name": "cylinder_balance_imaginary_2_dynamics_compensation_values",
+  "proposed_type": "word[16]",
+  "comment": "e2m 823F +0 CBDI2DCT 'CYLINDER BALANCING IMAG_2 DYNAMICS COMPENSATION TABLE' (NONE; e2m type T): the y values of cylinder_balance_imaginary_2_dynamics_compensation_lookup; 16 values with no byte count word (all 10000 = 0 in the dump; minimum -10000, stored plus 10000); the next record starts 32 bytes on. vp44_FUN_000127c2 writes it at index 0x800320 (0x12b2e-0x12c1a) and resets it to 10000 from its first word (0x12c42). With the 16-point axis the lookup reads values + 2 .. + 32, so its last point reads the word after the table (a firmware quirk). (new row, was DAT_00809ebe; PR #53 round 95)",
+  "evidence": "e2m 823E CBDDCT at 0x809e9e and 823F CBDI2DCT at 0x809ebe are 32 bytes apart, the next record SSECTMEA at 0x809ede; writer 0x12b2e-0x12c1a movea.l #0x809e9e / #0x809ea0 / #0x809ebe / #0x809ec0 with index (0x800320).w*2; reset 0x12c42 move.w #0x2710,(a5)+ from 0x809e9e",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807360",
+  "current_name": "",
+  "proposed_name": "cylinder_balance_engine_speed_breakpoint_axis",
+  "proposed_type": "word[8]",
+  "comment": "e2m 822E +0 CBDESBV 'CYLINDER BALANCING ENGINE SPEED BREAKPOINT VECTOR' (NONE): the x axis of cylinder_balance_engine_speed_breakpoint_lookup; dump: byte count 14, 7 points (0 .. 6). (new row, was DAT_00807360; PR #53 round 95)",
+  "evidence": "dump word 0x807360 = 14 -> word[8]; next e2m record CBDESBT at 0x807370",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807370",
+  "current_name": "",
+  "proposed_name": "cylinder_balance_engine_speed_breakpoint_values",
+  "proposed_type": "word[8]",
+  "comment": "e2m 822F +0 CBDESBT 'CYLINDER BALANCING ENGINE SPEED BREAKPOINT TABLE' (NONE): the y values of cylinder_balance_engine_speed_breakpoint_lookup; dump: byte count 14, 7 points (0 .. 16000). (new row, was DAT_00807370; PR #53 round 95)",
+  "evidence": "dump word 0x807370 = 14 -> word[8]; next e2m record CBDDFBV at 0x807380",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807380",
+  "current_name": "",
+  "proposed_name": "cylinder_balance_delta_fueling_breakpoint_axis",
+  "proposed_type": "word[7]",
+  "comment": "e2m 8230 +0 CBDDFBV 'CYLINDER BALANCING DELTA FUELING BREAKPOINT VECTOR' (NONE): the x axis of cylinder_balance_delta_fueling_breakpoint_lookup; dump: byte count 12, 6 points (0 .. 5). The rows inside are removed (were 0x807386 rpm_derate_scale_factor / 0x807388 rpm_derate_base_offset / 0x80738a derate_rpm_adjustment_max / 0x80738c derate_rpm_adjustment_min). (new row, was DAT_00807380; PR #53 round 95)",
+  "evidence": "dump word 0x807380 = 12 -> word[7]; next e2m record CBDDFBT at 0x80738e; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080738e",
+  "current_name": "rpm_derate_percent_upper",
+  "proposed_name": "cylinder_balance_delta_fueling_breakpoint_values",
+  "proposed_type": "word[7]",
+  "comment": "e2m 8231 +0 CBDDFBT 'CYLINDER BALANCING DELTA FUELING BREAKPOINT TABLE' (MSEC): the y values of cylinder_balance_delta_fueling_breakpoint_lookup; dump: byte count 12, 6 points (10000 .. 30000). The rows inside are removed (were 0x807390 rpm_derate_percent_lower / 0x807392 rpm_derate_lower_threshold / 0x807394 rpm_derate_upper_threshold / 0x807396 rpm_derate_calc_offset_1 / 0x807398 rpm_derate_calc_offset_2 / 0x80739a rpm_derate_calc_multiplier). (was rpm_derate_percent_upper; PR #53 round 95)",
+  "evidence": "dump word 0x80738e = 12 -> word[7]; next e2m record CBDFFBV at 0x80739c; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080739c",
+  "current_name": "vp44_fso_fault_debounce_threshold",
+  "proposed_name": "cylinder_balance_filtered_fueling_breakpoint_axis",
+  "proposed_type": "word[7]",
+  "comment": "e2m 8232 +0 CBDFFBV 'CYLINDER BALANCING FILTERED FUELING BREAKPOINT VECTOR' (NONE): the x axis of cylinder_balance_filtered_fueling_breakpoint_lookup; dump: byte count 12, 6 points (0 .. 5). The rows inside are removed (were 0x80739e vp44_feedback_pulse_value / 0x8073a0 vp44_can_200_response_byte_0 / 0x8073a1 vp44_can_200_response_byte_1 / 0x8073a2 derate_output_value / 0x8073a8 lift_pump_fuel_scale_factor). (was vp44_fso_fault_debounce_threshold; PR #53 round 95)",
+  "evidence": "dump word 0x80739c = 12 -> word[7]; next e2m record CBDFFBT at 0x8073aa; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008073aa",
+  "current_name": "lift_pump_fuel_base_offset",
+  "proposed_name": "cylinder_balance_filtered_fueling_breakpoint_values",
+  "proposed_type": "word[7]",
+  "comment": "e2m 8233 +0 CBDFFBT 'CYLINDER BALANCING FILTERED FUELING BREAKPOINT TABLE' (NONE): the y values of cylinder_balance_filtered_fueling_breakpoint_lookup; dump: byte count 12, 6 points (0 .. 1750). The rows inside are removed (were 0x8073ac lift_pump_timing_increase_limit / 0x8073ae lift_pump_timing_decrease_limit / 0x8073b0 vp44_can_msg_upper_threshold / 0x8073b2 vp44_can_msg_lower_threshold / 0x8073b4 vp44_fso_bit0_debounce_threshold / 0x8073b5 fso_fault_debounce_threshold / 0x8073b6 vp44_fso_bit0_fuel_threshold). (was lift_pump_fuel_base_offset; PR #53 round 95)",
+  "evidence": "dump word 0x8073aa = 12 -> word[7]; next e2m record CBDFBV at 0x8073b8; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00060846",
+  "current_name": "",
+  "proposed_name": "engine_warmup_protection_rifle_to_turbocharger_delay_time_axis",
+  "proposed_type": "word[10]",
+  "comment": "e2m 11EF +0 WPCQXA 'X-AXIS OF ENGINE WARMUP PROTECTION FOR COOLANT_TEMPERATURE' (DEGF): the x axis of engine_warmup_protection_rifle_to_turbocharger_delay_time_lookup; ROM beyond the dump (no values): word[10] by the e2m layout (next record WPDYTMYA at 0x6085a). (new row, was DAT_00060846; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record WPDYTMYA at 0x6085a -> word[10]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0006085a",
+  "current_name": "",
+  "proposed_name": "engine_warmup_protection_rifle_to_turbocharger_delay_time_values",
+  "proposed_type": "word[10]",
+  "comment": "e2m 11EE +0 WPDYTMYA 'Y-AXIS OF ENGINE WARMUP PROTECTION FOR RIFLE TO TURBO DELAY TI' (SEC): the y values of engine_warmup_protection_rifle_to_turbocharger_delay_time_lookup; ROM beyond the dump (no values): word[10] by the e2m layout (next record 5DFL01XA at 0x6086e). (new row, was DAT_0006085a; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record 5DFL01XA at 0x6086e -> word[10]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x000607f2",
+  "current_name": "",
+  "proposed_name": "engine_warmup_protection_fuel_limit_axis",
+  "proposed_type": "word[21]",
+  "comment": "e2m 11ED +0 WPESXA 'X-AXIS OF ENGINE WARUP PROTECTION FUEL DERATE TABLE' (RPM): the x axis of engine_warmup_protection_fuel_limit_lookup; ROM beyond the dump (no values): word[21] by the e2m layout (next record WPFLDQYA at 0x6081c). (new row, was DAT_000607f2; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record WPFLDQYA at 0x6081c -> word[21]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0006081c",
+  "current_name": "",
+  "proposed_name": "engine_warmup_protection_fuel_limit_values",
+  "proposed_type": "word[21]",
+  "comment": "e2m 11EC +0 WPFLDQYA 'FUELING DERATE VALUES FOR ENGINE WARMUP PROTECTION ALGORITHM' (MM3S): the y values of engine_warmup_protection_fuel_limit_lookup; ROM beyond the dump (no values): word[21] by the e2m layout (next record WPCQXA at 0x60846). (new row, was DAT_0006081c; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record WPCQXA at 0x60846 -> word[21]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807176",
+  "current_name": "load_breakpoint_table",
+  "proposed_name": "fault_derate_fuel_limit_by_engine_speed_axis",
+  "proposed_type": "word[25]",
+  "comment": "e2m 10BA +0 EPFLVSAI 'AXIS FOR DETERMINING FUEL DERATE' (RPM): the x axis of fault_derate_fuel_limit_by_engine_speed_lookup and fault_derate_fuel_limit_at_torque_curve_points_lookup; dump: byte count 48, 24 points (0 .. 24000). CM848 names the same record fault_derate_fuel_limit_by_engine_speed_axis (0x597d6). The rows inside are removed (were 0x8071a6 shutdown_limit_selector_param). (was load_breakpoint_table; PR #53 round 95)",
+  "evidence": "dump word 0x807176 = 48 -> word[25]; next e2m record EPFLTB at 0x8071a8; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008071a8",
+  "current_name": "",
+  "proposed_name": "fault_derate_fuel_limit_by_engine_speed_values",
+  "proposed_type": "word[25]",
+  "comment": "e2m 10BB +0 EPFLTB 'EPS TABLE FOR MAX FUELING DERATE AS A FUNCTION OF RPM (SIZE =' (%FU): the y values of fault_derate_fuel_limit_by_engine_speed_lookup and fault_derate_fuel_limit_at_torque_curve_points_lookup; dump: byte count 48, 24 points (1884 .. 913). CM848 names the same record fault_derate_fuel_limit_by_engine_speed_values (0x59808). The rows inside are removed (were 0x8071aa timer_capture_init_value / 0x8071ac clutch_rpm_low_value / 0x8071ae fuel_temp_throttle_threshold / 0x8071b0 boost_pressure_offset_factor / 0x8071b2 boost_pressure_interp_threshold / 0x8071b4 boost_pressure_decrement_rate / 0x8071b6 boost_pressure_stats_threshold_71b6 / 0x8071b8 boost_pressure_smoke_threshold / 0x8071ba boost_pressure_state_6_threshold / 0x8071bc boost_pressure_state_3_threshold / 0x8071c6 derate_event_threshold_time / 0x8071ca clutch_slip_threshold / 0x8071ce fuel_temp_exceedance_threshold / 0x8071d0 fuel_limit_near_threshold / 0x8071d4 boost_pressure_stats_threshold_71d4 / 0x8071d6 vp44_derate_bit8_limit / 0x8071d8 vp44_derate_bit4_limit). (new row, was DAT_008071a8; PR #53 round 95)",
+  "evidence": "dump word 0x8071a8 = 48 -> word[25]; next e2m record WSBLKSPT at 0x8071da; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x000607d6",
+  "current_name": "",
+  "proposed_name": "double_pulsing_fueling_mapping_axis",
+  "proposed_type": "word[7]",
+  "comment": "e2m 1084 +0 DPFPTB '1 BY 6 TABLE OF FPW VALUES FOR TVO/FPW MAPPING' (MM3S; e2m type Y): the x axis of double_pulsing_fueling_mapping_lookup; ROM beyond the dump (no values): word[7] by the e2m layout (next record DPTVOTB at 0x607e4), as its text says ('1 BY 6'). (new row, was DAT_000607d6; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record DPTVOTB at 0x607e4 -> word[7]; above the 0x40000 dump",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x000607e4",
+  "current_name": "",
+  "proposed_name": "double_pulsing_fueling_mapping_values",
+  "proposed_type": "word[7]",
+  "comment": "e2m 1085 +0 DPTVOTB '1 BY 6 TABLE OF TVO VALUES FOR TVO/FPW MAPPING' (%FU; e2m type X): the y values of double_pulsing_fueling_mapping_lookup; ROM beyond the dump (no values): word[7] by the e2m layout (next record WPESXA at 0x607f2), as its text says ('1 BY 6'). (new row, was DAT_000607e4; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record WPESXA at 0x607f2 -> word[7]; above the 0x40000 dump",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00808068",
+  "current_name": "",
+  "proposed_name": "high_speed_governor_derivative_gain_adjustment_error_axis",
+  "proposed_type": "word[14]",
+  "comment": "e2m 12E1 +0 HSDVCFXA 'SPEED ERROR AXIS OF COEFFICIENT TABLE FOR HSG DERIVATIVE GAIN' (RPM): the x axis of high_speed_governor_derivative_gain_adjustment_multiplier_lookup; dump: byte count 26, 13 points (0 .. 8000). CM848 names the same record high_speed_governor_derivative_gain_adjustment_error_axis (0x406ff0). (new row, was DAT_00808068; PR #53 round 95)",
+  "evidence": "dump word 0x808068 = 26 -> word[14]; next e2m record HSDVCFYA at 0x808084",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008080a0",
+  "current_name": "",
+  "proposed_name": "high_speed_governor_proportional_gain_adjustment_error_axis",
+  "proposed_type": "word[14]",
+  "comment": "e2m 12E3 +0 HSPPCFXA 'SPEED ERROR AXIS OF COEFFICIENT TABLE FOR HSG DERIVATIVE GAIN' (RPM): the x axis of high_speed_governor_proportional_gain_adjustment_multiplier_lookup; dump: byte count 26, 13 points (0 .. 8000). CM848 names the same record high_speed_governor_proportional_gain_adjustment_error_axis (0x407028). (new row, was DAT_008080a0; PR #53 round 95)",
+  "evidence": "dump word 0x8080a0 = 26 -> word[14]; next e2m record HSPPCFYA at 0x8080bc",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008080d8",
+  "current_name": "",
+  "proposed_name": "high_speed_governor_integral_gain_adjustment_error_axis",
+  "proposed_type": "word[14]",
+  "comment": "e2m 12E5 +0 HSITCFXA 'SPEED ERROR AXIS OF COEFFICIENT TABLE FOR HSG INTEGRAL GAIN A' (RPM): the x axis of high_speed_governor_integral_gain_adjustment_multiplier_lookup; dump: byte count 26, 13 points (0 .. 8000). CM848 names the same record high_speed_governor_integral_gain_adjustment_error_axis (0x407060). (new row, was DAT_008080d8; PR #53 round 95)",
+  "evidence": "dump word 0x8080d8 = 26 -> word[14]; next e2m record HSITCFYA at 0x8080f4",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x000611d0",
+  "current_name": "",
+  "proposed_name": "engine_protection_oil_pressure_limit_axis",
+  "proposed_type": "word[7]",
+  "comment": "e2m 10BC +0 EPO2VSAI 'LOW_ & VERY_LOW_OIL_PRESSURE_TABLES INPUT VARIABLE BREAKPOINT' (RPM): the x axis of engine_protection_low_oil_pressure_limit_lookup and engine_protection_very_low_oil_pressure_limit_lookup; ROM beyond the dump (no values): word[7] by the e2m layout (next record EPO2LOTB at 0x611de). (new row, was DAT_000611d0; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record EPO2LOTB at 0x611de -> word[7]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x000611de",
+  "current_name": "",
+  "proposed_name": "engine_protection_low_oil_pressure_limit_values",
+  "proposed_type": "word[7]",
+  "comment": "e2m 10BD +0 EPO2LOTB '2X6 TABLEDEFINING LOW OIL PRESSURE AS A FUNCTION OF RPM' (PSIG): the y values of engine_protection_low_oil_pressure_limit_lookup; ROM beyond the dump (no values): word[7] by the e2m layout (next record EPO2VLTB at 0x611ec), as its text says ('2X6'). (new row, was DAT_000611de; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record EPO2VLTB at 0x611ec -> word[7]; above the 0x40000 dump",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x000611ec",
+  "current_name": "",
+  "proposed_name": "engine_protection_very_low_oil_pressure_limit_values",
+  "proposed_type": "word[7]",
+  "comment": "e2m 10BE +0 EPO2VLTB '2X6 TABLEDEFINING VERY LOW OIL PRESSURE AS A FUNCTION OF RPM' (PSIG): the y values of engine_protection_very_low_oil_pressure_limit_lookup; ROM beyond the dump (no values): word[7] by the e2m layout (next record NLFCFLXA at 0x611fa), as its text says ('2X6'). (new row, was DAT_000611ec; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record NLFCFLXA at 0x611fa -> word[7]; above the 0x40000 dump",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00808958",
+  "current_name": "retarder_torque_point_3_value",
+  "proposed_name": "power_take_off_gain_adjustment_axis",
+  "proposed_type": "word[11]",
+  "comment": "e2m 13B2 +0 PTSPAX 'SPEED AXIS TO PTO_GAIN_ADJUST_TABLE' (RPM): the x axis of power_take_off_gain_adjustment_lookup; dump: byte count 20, 10 points (0 .. 36000). CM848 names the same record power_take_off_gain_adjustment_axis (0x4071ac). The rows inside are removed (were 0x80895a retarder_torque_point_4_value / 0x80895c retarder_torque_point_5_value / 0x80895e vp44_sensor_value_2 / 0x808962 insite_parameter_table_start). (was retarder_torque_point_3_value; PR #53 round 95)",
+  "evidence": "dump word 0x808958 = 20 -> word[11]; next e2m record PTGNTB at 0x80896e; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080896e",
+  "current_name": "",
+  "proposed_name": "power_take_off_gain_adjustment_values",
+  "proposed_type": "word[11]",
+  "comment": "e2m 13B3 +0 PTGNTB 'GAIN ADJUSTMENT IN FUNCTION OF RPM' (NONE): the y values of power_take_off_gain_adjustment_lookup; dump: byte count 20, 10 points (1638 .. 9830). CM848 names the same record power_take_off_gain_adjustment_values (0x4071c2). (new row, was DAT_0080896e; PR #53 round 95)",
+  "evidence": "dump word 0x80896e = 20 -> word[11]; next e2m record PTMXEGES at 0x808984",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008088b0",
+  "current_name": "pwm_output_frequency_divisor",
+  "proposed_name": "power_take_off_governor_derivative_gain_adjustment_axis",
+  "proposed_type": "word[14]",
+  "comment": "e2m 13AC +0 PTERQDAX 'DROOP COMP. ERROR AXIS TO PTO_QD_GAIN_ADJUST_TABLE' (RPM): the x axis of power_take_off_governor_derivative_gain_adjustment_lookup; dump: byte count 26, 13 points (8000 .. 24000). The rows inside are removed (were 0x8088b2 pwm_output_period_multiplier / 0x8088b3 pwm_output_channel_select / 0x8088b4 pwm_output_enable_flag / 0x8088c0 redundant_sensor_compare_threshold / 0x8088c3 can_controller_1_status_byte / 0x8088c5 can_controller_1_filter_byte_1 / 0x8088c7 can_controller_1_filter_byte_2 / 0x8088c9 can_controller_1_filter_byte_3 / 0x8088ca can_controller_1_baud_byte_0 / 0x8088cb can_controller_1_baud_byte_1). (was pwm_output_frequency_divisor; PR #53 round 95)",
+  "evidence": "dump word 0x8088b0 = 26 -> word[14]; next e2m record PTGNQDTB at 0x8088cc; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008088e8",
+  "current_name": "",
+  "proposed_name": "power_take_off_governor_integral_gain_adjustment_axis",
+  "proposed_type": "word[14]",
+  "comment": "e2m 13AE +0 PTERQIAX 'DROOP COMP. ERROR AXIS TO PTO_QI_GAIN_ADJUST_TABLE' (RPM): the x axis of power_take_off_governor_integral_gain_adjustment_lookup; dump: byte count 26, 13 points (8000 .. 24000). (new row, was DAT_008088e8; PR #53 round 95)",
+  "evidence": "dump word 0x8088e8 = 26 -> word[14]; next e2m record PTGNQITB at 0x808904",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00808920",
+  "current_name": "oil_pressure_protection_threshold",
+  "proposed_name": "power_take_off_governor_proportional_gain_adjustment_axis",
+  "proposed_type": "word[14]",
+  "comment": "e2m 13B0 +0 PTERQPAX 'DROOP COMP. ERROR AXIS TO PTO_QP_GAIN_ADJUST_TABLE' (RPM): the x axis of power_take_off_governor_proportional_gain_adjustment_lookup; dump: byte count 26, 13 points (8000 .. 24000). The rows inside are removed (were 0x808924 oil_pressure_rpm_limit_step / 0x808926 oil_pressure_rate_limit_step / 0x80892a rpm_range_upper_limit / 0x80892c rpm_range_lower_limit / 0x808932 oil_pressure_validation_threshold / 0x808934 pwm_output_scaling_factor / 0x808936 pwm_output_2_scaling_factor / 0x808938 pwm_output_3_scaling_factor / 0x80893a pwm_output_4_scaling_factor). (was oil_pressure_protection_threshold; PR #53 round 95)",
+  "evidence": "dump word 0x808920 = 26 -> word[14]; next e2m record PTGNQPTB at 0x80893c; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00060534",
+  "current_name": "",
+  "proposed_name": "engine_retarder_torque_stage_1_values",
+  "proposed_type": "word[5]",
+  "comment": "e2m 13D0 +0 JC1CTQYA 'JCOMM BRAKE MAP AXIS DEP. AXIS THAT DEFINES 1 CYL. BRAKING TORQ' (N-M): the y values of engine_retarder_torque_stage_1_lookup and of engine_retarder_torque_lookup when engine_brake_active_cylinder_count is 1; ROM beyond the dump (no values): word[5] by the e2m layout (next record JC2CTQYA at 0x6053e). CM848 names the same record engine_retarder_torque_stage_1_values (0x5a430). (new row, was DAT_00060534; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record JC2CTQYA at 0x6053e -> word[5]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0006053e",
+  "current_name": "",
+  "proposed_name": "engine_retarder_torque_stage_2_values",
+  "proposed_type": "word[5]",
+  "comment": "e2m 13D1 +0 JC2CTQYA 'JCOMM RAKE MAP 2 AXIS DEP. AXIS THAT DEFINES 2 CYL. BRAKING TOR' (N-M): the y values of engine_retarder_torque_stage_2_lookup and of engine_retarder_torque_lookup when engine_brake_active_cylinder_count is 2; ROM beyond the dump (no values): word[5] by the e2m layout (next record JC3CTQYA at 0x60548). CM848 names the same record engine_retarder_torque_stage_2_values (0x5a43a). (new row, was DAT_0006053e; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record JC3CTQYA at 0x60548 -> word[5]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00060548",
+  "current_name": "",
+  "proposed_name": "engine_retarder_torque_stage_3_values",
+  "proposed_type": "word[5]",
+  "comment": "e2m 13D2 +0 JC3CTQYA 'JCOMM BRAKE MAP 3 AXIS DEP. AXIS THAT DEFINES 3 CYL. BRAKING TO' (N-M): the y values of engine_retarder_torque_stage_3_lookup and of engine_retarder_torque_lookup when engine_brake_active_cylinder_count is 3; ROM beyond the dump (no values): word[5] by the e2m layout (next record JC4CTQYA at 0x60552). CM848 names the same record engine_retarder_torque_stage_3_values (0x5a444). (new row, was DAT_00060548; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record JC4CTQYA at 0x60552 -> word[5]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00060552",
+  "current_name": "",
+  "proposed_name": "engine_retarder_torque_stage_4_values",
+  "proposed_type": "word[5]",
+  "comment": "e2m 13D3 +0 JC4CTQYA 'JCOMM BRAKE MAP 4 AXIS DEP. AXIS THAT DEFINES 4 CYL. BRAKING TO' (N-M): the y values of engine_retarder_torque_stage_4_lookup and of engine_retarder_torque_lookup when engine_brake_active_cylinder_count is 4; ROM beyond the dump (no values): word[5] by the e2m layout (next record JC5CTQYA at 0x6055c). CM848 names the same record engine_retarder_torque_stage_4_values (0x5a44e). (new row, was DAT_00060552; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record JC5CTQYA at 0x6055c -> word[5]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0006055c",
+  "current_name": "",
+  "proposed_name": "engine_retarder_torque_stage_5_values",
+  "proposed_type": "word[5]",
+  "comment": "e2m 13D4 +0 JC5CTQYA 'JCOMM BRAKE MAP 5 AXIS DEP. AXIS THAT DEFINES 5 CYL. BRAKING TO' (N-M): the y values of engine_retarder_torque_stage_5_lookup and of engine_retarder_torque_lookup when engine_brake_active_cylinder_count is 5; ROM beyond the dump (no values): word[5] by the e2m layout (next record JC6CTQYA at 0x60566). CM848 names the same record engine_retarder_torque_stage_5_values (0x5a458). (new row, was DAT_0006055c; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record JC6CTQYA at 0x60566 -> word[5]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008071e0",
+  "current_name": "vp44_fault_timer_threshold",
+  "proposed_name": "wet_stack_timing_by_intake_manifold_temperature_axis",
+  "proposed_type": "word[11]",
+  "comment": "e2m 1075 +0 WSIMAI 'REPRESENTS TEMPERATURE ON \"X\" AXIS FOR WET_STACK_TIMING_TAB' (DEGF): the x axis of wet_stack_timing_by_intake_manifold_temperature_lookup (and the unread crank_wet_stack_timing_by_intake_manifold_temperature_lookup); dump: byte count 20, 10 points (6400 .. 39040). The rows inside are removed (were 0x8071e2 vp44_smoke_limiter_threshold / 0x8071e4 vp44_fault_counter_threshold_1 / 0x8071e6 vp44_fuel_temp_delta_threshold / 0x8071e8 vp44_fault_tolerance_factor / 0x8071ea vp44_throttle_threshold / 0x8071ee vp44_fault_counter_limit_1 / 0x8071f0 vp44_table_compare_threshold / 0x8071f2 vp44_protection_recovery_threshold / 0x8071f4 vp44_clutch_rpm_delta_threshold). (was vp44_fault_timer_threshold; PR #53 round 95)",
+  "evidence": "dump word 0x8071e0 = 20 -> word[11]; next e2m record WSTATB at 0x8071f6; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x008071f6",
+  "current_name": "",
+  "proposed_name": "wet_stack_timing_by_intake_manifold_temperature_values",
+  "proposed_type": "word[11]",
+  "comment": "e2m 1076 +0 WSTATB '2 DIM TABLE OF 10 BREAKPOINTS. INTAKE MANIFOLD TEMPERATURE IS T' (DADV): the y values of wet_stack_timing_by_intake_manifold_temperature_lookup (and the unread crank_wet_stack_timing_by_intake_manifold_temperature_lookup); dump: byte count 20, 10 points (597 .. 444). The rows inside are removed (were 0x8071f8 vp44_fault_counter_limit_2 / 0x807204 oil_pressure_throttle_threshold / 0x807206 oil_pressure_debounce_threshold). (new row, was DAT_008071f6; PR #53 round 95)",
+  "evidence": "dump word 0x8071f6 = 20 -> word[11]; next e2m record WSCLAI at 0x80720c; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080720c",
+  "current_name": "",
+  "proposed_name": "wet_stack_timing_by_coolant_temperature_axis",
+  "proposed_type": "word[9]",
+  "comment": "e2m 12CB +0 WSCLAI 'REPRESENTS COOLANT TEMPERATURE ON \"X\" AXIS FOR WET_STACK_COOL' (DEGF): the x axis of wet_stack_timing_by_coolant_temperature_lookup; dump: byte count 16, 8 points (3840 .. 39040). (new row, was DAT_0080720c; PR #53 round 95)",
+  "evidence": "dump word 0x80720c = 16 -> word[9]; next e2m record WSCLTATB at 0x80721e",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x000611fa",
+  "current_name": "",
+  "proposed_name": "friction_fuel_by_engine_speed_axis",
+  "proposed_type": "word[10]",
+  "comment": "e2m 1098 +0 NLFCFLXA 'NO LOAD FUEL BREAKPOINT TABLE' (RPM): the x axis of friction_fuel_by_engine_speed_lookup; ROM beyond the dump (no values): word[10] by the e2m layout (next record NLFCFLYA at 0x6120e). CM848 names the same record friction_fuel_by_engine_speed_axis (0x5a77c). (new row, was DAT_000611fa; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record NLFCFLYA at 0x6120e -> word[10]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0006120e",
+  "current_name": "",
+  "proposed_name": "friction_fuel_by_engine_speed_values",
+  "proposed_type": "word[10]",
+  "comment": "e2m 1099 +0 NLFCFLYA 'ESTIMATED NO LOAD FUEL BASED ON ENGINE SPEED' (MM3S): the y values of friction_fuel_by_engine_speed_lookup; ROM beyond the dump (no values): word[10] by the e2m layout (next record ADCLFLBP at 0x61222). CM848 names the same record friction_fuel_by_engine_speed_values (0x5a790). (new row, was DAT_0006120e; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record ADCLFLBP at 0x61222 -> word[10]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00061222",
+  "current_name": "",
+  "proposed_name": "friction_fuel_correction_by_coolant_temperature_axis",
+  "proposed_type": "word[10]",
+  "comment": "e2m 109A +0 ADCLFLBP 'COOLANT TEMPERATURE ADJUSTMENT BREAKPOINT TABLE FOR NO LOAD' (DEGF): the x axis of friction_fuel_correction_by_coolant_temperature_lookup; ROM beyond the dump (no values): word[10] by the e2m layout (next record NLCLFLYA at 0x61236). CM848 names the same record friction_fuel_correction_by_coolant_temperature_axis (0x5a7a4). (new row, was DAT_00061222; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record NLCLFLYA at 0x61236 -> word[10]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00061236",
+  "current_name": "",
+  "proposed_name": "friction_fuel_correction_by_coolant_temperature_values",
+  "proposed_type": "word[10]",
+  "comment": "e2m 109B +0 NLCLFLYA 'COOLANT TEMPERATURE BASED FUEL ADJUSTMENT TO NO LOAD FUEL' (MM3S): the y values of friction_fuel_correction_by_coolant_temperature_lookup; ROM beyond the dump (no values): word[10] by the e2m layout (next record FLCDTPXA at 0x6124a). CM848 names the same record friction_fuel_correction_by_coolant_temperature_values (0x5a7bc). (new row, was DAT_00061236; PR #53 round 95)",
+  "evidence": "next_record.py: next e2m record FLCDTPXA at 0x6124a -> word[10]; above the 0x40000 dump",
+  "confidence": "medium"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806d3a",
+  "current_name": "linearization_table_ch15_x_axis",
+  "proposed_name": "intake_manifold_temperature_linearization_axis",
+  "proposed_type": "word[26]",
+  "comment": "e2m 101B +0 ADIMTPXA 'INTAKE MANIFOLD TEMPERATURE LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of intake_manifold_temperature_linearization_lookup; dump: byte count 50, 25 points (0 .. 1023). CM848 names the same record intake_manifold_temperature_linearization_axis (0x59536). The rows inside are removed (were 0x806d40 linearization_table_ch15_y_axis / 0x806d46 linearization_table_ch16_x_axis / 0x806d4c linearization_table_ch16_y_axis / 0x806d52 linearization_table_ch17_x_axis / 0x806d58 linearization_table_ch17_y_axis / 0x806d5e linearization_table_ch18_x_axis / 0x806d64 linearization_table_ch18_y_axis / 0x806d6a linearization_table_ch19_x_axis). (was linearization_table_ch15_x_axis; PR #53 round 95)",
+  "evidence": "dump word 0x806d3a = 50 -> word[26]; next e2m record ADIMTPYA at 0x806d6e; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806d6e",
+  "current_name": "",
+  "proposed_name": "intake_manifold_temperature_linearization_values",
+  "proposed_type": "word[26]",
+  "comment": "e2m 1019 +0 ADIMTPYA 'INTAKE MANIFOLD TEMPERATURE LINEARIZATION TABLE, Y-AXIS' (DEGF): the y values of intake_manifold_temperature_linearization_lookup; dump: byte count 50, 25 points (21120 .. 21120). CM848 names the same record intake_manifold_temperature_linearization_values (0x59566). The rows inside are removed (were 0x806d70 linearization_table_ch19_y_axis / 0x806d76 linearization_table_ch20_x_axis / 0x806d9c linearization_table_ch20_y_axis). (new row, was DAT_00806d6e; PR #53 round 95)",
+  "evidence": "dump word 0x806d6e = 50 -> word[26]; next e2m record ADFLTPXA at 0x806da2; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806da2",
+  "current_name": "",
+  "proposed_name": "fuel_temperature_linearization_axis",
+  "proposed_type": "word[22]",
+  "comment": "e2m 8008 +0 ADFLTPXA 'LINEARIZATION TABLE, FUEL TEMPERATURE X-AXIS' (CNTS): the x axis of fuel_temperature_linearization_lookup; dump: byte count 42, 21 points (0 .. 1023). The rows inside are removed (were 0x806dc2 linearization_table_ch21_x_axis). (new row, was DAT_00806da2; PR #53 round 95)",
+  "evidence": "dump word 0x806da2 = 42 -> word[22]; next e2m record ADFLTPYA at 0x806dce; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806dce",
+  "current_name": "",
+  "proposed_name": "fuel_temperature_linearization_values",
+  "proposed_type": "word[22]",
+  "comment": "e2m 8009 +0 ADFLTPYA 'Y - AXIS LINEARIZATION TABLE FOR FUEL TEMPERATURE' (DEGF): the y values of fuel_temperature_linearization_lookup; dump: byte count 42, 21 points (42240 .. 8960). The rows inside are removed (were 0x806dd4 linearization_table_ch21_y_axis / 0x806de6 linearization_table_ch22_x_axis / 0x806dee linearization_table_ch22_y_axis / 0x806df6 linearization_table_ch23_x_axis). (new row, was DAT_00806dce; PR #53 round 95)",
+  "evidence": "dump word 0x806dce = 42 -> word[22]; next e2m record ADCVXA at 0x806dfa; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806dfa",
+  "current_name": "",
+  "proposed_name": "coolant_level_linearization_axis",
+  "proposed_type": "word[9]",
+  "comment": "e2m 800A +0 ADCVXA 'COOLANT LEVEL X-AXIS' (CNTS): the x axis of coolant_level_linearization_lookup; dump: byte count 16, 8 points (0 .. 1023). The rows inside are removed (were 0x806dfc linearization_table_ch23_y_axis / 0x806e02 linearization_table_ch24_x_axis / 0x806e08 linearization_table_ch24_y_axis). (new row, was DAT_00806dfa; PR #53 round 95)",
+  "evidence": "dump word 0x806dfa = 16 -> word[9]; next e2m record ADCVYA at 0x806e0c; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806e0c",
+  "current_name": "",
+  "proposed_name": "coolant_level_linearization_values",
+  "proposed_type": "word[9]",
+  "comment": "e2m 800B +0 ADCVYA 'COOLANT LEVEL Y-AXIS' (NONE): the y values of coolant_level_linearization_lookup; dump: byte count 16, 8 points (0 .. 2). The rows inside are removed (were 0x806e0e linearization_table_ch25_x_axis / 0x806e14 linearization_table_ch25_y_axis / 0x806e1a fuel_limit_rpm_error_offset / 0x806e1c diagnostic_exit_limit). (new row, was DAT_00806e0c; PR #53 round 95)",
+  "evidence": "dump word 0x806e0c = 16 -> word[9]; next e2m record ADFPLZXA at 0x806e1e; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806e1e",
+  "current_name": "diagnostic_transition_limit",
+  "proposed_name": "fuel_pressure_linearization_axis",
+  "proposed_type": "word[3]",
+  "comment": "e2m 801F +0 ADFPLZXA 'LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of fuel_pressure_linearization_lookup; dump: byte count 4, 2 points (0 .. 1023). (was diagnostic_transition_limit; PR #53 round 95)",
+  "evidence": "dump word 0x806e1e = 4 -> word[3]; next e2m record ADFPLZYA at 0x806e24",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806e2a",
+  "current_name": "",
+  "proposed_name": "oil_pressure_linearization_axis",
+  "proposed_type": "word[6]",
+  "comment": "e2m 1018 +0 ADOLPRXA 'OIL PRESSURE LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of oil_pressure_linearization_lookup; dump: byte count 10, 5 points (0 .. 1023). CM848 names the same record oil_pressure_linearization_axis (0x595a6). (new row, was DAT_00806e2a; PR #53 round 95)",
+  "evidence": "dump word 0x806e2a = 10 -> word[6]; next e2m record ADOLPRYA at 0x806e36",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806e42",
+  "current_name": "",
+  "proposed_name": "boost_pressure_linearization_axis",
+  "proposed_type": "word[5]",
+  "comment": "e2m 1016 +0 ADBSPRXA 'BOOST PRESSURE LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of boost_pressure_linearization_lookup; dump: byte count 8, 4 points (0 .. 1023). CM848 names the same record boost_pressure_linearization_axis (0x5937a). (new row, was DAT_00806e42; PR #53 round 95)",
+  "evidence": "dump word 0x806e42 = 8 -> word[5]; next e2m record ADBSPRYA at 0x806e4c",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806e56",
+  "current_name": "",
+  "proposed_name": "coolant_temperature_linearization_axis",
+  "proposed_type": "word[26]",
+  "comment": "e2m 1014 +0 ADCLTPXA 'COOLANT TEMPERATURE LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of coolant_temperature_linearization_lookup; dump: byte count 50, 25 points (0 .. 1023). CM848 names the same record coolant_temperature_linearization_axis (0x593ee). (new row, was DAT_00806e56; PR #53 round 95)",
+  "evidence": "dump word 0x806e56 = 50 -> word[26]; next e2m record ADCLTPYA at 0x806e8a",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806ebe",
+  "current_name": "",
+  "proposed_name": "ambient_air_temperature_linearization_axis",
+  "proposed_type": "word[9]",
+  "comment": "e2m 8021 +0 ADAATXA 'X-AXIS' (CNTS): the x axis of ambient_air_temperature_linearization_lookup; dump: byte count 16, 8 points (0 .. 1023). (new row, was DAT_00806ebe; PR #53 round 95)",
+  "evidence": "dump word 0x806ebe = 16 -> word[9]; next e2m record ADAATYA at 0x806ed0",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806ee2",
+  "current_name": "",
+  "proposed_name": "power_steering_temperature_linearization_axis",
+  "proposed_type": "word[3]",
+  "comment": "e2m 8023 +0 ADPOTPXA 'X-AXIS' (CNTS): the x axis of power_steering_temperature_linearization_lookup; dump: byte count 4, 2 points (0 .. 1023). (new row, was DAT_00806ee2; PR #53 round 95)",
+  "evidence": "dump word 0x806ee2 = 4 -> word[3]; next e2m record ADPOTPYA at 0x806ee8",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806eee",
+  "current_name": "",
+  "proposed_name": "exhaust_pressure_linearization_axis",
+  "proposed_type": "word[3]",
+  "comment": "e2m 8025 +0 ADEPLZXA 'LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of exhaust_pressure_linearization_lookup; dump: byte count 4, 2 points (0 .. 1023). (new row, was DAT_00806eee; PR #53 round 95)",
+  "evidence": "dump word 0x806eee = 4 -> word[3]; next e2m record ADEPLZYA at 0x806ef4",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806efa",
+  "current_name": "",
+  "proposed_name": "sampled_throttle_linearization_axis",
+  "proposed_type": "word[7]",
+  "comment": "e2m 1012 +0 ADSATHXA 'THROTTLE LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of sampled_throttle_linearization_lookup; dump: byte count 12, 6 points (0 .. 1023). CM848 names the same record accelerator_pedal_linearization_axis (0x595fe). (new row, was DAT_00806efa; PR #53 round 95)",
+  "evidence": "dump word 0x806efa = 12 -> word[7]; next e2m record ADSATHYA at 0x806f08",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806f16",
+  "current_name": "",
+  "proposed_name": "remote_throttle_linearization_axis",
+  "proposed_type": "word[7]",
+  "comment": "e2m 1023 +0 ADROTHXA 'REMOTE THROTTLE LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of remote_throttle_linearization_lookup; dump: byte count 12, 6 points (0 .. 1023). CM848 names the same record remote_accelerator_pedal_linearization_axis (0x595da). (new row, was DAT_00806f16; PR #53 round 95)",
+  "evidence": "dump word 0x806f16 = 12 -> word[7]; next e2m record ADROTHYA at 0x806f24",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806f32",
+  "current_name": "",
+  "proposed_name": "ambient_air_pressure_linearization_axis",
+  "proposed_type": "word[5]",
+  "comment": "e2m 101D +0 ADAAPRXA 'AMBIENT AIR LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of ambient_air_pressure_linearization_lookup; dump: byte count 8, 4 points (0 .. 1023). CM848 names the same record barometric_pressure_linearization_axis (0x592b2). (new row, was DAT_00806f32; PR #53 round 95)",
+  "evidence": "dump word 0x806f32 = 8 -> word[5]; next e2m record ADAAPRYA at 0x806f3c",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806f46",
+  "current_name": "",
+  "proposed_name": "battery_voltage_linearization_axis",
+  "proposed_type": "word[3]",
+  "comment": "e2m 1027 +0 ADBTVTXA 'BATTERY VOLTAGE LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of battery_voltage_linearization_lookup; dump: byte count 4, 2 points (0 .. 1023). CM848 names the same record battery_voltage_linearization_axis (0x59346). (new row, was DAT_00806f46; PR #53 round 95)",
+  "evidence": "dump word 0x806f46 = 4 -> word[3]; next e2m record ADBTVTYA at 0x806f4c",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806f52",
+  "current_name": "",
+  "proposed_name": "engine_speed_sensor_supply_voltage_linearization_axis",
+  "proposed_type": "word[3]",
+  "comment": "e2m 800C +0 ADESLZXA 'LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of engine_speed_sensor_supply_voltage_linearization_lookup; dump: byte count 4, 2 points (0 .. 1023). (new row, was DAT_00806f52; PR #53 round 95)",
+  "evidence": "dump word 0x806f52 = 4 -> word[3]; next e2m record ADESLZYA at 0x806f58",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806f5e",
+  "current_name": "",
+  "proposed_name": "throttle_position_sensor_supply_voltage_linearization_axis",
+  "proposed_type": "word[3]",
+  "comment": "e2m 8029 +0 ADTHLIXA 'LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of throttle_position_sensor_supply_voltage_linearization_lookup; dump: byte count 4, 2 points (0 .. 1023). (new row, was DAT_00806f5e; PR #53 round 95)",
+  "evidence": "dump word 0x806f5e = 4 -> word[3]; next e2m record ADTHLIYA at 0x806f64",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806f6a",
+  "current_name": "",
+  "proposed_name": "vehicle_connector_sensor_supply_voltage_linearization_axis",
+  "proposed_type": "word[3]",
+  "comment": "e2m 802B +0 ADVHLZXA 'LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of vehicle_connector_sensor_supply_voltage_linearization_lookup; dump: byte count 4, 2 points (0 .. 1023). (new row, was DAT_00806f6a; PR #53 round 95)",
+  "evidence": "dump word 0x806f6a = 4 -> word[3]; next e2m record ADVHLZYA at 0x806f70",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806f76",
+  "current_name": "",
+  "proposed_name": "engine_connector_sensor_supply_voltage_linearization_axis",
+  "proposed_type": "word[3]",
+  "comment": "e2m 802D +0 ADECLZXA 'ENGINE SENSOR SUPPLY VOLTAGE LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of engine_connector_sensor_supply_voltage_linearization_lookup; dump: byte count 4, 2 points (0 .. 1023). (new row, was DAT_00806f76; PR #53 round 95)",
+  "evidence": "dump word 0x806f76 = 4 -> word[3]; next e2m record ADECLZYA at 0x806f7c",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806f82",
+  "current_name": "",
+  "proposed_name": "frequency_throttle_input_supply_voltage_linearization_axis",
+  "proposed_type": "word[3]",
+  "comment": "e2m 802F +0 ADFTLZXA 'LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of frequency_throttle_input_supply_voltage_linearization_lookup; dump: byte count 4, 2 points (0 .. 1023). (new row, was DAT_00806f82; PR #53 round 95)",
+  "evidence": "dump word 0x806f82 = 4 -> word[3]; next e2m record ADFTLZYA at 0x806f88",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806f8e",
+  "current_name": "",
+  "proposed_name": "cruise_control_switch_multiplexer_linearization_axis",
+  "proposed_type": "word[19]",
+  "comment": "e2m 800E +0 ADCRLZXA 'CC SWITCH MUX LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of cruise_control_switch_multiplexer_linearization_lookup; dump: byte count 36, 18 points (0 .. 1023). The rows inside are removed (were 0x806fa0 timing_protection_flags_param / 0x806fa2 timing_protection_blend_base / 0x806fa4 timing_protection_blend_increment / 0x806fa6 fuel_mode_transition_timeout_value / 0x806fa8 fuel_timing_mode_arbitration_1 / 0x806fac fuel_timing_mode_arbitration_2 / 0x806fae fuel_source_mode_11_timeout_value / 0x806fb2 timing_blend_threshold). (new row, was DAT_00806f8e; PR #53 round 95)",
+  "evidence": "dump word 0x806f8e = 36 -> word[19]; next e2m record ADCRLZYA at 0x806fb4; abs_refs.py: no reference to the rows inside",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806fda",
+  "current_name": "",
+  "proposed_name": "water_in_fuel_linearization_axis",
+  "proposed_type": "word[9]",
+  "comment": "e2m 8027 +0 ADWFLZXA 'WATER IN FUEL LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of water_in_fuel_linearization_lookup; dump: byte count 16, 8 points (0 .. 1023). (new row, was DAT_00806fda; PR #53 round 95)",
+  "evidence": "dump word 0x806fda = 16 -> word[9]; next e2m record ADWFLZYA at 0x806fec",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00806ffe",
+  "current_name": "",
+  "proposed_name": "egr_current_feedback_linearization_axis",
+  "proposed_type": "word[4]",
+  "comment": "e2m 8010 +0 ADEGLZXA 'LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of egr_current_feedback_linearization_lookup; dump: byte count 6, 3 points (0 .. 1023). (new row, was DAT_00806ffe; PR #53 round 95)",
+  "evidence": "dump word 0x806ffe = 6 -> word[4]; next e2m record ADEGLZYA at 0x807006",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080700e",
+  "current_name": "",
+  "proposed_name": "programming_pulse_supply_voltage_linearization_axis",
+  "proposed_type": "word[3]",
+  "comment": "e2m 8031 +0 ADPSLIXA 'LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of programming_pulse_supply_voltage_linearization_lookup; dump: byte count 4, 2 points (0 .. 1023). (new row, was DAT_0080700e; PR #53 round 95)",
+  "evidence": "dump word 0x80700e = 4 -> word[3]; next e2m record ADPSLIYA at 0x807014",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x0080701a",
+  "current_name": "",
+  "proposed_name": "high_side_gate_bias_supply_voltage_linearization_axis",
+  "proposed_type": "word[3]",
+  "comment": "e2m 8033 +0 ADHBLZXA 'LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of high_side_gate_bias_supply_voltage_linearization_lookup; dump: byte count 4, 2 points (0 .. 1023). (new row, was DAT_0080701a; PR #53 round 95)",
+  "evidence": "dump word 0x80701a = 4 -> word[3]; next e2m record ADHBLZYA at 0x807020",
+  "confidence": "high"
+ },
+ {
+  "firmware": "CM550",
+  "address": "0x00807026",
+  "current_name": "",
+  "proposed_name": "operational_amplifier_and_comparator_supply_voltage_linearization_axis",
+  "proposed_type": "word[3]",
+  "comment": "e2m 8035 +0 ADOCLIXA 'LINEARIZATION TABLE, X-AXIS' (CNTS): the x axis of operational_amplifier_and_comparator_supply_voltage_linearization_lookup; dump: byte count 4, 2 points (0 .. 1023). (new row, was DAT_00807026; PR #53 round 95)",
+  "evidence": "dump word 0x807026 = 4 -> word[3]; next e2m record ADOCLIYA at 0x80702c",
+  "confidence": "high"
+ }
+]

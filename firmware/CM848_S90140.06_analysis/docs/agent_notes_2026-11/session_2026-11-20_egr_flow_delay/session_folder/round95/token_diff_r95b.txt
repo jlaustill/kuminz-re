@@ -1,0 +1,4 @@
+0x000023b8: 2 token changes:  => qadc_a_pqa2_sample ; word direction_register_value ; word | ; word qadc_a_pqa2_sample ; word direction_register_value => 
+---- census of distinct changes
+   1  => qadc_a_pqa2_sample ; word direction_register_value ; word
+   1 ; word qadc_a_pqa2_sample ; word direction_register_value => 

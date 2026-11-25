@@ -1,0 +1,999 @@
+{
+ "batch": "N3",
+ "proposal": {
+  "batch": "N3",
+  "summary": "Batch N3 covers the round 94 leads: two CM550 prototypes, the CM550 J1708 buffer pointers, the engine position sensor accumulators and the PGN 61442 / TSC1 bytes, plus four CM848 items. scheduleJ1939PeriodicMessage is a proven twin (CM550 0x1fe84 / CM848 0x538c8c). Both bodies have the same steps and store order (+0, +4, +2, +6), the same 20 / 10 queue limits and 19 calls from the datalink start-up. They take (queue, PGN key, interval ms, first send offset ms, builder) and return a byte that no caller reads. cm550_tableLookup2D takes one table_lookup_2d_arguments_t pointer and returns an unsigned word in d0 (it saves every other register). Its CONCAT44 / undefined8 comes only from the missing return type. The J1708 driver uses two 256-byte circular buffers of [length][bytes] records, each with three pointers (message write, byte, message read: e2m JC17TXIP / TXMP / TXOP and RXIP / RXMP / RXOP). io_control_bit0_state is Calterm ESACGR, the accumulated main engine position sensor period between vehicle speed interrupts. The CM848 'fuel demand filter' pair computes and initializes maximum_torque_at_current_engine_speed. The leaf at 0x29ecc is unreachable. The safety_* words belong to the fuel pressure governor fault blend, and every user of governor_tuning_set_blend_weight is an all-speed governor function (Calterm block 158D ASG_Droop_Flag).",
+  "functions": [
+   {
+    "address": "0x0001fe84",
+    "current_name": "scheduleJ1939PeriodicMessage",
+    "proposed_name": "scheduleJ1939PeriodicMessage",
+    "role": "Appends one periodic J1939 broadcast (PGN key, interval, first send offset, builder) to transmit queue 0 or 1 and returns 1 when that queue is full.",
+    "discriminator": "It is the only writer of the periodic queues. It fills the entry at count x 10 and increments j1939_periodic_queue0_count / queue1_count (0x800a9a / 0x800a9b; no other code touches them). cm550_runJ1939PeriodicTransmitQueues only reads the entries and advances next_tick. The interval and the offset arrive in ms and are divided by 10 (divs.l #10) into 10 ms ticks.",
+    "relation": "twin",
+    "cm848_address": "0x00538c8c",
+    "cm848_current_name": "scheduleJ1939PeriodicMessage",
+    "plate_comment": "Adds a periodic J1939 broadcast to transmit queue 0 (the engine node: up to 20 entries of 10 bytes at j1939_periodic_queue0_entries 0x80096e) or queue 1 (the retarder node: up to 10 entries at 0x800a36). The entry gets the PGN key (+0), the interval in 10 ms ticks (+2), the first send as the queue's current tick plus the offset in ticks (+4) and the builder's address (+6). Returns 1 when the queue is full, else 0; no caller reads it. mc68k_initializeJ1939Datalink makes all 19 calls through a4 (movea.l #0x1fe84 / jsr (a4)); the first is PGN 65265 every 100 ms from 70 ms. The twin of CM848 0x538c8c: same steps in the same order, the same limits 20 / 10 and the same 19 start-up calls. (PR #53 round 95)",
+    "evidence": "Entry 0x1fe84: movem.l a3/a2/d2 = 12 bytes, so (0x10;a7) = entry +4, (0x14) = +8, (0x16) = +10, (0x18) = +12, (0x1a) = +14. 0x1fe94 move.l (0x10;a7),d0 / beq queue 0 / cmp.l #1 -> queue 1 (0x1fe9c). 0x1fea2 cmpi.b #0x14,(0x800a9a) / moveq #1,d0 / rts (full). 0x1feb0 index = count++ and entry = 0x80096e + index x 10; d2 = (0x800a9c) the current tick. Queue 1 at 0x1fed4-0x1fefe: limit 0x0a, 0x800a36, tick 0x800a9e. 0x1ff04 move.w (0x14;a7),(a2) = PGN key at +0. 0x1ff08 moveq #0 / move.w (0x18;a7) / divs.l #10 / add.w d2 -> +4. 0x1ff1a same for (0x16;a7) -> +2. 0x1ff2a move.l (0x1a;a7),(0x6;a2) = builder at +6. 0x1ff30 clr.b d0 / rts. CM848 0x538c8c: cmpwi r3,0; lbz count / cmpwi 20 (10) / li r3,1; mulli 10 + 0x3fd2e2 (0x3fd3aa); count+1; lhz tick 0x3fd410 (0x3fd412); sth r4,0 / divw r6,10 + tick -> sth 4 / divw r5,10 -> sth 2 / stw r7,6 / li r3,0. Same store order. Call graph: CM550 has only the raw pointer 0x28b8c (movea.l #0x1fe84,a4 in mc68k_initializeJ1939Datalink) and 19 jsr (a4) calls of 14 bytes each. CM848 has 19 bl at 0x5392c0-0x539500, all in cm848_j1939_system_init. The first call in both is PGN 65265, 100 ms, 70 ms, queue 0 (CM550 pea 0x31c84 / 0x46 / 0x64 / 0xfef1 / clr.l; CM848 li r3,0 / ori r4,65265 / li r5,100 / li r6,70).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00035088",
+    "current_name": "cm550_tableLookup2D",
+    "proposed_name": "cm550_tableLookup2D",
+    "role": "Looks up a z value in a two-axis grid with bilinear interpolation through a 22-byte table_lookup_2d_arguments_t record and returns it as an unsigned word in d0.",
+    "discriminator": "Its one argument is a record pointer. It searches two axes from the cached segment offsets (+0 and +8), writes the found offsets back and interpolates over the z grid (+16) unless no_interpolation_flag (+20) is nonzero. lookupTableInterpolation 0x34de0 does one axis through table_interp_args_t. The CM848 counterpart cm848_dualAxisTableInterpolation takes seven register arguments and has signed-axis and step options.",
+    "relation": "counterpart",
+    "cm848_address": "0x000566cc",
+    "cm848_current_name": "cm848_dualAxisTableInterpolation",
+    "plate_comment": "Two-axis table lookup through a table_lookup_2d_arguments_t record (the long at +4). It finds the x segment around x_input from x_axis_offset and the y segment around y_input from y_axis_offset (an input outside an axis takes its end point), writes both offsets back as the next search start, and returns the z value as an unsigned word in d0. The value is the grid point interpolated along x, the same for the next y row, then along y (mulu.w / divu.w), or the grid point alone when no_interpolation_flag is nonzero. It saves every register except d0. The 25 callers each push the record and store the word or zero-extend it. CM848's counterpart is cm848_dualAxisTableInterpolation. (PR #53 round 95)",
+    "evidence": "0x35088 link a6,#0 / movem.l d1-d6/a0-a5 (every register but d0); 0x35090 movea.l (0x8;a6),a2 = the long at entry +4. x search 0x35094-0x350f6: axis (0x2;a2), input (0x6;a2), offset written back by move.w a1,(a2). y search 0x350f8-0x35160: axis (0xa;a2), input (0xe;a2), offset written back by move.w a5,(0x8;a2). 0x35162-0x35176: grid address = (0x10;a2) + ((y offset - 2) >> 1) x x-axis byte count + x offset - 2. 0x35178 move.w (0x14;a2),d0 / beq; else move.w (a1),d0. Interpolation by mulu.w / divu.w with bcs / bcc (unsigned). Every exit writes only d0.w (0x35180 / 0x351da / 0x35202 / 0x35208 / 0x3521a) and the upper word keeps the divu remainder or the caller's d0, which is where the CONCAT22 / CONCAT44 come from. 25 jsr.l callers (0xad22 ... 0x26ae0): pea record / move.l aN,-(a7); then move.w d0,<dest>, or andi.l #0xffff,d0 at 0x1292a and 0x12c7e.",
+    "confidence": "high"
+   }
+  ],
+  "cm848_functions": [
+   {
+    "address": "0x00029c98",
+    "current_name": "cm848_calculateFuelDemandFilter",
+    "proposed_name": "cm848_calculateMaximumTorqueAtCurrentEngineSpeed",
+    "role": "Computes maximum_torque_at_current_engine_speed (0x40aee6, lb-ft) from the maximum torque map at the filtered engine speed, blended over the combustion chi maps and alpha.",
+    "discriminator": "It is the periodic writer of maximum_torque_at_current_engine_speed (the init is the only other one). It makes three cm848_dualAxisTableInterpolation lookups of maximum_torque_map_grid, at y = 0 and at y = combustion_chi_lower / upper_map_number << 14 (capped 0xffff), each with its own cache (0x3faf98 / 0x3faf9c / 0x3fafa0). It blends them with cm848_interpolateAlphaChiValue and replaces 0 by 1. Nothing in it filters fuel demand. CM550's counterpart makes one lookup (engine speed x alpha).",
+    "plate_comment": "Computes the maximum engine torque at the current engine speed (CHR e2m 1461 +0 MT_Max_Torque_At_RPM_Ftlb, lb-ft) into maximum_torque_at_current_engine_speed. It looks up maximum_torque_map_grid (e2m MT_Max_Torque_Map over MT_RPM_Axis and MT_Alpha_Axis) at engine_speed_state.filtered_engine_speed in the alpha 0 row and in the rows of combustion_chi_lower_map_number and combustion_chi_upper_map_number (x 0x4000). It blends them by combustion_reference_state.chi_hundredths and alpha_percent with cm848_interpolateAlphaChiValue and replaces 0 by 1 (the value is a divisor). Called by cm848_periodicTaskSet_sensorProcessing. CM550's counterpart cm550_calculateMaximumTorqueAtCurrentEngineSpeed makes one lookup over engine speed and alpha. (was cm848_calculateFuelDemandFilter; PR #53 round 95)",
+    "evidence": "0x29ca8-0x29cbc: r26 = 0x5c58e grid, r27 = 0x5c582 y axis, r28 = 0x5c556 x axis, r30 = 0x40b7ba engine speed. bl 0x566cc at 0x29ce8 (cache 0x3faf98, y 0), 0x29d30 (0x3faf9c, chi lower << 14) and 0x29d78 (0x3fafa0, chi upper << 14). bl 0x14528 cm848_interpolateAlphaChiValue at 0x29dac. 0x29d80 r31 = 0x410000 - 20762 = 0x40aee6; 0x29db4 sth r29,0(r31); 0x29dbc cmpwi 0 / li 1 / sth at 0x29dc8. The only stores are those two. Caller: cm848_periodicTaskSet_sensorProcessing (0xb98c). CM550 0x269f2: one cm550_tableLookup2D with engine_rpm_primary and alpha_blend_factor, then min 1. RAM dump 0x40aee6 = 0x0122 (290 lb-ft).",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00029de0",
+    "current_name": "cm848_initFuelDemandFilterDimensions",
+    "proposed_name": "cm848_initializeMaximumTorqueAtCurrentEngineSpeed",
+    "role": "Start-up: sets maximum_torque_at_current_engine_speed to 1 and the three maximum torque map lookup caches to 2.",
+    "discriminator": "It writes only 0x40aee6 (1) and the six cache words 0x3faf98-0x3fafa2 (2), and is called once from cm848_applicationMain. The other start-up initializers set other records, for example cm848_initializeInjectionTimingMainMisfireLimit at 0x29e24.",
+    "plate_comment": "Start-up initialization of cm848_calculateMaximumTorqueAtCurrentEngineSpeed. It sets maximum_torque_at_current_engine_speed to 1 and both words of maximum_torque_map_alpha_0_cached_axis_offsets, maximum_torque_map_chi_lower_cached_axis_offsets and maximum_torque_map_chi_upper_cached_axis_offsets to 2 (the first axis point). Called once from cm848_applicationMain. CM550's counterpart is cm550_initializeMaximumTorqueAtCurrentEngineSpeed. (was cm848_initFuelDemandFilterDimensions; PR #53 round 95)",
+    "evidence": "0x29de0 lis r12,0x41 / li r11,1 / sth r11,-20762(r12) = 0x40aee6. li r3,2 / sth to 0(r4) and 2(r4) for r4 = 0x3faf98, 0x3faf9c and 0x3fafa0 (0x29df0-0x29e1c). blr 0x29e20. Caller: cm848_applicationMain 0x544c4 (decompile line 59130). CM550 0x26a2e sets the torque to 1 and points maximum_torque_map_lookup at its tables with offsets 2.",
+    "confidence": "high"
+   },
+   {
+    "address": "0x00029ecc",
+    "current_name": "",
+    "proposed_name": "cm848_raiseMainInjectionTimingCopyToMisfireLimit",
+    "role": "Unreachable leaf. While the misfire timing limit is enabled and the intermediate timing source is the 4D maps, it saves main_injection_timing_copy as main_injection_timing_before_misfire_limit and raises the copy to injection_timing_main_misfire_limit (source code 11).",
+    "discriminator": "It works on main_injection_timing_copy, injection_timing_intermediate_source_code and bit 0 of injection_timing_increment_flags. It is the only store of main_injection_timing_before_misfire_limit besides the power-up clear. The live misfire limit is applied to injection_timing_demand inside cm848_calculateMainInjectionTiming (0x4ae20), which sets main_injection_timing_source_code. No branch, address word, lis+addi or lis+ori pair in the ROM or the flash2 image reaches 0x29ecc, so it is dead under any calibration.",
+    "plate_comment": "Dead code: nothing calls it (no branch, address word or lis+addi / lis+ori pair in the ROM or the flash2 image reaches 0x29ecc). While algorithm_enable_flags_40_cal bit 8 (e2m Misfire_Timing_Limit_Enable) is set and injection_timing_intermediate_source_code is 0 (the 4D maps), it copies main_injection_timing_copy into main_injection_timing_before_misfire_limit (e2m 8A3D +2 SOI_Before_MST). When injection_timing_main_misfire_limit is larger (signed) it raises main_injection_timing_copy to it, clears bit 0 of injection_timing_increment_flags and sets the intermediate source code to 11 (e2m 103B label 0B MISFIRE). The live misfire limit is the injection_timing_demand step of cm848_calculateMainInjectionTiming. (new row; PR #53 round 95)",
+    "evidence": "ROM 0x29ecc-0x29f38: the previous blr is at 0x29ec8 (cm848_calculateInjectionTimingMainMisfireLimit) and cm848_absoluteValue16 starts at 0x29f3c. lhz 0x3fd5ec / rlwinm 0,23,23 (0x100) / beq out. lha 0x40a2f2 / bne out. lha 0x40a2f0 -> sth 0x40aeea (0x29f04). lha 0x40aee8 / cmpw / ble out. sth to 0x40a2f0 (0x29f18); lhz 0x40a2f4 / rlwinm 16,30 / sth; li r10,11 / sth 0x40a2f2; blr. ppc_refs.py over both images found nothing for 0x29ecc; the same scan finds bl 0x29e50 at 0xbab0. The frozen .cpp has no function at 0x29ecc. RAM dump 0x40aeea = 0. Live path: cm848_calculateMainInjectionTiming 'if (injection_timing_demand < injection_timing_main_misfire_limit)' -> MAIN_INJECTION_TIMING_SOURCE_MISFIRE_LIMIT.",
+    "confidence": "medium"
+   }
+  ],
+  "prototypes": [
+   {
+    "firmware": "CM550",
+    "address": "0x0001fe84",
+    "function_name": "scheduleJ1939PeriodicMessage",
+    "return_type": "byte",
+    "params": [
+     {
+      "index": 0,
+      "name": "queue_index",
+      "type": "uint",
+      "comment": "The queue - the long at +4 (move.l (0x10;a7) after the 12-byte movem): 0 = queue 0 j1939_periodic_queue0_entries (the engine node) / 1 = queue 1 j1939_periodic_queue1_entries (the retarder node); the callers push clr.l or pea (1).w (PR #53 round 95)"
+     },
+     {
+      "index": 1,
+      "name": "pgn_key",
+      "type": "ushort",
+      "comment": "The PGN key stored at the entry's +0 - the word at +8 (move.w (0x14;a7);(a2)): 65265 / 61444 / 61443 / ... (PR #53 round 95)"
+     },
+     {
+      "index": 2,
+      "name": "interval_milliseconds",
+      "type": "ushort",
+      "comment": "The transmit interval in ms - the word at +10 (moveq #0 / move.w (0x16;a7) / divs.l #10) - kept in the entry's +2 as 10 ms ticks (PR #53 round 95)"
+     },
+     {
+      "index": 3,
+      "name": "first_send_offset_milliseconds",
+      "type": "ushort",
+      "comment": "The delay of the first send in ms - the word at +12 (move.w (0x18;a7) / divs.l #10) - added to the queue's current tick into the entry's +4 (PR #53 round 95)"
+     },
+     {
+      "index": 4,
+      "name": "builder",
+      "type": "void*",
+      "comment": "The message builder - the long at +14 (move.l (0x1a;a7);(0x6;a2)) - that cm550_runJ1939PeriodicTransmitQueues calls when its tick comes (PR #53 round 95)"
+     }
+    ],
+    "evidence": "Stack layout: first_stack_offset 4 and slot 2 give +4 (4 bytes) / +8 / +10 / +12 (2 bytes each) / +14 (4 bytes). The body reads exactly those offsets after its 12-byte movem.l a3/a2/d2: (0x10) move.l, (0x14) move.w, (0x16) move.w zero-extended, (0x18) move.w zero-extended, (0x1a) move.l. The callers push pea builder / move.w offset / move.w interval / move.w PGN / clr.l (or pea (1).w) queue = 14 bytes per call (lea (0x2a;a7) after every 3). Return: moveq #1,d0 (full) or clr.b d0 (only the low byte defined) -> byte; no caller reads d0 (the next push follows each jsr (a4)). The function's body is missing from the frozen and the current .cpp (see notes), but the callers render its name, so the function record exists.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x00538c8c",
+    "function_name": "scheduleJ1939PeriodicMessage",
+    "return_type": "byte",
+    "params": [
+     {
+      "index": 0,
+      "name": "queue_index",
+      "type": "uint",
+      "comment": "The queue (r3; cmpwi r3,0): 0 = queue 0 at 0x3fd2e2 (the engine node; 20 entries) / any other value = queue 1 at 0x3fd3aa (the retarder node; 10 entries) (PR #53 round 95)"
+     },
+     {
+      "index": 1,
+      "name": "pgn_key",
+      "type": "ushort",
+      "comment": "The PGN key (r4) stored with sth at the entry's +0 (PR #53 round 95)"
+     },
+     {
+      "index": 2,
+      "name": "interval_milliseconds",
+      "type": "int",
+      "comment": "The transmit interval in ms (r5): divw by 10 into the entry's +2 (a full 32-bit divide; a 16-bit type would leave CONCAT22 artifacts) (PR #53 round 95)"
+     },
+     {
+      "index": 3,
+      "name": "first_send_offset_milliseconds",
+      "type": "int",
+      "comment": "The delay of the first send in ms (r6): divw by 10 plus the queue's current tick into the entry's +4 (PR #53 round 95)"
+     },
+     {
+      "index": 4,
+      "name": "builder",
+      "type": "void*",
+      "comment": "The message builder (r7) stored with stw at the entry's +6; the periodic transmit code calls it when its tick comes (PR #53 round 95)"
+     }
+    ],
+    "evidence": "0x538c8c cmpwi r3,0; 0x538d10 sth r4,0(r3); 0x538d18 divw r12,r6,10 + tick -> sth 4; 0x538d28 divw r11,r5,10 -> sth 2; 0x538d30 stw r7,6(r3); li r3,1 at 0x538ca8 / 0x538ce8 (full) and li r3,0 at 0x538d34. Callers (19 bl in cm848_j1939_system_init) load r3 queue, r4 PGN (lis 0 / ori), r5 interval, r6 offset and r7 builder (lis / addi). The instruction after each bl is lis r7 for the next call, so no caller reads r3. Same parameter names as CM848 registerJ1939ReceiveHandler (pgn_key ushort, handler void*).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00035088",
+    "function_name": "cm550_tableLookup2D",
+    "return_type": "word",
+    "params": [
+     {
+      "index": 0,
+      "name": "lookup",
+      "type": "table_lookup_2d_arguments_t*",
+      "comment": "The 22-byte argument record - the long at +4 (movea.l (0x8;a6);a2 after link a6): axes / inputs / grid / no-interpolation flag; the function writes back the found x_axis_offset (+0) and y_axis_offset (+8) (was table_args short*; PR #53 round 95)"
+     }
+    ],
+    "evidence": "0x35088 link a6,#0 then movea.l (0x8;a6),a2 = the long at entry +4: one 4-byte parameter, and each of the 25 callers pushes one long (pea record / move.l aN,-(a7)). The movem.l saves d1-d6/a0-a5, so d0 is the only result. Every exit writes d0 with a word operation only (move.w (a1),d0 / add.w / sub.w / the divu.w quotient). The upper word is the divu.w remainder or the caller's old d0, which is why the undeclared return renders as CONCAT22 / CONCAT44 (undefined8). Unsigned throughout (bcs / bcc, mulu.w / divu.w). Callers: move.w d0,<global or (aN)> or move.w d0,dN, and andi.l #0xffff,d0 at 0x1292a and 0x12c7e (zero-extend), so the return is an unsigned word. Return row: 0x00035088,cm550_tableLookup2D,return,,word,...",
+    "confidence": "high"
+   }
+  ],
+  "globals": [
+   {
+    "firmware": "CM550",
+    "address": "0x0080dc94",
+    "current_name": "j1708_transmit_buffer_0_2_32",
+    "proposed_name": "j1708_transmit_buffer_write_pointer",
+    "proposed_type": "byte *",
+    "comment": "e2m 1126 +0 JC17TXIP: where the next queued J1708 message goes in the 256-byte transmit buffer at 0x808b00 (records of [length][bytes]); it always points at a 0 length (the end marker). The message writers compute the free space as j1708_transmit_buffer_read_pointer minus it (minus 2, plus 0xfe when it wraps), write the record there and move it past the record. The pointers step only their low byte, so they wrap inside the 256 bytes. RAM dump 0x808b7d = the read pointer (queue empty). (was j1708_transmit_buffer_0_2_32; PR #53 round 95)",
+    "evidence": "Init 0x1dd48 = 0x808bdc & 0xffffff00 = 0x808b00; 0x1dd60 clr.b (it). Writer cm550_diagnosticMessageQueueWrite 0xb708-0xb72c: (0x80dc9c) - (0x80dc94) free check; 0xb732 record start = it; 0xb786 move.l (a2),(0x80dc94); 0xb78e clr.b. Same pattern in the many builders (0x1e810 / 0x1f2ea / 0x1fc10 ...). ISRs compare it with the read pointer to find pending messages (0x1e316 / 0x1e4f8 / 0x30200).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080dc98",
+    "current_name": "j1708_transmit_buffer_2_32_dc98",
+    "proposed_name": "j1708_transmit_byte_pointer",
+    "proposed_type": "byte *",
+    "comment": "e2m 1126 +4 JC17TXMP: the byte of the current J1708 message that is being sent. mc68k_startJ1708Transmission writes *pointer to the SCI data register. mc68k_j1708SciInterruptHandler compares the echo of the first byte with it (bus arbitration), then steps its low byte and sends the next byte until the record's length is reached, then sends the checksum. After the checksum it points at the next record's length byte, which becomes the read pointer. The bus timer handler rewinds it to the read pointer + 1 to resend. RAM dump 0x808b7e. (was j1708_transmit_buffer_2_32_dc98; PR #53 round 95)",
+    "evidence": "Init 0x1dd4e (0x4;a1) = TXIP then addq.b #1,(0x7;a1). mc68k_startJ1708Transmission 0x16d7c movea.l #0x80dc98,a2 / move.b (a0) -> 0xfffc0e. ISR 0x1e35e-0x1e368 a2 = a4 + 4, cmp.b (a0),d2 (echo). 0x1e3ca / 0x1e414 addq.b #1,(0x7;a4) then send *(0x4;a4). 0x1e470 addq.b after the checksum. 0x1e480 move.l (0x4;a4),(0x8;a4). Bus timer ISR 0x301d4 move.l (0x8;a3),(0x4;a3) / addq.b #1,(0x7;a3) and 0x3021a sends *(a3 + 4).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080dc9c",
+    "current_name": "j1708_transmit_buffer_2_32_dc9c",
+    "proposed_name": "j1708_transmit_buffer_read_pointer",
+    "proposed_type": "byte *",
+    "comment": "e2m 1126 +8 JC17TXOP: the length byte of the J1708 message being sent (the oldest unsent message). The SCI interrupt handler ends the data bytes when its byte count equals *pointer, and moves the pointer to the next record after the checksum. The writers' free space is it minus the write pointer. A message is pending while the write pointer differs from it. (was j1708_transmit_buffer_2_32_dc9c; PR #53 round 95)",
+    "evidence": "Init 0x1dd46 move.l d0,(a2) with a2 = 0x80dc9c. ISR 0x1e3f4 / 0x1e442 movea.l (0x8;a4),a0 / cmp.b (a0),d0 (count vs length). 0x1e480 move.l (0x4;a4),(0x8;a4). Writers 0xb6f8 movea.l #0x80dc9c,a3 / move.l (a3),d0 / sub.l TXIP (0x16724 / 0x1ee9a / 0x1f2f4 same). ISRs 0x1e31c / 0x1e4fe / 0x30206 cmp.l (0x8;a4) with TXIP.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080dca2",
+    "current_name": "j1708_receive_buffer_pointer_2_32_dca2",
+    "proposed_name": "j1708_receive_buffer_write_pointer",
+    "proposed_type": "byte *",
+    "comment": "e2m 1126 +0x0E JC17RXIP: the length byte of the J1708 message being received in the 256-byte receive buffer at 0x808c00. The SCI interrupt handler adds 1 to *pointer for each byte it stores. mc68k_j1708BusTimerInterruptHandler closes the message on bus idle. With a good checksum it removes the checksum byte from the count and moves the pointer to that byte's slot, the next record. A message under 3 bytes or with a bad checksum is discarded instead. mc68k_dispatchJ1708ReceivedMessages handles records until its read pointer reaches this one. RAM dump 0x808c00. (was j1708_receive_buffer_pointer_2_32_dca2; PR #53 round 95)",
+    "evidence": "Init 0x1dd74-0x1dd90 a2 = a1 + 14: move.l d0,(a2) (0x808c00) / clr.b (a0). ISR 0x1e2ce / 0x1e38c movea.l (0xe;a4),a0 / addq.b #1,(a0). 0x1e2e8-0x1e2f2 compares it with the read pointer when the buffer is full. Bus timer ISR 0x300de a4 = a3 + 14: tst.b (a0) / cmpi.b #3 / 0x301b0 subq.b #1,(a0) / 0x301b2-0x301ba low byte = byte pointer - 1 / 0x301c0 clr.b. Reader 0x16440 move.l (0x80dca2),d0 / cmp.l (a3) (read pointer) / bne loop.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080dca6",
+    "current_name": "j1708_receive_buffer_pointer_2_32_dca6",
+    "proposed_name": "j1708_receive_byte_pointer",
+    "proposed_type": "byte *",
+    "comment": "e2m 1126 +0x12 JC17RXMP: where mc68k_j1708SciInterruptHandler stores the next received J1708 byte (then it steps the low byte). The receive buffer is full when it reaches the read pointer. The bus timer handler resets it to the write pointer + 1 when it discards a message. RAM dump 0x808c01. (was j1708_receive_buffer_pointer_2_32_dca6; PR #53 round 95)",
+    "evidence": "Init 0x1dd86 (0x12;a1) = RXIP / addq.b #1,(0x15;a1). ISR 0x1e2c4 movea.l (0x12;a4),a0 / move.b d2,(a0) / addq.b #1,(0x15;a4); 0x1e382-0x1e388 the same on the first byte after a lost arbitration; 0x1e2e0 / 0x1e396 cmp.l with (0x16;a4) for full. Bus timer ISR 0x30128-0x3012e / 0x30140-0x30146 / 0x3019c-0x301a2 move.b to (0x15;a3) = write pointer low byte + 1; 0x3014a movea.l (0x12;a3) / cmpi.b #7,(a0).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080dcaa",
+    "current_name": "j1708_receive_buffer_pointer_2_32_dcaa",
+    "proposed_name": "j1708_receive_buffer_read_pointer",
+    "proposed_type": "byte *",
+    "comment": "e2m 1126 +0x16 JC17RXOP: the length byte of the oldest unprocessed J1708 message. mc68k_dispatchJ1708ReceivedMessages handles the record there, adds its length + 1 to the pointer's low byte, clears the receive buffer full flag and re-enables the SCI receive interrupt. The receive side stops (full) when the byte pointer reaches it. (was j1708_receive_buffer_pointer_2_32_dcaa; PR #53 round 95)",
+    "evidence": "Init 0x1dd82 move.l d0,(a3) with a3 = a1 + 22. Reader 0x15fbe movea.l #0x80dcaa,a3 / 0x15fce move.l (a3),(-4;a6) / move.b (a0),d3 (length); 0x16416-0x1641a add.b d0,(0x80dcad) (length + 1); 0x16420 clr.b full flag; 0x16422 ori.w #0x20 SCCR1. Multi-packet handlers 0x16680 / 0x16884 and the diagnostic handlers read it (move.l (abs) at 0x1e966 / 0x1ec48 / 0x1edc6 / 0x1eece / 0x1f504 / 0x1f866 / 0x1f8d8 / 0x1fbba).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080ddc6",
+    "current_name": "j1708_transmit_buffer_2_32_ddc6",
+    "proposed_name": "j1708_transmit_buffer_start_address",
+    "proposed_type": "byte *",
+    "comment": "e2m 1127 +0 JC17TXBF 'J1708 TRANSMIT BUFFER': holds the address of the 256-byte J1708 transmit buffer (0x808b00), written once by cm550_diagnosticBufferPointerInit; no code reads it (only the parameter ID table lists it, for Calterm). (was j1708_transmit_buffer_2_32_ddc6; PR #53 round 95)",
+    "evidence": "0x1dd66 movea.l (a2),a4 (0x808b00) / 0x1dd68 move.l a4,(0x80ddc6). Its only other reference is the table word at 0x35cd8 (the parameter ID table area 0x35ccc..). RAM dump 0x00808b00.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080ddca",
+    "current_name": "j1708_receive_buffer_2_32",
+    "proposed_name": "j1708_receive_buffer_start_address",
+    "proposed_type": "byte *",
+    "comment": "e2m 1128 +0 JC17RXBF 'J1708 RECEIVE BUFFER': holds the address of the 256-byte J1708 receive buffer (0x808c00), written once by cm550_diagnosticBufferPointerInit; no code reads it except that same initializer (for the end address). (was j1708_receive_buffer_2_32; PR #53 round 95)",
+    "evidence": "0x1dd96 move.l (a3),(0x80ddca) (a3 = 0x80dcaa = 0x808c00); 0x1dd9c move.l (0x80ddca),d0 / addi.l #0xff -> 0x80ddce. The only other reference is the table word at 0x35ce0. RAM dump 0x00808c00.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080ddce",
+    "current_name": "",
+    "proposed_name": "j1708_receive_buffer_last_byte_address",
+    "proposed_type": "byte *",
+    "comment": "The address of the last byte of the J1708 receive buffer (start + 0xff = 0x808cff), written once by cm550_diagnosticBufferPointerInit; no code reads it and no e2m record covers it. (new name; PR #53 round 95)",
+    "evidence": "0x1dd9c-0x1dda8 move.l (0x80ddca),d0 / addi.l #0xff,d0 / move.l d0,(0x80ddce); abs_refs finds no other reference. RAM dump 0x00808cff.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080d03e",
+    "current_name": "io_control_bit0_state",
+    "proposed_name": "accumulated_main_engine_position_sensor_period",
+    "proposed_type": "dword",
+    "comment": "e2m 100C +34C ESACGR 'ACCUMULATED MAIN EPS PERIOD BETWEEN VSS INTERRUPTS' (TCNT): the TPU channel 10 primary speed interrupt handlers (modes 0 / 1 / 2 and cm550_processPrimarySpeedPulsePeriodWithSyncPulse) add each new main engine position sensor period (main_engine_position_sensor_period) to it only while the sum cannot overflow (0xffffffff - sum >= period), and then count it in main_engine_position_sensor_interrupt_count. The same handlers add the crank degrees per tooth into 0x80cd00 (ESCKSM01 'CRANK DEGREES BETWEEN VSS INTERRUPTS'). Nothing in the dumped ROM reads or clears it: the vehicle speed sensor side that the Calterm text names is not in the dump. (was io_control_bit0_state; PR #53 round 95)",
+    "evidence": "8 absolute references, all in the four handlers (vector 65 at 0x808f04): 0x19b1e moveq #-1,d0 / sub.l (0x80d03e),d0 / cmp.l (a2),d0 / bcs skip / move.l (a2),d0 / add.l d0,(0x80d03e) (a2 = 0x80d04a); the same at 0x19ee2 / 0x1a57e / 0x1a9fe. No immediate or base register reaches it (scanned 0x80cf00-0x80d03e). No VSS handler is among the RAM vector table writes (0x808e4c-0x809008).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080d046",
+    "current_name": "io_control_bit4_state",
+    "proposed_name": "main_engine_position_sensor_interrupt_count",
+    "proposed_type": "word",
+    "comment": "e2m 100C +354 ESCTGR 'NUMBER OF MAIN EPS INTERRUPTS BETWEEN VSS INTERRUPTS' (CNT): the TPU channel 10 handlers add 1 (up to 0xffff) each time they add a period to accumulated_main_engine_position_sensor_period; nothing in the dumped ROM reads or clears it. (was io_control_bit4_state; PR #53 round 95)",
+    "evidence": "0x19b32 cmpi.w #0xffff,(0x80d046) / bcc / addq.w #1,(0x80d046) right after the add.l (also at 0x19ef6 / 0x1a592 / 0x1aa12); the only 8 references are these word accesses.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080d04a",
+    "current_name": "io_control_handshake_state",
+    "proposed_name": "main_engine_position_sensor_period",
+    "proposed_type": "dword",
+    "comment": "e2m 100C +358 ESIPPE 'EPS_PERIOD: TIME BETWEEN THE TWO MOST RECENT EPS INTERRUPTS' (CNTS, 200 - 16777216): the TPU channel 10 handlers copy the measured period from TPU parameter RAM 0xffffa8 (then clear its high word). The pulse period ring buffer (0x1028a), the 4-period sum 0x8002a6 (0x126be) and accumulated_main_engine_position_sensor_period take it. cm550_processPrimarySpeedPulsePeriodWithSyncPulse writes it from its argument. (was io_control_handshake_state; untyped; PR #53 round 95)",
+    "evidence": "0x19ad0 movea.l #0x80d04a,a2 / 0x19ae8 move.l (0xffffa8),(a2) / clr.w (0xffffa8) (also 0x19e94 / 0x1a530); 0x1a962 movea.l #0x80d04a,a2 / 0x1a97a move.l (0x8;a6),(a2); 0x1028a move.l (0x80d04a),(a2); 0x126be move.l (0x80d04a),d0 / add.l d0,(0x8002a6). All 4-byte accesses.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00801d44",
+    "current_name": "j1939_received_pgn61442_byte_1",
+    "proposed_name": "j1939_powertrain_messages_received",
+    "proposed_type": "cm550_j1939_powertrain_messages_received_t",
+    "comment": "The received ETC1 (PGN 61442) and engine TSC1 (PGN 0) bytes and the accepted TSC1 request: a 22-byte record (fields in cm550_j1939_powertrain_messages_received_t). The ETC1 data image (+0..+7) has bytes 1 and 5 stored by cm550_receivePgn61442ElectronicTransmissionController1Message. The TSC1 data image (+8..+15) has byte 1, the requested speed big-endian at +9 and the torque stored by processEngineTsc1Request. The accepted priority / speed / torque are at +0x10 / +0x12 / +0x14. It is CM848's j1939_powertrain_messages_received with the same members in the same order, but without ETC2 and the previous values, and with the accepted speed word aligned. The rows inside are removed (were 0x801d48 j1939_received_pgn61442_byte_5 / 0x801d4c j1939_received_tsc1_control_byte / 0x801d4d j1939_received_tsc1_requested_speed / 0x801d4f j1939_received_tsc1_requested_torque / 0x801d54 tsc1_accepted_priority / 0x801d56 tsc1_accepted_requested_speed / 0x801d58 tsc1_accepted_requested_torque). (was j1939_received_pgn61442_byte_1; PR #53 round 95)",
+    "evidence": "Every byte 0x801d40-0x801d5b checked (absolute refs and base registers). 0x2efde movea.l #0x801d44,a1 / 0x2f010 move.b (a0),(a1) = ETC1 data[0]. 0x2f016 move.b (0x4;a0) -> 0x801d48 = data[4]. 0x2f130 a3 = 0x801d4c: 0x2f150 data[0] -> +0, 0x2f16e data[1] -> (2;a3), 0x2f178 data[2] -> (1;a3), 0x2f182 data[3] -> (3;a3). 0x801d54 byte (0x2f1f2 / 0x2f1fc / 0x2f29e). 0x801d56 word (0x2f22c / 0x2f320 / 0x2f41c). 0x801d58 byte (0x2f212 / 0x2f220 / 0x2f388 / 0x2f42c). Nothing touches 0x801d45-47 / 49-4b / 50-53 / 55 / 57 / 59. 0x801d3c is a separate byte (the PGN 58112 handler 0x2ef4a, offset 0 only) and 0x801d5a is cm550_FUN_0002f4be's record: 0x801d44 + 22 = 0x801d5a. ETC1 data[4] at +4 and TSC1 data[0] at +8 match 8-byte frame images, as in CM848's struct. RAM dump: all 0 (no frames).",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x0040b31e",
+    "current_name": "safety_fuel_blend_output",
+    "proposed_name": "fuel_pressure_governor_fault_blended_fuel_limit",
+    "proposed_type": "word",
+    "comment": "The fuel limit of cm848_applyFuelPressureGovernorFaultBlend: the start fuel x (25600 - fraction) / 25600 + the table fuel limit x fraction / 25600. While no fault is set and the fraction is 0 it is injection_quantity_combustion_chi_maximum. It becomes torque_derate_fuel_quantity (source code 62, FUELING_STATE_FUEL_PRESSURE_GOVERNOR_FAULT_BLEND) when lower. The RAM dump holds 1030 = the chi maximum and that derate with source 62. Power-up 5888 (0x1700). (was safety_fuel_blend_output; PR #53 round 95)",
+    "evidence": "0x38a14-0x38a48 subfic 25600 / mullw / divwu 25600 twice / add; 0x389e4 lhz 0x40a4ea when the fraction is 0; 0x38a50 sth r31,-19682 (0x40b31e); 0x38a60 cmpw with 0x40afac / sth / li 62 -> 0x40afae; cm848_initializeFuelPressureGovernorFaultBlend 0x1700. Dump: 0x40b31e = 0x0406 = 0x40a4ea = 0x40afac; 0x40afae = 0x3e.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x0040b320",
+    "current_name": "safety_blend_fuel_demand_prev",
+    "proposed_name": "fuel_pressure_governor_fault_blend_start_fuel",
+    "proposed_type": "word",
+    "comment": "The blend's 0 percent end: injection_quantity_combustion_chi_maximum captured on the pass when a fuel pressure governor fault starts (fuel_pressure_governor_fault_active_flag_previous 0, active 1) and the table fuel limit is below final_fueling. The fraction rises only while it is above the table limit. Power-up 5888. (was safety_blend_fuel_demand_prev; PR #53 round 95)",
+    "evidence": "0x38954-0x38988: lhz 0x3fb3c0 == 0, lhz 0x40b326 != 0, lhz 0x40a2ce (final_fueling) > table value -> lhz 0x40a4ea / sth 0x40b320; 0x3898c-0x38998 lhz 0x40b320 / cmpw table / ble skips the increment; read in the blend at 0x38a20. Dump 0x1700.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x0040b322",
+    "current_name": "safety_fuel_blend_fraction",
+    "proposed_name": "fuel_pressure_governor_fault_blend_fraction",
+    "proposed_type": "word",
+    "comment": "The weight of the table fuel limit in the blend, 0 to 25600 (100 percent). While a fault is set (and the table limit is below the start fuel) it rises by fuel_pressure_governor_fault_blend_fraction_increment per pass, capped at 25600. After the faults clear it falls by the decrement per pass. The floor at 0 (0x38a04) is unreachable because the test is on the zero-extended result, so a step past 0 wraps. Power-up 0. (was safety_fuel_blend_fraction; PR #53 round 95)",
+    "evidence": "0x3899c-0x389bc lhz 0x40b322 + lhz 0x4088e2 / cmpwi 25600 / li 25600; 0x389d0-0x389f4 lhz 0x40b322 / lhz 0x4088e0 / subf; 0x389f8 clrlwi / cmpwi 0 / bge (always) so li r31,0 at 0x38a04 is unreachable (Ghidra's 'Removing unreachable block (ram,0x00038a04)'); 0x38a10 sth. Dump 0.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x0040b324",
+    "current_name": "safety_fuel_limit_lookup",
+    "proposed_name": "fuel_pressure_governor_fault_fuel_limit",
+    "proposed_type": "word",
+    "comment": "The fault fuel limit at the filtered engine speed: lookupTableInterpolation of fuel_pressure_governor_fault_fuel_limit_values over fuel_pressure_governor_fault_fuel_limit_axis, looked up each pass while a fault is set. It is the blend's 100 percent end. (was safety_fuel_limit_lookup; PR #53 round 95)",
+    "evidence": "0x38920-0x38950: r3 = 0x3fb3c2 cache, r4 = lhz 0x40b7ba, r5 = 0x4088e8, r6 = 0x40891a, bl 0x55ef4, sth -> 0x40b324; read at 0x38a38 (mullw by the fraction).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x0040b326",
+    "current_name": "safety_condition_active_flag",
+    "proposed_name": "fuel_pressure_governor_fault_active_flag",
+    "proposed_type": "word",
+    "comment": "1 on a pass when fault 57, 58, 59 or 60 is set in fault_detected_cal (fuel_pressure_governed_speed_check_error / fuel_pressure_governor_demand_above_limit_error / fuel_pressure_decay_below_model_error / fuel_metering_feedback_low_error), else 0. Copied to fuel_pressure_governor_fault_active_flag_previous at the end of the pass, so the start fuel is captured on its rising edge. A word (0x40b328 is the separate fuel_level_first_sample_flag). (was safety_condition_active_flag; PR #53 round 95)",
+    "evidence": "0x388bc r31 = 0x3fe974 (fault_detected_cal); lhz 6(r31) with rlwinm masks 0x200 / 0x400 / 0x800 / 0x1000; 0x38918 li 1 / sth 0(r30) (r30 = 0x40b326); 0x389c8 li 0 / sth; 0x38a7c lhz 0(r30) / sth 0(r29) (0x3fb3c0).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fb3c0",
+    "current_name": "safety_condition_prev_flag",
+    "proposed_name": "fuel_pressure_governor_fault_active_flag_previous",
+    "proposed_type": "word",
+    "comment": "fuel_pressure_governor_fault_active_flag of the previous pass (cm848_applyFuelPressureGovernorFaultBlend copies it at the end); 0 here and 1 now is the fault start that captures fuel_pressure_governor_fault_blend_start_fuel. (was safety_condition_prev_flag; PR #53 round 95)",
+    "evidence": "0x388d0 r29 = 0x3fb3c0; 0x38954 lhz 0(r29) / cmpwi 0; 0x38a80 sth r12,0(r29) from 0x40b326.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fb3c2",
+    "current_name": "safety_fuel_limit_cached_axis_offset",
+    "proposed_name": "fuel_pressure_governor_fault_fuel_limit_cached_axis_offset",
+    "proposed_type": "word",
+    "comment": "The lookup cache of fuel_pressure_governor_fault_fuel_limit (lookupTableInterpolation's axis segment offset); 2 at power-up. (was safety_fuel_limit_cached_axis_offset; PR #53 round 95)",
+    "evidence": "0x38920 r3 = 0x3fb3c2 as the cache argument of bl 0x55ef4; cm848_initializeFuelPressureGovernorFaultBlend sets 2.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x004088e0",
+    "current_name": "safety_fuel_blend_decrement",
+    "proposed_name": "fuel_pressure_governor_fault_blend_fraction_decrement",
+    "proposed_type": "word",
+    "comment": "The step fuel_pressure_governor_fault_blend_fraction falls by per pass after the faults clear (1280 = 5 percent in the dump). ROM-copied (RAM = ROM + 0x39a3e6), so no _cal. (was safety_fuel_blend_decrement; PR #53 round 95)",
+    "evidence": "0x389ec lhz -30496(0x41) = 0x4088e0 / subf from the fraction. Dump 0x0500.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x004088e2",
+    "current_name": "safety_fuel_blend_increment",
+    "proposed_name": "fuel_pressure_governor_fault_blend_fraction_increment",
+    "proposed_type": "word",
+    "comment": "The step fuel_pressure_governor_fault_blend_fraction rises by per pass while a fault is set (1280 = 5 percent in the dump). ROM-copied, so no _cal. (was safety_fuel_blend_increment; PR #53 round 95)",
+    "evidence": "0x389a4 lhz -30494(0x41) = 0x4088e2 / add to the fraction. Dump 0x0500.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x004088e4",
+    "current_name": "safety_fuel_blend_enable",
+    "proposed_name": "fuel_pressure_governor_fault_blend_enable",
+    "proposed_type": "byte",
+    "comment": "0 skips cm848_applyFuelPressureGovernorFaultBlend entirely (1 in the dump). ROM-copied, so no _cal. (was safety_fuel_blend_enable; PR #53 round 95)",
+    "evidence": "0x388ac lbz -30492(0x41) = 0x4088e4 / cmpwi 0 / beq exit. Dump byte 0x01.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x004088e8",
+    "current_name": "safety_fuel_limit_axis",
+    "proposed_name": "fuel_pressure_governor_fault_fuel_limit_axis",
+    "proposed_type": "word[25]",
+    "comment": "The engine speed axis of the fault fuel limit table (lookupTableInterpolation by engine_speed_state.filtered_engine_speed into fuel_pressure_governor_fault_fuel_limit). No e2m record resolves here. (was safety_fuel_limit_axis; PR #53 round 95)",
+    "evidence": "0x38930 r5 = 0x4088e8 for bl 0x55ef4.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x0040891a",
+    "current_name": "safety_fuel_limit_values",
+    "proposed_name": "fuel_pressure_governor_fault_fuel_limit_values",
+    "proposed_type": "word[25]",
+    "comment": "The values of the fault fuel limit table over fuel_pressure_governor_fault_fuel_limit_axis. No e2m record resolves here. (was safety_fuel_limit_values; PR #53 round 95)",
+    "evidence": "0x38938 r6 = 0x40891a for bl 0x55ef4.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x0040af7c",
+    "current_name": "governor_tuning_set_blend_weight",
+    "proposed_name": "all_speed_governor_tuning_set_blend_weight",
+    "proposed_type": "word",
+    "comment": "CHR e2m 158D +0 ASG_Droop_Flag 'ASG droop selection flag; used to select droop source' (1/128 per count): the all-speed governor's weight 0..128 of its second tuning set. 0 = the governor_speed_error_*_working set and the *_blend_0 tables, 128 = the _b set and the *_blend_128 tables. cm848_blendAllSpeedGovernorReferenceSpeeds writes it from the drivetrain ratio table (or the EEPROM default) and cm848_initializeAllSpeedGovernorTuningSetBlendWeight at start-up. cm848_calculateAllSpeedGovernorNoLoadFuel, cm848_calculateGovernorCompensatorCoefficients and cm848_calculateAllSpeedGovernorEquivalentThrottle read it. Block 158D's +2 / +4 are all_speed_governor_maximum_reference_speed / _minimum_reference_speed, which fixes the address. 128 in the RAM dump. (was governor_tuning_set_blend_weight; PR #53 round 95)",
+    "evidence": "Every access (ppc_dform.py over both images): 0xfd34 (cm848_calculateAllSpeedGovernorNoLoadFuel), 0xff18 (cm848_calculateGovernorCompensatorCoefficients: reads only all_speed_governor_droop / droop blend tables / all_speed_governor_throttle_mode_gain_set and writes all_speed_governor_droop_gain_*), 0x2c048 sth / 0x2c050 lhz (cm848_blendAllSpeedGovernorReferenceSpeeds), 0x2c10c sth (cm848_initializeAllSpeedGovernorTuningSetBlendWeight), 0x45fa0 (cm848_calculateAllSpeedGovernorEquivalentThrottle). CHR_CC_11.45.01.07.e2m line 4500 ASG_Droop_Flag 158D +0; the 158D records are not in the dumped parameter ID table. Dump 0x40af7c = 0x0080, 0x40af7e = 37200, 0x40af80 = 5920.",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x003fd526",
+    "current_name": "governor_tuning_set_default_blend_weight_cal",
+    "proposed_name": "all_speed_governor_tuning_set_default_blend_weight_cal",
+    "proposed_type": "word",
+    "comment": "e2m 1387 +8 ASG_Droop_Flag_Trim 'Trim for ASG droop selection flag; select droop source' (EEPROM 0xa4; 0 in originals/cm848_eeprom.bin): the default all_speed_governor_tuning_set_blend_weight. cm848_initializeAllSpeedGovernorTuningSetBlendWeight copies it, and cm848_blendAllSpeedGovernorReferenceSpeeds uses it when the drivetrain ratio selection is off. (was governor_tuning_set_default_blend_weight_cal; PR #53 round 95)",
+    "evidence": "lhz at 0x2bfa4 / 0x2c040 (cm848_blendAllSpeedGovernorReferenceSpeeds) and 0x2c108 (the initializer) only; e2m_block_addresses.py: 1387 +0008 ASG_Droop_Flag_Trim -> EEPROM 0xa4 = 0x3fd526 (inside 0x3fd482-0x3feec1, so _cal).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x0005a9c4",
+    "current_name": "governor_tuning_set_blend_weight_by_drivetrain_ratio_axis",
+    "proposed_name": "all_speed_governor_tuning_set_blend_weight_by_drivetrain_ratio_axis",
+    "proposed_type": "word[7]",
+    "comment": "ROM table: the drivetrain ratio breakpoints (x 2048: 0.9 / 1.2 / 1.7 / 3.0 / 5.0 / 20.0 after the length word) that cm848_blendAllSpeedGovernorReferenceSpeeds compares drivetrain_ratio with to pick all_speed_governor_tuning_set_blend_weight. (was governor_tuning_set_blend_weight_by_drivetrain_ratio_axis; PR #53 round 95)",
+    "evidence": "addi 0x5a9c4 at 0x2bff8 in cm848_blendAllSpeedGovernorReferenceSpeeds (the only reference; indexed lhzx).",
+    "confidence": "high"
+   },
+   {
+    "firmware": "CM848",
+    "address": "0x0005a9d2",
+    "current_name": "governor_tuning_set_blend_weight_by_drivetrain_ratio_values",
+    "proposed_name": "all_speed_governor_tuning_set_blend_weight_by_drivetrain_ratio_values",
+    "proposed_type": "word[7]",
+    "comment": "ROM table: the all_speed_governor_tuning_set_blend_weight for each drivetrain ratio band (all 128 in this ROM: the second tuning set only), read by cm848_blendAllSpeedGovernorReferenceSpeeds. (was governor_tuning_set_blend_weight_by_drivetrain_ratio_values; PR #53 round 95)",
+    "evidence": "addi 0x5a9d2 at 0x2c018 in cm848_blendAllSpeedGovernorReferenceSpeeds (the only reference).",
+    "confidence": "high"
+   }
+  ],
+  "enum_members": [
+   {
+    "firmware": "both",
+    "enum_name": "J1939_PERIODIC_TRANSMIT_QUEUE",
+    "value": 0,
+    "current_member": "",
+    "proposed_member": "J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE",
+    "comment": "Queue 0: the engine node's periodic broadcasts (CM550 j1939_periodic_queue0_entries 0x80096e / CM848 0x3fd2e2; 20 entries), sent while the engine broadcast enable bit (e2m JCEGBCEA) is set. Optional: a 4-byte enum for the queue_index parameter of scheduleJ1939PeriodicMessage.",
+    "evidence": "CM550 0x1fe94 beq on 0 -> 0x80096e / limit 20; CM848 0x538c8c cmpwi r3,0 -> 0x3fd2e2 / limit 20; 17 of the 19 CM550 calls and 18 of the 19 CM848 calls pass 0 (PGN 65265 / 61444 / 61443 ...).",
+    "confidence": "medium"
+   },
+   {
+    "firmware": "both",
+    "enum_name": "J1939_PERIODIC_TRANSMIT_QUEUE",
+    "value": 1,
+    "current_member": "",
+    "proposed_member": "J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER",
+    "comment": "Queue 1: the retarder node's periodic broadcasts (CM550 j1939_periodic_queue1_entries 0x800a36 / CM848 0x3fd3aa; 10 entries), sent while the retarder broadcast enable bit (e2m JCRDBCEA) is set: PGN 61440 ERC1 and 65249 retarder configuration.",
+    "evidence": "CM550 0x1fe9c cmp.l #1 -> 0x800a36 / limit 10; the calls with pea (1).w are PGN 61440 (0x28cd8, builder 0x338ea) and PGN 65249 (0x28d0a, builder 0x3407a). CM848: the one queue 1 call is PGN 65249 with cm848_buildPgn65249RetarderConfigurationMessage.",
+    "confidence": "medium"
+   }
+  ],
+  "skipped": [],
+  "notes": "Scratch: /home/linux/.claude/jobs/374b0424/tmp/w15/r95/scratch/N3/investigator/ holds notes.md (every finding with its evidence) and the scripts callers.py, owner.py, cm848_owner.py, ppc_refs.py, ppc_dform.py and vectors.txt.\n\nLEAD (important for verifying the prototype): CM550 0x1fe84 has no body in the frozen or in the current J90350.00.ghidra.cpp, though its row exists and callers render the name. ExportAnalysis.java silently drops a function whose decompile fails or throws. Seven other named CM550 functions are missing for the same reason, and were missing in HEAD~20 too: 0x103ba cm550_sendCanSingleFrame, 0x16cd8 cm550_circularBufferWrite, 0x18dae, 0x1e0bc, 0x21272 registerJ1939ReceiveHandler, 0x21642 writeJ1939DiagnosticMemoryByParameterId, 0x2ee62 registerJ1939DiagnosticService. No ROM data row overlaps them. The cause needs a Ghidra run. The 0x1fe84 prototype will change the 19 caller renderings in mc68k_initializeJ1939Datalink (now scheduleJ1939PeriodicMessage(0,100) etc.); its body can be checked only after the decompile works.\n\nCM550 0x35088: replace the row '0,table_args,short*' with '0,lookup,table_lookup_2d_arguments_t*' and add 'return,,word'. Callers then render cm550_tableLookup2D(&x_lookup) instead of &x_lookup.x_axis_offset.\n\nSTRUCT for 0x801d44, cm550_j1939_powertrain_messages_received_t (22 bytes; sequential fields, sizes in bytes):\n+0x00 etc1_status_byte_1 byte 1 (ETC1 byte 1: bits 1-2 driveline engaged SPN 560 / bits 5-6 shift in process SPN 574)\n+0x01 etc1_bytes_2_to_4 byte 3 (never written)\n+0x04 etc1_status_byte_5 byte 1 (ETC1 byte 5: SPN 606 / SPN 607)\n+0x05 etc1_bytes_6_to_8 byte 3 (never written)\n+0x08 tsc1_control_byte byte 1 (SPN 695 / 696 / 897)\n+0x09 tsc1_requested_speed byte 2 (byte[2], big-endian: [0] = data[2] / [1] = data[1]; SPN 898)\n+0x0b tsc1_requested_torque byte 1 (SPN 518)\n+0x0c tsc1_bytes_5_to_8 byte 4 (never written)\n+0x10 tsc1_accepted_priority byte 1\n+0x11 padding_1 byte 1 (word alignment)\n+0x12 tsc1_accepted_requested_speed word 2\n+0x14 tsc1_accepted_requested_torque byte 1\n+0x15 padding_2 byte 1 (even size; the next record starts at 0x801d5a)\nMove the comments of the 8 rows into the field comments and delete the 7 rows inside the struct (0x801d44 becomes the struct row). The cm550_ prefix on the type follows the cm550_algorithm_enable_flags_<n>_t precedent for a layout that differs from CM848's. Confidence is medium only for the grouping: the offsets and widths are proven, and the struct rests on the frame-image spacing, the 22-byte size ending at 0x801d5a and CM848's parallel struct.\n\nJUDGMENT CALLS: (1) 0x29ecc is dead code (no reference of any kind). I named it so that its plate documents the only store of main_injection_timing_before_misfire_limit (e2m SOI_Before_MST); skipping it is the alternative. INJECTION_TIMING_INTERMEDIATE_SOURCE has no member 11, which only this dead store writes, so I did not propose one. (2) Beyond the five safety_* words of the lead I proposed the seven other safety_* rows of the same function family, so the family keeps one prefix; drop them if the judges want only the five. (3) For the blend weight I also renamed its three relatives (EEPROM default and the two ROM ratio tables). (4) Beside 0x80dc98 / 0x80dca2 I proposed all six J1708 pointers and the three buffer address cells, because their names had the same hex and range defects. (5) Beside 0x80d03e I renamed its addend 0x80d04a and its counter 0x80d046, which carried the same wrong io_control names. (6) The J1939_PERIODIC_TRANSMIT_QUEUE enum is optional; the prototypes use uint, so retype queue_index only if the enum is added (size 4).\n\nSTALE TEXT after the renames: the CM550 plate of 0x26a2e quotes cm848_initFuelDemandFilterDimensions. The CM848 rows 0x40aee6, 0x5c556, 0x5c582, 0x5c58e, 0x3faf98, 0x3faf9c and 0x3fafa0 quote cm848_calculateFuelDemandFilter / cm848_initFuelDemandFilterDimensions. The plates of cm848_applyFuelPressureGovernorFaultBlend / cm848_initializeFuelPressureGovernorFaultBlend and the rows 0x4088e0-0x40891a quote safety_* names. The rows 0x5976e, 0x40af80 and 0x3fd526 and the plates of 0x2bf6c / 0x2c100 quote governor_tuning_set_blend_weight. The CM550 0x80d03e comment says 'three functions'; there are four handlers. The CM550 plate of scheduleJ1939PeriodicMessage has a duplicated round 94 tail, which the proposed plate replaces.\n\nOTHER LEADS: CM550 0x80d042 (e2m ESACBKGR, the accumulated backup EPS period) and 0x80d048 (ESCTBKGR) have no absolute access in the dump. 0x80d04e (ESIPBKPE) is read at 0x102cc and used as a base at 0x1b30e (mc68k_FUN_0001b30a, vector 56). The CM848 dump shows torque_derate_fuel_source_code 62 with the fault blend output = the chi maximum (1030) and no fault set: the fault blend function supplies the chi-maximum derate limit on every pass. The CM848 intervals in cm848_j1939_system_init differ from CM550's for some PGNs (61443: 20 ms vs 50 ms; 65247: 50 vs 250), and CM848 schedules PGN 65504. These are caller differences; the scheduler bodies are the same."
+ },
+ "blind": {
+  "batch": "N3",
+  "roles": [
+   {
+    "address": "0x0001fe84",
+    "role": "Adds one periodic J1939 broadcast to transmit queue 0 (20 x 10-byte entries at 0x80096e, count 0x800a9a, tick 0x800a9c) or queue 1 (10 entries at 0x800a36, count 0x800a9b, tick 0x800a9e). Entry fields: +0 the PGN, +2 the interval ms / 10, +4 the queue's current tick + first-send offset ms / 10, +6 the builder. Returns 1 (moveq) when the queue is full, else clears d0.b. PROTOTYPE: byte scheduleJ1939PeriodicMessage(dword queue_index @+4, ushort pgn @+8, ushort interval_milliseconds @+10, ushort first_send_offset_milliseconds @+12, void* builder @+14).",
+    "discriminator": "The only function that writes a j1939_periodic_transmit_entry_t; cm550_runJ1939PeriodicTransmitQueues reads the entries. After a 12-byte movem the body reads move.l (0x10,a7) / move.w (0x14,a7) / move.w (0x16,a7) / move.w (0x18,a7) / move.l (0x1a,a7) = entry offsets +4 / +8 / +10 / +12 / +14, which fits stack_parameter_layout. moveq #0 / move.w then divs.l #10: the words are zero-extended. Success ends with clr.b d0 only, so the return is a byte. Only caller: mc68k_initializeJ1939Datalink (movea.l #0x1fe84,a4 at 0x28b8a, then 19 x jsr (a4)). Each call pushes pea builder, move.w offset, move.w interval, move.w PGN (0xfef1 = 65265 ...), then clr.l or pea (1).w; the caller pops 3 calls at a time with lea 0x2a = 3 x 14 bytes and never reads d0. A queue other than 0 / 1 skips the setup and writes through the caller's a2. The frozen .cpp has no body at 0x1fe84 and shows the calls as scheduleJ1939PeriodicMessage(0,100).",
+    "suggested_name": "scheduleJ1939PeriodicMessage",
+    "confidence": "high",
+    "cm848_counterpart": "scheduleJ1939PeriodicMessage @ 0x538c8c - twin: the same stores in the same order (+0 PGN, +4 offset/10 + tick, +2 interval/10, +6 builder), the same limits 20 / 10, the same 1 / 0 result, and the same caller slot (cm848_j1939_system_init schedules the same PGNs with the same periods and offsets; CM848 adds 65241 and 65504)"
+   },
+   {
+    "address": "0x00538c8c",
+    "role": "CM848 twin. r3 = 0 selects queue 0 (0x3fd2e2, count 0x3fd40e max 20, tick 0x3fd410); any other value selects queue 1 (0x3fd3aa, count 0x3fd40f max 10, tick 0x3fd412). It stores sth r4 -> +0, divw r6/10 + tick -> +4, divw r5/10 -> +2, stw r7 -> +6, and returns li r3,1 when full or li r3,0 after the add. PROTOTYPE: uint scheduleJ1939PeriodicMessage(uint queue_index r3, word pgn r4, int interval_milliseconds r5, int first_send_offset_milliseconds r6, void* builder r7).",
+    "discriminator": "divw reads all 32 bits of r5 / r6, so they are int; the callers load them with li 16-bit constants (100, 5000, 70 ...). r4 is only stored with sth (the caller builds it as lis 0 / ori 65265), and the queue test is cmpwi r3,0 (non-zero = queue 1, where CM550 tests 0 / 1). cm848_j1939_system_init does not use r3 after any bl 0x538c8c. The current row has no function_definitions entry, and Ghidra shows (int,undefined2,int,int,undefined4) returning undefined4.",
+    "suggested_name": "scheduleJ1939PeriodicMessage",
+    "confidence": "high",
+    "cm848_counterpart": "this is the CM848 row; twin of CM550 0x1fe84 (shared name already)"
+   },
+   {
+    "address": "0x00035088",
+    "role": "Bilinear lookup of an unsigned word grid described by one 22-byte table_lookup_2d_arguments_t record. It searches the x and y axes from the cached offsets (+0 / +8, written back) and clamps at both axis ends. It then interpolates z between the four grid points with mulu / divu; when the +20 no_interpolation_flag is set it returns the grid point at the low corner instead. The z value comes back in d0.w only. PROTOTYPE: ushort cm550_tableLookup2D(table_lookup_2d_arguments_t* lookup @+4).",
+    "discriminator": "Ghidra shows undefined8 built as CONCAT44(uVar3,in_D1) because the return is undeclared and it assumes the 68000 d0:d1 pair. In the code, d1-d6/a0-a5 are saved and restored by the movem. Every exit sets only d0.w: move.w (a1),d0 at 0x35180, add.w d6,d0 at 0x35202, move.w d6,d0 at 0x35208 and sub.w d3,d0 at 0x3521a. The upper word holds a divu remainder or the caller's bits. All 25 jsr (0x35088).l callers and the 10 jsr (a5) callers (movea.l #0x35088,a5 at 0x1c674 / 0x1de6a) take move.w d0,<ea> or andi.l #0xffff,d0 (0x1292a / 0x12c7e), and none reads d1. One argument only: movea.l (0x8,a6),a2 after link a6,#0. Replace the old row (table_args short*) with return ushort + lookup table_lookup_2d_arguments_t*.",
+    "suggested_name": "cm550_tableLookup2D",
+    "confidence": "high",
+    "cm848_counterpart": "cm848_dualAxisTableInterpolation @ 0x566cc - counterpart: the same job with register arguments (r3 two-word cache, r4-r8 inputs / axes / grid, r9 signedness and step flags) instead of one record, so not a twin"
+   },
+   {
+    "address": "0x0080dc98",
+    "role": "The J1708 transmit ring's read pointer: the address of the byte being transmitted in the 256-byte ring 0x808b00-0x808bff (set to 0x808b01 by cm550_diagnosticBufferPointerInit). mc68k_startJ1708Transmission sends *pointer as the first byte (the MID). mc68k_j1708SciInterruptHandler advances its low byte after each echoed byte, sends the next one, and after the checksum moves it to the next record's first byte. mc68k_j1708BusTimerInterruptHandler sets it back to the message start + 1 when the echo never came, which restarts the message.",
+    "discriminator": "Among the ring pointers, only this one is dereferenced into QSM_SCDR. 0x80dc94 is the transmit write pointer (dc94 != dc9c means a message waits). 0x80dc9c is the length byte of the message in progress (j1708_transmit_byte_count is compared with *dc9c), not an end pointer. 0x80dca6 and 0x80dcaa are the receive write and read pointers. Its single absolute reference is movea.l #0x80dc98,a2 at 0x16d7c; the interrupt handlers reach it as (4,a4) from 0x80dc94. It advances by addq.b on the low byte, so the ring wraps at 256.",
+    "suggested_name": "j1708_transmit_read_pointer",
+    "confidence": "high",
+    "cm848_counterpart": "none - CM848 has no J1708 driver (its QSMCM SCI1 runs the Chrysler SCI link)"
+   },
+   {
+    "address": "0x0080dca2",
+    "role": "Points at the length byte of the J1708 message being received in the 256-byte receive ring 0x808c00-0x808cff. mc68k_j1708SciInterruptHandler stores each byte at *0x80dca6 and adds 1 to *pointer. At the message end mc68k_j1708BusTimerInterruptHandler discards a message under 3 bytes or with a bad checksum (write pointer = pointer + 1). It closes a good one with *pointer -= 1 (the checksum byte), moves the pointer to the checksum position and writes *pointer = 0 to start the next record.",
+    "discriminator": "It marks the boundary between complete and in-progress records. mc68k_dispatchJ1708ReceivedMessages loads it (move.l (0x80dca2),d0 at 0x16440), compares it with the read pointer (cmp.l (a3), a3 = 0x80dcaa), and keeps draining while they differ or the full flag 0x80dcae is 1. It moves once per message; 0x80dca6 is the byte write position. Initialized to 0x808c00 together with 0x80dcaa.",
+    "suggested_name": "j1708_receive_message_length_pointer",
+    "confidence": "high",
+    "cm848_counterpart": "none - no J1708 driver in CM848"
+   },
+   {
+    "address": "0x0080d03e",
+    "role": "Sum of the main (primary) engine speed sensor pulse periods between vehicle speed sensor interrupts. e2m 100C +34C ESACGR 'ACCUMULATED MAIN EPS PERIOD BETWEEN VSS INTERRUPTS' (4 bytes) resolves here. The four TPU channel 10 primary speed interrupt handlers (modes 0-3) add each new period (0x80d04a, from TPU channel 10 parameters 4-5) while the sum stays under 0xffffffff, then count it in 0x80d046.",
+    "discriminator": "The add is guarded against overflow: moveq #-1,d0 / sub.l (0x80d03e),d0 / cmp.l period,d0 / bcs / add.l, starting at 0x19b1e (operands at 0x19b22 / 0x19ee6 / 0x1a582 / 0x1aa02). It is paired with the count word 0x80d046. The backup sensor's sum and count (0x80d042 / 0x80d048) have no reference in the dumped ROM. The reader that divides sum by count and clears both is not in the dump either (no constant 0x80cfc0-0x80d049 outside these 16 words); it is probably in the undumped ROM above 0x40000. The old name and the round 78 note (handshake / bit0) do not fit any use.",
+    "suggested_name": "main_speed_period_sum_between_vehicle_speed_pulses",
+    "confidence": "high",
+    "cm848_counterpart": "engine_speed_state.main_speed_period_sum_between_vss_pulses @ 0x40b7ae (e2m 819B +20 EPS_VSS_Accumulator [ESACGR]; hpcr_processEngineSyncPulses adds, cm848_vehicleSpeedSensorInterruptHandler divides and clears) - the same Calterm record; the code that fills it differs"
+   },
+   {
+    "address": "0x0080d046",
+    "role": "Count of the periods summed into 0x80d03e. e2m 100C +354 ESCTGR 'NUMBER OF MAIN EPS INTERRUPTS BETWEEN VSS INTERRUPTS' resolves here. The same four interrupt handlers add 1 below 0xffff after each successful add. (Added because it is the sum's partner; it was not in the lead list.)",
+    "discriminator": "cmpi.w #0xffff,(0x80d046) / bcc / addq.w #1 directly after the add to 0x80d03e (0x19b32-0x19b3c and the three copies); its 8 word accesses all sit in those handlers. The current name io_control_bit4_state does not fit.",
+    "suggested_name": "main_speed_pulse_count_between_vehicle_speed_pulses",
+    "confidence": "high",
+    "cm848_counterpart": "engine_speed_state.main_speed_pulse_count_between_vss_pulses @ 0x40b7b6 (e2m 819B +28 [ESCTGR])"
+   },
+   {
+    "address": "0x00801d44",
+    "role": "Start of one 22-byte record (0x801d44-0x801d59) that holds the received ETC1 and TSC1 bytes and the accepted TSC1 request. The ETC1 handler 0x2efd0 stores data[0] at +0 and data[4] at +4, nothing else. processEngineTsc1Request (a3 = 0x801d4c) stores TSC1 byte 1 at +8, bytes 3 / 2 at +9 / +10 (big-endian) and byte 4 at +11. The accepted priority is at +16, the accepted speed word at +18 and the accepted torque at +20. Proposal: global j1939_powertrain_messages_received of type cm550_j1939_powertrain_messages_received_t (fields in notes); the 7 rows 0x801d44-0x801d58 become its fields.",
+    "discriminator": "The field order is CM848's j1939_powertrain_messages_received_t: an 8-byte ETC1 image, an 8-byte TSC1 image, then the accepted priority / speed / torque. CM550 lacks the etc1 output-shaft-speed previous word and the whole ETC2 block, and has a pad byte at +17 so the speed word is even (68k). Every ROM constant in 0x801d3b-0x801d63 is one of these accesses. The record is bounded by the J1939 receive handler table at 0x801d5a (6-byte PGN + handler entries, count 0x801e1a = 0x801d5a + 32 x 6; the dump holds fe f1 00031c84). The DM7 test identifier 0x801d3c sits 8 bytes before the record, just as CM848's 0x3fa97a sits 8 bytes before 0x3fa982. All 22 bytes are 0 in the RAM dump.",
+    "suggested_name": "j1939_powertrain_messages_received",
+    "confidence": "medium",
+    "cm848_counterpart": "j1939_powertrain_messages_received @ 0x3fa982 (j1939_powertrain_messages_received_t, 32 bytes) - the same data in a different layout, hence a cm550_ type"
+   },
+   {
+    "address": "0x00029c98",
+    "role": "Computes maximum_torque_at_current_engine_speed (0x40aee6, e2m 1461 MT_Max_Torque_At_RPM_Ftlb). It runs three cm848_dualAxisTableInterpolation lookups of maximum_torque_map_grid (MT_Max_Torque_Map) at engine_speed_state.filtered_engine_speed: y = 0, y = chi lower map number << 14 and y = chi upper map number << 14 (each clamped to 0xffff, each with its own cache). cm848_interpolateAlphaChiValue then blends them by combustion_reference_state chi and alpha, and a 0 result becomes 1. This confirms the L4 judge's lead.",
+    "discriminator": "cm848_lookupMaximumTorqueAtEngineSpeed (0x21ac0) runs the same three lookups and blend with differences: it takes the speed in r3, uses fresh local caches, returns the value and never replaces 0. This one takes no argument, uses the persistent caches 0x3faf98 / 0x3faf9c / 0x3fafa0, stores the global (sth at 0x29db4) and turns 0 into 1 (sth at 0x29dc8), because the result is a divisor. It runs first in cm848_periodicTaskSet_sensorProcessing, before cm848_calculateJ1939ReferenceEngineFueling, which reads the result. It neither filters anything nor touches fuel demand.",
+    "suggested_name": "cm848_calculateMaximumTorqueAtCurrentEngineSpeed",
+    "confidence": "high",
+    "cm848_counterpart": "CM550 counterpart cm550_calculateMaximumTorqueAtCurrentEngineSpeed @ 0x269f2 (one cm550_tableLookup2D at engine_rpm_primary x alpha_blend_factor, 0 -> 1): the same role but different lookup steps, so the cm848_ prefix stays"
+   },
+   {
+    "address": "0x00029de0",
+    "role": "Start-up preset for 0x29c98: it sets maximum_torque_at_current_engine_speed to 1 and both words of the three maximum torque map lookup caches (alpha 0 row 0x3faf98, chi lower 0x3faf9c, chi upper 0x3fafa0) to 2, the first segment. Called once from cm848_applicationMain.",
+    "discriminator": "Seven sth and no call: exactly the result and the caches that 0x29c98 uses. It sets no table dimensions and no fuel demand state.",
+    "suggested_name": "cm848_initializeMaximumTorqueAtCurrentEngineSpeed",
+    "confidence": "high",
+    "cm848_counterpart": "CM550 counterpart cm550_initializeMaximumTorqueAtCurrentEngineSpeed @ 0x26a2e (sets 1, then the lookup record's axis pointers and offsets) - counterpart"
+   },
+   {
+    "address": "0x00029ecc",
+    "role": "Unreferenced leaf, dead in this build. When algorithm_enable_flags_40_cal.misfire_timing_limit_enable is set and injection_timing_intermediate_source_code is 0 (FOUR_D), it copies main_injection_timing_copy into main_injection_timing_before_misfire_limit (e2m 8A3D +2 SOI_Before_MST). If injection_timing_main_misfire_limit is greater (signed compare), it raises main_injection_timing_copy to the limit, clears bit 0 of injection_timing_increment_flags and writes 11 (e2m 103B +4 label 0B MISFIRE) to injection_timing_intermediate_source_code.",
+    "discriminator": "No I-form or B-form branch, aligned 4-byte value, or lis/addi or lis/ori pair in cm848_rom.bin or cm848_flash2_live.bin reaches 0x29ecc. The same scan does find bl 0xbab0 -> 0x29e50 and bl 0x54a64 -> 0x29e24, so the code is unreachable under any calibration. The body is complete (0x29ecc-0x29f38 blr, no frame, no calls). After the power-up clear it is the only store of main_injection_timing_before_misfire_limit. The live misfire raise is a step of cm848_calculateMainInjectionTiming (0x4ae20) on injection_timing_demand, with MAIN_INJECTION_TIMING_SOURCE_MISFIRE_LIMIT. It is third in the module order init 0x29e24 / calculate 0x29e50 / apply 0x29ecc.",
+    "suggested_name": "cm848_applyInjectionTimingMainMisfireLimit",
+    "confidence": "high",
+    "cm848_counterpart": "CM550 cm550_applyMisfireTimingLimit @ 0x26af0 - twin by code. It runs the same enable bit test, the TSTPTAST = 0 test, the save to the before-limit record (CM550 818E +2 BSTABELM = CM848 8A3D +2), the raise, andi 0xfffe and state 11, in the same order. Only the compare differs: unsigned bls in CM550, signed ble in CM848. It also takes the same place after the init / calculate pair. It fails the call-graph test, though: CM550 calls it as step 1 of cm550_runInjectionTimingModificationChain and CM848 never calls it. Use the shared name applyMisfireTimingLimit only if the judge accepts an unreferenced copy as a twin."
+   },
+   {
+    "address": "0x0040b31e",
+    "role": "The result of cm848_applyFuelPressureGovernorFaultBlend on each pass: start_fuel x (25600 - fraction) / 25600 + target x fraction / 25600. With no fault set and the fraction at 0 it is injection_quantity_combustion_chi_maximum. When it is below torque_derate_fuel_quantity it replaces that value with source 62 (FUELING_STATE_FUEL_PRESSURE_GOVERNOR_FAULT_BLEND). Preset to 5888 (0x1700) by cm848_initializeFuelPressureGovernorFaultBlend.",
+    "discriminator": "The blend's output (sth at 0x38a50). Nothing outside these two functions reads it, so it is a write-only copy of the derate candidate. No e2m record.",
+    "suggested_name": "fuel_pressure_governor_fault_blend_fuel_limit",
+    "confidence": "medium",
+    "cm848_counterpart": "none - CM550 (VP44) has no rail pressure governor fault blend"
+   },
+   {
+    "address": "0x0040b320",
+    "role": "The fuel the blend starts from: injection_quantity_combustion_chi_maximum, captured when the fault flag rises (0x3fb3c0 = 0 and 0x40b326 = 1) while the target is below final_fueling (sth at 0x38988). Preset to 5888.",
+    "discriminator": "It is the (25600 - fraction) term of the blend, and the fraction may rise only while the target is below it (0x38994). It does not track the current chi maximum: it changes only on the rising edge.",
+    "suggested_name": "fuel_pressure_governor_fault_blend_start_fuel",
+    "confidence": "medium",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x0040b322",
+    "role": "The blend fraction, 0..25600 (25600 = all target). While a fault is set and the target is below the start fuel it rises by safety_fuel_blend_increment per pass, clamped at 25600. Once the faults clear it falls by safety_fuel_blend_decrement per pass. 0 at power-up.",
+    "discriminator": "The only variable stepped by the increment and decrement. The clamp at 0 after the decrement (0x38a04) can never run: clrlwi then cmpwi >= 0 always branches, so a step bigger than the remainder wraps the 16-bit value. This is the block Ghidra removed.",
+    "suggested_name": "fuel_pressure_governor_fault_blend_fraction",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x0040b324",
+    "role": "The blend's target: lookupTableInterpolation of safety_fuel_limit_values over safety_fuel_limit_axis at engine_speed_state.filtered_engine_speed (cache 0x3fb3c2). It is refreshed only while a fault is set (sth at 0x38950).",
+    "discriminator": "The only one of the five looked up from the engine speed table; it is the fraction term of the blend.",
+    "suggested_name": "fuel_pressure_governor_fault_blend_target_fuel",
+    "confidence": "medium",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x0040b326",
+    "role": "1 while any of fault_detected_cal word 3 bits 0x200 / 0x400 / 0x800 / 0x1000 is set (faults 57-60: fuel pressure governed speed check, governor demand above limit, fuel pressure decay below model, fuel metering feedback low), else 0. It is copied into 0x3fb3c0 (safety_condition_prev_flag) at the end of each pass for the rising-edge test.",
+    "discriminator": "The fault condition flag (li 1 / li 0 -> sth 0(r30), r30 = 0x40b326). 0x3fb3c0 holds its previous-pass value and could become fuel_pressure_governor_fault_active_previous_flag.",
+    "suggested_name": "fuel_pressure_governor_fault_active_flag",
+    "confidence": "high",
+    "cm848_counterpart": "none"
+   },
+   {
+    "address": "0x0040af7c",
+    "role": "The 0..128 weight between the all-speed governor's two tuning sets: 0 = the _blend_0 tables / set 1, 128 = the _blend_128 tables / set 2. cm848_blendAllSpeedGovernorReferenceSpeeds writes it from drivetrain_ratio (or the default cal) and blends the reference speeds with it. cm848_calculateAllSpeedGovernorNoLoadFuel blends the friction fuel tables, cm848_calculateGovernorCompensatorCoefficients blends the droop tables into all_speed_governor_droop, and cm848_calculateAllSpeedGovernorEquivalentThrottle blends both. cm848_initializeAllSpeedGovernorTuningSetBlendWeight presets it. The all_speed_governor_ prefix is supported.",
+    "discriminator": "Machine-code accesses (lis + D-form) exist only at 0xfd34, 0xff18, 0x2c048 / 0x2c050, 0x2c10c and 0x45fa0. All five functions read or write all_speed_governor_* data, including cm848_calculateGovernorCompensatorCoefficients, whose outputs are all_speed_governor_droop and the ASG droop gains. e2m: CHR 158D +0 ASG_Droop_Flag [ASDPFG] 'ASG droop selection flag; used to select droop source' (1/128 per count). Block 158D is not in the dumped ID table, but its +2 ASG_Max_RPM and +4 ASG_Min_RPM fall on 0x40af7e / 0x40af80 (the all_speed_governor maximum / minimum reference speeds) by relative offset. Its default is e2m 1387 +8 ASG_Droop_Flag_Trim.",
+    "suggested_name": "all_speed_governor_tuning_set_blend_weight",
+    "confidence": "high",
+    "cm848_counterpart": "CM550 0x80a9a2 asg_throttle_source_selector (e2m 107A +16 ASDPFG, TRUE / FALSE) - counterpart: the same Calterm record used as a 0 / 1 switch instead of a blend weight"
+   }
+  ],
+  "enum_roles": [
+   {
+    "enum_name": "INJECTION_TIMING_INTERMEDIATE_SOURCE",
+    "value": 11,
+    "meaning": "INJECTION_TIMING_INTERMEDIATE_SOURCE_MISFIRE_LIMIT: the misfire timing limit raised the intermediate main injection timing",
+    "evidence": "e2m 103B +4 SOI_State [TSTPTAST] 'Intermediate timing state used before final timing selection' has the value label 0B=MISFIRE; the enum has only 0 / 2 / 25 / 27 / 28. In CM848 the only store of 11 is li r10,11 / sth 0x40a2f2 at 0x29f30-0x29f34 in the unreferenced leaf 0x29ecc. CM550's twin cm550_applyMisfireTimingLimit writes 11 into its own TSTPTAST word 0x80d348 (live code). The value matches MAIN_INJECTION_TIMING_SOURCE 11 MISFIRE_LIMIT, which uses the same label table."
+   }
+  ],
+  "notes": "PROTOTYPES (the schema has no prototypes[] field, so they are listed here in parameter order):\n(1) CM550 0x1fe84 scheduleJ1939PeriodicMessage: return byte (moveq #1 when full / clr.b d0 after the add); 0 queue_index dword @+4 (move.l (0x10,a7) after the 12-byte movem; 0 = engine queue, 1 = retarder queue); 1 pgn ushort @+8 (stored at entry +0; the callers pass real PGN numbers, so pgn_key also fits); 2 interval_milliseconds ushort @+10 (/10 -> +2); 3 first_send_offset_milliseconds ushort @+12 (/10 + the current tick -> +4); 4 builder void* @+14 (-> +6).\n(2) CM848 0x538c8c (twin): return uint (li r3,0/1); 0 queue_index uint r3; 1 pgn word r4; 2 interval_milliseconds int r5; 3 first_send_offset_milliseconds int r6; 4 builder void* r7.\n(3) CM550 0x35088 cm550_tableLookup2D: return ushort (d0.w); 0 lookup table_lookup_2d_arguments_t* @+4. This replaces the old row (table_args short*).\n\nSTRUCT cm550_j1939_powertrain_messages_received_t (22 bytes; global 0x801d44 j1939_powertrain_messages_received). Fields as offset / name / type / size:\n+0 etc1_status_byte_1 byte 1 (ETC1 data[0], SPN 560 / 574)\n+1 reserved_1 byte 3 (ETC1 bytes 2-4, never stored)\n+4 etc1_status_byte_5 byte 1 (data[4], SPN 606 / 607)\n+5 reserved_5 byte 3 (ETC1 bytes 6-8)\n+8 tsc1_control_byte byte 1 (SPN 695 / 696 / 897)\n+9 tsc1_requested_speed byte 2 ([0] = data[2] high, [1] = data[1] low; odd address, byte accesses only)\n+11 tsc1_requested_torque byte 1 (data[3], SPN 518)\n+12 reserved_12 byte 4 (TSC1 bytes 5-8)\n+16 tsc1_accepted_priority byte 1\n+17 reserved_17 byte 1 (alignment)\n+18 tsc1_accepted_requested_speed word 2\n+20 tsc1_accepted_requested_torque byte 1\n+21 reserved_21 byte 1\nThe type takes the cm550_ prefix because the layout differs from CM848's 32-byte struct (CM550 has no etc1_output_shaft_speed_previous word and no ETC2 block), following the algorithm_enable_flags convention.\n\nASIDES:\n- CM550 0x801d3c is the DM7 test identifier (cm550_FUN_0002ef4a stores data[0]; 0 -> supported_non_continuous_monitors_bits 0x100, 1 -> 0x200), which matches CM848's j1939_dm7_test_identifier at 0x3fa97a.\n- CM550 J1708 neighbours with noise names: 0x80dc94 = the transmit write pointer, 0x80dc9c = the length byte of the message being sent (its row says end pointer), 0x80dca6 = the receive write pointer, 0x80dcaa = the receive read pointer. The family would be j1708_transmit_write_pointer, j1708_transmit_message_length_pointer, j1708_receive_write_pointer and j1708_receive_read_pointer.\n- 0x80d03e / 0x80d046: CM848 names the same records ..._between_vss_pulses. My names spell VSS out (vehicle_speed). If cross-firmware identity matters more, the CM848 spelling is the alternative.\n- CM848's governor_tuning_set_default_blend_weight_cal (0x3fd526) and the two ROM tables 0x5a9c4 / 0x5a9d2 could take the same all_speed_governor_ prefix.\n- The frozen CM550 .cpp has no function body at 0x1fe84.\n\nScratch scripts and notes are in /home/linux/.claude/jobs/374b0424/tmp/w15/r95/scratch/N3/describer/: notes.md, find_calls.py, range_refs.py, after_calls.sh, ppc_reach.py and ppc_data_refs.py."
+ },
+ "verdict": {
+  "batch": "N3",
+  "overall": "39 verdicts: 30 CONFIRMED, 9 AMENDED, 0 REFUTED. The investigator's skipped[] list is empty, so nothing stays skipped. I re-derived every role from the disassembly and checked every access with base-register and D-form scans. My scripts and notes are in /home/linux/.claude/jobs/374b0424/tmp/w15/r95/scratch/N3/judge/ (base_scan.py, ppc_reach.py, ppc_dform.py, notes.md).\n\nWhat I amended:\n(1) CM550 0x1fe84 plate: \"the same 19 start-up calls\" claimed too much. Both firmwares make 19 calls, but CM848 schedules PGN 65241 / 65504 where CM550 schedules 65266 / 65252, and some intervals differ (PGN 61443: 20 ms vs 50 ms).\n(2) CM550 0x35088 plate: there are 35 call sites, not 25 (25 jsr.l plus 10 jsr (a5)).\n(3) CM848 0x29ecc is renamed cm848_applyInjectionTimingMainMisfireLimit so it matches its init / calculate neighbours 0x29e24 / 0x29e50 and its CM550 counterpart cm550_applyMisfireTimingLimit, which has the same steps but an unsigned compare. It stays dead code (no references found).\n(4) I adopted the J1939_PERIODIC_TRANSMIT_QUEUE enum: size 4, in both enums.csv files. The runner gates on JCEGBCEA / JCRDBCEA, and queue 1 carries only PGN 61440 and 65249. Both scheduler prototypes now type queue_index with it.\n(5) 0x80d03e: the comment said \"crank degrees per tooth\"; it is the crank degrees per period measurement (0x807ec4 ESPECK01).\n(6) 0x80d04a: the period is not stored in a ring buffer at 0x1028a; the ring is fed by the handlers. Typing 0x80d04a as a dword also swallows the row 0x80d04c io_control_active_mask, which no code accesses, so the applier must delete that row.\n(7) 0x40af7c: the comment quoted old set names (governor_speed_error_*_working / _b). The sets are the all_speed_governor_*_reference_speed_1_cal / _2_cal values.\n\nFor the applier:\n- 0x801d44: delete the 7 rows inside the struct and use the investigator's 13-field layout (22 bytes, explicit padding). ApplyStructures packs fields one after another.\n- The investigator's stale-text list is correct. Also stale: the CM550 function_definitions row of 0x1a95a, which quotes io_control_handshake_state, and the CM848 FUELING_STATE 62 comment, which quotes safety_fuel_blend_enable.\n\nInvestigator evidence errors (they do not change any verdict):\n- CM848 also has TWO queue-1 calls (61440 at 0x53934c and 65249 at 0x53936c), so 17 of the 19 calls use queue 0 in both firmwares.\n- cm848_convertTorqueDerateTorqueLimitToFuelLimit (0x1e4e8) also writes maximum_torque_at_current_engine_speed (0 becomes 1).\n\nLeads:\n(a) The new function at 0x29ecc stores 11 into the enum-typed injection_timing_intermediate_source_code. INJECTION_TIMING_INTERMEDIATE_SOURCE has no member 11 (e2m 103B label 0B=MISFIRE), so a follow-up could add INJECTION_TIMING_INTERMEDIATE_SOURCE_MISFIRE_LIMIT.\n(b) The J1708 block 0x80dc94-0x80dcae is struct-shaped. The init, the SCI handler and the bus timer handler reach it through one base register (offsets +4/+7/+8/+0xc/+0xe/+0x11/+0x12/+0x15/+0x16/+0x1a; e2m 1126), so it could become a struct with these six pointer names as fields.\n(c) 0x40b326's new name is close to 0x40b214 fuel_pressure_fault_active_flag. Both flags test the same faults 57-60, in different functions.\n(d) The CM550 decompile still has no body at 0x1fe84 (or at the 7 other functions the investigator listed). Only a Ghidra run can show whether the new prototype changes that.",
+  "verdicts": [
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x0001fe84",
+    "verdict": "AMENDED",
+    "final_name": "scheduleJ1939PeriodicMessage",
+    "final_relation": "twin",
+    "final_cm848_address": "0x00538c8c",
+    "own_role": "Appends one periodic broadcast entry {PGN key at +0, interval/10 at +2, current tick + offset/10 at +4, builder at +6} to J1939 periodic transmit queue 0 (engine node, 20 entries at 0x80096e, count 0x800a9a, tick 0x800a9c) or queue 1 (retarder node, 10 entries at 0x800a36, count 0x800a9b, tick 0x800a9e). Returns 1 when the queue is already full, else clr.b d0.",
+    "final_comment": "Adds a periodic J1939 broadcast to transmit queue 0 (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE, the engine node: up to 20 entries of 10 bytes at j1939_periodic_queue0_entries 0x80096e) or queue 1 (J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER, the retarder node: up to 10 entries at j1939_periodic_queue1_entries 0x800a36); any other queue value skips the entry set-up and writes through an unset pointer (no caller passes one). The entry gets the PGN key (+0), the interval in 10 ms ticks (+2), the first send as the queue's current tick plus the offset in ticks (+4) and the builder's address (+6). Returns 1 when the queue is full, else 0; no caller reads it. mc68k_initializeJ1939Datalink makes all 19 calls through a4 (movea.l #0x1fe84 / jsr (a4)); the first is PGN 65265 every 100 ms from 70 ms, and queue 1 gets PGN 61440 and 65249. The twin of CM848 0x538c8c: the same steps in the same order and the same limits 20 / 10, called 19 times from the J1939 start-up in both firmwares (CM848's cm848_j1939_system_init schedules PGN 65241 / 65504 where CM550 schedules 65266 / 65252, and some intervals differ, for example PGN 61443 every 20 ms against 50 ms). (PR #53 round 95)",
+    "reason": "Body verified (m68k.py 0x1fe84-0x1ff36): movem a3/a2/d2 then (0x10)/(0x14)/(0x16)/(0x18)/(0x1a),a7 = +4/+8/+10/+12/+14. Queue 0 limit 0x14, queue 1 limit 0xa. Store order +0, +4 (offset/10 + tick), +2 (interval/10), +6. Returns moveq #1 or clr.b d0. The only reference is 0x28b8c (movea.l #0x1fe84,a4), followed by 19 jsr (a4) whose d0 is never read. CM848 0x538c8c has the same steps, order, constants and caller slot (19 bl in cm848_j1939_system_init), so the twin is correct. The plate is amended because 'the same 19 start-up calls' claims too much: the PGN lists differ (65266 / 65252 vs 65241 / 65504) and intervals differ (61443: 50 vs 20 ms; 65247: 250 vs 50 ms)."
+   },
+   {
+    "kind": "function",
+    "firmware": "CM550",
+    "address": "0x00035088",
+    "verdict": "AMENDED",
+    "final_name": "cm550_tableLookup2D",
+    "final_relation": "counterpart",
+    "own_role": "Bilinear 2-D lookup through one 22-byte table_lookup_2d_arguments_t record. It searches the x and y axes from their cached segment offsets (+0 / +8, written back), clamps at the axis ends, then interpolates the four grid points unsigned (mulu.w / divu.w). With no_interpolation_flag (+20) set it takes the grid point at the lower corner instead. The z word comes back in d0 only; every other register is saved.",
+    "final_comment": "Two-axis table lookup through a table_lookup_2d_arguments_t record (the long at +4). It finds the x segment around x_input from x_axis_offset and the y segment around y_input from y_axis_offset (an input outside an axis takes its end point), writes both offsets back as the next search start, and returns the z value as an unsigned word in d0. The value is the grid point interpolated along x, the same for the next y row, then along y (mulu.w / divu.w), or the grid point at the lower x / y corner alone when no_interpolation_flag is nonzero. It saves every register except d0. It has 35 call sites: 25 jsr (0x35088).l and 10 jsr (a5) after movea.l #0x35088,a5 (4 in cm550_fuelDemandTableBlendCalculator, 6 in cm550_FUN_0001de58); each pushes the record and stores the word (move.w d0) or zero-extends it (andi.l #0xffff). CM848's counterpart is cm848_dualAxisTableInterpolation (seven register arguments and signed / step options). (PR #53 round 95)",
+    "reason": "The name and the counterpart relation are right: CM848's cm848_dualAxisTableInterpolation takes 7 register arguments plus signedness and step flags, so the interface differs. The plate is amended for its call count. abs_refs shows 25 jsr.l sites plus two movea.l #0x35088,a5 loads, and the m68k.py scans of 0x1c65e-0x1c7a8 and 0x1de58-0x1e02a find 4 + 6 jsr (a5). Every one of the 35 takes the result as move.w d0 or andi.l #0xffff."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x00029c98",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_calculateMaximumTorqueAtCurrentEngineSpeed",
+    "final_relation": "counterpart",
+    "own_role": "Periodic writer of maximum_torque_at_current_engine_speed (0x40aee6). It makes three cm848_dualAxisTableInterpolation lookups of maximum_torque_map_grid at engine_speed_state.filtered_engine_speed: y = 0, y = chi lower map number << 14 and y = chi upper map number << 14 (capped at 0xffff), each with a persistent cache (0x3faf98 / 9c / a0). cm848_interpolateAlphaChiValue blends them by chi_hundredths and alpha_percent, and a 0 result becomes 1.",
+    "reason": "Disassembly 0x29c98-0x29ddc matches both describers: r26/r27/r28 = 0x5c58e / 0x5c582 / 0x5c556, three bl 0x566cc, bl 0x14528, sth to 0x40aee6, and 0 becomes 1. It neither filters anything nor touches fuel demand. The only call is the bl at 0xb998 in cm848_periodicTaskSet_sensorProcessing. The CM550 counterpart cm550_calculateMaximumTorqueAtCurrentEngineSpeed makes one lookup, so it is a counterpart and keeps the cm848_ prefix. The name is unique. The plate is accurate. One investigator discriminator is wrong but not used in the text: cm848_convertTorqueDerateTorqueLimitToFuelLimit (0x1e4e8) also writes the global (0 becomes 1)."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x00029de0",
+    "verdict": "CONFIRMED",
+    "final_name": "cm848_initializeMaximumTorqueAtCurrentEngineSpeed",
+    "final_relation": "counterpart",
+    "own_role": "Start-up preset of the maximum torque calculation: maximum_torque_at_current_engine_speed = 1 and both words of the three maximum torque map lookup caches (0x3faf98 / 0x3faf9c / 0x3fafa0) = 2.",
+    "reason": "Seven sth and a blr (0x29de0-0x29e20), and nothing else. The only call is the bl at 0x549bc in cm848_applicationMain. The counterpart is cm550_initializeMaximumTorqueAtCurrentEngineSpeed (0x26a2e). The name is unique and follows the initialize rule; the plate is accurate."
+   },
+   {
+    "kind": "cm848_function",
+    "firmware": "CM848",
+    "address": "0x00029ecc",
+    "verdict": "AMENDED",
+    "final_name": "cm848_applyInjectionTimingMainMisfireLimit",
+    "final_relation": "counterpart",
+    "own_role": "Unreferenced (dead) apply step of the misfire timing limit. With misfire_timing_limit_enable (0x3fd5ec bit 8) set and injection_timing_intermediate_source_code 0, it saves main_injection_timing_copy as main_injection_timing_before_misfire_limit. If injection_timing_main_misfire_limit is larger (signed), it raises the copy to it, clears bit 0 of injection_timing_increment_flags and sets the intermediate source to 11.",
+    "final_comment": "Dead code: nothing calls it (no branch, address word or lis+addi / lis+ori pair in the ROM or the flash2 image reaches 0x29ecc). It is the third function of the misfire timing limit module after cm848_initializeInjectionTimingMainMisfireLimit (0x29e24) and cm848_calculateInjectionTimingMainMisfireLimit (0x29e50). While algorithm_enable_flags_40_cal.misfire_timing_limit_enable (bit 8, e2m Misfire_Timing_Limit_Enable) is set and injection_timing_intermediate_source_code is 0 (the 4D maps), it copies main_injection_timing_copy into main_injection_timing_before_misfire_limit (e2m 8A3D +2 SOI_Before_MST). When injection_timing_main_misfire_limit is larger (signed) it raises main_injection_timing_copy to it, clears bit 0 of injection_timing_increment_flags and sets the intermediate source code to 11 (e2m 103B label 0B MISFIRE). CM550's counterpart cm550_applyMisfireTimingLimit (0x26af0) runs the same steps with an unsigned compare as step 1 of its timing chain; in CM848 the live misfire limit is the injection_timing_demand step of cm848_calculateMainInjectionTiming. (new row; PR #53 round 95)",
+    "reason": "The body (0x29ecc-0x29f38) and its dead status are confirmed. My ppc_reach.py finds 0 b / bl / bc / word / lis pairs for 0x29ecc; the same scan finds the controls 0x29e50 (bl at 0xbab0) and 0x29e24 (bl at 0x54a64). It is the only store of 0x40aeea besides the init clear. The investigator's name is accurate, but the naming rule puts the repository's concept in the neighbours' order: the module is cm848_initialize / calculateInjectionTimingMainMisfireLimit, and the CM550 counterpart, with identical steps (save, compare, raise, andi 0xfffe, 11), is cm550_applyMisfireTimingLimit. It is not a twin, because CM550's is called and CM848's never is, and the compare differs (signed / unsigned). So the counterpart keeps the cm848_ prefix. The plate adds the CM550 counterpart. The name is unique."
+   },
+   {
+    "kind": "prototype",
+    "firmware": "CM550",
+    "address": "0x0001fe84",
+    "verdict": "AMENDED",
+    "final_name": "scheduleJ1939PeriodicMessage",
+    "final_comment": "return byte - moveq #1 when the queue is full, else clr.b d0 (no caller reads d0); 0 queue_index J1939_PERIODIC_TRANSMIT_QUEUE (the new 4-byte enum) - the long at +4 (move.l (0x10;a7) after the 12-byte movem): J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE = j1939_periodic_queue0_entries / J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER = j1939_periodic_queue1_entries; the callers push clr.l or pea (1).w; 1 pgn_key ushort - the word at +8 (move.w (0x14;a7);(a2)) stored at the entry's +0; 2 interval_milliseconds ushort - the word at +10 (moveq #0 / move.w (0x16;a7) / divs.l #10) kept in the entry's +2 as 10 ms ticks; 3 first_send_offset_milliseconds ushort - the word at +12 (move.w (0x18;a7) / divs.l #10) added to the queue's current tick into the entry's +4; 4 builder void* - the long at +14 (move.l (0x1a;a7);(0x6;a2)) that cm550_runJ1939PeriodicTransmitQueues calls when its tick comes",
+    "reason": "Offsets, widths and order are verified against stack_parameter_layout.csv (first_stack_offset 4, slot 2): 4 / 2 / 2 / 2 / 4 bytes at +4 / +8 / +10 / +12 / +14. The callers push 14 bytes each (lea 0x2a per 3 calls). The byte return is right (clr.b d0). The only change is queue_index's type: the J1939_PERIODIC_TRANSMIT_QUEUE enum is confirmed below, and its size 4 keeps the layout (enums are applied before function definitions). pgn_key matches j1939_periodic_transmit_entry_t.pgn_key."
+   },
+   {
+    "kind": "prototype",
+    "firmware": "CM848",
+    "address": "0x00538c8c",
+    "verdict": "AMENDED",
+    "final_name": "scheduleJ1939PeriodicMessage",
+    "final_comment": "return byte - li r3,1 when the queue is full, else li r3,0 (no caller reads r3); 0 queue_index J1939_PERIODIC_TRANSMIT_QUEUE (size 4) - r3, cmpwi r3,0: J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE = queue 0 at 0x3fd2e2 (20 entries), any other value = queue 1 at 0x3fd3aa (10 entries; the two queue 1 calls pass 1 = J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER); 1 pgn_key ushort - r4, sth to the entry's +0; 2 interval_milliseconds int - r5, divw by 10 into the entry's +2 (a full 32-bit divide); 3 first_send_offset_milliseconds int - r6, divw by 10 plus the queue's current tick into the entry's +4; 4 builder void* - r7, stw to the entry's +6; the periodic transmit code calls it when its tick comes",
+    "reason": "Body verified (0x538c8c-0x538d38): cmpwi r3,0; sth r4,0; divw r6/10 + tick to +4; divw r5/10 to +2; stw r7,6; li r3,1 / 0. All 19 callers are in cm848_j1939_system_init, and the instruction after each bl is lis r7, so r3 is never read. The callers load r3-r7 exactly as described. queue_index takes the confirmed enum, as for CM550. byte for the 0 / 1 return keeps the twins' prototypes alike. The investigator's evidence that CM848 has one queue 1 call is wrong: it has two, 61440 at 0x53934c and 65249 at 0x53936c."
+   },
+   {
+    "kind": "prototype",
+    "firmware": "CM550",
+    "address": "0x00035088",
+    "verdict": "CONFIRMED",
+    "final_name": "cm550_tableLookup2D",
+    "final_comment": "",
+    "reason": "link a6,#0 then movea.l (0x8,a6),a2: one 4-byte argument at entry +4, the record. Its offsets +0/+2/+6/+8/+10/+14/+16/+20 match table_lookup_2d_arguments_t (structure_definitions rows 924-932), and +0 / +8 are written back, so it is a non-const pointer. d1-d6/a0-a5 are saved, and every exit writes only d0.w. All 35 call sites use the word, and 0x1292a / 0x12c7e zero-extend it with andi.l #0xffff, so the return is an unsigned word. Replace the row 'table_args short*' with 'return,,word' plus '0,lookup,table_lookup_2d_arguments_t*'. No local_variables.csv row depends on the old name."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080dc94",
+    "verdict": "CONFIRMED",
+    "final_name": "j1708_transmit_buffer_write_pointer",
+    "final_type": "byte *",
+    "reason": "e2m 1126 +0 JC17TXIP. The init 0x1dd2c sets it to 0x808b00 and clears *ptr. The writer 0xb6e8 computes free = TXOP - TXIP - 2 (or + 0xfe), writes the record at TXIP, moves TXIP past it and writes the 0 end marker. The ISRs compare it with TXOP to find a pending message. All accesses are move.l, so byte * (4 bytes) is right. The name follows the CAN buffer precedent (can_transmit_buffer_write_pointer) and is unique. RAM 0x808b7d."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080dc98",
+    "verdict": "CONFIRMED",
+    "final_name": "j1708_transmit_byte_pointer",
+    "final_type": "byte *",
+    "reason": "e2m 1126 +4 JC17TXMP. mc68k_startJ1708Transmission sends *ptr; its only absolute reference is 0x16d7c. In the SCI ISR, state 0 compares the echo with *ptr, states 0 / 1 step the low byte (addq.b (0x7,a4)) and send *ptr, state 2 sends the checksum and steps, and state 3 copies it to TXOP. The bus timer (0x301d4) rewinds it to TXOP + 1. The describer's alternative 'read pointer' would clash with TXOP. RAM 0x808b7e."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080dc9c",
+    "verdict": "CONFIRMED",
+    "final_name": "j1708_transmit_buffer_read_pointer",
+    "final_type": "byte *",
+    "reason": "e2m 1126 +8 JC17TXOP. It points at the length byte of the message being sent: the ISR ends the data bytes when count == *(0x8,a4) (0x1e3f4 / 0x1e442), state 3 sets it to the next record (0x1e480), and the writers take free = it - TXIP. The old comment's 'end pointer' was wrong. All accesses are 4 bytes."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080dca2",
+    "verdict": "CONFIRMED",
+    "final_name": "j1708_receive_buffer_write_pointer",
+    "final_type": "byte *",
+    "reason": "e2m 1126 +0x0E JC17RXIP. The SCI ISR adds 1 to *ptr per stored byte (0x1e2ce / 0x1e38c). The bus timer 0x300d4 discards a message shorter than 3 bytes. With a bad checksum it also discards the message, and from a MID below 7 with room it writes a [2][6][0x74] record in its place. With a good checksum it does *ptr -= 1, sets the low byte to the byte pointer's - 1 and clears *ptr. The dispatcher loops while it differs from RXOP or the full flag is 1 (0x16440). The name is symmetric with the transmit side (IP = record in). The comment is correct, though it omits the [2][6][0x74] record. RAM 0x808c00."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080dca6",
+    "verdict": "CONFIRMED",
+    "final_name": "j1708_receive_byte_pointer",
+    "final_type": "byte *",
+    "reason": "e2m 1126 +0x12 JC17RXMP. The ISR stores each byte at *ptr and steps the low byte (0x1e2c4 / 0x1e382). The buffer is full when ptr == RXOP (0x1e2e0 / 0x1e396). The bus timer resets it to RXIP + 1 on a discard (0x30128 / 0x30140 / 0x3019c). It has no absolute reference, only base offset (0x12,a4) from 0x80dc94. RAM 0x808c01."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080dcaa",
+    "verdict": "CONFIRMED",
+    "final_name": "j1708_receive_buffer_read_pointer",
+    "final_type": "byte *",
+    "reason": "e2m 1126 +0x16 JC17RXOP. mc68k_dispatchJ1708ReceivedMessages (a3 = 0x80dcaa) reads the record's length, adds length + 1 to the low byte 0x80dcad (0x1641a), clears the full flag and sets SCCR1 RIE (0x16422). The diagnostic handlers read it (move.l at 0x1e966 / 0x1ec48 / ...). Init 0x808c00."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080ddc6",
+    "verdict": "CONFIRMED",
+    "final_name": "j1708_transmit_buffer_start_address",
+    "final_type": "byte *",
+    "reason": "e2m 1127 +0 JC17TXBF. The only code reference is the init write at 0x1dd68 (move.l a4 = 0x808b00); the other references are parameter ID table words (0x35cd4 / 0x35cd8). RAM 0x00808b00. Its type is already byte *."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080ddca",
+    "verdict": "CONFIRMED",
+    "final_name": "j1708_receive_buffer_start_address",
+    "final_type": "byte *",
+    "reason": "e2m 1128 +0 JC17RXBF. The init writes it at 0x1dd96 (0x808c00), and the same init reads it at 0x1dd9c to compute the end address. The other references are parameter ID table words (0x35cdc / 0x35ce0). RAM 0x00808c00."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080ddce",
+    "verdict": "CONFIRMED",
+    "final_name": "j1708_receive_buffer_last_byte_address",
+    "final_type": "byte *",
+    "reason": "The only reference is the init store at 0x1dda8 of start + 0xff. No e2m record resolves here (the --address query is empty). RAM 0x00808cff. The name is unique; the row had no name."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080d03e",
+    "verdict": "AMENDED",
+    "final_name": "accumulated_main_engine_position_sensor_period",
+    "final_type": "dword",
+    "final_comment": "e2m 100C +34C ESACGR 'ACCUMULATED MAIN EPS PERIOD BETWEEN VSS INTERRUPTS' (TCNT, 4 bytes): the TPU channel 10 primary speed interrupt handlers (modes 0 / 1 / 2 and cm550_processPrimarySpeedPulsePeriodWithSyncPulse) add each new main engine position sensor period (main_engine_position_sensor_period) to it only while the sum cannot overflow (0xffffffff - sum >= period), and then count it in main_engine_position_sensor_interrupt_count. With the same guard the handlers add the crank degrees per period measurement (0x807ec4, e2m 100B +1C ESPECK01) into 0x80cd00 (ESCKSM01 'CRANK DEGREES BETWEEN VSS INTERRUPTS'). Nothing in the dumped ROM reads or clears it (no absolute or base-register access besides these 8): the vehicle speed sensor side that the Calterm text names is not in the dump. (was io_control_bit0_state; PR #53 round 95)",
+    "reason": "The name and type are right. ESACGR is 4 bytes at this address. There are 8 long accesses, all the guarded add (moveq #-1 / sub.l / cmp.l / bcs / add.l) in 0x19acc / 0x19e90 / 0x1a52c / 0x1a95a. My base-register scan of the whole ROM finds no other access to 0x80d03e-0x80d049. The comment is amended because 0x807ec4 holds crank degrees per period measurement (ESPECK01 CRANK_DEG_PER_PERIOD_MEAS; teeth per measurement are ESTTIP), not per tooth."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080d046",
+    "verdict": "CONFIRMED",
+    "final_name": "main_engine_position_sensor_interrupt_count",
+    "final_type": "word",
+    "reason": "e2m 100C +354 ESCTGR (2 bytes). There are 8 word accesses: cmpi.w #0xffff / bcc / addq.w #1 inside the overflow-guarded branch of each of the four handlers (0x19b32 ...), so it counts the periods added to the sum. Nothing reads or clears it in the dump. The name is unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x0080d04a",
+    "verdict": "AMENDED",
+    "final_name": "main_engine_position_sensor_period",
+    "final_type": "dword",
+    "final_comment": "e2m 100C +358 ESIPPE 'EPS_PERIOD: TIME BETWEEN THE TWO MOST RECENT EPS INTERRUPTS' (CNTS, 4 bytes, 200 - 16777216): the TPU channel 10 primary speed interrupt handlers (modes 0 / 1 / 2) copy the measured period from TPU parameter RAM 0xffffa8 (move.l, then clr.w of 0xffffa8), and cm550_processPrimarySpeedPulsePeriodWithSyncPulse writes it from its argument (on the pulse after a sync pulse it adds the sync pulse's period saved at 0x800660). The handlers put it into the pulse period table ring (it replaces the oldest entry in pulse_period_sum_primary) and add it to accumulated_main_engine_position_sensor_period. cm550_detectEngineSpeedSensorSyncPulse copies it to 0x8001a8 (0x1028a) and mc68k_FUN_0001266e adds it to the 4-period sum 0x8002a6 (0x126be). Every access is 4 bytes. Its 4 bytes cover the old row 0x80d04c io_control_active_mask, which no code accesses, so that row is removed. (was io_control_handshake_state; untyped; PR #53 round 95)",
+    "reason": "The name and the dword type are right: ESIPPE is 4 bytes, and every access is move.l (0x19ae8 / 0x19eac / 0x1a530 / 0x1a97a writes; 0x1028a / 0x126be / the handlers' (a2) reads). The comment is amended for two reasons. (1) 0x1028a is cm550_detectEngineSpeedSensorSyncPulse copying the period to 0x8001a8; the ring (0x80cd1e via 0x80cd08, with pulse_period_sum_primary) is fed by the handlers at 0x19af4-0x19b1c. (2) The dword swallows the named row 0x80d04c io_control_active_mask (untyped). My scan finds no absolute or base-register access to 0x80d04c, so the applier must delete that row."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM550",
+    "address": "0x00801d44",
+    "verdict": "CONFIRMED",
+    "final_name": "j1939_powertrain_messages_received",
+    "final_type": "cm550_j1939_powertrain_messages_received_t",
+    "reason": "Every access in 0x801d3c-0x801d59 is verified. ETC1 handler 0x2efd0: data[0] goes to +0 and data[4] to +4. processEngineTsc1Request (a3 = 0x801d4c): data[0] to +8, data[2] to +9, data[1] to +10, data[3] to +11. Byte +0x10, word +0x12, byte +0x14. Nothing touches the other bytes. 0x801d3c is a separate byte 8 bytes before the record, matching CM848's 0x3fa97a before 0x3fa982. 0x801d5a starts the next object, a 32 x 6-byte table registered by 0x2f47e (count 0x801e1a = 0x801d5a + 0xc0), so the record is 22 bytes. The members and their order match CM848's j1939_powertrain_messages_received_t; the layout differs, so the type takes the cm550_ prefix (cm550_algorithm_enable_flags_<n>_t precedent). The investigator's 13 fields (with explicit padding, because ApplyStructures packs fields one after another) sum to 22. Delete the 7 rows inside (0x801d48 / 4c / 4d / 4f / 54 / 56 / 58) and move their comments into the fields. The names are unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x0040b31e",
+    "verdict": "CONFIRMED",
+    "final_name": "fuel_pressure_governor_fault_blended_fuel_limit",
+    "final_type": "word",
+    "reason": "The output of the blend: start*(25600-f)/25600 + table*f/25600, or the chi maximum when there is no fault and f = 0 (0x389e0). It is stored with sth at 0x38a50, and when lower it becomes torque_derate_fuel_quantity with source 62. The init sets it to 5888. It has no other user (D-form scan). RAM 1030 = 0x40a4ea = 0x40afac, source 62. The name is unique."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x0040b320",
+    "verdict": "CONFIRMED",
+    "final_name": "fuel_pressure_governor_fault_blend_start_fuel",
+    "final_type": "word",
+    "reason": "It is the chi maximum, stored only on the rising edge (prev 0x3fb3c0 == 0 and active != 0) when final_fueling > the table limit (sth at 0x38988). The fraction rises only while it is above the table value (0x38994). It is the (25600-f) term (0x38a20). The init sets it to 5888."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x0040b322",
+    "verdict": "CONFIRMED",
+    "final_name": "fuel_pressure_governor_fault_blend_fraction",
+    "final_type": "word",
+    "reason": "With a fault it rises by 0x4088e2, capped at 25600. Without a fault it falls by 0x4088e0; clrlwi + cmpwi 0 / bge always branches, so the 0 floor at 0x38a04 can never run. It is the blend weight, and the init sets it to 0. The comment is accurate."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x0040b324",
+    "verdict": "CONFIRMED",
+    "final_name": "fuel_pressure_governor_fault_fuel_limit",
+    "final_type": "word",
+    "reason": "lookupTableInterpolation(0x3fb3c2, filtered engine speed, 0x4088e8, 0x40891a, 0), stored with sth at 0x38950, only on fault passes. It is the blend's 100 percent end (0x38a38). It is the per-lookup base of the axis / values / cache names, as the table naming method wants."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x0040b326",
+    "verdict": "CONFIRMED",
+    "final_name": "fuel_pressure_governor_fault_active_flag",
+    "final_type": "word",
+    "reason": "li 1 / li 0 through r30 = 0x40b326 according to fault_detected_cal +6 bits 9-12 (faults 57-60, fault_bit_words_t), and it is copied to 0x3fb3c0 at 0x38a80. The name is unique. Note: 0x40b214 fuel_pressure_fault_active_flag (cm848_updateEngineWarningFlags) tests the same four faults; the two names are distinct but close."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fb3c0",
+    "verdict": "CONFIRMED",
+    "final_name": "fuel_pressure_governor_fault_active_flag_previous",
+    "final_type": "word",
+    "reason": "r29 = 0x3fb3c0 (0x388d4). It is read for the rising-edge test (0x38954) and written from 0x40b326 at the end of the pass (0x38a80). The _flag_previous form has precedent (13 rows, for example high_idle_override_active_flag_previous)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fb3c2",
+    "verdict": "CONFIRMED",
+    "final_name": "fuel_pressure_governor_fault_fuel_limit_cached_axis_offset",
+    "final_type": "word",
+    "reason": "It is the r3 cache argument of bl 0x55ef4 at 0x38924, and the init stores 2 at 0x38aa0. RAM 2."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x004088e0",
+    "verdict": "CONFIRMED",
+    "final_name": "fuel_pressure_governor_fault_blend_fraction_decrement",
+    "final_type": "word",
+    "reason": "Its only access is lhz at 0x389f0, subtracted from the fraction. It is ROM-copied (RAM = ROM + 0x39a3e6), so it takes no _cal. RAM 1280."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x004088e2",
+    "verdict": "CONFIRMED",
+    "final_name": "fuel_pressure_governor_fault_blend_fraction_increment",
+    "final_type": "word",
+    "reason": "Its only access is lhz at 0x389a8, added to the fraction. It is ROM-copied, so it takes no _cal. RAM 1280."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x004088e4",
+    "verdict": "CONFIRMED",
+    "final_name": "fuel_pressure_governor_fault_blend_enable",
+    "final_type": "byte",
+    "reason": "Its only access is lbz at 0x388b0, where cmpwi 0 / beq skips the whole function. RAM byte 1. It is ROM-copied, so it takes no _cal."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x004088e8",
+    "verdict": "CONFIRMED",
+    "final_name": "fuel_pressure_governor_fault_fuel_limit_axis",
+    "final_type": "word[25]",
+    "reason": "It is the r5 of bl 0x55ef4 (addi at 0x38934), plus a parameter ID table word at flash2 0x53c9ec. The dump holds the length word 48 and 24 engine speed breakpoints, so word[25] is right. No e2m record resolves here (the --address query is empty)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x0040891a",
+    "verdict": "CONFIRMED",
+    "final_name": "fuel_pressure_governor_fault_fuel_limit_values",
+    "final_type": "word[25]",
+    "reason": "It is the r6 of bl 0x55ef4 (addi at 0x3893c). The dump holds the length word 48 and 24 fuel values, so word[25] is right. It is 25 words up to 0x40894b, and the next row is 0x40894c."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x0040af7c",
+    "verdict": "AMENDED",
+    "final_name": "all_speed_governor_tuning_set_blend_weight",
+    "final_type": "word",
+    "final_comment": "CHR e2m 158D +0 ASG_Droop_Flag [ASDPFG] 'ASG droop selection flag; used to select droop source' (2 bytes, 1/128 per count): the all-speed governor's weight 0..128 of its second tuning set. 0 = set 1 (all_speed_governor_minimum / maximum_reference_speed_1_cal and the *_blend_0 tables), 128 = set 2 (the _2_cal reference speeds and the *_blend_128 tables), values between blend them (x / 128). cm848_blendAllSpeedGovernorReferenceSpeeds writes it from the drivetrain ratio table (all_speed_governor_tuning_set_blend_weight_by_drivetrain_ratio_axis / _values) or, with algorithm_enable_flags_27_cal.switched_throttle_control_governor_select set, from all_speed_governor_tuning_set_default_blend_weight_cal; cm848_initializeAllSpeedGovernorTuningSetBlendWeight presets it at start-up. cm848_calculateAllSpeedGovernorNoLoadFuel, cm848_calculateGovernorCompensatorCoefficients and cm848_calculateAllSpeedGovernorEquivalentThrottle read it. Block 158D's +2 / +4 (ASG_Max_RPM / ASG_Min_RPM) are all_speed_governor_maximum_reference_speed / _minimum_reference_speed, which fixes the address (158D is not in the dumped parameter ID table). 128 in the RAM dump. (was governor_tuning_set_blend_weight; PR #53 round 95)",
+    "reason": "The all_speed_governor_ prefix is supported. Every access (D-form scan) is in an all-speed governor function: 0xfd34 NoLoadFuel, 0xff18 cm848_calculateGovernorCompensatorCoefficients (which reads the ASG droop blend tables and writes only all_speed_governor_droop and gains), 0x2c048 / 0x2c050 blendAllSpeedGovernorReferenceSpeeds, 0x2c10c the init and 0x45fa0 EquivalentThrottle. Calterm calls it ASG_Droop_Flag in the ASG block 158D. The comment is amended because it quoted 'governor_speed_error_*_working' and '_b' sets, which no longer exist: the decompile blends all_speed_governor_*_reference_speed_1_cal (weight 0) with _2_cal (weight 128)."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x003fd526",
+    "verdict": "CONFIRMED",
+    "final_name": "all_speed_governor_tuning_set_default_blend_weight_cal",
+    "final_type": "word",
+    "reason": "e2m 1387 +8 ASG_Droop_Flag_Trim, EEPROM 0xa4 (0x0000 in cm848_eeprom.bin), inside 0x3fd482-0x3feec1, so _cal is right. Its only accesses are lhz at 0x2bfa4 / 0x2c040 (blend function: the default when switched_throttle_control_governor_select is set, and the < 0x100 gate) and 0x2c108 (the init). It follows the family prefix."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x0005a9c4",
+    "verdict": "CONFIRMED",
+    "final_name": "all_speed_governor_tuning_set_blend_weight_by_drivetrain_ratio_axis",
+    "final_type": "word[7]",
+    "reason": "ROM [12, 1843, 2458, 3482, 6144, 10240, 40960] (drivetrain_ratio x 2048). Its only code reference is the addi at 0x2bff8 in cm848_blendAllSpeedGovernorReferenceSpeeds (indexed); there is also a parameter ID table word at 0x53dfac. ROM, so no _cal."
+   },
+   {
+    "kind": "global",
+    "firmware": "CM848",
+    "address": "0x0005a9d2",
+    "verdict": "CONFIRMED",
+    "final_name": "all_speed_governor_tuning_set_blend_weight_by_drivetrain_ratio_values",
+    "final_type": "word[7]",
+    "reason": "ROM [12, 128 x 6]. Its only reference is the addi at 0x2c018 in cm848_blendAllSpeedGovernorReferenceSpeeds. ROM, so no _cal."
+   },
+   {
+    "kind": "enum_member",
+    "firmware": "both",
+    "address": "J1939_PERIODIC_TRANSMIT_QUEUE:0",
+    "verdict": "AMENDED",
+    "final_name": "J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE",
+    "final_comment": "Queue 0, the engine node's periodic broadcasts: 20 entries of j1939_periodic_transmit_entry_t (CM550 j1939_periodic_queue0_entries 0x80096e / CM848 0x3fd2e2), run while datalink_broadcast_enable_flags bit 2 (e2m JCEGBCEA, J1939-71 engine broadcast) is set (CM848 also needs j1939_dm13_broadcast_enable_flags bit 2). 17 of the 19 start-up calls of scheduleJ1939PeriodicMessage in each firmware use it (PGN 65265 / 61444 / 61443 ...). The type of its queue_index parameter (4 bytes). (PR #53 round 95)",
+    "reason": "Adopted. In both firmwares cm550_runJ1939PeriodicTransmitQueues / cm848_runJ1939PeriodicTransmitQueues run queue 0 under bit 2 (JCEGBCEA, the engine broadcast) and queue 1 under bit 3. CM550 0x1fe94 beq on 0 selects 0x80096e with limit 20; CM848 cmpwi r3,0 selects 0x3fd2e2 with limit 20. The 'Optional' remark is dropped because both prototypes now use the enum; it needs size 4 in both enums.csv files. The evidence count is corrected: 17 of 19 calls use queue 0 in CM848 as well, not 18. The name is unique (new enum)."
+   },
+   {
+    "kind": "enum_member",
+    "firmware": "both",
+    "address": "J1939_PERIODIC_TRANSMIT_QUEUE:1",
+    "verdict": "CONFIRMED",
+    "final_name": "J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER",
+    "reason": "Queue 1 is the retarder node's: it runs under bit 3 (JCRDBCEA, the J1939-71 retarder broadcast), and in both firmwares exactly two calls pass 1, PGN 61440 ERC1 and PGN 65249 retarder configuration (CM550 pea (1).w at 0x28cdc / 0x28d0e; CM848 li r3,1 at 0x53934c / 0x53936c). The comment is correct. The investigator's evidence ('the one queue 1 call') is wrong for CM848, which has two. CM848's scheduler treats any non-zero value as queue 1, which the enum's 0 / 1 values still match."
+   }
+  ]
+ }
+}
