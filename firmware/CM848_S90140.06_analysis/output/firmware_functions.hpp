@@ -628,11 +628,11 @@ void cm848_initializeLowSpeedGovernorParameters(void);  // @ 0x00028618
 void cm848_updateLowSpeedGovernorAggressiveGainLogic(void);  // @ 0x00028670
 void cm848_clearGovernorTimerCounters(void);  // @ 0x00028994
 void cm848_resetLowSpeedGovernorAggressiveGainLogic(void);  // @ 0x000289ac
-undefined4 cm848_selectLowSpeedGovernorOverrideGainSet(int param_1);  // @ 0x000289d0
+undefined4 selectLowSpeedGovernorOverrideGainSet(int param_1);  // @ 0x000289d0
 void cm848_loadLowSpeedGovernorGainSet(void);  // @ 0x00028a14
 void cm848_initializeGovernorTimerCountersWrapper(void);  // @ 0x00028abc
 void cm848_initializeLowSpeedGovernorGainSelection(void);  // @ 0x00028adc
-undefined4 cm848_selectLowSpeedGovernorTsc1GainSet(void);  // @ 0x00028b38
+undefined4 selectLowSpeedGovernorTsc1GainSet(void);  // @ 0x00028b38
 void cm848_clearGovernorFilterAccumulators(void);  // @ 0x00028b8c
 void cm848_calculateLowSpeedGovernorErrorTerms(void);  // @ 0x00028ba4
 void cm848_setGovernorFilterPointer(void);  // @ 0x00028d30

@@ -1208,7 +1208,7 @@ extern word high_speed_governor_transient_gain_set_pass_counter;  // 0x003fa89c
 extern word high_speed_governor_transient_gain_set_timer;  // 0x003fa89e
 extern word driver_demand_fuel_quantity;  // 0x003fa8a0
 extern word all_speed_governor_droop_snapshot;  // 0x003fa8a2
-extern word torque_limit_working_reference;  // 0x003fa8a4
+extern word j1939_torque_curve_derate_engine_speed;  // 0x003fa8a4
 extern word engine_retarder_torque_cached_axis_offset;  // 0x003fa8a6
 extern word engine_retarder_torque_cached_axis_offset_2;  // 0x003fa8a8
 extern word engine_retarder_torque_ramp_percent_times_256;  // 0x003fa8aa
@@ -4626,8 +4626,8 @@ extern word low_speed_governor_aggressive_gain_inhibit_flag;  // 0x0040ae74
 extern int16_t low_speed_governor_proportional_gain;  // 0x0040ae76
 extern int16_t low_speed_governor_integral_gain;  // 0x0040ae78
 extern int16_t low_speed_governor_derivative_gain;  // 0x0040ae7a
-extern word low_speed_governor_user_gain_state;  // 0x0040ae7c
-extern word low_speed_governor_final_gain_state;  // 0x0040ae7e
+extern LOW_SPEED_GOVERNOR_GAIN_STATE low_speed_governor_user_gain_state;  // 0x0040ae7c
+extern LOW_SPEED_GOVERNOR_GAIN_STATE low_speed_governor_final_gain_state;  // 0x0040ae7e
 extern word low_speed_governor_override_gain_state;  // 0x0040ae80
 extern low_speed_governor_gain_set_t low_speed_governor_override_gain_set;  // 0x0040ae82
 extern int16_t low_speed_governor_jerk_gain;  // 0x0040ae8a

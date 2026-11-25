@@ -1036,7 +1036,7 @@ typedef enum {
     ENGINE_STATE_ENGINE_BRAKE = 4,  /* e2m 4=ENGBRAKE. Entered from RUNNING while engine_retarder_active_flag (117D +4 EBSS) is 1 and engine_brake_driveline_brake_type_cal is 0. It returns to RUNNING when both are 0. (PR #53 round 88) */
     ENGINE_STATE_OVERSPEED = 5,  /* e2m 5=OVERSPED. Entered from RUNNING while engine_overspeed_active_flag is 1. It returns to RUNNING when the flag clears. (PR #53 round 88) */
     ENGINE_STATE_JUMP_START = 6,  /* e2m 6=JUMPSTRT. Entered from CRANKING after crank_jump_start_timer passes crank_jump_start_time. It leaves like CRANKING, without the jump start test. The consumers treat it like CRANKING. (PR #53 round 88) */
-    ENGINE_STATE_REENTRY = 7,  /* e2m 7=REENTRY. Entered from RUNNING when engine_rpm_primary falls to crank_reentry_speed. It leaves like JUMP_START: to RUNNING at crank_exit_speed, to STOPPED at engine_stopped_speed. (PR #53 round 88) */
+    ENGINE_STATE_REENTRY = 7,  /* e2m 7=REENTRY. Entered from RUNNING when filtered_engine_speed falls to crank_reentry_speed. It leaves like JUMP_START: to RUNNING at crank_exit_speed, to STOPPED at engine_stopped_speed. (PR #53 round 88) */
     ENGINE_STATE_SHUTDOWN = 8  /* e2m 8=SHUTDOWN. (PR #53 round 88) */
 } ENGINE_STATE;
 
@@ -1127,6 +1127,14 @@ typedef enum {
     J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER = 1  /* Queue 1: the retarder node's periodic broadcasts (CM550 j1939_periodic_queue1_entries 0x800a36 / CM848 0x3fd3aa; 10 entries), sent while the retarder broadcast enable bit (e2m JCRDBCEA) is set: PGN 61440 ERC1 and 65249 retarder configuration. (PR #53 round 95) */
 } J1939_PERIODIC_TRANSMIT_QUEUE;
 
+typedef enum {
+    LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT = 0,  /* e2m 10ED +6 / +8 LSUSGNST / LSFNGNST (no value labels): the default gain set (e2m 10EC, low_speed_governor_default_gain_set), selected by the gain set load for user gain state 0 (PR #53 round 97) */
+    LOW_SPEED_GOVERNOR_GAIN_STATE_AGGRESSIVE = 1,  /* The aggressive gain set (e2m 10EE +12, low_speed_governor_aggressive_gain_set), requested by the aggressive gain logic (PR #53 round 97) */
+    LOW_SPEED_GOVERNOR_GAIN_STATE_MIDDLE_GEAR = 2,  /* The middle gear gain set (e2m 10EA, low_speed_governor_middle_gear_gain_set), requested by the gear gain logic (PR #53 round 97) */
+    LOW_SPEED_GOVERNOR_GAIN_STATE_HIGH_GEAR = 3,  /* The high gear gain set (e2m 10EA, low_speed_governor_high_gear_gain_set), requested by the gear gain logic (PR #53 round 97) */
+    LOW_SPEED_GOVERNOR_GAIN_STATE_J1939 = 4  /* The J1939 (Jcomm) gain set (e2m 10EB, j1939_low_speed_governor_gain_set), selected by selectLowSpeedGovernorTsc1GainSet under a TSC1 override control mode. Values 5-9 are override states of the fuel system specific algorithm (LSOVGNST), with no members (PR #53 round 97) */
+} LOW_SPEED_GOVERNOR_GAIN_STATE;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_message_header_t j1939_message_header_t;
@@ -1213,6 +1221,7 @@ typedef struct j1939_pgn_handler_entry_t j1939_pgn_handler_entry_t;
 typedef struct j1939_pgn65261_payload_t j1939_pgn65261_payload_t;
 typedef struct j1939_pgn65230_payload_t j1939_pgn65230_payload_t;
 typedef struct j1708_memory_write_record_t j1708_memory_write_record_t;
+typedef struct cm550_low_speed_governor_gain_set_t cm550_low_speed_governor_gain_set_t;
 
 struct j1939_message_header_t {
     uint32_t can_id;  /* The CAN identifier: priority / PGN / source address (was j1939_header_t.id; CM848's type name; PR #53 round 88) */
@@ -1227,7 +1236,7 @@ struct j1939_transmit_message_t {
 
 struct engine_overspeed_event_t {
     uint32_t start_key_on_hour_meter;  /* key_on_hour_meter when the overspeed began */
-    uint16_t engine_speed_at_detection;  /* engine_rpm_primary on the pass the overspeed latch set */
+    uint16_t engine_speed_at_detection;  /* filtered_engine_speed on the pass the overspeed latch set */
     uint16_t duration;  /* The passes the overspeed lasted (PR #53 round 88) */
 };
 
@@ -1662,10 +1671,10 @@ struct algorithm_enable_flags_1_t {
     uint16_t reserved_bit_9 : 1;  /* bit 9: no e2m record; no reader in the dumped ROM; clear in the dumps */
     uint16_t reserved_bit_10 : 1;  /* bit 10: no e2m record; no reader in the dumped ROM; clear in the dumps */
     uint16_t reserved_bit_11 : 1;  /* bit 11: no e2m record; no reader in the dumped ROM; clear in the dumps */
-    uint16_t low_speed_governor_aggressive_gain_set_enable : 1;  /* bit 12: LSAGGNEN 'LOW SPEED GOVERNOR AGGRESSIVE GAIN SET ENABLE' (no bit in the CM550 text; CM848 S mask 0x1000); andi 0x1000 at 0x26188: cm550_enginePositionSensorAccelerationMonitor selects LSG PID gain set 1; set in the dumps */
-    uint16_t low_speed_governor_high_gear_gain_set_enable : 1;  /* bit 13: LSHGGNEN 'ENABLES THE LSG GAIN SET FOR WHEN IN HIGH GEARS' (CM848 S mask 0x2000); andi.l 0x2000 at 0x26408: cm550_enginePositionSensorDiagnosticModeHandler selects gain set 3 (the high gear gains); clear */
-    uint16_t low_speed_governor_middle_gear_gain_set_enable : 1;  /* bit 14: LSMGGNEN 'ENABLE PARAMETER FOR LSG GAIN SET USED WHEN IN MIDDLE (GEARS)' (CM848 S mask 0x4000); andi.l 0x4000 at 0x263e0: cm550_enginePositionSensorDiagnosticModeHandler selects gain set 2 (the middle gear gains); clear */
-    uint16_t low_speed_governor_tsc1_gain_set_enable : 1;  /* bit 15: LSJCGNEN 'ENABLES/DISABLES THE LSG JCOMM PID GAINS' (CM848 S mask 0x8000); andi.l 0x8000 at 0x265ee: cm550_enginePositionSensorRpmTargetModeChecker selects gain set 4 while _datalink_speed_control_mode is set; clear */
+    uint16_t low_speed_governor_aggressive_gain_set_enable : 1;  /* bit 12: LSAGGNEN 'LOW SPEED GOVERNOR AGGRESSIVE GAIN SET ENABLE' (no bit in the CM550 text; CM848 S mask 0x1000); andi 0x1000 at 0x26188: cm550_updateLowSpeedGovernorAggressiveGainLogic selects LSG PID gain set 1; set in the dumps */
+    uint16_t low_speed_governor_high_gear_gain_set_enable : 1;  /* bit 13: LSHGGNEN 'ENABLES THE LSG GAIN SET FOR WHEN IN HIGH GEARS' (CM848 S mask 0x2000); andi.l 0x2000 at 0x26408: cm550_selectLowSpeedGovernorGearGainSet selects gain set 3 (the high gear gains); clear */
+    uint16_t low_speed_governor_middle_gear_gain_set_enable : 1;  /* bit 14: LSMGGNEN 'ENABLE PARAMETER FOR LSG GAIN SET USED WHEN IN MIDDLE (GEARS)' (CM848 S mask 0x4000); andi.l 0x4000 at 0x263e0: cm550_selectLowSpeedGovernorGearGainSet selects gain set 2 (the middle gear gains); clear */
+    uint16_t low_speed_governor_tsc1_gain_set_enable : 1;  /* bit 15: LSJCGNEN 'ENABLES/DISABLES THE LSG JCOMM PID GAINS' (CM848 S mask 0x8000); andi.l 0x8000 at 0x265ee: selectLowSpeedGovernorTsc1GainSet selects gain set 4 while _datalink_speed_control_mode is set; clear */
 };
 
 struct cm550_algorithm_enable_flags_2_t {
@@ -1802,10 +1811,10 @@ struct algorithm_enable_flags_11_t {
 };
 
 struct cm550_algorithm_enable_flags_12_t {
-    uint16_t idle_speed_save_enable : 1;  /* bit 0: LSISSVEN 'BIT 0 OF 0 - 15 ENABLES SAVE OF LAST IDLE SPEED AT SHUT(DOWN)'; andi.w #0x1 at 0x26546 (cm550_engineModeTimingAdjuster: set keeps the operator idle adjustment in rpm_added_to_lsg_reference_300_300 0x805f0a - clear zeroes it) and 0x265a0 (cm550_initializeLowSpeedGovernorIdleAdjustment: the start-up restore of that adjustment); CM848 field name; set in the dumps (0xbb87) */
+    uint16_t idle_speed_save_enable : 1;  /* bit 0: LSISSVEN 'BIT 0 OF 0 - 15 ENABLES SAVE OF LAST IDLE SPEED AT SHUT(DOWN)'; andi.w #0x1 at 0x26546 (cm550_updateLowSpeedGovernorIdleAdjustment: set keeps the operator idle adjustment in low_speed_governor_saved_operator_idle_adjustment 0x805f0a - clear zeroes it) and 0x265a0 (cm550_initializeLowSpeedGovernorIdleAdjustment: the start-up restore of that adjustment); CM848 field name; set in the dumps (0xbb87) */
     uint16_t overspeed_fuel_shutoff_enable : 1;  /* bit 1: EPOSFSO 'IF T FSO CLOSES WHEN OVRSPD DETECTED BY MAIN MICRO. BI(T 1 OF 0 - 15 OF WORD C)' (FSO = fuel shut off: e2m DRFSEA 'CONTROLS FUEL SHUT OFF DRIVER'); andi.l #0x2 at 0x1ca9a (cm550_commandFuelShutoffDriver): in ENGINE_STATE_OVERSPEED the fuel shutoff driver bit 0x20 of fuel_system_output_driver_control is cleared only while set; CM848 reserved_bit_1 with the same record (rename proposed); set */
     uint16_t water_in_fuel_enable : 1;  /* bit 2: WFAGEN 'BIT 2 ENABLE FLAG USED FOR WATER_IN_FUEL ALGORITHM.'; andi.w #0x4 at 0x34c3e (vp44FaultRegisterBit2Monitor): set = a wet water_in_fuel_sensor_state sets fault status word 4 bit 0x2000 and lamp driver bit 0x10 - clear = that fault bit is cleared; CM848 field name; set */
-    uint16_t air_fuel_control_override_enable : 1;  /* bit 3: AFENMAN 'BIT 3 OF 0-15 IN WORD C'; andi.w #0x8 at 0xc19c (cm550_fuelTimingTransitionStateMachine): set takes the derate fuel adjustment from afc_fueling_derate_value_when_afc_override_is_enabled_0_100 instead of the engine speed x boost pressure table; CM848 field name; clear */
+    uint16_t air_fuel_control_override_enable : 1;  /* bit 3: AFENMAN 'BIT 3 OF 0-15 IN WORD C'; andi.w #0x8 at 0xc19c (cm550_fuelTimingTransitionStateMachine): set takes the derate fuel adjustment from air_fuel_control_fueling_override_value instead of the engine speed x boost pressure table; CM848 field name; clear */
     uint16_t electronic_smart_power_enable : 1;  /* bit 4: SPAGEN '0 - DISBALE 1 - ENABLE ESP ALGORITHM BIT 4 OF 0 - 15.' (e2m group ESP_08 'ELECTRONIC SMART POWER GROUP'); andi #0x10 at 0x1abcc (gates cm550_updateElectronicSmartPowerTau) / 0xc3ea (calculateAlpha copies the alpha into the timing alpha only while clear) / 0x1cd96 (cm550_calculateThrottle100Fuelings: the maximum fueling without programmable power comes from the low horsepower curve while set); CM848 field name; clear */
     uint16_t reverse_electronic_smart_power_enable : 1;  /* bit 5: SPRVEN '0 - DISBALE 1 - ENABLE ESP LAUNCH APPLICATION ALGORITH(M BIT 5 OF 0 - 15.)' (CM848 label Reverse_ESP_Enable S mask 0x20); andi.l #0x20 at 0x1ad52: cm550_updateElectronicSmartPowerTau enters ESP tau source state 1 (e2m 11DC +6 SPTUST lists NORMAL / LAUNCH / STEEP) only while set; CM848 field name; clear */
     uint16_t low_speed_governor_droop_enable : 1;  /* bit 6: LSDPEN 'LSG DROOP ENABLE BIT 6 OF 0 - 15 IN WORD C'; andi.l #0x40 at 0xfa1c (vp44State2TransitionHandler) and 0x1850e (cm550_calculateFaultDerateJ1939TorqueCurveSpeedPoints): set lowers the torque curve speed point 1 by fueling x the selected droop slope 0x80daf4 (e2m LSDPSE) / 167 - the same droop as CM848's reader; CM848 field name; clear */
@@ -2160,4 +2169,10 @@ struct j1708_memory_write_record_t {
     byte* data_pointer;  /* the item's data in the J1708 receive ring */
     uint8_t length;  /* the number of bytes to write */
     MEMORY_REGION_TYPE region_type;  /* the memory region type of the target (picks the writer) */
+};
+
+struct cm550_low_speed_governor_gain_set_t {
+    int16_t proportional_gain;  /* The proportional gain (LSPPGN in the working copy): +0 */
+    int16_t integral_gain;  /* The integral gain (LSITGN): +2 */
+    int16_t derivative_gain;  /* The derivative gain (LSDVGN): +4 */
 };

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 15:34:05 MST 2026
+// Generated: Wed Nov 25 16:13:59 MST 2026
 
 
 //
@@ -22977,16 +22977,17 @@ void setJ1939TorqueCurvePoints1And3AtDeratedFueling(void)
    pointer parameter received_message) and a flag in r4. The speed is the droop line speed at that
    fueling: engine_speed_limit_arbitrated + engine_speed_limit_droop_slope x
    (((engine_speed_limit_ramped_maximum_fuel_quantity - fueling) x 8) & 0xfff8) / 0x8888, capped at
-   40000 (5000 rpm), or torque_limit_working_reference when engine_speed_limit_droop_slope is 0. It
-   stores that speed in j1939_torque_curve_speed_at_point_2 (e2m 1102 +24 Jcomm_RPM_At_Point_2, the
-   high speed governor breakpoint) and in j1939_torque_curve_speed_at_point_5 (+2A; with r4 = 0
-   point 5 gets the ROM speed j1939_engine_speed_at_point_5 instead, e2m 1104 +8
-   Jcomm_Engine_Speed_at_Point_5) and the fueling in j1939_torque_curve_fueling_at_point_2 (+2E) and
-   j1939_torque_curve_fueling_at_point_5 (+34). Its only caller
-   cm848_updateJ1939EngineConfigurationTorqueCurve (0x20d10) passes j1939_derated_fueling_at_point_4
-   with r4 = 1 when ROM 0x5c35e (e2m 1104 +16 Jcomm_Tau_0_Point_5_Intersection_Speed) is above the
-   speed limit, otherwise j1939_derated_fueling_at_point_5 with r4 = 0. It receives no J1939
-   message. (was cm848_processJ1939RxMessage) */
+   40000 (5000 rpm), or j1939_torque_curve_derate_engine_speed when engine_speed_limit_droop_slope
+   is 0. It stores that speed in j1939_torque_curve_speed_at_point_2 (e2m 1102 +24
+   Jcomm_RPM_At_Point_2, the high speed governor breakpoint) and in
+   j1939_torque_curve_speed_at_point_5 (+2A; with r4 = 0 point 5 gets the ROM speed
+   j1939_engine_speed_at_point_5 instead, e2m 1104 +8 Jcomm_Engine_Speed_at_Point_5) and the fueling
+   in j1939_torque_curve_fueling_at_point_2 (+2E) and j1939_torque_curve_fueling_at_point_5 (+34).
+   Its only caller cm848_updateJ1939EngineConfigurationTorqueCurve (0x20d10) passes
+   j1939_derated_fueling_at_point_4 with r4 = 1 when ROM 0x5c35e (e2m 1104 +16
+   Jcomm_Tau_0_Point_5_Intersection_Speed) is above the speed limit, otherwise
+   j1939_derated_fueling_at_point_5 with r4 = 0. It receives no J1939 message. (was
+   cm848_processJ1939RxMessage) */
 
 void cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling
                (j1939_received_message_t *received_message)
@@ -22996,7 +22997,7 @@ void cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling
   undefined *puVar1;
   
   if (engine_speed_limit_droop_slope == 0) {
-    puVar1 = (undefined *)(uint)torque_limit_working_reference;
+    puVar1 = (undefined *)(uint)j1939_torque_curve_derate_engine_speed;
   }
   else {
     puVar1 = (undefined *)
@@ -23083,12 +23084,12 @@ void cm848_updateJ1939EngineConfigurationTorqueCurve(void)
        (engine_speed_limit_arbitration.limiting_source_number == 4)) ||
       (engine_speed_limit_arbitration.limiting_source_number == 5)) ||
      ((engine_speed_limit_arbitration.limiting_source_number == 1 ||
-      (torque_limit_working_reference = engine_speed_limit_reference,
+      (j1939_torque_curve_derate_engine_speed = engine_speed_limit_reference,
       engine_speed_limit_arbitration.limiting_source_number == 0xc)))) {
     iVar2 = iVar2 + 1;
-    torque_limit_working_reference = engine_speed_limit_arbitrated;
+    j1939_torque_curve_derate_engine_speed = engine_speed_limit_arbitrated;
   }
-  uVar1 = (uint)torque_limit_working_reference;
+  uVar1 = (uint)j1939_torque_curve_derate_engine_speed;
   switch(iVar2) {
   case 0:
     break;
@@ -29014,11 +29015,11 @@ void cm848_updateLowSpeedGovernorAggressiveGainLogic(void)
       }
     }
     if (low_speed_governor_aggressive_gains_active_flag == 1) {
-      low_speed_governor_user_gain_state = 1;
+      low_speed_governor_user_gain_state = LOW_SPEED_GOVERNOR_GAIN_STATE_AGGRESSIVE;
       low_speed_governor_requested_gain_set_pointer = &low_speed_governor_aggressive_gain_set;
     }
     else {
-      low_speed_governor_user_gain_state = 0;
+      low_speed_governor_user_gain_state = LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT;
     }
   }
   return;
@@ -29059,14 +29060,15 @@ void cm848_resetLowSpeedGovernorAggressiveGainLogic(void)
 
 
 //
-// Function: cm848_selectLowSpeedGovernorOverrideGainSet @ 0x000289d0
+// Function: selectLowSpeedGovernorOverrideGainSet @ 0x000289d0
 //
 
 /* If no TSC1 gain set is active and low_speed_governor_override_gain_state is set: final gain state
    = it and the override gain set at 0x40ae82 is selected; returns 1 when a set is selected (was
-   cm848_selectGovernorSetpointSource) */
+   cm848_selectGovernorSetpointSource) | the twin of CM550 0x00026272: one shared name (was
+   cm848_selectLowSpeedGovernorOverrideGainSet; PR #53 round 97) */
 
-undefined4 cm848_selectLowSpeedGovernorOverrideGainSet(int param_1)
+undefined4 selectLowSpeedGovernorOverrideGainSet(int param_1)
 
 {
   if (param_1 == 0) {
@@ -29094,12 +29096,12 @@ void cm848_loadLowSpeedGovernorGainSet(void)
 {
   short sVar1;
   
-  sVar1 = cm848_selectLowSpeedGovernorTsc1GainSet();
-  sVar1 = cm848_selectLowSpeedGovernorOverrideGainSet((int)sVar1);
+  sVar1 = selectLowSpeedGovernorTsc1GainSet();
+  sVar1 = selectLowSpeedGovernorOverrideGainSet((int)sVar1);
   if ((sVar1 == 0) &&
      (low_speed_governor_final_gain_state = low_speed_governor_user_gain_state,
      low_speed_governor_gain_set_pointer = low_speed_governor_requested_gain_set_pointer,
-     low_speed_governor_user_gain_state == 0)) {
+     low_speed_governor_user_gain_state == LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT)) {
     low_speed_governor_gain_set_pointer = &low_speed_governor_default_gain_set;
   }
   low_speed_governor_proportional_gain = low_speed_governor_gain_set_pointer->proportional_gain;
@@ -29138,7 +29140,7 @@ void cm848_initializeLowSpeedGovernorGainSelection(void)
 
 {
   cm848_resetLowSpeedGovernorAggressiveGainLogic();
-  low_speed_governor_user_gain_state = 0;
+  low_speed_governor_user_gain_state = LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT;
   low_speed_governor_override_gain_set.proportional_gain =
        low_speed_governor_default_gain_set.proportional_gain;
   low_speed_governor_override_gain_set.integral_gain =
@@ -29152,14 +29154,15 @@ void cm848_initializeLowSpeedGovernorGainSelection(void)
 
 
 //
-// Function: cm848_selectLowSpeedGovernorTsc1GainSet @ 0x00028b38
+// Function: selectLowSpeedGovernorTsc1GainSet @ 0x00028b38
 //
 
 /* With a TSC1 governor mode request (j1939_powertrain_control_state.tsc1_override_control_mode) and
    algorithm_enable_flags_1_cal bit 0x8000: final gain state 4 and the TSC1 gain set; returns 1 when
-   selected (was cm848_getGovernorOverrideSource) */
+   selected (was cm848_getGovernorOverrideSource) | the twin of CM550 0x000265e6: one shared name
+   (was cm848_selectLowSpeedGovernorTsc1GainSet; PR #53 round 97) */
 
-undefined4 cm848_selectLowSpeedGovernorTsc1GainSet(void)
+undefined4 selectLowSpeedGovernorTsc1GainSet(void)
 
 {
   undefined4 uVar1;
@@ -29169,7 +29172,7 @@ undefined4 cm848_selectLowSpeedGovernorTsc1GainSet(void)
     uVar1 = 0;
   }
   else {
-    low_speed_governor_final_gain_state = 4;
+    low_speed_governor_final_gain_state = LOW_SPEED_GOVERNOR_GAIN_STATE_J1939;
     low_speed_governor_gain_set_pointer = &j1939_low_speed_governor_gain_set;
     uVar1 = 1;
   }
@@ -29764,7 +29767,8 @@ void cm848_calculateLowSpeedGovernorNoLoadFuel(void)
                      low_speed_governor_fuel_by_commanded_throttle_axis,
                      low_speed_governor_fuel_by_commanded_throttle_values,0);
   low_speed_governor_reference.no_load_fuel = no_load_fuel_quantity;
-  if ((low_speed_governor_final_gain_state != 0) && (low_speed_governor_final_gain_state != 1)) {
+  if ((low_speed_governor_final_gain_state != LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT) &&
+     (low_speed_governor_final_gain_state != LOW_SPEED_GOVERNOR_GAIN_STATE_AGGRESSIVE)) {
     low_speed_governor_reference.no_load_fuel =
          friction_fuel_adjustment_for_coolant_temperature + wVar1 + wVar2 +
          low_speed_governor_no_load_fuel_trim_cal;
@@ -46846,7 +46850,7 @@ void cm848_selectLowSpeedGovernorGearGainSet(void)
            (short)low_speed_governor_filtered_speed_error) ||
          ((short)low_speed_governor_filtered_speed_error <
           low_speed_governor_gear_gain_speed_error_minimum)) {
-        low_speed_governor_user_gain_state = 0;
+        low_speed_governor_user_gain_state = LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT;
         low_speed_governor_gear_gain_transition_timer = 0;
       }
       else {
@@ -46857,9 +46861,9 @@ void cm848_selectLowSpeedGovernorGearGainSet(void)
         }
         uVar1 = (uint)drivetrain_ratio * (uint)rear_axle_ratio >> 0xb;
         if ((int)low_speed_governor_gear_breakpoint_1 < (int)uVar1) {
-          low_speed_governor_user_gain_state = 0;
+          low_speed_governor_user_gain_state = LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT;
         }
-        else if ((((low_speed_governor_user_gain_state == 0) &&
+        else if ((((low_speed_governor_user_gain_state == LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT) &&
                   (low_speed_governor_gear_gain_transition_timer ==
                    low_speed_governor_gear_gain_transition_time)) &&
                  (algorithm_enable_flags_1_cal.low_speed_governor_middle_gear_gain_set_enable != 0))
@@ -46868,19 +46872,19 @@ void cm848_selectLowSpeedGovernorGearGainSet(void)
                     (int)low_speed_governor_gear_hysteresis)) {
           if ((algorithm_enable_flags_1_cal.low_speed_governor_high_gear_gain_set_enable == 0) ||
              ((int)low_speed_governor_gear_breakpoint_2 < (int)uVar1)) {
-            low_speed_governor_user_gain_state = 2;
+            low_speed_governor_user_gain_state = LOW_SPEED_GOVERNOR_GAIN_STATE_MIDDLE_GEAR;
             low_speed_governor_requested_gain_set_pointer = &low_speed_governor_middle_gear_gain_set
             ;
           }
           else if ((int)uVar1 <
                    (int)low_speed_governor_gear_breakpoint_2 -
                    (int)low_speed_governor_gear_hysteresis) {
-            low_speed_governor_user_gain_state = 3;
+            low_speed_governor_user_gain_state = LOW_SPEED_GOVERNOR_GAIN_STATE_HIGH_GEAR;
             low_speed_governor_requested_gain_set_pointer = &low_speed_governor_high_gear_gain_set;
           }
         }
       }
-      if (low_speed_governor_user_gain_state == 0) {
+      if (low_speed_governor_user_gain_state == LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT) {
         low_speed_governor_gain_adjustment_inhibit_flag = 0;
       }
       else {
@@ -46889,7 +46893,7 @@ void cm848_selectLowSpeedGovernorGearGainSet(void)
     }
   }
   else {
-    low_speed_governor_user_gain_state = 0;
+    low_speed_governor_user_gain_state = LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT;
     low_speed_governor_gear_gain_transition_timer = 0;
   }
   return;

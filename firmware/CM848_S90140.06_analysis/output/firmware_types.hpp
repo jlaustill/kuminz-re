@@ -1283,6 +1283,14 @@ typedef enum {
     J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER = 1  /* Queue 1: the retarder node's periodic broadcasts (CM550 j1939_periodic_queue1_entries 0x800a36 / CM848 0x3fd3aa; 10 entries), sent while the retarder broadcast enable bit (e2m JCRDBCEA) is set: PGN 61440 ERC1 and 65249 retarder configuration. (PR #53 round 95) */
 } J1939_PERIODIC_TRANSMIT_QUEUE;
 
+typedef enum {
+    LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT = 0,  /* e2m 10ED +6 / +8 LSUSGNST / LSFNGNST (no value labels): the default gain set (e2m 10EC, low_speed_governor_default_gain_set), selected by the gain set load for user gain state 0 (PR #53 round 97) */
+    LOW_SPEED_GOVERNOR_GAIN_STATE_AGGRESSIVE = 1,  /* The aggressive gain set (e2m 10EE +12, low_speed_governor_aggressive_gain_set), requested by the aggressive gain logic (PR #53 round 97) */
+    LOW_SPEED_GOVERNOR_GAIN_STATE_MIDDLE_GEAR = 2,  /* The middle gear gain set (e2m 10EA, low_speed_governor_middle_gear_gain_set), requested by the gear gain logic (PR #53 round 97) */
+    LOW_SPEED_GOVERNOR_GAIN_STATE_HIGH_GEAR = 3,  /* The high gear gain set (e2m 10EA, low_speed_governor_high_gear_gain_set), requested by the gear gain logic (PR #53 round 97) */
+    LOW_SPEED_GOVERNOR_GAIN_STATE_J1939 = 4  /* The J1939 (Jcomm) gain set (e2m 10EB, j1939_low_speed_governor_gain_set), selected by selectLowSpeedGovernorTsc1GainSet under a TSC1 override control mode. Values 5-9 are override states of the fuel system specific algorithm (LSOVGNST), with no members (PR #53 round 97) */
+} LOW_SPEED_GOVERNOR_GAIN_STATE;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_received_message_t j1939_received_message_t;
@@ -3435,7 +3443,7 @@ struct algorithm_enable_flags_1_t {
     uint16_t low_speed_governor_aggressive_gain_set_enable : 1;  /* bit 12: e2m LSG_Aggressive_Gain_Set_Enable (0x1000): '[LSAGGNEN] Low speed governor aggressive gain set enable.'; read by cm848_updateLowSpeedGovernorAggressiveGainLogic; set on this truck */
     uint16_t low_speed_governor_high_gear_gain_set_enable : 1;  /* bit 13: e2m LSG_High_Gear_Gain_Set_Enable (0x2000): '[LSHGGNEN] Enables the LSG gain set for when in high gears.'; read by cm848_selectLowSpeedGovernorGearGainSet; clear on this truck */
     uint16_t low_speed_governor_middle_gear_gain_set_enable : 1;  /* bit 14: e2m LSG_Mid_Gear_Gain_Set_Enable (0x4000): '[LSMGGNEN] Enable parameter for LSG gain set used when in middle gears'; read by cm848_selectLowSpeedGovernorGearGainSet; clear on this truck */
-    uint16_t low_speed_governor_tsc1_gain_set_enable : 1;  /* bit 15: e2m LSG_Jcomm_Gain_Set_Enable (0x8000): '[LSJCGNEN] Enables/Disables the LSG Jcomm PID gains'; read by cm848_selectLowSpeedGovernorTsc1GainSet; clear on this truck */
+    uint16_t low_speed_governor_tsc1_gain_set_enable : 1;  /* bit 15: e2m LSG_Jcomm_Gain_Set_Enable (0x8000): '[LSJCGNEN] Enables/Disables the LSG Jcomm PID gains'; read by selectLowSpeedGovernorTsc1GainSet; clear on this truck */
 };
 
 struct algorithm_enable_flags_2_t {
