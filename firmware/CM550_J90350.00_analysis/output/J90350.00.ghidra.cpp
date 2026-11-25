@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Wed Nov 25 11:33:28 MST 2026
+// Generated: Wed Nov 25 12:22:15 MST 2026
 
 
 //
@@ -5519,7 +5519,7 @@ void cm550_canBusTimingInit(void)
 // Function: cm550_sendCanMessage @ 0x000104e8
 //
 
-void cm550_sendCanMessage(j1939_tx_msg_t *msg)
+void cm550_sendCanMessage(j1939_transmit_message_t *msg)
 
 {
   if ((msg->header).data_length < 9) {
@@ -5539,7 +5539,7 @@ void cm550_sendCanMessage(j1939_tx_msg_t *msg)
 void cm550_sendJ1939MultiFrameWrapper(void)
 
 {
-  j1939_tx_msg_t *unaff_A2;
+  j1939_transmit_message_t *unaff_A2;
   
   sendJ1939MultiFrame(unaff_A2);
   return;
@@ -23364,7 +23364,7 @@ void cm550_diagMemoryReadResponseBuilder(byte *request_ptr,dword start_address,d
   undefined4 in_D0;
   byte bVar6;
   MEMORY_REGION_TYPE MVar7;
-  j1939_tx_msg_t *msg;
+  j1939_transmit_message_t *msg;
   undefined1 uVar8;
   ushort range_length;
   byte *destination;
@@ -23395,7 +23395,7 @@ void cm550_diagMemoryReadResponseBuilder(byte *request_ptr,dword start_address,d
   bVar6 = getJ1939MemoryServiceHeaderLength((word)CONCAT31(uVar5,uVar8));
   bVar6 = bVar6 - 1;
   msg = cm550_multiPacketBufferAllocator(range_length + bVar6 + 1);
-  if (msg == (j1939_tx_msg_t *)0x0) {
+  if (msg == (j1939_transmit_message_t *)0x0) {
     return;
   }
   puVar1 = msg->data_pointer;
@@ -23532,7 +23532,7 @@ void cm550_FUN_000226da(void)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void sendJ1939MultiFrame(j1939_tx_msg_t *msg)
+void sendJ1939MultiFrame(j1939_transmit_message_t *msg)
 
 {
   undefined1 *puVar1;
@@ -24257,7 +24257,7 @@ void vp44_messageQueueDispatcher(void)
 // Function: cm550_multiPacketBufferAllocator @ 0x00023130
 //
 
-j1939_tx_msg_t * cm550_multiPacketBufferAllocator(word data_length)
+j1939_transmit_message_t * cm550_multiPacketBufferAllocator(word data_length)
 
 {
   if (data_length < 9) {
@@ -24272,7 +24272,7 @@ j1939_tx_msg_t * cm550_multiPacketBufferAllocator(word data_length)
     j1939_transport_tx_message.status_pointer = &j1939_transport_transmit_status;
     return &j1939_transport_tx_message;
   }
-  return (j1939_tx_msg_t *)0x0;
+  return (j1939_transmit_message_t *)0x0;
 }
 
 
@@ -34723,7 +34723,7 @@ undefined4 cm550_diagnosticMultiPacketResponseBuilder(can_std_rx_desc_t *request
 {
   undefined4 in_D0;
   byte bVar2;
-  j1939_tx_msg_t *msg;
+  j1939_transmit_message_t *msg;
   undefined4 uVar1;
   char cVar3;
   byte bVar4;
@@ -34745,7 +34745,7 @@ undefined4 cm550_diagnosticMultiPacketResponseBuilder(can_std_rx_desc_t *request
   }
   msg = cm550_multiPacketBufferAllocator(data_length);
   uVar1 = 0;
-  if (msg != (j1939_tx_msg_t *)0x0) {
+  if (msg != (j1939_transmit_message_t *)0x0) {
     (msg->header).can_id = 0xef0000;
     bVar4 = *(byte *)&request->id;
     *(byte *)&(msg->header).can_id = *(byte *)&(msg->header).can_id & 0xe3;

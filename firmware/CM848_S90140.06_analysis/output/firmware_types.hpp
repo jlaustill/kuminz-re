@@ -1285,7 +1285,7 @@ typedef enum {
 
 /* ---- Structures ---- */
 
-typedef struct j1939_rx_msg_t j1939_rx_msg_t;
+typedef struct j1939_received_message_t j1939_received_message_t;
 typedef struct tsc1_payload_t tsc1_payload_t;
 typedef struct pci_diagnostic_response_t pci_diagnostic_response_t;
 typedef struct commanded_throttle_state_t commanded_throttle_state_t;
@@ -1313,7 +1313,7 @@ typedef struct charge_flow_estimate_terms_t charge_flow_estimate_terms_t;
 typedef struct engine_speed_limit_arbitration_t engine_speed_limit_arbitration_t;
 typedef struct operating_mode_governor_output_t operating_mode_governor_output_t;
 typedef struct transmission_lockup_timers_t transmission_lockup_timers_t;
-typedef struct j1939_msg_hdr_t j1939_msg_hdr_t;
+typedef struct j1939_message_header_t j1939_message_header_t;
 typedef struct sensor_channel_config_t sensor_channel_config_t;
 typedef struct sensor_channel_state_t sensor_channel_state_t;
 typedef struct cruise_governor_gain_set_t cruise_governor_gain_set_t;
@@ -1323,7 +1323,7 @@ typedef struct ema_filter_state_t ema_filter_state_t;
 typedef struct high_speed_governor_gain_set_t high_speed_governor_gain_set_t;
 typedef struct q16_fixed_point_t q16_fixed_point_t;
 typedef struct j1939_pgn_handler_entry_t j1939_pgn_handler_entry_t;
-typedef struct j1939_tx_msg_t j1939_tx_msg_t;
+typedef struct j1939_transmit_message_t j1939_transmit_message_t;
 typedef struct j1939_acknowledgement_payload_t j1939_acknowledgement_payload_t;
 typedef struct j1939_powertrain_messages_received_t j1939_powertrain_messages_received_t;
 typedef struct parameter_id_entry_t parameter_id_entry_t;
@@ -1367,7 +1367,7 @@ typedef struct boot_can_transmit_frame_t boot_can_transmit_frame_t;
 typedef struct can_ring_state_t can_ring_state_t;
 typedef struct diag_write_request_state_t diag_write_request_state_t;
 typedef struct can_slot_range_t can_slot_range_t;
-typedef struct can_rx_channel_t can_rx_channel_t;
+typedef struct can_receive_channel_t can_receive_channel_t;
 typedef struct system_initialization_flags_t system_initialization_flags_t;
 typedef struct eeprom_transfer_state_t eeprom_transfer_state_t;
 typedef struct eeprom_block_tracking_t eeprom_block_tracking_t;
@@ -1377,7 +1377,7 @@ typedef struct boot_state_t boot_state_t;
 typedef struct mios_mpiosm_t mios_mpiosm_t;
 typedef struct mios1_interrupt_registers_t mios1_interrupt_registers_t;
 typedef struct diag_clear_flags_t diag_clear_flags_t;
-typedef struct j1939_ccss_tx_payload_t j1939_ccss_tx_payload_t;
+typedef struct j1939_pgn65261_payload_t j1939_pgn65261_payload_t;
 typedef struct pci_message_descriptor_t pci_message_descriptor_t;
 typedef struct qspi_job_t qspi_job_t;
 typedef struct qspi_device_slot_t qspi_device_slot_t;
@@ -1457,7 +1457,7 @@ typedef struct discrete_output_override_t discrete_output_override_t;
 typedef struct sci_command_dispatch_entry_t sci_command_dispatch_entry_t;
 typedef struct j1939_pgn65232_payload_t j1939_pgn65232_payload_t;
 
-struct j1939_rx_msg_t {
+struct j1939_received_message_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
     uint8_t pgn_pf;  /* PDU Format - high byte of PGN (0xEF=EF00 0xDF=DF00 0x00=TSC1 etc) */
     uint8_t dest_address;  /* Destination address (PDU1) or PGN low byte (PDU2); compared against j1939_source_address to filter incoming messages */
@@ -2484,7 +2484,7 @@ struct transmission_lockup_timers_t {
     uint16_t low_range_shift_timer;  /* e2m 8C17 +24 RE_Low_Range_Shift_Timer ('Timer used to delay low range shifts'): reloaded from transmission_low_range_1_2_boost_time / _2_3_ (was timer_expired) */
 };
 
-struct j1939_msg_hdr_t {
+struct j1939_message_header_t {
     uint32_t can_id;  /* Packed J1939 29-bit CAN identifier (priority[31:29] DP[28] PGN[27:8] SA[7:0]) */
     uint16_t data_length;  /* CAN DLC - payload byte count for TX message */
 };
@@ -2553,8 +2553,8 @@ struct j1939_pgn_handler_entry_t {
     uint32_t handler_func;  /* Function pointer to PGN handler callback */
 };
 
-struct j1939_tx_msg_t {
-    j1939_msg_hdr_t header;  /* J1939 TX message header (can_id + data_length) */
+struct j1939_transmit_message_t {
+    j1939_message_header_t header;  /* J1939 TX message header (can_id + data_length) */
     void * data_pointer;  /* Pointer to the first payload byte */
     void * status_pointer;  /* Points at the message's status byte j1939_<message>_transmit_status (was data_end_pointer: the byte often sits right after the payload; PR #53 round 33): in the application mpc555_sendJ1939SingleFrame stores its result there (0 queued / 1 zero length / 4 queue full) and the transport its session codes: a broadcast (BAM) session through the per source address records at 0x3fbd74 (cm848_startJ1939TransportSession / cm848_sendJ1939BroadcastDataPacket: 0x10 announced / 0x11 sending / 5 complete / 2 already active) and a destination-specific (RTS / CTS) session through j1939_transport_transmit_session.session_status_pointer (0x12 started / 0x13 sending / 9 complete / 10 aborted / 6 clear to send timeout / 7 send failed / 8 busy); 3 = not our source address. The multi-frame builders rebuild only while its 0xf0 nibble is clear (no session in progress). In the boot kernel (whose records use this type since its twin diagnostic_response_message_t was merged in PR #53 round 64) the transport writes 0x12 while it sends and 6 on a timeout */
 };
@@ -2598,12 +2598,12 @@ struct parameter_id_entry_t {
 struct j1939_diagnostic_service_entry_t {
     J1939_DIAGNOSTIC_SERVICE service_id;  /* The PGN 61184 diagnostic service byte (the request's first data byte; typed J1939_DIAGNOSTIC_SERVICE - was EF00_SERVICE_ID in this comment; PR #53 round 63) */
     uint8_t pad;  /* Never written: the registrar stores only the service byte and the handler */
-    void * handler;  /* The service handler: called with the received j1939_rx_msg_t once cm848_validateJ1939DiagnosticRequest accepts the request */
+    void * handler;  /* The service handler: called with the received j1939_received_message_t once cm848_validateJ1939DiagnosticRequest accepts the request */
 };
 
 struct j1939_receive_handler_entry_t {
     uint16_t pgn_key;  /* The PGN's PDU format and PDU specific bytes as one word - specific 0 for a destination-specific PGN (0xef00 = PGN 61184 / 0xfef1 = PGN 65265 / 0 = TSC1) */
-    void * handler;  /* The receive handler: called with the received j1939_rx_msg_t */
+    void * handler;  /* The receive handler: called with the received j1939_received_message_t */
 };
 
 struct boot_diagnostic_service_entry_t {
@@ -3019,8 +3019,8 @@ struct boot_can_transmit_frame_t {
 struct can_ring_state_t {
     boot_can_transmit_frame_t* transmit_write_pointer;  /* Transmit ring write pointer: 12-byte frames from 0x3022e6; mpc555_canTransmitQueuePush stores a frame and advances it (was j1939_tx_write_ptr) | earlier note: J1939 TX queue write pointer (12-byte records base 0x3022E6) */
     boot_can_transmit_frame_t* transmit_read_pointer;  /* Transmit ring read pointer: mpc555_manageCan1TransmitBuffer sends the frame there and advances it (wrapping after 0x3024ba) (was j1939_tx_read_ptr) | earlier note: J1939 TX queue read pointer */
-    j1939_rx_msg_t* receive_write_pointer;  /* Receive ring write pointer: 18-byte records from 0x302016 (mpc555_processCanReceiveBuffer) (was can_rx_write_ptr) | earlier note: CAN RX queue write pointer (18-byte records base 0x302016) */
-    j1939_rx_msg_t* receive_read_pointer;  /* Receive ring read pointer (mpc555_dispatchCanMessageHandlers) (was can_rx_read_ptr) | earlier note: CAN RX queue read pointer */
+    j1939_received_message_t* receive_write_pointer;  /* Receive ring write pointer: 18-byte records from 0x302016 (mpc555_processCanReceiveBuffer) (was can_rx_write_ptr) | earlier note: CAN RX queue write pointer (18-byte records base 0x302016) */
+    j1939_received_message_t* receive_read_pointer;  /* Receive ring read pointer (mpc555_dispatchCanMessageHandlers) (was can_rx_read_ptr) | earlier note: CAN RX queue read pointer */
     uint8_t transmit_ring_full_flag;  /* 1 = the transmit ring is full: mpc555_canTransmitQueuePush sets it when its write pointer reaches the read pointer (and returns 4 while it is set); mpc555_manageCan1TransmitBuffer clears it after sending a frame (was _pad16 byte 0; PR #53 round 28) */
     uint8_t receive_ring_full_flag;  /* 1 = the receive ring is full: mpc555_processCanReceiveBuffer sets it when its write pointer reaches the read pointer; mpc555_dispatchCanMessageHandlers clears it (was _pad16 byte 1; PR #53 round 28) */
     uint16_t reserved_18;  /* No users (bytes 2-3 of the old _pad16) */
@@ -3037,7 +3037,7 @@ struct can_slot_range_t {
     uint16_t slot_end;  /* Last CAN mailbox slot for diagnostic service */
 };
 
-struct can_rx_channel_t {
+struct can_receive_channel_t {
     uint16_t channel_id;  /* J1939 source address filter for CAN receive matching */
 };
 
@@ -3105,7 +3105,7 @@ struct diag_clear_flags_t {
     uint16_t learned_output_speed_to_vehicle_speed_ratio;  /* e2m 8BB3 +0 RE_Axle_Ratio_Factor_Learned 'Ratio of transmission output shaft speed to road speed (NV ratio)' (0.0078125 per count = rpm per mph; 5141 = 40.16 in the dump; the default 8BB2 +0 output_speed_to_vehicle_speed_default_ratio = 42 on the same scale; EEPROM 0x197c) (PR #53 round 52): EEPROM-backed learned ratio = output shaft speed x 4096 / vehicle_speed (5141 = 40.2 rpm per mph) clamped 4480-6656; synthesizes the output shaft speed on sensor fault; 0x3fedfb bit 0 marks it learned (was fuel_temp_protection_ratio) */
 };
 
-struct j1939_ccss_tx_payload_t {
+struct j1939_pgn65261_payload_t {
     uint8_t max_vehicle_speed_limit;  /* SPN 74 Maximum Vehicle Speed Limit (km/h); from maximum_road_speed; gate algorithm_enable_flags_3_cal&0x80 */
     uint8_t cruise_high_set_limit_speed;  /* SPN 87 Cruise Control High Set Limit Speed (km/h); gate algorithm_enable_flags_3_cal&0x40; fed by cruise_maximum_road_speed_cal */
     uint8_t cruise_low_set_limit_speed;  /* SPN 88 Cruise Control Operator Low Set Limit Speed (km/h); from cruise_speed_low_limit */

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 12:17:31 MST 2026
+// Generated: Wed Nov 25 12:29:12 MST 2026
 
 
 //
@@ -169,7 +169,8 @@ void cm848_registerBootReflashAndNoOperationServices(void)
    cm848_eepromProgressNotify; PR #53 round 67) */
 
 void cm848_sendBootResultToJ1939Requester
-               (j1939_rx_msg_t *request,BOOT_REQUEST_CHANNEL channel,BOOT_DIAGNOSTIC_RESULT result)
+               (j1939_received_message_t *request,BOOT_REQUEST_CHANNEL channel,
+               BOOT_DIAGNOSTIC_RESULT result)
 
 {
   if ((channel != 1) && (channel == BOOT_REQUEST_CHANNEL_J1939)) {
@@ -217,7 +218,8 @@ undefined4 cm848_bootDiagnosticServiceAcknowledgeNoOperation(void)
    0x50 and 0x52 (it time-shares the application's EEPROM mirror; PR #53 round 68) (was
    mpc555_loadEepromCalibration; PR #53 round 67) */
 
-void mpc555_verifyDownloadedCalibration(j1939_rx_msg_t *request,BOOT_REQUEST_CHANNEL channel)
+void mpc555_verifyDownloadedCalibration
+               (j1939_received_message_t *request,BOOT_REQUEST_CHANNEL channel)
 
 {
   bool bVar1;
@@ -421,7 +423,8 @@ void mpc555_verifyDownloadedCalibration(j1939_rx_msg_t *request,BOOT_REQUEST_CHA
    as diagnostic service 7 via diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) -
    not a dead function */
 
-BOOT_DIAGNOSTIC_RESULT cm848_handleBootVerifyDownloadedCalibrationService(j1939_rx_msg_t *request)
+BOOT_DIAGNOSTIC_RESULT
+cm848_handleBootVerifyDownloadedCalibrationService(j1939_received_message_t *request)
 
 {
   mpc555_verifyDownloadedCalibration(request,BOOT_REQUEST_CHANNEL_J1939);
@@ -445,7 +448,7 @@ BOOT_DIAGNOSTIC_RESULT cm848_handleBootVerifyDownloadedCalibrationService(j1939_
 word mpc555_beginReflash(BOOT_REQUEST_CHANNEL channel)
 
 {
-  j1939_rx_msg_t *request;
+  j1939_received_message_t *request;
   byte bVar1;
   short sVar2;
   word wVar3;
@@ -497,7 +500,7 @@ word mpc555_beginReflash(BOOT_REQUEST_CHANNEL channel)
    diagnostic service 2 via diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) -
    not a dead function */
 
-BOOT_DIAGNOSTIC_RESULT cm848_handleBootBeginReflashService(j1939_rx_msg_t *request)
+BOOT_DIAGNOSTIC_RESULT cm848_handleBootBeginReflashService(j1939_received_message_t *request)
 
 {
   word wVar2;
@@ -1186,7 +1189,7 @@ void cm848_stubFunction2(void)
    service 25 via diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) - not a dead
    function */
 
-BOOT_DIAGNOSTIC_RESULT cm848_handleBootExecuteAtAddressService(j1939_rx_msg_t *request)
+BOOT_DIAGNOSTIC_RESULT cm848_handleBootExecuteAtAddressService(j1939_received_message_t *request)
 
 {
   boot_can_transmit_frame_t *pbVar1;
@@ -1304,7 +1307,7 @@ void cm848_registerBootMemoryWriteServices(void)
    PR #53 round 63) | earlier note: dispatched as diagnostic service 65 via
    diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) - not a dead function */
 
-undefined4 cm848_handleBootGetAddressByParameterIdService(j1939_rx_msg_t *request)
+undefined4 cm848_handleBootGetAddressByParameterIdService(j1939_received_message_t *request)
 
 {
   int iVar1;
@@ -1403,7 +1406,8 @@ void cm848_registerBootMemoryReadServices(void)
    cm848_readJ1939DiagnosticMemoryAndRespond (was cm848_diagMemoryReadHandler; PR #53 round 63) */
 
 MEMORY_REGION_TYPE
-cm848_readBootDiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,dword length)
+cm848_readBootDiagnosticMemoryAndRespond
+          (j1939_received_message_t *request,dword address,dword length)
 
 {
   ushort uVar1;
@@ -1411,7 +1415,7 @@ cm848_readBootDiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,d
   ushort uVar2;
   MEMORY_REGION_TYPE MVar3;
   char cVar4;
-  j1939_tx_msg_t *message;
+  j1939_transmit_message_t *message;
   byte *pbVar5;
   byte bVar6;
   byte bVar7;
@@ -1435,7 +1439,7 @@ cm848_readBootDiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,d
         cVar4 = cm848_getBootMemoryServiceHeaderLength(bVar6);
         bVar7 = cVar4 - 1;
         message = cm848_allocateDiagnosticResponseBuffer(bVar7 + length + 1 & 0xffff);
-        if (message == (j1939_tx_msg_t *)0x0) {
+        if (message == (j1939_transmit_message_t *)0x0) {
           MVar3 = MEMORY_REGION_TYPE_MAIN_FLASH;
         }
         else {
@@ -1486,7 +1490,7 @@ cm848_readBootDiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,d
 
 undefined1
 cm848_readBootDiagnosticMemoryByParameterId
-          (j1939_rx_msg_t *request,word parameter_id,dword offset,dword length)
+          (j1939_received_message_t *request,word parameter_id,dword offset,dword length)
 
 {
   int iVar1;
@@ -1514,7 +1518,7 @@ cm848_readBootDiagnosticMemoryByParameterId
    note: dispatched as diagnostic service 67 via diagnostic_service_dispatch_table
    (cm848_dispatchDiagnosticService) - not a dead function */
 
-undefined1 cm848_handleBootReadByParameterIdLongLengthService(j1939_rx_msg_t *request)
+undefined1 cm848_handleBootReadByParameterIdLongLengthService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -1538,7 +1542,7 @@ undefined1 cm848_handleBootReadByParameterIdLongLengthService(j1939_rx_msg_t *re
    earlier note: dispatched as diagnostic service 74 via diagnostic_service_dispatch_table
    (cm848_dispatchDiagnosticService) - not a dead function */
 
-undefined1 cm848_handleBootReadMemoryService(j1939_rx_msg_t *request)
+undefined1 cm848_handleBootReadMemoryService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -1562,7 +1566,7 @@ undefined1 cm848_handleBootReadMemoryService(j1939_rx_msg_t *request)
    | earlier note: dispatched as diagnostic service 76 via diagnostic_service_dispatch_table
    (cm848_dispatchDiagnosticService) - not a dead function */
 
-undefined1 cm848_handleBootReadMemoryLongLengthService(j1939_rx_msg_t *request)
+undefined1 cm848_handleBootReadMemoryLongLengthService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -2165,7 +2169,7 @@ void mpc555_initDiagnosticSubsystem(void)
 {
   undefined *puVar1;
   word wVar2;
-  can_rx_channel_t cVar3;
+  can_receive_channel_t cVar3;
   uint uVar4;
   int iVar5;
   byte bVar6;
@@ -2956,7 +2960,7 @@ void cm848_finishSerialReflash(void)
       mpc555_eepromReadWords(0x1000000,0x3fee0a,2);
       uVar2 = uVar2 + 1;
     }
-    mpc555_verifyDownloadedCalibration((j1939_rx_msg_t *)0x0,BOOT_REQUEST_CHANNEL_SERIAL);
+    mpc555_verifyDownloadedCalibration((j1939_received_message_t *)0x0,BOOT_REQUEST_CHANNEL_SERIAL);
   }
   else {
     cm848_diagSendResponseCode(0x40,0x7f);
@@ -3276,7 +3280,7 @@ void mpc555_canTransmitQueuePush(dword can_id,dword data_length,byte *data,byte 
 // Function: cm848_transmitCanMessage @ 0x00003f20
 //
 
-void cm848_transmitCanMessage(j1939_tx_msg_t *message)
+void cm848_transmitCanMessage(j1939_transmit_message_t *message)
 
 {
   uint data_length;
@@ -3459,14 +3463,14 @@ void cm848_fillFlashProgramPageBuffer(void)
 void cm848_completePendingDiagWrite(void)
 
 {
-  j1939_rx_msg_t *request;
+  j1939_received_message_t *request;
   
   if (reflash_transfer_state.pending_write_transport == 2) {
     serial_reflash_busy_flag = 0;
   }
   else if ((reflash_transfer_state.pending_write_transport == 1) &&
-          (request = (j1939_rx_msg_t *)diag_write_request_state.pending_request,
-          request != (j1939_rx_msg_t *)0x0)) {
+          (request = (j1939_received_message_t *)diag_write_request_state.pending_request,
+          request != (j1939_received_message_t *)0x0)) {
     cm848_sendDiagServiceResponse(request,0);
   }
   reflash_transfer_state.pending_write_transport = 0;
@@ -4103,8 +4107,8 @@ void mpc555_manageCan1TransmitBuffer(void)
 void mpc555_processCanReceiveBuffer(int param_1)
 
 {
-  j1939_rx_msg_t *pjVar1;
-  j1939_rx_msg_t *pjVar2;
+  j1939_received_message_t *pjVar1;
+  j1939_received_message_t *pjVar2;
   byte bVar3;
   word wVar4;
   word wVar5;
@@ -4173,11 +4177,11 @@ void mpc555_processCanReceiveBuffer(int param_1)
 void mpc555_dispatchCanMessageHandlers(void)
 
 {
-  j1939_rx_msg_t *pjVar1;
-  j1939_rx_msg_t *pjVar2;
+  j1939_received_message_t *pjVar1;
+  j1939_received_message_t *pjVar2;
   byte bVar3;
   word wVar4;
-  can_rx_channel_t cVar5;
+  can_receive_channel_t cVar5;
   word wVar6;
   int iVar7;
   byte *pbVar8;
@@ -4260,7 +4264,7 @@ void mpc555_dispatchCanMessageHandlers(void)
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
     */
 
-byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword length)
+byte cm848_writeBootDiagnosticMemory(j1939_received_message_t *request,dword address,dword length)
 
 {
   bool bVar1;
@@ -4391,7 +4395,7 @@ byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword
    Accuracy Confidence Medium */
 
 byte cm848_writeBootDiagnosticMemoryByParameterId
-               (j1939_rx_msg_t *request,word parameter_id,dword offset,dword length)
+               (j1939_received_message_t *request,word parameter_id,dword offset,dword length)
 
 {
   int iVar1;
@@ -4423,7 +4427,7 @@ byte cm848_writeBootDiagnosticMemoryByParameterId
    write counterpart of service 67 | review-function-readability reviewed 2026-11-11 - Readability
    Medium Accuracy Confidence Medium */
 
-undefined1 cm848_handleBootWriteByParameterIdService(j1939_rx_msg_t *request)
+undefined1 cm848_handleBootWriteByParameterIdService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -4450,7 +4454,7 @@ undefined1 cm848_handleBootWriteByParameterIdService(j1939_rx_msg_t *request)
    request = 2-byte parameter ID + 4-byte length + data | review-function-readability reviewed
    2026-11-11 - Readability Medium Accuracy Confidence Medium */
 
-undefined1 cm848_handleBootWriteByParameterIdLongLengthService(j1939_rx_msg_t *request)
+undefined1 cm848_handleBootWriteByParameterIdLongLengthService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -4477,7 +4481,7 @@ undefined1 cm848_handleBootWriteByParameterIdLongLengthService(j1939_rx_msg_t *r
    write counterpart of service 74 | review-function-readability reviewed 2026-11-11 - Readability
    Medium Accuracy Confidence Medium */
 
-byte cm848_handleBootWriteMemoryService(j1939_rx_msg_t *request)
+byte cm848_handleBootWriteMemoryService(j1939_received_message_t *request)
 
 {
   byte bVar1;
@@ -4505,7 +4509,7 @@ byte cm848_handleBootWriteMemoryService(j1939_rx_msg_t *request)
    counterpart of service 76 | review-function-readability reviewed 2026-11-11 - Readability Medium
    Accuracy Confidence Medium */
 
-byte cm848_handleBootWriteMemoryLongLengthService(j1939_rx_msg_t *request)
+byte cm848_handleBootWriteMemoryLongLengthService(j1939_received_message_t *request)
 
 {
   byte bVar1;
@@ -4556,7 +4560,7 @@ undefined1 cm848_getBootMemoryServiceHeaderLength(int param_1)
    Accuracy Confidence High */
 
 BOOT_DIAGNOSTIC_RESULT
-cm848_validateDiagnosticRequestLengthAndAuthorization(j1939_rx_msg_t *request)
+cm848_validateDiagnosticRequestLengthAndAuthorization(j1939_received_message_t *request)
 
 {
   bool bVar1;
@@ -4658,7 +4662,7 @@ LAB_00005a58:
    TP.CM 0x10 request-to-send on PGN 60416 then switches to PGN 60160 data transfer |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-void mpc555_sendJ1939TransportRequestToSend(j1939_tx_msg_t *message)
+void mpc555_sendJ1939TransportRequestToSend(j1939_transmit_message_t *message)
 
 {
   ushort *puVar1;
@@ -4789,7 +4793,7 @@ void mpc555_handleJ1939TransportClearToSend(byte request_type,byte connection_id
 void mpc555_sendJ1939TransportAbort(undefined1 param_1,undefined2 param_2)
 
 {
-  can_rx_channel_t cVar1;
+  can_receive_channel_t cVar1;
   byte *pbVar2;
   byte *pbVar3;
   byte bVar4;
@@ -4831,7 +4835,7 @@ void mpc555_sendJ1939TransportAbort(undefined1 param_1,undefined2 param_2)
 void mpc555_sendJ1939TransportEndOfMessageAcknowledge(byte destination_address,word transported_pgn)
 
 {
-  can_rx_channel_t cVar1;
+  can_receive_channel_t cVar1;
   word wVar2;
   undefined4 local_28;
   byte abStack_1a [2];
@@ -4880,7 +4884,7 @@ byte mpc555_sendJ1939TransportClearToSend
                (undefined1 param_1,undefined1 param_2,undefined1 param_3,undefined2 param_4)
 
 {
-  can_rx_channel_t cVar1;
+  can_receive_channel_t cVar1;
   undefined4 local_30;
   byte local_22 [2];
   byte local_20;
@@ -4919,7 +4923,7 @@ byte mpc555_sendJ1939TransportClearToSend
    mpc555_dispatchJ1939TransportConnectionManagement | review-function-readability reviewed
    2026-11-11 - Readability Medium Accuracy Confidence High */
 
-void mpc555_handleJ1939TransportRequestToSend(j1939_rx_msg_t *rx_msg)
+void mpc555_handleJ1939TransportRequestToSend(j1939_received_message_t *rx_msg)
 
 {
   byte bVar1;
@@ -4979,7 +4983,7 @@ void mpc555_handleJ1939TransportRequestToSend(j1939_rx_msg_t *rx_msg)
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
     */
 
-void mpc555_handleJ1939TransportDataPacket(j1939_rx_msg_t *rx_msg)
+void mpc555_handleJ1939TransportDataPacket(j1939_received_message_t *rx_msg)
 
 {
   byte destination_address;
@@ -5039,8 +5043,8 @@ void mpc555_handleJ1939TransportDataPacket(j1939_rx_msg_t *rx_msg)
           boot_j1939_transport_receive_session.receive_buffer_pointer =
                &boot_j1939_transport_receive_buffer;
           cm848_dispatchDiagnosticService
-                    ((j1939_rx_msg_t *)&boot_j1939_transport_receive_session.request_to_send_can_id)
-          ;
+                    ((j1939_received_message_t *)
+                     &boot_j1939_transport_receive_session.request_to_send_can_id);
           return;
         }
         if ((int)(((uint)bVar1 - (uint)bVar4) + 1) < 0x1a) {
@@ -5075,7 +5079,7 @@ void mpc555_handleJ1939TransportDataPacket(j1939_rx_msg_t *rx_msg)
    | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
     */
 
-void mpc555_handleJ1939TransportEndOfMessageAcknowledge(j1939_rx_msg_t *rx_msg)
+void mpc555_handleJ1939TransportEndOfMessageAcknowledge(j1939_received_message_t *rx_msg)
 
 {
   byte bVar1;
@@ -5146,7 +5150,8 @@ void mpc555_handleJ1939TransportAbort(int param_1)
    end-of-message acknowledge / 0xFF abort (was j1939DiagMessageDispatcher) |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-void mpc555_dispatchJ1939TransportConnectionManagement(j1939_rx_msg_t *rx_msg,byte service_code)
+void mpc555_dispatchJ1939TransportConnectionManagement
+               (j1939_received_message_t *rx_msg,byte service_code)
 
 {
   byte bVar1;
@@ -5333,11 +5338,11 @@ void mpc555_serviceJ1939TransportSessions(byte connection_id)
    the multi-frame transport buffer when no transport is in progress / else NULL |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-j1939_tx_msg_t * cm848_allocateDiagnosticResponseBuffer(int length)
+j1939_transmit_message_t * cm848_allocateDiagnosticResponseBuffer(int length)
 
 {
   byte bVar1;
-  j1939_tx_msg_t *pjVar2;
+  j1939_transmit_message_t *pjVar2;
   
   if (length < 9) {
     pjVar2 = &diagnostic_single_frame_response_message;
@@ -5355,7 +5360,7 @@ j1939_tx_msg_t * cm848_allocateDiagnosticResponseBuffer(int length)
       pjVar2 = &diagnostic_transport_response_message;
     }
     else {
-      pjVar2 = (j1939_tx_msg_t *)0x0;
+      pjVar2 = (j1939_transmit_message_t *)0x0;
     }
   }
   return pjVar2;
@@ -5818,7 +5823,7 @@ void cm848_runBootKernelLoop(void)
    before PR #53 round 63); the boot twin of cm848_j1939DiagnosticServiceHandler) - validates
    length/auth - calls the handler pointer (reflash memory read/write/download services) */
 
-void cm848_dispatchDiagnosticService(j1939_rx_msg_t *request)
+void cm848_dispatchDiagnosticService(j1939_received_message_t *request)
 
 {
   BOOT_DIAGNOSTIC_RESULT BVar1;
@@ -6205,11 +6210,11 @@ undefined4 cm848_validateBootSecurityKey(undefined4 scrambled_token)
    bytes | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence
    High */
 
-void cm848_sendDiagServiceResponse(j1939_rx_msg_t *request,dword result_code)
+void cm848_sendDiagServiceResponse(j1939_received_message_t *request,dword result_code)
 
 {
   byte bVar1;
-  j1939_tx_msg_t *message;
+  j1939_transmit_message_t *message;
   int iVar2;
   byte *pbVar3;
   byte bVar4;
@@ -6229,7 +6234,7 @@ void cm848_sendDiagServiceResponse(j1939_rx_msg_t *request,dword result_code)
   iVar2 = (uint)bVar1 + iVar2;
 LAB_000074f8:
   message = cm848_allocateDiagnosticResponseBuffer(iVar2);
-  if (message != (j1939_tx_msg_t *)0x0) {
+  if (message != (j1939_transmit_message_t *)0x0) {
     (message->header).can_id = 0xefff00;
     *(byte *)&(message->header).can_id =
          (request->priority_dp_flags >> 2 & 7) << 2 | *(byte *)&(message->header).can_id & 0xe3;
@@ -6276,7 +6281,7 @@ LAB_000074f8:
 /* Boot reflash kernel: stores the wait time and sends a 0x0E response-pending for the request |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-void cm848_sendDiagResponsePending(j1939_rx_msg_t *param_1,word param_2)
+void cm848_sendDiagResponsePending(j1939_received_message_t *param_1,word param_2)
 
 {
   boot_state_machine.boot_param = param_2;
@@ -22888,7 +22893,7 @@ void cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling(void)
    speed limit, otherwise j1939_derated_fueling_at_point_5 with r4 = 0. It receives no J1939
    message. (was cm848_processJ1939RxMessage) */
 
-void cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling(j1939_rx_msg_t *rx_msg)
+void cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling(j1939_received_message_t *rx_msg)
 
 {
   int in_r4;
@@ -23010,11 +23015,11 @@ void cm848_updateJ1939EngineConfigurationTorqueCurve(void)
     cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling();
     if ((int)uVar1 < (int)(uint)j1939_low_power_point_5_intersection_engine_speed) {
       cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling
-                ((j1939_rx_msg_t *)(uint)j1939_derated_fueling_at_point_4);
+                ((j1939_received_message_t *)(uint)j1939_derated_fueling_at_point_4);
     }
     else {
       cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling
-                ((j1939_rx_msg_t *)(uint)j1939_derated_fueling_at_point_5);
+                ((j1939_received_message_t *)(uint)j1939_derated_fueling_at_point_5);
     }
     j1939_torque_curve_speed_at_point_3 = j1939_engine_speed_at_point_3;
     j1939_torque_curve_fueling_at_point_3 = j1939_derated_fueling_at_point_3;
@@ -23056,11 +23061,11 @@ LAB_0002105c:
     cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling();
     if ((int)uVar1 < (int)(uint)j1939_low_power_point_5_intersection_engine_speed) {
       cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling
-                ((j1939_rx_msg_t *)(uint)j1939_derated_fueling_at_point_4);
+                ((j1939_received_message_t *)(uint)j1939_derated_fueling_at_point_4);
     }
     else {
       cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling
-                ((j1939_rx_msg_t *)(uint)j1939_derated_fueling_at_point_5);
+                ((j1939_received_message_t *)(uint)j1939_derated_fueling_at_point_5);
     }
 LAB_000210c8:
     j1939_torque_curve_fueling_at_point_4 = j1939_derated_fueling_at_point_4;
@@ -23425,7 +23430,7 @@ J1939_DIAGNOSTIC_RESULT commandEngineShutdown(void)
    mpc555_processJ1939RxQueue | (was cm848_restartThroughBootRom; PR #53 round 87; the twin of CM550
    0x1192a: one shared name) */
 
-undefined4 restartThroughBootRom(j1939_rx_msg_t *param_1,int param_2)
+undefined4 restartThroughBootRom(j1939_received_message_t *param_1,int param_2)
 
 {
   char cVar1;
@@ -23504,7 +23509,7 @@ undefined1 cm848_restartThroughBootRomAfterSciRequest(void)
    ROM and acknowledge with a J1939 response frame. Was cm848_j1939ProcessRxQueueParam | (was
    cm848_handleJ1939RestartService; PR #53 round 87; the twin of CM550 0x11908: one shared name) */
 
-undefined1 handleJ1939RestartService(j1939_rx_msg_t *request)
+undefined1 handleJ1939RestartService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -23898,7 +23903,7 @@ void cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings(void)
    message into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named)
    | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Low */
 
-void cm848_receivePgn56576AntiTheftRequestMessage(j1939_rx_msg_t *message)
+void cm848_receivePgn56576AntiTheftRequestMessage(j1939_received_message_t *message)
 
 {
   byte bVar1;
@@ -23986,7 +23991,7 @@ bool registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *ha
    j1939_diagnostic_service_table (0x3fa8b2) and is also fed by transport reassembly - registered by
    cm848_initJ1939DiagnosticServiceHandler */
 
-void cm848_j1939DiagnosticServiceHandler(j1939_rx_msg_t *rx_msg)
+void cm848_j1939DiagnosticServiceHandler(j1939_received_message_t *rx_msg)
 
 {
   J1939_DIAGNOSTIC_RESULT JVar1;
@@ -24163,7 +24168,7 @@ void cm848_clearJ1939Dm13StoppedNetworkBits(int param_1)
    and zeroes the hold timer and fault log inhibit (was cm848_processGovernorControlMessage) |
    review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
 
-void cm848_processJ1939Dm13StopStartBroadcast(j1939_rx_msg_t *message)
+void cm848_processJ1939Dm13StopStartBroadcast(j1939_received_message_t *message)
 
 {
   byte bVar1;
@@ -24284,7 +24289,7 @@ void cm848_processJ1939Dm13StopStartBroadcast(j1939_rx_msg_t *message)
    j1939_pgn_dispatch_table (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call
    but reached only through the table */
 
-void cm848_j1939HandlePgn65228Dm3ClearInactiveFaults(j1939_rx_msg_t *param_1)
+void cm848_j1939HandlePgn65228Dm3ClearInactiveFaults(j1939_received_message_t *param_1)
 
 {
   J1939_ACK_TYPE JVar1;
@@ -24349,7 +24354,7 @@ void cm848_initPgn65228Dm3Handler(void)
    cm848_registerJ1939Dm7Handler (was cm848_j1939HandleDm1RequestMessage) | registration-table-sweep
    reviewed 2026-11-13 */
 
-void cm848_j1939HandlePgn58112Dm7(j1939_rx_msg_t *request_msg)
+void cm848_j1939HandlePgn58112Dm7(j1939_received_message_t *request_msg)
 
 {
   j1939_dm7_test_identifier = *request_msg->data_pointer;
@@ -24393,7 +24398,7 @@ void cm848_registerJ1939Dm7Handler(void)
    (cm848_dispatchJ1939ReceivedMessages) - registered by cm848_initJ1939Pgn61442Etc1Handler - greps
    as 1 call but reached only through the table */
 
-void cm848_j1939ProcessPgn61442Etc1(j1939_rx_msg_t *rx_msg)
+void cm848_j1939ProcessPgn61442Etc1(j1939_received_message_t *rx_msg)
 
 {
   if ((rx_msg->source_address != j1939_transmission_source_address) &&
@@ -24531,7 +24536,7 @@ void cm848_initJ1939Pgn61442Etc1Handler(void)
    transmission_park_or_neutral_flag (was part of cm848_initJ1939Pgn61442Etc1Handler) |
    review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
 
-void cm848_j1939ProcessPgn61445Etc2(j1939_rx_msg_t *message)
+void cm848_j1939ProcessPgn61445Etc2(j1939_received_message_t *message)
 
 {
   if (((message->source_address == j1939_transmission_source_address) ||
@@ -24596,7 +24601,7 @@ void cm848_initEtc2Handler(void)
    mode 3 = speed / torque limit control; each loads its request timeout from the sender's entry.
    CM550's 0x2f128 is the same handler (was torqueControlModeHandler) */
 
-void processEngineTsc1Request(j1939_rx_msg_t *msg)
+void processEngineTsc1Request(j1939_received_message_t *msg)
 
 {
   word result;
@@ -24779,7 +24784,7 @@ bool cm848_j1939RegisterPgnHandler(dword pgn,void *handler_func)
 
 /* jlaustill reviewed 2026-5-25 - mostly readable, hopefully accurate */
 
-void cm848_j1939DispatchPgnHandler(j1939_rx_msg_t *msg)
+void cm848_j1939DispatchPgnHandler(j1939_received_message_t *msg)
 
 {
   byte search_idx;
@@ -24852,7 +24857,7 @@ void cm848_initJ1939ProtocolHandlers(void)
    sets feature-enable and ascii-detect flags gated by algorithm_enable_flags_29_cal - registered by
    cm848_initJ1939ProprietaryHandler */
 
-void cm848_j1939HandlePgn56832Reset(j1939_rx_msg_t *message)
+void cm848_j1939HandlePgn56832Reset(j1939_received_message_t *message)
 
 {
   if (algorithm_enable_flags_29_cal.trip_reset_enable != 0) {
@@ -25039,7 +25044,7 @@ LAB_000235d0:
    arbitrates; override control mode 0 clears the request (was cm848_j1939ProcessGovernorRequest).
     */
 
-void cm848_processEngineRetarderTsc1Request(j1939_rx_msg_t *msg)
+void cm848_processEngineRetarderTsc1Request(j1939_received_message_t *msg)
 
 {
   byte bVar1;
@@ -25226,7 +25231,7 @@ void cm848_initializeEngineRetarderTsc1RequestState(void)
    cm848_processEngineRetarderTsc1Request by ECM source address - registered under key 0 by
    cm848_initJ1939AddressDispatcher */
 
-void cm848_dispatchTsc1ByDestinationAddress(j1939_rx_msg_t *msg)
+void cm848_dispatchTsc1ByDestinationAddress(j1939_received_message_t *msg)
 
 {
   ushort uVar1;
@@ -25316,7 +25321,8 @@ void cm848_initializePgn56320AntiTheftStatusBuffer(void)
 // Function: cm848_sendJ1939AcknowledgeMessage @ 0x00023d3c
 //
 
-void cm848_sendJ1939AcknowledgeMessage(j1939_rx_msg_t *request_msg,J1939_ACK_TYPE ack_type)
+void cm848_sendJ1939AcknowledgeMessage
+               (j1939_received_message_t *request_msg,J1939_ACK_TYPE ack_type)
 
 {
   j1939_pgn59392_tx_message.header.can_id =
@@ -25339,7 +25345,7 @@ void cm848_sendJ1939AcknowledgeMessage(j1939_rx_msg_t *request_msg,J1939_ACK_TYP
 /* Sends the J1939 acknowledgement (PGN 59392, header 0xe8ff00) with the negative acknowledgement
    control byte (was cm848_sendJ1939NegativeAck) */
 
-void cm848_sendJ1939NegativeAcknowledgement(j1939_rx_msg_t *msg,J1939_ACK_TYPE ack_type)
+void cm848_sendJ1939NegativeAcknowledgement(j1939_received_message_t *msg,J1939_ACK_TYPE ack_type)
 
 {
   byte *pbVar1;
@@ -25763,30 +25769,30 @@ void j1939HandlePgn65261CruiseControlSetup(void)
 {
   if ((algorithm_enable_flags_3_cal.road_speed_governor_enable == 0) ||
      (&DAT_00009e00 < (undefined *)(uint)maximum_road_speed)) {
-    j1939_ccss_tx_payload_t_003fab0a.max_vehicle_speed_limit = 0xff;
+    j1939_pgn65261_payload.max_vehicle_speed_limit = 0xff;
   }
   else {
-    j1939_ccss_tx_payload_t_003fab0a.max_vehicle_speed_limit =
+    j1939_pgn65261_payload.max_vehicle_speed_limit =
          (byte)((uint)((int)(uint)maximum_road_speed * 0xa1) / 100 >> 8);
   }
   if (algorithm_enable_flags_3_cal.cruise_control_enable == 0) {
-    j1939_ccss_tx_payload_t_003fab0a.cruise_high_set_limit_speed = 0xff;
+    j1939_pgn65261_payload.cruise_high_set_limit_speed = 0xff;
   }
   else {
     if (cruise_maximum_road_speed_cal < 0x9e01) {
-      j1939_ccss_tx_payload_t_003fab0a.cruise_high_set_limit_speed =
+      j1939_pgn65261_payload.cruise_high_set_limit_speed =
            (byte)(((uint)cruise_maximum_road_speed_cal * 0xa1) / 100 >> 8);
     }
     else {
-      j1939_ccss_tx_payload_t_003fab0a.cruise_high_set_limit_speed = 0xff;
+      j1939_pgn65261_payload.cruise_high_set_limit_speed = 0xff;
     }
     if (cruise_speed_low_limit < 0x9e01) {
-      j1939_ccss_tx_payload_t_003fab0a.cruise_low_set_limit_speed =
+      j1939_pgn65261_payload.cruise_low_set_limit_speed =
            (byte)(((uint)cruise_speed_low_limit * 0xa1) / 100 >> 8);
       goto LAB_000247e0;
     }
   }
-  j1939_ccss_tx_payload_t_003fab0a.cruise_low_set_limit_speed = 0xff;
+  j1939_pgn65261_payload.cruise_low_set_limit_speed = 0xff;
 LAB_000247e0:
   cm848_sendJ1939Message(&j1939_pgn65261_tx_message);
   return;
@@ -25804,16 +25810,15 @@ void initPgn65261CruiseControlSetupStruct(void)
   j1939_pgn65261_tx_message.header.can_id =
        CONCAT13(((byte)j1939_cruise_control_vehicle_speed_priority_cal & 7) << 2,0xfeed00);
   j1939_pgn65261_tx_message.header.data_length = 8;
-  j1939_pgn65261_tx_message.data_pointer = &j1939_ccss_tx_payload_t_003fab0a.max_vehicle_speed_limit
-  ;
+  j1939_pgn65261_tx_message.data_pointer = &j1939_pgn65261_payload.max_vehicle_speed_limit;
   j1939_pgn65261_tx_message.status_pointer = &j1939_pgn65261_transmit_status;
   j1939_pgn65261_tx_message.header.can_id =
        CONCAT31(j1939_pgn65261_tx_message.header.can_id._0_3_,(char)j1939_source_address);
-  j1939_ccss_tx_payload_t_003fab0a.reserved3 = 0xff;
-  j1939_ccss_tx_payload_t_003fab0a.reserved4 = 0xff;
-  j1939_ccss_tx_payload_t_003fab0a.reserved5 = 0xff;
-  j1939_ccss_tx_payload_t_003fab0a.reserved6 = 0xff;
-  j1939_ccss_tx_payload_t_003fab0a.reserved7 = 0xff;
+  j1939_pgn65261_payload.reserved3 = 0xff;
+  j1939_pgn65261_payload.reserved4 = 0xff;
+  j1939_pgn65261_payload.reserved5 = 0xff;
+  j1939_pgn65261_payload.reserved6 = 0xff;
+  j1939_pgn65261_payload.reserved7 = 0xff;
   return;
 }
 
@@ -25891,11 +25896,11 @@ void cm848_initPgn65259ComponentIdHandler(void)
 // Function: cm848_sendJ1939ResponseFrame @ 0x000249c4
 //
 
-void cm848_sendJ1939ResponseFrame(j1939_rx_msg_t *request,dword result_code)
+void cm848_sendJ1939ResponseFrame(j1939_received_message_t *request,dword result_code)
 
 {
   byte bVar1;
-  j1939_tx_msg_t *msg;
+  j1939_transmit_message_t *msg;
   int iVar2;
   byte *pbVar3;
   byte bVar4;
@@ -25915,7 +25920,7 @@ void cm848_sendJ1939ResponseFrame(j1939_rx_msg_t *request,dword result_code)
   iVar2 = (uint)bVar1 + iVar2;
 LAB_00024a1c:
   msg = cm848_selectJ1939TransmitBuffer(iVar2);
-  if (msg != (j1939_tx_msg_t *)0x0) {
+  if (msg != (j1939_transmit_message_t *)0x0) {
     (msg->header).can_id = 0xef0000;
     *(byte *)&(msg->header).can_id =
          (request->priority_dp_flags >> 2 & 7) << 2 | *(byte *)&(msg->header).can_id & 0xe3;
@@ -25957,7 +25962,7 @@ LAB_00024a1c:
 // Function: cm848_sendJ1939ExtendedResponse @ 0x00024afc
 //
 
-void cm848_sendJ1939ExtendedResponse(j1939_rx_msg_t *param_1,word param_2)
+void cm848_sendJ1939ExtendedResponse(j1939_received_message_t *param_1,word param_2)
 
 {
   j1939_response_param_working = param_2;
@@ -58673,7 +58678,7 @@ void mpc555_sendJ1939SingleFrame(dword can_id,word data_length,byte *data,byte *
 /* jlaustill reviewed 2026-5-26 - reads nicely, hopefully accurate (was sendJ1939Message; PR #53
    round 65) */
 
-void cm848_sendJ1939Message(j1939_tx_msg_t *msg)
+void cm848_sendJ1939Message(j1939_transmit_message_t *msg)
 
 {
   word data_length;
@@ -66011,7 +66016,7 @@ void cm848_sendDataCollectorBuffer(void)
 
 {
   undefined *puVar1;
-  j1939_tx_msg_t *msg;
+  j1939_transmit_message_t *msg;
   undefined1 *puVar2;
   undefined *puVar3;
   uint uVar4;
@@ -66039,7 +66044,7 @@ void cm848_sendDataCollectorBuffer(void)
     }
     msg = cm848_selectJ1939TransmitBuffer((uint)puVar3 & 0xffff);
     puVar1 = data_collector_start_address;
-    if (msg != (j1939_tx_msg_t *)0x0) {
+    if (msg != (j1939_transmit_message_t *)0x0) {
       (msg->header).can_id = 0xffff00;
       *(byte *)&(msg->header).can_id = *(byte *)&(msg->header).can_id & 0xe3 | 0x18;
       *(char *)((int)&(msg->header).can_id + 3) = (char)j1939_source_address;
@@ -69172,7 +69177,7 @@ undefined4 cm848_j1939DiagnosticServiceAcknowledgeNoOperation(void)
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
     */
 
-undefined4 cm848_updateJ1939BroadcastEnableMask(j1939_rx_msg_t *request,dword enable)
+undefined4 cm848_updateJ1939BroadcastEnableMask(j1939_received_message_t *request,dword enable)
 
 {
   byte bVar1;
@@ -69240,7 +69245,7 @@ undefined4 cm848_updateJ1939BroadcastEnableMask(j1939_rx_msg_t *request,dword en
    registerJ1939DiagnosticService: service 4 - cm848_updateJ1939BroadcastEnableMask with enable 0 |
    review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
 
-undefined1 cm848_handleJ1939DisableBroadcastService(j1939_rx_msg_t *request)
+undefined1 cm848_handleJ1939DisableBroadcastService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -69262,7 +69267,7 @@ undefined1 cm848_handleJ1939DisableBroadcastService(j1939_rx_msg_t *request)
    registerJ1939DiagnosticService: service 5 - cm848_updateJ1939BroadcastEnableMask with enable 1 |
    review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
 
-undefined1 cm848_handleJ1939EnableBroadcastService(j1939_rx_msg_t *request)
+undefined1 cm848_handleJ1939EnableBroadcastService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -70174,7 +70179,7 @@ void endRetarderShiftAssistAboveFuelDemandLimit(void)
    mirror / RAM (type 3) with the 0x3fd480 window protected | review-function-readability reviewed
    2026-11-11 - Readability Medium Accuracy Confidence High */
 
-byte writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dword length)
+byte writeJ1939DiagnosticMemory(j1939_received_message_t *request,byte *address,dword length)
 
 {
   bool bVar1;
@@ -70269,7 +70274,7 @@ byte writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dword leng
    shared name (was cm848_writeJ1939DiagnosticMemoryByParameterId; PR #53 round 94) */
 
 byte writeJ1939DiagnosticMemoryByParameterId
-               (j1939_rx_msg_t *request,undefined4 parameter_id,dword offset,dword length)
+               (j1939_received_message_t *request,undefined4 parameter_id,dword offset,dword length)
 
 {
   char cVar1;
@@ -70301,7 +70306,7 @@ byte writeJ1939DiagnosticMemoryByParameterId
    Readability Low Accuracy Confidence High | the twin of CM550 0x0002167e: one shared name (was
    cm848_handleJ1939WriteByParameterIdService; PR #53 round 94) */
 
-undefined1 handleJ1939WriteByParameterIdService(j1939_rx_msg_t *request)
+undefined1 handleJ1939WriteByParameterIdService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -70329,7 +70334,7 @@ undefined1 handleJ1939WriteByParameterIdService(j1939_rx_msg_t *request)
    Readability Low Accuracy Confidence High | the twin of CM550 0x000216c6: one shared name (was
    cm848_handleJ1939WriteByParameterIdLongLengthService; PR #53 round 94) */
 
-undefined1 handleJ1939WriteByParameterIdLongLengthService(j1939_rx_msg_t *request)
+undefined1 handleJ1939WriteByParameterIdLongLengthService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -70356,7 +70361,7 @@ undefined1 handleJ1939WriteByParameterIdLongLengthService(j1939_rx_msg_t *reques
    reviewed 2026-11-12 - Readability Low Accuracy Confidence Low | the twin of CM550 0x00021714: one
    shared name (was cm848_handleJ1939WriteByParameterIdShortOffsetService; PR #53 round 94) */
 
-undefined1 handleJ1939WriteByParameterIdShortOffsetService(j1939_rx_msg_t *request)
+undefined1 handleJ1939WriteByParameterIdShortOffsetService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -70386,7 +70391,7 @@ undefined1 handleJ1939WriteByParameterIdShortOffsetService(j1939_rx_msg_t *reque
    Readability Low Accuracy Confidence Medium | the twin of CM550 0x00021778: one shared name (was
    cm848_handleJ1939WriteByParameterIdLongOffsetService; PR #53 round 94) */
 
-undefined1 handleJ1939WriteByParameterIdLongOffsetService(j1939_rx_msg_t *request)
+undefined1 handleJ1939WriteByParameterIdLongOffsetService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -70415,7 +70420,7 @@ undefined1 handleJ1939WriteByParameterIdLongOffsetService(j1939_rx_msg_t *reques
    (writeJ1939DiagnosticMemory) | review-function-readability reviewed 2026-11-12 - Readability Low
    Accuracy Confidence High */
 
-byte handleJ1939WriteMemoryService(j1939_rx_msg_t *request)
+byte handleJ1939WriteMemoryService(j1939_received_message_t *request)
 
 {
   byte bVar1;
@@ -70443,7 +70448,7 @@ byte handleJ1939WriteMemoryService(j1939_rx_msg_t *request)
    with a long length | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
    Confidence High */
 
-byte handleJ1939WriteMemoryLongLengthService(j1939_rx_msg_t *request)
+byte handleJ1939WriteMemoryLongLengthService(j1939_received_message_t *request)
 
 {
   byte bVar1;
@@ -70612,7 +70617,7 @@ byte getJ1939MemoryServiceHeaderLength(int param_1)
    header and validateSecurityKey must accept it. Returns 0xff = accepted / 2 = wrong length / 0x1a
    = key missing / 3 = key refused (was j1939_diagServiceDispatch; PR #53 round 61) */
 
-J1939_DIAGNOSTIC_RESULT cm848_validateJ1939DiagnosticRequest(j1939_rx_msg_t *rx_msg)
+J1939_DIAGNOSTIC_RESULT cm848_validateJ1939DiagnosticRequest(j1939_received_message_t *rx_msg)
 
 {
   byte bVar1;
@@ -70669,7 +70674,7 @@ J1939_DIAGNOSTIC_RESULT cm848_validateJ1939DiagnosticRequest(j1939_rx_msg_t *rx_
    | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Low | the
    twin of CM550 0x21a5c: one shared name (was cm848_receivePgn57344CabMessage1; PR #53 round 91) */
 
-void receivePgn57344CabMessage1(j1939_rx_msg_t *message)
+void receivePgn57344CabMessage1(j1939_received_message_t *message)
 
 {
   if ((j1939_input_source_address_filter_cal[0] == j1939_received_source_address) ||
@@ -70695,7 +70700,7 @@ void receivePgn57344CabMessage1(j1939_rx_msg_t *message)
    the twin of CM550 0x21a8c: one shared name (was
    cm848_receivePgn61441ElectronicBrakeController1Message; PR #53 round 91) */
 
-void receivePgn61441ElectronicBrakeController1Message(j1939_rx_msg_t *message)
+void receivePgn61441ElectronicBrakeController1Message(j1939_received_message_t *message)
 
 {
   if ((j1939_input_source_address_filter_cal[1] == j1939_received_source_address) ||
@@ -70741,7 +70746,7 @@ void receivePgn61441ElectronicBrakeController1Message(j1939_rx_msg_t *message)
    the twin of CM550 0x21b88: one shared name (was
    cm848_receivePgn61443ElectronicEngineController2Message; PR #53 round 91) */
 
-void receivePgn61443ElectronicEngineController2Message(j1939_rx_msg_t *message)
+void receivePgn61443ElectronicEngineController2Message(j1939_received_message_t *message)
 
 {
   if ((j1939_input_source_address_filter_cal[6] == j1939_received_source_address) ||
@@ -70783,7 +70788,7 @@ void receivePgn61443ElectronicEngineController2Message(j1939_rx_msg_t *message)
    twin of CM550 0x21c3c: one shared name (was cm848_receivePgn65252ShutdownMessage; PR #53 round
    91) */
 
-void receivePgn65252ShutdownMessage(j1939_rx_msg_t *message)
+void receivePgn65252ShutdownMessage(j1939_received_message_t *message)
 
 {
   if ((j1939_input_source_address_filter_cal[10] == j1939_received_source_address) ||
@@ -70809,7 +70814,7 @@ void receivePgn65252ShutdownMessage(j1939_rx_msg_t *message)
    Low Accuracy Confidence Medium | the twin of CM550 0x21c74: one shared name (was
    cm848_receivePgn65264PowerTakeoffInformationMessage; PR #53 round 91) */
 
-void receivePgn65264PowerTakeoffInformationMessage(j1939_rx_msg_t *message)
+void receivePgn65264PowerTakeoffInformationMessage(j1939_received_message_t *message)
 
 {
   if ((j1939_input_source_address_filter_cal[0xb] == j1939_received_source_address) ||
@@ -70850,7 +70855,7 @@ void receivePgn65264PowerTakeoffInformationMessage(j1939_rx_msg_t *message)
    Medium | the twin of CM550 0x21d44: one shared name (was
    cm848_receivePgn65265CruiseControlVehicleSpeedMessage; PR #53 round 91) */
 
-void receivePgn65265CruiseControlVehicleSpeedMessage(j1939_rx_msg_t *message)
+void receivePgn65265CruiseControlVehicleSpeedMessage(j1939_received_message_t *message)
 
 {
   if ((j1939_input_source_address_filter_cal[0xf] == j1939_received_source_address) ||
@@ -71258,7 +71263,7 @@ LAB_0050c2f4:
    resolves a parameter ID (cm848_lookupParameterIdAddress) to an address |
    review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
 
-undefined4 cm848_handleJ1939GetAddressByParameterIdService(j1939_rx_msg_t *request)
+undefined4 cm848_handleJ1939GetAddressByParameterIdService(j1939_received_message_t *request)
 
 {
   char cVar2;
@@ -71340,7 +71345,8 @@ void cm848_registerJ1939GetAddressByParameterIdService(void)
    reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
 MEMORY_REGION_TYPE
-cm848_readJ1939DiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,dword length)
+cm848_readJ1939DiagnosticMemoryAndRespond
+          (j1939_received_message_t *request,dword address,dword length)
 
 {
   ushort uVar1;
@@ -71348,7 +71354,7 @@ cm848_readJ1939DiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,
   ushort uVar2;
   MEMORY_REGION_TYPE MVar3;
   char cVar4;
-  j1939_tx_msg_t *msg;
+  j1939_transmit_message_t *msg;
   byte *pbVar5;
   byte bVar6;
   byte bVar7;
@@ -71372,7 +71378,7 @@ cm848_readJ1939DiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,
         cVar4 = getJ1939MemoryServiceHeaderLength(bVar6);
         bVar7 = cVar4 - 1;
         msg = cm848_selectJ1939TransmitBuffer(bVar7 + length + 1 & 0xffff);
-        if (msg == (j1939_tx_msg_t *)0x0) {
+        if (msg == (j1939_transmit_message_t *)0x0) {
           MVar3 = MEMORY_REGION_TYPE_MAIN_FLASH;
         }
         else {
@@ -71422,7 +71428,7 @@ cm848_readJ1939DiagnosticMemoryAndRespond(j1939_rx_msg_t *request,dword address,
 
 undefined1
 cm848_readJ1939DiagnosticMemoryByParameterId
-          (j1939_rx_msg_t *request,undefined4 parameter_id,dword offset,dword length)
+          (j1939_received_message_t *request,undefined4 parameter_id,dword offset,dword length)
 
 {
   char cVar1;
@@ -71453,7 +71459,7 @@ cm848_readJ1939DiagnosticMemoryByParameterId
    parameter ID (cm848_readJ1939DiagnosticMemoryByParameterId) | review-function-readability
    reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
 
-undefined1 cm848_handleJ1939ReadByParameterIdLongLengthService(j1939_rx_msg_t *request)
+undefined1 cm848_handleJ1939ReadByParameterIdLongLengthService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -71479,7 +71485,7 @@ undefined1 cm848_handleJ1939ReadByParameterIdLongLengthService(j1939_rx_msg_t *r
    registerJ1939DiagnosticService: service 0x46 | review-function-readability reviewed 2026-11-12 -
    Readability Low Accuracy Confidence Low */
 
-undefined1 cm848_handleJ1939ReadByParameterIdShortOffsetService(j1939_rx_msg_t *request)
+undefined1 cm848_handleJ1939ReadByParameterIdShortOffsetService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -71508,7 +71514,7 @@ undefined1 cm848_handleJ1939ReadByParameterIdShortOffsetService(j1939_rx_msg_t *
    parameter ID | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
    Confidence Medium */
 
-undefined1 cm848_handleJ1939ReadByParameterIdLongOffsetService(j1939_rx_msg_t *request)
+undefined1 cm848_handleJ1939ReadByParameterIdLongOffsetService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -71537,7 +71543,7 @@ undefined1 cm848_handleJ1939ReadByParameterIdLongOffsetService(j1939_rx_msg_t *r
    (cm848_readJ1939DiagnosticMemoryAndRespond) | review-function-readability reviewed 2026-11-12 -
    Readability Low Accuracy Confidence High */
 
-undefined1 cm848_handleJ1939ReadMemoryService(j1939_rx_msg_t *request)
+undefined1 cm848_handleJ1939ReadMemoryService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -71563,7 +71569,7 @@ undefined1 cm848_handleJ1939ReadMemoryService(j1939_rx_msg_t *request)
    registerJ1939DiagnosticService: service 0x4C - read by address with a long length |
    review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
 
-undefined1 cm848_handleJ1939ReadMemoryLongLengthService(j1939_rx_msg_t *request)
+undefined1 cm848_handleJ1939ReadMemoryLongLengthService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -71618,7 +71624,7 @@ void cm848_registerJ1939MemoryReadServices(void)
    broadcast session (j1939_broadcast_transmit_session_t) (was initiateJ1939TransportProtocol; PR
    #53 round 65) */
 
-void cm848_startJ1939TransportSession(j1939_tx_msg_t *msg)
+void cm848_startJ1939TransportSession(j1939_transmit_message_t *msg)
 
 {
   ushort *puVar1;
@@ -71759,7 +71765,7 @@ void cm848_startJ1939TransportSession(j1939_tx_msg_t *msg)
    (timer 55) else sets the window | review-function-readability reviewed 2026-11-11 - Readability
    Medium Accuracy Confidence High (was j1939_transport_handleClearToSend; PR #53 round 65) */
 
-void cm848_handleJ1939TransportClearToSend(j1939_rx_msg_t *message)
+void cm848_handleJ1939TransportClearToSend(j1939_received_message_t *message)
 
 {
   byte bVar1;
@@ -71940,7 +71946,7 @@ byte cm848_sendJ1939TransportClearToSend
    (timer 112); otherwise aborts | review-function-readability reviewed 2026-11-11 - Readability
    Medium Accuracy Confidence High (was j1939_transport_handleRequestToSend; PR #53 round 65) */
 
-void cm848_handleJ1939TransportRequestToSend(j1939_rx_msg_t *message)
+void cm848_handleJ1939TransportRequestToSend(j1939_received_message_t *message)
 
 {
   byte bVar1;
@@ -71995,7 +72001,7 @@ void cm848_handleJ1939TransportRequestToSend(j1939_rx_msg_t *message)
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
    (was j1939_transport_handleDataPacket; PR #53 round 65) */
 
-void cm848_handleJ1939TransportDataPacket(j1939_rx_msg_t *message)
+void cm848_handleJ1939TransportDataPacket(j1939_received_message_t *message)
 
 {
   byte bVar1;
@@ -72047,7 +72053,8 @@ void cm848_handleJ1939TransportDataPacket(j1939_rx_msg_t *message)
         j1939_transport_receive_session.active = 0;
         j1939_transport_receive_session.receive_buffer_pointer = &j1939_transport_receive_buffer;
         cm848_j1939DiagnosticServiceHandler
-                  ((j1939_rx_msg_t *)&j1939_transport_receive_session.request_to_send_can_id);
+                  ((j1939_received_message_t *)
+                   &j1939_transport_receive_session.request_to_send_can_id);
         return;
       }
       if ((int)(((uint)j1939_transport_receive_session.total_packet_count -
@@ -72083,7 +72090,7 @@ void cm848_handleJ1939TransportDataPacket(j1939_rx_msg_t *message)
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
    (was j1939_transport_handleEndOfMessageAcknowledge; PR #53 round 65) */
 
-void cm848_handleJ1939TransportEndOfMessageAcknowledge(j1939_rx_msg_t *message)
+void cm848_handleJ1939TransportEndOfMessageAcknowledge(j1939_received_message_t *message)
 
 {
   word local_8;
@@ -72109,7 +72116,7 @@ void cm848_handleJ1939TransportEndOfMessageAcknowledge(j1939_rx_msg_t *message)
    receive session | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy
    Confidence High (was j1939_transport_handleAbort; PR #53 round 65) */
 
-void cm848_handleJ1939TransportAbort(j1939_rx_msg_t *message)
+void cm848_handleJ1939TransportAbort(j1939_received_message_t *message)
 
 {
   word local_8;
@@ -72140,7 +72147,7 @@ void cm848_handleJ1939TransportAbort(j1939_rx_msg_t *message)
    reviewed 2026-11-11 - Readability Medium Accuracy Confidence High (was
    j1939_transport_dispatchConnectionManagement; PR #53 round 65) */
 
-void cm848_dispatchJ1939TransportConnectionManagement(j1939_rx_msg_t *message)
+void cm848_dispatchJ1939TransportConnectionManagement(j1939_received_message_t *message)
 
 {
   byte bVar1;
@@ -72405,17 +72412,18 @@ void cm848_serviceJ1939TransportSessions(void)
 // Function: cm848_selectJ1939TransmitBuffer @ 0x0050d688
 //
 
-/* Picks a transmit record (j1939_tx_msg_t) for a message of the given length: up to 8 bytes the
-   single-frame record at 0x3fcbc4 (data at 0x3fcbd3 / status byte at 0x3fcbd2) - else the transport
-   record at 0x3fc4ad (data at 0x3fc4bc / status byte at 0x3fc4bb) when that status byte's high
-   nibble is 0 - else 0. It sets the record's data length / data pointer / status pointer. Used by
-   the PGN 61184 replies (cm848_sendJ1939ResponseFrame / cm848_readJ1939DiagnosticMemoryAndRespond)
-   and cm848_sendDataCollectorBuffer (was j1939_selectResponseBuffer; PR #53 round 63) */
+/* Picks a transmit record (j1939_transmit_message_t) for a message of the given length: up to 8
+   bytes the single-frame record at 0x3fcbc4 (data at 0x3fcbd3 / status byte at 0x3fcbd2) - else the
+   transport record at 0x3fc4ad (data at 0x3fc4bc / status byte at 0x3fc4bb) when that status byte's
+   high nibble is 0 - else 0. It sets the record's data length / data pointer / status pointer. Used
+   by the PGN 61184 replies (cm848_sendJ1939ResponseFrame /
+   cm848_readJ1939DiagnosticMemoryAndRespond) and cm848_sendDataCollectorBuffer (was
+   j1939_selectResponseBuffer; PR #53 round 63) */
 
-j1939_tx_msg_t * cm848_selectJ1939TransmitBuffer(int length)
+j1939_transmit_message_t * cm848_selectJ1939TransmitBuffer(int length)
 
 {
-  j1939_tx_msg_t *pjVar1;
+  j1939_transmit_message_t *pjVar1;
   
   if (length < 9) {
     pjVar1 = &j1939_single_frame_tx_message;
@@ -72430,7 +72438,7 @@ j1939_tx_msg_t * cm848_selectJ1939TransmitBuffer(int length)
     j1939_transport_tx_message.header.data_length = (word)length;
   }
   else {
-    pjVar1 = (j1939_tx_msg_t *)0x0;
+    pjVar1 = (j1939_transmit_message_t *)0x0;
   }
   return pjVar1;
 }

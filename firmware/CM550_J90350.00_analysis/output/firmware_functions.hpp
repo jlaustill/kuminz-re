@@ -92,7 +92,7 @@ uint cm550_bufferDecreasingPatternCheck(void);  // @ 0x0001011c
 uint cm550_bufferThresholdValidator(void);  // @ 0x000101b8
 word cm550_detectEngineSpeedSensorSyncPulse(word backup_sensor_flag);  // @ 0x0001025c
 void cm550_canBusTimingInit(void);  // @ 0x00010394
-void cm550_sendCanMessage(j1939_tx_msg_t *msg);  // @ 0x000104e8
+void cm550_sendCanMessage(j1939_transmit_message_t *msg);  // @ 0x000104e8
 void cm550_sendJ1939MultiFrameWrapper(void);  // @ 0x00010512
 short cm550_arrayRangeSum(word *start_ptr,word *end_ptr);  // @ 0x00010520
 void cm550_memoryPatchCountDecrement(void);  // @ 0x00010536
@@ -431,7 +431,7 @@ void cm550_FUN_000225e0(int param_1);  // @ 0x000225e0
 void cm550_FUN_00022646(byte *param_1);  // @ 0x00022646
 void cm550_FUN_0002268e(byte *param_1);  // @ 0x0002268e
 void cm550_FUN_000226da(void);  // @ 0x000226da
-void sendJ1939MultiFrame(j1939_tx_msg_t *msg);  // @ 0x00022726
+void sendJ1939MultiFrame(j1939_transmit_message_t *msg);  // @ 0x00022726
 void cm550_diagnosticParamRequestHandler(can_std_rx_desc_t *rx_msg);  // @ 0x00022956
 void cm550_messageErrorHandler(byte destination_address,word pgn);  // @ 0x000229ea
 void vp44CanFrameBuilder(byte destination_address,word pgn);  // @ 0x00022a58
@@ -449,7 +449,7 @@ void cm550_unknownMessageHandler(uint param_1);  // @ 0x00022ece
 void cm550_diagnosticMessageProcessor(void);  // @ 0x00022fae
 void vp44ResponseTimeoutHandler(void);  // @ 0x000230d6
 void vp44_messageQueueDispatcher(void);  // @ 0x000230ee
-j1939_tx_msg_t * cm550_multiPacketBufferAllocator(word data_length);  // @ 0x00023130
+j1939_transmit_message_t * cm550_multiPacketBufferAllocator(word data_length);  // @ 0x00023130
 void vp44DiagnosticBufferPointersInit(void);  // @ 0x00023186
 void cm550_resetEngineTsc1Request(void);  // @ 0x000231da
 void resetEngineRetarderTsc1Request(void);  // @ 0x00023216

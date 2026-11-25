@@ -10,11 +10,11 @@ struct_name,address,field_name,type,size,comment,dependency,Status
 # -----------------------------------------------------------------------------
 
 # J1939 Message Header
-j1939_msg_hdr_t,,can_id,dword,4,The CAN identifier: priority / PGN / source address (was j1939_header_t.id; CM848's type name; PR #53 round 88),,verified
-j1939_msg_hdr_t,,data_length,word,2,The payload length in bytes: above 8 goes out as a transport session (was j1939_header_t.length; PR #53 round 88),,verified
-j1939_tx_msg_t,,header,j1939_msg_hdr_t,6,The CAN identifier and the payload length,j1939_msg_hdr_t,verified
-j1939_tx_msg_t,,data_pointer,pointer,4,Points at the first payload byte,,verified
-j1939_tx_msg_t,,status_pointer,pointer,4,Points at the message's status byte j1939_<message>_transmit_status: the send result or the transport session code (CM848's layout; PR #53 round 88),,verified
+j1939_message_header_t,,can_id,dword,4,The CAN identifier: priority / PGN / source address (was j1939_header_t.id; CM848's type name; PR #53 round 88),,verified
+j1939_message_header_t,,data_length,word,2,The payload length in bytes: above 8 goes out as a transport session (was j1939_header_t.length; PR #53 round 88),,verified
+j1939_transmit_message_t,,header,j1939_message_header_t,6,The CAN identifier and the payload length,j1939_message_header_t,verified
+j1939_transmit_message_t,,data_pointer,pointer,4,Points at the first payload byte,,verified
+j1939_transmit_message_t,,status_pointer,pointer,4,Points at the message's status byte j1939_<message>_transmit_status: the send result or the transport session code (CM848's layout; PR #53 round 88),,verified
 engine_overspeed_event_t,,start_key_on_hour_meter,dword,4,key_on_hour_meter when the overspeed began,,verified
 engine_overspeed_event_t,,engine_speed_at_detection,word,2,engine_rpm_primary on the pass the overspeed latch set,,verified
 engine_overspeed_event_t,,duration,word,2,The passes the overspeed lasted (PR #53 round 88),,verified
@@ -141,7 +141,7 @@ cummins_data_plate_t,0x010002C0,ecm_serial_number,dword,4,ECM serial number (T03
 
 # J1939 TX Message Buffer @ RAM 0x803036 (J90350.00 verified)
 j1939_tx_msg_buffer_t,0x00803036,data,byte,8,J1939 message payload data array,,verified
-j1939_tx_msg_buffer_t,0x00803036,header,j1939_msg_hdr_t,6,CAN message header (ID + length),j1939_msg_hdr_t,verified
+j1939_tx_msg_buffer_t,0x00803036,header,j1939_message_header_t,6,CAN message header (ID + length),j1939_message_header_t,verified
 
 # J1939/VP44 Dual Protocol Message (generic - addresses vary by usage)
 j1939_vp44_msg_t,,j1939_status_byte,byte,1,J1939 transmission message status/header byte,,verified

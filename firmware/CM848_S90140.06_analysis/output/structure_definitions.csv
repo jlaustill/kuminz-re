@@ -4,15 +4,15 @@ struct_name,address,field_name,type,size,comment,dependency,Status
 # Passed as param_1 to all J1939 RX handlers (processEngineTsc1Request, cm848_j1939DispatchPgnHandler, etc.)
 # Ring buffer: 39 slots x 18 bytes, base 0x302016, wraps at 0x3022d4
 # data_ptr always points to this struct's own inline_data field (self-referential)
-j1939_rx_msg_t,0x00302016,priority_dp_flags,byte,1,J1939 priority/reserved/data-page bits packed from upper CAN ID,,needs_review
-j1939_rx_msg_t,0x00302016,pgn_pf,byte,1,PDU Format - high byte of PGN (0xEF=EF00 0xDF=DF00 0x00=TSC1 etc),,verified
-j1939_rx_msg_t,0x00302016,dest_address,byte,1,Destination address (PDU1) or PGN low byte (PDU2); compared against j1939_source_address to filter incoming messages,,verified
-j1939_rx_msg_t,0x00302016,source_address,byte,1,J1939 source address of sending node,,verified
-j1939_rx_msg_t,0x00302016,data_length,word,2,CAN DLC - payload byte count (handlers expect 8 for TSC1/ETC1),,verified
-j1939_rx_msg_t,0x00302016,data_pointer,byte*,4,Pointer to inline_data below (always this+10 per processCanReceiveBuffer),,verified
-j1939_rx_msg_t,0x00302016,inline_data,byte,8,CAN payload bytes copied directly from TouCAN mailbox data registers,,verified
+j1939_received_message_t,0x00302016,priority_dp_flags,byte,1,J1939 priority/reserved/data-page bits packed from upper CAN ID,,needs_review
+j1939_received_message_t,0x00302016,pgn_pf,byte,1,PDU Format - high byte of PGN (0xEF=EF00 0xDF=DF00 0x00=TSC1 etc),,verified
+j1939_received_message_t,0x00302016,dest_address,byte,1,Destination address (PDU1) or PGN low byte (PDU2); compared against j1939_source_address to filter incoming messages,,verified
+j1939_received_message_t,0x00302016,source_address,byte,1,J1939 source address of sending node,,verified
+j1939_received_message_t,0x00302016,data_length,word,2,CAN DLC - payload byte count (handlers expect 8 for TSC1/ETC1),,verified
+j1939_received_message_t,0x00302016,data_pointer,byte*,4,Pointer to inline_data below (always this+10 per processCanReceiveBuffer),,verified
+j1939_received_message_t,0x00302016,inline_data,byte,8,CAN payload bytes copied directly from TouCAN mailbox data registers,,verified
 # TSC1 (Torque/Speed Control 1, PGN 0) payload - SAE J1939-71
-# Pointed to by j1939_rx_msg_t.data_pointer; also lives inline at j1939_rx_msg_t+10
+# Pointed to by j1939_received_message_t.data_pointer; also lives inline at j1939_received_message_t+10
 # Total size: 8 bytes
 tsc1_payload_t,0x00302020,control_byte,byte,1,Override control mode (bits 0-1) priority (bits 4-5) tx_rate (bits 6-7),,verified
 tsc1_payload_t,0x00302020,requested_speed,word,2,Requested speed/speed limit - little-endian 0.125 rpm/bit,,verified
@@ -1038,14 +1038,14 @@ transmission_lockup_timers_t,0x0040b11c,low_range_shift_timer,word,2,e2m 8C17 +2
 
 # J1939 TX Message Header - first 6 bytes of all outgoing J1939 TX message descriptors
 # Used as the parameter type for cm848_transmitCanMessage / mpc555_sendJ1939TransportRequestToSend
-# Note: RX ring buffer (j1939_rx_msg_t) stores the same 6 bytes but decoded as 4 individual
+# Note: RX ring buffer (j1939_received_message_t) stores the same 6 bytes but decoded as 4 individual
 #       address bytes; TX buffers pack the CAN ID as a single dword via stw.
 # Layout: [priority+DP (byte)] [PF (byte)] [PS/dest (byte)] [SA (byte)]
 # Note: can_id uses dword (matches stw). The sth at +2 (PS/SA overlay) produces ._2_2_ in decompiler —
 #       this is Ghidra's best representation; union approach tested but decompiler mixes members at byte
 #       granularity and produces MORE sub-ranges, not fewer.
-j1939_msg_hdr_t,,can_id,dword,4,Packed J1939 29-bit CAN identifier (priority[31:29] DP[28] PGN[27:8] SA[7:0]),,verified
-j1939_msg_hdr_t,,data_length,word,2,CAN DLC - payload byte count for TX message,,verified
+j1939_message_header_t,,can_id,dword,4,Packed J1939 29-bit CAN identifier (priority[31:29] DP[28] PGN[27:8] SA[7:0]),,verified
+j1939_message_header_t,,data_length,word,2,CAN DLC - payload byte count for TX message,,verified
 
 # Table Interpolation Arguments - generic lookup table input structure
 # Note: CM848 passes these as function parameters, not a structure pointer
@@ -1107,15 +1107,15 @@ j1939_pgn_handler_entry_t,0x003fa9a2,pgn_byte_0,byte,1,Second PGN byte for match
 j1939_pgn_handler_entry_t,0x003fa9a2,handler_func,dword,4,Function pointer to PGN handler callback,,verified
 
 # J1939 transmit descriptor. It began as the ACK message's 22-byte struct (header + two pointers + the 8-byte
-# payload), split 2026-11-18 into j1939_tx_msg_t and j1939_ack_payload. Its third pointer was read as a data end
+# payload), split 2026-11-18 into j1939_transmit_message_t and j1939_ack_payload. Its third pointer was read as a data end
 # pointer because the ACK status byte sits right after the payload (0x3faaaa + 8 = 0x3faab2): it is the status
 # pointer (PR #53 round 33)
-# j1939_tx_msg_t: one J1939 transmit descriptor (14 bytes), the argument of cm848_sendJ1939Message - type-only template since 2026-11-18;
-# every descriptor is a global row typed with it (j1939_pgn59392_tx_message at 0x3faa9c, j1939_pgn<N>_tx_message, ...). header is j1939_msg_hdr_t (the boot kernel's records use it too - cm848_transmitCanMessage and mpc555_sendJ1939TransportRequestToSend take it - since its twin diagnostic_response_message_t was merged in PR #53 round 64)
-j1939_tx_msg_t,,header,j1939_msg_hdr_t,6,J1939 TX message header (can_id + data_length),,verified
-j1939_tx_msg_t,,data_pointer,pointer,4,Pointer to the first payload byte,,verified
-j1939_tx_msg_t,,status_pointer,pointer,4,Points at the message's status byte j1939_<message>_transmit_status (was data_end_pointer: the byte often sits right after the payload; PR #53 round 33): in the application mpc555_sendJ1939SingleFrame stores its result there (0 queued / 1 zero length / 4 queue full) and the transport its session codes: a broadcast (BAM) session through the per source address records at 0x3fbd74 (cm848_startJ1939TransportSession / cm848_sendJ1939BroadcastDataPacket: 0x10 announced / 0x11 sending / 5 complete / 2 already active) and a destination-specific (RTS / CTS) session through j1939_transport_transmit_session.session_status_pointer (0x12 started / 0x13 sending / 9 complete / 10 aborted / 6 clear to send timeout / 7 send failed / 8 busy); 3 = not our source address. The multi-frame builders rebuild only while its 0xf0 nibble is clear (no session in progress). In the boot kernel (whose records use this type since its twin diagnostic_response_message_t was merged in PR #53 round 64) the transport writes 0x12 while it sends and 6 on a timeout,,verified
-# j1939_acknowledgement_payload_t: the J1939-21 ACKM payload (PGN 59392) - j1939_ack_payload at 0x3faaaa (was the tail of j1939_tx_msg_t)
+# j1939_transmit_message_t: one J1939 transmit descriptor (14 bytes), the argument of cm848_sendJ1939Message - type-only template since 2026-11-18;
+# every descriptor is a global row typed with it (j1939_pgn59392_tx_message at 0x3faa9c, j1939_pgn<N>_tx_message, ...). header is j1939_message_header_t (the boot kernel's records use it too - cm848_transmitCanMessage and mpc555_sendJ1939TransportRequestToSend take it - since its twin diagnostic_response_message_t was merged in PR #53 round 64)
+j1939_transmit_message_t,,header,j1939_message_header_t,6,J1939 TX message header (can_id + data_length),,verified
+j1939_transmit_message_t,,data_pointer,pointer,4,Pointer to the first payload byte,,verified
+j1939_transmit_message_t,,status_pointer,pointer,4,Points at the message's status byte j1939_<message>_transmit_status (was data_end_pointer: the byte often sits right after the payload; PR #53 round 33): in the application mpc555_sendJ1939SingleFrame stores its result there (0 queued / 1 zero length / 4 queue full) and the transport its session codes: a broadcast (BAM) session through the per source address records at 0x3fbd74 (cm848_startJ1939TransportSession / cm848_sendJ1939BroadcastDataPacket: 0x10 announced / 0x11 sending / 5 complete / 2 already active) and a destination-specific (RTS / CTS) session through j1939_transport_transmit_session.session_status_pointer (0x12 started / 0x13 sending / 9 complete / 10 aborted / 6 clear to send timeout / 7 send failed / 8 busy); 3 = not our source address. The multi-frame builders rebuild only while its 0xf0 nibble is clear (no session in progress). In the boot kernel (whose records use this type since its twin diagnostic_response_message_t was merged in PR #53 round 64) the transport writes 0x12 while it sends and 6 on a timeout,,verified
+# j1939_acknowledgement_payload_t: the J1939-21 ACKM payload (PGN 59392) - j1939_ack_payload at 0x3faaaa (was the tail of j1939_transmit_message_t)
 j1939_acknowledgement_payload_t,,control_byte,J1939_ACK_TYPE,1,J1939-21 ACKM control byte (ACK/NACK/ACCESS_DENIED/CANNOT_RESPOND),,verified
 j1939_acknowledgement_payload_t,,group_function,byte,1,Group function value (0xFF = not defined per J1939-21),,verified
 j1939_acknowledgement_payload_t,,reserved_byte2,byte,1,Reserved byte 2 (always 0xFF per J1939-21),,verified
@@ -1159,10 +1159,10 @@ parameter_id_entry_t,,address,dword,4,"The resolved address: EEPROM 0x01000000 +
 # J1939 diagnostic service entry (6 bytes): j1939_diagnostic_service_table (RAM 0x3fa8b2 - 32 slots) - registerJ1939DiagnosticService appends {service - handler} and cm848_j1939DiagnosticServiceHandler scans it for a PGN 61184 request's service byte (was ef00_dispatch_entry_t; PR #53 round 61)
 j1939_diagnostic_service_entry_t,,service_id,J1939_DIAGNOSTIC_SERVICE,1,The PGN 61184 diagnostic service byte (the request's first data byte; typed J1939_DIAGNOSTIC_SERVICE - was EF00_SERVICE_ID in this comment; PR #53 round 63),,verified
 j1939_diagnostic_service_entry_t,,pad,byte,1,Never written: the registrar stores only the service byte and the handler,,verified
-j1939_diagnostic_service_entry_t,,handler,pointer,4,The service handler: called with the received j1939_rx_msg_t once cm848_validateJ1939DiagnosticRequest accepts the request,,verified
+j1939_diagnostic_service_entry_t,,handler,pointer,4,The service handler: called with the received j1939_received_message_t once cm848_validateJ1939DiagnosticRequest accepts the request,,verified
 # J1939 receive handler entry (6 bytes): j1939_receive_handler_table (RAM 0x3fd414 - 17 slots) - registerJ1939ReceiveHandler appends {PGN key - handler} and cm848_dispatchJ1939ReceivedMessages calls the handler whose key matches a received frame (PR #53 round 65)
 j1939_receive_handler_entry_t,,pgn_key,word,2,The PGN's PDU format and PDU specific bytes as one word - specific 0 for a destination-specific PGN (0xef00 = PGN 61184 / 0xfef1 = PGN 65265 / 0 = TSC1),,verified
-j1939_receive_handler_entry_t,,handler,pointer,4,The receive handler: called with the received j1939_rx_msg_t,,verified
+j1939_receive_handler_entry_t,,handler,pointer,4,The receive handler: called with the received j1939_received_message_t,,verified
 
 # Boot kernel diagnostic service entry (5 bytes - packed): diagnostic_service_dispatch_table (RAM 0x3fdb30) - cm848_registerDiagnosticService appends {service - handler} (14 entries - capacity 20) and cm848_dispatchDiagnosticService scans them; 2 entries are typed because the application's EEPROM mirror words share the RAM from 0x3fdb3a (was diag_dispatch_entry_t; PR #53 round 61)
 boot_diagnostic_service_entry_t,,service_id,BOOT_DIAGNOSTIC_SERVICE,1,The boot diagnostic service byte: the kernel's constant-ID cm848_registerDiagnosticService calls register 0x0b / 0x10 / 0x18 (acknowledge - no operation) / 0x19 (execute function) / 0x41 (service 65) / 0x43 / 0x4a / 0x4c (memory reads),,verified
@@ -1668,13 +1668,13 @@ boot_can_transmit_frame_t,,data,byte,8,The payload - 0xff past its length,,verif
 # =============================================================================
 # CAN transmit/receive ring buffer pointers @ 0x3024c6
 # boot_can_transmit_ring: 40 boot_can_transmit_frame_t at 0x3022e6 (round 70)
-# boot_can_receive_ring: 40 j1939_rx_msg_t at 0x302016 (round 70)
+# boot_can_receive_ring: 40 j1939_received_message_t at 0x302016 (round 70)
 # transmit_message_buffer_pointer: active TouCAN mailbox base for current diagnostic session
 # =============================================================================
 can_ring_state_t,0x003024c6,transmit_write_pointer,boot_can_transmit_frame_t*,4,Transmit ring write pointer: 12-byte frames from 0x3022e6; mpc555_canTransmitQueuePush stores a frame and advances it (was j1939_tx_write_ptr) | earlier note: J1939 TX queue write pointer (12-byte records base 0x3022E6),,verified
 can_ring_state_t,0x003024c6,transmit_read_pointer,boot_can_transmit_frame_t*,4,Transmit ring read pointer: mpc555_manageCan1TransmitBuffer sends the frame there and advances it (wrapping after 0x3024ba) (was j1939_tx_read_ptr) | earlier note: J1939 TX queue read pointer,,verified
-can_ring_state_t,0x003024c6,receive_write_pointer,j1939_rx_msg_t*,4,Receive ring write pointer: 18-byte records from 0x302016 (mpc555_processCanReceiveBuffer) (was can_rx_write_ptr) | earlier note: CAN RX queue write pointer (18-byte records base 0x302016),,verified
-can_ring_state_t,0x003024c6,receive_read_pointer,j1939_rx_msg_t*,4,Receive ring read pointer (mpc555_dispatchCanMessageHandlers) (was can_rx_read_ptr) | earlier note: CAN RX queue read pointer,,verified
+can_ring_state_t,0x003024c6,receive_write_pointer,j1939_received_message_t*,4,Receive ring write pointer: 18-byte records from 0x302016 (mpc555_processCanReceiveBuffer) (was can_rx_write_ptr) | earlier note: CAN RX queue write pointer (18-byte records base 0x302016),,verified
+can_ring_state_t,0x003024c6,receive_read_pointer,j1939_received_message_t*,4,Receive ring read pointer (mpc555_dispatchCanMessageHandlers) (was can_rx_read_ptr) | earlier note: CAN RX queue read pointer,,verified
 can_ring_state_t,0x003024c6,transmit_ring_full_flag,byte,1,1 = the transmit ring is full: mpc555_canTransmitQueuePush sets it when its write pointer reaches the read pointer (and returns 4 while it is set); mpc555_manageCan1TransmitBuffer clears it after sending a frame (was _pad16 byte 0; PR #53 round 28),,verified
 can_ring_state_t,0x003024c6,receive_ring_full_flag,byte,1,1 = the receive ring is full: mpc555_processCanReceiveBuffer sets it when its write pointer reaches the read pointer; mpc555_dispatchCanMessageHandlers clears it (was _pad16 byte 1; PR #53 round 28),,verified
 can_ring_state_t,0x003024c6,reserved_18,word,2,No users (bytes 2-3 of the old _pad16),,verified
@@ -1697,7 +1697,7 @@ can_slot_range_t,0x00302510,slot_end,word,2,Last CAN mailbox slot for diagnostic
 # CAN receive channel ID filter @ 0x30251c
 # J1939 source address filter used in mpc555_processCanReceiveBuffer
 # =============================================================================
-can_rx_channel_t,0x0030251c,channel_id,word,2,J1939 source address filter for CAN receive matching,,verified
+can_receive_channel_t,0x0030251c,channel_id,word,2,J1939 source address filter for CAN receive matching,,verified
 # =============================================================================
 # System initialization sentinel @ 0x302736
 # Written in mpc555_systemInitialization: sentinel=0xBBBB counter=0
@@ -1769,7 +1769,7 @@ j1939_transport_transmit_session_t,0x003fbdc7,,,,the application transport's ins
 # data_count: number of QADC data items requested
 # rx_buf_ptr: pointer to CAN RX data assembly buffer (initialized to 0x303075)
 # =============================================================================
-# diagnostic_response_message_t - the boot kernel's twin of j1939_tx_msg_t field for field - was merged into j1939_tx_msg_t in PR #53 round 64 with the old diagnostic buffer A / B notes about its two records (diagnostic_single_frame_response_message at 0x303056 and diagnostic_transport_response_message at 0x303047)
+# diagnostic_response_message_t - the boot kernel's twin of j1939_transmit_message_t field for field - was merged into j1939_transmit_message_t in PR #53 round 64 with the old diagnostic buffer A / B notes about its two records (diagnostic_single_frame_response_message at 0x303056 and diagnostic_transport_response_message at 0x303047)
 # =============================================================================
 # Boot state machine phase counter @ 0x3034A0
 # mpc555_bootStateMachine cycles phase 0->1->2->3->0 per PISCR interrupt
@@ -1824,14 +1824,14 @@ diag_clear_flags_t,0x003fedfc,learned_output_speed_to_vehicle_speed_ratio,word,2
 # J1939 PGN 65261 (CCSS - Cruise Control/Vehicle Speed Setup) TX payload - 8 bytes at 0x3fab0a
 # Populated by j1939HandlePgn65261CruiseControlSetup; values scaled to km/h via *0xa1/100>>8; 0xff = not available
 # Byte->SPN map from the j1939 PGN/SPN database (PGN 65261 spns 74/87/88)
-j1939_ccss_tx_payload_t,0x003fab0a,max_vehicle_speed_limit,byte,1,SPN 74 Maximum Vehicle Speed Limit (km/h); from maximum_road_speed; gate algorithm_enable_flags_3_cal&0x80,,verified
-j1939_ccss_tx_payload_t,0x003fab0a,cruise_high_set_limit_speed,byte,1,SPN 87 Cruise Control High Set Limit Speed (km/h); gate algorithm_enable_flags_3_cal&0x40; fed by cruise_maximum_road_speed_cal,,verified
-j1939_ccss_tx_payload_t,0x003fab0a,cruise_low_set_limit_speed,byte,1,SPN 88 Cruise Control Operator Low Set Limit Speed (km/h); from cruise_speed_low_limit,,verified
-j1939_ccss_tx_payload_t,0x003fab0a,reserved3,byte,1,reserved - init 0xff (not available),,verified
-j1939_ccss_tx_payload_t,0x003fab0a,reserved4,byte,1,reserved - init 0xff (not available),,verified
-j1939_ccss_tx_payload_t,0x003fab0a,reserved5,byte,1,reserved - init 0xff (not available),,verified
-j1939_ccss_tx_payload_t,0x003fab0a,reserved6,byte,1,reserved - init 0xff (not available),,verified
-j1939_ccss_tx_payload_t,0x003fab0a,reserved7,byte,1,reserved - init 0xff (not available),,verified
+j1939_pgn65261_payload_t,0x003fab0a,max_vehicle_speed_limit,byte,1,SPN 74 Maximum Vehicle Speed Limit (km/h); from maximum_road_speed; gate algorithm_enable_flags_3_cal&0x80,,verified
+j1939_pgn65261_payload_t,0x003fab0a,cruise_high_set_limit_speed,byte,1,SPN 87 Cruise Control High Set Limit Speed (km/h); gate algorithm_enable_flags_3_cal&0x40; fed by cruise_maximum_road_speed_cal,,verified
+j1939_pgn65261_payload_t,0x003fab0a,cruise_low_set_limit_speed,byte,1,SPN 88 Cruise Control Operator Low Set Limit Speed (km/h); from cruise_speed_low_limit,,verified
+j1939_pgn65261_payload_t,0x003fab0a,reserved3,byte,1,reserved - init 0xff (not available),,verified
+j1939_pgn65261_payload_t,0x003fab0a,reserved4,byte,1,reserved - init 0xff (not available),,verified
+j1939_pgn65261_payload_t,0x003fab0a,reserved5,byte,1,reserved - init 0xff (not available),,verified
+j1939_pgn65261_payload_t,0x003fab0a,reserved6,byte,1,reserved - init 0xff (not available),,verified
+j1939_pgn65261_payload_t,0x003fab0a,reserved7,byte,1,reserved - init 0xff (not available),,verified
 # --- pci_message_descriptor_t: CM848 J1850 VPW (Chrysler PCI) message descriptor - 28 bytes ---
 # Two contiguous ROM tables: RX at 0x5774b (15 entries) then TX at 0x578ef (25 entries); counts at 0x57bab / 0x57bad
 # Evidence: headers 68 6A / 48 6B = SAE J1850 OBD-II request (RX) / response (TX); 0x10 / 0xC0 / D1 03 / F0 xx VIN match mydb PCI broadcasts; RX has 0x37 (48RE shift lever)

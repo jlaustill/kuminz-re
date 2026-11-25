@@ -1132,8 +1132,8 @@ typedef enum {
 
 /* ---- Structures ---- */
 
-typedef struct j1939_msg_hdr_t j1939_msg_hdr_t;
-typedef struct j1939_tx_msg_t j1939_tx_msg_t;
+typedef struct j1939_message_header_t j1939_message_header_t;
+typedef struct j1939_transmit_message_t j1939_transmit_message_t;
 typedef struct engine_overspeed_event_t engine_overspeed_event_t;
 typedef struct j1939_diagnostic_service_entry_t j1939_diagnostic_service_entry_t;
 typedef struct can_std_rx_desc_t can_std_rx_desc_t;
@@ -1212,13 +1212,13 @@ typedef struct table_lookup_1d_arguments_t table_lookup_1d_arguments_t;
 typedef struct cm550_j1939_powertrain_messages_received_t cm550_j1939_powertrain_messages_received_t;
 typedef struct trending_sample_record_t trending_sample_record_t;
 
-struct j1939_msg_hdr_t {
+struct j1939_message_header_t {
     uint32_t can_id;  /* The CAN identifier: priority / PGN / source address (was j1939_header_t.id; CM848's type name; PR #53 round 88) */
     uint16_t data_length;  /* The payload length in bytes: above 8 goes out as a transport session (was j1939_header_t.length; PR #53 round 88) */
 };
 
-struct j1939_tx_msg_t {
-    j1939_msg_hdr_t header;  /* The CAN identifier and the payload length */
+struct j1939_transmit_message_t {
+    j1939_message_header_t header;  /* The CAN identifier and the payload length */
     void * data_pointer;  /* Points at the first payload byte */
     void * status_pointer;  /* Points at the message's status byte j1939_<message>_transmit_status: the send result or the transport session code (CM848's layout; PR #53 round 88) */
 };
@@ -1346,7 +1346,7 @@ struct cummins_data_plate_t {
 
 struct j1939_tx_msg_buffer_t {
     uint8_t data[8];  /* J1939 message payload data array */
-    j1939_msg_hdr_t header;  /* CAN message header (ID + length) */
+    j1939_message_header_t header;  /* CAN message header (ID + length) */
 };
 
 struct j1939_vp44_msg_t {

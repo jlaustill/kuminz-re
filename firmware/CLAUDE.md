@@ -661,12 +661,12 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   - PR #53 round 33 added one more: the CI (PGN 65259) payload `j1939_pgn65259_payload` covers the 3 boot calls to
     the RAM copy of `mpc555_can2TransmitInterruptHandler` at 0x3fab3c. The build log now reads 18 thunks / 14 call
     overrides.
-  - **J1939 transmit descriptors:** every one is now a 14-byte `j1939_tx_msg_t` instance (`header.can_id` /
+  - **J1939 transmit descriptors:** every one is now a 14-byte `j1939_transmit_message_t` instance (`header.can_id` /
     `header.data_length` / `data_pointer` / `status_pointer`): `j1939_pgn<N>_tx_message`, `j1939_dm1_tx_message`, and
     so on (30 of them).
   - The ACK message is `j1939_pgn59392_tx_message` (was `j1939_ackm_msg`; PR #53 round 33) and its payload is `j1939_ack_payload` (`j1939_acknowledgement_payload_t`).
   - `status_pointer` (was `data_end_pointer`; PR #53 round 33) points at the message's status byte
-    `j1939_<message>_transmit_status`: the send result or the transport session code (`j1939_tx_msg_t` lists
+    `j1939_<message>_transmit_status`: the send result or the transport session code (`j1939_transmit_message_t` lists
     the codes). The multi-frame builders (EC1, DM1, DM2, DM4, RC) rebuild their payload only while its 0xf0
     nibble is clear.
   - `cm848_sendJ1939Message(&j1939_pgn65262_tx_message)` now carries no cast (it carried one at 30 call sites).
