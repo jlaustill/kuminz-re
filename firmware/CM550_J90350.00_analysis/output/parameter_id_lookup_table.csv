@@ -96,7 +96,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4174,0x104E,393484,0x0006010C,ROM,,AFFLLMXA
 4175,0x104F,393528,0x00060138,ROM,,AFFLLMZA
 4176,0x1050,8445650,0x0080DED2,RAM,fuel_demand_selected,FSDSFL
-4177,0x1051,8442670,0x0080D32E,RAM,current_fuel_demand,FSFNFL
+4177,0x1051,8442670,0x0080D32E,RAM,final_fueling,FSFNFL
 4178,0x1052,8421380,0x00808004,RAM,peak_fueling_calibration_value,FSMXFL
 4179,0x1053,8442686,0x0080D33E,RAM,,5DFL
 4180,0x1054,395418,0x0006089A,ROM,,5DFL01YA
@@ -157,7 +157,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4239,0x108F,8420600,0x00807CF8,RAM,enable_flag_that_indicates_presence_of_an_ambient_air_press_true_false,AAPRSNST
 4240,0x1090,8432284,0x0080AA9C,RAM,expected_intake_temperature_based_on_mass_fuel_rate_calcula_50_to_293,CPEPIMTP
 4241,0x1091,8442702,0x0080D34E,RAM,fso_state_desired_from_fuel_system_specific_algorithms_1_off_on_off,FSAPFSCO
-4242,0x1092,8436936,0x0080BCC8,RAM,bit_mapped_system_switch_status_0_false_1_true_bcc8,SSSWSS01
+4242,0x1092,8436936,0x0080BCC8,RAM,system_switch_status,SSSWSS01
 4243,0x1093,8425948,0x008091DC,RAM,none_none,SSSUUNAD
 4244,0x1094,8444574,0x0080DA9E,RAM,determined_state_of_operation_of_lamp_1_on_off_short,LCLP01MD
 4245,0x1095,8442794,0x0080D3AA,RAM,,
@@ -200,7 +200,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4284,0x10BC,397776,0x000611D0,ROM,,EPO2VSAI
 4285,0x10BD,397790,0x000611DE,ROM,,EPO2LOTB
 4286,0x10BE,397804,0x000611EC,ROM,,EPO2VLTB
-4287,0x10BF,8444766,0x0080DB5E,RAM,percent_load_at_current_speed,JCPCLD
+4287,0x10BF,8444766,0x0080DB5E,RAM,engine_load_at_current_speed_percent,JCPCLD
 4290,0x10C2,8442716,0x0080D35C,RAM,,
 4291,0x10C3,8421714,0x00808152,RAM,calibrated_engine_speed_limit_used_when_there_is_an_inj_f_1400_2100,ZICNMXES
 4292,0x10C4,8443526,0x0080D686,RAM,,ZILMES
@@ -355,7 +355,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4535,0x11B7,8445066,0x0080DC8A,RAM,,GDST
 4538,0x11BA,8422510,0x0080846E,RAM,,GROGFLLM
 4539,0x11BB,8444762,0x0080DB5A,RAM,,GROGFLOD
-4540,0x11BC,8441070,0x0080CCEE,RAM,time_that_the_engine_is_not_in_stop_state_0_2_29,CMEGTR
+4540,0x11BC,8441070,0x0080CCEE,RAM,engine_hour_meter,CMEGTR
 4543,0x11BF,8409032,0x00804FC8,RAM,ivs_switch_status_when_throttle_validation_process_error_true_false,CTIVSWSS
 4544,0x11C0,16779098,0x0100075A,EEPROM,,J39PDBLK
 4545,0x11C1,16779100,0x0100075C,EEPROM,,JC17TMCU

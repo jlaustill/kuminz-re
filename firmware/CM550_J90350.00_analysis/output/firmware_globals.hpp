@@ -1535,9 +1535,7 @@ extern undefined retarder_snapshot_mode_count;  // 0x00804216
 extern word j1939_input_signal_timeouts[25];  // 0x00804234
 extern undefined j1708_link_timeout_counter;  // 0x00804266
 extern undefined j1939_link_timeout_counter;  // 0x00804268
-extern undefined diagnostic_fault_code_table;  // 0x0080426e
-extern undefined flash_program_block_1_buffer;  // 0x00804882
-extern undefined flash_program_block_2_buffer;  // 0x0080488e
+extern cm550_fault_entry_t fault_freeze_frame_entries[40];  // 0x0080426a
 extern undefined calibration_validator_ptr;  // 0x008049ec
 extern undefined trending_presample_interval_counter;  // 0x008049f4
 extern undefined trending_sample_phase_counter;  // 0x008049f8
@@ -3774,8 +3772,11 @@ extern undefined fuel_limit_from_pump_eeprom_error_algorithm_0_to_300;  // 0x008
 extern undefined fuel_limit_from_fuel_temp_error_algorithm_0_to_300;  // 0x0080a178
 extern undefined fuel_limit_from_vp44_engine_sync_error_algorithm_0_to_300;  // 0x0080a17a
 extern undefined fuel_limit_from_timing_error_algorithm_0_to_300;  // 0x0080a17c
+extern word vp44_engine_speed;  // 0x0080a17e
+extern word vp44_fuel_temperature;  // 0x0080a188
 extern undefined output_of_line_delay_table_60_to_60;  // 0x0080a18a
 extern undefined ram_image_of_metering_valve_duration_from_pump_controller_0_to_96;  // 0x0080a18c
+extern word vp44_pump_status;  // 0x0080a18e
 extern undefined pump_ram_contents_at_ram_address_1_0_to_ffff;  // 0x0080a190
 extern undefined pump_ram_contents_at_ram_address_2_0_to_ffff;  // 0x0080a192
 extern undefined pump_ram_contents_at_ram_address_3_0_to_ffff;  // 0x0080a194
@@ -3983,7 +3984,7 @@ extern all_speed_governor_gain_set_t * all_speed_governor_gain_set_pointer;  // 
 extern undefined steady_state_approximation_of_user_fuel_0_100;  // 0x0080a9c2
 extern undefined cruise_control_active_flag;  // 0x0080a9c4
 extern word engine_retarder_active_flag;  // 0x0080a9c8
-extern undefined sampled_road_speed_after_it_has_been_filtered_0_255_9961;  // 0x0080a9d0
+extern word sampled_road_speed_after_it_has_been_filtered_0_255_9961;  // 0x0080a9d0
 extern undefined filtered_transmission_gear_ratio_0_1_15_999;  // 0x0080a9d2
 extern word engine_speed_limit_source_2;  // 0x0080a9d6
 extern undefined vss_tamper_derate_rpm_0_3000;  // 0x0080a9d8
@@ -4017,7 +4018,7 @@ extern undefined CRERDP;  // 0x0080aa6c
 extern undefined CRETRS;  // 0x0080aa6e
 extern undefined gain_used_to_adjust_droop_error_can_change_with_rear_axle_ratio_1_294;  // 0x0080aa78
 extern undefined flag_to_denote_if_valid_resume_speed_is_available_valid_invalid;  // 0x0080aa80
-extern undefined validated_percent_throttle_commanded_by_driver_0_100;  // 0x0080aa82
+extern word validated_percent_throttle_commanded_by_driver_0_100;  // 0x0080aa82
 extern undefined throttle_validation_diagnostic_state;  // 0x0080aa84
 extern undefined throttle_above_idle_flag;  // 0x0080aa86
 extern undefined throttle_signal_validation_state;  // 0x0080aa88
@@ -4062,9 +4063,9 @@ extern undefined frictional_load_torque_in_fueling_at_breakpoint_3_engine_rpm_0_
 extern undefined frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88;  // 0x0080bc88
 extern undefined frictional_load_torque_in_fueling_at_breakpoint_5_engine_rpm_0_100_bc8a;  // 0x0080bc8a
 extern undefined insite_fault_change_queue_count;  // 0x0080bca8
-extern undefined bit_mapped_system_switch_status_0_false_1_true_bcc8;  // 0x0080bcc8
-extern undefined bit_mapped_system_switch_status_0_false_1_true_bcca;  // 0x0080bcca
-extern undefined bit_mapped_system_switch_status_0_false_1_true_bccc;  // 0x0080bccc
+extern word system_switch_status;  // 0x0080bcc8
+extern word system_switch_status_2;  // 0x0080bcca
+extern word system_switch_status_3;  // 0x0080bccc
 extern undefined value_used_for_monitoring_switch_data_0_1_2089_10_24;  // 0x0080bcce
 extern undefined debounced_switch_value_for_switch_16_on_off;  // 0x0080bccf
 extern undefined debounced_value_for_rear_axle_ratio_switch_on_off;  // 0x0080bcd0
@@ -4361,9 +4362,9 @@ extern undefined EBNOODCS;  // 0x0080cce6
 extern undefined level_of_eng_braking_req_by_non_override_algorithms_0_100;  // 0x0080cce8
 extern undefined eps_pulse_number_eps_tooth_counter_0_24;  // 0x0080ccea
 extern undefined eps_pulse_number_backup_eps_backup_tooth_counter_0_24;  // 0x0080ccec
-extern undefined time_that_the_engine_is_not_in_stop_state_0_2_29;  // 0x0080ccee
+extern dword engine_hour_meter;  // 0x0080ccee
 extern undefined fuel_demand_blend_mode_select;  // 0x0080ccf2
-extern undefined current_engine_rpm_filtered;  // 0x0080ccf4
+extern word current_engine_rpm_filtered;  // 0x0080ccf4
 extern undefined engine_rpm_primary;  // 0x0080ccf6
 extern undefined average_pulse_period_time_period_over_1_cyl_of_primary_s_1000_65535;  // 0x0080ccf8
 extern undefined average_pulse_period_backup_time_period_over_1_cyl_of_secondary_2_32;  // 0x0080ccfc
@@ -4732,7 +4733,7 @@ extern undefined FC23DR02;  // 0x0080d318
 extern undefined how_often_samples_are_taken_for_ct_1_3000_d320;  // 0x0080d320
 extern undefined how_often_samples_are_taken_for_imt_1_3000_d328;  // 0x0080d328
 extern undefined a2d_input_related_to_ac_pressure_255_255;  // 0x0080d32c
-extern undefined current_fuel_demand;  // 0x0080d32e
+extern word final_fueling;  // 0x0080d32e
 extern FUELING_STATE final_fueling_state;  // 0x0080d330
 extern undefined desired_engine_fueling_after_derate_without_air_handl_derate_0_100;  // 0x0080d332
 extern FUELING_STATE requested_fueling_state;  // 0x0080d334
@@ -5074,7 +5075,7 @@ extern undefined reset_flag_used_to_determine_when_other_app_is_requesting_to_up
 extern undefined actual_amount_of_fuel_consumed_since_the_last_ocm_rese_0_0_9999999_0;  // 0x0080db4c
 extern undefined bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none;  // 0x0080db5c
 extern undefined driver_output_feedback_status;  // 0x0080db5d
-extern undefined percent_load_at_current_speed;  // 0x0080db5e
+extern word engine_load_at_current_speed_percent;  // 0x0080db5e
 extern undefined engine_load_percent_normalized;  // 0x0080db60
 extern undefined percent_load_based_on_low_hp_torque_curve_0_255;  // 0x0080db62
 extern undefined phase_lag_calculation_based_on_the_pulse_0_phase_lag_slope_and_0_40;  // 0x0080db66

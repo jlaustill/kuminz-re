@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue Nov 24 21:34:45 MST 2026
+// Generated: Tue Nov 24 22:02:39 MST 2026
 
 
 //
@@ -19782,10 +19782,15 @@ void cm848_countDownPreviouslyActiveFaults(void)
 
 
 //
-// Function: cm848_faultCodeLookup @ 0x0001cdc0
+// Function: cm848_findOldestFreezeFrameEntryByFaultStatus @ 0x0001cdc0
 //
 
-uint cm848_faultCodeLookup(uint param_1)
+/* Returns the index (0-7) of the primary freeze frame entry whose fault has the given
+   fault_state_records_cal status and the smallest timestamp, or 0xffff when no entry's fault has
+   that status. The counterpart of CM550's cm550_findOldestFreezeFrameEntryByFaultStatus (0x146b4)
+   (was cm848_faultCodeLookup; PR #53 round 93) */
+
+uint cm848_findOldestFreezeFrameEntryByFaultStatus(uint param_1)
 
 {
   uint uVar1;
@@ -19814,10 +19819,16 @@ uint cm848_faultCodeLookup(uint param_1)
 
 
 //
-// Function: cm848_findFaultByTypeAndSeverity @ 0x0001ce28
+// Function: cm848_findOldestFreezeFrameEntryByFaultStatusWithoutFlags @ 0x0001ce28
 //
 
-uint cm848_findFaultByTypeAndSeverity(uint param_1,ushort param_2)
+/* cm848_findOldestFreezeFrameEntryByFaultStatus restricted to the entries whose status_flags have
+   none of the bits of the mask (the second argument): the index (0-7) of the oldest such entry
+   whose fault has the given status, or 0xffff. Used by cm848_assignFaultFreezeFrameEntry when the
+   OBD fault handler is enabled (masks 3 and 2) (was cm848_findFaultByTypeAndSeverity; PR #53 round
+   93) */
+
+uint cm848_findOldestFreezeFrameEntryByFaultStatusWithoutFlags(uint param_1,ushort param_2)
 
 {
   uint uVar1;
@@ -19847,10 +19858,21 @@ uint cm848_findFaultByTypeAndSeverity(uint param_1,ushort param_2)
 
 
 //
-// Function: cm848_registerFaultInActiveList @ 0x0001cea4
+// Function: cm848_assignFaultFreezeFrameEntry @ 0x0001cea4
 //
 
-void cm848_registerFaultInActiveList(uint param_1)
+/* Gives a fault a freeze frame entry and captures it (cm848_captureFaultFreezeFrame): the entry
+   that already holds the fault code; else the first free entry (0xAA). Else, without the OBD fault
+   handler: the entry of the oldest fault with status 2 (whose status becomes 0), else of the oldest
+   with status 3 (becomes 1), by cm848_findOldestFreezeFrameEntryByFaultStatus. With the OBD fault
+   handler: the oldest status 2 entry with neither status_flags bit 0 nor 1 (status becomes 0); else
+   the oldest status 3 entry with neither bit, the oldest status 2 entry without bit 1, the oldest
+   status 3 entry without bit 1 (status becomes 1); else cm848_markFaultForReplacement and the
+   search without the handler. 8 entries. The counterpart of CM550's
+   cm550_assignFaultFreezeFrameEntry (0x14720) (was cm848_registerFaultInActiveList; PR #53 round
+   93) */
+
+void cm848_assignFaultFreezeFrameEntry(uint param_1)
 
 {
   byte bVar1;
@@ -19869,39 +19891,39 @@ void cm848_registerFaultInActiveList(uint param_1)
   do {
     if (fault_freeze_frame_entries_cal[uVar4].fault_code == 0xaa) {
 LAB_0001cefc:
-      hpcr_setFaultActiveStatus(uVar4 & 0xffff,param_1);
+      cm848_captureFaultFreezeFrame(uVar4 & 0xffff,param_1);
       return;
     }
     uVar4 = uVar4 + 1;
   } while ((int)uVar4 < 8);
   if (algorithm_enable_flags_12_cal.obd_fault_handler_enable == 0) {
 LAB_0001cf90:
-    uVar4 = cm848_faultCodeLookup(2);
+    uVar4 = cm848_findOldestFreezeFrameEntryByFaultStatus(2);
     uVar4 = uVar4 & 0xffff;
     if (7 < uVar4) {
-      uVar4 = cm848_faultCodeLookup(3);
+      uVar4 = cm848_findOldestFreezeFrameEntryByFaultStatus(3);
       uVar4 = uVar4 & 0xffff;
       if (7 < uVar4) {
         return;
       }
 LAB_0001cfd8:
       bVar1 = fault_freeze_frame_entries_cal[uVar4].fault_code;
-      hpcr_setFaultActiveStatus(uVar4,param_1);
+      cm848_captureFaultFreezeFrame(uVar4,param_1);
       bVar3 = 1;
       goto LAB_0001cff4;
     }
   }
   else {
-    uVar4 = cm848_findFaultByTypeAndSeverity(2,3);
+    uVar4 = cm848_findOldestFreezeFrameEntryByFaultStatusWithoutFlags(2,3);
     uVar4 = uVar4 & 0xffff;
     if (7 < uVar4) {
-      uVar4 = cm848_findFaultByTypeAndSeverity(3,3);
+      uVar4 = cm848_findOldestFreezeFrameEntryByFaultStatusWithoutFlags(3,3);
       uVar4 = uVar4 & 0xffff;
       if (7 < uVar4) {
-        uVar4 = cm848_findFaultByTypeAndSeverity(2,2);
+        uVar4 = cm848_findOldestFreezeFrameEntryByFaultStatusWithoutFlags(2,2);
         uVar4 = uVar4 & 0xffff;
         if (7 < uVar4) {
-          uVar4 = cm848_findFaultByTypeAndSeverity(3,2);
+          uVar4 = cm848_findOldestFreezeFrameEntryByFaultStatusWithoutFlags(3,2);
           uVar4 = uVar4 & 0xffff;
           if (7 < uVar4) {
             cm848_markFaultForReplacement();
@@ -19913,7 +19935,7 @@ LAB_0001cfd8:
     }
   }
   bVar1 = fault_freeze_frame_entries_cal[uVar4].fault_code;
-  hpcr_setFaultActiveStatus(uVar4,param_1);
+  cm848_captureFaultFreezeFrame(uVar4,param_1);
   bVar3 = 0;
 LAB_0001cff4:
   fault_state_records_cal[bVar1].status = bVar3;
@@ -20113,7 +20135,7 @@ void cm848_processFaultScanGroup(void)
             fault_state_records_cal[uVar8].timer = fault_state_records_cal[uVar8].timer + 1;
           }
           if (*(char *)(uVar8 + 0x3fe124) == '\0') {
-            cm848_registerFaultInActiveList(uVar8);
+            cm848_assignFaultFreezeFrameEntry(uVar8);
             fault_state_records_cal[uVar8].status = 3;
             fault_state_records_cal[uVar8].timestamp = key_on_hour_meter;
             fault_state_records_cal[uVar8].debounce_count = 0;
@@ -20453,10 +20475,20 @@ void cm848_resetFaultStatus(int param_1)
 
 
 //
-// Function: hpcr_setFaultActiveStatus @ 0x0001df64
+// Function: cm848_captureFaultFreezeFrame @ 0x0001df64
 //
 
-void hpcr_setFaultActiveStatus(int param_1,uint param_2)
+/* Fills a fault freeze frame record (fault_freeze_frame_entries_cal, 48-byte fault_entry_t) for
+   (entry, fault code): the shadow record (entry + 8) when the fault's definition flag 0x10 is set,
+   and the primary record when its fault code differs (the first capture). With the OBD fault
+   handler enabled (algorithm_enable_flags_12_cal.obd_fault_handler_enable) and the fault's entry
+   flag 1: a newly written primary sets its status_flags bit 0 and is queued
+   (cm848_queueFaultFreezeFrameEntry) unless entry flag 0x20 is set - then
+   cm848_recordFaultDetection runs instead. It sets no fault status. Called by
+   cm848_assignFaultFreezeFrameEntry. The counterpart of CM550's cm550_captureFaultFreezeFrame
+   (0x2fe38) (was hpcr_setFaultActiveStatus; PR #53 round 93) */
+
+void cm848_captureFaultFreezeFrame(int param_1,uint param_2)
 
 {
   bool bVar1;
@@ -97433,7 +97465,7 @@ void cm848_latchNewlyActiveFault(uint param_1)
 /* Puts a freeze frame entry into fault_entry_pointer_queue_cal: with the queue full or an entry
    marked for replacement (status_flags bit 1) it keeps the entries whose fault definitions rank
    higher (entry_flags 0x0e / 0x0a). Called by cm848_recordFaultDetection and
-   hpcr_setFaultActiveStatus (was fault_enqueueRecord; PR #53 round 55) */
+   cm848_captureFaultFreezeFrame (was fault_enqueueRecord; PR #53 round 55) */
 
 void cm848_queueFaultFreezeFrameEntry(int param_1)
 
@@ -97540,7 +97572,8 @@ void cm848_queueFaultFreezeFrameEntry(int param_1)
    entry_flags 0x02 sets bit 2 and stores fault_aging_drive_cycle_counter_cal in bits 3-9. On a
    later detection with bit 1 clear it marks the freeze frame entry used and queues it
    (cm848_queueFaultFreezeFrameEntry) - latches the fault (cm848_latchNewlyActiveFault) - and clears
-   bits 0-9. Called by hpcr_setFaultActiveStatus (was fault_captureDataSnapshot; PR #53 round 55) */
+   bits 0-9. Called by cm848_captureFaultFreezeFrame (was fault_captureDataSnapshot; PR #53 round
+   55) */
 
 void cm848_recordFaultDetection(int param_1,uint param_2)
 
@@ -97586,7 +97619,7 @@ void cm848_recordFaultDetection(int param_1,uint param_2)
 
 /* For each of the 32 fault monitor groups whose diagnostic_monitor_complete_bits bit is newly set:
    registers each of its 16 slots (0xaa = none) whose status_word has bit 0 without bit 1 and whose
-   fault_state_records_cal status bit 0 is set (cm848_registerFaultInActiveList) - then marks the
+   fault_state_records_cal status bit 0 is set (cm848_assignFaultFreezeFrameEntry) - then marks the
    group in diagnostic_monitor_complete_handled_bits. Called by diagnosticMainStateProcessor (was
    diag_mainStateHandler; PR #53 round 55) */
 
@@ -97610,7 +97643,7 @@ void cm848_registerFaultsOfCompletedMonitors(void)
           if (((((&fault_status_records_cal)[uVar1].status_word & 1) != 0) &&
               (((&fault_status_records_cal)[uVar1].status_word & 2) == 0)) &&
              ((fault_state_records_cal[uVar1].status & 1) != 0)) {
-            cm848_registerFaultInActiveList(fault_monitor_group_table[uVar2].fault_slots[uVar4]);
+            cm848_assignFaultFreezeFrameEntry(fault_monitor_group_table[uVar2].fault_slots[uVar4]);
           }
         }
         uVar4 = uVar4 + 1 & 0xff;

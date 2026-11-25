@@ -856,7 +856,7 @@ address,name,type,comment
 0x0080291a,dtc_response_spn_low_byte,undefined,
 0x0080291c,dtc_response_fmi_byte,undefined,
 0x00802d60,j1939_dm2_transmit_status,byte,DM2 status byte (status_pointer target; references_to.py: the builder store at 0x3255a and the sender's 0xf0 nibble test at 0x3242a). Dump 0x00. Named as CM848 names it. (PR #53 round 88)
-0x00802d62,j1939_pgn65229_tx_message,j1939_tx_msg_t,PGN 65229 DM4 (freeze frame parameters) transmit descriptor. cm550_diagnosticDM4PGN_65229_Builder (0x329d2, called from cm550_diagnosticDataDump) writes header.can_id = 0x00fecd00 + priority word 0x803f5a + 0x80da01, data_pointer = 0x802d70, status_pointer = 0x803448, initializes 20 freeze frame records of 73 bytes and registers the DM4 sender (0x3258a, misnamed evaluateTemperatureDiagnosticState) for PGN 65229. (PR #53 round 88)
+0x00802d62,j1939_pgn65229_tx_message,j1939_tx_msg_t,PGN 65229 DM4 (freeze frame parameters) transmit descriptor. cm550_initializePgn65229Dm4Handler (0x329d2, called from cm550_diagnosticDataDump) writes header.can_id = 0x00fecd00 + priority word 0x803f5a + 0x80da01, data_pointer = 0x802d70, status_pointer = 0x803448, initializes 20 freeze frame records of 73 bytes and registers the DM4 request handler cm550_j1939HandlePgn65229Dm4FreezeFrame (0x3258a) for PGN 65229. (PR #53 round 88)
 0x00802fec,dm4_pgn65229_status_byte,undefined,
 0x00802fee,j1939_message_buffer_pgn65230,undefined,
 0x00802ff2,dm5_pgn65230_msg_size,undefined,
@@ -1605,9 +1605,7 @@ address,name,type,comment
 0x00804234,j1939_input_signal_timeouts,word[25],CM848's j1939_input_signal_timeouts (0x3feaa4, word[25]) slot for slot: e2m 12F6 +2n - the MX..TR timers 'TIMER TO TRACK TIME ELAPSED BEFORE <signal> IS RECEIVED AGAIN' (+0 MXMNFMTR manual fan level ... +12 MXWTPRTR wet tank pressure ... +2C MXTESWTR test switch; the parameter ID table tags them EEPROM 0x72a + 2n = 0x803b0a + 0x72a + 2n). The six receive handlers reload slot n when signal n arrives from an accepted source: 500 for slots 0 (CM1) and 10 (SHUTDN), 50 for slots 1-5 (EBC1) and 11-22 (PTO / CCVS1), 25 for slots 6-9 (EEC2); cm550_tickJ1939InputSupervision counts all 25 words down (inclusive bound 0x804264); 0 = the signal timed out. Direct readers: slot 0 cm550_FUN_0002041c (fan request), slot 1 cm550_FUN_00020784 (the remote accelerator - it tests slot 1, the remote accelerator enable switch timer, not slot 8), slot 5 cm550_FUN_00020380 (retarder selection), slot 6 cm550_outputControlState1Handler (idle switch), slot 7 cm550_FUN_00020c98 (pedal position), slot 9 cm550_FUN_00020fac (wet tank pressure); cm550_FUN_00020890 indexes it with j1939_input_signal_descriptor_table's timeout_slot. Slot 23 is 12F6 +2E MXDUMYTR (unused dummy; no writer); slot 24 (0x804264) is a separate record, e2m 11C0 +0 J39PDBLK, reached only through the tick's bound in the dumped ROM - CM848's slot 24 is likewise its history table's length word. Outside the EEPROM mirror 0x803b0a-0x804155, so no _cal. All 0 in the RAM dump (no J1939 input traffic) (PR #53 round 91) (PR #53 round 91)
 0x00804266,j1708_link_timeout_counter,undefined,
 0x00804268,j1939_link_timeout_counter,undefined,
-0x0080426e,diagnostic_fault_code_table,undefined,
-0x00804882,flash_program_block_1_buffer,undefined,
-0x0080488e,flash_program_block_2_buffer,undefined,
+0x0080426a,fault_freeze_frame_entries,cm550_fault_entry_t[40],The fault freeze frames: 40 records of 48 bytes (0x80426a-0x8049e9). Records 0-19 are a fault's first capture (written when the entry is given to the fault), records 20-39 the latest capture of the same entry (the shadow: rewritten at every capture of a fault whose definition flag 0x10 is set). fault_code_index 125 = free. Written by cm550_captureFaultFreezeFrame, freed by cm550_releaseFaultFreezeFrameEntry, searched by cm550_assignFaultFreezeFrameEntry / cm550_findOldestFreezeFrameEntryByFaultStatus and sent by cm550_j1939HandlePgn65229Dm4FreezeFrame (73 bytes per used entry, both halves). No e2m record. The counterpart of CM848's fault_freeze_frame_entries_cal (fault_entry_t[16], 8 + 8, in its EEPROM mirror); this one is outside CM550's mirror, so no _cal (was the row diagnostic_fault_code_table at 0x80426e and no rows for the rest; PR #53 round 93)
 0x008049ec,calibration_validator_ptr,undefined,
 0x008049f4,trending_presample_interval_counter,undefined,
 0x008049f8,trending_sample_phase_counter,undefined,
@@ -1802,7 +1800,7 @@ address,name,type,comment
 0x00805998,active_j1922_reportable_fault_count,undefined,
 0x0080599a,inactive_fault_j1587_reportable_count,undefined,
 0x0080599c,insite_active_fault_count,undefined,
-0x00805a1c,fault_count_table,fault_count_record_t[125],e2m 1031 +0 DGFUCUBF 'FAULT_COUNT_TABLE.H' (1250 bytes = 125 x 10; CM848's e2m names the record Fault_Count_Table): one fault_count_record_t per fault code index 0-124. The index is that of the fault's 6-byte fault data record (e2m DG0000FU-DG0124FU at 0x8067c4), and the fault code assignment table DGFUCATB (0x80656c) maps each status bit to it (125 = none). Every access is 0x805a1c / 0x805a20 / 0x805a24 / 0x805a25 + index x 10 (44 instructions in 13 functions); cm550_FUN_000315be and cm550_insitePidDtcHandler walk all 125 (cmpi.b #0x7d with a stride of 10). Writers: cm550_processFaultScanGroup (activation / deactivation), cm550_countDownPreviouslyActiveFault (countdown), cm550_diagnosticCodeRegistrar (snapshot slot hand-over), cm550_resetFaultStatus (clear). Readers: the datalogger fault-code triggers cm550_initializeDatalogger / cm550_findDataloggerTriggerFaultIndexes / cm550_evaluateDataloggerTrigger, cm550_oldestDiagnosticTimestampSearch, the trending task cm550_FUN_000315be (any fault active), cm550_insitePidDtcHandler, cm550_insiteFaultDetailBuilder, j1939HandlePgn65226Dm1ActiveDtc and cm550_previousDtcListBuilder (DM2). The 10 bytes after it (0x805efe) are not a record: no code reaches them, because the empty snapshot slot code 125 is never used as an index, and they hold the same constant in RAM and both flash blocks. No _cal: it is in the flash parameter block (RAM 0x804f9a-0x806547). cm550_loadParameterBlock1FromFlash / 2 load the block at start-up and cm550_saveParameterBlock1ToFlash / 2 save it at power-down, and the dumped ROM holds copies at flash 0x4a86 / 0x6a86. Counterpart of CM848 fault_state_records_cal (fault_state_t[170]: 7-byte records with a countdown step count in place of the second time). (were diagnostic_fault_status_change_time at +0 / diagnostic_fault_status_table at +8 / diagnostic_fault_occurrence_count at +9, and 27 unreferenced rows from the J90280.05 address map: diagnostic_fault_status_array at +26 / diagnostic_snapshot_throttle_value at +28 / diagnostic_snapshot_fuel_value at +34 / diagnostic_snapshot_sensor_reading at +38 / diagnostic_snapshot_throttle_raw at +40 / fault_flags_active_base at +982 / fault_status_flags_2 at +984 / engine_fault_status_reg at +986 / io_fault_status_reg_1 at +990 / io_fault_status_reg_2 at +992 / io_fault_status_reg_3 at +994 / io_fault_status_reg_4 at +996 / vp44_status_register_5e12 at +1014 / vp44_fault_status_reg at +1016 / vp44_fso_fault_flags_active at +1018 / fault_flags_history_base at +1046 / fault_status_flags_8_previous at +1048 / engine_fault_latch_reg at +1050 / io_fault_latch_reg_1 at +1054 / io_fault_latch_reg_2 at +1056 / io_fault_latch_reg_3 at +1058 / io_fault_latch_reg_4 at +1060 / vp44_fso_fault_flags at +1078 / vp44_fso_fault_accumulator at +1080 / vp44_fso_fault_flags_history at +1082 / diagnostic_fault_group_bitmask_array at +1110 / rpm_histogram_buffer_start at +1176; PR #53 round 91) (was diagnostic_fault_status_change_time; PR #53 round 91)
+0x00805a1c,fault_count_table,fault_count_record_t[125],e2m 1031 +0 DGFUCUBF 'FAULT_COUNT_TABLE.H' (1250 bytes = 125 x 10; CM848's e2m names the record Fault_Count_Table): one fault_count_record_t per fault code index 0-124. The index is that of the fault's 6-byte fault data record (e2m DG0000FU-DG0124FU at 0x8067c4), and the fault code assignment table DGFUCATB (0x80656c) maps each status bit to it (125 = none). Every access is 0x805a1c / 0x805a20 / 0x805a24 / 0x805a25 + index x 10 (44 instructions in 13 functions); cm550_FUN_000315be and cm550_insitePidDtcHandler walk all 125 (cmpi.b #0x7d with a stride of 10). Writers: cm550_processFaultScanGroup (activation / deactivation), cm550_countDownPreviouslyActiveFault (countdown), cm550_assignFaultFreezeFrameEntry (snapshot slot hand-over), cm550_resetFaultStatus (clear). Readers: the datalogger fault-code triggers cm550_initializeDatalogger / cm550_findDataloggerTriggerFaultIndexes / cm550_evaluateDataloggerTrigger, cm550_findOldestFreezeFrameEntryByFaultStatus, the trending task cm550_FUN_000315be (any fault active), cm550_insitePidDtcHandler, cm550_insiteFaultDetailBuilder, j1939HandlePgn65226Dm1ActiveDtc and cm550_previousDtcListBuilder (DM2). The 10 bytes after it (0x805efe) are not a record: no code reaches them, because the empty snapshot slot code 125 is never used as an index, and they hold the same constant in RAM and both flash blocks. No _cal: it is in the flash parameter block (RAM 0x804f9a-0x806547). cm550_loadParameterBlock1FromFlash / 2 load the block at start-up and cm550_saveParameterBlock1ToFlash / 2 save it at power-down, and the dumped ROM holds copies at flash 0x4a86 / 0x6a86. Counterpart of CM848 fault_state_records_cal (fault_state_t[170]: 7-byte records with a countdown step count in place of the second time). (were diagnostic_fault_status_change_time at +0 / diagnostic_fault_status_table at +8 / diagnostic_fault_occurrence_count at +9, and 27 unreferenced rows from the J90280.05 address map: diagnostic_fault_status_array at +26 / diagnostic_snapshot_throttle_value at +28 / diagnostic_snapshot_fuel_value at +34 / diagnostic_snapshot_sensor_reading at +38 / diagnostic_snapshot_throttle_raw at +40 / fault_flags_active_base at +982 / fault_status_flags_2 at +984 / engine_fault_status_reg at +986 / io_fault_status_reg_1 at +990 / io_fault_status_reg_2 at +992 / io_fault_status_reg_3 at +994 / io_fault_status_reg_4 at +996 / vp44_status_register_5e12 at +1014 / vp44_fault_status_reg at +1016 / vp44_fso_fault_flags_active at +1018 / fault_flags_history_base at +1046 / fault_status_flags_8_previous at +1048 / engine_fault_latch_reg at +1050 / io_fault_latch_reg_1 at +1054 / io_fault_latch_reg_2 at +1056 / io_fault_latch_reg_3 at +1058 / io_fault_latch_reg_4 at +1060 / vp44_fso_fault_flags at +1078 / vp44_fso_fault_accumulator at +1080 / vp44_fso_fault_flags_history at +1082 / diagnostic_fault_group_bitmask_array at +1110 / rpm_histogram_buffer_start at +1176; PR #53 round 91) (was diagnostic_fault_status_change_time; PR #53 round 91)
 0x00805f0a,rpm_added_to_lsg_reference_300_300,undefined,
 0x00805f18,fuel_total_when_the_weighted_fuel_value_reaches_the_fu_0_0_1000000_0,undefined,
 0x00805f1e,pointer_to_the_most_current_entry_of_the_ocm_reset_log_circula_0_2,undefined,
@@ -3847,8 +3845,11 @@ address,name,type,comment
 0x0080a178,fuel_limit_from_fuel_temp_error_algorithm_0_to_300,undefined,
 0x0080a17a,fuel_limit_from_vp44_engine_sync_error_algorithm_0_to_300,undefined,
 0x0080a17c,fuel_limit_from_timing_error_algorithm_0_to_300,undefined,
+0x0080a17e,vp44_engine_speed,word,e2m 801A +C FLDFES 'engine speed as measured by VP44 controller' (RPM). The only reader in the dumped ROM is cm550_captureFaultFreezeFrame (through a4 = 0x80a17e), which stores it in the freeze frame (PR #53 round 93)
+0x0080a188,vp44_fuel_temperature,word,e2m 801A +16 FLFLTP 'RAM image of fuel temp measured by pump controller' (DEGF). Word reads at 0x1cb48 and 0x3381a; cm550_captureFaultFreezeFrame stores it in the freeze frame (PR #53 round 93)
 0x0080a18a,output_of_line_delay_table_60_to_60,undefined,
 0x0080a18c,ram_image_of_metering_valve_duration_from_pump_controller_0_to_96,undefined,
+0x0080a18e,vp44_pump_status,word,e2m 801A +1C FLFLSS 'RAM image of pump status info maintained by pump controller' (HEX). Read only by cm550_captureFaultFreezeFrame (move.w at 0x2ff68 / 0x3009c) (PR #53 round 93)
 0x0080a190,pump_ram_contents_at_ram_address_1_0_to_ffff,undefined,
 0x0080a192,pump_ram_contents_at_ram_address_2_0_to_ffff,undefined,
 0x0080a194,pump_ram_contents_at_ram_address_3_0_to_ffff,undefined,
@@ -4056,7 +4057,7 @@ address,name,type,comment
 0x0080a9c2,steady_state_approximation_of_user_fuel_0_100,undefined,
 0x0080a9c4,cruise_control_active_flag,undefined,
 0x0080a9c8,engine_retarder_active_flag,word,e2m 117D +4 EBSS 'status of whether operating conditions indicate desire for brake activation', the same record as CM848 engine_retarder_active_flag (E_Brake_Status [EBSS]). RUNNING enters ENGINE_BRAKE while it is 1, and ENGINE_BRAKE returns to RUNNING when it is 0. (PR #53 round 88)
-0x0080a9d0,sampled_road_speed_after_it_has_been_filtered_0_255_9961,undefined,
+0x0080a9d0,sampled_road_speed_after_it_has_been_filtered_0_255_9961,word,typed word (was undefined; word accesses only; PR #53 round 93)
 0x0080a9d2,filtered_transmission_gear_ratio_0_1_15_999,undefined,
 0x0080a9d6,engine_speed_limit_source_2,word,Source 2 of the HSG reference speed arbitration (e2m 117D +12 ZVLMES 'OUTPUT ENGINE SPEED LIMIT GOING TO HSG REFERENCE SPEED ALG', 0.125 rpm; dump 24000): selectEngineSpeedLimit lets it compete in the lowest-wins minimum (winner 2) when 0x803f42 (ZVHSRFTY) is 0 / 1 and caps hsg_isochronous_speed_currently_in_use with it when 2 / 3. The only dumped writer, cm550_initBoostProtectionSystem, stores maximum_rated_engine_speed (21200), so the dump value comes from undumped code; CM848 twin engine_speed_limit_source_2 (same ZVLMES record); extended RAM, no _cal. (PR #53 round 90)
 0x0080a9d8,vss_tamper_derate_rpm_0_3000,undefined,
@@ -4090,7 +4091,7 @@ address,name,type,comment
 0x0080aa6e,CRETRS,undefined,
 0x0080aa78,gain_used_to_adjust_droop_error_can_change_with_rear_axle_ratio_1_294,undefined,
 0x0080aa80,flag_to_denote_if_valid_resume_speed_is_available_valid_invalid,undefined,
-0x0080aa82,validated_percent_throttle_commanded_by_driver_0_100,undefined,
+0x0080aa82,validated_percent_throttle_commanded_by_driver_0_100,word,typed word (was undefined; word accesses only; PR #53 round 93)
 0x0080aa84,throttle_validation_diagnostic_state,undefined,
 0x0080aa86,throttle_above_idle_flag,undefined,
 0x0080aa88,throttle_signal_validation_state,undefined,
@@ -4137,9 +4138,9 @@ address,name,type,comment
 0x0080bc88,frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88,undefined,
 0x0080bc8a,frictional_load_torque_in_fueling_at_breakpoint_5_engine_rpm_0_100_bc8a,undefined,
 0x0080bca8,insite_fault_change_queue_count,undefined,
-0x0080bcc8,bit_mapped_system_switch_status_0_false_1_true_bcc8,undefined,
-0x0080bcca,bit_mapped_system_switch_status_0_false_1_true_bcca,undefined,
-0x0080bccc,bit_mapped_system_switch_status_0_false_1_true_bccc,undefined,
+0x0080bcc8,system_switch_status,word,e2m 1092 +0 SSSWSS01 'bit mapped system switch status': the same record as CM848's system_switch_status (0x40a813). Word accesses only; stored in every fault freeze frame (was bit_mapped_system_switch_status_0_false_1_true_bcc8; PR #53 round 93)
+0x0080bcca,system_switch_status_2,word,e2m 1092 +2 SSSWSS02 'bit mapped system switch status': the same record as CM848's system_switch_status_2 (0x40a815). Word accesses only; stored in every fault freeze frame (was bit_mapped_system_switch_status_0_false_1_true_bcca; PR #53 round 93)
+0x0080bccc,system_switch_status_3,word,e2m 1092 +4 SSSWSS03 'bit mapped system switch status': the third word of the block (CM848's e2m has two). or.w / and.w at 0x14f04 / 0x14f10; stored in every fault freeze frame (was bit_mapped_system_switch_status_0_false_1_true_bccc; PR #53 round 93)
 0x0080bcce,value_used_for_monitoring_switch_data_0_1_2089_10_24,undefined,
 0x0080bccf,debounced_switch_value_for_switch_16_on_off,undefined,
 0x0080bcd0,debounced_value_for_rear_axle_ratio_switch_on_off,undefined,
@@ -4436,9 +4437,9 @@ address,name,type,comment
 0x0080cce8,level_of_eng_braking_req_by_non_override_algorithms_0_100,undefined,
 0x0080ccea,eps_pulse_number_eps_tooth_counter_0_24,undefined,
 0x0080ccec,eps_pulse_number_backup_eps_backup_tooth_counter_0_24,undefined,
-0x0080ccee,time_that_the_engine_is_not_in_stop_state_0_2_29,undefined,
+0x0080ccee,engine_hour_meter,dword,e2m 11BC +0 CMEGTR 'time that the engine is not in stop state' (SEC; 0 - 2^29): the same record as CM848's engine_hour_meter (0x40a794). Long accesses only (11 direct) (was time_that_the_engine_is_not_in_stop_state_0_2_29; PR #53 round 93)
 0x0080ccf2,fuel_demand_blend_mode_select,undefined,
-0x0080ccf4,current_engine_rpm_filtered,undefined,
+0x0080ccf4,current_engine_rpm_filtered,word,typed word (was undefined; word accesses only; PR #53 round 93)
 0x0080ccf6,engine_rpm_primary,undefined,
 0x0080ccf8,average_pulse_period_time_period_over_1_cyl_of_primary_s_1000_65535,undefined,
 0x0080ccfc,average_pulse_period_backup_time_period_over_1_cyl_of_secondary_2_32,undefined,
@@ -4807,7 +4808,7 @@ address,name,type,comment
 0x0080d320,how_often_samples_are_taken_for_ct_1_3000_d320,undefined,
 0x0080d328,how_often_samples_are_taken_for_imt_1_3000_d328,undefined,
 0x0080d32c,a2d_input_related_to_ac_pressure_255_255,undefined,
-0x0080d32e,current_fuel_demand,undefined,
+0x0080d32e,final_fueling,word,e2m 1051 +0 FSFNFL 'final fueling value' (0 - 100), next to final_fueling_state (+2): the same record as CM848's final_fueling (0x40a2ce). Word accesses only (39 direct) (was current_fuel_demand; PR #53 round 93)
 0x0080d330,final_fueling_state,FUELING_STATE,e2m 1051 +2 FSFNFLST FINAL FUELING STATE (1-41; its Calterm labels are FUELING_STATE's members); CM848's final_fueling_state (was fuel_limit_selection_state; PR #53 round 92)
 0x0080d332,desired_engine_fueling_after_derate_without_air_handl_derate_0_100,undefined,
 0x0080d334,requested_fueling_state,FUELING_STATE,e2m 1051 +6 FSLMDSST (Requested_Fueling_State): the state of the requested fueling 0x80d332 (1051 +4 FSLMDSFL); fuelTimingOilPressureModeController stores the governed-fuel state 0x80a8f2 (1-12) when the governed fuel is lower, else the derate minimum's source 0x80deca (13-41), and cm550_diagnosticFuelLimitInterpolator copies it into final_fueling_state when the requested fueling wins. Dump 19; same record and role as CM848 0x40a2d4. (was FSLMDSST; PR #53 round 90) | typed FUELING_STATE (PR #53 round 92)
@@ -5149,7 +5150,7 @@ address,name,type,comment
 0x0080db4c,actual_amount_of_fuel_consumed_since_the_last_ocm_rese_0_0_9999999_0,undefined,
 0x0080db5c,bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none,undefined,
 0x0080db5d,driver_output_feedback_status,undefined,
-0x0080db5e,percent_load_at_current_speed,undefined,
+0x0080db5e,engine_load_at_current_speed_percent,word,e2m 10BF +0 JCPCLD 'current output torque as a percent of maximum torque available' (0 - 127.5): the same record as CM848's engine_load_at_current_speed_percent (0x40af22). Word accesses only (was percent_load_at_current_speed; PR #53 round 93)
 0x0080db60,engine_load_percent_normalized,undefined,
 0x0080db62,percent_load_based_on_low_hp_torque_curve_0_255,undefined,
 0x0080db66,phase_lag_calculation_based_on_the_pulse_0_phase_lag_slope_and_0_40,undefined,

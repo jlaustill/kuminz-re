@@ -454,9 +454,9 @@ void initializeEngineState(void);  // @ 0x0001c978
 void cm848_countDownPreviouslyActiveFault(byte param_1);  // @ 0x0001c9a0
 void cm848_clearFaultFromActiveList(byte param_1);  // @ 0x0001cb94
 void cm848_countDownPreviouslyActiveFaults(void);  // @ 0x0001cd1c
-uint cm848_faultCodeLookup(uint param_1);  // @ 0x0001cdc0
-uint cm848_findFaultByTypeAndSeverity(uint param_1,ushort param_2);  // @ 0x0001ce28
-void cm848_registerFaultInActiveList(uint param_1);  // @ 0x0001cea4
+uint cm848_findOldestFreezeFrameEntryByFaultStatus(uint param_1);  // @ 0x0001cdc0
+uint cm848_findOldestFreezeFrameEntryByFaultStatusWithoutFlags(uint param_1,ushort param_2);  // @ 0x0001ce28
+void cm848_assignFaultFreezeFrameEntry(uint param_1);  // @ 0x0001cea4
 void cm848_clearDiagnosticState(void);  // @ 0x0001d01c
 void cm848_processFaultScanGroup(void);  // @ 0x0001d224
 void cm848_buildFaultConditionMask(void);  // @ 0x0001d8f8
@@ -465,7 +465,7 @@ void cm848_initDiagnosticRingBuffer(void);  // @ 0x0001dcdc
 void cm848_markFaultForReplacement(void);  // @ 0x0001dd10
 void cm848_updateFaultEntryCounters(uint param_1);  // @ 0x0001de4c
 void cm848_resetFaultStatus(int param_1);  // @ 0x0001dee0
-void hpcr_setFaultActiveStatus(int param_1,uint param_2);  // @ 0x0001df64
+void cm848_captureFaultFreezeFrame(int param_1,uint param_2);  // @ 0x0001df64
 void cm848_selectFinalFueling(void);  // @ 0x0001e22c
 void cm848_clearFuelDemandFlag(void);  // @ 0x0001e4d8
 void cm848_calculateProtectionRateLimited(void);  // @ 0x0001e4e8

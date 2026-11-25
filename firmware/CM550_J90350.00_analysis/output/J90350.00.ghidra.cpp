@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue Nov 24 21:47:21 MST 2026
+// Generated: Tue Nov 24 22:01:07 MST 2026
 
 
 //
@@ -499,19 +499,16 @@ uint cm550_FUN_0000ac3c(void)
   if ((algorithm_enable_flags_18_cal.duty_cycle_monitor_enable != 0) &&
      (engine_state != ENGINE_STATE_STOPPED)) {
     if (_duty_cycle_monitor_long_term_map_total_time_0_0_100000_0 == 0) {
-      _duty_cycle_mon_approximate_long_term_map_start_0_0_50000_0 =
-           _time_that_the_engine_is_not_in_stop_state_0_2_29;
+      _duty_cycle_mon_approximate_long_term_map_start_0_0_50000_0 = engine_hour_meter;
     }
     if ((_short_term_map_1_processing_total_0_500_0 == 0) &&
        ((_short_term_map_2_processing_total_0_500_0 == 0 ||
         (_rpm_control_timer_2 <= _short_term_map_2_processing_total_0_500_0)))) {
-      _duty_cycle_mon_approxiamte_short_term_map_1_start_0_0_50000_0 =
-           _time_that_the_engine_is_not_in_stop_state_0_2_29;
+      _duty_cycle_mon_approxiamte_short_term_map_1_start_0_0_50000_0 = engine_hour_meter;
     }
     else if ((_short_term_map_2_processing_total_0_500_0 == 0) &&
             (_rpm_control_timer_2 <= _short_term_map_1_processing_total_0_500_0)) {
-      _duty_cycle_mon_approxiamte_short_term_map_2_start_0_0_50000_0 =
-           _time_that_the_engine_is_not_in_stop_state_0_2_29;
+      _duty_cycle_mon_approxiamte_short_term_map_2_start_0_0_50000_0 = engine_hour_meter;
     }
     if ((_engine_rpm_primary < duty_cycle_monitor_high_cutoff_engine_speed) &&
        (duty_cycle_monitor_low_cutoff_engine_speed <= _engine_rpm_primary)) {
@@ -544,7 +541,7 @@ uint cm550_FUN_0000ac3c(void)
     }
     else {
       _rpm_rate_limit_countdown =
-           (int)(((uint)_current_fuel_demand - (uint)_frictional_no_load_fueling) * 10000) /
+           (int)(((uint)final_fueling - (uint)_frictional_no_load_fueling) * 10000) /
            (int)((uint)_high_rpm_threshold_countdown - (uint)_frictional_no_load_fueling);
     }
     if ((int)_rpm_rate_limit_countdown < 0) {
@@ -764,8 +761,8 @@ void cm550_writeHourMeterConversionData(void)
 void calculateFilteredEngineAcceleration(void)
 
 {
-  _DAT_0080a292 = _current_engine_rpm_filtered - _DAT_00800048;
-  _DAT_00800048 = _current_engine_rpm_filtered;
+  _DAT_0080a292 = current_engine_rpm_filtered - _DAT_00800048;
+  _DAT_00800048 = current_engine_rpm_filtered;
   _engine_acceleration_after_first_stage_low_pass_filtering_2560_2540 =
        cm550_signedFirstOrderFilter(_DAT_0080a292,&engine_acceleration_first_stage_filter_state);
   if ((short)_engine_acceleration_after_first_stage_low_pass_filtering_2560_2540 <
@@ -819,7 +816,7 @@ ushort cm550_rpm_system_state_controller(void)
     }
     if ((((_application_specific_anc_enable_disable_flag_set_to_false_to_dis_0_1 == 0) ||
          (_anc_fueling_limit_disable_due_to_bare_engine_accel_active_inactive != 0)) ||
-        (_current_engine_rpm_filtered < _engine_speed_above_which_anc_may_limit_fueling_1000_3000))
+        (current_engine_rpm_filtered < _engine_speed_above_which_anc_may_limit_fueling_1000_3000))
        || ((_engine_acceleration_below_which_anc_may_limit_fueling_2560_2540 <
             _engine_acceleration_after_first_stage_low_pass_filtering_2560_2540 ||
            (_engine_acceleration_after_second_stage_low_pass_filtering_2560_2540 <
@@ -844,7 +841,7 @@ ushort cm550_rpm_system_state_controller(void)
            _minimum_amount_of_time_which_the_anc_fuel_limit_will_be_active_0_20;
     }
     if (_sstatus_indicating_conditions_proper_for_a_fuel_lim_active_or_inactive == 1) {
-      _DAT_00800050 = _current_engine_rpm_filtered;
+      _DAT_00800050 = current_engine_rpm_filtered;
       _anc_fuel_limit_value = lookupTableInterpolation((table_interp_args_t *)&DAT_0080004a);
       return _anc_fuel_limit_value;
     }
@@ -937,7 +934,7 @@ ushort cm550_FUN_0000b3d0(void)
            _minimum_amount_of_time_which_the_anc_timing_limit_will_be_activ_0_20;
     }
     if (_status_indicating_conditions_proper_for_a_timing_li_active_or_inactive == 1) {
-      _DAT_0080005e = _current_engine_rpm_filtered;
+      _DAT_0080005e = current_engine_rpm_filtered;
       _anc_timing_limit_interpolated_value =
            lookupTableInterpolation((table_interp_args_t *)&timing_table_2_base);
       return _anc_timing_limit_interpolated_value;
@@ -982,12 +979,13 @@ void cm550_fuelDemandLimitMinimumUpdater(void)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-ushort cm550_engineStateFuelLimitInterpolator(void)
+word cm550_engineStateFuelLimitInterpolator(void)
 
 {
-  ushort uVar1;
+  word wVar1;
+  ushort uVar2;
   
-  uVar1 = 0;
+  uVar2 = 0;
   if (algorithm_enable_flags_3_cal.acceleration_noise_control_engine_speed_limit_enable != 0) {
     if (_engine_acceleration_below_which_anc_may_limit_engine_spee_2560_2540 <
         (short)_engine_acceleration_after_first_stage_low_pass_filtering_2560_2540) {
@@ -1000,18 +998,17 @@ ushort cm550_engineStateFuelLimitInterpolator(void)
     else {
       _DAT_0080003c = _DAT_0080003c + -1;
     }
-    uVar1 = _engine_acceleration_after_first_stage_low_pass_filtering_2560_2540;
+    wVar1 = _engine_acceleration_after_first_stage_low_pass_filtering_2560_2540;
     if ((((_application_specific_anc_enable_disable_flag_set_to_false_to_dis_0_1 == 0) ||
          (_anc_speed_limit_disable_due_to_bare_engine_accel_active_inactive != 0)) ||
-        (uVar1 = _current_engine_rpm_filtered,
-        _engine_speed_above_which_anc_may_limit_engine_speed_1000_3000 <
-        _current_engine_rpm_filtered)) ||
-       ((uVar1 = _engine_acceleration_after_first_stage_low_pass_filtering_2560_2540,
-        _engine_acceleration_below_which_anc_may_limit_engine_spee_2560_2540 <
-        (short)_engine_acceleration_after_first_stage_low_pass_filtering_2560_2540 ||
-        (uVar1 = _engine_acceleration_after_second_stage_low_pass_filtering_2560_2540,
-        (short)_engine_acceleration_after_second_stage_low_pass_filtering_2560_2540 <
-        _filtered_engine_acceleration_above_which_anc_may_limit_en_2560_2540)))) {
+        (wVar1 = current_engine_rpm_filtered,
+        _engine_speed_above_which_anc_may_limit_engine_speed_1000_3000 < current_engine_rpm_filtered
+        )) || ((wVar1 = _engine_acceleration_after_first_stage_low_pass_filtering_2560_2540,
+               _engine_acceleration_below_which_anc_may_limit_engine_spee_2560_2540 <
+               (short)_engine_acceleration_after_first_stage_low_pass_filtering_2560_2540 ||
+               (wVar1 = _engine_acceleration_after_second_stage_low_pass_filtering_2560_2540,
+               (short)_engine_acceleration_after_second_stage_low_pass_filtering_2560_2540 <
+               _filtered_engine_acceleration_above_which_anc_may_limit_en_2560_2540)))) {
       if (_application_specific_anc_override_flag_1_engage_anc_0_1 == 0) {
         if (_anc_speed_limit_hold_timer == 0) {
           _status_indicating_conditions_proper_for_a_speed_lim_active_or_inactive = 0;
@@ -1034,19 +1031,19 @@ ushort cm550_engineStateFuelLimitInterpolator(void)
     if (_status_indicating_conditions_proper_for_a_speed_lim_active_or_inactive != 0) {
       _anc_speed_limit_ramp_value =
            _calibratible_engine_speed_constant_used_to_set_anc_engine_1000_3000;
-      return uVar1;
+      return wVar1;
     }
-    uVar1 = _anc_speed_limit_ramp_value;
+    uVar2 = _anc_speed_limit_ramp_value;
     if (_anc_speed_limit_ramp_value < _maximum_rated_engine_speed_0_5000) {
-      uVar1 = _engine_speed_increment_added_to_anc_speed_to_ramp_out_the_eng_0_3000 +
+      uVar2 = _engine_speed_increment_added_to_anc_speed_to_ramp_out_the_eng_0_3000 +
               _anc_speed_limit_ramp_value;
-      _anc_speed_limit_ramp_value = uVar1;
-      if (_maximum_rated_engine_speed_0_5000 < uVar1) {
+      _anc_speed_limit_ramp_value = uVar2;
+      if (_maximum_rated_engine_speed_0_5000 < uVar2) {
         _anc_speed_limit_ramp_value = _maximum_rated_engine_speed_0_5000;
       }
     }
   }
-  return uVar1;
+  return uVar2;
 }
 
 
@@ -2383,7 +2380,7 @@ void cm550_runAllSpeedGovernor(void)
         _asg_filtered_reference_speed_0_4500 = _engine_rpm_primary;
       }
       else {
-        iVar2 = (int)(((uint)_current_fuel_demand - (uint)_rpm_control_override_flag) *
+        iVar2 = (int)(((uint)final_fueling - (uint)_rpm_control_override_flag) *
                       (0x400 - (uint)_qpid_adjusted_asg_droop_compensated_error_integral_2000_2000)
                      * 0x80) / iVar2;
         if (iVar2 < 0x30d4) {
@@ -2459,7 +2456,7 @@ void cm550_runAllSpeedGovernor(void)
       _asg_state_x6_100_100 = all_speed_governor_reset_state_fuel_demand_correction;
       sVar4 = _asg_reset_state_x5_0_100;
     }
-    else if ((_fuel_blend_table_3_base == _current_fuel_demand) &&
+    else if ((_fuel_blend_table_3_base == final_fueling) &&
             (user_fueling_state == user_fueling_state_previous_pass)) {
       _DAT_0080a974 = 0;
       sVar6 = _asg_state_x4_100_100;
@@ -2472,10 +2469,10 @@ void cm550_runAllSpeedGovernor(void)
         _fuel_blend_table_1_limit = 0;
         sVar4 = 0;
       }
-      else if (_rpm_control_override_flag < _current_fuel_demand) {
+      else if (_rpm_control_override_flag < final_fueling) {
         puVar3 = (undefined *)
                  cm550_scaleByRatioSigned
-                           ((uint)_current_fuel_demand - (uint)_rpm_control_override_flag,
+                           ((uint)final_fueling - (uint)_rpm_control_override_flag,
                             0x100 - (int)all_speed_governor_gain_set_pointer->
                                          compensation_filter_coefficient_3,
                             (int)all_speed_governor_gain_set_pointer->
@@ -2491,7 +2488,7 @@ void cm550_runAllSpeedGovernor(void)
       else {
         puVar3 = (undefined *)
                  cm550_scaleByRatioSigned
-                           ((uint)_rpm_control_override_flag - (uint)_current_fuel_demand,
+                           ((uint)_rpm_control_override_flag - (uint)final_fueling,
                             0x100 - (int)all_speed_governor_gain_set_pointer->
                                          compensation_filter_coefficient_3,
                             (int)all_speed_governor_gain_set_pointer->
@@ -2506,7 +2503,7 @@ void cm550_runAllSpeedGovernor(void)
       }
       _fuel_blend_table_2_base = _engine_rpm_primary;
       sVar6 = 0;
-      _asg_state_x6_100_100 = _current_fuel_demand - _rpm_control_override_flag;
+      _asg_state_x6_100_100 = final_fueling - _rpm_control_override_flag;
       _DAT_00800112 = _rpm_control_override_flag;
     }
     iVar2 = (uint)_engine_rpm_primary - (uint)_fuel_blend_table_2_base;
@@ -2803,8 +2800,8 @@ void cm550_acceleratorThrottleFaultDetector(void)
 
 {
   if (((_default_throttle_source_selector < 2) &&
-      ((uint)_current_fuel_demand < (uint)_DAT_00807ac8 + (uint)_frictional_no_load_fueling)) &&
-     (_validated_percent_throttle_commanded_by_driver_0_100 == 0)) {
+      ((uint)final_fueling < (uint)_DAT_00807ac8 + (uint)_frictional_no_load_fueling)) &&
+     (validated_percent_throttle_commanded_by_driver_0_100 == 0)) {
     if ((algorithm_enable_flags_27_cal.switched_throttle_control_governor_select == 0) &&
        ((state_of_the_throttle_interlock_switch_on_off & 2) != 0)) {
       if (_default_throttle_source_selector == 0) {
@@ -2828,7 +2825,7 @@ void cm550_acceleratorThrottleFaultDetector(void)
   }
   _all_speed_governor_reference_speed_based_upon_throttle_positi_0_3000 =
        _asg_reference_speed_for_0_throttle_input_should_be_less_tha_0_4500 +
-       (short)(((uint)_validated_percent_throttle_commanded_by_driver_0_100 *
+       (short)(((uint)validated_percent_throttle_commanded_by_driver_0_100 *
                ((uint)_asg_reference_speed_for_100_throttle_input_should_be_greate_0_4500 -
                (uint)_asg_reference_speed_for_0_throttle_input_should_be_less_tha_0_4500)) / 400);
   _asg_quadratic_integral_adjustment_500_500 = 0;
@@ -2910,8 +2907,7 @@ uint cm550_FUN_0000d4ae(word previous_user_fueling_state)
   uint uVar1;
   
   uVar1 = (uint)_DAT_00807ac8 + (uint)_frictional_no_load_fueling;
-  if ((_current_fuel_demand < uVar1) && (_validated_percent_throttle_commanded_by_driver_0_100 == 0)
-     ) {
+  if ((final_fueling < uVar1) && (validated_percent_throttle_commanded_by_driver_0_100 == 0)) {
     uVar1 = (ushort)algorithm_enable_flags_27_cal & 8;
     if ((algorithm_enable_flags_27_cal.switched_throttle_control_governor_select == 0) ||
        (uVar1 = (byte)-((state_of_the_throttle_interlock_switch_on_off & 2) != 0) & 1, uVar1 != 1))
@@ -2994,7 +2990,7 @@ void cm550_initBoostProtectionSystem(void)
 {
   _cruise_control_active_flag = 0;
   _DAT_0080a9c6 = 0;
-  _sampled_road_speed_after_it_has_been_filtered_0_255_9961 = 0;
+  sampled_road_speed_after_it_has_been_filtered_0_255_9961 = 0;
   _filtered_transmission_gear_ratio_0_1_15_999 = 0;
   _DAT_0080a9d4 = 0;
   engine_speed_limit_source_2 = _maximum_rated_engine_speed_0_5000;
@@ -3783,10 +3779,10 @@ uint cm550_FUN_0000e998(void)
         }
         if ((uVar2 == 0) &&
            (uVar2 = (uint)_offset_added_to_lsg_ref_spd_resulting_in_rpm_limit_for_birh_tes_0_5000 +
-                    (uint)_lsg_breakpoint_speed, _current_engine_rpm_filtered <= uVar2)) {
+                    (uint)_lsg_breakpoint_speed, current_engine_rpm_filtered <= uVar2)) {
           uVar1 = (undefined2)(uVar2 >> 0x10);
-          uVar2 = CONCAT22(uVar1,_percent_load_at_current_speed);
-          if (_percent_load_at_current_speed <= _DAT_00807c08) {
+          uVar2 = CONCAT22(uVar1,engine_load_at_current_speed_percent);
+          if (engine_load_at_current_speed_percent <= _DAT_00807c08) {
             if (_anc_speed_limit_table_2_base <
                 _time_required_that_low_boost_cond_exist_before_birh_error_check_0_120) {
               _anc_speed_limit_table_2_base = _anc_speed_limit_table_2_base + 1;
@@ -4176,7 +4172,7 @@ void insiteCommandByteDispatcher(void)
       else {
         switch(insite_parameter_id) {
         case 0x54:
-          bVar5 = (byte)((int)(uint)_sampled_road_speed_after_it_has_been_filtered_0_255_9961 >> 7);
+          bVar5 = (byte)((int)(uint)sampled_road_speed_after_it_has_been_filtered_0_255_9961 >> 7);
           break;
         case 0x55:
           bVar5 = 0;
@@ -4260,10 +4256,10 @@ void insiteCommandByteDispatcher(void)
         goto switchD_0000f050_default;
       case 0x5b:
         local_6._1_1_ =
-             (byte)(((uint)_validated_percent_throttle_commanded_by_driver_0_100 * 0xfa) / 400);
+             (byte)(((uint)validated_percent_throttle_commanded_by_driver_0_100 * 0xfa) / 400);
         break;
       case 0x5c:
-        local_6._1_1_ = (byte)((int)(uint)_percent_load_at_current_speed >> 7);
+        local_6._1_1_ = (byte)((int)(uint)engine_load_at_current_speed_percent >> 7);
         break;
       case 0x61:
         local_6._1_1_ = 0;
@@ -4403,7 +4399,7 @@ void insiteCommandByteDispatcher(void)
         local_6 = (word)((int)(uint)engine_overspeed_set_rpm_threshold >> 1);
         break;
       case 0xbe:
-        local_6 = (word)((int)(uint)_current_engine_rpm_filtered >> 1);
+        local_6 = (word)((int)(uint)current_engine_rpm_filtered >> 1);
       }
       *(byte *)insite_response_write_pointer = insite_parameter_id;
       insite_response_write_pointer =
@@ -4722,16 +4718,15 @@ void cm550_param_lookup_1(void)
     _DAT_0080da16 = 0;
     return;
   }
-  if ((short)(_current_fuel_demand - _maximum_fueling_value_that_does_not_inject_fuel_0_100) < 1) {
+  if ((short)(final_fueling - _maximum_fueling_value_that_does_not_inject_fuel_0_100) < 1) {
     _DAT_0080da16 = 0;
     return;
   }
   _DAT_0080da16 =
        cm550_param_address_calc
-                 ((short)(_current_fuel_demand -
-                         _maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400,
-                  _determined_peak_engine_fueling_0_100 -
-                  _maximum_fueling_value_that_does_not_inject_fuel_0_100);
+                 ((short)(final_fueling - _maximum_fueling_value_that_does_not_inject_fuel_0_100) *
+                  0x6400,_determined_peak_engine_fueling_0_100 -
+                         _maximum_fueling_value_that_does_not_inject_fuel_0_100);
   if (32000 < _DAT_0080da16) {
     _DAT_0080da16 = 32000;
   }
@@ -4749,8 +4744,8 @@ void cm550_param_lookup_1(void)
 void cm550_param_lookup_3(void)
 
 {
-  if ((int)((uint)_current_fuel_demand -
-           (uint)_maximum_fueling_value_that_does_not_inject_fuel_0_100) < 1) {
+  if ((int)((uint)final_fueling - (uint)_maximum_fueling_value_that_does_not_inject_fuel_0_100) < 1)
+  {
     _jcomm_ind_percent_load_ratio_of_actual_engine_torque_to_max_to_0_125 = 0;
     return;
   }
@@ -4761,7 +4756,7 @@ void cm550_param_lookup_3(void)
   }
   _jcomm_ind_percent_load_ratio_of_actual_engine_torque_to_max_to_0_125 =
        cm550_param_address_calc
-                 (((uint)_current_fuel_demand -
+                 (((uint)final_fueling -
                   (uint)_maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400,
                   _fueling_value_at_100_throttle_0_100 -
                   _maximum_fueling_value_that_does_not_inject_fuel_0_100);
@@ -5589,11 +5584,11 @@ uint vp44_rpmDerateCalculationController(void)
              (uVar1 = _fault_confirm_status_word_4 & 0xffff0008,
              (_fault_confirm_status_word_4 & 8) == 0)) &&
             (uVar1 = (uint)_vp44_block_size, _DAT_00804f9e < _vp44_block_size)))) {
-          _validated_percent_throttle_commanded_by_driver_0_100 =
+          validated_percent_throttle_commanded_by_driver_0_100 =
                _intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100;
         }
         else {
-          _validated_percent_throttle_commanded_by_driver_0_100 = 0;
+          validated_percent_throttle_commanded_by_driver_0_100 = 0;
         }
         _state_of_selected_alternate_throttle_priority_0_9 = 0;
       }
@@ -5622,13 +5617,13 @@ uint vp44_rpmDerateCalculationController(void)
           _intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100 = 0;
         }
         _throttle_above_idle_flag = (ushort)(_DAT_00807cee < _vp44_block_size);
-        _validated_percent_throttle_commanded_by_driver_0_100 =
+        validated_percent_throttle_commanded_by_driver_0_100 =
              _intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100;
         _state_of_selected_alternate_throttle_priority_0_9 = 0;
       }
     }
     else {
-      _validated_percent_throttle_commanded_by_driver_0_100 = _alternate_throttle_command;
+      validated_percent_throttle_commanded_by_driver_0_100 = _alternate_throttle_command;
       _state_of_selected_alternate_throttle_priority_0_9 = _alternate_throttle_priority;
       _alternate_throttle_priority = 0;
     }
@@ -5637,7 +5632,7 @@ uint vp44_rpmDerateCalculationController(void)
     uVar1 = (uint)_j1939_source_address_of_commanding_device;
     if (_j1939_source_address_of_commanding_device <
         _priority_of_client_overriding_final_sampled_throttle_0_ff) {
-      _validated_percent_throttle_commanded_by_driver_0_100 =
+      validated_percent_throttle_commanded_by_driver_0_100 =
            sampled_throttle_sensor_state.filtered_value;
     }
     else {
@@ -5645,11 +5640,11 @@ uint vp44_rpmDerateCalculationController(void)
            sampled_throttle_sensor_state.filtered_value;
       if (_alternate_throttle_priority == 0) {
         _state_of_selected_alternate_throttle_priority_0_9 = 0;
-        _validated_percent_throttle_commanded_by_driver_0_100 =
+        validated_percent_throttle_commanded_by_driver_0_100 =
              sampled_throttle_sensor_state.filtered_value;
       }
       else {
-        _validated_percent_throttle_commanded_by_driver_0_100 = _alternate_throttle_command;
+        validated_percent_throttle_commanded_by_driver_0_100 = _alternate_throttle_command;
         _state_of_selected_alternate_throttle_priority_0_9 = _alternate_throttle_priority;
         _alternate_throttle_priority = 0;
       }
@@ -5658,8 +5653,8 @@ uint vp44_rpmDerateCalculationController(void)
   if (400 < _intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100) {
     _intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100 = 400;
   }
-  if (400 < _validated_percent_throttle_commanded_by_driver_0_100) {
-    _validated_percent_throttle_commanded_by_driver_0_100 = 400;
+  if (400 < validated_percent_throttle_commanded_by_driver_0_100) {
+    validated_percent_throttle_commanded_by_driver_0_100 = 400;
   }
   return uVar1;
 }
@@ -5851,9 +5846,9 @@ LAB_00010a50:
     in_D1 = (uint)_DAT_00804f9e;
     if ((uVar4 < in_D1) &&
        (uVar4 = CONCAT22((short)(uVar4 >> 0x10),
-                         _sampled_road_speed_after_it_has_been_filtered_0_255_9961),
+                         sampled_road_speed_after_it_has_been_filtered_0_255_9961),
        _mph_above_which_throttle_faults_can_be_logged_for_uncalibrated_0_255 <
-       _sampled_road_speed_after_it_has_been_filtered_0_255_9961)) {
+       sampled_road_speed_after_it_has_been_filtered_0_255_9961)) {
 LAB_00010cba:
       uVar6 = (uint)_DAT_00804f9e;
       uVar1 = (ushort)(uVar4 >> 0x10);
@@ -6673,7 +6668,7 @@ byte restartThroughBootRom(dword request,word acknowledge_datalink)
         mc68k_delayTimeBaseTicksWithWatchdogService2(500);
       }
     }
-    local_8 = _time_that_the_engine_is_not_in_stop_state_0_2_29;
+    local_8 = engine_hour_meter;
     cm550_parameterCircularBufferWrite(0x803b50,(byte *)&local_8,4);
     if (ram_refresh_enable == RAM_REFRESH_DISABLED) {
       mc68k_delayTimeBaseTicksWithWatchdogService2(0xfa);
@@ -6888,31 +6883,32 @@ ushort cm550_coldStartFuelControlSlowCycle40Coordinator(void)
   ushort uVar5;
   ushort uVar6;
   uint uVar3;
+  word wVar7;
   ushort unaff_D2w;
-  ushort uVar7;
-  int iVar8;
+  ushort uVar8;
+  int iVar9;
   dword divisor;
   
-  uVar4 = (ushort)algorithm_enable_flags_3_cal & 0x800;
+  wVar7 = (ushort)algorithm_enable_flags_3_cal & 0x800;
   if ((((algorithm_enable_flags_3_cal.cylinder_pressure_maintenance_enable == 0) ||
-       (uVar4 = _alpha_blend_factor,
+       (wVar7 = _alpha_blend_factor,
        _alpha_blend_factor < _minimum_value_of_alpha_required_to_calculate_cylinder_maintenanc_0_1))
-      || (uVar4 = _current_fuel_demand,
-         _current_fuel_demand < _minimum_allowable_fueling_for_this_algorithm_to_operate_0_100)) ||
-     ((uVar4 = _engine_rpm_primary,
+      || (wVar7 = final_fueling,
+         final_fueling < _minimum_allowable_fueling_for_this_algorithm_to_operate_0_100)) ||
+     ((wVar7 = _engine_rpm_primary,
       _engine_rpm_primary <= _minimum_allowable_engine_speed_for_this_algorithm_to_operate_0_4500 ||
       (_maximum_allowable_engine_speed_for_this_algorithm_to_operate_0_4500 <= _engine_rpm_primary))
      )) {
     _cylinder_pressure_maintenance_status = 0;
     _increment_timing_value_output_by_cylinder_pressure_maintenanc_20_20 = 0;
     _cylinder_pressure_calculation_method = 0;
-    return uVar4;
+    return wVar7;
   }
   _manifold_temp_table_2_x_ptr = _engine_rpm_primary;
   _manifold_temp_table_1_type = _engine_rpm_primary;
   _engine_rpm_histogram_threshold_select = _engine_rpm_primary;
   _DAT_008001da = _engine_rpm_primary;
-  _DAT_008001e2 = _current_fuel_demand;
+  _DAT_008001e2 = final_fueling;
   if (_indicates_that_boost_press_sensor_is_absolute_pressure_sens_true_false != 0 ||
       _enable_flag_that_indicates_presence_of_an_ambient_air_press_true_false != 0) {
     if (((_status_32_word_bit_mapped_system_error_status_word_1_0_1 & 0x200) == 0) ||
@@ -6993,26 +6989,26 @@ LAB_00011f78:
           _calculated_cylinder_pressure_1500_3000 = 48000;
         }
         if (_calculated_cylinder_pressure_1500_3000 < uVar6) {
-          iVar8 = 0x7fffffff;
-          uVar7 = uVar6 - _calculated_cylinder_pressure_1500_3000;
+          iVar9 = 0x7fffffff;
+          uVar8 = uVar6 - _calculated_cylinder_pressure_1500_3000;
         }
         else {
-          uVar7 = _calculated_cylinder_pressure_1500_3000 - uVar6;
-          iVar8 = -0x80000000;
+          uVar8 = _calculated_cylinder_pressure_1500_3000 - uVar6;
+          iVar9 = -0x80000000;
         }
-        if (_min_diff_between_desired_cylinder_pressure_and_calculated_cy_0_200 < uVar7) {
+        if (_min_diff_between_desired_cylinder_pressure_and_calculated_cy_0_200 < uVar8) {
           if ((uVar5 != 0) && (uVar4 != 0)) {
-            iVar8 = cm550_scaleByRatioSigned
+            iVar9 = cm550_scaleByRatioSigned
                               ((int)(short)(uVar6 - _calculated_cylinder_pressure_1500_3000),0x4444,
                                (uint)uVar4 * (uint)uVar5);
           }
           _cylinder_pressure_calculation_method = 1;
-          if (iVar8 < 0xab) {
-            if (iVar8 < -0xaa) {
+          if (iVar9 < 0xab) {
+            if (iVar9 < -0xaa) {
               unaff_D2w = 0xff56;
             }
             else {
-              unaff_D2w = (ushort)iVar8;
+              unaff_D2w = (ushort)iVar9;
             }
           }
           else {
@@ -7094,13 +7090,12 @@ LAB_00012112:
         }
       }
       else {
-        iVar8 = cm550_scaleByRatioSigned
-                          (((uint)_engine_rpm_primary * (uint)_current_fuel_demand) / 0x1266 &
-                           0xffff,(uint)
-                                  _intake_manifold_temperature_at_maximum_fueling_condition_50_293 -
-                                  (uint)_intake_manifold_temperature_at_motoring_conditions_50_293,
+        iVar9 = cm550_scaleByRatioSigned
+                          (((uint)_engine_rpm_primary * (uint)final_fueling) / 0x1266 & 0xffff,
+                           (uint)_intake_manifold_temperature_at_maximum_fueling_condition_50_293 -
+                           (uint)_intake_manifold_temperature_at_motoring_conditions_50_293,
                            (uint)_fuel_rate_at_maximum_fueling_conditions_32000_450000);
-        uVar3 = (uint)_intake_manifold_temperature_at_motoring_conditions_50_293 + iVar8;
+        uVar3 = (uint)_intake_manifold_temperature_at_motoring_conditions_50_293 + iVar9;
       }
       if ((int)uVar3 < 0x7f81) {
         if ((int)uVar3 < 0xa00) {
@@ -7116,13 +7111,13 @@ LAB_00012112:
         sVar1 = intake_manifold_temperature_sensor_state.filtered_value -
                 _expected_intake_temperature_based_on_mass_fuel_rate_calcula_50_to_293;
         uVar4 = lookupTableInterpolation((table_interp_args_t *)&manifold_temp_table_1_z_ptr);
-        iVar8 = cm550_scaleByRatioSigned((uint)uVar4,(int)sVar1,0x7800);
-        if (iVar8 < 0xab) {
-          if (iVar8 < -0xaa) {
+        iVar9 = cm550_scaleByRatioSigned((uint)uVar4,(int)sVar1,0x7800);
+        if (iVar9 < 0xab) {
+          if (iVar9 < -0xaa) {
             unaff_D2w = 0xff56;
           }
           else {
-            unaff_D2w = (ushort)iVar8;
+            unaff_D2w = (ushort)iVar9;
           }
         }
         else {
@@ -7288,7 +7283,7 @@ void cm550_initLoadTrendingSystem(void)
   _DAT_008001da = _engine_rpm_primary;
   _engine_runtime_histogram_config_type_a = 0x60678;
   _engine_runtime_histogram_interpolation_b = 2;
-  _DAT_008001e2 = _current_fuel_demand;
+  _DAT_008001e2 = final_fueling;
   _hour_meter_table_2_base = 0x60694;
   _rpm_histogram_threshold_saved = 2;
   _hour_meter_table_1_limit = 0x606a4;
@@ -7389,10 +7384,9 @@ void cm550_fuelSourceMode11CountdownHandler(void)
 {
   if (_DAT_008072c0 == 1) {
     _fuel_timing_blend_offset_input_2 =
-         _current_fuel_demand +
+         final_fueling +
          (short)((int)((uint)_DAT_0080728c *
-                      ((uint)_fuel_timing_blend_offset_input_2 - (uint)_current_fuel_demand)) / 1000
-                );
+                      ((uint)_fuel_timing_blend_offset_input_2 - (uint)final_fueling)) / 1000);
     _DAT_008091e8 = _fuel_timing_blend_offset_input_2;
   }
   return;
@@ -7472,17 +7466,17 @@ void vp44_FUN_000127c2(void)
            (((_DAT_00809298 + _DAT_00809290 + _DAT_00809288) -
             cylinder_balance_acceleration_buffer_1) - _DAT_0080928c) - _DAT_00809294;
     }
-    _DAT_00800228 = _current_engine_rpm_filtered;
+    _DAT_00800228 = current_engine_rpm_filtered;
     _diagnostic_queue_index = _DAT_008091e8;
     _cyl_balance_gain_percent = cm550_tableLookup2D((word *)&DAT_00800222);
     if (100 < _cyl_balance_gain_percent) {
       _cyl_balance_gain_percent = 100;
     }
-    _DAT_008002c8 = (ushort)((uint)_current_engine_rpm_filtered - (uint)_load_trending_table_6_ptr);
-    if ((int)((uint)_current_engine_rpm_filtered - (uint)_load_trending_table_6_ptr) < 0) {
+    _DAT_008002c8 = (ushort)((uint)current_engine_rpm_filtered - (uint)_load_trending_table_6_ptr);
+    if ((int)((uint)current_engine_rpm_filtered - (uint)_load_trending_table_6_ptr) < 0) {
       _DAT_008002c8 = -_DAT_008002c8;
     }
-    _load_trending_table_6_ptr = _current_engine_rpm_filtered;
+    _load_trending_table_6_ptr = current_engine_rpm_filtered;
     if ((((_cyl_balance_gain_percent < 100) || (_DAT_0080728e < _DAT_008002c8)) ||
         (_oil_pressure_mode_init_flag == 0)) || (engine_state != ENGINE_STATE_RUNNING)) {
       _DAT_0080922e = 1;
@@ -7491,9 +7485,9 @@ void vp44_FUN_000127c2(void)
       _DAT_0080922e = 0;
     }
     _oil_pressure_mode_init_flag = 0;
-    _DAT_00800262 = _current_engine_rpm_filtered;
+    _DAT_00800262 = current_engine_rpm_filtered;
     uVar4 = lookupTableInterpolation((table_interp_args_t *)&DAT_0080025c);
-    _vp44_third_array_3 = _current_engine_rpm_filtered;
+    _vp44_third_array_3 = current_engine_rpm_filtered;
     uVar5 = lookupTableInterpolation((table_interp_args_t *)&DAT_0080026a);
     puVar8 = &DAT_00002710 + (_DAT_0080920e - (uVar4 & 0xffff));
     if ((int)puVar8 < 0x2711) {
@@ -7519,16 +7513,16 @@ void vp44_FUN_000127c2(void)
     uVar7 = 1;
     puVar11 = (ushort *)&DAT_008072f6;
     do {
-      if (*puVar11 <= _current_engine_rpm_filtered) {
+      if (*puVar11 <= current_engine_rpm_filtered) {
         _rpm_speed_bin_index = uVar7 - 1;
       }
       uVar7 = uVar7 + 1;
       puVar11 = puVar11 + 1;
     } while (uVar7 < 0xf);
-    if (((_DAT_008091e8 <= _DAT_008072be) && (_current_fuel_demand == 0)) &&
-       ((_DAT_00807292 < _current_engine_rpm_filtered &&
-        ((_current_engine_rpm_filtered < _DAT_00807290 && (engine_state == ENGINE_STATE_RUNNING)))))
-       ) {
+    if (((_DAT_008091e8 <= _DAT_008072be) && (final_fueling == 0)) &&
+       ((_DAT_00807292 < current_engine_rpm_filtered &&
+        ((current_engine_rpm_filtered < _DAT_00807290 && (engine_state == ENGINE_STATE_RUNNING))))))
+    {
       sVar9 = _DAT_00809276 -
               (short)((int)((uint)_DAT_0080729a * (int)(short)_DAT_00809276) / 10000);
       sVar1 = _DAT_00809278 -
@@ -7568,7 +7562,7 @@ void vp44_FUN_000127c2(void)
         puVar22 = puVar22 + 1;
       } while (uVar7 < 0x10);
     }
-    _vp44_status_mask_array = _current_engine_rpm_filtered;
+    _vp44_status_mask_array = current_engine_rpm_filtered;
     _DAT_00800246 = _DAT_008091e8;
     _DAT_008092e0 = cm550_tableLookup2D((word *)&vp44_comm_bit1_debounce_timer);
     _DAT_008092e0 = _DAT_008092e0 + -10000;
@@ -7683,7 +7677,7 @@ void vp44_FUN_000127c2(void)
       iVar6 = 15000;
     }
     _DAT_00809236 = (ushort)iVar6;
-    _DAT_00800254 = _current_engine_rpm_filtered;
+    _DAT_00800254 = current_engine_rpm_filtered;
     _DAT_00809230 = lookupTableInterpolation((table_interp_args_t *)&DAT_0080024e);
     if (_DAT_00809230 < _DAT_00809232) {
       _throttle_position_raw = _DAT_008072a6;
@@ -7721,7 +7715,7 @@ void vp44_FUN_000127c2(void)
     } while (uVar7 < 6);
     if (((((_DAT_008072de == 1) && (_DAT_0080922e == 0)) && (cam_sync_status == '\x01')) &&
         ((cam_sync_state == 1 && (_manifold_temp_table_3_x_ptr == 0)))) &&
-       ((_sampled_road_speed_after_it_has_been_filtered_0_255_9961 <= _DAT_008072f2 &&
+       ((sampled_road_speed_after_it_has_been_filtered_0_255_9961 <= _DAT_008072f2 &&
         ((_DAT_008072ea < coolant_temperature_sensor_state.filtered_value &&
          (_DAT_008072ec < intake_manifold_temperature_sensor_state.filtered_value)))))) {
       uVar7 = 0;
@@ -8698,10 +8692,11 @@ void cm550_findDataloggerTriggerFaultIndexes(void)
    fault index at 0x800366 + index) against the status it saw last (0x80036e + index): a nonzero
    flag fires when the status went from inactive (0 / 2) to active (1 / 3), 0 when it went from
    active to inactive; it then saves the status. Status bit 0 = active: cm550_processFaultScanGroup
-   stores 3 when a fault turns active and 2 when it turns inactive, cm550_diagnosticCodeRegistrar
-   stores 0 / 1 when it gives an inactive / active fault's snapshot slot to another fault and
-   cm550_resetFaultStatus stores 0. Called by cm550_updateDataloggerTriggers with 0-2 and 3. (was
-   cm550_FUN_00013ed8; PR #53 round 91) (was cm550_FUN_00013ed8; PR #53 round 91) */
+   stores 3 when a fault turns active and 2 when it turns inactive,
+   cm550_assignFaultFreezeFrameEntry stores 0 / 1 when it gives an inactive / active fault's
+   snapshot slot to another fault and cm550_resetFaultStatus stores 0. Called by
+   cm550_updateDataloggerTriggers with 0-2 and 3. (was cm550_FUN_00013ed8; PR #53 round 91) (was
+   cm550_FUN_00013ed8; PR #53 round 91) */
 
 byte cm550_evaluateDataloggerTrigger(word condition_record_index)
 
@@ -9020,7 +9015,7 @@ void cm550_fuelDemandPercentageCalculator(void)
        lookupTableInterpolation((table_interp_args_t *)&no_load_fueling_curve_descriptor);
   _jcomm_percent_peak_torque_based_on_current_engine_speed_and_128_127 =
        cm550_safeDivideWithClamp
-                 (((int)_current_fuel_demand -
+                 (((int)(short)final_fueling -
                   (int)_jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100) *
                   0x6400,_jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100 -
                          _frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88);
@@ -9130,10 +9125,15 @@ void cm550_countDownPreviouslyActiveFaults(void)
 
 
 //
-// Function: cm550_oldestDiagnosticTimestampSearch @ 0x000146b4
+// Function: cm550_findOldestFreezeFrameEntryByFaultStatus @ 0x000146b4
 //
 
-word cm550_oldestDiagnosticTimestampSearch(word fault_status)
+/* Returns the index (0-19) of the freeze frame entry whose fault has the given fault_count_table
+   status and the smallest status_change_time, or 0xffff when no entry's fault has that status. The
+   counterpart of CM848's cm848_findOldestFreezeFrameEntryByFaultStatus (was
+   cm550_oldestDiagnosticTimestampSearch; PR #53 round 93) */
+
+word cm550_findOldestFreezeFrameEntryByFaultStatus(word fault_status)
 
 {
   short sVar1;
@@ -9147,7 +9147,7 @@ word cm550_oldestDiagnosticTimestampSearch(word fault_status)
   wVar2 = 0;
   sVar3 = 0;
   do {
-    sVar1 = *(short *)(&diagnostic_fault_code_table + sVar3) * 10;
+    sVar1 = *(short *)((int)&fault_freeze_frame_entries[0].fault_code_index + (int)sVar3) * 10;
     if (((&fault_count_table[0].status)[sVar1] == fault_status) &&
        (*(uint *)((int)&fault_count_table[0].status_change_time + (int)sVar1) < uVar4)) {
       uVar4 = *(uint *)((int)&fault_count_table[0].status_change_time + (int)sVar1);
@@ -9162,47 +9162,57 @@ word cm550_oldestDiagnosticTimestampSearch(word fault_status)
 
 
 //
-// Function: cm550_diagnosticCodeRegistrar @ 0x00014720
+// Function: cm550_assignFaultFreezeFrameEntry @ 0x00014720
 //
 
-void cm550_diagnosticCodeRegistrar(word code_index)
+/* Gives a fault a freeze frame entry and captures it (cm550_captureFaultFreezeFrame): the entry
+   that already holds the fault code index; else the first free entry (125); else the entry of the
+   oldest fault with status 2 (inactive), whose status becomes 0; else of the oldest with status 3
+   (active), whose status becomes 1 (cm550_findOldestFreezeFrameEntryByFaultStatus). 20 entries.
+   Called by cm550_processFaultScanGroup when a fault turns active. The counterpart of CM848's
+   cm848_assignFaultFreezeFrameEntry (0x1cea4), which has an OBD severity search on top (was
+   cm550_diagnosticCodeRegistrar; PR #53 round 93) */
+
+void cm550_assignFaultFreezeFrameEntry(word code_index)
 
 {
   word wVar1;
-  short sVar2;
+  word wVar2;
+  short sVar3;
   
-  wVar1 = 0;
-  sVar2 = 0;
+  wVar2 = 0;
+  sVar3 = 0;
   do {
-    if (code_index == *(word *)(&diagnostic_fault_code_table + sVar2)) {
-      cm550_diagnosticTableSnapshotCapture(wVar1,code_index);
+    if (code_index == *(word *)((int)&fault_freeze_frame_entries[0].fault_code_index + (int)sVar3))
+    {
+      cm550_captureFaultFreezeFrame(wVar2,code_index);
       return;
     }
-    sVar2 = sVar2 + 0x30;
-    wVar1 = wVar1 + 1;
-  } while ((short)wVar1 < 0x14);
-  wVar1 = 0;
-  sVar2 = 0;
+    sVar3 = sVar3 + 0x30;
+    wVar2 = wVar2 + 1;
+  } while ((short)wVar2 < 0x14);
+  wVar2 = 0;
+  sVar3 = 0;
   do {
-    if (*(short *)(&diagnostic_fault_code_table + sVar2) == 0x7d) {
-      cm550_diagnosticTableSnapshotCapture(wVar1,code_index);
+    if (*(short *)((int)&fault_freeze_frame_entries[0].fault_code_index + (int)sVar3) == 0x7d) {
+      cm550_captureFaultFreezeFrame(wVar2,code_index);
       return;
     }
-    sVar2 = sVar2 + 0x30;
-    wVar1 = wVar1 + 1;
-  } while ((short)wVar1 < 0x14);
-  wVar1 = cm550_oldestDiagnosticTimestampSearch(2);
-  if (wVar1 < 0x14) {
-    sVar2 = *(short *)(&diagnostic_fault_code_table + (short)(wVar1 * 6) * 8);
-    cm550_diagnosticTableSnapshotCapture(wVar1,code_index);
-    (&fault_count_table[0].status)[(short)(sVar2 * 5) * 2] = 0;
+    sVar3 = sVar3 + 0x30;
+    wVar2 = wVar2 + 1;
+  } while ((short)wVar2 < 0x14);
+  wVar2 = cm550_findOldestFreezeFrameEntryByFaultStatus(2);
+  if (wVar2 < 0x14) {
+    wVar1 = (&fault_freeze_frame_entries[0].fault_code_index)[(short)(wVar2 * 6) * 4];
+    cm550_captureFaultFreezeFrame(wVar2,code_index);
+    (&fault_count_table[0].status)[(short)(wVar1 * 5) * 2] = 0;
     return;
   }
-  wVar1 = cm550_oldestDiagnosticTimestampSearch(3);
-  if (wVar1 < 0x14) {
-    sVar2 = *(short *)(&diagnostic_fault_code_table + (short)(wVar1 * 6) * 8);
-    cm550_diagnosticTableSnapshotCapture(wVar1,code_index);
-    (&fault_count_table[0].status)[(short)(sVar2 * 5) * 2] = 1;
+  wVar2 = cm550_findOldestFreezeFrameEntryByFaultStatus(3);
+  if (wVar2 < 0x14) {
+    wVar1 = (&fault_freeze_frame_entries[0].fault_code_index)[(short)(wVar2 * 6) * 4];
+    cm550_captureFaultFreezeFrame(wVar2,code_index);
+    (&fault_count_table[0].status)[(short)(wVar1 * 5) * 2] = 1;
   }
   return;
 }
@@ -9358,7 +9368,7 @@ void cm550_processFaultScanGroup(void)
                (&fault_count_table[0].occurrence_count)[(short)(uVar5 * 5) * 2] + 1;
         }
         if (*(char *)((short)uVar5 + 0x80599e) == '\0') {
-          cm550_diagnosticCodeRegistrar(uVar5);
+          cm550_assignFaultFreezeFrameEntry(uVar5);
           (&fault_count_table[0].status)[(short)(uVar5 * 5) * 2] = 3;
           *(dword *)((int)&fault_count_table[0].status_change_time + (short)(uVar5 * 5) * 2) =
                key_on_hour_meter;
@@ -9468,12 +9478,10 @@ void cm550_faultFlagScannerAndProcessor(void)
   do {
     if (((uint)(byte)(&value_used_for_monitoring_switch_data_0_1_2089_10_24)
                      [(int)(uint)*puVar4 >> 3] & 1 << (*puVar4 & 7)) == 0) {
-      _bit_mapped_system_switch_status_0_false_1_true_bcc8 =
-           ~uVar1 & _bit_mapped_system_switch_status_0_false_1_true_bcc8;
+      system_switch_status = ~uVar1 & system_switch_status;
     }
     else {
-      _bit_mapped_system_switch_status_0_false_1_true_bcc8 =
-           uVar1 | _bit_mapped_system_switch_status_0_false_1_true_bcc8;
+      system_switch_status = uVar1 | system_switch_status;
     }
     uVar1 = uVar1 * 2;
     puVar4 = puVar4 + 1;
@@ -9485,12 +9493,10 @@ void cm550_faultFlagScannerAndProcessor(void)
   do {
     if (((uint)(byte)(&value_used_for_monitoring_switch_data_0_1_2089_10_24)
                      [(int)(uint)*puVar4 >> 3] & 1 << (*puVar4 & 7)) == 0) {
-      _bit_mapped_system_switch_status_0_false_1_true_bcca =
-           ~uVar1 & _bit_mapped_system_switch_status_0_false_1_true_bcca;
+      system_switch_status_2 = ~uVar1 & system_switch_status_2;
     }
     else {
-      _bit_mapped_system_switch_status_0_false_1_true_bcca =
-           uVar1 | _bit_mapped_system_switch_status_0_false_1_true_bcca;
+      system_switch_status_2 = uVar1 | system_switch_status_2;
     }
     uVar1 = uVar1 * 2;
     puVar4 = puVar4 + 1;
@@ -9502,12 +9508,10 @@ void cm550_faultFlagScannerAndProcessor(void)
   do {
     if (((uint)(byte)(&value_used_for_monitoring_switch_data_0_1_2089_10_24)
                      [(int)(uint)*puVar4 >> 3] & 1 << (*puVar4 & 7)) == 0) {
-      _bit_mapped_system_switch_status_0_false_1_true_bccc =
-           ~uVar1 & _bit_mapped_system_switch_status_0_false_1_true_bccc;
+      system_switch_status_3 = ~uVar1 & system_switch_status_3;
     }
     else {
-      _bit_mapped_system_switch_status_0_false_1_true_bccc =
-           uVar1 | _bit_mapped_system_switch_status_0_false_1_true_bccc;
+      system_switch_status_3 = uVar1 | system_switch_status_3;
     }
     uVar1 = uVar1 * 2;
     puVar4 = puVar4 + 1;
@@ -9733,7 +9737,7 @@ byte mc68k_sampleAndDebounceDiscreteInputs(void)
       _pto_engage_debounce_counter = 1;
     }
     if (((((power_take_off_switch_state_bits & 0x10) != 0) && (DAT_0080053c == 0)) &&
-        (_sampled_road_speed_after_it_has_been_filtered_0_255_9961 == 0)) &&
+        (sampled_road_speed_after_it_has_been_filtered_0_255_9961 == 0)) &&
        (algorithm_enable_flags_28_cal.integrated_idle_management_enable != 0)) {
       switch_status_cruise_coast_switch_bit_3_on_off =
            switch_status_cruise_coast_switch_bit_3_on_off | 0x40;
@@ -11548,7 +11552,7 @@ uint cm550_calculateEngineSpeed(void)
       if (_main_lost_counter_timeout_counter_for_primary_speed_sensor_0_10000 == 0) {
         _fuel_demand_blend_mode_select = 0;
         _engine_rpm_primary = 0;
-        _current_engine_rpm_filtered = 0;
+        current_engine_rpm_filtered = 0;
         engine_speed_filter_state.accumulator = 0;
       }
       else {
@@ -11557,14 +11561,14 @@ uint cm550_calculateEngineSpeed(void)
              cm550_exponentialMovingAverage(_DAT_0080cd06,&engine_speed_filter_state);
         uVar1 = _engine_speed_constant_2_conversion_factor_from_tcnts_to_rpm_0_2_29 /
                 _pulse_period_sum_primary;
-        _current_engine_rpm_filtered = (ushort)uVar1;
+        current_engine_rpm_filtered = (word)uVar1;
       }
     }
     else if (_engine_speed_source_select == 1) {
       if (_backup_lost_counter_timeout_counter_for_secondary_speed_inp_0_10000 == 0) {
         _fuel_demand_blend_mode_select = 0;
         _engine_rpm_primary = 0;
-        _current_engine_rpm_filtered = 0;
+        current_engine_rpm_filtered = 0;
         engine_speed_filter_state.accumulator = 0;
       }
       else {
@@ -11572,27 +11576,27 @@ uint cm550_calculateEngineSpeed(void)
         _engine_rpm_primary =
              cm550_exponentialMovingAverage(_DAT_0080cd04,&engine_speed_filter_state);
         uVar1 = _engine_speed_constant_2_conversion_factor_from_tcnts_to_rpm_0_2_29 / _DAT_0080d074;
-        _current_engine_rpm_filtered = (ushort)uVar1;
+        current_engine_rpm_filtered = (word)uVar1;
       }
     }
     else if (_engine_speed_source_select == 2) {
       if (_external_lost_counter_timeout_counter_for_external_speed_inp_0_10000 == 0) {
         _fuel_demand_blend_mode_select = 0;
         _engine_rpm_primary = 0;
-        _current_engine_rpm_filtered = 0;
+        current_engine_rpm_filtered = 0;
         engine_speed_filter_state.accumulator = 0;
       }
       else {
         _fuel_demand_blend_mode_select = _DAT_0080cd16;
-        _current_engine_rpm_filtered =
+        current_engine_rpm_filtered =
              cm550_exponentialMovingAverage(_DAT_0080cd16,&engine_speed_filter_state);
-        uVar1 = (uint)_current_engine_rpm_filtered;
-        _engine_rpm_primary = _current_engine_rpm_filtered;
+        uVar1 = (uint)current_engine_rpm_filtered;
+        _engine_rpm_primary = current_engine_rpm_filtered;
       }
     }
   }
   else {
-    _current_engine_rpm_filtered = _DAT_0080a92c;
+    current_engine_rpm_filtered = _DAT_0080a92c;
     _fuel_demand_blend_mode_select = _DAT_0080a92c;
     _engine_rpm_primary = _DAT_0080a92c;
     uVar1 = (uint)_DAT_0080a92c << 0x10;
@@ -11610,14 +11614,14 @@ uint cm550_calculateEngineSpeed(void)
   else {
     not_safe_to_program_flag = 1;
   }
-  if (_current_engine_rpm_filtered < 0x800) {
+  if (current_engine_rpm_filtered < 0x800) {
     _governor_rpm_target_adjusted =
          _maximum_pulse_period_timeout_max_reset_value_for_main_lost_co_0_140;
     _pulse_period_timeout_backup =
          _maximum_pulse_period_timeout_backup_max_reset_value_for_back_0_10000;
     return uVar1;
   }
-  if (_current_engine_rpm_filtered < 0xff8) {
+  if (current_engine_rpm_filtered < 0xff8) {
     _governor_rpm_target_adjusted =
          (short)((int)(uint)_maximum_pulse_period_timeout_max_reset_value_for_main_lost_co_0_140 >>
                 1);
@@ -11626,7 +11630,7 @@ uint cm550_calculateEngineSpeed(void)
                 1);
     return (int)(uint)_maximum_pulse_period_timeout_backup_max_reset_value_for_back_0_10000 >> 1;
   }
-  if (_current_engine_rpm_filtered < 0x1800) {
+  if (current_engine_rpm_filtered < 0x1800) {
     _governor_rpm_target_adjusted =
          (short)((int)(uint)_maximum_pulse_period_timeout_max_reset_value_for_main_lost_co_0_140 >>
                 2);
@@ -14801,9 +14805,9 @@ uint cm550_updateElectronicSmartPowerTau(void)
   if (algorithm_enable_flags_12_cal.electronic_smart_power_enable != 0) {
     if (_DAT_00803f28 == 0) {
       if (((_stcg_enable_stcg_switch_xor_user_selected_throttle_control_0_1 == 0) &&
-          (_validated_percent_throttle_commanded_by_driver_0_100 < _DAT_00807f78)) ||
+          (validated_percent_throttle_commanded_by_driver_0_100 < _DAT_00807f78)) ||
          ((_stcg_enable_stcg_switch_xor_user_selected_throttle_control_0_1 != 0 &&
-          ((int)(uint)_current_fuel_demand <
+          ((int)(uint)final_fueling <
            (int)((uint)_fueling_provided_if_engine_were_using_low_hp_curve_0_100 -
                 (uint)_a_tolerance_for_throttle_100_fueling_0_10))))) {
         if (_track_the_time_when_throttle_is_less_than_a_threshold_0_30 <
@@ -14832,9 +14836,8 @@ uint cm550_updateElectronicSmartPowerTau(void)
       uVar1 = (uint)_high_horsepower_mode_state;
       if (_high_horsepower_mode_state == 0) {
         if ((((((int)((uint)_fueling_value_at_100_throttle_0_100 -
-                     (uint)_a_tolerance_for_throttle_100_fueling_0_10) <=
-                (int)(uint)_current_fuel_demand) &&
-              (_DAT_00807f78 <= _validated_percent_throttle_commanded_by_driver_0_100)) &&
+                     (uint)_a_tolerance_for_throttle_100_fueling_0_10) <= (int)(uint)final_fueling)
+              && (_DAT_00807f78 <= validated_percent_throttle_commanded_by_driver_0_100)) &&
              (_can_transmit_length != 0)) &&
             (((debounced_switch_value_for_switch_16_on_off & 8) == 0 &&
              (coolant_temperature_sensor_state.filtered_value <
@@ -16687,11 +16690,11 @@ void fuelTimingOilPressureModeController(void)
     requested_fueling_state = torque_derate_fuel_source_code;
   }
   if (engine_state == ENGINE_STATE_STOPPED) {
-    _current_fuel_demand = 0;
+    final_fueling = 0;
     final_fueling_state = FUELING_STATE_ENGINE_STOPPED;
   }
   else if (engine_state == ENGINE_STATE_SHUTDOWN) {
-    _current_fuel_demand = _minimum_fueling_value_0_100;
+    final_fueling = _minimum_fueling_value_0_100;
     final_fueling_state = FUELING_STATE_SHUTDOWN;
   }
   else {
@@ -16732,13 +16735,13 @@ void fuelTimingOilPressureModeController(void)
       final_fueling_state = FUELING_STATE_FUEL_OVERRIDE;
     }
     if (_peak_fueling_calibration_value < _fuel_limit_after_derate_selection) {
-      _current_fuel_demand = _peak_fueling_calibration_value;
+      final_fueling = _peak_fueling_calibration_value;
     }
     else if (_fuel_limit_after_derate_selection < _minimum_fueling_value_0_100) {
-      _current_fuel_demand = _minimum_fueling_value_0_100;
+      final_fueling = _minimum_fueling_value_0_100;
     }
     else {
-      _current_fuel_demand = _fuel_limit_after_derate_selection;
+      final_fueling = _fuel_limit_after_derate_selection;
     }
   }
   if ((torque_derate_fuel_source_code != FUELING_STATE_TORQUE_DERATE_OVERRIDE) &&
@@ -17013,7 +17016,7 @@ uint cm550_fuelDemandTableBlendCalculator(void)
 {
   ushort extraout_D0u;
   undefined4 in_D0;
-  undefined2 uVar2;
+  word wVar2;
   word extraout_D0w;
   ushort uVar3;
   ushort uVar4;
@@ -17022,31 +17025,31 @@ uint cm550_fuelDemandTableBlendCalculator(void)
   uVar3 = (ushort)((uint)in_D0 >> 0x10);
   if (algorithm_enable_flags_4_cal.user_commanded_timing_enable == 0) {
     if (_DAT_0080d706 == 1) {
-      _DAT_008006b0 = _current_fuel_demand;
-      uVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_008006aa);
+      _DAT_008006b0 = final_fueling;
+      wVar2 = lookupTableInterpolation((table_interp_args_t *)&DAT_008006aa);
     }
     else {
-      uVar2 = _current_fuel_demand;
+      wVar2 = final_fueling;
     }
     if (_alpha_blend_factor == 0x4000) {
       _DAT_008006be = _engine_rpm_primary;
-      _DAT_008006c6 = uVar2;
+      _DAT_008006c6 = wVar2;
       cm550_tableLookup2D((word *)&DAT_008006b8);
       uVar3 = extraout_D0u;
       _timing_4DTBTA = extraout_D0w;
     }
     else if (_alpha_blend_factor == 0) {
       _DAT_008006d4 = _engine_rpm_primary;
-      _DAT_008006dc = uVar2;
+      _DAT_008006dc = wVar2;
       _timing_4DTBTA = cm550_tableLookup2D((word *)&DAT_008006ce);
       uVar3 = 0;
     }
     else {
       _DAT_008006be = _engine_rpm_primary;
-      _DAT_008006c6 = uVar2;
+      _DAT_008006c6 = wVar2;
       uVar3 = cm550_tableLookup2D((word *)&DAT_008006b8);
       _DAT_008006d4 = _engine_rpm_primary;
-      _DAT_008006dc = uVar2;
+      _DAT_008006dc = wVar2;
       uVar4 = cm550_tableLookup2D((word *)&DAT_008006ce);
       uVar1 = (uint)uVar4 * (0x4000 - (uint)_alpha_blend_factor);
       _timing_4DTBTA =
@@ -17222,12 +17225,12 @@ void fuelDemandProportionalCalculationSlowCycle40Coordinator(void)
 {
   uint uVar1;
   
-  if (_current_fuel_demand < _conversion_offset_of_line_converting_cubic_millimeter_fuel_to_0_100) {
+  if (final_fueling < _conversion_offset_of_line_converting_cubic_millimeter_fuel_to_0_100) {
     _DAT_0080d35a = 0;
     return;
   }
   uVar1 = cm550_scaleByRatio((uint)_engine_rpm_primary * 100,
-                             (uint)_current_fuel_demand -
+                             (uint)final_fueling -
                              (uint)
                              _conversion_offset_of_line_converting_cubic_millimeter_fuel_to_0_100,
                              (uint)
@@ -17330,8 +17333,6 @@ void vp44_FUN_0001cb3c(void)
 //
 // Function: cm550_FUN_0001cb48 @ 0x0001cb48
 //
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void cm550_FUN_0001cb48(void)
 
@@ -17711,7 +17712,7 @@ void presetHighSpeedGovernorIntegrator(void)
     else {
       _hsg_integrator_fuel_output = (int)_hsg_pid_proportional_fueling_contribution;
     }
-    _hsg_integrator_fuel_output = (uint)_current_fuel_demand - _hsg_integrator_fuel_output;
+    _hsg_integrator_fuel_output = (uint)final_fueling - _hsg_integrator_fuel_output;
     if (0 < _hsg_pid_proportional_fueling_contribution) {
       if (_hsg_pid_proportional_fueling_contribution <
           _hsg_integrator_reset_value_used_to_adjust_integrator_under_def_0_100_8066) {
@@ -18418,7 +18419,7 @@ undefined4 cm550_FUN_0001de58(void)
   short sVar2;
   int iVar3;
   short sVar4;
-  ushort uVar5;
+  word wVar5;
   ushort local_10;
   ushort local_e;
   ushort local_c;
@@ -18428,20 +18429,20 @@ undefined4 cm550_FUN_0001de58(void)
   
   uVar1 = _timing_alpha_blend_factor;
   if ((algorithm_enable_flags_18_cal.programmable_power_enable == 0) ||
-     (_validated_percent_throttle_commanded_by_driver_0_100 <= _DAT_000608a0)) {
-    uVar5 = _validated_percent_throttle_commanded_by_driver_0_100;
+     (validated_percent_throttle_commanded_by_driver_0_100 <= _DAT_000608a0)) {
+    wVar5 = validated_percent_throttle_commanded_by_driver_0_100;
   }
   else {
-    uVar5 = _DAT_000608a0;
+    wVar5 = _DAT_000608a0;
   }
   sVar2 = 0;
-  if (uVar5 == 0) {
+  if (wVar5 == 0) {
     sVar4 = _minimum_fueling_value_0_100;
   }
   else {
     if (_timing_alpha_blend_factor != 0) {
       _DAT_0080d378 = _engine_rpm_primary;
-      _fuel_table_primary_throttle_input = uVar5;
+      _fuel_table_primary_throttle_input = wVar5;
       local_6 = cm550_tableLookup2D((word *)&fuel_table_primary_descriptor);
       cm550_subtractAndClampValue(&local_6);
       _fuel_table_primary_throttle_input = 0;
@@ -18461,7 +18462,7 @@ undefined4 cm550_FUN_0001de58(void)
     }
     if (uVar1 < 0x4000) {
       _DAT_0080d38e = _engine_rpm_primary;
-      _fuel_table_secondary_throttle_input = uVar5;
+      _fuel_table_secondary_throttle_input = wVar5;
       local_8 = cm550_tableLookup2D((word *)&fuel_table_secondary_descriptor);
       cm550_subtractAndClampValue(&local_8);
       _fuel_table_secondary_throttle_input = 0;
@@ -19771,8 +19772,8 @@ void cm550_diagnosticMessage45Builder(void)
         bVar1 = true;
       }
       if (!bVar1) {
-        *local_8 = (char)(((uint)_validated_percent_throttle_commanded_by_driver_0_100 * 0xff) / 400
-                         );
+        *local_8 = (char)(((uint)validated_percent_throttle_commanded_by_driver_0_100 * 0xff) / 400)
+        ;
         goto LAB_0001f204;
       }
     }
@@ -19791,7 +19792,7 @@ LAB_0001f204:
     bVar4 = bVar4 | 8;
   }
   if (_jcomm_throttle_kickdown_threshold_throt_position_above_which_k_0_100 <
-      _validated_percent_throttle_commanded_by_driver_0_100) {
+      validated_percent_throttle_commanded_by_driver_0_100) {
     bVar4 = bVar4 | 0x10;
   }
   if (_throttle_above_idle_flag == 0) {
@@ -25626,7 +25627,7 @@ void cm550_calculatePedalFaultModeFuelDemand(void)
   if (user_fueling_state == FUELING_STATE_ACCELERATOR_PEDAL_FAULT) {
     _DAT_0080dabc =
          cm550_exponentialMovingAverage
-                   (_current_engine_rpm_filtered,&pedal_fault_mode_engine_speed_filter_state);
+                   (current_engine_rpm_filtered,&pedal_fault_mode_engine_speed_filter_state);
     uVar1 = ((uint)_DAT_00808210 * (uint)_DAT_0080dabc) / 0x8b21;
     if ((uint)_DAT_00808212 < (uint)_DAT_00808216 + (uVar1 & 0xffff)) {
       _DAT_0080daba = _DAT_00808216;
@@ -25704,16 +25705,16 @@ void cm550_FUN_00025806(word previous_user_fueling_state)
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* It uses pedal_fault_mode_engine_speed_filter_state. It is the pedal fault mode preset:
    fuel_demand_ramped (0x80dab8, the ramp) and fuel_demand_target (0x801a3c, the slewed limit) =
-   current_fuel_demand, and the filter's accumulator = ESCMES (0x80ccf4) << 16. (was
-   cm550_FUN_000258b0; PR #53 round 89; the twin of CM848 0x50da7c: one shared name) */
+   final_fueling, and the filter's accumulator = ESCMES (0x80ccf4) << 16. (was cm550_FUN_000258b0;
+   PR #53 round 89; the twin of CM848 0x50da7c: one shared name) */
 
 void presetPedalFaultModeFuelDemand(void)
 
 {
-  _fuel_demand_ramped = _current_fuel_demand;
-  _fuel_demand_target = _current_fuel_demand;
-  pedal_fault_mode_engine_speed_filter_state.accumulator =
-       (uint)_current_engine_rpm_filtered << 0x10;
+  _fuel_demand_ramped = final_fueling;
+  _fuel_demand_target = final_fueling;
+  pedal_fault_mode_engine_speed_filter_state.accumulator = (uint)current_engine_rpm_filtered << 0x10
+  ;
   return;
 }
 
@@ -25853,7 +25854,7 @@ void vp44_FUN_00025a34(void)
     _lsg_integrator_preset_max_0_100 = 0x1700;
   }
   iVar1 = (int)((int)_lsg_proportional_gain_2_calibration_2_to_2 * (uint)_engine_rpm_primary) /
-          0x8b2 + ((uint)_current_fuel_demand -
+          0x8b2 + ((uint)final_fueling -
                   ((int)_lsg_filtered_speed_error * (int)_lsg_proportional_gain_active) / 0x3c0);
   if (algorithm_enable_flags_32_cal.low_speed_governor_no_load_fuel_enable != 0) {
     iVar1 = iVar1 - (uint)_frictional_no_load_fueling;
@@ -25865,7 +25866,7 @@ void vp44_FUN_00025a34(void)
     iVar1 = (int)_lsg_integrator_preset_max_0_100;
   }
   _fuel_economy_sample_1 = iVar1 << 0x10;
-  _lsg_fuel_output_clamped = _current_fuel_demand;
+  _lsg_fuel_output_clamped = final_fueling;
   _lsg_derivative_filter_output = 0;
   _vp44_fuel_demand_previous = _engine_rpm_primary;
   _DAT_00801a72 = _lsg_proportional_gain_active;
@@ -25896,7 +25897,7 @@ void cm550_runLowSpeedGovernor(void)
   word wVar5;
   
   wVar3 = cm550_exponentialMovingAverage
-                    (_DAT_0080825a * _validated_percent_throttle_commanded_by_driver_0_100,
+                    (_DAT_0080825a * validated_percent_throttle_commanded_by_driver_0_100,
                      &low_speed_governor_throttle_reference_offset_filter_state);
   wVar5 = _lsg_filtered_speed_error;
   if (_datalink_speed_control_mode == 0) {
@@ -26177,8 +26178,8 @@ uint cm550_epsAccelerationMonitor(void)
     if (_high_speed_idle_cooldown_timer < _DAT_0080821e) {
       _high_speed_idle_cooldown_timer = _high_speed_idle_cooldown_timer + 1;
     }
-    uVar2 = CONCAT22(sVar3 >> 0xf,_sampled_road_speed_after_it_has_been_filtered_0_255_9961);
-    if (_sampled_road_speed_after_it_has_been_filtered_0_255_9961 < _DAT_00808226) {
+    uVar2 = CONCAT22(sVar3 >> 0xf,sampled_road_speed_after_it_has_been_filtered_0_255_9961);
+    if (sampled_road_speed_after_it_has_been_filtered_0_255_9961 < _DAT_00808226) {
       uVar2 = CONCAT22(sVar3 >> 0xf,_high_temp_idle_cooldown_timer);
       if (_high_temp_idle_cooldown_timer < _DAT_0080821e) {
         _high_temp_idle_cooldown_timer = _high_temp_idle_cooldown_timer + 1;
@@ -26203,17 +26204,17 @@ uint cm550_epsAccelerationMonitor(void)
        (uVar2 = debounced_switch_value_for_switch_16_on_off & 4,
        (debounced_switch_value_for_switch_16_on_off & 4) != 0)) {
       uVar1 = (undefined2)(uVar2 >> 0x10);
-      uVar2 = CONCAT22(uVar1,_sampled_road_speed_after_it_has_been_filtered_0_255_9961);
-      if ((_sampled_road_speed_after_it_has_been_filtered_0_255_9961 < _DAT_00808226) ||
+      uVar2 = CONCAT22(uVar1,sampled_road_speed_after_it_has_been_filtered_0_255_9961);
+      if ((sampled_road_speed_after_it_has_been_filtered_0_255_9961 < _DAT_00808226) ||
          (uVar2 = CONCAT22(uVar1,_high_speed_idle_cooldown_timer),
          _high_speed_idle_cooldown_timer != _DAT_0080821e)) goto LAB_00026158;
     }
   }
   else {
 LAB_00026158:
-    uVar2 = CONCAT22((short)(uVar2 >> 0x10),
-                     _sampled_road_speed_after_it_has_been_filtered_0_255_9961);
-    if (_sampled_road_speed_after_it_has_been_filtered_0_255_9961 <= _DAT_00808224)
+    uVar2 = CONCAT22((short)(uVar2 >> 0x10),sampled_road_speed_after_it_has_been_filtered_0_255_9961
+                    );
+    if (sampled_road_speed_after_it_has_been_filtered_0_255_9961 <= _DAT_00808224)
     goto LAB_0002617e;
   }
   _allow_aggressive_logic_0_inhibit_aggressive_logic_1_0_1 = 1;
@@ -27103,11 +27104,11 @@ void calculateSpeedRatioComponent(void)
   uint uVar1;
   ushort uVar2;
   
-  if ((_frictional_no_load_fueling < _current_fuel_demand) &&
+  if ((_frictional_no_load_fueling < final_fueling) &&
      (_frictional_no_load_fueling < _fueling_value_at_100_throttle_0_100)) {
-    uVar1 = cm550_scaleByRatio((uint)_current_fuel_demand - (uint)_frictional_no_load_fueling,0x6400
-                               ,(uint)_fueling_value_at_100_throttle_0_100 -
-                                (uint)_frictional_no_load_fueling);
+    uVar1 = cm550_scaleByRatio((uint)final_fueling - (uint)_frictional_no_load_fueling,0x6400,
+                               (uint)_fueling_value_at_100_throttle_0_100 -
+                               (uint)_frictional_no_load_fueling);
     if (uVar1 < 0x7f81) {
       _engine_load_percent_normalized = (undefined2)uVar1;
     }
@@ -27118,7 +27119,7 @@ void calculateSpeedRatioComponent(void)
   else {
     _engine_load_percent_normalized = 0;
   }
-  if (_frictional_no_load_fueling < _current_fuel_demand) {
+  if (_frictional_no_load_fueling < final_fueling) {
     if ((_the_actual_hsg_derate_speed_used_in_hsg_droop_calculation_1400_5000 < _engine_rpm_primary)
        && (_hsg_droop_active_flag != 0)) {
       uVar1 = ((uint)_engine_rpm_primary -
@@ -27137,31 +27138,31 @@ void calculateSpeedRatioComponent(void)
         uVar2 = 0;
       }
       if (uVar2 <= _frictional_no_load_fueling) {
-        _percent_load_at_current_speed = 0;
+        engine_load_at_current_speed_percent = 0;
         return;
       }
       uVar2 = uVar2 - _frictional_no_load_fueling;
     }
     else {
       if (_fueling_value_at_100_throttle_0_100 <= _frictional_no_load_fueling) {
-        _percent_load_at_current_speed = 0;
+        engine_load_at_current_speed_percent = 0;
         return;
       }
       uVar2 = _fueling_value_at_100_throttle_0_100 - _frictional_no_load_fueling;
     }
-    uVar1 = (uint)(ushort)(_current_fuel_demand - _frictional_no_load_fueling) * 0x6400;
+    uVar1 = (uint)(ushort)(final_fueling - _frictional_no_load_fueling) * 0x6400;
     if (uVar1 < (uint)uVar2 * 0x7f80) {
-      _percent_load_at_current_speed = (undefined2)(uVar1 / uVar2);
+      engine_load_at_current_speed_percent = (word)(uVar1 / uVar2);
     }
     else {
-      _percent_load_at_current_speed = 0x7f80;
+      engine_load_at_current_speed_percent = 0x7f80;
     }
     if (final_fueling_state == FUELING_STATE_HIGH_SPEED_GOVERNOR) {
-      _percent_load_at_current_speed = 0x6400;
+      engine_load_at_current_speed_percent = 0x6400;
     }
   }
   else {
-    _percent_load_at_current_speed = 0;
+    engine_load_at_current_speed_percent = 0;
   }
   return;
 }
@@ -27177,10 +27178,10 @@ void calculateSpeedRatioComponent(void)
 void cm550_FUN_00026e2c(void)
 
 {
-  if ((_frictional_no_load_fueling < _current_fuel_demand) &&
+  if ((_frictional_no_load_fueling < final_fueling) &&
      (_frictional_no_load_fueling < _fueling_provided_if_engine_were_using_low_hp_curve_0_100)) {
     _percent_load_based_on_low_hp_torque_curve_0_255 =
-         (short)(((uint)(ushort)(_current_fuel_demand - _frictional_no_load_fueling) * 0x6400) /
+         (short)(((uint)(ushort)(final_fueling - _frictional_no_load_fueling) * 0x6400) /
                 (uint)(ushort)(_fueling_provided_if_engine_were_using_low_hp_curve_0_100 -
                               _frictional_no_load_fueling));
     return;
@@ -28324,7 +28325,7 @@ void mc68k_runPowerDownSequence(void)
     } while (uVar4 < 0xa0);
     uVar5 = uVar5 + 1;
   }
-  local_a = _time_that_the_engine_is_not_in_stop_state_0_2_29;
+  local_a = engine_hour_meter;
   cm550_parameterCircularBufferWrite(0x803b50,(byte *)&local_a,4);
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
@@ -29693,7 +29694,7 @@ void cm550_runPowerTakeOffGovernor(void)
     _DAT_0080dc1c =
          _closed_loop_filtered_speed_error -
          (short)((int)((uint)_DAT_00803bac *
-                      ((uint)_current_fuel_demand - (uint)_frictional_no_load_fueling)) / 0x444);
+                      ((uint)final_fueling - (uint)_frictional_no_load_fueling)) / 0x444);
     if (_DAT_00804012 != 0) {
       _DAT_00801c22 = _DAT_0080dc1c + 16000;
       _DAT_0080dc1e = lookupTableInterpolation((table_interp_args_t *)&DAT_00801c1c);
@@ -29761,16 +29762,16 @@ void cm550_runPowerTakeOffGovernor(void)
                               );
     if (final_fueling_state != FUELING_STATE_POWER_TAKE_OFF) {
       _pid_combined_correction_term = _closed_loop_pid_proportional_term;
-      if (_frictional_no_load_fueling < _current_fuel_demand) {
+      if (_frictional_no_load_fueling < final_fueling) {
         _fuel_above_no_load_feedforward =
              cm550_scaleByRatio((uint)uVar9 *
-                                ((uint)_current_fuel_demand - (uint)_frictional_no_load_fueling),
-                                0x8000,0x22222);
+                                ((uint)final_fueling - (uint)_frictional_no_load_fueling),0x8000,
+                                0x22222);
       }
       else {
         _fuel_above_no_load_feedforward = 0;
       }
-      _closed_loop_fuel_output_scaled = (uint)_current_fuel_demand * (uint)local_8._2_2_;
+      _closed_loop_fuel_output_scaled = (uint)final_fueling * (uint)local_8._2_2_;
       _closed_loop_fuel_output_scaled =
            cm550_scaleByRatio(_closed_loop_fuel_output_scaled,0x8000,0x4443b);
       iVar6 = cm550_scaleByRatio((int)
@@ -29883,11 +29884,11 @@ void cm550_presetPowerTakeOffGovernorOnEngagement(void)
   }
   local_8._2_2_ = (ushort)((uint)local_8._2_2_ * (0x7fff - (uint)_DAT_008088a4) >> 0xe);
   _closed_loop_fuel_output_scaled =
-       (uint)_current_fuel_demand * (uint)(ushort)(local_8._2_2_ + _DAT_008088a4);
+       (uint)final_fueling * (uint)(ushort)(local_8._2_2_ + _DAT_008088a4);
   _closed_loop_fuel_output_scaled =
        cm550_scaleByRatio(_closed_loop_fuel_output_scaled,0x8000,0x7fff);
   _DAT_0080dc0c = _closed_loop_fuel_output_scaled;
-  _closed_loop_fuel_demand_output = _current_fuel_demand;
+  _closed_loop_fuel_demand_output = final_fueling;
   return;
 }
 
@@ -31396,7 +31397,7 @@ void cm550_diagnosticDataDump(void)
   cm550_engineCoolantPGN_65226_Builder();
   cm550_diagnosticDM2PGN_65227_Builder();
   cm550_canTransmissionTrigger();
-  cm550_diagnosticDM4PGN_65229_Builder();
+  cm550_initializePgn65229Dm4Handler();
   cm550_diagnosticDM5PGN_65230_Builder();
   cm550_diagnosticDM11PGN_65234_Builder();
   return;
@@ -31909,10 +31910,15 @@ byte validateSecurityKey(byte *auth_payload_ptr)
 
 
 //
-// Function: cm550_FUN_0002fd90 @ 0x0002fd90
+// Function: cm550_releaseFaultFreezeFrameEntry @ 0x0002fd90
 //
 
-void cm550_FUN_0002fd90(word code_index)
+/* Frees the freeze frame entry of a fault: finds the first of the 20 entries whose fault code index
+   is the given one and writes 125 (free) to the code of its primary and of its shadow record.
+   Called by cm550_resetFaultStatus for a fault with status 2 (was cm550_FUN_0002fd90; PR #53 round
+   93) */
+
+void cm550_releaseFaultFreezeFrameEntry(word code_index)
 
 {
   bool bVar1;
@@ -31923,9 +31929,10 @@ void cm550_FUN_0002fd90(word code_index)
   bVar3 = 0;
   sVar2 = 0;
   while ((bVar3 < 0x14 && (!bVar1))) {
-    if (code_index == *(word *)(&diagnostic_fault_code_table + sVar2)) {
-      *(undefined2 *)(&diagnostic_fault_code_table + sVar2) = 0x7d;
-      *(undefined2 *)(&DAT_0080462e + sVar2) = 0x7d;
+    if (code_index == *(word *)((int)&fault_freeze_frame_entries[0].fault_code_index + (int)sVar2))
+    {
+      *(undefined2 *)((int)&fault_freeze_frame_entries[0].fault_code_index + (int)sVar2) = 0x7d;
+      *(undefined2 *)((int)&fault_freeze_frame_entries[0x14].fault_code_index + (int)sVar2) = 0x7d;
       bVar1 = true;
     }
     sVar2 = sVar2 + 0x30;
@@ -31942,11 +31949,11 @@ void cm550_FUN_0002fd90(word code_index)
 
 /* Clears fault_count_table[code_index]: occurrence_count, status_change_time and
    last_countdown_time = 0. When the status is 2 it then releases the fault's snapshot slot
-   (cm550_FUN_0002fd90 writes 125 to the slot's code words at 0x80426e / 0x80462e + 48 x slot).
-   Last, status = 0. Called by cm550_countDownPreviouslyActiveFault when the count reaches 0 and by
-   cm550_FUN_00014812 for every previously active fault on a clear request. Counterpart of CM848
-   cm848_resetFaultStatus (0x1dee0) (was cm550_diagnosticTableEntryClear; PR #53 round 91) (was
-   cm550_diagnosticTableEntryClear; PR #53 round 91) */
+   (cm550_releaseFaultFreezeFrameEntry writes 125 to the slot's code words at 0x80426e / 0x80462e +
+   48 x slot). Last, status = 0. Called by cm550_countDownPreviouslyActiveFault when the count
+   reaches 0 and by cm550_FUN_00014812 for every previously active fault on a clear request.
+   Counterpart of CM848 cm848_resetFaultStatus (0x1dee0) (was cm550_diagnosticTableEntryClear; PR
+   #53 round 91) (was cm550_diagnosticTableEntryClear; PR #53 round 91) */
 
 void cm550_resetFaultStatus(word code_index)
 
@@ -31958,7 +31965,7 @@ void cm550_resetFaultStatus(word code_index)
   *(undefined4 *)((int)&fault_count_table[0].status_change_time + (int)sVar1) = 0;
   *(undefined4 *)((int)&fault_count_table[0].last_countdown_time + (int)sVar1) = 0;
   if ((&fault_count_table[0].status)[sVar1] == 2) {
-    cm550_FUN_0002fd90(code_index);
+    cm550_releaseFaultFreezeFrameEntry(code_index);
   }
   (&fault_count_table[0].status)[sVar1] = 0;
   return;
@@ -31967,66 +31974,112 @@ void cm550_resetFaultStatus(word code_index)
 
 
 //
-// Function: cm550_diagnosticTableSnapshotCapture @ 0x0002fe38
+// Function: cm550_captureFaultFreezeFrame @ 0x0002fe38
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Fills a fault freeze frame (fault_freeze_frame_entries, 48-byte cm550_fault_entry_t): the fault
+   code index, key_on_hour_meter, engine_hour_meter, the vehicle and engine speeds, load, throttle,
+   boost / coolant / intake manifold temperature / oil pressure / battery sensor values, the three
+   system switch status words, final_fueling and its state, the timing advance, the cruise switch
+   multiplexer value and three words of the VP44 RAM image. When the fault's definition flags word
+   (0x8067c6 + 6 x code) has bit 0x10 it writes the shadow record (entry + 20); it writes the
+   primary record only when the entry's fault code index differs (the first capture). Called by
+   cm550_assignFaultFreezeFrameEntry. CM848 does this inside cm848_captureFaultFreezeFrame (was
+   cm550_diagnosticTableSnapshotCapture; PR #53 round 93) */
 
-void cm550_diagnosticTableSnapshotCapture(word snapshot_slot,word code_index)
+void cm550_captureFaultFreezeFrame(word snapshot_slot,word code_index)
 
 {
   short sVar1;
   
   if ((*(ushort *)(&fault_definition_flags_word + (short)(code_index * 3) * 2) & 0x10) != 0) {
     sVar1 = snapshot_slot * 0x30;
-    *(word *)(&DAT_0080462e + sVar1) = code_index;
-    *(undefined2 *)(&DAT_00804636 + sVar1) = _percent_load_at_current_speed;
-    *(undefined2 *)(&DAT_00804630 + sVar1) =
-         _sampled_road_speed_after_it_has_been_filtered_0_255_9961;
-    *(undefined2 *)(sVar1 + 0x804632) = _current_engine_rpm_filtered;
-    *(undefined2 *)(sVar1 + 0x804638) = _validated_percent_throttle_commanded_by_driver_0_100;
-    *(word *)(&DAT_0080463a + sVar1) = boost_pressure_sensor_state.filtered_value;
-    *(dword *)(sVar1 + 0x80462a) = key_on_hour_meter;
-    *(word *)(&DAT_0080463c + sVar1) = coolant_temperature_sensor_state.filtered_value;
-    *(word *)(sVar1 + 0x80463e) = intake_manifold_temperature_sensor_state.filtered_value;
-    *(word *)(sVar1 + 0x804640) = oil_pressure_sensor_state.filtered_value;
-    *(undefined2 *)(sVar1 + 0x804634) = _bit_mapped_system_switch_status_0_false_1_true_bcc8;
-    *(undefined2 *)(sVar1 + 0x804642) = _bit_mapped_system_switch_status_0_false_1_true_bcca;
-    *(undefined4 *)(sVar1 + 0x804644) = _time_that_the_engine_is_not_in_stop_state_0_2_29;
-    *(FUELING_STATE *)(sVar1 + 0x804648) = final_fueling_state;
-    *(word *)(sVar1 + 0x80464a) = battery_voltage_sensor_state.filtered_value;
-    *(undefined2 *)(sVar1 + 0x80464c) = _current_fuel_demand;
-    *(word *)(sVar1 + 0x80464e) = selected_timing_advance_output_0_120;
-    *(undefined2 *)(sVar1 + 0x804650) = _DAT_0080a18e;
-    *(undefined2 *)(sVar1 + 0x804652) = _DAT_0080a188;
-    *(word *)(sVar1 + 0x804654) = cruise_control_switch_multiplexer_sensor_state.filtered_value;
-    *(undefined2 *)(sVar1 + 0x804656) = _DAT_0080a17e;
-    *(undefined2 *)(sVar1 + 0x804658) = _bit_mapped_system_switch_status_0_false_1_true_bccc;
+    *(word *)((int)&fault_freeze_frame_entries[0x14].fault_code_index + (int)sVar1) = code_index;
+    *(word *)((int)&fault_freeze_frame_entries[0x14].engine_load_at_current_speed + (int)sVar1) =
+         engine_load_at_current_speed_percent;
+    *(word *)((int)&fault_freeze_frame_entries[0x14].vehicle_speed + (int)sVar1) =
+         sampled_road_speed_after_it_has_been_filtered_0_255_9961;
+    *(word *)((int)&fault_freeze_frame_entries[0x14].filtered_rpm + (int)sVar1) =
+         current_engine_rpm_filtered;
+    *(word *)((int)&fault_freeze_frame_entries[0x14].accelerator_pedal_position + (int)sVar1) =
+         validated_percent_throttle_commanded_by_driver_0_100;
+    *(word *)((int)&fault_freeze_frame_entries[0x14].intake_manifold_pressure + (int)sVar1) =
+         boost_pressure_sensor_state.filtered_value;
+    *(dword *)((int)&fault_freeze_frame_entries[0x14].key_on_hour_meter + (int)sVar1) =
+         key_on_hour_meter;
+    *(word *)((int)&fault_freeze_frame_entries[0x14].coolant_temperature + (int)sVar1) =
+         coolant_temperature_sensor_state.filtered_value;
+    *(word *)((int)&fault_freeze_frame_entries[0x14].intake_manifold_temperature + (int)sVar1) =
+         intake_manifold_temperature_sensor_state.filtered_value;
+    *(word *)((int)&fault_freeze_frame_entries[0x14].oil_pressure + (int)sVar1) =
+         oil_pressure_sensor_state.filtered_value;
+    *(word *)((int)&fault_freeze_frame_entries[0x14].system_switch_status + (int)sVar1) =
+         system_switch_status;
+    *(word *)((int)&fault_freeze_frame_entries[0x14].system_switch_status_2 + (int)sVar1) =
+         system_switch_status_2;
+    *(dword *)((int)&fault_freeze_frame_entries[0x14].engine_hour_meter + (int)sVar1) =
+         engine_hour_meter;
+    *(FUELING_STATE *)((int)&fault_freeze_frame_entries[0x14].final_fueling_state + (int)sVar1) =
+         final_fueling_state;
+    *(word *)((int)&fault_freeze_frame_entries[0x14].battery_voltage + (int)sVar1) =
+         battery_voltage_sensor_state.filtered_value;
+    *(word *)((int)&fault_freeze_frame_entries[0x14].final_fueling + (int)sVar1) = final_fueling;
+    *(word *)((int)&fault_freeze_frame_entries[0x14].selected_timing_advance + (int)sVar1) =
+         selected_timing_advance_output_0_120;
+    *(word *)((int)&fault_freeze_frame_entries[0x14].vp44_pump_status + (int)sVar1) =
+         vp44_pump_status;
+    *(word *)((int)&fault_freeze_frame_entries[0x14].vp44_fuel_temperature + (int)sVar1) =
+         vp44_fuel_temperature;
+    *(word *)((int)&fault_freeze_frame_entries[0x14].cruise_control_switch_multiplexer + (int)sVar1)
+         = cruise_control_switch_multiplexer_sensor_state.filtered_value;
+    *(word *)((int)&fault_freeze_frame_entries[0x14].vp44_engine_speed + (int)sVar1) =
+         vp44_engine_speed;
+    *(word *)((int)&fault_freeze_frame_entries[0x14].system_switch_status_3 + (int)sVar1) =
+         system_switch_status_3;
   }
   sVar1 = snapshot_slot * 0x30;
-  if (code_index != *(word *)(&diagnostic_fault_code_table + sVar1)) {
-    *(word *)(&diagnostic_fault_code_table + sVar1) = code_index;
-    *(undefined2 *)(sVar1 + 0x804276) = _percent_load_at_current_speed;
-    *(undefined2 *)(sVar1 + 0x804270) = _sampled_road_speed_after_it_has_been_filtered_0_255_9961;
-    *(undefined2 *)(sVar1 + 0x804272) = _current_engine_rpm_filtered;
-    *(undefined2 *)(sVar1 + 0x804278) = _validated_percent_throttle_commanded_by_driver_0_100;
-    *(word *)(sVar1 + 0x80427a) = boost_pressure_sensor_state.filtered_value;
-    *(dword *)(sVar1 + 0x80426a) = key_on_hour_meter;
-    *(word *)(sVar1 + 0x80427c) = coolant_temperature_sensor_state.filtered_value;
-    *(word *)(sVar1 + 0x80427e) = intake_manifold_temperature_sensor_state.filtered_value;
-    *(word *)(sVar1 + 0x804280) = oil_pressure_sensor_state.filtered_value;
-    *(undefined2 *)(sVar1 + 0x804274) = _bit_mapped_system_switch_status_0_false_1_true_bcc8;
-    *(undefined2 *)(sVar1 + 0x804282) = _bit_mapped_system_switch_status_0_false_1_true_bcca;
-    *(undefined4 *)(sVar1 + 0x804284) = _time_that_the_engine_is_not_in_stop_state_0_2_29;
-    *(FUELING_STATE *)(sVar1 + 0x804288) = final_fueling_state;
-    *(word *)(sVar1 + 0x80428a) = battery_voltage_sensor_state.filtered_value;
-    *(undefined2 *)(sVar1 + 0x80428c) = _current_fuel_demand;
-    *(word *)(sVar1 + 0x80428e) = selected_timing_advance_output_0_120;
-    *(undefined2 *)(sVar1 + 0x804290) = _DAT_0080a18e;
-    *(undefined2 *)(sVar1 + 0x804292) = _DAT_0080a188;
-    *(word *)(sVar1 + 0x804294) = cruise_control_switch_multiplexer_sensor_state.filtered_value;
-    *(undefined2 *)(sVar1 + 0x804296) = _DAT_0080a17e;
-    *(undefined2 *)(sVar1 + 0x804298) = _bit_mapped_system_switch_status_0_false_1_true_bccc;
+  if (code_index != *(word *)((int)&fault_freeze_frame_entries[0].fault_code_index + (int)sVar1)) {
+    *(word *)((int)&fault_freeze_frame_entries[0].fault_code_index + (int)sVar1) = code_index;
+    *(word *)((int)&fault_freeze_frame_entries[0].engine_load_at_current_speed + (int)sVar1) =
+         engine_load_at_current_speed_percent;
+    *(word *)((int)&fault_freeze_frame_entries[0].vehicle_speed + (int)sVar1) =
+         sampled_road_speed_after_it_has_been_filtered_0_255_9961;
+    *(word *)((int)&fault_freeze_frame_entries[0].filtered_rpm + (int)sVar1) =
+         current_engine_rpm_filtered;
+    *(word *)((int)&fault_freeze_frame_entries[0].accelerator_pedal_position + (int)sVar1) =
+         validated_percent_throttle_commanded_by_driver_0_100;
+    *(word *)((int)&fault_freeze_frame_entries[0].intake_manifold_pressure + (int)sVar1) =
+         boost_pressure_sensor_state.filtered_value;
+    *(dword *)((int)&fault_freeze_frame_entries[0].key_on_hour_meter + (int)sVar1) =
+         key_on_hour_meter;
+    *(word *)((int)&fault_freeze_frame_entries[0].coolant_temperature + (int)sVar1) =
+         coolant_temperature_sensor_state.filtered_value;
+    *(word *)((int)&fault_freeze_frame_entries[0].intake_manifold_temperature + (int)sVar1) =
+         intake_manifold_temperature_sensor_state.filtered_value;
+    *(word *)((int)&fault_freeze_frame_entries[0].oil_pressure + (int)sVar1) =
+         oil_pressure_sensor_state.filtered_value;
+    *(word *)((int)&fault_freeze_frame_entries[0].system_switch_status + (int)sVar1) =
+         system_switch_status;
+    *(word *)((int)&fault_freeze_frame_entries[0].system_switch_status_2 + (int)sVar1) =
+         system_switch_status_2;
+    *(dword *)((int)&fault_freeze_frame_entries[0].engine_hour_meter + (int)sVar1) =
+         engine_hour_meter;
+    *(FUELING_STATE *)((int)&fault_freeze_frame_entries[0].final_fueling_state + (int)sVar1) =
+         final_fueling_state;
+    *(word *)((int)&fault_freeze_frame_entries[0].battery_voltage + (int)sVar1) =
+         battery_voltage_sensor_state.filtered_value;
+    *(word *)((int)&fault_freeze_frame_entries[0].final_fueling + (int)sVar1) = final_fueling;
+    *(word *)((int)&fault_freeze_frame_entries[0].selected_timing_advance + (int)sVar1) =
+         selected_timing_advance_output_0_120;
+    *(word *)((int)&fault_freeze_frame_entries[0].vp44_pump_status + (int)sVar1) = vp44_pump_status;
+    *(word *)((int)&fault_freeze_frame_entries[0].vp44_fuel_temperature + (int)sVar1) =
+         vp44_fuel_temperature;
+    *(word *)((int)&fault_freeze_frame_entries[0].cruise_control_switch_multiplexer + (int)sVar1) =
+         cruise_control_switch_multiplexer_sensor_state.filtered_value;
+    *(word *)((int)&fault_freeze_frame_entries[0].vp44_engine_speed + (int)sVar1) =
+         vp44_engine_speed;
+    *(word *)((int)&fault_freeze_frame_entries[0].system_switch_status_3 + (int)sVar1) =
+         system_switch_status_3;
   }
   return;
 }
@@ -32377,15 +32430,15 @@ void cm550_rpmHistogramAndAveragingStatistics(void)
 {
   ushort uVar1;
   
-  if (_current_engine_rpm_filtered != 0) {
-    if (_DAT_00806198 < _current_engine_rpm_filtered) {
-      _DAT_00806198 = _current_engine_rpm_filtered;
+  if (current_engine_rpm_filtered != 0) {
+    if (_DAT_00806198 < current_engine_rpm_filtered) {
+      _DAT_00806198 = current_engine_rpm_filtered;
     }
-    if ((_current_engine_rpm_filtered < _DAT_00804022) || (_rpm_histogram_bin_size == 0)) {
+    if ((current_engine_rpm_filtered < _DAT_00804022) || (_rpm_histogram_bin_size == 0)) {
       uVar1 = 0;
     }
     else {
-      uVar1 = (short)((int)((uint)_current_engine_rpm_filtered - (uint)_DAT_00804022) /
+      uVar1 = (short)((int)((uint)current_engine_rpm_filtered - (uint)_DAT_00804022) /
                      (int)(uint)_rpm_histogram_bin_size) + 1;
       if (0x18 < uVar1) {
         uVar1 = 0x18;
@@ -32396,7 +32449,7 @@ void cm550_rpmHistogramAndAveragingStatistics(void)
   DAT_00801e96 = DAT_00801e96 + '\x01';
   if (DAT_00801e96 == '\n') {
     DAT_00801e96 = '\0';
-    if (_current_engine_rpm_filtered != 0) {
+    if (current_engine_rpm_filtered != 0) {
       if (_trip_rpm_average_sample_count != -1) {
         _trip_rpm_average_sample_count = _trip_rpm_average_sample_count + 1;
       }
@@ -32436,7 +32489,7 @@ void cm550_rpmHistogramAndAveragingStatistics(void)
         _idle_cooldown_timer_high_load =
              _minimum_time_the_engine_must_idle_before_shutdown_if_high_loa_0_1800;
       }
-      if (_rpm_histogram_high_speed_threshold < _current_engine_rpm_filtered) {
+      if (_rpm_histogram_high_speed_threshold < current_engine_rpm_filtered) {
         _idle_cooldown_timer_high_speed =
              _minimum_idle_time_if_the_engine_was_at_high_speed_to_avoid_ho_0_1800;
       }
@@ -32511,13 +32564,13 @@ uint cm550_FUN_000306ca(void)
       _DAT_00806198 = 0;
       _DAT_00804fa4 = 0;
     }
-    if (_current_engine_rpm_filtered == 0) {
+    if (current_engine_rpm_filtered == 0) {
       fuel_statistics_operating_mode = 0;
     }
     else if (_closed_loop_governor_active_flag == 1) {
       fuel_statistics_operating_mode = 2;
     }
-    else if (((_sampled_road_speed_after_it_has_been_filtered_0_255_9961 == 0) &&
+    else if (((sampled_road_speed_after_it_has_been_filtered_0_255_9961 == 0) &&
              (_DAT_0080a9ee == 1)) ||
             ((final_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR && (_DAT_0080a9ee != 1)))) {
       fuel_statistics_operating_mode = 1;
@@ -32943,16 +32996,16 @@ ushort cm550_FUN_00031496(void)
   uVar1 = (ushort)algorithm_enable_flags_18_cal & 0x10;
   if (((algorithm_enable_flags_18_cal.trending_enable != 0) &&
       (engine_state != ENGINE_STATE_STOPPED)) && (_trending_data_capture_active == 1)) {
-    if ((_DAT_00808a80 < _current_engine_rpm_filtered) ||
-       (_current_engine_rpm_filtered <= _rpm_divisor_value)) {
+    if ((_DAT_00808a80 < current_engine_rpm_filtered) ||
+       (current_engine_rpm_filtered <= _rpm_divisor_value)) {
       _DAT_00801e98 = 0;
     }
     else {
       _DAT_00801e98 = 1;
     }
     if ((_upper_limit_at_which_loading_trigger_is_satisfied_in_trendin_0_127_5 <
-         _percent_load_at_current_speed) ||
-       (_percent_load_at_current_speed <=
+         engine_load_at_current_speed_percent) ||
+       (engine_load_at_current_speed_percent <=
         _lower_limit_at_which_loading_trigger_is_satisfied_in_trendin_0_127_5)) {
       _DAT_00801e9a = 0;
     }
@@ -32973,7 +33026,7 @@ ushort cm550_FUN_00031496(void)
     else {
       _DAT_00801e9e = 1;
     }
-    uVar1 = _percent_load_at_current_speed;
+    uVar1 = engine_load_at_current_speed_percent;
     if ((((_DAT_00801e98 == 0) || (_DAT_00801e9a == 0)) || (_DAT_00801e9c == 0)) ||
        (_DAT_00801e9e == 0)) {
       _DAT_00804a08 = 0;
@@ -33061,7 +33114,7 @@ void cm550_FUN_000315be(void)
         *(undefined2 *)((short)(_trending_write_index * 7) * 2 + 0x804a1e) = 0;
         *(undefined2 *)(&runtime_histogram_array_1 + (short)(_trending_write_index * 7) * 2) = 0;
         *(undefined2 *)((short)(_trending_write_index * 7) * 2 + 0x804a22) = 0;
-        _DAT_008049f0 = _time_that_the_engine_is_not_in_stop_state_0_2_29 & 0xffffff00;
+        _DAT_008049f0 = engine_hour_meter & 0xffffff00;
         _DAT_00804a12 = _fueling_value_at_100_throttle_0_100 & 0xff00;
         *(uint *)((short)(_trending_write_index * 7) * 2 + 0x804a24) =
              _DAT_008049f0 | (int)(uint)_DAT_00804a12 >> 8;
@@ -33132,7 +33185,7 @@ void cm550_FUN_000315be(void)
              (undefined2)(_engine_run_counter_snapshot_1 / _output_control_countdown_timer);
         *(undefined2 *)((short)(_trending_write_index * 7) * 2 + 0x804a22) =
              _engine_run_counter_snapshot_2;
-        _DAT_008049f0 = _time_that_the_engine_is_not_in_stop_state_0_2_29 & 0xffffff00;
+        _DAT_008049f0 = engine_hour_meter & 0xffffff00;
         _DAT_00804a12 = _fueling_value_at_100_throttle_0_100 & 0xff00;
         *(uint *)((short)(_trending_write_index * 7) * 2 + 0x804a24) =
              _DAT_008049f0 | (int)(uint)_DAT_00804a12 >> 8;
@@ -33190,7 +33243,7 @@ ushort cm550_FUN_00031a68(void)
     _DAT_008049ea = 0;
     _DAT_008049fe = _trending_total_sample_count;
     _trending_total_sample_count = 0;
-    _calibration_validator_ptr = _time_that_the_engine_is_not_in_stop_state_0_2_29;
+    _calibration_validator_ptr = engine_hour_meter;
     _engine_run_counter_snapshot_1 = 0;
   }
   return (ushort)algorithm_enable_flags_18_cal & 0x10;
@@ -33347,8 +33400,8 @@ void j1939HandlePgn65265CruiseVehicleSpeed(void)
       ccvs_message_byte_0 = ccvs_message_byte_0 & 0xfd;
     }
   }
-  if ((byte)(_sampled_road_speed_after_it_has_been_filtered_0_255_9961 >> 8) < 0x9d) {
-    local_6 = _sampled_road_speed_after_it_has_been_filtered_0_255_9961;
+  if ((byte)(sampled_road_speed_after_it_has_been_filtered_0_255_9961 >> 8) < 0x9d) {
+    local_6 = sampled_road_speed_after_it_has_been_filtered_0_255_9961;
   }
   else {
     local_6 = 0x9c00;
@@ -33808,12 +33861,20 @@ void cm550_diagnosticDM2PGN_65227_Builder(void)
 
 
 //
-// Function: evaluateTemperatureDiagnosticState @ 0x0003258a
+// Function: cm550_j1939HandlePgn65229Dm4FreezeFrame @ 0x0003258a
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The J1939 request handler for PGN 65229 DM4 freeze frame (registered by
+   cm550_initializePgn65229Dm4Handler): while the transmit status is idle it builds
+   j1939_pgn65229_tx_message - 8 bytes of 0 / 0xff when there is no active or previously active
+   fault, else 73 bytes per used freeze frame entry (the standard fields from the shadow record when
+   it is in use, else the primary; then both records' words) - and sends it with
+   cm550_sendCanMessage. CM848 splits this into cm848_j1939BuildDm4FreezeFrame and
+   cm848_j1939HandlePgn65229Dm4FreezeFrame (was evaluateTemperatureDiagnosticState; PR #53 round 93)
+    */
 
-uint evaluateTemperatureDiagnosticState(void)
+uint cm550_j1939HandlePgn65229Dm4FreezeFrame(void)
 
 {
   undefined4 uVar1;
@@ -33850,11 +33911,13 @@ uint evaluateTemperatureDiagnosticState(void)
       iVar8 = 0;
       do {
         sVar9 = (short)iVar8;
-        if (*(short *)(&diagnostic_fault_code_table + sVar9) != 0x7d) {
-          iVar2 = (uint)(*(short *)(&DAT_0080462e + sVar9) != 0x7d) * 0x3c0;
+        if (*(short *)((int)&fault_freeze_frame_entries[0].fault_code_index + (int)sVar9) != 0x7d) {
+          iVar2 = (uint)(*(short *)((int)&fault_freeze_frame_entries[0x14].fault_code_index +
+                                   (int)sVar9) != 0x7d) * 0x3c0;
           sVar4 = (short)iVar2;
-          uVar3 = (uint)(((int)(uint)*(ushort *)((short)(sVar9 + sVar4) + 0x80427a) >> 7) * 0x1afa)
-                  / 1000;
+          uVar3 = (uint)(((int)(uint)*(ushort *)
+                                      ((int)&fault_freeze_frame_entries[0].intake_manifold_pressure
+                                      + (int)(short)(sVar9 + sVar4)) >> 7) * 0x1afa) / 1000;
           if (500 < (ushort)uVar3) {
             uVar3 = 500;
           }
@@ -33862,17 +33925,23 @@ uint evaluateTemperatureDiagnosticState(void)
           uVar5 = byteSwap16(iVar8 + iVar2 + 0x804272);
           puVar11[8] = (char)uVar5;
           puVar11[7] = (char)((ushort)uVar5 >> 8);
-          puVar11[9] = (char)((ushort)*(undefined2 *)((short)(sVar9 + sVar4) + 0x804276) >> 8);
-          iVar2 = ((short)((int)(uint)*(ushort *)((short)(sVar9 + sVar4) + 0x80427c) >> 7) * 5 +
-                  -0xa0) / 9;
+          puVar11[9] = (char)((ushort)*(undefined2 *)
+                                       ((int)&fault_freeze_frame_entries[0].
+                                              engine_load_at_current_speed +
+                                       (int)(short)(sVar9 + sVar4)) >> 8);
+          iVar2 = ((short)((int)(uint)*(ushort *)
+                                       ((int)&fault_freeze_frame_entries[0].coolant_temperature +
+                                       (int)(short)(sVar9 + sVar4)) >> 7) * 5 + -0xa0) / 9;
           cVar6 = (char)iVar2;
           if ((short)iVar2 < -0x28) {
             cVar6 = -0x28;
           }
           puVar11[10] = cVar6 + '(';
           if (_DAT_00060fa2 == 1) {
-            local_6 = (undefined2)((uint)*(ushort *)((short)(sVar9 + sVar4) + 0x804270) * 0x67 >> 6)
-            ;
+            local_6 = (undefined2)
+                      ((uint)*(ushort *)
+                              ((int)&fault_freeze_frame_entries[0].vehicle_speed +
+                              (int)(short)(sVar9 + sVar4)) * 0x67 >> 6);
             uVar5 = byteSwap16(&local_6);
             puVar11[0xc] = (char)uVar5;
             puVar11[0xb] = (char)((ushort)uVar5 >> 8);
@@ -33882,54 +33951,78 @@ uint evaluateTemperatureDiagnosticState(void)
             puVar11[0xc] = 0xff;
           }
           puVar11[0xd] = (char)*(undefined2 *)
-                                (&diagnostic_fault_code_table + (short)(sVar9 + sVar4));
+                                ((int)&fault_freeze_frame_entries[0].fault_code_index +
+                                (int)(short)(sVar9 + sVar4));
           puVar11[0xe] = (char)((ushort)*(undefined2 *)
-                                         (&diagnostic_fault_code_table + (short)(sVar9 + sVar4)) >>
-                               8);
+                                         ((int)&fault_freeze_frame_entries[0].fault_code_index +
+                                         (int)(short)(sVar9 + sVar4)) >> 8);
           puVar11[0xf] = 0;
           puVar11[0x10] = DAT_00060fa1;
           bVar7 = 0;
           do {
             iVar2 = (uint)bVar7 * 0x1c;
-            uVar1 = *(undefined4 *)((short)(sVar9 + (ushort)bVar7 * 0x3c0) + 0x80426a);
+            uVar1 = *(undefined4 *)
+                     ((int)&fault_freeze_frame_entries[0].key_on_hour_meter +
+                     (int)(short)(sVar9 + (ushort)bVar7 * 0x3c0));
             puVar11[iVar2 + 0x14] = (char)uVar1;
             puVar11[iVar2 + 0x13] = (char)((uint)uVar1 >> 8);
             puVar11[iVar2 + 0x12] = (char)((uint)uVar1 >> 0x10);
             puVar11[iVar2 + 0x11] = (char)((uint)uVar1 >> 0x18);
             uVar5 = *(undefined2 *)
-                     (&diagnostic_fault_code_table + (short)(sVar9 + (ushort)bVar7 * 0x3c0));
+                     ((int)&fault_freeze_frame_entries[0].fault_code_index +
+                     (int)(short)(sVar9 + (ushort)bVar7 * 0x3c0));
             puVar11[iVar2 + 0x16] = (char)uVar5;
             puVar11[iVar2 + 0x15] = (char)((ushort)uVar5 >> 8);
-            uVar5 = *(undefined2 *)((short)(sVar9 + (ushort)bVar7 * 0x3c0) + 0x804270);
+            uVar5 = *(undefined2 *)
+                     ((int)&fault_freeze_frame_entries[0].vehicle_speed +
+                     (int)(short)(sVar9 + (ushort)bVar7 * 0x3c0));
             puVar11[iVar2 + 0x18] = (char)uVar5;
             puVar11[iVar2 + 0x17] = (char)((ushort)uVar5 >> 8);
-            uVar5 = *(undefined2 *)((short)(sVar9 + (ushort)bVar7 * 0x3c0) + 0x804272);
+            uVar5 = *(undefined2 *)
+                     ((int)&fault_freeze_frame_entries[0].filtered_rpm +
+                     (int)(short)(sVar9 + (ushort)bVar7 * 0x3c0));
             puVar11[iVar2 + 0x1a] = (char)uVar5;
             puVar11[iVar2 + 0x19] = (char)((ushort)uVar5 >> 8);
-            uVar5 = *(undefined2 *)((short)(sVar9 + (ushort)bVar7 * 0x3c0) + 0x804274);
+            uVar5 = *(undefined2 *)
+                     ((int)&fault_freeze_frame_entries[0].system_switch_status +
+                     (int)(short)(sVar9 + (ushort)bVar7 * 0x3c0));
             puVar11[iVar2 + 0x1c] = (char)uVar5;
             puVar11[iVar2 + 0x1b] = (char)((ushort)uVar5 >> 8);
-            uVar5 = *(undefined2 *)((short)(sVar9 + (ushort)bVar7 * 0x3c0) + 0x804276);
+            uVar5 = *(undefined2 *)
+                     ((int)&fault_freeze_frame_entries[0].engine_load_at_current_speed +
+                     (int)(short)(sVar9 + (ushort)bVar7 * 0x3c0));
             puVar11[iVar2 + 0x1e] = (char)uVar5;
             puVar11[iVar2 + 0x1d] = (char)((ushort)uVar5 >> 8);
-            uVar5 = *(undefined2 *)((short)(sVar9 + (ushort)bVar7 * 0x3c0) + 0x804278);
+            uVar5 = *(undefined2 *)
+                     ((int)&fault_freeze_frame_entries[0].accelerator_pedal_position +
+                     (int)(short)(sVar9 + (ushort)bVar7 * 0x3c0));
             puVar11[iVar2 + 0x20] = (char)uVar5;
             puVar11[iVar2 + 0x1f] = (char)((ushort)uVar5 >> 8);
-            uVar5 = *(undefined2 *)((short)(sVar9 + (ushort)bVar7 * 0x3c0) + 0x80427a);
+            uVar5 = *(undefined2 *)
+                     ((int)&fault_freeze_frame_entries[0].intake_manifold_pressure +
+                     (int)(short)(sVar9 + (ushort)bVar7 * 0x3c0));
             puVar11[iVar2 + 0x22] = (char)uVar5;
             puVar11[iVar2 + 0x21] = (char)((ushort)uVar5 >> 8);
-            uVar5 = *(undefined2 *)((short)(sVar9 + (ushort)bVar7 * 0x3c0) + 0x80427c);
+            uVar5 = *(undefined2 *)
+                     ((int)&fault_freeze_frame_entries[0].coolant_temperature +
+                     (int)(short)(sVar9 + (ushort)bVar7 * 0x3c0));
             puVar11[iVar2 + 0x24] = (char)uVar5;
             puVar11[iVar2 + 0x23] = (char)((ushort)uVar5 >> 8);
-            uVar5 = *(undefined2 *)((short)(sVar9 + (ushort)bVar7 * 0x3c0) + 0x80427e);
+            uVar5 = *(undefined2 *)
+                     ((int)&fault_freeze_frame_entries[0].intake_manifold_temperature +
+                     (int)(short)(sVar9 + (ushort)bVar7 * 0x3c0));
             puVar11[iVar2 + 0x26] = (char)uVar5;
             puVar11[iVar2 + 0x25] = (char)((ushort)uVar5 >> 8);
             puVar11[iVar2 + 0x27] = 0;
             puVar11[iVar2 + 0x28] = 0;
-            uVar5 = *(undefined2 *)((short)(sVar9 + (ushort)bVar7 * 0x3c0) + 0x804280);
+            uVar5 = *(undefined2 *)
+                     ((int)&fault_freeze_frame_entries[0].oil_pressure +
+                     (int)(short)(sVar9 + (ushort)bVar7 * 0x3c0));
             puVar11[iVar2 + 0x2a] = (char)uVar5;
             puVar11[iVar2 + 0x29] = (char)((ushort)uVar5 >> 8);
-            uVar5 = *(undefined2 *)((short)(sVar9 + (ushort)bVar7 * 0x3c0) + 0x804282);
+            uVar5 = *(undefined2 *)
+                     ((int)&fault_freeze_frame_entries[0].system_switch_status_2 +
+                     (int)(short)(sVar9 + (ushort)bVar7 * 0x3c0));
             puVar11[iVar2 + 0x2c] = (char)uVar5;
             puVar11[iVar2 + 0x2b] = (char)((ushort)uVar5 >> 8);
             bVar7 = bVar7 + 1;
@@ -33950,12 +34043,18 @@ uint evaluateTemperatureDiagnosticState(void)
 
 
 //
-// Function: cm550_diagnosticDM4PGN_65229_Builder @ 0x000329d2
+// Function: cm550_initializePgn65229Dm4Handler @ 0x000329d2
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up: sets up the DM4 transmit descriptor at 0x802d62 (CAN ID from 0xFECD00 with the priority
+   bits of 0x803f5a, the source address, the data pointer 0x802d70 and the status pointer), writes
+   each of the 20 entries' length byte 73 and 0xff, and registers
+   cm550_j1939HandlePgn65229Dm4FreezeFrame for PGN 65229 (0xFECD) with the request handler registrar
+   at 0x2f47e. The counterpart of CM848's cm848_initPgn65229Dm4Handler (0x25094) (was
+   cm550_diagnosticDM4PGN_65229_Builder; PR #53 round 93) */
 
-void cm550_diagnosticDM4PGN_65229_Builder(void)
+void cm550_initializePgn65229Dm4Handler(void)
 
 {
   byte bVar1;
@@ -34244,7 +34343,7 @@ void j1939HandlePgn61443Eec2(void)
       (((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 4) == 0 ||
        ((_fault_confirm_status_word_4 & 4) == 0)))))) {
     if (_jcomm_throttle_kickdown_threshold_throt_position_above_which_k_0_100 <
-        _validated_percent_throttle_commanded_by_driver_0_100) {
+        validated_percent_throttle_commanded_by_driver_0_100) {
       vp44_feedback_pulse_low_fault_counter = 0xf4;
     }
     else {
@@ -34280,8 +34379,8 @@ void j1939HandlePgn61443Eec2(void)
        ((_fault_confirm_status_word_4 & 4) == 0)))))) {
     if (algorithm_enable_flags_5_cal.sampled_throttle_override_enable == 0) {
       vp44_feedback_pulse_high_fault_counter =
-           (char)((int)(uint)_validated_percent_throttle_commanded_by_driver_0_100 >> 1) +
-           (char)((int)(uint)_validated_percent_throttle_commanded_by_driver_0_100 >> 3);
+           (char)((int)(uint)validated_percent_throttle_commanded_by_driver_0_100 >> 1) +
+           (char)((int)(uint)validated_percent_throttle_commanded_by_driver_0_100 >> 3);
     }
     else {
       vp44_feedback_pulse_high_fault_counter = -1;
@@ -34815,7 +34914,7 @@ void cm550_FUN_000337c4(void)
   else {
     DAT_00803560 = -6;
   }
-  iVar1 = (int)_DAT_0080a188;
+  iVar1 = (int)(short)vp44_fuel_temperature;
   if (iVar1 < 0) {
     iVar1 = iVar1 + 0xf;
   }
@@ -35523,14 +35622,11 @@ void vp44_FUN_000344ce(void)
 // Function: cm550_FUN_00034512 @ 0x00034512
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm550_FUN_00034512(void)
 
 {
   if (engine_state != ENGINE_STATE_STOPPED) {
-    _time_that_the_engine_is_not_in_stop_state_0_2_29 =
-         _time_that_the_engine_is_not_in_stop_state_0_2_29 + 1;
+    engine_hour_meter = engine_hour_meter + 1;
   }
   key_on_hour_meter = key_on_hour_meter + 1;
   return;
@@ -35548,7 +35644,7 @@ void cm550_FUN_0003452a(void)
 
 {
   key_on_hour_meter = _eeprom_hour_meter_buffer;
-  _time_that_the_engine_is_not_in_stop_state_0_2_29 = _eeprom_engine_run_time_buffer;
+  engine_hour_meter = _eeprom_engine_run_time_buffer;
   return;
 }
 
@@ -36224,11 +36320,11 @@ void vp44_liftPumpFuelDeliveryController(void)
 void vp44_FUN_00034d52(void)
 
 {
-  if (_fueling_value_above_which_wet_stack_timing_is_set_to_zero_0_100 < _current_fuel_demand) {
+  if (_fueling_value_above_which_wet_stack_timing_is_set_to_zero_0_100 < final_fueling) {
     _wet_stack_adjusted_timing_floor_0_120 =
          _wet_stack_timing_base_value_0_120 -
          (short)((int)((uint)_vp44_fault_counter_threshold_2 *
-                      ((uint)_current_fuel_demand -
+                      ((uint)final_fueling -
                       (uint)_fueling_value_above_which_wet_stack_timing_is_set_to_zero_0_100)) / 100
                 );
   }

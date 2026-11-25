@@ -1177,6 +1177,7 @@ typedef struct cm550_algorithm_enable_flags_27_t cm550_algorithm_enable_flags_27
 typedef struct cm550_algorithm_enable_flags_28_t cm550_algorithm_enable_flags_28_t;
 typedef struct cm550_algorithm_enable_flags_32_t cm550_algorithm_enable_flags_32_t;
 typedef struct cm550_algorithm_enable_flags_33_t cm550_algorithm_enable_flags_33_t;
+typedef struct cm550_fault_entry_t cm550_fault_entry_t;
 
 struct j1939_msg_hdr_t {
     uint32_t can_id;  /* The CAN identifier: priority / PGN / source address (was j1939_header_t.id; CM848's type name; PR #53 round 88) */
@@ -1560,9 +1561,9 @@ struct parameter_id_table_entry_t {
 };
 
 struct fault_count_record_t {
-    uint32_t status_change_time;  /* +0: key_on_hour_meter (0.2 s counts) when the fault last became active (status 3) or inactive (status 2) - cm550_processFaultScanGroup stores it (move.l at 0x14972 / 0x14bd0). The first countdown step waits until key_on_hour_meter minus it reaches the mode's elapsed time before countdown (e2m DGnnELTM at 0x80654c + 8 x mode); cm550_oldestDiagnosticTimestampSearch picks the snapshot slot whose fault has the smallest one (cmp.l at 0x146fa); cm550_resetFaultStatus zeroes it. Unsigned (sub.l then cmp.l / bls) */
+    uint32_t status_change_time;  /* +0: key_on_hour_meter (0.2 s counts) when the fault last became active (status 3) or inactive (status 2) - cm550_processFaultScanGroup stores it (move.l at 0x14972 / 0x14bd0). The first countdown step waits until key_on_hour_meter minus it reaches the mode's elapsed time before countdown (e2m DGnnELTM at 0x80654c + 8 x mode); cm550_findOldestFreezeFrameEntryByFaultStatus picks the snapshot slot whose fault has the smallest one (cmp.l at 0x146fa); cm550_resetFaultStatus zeroes it. Unsigned (sub.l then cmp.l / bls) */
     uint32_t last_countdown_time;  /* +4: key_on_hour_meter at the last countdown step (move.l at 0x145bc); 0 until the first step - the activation (clr.l at 0x14988) and cm550_resetFaultStatus (clr.l at 0x2fe0e) zero it. While it is not 0 each step waits until key_on_hour_meter minus it reaches the mode's count down rate (e2m DGnnCUDN at 0x806550 + 8 x mode). Unsigned (sub.l then cmp.l / bhi) */
-    uint8_t status;  /* +8: bit 0 = active / bit 1 = given a snapshot slot in diagnostic_fault_code_table. cm550_processFaultScanGroup writes 3 on activation (after cm550_diagnosticCodeRegistrar assigns the slot) and 2 on deactivation (whatever bit 1 was - in the RAM dump fault 70 is 2 and holds no slot); the registrar writes 0 (from 2) or 1 (from 3) to the oldest fault whose slot it hands to a new fault; cm550_resetFaultStatus releases the slot when the status is 2 and writes 0. Readers test bit 0 (btst #0 in the countdown) or group 1 / 3 against 0 / 2 (cm550_FUN_000315be / cm550_evaluateDataloggerTrigger) */
+    uint8_t status;  /* +8: bit 0 = active / bit 1 = given a snapshot slot in fault_freeze_frame_entries[0].fault_code_index. cm550_processFaultScanGroup writes 3 on activation (after cm550_assignFaultFreezeFrameEntry assigns the slot) and 2 on deactivation (whatever bit 1 was - in the RAM dump fault 70 is 2 and holds no slot); the registrar writes 0 (from 2) or 1 (from 3) to the oldest fault whose slot it hands to a new fault; cm550_resetFaultStatus releases the slot when the status is 2 and writes 0. Readers test bit 0 (btst #0 in the countdown) or group 1 / 3 against 0 / 2 (cm550_FUN_000315be / cm550_evaluateDataloggerTrigger) */
     uint8_t occurrence_count;  /* +9: times the fault became active: +1 on each new fault bit mapped to it up to 255 (cmpi.b #0xff / bcc at 0x1491e) and -1 per countdown step (subq.b at 0x145d4); at 0 the record is cleared and the fault leaves previously_active_dtc_list. DM1 / DM2 send it capped at 127 (cmpi.b #0x7f / bls) and the InSite fault list (J1587 PID 194 layout) sends it whole; cm550_insitePidDtcHandler skips a fault whose count is 0. Unsigned */
 };
 
@@ -1967,4 +1968,29 @@ struct cm550_algorithm_enable_flags_33_t {
     uint16_t reserved_bit_13 : 1;  /* bit 13: no record in v64t6_s and no test in the dumped ROM; guess PTFTEN 'FIRE TRUCK SET/RESUME PTO ENABLE FLAG' (0x2000 in 18 later ISB e2m files) or TCSTLEN torque converter stall torque management (3 files); clear */
     uint16_t reserved_bit_14 : 1;  /* bit 14: no record in v64t6_s and no test in the dumped ROM; guess SMS_EN shift management system (0x4000 in 13 later files) / TCTCPTEN powertrain protection torque converter (4) / VSBKSWEN brake switch diagnostics (3); clear */
     uint16_t ambient_pressure_control_enable : 1;  /* bit 15: e2m AAPRCOEN (mask 8000) 'AMBIENT PRESSURE CONTROL ALGORITHM ENABLE'; no test in the dumped ROM; clear */
+};
+
+struct cm550_fault_entry_t {
+    uint32_t key_on_hour_meter;  /* key_on_hour_meter (0x80bda4) at capture (move.l) */
+    uint16_t fault_code_index;  /* the fault code index (0-124) that owns the entry; 125 = free (cm550_releaseFaultFreezeFrameEntry). CM848 fault_entry_t.fault_code is a byte with 0xAA = free */
+    uint16_t vehicle_speed;  /* 0x80a9d0 at capture: e2m 117D +C VSFTAVVS 'sampled road speed after it has been filtered' */
+    uint16_t filtered_rpm;  /* 0x80ccf4 at capture: e2m 100C +2 ESCMES 'engine speed based from period of one cam rev' */
+    uint16_t system_switch_status;  /* system_switch_status (0x80bcc8; e2m 1092 +0 SSSWSS01) at capture */
+    uint16_t engine_load_at_current_speed;  /* engine_load_at_current_speed_percent (0x80db5e; e2m 10BF +0 JCPCLD) at capture */
+    uint16_t accelerator_pedal_position;  /* 0x80aa82 at capture: e2m 1047 +0 THROTTLE 'validated percent throttle commanded by driver' */
+    uint16_t intake_manifold_pressure;  /* boost_pressure_sensor_state.filtered_value at capture */
+    uint16_t coolant_temperature;  /* coolant_temperature_sensor_state.filtered_value at capture */
+    uint16_t intake_manifold_temperature;  /* intake_manifold_temperature_sensor_state.filtered_value at capture */
+    uint16_t oil_pressure;  /* oil_pressure_sensor_state.filtered_value at capture */
+    uint16_t system_switch_status_2;  /* system_switch_status_2 (0x80bcca; e2m 1092 +2 SSSWSS02) at capture */
+    uint32_t engine_hour_meter;  /* engine_hour_meter (0x80ccee; e2m 11BC +0 CMEGTR 'time that the engine is not in stop state') at capture (move.l). CM848's fault_entry_t leaves these four bytes unwritten */
+    FUELING_STATE final_fueling_state;  /* final_fueling_state (0x80d330) at capture; CM848 keeps only its low byte */
+    uint16_t battery_voltage;  /* battery_voltage_sensor_state.filtered_value at capture */
+    uint16_t final_fueling;  /* final_fueling (0x80d32e; e2m 1051 +0 FSFNFL) at capture */
+    uint16_t selected_timing_advance;  /* selected_timing_advance_output_0_120 (0x80de6a; e2m 105B +2 TSFNTA) at capture; CM848's field here is main_injection_timing */
+    uint16_t vp44_pump_status;  /* vp44_pump_status (0x80a18e; e2m 801A +1C FLFLSS) at capture. From here on CM848's fault_entry_t holds its common rail words instead */
+    uint16_t vp44_fuel_temperature;  /* vp44_fuel_temperature (0x80a188; e2m 801A +16 FLFLTP) at capture */
+    uint16_t cruise_control_switch_multiplexer;  /* cruise_control_switch_multiplexer_sensor_state.filtered_value at capture */
+    uint16_t vp44_engine_speed;  /* vp44_engine_speed (0x80a17e; e2m 801A +C FLDFES) at capture */
+    uint16_t system_switch_status_3;  /* system_switch_status_3 (0x80bccc; e2m 1092 +4 SSSWSS03) at capture */
 };
