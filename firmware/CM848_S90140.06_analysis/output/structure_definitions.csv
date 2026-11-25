@@ -3,10 +3,10 @@ struct_name,address,field_name,type,size,comment,dependency,Status
 # Populated by mpc555_processCanReceiveBuffer from TouCAN mailbox hardware
 # Passed as param_1 to all J1939 RX handlers (processEngineTsc1Request, cm848_dispatchJ1939PgnRequest, etc.)
 # Ring buffer: 39 slots x 18 bytes, base 0x302016, wraps at 0x3022d4
-# data_ptr always points to this struct's own inline_data field (self-referential)
+# data_pointer always points to this struct's own inline_data field (self-referential)
 j1939_received_message_t,0x00302016,priority_dp_flags,byte,1,J1939 priority/reserved/data-page bits packed from upper CAN ID,,needs_review
 j1939_received_message_t,0x00302016,pgn_pf,byte,1,PDU Format - high byte of PGN (0xEF=EF00 0xDF=DF00 0x00=TSC1 etc),,verified
-j1939_received_message_t,0x00302016,dest_address,byte,1,Destination address (PDU1) or PGN low byte (PDU2); compared against j1939_source_address to filter incoming messages,,verified
+j1939_received_message_t,0x00302016,destination_address,byte,1,Destination address (PDU1) or PGN low byte (PDU2); compared against j1939_source_address to filter incoming messages,,verified
 j1939_received_message_t,0x00302016,source_address,byte,1,J1939 source address of sending node,,verified
 j1939_received_message_t,0x00302016,data_length,word,2,CAN DLC - payload byte count (handlers expect 8 for TSC1/ETC1),,verified
 j1939_received_message_t,0x00302016,data_pointer,byte*,4,Pointer to inline_data below (always this+10 per processCanReceiveBuffer),,verified
@@ -139,7 +139,7 @@ low_speed_governor_reference_t,0x0040aec2,altitude_speed,dword,4,e2m 1496 +16 LS
 pci_link_state_t,0x0040b34e,rx_match_index,byte,1,pci_receive_message_table entry whose header matches the frame being received (search resumes here per byte),,verified
 pci_link_state_t,0x0040b34e,tx_match_index,byte,1,pci_transmit_message_table entry whose header matches (own transmission echoed back),,verified
 pci_link_state_t,0x0040b34e,receive_byte_count,byte,1,Bytes stored in pci_receive_frame_buffer for the current frame,,verified
-pci_link_state_t,0x0040b34e,init_complete_marker,byte,1,Set to 1 at the end of cm848_initJ1939CommunicationSystem; no reader found,,verified
+pci_link_state_t,0x0040b34e,initialization_complete_marker,byte,1,Set to 1 at the end of cm848_initJ1939CommunicationSystem; no reader found,,verified
 pci_link_state_t,0x0040b34e,link_event_code,dword,4,PCI link event 1..7 (all stw/lwz); cm848_handlePciLinkEvent maps each to a recovery-action mask at 0x3fd8e0..0x3fd8e7; 7 = every scheduled PCI transmit overdue (set by cm848_checkPciMessageTimeouts); was dm1_pending (word),,verified
 # Fault List Management - DTC list indices and counters
 # Used by fault logging and DM1/DM2 message generation
@@ -1051,7 +1051,7 @@ j1939_message_header_t,,data_length,word,2,CAN DLC - payload byte count for TX m
 # Note: CM848 passes these as function parameters, not a structure pointer
 # Per-sensor-channel calibration config (ROM). Pointer-passed to cm848_processUnsignedSensorChannel / cm848_initializeUnsignedSensorChannel; field offsets verified from the threshold/debounce logic at 0x005012dc
 sensor_channel_config_t,,filter_coefficient,word,2,EMA coefficient: the weight of the previous filtered value in 1/65536 (0 = no filtering) - the channel's ema_filter_state_t.coefficient points here (was config_word0),,verified
-sensor_channel_config_t,,default_value,word,2,Nominal/fault fallback value (written to filtered output and state_ptr[1]),,verified
+sensor_channel_config_t,,default_value,word,2,Nominal/fault fallback value (written to filtered output and state_pointer[1]),,verified
 sensor_channel_config_t,,high_threshold,word,2,Upper limit - sensor value above this trips the high fault path,,verified
 sensor_channel_config_t,,low_threshold,word,2,Lower limit - sensor value below this trips the low fault path,,verified
 sensor_channel_config_t,,debounce_step,word,2,Per-cycle increment added to the debounce counter while ramping toward the limit,,verified
@@ -1104,7 +1104,7 @@ q16_fixed_point_t,,fractional_part,word,2,Low 16 bits - fractional portion,,veri
 # Size: 6 bytes per entry (observed in j1939DispatchPgnHandler loop increment)
 j1939_pgn_handler_entry_t,0x003fa9a2,pgn_byte_1,byte,1,First PGN byte for matching (compared against msg+6+1),,verified
 j1939_pgn_handler_entry_t,0x003fa9a2,pgn_byte_0,byte,1,Second PGN byte for matching (compared against msg+6+0),,verified
-j1939_pgn_handler_entry_t,0x003fa9a2,handler_func,dword,4,Function pointer to PGN handler callback,,verified
+j1939_pgn_handler_entry_t,0x003fa9a2,handler,dword,4,Function pointer to PGN handler callback,,verified
 
 # J1939 transmit descriptor. It began as the ACK message's 22-byte struct (header + two pointers + the 8-byte
 # payload), split 2026-11-18 into j1939_transmit_message_t and j1939_ack_payload. Its third pointer was read as a data end
@@ -1123,7 +1123,7 @@ j1939_acknowledgement_payload_t,,reserved_byte3,byte,1,Reserved byte 3 (always 0
 j1939_acknowledgement_payload_t,,address_acknowledged,byte,1,Source address of message being acknowledged (0xFF = global),,verified
 j1939_acknowledgement_payload_t,,pgn_low,byte,1,Acknowledged PGN low byte (hardcoded 0 for PDU1 requests),,verified
 j1939_acknowledgement_payload_t,,pgn_mid,byte,1,Acknowledged PGN mid byte (= pgn_pf of request),,verified
-j1939_acknowledgement_payload_t,,pgn_high,byte,1,Acknowledged PGN high byte (= dest_address of request),,verified
+j1939_acknowledgement_payload_t,,pgn_high,byte,1,Acknowledged PGN high byte (= destination_address of request),,verified
 
 # ============================================================================
 # Additional Generic Structures - Ported from CM550 for analysis reference
@@ -1722,18 +1722,18 @@ eeprom_transfer_state_t,0x00302878,transfer_timer,word,2,Transfer timeout countd
 # =============================================================================
 # EEPROM block range tracking @ 0x3028a6
 # key_off_duration_ticks: ticks since the key was last on; the runtime counter is saved past 0x2903
-# last_write_addr: previous block write address for sequential continuity check
-# block_start_addr: start address of current transfer address range
+# last_write_address: previous block write address for sequential continuity check
+# block_start_address: start address of current transfer address range
 # block_count: finished download blocks recorded in download_block_list @ 0x3028b3 (10 at most)
-# Note: last_write_addr and block_start_addr are UNALIGNED dwords (packed struct)
+# Note: last_write_address and block_start_address are UNALIGNED dwords (packed struct)
 # =============================================================================
 eeprom_block_tracking_t,0x003028a6,key_off_duration_ticks,word,2,Counted with the runtime counter by mpc555_tickTransferTimeoutAndRuntimeCounter (every 41 calls) - mpc555_keyOnStateMachine zeroes it while SCR bit 15 (key on - PR #48) is set and saves the runtime counter once it passes 0x2903 (was watchdog_counter 'Transfer watchdog counter (reset each block)'; PR #53 round 67),,verified
 eeprom_block_tracking_t,0x003028a6,failed_write_authorization_count,byte,1,cm848_validateBootSecurityKey's count of failed write authorizations: at 0x11 every check fails / a matching token resets it / a mismatch adds 1 (was _pad2; PR #53 round 35),,verified
-eeprom_block_tracking_t,0x003028a6,last_write_addr,dword,4,Previous block write address for continuity validation,,verified
-eeprom_block_tracking_t,0x003028a6,block_start_addr,dword,4,Start address of current EEPROM transfer range,,verified
+eeprom_block_tracking_t,0x003028a6,last_write_address,dword,4,Previous block write address for continuity validation,,verified
+eeprom_block_tracking_t,0x003028a6,block_start_address,dword,4,Start address of current EEPROM transfer range,,verified
 eeprom_block_tracking_t,0x003028a6,block_count,word,2,Finished download blocks in download_block_list (10 at most - cm848_finishDownloadBlock answers DOWNLOAD_INVALID when it is full; PR #53 round 67),,verified
 # download_block_range_t - one entry of download_block_list @ 0x3028b3 (PR #53 round 67)
-download_block_range_t,,start_address,dword,4,The block's first address (eeprom_block_tracking.block_start_addr),,verified
+download_block_range_t,,start_address,dword,4,The block's first address (eeprom_block_tracking.block_start_address),,verified
 download_block_range_t,,end_address,dword,4,The block's last data byte: start + block length - 3 for a J1939 block (before its 2-byte CRC) / - 1 for a serial block,,verified
 # =============================================================================
 # J1939 Transport Protocol queue/RTS-CTS state machine @ 0x302905
@@ -1741,7 +1741,7 @@ download_block_range_t,,end_address,dword,4,The block's last data byte: start + 
 # transported_pgn: PGN for active queue TP session (top byte 0xEF)
 # message_size: total data bytes for TP session (from CTS request)
 # message_data_pointer: pointer to source data buffer for multi-packet transmission
-# state_ptr: pointer to session status byte (updated with J1939 TP state codes)
+# state_pointer: pointer to session status byte (updated with J1939 TP state codes)
 # timeout_timer: CTS retry countdown (nominal 0x37 = 55 ticks)
 # frame_can_id: CAN frame first-4-byte header (alternates PGN 0xEC00/0xEB00)
 # frame_data_length: bytes to send in current CTS grant (max 8)
@@ -1776,10 +1776,10 @@ j1939_transport_transmit_session_t,0x003fbdc7,,,,the application transport's ins
 # phase 0: loadCalibrationFromEeprom
 # phase 1/2: mainLoopIteration
 # phase 3: loadVersionConfigFromEeprom
-# boot_param: parameter value set during mpc555_runPeriodicInterruptTimerTick
+# boot_parameter: parameter value set during mpc555_runPeriodicInterruptTimerTick
 # boot_phase: current phase counter (0-3)
 # =============================================================================
-boot_state_t,0x003034a0,boot_param,word,2,Boot state machine initialization parameter,,verified
+boot_state_t,0x003034a0,boot_parameter,word,2,Boot state machine initialization parameter,,verified
 boot_state_t,0x003034a0,boot_phase,word,2,Boot phase counter (cycles 0-3 per PISCR interrupt),,verified
 # =============================================================================
 # MIOS MDASM channel 27 @ 0x3060d8
@@ -1811,8 +1811,8 @@ mios1_interrupt_registers_t,0x00306c00,EN,word,2,MIOS1 interrupt enable register
 # Originally one bogus 4-byte pointer (sensor_channel_cmd_address).
 # These bytes serve different roles in different execution contexts (type-punned).
 # ==============================================================================
-diag_clear_flags_t,0x003fedfc,diag_response_write_count,byte,1,Diagnostic response write count pending,,best_guess
-diag_clear_flags_t,0x003fedfc,diag_eeprom_work_byte,byte,1,EEPROM channel scratch byte,,best_guess
+diag_clear_flags_t,0x003fedfc,diagnostic_response_write_count,byte,1,Diagnostic response write count pending,,best_guess
+diag_clear_flags_t,0x003fedfc,diagnostic_eeprom_work_byte,byte,1,EEPROM channel scratch byte,,best_guess
 diag_clear_flags_t,0x003fedfc,learned_output_speed_to_vehicle_speed_ratio,word,2,e2m 8BB3 +0 RE_Axle_Ratio_Factor_Learned 'Ratio of transmission output shaft speed to road speed (NV ratio)' (0.0078125 per count = rpm per mph; 5141 = 40.16 in the dump; the default 8BB2 +0 output_speed_to_vehicle_speed_default_ratio = 42 on the same scale; EEPROM 0x197c) (PR #53 round 52): EEPROM-backed learned ratio = output shaft speed x 4096 / vehicle_speed (5141 = 40.2 rpm per mph) clamped 4480-6656; synthesizes the output shaft speed on sensor fault; 0x3fedfb bit 0 marks it learned (was fuel_temp_protection_ratio),,best_guess
 # ==============================================================================
 # Dual-axis lookup table dimension descriptor

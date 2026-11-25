@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 13:58:47 MST 2026
+// Generated: Wed Nov 25 15:05:03 MST 2026
 
 
 //
@@ -608,7 +608,7 @@ void cm848_stubFunction1(void)
 // Function: mpc555_eepromWriteWords @ 0x00000bec
 //
 
-void mpc555_eepromWriteWords(dword dest_address,word *src_ptr,word word_count)
+void mpc555_eepromWriteWords(dword destination_address,word *source_pointer,word word_count)
 
 {
   word wVar1;
@@ -626,14 +626,14 @@ void mpc555_eepromWriteWords(dword dest_address,word *src_ptr,word word_count)
     qsmcm_comdram_0 = 0x1e;
     qsmcm_tranram.TX1 = 2;
     qsmcm_comdram_1 = 0x9e;
-    qsmcm_tranram.TX2 = (word)src_ptr;
+    qsmcm_tranram.TX2 = (word)source_pointer;
     qsmcm_comdram_2 = 0xce;
-    qsmcm_tranram.TX3 = *(word *)dest_address;
+    qsmcm_tranram.TX3 = *(word *)destination_address;
     qsmcm_comdram_3 = 0x4e;
     wVar1 = qsmcm_qspi.SPCR1;
     qsmcm_qspi.SPCR1 = wVar1 | 0x8000;
-    dest_address = dest_address + 2;
-    src_ptr = src_ptr + 1;
+    destination_address = destination_address + 2;
+    source_pointer = source_pointer + 1;
     uVar3 = uVar3 + 0xffff;
     do {
       bVar2 = qsmcm_qspi.SPSR;
@@ -1249,7 +1249,7 @@ void cm848_registerBootExecuteAtAddressService(void)
 // Function: cm848_registerPgnResponseHandler @ 0x00001948
 //
 
-bool cm848_registerPgnResponseHandler(dword pgn,void *handler_func)
+bool cm848_registerPgnResponseHandler(dword pgn,void *handler)
 
 {
   byte bVar1;
@@ -1260,7 +1260,7 @@ bool cm848_registerPgnResponseHandler(dword pgn,void *handler_func)
   if (uVar2 != 4) {
     pgn_response_handler_count = bVar1 + 1;
     *(short *)(&pgn_response_handler_table + uVar2 * 6) = (short)pgn;
-    *(void **)(&pgn_response_handler_callbacks + uVar2 * 6) = handler_func;
+    *(void **)(&pgn_response_handler_callbacks + uVar2 * 6) = handler;
   }
   return uVar2 == 4;
 }
@@ -1332,7 +1332,8 @@ undefined4 cm848_handleBootGetAddressByParameterIdService(j1939_received_message
   }
   else {
     local_28 = CONCAT13((request->priority_dp_flags >> 2 & 7) << 2,0xefff00);
-    local_28 = CONCAT31(CONCAT21(local_28._0_2_,request->source_address),request->dest_address);
+    local_28 = CONCAT31(CONCAT21(local_28._0_2_,request->source_address),
+                        request->destination_address);
     local_18 = 0x42;
     local_17 = local_c._0_1_;
     local_16 = (undefined1)local_c;
@@ -1450,7 +1451,7 @@ cm848_readBootDiagnosticMemoryAndRespond
                (request->priority_dp_flags >> 2 & 7) << 2 |
                *(byte *)&(message->header).can_id & 0xe3;
           *(byte *)((int)&(message->header).can_id + 2) = request->source_address;
-          *(byte *)((int)&(message->header).can_id + 3) = request->dest_address;
+          *(byte *)((int)&(message->header).can_id + 3) = request->destination_address;
           pbVar5 = request->data_pointer;
           *pbVar8 = bVar6;
           pbVar8 = pbVar8 + 1;
@@ -1641,7 +1642,7 @@ void mpc555_processDiagnosticAndEepromRequests(void)
 {
   byte bVar1;
   word erase_result;
-  byte diag_response_code;
+  byte diagnostic_response_code;
   
   mpc555_sciValidateChecksum();
   cm848_processDiagnosticTimeout();
@@ -1671,16 +1672,16 @@ void mpc555_processDiagnosticAndEepromRequests(void)
     else {
       if (eeprom_diag_state != EEPROM_DIAG_WRITE_DISPATCH) {
 LAB_0000208c:
-        diag_response_code = 0x12;
+        diagnostic_response_code = 0x12;
         goto LAB_00002098;
       }
       cm848_dispatchSerialReflashRequest();
     }
   }
   else {
-    diag_response_code = 0x11;
+    diagnostic_response_code = 0x11;
 LAB_00002098:
-    cm848_diagSendResponseCode(diag_response_code,0x7f);
+    cm848_diagSendResponseCode(diagnostic_response_code,0x7f);
   }
   diag_request_pending_flag = '\0';
 LAB_000020ac:
@@ -2274,7 +2275,7 @@ void cm848_softReset(void)
 /* fills diagnostic_service_dispatch_table (entry = byte service_id + void* handler - max 20);
    returns true when full */
 
-bool cm848_registerDiagnosticService(BOOT_DIAGNOSTIC_SERVICE service_id,void *handler_ptr)
+bool cm848_registerDiagnosticService(BOOT_DIAGNOSTIC_SERVICE service_id,void *handler_pointer)
 
 {
   uint uVar1;
@@ -2283,7 +2284,7 @@ bool cm848_registerDiagnosticService(BOOT_DIAGNOSTIC_SERVICE service_id,void *ha
   if (uVar1 != 0x14) {
     boot_diagnostic_service_count = boot_diagnostic_service_count + 1;
     diagnostic_service_dispatch_table[uVar1].service_id = service_id;
-    diagnostic_service_dispatch_table[uVar1].handler = handler_ptr;
+    diagnostic_service_dispatch_table[uVar1].handler = handler_pointer;
   }
   return uVar1 == 0x14;
 }
@@ -2294,7 +2295,7 @@ bool cm848_registerDiagnosticService(BOOT_DIAGNOSTIC_SERVICE service_id,void *ha
 // Function: cm848_registerPgnEf00Handler @ 0x00002cd8
 //
 
-void cm848_registerPgnEf00Handler(byte sub_id,void *handler_func)
+void cm848_registerPgnEf00Handler(byte sub_id,void *handler)
 
 {
   cm848_registerPgnResponseHandler(0xef00,&DAT_003fc8f4);
@@ -3029,7 +3030,7 @@ void mpc555_diagServiceTransferBlock(void)
     wVar1 = eeprom_block_tracking.block_count;
     if (wVar1 < 10) {
       cm848_diagSendResponseCode(0x61,0x74);
-      dVar3 = eeprom_block_tracking.block_start_addr;
+      dVar3 = eeprom_block_tracking.block_start_address;
       wVar1 = eeprom_block_tracking.block_count;
       download_block_list[wVar1].start_address = dVar3;
       dVar2 = eeprom_xfer_state.block_length;
@@ -3310,7 +3311,7 @@ void cm848_transmitCanMessage(j1939_transmit_message_t *message)
    cm848_writeBootDiagnosticMemoryByParameterId (was cm848_lookupTableEntryByKey; PR #53 round 60)
     */
 
-dword cm848_lookupBootParameterIdAddress(word param_id)
+dword cm848_lookupBootParameterIdAddress(word parameter_id)
 
 {
   ushort uVar1;
@@ -3320,11 +3321,11 @@ dword cm848_lookupBootParameterIdAddress(word param_id)
   
   ppVar2 = boot_parameter_id_table;
   uVar1 = boot_parameter_id_table[0].parameter_id;
-  while (((int)(uint)uVar1 < (int)CONCAT22(in_register_0000000c,param_id) &&
+  while (((int)(uint)uVar1 < (int)CONCAT22(in_register_0000000c,parameter_id) &&
          (ppVar2 = ppVar2 + 1, ppVar2 < (parameter_id_entry_t *)0x3f9924))) {
     uVar1 = ppVar2->parameter_id;
   }
-  if ((uint)ppVar2->parameter_id == CONCAT22(in_register_0000000c,param_id)) {
+  if ((uint)ppVar2->parameter_id == CONCAT22(in_register_0000000c,parameter_id)) {
     dVar3 = ppVar2->address;
   }
   else {
@@ -4134,7 +4135,7 @@ void mpc555_processCanReceiveBuffer(int param_1)
             *(uint *)(&DAT_003070f2 + param_1) >> 1 & 0x3ffff;
     pjVar1->priority_dp_flags = (char)(uVar9 >> 0x18);
     pjVar1->pgn_pf = (char)(uVar9 >> 0x10);
-    pjVar1->dest_address = (char)(uVar9 >> 8);
+    pjVar1->destination_address = (char)(uVar9 >> 8);
     pjVar1->source_address = (char)uVar9;
     pjVar1->data_length = (byte)(&DAT_003070f1)[param_1] & 0xf;
     pjVar1->data_pointer = pjVar1->inline_data;
@@ -4210,9 +4211,10 @@ void mpc555_dispatchCanMessageHandlers(void)
       return;
     }
     local_28._0_1_ = pjVar2->pgn_pf;
-    local_28._1_1_ = pjVar2->dest_address;
+    local_28._1_1_ = pjVar2->destination_address;
     if ((pjVar2->pgn_pf < 0xf0) &&
-       (cVar5 = can_rx_channel_filter, (cVar5.channel_id & 0xff) == (ushort)pjVar2->dest_address)) {
+       (cVar5 = can_rx_channel_filter,
+       (cVar5.channel_id & 0xff) == (ushort)pjVar2->destination_address)) {
       local_28 = (ushort)pjVar2->pgn_pf << 8;
     }
     pbVar8 = &pgn_response_handler_table;
@@ -4931,7 +4933,7 @@ byte mpc555_sendJ1939TransportClearToSend
    mpc555_dispatchJ1939TransportConnectionManagement | review-function-readability reviewed
    2026-11-11 - Readability Medium Accuracy Confidence High */
 
-void mpc555_handleJ1939TransportRequestToSend(j1939_received_message_t *rx_msg)
+void mpc555_handleJ1939TransportRequestToSend(j1939_received_message_t *received_message)
 
 {
   byte bVar1;
@@ -4943,9 +4945,9 @@ void mpc555_handleJ1939TransportRequestToSend(j1939_received_message_t *rx_msg)
   short local_28;
   undefined2 local_24;
   
-  pbVar5 = rx_msg->data_pointer;
+  pbVar5 = received_message->data_pointer;
   local_28 = (ushort)pbVar5[6] << 8;
-  bVar1 = rx_msg->source_address;
+  bVar1 = received_message->source_address;
   local_24 = CONCAT11(pbVar5[2],pbVar5[1]);
   bVar4 = boot_j1939_transport_receive_session.active;
   if ((((bVar4 == 1) &&
@@ -4955,10 +4957,10 @@ void mpc555_handleJ1939TransportRequestToSend(j1939_received_message_t *rx_msg)
   }
   else {
     boot_j1939_transport_receive_session.active = 1;
-    dVar6._0_1_ = rx_msg->priority_dp_flags;
-    dVar6._1_1_ = rx_msg->pgn_pf;
-    dVar6._2_1_ = rx_msg->dest_address;
-    dVar6._3_1_ = rx_msg->source_address;
+    dVar6._0_1_ = received_message->priority_dp_flags;
+    dVar6._1_1_ = received_message->pgn_pf;
+    dVar6._2_1_ = received_message->destination_address;
+    dVar6._3_1_ = received_message->source_address;
     boot_j1939_transport_receive_session.request_to_send_can_id = dVar6;
     boot_j1939_transport_receive_session.transported_pgn = 0xef00;
     bVar4 = pbVar5[3];
@@ -4991,7 +4993,7 @@ void mpc555_handleJ1939TransportRequestToSend(j1939_received_message_t *rx_msg)
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
     */
 
-void mpc555_handleJ1939TransportDataPacket(j1939_received_message_t *rx_msg)
+void mpc555_handleJ1939TransportDataPacket(j1939_received_message_t *received_message)
 
 {
   byte destination_address;
@@ -5005,13 +5007,13 @@ void mpc555_handleJ1939TransportDataPacket(j1939_received_message_t *rx_msg)
   byte *pbVar8;
   byte *pbVar9;
   
-  if (rx_msg->data_length == 8) {
-    destination_address = rx_msg->source_address;
+  if (received_message->data_length == 8) {
+    destination_address = received_message->source_address;
     bVar4 = boot_j1939_transport_receive_session.active;
     if ((bVar4 == 1) &&
        (bVar4 = boot_j1939_transport_receive_session.request_to_send_can_id._3_1_,
        bVar4 == destination_address)) {
-      pbVar8 = rx_msg->data_pointer;
+      pbVar8 = received_message->data_pointer;
       uVar3 = (uint)*pbVar8;
       bVar4 = boot_j1939_transport_receive_session.next_packet_number;
       if (bVar4 == uVar3) {
@@ -5087,7 +5089,7 @@ void mpc555_handleJ1939TransportDataPacket(j1939_received_message_t *rx_msg)
    | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
     */
 
-void mpc555_handleJ1939TransportEndOfMessageAcknowledge(j1939_received_message_t *rx_msg)
+void mpc555_handleJ1939TransportEndOfMessageAcknowledge(j1939_received_message_t *received_message)
 
 {
   byte bVar1;
@@ -5097,8 +5099,9 @@ void mpc555_handleJ1939TransportEndOfMessageAcknowledge(j1939_received_message_t
   
   bVar1 = boot_j1939_transport_transmit_active;
   if ((bVar1 == 1) &&
-     (bVar1 = boot_j1939_transport_transmit_destination_address, bVar1 == rx_msg->source_address)) {
-    local_10 = (ushort)rx_msg->data_pointer[6] << 8;
+     (bVar1 = boot_j1939_transport_transmit_destination_address,
+     bVar1 == received_message->source_address)) {
+    local_10 = (ushort)received_message->data_pointer[6] << 8;
     wVar2 = boot_j1939_transport_transmit_session.transported_pgn;
     if (local_10 == wVar2) {
       pbVar3 = boot_j1939_transport_transmit_session.session_status_pointer;
@@ -5159,21 +5162,21 @@ void mpc555_handleJ1939TransportAbort(int param_1)
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
 void mpc555_dispatchJ1939TransportConnectionManagement
-               (j1939_received_message_t *rx_msg,byte service_code)
+               (j1939_received_message_t *received_message,byte service_code)
 
 {
   byte bVar1;
   
-  if (rx_msg->data_length == 8) {
-    bVar1 = *rx_msg->data_pointer;
+  if (received_message->data_length == 8) {
+    bVar1 = *received_message->data_pointer;
     if (bVar1 == 0x10) {
-      mpc555_handleJ1939TransportRequestToSend(rx_msg);
+      mpc555_handleJ1939TransportRequestToSend(received_message);
     }
     else if (bVar1 == 0x11) {
-      mpc555_handleJ1939TransportClearToSend((byte)rx_msg,0x11);
+      mpc555_handleJ1939TransportClearToSend((byte)received_message,0x11);
     }
     else if (bVar1 == 0x13) {
-      mpc555_handleJ1939TransportEndOfMessageAcknowledge(rx_msg);
+      mpc555_handleJ1939TransportEndOfMessageAcknowledge(received_message);
     }
     else if (bVar1 == 0xff) {
       mpc555_handleJ1939TransportAbort();
@@ -5414,7 +5417,7 @@ void mpc555_sciSendServiceResponse(byte param_1,int param_2)
 // Function: mpc555_diagnosticSubcommandDispatcher @ 0x0000662c
 //
 
-void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_ptr)
+void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_pointer)
 
 {
   byte bVar1;
@@ -5508,12 +5511,12 @@ void mpc555_sciReceiveDataByte(void)
       diag_serial_buffer[boot_sci_session_state.response_write_index + 0x20] = (byte)wVar2;
       boot_sci_session_state.response_write_index = boot_sci_session_state.response_write_index + 1;
       transmission_learned_information_stored_flags_byte_1_cal = 2;
-      diag_clear_flags_t_003fedfc.diag_response_write_count =
-           diag_clear_flags_t_003fedfc.diag_response_write_count + (byte)wVar2;
+      diag_clear_flags_t_003fedfc.diagnostic_response_write_count =
+           diag_clear_flags_t_003fedfc.diagnostic_response_write_count + (byte)wVar2;
       return;
     }
     cm848_resetSerialReceiveBuffer();
-    diag_clear_flags_t_003fedfc.diag_response_write_count = 0;
+    diag_clear_flags_t_003fedfc.diagnostic_response_write_count = 0;
     transmission_learned_information_stored_flags_byte_1_cal = 0;
   }
   return;
@@ -5532,7 +5535,7 @@ void mpc555_sciResetToReceiveData(void)
   
   cm848_resetSerialReceiveBuffer();
   diag_serial_transfer_phase = 2;
-  diag_clear_flags_t_003fedfc.diag_response_write_count = 0;
+  diag_clear_flags_t_003fedfc.diagnostic_response_write_count = 0;
   wVar1 = qsmcm_sci1.SCC1R1;
   qsmcm_sci1.SCC1R1 = wVar1 & 0xffbf;
   wVar1 = qsmcm_sci1.SCC1R1;
@@ -5608,13 +5611,13 @@ void mpc555_sciValidateChecksum(void)
      (transmission_learned_information_stored_flags_byte_1_cal =
            transmission_learned_information_stored_flags_byte_1_cal - 1,
      transmission_learned_information_stored_flags_byte_1_cal == 0)) {
-    if ((byte)(diag_clear_flags_t_003fedfc.diag_response_write_count -
+    if ((byte)(diag_clear_flags_t_003fedfc.diagnostic_response_write_count -
               diag_serial_buffer[boot_sci_session_state.response_write_index + 0x1f]) ==
         (byte)~diag_serial_buffer[boot_sci_session_state.response_write_index + 0x1f]) {
       wVar1 = qsmcm_sci1.SCC1R1;
       qsmcm_sci1.SCC1R1 = wVar1 & 0xffdf;
       diag_request_pending_flag = 1;
-      diag_clear_flags_t_003fedfc.diag_response_write_count = 0;
+      diag_clear_flags_t_003fedfc.diagnostic_response_write_count = 0;
     }
     else {
       mpc555_sciResetToReceiveData();
@@ -6247,17 +6250,17 @@ LAB_000074f8:
     *(byte *)&(message->header).can_id =
          (request->priority_dp_flags >> 2 & 7) << 2 | *(byte *)&(message->header).can_id & 0xe3;
     *(byte *)((int)&(message->header).can_id + 2) = request->source_address;
-    *(byte *)((int)&(message->header).can_id + 3) = request->dest_address;
+    *(byte *)((int)&(message->header).can_id + 3) = request->destination_address;
     pbVar3 = message->data_pointer;
     if (result_code == 0) {
       result_code = 0xc;
     }
     else if (result_code == 0xfe) {
       *pbVar3 = 0xe;
-      bVar4 = boot_state_machine.boot_param._0_1_;
+      bVar4 = boot_state_machine.boot_parameter._0_1_;
       pbVar3[1] = bVar4;
       pbVar3 = pbVar3 + 2;
-      bVar4 = boot_state_machine.boot_param._1_1_;
+      bVar4 = boot_state_machine.boot_parameter._1_1_;
       result_code = (dword)bVar4;
     }
     else {
@@ -6292,7 +6295,7 @@ LAB_000074f8:
 void cm848_sendDiagResponsePending(j1939_received_message_t *param_1,word param_2)
 
 {
-  boot_state_machine.boot_param = param_2;
+  boot_state_machine.boot_parameter = param_2;
   cm848_sendDiagServiceResponse(param_1,0xfe);
   return;
 }
@@ -6427,19 +6430,19 @@ byte cm848_trackDownloadBlock(byte *data,dword address,word *length,BOOT_REQUEST
     bVar4 = 0x10;
   }
   else {
-    dVar1 = eeprom_block_tracking.last_write_addr;
+    dVar1 = eeprom_block_tracking.last_write_address;
     if (dVar1 == address) {
       bVar4 = 0xff;
     }
     else {
-      eeprom_block_tracking.last_write_addr = address;
+      eeprom_block_tracking.last_write_address = address;
       dVar1 = eeprom_xfer_state.bytes_transferred;
       if (dVar1 == 0) {
-        eeprom_block_tracking.block_start_addr = address;
+        eeprom_block_tracking.block_start_address = address;
         ecu_power_state_flags.transfer_crc = 0;
       }
       else {
-        dVar3 = eeprom_block_tracking.block_start_addr;
+        dVar3 = eeprom_block_tracking.block_start_address;
         if (dVar3 + dVar1 != address) {
           return 9;
         }
@@ -6489,7 +6492,7 @@ byte cm848_finishDownloadBlock(word *trailing_crc)
     wVar1 = eeprom_block_tracking.block_count;
     uVar4 = (uint)wVar1;
     if (uVar4 < 10) {
-      dVar3 = eeprom_block_tracking.block_start_addr;
+      dVar3 = eeprom_block_tracking.block_start_address;
       download_block_list[uVar4].start_address = dVar3;
       dVar2 = eeprom_xfer_state.block_length;
       download_block_list[uVar4].end_address = (dVar3 + dVar2) - 3;
@@ -20361,8 +20364,8 @@ void cm848_clearDiagnosticState(void)
     j1587_fault_count_data_cal.total_emission_faults = 0;
     diagnostic_fault_to_erase = 0;
     if (lifetime_distance_pulses_cal <= (uint)end_of_line_test_settings_cal.maximum_miles * 8000) {
-      diag_clear_flags_t_003fedfc.diag_response_write_count = 0;
-      diag_clear_flags_t_003fedfc.diag_eeprom_work_byte = 0;
+      diag_clear_flags_t_003fedfc.diagnostic_response_write_count = 0;
+      diag_clear_flags_t_003fedfc.diagnostic_eeprom_work_byte = 0;
       exhaust_brake_switch_learned_flag_cal = 0;
       four_wheel_drive_switch_learned_flag_cal = 0;
       cruise_control_switches_learned_flag_cal = 0;
@@ -22926,8 +22929,8 @@ void setJ1939TorqueCurvePoints1And3AtDeratedFueling(void)
 
 /* Sets points 2 and 5 of the J1939 (Jcomm) torque curve of the engine configuration message from
    one fueling on the engine speed limit droop line. The fueling arrives in r3 (decompiled as the
-   pointer parameter rx_msg) and a flag in r4. The speed is the droop line speed at that fueling:
-   engine_speed_limit_arbitrated + engine_speed_limit_droop_slope x
+   pointer parameter received_message) and a flag in r4. The speed is the droop line speed at that
+   fueling: engine_speed_limit_arbitrated + engine_speed_limit_droop_slope x
    (((engine_speed_limit_ramped_maximum_fuel_quantity - fueling) x 8) & 0xfff8) / 0x8888, capped at
    40000 (5000 rpm), or torque_limit_working_reference when engine_speed_limit_droop_slope is 0. It
    stores that speed in j1939_torque_curve_speed_at_point_2 (e2m 1102 +24 Jcomm_RPM_At_Point_2, the
@@ -22940,7 +22943,8 @@ void setJ1939TorqueCurvePoints1And3AtDeratedFueling(void)
    speed limit, otherwise j1939_derated_fueling_at_point_5 with r4 = 0. It receives no J1939
    message. (was cm848_processJ1939RxMessage) */
 
-void cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling(j1939_received_message_t *rx_msg)
+void cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling
+               (j1939_received_message_t *received_message)
 
 {
   int in_r4;
@@ -22952,8 +22956,8 @@ void cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling(j1939_received_messa
   else {
     puVar1 = (undefined *)
              ((((uint)(ushort)engine_speed_limit_droop_slope *
-               (((uint)engine_speed_limit_ramped_maximum_fuel_quantity - (int)rx_msg) * 8 & 0xfff8))
-               / 0x8888 & 0xffff) + (uint)engine_speed_limit_arbitrated);
+               (((uint)engine_speed_limit_ramped_maximum_fuel_quantity - (int)received_message) * 8
+               & 0xfff8)) / 0x8888 & 0xffff) + (uint)engine_speed_limit_arbitrated);
     if (&DAT_00009c40 < puVar1) {
       puVar1 = &DAT_00009c40;
     }
@@ -22963,8 +22967,8 @@ void cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling(j1939_received_messa
   if (in_r4 == 0) {
     j1939_torque_curve_speed_at_point_5 = j1939_engine_speed_at_point_5;
   }
-  j1939_torque_curve_fueling_at_point_2 = (word)rx_msg;
-  j1939_torque_curve_fueling_at_point_5 = (word)rx_msg;
+  j1939_torque_curve_fueling_at_point_2 = (word)received_message;
+  j1939_torque_curve_fueling_at_point_5 = (word)received_message;
   return;
 }
 
@@ -23960,7 +23964,7 @@ void cm848_receivePgn56576AntiTheftRequestMessage(j1939_received_message_t *mess
   int iVar4;
   
   if (message->data_length == 8) {
-    j1939_pgn56320_source_address = message->dest_address;
+    j1939_pgn56320_source_address = message->destination_address;
     j1939_pgn56320_destination_address = message->source_address;
     if ((algorithm_enable_flags_27_cal.anti_theft_enable != 0) &&
        (j1939_anti_theft_status_transmit_state == 0)) {
@@ -24014,7 +24018,7 @@ void cm848_initJ1939DiagnosticCallback(void)
    cm848_j1939RegisterDiagnosticService; PR #53 round 88; the twin of CM550 0x2ee62: one shared
    name) */
 
-bool registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *handler_ptr)
+bool registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *handler_pointer)
 
 {
   uint uVar1;
@@ -24023,7 +24027,7 @@ bool registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *ha
   if (uVar1 != 0x20) {
     j1939_diagnostic_handler_count = j1939_diagnostic_handler_count + 1;
     j1939_diagnostic_service_table[uVar1].service_id = service_id;
-    j1939_diagnostic_service_table[uVar1].handler = handler_ptr;
+    j1939_diagnostic_service_table[uVar1].handler = handler_pointer;
   }
   return uVar1 == 0x20;
 }
@@ -24039,7 +24043,7 @@ bool registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *ha
    j1939_diagnostic_service_table (0x3fa8b2) and is also fed by transport reassembly - registered by
    registerJ1939DiagnosticServiceDispatcher */
 
-void cm848_j1939DiagnosticServiceHandler(j1939_received_message_t *rx_msg)
+void cm848_j1939DiagnosticServiceHandler(j1939_received_message_t *received_message)
 
 {
   J1939_DIAGNOSTIC_RESULT JVar1;
@@ -24049,7 +24053,7 @@ void cm848_j1939DiagnosticServiceHandler(j1939_received_message_t *rx_msg)
   J1939_DIAGNOSTIC_SERVICE service;
   
   entry = j1939_diagnostic_service_table;
-  service = *rx_msg->data_pointer;
+  service = *received_message->data_pointer;
   result_code = J1939_DIAGNOSTIC_RESULT_UNKNOWN_SERVICE;
   if ((service == J1939_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE) ||
      (service == J1939_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE)) {
@@ -24060,10 +24064,10 @@ void cm848_j1939DiagnosticServiceHandler(j1939_received_message_t *rx_msg)
     if (j1939_diagnostic_handler_count != 0) {
       do {
         if (entry->service_id == service) {
-          JVar1 = cm848_validateJ1939DiagnosticRequest(rx_msg);
+          JVar1 = cm848_validateJ1939DiagnosticRequest(received_message);
           result_code = JVar1 & 0xff;
           if (result_code == 0xff) {
-            JVar1 = (*(code *)entry->handler)(rx_msg);
+            JVar1 = (*(code *)entry->handler)(received_message);
             result_code = JVar1 & 0xff;
           }
           break;
@@ -24074,7 +24078,7 @@ void cm848_j1939DiagnosticServiceHandler(j1939_received_message_t *rx_msg)
     }
   }
   if (result_code != 0xff) {
-    cm848_sendJ1939ResponseFrame(rx_msg,result_code);
+    cm848_sendJ1939ResponseFrame(received_message,result_code);
   }
   return;
 }
@@ -24407,10 +24411,10 @@ void registerJ1939Dm3RequestHandler(void)
    cm848_sendPgn65232NonContinuousMonitorTestResultMessage - registered by registerJ1939Dm7Handler
    (was cm848_j1939HandleDm1RequestMessage) | registration-table-sweep reviewed 2026-11-13 */
 
-void cm848_j1939HandlePgn58112Dm7(j1939_received_message_t *request_msg)
+void cm848_j1939HandlePgn58112Dm7(j1939_received_message_t *request_message)
 
 {
-  j1939_dm7_test_identifier = *request_msg->data_pointer;
+  j1939_dm7_test_identifier = *request_message->data_pointer;
   if ((j1939_dm7_test_identifier == 0) && ((supported_non_continuous_monitors_bits & 0x100) != 0)) {
     cm848_sendPgn65232NonContinuousMonitorTestResultMessage(0,intake_air_heater_monitor_result);
   }
@@ -24419,7 +24423,7 @@ void cm848_j1939HandlePgn58112Dm7(j1939_received_message_t *request_msg)
     cm848_sendPgn65232NonContinuousMonitorTestResultMessage(1,misfire_monitor_result);
   }
   else if (j1939_dm7_test_identifier < 2) {
-    cm848_sendJ1939AcknowledgeMessage(request_msg,J1939_NACK);
+    cm848_sendJ1939AcknowledgeMessage(request_message,J1939_NACK);
   }
   return;
 }
@@ -24452,18 +24456,18 @@ void registerJ1939Dm7Handler(void)
    (cm848_dispatchJ1939ReceivedMessages) - registered by cm848_initJ1939Pgn61442Etc1Handler - greps
    as 1 call but reached only through the table */
 
-void cm848_j1939ProcessPgn61442Etc1(j1939_received_message_t *rx_msg)
+void cm848_j1939ProcessPgn61442Etc1(j1939_received_message_t *received_message)
 
 {
-  if ((rx_msg->source_address != j1939_transmission_source_address) &&
+  if ((received_message->source_address != j1939_transmission_source_address) &&
      (j1939_transmission_source_address != 0xff)) {
     return;
   }
-  if (rx_msg->data_length != 8) {
+  if (received_message->data_length != 8) {
     j1939_powertrain_control_state.etc1_message_timeout = j1939_pgn61442_message_timeout + 1;
     return;
   }
-  j1939_powertrain_messages_received.etc1_status_byte_1 = *rx_msg->data_pointer;
+  j1939_powertrain_messages_received.etc1_status_byte_1 = *received_message->data_pointer;
   if (0xfa < j1939_powertrain_messages_received.etc1_status_byte_1) goto LAB_00022a00;
   if ((j1939_powertrain_messages_received.etc1_status_byte_1 & 0xc) == 0) {
     j1939_powertrain_control_state.etc1_spn573_torque_converter_lockup_disengaged_flag = 1;
@@ -24503,7 +24507,7 @@ LAB_00022900:
 LAB_00022a00:
   if ((vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO) &&
      (j1939_powertrain_messages_received.etc1_spn191_output_shaft_speed =
-           CONCAT11(rx_msg->data_pointer[2],rx_msg->data_pointer[1]),
+           CONCAT11(received_message->data_pointer[2],received_message->data_pointer[1]),
      j1939_powertrain_messages_received.etc1_spn191_output_shaft_speed < 0xfb00)) {
     j1939_powertrain_control_state.etc1_output_shaft_speed_timer =
          j1939_pgn61442_output_shaft_speed_timeout + 1;
@@ -24513,7 +24517,7 @@ LAB_00022a00:
     fault_detected_cal._2_2_ = fault_detected_cal._2_2_ & 0xdfff;
     fault_registered_cal._2_2_ = fault_registered_cal._2_2_ & 0xdfff;
   }
-  j1939_powertrain_messages_received.etc1_status_byte_5 = rx_msg->data_pointer[4];
+  j1939_powertrain_messages_received.etc1_status_byte_5 = received_message->data_pointer[4];
   if ((j1939_powertrain_messages_received.etc1_status_byte_5 & 3) == 1) {
     if (j1939_powertrain_control_state.high_idle_override_recovery_flag == 0) {
       if (j1939_powertrain_control_state.high_idle_override_time_limit_timer == 0) {
@@ -24655,7 +24659,7 @@ void cm848_initEtc2Handler(void)
    speed / torque limit control; each loads its request timeout from the sender's entry. CM550's
    0x2f128 is the same handler (was torqueControlModeHandler) */
 
-void processEngineTsc1Request(j1939_received_message_t *msg)
+void processEngineTsc1Request(j1939_received_message_t *message)
 
 {
   word result;
@@ -24664,16 +24668,16 @@ void processEngineTsc1Request(j1939_received_message_t *msg)
   byte priority_bits;
   byte sender_source_address;
   
-  if (msg->data_length != 8) {
+  if (message->data_length != 8) {
     return;
   }
-  j1939_powertrain_messages_received.tsc1_control_byte = *msg->data_pointer;
+  j1939_powertrain_messages_received.tsc1_control_byte = *message->data_pointer;
   control_mode = j1939_powertrain_messages_received.tsc1_control_byte & 3;
   priority_bits = j1939_powertrain_messages_received.tsc1_control_byte & 0x30;
   j1939_powertrain_messages_received.tsc1_requested_speed =
-       CONCAT11(msg->data_pointer[2],msg->data_pointer[1]);
-  j1939_powertrain_messages_received.tsc1_requested_torque = msg->data_pointer[3];
-  sender_source_address = msg->source_address;
+       CONCAT11(message->data_pointer[2],message->data_pointer[1]);
+  j1939_powertrain_messages_received.tsc1_requested_torque = message->data_pointer[3];
+  sender_source_address = message->source_address;
   if (control_mode == 0) {
     removeEngineTsc1IgnoredRequestEntry(1,sender_source_address);
     j1939_powertrain_control_state.j1939_blocked_message_bits =
@@ -24750,7 +24754,7 @@ accept_tsc1_command:
          (j1939_powertrain_control_state.tsc1_source_configuration_pointer)->
          speed_control_request_timeout + 1;
     j1939_powertrain_control_state.tsc1_override_control_mode = TSC1_SPEED_CONTROL;
-    engine_control_device_indicator = lookupJ1939ControlDevice((uint)msg->source_address);
+    engine_control_device_indicator = lookupJ1939ControlDevice((uint)message->source_address);
     j1939_powertrain_control_state.tsc1_speed_control_flag = 1;
     j1939_powertrain_messages_received.tsc1_accepted_requested_speed =
          j1939_powertrain_messages_received.tsc1_requested_speed;
@@ -24768,7 +24772,7 @@ accept_tsc1_command:
          (j1939_powertrain_control_state.tsc1_source_configuration_pointer)->
          torque_control_request_timeout + 1;
     j1939_powertrain_control_state.tsc1_override_control_mode = TSC1_TORQUE_CONTROL;
-    engine_control_device_indicator = lookupJ1939ControlDevice((uint)msg->source_address);
+    engine_control_device_indicator = lookupJ1939ControlDevice((uint)message->source_address);
     j1939_powertrain_control_state.tsc1_speed_control_flag = 0;
     j1939_powertrain_messages_received.tsc1_accepted_requested_torque =
          j1939_powertrain_messages_received.tsc1_requested_torque;
@@ -24787,7 +24791,7 @@ accept_tsc1_command:
          (j1939_powertrain_control_state.tsc1_source_configuration_pointer)->
          speed_torque_limit_control_request_timeout + 1;
     j1939_powertrain_control_state.tsc1_override_control_mode = TSC1_SPEED_TORQUE_LIMIT;
-    engine_control_device_indicator = lookupJ1939ControlDevice((uint)msg->source_address);
+    engine_control_device_indicator = lookupJ1939ControlDevice((uint)message->source_address);
     j1939_powertrain_control_state.tsc1_speed_control_flag = 0;
     j1939_powertrain_messages_received.tsc1_accepted_requested_speed =
          j1939_powertrain_messages_received.tsc1_requested_speed;
@@ -24818,7 +24822,7 @@ accept_tsc1_command:
 /* the twin of CM550 0x0002f47e: one shared name (was cm848_j1939RegisterPgnHandler; PR #53 round
    96) */
 
-bool registerJ1939PgnRequestHandler(dword pgn,void *handler_func)
+bool registerJ1939PgnRequestHandler(dword pgn,void *handler)
 
 {
   uint uVar1;
@@ -24828,7 +24832,7 @@ bool registerJ1939PgnRequestHandler(dword pgn,void *handler_func)
     j1939_pgn_handler_count = j1939_pgn_handler_count + 1;
     j1939_pgn_dispatch_table[uVar1].pgn_byte_1 = (char)((ushort)(short)pgn >> 8);
     j1939_pgn_dispatch_table[uVar1].pgn_byte_0 = (char)(short)pgn;
-    j1939_pgn_dispatch_table[uVar1].handler_func = (dword)handler_func;
+    j1939_pgn_dispatch_table[uVar1].handler = (dword)handler;
   }
   return uVar1 == 0x20;
 }
@@ -24849,29 +24853,30 @@ bool registerJ1939PgnRequestHandler(dword pgn,void *handler_func)
    reviewed 2026-5-25 - mostly readable, hopefully accurate (was cm848_j1939DispatchPgnHandler; PR
    #53 round 96) */
 
-void cm848_dispatchJ1939PgnRequest(j1939_received_message_t *msg)
+void cm848_dispatchJ1939PgnRequest(j1939_received_message_t *message)
 
 {
-  byte search_idx;
+  byte entry_index;
   j1939_pgn_handler_entry_t *entry;
   
   entry = j1939_pgn_dispatch_table;
-  if (((j1939_source_address & 0xff) == (ushort)msg->dest_address) || (msg->dest_address == 0xff)) {
-    search_idx = 0;
+  if (((j1939_source_address & 0xff) == (ushort)message->destination_address) ||
+     (message->destination_address == 0xff)) {
+    entry_index = 0;
     if (j1939_pgn_handler_count != 0) {
       do {
-        if ((entry->pgn_byte_0 == *msg->data_pointer) && (entry->pgn_byte_1 == msg->data_pointer[1])
-           ) {
+        if ((entry->pgn_byte_0 == *message->data_pointer) &&
+           (entry->pgn_byte_1 == message->data_pointer[1])) {
           j1939_dm1_active_flag = 1;
-          (*(code *)entry->handler_func)(msg);
+          (*(code *)entry->handler)(message);
           break;
         }
         entry = entry + 1;
-        search_idx = search_idx + 1;
-      } while (search_idx < j1939_pgn_handler_count);
+        entry_index = entry_index + 1;
+      } while (entry_index < j1939_pgn_handler_count);
     }
-    if ((j1939_pgn_handler_count == search_idx) && (msg->dest_address != 0xff)) {
-      cm848_sendJ1939NegativeAcknowledgement(msg,J1939_NACK);
+    if ((j1939_pgn_handler_count == entry_index) && (message->destination_address != 0xff)) {
+      cm848_sendJ1939NegativeAcknowledgement(message,J1939_NACK);
     }
   }
   return;
@@ -25119,7 +25124,7 @@ LAB_000235d0:
    arbitrates; override control mode 0 clears the request (was cm848_j1939ProcessGovernorRequest).
     */
 
-void cm848_processEngineRetarderTsc1Request(j1939_received_message_t *msg)
+void cm848_processEngineRetarderTsc1Request(j1939_received_message_t *message)
 
 {
   byte bVar1;
@@ -25131,17 +25136,17 @@ void cm848_processEngineRetarderTsc1Request(j1939_received_message_t *msg)
   if (engine_retarder_output_driver_count == 0) {
     return;
   }
-  if (msg->data_length != 8) {
+  if (message->data_length != 8) {
     return;
   }
-  engine_retarder_received_tsc1_control_byte = *msg->data_pointer;
+  engine_retarder_received_tsc1_control_byte = *message->data_pointer;
   if ((engine_retarder_received_tsc1_control_byte & 3) == 1) {
     return;
   }
   bVar2 = engine_retarder_received_tsc1_control_byte & 3;
   bVar5 = engine_retarder_received_tsc1_control_byte & 0x30;
-  engine_retarder_received_tsc1_torque_byte = msg->data_pointer[3];
-  bVar1 = msg->source_address;
+  engine_retarder_received_tsc1_torque_byte = message->data_pointer[3];
+  bVar1 = message->source_address;
   if ((algorithm_enable_flags_2_cal.j1939_retarder_shift_assist_enable == 0) &&
      (bVar1 == j1939_transmission_source_address)) {
     return;
@@ -25220,8 +25225,8 @@ LAB_00023878:
            (j1939_powertrain_control_state.retarder_tsc1_source_configuration_pointer)->
            retarder_torque_control_request_timeout + 1;
       engine_retarder_override_control_mode = TSC1_TORQUE_CONTROL;
-      engine_retarder_control_device_indicator = lookupJ1939ControlDevice((uint)msg->source_address)
-      ;
+      engine_retarder_control_device_indicator =
+           lookupJ1939ControlDevice((uint)message->source_address);
       if (engine_retarder_torque_request_percent == 0) {
         engine_retarder_torque_limit_percent = 0x7d;
         j1939_powertrain_control_state.retarder_tsc1_zero_torque_request_timer =
@@ -25238,7 +25243,8 @@ LAB_00023878:
   }
   if (bVar2 == 3) {
     engine_retarder_override_control_mode = TSC1_SPEED_TORQUE_LIMIT;
-    engine_retarder_control_device_indicator = lookupJ1939ControlDevice((uint)msg->source_address);
+    engine_retarder_control_device_indicator =
+         lookupJ1939ControlDevice((uint)message->source_address);
     engine_retarder_requested_torque_percent =
          decodeRetarderTorqueRequestPercent(engine_retarder_received_tsc1_torque_byte);
     j1939_powertrain_control_state.retarder_tsc1_request_timeout_count =
@@ -25307,17 +25313,17 @@ void cm848_initializeEngineRetarderTsc1RequestState(void)
    registerTsc1DestinationAddressDispatcher | the twin of CM550 0x0002fb70: one shared name (was
    cm848_dispatchTsc1ByDestinationAddress; PR #53 round 96) */
 
-void dispatchTsc1ByDestinationAddress(j1939_received_message_t *msg)
+void dispatchTsc1ByDestinationAddress(j1939_received_message_t *message)
 
 {
   ushort uVar1;
   
-  uVar1 = (ushort)msg->dest_address;
+  uVar1 = (ushort)message->destination_address;
   if (((j1939_source_address & 0xff) == uVar1) || (uVar1 == 0xff)) {
-    processEngineTsc1Request(msg);
+    processEngineTsc1Request(message);
   }
   if (((j1939_engine_retarder_source_address & 0xff) == uVar1) || (uVar1 == 0xff)) {
-    cm848_processEngineRetarderTsc1Request(msg);
+    cm848_processEngineRetarderTsc1Request(message);
   }
   return;
 }
@@ -25401,16 +25407,17 @@ void cm848_initializePgn56320AntiTheftStatusBuffer(void)
 //
 
 void cm848_sendJ1939AcknowledgeMessage
-               (j1939_received_message_t *request_msg,J1939_ACK_TYPE ack_type)
+               (j1939_received_message_t *request_message,J1939_ACK_TYPE acknowledgement_type)
 
 {
   j1939_pgn59392_tx_message.header.can_id =
        CONCAT13(((byte)j1939_pgn59392_priority_cal & 7) << 2,0xe8ff00);
-  j1939_pgn59392_tx_message.header.can_id._2_2_ = CONCAT11(0xff,request_msg->dest_address);
+  j1939_pgn59392_tx_message.header.can_id._2_2_ =
+       CONCAT11(0xff,request_message->destination_address);
   j1939_ack_payload.pgn_low = 0;
-  j1939_ack_payload.pgn_mid = request_msg->pgn_pf;
-  j1939_ack_payload.pgn_high = request_msg->dest_address;
-  j1939_ack_payload.control_byte = ack_type;
+  j1939_ack_payload.pgn_mid = request_message->pgn_pf;
+  j1939_ack_payload.pgn_high = request_message->destination_address;
+  j1939_ack_payload.control_byte = acknowledgement_type;
   cm848_sendJ1939Message(&j1939_pgn59392_tx_message);
   return;
 }
@@ -25424,19 +25431,20 @@ void cm848_sendJ1939AcknowledgeMessage
 /* Sends the J1939 acknowledgement (PGN 59392, header 0xe8ff00) with the negative acknowledgement
    control byte (was cm848_sendJ1939NegativeAck) */
 
-void cm848_sendJ1939NegativeAcknowledgement(j1939_received_message_t *msg,J1939_ACK_TYPE ack_type)
+void cm848_sendJ1939NegativeAcknowledgement
+               (j1939_received_message_t *message,J1939_ACK_TYPE acknowledgement_type)
 
 {
   byte *pbVar1;
   
   j1939_pgn59392_tx_message.header.can_id =
        CONCAT13(((byte)j1939_pgn59392_priority_cal & 7) << 2,0xe8ff00);
-  j1939_pgn59392_tx_message.header.can_id._2_2_ = CONCAT11(0xff,msg->dest_address);
-  pbVar1 = msg->data_pointer;
+  j1939_pgn59392_tx_message.header.can_id._2_2_ = CONCAT11(0xff,message->destination_address);
+  pbVar1 = message->data_pointer;
   j1939_ack_payload.pgn_low = *pbVar1;
   j1939_ack_payload.pgn_mid = pbVar1[1];
   j1939_ack_payload.pgn_high = pbVar1[2];
-  j1939_ack_payload.control_byte = ack_type;
+  j1939_ack_payload.control_byte = acknowledgement_type;
   cm848_sendJ1939Message(&j1939_pgn59392_tx_message);
   return;
 }
@@ -25982,7 +25990,7 @@ void cm848_sendJ1939ResponseFrame(j1939_received_message_t *request,dword result
 
 {
   byte bVar1;
-  j1939_transmit_message_t *msg;
+  j1939_transmit_message_t *message;
   int iVar2;
   byte *pbVar3;
   byte bVar4;
@@ -26001,14 +26009,14 @@ void cm848_sendJ1939ResponseFrame(j1939_received_message_t *request,dword result
   }
   iVar2 = (uint)bVar1 + iVar2;
 LAB_00024a1c:
-  msg = cm848_selectJ1939TransmitBuffer(iVar2);
-  if (msg != (j1939_transmit_message_t *)0x0) {
-    (msg->header).can_id = 0xef0000;
-    *(byte *)&(msg->header).can_id =
-         (request->priority_dp_flags >> 2 & 7) << 2 | *(byte *)&(msg->header).can_id & 0xe3;
-    *(byte *)((int)&(msg->header).can_id + 2) = request->source_address;
-    *(byte *)((int)&(msg->header).can_id + 3) = request->dest_address;
-    pbVar3 = msg->data_pointer;
+  message = cm848_selectJ1939TransmitBuffer(iVar2);
+  if (message != (j1939_transmit_message_t *)0x0) {
+    (message->header).can_id = 0xef0000;
+    *(byte *)&(message->header).can_id =
+         (request->priority_dp_flags >> 2 & 7) << 2 | *(byte *)&(message->header).can_id & 0xe3;
+    *(byte *)((int)&(message->header).can_id + 2) = request->source_address;
+    *(byte *)((int)&(message->header).can_id + 3) = request->destination_address;
+    pbVar3 = message->data_pointer;
     if (result_code == 0) {
       result_code = 0xc;
     }
@@ -26033,7 +26041,7 @@ LAB_00024a1c:
         bVar4 = bVar4 + 1;
       } while (bVar4 < bVar1);
     }
-    cm848_sendJ1939Message(msg);
+    cm848_sendJ1939Message(message);
   }
   return;
 }
@@ -41346,7 +41354,7 @@ void cm848_initJ1939CommunicationSystem(void)
   fault_detected_cal.j1850_system_bus_fault = 0;
   fault_registered_cal.j1850_system_bus_fault = 0;
   cm848_initPciControllerInterface();
-  pci_link_state.init_complete_marker = 1;
+  pci_link_state.initialization_complete_marker = 1;
   return;
 }
 
@@ -58811,18 +58819,18 @@ void mpc555_sendJ1939SingleFrame(dword can_id,word data_length,byte *data,byte *
 /* jlaustill reviewed 2026-5-26 - reads nicely, hopefully accurate (was sendJ1939Message; PR #53
    round 65) */
 
-void cm848_sendJ1939Message(j1939_transmit_message_t *msg)
+void cm848_sendJ1939Message(j1939_transmit_message_t *message)
 
 {
   word data_length;
   
-  data_length = (msg->header).data_length;
+  data_length = (message->header).data_length;
   if (data_length < 9) {
     mpc555_sendJ1939SingleFrame
-              ((msg->header).can_id,data_length,msg->data_pointer,msg->status_pointer);
+              ((message->header).can_id,data_length,message->data_pointer,message->status_pointer);
   }
   else {
-    cm848_startJ1939TransportSession(msg);
+    cm848_startJ1939TransportSession(message);
   }
   return;
 }
@@ -61024,8 +61032,8 @@ void cm848_extendedDivisionWithRemainder
 
 {
   uint extraout_r4;
-  dword dividend_hi;
-  dword dividend_lo;
+  dword dividend_high;
+  dword dividend_low;
   int iVar1;
   uint uVar2;
   uint uVar3;
@@ -61033,15 +61041,15 @@ void cm848_extendedDivisionWithRemainder
   uVar3 = param_2 - param_3 * (param_2 / param_3);
   uVar2 = param_1 - param_3 * (param_1 / param_3);
   *param_4 = param_1 / param_3;
-  dividend_hi = (dword)((ulonglong)uVar2 * 0xffffffff >> 0x20);
-  dividend_lo = -uVar2;
-  iVar1 = (int)(CONCAT44(dividend_hi,dividend_lo) / (ulonglong)param_3) + param_2 / param_3;
+  dividend_high = (dword)((ulonglong)uVar2 * 0xffffffff >> 0x20);
+  dividend_low = -uVar2;
+  iVar1 = (int)(CONCAT44(dividend_high,dividend_low) / (ulonglong)param_3) + param_2 / param_3;
   *param_5 = iVar1;
   if (param_3 - uVar2 < uVar3) {
     *param_5 = iVar1 + 1;
     uVar2 = -(param_3 - uVar2);
   }
-  cm848_conditionalMultiplyDivide(dividend_hi,dividend_lo,0,param_3);
+  cm848_conditionalMultiplyDivide(dividend_high,dividend_low,0,param_3);
   if (param_3 - (uVar3 + uVar2) < extraout_r4) {
     *param_5 = *param_5 + 1;
   }
@@ -61709,7 +61717,7 @@ void cm848_delayMicroseconds2(int param_1)
 /* WARNING: This is an inlined function */
 
 dword cm848_unsignedDivision64by32
-                (dword dividend_hi,dword dividend_lo,dword divisor_hi,dword divisor_lo)
+                (dword dividend_high,dword dividend_low,dword divisor_high,dword divisor_low)
 
 {
   bool bVar1;
@@ -61724,29 +61732,29 @@ dword cm848_unsignedDivision64by32
   uVar8 = cm848_saveRegisters27To31();
   uVar7 = (uint)(uVar8 >> 0x20);
   uVar3 = (uint)uVar8;
-  if ((divisor_hi & (divisor_hi - 1) + (uint)(divisor_lo != 0)) == 0 &&
-      (divisor_lo & divisor_lo - 1) == 0) {
-    if (divisor_lo == 0) {
+  if ((divisor_high & (divisor_high - 1) + (uint)(divisor_low != 0)) == 0 &&
+      (divisor_low & divisor_low - 1) == 0) {
+    if (divisor_low == 0) {
       uVar8 = (ulonglong)uVar7;
-      divisor_lo = divisor_hi;
+      divisor_low = divisor_high;
     }
-    if ((divisor_lo & 0xffff) == 0) {
-      divisor_lo = divisor_lo >> 0x10;
+    if ((divisor_low & 0xffff) == 0) {
+      divisor_low = divisor_low >> 0x10;
       uVar8 = uVar8 >> 0x10;
     }
     uVar2 = uVar8;
-    if ((divisor_lo & 0xff) == 0) {
-      divisor_lo = divisor_lo >> 8;
+    if ((divisor_low & 0xff) == 0) {
+      divisor_low = divisor_low >> 8;
       uVar2 = uVar8 >> 8;
     }
-    while (divisor_lo = divisor_lo >> 1, divisor_lo != 0) {
+    while (divisor_low = divisor_low >> 1, divisor_low != 0) {
       uVar2 = uVar2 >> 1;
     }
   }
   else {
-    uVar5 = uVar7 | divisor_hi;
+    uVar5 = uVar7 | divisor_high;
     if (uVar5 == 0) {
-      uVar2 = (ulonglong)(uVar3 / divisor_lo);
+      uVar2 = (ulonglong)(uVar3 / divisor_low);
     }
     else {
       uVar6 = 0xff000000;
@@ -61755,42 +61763,42 @@ dword cm848_unsignedDivision64by32
         uVar6 = 0xffffffff;
       }
       iVar4 = 0;
-      for (; (divisor_hi & uVar6) == 0; divisor_hi = uVar5 | divisor_hi << 8) {
-        uVar5 = divisor_lo >> 0x18;
-        divisor_lo = divisor_lo << 8;
+      for (; (divisor_high & uVar6) == 0; divisor_high = uVar5 | divisor_high << 8) {
+        uVar5 = divisor_low >> 0x18;
+        divisor_low = divisor_low << 8;
         iVar4 = iVar4 + 8;
       }
-      uVar5 = divisor_hi;
+      uVar5 = divisor_high;
       if ((uVar8 & 0x8000000000000000) == 0) {
-        bVar1 = uVar7 < divisor_hi;
-        if (divisor_hi == uVar7) {
-          bVar1 = uVar3 < divisor_lo;
+        bVar1 = uVar7 < divisor_high;
+        if (divisor_high == uVar7) {
+          bVar1 = uVar3 < divisor_low;
         }
         while (!bVar1) {
-          divisor_hi = divisor_lo >> 0x1f | divisor_hi << 1;
-          bVar1 = uVar7 < divisor_hi;
-          divisor_lo = divisor_lo << 1;
+          divisor_high = divisor_low >> 0x1f | divisor_high << 1;
+          bVar1 = uVar7 < divisor_high;
+          divisor_low = divisor_low << 1;
           iVar4 = iVar4 + 1;
-          if (divisor_hi == uVar7) {
-            bVar1 = uVar3 < divisor_lo;
+          if (divisor_high == uVar7) {
+            bVar1 = uVar3 < divisor_low;
           }
         }
         uVar5 = 0;
       }
       else {
         while ((uVar5 & 0x80000000) == 0) {
-          uVar5 = divisor_hi << 1;
-          divisor_hi = divisor_lo >> 0x1f | uVar5;
-          divisor_lo = divisor_lo << 1;
+          uVar5 = divisor_high << 1;
+          divisor_high = divisor_low >> 0x1f | uVar5;
+          divisor_low = divisor_low << 1;
           iVar4 = iVar4 + 1;
         }
-        bVar1 = uVar7 < divisor_hi;
+        bVar1 = uVar7 < divisor_high;
         uVar5 = 0;
-        if (uVar7 == divisor_hi) {
-          bVar1 = uVar3 < divisor_lo;
+        if (uVar7 == divisor_high) {
+          bVar1 = uVar3 < divisor_low;
         }
         if (!bVar1) {
-          uVar8 = CONCAT44(uVar7 - (divisor_hi + (uVar3 < divisor_lo)),uVar3 - divisor_lo);
+          uVar8 = CONCAT44(uVar7 - (divisor_high + (uVar3 < divisor_low)),uVar3 - divisor_low);
           uVar5 = 1;
         }
       }
@@ -61800,16 +61808,16 @@ dword cm848_unsignedDivision64by32
         uVar3 = (uint)(uVar8 >> 0x20);
         uVar6 = (uint)uVar8;
         if (iVar4 == 0) break;
-        divisor_lo = divisor_hi << 0x1f | divisor_lo >> 1;
-        divisor_hi = divisor_hi >> 1;
-        bVar1 = uVar3 < divisor_hi;
+        divisor_low = divisor_high << 0x1f | divisor_low >> 1;
+        divisor_high = divisor_high >> 1;
+        bVar1 = uVar3 < divisor_high;
         uVar7 = uVar5 >> 0x1f | uVar7 << 1;
         uVar5 = uVar5 << 1;
-        if (uVar3 == divisor_hi) {
-          bVar1 = uVar6 < divisor_lo;
+        if (uVar3 == divisor_high) {
+          bVar1 = uVar6 < divisor_low;
         }
         if (!bVar1) {
-          uVar8 = CONCAT44(uVar3 - (divisor_hi + (uVar6 < divisor_lo)),uVar6 - divisor_lo);
+          uVar8 = CONCAT44(uVar3 - (divisor_high + (uVar6 < divisor_low)),uVar6 - divisor_low);
           uVar5 = uVar5 | 1;
         }
         iVar4 = iVar4 + -1;
@@ -61829,7 +61837,8 @@ dword cm848_unsignedDivision64by32
 /* WARNING: This is an inlined function */
 /* WARNING: Function: cm848_unsignedDivision64by32 replaced with injection: udiv64by32 */
 
-dword cm848_signedDivision32(dword dividend_hi,dword dividend_lo,dword divisor_hi,dword divisor_lo)
+dword cm848_signedDivision32
+                (dword dividend_high,dword dividend_low,dword divisor_high,dword divisor_low)
 
 {
   bool bVar1;
@@ -61848,12 +61857,12 @@ dword cm848_signedDivision32(dword dividend_hi,dword dividend_lo,dword divisor_h
     uVar3 = CONCAT44(-(((int)uVar7 != 0) + uVar4),-(int)uVar7);
   }
   iVar5 = (int)(uVar3 >> 0x20);
-  bVar1 = 0 < (int)divisor_hi;
-  if (divisor_hi == 0) {
-    bVar1 = divisor_lo != 0;
+  bVar1 = 0 < (int)divisor_high;
+  if (divisor_high == 0) {
+    bVar1 = divisor_low != 0;
   }
   if (!bVar1) {
-    if (divisor_hi == 0 && divisor_lo == 0) {
+    if (divisor_high == 0 && divisor_low == 0) {
       if (uVar7 < 0x8000000000000000) {
         iVar5 = 0x7fffffff;
         iVar6 = -1;
@@ -61864,12 +61873,12 @@ dword cm848_signedDivision32(dword dividend_hi,dword dividend_lo,dword divisor_h
       }
       goto LAB_000571a0;
     }
-    bVar2 = divisor_lo != 0;
-    divisor_lo = -divisor_lo;
-    divisor_hi = -(bVar2 + divisor_hi);
+    bVar2 = divisor_low != 0;
+    divisor_low = -divisor_low;
+    divisor_high = -(bVar2 + divisor_high);
     bVar2 = uVar4 < 0x80000000;
   }
-  iVar6 = (int)(uVar3 / CONCAT44(divisor_hi,divisor_lo));
+  iVar6 = (int)(uVar3 / CONCAT44(divisor_high,divisor_low));
   if (bVar2) {
     bVar2 = iVar6 != 0;
     iVar6 = -iVar6;
@@ -61890,13 +61899,13 @@ LAB_000571a0:
 /* WARNING: Function: cm848_unsignedDivision64by32 replaced with injection: udiv64by32 */
 
 dword cm848_unsignedDivision32
-                (dword dividend_hi,dword dividend_lo,dword divisor_hi,dword divisor_lo)
+                (dword dividend_high,dword dividend_low,dword divisor_high,dword divisor_low)
 
 {
-  if (divisor_hi == 0 && divisor_lo == 0) {
-    dividend_hi = 0xffffffff;
+  if (divisor_high == 0 && divisor_low == 0) {
+    dividend_high = 0xffffffff;
   }
-  return dividend_hi;
+  return dividend_high;
 }
 
 
@@ -62029,12 +62038,12 @@ LAB_00057488:
 //
 
 dword cm848_conditionalMultiplyDivide
-                (dword dividend_hi,dword dividend_lo,dword divisor_hi,dword divisor_lo)
+                (dword dividend_high,dword dividend_low,dword divisor_high,dword divisor_low)
 
 {
   dword dVar1;
   
-  if (divisor_hi == 0 && divisor_lo == 0) {
+  if (divisor_high == 0 && divisor_low == 0) {
     dVar1 = 0xffffffff;
   }
   else {
@@ -62246,11 +62255,11 @@ void cm848_initializeExhaustThrottlePositionChannel(void)
    sensorChannelConfigInit) */
 
 void cm848_processSignedSensorChannel
-               (sensor_channel_config_t *config_ptr,sensor_channel_state_t *state_ptr,
-               word *cached_axis_offset,word *x_axis,word *y_data,dword flags,
-               ema_filter_state_t *filter_state_ptr,dword channel_index,dword high_fault_bit,
-               dword low_fault_bit,word *value_output_ptr,word *default_value_output_ptr,
-               word *fault_status_output_ptr)
+               (sensor_channel_config_t *configuration_pointer,sensor_channel_state_t *state_pointer
+               ,word *cached_axis_offset,word *x_axis,word *y_data,dword flags,
+               ema_filter_state_t *filter_state_pointer,dword channel_index,dword high_fault_bit,
+               dword low_fault_bit,word *value_output_pointer,word *default_value_output_pointer,
+               word *fault_status_output_pointer)
 
 {
   ushort uVar1;
@@ -62272,11 +62281,11 @@ void cm848_processSignedSensorChannel
   iVar8 = (int)high_fault_bit >> 4;
   iVar7 = (int)low_fault_bit >> 4;
   if ((sensor_channel_enable_bits_cal[iVar9] & uVar11) == 0) {
-    wVar5 = config_ptr->default_value;
-    state_ptr->value = wVar5;
-    filter_state_ptr->accumulator = (int)(short)wVar5 << 0x10;
+    wVar5 = configuration_pointer->default_value;
+    state_pointer->value = wVar5;
+    filter_state_pointer->accumulator = (int)(short)wVar5 << 0x10;
     (&sensor_channel_filtered_output)[channel_index] = wVar5;
-    *fault_status_output_ptr = 0x100;
+    *fault_status_output_pointer = 0x100;
     (&fault_detected_cal.faults_0_to_15)[iVar8] =
          (&fault_detected_cal.faults_0_to_15)[iVar8] & ~(ushort)(1 << (high_fault_bit & 0xf));
     (&fault_registered_cal.faults_0_to_15)[iVar8] =
@@ -62288,10 +62297,10 @@ void cm848_processSignedSensorChannel
     goto LAB_00500a1c;
   }
   if ((sensor_channel_held_value_enable_bits_cal[iVar9] & uVar11) != 0) {
-    wVar5 = state_ptr->held_value;
-    filter_state_ptr->accumulator = (int)(short)wVar5 << 0x10;
+    wVar5 = state_pointer->held_value;
+    filter_state_pointer->accumulator = (int)(short)wVar5 << 0x10;
     (&sensor_channel_filtered_output)[channel_index] = wVar5;
-    *fault_status_output_ptr = 0;
+    *fault_status_output_pointer = 0;
     goto LAB_00500a1c;
   }
   if ((((channel_index == 0x15) || (channel_index == 0x2a)) || (channel_index == 0x2b)) ||
@@ -62313,7 +62322,7 @@ void cm848_processSignedSensorChannel
   else {
     wVar5 = (&sensor_channel_diag_override)[channel_index];
   }
-  state_ptr->raw_adc_counts = wVar5;
+  state_pointer->raw_adc_counts = wVar5;
   if (sensor_channel_ratiometric_reference_channel_cal[channel_index] == 0) {
     if ((adc_forced_reading_enable_bits_cal[iVar9] & uVar11) == 0) {
       if (qadc_channel_index_table[channel_index] < 0x81) {
@@ -62374,18 +62383,19 @@ void cm848_processSignedSensorChannel
       uVar11 = 0x3ff;
     }
   }
-  state_ptr->lookup_input = (word)uVar11;
-  if ((uint)config_ptr->high_threshold < (uVar11 & 0xffff)) {
-    uVar1 = config_ptr->debounce_limit;
-    if ((uint)state_ptr->debounce_count < (uint)uVar1) {
-      if ((int)(uint)config_ptr->debounce_step <
-          (int)((uint)uVar1 - (uint)state_ptr->debounce_count)) {
+  state_pointer->lookup_input = (word)uVar11;
+  if ((uint)configuration_pointer->high_threshold < (uVar11 & 0xffff)) {
+    uVar1 = configuration_pointer->debounce_limit;
+    if ((uint)state_pointer->debounce_count < (uint)uVar1) {
+      if ((int)(uint)configuration_pointer->debounce_step <
+          (int)((uint)uVar1 - (uint)state_pointer->debounce_count)) {
 LAB_005006b4:
-        state_ptr->debounce_count = state_ptr->debounce_count + config_ptr->debounce_step;
+        state_pointer->debounce_count =
+             state_pointer->debounce_count + configuration_pointer->debounce_step;
         cVar10 = '\x01';
       }
       else {
-        state_ptr->debounce_count = uVar1;
+        state_pointer->debounce_count = uVar1;
         (&fault_detected_cal.faults_0_to_15)[iVar8] =
              (&fault_detected_cal.faults_0_to_15)[iVar8] | (ushort)(1 << (high_fault_bit & 0xf));
         (&fault_detected_cal.faults_0_to_15)[iVar7] =
@@ -62405,12 +62415,12 @@ LAB_005006b4:
       cVar10 = '\x02';
     }
   }
-  else if ((uVar11 & 0xffff) < (uint)config_ptr->low_threshold) {
-    uVar1 = config_ptr->debounce_limit;
-    if ((uint)state_ptr->debounce_count < (uint)uVar1) {
-      if ((int)(uint)config_ptr->debounce_step <
-          (int)((uint)uVar1 - (uint)state_ptr->debounce_count)) goto LAB_005006b4;
-      state_ptr->debounce_count = uVar1;
+  else if ((uVar11 & 0xffff) < (uint)configuration_pointer->low_threshold) {
+    uVar1 = configuration_pointer->debounce_limit;
+    if ((uint)state_pointer->debounce_count < (uint)uVar1) {
+      if ((int)(uint)configuration_pointer->debounce_step <
+          (int)((uint)uVar1 - (uint)state_pointer->debounce_count)) goto LAB_005006b4;
+      state_pointer->debounce_count = uVar1;
       (&fault_detected_cal.faults_0_to_15)[iVar7] =
            (&fault_detected_cal.faults_0_to_15)[iVar7] | (ushort)(1 << (low_fault_bit & 0xf));
       (&fault_detected_cal.faults_0_to_15)[iVar8] =
@@ -62430,16 +62440,16 @@ LAB_005006b4:
     }
   }
   else {
-    uVar1 = state_ptr->debounce_count;
-    uVar2 = config_ptr->recovery_decrement;
+    uVar1 = state_pointer->debounce_count;
+    uVar2 = configuration_pointer->recovery_decrement;
     if (uVar1 <= uVar2) {
-      state_ptr->debounce_count = 0;
+      state_pointer->debounce_count = 0;
     }
     else {
-      state_ptr->debounce_count = uVar1 - uVar2;
+      state_pointer->debounce_count = uVar1 - uVar2;
     }
     cVar10 = uVar1 > uVar2;
-    if (state_ptr->debounce_count <= config_ptr->debounce_clear_threshold) {
+    if (state_pointer->debounce_count <= configuration_pointer->debounce_clear_threshold) {
       (&fault_detected_cal.faults_0_to_15)[iVar8] =
            (&fault_detected_cal.faults_0_to_15)[iVar8] & ~(ushort)(1 << (high_fault_bit & 0xf));
       (&fault_registered_cal.faults_0_to_15)[iVar8] =
@@ -62454,24 +62464,24 @@ LAB_005006b4:
       (((uint)(&fault_detected_cal.faults_0_to_15)[iVar7] & 1 << (low_fault_bit & 0xf)) == 0)) &&
      (sVar4 != 2)) {
     if ((cVar10 == '\x01') || (sVar4 == 1)) {
-      *fault_status_output_ptr = 1;
+      *fault_status_output_pointer = 1;
       goto LAB_00500a1c;
     }
-    wVar5 = lookupTableInterpolation(cached_axis_offset,state_ptr->lookup_input,x_axis,y_data,flags)
-    ;
-    state_ptr->value = wVar5;
+    wVar5 = lookupTableInterpolation
+                      (cached_axis_offset,state_pointer->lookup_input,x_axis,y_data,flags);
+    state_pointer->value = wVar5;
     wVar5 = 0;
   }
   else {
-    state_ptr->value = config_ptr->default_value;
+    state_pointer->value = configuration_pointer->default_value;
     wVar5 = 2;
   }
-  wVar6 = cm848_signedFirstOrderFilter((int)(short)state_ptr->value,filter_state_ptr);
+  wVar6 = cm848_signedFirstOrderFilter((int)(short)state_pointer->value,filter_state_pointer);
   (&sensor_channel_filtered_output)[channel_index] = wVar6;
-  *fault_status_output_ptr = wVar5;
+  *fault_status_output_pointer = wVar5;
 LAB_00500a1c:
-  *value_output_ptr = (&sensor_channel_filtered_output)[channel_index];
-  *default_value_output_ptr = config_ptr->default_value;
+  *value_output_pointer = (&sensor_channel_filtered_output)[channel_index];
+  *default_value_output_pointer = configuration_pointer->default_value;
   return;
 }
 
@@ -62486,11 +62496,11 @@ LAB_00500a1c:
    cm848_applicationMain (was updateSensorChannelWithConfig) */
 
 void cm848_initializeSignedSensorChannel
-               (sensor_channel_config_t *config_ptr,sensor_channel_state_t *state_ptr,
-               word *cached_axis_offset,word *x_axis,word *y_data,dword flags,
-               ema_filter_state_t *filter_state_ptr,dword channel_index,dword high_fault_bit,
-               dword low_fault_bit,word *value_output_ptr,word *default_value_output_ptr,
-               word *fault_status_output_ptr)
+               (sensor_channel_config_t *configuration_pointer,sensor_channel_state_t *state_pointer
+               ,word *cached_axis_offset,word *x_axis,word *y_data,dword flags,
+               ema_filter_state_t *filter_state_pointer,dword channel_index,dword high_fault_bit,
+               dword low_fault_bit,word *value_output_pointer,word *default_value_output_pointer,
+               word *fault_status_output_pointer)
 
 {
   word wVar1;
@@ -62503,7 +62513,7 @@ void cm848_initializeSignedSensorChannel
   int iVar8;
   uint uVar9;
   
-  state_ptr->held_value = config_ptr->default_value;
+  state_pointer->held_value = configuration_pointer->default_value;
   iVar7 = (int)channel_index >> 4;
   uVar9 = 1 << (channel_index +
                 (iVar7 + (uint)((int)channel_index < 0 && (channel_index & 0xf) != 0)) * -0x10 &
@@ -62511,11 +62521,11 @@ void cm848_initializeSignedSensorChannel
   iVar8 = (int)high_fault_bit >> 4;
   iVar6 = (int)low_fault_bit >> 4;
   if ((sensor_channel_enable_bits_cal[iVar7] & uVar9) == 0) {
-    wVar4 = config_ptr->default_value;
-    state_ptr->value = wVar4;
-    filter_state_ptr->accumulator = (int)(short)wVar4 << 0x10;
+    wVar4 = configuration_pointer->default_value;
+    state_pointer->value = wVar4;
+    filter_state_pointer->accumulator = (int)(short)wVar4 << 0x10;
     (&sensor_channel_filtered_output)[channel_index] = wVar4;
-    *fault_status_output_ptr = 0x100;
+    *fault_status_output_pointer = 0x100;
     (&fault_detected_cal.faults_0_to_15)[iVar8] =
          (&fault_detected_cal.faults_0_to_15)[iVar8] & ~(ushort)(1 << (high_fault_bit & 0xf));
     (&fault_registered_cal.faults_0_to_15)[iVar8] =
@@ -62527,19 +62537,19 @@ void cm848_initializeSignedSensorChannel
     goto LAB_0050119c;
   }
   *cached_axis_offset = 2;
-  filter_state_ptr->coefficient = &config_ptr->filter_coefficient;
+  filter_state_pointer->coefficient = &configuration_pointer->filter_coefficient;
   if ((sensor_channel_held_value_enable_bits_cal[iVar7] & uVar9) != 0) {
-    wVar4 = state_ptr->held_value;
-    filter_state_ptr->accumulator = (int)(short)wVar4 << 0x10;
+    wVar4 = state_pointer->held_value;
+    filter_state_pointer->accumulator = (int)(short)wVar4 << 0x10;
     (&sensor_channel_filtered_output)[channel_index] = wVar4;
-    state_ptr->debounce_count = 0;
-    *fault_status_output_ptr = 0;
+    state_pointer->debounce_count = 0;
+    *fault_status_output_pointer = 0;
     goto LAB_0050119c;
   }
   if ((adc_forced_reading_enable_bits_cal[iVar7] & uVar9) == 0) {
     if ((*(ushort *)(&DAT_003fda58 + iVar7 * 2) & uVar9) != 0) {
-      wVar4 = config_ptr->default_value;
-      filter_state_ptr->accumulator = (int)(short)wVar4 << 0x10;
+      wVar4 = configuration_pointer->default_value;
+      filter_state_pointer->accumulator = (int)(short)wVar4 << 0x10;
       (&sensor_channel_filtered_output)[channel_index] = wVar4;
       goto LAB_0050119c;
     }
@@ -62562,7 +62572,7 @@ void cm848_initializeSignedSensorChannel
     else {
       wVar4 = (&sensor_channel_diag_override)[channel_index];
     }
-    state_ptr->raw_adc_counts = wVar4;
+    state_pointer->raw_adc_counts = wVar4;
     if (sensor_channel_ratiometric_reference_channel_cal[channel_index] == 0) {
       if ((adc_forced_reading_enable_bits_cal[iVar7] & uVar9) == 0) {
         if (qadc_channel_index_table[channel_index] < 0x81) {
@@ -62623,25 +62633,25 @@ void cm848_initializeSignedSensorChannel
         uVar9 = 0x3ff;
       }
     }
-    state_ptr->lookup_input = (word)uVar9;
+    state_pointer->lookup_input = (word)uVar9;
     if (((((uint)(&fault_detected_cal.faults_0_to_15)[iVar8] & 1 << (high_fault_bit & 0xf)) == 0) &&
         (((uint)(&fault_detected_cal.faults_0_to_15)[iVar6] & 1 << (low_fault_bit & 0xf)) == 0)) &&
        (sVar3 != 2)) {
-      if (((uVar9 & 0xffff) <= (uint)config_ptr->high_threshold) &&
-         ((uint)config_ptr->low_threshold <= (uVar9 & 0xffff))) goto LAB_005010a8;
+      if (((uVar9 & 0xffff) <= (uint)configuration_pointer->high_threshold) &&
+         ((uint)configuration_pointer->low_threshold <= (uVar9 & 0xffff))) goto LAB_005010a8;
       wVar4 = 1;
     }
     else {
-      state_ptr->debounce_count = config_ptr->debounce_limit;
+      state_pointer->debounce_count = configuration_pointer->debounce_limit;
       wVar4 = 2;
     }
-    wVar1 = config_ptr->default_value;
-    filter_state_ptr->accumulator = (int)(short)wVar1 << 0x10;
+    wVar1 = configuration_pointer->default_value;
+    filter_state_pointer->accumulator = (int)(short)wVar1 << 0x10;
     (&sensor_channel_filtered_output)[channel_index] = wVar1;
-    *fault_status_output_ptr = wVar4;
+    *fault_status_output_pointer = wVar4;
   }
   else {
-    state_ptr->debounce_count = 0;
+    state_pointer->debounce_count = 0;
     if ((adc_forced_reading_enable_bits_cal[iVar7] & uVar9) == 0) {
       if (qadc_channel_index_table[channel_index] < 0x81) {
         uVar5 = (uint)qadc_channel_index_table[channel_index];
@@ -62654,7 +62664,7 @@ void cm848_initializeSignedSensorChannel
     else {
       wVar4 = (&sensor_channel_diag_override)[channel_index];
     }
-    state_ptr->raw_adc_counts = wVar4;
+    state_pointer->raw_adc_counts = wVar4;
     if (sensor_channel_ratiometric_reference_channel_cal[channel_index] == 0) {
       if ((adc_forced_reading_enable_bits_cal[iVar7] & uVar9) == 0) {
         if (qadc_channel_index_table[channel_index] < 0x81) {
@@ -62663,10 +62673,10 @@ void cm848_initializeSignedSensorChannel
         else {
           uVar9 = 0;
         }
-        state_ptr->lookup_input = *qadc_channel_dispatch_table[uVar9].result_register;
+        state_pointer->lookup_input = *qadc_channel_dispatch_table[uVar9].result_register;
       }
       else {
-        state_ptr->lookup_input = (&sensor_channel_diag_override)[channel_index];
+        state_pointer->lookup_input = (&sensor_channel_diag_override)[channel_index];
       }
     }
     else {
@@ -62708,25 +62718,25 @@ void cm848_initializeSignedSensorChannel
         else {
           uVar9 = 0;
         }
-        state_ptr->lookup_input =
+        state_pointer->lookup_input =
              (word)(((uint)uVar2 * (uint)sensor_channel_ratio_scale) /
                    (uint)(&sensor_channel_filtered_output)[uVar9]);
       }
       else {
-        state_ptr->lookup_input = 0x3ff;
+        state_pointer->lookup_input = 0x3ff;
       }
     }
 LAB_005010a8:
-    wVar4 = lookupTableInterpolation(cached_axis_offset,state_ptr->lookup_input,x_axis,y_data,flags)
-    ;
-    state_ptr->value = wVar4;
-    filter_state_ptr->accumulator = (int)(short)wVar4 << 0x10;
+    wVar4 = lookupTableInterpolation
+                      (cached_axis_offset,state_pointer->lookup_input,x_axis,y_data,flags);
+    state_pointer->value = wVar4;
+    filter_state_pointer->accumulator = (int)(short)wVar4 << 0x10;
     (&sensor_channel_filtered_output)[channel_index] = wVar4;
-    *fault_status_output_ptr = 0;
+    *fault_status_output_pointer = 0;
   }
 LAB_0050119c:
-  *value_output_ptr = (&sensor_channel_filtered_output)[channel_index];
-  *default_value_output_ptr = config_ptr->default_value;
+  *value_output_pointer = (&sensor_channel_filtered_output)[channel_index];
+  *default_value_output_pointer = configuration_pointer->default_value;
   return;
 }
 
@@ -62805,17 +62815,17 @@ void cm848_initializeVariableGeometryTurbochargerPositionChannel(void)
    oil_pressure_switch_only_cal is set (was sensorChannelTypeB_configInit) | earlier note:
    review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible
    converging-epilogue gotos + 3 split-remnant scratch temps Ghidra will not let CSV name) Accuracy
-   Confidence High. config_ptr typed as sensor_channel_config_t* (7 default/threshold/debounce
-   fields render); DAT_003fd8e8 -> governor_temp_protection_disable (now
+   Confidence High. configuration_pointer typed as sensor_channel_config_t* (7
+   default/threshold/debounce fields render); DAT_003fd8e8 -> governor_temp_protection_disable (now
    oil_pressure_switch_only_cal); 11 locals named; 2 array globals renamed. 13-param PowerPC
    prototype; params 4-6 passed but unused. */
 
 void cm848_processUnsignedSensorChannel
-               (sensor_channel_config_t *config_ptr,sensor_channel_state_t *state_ptr,
-               word *cached_axis_offset,word *x_axis,word *y_data,dword flags,
-               ema_filter_state_t *filter_state_ptr,dword channel_index,dword high_fault_bit,
-               dword low_fault_bit,word *value_output_ptr,word *default_value_output_ptr,
-               word *fault_status_output_ptr)
+               (sensor_channel_config_t *configuration_pointer,sensor_channel_state_t *state_pointer
+               ,word *cached_axis_offset,word *x_axis,word *y_data,dword flags,
+               ema_filter_state_t *filter_state_pointer,dword channel_index,dword high_fault_bit,
+               dword low_fault_bit,word *value_output_pointer,word *default_value_output_pointer,
+               word *fault_status_output_pointer)
 
 {
   ushort uVar1;
@@ -62840,12 +62850,12 @@ void cm848_processUnsignedSensorChannel
   high_fault_word_index = (int)high_fault_bit >> 4;
   low_fault_word_index = (int)low_fault_bit >> 4;
   if ((sensor_channel_enable_bits_cal[channel_word_index] & sensor_value) == 0) {
-    uVar1 = config_ptr->default_value;
-    state_ptr->value = uVar1;
-    filter_state_ptr->accumulator = (uint)uVar1 << 0x10;
-    ema_result = cm848_exponentialMovingAverage((uint)uVar1,filter_state_ptr);
+    uVar1 = configuration_pointer->default_value;
+    state_pointer->value = uVar1;
+    filter_state_pointer->accumulator = (uint)uVar1 << 0x10;
+    ema_result = cm848_exponentialMovingAverage((uint)uVar1,filter_state_pointer);
     (&sensor_channel_filtered_output)[channel_index] = (word)ema_result;
-    *fault_status_output_ptr = 0x100;
+    *fault_status_output_pointer = 0x100;
     (&fault_detected_cal.faults_0_to_15)[high_fault_word_index] =
          (&fault_detected_cal.faults_0_to_15)[high_fault_word_index] &
          ~(ushort)(1 << (high_fault_bit & 0xf));
@@ -62861,10 +62871,10 @@ void cm848_processUnsignedSensorChannel
     goto LAB_00501b1c;
   }
   if ((sensor_channel_held_value_enable_bits_cal[channel_word_index] & sensor_value) != 0) {
-    scratch16 = state_ptr->held_value;
-    filter_state_ptr->accumulator = (uint)scratch16 << 0x10;
+    scratch16 = state_pointer->held_value;
+    filter_state_pointer->accumulator = (uint)scratch16 << 0x10;
     (&sensor_channel_filtered_output)[channel_index] = scratch16;
-    *fault_status_output_ptr = 0;
+    *fault_status_output_pointer = 0;
     goto LAB_00501b1c;
   }
   if ((((channel_index == 0x15) || (channel_index == 0x2a)) || (channel_index == 0x2b)) ||
@@ -62886,7 +62896,7 @@ void cm848_processUnsignedSensorChannel
   else {
     wVar2 = (&sensor_channel_diag_override)[channel_index];
   }
-  state_ptr->raw_adc_counts = wVar2;
+  state_pointer->raw_adc_counts = wVar2;
   if (sensor_channel_ratiometric_reference_channel_cal[channel_index] == 0) {
     if ((adc_forced_reading_enable_bits_cal[channel_word_index] & sensor_value) == 0) {
       if (qadc_channel_index_table[channel_index] < 0x81) {
@@ -62947,21 +62957,22 @@ void cm848_processUnsignedSensorChannel
       uVar3 = 0x3ff;
     }
   }
-  state_ptr->lookup_input = (word)uVar3;
+  state_pointer->lookup_input = (word)uVar3;
   if ((((channel_index != 0x2f) || (cruise_control_switches_learned_flag_cal != 0)) &&
       ((channel_index != 0x47 || (diag_clear_flags_t_003fedfc._0_2_ != 0)))) &&
      ((channel_index != 10 || (oil_pressure_switch_only_cal == 0)))) {
-    if ((uint)config_ptr->high_threshold < (uVar3 & 0xffff)) {
-      uVar1 = config_ptr->debounce_limit;
-      if ((uint)state_ptr->debounce_count < (uint)uVar1) {
-        if ((int)(uint)config_ptr->debounce_step <
-            (int)((uint)uVar1 - (uint)state_ptr->debounce_count)) {
+    if ((uint)configuration_pointer->high_threshold < (uVar3 & 0xffff)) {
+      uVar1 = configuration_pointer->debounce_limit;
+      if ((uint)state_pointer->debounce_count < (uint)uVar1) {
+        if ((int)(uint)configuration_pointer->debounce_step <
+            (int)((uint)uVar1 - (uint)state_pointer->debounce_count)) {
 LAB_005017a8:
-          state_ptr->debounce_count = state_ptr->debounce_count + config_ptr->debounce_step;
+          state_pointer->debounce_count =
+               state_pointer->debounce_count + configuration_pointer->debounce_step;
           debounce_transition_state = 1;
         }
         else {
-          state_ptr->debounce_count = uVar1;
+          state_pointer->debounce_count = uVar1;
           (&fault_detected_cal.faults_0_to_15)[high_fault_word_index] =
                (&fault_detected_cal.faults_0_to_15)[high_fault_word_index] |
                (ushort)(1 << (high_fault_bit & 0xf));
@@ -62987,12 +62998,12 @@ LAB_005017a8:
         debounce_transition_state = 2;
       }
     }
-    else if ((uVar3 & 0xffff) < (uint)config_ptr->low_threshold) {
-      uVar1 = config_ptr->debounce_limit;
-      if ((uint)state_ptr->debounce_count < (uint)uVar1) {
-        if ((int)(uint)config_ptr->debounce_step <
-            (int)((uint)uVar1 - (uint)state_ptr->debounce_count)) goto LAB_005017a8;
-        state_ptr->debounce_count = uVar1;
+    else if ((uVar3 & 0xffff) < (uint)configuration_pointer->low_threshold) {
+      uVar1 = configuration_pointer->debounce_limit;
+      if ((uint)state_pointer->debounce_count < (uint)uVar1) {
+        if ((int)(uint)configuration_pointer->debounce_step <
+            (int)((uint)uVar1 - (uint)state_pointer->debounce_count)) goto LAB_005017a8;
+        state_pointer->debounce_count = uVar1;
         (&fault_detected_cal.faults_0_to_15)[low_fault_word_index] =
              (&fault_detected_cal.faults_0_to_15)[low_fault_word_index] |
              (ushort)(1 << (low_fault_bit & 0xf));
@@ -63018,16 +63029,16 @@ LAB_005017a8:
       }
     }
     else {
-      uVar1 = state_ptr->debounce_count;
-      recovery_decrement = config_ptr->recovery_decrement;
+      uVar1 = state_pointer->debounce_count;
+      recovery_decrement = configuration_pointer->recovery_decrement;
       if (uVar1 <= recovery_decrement) {
-        state_ptr->debounce_count = 0;
+        state_pointer->debounce_count = 0;
       }
       else {
-        state_ptr->debounce_count = uVar1 - recovery_decrement;
+        state_pointer->debounce_count = uVar1 - recovery_decrement;
       }
       debounce_transition_state = (dword)(uVar1 > recovery_decrement);
-      if (state_ptr->debounce_count <= config_ptr->debounce_clear_threshold) {
+      if (state_pointer->debounce_count <= configuration_pointer->debounce_clear_threshold) {
         (&fault_detected_cal.faults_0_to_15)[high_fault_word_index] =
              (&fault_detected_cal.faults_0_to_15)[high_fault_word_index] &
              ~(ushort)(1 << (high_fault_bit & 0xf));
@@ -63048,24 +63059,25 @@ LAB_005017a8:
       (((uint)(&fault_detected_cal.faults_0_to_15)[low_fault_word_index] &
        1 << (low_fault_bit & 0xf)) == 0)) && (validation_state != 2)) {
     if ((debounce_transition_state == 1) || (validation_state == 1)) {
-      *fault_status_output_ptr = 1;
+      *fault_status_output_pointer = 1;
       goto LAB_00501b1c;
     }
     sensor_scratch =
-         lookupTableInterpolation(cached_axis_offset,state_ptr->lookup_input,x_axis,y_data,flags);
-    state_ptr->value = sensor_scratch;
+         lookupTableInterpolation
+                   (cached_axis_offset,state_pointer->lookup_input,x_axis,y_data,flags);
+    state_pointer->value = sensor_scratch;
     wVar2 = 0;
   }
   else {
-    state_ptr->value = config_ptr->default_value;
+    state_pointer->value = configuration_pointer->default_value;
     wVar2 = 2;
   }
-  ema_result = cm848_exponentialMovingAverage((uint)state_ptr->value,filter_state_ptr);
+  ema_result = cm848_exponentialMovingAverage((uint)state_pointer->value,filter_state_pointer);
   (&sensor_channel_filtered_output)[channel_index] = (word)ema_result;
-  *fault_status_output_ptr = wVar2;
+  *fault_status_output_pointer = wVar2;
 LAB_00501b1c:
-  *value_output_ptr = (&sensor_channel_filtered_output)[channel_index];
-  *default_value_output_ptr = config_ptr->default_value;
+  *value_output_pointer = (&sensor_channel_filtered_output)[channel_index];
+  *default_value_output_pointer = configuration_pointer->default_value;
   return;
 }
 
@@ -63079,15 +63091,15 @@ LAB_00501b1c:
    cm848_initializeSignedSensorChannel) (was sensorChannelTypeB_update) | earlier note:
    review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible
    converging-epilogue gotos + split-remnant scratch temps) Accuracy Confidence High. Boot-time twin
-   of configInit; same config_ptr struct typing, named global, and named locals; 13-param prototype.
-    */
+   of configInit; same configuration_pointer struct typing, named global, and named locals; 13-param
+   prototype. */
 
 void cm848_initializeUnsignedSensorChannel
-               (sensor_channel_config_t *config_ptr,sensor_channel_state_t *state_ptr,
-               word *cached_axis_offset,word *x_axis,word *y_data,dword flags,
-               ema_filter_state_t *filter_state_ptr,dword channel_index,dword high_fault_bit,
-               dword low_fault_bit,word *value_output_ptr,word *default_value_output_ptr,
-               word *fault_status_output_ptr)
+               (sensor_channel_config_t *configuration_pointer,sensor_channel_state_t *state_pointer
+               ,word *cached_axis_offset,word *x_axis,word *y_data,dword flags,
+               ema_filter_state_t *filter_state_pointer,dword channel_index,dword high_fault_bit,
+               dword low_fault_bit,word *value_output_pointer,word *default_value_output_pointer,
+               word *fault_status_output_pointer)
 
 {
   ushort uVar1;
@@ -63103,7 +63115,7 @@ void cm848_initializeUnsignedSensorChannel
   dword sensor_value;
   word scratch16;
   
-  state_ptr->held_value = config_ptr->default_value;
+  state_pointer->held_value = configuration_pointer->default_value;
   channel_word_index = (int)channel_index >> 4;
   sensor_value = 1 << (channel_index +
                        (channel_word_index + ((int)channel_index < 0 && (channel_index & 0xf) != 0))
@@ -63111,12 +63123,12 @@ void cm848_initializeUnsignedSensorChannel
   high_fault_word_index = (int)high_fault_bit >> 4;
   low_fault_word_index = (int)low_fault_bit >> 4;
   if ((sensor_channel_enable_bits_cal[channel_word_index] & sensor_value) == 0) {
-    uVar1 = config_ptr->default_value;
-    state_ptr->value = uVar1;
-    filter_state_ptr->accumulator = (uint)uVar1 << 0x10;
-    ema_result = cm848_exponentialMovingAverage((uint)uVar1,filter_state_ptr);
+    uVar1 = configuration_pointer->default_value;
+    state_pointer->value = uVar1;
+    filter_state_pointer->accumulator = (uint)uVar1 << 0x10;
+    ema_result = cm848_exponentialMovingAverage((uint)uVar1,filter_state_pointer);
     (&sensor_channel_filtered_output)[channel_index] = (word)ema_result;
-    *fault_status_output_ptr = 0x100;
+    *fault_status_output_pointer = 0x100;
     (&fault_detected_cal.faults_0_to_15)[high_fault_word_index] =
          (&fault_detected_cal.faults_0_to_15)[high_fault_word_index] &
          ~(ushort)(1 << (high_fault_bit & 0xf));
@@ -63132,19 +63144,19 @@ void cm848_initializeUnsignedSensorChannel
     goto LAB_005022a4;
   }
   *cached_axis_offset = 2;
-  filter_state_ptr->coefficient = &config_ptr->filter_coefficient;
+  filter_state_pointer->coefficient = &configuration_pointer->filter_coefficient;
   if ((sensor_channel_held_value_enable_bits_cal[channel_word_index] & sensor_value) != 0) {
-    scratch16 = state_ptr->held_value;
-    filter_state_ptr->accumulator = (uint)scratch16 << 0x10;
+    scratch16 = state_pointer->held_value;
+    filter_state_pointer->accumulator = (uint)scratch16 << 0x10;
     (&sensor_channel_filtered_output)[channel_index] = scratch16;
-    state_ptr->debounce_count = 0;
-    *fault_status_output_ptr = 0;
+    state_pointer->debounce_count = 0;
+    *fault_status_output_pointer = 0;
     goto LAB_005022a4;
   }
   if ((adc_forced_reading_enable_bits_cal[channel_word_index] & sensor_value) == 0) {
     if ((*(ushort *)(&DAT_003fda58 + channel_word_index * 2) & sensor_value) != 0) {
-      uVar1 = config_ptr->default_value;
-      filter_state_ptr->accumulator = (uint)uVar1 << 0x10;
+      uVar1 = configuration_pointer->default_value;
+      filter_state_pointer->accumulator = (uint)uVar1 << 0x10;
       (&sensor_channel_filtered_output)[channel_index] = uVar1;
       goto LAB_005022a4;
     }
@@ -63167,7 +63179,7 @@ void cm848_initializeUnsignedSensorChannel
     else {
       wVar3 = (&sensor_channel_diag_override)[channel_index];
     }
-    state_ptr->raw_adc_counts = wVar3;
+    state_pointer->raw_adc_counts = wVar3;
     if (sensor_channel_ratiometric_reference_channel_cal[channel_index] == 0) {
       if ((adc_forced_reading_enable_bits_cal[channel_word_index] & sensor_value) == 0) {
         if (qadc_channel_index_table[channel_index] < 0x81) {
@@ -63228,26 +63240,26 @@ void cm848_initializeUnsignedSensorChannel
         uVar2 = 0x3ff;
       }
     }
-    state_ptr->lookup_input = (word)uVar2;
+    state_pointer->lookup_input = (word)uVar2;
     if (((((uint)(&fault_detected_cal.faults_0_to_15)[high_fault_word_index] &
           1 << (high_fault_bit & 0xf)) == 0) &&
         (((uint)(&fault_detected_cal.faults_0_to_15)[low_fault_word_index] &
          1 << (low_fault_bit & 0xf)) == 0)) && (validation_state != 2)) {
-      if (((uVar2 & 0xffff) <= (uint)config_ptr->high_threshold) &&
-         ((uint)config_ptr->low_threshold <= (uVar2 & 0xffff))) goto LAB_005021a8;
+      if (((uVar2 & 0xffff) <= (uint)configuration_pointer->high_threshold) &&
+         ((uint)configuration_pointer->low_threshold <= (uVar2 & 0xffff))) goto LAB_005021a8;
       wVar3 = 1;
     }
     else {
-      state_ptr->debounce_count = config_ptr->debounce_limit;
+      state_pointer->debounce_count = configuration_pointer->debounce_limit;
       wVar3 = 2;
     }
-    uVar1 = config_ptr->default_value;
-    filter_state_ptr->accumulator = (uint)uVar1 << 0x10;
+    uVar1 = configuration_pointer->default_value;
+    filter_state_pointer->accumulator = (uint)uVar1 << 0x10;
     (&sensor_channel_filtered_output)[channel_index] = uVar1;
-    *fault_status_output_ptr = wVar3;
+    *fault_status_output_pointer = wVar3;
   }
   else {
-    state_ptr->debounce_count = 0;
+    state_pointer->debounce_count = 0;
     if ((adc_forced_reading_enable_bits_cal[channel_word_index] & sensor_value) == 0) {
       if (qadc_channel_index_table[channel_index] < 0x81) {
         uVar2 = (uint)qadc_channel_index_table[channel_index];
@@ -63260,7 +63272,7 @@ void cm848_initializeUnsignedSensorChannel
     else {
       wVar3 = (&sensor_channel_diag_override)[channel_index];
     }
-    state_ptr->raw_adc_counts = wVar3;
+    state_pointer->raw_adc_counts = wVar3;
     if (sensor_channel_ratiometric_reference_channel_cal[channel_index] == 0) {
       if ((adc_forced_reading_enable_bits_cal[channel_word_index] & sensor_value) == 0) {
         if (qadc_channel_index_table[channel_index] < 0x81) {
@@ -63269,10 +63281,10 @@ void cm848_initializeUnsignedSensorChannel
         else {
           uVar2 = 0;
         }
-        state_ptr->lookup_input = *qadc_channel_dispatch_table[uVar2].result_register;
+        state_pointer->lookup_input = *qadc_channel_dispatch_table[uVar2].result_register;
       }
       else {
-        state_ptr->lookup_input = (&sensor_channel_diag_override)[channel_index];
+        state_pointer->lookup_input = (&sensor_channel_diag_override)[channel_index];
       }
     }
     else {
@@ -63314,25 +63326,26 @@ void cm848_initializeUnsignedSensorChannel
         else {
           uVar2 = 0;
         }
-        state_ptr->lookup_input =
+        state_pointer->lookup_input =
              (word)(((uint)uVar1 * (uint)sensor_channel_ratio_scale) /
                    (uint)(&sensor_channel_filtered_output)[uVar2]);
       }
       else {
-        state_ptr->lookup_input = 0x3ff;
+        state_pointer->lookup_input = 0x3ff;
       }
     }
 LAB_005021a8:
     sensor_scratch =
-         lookupTableInterpolation(cached_axis_offset,state_ptr->lookup_input,x_axis,y_data,flags);
-    state_ptr->value = sensor_scratch;
-    filter_state_ptr->accumulator = (uint)sensor_scratch << 0x10;
+         lookupTableInterpolation
+                   (cached_axis_offset,state_pointer->lookup_input,x_axis,y_data,flags);
+    state_pointer->value = sensor_scratch;
+    filter_state_pointer->accumulator = (uint)sensor_scratch << 0x10;
     (&sensor_channel_filtered_output)[channel_index] = sensor_scratch;
-    *fault_status_output_ptr = 0;
+    *fault_status_output_pointer = 0;
   }
 LAB_005022a4:
-  *value_output_ptr = (&sensor_channel_filtered_output)[channel_index];
-  *default_value_output_ptr = config_ptr->default_value;
+  *value_output_pointer = (&sensor_channel_filtered_output)[channel_index];
+  *default_value_output_pointer = configuration_pointer->default_value;
   return;
 }
 
@@ -66148,7 +66161,7 @@ void cm848_sendDataCollectorBuffer(void)
 
 {
   undefined *puVar1;
-  j1939_transmit_message_t *msg;
+  j1939_transmit_message_t *message;
   undefined1 *puVar2;
   undefined *puVar3;
   uint uVar4;
@@ -66174,13 +66187,13 @@ void cm848_sendDataCollectorBuffer(void)
         puVar3 = (undefined *)((0x20 / uVar4) * uVar4);
       }
     }
-    msg = cm848_selectJ1939TransmitBuffer((uint)puVar3 & 0xffff);
+    message = cm848_selectJ1939TransmitBuffer((uint)puVar3 & 0xffff);
     puVar1 = data_collector_start_address;
-    if (msg != (j1939_transmit_message_t *)0x0) {
-      (msg->header).can_id = 0xffff00;
-      *(byte *)&(msg->header).can_id = *(byte *)&(msg->header).can_id & 0xe3 | 0x18;
-      *(char *)((int)&(msg->header).can_id + 3) = (char)j1939_source_address;
-      puVar2 = msg->data_pointer;
+    if (message != (j1939_transmit_message_t *)0x0) {
+      (message->header).can_id = 0xffff00;
+      *(byte *)&(message->header).can_id = *(byte *)&(message->header).can_id & 0xe3 | 0x18;
+      *(char *)((int)&(message->header).can_id + 3) = (char)j1939_source_address;
+      puVar2 = message->data_pointer;
       puVar5 = data_collector_start_address;
       for (; ((uint)puVar3 & 0xffff) != 0; puVar3 = puVar3 + 0xffff) {
         *puVar2 = *puVar5;
@@ -66194,14 +66207,14 @@ void cm848_sendDataCollectorBuffer(void)
           puVar5 = data_collector_buffer_start_address;
         }
       }
-      cm848_startJ1939TransportSession(msg);
+      cm848_startJ1939TransportSession(message);
       puVar1 = data_collector_start_address;
-      if (*msg->status_pointer == '\x10') {
+      if (*message->status_pointer == '\x10') {
         do {
           cm848_sendJ1939BroadcastDataPacket(0);
-        } while (*msg->status_pointer == '\x11');
+        } while (*message->status_pointer == '\x11');
         puVar1 = puVar5;
-        if (*msg->status_pointer != '\x05') {
+        if (*message->status_pointer != '\x05') {
           cm848_resetDataCollector();
           puVar1 = data_collector_start_address;
         }
@@ -69977,8 +69990,8 @@ LAB_0050a6cc:
    falls back to the low idle switch; message lost runs cm848_updateIdleSwitchesFromLocalInputs;
    runs only when sensor_channel_held_value_enable_bits_cal bit 13 (J1939 pedal) is set and switch 7
    is datalink-sourced; with the same bit 13 set the accelerator pedal channel (13) outputs
-   held_value in place of its sensor (the sensor-channel functions read it through state_ptr) - so
-   the J1939 pedal DOES reach sensor_channel_filtered_output[13]; it was read as having no reader
+   held_value in place of its sensor (the sensor-channel functions read it through state_pointer) -
+   so the J1939 pedal DOES reach sensor_channel_filtered_output[13]; it was read as having no reader
    because nothing names the address (was fuel_demandFeature_emission_update) |
    review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
 
@@ -70757,7 +70770,8 @@ byte getJ1939MemoryServiceHeaderLength(int param_1)
    header and validateSecurityKey must accept it. Returns 0xff = accepted / 2 = wrong length / 0x1a
    = key missing / 3 = key refused (was j1939_diagServiceDispatch; PR #53 round 61) */
 
-J1939_DIAGNOSTIC_RESULT cm848_validateJ1939DiagnosticRequest(j1939_received_message_t *rx_msg)
+J1939_DIAGNOSTIC_RESULT
+cm848_validateJ1939DiagnosticRequest(j1939_received_message_t *received_message)
 
 {
   byte bVar1;
@@ -70765,8 +70779,8 @@ J1939_DIAGNOSTIC_RESULT cm848_validateJ1939DiagnosticRequest(j1939_received_mess
   char cVar3;
   uint uVar4;
   
-  bVar1 = *rx_msg->data_pointer;
-  uVar4 = (uint)rx_msg->data_length;
+  bVar1 = *received_message->data_pointer;
+  uVar4 = (uint)received_message->data_length;
   if (bVar1 < 0x1a) {
     if ((bVar1 == 4) || (bVar1 == 5)) {
       iVar2 = 3;
@@ -70790,7 +70804,7 @@ J1939_DIAGNOSTIC_RESULT cm848_validateJ1939DiagnosticRequest(j1939_received_mess
         }
         return J1939_DIAGNOSTIC_RESULT_WRONG_LENGTH;
       }
-      cVar3 = validateSecurityKey(rx_msg->data_pointer + iVar2);
+      cVar3 = validateSecurityKey(received_message->data_pointer + iVar2);
       if (cVar3 != '\0') {
         return J1939_DIAGNOSTIC_RESULT_KEY_REFUSED;
       }
@@ -71429,7 +71443,8 @@ undefined4 cm848_handleJ1939GetAddressByParameterIdService(j1939_received_messag
   cVar2 = cm848_lookupParameterIdAddress(local_24,&local_20);
   if (cVar2 == '\0') {
     local_14 = CONCAT13((request->priority_dp_flags >> 2 & 7) << 2,0xef0000);
-    local_14 = CONCAT31(CONCAT21(local_14._0_2_,request->source_address),request->dest_address);
+    local_14 = CONCAT31(CONCAT21(local_14._0_2_,request->source_address),
+                        request->destination_address);
     local_e = &local_1c;
     local_10 = 7;
     local_1c = 0x42;
@@ -71494,7 +71509,7 @@ cm848_readJ1939DiagnosticMemoryAndRespond
   ushort uVar2;
   MEMORY_REGION_TYPE MVar3;
   char cVar4;
-  j1939_transmit_message_t *msg;
+  j1939_transmit_message_t *message;
   byte *pbVar5;
   byte bVar6;
   byte bVar7;
@@ -71517,17 +71532,18 @@ cm848_readJ1939DiagnosticMemoryAndRespond
         }
         cVar4 = getJ1939MemoryServiceHeaderLength(bVar6);
         bVar7 = cVar4 - 1;
-        msg = cm848_selectJ1939TransmitBuffer(bVar7 + length + 1 & 0xffff);
-        if (msg == (j1939_transmit_message_t *)0x0) {
+        message = cm848_selectJ1939TransmitBuffer(bVar7 + length + 1 & 0xffff);
+        if (message == (j1939_transmit_message_t *)0x0) {
           MVar3 = MEMORY_REGION_TYPE_MAIN_FLASH;
         }
         else {
-          pbVar8 = msg->data_pointer;
-          (msg->header).can_id = 0xef0000;
-          *(byte *)&(msg->header).can_id =
-               (request->priority_dp_flags >> 2 & 7) << 2 | *(byte *)&(msg->header).can_id & 0xe3;
-          *(byte *)((int)&(msg->header).can_id + 2) = request->source_address;
-          *(byte *)((int)&(msg->header).can_id + 3) = request->dest_address;
+          pbVar8 = message->data_pointer;
+          (message->header).can_id = 0xef0000;
+          *(byte *)&(message->header).can_id =
+               (request->priority_dp_flags >> 2 & 7) << 2 |
+               *(byte *)&(message->header).can_id & 0xe3;
+          *(byte *)((int)&(message->header).can_id + 2) = request->source_address;
+          *(byte *)((int)&(message->header).can_id + 3) = request->destination_address;
           pbVar5 = request->data_pointer;
           *pbVar8 = bVar6;
           pbVar8 = pbVar8 + 1;
@@ -71536,7 +71552,7 @@ cm848_readJ1939DiagnosticMemoryAndRespond
             address = address - 0xc02b7e;
           }
           cm848_memcpyBytes(pbVar8 + bVar7,address,range_length);
-          cm848_sendJ1939Message(msg);
+          cm848_sendJ1939Message(message);
           MVar3 = ~MEMORY_REGION_TYPE_RAM;
         }
       }
@@ -71770,7 +71786,7 @@ void registerJ1939MemoryReadServices(void)
    broadcast session (j1939_broadcast_transmit_session_t) (was initiateJ1939TransportProtocol; PR
    #53 round 65) */
 
-void cm848_startJ1939TransportSession(j1939_transmit_message_t *msg)
+void cm848_startJ1939TransportSession(j1939_transmit_message_t *message)
 
 {
   ushort *puVar1;
@@ -71786,25 +71802,26 @@ void cm848_startJ1939TransportSession(j1939_transmit_message_t *msg)
   byte bStack_13;
   
   pbVar5 = j1939_transport_transmit_session.transmit_frame_pointer;
-  puVar1 = (ushort *)((int)&(msg->header).can_id + 1);
+  puVar1 = (ushort *)((int)&(message->header).can_id + 1);
   bVar2 = *(byte *)puVar1;
-  bVar3 = *(byte *)((int)&(msg->header).can_id + 2);
+  bVar3 = *(byte *)((int)&(message->header).can_id + 2);
   uVar4 = *puVar1;
-  uVar7 = (ushort)(byte)(msg->header).can_id;
+  uVar7 = (ushort)(byte)(message->header).can_id;
   local_18 = (byte)(uVar4 >> 8);
   if ((bVar2 < 0xf0) && (bVar3 != 0xff)) {
     if (j1939_multiframe_tx_active == 0) {
       j1939_multiframe_tx_active = 1;
       j1939_transport_transmit_session.transported_pgn = uVar4 & 0xff00;
-      j1939_transport_transmit_session.message_size = (msg->header).data_length;
+      j1939_transport_transmit_session.message_size = (message->header).data_length;
       j1939_transport_transmit_session.total_packet_count =
            (char)((int)(j1939_transport_transmit_session.message_size - 1) / 7) + 1;
       j1939_transport_transmit_session.granted_packet_count = 0;
-      j1939_transport_transmit_session.message_data_pointer = msg->data_pointer;
-      j1939_transport_transmit_session.frame_can_id = (msg->header).can_id & 0xff00ffff | 0xec0000;
+      j1939_transport_transmit_session.message_data_pointer = message->data_pointer;
+      j1939_transport_transmit_session.frame_can_id =
+           (message->header).can_id & 0xff00ffff | 0xec0000;
       j1939_transport_transmit_session.frame_data_length = 8;
       j1939_transport_transmit_session.timeout_timer = 0x37;
-      j1939_transport_transmit_session.session_status_pointer = msg->status_pointer;
+      j1939_transport_transmit_session.session_status_pointer = message->status_pointer;
       j1939_multiframe_tx_destination_address = bVar3;
       *j1939_transport_transmit_session.transmit_frame_pointer = 0x10;
       wVar6 = j1939_transport_transmit_session.message_size;
@@ -71824,8 +71841,8 @@ void cm848_startJ1939TransportSession(j1939_transmit_message_t *msg)
                  &j1939_transport_transmit_session.frame_queue_status);
       if (j1939_transport_transmit_session.frame_queue_status == 0) {
         *j1939_transport_transmit_session.session_status_pointer = 0x12;
-        j1939_transport_transmit_session.frame_can_id = (msg->header).can_id & 0xff00ffff | 0xeb0000
-        ;
+        j1939_transport_transmit_session.frame_can_id =
+             (message->header).can_id & 0xff00ffff | 0xeb0000;
       }
       else {
         *j1939_transport_transmit_session.session_status_pointer =
@@ -71834,7 +71851,7 @@ void cm848_startJ1939TransportSession(j1939_transmit_message_t *msg)
       }
     }
     else {
-      *msg->status_pointer = 8;
+      *message->status_pointer = 8;
     }
   }
   else {
@@ -71843,26 +71860,26 @@ void cm848_startJ1939TransportSession(j1939_transmit_message_t *msg)
     }
     else {
       if (j1939_engine_retarder_source_address != uVar7) {
-        *msg->status_pointer = 3;
+        *message->status_pointer = 3;
         return;
       }
       pjVar8 = j1939_broadcast_transmit_sessions + 1;
     }
     if (pjVar8->active == 1) {
-      *msg->status_pointer = 2;
+      *message->status_pointer = 2;
     }
     else {
       if ((bVar2 == 0xff) && (bVar3 == 0xff)) {
         j1939_broadcast_no_packet_delay_flag = 1;
       }
       pjVar8->active = 1;
-      uVar4 = (msg->header).data_length;
+      uVar4 = (message->header).data_length;
       pjVar8->message_size = uVar4;
       pjVar8->total_packet_count = (char)((int)(uVar4 - 1) / 7) + 1;
       pjVar8->next_packet_number = 1;
       pjVar8->next_data_byte_number = 1;
-      pjVar8->message_data_pointer = msg->data_pointer;
-      pjVar8->frame_can_id = (msg->header).can_id & 0xff0000ff | 0xecff00;
+      pjVar8->message_data_pointer = message->data_pointer;
+      pjVar8->frame_can_id = (message->header).can_id & 0xff0000ff | 0xecff00;
       pjVar8->frame_data_length = 8;
       if (j1939_broadcast_no_packet_delay_flag == 0) {
         wVar6 = 5;
@@ -71871,7 +71888,7 @@ void cm848_startJ1939TransportSession(j1939_transmit_message_t *msg)
         wVar6 = 0;
       }
       pjVar8->packet_delay_timer = wVar6;
-      pjVar8->session_status_pointer = msg->status_pointer;
+      pjVar8->session_status_pointer = message->status_pointer;
       pbVar5 = pjVar8->transmit_frame_pointer;
       *pbVar5 = 0x20;
       wVar6 = pjVar8->message_size;
@@ -71889,7 +71906,7 @@ void cm848_startJ1939TransportSession(j1939_transmit_message_t *msg)
                  &pjVar8->frame_queue_status);
       if (pjVar8->frame_queue_status == 0) {
         *pjVar8->session_status_pointer = 0x10;
-        pjVar8->frame_can_id = (msg->header).can_id & 0xff0000ff | 0xebff00;
+        pjVar8->frame_can_id = (message->header).can_id & 0xff0000ff | 0xebff00;
       }
       else {
         *pjVar8->session_status_pointer = pjVar8->frame_queue_status;
@@ -72114,7 +72131,7 @@ void cm848_handleJ1939TransportRequestToSend(j1939_received_message_t *message)
     j1939_transport_receive_session.active = 1;
     j1939_transport_receive_session.request_to_send_can_id._0_1_ = message->priority_dp_flags;
     j1939_transport_receive_session.request_to_send_can_id._1_1_ = message->pgn_pf;
-    j1939_transport_receive_session.request_to_send_can_id._2_1_ = message->dest_address;
+    j1939_transport_receive_session.request_to_send_can_id._2_1_ = message->destination_address;
     j1939_transport_receive_session.request_to_send_can_id._3_1_ = message->source_address;
     j1939_transport_receive_session.transported_pgn = local_10;
     j1939_transport_receive_session.total_packet_count = pbVar3[3];
@@ -75178,8 +75195,8 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
     air_conditioning_pressure_learn_count = 0;
   }
   if (air_conditioning_pressure_learn_time <= air_conditioning_pressure_learn_count) {
-    diag_clear_flags_t_003fedfc.diag_response_write_count = 0;
-    diag_clear_flags_t_003fedfc.diag_eeprom_work_byte = 1;
+    diag_clear_flags_t_003fedfc.diagnostic_response_write_count = 0;
+    diag_clear_flags_t_003fedfc.diagnostic_eeprom_work_byte = 1;
   }
   bVar4 = switch_input_state_bits.air_conditioning_switch != 0;
   if ((fault_detected_cal.air_conditioning_pressure_high_error == 0) &&

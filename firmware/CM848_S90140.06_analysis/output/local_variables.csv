@@ -28,13 +28,13 @@ function_address,function_name,old_name,new_name,type,comment
 0x00021624,exitDevelopmentMode,uVar1,result,J1939_DIAGNOSTIC_RESULT,J1939_DIAGNOSTIC_RESULT: ACK(0) if standby→active transition succeeded NACK_NOT_READY(4) if not in standby
 0x00021694,forceExitDevelopmentMode,uVar1,result,J1939_DIAGNOSTIC_RESULT,J1939_DIAGNOSTIC_RESULT: ACK(0) if activated NACK_PROTECTED(7) if protection mode blocked
 # cm848_dispatchJ1939PgnRequest @ 0x000231cc - linear search through j1939_pgn_dispatch_table
-0x000231cc,cm848_dispatchJ1939PgnRequest,bVar1,search_idx,byte,Index of current entry being tested; equals j1939_pgn_handler_count on exit if no handler matched
+0x000231cc,cm848_dispatchJ1939PgnRequest,bVar1,entry_index,byte,Index of current entry being tested; equals j1939_pgn_handler_count on exit if no handler matched
 0x000231cc,cm848_dispatchJ1939PgnRequest,pjVar2,entry,j1939_pgn_handler_entry_t *,Pointer to current dispatch table entry under test
 0x005267f4,cm848_calculateVehicleSpeedFromOutputShaft,uVar2,fuel_temp_trim_uncapped,uint,Shaft-speed-derived fuel-temp estimate before capping - named _uncapped not _working to avoid collision with global fuel_temp_trim_working at 0x003fb4d8
 0x005267f4,cm848_calculateVehicleSpeedFromOutputShaft,uVar1,fuel_temp_trim_result,uint,Final capped result stored to fuel_temp_trim_raw - the lesser of the uncapped estimate and fuel_temp_cap_from_shaft_speed
 # mpc555_processDiagnosticAndEepromRequests @ 0x00001fa4 - Main diagnostic/EEPROM request dispatcher
 0x00001fa4,mpc555_processDiagnosticAndEepromRequests,wVar1,erase_result,short,mpc555_beginReflash(serial)'s result - nonzero when both erases succeeded (0x73 into diag_session_state_byte; 0 gives 0x22) (was eeprom_init_result whose note said 0=success; PR #53 round 67)
-0x00001fa4,mpc555_processDiagnosticAndEepromRequests,bVar2,diag_response_code,byte,Diagnostic response code to send (0x11=invalid service 0x12=invalid state)
+0x00001fa4,mpc555_processDiagnosticAndEepromRequests,bVar2,diagnostic_response_code,byte,Diagnostic response code to send (0x11=invalid service 0x12=invalid state)
 # cm848_checkCruiseSwitchLearnCondition @ 0x00512e70 (was governor_cruise_engage_check) - cruise-engage gate (reviewed via review-function-readability)
 0x00512e70,cm848_checkCruiseSwitchLearnCondition,uVar1,cruise_switch_adc_value,ushort,Live or overridden cruise-switch ADC reading compared against the valid window (ushort emits a benign Unable-to-use-type warning, same as message_data_length on main)
 0x00512e70,cm848_checkCruiseSwitchLearnCondition,uVar2,qadc_dispatch_index,uint,Clamped index into qadc_channel_dispatch_table for cruise-switch channel 0x2f
@@ -109,7 +109,7 @@ function_address,function_name,old_name,new_name,type,comment
 0x005012dc,cm848_processUnsignedSensorChannel,wVar6,sensor_scratch,word,Raw reading / lookup result / fault status - one register reused across the paths
 0x005012dc,cm848_processUnsignedSensorChannel,dVar4,ema_result,undefined4,cm848_exponentialMovingAverage output written to sensor_channel_filtered_output
 0x005012dc,cm848_processUnsignedSensorChannel,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state fields)
-0x005012dc,cm848_processUnsignedSensorChannel,uVar2,recovery_decrement,ushort,config_ptr->recovery_decrement copy
+0x005012dc,cm848_processUnsignedSensorChannel,uVar2,recovery_decrement,ushort,configuration_pointer->recovery_decrement copy
 0x005012dc,cm848_processUnsignedSensorChannel,unaff_r29,debounce_transition_state,uint,Debounce step outcome - 0 settled / 1 still counting / 2 limit reached
 0x00501b4c,cm848_initializeUnsignedSensorChannel,iVar7,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
 0x00501b4c,cm848_initializeUnsignedSensorChannel,iVar8,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault bitmaps

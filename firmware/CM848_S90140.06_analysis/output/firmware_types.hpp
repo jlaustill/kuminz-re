@@ -1461,7 +1461,7 @@ typedef struct j1939_pgn65230_payload_t j1939_pgn65230_payload_t;
 struct j1939_received_message_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
     uint8_t pgn_pf;  /* PDU Format - high byte of PGN (0xEF=EF00 0xDF=DF00 0x00=TSC1 etc) */
-    uint8_t dest_address;  /* Destination address (PDU1) or PGN low byte (PDU2); compared against j1939_source_address to filter incoming messages */
+    uint8_t destination_address;  /* Destination address (PDU1) or PGN low byte (PDU2); compared against j1939_source_address to filter incoming messages */
     uint8_t source_address;  /* J1939 source address of sending node */
     uint16_t data_length;  /* CAN DLC - payload byte count (handlers expect 8 for TSC1/ETC1) */
     byte* data_pointer;  /* Pointer to inline_data below (always this+10 per processCanReceiveBuffer) */
@@ -1594,7 +1594,7 @@ struct pci_link_state_t {
     uint8_t rx_match_index;  /* pci_receive_message_table entry whose header matches the frame being received (search resumes here per byte) */
     uint8_t tx_match_index;  /* pci_transmit_message_table entry whose header matches (own transmission echoed back) */
     uint8_t receive_byte_count;  /* Bytes stored in pci_receive_frame_buffer for the current frame */
-    uint8_t init_complete_marker;  /* Set to 1 at the end of cm848_initJ1939CommunicationSystem; no reader found */
+    uint8_t initialization_complete_marker;  /* Set to 1 at the end of cm848_initJ1939CommunicationSystem; no reader found */
     uint32_t link_event_code;  /* PCI link event 1..7 (all stw/lwz); cm848_handlePciLinkEvent maps each to a recovery-action mask at 0x3fd8e0..0x3fd8e7; 7 = every scheduled PCI transmit overdue (set by cm848_checkPciMessageTimeouts); was dm1_pending (word) */
 };
 
@@ -2492,7 +2492,7 @@ struct j1939_message_header_t {
 
 struct sensor_channel_config_t {
     uint16_t filter_coefficient;  /* EMA coefficient: the weight of the previous filtered value in 1/65536 (0 = no filtering) - the channel's ema_filter_state_t.coefficient points here (was config_word0) */
-    uint16_t default_value;  /* Nominal/fault fallback value (written to filtered output and state_ptr[1]) */
+    uint16_t default_value;  /* Nominal/fault fallback value (written to filtered output and state_pointer[1]) */
     uint16_t high_threshold;  /* Upper limit - sensor value above this trips the high fault path */
     uint16_t low_threshold;  /* Lower limit - sensor value below this trips the low fault path */
     uint16_t debounce_step;  /* Per-cycle increment added to the debounce counter while ramping toward the limit */
@@ -2551,7 +2551,7 @@ struct q16_fixed_point_t {
 struct j1939_pgn_handler_entry_t {
     uint8_t pgn_byte_1;  /* First PGN byte for matching (compared against msg+6+1) */
     uint8_t pgn_byte_0;  /* Second PGN byte for matching (compared against msg+6+0) */
-    uint32_t handler_func;  /* Function pointer to PGN handler callback */
+    uint32_t handler;  /* Function pointer to PGN handler callback */
 };
 
 struct j1939_transmit_message_t {
@@ -2568,7 +2568,7 @@ struct j1939_acknowledgement_payload_t {
     uint8_t address_acknowledged;  /* Source address of message being acknowledged (0xFF = global) */
     uint8_t pgn_low;  /* Acknowledged PGN low byte (hardcoded 0 for PDU1 requests) */
     uint8_t pgn_mid;  /* Acknowledged PGN mid byte (= pgn_pf of request) */
-    uint8_t pgn_high;  /* Acknowledged PGN high byte (= dest_address of request) */
+    uint8_t pgn_high;  /* Acknowledged PGN high byte (= destination_address of request) */
 };
 
 struct j1939_powertrain_messages_received_t {
@@ -3059,13 +3059,13 @@ struct eeprom_transfer_state_t {
 struct eeprom_block_tracking_t {
     uint16_t key_off_duration_ticks;  /* Counted with the runtime counter by mpc555_tickTransferTimeoutAndRuntimeCounter (every 41 calls) - mpc555_keyOnStateMachine zeroes it while SCR bit 15 (key on - PR #48) is set and saves the runtime counter once it passes 0x2903 (was watchdog_counter 'Transfer watchdog counter (reset each block)'; PR #53 round 67) */
     uint8_t failed_write_authorization_count;  /* cm848_validateBootSecurityKey's count of failed write authorizations: at 0x11 every check fails / a matching token resets it / a mismatch adds 1 (was _pad2; PR #53 round 35) */
-    uint32_t last_write_addr;  /* Previous block write address for continuity validation */
-    uint32_t block_start_addr;  /* Start address of current EEPROM transfer range */
+    uint32_t last_write_address;  /* Previous block write address for continuity validation */
+    uint32_t block_start_address;  /* Start address of current EEPROM transfer range */
     uint16_t block_count;  /* Finished download blocks in download_block_list (10 at most - cm848_finishDownloadBlock answers DOWNLOAD_INVALID when it is full; PR #53 round 67) */
 };
 
 struct download_block_range_t {
-    uint32_t start_address;  /* The block's first address (eeprom_block_tracking.block_start_addr) */
+    uint32_t start_address;  /* The block's first address (eeprom_block_tracking.block_start_address) */
     uint32_t end_address;  /* The block's last data byte: start + block length - 3 for a J1939 block (before its 2-byte CRC) / - 1 for a serial block */
 };
 
@@ -3085,7 +3085,7 @@ struct j1939_transport_transmit_session_t {
 };
 
 struct boot_state_t {
-    uint16_t boot_param;  /* Boot state machine initialization parameter */
+    uint16_t boot_parameter;  /* Boot state machine initialization parameter */
     uint16_t boot_phase;  /* Boot phase counter (cycles 0-3 per PISCR interrupt) */
 };
 
@@ -3101,8 +3101,8 @@ struct mios1_interrupt_registers_t {
 };
 
 struct diag_clear_flags_t {
-    uint8_t diag_response_write_count;  /* Diagnostic response write count pending */
-    uint8_t diag_eeprom_work_byte;  /* EEPROM channel scratch byte */
+    uint8_t diagnostic_response_write_count;  /* Diagnostic response write count pending */
+    uint8_t diagnostic_eeprom_work_byte;  /* EEPROM channel scratch byte */
     uint16_t learned_output_speed_to_vehicle_speed_ratio;  /* e2m 8BB3 +0 RE_Axle_Ratio_Factor_Learned 'Ratio of transmission output shaft speed to road speed (NV ratio)' (0.0078125 per count = rpm per mph; 5141 = 40.16 in the dump; the default 8BB2 +0 output_speed_to_vehicle_speed_default_ratio = 42 on the same scale; EEPROM 0x197c) (PR #53 round 52): EEPROM-backed learned ratio = output shaft speed x 4096 / vehicle_speed (5141 = 40.2 rpm per mph) clamped 4480-6656; synthesizes the output shaft speed on sensor fault; 0x3fedfb bit 0 marks it learned (was fuel_temp_protection_ratio) */
 };
 

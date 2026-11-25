@@ -1243,7 +1243,7 @@ struct j1939_diagnostic_service_entry_t {
 struct can_std_rx_desc_t {
     uint32_t id;  /* 11-bit CAN ID stored in 32-bit (ABI) */
     uint16_t length;  /* DLC */
-    uint8_t * data_ptr;  /* Pointer to payload bytes */
+    uint8_t * data_pointer;  /* Pointer to payload bytes */
 };
 
 struct param_lookup_args_t {
@@ -1254,15 +1254,15 @@ struct param_lookup_args_t {
 
 struct dma_descriptor_t {
     uint32_t source_address;  /* DMA transfer source memory address */
-    uint32_t dest_address;  /* DMA transfer destination memory address */
+    uint32_t destination_address;  /* DMA transfer destination memory address */
     uint16_t transfer_count;  /* Number of bytes/words to transfer */
     uint16_t control_flags;  /* DMA control flags (mode type enable etc) */
     uint32_t next_descriptor;  /* Pointer to next descriptor in chain */
 };
 
 struct memory_operation_request_t {
-    uint32_t source_data_ptr;  /* Pointer to source data for memory operation */
-    uint32_t target_data_ptr;  /* Pointer to destination memory location */
+    uint32_t source_data_pointer;  /* Pointer to source data for memory operation */
+    uint32_t target_data_pointer;  /* Pointer to destination memory location */
     uint16_t operation_size;  /* Number of bytes to copy (max 1764 bytes) */
     uint16_t metadata_value;  /* Logging metadata/timestamp for circular buffer */
 };
@@ -1375,21 +1375,21 @@ struct diag_service_request_t {
 };
 
 struct diag_tp_state_t {
-    uint8_t diag_state;  /* State flag: 0=idle 1=active */
+    uint8_t diagnostic_state;  /* State flag: 0=idle 1=active */
     uint8_t expected_id_low;  /* Expected low byte of std CAN ID */
     uint16_t expected_guard;  /* Guard word; must match (payload[6]<<8) */
     uint8_t total_packets;  /* ((total_bytes-1)/7)+1 */
-    uint8_t req_start;  /* Current sequence index (1-based) */
-    uint8_t req_count;  /* Remaining packets to send */
+    uint8_t request_start;  /* Current sequence index (1-based) */
+    uint8_t request_count;  /* Remaining packets to send */
     uint8_t pre_status;  /* Abort/status flag (non-zero aborts with 7) */
     uint16_t total_bytes;  /* Total payload length */
-    uint8_t * src_data_ptr;  /* Pointer to source payload */
-    uint8_t * resp_byte_ptr;  /* Pointer to 1-byte response/status */
+    uint8_t * source_data_pointer;  /* Pointer to source payload */
+    uint8_t * response_byte_pointer;  /* Pointer to 1-byte response/status */
     uint8_t status_code;  /* Countdown/NACK (0x37 init or 0x70 delay) */
     uint8_t reserved_0x47;  /* Padding */
-    uint32_t tx_header_id;  /* Composed CAN ID for TP.CM/TP.DT */
-    uint16_t tx_length;  /* DLC for frame (8 or tail) */
-    uint8_t * tx_cm_buf;  /* Scratch 8-byte CM/DT buffer */
+    uint32_t transmit_header_id;  /* Composed CAN ID for TP.CM/TP.DT */
+    uint16_t transmit_length;  /* DLC for frame (8 or tail) */
+    uint8_t * transmit_connection_management_buffer;  /* Scratch 8-byte CM/DT buffer */
 };
 
 struct diag_transfer_state_t {
@@ -1397,18 +1397,18 @@ struct diag_transfer_state_t {
     uint32_t data_pointer;  /* Pointer to source/dest data buffer */
     uint16_t remaining_length;  /* Remaining bytes to transfer */
     uint16_t byte_count;  /* Total byte count for operation */
-    uint8_t tx_active_flag;  /* Transmit operation active (0/1) */
-    uint8_t rx_active_flag;  /* Receive operation active (0/1) */
+    uint8_t transmit_active_flag;  /* Transmit operation active (0/1) */
+    uint8_t receive_active_flag;  /* Receive operation active (0/1) */
 };
 
 struct fuel_governor_state_t {
-    int16_t out_cmd;  /* Final clamped output (governor/fueling command) */
-    int16_t cmd_raw;  /* Current raw command (signed) */
+    int16_t output_command;  /* Final clamped output (governor/fueling command) */
+    int16_t raw_command;  /* Current raw command (signed) */
     int16_t term_ff;  /* Feed-forward/scaling term (signed) */
     int16_t term_rate;  /* Rate/derivative term (signed saturating) */
-    ushort accum_lo;  /* Q16.16 accumulator low 16 bits (fractional part) */
-    ushort accum_hi;  /* Q16.16 accumulator high 16 bits (integer part) */
-    int16_t limit_hi;  /* Accumulator integer ceiling (upper clamp) */
+    ushort accumulator_low;  /* Q16.16 accumulator low 16 bits (fractional part) */
+    ushort accumulator_high;  /* Q16.16 accumulator high 16 bits (integer part) */
+    int16_t limit_high;  /* Accumulator integer ceiling (upper clamp) */
     int16_t limit_cap;  /* Accumulator/output cap */
     int16_t rpm_window;  /* RPM window/threshold term used for gating */
 };
@@ -1460,7 +1460,7 @@ struct rpm_fuel_protection_t {
     uint16_t low_rpm_fuel_protection_limit;  /* Low RPM fuel protection limit */
     uint16_t rpm_rate_limiter_output;  /* RPM rate limiter output */
     uint16_t rpm_rate_limited_value;  /* RPM rate limited value */
-    uint16_t rpm_rate_secondary_calc;  /* Secondary RPM rate calculation */
+    uint16_t rpm_rate_secondary_calculation;  /* Secondary RPM rate calculation */
     uint16_t rpm_state_accumulator;  /* RPM state accumulator */
     uint16_t high_rpm_fuel_accumulator;  /* High RPM fuel accumulator */
     uint16_t low_rpm_fuel_accumulator;  /* Low RPM fuel accumulator */
@@ -1547,10 +1547,10 @@ struct address_range_entry_t {
 };
 
 struct circular_buffer_control_t {
-    uint32_t read_ptr;  /* Current read position pointer */
-    uint32_t write_ptr;  /* Current write position pointer */
-    uint32_t base_ptr;  /* Start address of buffer data */
-    uint32_t end_ptr;  /* End address of buffer data */
+    uint32_t read_pointer;  /* Current read position pointer */
+    uint32_t write_pointer;  /* Current write position pointer */
+    uint32_t base_pointer;  /* Start address of buffer data */
+    uint32_t end_pointer;  /* End address of buffer data */
     uint8_t full_flag;  /* Buffer full indicator (1=full 0=space available) */
 };
 
@@ -2135,7 +2135,7 @@ struct j1939_pgn65249_payload_t {
 struct j1939_pgn_handler_entry_t {
     uint8_t pgn_byte_1;  /* First PGN byte for matching (compared against msg+6+1) */
     uint8_t pgn_byte_0;  /* Second PGN byte for matching (compared against msg+6+0) */
-    uint32_t handler_func;  /* Function pointer to PGN handler callback */
+    uint32_t handler;  /* Function pointer to PGN handler callback */
 };
 
 struct j1939_pgn65261_payload_t {

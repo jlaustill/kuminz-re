@@ -73,15 +73,15 @@ EF00 Service Request (0x41 or 0x43)
 ### `lookupTableEntryByKey` (ROM 0x3F70 → RAM 0x3F9B40)
 
 ```c
-uint32_t lookupTableEntryByKey(uint16_t param_id) {
+uint32_t lookupTableEntryByKey(uint16_t parameter_id) {
     uint16_t *entry = (uint16_t *)0x003F98AC;  // Table start in RAM
 
     // Linear search through sorted table (20 entries max)
-    while (*entry < param_id && entry < (uint16_t *)0x003F9924) {
+    while (*entry < parameter_id && entry < (uint16_t *)0x003F9924) {
         entry += 3;  // Each entry is 6 bytes (3 × uint16_t)
     }
 
-    if (*entry == param_id) {
+    if (*entry == parameter_id) {
         return *(uint32_t *)(entry + 1);  // Return 4-byte address
     }
     return 0;  // Not found
@@ -97,7 +97,7 @@ uint32_t lookupTableEntryByKey(uint16_t param_id) {
 ### Entry Format (6 bytes)
 ```c
 typedef struct {
-    uint16_t param_id;   // Parameter ID (0x0000-0x12A9)
+    uint16_t parameter_id;   // Parameter ID (0x0000-0x12A9)
     uint32_t address;    // Resolved memory address
 } param_id_entry_t;
 ```
