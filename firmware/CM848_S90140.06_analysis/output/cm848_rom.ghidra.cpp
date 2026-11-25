@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 15:05:03 MST 2026
+// Generated: Wed Nov 25 15:16:11 MST 2026
 
 
 //
@@ -1653,24 +1653,24 @@ void mpc555_processDiagnosticAndEepromRequests(void)
     if ((bVar1 & 0x80) != 0) {
       eeprom_xfer_state.transfer_timer = 0x28;
     }
-    if (eeprom_diag_state < EEPROM_DIAG_TRANSFER_BLOCK) {
-      if (eeprom_diag_state == EEPROM_DIAG_SEND_VERSION) {
+    if (eeprom_diag_state < EEPROM_DIAGNOSTIC_TRANSFER_BLOCK) {
+      if (eeprom_diag_state == EEPROM_DIAGNOSTIC_SEND_VERSION) {
         cm848_sendSerialDownloadStatusResponse();
         diagnostic_callback_ptr = mpc555_processDiagnosticAndEepromRequests;
       }
-      else if (eeprom_diag_state == EEPROM_DIAG_HANDLE_RESPONSE) {
+      else if (eeprom_diag_state == EEPROM_DIAGNOSTIC_HANDLE_RESPONSE) {
         mpc555_sciHandleDownloadStart();
       }
       else {
-        if (eeprom_diag_state != EEPROM_DIAG_DATA_TRANSFER) goto LAB_0000208c;
+        if (eeprom_diag_state != EEPROM_DIAGNOSTIC_DATA_TRANSFER) goto LAB_0000208c;
         mpc555_sciHandleDownloadDataBlock();
       }
     }
-    else if (eeprom_diag_state == EEPROM_DIAG_TRANSFER_BLOCK) {
+    else if (eeprom_diag_state == EEPROM_DIAGNOSTIC_TRANSFER_BLOCK) {
       mpc555_diagServiceTransferBlock();
     }
     else {
-      if (eeprom_diag_state != EEPROM_DIAG_WRITE_DISPATCH) {
+      if (eeprom_diag_state != EEPROM_DIAGNOSTIC_WRITE_DISPATCH) {
 LAB_0000208c:
         diagnostic_response_code = 0x12;
         goto LAB_00002098;
@@ -1697,7 +1697,7 @@ LAB_000020ac:
     serial_reflash_busy_flag = 0;
   }
   if (eeprom_write_request_pending != 0) {
-    eeprom_diag_state = EEPROM_DIAG_WRITE_DISPATCH;
+    eeprom_diag_state = EEPROM_DIAGNOSTIC_WRITE_DISPATCH;
     eeprom_write_request_type = (byte)eeprom_write_request_pending;
     cm848_dispatchSerialReflashRequest();
     eeprom_write_request_pending = 0;
@@ -5436,23 +5436,23 @@ void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_pointer)
     if ((bVar1 & 0x80) != 0) {
       eeprom_xfer_state.transfer_timer = 0x28;
     }
-    if (eeprom_diag_state == EEPROM_DIAG_HANDLE_RESPONSE) {
+    if (eeprom_diag_state == EEPROM_DIAGNOSTIC_HANDLE_RESPONSE) {
       mpc555_sciHandleDownloadStart();
       diag_request_pending_flag = 0;
       return;
     }
-    if (eeprom_diag_state == EEPROM_DIAG_DATA_TRANSFER) {
+    if (eeprom_diag_state == EEPROM_DIAGNOSTIC_DATA_TRANSFER) {
       mpc555_sciHandleDownloadDataBlock();
       diag_request_pending_flag = 0;
       return;
     }
-    if (eeprom_diag_state == EEPROM_DIAG_SEND_VERSION) {
+    if (eeprom_diag_state == EEPROM_DIAGNOSTIC_SEND_VERSION) {
       cm848_sendSerialDownloadStatusResponse();
       diagnostic_callback_ptr = &DAT_003fc1fc;
       diag_request_pending_flag = 0;
       return;
     }
-    if (eeprom_diag_state != EEPROM_DIAG_WRITE_DISPATCH) {
+    if (eeprom_diag_state != EEPROM_DIAGNOSTIC_WRITE_DISPATCH) {
       mpc555_sciSendServiceResponse(0x12,0x7f);
       diag_request_pending_flag = 0;
       return;

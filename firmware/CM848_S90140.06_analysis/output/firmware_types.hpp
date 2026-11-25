@@ -69,11 +69,11 @@ typedef enum {
     SYSTEM_CONTROL = 4,  /* System control operations */
     MEMORY_ACCESS = 5,  /* Memory read/write operations */
     SPECIAL_CONTROL = 6  /* Special timing/control functions */
-} DIAG_SERVICE_ID;
+} DIAGNOSTIC_SERVICE_ID;
 
 typedef enum {
-    COEFFICIENT_INIT = 2  /* Standard filter coefficient initialization value */
-} FILTER_INIT;
+    COEFFICIENT_INITIALIZATION = 2  /* Standard filter coefficient initialization value */
+} FILTER_INITIALIZATION;
 
 typedef enum {
     PROTECTION_IDLE = 0,  /* Protection system inactive/normal operation */
@@ -85,7 +85,7 @@ typedef enum {
 
 typedef enum {
     STATUS_SENSOR_FAULT = 0x05,  /* Sensor fault condition detected */
-    STATUS_TEMP_DERATE = 0x0B,  /* Temperature derate active */
+    STATUS_TEMPERATURE_DERATE = 0x0B,  /* Temperature derate active */
     STATUS_SHUTDOWN = 0x10,  /* Shutdown level reached */
     STATUS_LEVEL_2_ACTIVE = 0x11,  /* Level 2 protection active */
     STATUS_LEVEL_1_ACTIVE = 0x12  /* Level 1 protection active */
@@ -164,25 +164,25 @@ typedef enum {
 typedef enum {
     SPN_51_THROTTLE_PLATE = 51,  /* Throttle Plate Position Sensor */
     SPN_84_VEHICLE_SPEED = 84,  /* Vehicle Speed Signal */
-    SPN_89_PTO_SPEED = 89,  /* PTO Speed Switch */
-    SPN_91_ACCEL_PEDAL = 91,  /* Accelerator Pedal Position */
+    SPN_89_POWER_TAKE_OFF_SPEED = 89,  /* PTO Speed Switch */
+    SPN_91_ACCELERATOR_PEDAL = 91,  /* Accelerator Pedal Position */
     SPN_93_TORQUE_CURVE = 93,  /* Torque Curve Switch */
     SPN_95_FUEL_FILTER = 95,  /* Fuel Filter Restriction Switch */
     SPN_100_OIL_PRESSURE = 100,  /* Engine Oil Pressure */
     SPN_101_BLOWBY = 101,  /* Engine Blowby */
     SPN_102_BOOST_PRESSURE = 102,  /* Boost Pressure */
-    SPN_105_INTAKE_TEMP = 105,  /* Intake Manifold Temperature */
+    SPN_105_INTAKE_TEMPERATURE = 105,  /* Intake Manifold Temperature */
     SPN_108_AMBIENT_PRESS = 108,  /* Barometric/Ambient Air Pressure */
     SPN_109_COOLANT_PRESS = 109,  /* Engine Coolant Pressure */
-    SPN_110_COOLANT_TEMP = 110,  /* Engine Coolant Temperature */
+    SPN_110_COOLANT_TEMPERATURE = 110,  /* Engine Coolant Temperature */
     SPN_111_COOLANT_LEVEL = 111,  /* Engine Coolant Level */
     SPN_113_DROOP_SWITCH = 113,  /* Alternate Droop Switch */
     SPN_121_ENGINE_BRAKE = 121,  /* Engine Brake Circuit */
     SPN_157_FUEL_PRESS = 157,  /* Fuel Pressure */
     SPN_168_BATTERY_VOLT = 168,  /* Battery Voltage */
-    SPN_174_FUEL_TEMP = 174,  /* Fuel Temperature Sensor */
-    SPN_175_OIL_TEMP = 175,  /* Engine Oil Temperature */
-    SPN_177_TRANS_TEMP = 177,  /* Transmission Temperature */
+    SPN_174_FUEL_TEMPERATURE = 174,  /* Fuel Temperature Sensor */
+    SPN_175_OIL_TEMPERATURE = 175,  /* Engine Oil Temperature */
+    SPN_177_TRANSMISSION_TEMPERATURE = 177,  /* Transmission Temperature */
     SPN_183_GAS_MASS = 183,  /* Gas Mass Sensor */
     SPN_190_ENGINE_SPEED = 190,  /* Engine Speed */
     SPN_608_J1587 = 608,  /* J1587 Protocol */
@@ -304,10 +304,10 @@ typedef enum {
 
 typedef enum {
     EVENT_FUEL_EFFICIENCY_DERATE = 0x0b,  /* Fuel efficiency protection derate */
-    EVENT_TEMP_TRIM_RESET_C = 0x0c,  /* Temperature trim reset state C (init with 0x0b-0x0f in initProtectionEventStates) */
-    EVENT_TEMP_TRIM_RESET_D = 0x0d,  /* Temperature trim reset state D (init with 0x0b-0x0f in initProtectionEventStates) */
-    EVENT_TEMP_TRIM_RESET_E = 0x0e,  /* Temperature trim reset state E (init with 0x0b-0x0f in initProtectionEventStates) */
-    EVENT_TEMP_TRIM_RESET_F = 0x0f,  /* Temperature trim reset state F (init with 0x0b-0x0f in initProtectionEventStates) */
+    EVENT_TEMPERATURE_TRIM_RESET_C = 0x0c,  /* Temperature trim reset state C (init with 0x0b-0x0f in initProtectionEventStates) */
+    EVENT_TEMPERATURE_TRIM_RESET_D = 0x0d,  /* Temperature trim reset state D (init with 0x0b-0x0f in initProtectionEventStates) */
+    EVENT_TEMPERATURE_TRIM_RESET_E = 0x0e,  /* Temperature trim reset state E (init with 0x0b-0x0f in initProtectionEventStates) */
+    EVENT_TEMPERATURE_TRIM_RESET_F = 0x0f,  /* Temperature trim reset state F (init with 0x0b-0x0f in initProtectionEventStates) */
     EVENT_SHUTDOWN = 0x10,  /* Shutdown protection event */
     EVENT_LEVEL1_ACTIVE = 0x12,  /* Level 1 protection triggered */
     EVENT_LOAD_DERATE_PHASE_A = 0x13,  /* Engine load derate phase A - duty cycle based on protection timer counter */
@@ -315,7 +315,7 @@ typedef enum {
     EVENT_LOAD_DERATE_FULL = 0x15,  /* Engine load full derate - triggered when protection_derate_factor = -25600 (-100%) */
     EVENT_LEVEL2_ACTIVE = 0x3f,  /* Level 2 protection triggered - checkProtectionModeFlags when mode_flags bit 2 clear */
     EVENT_SENSOR_FAULT_ACTIVE = 0x43,  /* Sensor fault condition active - updateFaultConditionState debounced sensor_fault_detect_flags */
-    EVENT_DIAG_CONDITION_ACTIVE = 0x48  /* Diagnostic condition active - processFaultConditionFlags based on diagnostic_condition_flags */
+    EVENT_DIAGNOSTIC_CONDITION_ACTIVE = 0x48  /* Diagnostic condition active - processFaultConditionFlags based on diagnostic_condition_flags */
 } PROTECTION_EVENT;
 
 typedef enum {
@@ -342,9 +342,9 @@ typedef enum {
 typedef enum {
     CRANKING_RPM_LIMIT = 125,  /* Cold crank sync determination limit */
     RUNNING_RPM_THRESHOLD = 300,  /* Engine considered running threshold */
-    PTO_MIN_RPM = 700,  /* PTO minimum RPM setpoint */
-    PTO_MAX_RPM = 3000,  /* PTO maximum RPM setpoint */
-    ASG_MAX_RPM = 3000  /* ASG maximum allowed speed */
+    POWER_TAKE_OFF_MINIMUM_RPM = 700,  /* PTO minimum RPM setpoint */
+    POWER_TAKE_OFF_MAXIMUM_RPM = 3000,  /* PTO maximum RPM setpoint */
+    ALL_SPEED_GOVERNOR_MAXIMUM_RPM = 3000  /* ASG maximum allowed speed */
 } ENGINE_RPM_LIMITS;
 
 typedef enum {
@@ -367,7 +367,7 @@ typedef enum {
     INSITE_LIVE = 0x02,  /* Enable Insite live data monitoring */
     EXTENDED_SERVICES = 0x04,  /* Enable extended diagnostic services */
     SPECIAL_MODE = 0x08  /* Special diagnostic mode enabled */
-} DIAG_ENABLE_FLAGS;
+} DIAGNOSTIC_ENABLE_FLAGS;
 
 typedef enum {
     DTC_STATUS_FLAGS = 0x02,  /* DTC search result status flags */
@@ -382,17 +382,17 @@ typedef enum {
     FUEL_TIMING_DISPLAY = 0x58,  /* INSITE fuel timing display (scaled >>7) */
     OIL_PRESSURE_STATUS = 0x59,  /* Oil pressure protection status byte */
     ACTIVE_DERATE_VALUE = 0x5B,  /* Active derate value (scaled *250/400) */
-    PARAM_DISPLAY_VALUE = 0x64,  /* INSITE parameter display value (scaled >>6) */
+    PARAMETER_DISPLAY_VALUE = 0x64,  /* INSITE parameter display value (scaled >>6) */
     DIAGNOSTIC_SENSOR = 0x66,  /* Diagnostic sensor reading (scaled >>4 max 0xFF) */
-    INTAKE_MANIFOLD_TEMP = 0x69,  /* Intake manifold temp (offset 0x1900 scaled >>7) */
+    INTAKE_MANIFOLD_TEMPERATURE = 0x69,  /* Intake manifold temp (offset 0x1900 scaled >>7) */
     DIAGNOSTIC_READING = 0x6C,  /* INSITE diagnostic reading (scaled >>3) */
     RETARDER_MODE_STATUS = 0x79,  /* Retarder mode threshold status */
     ACTIVE_FAULT_LIST = 0xC1,  /* Active fault list builder */
     FAULT_DETAIL = 0xC2,  /* Fault detail builder */
     ECU_ID_RESPONSE = 0xEA,  /* ECU ID response builder */
     CAPACITY_RESPONSE = 0xED,  /* Capacity response builder */
-    VERSION_INFO = 0xF3  /* Version info builder */
-} INSITE_PARAM_CODE;
+    VERSION_INFORMATION = 0xF3  /* Version info builder */
+} INSITE_PARAMETER_CODE;
 
 typedef enum {
     QUERY_INITIALIZE = 0x00,  /* Initialize query session */
@@ -421,13 +421,13 @@ typedef enum {
     SECURED_SHUTDOWN_REQUEST = 0x52,  /* Request secured shutdown */
     UNSUPPORTED_ERROR = 0x53,  /* Unsupported operation - returns error 4 */
     CAN_BUFFER_LOGGER = 0x54  /* CAN message buffer logger */
-} DIAG_SECURED_SUBFUNC;
+} DIAGNOSTIC_SECURED_SUBFUNCTION;
 
 typedef enum {
     SYSTEM_CONTROL_100 = 0x64,  /* System control function 100 */
     FAULT_SCANNER_ENABLE = 0x65,  /* Enable fault flag scanner */
     CLEAR_COMMAND_STATE = 0x66,  /* Clear diagnostic_command_state to 0 */
-    WATER_IN_FUEL_INIT = 0x69,  /* Water in fuel detection init */
+    WATER_IN_FUEL_INITIALIZATION = 0x69,  /* Water in fuel detection init */
     RESERVED_112 = 0x70,  /* Reserved - returns error code 4 */
     SET_COMMAND_STATE_BIT0 = 0x71,  /* Set bit 0 of diagnostic_command_state */
     RESERVED_114 = 0x72,  /* Reserved - returns error code 4 */
@@ -435,27 +435,27 @@ typedef enum {
     SYSTEM_CONTROL_116 = 0x74,  /* System control function 116 */
     SYSTEM_CONTROL_117 = 0x75,  /* System control function 117 */
     RESERVED_118 = 0x76  /* Reserved - returns error code 4 */
-} DIAG_CONTROL_SUBFUNC;
+} DIAGNOSTIC_CONTROL_SUBFUNCTION;
 
 typedef enum {
-    READ_3BYTE_ADDR = 0x60,  /* Memory read with 3-byte addressing */
-    WRITE_4BYTE_ADDR = 0x80,  /* Memory write with 4-byte addressing */
-    WRITE_2BYTE_ADDR = 0xA0,  /* Memory write with 2-byte addressing */
-    MULTI_PKT_RECEIVE = 0xB0,  /* Multi-packet data receive */
-    READ_2BYTE_ADDR = 0xC0,  /* Memory read with 2-byte addressing */
-    READ_1BYTE_ADDR = 0xE0,  /* Memory read with 1-byte addressing */
-    MULTI_PKT_TRANSMIT = 0xF0  /* Multi-packet data transmit */
-} DIAG_MEMORY_OP;
+    READ_3BYTE_ADDRESS = 0x60,  /* Memory read with 3-byte addressing */
+    WRITE_4BYTE_ADDRESS = 0x80,  /* Memory write with 4-byte addressing */
+    WRITE_2BYTE_ADDRESS = 0xA0,  /* Memory write with 2-byte addressing */
+    MULTIPLE_PACKET_RECEIVE = 0xB0,  /* Multi-packet data receive */
+    READ_2BYTE_ADDRESS = 0xC0,  /* Memory read with 2-byte addressing */
+    READ_1BYTE_ADDRESS = 0xE0,  /* Memory read with 1-byte addressing */
+    MULTIPLE_PACKET_TRANSMIT = 0xF0  /* Multi-packet data transmit */
+} DIAGNOSTIC_MEMORY_OPERATION;
 
 typedef enum {
-    MEM_READ_2BYTE_4BYTE = 0x43,  /* Memory read: 2-byte param + 4-byte offset */
-    MEM_READ_2BYTE_ONLY = 0x46,  /* Memory read: 2-byte param only */
-    MEM_READ_2BYTE_4BYTE_4BYTE = 0x48,  /* Memory read: 2-byte + 4-byte + 4-byte params */
-    MEM_READ_4BYTE_1BYTE = 0x4A,  /* Memory read: 4-byte address + 1-byte length */
-    MEM_READ_4BYTE_4BYTE = 0x4C,  /* Memory read: 4-byte address + 4-byte length */
+    MEMORY_READ_2BYTE_4BYTE = 0x43,  /* Memory read: 2-byte param + 4-byte offset */
+    MEMORY_READ_2BYTE_ONLY = 0x46,  /* Memory read: 2-byte param only */
+    MEMORY_READ_2BYTE_4BYTE_4BYTE = 0x48,  /* Memory read: 2-byte + 4-byte + 4-byte params */
+    MEMORY_READ_4BYTE_1BYTE = 0x4A,  /* Memory read: 4-byte address + 1-byte length */
+    MEMORY_READ_4BYTE_4BYTE = 0x4C,  /* Memory read: 4-byte address + 4-byte length */
     EXTENDED_4F = 0x4F,  /* Extended diagnostic service 0x4F */
     EXTENDED_51 = 0x51  /* Extended diagnostic service 0x51 */
-} DIAG_EXTENDED_SVC;
+} DIAGNOSTIC_EXTENDED_SERVICE;
 
 typedef enum {
     SUCCESS_RESPONSE = 0x0C,  /* Operation successful - no error code follows */
@@ -465,11 +465,11 @@ typedef enum {
 typedef enum {
     NONE = 0,  /* No active diagnostic source */
     FUEL_ARBITRATOR = 1,  /* Fuel arbitrator triggered (rpm_target == 2) */
-    DIAG_STATUS_2 = 2,  /* Diagnostic status 2 condition */
+    DIAGNOSTIC_STATUS_2 = 2,  /* Diagnostic status 2 condition */
     ENGINE_FLAGS = 5,  /* Engine control flags triggered */
-    EPS_FAULT = 6,  /* Electronic Position Sensor fault */
-    DIAG_STATUS_7 = 7,  /* Diagnostic status 7 condition */
-    DIAG_STATUS_30 = 30  /* Diagnostic status 30 condition */
+    ENGINE_POSITION_SENSOR_FAULT = 6,  /* Electronic Position Sensor fault */
+    DIAGNOSTIC_STATUS_7 = 7,  /* Diagnostic status 7 condition */
+    DIAGNOSTIC_STATUS_30 = 30  /* Diagnostic status 30 condition */
 } DIAGNOSTIC_SOURCE_CODE;
 
 typedef enum {
@@ -502,13 +502,13 @@ typedef enum {
     INVALID_LENGTH = 0x02,  /* Security validator - message length mismatch */
     ERROR_SECURITY_FAILED = 0x03,  /* Security validator - security check returned non-zero */
     CONDITION_NOT_MET = 0x07,  /* Memory operation - system_logging_state check failed */
-    ADDR_LOOKUP_FAIL = 0x08,  /* Memory resolver - initial address lookup failed */
-    ADDR_RANGE_INVALID = 0x09,  /* Address validator - address not in validation table */
-    ADDR_ACCESS_DENIED = 0x0A,  /* Address validator - access blocked in normal mode */
+    ADDRESS_LOOKUP_FAIL = 0x08,  /* Memory resolver - initial address lookup failed */
+    ADDRESS_RANGE_INVALID = 0x09,  /* Address validator - address not in validation table */
+    ADDRESS_ACCESS_DENIED = 0x0A,  /* Address validator - access blocked in normal mode */
     BUFFER_WRITE_FAIL = 0x0B,  /* Memory operation - circular buffer write error */
     PATCH_LIMIT = 0x0E,  /* Response builder - memory patch count exceeded */
     UNKNOWN_SERVICE = 0x18  /* Service dispatcher - service ID not in dispatch table */
-} DIAG_ERROR_SOURCE;
+} DIAGNOSTIC_ERROR_SOURCE;
 
 typedef enum {
     ENABLE_SPECIAL_MODE = 0x40,  /* Enable special diagnostic mode for high memory access */
@@ -520,7 +520,7 @@ typedef enum {
     SECURED_SHUTDOWN = 0x52,  /* Request secured engine shutdown */
     RESERVED_ERROR = 0x53,  /* Reserved - always returns error 0x04 */
     CAN_BUFFER_LOG = 0x54  /* Log CAN message buffer */
-} DIAG_SERVICE_3_CMD;
+} DIAGNOSTIC_SERVICE_3_COMMAND;
 
 typedef enum {
     CONTROL_64 = 0x64,  /* System control function 64 */
@@ -534,17 +534,17 @@ typedef enum {
     CONTROL_74 = 0x74,  /* System control function 74 */
     CONTROL_75 = 0x75,  /* System control function 75 */
     RESERVED_76 = 0x76  /* Reserved - returns error 0x04 */
-} DIAG_SERVICE_4_CMD;
+} DIAGNOSTIC_SERVICE_4_COMMAND;
 
 typedef enum {
-    MEM_READ_MODE3 = 0x60,  /* Memory read mode 3 - standard read */
-    MEM_WRITE_MODE4 = 0x80,  /* Memory write mode 4 - 4-byte address */
-    MEM_WRITE_MODE2 = 0xA0,  /* Memory write mode 2 - 2-byte address */
-    MULTI_PKT_RX = 0xB0,  /* Multi-packet receive handler */
-    MEM_READ_MODE2 = 0xC0,  /* Memory read mode 2 - compact read */
-    MEM_READ_MODE1 = 0xE0,  /* Memory read mode 1 - extended read */
-    MULTI_PKT_TX = 0xF0  /* Multi-packet transmit handler */
-} DIAG_SERVICE_5_MODE;
+    MEMORY_READ_MODE3 = 0x60,  /* Memory read mode 3 - standard read */
+    MEMORY_WRITE_MODE4 = 0x80,  /* Memory write mode 4 - 4-byte address */
+    MEMORY_WRITE_MODE2 = 0xA0,  /* Memory write mode 2 - 2-byte address */
+    DIAGNOSTIC_SERVICE_5_MULTIPLE_PACKET_RECEIVE = 0xB0,  /* Multi-packet receive handler */
+    MEMORY_READ_MODE2 = 0xC0,  /* Memory read mode 2 - compact read */
+    MEMORY_READ_MODE1 = 0xE0,  /* Memory read mode 1 - extended read */
+    DIAGNOSTIC_SERVICE_5_MULTIPLE_PACKET_TRANSMIT = 0xF0  /* Multi-packet transmit handler */
+} DIAGNOSTIC_SERVICE_5_MODE;
 
 typedef enum {
     ASYNC = 0xC0,  /* Asynchronous frame - no immediate response expected */
@@ -644,16 +644,16 @@ typedef enum {
 
 typedef enum {
     BASIC_DELAY = 0,  /* Basic timer + delay with watchdog */
-    ALT_TRANSMIT = 1,  /* Alt timer + message transmit init */
+    ALTERNATE_TRANSMIT = 1,  /* Alt timer + message transmit init */
     DIVIDED_TRANSMIT = 2,  /* Divided timer + message transmit init */
     CONDITIONAL_DELAY = 3  /* Conditional timer + watchdog delay */
-} CAN_TIMER_INIT_MODE;
+} CAN_TIMER_INITIALIZATION_MODE;
 
 typedef enum {
     CAN_STATUS_BYTE = 0x36,  /* CAN message status byte offset */
-    PARAM_BYTE_1 = 0x37,  /* First parameter byte offset */
-    PARAM_BYTE_2 = 0x38,  /* Second parameter byte offset */
-    PARAM_BYTE_3 = 0x39  /* Third parameter byte offset */
+    PARAMETER_BYTE_1 = 0x37,  /* First parameter byte offset */
+    PARAMETER_BYTE_2 = 0x38,  /* Second parameter byte offset */
+    PARAMETER_BYTE_3 = 0x39  /* Third parameter byte offset */
 } CAN_BUFFER_OFFSETS;
 
 typedef enum {
@@ -672,9 +672,9 @@ typedef enum {
 typedef enum {
     ETC1_RECEIVE_ENABLE = 1,  /* ETC1(PGN 61442) message reception enable */
     J1939_MESSAGE_FLAGS = 2,  /* J1939 message enable flags table */
-    ASG_THROTTLE_COEFF_1 = 3,  /* ASG throttle mode compensation filter coef 1 */
-    ASG_THROTTLE_COEFF_2 = 4,  /* ASG throttle mode compensation filter coef 2 */
-    ASG_THROTTLE_COEFF_3 = 5  /* ASG throttle mode compensation filter coef 3 */
+    ALL_SPEED_GOVERNOR_THROTTLE_COEFFICIENT_1 = 3,  /* ASG throttle mode compensation filter coef 1 */
+    ALL_SPEED_GOVERNOR_THROTTLE_COEFFICIENT_2 = 4,  /* ASG throttle mode compensation filter coef 2 */
+    ALL_SPEED_GOVERNOR_THROTTLE_COEFFICIENT_3 = 5  /* ASG throttle mode compensation filter coef 3 */
 } J1939_THROTTLE_ENABLE;
 
 typedef enum {
@@ -724,22 +724,22 @@ typedef enum {
 typedef enum {
     CALTERM_COMMUNICATION = 1,  /* CalTerm parameter read/write via J1939 */
     INSITE_COMMUNICATION = 2,  /* Insite live data monitoring via J1939 */
-    DIAG_MESSAGE_DISPATCHER = 3,  /* Routes diagnostic requests by message type */
-    PARAM_REQUEST_HANDLER = 4,  /* Processes EEPROM parameter read requests */
-    PARAM_RESPONSE_BUILDER = 5  /* Formats parameter values for J1939 response */
+    DIAGNOSTIC_MESSAGE_DISPATCHER = 3,  /* Routes diagnostic requests by message type */
+    PARAMETER_REQUEST_HANDLER = 4,  /* Processes EEPROM parameter read requests */
+    PARAMETER_RESPONSE_BUILDER = 5  /* Formats parameter values for J1939 response */
 } J1939_DIAGNOSTIC_PROTOCOL;
 
 typedef enum {
-    PARAM_STANDARD = 0x00,  /* Standard parameter read (0x00-0x7F) - response length 2 */
-    PARAM_EXTENDED = 0x80,  /* Extended parameter read (0x80-0xBF) - response length 3 */
+    PARAMETER_STANDARD = 0x00,  /* Standard parameter read (0x00-0x7F) - response length 2 */
+    PARAMETER_EXTENDED = 0x80,  /* Extended parameter read (0x80-0xBF) - response length 3 */
     INSITE_COMMAND_ACTIVE_FAULT_LIST = 0xC1,  /* Active DTC list builder */
     INSITE_COMMAND_FAULT_DETAIL = 0xC2,  /* Detailed fault information builder */
     PID_DTC_REQUEST = 0xC3,  /* PID/DTC handler request */
     PID_DTC_RESPONSE = 0xC4,  /* PID/DTC response - response length 4 or 7 */
-    CAPACITY_INFO = 0xEA,  /* Capacity response builder - 24 bytes */
+    CAPACITY_INFORMATION = 0xEA,  /* Capacity response builder - 24 bytes */
     ECU_ID = 0xED,  /* ECU identification builder */
-    INSITE_COMMAND_VERSION_INFO = 0xF3  /* Version info builder - 31 bytes */
-} INSITE_CMD;
+    INSITE_COMMAND_VERSION_INFORMATION = 0xF3  /* Version info builder - 31 bytes */
+} INSITE_COMMAND;
 
 typedef enum {
     PROTECTION_ENABLED = 0x80,  /* Protection system enable flag is set */
@@ -760,14 +760,14 @@ typedef enum {
     MEMORY_OPERATION_WRITE_DENIED = 0x0A,  /* ROM/Flash region - write not permitted */
     MEMORY_OPERATION_BUFFER_WRITE_FAIL = 0x0B,  /* Circular buffer write error during EEPROM logging */
     AUTH_REQUIRED_MISSING = 0x1A  /* EEPROM write requires auth but not provided */
-} MEMORY_OP_RESULT;
+} MEMORY_OPERATION_RESULT;
 
 typedef enum {
     AUTH_SUCCESS = 0x00,  /* Security check passed - operation authorized */
     SECURITY_INVALID_LENGTH = 0x02,  /* Invalid message length for service */
     AUTH_FAILED = 0x03,  /* Security check failed - access denied */
     SECURITY_CONDITION_NOT_MET = 0x07,  /* Pre-condition not satisfied */
-    INVALID_ADDR = 0x0A,  /* Invalid memory address range */
+    INVALID_ADDRESS = 0x0A,  /* Invalid memory address range */
     SECURITY_BUFFER_WRITE_FAIL = 0x0B,  /* Circular buffer write failed */
     PROCEED_TO_HANDLER = 0xFF  /* Proceed to handler (auth passed or not required) */
 } SECURITY_RESULT;
@@ -804,9 +804,9 @@ typedef enum {
 } SYNC_STATE;
 
 typedef enum {
-    TABLE_BLEND_CALC = 0,  /* Table interpolation blend calculation result */
+    TABLE_BLEND_CALCULATION = 0,  /* Table interpolation blend calculation result */
     RPM_BASED_LIMIT = 1,  /* RPM-based fuel demand limit */
-    BLEND_PARAM_FALLBACK = 2,  /* Blend parameter 2 fallback value */
+    BLEND_PARAMETER_FALLBACK = 2,  /* Blend parameter 2 fallback value */
     HIGH_RPM_FUEL_LIMIT = 3,  /* High RPM fuel limit */
     FUEL_LIMIT_FLOOR = 4,  /* Fuel limit floor value */
     ENGINE_MODE_TRANSITION = 5  /* Engine mode transition timing */
@@ -830,9 +830,9 @@ typedef enum {
     DIAGNOSTIC_MODE_BUFFER = 16,  /* Diagnostic mode buffer limit */
     FUEL_LIMIT_SHUTDOWN = 17,  /* Fuel limit from shutdown calc */
     CALCULATED_FUEL_TIMING = 19,  /* Calculated fuel timing value */
-    FUEL_ARBITRATOR_DIAG = 20,  /* Fuel arbitrator diagnostic mode */
+    FUEL_ARBITRATOR_DIAGNOSTIC = 20,  /* Fuel arbitrator diagnostic mode */
     SHUTDOWN_LIMIT_SELECTOR = 21,  /* Shutdown limit selector value */
-    SHUTDOWN_MINIMUM_INIT = 28,  /* Shutdown minimum init value */
+    SHUTDOWN_MINIMUM_INITIALIZATION = 28,  /* Shutdown minimum init value */
     PROTECTION_SHUTDOWN_LIMIT = 29,  /* Protection shutdown fuel limit */
     OIL_PRESSURE_PROTECTION = 34  /* Oil pressure protection limit */
 } SHUTDOWN_SELECTOR_SOURCE;
@@ -859,16 +859,16 @@ typedef enum {
 
 typedef enum {
     STATUS_NORMAL = 0xF0,  /* Normal operation - load below threshold */
-    PROP_DIAG_STATUS_F1 = 0xF1,  /* Status F1 - specific condition */
+    PROPRIETARY_DIAGNOSTIC_STATUS_F1 = 0xF1,  /* Status F1 - specific condition */
     STATUS_LOAD_HIGH = 0xF4,  /* Load above threshold */
     STATUS_FAULT_ACTIVE = 0xF8,  /* Critical fault active */
     STATUS_BIT0_LOAD_INACTIVE = 0x01  /* Bit 0 set when load calculation inactive */
-} PROP_DIAG_STATUS;
+} PROPRIETARY_DIAGNOSTIC_STATUS;
 
 typedef enum {
     SAFETY_LIMIT = 32000,  /* Maximum allowed parameter value */
     BLOCK_LIMIT = 65535  /* Block validation limit */
-} PARAM_VALIDATION;
+} PARAMETER_VALIDATION;
 
 typedef enum {
     TIMER_CHANNEL_04 = 0x04,  /* Timer channel 4 (DAT_003fcf42) */
@@ -920,12 +920,12 @@ typedef enum {
 } J1939_DIAGNOSTIC_RESULT;
 
 typedef enum {
-    EEPROM_DIAG_HANDLE_RESPONSE = 0x03,  /* Handle EEPROM diagnostic response */
-    EEPROM_DIAG_DATA_TRANSFER = 0x10,  /* Process EEPROM data transfer */
-    EEPROM_DIAG_SEND_VERSION = 0x11,  /* Send EEPROM version response */
-    EEPROM_DIAG_TRANSFER_BLOCK = 0x12,  /* Transfer data block service */
-    EEPROM_DIAG_WRITE_DISPATCH = 0x20  /* Dispatch EEPROM write request */
-} EEPROM_DIAG_STATE;
+    EEPROM_DIAGNOSTIC_HANDLE_RESPONSE = 0x03,  /* Handle EEPROM diagnostic response */
+    EEPROM_DIAGNOSTIC_DATA_TRANSFER = 0x10,  /* Process EEPROM data transfer */
+    EEPROM_DIAGNOSTIC_SEND_VERSION = 0x11,  /* Send EEPROM version response */
+    EEPROM_DIAGNOSTIC_TRANSFER_BLOCK = 0x12,  /* Transfer data block service */
+    EEPROM_DIAGNOSTIC_WRITE_DISPATCH = 0x20  /* Dispatch EEPROM write request */
+} EEPROM_DIAGNOSTIC_STATE;
 
 typedef enum {
     CAL_VOLATILE = 0xea,  /* Writes land in RAM only; lost on power cycle */

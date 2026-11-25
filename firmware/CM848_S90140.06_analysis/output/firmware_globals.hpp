@@ -2239,7 +2239,7 @@ extern dword crc16_working_value;  // 0x003fecc8
 extern byte boot_sci_failed_key_count;  // 0x003feccd
 extern word boot_sci_key_retry_delay;  // 0x003fecce
 extern byte diag_serial_buffer[33];  // 0x003fecd0
-extern EEPROM_DIAG_STATE eeprom_diag_state;  // 0x003fecf1
+extern EEPROM_DIAGNOSTIC_STATE eeprom_diag_state;  // 0x003fecf1
 extern byte eeprom_write_request_type;  // 0x003fecf2
 extern word eeprom_block_length_cal;  // 0x003fecf6
 extern byte fault_entry_pointer_queue_count_cal;  // 0x003fed92

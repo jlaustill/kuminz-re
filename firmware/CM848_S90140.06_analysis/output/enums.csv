@@ -25,12 +25,12 @@ ECM_STATUS,0x600d,ECM_STATUS_CALIBRATION_VALID,The downloaded calibration was ve
 ECM_STATUS,0x1d0a,ECM_STATUS_REFLASH_IN_PROGRESS,Written by cm848_sciCommand49Callback (the application's serial reflash request - its image still intact) and by mpc555_beginReflash before the erase: keeps the boot kernel resident (mpc555_systemInitialization runs cm848_runBootKernelLoop) and mpc555_sciHandleDownloadStart requires it (was FLASH_MODE_MARKER),2
 ECM_STATUS,0x2b16,ECM_STATUS_CALIBRATION_DOWNLOADED_NOT_VERIFIED,Written by cm848_finishSerialReflash after a serial download (no J1939 writer found in the firmware - the write memory services can reach EEPROM 0x0): mpc555_verifyDownloadedCalibration checks the image then writes CALIBRATION_VALID (was NEEDS_PROGRAMMING),2
 # Diagnostic Protocol Service IDs (CalTerm/Insite) - same as CM550
-DIAG_SERVICE_ID,3,SECURED_WRITE,Secured write operations (requires security check),1
-DIAG_SERVICE_ID,4,SYSTEM_CONTROL,System control operations,1
-DIAG_SERVICE_ID,5,MEMORY_ACCESS,Memory read/write operations,1
-DIAG_SERVICE_ID,6,SPECIAL_CONTROL,Special timing/control functions,1
+DIAGNOSTIC_SERVICE_ID,3,SECURED_WRITE,Secured write operations (requires security check),1
+DIAGNOSTIC_SERVICE_ID,4,SYSTEM_CONTROL,System control operations,1
+DIAGNOSTIC_SERVICE_ID,5,MEMORY_ACCESS,Memory read/write operations,1
+DIAGNOSTIC_SERVICE_ID,6,SPECIAL_CONTROL,Special timing/control functions,1
 # Filter Coefficient Init Value
-FILTER_INIT,2,COEFFICIENT_INIT,Standard filter coefficient initialization value,2
+FILTER_INITIALIZATION,2,COEFFICIENT_INITIALIZATION,Standard filter coefficient initialization value,2
 # Protection System State Machine (_protection_system_state values)
 PROTECTION_STATE,0,PROTECTION_IDLE,Protection system inactive/normal operation,2
 PROTECTION_STATE,1,PROTECTION_LEVEL_1,First protection threshold level (warning),2
@@ -39,7 +39,7 @@ PROTECTION_STATE,3,PROTECTION_SHUTDOWN,Shutdown protection level,2
 PROTECTION_STATE,4,PROTECTION_RECOVERY,Protection condition cleared - returning to normal,2
 # Protection Status Codes (_protection_status_code values)
 PROTECTION_STATUS_CODE,0x05,STATUS_SENSOR_FAULT,Sensor fault condition detected,1
-PROTECTION_STATUS_CODE,0x0B,STATUS_TEMP_DERATE,Temperature derate active,1
+PROTECTION_STATUS_CODE,0x0B,STATUS_TEMPERATURE_DERATE,Temperature derate active,1
 PROTECTION_STATUS_CODE,0x10,STATUS_SHUTDOWN,Shutdown level reached,1
 PROTECTION_STATUS_CODE,0x11,STATUS_LEVEL_2_ACTIVE,Level 2 protection active,1
 PROTECTION_STATUS_CODE,0x12,STATUS_LEVEL_1_ACTIVE,Level 1 protection active,1
@@ -110,25 +110,25 @@ FUELING_STATE,62,FUELING_STATE_FUEL_PRESSURE_GOVERNOR_FAULT_BLEND,torque_derate_
 # J1939 SPN (Suspect Parameter Number) Reference
 J1939_SPN,51,SPN_51_THROTTLE_PLATE,Throttle Plate Position Sensor,2
 J1939_SPN,84,SPN_84_VEHICLE_SPEED,Vehicle Speed Signal,2
-J1939_SPN,89,SPN_89_PTO_SPEED,PTO Speed Switch,2
-J1939_SPN,91,SPN_91_ACCEL_PEDAL,Accelerator Pedal Position,2
+J1939_SPN,89,SPN_89_POWER_TAKE_OFF_SPEED,PTO Speed Switch,2
+J1939_SPN,91,SPN_91_ACCELERATOR_PEDAL,Accelerator Pedal Position,2
 J1939_SPN,93,SPN_93_TORQUE_CURVE,Torque Curve Switch,2
 J1939_SPN,95,SPN_95_FUEL_FILTER,Fuel Filter Restriction Switch,2
 J1939_SPN,100,SPN_100_OIL_PRESSURE,Engine Oil Pressure,2
 J1939_SPN,101,SPN_101_BLOWBY,Engine Blowby,2
 J1939_SPN,102,SPN_102_BOOST_PRESSURE,Boost Pressure,2
-J1939_SPN,105,SPN_105_INTAKE_TEMP,Intake Manifold Temperature,2
+J1939_SPN,105,SPN_105_INTAKE_TEMPERATURE,Intake Manifold Temperature,2
 J1939_SPN,108,SPN_108_AMBIENT_PRESS,Barometric/Ambient Air Pressure,2
 J1939_SPN,109,SPN_109_COOLANT_PRESS,Engine Coolant Pressure,2
-J1939_SPN,110,SPN_110_COOLANT_TEMP,Engine Coolant Temperature,2
+J1939_SPN,110,SPN_110_COOLANT_TEMPERATURE,Engine Coolant Temperature,2
 J1939_SPN,111,SPN_111_COOLANT_LEVEL,Engine Coolant Level,2
 J1939_SPN,113,SPN_113_DROOP_SWITCH,Alternate Droop Switch,2
 J1939_SPN,121,SPN_121_ENGINE_BRAKE,Engine Brake Circuit,2
 J1939_SPN,157,SPN_157_FUEL_PRESS,Fuel Pressure,2
 J1939_SPN,168,SPN_168_BATTERY_VOLT,Battery Voltage,2
-J1939_SPN,174,SPN_174_FUEL_TEMP,Fuel Temperature Sensor,2
-J1939_SPN,175,SPN_175_OIL_TEMP,Engine Oil Temperature,2
-J1939_SPN,177,SPN_177_TRANS_TEMP,Transmission Temperature,2
+J1939_SPN,174,SPN_174_FUEL_TEMPERATURE,Fuel Temperature Sensor,2
+J1939_SPN,175,SPN_175_OIL_TEMPERATURE,Engine Oil Temperature,2
+J1939_SPN,177,SPN_177_TRANSMISSION_TEMPERATURE,Transmission Temperature,2
 J1939_SPN,183,SPN_183_GAS_MASS,Gas Mass Sensor,2
 J1939_SPN,190,SPN_190_ENGINE_SPEED,Engine Speed,2
 J1939_SPN,608,SPN_608_J1587,J1587 Protocol,2
@@ -245,10 +245,10 @@ J1939_HANDLER_TYPE,0xf005,HANDLER_ENGINE_CONTROLLER,Engine Controller message,2
 
 # Protection Event Codes (passed to triggerProtectionEvent)
 PROTECTION_EVENT,0x0b,EVENT_FUEL_EFFICIENCY_DERATE,Fuel efficiency protection derate,1
-PROTECTION_EVENT,0x0c,EVENT_TEMP_TRIM_RESET_C,Temperature trim reset state C (init with 0x0b-0x0f in initProtectionEventStates),1
-PROTECTION_EVENT,0x0d,EVENT_TEMP_TRIM_RESET_D,Temperature trim reset state D (init with 0x0b-0x0f in initProtectionEventStates),1
-PROTECTION_EVENT,0x0e,EVENT_TEMP_TRIM_RESET_E,Temperature trim reset state E (init with 0x0b-0x0f in initProtectionEventStates),1
-PROTECTION_EVENT,0x0f,EVENT_TEMP_TRIM_RESET_F,Temperature trim reset state F (init with 0x0b-0x0f in initProtectionEventStates),1
+PROTECTION_EVENT,0x0c,EVENT_TEMPERATURE_TRIM_RESET_C,Temperature trim reset state C (init with 0x0b-0x0f in initProtectionEventStates),1
+PROTECTION_EVENT,0x0d,EVENT_TEMPERATURE_TRIM_RESET_D,Temperature trim reset state D (init with 0x0b-0x0f in initProtectionEventStates),1
+PROTECTION_EVENT,0x0e,EVENT_TEMPERATURE_TRIM_RESET_E,Temperature trim reset state E (init with 0x0b-0x0f in initProtectionEventStates),1
+PROTECTION_EVENT,0x0f,EVENT_TEMPERATURE_TRIM_RESET_F,Temperature trim reset state F (init with 0x0b-0x0f in initProtectionEventStates),1
 PROTECTION_EVENT,0x10,EVENT_SHUTDOWN,Shutdown protection event,1
 PROTECTION_EVENT,0x12,EVENT_LEVEL1_ACTIVE,Level 1 protection triggered,1
 PROTECTION_EVENT,0x13,EVENT_LOAD_DERATE_PHASE_A,Engine load derate phase A - duty cycle based on protection timer counter,1
@@ -256,7 +256,7 @@ PROTECTION_EVENT,0x14,EVENT_LOAD_DERATE_PHASE_B,Engine load derate phase B - dut
 PROTECTION_EVENT,0x15,EVENT_LOAD_DERATE_FULL,Engine load full derate - triggered when protection_derate_factor = -25600 (-100%),1
 PROTECTION_EVENT,0x3f,EVENT_LEVEL2_ACTIVE,Level 2 protection triggered - checkProtectionModeFlags when mode_flags bit 2 clear,1
 PROTECTION_EVENT,0x43,EVENT_SENSOR_FAULT_ACTIVE,Sensor fault condition active - updateFaultConditionState debounced sensor_fault_detect_flags,1
-PROTECTION_EVENT,0x48,EVENT_DIAG_CONDITION_ACTIVE,Diagnostic condition active - processFaultConditionFlags based on diagnostic_condition_flags,1
+PROTECTION_EVENT,0x48,EVENT_DIAGNOSTIC_CONDITION_ACTIVE,Diagnostic condition active - processFaultConditionFlags based on diagnostic_condition_flags,1
 
 # Fuel Timing Mode State Machine (_pressure_fuel_adjustment values)
 # Controls fuel timing and oil pressure-based adjustments in temperatureSensorProcessing @ 0x0000ea00
@@ -283,9 +283,9 @@ FUEL_TIMING_MODE,0x3a,MODE_PROTECTION_3,Protection mode variant 3,1
 # Engine RPM Limits - Ported from CM550 (generic across ECU families)
 ENGINE_RPM_LIMITS,125,CRANKING_RPM_LIMIT,Cold crank sync determination limit,2
 ENGINE_RPM_LIMITS,300,RUNNING_RPM_THRESHOLD,Engine considered running threshold,2
-ENGINE_RPM_LIMITS,700,PTO_MIN_RPM,PTO minimum RPM setpoint,2
-ENGINE_RPM_LIMITS,3000,PTO_MAX_RPM,PTO maximum RPM setpoint,2
-ENGINE_RPM_LIMITS,3000,ASG_MAX_RPM,ASG maximum allowed speed,2
+ENGINE_RPM_LIMITS,700,POWER_TAKE_OFF_MINIMUM_RPM,PTO minimum RPM setpoint,2
+ENGINE_RPM_LIMITS,3000,POWER_TAKE_OFF_MAXIMUM_RPM,PTO maximum RPM setpoint,2
+ENGINE_RPM_LIMITS,3000,ALL_SPEED_GOVERNOR_MAXIMUM_RPM,ASG maximum allowed speed,2
 
 # Derate Status Bits - Ported from CM550 (Insite status reporting)
 DERATE_STATUS_BITS,0x80,DERATE_ACTIVE,Derate condition is active,1
@@ -305,39 +305,39 @@ FUEL_ARB_MODE,3,FUEL_LIMIT_MODE,Fuel limit control mode,1
 # (MEMORY_ACCESS_FLAG - ported from CM550 - removed in PR #53 round 72: MEMORY_REGION_TYPE holds these codes; it rendered nowhere)
 
 # Diagnostic Enable Flags - Ported from CM550 (service activation)
-DIAG_ENABLE_FLAGS,0x01,CORE_SERVICES,Enable core diagnostic services (secured memory ops),1
-DIAG_ENABLE_FLAGS,0x02,INSITE_LIVE,Enable Insite live data monitoring,1
-DIAG_ENABLE_FLAGS,0x04,EXTENDED_SERVICES,Enable extended diagnostic services,1
-DIAG_ENABLE_FLAGS,0x08,SPECIAL_MODE,Special diagnostic mode enabled,1
+DIAGNOSTIC_ENABLE_FLAGS,0x01,CORE_SERVICES,Enable core diagnostic services (secured memory ops),1
+DIAGNOSTIC_ENABLE_FLAGS,0x02,INSITE_LIVE,Enable Insite live data monitoring,1
+DIAGNOSTIC_ENABLE_FLAGS,0x04,EXTENDED_SERVICES,Enable extended diagnostic services,1
+DIAGNOSTIC_ENABLE_FLAGS,0x08,SPECIAL_MODE,Special diagnostic mode enabled,1
 
 # INSITE Parameter Command Codes - Ported from CM550 (common subset)
 # DTC/Diagnostic codes (0x02-0x03)
-INSITE_PARAM_CODE,0x02,DTC_STATUS_FLAGS,DTC search result status flags,1
-INSITE_PARAM_CODE,0x03,DERATE_STATUS,Derate status byte bit flags,1
+INSITE_PARAMETER_CODE,0x02,DTC_STATUS_FLAGS,DTC search result status flags,1
+INSITE_PARAMETER_CODE,0x03,DERATE_STATUS,Derate status byte bit flags,1
 # Engine protection status (0x47-0x53)
-INSITE_PARAM_CODE,0x47,IDLE_SHUTDOWN_TIMER_STATUS,J1587 PID 71 Idle Shutdown Timer Status: the response byte (CM550 builds it at 0xefa2-0xf004: 0x80 timer active / 0x08 function enabled / 0x04 override active / 0x02 engine shut down by the idle timer / 0x01 driver alert); was HIGH_RPM_PROTECTION_STATUS (PR #53 round 94),1
-INSITE_PARAM_CODE,0x4A,BOOST_PRESSURE_TARGET,Boost pressure target pointer (scaled >>7),1
-INSITE_PARAM_CODE,0x53,DIAGNOSTIC_FUEL_MODE_FLAG,Diagnostic fuel control mode flag (0x80 if mode==10),1
+INSITE_PARAMETER_CODE,0x47,IDLE_SHUTDOWN_TIMER_STATUS,J1587 PID 71 Idle Shutdown Timer Status: the response byte (CM550 builds it at 0xefa2-0xf004: 0x80 timer active / 0x08 function enabled / 0x04 override active / 0x02 engine shut down by the idle timer / 0x01 driver alert); was HIGH_RPM_PROTECTION_STATUS (PR #53 round 94),1
+INSITE_PARAMETER_CODE,0x4A,BOOST_PRESSURE_TARGET,Boost pressure target pointer (scaled >>7),1
+INSITE_PARAMETER_CODE,0x53,DIAGNOSTIC_FUEL_MODE_FLAG,Diagnostic fuel control mode flag (0x80 if mode==10),1
 # Single-byte scaled values (0x54-0x58)
-INSITE_PARAM_CODE,0x54,THROTTLE_POSITION,Throttle position value (scaled >>7),1
-INSITE_PARAM_CODE,0x55,INSITE_STATUS_BYTE,Combined status byte with sensor/derate flags,1
-INSITE_PARAM_CODE,0x56,BOOST_PRESSURE_BASE,Target boost pressure base (scaled >>7),1
-INSITE_PARAM_CODE,0x57,FUEL_TIMING_LIMIT,Fuel timing transition limit (scaled >>7),1
-INSITE_PARAM_CODE,0x58,FUEL_TIMING_DISPLAY,INSITE fuel timing display (scaled >>7),1
+INSITE_PARAMETER_CODE,0x54,THROTTLE_POSITION,Throttle position value (scaled >>7),1
+INSITE_PARAMETER_CODE,0x55,INSITE_STATUS_BYTE,Combined status byte with sensor/derate flags,1
+INSITE_PARAMETER_CODE,0x56,BOOST_PRESSURE_BASE,Target boost pressure base (scaled >>7),1
+INSITE_PARAMETER_CODE,0x57,FUEL_TIMING_LIMIT,Fuel timing transition limit (scaled >>7),1
+INSITE_PARAMETER_CODE,0x58,FUEL_TIMING_DISPLAY,INSITE fuel timing display (scaled >>7),1
 # Additional values (0x59-0x79)
-INSITE_PARAM_CODE,0x59,OIL_PRESSURE_STATUS,Oil pressure protection status byte,1
-INSITE_PARAM_CODE,0x5B,ACTIVE_DERATE_VALUE,Active derate value (scaled *250/400),1
-INSITE_PARAM_CODE,0x64,PARAM_DISPLAY_VALUE,INSITE parameter display value (scaled >>6),1
-INSITE_PARAM_CODE,0x66,DIAGNOSTIC_SENSOR,Diagnostic sensor reading (scaled >>4 max 0xFF),1
-INSITE_PARAM_CODE,0x69,INTAKE_MANIFOLD_TEMP,Intake manifold temp (offset 0x1900 scaled >>7),1
-INSITE_PARAM_CODE,0x6C,DIAGNOSTIC_READING,INSITE diagnostic reading (scaled >>3),1
-INSITE_PARAM_CODE,0x79,RETARDER_MODE_STATUS,Retarder mode threshold status,1
+INSITE_PARAMETER_CODE,0x59,OIL_PRESSURE_STATUS,Oil pressure protection status byte,1
+INSITE_PARAMETER_CODE,0x5B,ACTIVE_DERATE_VALUE,Active derate value (scaled *250/400),1
+INSITE_PARAMETER_CODE,0x64,PARAMETER_DISPLAY_VALUE,INSITE parameter display value (scaled >>6),1
+INSITE_PARAMETER_CODE,0x66,DIAGNOSTIC_SENSOR,Diagnostic sensor reading (scaled >>4 max 0xFF),1
+INSITE_PARAMETER_CODE,0x69,INTAKE_MANIFOLD_TEMPERATURE,Intake manifold temp (offset 0x1900 scaled >>7),1
+INSITE_PARAMETER_CODE,0x6C,DIAGNOSTIC_READING,INSITE diagnostic reading (scaled >>3),1
+INSITE_PARAMETER_CODE,0x79,RETARDER_MODE_STATUS,Retarder mode threshold status,1
 # Special response builders (0xC1-0xF3)
-INSITE_PARAM_CODE,0xC1,ACTIVE_FAULT_LIST,Active fault list builder,1
-INSITE_PARAM_CODE,0xC2,FAULT_DETAIL,Fault detail builder,1
-INSITE_PARAM_CODE,0xEA,ECU_ID_RESPONSE,ECU ID response builder,1
-INSITE_PARAM_CODE,0xED,CAPACITY_RESPONSE,Capacity response builder,1
-INSITE_PARAM_CODE,0xF3,VERSION_INFO,Version info builder,1
+INSITE_PARAMETER_CODE,0xC1,ACTIVE_FAULT_LIST,Active fault list builder,1
+INSITE_PARAMETER_CODE,0xC2,FAULT_DETAIL,Fault detail builder,1
+INSITE_PARAMETER_CODE,0xEA,ECU_ID_RESPONSE,ECU ID response builder,1
+INSITE_PARAMETER_CODE,0xED,CAPACITY_RESPONSE,Capacity response builder,1
+INSITE_PARAMETER_CODE,0xF3,VERSION_INFORMATION,Version info builder,1
 
 # ============================================================================
 # CLIP/Diagnostic Protocol Enums - Ported from CM550 (common across Cummins ECUs)
@@ -359,46 +359,46 @@ CUMMINS_MODULE_IDS,0x4841,MODULE_HA,Cummins HA module family (CM848 HPCR ECUs),2
 CUMMINS_MODULE_IDS,0x4E41,MODULE_AN,Cummins AN module family,2
 
 # Diagnostic Service 3 Secured Subfunctions
-DIAG_SECURED_SUBFUNC,0x40,WATER_IN_FUEL_CLEAR,Clear water-in-fuel fault,1
-DIAG_SECURED_SUBFUNC,0x41,WATER_IN_FUEL_VALIDATE,Validate water-in-fuel condition,1
-DIAG_SECURED_SUBFUNC,0x42,HIGH_RPM_SHUTDOWN_ACTIVATE,Activate high RPM shutdown flag,1
-DIAG_SECURED_SUBFUNC,0x43,SYSTEM_RESET_TRIGGER,Trigger diagnostic system reset,1
-DIAG_SECURED_SUBFUNC,0x50,NOP_ACK,No operation - returns success (0),1
-DIAG_SECURED_SUBFUNC,0x51,MEMORY_PATCH,RAM patching system,1
-DIAG_SECURED_SUBFUNC,0x52,SECURED_SHUTDOWN_REQUEST,Request secured shutdown,1
-DIAG_SECURED_SUBFUNC,0x53,UNSUPPORTED_ERROR,Unsupported operation - returns error 4,1
-DIAG_SECURED_SUBFUNC,0x54,CAN_BUFFER_LOGGER,CAN message buffer logger,1
+DIAGNOSTIC_SECURED_SUBFUNCTION,0x40,WATER_IN_FUEL_CLEAR,Clear water-in-fuel fault,1
+DIAGNOSTIC_SECURED_SUBFUNCTION,0x41,WATER_IN_FUEL_VALIDATE,Validate water-in-fuel condition,1
+DIAGNOSTIC_SECURED_SUBFUNCTION,0x42,HIGH_RPM_SHUTDOWN_ACTIVATE,Activate high RPM shutdown flag,1
+DIAGNOSTIC_SECURED_SUBFUNCTION,0x43,SYSTEM_RESET_TRIGGER,Trigger diagnostic system reset,1
+DIAGNOSTIC_SECURED_SUBFUNCTION,0x50,NOP_ACK,No operation - returns success (0),1
+DIAGNOSTIC_SECURED_SUBFUNCTION,0x51,MEMORY_PATCH,RAM patching system,1
+DIAGNOSTIC_SECURED_SUBFUNCTION,0x52,SECURED_SHUTDOWN_REQUEST,Request secured shutdown,1
+DIAGNOSTIC_SECURED_SUBFUNCTION,0x53,UNSUPPORTED_ERROR,Unsupported operation - returns error 4,1
+DIAGNOSTIC_SECURED_SUBFUNCTION,0x54,CAN_BUFFER_LOGGER,CAN message buffer logger,1
 
 # Diagnostic Service 4 Control Subfunctions
-DIAG_CONTROL_SUBFUNC,0x64,SYSTEM_CONTROL_100,System control function 100,1
-DIAG_CONTROL_SUBFUNC,0x65,FAULT_SCANNER_ENABLE,Enable fault flag scanner,1
-DIAG_CONTROL_SUBFUNC,0x66,CLEAR_COMMAND_STATE,Clear diagnostic_command_state to 0,1
-DIAG_CONTROL_SUBFUNC,0x69,WATER_IN_FUEL_INIT,Water in fuel detection init,1
-DIAG_CONTROL_SUBFUNC,0x70,RESERVED_112,Reserved - returns error code 4,1
-DIAG_CONTROL_SUBFUNC,0x71,SET_COMMAND_STATE_BIT0,Set bit 0 of diagnostic_command_state,1
-DIAG_CONTROL_SUBFUNC,0x72,RESERVED_114,Reserved - returns error code 4,1
-DIAG_CONTROL_SUBFUNC,0x73,SET_COMMAND_STATE_BIT1,Set bit 1 of diagnostic_command_state,1
-DIAG_CONTROL_SUBFUNC,0x74,SYSTEM_CONTROL_116,System control function 116,1
-DIAG_CONTROL_SUBFUNC,0x75,SYSTEM_CONTROL_117,System control function 117,1
-DIAG_CONTROL_SUBFUNC,0x76,RESERVED_118,Reserved - returns error code 4,1
+DIAGNOSTIC_CONTROL_SUBFUNCTION,0x64,SYSTEM_CONTROL_100,System control function 100,1
+DIAGNOSTIC_CONTROL_SUBFUNCTION,0x65,FAULT_SCANNER_ENABLE,Enable fault flag scanner,1
+DIAGNOSTIC_CONTROL_SUBFUNCTION,0x66,CLEAR_COMMAND_STATE,Clear diagnostic_command_state to 0,1
+DIAGNOSTIC_CONTROL_SUBFUNCTION,0x69,WATER_IN_FUEL_INITIALIZATION,Water in fuel detection init,1
+DIAGNOSTIC_CONTROL_SUBFUNCTION,0x70,RESERVED_112,Reserved - returns error code 4,1
+DIAGNOSTIC_CONTROL_SUBFUNCTION,0x71,SET_COMMAND_STATE_BIT0,Set bit 0 of diagnostic_command_state,1
+DIAGNOSTIC_CONTROL_SUBFUNCTION,0x72,RESERVED_114,Reserved - returns error code 4,1
+DIAGNOSTIC_CONTROL_SUBFUNCTION,0x73,SET_COMMAND_STATE_BIT1,Set bit 1 of diagnostic_command_state,1
+DIAGNOSTIC_CONTROL_SUBFUNCTION,0x74,SYSTEM_CONTROL_116,System control function 116,1
+DIAGNOSTIC_CONTROL_SUBFUNCTION,0x75,SYSTEM_CONTROL_117,System control function 117,1
+DIAGNOSTIC_CONTROL_SUBFUNCTION,0x76,RESERVED_118,Reserved - returns error code 4,1
 
 # Diagnostic Service 5 Memory Operations
-DIAG_MEMORY_OP,0x60,READ_3BYTE_ADDR,Memory read with 3-byte addressing,1
-DIAG_MEMORY_OP,0x80,WRITE_4BYTE_ADDR,Memory write with 4-byte addressing,1
-DIAG_MEMORY_OP,0xA0,WRITE_2BYTE_ADDR,Memory write with 2-byte addressing,1
-DIAG_MEMORY_OP,0xB0,MULTI_PKT_RECEIVE,Multi-packet data receive,1
-DIAG_MEMORY_OP,0xC0,READ_2BYTE_ADDR,Memory read with 2-byte addressing,1
-DIAG_MEMORY_OP,0xE0,READ_1BYTE_ADDR,Memory read with 1-byte addressing,1
-DIAG_MEMORY_OP,0xF0,MULTI_PKT_TRANSMIT,Multi-packet data transmit,1
+DIAGNOSTIC_MEMORY_OPERATION,0x60,READ_3BYTE_ADDRESS,Memory read with 3-byte addressing,1
+DIAGNOSTIC_MEMORY_OPERATION,0x80,WRITE_4BYTE_ADDRESS,Memory write with 4-byte addressing,1
+DIAGNOSTIC_MEMORY_OPERATION,0xA0,WRITE_2BYTE_ADDRESS,Memory write with 2-byte addressing,1
+DIAGNOSTIC_MEMORY_OPERATION,0xB0,MULTIPLE_PACKET_RECEIVE,Multi-packet data receive,1
+DIAGNOSTIC_MEMORY_OPERATION,0xC0,READ_2BYTE_ADDRESS,Memory read with 2-byte addressing,1
+DIAGNOSTIC_MEMORY_OPERATION,0xE0,READ_1BYTE_ADDRESS,Memory read with 1-byte addressing,1
+DIAGNOSTIC_MEMORY_OPERATION,0xF0,MULTIPLE_PACKET_TRANSMIT,Multi-packet data transmit,1
 
 # Diagnostic Extended Service Handlers (Service 5 sub-modes)
-DIAG_EXTENDED_SVC,0x43,MEM_READ_2BYTE_4BYTE,Memory read: 2-byte param + 4-byte offset,1
-DIAG_EXTENDED_SVC,0x46,MEM_READ_2BYTE_ONLY,Memory read: 2-byte param only,1
-DIAG_EXTENDED_SVC,0x48,MEM_READ_2BYTE_4BYTE_4BYTE,Memory read: 2-byte + 4-byte + 4-byte params,1
-DIAG_EXTENDED_SVC,0x4A,MEM_READ_4BYTE_1BYTE,Memory read: 4-byte address + 1-byte length,1
-DIAG_EXTENDED_SVC,0x4C,MEM_READ_4BYTE_4BYTE,Memory read: 4-byte address + 4-byte length,1
-DIAG_EXTENDED_SVC,0x4F,EXTENDED_4F,Extended diagnostic service 0x4F,1
-DIAG_EXTENDED_SVC,0x51,EXTENDED_51,Extended diagnostic service 0x51,1
+DIAGNOSTIC_EXTENDED_SERVICE,0x43,MEMORY_READ_2BYTE_4BYTE,Memory read: 2-byte param + 4-byte offset,1
+DIAGNOSTIC_EXTENDED_SERVICE,0x46,MEMORY_READ_2BYTE_ONLY,Memory read: 2-byte param only,1
+DIAGNOSTIC_EXTENDED_SERVICE,0x48,MEMORY_READ_2BYTE_4BYTE_4BYTE,Memory read: 2-byte + 4-byte + 4-byte params,1
+DIAGNOSTIC_EXTENDED_SERVICE,0x4A,MEMORY_READ_4BYTE_1BYTE,Memory read: 4-byte address + 1-byte length,1
+DIAGNOSTIC_EXTENDED_SERVICE,0x4C,MEMORY_READ_4BYTE_4BYTE,Memory read: 4-byte address + 4-byte length,1
+DIAGNOSTIC_EXTENDED_SERVICE,0x4F,EXTENDED_4F,Extended diagnostic service 0x4F,1
+DIAGNOSTIC_EXTENDED_SERVICE,0x51,EXTENDED_51,Extended diagnostic service 0x51,1
 
 # CAN Multi-packet Response Codes
 CAN_MULTIPACKET_RESPONSE,0x0C,SUCCESS_RESPONSE,Operation successful - no error code follows,1
@@ -407,11 +407,11 @@ CAN_MULTIPACKET_RESPONSE,0x0D,STATUS_RESPONSE,Error/status response - error code
 # Diagnostic Source Codes - identifies trigger source for diagnostic mode
 DIAGNOSTIC_SOURCE_CODE,0,NONE,No active diagnostic source,2
 DIAGNOSTIC_SOURCE_CODE,1,FUEL_ARBITRATOR,Fuel arbitrator triggered (rpm_target == 2),2
-DIAGNOSTIC_SOURCE_CODE,2,DIAG_STATUS_2,Diagnostic status 2 condition,2
+DIAGNOSTIC_SOURCE_CODE,2,DIAGNOSTIC_STATUS_2,Diagnostic status 2 condition,2
 DIAGNOSTIC_SOURCE_CODE,5,ENGINE_FLAGS,Engine control flags triggered,2
-DIAGNOSTIC_SOURCE_CODE,6,EPS_FAULT,Electronic Position Sensor fault,2
-DIAGNOSTIC_SOURCE_CODE,7,DIAG_STATUS_7,Diagnostic status 7 condition,2
-DIAGNOSTIC_SOURCE_CODE,30,DIAG_STATUS_30,Diagnostic status 30 condition,2
+DIAGNOSTIC_SOURCE_CODE,6,ENGINE_POSITION_SENSOR_FAULT,Electronic Position Sensor fault,2
+DIAGNOSTIC_SOURCE_CODE,7,DIAGNOSTIC_STATUS_7,Diagnostic status 7 condition,2
+DIAGNOSTIC_SOURCE_CODE,30,DIAGNOSTIC_STATUS_30,Diagnostic status 30 condition,2
 
 # Diagnostic Fuel Control Mode - active fuel control diagnostic mode
 DIAGNOSTIC_FUEL_CONTROL_MODE,0x0A,FUEL_MODE_INSITE_DISPLAY,INSITE live data display mode,1
@@ -436,48 +436,48 @@ DERATE_EVENT_STATE,1,TIMING_ACTIVE,Derate timing accumulator active,2
 DERATE_EVENT_STATE,2,EVENT_COUNTED,Event counted - counter incremented,2
 
 # Diagnostic Error Source Codes - identifies where error originated
-DIAG_ERROR_SOURCE,0x02,INVALID_LENGTH,Security validator - message length mismatch,1
-DIAG_ERROR_SOURCE,0x03,ERROR_SECURITY_FAILED,Security validator - security check returned non-zero,1
-DIAG_ERROR_SOURCE,0x07,CONDITION_NOT_MET,Memory operation - system_logging_state check failed,1
-DIAG_ERROR_SOURCE,0x08,ADDR_LOOKUP_FAIL,Memory resolver - initial address lookup failed,1
-DIAG_ERROR_SOURCE,0x09,ADDR_RANGE_INVALID,Address validator - address not in validation table,1
-DIAG_ERROR_SOURCE,0x0A,ADDR_ACCESS_DENIED,Address validator - access blocked in normal mode,1
-DIAG_ERROR_SOURCE,0x0B,BUFFER_WRITE_FAIL,Memory operation - circular buffer write error,1
-DIAG_ERROR_SOURCE,0x0E,PATCH_LIMIT,Response builder - memory patch count exceeded,1
-DIAG_ERROR_SOURCE,0x18,UNKNOWN_SERVICE,Service dispatcher - service ID not in dispatch table,1
+DIAGNOSTIC_ERROR_SOURCE,0x02,INVALID_LENGTH,Security validator - message length mismatch,1
+DIAGNOSTIC_ERROR_SOURCE,0x03,ERROR_SECURITY_FAILED,Security validator - security check returned non-zero,1
+DIAGNOSTIC_ERROR_SOURCE,0x07,CONDITION_NOT_MET,Memory operation - system_logging_state check failed,1
+DIAGNOSTIC_ERROR_SOURCE,0x08,ADDRESS_LOOKUP_FAIL,Memory resolver - initial address lookup failed,1
+DIAGNOSTIC_ERROR_SOURCE,0x09,ADDRESS_RANGE_INVALID,Address validator - address not in validation table,1
+DIAGNOSTIC_ERROR_SOURCE,0x0A,ADDRESS_ACCESS_DENIED,Address validator - access blocked in normal mode,1
+DIAGNOSTIC_ERROR_SOURCE,0x0B,BUFFER_WRITE_FAIL,Memory operation - circular buffer write error,1
+DIAGNOSTIC_ERROR_SOURCE,0x0E,PATCH_LIMIT,Response builder - memory patch count exceeded,1
+DIAGNOSTIC_ERROR_SOURCE,0x18,UNKNOWN_SERVICE,Service dispatcher - service ID not in dispatch table,1
 
 # Diagnostic Service 3 Command Codes (Secured Operations)
-DIAG_SERVICE_3_CMD,0x40,ENABLE_SPECIAL_MODE,Enable special diagnostic mode for high memory access,1
-DIAG_SERVICE_3_CMD,0x41,VALIDATE_SPECIAL_MODE,Validate special mode state transition,1
-DIAG_SERVICE_3_CMD,0x42,HIGH_RPM_SHUTDOWN,Trigger high RPM shutdown,1
-DIAG_SERVICE_3_CMD,0x43,SYSTEM_RESET,Diagnostic system reset,1
-DIAG_SERVICE_3_CMD,0x50,NOP,No operation - returns success,1
-DIAG_SERVICE_3_CMD,0x51,SERVICE_3_MEMORY_PATCH,Apply queued memory patches,1
-DIAG_SERVICE_3_CMD,0x52,SECURED_SHUTDOWN,Request secured engine shutdown,1
-DIAG_SERVICE_3_CMD,0x53,RESERVED_ERROR,Reserved - always returns error 0x04,1
-DIAG_SERVICE_3_CMD,0x54,CAN_BUFFER_LOG,Log CAN message buffer,1
+DIAGNOSTIC_SERVICE_3_COMMAND,0x40,ENABLE_SPECIAL_MODE,Enable special diagnostic mode for high memory access,1
+DIAGNOSTIC_SERVICE_3_COMMAND,0x41,VALIDATE_SPECIAL_MODE,Validate special mode state transition,1
+DIAGNOSTIC_SERVICE_3_COMMAND,0x42,HIGH_RPM_SHUTDOWN,Trigger high RPM shutdown,1
+DIAGNOSTIC_SERVICE_3_COMMAND,0x43,SYSTEM_RESET,Diagnostic system reset,1
+DIAGNOSTIC_SERVICE_3_COMMAND,0x50,NOP,No operation - returns success,1
+DIAGNOSTIC_SERVICE_3_COMMAND,0x51,SERVICE_3_MEMORY_PATCH,Apply queued memory patches,1
+DIAGNOSTIC_SERVICE_3_COMMAND,0x52,SECURED_SHUTDOWN,Request secured engine shutdown,1
+DIAGNOSTIC_SERVICE_3_COMMAND,0x53,RESERVED_ERROR,Reserved - always returns error 0x04,1
+DIAGNOSTIC_SERVICE_3_COMMAND,0x54,CAN_BUFFER_LOG,Log CAN message buffer,1
 
 # Diagnostic Service 4 Command Codes (Control Operations)
-DIAG_SERVICE_4_CMD,0x64,CONTROL_64,System control function 64,1
-DIAG_SERVICE_4_CMD,0x65,FAULT_SCANNER,Enable fault flag scanning,1
-DIAG_SERVICE_4_CMD,0x66,STATE_RESET,Reset diagnostic_command_state to 0,1
-DIAG_SERVICE_4_CMD,0x69,DISABLE_SPECIAL_MODE,Disable special diagnostic mode,1
-DIAG_SERVICE_4_CMD,0x70,RESERVED_70,Reserved - returns error 0x04,1
-DIAG_SERVICE_4_CMD,0x71,STATE_BIT0,Set diagnostic_command_state bit 0,1
-DIAG_SERVICE_4_CMD,0x72,RESERVED_72,Reserved - returns error 0x04,1
-DIAG_SERVICE_4_CMD,0x73,STATE_BIT1,Set diagnostic_command_state bit 1,1
-DIAG_SERVICE_4_CMD,0x74,CONTROL_74,System control function 74,1
-DIAG_SERVICE_4_CMD,0x75,CONTROL_75,System control function 75,1
-DIAG_SERVICE_4_CMD,0x76,RESERVED_76,Reserved - returns error 0x04,1
+DIAGNOSTIC_SERVICE_4_COMMAND,0x64,CONTROL_64,System control function 64,1
+DIAGNOSTIC_SERVICE_4_COMMAND,0x65,FAULT_SCANNER,Enable fault flag scanning,1
+DIAGNOSTIC_SERVICE_4_COMMAND,0x66,STATE_RESET,Reset diagnostic_command_state to 0,1
+DIAGNOSTIC_SERVICE_4_COMMAND,0x69,DISABLE_SPECIAL_MODE,Disable special diagnostic mode,1
+DIAGNOSTIC_SERVICE_4_COMMAND,0x70,RESERVED_70,Reserved - returns error 0x04,1
+DIAGNOSTIC_SERVICE_4_COMMAND,0x71,STATE_BIT0,Set diagnostic_command_state bit 0,1
+DIAGNOSTIC_SERVICE_4_COMMAND,0x72,RESERVED_72,Reserved - returns error 0x04,1
+DIAGNOSTIC_SERVICE_4_COMMAND,0x73,STATE_BIT1,Set diagnostic_command_state bit 1,1
+DIAGNOSTIC_SERVICE_4_COMMAND,0x74,CONTROL_74,System control function 74,1
+DIAGNOSTIC_SERVICE_4_COMMAND,0x75,CONTROL_75,System control function 75,1
+DIAGNOSTIC_SERVICE_4_COMMAND,0x76,RESERVED_76,Reserved - returns error 0x04,1
 
 # Diagnostic Service 5 Mode Codes (Memory Operations)
-DIAG_SERVICE_5_MODE,0x60,MEM_READ_MODE3,Memory read mode 3 - standard read,1
-DIAG_SERVICE_5_MODE,0x80,MEM_WRITE_MODE4,Memory write mode 4 - 4-byte address,1
-DIAG_SERVICE_5_MODE,0xA0,MEM_WRITE_MODE2,Memory write mode 2 - 2-byte address,1
-DIAG_SERVICE_5_MODE,0xB0,MULTI_PKT_RX,Multi-packet receive handler,1
-DIAG_SERVICE_5_MODE,0xC0,MEM_READ_MODE2,Memory read mode 2 - compact read,1
-DIAG_SERVICE_5_MODE,0xE0,MEM_READ_MODE1,Memory read mode 1 - extended read,1
-DIAG_SERVICE_5_MODE,0xF0,MULTI_PKT_TX,Multi-packet transmit handler,1
+DIAGNOSTIC_SERVICE_5_MODE,0x60,MEMORY_READ_MODE3,Memory read mode 3 - standard read,1
+DIAGNOSTIC_SERVICE_5_MODE,0x80,MEMORY_WRITE_MODE4,Memory write mode 4 - 4-byte address,1
+DIAGNOSTIC_SERVICE_5_MODE,0xA0,MEMORY_WRITE_MODE2,Memory write mode 2 - 2-byte address,1
+DIAGNOSTIC_SERVICE_5_MODE,0xB0,DIAGNOSTIC_SERVICE_5_MULTIPLE_PACKET_RECEIVE,Multi-packet receive handler,1
+DIAGNOSTIC_SERVICE_5_MODE,0xC0,MEMORY_READ_MODE2,Memory read mode 2 - compact read,1
+DIAGNOSTIC_SERVICE_5_MODE,0xE0,MEMORY_READ_MODE1,Memory read mode 1 - extended read,1
+DIAGNOSTIC_SERVICE_5_MODE,0xF0,DIAGNOSTIC_SERVICE_5_MULTIPLE_PACKET_TRANSMIT,Multi-packet transmit handler,1
 
 # DPA Protocol Frame Types - Cummins DPA diagnostic protocol
 DPA_FRAME_TYPE,0xC0,ASYNC,Asynchronous frame - no immediate response expected,1
@@ -569,16 +569,16 @@ MEMORY_REGION_TYPE,0x09,MEMORY_REGION_TYPE_UNMAPPED,No entry holds the range - t
 MEMORY_REGION_TYPE,0x0a,MEMORY_REGION_TYPE_REFUSED,The application's register ranges while development mode is off (development_mode_off_region_type); passed back as J1939_DIAGNOSTIC_RESULT_REGION_REFUSED - the boot read handler tests it too,1
 
 # CAN Timer Init Modes
-CAN_TIMER_INIT_MODE,0,BASIC_DELAY,Basic timer + delay with watchdog,1
-CAN_TIMER_INIT_MODE,1,ALT_TRANSMIT,Alt timer + message transmit init,1
-CAN_TIMER_INIT_MODE,2,DIVIDED_TRANSMIT,Divided timer + message transmit init,1
-CAN_TIMER_INIT_MODE,3,CONDITIONAL_DELAY,Conditional timer + watchdog delay,1
+CAN_TIMER_INITIALIZATION_MODE,0,BASIC_DELAY,Basic timer + delay with watchdog,1
+CAN_TIMER_INITIALIZATION_MODE,1,ALTERNATE_TRANSMIT,Alt timer + message transmit init,1
+CAN_TIMER_INITIALIZATION_MODE,2,DIVIDED_TRANSMIT,Divided timer + message transmit init,1
+CAN_TIMER_INITIALIZATION_MODE,3,CONDITIONAL_DELAY,Conditional timer + watchdog delay,1
 
 # CAN Buffer Offsets
 CAN_BUFFER_OFFSETS,0x36,CAN_STATUS_BYTE,CAN message status byte offset,1
-CAN_BUFFER_OFFSETS,0x37,PARAM_BYTE_1,First parameter byte offset,1
-CAN_BUFFER_OFFSETS,0x38,PARAM_BYTE_2,Second parameter byte offset,1
-CAN_BUFFER_OFFSETS,0x39,PARAM_BYTE_3,Third parameter byte offset,1
+CAN_BUFFER_OFFSETS,0x37,PARAMETER_BYTE_1,First parameter byte offset,1
+CAN_BUFFER_OFFSETS,0x38,PARAMETER_BYTE_2,Second parameter byte offset,1
+CAN_BUFFER_OFFSETS,0x39,PARAMETER_BYTE_3,Third parameter byte offset,1
 
 # Interpolation Scaling Factors
 INTERPOLATION_FACTORS,3,SCALE_FACTOR,Base interpolation scaling,1
@@ -598,9 +598,9 @@ J1939_CRUISE_CONTROL_ENABLE,4,SPEED_BRAKE_INTERACTION,Enable speed control/engin
 # J1939 Throttle Enable Flags
 J1939_THROTTLE_ENABLE,1,ETC1_RECEIVE_ENABLE,ETC1(PGN 61442) message reception enable,1
 J1939_THROTTLE_ENABLE,2,J1939_MESSAGE_FLAGS,J1939 message enable flags table,1
-J1939_THROTTLE_ENABLE,3,ASG_THROTTLE_COEFF_1,ASG throttle mode compensation filter coef 1,1
-J1939_THROTTLE_ENABLE,4,ASG_THROTTLE_COEFF_2,ASG throttle mode compensation filter coef 2,1
-J1939_THROTTLE_ENABLE,5,ASG_THROTTLE_COEFF_3,ASG throttle mode compensation filter coef 3,1
+J1939_THROTTLE_ENABLE,3,ALL_SPEED_GOVERNOR_THROTTLE_COEFFICIENT_1,ASG throttle mode compensation filter coef 1,1
+J1939_THROTTLE_ENABLE,4,ALL_SPEED_GOVERNOR_THROTTLE_COEFFICIENT_2,ASG throttle mode compensation filter coef 2,1
+J1939_THROTTLE_ENABLE,5,ALL_SPEED_GOVERNOR_THROTTLE_COEFFICIENT_3,ASG throttle mode compensation filter coef 3,1
 
 # ETC1_SPN560_DRIVELINE_STATE - SPN 560: Transmission Driveline Engaged (ETC1 byte 1 bits 1-2)
 # 0=not defined 1=disengaged 2=engaged 3=N/A
@@ -650,20 +650,20 @@ VEHICLE_SPEED_SENSOR_TYPE,5,VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO,5 = dl
 # J1939 Diagnostic Protocol Modes
 J1939_DIAGNOSTIC_PROTOCOL,1,CALTERM_COMMUNICATION,CalTerm parameter read/write via J1939,1
 J1939_DIAGNOSTIC_PROTOCOL,2,INSITE_COMMUNICATION,Insite live data monitoring via J1939,1
-J1939_DIAGNOSTIC_PROTOCOL,3,DIAG_MESSAGE_DISPATCHER,Routes diagnostic requests by message type,1
-J1939_DIAGNOSTIC_PROTOCOL,4,PARAM_REQUEST_HANDLER,Processes EEPROM parameter read requests,1
-J1939_DIAGNOSTIC_PROTOCOL,5,PARAM_RESPONSE_BUILDER,Formats parameter values for J1939 response,1
+J1939_DIAGNOSTIC_PROTOCOL,3,DIAGNOSTIC_MESSAGE_DISPATCHER,Routes diagnostic requests by message type,1
+J1939_DIAGNOSTIC_PROTOCOL,4,PARAMETER_REQUEST_HANDLER,Processes EEPROM parameter read requests,1
+J1939_DIAGNOSTIC_PROTOCOL,5,PARAMETER_RESPONSE_BUILDER,Formats parameter values for J1939 response,1
 
 # Insite Command Codes
-INSITE_CMD,0x00,PARAM_STANDARD,Standard parameter read (0x00-0x7F) - response length 2,1
-INSITE_CMD,0x80,PARAM_EXTENDED,Extended parameter read (0x80-0xBF) - response length 3,1
-INSITE_CMD,0xC1,INSITE_COMMAND_ACTIVE_FAULT_LIST,Active DTC list builder,1
-INSITE_CMD,0xC2,INSITE_COMMAND_FAULT_DETAIL,Detailed fault information builder,1
-INSITE_CMD,0xC3,PID_DTC_REQUEST,PID/DTC handler request,1
-INSITE_CMD,0xC4,PID_DTC_RESPONSE,PID/DTC response - response length 4 or 7,1
-INSITE_CMD,0xEA,CAPACITY_INFO,Capacity response builder - 24 bytes,1
-INSITE_CMD,0xED,ECU_ID,ECU identification builder,1
-INSITE_CMD,0xF3,INSITE_COMMAND_VERSION_INFO,Version info builder - 31 bytes,1
+INSITE_COMMAND,0x00,PARAMETER_STANDARD,Standard parameter read (0x00-0x7F) - response length 2,1
+INSITE_COMMAND,0x80,PARAMETER_EXTENDED,Extended parameter read (0x80-0xBF) - response length 3,1
+INSITE_COMMAND,0xC1,INSITE_COMMAND_ACTIVE_FAULT_LIST,Active DTC list builder,1
+INSITE_COMMAND,0xC2,INSITE_COMMAND_FAULT_DETAIL,Detailed fault information builder,1
+INSITE_COMMAND,0xC3,PID_DTC_REQUEST,PID/DTC handler request,1
+INSITE_COMMAND,0xC4,PID_DTC_RESPONSE,PID/DTC response - response length 4 or 7,1
+INSITE_COMMAND,0xEA,CAPACITY_INFORMATION,Capacity response builder - 24 bytes,1
+INSITE_COMMAND,0xED,ECU_ID,ECU identification builder,1
+INSITE_COMMAND,0xF3,INSITE_COMMAND_VERSION_INFORMATION,Version info builder - 31 bytes,1
 
 # Insite Status Output Bits - maps internal status to Insite display
 INSITE_STATUS_OUTPUT,0x80,PROTECTION_ENABLED,Protection system enable flag is set,1
@@ -676,20 +676,20 @@ INSITE_STATUS_OUTPUT,0x02,SENSOR_BIT2_SET,Sensor status register bit 2 is set,1
 INSITE_STATUS_OUTPUT,0x01,SENSOR_BIT4_SET,Sensor status register bit 4 is set,1
 
 # Memory Operation Result Codes
-MEMORY_OP_RESULT,0x00,MEMORY_OPERATION_SUCCESS,Memory operation completed successfully,1
-MEMORY_OP_RESULT,0x02,MEMORY_OPERATION_INVALID_LENGTH,Message length mismatch,1
-MEMORY_OP_RESULT,0x03,MEMORY_OPERATION_AUTH_FAILED,Security check returned non-zero,1
-MEMORY_OP_RESULT,0x07,LOGGING_STATE_ERROR,EEPROM write blocked - logging state check failed,1
-MEMORY_OP_RESULT,0x0A,MEMORY_OPERATION_WRITE_DENIED,ROM/Flash region - write not permitted,1
-MEMORY_OP_RESULT,0x0B,MEMORY_OPERATION_BUFFER_WRITE_FAIL,Circular buffer write error during EEPROM logging,1
-MEMORY_OP_RESULT,0x1A,AUTH_REQUIRED_MISSING,EEPROM write requires auth but not provided,1
+MEMORY_OPERATION_RESULT,0x00,MEMORY_OPERATION_SUCCESS,Memory operation completed successfully,1
+MEMORY_OPERATION_RESULT,0x02,MEMORY_OPERATION_INVALID_LENGTH,Message length mismatch,1
+MEMORY_OPERATION_RESULT,0x03,MEMORY_OPERATION_AUTH_FAILED,Security check returned non-zero,1
+MEMORY_OPERATION_RESULT,0x07,LOGGING_STATE_ERROR,EEPROM write blocked - logging state check failed,1
+MEMORY_OPERATION_RESULT,0x0A,MEMORY_OPERATION_WRITE_DENIED,ROM/Flash region - write not permitted,1
+MEMORY_OPERATION_RESULT,0x0B,MEMORY_OPERATION_BUFFER_WRITE_FAIL,Circular buffer write error during EEPROM logging,1
+MEMORY_OPERATION_RESULT,0x1A,AUTH_REQUIRED_MISSING,EEPROM write requires auth but not provided,1
 
 # Security Result Codes
 SECURITY_RESULT,0x00,AUTH_SUCCESS,Security check passed - operation authorized,1
 SECURITY_RESULT,0x02,SECURITY_INVALID_LENGTH,Invalid message length for service,1
 SECURITY_RESULT,0x03,AUTH_FAILED,Security check failed - access denied,1
 SECURITY_RESULT,0x07,SECURITY_CONDITION_NOT_MET,Pre-condition not satisfied,1
-SECURITY_RESULT,0x0A,INVALID_ADDR,Invalid memory address range,1
+SECURITY_RESULT,0x0A,INVALID_ADDRESS,Invalid memory address range,1
 SECURITY_RESULT,0x0B,SECURITY_BUFFER_WRITE_FAIL,Circular buffer write failed,1
 SECURITY_RESULT,0xFF,PROCEED_TO_HANDLER,Proceed to handler (auth passed or not required),1
 
@@ -718,9 +718,9 @@ SYNC_STATE,1,HAVE_SYNC,Synchronization established and maintained,1
 SYNC_STATE,2,LOST_SYNC,Synchronization was established but lost,1
 
 # Fuel Demand Source IDs
-FUEL_DEMAND_SOURCE,0,TABLE_BLEND_CALC,Table interpolation blend calculation result,2
+FUEL_DEMAND_SOURCE,0,TABLE_BLEND_CALCULATION,Table interpolation blend calculation result,2
 FUEL_DEMAND_SOURCE,1,RPM_BASED_LIMIT,RPM-based fuel demand limit,2
-FUEL_DEMAND_SOURCE,2,BLEND_PARAM_FALLBACK,Blend parameter 2 fallback value,2
+FUEL_DEMAND_SOURCE,2,BLEND_PARAMETER_FALLBACK,Blend parameter 2 fallback value,2
 FUEL_DEMAND_SOURCE,3,HIGH_RPM_FUEL_LIMIT,High RPM fuel limit,2
 FUEL_DEMAND_SOURCE,4,FUEL_LIMIT_FLOOR,Fuel limit floor value,2
 FUEL_DEMAND_SOURCE,5,ENGINE_MODE_TRANSITION,Engine mode transition timing,2
@@ -741,9 +741,9 @@ SHUTDOWN_SELECTOR_SOURCE,15,SHUTDOWN_PROTECTION_LIMIT,Shutdown protection fuel l
 SHUTDOWN_SELECTOR_SOURCE,16,DIAGNOSTIC_MODE_BUFFER,Diagnostic mode buffer limit,2
 SHUTDOWN_SELECTOR_SOURCE,17,FUEL_LIMIT_SHUTDOWN,Fuel limit from shutdown calc,2
 SHUTDOWN_SELECTOR_SOURCE,19,CALCULATED_FUEL_TIMING,Calculated fuel timing value,2
-SHUTDOWN_SELECTOR_SOURCE,20,FUEL_ARBITRATOR_DIAG,Fuel arbitrator diagnostic mode,2
+SHUTDOWN_SELECTOR_SOURCE,20,FUEL_ARBITRATOR_DIAGNOSTIC,Fuel arbitrator diagnostic mode,2
 SHUTDOWN_SELECTOR_SOURCE,21,SHUTDOWN_LIMIT_SELECTOR,Shutdown limit selector value,2
-SHUTDOWN_SELECTOR_SOURCE,28,SHUTDOWN_MINIMUM_INIT,Shutdown minimum init value,2
+SHUTDOWN_SELECTOR_SOURCE,28,SHUTDOWN_MINIMUM_INITIALIZATION,Shutdown minimum init value,2
 SHUTDOWN_SELECTOR_SOURCE,29,PROTECTION_SHUTDOWN_LIMIT,Protection shutdown fuel limit,2
 SHUTDOWN_SELECTOR_SOURCE,34,OIL_PRESSURE_PROTECTION,Oil pressure protection limit,2
 
@@ -766,15 +766,15 @@ OUTPUT_CONTROL_TIMING_STATE,0x01,TIMING_MODE_A,PWM output timing mode A,1
 OUTPUT_CONTROL_TIMING_STATE,0x02,TIMING_MODE_B,PWM output timing mode B,1
 
 # Proprietary Diagnostic Status
-PROP_DIAG_STATUS,0xF0,STATUS_NORMAL,Normal operation - load below threshold,1
-PROP_DIAG_STATUS,0xF1,PROP_DIAG_STATUS_F1,Status F1 - specific condition,1
-PROP_DIAG_STATUS,0xF4,STATUS_LOAD_HIGH,Load above threshold,1
-PROP_DIAG_STATUS,0xF8,STATUS_FAULT_ACTIVE,Critical fault active,1
-PROP_DIAG_STATUS,0x01,STATUS_BIT0_LOAD_INACTIVE,Bit 0 set when load calculation inactive,1
+PROPRIETARY_DIAGNOSTIC_STATUS,0xF0,STATUS_NORMAL,Normal operation - load below threshold,1
+PROPRIETARY_DIAGNOSTIC_STATUS,0xF1,PROPRIETARY_DIAGNOSTIC_STATUS_F1,Status F1 - specific condition,1
+PROPRIETARY_DIAGNOSTIC_STATUS,0xF4,STATUS_LOAD_HIGH,Load above threshold,1
+PROPRIETARY_DIAGNOSTIC_STATUS,0xF8,STATUS_FAULT_ACTIVE,Critical fault active,1
+PROPRIETARY_DIAGNOSTIC_STATUS,0x01,STATUS_BIT0_LOAD_INACTIVE,Bit 0 set when load calculation inactive,1
 
 # Parameter Validation Limits
-PARAM_VALIDATION,32000,SAFETY_LIMIT,Maximum allowed parameter value,2
-PARAM_VALIDATION,65535,BLOCK_LIMIT,Block validation limit,2
+PARAMETER_VALIDATION,32000,SAFETY_LIMIT,Maximum allowed parameter value,2
+PARAMETER_VALIDATION,65535,BLOCK_LIMIT,Block validation limit,2
 
 # Event Timer Channels - used with cancelEventTimer/tickEventTimer
 # Timer variables at 0x003fcf3a-0x003fcf54 (DAT_003fcf36 = active count)
@@ -818,11 +818,11 @@ J1939_DIAGNOSTIC_RESULT,0x18,J1939_DIAGNOSTIC_RESULT_UNKNOWN_SERVICE,No handler 
 J1939_DIAGNOSTIC_RESULT,0x1a,J1939_DIAGNOSTIC_RESULT_KEY_MISSING,The service needs the key but the request carries none,4
 # EEPROM diagnostic handler state machine (eeprom_diag_state at 0x003fecf1)
 # Dispatches diagnostic requests during EEPROM operations in mpc555_processDiagnosticAndEepromRequests
-EEPROM_DIAG_STATE,0x03,EEPROM_DIAG_HANDLE_RESPONSE,Handle EEPROM diagnostic response,1
-EEPROM_DIAG_STATE,0x10,EEPROM_DIAG_DATA_TRANSFER,Process EEPROM data transfer,1
-EEPROM_DIAG_STATE,0x11,EEPROM_DIAG_SEND_VERSION,Send EEPROM version response,1
-EEPROM_DIAG_STATE,0x12,EEPROM_DIAG_TRANSFER_BLOCK,Transfer data block service,1
-EEPROM_DIAG_STATE,0x20,EEPROM_DIAG_WRITE_DISPATCH,Dispatch EEPROM write request,1
+EEPROM_DIAGNOSTIC_STATE,0x03,EEPROM_DIAGNOSTIC_HANDLE_RESPONSE,Handle EEPROM diagnostic response,1
+EEPROM_DIAGNOSTIC_STATE,0x10,EEPROM_DIAGNOSTIC_DATA_TRANSFER,Process EEPROM data transfer,1
+EEPROM_DIAGNOSTIC_STATE,0x11,EEPROM_DIAGNOSTIC_SEND_VERSION,Send EEPROM version response,1
+EEPROM_DIAGNOSTIC_STATE,0x12,EEPROM_DIAGNOSTIC_TRANSFER_BLOCK,Transfer data block service,1
+EEPROM_DIAGNOSTIC_STATE,0x20,EEPROM_DIAGNOSTIC_WRITE_DISPATCH,Dispatch EEPROM write request,1
 # Calibration write mode - gates whether parameter writes go to volatile RAM or persistent EEPROM
 # Mirrors Cummins CILCALDATASERVERLib.tagCICacheMode: dataVolatile vs readWrite
 CAL_WRITE_MODE,0xea,CAL_VOLATILE,Writes land in RAM only; lost on power cycle,1

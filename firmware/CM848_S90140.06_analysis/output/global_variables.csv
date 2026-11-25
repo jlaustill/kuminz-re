@@ -2466,7 +2466,7 @@ address,name,type,comment
 0x003fecd2,diag_serial_buffer[2],,
 0x003fecd3,diag_serial_buffer[3],,
 0x003fecef,diag_serial_buffer[31],,
-0x003fecf1,eeprom_diag_state,EEPROM_DIAG_STATE,EEPROM diagnostic handler state machine
+0x003fecf1,eeprom_diag_state,EEPROM_DIAGNOSTIC_STATE,EEPROM diagnostic handler state machine
 0x003fecf2,eeprom_write_request_type,byte,EEPROM write operation type: 1=begin cal write 2=update magic
 0x003fecf6,eeprom_block_length_cal,word,
 0x003fed92,fault_entry_pointer_queue_count_cal,byte,Count of fault_entry_pointer_queue_cal (byte) - freed by narrowing 0x3fed91 to a byte (new row 2026-11-18) | e2m: e2m 1211 +2 Number_Of_OBD_Snapshots '[DGNOOBSN] Number of Snapshots that are OBDII in Fault_Snapshot_Table' (EEPROM 0x1910; count of the freeze frame pointers in the queue)
