@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 12:34:31 MST 2026
+// Generated: Wed Nov 25 13:05:42 MST 2026
 
 
 //
@@ -904,9 +904,10 @@ short cm848_flashEraseChip(void)
       uRam00500554 = 0x55;
                     /* WARNING: Read-only address (ram,0x00500aaa) is written */
       uRam00500aaa = 0x10;
-      sVar3 = cm848_flashPollUntilReady(0xffff,&flash2_command_register,flash_poll_timeout_cycles);
+      sVar3 = cm848_flashPollUntilReady
+                        (0xffff,&flash2_command_register,flash2_chip_erase_poll_limit);
       if (sVar3 != 0) break;
-      bVar1 = unaff_r21 < flash_poll_retry_limit_cal;
+      bVar1 = unaff_r21 < flash2_chip_erase_retry_limit;
       unaff_r21 = unaff_r21 + 1;
     } while (bVar1);
     if (sVar3 != 0) {
@@ -937,7 +938,7 @@ undefined2 cm848_flashWriteWord(undefined2 *param_1,undefined2 *param_2)
   }
   flash2_command_register._0_2_ = 0xa0;
   *param_1 = *param_2;
-  uVar1 = cm848_flashPollUntilReady(*param_2,param_1,flash_poll_timeout_cal);
+  uVar1 = cm848_flashPollUntilReady(*param_2,param_1,flash2_word_program_poll_limit);
   return uVar1;
 }
 
@@ -963,7 +964,7 @@ undefined4 cm848_flashWriteBlock(int param_1,int param_2,uint param_3)
       uVar4 = uVar4 + 1;
     }
     uVar3 = 0;
-    if (((uVar4 & 0xffff) != 0) && (data_transfer_retry_count != 0)) {
+    if (((uVar4 & 0xffff) != 0) && (flash2_word_program_retry_limit != 0)) {
       do {
         sVar2 = cm848_flashWriteWord(param_2,param_1);
         if (sVar2 == 0) {
@@ -975,7 +976,7 @@ undefined4 cm848_flashWriteBlock(int param_1,int param_2,uint param_3)
           uVar4 = uVar4 + 0xffff;
           uVar3 = 0;
         }
-      } while (((uVar4 & 0xffff) != 0) && (uVar3 < data_transfer_retry_count));
+      } while (((uVar4 & 0xffff) != 0) && (uVar3 < flash2_word_program_retry_limit));
     }
     if (flash2_operation_active_flag != 0) {
       flash2_command_register._0_2_ = 0;
@@ -1006,56 +1007,56 @@ void mpc555_initHardwareConfig(void)
     switch_input_11_hardware_line_cal._0_1_ = 1;
     cmf_erase_control_base = 0x28000000;
     cmf_erase_control_bits = 0x1e0000;
-    qadc_control_word_cal = 0xc20;
-    qadc_control_word_b = 0xd20;
-    _qadc_control_word_c = 0xe20;
-    _qadc_control_word_d = 0xf20;
-    _qadc_control_word_e = 0x420;
-    _qadc_control_word_f = 0x520;
-    _qadc_control_word_g = 0x620;
+    _cmf_erase_test_register_step_values = 0xc20;
+    _switch_input_20_hardware_line_cal = 0xd20;
+    cmf_erase_step_2_test_register_value = 0xe20;
+    cmf_erase_step_3_test_register_value = 0xf20;
+    cmf_erase_step_4_test_register_value = 0x420;
+    cmf_erase_step_5_test_register_value = 0x520;
+    cmf_erase_step_6_test_register_value = 0x620;
     switch_input_datalink_source_bits_cal[0] = 0;
     switch_input_datalink_source_bits_cal[1] = 0;
     switch_input_datalink_source_bits_cal[2] = 7;
     switch_input_datalink_source_bits_cal[3] = 0x20;
-    logical_output_line_active_low_bits_cal._0_2_ = 1;
+    logical_output_line_active_low_bits_cal = 1;
     switch_input_11_hardware_line_cal._1_1_ = 8;
     switch_input_13_hardware_line_cal = 100;
-    cmf_control_base = 0x28000000;
-    cmf_control_step_bits = 0x4f0000;
-    qadc_channel_config_mask_c = 0x4f0000;
-    qadc_channel_config_mask_d = 0x4f0000;
-    qadc_channel_config_mask_e = 0x4f0000;
-    qadc_channel_config_mask_f = 0xf0000;
-    qadc_channel_config_mask_g = 0xf0000;
-    qadc_channel_config_mask_h = 0xf0000;
-    qadc_channel_config_mask_i = 0xf0000;
-    qadc_queue_timing_config = 0xc20;
-    qadc_queue_timing_config_b = 0xd20;
-    qadc_queue_timing_config_c = 0xe20;
-    qadc_queue_timing_config_d = 0xf20;
-    qadc_queue_timing_config_e = 0x420;
-    qadc_queue_timing_config_f = 0x520;
-    qadc_queue_timing_config_g = 0x620;
-    qadc_queue_timing_config_h = 0x720;
-    cmf_pulses_per_step = 4;
-    qadc_prescale_count_b = 4;
-    qadc_prescale_count_c = 4;
-    qadc_prescale_count_d = 4;
-    qadc_prescale_count_e = 0x14;
-    qadc_prescale_count_f = 0x14;
-    qadc_prescale_count_g = 0x14;
-    qadc_sample_rate_cal = 48000;
-    logical_output_line_active_low_bits_cal._2_2_ = 8;
+    cmf_program_control_base = 0x28000000;
+    cmf_program_control_step_bits[0] = 0x4f0000;
+    cmf_program_control_step_bits[1] = 0x4f0000;
+    cmf_program_control_step_bits[2] = 0x4f0000;
+    cmf_program_control_step_bits[3] = 0x4f0000;
+    cmf_program_control_step_bits[4] = 0xf0000;
+    cmf_program_control_step_bits[5] = 0xf0000;
+    cmf_program_control_step_bits[6] = 0xf0000;
+    cmf_program_control_step_bits[7] = 0xf0000;
+    _logical_output_17_line_cal = 0xc20;
+    cmf_program_step_1_test_register_value = 0xd20;
+    cmf_program_step_2_test_register_value = 0xe20;
+    cmf_program_step_3_test_register_value = 0xf20;
+    cmf_program_step_4_test_register_value = 0x420;
+    cmf_program_step_5_test_register_value = 0x520;
+    cmf_program_step_6_test_register_value = 0x620;
+    cmf_program_step_7_test_register_value = 0x720;
+    cmf_program_step_pulse_limits[0] = 4;
+    cmf_program_step_pulse_limits[1] = 4;
+    cmf_program_step_pulse_limits[2] = 4;
+    cmf_program_step_pulse_limits[3] = 4;
+    cmf_program_step_pulse_limits[4] = 0x14;
+    cmf_program_step_pulse_limits[5] = 0x14;
+    cmf_program_step_pulse_limits[6] = 0x14;
+    cmf_program_step_pulse_limits[7] = 48000;
+    cmf_program_step_count = 8;
   }
   if (reflash_transfer_state.flash2_erase_state == 0) {
     reflash_transfer_state.flash2_erase_state = 1;
   }
   memory_scan_pointer = (undefined *)0x0;
   cmf_erase_pulse_total = 0;
-  flash_poll_timeout_cycles = 9800000;
-  flash_poll_timeout_cal = 200;
-  flash_poll_retry_limit_cal = 3;
-  data_transfer_retry_count = 0x32;
+  flash2_chip_erase_poll_limit = 9800000;
+  flash2_word_program_poll_limit = 200;
+  flash2_chip_erase_retry_limit = 3;
+  flash2_word_program_retry_limit = 0x32;
   reflash_transfer_state.byte_count = 0;
   data_transfer_buffer_status = 0;
   data_transfer_target_address = 0;
@@ -3483,6 +3484,7 @@ void cm848_completePendingDiagWrite(void)
 // Function: mpc555_cmfRestoreNormalMode @ 0x00004320
 //
 
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Boot reflash kernel: returns both CMF flash modules to normal mode: CMFCTL = block select only
    (or CMFTST = step value when the CMF test-step count at 0x3fdba4 is nonzero) then CMFMCR_A /
    CMFMCR_B = 0x85000000 | review-function-readability reviewed 2026-11-11 - Readability Medium
@@ -3492,12 +3494,12 @@ void mpc555_cmfRestoreNormalMode(void)
 
 {
   if (switch_input_11_hardware_line_cal._0_1_ == '\0') {
-    CMFCTL_A = cmf_control_base | cmf_control_step_bits;
-    CMFCTL_B = cmf_control_base | cmf_control_step_bits;
+    CMFCTL_A = cmf_program_control_base | cmf_program_control_step_bits[0];
+    CMFCTL_B = cmf_program_control_base | cmf_program_control_step_bits[0];
   }
   else {
-    CMFTST_A = qadc_queue_timing_config;
-    CMFTST_B = qadc_queue_timing_config;
+    CMFTST_A = _logical_output_17_line_cal;
+    CMFTST_B = _logical_output_17_line_cal;
   }
   CMFMCR_A = 0x85000000;
   CMFMCR_B = 0x85000000;
@@ -3510,6 +3512,7 @@ void mpc555_cmfRestoreNormalMode(void)
 // Function: mpc555_cmfSelectBlockAndStartSequence @ 0x000043a4
 //
 
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Boot reflash kernel: selects flash block N (0-7 = module A at 0x2fc800 / 8+ = module B at
    0x2fc840) via CMFCTL BLOCK bit 0x8000 >> N then sets SES (|2) to start a program/erase sequence |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
@@ -3521,12 +3524,12 @@ void mpc555_cmfSelectBlockAndStartSequence(uint param_1)
   dword *pdVar2;
   
   if (switch_input_11_hardware_line_cal._0_1_ == '\0') {
-    CMFCTL_A = cmf_control_base | cmf_control_step_bits;
-    CMFCTL_B = cmf_control_base | cmf_control_step_bits;
+    CMFCTL_A = cmf_program_control_base | cmf_program_control_step_bits[0];
+    CMFCTL_B = cmf_program_control_base | cmf_program_control_step_bits[0];
   }
   else {
-    CMFTST_A = qadc_queue_timing_config;
-    CMFTST_B = qadc_queue_timing_config;
+    CMFTST_A = _logical_output_17_line_cal;
+    CMFTST_B = _logical_output_17_line_cal;
   }
   if ((int)param_1 < 8) {
     cmf_active_control_register = (undefined *)&CMFCTL_A;
@@ -3539,11 +3542,12 @@ void mpc555_cmfSelectBlockAndStartSequence(uint param_1)
     cmf_active_test_register = (undefined *)&CMFTST_B;
     pdVar2 = &CMFCTL_A;
   }
-  cmf_control_block_select = cmf_control_base | 0x8000 >> (param_1 & 0x3f);
-  *pdVar2 = cmf_control_base | cmf_control_step_bits;
+  cmf_control_block_select = cmf_program_control_base | 0x8000 >> (param_1 & 0x3f);
+  *pdVar2 = cmf_program_control_base | cmf_program_control_step_bits[0];
   puVar1 = cmf_active_control_register;
-  *(dword *)cmf_active_control_register = cmf_control_block_select | cmf_control_step_bits;
-  *(dword *)puVar1 = cmf_control_block_select | cmf_control_step_bits | 2;
+  *(dword *)cmf_active_control_register =
+       cmf_control_block_select | cmf_program_control_step_bits[0];
+  *(dword *)puVar1 = cmf_control_block_select | cmf_program_control_step_bits[0] | 2;
   return;
 }
 
@@ -3576,7 +3580,8 @@ void mpc555_cmfLoadProgramPage(undefined *param_1)
   } while (uVar3 < 0x20);
   data_transfer_scan_ptr = param_1;
   cmf_pulse_step_index = 0;
-  _cmf_control_pulse_value = cmf_control_block_select | cmf_control_step_bits | 3;
+  _cmf_program_pulse_control_value = cmf_control_block_select | cmf_program_control_step_bits[0] | 3
+  ;
   cmf_pulse_count = 0;
   return;
 }
@@ -3589,8 +3594,9 @@ void mpc555_cmfLoadProgramPage(undefined *param_1)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Boot reflash kernel: one high-voltage pulse: writes the step's CMFTST value and CMFCTL (SES|EHV);
-   after cmf_pulses_per_step pulses advances to the next step; returns 0 when every step is done |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   after cmf_program_step_pulse_limits pulses advances to the next step; returns 0 when every step
+   is done | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy
+   Confidence High */
 
 undefined4 mpc555_cmfApplyHighVoltagePulse(void)
 
@@ -3603,21 +3609,22 @@ undefined4 mpc555_cmfApplyHighVoltagePulse(void)
   bVar2 = cmf_pulse_step_index;
   uVar3 = (uint)cmf_pulse_step_index;
   if (switch_input_11_hardware_line_cal._0_1_ != '\0') {
-    *(dword *)cmf_active_test_register = (&qadc_queue_timing_config)[uVar3];
+    *(undefined4 *)cmf_active_test_register =
+         *(undefined4 *)(&logical_output_17_line_cal + uVar3 * 2);
   }
-  *(uint *)cmf_active_control_register = _cmf_control_pulse_value;
+  *(uint *)cmf_active_control_register = _cmf_program_pulse_control_value;
   wVar4 = cmf_pulse_count + 1;
-  bVar1 = (&cmf_pulses_per_step)[uVar3] <= cmf_pulse_count;
+  bVar1 = cmf_program_step_pulse_limits[uVar3] <= cmf_pulse_count;
   cmf_pulse_count = wVar4;
   if (bVar1) {
-    if ((int)(logical_output_line_active_low_bits_cal._2_2_ - 1) <= (int)uVar3) {
+    if ((int)(cmf_program_step_count - 1) <= (int)uVar3) {
       return 0;
     }
     cmf_pulse_step_index = bVar2 + 1;
     cmf_pulse_count = 0;
   }
-  _cmf_control_pulse_value =
-       cmf_control_block_select | (&cmf_control_step_bits)[cmf_pulse_step_index] | 3;
+  _cmf_program_pulse_control_value =
+       cmf_control_block_select | cmf_program_control_step_bits[cmf_pulse_step_index] | 3;
   return 1;
 }
 
@@ -3666,7 +3673,8 @@ int mpc555_cmfScanRangeForNonzeroWords(void)
 void mpc555_cmfEndHighVoltagePulse(void)
 
 {
-  *(dword *)cmf_active_control_register = cmf_control_block_select | cmf_control_step_bits;
+  *(dword *)cmf_active_control_register =
+       cmf_control_block_select | cmf_program_control_step_bits[0];
   if (switch_input_11_hardware_line_cal._0_1_ != '\0') {
     *(undefined4 *)cmf_active_test_register = 0;
   }
@@ -3784,6 +3792,7 @@ LAB_000049a0:
 // Function: mpc555_cmfEraseBlocks @ 0x000049d0
 //
 
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Boot reflash kernel: erases the flash blocks in the mask (high byte = module A blocks 0-7 at
    0x0-0x38000 / low byte = module B blocks at 0x40000-0x68000): CMFCTL PE then PE|SES / 0xFFFFFFFF
    interlock write to each 32 KB block / EHV pulses polled on HVS (servicing watchdog + SCI
@@ -3820,7 +3829,7 @@ bool mpc555_cmfEraseBlocks(uint param_1)
     bVar1 = true;
     CMFMCR_A = 0x85000000;
     if (switch_input_11_hardware_line_cal._0_1_ != '\0') {
-      CMFTST_A = qadc_control_word_cal;
+      CMFTST_A = _cmf_erase_test_register_step_values;
     }
     CMFCTL_A = uVar8 | cmf_erase_control_bits | 4;
     CMFCTL_A = uVar8 | cmf_erase_control_bits | 6;
@@ -3843,7 +3852,7 @@ bool mpc555_cmfEraseBlocks(uint param_1)
     bVar2 = true;
     CMFMCR_B = 0x85000000;
     if (switch_input_11_hardware_line_cal._0_1_ != '\0') {
-      CMFTST_B = qadc_control_word_cal;
+      CMFTST_B = _cmf_erase_test_register_step_values;
     }
     CMFCTL_B = uVar9 | cmf_erase_control_bits | 4;
     CMFCTL_B = uVar9 | cmf_erase_control_bits | 6;
@@ -3871,14 +3880,14 @@ bool mpc555_cmfEraseBlocks(uint param_1)
       while (cmf_erase_pulse_total < switch_input_13_hardware_line_cal) {
         if ((switch_input_11_hardware_line_cal._0_1_ != '\0') && (uVar6 != 0)) {
           if (bVar1) {
-            CMFTST_A = (&qadc_control_word_cal)[uVar6];
+            CMFTST_A = *(dword *)(&cmf_erase_test_register_step_values + uVar6 * 2);
           }
           if (bVar2) {
-            CMFTST_B = (&qadc_control_word_cal)[uVar6];
+            CMFTST_B = *(dword *)(&cmf_erase_test_register_step_values + uVar6 * 2);
           }
         }
         uVar10 = 0;
-        if ((iVar7 != 0) && (uVar5 = 0, logical_output_line_active_low_bits_cal._0_2_ != 0)) {
+        if ((iVar7 != 0) && (uVar5 = 0, logical_output_line_active_low_bits_cal != 0)) {
           while (uVar10 = uVar5, cmf_erase_pulse_total < switch_input_13_hardware_line_cal) {
             if (bVar1) {
               CMFCTL_A = uVar8 | cmf_erase_control_bits | 7;
@@ -3904,8 +3913,7 @@ bool mpc555_cmfEraseBlocks(uint param_1)
             }
             uVar10 = uVar10 + 1;
             if ((iVar7 == 0) ||
-               (uVar5 = uVar10, logical_output_line_active_low_bits_cal._0_2_ <= (uVar10 & 0xff)))
-            break;
+               (uVar5 = uVar10, logical_output_line_active_low_bits_cal <= (uVar10 & 0xff))) break;
           }
         }
         uVar6 = uVar6 + 1 & 0xff;
@@ -25471,7 +25479,7 @@ void cm848_buildPgn65241AuxiliaryInputOutputStatus1Message(void)
   byte bVar1;
   byte bVar2;
   
-  if (qadc_control_word_cal._2_2_ == 0) {
+  if (switch_input_19_hardware_line_cal == 0) {
     bVar2 = 0xc0;
 LAB_00024080:
     bVar2 = bVar2 | 3;
@@ -39808,8 +39816,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  byte all_transmits_overdue;
   ushort receive_interval;
+  byte all_transmits_overdue;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
@@ -56345,8 +56353,8 @@ void cm848_clearLogicalOutputAndDriveLine(uint param_1)
    (logical_output_line_cal) output 62 follows the overdrive solenoid request (17) and when 18 and
    63 both have lines output 63 follows the converter clutch solenoid request (18) - both at
    priority 0. Active on this truck: lines 153 / 158 and 156 / 159. Entry 17 renders as the kernel's
-   time-shared name qadc_queue_timing_config._0_2_ (was cm848_checkProtectionModeFlags; PR #53 round
-   58) */
+   time-shared name logical_output_17_line_cal._0_2_ (was cm848_checkProtectionModeFlags; PR #53
+   round 58) */
 
 void cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63(void)
 
@@ -56354,7 +56362,7 @@ void cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63(void)
   word *pwVar1;
   
   pwVar1 = &logical_output_line_cal;
-  if ((qadc_queue_timing_config._0_2_ != 0) && (logical_output_62_line_cal != 0)) {
+  if ((logical_output_17_line_cal != 0) && (logical_output_62_line_cal != 0)) {
     if (logical_output_request_bits_16_to_23.overdrive_solenoid_request == 0) {
       cm848_clearLogicalOutputRequest(0x3e,0);
     }
@@ -75424,7 +75432,7 @@ void cm848_updateParkNeutralFlagAndTsc1Activity(void)
   
   if (j1939_powertrain_control_state.etc2_transmission_selected_gear ==
       TRANSMISSION_SELECTED_GEAR_NOT_AVAILABLE) {
-    if (qadc_control_word_b._0_2_ == 0) {
+    if (switch_input_20_hardware_line_cal == 0) {
       if (((transmission_selected_gear == TRANSMISSION_SELECTED_GEAR_NOT_AVAILABLE) ||
           (transmission_selected_gear == TRANSMISSION_SELECTED_GEAR_PARK)) ||
          (transmission_selected_gear == TRANSMISSION_SELECTED_GEAR_NEUTRAL)) {
