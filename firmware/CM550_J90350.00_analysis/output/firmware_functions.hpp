@@ -571,7 +571,7 @@ void cm550_diagnosticResponseHandler2(can_std_rx_desc_t *param_1);  // @ 0x0002e
 void cm550_canTransmissionTrigger(void);  // @ 0x0002ef36
 void cm550_FUN_0002ef4a(dword msg_ptr);  // @ 0x0002ef4a
 void cm550_systemControlFunction2(void);  // @ 0x0002efbc
-ushort cm550_diagnosticServiceDispatcherByPgn(int param_1);  // @ 0x0002efd0
+word cm550_diagnosticServiceDispatcherByPgn(int param_1);  // @ 0x0002efd0
 void cm550_systemControlFunction3(void);  // @ 0x0002f114
 void processEngineTsc1Request(int param_1);  // @ 0x0002f128
 void cm550_FUN_0002f4be(can_std_rx_desc_t *rx_msg);  // @ 0x0002f4be
