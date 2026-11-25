@@ -1,0 +1,7 @@
+address,name,old_label,kind,dims
+0x00000000,j1939_received_message_t,j1939_rx_msg_t,type,1
+0x00000000,j1939_transmit_message_t,j1939_tx_msg_t,type,1
+0x00000000,j1939_message_header_t,j1939_msg_hdr_t,type,1
+0x00000000,can_receive_channel_t,can_rx_channel_t,type,1
+0x00000000,j1939_pgn65261_payload_t,j1939_ccss_tx_payload_t,type,1
+0x003fab0a,j1939_pgn65261_payload,j1939_ccss_tx_payload_t_003fab0a,symbol,1

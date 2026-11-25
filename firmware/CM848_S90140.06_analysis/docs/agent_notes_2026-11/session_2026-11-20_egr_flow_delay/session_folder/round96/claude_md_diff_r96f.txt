@@ -1,0 +1,4 @@
+1023c1023
+<   - **The handlers:** PGN 0 is routed by destination address (`cm848_dispatchTsc1ByDestinationAddress`). The
+---
+>   - **The handlers:** PGN 0 is routed by destination address (`dispatchTsc1ByDestinationAddress`). The

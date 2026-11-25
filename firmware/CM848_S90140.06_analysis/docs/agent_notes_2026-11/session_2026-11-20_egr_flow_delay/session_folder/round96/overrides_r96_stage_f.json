@@ -1,0 +1,549 @@
+{
+ "global|CM848|0x003fdba6": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdbaa": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdbae": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdbb2": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range",
+  "force_type": true
+ },
+ "global|CM848|0x003fdbba": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range",
+  "force_type": true
+ },
+ "global|CM848|0x003fdbbe": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range",
+  "force_type": true
+ },
+ "global|CM848|0x003fdbc2": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range",
+  "force_type": true
+ },
+ "global|CM848|0x003fdbc6": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range",
+  "force_type": true
+ },
+ "global|CM848|0x003fdbca": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range",
+  "force_type": true
+ },
+ "global|CM848|0x003fdbd4": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdbd6": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdbda": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdbde": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range",
+  "force_type": true
+ },
+ "global|CM848|0x003fdbe2": {
+  "drop": true,
+  "reason": "entry 1 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "remove_globals": {
+  "CM550": {
+   "0x0080345a": "",
+   "0x0080345c": "",
+   "0x008035e0": "",
+   "0x00801a6c": "",
+   "0x00801a85": ""
+  },
+  "CM848": {
+   "0x003fad5a": "",
+   "0x003fad5c": ""
+  }
+ },
+ "global|CM848|0x003fdbe6": {
+  "drop": true,
+  "reason": "entry 2 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdbea": {
+  "drop": true,
+  "reason": "entry 3 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdbee": {
+  "drop": true,
+  "reason": "entry 4 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdbf2": {
+  "drop": true,
+  "reason": "entry 5 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdbf6": {
+  "drop": true,
+  "reason": "entry 6 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdbfa": {
+  "drop": true,
+  "reason": "entry 7 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdc02": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc06": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc0a": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc0e": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc12": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc16": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc1a": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc1e": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range",
+  "force_type": true
+ },
+ "global|CM848|0x003fdc20": {
+  "drop": true,
+  "reason": "entry 1 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdc22": {
+  "drop": true,
+  "reason": "entry 2 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdc24": {
+  "drop": true,
+  "reason": "entry 3 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdc26": {
+  "drop": true,
+  "reason": "entry 4 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdc28": {
+  "drop": true,
+  "reason": "entry 5 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdc2a": {
+  "drop": true,
+  "reason": "entry 6 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdc2c": {
+  "drop": true,
+  "reason": "entry 7 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW)"
+ },
+ "global|CM848|0x003fdc2e": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc32": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc36": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdc38": {
+  "cal_exempt": true,
+  "reason": "a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range"
+ },
+ "global|CM848|0x003fdbb6": {
+  "force_type": true,
+  "reason": "the Q5 judge's width (the live type was a guessed wider / narrower row)"
+ },
+ "global|CM848|0x003fdbd2": {
+  "force_type": true,
+  "reason": "the Q5 judge's width (the live type was a guessed wider / narrower row)"
+ },
+ "global|CM848|0x003fdbfe": {
+  "force_type": true,
+  "reason": "the Q5 judge's width (the live type was a guessed wider / narrower row)"
+ },
+ "structs": {
+  "CM550": {
+   "j1939_pgn65249_payload_t": [
+    [
+     "retarder_type_and_location",
+     "byte",
+     1,
+     "SPN 901 retarder type (bits 1-4) and SPN 902 retarder location (bits 5-8): 0x14 = exhaust (4) at the engine exhaust brake (1) for one engine_retarder_output_driver_count / 3 = compression release (3) at the engine compression release brake (0) for two or more / 0xff = not available"
+    ],
+    [
+     "retarder_control_method",
+     "byte",
+     1,
+     "SPN 557 retarder control method: 0xff / 6 / 3 / 2 / 1 for engine_retarder_driver_1_cylinder_count 0 / 1 / 2 / 3 / 6 (6 divided by the weight); other weights leave it"
+    ],
+    [
+     "retarder_speed_at_idle_point_1_low_byte",
+     "byte",
+     1,
+     "SPN 546 retarder speed at idle (point 1); low byte"
+    ],
+    [
+     "retarder_speed_at_idle_point_1_high_byte",
+     "byte",
+     1,
+     "SPN 546; high byte"
+    ],
+    [
+     "percent_torque_at_idle_point_1",
+     "byte",
+     1,
+     "SPN 551; 125 minus the high byte of the ROM percent word"
+    ],
+    [
+     "maximum_retarder_speed_point_2_low_byte",
+     "byte",
+     1,
+     "SPN 548 maximum retarder speed (point 2); low byte"
+    ],
+    [
+     "maximum_retarder_speed_point_2_high_byte",
+     "byte",
+     1,
+     "SPN 548; high byte"
+    ],
+    [
+     "percent_torque_at_maximum_speed_point_2",
+     "byte",
+     1,
+     "SPN 552; 125 minus the percent"
+    ],
+    [
+     "retarder_speed_at_point_3_low_byte",
+     "byte",
+     1,
+     "SPN 549; low byte"
+    ],
+    [
+     "retarder_speed_at_point_3_high_byte",
+     "byte",
+     1,
+     "SPN 549; high byte"
+    ],
+    [
+     "percent_torque_at_point_3",
+     "byte",
+     1,
+     "SPN 553; 125 minus the percent"
+    ],
+    [
+     "retarder_speed_at_point_4_low_byte",
+     "byte",
+     1,
+     "SPN 550; low byte"
+    ],
+    [
+     "retarder_speed_at_point_4_high_byte",
+     "byte",
+     1,
+     "SPN 550; high byte"
+    ],
+    [
+     "percent_torque_at_point_4",
+     "byte",
+     1,
+     "SPN 554; 125 minus the percent"
+    ],
+    [
+     "retarder_speed_at_peak_torque_point_5_low_byte",
+     "byte",
+     1,
+     "SPN 547 retarder speed at peak torque (point 5); low byte"
+    ],
+    [
+     "retarder_speed_at_peak_torque_point_5_high_byte",
+     "byte",
+     1,
+     "SPN 547; high byte"
+    ],
+    [
+     "reference_retarder_torque_low_byte",
+     "byte",
+     1,
+     "SPN 556 reference retarder torque; low byte"
+    ],
+    [
+     "reference_retarder_torque_high_byte",
+     "byte",
+     1,
+     "SPN 556; high byte"
+    ],
+    [
+     "percent_torque_at_peak_torque_point_5",
+     "byte",
+     1,
+     "SPN 555; 125 minus the percent"
+    ]
+   ],
+   "j1939_pgn_handler_entry_t": [
+    [
+     "pgn_byte_1",
+     "byte",
+     1,
+     "First PGN byte for matching (compared against msg+6+1)"
+    ],
+    [
+     "pgn_byte_0",
+     "byte",
+     1,
+     "Second PGN byte for matching (compared against msg+6+0)"
+    ],
+    [
+     "handler_func",
+     "dword",
+     4,
+     "Function pointer to PGN handler callback"
+    ]
+   ],
+   "j1939_pgn65261_payload_t": [
+    [
+     "max_vehicle_speed_limit",
+     "byte",
+     1,
+     "SPN 74 Maximum Vehicle Speed Limit (km/h); from maximum_road_speed; gate algorithm_enable_flags_3_cal&0x80"
+    ],
+    [
+     "cruise_high_set_limit_speed",
+     "byte",
+     1,
+     "SPN 87 Cruise Control High Set Limit Speed (km/h); gate algorithm_enable_flags_3_cal&0x40; fed by cruise_maximum_road_speed_cal"
+    ],
+    [
+     "cruise_low_set_limit_speed",
+     "byte",
+     1,
+     "SPN 88 Cruise Control Operator Low Set Limit Speed (km/h); from cruise_speed_low_limit"
+    ],
+    [
+     "reserved3",
+     "byte",
+     1,
+     "reserved - init 0xff (not available)"
+    ],
+    [
+     "reserved4",
+     "byte",
+     1,
+     "reserved - init 0xff (not available)"
+    ],
+    [
+     "reserved5",
+     "byte",
+     1,
+     "reserved - init 0xff (not available)"
+    ],
+    [
+     "reserved6",
+     "byte",
+     1,
+     "reserved - init 0xff (not available)"
+    ],
+    [
+     "reserved7",
+     "byte",
+     1,
+     "reserved - init 0xff (not available)"
+    ]
+   ],
+   "j1939_pgn65230_payload_t": [
+    [
+     "active_trouble_code_count",
+     "byte",
+     1,
+     "DM5 byte 1: the number of active diagnostic trouble codes (SPN 1218)"
+    ],
+    [
+     "previously_active_trouble_code_count",
+     "byte",
+     1,
+     "DM5 byte 2: the number of previously active codes (SPN 1219)"
+    ],
+    [
+     "obd_compliance",
+     "byte",
+     1,
+     "DM5 byte 3: OBD compliance (SPN 1220)"
+    ],
+    [
+     "continuously_monitored_systems_support",
+     "byte",
+     1,
+     "DM5 byte 4: continuously monitored systems support / status (SPN 1221)"
+    ],
+    [
+     "non_continuously_monitored_systems_support",
+     "word",
+     2,
+     "DM5 bytes 5-6: non-continuously monitored systems support (SPN 1222)"
+    ],
+    [
+     "non_continuously_monitored_systems_status",
+     "word",
+     2,
+     "DM5 bytes 7-8: non-continuously monitored systems status (SPN 1223)"
+    ]
+   ],
+   "j1708_memory_write_record_t": [
+    [
+     "address",
+     "dword",
+     4,
+     "the target address (from cm550_lookupParameterIdAddress when the item names a 2-byte parameter ID)"
+    ],
+    [
+     "data_pointer",
+     "byte*",
+     4,
+     "the item's data in the J1708 receive ring"
+    ],
+    [
+     "length",
+     "byte",
+     1,
+     "the number of bytes to write"
+    ],
+    [
+     "region_type",
+     "MEMORY_REGION_TYPE",
+     1,
+     "the memory region type of the target (picks the writer)"
+    ]
+   ]
+  },
+  "CM848": {
+   "j1939_pgn65230_payload_t": [
+    [
+     "active_trouble_code_count",
+     "byte",
+     1,
+     "DM5 byte 1: the number of active diagnostic trouble codes (SPN 1218)"
+    ],
+    [
+     "previously_active_trouble_code_count",
+     "byte",
+     1,
+     "DM5 byte 2: the number of previously active codes (SPN 1219)"
+    ],
+    [
+     "obd_compliance",
+     "byte",
+     1,
+     "DM5 byte 3: OBD compliance (SPN 1220)"
+    ],
+    [
+     "continuously_monitored_systems_support",
+     "byte",
+     1,
+     "DM5 byte 4: continuously monitored systems support / status (SPN 1221)"
+    ],
+    [
+     "non_continuously_monitored_systems_support",
+     "word",
+     2,
+     "DM5 bytes 5-6: non-continuously monitored systems support (SPN 1222)"
+    ],
+    [
+     "non_continuously_monitored_systems_status",
+     "word",
+     2,
+     "DM5 bytes 7-8: non-continuously monitored systems status (SPN 1223)"
+    ]
+   ]
+  }
+ },
+ "struct_sizes": {
+  "CM550": {
+   "j1939_pgn65249_payload_t": 19,
+   "j1939_pgn_handler_entry_t": 6,
+   "j1939_pgn65261_payload_t": 8,
+   "j1939_pgn65230_payload_t": 8,
+   "j1708_memory_write_record_t": 10
+  },
+  "CM848": {
+   "j1939_pgn65230_payload_t": 8
+  }
+ },
+ "global|CM550|0x00803631": {
+  "drop": true,
+  "reason": "its final name is the documentation path j1939_pgn65249_payload.retarder_control_method; post_apply_r96_q124.py writes it"
+ },
+ "function|0x00033d38": {
+  "drop": true,
+  "reason": "Q2: no change (the judge kept the earlier round's name and plate)"
+ },
+ "function|0x00033164": {
+  "drop": true,
+  "reason": "Q2: no change (the judge kept the earlier round's name and plate)"
+ },
+ "function|0x00033f5a": {
+  "drop": true,
+  "reason": "Q2: no change (the judge kept the earlier round's name and plate)"
+ },
+ "function|0x00031bce": {
+  "drop": true,
+  "reason": "Q2: no change (the judge kept the earlier round's name and plate)"
+ },
+ "function|0x00033e58": {
+  "drop": true,
+  "reason": "Q2: no change (the judge kept the earlier round's name and plate)"
+ },
+ "function|0x00032052": {
+  "drop": true,
+  "reason": "Q2: no change (the judge kept the earlier round's name and plate)"
+ },
+ "function|0x0003258a": {
+  "drop": true,
+  "reason": "Q2: no change (the judge kept the earlier round's name and plate)"
+ },
+ "function|0x00033716": {
+  "drop": true,
+  "reason": "Q2: no change (the judge kept the earlier round's name and plate)"
+ },
+ "function|0x000337c4": {
+  "drop": true,
+  "reason": "Q2: no change (the judge kept the earlier round's name and plate)"
+ },
+ "function|0x00033a62": {
+  "drop": true,
+  "reason": "Q2: no change (the judge kept the earlier round's name and plate)"
+ },
+ "function|0x00034232": {
+  "drop": true,
+  "reason": "Q2: no change (the judge kept the earlier round's name and plate)"
+ },
+ "function|0x00034394": {
+  "drop": true,
+  "reason": "Q2: no change (the judge kept the earlier round's name and plate)"
+ }
+}

@@ -1,0 +1,47 @@
+{
+ "remove_globals": {
+  "CM550": {
+   "0x008002a8": "",
+   "0x0080032a": "",
+   "0x00800332": "",
+   "0x0080033a": "",
+   "0x008002d1": "",
+   "0x008002d5": "",
+   "0x008002d6": "",
+   "0x008002d8": "",
+   "0x008002d9": "",
+   "0x008002da": "",
+   "0x008002dc": "",
+   "0x008002de": "",
+   "0x008002e2": "",
+   "0x008002e6": "",
+   "0x008002e8": "",
+   "0x008002ea": "",
+   "0x008002ec": "",
+   "0x008002ee": "",
+   "0x008002f2": "",
+   "0x008002f6": "",
+   "0x008002fa": "",
+   "0x008002fc": "",
+   "0x008002fe": "",
+   "0x00800304": "",
+   "0x00800306": ""
+  }
+ },
+ "function|0x000133fc": {
+  "name": "cm550_emptyExecutiveFrame5ExtraTask",
+  "reason": "named by its one call site's role (the judge's plate); the numbered stub name 12 is taken"
+ },
+ "function|0x00019e8e": {
+  "name": "cm550_emptyEnginePositionSignalConfiguration1ThirdStep",
+  "reason": "named by its one call site's role (the judge's plate); the numbered stub name 12 is taken"
+ },
+ "function|0x0001a52a": {
+  "name": "cm550_emptyEnginePositionSignalConfiguration2ThirdStep",
+  "reason": "named by its one call site's role (the judge's plate); the numbered stub name 12 is taken"
+ },
+ "function|0x0001a8a2": {
+  "name": "cm550_emptyEnginePositionSignalConfiguration3ThirdStep",
+  "reason": "named by its one call site's role (the judge's plate); the numbered stub name 12 is taken"
+ }
+}

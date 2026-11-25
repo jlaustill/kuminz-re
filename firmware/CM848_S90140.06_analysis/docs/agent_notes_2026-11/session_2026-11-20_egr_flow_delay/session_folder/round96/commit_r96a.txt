@@ -1,0 +1,21 @@
+cm848: round 96 stage A - the peripheral struct types spell their words out (19 types)
+
+The repository's naming rule bans invented abbreviations; the MPC555 module and submodule names from the manual
+(TPU3, QADC64, QSMCM, SCI, QSPI, USIU, MIOS1, MMCSM) stay. Renamed:
+- tpu3_ch_params_t -> tpu3_channel_parameters_t; tpua_ch1 / ch9 / ch12 / ch14_params_t ->
+  tpu_a_channel_1 / 9 / 12 / 14_parameters_t; tpub_ch0 / ch11 / ch14_params_t -> tpu_b_channel_0 / 11 / 14_parameters_t
+  (the instances took these names in round 95);
+- qadc64_regs_t -> qadc64_registers_t; qsmcm_sci1_regs_t -> qsmcm_sci1_registers_t; qsmcm_qspi_ctrl_t ->
+  qsmcm_qspi_control_registers_t; qsmcm_txram_t / qsmcm_recram_t -> qsmcm_transmit_ram_t / qsmcm_receive_ram_t;
+- usiu_memc_t / usiu_pit_t / usiu_clock_t -> usiu_memory_controller_t / usiu_periodic_interrupt_timer_t /
+  usiu_clocks_and_reset_t;
+- mios_mmcsm_b_t -> mios_mmcsm_t (the "_b" told it apart from a fake mios_mmcsm_t that PR #48 removed; that history
+  note is reworded); mios1_isr_t -> mios1_interrupt_registers_t; eeprom_xfer_state_t -> eeprom_transfer_state_t.
+None of them renders in the decompilation, and each appeared only in structure_definitions.csv and
+global_variables.csv. History notes keep their old names (the 0x305140 row's "(was qsmcm_recram_t_00305140)" too).
+
+Proof: CM848 built twice, deterministic (base = HEAD bdf1fdf8): the .cpp is byte-identical to HEAD apart from the
+Generated line, so it is not part of this commit. Headers regenerated (firmware_types.hpp / firmware_globals.hpp; g++
+0 errors); the _cal audit, the five Python suites and the 109 JUnit tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,4 @@
+address,name,old_label,kind,dims
+0x00016cd8,cm550_queueEepromByteWrites,cm550_circularBufferWrite,symbol,1
+0x00018dae,cm550_updateEngineProtectionRestartLimitationCommands,cm550_protectionUpdateHandler,symbol,1
+0x0001e0bc,cm550_transmitCanFrameOnMessageObject,cm550_canFrameDataCopy,symbol,1

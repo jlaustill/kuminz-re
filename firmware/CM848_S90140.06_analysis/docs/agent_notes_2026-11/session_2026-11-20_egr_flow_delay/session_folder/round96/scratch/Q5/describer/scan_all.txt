@@ -1,0 +1,294 @@
+BOOT 0x00121c cm848_flashEraseChip                                    addi r25,r25,-9162           -> 0x3fdc36 w0 P
+BOOT 0x001224 cm848_flashEraseChip                                    addi r26,r26,-9170           -> 0x3fdc2e w0 P
+BOOT 0x001240 cm848_flashEraseChip                                    lwz r5,0(r26)                -> 0x3fdc2e w4 D
+BOOT 0x00126c cm848_flashEraseChip                                    lhz r11,0(r25)               -> 0x3fdc36 w2 D
+BOOT 0x001318 cm848_flashWriteWord                                    lwz r5,-9166(r5)             -> 0x3fdc32 w4 D
+BOOT 0x001398 cm848_flashWriteBlock                                   addi r27,r27,-9160           -> 0x3fdc38 w0 P
+BOOT 0x00139c cm848_flashWriteBlock                                   lhz r11,0(r27)               -> 0x3fdc38 w2 D
+BOOT 0x0013f0 cm848_flashWriteBlock                                   lhz r12,0(r27)               -> 0x3fdc38 w2 D
+BOOT 0x001480 mpc555_initHardwareConfig                               stb r11,-9308(r12)           -> 0x3fdba4 w1 D
+BOOT 0x00148c mpc555_initHardwareConfig                               stw r29,-9302(r9)            -> 0x3fdbaa w4 D
+BOOT 0x001498 mpc555_initHardwareConfig                               stw r11,-9298(r12)           -> 0x3fdbae w4 D
+BOOT 0x0014a4 mpc555_initHardwareConfig                               addi r9,r9,-9294             -> 0x3fdbb2 w0 P
+BOOT 0x0014a8 mpc555_initHardwareConfig                               stw r3,0(r9)                 -> 0x3fdbb2 w4 D
+BOOT 0x0014b0 mpc555_initHardwareConfig                               stw r4,4(r9)                 -> 0x3fdbb6 w4 D
+BOOT 0x0014b8 mpc555_initHardwareConfig                               stw r5,8(r9)                 -> 0x3fdbba w4 D
+BOOT 0x0014c0 mpc555_initHardwareConfig                               stw r6,12(r9)                -> 0x3fdbbe w4 D
+BOOT 0x0014c8 mpc555_initHardwareConfig                               stw r7,16(r9)                -> 0x3fdbc2 w4 D
+BOOT 0x0014d0 mpc555_initHardwareConfig                               stw r8,20(r9)                -> 0x3fdbc6 w4 D
+BOOT 0x0014d8 mpc555_initHardwareConfig                               stw r30,24(r9)               -> 0x3fdbca w4 D
+BOOT 0x0014e0 mpc555_initHardwareConfig                               stw r31,28(r9)               -> 0x3fdbce w4 D
+BOOT 0x0014ec mpc555_initHardwareConfig                               sth r12,-9262(r9)            -> 0x3fdbd2 w2 D
+BOOT 0x0014f8 mpc555_initHardwareConfig                               stb r10,-9307(r11)           -> 0x3fdba5 w1 D
+BOOT 0x001504 mpc555_initHardwareConfig                               sth r12,-9304(r9)            -> 0x3fdba8 w2 D
+BOOT 0x00150c mpc555_initHardwareConfig                               stw r29,-9258(r11)           -> 0x3fdbd6 w4 D
+BOOT 0x001518 mpc555_initHardwareConfig                               addi r29,r29,-9250           -> 0x3fdbde w0 P
+BOOT 0x00151c mpc555_initHardwareConfig                               stw r9,0(r29)                -> 0x3fdbde w4 D
+BOOT 0x001520 mpc555_initHardwareConfig                               stw r9,4(r29)                -> 0x3fdbe2 w4 D
+BOOT 0x001524 mpc555_initHardwareConfig                               stw r9,8(r29)                -> 0x3fdbe6 w4 D
+BOOT 0x001528 mpc555_initHardwareConfig                               stw r9,12(r29)               -> 0x3fdbea w4 D
+BOOT 0x001530 mpc555_initHardwareConfig                               stw r9,16(r29)               -> 0x3fdbee w4 D
+BOOT 0x001534 mpc555_initHardwareConfig                               stw r9,20(r29)               -> 0x3fdbf2 w4 D
+BOOT 0x001538 mpc555_initHardwareConfig                               stw r9,24(r29)               -> 0x3fdbf6 w4 D
+BOOT 0x00153c mpc555_initHardwareConfig                               stw r9,28(r29)               -> 0x3fdbfa w4 D
+BOOT 0x001544 mpc555_initHardwareConfig                               addi r29,r29,-9218           -> 0x3fdbfe w0 P
+BOOT 0x001548 mpc555_initHardwareConfig                               stw r3,0(r29)                -> 0x3fdbfe w4 D
+BOOT 0x00154c mpc555_initHardwareConfig                               stw r4,4(r29)                -> 0x3fdc02 w4 D
+BOOT 0x001550 mpc555_initHardwareConfig                               stw r5,8(r29)                -> 0x3fdc06 w4 D
+BOOT 0x001554 mpc555_initHardwareConfig                               stw r6,12(r29)               -> 0x3fdc0a w4 D
+BOOT 0x001558 mpc555_initHardwareConfig                               stw r7,16(r29)               -> 0x3fdc0e w4 D
+BOOT 0x00155c mpc555_initHardwareConfig                               stw r8,20(r29)               -> 0x3fdc12 w4 D
+BOOT 0x001560 mpc555_initHardwareConfig                               stw r30,24(r29)              -> 0x3fdc16 w4 D
+BOOT 0x001564 mpc555_initHardwareConfig                               stw r31,28(r29)              -> 0x3fdc1a w4 D
+BOOT 0x001570 mpc555_initHardwareConfig                               addi r31,r31,-9186           -> 0x3fdc1e w0 P
+BOOT 0x001574 mpc555_initHardwareConfig                               sth r30,0(r31)               -> 0x3fdc1e w2 D
+BOOT 0x001578 mpc555_initHardwareConfig                               sth r30,2(r31)               -> 0x3fdc20 w2 D
+BOOT 0x00157c mpc555_initHardwareConfig                               sth r30,4(r31)               -> 0x3fdc22 w2 D
+BOOT 0x001580 mpc555_initHardwareConfig                               sth r30,6(r31)               -> 0x3fdc24 w2 D
+BOOT 0x001588 mpc555_initHardwareConfig                               sth r30,8(r31)               -> 0x3fdc26 w2 D
+BOOT 0x00158c mpc555_initHardwareConfig                               sth r30,10(r31)              -> 0x3fdc28 w2 D
+BOOT 0x001590 mpc555_initHardwareConfig                               sth r30,12(r31)              -> 0x3fdc2a w2 D
+BOOT 0x00159c mpc555_initHardwareConfig                               sth r11,14(r31)              -> 0x3fdc2c w2 D
+BOOT 0x0015a8 mpc555_initHardwareConfig                               sth r9,-9260(r10)            -> 0x3fdbd4 w2 D
+BOOT 0x0015e0 mpc555_initHardwareConfig                               sth r30,-9306(r9)            -> 0x3fdba6 w2 D
+BOOT 0x0015f0 mpc555_initHardwareConfig                               stw r11,-9170(r12)           -> 0x3fdc2e w4 D
+BOOT 0x0015fc mpc555_initHardwareConfig                               stw r9,-9166(r10)            -> 0x3fdc32 w4 D
+BOOT 0x001608 mpc555_initHardwareConfig                               sth r11,-9162(r12)           -> 0x3fdc36 w2 D
+BOOT 0x001614 mpc555_initHardwareConfig                               sth r9,-9160(r10)            -> 0x3fdc38 w2 D
+BOOT 0x002928 mpc555_hardwareInitialization                           sth r30,-9316(r12)           -> 0x3fdb9c w2 D
+BOOT 0x002c98 cm848_registerDiagnosticService                         addi r5,r5,-9324             -> 0x3fdb94 w0 P
+BOOT 0x002c9c cm848_registerDiagnosticService                         lbz r7,0(r5)                 -> 0x3fdb94 w1 D
+BOOT 0x002cbc cm848_registerDiagnosticService                         add r6,r12,r11               -> 0x3fdb30 w0 A r12=0x3fdb30
+BOOT 0x002cc4 cm848_registerDiagnosticService                         stb r10,0(r5)                -> 0x3fdb94 w1 D
+BOOT 0x004094 cm848_dataTransferBufferWrite                           addi r4,r4,-9158             -> 0x3fdc3a w0 P
+BOOT 0x0040ac cm848_dataTransferBufferWrite                           stbx r11,r4,r6               -> 0x3fdc3a w1 X r4=0x3fdc3a
+BOOT 0x004228 cm848_fillFlashProgramPageBuffer                        addi r28,r28,-9158           -> 0x3fdc3a w0 P
+BOOT 0x004240 cm848_fillFlashProgramPageBuffer                        lbzx r11,r28,r3              -> 0x3fdc3a w1 X r28=0x3fdc3a
+BOOT 0x004324 mpc555_cmfRestoreNormalMode                             lbz r12,-9308(r12)           -> 0x3fdba4 w1 D
+BOOT 0x004334 mpc555_cmfRestoreNormalMode                             addi r4,r4,-9218             -> 0x3fdbfe w0 P
+BOOT 0x00433c mpc555_cmfRestoreNormalMode                             lwz r10,0(r4)                -> 0x3fdbfe w4 D
+BOOT 0x004348 mpc555_cmfRestoreNormalMode                             lwz r12,0(r4)                -> 0x3fdbfe w4 D
+BOOT 0x004358 mpc555_cmfRestoreNormalMode                             addi r3,r3,-9258             -> 0x3fdbd6 w0 P
+BOOT 0x004360 mpc555_cmfRestoreNormalMode                             addi r4,r4,-9250             -> 0x3fdbde w0 P
+BOOT 0x004368 mpc555_cmfRestoreNormalMode                             lwz r9,0(r3)                 -> 0x3fdbd6 w4 D
+BOOT 0x00436c mpc555_cmfRestoreNormalMode                             lwz r12,0(r4)                -> 0x3fdbde w4 D
+BOOT 0x00437c mpc555_cmfRestoreNormalMode                             lwz r10,0(r3)                -> 0x3fdbd6 w4 D
+BOOT 0x004380 mpc555_cmfRestoreNormalMode                             lwz r12,0(r4)                -> 0x3fdbde w4 D
+BOOT 0x0043b4 mpc555_cmfSelectBlockAndStartSequence                   addi r30,r30,-9250           -> 0x3fdbde w0 P
+BOOT 0x0043bc mpc555_cmfSelectBlockAndStartSequence                   addi r31,r31,-9258           -> 0x3fdbd6 w0 P
+BOOT 0x0043c4 mpc555_cmfSelectBlockAndStartSequence                   lbz r10,-9308(r10)           -> 0x3fdba4 w1 D
+BOOT 0x0043d4 mpc555_cmfSelectBlockAndStartSequence                   addi r8,r8,-9218             -> 0x3fdbfe w0 P
+BOOT 0x0043dc mpc555_cmfSelectBlockAndStartSequence                   lwz r10,0(r8)                -> 0x3fdbfe w4 D
+BOOT 0x0043e8 mpc555_cmfSelectBlockAndStartSequence                   lwz r12,0(r8)                -> 0x3fdbfe w4 D
+BOOT 0x0043f8 mpc555_cmfSelectBlockAndStartSequence                   lwz r11,0(r31)               -> 0x3fdbd6 w4 D
+BOOT 0x0043fc mpc555_cmfSelectBlockAndStartSequence                   lwz r10,0(r30)               -> 0x3fdbde w4 D
+BOOT 0x00440c mpc555_cmfSelectBlockAndStartSequence                   lwz r9,0(r31)                -> 0x3fdbd6 w4 D
+BOOT 0x004410 mpc555_cmfSelectBlockAndStartSequence                   lwz r10,0(r30)               -> 0x3fdbde w4 D
+BOOT 0x00441c mpc555_cmfSelectBlockAndStartSequence                   lwz r7,0(r31)                -> 0x3fdbd6 w4 D
+BOOT 0x0044bc mpc555_cmfSelectBlockAndStartSequence                   lwz r12,0(r30)               -> 0x3fdbde w4 D
+BOOT 0x0044d0 mpc555_cmfSelectBlockAndStartSequence                   lwz r9,0(r30)                -> 0x3fdbde w4 D
+BOOT 0x0044e0 mpc555_cmfSelectBlockAndStartSequence                   lwz r11,0(r30)               -> 0x3fdbde w4 D
+BOOT 0x004550 mpc555_cmfLoadProgramPage                               lwz r11,-9250(r11)           -> 0x3fdbde w4 D
+BOOT 0x00455c mpc555_cmfLoadProgramPage                               stw r12,-9254(r9)            -> 0x3fdbda w4 D
+BOOT 0x004580 mpc555_cmfApplyHighVoltagePulse                         lbz r10,-9308(r10)           -> 0x3fdba4 w1 D
+BOOT 0x004598 mpc555_cmfApplyHighVoltagePulse                         addi r11,r11,-9218           -> 0x3fdbfe w0 P
+BOOT 0x0045a0 mpc555_cmfApplyHighVoltagePulse                         lwzx r11,r11,r10             -> 0x3fdbfe w4 X r11=0x3fdbfe
+BOOT 0x0045ac mpc555_cmfApplyHighVoltagePulse                         addi r4,r4,-9254             -> 0x3fdbda w0 P
+BOOT 0x0045b8 mpc555_cmfApplyHighVoltagePulse                         lwz r10,0(r4)                -> 0x3fdbda w4 D
+BOOT 0x0045e0 mpc555_cmfApplyHighVoltagePulse                         addi r11,r11,-9186           -> 0x3fdc1e w0 P
+BOOT 0x0045e8 mpc555_cmfApplyHighVoltagePulse                         lhzx r11,r11,r10             -> 0x3fdc1e w2 X r11=0x3fdc1e
+BOOT 0x0045f8 mpc555_cmfApplyHighVoltagePulse                         lhz r12,-9260(r12)           -> 0x3fdbd4 w2 D
+BOOT 0x004630 mpc555_cmfApplyHighVoltagePulse                         addi r11,r11,-9250           -> 0x3fdbde w0 P
+BOOT 0x00463c mpc555_cmfApplyHighVoltagePulse                         lwzx r11,r11,r10             -> 0x3fdbde w4 X r11=0x3fdbde
+BOOT 0x004648 mpc555_cmfApplyHighVoltagePulse                         stw r12,0(r4)                -> 0x3fdbda w4 D
+BOOT 0x0046f0 mpc555_cmfEndHighVoltagePulse                           lwz r10,-9250(r10)           -> 0x3fdbde w4 D
+BOOT 0x004700 mpc555_cmfEndHighVoltagePulse                           lbz r12,-9308(r12)           -> 0x3fdba4 w1 D
+BOOT 0x004a28 mpc555_cmfEraseBlocks                                   sth r9,-9306(r10)            -> 0x3fdba6 w2 D
+BOOT 0x004a30 mpc555_cmfEraseBlocks                                   lwz r17,-9302(r17)           -> 0x3fdbaa w4 D
+BOOT 0x004a40 mpc555_cmfEraseBlocks                                   addi r28,r28,-9298           -> 0x3fdbae w0 P
+BOOT 0x004a44 mpc555_cmfEraseBlocks                                   lwz r9,0(r28)                -> 0x3fdbae w4 D
+BOOT 0x004a58 mpc555_cmfEraseBlocks                                   lwz r11,0(r28)               -> 0x3fdbae w4 D
+BOOT 0x004aac mpc555_cmfEraseBlocks                                   lbz r10,-9308(r10)           -> 0x3fdba4 w1 D
+BOOT 0x004ac0 mpc555_cmfEraseBlocks                                   lwz r11,-9294(r11)           -> 0x3fdbb2 w4 D
+BOOT 0x004ac8 mpc555_cmfEraseBlocks                                   lwz r12,0(r28)               -> 0x3fdbae w4 D
+BOOT 0x004ad8 mpc555_cmfEraseBlocks                                   lwz r11,0(r28)               -> 0x3fdbae w4 D
+BOOT 0x004b40 mpc555_cmfEraseBlocks                                   lbz r10,-9308(r10)           -> 0x3fdba4 w1 D
+BOOT 0x004b54 mpc555_cmfEraseBlocks                                   lwz r11,-9294(r11)           -> 0x3fdbb2 w4 D
+BOOT 0x004b5c mpc555_cmfEraseBlocks                                   lwz r12,0(r28)               -> 0x3fdbae w4 D
+BOOT 0x004b6c mpc555_cmfEraseBlocks                                   lwz r11,0(r28)               -> 0x3fdbae w4 D
+BOOT 0x004bb8 mpc555_cmfEraseBlocks                                   addi r19,r19,-9304           -> 0x3fdba8 w0 P
+BOOT 0x004bc0 mpc555_cmfEraseBlocks                                   lhz r11,-9306(r11)           -> 0x3fdba6 w2 D
+BOOT 0x004bc4 mpc555_cmfEraseBlocks                                   lhz r10,0(r19)               -> 0x3fdba8 w2 D
+BOOT 0x004be4 mpc555_cmfEraseBlocks                                   lbz r12,-9307(r12)           -> 0x3fdba5 w1 D
+BOOT 0x004bfc mpc555_cmfEraseBlocks                                   addi r14,r14,-9307           -> 0x3fdba5 w0 P
+BOOT 0x004c00 mpc555_cmfEraseBlocks                                   lbz r11,0(r14)               -> 0x3fdba5 w1 D
+BOOT 0x004c18 mpc555_cmfEraseBlocks                                   addi r21,r21,-9306           -> 0x3fdba6 w0 P
+BOOT 0x004c1c mpc555_cmfEraseBlocks                                   lhz r12,0(r21)               -> 0x3fdba6 w2 D
+BOOT 0x004c20 mpc555_cmfEraseBlocks                                   lhz r11,0(r14)               -> 0x3fdba8 w2 D
+BOOT 0x004c30 mpc555_cmfEraseBlocks                                   lbz r12,-9308(r12)           -> 0x3fdba4 w1 D
+BOOT 0x004c54 mpc555_cmfEraseBlocks                                   addi r11,r11,-9294           -> 0x3fdbb2 w0 P
+BOOT 0x004c5c mpc555_cmfEraseBlocks                                   lwzx r11,r11,r10             -> 0x3fdbb2 w4 X r11=0x3fdbb2
+BOOT 0x004c74 mpc555_cmfEraseBlocks                                   addi r11,r11,-9294           -> 0x3fdbb2 w0 P
+BOOT 0x004c7c mpc555_cmfEraseBlocks                                   lwzx r11,r11,r10             -> 0x3fdbb2 w4 X r11=0x3fdbb2
+BOOT 0x004c94 mpc555_cmfEraseBlocks                                   addi r20,r20,-9262           -> 0x3fdbd2 w0 P
+BOOT 0x004c98 mpc555_cmfEraseBlocks                                   lhz r11,0(r20)               -> 0x3fdbd2 w2 D
+BOOT 0x004cac mpc555_cmfEraseBlocks                                   lhz r12,0(r21)               -> 0x3fdba6 w2 D
+BOOT 0x004cb0 mpc555_cmfEraseBlocks                                   lhz r11,0(r20)               -> 0x3fdba8 w2 D
+BOOT 0x004cc4 mpc555_cmfEraseBlocks                                   lwz r12,0(r28)               -> 0x3fdbae w4 D
+BOOT 0x004d10 mpc555_cmfEraseBlocks                                   lwz r12,0(r28)               -> 0x3fdbae w4 D
+BOOT 0x004d28 mpc555_cmfEraseBlocks                                   lwz r12,0(r28)               -> 0x3fdbae w4 D
+BOOT 0x004d74 mpc555_cmfEraseBlocks                                   lwz r12,0(r28)               -> 0x3fdbae w4 D
+BOOT 0x004d94 mpc555_cmfEraseBlocks                                   lhz r11,0(r19)               -> 0x3fdbd2 w2 D
+BOOT 0x004da8 mpc555_cmfEraseBlocks                                   lhz r11,0(r21)               -> 0x3fdba6 w2 D
+BOOT 0x004db4 mpc555_cmfEraseBlocks                                   sth r11,0(r21)               -> 0x3fdba6 w2 D
+BOOT 0x004dc0 mpc555_cmfEraseBlocks                                   lbz r12,0(r15)               -> 0x3fdba5 w1 D
+BOOT 0x004e60 mpc555_cmfEraseBlocks                                   lbz r12,-9308(r12)           -> 0x3fdba4 w1 D
+BOOT 0x004e9c mpc555_cmfEraseBlocks                                   lwz r12,0(r28)               -> 0x3fdbae w4 D
+BOOT 0x004eb4 mpc555_cmfEraseBlocks                                   lwz r12,0(r28)               -> 0x3fdbae w4 D
+BOOT 0x006d6c cm848_dispatchDiagnosticService                         lbz r4,-9324(r4)             -> 0x3fdb94 w1 D
+BOOT 0x007984 cm848_serviceSupervisorWatchdog                         addi r4,r4,-9320             -> 0x3fdb98 w0 P
+BOOT 0x007988 cm848_serviceSupervisorWatchdog                         lhz r9,0(r4)                 -> 0x3fdb98 w2 D
+BOOT 0x0079b4 cm848_serviceSupervisorWatchdog                         addi r6,r6,-9322             -> 0x3fdb96 w0 P
+BOOT 0x0079bc cm848_serviceSupervisorWatchdog                         lhz r11,0(r6)                -> 0x3fdb96 w2 D
+BOOT 0x0079e0 cm848_serviceSupervisorWatchdog                         lhz r11,0(r6)                -> 0x3fdb96 w2 D
+BOOT 0x007a00 cm848_serviceSupervisorWatchdog                         lhz r9,0(r6)                 -> 0x3fdb96 w2 D
+BOOT 0x007a20 cm848_serviceSupervisorWatchdog                         lhz r10,0(r6)                -> 0x3fdb96 w2 D
+BOOT 0x007abc cm848_serviceSupervisorWatchdog                         sth r9,-9322(r12)            -> 0x3fdb96 w2 D
+BOOT 0x007acc cm848_serviceSupervisorWatchdog                         sth r7,-9318(r12)            -> 0x3fdb9a w2 D
+BOOT 0x007ad4 cm848_serviceSupervisorWatchdog                         addi r6,r6,-9312             -> 0x3fdba0 w0 P
+BOOT 0x007adc cm848_serviceSupervisorWatchdog                         lhz r11,0(r6)                -> 0x3fdba0 w2 D
+BOOT 0x007ae8 cm848_serviceSupervisorWatchdog                         sth r7,0(r6)                 -> 0x3fdba0 w2 D
+BOOT 0x007af8 cm848_serviceSupervisorWatchdog                         sth r11,-9310(r12)           -> 0x3fdba2 w2 D
+BOOT 0x007b00 cm848_serviceSupervisorWatchdog                         sth r12,0(r4)                -> 0x3fdb98 w2 D
+BOOT 0x007c64 cm848_initSupervisorWatchdog                            addi r23,r23,-9320           -> 0x3fdb98 w0 P
+BOOT 0x007c6c cm848_initSupervisorWatchdog                            sth r27,0(r23)               -> 0x3fdb98 w2 D
+BOOT 0x007c84 cm848_initSupervisorWatchdog                            addi r21,r21,-9322           -> 0x3fdb96 w0 P
+BOOT 0x007c90 cm848_initSupervisorWatchdog                            sth r9,0(r21)                -> 0x3fdb96 w2 D
+BOOT 0x007c98 cm848_initSupervisorWatchdog                            addi r26,r26,-9318           -> 0x3fdb9a w0 P
+BOOT 0x007ca4 cm848_initSupervisorWatchdog                            sth r30,0(r26)               -> 0x3fdb9a w2 D
+BOOT 0x007cc8 cm848_initSupervisorWatchdog                            lhz r12,0(r26)               -> 0x3fdb9a w2 D
+BOOT 0x007ce8 cm848_initSupervisorWatchdog                            sth r11,-9312(r12)           -> 0x3fdba0 w2 D
+BOOT 0x007d0c cm848_initSupervisorWatchdog                            lhz r12,-9316(r12)           -> 0x3fdb9c w2 D
+BOOT 0x007d18 cm848_initSupervisorWatchdog                            lhz r12,0(r26)               -> 0x3fdb9a w2 D
+BOOT 0x007d44 cm848_initSupervisorWatchdog                            sth r28,-9314(r12)           -> 0x3fdb9e w2 D
+BOOT 0x007da0 cm848_initSupervisorWatchdog                            sth r12,0(r23)               -> 0x3fdb98 w2 D
+BOOT 0x007e94 cm848_forceSupervisorWatchdogReset                      addi r6,r6,-9318             -> 0x3fdb9a w0 P
+BOOT 0x007e9c cm848_forceSupervisorWatchdogReset                      addi r7,r7,-9322             -> 0x3fdb96 w0 P
+BOOT 0x007f2c cm848_forceSupervisorWatchdogReset                      sth r11,0(r7)                -> 0x3fdb96 w2 D
+BOOT 0x007f38 cm848_forceSupervisorWatchdogReset                      sth r10,0(r6)                -> 0x3fdb9a w2 D
+APP 0x024048 cm848_buildPgn65241AuxiliaryInputOutputStatus1Message   addi r5,r5,-9330             -> 0x3fdb8e w0 P
+APP 0x02404c cm848_buildPgn65241AuxiliaryInputOutputStatus1Message   lhz r9,38(r5)                -> 0x3fdbb4 w2 D
+APP 0x02408c cm848_buildPgn65241AuxiliaryInputOutputStatus1Message   lhz r12,22(r5)               -> 0x3fdba4 w2 D
+APP 0x0240cc cm848_buildPgn65241AuxiliaryInputOutputStatus1Message   lhz r12,4(r5)                -> 0x3fdb92 w2 D
+APP 0x02423c cm848_buildPgn65265CruiseControlVehicleSpeedMessage     addi r5,r5,-9266             -> 0x3fdbce w0 P
+APP 0x024240 cm848_buildPgn65265CruiseControlVehicleSpeedMessage     lbz r11,1(r5)                -> 0x3fdbcf w1 D
+APP 0x024284 cm848_buildPgn65265CruiseControlVehicleSpeedMessage     lbz r12,1(r5)                -> 0x3fdbcf w1 D
+APP 0x0242d4 cm848_buildPgn65265CruiseControlVehicleSpeedMessage     lbz r12,3(r5)                -> 0x3fdbd1 w1 D
+APP 0x024348 cm848_buildPgn65265CruiseControlVehicleSpeedMessage     lbz r12,3(r5)                -> 0x3fdbd1 w1 D
+APP 0x02436c cm848_buildPgn65265CruiseControlVehicleSpeedMessage     lbz r12,3(r5)                -> 0x3fdbd1 w1 D
+APP 0x0243c4 cm848_buildPgn65265CruiseControlVehicleSpeedMessage     lbz r12,3(r5)                -> 0x3fdbd1 w1 D
+APP 0x02442c cm848_buildPgn65265CruiseControlVehicleSpeedMessage     lbz r12,3(r5)                -> 0x3fdbd1 w1 D
+APP 0x024450 cm848_buildPgn65265CruiseControlVehicleSpeedMessage     lbz r12,3(r5)                -> 0x3fdbd1 w1 D
+APP 0x0244a0 cm848_buildPgn65265CruiseControlVehicleSpeedMessage     lbz r12,3(r5)                -> 0x3fdbd1 w1 D
+APP 0x024590 cm848_buildPgn65265CruiseControlVehicleSpeedMessage     lbz r12,3(r5)                -> 0x3fdbd1 w1 D
+APP 0x0245d4 cm848_buildPgn65265CruiseControlVehicleSpeedMessage     lbz r12,3(r5)                -> 0x3fdbd1 w1 D
+APP 0x02460c cm848_buildPgn65265CruiseControlVehicleSpeedMessage     lbz r12,3(r5)                -> 0x3fdbd1 w1 D
+APP 0x02568c cm848_j1939BuildEngineControlByte                       addi r6,r6,-9266             -> 0x3fdbce w0 P
+APP 0x02569c cm848_j1939BuildEngineControlByte                       lbz r10,3(r6)                -> 0x3fdbd1 w1 D
+APP 0x0256f4 cm848_j1939BuildEngineControlByte                       lbz r11,3(r6)                -> 0x3fdbd1 w1 D
+APP 0x02572c cm848_j1939BuildEngineControlByte                       lbz r12,3(r6)                -> 0x3fdbd1 w1 D
+APP 0x025778 cm848_j1939BuildEngineControlByte                       lbz r12,3(r6)                -> 0x3fdbd1 w1 D
+APP 0x025bb0 cm848_buildPgn61443ElectronicEngineController2Message   lbz r11,-9266(r11)           -> 0x3fdbce w1 D
+APP 0x02bd98 cm848_buildPgn65264PowerTakeOffInformationMessage       addi r3,r3,-9266             -> 0x3fdbce w0 P
+APP 0x02bd9c cm848_buildPgn65264PowerTakeOffInformationMessage       lbz r9,2(r3)                 -> 0x3fdbd0 w1 D
+APP 0x02bddc cm848_buildPgn65264PowerTakeOffInformationMessage       lbz r12,0(r3)                -> 0x3fdbce w1 D
+APP 0x02be14 cm848_buildPgn65264PowerTakeOffInformationMessage       lbz r12,3(r3)                -> 0x3fdbd1 w1 D
+APP 0x02be54 cm848_buildPgn65264PowerTakeOffInformationMessage       lbz r12,3(r3)                -> 0x3fdbd1 w1 D
+APP 0x02c510 cm848_checkSwitch31OnTimeFault                          addi r4,r4,-9266             -> 0x3fdbce w0 P
+APP 0x02c52c cm848_checkSwitch31OnTimeFault                          lbz r12,3(r4)                -> 0x3fdbd1 w1 D
+APP 0x02c564 cm848_checkSwitch31OnTimeFault                          lbz r12,3(r4)                -> 0x3fdbd1 w1 D
+APP 0x03602c cm848_monitorInjectorDriverBoosterCapacitorVoltage      lhzx r12,r12,r5              -> 0x3fdb78 w2 X r12=0x3fdb78
+APP 0x03be34 cm848_updateAirConditioningSwitchFromPci                lhz r12,-9304(r12)           -> 0x3fdba8 w2 D
+APP 0x03f5d8 cm848_selectTransmissionTemperatureInUse                lhz r11,12(r3)               -> 0x3fdb84 w2 D
+APP 0x03f678 cm848_selectTransmissionTemperatureInUse                lhz r12,12(r3)               -> 0x3fdb84 w2 D
+APP 0x04eae0 cm848_readSwitchHardwareInput                           addi r12,r12,-9330           -> 0x3fdb8e w0 P
+APP 0x04eae8 cm848_readSwitchHardwareInput                           lhzx r3,r12,r11              -> 0x3fdb8e w2 X r12=0x3fdb8e
+APP 0x04eaf8 cm848_readSwitchHardwareInput                           addi r10,r10,-9334           -> 0x3fdb8a w0 P
+APP 0x04eb00 cm848_readSwitchHardwareInput                           lbzx r10,r10,r9              -> 0x3fdb8a w1 X r10=0x3fdb8a
+APP 0x04eb5c cm848_scanAndDebounceSwitchInputs                       addi r6,r6,-9266             -> 0x3fdbce w0 P
+APP 0x04eb64 cm848_scanAndDebounceSwitchInputs                       lbzx r12,r6,r12              -> 0x3fdbce w1 X r6=0x3fdbce
+APP 0x04ec40 cm848_scanAndDebounceSwitchInputs                       addi r12,r12,-9330           -> 0x3fdb8e w0 P
+APP 0x04ec48 cm848_scanAndDebounceSwitchInputs                       lhzx r31,r12,r11             -> 0x3fdb8e w2 X r12=0x3fdb8e
+APP 0x04ec8c cm848_scanAndDebounceSwitchInputs                       addi r11,r11,-9334           -> 0x3fdb8a w0 P
+APP 0x04ec94 cm848_scanAndDebounceSwitchInputs                       lbzx r11,r11,r10             -> 0x3fdb8a w1 X r11=0x3fdb8a
+APP 0x04ef88 cm848_setLogicalOutputAndDriveLine                      addi r12,r12,-9252           -> 0x3fdbdc w0 P
+APP 0x04ef90 cm848_setLogicalOutputAndDriveLine                      lhzx r6,r12,r11              -> 0x3fdbdc w2 X r12=0x3fdbdc
+APP 0x04efac cm848_setLogicalOutputAndDriveLine                      addi r12,r12,-9262           -> 0x3fdbd2 w0 P
+APP 0x04efb4 cm848_setLogicalOutputAndDriveLine                      lbzx r12,r12,r11             -> 0x3fdbd2 w1 X r12=0x3fdbd2
+APP 0x04f064 cm848_clearLogicalOutputAndDriveLine                    addi r12,r12,-9252           -> 0x3fdbdc w0 P
+APP 0x04f06c cm848_clearLogicalOutputAndDriveLine                    lhzx r6,r12,r11              -> 0x3fdbdc w2 X r12=0x3fdbdc
+APP 0x04f088 cm848_clearLogicalOutputAndDriveLine                    addi r12,r12,-9262           -> 0x3fdbd2 w0 P
+APP 0x04f090 cm848_clearLogicalOutputAndDriveLine                    lbzx r12,r12,r11             -> 0x3fdbd2 w1 X r12=0x3fdbd2
+APP 0x04f0ec cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63 addi r6,r6,-9252             -> 0x3fdbdc w0 P
+APP 0x04f0f0 cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63 lhz r11,34(r6)               -> 0x3fdbfe w2 D
+APP 0x04f0fc cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63 lhz r12,124(r6)              -> 0x3fdc58 w2 D
+APP 0x04f1d8 cm848_applyLogicalOutputRequests                        addi r3,r3,-9252             -> 0x3fdbdc w0 P
+APP 0x04f1e0 cm848_applyLogicalOutputRequests                        lhzx r7,r3,r12               -> 0x3fdbdc w2 X r3=0x3fdbdc
+APP 0x04f214 cm848_applyLogicalOutputRequests                        addi r10,r10,-9262           -> 0x3fdbd2 w0 P
+APP 0x04f218 cm848_applyLogicalOutputRequests                        lbzx r10,r10,r5              -> 0x3fdbd2 w1 X r10=0x3fdbd2
+APP 0x052e98 cm848_refreshOutputPortsAndReadback                     addi r5,r5,-9252             -> 0x3fdbdc w0 P
+APP 0x052ea0 cm848_refreshOutputPortsAndReadback                     lhzx r27,r5,r12              -> 0x3fdbdc w2 X r5=0x3fdbdc
+APP 0x500328 cm848_processSignedSensorChannel                        lhzx r11,r25,r29             -> 0x3fdb78 w2 X r25=0x3fdb78
+APP 0x5003a4 cm848_processSignedSensorChannel                        lhzx r12,r25,r29             -> 0x3fdb78 w2 X r25=0x3fdb78
+APP 0x500408 cm848_processSignedSensorChannel                        lhzx r12,r25,r29             -> 0x3fdb78 w2 X r25=0x3fdb78
+APP 0x5004b0 cm848_processSignedSensorChannel                        lhzx r12,r25,r29             -> 0x3fdb78 w2 X r25=0x3fdb78
+APP 0x500b2c cm848_initializeSignedSensorChannel                     lhzx r11,r22,r29             -> 0x3fdb78 w2 X r22=0x3fdb78
+APP 0x500b44 cm848_initializeSignedSensorChannel                     lhzx r11,r22,r29             -> 0x3fdb78 w2 X r22=0x3fdb78
+APP 0x500bc0 cm848_initializeSignedSensorChannel                     lhzx r12,r22,r29             -> 0x3fdb78 w2 X r22=0x3fdb78
+APP 0x500c2c cm848_initializeSignedSensorChannel                     lhzx r12,r22,r29             -> 0x3fdb78 w2 X r22=0x3fdb78
+APP 0x500cd4 cm848_initializeSignedSensorChannel                     lhzx r12,r22,r29             -> 0x3fdb78 w2 X r22=0x3fdb78
+APP 0x500dd8 cm848_initializeSignedSensorChannel                     lhzx r12,r22,r29             -> 0x3fdb78 w2 X r22=0x3fdb78
+APP 0x500e54 cm848_initializeSignedSensorChannel                     lhzx r12,r22,r29             -> 0x3fdb78 w2 X r22=0x3fdb78
+APP 0x500eb8 cm848_initializeSignedSensorChannel                     lhzx r12,r22,r29             -> 0x3fdb78 w2 X r22=0x3fdb78
+APP 0x500f60 cm848_initializeSignedSensorChannel                     lhzx r12,r22,r29             -> 0x3fdb78 w2 X r22=0x3fdb78
+APP 0x5013d0 cm848_processUnsignedSensorChannel                      lhzx r11,r6,r27              -> 0x3fdb78 w2 X r6=0x3fdb78
+APP 0x50144c cm848_processUnsignedSensorChannel                      lhzx r12,r6,r27              -> 0x3fdb78 w2 X r6=0x3fdb78
+APP 0x5014b0 cm848_processUnsignedSensorChannel                      lhzx r12,r6,r27              -> 0x3fdb78 w2 X r6=0x3fdb78
+APP 0x501558 cm848_processUnsignedSensorChannel                      lhzx r12,r6,r27              -> 0x3fdb78 w2 X r6=0x3fdb78
+APP 0x501c2c cm848_initializeUnsignedSensorChannel                   lhzx r11,r22,r29             -> 0x3fdb78 w2 X r22=0x3fdb78
+APP 0x501c44 cm848_initializeUnsignedSensorChannel                   lhzx r11,r22,r29             -> 0x3fdb78 w2 X r22=0x3fdb78
+APP 0x501cc0 cm848_initializeUnsignedSensorChannel                   lhzx r12,r22,r29             -> 0x3fdb78 w2 X r22=0x3fdb78
+APP 0x501d2c cm848_initializeUnsignedSensorChannel                   lhzx r12,r22,r29             -> 0x3fdb78 w2 X r22=0x3fdb78
+APP 0x501dd4 cm848_initializeUnsignedSensorChannel                   lhzx r12,r22,r29             -> 0x3fdb78 w2 X r22=0x3fdb78
+APP 0x501ed8 cm848_initializeUnsignedSensorChannel                   lhzx r12,r22,r29             -> 0x3fdb78 w2 X r22=0x3fdb78
+APP 0x501f54 cm848_initializeUnsignedSensorChannel                   lhzx r12,r22,r29             -> 0x3fdb78 w2 X r22=0x3fdb78
+APP 0x501fb8 cm848_initializeUnsignedSensorChannel                   lhzx r12,r22,r29             -> 0x3fdb78 w2 X r22=0x3fdb78
+APP 0x502060 cm848_initializeUnsignedSensorChannel                   lhzx r12,r22,r29             -> 0x3fdb78 w2 X r22=0x3fdb78
+APP 0x50a1dc cm848_processJ1939AcceleratorLowIdleSwitch              lbz r9,-9266(r9)             -> 0x3fdbce w1 D
+APP 0x50a4b4 cm848_copyStatusBitToDatalinkSwitch                     addi r12,r12,-9266           -> 0x3fdbce w0 P
+APP 0x50a4c0 cm848_copyStatusBitToDatalinkSwitch                     lbzx r12,r12,r11             -> 0x3fdbce w1 X r12=0x3fdbce
+APP 0x50a5cc cm848_evaluateJ1939InputSignalFault                     addi r10,r10,-9266           -> 0x3fdbce w0 P
+APP 0x50a5d0 cm848_evaluateJ1939InputSignalFault                     lbzx r10,r10,r7              -> 0x3fdbce w1 X r10=0x3fdbce
+APP 0x50a72c cm848_processJ1939AcceleratorPedalPosition              lbz r12,-9266(r12)           -> 0x3fdbce w1 D
+APP 0x50aa18 cm848_processJ1939AcceleratorIdleSwitchPair             lbz r12,-9266(r12)           -> 0x3fdbce w1 D
+APP 0x5110ac cm848_controlAirConditioningClutchForDrTruck            lhz r12,-9344(r12)           -> 0x3fdb80 w2 D
+APP 0x511ba8 cm848_updateParkNeutralFlagAndTsc1Activity              lhz r12,-9290(r12)           -> 0x3fdbb6 w2 D
+APP 0x5120f8 cm848_deriveSecondBrakeSwitchSignal                     lhz r10,-9326(r10)           -> 0x3fdb92 w2 D
+APP 0x512154 cm848_monitorBrakeSwitchPairAgreement                   addi r30,r30,-9330           -> 0x3fdb8e w0 P
+APP 0x512158 cm848_monitorBrakeSwitchPairAgreement                   lhz r11,22(r30)              -> 0x3fdba4 w2 D
+APP 0x512164 cm848_monitorBrakeSwitchPairAgreement                   lhz r12,4(r30)               -> 0x3fdb92 w2 D
+APP 0x51f320 cm848_sciCommand20Callback                              lhz r12,-9344(r12)           -> 0x3fdb80 w2 D
+APP 0x51f870 cm848_sciCommand20Callback                              lhz r12,-9340(r12)           -> 0x3fdb84 w2 D
+APP 0x51fad4 cm848_sciCommand20Callback                              lhz r12,-9344(r12)           -> 0x3fdb80 w2 D
+APP 0x51fd70 cm848_sciCommand20Callback                              lhz r12,-9344(r12)           -> 0x3fdb80 w2 D
+APP 0x51ffc8 cm848_sciCommand20Callback                              lhz r12,-9340(r12)           -> 0x3fdb84 w2 D
+APP 0x520058 cm848_sciCommand20Callback                              lhz r12,-9340(r12)           -> 0x3fdb84 w2 D
+APP 0x5227fc cm848_monitorFourWheelDriveSwitch                       lhz r12,-9344(r12)           -> 0x3fdb80 w2 D
+APP 0x537c98 cm848_checkDiscreteOutputReadBack                       addi r12,r12,-9330           -> 0x3fdb8e w0 P
+APP 0x537ca0 cm848_checkDiscreteOutputReadBack                       lhzx r12,r12,r11             -> 0x3fdb8e w2 X r12=0x3fdb8e
+APP 0x537cb0 cm848_checkDiscreteOutputReadBack                       addi r10,r10,-9252           -> 0x3fdbdc w0 P
+APP 0x537cb8 cm848_checkDiscreteOutputReadBack                       lhzx r10,r10,r11             -> 0x3fdbdc w2 X r10=0x3fdbdc
+APP 0x539b2c cm848_saveEepromForPowerDown                            addi r30,r30,-9336           -> 0x3fdb88 w0 P
+APP 0x539b30 cm848_saveEepromForPowerDown                            lhz r11,0(r30)               -> 0x3fdb88 w2 D
+APP 0x539b50 cm848_saveEepromForPowerDown                            lhz r11,0(r30)               -> 0x3fdb88 w2 D
+APP 0x539bb4 cm848_saveEepromForPowerDown                            lhz r12,0(r30)               -> 0x3fdb88 w2 D

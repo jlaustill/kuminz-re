@@ -1,0 +1,33 @@
+cm848: round 96 stage B - every TPU3 channel parameter block is a struct instance; eight stale documentation rows go
+
+- **TPU channel parameter blocks:** the TPU3 parameter RAM gives each channel eight words at 0x304100 + 16 x n (TPU-A)
+  and 0x304500 + 16 x n (TPU-B). Eight blocks had a type (round 95 named them tpu_a_channel_N_parameters /
+  tpu_b_channel_N_parameters); the other 24 were plain word rows (TPUA_CHn_PARAMm / TPUB_CHn_PARAMm) or unnamed, so 30
+  of their words rendered as DAT_003041xx / DAT_003045xx. Each is now a tpu3_channel_parameters_t instance
+  (PARAM0-7: their meaning depends on the channel's TPU function) with the same name pattern; the 18 PARAM rows inside
+  them are the fields. Old row comments move to the instance comment.
+- **Two parameters moved as one 32-bit value** rendered as pieces once the blocks were typed (._8_4_ / ._6_4_), so
+  those blocks get a layout with the dword:
+  - `tpu3_period_accumulator_parameters_t` for TPU-B channels 1 / 2 / 9 / 14 (the turbocharger speed, vehicle speed,
+    radiator fan speed and transmission output speed sensors): `accumulated_period` (PARAM4-5) is the period each
+    speed sensor interrupt handler copies and then clears. It replaces `tpu_b_channel_14_parameters_t`, a copy of the
+    generic layout that already rendered the pieces.
+  - `tpu_a_channel_4_parameters_t` for the injector driver channel: `injector_driver_recharge_interval` (PARAM3-4),
+    which `cm848_loadInjectorDriverCalibration` writes (the bank cutoff interval while a cylinder is cut out, else
+    the continuous one).
+- **Stale documentation rows:** eight 'name.field' rows named rows that no longer exist (adc_trigger_t_003024f4,
+  qadc_a_result_high_2, TPUB_CH14_PARAM0, eeprom_command_register). They had no text of their own and only repeated
+  the covering struct's fields, so they are removed. r96/stale_doc_rows_r96.py finds such rows in both firmwares (0
+  left).
+
+Proof: CM848 built twice, deterministic, in a copy of the firmware folder (base = HEAD 8bbdb24c). The
+function set is unchanged (1969) and no old row name is left in the code. The token changes outside the map are the
+30 DAT_003041xx / DAT_003045xx words becoming fields, ._8_4_ -> .accumulated_period and ._6_4_ ->
+.injector_driver_recharge_interval, the two upper-word clears as accumulated_period._0_2_, temps that merged or
+changed type, and one local declaration moving; two functions lost a statement to the merges
+(cm848_configureRadiatorFanSpeedInput, cm848_initVehicleSpeedSensorChannel). Pieces 1379 -> 1378. A first build with
+the generic layout everywhere showed 9 new pieces (the 32-bit accesses), which led to the two dword layouts.
+Rows inside typed spans 385 -> 377 (the documentation rows that went); stale documentation rows 0 in both firmwares.
+Headers regenerated (g++ 0 errors); the _cal audit, the five Python suites and the 109 JUnit tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

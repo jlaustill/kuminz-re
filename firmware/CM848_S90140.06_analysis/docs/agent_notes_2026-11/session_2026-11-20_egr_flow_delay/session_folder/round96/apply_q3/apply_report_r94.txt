@@ -1,0 +1,209 @@
+CM550 removed global 0x008002a8 fuel_timing_blend_rpm_input_1 (inside a new instance)
+CM550 removed global 0x0080032a throttle_timer_capture_backup (inside a new instance)
+CM550 removed global 0x00800332 rpm_filter_buffer_ptr (inside a new instance)
+CM550 removed global 0x0080033a oil_pressure_crank_exit_ptr (inside a new instance)
+CM550 removed global 0x008002d1 protection_reserved_1 (inside a new instance)
+CM550 removed global 0x008002d5 protection_reserved_2 (inside a new instance)
+CM550 removed global 0x008002d6 engine_overspeed_counter (inside a new instance)
+CM550 removed global 0x008002d8 vp44_communication_status_latch (inside a new instance)
+CM550 removed global 0x008002d9 protection_reserved_3 (inside a new instance)
+CM550 removed global 0x008002da protection_state_machine_index (inside a new instance)
+CM550 removed global 0x008002dc protection_reserved_5 (inside a new instance)
+CM550 removed global 0x008002de protection_threshold_table_ptr (inside a new instance)
+CM550 removed global 0x008002e2 protection_threshold_status_shifted (inside a new instance)
+CM550 removed global 0x008002e6 engine_rpm_previous_nonzero (inside a new instance)
+CM550 removed global 0x008002e8 high_rpm_shutdown_previous (inside a new instance)
+CM550 removed global 0x008002ea diagnostic_protection_previous (inside a new instance)
+CM550 removed global 0x008002ec engine_mode_transition_flag (inside a new instance)
+CM550 removed global 0x008002ee protection_fault_id_table (inside a new instance)
+CM550 removed global 0x008002f2 engine_state_timer (inside a new instance)
+CM550 removed global 0x008002f6 engine_mode_transition_timer (inside a new instance)
+CM550 removed global 0x008002fa protection_state2_rpm_timer (inside a new instance)
+CM550 removed global 0x008002fc protection_state2_threshold (inside a new instance)
+CM550 removed global 0x008002fe protection_state2_lookup_args (inside a new instance)
+CM550 removed global 0x00800304 protection_state2_rpm_snapshot (inside a new instance)
+CM550 removed global 0x00800306 protection_state2_table_ptr_2 (inside a new instance)
+proposed names rewritten in comments: 5
+Q3 CM550 function 0x00010e06 cm550_FUN_00010e06 -> cm550_initializeThrottleMinimum [counterpart]
+Q3 CM550 function 0x0001266e mc68k_FUN_0001266e -> mc68k_fillCylinderBalanceSpeedBuffers [counterpart]
+Q3 CM550 function 0x000127c2 vp44_FUN_000127c2 -> cm550_calculateCylinderBalanceTrims [counterpart]
+Q3 CM550 function 0x000133fc cm550_FUN_000133fc -> cm550_emptyExecutiveFrame5ExtraTask [standalone]
+Q3 CM550 function 0x000133fe vp44_FUN_000133fe -> cm550_initializeCylinderBalancing [counterpart]
+Q3 CM550 function 0x000142d4 cm550_FUN_000142d4 -> calculateJ1939PercentPeakTorqueAtSpeed [twin]
+Q3 CM848 function 0x00018070 cm848_calculateJ1939PercentPeakTorqueAtSpeed -> calculateJ1939PercentPeakTorqueAtSpeed [twin of CM550 0x000142d4]
+Q3 CM550 function 0x00014348 cm550_FUN_00014348 -> calculateJ1939FrictionLoadFuelingAtBreakpoints [twin]
+Q3 CM848 function 0x0001811c cm848_calculateJ1939FrictionLoadFuelingAtBreakpoints -> calculateJ1939FrictionLoadFuelingAtBreakpoints [twin of CM550 0x00014348]
+Q3 CM550 function 0x00014812 cm550_FUN_00014812 -> cm550_clearInactiveFaultsOnRequest [counterpart]
+Q3 CM550 function 0x00017baa cm550_FUN_00017baa -> cm550_calculateCrankInitialAdvanceByIntakeManifoldTemperature [counterpart]
+Q3 CM550 function 0x000183cc cm550_FUN_000183cc -> cm550_applyFaultDerateToJ1939TorqueCurveFuelings [counterpart]
+Q3 CM550 function 0x000184c6 cm550_FUN_000184c6 -> cm550_calculateFaultDerateJ1939TorqueCurveSpeedPoints [counterpart]
+Q3 CM550 function 0x000185f0 cm550_FUN_000185f0 -> initializeFaultDerateJ1939TorqueCurvePriority [twin]
+Q3 CM848 function 0x00507c1c cm848_initializeFaultDerateJ1939TorqueCurvePriority -> initializeFaultDerateJ1939TorqueCurvePriority [twin of CM550 0x000185f0]
+Q3 CM550 function 0x000192e0 cm550_FUN_000192e0 -> cm550_initializeEngineProtectionShutdownCounting [counterpart]
+Q3 CM550 function 0x00019702 cm550_FUN_00019702 -> cm550_calculateFaultDerateFuelLimit [counterpart]
+Q3 CM550 function 0x00019caa mc68k_FUN_00019caa -> mc68k_initializeTpuChannel10PrimarySpeedInputMode1 [standalone]
+Q3 CM550 function 0x00019e8e cm550_FUN_00019e8e -> cm550_emptyEnginePositionSignalConfiguration1ThirdStep [standalone]
+Q3 CM550 function 0x0001a298 cm550_FUN_0001a298 -> cm550_checkEnginePositionSensorPhaseOnBackupPeriod [standalone]
+Q3 CM550 function 0x0001a350 mc68k_FUN_0001a350 -> mc68k_initializeTpuChannel10PrimarySpeedInputMode2 [standalone]
+Q3 CM550 function 0x0001a47c mc68k_FUN_0001a47c -> mc68k_initializeTpuChannel0MissingToothInputMode2 [standalone]
+Q3 CM550 function 0x0001a52a cm550_FUN_0001a52a -> cm550_emptyEnginePositionSignalConfiguration2ThirdStep [standalone]
+Q3 CM550 function 0x0001a89a cm550_FUN_0001a89a -> cm550_initializeSpeedMeasurementMode3 [standalone]
+Q3 CM550 function 0x0001a8a2 cm550_FUN_0001a8a2 -> cm550_emptyEnginePositionSignalConfiguration3ThirdStep [standalone]
+Q3 CM550 function 0x0001b1ea mc68k_FUN_0001b1ea -> mc68k_initializeTpuChannel1BackupSpeedPeriodInput [standalone]
+Q3 CM550 function 0x0001b30a mc68k_FUN_0001b30a -> mc68k_tpuChannel1BackupSpeedPeriodInterruptHandler [standalone]
+Q3 CM550 function 0x0001b4b2 mc68k_FUN_0001b4b2 -> mc68k_tpuChannel1SpeedMeasurementResetInterruptHandler [standalone]
+Q3 CM550 function 0x0001c7a8 cm550_FUN_0001c7a8 -> cm550_initializeFourDimensionalInjectionTimingLookups [counterpart]
+Q3 CM550 function 0x0001c824 cm550_FUN_0001c824 -> cm550_setThrottle100J1939TorqueCurveSpeedPoints [counterpart]
+Q3 CM550 function 0x0001c8a0 cm550_FUN_0001c8a0 -> cm550_calculateThrottle100J1939TorqueCurveFuelings [counterpart]
+Q3 CM550 function 0x0001cad6 vp44_FUN_0001cad6 -> cm550_selectEngineProtectionFuelTemperature [standalone]
+Q3 CM550 function 0x0001cb3c vp44_FUN_0001cb3c -> cm550_initializeEngineProtectionFuelTemperature [standalone]
+Q3 CM550 function 0x0001cb48 cm550_FUN_0001cb48 -> vp44_convertPumpFuelTemperatureToSensorScale [standalone]
+Q3 CM550 function 0x0001cdf8 cm550_FUN_0001cdf8 -> cm550_initializeThrottle100FuelingLookups [counterpart]
+Q3 CM550 function 0x0001dbd8 cm550_FUN_0001dbd8 -> cm550_initializeInjectorFaultEngineSpeedLimit [standalone]
+Q3 CM550 function 0x0001ddb4 cm550_FUN_0001ddb4 -> initializeFourDimensionalFuelingAndFrictionFuelLookups [twin]
+Q3 CM848 function 0x0001ea94 cm848_initFaultSeverityTables -> initializeFourDimensionalFuelingAndFrictionFuelLookups [twin of CM550 0x0001ddb4]
+Q3 CM550 function 0x0001de58 cm550_FUN_0001de58 -> cm550_calculateFourDimensionalFueling [counterpart]
+Q3 CM550 function 0x0001e04c cm550_FUN_0001e04c -> cm550_initializeFourDimensionalFuelingInterpolationFactor [counterpart]
+Q3 CM550 function 0x0001f4e8 cm550_FUN_0001f4e8 -> cm550_processJ1922EngineControlRequestFromSource74 [standalone]
+Q3 CM848 function 0x0001bd74 cm848_calculateIntakeAirAdjustment -> cm848_calculateCrankInitialAdvanceByIntakeManifoldTemperature [CM848 only]
+Q3 CM848 function 0x0001ec70 cm848_calculateDualAxisFuelLimit -> cm848_calculateFourDimensionalFueling [CM848 only]
+Q3 CM550 global 0x00807ce4 (no row)  -> accelerator_pedal_highest_valid_minimum word
+Q3 CM550 global 0x0080052c (no row)  -> friction_fuel_coolant_temperature_correction word
+Q3 CM550 global 0x00807d4c jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100 word -> j1939_peak_fueling_tau_0 word
+Q3 CM550 global 0x00807d4e shutdown_protection_step_2 word -> j1939_rated_speed_tau_0 word
+Q3 CM550 global 0x00807d50 shutdown_protection_step_1 word -> j1939_speed_breakpoint_3_tau_0 word
+Q3 CM550 global 0x00807d52 engine_running_timer_threshold word -> j1939_speed_breakpoint_4_tau_0 word
+Q3 CM550 global 0x00807d54 frictional_load_torque_table_value word -> j1939_speed_breakpoint_5_tau_0 word
+Q3 CM550 global 0x0080bc82 frictional_load_interpolated_from_the_no_load_curve_at_lsg_ref_s_0_100 word -> j1939_friction_load_fueling_at_low_idle word
+Q3 CM550 global 0x0080bc84 frictional_load_torque_in_fueling_at_rated_engine_rpm_0_100_bc84 word -> j1939_friction_load_fueling_at_rated_speed word
+Q3 CM550 global 0x0080bc86 frictional_load_torque_in_fueling_at_breakpoint_3_engine_rpm_0_100_bc86 word -> j1939_friction_load_fueling_at_breakpoint_3 word
+Q3 CM550 global 0x0080bc88 frictional_load_torque_in_fueling_at_breakpoint_4_engine_rpm_0_100_bc88 word -> j1939_friction_load_fueling_at_breakpoint_4 word
+Q3 CM550 global 0x0080bc8a frictional_load_torque_in_fueling_at_breakpoint_5_engine_rpm_0_100_bc8a word -> j1939_friction_load_fueling_at_breakpoint_5 word
+Q3 CM550 global 0x0080de78 fault_to_erase_none word -> diagnostic_fault_to_erase word
+Q3 CM550 global 0x00807f3e intercept_fueling_between_lsg_ref_and_the_epf_curve_0_100 word -> fault_derate_curve_low_speed_governor_intercept_fueling word
+Q3 CM550 global 0x00807f40 intercept_fueling_between_hsg_brkpt_and_the_epf_curve_0_100 word -> fault_derate_curve_high_speed_governor_intercept_fueling word
+Q3 CM550 global 0x00807f42 (no row)  -> fault_derate_curve_engine_speed_point_2 word
+Q3 CM550 global 0x00807f44 (no row)  -> fault_derate_curve_engine_speed_point_3 word
+Q3 CM550 global 0x00807f46 (no row)  -> fault_derate_curve_engine_speed_point_4 word
+Q3 CM550 global 0x00807f48 (no row)  -> fault_derate_curve_engine_speed_point_5 word
+Q3 CM550 global 0x00807f4a (no row)  -> fault_derate_curve_priority_bit_position word
+Q3 CM550 global 0x00807f4c (no row)  -> fault_derate_curve_clamp_priority_mask word
+Q3 CM550 global 0x0080060c epf_source_bitmask word -> fault_derate_torque_curve_priority_bit word
+Q3 CM550 global 0x0080d0da state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff word -> j1939_pgn65251_speed_points_request_flags word
+Q3 CM550 global 0x0080d286 indicator_from_engine_protection_that_fuel_derate_1_active_0_inact word -> fault_derate_active_flag word
+Q3 CM550 global 0x0080daf4 (no row)  -> low_speed_governor_droop_selected_slope i16
+Q3 CM550 global 0x00808010 (no row)  -> j1939_pgn65251_speed_at_point_1_low_speed_governor_offset i16
+Q3 CM550 global 0x00808014 (no row)  -> j1939_pgn65251_speed_at_point_3 word
+Q3 CM550 global 0x00808016 (no row)  -> j1939_pgn65251_speed_at_point_4 word
+Q3 CM550 global 0x00808018 (no row)  -> j1939_pgn65251_speed_at_point_5 word
+Q3 CM550 global 0x0080801a bitmap_indicating_when_a_feature_should_clamp_a_fueling_point_0_ffff word -> throttle_100_fueling_point_clamp_bitmap word
+Q3 CM550 global 0x0080801c bitmap_indicating_which_algorithms_wish_to_set_rpms_0_15 word -> throttle_100_priority_bit_index word
+Q3 CM550 global 0x008006e6 torque_curve_feature_bitmask undefined -> throttle_100_speed_points_request_bit word
+Q3 CM550 global 0x008006e8 (no row)  -> throttle_100_speed_points_request_bit_initialized_flag word
+Q3 CM550 global 0x0080da38 torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000 word -> j1939_torque_curve_speed_at_point_1 word
+Q3 CM550 global 0x0080da3a torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000 word -> j1939_torque_curve_speed_at_point_2 word
+Q3 CM550 global 0x0080da3c torque_curve_speed_at_breakpoint_3_0_5000 word -> j1939_torque_curve_speed_at_point_3 word
+Q3 CM550 global 0x0080da3e torque_curve_speed_at_breakpoint_4_0_5000 word -> j1939_torque_curve_speed_at_point_4 word
+Q3 CM550 global 0x0080da40 torque_curve_speed_at_breakpoint_5_0_5000 word -> j1939_torque_curve_speed_at_point_5 word
+Q3 CM550 global 0x0080da42 torque_curve_fueling_at_idle_speed_breakpoint_0_100 word -> j1939_torque_curve_fueling_at_point_1 word
+Q3 CM550 global 0x0080da44 torque_curve_fueling_at_point_2_speed_breakpoint_0_100 word -> j1939_torque_curve_fueling_at_point_2 word
+Q3 CM550 global 0x0080da46 torque_curve_fueling_at_point_3_speed_breakpoint_0_100 word -> j1939_torque_curve_fueling_at_point_3 word
+Q3 CM550 global 0x0080da48 torque_curve_fueling_at_point_4_speed_breakpoint_0_100 word -> j1939_torque_curve_fueling_at_point_4 word
+Q3 CM550 global 0x0080da4a torque_curve_fueling_at_point_5_speed_breakpoint_0_100 word -> j1939_torque_curve_fueling_at_point_5 word
+Q3 CM550 global 0x0080061e (no row)  -> engine_protection_power_up_shutdown_channel i16
+Q3 CM550 global 0x0080d33e (no row)  -> four_dimensional_fueling word
+Q3 CM550 global 0x0080d340 timing_alpha_blend_factor word -> four_dimensional_fueling_interpolation_factor word
+Q3 CM550 global 0x0080d342 maximum_user_fueling_allowed_0_100 i16 -> four_dimensional_fueling_user_maximum i16
+Q3 CM550 global 0x00803f3a (no row)  -> four_dimensional_fueling_increment_cal i16
+Q3 CM550 global 0x0080a254 vp44_fuel_temperature_value undefined -> engine_protection_fuel_temperature word
+Q3 CM550 global 0x0080784a dzg_pressure_max_limit word -> engine_protection_fuel_temperature_source word
+Q3 CM550 global 0x0080d686 (no row)  -> injector_fault_engine_speed_limit word
+Q3 CM550 global 0x008072c0 (no row)  -> cylinder_balance_enable_flag word
+Q3 CM550 global 0x008072dc (no row)  -> cylinder_balance_start_tooth word
+Q3 CM550 global 0x0080728e (no row)  -> cylinder_balance_delta_speed_threshold word
+Q3 CM550 global 0x00807290 (no row)  -> cylinder_balance_upper_speed_limit word
+Q3 CM550 global 0x00807292 (no row)  -> cylinder_balance_lower_speed_limit word
+Q3 CM550 global 0x00807296 (no row)  -> cylinder_balance_magnitude_gain_2 word
+Q3 CM550 global 0x00807298 (no row)  -> cylinder_balance_magnitude_gain_3 word
+Q3 CM550 global 0x0080729a (no row)  -> cylinder_balance_error_filter_coefficient word
+Q3 CM550 global 0x008072a0 (no row)  -> cylinder_balance_fueling_trim_maximum word
+Q3 CM550 global 0x008072a2 (no row)  -> cylinder_balance_fueling_trim_minimum i16
+Q3 CM550 global 0x008072be (no row)  -> cylinder_balance_motoring_fuel_threshold word
+Q3 CM550 global 0x008072c2 (no row)  -> cylinder_balance_reference_1_cylinder_1_real i16
+Q3 CM550 global 0x008072c4 (no row)  -> cylinder_balance_reference_1_cylinder_1_imaginary i16
+Q3 CM550 global 0x008072c6 (no row)  -> cylinder_balance_reference_1_cylinder_5_real i16
+Q3 CM550 global 0x008072c8 (no row)  -> cylinder_balance_reference_1_cylinder_5_imaginary i16
+Q3 CM550 global 0x008072ca (no row)  -> cylinder_balance_reference_1_cylinder_3_real i16
+Q3 CM550 global 0x008072cc (no row)  -> cylinder_balance_reference_1_cylinder_3_imaginary i16
+Q3 CM550 global 0x008072ce (no row)  -> cylinder_balance_reference_2_cylinder_1_real i16
+Q3 CM550 global 0x008072d0 (no row)  -> cylinder_balance_reference_2_cylinder_1_imaginary i16
+Q3 CM550 global 0x008072d2 (no row)  -> cylinder_balance_reference_2_cylinder_5_real i16
+Q3 CM550 global 0x008072d4 (no row)  -> cylinder_balance_reference_2_cylinder_5_imaginary i16
+Q3 CM550 global 0x008072d6 (no row)  -> cylinder_balance_reference_2_cylinder_3_real i16
+Q3 CM550 global 0x008072d8 (no row)  -> cylinder_balance_reference_2_cylinder_3_imaginary i16
+Q3 CM550 global 0x008072da (no row)  -> cylinder_balance_reference_3 word
+Q3 CM550 global 0x008072de (no row)  -> cylinder_balance_compensation_enable word
+Q3 CM550 global 0x008072e0 (no row)  -> cylinder_balance_dynamic_compensation_reset_enable word
+Q3 CM550 global 0x008072e4 (no row)  -> cylinder_balance_trim_gain_1_small word
+Q3 CM550 global 0x008072e6 (no row)  -> cylinder_balance_trim_gain_2_small word
+Q3 CM550 global 0x008072e8 (no row)  -> cylinder_balance_trim_gain_3_small word
+Q3 CM550 global 0x008072ea (no row)  -> cylinder_balance_coolant_temperature_threshold word
+Q3 CM550 global 0x008072ec (no row)  -> cylinder_balance_intake_manifold_temperature_threshold word
+Q3 CM550 global 0x008072ee (no row)  -> cylinder_balance_cutout_disable_time word
+Q3 CM550 global 0x008072f0 (no row)  -> cylinder_balance_fueling_trim_limit_mode word
+Q3 CM550 global 0x008072f2 (no row)  -> cylinder_balance_update_maximum_road_speed word
+Q3 CM550 global 0x008091e8 (no row)  -> cylinder_balance_filtered_fueling word
+Q3 CM550 global 0x008091ea intake_manifold_temp_raw undefined -> cylinder_balance_speed_buffer_1 dword
+Q3 CM550 global 0x00809206 (no row)  -> cylinder_balance_fourier_real_component_1 i32
+Q3 CM550 global 0x0080920a (no row)  -> cylinder_balance_fourier_imaginary_component_1 i32
+Q3 CM550 global 0x0080920e (no row)  -> cylinder_balance_fourier_real_component_2 i32
+Q3 CM550 global 0x00809212 (no row)  -> cylinder_balance_fourier_imaginary_component_2 i32
+Q3 CM550 global 0x00809216 (no row)  -> cylinder_balance_fourier_real_component_3 i32
+Q3 CM550 global 0x0080922e (no row)  -> cylinder_balance_stop_compensation_flag word
+Q3 CM550 global 0x00809230 (no row)  -> cylinder_balance_fourier_threshold word
+Q3 CM550 global 0x00809232 (no row)  -> cylinder_balance_fourier_magnitude_1 word
+Q3 CM550 global 0x00809234 (no row)  -> cylinder_balance_fourier_magnitude_2 word
+Q3 CM550 global 0x00809236 (no row)  -> cylinder_balance_fourier_magnitude_3 word
+Q3 CM550 global 0x00809246 cyl_balance_correction_array undefined -> cylinder_balance_fueling_trim_1 i16
+Q3 CM550 global 0x00809248 (no row)  -> cylinder_balance_fueling_trim_2 i16
+Q3 CM550 global 0x0080924a (no row)  -> cylinder_balance_fueling_trim_3 i16
+Q3 CM550 global 0x0080924c (no row)  -> cylinder_balance_fueling_trim_4 i16
+Q3 CM550 global 0x0080924e (no row)  -> cylinder_balance_fueling_trim_5 i16
+Q3 CM550 global 0x00809250 (no row)  -> cylinder_balance_fueling_trim_6 i16
+Q3 CM550 global 0x0080925e (no row)  -> cylinder_balance_trim_limits_exceeded_flag word
+Q3 CM550 global 0x00809260 (no row)  -> cylinder_balance_trim_index_1 word
+Q3 CM550 global 0x00809262 (no row)  -> cylinder_balance_trim_index_2 word
+Q3 CM550 global 0x00809264 (no row)  -> cylinder_balance_trim_index_3 word
+Q3 CM550 global 0x0080926e throttle_position_raw word -> cylinder_balance_trim_increment_1 word
+Q3 CM550 global 0x00809270 (no row)  -> cylinder_balance_trim_increment_2 word
+Q3 CM550 global 0x00809272 (no row)  -> cylinder_balance_trim_increment_3 word
+Q3 CM550 global 0x00809276 (no row)  -> cylinder_balance_adjusted_real_component_2 i16
+Q3 CM550 global 0x00809278 (no row)  -> cylinder_balance_adjusted_imaginary_component_2 i16
+Q3 CM550 global 0x0080927a (no row)  -> cylinder_balance_adjusted_real_component_3 i16
+Q3 CM550 global 0x00809288 (no row)  -> cylinder_balance_acceleration_buffer_2 i32
+Q3 CM550 global 0x0080928c (no row)  -> cylinder_balance_acceleration_buffer_3 i32
+Q3 CM550 global 0x00809290 (no row)  -> cylinder_balance_acceleration_buffer_4 i32
+Q3 CM550 global 0x00809294 (no row)  -> cylinder_balance_acceleration_buffer_5 i32
+Q3 CM550 global 0x00809298 (no row)  -> cylinder_balance_acceleration_buffer_6 i32
+Q3 CM550 global 0x008092e0 (no row)  -> cylinder_balance_component_3_adjustment i16
+Q3 CM550 global 0x008092e2 cyl_balance_gain_percent undefined -> cylinder_balance_active_trim_gain word
+Q3 CM550 global 0x008092e4 (no row)  -> cylinder_balance_speed_buffer_ready_flag word
+Q3 CM550 global 0x00804158 cyl_balance_trim_array_cal undefined -> cylinder_balance_saved_fueling_trims_cal i16[6]
+Q3 CM550 global 0x0080a1ac (no row)  -> balanced_cylinder_fueling_offsets i16[6]
+Q3 CM550 global 0x008002a4 load_trending_table_1_ptr undefined -> cylinder_balance_segment_index word
+Q3 CM550 global 0x008002a6 (no row)  -> cylinder_balance_segment_period_sum dword
+Q3 CM550 global 0x008002aa load_trending_table_2_base word -> cylinder_balance_segment_period_count word
+Q3 CM550 global 0x00800322 throttle_zero_position_counter undefined -> cylinder_balance_segment_periods dword[7]
+Q3 CM550 global 0x0080033e oil_pressure_mode_init_flag word -> cylinder_balance_speed_buffer_processed_flag word
+Q3 CM550 global 0x008002c6 load_trending_table_6_ptr word -> cylinder_balance_engine_speed_previous word
+Q3 CM550 global 0x008002c8 (no row)  -> cylinder_balance_engine_speed_change word
+Q3 CM550 global 0x008002ca peak_torque_engine_mode_input word -> cylinder_balance_absolute_fourier_real_component_1 word
+Q3 CM550 global 0x008002cc engine_operating_mode_previous word -> cylinder_balance_absolute_fourier_imaginary_component_1 word
+Q3 CM550 global 0x008002ce engine_mode_previous_0 word -> cylinder_balance_absolute_adjusted_real_component_2 word
+Q3 CM550 global 0x008002d0 engine_mode_previous_1 undefined -> cylinder_balance_absolute_adjusted_imaginary_component_2 word
+Q3 CM550 global 0x008002d2 engine_mode_previous_state_2d2 word -> cylinder_balance_absolute_adjusted_real_component_3 word
+Q3 CM550 global 0x008002d4 engine_mode_previous_2 undefined -> cylinder_balance_power_up_fueling_trims i16[6]
+Q3 CM550 global 0x008002e0 system_timer_array undefined -> cylinder_balance_real_2_dynamics_compensation_previous_values word[16]
+Q3 CM550 global 0x00800300 protection_state2_table_ptr_1 undefined -> cylinder_balance_imaginary_2_dynamics_compensation_previous_values word[16]
+Q3 CM550 global 0x00800320 rpm_speed_bin_index i16 -> cylinder_balance_engine_speed_bin_index i16
+Q3 CM550 global 0x00800220 manifold_temp_table_3_x_ptr word -> cylinder_balance_cutout_disable_timer word

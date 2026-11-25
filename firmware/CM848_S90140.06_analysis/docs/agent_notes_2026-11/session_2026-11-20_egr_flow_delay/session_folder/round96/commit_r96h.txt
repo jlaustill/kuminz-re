@@ -1,0 +1,49 @@
+both firmwares: round 96 stage H - seven CM550 functions that never exported a body, the serial EEPROM write queue, and the import warning's cause
+
+- Seven CM550 functions had rows but no body in the .cpp: the decompiler failed on each with 'Low-level Error: Cannot
+  properly adjust input varnodes'. Each takes stack arguments in the compiler's 2-byte-slot layout (a word or byte at
+  +4, then a long at +6 ...), which Ghidra's 4-byte-slot default cannot fit, and none had a function_definitions row
+  (stack_parameter_layout.csv places parameters only from rows). Full prototypes from the disassembly (each argument's
+  load width and offset; round 93's m68k.py) let all seven decompile: cm550_sendCanSingleFrame,
+  registerJ1939ReceiveHandler, registerJ1939DiagnosticService, writeJ1939DiagnosticMemoryByParameterId and three
+  renamed by what they do:
+  - cm550_circularBufferWrite -> cm550_queueEepromByteWrites (the serial EEPROM write queue; its caller's plate already
+    called it that),
+  - cm550_protectionUpdateHandler -> cm550_updateEngineProtectionRestartLimitationCommands (it writes e2m EPRYO2SO /
+    EPRYO2SQ, the restart limitation's shutdown and shutdown-approaching commands, for protection channel 3),
+  - cm550_canFrameDataCopy -> cm550_transmitCanFrameOnMessageObject (it loads an 82527 message object and sets TxRqst).
+  Their callers now show the arguments: cm550_systemFunction6xParameterized rendered registerJ1939DiagnosticService(1),
+  (1, T), (2, T, T) and () with junk stores; it now reads four registrations with the service enum members and the
+  handlers. The write-by-parameter-ID handlers show the ID, offset and length they pass.
+- The serial EEPROM write queue is one family. Its two rings are typed: eeprom_write_queue_addresses (word[1280] at
+  0x80bda8) and eeprom_write_queue_data_bytes (byte[1280] at 0x80c7a8). The only ROM references into
+  0x80bda8-0x80cca7 are those two bases (3 users each: the two queue writers and mc68k_runSerialEepromDriverStep, which
+  sends each pair to QSM_TR4 / QSM_TR5), and none of the 175 rows that sat inside rendered or was referenced (old
+  guesses such as rpm_filter_buffer_start, engine_protection_coolant_ptr_1 and a second circular_buffer_* set); they go.
+  The index / count rows are eeprom_write_queue_read_index / _write_index / _count / _last_request_offset (were
+  eeprom_circular_buffer_* / circular_buffer_*), and cm550_circularBufferEmptyCheck / cm550_parameterCircularBufferWrite
+  are cm550_isEepromWriteQueueEmpty / cm550_queueEepromMirrorByteWrites, with a byte return (moveq #1 / clr.b d0) that
+  ends their 'in_D0 & 0xffffff00' / 'uVar1 & 0xffffff00' returns. Five CM550 enum notes that named those rows as the
+  enums' carriers say so.
+- The '1 function imports failed' warning of every build of both firmwares was the CSV header: both
+  function_renames.csv files had comment lines above 'address,name', and ImportAnalysis skips only the first line, so
+  it parsed the header as an address. The header is line 1 now and the warning is gone; firmware/CLAUDE.md's bullet that
+  called the warning benign is corrected.
+
+Proof: CM550 built twice (three times in all: the second build caught a local row the renumbering
+moved) and CM848 twice, each deterministic, in a copy of the firmware folder (base = HEAD 2be5a272).
+- CM848: the .cpp is identical apart from the Generated line (the header move changes no input row); the build logs no
+  import failure now.
+- CM550: 713 -> 720 bodies, no import failure, no SCRIPT ERROR, 'Skipped: 0' local rows, no old name left in the code.
+  The 37 changed functions are the seven new bodies' callers and the queue family. Every statement-count change (12)
+  was read with a temporaries-normalized diff: calls that now pass their arguments (vp44CanFrameBuilder rendered
+  cm550_sendCanSingleFrame(L) and now passes the identifier, 8, the data and its status byte; cm550_systemFunction6x's
+  junk temporaries go), byte returns that drop a char / uint temporary or an in_D0 / CONCAT22 return, and declarations.
+  One local row had moved: mc68k_dispatchJ1708ReceivedMessages' currentTimerCount (keyed to the auto-name wVar4) landed
+  on a CRC result once the queue functions returned bytes; it is keyed to wVar3 again and names the entry timer.
+  The 4 new pieces are inside the new cm550_sendCanSingleFrame body (the code splits the shifted identifier into two
+  stack words). unaff_ / extraout_ / CONCAT counts are equal (in_ falls by 2: the queue functions' in_D0 returns).
+- Headers regenerated (g++ 0 errors in both); the _cal audit is 0 hard / 0 soft; the five Python suites and the 109
+  JUnit tests pass; no new overlapping rows.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

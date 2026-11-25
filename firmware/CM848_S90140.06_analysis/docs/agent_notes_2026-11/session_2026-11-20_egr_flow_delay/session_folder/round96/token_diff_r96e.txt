@@ -1,0 +1,36 @@
+0x00001454: 12 token changes: cmf_erase_test_register_step_values => _cmf_erase_test_register_step_values | switch_input_20_hardware_line_cal => _switch_input_20_hardware_line_cal | _qadc_control_word_c => cmf_erase_step_2_test_register_value | _qadc_control_word_d => cmf_erase_step_3_test_register_value | _qadc_control_word_e => cmf_erase_step_4_test_register_value | _qadc_control_word_f => cmf_erase_step_5_test_register_value | _qadc_control_word_g => cmf_erase_step_6_test_register_value | . _0_2_ =>  |  => [ 0 ] | logical_output_17_line_cal => _logical_output_17_line_cal |  => [ 0 ] | logical_output_line_active_low_bits
+0x00004320: 4 token changes:  => [ 0 ] |  => [ 0 ] | logical_output_17_line_cal => _logical_output_17_line_cal | logical_output_17_line_cal => _logical_output_17_line_cal
+0x000043a4: 7 token changes:  => [ 0 ] |  => [ 0 ] | logical_output_17_line_cal => _logical_output_17_line_cal | logical_output_17_line_cal => _logical_output_17_line_cal |  => [ 0 ] |  => [ 0 ] |  => [ 0 ]
+0x00004500: 2 token changes: _cmf_control_pulse_value => _cmf_program_pulse_control_value |  => [ 0 ]
+0x00004570: 11 token changes: dword => undefined4 |  => * ( undefined4 * ) |  => + uVar3 * 2 | [ uVar3 ] =>  | _cmf_control_pulse_value => _cmf_program_pulse_control_value | ( & =>  | ) =>  | logical_output_line_active_low_bits_cal . _2_2_ => cmf_program_step_count | _cmf_control_pulse_value => _cmf_program_pulse_control_value | ( & =>  | ) => 
+0x000046dc: 1 token changes:  => [ 0 ]
+0x000049d0: 10 token changes: cmf_erase_test_register_step_values => _cmf_erase_test_register_step_values | cmf_erase_test_register_step_values => _cmf_erase_test_register_step_values |  => * ( dword * ) |  => + uVar6 * 2 | [ uVar6 ] =>  |  => * ( dword * ) |  => + uVar6 * 2 | [ uVar6 ] =>  | . _0_2_ =>  | . _0_2_ => 
+0x00024028: 1 token changes: cmf_erase_test_register_step_values . _2_2_ => switch_input_19_hardware_line_cal
+0x00038ac8: 2 token changes:  => ushort receive_interval ; | ; ushort receive_interval => 
+0x0004f0dc: 1 token changes: . _0_2_ => 
+0x00511b64: 1 token changes: . _0_2_ => 
+---- census of distinct changes
+  11  => [ 0 ]
+   5 . _0_2_ => 
+   5 logical_output_17_line_cal => _logical_output_17_line_cal
+   3 cmf_erase_test_register_step_values => _cmf_erase_test_register_step_values
+   3 _cmf_control_pulse_value => _cmf_program_pulse_control_value
+   2 logical_output_line_active_low_bits_cal . _2_2_ => cmf_program_step_count
+   2 ( & => 
+   2 ) => 
+   2  => * ( dword * )
+   2  => + uVar6 * 2
+   2 [ uVar6 ] => 
+   1 switch_input_20_hardware_line_cal => _switch_input_20_hardware_line_cal
+   1 _qadc_control_word_c => cmf_erase_step_2_test_register_value
+   1 _qadc_control_word_d => cmf_erase_step_3_test_register_value
+   1 _qadc_control_word_e => cmf_erase_step_4_test_register_value
+   1 _qadc_control_word_f => cmf_erase_step_5_test_register_value
+   1 _qadc_control_word_g => cmf_erase_step_6_test_register_value
+   1 dword => undefined4
+   1  => * ( undefined4 * )
+   1  => + uVar3 * 2
+   1 [ uVar3 ] => 
+   1 cmf_erase_test_register_step_values . _2_2_ => switch_input_19_hardware_line_cal
+   1  => ushort receive_interval ;
+   1 ; ushort receive_interval => 

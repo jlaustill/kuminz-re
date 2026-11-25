@@ -1,0 +1,350 @@
+"""The judge's function / CM848 function verdicts for batch Q3 (written out so the JSON can be validated)."""
+import json
+
+base = "/home/linux/.claude/jobs/374b0424/tmp/w15/r96/scratch/Q3/judge/"
+
+
+def f(address, verdict, final_name, relation, own_role, reason, cm848="", comment=""):
+    v = {"kind": "function", "firmware": "CM550", "address": address, "verdict": verdict, "final_name": final_name,
+         "final_relation": relation, "own_role": own_role, "reason": reason}
+    if relation == "twin":
+        v["final_cm848_address"] = cm848
+    if comment:
+        v["final_comment"] = comment
+    return v
+
+
+fun = [
+    f("0x10e06", "CONFIRMED", "cm550_initializeThrottleMinimum", "counterpart",
+      "Start-up store commanded_throttle_state.throttle_minimum (0x80aa8c) = word 0x807ce4 (e2m 1048 +6 CTHISATH) + 4; nothing else.",
+      "Both analysts agree. ROM 0x10e06 move.w (0x807ce4),d0 / addq.w #4 / move.w d0,(0x80aa8c) / rts; only caller mc68k_applicationMain "
+      "(jsr 0x28780). CM848 0x17af4 does the same store plus five more resets and the delta filter, so counterpart. Name unique."),
+    f("0x1266e", "AMENDED", "mc68k_fillCylinderBalanceSpeedBuffers", "counterpart",
+      "Per primary speed interrupt: with CBDEN = 1 and engine_speed_source_select 0, sums the EPS periods of a cylinder segment from the "
+      "start tooth (TPU_CH15_PARAM6 low byte, +36 on crank revolution 2), stores a segment every 4 periods and after slot 6 publishes the "
+      "7 sums (clamped 0..150000) as CBDSB1-7 and sets CBDSBRF.",
+      "Name CONFIRMED (asm 0x1266e-0x1277a read; the only writer of CBDSB1-7 / CBDSBRF; reads the MC68336 TPU parameter word directly, "
+      "the repository's mc68k_ rule as for mc68k_alignCylinderIndexToCrankRevolution; CM848 0x42bd0 stores TPU-A channel 14 capture "
+      "differences instead, so counterpart). Dump: ESTTIP 3, ESNOTTCU 34, so 4 periods = 12 teeth = 120 degrees. AMENDED comment only: "
+      "the four handlers call it unconditionally on every interrupt (jsr 0x19c62 / 0x19f5c / 0x1a6c2 / 0x1a912) and the CBDEN test is "
+      "inside it, not in the callers.",
+      comment="Cylinder balancing speed buffer fill. The four TPU channel 10 primary speed interrupt handlers call it on every interrupt; "
+              "it works only while cylinder_balance_enable_flag (e2m 823C +34 CBDEN) is 1. The tooth number is the low byte of "
+              "TPU_CH15_PARAM6 (+36 on the second crank revolution, CMSYFG); at cylinder_balance_start_tooth (CBDST) it restarts the "
+              "segment. It adds main_engine_position_sensor_period into the segment sum, and every 4 periods (one 120 degree segment "
+              "with 3 teeth per period in this dump) it stores the sum in cylinder_balance_segment_periods[index]; after slot 6 it "
+              "copies the 7 sums, clamped to 0..150000, into cylinder_balance_speed_buffer_1-7 (CBDSB1-7), carries slot 6 into slot 0 "
+              "and sets cylinder_balance_speed_buffer_ready_flag (CBDSBRF). With engine_speed_source_select not 0 it only clears that "
+              "flag."),
+    f("0x127c2", "CONFIRMED", "cm550_calculateCylinderBalanceTrims", "counterpart",
+      "Once per 40-frame cycle (frame 38) with CBDEN: acceleration samples CBDAXB1-6, six-point Fourier terms, stop compensation flag, "
+      "learned dynamics compensation, trim indexes / magnitudes / increments, trim adjustment and limits of the saved trims, mean "
+      "removal, and the six per-cylinder offsets 0x80a1ac-0x80a1b6 = FLFLAJCn + trim x CBDATG / 100 in firing order 1-5-3-6-2-4.",
+      "Both analysts agree. Full decompile and the asm of 0x127c2-0x12a60 / 0x12e80-0x130e0 checked: Fourier formulas, CBDSCF terms "
+      "(CBDATG < 100, speed change > CBDDST, no new buffer, engine_state not 3), gain selection by magnitude vs CBDFT, cutout timer "
+      "reload from CBDDSTM, gates CBDCEN / CBDSCF / CMSYSS / CRSYSS (0x80d0cc / 0x80d0cd = cam and crank sync) / road speed / "
+      "coolant / IMT. Output mapping cyl1<-0x809246, cyl2<-0x80924e, cyl3<-0x80924a, cyl4<-0x809250, cyl5<-0x809248, "
+      "cyl6<-0x80924c proves the firing order. Only caller jsr 0x1be60 (case 0x26). No VP44 register or message: cm550_. "
+      "CM848 hpcr_cbdCalculateCylinderTrims is different code (4/6/8 cylinders, filters): counterpart."),
+    f("0x133fc", "AMENDED", "cm550_emptyStubFunction12", "standalone",
+      "Empty function (rts), called once per 40-frame cycle as the extra task of executive frame 5.",
+      "Name CONFIRMED (body 4e75; the only reference is the jsr in case 5 of executiveFrameInterruptHandler; the other 4-byte hits "
+      "are 33fc move.w opcodes; stub numbers 12-15 are free and follow the cm550_emptyStubFunction10 / 11 precedent). AMENDED "
+      "comment: the jsr instruction is at 0x1ba2c (0x1ba2e is its operand).",
+      comment="Empty function (a single rts). Its one call is the extra task of executive frame 5 (jsr at 0x1ba2c in "
+              "executiveFrameInterruptHandler, after the six task sets), so it runs once per 40-frame cycle and does nothing. It "
+              "sits between the cylinder balancing trim calculation and its initializer; an empty body cannot prove a role or a "
+              "CM848 counterpart."),
+    f("0x133fe", "CONFIRMED", "cm550_initializeCylinderBalancing", "counterpart",
+      "Start-up: clears 0x8002a2, sets the four 16-word dynamics compensation arrays (tables and previous copies) to 10000, points "
+      "the eight cylinder balancing lookup records at their tables, copies the 6 saved trims 0x804158 into 0x8002d4.",
+      "Both analysts agree (describer cm550_initializeCylinderBalance, same meaning). asm 0x133fe-0x1355c read; only caller "
+      "mc68k_applicationMain (jsr 0x28964). No VP44 access, so the vp44_ prefix was wrong. CM848 hpcr_cbdInitFilterState sets the "
+      "event counter / caches and copies its trims: counterpart."),
+    f("0x142d4", "CONFIRMED", "calculateJ1939PercentPeakTorqueAtSpeed", "twin",
+      "Percent peak torque x 256 at one speed: 4D steady state fueling at (speed, throttle 400), storage offset removed and clamped "
+      "0..5888, minus (friction fueling arg + coolant correction 0x80052c), x 0x6400, saturating divide by (JCMXT0FL - JCFCBK04).",
+      "Twin proven: CM848 0x18070 has the same steps in the same order (lookup at y 400, clamp 0..0x1700, subtract friction + "
+      "coolant correction, x 0x6400, saturating divide by j1939_peak_fueling_tau_0 - j1939_friction_load_fueling_at_breakpoint_4) "
+      "and the same call graph position (called 5 times by the twin parents 0x143b6 / 0x1820c in the order idle, rated, bp3, bp4, "
+      "bp5). The only difference is data encoding: cm550_subtractAndClampValue also removes the +11776 storage offset of the CM550 "
+      "4D tables (documented on four_dimensional_fueling_steady_state_lookup) and the lookup takes a record. Shared unprefixed name; "
+      "the CM848 row changes too.",
+      cm848="0x18070"),
+    f("0x14348", "CONFIRMED", "calculateJ1939FrictionLoadFuelingAtBreakpoints", "twin",
+      "Five friction_fuel_by_engine_speed lookups: LSRF -> JCFCLDIS, JCT0RP03/04/05 -> JCFCBK03/04/05, JCRTT0RP -> JCFCBKRR.",
+      "Twin proven: CM848 0x1811c does the same five lookups of the same table in the same order into the same 10E2 records; "
+      "callers are the twin parent (bsr 0x143dc / CM848 0x1820c) and the twin start-up initializer (jsr 0x1de4e / CM848 0x1ea94). "
+      "Shared unprefixed name; the CM848 row changes too.",
+      cm848="0x1811c"),
+    f("0x14812", "CONFIRMED", "cm550_clearInactiveFaultsOnRequest", "counterpart",
+      "On the CLEAR_INACTIVE request: with not_safe_to_program_flag 2 resets every previously active fault and empties the list and "
+      "its counts and FLT2ERAS; always clears diagnostic_clear_request_state.",
+      "Both analysts agree on the role. asm 0x14812-0x14870 read; called by cm550_faultFlagScannerAndProcessor when bit 0 of the "
+      "request word is set (jsr 0x14e3e). CM848 cm848_clearDiagnosticState has the same previously active clear plus the active / "
+      "OBD branches behind other gates: counterpart. Name unique."),
+    f("0x17baa", "AMENDED", "cm550_calculateCrankInitialAdvanceByIntakeManifoldTemperature", "counterpart",
+      "On entry to CRANKING / REENTRY: crank initial advance CKIITA and its break speed CKIITAES from the intake manifold "
+      "temperature: low values with an enabled IMT high / low fault or below the low point, high values above the high point, "
+      "else interpolated.",
+      "Name CONFIRMED (asm 0x17baa-0x17ca4; only writer of 0x80d0a8 / 0x80d0b4; second call of cm550_engineModeTransitionHandler, "
+      "the slot of CM848 0x1bd74 in cm848_processColdStartAdjustment; CM848 has no enable mask test, <= / >= bounds and a slope "
+      "formula, so counterpart). AMENDED comment: it cited names that do not exist (crank_initial_timing_advance, "
+      "crank_initial_advace_break_speed, crank_low / high_intake_manifold_temperature); the rows carry range suffixes.",
+      comment="Crank initial timing on entry to CRANKING or REENTRY (called by cm550_engineModeTransitionHandler): "
+              "crank_initial_timing_advance_0_120 (e2m 105E +10 CKIITA) and crank_initial_advace_break_speed_0_1000 (105E +1C "
+              "CKIITAES) interpolated by intake_manifold_temperature_sensor_state.filtered_value between "
+              "crank_low_intake_manifold_temperature_50_to_293 (105F +8 CKCDIMTP) and "
+              "crank_high_intake_manifold_temperature_50_to_293 (105F +6 CKHTIMTP) from the low / high temperature timings "
+              "(CKCDIMTA / CKHTIMTA) and speeds (CKCDIMES / CKHTIMES). Below the low point, or with the intake manifold "
+              "temperature high or low fault (bits 13 / 14, set and enabled) it takes the low temperature values; above the high "
+              "point the high ones. CM848's cm848_calculateCrankInitialAdvanceByIntakeManifoldTemperature uses the fault bits "
+              "only, <= / >= bounds and a slope formula."),
+    f("0x183cc", "CONFIRMED", "cm550_applyFaultDerateToJ1939TorqueCurveFuelings", "counterpart",
+      "Looks up the fault derate fuel limit at the five torque curve speeds; with EPTQCG & request flags non-zero clamps each curve "
+      "fueling down to it, else, when no request above the fault derate bit is set, writes the five values.",
+      "Both analysts agree. asm 0x183cc-0x184c4 read; only caller bsr 0x185d6 (0x184c6). CM848 0x507858 tests the clamp mask "
+      "against cm848_getHighestPriorityBit only: counterpart."),
+    f("0x184c6", "CONFIRMED", "cm550_calculateFaultDerateJ1939TorqueCurveSpeedPoints", "counterpart",
+      "While EPFLLMSS is 1 sets the fault derate request bit and, as the highest request, the five torque curve speed points (LSG "
+      "reference less droop term, HSG reference before droop plus droop term for HSG sources 1/2/4/5 capped at 40000 or EPRPP2, "
+      "EPRPP3-5), then calls 0x183cc; otherwise clears its bit.",
+      "Both analysts agree. asm 0x184c6-0x185ee read (LSDPEN = algorithm_enable_flags_12_cal bit 6, /167, (x << 3) x HSDPSLAE / "
+      "0x8888). First call of buildPgn65251EngineConfiguration1Payload in both firmwares; CM848 0x507a20 also accepts source 12 "
+      "and caps point 1: counterpart."),
+    f("0x185f0", "CONFIRMED", "initializeFaultDerateJ1939TorqueCurvePriority", "twin",
+      "Start-up: fault derate request bit 0x80060c = 1 << EPTQPZ; fault derate curve-points lookup record offset 2 with its axis / "
+      "value pointers.",
+      "Twin proven: CM848 0x507c1c computes 1 << (position & 0x3f) (the 68k lsl.w by a register count uses the count mod 64, the "
+      "same result) and presets the same lookup offset 2; both are the first of the two closing calls of the shared "
+      "initializePgn65251EngineConfiguration1Buffer. The pointer stores are the CM550 record convention "
+      "(initializeHighSpeedGovernorGainSet precedent). Shared unprefixed name.",
+      cm848="0x507c1c"),
+    f("0x192e0", "CONFIRMED", "cm550_initializeEngineProtectionShutdownCounting", "counterpart",
+      "Start-up: copies EPSOAE (the last shutdown channel) into 0x80061e and clears 0x80061c, the previous shutdown command that "
+      "processDiagnosticLimitStatus uses for edge counting and as its shutdown latch.",
+      "Role agreed by both analysts (describer cm550_resetEngineProtectionShutdownState). asm: move.w (0x8058ce),(0x80061e) / "
+      "clr.w (0x80061c) / rts; only caller vp44_engineProtectionSystemInit after cm550_initShutdownLimitVariables. 0x80061e is read "
+      "only by the consecutive-count compare (0x1927e). Note: 0x80061c also latches the shutdown (while set "
+      "processDiagnosticLimitStatus skips the channels and holds engine_shutdown_command_flag at 1 until STOPPED), so the name is "
+      "narrow but not wrong. CM848 0x508de8 does more resets: counterpart."),
+    f("0x19702", "AMENDED", "cm550_calculateFaultDerateFuelLimit", "counterpart",
+      "Task 2 of the engine protection scheduler: per-channel fueling severities (history-only channels kept out), oil pressure "
+      "power-up inhibit, ramped filtered severity capped at 256, fault_derate_fuel_limit between the derate curve and the 100 "
+      "percent fueling, EPFLLMSS.",
+      "Name CONFIRMED (case 2 of cm550_engineProtectionMultiStateSlowCycle40Coordinator, the slot of CM848 task 2 "
+      "cm848_calculateFaultDerateFuelLimit, which has one channel and no oil pressure inhibit: counterpart; the only run-time writer "
+      "of 0x800630 / 0x80d284 besides the init 0x19960 and the disabled path). AMENDED comment: table bit 0x1a0 + n is "
+      "algorithm_enable_flags_26_cal bit n, the history-only (no derate) enable, not a restart enable; such a channel is not floored "
+      "by its restart severity and is left out of the maximum.",
+      comment="Engine protection fault derate fuel limit, task 2 of cm550_engineProtectionMultiStateSlowCycle40Coordinator. Over the 9 "
+              "protection channels (configurations 0x807032 + 36n, states 0x80d0dc + 46n, severity records 0x8057c0 + 30n) that "
+              "are enabled (configuration bit 0) and have their fueling limiting enable (table bit 0x70 + 4n) or their "
+              "history-only bit (algorithm_enable_flags_26_cal bit n, table bit 0x1a0 + n) set, it takes the fueling severity (the "
+              "ramped cm550_protectionThresholdCalculationHelper when configuration bit 0x40 is set, else "
+              "cm550_protectionPercentageCalculator once the channel's fault time passes its configuration time) and stores it in "
+              "the channel's fueling severity index. A channel that is not history-only gets at least its fueling restart severity "
+              "index and counts toward the highest severity; a history-only channel keeps its severity for the record but does "
+              "not derate. While oil pressure fueling limiting is enabled a power-up inhibit forces full severity (0x100) for the "
+              "oil pressure channel and the maximum until oil_pressure_fault_inhibit_timer (counted while the engine turns, reset "
+              "at 0 rpm) reaches its limit. engine_protection_fueling_severity_filtered moves toward the maximum by the ramp rate "
+              "and is capped at 256; fault_derate_fuel_limit is fuel_demand_maximum at 0, else the fault derate curve at "
+              "engine_rpm_primary plus (256 - severity) x (throttle_100_fueling - curve) / 256; fault_derate_active_flag = severity "
+              "above 0. CM848's cm848_calculateFaultDerateFuelLimit runs in the same task slot with one channel and no oil "
+              "pressure inhibit."),
+    f("0x19caa", "CONFIRMED", "mc68k_initializeTpuChannel10PrimarySpeedInputMode1", "standalone",
+      "Configuration 1 step 1: TPU channel 10 primary speed set-up and pulse period table fill, installing the Mode1 handler "
+      "0x19e90.",
+      "Both analysts agree. Disassembly diff with 0x1999c: identical except the handler store (0x19e90 vs 0x19acc) and branch "
+      "targets; called from case 1 of cm550_initializeEnginePositionSignalInputs (jsr 0x1716e). Dump: configuration 1, 0x808f04 = "
+      "0x19e90. Writes TPU registers directly: mc68k_."),
+    f("0x19e8e", "CONFIRMED", "cm550_emptyStubFunction13", "standalone",
+      "Empty function (rts), configuration 1 step 3.",
+      "Body 4e75; only reference jsr 0x1717a (case 1, third call); the configuration 0 / 2 / 3 third steps are empty too. Stub "
+      "number follows the cm550_emptyStubFunction precedent; unique."),
+    f("0x1a298", "CONFIRMED", "cm550_checkEnginePositionSensorPhaseOnBackupPeriod", "standalone",
+      "EPS main / backup phase check for a backup period: skipped while the backup sync-pulse result 0x80aa18 is set; with the "
+      "main lost counter at 0 marks the backup in phase; with matching tooth counters stores ESPHDF and counts out-of-phase teeth "
+      "into ESMNIPER / ESBUIPER.",
+      "Both analysts agree (describer ...OnBackupPulse). asm vs 0x1a1e0: the same logic with a0 / a2 swapped, gated by 0x80aa18 "
+      "(written for sensor 1 at 0x10386 in cm550_detectEngineSpeedSensorSyncPulse) instead of 0x80aa16 and by ESTMCU01 instead of "
+      "ESTMCU02. No absolute, relative or pointer reference in the ROM or either RAM dump (checked), as the plate says; medium "
+      "confidence accepted because the code itself fixes the role."),
+    f("0x1a350", "AMENDED", "mc68k_initializeTpuChannel10PrimarySpeedInputMode2", "standalone",
+      "Configuration 2 step 1: TPU channel 10 primary speed set-up with the Mode2 handler 0x1a52c and parameter 1 = (0x807ec8 / "
+      "ESPECM01) << 8.",
+      "Name CONFIRMED (diff with 0x1999c: handler 0x1a52c, parameter 1 from 0x807ec8 / ESPECM01, otherwise the same; case 2 jsr "
+      "0x17196). AMENDED comment: 'period_meas_per_cam_number_of_primary_speed_pulse_periods' is not a row name (the row is "
+      "..._mea_0_255), and both set-ups use ESPECY01 for the per-cylinder pointer (not a difference).",
+      comment="Step 1 of engine_position_signal_configuration 2 in cm550_initializeEnginePositionSignalInputs: the same TPU channel "
+              "10 primary speed set-up and pulse period table fill as the mode 0 / 1 set-ups, but it installs "
+              "mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2 (0x808f04 = 0x1a52c) and sets parameter 1 = (0x807ec8 / "
+              "period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 (ESPECM01)) << 8 instead of "
+              "primary_speed_sensor_teeth_per_period_measurement << 8; like them, the per-cylinder pointer uses ESPECY01."),
+    f("0x1a47c", "AMENDED", "mc68k_initializeTpuChannel0MissingToothInputMode2", "standalone",
+      "Configuration 2 step 2: TPU channel 0 as function 9 (missing tooth input) with parameter 0 = 4, channel 15 parameter 6 seeded "
+      "0xc000, priority 2 and the handler 0x1a6e8, then mc68k_initializeSpeedMeasurementMode0.",
+      "Name CONFIRMED (diff with mode 1's 0x19dd0: parameter 0 4 vs 7, no parameter 2 / 4-6 writes, TPU_CH15_PARAM6 = 0xc000, "
+      "priority 2 vs 1, handler 0x1a6e8 vs 0x19f82; case 2 jsr 0x1719c). AMENDED comment: 'pmm_num_of_teeth' is not a row name, "
+      "and 0xc000 is not proven to mean 'no sync error': the handler 0x1a6e8 turns error type 0xc0 into sync state 0 ('no sync') "
+      "and every other type into 2 ('lost sync').",
+      comment="Step 2 of engine_position_signal_configuration 2 in cm550_initializeEnginePositionSignalInputs: disables TPU channel "
+              "0, sets it to function 9 (the missing tooth period measurement) with parameter 0 = 4, parameter 1 = 0x100 + "
+              "pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 (ESNOTTCU), parameter 3 = "
+              "pmm_ratio_tooth_spacing_at_which_missing_tooth_is_found_0_1_9921875 << 8 | "
+              "tooth_count_at_which_missing_tooth_not_detct_err_0_255, seeds TPU_CH15_PARAM6 with 0xc000 (error type 0xc0, which "
+              "the handler 0x1a6e8 turns into cam / crank sync state 0 'no sync', any other type giving 2 'lost sync'), HSQR 3, "
+              "HSRR 1, priority 2, the channel 0 handler 0x808edc = 0x1a6e8 (it reads the PMM error type CKSYERTY and tooth "
+              "CKSYERTT from channel 15 parameter 6) and the interrupt enable, then calls mc68k_initializeSpeedMeasurementMode0. "
+              "Mode 1 uses mc68k_initializeTpuChannel0MissingToothInput (parameter 0 = 7, handler 0x19f82)."),
+    f("0x1a52a", "CONFIRMED", "cm550_emptyStubFunction14", "standalone",
+      "Empty function (rts), configuration 2 step 3.",
+      "Body 4e75; only reference jsr 0x171a2 (case 2, third call). Stub precedent; unique."),
+    f("0x1a89a", "CONFIRMED", "cm550_initializeSpeedMeasurementMode3", "standalone",
+      "Configuration 3 step 2: only jsr mc68k_initializeSpeedMeasurementMode0, which returns at once for configuration 3.",
+      "Both analysts agree on the slot (describer cm550_initializeSpeedMeasurementStepMode3). Body jsr 0x34674 / rts, the same "
+      "bytes as configuration 0's step 2 at 0x19ac2; only reference jsr 0x171b0; 0x34674 acts only for configurations 0 and 1. "
+      "The name states the slot's role in the vocabulary of its siblings and the plate says plainly that it changes nothing in "
+      "its only context, so it does not over-claim."),
+    f("0x1a8a2", "CONFIRMED", "cm550_emptyStubFunction15", "standalone",
+      "Empty function (rts), configuration 3 step 3.",
+      "Body 4e75; only reference jsr 0x171b6 (case 3, third call). Stub precedent; unique."),
+    f("0x1b1ea", "CONFIRMED", "mc68k_initializeTpuChannel1BackupSpeedPeriodInput", "standalone",
+      "Cam sync type 0 set-up of TPU channel 1: fills the backup pulse period table and, with ESSXSNEN bit 3, makes channel 1 a "
+      "period input (function 0xd, parameter 0 = 0xb, HSQR / HSRR 3, priority 2) with the handler 0x1b30a.",
+      "Both analysts agree on the role (describer ...BackupSpeedInputIfEnabled). Dispatcher 0x1839a: EPCMSYTY 0 -> jsr 0x1b1ea "
+      "(dump 0). Diff with type 1's 0x1ae22: enable-bit gate, parameter 0 0xb vs 0x4f, HSQR 3, handler 0x1b30a (period capture) vs "
+      "0x1af32 (cylinder identification pulse width in teeth), so 'Period' discriminates. Dump 0x808ee0 = 0x1b30a."),
+    f("0x1b30a", "AMENDED", "mc68k_tpuChannel1BackupSpeedPeriodInterruptHandler", "standalone",
+      "Channel 1 ISR for cam sync type 0: with ESSXSNEN bit 3 reloads the backup lost counter, captures the backup period from "
+      "parameters 4-5, sets CMSYRSFG, clears the cam sync fault, seeds the backup table and average; then resets the channel 0 "
+      "speed measurement and clears its interrupt flag (RTE).",
+      "Name CONFIRMED (asm 0x1b30a-0x1b398; installed at 0x1b28e; the only channel 1 handler that captures the period). AMENDED "
+      "comment: it clears only parameter 4 (clr.w 0xffff18), the second copy goes to ESPLAVBU (0x80ccfc, average pulse period "
+      "backup), not to 'the EPS backup period' (that is 0x80d04e, where the capture is stored first), and the cited "
+      "'backup_lost_counter' is not a row name.",
+      comment="TPU channel 1 interrupt handler installed by mc68k_initializeTpuChannel1BackupSpeedPeriodInput (cam sync type 0; it "
+              "ends in RTE). With engine_speed_sensor_enable_flags bit 3 set it reloads "
+              "backup_lost_counter_timeout_counter_for_secondary_speed_inp_0_10000 (ESTMCU02) from pulse_period_timeout_backup, "
+              "takes the period from channel 1 parameters 4-5 into "
+              "eps_period_backup_time_between_the_two_most_recent_eps_200_16777216 (ESIPBKPE) and clears parameter 4, sets "
+              "cam_cycle_reset_flag (e2m 11A8 +2, EPS pulse seen), clears the cam sync fault (status word 2 bit 0x800) when its "
+              "first-occurrence latch is clear (interrupts masked) and copies the period into the first entry of the backup pulse "
+              "period table (ESPSTB02) and into average_pulse_period_backup_time_period_over_1_cyl_of_secondary_2_32 (ESPLAVBU); "
+              "otherwise it only clears parameter 4. Then it calls mc68k_resetSpeedMeasurementMode0 and the empty hook 0xc87e and "
+              "clears its interrupt status bit."),
+    f("0x1b4b2", "CONFIRMED", "mc68k_tpuChannel1SpeedMeasurementResetInterruptHandler", "standalone",
+      "Channel 1 ISR for cam sync type 2: only mc68k_resetSpeedMeasurementMode0, the empty hook 0xc87e and the CISR bit 1 clear "
+      "(RTE).",
+      "Both analysts agree on the body (describer ...InterruptHandlerCamSyncType2). asm 0x1b4b2-0x1b4ce; installed by 0x1b39a "
+      "(move.l #0x1b4b2,(0x808ee0) at 0x1b48e, the only pointer); 0xc87e is a bare rts. The name states its only work."),
+    f("0x1c7a8", "CONFIRMED", "cm550_initializeFourDimensionalInjectionTimingLookups", "counterpart",
+      "Start-up set-up of the double pulsing fueling mapping lookup and the steady state / transient 4D injection timing lookups "
+      "(pointers, offsets 2).",
+      "Both analysts agree. The three records are used only by cm550_fuelDemandTableBlendCalculator; only caller "
+      "mc68k_applicationMain. CM848 0x1ea6c presets only the two timing caches: counterpart."),
+    f("0x1c824", "CONFIRMED", "cm550_setThrottle100J1939TorqueCurveSpeedPoints", "counterpart",
+      "When no request above the throttle 100 bit is set: point 1 = LSRF + JCLSRFOF limited 0..0xffff, point 2 = "
+      "engine_speed_limit_ramped, points 3-5 = PPTHES03-05.",
+      "Both analysts agree. asm 0x1c824-0x1c89e; only caller bsr 0x1c8ec. CM848 0x21c3c rebuilds the bit and only floors point 1: "
+      "counterpart."),
+    f("0x1c8a0", "CONFIRMED", "cm550_calculateThrottle100J1939TorqueCurveFuelings", "counterpart",
+      "Throttle 100 requester (every 100 ms): builds its request bit once, and without programmable power sets the bit, the speed "
+      "points and the 100 percent throttle fuelings at the five points (clamp with FSMXTHCG, else set as highest request); with "
+      "programmable power clears its bit.",
+      "Both analysts agree. asm 0x1c8a0-0x1c9d0; caller cm550_runEvery20FramesTaskSetPhase14. CM848 0x21cd4 also builds the "
+      "reference fuelings and tests the highest bit: counterpart."),
+    f("0x1cad6", "AMENDED", "cm550_selectEngineProtectionFuelTemperature", "standalone",
+      "Frame 15 (before the protection coordinator): with engine protection and fuel temperature fueling or rpm limiting enabled, "
+      "EPFLTP = converted VP44 pump temperature (EPFTFG 0), the default EPFLTPDF while fault 295 is set, or the ECM sensor value "
+      "(EPFTFG not 0).",
+      "Name CONFIRMED: it is the engine protection input selector; the pump value is reached only through the converter, so "
+      "cm550_ (the describer's vp44_ is not needed). asm 0x1cad6-0x1cb3a read; caller frame 15 of executiveFrameInterruptHandler "
+      "right before cm550_engineProtectionMultiStateSlowCycle40Coordinator. AMENDED comment: "
+      "'default_value_for_vp44_fuel_temperature_when_sensor_is_fail' is not a row name (the row is ..._40_to_300) and the ECM value "
+      "is fuel_temperature_sensor_state.filtered_value.",
+      comment="Fuel temperature input of engine protection (executive frame 15, once per 200 ms, before "
+              "cm550_engineProtectionMultiStateSlowCycle40Coordinator). While engine_protection_enable and the fuel temperature "
+              "fueling or rpm limiting enable are set it writes engine_protection_fuel_temperature (e2m 81FA +0 EPFLTP): with "
+              "engine_protection_fuel_temperature_source (81F9 +2 EPFTFG) 0 the VP44 pump's fuel temperature converted by "
+              "vp44_convertPumpFuelTemperatureToSensorScale, or "
+              "default_value_for_vp44_fuel_temperature_when_sensor_is_fail_40_to_300 (EPFLTPDF) while fault bit 295 (status word "
+              "18 bit 7) is set; otherwise the ECM fuel temperature sensor's fuel_temperature_sensor_state.filtered_value "
+              "(ADFLTPFT). Not VP44 handling itself, so cm550_."),
+    f("0x1cb3c", "CONFIRMED", "cm550_initializeEngineProtectionFuelTemperature", "standalone",
+      "Start-up: EPFLTP = ADDFFLTP (fuel_temperature_sensor_config.default_value).",
+      "Both analysts agree. move.w (0x806afc),(0x80a254) / rts; only caller mc68k_applicationMain. No VP44 access: the vp44_ "
+      "prefix was wrong."),
+    f("0x1cb48", "CONFIRMED", "vp44_convertPumpFuelTemperatureToSensorScale", "standalone",
+      "Returns in d0 the VP44 pump fuel temperature FLFLTP (1/16 degF signed) + 800, limited 0..5600, shifted left 3 = (T + 50) x "
+      "128, the EPFLTP scale.",
+      "Both analysts agree on the role (describer vp44_convertPumpFuelTemperature). asm 0x1cb48-0x1cb74; only caller jsr 0x1cb26, "
+      "which stores d0. It converts the pump's own reported value, so vp44_ fits. (Its function_definitions row could declare a "
+      "word return; none was proposed.)"),
+    f("0x1cdf8", "CONFIRMED", "cm550_initializeThrottle100FuelingLookups", "counterpart",
+      "Start-up set-up of the low horsepower curve lookup (4D steady state fueling, y input fixed at 400) and the cold temperature "
+      "fuel increment lookup of cm550_calculateThrottle100Fuelings.",
+      "Both analysts agree. Both records are used only by cm550_calculateThrottle100Fuelings; caller cm550_masterSubsystemInit. "
+      "CM848 0x1f300 presets one cache only: counterpart."),
+    f("0x1dbd8", "AMENDED", "cm550_initializeInjectorFaultEngineSpeedLimit", "standalone",
+      "Start-up: ZILMES 0x80d686 and the word 0x80def0 = maximum_rated_engine_speed_0_5000 (no injector fault speed derate).",
+      "Name CONFIRMED (move.w (0x803f40) into 0x80d686 and 0x80def0; only caller mc68k_applicationMain; e2m 10C4 +0 ZILMES in group "
+      "0x21 INJLIMIT). AMENDED comment: 'maximum_rated_engine_speed' is not a row name (the row is ..._0_5000), and the 10C3 "
+      "calibration and ZILMES do have parameter-table entries (0x359b4-0x359c0), only no code reference.",
+      comment="Start-up initializer (mc68k_applicationMain) of the injector fault speed derate (e2m group 0x21 'INJECTOR FAULT SPEED "
+              "DERATE GROUP'): injector_fault_engine_speed_limit (e2m 10C4 +0 ZILMES 'output engine speed limit going to HSG "
+              "reference speed algorithm') and the word 0x80def0 = maximum_rated_engine_speed_0_5000, no derate. The derate itself "
+              "and every reader of these words lie outside the dumped ROM (no code reference to ZILMES or to the 10C3 calibration "
+              "0x808152-0x808156 in it, only parameter table entries). CM848 has no such feature."),
+    f("0x1ddb4", "CONFIRMED", "initializeFourDimensionalFuelingAndFrictionFuelLookups", "twin",
+      "Start-up: sets the 4D steady state and transient fueling lookups (offsets 2 / 2), the friction fuel by speed and coolant "
+      "correction lookups (offset 2), then calls calculateJ1939FrictionLoadFuelingAtBreakpoints.",
+      "Twin proven: CM848 0x1ea94 asm stores 2 into the steady state pair, the transient pair, the friction offset (0x40aef8) and "
+      "the coolant correction offset (0x40aefa) in the same order, then bl 0x1811c (the twin of 0x14348); both are start-up steps "
+      "of applicationMain (CM550 jsr 0x2886a, CM848 cpp line 59502). CM550 also stores the record pointers (record convention). "
+      "The CM848 name cm848_initFaultSeverityTables is wrong; shared unprefixed name.",
+      cm848="0x1ea94"),
+    f("0x1de58", "CONFIRMED", "cm550_calculateFourDimensionalFueling", "counterpart",
+      "4D fueling (5DFL): steady state and transient tables at (engine_rpm_primary, commanded throttle) kept between their 0 / 100 "
+      "percent curves, blended by FLINML (Q14), plus 5DFLAJ, at least fuel_demand_minimum, at most the one-shot 5DIRMXFL which it "
+      "reloads with 5888.",
+      "Both analysts agree. Decompile checked against the asm landmarks; caller cm550_diagnostic_parameter_handler stores it in "
+      "0x80d33e. CM848 0x1ec70 has the same structure but the filtered throttle and speed and no 5DFLAJ step, so counterpart, not "
+      "twin."),
+    f("0x1e04c", "CONFIRMED", "cm550_initializeFourDimensionalFuelingInterpolationFactor", "counterpart",
+      "Start-up: FLINML (0x80d340) = 0x4000.",
+      "Both analysts agree. move.w #0x4000,(0x80d340) / rts; only caller mc68k_applicationMain. CM848 0x1ef30 also sets the "
+      "commanded throttle filter: counterpart."),
+    f("0x1f4e8", "CONFIRMED", "cm550_processJ1922EngineControlRequestFromSource74", "standalone",
+      "J1922 engine control (override) request from J1708 MID 74: length check by mode, ignored-request / source table checks, sets "
+      "the override mode, network type 0, source 74 and control device 1 (TRANS), then the speed / torque / limit request and the "
+      "retarder, high idle and driveline bits.",
+      "Role agreed by both analysts (describer cm550_processJ1922TransmissionEngineControlRequest). Jump table 0x163e8 (MIDs "
+      "74-81, J1922 range 69-86 with algorithm flag 0x803caa bit 2): 74 -> 0x1f4e8 only. The source number is a valid "
+      "discriminator; the code also records the sender as engine_control_device_indicator 1 = TRANS (e2m JCEGCOID), the MID 79 "
+      "handler 0x1f8bc as 2 = ABS, so a 'Transmission' name would also be supported. Plate checked against the decompile "
+      "(lengths 3 / 5 / 4 / 5, timeouts, formulas)."),
+]
+
+cm848 = [
+    {"kind": "cm848_function", "firmware": "CM848", "address": "0x1bd74", "verdict": "CONFIRMED",
+     "final_name": "cm848_calculateCrankInitialAdvanceByIntakeManifoldTemperature",
+     "own_role": "On entry to CRANKING / REENTRY: crank_initial_advance and crank_initial_advance_break_speed from the intake "
+                 "manifold temperature (low values with an IMT error or at / below the low point, high values at / above the high "
+                 "point, else interpolated).",
+     "reason": "The body writes only crank_initial_advance / crank_initial_advance_break_speed (their only writer) from the 105F "
+               "crank manifold temperature records; caller cm848_processColdStartAdjustment between the cold start temperature "
+               "table and the rpm limit. The old name calculateIntakeAirAdjustment says nothing of the crank timing. New name "
+               "unique in both firmwares. Its old name is cited in one other CM848 function_renames comment (follow-up)."},
+    {"kind": "cm848_function", "firmware": "CM848", "address": "0x1ec70", "verdict": "CONFIRMED",
+     "final_name": "cm848_calculateFourDimensionalFueling",
+     "own_role": "Returns the 4D fueling: steady state / transient grids at the filtered speed and commanded_throttle_filtered, "
+                 "each kept between its 0 / 100 percent curves without programmable power, blended by the interpolation factor, at "
+                 "least fuel_demand_minimum, at most the one-shot user maximum (reloaded with 5888).",
+     "reason": "Its result is stored in four_dimensional_fueling (e2m 1053 +0) by cm848_updateFourDimensionalFueling; it is a "
+               "fueling demand, not a limit. Counterpart of CM550 0x1de58 (no 5DFLAJ increment, other inputs). New name unique. "
+               "The old name is cited in 3 function_renames and 4 global_variables comments of CM848 (follow-up)."},
+]
+
+json.dump(fun + cm848, open(base + "function_verdicts.json", "w"), indent=1)
+print(len(fun), len(cm848))

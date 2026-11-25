@@ -1,0 +1,189 @@
++int T;
+-int T;
++word T;
++short *T;
++word *T;
++sword *T;
++dword *T;
+-undefined2 *T;
+-undefined2 *T;
+-short *T;
++word *T;
+-T = (int *)&cylinder_balance_speed_buffer_1;
++T = &cylinder_balance_speed_buffer_1;
+-cylinder_balance_fourier_real_component_2 = cm550_scaleByRatioSigned (cylinder_balance_acceleration_buffer_5 + cylinder_balance_acceleration_buffer_4 + cylinder_balance_acceleration_buffer_2 + cylinder_balance_accelerat
+-cylinder_balance_fourier_real_component_2 = cylinder_balance_acceleration_buffer_6 + cylinder_balance_acceleration_buffer_3 + cylinder_balance_fourier_real_component_2;
++T = cm550_scaleByRatioSigned (cylinder_balance_acceleration_buffer_5 + cylinder_balance_acceleration_buffer_4 + cylinder_balance_acceleration_buffer_2 + cylinder_balance_acceleration_buffer_1,0xffffffff,2);
++cylinder_balance_fourier_real_component_2 = cylinder_balance_acceleration_buffer_6 + cylinder_balance_acceleration_buffer_3 + T;
+-_cyl_balance_gain_percent = cm550_tableLookup2D(&cylinder_balance_stop_compensation_lookup);
+-if (100 < _cyl_balance_gain_percent) {
+-_cyl_balance_gain_percent = 100;
+-}
+-cylinder_balance_engine_speed_change = (ushort)((uint)current_engine_rpm_filtered - (uint)cylinder_balance_engine_speed_previous);
++cylinder_balance_active_trim_gain = cm550_tableLookup2D(&cylinder_balance_stop_compensation_lookup);
++if (100 < cylinder_balance_active_trim_gain) {
++cylinder_balance_active_trim_gain = 100;
++}
++cylinder_balance_engine_speed_change = (word)((uint)current_engine_rpm_filtered - (uint)cylinder_balance_engine_speed_previous);
+-if ((((_cyl_balance_gain_percent < 100) || (cylinder_balance_delta_speed_threshold < cylinder_balance_engine_speed_change)) || (cylinder_balance_speed_buffer_processed_flag == 0)) || (engine_state != ENGINE_STATE_RUNNIN
++if ((((cylinder_balance_active_trim_gain < 100) || (cylinder_balance_delta_speed_threshold < cylinder_balance_engine_speed_change)) || (cylinder_balance_speed_buffer_processed_flag == 0)) || (engine_state != ENGINE_STAT
+-cylinder_balance_adjusted_real_component_2 = (word)T;
++cylinder_balance_adjusted_real_component_2 = (sword)T;
+-cylinder_balance_adjusted_imaginary_component_2 = (ushort)T;
++cylinder_balance_adjusted_imaginary_component_2 = (sword)T;
+-T = cylinder_balance_adjusted_real_component_2 - (short)((int)((uint)cylinder_balance_error_filter_coefficient * (int)(short)cylinder_balance_adjusted_real_component_2) / 10000);
+-T = cylinder_balance_adjusted_imaginary_component_2 - (short)((int)((uint)cylinder_balance_error_filter_coefficient * (int)(short)cylinder_balance_adjusted_imaginary_component_2) / 10000);
+-cylinder_balance_real_2_dynamics_compensation_values[cylinder_balance_engine_speed_bin_index] = T + *(short *)(&cylinder_balance_real_2_dynamics_compensation_previous_values + cylinder_balance_engine_speed_bin_index * 2
+-cylinder_balance_real_2_dynamics_compensation_values[cylinder_balance_engine_speed_bin_index + 1] = T + *(short *)(&protection_threshold_status_shifted + cylinder_balance_engine_speed_bin_index * 2);
+-cylinder_balance_imaginary_2_dynamics_compensation_values[cylinder_balance_engine_speed_bin_index] = T + *(short *)(&cylinder_balance_imaginary_2_dynamics_compensation_previous_values + cylinder_balance_engine_speed_bin
+-cylinder_balance_imaginary_2_dynamics_compensation_values[cylinder_balance_engine_speed_bin_index + 1] = T + *(short *)(&DAT_00800302 + cylinder_balance_engine_speed_bin_index * 2);
+-*(word *)(&cylinder_balance_real_2_dynamics_compensation_previous_values + cylinder_balance_engine_speed_bin_index * 2) = cylinder_balance_real_2_dynamics_compensation_values[cylinder_balance_engine_speed_bin_index];
+-*(word *)(&protection_threshold_status_shifted + cylinder_balance_engine_speed_bin_index * 2) = cylinder_balance_real_2_dynamics_compensation_values[cylinder_balance_engine_speed_bin_index + 1];
+-*(word *)(&cylinder_balance_imaginary_2_dynamics_compensation_previous_values + cylinder_balance_engine_speed_bin_index * 2) = cylinder_balance_imaginary_2_dynamics_compensation_values[cylinder_balance_engine_speed_bin_
+-*(word *)(&DAT_00800302 + cylinder_balance_engine_speed_bin_index * 2) = cylinder_balance_imaginary_2_dynamics_compensation_values[cylinder_balance_engine_speed_bin_index + 1];
++T = cylinder_balance_adjusted_real_component_2 - (short)((int)((uint)cylinder_balance_error_filter_coefficient * (int)cylinder_balance_adjusted_real_component_2) / 10000);
++T = cylinder_balance_adjusted_imaginary_component_2 - (short)((int)((uint)cylinder_balance_error_filter_coefficient * (int)cylinder_balance_adjusted_imaginary_component_2) / 10000);
++cylinder_balance_real_2_dynamics_compensation_values[cylinder_balance_engine_speed_bin_index] = T + cylinder_balance_real_2_dynamics_compensation_previous_values [cylinder_balance_engine_speed_bin_index];
++cylinder_balance_real_2_dynamics_compensation_values [cylinder_balance_engine_speed_bin_index + 1] = T + cylinder_balance_real_2_dynamics_compensation_previous_values [cylinder_balance_engine_speed_bin_index + 1];
++cylinder_balance_imaginary_2_dynamics_compensation_values [cylinder_balance_engine_speed_bin_index] = T + cylinder_balance_imaginary_2_dynamics_compensation_previous_values [cylinder_balance_engine_speed_bin_index];
++cylinder_balance_imaginary_2_dynamics_compensation_values [cylinder_balance_engine_speed_bin_index + 1] = T + cylinder_balance_imaginary_2_dynamics_compensation_previous_values [cylinder_balance_engine_speed_bin_index +
++cylinder_balance_real_2_dynamics_compensation_previous_values [cylinder_balance_engine_speed_bin_index] = cylinder_balance_real_2_dynamics_compensation_values [cylinder_balance_engine_speed_bin_index];
++cylinder_balance_real_2_dynamics_compensation_previous_values [cylinder_balance_engine_speed_bin_index + 1] = cylinder_balance_real_2_dynamics_compensation_values [cylinder_balance_engine_speed_bin_index + 1];
++cylinder_balance_imaginary_2_dynamics_compensation_previous_values [cylinder_balance_engine_speed_bin_index] = cylinder_balance_imaginary_2_dynamics_compensation_values [cylinder_balance_engine_speed_bin_index];
++cylinder_balance_imaginary_2_dynamics_compensation_previous_values [cylinder_balance_engine_speed_bin_index + 1] = cylinder_balance_imaginary_2_dynamics_compensation_values [cylinder_balance_engine_speed_bin_index + 1];
+-T = (undefined2 *)&cylinder_balance_imaginary_2_dynamics_compensation_previous_values;
+-T = (undefined2 *)&cylinder_balance_real_2_dynamics_compensation_previous_values;
++T = cylinder_balance_imaginary_2_dynamics_compensation_previous_values;
++T = cylinder_balance_real_2_dynamics_compensation_previous_values;
+-cylinder_balance_adjusted_real_component_3 = _DAT_00809218 - cylinder_balance_component_3_adjustment;
+-T = (cylinder_balance_fourier_imaginary_component_1 * cylinder_balance_reference_1_cylinder_1_imaginary + cylinder_balance_fourier_real_component_1 * cylinder_balance_reference_1_cylinder_1_real) / 10000;
++cylinder_balance_adjusted_real_component_3 = cylinder_balance_fourier_real_component_3._2_2_ - cylinder_balance_component_3_adjustment;
++T = (cylinder_balance_fourier_imaginary_component_1 * cylinder_balance_reference_1_cylinder_1_imaginary + cylinder_balance_fourier_real_component_1 * cylinder_balance_reference_1_cylinder_1_real ) / 10000;
+-load_trending_table_2_ptr = ((int)cylinder_balance_reference_2_cylinder_1_imaginary * (int)(short)cylinder_balance_adjusted_imaginary_component_2 + (int)cylinder_balance_reference_2_cylinder_1_real * (int)(short)cylinde
+-_fuel_timing_blend_rpm_input_2 = ((int)cylinder_balance_reference_2_cylinder_5_imaginary * (int)(short)cylinder_balance_adjusted_imaginary_component_2 + (int)cylinder_balance_reference_2_cylinder_5_real * (int)(short)cy
+-_DAT_008002b4 = ((int)cylinder_balance_reference_2_cylinder_3_imaginary * (int)(short)cylinder_balance_adjusted_imaginary_component_2 + (int)cylinder_balance_reference_2_cylinder_3_real * (int)(short)cylinder_balance_ad
++load_trending_table_2_ptr = ((int)cylinder_balance_reference_2_cylinder_1_imaginary * (int)cylinder_balance_adjusted_imaginary_component_2 + (int)cylinder_balance_reference_2_cylinder_1_real * (int)cylinder_balance_adju
++_fuel_timing_blend_rpm_input_2 = ((int)cylinder_balance_reference_2_cylinder_5_imaginary * (int)cylinder_balance_adjusted_imaginary_component_2 + (int)cylinder_balance_reference_2_cylinder_5_real * (int)cylinder_balance
++_DAT_008002b4 = ((int)cylinder_balance_reference_2_cylinder_3_imaginary * (int)cylinder_balance_adjusted_imaginary_component_2 + (int)cylinder_balance_reference_2_cylinder_3_real * (int)cylinder_balance_adjusted_real_co
+-if ((short)cylinder_balance_adjusted_real_component_3 < 0) {
++if (cylinder_balance_adjusted_real_component_3 < 0) {
+-cylinder_balance_absolute_fourier_real_component_1 = -_DAT_00809208;
+-}
+-else {
+-cylinder_balance_absolute_fourier_real_component_1 = _DAT_00809208;
++cylinder_balance_absolute_fourier_real_component_1 = -cylinder_balance_fourier_real_component_1._2_2_;
++}
++else {
++cylinder_balance_absolute_fourier_real_component_1 = cylinder_balance_fourier_real_component_1._2_2_;
+-cylinder_balance_absolute_fourier_imaginary_component_1 = -_DAT_0080920c;
+-}
+-else {
+-cylinder_balance_absolute_fourier_imaginary_component_1 = _DAT_0080920c;
++cylinder_balance_absolute_fourier_imaginary_component_1 = -cylinder_balance_fourier_imaginary_component_1._2_2_;
++}
++else {
++cylinder_balance_absolute_fourier_imaginary_component_1 = cylinder_balance_fourier_imaginary_component_1._2_2_;
+-cylinder_balance_fourier_magnitude_1 = cylinder_balance_absolute_fourier_imaginary_component_1;
++cylinder_balance_fourier_magnitude_1 = cylinder_balance_absolute_fourier_imaginary_component_1 ;
+-if ((short)cylinder_balance_adjusted_real_component_2 < 0) {
++if (cylinder_balance_adjusted_real_component_2 < 0) {
+-if ((short)cylinder_balance_adjusted_imaginary_component_2 < 0) {
+-_engine_mode_previous_1 = -cylinder_balance_adjusted_imaginary_component_2;
+-}
+-else {
+-_engine_mode_previous_1 = cylinder_balance_adjusted_imaginary_component_2;
+-}
+-if (_engine_mode_previous_1 < cylinder_balance_absolute_adjusted_real_component_2) {
++if (cylinder_balance_adjusted_imaginary_component_2 < 0) {
++cylinder_balance_absolute_adjusted_imaginary_component_2 = -cylinder_balance_adjusted_imaginary_component_2;
++}
++else {
++cylinder_balance_absolute_adjusted_imaginary_component_2 = cylinder_balance_adjusted_imaginary_component_2;
++}
++if (cylinder_balance_absolute_adjusted_imaginary_component_2 < cylinder_balance_absolute_adjusted_real_component_2) {
+-T = (uint)cylinder_balance_magnitude_gain_2 * (uint)_engine_mode_previous_1;
++T = (uint)cylinder_balance_magnitude_gain_2 * (uint)cylinder_balance_absolute_adjusted_imaginary_component_2;
+-cylinder_balance_fourier_magnitude_2 = (ushort)T;
+-if ((short)cylinder_balance_adjusted_real_component_3 < 0) {
++cylinder_balance_fourier_magnitude_2 = (word)T;
++if (cylinder_balance_adjusted_real_component_3 < 0) {
+-cylinder_balance_fourier_magnitude_3 = (ushort)T;
++cylinder_balance_fourier_magnitude_3 = (word)T;
+-T = (short *)&cylinder_balance_fueling_trim_1;
+-do {
+-*T = *T + *(short *)(&cylinder_balance_saved_fueling_trims_cal + (short)T * 2);
+-T = T + 1;
+-T = T + 1;
+-T = T + 1;
+-}
+-while (T < 6);
+-T = 0;
+-do {
+-if (((int)(uint)cylinder_balance_fueling_trim_maximum < (int)*(short *)(&cylinder_balance_fueling_trim_1 + (short)T * 2)) || (*(short *)(&cylinder_balance_fueling_trim_1 + (short)T * 2) < cylinder_balance_fueling_trim_m
++T = &cylinder_balance_fueling_trim_1;
++do {
++*T = *T + cylinder_balance_saved_fueling_trims_cal[(short)T];
++T = T + 1;
++T = T + 1;
++T = T + 1;
++}
++while (T < 6);
++T = 0;
++do {
++if (((int)(uint)cylinder_balance_fueling_trim_maximum < (int)(&cylinder_balance_fueling_trim_1)[(short)T]) || ((&cylinder_balance_fueling_trim_1)[(short)T] < cylinder_balance_fueling_trim_minimum)) {
+-T = (undefined2 *)&cylinder_balance_power_up_fueling_trims;
+-do {
+-*(undefined2 *)(&cylinder_balance_saved_fueling_trims_cal + (short)T * 2) = *T;
++T = cylinder_balance_power_up_fueling_trims;
++do {
++cylinder_balance_saved_fueling_trims_cal[(short)T] = *T;
+-*(undefined2 *)(&cylinder_balance_saved_fueling_trims_cal + (short)T * 2) = 0;
+-T = T + 1;
+-}
+-while (T < 6);
+-}
+-T = 0;
+-T = (undefined2 *)&cylinder_balance_fueling_trim_1;
+-do {
+-*T = *(undefined2 *)(&cylinder_balance_saved_fueling_trims_cal + (short)T * 2);
++cylinder_balance_saved_fueling_trims_cal[(short)T] = 0;
++T = T + 1;
++}
++while (T < 6);
++}
++T = 0;
++T = &cylinder_balance_fueling_trim_1;
++do {
++*T = cylinder_balance_saved_fueling_trims_cal[(short)T];
+-T = (undefined2 *)&cylinder_balance_fueling_trim_1;
++T = &cylinder_balance_fueling_trim_1;
+-T = (short *)&cylinder_balance_fueling_trim_1;
++T = &cylinder_balance_fueling_trim_1;
+-T = (short *)&cylinder_balance_fueling_trim_1;
++T = &cylinder_balance_fueling_trim_1;
+-T = (undefined2 *)&cylinder_balance_fueling_trim_1;
+-do {
+-*(undefined2 *)(&cylinder_balance_saved_fueling_trims_cal + (short)T * 2) = *T;
++T = &cylinder_balance_fueling_trim_1;
++do {
++cylinder_balance_saved_fueling_trims_cal[(short)T] = *T;
+-balanced_cylinder_fueling_offsets = added_to_final_fuel_command_for_cylinder_1_300_to_300 + (short)(((int)_cyl_balance_correction_array * (int)(short)_cyl_balance_gain_percent) / 100);
+-_DAT_0080a1ae = added_to_final_fuel_command_for_cylinder_2_300_to_300 + (short)(((int)cylinder_balance_fueling_trim_5 * (int)(short)_cyl_balance_gain_percent) / 100);
+-_DAT_0080a1b0 = added_to_final_fuel_command_for_cylinder_3_300_to_300 + (short)(((int)cylinder_balance_fueling_trim_3 * (int)(short)_cyl_balance_gain_percent) / 100);
+-_DAT_0080a1b2 = added_to_final_fuel_command_for_cylinder_4_300_to_300 + (short)(((int)cylinder_balance_fueling_trim_6 * (int)(short)_cyl_balance_gain_percent) / 100);
+-_DAT_0080a1b4 = added_to_final_fuel_command_for_cylinder_5_300_to_300 + (short)(((int)cylinder_balance_fueling_trim_2 * (int)(short)_cyl_balance_gain_percent) / 100);
+-_DAT_0080a1b6 = added_to_final_fuel_command_for_cylinder_6_300_to_300 + (short)(((int)cylinder_balance_fueling_trim_4 * (int)(short)_cyl_balance_gain_percent) / 100);
+-}
+-else {
+-T = 0;
+-T = (undefined2 *)&balanced_cylinder_fueling_offsets;
++balanced_cylinder_fueling_offsets[0] = added_to_final_fuel_command_for_cylinder_1_300_to_300 + (short)(((int)cylinder_balance_fueling_trim_1 * (int)(short)cylinder_balance_active_trim_gain) / 100);
++balanced_cylinder_fueling_offsets[1] = added_to_final_fuel_command_for_cylinder_2_300_to_300 + (short)(((int)cylinder_balance_fueling_trim_5 * (int)(short)cylinder_balance_active_trim_gain) / 100);
++balanced_cylinder_fueling_offsets[2] = added_to_final_fuel_command_for_cylinder_3_300_to_300 + (short)(((int)cylinder_balance_fueling_trim_3 * (int)(short)cylinder_balance_active_trim_gain) / 100);
++balanced_cylinder_fueling_offsets[3] = added_to_final_fuel_command_for_cylinder_4_300_to_300 + (short)(((int)cylinder_balance_fueling_trim_6 * (int)(short)cylinder_balance_active_trim_gain) / 100);
++balanced_cylinder_fueling_offsets[4] = added_to_final_fuel_command_for_cylinder_5_300_to_300 + (short)(((int)cylinder_balance_fueling_trim_2 * (int)(short)cylinder_balance_active_trim_gain) / 100);
++balanced_cylinder_fueling_offsets[5] = added_to_final_fuel_command_for_cylinder_6_300_to_300 + (short)(((int)cylinder_balance_fueling_trim_4 * (int)(short)cylinder_balance_active_trim_gain) / 100);
++}
++else {
++T = 0;
++T = balanced_cylinder_fueling_offsets;

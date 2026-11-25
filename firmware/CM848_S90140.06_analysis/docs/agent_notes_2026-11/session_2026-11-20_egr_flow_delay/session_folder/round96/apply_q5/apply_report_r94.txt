@@ -1,0 +1,71 @@
+CM848 removed global 0x003fdbe2 qadc_channel_config_mask_c (inside a new instance: cmf_program_control_step_bits[1])
+CM848 removed global 0x003fdbe6 qadc_channel_config_mask_d (inside a new instance: cmf_program_control_step_bits[2])
+CM848 removed global 0x003fdbea qadc_channel_config_mask_e (inside a new instance: cmf_program_control_step_bits[3])
+CM848 removed global 0x003fdbee qadc_channel_config_mask_f (inside a new instance: cmf_program_control_step_bits[4])
+CM848 removed global 0x003fdbf2 qadc_channel_config_mask_g (inside a new instance: cmf_program_control_step_bits[5])
+CM848 removed global 0x003fdbf6 qadc_channel_config_mask_h (inside a new instance: cmf_program_control_step_bits[6])
+CM848 removed global 0x003fdbfa qadc_channel_config_mask_i (inside a new instance: cmf_program_control_step_bits[7])
+CM848 removed global 0x003fdc20 qadc_prescale_count_b (inside a new instance: cmf_program_step_pulse_limits[1])
+CM848 removed global 0x003fdc22 qadc_prescale_count_c (inside a new instance: cmf_program_step_pulse_limits[2])
+CM848 removed global 0x003fdc24 qadc_prescale_count_d (inside a new instance: cmf_program_step_pulse_limits[3])
+CM848 removed global 0x003fdc26 qadc_prescale_count_e (inside a new instance: cmf_program_step_pulse_limits[4])
+CM848 removed global 0x003fdc28 qadc_prescale_count_f (inside a new instance: cmf_program_step_pulse_limits[5])
+CM848 removed global 0x003fdc2a qadc_prescale_count_g (inside a new instance: cmf_program_step_pulse_limits[6])
+CM848 removed global 0x003fdc2c qadc_sample_rate_cal (inside a new instance: cmf_program_step_pulse_limits[7])
+proposed names rewritten in comments: 0
+Q5 CM848 function 0x00004570 mpc555_cmfApplyHighVoltagePulse: name kept
+Q5 CM848 function 0x00004320 mpc555_cmfRestoreNormalMode: name kept
+Q5 CM848 function 0x0004f0dc cm848_mirrorTransmissionSolenoidRequestsToOutputs62And63: name kept
+Q5 TYPE FORCED CM848 0x003fdbb2: dword -> word (a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range)
+Q5 CM848 global 0x003fdbb2 qadc_control_word_cal dword -> cmf_erase_test_register_step_values word
+Q5 CM848 global 0x003fdbb4 (no row)  -> switch_input_19_hardware_line_cal word
+Q5 TYPE FORCED CM848 0x003fdbb6: dword -> word (the Q5 judge's width (the live type was a guessed wider / narrower row))
+Q5 CM848 global 0x003fdbb6 qadc_control_word_b dword -> switch_input_20_hardware_line_cal word
+Q5 TYPE FORCED CM848 0x003fdbba: word -> dword (a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range)
+Q5 CM848 global 0x003fdbba qadc_control_word_c word -> cmf_erase_step_2_test_register_value dword
+Q5 TYPE FORCED CM848 0x003fdbbe: word -> dword (a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range)
+Q5 CM848 global 0x003fdbbe qadc_control_word_d word -> cmf_erase_step_3_test_register_value dword
+Q5 TYPE FORCED CM848 0x003fdbc2: word -> dword (a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range)
+Q5 CM848 global 0x003fdbc2 qadc_control_word_e word -> cmf_erase_step_4_test_register_value dword
+Q5 TYPE FORCED CM848 0x003fdbc6: word -> dword (a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range)
+Q5 CM848 global 0x003fdbc6 qadc_control_word_f word -> cmf_erase_step_5_test_register_value dword
+Q5 TYPE FORCED CM848 0x003fdbca: word -> dword (a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range)
+Q5 CM848 global 0x003fdbca qadc_control_word_g word -> cmf_erase_step_6_test_register_value dword
+Q5 CM848 global 0x003fdbce (no row)  -> switch_input_datalink_source_bits_cal byte[4]
+Q5 TYPE FORCED CM848 0x003fdbd2: dword -> word (the Q5 judge's width (the live type was a guessed wider / narrower row))
+Q5 CM848 global 0x003fdbd2 logical_output_line_active_low_bits_cal dword -> logical_output_line_active_low_bits_cal word
+Q5 CM848 global 0x003fdbd4 (no row)  -> cmf_program_step_count word
+Q5 CM848 global 0x003fdbd6 cmf_control_base dword -> cmf_program_control_base dword
+Q5 CM848 global 0x003fdbda cmf_control_pulse_value word -> cmf_program_pulse_control_value word
+Q5 TYPE FORCED CM848 0x003fdbde: dword -> dword[8] (a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range)
+Q5 CM848 global 0x003fdbde cmf_control_step_bits dword -> cmf_program_control_step_bits dword[8]
+Q5 DROPPED global CM848 0x003fdbe2 (entry 1 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW))
+Q5 DROPPED global CM848 0x003fdbe6 (entry 2 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW))
+Q5 DROPPED global CM848 0x003fdbea (entry 3 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW))
+Q5 DROPPED global CM848 0x003fdbee (entry 4 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW))
+Q5 DROPPED global CM848 0x003fdbf2 (entry 5 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW))
+Q5 DROPPED global CM848 0x003fdbf6 (entry 6 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW))
+Q5 DROPPED global CM848 0x003fdbfa (entry 7 of cmf_program_control_step_bits (the Q5 judge: DELETE THIS ROW))
+Q5 TYPE FORCED CM848 0x003fdbfe: dword -> word (the Q5 judge's width (the live type was a guessed wider / narrower row))
+Q5 CM848 global 0x003fdbfe qadc_queue_timing_config dword -> logical_output_17_line_cal word
+Q5 CM848 global 0x003fdc00 (no row)  -> logical_output_18_line_cal word
+Q5 CM848 global 0x003fdc02 qadc_queue_timing_config_b dword -> cmf_program_step_1_test_register_value dword
+Q5 CM848 global 0x003fdc06 qadc_queue_timing_config_c dword -> cmf_program_step_2_test_register_value dword
+Q5 CM848 global 0x003fdc0a qadc_queue_timing_config_d dword -> cmf_program_step_3_test_register_value dword
+Q5 CM848 global 0x003fdc0e qadc_queue_timing_config_e dword -> cmf_program_step_4_test_register_value dword
+Q5 CM848 global 0x003fdc12 qadc_queue_timing_config_f dword -> cmf_program_step_5_test_register_value dword
+Q5 CM848 global 0x003fdc16 qadc_queue_timing_config_g dword -> cmf_program_step_6_test_register_value dword
+Q5 CM848 global 0x003fdc1a qadc_queue_timing_config_h dword -> cmf_program_step_7_test_register_value dword
+Q5 TYPE FORCED CM848 0x003fdc1e: word -> word[8] (a boot kernel CMF parameter row: the kernel's own value before the application loads the EEPROM image over the range)
+Q5 CM848 global 0x003fdc1e cmf_pulses_per_step word -> cmf_program_step_pulse_limits word[8]
+Q5 DROPPED global CM848 0x003fdc20 (entry 1 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW))
+Q5 DROPPED global CM848 0x003fdc22 (entry 2 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW))
+Q5 DROPPED global CM848 0x003fdc24 (entry 3 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW))
+Q5 DROPPED global CM848 0x003fdc26 (entry 4 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW))
+Q5 DROPPED global CM848 0x003fdc28 (entry 5 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW))
+Q5 DROPPED global CM848 0x003fdc2a (entry 6 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW))
+Q5 DROPPED global CM848 0x003fdc2c (entry 7 of cmf_program_step_pulse_limits (the Q5 judge: DELETE THIS ROW))
+Q5 CM848 global 0x003fdc2e flash_poll_timeout_cycles dword -> flash2_chip_erase_poll_limit dword
+Q5 CM848 global 0x003fdc32 flash_poll_timeout_cal dword -> flash2_word_program_poll_limit dword
+Q5 CM848 global 0x003fdc36 flash_poll_retry_limit_cal word -> flash2_chip_erase_retry_limit word
+Q5 CM848 global 0x003fdc38 data_transfer_retry_count word -> flash2_word_program_retry_limit word
