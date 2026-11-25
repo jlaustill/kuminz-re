@@ -294,6 +294,7 @@ extern word duty_cycle_monitor_high_cutoff_engine_speed;  // 0x0005c2bc
 extern word duty_cycle_monitor_low_cutoff_engine_speed;  // 0x0005c2be
 extern word engine_protection_fueling_index_ramp_rate;  // 0x0005c2ec
 extern word engine_speed_limit_fault_derate_full_severity;  // 0x0005c2f0
+extern word fault_derate_engine_speed_limit_filter_coefficient;  // 0x0005c2f2
 extern word engine_protection_maximum_shutdowns;  // 0x0005c2f4
 extern word fault_derate_curve_low_speed_governor_intercept_fueling;  // 0x0005c2f6
 extern word fault_derate_curve_high_speed_governor_intercept_fueling;  // 0x0005c2f8
@@ -1001,6 +1002,7 @@ extern dword wastegate_duty_integrator_q16;  // 0x003fa17a
 extern word fuel_flow_rate_prev_snapshot;  // 0x003fa182
 extern word fuel_demand_quantity_snapshot;  // 0x003fa184
 extern word governor_rpm_band_rate_working;  // 0x003fa190
+extern ema_filter_state_t wastegate_battery_voltage_filter_state;  // 0x003fa19c
 extern word wastegate_duty_integrator_input;  // 0x003fa1a4
 extern dword governor_rpm_band_rate_target;  // 0x003fa1a6
 extern word wastegate_duty_integrator_enable_flag;  // 0x003fa1aa
@@ -1077,6 +1079,7 @@ extern word accelerator_pedal_autozero_elapsed_time;  // 0x003fa6fc
 extern word accelerator_pedal_autozero_update_count;  // 0x003fa6fe
 extern word injection_timing_combustion_limits_input_copy;  // 0x003fa700
 extern INJECTION_TIMING_INTERMEDIATE_SOURCE injection_timing_combustion_limits_input_source;  // 0x003fa702
+extern ema_filter_state_t compressor_outlet_temperature_filter_state;  // 0x003fa70a
 extern word throttle_demand_offset_cal_working;  // 0x003fa712
 extern word egr_delta_pressure_autozero_wait_counter;  // 0x003fa714
 extern ema_filter_state_t egr_delta_pressure_autozero_offset_filter_state;  // 0x003fa716
@@ -1374,6 +1377,7 @@ extern dword accelerator_pedal_pressed_flag;  // 0x003fb012
 extern word switch_31_on_time_counter;  // 0x003fb016
 extern word map_fuel_correction_prev_snapshot;  // 0x003fb018
 extern ema_filter_state_t turbocharger_speed_estimate_boost_lead_term_filter;  // 0x003fb01e
+extern ema_filter_state_t turbocharger_speed_estimate_engine_speed_filter_state;  // 0x003fb026
 extern word variable_geometry_turbocharger_hold_open_confirm_counter;  // 0x003fb02e
 extern word variable_geometry_turbocharger_open_stage_ramp;  // 0x003fb030
 extern word variable_geometry_turbocharger_closed_stage_ramp;  // 0x003fb032
@@ -1868,7 +1872,13 @@ extern ema_filter_state_t ambient_air_temperature_filter;  // 0x003fb9e2
 extern ema_filter_state_t ambient_air_flow_filter;  // 0x003fb9ea
 extern ema_filter_state_t compressor_inlet_pressure_drop_air_flow_filter;  // 0x003fb9f6
 extern ema_filter_state_t exhaust_pressure_estimate_filter_state;  // 0x003fbce2
+extern ema_filter_state_t exhaust_metal_temperature_filter_state;  // 0x003fbcea
+extern word egr_orifice_temperature_compensated;  // 0x003fbcf6
+extern word egr_orifice_temperature_first_stage_filtered;  // 0x003fbcfc
+extern ema_filter_state_t egr_orifice_temperature_first_stage_filter_state;  // 0x003fbd00
+extern ema_filter_state_t egr_orifice_temperature_second_stage_filter_state;  // 0x003fbd08
 extern ema_filter_state_t egr_valve_position_command_diagnostic_filter_state;  // 0x003fbd10
+extern ema_filter_state_t fault_derate_engine_speed_limit_filter_state;  // 0x003fbd2e
 extern engine_protection_channel_configuration_t* engine_protection_current_configuration;  // 0x003fbd42
 extern engine_protection_channel_state_t* engine_protection_current_state;  // 0x003fbd46
 extern engine_protection_channel_history_t* engine_protection_current_history;  // 0x003fbd4a
@@ -2430,6 +2440,7 @@ extern int16_t wastegate_duty_engine_brake_lower_limit;  // 0x003ffcac
 extern word wastegate_duty_turbocharger_speed_derate_derivative_gain;  // 0x003ffcae
 extern word wastegate_duty_compressor_outlet_temperature_derate_derivative_gain;  // 0x003ffcb0
 extern word wastegate_duty_compressor_outlet_temperature_derate_scale_gain;  // 0x003ffcb2
+extern word wastegate_battery_voltage_filter_coefficient;  // 0x003ffcb4
 extern word turbocharger_speed_derate_gain_axis[10];  // 0x003ffcb6
 extern word turbocharger_speed_derate_gain_values[10];  // 0x003ffcca
 extern word wastegate_duty_ceiling_engine_speed_axis[20];  // 0x003ffcde
@@ -2883,6 +2894,7 @@ extern word power_take_off_remote_switch_timeout;  // 0x004071dc
 extern word high_idle_override_reset_enable;  // 0x00407264
 extern word engine_speed_limit_droop_select_port_type;  // 0x00407266
 extern word turbocharger_speed_estimate_boost_lead_gain;  // 0x0040729c
+extern word turbocharger_speed_estimate_engine_speed_filter_coefficient;  // 0x004072a0
 extern word turbocharger_corrected_speed_x_axis[35];  // 0x004072a2
 extern word turbocharger_corrected_speed_y_axis[16];  // 0x004072e8
 extern word turbocharger_corrected_speed_grid[510];  // 0x00407308
@@ -6838,6 +6850,7 @@ extern word charge_water_vapor_partial_pressure_times_4;  // 0x0040af6e
 extern word exhaust_water_vapor_partial_pressure_times_4;  // 0x0040af70
 extern word compressor_inlet_density_negative_rate_limit;  // 0x004065be
 extern word compressor_inlet_density_positive_rate_limit;  // 0x004065c0
+extern word compressor_outlet_temperature_filter_coefficient;  // 0x004065c2
 extern word fuel_pressure_governed_speed_check_debounce_limit;  // 0x00409aac
 extern word fuel_pressure_governed_speed_check_demand_limit;  // 0x00409ad0
 extern word fuel_pressure_allowed_decay_start_pressure;  // 0x0040b8e0
@@ -6911,6 +6924,7 @@ extern word exhaust_temperature_estimate_boost_pressure_coefficient;  // 0x00406
 extern word exhaust_temperature_estimate_offset;  // 0x0040676a
 extern int16_t exhaust_temperature_estimate_injection_timing_coefficient;  // 0x0040676c
 extern word exhaust_temperature_estimate_engine_speed_coefficient;  // 0x0040676e
+extern word exhaust_metal_temperature_filter_coefficient;  // 0x00406770
 extern word egr_orifice_temperature_estimate_maximum_limit;  // 0x00406774
 extern word exhaust_temperature_model_delta;  // 0x0040a67e
 extern word exhaust_temperature_rise_over_intake_manifold_temperature;  // 0x0040a680

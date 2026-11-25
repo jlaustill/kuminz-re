@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 12:29:12 MST 2026
+// Generated: Wed Nov 25 12:34:31 MST 2026
 
 
 //
@@ -12071,7 +12071,7 @@ void cm848_calculateWastegateDutyRequest(void)
                   barometric_altitude_feet,wastegate_duty_floor_adjustment_by_altitude_axis,
                   wastegate_duty_floor_adjustment_by_altitude_values,3);
   dVar2 = cm848_exponentialMovingAverage
-                    ((uint)battery_voltage_sensor_filtered,&ema_filter_state_t_003fa19c);
+                    ((uint)battery_voltage_sensor_filtered,&wastegate_battery_voltage_filter_state);
   if (wastegate_duty_ceiling_grid_enable_cal == 0) {
     wastegate_duty_upper_limit_battery_voltage_factor =
          lookupTableInterpolation
@@ -12244,9 +12244,10 @@ void cm848_runWastegateDutyController(void)
 
 /* Boot init of the wastegate duty controller (called from cm848_applicationMain): zeroes
    wastegate_duty_integrator_q16, governor_rpm_band_rate_working, the duty request of the controller
-   state struct and the battery-voltage averaging accumulator ema_filter_state_t_003fa19c
-   (coefficient pointer set to WORD_003ffcb4), and sets the twelve lookup hint words DAT_003fa17e to
-   DAT_003fa19a to 2. (was mpc555_initTurboCompensationVariables) */
+   state struct and the battery-voltage averaging accumulator wastegate_battery_voltage_filter_state
+   (coefficient pointer set to wastegate_battery_voltage_filter_coefficient), and sets the twelve
+   lookup hint words DAT_003fa17e to DAT_003fa19a to 2. (was mpc555_initTurboCompensationVariables)
+    */
 
 void cm848_initializeWastegateDutyController(void)
 
@@ -12254,8 +12255,9 @@ void cm848_initializeWastegateDutyController(void)
   wastegate_duty_integrator_q16 = 0;
   governor_rpm_band_rate_working = 0;
   wastegate_duty_controller_state.request_half_duty_counts = 0;
-  ema_filter_state_t_003fa19c.accumulator = 0;
-  ema_filter_state_t_003fa19c.coefficient = &WORD_003ffcb4;
+  wastegate_battery_voltage_filter_state.accumulator = 0;
+  wastegate_battery_voltage_filter_state.coefficient = &wastegate_battery_voltage_filter_coefficient
+  ;
   wastegate_duty_ceiling_battery_voltage_gain_cached_axis_offset = 2;
   wastegate_integrator_gain_by_error_cached_axis_offset = 2;
   wastegate_duty_ceiling_by_engine_speed_cached_axis_offset = 2;
@@ -16433,7 +16435,8 @@ uint cm848_estimateCompressorOutletTemperature(void)
   else {
     uVar2 = uVar2 + 0xc680;
   }
-  dVar1 = cm848_exponentialMovingAverage(uVar2 & 0xffff,&ema_filter_state_t_003fa70a);
+  dVar1 = cm848_exponentialMovingAverage(uVar2 & 0xffff,&compressor_outlet_temperature_filter_state)
+  ;
   return dVar1 & 0xffff;
 }
 
@@ -16493,13 +16496,14 @@ void mpc555_initFuelFlowRateVariables(void)
   compressor_map_cached_axis_offsets[0] = 2;
   compressor_map_cached_axis_offsets[1] = 2;
   if ((short)compressor_inlet_temperature_sensor_value < 1) {
-    ema_filter_state_t_003fa70a.accumulator = 0;
+    compressor_outlet_temperature_filter_state.accumulator = 0;
   }
   else {
-    ema_filter_state_t_003fa70a.accumulator =
+    compressor_outlet_temperature_filter_state.accumulator =
          (int)(short)compressor_inlet_temperature_sensor_value << 0x10;
   }
-  ema_filter_state_t_003fa70a.coefficient = &WORD_004065c2;
+  compressor_outlet_temperature_filter_state.coefficient =
+       &compressor_outlet_temperature_filter_coefficient;
   compressor_outlet_temperature_source = SENSOR_VALUE_SOURCE_PRIMARY;
   return;
 }
@@ -31489,7 +31493,8 @@ void cm848_estimateTurbochargerSpeed(void)
     uVar3 = 0xffff;
   }
   dVar1 = cm848_exponentialMovingAverage
-                    ((uint)engine_speed_state.filtered_engine_speed,&ema_filter_state_t_003fb026);
+                    ((uint)engine_speed_state.filtered_engine_speed,
+                     &turbocharger_speed_estimate_engine_speed_filter_state);
   turbocharger_speed_estimate_engine_speed_filtered = (word)dVar1;
   turbocharger_speed_estimate_corrected_speed =
        cm848_dualAxisTableInterpolation
@@ -31549,8 +31554,9 @@ void cm848_initializeTurbochargerSpeedEstimate(void)
   turbocharger_speed_estimate_boost_lead_term_filter.accumulator = 0;
   turbocharger_speed_estimate_boost_lead_term_filter.coefficient =
        &turbocharger_speed_estimate_boost_lead_term_filter_coefficient;
-  ema_filter_state_t_003fb026.accumulator = 0;
-  ema_filter_state_t_003fb026.coefficient = &WORD_004072a0;
+  turbocharger_speed_estimate_engine_speed_filter_state.accumulator = 0;
+  turbocharger_speed_estimate_engine_speed_filter_state.coefficient =
+       &turbocharger_speed_estimate_engine_speed_filter_coefficient;
   return;
 }
 
@@ -66789,7 +66795,7 @@ void cm848_estimateExhaustTemperature(void)
     uVar2 = iVar3 + uVar2;
   }
   exhaust_temperature = (word)uVar2;
-  dVar1 = cm848_exponentialMovingAverage(uVar2 & 0xffff,&ema_filter_state_t_003fbcea);
+  dVar1 = cm848_exponentialMovingAverage(uVar2 & 0xffff,&exhaust_metal_temperature_filter_state);
   exhaust_metal_temperature = (word)dVar1;
   if ((((charge_flow_estimate_terms.charge_flow_source == SENSOR_VALUE_SOURCE_PRIMARY) &&
        (charge_pressure_source == SENSOR_VALUE_SOURCE_PRIMARY)) &&
@@ -66813,8 +66819,9 @@ void cm848_estimateExhaustTemperature(void)
 void cm848_initialization_step_13(void)
 
 {
-  ema_filter_state_t_003fbcea.accumulator = 0;
-  ema_filter_state_t_003fbcea.coefficient = &WORD_00406770;
+  exhaust_metal_temperature_filter_state.accumulator = 0;
+  exhaust_metal_temperature_filter_state.coefficient = &exhaust_metal_temperature_filter_coefficient
+  ;
   return;
 }
 
@@ -66916,12 +66923,14 @@ void cm848_filterEgrOrificeTemperature(void)
   if (((wVar1 == 0) && (air_handling_compensation_and_diagnostic_bypass_cal == 0)) &&
      (algorithm_enable_flags_20_cal.egr_orifice_temperature_lead_compensation_enable != 0)) {
     dVar2 = cm848_exponentialMovingAverage
-                      ((uint)egr_orifice_temperature_after_lead,&ema_filter_state_t_003fbd00);
-    DAT_003fbcfc = (undefined2)dVar2;
-    dVar2 = cm848_exponentialMovingAverage(dVar2 & 0xffff,&ema_filter_state_t_003fbd08);
+                      ((uint)egr_orifice_temperature_after_lead,
+                       &egr_orifice_temperature_first_stage_filter_state);
+    egr_orifice_temperature_first_stage_filtered = (word)dVar2;
+    dVar2 = cm848_exponentialMovingAverage
+                      (dVar2 & 0xffff,&egr_orifice_temperature_second_stage_filter_state);
     wVar3 = (word)dVar2;
   }
-  DAT_003fbcf6 = wVar3;
+  egr_orifice_temperature_compensated = wVar3;
   return;
 }
 
@@ -66943,7 +66952,7 @@ void cm848_selectEgrOrificeTemperature(void)
 
 {
   if ((egr_orifice_temperature_state & 2U) == 0) {
-    egr_orifice_temperature = DAT_003fbcf6;
+    egr_orifice_temperature = egr_orifice_temperature_compensated;
     egr_orifice_temperature_source = SENSOR_VALUE_SOURCE_PRIMARY;
   }
   else {
@@ -66976,8 +66985,9 @@ void cm848_phase_groupB_calculation_2(void)
 void cm848_initialization_step_14(void)
 
 {
-  ema_filter_state_t_003fbd00.accumulator = 0;
-  ema_filter_state_t_003fbd00.coefficient = &egr_orifice_temperature_lead_time_constant_lookup;
+  egr_orifice_temperature_first_stage_filter_state.accumulator = 0;
+  egr_orifice_temperature_first_stage_filter_state.coefficient =
+       &egr_orifice_temperature_lead_time_constant_lookup;
   egr_orifice_temperature = egr_orifice_temperature_sensor_value;
   return;
 }
@@ -68132,7 +68142,7 @@ void cm848_calculateFaultDerateEngineSpeedLimit(void)
   dVar1 = cm848_exponentialMovingAverage
                     ((uint)engine_speed_limit_default_cal -
                      (uVar5 * engine_speed_limit_fault_derate_span >> 8) & 0xffff,
-                     &ema_filter_state_t_003fbd2e);
+                     &fault_derate_engine_speed_limit_filter_state);
   engine_speed_limit_fault_derate = (word)dVar1;
   return;
 }
@@ -68144,8 +68154,9 @@ void cm848_calculateFaultDerateEngineSpeedLimit(void)
 //
 
 /* Initializes the fault derate engine speed limit: engine_speed_limit_fault_derate (source 5 of
-   selectEngineSpeedLimit) and the accumulator of its filter state (ema_filter_state_t_003fbd2e,
-   coefficient WORD_0005c2f2) to engine_speed_limit_default_cal, and
+   selectEngineSpeedLimit) and the accumulator of its filter state
+   (fault_derate_engine_speed_limit_filter_state, coefficient
+   fault_derate_engine_speed_limit_filter_coefficient) to engine_speed_limit_default_cal, and
    engine_speed_limit_fault_derate_span to the default minus
    engine_speed_limit_fault_derate_full_severity (19200 = 2400 rpm). Called with
    cm848_resetFaultDerateFuelLimit by hpcr_initializeEngineProtection;
@@ -68156,8 +68167,10 @@ void cm848_calculateFaultDerateEngineSpeedLimit(void)
 void initializeFaultDerateEngineSpeedLimit(void)
 
 {
-  ema_filter_state_t_003fbd2e.accumulator = (uint)engine_speed_limit_default_cal << 0x10;
-  ema_filter_state_t_003fbd2e.coefficient = &WORD_0005c2f2;
+  fault_derate_engine_speed_limit_filter_state.accumulator =
+       (uint)engine_speed_limit_default_cal << 0x10;
+  fault_derate_engine_speed_limit_filter_state.coefficient =
+       &fault_derate_engine_speed_limit_filter_coefficient;
   engine_speed_limit_fault_derate = engine_speed_limit_default_cal;
   engine_speed_limit_fault_derate_span =
        engine_speed_limit_default_cal - engine_speed_limit_fault_derate_full_severity;
