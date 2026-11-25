@@ -1059,6 +1059,51 @@ typedef enum {
     ENGINE_STATE_SHUTDOWN = 8  /* e2m 8=SHUTDOWN. (PR #53 round 88) */
 } ENGINE_STATE;
 
+typedef enum {
+    FUELING_STATE_NOT_SELECTED = 0,  /* Calterm FSFNFLST 0=NOT_SET (CM848's member of the same label) */
+    FUELING_STATE_TSC1_TORQUE_CONTROL = 1,  /* Calterm FSFNFLST 1=JCOMTORQ (CM848's member of the same label) */
+    FUELING_STATE_TSC1_SPEED_CONTROL = 2,  /* Calterm FSFNFLST 2=JCOMSPED (CM848's member of the same label) */
+    FUELING_STATE_UNIDENTIFIED_3 = 3,  /* Calterm FSFNFLST 3=PSSPEED (no CM848 member; the label's meaning is not proved) */
+    FUELING_STATE_POWER_TAKE_OFF = 4,  /* Calterm FSFNFLST 4=PTO (CM848's member of the same label) */
+    FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND = 5,  /* Calterm FSFNFLST 5=USERCOMD (CM848's member of the same label) */
+    FUELING_STATE_ACCELERATOR_PEDAL_FAULT = 6,  /* Calterm FSFNFLST 6=LIMPHOME (CM848's member of the same label) */
+    FUELING_STATE_VARIABLE_SPEED_GOVERNOR = 7,  /* Calterm FSFNFLST 7=ASGTHROT (CM848's member of the same label) */
+    FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE = 8,  /* Calterm FSFNFLST 8=FOUR_D (CM848's member of the same label) */
+    FUELING_STATE_CRUISE_CONTROL = 9,  /* Calterm FSFNFLST 9=CRUISE (CM848's member of the same label) */
+    FUELING_STATE_ROAD_SPEED_GOVERNOR = 10,  /* Calterm FSFNFLST A=RSG (CM848's member of the same label) */
+    FUELING_STATE_LOW_SPEED_GOVERNOR = 11,  /* Calterm FSFNFLST B=LSG (CM848's member of the same label) */
+    FUELING_STATE_HIGH_SPEED_GOVERNOR = 12,  /* Calterm FSFNFLST C=HSG (CM848's member of the same label) */
+    FUELING_STATE_TORQUE_DERATE_OVERRIDE = 13,  /* Calterm FSFNFLST D=TRQDROVR (CM848's member of the same label) */
+    FUELING_STATE_LOW_GEAR = 14,  /* Calterm FSFNFLST E=LOWGEAR (no CM848 member) */
+    FUELING_STATE_ALTITUDE_DERATE = 15,  /* Calterm FSFNFLST F=ALTDERAT (CM848's member of the same label) */
+    FUELING_STATE_AIR_FUEL_CONTROL_DERATE = 16,  /* Calterm FSFNFLST 10=AFCDERAT (CM848's member of the same label) */
+    FUELING_STATE_UNIDENTIFIED_17 = 17,  /* Calterm FSFNFLST 11=ANCDERAT (no CM848 member; the label's meaning is not proved) */
+    FUELING_STATE_UNIDENTIFIED_18 = 18,  /* Calterm FSFNFLST 12=EPF (no CM848 member; the label's meaning is not proved) */
+    FUELING_STATE_MAXIMUM_THROTTLE = 19,  /* Calterm FSFNFLST 13=MAXTHROT (CM848's member of the same label) */
+    FUELING_STATE_TSC1_TORQUE_LIMIT = 20,  /* Calterm FSFNFLST 14=JCTRQDER (CM848's member of the same label) */
+    FUELING_STATE_OUT_OF_GEAR = 21,  /* Calterm FSFNFLST 15=OUTOGEAR (no CM848 member) */
+    FUELING_STATE_CRANKING = 22,  /* Calterm FSFNFLST 16=CRANK (CM848's member of the same label) */
+    FUELING_STATE_FUEL_OVERRIDE = 23,  /* Calterm FSFNFLST 17=OVERRIDE (CM848's member of the same label) */
+    FUELING_STATE_ENGINE_BRAKE = 24,  /* Calterm FSFNFLST 18=ENGBRAKE (CM848's member of the same label) */
+    FUELING_STATE_OVERSPEED = 25,  /* Calterm FSFNFLST 19=OVERSPED (CM848's member of the same label) */
+    FUELING_STATE_ENGINE_STOPPED = 26,  /* Calterm FSFNFLST 1A=STOP (CM848's member of the same label) */
+    FUELING_STATE_SHUTDOWN = 27,  /* Calterm FSFNFLST 1B=SHUTDOWN (CM848's member of the same label) */
+    FUELING_STATE_FUEL_SYSTEM_DERATE = 28,  /* Calterm FSFNFLST 1C=FSSDERAT (CM848's member of the same label) */
+    FUELING_STATE_FAULT_DERATE = 29,  /* Calterm FSFNFLST 1D=EPFDERAT (CM848's member of the same label) */
+    FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION = 30,  /* Calterm FSFNFLST 1E=ASG_APPL (CM848's member of the same label) */
+    FUELING_STATE_ALTERNATE_TORQUE = 31,  /* Calterm FSFNFLST 1F=ALT_TORQ (no CM848 member) */
+    FUELING_STATE_MASTER_SLAVE_OVERRIDE = 32,  /* Calterm FSFNFLST 20=MSOVRIDE (CM848's member of the same label) */
+    FUELING_STATE_UNIDENTIFIED_33 = 33,  /* Calterm FSFNFLST 21=ESUOILLM (no CM848 member; the label's meaning is not proved) */
+    FUELING_STATE_POWER_TAKE_OFF_DERATE = 34,  /* Calterm FSFNFLST 22=PTODERAT (CM848's member of the same label) */
+    FUELING_STATE_TORQUE_CONTROL = 35,  /* Calterm FSFNFLST 23=TORQCTRL (no CM848 member) */
+    FUELING_STATE_UNIDENTIFIED_36 = 36,  /* Calterm FSFNFLST 24=PTPDERAT (no CM848 member; the label's meaning is not proved) */
+    FUELING_STATE_UNIDENTIFIED_37 = 37,  /* Calterm FSFNFLST 25=T2SPD (CM848's member of the same label) */
+    FUELING_STATE_UNIDENTIFIED_38 = 38,  /* Calterm FSFNFLST 26=T2TORQ (CM848's member of the same label) */
+    FUELING_STATE_UNIDENTIFIED_39 = 39,  /* Calterm FSFNFLST 27=T2DERAT (no CM848 member; the label's meaning is not proved) */
+    FUELING_STATE_NO_DERATE = 40,  /* Calterm FSFNFLST 28=NODERAT (CM848's member of the same label) */
+    FUELING_STATE_IMMOBILIZER_FUEL_DISABLE = 41  /* Calterm FSFNFLST 29=ATDERAT (CM848's member of the same label) */
+} FUELING_STATE;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_msg_hdr_t j1939_msg_hdr_t;

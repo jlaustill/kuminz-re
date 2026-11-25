@@ -3891,7 +3891,7 @@ extern undefined priority_of_client_overriding_raw_op_amp_and_comp_0_ff;  // 0x0
 extern word analog_sensor_override_values[25];  // 0x0080a72e
 extern word analog_sensor_raw_override_values[25];  // 0x0080a760
 extern undefined lsg_governor_fuel_demand;  // 0x0080a8f0
-extern undefined indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12;  // 0x0080a8f2
+extern FUELING_STATE adjusted_user_fueling_state;  // 0x0080a8f2
 extern undefined afc_derate_fuel_adjustment;  // 0x0080a8f6
 extern undefined alpha_blend_factor;  // 0x0080a8f8
 extern word alpha_base;  // 0x0080a8fa
@@ -4714,9 +4714,9 @@ extern undefined how_often_samples_are_taken_for_ct_1_3000_d320;  // 0x0080d320
 extern undefined how_often_samples_are_taken_for_imt_1_3000_d328;  // 0x0080d328
 extern undefined a2d_input_related_to_ac_pressure_255_255;  // 0x0080d32c
 extern undefined current_fuel_demand;  // 0x0080d32e
-extern undefined fuel_limit_selection_state;  // 0x0080d330
+extern FUELING_STATE final_fueling_state;  // 0x0080d330
 extern undefined desired_engine_fueling_after_derate_without_air_handl_derate_0_100;  // 0x0080d332
-extern word requested_fueling_state;  // 0x0080d334
+extern FUELING_STATE requested_fueling_state;  // 0x0080d334
 extern undefined torque_demand_fuel_limit;  // 0x0080d338
 extern undefined indicates_origin_of_tqdqta_value_0_10;  // 0x0080d33a
 extern undefined timing_alpha_blend_factor;  // 0x0080d340
@@ -5070,7 +5070,7 @@ extern undefined closed_loop_governor_active_flag;  // 0x0080dc26
 extern undefined max_engine_speed_while_throttle_fueling_overrides_pto_fueling_0_4500;  // 0x0080dc2c
 extern undefined throttle_fueling_override_active_flag;  // 0x0080dc2e
 extern undefined pto_fuel_demand_snapshot;  // 0x0080dc30
-extern undefined selected_fueling_state_from_pto_fl_state_and_user_fl_state_1_8;  // 0x0080dc32
+extern FUELING_STATE power_take_off_or_user_fueling_state;  // 0x0080dc32
 extern undefined pwm1_driver_error_counter;  // 0x0080dc56
 extern undefined pwm2_driver_error_counter;  // 0x0080dc58
 extern undefined pwm5_driver_error_counter;  // 0x0080dc5e
@@ -5155,12 +5155,12 @@ extern word fault_to_erase_none;  // 0x0080de78
 extern word diagnostic_clear_request_state;  // 0x0080de7a
 extern undefined total_time_offset_moved_to_ti_base_adj_h_none;  // 0x0080de5c
 extern word fuel_limit_shutdown_minimum;  // 0x0080dec8
-extern undefined indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41;  // 0x0080deca
+extern FUELING_STATE torque_derate_fuel_source_code;  // 0x0080deca
 extern undefined fuel_system_specific_fuel_derate_that_is_input_to_the_core_sys_0_100;  // 0x0080decc
 extern undefined smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100;  // 0x0080dece
-extern word fuel_demand_minimum_tracked_state;  // 0x0080ded0
+extern FUELING_STATE fuel_demand_minimum_tracked_state;  // 0x0080ded0
 extern undefined fuel_demand_selected;  // 0x0080ded2
-extern word user_fueling_state;  // 0x0080ded4
+extern FUELING_STATE user_fueling_state;  // 0x0080ded4
 extern undefined eps_period_between_vss_interrupts_0_4294967295;  // 0x0080deda
 extern undefined wet_stack_adjusted_timing_floor_0_120;  // 0x0080dee4
 extern undefined timing_command_just_before_wet_stack_modification_0_120;  // 0x0080dee6
