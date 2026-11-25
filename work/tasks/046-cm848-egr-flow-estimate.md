@@ -4193,7 +4193,7 @@ workflow's batches (`batch_W1..W4.json`: each proposal with its skeptic verdicts
 
 ## Done, round 93 (2026-11-24, same PR): CM550 structure fixes, freeze frames, task sets, two typing passes
 
-Peer relays started and continued the round (21:19, 21:50, 22:20). Scripts and proofs are in
+Peer relays started and continued the round (21:19, 21:50, 22:20, 22:50). Scripts and proofs are in
 `session_folder/round93/`. Eight commits; every build verify DETERMINISTIC; no firmware/CLAUDE.md change.
 - **1f9043ef, a round 91 defect fixed:** seven CM848 plate comments (the J1939 receive twins) had been replaced by the
   literal text "APPEND to the current comment: ..." from a proposal. Restored from the commit before round 91. The
