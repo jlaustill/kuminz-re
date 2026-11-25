@@ -1,0 +1,26 @@
+02fddc: 48e73800                 movem.l d2-d4, -(a7)
+02fde0: 362f0010                 move.w $10(a7), d3
+02fde4: 7400                     moveq #$0, d2
+02fde6: 3403                     move.w d3, d2
+02fde8: 2002                     move.l d2, d0
+02fdea: e58a                     lsl.l #$2, d2
+02fdec: d480                     add.l d0, d2
+02fdee: d482                     add.l d2, d2
+02fdf0: 2002                     move.l d2, d0
+02fdf2: 2800                     move.l d0, d4
+02fdf4: 207c00805a25             movea.l #$805a25, a0
+02fdfa: 42300000                 clr.b (a0, d0.w)
+02fdfe: 207c00805a1c             movea.l #$805a1c, a0
+02fe04: 42b02000                 clr.l (a0, d2.w)
+02fe08: 207c00805a20             movea.l #$805a20, a0
+02fe0e: 42b02000                 clr.l (a0, d2.w)
+02fe12: 207c00805a24             movea.l #$805a24, a0
+02fe18: 0c3000022000             cmpi.b #$2, (a0, d2.w)
+02fe1e: 6608                     bne.b $2fe28
+02fe20: 3f03                     move.w d3, -(a7)
+02fe22: 6100ff6c                 bsr.w $2fd90
+02fe26: 548f                     addq.l #$2, a7
+02fe28: 207c00805a24             movea.l #$805a24, a0
+02fe2e: 42304000                 clr.b (a0, d4.w)
+02fe32: 4cdf001c                 movem.l (a7)+, d2-d4
+02fe36: 4e75                     rts 

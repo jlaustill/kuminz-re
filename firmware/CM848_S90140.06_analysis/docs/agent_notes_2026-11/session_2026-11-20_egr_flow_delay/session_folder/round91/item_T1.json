@@ -1,0 +1,777 @@
+{
+ "proposal": {
+  "item": "T1",
+  "summary": "CM550's J1939 receive layer is CM848's. Seven functions are twins: the six input handlers (CM1 / EBC1 / EEC2 / SHUTDN / PTO / CCVS1) match step for step (filter slots, timeout reloads 500 / 50 / 25, data bytes and bit fields, receiver offsets), and the registrar matches except for its capacity (16 entries against CM848's 17). The input registration (it lacks CM848's j1939_input_fault_start_delay = 1000 store) and the tick (only CM848's final count-down loop) are counterparts. The timeout words 0x804234-0x804264 are CM848's j1939_input_signal_timeouts word[25]: the tick walks them and a twin descriptor table at ROM 0x20108 indexes them. The receiver bytes 0x80d70f-0x80d725 are CM848's 23 j1939_received_* bytes at the same e2m 12F7 offsets, all flat bytes. Slot 9 is wet tank pressure in both firmwares' parameter tables, so CM848's 0x40aaba (now accelerator_pedal_position_2) should take the same name.",
+  "functions": [
+   {
+    "firmware": "cm550",
+    "address": "0x00021a5c",
+    "current_name": "(none - not a function yet; no row)",
+    "proposed_name": "receivePgn57344CabMessage1",
+    "relation": "twin",
+    "other_firmware_address": "0x0050b734",
+    "evidence": "ROM 0x21a5c-0x21a8a, right after the rts at 0x21a5a: move.b 0x803f9c,d0; cmp.b 0x80d9dc,d0; beq; cmpi.b #255,0x803f9c; bne rts; move.w #500,0x804234; movea.l (4,sp),a0; movea.l (6,a0),a0; move.b (a0),0x80d71c; rts. CM848 0x50b734: lbz 0x3fd81e (filter[0]) vs lbz 0x40ad52; beq; cmpwi 255; bne; li 500 / sth 0x3feaa4 (timeouts[0]); lwz 6(r3); lbz 0(r9); stb 0x40aab6. Same filter slot 0, timeout slot 0 = 500, data byte 1, receiver at the same offset (+0x0d from 0x80d70f / 0x40aaa9 = e2m 12F7 +0x10 in both). Registered with key 0xe000 in both (pea 0x21a5c / move.w #57344 at 0x21efe; RAM dump handler table entry 7 = 0xe000 / 0x21a5c). Not in deleted_functions.csv, so the new function_renames.csv row creates it.",
+    "plate_comment": "J1939 PGN 57344 Cab Message 1 (CM1) receive handler: when j1939_engine_fan_requested_percent_speed_source_address_filter_cal (slot 0) equals j1939_received_source_address or is 0xFF it sets j1939_input_signal_timeouts[0] = 500 and stores data byte 1 in j1939_received_engine_fan_requested_percent_speed. Registered for PGN 57344 by cm550_registerJ1939InputMessageHandlers; the receive dispatcher 0x212b2 calls it with the received frame. The same steps and constants as CM848 0x50b734 (new function; PR #53 round 91; the twin of CM848 0x50b734: one shared name)"
+   },
+   {
+    "firmware": "cm848",
+    "address": "0x0050b734",
+    "current_name": "cm848_receivePgn57344CabMessage1",
+    "proposed_name": "receivePgn57344CabMessage1",
+    "relation": "twin",
+    "other_firmware_address": "0x00021a5c",
+    "evidence": "Twin of CM550 0x21a5c; the step-by-step comparison is on the CM550 row.",
+    "plate_comment": "APPEND to the current comment: | (was cm848_receivePgn57344CabMessage1; PR #53 round 91; the twin of CM550 0x21a5c: one shared name)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00021a8c",
+    "current_name": "cm550_FUN_00021a8c",
+    "proposed_name": "receivePgn61441ElectronicBrakeController1Message",
+    "relation": "twin",
+    "other_firmware_address": "0x0050b77c",
+    "evidence": "Five blocks with the same order and constants. CM550: filter 0x803f9d-0x803fa1 (slots 1-5) compared with (a1) = 0x80d9dc, then with 0xff; move.w #50 to 0x804236-0x80423e; data[3] andi.l #0xc0 / asr.l #6 -> 0x80d723, andi #0x30 / asr #4 -> 0x80d711, andi #0x0c / asr #2 -> 0x80d725, andi #3 -> 0x80d710; data[4] -> 0x80d719. CM848 0x50b77c: filter[1..5]; li 50 / sth 0x3feaa6-0x3feaae; data[3] rlwinm 26,30,31 -> 0x40aabd, rlwinm 28,30,31 -> 0x40aaab, rlwinm 30,30,31 -> 0x40aabf, clrlwi 30 -> 0x40aaaa; data[4] -> 0x40aab3. Receiver offsets +0x14 / +2 / +0x16 / +1 / +0x0a in both. 68k masks then shifts and PowerPC rotates then masks, which gives the same values. Key 0xf001 in both (dump entry 8).",
+    "plate_comment": "J1939 PGN 61441 Electronic Brake Controller 1 (EBC1) receive handler: signal slots 1-5, each taken only when its source address filter byte equals j1939_received_source_address or is 0xFF, and each reloads its j1939_input_signal_timeouts slot with 50: byte 4 bits 7-8 j1939_received_remote_accelerator_enable_switch, bits 5-6 j1939_received_engine_auxiliary_shutdown_switch, bits 3-4 j1939_received_engine_derate_switch, bits 1-2 j1939_received_accelerator_interlock_switch, byte 5 j1939_received_engine_retarder_selection. Registered for PGN 61441 by cm550_registerJ1939InputMessageHandlers. The same steps and constants as CM848 0x50b77c (was cm550_FUN_00021a8c; PR #53 round 91; the twin of CM848 0x50b77c: one shared name)"
+   },
+   {
+    "firmware": "cm848",
+    "address": "0x0050b77c",
+    "current_name": "cm848_receivePgn61441ElectronicBrakeController1Message",
+    "proposed_name": "receivePgn61441ElectronicBrakeController1Message",
+    "relation": "twin",
+    "other_firmware_address": "0x00021a8c",
+    "evidence": "Twin of CM550 0x21a8c; the step-by-step comparison is on the CM550 row.",
+    "plate_comment": "APPEND to the current comment: | (was cm848_receivePgn61441ElectronicBrakeController1Message; PR #53 round 91; the twin of CM550 0x21a8c: one shared name)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00021b88",
+    "current_name": "cm550_FUN_00021b88",
+    "proposed_name": "receivePgn61443ElectronicEngineController2Message",
+    "relation": "twin",
+    "other_firmware_address": "0x0050b8a4",
+    "evidence": "Four blocks. CM550: filter 0x803fa2-0x803fa5 (slots 6-9); move.w #25 to 0x804240-0x804246; data[0] andi #3 -> 0x80d71a, data[1] -> 0x80d714, data[3] -> 0x80d722, data[4] -> 0x80d720. CM848 0x50b8a4: filter[6..9]; li 25 / sth 0x3feab0-0x3feab6; clrlwi 30 of data[0] -> 0x40aab4, data[1] -> 0x40aaae, data[3] -> 0x40aabc, data[4] -> 0x40aaba. Receiver offsets +0x0b / +5 / +0x13 / +0x11 in both. Key 0xf003 in both (dump entry 9).",
+    "plate_comment": "J1939 PGN 61443 Electronic Engine Controller 2 (EEC2) receive handler: signal slots 6-9 (timeout 25 each): byte 1 bits 1-2 j1939_received_accelerator_pedal_1_low_idle_switch, byte 2 j1939_received_accelerator_pedal_position_1, byte 4 j1939_received_remote_accelerator_pedal_position, byte 5 j1939_received_wet_tank_pressure. Registered for PGN 61443 by cm550_registerJ1939InputMessageHandlers. The same steps and constants as CM848 0x50b8a4 (was cm550_FUN_00021b88; PR #53 round 91; the twin of CM848 0x50b8a4: one shared name)"
+   },
+   {
+    "firmware": "cm848",
+    "address": "0x0050b8a4",
+    "current_name": "cm848_receivePgn61443ElectronicEngineController2Message",
+    "proposed_name": "receivePgn61443ElectronicEngineController2Message",
+    "relation": "twin",
+    "other_firmware_address": "0x00021b88",
+    "evidence": "Twin of CM550 0x21b88; the step-by-step comparison is on the CM550 row.",
+    "plate_comment": "APPEND to the current comment: | (was cm848_receivePgn61443ElectronicEngineController2Message; PR #53 round 91; the twin of CM550 0x21b88: one shared name)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00021c3c",
+    "current_name": "(none - not a function yet; no row)",
+    "proposed_name": "receivePgn65252ShutdownMessage",
+    "relation": "twin",
+    "other_firmware_address": "0x0050b98c",
+    "evidence": "ROM 0x21c3c-0x21c72, right after 0x21b88's rts at 0x21c3a: move.b 0x803fa6,d0; cmp.b 0x80d9dc,d0; beq; cmpi.b #255,0x803fa6; bne rts; move.w #500,0x804248; movea.l (4,sp),a0; movea.l (6,a0),a0; move.b (2,a0),d0; andi.b #3,d0; move.b d0,0x80d70f; rts. CM848 0x50b98c: filter[10]; li 500 / sth 0x3feab8; clrlwi 30 of data[2] -> 0x40aaa9. Receiver offset +0 in both (e2m 12F7 +3). Key 0xfee4 in both (pea 0x21c3c / move.w #65252 at 0x21f22; dump entry 10). Not in deleted_functions.csv, so the new row creates it.",
+    "plate_comment": "J1939 PGN 65252 Shutdown (SHUTDN) receive handler: when j1939_air_conditioner_high_pressure_fan_switch_source_address_filter_cal (slot 10) equals j1939_received_source_address or is 0xFF it sets j1939_input_signal_timeouts[10] = 500 and stores byte 3 bits 1-2 in j1939_received_air_conditioner_high_pressure_fan_switch. Registered for PGN 65252 by cm550_registerJ1939InputMessageHandlers. The same steps and constants as CM848 0x50b98c (new function; PR #53 round 91; the twin of CM848 0x50b98c: one shared name)"
+   },
+   {
+    "firmware": "cm848",
+    "address": "0x0050b98c",
+    "current_name": "cm848_receivePgn65252ShutdownMessage",
+    "proposed_name": "receivePgn65252ShutdownMessage",
+    "relation": "twin",
+    "other_firmware_address": "0x00021c3c",
+    "evidence": "Twin of CM550 0x21c3c; the step-by-step comparison is on the CM550 row.",
+    "plate_comment": "APPEND to the current comment: | (was cm848_receivePgn65252ShutdownMessage; PR #53 round 91; the twin of CM550 0x21c3c: one shared name)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00021c74",
+    "current_name": "cm550_FUN_00021c74",
+    "proposed_name": "receivePgn65264PowerTakeoffInformationMessage",
+    "relation": "twin",
+    "other_firmware_address": "0x0050b9d8",
+    "evidence": "Four blocks. CM550: filter 0x803fa7-0x803faa (slots 11-14); move.w #50 to 0x80424a-0x804250; data[5] andi #0x0c / asr #2 -> 0x80d721, data[5] andi #3 -> 0x80d71d, data[6] andi #0x30 / asr #4 -> 0x80d71e, data[6] andi #3 -> 0x80d71f. CM848 0x50b9d8: filter[11..14]; li 50 / sth 0x3feaba-0x3feac0; rlwinm 30,30,31 / clrlwi 30 / rlwinm 28,30,31 / clrlwi 30 -> 0x40aabb / 0x40aab7 / 0x40aab8 / 0x40aab9. Receiver offsets +0x12 / +0x0e / +0x0f / +0x10 in both. Key 0xfef0 in both (dump entry 11).",
+    "plate_comment": "J1939 PGN 65264 Power Takeoff Information (PTO) receive handler: signal slots 11-14 (timeout 50 each): byte 6 bits 3-4 j1939_received_remote_power_take_off_switch, bits 1-2 j1939_received_power_take_off_on_switch, byte 7 bits 5-6 j1939_received_power_take_off_resume_switch, bits 1-2 j1939_received_power_take_off_set_switch. Registered for PGN 65264 by cm550_registerJ1939InputMessageHandlers. The same steps and constants as CM848 0x50b9d8 (was cm550_FUN_00021c74; PR #53 round 91; the twin of CM848 0x50b9d8: one shared name)"
+   },
+   {
+    "firmware": "cm848",
+    "address": "0x0050b9d8",
+    "current_name": "cm848_receivePgn65264PowerTakeoffInformationMessage",
+    "proposed_name": "receivePgn65264PowerTakeoffInformationMessage",
+    "relation": "twin",
+    "other_firmware_address": "0x00021c74",
+    "evidence": "Twin of CM550 0x21c74; the step-by-step comparison is on the CM550 row.",
+    "plate_comment": "APPEND to the current comment: | (was cm848_receivePgn65264PowerTakeoffInformationMessage; PR #53 round 91; the twin of CM550 0x21c74: one shared name)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00021d44",
+    "current_name": "cm550_FUN_00021d44",
+    "proposed_name": "receivePgn65265CruiseControlVehicleSpeedMessage",
+    "relation": "twin",
+    "other_firmware_address": "0x0050bacc",
+    "evidence": "Eight blocks. CM550: filter 0x803fab-0x803fb2 (slots 15-22); move.w #50 to 0x804252-0x804260; data[3] (0xc0)>>6 / (0x30)>>4 / (0x0c)>>2 -> 0x80d713 / 0x80d712 / 0x80d715; data[4] (0x30)>>4 / &3 -> 0x80d716 / 0x80d717; data[7] &3 / (0x0c)>>2 / (0x30)>>4 -> 0x80d71b / 0x80d718 / 0x80d724. CM848 0x50bacc: filter[15..22]; li 50 / sth 0x3feac2-0x3fead0; the same fields -> 0x40aaad / 0x40aaac / 0x40aaaf / 0x40aab0 / 0x40aab1 / 0x40aab5 / 0x40aab2 / 0x40aabe. Receiver offsets +4 / +3 / +6 / +7 / +8 / +0x0c / +9 / +0x15 in both. Key 0xfef1 in both (dump entry 12).",
+    "plate_comment": "J1939 PGN 65265 Cruise Control/Vehicle Speed 1 (CCVS1) receive handler: signal slots 15-22 (timeout 50 each): byte 4 bits 7-8 clutch, 5-6 brake and 3-4 cruise control enable switch; byte 5 bits 5-6 cruise control resume and 1-2 set switch; byte 8 bits 1-2 engine idle increment, 3-4 decrement and 5-6 engine diagnostic test mode switch (the j1939_received_* bytes). Registered for PGN 65265 by cm550_registerJ1939InputMessageHandlers. The same steps and constants as CM848 0x50bacc (was cm550_FUN_00021d44; PR #53 round 91; the twin of CM848 0x50bacc: one shared name)"
+   },
+   {
+    "firmware": "cm848",
+    "address": "0x0050bacc",
+    "current_name": "cm848_receivePgn65265CruiseControlVehicleSpeedMessage",
+    "proposed_name": "receivePgn65265CruiseControlVehicleSpeedMessage",
+    "relation": "twin",
+    "other_firmware_address": "0x00021d44",
+    "evidence": "Twin of CM550 0x21d44; the step-by-step comparison is on the CM550 row.",
+    "plate_comment": "APPEND to the current comment: | (was cm848_receivePgn65265CruiseControlVehicleSpeedMessage; PR #53 round 91; the twin of CM550 0x21d44: one shared name)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00021272",
+    "current_name": "cm550_canTransmissionController",
+    "proposed_name": "registerJ1939ReceiveHandler",
+    "relation": "twin",
+    "other_firmware_address": "0x00538eb0",
+    "evidence": "FIRST, the one difference: the capacity is 16 here (cmpi.b #16,(0x800b10)) and 17 in CM848 0x538eb0 (cmpwi r7,17). Each is its own table's size (0x800ab0 + 16 x 6 = 0x800b10 and 0x3fd414 + 17 x 6 = 0x3fd47a, the count byte right after the table in both). That is a layout bound, like the different counts and limits of two pairs that already share a name: copyCalibrationFromRomToRam (CM550 0x117ec copies 2401 dwords, CM848 0x4bd00 copies 0x3feed0-0x40a046) and clearWorkingRam (0x2e9ac / 0x538974). If 16 vs 17 counts as a constant, this becomes cm550_registerJ1939ReceiveHandler (a counterpart) and CM848 keeps its name. The steps match: if count == capacity, return 1 (moveq #1 / li r3,1). Otherwise entry = table + count x 6 (d0+d0+d0 then doubled / mulli 6), count + 1, key word to +0 (move.w (8,sp),(a2) / sth r3,0(r6)), handler long to +2 (move.l (10,sp),(2,a2) / stw r4,2(r6)), return 0 (clr.b d0 / li r3,0). CM550's dispatcher 0x212b2 scans the same 6-byte entries up to the count byte (0x21370-0x2137a) and calls +2 with the 18-byte receive record, as CM848's does. RAM dump: count 13, and entries 7-12 are the six input handlers. All 8 call sites push pea handler / move.w #key (clr.w for TSC1). The function transmits nothing, so the old name is wrong. It has no // Function: block in the current .cpp, so this is read from the ROM bytes.",
+    "plate_comment": "Appends a PGN key word and its handler to j1939_receive_handler_table (6-byte entries: the key at +0 and the handler at +2) at index j1939_receive_handler_count (the byte right after the table) and adds 1 to the count; it returns 1 and stores nothing when the count is already 16 (the table's size), else 0. The receive dispatcher 0x212b2 scans count entries for the frame's key and calls the handler. 13 registrations at start-up (13 in the RAM dump). The same steps as CM848 0x538eb0, whose table holds 17 (was cm550_canTransmissionController: it transmits nothing; PR #53 round 91; the twin of CM848 0x538eb0: one shared name)"
+   },
+   {
+    "firmware": "cm848",
+    "address": "0x00538eb0",
+    "current_name": "cm848_registerJ1939ReceiveHandler",
+    "proposed_name": "registerJ1939ReceiveHandler",
+    "relation": "twin",
+    "other_firmware_address": "0x00021272",
+    "evidence": "Twin of CM550 0x21272 (capacity 17 here, 16 there); the step-by-step comparison and the 16-vs-17 caveat are on the CM550 row.",
+    "plate_comment": "APPEND to the current comment: | (was cm848_registerJ1939ReceiveHandler; PR #53 round 91; the twin of CM550 0x21272, whose table holds 16: one shared name)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00021ef6",
+    "current_name": "cm550_FUN_00021ef6",
+    "proposed_name": "cm550_registerJ1939InputMessageHandlers",
+    "relation": "counterpart",
+    "other_firmware_address": "0x0050bdcc",
+    "evidence": "Body: movea.l #0x21272,a2, then six pea handler / move.w #key,-(sp) / jsr (a2) with 0xe000 -> 0x21a5c, 0xf001 -> 0x21a8c, 0xf003 -> 0x21b88, 0xfee4 -> 0x21c3c, 0xfef0 -> 0x21c74, 0xfef1 -> 0x21d44, then lea (36,sp),sp; rts. CM848 0x50bdcc makes the same six calls with the same keys (ori r3 57344 / 61441 / 61443 / 65252 / 65264 / 65265) and handlers in the same order. It then stores j1939_input_fault_start_delay = 1000 (li 1000 / sth 0x40aaa4). That extra step has no CM550 equivalent, so this is a counterpart (cm550_ plus CM848's base name). Callers: mc68k_initializeJ1939Datalink (0x28b80) here and cm848_j1939_system_init in CM848.",
+    "plate_comment": "From mc68k_initializeJ1939Datalink: registers the J1939 input layer's six receive handlers with registerJ1939ReceiveHandler in CM848's order: PGN 57344 receivePgn57344CabMessage1 / 61441 EBC1 / 61443 EEC2 / 65252 SHUTDN / 65264 PTO / 65265 CCVS1. The counterpart of cm848_registerJ1939InputMessageHandlers (0x50bdcc), which then also starts j1939_input_fault_start_delay at 1000; CM550 has no such store (was cm550_FUN_00021ef6; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00021edc",
+    "current_name": "cm550_FUN_00021edc",
+    "proposed_name": "cm550_tickJ1939InputSupervision",
+    "relation": "counterpart",
+    "other_firmware_address": "0x0050bca0",
+    "evidence": "Whole body: movea.l #0x804234,a0; bra test; loop: tst.w (a0); beq; subq.w #1,(a0); addq.l #2,a0; test: cmpa.l #0x804264,a0; bls loop; rts. That counts 25 words down, inclusive of 0x804264. CM848 0x50bca0 ends with the same inclusive loop (addi r3 = base + 48; cmplw / bge). Before it, CM848 returns unless algorithm_enable_flags_28_cal bit 0x400 is set (lhz 0x3fd5d4), counts j1939_input_fault_start_delay down, and updates j1939_input_monitor_startup_timer / j1939_input_monitor_inhibit_flag from engine_state 3/4/5 and the key switch. It also skips the loop while j1939_dm13_fault_log_inhibit_flag is set. CM550 has none of those steps, and its e2m 12F7 has no JCMXRNTR / JCIHMXFU records (CM848's 12F7 +22 / +24), so this is a counterpart. Callers: vp44_evenPhaseSchedulerTaskSet (0x1b4d8) and cm550_diagnosticMonitoringCoordinator (0x1b4ea), with no gate; CM848's is cm848_phase_group_a_processing.",
+    "plate_comment": "Counts each nonzero word of j1939_input_signal_timeouts down by 1 - all 25 words (the bound 0x804264 is inclusive as in CM848). Runs from vp44_evenPhaseSchedulerTaskSet and cm550_diagnosticMonitoringCoordinator with no gate. The counterpart of cm848_tickJ1939InputSupervision (0x50bca0): CM848 ends with the same loop but first needs the J1939 multiplex enable bit, counts j1939_input_fault_start_delay and the start-up timer / inhibit flag, and skips the loop while DM13 holds; CM550 has none of those steps (was cm550_FUN_00021edc; PR #53 round 91)"
+   }
+  ],
+  "globals": [
+   {
+    "firmware": "cm550",
+    "address": "0x00804234",
+    "current_name": "(none - renders _DAT_008042xx)",
+    "proposed_name": "j1939_input_signal_timeouts",
+    "proposed_type": "word[25]",
+    "evidence": "The code indexes and walks it. cm550_FUN_00020890 tests (0,a0,d0.w*2) with a0 = 0x804234 and d0 = the descriptor's timeout slot (tst.w at 0x2097a). The tick walks 0x804234-0x804264 (addq.l #2 / cmpa.l #0x804264 / bls). The handlers store word constants at 0x804234 + 2 x slot for slots 0-22. e2m 12F6 +2n are the timers MXMNFMTR..MXTESWTR, in the same slot order as CM848's 12F6 at 0x3feaa4 + 2n. The parameter ID table tags them EEPROM 0x72a + 2n, and 0x803b0a + 0x72a = 0x804234. No row exists in 0x804234-0x804265; the next is 0x804266 j1708_link_timeout_counter = 11C1 +0.",
+    "comment": "CM848's j1939_input_signal_timeouts (0x3feaa4, word[25]) slot for slot: e2m 12F6 +2n - the MX..TR timers 'TIMER TO TRACK TIME ELAPSED BEFORE <signal> IS RECEIVED AGAIN' (+0 MXMNFMTR manual fan level ... +12 MXWTPRTR wet tank pressure ... +2C MXTESWTR test switch; the parameter ID table tags them EEPROM 0x72a + 2n = 0x803b0a + 0x72a + 2n). The six receive handlers reload slot n when signal n arrives from an accepted source: 500 for slots 0 (CM1) and 10 (SHUTDN), 50 for slots 1-5 (EBC1) and 11-22 (PTO / CCVS1), 25 for slots 6-9 (EEC2); cm550_tickJ1939InputSupervision counts all 25 words down (inclusive bound 0x804264); 0 = the signal timed out. Direct readers: slot 0 cm550_FUN_0002041c (fan request), slot 1 cm550_FUN_00020784 (the remote accelerator - it tests slot 1, the remote accelerator enable switch timer, not slot 8), slot 5 cm550_FUN_00020380 (retarder selection), slot 6 cm550_outputControlState1Handler (idle switch), slot 7 cm550_FUN_00020c98 (pedal position), slot 9 cm550_FUN_00020fac (wet tank pressure); cm550_FUN_00020890 indexes it with j1939_input_signal_descriptor_table's timeout_slot. Slot 23 is 12F6 +2E MXDUMYTR (unused dummy; no writer); slot 24 (0x804264) is a separate record, e2m 11C0 +0 J39PDBLK, reached only through the tick's bound in the dumped ROM - CM848's slot 24 is likewise its history table's length word. Outside the EEPROM mirror 0x803b0a-0x804155, so no _cal. All 0 in the RAM dump (no J1939 input traffic) (PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00800ab0",
+    "current_name": "(none - renders DAT_00800ab0)",
+    "proposed_name": "j1939_receive_handler_table",
+    "proposed_type": "j1939_receive_handler_entry_t[16]",
+    "evidence": "registerJ1939ReceiveHandler writes entry = 0x800ab0 + count x 6 (key word at +0, handler long at +2) and refuses when count == 16. The dispatcher 0x212b2 starts at 0x800ab0 (movea.l at 0x21370), compares +0, calls through +2 and steps 6 bytes up to the count byte 0x800b10. 0x800ab0 + 96 = 0x800b10. RAM dump: 13 entries. Only one row lies inside (0x800b00 diagnostic_request_buffer; see rows_to_remove).",
+    "comment": "CM848's j1939_receive_handler_table (0x3fd414, j1939_receive_handler_entry_t[17]): the J1939 receive handler table. registerJ1939ReceiveHandler appends {PGN key word - handler} at index j1939_receive_handler_count (at most 16) and the receive dispatcher mc68k_FUN_000212b2 scans count entries for the frame's key and calls that handler with the receive record. 0x800ab0 + 16 x 6 = 0x800b10 = the count byte - CM848's layout too. The RAM dump holds 13: the keys of PGN 60416 (0x22e5e) / 60160 (0x22c26) / 61184 (0x2eea2) / 0 TSC1 (0x2fb70) / 61442 ETC1 (0x2efd0) / 59904 (0x2f4be) / 58112 DM7 (0x2ef4a), then the six input handlers receivePgn57344CabMessage1 .. receivePgn65265CruiseControlVehicleSpeedMessage (PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00800b10",
+    "current_name": "(none - renders DAT_00800b10)",
+    "proposed_name": "j1939_receive_handler_count",
+    "proposed_type": "byte",
+    "evidence": "cmpi.b #16,(a1) / move.b (a1),d0 / addq.b #1,(a1) with a1 = 0x800b10 in registerJ1939ReceiveHandler (0x21274-0x21288); move.b 0x800b10,d3 as the scan bound in the dispatcher (0x21378). It is the byte right after the 16-entry table, as CM848's 0x3fd47a is after its 17 entries. Dump value 13.",
+    "comment": "CM848's j1939_receive_handler_count (0x3fd47a, byte): the number of entries in j1939_receive_handler_table, the byte right after its 16 entries. registerJ1939ReceiveHandler compares it with 16, appends at it and increments it; the dispatcher mc68k_FUN_000212b2 uses it as the scan bound. 13 in the RAM dump (seven direct registrations plus the six of cm550_registerJ1939InputMessageHandlers) (PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00020108",
+    "current_name": "(none - renders DAT_00020108 / DAT_0002010c / DAT_0002010e / DAT_00020110)",
+    "proposed_name": "j1939_input_signal_descriptor_table",
+    "proposed_type": "j1939_input_signal_descriptor_t[17]",
+    "evidence": "cm550_FUN_00020890 (inputs 0-16 from cm550_FUN_00021070, loop while < 0x11) addresses 0x20108 + input x 10 (d0 = input x 5, then (n,a4,d0.l*2) with a4 = 0x20108). It does movea.l +0 then cmpi.b (a0) (0x20a36), move.b +4 (the slot; then tst.w (0,a0,d0.w*2) of 0x804234), move.l +6 (0x2090a; the index into 0x80bd4a) and move.w +8 (its low word, + 0xd0). Dumped records: pointers 0x80d70f / 10 / 11 / 12 / 13 / 15 / 16 / 17 / 18 / 1b / 1d / 1e / 1f / 21 / 23 / 24 / 25; slots 10 4 2 16 15 17 18 19 21 20 12 13 14 11 1 22 3, each equal to its handler's timeout store; byte +5 = 0. CM848's table (flash2 0x53a278, 17 x 10) has the same pointers (by 12F7 offset) and slots in the same order. It starts right after the rts at 0x20106 and has no row. It applies only if the import does not list it under 'failed (in code)'.",
+    "comment": "CM848's j1939_input_signal_descriptor_table (flash2 0x53a278, j1939_input_signal_descriptor_t[17]): one 10-byte record per J1939 2-bit switch input - the received byte's pointer, its j1939_input_signal_timeouts slot and the logical switch it drives. cm550_FUN_00020890 runs one record per call for inputs 0-16 (from cm550_FUN_00021070). Pointers and slots are CM848's entry for entry; the logical switch numbers differ (72 9 54 11 10 3 1 2 14 13 60 56 58 20 19 15 54) (PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00803f9c",
+    "current_name": "(none - no row; e2m 12E8 +6 MXMNFMSA)",
+    "proposed_name": "j1939_engine_fan_requested_percent_speed_source_address_filter_cal",
+    "proposed_type": "byte",
+    "evidence": "move.b 0x803f9c,d0 (0x21a5c) and cmpi.b #255,0x803f9c (0x21a6a) in receivePgn57344CabMessage1. Those are its only two absolute references in the dumped ROM. e2m 12E8 +6 MXMNFMSA resolves here. It is inside the EEPROM mirror, so it takes _cal. EEPROM dump 0xff. It is slot 0 of the existing flat filter rows 0x803f9d-0x803fb2 and CM848's j1939_input_source_address_filter_cal[0].",
+    "comment": "EEPROM-backed source address that the J1939 engine fan requested percent speed input (PGN 57344 CM1 byte 1; SPN 986) is accepted from (0xFF = any source; 0xFF in the EEPROM dump): e2m 12E8 +6 MXMNFMSA 'SOURCE ADDRESS ALLOWED FOR MUXING REQUESTED % FAN SPEED PARAMETER' = slot 0 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[0]). receivePgn57344CabMessage1 compares it with j1939_received_source_address and with 0xFF; on a match it reloads j1939_input_signal_timeouts[0] with 500 and stores the signal in j1939_received_engine_fan_requested_percent_speed (PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x00803fa6",
+    "current_name": "(none - no row; e2m 12E8 +10 MXAKPRSA)",
+    "proposed_name": "j1939_air_conditioner_high_pressure_fan_switch_source_address_filter_cal",
+    "proposed_type": "byte",
+    "evidence": "move.b 0x803fa6,d0 (0x21c3c) and cmpi.b #255,0x803fa6 (0x21c4a) in receivePgn65252ShutdownMessage. Those are its only two absolute references in the dumped ROM. e2m 12E8 +10 MXAKPRSA resolves here. It is inside the EEPROM mirror, so it takes _cal. EEPROM dump 0xff. It is slot 10 of the filter bytes and CM848's j1939_input_source_address_filter_cal[10].",
+    "comment": "EEPROM-backed source address that the J1939 air conditioner high pressure fan switch input (PGN 65252 SHUTDN byte 3 bits 1-2; SPN 985) is accepted from (0xFF = any source; 0xFF in the EEPROM dump): e2m 12E8 +10 MXAKPRSA 'SOURCE ADDRESS ALLOWED FOR MUXING AIR CONDITIONER PRESSURE SWITCH' = slot 10 of the filter bytes 0x803f9c-0x803fb2 (CM848 j1939_input_source_address_filter_cal[10]). receivePgn65252ShutdownMessage compares it with j1939_received_source_address and with 0xFF; on a match it reloads j1939_input_signal_timeouts[10] with 500 and stores the signal in j1939_received_air_conditioner_high_pressure_fan_switch (PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d9dc",
+    "current_name": "can_received_source_address",
+    "proposed_name": "j1939_received_source_address",
+    "proposed_type": "byte",
+    "evidence": "The dispatcher 0x212b2 does move.b (3,a0),0x80d9dc (0x2133c), copying the receive record's source address byte. It then compares the byte with the 4-byte skip list 0x80d9e0 (0xFE ends it) before the handler scan. The six handlers compare it with their filter bytes (cmp.b (a1) / cmp.b 0x80d9dc). These are CM848 j1939_received_source_address's role and users. Byte accesses only. Dump 0xF9.",
+    "comment": "CM848's j1939_received_source_address (0x40ad52): the source address of the J1939 frame being handled. The receive dispatcher mc68k_FUN_000212b2 copies the receive record's byte 3 into it, drops the frame when the address is in the skip list at 0x80d9e0 (0xFE ends the list), else calls the registered handler; the six input handlers compare it with their source address filter bytes. 0xF9 in the dump (the service tool that read it) (was can_received_source_address; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d70f",
+    "current_name": "multiplex_value_for_air_conditioner_pressure_switch_on_off",
+    "proposed_name": "j1939_received_air_conditioner_high_pressure_fan_switch",
+    "proposed_type": "byte",
+    "evidence": "Store move.b d0 at 0x21c6c (receivePgn65252ShutdownMessage, slot 10, timeout 500); CM848 twin 0x40aaa9 (stb at 0x50b9d0); e2m 12F7 +3 in both; descriptor entry 0 (0x20108) points at it.",
+    "comment": "e2m 12F7 +3 JCAKPRMU 'MULTIPLEX VALUE FOR AIR CONDITIONER PRESSURE SWITCH' (address from the ECU's parameter ID table): J1939 input received over PGN 65252 SHUTDN byte 3 bits 1-2 (SPN 985 A/C High Pressure Fan Switch), stored by receivePgn65252ShutdownMessage when filter slot 10 passes (timeout 500); cm550_FUN_00020890 reads it through j1939_input_signal_descriptor_table entry 0. 2-bit switch states use J1939 0 off / 1 on / 3 not available. CM848 twin 0x40aaa9 (one shared name). Dump 0 (was multiplex_value_for_air_conditioner_pressure_switch_on_off; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d710",
+    "current_name": "multiplex_value_for_throttle_interlock_switch_on_off",
+    "proposed_name": "j1939_received_accelerator_interlock_switch",
+    "proposed_type": "byte",
+    "evidence": "Store at 0x21b56 (EBC1 handler, slot 4, timeout 50); CM848 twin 0x40aaaa (stb at 0x50b868); e2m 12F7 +4; descriptor entry 1.",
+    "comment": "e2m 12F7 +4 JCTHILMU 'MULTIPLEX VALUE FOR THROTTLE INTERLOCK SWITCH': J1939 input received over PGN 61441 EBC1 byte 4 bits 1-2 (SPN 972 Accelerator Interlock Switch), stored by receivePgn61441ElectronicBrakeController1Message when filter slot 4 passes (timeout 50); read through j1939_input_signal_descriptor_table entry 1. 2-bit switch states use J1939 0 off / 1 on / 3 not available. CM848 twin 0x40aaaa (one shared name). Dump 0 (was multiplex_value_for_throttle_interlock_switch_on_off; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d711",
+    "current_name": "multiplex_value_for_auxiliary_shutdown_switch_on_off",
+    "proposed_name": "j1939_received_engine_auxiliary_shutdown_switch",
+    "proposed_type": "byte",
+    "evidence": "Store at 0x21af6 (EBC1, slot 2, 50); CM848 twin 0x40aaab (stb at 0x50b7f8); e2m 12F7 +5; descriptor entry 2.",
+    "comment": "e2m 12F7 +5 JCAUSHMU 'MULTIPLEX VALUE FOR AUXILIARY SHUTDOWN SWITCH': J1939 input received over PGN 61441 EBC1 byte 4 bits 5-6 (SPN 970 Engine Auxiliary Shutdown Switch), stored by receivePgn61441ElectronicBrakeController1Message when filter slot 2 passes (timeout 50); read through j1939_input_signal_descriptor_table entry 2. 2-bit switch states use J1939 0 off / 1 on / 3 not available. CM848 twin 0x40aaab (one shared name). Dump 0 (was multiplex_value_for_auxiliary_shutdown_switch_on_off; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d712",
+    "current_name": "multiplex_value_for_brake_switch_on_off",
+    "proposed_name": "j1939_received_brake_switch",
+    "proposed_type": "byte",
+    "evidence": "Store at 0x21dae (CCVS1, slot 16, 50); CM848 twin 0x40aaac (stb at 0x50bb48); e2m 12F7 +6; descriptor entry 3.",
+    "comment": "e2m 12F7 +6 JCBRSWMU 'MULTIPLEX VALUE FOR BRAKE SWITCH': J1939 input received over PGN 65265 CCVS1 byte 4 bits 5-6 (SPN 597 Brake Switch), stored by receivePgn65265CruiseControlVehicleSpeedMessage when filter slot 16 passes (timeout 50); read through j1939_input_signal_descriptor_table entry 3. 2-bit switch states use J1939 0 off / 1 on / 3 not available. CM848 twin 0x40aaac (one shared name). Dump 0 (was multiplex_value_for_brake_switch_on_off; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d713",
+    "current_name": "multiplex_value_for_clutch_switch_on_off",
+    "proposed_name": "j1939_received_clutch_switch",
+    "proposed_type": "byte",
+    "evidence": "Store at 0x21d7c (CCVS1, slot 15, 50); CM848 twin 0x40aaad (stb at 0x50bb10); e2m 12F7 +7; descriptor entry 4.",
+    "comment": "e2m 12F7 +7 JCCHSWMU 'MULTIPLEX VALUE FOR CLUTCH SWITCH': J1939 input received over PGN 65265 CCVS1 byte 4 bits 7-8 (SPN 598 Clutch Switch), stored by receivePgn65265CruiseControlVehicleSpeedMessage when filter slot 15 passes (timeout 50); read through j1939_input_signal_descriptor_table entry 4. 2-bit switch states use J1939 0 off / 1 on / 3 not available. CM848 twin 0x40aaad (one shared name). Dump 0 (was multiplex_value_for_clutch_switch_on_off; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d714",
+    "current_name": "multiplexed_accelerator_pedal_position",
+    "proposed_name": "j1939_received_accelerator_pedal_position_1",
+    "proposed_type": "byte",
+    "evidence": "Store move.b (1,a0) at 0x21be0 (EEC2, slot 7, timeout 25); CM848 twin 0x40aaae (stb at 0x50b91c); e2m 12F7 +8; byte readers in cm550_FUN_00020c98 (0x20d1c / 0x20d32 / 0x20d42 / 0x20daa).",
+    "comment": "e2m 12F7 +8 JCCMTHMU 'MUXED VALUE FOR COMMANDED THROTTLE REQUESTED, ALREADY FILTERED &' (0.4 % per bit): J1939 input received over PGN 61443 EEC2 byte 2 (SPN 91 Accelerator Pedal Position 1), stored by receivePgn61443ElectronicEngineController2Message when filter slot 7 passes (timeout 25). cm550_FUN_00020c98 uses it as the multiplexed throttle (below 0xfb: throttle = value x 16 / 10 and throttle_above_idle_flag = value != 0; 0xfe sets the throttle fault bit) and tests j1939_input_signal_timeouts[7]. CM848 twin 0x40aaae (one shared name). Dump 0 (was multiplexed_accelerator_pedal_position, earlier JCCMTHMU; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d715",
+    "current_name": "multiplex_value_for_cruise_enable_switch_switch_on_off",
+    "proposed_name": "j1939_received_cruise_control_enable_switch",
+    "proposed_type": "byte",
+    "evidence": "Store at 0x21de0 (CCVS1, slot 17, 50); CM848 twin 0x40aaaf (stb at 0x50bb80); e2m 12F7 +9; descriptor entry 5.",
+    "comment": "e2m 12F7 +9 JCCRONMU 'MULTIPLEX VALUE FOR CRUISE ENABLE SWITCH SWITCH': J1939 input received over PGN 65265 CCVS1 byte 4 bits 3-4 (SPN 596 Cruise Control Enable Switch), stored by receivePgn65265CruiseControlVehicleSpeedMessage when filter slot 17 passes (timeout 50); read through j1939_input_signal_descriptor_table entry 5. 2-bit switch states use J1939 0 off / 1 on / 3 not available. CM848 twin 0x40aaaf (one shared name). Dump 0 (was multiplex_value_for_cruise_enable_switch_switch_on_off; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d716",
+    "current_name": "multiplex_value_for_cruise_resume_switch_on_off",
+    "proposed_name": "j1939_received_cruise_control_resume_switch",
+    "proposed_type": "byte",
+    "evidence": "Store at 0x21e12 (CCVS1, slot 18, 50); CM848 twin 0x40aab0 (stb at 0x50bbb8); e2m 12F7 +A; descriptor entry 6.",
+    "comment": "e2m 12F7 +A JCCRRUMU 'MULTIPLEX VALUE FOR CRUISE RESUME SWITCH': J1939 input received over PGN 65265 CCVS1 byte 5 bits 5-6 (SPN 601 Cruise Control Resume Switch), stored by receivePgn65265CruiseControlVehicleSpeedMessage when filter slot 18 passes (timeout 50); read through j1939_input_signal_descriptor_table entry 6. 2-bit switch states use J1939 0 off / 1 on / 3 not available. CM848 twin 0x40aab0 (one shared name). Dump 0 (was multiplex_value_for_cruise_resume_switch_on_off; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d717",
+    "current_name": "multiplex_value_for_cruise_set_switch_on_off",
+    "proposed_name": "j1939_received_cruise_control_set_switch",
+    "proposed_type": "byte",
+    "evidence": "Store at 0x21e40 (CCVS1, slot 19, 50); CM848 twin 0x40aab1 (stb at 0x50bbf0); e2m 12F7 +B; descriptor entry 7.",
+    "comment": "e2m 12F7 +B JCCRSEMU 'MULTIPLEX VALUE FOR CRUISE SET SWITCH': J1939 input received over PGN 65265 CCVS1 byte 5 bits 1-2 (SPN 599 Cruise Control Set Switch), stored by receivePgn65265CruiseControlVehicleSpeedMessage when filter slot 19 passes (timeout 50); read through j1939_input_signal_descriptor_table entry 7. 2-bit switch states use J1939 0 off / 1 on / 3 not available. CM848 twin 0x40aab1 (one shared name). Dump 0 (was multiplex_value_for_cruise_set_switch_on_off; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d718",
+    "current_name": "multiplex_value_for_decrement_switch_on_off",
+    "proposed_name": "j1939_received_engine_idle_decrement_switch",
+    "proposed_type": "byte",
+    "evidence": "Store at 0x21ea0 (CCVS1, slot 21, 50); CM848 twin 0x40aab2 (stb at 0x50bc60); e2m 12F7 +C; descriptor entry 8.",
+    "comment": "e2m 12F7 +C JCDTSWMU 'MULTIPLEX VALUE FOR DECREMENT SWITCH': J1939 input received over PGN 65265 CCVS1 byte 8 bits 3-4 (SPN 967 Engine Idle Decrement Switch), stored by receivePgn65265CruiseControlVehicleSpeedMessage when filter slot 21 passes (timeout 50); read through j1939_input_signal_descriptor_table entry 8. 2-bit switch states use J1939 0 off / 1 on / 3 not available. CM848 twin 0x40aab2 (one shared name). Dump 0 (was multiplex_value_for_decrement_switch_on_off; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d719",
+    "current_name": "muxed_value_for_the_amount_of_engine_brake_requested_0_100",
+    "proposed_name": "j1939_received_engine_retarder_selection",
+    "proposed_type": "byte",
+    "evidence": "Store move.b (4,a0) at 0x21b7c (EBC1, slot 5, 50); CM848 twin 0x40aab3 (stb at 0x50b89c); e2m 12F7 +D; reader cm550_FUN_00020380 (movea.l #0x80d719 at 0x20390) with j1939_input_signal_timeouts[5] (tst.w at 0x203c8).",
+    "comment": "e2m 12F7 +D JCEBSWMU 'MUXED VALUE FOR THE AMOUNT OF ENGINE BRAKE REQUESTED.' (percent): J1939 input received over PGN 61441 EBC1 byte 5 (SPN 973 Engine Retarder Selection), stored by receivePgn61441ElectronicBrakeController1Message when filter slot 5 passes (timeout 50); its reader cm550_FUN_00020380 tests j1939_input_signal_timeouts[5]. CM848 twin 0x40aab3 (one shared name). Dump 0 (was muxed_value_for_the_amount_of_engine_brake_requested_0_100; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d71a",
+    "current_name": "multiplex_value_for_idle_switch_on_off",
+    "proposed_name": "j1939_received_accelerator_pedal_1_low_idle_switch",
+    "proposed_type": "byte",
+    "evidence": "Store at 0x21bba (EEC2, slot 6, timeout 25); CM848 twin 0x40aab4 (stb at 0x50b8e8); e2m 12F7 +E; byte readers in cm550_outputControlState1Handler (0x204c2, with slot 6 at 0x2051a), cm550_FUN_00020c98 and cm550_FUN_00020e14.",
+    "comment": "e2m 12F7 +E JCISSWMU 'MULTIPLEX VALUE FOR IDLE SWITCH': J1939 input received over PGN 61443 EEC2 byte 1 bits 1-2 (SPN 558 Accelerator Pedal 1 Low Idle Switch), stored by receivePgn61443ElectronicEngineController2Message when filter slot 6 passes (timeout 25); read by cm550_outputControlState1Handler (with j1939_input_signal_timeouts[6]), cm550_FUN_00020c98 and cm550_FUN_00020e14. 2-bit switch states use J1939 0 off / 1 on / 3 not available. CM848 twin 0x40aab4 (one shared name). Dump 0 (was multiplex_value_for_idle_switch_on_off; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d71b",
+    "current_name": "multiplex_value_for_increment_switch_on_off",
+    "proposed_name": "j1939_received_engine_idle_increment_switch",
+    "proposed_type": "byte",
+    "evidence": "Store at 0x21e6e (CCVS1, slot 20, 50); CM848 twin 0x40aab5 (stb at 0x50bc28); e2m 12F7 +F; descriptor entry 9.",
+    "comment": "e2m 12F7 +F JCICSWMU 'MULTIPLEX VALUE FOR INCREMENT SWITCH': J1939 input received over PGN 65265 CCVS1 byte 8 bits 1-2 (SPN 968 Engine Idle Increment Switch), stored by receivePgn65265CruiseControlVehicleSpeedMessage when filter slot 20 passes (timeout 50); read through j1939_input_signal_descriptor_table entry 9. 2-bit switch states use J1939 0 off / 1 on / 3 not available. CM848 twin 0x40aab5 (one shared name). Dump 0 (was multiplex_value_for_increment_switch_on_off; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d71c",
+    "current_name": "multiplexed_value_for_requested_fan_speed_0_100",
+    "proposed_name": "j1939_received_engine_fan_requested_percent_speed",
+    "proposed_type": "byte",
+    "evidence": "Store move.b (a0) at 0x21a84 (receivePgn57344CabMessage1, slot 0, timeout 500); CM848 twin 0x40aab6 (stb at 0x50b774); e2m 12F7 +10; reader cm550_FUN_0002041c (movea.l #0x80d71c at 0x2042c) with j1939_input_signal_timeouts[0] (tst.w at 0x20460).",
+    "comment": "e2m 12F7 +10 JCFSPCMU 'MULTIPLEXED VALUE FOR REQUESTED % FAN SPEED' (0.4 % per bit): J1939 input received over PGN 57344 CM1 byte 1 (SPN 986 Engine Fan 1 Requested Percent Speed), stored by receivePgn57344CabMessage1 when filter slot 0 passes (timeout 500); cm550_FUN_0002041c converts it (below 0xfb: x 16 / 10 into user_value_for_manual_fan_level_requested_fan_speed_0_100) while j1939_input_signal_timeouts[0] is nonzero. CM848 twin 0x40aab6 (one shared name). Dump 0 (was multiplexed_value_for_requested_fan_speed_0_100; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d71d",
+    "current_name": "multiplex_value_for_pto_on_switch_on_off",
+    "proposed_name": "j1939_received_power_take_off_on_switch",
+    "proposed_type": "byte",
+    "evidence": "Store at 0x21cda (PTO, slot 12, 50); CM848 twin 0x40aab7 (stb at 0x50ba54); e2m 12F7 +11; descriptor entry 10.",
+    "comment": "e2m 12F7 +11 JCPTONMU 'MULTIPLEX VALUE FOR PTO ON SWITCH': J1939 input received over PGN 65264 PTO byte 6 bits 1-2, stored by receivePgn65264PowerTakeoffInformationMessage when filter slot 12 passes (timeout 50); read through j1939_input_signal_descriptor_table entry 10. 2-bit switch states use J1939 0 off / 1 on / 3 not available. CM848 twin 0x40aab7 (one shared name). Dump 0 (was multiplex_value_for_pto_on_switch_on_off; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d71e",
+    "current_name": "multiplex_value_for_pto_resume_switch_on_off",
+    "proposed_name": "j1939_received_power_take_off_resume_switch",
+    "proposed_type": "byte",
+    "evidence": "Store at 0x21d0c (PTO, slot 13, 50); CM848 twin 0x40aab8 (stb at 0x50ba8c); e2m 12F7 +12; descriptor entry 11.",
+    "comment": "e2m 12F7 +12 JCPTRUMU 'MULTIPLEX VALUE FOR PTO RESUME SWITCH': J1939 input received over PGN 65264 PTO byte 7 bits 5-6, stored by receivePgn65264PowerTakeoffInformationMessage when filter slot 13 passes (timeout 50); read through j1939_input_signal_descriptor_table entry 11. 2-bit switch states use J1939 0 off / 1 on / 3 not available. CM848 twin 0x40aab8 (one shared name). Dump 0 (was multiplex_value_for_pto_resume_switch_on_off; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d71f",
+    "current_name": "multiplex_value_for_pto_set_switch_on_off",
+    "proposed_name": "j1939_received_power_take_off_set_switch",
+    "proposed_type": "byte",
+    "evidence": "Store at 0x21d3a (PTO, slot 14, 50); CM848 twin 0x40aab9 (stb at 0x50bac4); e2m 12F7 +13; descriptor entry 12.",
+    "comment": "e2m 12F7 +13 JCPTSEMU 'MULTIPLEX VALUE FOR PTO SET SWITCH': J1939 input received over PGN 65264 PTO byte 7 bits 1-2, stored by receivePgn65264PowerTakeoffInformationMessage when filter slot 14 passes (timeout 50); read through j1939_input_signal_descriptor_table entry 12. 2-bit switch states use J1939 0 off / 1 on / 3 not available. CM848 twin 0x40aab9 (one shared name). Dump 0 (was multiplex_value_for_pto_set_switch_on_off; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d720",
+    "current_name": "muxed_value_for_the_pneumatic_control_pressure_wet_tank_pressur_0_250",
+    "proposed_name": "j1939_received_wet_tank_pressure",
+    "proposed_type": "byte",
+    "evidence": "Store move.b (4,a0) at 0x21c30 (EEC2, slot 9, timeout 25); CM848 twin 0x40aaba (stb at 0x50b984), same e2m 12F7 +14. This is the one deliberate exception: the other 22 take CM848's SPN-based names. The basis is both firmwares' own parameter tables, which name every part of slot 9 wet tank pressure (12E8 +F MXWTPRSA filter, 12F6 +12 MXWTPRTR timer, 12F7 +14 JCWTPRMU value), plus this consumer's pressure scaling (cm550_FUN_00020fac: x 0x2442 / 100 at 0x21028-0x2104e). It also matches the existing CM550 row j1939_wet_tank_pressure_source_address_filter_cal. A reviewer who prefers the SPN name can flip this pair alone.",
+    "comment": "e2m 12F7 +14 JCWTPRMU 'MUXED VALUE FOR THE PNEUMATIC CONTROL PRESSURE (WET TANK PRESSUR' (PSIA): J1939 input received over PGN 61443 EEC2 byte 5, stored by receivePgn61443ElectronicEngineController2Message when filter slot 9 (j1939_wet_tank_pressure_source_address_filter_cal) passes (timeout 25). Its one consumer cm550_FUN_00020fac converts it at 5 kPa per bit (x 9282 / 100 = psi x 128) into analog_sensor_raw_override_values[0] while j1939_input_signal_timeouts[9] is nonzero (0xfe or a timeout keeps the default 0x806d3c), so the slot is a pressure as the e2m says. CM848 twin 0x40aaba (renamed to the same name; it was named for SPN 29 Accelerator Pedal Position 2, which J1939 places at EEC2 byte 5). Dump 0 (was muxed_value_for_the_pneumatic_control_pressure_wet_tank_pressur_0_250; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d721",
+    "current_name": "multiplex_value_for_remote_pto_switch_on_off",
+    "proposed_name": "j1939_received_remote_power_take_off_switch",
+    "proposed_type": "byte",
+    "evidence": "Store at 0x21cac (PTO, slot 11, 50); CM848 twin 0x40aabb (stb at 0x50ba1c); e2m 12F7 +15; descriptor entry 13.",
+    "comment": "e2m 12F7 +15 JCRXSWMU 'MULTIPLEX VALUE FOR REMOTE PTO SWITCH': J1939 input received over PGN 65264 PTO byte 6 bits 3-4, stored by receivePgn65264PowerTakeoffInformationMessage when filter slot 11 passes (timeout 50); read through j1939_input_signal_descriptor_table entry 13. 2-bit switch states use J1939 0 off / 1 on / 3 not available. CM848 twin 0x40aabb (one shared name). Dump 0 (was multiplex_value_for_remote_pto_switch_on_off; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d722",
+    "current_name": "multiplexed_value_for_remote_accelerator_0_100",
+    "proposed_name": "j1939_received_remote_accelerator_pedal_position",
+    "proposed_type": "byte",
+    "evidence": "Store move.b (3,a0) at 0x21c08 (EEC2, slot 8, timeout 25); CM848 twin 0x40aabc (stb at 0x50b950); e2m 12F7 +16; reader cm550_FUN_00020784 (movea.l #0x80d722 at 0x20788), which tests slot 1 (tst.w 0x804236 at 0x207f0).",
+    "comment": "e2m 12F7 +16 JCRTTHMU 'MULTIPLEXED VALUE FOR REMOTE ACCELERATOR' (0.4 % per bit): J1939 input received over PGN 61443 EEC2 byte 4 (SPN 974 Remote Accelerator Pedal Position), stored by receivePgn61443ElectronicEngineController2Message when filter slot 8 passes (timeout 25). Its reader cm550_FUN_00020784 (below 0xfb: x 16 / 10 into analog_sensor_override_values[11]; 0xfe / 0xfb-0xfd / 0xff fall back to remote_throttle_sensor_config.default_value) tests j1939_input_signal_timeouts[1], the remote accelerator enable switch's slot, not slot 8. CM848 twin 0x40aabc (one shared name). Dump 0 (was multiplexed_value_for_remote_accelerator_0_100; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d723",
+    "current_name": "multiplex_value_for_remote_throttle_switch_on_off",
+    "proposed_name": "j1939_received_remote_accelerator_enable_switch",
+    "proposed_type": "byte",
+    "evidence": "Store at 0x21ac4 (EBC1, slot 1, 50); CM848 twin 0x40aabd (stb at 0x50b7c0); e2m 12F7 +17; descriptor entry 14.",
+    "comment": "e2m 12F7 +17 JCRTSWMU 'MULTIPLEX VALUE FOR REMOTE THROTTLE SWITCH': J1939 input received over PGN 61441 EBC1 byte 4 bits 7-8 (SPN 969 Remote Accelerator Enable Switch), stored by receivePgn61441ElectronicBrakeController1Message when filter slot 1 passes (timeout 50); read through j1939_input_signal_descriptor_table entry 14. 2-bit switch states use J1939 0 off / 1 on / 3 not available. CM848 twin 0x40aabd (one shared name). Dump 0 (was multiplex_value_for_remote_throttle_switch_on_off; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d724",
+    "current_name": "multiplex_value_for_test_switch_on_off",
+    "proposed_name": "j1939_received_engine_diagnostic_test_mode_switch",
+    "proposed_type": "byte",
+    "evidence": "Store at 0x21ed2 (CCVS1, slot 22, 50); CM848 twin 0x40aabe (stb at 0x50bc98); e2m 12F7 +18; descriptor entry 15.",
+    "comment": "e2m 12F7 +18 JCTESWMU 'MULTIPLEX VALUE FOR TEST SWITCH': J1939 input received over PGN 65265 CCVS1 byte 8 bits 5-6 (SPN 966 Engine Diagnostic Test Mode Switch), stored by receivePgn65265CruiseControlVehicleSpeedMessage when filter slot 22 passes (timeout 50); read through j1939_input_signal_descriptor_table entry 15. 2-bit switch states use J1939 0 off / 1 on / 3 not available. CM848 twin 0x40aabe (one shared name). Dump 0 (was multiplex_value_for_test_switch_on_off; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm550",
+    "address": "0x0080d725",
+    "current_name": "multiplex_value_for_torque_derate_switch_on_off",
+    "proposed_name": "j1939_received_engine_derate_switch",
+    "proposed_type": "byte",
+    "evidence": "Store at 0x21b28 (EBC1, slot 3, 50); CM848 twin 0x40aabf (stb at 0x50b830); e2m 12F7 +19; descriptor entry 16.",
+    "comment": "e2m 12F7 +19 JCTQSWMU 'MULTIPLEX VALUE FOR TORQUE DERATE SWITCH': J1939 input received over PGN 61441 EBC1 byte 4 bits 3-4 (SPN 971 Engine Derate Switch), stored by receivePgn61441ElectronicBrakeController1Message when filter slot 3 passes (timeout 50); read through j1939_input_signal_descriptor_table entry 16. 2-bit switch states use J1939 0 off / 1 on / 3 not available. CM848 twin 0x40aabf (one shared name). Dump 0 (was multiplex_value_for_torque_derate_switch_on_off; PR #53 round 91)"
+   },
+   {
+    "firmware": "cm848",
+    "address": "0x0040aaba",
+    "current_name": "j1939_received_accelerator_pedal_position_2",
+    "proposed_name": "j1939_received_wet_tank_pressure",
+    "proposed_type": "byte",
+    "evidence": "The ECU's own parameter ID table (e2m_block_addresses.py) names every part of slot 9 wet tank pressure: 12E8 +F Wet_Tank_Pressure_Source_Address_Enable = 0x3fd827 = j1939_input_source_address_filter_cal[9], 12F6 +12 J1939_Wet_Tank_Pressure_Timer = 0x3feab6 = j1939_input_signal_timeouts[9], and 12F7 +14 J1939_Mux_Wet_Tank_Pressure [PSI_A] = 0x40aaba. CM550's twin slot (0x80d720) is scaled as a pressure by its consumer. The old name came from the J1939 position of SPN 29 (EEC2 byte 5), not from any code. In the dumped ROM and flash2 there is no reader: the only instruction with displacement 0xaaba is the handler's stb at 0x50b984, there is no 32-bit pointer to 0x40aaba, and no descriptor-table entry points at it.",
+    "comment": "e2m 12F7 +14 J1939_Mux_Wet_Tank_Pressure '[JCWTPRMU] MUXed value for the Pneumatic Control Pressure (Wet tank pressure)' (PSI_A; address from the ECU's parameter ID table): J1939 input received over PGN 61443 EEC2 byte 5, stored by receivePgn61443ElectronicEngineController2Message when j1939_input_source_address_filter_cal[9] (12E8 +F Wet_Tank_Pressure_Source_Address_Enable) passes, with j1939_input_signal_timeouts[9] (12F6 +12 J1939_Wet_Tank_Pressure_Timer) reloaded to 25. The old name came from SPN 29 Accelerator Pedal Position 2, which the J1939 database places at EEC2 byte 5; this ECM's own parameter table names the filter / timer / value of this slot wet tank pressure, and the CM550 twin 0x80d720's consumer scales it as a pressure (5 kPa per bit). No reader in the dumped ROM and flash2 (the only 0xaaba displacement is the handler's stb at 0x50b984; no 32-bit pointer to it) (was j1939_received_accelerator_pedal_position_2; PR #53 round 91)"
+   }
+  ],
+  "structs": [
+   {
+    "firmware": "cm550",
+    "struct_name": "j1939_receive_handler_entry_t",
+    "size": 6,
+    "fields": [
+     {
+      "offset": 0,
+      "name": "pgn_key",
+      "type": "word",
+      "size": 2,
+      "comment": "The PGN key: the PDU format and PDU specific bytes as one word - specific 0 for a destination-specific PGN (0xef00 = PGN 61184 / 0xfef1 = PGN 65265 / 0 = TSC1)"
+     },
+     {
+      "offset": 2,
+      "name": "handler",
+      "type": "pointer",
+      "size": 4,
+      "comment": "The receive handler: the dispatcher mc68k_FUN_000212b2 calls it with the received frame's record"
+     }
+    ],
+    "evidence": "registerJ1939ReceiveHandler stores the key word at +0 (move.w (8,sp),(a2)) and the handler long at +2 (move.l (10,sp),(2,a2)) at 0x800ab0 + count x 6 (stride 6), with capacity 16 (cmpi.b #16). The dispatcher compares the word at +0, calls through +2 and steps 6 bytes (psVar8 += 3) up to the count byte 0x800b10 = 0x800ab0 + 96. The RAM dump shows 13 well-formed entries. CM848's template j1939_receive_handler_entry_t has the same two fields (used as [17] at 0x3fd414). Make it a type-only template (empty address column), applied through the global row 0x800ab0 j1939_receive_handler_entry_t[16], like round 88's j1939_diagnostic_service_entry_t. Comments carry no commas. CM550's structure_definitions.csv is CRLF."
+   },
+   {
+    "firmware": "cm550",
+    "struct_name": "j1939_input_signal_descriptor_t",
+    "size": 10,
+    "fields": [
+     {
+      "offset": 0,
+      "name": "signal_value",
+      "type": "byte*",
+      "size": 4,
+      "comment": "The received signal byte (a j1939_received_* switch byte)"
+     },
+     {
+      "offset": 4,
+      "name": "timeout_slot",
+      "type": "byte",
+      "size": 1,
+      "comment": "Index into j1939_input_signal_timeouts"
+     },
+     {
+      "offset": 5,
+      "name": "reserved_5",
+      "type": "byte",
+      "size": 1,
+      "comment": "Always 0 (no reader)"
+     },
+     {
+      "offset": 6,
+      "name": "logical_switch",
+      "type": "dword",
+      "size": 4,
+      "comment": "The logical switch this input drives: cm550_FUN_00020890 indexes the e2m 12A8 input priority bytes (0x80bd4a) and the switch bitmaps with it and tests enable bit switch + 0xd0 of the calibration feature words (it reads the low word at +8 for that)"
+     }
+    ],
+    "evidence": "cm550_FUN_00020890 runs inputs 0-16 (cm550_FUN_00021070 loops while < 0x11) and addresses 0x20108 + input x 10: d0 = input x 5, then (n,a4,d0.l*2) with a4 = 0x20108. It reads movea.l +0 / cmpi.b (a0) (0x20a36), move.b +4 (0x2096a; the slot feeds tst.w (0,a0,d0.w*2) of 0x804234), move.l +6 (0x2090a / 0x20a6e) and move.w +8 (0x208d0). Stride 10, count 17, offsets +0 / +4 / +6. Byte +5 is 0 in all 17 records and has no reader. CM848's j1939_input_signal_descriptor_t has the same layout (10 bytes x 17 at flash2 0x53a278), and its records match pointer for pointer (by 12F7 offset) and slot for slot. Make it a type-only template applied through the global row 0x20108 [17]. It applies only if the import does not list 0x20108 under 'failed (in code)'."
+   }
+  ],
+  "rows_to_remove": [
+   {
+    "firmware": "cm550",
+    "address": "0x00800b00",
+    "name": "diagnostic_request_buffer",
+    "reason": "It lies inside the new j1939_receive_handler_table, in entry 13's handler field (0x800afe + 2). The row is an undefined-typed legacy guess with no comment, and it survived the J90280.05 removal. The dumped 256 KB ROM has no absolute reference to it and the .cpp has no use. Code above 0x40000 is not dumped, so remove it only if the build diff shows no change apart from the table."
+   }
+  ],
+  "local_rows": [],
+  "notes": "1) Twin flip, one sentence: if 16 vs 17 counts as a constant, CM550 0x21272 becomes cm550_registerJ1939ReceiveHandler (counterpart), CM848 0x538eb0 keeps cm848_registerJ1939ReceiveHandler, and the plate comments here that say registerJ1939ReceiveHandler must follow that choice.\n\n2) 0x21272 has no // Function: block in the current .cpp. It is one of 7 renamed CM550 functions without one: 0x103ba, 0x16cd8, 0x18dae, 0x1e0bc, 0x21272, 0x21642 and 0x2ee62. 0x2ee62 is registerJ1939DiagnosticService, twinned in round 88. Calls to 0x21272 render with no arguments. Its prototype comes from the machine code and is untested: a word at +4, a long at +6, and a byte result in d0. Proposed function_definitions.csv rows (no commas in comments):\n0x00021272,registerJ1939ReceiveHandler,return,,byte,1 = the table already held 16 entries and nothing was stored / 0 = appended (moveq #1 / clr.b d0)\n0x00021272,registerJ1939ReceiveHandler,0,pgn_key,ushort,The PGN key word (PDU format and PDU specific bytes; 0 = TSC1) - the word at +4 (move.w (8;sp) after the a2 push)\n0x00021272,registerJ1939ReceiveHandler,1,handler,void*,The receive handler - the long at +6 (move.l (10;sp)); the dispatcher 0x212b2 calls it with the received frame\n0x00021a5c,receivePgn57344CabMessage1,0,message,can_std_rx_desc_t*,The received frame from the dispatcher 0x212b2 - the long at +4 (movea.l (4;sp)); the body reads data_ptr (+6)\nFor 0x21a8c / 0x21b88 / 0x21c74 / 0x21d44, use the same row with movea.l (8;sp) after the a2 push. For 0x21c3c, use the same row with movea.l (4;sp).\nRender check after the build: cm550_registerJ1939InputMessageHandlers must show six calls of the form registerJ1939ReceiveHandler(0xe000,receivePgn57344CabMessage1). If they still have no arguments, the prototype rows did not apply. No DAT_008042xx, DAT_00803f9c or DAT_00803fa6 may remain in the six handlers. The two new functions must appear as // Function: blocks.\n\n3) Shared proof for the 23 receivers: in both firmwares the same handler and slot writes each byte at the same offset from the 12F7 +3 base (0x80d70f / 0x40aaa9). Every access is a byte. The code reaches them by absolute address or through the descriptor pointers and never by index, so they stay flat byte rows, as in CM848. Only j1939_input_signal_timeouts gets an array, because it is the only one of these the code indexes.\n\n4) Refresh: the seven CM848 twin renames also change the function_name column of CM848's function_definitions.csv rows for 0x538eb0 (2 rows) and the six handlers. They also touch comments that cite the cm848_ names: CM848 arrays.csv (j1939_input_signal_timeouts / filter), global_variables.csv, and firmware/CLAUDE.md's 'J1939 input layer' paragraph, which also says 'Pedal position 2 ... received and supervised'. CM550's existing filter rows 0x803f9d-0x803fb2 cite cm550_FUN_00021a8c / cm550_FUN_00021ef6 / can_received_source_address.\n\n5) parameter_id_lookup_table.csv: run its staleness test. Reading write_cm550_table, it lists only block bases: 12F7 = 0x80d70c (not renamed), 12E8 = 0x0100048c (-> 0x803f96, no row), 12F6 = 0x0100072a (outside the mapped mirror, stays blank) and 11C0 = 0x0100075a. So no change is expected. If the test fails, rerun e2m_block_addresses.py --firmware cm550 --write-table output/parameter_id_lookup_table.csv.\n\n6) Scope: each 'no reference' or 'only' claim for CM550 covers absolute addressing in the dumped 256 KB ROM (0x0-0x3FFFF) plus the .cpp. Code above 0x40000 is not dumped; for example func_0x000420bc runs in the same task as the tick.\n\n7) Observation: CM550's remote accelerator consumer cm550_FUN_00020784 tests timeout slot 1 (the remote accelerator enable switch) rather than slot 8, the remote accelerator's own slot. Slot 8 has no reader in the dumped ROM.\n\n8) Leads, not verified, outside the listed pairings:\n- mc68k_FUN_000212b2 against cm848_dispatchJ1939ReceivedMessages (source skip list 0x80d9e0-0x80d9e3; the 18-byte ring 0x80d72e-0x80d884).\n- cm550_FUN_00020890 against cm848_evaluateJ1939InputSignalFault.\n- cm550_FUN_00021070 / cm550_FUN_00021146 against cm848_processJ1939SwitchAndRequestInputs / cm848_processJ1939AcceleratorInputs, with the consumers 0x2041c / 0x20380 / 0x204b0 / 0x20784 / 0x20c98 / 0x20e14 / 0x20fac.\n- 12F7 +0..+2 at 0x80d70c-0x80d70e against CM848's 0x40aaa6-0x40aaa8 flags.\n- The unnamed 12E8 +0..+5 module source addresses at 0x803f96-0x803f9b.\n\n9) Tooling: llvm-objdump-18 disassembles CM550 with addresses through a hand-made m68k ELF wrapper (scratch T1/mkelf.py; cm550.elf). It still prints moveq / addq / subq / andi / clr / pea / tst / cmpa / cmp.b-absolute as <unknown>, so those were decoded by hand. Evidence notes: /home/linux/.claude/jobs/374b0424/tmp/w15/r91/scratch/T1/evidence_notes.txt."
+ },
+ "verdict": {
+  "item": "T1",
+  "overall": "48 CONFIRMED, 2 AMENDED (comment only: slot 9 in both firmwares), 0 REFUTED. I re-checked everything from scratch: capstone m68k decode of J90350.00.rom.bin, disasm_func.py for CM848, the RAM / EEPROM / extended RAM dumps, and both e2m tables through e2m_block_addresses.py.\n\n- Six handlers: twins. They match step for step: filter slot, the 500 / 50 / 25 reloads, data byte and bit field, receiver offset from each 12F7 +3 base, and registration key.\n- Registration (0x21ef6) and tick (0x21edc): counterparts. CM848 adds the 1000 start-delay store and the gate / start-up / DM13 steps.\n- Registrar: twin, with one caveat. The only difference is the capacity immediate, 16 vs 17. Each value equals its own table's extent (0x800ab0 + 96 = count byte 0x800b10; 0x3fd414 + 102 = 0x3fd47a). The cited precedents (copyCalibrationFromRomToRam, clearWorkingRam; disassembled) differ in address bounds and CM550's inline watchdog kick, not in an immediate count, so they are not an exact match.\n- FLIP: if 16 vs 17 counts as a constant, CM550 0x21272 becomes cm550_registerJ1939ReceiveHandler and CM848 0x538eb0 keeps cm848_registerJ1939ReceiveHandler. Every plate, comment and prototype text that says registerJ1939ReceiveHandler then follows.\n- Receivers: 22 of the 23 take CM848's existing names exactly; all accesses are byte-wide and at offset 0.\n- Slot 9 name: it rests on both ECMs' e2m tables (same record, PSI_A at 0.7252683 per bit, range 0-250), not on the CM550 consumer. That consumer writes x 9282/100 into A/D channel 0's raw override (the intake manifold temperature channel per the round 90 rows), so \"so the slot is a pressure\" is removed from both comments.\n- Checks that found nothing:\n  - No local_variables.csv rows for any affected function in either firmware, so local_rows [] is right.\n  - No addressed structure_definitions rows inside the ranges.\n  - No other ROM reference into the descriptor table, the timeout words, the handler table or 0x800b00. The extra hits were coincidental byte pairs.\n  - function_definitions rows match by address; a stale function_name only warns.\n- Prototype rows: they fit stack_parameter_layout.csv (word key at +4 and long handler at +6, as read by 8(sp) / 10(sp) after the a2 push; the handler record at +4). They also match CM550's existing can_std_rx_desc_t* handlers, whose data_ptr is at +6. A byte return is fine (moveq #1 / clr.b d0); CM848's registrar simply has no return row.\n- Refresh after the renames: cm848_registerJ1939ReceiveHandler is cited 21 times. That covers CM848 function_definitions / structure_definitions (the j1939_receive_handler_entry_t comment row, which note 4 does not list) / function_renames (six handler plates and others) / global_variables, plus firmware/CLAUDE.md. The six cm848_receivePgn* names are cited 3 times each. CLAUDE.md's \"Pedal position 2 ... received and supervised\" also needs updating. Regenerate both firmwares' headers.\n- Evidence nits (not amendments):\n  - \"All 8 call sites\" is 8 references: 7 jsr plus the movea.l in 0x21ef6, which calls through a2 six times. That is 13 calls, matching dump count 13.\n  - The tick has a single jsr (0x1b4f0), shared by two Ghidra entries over the same scheduler code.\n  - 0x80d719's comment says \"(percent)\"; it is 0.4 % per bit.\n\nScratch notes and tools: /home/linux/.claude/jobs/374b0424/tmp/w15/r91/scratch/T1-skeptic/ (skeptic_notes.txt, tools/dis68k.py, tools/absrefs.py, tools/ppc_refs.py, tools/ppc_after.py).",
+  "verdicts": [
+   {
+    "element": "function 0x00021a5c",
+    "verdict": "CONFIRMED",
+    "reason": "Decoded 0x21a5c-0x21a8a, right after the rts at 0x21a5a: move.b 0x803f9c,d0 / cmp.b 0x80d9dc,d0 / beq / cmpi.b #$ff,0x803f9c / bne rts / move.w #$1f4,0x804234 / movea.l 4(sp),a0 / movea.l 6(a0),a0 / move.b (a0),0x80d71c / rts. CM848 0x50b734: lbz filter[0] (0x3fd81e) vs lbz 0x40ad52 / cmpwi 255 / li 500 + sth 0x3feaa4 / lwz 6(r3) / lbz 0 / stb 0x40aab6. Same slot 0, same 500, data byte 1, receiver +0x0d from both 12F7 +3 bases. Key 0xe000 in both (move.w #$e000 at 0x21f04; RAM dump table entry 7 = e000 / 00021a5c). No // Function: block, no function_renames or deleted_functions row, and the body is decompiled nowhere, so the new row creates it. Twin: one shared name."
+   },
+   {
+    "element": "function 0x0050b734",
+    "verdict": "CONFIRMED",
+    "reason": "Twin of CM550 0x21a5c; I verified both bodies. The appended text is fine. Its existing plate text says 'Registered with cm848_registerJ1939ReceiveHandler', so refresh it with the registrar rename."
+   },
+   {
+    "element": "function 0x00021a8c",
+    "verdict": "CONFIRMED",
+    "reason": "Decoded: filters 0x803f9d-0x803fa1 vs (a1)=0x80d9dc then 0xff; move.w #$32 to 0x804236-0x80423e. Stores: data[3] (&0xc0)>>6 -> 0x80d723, (&0x30)>>4 -> 0x80d711, (&0x0c)>>2 -> 0x80d725, &3 -> 0x80d710; data[4] -> 0x80d719. CM848 0x50b77c: filter[1..5] / li 50 + sth 0x3feaa6-0x3feaae / rlwinm 26,30,31 -> 0x40aabd, 28 -> 0x40aaab, 30 -> 0x40aabf, clrlwi 30 -> 0x40aaaa, data[4] -> 0x40aab3. Receiver offsets +0x14 / +2 / +0x16 / +1 / +0x0a in both; mask-then-shift equals rotate-then-mask. Key 0xf001 in both (dump entry 8). The fields match J1939 EBC1 byte 4 (SPN 972/971/970/969) and byte 5 (SPN 973). Twin."
+   },
+   {
+    "element": "function 0x0050b77c",
+    "verdict": "CONFIRMED",
+    "reason": "Twin of CM550 0x21a8c; I verified both bodies. Refresh its 'Registered with cm848_registerJ1939ReceiveHandler' text with the registrar rename."
+   },
+   {
+    "element": "function 0x00021b88",
+    "verdict": "CONFIRMED",
+    "reason": "Decoded: filters 0x803fa2-0x803fa5; move.w #$19 to 0x804240-0x804246. Stores: data[0]&3 -> 0x80d71a, data[1] -> 0x80d714, data[3] -> 0x80d722, data[4] -> 0x80d720. CM848 0x50b8a4: filter[6..9] / li 25 + sth 0x3feab0-0x3feab6 / clrlwi 30 data[0] -> 0x40aab4, data[1] -> 0x40aaae, data[3] -> 0x40aabc, data[4] -> 0x40aaba. Offsets +0x0b / +5 / +0x13 / +0x11 in both. Key 0xf003 in both (dump entry 9). Twin."
+   },
+   {
+    "element": "function 0x0050b8a4",
+    "verdict": "CONFIRMED",
+    "reason": "Twin of CM550 0x21b88; I verified both bodies. Refresh its existing cm848_registerJ1939ReceiveHandler mention."
+   },
+   {
+    "element": "function 0x00021c3c",
+    "verdict": "CONFIRMED",
+    "reason": "Decoded 0x21c3c-0x21c72, right after 0x21b88's rts at 0x21c3a: move.b 0x803fa6,d0 / cmp.b 0x80d9dc / beq / cmpi.b #$ff,0x803fa6 / bne rts / move.w #$1f4,0x804248 / movea.l 4(sp),a0 / movea.l 6(a0),a0 / move.b 2(a0),d0 / andi.b #3 / move.b d0,0x80d70f / rts. CM848 0x50b98c: filter[10] / li 500 + sth 0x3feab8 / clrlwi 30 of data[2] -> 0x40aaa9. Offset +0 in both. Key 0xfee4 in both (move.w #$fee4 at 0x21f28; dump entry 10). It has no function block, no row and no deleted_functions entry, and the 0x80d70f store is decompiled nowhere. SHUTDN byte 3 bits 1-2 = SPN 985. Twin."
+   },
+   {
+    "element": "function 0x0050b98c",
+    "verdict": "CONFIRMED",
+    "reason": "Twin of CM550 0x21c3c; I verified both bodies. Refresh its existing cm848_registerJ1939ReceiveHandler mention."
+   },
+   {
+    "element": "function 0x00021c74",
+    "verdict": "CONFIRMED",
+    "reason": "Decoded: filters 0x803fa7-0x803faa; move.w #$32 to 0x80424a-0x804250. Stores: data[5] (&0x0c)>>2 -> 0x80d721, &3 -> 0x80d71d; data[6] (&0x30)>>4 -> 0x80d71e, &3 -> 0x80d71f. CM848 0x50b9d8: filter[11..14] / li 50 + sth 0x3feaba-0x3feac0 / rlwinm 30,30,31 -> 0x40aabb, clrlwi 30 -> 0x40aab7, rlwinm 28,30,31 -> 0x40aab8, clrlwi 30 -> 0x40aab9. Offsets +0x12 / +0x0e / +0x0f / +0x10 in both. Key 0xfef0 in both (dump entry 11). Twin."
+   },
+   {
+    "element": "function 0x0050b9d8",
+    "verdict": "CONFIRMED",
+    "reason": "Twin of CM550 0x21c74; I verified both bodies. Refresh its existing cm848_registerJ1939ReceiveHandler mention."
+   },
+   {
+    "element": "function 0x00021d44",
+    "verdict": "CONFIRMED",
+    "reason": "Decoded: filters 0x803fab-0x803fb2; move.w #$32 to 0x804252-0x804260. Stores: data[3] >>6 / >>4 / >>2 -> 0x80d713 / 0x80d712 / 0x80d715; data[4] >>4 / &3 -> 0x80d716 / 0x80d717; data[7] &3 / >>2 / >>4 -> 0x80d71b / 0x80d718 / 0x80d724. CM848 0x50bacc: filter[15..22] / li 50 + sth 0x3feac2-0x3fead0, the same fields -> 0x40aaad / ac / af / b0 / b1 / b5 / b2 / be. Offsets +4 / +3 / +6 / +7 / +8 / +0x0c / +9 / +0x15 in both. Key 0xfef1 in both (dump entry 12). The fields match CCVS1 SPN 598/597/596/601/599/968/967/966. Twin."
+   },
+   {
+    "element": "function 0x0050bacc",
+    "verdict": "CONFIRMED",
+    "reason": "Twin of CM550 0x21d44; I verified both bodies. Refresh its existing cm848_registerJ1939ReceiveHandler mention."
+   },
+   {
+    "element": "function 0x00021272",
+    "verdict": "CONFIRMED",
+    "reason": "Decoded: move.l a2,-(sp); movea.l #$800b10,a1; cmpi.b #$10,(a1); bne; moveq #1; rts. Else: move.b (a1),d0; addq.b #1,(a1); andi.l #$ff; d0 x 6; adda 0x800ab0; move.w 8(sp),(a2); move.l 10(sp),2(a2); clr.b d0. CM848 0x538eb0: lbz 0x3fd47a / cmpwi 17 / li r3,1, else mulli 6 + 0x3fd414 / stb count+1 / sth r3,0 / stw r4,2 / li r3,0. Same steps and role. The dispatcher 0x212b2 scans the same 6-byte entries to the count byte and jsr's +2 with the 18-byte record. The only difference is the capacity immediate 16 vs 17, and each equals its own table's extent (0x800ab0+96 = count byte 0x800b10; 0x3fd414+102 = 0x3fd47a), so it is a layout bound. I disassembled the cited precedents: copyCalibrationFromRomToRam 0x117ec/0x4bd00 and clearWorkingRam 0x2e9ac/0x538974 differ in address bounds and CM550's inline watchdog kick, not in an immediate count. They support the leniency but are not an exact match. FLIP: if 16 vs 17 counts as a constant, this row becomes cm550_registerJ1939ReceiveHandler, 0x538eb0 keeps cm848_registerJ1939ReceiveHandler, and every plate, comment and prototype text naming registerJ1939ReceiveHandler follows. The old name is wrong (it transmits nothing). Nit: '8 call sites' is 8 references (7 jsr plus the movea.l #$21272,a2 in 0x21ef6, used six times) = 13 calls, matching dump count 13."
+   },
+   {
+    "element": "function 0x00538eb0",
+    "verdict": "CONFIRMED",
+    "reason": "Follows 0x21272 and carries the same flip. Its current plate text calls it 'The receive side twin of registerJ1939DiagnosticService'. Next to a cross-firmware twin note that loose 'twin' is ambiguous, so consider rewording it when appending."
+   },
+   {
+    "element": "function 0x00021ef6",
+    "verdict": "CONFIRMED",
+    "reason": "Decoded 0x21ef6-0x21f4c: movea.l #$21272,a2, then six pea handler / move.w #key,-(sp) / jsr (a2): e000->21a5c, f001->21a8c, f003->21b88, fee4->21c3c, fef0->21c74, fef1->21d44; then lea 36(sp) / rts. CM848 0x50bdcc makes the same six calls in the same order, then li 1000 / sth 0x40aaa4 (j1939_input_fault_start_delay). The extra step makes it a counterpart: cm550_ plus CM848's base name. Its single caller is mc68k_initializeJ1939Datalink (jsr at 0x28e38)."
+   },
+   {
+    "element": "function 0x00021edc",
+    "verdict": "CONFIRMED",
+    "reason": "Whole body decoded: movea.l #$804234,a0, then a loop of tst.w / beq / subq.w #1 / addq.l #2 / cmpa.l #$804264 / bls, so 25 words inclusive. CM848 0x50bca0 ends with the same inclusive loop (r3 = base+48, cmplw/bge, 25 words). Before it CM848 has: the algorithm_enable_flags_28_cal 0x400 gate; the j1939_input_fault_start_delay countdown; the start-up timer / inhibit flag from engine_state 3/4/5 and the key-switch bit; and a skip while 0x40adda (j1939_dm13_fault_log_inhibit_flag) is set. CM550 has none of these, and its 12F7 ends at +20 (no +22/+24 records), so it is a counterpart. Nit: there is one call (jsr at 0x1b4f0); 0x1b4d8 and 0x1b4ea are two Ghidra entries into the same unconditional scheduler code. cm550_countDownJ1939InputSignalTimeouts would describe the body more literally, but the counterpart convention keeps CM848's base name."
+   },
+   {
+    "element": "global 0x00804234",
+    "verdict": "CONFIRMED",
+    "reason": "Every absolute reference into 0x804234-0x804265 in the dumped ROM is one of these:\n- the handlers' word stores to slots 0-22 (500 / 50 / 25 as listed);\n- the tick's walk;\n- cm550_FUN_00020890's indexed base (movea.l at 0x20974, then tst.w (a0,d0.w*2) at 0x2097a with the descriptor slot);\n- six direct tst.w readers: 0x20460 slot 0, 0x207f0 slot 1, 0x203c8 slot 5, 0x20518 slot 6, 0x20ce8 slot 7, 0x20ffe slot 9.\nThe hits at 0x13116, 0x20616 and 0x2068e are coincidental byte pairs. e2m 12F6 +0..+2E (24 two-byte records, 10 ms) map in slot order, MXMNFMTR..MXTESWTR = slots 0-22 and MXDUMYTR = 23. 0x803b0a + 0x72a = 0x804234, and the same offset puts 11C1 +0 / +2 on the existing j1708_link_timeout_counter / j1939_link_timeout_counter rows, which corroborates the mapping past the 0x64c-byte mirror. Slot 24 is 11C0 J39PDBLK and is reached only by the tick's inclusive bound, like CM848's slot 24. word[25] matches the code's walk and CM848's word[25]. There is no row in the range, the dump is all 0, and the words lie outside the mirror, so no _cal."
+   },
+   {
+    "element": "global 0x00800ab0",
+    "verdict": "CONFIRMED",
+    "reason": "The registrar writes 0x800ab0 + count x 6 (word at +0, long at +2) and refuses at 16. The dispatcher does movea.l #$800ab0 at 0x21370, cmp.w (a2), jsr through 2(a2), addq.l #6, bounded by move.b 0x800b10 at 0x21378. Only those two functions reference 0x800ab0-0x800b10. RAM dump: 13 well-formed entries; keys ec00 eb00 ef00 0000 f002 ea00 e300 then e000 f001 f003 fee4 fef0 fef1, with the handlers the comment lists; entries 13-15 are zero. The only row inside is 0x800b00 (see remove). A struct-array T[N] global row applies (firmware/CLAUDE.md; round 88 precedent j1939_diagnostic_service_entry_t[32])."
+   },
+   {
+    "element": "global 0x00800b10",
+    "verdict": "CONFIRMED",
+    "reason": "Byte accesses: cmpi.b #$10,(a1) / move.b (a1),d0 / addq.b #1,(a1) with a1 = 0x800b10 in the registrar, and move.b 0x800b10,d3 as the dispatcher's scan bound. Dump value 13 = 7 direct jsr registrations + 6 from 0x21ef6. Same role and position as CM848's 0x3fd47a, and the same name."
+   },
+   {
+    "element": "global 0x00020108",
+    "verdict": "CONFIRMED",
+    "reason": "Decoded 17 x 10 bytes from ROM:\n- pointers 0x80d70f/10/11/12/13/15/16/17/18/1b/1d/1e/1f/21/23/24/25;\n- slots 10 4 2 16 15 17 18 19 21 20 12 13 14 11 1 22 3;\n- byte +5 = 0;\n- switches 72 9 54 11 10 3 1 2 14 13 60 56 58 20 19 15 54.\nCM848 0x53a278 has the same pointers (by 12F7 offset) and slots, entry for entry. The table starts right after the rts at 0x20106, and its only absolute reference is movea.l #$20108,a4 at 0x20898. cm550_FUN_00020890 addresses it as a4 + (input x 5) x 2; the *2 scale is in extension words 0x0a00 / 0x0a04 / 0x0a06, which capstone's text omits. It reads +0 (movea.l, then cmpi.b (a0)), +4 (byte slot), +6 (long) and +8 (word). cm550_FUN_00021070 loops inputs 0-16. No row lies inside, it renders as DAT_ labels today, and CM550 already types ROM struct arrays (application_memory_region_table memory_region_t[5])."
+   },
+   {
+    "element": "global 0x00803f9c",
+    "verdict": "CONFIRMED",
+    "reason": "Only two absolute references, both byte: move.b 0x803f9c,d0 at 0x21a5c and cmpi.b #$ff,0x803f9c at 0x21a6a. e2m 12E8 +6 MXMNFMSA (1 byte) resolves here. EEPROM offset 0x492 is inside the mirror 0x803b0a-0x804155, so _cal. EEPROM and RAM dumps hold 0xFF. The name follows the existing j1939_<signal>_source_address_filter_cal rows at 0x803f9d-0x803fb2 and the twin receiver's name."
+   },
+   {
+    "element": "global 0x00803fa6",
+    "verdict": "CONFIRMED",
+    "reason": "Only two absolute references, both byte: move.b 0x803fa6,d0 at 0x21c3c and cmpi.b #$ff,0x803fa6 at 0x21c4a. e2m 12E8 +10 MXAKPRSA (1 byte) resolves here; EEPROM offset 0x49c is inside the mirror, so _cal. Dumps 0xFF. The name follows the filter-row convention and the receiver j1939_received_air_conditioner_high_pressure_fan_switch."
+   },
+   {
+    "element": "global 0x0080d9dc",
+    "verdict": "CONFIRMED",
+    "reason": "Writer: move.b 3(a0),0x80d9dc at 0x2133c in mc68k_FUN_000212b2 (receive record byte 3 = source address). Readers: the skip-list scan (move.b at 0x21352 over 0x80d9e0-0x80d9e3, ended by 0xFE; dump FE FE FE FE) and the six handlers (cmp.b 0x80d9dc, or movea.l #$80d9dc,a1 then cmp.b (a1)). All byte accesses, and no base register near 0x80d9c0-0x80d9db reaches it. CM848's j1939_received_source_address has the same writer (lbz 3(r29) / stb at 0x539020 in cm848_dispatchJ1939ReceivedMessages) and the same six handler readers. Extended RAM dump 0xF9."
+   },
+   {
+    "element": "global 0x0080d70f",
+    "verdict": "CONFIRMED",
+    "reason": "Store move.b d0 at 0x21c6c (SHUTDN data[2]&3, slot 10, timeout 500). CM848 0x40aaa9 has its stb at 0x50b9d0. Both are 12F7 +3, a 1-byte JCAKPRMU in both e2m files, and descriptor entry 0 points at it in both tables. Byte-only; the name is CM848's row; dump 0."
+   },
+   {
+    "element": "global 0x0080d710",
+    "verdict": "CONFIRMED",
+    "reason": "Store at 0x21b56 (EBC1 data[3]&3, slot 4, timeout 50). CM848 0x40aaaa: clrlwi 30, stb at 0x50b868. 12F7 +4; descriptor entry 1 in both; SPN 972 = EBC1 byte 4 bits 1-2. The name is CM848's."
+   },
+   {
+    "element": "global 0x0080d711",
+    "verdict": "CONFIRMED",
+    "reason": "Store at 0x21af6 ((data[3]&0x30)>>4, slot 2). CM848 0x40aaab: rlwinm 28,30,31, stb at 0x50b7f8. 12F7 +5; descriptor entry 2; SPN 970. The name is CM848's."
+   },
+   {
+    "element": "global 0x0080d712",
+    "verdict": "CONFIRMED",
+    "reason": "Store at 0x21dae (CCVS1 (data[3]&0x30)>>4, slot 16). CM848 0x40aaac stb at 0x50bb48. 12F7 +6; descriptor entry 3; SPN 597. The name is CM848's."
+   },
+   {
+    "element": "global 0x0080d713",
+    "verdict": "CONFIRMED",
+    "reason": "Store at 0x21d7c ((data[3]&0xc0)>>6, slot 15). CM848 0x40aaad: rlwinm 26,30,31, stb at 0x50bb10. 12F7 +7; descriptor entry 4; SPN 598. The name is CM848's."
+   },
+   {
+    "element": "global 0x0080d714",
+    "verdict": "CONFIRMED",
+    "reason": "Store move.b 1(a0) at 0x21be0 (EEC2 slot 7, timeout 25). CM848 0x40aaae stb at 0x50b91c. 12F7 +8 JCCMTHMU, 0.4 % per bit in both e2m files. Byte readers in cm550_FUN_00020c98 at 0x20d18 / 0x20d30 / 0x20d40 / 0x20da6, with tst.w on slot 7 at 0x20ce8. The comment's reader summary matches the decompile (x 16 / 10 below 0xfb unless the IVS-configuration flag is set; 0xfe sets status bit 0). The name is CM848's."
+   },
+   {
+    "element": "global 0x0080d715",
+    "verdict": "CONFIRMED",
+    "reason": "Store at 0x21de0 ((data[3]&0x0c)>>2, slot 17). CM848 0x40aaaf stb at 0x50bb80. 12F7 +9; descriptor entry 5; SPN 596. The name is CM848's."
+   },
+   {
+    "element": "global 0x0080d716",
+    "verdict": "CONFIRMED",
+    "reason": "Store at 0x21e12 ((data[4]&0x30)>>4, slot 18). CM848 0x40aab0 stb at 0x50bbb8. 12F7 +A; descriptor entry 6; SPN 601. The name is CM848's."
+   },
+   {
+    "element": "global 0x0080d717",
+    "verdict": "CONFIRMED",
+    "reason": "Store at 0x21e40 (data[4]&3, slot 19). CM848 0x40aab1 stb at 0x50bbf0. 12F7 +B; descriptor entry 7; SPN 599. The name is CM848's."
+   },
+   {
+    "element": "global 0x0080d718",
+    "verdict": "CONFIRMED",
+    "reason": "Store at 0x21ea0 ((data[7]&0x0c)>>2, slot 21). CM848 0x40aab2 stb at 0x50bc60. 12F7 +C; descriptor entry 8; SPN 967. The name is CM848's."
+   },
+   {
+    "element": "global 0x0080d719",
+    "verdict": "CONFIRMED",
+    "reason": "Store move.b 4(a0) at 0x21b7c (EBC1 slot 5, timeout 50). CM848 0x40aab3 stb at 0x50b89c. 12F7 +D. The reader cm550_FUN_00020380 (movea.l #$80d719,a4 at 0x20390; offset-0 byte accesses only) tests slot 5 with tst.w at 0x203c8. The name is CM848's. Nit: the comment's '(percent)' should read 0.4 % per bit; the e2m scale is 0.4 and the reader multiplies by 4 / 10."
+   },
+   {
+    "element": "global 0x0080d71a",
+    "verdict": "CONFIRMED",
+    "reason": "Store at 0x21bba (EEC2 data[0]&3, slot 6, timeout 25). CM848 0x40aab4 stb at 0x50b8e8. 12F7 +E. Byte readers: cm550_outputControlState1Handler (movea.l #$80d71a,a4 at 0x204c0; slot 6 tst.w at 0x20518), cm550_FUN_00020c98 (0x20d5e / 0x20dca / 0x20de4) and cm550_FUN_00020e14 (0x20ec2 / 0x20ed6 / 0x20efa / 0x20f68). SPN 558. The name is CM848's."
+   },
+   {
+    "element": "global 0x0080d71b",
+    "verdict": "CONFIRMED",
+    "reason": "Store at 0x21e6e (data[7]&3, slot 20). CM848 0x40aab5 stb at 0x50bc28. 12F7 +F; descriptor entry 9; SPN 968. The name is CM848's."
+   },
+   {
+    "element": "global 0x0080d71c",
+    "verdict": "CONFIRMED",
+    "reason": "Store move.b (a0) at 0x21a84 (CM1 slot 0, timeout 500). CM848 0x40aab6 stb at 0x50b774. 12F7 +10 JCFSPCMU, 0.4 % per bit. The reader cm550_FUN_0002041c (movea.l #$80d71c,a4 at 0x2042c; offset 0 only) tests slot 0 with tst.w at 0x20460, and below 0xfb writes x 16 / 10 into user_value_for_manual_fan_level_requested_fan_speed_0_100. SPN 986. The name is CM848's."
+   },
+   {
+    "element": "global 0x0080d71d",
+    "verdict": "CONFIRMED",
+    "reason": "Store at 0x21cda (PTO data[5]&3, slot 12). CM848 0x40aab7 stb at 0x50ba54. 12F7 +11; descriptor entry 10. The name is CM848's."
+   },
+   {
+    "element": "global 0x0080d71e",
+    "verdict": "CONFIRMED",
+    "reason": "Store at 0x21d0c ((data[6]&0x30)>>4, slot 13). CM848 0x40aab8 stb at 0x50ba8c. 12F7 +12; descriptor entry 11. The name is CM848's."
+   },
+   {
+    "element": "global 0x0080d71f",
+    "verdict": "CONFIRMED",
+    "reason": "Store at 0x21d3a (data[6]&3, slot 14). CM848 0x40aab9 stb at 0x50bac4. 12F7 +13; descriptor entry 12. The name is CM848's."
+   },
+   {
+    "element": "global 0x0080d720",
+    "verdict": "AMENDED",
+    "reason": "The name holds on the e2m evidence. Both ECMs' tables give 12F7 +14 JCWTPRMU with unit PSI_A, scale 0.7252683 per bit (5 kPa) and range 0-250, a different quantity from SPN 29's 0.4 % per bit. Slot 9's filter (12E8 +F MXWTPRSA) and timer (12F6 +12 MXWTPRTR) are also wet tank pressure. The store move.b 4(a0) at 0x21c30 (EEC2 slot 9, timeout 25) matches CM848 0x40aaba's stb at 0x50b984. The reader does not support 'so the slot is a pressure'. cm550_FUN_00020fac, gated by bit 0x200 of 0x803cbc and by priority byte 0x80a6fc (e2m 'PRIORITY OF CLIENT OVERRIDING RAW INTAKE MANIFOLD TEMPERATURE'), stores value x 9282/100 at 0x80a760 = analog_sensor_raw_override_values[0]. The round 90 rows identify element 0 as A/D channel 0, the intake manifold temperature channel. The decoded fact is the factor (9282/100 = 0.7252683 x 128, i.e. 5 kPa in 1/128 psi counts). The destination contradicts the source's e2m label, so that sentence has to go.",
+    "amendment": "name and type unchanged (j1939_received_wet_tank_pressure, byte); comment: e2m 12F7 +14 JCWTPRMU 'MUXED VALUE FOR THE PNEUMATIC CONTROL PRESSURE (WET TANK PRESSUR' (PSIA at 0.7252683 per bit = 5 kPa; 0-250; CM848's e2m gives the same record unit and scale): J1939 input received over PGN 61443 EEC2 byte 5, stored by receivePgn61443ElectronicEngineController2Message when filter slot 9 (j1939_wet_tank_pressure_source_address_filter_cal) passes (timeout 25). Its one reader cm550_FUN_00020fac (enable bit 0x200 of 0x803cbc; priority byte 0x80a6fc = e2m 'PRIORITY OF CLIENT OVERRIDING RAW INTAKE MANIFOLD TEMPERATURE') writes value x 9282 / 100 (= 0.7252683 x 128) below 0xfb into analog_sensor_raw_override_values[0] (0x80a760) while j1939_input_signal_timeouts[9] is nonzero; a timeout or a value of 0xfb and up gives the default word at 0x806d3c. Element 0 is A/D channel 0 - the intake manifold temperature channel by the round 90 rows - so that destination does not match the source's e2m label (open question). CM848 twin 0x40aaba (renamed to the same name; it was named for SPN 29 Accelerator Pedal Position 2 at 0.4 % per bit - which J1939 places at EEC2 byte 5). Dump 0 (was muxed_value_for_the_pneumatic_control_pressure_wet_tank_pressur_0_250; PR #53 round 91)"
+   },
+   {
+    "element": "global 0x0080d721",
+    "verdict": "CONFIRMED",
+    "reason": "Store at 0x21cac ((data[5]&0x0c)>>2, slot 11). CM848 0x40aabb stb at 0x50ba1c. 12F7 +15; descriptor entry 13. The name is CM848's."
+   },
+   {
+    "element": "global 0x0080d722",
+    "verdict": "CONFIRMED",
+    "reason": "Store move.b 3(a0) at 0x21c08 (EEC2 slot 8, timeout 25). CM848 0x40aabc stb at 0x50b950. 12F7 +16 JCRTTHMU, 0.4 % per bit. The reader cm550_FUN_00020784 (movea.l #$80d722,a2 at 0x20788; offset-0 byte accesses) tests slot 1 (tst.w 0x804236 at 0x207f0) and passes 1 to its bitmap helpers. Slot 8 (0x804244) has only the handler's store. The comment states exactly this. In CM848 neither 0x40aabc nor slot 8 has any reader. SPN 974; the name is CM848's."
+   },
+   {
+    "element": "global 0x0080d723",
+    "verdict": "CONFIRMED",
+    "reason": "Store at 0x21ac4 ((data[3]&0xc0)>>6, slot 1). CM848 0x40aabd stb at 0x50b7c0. 12F7 +17; descriptor entry 14; SPN 969. The name is CM848's."
+   },
+   {
+    "element": "global 0x0080d724",
+    "verdict": "CONFIRMED",
+    "reason": "Store at 0x21ed2 ((data[7]&0x30)>>4, slot 22). CM848 0x40aabe stb at 0x50bc98. 12F7 +18; descriptor entry 15; SPN 966. The name is CM848's."
+   },
+   {
+    "element": "global 0x0080d725",
+    "verdict": "CONFIRMED",
+    "reason": "Store at 0x21b28 ((data[3]&0x0c)>>2, slot 3). CM848 0x40aabf stb at 0x50b830. 12F7 +19; descriptor entry 16; SPN 971. The name is CM848's."
+   },
+   {
+    "element": "global 0x0040aaba",
+    "verdict": "AMENDED",
+    "reason": "The rename is supported. CM848's own parameter ID table resolves:\n- 12F7 +14 J1939_Mux_Wet_Tank_Pressure (PSI_A, 0.7252683 per bit, 0-250) to 0x40aaba;\n- 12E8 +F Wet_Tank_Pressure_Source_Address_Enable to 0x3fd827 = filter[9];\n- 12F6 +12 J1939_Wet_Tank_Pressure_Timer to 0x3feab6 = timeouts[9].\nThe SPN 29 name came only from the J1939 position, and SPN 29's 0.4 % per bit contradicts the e2m scale. No reader: in ROM and flash2 the only 0xaaba displacement is the stb at 0x50b984 and there is no 32-bit pointer. The base registers built near the block (0x40aa9a / 0x40aaa6 / 0x40aab4 / 0x40aaa4) are used only at offset 0. Timer 0x3feab6 has only its sth. Amend the comment: the clause 'the CM550 twin's consumer scales it as a pressure (5 kPa per bit)' is not clean evidence, because that consumer writes A/D channel 0's raw override, the intake manifold temperature channel per CM550's round 90 rows. Cite the e2m scale instead.",
+    "amendment": "name and type unchanged (j1939_received_wet_tank_pressure, byte); comment: e2m 12F7 +14 J1939_Mux_Wet_Tank_Pressure '[JCWTPRMU] MUXed value for the Pneumatic Control Pressure (Wet tank pressure)' (PSI_A at 0.7252683 per bit = 5 kPa; 0-250; address from the ECU's parameter ID table): J1939 input received over PGN 61443 EEC2 byte 5, stored by receivePgn61443ElectronicEngineController2Message when j1939_input_source_address_filter_cal[9] (12E8 +F Wet_Tank_Pressure_Source_Address_Enable) passes, with j1939_input_signal_timeouts[9] (12F6 +12 J1939_Wet_Tank_Pressure_Timer) reloaded to 25. The old name came from SPN 29 Accelerator Pedal Position 2 (0.4 % per bit), which the J1939 database places at EEC2 byte 5; this ECM's own parameter table names the filter / timer / value of this slot wet tank pressure with a pressure scale, and the CM550 twin 0x80d720's e2m record is the same (unit and scale). No reader in the dumped ROM and flash2 (the only 0xaaba displacement is the handler's stb at 0x50b984; no 32-bit pointer or base register reaches it) (was j1939_received_accelerator_pedal_position_2; PR #53 round 91)"
+   },
+   {
+    "element": "struct j1939_receive_handler_entry_t",
+    "verdict": "CONFIRMED",
+    "reason": "Offsets come from the registrar (move.w 8(sp),(a2) at +0; move.l 10(sp),2(a2) at +2; stride count x 6) and from the dispatcher (move.w (a2), movea.l 2(a2), addq.l #6). Size 6; 16 entries = 96 bytes up to the count byte; the RAM dump holds 13 well-formed entries. The fields (pgn_key word, handler pointer) match CM848's type-only template. A type-only template applied through the [16] global row follows round 88's j1939_diagnostic_service_entry_t. structure_definitions.csv is CRLF, and the proposed comments contain no commas."
+   },
+   {
+    "element": "struct j1939_input_signal_descriptor_t",
+    "verdict": "CONFIRMED",
+    "reason": "Stride 10 (input x 5 at scale 2), 17 records (inputs 0-16). Reads:\n- +0: a long pointer, then a byte through it;\n- +4: the byte slot (ext.w, then the timeouts index and the bitmap helpers' argument);\n- +6: the long switch;\n- +8: its low word (+0xd0 bit test into the feature words at 0x803c94);\n- +9: its low byte (&7 bit shifts).\n+5 is 0 in all 17 records and is never read. Layout and field names match CM848's j1939_input_signal_descriptor_t. byte* resolves to a byte pointer in ApplyStructures (isPointerType)."
+   },
+   {
+    "element": "remove 0x00800b00",
+    "verdict": "CONFIRMED",
+    "reason": "It lies in the handler field of entry 13 of the new table (0x800afe + 2). The dumped ROM has no absolute reference to it (the only references into 0x800ab0-0x800b10 are the registrar and the dispatcher) and the .cpp never uses it. Its type is undefined, it has no comment, and the dump holds 0. Keep the proposal's guard: remove it only if the build diff shows no other change."
+   }
+  ]
+ }
+}

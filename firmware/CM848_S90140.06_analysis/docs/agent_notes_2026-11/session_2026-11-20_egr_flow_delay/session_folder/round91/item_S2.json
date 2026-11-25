@@ -1,0 +1,1394 @@
+{
+ "proposal": {
+  "item": "S2",
+  "summary": "CM550's user datalogger keeps its settings in the EEPROM mirror. e2m block 1282 holds four 16-byte trigger records at 0x803d64 (EEPROM 0x25a). Block 1283 (not 1282) holds five 6-byte data parameter records at 0x803da4 (EEPROM 0x29a). The machine code (16- and 6-byte strides, loop counts 4 and UDPRCU), the ROM region table (64 / 30 bytes) and the dump (UDADSZ = 94 = 64 + 30; resolved addresses = table[id] + offset) agree. The nine functions at 0x138b6-0x14292 are all the datalogger code in the dumped 256 KB ROM: trigger task, sample task, start-up, sample period, the two address resolvers, the fault-code lookup, the trigger evaluator and the 400-byte copy. Core proposal: the datalogger_trigger_t[4] / datalogger_data_parameter_t[5] instances (replacing six scalar rows) and nine standalone cm550_ function names. The block 1284 / 1285 words, the RAM working set and the event storage are secondary and separable.",
+  "structs": [
+   {
+    "firmware": "CM550",
+    "struct_name": "datalogger_trigger_t",
+    "size": 16,
+    "evidence": "Type-only template (empty address). 16-byte stride: lsl.l #4 of the index at 0x13ef6 (cm550_FUN_00013ed8), moveq #16 / add.l d0,d3 (d2 in 0x13dbe) at 0x13986 / 0x13d10 / 0x13dfe / 0x13ec4; count 4: cmpi.b #4 at 0x13e06 / 0x13ecc, cmpi.w #4 at 0x13d1a, the 0-2 loop plus the separate trigger 4 (tst.b $803d95, move.w #3,-(sp)) in 0x138b6; the ROM region table (8-byte {address, length} entries at 0x8062 + 8 x e2m region) gives region 0x1F5 = {0x0100025a, 64} = 4 x 16; the dump's UDADSZ (0x803dc2) = 0x5e = 94 = 64 + 30. Every field width is from the machine code (Ghidra 12.2 CPU32 listing). e2m 1282 holds 32 records: UD0nTR.. at hex +0x10*(n-1) + BY 0 / DB 1 / FU 2 / MD 4 / NM 6 / OF 8 / TD 0xA / TY 0xE; widths 1 / 1 / 2 / 2 / 2 / 2 / 4 / 2 match. EEPROM 0x25a-0x299 equals the RAM mirror 0x803d64-0x803da3 byte for byte.",
+    "fields": [
+     {
+      "offset": 0,
+      "name": "value_length",
+      "type": "byte",
+      "size": 1,
+      "comment": "+0 (e2m UD0nTRBY 'DATALOGGER TRIGGER LENGTH' 0-4): the width in bytes of the value the trigger compares: 1 = byte / 2 = word / any other value = dword (move.b (0;a0;d0.w*8);d0b at 0x13f30 then cmp.b #1 / #2 / #4); 2 in all four dump records"
+     },
+     {
+      "offset": 1,
+      "name": "disable_flag",
+      "type": "byte",
+      "size": 1,
+      "comment": "+1 (UD0nTRDB 'DISABLES DATALOGGER TRIGGER INPUT'): nonzero = not evaluated; the trigger task then stores 1 (satisfied) for triggers 1-3 so the AND condition ignores them and 0 for trigger 4 (tst.b (0;a0;d3.w) at 0x1396c with a0 = 0x803d65 / tst.b $803d95 at 0x13994); 1 in all four dump records"
+     },
+     {
+      "offset": 2,
+      "name": "fault_code_flag",
+      "type": "word",
+      "size": 2,
+      "comment": "+2 (UD0nTRFU 'SET TRIGGER INPUT TO A FAULT CODE'): 1 = the trigger watches a fault code's status in the fault count table / 0 = it compares a parameter with threshold. The address is resolved only for 0 (tst.w at 0x13dd2) and the fault is looked up only for 1 (cmpi.w #1 at 0x13cf4 / 0x13e78); the evaluation takes the fault path for any nonzero value (tst.w at 0x13f00); 0 in the dump"
+     },
+     {
+      "offset": 4,
+      "name": "above_threshold_or_fault_active_flag",
+      "type": "word",
+      "size": 2,
+      "comment": "+4 (UD0nTRMD 'TRIGGER => THRESHOLD OR < THRESHOLD'): parameter trigger: nonzero = satisfied while the value is above threshold / 0 = while it is below; both strict (bls / bcc / ble / bge after cmp; tst.w at 0x13f0e). Fault trigger: nonzero = satisfied on the pass the fault status turns from inactive (0 or 2) to active (1 or 3) / 0 = on the pass it turns from active to inactive (tst.w at 0x1419c); 1 in the dump"
+     },
+     {
+      "offset": 6,
+      "name": "parameter_id_or_fault_code",
+      "type": "word",
+      "size": 2,
+      "comment": "+6 (UD0nTRNM 'NAME TABLE NAME'): with fault_code_flag 0 the parameter ID passed to cm550_lookupParameterIdAddress (move.w (0;a0;d2.w);-(sp) at 0x13de0); with 1 the fault code matched against the code word of the 125 six-byte fault definitions at 0x8067c4 (cmp.w (a2);d0w at 0x13ea0); dump 0x100c / 0x1004 / 0x1051 / 0x1047"
+     },
+     {
+      "offset": 8,
+      "name": "parameter_offset",
+      "type": "word",
+      "size": 2,
+      "comment": "+8 (UD0nTROF 'NAME TABLE OFFSET'): byte offset added zero-extended to the parameter ID's address (move.w (0;a0;d2.w);d0w / andi.l #0xffff / add.l d0;(a2) at 0x13df2-0x13dfc); dump 2 / 0x76 / 0 / 0"
+     },
+     {
+      "offset": 10,
+      "name": "threshold",
+      "type": "dword",
+      "size": 4,
+      "comment": "+10 = +0xA (UD0nTRTD 'TRIGGER THRESHOLD' 0-FFFFFFFF): read as one dword (move.l (0;a0;d2.w)) and compared through its low byte for value_length 1 (andi.l #0xff - also in signed mode so a 1-byte threshold is 0-255) / its low word for 2 / the whole dword otherwise; dump 0x18fc / 0 / 0 / 0x4f"
+     },
+     {
+      "offset": 14,
+      "name": "signed_value_flag",
+      "type": "word",
+      "size": 2,
+      "comment": "+14 = +0xE (UD0nTRTY 'DATA TYPE (SET: SIGNED; CLEAR: UNSIGNED)'): nonzero = signed compares (extb.l / ble / bge) / 0 = unsigned (bls / bcc) (tst.w at 0x13f1c and 0x1405c with a0 = 0x803d72); 0 in the dump"
+     }
+    ]
+   },
+   {
+    "firmware": "CM550",
+    "struct_name": "datalogger_data_parameter_t",
+    "size": 6,
+    "evidence": "Type-only template. 6-byte stride: addq.l #6,d4 at 0x13ad0 / addq.l #6,d2 at 0x13e48 / the index x 6 at 0x13b5c-0x13b64 (d4 = 2 x (2 x i + i)); count 5: the loops run to the word at 0x803dc8 (UDPRCU 0-5, dump 5), the resolved address table at 0x800508 has room for 5 dwords before 0x80051c, the ROM region table gives region 0x1F6 = {0x0100029a, 30} = 5 x 6, UDADSZ = 94 = 64 + 30 and e2m has UD01-UD05. e2m 1283 holds 15 records: UD0nDX.. at hex +6*(n-1) + BY 0 / NM 2 / OF 4, all 2 bytes. EEPROM 0x29a-0x2b7 equals the RAM mirror.",
+    "fields": [
+     {
+      "offset": 0,
+      "name": "value_length",
+      "type": "word",
+      "size": 2,
+      "comment": "+0 (e2m 1283 UD0nDXBY 'DATALOGGER DATA LENGTH' 0-10): bytes copied from the parameter's address into the ring buffer at each sample (move.w (0;a0;d4.w);d0w at 0x13bb2); the set-up counts the parameters whose running byte total stays at or below 10 (move.w at 0x13abe / add.b d0b;d2b / cmpi.b #10 at 0x13ac4); 2 in all five dump records"
+     },
+     {
+      "offset": 2,
+      "name": "parameter_id",
+      "type": "word",
+      "size": 2,
+      "comment": "+2 (UD0nDXNM 'NAME TABLE NAME'): the parameter ID passed to cm550_lookupParameterIdAddress (move.w (0;a0;d2.w);-(sp) at 0x13e2a); dump 0x100c / 0x1004 / 0x1051 / 0x1047 / 0x1004"
+     },
+     {
+      "offset": 4,
+      "name": "parameter_offset",
+      "type": "word",
+      "size": 2,
+      "comment": "+4 (UD0nDXOF 'NAME TABLE OFFSET'): byte offset added zero-extended to that address (move.w at 0x13e3c / andi.l #0xffff / add.l d0;(a2) at 0x13e46); dump 2 / 0x76 / 0 / 0 / 0x8c"
+     }
+    ]
+   },
+   {
+    "firmware": "CM550",
+    "struct_name": "datalogger_trigger_information_t",
+    "size": 8,
+    "evidence": "SECONDARY (outside the asked scope; separable). Type-only template for the 8-byte record cm550_FUN_00013a5c builds at 0x800522 when an event starts (0x13b12-0x13b2c: word / dword / byte / byte) and copies field by field to 0x8052ea (event 1) or 0x8052f2 (event 2) when it is saved (0x13c16-0x13c34 / 0x13c52-0x13c70). e2m 1287 +0 UDTRMK 'CONTAINS DATALOGGER TRIGGER INFORMATION' is 16 bytes = 2 x 8 (the parameter ID table maps block 1287 to RAM 0x8052ea). Dump: event 1 = {0x0050, 0x000003d3, 1, 0}, event 2 = {0x00aa, 0x0d8d364a, 1, 0}; the dump's key_on_hour_meter is 0x0d8f9c69.",
+    "fields": [
+     {
+      "offset": 0,
+      "name": "ring_buffer_trigger_offset",
+      "type": "word",
+      "size": 2,
+      "comment": "+0: the ring buffer write pointer minus the ring buffer start (0x800374) when the event began (move.l $800504;d0 / subi.l #0x800374;d0 / move.w d0w;$800522 at 0x13b06-0x13b12): where the first post-trigger byte sits in the saved 400-byte copy"
+     },
+     {
+      "offset": 2,
+      "name": "trigger_key_on_hour_meter",
+      "type": "dword",
+      "size": 4,
+      "comment": "+2: key_on_hour_meter when the event began (move.l $80bda4;$800524 at 0x13b18)"
+     },
+     {
+      "offset": 6,
+      "name": "and_inputs_trigger_flag",
+      "type": "byte",
+      "size": 1,
+      "comment": "+6: the low byte of the AND trigger flag word 0x80bac6 (e2m 1285 +2 UDADTR; move.b $80bac7;$800528 at 0x13b22): 1 when triggers 1-3 together started the event"
+     },
+     {
+      "offset": 7,
+      "name": "or_input_trigger_flag",
+      "type": "byte",
+      "size": 1,
+      "comment": "+7: the low byte of the OR trigger flag word 0x80bac8 (e2m 1285 +4 UDORTR; move.b $80bac9;$800529 at 0x13b2c): 1 when trigger 4 started the event"
+     }
+    ]
+   }
+  ],
+  "globals": [
+   {
+    "firmware": "CM550",
+    "address": "0x00803d64",
+    "proposed_name": "datalogger_triggers_cal",
+    "proposed_type": "datalogger_trigger_t[4]",
+    "comment": "The four datalogger trigger records (e2m 1282 +0x00 to +0x3F, all 32 records: UD0nTR.. at +0x10 x (n - 1) with BY +0 value_length / DB +1 disable_flag / FU +2 fault_code_flag / MD +4 above_threshold_or_fault_active_flag / NM +6 parameter_id_or_fault_code / OF +8 parameter_offset / TD +0xA threshold / TY +0xE signed_value_flag; EEPROM 0x25a-0x299, ROM region table entry 0x1F5 = {0x0100025a, 64 bytes}). Triggers 1-3 form the AND condition and trigger 4 the OR input of cm550_updateDataloggerTriggers (automatic mode, 0x803dc6 = 1); cm550_resolveDataloggerTriggerAddresses / cm550_findDataloggerTriggerFaultIndexes / cm550_initializeDatalogger walk all four with a 16-byte stride and cm550_evaluateDataloggerTrigger takes the index 0-3 (lsl.l #4). Dump (= EEPROM): all four disabled, parameter triggers above 0x18fc / 0 / 0 / 0x4f on 0x100c +2 (engine speed ESCMES) / 0x1004 +0x76 (boost pressure) / 0x1051 +0 (final fueling FSFNFL) / 0x1047 +0 (THROTTLE), 2 bytes each. EEPROM mirror, so _cal. (were datalogger_trigger_1_disable_cal / datalogger_trigger_1_fault_code_flag_cal / datalogger_trigger_1_parameter_id_or_fault_code_cal at +1 / +2 / +6 and datalogger_trigger_4_disable_cal at +0x31; PR #53 round 91)",
+    "evidence": "New row. At the array base (no row there now). Absolute-operand scan of the dumped 256 KB ROM (0x0-0x3ffff; code above 0x40000 is not dumped): all 40 references to 0x803d60-0x803dcb sit in 0x13922-0x14186, in eight of the nine datalogger functions (0x14292 has none). Other code reaches the block only generically: through the mirror base 0x803b0a (cm550_commitEepromMirrorToEeprom; cm550_diagnosticMemoryReadHandler; cm550_diagMemoryReadResponseBuilder; cm550_memoryPatchingSystem; mc68k_FUN_00026854, a whole-mirror write through the serial EEPROM queue with data pointer 0x803b0a and length 0x64c) and through the parameter ID table (block 1282 -> 0x0100025a at ROM 0x367ac). Rendering after the build is unverified."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803da4",
+    "current_name": "datalogger_data_1_length_cal",
+    "proposed_name": "datalogger_data_parameters_cal",
+    "proposed_type": "datalogger_data_parameter_t[5]",
+    "comment": "The five datalogger data parameter records (e2m 1283 +0x00 to +0x1D, all 15 records: UD0nDX.. at +6 x (n - 1) with BY +0 value_length / NM +2 parameter_id / OF +4 parameter_offset; EEPROM 0x29a-0x2b7, ROM region table entry 0x1F6 = {0x0100029a, 30 bytes}). cm550_resolveDataloggerDataParameterAddresses resolves the first N of them (N = the word at 0x803dc8, e2m 1284 +6 UDPRCU) into the dwords at 0x800508 and cm550_recordDataloggerSamples copies value_length bytes of each into the 400-byte ring buffer at every sample (6-byte stride: addq.l #6 / i x 6). Dump (= EEPROM): 2 bytes each of 0x100c +2 (engine speed) / 0x1004 +0x76 (boost pressure) / 0x1051 +0 (final fueling) / 0x1047 +0 (throttle) / 0x1004 +0x8c (coolant temperature ADCLTPFT); the resolved dwords at 0x800508 are 0x80ccf4 / 0x80a320 / 0x80d32e / 0x80aa82 / 0x80a336. EEPROM mirror, so _cal. (were datalogger_data_1_length_cal at +0 and datalogger_data_1_parameter_id_cal at +2; PR #53 round 91)",
+    "evidence": "Rename + retype of the existing row at the array base: keep this row (do NOT also delete it). The block is e2m 1283, not 1282."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803dc4",
+    "proposed_name": "datalogger_sample_rate_code_cal",
+    "proposed_type": "word",
+    "comment": "Datalogger sample rate code (e2m 1284 +2 UDSART 'DATALOGGER SAMPLE RATE PARAMETER' 0-5; dump 1, EEPROM 0x2ba): cm550_selectDataloggerSamplePeriod maps 0 / 1 / 2 / 3 / 4 / 5 to a sample every 5 / 10 / 20 / 40 / 80 / 160 passes of the trigger task (any other value -> 5) and, in automatic trigger mode, rewrites a code of 3 or more as 2 (cmpi.w #3,$803dc4 / blt / move.w #2,$803dc4 at 0x13d52-0x13d5c). Word (move.w $803dc4,d0w at 0x13d64). EEPROM mirror, so _cal. (PR #53 round 91)",
+    "evidence": "New row. SECONDARY. No row now (renders _DAT_00803dc4). Only users: cm550_FUN_00013d42 (3 absolute operands)."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803dc6",
+    "proposed_name": "datalogger_trigger_mode_cal",
+    "proposed_type": "word",
+    "comment": "Datalogger trigger mode (e2m 1284 +4 UDTRMD 'SETS THE DATALOGGER TO TRIGGER MANUALLY, AUTOMATICALLY' 0-2; dump 1, EEPROM 0x2bc): 1 = automatic, triggers 1-4 of datalogger_triggers_cal are evaluated (cmpi.w #1,$803dc6 at 0x1391e / 0x1394a in cm550_updateDataloggerTriggers and 0x13d48 in cm550_selectDataloggerSamplePeriod); any other value = manual, a rising edge of bit 6 of the byte at 0x80bcd0 triggers. Word. EEPROM mirror, so _cal. (PR #53 round 91)",
+    "evidence": "New row. SECONDARY. No row now (renders _DAT_00803dc6). Only users: cm550_FUN_000138b6 / cm550_FUN_00013d42."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803dc8",
+    "proposed_name": "datalogger_data_parameter_count_cal",
+    "proposed_type": "word",
+    "comment": "Number of datalogger data parameters (e2m 1284 +6 UDPRCU 'NUMBER OF DATALOGGER PARAMETERS TO LOG PER SAMPLE INTERVAL' 0-5; dump 5, EEPROM 0x2be): the loop bound of cm550_resolveDataloggerDataParameterAddresses and of the set-up count in cm550_recordDataloggerSamples (move.w $803dc8,d1w / cmp.l d1,d0 at 0x13e54 / 0x13ada). Word. EEPROM mirror, so _cal. (PR #53 round 91)",
+    "evidence": "New row. SECONDARY. No row now (renders _DAT_00803dc8). Only users: cm550_FUN_00013a5c / cm550_FUN_00013e12."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080bac4",
+    "current_name": "snapshot_capture_active_flag",
+    "proposed_name": "datalogger_event_logging_active_flag",
+    "proposed_type": "word",
+    "comment": "Datalogger triggered-event logging status (e2m 1285 +0 UDSS 'STATUS OF TRIGGERED EVENT LOGGING (ACTIVE: LOGGING; INACTIVE)'): cm550_recordDataloggerSamples sets it on the sample pass that finds a detected trigger (move.w #1,(a4) at 0x13b02) and clears it once the 200 post-trigger bytes are saved (clr.w (a4) at 0x13c8c); while it is set cm550_updateDataloggerTriggers clears the trigger flags and both set-ups wait. Word (tst.w / cmpi.w #1 / move.w / clr.w). (was snapshot_capture_active_flag; PR #53 round 91)",
+    "evidence": "SECONDARY. Users: cm550_FUN_000138b6 / cm550_FUN_00013a5c only (plus the parameter ID table entry at ROM 0x367c4)."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080bac6",
+    "proposed_name": "datalogger_and_inputs_trigger_flag",
+    "proposed_type": "word",
+    "comment": "Datalogger AND trigger flag (e2m 1285 +2 UDADTR 'INDICATES THAT DATALOGGER TRIGGER WAS FROM THE AND INPUTS'): cm550_updateDataloggerTriggers sets it when triggers 1-3 are all satisfied (move.w #1,$80bac6 at 0x139ca) and clears it while the datalogger is disabled, the engine is stopped or an event is being logged; its low byte (0x80bac7) goes into the event's trigger information +6. Word. (PR #53 round 91)",
+    "evidence": "New row. SECONDARY. No row now. Users: cm550_FUN_000138b6 (word) and cm550_FUN_00013a5c (byte read of 0x80bac7)."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080bac8",
+    "proposed_name": "datalogger_or_input_trigger_flag",
+    "proposed_type": "word",
+    "comment": "Datalogger OR trigger flag (e2m 1285 +4 UDORTR 'INDICATES THAT DATALOGGER TRIGGER WAS FROM THE OR INPUT'): cm550_updateDataloggerTriggers sets it when trigger 4 is satisfied (a5 = 0x80bac8: move.w #1,(a5) at 0x139d8 / 0x139ec) and clears it with the AND flag; its low byte (0x80bac9) goes into the trigger information +7. Word. (PR #53 round 91)",
+    "evidence": "New row. SECONDARY. No row now. Users: cm550_FUN_000138b6 (word) and cm550_FUN_00013a5c (byte read of 0x80bac9)."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080baca",
+    "current_name": "trending_trigger_detected_flag",
+    "proposed_name": "datalogger_trigger_detected_flag",
+    "proposed_type": "word",
+    "comment": "Datalogger trigger detected flag (e2m 1285 +6 UDTRSE 'INDICATES WHEN A TRIGGER HAS OCCURRED'): set by cm550_updateDataloggerTriggers (a4 = 0x80baca: move.w #1,(a4) at 0x139c6 / 0x139e8 / 0x13a08) for the AND condition, the OR input or the manual switch edge; cm550_recordDataloggerSamples starts an event when it finds it set at a sample (tst.w $80baca at 0x13afa). Word. (was trending_trigger_detected_flag; PR #53 round 91)",
+    "evidence": "SECONDARY. Users: cm550_FUN_000138b6 / cm550_FUN_00013a5c only."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800352",
+    "proposed_name": "datalogger_setup_complete_flag",
+    "proposed_type": "byte",
+    "comment": "0 until the datalogger has been set up: then cm550_updateDataloggerTriggers reloads the sample period and (automatic mode) the trigger addresses and fault indexes, and cm550_recordDataloggerSamples sets it (move.b #1,$800352 at 0x13a9c) and then resolves the data parameter addresses, counts the logged parameters and resets the write pointer; cleared while the datalogger enable bit is clear (clr.b at 0x13a50). Byte (tst.b). (PR #53 round 91)",
+    "evidence": "New row. SECONDARY. No row now. Users: cm550_FUN_000138b6 / cm550_FUN_00013a5c only (4 absolute operands)."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800353",
+    "current_name": "trending_sample_rate_divisor",
+    "proposed_name": "datalogger_sample_period_passes",
+    "proposed_type": "byte",
+    "comment": "Datalogger sample period in trigger-task passes (5 / 10 / 20 / 40 / 80 / 160 from datalogger_sample_rate_code_cal; dump 10): cm550_selectDataloggerSamplePeriod stores it (move.b #imm,(a0)) and returns it, cm550_updateDataloggerTriggers stores the return again (move.b d0b,$800353 at 0x13918) and raises the sample due flag when the counter reaches it (move.b $800353,d1b / cmp.l / blt at 0x138dc). Byte. (was trending_sample_rate_divisor; PR #53 round 91)",
+    "evidence": "SECONDARY. Users: cm550_FUN_000138b6 / cm550_FUN_00013d42 only."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800354",
+    "current_name": "scheduler_phase_execution_time",
+    "proposed_name": "datalogger_sample_due_flag",
+    "proposed_type": "byte",
+    "comment": "1 on the pass the sample period counter reaches datalogger_sample_period_passes (move.b #1,$800354 at 0x138e6): cm550_updateDataloggerTriggers evaluates the automatic triggers and cm550_recordDataloggerSamples takes a sample and clears it (tst.b / clr.b at 0x13aea / 0x13af4); also cleared by cm550_initializeDatalogger and cm550_selectDataloggerSamplePeriod. Byte. (was scheduler_phase_execution_time; PR #53 round 91)",
+    "evidence": "SECONDARY. Users: 0x138b6 / 0x13a5c / 0x13cc8 / 0x13d42 only."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800356",
+    "current_name": "scheduler_reserved_padding",
+    "proposed_name": "datalogger_trigger_parameter_addresses",
+    "proposed_type": "dword[4]",
+    "comment": "The resolved address of each trigger's parameter: cm550_resolveDataloggerTriggerAddresses writes cm550_lookupParameterIdAddress(parameter_id_or_fault_code) + parameter_offset for each parameter trigger (a2 = 0x800356 / addq.l #4,a2) and cm550_evaluateDataloggerTrigger reads the value there (movea.l (0,a2,d0.l*4),a0). Dump 0x80ccf4 / 0x80a320 / 0x80d32e / 0x80aa82. dword[4] like the lookup's uint * parameter. (was scheduler_reserved_padding; PR #53 round 91)",
+    "evidence": "SECONDARY. Users: cm550_FUN_00013dbe / cm550_FUN_00013ed8 only. Its bytes hold five junk rows (see rows_to_remove)."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800366",
+    "current_name": "flash_write_data_pointer",
+    "proposed_name": "datalogger_trigger_fault_indexes",
+    "proposed_type": "byte[4]",
+    "comment": "For each fault-code trigger, the index (0-124) of its fault definition (0x8067c4 + 6 x index) and fault count table record (0x805a1c + 10 x index): written by cm550_findDataloggerTriggerFaultIndexes (move.b d2b,(a3) at 0x13ea4), read by cm550_initializeDatalogger and cm550_evaluateDataloggerTrigger (move.b (0,a1,d0.l),d0b). Byte. (was flash_write_data_pointer; PR #53 round 91)",
+    "evidence": "SECONDARY. Users: 0x13cc8 / 0x13e64 / 0x13ed8 only."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080036a",
+    "current_name": "flash_write_end_address",
+    "proposed_name": "datalogger_trigger_satisfied_flags",
+    "proposed_type": "byte[4]",
+    "comment": "cm550_updateDataloggerTriggers' result for triggers 1-4 (a3 = 0x80036a: move.b d0b,(a2) / move.b #1,(a2) for a disabled trigger 1-3 / clr.b (3,a3) for a disabled trigger 4 / move.b d0b,(3,a3)); bytes 0-2 all nonzero = the AND condition, byte 3 = the OR input. Byte. (was flash_write_end_address; PR #53 round 91)",
+    "evidence": "SECONDARY. Users: cm550_FUN_000138b6 only."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080036e",
+    "current_name": "fuel_demand_rating_table_size",
+    "proposed_name": "datalogger_trigger_previous_fault_status",
+    "proposed_type": "byte[4]",
+    "comment": "For each fault-code trigger, the fault count table status (0-3) it saw last: loaded by cm550_initializeDatalogger and cm550_findDataloggerTriggerFaultIndexes, compared and then rewritten by cm550_evaluateDataloggerTrigger (move.b d0b,(0,a3,d1.l) at 0x14286) so a fault trigger fires once per status edge. Byte. (was fuel_demand_rating_table_size; PR #53 round 91)",
+    "evidence": "SECONDARY. Users: 0x13cc8 / 0x13e64 / 0x13ed8 only. Holds the junk row 0x800370."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800372",
+    "proposed_name": "datalogger_ring_buffer_cleared_flag",
+    "proposed_type": "byte",
+    "comment": "1 after the ring buffer has been zeroed (cm550_initializeDatalogger at 0x13d34; cm550_recordDataloggerSamples at 0x13cb6 while the datalogger is disabled, so it zeroes the buffer once); cleared after every sample (clr.b at 0x13be6). Byte (tst.b). (PR #53 round 91)",
+    "evidence": "New row. SECONDARY. No row now. Users: 0x13a5c / 0x13cc8 only."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800374",
+    "current_name": "fuel_demand_blend_input",
+    "proposed_name": "datalogger_sample_ring_buffer",
+    "proposed_type": "byte[400]",
+    "comment": "The datalogger's 400-byte sample ring: zeroed with cmpi.w #0x190 loops (0x13ca6 / 0x13d24), filled through datalogger_ring_buffer_write_pointer with value_length bytes of each logged parameter per sample, wrapping at 0x800504 (cmpa.l (a5),a3 with a3 = 0x800504 at 0x13b78), and copied whole into event 1's or 2's buffer when an event is saved. The dump holds 10-byte samples (engine speed / boost / fueling / throttle / coolant). (was fuel_demand_blend_input; PR #53 round 91)",
+    "evidence": "SECONDARY. Users: 0x13a5c / 0x13cc8 only (dumped ROM). The dump's 400 bytes are 40 identical 10-byte samples (00 00 00 00 00 00 00 00 7f 80), so nothing else writes there at run time. Its bytes hold 51 junk rows 0x800376-0x800418 (see rows_to_remove)."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800504",
+    "current_name": "data_record_buffer_write_ptr",
+    "proposed_name": "datalogger_ring_buffer_write_pointer",
+    "proposed_type": "byte *",
+    "comment": "Next free byte of datalogger_sample_ring_buffer (move.l #0x800374,(a5) / movea.l (a5),a0 / move.b d0b,(a0) / addq.l #1,(a5) in cm550_recordDataloggerSamples; move.l a1,$800504 in cm550_initializeDatalogger); minus 0x800374 it is the trigger information's ring offset. Dump 0x80041e (offset 170). (was data_record_buffer_write_ptr; PR #53 round 91)",
+    "evidence": "SECONDARY. Users: 0x13a5c / 0x13cc8 only."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800508",
+    "proposed_name": "datalogger_data_parameter_addresses",
+    "proposed_type": "dword[5]",
+    "comment": "The resolved address of each data parameter: cm550_resolveDataloggerDataParameterAddresses writes cm550_lookupParameterIdAddress(parameter_id) + parameter_offset (a2 = 0x800508 / addq.l #4,a2) and cm550_recordDataloggerSamples reads byte j of each (add.l (a2),d0 / movea.l d0,a0 / move.b (a0),d0b at 0x13b6c). Dump 0x80ccf4 / 0x80a320 / 0x80d32e / 0x80aa82 / 0x80a336. (PR #53 round 91)",
+    "evidence": "New row. SECONDARY. No row now (renders DAT_00800508). Users: 0x13a5c / 0x13e12 only."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080051c",
+    "current_name": "data_record_byte_counter",
+    "proposed_name": "datalogger_post_trigger_byte_count",
+    "proposed_type": "byte",
+    "comment": "Bytes stored since the event's trigger: cleared when an event starts (clr.b at 0x13b36), +1 per stored byte while logging (addq.b at 0x13b88); at 200 (cmpi.b #-0x38) the capture is complete. Byte. (was data_record_byte_counter; PR #53 round 91)",
+    "evidence": "SECONDARY. Users: cm550_FUN_00013a5c only."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080051e",
+    "current_name": "trending_sample_counter",
+    "proposed_name": "datalogger_sample_period_counter",
+    "proposed_type": "word",
+    "comment": "Trigger-task passes since the last sample: +1 per pass (addq.w #1,$80051e at 0x138cc), cleared when it reaches datalogger_sample_period_passes and by cm550_initializeDatalogger / cm550_selectDataloggerSamplePeriod. Word (addq.w / move.w / clr.w). (was trending_sample_counter; PR #53 round 91)",
+    "evidence": "SECONDARY. Users: 0x138b6 / 0x13cc8 / 0x13d42 only."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800520",
+    "proposed_name": "datalogger_manual_trigger_switch_latch",
+    "proposed_type": "byte",
+    "comment": "Manual trigger mode (datalogger_trigger_mode_cal not 1): set with the trigger detected flag when bit 6 of 0x80bcd0 is set and it is 0 (move.b #1,$800520 at 0x13a0c), cleared when the bit is clear (clr.b at 0x13a1a) - one trigger per switch press. Byte. (PR #53 round 91)",
+    "evidence": "New row. SECONDARY. No row now. Users: cm550_FUN_000138b6 only."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800521",
+    "current_name": "trending_valid_channel_count",
+    "proposed_name": "datalogger_logged_parameter_count",
+    "proposed_type": "byte",
+    "comment": "How many of the first datalogger_data_parameter_count_cal data parameters are logged: those whose running byte total stays at or below 10 (add.b d0b,d2b / cmpi.b #10 / bhi / addq.b #1,$800521 at 0x13ac2-0x13aca); the sample loop's bound (cmp.b $800521,d3b at 0x13bdc). Dump 5. Byte. (was trending_valid_channel_count; PR #53 round 91)",
+    "evidence": "SECONDARY. Users: cm550_FUN_00013a5c only."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800522",
+    "proposed_name": "datalogger_pending_trigger_information",
+    "proposed_type": "datalogger_trigger_information_t",
+    "comment": "The trigger information of the event being logged (ring offset / key_on_hour_meter / AND and OR flag bytes), built when the event starts (0x13b12-0x13b2c) and copied into datalogger_event_trigger_information[0] or [1] when it is saved. (PR #53 round 91)",
+    "evidence": "New row. SECONDARY. No rows in 0x800522-0x800529 now. Users: cm550_FUN_00013a5c only."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080052a",
+    "proposed_name": "datalogger_event_capture_complete_flag",
+    "proposed_type": "byte",
+    "comment": "Set when the 200th post-trigger byte is stored (move.b #1,$80052a at 0x13ba2); makes cm550_recordDataloggerSamples save the event and is cleared after it (clr.b at 0x13c8e). Byte. (PR #53 round 91)",
+    "evidence": "New row. SECONDARY. No row now. Users: cm550_FUN_00013a5c only."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00804fca",
+    "proposed_name": "datalogger_event_sample_buffers",
+    "proposed_type": "byte[800]",
+    "comment": "e2m 1286 +0 UDDXTB 'CONTAINS DATA FOR UP TO TWO DATALOGGER TRIGGERED EVENTS' (800 bytes; the parameter ID table maps block 1286 to RAM 0x804fca): event 1's copy of the 400-byte ring at +0 (0x804fca) and event 2's at +400 (0x80515a), written by cm550_copyDataloggerSampleBuffer. (PR #53 round 91)",
+    "evidence": "New row. SECONDARY. No row now. Code users: the two movea.l #imm in cm550_FUN_00013a5c (0x13c0c / 0x13c48). Holds the junk row 0x804fcd."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008052ea",
+    "proposed_name": "datalogger_event_trigger_information",
+    "proposed_type": "datalogger_trigger_information_t[2]",
+    "comment": "e2m 1287 +0 UDTRMK 'CONTAINS DATALOGGER TRIGGER INFORMATION' (16 bytes, RAM): event 1's trigger information at +0 and event 2's at +8, copied from datalogger_pending_trigger_information when an event is saved. Dump: {0x50, 0x3d3, 1, 0} / {0xaa, 0x0d8d364a, 1, 0}. (PR #53 round 91)",
+    "evidence": "New row. SECONDARY. No rows in 0x8052ea-0x8052f9 now. Users: cm550_FUN_00013a5c only."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008052fa",
+    "proposed_name": "datalogger_event_1_logged_flag",
+    "proposed_type": "word",
+    "comment": "e2m 1288 +0 UDEV01 'INDICATES IF FIRST TRIGGERED EVENT OCCURRED AND WAS LOGGED': 0 sends the next saved event to event 1 (tst.w $8052fa at 0x13c04), which then sets it (move.w #1 at 0x13c3e); once it is set every later event overwrites event 2. Dump 1. Word. (PR #53 round 91)",
+    "evidence": "New row. SECONDARY. No row now. Users: cm550_FUN_00013a5c only."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008052fc",
+    "proposed_name": "datalogger_event_2_logged_flag",
+    "proposed_type": "word",
+    "comment": "e2m 1288 +2 UDEV02 'INDICATES IF TRIGGERED EVENT LATER THAN THE FIRST HAS OCCURRED': set when an event is saved into event 2 (move.w #1,$8052fc at 0x13c7a). Dump 1. Word. (PR #53 round 91)",
+    "evidence": "New row. SECONDARY. No row now. Users: cm550_FUN_00013a5c only."
+   }
+  ],
+  "functions": [
+   {
+    "firmware": "CM550",
+    "address": "0x000138b6",
+    "current_name": "cm550_FUN_000138b6",
+    "proposed_name": "cm550_updateDataloggerTriggers",
+    "relation": "standalone",
+    "plate_comment": "The datalogger's trigger task (e2m UD*; run from the scheduler slot cm550_FUN_0001b6d6 after cm550_j1939TimeoutDataClearHandler). Every pass it counts the sample period counter (0x80051e) up to the sample period (0x800353) and then raises the sample due flag (0x800354). With the datalogger enable bit clear (0x20 of feature_enable_flags_word, e2m 106B +0x26 UDEN 'BIT 5') it clears the trigger detected / AND / OR flags (0x80baca / 0x80bac6 / 0x80bac8) and the set-up flag (0x800352). Otherwise: before the set-up and with no event being logged (0x80bac4) it reloads the sample period (cm550_selectDataloggerSamplePeriod) and in automatic mode (0x803dc6 = 1) resolves the trigger parameters (cm550_resolveDataloggerTriggerAddresses) and fault codes (cm550_findDataloggerTriggerFaultIndexes); with the engine stopped (engine_state STOPPED) or an event being logged it clears the three flags; in automatic mode on a sample-due pass it evaluates triggers 1-3 of datalogger_triggers_cal (a disabled one counts as satisfied) and trigger 4 (a disabled one does not) with cm550_evaluateDataloggerTrigger into the result bytes at 0x80036a: triggers 1-3 all satisfied set the trigger detected flag and the AND flag, trigger 4 sets the trigger detected flag and the OR flag. In any other mode a rising edge of bit 6 of the byte at 0x80bcd0 (latch 0x800520) sets the trigger detected flag. No caller reads D0. (was cm550_FUN_000138b6; PR #53 round 91)",
+    "evidence": "Listing 0x138b6-0x13a5a: addq.w #1,$80051e / cmp.l with $800353 / move.b #1,$800354; andi.w #0x20 of $803cb8; jsr 0x13d42 / 0x13dbe / 0x13e64; cmpi.w #1,$80d0c8; cmpi.w #1,$803dc6; the 0-2 loop over 0x803d65 with a 16-byte stride calling 0x13ed8, then tst.b $803d95 / move.w #3,-(sp) / jsr 0x13ed8; btst.b #6,$80bcd0. Only caller: cm550_FUN_0001b6d6 (a statement call followed by return). CM848 has no datalogger (no UD records in its e2m; the six callers of cm848_lookupParameterIdAddress are PCI / J1939 parameter-ID services and the calibrated monitor disable conditions), so standalone with cm550_."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00013a5c",
+    "current_name": "cm550_FUN_00013a5c",
+    "proposed_name": "cm550_recordDataloggerSamples",
+    "relation": "standalone",
+    "plate_comment": "The datalogger's sample task (run from the scheduler slot cm550_FUN_0001b6e4 after vp44_hourMeterEventLogger). While the datalogger is disabled with no trigger detected and no event being logged it zeroes the 400-byte ring buffer at 0x800374 once (flag 0x800372). Otherwise: at the set-up (0x800352 = 0, no event being logged) it sets 0x800352, resolves the data parameters (cm550_resolveDataloggerDataParameterAddresses), counts into 0x800521 the first 0x803dc8 (UDPRCU) records of datalogger_data_parameters_cal whose running byte total stays at or below 10 and points the write pointer (0x800504) at the ring. On each sample-due pass (0x800354, cleared here): a detected trigger (0x80baca) starts an event - logging active (0x80bac4 = 1), the trigger information at 0x800522 (ring offset of the write pointer / key_on_hour_meter / the low bytes of the AND and OR flags) and the post-trigger byte count (0x80051c) = 0; then value_length bytes of each counted parameter are copied from its resolved address (0x800508 + 4 x n) into the ring, wrapping at 0x800504. While logging, the 200th byte after the trigger ends the sample and sets 0x80052a; the event is then saved: the trigger information and a copy of the ring (cm550_copyDataloggerSampleBuffer) go to event 1 (0x8052ea / 0x804fca; e2m UDTRMK / UDDXTB) while UDEV01 (0x8052fa) is 0 and to event 2 (0x8052f2 / 0x80515a) otherwise, UDEV01 / UDEV02 (0x8052fc) are set and logging stops - an event holds the 200 bytes before and the 200 after its trigger. No caller reads D0. (was cm550_FUN_00013a5c; PR #53 round 91)",
+    "evidence": "Listing 0x13a5c-0x13cc6: jsr 0x13e12; the 6-byte-stride count loop over 0x803da4 bounded by $803dc8; move.l #0x800374,(a5) with a5 = 0x800504; subi.l #0x800374 / move.w d0w,$800522 / move.l $80bda4,$800524; the copy loop through (a5) with the wrap cmpa.l (a5),a3; cmpi.b #-0x38,$80051c; tst.w $8052fa; jsr 0x14292 with 0x804fca or 0x80515a. Only caller: cm550_FUN_0001b6e4."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00013cc8",
+    "current_name": "cm550_FUN_00013cc8",
+    "proposed_name": "cm550_initializeDatalogger",
+    "relation": "standalone",
+    "plate_comment": "Start-up set-up of the datalogger (called once by mc68k_applicationMain after cm550_initLoadTrendingSystem). It clears the sample period counter (0x80051e) and the sample due flag (0x800354); for each record of datalogger_triggers_cal with fault_code_flag 1 it copies the fault count table status (0x805a24 + 10 x the trigger's fault index byte at 0x800366 + n) into its previous fault status byte (0x80036e + n); then it zeroes the 400-byte ring buffer (0x800374), points the write pointer (0x800504) at it and sets the buffer cleared flag (0x800372). (was cm550_FUN_00013cc8; PR #53 round 91)",
+    "evidence": "Listing 0x13cc8-0x13d40: cmpi.w #1,(0,a0,d3.w) with a0 = 0x803d66 and a 16-byte stride for 4 records; move.b (0,a0,d0.w*2),(a3) with a0 = 0x805a24; the cmpi.w #0x190 clear loop; move.l a1,$800504; move.b #1,$800372. Only caller: mc68k_applicationMain."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00013d42",
+    "current_name": "cm550_FUN_00013d42",
+    "proposed_name": "cm550_selectDataloggerSamplePeriod",
+    "relation": "standalone",
+    "plate_comment": "Turns the sample rate code (0x803dc4, e2m 1284 +2 UDSART 0-5) into the datalogger's sample period in trigger-task passes: 0 / 1 / 2 / 3 / 4 / 5 -> 5 / 10 / 20 / 40 / 80 / 160 (jump table at 0x13d7a; any other code -> 5), stored at 0x800353 and returned in D0's low byte. In automatic trigger mode (0x803dc6 = 1) a code of 3 or more is first rewritten as 2 in the EEPROM mirror. It also clears the sample due flag (0x800354) and the period counter (0x80051e). Called by cm550_updateDataloggerTriggers at the set-up. (was cm550_FUN_00013d42; PR #53 round 91)",
+    "evidence": "Listing 0x13d42-0x13dbc: cmpi.w #1,$803dc6 / cmpi.w #3,$803dc4 / blt / move.w #2,$803dc4; move.w (0x13d7a,pc,d0*2) / jmp; case bodies move.b #5 / #10 / #20 / #40 / #80 / #160,(a0) with a0 = 0x800353 (raw bytes 0x13d86-0x13da9); clr.b $800354 / clr.w $80051e / move.b (a0),d0b."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00013dbe",
+    "current_name": "cm550_FUN_00013dbe",
+    "proposed_name": "cm550_resolveDataloggerTriggerAddresses",
+    "relation": "standalone",
+    "plate_comment": "For each of the four records of datalogger_triggers_cal whose fault_code_flag is 0 it resolves parameter_id_or_fault_code with cm550_lookupParameterIdAddress into the trigger's address dword (0x800356 + 4 x n) and adds parameter_offset (zero-extended). Called by cm550_updateDataloggerTriggers at the set-up in automatic mode. Dump: 0x80ccf4 / 0x80a320 / 0x80d32e / 0x80aa82 = the parameter ID table addresses of 0x100c / 0x1004 / 0x1051 / 0x1047 plus 2 / 0x76 / 0 / 0. (was cm550_FUN_00013dbe; PR #53 round 91)",
+    "evidence": "Listing 0x13dbe-0x13e10: tst.w (0,a0,d2.w) with a0 = 0x803d66; move.l a2,-(sp) / move.w (0,a0,d2.w),-(sp) with a0 = 0x803d6a / jsr 0x10e16; move.w (0,a0,d2.w),d0w with a0 = 0x803d6c / andi.l #0xffff / add.l d0,(a2); moveq #16 / add.l d0,d2 / addq.l #4,a2 / cmpi.b #4,d3b."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00013e12",
+    "current_name": "cm550_FUN_00013e12",
+    "proposed_name": "cm550_resolveDataloggerDataParameterAddresses",
+    "relation": "standalone",
+    "plate_comment": "For the first 0x803dc8 (UDPRCU) records of datalogger_data_parameters_cal it resolves parameter_id with cm550_lookupParameterIdAddress into the dword at 0x800508 + 4 x n and adds parameter_offset (zero-extended); cm550_recordDataloggerSamples samples from these addresses. Dump: 0x80ccf4 / 0x80a320 / 0x80d32e / 0x80aa82 / 0x80a336 (engine speed / boost pressure / final fueling / throttle / coolant temperature). Called by cm550_recordDataloggerSamples at the set-up. (was cm550_FUN_00013e12; PR #53 round 91)",
+    "evidence": "Listing 0x13e12-0x13e62: move.w (0,a0,d2.w),-(sp) with a0 = 0x803da6 / jsr 0x10e16; move.w (0,a0,d2.w),d0w with a0 = 0x803da8 / add.l d0,(a2); addq.l #6,d2 / addq.l #4,a2; bound move.w $803dc8,d1w."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00013e64",
+    "current_name": "cm550_FUN_00013e64",
+    "proposed_name": "cm550_findDataloggerTriggerFaultIndexes",
+    "relation": "standalone",
+    "plate_comment": "For each record of datalogger_triggers_cal whose fault_code_flag is 1 it scans the 125 six-byte fault definitions at 0x8067c4 for the code word equal to parameter_id_or_fault_code; at each match (the loop does not stop, so the last match wins) it stores the definition index in the trigger's fault index byte (0x800366 + n) and that fault's current status (fault count table byte 0x805a24 + 10 x index) in its previous fault status byte (0x80036e + n). Called by cm550_updateDataloggerTriggers at the set-up in automatic mode. (was cm550_FUN_00013e64; PR #53 round 91)",
+    "evidence": "Listing 0x13e64-0x13ed6: cmpi.w #1,(0,a0,d3.w) with a0 = 0x803d66; move.w (0,a0,d3.w),d0w with a0 = 0x803d6a / cmp.w (a2),d0w with a2 from 0x8067c4 / addq.l #6,a2 / cmpi.b #0x7d,d2b; move.b d2b,(a3) with a3 = 0x800366 + n; move.b (0,a0,d0.w*2),(a1) with a0 = 0x805a24 and a1 = 0x80036e + n; 4 records."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00013ed8",
+    "current_name": "cm550_FUN_00013ed8",
+    "proposed_name": "cm550_evaluateDataloggerTrigger",
+    "relation": "standalone",
+    "plate_comment": "Returns 1 when datalogger trigger trigger_index (0-3) of datalogger_triggers_cal is satisfied, else 0. Parameter trigger (fault_code_flag 0): it reads value_length bytes (1 = byte / 2 = word / any other value = dword) at the trigger's resolved address (dword 0x800356 + 4 x index) and compares them with threshold (its low byte / low word / the whole dword), unsigned or signed by signed_value_flag, strictly above (above_threshold_or_fault_active_flag nonzero) or below (0). Fault trigger (fault_code_flag nonzero): the fault count table status byte (0x805a24 + 10 x the fault index at 0x800366 + index) against the status it saw last (0x80036e + index): a nonzero flag fires when the status went from inactive (0 / 2) to active (1 / 3), 0 when it went from active to inactive; it then saves the status. Status bit 0 = active: cm550_FUN_00014872 stores 3 when a fault turns active and 2 when it turns inactive, cm550_diagnosticCodeRegistrar stores 0 / 1 when it gives an inactive / active fault's snapshot slot to another fault and cm550_diagnosticTableEntryClear stores 0. Called by cm550_updateDataloggerTriggers with 0-2 and 3. (was cm550_FUN_00013ed8; PR #53 round 91)",
+    "evidence": "Listing 0x13ed8-0x14290: move.w (0x14,sp),d3w; lsl.l #4; tst.w at 0x803d66 / 0x803d68 / 0x803d72 + offset; move.b (0,a0,d0.w*8) with a0 = 0x803d64; move.l (0,a0,d2.w) with a0 = 0x803d6e and andi.l #0xff / cmp.w / cmp.l; movea.l (0,a2,d0.l*4),a0 with a2 = 0x800356; the fault path 0x1419c-0x14286 on 0x805a24 / 0x800366 / 0x80036e. Its two function_definitions.csv rows are keyed by the old name (see notes)."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00014292",
+    "current_name": "cm550_FUN_00014292",
+    "proposed_name": "cm550_copyDataloggerSampleBuffer",
+    "relation": "standalone",
+    "plate_comment": "Copies the 400 bytes at source (the long at +4: the ring buffer 0x800374) to destination (the long at +8: event 1's buffer 0x804fca or event 2's 0x80515a). Only caller: cm550_recordDataloggerSamples when it saves an event. (was cm550_FUN_00014292; PR #53 round 91)",
+    "evidence": "Listing 0x14292-0x142a6: movea.l (8,sp),a1 / movea.l (4,sp),a0 / move.b (a0)+,(a1)+ / cmpi.w #0x190,d0w; the caller pushes the destination (move.l a2,-(sp)) then the ring (move.l a3,-(sp)) at 0x13c82."
+   }
+  ],
+  "local_rows": [],
+  "rows_to_remove": [
+   {
+    "firmware": "CM550",
+    "address": "0x00803d65",
+    "name": "datalogger_trigger_1_disable_cal",
+    "reason": "Inside datalogger_triggers_cal: becomes datalogger_triggers_cal[0].disable_flag (+1)."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803d66",
+    "name": "datalogger_trigger_1_fault_code_flag_cal",
+    "reason": "Inside datalogger_triggers_cal: becomes datalogger_triggers_cal[0].fault_code_flag (+2)."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803d6a",
+    "name": "datalogger_trigger_1_parameter_id_or_fault_code_cal",
+    "reason": "Inside datalogger_triggers_cal: becomes datalogger_triggers_cal[0].parameter_id_or_fault_code (+6)."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803d95",
+    "name": "datalogger_trigger_4_disable_cal",
+    "reason": "Inside datalogger_triggers_cal: becomes datalogger_triggers_cal[3].disable_flag (+0x31)."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00803da6",
+    "name": "datalogger_data_1_parameter_id_cal",
+    "reason": "Inside datalogger_data_parameters_cal: becomes datalogger_data_parameters_cal[0].parameter_id (+2)."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800358",
+    "name": "main_loop_phase_index",
+    "reason": "SECONDARY: inside datalogger_trigger_parameter_addresses; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080035a",
+    "name": "main_loop_reserved",
+    "reason": "SECONDARY: inside datalogger_trigger_parameter_addresses; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080035c",
+    "name": "scheduler_phase_pointer",
+    "reason": "SECONDARY: inside datalogger_trigger_parameter_addresses; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800360",
+    "name": "engine_operating_mode_cached",
+    "reason": "SECONDARY: inside datalogger_trigger_parameter_addresses; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800362",
+    "name": "flash_control_register_ptr",
+    "reason": "SECONDARY: inside datalogger_trigger_parameter_addresses; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800370",
+    "name": "fuel_demand_table_1_ptr_370",
+    "reason": "SECONDARY: inside datalogger_trigger_previous_fault_status; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800376",
+    "name": "fuel_demand_rating_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080037a",
+    "name": "fuel_demand_blend_table_1_size",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080037c",
+    "name": "fuel_demand_table_2_ptr_37c",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800380",
+    "name": "rpm_snapshot_0",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800382",
+    "name": "fuel_demand_table_2_base",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800384",
+    "name": "fuel_demand_table_3_ptr_384",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800388",
+    "name": "fuel_snapshot_0",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080038a",
+    "name": "fuel_demand_table_4_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080038e",
+    "name": "fuel_demand_blend_table_2_size",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800390",
+    "name": "fuel_demand_table_5_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800394",
+    "name": "rpm_snapshot_1",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800396",
+    "name": "fuel_demand_table_5_base",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800398",
+    "name": "fuel_demand_table_6_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080039c",
+    "name": "fuel_snapshot_1",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080039e",
+    "name": "fuel_demand_table_7_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003a4",
+    "name": "fuel_limit_table_1_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003ac",
+    "name": "fuel_limit_table_2_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003b0",
+    "name": "fuel_limit_table_1_base_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003b2",
+    "name": "fuel_limit_lookup_1_base",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003b8",
+    "name": "fuel_limit_lookup_1_divisor",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003ba",
+    "name": "fuel_limit_table_3_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003be",
+    "name": "fuel_limit_table_1_limit",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003c0",
+    "name": "fuel_limit_intake_temp_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003c6",
+    "name": "fuel_limit_table_4_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003cc",
+    "name": "fuel_limit_lookup_2_divisor",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003ce",
+    "name": "fuel_limit_table_5_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003d2",
+    "name": "fuel_limit_table_2_limit",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003d4",
+    "name": "fuel_limit_table_6_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003d8",
+    "name": "fuel_delivery_param_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003e0",
+    "name": "fuel_delivery_pid_integral",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003e4",
+    "name": "derate_bit4_previous_state",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003e6",
+    "name": "derate_bit4_changed_flag",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003e8",
+    "name": "derate_bit8_previous_state",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003ea",
+    "name": "derate_bit8_changed_flag",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003ec",
+    "name": "derate_reference_value",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003ee",
+    "name": "derate_value_changed_flag",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003f0",
+    "name": "interpolation_table_1_base",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003f2",
+    "name": "fuel_timing_mode_table_1_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003f6",
+    "name": "fuel_timing_mode_rpm_input_1",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003f8",
+    "name": "fuel_timing_mode_lookup_1_base",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003fa",
+    "name": "fuel_timing_mode_table_2_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x008003fe",
+    "name": "derate_interpolation_value_1",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800400",
+    "name": "fuel_timing_mode_intake_temp_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800404",
+    "name": "interpolation_table_2_base",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800406",
+    "name": "fuel_timing_mode_table_3_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080040a",
+    "name": "fuel_timing_mode_rpm_input_2",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080040c",
+    "name": "fuel_timing_mode_lookup_2_base",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x0080040e",
+    "name": "fuel_timing_mode_table_4_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800412",
+    "name": "derate_interpolation_value_2",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800414",
+    "name": "fuel_timing_mode_table_5_ptr",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00800418",
+    "name": "general_counter_0",
+    "reason": "SECONDARY: inside datalogger_sample_ring_buffer; see notes JUNK ROWS."
+   },
+   {
+    "firmware": "CM550",
+    "address": "0x00804fcd",
+    "name": "diagnostic_pid_dtc_index",
+    "reason": "SECONDARY: inside datalogger_event_sample_buffers; see notes JUNK ROWS."
+   }
+  ],
+  "notes": "CORE vs SECONDARY: the core is structs datalogger_trigger_t + datalogger_data_parameter_t, the globals 0x803d64 / 0x803da4, the 5 rows_to_remove 0x803d65 / 0x803d66 / 0x803d6a / 0x803d95 / 0x803da6 and the 9 functions. Everything marked SECONDARY (struct datalogger_trigger_information_t, globals 0x803dc4-0x803dc8 / 0x80bac4-0x80baca / 0x800352-0x80052a / 0x804fca-0x8052fc and the 58 junk-row removals) can be dropped as a unit; the plate comments cite addresses so they read right either way. Struct offsets are decimal; e2m offsets are hex.\n\nBLOCKS: the triggers are e2m 1282 (32 records) and the data parameters e2m 1283 (15 records); the task text says 1282 for both. Block 1284 (0x803dc2-0x803dc9, EEPROM 0x2b8) = UDADSZ +0 / UDSART +2 / UDTRMD +4 / UDPRCU +6. Block 1285 (RAM 0x80bac4-0x80bacb) = UDSS +0 / UDADTR +2 / UDORTR +4 / UDTRSE +6. 1286 UDDXTB = RAM 0x804fca (800 bytes), 1287 UDTRMK = 0x8052ea (16), 1288 UDEV01 / UDEV02 = 0x8052fa / 0x8052fc. The e2m length column is decimal bytes.\ne2m 1282 -> datalogger_triggers_cal[n-1] (n = 1-4, base +0x10*(n-1)): UD0nTRBY +0 value_length (1 byte) | UD0nTRDB +1 disable_flag (1) | UD0nTRFU +2 fault_code_flag (2) | UD0nTRMD +4 above_threshold_or_fault_active_flag (2) | UD0nTRNM +6 parameter_id_or_fault_code (2) | UD0nTROF +8 parameter_offset (2) | UD0nTRTD +0xA threshold (4) | UD0nTRTY +0xE signed_value_flag (2). All 32 records land on a field; the e2m widths match the machine code.\ne2m 1283 -> datalogger_data_parameters_cal[n-1] (n = 1-5, base +6*(n-1)): UD0nDXBY +0 value_length | UD0nDXNM +2 parameter_id | UD0nDXOF +4 parameter_offset (all 2 bytes).\ne2m quirks: UD04TRTY's text says 'TRIGGER ONE' (it is +0x3E, record 4's +0xE); UD03TRBY's unit is NONE where the others say LGTH; MD's 'TRIGGER => THRESHOLD' is a strict > in the code.\n\nCOUNTS: trigger count 4 comes from the loops (cmpi.b #4 / cmpi.w #4, the 0-2 loop plus trigger 4) and region 0x1F5 = {0x0100025a, 64}. The data count 5 is NOT bounded by the code itself (the loops run to the word UDPRCU at 0x803dc8, e2m range 0-5). It rests on: region 0x1F6 = {0x0100029a, 30} = 5 x 6, room for 5 dwords at 0x800508 before 0x80051c, the dump's UDADSZ = 0x5e = 94 = 64 + 30, and e2m UD01-UD05. The region table is the 8-byte {address, length} list at ROM 0x8062 + 8 x (the e2m 'region' column). Against the parameter ID table, 188 blocks match the address exactly (CAL_DATE region 0xA = {0x01000080, 6}, DAT_PLAT 0xD = {0x010002c0, 332}). 303 more sit at a constant RAM - region offset of 0x7a51d4 (the RAM-copied calibration lists its flash source) and 47 at 0x800f96. That 47 includes the datalogger event regions: 0x1F8 / 0x1F9 / 0x1FA = {0x4034, 800} / {0x4354, 16} / {0x4364, 4} for RAM 0x804fca / 0x8052ea / 0x8052fa. Only 2 blocks fit none of the three.\n\nREADERS: an absolute-operand scan of the dumped 256 KB ROM (0x0-0x3ffff) finds 40 references to 0x803d60-0x803dcb, all in 0x13922-0x14186, in eight of the nine datalogger functions (0x14292 has none). CM550 also has call targets above 0x40000 that were never dumped (for example func_0x00042ad4 in mc68k_applicationMain), so every 'no other user' claim here is limited to the dumped ROM. Apart from those eight functions the block is reached only generically: through the EEPROM mirror base 0x803b0a (cm550_commitEepromMirrorToEeprom, cm550_diagnosticMemoryReadHandler, cm550_diagMemoryReadResponseBuilder, cm550_memoryPatchingSystem, and mc68k_FUN_00026854, a whole-mirror write through the serial EEPROM queue with data pointer 0x803b0a and length 0x64c) and the parameter ID table (blocks 1282 / 1283 / 1284 -> 0x0100025a / 0x0100029a / 0x010002b8 at ROM 0x367ac-0x367c0). The listed 0x144bc / 0x1452e / 0x146b4 / 0x14872 / 0x2fddc do NOT touch the records. They maintain the fault count table (e2m 1031, 125 x 10 bytes at 0x805a1c; status byte +8 = 0x805a24) that the fault-code triggers watch:\n- status 3: cm550_FUN_00014872 stores it when a fault turns active;\n- status 2: the same function stores it when the fault turns inactive;\n- status 1 / 0: cm550_diagnosticCodeRegistrar (0x14720) stores them when it reuses the snapshot slot of an active (3 -> 1) / inactive (2 -> 0) fault;\n- status 0: cm550_diagnosticTableEntryClear (0x2fddc).\ncm550_diagnosticCodeDebounceHandler (0x144bc) tests bit 0 as 'active' ((status & 1) == 0 means inactive). So a fault trigger with +4 set fires on the pass the status goes 0/2 -> 1/3, and with +4 clear on the pass it goes 1/3 -> 0/2. The fault code (+6) is matched against the code word of the 125 six-byte definitions at 0x8067c4 (cm550_FUN_00014872 copies that word as the Cummins fault code).\n\nCODE QUIRKS (documented in the comments): parameter compares are strict; a 1-byte threshold is masked to 0-255 even in signed mode; value_length other than 1 / 2 compares a dword. fault_code_flag 2 or more takes the fault path in the evaluator, but no fault index or address is ever set for it (those need exactly 1 / 0). A disabled trigger 1-3 counts as satisfied, so with all three disabled the AND condition is always true in automatic mode. The dump has exactly that (all four triggers disabled, mode 1), and both logged events carry AND flag 1 / OR flag 0. The 400-byte ring holds about 200 bytes before and 200 after a trigger. Event 1 is written once (UDEV01), and every later event overwrites event 2.\n\nNO CM848 TWIN: the CM848 e2m (CHR_CC_11.45.01.07) has no UD / DATALOGGER records. CM848's six cm848_lookupParameterIdAddress calls (name-only grep: 16 mentions, 6 calls) are cm848_processPciDiagnosticRequest x2, cm848_evaluateCalibratedMonitorDisableConditions (12-byte monitor-disable records with comparison types 1-8 and monitor masks, a different feature), and the three J1939 parameter-ID services. So all nine functions are standalone with cm550_.\n\nFUNCTION_DEFINITIONS.CSV (apply with the renames):\n(1) 0x00013ed8 has two rows keyed by the old name cm550_FUN_00013ed8. Change function_name to cm550_evaluateDataloggerTrigger and param 0's name condition_record_index -> trigger_index (ushort, unchanged). Its comment should say: the low byte is the index 0-3 into datalogger_triggers_cal; it also indexes the address dwords at 0x800356, the fault index bytes at 0x800366 and the previous status bytes at 0x80036e; the caller passes 0-2 from its loop counter and then 3. In the return row, 'condition' -> 'trigger'.\n(2) Optional, a full new prototype for 0x00014292 cm550_copyDataloggerSampleBuffer: return void / 0 source byte* (the long at +4) / 1 destination byte* (the long at +8). The caller pushes the destination first, so the arguments are in order. With byte* parameters the immediates 0x804fca / 0x80515a should render as datalogger_event_sample_buffers / + 400.\n(3) Optional, return-only void rows for 0x000138b6 and 0x00013a5c (no parameters). Their decompiled uint / undefined * returns are leftover D0: the only callers, cm550_FUN_0001b6d6 / cm550_FUN_0001b6e4, call them as statements and return. These rows remove the uVar1 / puVar1 return noise.\n\nUNVERIFIED RENDERING (read-only item, no build): after the build these greps on J90350.00.ghidra.cpp should be empty inside 0x138b6-0x14292: '(int)&datalogger', '0x803d6', '0x803d7', 'DAT_00803d6c', 'DAT_00803da8', '_DAT_00803dc'. The 11 '(int)&name + offset' lines are now at 8538 / 8635 / 8659 / 8671 / 8732 / 8817 / 8819 / 8849 / 8877 / 8881 / 8916. The byte-offset loops (offset register + 16 / + 6) may render as (&datalogger_triggers_cal[0].disable_flag)[offset] rather than [i].disable_flag, which is still field-named. 0x13ed8's index x 16 path should render datalogger_triggers_cal[trigger_index & 0xff].field. With the SECONDARY rows these names should disappear from the nine functions: flash_write_data_pointer, flash_write_end_address, fuel_demand_rating_table_size, fuel_demand_blend_input, scheduler_reserved_padding, scheduler_phase_execution_time. The byte reads of 0x80bac7 / 0x80bac9 will render as pieces of the two flag words; that is expected.\n\nJUNK ROWS (SECONDARY removals, 58): 5 inside the trigger address dwords (0x800358-0x800362), 1 inside the previous fault status bytes (0x800370), 51 inside the ring buffer (0x800376-0x800418) and 1 inside the event buffers (0x804fcd). All have type 'undefined', no comment, no absolute operand in the dumped ROM and zero .cpp references. Runtime evidence for the ring buffer: the dump's 400 bytes at 0x800374 are 40 identical 10-byte samples (00 00 00 00 00 00 00 00 7f 80 = engine speed / boost / fueling / throttle / coolant), and both 400-byte event copies at 0x804fca / 0x80515a hold the same 10-byte sample shape, so nothing else writes there. The three 4-byte matches of 0x800400 are at odd offsets inside data tables (0x8e2b / 0x3654d / 0x36551), so they are not code. No parameter ID resolves into 0x800340-0x800540. Build and diff before deleting.\n\nSTALE REFERENCES: after applying, grep the other rows' comments and plates (both firmwares' CSVs and docs) for the nine old function names (cm550_FUN_000138b6 ... cm550_FUN_00014292), the six removed scalar names (datalogger_trigger_1_* / datalogger_trigger_4_disable_cal / datalogger_data_1_*) and every renamed secondary global, and update them.\n\nAFTER APPLYING: regenerate the headers (generate_headers.py functions, both firmwares per the repo rule) and output/parameter_id_lookup_table.csv (e2m_block_addresses.py --firmware cm550 --write-table): its firmware_variable column shows datalogger_data_1_length_cal for block 1283.\n\nNOT PROPOSED: UDADSZ (0x803dc2, e2m 1284 +0, dump 94) has no code reader. No local_rows: the struct typing will renumber temporaries, so name locals after a build. Lead for another item: bit 6 of the byte at 0x80bcd0 is the datalogger's manual trigger switch (the row there is debounced_value_for_rear_axle_ratio_switch_on_off; 0x807d5e is user_inversion_bit_mask_for_the_user_datalogger_switc_invert_no_invert). The scheduler slot wrappers 0x1b6d6 / 0x1b6e4 also run other subsystems and stay unnamed here.\n\nEvidence files (scratch): /home/linux/.claude/jobs/374b0424/tmp/w15/r91/scratch/S2/listing2.txt (the Ghidra 12.2 CPU32 listing of every function), build_draft.py, cm550_table.csv."
+ },
+ "verdict": {
+  "item": "S2",
+  "overall": "S2 holds. Re-derived independently from the ROM: the proposer's Ghidra listing was checked byte-for-byte against J90350.00.rom.bin (1217 instructions, 0 mismatches, contiguous), key extension words, movem masks and the 0x13d7a jump table were hand-decoded, and the committed .cpp agrees. Trigger record = 16 bytes x 4 at 0x803d64 (+0 byte length / +1 byte disable / +2 word fault-code flag / +4 word above-or-active mode / +6 word id-or-fault-code / +8 word offset / +0xA dword threshold / +0xE word signed flag); data record = 6 bytes x 5 at 0x803da4 (+0 word length / +2 word id / +4 word offset). e2m: block 1282 = the 32 trigger records, block 1283 (not 1282 as the task text says) = the 15 data records; every record lands on a field of matching width; region table 0x1F5 / 0x1F6 = 64 / 30 bytes; UDADSZ = 94; RAM mirror = EEPROM byte for byte. All 40 absolute operands into 0x803d60-0x803dcb and every RAM working-set operand sit in the nine functions 0x138b6-0x14292; 0x144bc / 0x1452e / 0x146b4 / 0x14872 / 0x2fddc only maintain the fault count table the fault triggers watch (0x14872 stores 3 / 2, cm550_diagnosticCodeRegistrar 1 / 0, cm550_diagnosticTableEntryClear 0: bit 0 = active). Callers: 0x138b6 / 0x13a5c only from the scheduler wrappers 0x1b6d6 / 0x1b6e4, 0x13cc8 once from mc68k_applicationMain, the rest only from these. CM848 has no datalogger (0 UD / DATALOGGER e2m records; its six cm848_lookupParameterIdAddress sites are PCI, monitor-disable and J1939 services), so all nine are standalone cm550_. All 63 removals target existing rows with the listed names; no row is left inside any proposed extent; every current_name matches and every 'new row' address is free. 5 AMENDED, all comment / doc level, no layout change: name the manual trigger input (DSILSSSW, the debounced user datalogger switch = bit 6 of 0x80bcd0) in 0x138b6's plate and the 0x803dc6 / 0x800520 comments; fix 0x13a5c's 'UDEV01 / UDEV02 are set' wording (only the written event's flag is set); and with the 0x800358 main_loop_phase_index removal also fix docs/cross_firmware_variable_map.csv:17, docs/cross-firmware-analysis.md:204 and CM550 enums.csv:75 (CM550's phase index is scheduler_phase_index 0x80068c; CM848 0x3fa008 is executive_frame_phase; no script reads that map). Optional, not required: parameter_byte_offset (CM848 monitor_calibrated_condition_t's name for the same concept) instead of parameter_offset, and a 'no _cal: flash parameter block 0x804f9a-0x806547' note on 0x804fca / 0x8052ea / 0x8052fa. Not re-verified: the region-table statistics (188 / 303 / 47 / 2 blocks), the generic mirror-user list including the mc68k_FUN_00026854 whole-mirror-write claim, and the post-build rendering. Every 'no other user' claim is limited to the dumped 256 KB ROM; the dump (consistent samples in the ring and event buffers, resolved addresses in the dword tables) supports the extents at run time. Build and diff before deleting the 58 junk rows, as the proposal says.",
+  "verdicts": [
+   {
+    "element": "struct datalogger_trigger_t",
+    "verdict": "CONFIRMED",
+    "reason": "Re-derived from the ROM bytes (proposer listing checked byte-for-byte against J90350.00.rom.bin: 1217 lines, 0 mismatches; key extension words hand-decoded). Stride 16: lsl.l #4 at 0x13ef6, moveq #16 / add.l at 0x13986 / 0x13d10 / 0x13dfe / 0x13ec4. Count 4: cmpi.b #4 at 0x13e06 / 0x13ecc, cmpi.w #4 at 0x13d1a, the 0-2 loop (cmpi.b #2 / bls at 0x1398e) plus trigger 4 (tst.b $803d95, move.w #3,-(sp)). Fields: +0 byte (move.b (0,a0,d0.w*8) at 0x13f30 with d0 = 2 x index, then cmp 1 / 2 / 4, anything else = dword); +1 byte (tst.b (0,a0,d3.w) a0 = 0x803d65); +2 word (tst.w 0x13dd2 / 0x13f00, cmpi.w #1 0x13cf4 / 0x13e78); +4 word (tst.w 0x13f0e / 0x1419c: nonzero = value > threshold strict, or fault status 0/2 -> 1/3); +6 word (move.w 0x13de0 / cmp.w (a2) 0x13ea0); +8 word zero-extended (andi.l #0xffff 0x13df6); +0xA dword (move.l, low byte / low word / dword compares; andi.l #0xff also in signed mode); +0xE word (tst.w 0x13f1c / 0x1405c). e2m 1282 has exactly 32 records at +0x10 x (n-1) + 0/1/2/4/6/8/A/E with lengths 1/1/2/2/2/2/4/2; ROM region 0x1F5 = {0x0100025a, 64}; RAM 0x803d64-0x803dc9 equals EEPROM 0x25a-0x2bf byte for byte; dump = len 2, disabled, mode 1 on 0x100c+2 / 0x1004+0x76 / 0x1051 / 0x1047. No other reader: all 40 absolute operands in 0x803d60-0x803dcb sit in 0x13922-0x14186. Optional naming note (not required): CM848 monitor_calibrated_condition_t calls the same concept parameter_byte_offset."
+   },
+   {
+    "element": "struct datalogger_data_parameter_t",
+    "verdict": "CONFIRMED",
+    "reason": "Stride 6: addq.l #6,d4 at 0x13ad0, addq.l #6,d2 at 0x13e48, d4 = 6 x i at 0x13b5c-0x13b64. +0 word (move.w (0,a0,d4.w) at 0x13abe / 0x13bb2 / 0x13b9e, andi.l #0xffff; the set-up adds only its low byte: add.b d0,d2 / cmpi.b #10 / bhi), +2 word (move.w ...,-(sp) at 0x13e2a before jsr 0x10e16), +4 word zero-extended (0x13e3c / andi.l #0xffff / add.l d0,(a2)). Count 5 is not a code bound (loops run to UDPRCU 0x803dc8) but is pinned by: e2m 1283 = UD01-UD05 (15 records, +6 x (n-1) + 0/2/4, all 2 bytes); region 0x1F6 = {0x0100029a, 30}; UDADSZ dump 94 = 64 + 30; the address dwords 0x800508 + 5 x 4 = 0x80051c, the next variable. The task text said block 1282; the e2m file puts every UD0nDX record in 1283, so the proposal is right. Dump: len 2 x 5, ids 0x100c / 0x1004 / 0x1051 / 0x1047 / 0x1004, offsets 2 / 0x76 / 0 / 0 / 0x8c."
+   },
+   {
+    "element": "struct datalogger_trigger_information_t",
+    "verdict": "CONFIRMED",
+    "reason": "8 bytes, built at 0x13b06-0x13b2c: move.w d0w,$800522 (write pointer - 0x800374), move.l $80bda4 (key_on_hour_meter),$800524, move.b $80bac7,$800528, move.b $80bac9,$800529; copied field by field to 0x8052ea / 0x8052ec / 0x8052f0 / 0x8052f1 (event 1, 0x13c16-0x13c34) and 0x8052f2 / 0x8052f4 / 0x8052f8 / 0x8052f9 (event 2, 0x13c52-0x13c70) = stride 8. e2m 1287 UDTRMK is 16 bytes and region 0x1F9 = {0x4354, 16}. ApplyStructures builds non-packed structs (offset += size), so the dword at +2 lands at +2. Dump: {0x0050, 0x000003d3, 1, 0} / {0x00aa, 0x0d8d364a, 1, 0}."
+   },
+   {
+    "element": "global 0x00803d64",
+    "verdict": "CONFIRMED",
+    "reason": "No row at 0x803d64 now; 0x803d64 + 64 = 0x803da4 (the data array), no other row in 0x803d64-0x803da3 besides the four removed scalars. EEPROM mirror (0x803b0a-0x804155), so _cal is right. Every claim in the comment checked: the 40-operand scan (all in 0x13922-0x14186; 0x14292 has none), parameter ID table entry for 1282 at ROM 0x367ac / 0x367b0 = 0x0100025a, region 0x1F5 = {0x0100025a, 64}, dump values. Only generic users remain (mirror base / parameter ID services)."
+   },
+   {
+    "element": "global 0x00803da4",
+    "verdict": "CONFIRMED",
+    "reason": "Existing row datalogger_data_1_length_cal (word) at the array base: rename + retype in place is right (keep it, do not delete). 0x803da4 + 30 = 0x803dc2 (UDADSZ); only 0x803da6 sits inside and it is removed. Users 0x13a5c (0x13aba / 0x13b9a / 0x13bae) and 0x13e12 (0x803da6 / 0x803da8 at 0x13e26 / 0x13e38). EEPROM mirror -> _cal. Block 1283 confirmed."
+   },
+   {
+    "element": "global 0x00803dc4",
+    "verdict": "CONFIRMED",
+    "reason": "Word: cmpi.w #3 / move.w #2 / move.w $803dc4,d0w at 0x13d52 / 0x13d5c / 0x13d64; only users are the 3 operands in 0x13d42. Jump table at 0x13d7a decoded: 0..5 -> 5/10/20/40/80/160, else 5 (cmp.l #5 / bhi after ext.l). e2m 1284 +2 UDSART 2 bytes, dump 1, EEPROM 0x2ba. Nit: the rewrite uses signed blt, so only codes 3..0x7fff become 2."
+   },
+   {
+    "element": "global 0x00803dc6",
+    "verdict": "AMENDED",
+    "reason": "Word, users 0x1391e / 0x1394a (0x138b6) and 0x13d48 (0x13d42), all cmpi.w #1; e2m 1284 +4 UDTRMD, dump 1. Layout and name confirmed; the comment should name the manual trigger input: e2m 000E +2 DSILSSSW (mask 0x40) resolves to 0x80bcd0 and is 'STATUS OF THE DEBOUNCED SWITCH USER_DATALOGGER_SWITCH'.",
+    "amendment": "Keep name/type; in the comment replace \"any other value = manual, a rising edge of bit 6 of the byte at 0x80bcd0 triggers\" with \"any other value = manual: a rising edge of the debounced user datalogger switch (bit 6 = mask 0x40 of the byte at 0x80bcd0; e2m 000E +2 DSILSSSW 'STATUS OF THE DEBOUNCED SWITCH USER_DATALOGGER_SWITCH'; the row there is still named debounced_value_for_rear_axle_ratio_switch_on_off) triggers\"."
+   },
+   {
+    "element": "global 0x00803dc8",
+    "verdict": "CONFIRMED",
+    "reason": "Word: move.w $803dc8,d1w at 0x13ada (set-up count loop) and 0x13e54 (resolver bound), cmp.l / blt; only these 2 operands. e2m 1284 +6 UDPRCU 0-5, dump 5, EEPROM 0x2be. Note no code caps it at 5 (6+ would overrun 0x800508 into 0x80051c)."
+   },
+   {
+    "element": "global 0x0080bac4",
+    "verdict": "CONFIRMED",
+    "reason": "a4 = 0x80bac4 in 0x13a5c (cmpi.w #1,(a4) / tst.w (a4) / move.w #1,(a4) at 0x13b02 / clr.w (a4) at 0x13c8c) and tst.w $80bac4 at 0x1390a / 0x13940; plus the parameter ID table (0x367c4 / 0x367c8). e2m 1285 +0 UDSS. Word. Old name snapshot_capture_active_flag has users only in these two functions."
+   },
+   {
+    "element": "global 0x0080bac6",
+    "verdict": "CONFIRMED",
+    "reason": "move.w #1,$80bac6 at 0x139ca (triggers 1-3 all satisfied), clr.w at 0x13a28 / 0x13a38 / 0x13a48, byte read of 0x80bac7 at 0x13b22. e2m 1285 +2 UDADTR 2 bytes. Word. No row now."
+   },
+   {
+    "element": "global 0x0080bac8",
+    "verdict": "CONFIRMED",
+    "reason": "a5 = 0x80bac8 (0x138c6): move.w #1,(a5) at 0x139d8 / 0x139ec, clr.w (a5) at 0x13a2e / 0x13a3e / 0x13a4e; byte read 0x80bac9 at 0x13b2c. e2m 1285 +4 UDORTR. Word."
+   },
+   {
+    "element": "global 0x0080baca",
+    "verdict": "CONFIRMED",
+    "reason": "a4 = 0x80baca in 0x138b6: move.w #1,(a4) at 0x139c6 / 0x139e8 / 0x13a08, clr.w (a4) at 0x13a26 / 0x13a36 / 0x13a46; cmpi.w #1,$80baca at 0x13a7e and tst.w $80baca at 0x13afa in 0x13a5c. e2m 1285 +6 UDTRSE. Word. (The comment could also mention the 0x13a7e test that keeps the sample task running while the datalogger is disabled.)"
+   },
+   {
+    "element": "global 0x00800352",
+    "verdict": "CONFIRMED",
+    "reason": "Byte: tst.b at 0x13902 / 0x13a90, move.b #1 at 0x13a9c, clr.b at 0x13a50; 4 operands, all in 0x138b6 / 0x13a5c. Dump 1. Not overlapping 0x800350 (a data collector word, move.w only)."
+   },
+   {
+    "element": "global 0x00800353",
+    "verdict": "CONFIRMED",
+    "reason": "Byte: move.b $800353,d1b at 0x138dc, move.b d0b,$800353 at 0x13918, movea.l #0x800353,a0 / move.b #imm,(a0) / move.b (a0),d0b in 0x13d42. Dump 10 (UDSART 1 -> 10). Users only 0x138b6 / 0x13d42."
+   },
+   {
+    "element": "global 0x00800354",
+    "verdict": "CONFIRMED",
+    "reason": "Byte: move.b #1 at 0x138e6; tst.b at 0x13956 / 0x13aea; clr.b at 0x13af4 / 0x13cd8 / 0x13dae. Users 0x138b6 / 0x13a5c / 0x13cc8 / 0x13d42 only. Old name scheduler_phase_execution_time is wrong (CM550 phase index is scheduler_phase_index 0x80068c)."
+   },
+   {
+    "element": "global 0x00800356",
+    "verdict": "CONFIRMED",
+    "reason": "4 dwords: a2 = 0x800356 / addq.l #4,a2 / 4 iterations in 0x13dbe (the lookup writes the address, add.l d0,(a2) adds the offset); movea.l (0,a2,d0.l*4),a0 in 0x13ed8. Dump 0x80ccf4 / 0x80a320 / 0x80d32e / 0x80aa82 = table(0x100c)+2 / table(0x1004)+0x76 / table(0x1051) / table(0x1047). Ends at 0x800365; 0x800366 is the next array. The 5 junk rows inside have no user."
+   },
+   {
+    "element": "global 0x00800366",
+    "verdict": "CONFIRMED",
+    "reason": "Byte[4]: a2 = 0x800366 (+1 per trigger) in 0x13cc8, a3 = 0x800366 + n / move.b d2b,(a3) at 0x13ea4 in 0x13e64, a1 = 0x800366 / move.b (0,a1,d0.l) in 0x13ed8. Values index the 125 x 6 definitions at 0x8067c4 and the 10-byte fault count records (status at 0x805a24 + 10 x i). Dump 0."
+   },
+   {
+    "element": "global 0x0080036a",
+    "verdict": "CONFIRMED",
+    "reason": "a3 = 0x80036a (0x138ba), a2 = a3 +1 per trigger: move.b #1,(a2) / move.b d0b,(a2), clr.b (3,a3) / move.b d0b,(3,a3), tst.b $80036a / (1,a3) / (2,a3) / (3,a3). Byte[4]; replaces the rendered DAT_0080036b/c/d too. Users 0x138b6 only."
+   },
+   {
+    "element": "global 0x0080036e",
+    "verdict": "CONFIRMED",
+    "reason": "Byte[4]: a3 = 0x80036e in 0x13cc8 and 0x13ed8 (cmpi.b / tst.b (0,a3,d0.l), move.b d0b,(0,a3,d1.l) at 0x14286), a1 = 0x80036e +1 per trigger in 0x13e64. Status semantics checked in cm550_FUN_00014872 (3 active / 2 inactive), cm550_diagnosticCodeRegistrar (3 -> 1, 2 -> 0 when a snapshot slot is reused), cm550_diagnosticTableEntryClear (0)."
+   },
+   {
+    "element": "global 0x00800372",
+    "verdict": "CONFIRMED",
+    "reason": "Byte: move.b #1 at 0x13cb6 / 0x13d34, tst.b at 0x13c96, clr.b at 0x13be6 (after every sample). No row now. Users 0x13a5c / 0x13cc8 only."
+   },
+   {
+    "element": "global 0x00800374",
+    "verdict": "CONFIRMED",
+    "reason": "Byte[400] = 0x800374-0x800503: clr.b (a2)+ / cmpi.w #0x190 loops at 0x13ca6 and 0x13d24, write pointer reset to 0x800374 when it reaches 0x800504 (cmpa.l (a5),a3 at 0x13b78), 0x14292 copies 0x190 bytes from it. Dump: 40 identical 10-byte samples (00 00 00 00 00 00 00 00 7f 80), write pointer 0x80041e. All 51 rows inside are undefined, uncommented, with no .cpp user and no ROM operand."
+   },
+   {
+    "element": "global 0x00800504",
+    "verdict": "CONFIRMED",
+    "reason": "Long pointer: a5 = 0x800504 in 0x13a5c (move.l #0x800374,(a5) / movea.l (a5),a0 / move.b d0b,(a0) / addq.l #1,(a5) / cmpa.l (a5),a3), move.l $800504,d0 at 0x13b06, move.l a1,$800504 at 0x13d2e. byte * is an existing CSV type. Dump 0x80041e."
+   },
+   {
+    "element": "global 0x00800508",
+    "verdict": "CONFIRMED",
+    "reason": "Dword[5]: a2 = 0x800508 / addq.l #4,a2 in 0x13e12; movea.l #0x800508,a0 / adda.w (4 x i) / add.l (a2),d0 in 0x13a5c. Dump 0x80ccf4 / 0x80a320 / 0x80d32e / 0x80aa82 / 0x80a336. Ends at 0x80051b, before 0x80051c. No row now."
+   },
+   {
+    "element": "global 0x0080051c",
+    "verdict": "CONFIRMED",
+    "reason": "Byte: clr.b at 0x13b36, addq.b #1 at 0x13b88, cmpi.b #0xc8 (200) at 0x13b8e / 0x13bca. Users 0x13a5c only. Dump 0."
+   },
+   {
+    "element": "global 0x0080051e",
+    "verdict": "CONFIRMED",
+    "reason": "Word: addq.w #1 at 0x138cc, move.w at 0x138d4 (cmp.l with the period, blt), clr.w at 0x138ee / 0x13cd2 / 0x13db4. Dump 3."
+   },
+   {
+    "element": "global 0x00800520",
+    "verdict": "AMENDED",
+    "reason": "Byte: tst.b at 0x13a00, move.b #1 at 0x13a0c (with move.w #1,(a4) = trigger detected), clr.b at 0x13a1a; users 0x138b6 only. Name confirmed; the comment should say which switch: btst #6,$80bcd0 tests DSILSSSW (e2m 000E +2, mask 0x40, 'STATUS OF THE DEBOUNCED SWITCH USER_DATALOGGER_SWITCH').",
+    "amendment": "Keep name/type; in the comment replace \"when bit 6 of 0x80bcd0 is set\" / \"when the bit is clear\" with \"when the debounced user datalogger switch (bit 6 = mask 0x40 of the byte at 0x80bcd0; e2m 000E +2 DSILSSSW 'STATUS OF THE DEBOUNCED SWITCH USER_DATALOGGER_SWITCH'; the row there is still named debounced_value_for_rear_axle_ratio_switch_on_off) is on\" / \"when it is off\"."
+   },
+   {
+    "element": "global 0x00800521",
+    "verdict": "CONFIRMED",
+    "reason": "Byte: clr.b at 0x13aac, addq.b #1 at 0x13aca (after add.b d0,d2 / cmpi.b #10 / bhi), move.b at 0x13bd4, cmp.b at 0x13bdc (sample loop bound). Dump 5. Users 0x13a5c only."
+   },
+   {
+    "element": "global 0x00800522",
+    "verdict": "CONFIRMED",
+    "reason": "0x800522-0x800529 accessed only as the word / dword / byte / byte of datalogger_trigger_information_t (0x13b12-0x13b2c and the copies at 0x13c16-0x13c70); no rows in that span; 0x80052a is the next variable. Users 0x13a5c only."
+   },
+   {
+    "element": "global 0x0080052a",
+    "verdict": "CONFIRMED",
+    "reason": "Byte: move.b #1 at 0x13ba2, tst.b at 0x13bf4, clr.b at 0x13c8e. Users 0x13a5c only; 0x80052c (next operand) belongs to other code (0x1430a / 0x143d8)."
+   },
+   {
+    "element": "global 0x00804fca",
+    "verdict": "CONFIRMED",
+    "reason": "Byte[800] = 0x804fca-0x8052e9: movea.l #0x804fca / #0x80515a (= +400) at 0x13c0c / 0x13c48 as the 0x14292 destination; e2m 1286 UDDXTB 800 bytes; region 0x1F8 = {0x4034, 800}. The other ROM 4-byte matches inside (0x80522b / 0x80522d / 0x80528a at 0x1e902 / 0xec4c / 0xecce / 0x27824 / 0x37de / 0x2c9d2) are instruction-pair artefacts (10bc 0080 + 522d 0003 etc.), not operands. Optional comment addition, like the round-88 engine_overspeed_log row: no _cal because it lies in the flash parameter block RAM 0x804f9a-0x806547 that cm550_flashProgramFromRam(0x4004 / 0x6004, 0x804f9a, 0x15ae) saves (0x4034 - 0x4004 = 0x804fca - 0x804f9a = 0x30)."
+   },
+   {
+    "element": "global 0x008052ea",
+    "verdict": "CONFIRMED",
+    "reason": "Two 8-byte records 0x8052ea-0x8052f9 (event 1 / event 2 copies at 0x13c16-0x13c34 / 0x13c52-0x13c70); e2m 1287 UDTRMK 16 bytes, region 0x1F9 = {0x4354, 16} (flash parameter block +0x350). No rows in the span. Dump {0x50, 0x3d3, 1, 0} / {0xaa, 0x0d8d364a, 1, 0}."
+   },
+   {
+    "element": "global 0x008052fa",
+    "verdict": "CONFIRMED",
+    "reason": "Word: tst.w $8052fa at 0x13c04, move.w #1 at 0x13c3e; e2m 1288 +0 UDEV01; dump 1. Flash parameter block, so no _cal."
+   },
+   {
+    "element": "global 0x008052fc",
+    "verdict": "CONFIRMED",
+    "reason": "Word: move.w #1,$8052fc at 0x13c7a only; e2m 1288 +2 UDEV02; dump 1. 0x8052fe (DCSDEN) is a different variable."
+   },
+   {
+    "element": "function 0x000138b6",
+    "verdict": "AMENDED",
+    "reason": "Only caller jsr at 0x1b6dc in cm550_FUN_0001b6d6 (jsr 0x1fd6c cm550_j1939TimeoutDataClearHandler; jsr 0x138b6; rts), which executiveFrameInterruptHandler calls as a statement from 4 phases of its 40-phase switch (bsr.w at 0x1b9be / 0x1bb1a / 0x1bc76 / 0x1bda8; case 2 is the first). Every step of the plate checked against 0x138b6-0x13a5a (counter / due flag, enable bit 0x20 of 0x803cb8 = e2m 106B +0x26 UDEN bit 5, set-up calls, cmpi.w #1,$80d0c8 = ENGINE_STATE_STOPPED, the 0-2 loop + trigger 4, AND / OR flags). CM848 has no datalogger (0 UD / DATALOGGER records in CHR_CC_11.45.01.07.e2m; its 6 cm848_lookupParameterIdAddress calls are in cm848_processPciDiagnosticRequest x2, cm848_evaluateCalibratedMonitorDisableConditions and the 3 J1939 parameter-ID services), so standalone cm550_ is right. Only the manual-trigger sentence should name the switch.",
+    "amendment": "Keep name/relation; in the plate replace \"a rising edge of bit 6 of the byte at 0x80bcd0 (latch 0x800520)\" with \"a rising edge of the debounced user datalogger switch (bit 6 = mask 0x40 of the byte at 0x80bcd0; e2m 000E +2 DSILSSSW 'STATUS OF THE DEBOUNCED SWITCH USER_DATALOGGER_SWITCH'; the row there is still named debounced_value_for_rear_axle_ratio_switch_on_off) (latch 0x800520)\"."
+   },
+   {
+    "element": "function 0x00013a5c",
+    "verdict": "AMENDED",
+    "reason": "Only caller jsr at 0x1b6ea in cm550_FUN_0001b6e4 (after vp44_hourMeterEventLogger 0x27998). Plate checked against 0x13a5c-0x13cc6: disabled path zeroes the ring once, set-up, sample-due pass, event start, ring copy with wrap, 200-byte end, event save to 0x8052ea / 0x804fca or 0x8052f2 / 0x80515a, copy (source pushed last = (4,sp)). One wording fix: only the flag of the event written is set, not both.",
+    "amendment": "Keep name; in the plate replace \"UDEV01 / UDEV02 (0x8052fc) are set and logging stops\" with \"the flag of the event written is set (UDEV01 0x8052fa for event 1, UDEV02 0x8052fc for event 2) and logging stops\"."
+   },
+   {
+    "element": "function 0x00013cc8",
+    "verdict": "CONFIRMED",
+    "reason": "Only caller jsr at 0x28792 in mc68k_applicationMain, right after cm550_initLoadTrendingSystem (which is unrelated: hour meter / histogram table pointers). Body 0x13cc8-0x13d40 matches the plate (clr.w $80051e / clr.b $800354; cmpi.w #1 on 0x803d66 + 16 n, 4 records; move.b (0,a0,d0.w*2),(a3) with a0 = 0x805a24; 400-byte clear; move.l a1,$800504; move.b #1,$800372)."
+   },
+   {
+    "element": "function 0x00013d42",
+    "verdict": "CONFIRMED",
+    "reason": "Only caller jsr at 0x13912. Jump table 0x13d7a = 000c 0012 0018 001e 0024 002a -> case bodies move.b #5 / #10 / #20 / #40 / #80 / #160,(a0) with a0 = 0x800353; default 5; the automatic-mode rewrite and the two clears confirmed; returns move.b (a0),d0b."
+   },
+   {
+    "element": "function 0x00013dbe",
+    "verdict": "CONFIRMED",
+    "reason": "Only caller jsr at 0x13928. tst.w (0,a0,d2.w) a0 = 0x803d66; push a2 / move.w (0x803d6a + d2),-(sp); jsr 0x10e16 (cm550_lookupParameterIdAddress); add zero-extended word at 0x803d6c + d2; d2 += 16, a2 += 4, 4 records."
+   },
+   {
+    "element": "function 0x00013e12",
+    "verdict": "CONFIRMED",
+    "reason": "Only caller jsr at 0x13aa4. Records 0..UDPRCU-1 of 0x803da4 (0x803da6 id / 0x803da8 offset, d2 += 6), results into 0x800508 + 4 n. Dump results match table(id) + offset."
+   },
+   {
+    "element": "function 0x00013e64",
+    "verdict": "CONFIRMED",
+    "reason": "Only caller jsr at 0x1392e. For fault_code_flag == 1: scans 125 6-byte definitions from 0x8067c4 (addq.l #6,a2 / cmpi.b #0x7d), no early exit, stores index and current status (0x805a24 + 10 x i). The definitions +0 word is the Cummins fault code (cm550_FUN_00014872 copies it into previously_active_dtc_cummins_fault_codes)."
+   },
+   {
+    "element": "function 0x00013ed8",
+    "verdict": "CONFIRMED",
+    "reason": "Callers jsr 0x1397c (0-2) / 0x139a6 (move.w #3). All 12 compare paths decoded (unsigned bls / bcc / bge on 0-255, signed extb.l / ble / bge; all strict) and the fault-edge path 0x1419c-0x14286 (MD 0: now 0/2 and previous 1/3; MD nonzero: now 1/3 and previous 0/2; previous := now). function_definitions.csv: the two rows (return / param 0 condition_record_index ushort) are keyed by the old name; ApplyFunctionDefinitions only warns on a name mismatch, but rename function_name to cm550_evaluateDataloggerTrigger and param 0 to trigger_index as proposed."
+   },
+   {
+    "element": "function 0x00014292",
+    "verdict": "CONFIRMED",
+    "reason": "Only caller jsr at 0x13c86 after move.l a2 (destination),-(sp) / move.l a3 (0x800374),-(sp); body movea.l (8,sp),a1 / movea.l (4,sp),a0 / move.b (a0)+,(a1)+ x 0x190. So param 0 = source, param 1 = destination; the optional prototype (void; byte *source; byte *destination) is right."
+   },
+   {
+    "element": "remove 0x00803d65",
+    "verdict": "CONFIRMED",
+    "reason": "datalogger_trigger_1_disable_cal becomes datalogger_triggers_cal[0].disable_flag (+1); users tst.b (0,a0,d3.w) a0 = 0x803d65 at 0x1396c (only operand 0x13968). Struct field replaces the scalar; no other user."
+   },
+   {
+    "element": "remove 0x00803d66",
+    "verdict": "CONFIRMED",
+    "reason": "datalogger_trigger_1_fault_code_flag_cal becomes datalogger_triggers_cal[0].fault_code_flag (+2); its 4 operands (0x13cf0 / 0x13dce / 0x13e74 / 0x13efc) are record-base loads. Struct field replaces the scalar; no other user."
+   },
+   {
+    "element": "remove 0x00803d6a",
+    "verdict": "CONFIRMED",
+    "reason": "datalogger_trigger_1_parameter_id_or_fault_code_cal becomes datalogger_triggers_cal[0].parameter_id_or_fault_code (+6); operands 0x13ddc / 0x13e98 are record-base loads. Struct field replaces the scalar; no other user."
+   },
+   {
+    "element": "remove 0x00803d95",
+    "verdict": "CONFIRMED",
+    "reason": "datalogger_trigger_4_disable_cal becomes datalogger_triggers_cal[3].disable_flag (+0x31); tst.b $803d95 at 0x13994 is trigger 4 of the array. Struct field replaces the scalar; no other user."
+   },
+   {
+    "element": "remove 0x00803da6",
+    "verdict": "CONFIRMED",
+    "reason": "datalogger_data_1_parameter_id_cal becomes datalogger_data_parameters_cal[0].parameter_id (+2); operand 0x13e26 is a record-base load. Struct field replaces the scalar; no other user."
+   },
+   {
+    "element": "remove 0x00800358",
+    "verdict": "AMENDED",
+    "reason": "Row main_loop_phase_index is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_trigger_parameter_addresses (4 dwords, dump 0x80ccf4 / 0x80a320 / 0x80d32e / 0x80aa82, so 0x800358 holds 0xccf4, never a 0-0x27 phase). The name is a stale scheduler claim: CM550 switches on scheduler_phase_index 0x0080068c in executiveFrameInterruptHandler; CM848 0x003fa008 is executive_frame_phase. The removed name survives in docs, which the proposal stale-reference sweep (renamed names only) would miss; no script reads the map.",
+    "amendment": "Remove as proposed, and also fix the stale references: docs/cross_firmware_variable_map.csv line 17 (0x00800358,0x003fa008,main_loop_phase_index,confirmed - CM550 is 0x0080068c scheduler_phase_index, CM848 is executive_frame_phase; correct or drop the row), docs/cross-firmware-analysis.md line 204 (both columns), the CM550 enums.csv line 75 comment \"main_loop_phase_index in scheduler switch\" (-> scheduler_phase_index), and optionally the historical spec docs/superpowers/specs/2026-03-17-cross-firmware-convergence-pipeline-design.md line 86."
+   },
+   {
+    "element": "remove 0x0080035a",
+    "verdict": "CONFIRMED",
+    "reason": "Row main_loop_reserved is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_trigger_parameter_addresses 0x800356-0x800365 (addq.l #4,a2 x 4 in 0x13dbe, (0,a2,d0.l*4) in 0x13ed8); the dumped dwords are the four resolved trigger addresses."
+   },
+   {
+    "element": "remove 0x0080035c",
+    "verdict": "CONFIRMED",
+    "reason": "Row scheduler_phase_pointer is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_trigger_parameter_addresses 0x800356-0x800365 (addq.l #4,a2 x 4 in 0x13dbe, (0,a2,d0.l*4) in 0x13ed8); the dumped dwords are the four resolved trigger addresses."
+   },
+   {
+    "element": "remove 0x00800360",
+    "verdict": "CONFIRMED",
+    "reason": "Row engine_operating_mode_cached is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_trigger_parameter_addresses 0x800356-0x800365 (addq.l #4,a2 x 4 in 0x13dbe, (0,a2,d0.l*4) in 0x13ed8); the dumped dwords are the four resolved trigger addresses."
+   },
+   {
+    "element": "remove 0x00800362",
+    "verdict": "CONFIRMED",
+    "reason": "Row flash_control_register_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_trigger_parameter_addresses 0x800356-0x800365 (addq.l #4,a2 x 4 in 0x13dbe, (0,a2,d0.l*4) in 0x13ed8); the dumped dwords are the four resolved trigger addresses."
+   },
+   {
+    "element": "remove 0x00800370",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_demand_table_1_ptr_370 is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_trigger_previous_fault_status 0x80036e-0x800371 (index 0-3: (0,a3,d0.l) in 0x13ed8, a1 = 0x80036e + n in 0x13e64, a3 + n in 0x13cc8)."
+   },
+   {
+    "element": "remove 0x00800376",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_demand_rating_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x0080037a",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_demand_blend_table_1_size is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x0080037c",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_demand_table_2_ptr_37c is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x00800380",
+    "verdict": "CONFIRMED",
+    "reason": "Row rpm_snapshot_0 is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x00800382",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_demand_table_2_base is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x00800384",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_demand_table_3_ptr_384 is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x00800388",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_snapshot_0 is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x0080038a",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_demand_table_4_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x0080038e",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_demand_blend_table_2_size is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x00800390",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_demand_table_5_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x00800394",
+    "verdict": "CONFIRMED",
+    "reason": "Row rpm_snapshot_1 is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x00800396",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_demand_table_5_base is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x00800398",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_demand_table_6_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x0080039c",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_snapshot_1 is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x0080039e",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_demand_table_7_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003a4",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_limit_table_1_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003ac",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_limit_table_2_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003b0",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_limit_table_1_base_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003b2",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_limit_lookup_1_base is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003b8",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_limit_lookup_1_divisor is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003ba",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_limit_table_3_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003be",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_limit_table_1_limit is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003c0",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_limit_intake_temp_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003c6",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_limit_table_4_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003cc",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_limit_lookup_2_divisor is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003ce",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_limit_table_5_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003d2",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_limit_table_2_limit is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003d4",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_limit_table_6_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003d8",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_delivery_param_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003e0",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_delivery_pid_integral is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003e4",
+    "verdict": "CONFIRMED",
+    "reason": "Row derate_bit4_previous_state is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003e6",
+    "verdict": "CONFIRMED",
+    "reason": "Row derate_bit4_changed_flag is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003e8",
+    "verdict": "CONFIRMED",
+    "reason": "Row derate_bit8_previous_state is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003ea",
+    "verdict": "CONFIRMED",
+    "reason": "Row derate_bit8_changed_flag is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003ec",
+    "verdict": "CONFIRMED",
+    "reason": "Row derate_reference_value is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003ee",
+    "verdict": "CONFIRMED",
+    "reason": "Row derate_value_changed_flag is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003f0",
+    "verdict": "CONFIRMED",
+    "reason": "Row interpolation_table_1_base is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003f2",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_timing_mode_table_1_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003f6",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_timing_mode_rpm_input_1 is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003f8",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_timing_mode_lookup_1_base is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003fa",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_timing_mode_table_2_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x008003fe",
+    "verdict": "CONFIRMED",
+    "reason": "Row derate_interpolation_value_1 is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x00800400",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_timing_mode_intake_temp_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x00800404",
+    "verdict": "CONFIRMED",
+    "reason": "Row interpolation_table_2_base is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x00800406",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_timing_mode_table_3_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x0080040a",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_timing_mode_rpm_input_2 is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x0080040c",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_timing_mode_lookup_2_base is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x0080040e",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_timing_mode_table_4_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x00800412",
+    "verdict": "CONFIRMED",
+    "reason": "Row derate_interpolation_value_2 is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x00800414",
+    "verdict": "CONFIRMED",
+    "reason": "Row fuel_timing_mode_table_5_ptr is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x00800418",
+    "verdict": "CONFIRMED",
+    "reason": "Row general_counter_0 is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_sample_ring_buffer 0x800374-0x800503 (0x190-byte clears, wrap at 0x800504); the dumped bytes are 10-byte datalogger samples."
+   },
+   {
+    "element": "remove 0x00804fcd",
+    "verdict": "CONFIRMED",
+    "reason": "Row diagnostic_pid_dtc_index is undefined, uncommented, has 0 .cpp references and no ROM operand (word-aligned 4-byte scan of the dumped ROM). Inside datalogger_event_sample_buffers (event 1 = 0x804fca + 400, written whole by the 0x14292 copy); its dumped byte 0x00 is part of event 1 first sample."
+   }
+  ]
+ }
+}

@@ -1,0 +1,121 @@
+S1 PROBLEM CM550 remove 0x00805a24: no row
+S1 PROBLEM CM550 remove 0x00805a25: no row
+S1 PROBLEM CM550 remove 0x00805a36: no row
+S1 PROBLEM CM550 remove 0x00805a38: no row
+S1 PROBLEM CM550 remove 0x00805a3e: no row
+S1 PROBLEM CM550 remove 0x00805a42: no row
+S1 PROBLEM CM550 remove 0x00805a44: no row
+S1 PROBLEM CM550 remove 0x00805df2: no row
+S1 PROBLEM CM550 remove 0x00805df4: no row
+S1 PROBLEM CM550 remove 0x00805df6: no row
+S1 PROBLEM CM550 remove 0x00805dfa: no row
+S1 PROBLEM CM550 remove 0x00805dfc: no row
+S1 PROBLEM CM550 remove 0x00805dfe: no row
+S1 PROBLEM CM550 remove 0x00805e00: no row
+S1 PROBLEM CM550 remove 0x00805e12: no row
+S1 PROBLEM CM550 remove 0x00805e14: no row
+S1 PROBLEM CM550 remove 0x00805e16: no row
+S1 PROBLEM CM550 remove 0x00805e32: no row
+S1 PROBLEM CM550 remove 0x00805e34: no row
+S1 PROBLEM CM550 remove 0x00805e36: no row
+S1 PROBLEM CM550 remove 0x00805e3a: no row
+S1 PROBLEM CM550 remove 0x00805e3c: no row
+S1 PROBLEM CM550 remove 0x00805e3e: no row
+S1 PROBLEM CM550 remove 0x00805e40: no row
+S1 PROBLEM CM550 remove 0x00805e52: no row
+S1 PROBLEM CM550 remove 0x00805e54: no row
+S1 PROBLEM CM550 remove 0x00805e56: no row
+S1 PROBLEM CM550 remove 0x00805e72: no row
+S1 PROBLEM CM550 remove 0x00805eb4: no row
+S2 PROBLEM CM550 remove 0x00803d65: no row
+S2 PROBLEM CM550 remove 0x00803d66: no row
+S2 PROBLEM CM550 remove 0x00803d6a: no row
+S2 PROBLEM CM550 remove 0x00803d95: no row
+S2 PROBLEM CM550 remove 0x00803da6: no row
+S2 PROBLEM CM550 remove 0x00800358: no row
+S2 PROBLEM CM550 remove 0x0080035a: no row
+S2 PROBLEM CM550 remove 0x0080035c: no row
+S2 PROBLEM CM550 remove 0x00800360: no row
+S2 PROBLEM CM550 remove 0x00800362: no row
+S2 PROBLEM CM550 remove 0x00800370: no row
+S2 PROBLEM CM550 remove 0x00800376: no row
+S2 PROBLEM CM550 remove 0x0080037a: no row
+S2 PROBLEM CM550 remove 0x0080037c: no row
+S2 PROBLEM CM550 remove 0x00800380: no row
+S2 PROBLEM CM550 remove 0x00800382: no row
+S2 PROBLEM CM550 remove 0x00800384: no row
+S2 PROBLEM CM550 remove 0x00800388: no row
+S2 PROBLEM CM550 remove 0x0080038a: no row
+S2 PROBLEM CM550 remove 0x0080038e: no row
+S2 PROBLEM CM550 remove 0x00800390: no row
+S2 PROBLEM CM550 remove 0x00800394: no row
+S2 PROBLEM CM550 remove 0x00800396: no row
+S2 PROBLEM CM550 remove 0x00800398: no row
+S2 PROBLEM CM550 remove 0x0080039c: no row
+S2 PROBLEM CM550 remove 0x0080039e: no row
+S2 PROBLEM CM550 remove 0x008003a4: no row
+S2 PROBLEM CM550 remove 0x008003ac: no row
+S2 PROBLEM CM550 remove 0x008003b0: no row
+S2 PROBLEM CM550 remove 0x008003b2: no row
+S2 PROBLEM CM550 remove 0x008003b8: no row
+S2 PROBLEM CM550 remove 0x008003ba: no row
+S2 PROBLEM CM550 remove 0x008003be: no row
+S2 PROBLEM CM550 remove 0x008003c0: no row
+S2 PROBLEM CM550 remove 0x008003c6: no row
+S2 PROBLEM CM550 remove 0x008003cc: no row
+S2 PROBLEM CM550 remove 0x008003ce: no row
+S2 PROBLEM CM550 remove 0x008003d2: no row
+S2 PROBLEM CM550 remove 0x008003d4: no row
+S2 PROBLEM CM550 remove 0x008003d8: no row
+S2 PROBLEM CM550 remove 0x008003e0: no row
+S2 PROBLEM CM550 remove 0x008003e4: no row
+S2 PROBLEM CM550 remove 0x008003e6: no row
+S2 PROBLEM CM550 remove 0x008003e8: no row
+S2 PROBLEM CM550 remove 0x008003ea: no row
+S2 PROBLEM CM550 remove 0x008003ec: no row
+S2 PROBLEM CM550 remove 0x008003ee: no row
+S2 PROBLEM CM550 remove 0x008003f0: no row
+S2 PROBLEM CM550 remove 0x008003f2: no row
+S2 PROBLEM CM550 remove 0x008003f6: no row
+S2 PROBLEM CM550 remove 0x008003f8: no row
+S2 PROBLEM CM550 remove 0x008003fa: no row
+S2 PROBLEM CM550 remove 0x008003fe: no row
+S2 PROBLEM CM550 remove 0x00800400: no row
+S2 PROBLEM CM550 remove 0x00800404: no row
+S2 PROBLEM CM550 remove 0x00800406: no row
+S2 PROBLEM CM550 remove 0x0080040a: no row
+S2 PROBLEM CM550 remove 0x0080040c: no row
+S2 PROBLEM CM550 remove 0x0080040e: no row
+S2 PROBLEM CM550 remove 0x00800412: no row
+S2 PROBLEM CM550 remove 0x00800414: no row
+S2 PROBLEM CM550 remove 0x00800418: no row
+S2 PROBLEM CM550 remove 0x00804fcd: no row
+S3 PROBLEM CM550 remove 0x00807be2: no row
+S3 PROBLEM CM550 remove 0x00807be4: no row
+S3 PROBLEM CM550 remove 0x00807be6: no row
+S3 PROBLEM CM550 remove 0x00807be8: no row
+S3 PROBLEM CM550 remove 0x00807bea: no row
+S3 PROBLEM CM550 remove 0x00807bec: no row
+S3 PROBLEM CM550 remove 0x00807bee: no row
+S3 PROBLEM CM550 remove 0x00807bf0: no row
+S3 PROBLEM CM550 remove 0x0080a95c: no row
+S3 PROBLEM CM550 remove 0x0080a95e: no row
+S3 PROBLEM CM550 remove 0x0080a960: no row
+S3 PROBLEM CM550 remove 0x0080a962: no row
+S3 PROBLEM CM550 remove 0x0080a964: no row
+S3 PROBLEM CM550 remove 0x0080a966: no row
+S3 PROBLEM CM550 remove 0x0080a968: no row
+S3 PROBLEM CM550 remove 0x0080a96a: no row
+T1 PROBLEM CM550 remove 0x00800b00: no row
+117 report lines; maps: {'CM550': 0, 'CM848': 0}
+cm550 0 map rows; 0 Calterm names kept: []
+cm848 0 map rows; 0 Calterm names kept: []
+-- cm550 own
+nothing to refresh
+-- cm550 map into cm848
+nothing to refresh
+-- cm848 own (+ firmware/CLAUDE.md, test_disasm_tools.py)
+nothing to refresh
+-- cm848 map into cm550
+nothing to refresh
+-- other csvs

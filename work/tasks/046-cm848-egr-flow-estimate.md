@@ -4108,6 +4108,45 @@ three big audit tables are in the large-files tarball (`round90_*`).
     `cm550_peakTorqueFuelCorrection`; `cm550_j1939TorqueControlMode*`; `cm848_mathMultiplyDivide32`'s fall-through;
     0x80ddd3; the A/D array-end bound render.
 
+## Done, round 91 (2026-11-24, same PR): the fault count / datalogger / gain set structs; the J1939 receive layer twins
+
+Peer relays started and continued the round (15:49, 16:19, 16:49). The scripts and the workflow's items
+(`item_S1..T2.json`: each proposal with its skeptic verdicts) are in `session_folder/round91/`.
+- **900ff89c, workflow wf_368d2db4-707 (10 agents):** 216 elements confirmed and 11 amended (comment text); none
+  refuted.
+  - **S1:** `fault_count_record_t` / `fault_count_table[125]` (0x805a1c, e2m 1031). The 27 J90280.05-map rows inside
+    it are gone, and the 0x1452e split went to deleted_functions.csv. The fault countdown functions are counterparts
+    in both firmwares (`cm550_countDownPreviouslyActiveFault(s)` / `cm848_countDownPreviouslyActiveFault(s)`,
+    `cm550_processFaultScanGroup`, `cm550_resetFaultStatus`).
+  - **S2:** the user datalogger (e2m 1282 / 1283): `datalogger_trigger_t[4]`, `datalogger_data_parameter_t[5]`,
+    `datalogger_trigger_information_t`, its working RAM and 9 functions. 63 rows inside the new arrays are gone.
+    0x800358 `main_loop_phase_index` was a stale claim (it is `scheduler_phase_index` 0x80068c); two docs and an enum
+    comment were corrected.
+  - **S3:** CM550 takes CM848's `all_speed_governor_gain_set_t`: the TSC1 condition gain sets [4], the throttle mode
+    and application sets, and `all_speed_governor_gain_set_pointer`.
+  - **T1:** the J1939 receive layer is CM848's twin. The six handlers and `registerJ1939ReceiveHandler` share one
+    unprefixed name, and CM550's 0x21a5c / 0x21c3c are created as functions. Also typed: the receive handler table,
+    the input signal descriptor table (it now indexes `[i].logical_switch`), the timeouts, and the 23 receiver bytes
+    with CM848's names.
+  - **T2:** `findTsc1SourceConfiguration` (twin); CM550's `tsc1_source_configuration_table[5]` and its three
+    pointers, named like CM848's fields (`*_ptr` -> `*_pointer`); `j1939_received_wet_tank_pressure` in both
+    firmwares (CM848's was `j1939_received_accelerator_pedal_position_2`).
+  - **`refresh_references.py`** protects a whole "were a / b / c" list; a 120-character window had let the later
+    names be refreshed. A test fails on the old window.
+  - **Proof:** CM550 verify DETERMINISTIC (the split removed and the 2 handlers added, on purpose; 42 functions
+    changed; caller artifacts unchanged); CM848 label-only; tests pass; headers 0 errors; _cal HARD 0.
+- **firmware/CLAUDE.md:** the J1939 input layer bullet names the twins, through the refresh (the full lines are in
+  the commit's report).
+- **Leads (round 92):**
+  - Indexed struct-array reads whose stride the code builds with shifts / adds still print as byte arithmetic on a
+    field, `(int)&datalogger_triggers_cal[0].parameter_offset + offset`.
+  - The CM550 audit's 478 named rows that disagree with their description.
+  - A fueling state enum for CM550.
+  - Carried: the misnamed PGN builders; `linearization_table_ch15_x_axis` (channel 0's table); 0x803f40 `_cal`;
+    ESCMES / ENGRPM; the DIAG enum members 0x42 / 0x52 / 0x54; the descriptor rows 0x801ab6-0x801b0d;
+    `cm550_peakTorqueFuelCorrection`; `cm550_j1939TorqueControlMode*`; `cm848_mathMultiplyDivide32`'s fall-through;
+    0x80ddd3; the A/D array-end bound render; the one stage C type that could not be applied.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

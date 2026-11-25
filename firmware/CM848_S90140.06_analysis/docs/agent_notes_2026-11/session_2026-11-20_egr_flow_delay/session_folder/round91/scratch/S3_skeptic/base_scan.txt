@@ -1,0 +1,16 @@
+ABS  80a9a8 | 00c9b2: movea.l  $80a9a8.l, a0
+ABS  80a9a8 | 00c9be: movea.l  $80a9a8.l, a0
+ABS  80a9a8 | 00cbbe: movea.l  $80a9a8.l, a0
+ABS  80a9a8 | 00cbc8: movea.l  $80a9a8.l, a0
+ABS  80a9a8 | 00cbf2: movea.l  $80a9a8.l, a2
+ABS  80a9a8 | 00cd7c: movea.l  $80a9a8.l, a3
+ABS  80a9a8 | 00ce0a: movea.l  $80a9a8.l, a0
+ABS  80a9a8 | 00ce1c: movea.l  $80a9a8.l, a0
+ABS  80a9a8 | 00cfde: movea.l  $80a9a8.l, a2
+ABS  80a95a | 00d11a: move.l   #$80a95a, $80a9a8.l
+ABS  80a9a8 | 00d11a: move.l   #$80a95a, $80a9a8.l
+ABS  807b92 | 00d1cc: movea.l  #$807b92, a0
+ABS  80a9a8 | 00d1d4: move.l   a0, $80a9a8.l
+ABS  807be0 | 00d400: movea.l  #$807be0, a5
+ABS  807be0 | 00d550: move.l   #$807be0, $80a9a8.l
+ABS  80a9a8 | 00d550: move.l   #$807be0, $80a9a8.l

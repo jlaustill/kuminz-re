@@ -1,0 +1,278 @@
+0x0000c962: 20 token changes: _asg_governor_gains_ptr [ 3 ] => all_speed_governor_gain_set_pointer -> integral_gain_2 | _asg_governor_gains_ptr [ 2 ] => all_speed_governor_gain_set_pointer -> integral_gain_1 | _asg_governor_gains_ptr [ 6 ] => all_speed_governor_gain_set_pointer -> compensation_filter_coefficient_1 | _asg_governor_gains_ptr [ 7 ] => all_speed_governor_gain_set_pointer -> compensation_filter_coefficient_2 | _asg_governor_gains_ptr [ 8 ] => all_speed_governor_gain_set_pointer -> compensation_filter_coefficient_3 | _asg_governor_gains_ptr [ 6 ] => all_speed_governor_gain_set_pointer -> compensation_filter_coef
+0x0000d0e2: 1 token changes: _asg_governor_gains_ptr => all_speed_governor_gain_set_pointer
+0x0000d0fc: 1 token changes: _asg_governor_gains_ptr => all_speed_governor_gain_set_pointer
+0x0000d1a4: 3 token changes: _asg_governor_gains_ptr => all_speed_governor_gain_set_pointer | ( uint ) =>  | * 9 => 
+0x0000d3e6: 2 token changes: _asg_integral_gain_2_calibration_0_6_75 => all_speed_governor_throttle_mode_gain_set . integral_gain_2 | _asg_integral_gain_1_calibration_0_6_75 => all_speed_governor_throttle_mode_gain_set . integral_gain_1
+0x0000d4ae: 1 token changes: _asg_governor_gains_ptr => all_speed_governor_gain_set_pointer
+0x000138b6: 52 token changes: _trending_sample_counter => datalogger_sample_period_counter | _trending_sample_counter => datalogger_sample_period_counter | _trending_sample_counter => datalogger_sample_period_counter | ' \ x01 ' => 1 | _trending_sample_counter => datalogger_sample_period_counter | _trending_trigger_detected_flag => datalogger_trigger_detected_flag | _DAT_0080bac6 => datalogger_and_inputs_trigger_flag | _DAT_0080bac8 => datalogger_or_input_trigger_flag | DAT_00800352 => datalogger_setup_complete_flag | ' \ =>  | ' =>  | DAT_00800352 => datalogger_setup_complete_flag | ' \ =>  | ' =>  | _snapshot_capture_act
+0x00013a5c: 150 token changes: undefined => byte | undefined => byte | puVar1 ; undefined * puVar2 => pbVar1 | cVar3 => cVar2 ; byte bVar4 ; ushort uVar3 | ushort uVar4 => short sVar6 | bVar6 => * pbVar7 | short sVar7 ; undefined4 uVar8 ; undefined1 * puVar9 ; puVar1 => pbVar7 | undefined => byte | _trending_trigger_detected_flag => datalogger_trigger_detected_flag | _snapshot_capture_active_flag => datalogger_event_logging_active_flag | DAT_00800372 => datalogger_ring_buffer_cleared_flag | ' \ =>  | ' =>  | uVar4 => uVar3 | puVar9 => pbVar1 | & =>  | puVar9 => pbVar1 | uVar4 => uVar3 | uVar4 => uVar3 | puVar9 => pbVar1 | p
+0x00013cc8: 17 token changes: undefined1 => byte | puVar4 => pbVar4 | undefined * puVar5 ; _trending_sample_counter => datalogger_sample_period_counter | & =>  | puVar5 => pbVar4 | & =>  | puVar5 => pbVar4 | puVar5 => pbVar4 | puVar5 => pbVar4 | puVar4 => pbVar3 | & =>  | puVar4 => pbVar3 | puVar4 => pbVar3 | puVar4 => pbVar3 | _data_record_buffer_write_ptr => datalogger_ring_buffer_write_pointer | & =>  | DAT_00800372 => datalogger_ring_buffer_cleared_flag
+0x00013d42: 7 token changes: _DAT_00803dc6 => datalogger_trigger_mode_cal | _DAT_00803dc4 => ( short ) datalogger_sample_rate_code_cal | _DAT_00803dc4 => datalogger_sample_rate_code_cal | _DAT_00803dc4 => ( short ) datalogger_sample_rate_code_cal | _DAT_00803dc4 => ( short ) datalogger_sample_rate_code_cal | _DAT_00803dc4 => datalogger_sample_rate_code_cal | _trending_sample_counter => datalogger_sample_period_counter
+0x00013dbe: 4 token changes: ( dword * ) & =>  |  => ( int ) | DAT_00803d6c => datalogger_triggers_cal [ 0 ] . parameter_offset |  => ( int )
+0x00013e12: 5 token changes: ( dword * ) & DAT_00800508 => datalogger_data_parameter_addresses | _DAT_00803dc8 => datalogger_data_parameter_count_cal |  => ( int ) | DAT_00803da8 => datalogger_data_parameters_cal [ 0 ] . parameter_offset |  => ( int )
+0x00013e64: 11 token changes: undefined => byte | puVar5 => pbVar5 | puVar5 => pbVar5 | & =>  | ( & =>  | ) =>  | ( & =>  | ) =>  | puVar5 => pbVar5 | puVar5 => pbVar5 | puVar5 => pbVar5
+0x00013ed8: 172 token changes: char cVar1 => short sVar1 | short sVar2 => byte bVar2 | byte bVar4 ; bVar4 => bVar3 | sVar2 => sVar1 | sVar2 => sVar1 | sVar2 => ( int ) & datalogger_triggers_cal [ 0 ] . above_threshold_or_fault_active_flag | 0x803d68 => ( int ) sVar1 | sVar2 => ( int ) & datalogger_triggers_cal [ 0 ] . signed_value_flag | 0x803d72 => ( int ) sVar1 | cVar1 = * => if | char * => ( & datalogger_triggers_cal [ 0 ] . value_length | ( => [ | + 0x803d64 ) ; if ( cVar1 => ] | ' \ x01 ' => 1 | * =>  | * =>  | ( & =>  | + ( uint ) bVar4 * 4 ) => [ bVar3 ] | sVar2 => ( int ) & datalogger_triggers_cal [ 0 ] . threshold 
+0x000144bc: 16 token changes: ' \ =>  | ' =>  |  => int ) & fault_count_table [ 0 ] . last_countdown_time + ( | + 0x805a20 =>  |  => [ 0 ] . status_change_time |  => int ) & fault_count_table [ 0 ] . last_countdown_time + ( | + 0x805a20 =>  |  => int ) & fault_count_table [ 0 ] . last_countdown_time + ( | + 0x805a20 =>  |  => ( int ) & fault_count_table [ 0 ] . last_countdown_time + ( int ) | + 0x805a20 =>  | ' \ =>  | ' =>  | + =>  | ' \ =>  | ' => 
+0x000146b4: 3 token changes: byte ) ( =>  |  => [ 0 ] . status_change_time |  => [ 0 ] . status_change_time
+0x00014872: 6 token changes:  => [ 0 ] . status_change_time | - 1 => 0xff | ' \ x01 ' => 1 |  => [ 0 ] . status_change_time |  => int ) & fault_count_table [ 0 ] . last_countdown_time + ( | + 0x805a20 => 
+0x00014f42: 2 token changes: ' \ =>  | ' => 
+0x0001f4e8: 21 token changes: uint => tsc1_source_configuration_t * | uint uVar7 => tsc1_source_configuration_t * ptVar7 |  => tsc1_source_configuration_t * ) ( | uVar7 => ptVar7 |  => ( tsc1_source_configuration_t * ) | uVar7 => ptVar7 | uVar7 => ptVar7 | uVar7 => ptVar7 |  => tsc1_source_configuration_t * ) ( | _datalink_active_session_pointer => tsc1_source_configuration_pointer | _datalink_session_config_pointer => tsc1_matched_source_configuration_pointer |  => tsc1_source_configuration_t * ) ( | _datalink_active_session_pointer => tsc1_source_configuration_pointer | _datalink_session_config_pointer => tsc1_matched_so
+0x0001f8bc: 25 token changes: uint => tsc1_source_configuration_t * | uint uVar5 => tsc1_source_configuration_t * ptVar5 | uVar5 => ptVar5 |  => ( tsc1_source_configuration_t * ) ( |  => ) | uVar5 => ptVar5 |  => ( tsc1_source_configuration_t * ) |  => tsc1_source_configuration_t * ) ( |  => ( tsc1_source_configuration_t * ) |  => tsc1_source_configuration_t * ) ( | _datalink_active_session_pointer => tsc1_source_configuration_pointer | _datalink_session_config_pointer => tsc1_matched_source_configuration_pointer |  => tsc1_source_configuration_t * ) ( | _datalink_active_session_pointer => tsc1_source_configuration_pointer
+0x00020380: 1 token changes: _DAT_0080423e => j1939_input_signal_timeouts [ 5 ]
+0x0002041c: 1 token changes: _DAT_00804234 => j1939_input_signal_timeouts [ 0 ]
+0x000204b0: 5 token changes: _DAT_00804240 => j1939_input_signal_timeouts [ 6 ] | ' \ x03 ' => 3 | ' \ x02 ' => 2 | ' \ =>  | ' => 
+0x00020784: 1 token changes: _DAT_00804236 => j1939_input_signal_timeouts [ 1 ]
+0x00020890: 103 token changes:  => byte * pbVar1 ; uint uVar2 ; | iVar1 ; char * pcVar2 ; ushort uVar3 => iVar3 | iVar1 => iVar3 |  => ( int ) | * 10 =>  | ( short ) input_index => iVar3 | ( & DAT_0002010c ) => j1939_input_signal_descriptor_table | iVar1 => iVar3 |  => . timeout_slot | ( & DAT_0002010c ) => j1939_input_signal_descriptor_table | iVar1 => iVar3 |  => . timeout_slot |  => ; uVar2 = ( ushort ) j1939_input_signal_descriptor_table [ iVar3 ] . logical_switch + 0xd0 | ( * ( ushort * ) ( & DAT_00020110 + iVar1 ) + 0xd0 ) => uVar2 | ( * ( ushort * ) ( & DAT_00020110 + iVar1 ) + 0xd0 ) => uVar2 | * ( int * ) ( & DAT_0
+0x00020c98: 1 token changes: _DAT_00804242 => j1939_input_signal_timeouts [ 7 ]
+0x00020fac: 1 token changes: _DAT_00804246 => j1939_input_signal_timeouts [ 9 ]
+0x000212b2: 27 token changes: char => byte | pcVar7 => pbVar7 | short => j1939_receive_handler_entry_t | psVar8 => pjVar8 | short => word | short => word | char => byte | pcVar7 => pbVar7 | pcVar7 => pbVar7 | - 2 => 0xfe | char => byte | pcVar7 => pbVar7 | cVar1 => bVar6 | pcVar7 => pbVar7 | pcVar7 => pbVar7 | pcVar7 => pbVar7 | cVar1 => bVar6 | psVar8 => pjVar8 | ( short * ) & DAT_00800ab0 => j1939_receive_handler_table | DAT_00800b10 => j1939_receive_handler_count | * psVar8 => pjVar8 -> pgn_key | * =>  | * =>  | ( psVar8 + 1 ) => pjVar8 -> handler | psVar8 => pjVar8 | psVar8 => pjVar8 | 3 => 1
+0x00021a8c: 9 token changes: _DAT_00804236 => j1939_input_signal_timeouts [ 1 ] | undefined1 => byte | _DAT_00804238 => j1939_input_signal_timeouts [ 2 ] | undefined1 => byte | _DAT_0080423a => j1939_input_signal_timeouts [ 3 ] | undefined1 => byte | _DAT_0080423c => j1939_input_signal_timeouts [ 4 ] | _DAT_0080423e => j1939_input_signal_timeouts [ 5 ] | undefined1 => byte
+0x00021b88: 6 token changes: _DAT_00804240 => j1939_input_signal_timeouts [ 6 ] | _DAT_00804242 => j1939_input_signal_timeouts [ 7 ] | _DAT_00804244 => j1939_input_signal_timeouts [ 8 ] | undefined1 => byte | _DAT_00804246 => j1939_input_signal_timeouts [ 9 ] | undefined1 => byte
+0x00021c74: 6 token changes: _DAT_0080424a => j1939_input_signal_timeouts [ 0xb ] | undefined1 => byte | _DAT_0080424c => j1939_input_signal_timeouts [ 0xc ] | _DAT_0080424e => j1939_input_signal_timeouts [ 0xd ] | undefined1 => byte | _DAT_00804250 => j1939_input_signal_timeouts [ 0xe ]
+0x00021d44: 14 token changes: _DAT_00804252 => j1939_input_signal_timeouts [ 0xf ] | undefined1 => byte | _DAT_00804254 => j1939_input_signal_timeouts [ 0x10 ] | undefined1 => byte | _DAT_00804256 => j1939_input_signal_timeouts [ 0x11 ] | undefined1 => byte | _DAT_00804258 => j1939_input_signal_timeouts [ 0x12 ] | undefined1 => byte | _DAT_0080425a => j1939_input_signal_timeouts [ 0x13 ] | _DAT_0080425c => j1939_input_signal_timeouts [ 0x14 ] | _DAT_0080425e => j1939_input_signal_timeouts [ 0x15 ] | undefined1 => byte | _DAT_00804260 => j1939_input_signal_timeouts [ 0x16 ] | undefined1 => byte
+0x00021edc: 11 token changes: short => word | psVar1 => pwVar1 | psVar1 => pwVar1 |  => j1939_input_signal_timeouts ; pwVar1 < | short => word | & DAT_00804234 => ( ( int ) j1939_input_signal_timeouts + 0x31 ) | psVar1 < ( short * ) 0x804265 ; psVar1 => pwVar1 | psVar1 => pwVar1 | psVar1 => pwVar1 | psVar1 => pwVar1 | psVar1 + => pwVar1
+0x00023244: 3 token changes: * ( short * ) ( _datalink_active_session_pointer + 6 ) => tsc1_source_configuration_pointer -> speed_control_time_limit | * ( short * ) ( _datalink_active_session_pointer + 10 ) => tsc1_source_configuration_pointer -> torque_control_time_limit | * ( short * ) ( _retarder_session_config_pointer + 0x10 ) => retarder_tsc1_source_configuration_pointer -> retarder_torque_control_time_limit
+0x00026fea: 3 token changes: undefined => byte | undefined => byte | undefined => byte
+0x0002f128: 11 token changes: _datalink_active_session_pointer => tsc1_source_configuration_pointer | _datalink_session_config_pointer => tsc1_matched_source_configuration_pointer | _datalink_active_session_pointer => tsc1_source_configuration_pointer | _datalink_session_config_pointer => tsc1_matched_source_configuration_pointer | _datalink_active_session_pointer => tsc1_source_configuration_pointer | _datalink_session_config_pointer => tsc1_matched_source_configuration_pointer | _datalink_active_session_pointer => tsc1_source_configuration_pointer | _datalink_session_config_pointer => tsc1_matched_source_configuration_po
+0x0002f7e6: 8 token changes: _retarder_session_config_pointer => retarder_tsc1_source_configuration_pointer | _datalink_session_config_pointer => tsc1_matched_source_configuration_pointer | _retarder_session_config_pointer => retarder_tsc1_source_configuration_pointer | _datalink_session_config_pointer => tsc1_matched_source_configuration_pointer | * ( short * ) ( _retarder_session_config_pointer + 0xe ) => retarder_tsc1_source_configuration_pointer -> retarder_torque_control_request_timeout | * ( short * ) ( _retarder_session_config_pointer + 0xe ) => retarder_tsc1_source_configuration_pointer -> retarder_torque_control_
+0x0002fddc: 4 token changes:  => [ 0 ] . status_change_time |  => ( int ) & fault_count_table [ 0 ] . last_countdown_time + ( int ) | + 0x805a20 =>  | ' \ x02 ' => 2
+0x000315be: 2 token changes: ' \ x01 ' => 1 | ' \ x03 ' => 3
+0x00031ace: 17 token changes: word => tsc1_source_configuration_t | pwVar2 => ptVar2 | pwVar2 => ptVar2 | & =>  | * pwVar2 => ptVar2 -> data_link | * =>  | * =>  | ( ( int ) pwVar2 + 3 ) => ptVar2 -> source_address_filter | * pwVar2 => ptVar2 -> data_link | * =>  | * =>  | ( ( int ) pwVar2 + 3 ) => ptVar2 -> source_address_filter | pwVar2 => ptVar2 | pwVar2 => ptVar2 | 10 => 1 | _datalink_session_config_pointer => tsc1_matched_source_configuration_pointer | pwVar2 => ptVar2
+0x000322ae: 1 token changes: byte ) ( => 
+0x0003241c: 1 token changes: byte ) ( => 
+---- census of distinct changes
+  23 ' \ => 
+  23 ' => 
+  23 * => 
+  23 bVar3 => bVar2
+  22 * 10 ) => ] . logical_switch
+  17 ) => 
+  15 undefined1 => byte
+  15 ( & => 
+  15 bVar4 => bVar3
+  15 _datalink_session_config_pointer => tsc1_matched_source_configuration_pointer
+  13 undefined => byte
+  12 * ( uint * ) ( & DAT_0002010e + => j1939_input_signal_descriptor_table [
+  11 ' \ x01 ' => 1
+  11 & => 
+  10 uVar4 => uVar3
+  10 ( byte ) ( & => 
+  10 _datalink_active_session_pointer => tsc1_source_configuration_pointer
+   9 _snapshot_capture_active_flag => datalogger_event_logging_active_flag
+   8 _trending_trigger_detected_flag => datalogger_trigger_detected_flag
+   8 _data_record_buffer_write_ptr => datalogger_ring_buffer_write_pointer
+   8 bVar6 => bVar5
+   8  => ( int )
+   8 + ( uint ) bVar4 * 4 ) => [ bVar3 ]
+   8 sVar2 => ( int ) & datalogger_triggers_cal [ 0 ] . threshold
+   8 0x803d6e => ( int ) sVar1
+   7 puVar1 => pbVar7
+   7 ' \ x02 ' => 2
+   7  => tsc1_source_configuration_t * ) (
+   7 pcVar7 => pbVar7
+   6 + 0x805a20 => 
+   6  => [ 0 ] . status_change_time
+   6 iVar1 => iVar3
+   6 * ( undefined4 * ) ( & DAT_0002010e + => j1939_input_signal_descriptor_table [
+   5 _trending_sample_counter => datalogger_sample_period_counter
+   5 _DAT_0080bac8 => datalogger_or_input_trigger_flag
+   5 DAT_0080036d => datalogger_trigger_satisfied_flags [ 3 ]
+   5 puVar2 => pbVar1
+   5 puVar5 => pbVar5
+   5 ' \ x03 ' => 3
+   5 psVar1 => pwVar1
+   5 pwVar2 => ptVar2
+   4 _asg_governor_gains_ptr [ 6 ] => all_speed_governor_gain_set_pointer -> compensation_filter_coefficient_1
+   4 _asg_governor_gains_ptr [ 7 ] => all_speed_governor_gain_set_pointer -> compensation_filter_coefficient_2
+   4 _asg_governor_gains_ptr => all_speed_governor_gain_set_pointer
+   4 _DAT_0080bac6 => datalogger_and_inputs_trigger_flag
+   4 DAT_00800352 => datalogger_setup_complete_flag
+   4 DAT_00800372 => datalogger_ring_buffer_cleared_flag
+   4 puVar9 => pbVar1
+   4 sVar7 => sVar6
+   4 bVar5 => bVar4
+   4 puVar5 => pbVar4
+   4 puVar4 => pbVar3
+   4  => int ) & fault_count_table [ 0 ] . last_countdown_time + (
+   4 uVar7 => ptVar7
+   4 uVar5 => ptVar5
+   4 * ( int * ) ( & DAT_0002010e + => j1939_input_signal_descriptor_table [
+   4 pcVar2 => pbVar1
+   4 psVar8 => pjVar8
+   4 short => word
+   3 _asg_governor_gains_ptr [ 2 ] => all_speed_governor_gain_set_pointer -> integral_gain_1
+   3 _asg_governor_gains_ptr [ 8 ] => all_speed_governor_gain_set_pointer -> compensation_filter_coefficient_3
+   3 _DAT_00803dc6 => datalogger_trigger_mode_cal
+   3 DAT_00800520 => datalogger_manual_trigger_switch_latch
+   3  => [ 0 ] . value_length
+   3 _DAT_00800522 => datalogger_pending_trigger_information . ring_buffer_trigger_offset
+   3 _DAT_00800524 => datalogger_pending_trigger_information . trigger_key_on_hour_meter
+   3 DAT_00800528 => datalogger_pending_trigger_information . and_inputs_trigger_flag
+   3 DAT_00800529 => datalogger_pending_trigger_information . or_input_trigger_flag
+   3 cVar3 => cVar2
+   3 DAT_0080052a => datalogger_event_capture_complete_flag
+   3 uVar8 => pbVar7
+   3 _DAT_00803dc4 => ( short ) datalogger_sample_rate_code_cal
+   3 + 0x803d64 ) ; if ( cVar1 => ]
+   3 byte ) ( => 
+   3  => ( tsc1_source_configuration_t * )
+   3 * ( short * ) ( _datalink_active_session_pointer + 4 ) => tsc1_source_configuration_pointer -> speed_control_request_timeout
+   3 * ( short * ) ( _datalink_active_session_pointer + 8 ) => tsc1_source_configuration_pointer -> torque_control_request_timeout
+   3 * ( short * ) ( _datalink_active_session_pointer + 0xc ) => tsc1_source_configuration_pointer -> speed_torque_limit_control_request_timeout
+   3 ( ( int ) ( uint ) uVar3 >> 3 ) => uVar5
+   3 * ( char * * ) ( & DAT_00020108 + => j1939_input_signal_descriptor_table [
+   3 * 10 ) => ] . signal_value
+   3 char => byte
+   2 _asg_governor_gains_ptr [ 3 ] => all_speed_governor_gain_set_pointer -> integral_gain_2
+   2 _DAT_00803dc8 => datalogger_data_parameter_count_cal
+   2 - 0x38 => 200
+   2 _DAT_008052fa => datalogger_event_1_logged_flag
+   2 _DAT_00803dc4 => datalogger_sample_rate_code_cal
+   2 sVar2 => sVar1
+   2 sVar2 => ( int ) & datalogger_triggers_cal [ 0 ] . above_threshold_or_fault_active_flag
+   2 0x803d68 => ( int ) sVar1
+   2 char * => ( & datalogger_triggers_cal [ 0 ] . value_length
+   2 ( => [
+   2 } => 
+   2 cVar1 => ( & datalogger_triggers_cal [ 0 ] . value_length ) [ ( short ) ( ( condition_record_index & 0xff ) * 2 ) * 8 ]
+   2  => ( int ) & fault_count_table [ 0 ] . last_countdown_time + ( int )
+   2 uint => tsc1_source_configuration_t *
+   2  => ( tsc1_source_configuration_t * ) (
+   2  => )
+   2 _DAT_0080423e => j1939_input_signal_timeouts [ 5 ]
+   2 _DAT_00804240 => j1939_input_signal_timeouts [ 6 ]
+   2 _DAT_00804236 => j1939_input_signal_timeouts [ 1 ]
+   2 * 10 => 
+   2 ( & DAT_0002010c ) => j1939_input_signal_descriptor_table
+   2  => . timeout_slot
+   2 ( * ( ushort * ) ( & DAT_00020110 + iVar1 ) + 0xd0 ) => uVar2
+   2  => ( char )
+   2 * ( uint * ) ( & DAT_0002010e + iVar1 ) => j1939_input_signal_descriptor_table [ iVar3 ] . logical_switch
+   2 & DAT_00020111 => byte
+   2  => j1939_input_signal_descriptor_table
+   2  => . logical_switch
+   2 _DAT_00804242 => j1939_input_signal_timeouts [ 7 ]
+   2 _DAT_00804246 => j1939_input_signal_timeouts [ 9 ]
+   2 cVar1 => bVar6
+   2 _retarder_session_config_pointer => retarder_tsc1_source_configuration_pointer
+   2 * ( short * ) ( _retarder_session_config_pointer + 0xe ) => retarder_tsc1_source_configuration_pointer -> retarder_torque_control_request_timeout
+   2 * ( short * ) ( _retarder_session_config_pointer + 0x12 ) => retarder_tsc1_source_configuration_pointer -> retarder_speed_torque_limit_control_request_timeout
+   2 * pwVar2 => ptVar2 -> data_link
+   2 ( ( int ) pwVar2 + 3 ) => ptVar2 -> source_address_filter
+   1 * _asg_governor_gains_ptr => all_speed_governor_gain_set_pointer -> proportional_gain_1
+   1 _asg_governor_gains_ptr [ 1 ] => all_speed_governor_gain_set_pointer -> proportional_gain_2
+   1 _asg_governor_gains_ptr [ 4 ] => all_speed_governor_gain_set_pointer -> derivative_gain_1
+   1 _asg_governor_gains_ptr [ 5 ] => all_speed_governor_gain_set_pointer -> derivative_gain_2
+   1 ( uint ) => 
+   1 * 9 => 
+   1 _asg_integral_gain_2_calibration_0_6_75 => all_speed_governor_throttle_mode_gain_set . integral_gain_2
+   1 _asg_integral_gain_1_calibration_0_6_75 => all_speed_governor_throttle_mode_gain_set . integral_gain_1
+   1 ( byte * ) & => 
+   1  => [ 0 ]
+   1 DAT_0080036b => datalogger_trigger_satisfied_flags [ 1 ]
+   1 DAT_0080036c => datalogger_trigger_satisfied_flags [ 2 ]
+   1 puVar1 ; undefined * puVar2 => pbVar1
+   1 cVar3 => cVar2 ; byte bVar4 ; ushort uVar3
+   1 ushort uVar4 => short sVar6
+   1 bVar6 => * pbVar7
+   1 short sVar7 ; undefined4 uVar8 ; undefined1 * puVar9 ; puVar1 => pbVar7
+   1 SUB42 => 
+   1 puVar1 , 0 => word
+   1  => pbVar7
+   1 DAT_0080bac7 => ( byte ) datalogger_and_inputs_trigger_flag
+   1 DAT_0080bac9 => ( byte ) datalogger_or_input_trigger_flag
+   1 & DAT_00800508 => ( int ) datalogger_data_parameter_addresses
+   1 _data_record_buffer_write_ptr => ( byte * * ) datalogger_ring_buffer_write_pointer
+   1 0x804fca => datalogger_event_sample_buffers
+   1 _DAT_008052ea => datalogger_event_trigger_information [ 0 ] . ring_buffer_trigger_offset
+   1 _DAT_008052ec => datalogger_event_trigger_information [ 0 ] . trigger_key_on_hour_meter
+   1 DAT_008052f0 => datalogger_event_trigger_information [ 0 ] . and_inputs_trigger_flag
+   1 DAT_008052f1 => datalogger_event_trigger_information [ 0 ] . or_input_trigger_flag
+   1 0x80515a => datalogger_event_sample_buffers + 400
+   1 _DAT_008052f2 => datalogger_event_trigger_information [ 1 ] . ring_buffer_trigger_offset
+   1 _DAT_008052f4 => datalogger_event_trigger_information [ 1 ] . trigger_key_on_hour_meter
+   1 DAT_008052f8 => datalogger_event_trigger_information [ 1 ] . and_inputs_trigger_flag
+   1 DAT_008052f9 => datalogger_event_trigger_information [ 1 ] . or_input_trigger_flag
+   1 _DAT_008052fc => datalogger_event_2_logged_flag
+   1 puVar4 => pbVar4
+   1 undefined * puVar5 ; _trending_sample_counter => datalogger_sample_period_counter
+   1 ( dword * ) & => 
+   1 DAT_00803d6c => datalogger_triggers_cal [ 0 ] . parameter_offset
+   1 ( dword * ) & DAT_00800508 => datalogger_data_parameter_addresses
+   1 DAT_00803da8 => datalogger_data_parameters_cal [ 0 ] . parameter_offset
+   1 char cVar1 => short sVar1
+   1 short sVar2 => byte bVar2
+   1 byte bVar4 ; bVar4 => bVar3
+   1 sVar2 => ( int ) & datalogger_triggers_cal [ 0 ] . signed_value_flag
+   1 0x803d72 => ( int ) sVar1
+   1 cVar1 = * => if
+   1 cVar1 == ' \ x02 ' ) { if ( * * ( ushort * * ) => 
+   1 datalogger_trigger_parameter_addresses + ( uint => datalogger_triggers_cal [ 0 ] . value_length
+   1 bVar4 * 4 ) < ( ushort ) * ( undefined4 * ) ( sVar2 + 0x803d6e ) ) { bVar3 = 1 ; } else { bVar3 = 0 ; } } else if ( * * ( uint * * ) ( & datalogger_trigger_parameter_addresses + ( uint ) bVar4 * 4 ) <
+   1 ' \ x01 ' ) { if ( ( int ) * * ( char * * ) ( & datalogger_trigger_parameter_addresses + ( uint ) bVar4 * 4 ) < ( int ) ( * ( uint * ) ( sVar2 + 0x803d6e ) & 0xff ) ) { bVar3 = 1 ; } else { bVar3 = 0 
+   1 short * => ushort
+   1 short => ushort
+   1  => ( uint * ) datalogger_trigger_parameter_addresses [ bVar3 ] <
+   1 int * => uint
+   1 datalogger_trigger_parameter_addresses => datalogger_triggers_cal [ 0 ] . threshold
+   1 uint => int
+   1 bVar4 * 4 ) < * ( int * ) ( sVar2 + 0x803d6e => sVar1
+   1 short * => & datalogger_triggers_cal [ 0 ] . value_length
+   1 ( sVar2 + 0x803d72 ) == 0 ) { cVar1 = * ( char * ) ( => [
+   1 + 0x803d64 => ] == 1
+   1 ; => {
+   1 cVar1 => ( int ) * ( char * ) datalogger_trigger_parameter_addresses [ bVar3 ] < ( int ) ( * ( uint * ) ( ( int ) & datalogger_triggers_cal [ 0 ] . threshold + ( int ) sVar1 ) & 0xff ) ) { bVar2 = 1 ;
+   1 ' \ x01 ' => 2 ) { if ( * ( short * ) datalogger_trigger_parameter_addresses [ bVar3 ] < ( short ) * ( undefined4 * ) ( ( int ) & datalogger_triggers_cal [ 0 ] . threshold + ( int ) sVar1 ) ) { bVar2 
+   1 { cVar1 = * => if
+   1 + => 
+   1 - 1 => 0xff
+   1 uint uVar7 => tsc1_source_configuration_t * ptVar7
+   1 uint uVar5 => tsc1_source_configuration_t * ptVar5
+   1 _DAT_00804234 => j1939_input_signal_timeouts [ 0 ]
+   1  => byte * pbVar1 ; uint uVar2 ;
+   1 iVar1 ; char * pcVar2 ; ushort uVar3 => iVar3
+   1 ( short ) input_index => iVar3
+   1  => ; uVar2 = ( ushort ) j1939_input_signal_descriptor_table [ iVar3 ] . logical_switch + 0xd0
+   1 DAT_0002010c + => j1939_input_signal_descriptor_table [
+   1 * 10 => ] . timeout_slot
+   1 * ( short * ) ( & DAT_00804234 + => j1939_input_signal_timeouts [
+   1 pcVar2 * 2 ) => pbVar1 ]
+   1 uVar3 => uVar5
+   1 * => ( int ) ( uint )
+   1 ( & DAT_00020110 + iVar1 ) => j1939_input_signal_descriptor_table [ iVar3 ] . logical_switch >> 3
+   1 ( => uVar5 ] ; return uVar5 ; } uVar5 =
+   1 uVar3 => ( ushort ) j1939_input_signal_descriptor_table [ iVar3 ] . logical_switch
+   1 ) ] ; return ( int ) ( uint ) uVar3 >> 3 ; } uVar3 = * ( ushort * ) ( & DAT_00020110 + iVar1 ) => 
+   1 ( int ) ( uint ) uVar3 >> 3 => uVar5
+   1 short => j1939_receive_handler_entry_t
+   1 - 2 => 0xfe
+   1 ( short * ) & DAT_00800ab0 => j1939_receive_handler_table
+   1 DAT_00800b10 => j1939_receive_handler_count
+   1 * psVar8 => pjVar8 -> pgn_key
+   1 ( psVar8 + 1 ) => pjVar8 -> handler
+   1 3 => 1
+   1 _DAT_00804238 => j1939_input_signal_timeouts [ 2 ]
+   1 _DAT_0080423a => j1939_input_signal_timeouts [ 3 ]
+   1 _DAT_0080423c => j1939_input_signal_timeouts [ 4 ]
+   1 _DAT_00804244 => j1939_input_signal_timeouts [ 8 ]
+   1 _DAT_0080424a => j1939_input_signal_timeouts [ 0xb ]
+   1 _DAT_0080424c => j1939_input_signal_timeouts [ 0xc ]
+   1 _DAT_0080424e => j1939_input_signal_timeouts [ 0xd ]
+   1 _DAT_00804250 => j1939_input_signal_timeouts [ 0xe ]
+   1 _DAT_00804252 => j1939_input_signal_timeouts [ 0xf ]
+   1 _DAT_00804254 => j1939_input_signal_timeouts [ 0x10 ]
+   1 _DAT_00804256 => j1939_input_signal_timeouts [ 0x11 ]
+   1 _DAT_00804258 => j1939_input_signal_timeouts [ 0x12 ]
+   1 _DAT_0080425a => j1939_input_signal_timeouts [ 0x13 ]
+   1 _DAT_0080425c => j1939_input_signal_timeouts [ 0x14 ]
+   1 _DAT_0080425e => j1939_input_signal_timeouts [ 0x15 ]
+   1 _DAT_00804260 => j1939_input_signal_timeouts [ 0x16 ]
+   1  => j1939_input_signal_timeouts ; pwVar1 <
+   1 & DAT_00804234 => ( ( int ) j1939_input_signal_timeouts + 0x31 )
+   1 psVar1 < ( short * ) 0x804265 ; psVar1 => pwVar1
+   1 psVar1 + => pwVar1
+   1 * ( short * ) ( _datalink_active_session_pointer + 6 ) => tsc1_source_configuration_pointer -> speed_control_time_limit
+   1 * ( short * ) ( _datalink_active_session_pointer + 10 ) => tsc1_source_configuration_pointer -> torque_control_time_limit
+   1 * ( short * ) ( _retarder_session_config_pointer + 0x10 ) => retarder_tsc1_source_configuration_pointer -> retarder_torque_control_time_limit
+   1 word => tsc1_source_configuration_t
+   1 10 => 1

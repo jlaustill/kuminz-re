@@ -780,3 +780,11 @@ Hand work on the round 7 lead.
   `apply_r90c_vsk.py` (validateSecurityKey), `keep_r90c.txt` (the Calterm names the refresh keeps).
 - **Stage D:** `apply_r90d.py`.
 - **Closing:** `apply_r90_closing.py`, `update_large_tar_r90.sh`.
+
+## Round 91: structs and J1939 twins (`session_folder/round91/`)
+
+- `rows_in_ranges_r91.py` (the rows inside each struct candidate), `item_S1..T2.json` (the workflow's proposals and
+  verdicts), `peek_r91.py` / `dump_items_r91.py`, `apply_r91.py` (applies the verified elements, with the
+  amendments), `keep_lists_r91.py`, `run_r91.sh` (apply + refresh), `review_refresh_r91.py` (every refresh change
+  against the post-apply snapshot), `fix_phase_index_docs_r91.py`.
+- **Closing:** `apply_r91_closing.py`, `update_large_tar_r91.sh`.
