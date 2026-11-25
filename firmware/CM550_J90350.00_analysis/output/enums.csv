@@ -371,13 +371,13 @@ VP44_COMMAND_BYTE,4,TIMING_4,Timing advance data byte 4
 VP44_COMMAND_BYTE,5,TIMING_5,Timing advance data byte 5
 VP44_COMMAND_BYTE,6,RPM_LOW,Engine RPM low byte (low byte)
 VP44_COMMAND_BYTE,7,RPM_HIGH,Engine RPM high byte (high byte)
-# VP44 Response Message (0x112 from pump) - vp44FuelTempHandler
+# VP44 Response Message (0x112 from pump) - vp44FuelTemperatureHandler
 VP44_RESPONSE_BYTE,1,FUEL_TEMPERATURE_LOW,Fuel temperature low byte
 VP44_RESPONSE_BYTE,2,FUEL_TEMPERATURE_HIGH,Fuel temperature high byte
 VP44_RESPONSE_BYTE,3,SEQUENCE_NUMBER,Message sequence number
 VP44_RESPONSE_BYTE,6,MESSAGE_ID_HIGH,Message ID high byte (must be 0xEF)
 # VP44 CAN Message Dispatcher Types - vp44CanMessageDispatcher
-VP44_CAN_DISPATCH,0x10,FUEL_TEMPERATURE_MESSAGE,VP44 fuel temperature response (calls vp44FuelTempHandler)
+VP44_CAN_DISPATCH,0x10,FUEL_TEMPERATURE_MESSAGE,VP44 fuel temperature response (calls vp44FuelTemperatureHandler)
 VP44_CAN_DISPATCH,0x11,PARAMETER_REQUEST_MESSAGE,Diagnostic parameter request (calls diagnosticParamRequestHandler)
 VP44_CAN_DISPATCH,0x13,STATUS_REQUEST_MESSAGE,Diagnostic status request (calls diagnosticStatusRequestHandler)
 VP44_CAN_DISPATCH,0xFF,ERROR_MESSAGE,Error message (calls diagnosticErrorHandler)

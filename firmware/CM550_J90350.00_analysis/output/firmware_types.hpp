@@ -575,7 +575,7 @@ typedef enum {
 } VP44_RESPONSE_BYTE;
 
 typedef enum {
-    FUEL_TEMPERATURE_MESSAGE = 0x10,  /* VP44 fuel temperature response (calls vp44FuelTempHandler) */
+    FUEL_TEMPERATURE_MESSAGE = 0x10,  /* VP44 fuel temperature response (calls vp44FuelTemperatureHandler) */
     PARAMETER_REQUEST_MESSAGE = 0x11,  /* Diagnostic parameter request (calls diagnosticParamRequestHandler) */
     STATUS_REQUEST_MESSAGE = 0x13,  /* Diagnostic status request (calls diagnosticStatusRequestHandler) */
     ERROR_MESSAGE = 0xFF  /* Error message (calls diagnosticErrorHandler) */
@@ -1564,7 +1564,7 @@ struct huffman_tree_t {
 };
 
 struct insite_parameter_schedule_entry_t {
-    uint8_t parameter_id;  /* The parameter's ID (0 ends the list) - vp44_insiteParameterTableIterator tests its bit in the 32-byte bitmap at ROM 0x6134a before it calls cm550_activeParamReadFunction */
+    uint8_t parameter_id;  /* The parameter's ID (0 ends the list) - vp44_insiteParameterTableIterator tests its bit in the 32-byte bitmap at ROM 0x6134a before it calls cm550_activeParameterReadFunction */
     uint8_t period;  /* Schedule ticks between two sends: the iterator adds it to the parameter's next due tick each time that tick comes */
     uint8_t first_due_offset;  /* Ticks added to the period for the first due tick (the initializer mc68k_initializeJ1708Datalink sets next due = period + this) */
 };
@@ -1662,10 +1662,10 @@ struct algorithm_enable_flags_1_t {
     uint16_t reserved_bit_9 : 1;  /* bit 9: no e2m record; no reader in the dumped ROM; clear in the dumps */
     uint16_t reserved_bit_10 : 1;  /* bit 10: no e2m record; no reader in the dumped ROM; clear in the dumps */
     uint16_t reserved_bit_11 : 1;  /* bit 11: no e2m record; no reader in the dumped ROM; clear in the dumps */
-    uint16_t low_speed_governor_aggressive_gain_set_enable : 1;  /* bit 12: LSAGGNEN 'LOW SPEED GOVERNOR AGGRESSIVE GAIN SET ENABLE' (no bit in the CM550 text; CM848 S mask 0x1000); andi 0x1000 at 0x26188: cm550_epsAccelerationMonitor selects LSG PID gain set 1; set in the dumps */
-    uint16_t low_speed_governor_high_gear_gain_set_enable : 1;  /* bit 13: LSHGGNEN 'ENABLES THE LSG GAIN SET FOR WHEN IN HIGH GEARS' (CM848 S mask 0x2000); andi.l 0x2000 at 0x26408: cm550_epsDiagnosticModeHandler selects gain set 3 (the high gear gains); clear */
-    uint16_t low_speed_governor_middle_gear_gain_set_enable : 1;  /* bit 14: LSMGGNEN 'ENABLE PARAMETER FOR LSG GAIN SET USED WHEN IN MIDDLE (GEARS)' (CM848 S mask 0x4000); andi.l 0x4000 at 0x263e0: cm550_epsDiagnosticModeHandler selects gain set 2 (the middle gear gains); clear */
-    uint16_t low_speed_governor_tsc1_gain_set_enable : 1;  /* bit 15: LSJCGNEN 'ENABLES/DISABLES THE LSG JCOMM PID GAINS' (CM848 S mask 0x8000); andi.l 0x8000 at 0x265ee: cm550_epsRpmTargetModeChecker selects gain set 4 while _datalink_speed_control_mode is set; clear */
+    uint16_t low_speed_governor_aggressive_gain_set_enable : 1;  /* bit 12: LSAGGNEN 'LOW SPEED GOVERNOR AGGRESSIVE GAIN SET ENABLE' (no bit in the CM550 text; CM848 S mask 0x1000); andi 0x1000 at 0x26188: cm550_enginePositionSensorAccelerationMonitor selects LSG PID gain set 1; set in the dumps */
+    uint16_t low_speed_governor_high_gear_gain_set_enable : 1;  /* bit 13: LSHGGNEN 'ENABLES THE LSG GAIN SET FOR WHEN IN HIGH GEARS' (CM848 S mask 0x2000); andi.l 0x2000 at 0x26408: cm550_enginePositionSensorDiagnosticModeHandler selects gain set 3 (the high gear gains); clear */
+    uint16_t low_speed_governor_middle_gear_gain_set_enable : 1;  /* bit 14: LSMGGNEN 'ENABLE PARAMETER FOR LSG GAIN SET USED WHEN IN MIDDLE (GEARS)' (CM848 S mask 0x4000); andi.l 0x4000 at 0x263e0: cm550_enginePositionSensorDiagnosticModeHandler selects gain set 2 (the middle gear gains); clear */
+    uint16_t low_speed_governor_tsc1_gain_set_enable : 1;  /* bit 15: LSJCGNEN 'ENABLES/DISABLES THE LSG JCOMM PID GAINS' (CM848 S mask 0x8000); andi.l 0x8000 at 0x265ee: cm550_enginePositionSensorRpmTargetModeChecker selects gain set 4 while _datalink_speed_control_mode is set; clear */
 };
 
 struct cm550_algorithm_enable_flags_2_t {

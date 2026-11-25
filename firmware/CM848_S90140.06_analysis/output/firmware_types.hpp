@@ -120,10 +120,10 @@ typedef enum {
     FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND = 5,  /* cm848_selectUserCommandedFueling: bit 0 of algorithm_enable_flags_4_cal (0 in every dump) makes the governor output a calibrated fuel demand; the feature behind it is not identified - e2m label USERCOMD (CHR_CC_11.45.01.07 0x05) */
     FUELING_STATE_ACCELERATOR_PEDAL_FAULT = 6,  /* cm848_selectPedalFaultMode: accelerator pedal input fault conditions; cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit ramps the fuel only while the mode is 6 - e2m label LIMPHOME (CHR_CC_11.45.01.07 0x06) */
     FUELING_STATE_VARIABLE_SPEED_GOVERNOR = 7,  /* cm848_selectVariableSpeedGovernorMode: variable_speed_governor_selected_flag = 1; the pedal sets a speed request and the all-speed governor PID runs (dump: 7) - e2m label ASGTHROT (CHR_CC_11.45.01.07 0x07) */
-    FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE = 8,  /* cm848_initEngineOperatingState: left when no other selector claimed the pass; the governor output comes from cm848_calculateFourDimensionalFueling (engine speed x tracked fuel demand tables) - e2m label FOUR_D (CHR_CC_11.45.01.07 0x08) */
+    FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE = 8,  /* cm848_initializeEngineOperatingState: left when no other selector claimed the pass; the governor output comes from cm848_calculateFourDimensionalFueling (engine speed x tracked fuel demand tables) - e2m label FOUR_D (CHR_CC_11.45.01.07 0x08) */
     FUELING_STATE_CRUISE_CONTROL = 9,  /* governor_fuel_demand_working_mode only (cm848_selectCruiseOrUserFueling): cruise control is engaged and the cruise PID fuel cruise_control_fueling replaces the user fueling; cm848_selectCruiseGovernorGainSet and cm848_presetCruiseAndRoadSpeedGovernor run their cruise branches (cruise_control_state set / resume / accelerate / decelerate) in 9 - e2m label CRUISE (CHR_CC_11.45.01.07 0x09) */
     FUELING_STATE_ROAD_SPEED_GOVERNOR = 10,  /* adjusted_user_fueling_state (cm848_arbitrateGovernedFueling): the road speed governor fuel road_speed_governor_fueling (cm848_calculateRoadSpeedGovernorFueling: vehicle_speed_rise_limited - the vehicle speed - against road_speed_governor_reference_speed; no limit while algorithm_enable_flags_3_cal bit 0x80 is clear) is the smallest demand; cm848_presetCruiseAndRoadSpeedGovernor runs the limit-minus-speed error in 10 - e2m label RSG (CHR_CC_11.45.01.07 0x0A) (was FUELING_STATE_VEHICLE_SPEED_LIMIT) */
-    FUELING_STATE_LOW_SPEED_GOVERNOR = 11,  /* adjusted_user_fueling_state (cm848_arbitrateGovernedFueling and the initial value of cm848_initFuelFilterCoefficients): at or below the governor speed the low speed governor asks for more fuel than the selected demand (a max select); only in 11 does cm848_runLowSpeedGovernor write its fuel into adjusted_user_fueling (e2m FSGVFL: fueling as limited by limiting governors LSG / HSG) and low_speed_governor_active_flag latch. RAM dump: 11 - e2m label LSG (CHR_CC_11.45.01.07 0x0B) */
+    FUELING_STATE_LOW_SPEED_GOVERNOR = 11,  /* adjusted_user_fueling_state (cm848_arbitrateGovernedFueling and the initial value of cm848_initializeFuelFilterCoefficients): at or below the governor speed the low speed governor asks for more fuel than the selected demand (a max select); only in 11 does cm848_runLowSpeedGovernor write its fuel into adjusted_user_fueling (e2m FSGVFL: fueling as limited by limiting governors LSG / HSG) and low_speed_governor_active_flag latch. RAM dump: 11 - e2m label LSG (CHR_CC_11.45.01.07 0x0B) */
     FUELING_STATE_HIGH_SPEED_GOVERNOR = 12,  /* adjusted_user_fueling_state (cm848_arbitrateGovernedFueling): high_speed_governor_fueling is the smallest demand and becomes adjusted_user_fueling; runHighSpeedGovernorPid resets its integrator in 12 (the same compare as CM550 0x1ce7c on FSGVFLST) - e2m label HSG (CHR_CC_11.45.01.07 0x0C) */
     FUELING_STATE_TORQUE_DERATE_OVERRIDE = 13,  /* torque_derate_fuel_source_code (cm848_arbitrateRequestedFueling): while algorithm_enable_flags_1_cal bit 0x10 is set the EEPROM limit torque_derate_override_fuel_quantity_cal (EEPROM 0x380) replaces the whole derate chain. Off in the dump: the flags are 0x1020 and the limit is 5888 - e2m label TRQDROVR (CHR_CC_11.45.01.07 0x0D) */
     FUELING_STATE_ALTITUDE_DERATE = 15,  /* torque_derate_fuel_source_code (applyAltitudeDerateFuelLimit): altitude_derate_fuel_limit - the engine speed x barometric pressure grids for cool / hot ambient air blended by ambient air temperature (or the air handling fault grid while an enabled boost / intake manifold pressure / barometric / intake air or ambient air temperature / wastegate fault is set); cm848_calculateAltitudeDerateFuelLimit - e2m label ALTDERAT (CHR_CC_11.45.01.07 0x0F) */
@@ -594,8 +594,8 @@ typedef enum {
     BOOT_DIAGNOSTIC_SERVICE_BEGIN_REFLASH = 0x02,  /* cm848_handleBootBeginReflashService: response pending 0x96 then mpc555_beginReflash(J1939) - ECM_Status REFLASH_IN_PROGRESS / the erase / the download tracking reset (was INITIALIZE_EEPROM_TRANSFER) */
     BOOT_DIAGNOSTIC_SERVICE_VERIFY_DOWNLOADED_CALIBRATION = 0x07,  /* cm848_handleBootVerifyDownloadedCalibrationService: mpc555_verifyDownloadedCalibration(request / J1939) (was DOWNLOAD_CALIBRATION) */
     BOOT_DIAGNOSTIC_SERVICE_NO_OPERATION_11 = 0x0b,  /* cm848_bootDiagnosticServiceAcknowledgeNoOperation: accepted and does nothing */
-    BOOT_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE = 0x0c,  /* Sent by cm848_sendDiagServiceResponse for result 0; cm848_dispatchDiagnosticService ignores a received one */
-    BOOT_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE = 0x0d,  /* Sent by cm848_sendDiagServiceResponse for a nonzero result other than 0xfe (that sends 0x0e); cm848_dispatchDiagnosticService ignores a received one */
+    BOOT_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE = 0x0c,  /* Sent by cm848_sendDiagnosticServiceResponse for result 0; cm848_dispatchDiagnosticService ignores a received one */
+    BOOT_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE = 0x0d,  /* Sent by cm848_sendDiagnosticServiceResponse for a nonzero result other than 0xfe (that sends 0x0e); cm848_dispatchDiagnosticService ignores a received one */
     BOOT_DIAGNOSTIC_SERVICE_NO_OPERATION_16 = 0x10,  /* cm848_bootDiagnosticServiceAcknowledgeNoOperation: accepted and does nothing */
     BOOT_DIAGNOSTIC_SERVICE_NO_OPERATION_24 = 0x18,  /* cm848_bootDiagnosticServiceAcknowledgeNoOperation: accepted and does nothing */
     BOOT_DIAGNOSTIC_SERVICE_EXECUTE_AT_ADDRESS = 0x19,  /* cm848_handleBootExecuteAtAddressService: calls the request's 4-byte address once the positive response has left the CAN transmit ring */
@@ -610,7 +610,7 @@ typedef enum {
 } BOOT_DIAGNOSTIC_SERVICE;
 
 typedef enum {
-    BOOT_DIAGNOSTIC_RESULT_ACCEPTED = 0x00,  /* Done - cm848_sendDiagServiceResponse answers with 0x0c */
+    BOOT_DIAGNOSTIC_RESULT_ACCEPTED = 0x00,  /* Done - cm848_sendDiagnosticServiceResponse answers with 0x0c */
     BOOT_DIAGNOSTIC_RESULT_WRONG_LENGTH = 0x02,  /* The request length does not fit the service (the validator) or a memory length is over 1764 (the read and write workers) */
     BOOT_DIAGNOSTIC_RESULT_KEY_REFUSED = 0x03,  /* cm848_validateBootSecurityKey refused the request's token */
     BOOT_DIAGNOSTIC_RESULT_CANNOT_COMPLY = 0x04,  /* No response buffer is free (cm848_allocateDiagnosticResponseBuffer returned 0) */
@@ -624,12 +624,12 @@ typedef enum {
     BOOT_DIAGNOSTIC_RESULT_DOWNLOAD_INVALID = 0x15,  /* The download does not form a valid calibration: cm848_finishDownloadBlock finds download_block_list full - or mpc555_verifyDownloadedCalibration (service 7) finds a region sum unlike checksum_region_table or the block layout unlike block_data_structure (round 69) or ECM_Status neither CALIBRATION_VALID nor CALIBRATION_DOWNLOADED_NOT_VERIFIED (c48cc435 named it DOWNLOAD_BLOCK_LIST_FULL) */
     BOOT_DIAGNOSTIC_RESULT_FLASH_ERASE_FAILED = 0x17,  /* Service 2: the flash erase in mpc555_beginReflash (mpc555_cmfEraseBlocks then cm848_flashEraseChip) failed (382fa677 named it EEPROM_TRANSFER_NOT_STARTED) */
     BOOT_DIAGNOSTIC_RESULT_KEY_MISSING = 0x1a,  /* The service needs the token but the request carries none */
-    BOOT_DIAGNOSTIC_RESULT_RESPONSE_PENDING = 0xfe  /* cm848_sendDiagResponsePending: cm848_sendDiagServiceResponse answers it with service 0x0e and the wait time - the real result follows later (round 66 said 0xfe had no producer) */
+    BOOT_DIAGNOSTIC_RESULT_RESPONSE_PENDING = 0xfe  /* cm848_sendDiagnosticResponsePending: cm848_sendDiagnosticServiceResponse answers it with service 0x0e and the wait time - the real result follows later (round 66 said 0xfe had no producer) */
 } BOOT_DIAGNOSTIC_RESULT;
 
 typedef enum {
     BOOT_REQUEST_CHANNEL_J1939 = 0x02,  /* The PGN 61184 services: only this channel gets cm848_sendBootResultToJ1939Requester's answer / the CAN transmit runs while the verifier waits / cm848_finishDownloadBlock checks a block's trailing CRC */
-    BOOT_REQUEST_CHANNEL_SERIAL = 0x03  /* The serial reflash services: mpc555_runPacedSerialService runs while waiting / the verifier counts and flags the reflash in EEPROM / mpc555_diagServiceTransferBlock ends a block against the CRC in its own request */
+    BOOT_REQUEST_CHANNEL_SERIAL = 0x03  /* The serial reflash services: mpc555_runPacedSerialService runs while waiting / the verifier counts and flags the reflash in EEPROM / mpc555_diagnosticServiceTransferBlock ends a block against the CRC in its own request */
 } BOOT_REQUEST_CHANNEL;
 
 typedef enum {
@@ -716,7 +716,7 @@ typedef enum {
     VEHICLE_SPEED_SENSOR_NONE = 0,  /* e2m VSRSSNTY 0 = none: no vehicle speed sensor (the CCVS1 builder sends no speed; the HSG compensator runs) (was DRIVETRAIN_STANDALONE) */
     VEHICLE_SPEED_SENSOR_INDUCTIVE = 1,  /* 1 = inductive (the magnetic vehicle speed sensor on TPU-B channel 2; this truck's EEPROM holds 1) (was DRIVETRAIN_MANUAL_VSS) */
     VEHICLE_SPEED_SENSOR_MINIGEN = 2,  /* 2 = minigen (a mini generator speed sensor); no code compares with it */
-    VEHICLE_SPEED_SENSOR_TACHOGRAPH = 3,  /* 3 = tach: the speed comes from a tachograph signal; cm848_initVehicleSpeedSensorChannel and the sensor interrupt handle the TPU-B channel 2 input differently (was DRIVETRAIN_MANUAL_TPU) */
+    VEHICLE_SPEED_SENSOR_TACHOGRAPH = 3,  /* 3 = tach: the speed comes from a tachograph signal; cm848_initializeVehicleSpeedSensorChannel and the sensor interrupt handle the TPU-B channel 2 input differently (was DRIVETRAIN_MANUAL_TPU) */
     VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO = 4,  /* 4 = dlw/GR&OOG: data link with gear ratio and out-of-gear - the vehicle speed from the J1939 ETC1 output shaft speed (cm848_calculateVehicleSpeedFromOutputShaft) and the ETC2 gear ratio (was DRIVETRAIN_AUTO_J1939_FULL) */
     VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO = 5  /* 5 = dlw/o GR&OOG: data link without gear ratio and out-of-gear - ETC1 only (was DRIVETRAIN_AUTO_J1939_ETC1) */
 } VEHICLE_SPEED_SENSOR_TYPE;
@@ -1035,7 +1035,7 @@ typedef enum {
 typedef enum {
     MAIN_INJECTION_TIMING_SOURCE_CRANK = 5,  /* e2m 103B value label 05 CRANK: the cranking timing map (engine state CRANKING / JUMP_START / REENTRY) (was MAIN_INJECTION_TIMING_SOURCE_COLD_START_MAP) | earlier note: cm848_calculateMainInjectionTiming: the cold start engine speed x coolant temperature map while engine_state is ENGINE_STATE_CRANKING / ENGINE_STATE_JUMP_START / ENGINE_STATE_REENTRY */
     MAIN_INJECTION_TIMING_SOURCE_USER_OVERRIDE = 7,  /* e2m 103B value label 07 USEROVRD: main_injection_timing_selection 2 takes user_commanded_injection_timing_cal (was MAIN_INJECTION_TIMING_SOURCE_FIXED_OFFSET_CALIBRATION) | earlier note: cm848_selectMainInjectionTiming: main_injection_timing_selection 2 uses the fixed user_commanded_injection_timing_cal */
-    MAIN_INJECTION_TIMING_SOURCE_POWER_UP = 8,  /* The power-up value (cm848_initTimingFilterStates), the only store of 8; the e2m 103B value label is 08 STOP, but the dump with the engine stopped reads 20 (coolant) (was MAIN_INJECTION_TIMING_SOURCE_INITIAL, then _ENGINE_STOPPED) */
+    MAIN_INJECTION_TIMING_SOURCE_POWER_UP = 8,  /* The power-up value (cm848_initializeTimingFilterStates), the only store of 8; the e2m 103B value label is 08 STOP, but the dump with the engine stopped reads 20 (coolant) (was MAIN_INJECTION_TIMING_SOURCE_INITIAL, then _ENGINE_STOPPED) */
     MAIN_INJECTION_TIMING_SOURCE_MISFIRE_LIMIT = 11,  /* e2m 103B value label 0B MISFIRE: injection_timing_main_misfire_limit (e2m 8A3D Misfire_Timing_Limit) raised the timing (was MAIN_INJECTION_TIMING_SOURCE_DEMAND_FLOOR) | earlier note: cm848_calculateMainInjectionTiming: the demand was raised to injection_timing_main_misfire_limit */
     MAIN_INJECTION_TIMING_SOURCE_COMBUSTION_MANAGER = 18,  /* e2m 103B value label 12 COMB_MGR: injection_timing_main_base_command (e2m 171B +8 CBL_SOI_Cmd) won or the sum includes it (was MAIN_INJECTION_TIMING_SOURCE_BASE_COMMAND) | earlier note: cm848_calculateMainInjectionTiming: the sum of the base command and the components (combination mode 0) or the base command won the highest / lowest comparison */
     MAIN_INJECTION_TIMING_SOURCE_INTAKE_TEMPERATURE_COMPONENT = 19,  /* cm848_calculateMainInjectionTiming: the intake temperature component won (combination mode 1 / other) */
@@ -1594,7 +1594,7 @@ struct pci_link_state_t {
     uint8_t rx_match_index;  /* pci_receive_message_table entry whose header matches the frame being received (search resumes here per byte) */
     uint8_t tx_match_index;  /* pci_transmit_message_table entry whose header matches (own transmission echoed back) */
     uint8_t receive_byte_count;  /* Bytes stored in pci_receive_frame_buffer for the current frame */
-    uint8_t initialization_complete_marker;  /* Set to 1 at the end of cm848_initJ1939CommunicationSystem; no reader found */
+    uint8_t initialization_complete_marker;  /* Set to 1 at the end of cm848_initializeJ1939CommunicationSystem; no reader found */
     uint32_t link_event_code;  /* PCI link event 1..7 (all stw/lwz); cm848_handlePciLinkEvent maps each to a recovery-action mask at 0x3fd8e0..0x3fd8e7; 7 = every scheduled PCI transmit overdue (set by cm848_checkPciMessageTimeouts); was dm1_pending (word) */
 };
 
@@ -2578,7 +2578,7 @@ struct j1939_powertrain_messages_received_t {
     uint8_t etc1_spn522_percent_clutch_slip;  /* ETC1 byte 4: the percent clutch slip (SPN 522); no access found in the decompile (was spn522_clutch_slip) */
     uint8_t etc1_status_byte_5;  /* ETC1 byte 5: bits 1-2 engine momentary overspeed enable (SPN 606), 3-4 progressive shift disable (SPN 607) (was byte5_control) */
     uint8_t reserved_07[3];  /* Gap/reserved bytes */
-    uint16_t etc2_actual_gear_ratio_previous;  /* etc2_actual_gear_ratio before the latest valid ETC2 (sth @ 0x22cf0; cm848_initEtc2Handler zeroes it, sth @ 0x22d2c); no reader in the decompile (was auxiliary_state, a byte: the word store rendered as the _10_2_ piece) */
+    uint16_t etc2_actual_gear_ratio_previous;  /* etc2_actual_gear_ratio before the latest valid ETC2 (sth @ 0x22cf0; cm848_initializeEtc2Handler zeroes it, sth @ 0x22d2c); no reader in the decompile (was auxiliary_state, a byte: the word store rendered as the _10_2_ piece) */
     uint8_t reserved_0c;  /* no access found */
     uint16_t etc2_spn526_actual_gear_ratio;  /* ETC2 bytes 2-3 (SPN 526 transmission actual gear ratio, 0.001 per bit) as received: cm848_j1939ProcessPgn61445Etc2 stores byte 3 at +0xd and byte 2 at +0xe and reads the word (lhz @ 0x22cc4); below 0xfb00 it becomes etc2_actual_gear_ratio (was bytes 2-3 of reserved_0b) */
     uint8_t reserved_0f[5];  /* no access found */
@@ -2938,7 +2938,7 @@ struct mios_mmcsm_t {
 };
 
 struct toucan_module_registers_t {
-    uint16_t MCR;  /* Module configuration: mpc555_initCanController writes 0x5000 (freeze + halt) before the setup and 0 after it (PR #53 round 25) */
+    uint16_t MCR;  /* Module configuration: mpc555_initializeCanController writes 0x5000 (freeze + halt) before the setup and 0 after it (PR #53 round 25) */
     uint16_t TCR;  /* Test register (PR #53 round 25) */
     uint16_t CANICR;  /* Interrupt configuration (0x400 at init) (PR #53 round 25) */
     uint8_t CANCTRL0;  /* Control register 0 (0 at init) (PR #53 round 25) */
@@ -2959,7 +2959,7 @@ struct toucan_module_registers_t {
 };
 
 struct toucan_message_buffer_t {
-    uint16_t CONTROL_STATUS;  /* Bits 15-8 time stamp, 7-4 CODE, 3-0 LENGTH; mpc555_initCanController zeroes byte +1 (CODE / LENGTH) of all 16 buffers */
+    uint16_t CONTROL_STATUS;  /* Bits 15-8 time stamp, 7-4 CODE, 3-0 LENGTH; mpc555_initializeCanController zeroes byte +1 (CODE / LENGTH) of all 16 buffers */
     uint16_t ID_HIGH;  /* Identifier, high word */
     uint16_t ID_LOW;  /* Identifier, low word */
     uint16_t DATA_0_1;  /* Data bytes 0-1 */
@@ -3025,7 +3025,7 @@ struct can_ring_state_t {
     uint8_t transmit_ring_full_flag;  /* 1 = the transmit ring is full: mpc555_canTransmitQueuePush sets it when its write pointer reaches the read pointer (and returns 4 while it is set); mpc555_manageCan1TransmitBuffer clears it after sending a frame (was _pad16 byte 0; PR #53 round 28) */
     uint8_t receive_ring_full_flag;  /* 1 = the receive ring is full: mpc555_processCanReceiveBuffer sets it when its write pointer reaches the read pointer; mpc555_dispatchCanMessageHandlers clears it (was _pad16 byte 1; PR #53 round 28) */
     uint16_t reserved_18;  /* No users (bytes 2-3 of the old _pad16) */
-    uint32_t transmit_message_buffer_pointer;  /* The transmit message buffer: mpc555_initDiagnosticSubsystem sets it to TouCAN A buffer 0x3070f0 + 16 x n; the empty-ring path of mpc555_manageCan1TransmitBuffer clears its control byte (was toucan_mb_ptr) | earlier note: Active TouCAN mailbox base pointer for diagnostic session */
+    uint32_t transmit_message_buffer_pointer;  /* The transmit message buffer: mpc555_initializeDiagnosticSubsystem sets it to TouCAN A buffer 0x3070f0 + 16 x n; the empty-ring path of mpc555_manageCan1TransmitBuffer clears its control byte (was toucan_mb_ptr) | earlier note: Active TouCAN mailbox base pointer for diagnostic session */
 };
 
 struct diag_write_request_state_t {
@@ -3671,7 +3671,7 @@ struct algorithm_enable_flags_32_t {
     uint16_t end_of_injection_limit_enable : 1;  /* bit 1: e2m EOI_Limit_Algorithm_Enable (0x2): 'Algorithm enable calibration for eoi_limit'; read by cm848_armTpuChannel10AtEndOfInjectionLimit; set on this truck */
     uint16_t equivalent_throttle_enable : 1;  /* bit 2: e2m Equivalent_Throttle_Enable (0x4): 'Equivalent_Throttle Algorithm Enable'; read by cm848_calculateAllSpeedGovernorEquivalentThrottle; the e2m record's mask is 7 but its value list says 0=DISABLE:4=ENABLE; the code tests 4; set on this truck */
     uint16_t reserved_bit_3 : 1;  /* bit 3: no e2m record (0x8); no reader in this build; clear on this truck */
-    uint16_t intake_air_heater_24_volt_enable : 1;  /* bit 4: e2m IAH_24V_Enable (0x10): 'Intake Air Heater 24V Control Algorithm Enable'; read by cm848_initIntakeAirHeaterControl, cm848_computeIntakeAirHeaterPreheatDuration, cm848_countDownIntakeAirHeaterPreheat, cm848_pulseIntakeAirHeaterRelays, cm848_shutdownIntakeAirHeater, cm848_updateIntakeAirHeaterPostheat, cm848_updateIntakeAirHeaterControl; clear on this truck */
+    uint16_t intake_air_heater_24_volt_enable : 1;  /* bit 4: e2m IAH_24V_Enable (0x10): 'Intake Air Heater 24V Control Algorithm Enable'; read by cm848_initializeIntakeAirHeaterControl, cm848_computeIntakeAirHeaterPreheatDuration, cm848_countDownIntakeAirHeaterPreheat, cm848_pulseIntakeAirHeaterRelays, cm848_shutdownIntakeAirHeater, cm848_updateIntakeAirHeaterPostheat, cm848_updateIntakeAirHeaterControl; clear on this truck */
     uint16_t reserved_bit_5 : 1;  /* bit 5: no e2m record (0x20); no reader in this build; clear on this truck */
     uint16_t reserved_bit_6 : 1;  /* bit 6: no e2m record (0x40); no reader in this build; clear on this truck */
     uint16_t reserved_bit_7 : 1;  /* bit 7: no e2m record (0x80); no reader in this build; clear on this truck */

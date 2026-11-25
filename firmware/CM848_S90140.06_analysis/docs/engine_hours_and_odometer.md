@@ -155,7 +155,7 @@ table inside `cm848_registerJ1939PgnRequestHandlers` (0x232B4) calling
 | 0xFEF5 | 1000 ms| `0x24104`            | AMB                     |
 | 0xFEF6 | 500 ms | `0x26750`            | IC1                     |
 | 0xFEF7 | 1000 ms| `LAB_00026F68`       | VEP                     |
-| **0xFFE0** | **200 ms** | **`cm848_initPgn65248VehicleDistanceHandler`** | See note below |
+| **0xFFE0** | **200 ms** | **`cm848_initializePgn65248VehicleDistanceHandler`** | See note below |
 | 0xFECA | 1000 ms| `0x24FF0`            | DM1                     |
 | 0xFEBD | 1000 ms| `0x26694`            | BJM1                    |
 | 0xF001 | 100 ms | `0x258F4`            | ETC2                    |
@@ -167,7 +167,7 @@ could plausibly carry an odometer value as a distinct PGN.**
 ### The "0xFFE0 vehicle-distance" oddity
 
 The `0xFFE0` tag in the enqueue call does *not* mean the ECU broadcasts as
-Proprietary A. `cm848_initPgn65248VehicleDistanceHandler` @ 0x26C6C
+Proprietary A. `cm848_initializePgn65248VehicleDistanceHandler` @ 0x26C6C
 hard-codes the transmitted CAN ID:
 
 ```c
@@ -274,7 +274,7 @@ Save path: `ecu_power_state_flags.runtime_counter` → `eeprom_runtime_write_sta
 
 On boot, `mpc555_loadRuntimeCounterFromEepromShadow` @ 0x76B4 reloads
 `ecu_power_state_flags.runtime_counter` from `eeprom_shadow_header.key_on_hour_meter`,
-which `cm848_loadVersionConfigFromEeprom` reads from EEPROM 0x01000030. (An older note here said 0x01000034: that
+which `cm848_loadVersionConfigurationFromEeprom` reads from EEPROM 0x01000030. (An older note here said 0x01000034: that
 word is the boot kernel's copy of the security key, which the boot service loop writes from EEPROM 0x8e; PR #53 round 75.)
 
 ```bash
@@ -653,5 +653,5 @@ Add results to the [Bench Results](#bench-results-2026-04-08) section
 - `firmware/CM848_S90140.06_analysis/output/e2m_parameters.csv`
 - `firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp` — see
   `cm848_registerJ1939PgnRequestHandlers` @ 0x232B4, TX enqueue list inside it,
-  and `cm848_initPgn65248VehicleDistanceHandler` @ 0x26C6C.
+  and `cm848_initializePgn65248VehicleDistanceHandler` @ 0x26C6C.
 - `work/docs/clip-protocol-spec.md` — CLIP service reference.

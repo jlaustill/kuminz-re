@@ -284,10 +284,10 @@ function_address,function_name,param_index,name,type,comment
 # against data flow and dropped a potentially-live value. Reverted to void; revisit
 # with explicit custom return storage (r4) if these need cleaning.
 # -----------------------------------------------------------------------------
-0x00003948,mpc555_diagServiceTransferBlock,return,,void,Reverted: r4-return needs custom storage to model safely
-0x00001ef8,cm848_diagSendResponseCode,return,,void,Reverted: r4-return needs custom storage to model safely
-0x00001ef8,cm848_diagSendResponseCode,0,response_code,byte,Response/service code to send
-0x00001ef8,cm848_diagSendResponseCode,1,negative_response_id,int,Negative-response service id (0x7f) or 0
+0x00003948,mpc555_diagnosticServiceTransferBlock,return,,void,Reverted: r4-return needs custom storage to model safely
+0x00001ef8,cm848_sendDiagnosticResponseCode,return,,void,Reverted: r4-return needs custom storage to model safely
+0x00001ef8,cm848_sendDiagnosticResponseCode,0,response_code,byte,Response/service code to send
+0x00001ef8,cm848_sendDiagnosticResponseCode,1,negative_response_id,int,Negative-response service id (0x7f) or 0
 
 # -----------------------------------------------------------------------------
 # Sensor Channel Type B - Config Init (13 params via PowerPC ABI: r3-r10 + 5 stack)
@@ -464,12 +464,12 @@ function_address,function_name,param_index,name,type,comment
 0x00508834,cm848_countEngineProtectionShutdownTime,1,state,engine_protection_channel_state_t *,The channel's state (r4)
 0x00508834,cm848_countEngineProtectionShutdownTime,2,is_engine_speed,int,0 = the fueling count, 1 = the engine speed count (r5)
 # CAN transmit mailbox writers (PR #53 round 28)
-0x00004f2c,cm848_writeBootKernelCanTxMailbox,0,can_module,undefined4,The TouCAN module registers (callers pass &toucan_a); buffer n - 1 starts at +0x70 + 16 x n (the boot kernel's copy; PR #53 round 28)
-0x00004f2c,cm848_writeBootKernelCanTxMailbox,1,mailbox_number,int,The message buffer number + 1 (callers pass their mailbox index & 0xff)
-0x00004f2c,cm848_writeBootKernelCanTxMailbox,2,frame_words,word*,The frame: identifier high / low and data bytes 0-7 (6 halfwords) - one boot_can_transmit_frame_t; as that type the copy loop read worse (PR #53 round 70)
-0x00053b28,cm848_writeCanControllerTxMailbox,0,can_module,undefined4,The TouCAN module registers (callers pass &toucan_a); buffer n - 1 starts at +0x70 + 16 x n (the application's copy; PR #53 round 28)
-0x00053b28,cm848_writeCanControllerTxMailbox,1,mailbox_number,int,The message buffer number + 1 (callers pass their mailbox index & 0xff)
-0x00053b28,cm848_writeCanControllerTxMailbox,2,frame_words,word*,The frame: identifier high / low and data bytes 0-7 (6 halfwords)
+0x00004f2c,cm848_writeBootKernelCanTransmitMailbox,0,can_module,undefined4,The TouCAN module registers (callers pass &toucan_a); buffer n - 1 starts at +0x70 + 16 x n (the boot kernel's copy; PR #53 round 28)
+0x00004f2c,cm848_writeBootKernelCanTransmitMailbox,1,mailbox_number,int,The message buffer number + 1 (callers pass their mailbox index & 0xff)
+0x00004f2c,cm848_writeBootKernelCanTransmitMailbox,2,frame_words,word*,The frame: identifier high / low and data bytes 0-7 (6 halfwords) - one boot_can_transmit_frame_t; as that type the copy loop read worse (PR #53 round 70)
+0x00053b28,cm848_writeCanControllerTransmitMailbox,0,can_module,undefined4,The TouCAN module registers (callers pass &toucan_a); buffer n - 1 starts at +0x70 + 16 x n (the application's copy; PR #53 round 28)
+0x00053b28,cm848_writeCanControllerTransmitMailbox,1,mailbox_number,int,The message buffer number + 1 (callers pass their mailbox index & 0xff)
+0x00053b28,cm848_writeCanControllerTransmitMailbox,2,frame_words,word*,The frame: identifier high / low and data bytes 0-7 (6 halfwords)
 # The discrete output read-back check (PR #53 round 32)
 0x00537c64,cm848_checkDiscreteOutputReadBack,0,logical_output,int,the logical output the check reads back
 0x00537c64,cm848_checkDiscreteOutputReadBack,1,read_back_line,int,the switch input line wired to the output's read-back
@@ -503,8 +503,8 @@ function_address,function_name,param_index,name,type,comment
 0x00003f20,cm848_transmitCanMessage,0,message,j1939_transmit_message_t*,the response record from cm848_allocateDiagnosticResponseBuffer (header / data pointer / status pointer)
 0x00005adc,mpc555_sendJ1939TransportRequestToSend,0,message,j1939_transmit_message_t*,the response record of a reply longer than 8 bytes
 # The boot kernel's diagnostic response sender (PR #53 round 36): the twin of cm848_sendJ1939ResponseFrame
-0x000074a0,cm848_sendDiagServiceResponse,0,request,j1939_received_message_t*,the request being answered (its addresses swap into the reply; its service byte is echoed)
-0x000074a0,cm848_sendDiagServiceResponse,1,result_code,dword,the service result: 0 positive (0x0C) / 0xfe pending (0x0E + the wait time) / else 0x0D + the code (dword: the body reuses it as a 32-bit variable)
+0x000074a0,cm848_sendDiagnosticServiceResponse,0,request,j1939_received_message_t*,the request being answered (its addresses swap into the reply; its service byte is echoed)
+0x000074a0,cm848_sendDiagnosticServiceResponse,1,result_code,dword,the service result: 0 positive (0x0C) / 0xfe pending (0x0E + the wait time) / else 0x0D + the code (dword: the body reuses it as a 32-bit variable)
 # The trip information power-down step takes no parameters (PR #53 round 51)
 0x00523760,cm848_flagTripInformationPowerDownDataLoss,return,,void,Takes no parameters: at its one call (0x54de0) r3 still holds 12500 = 0x30d4 from li r3 / mtdec r3 (the decrementer reload) which the decompiler showed as an argument (PR #53 round 51)
 0x005125f4,cm848_selectCruiseStateForCoastSwitch,return,,CRUISE_CONTROL_STATE,The cruise state for this pass (r3) - no parameters
@@ -608,7 +608,7 @@ function_address,function_name,param_index,name,type,comment
 0x00007740,cm848_trackDownloadBlock,0,data,byte*,The bytes being written (PR #53 round 67)
 0x00007740,cm848_trackDownloadBlock,1,address,dword,Their first address (PR #53 round 67)
 0x00007740,cm848_trackDownloadBlock,2,length,ushort*,Their length - 2 less (the trailing CRC) when they end the block (PR #53 round 67)
-0x00007740,cm848_trackDownloadBlock,3,channel,BOOT_REQUEST_CHANNEL,J1939 blocks end in cm848_updateDownloadCrc / serial blocks in mpc555_diagServiceTransferBlock (PR #53 round 67)
+0x00007740,cm848_trackDownloadBlock,3,channel,BOOT_REQUEST_CHANNEL,J1939 blocks end in cm848_updateDownloadCrc / serial blocks in mpc555_diagnosticServiceTransferBlock (PR #53 round 67)
 0x000078d0,cm848_updateDownloadCrc,return,,byte,0xff to go on - or cm848_finishDownloadBlock's status once a J1939 block ends (PR #53 round 67)
 0x000078d0,cm848_updateDownloadCrc,0,data,byte*,The bytes to add to ecu_power_state_flags.transfer_crc (PR #53 round 67)
 0x000078d0,cm848_updateDownloadCrc,1,length,uint,How many (PR #53 round 67)

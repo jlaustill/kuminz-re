@@ -139,7 +139,7 @@ low_speed_governor_reference_t,0x0040aec2,altitude_speed,dword,4,e2m 1496 +16 LS
 pci_link_state_t,0x0040b34e,rx_match_index,byte,1,pci_receive_message_table entry whose header matches the frame being received (search resumes here per byte),,verified
 pci_link_state_t,0x0040b34e,tx_match_index,byte,1,pci_transmit_message_table entry whose header matches (own transmission echoed back),,verified
 pci_link_state_t,0x0040b34e,receive_byte_count,byte,1,Bytes stored in pci_receive_frame_buffer for the current frame,,verified
-pci_link_state_t,0x0040b34e,initialization_complete_marker,byte,1,Set to 1 at the end of cm848_initJ1939CommunicationSystem; no reader found,,verified
+pci_link_state_t,0x0040b34e,initialization_complete_marker,byte,1,Set to 1 at the end of cm848_initializeJ1939CommunicationSystem; no reader found,,verified
 pci_link_state_t,0x0040b34e,link_event_code,dword,4,PCI link event 1..7 (all stw/lwz); cm848_handlePciLinkEvent maps each to a recovery-action mask at 0x3fd8e0..0x3fd8e7; 7 = every scheduled PCI transmit overdue (set by cm848_checkPciMessageTimeouts); was dm1_pending (word),,verified
 # Fault List Management - DTC list indices and counters
 # Used by fault logging and DM1/DM2 message generation
@@ -1140,7 +1140,7 @@ j1939_powertrain_messages_received_t,0x003fa982,etc1_spn191_output_shaft_speed,w
 j1939_powertrain_messages_received_t,0x003fa982,etc1_spn522_percent_clutch_slip,byte,1,ETC1 byte 4: the percent clutch slip (SPN 522); no access found in the decompile (was spn522_clutch_slip),,verified
 j1939_powertrain_messages_received_t,0x003fa982,etc1_status_byte_5,byte,1,"ETC1 byte 5: bits 1-2 engine momentary overspeed enable (SPN 606), 3-4 progressive shift disable (SPN 607) (was byte5_control)",,verified
 j1939_powertrain_messages_received_t,0x003fa982,reserved_07,byte,3,Gap/reserved bytes,,needs_review
-j1939_powertrain_messages_received_t,0x003fa982,etc2_actual_gear_ratio_previous,word,2,"etc2_actual_gear_ratio before the latest valid ETC2 (sth @ 0x22cf0; cm848_initEtc2Handler zeroes it, sth @ 0x22d2c); no reader in the decompile (was auxiliary_state, a byte: the word store rendered as the _10_2_ piece)",,verified
+j1939_powertrain_messages_received_t,0x003fa982,etc2_actual_gear_ratio_previous,word,2,"etc2_actual_gear_ratio before the latest valid ETC2 (sth @ 0x22cf0; cm848_initializeEtc2Handler zeroes it, sth @ 0x22d2c); no reader in the decompile (was auxiliary_state, a byte: the word store rendered as the _10_2_ piece)",,verified
 j1939_powertrain_messages_received_t,0x003fa982,reserved_0c,byte,1,no access found,,verified
 j1939_powertrain_messages_received_t,0x003fa982,etc2_spn526_actual_gear_ratio,word,2,"ETC2 bytes 2-3 (SPN 526 transmission actual gear ratio, 0.001 per bit) as received: cm848_j1939ProcessPgn61445Etc2 stores byte 3 at +0xd and byte 2 at +0xe and reads the word (lhz @ 0x22cc4); below 0xfb00 it becomes etc2_actual_gear_ratio (was bytes 2-3 of reserved_0b)",,verified
 j1939_powertrain_messages_received_t,0x003fa982,reserved_0f,byte,5,no access found,,verified
@@ -1382,7 +1382,7 @@ tsc1_source_configuration_t,0x0005c3b4,retarder_speed_torque_limit_control_reque
 # =============================================================================
 # TPU3 module registers - tpu3_module_registers_t, one type for TPU-A (0x304000) and TPU-B (0x304400 marker row)
 # Register names and offsets from the MPC555 User's Manual Table A-7 (PR #53 round 95; the TPU-B type was a copy)
-# mpc555_initTpuConfiguration writes TPUMCR / TICR / TPUMCR2 / TPUMCR3 for both modules
+# mpc555_initializeTpuConfiguration writes TPUMCR / TICR / TPUMCR2 / TPUMCR3 for both modules
 # Total size: 44 bytes (offsets 0x00-0x2b with padding for gaps)
 # =============================================================================
 tpu3_module_registers_t,0x00304000,TPUMCR,word,2,TPU3 Module Configuration Register (0x8000 = STOP; initialization writes 0x4460 on TPU-A and 0x4430 on TPU-B),,verified
@@ -1565,7 +1565,7 @@ mios_mmcsm_t,0x003060b0,,,,MMCSM22 instance - marker only,,verified
 # MB area starts at TouCAN_A_base + 0x80; each MB = 16 bytes (spacing confirmed)
 # Fields: CTRL (code+flags), ID_HI, ID_LO, DATA0..DATA6, _pad (timestamp/reserved)
 # =============================================================================
-toucan_module_registers_t,0x00307080,MCR,word,2,Module configuration: mpc555_initCanController writes 0x5000 (freeze + halt) before the setup and 0 after it (PR #53 round 25),,verified
+toucan_module_registers_t,0x00307080,MCR,word,2,Module configuration: mpc555_initializeCanController writes 0x5000 (freeze + halt) before the setup and 0 after it (PR #53 round 25),,verified
 toucan_module_registers_t,0x00307080,TCR,word,2,Test register (PR #53 round 25),,verified
 toucan_module_registers_t,0x00307080,CANICR,word,2,Interrupt configuration (0x400 at init) (PR #53 round 25),,verified
 toucan_module_registers_t,0x00307080,CANCTRL0,byte,1,Control register 0 (0 at init) (PR #53 round 25),,verified
@@ -1583,7 +1583,7 @@ toucan_module_registers_t,0x00307080,IMASK,word,2,"Interrupt mask, one bit per m
 toucan_module_registers_t,0x00307080,IFLAG,word,2,"Interrupt flags, one bit per message buffer (read, then cleared, at init) (PR #53 round 25)",,verified
 toucan_module_registers_t,0x00307080,RXECTR,byte,1,Receive error counter (PR #53 round 25),,verified
 toucan_module_registers_t,0x00307080,TXECTR,byte,1,Transmit error counter (PR #53 round 25),,verified
-toucan_message_buffer_t,,CONTROL_STATUS,word,2,"Bits 15-8 time stamp, 7-4 CODE, 3-0 LENGTH; mpc555_initCanController zeroes byte +1 (CODE / LENGTH) of all 16 buffers",,verified
+toucan_message_buffer_t,,CONTROL_STATUS,word,2,"Bits 15-8 time stamp, 7-4 CODE, 3-0 LENGTH; mpc555_initializeCanController zeroes byte +1 (CODE / LENGTH) of all 16 buffers",,verified
 toucan_message_buffer_t,,ID_HIGH,word,2,"Identifier, high word",,verified
 toucan_message_buffer_t,,ID_LOW,word,2,"Identifier, low word",,verified
 toucan_message_buffer_t,,DATA_0_1,word,2,Data bytes 0-1,,verified
@@ -1662,7 +1662,7 @@ keyon_flags_t,0x00302002,_pad10,word,2,Reserved,,verified
 keyon_flags_t,0x00302002,mailbox_index,word,2,CAN mailbox slot index for channel assignment,,verified
 keyon_flags_t,0x00302002,_pad14,word,2,Reserved,,verified
 keyon_flags_t,0x00302002,runtime_counter,dword,4,ECU runtime counter (RAM 0x302012): loaded from EEPROM 0x1000030 at boot / +1 every 41 PIT ticks (~0.205 s per count if the PIT runs at 1 MHz) / written back at key-off; also the auth-token freshness clock (was eeprom_write_count),,verified
-# boot_can_transmit_frame_t - one frame of boot_can_transmit_ring: the 12 bytes mpc555_canTransmitQueuePush builds and either queues or hands to cm848_writeBootKernelCanTxMailbox (PR #53 round 70)
+# boot_can_transmit_frame_t - one frame of boot_can_transmit_ring: the 12 bytes mpc555_canTransmitQueuePush builds and either queues or hands to cm848_writeBootKernelCanTransmitMailbox (PR #53 round 70)
 boot_can_transmit_frame_t,,toucan_identifier,dword,4,The TouCAN ID_HIGH / ID_LOW image: identifier bits 28-18 shifted to 31-21 / SRR and IDE (0x180000) / bits 17-0 shifted to 18-1,,verified
 boot_can_transmit_frame_t,,data,byte,8,The payload - 0xff past its length,,verified
 # =============================================================================
@@ -1678,7 +1678,7 @@ can_ring_state_t,0x003024c6,receive_read_pointer,j1939_received_message_t*,4,Rec
 can_ring_state_t,0x003024c6,transmit_ring_full_flag,byte,1,1 = the transmit ring is full: mpc555_canTransmitQueuePush sets it when its write pointer reaches the read pointer (and returns 4 while it is set); mpc555_manageCan1TransmitBuffer clears it after sending a frame (was _pad16 byte 0; PR #53 round 28),,verified
 can_ring_state_t,0x003024c6,receive_ring_full_flag,byte,1,1 = the receive ring is full: mpc555_processCanReceiveBuffer sets it when its write pointer reaches the read pointer; mpc555_dispatchCanMessageHandlers clears it (was _pad16 byte 1; PR #53 round 28),,verified
 can_ring_state_t,0x003024c6,reserved_18,word,2,No users (bytes 2-3 of the old _pad16),,verified
-can_ring_state_t,0x003024c6,transmit_message_buffer_pointer,dword,4,The transmit message buffer: mpc555_initDiagnosticSubsystem sets it to TouCAN A buffer 0x3070f0 + 16 x n; the empty-ring path of mpc555_manageCan1TransmitBuffer clears its control byte (was toucan_mb_ptr) | earlier note: Active TouCAN mailbox base pointer for diagnostic session,,verified
+can_ring_state_t,0x003024c6,transmit_message_buffer_pointer,dword,4,The transmit message buffer: mpc555_initializeDiagnosticSubsystem sets it to TouCAN A buffer 0x3070f0 + 16 x n; the empty-ring path of mpc555_manageCan1TransmitBuffer clears its control byte (was toucan_mb_ptr) | earlier note: Active TouCAN mailbox base pointer for diagnostic session,,verified
 # =============================================================================
 # ADC scan trigger state @ 0x3024f4
 # sensor_param_ptr: pointer to active sensor parameter block (set in ADC init)
@@ -1688,7 +1688,7 @@ diag_write_request_state_t,0x003024f4,pending_request,dword,4,Boot reflash kerne
 diag_write_request_state_t,0x003024f4,address_mode,dword,4,0 = parameter-ID addressing (services 68/69) / 1 = absolute address (75/77); stored as a dword (was adc_scan_active word + _pad6),,verified
 # =============================================================================
 # CAN mailbox slot assignment range @ 0x302510
-# Configured in mpc555_initDiagnosticSubsystem to (mailbox_index, mailbox_index+4)
+# Configured in mpc555_initializeDiagnosticSubsystem to (mailbox_index, mailbox_index+4)
 # Used to match incoming J1939 messages to ECU diagnostic service handlers
 # =============================================================================
 can_slot_range_t,0x00302510,slot_start,word,2,First CAN mailbox slot for diagnostic service,,verified
@@ -2340,7 +2340,7 @@ algorithm_enable_flags_32_t,,intake_air_heater_control_enable,bitfield:1@0,2,"e2
 algorithm_enable_flags_32_t,,end_of_injection_limit_enable,bitfield:1@1,0,"e2m EOI_Limit_Algorithm_Enable (0x2): 'Algorithm enable calibration for eoi_limit'; read by cm848_armTpuChannel10AtEndOfInjectionLimit; set on this truck",,verified
 algorithm_enable_flags_32_t,,equivalent_throttle_enable,bitfield:1@2,0,"e2m Equivalent_Throttle_Enable (0x4): 'Equivalent_Throttle Algorithm Enable'; read by cm848_calculateAllSpeedGovernorEquivalentThrottle; the e2m record's mask is 7 but its value list says 0=DISABLE:4=ENABLE; the code tests 4; set on this truck",,verified
 algorithm_enable_flags_32_t,,reserved_bit_3,bitfield:1@3,0,"no e2m record (0x8); no reader in this build; clear on this truck",,verified
-algorithm_enable_flags_32_t,,intake_air_heater_24_volt_enable,bitfield:1@4,0,"e2m IAH_24V_Enable (0x10): 'Intake Air Heater 24V Control Algorithm Enable'; read by cm848_initIntakeAirHeaterControl, cm848_computeIntakeAirHeaterPreheatDuration, cm848_countDownIntakeAirHeaterPreheat, cm848_pulseIntakeAirHeaterRelays, cm848_shutdownIntakeAirHeater, cm848_updateIntakeAirHeaterPostheat, cm848_updateIntakeAirHeaterControl; clear on this truck",,verified
+algorithm_enable_flags_32_t,,intake_air_heater_24_volt_enable,bitfield:1@4,0,"e2m IAH_24V_Enable (0x10): 'Intake Air Heater 24V Control Algorithm Enable'; read by cm848_initializeIntakeAirHeaterControl, cm848_computeIntakeAirHeaterPreheatDuration, cm848_countDownIntakeAirHeaterPreheat, cm848_pulseIntakeAirHeaterRelays, cm848_shutdownIntakeAirHeater, cm848_updateIntakeAirHeaterPostheat, cm848_updateIntakeAirHeaterControl; clear on this truck",,verified
 algorithm_enable_flags_32_t,,reserved_bit_5,bitfield:1@5,0,"no e2m record (0x20); no reader in this build; clear on this truck",,verified
 algorithm_enable_flags_32_t,,reserved_bit_6,bitfield:1@6,0,"no e2m record (0x40); no reader in this build; clear on this truck",,verified
 algorithm_enable_flags_32_t,,reserved_bit_7,bitfield:1@7,0,"no e2m record (0x80); no reader in this build; clear on this truck",,verified

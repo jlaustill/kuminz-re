@@ -6,7 +6,7 @@ The project rule (firmware/CLAUDE.md, investigate-firmware-symbol skill):
     ROM / Bank2 flash / the ROM->RAM copy window / computed working RAM are NOT `_cal`.
     On CM550 the EEPROM RAM image is 0x803B0A-0x804F93 (RAM = 0x803B0A + EEPROM offset; the start-up load is 0x148a
     bytes; PR #53 rounds 73 / 94).
-    On CM848 the application loads a RAM mirror of the serial EEPROM at 0x3FD482-0x3FEEC1 (RAM = 0x3FD482 + EEPROM offset; cm848_initEepromDriverAndLoadMirror, verified 2026-11-11).
+    On CM848 the application loads a RAM mirror of the serial EEPROM at 0x3FD482-0x3FEEC1 (RAM = 0x3FD482 + EEPROM offset; cm848_initializeEepromDriverAndLoadMirror, verified 2026-11-11).
 
 This script does the MECHANICAL half: classify each address by region and report names
 whose `_cal` presence/absence contradicts the region. It does NOT edit anything and it

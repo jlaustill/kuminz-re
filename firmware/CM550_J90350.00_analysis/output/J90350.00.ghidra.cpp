@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Wed Nov 25 15:18:49 MST 2026
+// Generated: Wed Nov 25 15:28:17 MST 2026
 
 
 //
@@ -282,10 +282,12 @@ undefined4 mc68k_checkSerialEepromSignature(void)
 
 
 //
-// Function: mc68k_hardwareInitAndStartup @ 0x00003a94
+// Function: mc68k_hardwareInitializationAndStartup @ 0x00003a94
 //
 
-void mc68k_hardwareInitAndStartup(void)
+/* (was mc68k_hardwareInitAndStartup; PR #53 round 97) */
+
+void mc68k_hardwareInitializationAndStartup(void)
 
 {
   byte bVar1;
@@ -370,7 +372,7 @@ LAB_00003c1a:
 //
 
 /* This is the boot ROM's software-restart entry: a point inside the body of
-   mc68k_hardwareInitAndStartup that has its own function row, like
+   mc68k_hardwareInitializationAndStartup that has its own function row, like
    cm550_restartApplicationWithoutReset (0x28978) inside mc68k_applicationMain. How it is reached:
    (a) restartThroughBootRom (0x1192a, twin of CM848 0x216fc) masks interrupts, sets SP to 0x811000,
    loads the long at ROM 0x8 and jumps to it. (b) (was mc68k_FUN_00003abe; PR #53 round 88) */
@@ -1176,10 +1178,12 @@ void cm550_dmaDescriptorSetup2(void)
 
 
 //
-// Function: cm550_initFuelSystemOutputDriver @ 0x0000b666
+// Function: cm550_initializeFuelSystemOutputDriver @ 0x0000b666
 //
 
-void cm550_initFuelSystemOutputDriver(void)
+/* (was cm550_initFuelSystemOutputDriver; PR #53 round 97) */
+
+void cm550_initializeFuelSystemOutputDriver(void)
 
 {
   application_specific_anc_enable_disable_flag_set_to_false_to_dis_0_1 = 1;
@@ -1799,10 +1803,12 @@ ushort cm550_fuelTimingTransitionStateMachine(void)
 
 
 //
-// Function: cm550_fuelTimingModeInit @ 0x0000c246
+// Function: cm550_initializeFuelTimingMode @ 0x0000c246
 //
 
-void cm550_fuelTimingModeInit(void)
+/* (was cm550_fuelTimingModeInit; PR #53 round 97) */
+
+void cm550_initializeFuelTimingMode(void)
 
 {
   air_fuel_control_fuel_limit_lookup.x_axis_pointer = (word *)&DAT_0006010c;
@@ -3999,7 +4005,7 @@ void vp44_insiteParameterTableIterator(void)
       sVar1 = (short)((int)(uint)insite_parameter_id >> 3);
       if (((bVar3 & *(byte *)(sVar1 + 0x6134a)) != 0) &&
          ((bVar3 & (&vp44_fuel_demand_accumulator)[sVar1]) == 0)) {
-        cm550_activeParamReadFunction();
+        cm550_activeParameterReadFunction();
       }
     }
     insite_parameter_table_pointer = insite_parameter_table_pointer + 1;
@@ -4055,10 +4061,12 @@ uint cm550_diagnosticMessageTransmissionManager(void)
 
 
 //
-// Function: cm550_activeParamReadFunction @ 0x0000ec1e
+// Function: cm550_activeParameterReadFunction @ 0x0000ec1e
 //
 
-void cm550_activeParamReadFunction(void)
+/* (was cm550_activeParamReadFunction; PR #53 round 97) */
+
+void cm550_activeParameterReadFunction(void)
 
 {
   if (insite_response_length == 0) {
@@ -4602,7 +4610,7 @@ void insiteCommandByteDispatcher(void)
     }
     else {
       if (insite_parameter_id == 0xea) {
-        cm550_insiteVersionInfoBuilder();
+        cm550_insiteVersionInformationBuilder();
         return;
       }
       if (insite_parameter_id == 0xeb) {
@@ -4769,12 +4777,13 @@ undefined * cm550_calculateAllSpeedGovernorDroopFueling(void)
 
 
 //
-// Function: cm550_paramSystemModeController @ 0x0000f796
+// Function: cm550_parameterSystemModeController @ 0x0000f796
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was cm550_paramSystemModeController; PR #53 round 97) */
 
-void cm550_paramSystemModeController(void)
+void cm550_parameterSystemModeController(void)
 
 {
   if (variable_speed_governor_default_cal == 1) {
@@ -4907,9 +4916,9 @@ void cm550_param_lookup_3(void)
 //
 
 /* Empty function (a single rts). Its only call is in the PGN 61443 (EEC2) transmit record
-   initializer (CM550 0x33064, CM848 cm848_initPgn61443Eec2Handler), after the record's CAN ID,
-   length 5 and data and status pointers and before the PGN 61443 request handler registration: an
-   initialization step compiled empty. In both ROMs it sits right before the nominal friction
+   initializer (CM550 0x33064, CM848 cm848_initializePgn61443Eec2Handler), after the record's CAN
+   ID, length 5 and data and status pointers and before the PGN 61443 request handler registration:
+   an initialization step compiled empty. In both ROMs it sits right before the nominal friction
    percent torque calculation. Twin of CM848 0x20aec (one shared name). (was cm550_FUN_0000f99a; PR
    #53 round 96) */
 
@@ -5578,12 +5587,13 @@ word cm550_detectEngineSpeedSensorSyncPulse(word backup_sensor_flag)
 
 
 //
-// Function: cm550_canBusTimingInit @ 0x00010394
+// Function: cm550_initializeCanBusTiming @ 0x00010394
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was cm550_canBusTimingInit; PR #53 round 97) */
 
-void cm550_canBusTimingInit(void)
+void cm550_initializeCanBusTiming(void)
 
 {
   _anc_altitude_table_3_size = _DAT_008001a8 * (uint)value_used_to_detect_sync_pulse_0_100_7c1e >> 8
@@ -7502,10 +7512,12 @@ void cm550_addCylinderPressureMaintenanceTimingIncrement(void)
 
 
 //
-// Function: cm550_initLoadTrendingSystem @ 0x000124d2
+// Function: cm550_initializeLoadTrendingSystem @ 0x000124d2
 //
 
-void cm550_initLoadTrendingSystem(void)
+/* (was cm550_initLoadTrendingSystem; PR #53 round 97) */
+
+void cm550_initializeLoadTrendingSystem(void)
 
 {
   cylinder_pressure_maintenance_pressure_ratio_per_timing_degree_lookup.x_input = engine_rpm_primary
@@ -8537,10 +8549,12 @@ uint vp44_communication_state_machine(word scheduler_call)
 
 
 //
-// Function: vp44_initVp44BufferAddresses @ 0x000138a0
+// Function: vp44_initializeVp44BufferAddresses @ 0x000138a0
 //
 
-void vp44_initVp44BufferAddresses(void)
+/* (was vp44_initVp44BufferAddresses; PR #53 round 97) */
+
+void vp44_initializeVp44BufferAddresses(void)
 
 {
   actual_starting_ram_address_of_the_data_collector_buffer_none = 0x80aac4;
@@ -8831,10 +8845,10 @@ byte * cm550_recordDataloggerSamples(void)
 //
 
 /* Start-up set-up of the datalogger (called once by mc68k_applicationMain after
-   cm550_initLoadTrendingSystem). It clears the sample period counter (0x80051e) and the sample due
-   flag (0x800354); for each record of datalogger_triggers_cal with fault_code_flag 1 it copies the
-   fault count table status (0x805a24 + 10 x the trigger's fault index byte at 0x800366 + n) into
-   its previous fault status byte (0x80036e + n); then it zeroes the 400-byte ring buffer
+   cm550_initializeLoadTrendingSystem). It clears the sample period counter (0x80051e) and the
+   sample due flag (0x800354); for each record of datalogger_triggers_cal with fault_code_flag 1 it
+   copies the fault count table status (0x805a24 + 10 x the trigger's fault index byte at 0x800366 +
+   n) into its previous fault status byte (0x80036e + n); then it zeroes the 400-byte ring buffer
    (0x800374), points the write pointer (0x800504) at it and sets the buffer cleared flag
    (0x800372). (was cm550_FUN_00013cc8; PR #53 round 91) (was cm550_FUN_00013cc8; PR #53 round 91)
     */
@@ -9956,13 +9970,15 @@ void cm550_insitePidDtcHandler(word spn_byte)
 
 
 //
-// Function: cm550_initHourMeterSystem @ 0x00014fae
+// Function: cm550_initializeHourMeterSystem @ 0x00014fae
 //
 
-void cm550_initHourMeterSystem(void)
+/* (was cm550_initHourMeterSystem; PR #53 round 97) */
+
+void cm550_initializeHourMeterSystem(void)
 
 {
-  cm550_circularBufferInit((dword *)0x80bc8c,0x80bc9e,10);
+  cm550_initializeCircularBuffer((dword *)0x80bc8c,0x80bc9e,10);
   return;
 }
 
@@ -11907,7 +11923,7 @@ uint cm550_calculateEngineSpeed(void)
   if (backup_lost_counter_timeout_counter_for_secondary_speed_inp_0_10000 == 0) {
     if (_DAT_0080cd04 != 0) {
       _DAT_0080cd04 = 0;
-      cm550_canRpmModeConfigInit();
+      cm550_initializeCanRpmModeConfiguration();
     }
   }
   else {
@@ -12815,10 +12831,12 @@ void initializeEngineState(void)
 
 
 //
-// Function: cm550_canRpmModeConfigInit @ 0x0001839a
+// Function: cm550_initializeCanRpmModeConfiguration @ 0x0001839a
 //
 
-void cm550_canRpmModeConfigInit(void)
+/* (was cm550_canRpmModeConfigInit; PR #53 round 97) */
+
+void cm550_initializeCanRpmModeConfiguration(void)
 
 {
   if (determines_how_engine_position_is_sync_d_to_cam_0 == 1) {
@@ -13210,7 +13228,7 @@ void vp44_engineProtectionSystemInit(void)
   pointer_to_ambient_air_pressure_fuel_fault_log_data_0_2_32 = 0x80576e;
   pointer_to_ambient_air_pressure_rpm_fault_log_data_0_2_32 = 0x805796;
   initializeFaultDerateEngineSpeedLimit();
-  cm550_initShutdownLimitVariables();
+  cm550_initializeShutdownLimitVariables();
   cm550_initializeEngineProtectionShutdownCounting();
   _engine_protection_state_phase_index = 0;
   return;
@@ -13813,13 +13831,13 @@ ushort processDiagnosticLimitStatus(void)
 // Function: cm550_initializeEngineProtectionShutdownCounting @ 0x000192e0
 //
 
-/* Start-up step of vp44_engineProtectionSystemInit (after cm550_initShutdownLimitVariables): copies
-   engine_protection_active_fault_index (e2m 10B3 +0 EPSOAE, the channel of the last shutdown) into
-   engine_protection_power_up_shutdown_channel and clears engine_shutdown_command_flag_previous.
-   processDiagnosticLimitStatus counts a new shutdown on the 0 to 1 edge of the command and adds to
-   the consecutive shutdown count only when the shutting channel equals the one recorded here.
-   CM848's cm848_resetEngineProtectionShutdownState records the same channel among more resets. (was
-   cm550_FUN_000192e0; PR #53 round 96) */
+/* Start-up step of vp44_engineProtectionSystemInit (after cm550_initializeShutdownLimitVariables):
+   copies engine_protection_active_fault_index (e2m 10B3 +0 EPSOAE, the channel of the last
+   shutdown) into engine_protection_power_up_shutdown_channel and clears
+   engine_shutdown_command_flag_previous. processDiagnosticLimitStatus counts a new shutdown on the
+   0 to 1 edge of the command and adds to the consecutive shutdown count only when the shutting
+   channel equals the one recorded here. CM848's cm848_resetEngineProtectionShutdownState records
+   the same channel among more resets. (was cm550_FUN_000192e0; PR #53 round 96) */
 
 void cm550_initializeEngineProtectionShutdownCounting(void)
 
@@ -14245,10 +14263,12 @@ void cm550_calculateFaultDerateFuelLimit(void)
 
 
 //
-// Function: cm550_initShutdownLimitVariables @ 0x00019960
+// Function: cm550_initializeShutdownLimitVariables @ 0x00019960
 //
 
-void cm550_initShutdownLimitVariables(void)
+/* (was cm550_initShutdownLimitVariables; PR #53 round 97) */
+
+void cm550_initializeShutdownLimitVariables(void)
 
 {
   oil_pressure_fault_inhibit_timer = 0;
@@ -15795,9 +15815,9 @@ undefined8 mc68k_dutyCycleMonitorIsrHandler(void)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* TPU channel 1 set-up for cam sync type 0 (e2m 11AD +2 EPCMSYTY = 0 in the dump; chosen by the
-   start-up dispatcher cm550_canRpmModeConfigInit): disables channel 1, fills the backup pulse
-   period table (pulse_period_table_backup_*) and sets its sums and next pointer, and while
-   engine_speed_sensor_enable_flags bit 3 is set installs
+   start-up dispatcher cm550_initializeCanRpmModeConfiguration): disables channel 1, fills the
+   backup pulse period table (pulse_period_table_backup_*) and sets its sums and next pointer, and
+   while engine_speed_sensor_enable_flags bit 3 is set installs
    mc68k_tpuChannel1BackupSpeedPeriodInterruptHandler (0x808ee0 = 0x1b30a, the value in the RAM
    dump) and sets function 0xd, parameter 1 = 0x100, parameter 0 = 0xb, HSQR / HSRR 3, the interrupt
    enable and priority 2. Type 1 uses mc68k_initializeTpuChannel1BackupSpeedInput (cylinder
@@ -16164,19 +16184,19 @@ void cm550_runEvery4FramesTaskSetPhase1(void)
 
 /* Executive frame task set: runs every 4 frames (20 ms): frames 2, 6, ... of the 40-frame cycle, as
    call 3 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   cm550_calculateEngineSpeed, cm550_runLowSpeedGovernor, cm550_epsDiagnosticModeHandler,
-   cm550_fuelTimingTransitionStateMachine, cm550_engineModeTransitionHandler,
-   cm550_calculateInjectionTimingMisfireLimit, cm550_frictionalLoadTorqueTransitionHandler,
-   cm550_rpmBasedFuelLimitCalculator, cm550_selectFinalFueling, 0x4094c (not dumped),
-   cm550_fuelSourceMode11CountdownHandler. (was cm550_periodicTaskSet_fuelTiming; PR #53 round 93)
-    */
+   cm550_calculateEngineSpeed, cm550_runLowSpeedGovernor,
+   cm550_enginePositionSensorDiagnosticModeHandler, cm550_fuelTimingTransitionStateMachine,
+   cm550_engineModeTransitionHandler, cm550_calculateInjectionTimingMisfireLimit,
+   cm550_frictionalLoadTorqueTransitionHandler, cm550_rpmBasedFuelLimitCalculator,
+   cm550_selectFinalFueling, 0x4094c (not dumped), cm550_fuelSourceMode11CountdownHandler. (was
+   cm550_periodicTaskSet_fuelTiming; PR #53 round 93) */
 
 void cm550_runEvery4FramesTaskSetPhase2(void)
 
 {
   cm550_calculateEngineSpeed();
   cm550_runLowSpeedGovernor();
-  cm550_epsDiagnosticModeHandler();
+  cm550_enginePositionSensorDiagnosticModeHandler();
   cm550_fuelTimingTransitionStateMachine();
   cm550_engineModeTransitionHandler();
   cm550_calculateInjectionTimingMisfireLimit();
@@ -17077,7 +17097,7 @@ undefined8 executiveFrameInterruptHandler(void)
     cm550_runEvery8FramesTaskSetPhase2();
     cm550_runEvery10FramesTaskSetPhase0();
     cm550_runEvery20FramesTaskSetPhase10();
-    hpcr_injectorPulseWidthCalc();
+    hpcr_injectorPulseWidthCalculation();
     _scheduler_phase_index = 0xb;
     break;
   case 0xb:
@@ -17127,7 +17147,7 @@ undefined8 executiveFrameInterruptHandler(void)
     cm550_runEvery8FramesTaskSetPhase7();
     cm550_runEvery10FramesTaskSetPhase5();
     cm550_runEvery20FramesTaskSetPhase15();
-    cm550_epsTimingCalculationSlowCycle40Coordinator();
+    cm550_enginePositionSensorTimingCalculationSlowCycle40Coordinator();
     cm550_selectEngineProtectionFuelTemperature();
     cm550_engineProtectionMultiStateSlowCycle40Coordinator();
     _scheduler_phase_index = 0x10;
@@ -17457,10 +17477,12 @@ uint cm550_circularBufferPop(dword *buffer_control,byte *data_out)
 
 
 //
-// Function: cm550_circularBufferInit @ 0x0001c016
+// Function: cm550_initializeCircularBuffer @ 0x0001c016
 //
 
-void cm550_circularBufferInit(dword *buffer_control,dword base_address,word buffer_size)
+/* (was cm550_circularBufferInit; PR #53 round 97) */
+
+void cm550_initializeCircularBuffer(dword *buffer_control,dword base_address,word buffer_size)
 
 {
   buffer_control[2] = base_address;
@@ -18420,7 +18442,7 @@ void cm550_calculateThrottle100Fuelings(void)
 // Function: cm550_initializeThrottle100FuelingLookups @ 0x0001cdf8
 //
 
-/* Start-up initializer (cm550_masterSubsystemInit) of the lookups only
+/* Start-up initializer (cm550_initializeMasterSubsystem) of the lookups only
    cm550_calculateThrottle100Fuelings uses: throttle_100_fueling_low_horsepower_curve_lookup (the
    steady state 4D fueling table 0x6086e / 0x6089a / 0x608a4, axis offsets 2, y input fixed at 400 =
    100 percent throttle) and full_fueling_cold_temperature_fuel_increment_lookup (0x6124a / 0x6125e
@@ -19332,10 +19354,12 @@ void cm550_initializeAlpha(void)
 
 
 //
-// Function: cm550_diagnosticBufferPointerInit @ 0x0001dd2c
+// Function: cm550_initializeDiagnosticBufferPointer @ 0x0001dd2c
 //
 
-void cm550_diagnosticBufferPointerInit(void)
+/* (was cm550_diagnosticBufferPointerInit; PR #53 round 97) */
+
+void cm550_initializeDiagnosticBufferPointer(void)
 
 {
   j1708_transmit_buffer_read_pointer = diagnostic_tx_buffer_base;
@@ -19539,7 +19563,7 @@ void cm550_subtractAndClampValue(word *fuel_value_pointer)
 
 /* Start-up initializer (mc68k_applicationMain): four_dimensional_fueling_interpolation_factor (e2m
    1053 +2 FLINML, the alpha) = 0x4000, the steady state end of the 4D fueling blend, until
-   calculateAlpha runs. CM848's cm848_initFuelDemandTracking sets the same value and also the
+   calculateAlpha runs. CM848's cm848_initializeFuelDemandTracking sets the same value and also the
    commanded throttle filter. (was cm550_FUN_0001e04c; PR #53 round 96) */
 
 void cm550_initializeFourDimensionalFuelingInterpolationFactor(void)
@@ -20177,10 +20201,12 @@ undefined8 cm550_interruptCounter2Increment(void)
 
 
 //
-// Function: cm550_initVectorTable @ 0x0001e77a
+// Function: cm550_initializeVectorTable @ 0x0001e77a
 //
 
-void cm550_initVectorTable(void)
+/* (was cm550_initVectorTable; PR #53 round 97) */
+
+void cm550_initializeVectorTable(void)
 
 {
   undefined4 *puVar1;
@@ -20346,7 +20372,7 @@ LAB_0001eb76:
           sVar3 = (short)((int)(uint)insite_parameter_id >> 3);
           if (((bVar6 & *(byte *)(sVar3 + 0x6134a)) != 0) &&
              ((bVar6 & (&vp44_fuel_demand_accumulator)[sVar3]) == 0)) {
-            cm550_activeParamReadFunction();
+            cm550_activeParameterReadFunction();
           }
         }
         else if (insite_parameter_id == 0x80) {
@@ -20362,7 +20388,7 @@ LAB_0001eb76:
             sVar3 = (short)((int)(uint)insite_parameter_id >> 3);
             if (((bVar6 & *(byte *)(sVar3 + 0x6134a)) != 0) &&
                ((bVar6 & (&vp44_fuel_demand_accumulator)[sVar3]) == 0)) {
-              cm550_activeParamReadFunction();
+              cm550_activeParameterReadFunction();
             }
           }
         }
@@ -20396,7 +20422,7 @@ LAB_0001eb76:
             }
             insite_parameter_id = 0xc4;
             insite_parameter_data_size = cm550_parameterLookupForInsite();
-            cm550_activeParamReadFunction();
+            cm550_activeParameterReadFunction();
           }
         }
         else {
@@ -21567,12 +21593,13 @@ dword cm550_recordJ1922ControlOccurrence(word control_mode)
 
 
 //
-// Function: cm550_canMessageFilterInit @ 0x0001fe40
+// Function: cm550_initializeCanMessageFilter @ 0x0001fe40
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was cm550_canMessageFilterInit; PR #53 round 97) */
 
-void cm550_canMessageFilterInit(void)
+void cm550_initializeCanMessageFilter(void)
 
 {
   byte bVar1;
@@ -21703,10 +21730,12 @@ uint cm550_runJ1939PeriodicTransmitQueues(void)
 
 
 //
-// Function: cm550_emptyPlaceholderInit @ 0x0001ffd0
+// Function: cm550_emptyPlaceholderInitialization @ 0x0001ffd0
 //
 
-void cm550_emptyPlaceholderInit(void)
+/* (was cm550_emptyPlaceholderInit; PR #53 round 97) */
+
+void cm550_emptyPlaceholderInitialization(void)
 
 {
   return;
@@ -22884,7 +22913,7 @@ void cm550_processJ1939AcceleratorInputs(void)
    accelerator_idle_switch_previous_state to 0xff, clears bit 0 of the fault status word 0x806000
    and clears j1939_accelerator_low_idle_switch_unavailable_flag. Nothing in the dumped ROM calls it
    or holds its address, and the RAM dump does not show its values (in this calibration nothing else
-   would overwrite them). The counterpart of cm848_initJ1939InputProcessing (0x50ae5c), which
+   would overwrite them). The counterpart of cm848_initializeJ1939InputProcessing (0x50ae5c), which
    CM848's start-up list calls and which also loads the debounce timer and sets the monitor inhibit
    flag. (was cm550_FUN_000211f4; PR #53 round 94) */
 
@@ -24087,10 +24116,12 @@ void cm550_systemFunction1xCaller(void)
 
 
 //
-// Function: cm550_diagMemoryReadResponseBuilder @ 0x0002238e
+// Function: cm550_diagnosticMemoryReadResponseBuilder @ 0x0002238e
 //
 
-void cm550_diagMemoryReadResponseBuilder
+/* (was cm550_diagMemoryReadResponseBuilder; PR #53 round 97) */
+
+void cm550_diagnosticMemoryReadResponseBuilder
                (byte *request_pointer,dword start_address,dword read_length)
 
 {
@@ -24165,8 +24196,9 @@ void cm550_diagMemoryReadResponseBuilder
 
 /* PGN 61184 service 0x43, registered by registerJ1939MemoryReadServices: request bytes 1-2 are the
    parameter ID and 3-6 the length. It reads from the ID's address (offset 0) through 0x224f4:
-   cm550_lookupParameterIdAddress (8 for an unknown ID), then cm550_diagMemoryReadResponseBuilder.
-   Twin of CM848 0x50c640 (one shared name). (was cm550_FUN_00022530; PR #53 round 96) */
+   cm550_lookupParameterIdAddress (8 for an unknown ID), then
+   cm550_diagnosticMemoryReadResponseBuilder. Twin of CM848 0x50c640 (one shared name). (was
+   cm550_FUN_00022530; PR #53 round 96) */
 
 void handleJ1939ReadByParameterIdLongLengthService(int param_1)
 
@@ -24231,8 +24263,8 @@ void handleJ1939ReadByParameterIdLongOffsetService(int param_1)
 //
 
 /* PGN 61184 service 0x4a, registered by registerJ1939MemoryReadServices: request bytes 1-4 are the
-   address and 5 the length; it reads through cm550_diagMemoryReadResponseBuilder. Twin of CM848
-   0x50c7b0 (one shared name). (was cm550_FUN_00022646; PR #53 round 96) */
+   address and 5 the length; it reads through cm550_diagnosticMemoryReadResponseBuilder. Twin of
+   CM848 0x50c7b0 (one shared name). (was cm550_FUN_00022646; PR #53 round 96) */
 
 void handleJ1939ReadMemoryService(byte *param_1)
 
@@ -24242,7 +24274,7 @@ void handleJ1939ReadMemoryService(byte *param_1)
   
   cm550_memcpy((byte *)&local_8,(byte *)(*(int *)(param_1 + 6) + 1),4);
   local_c = (uint)*(byte *)(*(int *)(param_1 + 6) + 5);
-  cm550_diagMemoryReadResponseBuilder(param_1,local_8,local_c);
+  cm550_diagnosticMemoryReadResponseBuilder(param_1,local_8,local_c);
   return;
 }
 
@@ -24253,8 +24285,8 @@ void handleJ1939ReadMemoryService(byte *param_1)
 //
 
 /* PGN 61184 service 0x4c, registered by registerJ1939MemoryReadServices: request bytes 1-4 are the
-   address and 5-8 the length; it reads through cm550_diagMemoryReadResponseBuilder. Twin of CM848
-   0x50c81c (one shared name). (was cm550_FUN_0002268e; PR #53 round 96) */
+   address and 5-8 the length; it reads through cm550_diagnosticMemoryReadResponseBuilder. Twin of
+   CM848 0x50c81c (one shared name). (was cm550_FUN_0002268e; PR #53 round 96) */
 
 void handleJ1939ReadMemoryLongLengthService(byte *param_1)
 
@@ -24264,7 +24296,7 @@ void handleJ1939ReadMemoryLongLengthService(byte *param_1)
   
   cm550_memcpy((byte *)&local_8,(byte *)(*(int *)(param_1 + 6) + 1),4);
   cm550_memcpy((byte *)&local_c,(byte *)(*(int *)(param_1 + 6) + 5),4);
-  cm550_diagMemoryReadResponseBuilder(param_1,local_8,local_c);
+  cm550_diagnosticMemoryReadResponseBuilder(param_1,local_8,local_c);
   return;
 }
 
@@ -24419,12 +24451,13 @@ void sendJ1939MultiFrame(j1939_transmit_message_t *message)
 
 
 //
-// Function: cm550_diagnosticParamRequestHandler @ 0x00022956
+// Function: cm550_diagnosticParameterRequestHandler @ 0x00022956
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was cm550_diagnosticParamRequestHandler; PR #53 round 97) */
 
-void cm550_diagnosticParamRequestHandler(can_std_rx_desc_t *received_message)
+void cm550_diagnosticParameterRequestHandler(can_std_rx_desc_t *received_message)
 
 {
   byte bVar1;
@@ -24582,12 +24615,13 @@ byte vp44MessageTransmitter
 
 
 //
-// Function: vp44FuelTempHandler @ 0x00022b50
+// Function: vp44FuelTemperatureHandler @ 0x00022b50
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was vp44FuelTempHandler; PR #53 round 97) */
 
-void vp44FuelTempHandler(can_std_rx_desc_t *received_message)
+void vp44FuelTemperatureHandler(can_std_rx_desc_t *received_message)
 
 {
   undefined *puVar1;
@@ -24773,11 +24807,11 @@ void vp44CanMessageDispatcher(can_std_rx_desc_t *received_message)
   if (received_message->length == 8) {
     cVar1 = *received_message->data_pointer;
     if (cVar1 == '\x11') {
-      cm550_diagnosticParamRequestHandler(received_message);
+      cm550_diagnosticParameterRequestHandler(received_message);
       return;
     }
     if (cVar1 == '\x10') {
-      vp44FuelTempHandler(received_message);
+      vp44FuelTemperatureHandler(received_message);
       return;
     }
     if (cVar1 == '\x13') {
@@ -24795,30 +24829,34 @@ void vp44CanMessageDispatcher(can_std_rx_desc_t *received_message)
 
 
 //
-// Function: cm550_diagnosticParamRequestHandlerWrapper @ 0x00022e96
+// Function: cm550_diagnosticParameterRequestHandlerWrapper @ 0x00022e96
 //
 
-void cm550_diagnosticParamRequestHandlerWrapper(void)
+/* (was cm550_diagnosticParamRequestHandlerWrapper; PR #53 round 97) */
+
+void cm550_diagnosticParameterRequestHandlerWrapper(void)
 
 {
   can_std_rx_desc_t *unaff_A2;
   
-  cm550_diagnosticParamRequestHandler(unaff_A2);
+  cm550_diagnosticParameterRequestHandler(unaff_A2);
   return;
 }
 
 
 
 //
-// Function: vp44FuelTempHandlerWrapper @ 0x00022ea4
+// Function: vp44FuelTemperatureHandlerWrapper @ 0x00022ea4
 //
 
-void vp44FuelTempHandlerWrapper(void)
+/* (was vp44FuelTempHandlerWrapper; PR #53 round 97) */
+
+void vp44FuelTemperatureHandlerWrapper(void)
 
 {
   can_std_rx_desc_t *unaff_A2;
   
-  vp44FuelTempHandler(unaff_A2);
+  vp44FuelTemperatureHandler(unaff_A2);
   return;
 }
 
@@ -25054,12 +25092,13 @@ j1939_transmit_message_t * cm550_multiPacketBufferAllocator(word data_length)
 
 
 //
-// Function: vp44DiagnosticBufferPointersInit @ 0x00023186
+// Function: initializeVp44DiagnosticBufferPointers @ 0x00023186
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was vp44DiagnosticBufferPointersInit; PR #53 round 97) */
 
-void vp44DiagnosticBufferPointersInit(void)
+void initializeVp44DiagnosticBufferPointers(void)
 
 {
   _DAT_00801262 = 0x80128a;
@@ -27358,12 +27397,13 @@ void initializePedalFaultModeEngineSpeedFilter(void)
 
 
 //
-// Function: cm550_epsTimingCalculationSlowCycle40Coordinator @ 0x000258e8
+// Function: cm550_enginePositionSensorTimingCalculationSlowCycle40Coordinator @ 0x000258e8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was cm550_epsTimingCalculationSlowCycle40Coordinator; PR #53 round 97) */
 
-void cm550_epsTimingCalculationSlowCycle40Coordinator(void)
+void cm550_enginePositionSensorTimingCalculationSlowCycle40Coordinator(void)
 
 {
   engine_protection_low_oil_pressure_limit_lookup.x_input = engine_rpm_primary;
@@ -27378,10 +27418,12 @@ void cm550_epsTimingCalculationSlowCycle40Coordinator(void)
 
 
 //
-// Function: cm550_initLookupTablePointers1 @ 0x00025926
+// Function: cm550_initializeLookupTablePointers1 @ 0x00025926
 //
 
-void cm550_initLookupTablePointers1(void)
+/* (was cm550_initLookupTablePointers1; PR #53 round 97) */
+
+void cm550_initializeLookupTablePointers1(void)
 
 {
   engine_protection_low_oil_pressure_limit_lookup.y_values_pointer =
@@ -27587,7 +27629,7 @@ void cm550_runLowSpeedGovernor(void)
     }
     low_speed_governor_proportional_gain_previous = lsg_proportional_gain_active;
     low_speed_governor_proportional_gain_2_previous = lsg_proportional_gain_2_calibration_2_to_2;
-    cm550_epsControlModeSelector();
+    cm550_enginePositionSensorControlModeSelector();
     if ((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR) &&
        (final_fueling_state != FUELING_STATE_LOW_SPEED_GOVERNOR)) {
       cm550_presetLowSpeedGovernorIntegrator();
@@ -27750,7 +27792,7 @@ void cm550_presetLowSpeedGovernorSpeedError(void)
     lsg_filtered_speed_error = (sword)iVar1;
   }
   low_speed_governor_error_filter.accumulator = lsg_filtered_speed_error * 0x10000 + 0x80000000;
-  cm550_epsInitializationWrapper();
+  cm550_enginePositionSensorInitializationWrapper();
   low_speed_governor_previous_engine_speed = engine_rpm_primary;
   return;
 }
@@ -27773,7 +27815,7 @@ void cm550_initializeLowSpeedGovernor(void)
   low_speed_governor_throttle_reference_offset_filter_state.coefficient =
        &low_speed_governor_throttle_reference_offset_filter_coefficient;
   low_speed_governor_error_filter.coefficient = &low_speed_governor_error_filter_coefficient;
-  cm550_epsControlModeInit();
+  cm550_initializeEnginePositionSensorControlMode();
   lsg_fueling_clamp_max_0_100 = 0x1700;
   return;
 }
@@ -27781,12 +27823,13 @@ void cm550_initializeLowSpeedGovernor(void)
 
 
 //
-// Function: cm550_epsAccelerationMonitor @ 0x0002609c
+// Function: cm550_enginePositionSensorAccelerationMonitor @ 0x0002609c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was cm550_epsAccelerationMonitor; PR #53 round 97) */
 
-uint cm550_epsAccelerationMonitor(void)
+uint cm550_enginePositionSensorAccelerationMonitor(void)
 
 {
   undefined2 uVar1;
@@ -27892,12 +27935,13 @@ LAB_0002617e:
 
 
 //
-// Function: cm550_epsRpmTrackingInit @ 0x00026252
+// Function: cm550_initializeEnginePositionSensorRpmTracking @ 0x00026252
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was cm550_epsRpmTrackingInit; PR #53 round 97) */
 
-void cm550_epsRpmTrackingInit(void)
+void cm550_initializeEnginePositionSensorRpmTracking(void)
 
 {
   high_load_idle_cooldown_timer = engine_rpm_primary;
@@ -27909,12 +27953,13 @@ void cm550_epsRpmTrackingInit(void)
 
 
 //
-// Function: cm550_epsControlModeReset @ 0x0002626a
+// Function: cm550_enginePositionSensorControlModeReset @ 0x0002626a
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was cm550_epsControlModeReset; PR #53 round 97) */
 
-void cm550_epsControlModeReset(void)
+void cm550_enginePositionSensorControlModeReset(void)
 
 {
   _DAT_00801a76 = 0;
@@ -27924,12 +27969,13 @@ void cm550_epsControlModeReset(void)
 
 
 //
-// Function: cm550_epsOverrideChecker @ 0x00026272
+// Function: cm550_enginePositionSensorOverrideChecker @ 0x00026272
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was cm550_epsOverrideChecker; PR #53 round 97) */
 
-word cm550_epsOverrideChecker(word gain_set_already_selected)
+word cm550_enginePositionSensorOverrideChecker(word gain_set_already_selected)
 
 {
   if (gain_set_already_selected != 0) {
@@ -27947,19 +27993,20 @@ word cm550_epsOverrideChecker(word gain_set_already_selected)
 
 
 //
-// Function: cm550_epsControlModeSelector @ 0x0002629e
+// Function: cm550_enginePositionSensorControlModeSelector @ 0x0002629e
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was cm550_epsControlModeSelector; PR #53 round 97) */
 
-void cm550_epsControlModeSelector(void)
+void cm550_enginePositionSensorControlModeSelector(void)
 
 {
   word wVar1;
   
-  cm550_epsAccelerationMonitor();
-  wVar1 = cm550_epsRpmTargetModeChecker();
-  wVar1 = cm550_epsOverrideChecker(wVar1);
+  cm550_enginePositionSensorAccelerationMonitor();
+  wVar1 = cm550_enginePositionSensorRpmTargetModeChecker();
+  wVar1 = cm550_enginePositionSensorOverrideChecker(wVar1);
   if (wVar1 == 0) {
     indicator_of_the_lsg_gain_set_currently_being_used_0_9 =
          identifies_the_current_lsg_pid_gain_set_0_7;
@@ -27979,29 +28026,32 @@ void cm550_epsControlModeSelector(void)
 
 
 //
-// Function: cm550_epsInitializationWrapper @ 0x000262fa
+// Function: cm550_enginePositionSensorInitializationWrapper @ 0x000262fa
 //
 
-void cm550_epsInitializationWrapper(void)
+/* (was cm550_epsInitializationWrapper; PR #53 round 97) */
+
+void cm550_enginePositionSensorInitializationWrapper(void)
 
 {
-  cm550_epsRpmTrackingInit();
-  cm550_initOilPressureMonitoring();
+  cm550_initializeEnginePositionSensorRpmTracking();
+  cm550_initializeOilPressureMonitoring();
   return;
 }
 
 
 
 //
-// Function: cm550_epsControlModeInit @ 0x00026308
+// Function: cm550_initializeEnginePositionSensorControlMode @ 0x00026308
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was cm550_epsControlModeInit; PR #53 round 97) */
 
-void cm550_epsControlModeInit(void)
+void cm550_initializeEnginePositionSensorControlMode(void)
 
 {
-  cm550_epsControlModeReset();
+  cm550_enginePositionSensorControlModeReset();
   identifies_the_current_lsg_pid_gain_set_0_7 = 0;
   _lsg_p_gain_passed_from_fuel_system_specific_algorithm_0_0_4348_dad0 =
        low_speed_governor_default_proportional_gain;
@@ -28013,12 +28063,13 @@ void cm550_epsControlModeInit(void)
 
 
 //
-// Function: cm550_epsDiagnosticModeHandler @ 0x00026340
+// Function: cm550_enginePositionSensorDiagnosticModeHandler @ 0x00026340
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was cm550_epsDiagnosticModeHandler; PR #53 round 97) */
 
-void cm550_epsDiagnosticModeHandler(void)
+void cm550_enginePositionSensorDiagnosticModeHandler(void)
 
 {
   short sStack_6;
@@ -28068,12 +28119,13 @@ void cm550_epsDiagnosticModeHandler(void)
 
 
 //
-// Function: cm550_initOilPressureMonitoring @ 0x00026462
+// Function: cm550_initializeOilPressureMonitoring @ 0x00026462
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was cm550_initOilPressureMonitoring; PR #53 round 97) */
 
-void cm550_initOilPressureMonitoring(void)
+void cm550_initializeOilPressureMonitoring(void)
 
 {
   _engine_mode_previous_state_1a7e = 0;
@@ -28164,12 +28216,13 @@ void cm550_initializeLowSpeedGovernorIdleAdjustment(void)
 
 
 //
-// Function: cm550_epsRpmTargetModeChecker @ 0x000265e6
+// Function: cm550_enginePositionSensorRpmTargetModeChecker @ 0x000265e6
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was cm550_epsRpmTargetModeChecker; PR #53 round 97) */
 
-uint cm550_epsRpmTargetModeChecker(void)
+uint cm550_enginePositionSensorRpmTargetModeChecker(void)
 
 {
   uint in_D0;
@@ -28393,8 +28446,8 @@ undefined8 mc68k_serialEepromQspiInterruptHandler(void)
 
 /* Empty function (a single rts). Its one call is the first step of
    mc68k_initializeSerialEepromDriverAndLoadMirror (bsr.s at 0x2685e), before the QSPI interrupt
-   vector store. CM848's counterpart start-up (cm848_initEepromDriverAndLoadMirror) has no call in
-   that place. (was cm550_FUN_00026852; PR #53 round 94) */
+   vector store. CM848's counterpart start-up (cm848_initializeEepromDriverAndLoadMirror) has no
+   call in that place. (was cm550_FUN_00026852; PR #53 round 94) */
 
 void cm550_emptyStubFunction10(void)
 
@@ -28416,7 +28469,8 @@ void cm550_emptyStubFunction10(void)
    runs the queue by polling (mc68k_runSerialEepromDriverStep after each pass, both watchdogs
    serviced) until the mirror is loaded. Then it enables the QSPI interrupt and sets the length to
    0x64c, so the driver keeps refreshing RAM 0x803b0a-0x804155 (the _cal range) from the EEPROM. The
-   counterpart of cm848_initEepromDriverAndLoadMirror. (was mc68k_FUN_00026854; PR #53 round 94) */
+   counterpart of cm848_initializeEepromDriverAndLoadMirror. (was mc68k_FUN_00026854; PR #53 round
+   94) */
 
 void mc68k_initializeSerialEepromDriverAndLoadMirror(void)
 
@@ -28696,7 +28750,7 @@ void cm550_calculateNoLoadFuel(void)
 /* Empty function (a single rts). Its one call is a start-up step of mc68k_applicationMain (jsr at
    0x287da), after cm550_initializeLowSpeedGovernorIdleAdjustment and before the undumped 0x4cf42.
    It sits among unreferenced rts stubs (0x26b7e-0x26b86) after cm550_calculateNoLoadFuel. No CM848
-   counterpart is proven: CM848's cm848_initInterpolationStateCounters, placed after
+   counterpart is proven: CM848's cm848_initializeInterpolationStateCounters, placed after
    cm848_calculateNoLoadFuel, presets lookup caches that CM550 sets up in 0x1ddb4, and the start-up
    orders differ. (was cm550_FUN_00026b82; PR #53 round 96) */
 
@@ -28709,10 +28763,12 @@ void cm550_emptyStubFunction12(void)
 
 
 //
-// Function: hpcr_injectorPulseWidthCalc @ 0x00026b88
+// Function: hpcr_injectorPulseWidthCalculation @ 0x00026b88
 //
 
-void hpcr_injectorPulseWidthCalc(void)
+/* (was hpcr_injectorPulseWidthCalc; PR #53 round 97) */
+
+void hpcr_injectorPulseWidthCalculation(void)
 
 {
   if ((commanded_driver_true_on_0_1 & 1) == 0) {
@@ -28776,10 +28832,12 @@ void hpcr_injectorPulseWidthCalc(void)
 
 
 //
-// Function: mc68k_pwmOutputInit @ 0x00026c7e
+// Function: mc68k_initializePwmOutput @ 0x00026c7e
 //
 
-ushort mc68k_pwmOutputInit(void)
+/* (was mc68k_pwmOutputInit; PR #53 round 97) */
+
+ushort mc68k_initializePwmOutput(void)
 
 {
   ushort uVar1;
@@ -28910,7 +28968,7 @@ void cm550_calculateEngineLoadLowHorsepowerCurvePercent(void)
 // Function: cm550_initializeEnginePositionPhaseLag @ 0x00026e86
 //
 
-/* Start-up step (one call from mc68k_applicationMain, after cm550_canBusTimingInit and before
+/* Start-up step (one call from mc68k_applicationMain, after cm550_initializeCanBusTiming and before
    cm550_initializeEnginePositionSignalInputs): runs cm550_calculateEnginePositionPhaseLag once, so
    the phase lags are set before the 20 ms task first runs it. (was cm550_FUN_00026e86; PR #53 round
    96) */
@@ -29299,10 +29357,12 @@ void cm550_insiteFaultDetailBuilder(void)
 
 
 //
-// Function: cm550_insiteVersionInfoBuilder @ 0x0002758e
+// Function: cm550_insiteVersionInformationBuilder @ 0x0002758e
 //
 
-void cm550_insiteVersionInfoBuilder(void)
+/* (was cm550_insiteVersionInfoBuilder; PR #53 round 97) */
+
+void cm550_insiteVersionInformationBuilder(void)
 
 {
   byte bVar1;
@@ -30281,10 +30341,10 @@ void mc68k_applicationMain(void)
   }
   _DAT_00810ffc = 2;
   _DAT_00810ffe = 0x8648;
-  cm550_initVectorTable();
+  cm550_initializeVectorTable();
   _DAT_00810ffc = 2;
   _DAT_00810ffe = 0x865c;
-  initQadcModule();
+  initializeQadcModule();
   QSM_QSMCR = 5;
   QSM_QILR = 0x13;
   QSM_QIVR = 0x50;
@@ -30334,7 +30394,7 @@ void mc68k_applicationMain(void)
   loadHourMetersFromEeprom();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x871a;
-  cm550_initFuelSystemOutputDriver();
+  cm550_initializeFuelSystemOutputDriver();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8720;
   cm550_dmaDescriptorSetup2();
@@ -30343,7 +30403,7 @@ void mc68k_applicationMain(void)
   cm550_initializeAllSpeedGovernorReferenceSpeedSets();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x872c;
-  cm550_initMultiSystemParameters();
+  cm550_initializeMultiSystemParameters();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8732;
   initializeEngineAccelerationFilters();
@@ -30364,7 +30424,7 @@ void mc68k_applicationMain(void)
   cm550_initializeEngineSpeedCalculation();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8756;
-  cm550_canBusTimingInit();
+  cm550_initializeCanBusTiming();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x875c;
   cm550_initializeEnginePositionPhaseLag();
@@ -30373,7 +30433,7 @@ void mc68k_applicationMain(void)
   cm550_initializeEnginePositionSignalInputs();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8768;
-  cm550_canRpmModeConfigInit();
+  cm550_initializeCanRpmModeConfiguration();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x876e;
   initializeEngineState();
@@ -30394,16 +30454,16 @@ void mc68k_applicationMain(void)
   cm550_initBoostProtectionSystem();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8792;
-  cm550_initLoadTrendingSystem();
+  cm550_initializeLoadTrendingSystem();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8798;
   cm550_initializeDatalogger();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x879e;
-  vp44_initVp44BufferAddresses();
+  vp44_initializeVp44BufferAddresses();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x87a4;
-  cm550_initHourMeterSystem();
+  cm550_initializeHourMeterSystem();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x87aa;
   vp44_fuelLimitParameterPointerSetup();
@@ -30427,7 +30487,7 @@ void mc68k_applicationMain(void)
   cm550_iahDisableWaitToStartLamp();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x87d4;
-  cm550_initLookupTablePointers1();
+  cm550_initializeLookupTablePointers1();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x87da;
   cm550_initializeLowSpeedGovernorIdleAdjustment();
@@ -30454,7 +30514,7 @@ void mc68k_applicationMain(void)
   cm550_initializeAlpha();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x880a;
-  mc68k_hardwareTimerFlagsInit();
+  mc68k_initializeHardwareTimerFlags();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8810;
   cm550_initializeLowSpeedGovernor();
@@ -30463,7 +30523,7 @@ void mc68k_applicationMain(void)
   cm550_initializeEngineWarmupProtection();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x881c;
-  cm550_masterSubsystemInit();
+  cm550_initializeMasterSubsystem();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8822;
   cm550_initializeFourDimensionalFuelingInterpolationFactor();
@@ -30472,7 +30532,7 @@ void mc68k_applicationMain(void)
   cm550_initializeDutyCycleMonitor();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x882e;
-  cm550_canMessageFilterInit();
+  cm550_initializeCanMessageFilter();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8834;
   cm550_initializeRemoteThrottle();
@@ -30487,7 +30547,7 @@ void mc68k_applicationMain(void)
   mc68k_initializeTpuChannel12();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x884c;
-  mc68k_pwmOutputInit();
+  mc68k_initializePwmOutput();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8852;
   cm550_serialCommunicationIsrRegister();
@@ -30496,13 +30556,13 @@ void mc68k_applicationMain(void)
   cm550_canMessageInterruptHandlerSetup();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x885e;
-  mc68k_dualCanControllerInit();
+  mc68k_initializeDualCanController();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8864;
   mc68k_initializeJ1708Datalink();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x886a;
-  cm550_emptyPlaceholderInit();
+  cm550_emptyPlaceholderInitialization();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8870;
   initializeFourDimensionalFuelingAndFrictionFuelLookups();
@@ -30696,12 +30756,13 @@ void cm550_restartApplicationWithoutReset(void)
 
 
 //
-// Function: mc68k_dualCanControllerInit @ 0x00028a04
+// Function: mc68k_initializeDualCanController @ 0x00028a04
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was mc68k_dualCanControllerInit; PR #53 round 97) */
 
-void mc68k_dualCanControllerInit(void)
+void mc68k_initializeDualCanController(void)
 
 {
   byte bVar1;
@@ -30797,7 +30858,7 @@ void mc68k_initializeJ1939Datalink(void)
   _DAT_0080d9ae = 0x80d896;
   _can_receive_buffer_read_pointer = 0x80d72e;
   _can_receive_buffer_write_pointer = 0x80d72e;
-  vp44DiagnosticBufferPointersInit();
+  initializeVp44DiagnosticBufferPointers();
   j1939_source_address_blocking_table_byte_length = 4;
   bVar4 = 0;
   pbVar7 = j1939_source_address_blocking_table;
@@ -30992,7 +31053,7 @@ void mc68k_initializeJ1939Datalink(void)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Initializes the J1708 datalink: the secure write scratch pad - the diagnostic buffer pointers
-   (cm550_diagnosticBufferPointerInit) - the J1708 receive state - the multipacket flags - the
+   (cm550_initializeDiagnosticBufferPointer) - the J1708 receive state - the multipacket flags - the
    broadcast enable word (from EEPROM 0x47e) - the InSite parameter schedule (next due ticks from
    insite_parameter_schedule_table) - then the QSM SCI (QSM_SCCR0 = 0x34 / QSM_SCCR1 = 0x102c). Six
    startup functions call it (was mc68k_FUN_00029130; PR #53 round 75) */
@@ -31008,7 +31069,7 @@ word mc68k_initializeJ1708Datalink(void)
   address_of_scratch_pad_directory_0c000h_0f7efh = &scratch_pad_directory_table;
   number_of_entries_in_the_scratch_pad_0_10 = 0;
   _scratch_pad_write_pointer = &scratch_pad_data_buffer;
-  cm550_diagnosticBufferPointerInit();
+  cm550_initializeDiagnosticBufferPointer();
   j1708_message_checksum = 0;
   j1708_pending_abort_count = 0;
   j1708_receive_mode_flag = 1;
@@ -31297,12 +31358,13 @@ void cm550_systemControl75(void)
 
 
 //
-// Function: cm550_memoryPatchBufferInit @ 0x0002d1fe
+// Function: cm550_initializeMemoryPatchBuffer @ 0x0002d1fe
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was cm550_memoryPatchBufferInit; PR #53 round 97) */
 
-void cm550_memoryPatchBufferInit(void)
+void cm550_initializeMemoryPatchBuffer(void)
 
 {
   _scratch_pad_write_pointer = &scratch_pad_data_buffer;
@@ -31352,7 +31414,7 @@ uint cm550_memoryPatchingSystem(void)
       if (((0xffffff < uVar4) || ((0x806543 < uVar4 && (uVar4 < 0x806547)))) ||
          ((puVar11 = puVar10, cVar7 = cVar3, 0x806543 < uVar4 + *pbVar9 &&
           (uVar4 + *pbVar9 < 0x806547)))) {
-        cm550_memoryPatchBufferInit();
+        cm550_initializeMemoryPatchBuffer();
         return 7;
       }
     }
@@ -31360,11 +31422,11 @@ uint cm550_memoryPatchingSystem(void)
   if ((development_mode == DEVELOPMENT_MODE_OFF) &&
      ((flag_indicating_tool_has_updated_scratch_pad_crc_0_false_1_tru == 0 ||
       (wVar5 = cm550_memoryPatchCrcCalculate(), wVar5 != WORD_0080de36)))) {
-    cm550_memoryPatchBufferInit();
+    cm550_initializeMemoryPatchBuffer();
     return 0x14;
   }
   if (10 < number_of_entries_in_the_scratch_pad_0_10) {
-    cm550_memoryPatchBufferInit();
+    cm550_initializeMemoryPatchBuffer();
     return 4;
   }
   _scratch_pad_write_pointer = &scratch_pad_data_buffer;
@@ -31372,7 +31434,7 @@ uint cm550_memoryPatchingSystem(void)
   puVar11 = (uint *)&scratch_pad_directory_table;
   do {
     if (number_of_entries_in_the_scratch_pad_0_10 <= bVar8) {
-      uVar4 = cm550_memoryPatchBufferInit();
+      uVar4 = cm550_initializeMemoryPatchBuffer();
       return uVar4 & 0xffffff00;
     }
     pbVar9 = (byte *)*puVar11;
@@ -31393,7 +31455,7 @@ uint cm550_memoryPatchingSystem(void)
       if ((ram_refresh_enable == RAM_REFRESH_ENABLED) &&
          (bVar6 = cm550_queueEepromByteWrites((word)pbVar9,_scratch_pad_write_pointer,(ushort)bVar2)
          , bVar6 == 1)) {
-        cm550_memoryPatchBufferInit();
+        cm550_initializeMemoryPatchBuffer();
         return 4;
       }
       pbVar9 = pbVar9 + -0x7fc4f6;
@@ -31913,10 +31975,12 @@ void initializePowerTakeOffThrottleOverride(void)
 
 
 //
-// Function: mc68k_hardwareTimerFlagsInit @ 0x0002ddce
+// Function: mc68k_initializeHardwareTimerFlags @ 0x0002ddce
 //
 
-void mc68k_hardwareTimerFlagsInit(void)
+/* (was mc68k_hardwareTimerFlagsInit; PR #53 round 97) */
+
+void mc68k_initializeHardwareTimerFlags(void)
 
 {
   CTM4_DASM10SIC = 1;
@@ -32424,10 +32488,12 @@ undefined8 mc68k_pwmFuelDemandOutputCalculator(void)
 
 
 //
-// Function: initQadcModule @ 0x0002e95e
+// Function: initializeQadcModule @ 0x0002e95e
 //
 
-void initQadcModule(void)
+/* (was initQadcModule; PR #53 round 97) */
+
+void initializeQadcModule(void)
 
 {
   byte bVar1;
@@ -33320,21 +33386,21 @@ void cm550_dispatchJ1939PgnRequest(can_std_rx_desc_t *received_message)
 //
 
 /* Start-up step of mc68k_initializeJ1939Datalink. It registers cm550_dispatchJ1939PgnRequest for
-   PGN 59904 with registerJ1939ReceiveHandler, then calls initPgn65261CruiseControlSetupStruct. It
-   then calls eight descriptor set-ups that each register their responder: 65259, 65253, 65262,
-   65257, 65244, 65248, 65255, 65260. It registers seven responders directly with
-   registerJ1939PgnRequestHandler: 65252, 65261, 65263, 65264, 65269, 65270, 65271. Last come the DM
-   set-ups DM1 / DM2 / DM3 / DM4 / DM5 / DM10. Entries 3-23 of j1939_pgn_dispatch_table come from
-   here. Counterpart of CM848 cm848_registerJ1939PgnRequestHandlers (0x232b4), which has the same
-   frame but another message set (set-ups 65259 / 65262 / 65242 / 65248 / 65260; direct 65261 /
-   65263 / 65264 / 65269 / 65270 / 65271 / 65504). (was cm550_diagnosticDataDump; PR #53 round 96)
-    */
+   PGN 59904 with registerJ1939ReceiveHandler, then calls
+   initializePgn65261CruiseControlSetupStruct. It then calls eight descriptor set-ups that each
+   register their responder: 65259, 65253, 65262, 65257, 65244, 65248, 65255, 65260. It registers
+   seven responders directly with registerJ1939PgnRequestHandler: 65252, 65261, 65263, 65264, 65269,
+   65270, 65271. Last come the DM set-ups DM1 / DM2 / DM3 / DM4 / DM5 / DM10. Entries 3-23 of
+   j1939_pgn_dispatch_table come from here. Counterpart of CM848
+   cm848_registerJ1939PgnRequestHandlers (0x232b4), which has the same frame but another message set
+   (set-ups 65259 / 65262 / 65242 / 65248 / 65260; direct 65261 / 65263 / 65264 / 65269 / 65270 /
+   65271 / 65504). (was cm550_diagnosticDataDump; PR #53 round 96) */
 
 void cm550_registerJ1939PgnRequestHandlers(void)
 
 {
   registerJ1939ReceiveHandler(0xea00,cm550_dispatchJ1939PgnRequest);
-  initPgn65261CruiseControlSetupStruct();
+  initializePgn65261CruiseControlSetupStruct();
   cm550_engineSerialNumberPGN_65259_Builder();
   cm550_initializePgn65253EngineHoursRevolutionsHandler();
   cm550_engineTemperaturePGN_65262_Builder();
@@ -34330,10 +34396,12 @@ void mc68k_initializeTpuChannel12(void)
 
 
 //
-// Function: cm550_emptyInitPlaceholder @ 0x000303d2
+// Function: cm550_emptyInitializationPlaceholder @ 0x000303d2
 //
 
-void cm550_emptyInitPlaceholder(void)
+/* (was cm550_emptyInitPlaceholder; PR #53 round 97) */
+
+void cm550_emptyInitializationPlaceholder(void)
 
 {
   return;
@@ -35011,14 +35079,16 @@ void cm550_runFuelLimitChains(void)
 
 
 //
-// Function: cm550_masterSubsystemInit @ 0x00030c78
+// Function: cm550_initializeMasterSubsystem @ 0x00030c78
 //
 
-void cm550_masterSubsystemInit(void)
+/* (was cm550_masterSubsystemInit; PR #53 round 97) */
+
+void cm550_initializeMasterSubsystem(void)
 
 {
   cm550_fuelParameterPointerSetup();
-  cm550_fuelTimingModeInit();
+  cm550_initializeFuelTimingMode();
   cm550_rpmParameterPointerSetup();
   cm550_initializeThrottle100FuelingLookups();
   fuel_system_derate_fuel_limit = fuel_demand_maximum;
@@ -35651,8 +35721,8 @@ void cm550_buildPgn65265CruiseControlVehicleSpeedMessage(void)
    j1939_pgn65265_two_speed_axle_and_parking_brake_switches_byte and status pointer
    j1939_pgn65265_transmit_status. It sets payload byte 1 to 0xf3. It then registers
    cm550_buildPgn65265CruiseControlVehicleSpeedMessage (the CCVS1 builder) for PGN 65265 with the
-   PGN 59904 request registrar 0x2f47e. Counterpart of cm848_initPgn65265CruiseSpeedHandler, which
-   also starts ccvs1_cruise_control_state at 7. (was cm550_FUN_00031ed2; PR #53 round 95) */
+   PGN 59904 request registrar 0x2f47e. Counterpart of cm848_initializePgn65265CruiseSpeedHandler,
+   which also starts ccvs1_cruise_control_state at 7. (was cm550_FUN_00031ed2; PR #53 round 95) */
 
 void cm550_initializePgn65265CruiseControlVehicleSpeedHandler(void)
 
@@ -35680,7 +35750,7 @@ void cm550_initializePgn65265CruiseControlVehicleSpeedHandler(void)
    0xff above 0x9e00 (158 MPH): maximum_road_speed (e2m 117D +18 RSMXRZ) as byte 1 (SPN 74 Maximum
    Vehicle Speed Limit), cruise_maximum_road_speed (117F +26 CRMXRZ) as byte 2 (SPN 87) and
    cruise_speed_low_limit (117E +0 CRMNRUVS) as byte 3 (SPN 88). It then sends
-   j1939_pgn65261_tx_message. Bytes 4-8 keep the 0xff of initPgn65261CruiseControlSetupStruct.
+   j1939_pgn65261_tx_message. Bytes 4-8 keep the 0xff of initializePgn65261CruiseControlSetupStruct.
    CM848's version gates the bytes on the road speed governor and cruise enables, so this is a
    counterpart and not the twin the old shared name claimed. (was
    j1939HandlePgn65261CruiseControlSetup; PR #53 round 96) */
@@ -35716,12 +35786,13 @@ void cm550_buildPgn65261CruiseControlVehicleSpeedSetupMessage(void)
 
 
 //
-// Function: initPgn65261CruiseControlSetupStruct @ 0x00031fee
+// Function: initializePgn65261CruiseControlSetupStruct @ 0x00031fee
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was initPgn65261CruiseControlSetupStruct; PR #53 round 97) */
 
-void initPgn65261CruiseControlSetupStruct(void)
+void initializePgn65261CruiseControlSetupStruct(void)
 
 {
   j1939_pgn65261_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f52 & 7) << 2),0xfeed00);
@@ -36315,7 +36386,7 @@ uint cm550_j1939HandlePgn65229Dm4FreezeFrame(void)
    bits of 0x803f5a, the source address, the data pointer 0x802d70 and the status pointer), writes
    each of the 20 entries' length byte 73 and 0xff, and registers
    cm550_j1939HandlePgn65229Dm4FreezeFrame for PGN 65229 (0xFECD) with the request handler registrar
-   at 0x2f47e. The counterpart of CM848's cm848_initPgn65229Dm4Handler (0x25094) (was
+   at 0x2f47e. The counterpart of CM848's cm848_initializePgn65229Dm4Handler (0x25094) (was
    cm550_diagnosticDM4PGN_65229_Builder; PR #53 round 93) */
 
 void cm550_initializePgn65229Dm4Handler(void)
@@ -36609,7 +36680,7 @@ void sendPgn61444ElectronicEngineController1Message(void)
   else {
     j1939_pgn61444_engine_torque_mode_byte = 0xfe;
   }
-  cm550_paramSystemModeController();
+  cm550_parameterSystemModeController();
   j1939_pgn61444_driver_demand_percent_torque = (char)((ushort)_DAT_0080da18 >> 8) + 0x7d;
   cm550_param_lookup_1();
   j1939_pgn61444_actual_engine_percent_torque = (char)((ushort)_DAT_0080da16 >> 8) + 0x7d;
@@ -38215,8 +38286,8 @@ void sendPgn65260VehicleIdentificationMessage(void)
    pointer straight at the VIN text in the EEPROM image (vehicle_vin_string_cal, 0x803e7f, spaces in
    the dump) and status pointer j1939_pgn65260_transmit_status. It registers the sender at 0x34430
    (no function in the project; it sends j1939_pgn65260_tx_message) for PGN 65260 with the request
-   registrar 0x2f47e. Counterpart of cm848_initPgn65260VehicleIdHandler, which copies the VIN into a
-   payload that ends with '*' (data length 21). (was cm550_FUN_00034440; PR #53 round 95) */
+   registrar 0x2f47e. Counterpart of cm848_initializePgn65260VehicleIdHandler, which copies the VIN
+   into a payload that ends with '*' (data length 21). (was cm550_FUN_00034440; PR #53 round 95) */
 
 void cm550_initializePgn65260VehicleIdentificationHandler(void)
 
@@ -38390,10 +38461,12 @@ void cm550_engine_protection_coordinator(void)
 
 
 //
-// Function: cm550_initMultiSystemParameters @ 0x000345c8
+// Function: cm550_initializeMultiSystemParameters @ 0x000345c8
 //
 
-void cm550_initMultiSystemParameters(void)
+/* (was cm550_initMultiSystemParameters; PR #53 round 97) */
+
+void cm550_initializeMultiSystemParameters(void)
 
 {
   cm550_fuelBlendTablePointerSetup();
@@ -38515,12 +38588,13 @@ uint mc68k_initializeSpeedMeasurementMode0(void)
 
 
 //
-// Function: mc68k_timerCaptureHardwareInit @ 0x00034696
+// Function: mc68k_initializeTimerCaptureHardware @ 0x00034696
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was mc68k_timerCaptureHardwareInit; PR #53 round 97) */
 
-uint mc68k_timerCaptureHardwareInit(void)
+uint mc68k_initializeTimerCaptureHardware(void)
 
 {
   word wVar1;

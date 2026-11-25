@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 15:16:11 MST 2026
+// Generated: Wed Nov 25 15:25:37 MST 2026
 
 
 //
@@ -95,7 +95,7 @@ void mpc555_keyOnStateMachine(void)
         mpc555_reset_vector();
         return;
       }
-      mpc555_initDiagnosticSession();
+      mpc555_initializeDiagnosticSession();
     }
   }
   return;
@@ -164,9 +164,9 @@ void cm848_registerBootReflashAndNoOperationServices(void)
 // Function: cm848_sendBootResultToJ1939Requester @ 0x000003ec
 //
 
-/* Boot kernel: sends a reflash result with cm848_sendDiagServiceResponse only when the channel is
-   BOOT_REQUEST_CHANNEL_J1939 - the serial channel answers through its own session state (was
-   cm848_eepromProgressNotify; PR #53 round 67) */
+/* Boot kernel: sends a reflash result with cm848_sendDiagnosticServiceResponse only when the
+   channel is BOOT_REQUEST_CHANNEL_J1939 - the serial channel answers through its own session state
+   (was cm848_eepromProgressNotify; PR #53 round 67) */
 
 void cm848_sendBootResultToJ1939Requester
                (j1939_received_message_t *request,BOOT_REQUEST_CHANNEL channel,
@@ -174,7 +174,7 @@ void cm848_sendBootResultToJ1939Requester
 
 {
   if ((channel != 1) && (channel == BOOT_REQUEST_CHANNEL_J1939)) {
-    cm848_sendDiagServiceResponse(request,result);
+    cm848_sendDiagnosticServiceResponse(request,result);
   }
   return;
 }
@@ -275,7 +275,7 @@ void mpc555_verifyDownloadedCalibration
   }
   if (eeprom_shadow_header.ecm_status == ECM_STATUS_CALIBRATION_DOWNLOADED_NOT_VERIFIED) {
     if (channel == BOOT_REQUEST_CHANNEL_J1939) {
-      cm848_sendDiagResponsePending(request,10);
+      cm848_sendDiagnosticResponsePending(request,10);
     }
     bVar1 = false;
     uVar7 = (checksum_table_descriptor.checksum_table_pointer)->region_count;
@@ -476,7 +476,7 @@ word mpc555_beginReflash(BOOT_REQUEST_CHANNEL channel)
       result_code = 0;
     }
     request = begin_reflash_request;
-    cm848_sendDiagServiceResponse(request,result_code);
+    cm848_sendDiagnosticServiceResponse(request,result_code);
   }
   eeprom_xfer_state.bytes_transferred = 0;
   eeprom_block_tracking.block_count = 0;
@@ -494,9 +494,9 @@ word mpc555_beginReflash(BOOT_REQUEST_CHANNEL channel)
 /* Boot kernel service 2: sends response pending 0x96 / keeps the request in begin_reflash_request /
    mpc555_beginReflash(J1939) answers it - returns FLASH_ERASE_FAILED when an erase failed else 0xff
    (was cm848_handleBootInitializeEepromTransferService; PR #53 round 67) | earlier note: Boot
-   kernel service 2: sends response-pending 0x96 (cm848_sendDiagResponsePending) / keeps the request
-   in begin_reflash_request / starts mpc555_beginReflash(2) - 0x17 when that returns 0 else 0xff
-   (was mpc555_diagServiceInitEepromTransfer; PR #53 round 63) | earlier note: dispatched as
+   kernel service 2: sends response-pending 0x96 (cm848_sendDiagnosticResponsePending) / keeps the
+   request in begin_reflash_request / starts mpc555_beginReflash(2) - 0x17 when that returns 0 else
+   0xff (was mpc555_diagServiceInitEepromTransfer; PR #53 round 63) | earlier note: dispatched as
    diagnostic service 2 via diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) -
    not a dead function */
 
@@ -506,7 +506,7 @@ BOOT_DIAGNOSTIC_RESULT cm848_handleBootBeginReflashService(j1939_received_messag
   word wVar2;
   BOOT_DIAGNOSTIC_RESULT BVar1;
   
-  cm848_sendDiagResponsePending(request,0x96);
+  cm848_sendDiagnosticResponsePending(request,0x96);
   begin_reflash_request = request;
   wVar2 = mpc555_beginReflash(BOOT_REQUEST_CHANNEL_J1939);
   if (wVar2 == 0) {
@@ -751,10 +751,12 @@ void cm848_loadCalibrationFromEeprom(void)
 
 
 //
-// Function: cm848_loadVersionConfigFromEeprom @ 0x00000f74
+// Function: cm848_loadVersionConfigurationFromEeprom @ 0x00000f74
 //
 
-void cm848_loadVersionConfigFromEeprom(void)
+/* (was cm848_loadVersionConfigFromEeprom; PR #53 round 97) */
+
+void cm848_loadVersionConfigurationFromEeprom(void)
 
 {
   mpc555_eepromReadWords(&eeprom_security_key_copy_cal,&eeprom_shadow_header,2);
@@ -791,7 +793,7 @@ void mpc555_bootStateMachine(void)
   else {
     if (wVar1 != 1) {
       if (wVar1 != 3) goto LAB_0000107c;
-      cm848_loadVersionConfigFromEeprom();
+      cm848_loadVersionConfigurationFromEeprom();
     }
     cm848_mainLoopIteration();
   }
@@ -992,12 +994,13 @@ undefined4 cm848_flashWriteBlock(int param_1,int param_2,uint param_3)
 
 
 //
-// Function: mpc555_initHardwareConfig @ 0x00001454
+// Function: mpc555_initializeHardwareConfiguration @ 0x00001454
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was mpc555_initHardwareConfig; PR #53 round 97) */
 
-void mpc555_initHardwareConfig(void)
+void mpc555_initializeHardwareConfiguration(void)
 
 {
   word wVar1;
@@ -1079,13 +1082,14 @@ void mpc555_initHardwareConfig(void)
 
 
 //
-// Function: mpc555_initSystemRegisters @ 0x000016d0
+// Function: mpc555_initializeSystemRegisters @ 0x000016d0
 //
 
 /* WARNING: This function may have set the stack pointer */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was mpc555_initSystemRegisters; PR #53 round 97) */
 
-void mpc555_initSystemRegisters(void)
+void mpc555_initializeSystemRegisters(void)
 
 {
   dword dVar1;
@@ -1123,13 +1127,14 @@ void mpc555_initSystemRegisters(void)
 
 
 //
-// Function: cm848_initClockAndTimers @ 0x000016dc
+// Function: cm848_initializeClockAndTimers @ 0x000016dc
 //
 
 /* WARNING: This function may have set the stack pointer */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was cm848_initClockAndTimers; PR #53 round 97) */
 
-void cm848_initClockAndTimers(void)
+void cm848_initializeClockAndTimers(void)
 
 {
   dword dVar1;
@@ -1208,7 +1213,7 @@ BOOT_DIAGNOSTIC_RESULT cm848_handleBootExecuteAtAddressService(j1939_received_me
     MVar7 = cm848_lookupBootMemoryRegionType((dword)local_20[0],1);
     BVar6 = (BOOT_DIAGNOSTIC_RESULT)MVar7;
     if (MVar7 != MEMORY_REGION_TYPE_UNMAPPED) {
-      cm848_sendDiagServiceResponse(request,0);
+      cm848_sendDiagnosticServiceResponse(request,0);
       wVar4 = mios_mmcsm6.CNT;
       bVar3 = boot_can_ring_state.transmit_ring_full_flag;
       do {
@@ -1271,15 +1276,15 @@ bool cm848_registerPgnResponseHandler(dword pgn,void *handler)
 // Function: cm848_registerBootMemoryWriteServices @ 0x0000198c
 //
 
-/* Boot kernel (reset -> mpc555_initDiagnosticSubsystem): registers the memory write services 0x44 /
-   0x45 / 0x4b / 0x4d with their handlers' RAM-copy addresses 0x3fb368 / 0x3fb3d8 / 0x3fb440 /
-   0x3fb4b8 (ROM 0x5798 / 0x5808 / 0x5870 / 0x58e8 - the cm848_handleBootWrite*Service handlers).
+/* Boot kernel (reset -> mpc555_initializeDiagnosticSubsystem): registers the memory write services
+   0x44 / 0x45 / 0x4b / 0x4d with their handlers' RAM-copy addresses 0x3fb368 / 0x3fb3d8 / 0x3fb440
+   / 0x3fb4b8 (ROM 0x5798 / 0x5808 / 0x5870 / 0x58e8 - the cm848_handleBootWrite*Service handlers).
    The arguments render as application variables because the running application reuses that RAM
    (was cm848_initDataBasedDiagServices; PR #53 round 63) | earlier note: Boot path (reset ->
-   mpc555_initDiagnosticSubsystem): registers boot reflash kernel memory-write services 0x44 / 0x45
-   / 0x4B / 0x4D with handlers at their RAM-copy addresses 0x3fb368 / 0x3fb3d8 / 0x3fb440 / 0x3fb4b8
-   (= ROM 0x5798 / 0x5808 / 0x5870 / 0x58e8). The arguments render as application variables because
-   the running app reuses that RAM */
+   mpc555_initializeDiagnosticSubsystem): registers boot reflash kernel memory-write services 0x44 /
+   0x45 / 0x4B / 0x4D with handlers at their RAM-copy addresses 0x3fb368 / 0x3fb3d8 / 0x3fb440 /
+   0x3fb4b8 (= ROM 0x5798 / 0x5808 / 0x5870 / 0x58e8). The arguments render as application variables
+   because the running app reuses that RAM */
 
 void cm848_registerBootMemoryWriteServices(void)
 
@@ -1584,10 +1589,12 @@ undefined1 cm848_handleBootReadMemoryLongLengthService(j1939_received_message_t 
 
 
 //
-// Function: mpc555_initDiagResponseHandlers @ 0x00001e94
+// Function: mpc555_initializeDiagnosticResponseHandlers @ 0x00001e94
 //
 
-void mpc555_initDiagResponseHandlers(void)
+/* (was mpc555_initDiagResponseHandlers; PR #53 round 97) */
+
+void mpc555_initializeDiagnosticResponseHandlers(void)
 
 {
   boot_j1939_transport_transmit_session.transmit_frame_pointer =
@@ -1602,10 +1609,12 @@ void mpc555_initDiagResponseHandlers(void)
 
 
 //
-// Function: cm848_diagSendResponseCode @ 0x00001ef8
+// Function: cm848_sendDiagnosticResponseCode @ 0x00001ef8
 //
 
-void cm848_diagSendResponseCode(byte response_code,dword negative_response_id)
+/* (was cm848_diagSendResponseCode; PR #53 round 97) */
+
+void cm848_sendDiagnosticResponseCode(byte response_code,dword negative_response_id)
 
 {
   if (negative_response_id == 0x51) {
@@ -1667,7 +1676,7 @@ void mpc555_processDiagnosticAndEepromRequests(void)
       }
     }
     else if (eeprom_diag_state == EEPROM_DIAGNOSTIC_TRANSFER_BLOCK) {
-      mpc555_diagServiceTransferBlock();
+      mpc555_diagnosticServiceTransferBlock();
     }
     else {
       if (eeprom_diag_state != EEPROM_DIAGNOSTIC_WRITE_DISPATCH) {
@@ -1681,7 +1690,7 @@ LAB_0000208c:
   else {
     diagnostic_response_code = 0x11;
 LAB_00002098:
-    cm848_diagSendResponseCode(diagnostic_response_code,0x7f);
+    cm848_sendDiagnosticResponseCode(diagnostic_response_code,0x7f);
   }
   diag_request_pending_flag = '\0';
 LAB_000020ac:
@@ -1708,10 +1717,12 @@ LAB_000020ac:
 
 
 //
-// Function: cm848_initDiagnosticCallback @ 0x00002148
+// Function: cm848_initializeDiagnosticCallback @ 0x00002148
 //
 
-void cm848_initDiagnosticCallback(void)
+/* (was cm848_initDiagnosticCallback; PR #53 round 97) */
+
+void cm848_initializeDiagnosticCallback(void)
 
 {
   diagnostic_callback_ptr = mpc555_processDiagnosticAndEepromRequests;
@@ -1732,7 +1743,7 @@ void cm848_processDiagnosticTimeout(void)
   if ((immobilizer_present_flag._0_1_ != '\0') &&
      (immobilizer_present_flag._0_1_ = immobilizer_present_flag._0_1_ + -1,
      immobilizer_present_flag._0_1_ == '\0')) {
-    cm848_diagSendResponseCode(2,0x51);
+    cm848_sendDiagnosticResponseCode(2,0x51);
   }
   return;
 }
@@ -1753,15 +1764,16 @@ void cm848_setDataTransferMode(void)
 
 
 //
-// Function: mpc555_initDiagnosticSession @ 0x000021d0
+// Function: mpc555_initializeDiagnosticSession @ 0x000021d0
 //
 
 /* Starts the boot SCI session. boot_serial_reflash_unlock_request 0 (the normal path): installs the
    boot SCI dispatcher at the normal baud rate (SCC1R0 0xa0), locked (boot_sci_security_state 0).
    Set (the application's SCI command 49 hand-off): clears EEPROM 0x56 and starts unlocked
-   (boot_sci_security_state 1, session_flags bit 0, transfer phase 2) at high speed (SCC1R0 0x14) */
+   (boot_sci_security_state 1, session_flags bit 0, transfer phase 2) at high speed (SCC1R0 0x14)
+   (was mpc555_initDiagnosticSession; PR #53 round 97) */
 
-void mpc555_initDiagnosticSession(void)
+void mpc555_initializeDiagnosticSession(void)
 
 {
   word local_8 [4];
@@ -1786,7 +1798,7 @@ void mpc555_initDiagnosticSession(void)
     boot_sci_session_state.session_flags = boot_sci_session_state.session_flags | 1;
     boot_sci_security_state = 1;
     diag_serial_transfer_phase = 2;
-    cm848_initDiagnosticCallback();
+    cm848_initializeDiagnosticCallback();
     boot_sci_session_state.response_write_index = 0;
     boot_sci_session_state.response_cursor_pointer = diag_serial_buffer;
     qsmcm_sci1.SCC1R0 = 0x14;
@@ -1883,7 +1895,7 @@ void cm848_busyWaitDelay(int pass_count)
    fourth sample sets up the QADC-B pair but reads the QADC-A port. mpc555_hardwareInitialization
    stores the result in boot_mode_strap_pins_high: when it is 1 (or the EEPROM magic is not 0x600d)
    the ECM enters the boot service loop (mpc555_systemInitialization never returns) instead of
-   starting the application - and cm848_initSupervisorWatchdog then sends the unarmed 0x1400
+   starting the application - and cm848_initializeSupervisorWatchdog then sends the unarmed 0x1400
    command. Which connector pins these are is a wiring / bench question. Was
    mpc555_checkBusHardwareStatus: no bus is involved | review-function-readability reviewed
    2026-11-13 - Readability Medium Accuracy Confidence Medium */
@@ -1936,10 +1948,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
    ignition key line - 1 = key on; the same bit cm848_readDiscreteInputLine reads as line 128 and
    mpc555_keyOnStateMachine tests) every 2 cm848_busyWaitDelay passes and returns once 5 consecutive
    samples read 1; any 0 restarts the count - so it never returns while the key is off. Called by
-   mpc555_reset_vector / mpc555_initSystemRegisters / cm848_initClockAndTimers right after they
-   write 3 (MDASM mode 3 = input capture) to that register. Was cm848_waitForBusStable: no bus is
-   involved | review-function-readability reviewed 2026-11-13 - Readability High Accuracy Confidence
-   High */
+   mpc555_reset_vector / mpc555_initializeSystemRegisters / cm848_initializeClockAndTimers right
+   after they write 3 (MDASM mode 3 = input capture) to that register. Was cm848_waitForBusStable:
+   no bus is involved | review-function-readability reviewed 2026-11-13 - Readability High Accuracy
+   Confidence High */
 
 void cm848_waitForStableIgnitionKeyOn(void)
 
@@ -1980,7 +1992,7 @@ void mpc555_systemInitialization(void)
   dVar1 = USIU_SIUMCR;
   USIU_SIUMCR = dVar1 | 0x10000;
   cm848_copyBootKernelToRam(in_BAR | 7);
-  cm848_initSupervisorWatchdog();
+  cm848_initializeSupervisorWatchdog();
   cm848_stubFunction1();
   dVar1 = ecu_power_state_flags.capability_flags;
   ecu_power_state_flags.capability_flags = dVar1 | 2;
@@ -1991,7 +2003,7 @@ void mpc555_systemInitialization(void)
   mios_mpwmsm1.SCR = 0x4000;
   cm848_generateCrcTable();
   cm848_stubFunction2();
-  mpc555_initCanController();
+  mpc555_initializeCanController();
   ecu_power_state_flags.state = 0;
   system_initialization_flags.initialization_sentinel = 0xbbbb;
   system_initialization_flags.initialization_counter = 0;
@@ -2001,8 +2013,8 @@ void mpc555_systemInitialization(void)
   mpc555_eepromWriteWords(0x3fee16,&eeprom_security_key_copy_cal,2);
   eeprom_xfer_state.eeprom_write_callback = 0xbec;
   mpc555_eepromReadWords(&serial_reflash_unlock_request_cal,&boot_serial_reflash_unlock_request,2);
-  mpc555_initDiagnosticSession();
-  mpc555_initHardwareConfig();
+  mpc555_initializeDiagnosticSession();
+  mpc555_initializeHardwareConfiguration();
   do {
     mpc555_sciDispatchByTransferPhase();
     cm848_runFlashProgramStateMachine();
@@ -2010,7 +2022,7 @@ void mpc555_systemInitialization(void)
     if (((bVar2 & 0xf) != 0) && (eeprom_shadow_header.ecm_status == ECM_STATUS_REFLASH_IN_PROGRESS))
     {
       cm848_runBootKernelLoop();
-      mpc555_initHardwareConfig();
+      mpc555_initializeHardwareConfiguration();
     }
     cm848_serviceSupervisorWatchdog();
     mpc555_can2TransmitInterruptHandler();
@@ -2086,7 +2098,7 @@ void mpc555_hardwareInitialization(void)
   tpu_a.CIER = 0;
   tpu_b.CIER = 0;
   cm848_clearRamRegions();
-  mpc555_initQspiRegisters();
+  mpc555_initializeQspiRegisters();
   mpc555_eepromReadWords(0x1000000,0x3fee0a,2);
                     /* WARNING: Read-only address (ram,0x00500aaa) is written */
                     /* WARNING: Read-only address (ram,0x00500554) is written */
@@ -2124,10 +2136,12 @@ LAB_0000291c:
 
 
 //
-// Function: mpc555_initCanController @ 0x00002970
+// Function: mpc555_initializeCanController @ 0x00002970
 //
 
-void mpc555_initCanController(void)
+/* (was mpc555_initCanController; PR #53 round 97) */
+
+void mpc555_initializeCanController(void)
 
 {
   word wVar1;
@@ -2153,20 +2167,20 @@ void mpc555_initCanController(void)
     bVar3 = bVar3 + 1;
   } while (bVar3 < 0x10);
   toucan_a.MCR = 0;
-  mpc555_initDiagnosticSubsystem();
+  mpc555_initializeDiagnosticSubsystem();
   return;
 }
 
 
 
 //
-// Function: mpc555_initDiagnosticSubsystem @ 0x00002a40
+// Function: mpc555_initializeDiagnosticSubsystem @ 0x00002a40
 //
 
 /* registers every diagnostic_service_dispatch_table entry at boot (services 2 7 11 16 24 25 65 67
-   68 69 74 75 76 77) */
+   68 69 74 75 76 77) (was mpc555_initDiagnosticSubsystem; PR #53 round 97) */
 
-void mpc555_initDiagnosticSubsystem(void)
+void mpc555_initializeDiagnosticSubsystem(void)
 
 {
   undefined *puVar1;
@@ -2181,7 +2195,7 @@ void mpc555_initDiagnosticSubsystem(void)
   boot_can_ring_state.transmit_write_pointer = boot_can_transmit_ring;
   boot_can_ring_state.receive_read_pointer = boot_can_receive_ring;
   boot_can_ring_state.receive_write_pointer = boot_can_receive_ring;
-  uVar7 = mpc555_initDiagResponseHandlers();
+  uVar7 = mpc555_initializeDiagnosticResponseHandlers();
   cm848_registerPgnEf00Handler((byte)((uint5)uVar7 >> 0x20),(void *)uVar7);
   cm848_registerBootMemoryReadServices();
   cm848_registerBootGetAddressByParameterIdService();
@@ -2415,9 +2429,9 @@ void cm848_dispatchBootSciDiagnosticCommand(void)
 //
 
 /* installs cm848_dispatchBootSciCommand as the current and default diagnostic_callback_ptr state
-   via cm848_saveDefaultDiagnosticHandler - called from mpc555_initDiagnosticSession on the normal
-   boot path (serial_reflash_unlock_request 0) - NOT a scheduler (was cm848_initSchedulerCallback) |
-   registration-table-sweep reviewed 2026-11-13 */
+   via cm848_saveDefaultDiagnosticHandler - called from mpc555_initializeDiagnosticSession on the
+   normal boot path (serial_reflash_unlock_request 0) - NOT a scheduler (was
+   cm848_initSchedulerCallback) | registration-table-sweep reviewed 2026-11-13 */
 
 void cm848_installBootSciDispatcher(void)
 
@@ -2605,14 +2619,14 @@ void mpc555_sciEnableTransmitInterrupt(void)
 
 
 //
-// Function: cm848_initDiagnosticResponseCallback @ 0x0000323c
+// Function: cm848_initializeDiagnosticResponseCallback @ 0x0000323c
 //
 
 /* boot SCI command 0x2a handler via dispatch table ROM 0x7f7a (cm848_dispatchBootSciCommand) - arms
    cm848_processDiagnosticResponseCallback to read an EEPROM parameter - reached only by pointer not
-   dead */
+   dead (was cm848_initDiagnosticResponseCallback; PR #53 round 97) */
 
-void cm848_initDiagnosticResponseCallback(void)
+void cm848_initializeDiagnosticResponseCallback(void)
 
 {
   diagnostic_callback_ptr = cm848_processDiagnosticResponseCallback;
@@ -2626,7 +2640,7 @@ void cm848_initDiagnosticResponseCallback(void)
 // Function: cm848_processDiagnosticResponseCallback @ 0x0000326c
 //
 
-/* boot SCI command 0x2a continuation - installed by cm848_initDiagnosticResponseCallback via
+/* boot SCI command 0x2a continuation - installed by cm848_initializeDiagnosticResponseCallback via
    diagnostic_callback_ptr - appends the EEPROM parameter value (cm848_lookupEepromParameterAddress)
    to the response - reached only by pointer not dead */
 
@@ -2692,14 +2706,14 @@ void mpc555_generateSerialChallenge(void)
 
 
 //
-// Function: cm848_initDiagnosticRequestHandler @ 0x000033a4
+// Function: cm848_initializeDiagnosticRequestHandler @ 0x000033a4
 //
 
 /* boot SCI command 0x2c handler via dispatch table ROM 0x7f7a (cm848_dispatchBootSciCommand) - arms
    cm848_bootSciCheckSecurityKey to collect and verify a 2-byte key plus checksum - reached only by
-   pointer not dead */
+   pointer not dead (was cm848_initDiagnosticRequestHandler; PR #53 round 97) */
 
-void cm848_initDiagnosticRequestHandler(void)
+void cm848_initializeDiagnosticRequestHandler(void)
 
 {
   oil_change_monitor_distance_pulses_cal._0_1_ = 0;
@@ -2729,7 +2743,7 @@ void cm848_decrementDiagnosticTimeout(void)
 // Function: cm848_bootSciCheckSecurityKey @ 0x00003408
 //
 
-/* Boot SCI command 0x2c continuation (installed by cm848_initDiagnosticRequestHandler via
+/* Boot SCI command 0x2c continuation (installed by cm848_initializeDiagnosticRequestHandler via
    diagnostic_callback_ptr; reached only by pointer, not dead). It collects two key bytes and a
    checksum byte (key bytes + 0x2c) and answers: 0 = unlocked (already, or the key matched in
    cm848_verifySerialResponse -> boot_sci_security_state 1); 1 = wrong key
@@ -2802,14 +2816,14 @@ void cm848_bootSciCheckSecurityKey(void)
 
 
 //
-// Function: cm848_initDiagnosticSessionHandler @ 0x000035e4
+// Function: cm848_initializeDiagnosticSessionHandler @ 0x000035e4
 //
 
 /* boot SCI command 0x31 handler via dispatch table ROM 0x7f7a (cm848_dispatchBootSciCommand) - arms
    cm848_processDiagnosticSessionFlags to confirm the diagnostic session - reached only by pointer
-   not dead */
+   not dead (was cm848_initDiagnosticSessionHandler; PR #53 round 97) */
 
-void cm848_initDiagnosticSessionHandler(void)
+void cm848_initializeDiagnosticSessionHandler(void)
 
 {
   diagnostic_callback_ptr = cm848_processDiagnosticSessionFlags;
@@ -2823,7 +2837,7 @@ void cm848_initDiagnosticSessionHandler(void)
 // Function: cm848_processDiagnosticSessionFlags @ 0x00003614
 //
 
-/* boot SCI command 0x31 continuation - installed by cm848_initDiagnosticSessionHandler via
+/* boot SCI command 0x31 continuation - installed by cm848_initializeDiagnosticSessionHandler via
    diagnostic_callback_ptr - sets session_flags bits 0-1 when the confirm byte is 1 and
    boot_sci_security_state is 1 (unlocked) - reached only by pointer not dead */
 
@@ -2909,7 +2923,7 @@ void cm848_beginSerialReflash(void)
   ushort local_8 [2];
   
   serial_reflash_busy_flag = 1;
-  cm848_diagSendResponseCode(0x78,0x74);
+  cm848_sendDiagnosticResponseCode(0x78,0x74);
   while (diag_serial_transfer_phase == 3) {
     mpc555_sciPollDuringEepromWrite();
     cm848_serviceSupervisorWatchdog();
@@ -2946,7 +2960,7 @@ void cm848_finishSerialReflash(void)
   uVar2 = 0;
   serial_reflash_busy_flag = 1;
   if (eeprom_shadow_header.ecm_status == ECM_STATUS_REFLASH_IN_PROGRESS) {
-    cm848_diagSendResponseCode(0x78,0x74);
+    cm848_sendDiagnosticResponseCode(0x78,0x74);
     while (diag_serial_transfer_phase == 3) {
       mpc555_sciPollDuringEepromWrite();
       cm848_serviceSupervisorWatchdog();
@@ -2965,7 +2979,7 @@ void cm848_finishSerialReflash(void)
     mpc555_verifyDownloadedCalibration((j1939_received_message_t *)0x0,BOOT_REQUEST_CHANNEL_SERIAL);
   }
   else {
-    cm848_diagSendResponseCode(0x40,0x7f);
+    cm848_sendDiagnosticResponseCode(0x40,0x7f);
   }
   return;
 }
@@ -2994,7 +3008,7 @@ void cm848_dispatchSerialReflashRequest(void)
     cm848_finishSerialReflash();
   }
   else {
-    cm848_diagSendResponseCode(0x12,0x7f);
+    cm848_sendDiagnosticResponseCode(0x12,0x7f);
   }
   return;
 }
@@ -3002,12 +3016,13 @@ void cm848_dispatchSerialReflashRequest(void)
 
 
 //
-// Function: mpc555_diagServiceTransferBlock @ 0x00003948
+// Function: mpc555_diagnosticServiceTransferBlock @ 0x00003948
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (was mpc555_diagServiceTransferBlock; PR #53 round 97) */
 
-void mpc555_diagServiceTransferBlock(void)
+void mpc555_diagnosticServiceTransferBlock(void)
 
 {
   word wVar1;
@@ -3016,7 +3031,7 @@ void mpc555_diagServiceTransferBlock(void)
   byte response_code;
   
   if (serial_reflash_busy_flag != 0) {
-    cm848_diagSendResponseCode(0x78,0x74);
+    cm848_sendDiagnosticResponseCode(0x78,0x74);
     return;
   }
   dVar2 = eeprom_xfer_state.bytes_transferred;
@@ -3024,12 +3039,12 @@ void mpc555_diagServiceTransferBlock(void)
   if (dVar2 == dVar3) {
     wVar1 = ecu_power_state_flags.transfer_crc;
     if (wVar1 != _eeprom_write_request_type) {
-      cm848_diagSendResponseCode(0x77,0x7f);
+      cm848_sendDiagnosticResponseCode(0x77,0x7f);
       return;
     }
     wVar1 = eeprom_block_tracking.block_count;
     if (wVar1 < 10) {
-      cm848_diagSendResponseCode(0x61,0x74);
+      cm848_sendDiagnosticResponseCode(0x61,0x74);
       dVar3 = eeprom_block_tracking.block_start_address;
       wVar1 = eeprom_block_tracking.block_count;
       download_block_list[wVar1].start_address = dVar3;
@@ -3045,7 +3060,7 @@ void mpc555_diagServiceTransferBlock(void)
   else {
     response_code = 0x40;
   }
-  cm848_diagSendResponseCode(response_code,0x7f);
+  cm848_sendDiagnosticResponseCode(response_code,0x7f);
   return;
 }
 
@@ -3135,10 +3150,12 @@ void cm848_saveDefaultDiagnosticHandler(void)
 
 
 //
-// Function: mpc555_initQspiRegisters @ 0x00003b6c
+// Function: mpc555_initializeQspiRegisters @ 0x00003b6c
 //
 
-void mpc555_initQspiRegisters(void)
+/* (was mpc555_initQspiRegisters; PR #53 round 97) */
+
+void mpc555_initializeQspiRegisters(void)
 
 {
   word wVar1;
@@ -3166,9 +3183,10 @@ void mpc555_initQspiRegisters(void)
 // Function: cm848_getDiagnosticResponseEchoLength @ 0x00003d54
 //
 
-/* Boot reflash kernel: number of request bytes cm848_sendDiagServiceResponse echoes back: services
-   4/5 -> 3 / 25 -> 5 / 65..78 -> table at ROM 0x3c30 / else 1 (was getDiagnosticServicePriority) |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+/* Boot reflash kernel: number of request bytes cm848_sendDiagnosticServiceResponse echoes back:
+   services 4/5 -> 3 / 25 -> 5 / 65..78 -> table at ROM 0x3c30 / else 1 (was
+   getDiagnosticServicePriority) | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence High */
 
 undefined1 cm848_getDiagnosticResponseEchoLength(int param_1)
 
@@ -3267,7 +3285,7 @@ void mpc555_canTransmitQueuePush(dword can_id,dword data_length,byte *data,byte 
       }
       else {
         wVar5 = can_mailbox_counter.slot_start;
-        cm848_writeBootKernelCanTxMailbox(&toucan_a,wVar5 & 0xff,(word *)&local_28);
+        cm848_writeBootKernelCanTransmitMailbox(&toucan_a,wVar5 & 0xff,(word *)&local_28);
       }
       bVar10 = 0;
     }
@@ -3454,15 +3472,15 @@ void cm848_fillFlashProgramPageBuffer(void)
 
 
 //
-// Function: cm848_completePendingDiagWrite @ 0x000042b0
+// Function: cm848_completePendingDiagnosticWrite @ 0x000042b0
 //
 
 /* Boot reflash kernel: when the pending flash/EEPROM write finishes (data_transfer_state 1) sends
    the deferred positive response for diag_write_request_state.pending_request; state 2 clears
    serial_reflash_busy_flag | review-function-readability reviewed 2026-11-11 - Readability Medium
-   Accuracy Confidence Medium */
+   Accuracy Confidence Medium (was cm848_completePendingDiagWrite; PR #53 round 97) */
 
-void cm848_completePendingDiagWrite(void)
+void cm848_completePendingDiagnosticWrite(void)
 
 {
   j1939_received_message_t *request;
@@ -3473,7 +3491,7 @@ void cm848_completePendingDiagWrite(void)
   else if ((reflash_transfer_state.pending_write_transport == 1) &&
           (request = (j1939_received_message_t *)diag_write_request_state.pending_request,
           request != (j1939_received_message_t *)0x0)) {
-    cm848_sendDiagServiceResponse(request,0);
+    cm848_sendDiagnosticServiceResponse(request,0);
   }
   reflash_transfer_state.pending_write_transport = 0;
   return;
@@ -3690,7 +3708,7 @@ void mpc555_cmfEndHighVoltagePulse(void)
 
 /* Boot reflash kernel: flash program/erase state machine on data_transfer_state.status: 1 wait HVS
    + verify (re-pulse on failure) / 2 restore normal mode / 3 fill page / 4 select block + load page
-   + pulse / 5 finish then cm848_completePendingDiagWrite. Never touches CAN (was
+   + pulse / 5 finish then cm848_completePendingDiagnosticWrite. Never touches CAN (was
    initCanMailboxFilters) | review-function-readability reviewed 2026-11-11 - Readability Medium
    Accuracy Confidence High */
 
@@ -3726,7 +3744,7 @@ void cm848_runFlashProgramStateMachine(void)
         mpc555_cmfEndHighVoltagePulse();
         if ((data_transfer_active_flag != 0) && (reflash_transfer_state.byte_count == 0)) {
           if (reflash_transfer_state.pending_write_transport != 0) {
-            cm848_completePendingDiagWrite();
+            cm848_completePendingDiagnosticWrite();
             data_transfer_buffer_status = 0;
           }
           mpc555_cmfEndHighVoltagePulse();
@@ -3762,7 +3780,7 @@ LAB_00004854:
          (reflash_transfer_state.largest_write_length < reflash_transfer_state.byte_count))
       goto LAB_000049a0;
 LAB_00004928:
-      cm848_completePendingDiagWrite();
+      cm848_completePendingDiagnosticWrite();
       data_transfer_buffer_status = 1;
       goto LAB_000049a0;
     }
@@ -3771,7 +3789,7 @@ LAB_00004928:
       *(uint *)cmf_active_control_register = *(uint *)cmf_active_control_register & 0xfffffffe;
       mpc555_cmfEndHighVoltagePulse();
       reflash_transfer_state.buffer_write_enabled_flag = 0;
-      cm848_completePendingDiagWrite();
+      cm848_completePendingDiagnosticWrite();
 LAB_0000497c:
       reflash_transfer_state.flash_program_step = 2;
       bVar1 = eeprom_service_mode_flags;
@@ -3985,16 +4003,17 @@ void cm848_can2MailboxTransmitRangeWrapper(void)
 
 
 //
-// Function: cm848_writeBootKernelCanTxMailbox @ 0x00004f2c
+// Function: cm848_writeBootKernelCanTransmitMailbox @ 0x00004f2c
 //
 
-/* The boot kernel's copy (ROM 0x3C30-0x7F60 image) of cm848_writeCanControllerTxMailbox, byte for
-   byte: copies the ID and 8 data bytes (6 halfwords) into TouCAN A message buffer (number - 1) and
-   writes 0xC8 (transmit once, length 8) to its control byte. Called by mpc555_canTransmitQueuePush
-   and mpc555_manageCan1TransmitBuffer. The old 'Can2' was not a second controller (was
-   cm848_writeCan2ControllerTxMailbox) */
+/* The boot kernel's copy (ROM 0x3C30-0x7F60 image) of cm848_writeCanControllerTransmitMailbox, byte
+   for byte: copies the ID and 8 data bytes (6 halfwords) into TouCAN A message buffer (number - 1)
+   and writes 0xC8 (transmit once, length 8) to its control byte. Called by
+   mpc555_canTransmitQueuePush and mpc555_manageCan1TransmitBuffer. The old 'Can2' was not a second
+   controller (was cm848_writeCan2ControllerTxMailbox) (was cm848_writeBootKernelCanTxMailbox; PR
+   #53 round 97) */
 
-void cm848_writeBootKernelCanTxMailbox(int can_module,dword mailbox_number,word *frame_words)
+void cm848_writeBootKernelCanTransmitMailbox(int can_module,dword mailbox_number,word *frame_words)
 
 {
   word *pwVar1;
@@ -4096,7 +4115,7 @@ void mpc555_manageCan1TransmitBuffer(void)
   }
   else {
     wVar4 = can_mailbox_counter.slot_start;
-    cm848_writeBootKernelCanTxMailbox(&toucan_a,wVar4 & 0xff,(word *)frame_words);
+    cm848_writeBootKernelCanTransmitMailbox(&toucan_a,wVar4 & 0xff,(word *)frame_words);
     boot_can_ring_state.transmit_ring_full_flag = 0;
     pbVar1 = boot_can_ring_state.transmit_read_pointer;
     boot_can_ring_state.transmit_read_pointer = pbVar1 + 1;
@@ -4330,7 +4349,7 @@ byte cm848_writeBootDiagnosticMemory(j1939_received_message_t *request,dword add
          bVar9 != 0xff)) {
         return bVar9;
       }
-      cm848_sendDiagResponsePending(request,10);
+      cm848_sendDiagnosticResponsePending(request,10);
       pcVar4 = (code *)eeprom_xfer_state.eeprom_write_callback;
       (*pcVar4)(data,address,local_20[0]);
       return 0;
@@ -4350,7 +4369,7 @@ byte cm848_writeBootDiagnosticMemory(j1939_received_message_t *request,dword add
     if (cVar8 == '\0') {
       return 0;
     }
-    cm848_sendDiagResponsePending(request,10);
+    cm848_sendDiagnosticResponsePending(request,10);
     diag_write_request_state.pending_request = (dword)request;
     return 0xff;
   }
@@ -5875,7 +5894,7 @@ void cm848_dispatchDiagnosticService(j1939_received_message_t *request)
     }
   }
   if (result_code != 0xff) {
-    cm848_sendDiagServiceResponse(request,result_code);
+    cm848_sendDiagnosticServiceResponse(request,result_code);
   }
   return;
 }
@@ -6213,15 +6232,15 @@ undefined4 cm848_validateBootSecurityKey(undefined4 scrambled_token)
 
 
 //
-// Function: cm848_sendDiagServiceResponse @ 0x000074a0
+// Function: cm848_sendDiagnosticServiceResponse @ 0x000074a0
 //
 
 /* Boot reflash kernel: sends the J1939 PGN 61184 diagnostic response to the requester: result 0 ->
    0x0C positive / 0xFE -> 0x0E pending + wait time / else 0x0D + code; echoes the request service
    bytes | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence
-   High */
+   High (was cm848_sendDiagServiceResponse; PR #53 round 97) */
 
-void cm848_sendDiagServiceResponse(j1939_received_message_t *request,dword result_code)
+void cm848_sendDiagnosticServiceResponse(j1939_received_message_t *request,dword result_code)
 
 {
   byte bVar1;
@@ -6286,17 +6305,18 @@ LAB_000074f8:
 
 
 //
-// Function: cm848_sendDiagResponsePending @ 0x000075dc
+// Function: cm848_sendDiagnosticResponsePending @ 0x000075dc
 //
 
 /* Boot reflash kernel: stores the wait time and sends a 0x0E response-pending for the request |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+   (was cm848_sendDiagResponsePending; PR #53 round 97) */
 
-void cm848_sendDiagResponsePending(j1939_received_message_t *param_1,word param_2)
+void cm848_sendDiagnosticResponsePending(j1939_received_message_t *param_1,word param_2)
 
 {
   boot_state_machine.boot_parameter = param_2;
-  cm848_sendDiagServiceResponse(param_1,0xfe);
+  cm848_sendDiagnosticServiceResponse(param_1,0xfe);
   return;
 }
 
@@ -6610,15 +6630,16 @@ void cm848_serviceSupervisorWatchdog(void)
 
 
 //
-// Function: cm848_initSupervisorWatchdog @ 0x00007b08
+// Function: cm848_initializeSupervisorWatchdog @ 0x00007b08
 //
 
 /* Boot reflash kernel: first call after the kernel copy: configures the supervisor watchdog over
    QSPI and answers questions until its error counter is 0; arms it (0x1440) only when no debugger
    is attached (DER at reset value) (was initQspiHardware) | review-function-readability reviewed
-   2026-11-11 - Readability Medium Accuracy Confidence High */
+   2026-11-11 - Readability Medium Accuracy Confidence High (was cm848_initSupervisorWatchdog; PR
+   #53 round 97) */
 
-void cm848_initSupervisorWatchdog(void)
+void cm848_initializeSupervisorWatchdog(void)
 
 {
   ushort uVar1;
@@ -8056,7 +8077,7 @@ void executiveFrameInterruptHandler(void)
     cm848_runEvery8FramesTaskSetPhase3();
     cm848_runEvery10FramesTaskSetPhase1();
     cm848_runEvery20FramesTaskSetPhase11();
-    cm848_initColdStartTablePointers();
+    cm848_initializeColdStartTablePointers();
     executive_frame_phase = 0xc;
     break;
   case 0xc:
@@ -8354,10 +8375,12 @@ void executiveFrameInterruptHandler(void)
 
 
 //
-// Function: cm848_initSensorDefaults @ 0x0000c874
+// Function: cm848_initializeSensorDefaults @ 0x0000c874
 //
 
-void cm848_initSensorDefaults(void)
+/* (was cm848_initSensorDefaults; PR #53 round 97) */
+
+void cm848_initializeSensorDefaults(void)
 
 {
   throttle_valve_actuator_position_sensor_fault_status = 10;
@@ -9343,10 +9366,12 @@ void cm848_calculateAirFuelControlFuelLimit(void)
 
 
 //
-// Function: cm848_initFuelTableSizes @ 0x0000e09c
+// Function: cm848_initializeFuelTableSizes @ 0x0000e09c
 //
 
-void cm848_initFuelTableSizes(void)
+/* (was cm848_initFuelTableSizes; PR #53 round 97) */
+
+void cm848_initializeFuelTableSizes(void)
 
 {
   air_fuel_control_fuel_limit_cached_axis_offsets[0] = 2;
@@ -9837,10 +9862,12 @@ void cm848_temperatureBasedFuelTrim(void)
 
 
 //
-// Function: cm848_initTemperatureTrimTableSizes @ 0x0000e8ac
+// Function: cm848_initializeTemperatureTrimTableSizes @ 0x0000e8ac
 //
 
-void cm848_initTemperatureTrimTableSizes(void)
+/* (was cm848_initTemperatureTrimTableSizes; PR #53 round 97) */
+
+void cm848_initializeTemperatureTrimTableSizes(void)
 
 {
   fuel_blend_coefficient_by_barometric_pressure_cached_axis_offset = 2;
@@ -10662,10 +10689,12 @@ void cm848_calculateAllSpeedGovernorNoLoadFuel(void)
 
 
 //
-// Function: cm848_initFuelTimingTableSizes @ 0x0000fe3c
+// Function: cm848_initializeFuelTimingTableSizes @ 0x0000fe3c
 //
 
-void cm848_initFuelTimingTableSizes(void)
+/* (was cm848_initFuelTimingTableSizes; PR #53 round 97) */
+
+void cm848_initializeFuelTimingTableSizes(void)
 
 {
   all_speed_governor_friction_fuel_blend_128_cached_axis_offset = 2;
@@ -10849,10 +10878,12 @@ void cm848_selectVariableSpeedGovernorMode(int previous_engine_operating_mode)
 
 
 //
-// Function: cm848_initLookupTableParams @ 0x00010248
+// Function: cm848_initializeLookupTableParameters @ 0x00010248
 //
 
-void cm848_initLookupTableParams(void)
+/* (was cm848_initLookupTableParams; PR #53 round 97) */
+
+void cm848_initializeLookupTableParameters(void)
 
 {
   unused_lookup_cached_axis_offset_1 = 2;
@@ -16503,10 +16534,12 @@ void cm848_selectCompressorOutletTemperature(void)
 
 
 //
-// Function: mpc555_initFuelFlowRateVariables @ 0x00017e54
+// Function: mpc555_initializeFuelFlowRateVariables @ 0x00017e54
 //
 
-void mpc555_initFuelFlowRateVariables(void)
+/* (was mpc555_initFuelFlowRateVariables; PR #53 round 97) */
+
+void mpc555_initializeFuelFlowRateVariables(void)
 
 {
   compressor_inlet_temperature_square_root_cached_axis_offset = 2;
@@ -19501,10 +19534,12 @@ void cm848_calculateColdStartRpmAdjust(void)
 
 
 //
-// Function: cm848_calculateColdStartTempTable @ 0x0001bc30
+// Function: cm848_calculateColdStartTemperatureTable @ 0x0001bc30
 //
 
-void cm848_calculateColdStartTempTable(void)
+/* (was cm848_calculateColdStartTempTable; PR #53 round 97) */
+
+void cm848_calculateColdStartTemperatureTable(void)
 
 {
   word wVar1;
@@ -19634,7 +19669,7 @@ void cm848_processColdStartAdjustment(void)
   if (((engine_state_prev_adjust == ENGINE_STATE_STOPPED) && (engine_state == ENGINE_STATE_CRANKING)
       ) || ((engine_state_prev_adjust == ENGINE_STATE_RUNNING &&
             (engine_state == ENGINE_STATE_REENTRY)))) {
-    cm848_calculateColdStartTempTable();
+    cm848_calculateColdStartTemperatureTable();
     cm848_calculateCrankInitialAdvanceByIntakeManifoldTemperature();
     cm848_selectColdStartRpmLimit();
   }
@@ -19646,10 +19681,12 @@ void cm848_processColdStartAdjustment(void)
 
 
 //
-// Function: cm848_initColdStartTablePointers @ 0x0001bfc8
+// Function: cm848_initializeColdStartTablePointers @ 0x0001bfc8
 //
 
-void cm848_initColdStartTablePointers(void)
+/* (was cm848_initColdStartTablePointers; PR #53 round 97) */
+
+void cm848_initializeColdStartTablePointers(void)
 
 {
   word wVar1;
@@ -20729,13 +20766,15 @@ void diagnosticMainStateProcessor(void)
 
 
 //
-// Function: cm848_initDiagnosticRingBuffer @ 0x0001dcdc
+// Function: cm848_initializeDiagnosticRingBuffer @ 0x0001dcdc
 //
 
-void cm848_initDiagnosticRingBuffer(void)
+/* (was cm848_initDiagnosticRingBuffer; PR #53 round 97) */
+
+void cm848_initializeDiagnosticRingBuffer(void)
 
 {
-  cm848_ringBufferInit(&fault_spn_ring_buffer,&fault_spn_ring_buffer_data,10);
+  cm848_initializeRingBuffer(&fault_spn_ring_buffer,&fault_spn_ring_buffer_data,10);
   return;
 }
 
@@ -21187,10 +21226,12 @@ LAB_0001e768:
 
 
 //
-// Function: cm848_initEngineOperatingState @ 0x0001e810
+// Function: cm848_initializeEngineOperatingState @ 0x0001e810
 //
 
-void cm848_initEngineOperatingState(void)
+/* (was cm848_initEngineOperatingState; PR #53 round 97) */
+
+void cm848_initializeEngineOperatingState(void)
 
 {
   if (engine_operating_mode == FUELING_STATE_NOT_SELECTED) {
@@ -21586,10 +21627,12 @@ LAB_0001eef4:
 
 
 //
-// Function: cm848_initFuelDemandTracking @ 0x0001ef30
+// Function: cm848_initializeFuelDemandTracking @ 0x0001ef30
 //
 
-void cm848_initFuelDemandTracking(void)
+/* (was cm848_initFuelDemandTracking; PR #53 round 97) */
+
+void cm848_initializeFuelDemandTracking(void)
 
 {
   four_dimensional_fueling_interpolation_factor = 0x4000;
@@ -21767,10 +21810,12 @@ void cm848_calculateThrottle100Fuelings(void)
 
 
 //
-// Function: cm848_initFuelDemandTableDimensions @ 0x0001f300
+// Function: cm848_initializeFuelDemandTableDimensions @ 0x0001f300
 //
 
-void cm848_initFuelDemandTableDimensions(void)
+/* (was cm848_initFuelDemandTableDimensions; PR #53 round 97) */
+
+void cm848_initializeFuelDemandTableDimensions(void)
 
 {
   four_dimensional_fueling_steady_state_cached_axis_offsets_2[0] = 2;
@@ -22813,7 +22858,7 @@ void cm848_calculateEnginePercentLoadAtCurrentSpeed(void)
 //
 
 /* Empty function: returns immediately (a single blr). Called once, from
-   cm848_initPgn61443Eec2Handler. (was emptyStubFunction3) | the twin of CM550 0x0000f99a: one
+   cm848_initializePgn61443Eec2Handler. (was emptyStubFunction3) | the twin of CM550 0x0000f99a: one
    shared name (was cm848_emptyStubFunction7; PR #53 round 96) */
 
 void emptyPgn61443ElectronicEngineController2InitializationStep(void)
@@ -23996,10 +24041,12 @@ void cm848_receivePgn56576AntiTheftRequestMessage(j1939_received_message_t *mess
 
 
 //
-// Function: cm848_initJ1939DiagnosticCallback @ 0x000220b4
+// Function: cm848_initializeJ1939DiagnosticCallback @ 0x000220b4
 //
 
-void cm848_initJ1939DiagnosticCallback(void)
+/* (was cm848_initJ1939DiagnosticCallback; PR #53 round 97) */
+
+void cm848_initializeJ1939DiagnosticCallback(void)
 
 {
   registerJ1939ReceiveHandler(0xdd00,cm848_receivePgn56576AntiTheftRequestMessage);
@@ -24164,15 +24211,16 @@ void cm848_onJ1939Dm13SeenOnBus(void)
 
 
 //
-// Function: cm848_initJ1939Dm13Handler @ 0x00022318
+// Function: cm848_initializeJ1939Dm13Handler @ 0x00022318
 //
 
 /* Start-up (from cm848_j1939_system_init): sets the three requester broadcast enable flags and
    j1939_dm13_broadcast_enable_flags to 0xFFFF (nothing suspended) and registers
    cm848_processJ1939Dm13StopStartBroadcast for PGN 57088 (was cm848_initGovernorDerivativeTerms) |
-   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+   (was cm848_initJ1939Dm13Handler; PR #53 round 97) */
 
-void cm848_initJ1939Dm13Handler(void)
+void cm848_initializeJ1939Dm13Handler(void)
 
 {
   j1939_dm13_requester_slots[0].broadcast_enable_flags = 0xffff;
@@ -24453,8 +24501,8 @@ void registerJ1939Dm7Handler(void)
 //
 
 /* receives J1939 PGN 61442 ETC1 via the Bank-2 receive table 0x3fd414
-   (cm848_dispatchJ1939ReceivedMessages) - registered by cm848_initJ1939Pgn61442Etc1Handler - greps
-   as 1 call but reached only through the table */
+   (cm848_dispatchJ1939ReceivedMessages) - registered by cm848_initializeJ1939Pgn61442Etc1Handler -
+   greps as 1 call but reached only through the table */
 
 void cm848_j1939ProcessPgn61442Etc1(j1939_received_message_t *received_message)
 
@@ -24560,10 +24608,12 @@ LAB_00022a00:
 
 
 //
-// Function: cm848_initJ1939Pgn61442Etc1Handler @ 0x00022bc4
+// Function: cm848_initializeJ1939Pgn61442Etc1Handler @ 0x00022bc4
 //
 
-void cm848_initJ1939Pgn61442Etc1Handler(void)
+/* (was cm848_initJ1939Pgn61442Etc1Handler; PR #53 round 97) */
+
+void cm848_initializeJ1939Pgn61442Etc1Handler(void)
 
 {
   j1939_powertrain_control_state.etc1_message_timeout = 0;
@@ -24584,8 +24634,8 @@ void cm848_initJ1939Pgn61442Etc1Handler(void)
 // Function: cm848_j1939ProcessPgn61445Etc2 @ 0x00022c5c
 //
 
-/* J1939 ETC2 (PGN 61445) receive callback registered by cm848_initEtc2Handler: 8-byte frames from
-   j1939_transmission_source_address (any when 0xff) - byte 1 (SPN 524 selected gear) into
+/* J1939 ETC2 (PGN 61445) receive callback registered by cm848_initializeEtc2Handler: 8-byte frames
+   from j1939_transmission_source_address (any when 0xff) - byte 1 (SPN 524 selected gear) into
    j1939_powertrain_control_state.etc2_transmission_selected_gear and reloads
    etc2_selected_gear_timeout (0x40ae50 - misnamed ETC2 timeout) / bytes 2-3 (SPN 526 actual gear
    ratio 0.001/bit - valid below 0xfb00 - floor 100) into etc2_actual_gear_ratio with
@@ -24619,7 +24669,7 @@ void cm848_j1939ProcessPgn61445Etc2(j1939_received_message_t *message)
 
 
 //
-// Function: cm848_initEtc2Handler @ 0x00022d18
+// Function: cm848_initializeEtc2Handler @ 0x00022d18
 //
 
 /* Registers the J1939 ETC2 (PGN 61445 / 0xf005) receive callback cm848_j1939ProcessPgn61445Etc2 and
@@ -24627,9 +24677,10 @@ void cm848_j1939ProcessPgn61445Etc2(j1939_received_message_t *message)
    j1939_powertrain_messages_received.etc2_actual_gear_ratio_previous at 0x3fa98c / sets the ETC2
    selected gear to 0xff = none). NOT vehicle speed - prior name cm848_initJ1939VehicleSpeedHandler
    was wrong; ETC2 carries gear / gear ratio (was cm848_initJ1939VehicleSpeedHandler) |
-   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+   (was cm848_initEtc2Handler; PR #53 round 97) */
 
-void cm848_initEtc2Handler(void)
+void cm848_initializeEtc2Handler(void)
 
 {
   j1939_powertrain_messages_received.etc2_actual_gear_ratio_previous = 0;
@@ -24889,23 +24940,23 @@ void cm848_dispatchJ1939PgnRequest(j1939_received_message_t *message)
 //
 
 /* Start-up step of cm848_j1939_system_init. It registers cm848_dispatchJ1939PgnRequest for PGN
-   59904 and calls initPgn65261CruiseControlSetupStruct. It calls the set-ups of 65259 / 65262 /
-   65242 / 65248 / 65260, which register their handlers. It registers 65261 / 65263 / 65264 / 65269
-   / 65270 / 65271 / 65504 directly, then calls the DM1 / DM2 / DM3 / DM4 / DM5 / DM10 set-ups.
-   Counterpart of CM550 cm550_registerJ1939PgnRequestHandlers, which registers another message set.
-   The old name said init and protocol handlers. (was cm848_initJ1939ProtocolHandlers; PR #53 round
-   96) */
+   59904 and calls initializePgn65261CruiseControlSetupStruct. It calls the set-ups of 65259 / 65262
+   / 65242 / 65248 / 65260, which register their handlers. It registers 65261 / 65263 / 65264 /
+   65269 / 65270 / 65271 / 65504 directly, then calls the DM1 / DM2 / DM3 / DM4 / DM5 / DM10
+   set-ups. Counterpart of CM550 cm550_registerJ1939PgnRequestHandlers, which registers another
+   message set. The old name said init and protocol handlers. (was cm848_initJ1939ProtocolHandlers;
+   PR #53 round 96) */
 
 void cm848_registerJ1939PgnRequestHandlers(void)
 
 {
   registerJ1939ReceiveHandler(0xea00,cm848_dispatchJ1939PgnRequest);
-  initPgn65261CruiseControlSetupStruct();
-  cm848_initPgn65259ComponentIdHandler();
-  cm848_initPgn65262EngineTempHandler();
-  cm848_initPgn65242SoftwareIdHandler();
-  cm848_initPgn65248VehicleDistanceHandler();
-  cm848_initPgn65260VehicleIdHandler();
+  initializePgn65261CruiseControlSetupStruct();
+  cm848_initializePgn65259ComponentIdHandler();
+  cm848_initializePgn65262EngineTemperatureHandler();
+  cm848_initializePgn65242SoftwareIdHandler();
+  cm848_initializePgn65248VehicleDistanceHandler();
+  cm848_initializePgn65260VehicleIdHandler();
   registerJ1939PgnRequestHandler(0xfeed,cm848_buildPgn65261CruiseControlVehicleSpeedSetupMessage);
   registerJ1939PgnRequestHandler(0xfeef,cm848_buildPgn65263EngineFluidLevelPressure1Message);
   registerJ1939PgnRequestHandler(0xfef0,cm848_buildPgn65264PowerTakeOffInformationMessage);
@@ -24913,11 +24964,11 @@ void cm848_registerJ1939PgnRequestHandlers(void)
   registerJ1939PgnRequestHandler(0xfef6,cm848_buildPgn65270InletExhaustConditions1Message);
   registerJ1939PgnRequestHandler(0xfef7,buildPgn65271VehicleElectricalPower1Message);
   registerJ1939PgnRequestHandler(0xffe0,cm848_buildPgn65504ProprietaryBMessage);
-  cm848_initPgn65226Dm1Handler();
-  cm848_initPgn65227Dm2Handler();
+  cm848_initializePgn65226Dm1Handler();
+  cm848_initializePgn65227Dm2Handler();
   registerJ1939Dm3RequestHandler();
-  cm848_initPgn65229Dm4Handler();
-  cm848_initPgn65230Dm5Handler();
+  cm848_initializePgn65229Dm4Handler();
+  cm848_initializePgn65230Dm5Handler();
   cm848_initializePgn65234Dm10Handler();
   return;
 }
@@ -24933,7 +24984,7 @@ void cm848_registerJ1939PgnRequestHandlers(void)
    cm848_j1939HandleProprietaryCommand) | earlier note: receives J1939 PGN 56832 (named Reset in the
    J1939 database) via the Bank-2 receive table 0x3fd414 (cm848_dispatchJ1939ReceivedMessages) -
    sets feature-enable and ascii-detect flags gated by algorithm_enable_flags_29_cal - registered by
-   cm848_initJ1939ProprietaryHandler */
+   cm848_initializeJ1939ProprietaryHandler */
 
 void cm848_j1939HandlePgn56832Reset(j1939_received_message_t *message)
 
@@ -24957,10 +25008,12 @@ void cm848_j1939HandlePgn56832Reset(j1939_received_message_t *message)
 
 
 //
-// Function: cm848_initJ1939ProprietaryHandler @ 0x0002343c
+// Function: cm848_initializeJ1939ProprietaryHandler @ 0x0002343c
 //
 
-void cm848_initJ1939ProprietaryHandler(void)
+/* (was cm848_initJ1939ProprietaryHandler; PR #53 round 97) */
+
+void cm848_initializeJ1939ProprietaryHandler(void)
 
 {
   registerJ1939ReceiveHandler(0xde00,cm848_j1939HandlePgn56832Reset);
@@ -25452,10 +25505,12 @@ void cm848_sendJ1939NegativeAcknowledgement
 
 
 //
-// Function: cm848_initJ1939AckBuffer @ 0x00023e40
+// Function: cm848_initializeJ1939AcknowledgementBuffer @ 0x00023e40
 //
 
-void cm848_initJ1939AckBuffer(void)
+/* (was cm848_initJ1939AckBuffer; PR #53 round 97) */
+
+void cm848_initializeJ1939AcknowledgementBuffer(void)
 
 {
   j1939_pgn59392_tx_message.header.data_length = 8;
@@ -25515,10 +25570,12 @@ void cm848_buildPgn65269AmbientConditionsMessage(void)
 
 
 //
-// Function: cm848_initJ1939AmbientConditionsBuffer @ 0x00023fb8
+// Function: cm848_initializeJ1939AmbientConditionsBuffer @ 0x00023fb8
 //
 
-void cm848_initJ1939AmbientConditionsBuffer(void)
+/* (was cm848_initJ1939AmbientConditionsBuffer; PR #53 round 97) */
+
+void cm848_initializeJ1939AmbientConditionsBuffer(void)
 
 {
   j1939_pgn65269_tx_message.header.can_id =
@@ -25822,10 +25879,12 @@ LAB_00024648:
 
 
 //
-// Function: cm848_initPgn65265CruiseSpeedHandler @ 0x00024664
+// Function: cm848_initializePgn65265CruiseSpeedHandler @ 0x00024664
 //
 
-void cm848_initPgn65265CruiseSpeedHandler(void)
+/* (was cm848_initPgn65265CruiseSpeedHandler; PR #53 round 97) */
+
+void cm848_initializePgn65265CruiseSpeedHandler(void)
 
 {
   j1939_pgn65265_tx_message.header.can_id =
@@ -25891,10 +25950,12 @@ LAB_000247e0:
 
 
 //
-// Function: initPgn65261CruiseControlSetupStruct @ 0x00024800
+// Function: initializePgn65261CruiseControlSetupStruct @ 0x00024800
 //
 
-void initPgn65261CruiseControlSetupStruct(void)
+/* (was initPgn65261CruiseControlSetupStruct; PR #53 round 97) */
+
+void initializePgn65261CruiseControlSetupStruct(void)
 
 {
   j1939_pgn65261_tx_message.header.can_id =
@@ -25957,16 +26018,17 @@ void cm848_j1939HandlePgn65259ComponentId(void)
 
 
 //
-// Function: cm848_initPgn65259ComponentIdHandler @ 0x00024940
+// Function: cm848_initializePgn65259ComponentIdHandler @ 0x00024940
 //
 
 /* Initializes the CI (PGN 65259 component identification) transmit descriptor: identifier 0xfeeb
    with the priority from j1939_pgn65259_priority_cal and the source address j1939_source_address /
    data length 44 / data pointer j1939_pgn65259_payload / status byte
    j1939_pgn65259_transmit_status. Then it registers cm848_j1939HandlePgn65259ComponentId, which
-   fills the payload and sends it when PGN 65259 is requested (PR #53 round 33) */
+   fills the payload and sends it when PGN 65259 is requested (PR #53 round 33) (was
+   cm848_initPgn65259ComponentIdHandler; PR #53 round 97) */
 
-void cm848_initPgn65259ComponentIdHandler(void)
+void cm848_initializePgn65259ComponentIdHandler(void)
 
 {
   j1939_pgn65259_tx_message.header.can_id =
@@ -26201,10 +26263,12 @@ void cm848_broadcastPgn65226Dm1UntilFaultsClear(void)
 
 
 //
-// Function: cm848_initPgn65226Dm1Handler @ 0x00024dd8
+// Function: cm848_initializePgn65226Dm1Handler @ 0x00024dd8
 //
 
-void cm848_initPgn65226Dm1Handler(void)
+/* (was cm848_initPgn65226Dm1Handler; PR #53 round 97) */
+
+void cm848_initializePgn65226Dm1Handler(void)
 
 {
   j1939_dm1_tx_message.header.can_id =
@@ -26280,10 +26344,12 @@ void cm848_j1939HandlePgn65227Dm2PreviousDtc(void)
 
 
 //
-// Function: cm848_initPgn65227Dm2Handler @ 0x00025000
+// Function: cm848_initializePgn65227Dm2Handler @ 0x00025000
 //
 
-void cm848_initPgn65227Dm2Handler(void)
+/* (was cm848_initPgn65227Dm2Handler; PR #53 round 97) */
+
+void cm848_initializePgn65227Dm2Handler(void)
 
 {
   j1939_dm2_tx_message.header.can_id =
@@ -26301,10 +26367,12 @@ void cm848_initPgn65227Dm2Handler(void)
 
 
 //
-// Function: cm848_initPgn65229Dm4Handler @ 0x00025094
+// Function: cm848_initializePgn65229Dm4Handler @ 0x00025094
 //
 
-void cm848_initPgn65229Dm4Handler(void)
+/* (was cm848_initPgn65229Dm4Handler; PR #53 round 97) */
+
+void cm848_initializePgn65229Dm4Handler(void)
 
 {
   j1939_pgn65229_tx_message.header.can_id =
@@ -26494,10 +26562,12 @@ void buildPgn65230Dm5DiagnosticReadiness1Message(void)
 
 
 //
-// Function: cm848_initPgn65230Dm5Handler @ 0x0002553c
+// Function: cm848_initializePgn65230Dm5Handler @ 0x0002553c
 //
 
-void cm848_initPgn65230Dm5Handler(void)
+/* (was cm848_initPgn65230Dm5Handler; PR #53 round 97) */
+
+void cm848_initializePgn65230Dm5Handler(void)
 
 {
   j1939_pgn65230_tx_message.header.can_id =
@@ -26681,18 +26751,18 @@ void cm848_initializePgn61441ElectronicBrakeController1Buffer(void)
 //
 
 /* Builds and sends the ECM's own EEC1 broadcast, PGN 61444: the transmit descriptor
-   j1939_pgn61444_tx_message (can_id built from 0xf00400, 5 bytes, set by cm848_initEec1TxDescriptor
-   at 0x25ab8) is registered in the periodic transmit queue with scheduleJ1939PeriodicMessage. Byte
-   1 is the engine torque mode (SPN 899): while a TSC1 override is active
-   (j1939_powertrain_control_state.tsc1_override_control_mode non-zero in the TSC1 fueling states)
-   0xf6 / 0xf7 / 0xf5 for the sender index 1 / 2 / 3 (transmission / ABS / ASR), otherwise from
-   final_fueling_state: 0xf8 (torque limiting) when torque_derate_fuel_source_code equals it, 0xf0
-   low speed governor, 0xf2 cruise control, 0xf3 power take-off governor, 0xf4 road speed governor,
-   0xf9 high speed governor, 0xfa engine brake, 0xf1 accelerator pedal for the other user fueling
-   states, else 0xfe. Byte 2 is the driver demand percent torque plus 125
-   (cm848_calculateDriverDemandPercentTorque, SPN 512), byte 3 the actual engine percent torque plus
-   125 (cm848_calculateActualEnginePercentTorque at 0x209e8, SPN 513; 0xfe when
-   j1939_torque_and_load_not_available_flag is 1) and bytes 4-5 the engine speed
+   j1939_pgn61444_tx_message (can_id built from 0xf00400, 5 bytes, set by
+   cm848_initializeEec1TransmitDescriptor at 0x25ab8) is registered in the periodic transmit queue
+   with scheduleJ1939PeriodicMessage. Byte 1 is the engine torque mode (SPN 899): while a TSC1
+   override is active (j1939_powertrain_control_state.tsc1_override_control_mode non-zero in the
+   TSC1 fueling states) 0xf6 / 0xf7 / 0xf5 for the sender index 1 / 2 / 3 (transmission / ABS /
+   ASR), otherwise from final_fueling_state: 0xf8 (torque limiting) when
+   torque_derate_fuel_source_code equals it, 0xf0 low speed governor, 0xf2 cruise control, 0xf3
+   power take-off governor, 0xf4 road speed governor, 0xf9 high speed governor, 0xfa engine brake,
+   0xf1 accelerator pedal for the other user fueling states, else 0xfe. Byte 2 is the driver demand
+   percent torque plus 125 (cm848_calculateDriverDemandPercentTorque, SPN 512), byte 3 the actual
+   engine percent torque plus 125 (cm848_calculateActualEnginePercentTorque at 0x209e8, SPN 513;
+   0xfe when j1939_torque_and_load_not_available_flag is 1) and bytes 4-5 the engine speed
    (engine_speed_state.filtered_engine_speed, SPN 190). Shared name with CM550 0x32c76 (the same
    function). (was j1939GetEngineStateCode) */
 
@@ -26834,10 +26904,12 @@ LAB_00025a28:
 
 
 //
-// Function: cm848_initEec1TxDescriptor @ 0x00025ab8
+// Function: cm848_initializeEec1TransmitDescriptor @ 0x00025ab8
 //
 
-void cm848_initEec1TxDescriptor(void)
+/* (was cm848_initEec1TxDescriptor; PR #53 round 97) */
+
+void cm848_initializeEec1TransmitDescriptor(void)
 
 {
   j1939_pgn61444_tx_message.header.can_id =
@@ -26944,10 +27016,12 @@ LAB_00025c0c:
 
 
 //
-// Function: cm848_initPgn61443Eec2Handler @ 0x00025d60
+// Function: cm848_initializePgn61443Eec2Handler @ 0x00025d60
 //
 
-void cm848_initPgn61443Eec2Handler(void)
+/* (was cm848_initPgn61443Eec2Handler; PR #53 round 97) */
+
+void cm848_initializePgn61443Eec2Handler(void)
 
 {
   j1939_pgn61443_tx_message.header.can_id =
@@ -26998,14 +27072,15 @@ void buildPgn65247ElectronicEngineController3Message(void)
 
 
 //
-// Function: cm848_initPgn65247ElectronicEngineController3Buffer @ 0x00025e5c
+// Function: cm848_initializePgn65247ElectronicEngineController3Buffer @ 0x00025e5c
 //
 
 /* Sets up the EEC3 (PGN 65247) transmit descriptor: header 0xFEDF with j1939_pgn65247_priority_cal
    / own source address / 4 data bytes at 0x3fadc0 (was cm848_initJ1939OilPressureBuffer) |
-   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+   (was cm848_initPgn65247ElectronicEngineController3Buffer; PR #53 round 97) */
 
-void cm848_initPgn65247ElectronicEngineController3Buffer(void)
+void cm848_initializePgn65247ElectronicEngineController3Buffer(void)
 
 {
   j1939_pgn65247_tx_message.header.can_id =
@@ -27061,10 +27136,12 @@ void cm848_buildPgn65263EngineFluidLevelPressure1Message(void)
 
 
 //
-// Function: cm848_initJ1939FluidLevelPressureBuffer @ 0x00025fb4
+// Function: cm848_initializeJ1939FluidLevelPressureBuffer @ 0x00025fb4
 //
 
-void cm848_initJ1939FluidLevelPressureBuffer(void)
+/* (was cm848_initJ1939FluidLevelPressureBuffer; PR #53 round 97) */
+
+void cm848_initializeJ1939FluidLevelPressureBuffer(void)
 
 {
   j1939_pgn65263_tx_message.header.can_id =
@@ -27137,10 +27214,12 @@ void cm848_buildPgn65262EngineTemperature1Message(void)
 
 
 //
-// Function: cm848_initPgn65262EngineTempHandler @ 0x0002619c
+// Function: cm848_initializePgn65262EngineTemperatureHandler @ 0x0002619c
 //
 
-void cm848_initPgn65262EngineTempHandler(void)
+/* (was cm848_initPgn65262EngineTempHandler; PR #53 round 97) */
+
+void cm848_initializePgn65262EngineTemperatureHandler(void)
 
 {
   j1939_pgn65262_tx_message.header.can_id =
@@ -27364,10 +27443,12 @@ void cm848_buildPgn65270InletExhaustConditions1Message(void)
 
 
 //
-// Function: cm848_initJ1939InletExhaustConditionsBuffer @ 0x000265d8
+// Function: cm848_initializeJ1939InletExhaustConditionsBuffer @ 0x000265d8
 //
 
-void cm848_initJ1939InletExhaustConditionsBuffer(void)
+/* (was cm848_initJ1939InletExhaustConditionsBuffer; PR #53 round 97) */
+
+void cm848_initializeJ1939InletExhaustConditionsBuffer(void)
 
 {
   j1939_pgn65270_tx_message.header.can_id =
@@ -27518,7 +27599,7 @@ void cm848_j1939HandlePgn65242SoftwareId(void)
 
 
 //
-// Function: cm848_initPgn65242SoftwareIdHandler @ 0x000268ac
+// Function: cm848_initializePgn65242SoftwareIdHandler @ 0x000268ac
 //
 
 /* Initializes the SOFT (PGN 65242 software identification) transmit descriptor (identifier
@@ -27527,9 +27608,9 @@ void cm848_j1939HandlePgn65242SoftwareId(void)
    '*'-ended fields (two 8-digit numbers from EEPROM 0x219 / 0x21d / 12 characters from EEPROM 0x22d
    / the calibration version / the ECM identifier / the application identifier). Then it registers
    cm848_j1939HandlePgn65242SoftwareId, which only sends it when PGN 65242 is requested (PR #53
-   round 33) */
+   round 33) (was cm848_initPgn65242SoftwareIdHandler; PR #53 round 97) */
 
-void cm848_initPgn65242SoftwareIdHandler(void)
+void cm848_initializePgn65242SoftwareIdHandler(void)
 
 {
   uint uVar1;
@@ -27637,10 +27718,12 @@ void cm848_buildPgn65504ProprietaryBMessage(void)
 
 
 //
-// Function: cm848_initJ1939ProprietaryPgn65504Buffer @ 0x00026b58
+// Function: cm848_initializeJ1939ProprietaryPgn65504Buffer @ 0x00026b58
 //
 
-void cm848_initJ1939ProprietaryPgn65504Buffer(void)
+/* (was cm848_initJ1939ProprietaryPgn65504Buffer; PR #53 round 97) */
+
+void cm848_initializeJ1939ProprietaryPgn65504Buffer(void)
 
 {
   j1939_pgn65504_tx_message.header.can_id =
@@ -27684,10 +27767,12 @@ void cm848_j1939HandlePgn65248VehicleDistance(void)
 
 
 //
-// Function: cm848_initPgn65248VehicleDistanceHandler @ 0x00026c6c
+// Function: cm848_initializePgn65248VehicleDistanceHandler @ 0x00026c6c
 //
 
-void cm848_initPgn65248VehicleDistanceHandler(void)
+/* (was cm848_initPgn65248VehicleDistanceHandler; PR #53 round 97) */
+
+void cm848_initializePgn65248VehicleDistanceHandler(void)
 
 {
   j1939_pgn65248_tx_message.header.can_id =
@@ -27726,10 +27811,12 @@ void buildPgn65271VehicleElectricalPower1Message(void)
 
 
 //
-// Function: cm848_initJ1939VehicleElectricalBuffer @ 0x00026d40
+// Function: cm848_initializeJ1939VehicleElectricalBuffer @ 0x00026d40
 //
 
-void cm848_initJ1939VehicleElectricalBuffer(void)
+/* (was cm848_initJ1939VehicleElectricalBuffer; PR #53 round 97) */
+
+void cm848_initializeJ1939VehicleElectricalBuffer(void)
 
 {
   j1939_pgn65271_tx_message.header.can_id =
@@ -27767,10 +27854,12 @@ void sendPgn65260VehicleIdentificationMessage(void)
 
 
 //
-// Function: cm848_initPgn65260VehicleIdHandler @ 0x00026ddc
+// Function: cm848_initializePgn65260VehicleIdHandler @ 0x00026ddc
 //
 
-void cm848_initPgn65260VehicleIdHandler(void)
+/* (was cm848_initPgn65260VehicleIdHandler; PR #53 round 97) */
+
+void cm848_initializePgn65260VehicleIdHandler(void)
 
 {
   uint uVar1;
@@ -28361,9 +28450,9 @@ LAB_00027ae8:
    special mode: number is read as 4 bytes and each byte is written as two decimal digits, 8
    characters in all (for example the bytes 11 46 6 0 give 11460600). Used for the star delimited ID
    strings of the J1939 component identification (cm848_j1939HandlePgn65259ComponentId, 0x24870) and
-   software identification (cm848_initPgn65242SoftwareIdHandler, 0x268ac), whose last number is
-   application_overlay_core_software_version (e2m 0019 Calibration_Version_Number). It has nothing
-   to do with a governor droop. (was cm848_governorDroopCalculation) */
+   software identification (cm848_initializePgn65242SoftwareIdHandler, 0x268ac), whose last number
+   is application_overlay_core_software_version (e2m 0019 Calibration_Version_Number). It has
+   nothing to do with a governor droop. (was cm848_governorDroopCalculation) */
 
 void cm848_formatNumberAsDecimalText(byte *number,byte *text,int digit_count)
 
@@ -28793,7 +28882,7 @@ LAB_00028594:
 void cm848_resetSpeedControlTracking(void)
 
 {
-  cm848_initGovernorTimerCountersWrapper();
+  cm848_initializeGovernorTimerCountersWrapper();
   low_speed_governor_minimum_average_engine_acceleration = 0;
   low_speed_governor_engine_acceleration_previous = 0;
   return;
@@ -29023,10 +29112,12 @@ void cm848_loadLowSpeedGovernorGainSet(void)
 
 
 //
-// Function: cm848_initGovernorTimerCountersWrapper @ 0x00028abc
+// Function: cm848_initializeGovernorTimerCountersWrapper @ 0x00028abc
 //
 
-void cm848_initGovernorTimerCountersWrapper(void)
+/* (was cm848_initGovernorTimerCountersWrapper; PR #53 round 97) */
+
+void cm848_initializeGovernorTimerCountersWrapper(void)
 
 {
   cm848_clearGovernorTimerCounters();
@@ -29714,10 +29805,12 @@ void cm848_initializeLowSpeedGovernorReferenceSpeed(void)
 
 
 //
-// Function: cm848_initGovernorLookupDimensions @ 0x00029c80
+// Function: cm848_initializeGovernorLookupDimensions @ 0x00029c80
 //
 
-void cm848_initGovernorLookupDimensions(void)
+/* (was cm848_initGovernorLookupDimensions; PR #53 round 97) */
+
+void cm848_initializeGovernorLookupDimensions(void)
 
 {
   friction_fuel_by_engine_speed_cached_axis_offset = 2;
@@ -38216,8 +38309,8 @@ void cm848_queueSupervisorStatusRead(void)
    supervisor_input_lines_144_to_151_state (application meaning of those globals not reviewed) |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium |
    supervisor_status_read_job (supervisor chip PCS1 command byte 0x5D) completion_callback - invoked
-   by cm848_completeQspiJob via cm848_onQspiFinished - set by cm848_initSupervisorStatusReadJob -
-   not a dead function */
+   by cm848_completeQspiJob via cm848_onQspiFinished - set by
+   cm848_initializeSupervisorStatusReadJob - not a dead function */
 
 void cm848_onSupervisorStatusRead(void)
 
@@ -38277,7 +38370,7 @@ void cm848_queueSupervisorRegister36Read(void)
    | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
    | supervisor_register_36_read_job (supervisor chip PCS1 command byte 0x5D) completion_callback -
    invoked by cm848_completeQspiJob via cm848_onQspiFinished - set by
-   cm848_initSupervisorRegister36ReadJob - not a dead function */
+   cm848_initializeSupervisorRegister36ReadJob - not a dead function */
 
 void cm848_onSupervisorRegister36Read(void)
 
@@ -38436,7 +38529,7 @@ void cm848_queueSupervisorRegister46Read(void)
    | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
    | supervisor_register_46_read_job (supervisor chip PCS1 command byte 0x5D) completion_callback -
    invoked by cm848_completeQspiJob via cm848_onQspiFinished - set by
-   cm848_initSupervisorRegister46ReadJob - not a dead function */
+   cm848_initializeSupervisorRegister46ReadJob - not a dead function */
 
 void cm848_onSupervisorRegister46Read(void)
 
@@ -38474,7 +38567,7 @@ void cm848_queueSupervisorRegister162Read(void)
    reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium |
    supervisor_register_162_read_job (supervisor chip PCS1 command byte 0x5D) completion_callback -
    invoked by cm848_completeQspiJob via cm848_onQspiFinished - set by
-   cm848_initSupervisorRegister162ReadJob - not a dead function */
+   cm848_initializeSupervisorRegister162ReadJob - not a dead function */
 
 void cm848_onSupervisorRegister162Read(void)
 
@@ -38694,14 +38787,15 @@ void cm848_startSupervisorWatchdog(void)
 
 
 //
-// Function: cm848_initSupervisorRegister36ReadJob @ 0x00037130
+// Function: cm848_initializeSupervisorRegister36ReadJob @ 0x00037130
 //
 
 /* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
    registers; command byte 0x5D): sets up supervisor_register_36_read_job |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+   (was cm848_initSupervisorRegister36ReadJob; PR #53 round 97) */
 
-void cm848_initSupervisorRegister36ReadJob(void)
+void cm848_initializeSupervisorRegister36ReadJob(void)
 
 {
   supervisor_register_36_read_job.device_slot = supervisor_qspi_slot;
@@ -38716,14 +38810,15 @@ void cm848_initSupervisorRegister36ReadJob(void)
 
 
 //
-// Function: cm848_initSupervisorStatusReadJob @ 0x00037180
+// Function: cm848_initializeSupervisorStatusReadJob @ 0x00037180
 //
 
 /* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
    registers; command byte 0x5D): sets up supervisor_status_read_job (3 words) |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+   (was cm848_initSupervisorStatusReadJob; PR #53 round 97) */
 
-void cm848_initSupervisorStatusReadJob(void)
+void cm848_initializeSupervisorStatusReadJob(void)
 
 {
   supervisor_status_read_job.device_slot = supervisor_qspi_slot;
@@ -38738,14 +38833,15 @@ void cm848_initSupervisorStatusReadJob(void)
 
 
 //
-// Function: cm848_initSupervisorOutputWriteJob @ 0x000371d0
+// Function: cm848_initializeSupervisorOutputWriteJob @ 0x000371d0
 //
 
 /* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
    registers; command byte 0x5D): sets up supervisor_output_write_job | review-function-readability
-   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High (was
+   cm848_initSupervisorOutputWriteJob; PR #53 round 97) */
 
-void cm848_initSupervisorOutputWriteJob(void)
+void cm848_initializeSupervisorOutputWriteJob(void)
 
 {
   supervisor_output_write_job.device_slot = supervisor_qspi_slot;
@@ -38760,14 +38856,15 @@ void cm848_initSupervisorOutputWriteJob(void)
 
 
 //
-// Function: cm848_initSupervisorRegister46ReadJob @ 0x00037214
+// Function: cm848_initializeSupervisorRegister46ReadJob @ 0x00037214
 //
 
 /* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
    registers; command byte 0x5D): sets up supervisor_register_46_read_job |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+   (was cm848_initSupervisorRegister46ReadJob; PR #53 round 97) */
 
-void cm848_initSupervisorRegister46ReadJob(void)
+void cm848_initializeSupervisorRegister46ReadJob(void)
 
 {
   supervisor_register_46_read_job.device_slot = supervisor_qspi_slot;
@@ -38783,14 +38880,15 @@ void cm848_initSupervisorRegister46ReadJob(void)
 
 
 //
-// Function: cm848_initSupervisorRegister162ReadJob @ 0x00037270
+// Function: cm848_initializeSupervisorRegister162ReadJob @ 0x00037270
 //
 
 /* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
    registers; command byte 0x5D): sets up supervisor_register_162_read_job |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+   (was cm848_initSupervisorRegister162ReadJob; PR #53 round 97) */
 
-void cm848_initSupervisorRegister162ReadJob(void)
+void cm848_initializeSupervisorRegister162ReadJob(void)
 
 {
   supervisor_register_162_read_job.device_slot = supervisor_qspi_slot;
@@ -38805,15 +38903,16 @@ void cm848_initSupervisorRegister162ReadJob(void)
 
 
 //
-// Function: cm848_initSupervisorConfigurationWriteJob @ 0x000372c0
+// Function: cm848_initializeSupervisorConfigurationWriteJob @ 0x000372c0
 //
 
 /* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
    registers; command byte 0x5D): sets up supervisor_configuration_write_job then writes the
    configuration and waits for it | review-function-readability reviewed 2026-11-11 - Readability
-   Medium Accuracy Confidence High */
+   Medium Accuracy Confidence High (was cm848_initSupervisorConfigurationWriteJob; PR #53 round 97)
+    */
 
-void cm848_initSupervisorConfigurationWriteJob(void)
+void cm848_initializeSupervisorConfigurationWriteJob(void)
 
 {
   supervisor_configuration_write_job.device_slot = supervisor_qspi_slot;
@@ -38831,28 +38930,28 @@ void cm848_initSupervisorConfigurationWriteJob(void)
 
 
 //
-// Function: cm848_initSupervisorChip @ 0x00037334
+// Function: cm848_initializeSupervisorChip @ 0x00037334
 //
 
 /* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
    registers; command byte 0x5D): registers the QSPI device slot (mode 0 / 2000 kHz - shared with
    the PCI controller timing) then configures the chip / starts its watchdog / sets up every job
    (was initPeriodicTimerSystem) | review-function-readability reviewed 2026-11-11 - Readability
-   Medium Accuracy Confidence High */
+   Medium Accuracy Confidence High (was cm848_initSupervisorChip; PR #53 round 97) */
 
-void cm848_initSupervisorChip(void)
+void cm848_initializeSupervisorChip(void)
 
 {
   supervisor_qspi_slot = cm848_registerQspiDeviceSlot(0,2000,0x352,0x28);
   cm848_configureSupervisorChip();
   cm848_startSupervisorWatchdog();
-  cm848_initSupervisorRegister36ReadJob();
-  cm848_initSupervisorStatusReadJob();
-  cm848_initSupervisorOutputWriteJob();
-  cm848_initSupervisorRegister46ReadJob();
+  cm848_initializeSupervisorRegister36ReadJob();
+  cm848_initializeSupervisorStatusReadJob();
+  cm848_initializeSupervisorOutputWriteJob();
+  cm848_initializeSupervisorRegister46ReadJob();
   supervisor_register_46_read_counter = 1;
-  cm848_initSupervisorRegister162ReadJob();
-  cm848_initSupervisorConfigurationWriteJob();
+  cm848_initializeSupervisorRegister162ReadJob();
+  cm848_initializeSupervisorConfigurationWriteJob();
   supervisor_configuration_rewrite_counter = 2;
   supervisor_register_162_read_counter = 3;
   return;
@@ -38915,7 +39014,7 @@ void cm848_initializeColdDeltaFuelLookupCache(void)
    cm848_refreshInputLineImage) | review-function-readability reviewed 2026-11-11 - Readability
    Medium Accuracy Confidence Medium | serial_output_driver_job (serial output driver PCS2 SPI mode
    3) completion_callback - invoked by cm848_completeQspiJob via cm848_onQspiFinished - set by
-   cm848_initSerialOutputDriverJob - not a dead function */
+   cm848_initializeSerialOutputDriverJob - not a dead function */
 
 void cm848_onSerialOutputDriverReply(void)
 
@@ -38934,15 +39033,16 @@ void cm848_onSerialOutputDriverReply(void)
 
 
 //
-// Function: cm848_initSerialOutputDriverJob @ 0x000374b8
+// Function: cm848_initializeSerialOutputDriverJob @ 0x000374b8
 //
 
 /* Serial output driver (QSPI PCS2 / SPI mode 3 / 8-bit / 2000 kHz): registers its QSPI slot and
    sets up serial_output_driver_job (transmit = output lines 152-159 byte / receive = status reply);
    presets output_line_state.lines_152_to_159 to 0xff | review-function-readability reviewed
-   2026-11-11 - Readability Medium Accuracy Confidence Medium */
+   2026-11-11 - Readability Medium Accuracy Confidence Medium (was cm848_initSerialOutputDriverJob;
+   PR #53 round 97) */
 
-void cm848_initSerialOutputDriverJob(void)
+void cm848_initializeSerialOutputDriverJob(void)
 
 {
   serial_output_driver_job.device_slot = cm848_registerQspiDeviceSlot(3,2000,0x352,0x28);
@@ -38970,7 +39070,7 @@ void cm848_queueSerialOutputDriverWrite(void)
 
 {
   if (serial_output_driver_job.word_count == 0) {
-    cm848_initSerialOutputDriverJob();
+    cm848_initializeSerialOutputDriverJob();
   }
   cm848_queueQspiJob(&serial_output_driver_job,1);
   return;
@@ -40646,7 +40746,7 @@ void cm848_servicePciTransmit(void)
    end-of-frame words to cm848_completePciFrame and data bytes to cm848_matchPciReceiveHeader; then
    services the transmit side and re-queues the receive job | pci_controller_receive_job (J1850 PCI
    controller PCS3 command byte 0x57) completion_callback - invoked by cm848_completeQspiJob via
-   cm848_onQspiFinished - set by cm848_initPciControllerInterface - not a dead function */
+   cm848_onQspiFinished - set by cm848_initializePciControllerInterface - not a dead function */
 
 void cm848_onPciControllerReceiveWord(void)
 
@@ -40753,14 +40853,15 @@ void cm848_pulsePciControllerLine124(void)
 
 
 //
-// Function: hpcr_initPciMessageTimers @ 0x0003a100
+// Function: hpcr_initializePciMessageTimers @ 0x0003a100
 //
 
 /* Initializes every PCI message timer: RX timers to 0xff37 (never received) and TX timers to
    staggered start values so the broadcasts do not all fire together; also arms the 0x26 diagnostic
-   response (timer 1) (link-event action bit 0x10) */
+   response (timer 1) (link-event action bit 0x10) (was hpcr_initPciMessageTimers; PR #53 round 97)
+    */
 
-void hpcr_initPciMessageTimers(void)
+void hpcr_initializePciMessageTimers(void)
 
 {
   pci_transmit_message_8_timer = 0;
@@ -40875,7 +40976,7 @@ undefined4 cm848_handlePciLinkEvent(void)
       action_mask = action_mask | 0x20;
     }
     if ((action_mask & 0x10) != 0) {
-      hpcr_initPciMessageTimers();
+      hpcr_initializePciMessageTimers();
     }
     if ((action_mask & 0x20) != 0) {
       return 1;
@@ -40887,16 +40988,16 @@ undefined4 cm848_handlePciLinkEvent(void)
 
 
 //
-// Function: cm848_initPciMessagePayloads @ 0x0003a450
+// Function: cm848_initializePciMessagePayloads @ 0x0003a450
 //
 
-/* Power-up fill of every PCI RX / TX payload buffer (cm848_initJ1939CommunicationSystem from
+/* Power-up fill of every PCI RX / TX payload buffer (cm848_initializeJ1939CommunicationSystem from
    cm848_applicationMain): zeroes most / TX[10] 0x26 = pci_ecm_address + ROM 0x57bb6 / TX[19] 0xED
    from ROM / TX[20]-TX[24] F0 xx = vehicle_vin_string_cal / RX[0] source 0xF0 (was
    hpcr_initJ1939MessageTables) | review-function-readability reviewed 2026-11-13 - Readability
-   Medium Accuracy Confidence High */
+   Medium Accuracy Confidence High (was cm848_initPciMessagePayloads; PR #53 round 97) */
 
-void cm848_initPciMessagePayloads(void)
+void cm848_initializePciMessagePayloads(void)
 
 {
   byte *pbVar1;
@@ -41234,15 +41335,15 @@ void cm848_initializePciMessageStatusBytes(void)
 
 
 //
-// Function: cm848_initPciInFrameResponseBytes @ 0x0003aaf0
+// Function: cm848_initializePciInFrameResponseBytes @ 0x0003aaf0
 //
 
 /* Writes the two zero-terminated J1850 in-frame response strings: 0x40b4fd = 0x60 0 (the cluster
    node address that TX[3] 0xB0 expects back) / 0x40b4fb = 0x18 0 (no descriptor points at it) (was
    cm848_initJ1939BufferParams) | review-function-readability reviewed 2026-11-13 - Readability
-   Medium Accuracy Confidence High */
+   Medium Accuracy Confidence High (was cm848_initPciInFrameResponseBytes; PR #53 round 97) */
 
-void cm848_initPciInFrameResponseBytes(void)
+void cm848_initializePciInFrameResponseBytes(void)
 
 {
   pci_transmit_message_3_in_frame_response = 0x60;
@@ -41292,15 +41393,16 @@ void cm848_clearCanMessageBuffers(void)
 
 
 //
-// Function: cm848_initPciControllerInterface @ 0x0003abc4
+// Function: cm848_initializePciControllerInterface @ 0x0003abc4
 //
 
 /* One-time init of the external J1850 PCI controller - resets it via output line 124 - registers
    the shared mode 0 timing slot (chip select PCS3 via command byte 0x57) - sets up the command and
    receive job callbacks - enables SIU vector 6 (was mpc555_initJ1939TransmitSchedule) |
-   registration-table-sweep reviewed 2026-11-13 */
+   registration-table-sweep reviewed 2026-11-13 (was cm848_initPciControllerInterface; PR #53 round
+   97) */
 
-void cm848_initPciControllerInterface(void)
+void cm848_initializePciControllerInterface(void)
 
 {
   ushort uVar1;
@@ -41322,7 +41424,7 @@ void cm848_initPciControllerInterface(void)
   pci_controller_receive_job.completion_callback = cm848_onPciControllerReceiveWord;
   pci_qspi_queue_priority = 1;
   pci_in_frame_response_queue_priority = 0;
-  pci_controller_command_job.completion_callback = cm848_continuePciControllerInit;
+  pci_controller_command_job.completion_callback = cm848_continuePciControllerInitialization;
   pci_controller_transmit_word = 0xe0;
   pci_controller_command_job.device_slot = pci_controller_qspi_slot;
   pci_controller_receive_job.device_slot = pci_controller_qspi_slot;
@@ -41337,23 +41439,25 @@ void cm848_initPciControllerInterface(void)
 
 
 //
-// Function: cm848_initJ1939CommunicationSystem @ 0x0003ad04
+// Function: cm848_initializeJ1939CommunicationSystem @ 0x0003ad04
 //
 
-void cm848_initJ1939CommunicationSystem(void)
+/* (was cm848_initJ1939CommunicationSystem; PR #53 round 97) */
+
+void cm848_initializeJ1939CommunicationSystem(void)
 
 {
-  cm848_initPciMessagePayloads();
-  hpcr_initPciMessageTimers();
+  cm848_initializePciMessagePayloads();
+  hpcr_initializePciMessageTimers();
   cm848_initializePciMessageStatusBytes();
-  cm848_initPciInFrameResponseBytes();
+  cm848_initializePciInFrameResponseBytes();
   cm848_clearCanMessageBuffers();
-  cm848_initPciTransmitMessage3State();
+  cm848_initializePciTransmitMessage3State();
   cm848_initializeObdServiceState();
   cm848_resetPciTransmitState();
   fault_detected_cal.j1850_system_bus_fault = 0;
   fault_registered_cal.j1850_system_bus_fault = 0;
-  cm848_initPciControllerInterface();
+  cm848_initializePciControllerInterface();
   pci_link_state.initialization_complete_marker = 1;
   return;
 }
@@ -41361,15 +41465,16 @@ void cm848_initJ1939CommunicationSystem(void)
 
 
 //
-// Function: cm848_continuePciControllerInit @ 0x0003ad80
+// Function: cm848_continuePciControllerInitialization @ 0x0003ad80
 //
 
 /* pci_controller_command_job completion_callback during controller init - reached via
    cm848_completeQspiJob when the 0xe0 command finishes - clears its own callback then sends the
    second init word 0xa18 - not a dead function (was cm848_j1939TransmitScheduleCallback) |
-   registration-table-sweep reviewed 2026-11-13 */
+   registration-table-sweep reviewed 2026-11-13 (was cm848_continuePciControllerInit; PR #53 round
+   97) */
 
-void cm848_continuePciControllerInit(void)
+void cm848_continuePciControllerInitialization(void)
 
 {
   pci_controller_command_job.completion_callback = (undefined *)0x0;
@@ -42672,10 +42777,12 @@ void cm848_buildPciTransmitMessage14VoltageOilPressureTemperatures(void)
 
 
 //
-// Function: mpc555_initFuelDemandFilterPointers @ 0x0003ca90
+// Function: mpc555_initializeFuelDemandFilterPointers @ 0x0003ca90
 //
 
-void mpc555_initFuelDemandFilterPointers(void)
+/* (was mpc555_initFuelDemandFilterPointers; PR #53 round 97) */
+
+void mpc555_initializeFuelDemandFilterPointers(void)
 
 {
   pci_coolant_temperature_filter.accumulator = 0;
@@ -42891,10 +42998,12 @@ void cm848_applyNetTorqueFuelLimit(void)
 
 
 //
-// Function: mpc555_initFuelDemandTrackingState @ 0x0003cf40
+// Function: mpc555_initializeFuelDemandTrackingState @ 0x0003cf40
 //
 
-void mpc555_initFuelDemandTrackingState(void)
+/* (was mpc555_initFuelDemandTrackingState; PR #53 round 97) */
+
+void mpc555_initializeFuelDemandTrackingState(void)
 
 {
   net_torque_fuel_limit_previous = net_torque_fuel_limit_grid[0];
@@ -43525,10 +43634,12 @@ void cm848_onQspiFinished(void)
 
 
 //
-// Function: mpc555_initQsmcmQspiModule @ 0x0003dd28
+// Function: mpc555_initializeQsmcmQspiModule @ 0x0003dd28
 //
 
-void mpc555_initQsmcmQspiModule(void)
+/* (was mpc555_initQsmcmQspiModule; PR #53 round 97) */
+
+void mpc555_initializeQsmcmQspiModule(void)
 
 {
   ushort uVar1;
@@ -43742,7 +43853,7 @@ void cm848_requestPowerDownDelayWhileVehicleMoving(void)
 
 
 //
-// Function: cm848_initVehicleSpeedCalculation @ 0x0003e230
+// Function: cm848_initializeVehicleSpeedCalculation @ 0x0003e230
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
@@ -43750,9 +43861,10 @@ void cm848_requestPowerDownDelayWhileVehicleMoving(void)
    vehicle_speed_conversion_numerator = period_scale x 921600 x 40000000 /
    (vehicle_speed_sensor_pulses_per_mile_cal x 128): 3600 s/h x 256 over 3.2 us TPU ticks gives
    1/256 mph (was cm848_initFuelDemandFilterState - same name as 0x1350c) |
-   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+   (was cm848_initVehicleSpeedCalculation; PR #53 round 97) */
 
-void cm848_initVehicleSpeedCalculation(void)
+void cm848_initializeVehicleSpeedCalculation(void)
 
 {
   vehicle_speed_filter_state.accumulator = 0;
@@ -44169,14 +44281,15 @@ void cm848_sciCancelCallbackTimeout(void)
 
 
 //
-// Function: cm848_sciInitDefaultCallback @ 0x0003e958
+// Function: cm848_initializeSciDefaultCallback @ 0x0003e958
 //
 
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    sci_default_command_handler = cm848_dispatchSciCommand | review-function-readability reviewed
-   2026-11-12 - Readability Medium Accuracy Confidence High */
+   2026-11-12 - Readability Medium Accuracy Confidence High (was cm848_sciInitDefaultCallback; PR
+   #53 round 97) */
 
-void cm848_sciInitDefaultCallback(void)
+void cm848_initializeSciDefaultCallback(void)
 
 {
   sci_default_command_handler = cm848_dispatchSciCommand;
@@ -44902,16 +45015,17 @@ LAB_0003f974:
 
 
 //
-// Function: cm848_initTransmissionOutputSpeedFilters @ 0x0003f9c4
+// Function: cm848_initializeTransmissionOutputSpeedFilters @ 0x0003f9c4
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
 /* Derives the output shaft speed numerator from the periods-accumulated and pulses-per-rev bytes -
    points both output speed EMA coefficient pointers at transmission_output_speed_filter_coefficient
    and zeroes both EMA accumulators (was cm848_initEngineLoadFilterState) |
-   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+   (was cm848_initTransmissionOutputSpeedFilters; PR #53 round 97) */
 
-void cm848_initTransmissionOutputSpeedFilters(void)
+void cm848_initializeTransmissionOutputSpeedFilters(void)
 
 {
   transmission_output_speed_in_use_filter_accumulator = 0;
@@ -44960,10 +45074,12 @@ void mpc555_updateOutputSpeedSensorPeriod(void)
 
 
 //
-// Function: mpc555_initTpuBConfiguration @ 0x0003fad4
+// Function: mpc555_initializeTpuBConfiguration @ 0x0003fad4
 //
 
-void mpc555_initTpuBConfiguration(void)
+/* (was mpc555_initTpuBConfiguration; PR #53 round 97) */
+
+void mpc555_initializeTpuBConfiguration(void)
 
 {
   word wVar1;
@@ -44993,15 +45109,16 @@ void mpc555_initTpuBConfiguration(void)
 
 
 //
-// Function: cm848_initCruiseServoControl @ 0x0003fba4
+// Function: cm848_initializeCruiseServoControl @ 0x0003fba4
 //
 
 /* Init for the cruise vacuum servo controller - zeroes the control-loop feed-forward and
    accumulator and the governor cycle counters and clears the vent (19) vacuum (20) and servo-supply
    (21) solenoid requests (was cm848_initEngineLoadProtection) | review-function-readability
-   reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium */
+   reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium (was
+   cm848_initCruiseServoControl; PR #53 round 97) */
 
-void cm848_initCruiseServoControl(void)
+void cm848_initializeCruiseServoControl(void)
 
 {
   vacuum_throttle_target_position = 0;
@@ -45440,10 +45557,12 @@ LAB_000406b0:
 
 
 //
-// Function: cm848_initFuelFilterCoefficients @ 0x00040828
+// Function: cm848_initializeFuelFilterCoefficients @ 0x00040828
 //
 
-void cm848_initFuelFilterCoefficients(void)
+/* (was cm848_initFuelFilterCoefficients; PR #53 round 97) */
+
+void cm848_initializeFuelFilterCoefficients(void)
 
 {
   cruise_fuel_ramp_down_working = 0;
@@ -46956,8 +47075,8 @@ void cm848_runFuelLimitChains(void)
 
 /* Startup initialization of the fuel demand and fuel limit lookups: calls
    cm848_initializeBarometricFuelLimitInterpolationStates (barometric fuel limit),
-   cm848_initFuelTableSizes (diag_state_group1_a..d, the first is the state argument of the lookup
-   in cm848_calculateAirFuelControlFuelLimit) and cm848_initFuelDemandTableDimensions
+   cm848_initializeFuelTableSizes (diag_state_group1_a..d, the first is the state argument of the
+   lookup in cm848_calculateAirFuelControlFuelLimit) and cm848_initializeFuelDemandTableDimensions
    (four_dimensional_fueling_steady_state_cached_axis_offsets_2 / 2, the first is the state argument
    of the lookup in cm848_calculateThrottle100Fuelings), each a store of the start value 2 into
    cached axis offset words, and sets fuel_pressure_fault_fuel_limit_working to its no-limit value
@@ -46968,8 +47087,8 @@ void cm848_initializeFuelDemandAndLimitInterpolationStates(void)
 
 {
   cm848_initializeBarometricFuelLimitInterpolationStates();
-  cm848_initFuelTableSizes();
-  cm848_initFuelDemandTableDimensions();
+  cm848_initializeFuelTableSizes();
+  cm848_initializeFuelDemandTableDimensions();
   fuel_pressure_fault_fuel_limit_working = fuel_demand_maximum;
   return;
 }
@@ -47030,7 +47149,7 @@ void cm848_resetEngineOperatingMode(void)
   cm848_selectUserCommandedFueling();
   cm848_selectPedalFaultMode(previous_engine_operating_mode);
   cm848_selectVariableSpeedGovernorMode(previous_engine_operating_mode);
-  cm848_initEngineOperatingState();
+  cm848_initializeEngineOperatingState();
   return;
 }
 
@@ -47043,7 +47162,7 @@ void cm848_resetEngineOperatingMode(void)
 void cm848_dispatchModeHandlers(void)
 
 {
-  cm848_initLookupTableParams();
+  cm848_initializeLookupTableParameters();
   initializePedalFaultModeEngineSpeedFilter();
   initializePowerTakeOffGovernorFiltersAndGains();
   return;
@@ -49252,10 +49371,12 @@ LAB_0004662c:
 
 
 //
-// Function: cm848_initRpmSetpointFilters @ 0x0004665c
+// Function: cm848_initializeRpmSetpointFilters @ 0x0004665c
 //
 
-void cm848_initRpmSetpointFilters(void)
+/* (was cm848_initRpmSetpointFilters; PR #53 round 97) */
+
+void cm848_initializeRpmSetpointFilters(void)
 
 {
   governor_speed_error_input = all_speed_governor_minimum_reference_speed_1_cal;
@@ -51593,10 +51714,12 @@ void cm848_setFuelMeteringPwm(void)
 
 
 //
-// Function: mpc555_initTpuTimingInterrupts @ 0x0004a37c
+// Function: mpc555_initializeTpuTimingInterrupts @ 0x0004a37c
 //
 
-void mpc555_initTpuTimingInterrupts(void)
+/* (was mpc555_initTpuTimingInterrupts; PR #53 round 97) */
+
+void mpc555_initializeTpuTimingInterrupts(void)
 
 {
   word wVar1;
@@ -51785,14 +51908,14 @@ void cm848_filterFuelPressureFeedback(void)
 
 
 //
-// Function: cm848_initFuelPressureSensor @ 0x0004a858
+// Function: cm848_initializeFuelPressureSensor @ 0x0004a858
 //
 
 /* Clears the rail pressure sensor state (volts / pressure / feedback / codes / debounce counts) and
    sets up the feedback filter and the table cache. Called from cm848_applicationMain. Was
-   cm848_initEnginePositionState */
+   cm848_initEnginePositionState (was cm848_initFuelPressureSensor; PR #53 round 97) */
 
-void cm848_initFuelPressureSensor(void)
+void cm848_initializeFuelPressureSensor(void)
 
 {
   fuel_pressure_sensor_volts = 0;
@@ -52016,10 +52139,12 @@ void cm848_evaluateInjectorDiagnostics(void)
 
 
 //
-// Function: cm848_initTimingFilterStates @ 0x0004ad8c
+// Function: cm848_initializeTimingFilterStates @ 0x0004ad8c
 //
 
-void cm848_initTimingFilterStates(void)
+/* (was cm848_initTimingFilterStates; PR #53 round 97) */
+
+void cm848_initializeTimingFilterStates(void)
 
 {
   injection_timing_main_cranking_cached_axis_offsets[0] = 2;
@@ -53281,7 +53406,7 @@ word cm848_getEepromMirrorChecksum(void)
 
 
 //
-// Function: cm848_initEepromDriverAndLoadMirror @ 0x0004cb64
+// Function: cm848_initializeEepromDriverAndLoadMirror @ 0x0004cb64
 //
 
 /* SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5
@@ -53289,9 +53414,10 @@ word cm848_getEepromMirrorChecksum(void)
    mirror at 0x3fd482 (RAM = 0x3fd482 + EEPROM offset) / sums 0x8aa words of the checksummed block
    (EEPROM 0x8ea-0x1a3d) against eeprom_block_checksum_expected_cal and sets or clears system_faults
    0x40; the entries at 0x4cb6c / 0x4cb84 / 0x4cb90 were spurious splits |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
+   (was cm848_initEepromDriverAndLoadMirror; PR #53 round 97) */
 
-void cm848_initEepromDriverAndLoadMirror(void)
+void cm848_initializeEepromDriverAndLoadMirror(void)
 
 {
   word *pwVar1;
@@ -53392,10 +53518,12 @@ int cm848_readInjectorDiagnosticWord(void)
 
 
 //
-// Function: cm848_initSensorRetryCounters @ 0x0004ce78
+// Function: cm848_initializeSensorRetryCounters @ 0x0004ce78
 //
 
-void cm848_initSensorRetryCounters(void)
+/* (was cm848_initSensorRetryCounters; PR #53 round 97) */
+
+void cm848_initializeSensorRetryCounters(void)
 
 {
   sensor_scan_count_a_limit = 10;
@@ -58639,10 +58767,12 @@ void cm848_refreshInputLineImage(void)
 
 
 //
-// Function: mpc555_processJ1939TxBufferSend @ 0x000535e8
+// Function: mpc555_processJ1939TransmitBufferSend @ 0x000535e8
 //
 
-void mpc555_processJ1939TxBufferSend(void)
+/* (was mpc555_processJ1939TxBufferSend; PR #53 round 97) */
+
+void mpc555_processJ1939TransmitBufferSend(void)
 
 {
   word wVar1;
@@ -58655,7 +58785,7 @@ void mpc555_processJ1939TxBufferSend(void)
     can_transmit_mailbox_pointer[1] = 0;
   }
   else {
-    cm848_writeCanControllerTxMailbox
+    cm848_writeCanControllerTransmitMailbox
               (&toucan_a,j1939_transmit_message_object_number & 0xff,
                (word *)can_transmit_queue_dequeue_pointer);
     can_transmit_queue_full_flag = 0;
@@ -58801,7 +58931,7 @@ void mpc555_sendJ1939SingleFrame(dword can_id,word data_length,byte *data,byte *
       }
     }
     else {
-      cm848_writeCanControllerTxMailbox
+      cm848_writeCanControllerTransmitMailbox
                 (&toucan_a,j1939_transmit_message_object_number & 0xff,(word *)&local_18);
     }
     bVar8 = 0;
@@ -58876,15 +59006,15 @@ J1939_CONTROL_DEVICE lookupJ1939ControlDevice(dword source_address)
 
 /* Twin of CM550 0x1e056 - the same shared name; the full step-by-step proof is in that row. Here:
    lhz the transmit index 0x40ad68, cmpw with r3 (the mailbox number), equal -> bl
-   mpc555_processJ1939TxBufferSend, else bl ignoreCanTransmitInterrupt with r3 unchanged; the only
-   caller is mpc555_canTransmitInterruptHandler (bl at 0x53bf0). (was
+   mpc555_processJ1939TransmitBufferSend, else bl ignoreCanTransmitInterrupt with r3 unchanged; the
+   only caller is mpc555_canTransmitInterruptHandler (bl at 0x53bf0). (was
    cm848_handleCanMailboxTransmitComplete; PR #53 round 88) */
 
 void handleJ1939CanTransmitInterrupt(uint param_1)
 
 {
   if (j1939_transmit_message_object_number == param_1) {
-    mpc555_processJ1939TxBufferSend();
+    mpc555_processJ1939TransmitBufferSend();
   }
   else {
     ignoreCanTransmitInterrupt();
@@ -58920,10 +59050,12 @@ void cm848_handleJ1939CanReceiveInterrupt(int param_1)
 
 
 //
-// Function: cm848_writeCanControllerTxMailbox @ 0x00053b28
+// Function: cm848_writeCanControllerTransmitMailbox @ 0x00053b28
 //
 
-void cm848_writeCanControllerTxMailbox(int can_module,dword mailbox_number,word *frame_words)
+/* (was cm848_writeCanControllerTxMailbox; PR #53 round 97) */
+
+void cm848_writeCanControllerTransmitMailbox(int can_module,dword mailbox_number,word *frame_words)
 
 {
   word *pwVar1;
@@ -59512,7 +59644,7 @@ void cm848_applicationMain(void)
   QSMCM_QDSCI_IL = 0;
   QSMCM_IDSPI_1 = 0;
   qsmcm_sci1.SCC1R1 = 0;
-  mpc555_initTpuConfiguration();
+  mpc555_initializeTpuConfiguration();
   clearWorkingRam();
   exception_reset_status = usiu_clocks_and_reset.RSR;
   usiu_clocks_and_reset.RSR = 0xffff;
@@ -59523,12 +59655,12 @@ void cm848_applicationMain(void)
   exception_dsisr = in_DSISR;
   copyCalibrationFromRomToRam();
   run_location = RUN_LOCATION_NORMAL;
-  initQadcModule();
+  initializeQadcModule();
   QSMCM_QDSCI_IL = 5;
   QSMCM_IDSPI_1 = 3;
-  mpc555_initQsmcmQspiModule();
-  cm848_initEepromDriverAndLoadMirror();
-  cm848_initSupervisorChip();
+  mpc555_initializeQsmcmQspiModule();
+  cm848_initializeEepromDriverAndLoadMirror();
+  cm848_initializeSupervisorChip();
   cm848_setLogicalOutputAndDriveLine(0x1b);
   if (power_cycle_sequence_number_cal == completed_power_down_sequence_number_cal) {
     fault_detected_cal.power_off_without_ignition_off_error = 0;
@@ -59634,19 +59766,19 @@ void cm848_applicationMain(void)
   cm848_dispatchModeHandlers();
   cm848_initializeHighSpeedGovernorCompensatedEngineSpeed();
   initializeEngineState();
-  cm848_initSensorDefaults();
-  cm848_initFuelFilterCoefficients();
+  cm848_initializeSensorDefaults();
+  cm848_initializeFuelFilterCoefficients();
   cm848_initializeCommandedThrottleState();
   cm848_selectColdStartFactor();
   cm848_initializeFourDimensionalInjectionTimingLookupCaches();
   cm848_initializePowerTakeOffGovernorState();
   initializePowerTakeOffThrottleOverride();
   cm848_initializeLowSpeedGovernorParameters();
-  cm848_initFuelDemandTracking();
+  cm848_initializeFuelDemandTracking();
   cm848_initializeTachometerOutputs();
   cm848_exceptionHandler();
   initializeFourDimensionalFuelingAndFrictionFuelLookups();
-  cm848_initFuelTimingTableSizes();
+  cm848_initializeFuelTimingTableSizes();
   cm848_initializeAllSpeedGovernorVariables();
   cm848_initializeMaximumTorqueAtCurrentEngineSpeed();
   cm848_setGovernorFilterPointer();
@@ -59667,13 +59799,13 @@ void cm848_applicationMain(void)
   cm848_initializeInjectionAngleScheduler();
   cm848_initializeFuelPressureGovernorState();
   cm848_initializeFuelPressureDiagnosticState();
-  cm848_initFuelPressureSensor();
+  cm848_initializeFuelPressureSensor();
   cm848_initializeFuelPressureSetpointState();
-  mpc555_initTpuTimingInterrupts();
+  mpc555_initializeTpuTimingInterrupts();
   cm848_writeWorkingRamEndMarker();
-  cm848_initRpmSetpointFilters();
+  cm848_initializeRpmSetpointFilters();
   cm848_initializeAllSpeedGovernorTuningSetBlendWeight();
-  cm848_initTimingFilterStates();
+  cm848_initializeTimingFilterStates();
   cm848_resetEngineProtectionShutdownOverrideDetector();
   cm848_stubFunction3();
   initializeHighSpeedGovernorGainSet();
@@ -59685,21 +59817,21 @@ void cm848_applicationMain(void)
   hpcr_initializeEngineProtection();
   cm848_initializeAirConditioningClutchControl();
   cm848_initializeCruiseSwitchChannel();
-  cm848_initFuelLevelFilter();
-  cm848_initJ1939CommunicationSystem();
+  cm848_initializeFuelLevelFilter();
+  cm848_initializeJ1939CommunicationSystem();
   mpc555_enableSchedulerMiosOutput();
   mpc555_resetEngineTimingAccumulators();
   cm848_enableSensorFilterUpdate();
   cm848_initializeInjectionTimingMainMisfireLimit();
   cm848_resetIntakeAirHeaterStartTemperatureCapture();
-  cm848_initIntakeAirHeaterControl();
+  cm848_initializeIntakeAirHeaterControl();
   cm848_initializeFuelDemandAndLimitInterpolationStates();
   initializeEngineAccelerationFilters();
   cm848_initializeCruiseGovernorFilters();
   cm848_initializeSpeedRequestBlendWeightLookupCache();
   cm848_initializeAirConditioningPressureChannel();
   cm848_initializeLowSpeedGovernorReferenceSpeed();
-  cm848_initGovernorLookupDimensions();
+  cm848_initializeGovernorLookupDimensions();
   cm848_initializeTorqueManagement();
   cm848_initializeLiftPumpControl();
   cm848_initializeAlternatorFieldControl();
@@ -59718,32 +59850,32 @@ void cm848_applicationMain(void)
   cm848_initializeFuelLevelLowDistanceMonitor();
   cm848_initializeFaultManagement();
   cm848_initializeCoolantTemperatureSensorPerformanceMonitor();
-  cm848_initDataStructures();
+  cm848_initializeDataStructures();
   cm848_resetFuelPressureTrackingErrorMonitor();
   cm848_initializeFuelTemperatureSensorColdSoakCheck();
   cm848_emptyStub3();
   cm848_emptyStub4();
-  cm848_initCanHardware();
+  cm848_initializeCanHardware();
   cm848_armIntakeAirHeaterPerformanceTest();
   cm848_initializeBoostPressureMonitors();
   cm848_initializeColdDeltaFuelLookupCache();
-  cm848_initOverboostMonitor();
-  cm848_initVehicleSpeedCalculation();
+  cm848_initializeOverboostMonitor();
+  cm848_initializeVehicleSpeedCalculation();
   cm848_initializeEndOfLineTestSequence();
   cm848_initializeMisfireMonitor();
-  cm848_sciInitCommandCallback();
-  cm848_sciInitPort1();
+  cm848_initializeSciCommandCallback();
+  cm848_initializeSciPort1();
   cm848_initializeFourWheelDriveSwitchChannel();
   cm848_initializeFourWheelDriveSwitchMonitor();
   cm848_initializeInjectorDriverBoosterCapacitorMonitor();
   cm848_copySensorValuesInUseUnchecked();
   cm848_resetImmobilizerHandshake();
-  cm848_initRadiatorFanSpeedMeasurement();
+  cm848_initializeRadiatorFanSpeedMeasurement();
   cm848_configureRadiatorFanSpeedInput();
-  cm848_initCoolingFanControl();
-  cm848_initEngineWarningFlags();
+  cm848_initializeCoolingFanControl();
+  cm848_initializeEngineWarningFlags();
   cm848_initializeRadiatorFanSpeedRationalityCheck();
-  cm848_initInterpolationStateCounters();
+  cm848_initializeInterpolationStateCounters();
   cm848_initializeRemoteThrottle();
   cm848_initializeBoostPressureAbsoluteChannel();
   cm848_initializeExhaustThrottlePositionChannel();
@@ -59754,7 +59886,7 @@ void cm848_applicationMain(void)
   cm848_initializeCombustionLimitLookupCaches();
   cm848_initializeCombustionReferenceMapPointers();
   cm848_initialization_step_4();
-  mpc555_initFuelFlowRateVariables();
+  mpc555_initializeFuelFlowRateVariables();
   cm848_initializeEgrValvePositionControlLoop();
   cm848_initializeEgrValvePositionControlDiagnostic();
   cm848_initializeEgrValveMotorThermalModel();
@@ -59762,34 +59894,34 @@ void cm848_applicationMain(void)
   cm848_resetSensorDeviationTracking();
   cm848_initializeTurbochargerSpeedSensorChannel();
   cm848_sciResetReceiveState();
-  cm848_initTemperatureTrimTableSizes();
+  cm848_initializeTemperatureTrimTableSizes();
   cm848_initializeConverterSlipEngineSpeedLimit();
-  cm848_initVehicleSpeedSensorChannel();
+  cm848_initializeVehicleSpeedSensorChannel();
   cm848_initializeVehicleSpeedSensorZeroUnderLoadMonitor();
   cm848_initializeVehicleSpeedAndCruiseState();
   cm848_loadDefaultJ1939NamesAndSourceAddresses();
-  cm848_initJ1939InputProcessing();
+  cm848_initializeJ1939InputProcessing();
   cm848_initializeVariableGeometryTurbochargerPositionChannel();
   cm848_initializeSciCommand37TestTimeouts();
-  cm848_initMemoryLayout();
+  cm848_initializeMemoryLayout();
   cm848_resetFuelPressureSetpointNotReachedMonitor();
   cm848_clearGovernorFilterAccumulators();
-  cm848_initWaterInFuelDistanceMonitor();
+  cm848_initializeWaterInFuelDistanceMonitor();
   cm848_initializeOilChangeMonitorLookups();
   cm848_clearEgrValveDriverOverCurrentState();
   cm848_initializeDiscreteOutputOverrides();
   cm848_initializeBarometricPressureSensorAboveMaximumMonitor();
   cm848_clearFuelDemandFlag();
-  cm848_initDiagnosticRingBuffer();
+  cm848_initializeDiagnosticRingBuffer();
   cm848_clearEgrValveHBridgeFaultState();
   cm848_initializeEgrValveClosedHoldPreviousFlag();
   cm848_initializeFrictionTorqueLookupCache();
   cm848_initializePredictedIntakeManifoldTemperature();
   cm848_initializeTurbochargerSpeedEstimate();
-  cm848_initSensorRetryCounters();
+  cm848_initializeSensorRetryCounters();
   cm848_initializeEgrOrificeTemperatureChannel();
   cm848_initializeEgrDeltaPressureChannel();
-  initGovernorFlagsAux();
+  initializeGovernorFlagsAuxiliary();
   cm848_initializeStackHighWaterMark();
   cm848_initializeMaximumRoadSpeeds();
   cm848_initializeAcceleratorPedalPositionSensor1Channel();
@@ -59812,9 +59944,9 @@ void cm848_applicationMain(void)
   cm848_initializeTransmissionControl();
   cm848_initializeOverdriveSwitchAndShift();
   cm848_initializeTransmissionTemperatureSensorPerformanceMonitor();
-  cm848_initTransmissionOutputSpeedFilters();
-  mpc555_initTpuBConfiguration();
-  cm848_initCruiseServoControl();
+  cm848_initializeTransmissionOutputSpeedFilters();
+  mpc555_initializeTpuBConfiguration();
+  cm848_initializeCruiseServoControl();
   cm848_initializeBarometricPressureSelection();
   cm848_updateBatteryVoltageSource();
   cm848_initializeChargeTemperatureEstimate();
@@ -59830,8 +59962,8 @@ void cm848_applicationMain(void)
   cm848_initialization_step_14();
   hpcr_initializeTimerRegisters();
   cm848_initializeExhaustPressure();
-  cm848_initFlowControlStateVariables();
-  cm848_initBoostControlInterpolationState();
+  cm848_initializeFlowControlStateVariables();
+  cm848_initializeBoostControlInterpolationState();
   cm848_initializeTurbochargerSpeedSource();
   cm848_initializeVariableGeometryTurbochargerPositionControlLoop();
   cm848_initializeVariableGeometryTurbochargerPositionControlDiagnostic();
@@ -59841,7 +59973,7 @@ void cm848_applicationMain(void)
   cm848_initializeVariableGeometryTurbochargerMotorThermalModel();
   cm848_initializeVariableGeometryTurbochargerAdjustmentFilters();
   cm848_initializeGovernorPressureTrackingMonitor();
-  cm848_initParkNeutralSwitchMonitor();
+  cm848_initializeParkNeutralSwitchMonitor();
   cm848_initializeAmbientConditions();
   cm848_initializeExhaustPressureEstimate();
   cm848_initialization_step_13();
@@ -59856,9 +59988,9 @@ void cm848_applicationMain(void)
   cm848_initializeChargeSystemErrorTables();
   cm848_initializeEgrAssistController();
   cm848_initializeWastegateDutyController();
-  mpc555_initFuelDemandTrackingState();
-  mpc555_initFuelDemandFilterPointers();
-  cm848_initAdaptiveControl();
+  mpc555_initializeFuelDemandTrackingState();
+  mpc555_initializeFuelDemandFilterPointers();
+  cm848_initializeAdaptiveControl();
   cm848_initialization_group26_state();
   hpcr_clearTimingCalibrationData();
   cm848_synchronizeProtectionEnableShadowFlags();
@@ -59890,7 +60022,7 @@ void cm848_applicationMain(void)
   cm848_clearMilForHealedFaults();
   cm848_addCoolantOverheatLevelTimersToTotals();
   cm848_saveCruiseSetSpeedForPowerDown();
-  cm848_initCommunication();
+  cm848_initializeCommunication();
   cm848_runPowerDownSequence();
   return;
 }
@@ -59936,7 +60068,7 @@ void cm848_restartApplicationWithoutReset(void)
   cm848_clearMilForHealedFaults();
   cm848_addCoolantOverheatLevelTimersToTotals();
   cm848_saveCruiseSetSpeedForPowerDown();
-  cm848_initCommunication();
+  cm848_initializeCommunication();
   cm848_runPowerDownSequence();
   return;
 }
@@ -60429,10 +60561,12 @@ void mpc555_tpuASetPwmPeriodMicroseconds(int channel,uint period_microseconds)
 
 
 //
-// Function: initQadcModule @ 0x00055500
+// Function: initializeQadcModule @ 0x00055500
 //
 
-void initQadcModule(void)
+/* (was initQadcModule; PR #53 round 97) */
+
+void initializeQadcModule(void)
 
 {
   ushort *puVar1;
@@ -60754,16 +60888,16 @@ void cm848_initializeTachometerOutputs(void)
 
 
 //
-// Function: mpc555_initTpuConfiguration @ 0x00055c1c
+// Function: mpc555_initializeTpuConfiguration @ 0x00055c1c
 //
 
 /* Unless TPU B is already in emulation mode (TPUMCR bit 0x400 - EMU): copies
    dual_port_tpu_ram_load_table's records - the TPU microcode - into the dual-port TPU RAM
    (0x302000-0x302fff) while the CPU can still write it / then sets both TPU module configuration
    registers with EMU (0x4430 B / 0x4460 A) so both TPUs run it / and their interrupt registers (PR
-   #53 round 70) */
+   #53 round 70) (was mpc555_initTpuConfiguration; PR #53 round 97) */
 
-void mpc555_initTpuConfiguration(void)
+void mpc555_initializeTpuConfiguration(void)
 
 {
   word wVar1;
@@ -61607,10 +61741,12 @@ undefined4 cm848_ringBufferWriteByte(int *param_1,undefined1 param_2)
 
 
 //
-// Function: cm848_ringBufferInit @ 0x00056d38
+// Function: cm848_initializeRingBuffer @ 0x00056d38
 //
 
-void cm848_ringBufferInit(int *param_1,int param_2,int param_3)
+/* (was cm848_ringBufferInit; PR #53 round 97) */
+
+void cm848_initializeRingBuffer(int *param_1,int param_2,int param_3)
 
 {
   param_1[2] = param_2;
@@ -69259,10 +69395,12 @@ void cm848_updateGeneralEngineProtection(void)
 
 
 //
-// Function: cm848_initFlowControlStateVariables @ 0x00509b5c
+// Function: cm848_initializeFlowControlStateVariables @ 0x00509b5c
 //
 
-void cm848_initFlowControlStateVariables(void)
+/* (was cm848_initFlowControlStateVariables; PR #53 round 97) */
+
+void cm848_initializeFlowControlStateVariables(void)
 
 {
   DAT_003fbd50 = 0;
@@ -70262,16 +70400,17 @@ void cm848_processJ1939AcceleratorInputs(void)
 
 
 //
-// Function: cm848_initJ1939InputProcessing @ 0x0050ae5c
+// Function: cm848_initializeJ1939InputProcessing @ 0x0050ae5c
 //
 
 /* Start-up / exception reset of the J1939 input layer: idle switch debounce (previous state 0xFF
    and timer 100) / clears the data-error fault bit (reserved_10 bit 2) and
    j1939_accelerator_low_idle_switch_unavailable_flag / sets j1939_input_monitor_inhibit_flag (was
    cm848_initializeDiagnosticStateCounters) | review-function-readability reviewed 2026-11-12 -
-   Readability Medium Accuracy Confidence High */
+   Readability Medium Accuracy Confidence High (was cm848_initJ1939InputProcessing; PR #53 round 97)
+    */
 
-void cm848_initJ1939InputProcessing(void)
+void cm848_initializeJ1939InputProcessing(void)
 
 {
   accelerator_idle_switch_previous_state = 0xff;
@@ -72907,10 +73046,12 @@ void cm848_calculateNoLoadFuel(void)
 
 
 //
-// Function: cm848_initInterpolationStateCounters @ 0x0050dd10
+// Function: cm848_initializeInterpolationStateCounters @ 0x0050dd10
 //
 
-void cm848_initInterpolationStateCounters(void)
+/* (was cm848_initInterpolationStateCounters; PR #53 round 97) */
+
+void cm848_initializeInterpolationStateCounters(void)
 
 {
   radiator_fan_load_fuel_demand_offset_cached_axis_offsets[0] = 2;
@@ -73496,10 +73637,12 @@ void cm848_calculateWaterVaporAndSaturationTemperatures(void)
 
 
 //
-// Function: cm848_initBoostControlInterpolationState @ 0x0050ea88
+// Function: cm848_initializeBoostControlInterpolationState @ 0x0050ea88
 //
 
-void cm848_initBoostControlInterpolationState(void)
+/* (was cm848_initBoostControlInterpolationState; PR #53 round 97) */
+
+void cm848_initializeBoostControlInterpolationState(void)
 
 {
   DAT_003fcbf4 = 2;
@@ -76673,14 +76816,15 @@ void cm848_updateEngineWarningFlags(void)
 
 
 //
-// Function: cm848_initEngineWarningFlags @ 0x005134e8
+// Function: cm848_initializeEngineWarningFlags @ 0x005134e8
 //
 
 /* Clears warning_chime_request_flag / coolant_overheat_or_low_oil_pressure_flag /
    warning_chime_countdown (was protection_sensor_state_initialize) | review-function-readability
-   reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
+   reviewed 2026-11-13 - Readability Medium Accuracy Confidence High (was
+   cm848_initEngineWarningFlags; PR #53 round 97) */
 
-void cm848_initEngineWarningFlags(void)
+void cm848_initializeEngineWarningFlags(void)
 
 {
   warning_chime_request_flag = 0;
@@ -78190,15 +78334,15 @@ void cm848_runCoolingFanControl(void)
 
 
 //
-// Function: cm848_initCoolingFanControl @ 0x00515bd4
+// Function: cm848_initializeCoolingFanControl @ 0x00515bd4
 //
 
 /* Cooling fan control init: clears the speed-target / ramp / PID state, sets the PID integral to
    cooling_fan_integral_term_initial, the A/C request to its off speed and the four filter
    coefficient pointers, then enables the cooling fan's output channel record. Was
-   j1939_message_handler_initialize */
+   j1939_message_handler_initialize (was cm848_initCoolingFanControl; PR #53 round 97) */
 
-void cm848_initCoolingFanControl(void)
+void cm848_initializeCoolingFanControl(void)
 
 {
   cooling_fan_coolant_integral_reset_flag = 0;
@@ -78370,14 +78514,15 @@ void cm848_measureRadiatorFanSpeed(void)
 
 
 //
-// Function: cm848_initRadiatorFanSpeedMeasurement @ 0x005161c0
+// Function: cm848_initializeRadiatorFanSpeedMeasurement @ 0x005161c0
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
 /* Initialises the radiator fan speed measurement: history enable / filter pointer /
-   radiator_fan_speed_numerator for the current type code. Was tpu_rpm_measurement_initialize */
+   radiator_fan_speed_numerator for the current type code. Was tpu_rpm_measurement_initialize (was
+   cm848_initRadiatorFanSpeedMeasurement; PR #53 round 97) */
 
-void cm848_initRadiatorFanSpeedMeasurement(void)
+void cm848_initializeRadiatorFanSpeedMeasurement(void)
 
 {
   uint uVar1;
@@ -78477,15 +78622,16 @@ void cm848_configureRadiatorFanSpeedInput(void)
 
 
 //
-// Function: cm848_initFuelLevelPowerUpCheck @ 0x00516428
+// Function: cm848_initializeFuelLevelPowerUpCheck @ 0x00516428
 //
 
 /* Arms the once-per-power-up fuel level check: dwell counter = ROM 0x5b32e (0 here) /
    fuel_level_first_sample_flag = 1 / fuel_level_power_up_check_pending_flag = 0 (was
    cm848_calibBlock1_adaptiveTrim_init) | review-function-readability reviewed 2026-11-13 -
-   Readability Medium Accuracy Confidence High */
+   Readability Medium Accuracy Confidence High (was cm848_initFuelLevelPowerUpCheck; PR #53 round
+   97) */
 
-void cm848_initFuelLevelPowerUpCheck(void)
+void cm848_initializeFuelLevelPowerUpCheck(void)
 
 {
   fuel_level_power_up_dwell_counter = fuel_level_power_up_read_delay;
@@ -78788,19 +78934,19 @@ void cm848_calibBlock1_warmupFlag_reset(void)
 
 
 //
-// Function: cm848_initFuelLevelFilter @ 0x00516a20
+// Function: cm848_initializeFuelLevelFilter @ 0x00516a20
 //
 
 /* Boot-time fuel level init (called once from cm848_applicationMain): resets the power-up check /
    high-voltage debounce / standstill timer / fault substitution and seeds the fast / slow /
    reference filters (x 256) from the EEPROM-mirror bytes [0] / [2] / [1] (was
    eeprom_calibration_load_initialize) | review-function-readability reviewed 2026-11-13 -
-   Readability Medium Accuracy Confidence High */
+   Readability Medium Accuracy Confidence High (was cm848_initFuelLevelFilter; PR #53 round 97) */
 
-void cm848_initFuelLevelFilter(void)
+void cm848_initializeFuelLevelFilter(void)
 
 {
-  cm848_initFuelLevelPowerUpCheck();
+  cm848_initializeFuelLevelPowerUpCheck();
   cm848_calibBlock1_counters_reset();
   cm848_calibBlock1_trimTimer_reset();
   cm848_calibBlock1_warmupFlag_reset();
@@ -78965,16 +79111,17 @@ void cm848_initializeWatchdogFueling(void)
 
 
 //
-// Function: cm848_initIntakeAirHeaterControl @ 0x00516e5c
+// Function: cm848_initializeIntakeAirHeaterControl @ 0x00516e5c
 //
 
 /* Reset-path init of the intake air heater (grid heater) control: clears output requests 43 / 44
    (heater relays A / B - driver faults P0541 P0542 / P2607 P2608 - B only when
    algorithm_enable_flags_32_cal bit 4 is clear) and zeroes its state and counters (was
    protection_iat_oilTemp_initialize) | review-function-readability reviewed 2026-11-13 -
-   Readability Medium Accuracy Confidence High */
+   Readability Medium Accuracy Confidence High (was cm848_initIntakeAirHeaterControl; PR #53 round
+   97) */
 
-void cm848_initIntakeAirHeaterControl(void)
+void cm848_initializeIntakeAirHeaterControl(void)
 
 {
   intake_air_heater_control_state = INTAKE_AIR_HEATER_PHASE_KEY_ON;
@@ -80441,7 +80588,7 @@ switchD_00518c0c_default:
 // Function: cm848_initializeObdServiceState @ 0x005196f0
 //
 
-/* Called by cm848_initJ1939CommunicationSystem: zeroes the OBD-II service state -
+/* Called by cm848_initializeJ1939CommunicationSystem: zeroes the OBD-II service state -
    obd_stored_dtc_count / obd_dtc_scan_index / obd_dtc_scan_more_flag / obd_dtc_copy_index and the
    VIN / calibration ID frame indexes (was j1939_fault_processor_initialize; PR #53 round 54) */
 
@@ -80615,14 +80762,15 @@ LAB_00519be0:
 
 
 //
-// Function: cm848_initPciTransmitMessage3State @ 0x00519c64
+// Function: cm848_initializePciTransmitMessage3State @ 0x00519c64
 //
 
 /* Boot init of the PCI TX[3] 0xB0 builder state: copies the key-off count (0x3fdda8) into the DTC
    display baseline 0x3fce9e and clears the builder flags 0x3fcea1 (was j1939_communication_init) |
-   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+   (was cm848_initPciTransmitMessage3State; PR #53 round 97) */
 
-void cm848_initPciTransmitMessage3State(void)
+void cm848_initializePciTransmitMessage3State(void)
 
 {
   dtc_display_key_off_count_base = ignition_key_off_count_cal;
@@ -81577,14 +81725,15 @@ void cm848_monitorParkNeutralSwitch(void)
 
 
 //
-// Function: cm848_initParkNeutralSwitchMonitor @ 0x0051b978
+// Function: cm848_initializeParkNeutralSwitchMonitor @ 0x0051b978
 //
 
 /* Clears park_neutral_switch_monitor_state / the start and driving check done flags (0x3fcef4 /
    0x3fcef8) and park_neutral_switch_start_check_delay_count (was initFuelTempDerateState) |
-   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+   (was cm848_initParkNeutralSwitchMonitor; PR #53 round 97) */
 
-void cm848_initParkNeutralSwitchMonitor(void)
+void cm848_initializeParkNeutralSwitchMonitor(void)
 
 {
   park_neutral_switch_monitor_state = DIAGNOSTIC_MONITOR_STATE_NOT_RUN;
@@ -83111,18 +83260,19 @@ void cm848_dispatchSciCommand(void)
 
 
 //
-// Function: cm848_sciInitCommandCallback @ 0x0051d810
+// Function: cm848_initializeSciCommandCallback @ 0x0051d810
 //
 
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    installs the default SCI command callback | review-function-readability reviewed 2026-11-12 -
-   Readability Medium Accuracy Confidence Medium */
+   Readability Medium Accuracy Confidence Medium (was cm848_sciInitCommandCallback; PR #53 round 97)
+    */
 
-void cm848_sciInitCommandCallback(void)
+void cm848_initializeSciCommandCallback(void)
 
 {
   sci_next_byte_handler = cm848_dispatchSciCommand;
-  cm848_sciInitDefaultCallback();
+  cm848_initializeSciDefaultCallback();
   return;
 }
 
@@ -83309,14 +83459,15 @@ void cm848_sciEnableSerialMode(void)
 
 
 //
-// Function: cm848_sciInitPort1 @ 0x0051dad4
+// Function: cm848_initializeSciPort1 @ 0x0051dad4
 //
 
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    configures QSMCM SCI1 (SCC1R0 = 0xa0 normal speed) for the SCI link | review-function-readability
-   reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+   reviewed 2026-11-12 - Readability Medium Accuracy Confidence High (was cm848_sciInitPort1; PR #53
+   round 97) */
 
-void cm848_sciInitPort1(void)
+void cm848_initializeSciPort1(void)
 
 {
   ushort uVar1;
@@ -87391,10 +87542,12 @@ void cm848_updateTripAndLifetimeCounters(void)
 
 
 //
-// Function: initGovernorFlagsAux @ 0x00523750
+// Function: initializeGovernorFlagsAuxiliary @ 0x00523750
 //
 
-void initGovernorFlagsAux(void)
+/* (was initGovernorFlagsAux; PR #53 round 97) */
+
+void initializeGovernorFlagsAuxiliary(void)
 
 {
   DAT_003fcfba = 0;
@@ -89790,15 +89943,16 @@ void cm848_vehicleSpeedSensorInterruptHandler(void)
 
 
 //
-// Function: cm848_initVehicleSpeedSensorChannel @ 0x00527050
+// Function: cm848_initializeVehicleSpeedSensorChannel @ 0x00527050
 //
 
 /* Configures TPU-B channel 2 (function 0xD period measurement) as the vehicle speed sensor input:
    vehicle_speed_sensor_period = 0x5e7fb044 (no pulse yet) / channel interrupt enabled /
    vehicle_speed_sensor_tpu_channel = 2 (was cm848_tpu_channel2_fuel_init) |
-   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+   (was cm848_initVehicleSpeedSensorChannel; PR #53 round 97) */
 
-void cm848_initVehicleSpeedSensorChannel(void)
+void cm848_initializeVehicleSpeedSensorChannel(void)
 
 {
   word wVar1;
@@ -99113,10 +99267,12 @@ void hpcr_injectPressureDiagnostic(void)
 
 
 //
-// Function: cm848_initCommunication @ 0x00536638
+// Function: cm848_initializeCommunication @ 0x00536638
 //
 
-void cm848_initCommunication(void)
+/* (was cm848_initCommunication; PR #53 round 97) */
+
+void cm848_initializeCommunication(void)
 
 {
   temperature_rationality_coolant_soak_reference_cal =
@@ -99127,10 +99283,12 @@ void cm848_initCommunication(void)
 
 
 //
-// Function: cm848_initMemoryLayout @ 0x0053664c
+// Function: cm848_initializeMemoryLayout @ 0x0053664c
 //
 
-void cm848_initMemoryLayout(void)
+/* (was cm848_initMemoryLayout; PR #53 round 97) */
+
+void cm848_initializeMemoryLayout(void)
 
 {
   temperature_rationality_confirm_coolant_minimum = 0x4b00;
@@ -99140,10 +99298,12 @@ void cm848_initMemoryLayout(void)
 
 
 //
-// Function: cm848_initDataStructures @ 0x0053665c
+// Function: cm848_initializeDataStructures @ 0x0053665c
 //
 
-void cm848_initDataStructures(void)
+/* (was cm848_initDataStructures; PR #53 round 97) */
+
+void cm848_initializeDataStructures(void)
 
 {
   thermostat_monitor_state = 0;
@@ -99584,15 +99744,16 @@ void cm848_resetFuelPressureSetpointNotReachedMonitor(void)
 
 
 //
-// Function: cm848_initOverboostMonitor @ 0x0053729c
+// Function: cm848_initializeOverboostMonitor @ 0x0053729c
 //
 
 /* Boot init: zeroes the overboost debounce 0x3fd268 / the boost-band debounce 0x3fd26a and the
    boost-band event and time counters 0x40ba6a / 0x40ba6c used by
    cm848_monitorOverboostAndHighLoadBoostBand (was cm848_initCommunicationState) |
-   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+   (was cm848_initOverboostMonitor; PR #53 round 97) */
 
-void cm848_initOverboostMonitor(void)
+void cm848_initializeOverboostMonitor(void)
 
 {
   overboost_debounce_count = 0;
@@ -99800,10 +99961,12 @@ LAB_005377b0:
 
 
 //
-// Function: cm848_initAdaptiveControl @ 0x00537944
+// Function: cm848_initializeAdaptiveControl @ 0x00537944
 //
 
-void cm848_initAdaptiveControl(void)
+/* (was cm848_initAdaptiveControl; PR #53 round 97) */
+
+void cm848_initializeAdaptiveControl(void)
 
 {
   wastegate_monitor_fail_high_boost_pressure_cached_axis_offset = 2;
@@ -99822,15 +99985,15 @@ void cm848_initAdaptiveControl(void)
 
 
 //
-// Function: cm848_initWaterInFuelDistanceMonitor @ 0x005379b4
+// Function: cm848_initializeWaterInFuelDistanceMonitor @ 0x005379b4
 //
 
 /* Boot init: arms the water-in-fuel distance monitor (sets 0x3fd278 to 1) when switch 0
    (switch_input_state_bits[0] bit 0) is set; runs once from the cm848_applicationMain boot list
    (was cm848_initOilPressure) | review-function-readability reviewed 2026-11-13 - Readability
-   Medium Accuracy Confidence High */
+   Medium Accuracy Confidence High (was cm848_initWaterInFuelDistanceMonitor; PR #53 round 97) */
 
-void cm848_initWaterInFuelDistanceMonitor(void)
+void cm848_initializeWaterInFuelDistanceMonitor(void)
 
 {
   if (switch_input_state_bits.key_switch != 0) {
@@ -100742,12 +100905,12 @@ void cm848_j1939_system_init(void)
   can_transmit_completed_flag = 0;
   fault_detected_cal.j1939_link_cannot_transmit_error = 0;
   fault_registered_cal.j1939_link_cannot_transmit_error = 0;
-  cm848_initJ1939AckBuffer();
-  cm848_initPgn65265CruiseSpeedHandler();
+  cm848_initializeJ1939AcknowledgementBuffer();
+  cm848_initializePgn65265CruiseSpeedHandler();
   cm848_initializePgn61441ElectronicBrakeController1Buffer();
-  cm848_initEec1TxDescriptor();
-  cm848_initPgn61443Eec2Handler();
-  cm848_initPgn65247ElectronicEngineController3Buffer();
+  cm848_initializeEec1TransmitDescriptor();
+  cm848_initializePgn61443Eec2Handler();
+  cm848_initializePgn65247ElectronicEngineController3Buffer();
   initializePgn65251EngineConfiguration1Buffer();
   cm848_initializePgn61440ElectronicRetarderController1Buffer();
   initializePgn65213FanDrive1Buffer();
@@ -100755,14 +100918,14 @@ void cm848_j1939_system_init(void)
   cm848_initializePgn65249RetarderConfigurationBuffer();
   cm848_initializeEngineRetarderTsc1RequestState();
   cm848_initializePgn56320AntiTheftStatusBuffer();
-  cm848_initJ1939AmbientConditionsBuffer();
-  cm848_initJ1939FluidLevelPressureBuffer();
-  cm848_initJ1939InletExhaustConditionsBuffer();
+  cm848_initializeJ1939AmbientConditionsBuffer();
+  cm848_initializeJ1939FluidLevelPressureBuffer();
+  cm848_initializeJ1939InletExhaustConditionsBuffer();
   cm848_initializePgn65264PowerTakeOffInformationBuffer();
-  cm848_initJ1939VehicleElectricalBuffer();
+  cm848_initializeJ1939VehicleElectricalBuffer();
   cm848_initializePgn65279WaterInFuelIndicatorBuffer();
-  cm848_initJ1939ProprietaryPgn65504Buffer();
-  cm848_initPgn65226Dm1Handler();
+  cm848_initializeJ1939ProprietaryPgn65504Buffer();
+  cm848_initializePgn65226Dm1Handler();
   cm848_initializePgn65232Dm8Buffer();
   scheduleJ1939PeriodicMessage
             (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfef1,100,0x46,
@@ -100823,14 +100986,14 @@ void cm848_j1939_system_init(void)
              cm848_sendPgn65279WaterInFuelIndicatorMessage);
   registerJ1939DiagnosticServiceDispatcher();
   registerTsc1DestinationAddressDispatcher();
-  cm848_initJ1939Pgn61442Etc1Handler();
-  cm848_initEtc2Handler();
+  cm848_initializeJ1939Pgn61442Etc1Handler();
+  cm848_initializeEtc2Handler();
   cm848_registerJ1939PgnRequestHandlers();
-  cm848_initJ1939ProprietaryHandler();
-  cm848_initJ1939Dm13Handler();
+  cm848_initializeJ1939ProprietaryHandler();
+  cm848_initializeJ1939Dm13Handler();
   registerJ1939Dm7Handler();
   cm848_registerJ1939InputMessageHandlers();
-  cm848_initJ1939DiagnosticCallback();
+  cm848_initializeJ1939DiagnosticCallback();
   registerJ1939MemoryReadServices();
   cm848_registerJ1939GetAddressByParameterIdService();
   registerJ1939MemoryWriteServices();
@@ -100960,10 +101123,12 @@ undefined4 cm848_lookupParameterIdAddress(uint param_1,uint *param_2)
 
 
 //
-// Function: cm848_initCanHardware @ 0x00539868
+// Function: cm848_initializeCanHardware @ 0x00539868
 //
 
-void cm848_initCanHardware(void)
+/* (was cm848_initCanHardware; PR #53 round 97) */
+
+void cm848_initializeCanHardware(void)
 
 {
   word wVar1;
