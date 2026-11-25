@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 11:35:19 MST 2026
+// Generated: Wed Nov 25 12:17:31 MST 2026
 
 
 //
@@ -6299,9 +6299,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
-  word counter_value;
   byte prescaler_count;
   dword runtime_value;
+  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -44802,13 +44802,13 @@ void cm848_initTransmissionOutputSpeedFilters(void)
 void mpc555_updateOutputSpeedSensorPeriod(void)
 
 {
-  uint uVar1;
+  dword dVar1;
   
   transmission_output_speed_pulse_timeout_counter = transmission_output_speed_pulse_timeout_reload;
-  uVar1 = tpu_b_channel_14_parameters._8_4_;
-  tpu_b_channel_14_parameters.PARAM4 = 0;
+  dVar1 = tpu_b_channel_14_parameters.accumulated_period;
+  tpu_b_channel_14_parameters.accumulated_period._0_2_ = 0;
   transmission_output_speed_period_microseconds =
-       (dword)(CONCAT44((int)((ulonglong)uVar1 * 1000000 >> 0x20),uVar1 * 1000000) / 0x4c4b4);
+       (dword)(CONCAT44((int)((ulonglong)dVar1 * 1000000 >> 0x20),dVar1 * 1000000) / 0x4c4b4);
   return;
 }
 
@@ -44833,7 +44833,7 @@ void mpc555_initTpuBConfiguration(void)
   tpu_b.CFSR0 = wVar1 & 0xf0ff | 0xd00;
   tpu_b_channel_14_parameters.PARAM1 = (ushort)output_speed_sensor_periods_accumulated << 8;
   tpu_b_channel_14_parameters.PARAM3 = 0;
-  tpu_b_channel_14_parameters._8_4_ = 0;
+  tpu_b_channel_14_parameters.accumulated_period = 0;
   tpu_b_channel_14_parameters.PARAM0 = 0xb;
   wVar1 = tpu_b.HSQR0;
   tpu_b.HSQR0 = wVar1 & 0xcfff | 0x3000;
@@ -47761,14 +47761,14 @@ void mpc555_resetEngineTimingAccumulators(void)
   tpu_a_channel_12_parameters.PARAM6 = (ushort)crank_periods_per_speed_interrupt * 0x100 - 0x100;
   tpu_a_channel_12_parameters.PARAM7 = engine_speed_interrupts_per_cylinder * 0x100 - 0x100;
   uVar2 = (uint)crank_periods_per_speed_interrupt * 20000000;
-  TPUA_CH11_PARAM0 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
-  TPUA_CH11_PARAM1 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
-  TPUA_CH11_PARAM2 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
-  TPUA_CH11_PARAM3 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
-  TPUA_CH11_PARAM4 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
-  TPUA_CH11_PARAM5 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
-  TPUA_CH11_PARAM6 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
-  TPUA_CH11_PARAM7 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
+  tpu_a_channel_11_parameters.PARAM0 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
+  tpu_a_channel_11_parameters.PARAM1 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
+  tpu_a_channel_11_parameters.PARAM2 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
+  tpu_a_channel_11_parameters.PARAM3 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
+  tpu_a_channel_11_parameters.PARAM4 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
+  tpu_a_channel_11_parameters.PARAM5 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
+  tpu_a_channel_11_parameters.PARAM6 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
+  tpu_a_channel_11_parameters.PARAM7 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
   tpu_a_channel_12_parameters.PARAM2 =
        (ushort)(uVar2 / tooth_period_buffer_initial_engine_speed >> 8) & 0xff00 |
        (ushort)(uVar2 / tooth_period_buffer_initial_engine_speed >> 0x10);
@@ -47781,11 +47781,11 @@ void mpc555_resetEngineTimingAccumulators(void)
   tpu_a_channel_12_parameters.PARAM5 =
        (ushort)(uVar2 / tooth_period_buffer_initial_engine_speed >> 8) & 0xff00 |
        (ushort)(uVar2 / tooth_period_buffer_initial_engine_speed >> 0x10);
-  TPUA_CH13_PARAM3 = (word)(20000000 / tooth_period_buffer_initial_engine_speed);
-  TPUA_CH13_PARAM4 = (word)(20000000 / tooth_period_buffer_initial_engine_speed);
-  TPUA_CH13_PARAM5 = (word)(20000000 / tooth_period_buffer_initial_engine_speed);
-  TPUA_CH13_PARAM6 = (word)(20000000 / tooth_period_buffer_initial_engine_speed);
-  TPUA_CH13_PARAM7 = (word)(20000000 / tooth_period_buffer_initial_engine_speed);
+  tpu_a_channel_13_parameters.PARAM3 = (word)(20000000 / tooth_period_buffer_initial_engine_speed);
+  tpu_a_channel_13_parameters.PARAM4 = (word)(20000000 / tooth_period_buffer_initial_engine_speed);
+  tpu_a_channel_13_parameters.PARAM5 = (word)(20000000 / tooth_period_buffer_initial_engine_speed);
+  tpu_a_channel_13_parameters.PARAM6 = (word)(20000000 / tooth_period_buffer_initial_engine_speed);
+  tpu_a_channel_13_parameters.PARAM7 = (word)(20000000 / tooth_period_buffer_initial_engine_speed);
   tpu_a_channel_14_parameters.PARAM5 =
        (ushort)(20000000 / tooth_period_buffer_initial_engine_speed >> 8) & 0xff00 |
        (ushort)(20000000 / tooth_period_buffer_initial_engine_speed >> 0x10);
@@ -48324,7 +48324,7 @@ void cm848_enterCrankPreliminarySync(void)
 
 /* TPU-A channel 11 interrupt handler - reached via tpu_a_channel_interrupt_handler_table
    (mpc555_tpuAInterruptDispatcher 0x55de4) - no direct caller in the decompile - engine sync pulse
-   capture packing TPUA_CH11_PARAM0-7 into crank_accumulated_period */
+   capture packing tpu_a_channel_11_parameters.PARAM0-7 into crank_accumulated_period */
 
 void hpcr_processEngineSyncPulses(void)
 
@@ -48345,19 +48345,19 @@ void hpcr_processEngineSyncPulses(void)
   if (uVar6 < 5) {
     if (uVar6 == 4) {
       wVar3 = tpu_a_channel_12_parameters.PARAM4;
-      wVar2 = TPUA_CH11_PARAM4;
+      wVar2 = tpu_a_channel_11_parameters.PARAM4;
       crank_accumulated_period = (wVar3 & 0xff00) << 8 | (uint)wVar2;
       goto LAB_00045154;
     }
     if ((wVar2 & 0xff) == 0) {
       wVar3 = tpu_a_channel_12_parameters.PARAM2;
-      wVar2 = TPUA_CH11_PARAM0;
+      wVar2 = tpu_a_channel_11_parameters.PARAM0;
       crank_accumulated_period = (wVar3 & 0xff00) << 8 | (uint)wVar2;
       goto LAB_00045154;
     }
     if (uVar6 == 1) {
       wVar3 = tpu_a_channel_12_parameters.PARAM2;
-      wVar2 = TPUA_CH11_PARAM1;
+      wVar2 = tpu_a_channel_11_parameters.PARAM1;
       crank_accumulated_period = (wVar3 & 0xff) << 0x10 | (uint)wVar2;
       goto LAB_00045154;
     }
@@ -48365,20 +48365,20 @@ void hpcr_processEngineSyncPulses(void)
       if (uVar6 != 3) goto LAB_00045154;
 LAB_000450fc:
       wVar3 = tpu_a_channel_12_parameters.PARAM3;
-      wVar2 = TPUA_CH11_PARAM3;
+      wVar2 = tpu_a_channel_11_parameters.PARAM3;
       crank_accumulated_period = (wVar3 & 0xff) << 0x10 | (uint)wVar2;
       goto LAB_00045154;
     }
 LAB_000450e0:
     wVar3 = tpu_a_channel_12_parameters.PARAM3;
-    wVar2 = TPUA_CH11_PARAM2;
+    wVar2 = tpu_a_channel_11_parameters.PARAM2;
     crank_accumulated_period = (wVar3 & 0xff00) << 8 | (uint)wVar2;
   }
   else {
     if (uVar6 != 5) {
       if (uVar6 == 6) {
         wVar3 = tpu_a_channel_12_parameters.PARAM5;
-        wVar2 = TPUA_CH11_PARAM6;
+        wVar2 = tpu_a_channel_11_parameters.PARAM6;
         crank_accumulated_period = (wVar3 & 0xff00) << 8 | (uint)wVar2;
         goto LAB_00045154;
       }
@@ -48390,18 +48390,18 @@ LAB_000450e0:
       if (uVar6 != 6) {
         if (uVar6 == 8) {
           wVar3 = tpu_a_channel_12_parameters.PARAM5;
-          wVar2 = TPUA_CH11_PARAM7;
+          wVar2 = tpu_a_channel_11_parameters.PARAM7;
           crank_accumulated_period = (wVar3 & 0xff) << 0x10 | (uint)wVar2;
         }
         goto LAB_00045154;
       }
     }
     wVar3 = tpu_a_channel_12_parameters.PARAM4;
-    wVar2 = TPUA_CH11_PARAM5;
+    wVar2 = tpu_a_channel_11_parameters.PARAM5;
     crank_accumulated_period = (wVar3 & 0xff) << 0x10 | (uint)wVar2;
   }
 LAB_00045154:
-  tpu_ch3_param3_snapshot = TPUA_CH3_PARAM3;
+  tpu_ch3_param3_snapshot = tpu_a_channel_3_parameters.PARAM3;
   crank_period_countdown = crank_period_adjusted_working;
   engine_speed_state.main_speed_period_sum_between_vss_pulses =
        engine_speed_state.main_speed_period_sum_between_vss_pulses + crank_accumulated_period;
@@ -48620,14 +48620,15 @@ void mpc555_updateCrankSyncState(void)
    cam_sync_error_count (819C +0 Cam_Sync_Error_Count) rises while LOST above
    engine_position_sensor_error_detection_minimum_engine_speed and falls while HAVE, and
    cam_have_sync_time_ticks (819B +72 Cam_Have_Sync_Time) is stored once at HAVE. It compares the
-   crank tooth number of the cam pulse (cam_to_crank_tooth_number from TPUA_CH3_PARAM2, 819B +E
-   Cam_2_Crank_Tooth_Number) with crank_tooth_pattern_table (Cam_2_Crank_Position_Array, 2 x
-   cam_wheel_pulse_count entries), counts matches in cam_crank_plausibility_count_1 /
-   cam_crank_plausibility_count_2 and mismatches in cam_crank_mismatch_count (819B +10
-   Cam_Crank_Mismatch_Count), and requests a TPU host service (tpu_a.HSRR1 = 1) with
-   crank_resync_time_ticks / crank_resync_count when the crank bank is out of phase, then dispatches
-   the run state handlers and the injection timing (cm848_dispatchCrankSynchronousInjection,
-   cm848_enterSpeedLimpHome). (was mpc555_updateEngineCrankState) */
+   crank tooth number of the cam pulse (cam_to_crank_tooth_number from
+   tpu_a_channel_3_parameters.PARAM2, 819B +E Cam_2_Crank_Tooth_Number) with
+   crank_tooth_pattern_table (Cam_2_Crank_Position_Array, 2 x cam_wheel_pulse_count entries), counts
+   matches in cam_crank_plausibility_count_1 / cam_crank_plausibility_count_2 and mismatches in
+   cam_crank_mismatch_count (819B +10 Cam_Crank_Mismatch_Count), and requests a TPU host service
+   (tpu_a.HSRR1 = 1) with crank_resync_time_ticks / crank_resync_count when the crank bank is out of
+   phase, then dispatches the run state handlers and the injection timing
+   (cm848_dispatchCrankSynchronousInjection, cm848_enterSpeedLimpHome). (was
+   mpc555_updateEngineCrankState) */
 
 void mpc555_handleCamSignalInterrupt(void)
 
@@ -48648,7 +48649,7 @@ void mpc555_handleCamSignalInterrupt(void)
   uVar2 = wVar3 >> 8;
   wVar3 = tpu_a_channel_1_parameters.PARAM4;
   uVar9 = wVar3 & 0xff;
-  wVar4 = TPUA_CH3_PARAM2;
+  wVar4 = tpu_a_channel_3_parameters.PARAM2;
   uVar10 = wVar4 & 0xff;
   cam_to_crank_tooth_number = (word)uVar10;
   if ((wVar3 & 0xff) == 0) {
@@ -49402,8 +49403,8 @@ void cm848_monitorInjectionLimitViolationCounters(void)
   word wVar2;
   short sVar3;
   
-  wVar1 = TPUA_CH2_PARAM3;
-  wVar2 = TPUA_CH7_PARAM3;
+  wVar1 = tpu_a_channel_2_parameters.PARAM3;
+  wVar2 = tpu_a_channel_7_parameters.PARAM3;
   if ((wVar1 & 0x8000) == 0 && (wVar2 & 0x8000) == 0) {
     if (injection_command_overlap_count == 0) {
       fault_detected_cal._40_2_ = fault_detected_cal._40_2_ & 0xffbf;
@@ -49413,10 +49414,10 @@ void cm848_monitorInjectionLimitViolationCounters(void)
     sVar3 = -1;
   }
   else {
-    wVar1 = TPUA_CH2_PARAM3;
-    TPUA_CH2_PARAM3 = wVar1 & 0x7fff;
-    wVar1 = TPUA_CH7_PARAM3;
-    TPUA_CH7_PARAM3 = wVar1 & 0x7fff;
+    wVar1 = tpu_a_channel_2_parameters.PARAM3;
+    tpu_a_channel_2_parameters.PARAM3 = wVar1 & 0x7fff;
+    wVar1 = tpu_a_channel_7_parameters.PARAM3;
+    tpu_a_channel_7_parameters.PARAM3 = wVar1 & 0x7fff;
     if (injection_command_overlap_count_threshold <= injection_command_overlap_count) {
       fault_detected_cal._40_2_ = fault_detected_cal._40_2_ | 0x40;
       goto LAB_00046e78;
@@ -49425,8 +49426,8 @@ void cm848_monitorInjectionLimitViolationCounters(void)
   }
   injection_command_overlap_count = injection_command_overlap_count + sVar3;
 LAB_00046e78:
-  wVar1 = TPUA_CH2_PARAM4;
-  wVar2 = TPUA_CH7_PARAM4;
+  wVar1 = tpu_a_channel_2_parameters.PARAM4;
+  wVar2 = tpu_a_channel_7_parameters.PARAM4;
   if ((wVar1 & 0x8000) == 0 && (wVar2 & 0x8000) == 0) {
     if (injection_end_limit_exceeded_count == 0) {
       fault_detected_cal.fault_325 = 0;
@@ -49436,10 +49437,10 @@ LAB_00046e78:
     sVar3 = -1;
   }
   else {
-    wVar1 = TPUA_CH2_PARAM4;
-    TPUA_CH2_PARAM4 = wVar1 & 0x7fff;
-    wVar1 = TPUA_CH7_PARAM4;
-    TPUA_CH7_PARAM4 = wVar1 & 0x7fff;
+    wVar1 = tpu_a_channel_2_parameters.PARAM4;
+    tpu_a_channel_2_parameters.PARAM4 = wVar1 & 0x7fff;
+    wVar1 = tpu_a_channel_7_parameters.PARAM4;
+    tpu_a_channel_7_parameters.PARAM4 = wVar1 & 0x7fff;
     if (injection_end_limit_exceeded_count_threshold <= injection_end_limit_exceeded_count) {
       fault_detected_cal.fault_325 = 1;
       return;
@@ -56807,7 +56808,7 @@ LAB_0004f990:
     tpu_b.CISR = wVar2 & 0xfffd;
     wVar2 = tpu_b.CFSR3;
     tpu_b.CFSR3 = wVar2 & 0xff0f | 0xf0;
-    TPUB_CH1_PARAM0 = 0x113;
+    tpu_b_channel_1_parameters.PARAM0 = 0x113;
     tpu_b.HSRR1 = 4;
     wVar2 = tpu_b.CPR1;
     tpu_b.CPR1 = wVar2 & 0xfff3 | 4;
@@ -56822,7 +56823,7 @@ LAB_0004f990:
     tpu_b.CISR = wVar2 & 0xfffb;
     wVar2 = tpu_b.CFSR3;
     tpu_b.CFSR3 = wVar2 & 0xf0ff | 0xf00;
-    TPUB_CH2_PARAM0 = 0x113;
+    tpu_b_channel_2_parameters.PARAM0 = 0x113;
     tpu_b.HSRR1 = 0x10;
     wVar2 = tpu_b.CPR1;
     tpu_b.CPR1 = wVar2 & 0xffcf | 0x10;
@@ -56837,7 +56838,7 @@ LAB_0004f990:
     tpu_b.CISR = wVar2 & 0xfff7;
     wVar2 = tpu_b.CFSR3;
     tpu_b.CFSR3 = wVar2 & 0xfff | 0xf000;
-    TPUB_CH3_PARAM0 = 0x113;
+    tpu_b_channel_3_parameters.PARAM0 = 0x113;
     tpu_b.HSRR1 = 0x40;
     wVar2 = tpu_b.CPR1;
     tpu_b.CPR1 = wVar2 & 0xff3f | 0x40;
@@ -56852,7 +56853,7 @@ LAB_0004f990:
     tpu_b.CISR = wVar2 & 0xffef;
     wVar2 = tpu_b.CFSR2;
     tpu_b.CFSR2 = wVar2 & 0xfff0 | 0xf;
-    TPUB_CH4_PARAM0 = 0x113;
+    tpu_b_channel_4_parameters.PARAM0 = 0x113;
     tpu_b.HSRR1 = 0x100;
     wVar2 = tpu_b.CPR1;
     tpu_b.CPR1 = wVar2 & 0xfcff | 0x100;
@@ -56867,7 +56868,7 @@ LAB_0004f990:
     tpu_b.CISR = wVar2 & 0xffdf;
     wVar2 = tpu_b.CFSR2;
     tpu_b.CFSR2 = wVar2 & 0xff0f | 0xf0;
-    TPUB_CH5_PARAM0 = 0x113;
+    tpu_b_channel_5_parameters.PARAM0 = 0x113;
     tpu_b.HSRR1 = 0x400;
     wVar2 = tpu_b.CPR1;
     tpu_b.CPR1 = wVar2 & 0xf3ff | 0x400;
@@ -56882,7 +56883,7 @@ LAB_0004f990:
     tpu_b.CISR = wVar2 & 0xffbf;
     wVar2 = tpu_b.CFSR2;
     tpu_b.CFSR2 = wVar2 & 0xf0ff | 0xf00;
-    TPUB_CH6_PARAM0 = 0x113;
+    tpu_b_channel_6_parameters.PARAM0 = 0x113;
     tpu_b.HSRR1 = 0x1000;
     wVar2 = tpu_b.CPR1;
     tpu_b.CPR1 = wVar2 & 0xcfff | 0x1000;
@@ -56897,7 +56898,7 @@ LAB_0004f990:
     tpu_b.CISR = wVar2 & 0xff7f;
     wVar2 = tpu_b.CFSR2;
     tpu_b.CFSR2 = wVar2 & 0xfff | 0xf000;
-    TPUB_CH7_PARAM0 = 0x113;
+    tpu_b_channel_7_parameters.PARAM0 = 0x113;
     tpu_b.HSRR1 = 0x4000;
     wVar2 = tpu_b.CPR1;
     tpu_b.CPR1 = wVar2 & 0x3fff | 0x4000;
@@ -56912,7 +56913,7 @@ LAB_0004f990:
     tpu_b.CISR = wVar2 & 0xfeff;
     wVar2 = tpu_b.CFSR1;
     tpu_b.CFSR1 = wVar2 & 0xfff0 | 0xf;
-    TPUB_CH8_PARAM0 = 0x113;
+    tpu_b_channel_8_parameters.PARAM0 = 0x113;
     tpu_b.HSRR0 = 1;
     wVar2 = tpu_b.CPR0;
     tpu_b.CPR0 = wVar2 & 0xfffc | 1;
@@ -56927,7 +56928,7 @@ LAB_0004f990:
     tpu_b.CISR = wVar2 & 0xfdff;
     wVar2 = tpu_b.CFSR1;
     tpu_b.CFSR1 = wVar2 & 0xff0f | 0xf0;
-    TPUB_CH9_PARAM0 = 0x113;
+    tpu_b_channel_9_parameters.PARAM0 = 0x113;
     tpu_b.HSRR0 = 4;
     wVar2 = tpu_b.CPR0;
     tpu_b.CPR0 = wVar2 & 0xfff3 | 4;
@@ -56942,7 +56943,7 @@ LAB_0004f990:
     tpu_b.CISR = wVar2 & 0xfbff;
     wVar2 = tpu_b.CFSR1;
     tpu_b.CFSR1 = wVar2 & 0xf0ff | 0xf00;
-    TPUB_CH10_PARAM0 = 0x113;
+    tpu_b_channel_10_parameters.PARAM0 = 0x113;
     tpu_b.HSRR0 = 0x10;
     wVar2 = tpu_b.CPR0;
     tpu_b.CPR0 = wVar2 & 0xffcf | 0x10;
@@ -56972,7 +56973,7 @@ LAB_0004f990:
     tpu_b.CISR = wVar2 & 0xefff;
     wVar2 = tpu_b.CFSR0;
     tpu_b.CFSR0 = wVar2 & 0xfff0 | 0xf;
-    TPUB_CH12_PARAM0 = 0x113;
+    tpu_b_channel_12_parameters.PARAM0 = 0x113;
     tpu_b.HSRR0 = 0x100;
     wVar2 = tpu_b.CPR0;
     tpu_b.CPR0 = wVar2 & 0xfcff | 0x100;
@@ -56987,7 +56988,7 @@ LAB_0004f990:
     tpu_b.CISR = wVar2 & 0xdfff;
     wVar2 = tpu_b.CFSR0;
     tpu_b.CFSR0 = wVar2 & 0xff0f | 0xf0;
-    TPUB_CH13_PARAM0 = 0x113;
+    tpu_b_channel_13_parameters.PARAM0 = 0x113;
     tpu_b.HSRR0 = 0x400;
     wVar2 = tpu_b.CPR0;
     tpu_b.CPR0 = wVar2 & 0xf3ff | 0x400;
@@ -57017,7 +57018,7 @@ LAB_0004f990:
     tpu_b.CISR = wVar2 & 0x7fff;
     wVar2 = tpu_b.CFSR0;
     tpu_b.CFSR0 = wVar2 & 0xfff | 0xf000;
-    TPUB_CH15_PARAM0 = 0x113;
+    tpu_b_channel_15_parameters.PARAM0 = 0x113;
     tpu_b.HSRR0 = 0x4000;
     wVar2 = tpu_b.CPR0;
     tpu_b.CPR0 = wVar2 & 0x3fff | 0x4000;
@@ -57062,7 +57063,7 @@ LAB_0004f990:
     tpu_a.CISR = wVar2 & 0xfffb;
     wVar2 = tpu_a.CFSR3;
     tpu_a.CFSR3 = wVar2 & 0xf0ff | 0xf00;
-    TPUA_CH2_PARAM0 = 0x113;
+    tpu_a_channel_2_parameters.PARAM0 = 0x113;
     tpu_a.HSRR1 = 0x10;
     wVar2 = tpu_a.CPR1;
     tpu_a.CPR1 = wVar2 & 0xffcf | 0x10;
@@ -57077,7 +57078,7 @@ LAB_0004f990:
     tpu_a.CISR = wVar2 & 0xfff7;
     wVar2 = tpu_a.CFSR3;
     tpu_a.CFSR3 = wVar2 & 0xfff | 0xf000;
-    TPUA_CH3_PARAM0 = 0x113;
+    tpu_a_channel_3_parameters.PARAM0 = 0x113;
     tpu_a.HSRR1 = 0x40;
     wVar2 = tpu_a.CPR1;
     tpu_a.CPR1 = wVar2 & 0xff3f | 0x40;
@@ -57092,7 +57093,7 @@ LAB_0004f990:
     tpu_a.CISR = wVar2 & 0xffef;
     wVar2 = tpu_a.CFSR2;
     tpu_a.CFSR2 = wVar2 & 0xfff0 | 0xf;
-    TPUA_CH4_PARAM0 = 0x113;
+    tpu_a_channel_4_parameters.PARAM0 = 0x113;
     tpu_a.HSRR1 = 0x100;
     wVar2 = tpu_a.CPR1;
     tpu_a.CPR1 = wVar2 & 0xfcff | 0x100;
@@ -57107,7 +57108,7 @@ LAB_0004f990:
     tpu_a.CISR = wVar2 & 0xffdf;
     wVar2 = tpu_a.CFSR2;
     tpu_a.CFSR2 = wVar2 & 0xff0f | 0xf0;
-    TPUA_CH5_PARAM0 = 0x113;
+    tpu_a_channel_5_parameters.PARAM0 = 0x113;
     tpu_a.HSRR1 = 0x400;
     wVar2 = tpu_a.CPR1;
     tpu_a.CPR1 = wVar2 & 0xf3ff | 0x400;
@@ -57122,7 +57123,7 @@ LAB_0004f990:
     tpu_a.CISR = wVar2 & 0xffbf;
     wVar2 = tpu_a.CFSR2;
     tpu_a.CFSR2 = wVar2 & 0xf0ff | 0xf00;
-    TPUA_CH6_PARAM0 = 0x113;
+    tpu_a_channel_6_parameters.PARAM0 = 0x113;
     tpu_a.HSRR1 = 0x1000;
     wVar2 = tpu_a.CPR1;
     tpu_a.CPR1 = wVar2 & 0xcfff | 0x1000;
@@ -57137,7 +57138,7 @@ LAB_0004f990:
     tpu_a.CISR = wVar2 & 0xff7f;
     wVar2 = tpu_a.CFSR2;
     tpu_a.CFSR2 = wVar2 & 0xfff | 0xf000;
-    TPUA_CH7_PARAM0 = 0x113;
+    tpu_a_channel_7_parameters.PARAM0 = 0x113;
     tpu_a.HSRR1 = 0x4000;
     wVar2 = tpu_a.CPR1;
     tpu_a.CPR1 = wVar2 & 0x3fff | 0x4000;
@@ -57152,7 +57153,7 @@ LAB_0004f990:
     tpu_a.CISR = wVar2 & 0xfeff;
     wVar2 = tpu_a.CFSR1;
     tpu_a.CFSR1 = wVar2 & 0xfff0 | 0xf;
-    TPUA_CH8_PARAM0 = 0x113;
+    tpu_a_channel_8_parameters.PARAM0 = 0x113;
     tpu_a.HSRR0 = 1;
     wVar2 = tpu_a.CPR0;
     tpu_a.CPR0 = wVar2 & 0xfffc | 1;
@@ -57187,7 +57188,7 @@ LAB_00050a2c:
     tpu_a.CISR = wVar2 & 0xf7ff;
     wVar2 = tpu_a.CFSR1;
     tpu_a.CFSR1 = wVar2 & 0xfff | 0xf000;
-    TPUA_CH11_PARAM0 = 0x113;
+    tpu_a_channel_11_parameters.PARAM0 = 0x113;
     tpu_a.HSRR0 = 0x40;
     wVar2 = tpu_a.CPR0;
     tpu_a.CPR0 = wVar2 & 0xff3f | 0x40;
@@ -57217,7 +57218,7 @@ LAB_00050a2c:
     tpu_a.CISR = wVar2 & 0xdfff;
     wVar2 = tpu_a.CFSR0;
     tpu_a.CFSR0 = wVar2 & 0xff0f | 0xf0;
-    TPUA_CH13_PARAM0 = 0x113;
+    tpu_a_channel_13_parameters.PARAM0 = 0x113;
     tpu_a.HSRR0 = 0x400;
     wVar2 = tpu_a.CPR0;
     tpu_a.CPR0 = wVar2 & 0xf3ff | 0x400;
@@ -57247,7 +57248,7 @@ LAB_00050a2c:
     tpu_a.CISR = wVar2 & 0x7fff;
     wVar2 = tpu_a.CFSR0;
     tpu_a.CFSR0 = wVar2 & 0xfff | 0xf000;
-    TPUA_CH15_PARAM0 = 0x113;
+    tpu_a_channel_15_parameters.PARAM0 = 0x113;
     tpu_a.HSRR0 = 0x4000;
     wVar2 = tpu_a.CPR0;
     tpu_a.CPR0 = wVar2 & 0x3fff | 0x4000;
@@ -57520,7 +57521,7 @@ LAB_000512ec:
     tpu_b.CISR = wVar2 & 0xfffd;
     wVar2 = tpu_b.CFSR3;
     tpu_b.CFSR3 = wVar2 & 0xff0f | 0xf0;
-    TPUB_CH1_PARAM0 = 0x113;
+    tpu_b_channel_1_parameters.PARAM0 = 0x113;
     tpu_b.HSRR1 = 8;
     wVar2 = tpu_b.CPR1;
     tpu_b.CPR1 = wVar2 & 0xfff3 | 4;
@@ -57535,7 +57536,7 @@ LAB_000512ec:
     tpu_b.CISR = wVar2 & 0xfffb;
     wVar2 = tpu_b.CFSR3;
     tpu_b.CFSR3 = wVar2 & 0xf0ff | 0xf00;
-    TPUB_CH2_PARAM0 = 0x113;
+    tpu_b_channel_2_parameters.PARAM0 = 0x113;
     tpu_b.HSRR1 = 0x20;
     wVar2 = tpu_b.CPR1;
     tpu_b.CPR1 = wVar2 & 0xffcf | 0x10;
@@ -57550,7 +57551,7 @@ LAB_000512ec:
     tpu_b.CISR = wVar2 & 0xfff7;
     wVar2 = tpu_b.CFSR3;
     tpu_b.CFSR3 = wVar2 & 0xfff | 0xf000;
-    TPUB_CH3_PARAM0 = 0x113;
+    tpu_b_channel_3_parameters.PARAM0 = 0x113;
     tpu_b.HSRR1 = 0x80;
     wVar2 = tpu_b.CPR1;
     tpu_b.CPR1 = wVar2 & 0xff3f | 0x40;
@@ -57565,7 +57566,7 @@ LAB_000512ec:
     tpu_b.CISR = wVar2 & 0xffef;
     wVar2 = tpu_b.CFSR2;
     tpu_b.CFSR2 = wVar2 & 0xfff0 | 0xf;
-    TPUB_CH4_PARAM0 = 0x113;
+    tpu_b_channel_4_parameters.PARAM0 = 0x113;
     tpu_b.HSRR1 = 0x200;
     wVar2 = tpu_b.CPR1;
     tpu_b.CPR1 = wVar2 & 0xfcff | 0x100;
@@ -57580,7 +57581,7 @@ LAB_000512ec:
     tpu_b.CISR = wVar2 & 0xffdf;
     wVar2 = tpu_b.CFSR2;
     tpu_b.CFSR2 = wVar2 & 0xff0f | 0xf0;
-    TPUB_CH5_PARAM0 = 0x113;
+    tpu_b_channel_5_parameters.PARAM0 = 0x113;
     tpu_b.HSRR1 = 0x800;
     wVar2 = tpu_b.CPR1;
     tpu_b.CPR1 = wVar2 & 0xf3ff | 0x400;
@@ -57595,7 +57596,7 @@ LAB_000512ec:
     tpu_b.CISR = wVar2 & 0xffbf;
     wVar2 = tpu_b.CFSR2;
     tpu_b.CFSR2 = wVar2 & 0xf0ff | 0xf00;
-    TPUB_CH6_PARAM0 = 0x113;
+    tpu_b_channel_6_parameters.PARAM0 = 0x113;
     tpu_b.HSRR1 = 0x2000;
     wVar2 = tpu_b.CPR1;
     tpu_b.CPR1 = wVar2 & 0xcfff | 0x1000;
@@ -57610,7 +57611,7 @@ LAB_000512ec:
     tpu_b.CISR = wVar2 & 0xff7f;
     wVar2 = tpu_b.CFSR2;
     tpu_b.CFSR2 = wVar2 & 0xfff | 0xf000;
-    TPUB_CH7_PARAM0 = 0x113;
+    tpu_b_channel_7_parameters.PARAM0 = 0x113;
     tpu_b.HSRR1 = 0x8000;
     wVar2 = tpu_b.CPR1;
     tpu_b.CPR1 = wVar2 & 0x3fff | 0x4000;
@@ -57625,7 +57626,7 @@ LAB_000512ec:
     tpu_b.CISR = wVar2 & 0xfeff;
     wVar2 = tpu_b.CFSR1;
     tpu_b.CFSR1 = wVar2 & 0xfff0 | 0xf;
-    TPUB_CH8_PARAM0 = 0x113;
+    tpu_b_channel_8_parameters.PARAM0 = 0x113;
     tpu_b.HSRR0 = 2;
     wVar2 = tpu_b.CPR0;
     tpu_b.CPR0 = wVar2 & 0xfffc | 1;
@@ -57640,7 +57641,7 @@ LAB_000512ec:
     tpu_b.CISR = wVar2 & 0xfdff;
     wVar2 = tpu_b.CFSR1;
     tpu_b.CFSR1 = wVar2 & 0xff0f | 0xf0;
-    TPUB_CH9_PARAM0 = 0x113;
+    tpu_b_channel_9_parameters.PARAM0 = 0x113;
     tpu_b.HSRR0 = 8;
     wVar2 = tpu_b.CPR0;
     tpu_b.CPR0 = wVar2 & 0xfff3 | 4;
@@ -57655,7 +57656,7 @@ LAB_000512ec:
     tpu_b.CISR = wVar2 & 0xfbff;
     wVar2 = tpu_b.CFSR1;
     tpu_b.CFSR1 = wVar2 & 0xf0ff | 0xf00;
-    TPUB_CH10_PARAM0 = 0x113;
+    tpu_b_channel_10_parameters.PARAM0 = 0x113;
     tpu_b.HSRR0 = 0x20;
     wVar2 = tpu_b.CPR0;
     tpu_b.CPR0 = wVar2 & 0xffcf | 0x10;
@@ -57685,7 +57686,7 @@ LAB_000512ec:
     tpu_b.CISR = wVar2 & 0xefff;
     wVar2 = tpu_b.CFSR0;
     tpu_b.CFSR0 = wVar2 & 0xfff0 | 0xf;
-    TPUB_CH12_PARAM0 = 0x113;
+    tpu_b_channel_12_parameters.PARAM0 = 0x113;
     tpu_b.HSRR0 = 0x200;
     wVar2 = tpu_b.CPR0;
     tpu_b.CPR0 = wVar2 & 0xfcff | 0x100;
@@ -57700,7 +57701,7 @@ LAB_000512ec:
     tpu_b.CISR = wVar2 & 0xdfff;
     wVar2 = tpu_b.CFSR0;
     tpu_b.CFSR0 = wVar2 & 0xff0f | 0xf0;
-    TPUB_CH13_PARAM0 = 0x113;
+    tpu_b_channel_13_parameters.PARAM0 = 0x113;
     tpu_b.HSRR0 = 0x800;
     wVar2 = tpu_b.CPR0;
     tpu_b.CPR0 = wVar2 & 0xf3ff | 0x400;
@@ -57730,7 +57731,7 @@ LAB_000512ec:
     tpu_b.CISR = wVar2 & 0x7fff;
     wVar2 = tpu_b.CFSR0;
     tpu_b.CFSR0 = wVar2 & 0xfff | 0xf000;
-    TPUB_CH15_PARAM0 = 0x113;
+    tpu_b_channel_15_parameters.PARAM0 = 0x113;
     tpu_b.HSRR0 = 0x8000;
     wVar2 = tpu_b.CPR0;
     tpu_b.CPR0 = wVar2 & 0x3fff | 0x4000;
@@ -57775,7 +57776,7 @@ LAB_000512ec:
     tpu_a.CISR = wVar2 & 0xfffb;
     wVar2 = tpu_a.CFSR3;
     tpu_a.CFSR3 = wVar2 & 0xf0ff | 0xf00;
-    TPUA_CH2_PARAM0 = 0x113;
+    tpu_a_channel_2_parameters.PARAM0 = 0x113;
     tpu_a.HSRR1 = 0x20;
     wVar2 = tpu_a.CPR1;
     tpu_a.CPR1 = wVar2 & 0xffcf | 0x10;
@@ -57790,7 +57791,7 @@ LAB_000512ec:
     tpu_a.CISR = wVar2 & 0xfff7;
     wVar2 = tpu_a.CFSR3;
     tpu_a.CFSR3 = wVar2 & 0xfff | 0xf000;
-    TPUA_CH3_PARAM0 = 0x113;
+    tpu_a_channel_3_parameters.PARAM0 = 0x113;
     tpu_a.HSRR1 = 0x80;
     wVar2 = tpu_a.CPR1;
     tpu_a.CPR1 = wVar2 & 0xff3f | 0x40;
@@ -57805,7 +57806,7 @@ LAB_000512ec:
     tpu_a.CISR = wVar2 & 0xffef;
     wVar2 = tpu_a.CFSR2;
     tpu_a.CFSR2 = wVar2 & 0xfff0 | 0xf;
-    TPUA_CH4_PARAM0 = 0x113;
+    tpu_a_channel_4_parameters.PARAM0 = 0x113;
     tpu_a.HSRR1 = 0x200;
     wVar2 = tpu_a.CPR1;
     tpu_a.CPR1 = wVar2 & 0xfcff | 0x100;
@@ -57820,7 +57821,7 @@ LAB_000512ec:
     tpu_a.CISR = wVar2 & 0xffdf;
     wVar2 = tpu_a.CFSR2;
     tpu_a.CFSR2 = wVar2 & 0xff0f | 0xf0;
-    TPUA_CH5_PARAM0 = 0x113;
+    tpu_a_channel_5_parameters.PARAM0 = 0x113;
     tpu_a.HSRR1 = 0x800;
     wVar2 = tpu_a.CPR1;
     tpu_a.CPR1 = wVar2 & 0xf3ff | 0x400;
@@ -57835,7 +57836,7 @@ LAB_000512ec:
     tpu_a.CISR = wVar2 & 0xffbf;
     wVar2 = tpu_a.CFSR2;
     tpu_a.CFSR2 = wVar2 & 0xf0ff | 0xf00;
-    TPUA_CH6_PARAM0 = 0x113;
+    tpu_a_channel_6_parameters.PARAM0 = 0x113;
     tpu_a.HSRR1 = 0x2000;
     wVar2 = tpu_a.CPR1;
     tpu_a.CPR1 = wVar2 & 0xcfff | 0x1000;
@@ -57850,7 +57851,7 @@ LAB_000512ec:
     tpu_a.CISR = wVar2 & 0xff7f;
     wVar2 = tpu_a.CFSR2;
     tpu_a.CFSR2 = wVar2 & 0xfff | 0xf000;
-    TPUA_CH7_PARAM0 = 0x113;
+    tpu_a_channel_7_parameters.PARAM0 = 0x113;
     tpu_a.HSRR1 = 0x8000;
     wVar2 = tpu_a.CPR1;
     tpu_a.CPR1 = wVar2 & 0x3fff | 0x4000;
@@ -57865,7 +57866,7 @@ LAB_000512ec:
     tpu_a.CISR = wVar2 & 0xfeff;
     wVar2 = tpu_a.CFSR1;
     tpu_a.CFSR1 = wVar2 & 0xfff0 | 0xf;
-    TPUA_CH8_PARAM0 = 0x113;
+    tpu_a_channel_8_parameters.PARAM0 = 0x113;
     tpu_a.HSRR0 = 2;
     wVar2 = tpu_a.CPR0;
     tpu_a.CPR0 = wVar2 & 0xfffc | 1;
@@ -57900,7 +57901,7 @@ LAB_000523a0:
     tpu_a.CISR = wVar2 & 0xf7ff;
     wVar2 = tpu_a.CFSR1;
     tpu_a.CFSR1 = wVar2 & 0xfff | 0xf000;
-    TPUA_CH11_PARAM0 = 0x113;
+    tpu_a_channel_11_parameters.PARAM0 = 0x113;
     tpu_a.HSRR0 = 0x80;
     wVar2 = tpu_a.CPR0;
     tpu_a.CPR0 = wVar2 & 0xff3f | 0x40;
@@ -57930,7 +57931,7 @@ LAB_000523a0:
     tpu_a.CISR = wVar2 & 0xdfff;
     wVar2 = tpu_a.CFSR0;
     tpu_a.CFSR0 = wVar2 & 0xff0f | 0xf0;
-    TPUA_CH13_PARAM0 = 0x113;
+    tpu_a_channel_13_parameters.PARAM0 = 0x113;
     tpu_a.HSRR0 = 0x800;
     wVar2 = tpu_a.CPR0;
     tpu_a.CPR0 = wVar2 & 0xf3ff | 0x400;
@@ -57960,7 +57961,7 @@ LAB_000523a0:
     tpu_a.CISR = wVar2 & 0x7fff;
     wVar2 = tpu_a.CFSR0;
     tpu_a.CFSR0 = wVar2 & 0xfff | 0xf000;
-    TPUA_CH15_PARAM0 = 0x113;
+    tpu_a_channel_15_parameters.PARAM0 = 0x113;
     tpu_a.HSRR0 = 0x8000;
     wVar2 = tpu_a.CPR0;
     tpu_a.CPR0 = wVar2 & 0x3fff | 0x4000;
@@ -73873,8 +73874,8 @@ void cm848_turbochargerSpeedSensorInterruptHandler(void)
 {
   word wVar1;
   
-  turbocharger_speed_sensor_pulse_period_working = DAT_00304518;
-  DAT_00304518 = 0;
+  turbocharger_speed_sensor_pulse_period_working = tpu_b_channel_1_parameters.accumulated_period;
+  tpu_b_channel_1_parameters.accumulated_period = 0;
   wVar1 = tpu_b.CISR;
   tpu_b.CISR = wVar1 & 0xfffd;
   turbocharger_speed_sensor_timeout_timer = turbocharger_speed_sensor_timeout;
@@ -73907,10 +73908,10 @@ void cm848_initializeTurbochargerSpeedSensorChannel(void)
   tpu_b.CISR = wVar1 & 0xfffd;
   wVar1 = tpu_b.CFSR3;
   tpu_b.CFSR3 = wVar1 & 0xff0f | 0xd0;
-  DAT_00304512 = turbocharger_speed_sensor_pulses_per_interrupt << 8;
-  DAT_00304516 = 0;
-  DAT_00304518 = 0;
-  TPUB_CH1_PARAM0 = 7;
+  tpu_b_channel_1_parameters.PARAM1 = turbocharger_speed_sensor_pulses_per_interrupt << 8;
+  tpu_b_channel_1_parameters.PARAM3 = 0;
+  tpu_b_channel_1_parameters.accumulated_period = 0;
+  tpu_b_channel_1_parameters.PARAM0 = 7;
   wVar1 = tpu_b.HSQR1;
   tpu_b.HSQR1 = wVar1 & 0xfff3 | 8;
   tpu_b.HSRR1 = 0xc;
@@ -78103,10 +78104,10 @@ void cm848_measureRadiatorFanSpeed(void)
       tpu_b.CISR = wVar1 & 0xfdff;
       wVar1 = tpu_b.CFSR1;
       tpu_b.CFSR1 = wVar1 & 0xff0f | 0xd0;
-      DAT_00304592 = radiator_fan_pulses_per_measurement_end_of_line << 8;
-      DAT_00304596 = 0;
-      DAT_00304598 = 0;
-      TPUB_CH9_PARAM0 = 0xb;
+      tpu_b_channel_9_parameters.PARAM1 = radiator_fan_pulses_per_measurement_end_of_line << 8;
+      tpu_b_channel_9_parameters.PARAM3 = 0;
+      tpu_b_channel_9_parameters.accumulated_period = 0;
+      tpu_b_channel_9_parameters.PARAM0 = 0xb;
       wVar1 = tpu_b.HSQR0;
       tpu_b.HSQR0 = wVar1 & 0xfff3 | 0xc;
       tpu_b.HSRR0 = 0xc;
@@ -78134,10 +78135,10 @@ void cm848_measureRadiatorFanSpeed(void)
       tpu_b.CISR = wVar1 & 0xfdff;
       wVar1 = tpu_b.CFSR1;
       tpu_b.CFSR1 = wVar1 & 0xff0f | 0xd0;
-      DAT_00304592 = (ushort)radiator_fan_pulses_per_measurement << 8;
-      DAT_00304596 = 0;
-      DAT_00304598 = 0;
-      TPUB_CH9_PARAM0 = 0xb;
+      tpu_b_channel_9_parameters.PARAM1 = (ushort)radiator_fan_pulses_per_measurement << 8;
+      tpu_b_channel_9_parameters.PARAM3 = 0;
+      tpu_b_channel_9_parameters.accumulated_period = 0;
+      tpu_b_channel_9_parameters.PARAM0 = 0xb;
       wVar1 = tpu_b.HSQR0;
       tpu_b.HSQR0 = wVar1 & 0xfff3 | 0xc;
       tpu_b.HSRR0 = 0xc;
@@ -78232,13 +78233,13 @@ void cm848_initRadiatorFanSpeedMeasurement(void)
 void cm848_radiatorFanSpeedInterruptHandler(void)
 
 {
-  uint uVar1;
+  dword dVar1;
   
   radiator_fan_speed_pulse_timeout_count = radiator_fan_speed_pulse_timeout_passes;
-  uVar1 = DAT_00304598;
-  DAT_00304598._0_2_ = 0;
+  dVar1 = tpu_b_channel_9_parameters.accumulated_period;
+  tpu_b_channel_9_parameters.accumulated_period._0_2_ = 0;
   radiator_fan_speed_period_microseconds =
-       (dword)(CONCAT44((int)((ulonglong)uVar1 * 1000000 >> 0x20),uVar1 * 1000000) / 0x4c4b4);
+       (dword)(CONCAT44((int)((ulonglong)dVar1 * 1000000 >> 0x20),dVar1 * 1000000) / 0x4c4b4);
   return;
 }
 
@@ -78255,42 +78256,41 @@ void cm848_radiatorFanSpeedInterruptHandler(void)
 void cm848_configureRadiatorFanSpeedInput(void)
 
 {
-  short sVar1;
-  word wVar2;
+  word wVar1;
   
   if (end_of_line_test_settings_cal.field_mode_register == 0x13ec) {
-    wVar2 = tpu_b.CPR0;
-    tpu_b.CPR0 = wVar2 & 0xfff3;
-    wVar2 = tpu_b.CIER;
-    tpu_b.CIER = wVar2 & 0xfdff;
-    wVar2 = tpu_b.CISR;
-    tpu_b.CISR = wVar2 & 0xfdff;
-    wVar2 = tpu_b.CFSR1;
-    tpu_b.CFSR1 = wVar2 & 0xff0f | 0xd0;
-    sVar1 = radiator_fan_pulses_per_measurement_end_of_line << 8;
+    wVar1 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar1 & 0xfff3;
+    wVar1 = tpu_b.CIER;
+    tpu_b.CIER = wVar1 & 0xfdff;
+    wVar1 = tpu_b.CISR;
+    tpu_b.CISR = wVar1 & 0xfdff;
+    wVar1 = tpu_b.CFSR1;
+    tpu_b.CFSR1 = wVar1 & 0xff0f | 0xd0;
+    wVar1 = radiator_fan_pulses_per_measurement_end_of_line << 8;
   }
   else {
-    wVar2 = tpu_b.CPR0;
-    tpu_b.CPR0 = wVar2 & 0xfff3;
-    wVar2 = tpu_b.CIER;
-    tpu_b.CIER = wVar2 & 0xfdff;
-    wVar2 = tpu_b.CISR;
-    tpu_b.CISR = wVar2 & 0xfdff;
-    wVar2 = tpu_b.CFSR1;
-    tpu_b.CFSR1 = wVar2 & 0xff0f | 0xd0;
-    sVar1 = (ushort)radiator_fan_pulses_per_measurement << 8;
+    wVar1 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar1 & 0xfff3;
+    wVar1 = tpu_b.CIER;
+    tpu_b.CIER = wVar1 & 0xfdff;
+    wVar1 = tpu_b.CISR;
+    tpu_b.CISR = wVar1 & 0xfdff;
+    wVar1 = tpu_b.CFSR1;
+    tpu_b.CFSR1 = wVar1 & 0xff0f | 0xd0;
+    wVar1 = (ushort)radiator_fan_pulses_per_measurement << 8;
   }
-  DAT_00304592 = sVar1;
-  DAT_00304596 = 0;
-  DAT_00304598 = 0;
-  TPUB_CH9_PARAM0 = 0xb;
-  wVar2 = tpu_b.HSQR0;
-  tpu_b.HSQR0 = wVar2 & 0xfff3 | 0xc;
+  tpu_b_channel_9_parameters.PARAM1 = wVar1;
+  tpu_b_channel_9_parameters.PARAM3 = 0;
+  tpu_b_channel_9_parameters.accumulated_period = 0;
+  tpu_b_channel_9_parameters.PARAM0 = 0xb;
+  wVar1 = tpu_b.HSQR0;
+  tpu_b.HSQR0 = wVar1 & 0xfff3 | 0xc;
   tpu_b.HSRR0 = 0xc;
-  wVar2 = tpu_b.CPR0;
-  tpu_b.CPR0 = wVar2 & 0xfff3 | 8;
-  wVar2 = tpu_b.CIER;
-  tpu_b.CIER = wVar2 | 0x200;
+  wVar1 = tpu_b.CPR0;
+  tpu_b.CPR0 = wVar1 & 0xfff3 | 8;
+  wVar1 = tpu_b.CIER;
+  tpu_b.CIER = wVar1 | 0x200;
   return;
 }
 
@@ -89622,7 +89622,6 @@ void cm848_initVehicleSpeedSensorChannel(void)
 
 {
   word wVar1;
-  undefined2 uVar2;
   
   vehicle_speed_sensor_period = 0x5e7fb044;
   if (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_TACHOGRAPH) {
@@ -89637,10 +89636,10 @@ void cm848_initVehicleSpeedSensorChannel(void)
     tpu_b.CISR = wVar1 & 0xfffb;
     wVar1 = tpu_b.CFSR3;
     tpu_b.CFSR3 = wVar1 & 0xf0ff | 0xd00;
-    DAT_00304522 = 0x100;
-    DAT_00304526 = 0;
-    DAT_00304528 = 0;
-    TPUB_CH2_PARAM0 = 0xf;
+    tpu_b_channel_2_parameters.PARAM1 = 0x100;
+    tpu_b_channel_2_parameters.PARAM3 = 0;
+    tpu_b_channel_2_parameters.accumulated_period = 0;
+    tpu_b_channel_2_parameters.PARAM0 = 0xf;
     wVar1 = tpu_b.HSQR1;
     tpu_b.HSQR1 = wVar1 & 0xffcf;
     tpu_b.HSRR1 = 0x30;
@@ -89658,10 +89657,10 @@ void cm848_initVehicleSpeedSensorChannel(void)
     tpu_b.CISR = wVar1 & 0xfffb;
     wVar1 = tpu_b.CFSR3;
     tpu_b.CFSR3 = wVar1 & 0xf0ff | 0xd00;
-    DAT_00304522 = 0x100;
-    DAT_00304526 = 0;
-    DAT_00304528 = 0;
-    TPUB_CH2_PARAM0 = 0xb;
+    tpu_b_channel_2_parameters.PARAM1 = 0x100;
+    tpu_b_channel_2_parameters.PARAM3 = 0;
+    tpu_b_channel_2_parameters.accumulated_period = 0;
+    tpu_b_channel_2_parameters.PARAM0 = 0xb;
     wVar1 = tpu_b.HSQR1;
     tpu_b.HSQR1 = wVar1 & 0xffcf | 0x30;
     tpu_b.HSRR1 = 0x30;
@@ -89669,8 +89668,8 @@ void cm848_initVehicleSpeedSensorChannel(void)
     tpu_b.CPR1 = wVar1 & 0xffcf | 0x20;
     wVar1 = tpu_b.CIER;
     tpu_b.CIER = wVar1 | 4;
-    uVar2 = DAT_00304522;
-    DAT_003fd07a = (undefined1)((ushort)uVar2 >> 8);
+    wVar1 = tpu_b_channel_2_parameters.PARAM1;
+    DAT_003fd07a = (undefined1)(wVar1 >> 8);
   }
   vehicle_speed_sensor_tpu_channel = 2;
   return;
@@ -89754,8 +89753,8 @@ void cm848_updateCylinderCutoutAndInjectionDemand(void)
           cylinder_cutout_mask = 0;
         }
         else {
-          wVar1 = TPUA_CH4_PARAM0;
-          TPUA_CH4_PARAM0 = wVar1 & 0x7fff;
+          wVar1 = tpu_a_channel_4_parameters.PARAM0;
+          tpu_a_channel_4_parameters.PARAM0 = wVar1 & 0x7fff;
           wVar1 = tpu_a_channel_9_parameters.PARAM0;
           tpu_a_channel_9_parameters.PARAM0 = wVar1 & 0x7fff;
         }
@@ -90236,8 +90235,8 @@ void cm848_initializeAuxiliaryInjectionTimingState(void)
 
 /* Computes injection_end_limit_angle (the injection_end_limit_base lookup on average_engine_speed
    plus the fuel pressure scale and valve delay bias terms - plus the limp home adjustment) and
-   programs TPU-A channel 10 (TPUA_CH10_PARAM0 and a host service request) from the cylinder's angle
-   + injection_timing_table_offset + that angle;
+   programs TPU-A channel 10 (tpu_a_channel_10_parameters.PARAM0 and a host service request) from
+   the cylinder's angle + injection_timing_table_offset + that angle;
    algorithm_enable_flags_32_cal.end_of_injection_limit_enable takes part. Called by the TPU-A
    channel 6 handler and cm848_scheduleInjectionAnglesInSpeedLimpHome (was
    engine_injectionAngle_tpuUpdate; PR #53 round 65) */
@@ -90335,9 +90334,10 @@ LAB_00528338:
     uVar2 = (ushort)*(byte *)((int)&DAT_0053ac42 +
                              (&injector_bank_by_cylinder)[cylinder_event_index] + 2);
   }
-  TPUA_CH10_PARAM0 = uVar2 << 0xc | (ushort)injection_tpu_period_parameter_address;
-  DAT_003041a2 = (ushort)((uVar5 & 0xff) << 8) | uVar7 & 0xff;
-  DAT_003041a6 = 0;
+  tpu_a_channel_10_parameters.PARAM0 = uVar2 << 0xc | (ushort)injection_tpu_period_parameter_address
+  ;
+  tpu_a_channel_10_parameters.PARAM1 = (ushort)((uVar5 & 0xff) << 8) | uVar7 & 0xff;
+  tpu_a_channel_10_parameters.PARAM3 = 0;
   tpu_a.HSRR0 = 0x30;
   return;
 }
@@ -90399,7 +90399,7 @@ void cm848_tpu_configuration_setup(void)
   tpu_a.HSRR0 = 0x30;
   wVar1 = tpu_a.CIER;
   tpu_a.CIER = wVar1 | 0x400;
-  TPUA_CH10_PARAM0 = injection_tpu_period_parameter_address | 0xa000;
+  tpu_a_channel_10_parameters.PARAM0 = injection_tpu_period_parameter_address | 0xa000;
   wVar1 = tpu_a.CPR0;
   tpu_a.CPR0 = wVar1 & 0xffcf | 0x10;
   return;
@@ -90491,13 +90491,15 @@ LAB_00528618:
 LAB_005286f0:
   if (((switch_input_state_bits.key_switch == 0) && (key_off_shutdown_inhibit_flag == 0)) ||
      (engine_shutdown_command_flag == 1)) {
-    *(ushort *)((int)&TPUA_CH5_PARAM0 + param_4) = (ushort)((uVar1 & 0xff) << 8) | uVar3 & 0xff;
+    *(ushort *)((int)&tpu_a_channel_5_parameters.PARAM0 + param_4) =
+         (ushort)((uVar1 & 0xff) << 8) | uVar3 & 0xff;
     param_3 = 0;
   }
   else {
-    *(ushort *)((int)&TPUA_CH5_PARAM0 + param_4) = (ushort)((uVar1 & 0xff) << 8) | uVar3 & 0xff;
+    *(ushort *)((int)&tpu_a_channel_5_parameters.PARAM0 + param_4) =
+         (ushort)((uVar1 & 0xff) << 8) | uVar3 & 0xff;
   }
-  *(undefined2 *)((int)&DAT_00304152 + param_4) = param_3;
+  *(undefined2 *)((int)&tpu_a_channel_5_parameters.PARAM1 + param_4) = param_3;
   return;
 }
 
@@ -90534,13 +90536,14 @@ void cm848_selectCylinderInjector(int param_1)
           ((uint)(&recharge_injector_by_cylinder)[param_1] << 1 & 0x3e) & 1U) != 0)))) {
       uVar3 = (uint)injection_cylinder_fault_index_offset;
     }
-    wVar1 = TPUA_CH4_PARAM0;
+    wVar1 = tpu_a_channel_4_parameters.PARAM0;
     iVar5 = param_1 + (uVar3 & 0xff);
-    TPUA_CH4_PARAM0 =
+    tpu_a_channel_4_parameters.PARAM0 =
          wVar1 & 0x8000 | (ushort)(&injection_injector_by_cylinder)[param_1] << 2 |
          (ushort)(&recharge_injector_by_cylinder)[iVar5 - (iVar5 / (int)uVar2) * uVar2];
-    wVar1 = TPUA_CH2_PARAM4;
-    TPUA_CH2_PARAM4 = wVar1 & 0x8000 | (ushort)injection_tpu_period_parameter_address;
+    wVar1 = tpu_a_channel_2_parameters.PARAM4;
+    tpu_a_channel_2_parameters.PARAM4 =
+         wVar1 & 0x8000 | (ushort)injection_tpu_period_parameter_address;
     wVar1 = 0x30;
   }
   else {
@@ -90559,8 +90562,9 @@ void cm848_selectCylinderInjector(int param_1)
     tpu_a_channel_9_parameters.PARAM0 =
          wVar1 & 0x8000 | (ushort)(&injection_injector_by_cylinder)[param_1] << 2 |
          (ushort)(&recharge_injector_by_cylinder)[iVar5 - (iVar5 / (int)uVar2) * uVar2];
-    wVar1 = TPUA_CH7_PARAM4;
-    TPUA_CH7_PARAM4 = wVar1 & 0x8000 | (ushort)injection_tpu_period_parameter_address;
+    wVar1 = tpu_a_channel_7_parameters.PARAM4;
+    tpu_a_channel_7_parameters.PARAM4 =
+         wVar1 & 0x8000 | (ushort)injection_tpu_period_parameter_address;
     wVar1 = 0xc000;
   }
   tpu_a.HSRR1 = wVar1;
@@ -90607,10 +90611,10 @@ void cm848_loadInjectorDriverCalibration(void)
   word wVar2;
   dword dVar1;
   
-  DAT_00304138 = injector_driver_pull_in_duration;
-  DAT_0030413a = injector_driver_pull_in_duration;
-  DAT_0030413c = injector_driver_pull_in_duration;
-  DAT_0030413e = injector_driver_pull_in_duration;
+  tpu_a_channel_3_parameters.PARAM4 = injector_driver_pull_in_duration;
+  tpu_a_channel_3_parameters.PARAM5 = injector_driver_pull_in_duration;
+  tpu_a_channel_3_parameters.PARAM6 = injector_driver_pull_in_duration;
+  tpu_a_channel_3_parameters.PARAM7 = injector_driver_pull_in_duration;
   wVar2 = lookupTableInterpolation
                     (&tpu_a_channel_4_scale_by_battery_voltage_cached_axis_offset,
                      battery_voltage_sensor_filtered,tpu_a_channel_4_scale_by_battery_voltage_axis,
@@ -90619,12 +90623,13 @@ void cm848_loadInjectorDriverCalibration(void)
   if (cylinder_cutout_mask == 0) {
     dVar1 = injector_driver_continuous_recharge_interval;
   }
-  DAT_00304146 = dVar1;
-  DAT_0030414a = injector_driver_decay_duration;
-  DAT_0030414c = (short)(((uint)injector_driver_recharge_duration * (uint)wVar2) / 0xfff);
-  DAT_0030414e = injector_driver_delay_duration;
-  DAT_0030412e = injector_driver_delay_duration;
-  DAT_0030417e = injector_driver_delay_duration;
+  tpu_a_channel_4_parameters.injector_driver_recharge_interval = dVar1;
+  tpu_a_channel_4_parameters.PARAM5 = injector_driver_decay_duration;
+  tpu_a_channel_4_parameters.PARAM6 =
+       (word)(((uint)injector_driver_recharge_duration * (uint)wVar2) / 0xfff);
+  tpu_a_channel_4_parameters.PARAM7 = injector_driver_delay_duration;
+  tpu_a_channel_2_parameters.PARAM7 = injector_driver_delay_duration;
+  tpu_a_channel_7_parameters.PARAM7 = injector_driver_delay_duration;
   cm848_miosPwm16SetPeriodMicroseconds(injector_driver_booster_voltage_pwm_period_microseconds);
   cm848_miosPwm16SetDuty(injector_driver_booster_voltage_level);
   cm848_miosPwm17SetPeriodMicroseconds(injector_driver_recharge_voltage_pwm_period_microseconds);
@@ -90681,7 +90686,7 @@ void cm848_initializeInjectionHardware(void)
   wVar1 = tpu_a.HSQR1;
   tpu_a.HSQR1 = wVar1 & 0xf3ff;
   tpu_a.HSRR1 = 0xc00;
-  TPUA_CH5_PARAM0 = 0x5002;
+  tpu_a_channel_5_parameters.PARAM0 = 0x5002;
   wVar1 = tpu_a.CPR1;
   tpu_a.CPR1 = wVar1 & 0xf3ff | 0xc00;
   do {
@@ -90697,9 +90702,9 @@ void cm848_initializeInjectionHardware(void)
   tpu_a.HSQR1 = wVar1 & 0xffcf | 0x10;
   wVar1 = tpu_a.CIER;
   tpu_a.CIER = wVar1 | 4;
-  TPUA_CH2_PARAM3 = 0x28;
-  wVar1 = TPUA_CH2_PARAM4;
-  TPUA_CH2_PARAM4 = wVar1 & 0x7fff;
+  tpu_a_channel_2_parameters.PARAM3 = 0x28;
+  wVar1 = tpu_a_channel_2_parameters.PARAM4;
+  tpu_a_channel_2_parameters.PARAM4 = wVar1 & 0x7fff;
   wVar1 = tpu_a.CPR1;
   tpu_a.CPR1 = wVar1 & 0xffcf | 0x20;
   wVar1 = tpu_a.CPR1;
@@ -90711,8 +90716,8 @@ void cm848_initializeInjectionHardware(void)
   tpu_a.HSRR1 = 0xc0;
   wVar1 = tpu_a.CPR1;
   tpu_a.CPR1 = wVar1 & 0xff3f | 0xc0;
-  wVar1 = TPUA_CH4_PARAM0;
-  TPUA_CH4_PARAM0 = wVar1 & 0x7ffc | 0x8000;
+  wVar1 = tpu_a_channel_4_parameters.PARAM0;
+  tpu_a_channel_4_parameters.PARAM0 = wVar1 & 0x7ffc | 0x8000;
   wVar1 = tpu_a.CPR1;
   tpu_a.CPR1 = wVar1 & 0xfcff;
   wVar1 = tpu_a.CFSR2;
@@ -90730,9 +90735,9 @@ void cm848_initializeInjectionHardware(void)
   tpu_a.HSQR1 = wVar1 & 0x3fff | 0x4000;
   wVar1 = tpu_a.CIER;
   tpu_a.CIER = wVar1 | 0x80;
-  TPUA_CH7_PARAM3 = 0x28;
-  wVar1 = TPUA_CH7_PARAM4;
-  TPUA_CH7_PARAM4 = wVar1 & 0x7fff;
+  tpu_a_channel_7_parameters.PARAM3 = 0x28;
+  wVar1 = tpu_a_channel_7_parameters.PARAM4;
+  tpu_a_channel_7_parameters.PARAM4 = wVar1 & 0x7fff;
   wVar1 = tpu_a.CPR1;
   tpu_a.CPR1 = wVar1 & 0x3fff | 0x8000;
   wVar1 = tpu_a.CPR0;
@@ -90755,14 +90760,14 @@ void cm848_initializeInjectionHardware(void)
   tpu_a.HSRR0 = 0xc;
   wVar1 = tpu_a.CPR0;
   tpu_a.CPR0 = wVar1 & 0xfff3 | 0xc;
-  TPUA_CH5_PARAM0 = 0;
-  DAT_00304152 = 0;
-  DAT_00304154 = 0;
-  DAT_00304156 = 0;
-  DAT_00304158 = 0;
-  DAT_0030415a = 0;
-  DAT_0030415c = 0;
-  DAT_0030415e = 0;
+  tpu_a_channel_5_parameters.PARAM0 = 0;
+  tpu_a_channel_5_parameters.PARAM1 = 0;
+  tpu_a_channel_5_parameters.PARAM2 = 0;
+  tpu_a_channel_5_parameters.PARAM3 = 0;
+  tpu_a_channel_5_parameters.PARAM4 = 0;
+  tpu_a_channel_5_parameters.PARAM5 = 0;
+  tpu_a_channel_5_parameters.PARAM6 = 0;
+  tpu_a_channel_5_parameters.PARAM7 = 0;
   wVar1 = tpu_a.CPR0;
   tpu_a.CPR0 = wVar1 & 0xcfff;
   wVar1 = tpu_a.CFSR0;
@@ -90840,8 +90845,8 @@ void cm848_monitorFuelSystemHardwareShutdown(void)
   if ((injector_driver_booster_recharge_off_delay_counter ==
        injector_driver_booster_recharge_off_delay) &&
      (injector_driver_booster_recharge_off_delay != 0xffff)) {
-    wVar3 = TPUA_CH4_PARAM0;
-    TPUA_CH4_PARAM0 = wVar3 & 0x7fff;
+    wVar3 = tpu_a_channel_4_parameters.PARAM0;
+    tpu_a_channel_4_parameters.PARAM0 = wVar3 & 0x7fff;
     wVar3 = tpu_a_channel_9_parameters.PARAM0;
     tpu_a_channel_9_parameters.PARAM0 = wVar3 & 0x7fff;
     fuel_system_hardware_shutdown_check_enable_flag = 0;
@@ -90856,8 +90861,8 @@ void cm848_monitorFuelSystemHardwareShutdown(void)
       fuel_system_hardware_shutdown_check_enable_flag = 1;
     }
     if (injector_driver_booster_recharge_off_delay_counter != 0xffff) {
-      wVar3 = TPUA_CH4_PARAM0;
-      TPUA_CH4_PARAM0 = wVar3 | 0x8000;
+      wVar3 = tpu_a_channel_4_parameters.PARAM0;
+      tpu_a_channel_4_parameters.PARAM0 = wVar3 | 0x8000;
       wVar3 = tpu_a_channel_9_parameters.PARAM0;
       tpu_a_channel_9_parameters.PARAM0 = wVar3 | 0x8000;
     }
@@ -91022,9 +91027,10 @@ LAB_005294e4:
     injection_timing_tooth_b = injection_timing_tooth_b - 2;
   }
 LAB_005295d8:
-  TPUA_CH6_PARAM0 = injection_tpu_period_parameter_address | 0x6000;
-  DAT_00304162 = CONCAT11(injection_timing_tooth_b,injection_timing_tooth_b_phase);
-  DAT_00304166 = 0;
+  tpu_a_channel_6_parameters.PARAM0 = injection_tpu_period_parameter_address | 0x6000;
+  tpu_a_channel_6_parameters.PARAM1 =
+       CONCAT11(injection_timing_tooth_b,injection_timing_tooth_b_phase);
+  tpu_a_channel_6_parameters.PARAM3 = 0;
   tpu_a.HSRR1 = 0x3000;
   injection_angle_sequence_state_prev = injection_angle_sequence_state;
   injection_angle_sequence_state = 2;
@@ -91229,9 +91235,10 @@ void cm848_scheduleInjectionAnglesInSpeedLimpHome(void)
              (char)((int)uVar4 >> 1) + ((int)uVar4 < 0 && (uVar4 & 1) != 0);
         injection_timing_tooth_b = injection_timing_tooth_base_index - 1;
       }
-      TPUA_CH6_PARAM0 = injection_tpu_period_parameter_address | 0x6000;
-      DAT_00304162 = CONCAT11(injection_timing_tooth_b,injection_timing_tooth_b_phase);
-      DAT_00304166 = 0;
+      tpu_a_channel_6_parameters.PARAM0 = injection_tpu_period_parameter_address | 0x6000;
+      tpu_a_channel_6_parameters.PARAM1 =
+           CONCAT11(injection_timing_tooth_b,injection_timing_tooth_b_phase);
+      tpu_a_channel_6_parameters.PARAM3 = 0;
       tpu_a.HSRR1 = 0x3000;
       injection_angle_sequence_state_prev = injection_angle_sequence_state;
       injection_angle_sequence_state = 4;
@@ -91275,9 +91282,10 @@ void cm848_scheduleInjectionAnglesInSpeedLimpHome(void)
       injection_timing_tooth_phase = (char)((int)uVar5 >> 1) + ((int)uVar5 < 0 && (uVar5 & 1) != 0);
       injection_timing_tooth = injection_timing_tooth_base_index - 1;
     }
-    TPUA_CH6_PARAM0 = injection_tpu_period_parameter_address | 0x6000;
-    DAT_00304162 = CONCAT11(injection_timing_tooth,injection_timing_tooth_phase);
-    DAT_00304166 = 0;
+    tpu_a_channel_6_parameters.PARAM0 = injection_tpu_period_parameter_address | 0x6000;
+    tpu_a_channel_6_parameters.PARAM1 =
+         CONCAT11(injection_timing_tooth,injection_timing_tooth_phase);
+    tpu_a_channel_6_parameters.PARAM3 = 0;
     tpu_a.HSRR1 = 0x3000;
     injection_angle_sequence_state_prev = injection_angle_sequence_state;
     injection_angle_sequence_state = 4;
@@ -91342,9 +91350,9 @@ LAB_00529e34:
   if (0x39 < injection_timing_tooth) {
     injection_timing_tooth = injection_timing_tooth - 2;
   }
-  TPUA_CH6_PARAM0 = 0x6002;
-  DAT_00304162 = CONCAT11(injection_timing_tooth,injection_timing_tooth_phase);
-  DAT_00304166 = 0;
+  tpu_a_channel_6_parameters.PARAM0 = 0x6002;
+  tpu_a_channel_6_parameters.PARAM1 = CONCAT11(injection_timing_tooth,injection_timing_tooth_phase);
+  tpu_a_channel_6_parameters.PARAM3 = 0;
   tpu_a.HSRR1 = 0x3000;
   injection_angle_sequence_state_prev = injection_angle_sequence_state;
   injection_angle_sequence_state = 1;
@@ -91362,12 +91370,12 @@ LAB_00529e34:
    (e2m 805E +0 HPCR_Wakeup_Processing_Status_N) to 1 and injection_tpu_period_parameter_address
    (805E +B HPCR_Period_Address) to 2 (the primary speed input, TPU-A channel 0 parameter 1 at
    0x304102), sets up channel 6 (CFSR2 function field 9, host service request 3 in HSRR1, channel
-   interrupt enable bit 0x40 in CIER, priority field of CPR1; TPUA_CH6_PARAM0 = 0x6002 = 0x6000 |
-   the period address) and stores injection_timing_tooth_separation_per_cylinder (805E +C
-   HPCR_Wakeup_Seperation_In_Increments) = injection_timing_tooth_count / cylinder_event_count_max
-   (120 / 6 = 20). Called once from the boot list of cm848_applicationMain and again by
-   cm848_updateEngineSpeedFromCrankSignal after average_engine_speed has dropped to 0, right after
-   mpc555_resetEngineTimingAccumulators. (was cm848_sensor_diagnostic_flag_update) */
+   interrupt enable bit 0x40 in CIER, priority field of CPR1; tpu_a_channel_6_parameters.PARAM0 =
+   0x6002 = 0x6000 | the period address) and stores injection_timing_tooth_separation_per_cylinder
+   (805E +C HPCR_Wakeup_Seperation_In_Increments) = injection_timing_tooth_count /
+   cylinder_event_count_max (120 / 6 = 20). Called once from the boot list of cm848_applicationMain
+   and again by cm848_updateEngineSpeedFromCrankSignal after average_engine_speed has dropped to 0,
+   right after mpc555_resetEngineTimingAccumulators. (was cm848_sensor_diagnostic_flag_update) */
 
 void cm848_initializeInjectionAngleScheduler(void)
 
@@ -91385,7 +91393,7 @@ void cm848_initializeInjectionAngleScheduler(void)
   tpu_a.HSRR1 = 0x3000;
   wVar1 = tpu_a.CIER;
   tpu_a.CIER = wVar1 | 0x40;
-  TPUA_CH6_PARAM0 = 0x6002;
+  tpu_a_channel_6_parameters.PARAM0 = 0x6002;
   wVar1 = tpu_a.CPR1;
   tpu_a.CPR1 = wVar1 & 0xcfff | 0x1000;
   injection_timing_tooth_separation_per_cylinder =

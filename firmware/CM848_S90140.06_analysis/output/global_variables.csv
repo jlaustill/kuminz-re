@@ -788,7 +788,6 @@ address,name,type,comment
 0x003024d7,boot_can_ring_state.receive_ring_full_flag,,
 0x003024da,boot_can_ring_state.transmit_message_buffer_pointer,,
 0x003024f4,diag_write_request_state,diag_write_request_state_t,
-0x003024f8,adc_trigger_t_003024f4.adc_scan_active,,
 0x00302510,can_mailbox_counter,can_slot_range_t,
 0x00302512,can_mailbox_counter.slot_end,,
 0x0030251c,can_rx_channel_filter,can_rx_channel_t,
@@ -799,8 +798,6 @@ address,name,type,comment
 0x00302738,system_initialization_flags.initialization_counter,,
 0x00302877,eeprom_service_mode_flags,byte,EEPROM-programming service-mode flags byte. High bit 0x80 = in EEPROM mode; low nibble (& 0xf) gates special main-loop processing; whole-byte 0x81 routes main-loop dispatch to CAN handlers and 0x82 to the diagnostic handler (mpc555_runPeriodicInterruptTimerTick/cm848_runBootKernelLoop/cm848_dispatchDiagnosticService) - name covers the dispatch role not just diag. Renamed from qadc_a_result_high_1 (legacy mislabel - not analog data; real QADC-A results are at 0x304A80+). Peripheral/RAM region 0x302xxx so no _cal
 0x00302878,eeprom_xfer_state,eeprom_transfer_state_t,
-0x00302882,qadc_a_result_high_2.write_callback_ptr,,
-0x00302886,qadc_a_result_high_2.read_callback_ptr,,
 0x003028a5,watchdog_tick_prescaler,byte,
 0x003028a6,eeprom_block_tracking,eeprom_block_tracking_t,
 0x003028a8,eeprom_block_tracking.failed_write_authorization_count,,(was write_auth_attempt_counter: a stale flat row inside the struct; PR #53 round 67)
@@ -845,57 +842,37 @@ address,name,type,comment
 0x00304000,tpu_a,tpu3_module_registers_t,TPU3 module A registers (0x304000-0x30402B) (was tpu_a_mcr; PR #53 round 95)
 0x00304100,tpu_a_channel_0_parameters,tpu3_channel_parameters_t,TPU-A channel 0 parameter RAM (0x304100-0x30410F) (was tpu_a_ch0_param0; PR #53 round 95)
 0x00304110,tpu_a_channel_1_parameters,tpu_a_channel_1_parameters_t,TPU-A channel 1 parameter RAM (0x304110-0x30411F; the old name said parameter 2, the block starts at parameter 0) (was tpu_a_ch1_param2; PR #53 round 95)
-0x00304120,TPUA_CH2_PARAM0,word,
-0x00304126,TPUA_CH2_PARAM3,word,
-0x00304128,TPUA_CH2_PARAM4,word,
-0x00304130,TPUA_CH3_PARAM0,word,
-0x00304134,TPUA_CH3_PARAM2,word,
-0x00304136,TPUA_CH3_PARAM3,word,
-0x00304140,TPUA_CH4_PARAM0,word,
-0x00304150,TPUA_CH5_PARAM0,word,
-0x00304160,TPUA_CH6_PARAM0,word,
-0x00304170,TPUA_CH7_PARAM0,word,
-0x00304176,TPUA_CH7_PARAM3,word,
-0x00304178,TPUA_CH7_PARAM4,word,
-0x00304180,TPUA_CH8_PARAM0,word,
+0x00304120,tpu_a_channel_2_parameters,tpu3_channel_parameters_t,TPU-A channel 2 parameter RAM (0x304120-0x30412f; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUA_CH2_PARAM0; PR #53 round 96)
+0x00304130,tpu_a_channel_3_parameters,tpu3_channel_parameters_t,TPU-A channel 3 parameter RAM (0x304130-0x30413f; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUA_CH3_PARAM0; PR #53 round 96)
+0x00304140,tpu_a_channel_4_parameters,tpu_a_channel_4_parameters_t,TPU-A channel 4 parameter RAM (0x304140-0x30414f; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUA_CH4_PARAM0; PR #53 round 96)
+0x00304150,tpu_a_channel_5_parameters,tpu3_channel_parameters_t,TPU-A channel 5 parameter RAM (0x304150-0x30415f; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUA_CH5_PARAM0; PR #53 round 96)
+0x00304160,tpu_a_channel_6_parameters,tpu3_channel_parameters_t,TPU-A channel 6 parameter RAM (0x304160-0x30416f; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUA_CH6_PARAM0; PR #53 round 96)
+0x00304170,tpu_a_channel_7_parameters,tpu3_channel_parameters_t,TPU-A channel 7 parameter RAM (0x304170-0x30417f; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUA_CH7_PARAM0; PR #53 round 96)
+0x00304180,tpu_a_channel_8_parameters,tpu3_channel_parameters_t,TPU-A channel 8 parameter RAM (0x304180-0x30418f; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUA_CH8_PARAM0; PR #53 round 96)
 0x00304190,tpu_a_channel_9_parameters,tpu_a_channel_9_parameters_t,TPU-A channel 9 parameter RAM (0x304190-0x30419F) (was tpu_channel_control; PR #53 round 95)
-0x003041a0,TPUA_CH10_PARAM0,word,
-0x003041b0,TPUA_CH11_PARAM0,word,
-0x003041b2,TPUA_CH11_PARAM1,word,
-0x003041b4,TPUA_CH11_PARAM2,word,
-0x003041b6,TPUA_CH11_PARAM3,word,
-0x003041b8,TPUA_CH11_PARAM4,word,
-0x003041ba,TPUA_CH11_PARAM5,word,
-0x003041bc,TPUA_CH11_PARAM6,word,
-0x003041be,TPUA_CH11_PARAM7,word,
+0x003041a0,tpu_a_channel_10_parameters,tpu3_channel_parameters_t,TPU-A channel 10 parameter RAM (0x3041a0-0x3041af; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUA_CH10_PARAM0; PR #53 round 96)
+0x003041b0,tpu_a_channel_11_parameters,tpu3_channel_parameters_t,TPU-A channel 11 parameter RAM (0x3041b0-0x3041bf; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUA_CH11_PARAM0; PR #53 round 96)
 0x003041c0,tpu_a_channel_12_parameters,tpu_a_channel_12_parameters_t,TPU-A channel 12 parameter RAM (0x3041C0-0x3041CF) (was TPUA_CH12_PARAM0; PR #53 round 95)
-0x003041d0,TPUA_CH13_PARAM0,word,
-0x003041d6,TPUA_CH13_PARAM3,word,
-0x003041d8,TPUA_CH13_PARAM4,word,
-0x003041da,TPUA_CH13_PARAM5,word,
-0x003041dc,TPUA_CH13_PARAM6,word,
-0x003041de,TPUA_CH13_PARAM7,word,
+0x003041d0,tpu_a_channel_13_parameters,tpu3_channel_parameters_t,TPU-A channel 13 parameter RAM (0x3041d0-0x3041df; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUA_CH13_PARAM0; PR #53 round 96)
 0x003041e0,tpu_a_channel_14_parameters,tpu_a_channel_14_parameters_t,TPU-A channel 14 parameter RAM (0x3041E0-0x3041EF) (was TPUA_CH14_PARAM0; PR #53 round 95)
-0x003041f0,TPUA_CH15_PARAM0,word,
+0x003041f0,tpu_a_channel_15_parameters,tpu3_channel_parameters_t,TPU-A channel 15 parameter RAM (0x3041f0-0x3041ff; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUA_CH15_PARAM0; PR #53 round 96)
 0x00304400,tpu_b,tpu3_module_registers_t,TPU3 module B registers (0x304400-0x30442B) (was tpu_b_mcr; PR #53 round 95)
 0x00304500,tpu_b_channel_0_parameters,tpu_b_channel_0_parameters_t,TPU-B channel parameter RAM (16 channels x 16 bytes) - the counterpart of TPU-A's tpu_a_channel_0_parameters at 0x304100; was a second tpu_b_mcr label (the TPU-B module registers are tpu_b_mcr at 0x304400) (was tpu_b_ch0_param0; PR #53 round 95)
-0x00304510,TPUB_CH1_PARAM0,word,
-0x00304520,TPUB_CH2_PARAM0,word,
-0x00304530,TPUB_CH3_PARAM0,word,
-0x00304540,TPUB_CH4_PARAM0,word,
-0x00304550,TPUB_CH5_PARAM0,word,
-0x00304560,TPUB_CH6_PARAM0,word,
-0x00304570,TPUB_CH7_PARAM0,word,
-0x00304580,TPUB_CH8_PARAM0,word,
-0x00304590,TPUB_CH9_PARAM0,word,
-0x003045a0,TPUB_CH10_PARAM0,word,
+0x00304510,tpu_b_channel_1_parameters,tpu3_period_accumulator_parameters_t,TPU-B channel 1 parameter RAM (0x304510-0x30451f; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUB_CH1_PARAM0; PR #53 round 96)
+0x00304520,tpu_b_channel_2_parameters,tpu3_period_accumulator_parameters_t,TPU-B channel 2 parameter RAM (0x304520-0x30452f; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUB_CH2_PARAM0; PR #53 round 96)
+0x00304530,tpu_b_channel_3_parameters,tpu3_channel_parameters_t,TPU-B channel 3 parameter RAM (0x304530-0x30453f; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUB_CH3_PARAM0; PR #53 round 96)
+0x00304540,tpu_b_channel_4_parameters,tpu3_channel_parameters_t,TPU-B channel 4 parameter RAM (0x304540-0x30454f; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUB_CH4_PARAM0; PR #53 round 96)
+0x00304550,tpu_b_channel_5_parameters,tpu3_channel_parameters_t,TPU-B channel 5 parameter RAM (0x304550-0x30455f; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUB_CH5_PARAM0; PR #53 round 96)
+0x00304560,tpu_b_channel_6_parameters,tpu3_channel_parameters_t,TPU-B channel 6 parameter RAM (0x304560-0x30456f; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUB_CH6_PARAM0; PR #53 round 96)
+0x00304570,tpu_b_channel_7_parameters,tpu3_channel_parameters_t,TPU-B channel 7 parameter RAM (0x304570-0x30457f; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUB_CH7_PARAM0; PR #53 round 96)
+0x00304580,tpu_b_channel_8_parameters,tpu3_channel_parameters_t,TPU-B channel 8 parameter RAM (0x304580-0x30458f; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUB_CH8_PARAM0; PR #53 round 96)
+0x00304590,tpu_b_channel_9_parameters,tpu3_period_accumulator_parameters_t,TPU-B channel 9 parameter RAM (0x304590-0x30459f; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUB_CH9_PARAM0; PR #53 round 96)
+0x003045a0,tpu_b_channel_10_parameters,tpu3_channel_parameters_t,TPU-B channel 10 parameter RAM (0x3045a0-0x3045af; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUB_CH10_PARAM0; PR #53 round 96)
 0x003045b0,tpu_b_channel_11_parameters,tpu_b_channel_11_parameters_t,TPU-B channel 11 parameter RAM (0x3045B0-0x3045BF) (was TPUB_CH11_PARAM0; PR #53 round 95)
-0x003045c0,TPUB_CH12_PARAM0,word,
-0x003045d0,TPUB_CH13_PARAM0,word,
-0x003045e0,tpu_b_channel_14_parameters,tpu_b_channel_14_parameters_t,TPU-B channel 14 parameter RAM (0x3045E0-0x3045EF) (was TPUB_CH14_PARAM0; PR #53 round 95)
-0x003045e2,TPUB_CH14_PARAM0.PARAM1,,
-0x003045e6,TPUB_CH14_PARAM0.PARAM3,,
-0x003045f0,TPUB_CH15_PARAM0,word,
+0x003045c0,tpu_b_channel_12_parameters,tpu3_channel_parameters_t,TPU-B channel 12 parameter RAM (0x3045c0-0x3045cf; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUB_CH12_PARAM0; PR #53 round 96)
+0x003045d0,tpu_b_channel_13_parameters,tpu3_channel_parameters_t,TPU-B channel 13 parameter RAM (0x3045d0-0x3045df; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUB_CH13_PARAM0; PR #53 round 96)
+0x003045e0,tpu_b_channel_14_parameters,tpu3_period_accumulator_parameters_t,TPU-B channel 14 parameter RAM (0x3045E0-0x3045EF) (was TPUB_CH14_PARAM0; PR #53 round 95)
+0x003045f0,tpu_b_channel_15_parameters,tpu3_channel_parameters_t,TPU-B channel 15 parameter RAM (0x3045f0-0x3045ff; eight words PARAM0-7: their meaning depends on the channel's TPU function) (was TPUB_CH15_PARAM0; PR #53 round 96)
 0x00304800,qadc64_a,qadc64_registers_t,QADC64 module A registers (0x304800-0x304811); its CCW table is at 0x304A00 and its result registers at 0x304A80 / 0x304B00 / 0x304B80 (was qadc_b_mcr before PR #48) (was QADC64A_MCR; PR #53 round 95) | earlier note: QADC64 module A register block (module B is qadc64_b at 0x304c00; results QADC-A 0x304a80 / QADC-B 0x304e80) - was qadc_b_mcr
 0x00304812,QADC64A_SR,byte,
 0x00304814,QADC64A_CCW_TBL,byte,
@@ -944,9 +921,6 @@ address,name,type,comment
 0x00305148,qsmcm_recram.RX4,,
 0x0030514a,qsmcm_recram.RX5,,
 0x00305180,qsmcm_tranram,qsmcm_transmit_ram_t,QSPI transmit RAM (was eeprom_command_register)
-0x00305186,eeprom_command_register.TX3,,
-0x00305188,eeprom_command_register.TX4,,
-0x0030518a,eeprom_command_register.TX5,,
 0x003051c0,qsmcm_comdram_0,byte,QSPI command RAM entry 0 (was eeprom_timing_reg_0)
 0x003051c1,qsmcm_comdram_1,byte,QSPI command RAM entry 1 (was eeprom_timing_reg_1)
 0x003051c2,qsmcm_comdram_2,byte,QSPI command RAM entry 2 (was eeprom_timing_reg_2)
@@ -4034,7 +4008,7 @@ address,name,type,comment
 0x00409088,injection_quantity_auxiliary_override_value,word,The replacement value used when injection_quantity_auxiliary_override_switch is set (e2m Aux_Quantity_Override_Value, MM3S). (was crank_sync_threshold_override_cal)
 0x0040908a,injection_quantity_auxiliary_logic_select,word,== 2 takes the minimum of the four terms, otherwise the maximum (1 = max wins in the dump). e2m Aux_Quantity_Logic_Select (1 = max wins, 2 = min wins). Only user is the auxiliary quantity function; not EEPROM-backed. (was injection_timing_mode_select_cal)
 0x0040908e,injection_quantity_auxiliary_speed_limp_home_switch,word,Code: auxiliary quantity limit forced to 0 (source code 14) when engine_speed_limp_home_active_flag != 0 (speed limp home) and this word == 1. e2m Aux_Speed_Limp_Home_Switch: '1 = aux off during speed limp home; 0 = aux on during speed limp home' (0 in the dump). Not an engine sync force reset. (was engine_sync_force_reset_cal)
-0x004090cc,injection_end_limit_exceeded_count_threshold,word,e2m 804A +0 EOI_Limit_Threshold 'Threshold where EOI limit counter causes error.' (UNITLESS, 0..65535; 0 in the dump): the count at which the end of injection (EOI) limit violation counter sets its fault. cm848_monitorInjectionLimitViolationCounters counts injection_end_limit_exceeded_count (e2m 804B +0 EOI_Limit_Count 'Persistence counter for EOI limit exceeded') up by 1 on each pass where bit 15 of TPUA_CH2_PARAM4 / TPUA_CH7_PARAM4 flags a violation (it clears both flags) and down by 1 otherwise; when the count reaches this threshold it sets fault bit 325 (fault_detected_cal.faults_320_to_335 bit 0x20, no DTC slot). Read-only cal in working RAM, so no _cal. (was injection_timing_count_a_max_cal)
+0x004090cc,injection_end_limit_exceeded_count_threshold,word,e2m 804A +0 EOI_Limit_Threshold 'Threshold where EOI limit counter causes error.' (UNITLESS, 0..65535; 0 in the dump): the count at which the end of injection (EOI) limit violation counter sets its fault. cm848_monitorInjectionLimitViolationCounters counts injection_end_limit_exceeded_count (e2m 804B +0 EOI_Limit_Count 'Persistence counter for EOI limit exceeded') up by 1 on each pass where bit 15 of tpu_a_channel_2_parameters.PARAM4 / tpu_a_channel_7_parameters.PARAM4 flags a violation (it clears both flags) and down by 1 otherwise; when the count reaches this threshold it sets fault bit 325 (fault_detected_cal.faults_320_to_335 bit 0x20, no DTC slot). Read-only cal in working RAM, so no _cal. (was injection_timing_count_a_max_cal)
 0x004090ce,injection_command_overlap_count_threshold,word,e2m 804A +2 Injection_Command_Overlap_Threshold 'Threshold where Injection command overlap counter triggers error' (UNITLESS): the overlap persistence count that sets the fault (cm848_monitorInjectionLimitViolationCounters) (was injection_timing_count_b_max_cal)
 0x004090d0,pilot_to_main_injection_minimum_interval,word,Only user cm848_calculatePilotInjectionPulseWidth: pilot enabled only if (pilot-start to main-start interval - pilot width) >= this, in ticks (625 = 250 us in the dump). Matches e2m HPCR_Min_Interval_Main_Pilot (0.4 us). Not EEPROM-backed, so no _cal. (was injection_timing_phase_upper_cal)
 0x004090d2,pilot_injection_pulse_width_maximum_shift_factor,byte,Only user cm848_setMainQuantityAndPulseWidthLimits: value 2 doubles the pilot maximum on-time (period / 16 -> period / 8). Matches e2m HPCR_Max_Pilotinj_Duration_Shiftfactor. Not EEPROM-backed. (was injection_timing_mode_a_cal)
@@ -6434,7 +6408,7 @@ address,name,type,comment
 0x003fd088,cylinder_cutout_expiry_count,byte,Code: cm848_updateCylinderCutoutAndInjectionDemand (read in full this wave) and cm848_resetCylinderCutoutState. Incremented each time the cutout countdown expires (only when the limit is nonzero), cleared by the reset function; used against the limit to choose between releasing the cutout and clearing the enable bit of TPU-A channel 4. xref_addr.py: 1 read / 2 writes, byte; time-shared ... (was protection_shutdown_cycle_count) | earlier note: count of protection shutdown cycles issued
 0x003fd089,cylinder_cutout_duration_countdown,word,Code: cm848_updateCylinderCutoutAndInjectionDemand (read in full this wave) and cm848_resetCylinderCutoutState. Loaded with cylinder_event_factor x cylinder_event_count_max when a cutout starts (mask was 0) and counted down while cylinder_cutout_mask is nonzero; at 0 the cutout is released or the injector channel is shut off. xref_addr.py: 1 read / 4 writes, word (odd address); time-shared ... (was protection_cylinder_event_countdown) | earlier note: cylinder-event countdown driving protection response
 0x003fd08b,cylinder_cutout_debounce_counter,word,Code: cm848_updateCylinderCutoutAndInjectionDemand (read in full this wave) and cm848_resetCylinderCutoutState. Counts down by 1 per call while an enabled injector diagnostic class is bad; at 0 the cutout mask gets 0x55 / 0xaa; counts back up (to debounce factor x cylinder_event_count_max) while all diagnostic bytes and injector_driver_booster_capacitor_low_voltage_mask are 0; reloaded when the cutout expires. ... (was protection_fault_debounce_counter) | earlier note: debounce before protection fires; recovers on clear
-0x003fd0b8,injector_driver_booster_recharge_off_delay_counter,word,Passes with the engine STOPPED (cm848_monitorFuelSystemHardwareShutdown; 0xffff while it is not stopped wraps to 0 on the first stopped pass). At injector_driver_booster_recharge_off_delay (e2m 8041 +26 HPCR_Booster_Recharge_Off_Delay 'Time limit for booster cap to recharge without engine speed and key on') it clears bit 15 of TPUA_CH4_PARAM0 / tpu_a_channel_9_parameters.PARAM0 - the booster recharge stops - and fuel_system_hardware_shutdown_check_enable_flag. cm848_initializeInjectionHardware zeroes it. Dump: 9920 (key on with the engine stopped long past the delay). (was protection_crank_event_counter; PR #53 round 58) | earlier note: crank-event count to trigger TPU protection enable
+0x003fd0b8,injector_driver_booster_recharge_off_delay_counter,word,Passes with the engine STOPPED (cm848_monitorFuelSystemHardwareShutdown; 0xffff while it is not stopped wraps to 0 on the first stopped pass). At injector_driver_booster_recharge_off_delay (e2m 8041 +26 HPCR_Booster_Recharge_Off_Delay 'Time limit for booster cap to recharge without engine speed and key on') it clears bit 15 of tpu_a_channel_4_parameters.PARAM0 / tpu_a_channel_9_parameters.PARAM0 - the booster recharge stops - and fuel_system_hardware_shutdown_check_enable_flag. cm848_initializeInjectionHardware zeroes it. Dump: 9920 (key on with the engine stopped long past the delay). (was protection_crank_event_counter; PR #53 round 58) | earlier note: crank-event count to trigger TPU protection enable
 0x003fd40e,j1939_periodic_queue0_count,byte,entry count for J1939 periodic diag queue 0 (max 20)
 0x003fd40f,j1939_periodic_queue1_count,byte,entry count for J1939 periodic diag queue 1 (max 10)
 0x003fee98,fuel_system_hardware_shutdown_error_count_cal,word,e2m 8C61 +0 FS_HW_Shutdown_Error_Count 'Saved number of powerdown fuel system hardware failures for valid test.' (UNITLESS; EEPROM mirror; 0 here): cm848_initializeInjectionHardware counts each injection TPU channel set initialization in it (cap 255) and sets fault 399 (P0607) once it exceeds fuel_system_hardware_shutdown_fail_count_threshold (0xffff = never); cm848_monitorFuelSystemHardwareShutdown clears it when the engine shutdown check of QADC slots 54 / 55 against fuel_system_hardware_shutdown_error_threshold passes and decrements it after a pending restart. (was tpu_init_retry_count) | earlier note: TPU init retry count; gates diag fault flag
@@ -6735,7 +6709,7 @@ address,name,type,comment
 0x0040b6d6,cruise_governor_speed_error_gain,word,e2m 118A +12 Cruise_RSG_Gain_Auto 'GAIN USED TO ADJUST DROOP ERROR. Can change with rear axle ratio' (R/MG): e2m Cruise_RSG_Gain_Auto (the Cruise_RSG_Gain computed from the axle ratio): driveshaft rpm per mph (tire_revolutions_per_mile_cal x rear_axle_ratio / 60) x 100 >> 7 x cruise_governor_speed_error_gain_multiplier >> 10, capped at cruise_governor_speed_error_gain_tool_upper_limit; turns the mph speed error into engine speed units (cm848_calculateCruiseGovernorEngineSpeedError) (was cruise_pid_rate_gain_scale) | earlier note: Written by cm848_calculateCruiseGovernorSpeedErrorGain, read by cm848_calculateCruiseGovernorEngineSpeedError and cm848_runCruiseAndRoadSpeedGovernor as the factor after cruise_governor_gear_ratio_gain in the cruise PID speed error / rate terms (xref_addr.py: 2 reads / 1 write); dump 0. (was cruise_torque_limit_scale) | earlier note: cruise torque-limit scaling factor
 0x0040b6dc,cruise_governor_preset_fueling,word,e2m 118A +18 CC_RS_Preset_Fueling 'CRUISE CONTROL RSG PRESET FUELING' (MM3S): The fueling a governor preset starts from: final_fueling, or once the speed has been steady for cruise_governor_preset_fueling_time the filtered fueling of that steady window (was cruise_fuel_demand_stable_ref) | earlier note: stable/current cruise fuel demand reference for ramp ctrl
 0x00408f46,cylinder_cutout_duration_event_factor,word,Code: cm848_updateCylinderCutoutAndInjectionDemand (read in full this wave) and cm848_resetCylinderCutoutState. ROM word: times cylinder_event_count_max gives the load value of cylinder_cutout_duration_countdown (3 uses). (was protection_cylinder_event_factor) | earlier note: ROM x cylinder_event_count_max -> protection countdown | e2m: e2m 81C9 +0 HPCR_Bank_Retest_Count 'Number of cam revs injector bank is disabled after fault' (the cutout takes one injector bank: mask 0x55 or 0xaa of the cylinder events)
-0x00408f48,cylinder_cutout_expiry_limit,byte,Code: cm848_updateCylinderCutoutAndInjectionDemand (read in full this wave) and cm848_resetCylinderCutoutState. ROM byte: 0 = never shut the injector channel off (cutout released after every expiry); else the cutout is released while the expiry count is below it and the TPU-A channel 4 enable bit (0x8000 of TPUA_CH4_PARAM0) is cleared once it is reached. Also gates the whole block (count <= ... (was protection_shutdown_cycle_limit) | earlier note: ROM cap on protection shutdown cycle count | e2m: e2m 81C9 +2 HPCR_Bank_Shutdown_Threshold 'Number of bank shutdowns before permanent disable'
+0x00408f48,cylinder_cutout_expiry_limit,byte,Code: cm848_updateCylinderCutoutAndInjectionDemand (read in full this wave) and cm848_resetCylinderCutoutState. ROM byte: 0 = never shut the injector channel off (cutout released after every expiry); else the cutout is released while the expiry count is below it and the TPU-A channel 4 enable bit (0x8000 of tpu_a_channel_4_parameters.PARAM0) is cleared once it is reached. Also gates the whole block (count <= ... (was protection_shutdown_cycle_limit) | earlier note: ROM cap on protection shutdown cycle count | e2m: e2m 81C9 +2 HPCR_Bank_Shutdown_Threshold 'Number of bank shutdowns before permanent disable'
 0x00408f49,cylinder_cutout_debounce_event_factor,word,Code: cm848_updateCylinderCutoutAndInjectionDemand (read in full this wave) and cm848_resetCylinderCutoutState. ROM word (read at an odd address because of the packed ROM block, no change): times cylinder_event_count_max gives the full value of cylinder_cutout_debounce_counter (3 uses). (was protection_debounce_event_factor) | earlier note: ROM x cylinder_event_count_max -> protection debounce | e2m: e2m 81C9 +3 HPCR_Bank_Diagnostic_Count 'Number of cam rev. counts for delay of bank shutdown so faults can be detected.'
 0x0040b78c,injection_quantity_scale_factor,word,Outside the five functions. Only users are cm848_updateCylinderCutoutAndInjectionDemand (slews it toward a fuel-demand dependent target, step limit speed_limp_home_derate_slew_rate, then multiplies fuel_demand_computed_snapshot, the pilot snapshot and the auxiliary snapshot by it / 51200) and cm848_captureInjectionQuantityAndTimingSnapshots (resets it to 51200 = 1.0 unless engine_state is ENGINE_STATE_RUNNING or ENGINE_STATE_ENGINE_BRAKE). It scales qua (was injection_timing_demand_working) | earlier note: rate-limited injection timing demand (reset 0xc800) | e2m: e2m 8192 +26 Speed_Limp_Derate (%, 1/512, 0-127) 'Fueling derate percentage for fuel injection when running on backup EPS' (the speed limp home fuel derate scale, 51200 = 100 percent; see speed_limp_home_derate_slew_rate)
 0x0040b830,auxiliary_injection_timing,i16,= main_injection_timing - retard (dump 162 - 0), or -(injection_timing_top_dead_center_offset + retard) when ROM flag 0x409096 is set; only reader cm848_captureInjectionQuantityAndTimingSnapshots -> auxiliary_injection_timing_for_cylinder_event -> x -5 -> slot 12 of TPU-A channel 5, the third event, in the same advance-count convention as the main timing. (was injection_timing_aux_offset) | earlier note: aux timing offset (torque snapshot - aux output) | retyped word -> i16 2026-11-20 (e2m signed, every load lha)
@@ -7580,7 +7554,7 @@ address,name,type,comment
 0x004090bc,injector_driver_continuous_recharge_interval,dword,e2m 8041 +1C HPCR_Continuous_Rchg_Interval 'Interval between recharge while in continuous recharge mode' (USEC, 0.4 per count; 250000 = 100000 here; the dumped parameter ID table resolves the address). cm848_loadInjectorDriverCalibration (lwz) (PR #53 round 49)
 0x004090c0,injector_driver_bank_cutoff_recharge_interval,dword,e2m 8041 +20 HPCR_Bank_Cutoff_Recharge_Interval 'Interval of continuous recharge when Bank_Cutoff is commanded > 0.' (address from the ECU's parameter ID table) (0.4 us per count; 16750000 = 6.7 s here, close to the 24-bit TPU maximum): the recharge interval cm848_loadInjectorDriverCalibration stores in TPU-A channel 4 PARAM3:PARAM4 (0x304146, 32 bit) while ... (new row 2026-11-19, wave 12)
 0x004090c4,injection_cylinder_fault_index_offset,word,ROM fallback cylinder-index offset on injection fault | e2m: e2m 8041 +24 HPCR_Open_Injector_Recharge_Offset 'Offset value for injector offset during an open circuit failure' (cm848_selectCylinderInjector shifts the injector output index by it, mod the cylinder count, when the cylinder's open circuit or fast decay diagnostic bit is set; dump 4 in the record range 0..12)
-0x004090c6,injector_driver_booster_recharge_off_delay,word,e2m 8041 +26 HPCR_Booster_Recharge_Off_Delay 'Time limit for booster cap to recharge without engine speed and key on.' (address from the ECU's parameter ID table) (100 ms per count in the e2m; 1200 = 120 s here): cm848_monitorFuelSystemHardwareShutdown stops the injector driver recharge (clears the enable bit 0x8000 of TPUA_CH4_PARAM0 and tpu_a_channel_9_parameters.PARAM0, and ... (new row 2026-11-19, wave 12)
+0x004090c6,injector_driver_booster_recharge_off_delay,word,e2m 8041 +26 HPCR_Booster_Recharge_Off_Delay 'Time limit for booster cap to recharge without engine speed and key on.' (address from the ECU's parameter ID table) (100 ms per count in the e2m; 1200 = 120 s here): cm848_monitorFuelSystemHardwareShutdown stops the injector driver recharge (clears the enable bit 0x8000 of tpu_a_channel_4_parameters.PARAM0 and tpu_a_channel_9_parameters.PARAM0, and ... (new row 2026-11-19, wave 12)
 0x004090c8,fuel_system_hardware_shutdown_fail_count_threshold,word,e2m 8041 +28 FS_HW_Shutdown_Fail_Count_Threshold 'Calibration of fuel system hardware failures counted to set fault. 255=off.' (address from the ECU's parameter ID table) (255 = off in the e2m; 1 here): the number of injection TPU channel set restarts (fuel_system_hardware_shutdown_error_count_cal, capped at 255) that cm848_initializeInjectionHardware tolerates before it sets fault 399 ... (new row 2026-11-19, wave 12)
 0x004090ca,fuel_system_hardware_shutdown_error_threshold,word,e2m 8041 +2A FS_HW_Shutdown_Error_Threshold 'Calibration of booster cap voltage level that increments fault count.' (address from the ECU's parameter ID table) (raw ADC counts, 0..800; 600 here): in ENGINE_STATE_SHUTDOWN cm848_monitorFuelSystemHardwareShutdown compares the QADC results of channel slots 54 and 55 (the e2m's booster capacitor voltage) with it: either at ... (new row 2026-11-19, wave 12)
 0x004090e9,injection_wakeup_duration_speed_breakpoint,word,Read by cm848_loadInjectionStartAnglesOnTpuChannel6 and cm848_calculatePilotInjectionTiming: if engine speed < this word the duration word 0x4090eb is used, else 0x4090ed; the duration x crank angle per period gives the angle by which the TPU channel 6 wake-up position is moved earlier. e2m HPCR_TPU_Latency_Min_Engine_Speed (0x01805C01, 0.125 rpm). Dump 3200 = 400 rpm. The polarity in the code is: below ... (was injection_timing_speed_breakpoint) | earlier note: ROM speed breakpoint selecting injection timing period

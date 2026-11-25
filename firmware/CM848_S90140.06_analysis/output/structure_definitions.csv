@@ -1473,6 +1473,22 @@ tpu3_channel_parameters_t,0x00304100,PARAM4,word,2,Channel parameter 4,,verified
 tpu3_channel_parameters_t,0x00304100,PARAM5,word,2,Channel parameter 5,,verified
 tpu3_channel_parameters_t,0x00304100,PARAM6,word,2,Channel parameter 6,,verified
 tpu3_channel_parameters_t,0x00304100,PARAM7,word,2,Channel parameter 7,,verified
+
+# TPU3 channel layouts with a 32-bit parameter pair (PR #53 round 96): the code moves those two words with one access
+tpu3_period_accumulator_parameters_t,,PARAM0,word,2,Channel parameter 0,,verified
+tpu3_period_accumulator_parameters_t,,PARAM1,word,2,Channel parameter 1,,verified
+tpu3_period_accumulator_parameters_t,,PARAM2,word,2,Channel parameter 2,,verified
+tpu3_period_accumulator_parameters_t,,PARAM3,word,2,Channel parameter 3,,verified
+tpu3_period_accumulator_parameters_t,,accumulated_period,dword,4,PARAM4-5 read as one 32-bit value: the accumulated period that the speed sensor interrupt handlers copy and then clear (cm848_radiatorFanSpeedInterruptHandler and mpc555_updateOutputSpeedSensorPeriod clear only its upper word),,verified
+tpu3_period_accumulator_parameters_t,,PARAM6,word,2,Channel parameter 6,,verified
+tpu3_period_accumulator_parameters_t,,PARAM7,word,2,Channel parameter 7,,verified
+tpu_a_channel_4_parameters_t,,PARAM0,word,2,Channel parameter 0,,verified
+tpu_a_channel_4_parameters_t,,PARAM1,word,2,Channel parameter 1,,verified
+tpu_a_channel_4_parameters_t,,PARAM2,word,2,Channel parameter 2,,verified
+tpu_a_channel_4_parameters_t,,injector_driver_recharge_interval,dword,4,PARAM3-4 written as one 32-bit value by cm848_loadInjectorDriverCalibration: the injector driver recharge interval (injector_driver_bank_cutoff_recharge_interval while a cylinder is cut out / else injector_driver_continuous_recharge_interval),,verified
+tpu_a_channel_4_parameters_t,,PARAM5,word,2,Channel parameter 5 (cm848_loadInjectorDriverCalibration writes injector_driver_decay_duration),,verified
+tpu_a_channel_4_parameters_t,,PARAM6,word,2,Channel parameter 6,,verified
+tpu_a_channel_4_parameters_t,,PARAM7,word,2,Channel parameter 7,,verified
 # =============================================================================
 # TPUA additional channel parameter blocks
 # Each channel occupies 16 bytes (8 × u16); base = TPUA_base + 0x100 + (ch × 0x10)
@@ -1530,14 +1546,6 @@ tpu_b_channel_11_parameters_t,0x003045b0,PARAM4,word,2,TPUB Channel 11 parameter
 tpu_b_channel_11_parameters_t,0x003045b0,PARAM5,word,2,TPUB Channel 11 parameter 5,,verified
 tpu_b_channel_11_parameters_t,0x003045b0,PARAM6,word,2,TPUB Channel 11 parameter 6,,verified
 tpu_b_channel_11_parameters_t,0x003045b0,PARAM7,word,2,TPUB Channel 11 parameter 7,,verified
-tpu_b_channel_14_parameters_t,0x003045e0,PARAM0,word,2,TPUB Channel 14 parameter 0,,verified
-tpu_b_channel_14_parameters_t,0x003045e0,PARAM1,word,2,TPUB Channel 14 parameter 1,,verified
-tpu_b_channel_14_parameters_t,0x003045e0,PARAM2,word,2,TPUB Channel 14 parameter 2,,verified
-tpu_b_channel_14_parameters_t,0x003045e0,PARAM3,word,2,TPUB Channel 14 parameter 3,,verified
-tpu_b_channel_14_parameters_t,0x003045e0,PARAM4,word,2,TPUB Channel 14 parameter 4,,verified
-tpu_b_channel_14_parameters_t,0x003045e0,PARAM5,word,2,TPUB Channel 14 parameter 5,,verified
-tpu_b_channel_14_parameters_t,0x003045e0,PARAM6,word,2,TPUB Channel 14 parameter 6,,verified
-tpu_b_channel_14_parameters_t,0x003045e0,PARAM7,word,2,TPUB Channel 14 parameter 7,,verified
 # =============================================================================
 # MIOS additional channel submodule instances - MIOS1 submodule n sits at 0x306000 + 8 x n (PR #48)
 # MPWMSM = PWM Submodule (PERR/PULR/CNTR/SCR) - MPWMSM1-3 at +0x08/+0x10/+0x18 and MPWMSM16-19 at +0x80/+0x88/+0x90/+0x98

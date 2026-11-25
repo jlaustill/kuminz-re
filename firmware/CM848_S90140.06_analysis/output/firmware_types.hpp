@@ -1347,13 +1347,14 @@ typedef struct mios_mpwmsm_t mios_mpwmsm_t;
 typedef struct mios_mdasm_t mios_mdasm_t;
 typedef struct qadc64_registers_t qadc64_registers_t;
 typedef struct tpu3_channel_parameters_t tpu3_channel_parameters_t;
+typedef struct tpu3_period_accumulator_parameters_t tpu3_period_accumulator_parameters_t;
+typedef struct tpu_a_channel_4_parameters_t tpu_a_channel_4_parameters_t;
 typedef struct tpu_a_channel_1_parameters_t tpu_a_channel_1_parameters_t;
 typedef struct tpu_a_channel_9_parameters_t tpu_a_channel_9_parameters_t;
 typedef struct tpu_a_channel_12_parameters_t tpu_a_channel_12_parameters_t;
 typedef struct tpu_a_channel_14_parameters_t tpu_a_channel_14_parameters_t;
 typedef struct tpu_b_channel_0_parameters_t tpu_b_channel_0_parameters_t;
 typedef struct tpu_b_channel_11_parameters_t tpu_b_channel_11_parameters_t;
-typedef struct tpu_b_channel_14_parameters_t tpu_b_channel_14_parameters_t;
 typedef struct mios_mmcsm_t mios_mmcsm_t;
 typedef struct toucan_module_registers_t toucan_module_registers_t;
 typedef struct toucan_message_buffer_t toucan_message_buffer_t;
@@ -2842,6 +2843,26 @@ struct tpu3_channel_parameters_t {
     uint16_t PARAM7;  /* Channel parameter 7 */
 };
 
+struct tpu3_period_accumulator_parameters_t {
+    uint16_t PARAM0;  /* Channel parameter 0 */
+    uint16_t PARAM1;  /* Channel parameter 1 */
+    uint16_t PARAM2;  /* Channel parameter 2 */
+    uint16_t PARAM3;  /* Channel parameter 3 */
+    uint32_t accumulated_period;  /* PARAM4-5 read as one 32-bit value: the accumulated period that the speed sensor interrupt handlers copy and then clear (cm848_radiatorFanSpeedInterruptHandler and mpc555_updateOutputSpeedSensorPeriod clear only its upper word) */
+    uint16_t PARAM6;  /* Channel parameter 6 */
+    uint16_t PARAM7;  /* Channel parameter 7 */
+};
+
+struct tpu_a_channel_4_parameters_t {
+    uint16_t PARAM0;  /* Channel parameter 0 */
+    uint16_t PARAM1;  /* Channel parameter 1 */
+    uint16_t PARAM2;  /* Channel parameter 2 */
+    uint32_t injector_driver_recharge_interval;  /* PARAM3-4 written as one 32-bit value by cm848_loadInjectorDriverCalibration: the injector driver recharge interval (injector_driver_bank_cutoff_recharge_interval while a cylinder is cut out / else injector_driver_continuous_recharge_interval) */
+    uint16_t PARAM5;  /* Channel parameter 5 (cm848_loadInjectorDriverCalibration writes injector_driver_decay_duration) */
+    uint16_t PARAM6;  /* Channel parameter 6 */
+    uint16_t PARAM7;  /* Channel parameter 7 */
+};
+
 struct tpu_a_channel_1_parameters_t {
     uint16_t PARAM0;  /* Channel 1 parameter 0 */
     uint16_t PARAM1;  /* Channel 1 parameter 1 */
@@ -2906,17 +2927,6 @@ struct tpu_b_channel_11_parameters_t {
     uint16_t PARAM5;  /* TPUB Channel 11 parameter 5 */
     uint16_t PARAM6;  /* TPUB Channel 11 parameter 6 */
     uint16_t PARAM7;  /* TPUB Channel 11 parameter 7 */
-};
-
-struct tpu_b_channel_14_parameters_t {
-    uint16_t PARAM0;  /* TPUB Channel 14 parameter 0 */
-    uint16_t PARAM1;  /* TPUB Channel 14 parameter 1 */
-    uint16_t PARAM2;  /* TPUB Channel 14 parameter 2 */
-    uint16_t PARAM3;  /* TPUB Channel 14 parameter 3 */
-    uint16_t PARAM4;  /* TPUB Channel 14 parameter 4 */
-    uint16_t PARAM5;  /* TPUB Channel 14 parameter 5 */
-    uint16_t PARAM6;  /* TPUB Channel 14 parameter 6 */
-    uint16_t PARAM7;  /* TPUB Channel 14 parameter 7 */
 };
 
 struct mios_mmcsm_t {
