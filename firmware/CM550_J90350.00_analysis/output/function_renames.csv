@@ -266,21 +266,11 @@ address,name
 0x0001b4c2,mc68k_phase2_slot_8_handler
 0x0001b4d0,cm550_ioDriverStrobeHandlerWrapper
 0x0001b4d8,vp44_evenPhaseSchedulerTaskSet
-0x0001b4ea,cm550_diagnosticMonitoringCoordinator
-0x0001b4f6,cm550_boostPressureControlInit
 0x0001b504,cm550_oddPhaseSchedulerTaskSet
 0x0001b518,vp44_engine_management_system
-0x0001b558,vp44ControlSystemCoordinator
-0x0001b56a,cm550_slowCycle10Coordinator
 0x0001b572,vp44_periodicTaskSet_governorProtection
-0x0001b57e,vp44_engine_control_cycle
-0x0001b5b4,cm550_slowCycle20ExtendedCoordinator
-0x0001b5ba,vp44ExtendedFaultDetectionCoordinator
 0x0001b5ce,cm550_periodicTaskSet_fuelTiming
-0x0001b604,cm550_fuelTimingCoordinator
-0x0001b60a,cm550_diagnosticDataTransmissionSlowCycle10Coordinator
 0x0001b612,periodicTaskSet_fuelDemand
-0x0001b62a,vp44_evenPhaseSchedulerTaskSet
 0x0001b668,cm550_FUN_0001b668
 0x0001b66a,cm550_FUN_0001b66a
 0x0001b678,cm550_FUN_0001b678
@@ -290,20 +280,12 @@ address,name
 0x0001b6aa,cm550_FUN_0001b6aa
 0x0001b6b2,cm550_FUN_0001b6b2
 0x0001b6b4,cm550_FUN_0001b6b4
-0x0001b6ba,cm550_rpm_control_system
-0x0001b6c6,cm550_emptySlowCycle8PlaceholderCase7
 0x0001b6c8,cm550_FUN_0001b6c8
-0x0001b6ce,cm550_slowCycle20Coordinator
-0x0001b6d4,cm550_empty_debug_hook
 0x0001b6d6,cm550_FUN_0001b6d6
 0x0001b6e4,cm550_FUN_0001b6e4
 0x0001b6f2,cm550_FUN_0001b6f2
-0x0001b6f8,vp44ProtectionSlowCycle20Coordinator
-0x0001b6fe,cm550_engineModeBasedOutputControlSlowCycle20Coordinator
-0x0001b70a,cm550_emptySlowCycle20PlaceholderCase15
 0x0001b70c,cm550_dzgTimingAndPressureSlowCycle10Coordinator
 0x0001b714,cm550_rpmBasedFuelLimiterCoordinator
-0x0001b71a,cm550_sensorStatusHistorySlowCycle20Coordinator
 0x0001b722,cm550_shutdownProtectionSlowCycle10Coordinator
 0x0001b72a,cm550_camSyncDiagnosticProcessingSlowCycle20Coordinator
 0x0001b732,cm550_FUN_0001b732
@@ -311,13 +293,10 @@ address,name
 0x0001b754,cm550_FUN_0001b754
 0x0001b768,cm550_FUN_0001b768
 0x0001b788,cm550_FUN_0001b788
-0x0001b78e,cm550_slowCycle8Coordinator
-0x0001b794,cm550_engineParameterAndBoostControlWrapper
 0x0001b7a2,cm550_auxiliarySystemControlWrapper
 0x0001b7b0,cm550_FUN_0001b7b0
 0x0001b7ca,vp44DiagnosticFaultMonitoringSlowCycle20Coordinator
 0x0001b7d2,cm550_FUN_0001b7d2
-0x0001b7d8,vp44FsoFaultMonitoringSlowCycle20Coordinator
 0x0001b7e0,cm550_FUN_0001b7e0
 0x0001b7e2,cm550_FUN_0001b7e2
 0x0001b7ea,cm550_FUN_0001b7ea
@@ -461,7 +440,7 @@ address,name
 0x00021b88,receivePgn61443ElectronicEngineController2Message,J1939 PGN 61443 Electronic Engine Controller 2 (EEC2) receive handler: signal slots 6-9 (timeout 25 each): byte 1 bits 1-2 j1939_received_accelerator_pedal_1_low_idle_switch, byte 2 j1939_received_accelerator_pedal_position_1, byte 4 j1939_received_remote_accelerator_pedal_position, byte 5 j1939_received_wet_tank_pressure. Registered for PGN 61443 by cm550_registerJ1939InputMessageHandlers. The same steps and constants as CM848 0x50b8a4 (was cm550_FUN_00021b88; PR #53 round 91; the twin of CM848 0x50b8a4: one shared name) (was cm550_FUN_00021b88; PR #53 round 91)
 0x00021c74,receivePgn65264PowerTakeoffInformationMessage,J1939 PGN 65264 Power Takeoff Information (PTO) receive handler: signal slots 11-14 (timeout 50 each): byte 6 bits 3-4 j1939_received_remote_power_take_off_switch, bits 1-2 j1939_received_power_take_off_on_switch, byte 7 bits 5-6 j1939_received_power_take_off_resume_switch, bits 1-2 j1939_received_power_take_off_set_switch. Registered for PGN 65264 by cm550_registerJ1939InputMessageHandlers. The same steps and constants as CM848 0x50b9d8 (was cm550_FUN_00021c74; PR #53 round 91; the twin of CM848 0x50b9d8: one shared name) (was cm550_FUN_00021c74; PR #53 round 91)
 0x00021d44,receivePgn65265CruiseControlVehicleSpeedMessage,J1939 PGN 65265 Cruise Control/Vehicle Speed 1 (CCVS1) receive handler: signal slots 15-22 (timeout 50 each): byte 4 bits 7-8 clutch, 5-6 brake and 3-4 cruise control enable switch; byte 5 bits 5-6 cruise control resume and 1-2 set switch; byte 8 bits 1-2 engine idle increment, 3-4 decrement and 5-6 engine diagnostic test mode switch (the j1939_received_* bytes). Registered for PGN 65265 by cm550_registerJ1939InputMessageHandlers. The same steps and constants as CM848 0x50bacc (was cm550_FUN_00021d44; PR #53 round 91; the twin of CM848 0x50bacc: one shared name) (was cm550_FUN_00021d44; PR #53 round 91)
-0x00021edc,cm550_tickJ1939InputSupervision,Counts each nonzero word of j1939_input_signal_timeouts down by 1 - all 25 words (the bound 0x804264 is inclusive as in CM848). Runs from vp44_evenPhaseSchedulerTaskSet and cm550_diagnosticMonitoringCoordinator with no gate. The counterpart of cm848_tickJ1939InputSupervision (0x50bca0): CM848 ends with the same loop but first needs the J1939 multiplex enable bit, counts j1939_input_fault_start_delay and the start-up timer / inhibit flag, and skips the loop while DM13 holds; CM550 has none of those steps (was cm550_FUN_00021edc; PR #53 round 91) (was cm550_FUN_00021edc; PR #53 round 91)
+0x00021edc,cm550_tickJ1939InputSupervision,Counts each nonzero word of j1939_input_signal_timeouts down by 1 - all 25 words (the bound 0x804264 is inclusive as in CM848). Runs from the task set vp44_evenPhaseSchedulerTaskSet (0x1b4d8; every second executive frame) with no gate. The counterpart of cm848_tickJ1939InputSupervision (0x50bca0): CM848 ends with the same loop but first needs the J1939 multiplex enable bit, counts j1939_input_fault_start_delay and the start-up timer / inhibit flag, and skips the loop while DM13 holds; CM550 has none of those steps (was cm550_FUN_00021edc; PR #53 round 91) (was cm550_FUN_00021edc; PR #53 round 91)
 0x00021ef6,cm550_registerJ1939InputMessageHandlers,From mc68k_initializeJ1939Datalink: registers the J1939 input layer's six receive handlers with registerJ1939ReceiveHandler in CM848's order: PGN 57344 receivePgn57344CabMessage1 / 61441 EBC1 / 61443 EEC2 / 65252 SHUTDN / 65264 PTO / 65265 CCVS1. The counterpart of cm848_registerJ1939InputMessageHandlers (0x50bdcc), which then also starts j1939_input_fault_start_delay at 1000; CM550 has no such store (was cm550_FUN_00021ef6; PR #53 round 91) (was cm550_FUN_00021ef6; PR #53 round 91)
 0x00021f4e,cm550_diagnosticGroupPositionBufferStore
 0x00021fac,cm550_diagnosticGroupSnapshotCapture

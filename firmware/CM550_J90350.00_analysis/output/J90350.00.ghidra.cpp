@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue Nov 24 20:49:38 MST 2026
+// Generated: Tue Nov 24 21:40:59 MST 2026
 
 
 //
@@ -15965,36 +15965,6 @@ void vp44_evenPhaseSchedulerTaskSet(void)
 
 
 //
-// Function: cm550_diagnosticMonitoringCoordinator @ 0x0001b4ea
-//
-
-void cm550_diagnosticMonitoringCoordinator(void)
-
-{
-  vp44_messageQueueDispatcher();
-  cm550_tickJ1939InputSupervision();
-  cm550_FUN_00021070();
-  func_0x000420bc();
-  return;
-}
-
-
-
-//
-// Function: cm550_boostPressureControlInit @ 0x0001b4f6
-//
-
-void cm550_boostPressureControlInit(void)
-
-{
-  cm550_FUN_00021070();
-  func_0x000420bc();
-  return;
-}
-
-
-
-//
 // Function: cm550_oddPhaseSchedulerTaskSet @ 0x0001b504
 //
 
@@ -16036,35 +16006,6 @@ void vp44_engine_management_system(void)
 
 
 //
-// Function: vp44ControlSystemCoordinator @ 0x0001b558
-//
-
-void vp44ControlSystemCoordinator(void)
-
-{
-  cm550_FUN_0002ec50();
-  vp44_rpmDerateCalculationController();
-  cm550_updateEngineState();
-  cm550_FUN_000269f2();
-  return;
-}
-
-
-
-//
-// Function: cm550_slowCycle10Coordinator @ 0x0001b56a
-//
-
-void cm550_slowCycle10Coordinator(void)
-
-{
-  cm550_FUN_000269f2();
-  return;
-}
-
-
-
-//
 // Function: vp44_periodicTaskSet_governorProtection @ 0x0001b572
 //
 
@@ -16083,62 +16024,6 @@ void vp44_periodicTaskSet_governorProtection(void)
   selectEngineSpeedLimit();
   func_0x0004da56();
   selectHighSpeedGovernorGainSet();
-  runHighSpeedGovernorPid();
-  func_0x00042496();
-  cm550_FUN_0001cc72();
-  return;
-}
-
-
-
-//
-// Function: vp44_engine_control_cycle @ 0x0001b57e
-//
-
-void vp44_engine_control_cycle(void)
-
-{
-  cm550_runAllSpeedGovernor();
-  cm550_diagnostic_parameter_handler();
-  smoothPowerTakeOffReferenceEngineSpeed();
-  cm550_runPowerTakeOffGovernor();
-  cm550_oil_pressure_shutdown_controller();
-  calculateAlpha();
-  func_0x00044c76();
-  selectEngineSpeedLimit();
-  func_0x0004da56();
-  selectHighSpeedGovernorGainSet();
-  runHighSpeedGovernorPid();
-  func_0x00042496();
-  cm550_FUN_0001cc72();
-  return;
-}
-
-
-
-//
-// Function: cm550_slowCycle20ExtendedCoordinator @ 0x0001b5b4
-//
-
-void cm550_slowCycle20ExtendedCoordinator(void)
-
-{
-  selectHighSpeedGovernorGainSet();
-  runHighSpeedGovernorPid();
-  func_0x00042496();
-  cm550_FUN_0001cc72();
-  return;
-}
-
-
-
-//
-// Function: vp44ExtendedFaultDetectionCoordinator @ 0x0001b5ba
-//
-
-void vp44ExtendedFaultDetectionCoordinator(void)
-
-{
   runHighSpeedGovernorPid();
   func_0x00042496();
   cm550_FUN_0001cc72();
@@ -16171,33 +16056,6 @@ void cm550_periodicTaskSet_fuelTiming(void)
 
 
 //
-// Function: cm550_fuelTimingCoordinator @ 0x0001b604
-//
-
-void cm550_fuelTimingCoordinator(void)
-
-{
-  func_0x0004094c();
-  cm550_fuelSourceMode11CountdownHandler();
-  return;
-}
-
-
-
-//
-// Function: cm550_diagnosticDataTransmissionSlowCycle10Coordinator @ 0x0001b60a
-//
-
-void cm550_diagnosticDataTransmissionSlowCycle10Coordinator(void)
-
-{
-  cm550_fuelSourceMode11CountdownHandler();
-  return;
-}
-
-
-
-//
 // Function: periodicTaskSet_fuelDemand @ 0x0001b612
 //
 
@@ -16208,28 +16066,6 @@ void periodicTaskSet_fuelDemand(void)
   cm550_rpmBasedFuelTimingInterpolation();
   vp44_FUN_00034d52();
   cm550_diagnosticTimingIncrementController();
-  vp44InjectionSystemStateController();
-  cm550_emptyPlaceholderFunction();
-  func_0x00040988();
-  cm550_fuelDemandLimitSelector11();
-  func_0x00040ace();
-  func_0x000488e8();
-  func_0x00048b1a();
-  mc68k_sampleAndDebounceDiscreteInputs();
-  mc68k_processAnalogSensorChannels();
-  func_0x00048c66();
-  return;
-}
-
-
-
-//
-// Function: vp44_evenPhaseSchedulerTaskSet @ 0x0001b62a
-//
-
-void vp44_evenPhaseSchedulerTaskSet(void)
-
-{
   vp44InjectionSystemStateController();
   cm550_emptyPlaceholderFunction();
   func_0x00040988();
@@ -16367,32 +16203,6 @@ void cm550_FUN_0001b6b4(void)
 
 
 //
-// Function: cm550_rpm_control_system @ 0x0001b6ba
-//
-
-void cm550_rpm_control_system(void)
-
-{
-  func_0x00044980();
-  cm550_highRpmEngineProtectionStateMachine();
-  return;
-}
-
-
-
-//
-// Function: cm550_emptySlowCycle8PlaceholderCase7 @ 0x0001b6c6
-//
-
-void cm550_emptySlowCycle8PlaceholderCase7(void)
-
-{
-  return;
-}
-
-
-
-//
 // Function: cm550_FUN_0001b6c8 @ 0x0001b6c8
 //
 
@@ -16401,31 +16211,6 @@ void cm550_FUN_0001b6c8(void)
 {
   cm550_engineStateFuelLimitInterpolator();
   cm550_FUN_0000b3d0();
-  return;
-}
-
-
-
-//
-// Function: cm550_slowCycle20Coordinator @ 0x0001b6ce
-//
-
-void cm550_slowCycle20Coordinator(void)
-
-{
-  cm550_FUN_0000b3d0();
-  return;
-}
-
-
-
-//
-// Function: cm550_empty_debug_hook @ 0x0001b6d4
-//
-
-void cm550_empty_debug_hook(void)
-
-{
   return;
 }
 
@@ -16476,47 +16261,6 @@ void cm550_FUN_0001b6f2(void)
 
 
 //
-// Function: vp44ProtectionSlowCycle20Coordinator @ 0x0001b6f8
-//
-
-void vp44ProtectionSlowCycle20Coordinator(void)
-
-{
-  func_0x00042218();
-  func_0x00042276();
-  func_0x0004204c();
-  return;
-}
-
-
-
-//
-// Function: cm550_engineModeBasedOutputControlSlowCycle20Coordinator @ 0x0001b6fe
-//
-
-void cm550_engineModeBasedOutputControlSlowCycle20Coordinator(void)
-
-{
-  func_0x00042276();
-  func_0x0004204c();
-  return;
-}
-
-
-
-//
-// Function: cm550_emptySlowCycle20PlaceholderCase15 @ 0x0001b70a
-//
-
-void cm550_emptySlowCycle20PlaceholderCase15(void)
-
-{
-  return;
-}
-
-
-
-//
 // Function: cm550_dzgTimingAndPressureSlowCycle10Coordinator @ 0x0001b70c
 //
 
@@ -16537,19 +16281,6 @@ void cm550_rpmBasedFuelLimiterCoordinator(void)
 
 {
   cm550_FUN_00024804();
-  cm550_FUN_00021146();
-  return;
-}
-
-
-
-//
-// Function: cm550_sensorStatusHistorySlowCycle20Coordinator @ 0x0001b71a
-//
-
-void cm550_sensorStatusHistorySlowCycle20Coordinator(void)
-
-{
   cm550_FUN_00021146();
   return;
 }
@@ -16660,35 +16391,6 @@ void cm550_FUN_0001b788(void)
 
 
 //
-// Function: cm550_slowCycle8Coordinator @ 0x0001b78e
-//
-
-void cm550_slowCycle8Coordinator(void)
-
-{
-  cm550_FUN_0000ac3c();
-  calculateSpeedRatioComponent();
-  cm550_FUN_00026e2c();
-  return;
-}
-
-
-
-//
-// Function: cm550_engineParameterAndBoostControlWrapper @ 0x0001b794
-//
-
-void cm550_engineParameterAndBoostControlWrapper(void)
-
-{
-  calculateSpeedRatioComponent();
-  cm550_FUN_00026e2c();
-  return;
-}
-
-
-
-//
 // Function: cm550_auxiliarySystemControlWrapper @ 0x0001b7a2
 //
 
@@ -16739,19 +16441,6 @@ void cm550_FUN_0001b7d2(void)
 
 {
   func_0x0004d238();
-  func_0x00044e48();
-  return;
-}
-
-
-
-//
-// Function: vp44FsoFaultMonitoringSlowCycle20Coordinator @ 0x0001b7d8
-//
-
-void vp44FsoFaultMonitoringSlowCycle20Coordinator(void)
-
-{
   func_0x00044e48();
   return;
 }
@@ -23348,8 +23037,8 @@ void receivePgn65265CruiseControlVehicleSpeedMessage(int param_1)
 //
 
 /* Counts each nonzero word of j1939_input_signal_timeouts down by 1 - all 25 words (the bound
-   0x804264 is inclusive as in CM848). Runs from vp44_evenPhaseSchedulerTaskSet and
-   cm550_diagnosticMonitoringCoordinator with no gate. The counterpart of
+   0x804264 is inclusive as in CM848). Runs from the task set vp44_evenPhaseSchedulerTaskSet
+   (0x1b4d8; every second executive frame) with no gate. The counterpart of
    cm848_tickJ1939InputSupervision (0x50bca0): CM848 ends with the same loop but first needs the
    J1939 multiplex enable bit, counts j1939_input_fault_start_delay and the start-up timer / inhibit
    flag, and skips the loop while DM13 holds; CM550 has none of those steps (was cm550_FUN_00021edc;
@@ -38063,4 +37752,4 @@ LAB_00035162:
 
 
 
-// Export complete - 756 functions processed
+// Export complete - 735 functions processed
