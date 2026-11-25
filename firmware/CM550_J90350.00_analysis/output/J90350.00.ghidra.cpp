@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Wed Nov 25 05:56:21 MST 2026
+// Generated: Wed Nov 25 06:25:15 MST 2026
 
 
 //
@@ -2781,7 +2781,7 @@ void cm550_acceleratorThrottleFaultDetector(void)
 {
   if (((default_throttle_source_selector < 2) &&
       ((uint)final_fueling < (uint)_DAT_00807ac8 + (uint)frictional_no_load_fueling)) &&
-     (validated_percent_throttle_commanded_by_driver_0_100 == 0)) {
+     (commanded_throttle_state.commanded_throttle == 0)) {
     if ((algorithm_enable_flags_27_cal.switched_throttle_control_governor_select == 0) &&
        ((state_of_the_throttle_interlock_switch_on_off & 2) != 0)) {
       if (default_throttle_source_selector == 0) {
@@ -2805,7 +2805,7 @@ void cm550_acceleratorThrottleFaultDetector(void)
   }
   all_speed_governor_reference_speed_based_upon_throttle_positi_0_3000 =
        asg_reference_speed_for_0_throttle_input_should_be_less_tha_0_4500 +
-       (short)(((uint)validated_percent_throttle_commanded_by_driver_0_100 *
+       (short)(((uint)commanded_throttle_state.commanded_throttle *
                ((uint)asg_reference_speed_for_100_throttle_input_should_be_greate_0_4500 -
                (uint)asg_reference_speed_for_0_throttle_input_should_be_less_tha_0_4500)) / 400);
   _asg_quadratic_integral_adjustment_500_500 = 0;
@@ -2886,7 +2886,7 @@ uint cm550_FUN_0000d4ae(word previous_user_fueling_state)
   uint uVar1;
   
   uVar1 = (uint)_DAT_00807ac8 + (uint)frictional_no_load_fueling;
-  if ((final_fueling < uVar1) && (validated_percent_throttle_commanded_by_driver_0_100 == 0)) {
+  if ((final_fueling < uVar1) && (commanded_throttle_state.commanded_throttle == 0)) {
     uVar1 = (ushort)algorithm_enable_flags_27_cal & 8;
     if ((algorithm_enable_flags_27_cal.switched_throttle_control_governor_select == 0) ||
        (uVar1 = (byte)-((state_of_the_throttle_interlock_switch_on_off & 2) != 0) & 1, uVar1 != 1))
@@ -4071,7 +4071,7 @@ void insiteCommandByteDispatcher(void)
           }
         }
         else if (insite_parameter_id == 0x1d) {
-          local_6._1_1_ = (byte)(((uint)alternate_throttle_command * 0xfa) / 400);
+          local_6._1_1_ = (byte)(((uint)commanded_throttle_state.alternate_throttle * 0xfa) / 400);
         }
         else if (insite_parameter_id == 0x1e) {
           iVar1 = (int)(uint)(&intake_manifold_temperature_sensor_state.filtered_value)
@@ -4229,8 +4229,7 @@ void insiteCommandByteDispatcher(void)
       default:
         goto switchD_0000f050_default;
       case 0x5b:
-        local_6._1_1_ =
-             (byte)(((uint)validated_percent_throttle_commanded_by_driver_0_100 * 0xfa) / 400);
+        local_6._1_1_ = (byte)(((uint)commanded_throttle_state.commanded_throttle * 0xfa) / 400);
         break;
       case 0x5c:
         local_6._1_1_ = (byte)((int)(uint)engine_load_at_current_speed_percent >> 7);
@@ -5509,27 +5508,27 @@ uint vp44_rpmDerateCalculationController(void)
   uint uVar4;
   
   if (algorithm_enable_flags_5_cal.sampled_throttle_override_enable == 0) {
-    if (_DAT_0080aa9a == 0) {
+    if (commanded_throttle_state.frequency_throttle_active_flag == 0) {
       _vp44_block_size = sampled_throttle_sensor_state.filtered_value;
       uVar4 = 0x41;
       uVar3 = 0x42;
     }
     else {
-      _vp44_block_size = requested_throttle_after_being_lin_and_fil_via_freq_thr_algo_0_100;
+      _vp44_block_size = commanded_throttle_state.sampled_frequency_throttle;
       uVar4 = 0xd5;
       uVar3 = 0xd6;
     }
     uVar1 = (uint)_vp44_block_size;
     if (_DAT_00804f9e < _vp44_block_size) {
       uVar1 = (((uint)_vp44_block_size - (uint)_DAT_00804f9e) * 400) / (uint)_DAT_00807ce2;
-      intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100 = (word)uVar1;
+      commanded_throttle_state.calculated_commanded_throttle = (word)uVar1;
     }
     else {
-      intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100 = 0;
+      commanded_throttle_state.calculated_commanded_throttle = 0;
     }
-    if (alternate_throttle_priority == 0) {
+    if (commanded_throttle_state.alternate_throttle_priority == 0) {
       if ((algorithm_enable_flags_1_cal.test_cell_throttle_switch_override_enable == 0) &&
-         (_DAT_0080aa96 == 0)) {
+         (commanded_throttle_state.idle_validation_inhibit_flag == 0)) {
         sVar2 = (short)((int)uVar4 >> 4);
         if (((((((uint)*(ushort *)
                         (&status_32_word_bit_mapped_system_error_status_word_0_0_1 + sVar2 * 2) &
@@ -5549,13 +5548,13 @@ uint vp44_rpmDerateCalculationController(void)
              (uVar1 = _fault_confirm_status_word_4 & 0xffff0008,
              (_fault_confirm_status_word_4 & 8) == 0)) &&
             (uVar1 = (uint)_vp44_block_size, _DAT_00804f9e < _vp44_block_size)))) {
-          validated_percent_throttle_commanded_by_driver_0_100 =
-               intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100;
+          commanded_throttle_state.commanded_throttle =
+               commanded_throttle_state.calculated_commanded_throttle;
         }
         else {
-          validated_percent_throttle_commanded_by_driver_0_100 = 0;
+          commanded_throttle_state.commanded_throttle = 0;
         }
-        state_of_selected_alternate_throttle_priority_0_9 = 0;
+        commanded_throttle_state.selected_alternate_throttle_priority = 0;
       }
       else {
         if (((status_32_word_bit_mapped_system_error_status_word_4_0_1 & 0x20) != 0) &&
@@ -5576,50 +5575,50 @@ uint vp44_rpmDerateCalculationController(void)
         uVar1 = (uint)_vp44_block_size;
         if (_DAT_00807cee < _vp44_block_size) {
           uVar1 = (((uint)_vp44_block_size - (uint)_DAT_00807cee) * 400) / (uint)_DAT_00807ce2;
-          intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100 = (word)uVar1;
+          commanded_throttle_state.calculated_commanded_throttle = (word)uVar1;
         }
         else {
-          intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100 = 0;
+          commanded_throttle_state.calculated_commanded_throttle = 0;
         }
-        throttle_above_idle_flag = (word)(_DAT_00807cee < _vp44_block_size);
-        validated_percent_throttle_commanded_by_driver_0_100 =
-             intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100;
-        state_of_selected_alternate_throttle_priority_0_9 = 0;
+        commanded_throttle_state.accelerator_off_idle = (word)(_DAT_00807cee < _vp44_block_size);
+        commanded_throttle_state.commanded_throttle =
+             commanded_throttle_state.calculated_commanded_throttle;
+        commanded_throttle_state.selected_alternate_throttle_priority = 0;
       }
     }
     else {
-      validated_percent_throttle_commanded_by_driver_0_100 = alternate_throttle_command;
-      state_of_selected_alternate_throttle_priority_0_9 = alternate_throttle_priority;
-      alternate_throttle_priority = 0;
+      commanded_throttle_state.commanded_throttle = commanded_throttle_state.alternate_throttle;
+      commanded_throttle_state.selected_alternate_throttle_priority =
+           commanded_throttle_state.alternate_throttle_priority;
+      commanded_throttle_state.alternate_throttle_priority = 0;
     }
   }
   else {
     uVar1 = (uint)_j1939_source_address_of_commanding_device;
     if (_j1939_source_address_of_commanding_device <
         priority_of_client_overriding_final_sampled_throttle_0_ff) {
-      validated_percent_throttle_commanded_by_driver_0_100 =
-           sampled_throttle_sensor_state.filtered_value;
+      commanded_throttle_state.commanded_throttle = sampled_throttle_sensor_state.filtered_value;
     }
     else {
-      intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100 =
+      commanded_throttle_state.calculated_commanded_throttle =
            sampled_throttle_sensor_state.filtered_value;
-      if (alternate_throttle_priority == 0) {
-        state_of_selected_alternate_throttle_priority_0_9 = 0;
-        validated_percent_throttle_commanded_by_driver_0_100 =
-             sampled_throttle_sensor_state.filtered_value;
+      if (commanded_throttle_state.alternate_throttle_priority == 0) {
+        commanded_throttle_state.selected_alternate_throttle_priority = 0;
+        commanded_throttle_state.commanded_throttle = sampled_throttle_sensor_state.filtered_value;
       }
       else {
-        validated_percent_throttle_commanded_by_driver_0_100 = alternate_throttle_command;
-        state_of_selected_alternate_throttle_priority_0_9 = alternate_throttle_priority;
-        alternate_throttle_priority = 0;
+        commanded_throttle_state.commanded_throttle = commanded_throttle_state.alternate_throttle;
+        commanded_throttle_state.selected_alternate_throttle_priority =
+             commanded_throttle_state.alternate_throttle_priority;
+        commanded_throttle_state.alternate_throttle_priority = 0;
       }
     }
   }
-  if (400 < intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100) {
-    intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100 = 400;
+  if (400 < commanded_throttle_state.calculated_commanded_throttle) {
+    commanded_throttle_state.calculated_commanded_throttle = 400;
   }
-  if (400 < validated_percent_throttle_commanded_by_driver_0_100) {
-    validated_percent_throttle_commanded_by_driver_0_100 = 400;
+  if (400 < commanded_throttle_state.commanded_throttle) {
+    commanded_throttle_state.commanded_throttle = 400;
   }
   return uVar1;
 }
@@ -5647,14 +5646,14 @@ ulonglong vp44_derateThresholdMonitorAndFaultController(void)
   if (((algorithm_enable_flags_5_cal.sampled_throttle_override_enable == 0) &&
       (uVar4 = (ushort)algorithm_enable_flags_1_cal & 4,
       algorithm_enable_flags_1_cal.test_cell_throttle_switch_override_enable == 0)) &&
-     (_DAT_0080aa96 == 0)) {
-    if (_DAT_0080aa9a == 0) {
+     (commanded_throttle_state.idle_validation_inhibit_flag == 0)) {
+    if (commanded_throttle_state.frequency_throttle_active_flag == 0) {
       _vp44_block_size = sampled_throttle_sensor_state.filtered_value;
       uVar4 = 0x41;
       uVar6 = 0x42;
     }
     else {
-      _vp44_block_size = requested_throttle_after_being_lin_and_fil_via_freq_thr_algo_0_100;
+      _vp44_block_size = commanded_throttle_state.sampled_frequency_throttle;
       uVar4 = 0xd5;
       uVar6 = 0xd6;
     }
@@ -5666,53 +5665,54 @@ ulonglong vp44_derateThresholdMonitorAndFaultController(void)
         ((debounced_switch_value_for_switch_16_on_off & 1) == 0)))) {
       if ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 0x80) == 0) {
         if (vp44_buffer_total_size < _vp44_block_size) {
-          throttle_validation_diagnostic_state = 5;
+          commanded_throttle_state.idle_validation_state = 5;
         }
         else if (_vp44_block_size < vp44_buffer_count) {
-          throttle_validation_diagnostic_state = 6;
+          commanded_throttle_state.idle_validation_state = 6;
         }
         else {
-          throttle_validation_diagnostic_state = 7;
+          commanded_throttle_state.idle_validation_state = 7;
         }
       }
       else if ((vp44_buffer_total_size < _vp44_block_size) || (_vp44_block_size < vp44_buffer_count)
               ) {
-        throttle_validation_diagnostic_state = 4;
+        commanded_throttle_state.idle_validation_state = 4;
       }
       else {
-        throttle_validation_diagnostic_state = 7;
+        commanded_throttle_state.idle_validation_state = 7;
       }
     }
     else if ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 0x80) == 0) {
       if (_vp44_block_size < _DAT_00804f9e) {
         if (_vp44_block_size < vp44_buffer_count) {
-          throttle_validation_diagnostic_state = 3;
+          commanded_throttle_state.idle_validation_state = 3;
         }
         else {
-          throttle_validation_diagnostic_state = 8;
+          commanded_throttle_state.idle_validation_state = 8;
         }
       }
       else {
-        throttle_validation_diagnostic_state = 1;
+        commanded_throttle_state.idle_validation_state = 1;
       }
     }
     else if (_DAT_00804f9e < _vp44_block_size) {
       if (vp44_buffer_total_size < _vp44_block_size) {
-        throttle_validation_diagnostic_state = 2;
+        commanded_throttle_state.idle_validation_state = 2;
       }
       else {
-        throttle_validation_diagnostic_state = 8;
+        commanded_throttle_state.idle_validation_state = 8;
       }
     }
     else {
-      throttle_validation_diagnostic_state = 0;
+      commanded_throttle_state.idle_validation_state = 0;
     }
-    if (((throttle_validation_diagnostic_state == 1) || (throttle_validation_diagnostic_state == 3))
-       || (throttle_validation_diagnostic_state == 5)) {
-      throttle_above_idle_flag = 1;
+    if (((commanded_throttle_state.idle_validation_state == 1) ||
+        (commanded_throttle_state.idle_validation_state == 3)) ||
+       (commanded_throttle_state.idle_validation_state == 5)) {
+      commanded_throttle_state.accelerator_off_idle = 1;
     }
     else {
-      throttle_above_idle_flag = 0;
+      commanded_throttle_state.accelerator_off_idle = 0;
     }
     sVar2 = (short)((int)uVar4 >> 4);
     if (((uint)*(ushort *)(&status_32_word_bit_mapped_system_error_status_word_0_0_1 + sVar2 * 2) &
@@ -5726,66 +5726,68 @@ ulonglong vp44_derateThresholdMonitorAndFaultController(void)
       uVar4 = (uint)*(ushort *)(&fault_confirm_status_word_0 + sVar2 * 2) & 1 << (uVar6 & 0xf);
       if (uVar4 != 0) {
 LAB_00010a50:
-        minimum_sampled_throttle_detected_0_21 = _DAT_00807ce4 + 4;
-        throttle_signal_validation_state = 0;
+        commanded_throttle_state.throttle_minimum = _DAT_00807ce4 + 4;
+        commanded_throttle_state.throttle_transition_state = 0;
         return (ulonglong)CONCAT24(_DAT_00807ce4 + 4,uVar4);
       }
     }
-    if (throttle_signal_validation_state == 0) {
+    if (commanded_throttle_state.throttle_transition_state == 0) {
       if ((((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 0x80) != 0) &&
           ((debounced_switch_value_for_switch_16_on_off & 1) == 0)) &&
          ((uint)_vp44_block_size <=
-          (uint)_DAT_00807cf0 + (uint)minimum_sampled_throttle_detected_0_21)) {
-        throttle_signal_validation_state = 1;
+          (uint)_DAT_00807cf0 + (uint)commanded_throttle_state.throttle_minimum)) {
+        commanded_throttle_state.throttle_transition_state = 1;
       }
     }
-    else if (throttle_signal_validation_state == 1) {
-      if ((throttle_validation_diagnostic_state == 1) &&
-         ((uint)_DAT_00807cf4 + (uint)minimum_sampled_throttle_detected_0_21 <
+    else if (commanded_throttle_state.throttle_transition_state == 1) {
+      if ((commanded_throttle_state.idle_validation_state == 1) &&
+         ((uint)_DAT_00807cf4 + (uint)commanded_throttle_state.throttle_minimum <
           (uint)_vp44_block_size)) {
-        throttle_signal_validation_state = 2;
+        commanded_throttle_state.throttle_transition_state = 2;
       }
     }
-    else if (((throttle_signal_validation_state == 2) &&
+    else if (((commanded_throttle_state.throttle_transition_state == 2) &&
              ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 0x80) != 0)) &&
             (((debounced_switch_value_for_switch_16_on_off & 1) == 0 &&
              ((uint)_vp44_block_size <=
-              (uint)_DAT_00807cf0 + (uint)minimum_sampled_throttle_detected_0_21)))) {
-      throttle_signal_validation_state = 3;
+              (uint)_DAT_00807cf0 + (uint)commanded_throttle_state.throttle_minimum)))) {
+      commanded_throttle_state.throttle_transition_state = 3;
     }
     if ((flag_to_delay_resetting_of_throttle_min_when_sampled_thrott_true_false == 0) &&
-       (_vp44_block_size < minimum_sampled_throttle_detected_0_21)) {
-      minimum_sampled_throttle_detected_0_21 = _vp44_block_size;
+       (_vp44_block_size < commanded_throttle_state.throttle_minimum)) {
+      commanded_throttle_state.throttle_minimum = _vp44_block_size;
     }
     if (((flag_to_delay_resetting_of_throttle_min_when_sampled_thrott_true_false == 1) &&
         ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 0x80) != 0)) &&
        (((debounced_switch_value_for_switch_16_on_off & 1) == 0 &&
         (((status_32_word_bit_mapped_system_error_status_word_6_0_1 & 0x400) == 0 ||
          ((_DAT_00806ac8 & 0x400) == 0)))))) {
-      if ((_vp44_block_size < minimum_sampled_throttle_detected_0_21) &&
-         (throttle_min_reset_delay_timer == 0)) {
-        throttle_min_reset_delay_timer = time_to_delay_before_setting_a_new_throttle_min_0_25500;
+      if ((_vp44_block_size < commanded_throttle_state.throttle_minimum) &&
+         (commanded_throttle_state.throttle_minimum_confidence_counter == 0)) {
+        commanded_throttle_state.throttle_minimum_confidence_counter =
+             time_to_delay_before_setting_a_new_throttle_min_0_25500;
         throttle_minimum_candidate = _vp44_block_size;
       }
-      if (throttle_min_reset_delay_timer != 0) {
+      if (commanded_throttle_state.throttle_minimum_confidence_counter != 0) {
         if ((uint)_DAT_00807ce8 + (uint)throttle_minimum_candidate < (uint)_vp44_block_size) {
-          throttle_minimum_candidate = minimum_sampled_throttle_detected_0_21;
-          throttle_min_reset_delay_timer = 0;
+          throttle_minimum_candidate = commanded_throttle_state.throttle_minimum;
+          commanded_throttle_state.throttle_minimum_confidence_counter = 0;
         }
         else {
-          throttle_min_reset_delay_timer = throttle_min_reset_delay_timer - 1;
-          if (throttle_min_reset_delay_timer == 0) {
-            minimum_sampled_throttle_detected_0_21 = throttle_minimum_candidate;
+          commanded_throttle_state.throttle_minimum_confidence_counter =
+               commanded_throttle_state.throttle_minimum_confidence_counter - 1;
+          if (commanded_throttle_state.throttle_minimum_confidence_counter == 0) {
+            commanded_throttle_state.throttle_minimum = throttle_minimum_candidate;
             _DAT_00804f9e = _DAT_00807cf0 + throttle_minimum_candidate;
           }
         }
       }
     }
     else {
-      throttle_minimum_candidate = minimum_sampled_throttle_detected_0_21;
-      throttle_min_reset_delay_timer = 0;
+      throttle_minimum_candidate = commanded_throttle_state.throttle_minimum;
+      commanded_throttle_state.throttle_minimum_confidence_counter = 0;
     }
-    if (throttle_signal_validation_state == 3) {
+    if (commanded_throttle_state.throttle_transition_state == 3) {
       if (((status_32_word_bit_mapped_system_error_status_word_4_0_1 & 0x20) != 0) &&
          ((fault_first_occurrence_flags_word_4 & 0x20) == 0)) {
         status_32_word_bit_mapped_system_error_status_word_4_0_1 =
@@ -5823,7 +5825,7 @@ LAB_00010cba:
       else {
         wVar5 = _DAT_00807cea;
       }
-      if (throttle_validation_diagnostic_state == 4) {
+      if (commanded_throttle_state.idle_validation_state == 4) {
         if (vp44_comm_buffer_status < wVar5) {
           vp44_comm_buffer_status = vp44_comm_buffer_status + 1;
         }
@@ -5831,14 +5833,14 @@ LAB_00010cba:
           status_32_word_bit_mapped_system_error_status_word_4_0_1 =
                status_32_word_bit_mapped_system_error_status_word_4_0_1 | 8;
           fault_first_occurrence_flags_word_4 = fault_first_occurrence_flags_word_4 | 8;
-          throttle_signal_validation_state = 0;
+          commanded_throttle_state.throttle_transition_state = 0;
         }
       }
       else {
         vp44_comm_buffer_status = 0;
       }
-      if ((throttle_validation_diagnostic_state == 6) || (throttle_validation_diagnostic_state == 5)
-         ) {
+      if ((commanded_throttle_state.idle_validation_state == 6) ||
+         (commanded_throttle_state.idle_validation_state == 5)) {
         if (throttle_out_of_range_fault_timer < wVar5) {
           throttle_out_of_range_fault_timer = throttle_out_of_range_fault_timer + 1;
         }
@@ -5846,14 +5848,14 @@ LAB_00010cba:
           status_32_word_bit_mapped_system_error_status_word_4_0_1 =
                status_32_word_bit_mapped_system_error_status_word_4_0_1 | 0x10;
           fault_first_occurrence_flags_word_4 = fault_first_occurrence_flags_word_4 | 0x10;
-          throttle_signal_validation_state = 0;
+          commanded_throttle_state.throttle_transition_state = 0;
         }
       }
       else {
         throttle_out_of_range_fault_timer = 0;
       }
-      if ((((throttle_validation_diagnostic_state != 2) &&
-           (throttle_validation_diagnostic_state != 3)) ||
+      if ((((commanded_throttle_state.idle_validation_state != 2) &&
+           (commanded_throttle_state.idle_validation_state != 3)) ||
           ((uVar4 = (uint)uVar1 << 0x10,
            (status_32_word_bit_mapped_system_error_status_word_4_0_1 & 0x10) != 0 &&
            (uVar4 = CONCAT22(uVar1,_fault_confirm_status_word_4) & 0xffff0010,
@@ -5873,7 +5875,7 @@ LAB_00010cba:
       status_32_word_bit_mapped_system_error_status_word_4_0_1 =
            status_32_word_bit_mapped_system_error_status_word_4_0_1 | 0x20;
       fault_first_occurrence_flags_word_4 = fault_first_occurrence_flags_word_4 | 0x20;
-      throttle_signal_validation_state = 0;
+      commanded_throttle_state.throttle_transition_state = 0;
       bVar3 = -((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 0x80) != 0);
       ivs_switch_status_when_throttle_validation_process_error_true_false = bVar3 & 1;
       return (ulonglong)CONCAT14(bVar3,uVar6) & 0x1ffffffff;
@@ -5896,7 +5898,7 @@ LAB_00010cba:
 void cm550_FUN_00010e06(void)
 
 {
-  minimum_sampled_throttle_detected_0_21 = _DAT_00807ce4 + 4;
+  commanded_throttle_state.throttle_minimum = _DAT_00807ce4 + 4;
   return;
 }
 
@@ -14731,7 +14733,7 @@ uint cm550_updateElectronicSmartPowerTau(void)
   if (algorithm_enable_flags_12_cal.electronic_smart_power_enable != 0) {
     if (_DAT_00803f28 == 0) {
       if (((stcg_enable_stcg_switch_xor_user_selected_throttle_control_0_1 == 0) &&
-          (validated_percent_throttle_commanded_by_driver_0_100 < _DAT_00807f78)) ||
+          (commanded_throttle_state.commanded_throttle < _DAT_00807f78)) ||
          ((stcg_enable_stcg_switch_xor_user_selected_throttle_control_0_1 != 0 &&
           ((int)(uint)final_fueling <
            (int)((uint)_fueling_provided_if_engine_were_using_low_hp_curve_0_100 -
@@ -14763,7 +14765,7 @@ uint cm550_updateElectronicSmartPowerTau(void)
       if (high_horsepower_mode_state == 0) {
         if ((((((int)((uint)fueling_value_at_100_throttle_0_100 -
                      (uint)a_tolerance_for_throttle_100_fueling_0_10) <= (int)(uint)final_fueling)
-              && (_DAT_00807f78 <= validated_percent_throttle_commanded_by_driver_0_100)) &&
+              && (_DAT_00807f78 <= commanded_throttle_state.commanded_throttle)) &&
              (can_transmit_length != 0)) &&
             (((debounced_switch_value_for_switch_16_on_off & 8) == 0 &&
              (coolant_temperature_sensor_state.filtered_value <
@@ -18557,8 +18559,8 @@ undefined4 cm550_FUN_0001de58(void)
   
   wVar3 = timing_alpha_blend_factor;
   if ((algorithm_enable_flags_18_cal.programmable_power_enable == 0) ||
-     (validated_percent_throttle_commanded_by_driver_0_100 <= _DAT_000608a0)) {
-    wVar4 = validated_percent_throttle_commanded_by_driver_0_100;
+     (commanded_throttle_state.commanded_throttle <= _DAT_000608a0)) {
+    wVar4 = commanded_throttle_state.commanded_throttle;
   }
   else {
     wVar4 = _DAT_000608a0;
@@ -19891,8 +19893,7 @@ void cm550_diagnosticMessage45Builder(void)
         bVar1 = true;
       }
       if (!bVar1) {
-        *local_8 = (char)(((uint)validated_percent_throttle_commanded_by_driver_0_100 * 0xff) / 400)
-        ;
+        *local_8 = (char)(((uint)commanded_throttle_state.commanded_throttle * 0xff) / 400);
         goto LAB_0001f204;
       }
     }
@@ -19911,10 +19912,10 @@ LAB_0001f204:
     bVar4 = bVar4 | 8;
   }
   if (jcomm_throttle_kickdown_threshold_throt_position_above_which_k_0_100 <
-      validated_percent_throttle_commanded_by_driver_0_100) {
+      commanded_throttle_state.commanded_throttle) {
     bVar4 = bVar4 | 0x10;
   }
-  if (throttle_above_idle_flag == 0) {
+  if (commanded_throttle_state.accelerator_off_idle == 0) {
     bVar4 = bVar4 | 0x20;
   }
   if (DAT_0080da96 == '\x01') {
@@ -21164,13 +21165,13 @@ void cm550_FUN_000205c4(void)
       switch_9_to_16_override_values = switch_9_to_16_override_values & 0xfe;
       user_supplied_value_for_ptp_switched_input_input_on_off =
            user_supplied_value_for_ptp_switched_input_input_on_off | 0x80;
-      throttle_above_idle_flag = 0;
+      commanded_throttle_state.accelerator_off_idle = 0;
       return;
     }
     switch_9_to_16_override_values = switch_9_to_16_override_values | 1;
     user_supplied_value_for_ptp_switched_input_input_on_off =
          user_supplied_value_for_ptp_switched_input_input_on_off & 0x7f;
-    throttle_above_idle_flag = 1;
+    commanded_throttle_state.accelerator_off_idle = 1;
     return;
   }
   bVar1 = (binary_value_of_not_idle_switch_off_on & ~DAT_00800aaf |
@@ -21184,13 +21185,13 @@ void cm550_FUN_000205c4(void)
         switch_9_to_16_override_values = switch_9_to_16_override_values & 0xfe;
         user_supplied_value_for_ptp_switched_input_input_on_off =
              user_supplied_value_for_ptp_switched_input_input_on_off | 0x80;
-        throttle_above_idle_flag = 0;
+        commanded_throttle_state.accelerator_off_idle = 0;
         return;
       }
       switch_9_to_16_override_values = switch_9_to_16_override_values | 1;
       user_supplied_value_for_ptp_switched_input_input_on_off =
            user_supplied_value_for_ptp_switched_input_input_on_off & 0x7f;
-      throttle_above_idle_flag = 1;
+      commanded_throttle_state.accelerator_off_idle = 1;
       return;
     }
   }
@@ -21464,12 +21465,13 @@ uint cm550_FUN_00020c98(void)
       if (ivs_parameter_not_properly_configured_not_logged_as_a_faul_true_false != 0) {
         aps_error_flag_for_throttle_indicating_bad_data_not_logged_true_false = 0;
         analog_sensor_override_values[10] = sampled_throttle_sensor_config.default_value;
-        throttle_above_idle_flag = 0;
+        commanded_throttle_state.accelerator_off_idle = 0;
         return uVar1;
       }
       analog_sensor_override_values[10] =
            (word)(((uint)j1939_received_accelerator_pedal_position_1 << 4) / 10);
-      throttle_above_idle_flag = (word)(j1939_received_accelerator_pedal_position_1 != 0);
+      commanded_throttle_state.accelerator_off_idle =
+           (word)(j1939_received_accelerator_pedal_position_1 != 0);
       uVar1 = _status_32_word_bit_mapped_system_error_status_word_0_0_1 & 0xffff0001;
       if (((_status_32_word_bit_mapped_system_error_status_word_0_0_1 & 1) != 0) &&
          (j1939_received_accelerator_pedal_1_low_idle_switch != 2)) {
@@ -21487,19 +21489,19 @@ uint cm550_FUN_00020c98(void)
              _status_32_word_bit_mapped_system_error_status_word_0_0_1 | 1;
         _fault_first_occurrence_flags_word_0 = _fault_first_occurrence_flags_word_0 | 1;
         if (1 < j1939_received_accelerator_pedal_1_low_idle_switch) {
-          throttle_above_idle_flag = 0;
+          commanded_throttle_state.accelerator_off_idle = 0;
           return uVar1;
         }
         aps_error_flag_for_throttle_indicating_bad_data_not_logged_true_false = 1;
         if (j1939_received_accelerator_pedal_1_low_idle_switch == 1) {
-          throttle_above_idle_flag = 0;
+          commanded_throttle_state.accelerator_off_idle = 0;
           return uVar1;
         }
-        throttle_above_idle_flag = 1;
+        commanded_throttle_state.accelerator_off_idle = 1;
         return uVar1;
       }
       uVar1 = setBitInArray(7);
-      throttle_above_idle_flag = 0;
+      commanded_throttle_state.accelerator_off_idle = 0;
     }
   }
   return uVar1;
@@ -25733,7 +25735,7 @@ void cm550_calculatePedalFaultModeFuelDemand(void)
     else {
       _fuel_demand_target = _DAT_0080daba;
     }
-    if (throttle_above_idle_flag == 1) {
+    if (commanded_throttle_state.accelerator_off_idle == 1) {
       if (_retarder_mode_control_byte_mirror == 1) {
         fuel_demand_ramped = _DAT_00808214 + fuel_demand_ramped;
         if (_fuel_demand_target < fuel_demand_ramped) {
@@ -25749,7 +25751,7 @@ void cm550_calculatePedalFaultModeFuelDemand(void)
     }
     fuel_demand_selected = fuel_demand_ramped;
   }
-  _retarder_mode_control_byte_mirror = throttle_above_idle_flag;
+  _retarder_mode_control_byte_mirror = commanded_throttle_state.accelerator_off_idle;
   return;
 }
 
@@ -25989,7 +25991,7 @@ void cm550_runLowSpeedGovernor(void)
   sword sVar5;
   
   wVar3 = cm550_exponentialMovingAverage
-                    (_DAT_0080825a * validated_percent_throttle_commanded_by_driver_0_100,
+                    (_DAT_0080825a * commanded_throttle_state.commanded_throttle,
                      &low_speed_governor_throttle_reference_offset_filter_state);
   sVar5 = lsg_filtered_speed_error;
   if (datalink_speed_control_mode == 0) {
@@ -30894,26 +30896,26 @@ void cm550_FUN_0002ec50(void)
 
 {
   if (algorithm_enable_flags_18_cal.remote_throttle_enable == 0) {
-    if (alternate_throttle_priority ==
+    if (commanded_throttle_state.alternate_throttle_priority ==
         priority_of_remote_throttle_feature_w_r_to_other_throttle_0_to_10) {
-      alternate_throttle_priority = 0;
-      alternate_throttle_command = 0;
+      commanded_throttle_state.alternate_throttle_priority = 0;
+      commanded_throttle_state.alternate_throttle = 0;
       return;
     }
   }
   else if (algorithm_enable_flags_18_cal.remote_throttle_transition_verification_enable == 0) {
     if ((debounced_value_for_rear_axle_ratio_switch_on_off & 8) == 0) {
-      if (alternate_throttle_priority ==
+      if (commanded_throttle_state.alternate_throttle_priority ==
           priority_of_remote_throttle_feature_w_r_to_other_throttle_0_to_10) {
-        alternate_throttle_priority = 0;
+        commanded_throttle_state.alternate_throttle_priority = 0;
         return;
       }
     }
-    else if (alternate_throttle_priority <
+    else if (commanded_throttle_state.alternate_throttle_priority <
              priority_of_remote_throttle_feature_w_r_to_other_throttle_0_to_10) {
-      alternate_throttle_priority =
+      commanded_throttle_state.alternate_throttle_priority =
            priority_of_remote_throttle_feature_w_r_to_other_throttle_0_to_10;
-      alternate_throttle_command = remote_throttle_sensor_state.filtered_value;
+      commanded_throttle_state.alternate_throttle = remote_throttle_sensor_state.filtered_value;
       return;
     }
   }
@@ -30921,32 +30923,32 @@ void cm550_FUN_0002ec50(void)
     if (((status_32_word_bit_mapped_system_error_status_word_3_0_1 & 0x800) == 0) ||
        ((_DAT_00806046 & 0x800) != 0)) {
       if ((remote_throttle_sensor_state.filtered_value <=
-           intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100) &&
+           commanded_throttle_state.calculated_commanded_throttle) &&
          ((debounced_value_for_rear_axle_ratio_switch_on_off & 8) != 0)) {
         remote_throttle_active_flag = 1;
       }
-      if ((intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100 <=
+      if ((commanded_throttle_state.calculated_commanded_throttle <=
            remote_throttle_sensor_state.filtered_value) &&
          ((debounced_value_for_rear_axle_ratio_switch_on_off & 8) == 0)) {
         remote_throttle_active_flag = 0;
       }
     }
-    else if (intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100 <=
+    else if (commanded_throttle_state.calculated_commanded_throttle <=
              remote_throttle_sensor_state.filtered_value) {
       remote_throttle_active_flag = 0;
     }
     if (remote_throttle_active_flag == 1) {
-      if (alternate_throttle_priority <
+      if (commanded_throttle_state.alternate_throttle_priority <
           priority_of_remote_throttle_feature_w_r_to_other_throttle_0_to_10) {
-        alternate_throttle_priority =
+        commanded_throttle_state.alternate_throttle_priority =
              priority_of_remote_throttle_feature_w_r_to_other_throttle_0_to_10;
-        alternate_throttle_command = remote_throttle_sensor_state.filtered_value;
+        commanded_throttle_state.alternate_throttle = remote_throttle_sensor_state.filtered_value;
         return;
       }
     }
-    else if (alternate_throttle_priority ==
+    else if (commanded_throttle_state.alternate_throttle_priority ==
              priority_of_remote_throttle_feature_w_r_to_other_throttle_0_to_10) {
-      alternate_throttle_priority = 0;
+      commanded_throttle_state.alternate_throttle_priority = 0;
     }
   }
   return;
@@ -32068,7 +32070,7 @@ void cm550_captureFaultFreezeFrame(word snapshot_slot,word code_index)
     *(word *)((int)&fault_freeze_frame_entries[0x14].filtered_rpm + (int)sVar1) =
          current_engine_rpm_filtered;
     *(word *)((int)&fault_freeze_frame_entries[0x14].accelerator_pedal_position + (int)sVar1) =
-         validated_percent_throttle_commanded_by_driver_0_100;
+         commanded_throttle_state.commanded_throttle;
     *(word *)((int)&fault_freeze_frame_entries[0x14].intake_manifold_pressure + (int)sVar1) =
          boost_pressure_sensor_state.filtered_value;
     *(dword *)((int)&fault_freeze_frame_entries[0x14].key_on_hour_meter + (int)sVar1) =
@@ -32113,7 +32115,7 @@ void cm550_captureFaultFreezeFrame(word snapshot_slot,word code_index)
     *(word *)((int)&fault_freeze_frame_entries[0].filtered_rpm + (int)sVar1) =
          current_engine_rpm_filtered;
     *(word *)((int)&fault_freeze_frame_entries[0].accelerator_pedal_position + (int)sVar1) =
-         validated_percent_throttle_commanded_by_driver_0_100;
+         commanded_throttle_state.commanded_throttle;
     *(word *)((int)&fault_freeze_frame_entries[0].intake_manifold_pressure + (int)sVar1) =
          boost_pressure_sensor_state.filtered_value;
     *(dword *)((int)&fault_freeze_frame_entries[0].key_on_hour_meter + (int)sVar1) =
@@ -34273,7 +34275,7 @@ void sendPgn61444ElectronicEngineController1Message(void)
     case FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE:
     case FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION:
     case FUELING_STATE_UNIDENTIFIED_37:
-      if (state_of_selected_alternate_throttle_priority_0_9 ==
+      if (commanded_throttle_state.selected_alternate_throttle_priority ==
           priority_of_remote_throttle_feature_w_r_to_other_throttle_0_to_10) {
         vp44_torque_speed_control_status = 0xfb;
       }
@@ -34399,7 +34401,7 @@ void j1939HandlePgn61443Eec2(void)
       (((status_32_word_bit_mapped_system_error_status_word_4_0_1 & 4) == 0 ||
        ((_fault_confirm_status_word_4 & 4) == 0)))))) {
     if (jcomm_throttle_kickdown_threshold_throt_position_above_which_k_0_100 <
-        validated_percent_throttle_commanded_by_driver_0_100) {
+        commanded_throttle_state.commanded_throttle) {
       vp44_feedback_pulse_low_fault_counter = 0xf4;
     }
     else {
@@ -34414,7 +34416,7 @@ void j1939HandlePgn61443Eec2(void)
         ((_fault_confirm_status_word_4 & 8) == 0)) &&
        (((status_32_word_bit_mapped_system_error_status_word_4_0_1 & 0x10) == 0 ||
         ((_fault_confirm_status_word_4 & 0x10) == 0)))) {
-      if (throttle_above_idle_flag == 0) {
+      if (commanded_throttle_state.accelerator_off_idle == 0) {
         vp44_feedback_pulse_low_fault_counter = vp44_feedback_pulse_low_fault_counter | 1;
       }
     }
@@ -34435,8 +34437,8 @@ void j1939HandlePgn61443Eec2(void)
        ((_fault_confirm_status_word_4 & 4) == 0)))))) {
     if (algorithm_enable_flags_5_cal.sampled_throttle_override_enable == 0) {
       vp44_feedback_pulse_high_fault_counter =
-           (char)((int)(uint)validated_percent_throttle_commanded_by_driver_0_100 >> 1) +
-           (char)((int)(uint)validated_percent_throttle_commanded_by_driver_0_100 >> 3);
+           (char)((int)(uint)commanded_throttle_state.commanded_throttle >> 1) +
+           (char)((int)(uint)commanded_throttle_state.commanded_throttle >> 3);
     }
     else {
       vp44_feedback_pulse_high_fault_counter = -1;

@@ -1178,6 +1178,7 @@ typedef struct cm550_algorithm_enable_flags_28_t cm550_algorithm_enable_flags_28
 typedef struct cm550_algorithm_enable_flags_32_t cm550_algorithm_enable_flags_32_t;
 typedef struct cm550_algorithm_enable_flags_33_t cm550_algorithm_enable_flags_33_t;
 typedef struct cm550_fault_entry_t cm550_fault_entry_t;
+typedef struct cm550_commanded_throttle_state_t cm550_commanded_throttle_state_t;
 
 struct j1939_msg_hdr_t {
     uint32_t can_id;  /* The CAN identifier: priority / PGN / source address (was j1939_header_t.id; CM848's type name; PR #53 round 88) */
@@ -1993,4 +1994,20 @@ struct cm550_fault_entry_t {
     uint16_t cruise_control_switch_multiplexer;  /* cruise_control_switch_multiplexer_sensor_state.filtered_value at capture */
     uint16_t vp44_engine_speed;  /* vp44_engine_speed (0x80a17e; e2m 801A +C FLDFES) at capture */
     uint16_t system_switch_status_3;  /* system_switch_status_3 (0x80bccc; e2m 1092 +4 SSSWSS03) at capture */
+};
+
+struct cm550_commanded_throttle_state_t {
+    uint16_t commanded_throttle;  /* e2m 1047 +0x0 THROTTLE 'VALIDATED PERCENT THROTTLE COMMANDED BY DRIVER' (0 - 100); CM848's commanded_throttle (+0x0) */
+    uint16_t idle_validation_state;  /* e2m 1047 +0x2 CTTHID 'IDENTIFIES DIFFERENT COMBINATIONS OF THE THROTTLE POT AND SWITCHES' (0-9); CM848's idle_validation_state (+0x2) */
+    uint16_t accelerator_off_idle;  /* e2m 1047 +0x4 CTTHSS 'STATUS OF THE IDLE VALIDATION SWITCH IDLE = 0; NOT_IDLE' (IDLE/NOT_IDLE); CM848's accelerator_off_idle (+0x4) */
+    uint16_t throttle_transition_state;  /* e2m 1047 +0x6 CTTZST 'STATE OF POTENTIOMETER AND IDLE VALIDATION SWITCH READINGS' (0-3); CM848's throttle_transition_state (+0x6) */
+    uint16_t throttle_minimum_confidence_counter;  /* e2m 1047 +0x8 CTCBCU 'CURRENT TIME OF COUNTER THAT MUST TIME OUT BEFORE A NEW THROTT' (0-25500); CM848's throttle_minimum_confidence_counter (+0x8) */
+    uint16_t throttle_minimum;  /* e2m 1047 +0xa CTMNSATH 'MINIMUM SAMPLED_THROTTLE DETECTED' (0-21); CM848's throttle_minimum (+0xa) */
+    uint16_t alternate_throttle;  /* e2m 1047 +0xc CTALTH 'PERCENT THROTTLE OVERRIDEN BY OTHER ALGORITHM' (0.0 - 100.0); CM848's alternate_throttle (+0xc) */
+    uint16_t alternate_throttle_priority;  /* e2m 1047 +0xe CTTHSL 'ALTERNATE THROTTLE PRIORITY #, 0=NORMAL, 9=HIGHPR' (0 - 9); CM848's alternate_throttle_priority (+0xe) */
+    uint16_t calculated_commanded_throttle;  /* e2m 1047 +0x10 CTEVTETH 'INTERMEDIATE CALCULATED VALUE OF COMMANDED THROTTLE BASED ON S' (0 - 100); CM848's calculated_commanded_throttle (+0x10) */
+    uint16_t selected_alternate_throttle_priority;  /* e2m 1047 +0x12 CTALSLST 'STATE OF SELECTED ALTERNATE THROTTLE PRIORITY' (0 - 9); CM848's selected_alternate_throttle_priority (+0x12) */
+    uint16_t idle_validation_inhibit_flag;  /* e2m 1047 +0x14 CTIVIH 'INHIBITS IDLE VALIDATION CALCULATIONS AND DIAGNOSTICS WHEN = 1' (0 - 1); CM550 only */
+    uint16_t sampled_frequency_throttle;  /* e2m 1047 +0x16 FQTHSATH 'REQUESTED THROTTLE AFTER BEING LIN. AND FIL. VIA FREQ. THR. ALGO' (0-100); CM848's sampled_frequency_throttle (+0x14) */
+    uint16_t frequency_throttle_active_flag;  /* e2m 1047 +0x18 FQTHAC 'INDICATES FREQUENCY THROTTLE HAS BEEN ENABLED' (0 - 1); CM848's frequency_throttle_active_flag (+0x16) */
 };

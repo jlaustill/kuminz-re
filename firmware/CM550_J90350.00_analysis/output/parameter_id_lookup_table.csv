@@ -86,7 +86,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4164,0x1044,16777224,0x01000008,EEPROM,parameter_block_1_checksum_cal,SSEECRC / SSFHPB01
 4165,0x1045,8431856,0x0080A8F0,RAM,lsg_governor_fuel_demand,FSGVFL
 4166,0x1046,8419924,0x00807A54,RAM,,LSRFOF
-4167,0x1047,8432258,0x0080AA82,RAM,validated_percent_throttle_commanded_by_driver_0_100,THROTTLE
+4167,0x1047,8432258,0x0080AA82,RAM,commanded_throttle_state,THROTTLE
 4168,0x1048,8420574,0x00807CDE,RAM,engine_fault_timer_init,CTTHDE
 4169,0x1049,8444674,0x0080DB02,RAM,lsg_breakpoint_speed,LSRF
 4170,0x104A,8431864,0x0080A8F8,RAM,alpha_blend_factor,ALPHA

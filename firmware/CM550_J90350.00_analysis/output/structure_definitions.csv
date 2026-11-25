@@ -891,3 +891,18 @@ cm550_fault_entry_t,,vp44_fuel_temperature,word,2,vp44_fuel_temperature (0x80a18
 cm550_fault_entry_t,,cruise_control_switch_multiplexer,word,2,cruise_control_switch_multiplexer_sensor_state.filtered_value at capture,,verified
 cm550_fault_entry_t,,vp44_engine_speed,word,2,vp44_engine_speed (0x80a17e; e2m 801A +C FLDFES) at capture,,verified
 cm550_fault_entry_t,,system_switch_status_3,word,2,system_switch_status_3 (0x80bccc; e2m 1092 +4 SSSWSS03) at capture,,verified
+
+# cm550_commanded_throttle_state_t: e2m 1047 (26 bytes), the commanded throttle block - CM848's commanded_throttle_state_t with CTIVIH inserted at +0x14 and no delta words (PR #53 round 94)
+cm550_commanded_throttle_state_t,,commanded_throttle,word,2,e2m 1047 +0x0 THROTTLE 'VALIDATED PERCENT THROTTLE COMMANDED BY DRIVER' (0 - 100); CM848's commanded_throttle (+0x0),,verified
+cm550_commanded_throttle_state_t,,idle_validation_state,word,2,e2m 1047 +0x2 CTTHID 'IDENTIFIES DIFFERENT COMBINATIONS OF THE THROTTLE POT AND SWITCHES' (0-9); CM848's idle_validation_state (+0x2),,verified
+cm550_commanded_throttle_state_t,,accelerator_off_idle,word,2,e2m 1047 +0x4 CTTHSS 'STATUS OF THE IDLE VALIDATION SWITCH IDLE = 0; NOT_IDLE' (IDLE/NOT_IDLE); CM848's accelerator_off_idle (+0x4),,verified
+cm550_commanded_throttle_state_t,,throttle_transition_state,word,2,e2m 1047 +0x6 CTTZST 'STATE OF POTENTIOMETER AND IDLE VALIDATION SWITCH READINGS' (0-3); CM848's throttle_transition_state (+0x6),,verified
+cm550_commanded_throttle_state_t,,throttle_minimum_confidence_counter,word,2,e2m 1047 +0x8 CTCBCU 'CURRENT TIME OF COUNTER THAT MUST TIME OUT BEFORE A NEW THROTT' (0-25500); CM848's throttle_minimum_confidence_counter (+0x8),,verified
+cm550_commanded_throttle_state_t,,throttle_minimum,word,2,e2m 1047 +0xa CTMNSATH 'MINIMUM SAMPLED_THROTTLE DETECTED' (0-21); CM848's throttle_minimum (+0xa),,verified
+cm550_commanded_throttle_state_t,,alternate_throttle,word,2,e2m 1047 +0xc CTALTH 'PERCENT THROTTLE OVERRIDEN BY OTHER ALGORITHM' (0.0 - 100.0); CM848's alternate_throttle (+0xc),,verified
+cm550_commanded_throttle_state_t,,alternate_throttle_priority,word,2,"e2m 1047 +0xe CTTHSL 'ALTERNATE THROTTLE PRIORITY #, 0=NORMAL, 9=HIGHPR' (0 - 9); CM848's alternate_throttle_priority (+0xe)",,verified
+cm550_commanded_throttle_state_t,,calculated_commanded_throttle,word,2,e2m 1047 +0x10 CTEVTETH 'INTERMEDIATE CALCULATED VALUE OF COMMANDED THROTTLE BASED ON S' (0 - 100); CM848's calculated_commanded_throttle (+0x10),,verified
+cm550_commanded_throttle_state_t,,selected_alternate_throttle_priority,word,2,e2m 1047 +0x12 CTALSLST 'STATE OF SELECTED ALTERNATE THROTTLE PRIORITY' (0 - 9); CM848's selected_alternate_throttle_priority (+0x12),,verified
+cm550_commanded_throttle_state_t,,idle_validation_inhibit_flag,word,2,e2m 1047 +0x14 CTIVIH 'INHIBITS IDLE VALIDATION CALCULATIONS AND DIAGNOSTICS WHEN = 1' (0 - 1); CM550 only,,verified
+cm550_commanded_throttle_state_t,,sampled_frequency_throttle,word,2,e2m 1047 +0x16 FQTHSATH 'REQUESTED THROTTLE AFTER BEING LIN. AND FIL. VIA FREQ. THR. ALGO' (0-100); CM848's sampled_frequency_throttle (+0x14),,verified
+cm550_commanded_throttle_state_t,,frequency_throttle_active_flag,word,2,e2m 1047 +0x18 FQTHAC 'INDICATES FREQUENCY THROTTLE HAS BEEN ENABLED' (0 - 1); CM848's frequency_throttle_active_flag (+0x16),,verified
