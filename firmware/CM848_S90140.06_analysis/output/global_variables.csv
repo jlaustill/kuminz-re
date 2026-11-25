@@ -740,7 +740,7 @@ address,name,type,comment
 0x002fc02c,USIU_SGPIOCR,dword,SIU SGPIO control register (0x2FC02C SGPIOCR) (was USIU_INITCFG; PR #53 round 95)
 0x002fc030,USIU_EMCR,byte,External master mode control register (0x2FC030 EMCR; SGPIODT1 is SIU_SGPIODT1 at 0x2FC024) (was USIU_SGPIODT1; PR #53 round 95)
 0x002fc03c,USIU_PDMCR,byte,Pads module configuration register (0x2FC03C PDMCR) (was USIU_EMCR; PR #53 round 95)
-0x002fc100,usiu_memory_controller,usiu_memc_t,USIU memory controller: the base / option register pairs BR0-OR3 (0x2FC100-0x2FC11F) (was USIU_BR0; PR #53 round 95)
+0x002fc100,usiu_memory_controller,usiu_memory_controller_t,USIU memory controller: the base / option register pairs BR0-OR3 (0x2FC100-0x2FC11F) (was USIU_BR0; PR #53 round 95)
 0x002fc140,USIU_DMBR,dword,
 0x002fc144,USIU_DMOR,dword,
 0x002fc200,USIU_TBSCR,word,
@@ -749,8 +749,8 @@ address,name,type,comment
 0x002fc220,USIU_RTCSC,byte,
 0x002fc224,USIU_RTC,byte,
 0x002fc228,USIU_RTSEC,byte,
-0x002fc240,usiu_periodic_interrupt_timer,usiu_pit_t,USIU periodic interrupt timer: PISCR / PITC / PITR (0x2FC240-0x2FC24B) (was USIU_PISCR; PR #53 round 95)
-0x002fc280,usiu_clocks_and_reset,usiu_clock_t,USIU clocks and reset: SCCR / PLPRCR / RSR / COLIR / VSRMCR (0x2FC280-0x2FC293) (was USIU_SCCR; PR #53 round 95)
+0x002fc240,usiu_periodic_interrupt_timer,usiu_periodic_interrupt_timer_t,USIU periodic interrupt timer: PISCR / PITC / PITR (0x2FC240-0x2FC24B) (was USIU_PISCR; PR #53 round 95)
+0x002fc280,usiu_clocks_and_reset,usiu_clocks_and_reset_t,USIU clocks and reset: SCCR / PLPRCR / RSR / COLIR / VSRMCR (0x2FC280-0x2FC293) (was USIU_SCCR; PR #53 round 95)
 0x002fc300,USIU_TBSCRK,byte,
 0x002fc304,USIU_TBREFF0K,byte,
 0x002fc308,USIU_TBREFF1K,byte,
@@ -798,7 +798,7 @@ address,name,type,comment
 0x00302736,system_initialization_flags,system_initialization_flags_t,Set by the boot service loop mpc555_systemInitialization: initialization_sentinel = 0xBBBB and initialization_counter = 0 (no reader in the .cpp) (was sys_init_flags_t_00302736)
 0x00302738,system_initialization_flags.initialization_counter,,
 0x00302877,eeprom_service_mode_flags,byte,EEPROM-programming service-mode flags byte. High bit 0x80 = in EEPROM mode; low nibble (& 0xf) gates special main-loop processing; whole-byte 0x81 routes main-loop dispatch to CAN handlers and 0x82 to the diagnostic handler (mpc555_runPeriodicInterruptTimerTick/cm848_runBootKernelLoop/cm848_dispatchDiagnosticService) - name covers the dispatch role not just diag. Renamed from qadc_a_result_high_1 (legacy mislabel - not analog data; real QADC-A results are at 0x304A80+). Peripheral/RAM region 0x302xxx so no _cal
-0x00302878,eeprom_xfer_state,eeprom_xfer_state_t,
+0x00302878,eeprom_xfer_state,eeprom_transfer_state_t,
 0x00302882,qadc_a_result_high_2.write_callback_ptr,,
 0x00302886,qadc_a_result_high_2.read_callback_ptr,,
 0x003028a5,watchdog_tick_prescaler,byte,
@@ -843,8 +843,8 @@ address,name,type,comment
 0x0030349d,pgn_response_handler_count,byte,
 0x003034a0,boot_state_machine,boot_state_t,
 0x00304000,tpu_a,tpu3_module_registers_t,TPU3 module A registers (0x304000-0x30402B) (was tpu_a_mcr; PR #53 round 95)
-0x00304100,tpu_a_channel_0_parameters,tpu3_ch_params_t,TPU-A channel 0 parameter RAM (0x304100-0x30410F) (was tpu_a_ch0_param0; PR #53 round 95)
-0x00304110,tpu_a_channel_1_parameters,tpua_ch1_params_t,TPU-A channel 1 parameter RAM (0x304110-0x30411F; the old name said parameter 2, the block starts at parameter 0) (was tpu_a_ch1_param2; PR #53 round 95)
+0x00304100,tpu_a_channel_0_parameters,tpu3_channel_parameters_t,TPU-A channel 0 parameter RAM (0x304100-0x30410F) (was tpu_a_ch0_param0; PR #53 round 95)
+0x00304110,tpu_a_channel_1_parameters,tpu_a_channel_1_parameters_t,TPU-A channel 1 parameter RAM (0x304110-0x30411F; the old name said parameter 2, the block starts at parameter 0) (was tpu_a_ch1_param2; PR #53 round 95)
 0x00304120,TPUA_CH2_PARAM0,word,
 0x00304126,TPUA_CH2_PARAM3,word,
 0x00304128,TPUA_CH2_PARAM4,word,
@@ -858,7 +858,7 @@ address,name,type,comment
 0x00304176,TPUA_CH7_PARAM3,word,
 0x00304178,TPUA_CH7_PARAM4,word,
 0x00304180,TPUA_CH8_PARAM0,word,
-0x00304190,tpu_a_channel_9_parameters,tpua_ch9_params_t,TPU-A channel 9 parameter RAM (0x304190-0x30419F) (was tpu_channel_control; PR #53 round 95)
+0x00304190,tpu_a_channel_9_parameters,tpu_a_channel_9_parameters_t,TPU-A channel 9 parameter RAM (0x304190-0x30419F) (was tpu_channel_control; PR #53 round 95)
 0x003041a0,TPUA_CH10_PARAM0,word,
 0x003041b0,TPUA_CH11_PARAM0,word,
 0x003041b2,TPUA_CH11_PARAM1,word,
@@ -868,17 +868,17 @@ address,name,type,comment
 0x003041ba,TPUA_CH11_PARAM5,word,
 0x003041bc,TPUA_CH11_PARAM6,word,
 0x003041be,TPUA_CH11_PARAM7,word,
-0x003041c0,tpu_a_channel_12_parameters,tpua_ch12_params_t,TPU-A channel 12 parameter RAM (0x3041C0-0x3041CF) (was TPUA_CH12_PARAM0; PR #53 round 95)
+0x003041c0,tpu_a_channel_12_parameters,tpu_a_channel_12_parameters_t,TPU-A channel 12 parameter RAM (0x3041C0-0x3041CF) (was TPUA_CH12_PARAM0; PR #53 round 95)
 0x003041d0,TPUA_CH13_PARAM0,word,
 0x003041d6,TPUA_CH13_PARAM3,word,
 0x003041d8,TPUA_CH13_PARAM4,word,
 0x003041da,TPUA_CH13_PARAM5,word,
 0x003041dc,TPUA_CH13_PARAM6,word,
 0x003041de,TPUA_CH13_PARAM7,word,
-0x003041e0,tpu_a_channel_14_parameters,tpua_ch14_params_t,TPU-A channel 14 parameter RAM (0x3041E0-0x3041EF) (was TPUA_CH14_PARAM0; PR #53 round 95)
+0x003041e0,tpu_a_channel_14_parameters,tpu_a_channel_14_parameters_t,TPU-A channel 14 parameter RAM (0x3041E0-0x3041EF) (was TPUA_CH14_PARAM0; PR #53 round 95)
 0x003041f0,TPUA_CH15_PARAM0,word,
 0x00304400,tpu_b,tpu3_module_registers_t,TPU3 module B registers (0x304400-0x30442B) (was tpu_b_mcr; PR #53 round 95)
-0x00304500,tpu_b_channel_0_parameters,tpub_ch0_params_t,TPU-B channel parameter RAM (16 channels x 16 bytes) - the counterpart of TPU-A's tpu_a_channel_0_parameters at 0x304100; was a second tpu_b_mcr label (the TPU-B module registers are tpu_b_mcr at 0x304400) (was tpu_b_ch0_param0; PR #53 round 95)
+0x00304500,tpu_b_channel_0_parameters,tpu_b_channel_0_parameters_t,TPU-B channel parameter RAM (16 channels x 16 bytes) - the counterpart of TPU-A's tpu_a_channel_0_parameters at 0x304100; was a second tpu_b_mcr label (the TPU-B module registers are tpu_b_mcr at 0x304400) (was tpu_b_ch0_param0; PR #53 round 95)
 0x00304510,TPUB_CH1_PARAM0,word,
 0x00304520,TPUB_CH2_PARAM0,word,
 0x00304530,TPUB_CH3_PARAM0,word,
@@ -889,14 +889,14 @@ address,name,type,comment
 0x00304580,TPUB_CH8_PARAM0,word,
 0x00304590,TPUB_CH9_PARAM0,word,
 0x003045a0,TPUB_CH10_PARAM0,word,
-0x003045b0,tpu_b_channel_11_parameters,tpub_ch11_params_t,TPU-B channel 11 parameter RAM (0x3045B0-0x3045BF) (was TPUB_CH11_PARAM0; PR #53 round 95)
+0x003045b0,tpu_b_channel_11_parameters,tpu_b_channel_11_parameters_t,TPU-B channel 11 parameter RAM (0x3045B0-0x3045BF) (was TPUB_CH11_PARAM0; PR #53 round 95)
 0x003045c0,TPUB_CH12_PARAM0,word,
 0x003045d0,TPUB_CH13_PARAM0,word,
-0x003045e0,tpu_b_channel_14_parameters,tpub_ch14_params_t,TPU-B channel 14 parameter RAM (0x3045E0-0x3045EF) (was TPUB_CH14_PARAM0; PR #53 round 95)
+0x003045e0,tpu_b_channel_14_parameters,tpu_b_channel_14_parameters_t,TPU-B channel 14 parameter RAM (0x3045E0-0x3045EF) (was TPUB_CH14_PARAM0; PR #53 round 95)
 0x003045e2,TPUB_CH14_PARAM0.PARAM1,,
 0x003045e6,TPUB_CH14_PARAM0.PARAM3,,
 0x003045f0,TPUB_CH15_PARAM0,word,
-0x00304800,qadc64_a,qadc64_regs_t,QADC64 module A registers (0x304800-0x304811); its CCW table is at 0x304A00 and its result registers at 0x304A80 / 0x304B00 / 0x304B80 (was qadc_b_mcr before PR #48) (was QADC64A_MCR; PR #53 round 95) | earlier note: QADC64 module A register block (module B is qadc64_b at 0x304c00; results QADC-A 0x304a80 / QADC-B 0x304e80) - was qadc_b_mcr
+0x00304800,qadc64_a,qadc64_registers_t,QADC64 module A registers (0x304800-0x304811); its CCW table is at 0x304A00 and its result registers at 0x304A80 / 0x304B00 / 0x304B80 (was qadc_b_mcr before PR #48) (was QADC64A_MCR; PR #53 round 95) | earlier note: QADC64 module A register block (module B is qadc64_b at 0x304c00; results QADC-A 0x304a80 / QADC-B 0x304e80) - was qadc_b_mcr
 0x00304812,QADC64A_SR,byte,
 0x00304814,QADC64A_CCW_TBL,byte,
 0x00304a00,QADC64A_CCW0,word,QADC64 A conversion command word 0 (CCW table 0x304A00-0x304A7F); the result registers are at 0x304A80 / 0x304B00 / 0x304B80 (was QADC64A_RESULT0; PR #53 round 95)
@@ -911,7 +911,7 @@ address,name,type,comment
 0x00304a12,QADC64A_CCW9,word,QADC64 A conversion command word 9 (CCW table 0x304A00-0x304A7F); the result registers are at 0x304A80 / 0x304B00 / 0x304B80 (was QADC64A_RESULT9; PR #53 round 95)
 0x00304a14,QADC64A_CCW10,word,QADC64 A conversion command word 10 (CCW table 0x304A00-0x304A7F); the result registers are at 0x304A80 / 0x304B00 / 0x304B80 (was QADC64A_RESULT10; PR #53 round 95)
 0x00304a16,QADC64A_CCW11,word,QADC64 A conversion command word 11 (CCW table 0x304A00-0x304A7F); the result registers are at 0x304A80 / 0x304B00 / 0x304B80 (was QADC64A_RESULT11; PR #53 round 95)
-0x00304c00,qadc64_b,qadc64_regs_t,QADC64 module B registers (0x304C00-0x304C11); its CCW table is at 0x304E00 and its result registers at 0x304E80 / 0x304F00 / 0x304F80 (was QADC64B_MCR; PR #53 round 95)
+0x00304c00,qadc64_b,qadc64_registers_t,QADC64 module B registers (0x304C00-0x304C11); its CCW table is at 0x304E00 and its result registers at 0x304E80 / 0x304F00 / 0x304F80 (was QADC64B_MCR; PR #53 round 95)
 0x00304c12,QADC64B_SR,byte,
 0x00304c14,QADC64B_CCW_TBL,word,
 0x00304e00,QADC64B_CCW0,word,QADC64 B conversion command word 0 (CCW table 0x304E00-0x304E7F); the result registers are at 0x304E80 / 0x304F00 / 0x304F80 (was QADC64B_RESULT0; PR #53 round 95)
@@ -923,14 +923,14 @@ address,name,type,comment
 0x00305004,QSMCM_QDSCI_IL,byte,QSMCM dual SCI interrupt level register (0x305004 QDSCI_IL; the byte access is its high byte) (was qsmcm_sccr0; PR #53 round 95)
 0x00305006,QSMCM_IDSPI,byte,
 0x00305007,QSMCM_IDSPI+1,byte,
-0x00305008,qsmcm_sci1,qsmcm_sci1_regs_t,QSMCM SCI1 registers SCC1R0 / SCC1R1 / SC1SR / SC1DR (0x305008-0x30500F) (was qsmcm_sccr1; PR #53 round 95)
+0x00305008,qsmcm_sci1,qsmcm_sci1_registers_t,QSMCM SCI1 registers SCC1R0 / SCC1R1 / SC1SR / SC1DR (0x305008-0x30500F) (was qsmcm_sccr1; PR #53 round 95)
 0x00305010,QSMCM_SPCR0,byte,
 0x00305012,QSMCM_SPCR1,byte,
 0x00305014,QSMCM_SPCR2,byte,
 0x00305015,qsmcm_portqs_low,byte,PORTQS low byte (port QS pin levels); init 0x7f; bit 0x04 = PQS2/SCK idle level set per slot clock polarity
 0x00305016,QSMCM_PQSPAR,byte,Port QS pin assignment (init 0x7b)
 0x00305017,QSMCM_DDRQS,byte,Port QS data direction (init 0x7e)
-0x00305018,qsmcm_qspi,qsmcm_qspi_ctrl_t,QSPI control/status registers SPCR0..SPSR (0x305018-0x30501f)
+0x00305018,qsmcm_qspi,qsmcm_qspi_control_registers_t,QSPI control/status registers SPCR0..SPSR (0x305018-0x30501f)
 0x00305020,QSMCM_SCC2R0,byte,
 0x00305022,QSMCM_SCC2R1,byte,
 0x00305024,QSMCM_SC2SR,byte,
@@ -938,12 +938,12 @@ address,name,type,comment
 0x00305030,QSMCM_COMD0,byte,
 0x00305040,QSMCM_RECRAM0,byte,
 0x00305060,QSMCM_TRANRAM0,byte,
-0x00305140,qsmcm_recram,qsmcm_recram_t,QSMCM RECRAM, the QSPI receive RAM (qsmcm_recram_t): the replies of the boot EEPROM driver (mpc555_eepromReadWords / WriteWords) and of the supervisor chip watchdog (cm848_initSupervisorWatchdog / cm848_serviceSupervisorWatchdog / cm848_forceSupervisorWatchdogReset) (was qsmcm_recram_t_00305140)
+0x00305140,qsmcm_recram,qsmcm_receive_ram_t,QSMCM RECRAM, the QSPI receive RAM (qsmcm_receive_ram_t, was qsmcm_recram_t: PR #53 round 96): the replies of the boot EEPROM driver (mpc555_eepromReadWords / WriteWords) and of the supervisor chip watchdog (cm848_initSupervisorWatchdog / cm848_serviceSupervisorWatchdog / cm848_forceSupervisorWatchdogReset) (was qsmcm_recram_t_00305140)
 0x00305142,qsmcm_recram.RX1,,
 0x00305144,qsmcm_recram.RX2,,
 0x00305148,qsmcm_recram.RX4,,
 0x0030514a,qsmcm_recram.RX5,,
-0x00305180,qsmcm_tranram,qsmcm_txram_t,QSPI transmit RAM (was eeprom_command_register)
+0x00305180,qsmcm_tranram,qsmcm_transmit_ram_t,QSPI transmit RAM (was eeprom_command_register)
 0x00305186,eeprom_command_register.TX3,,
 0x00305188,eeprom_command_register.TX4,,
 0x0030518a,eeprom_command_register.TX5,,
@@ -957,7 +957,7 @@ address,name,type,comment
 0x00306008,mios_mpwmsm1,mios_mpwmsm_t,(was MIOS_MPWMSM1_PERR)
 0x00306010,mios_mpwmsm2,mios_mpwmsm_t,(was MIOS_MPWMSM2_PERR)
 0x00306018,mios_mpwmsm3,mios_mpwmsm_t,(was MIOS_MPWMSM3_PERR)
-0x00306030,mios_mmcsm6,mios_mmcsm_b_t,MIOS1 submodule 6, modulus counter MMCSM6 (CNT / ML / SCRD / SCR): the boot time base (was mios_mmcsm_cnt; PR #53 round 95)
+0x00306030,mios_mmcsm6,mios_mmcsm_t,MIOS1 submodule 6, modulus counter MMCSM6 (CNT / ML / SCRD / SCR): the boot time base (was mios_mmcsm_cnt; PR #53 round 95)
 0x00306058,mios_mdasm11,mios_mdasm_t,(was MIOS_MDASM11_AR)
 0x00306060,mios_mdasm12,mios_mdasm_t,(was MIOS_MDASM12_AR)
 0x00306068,mios_mdasm13,mios_mdasm_t,(was MIOS_MDASM13_AR)
@@ -967,7 +967,7 @@ address,name,type,comment
 0x00306088,mios_mpwmsm17,mios_mpwmsm_t,MIOS1 submodule 17 (PWM): cm848_miosPwm17* - was MIOS_MDASM1_AR (was MIOS_MPWMSM17_PERR)
 0x00306090,mios_mpwmsm18,mios_mpwmsm_t,MIOS1 submodule 18 (PWM): cm848_miosPwm18* - was MIOS_MDASM2_AR (was MIOS_MPWMSM18_PERR)
 0x00306098,mios_mpwmsm19,mios_mpwmsm_t,MIOS1 submodule 19 (PWM): cm848_miosPwm19* - was MIOS_MDASM3_AR (was MIOS_MPWMSM19_PERR)
-0x003060b0,mios_mmcsm22,mios_mmcsm_b_t,MIOS1 submodule 22 (modulus counter): ML (+2) is the shared PWM period - mpc555_miosSetChannelPwmPeriod writes it (-(value x 20) - 1) and mpc555_miosSetChannelPwmDuty scales MDASM duty edges from it - was MIOS_MDASM6_AR / _BR / _SCRD
+0x003060b0,mios_mmcsm22,mios_mmcsm_t,MIOS1 submodule 22 (modulus counter): ML (+2) is the shared PWM period - mpc555_miosSetChannelPwmPeriod writes it (-(value x 20) - 1) and mpc555_miosSetChannelPwmDuty scales MDASM duty edges from it - was MIOS_MDASM6_AR / _BR / _SCRD
 0x003060d8,mios_mdasm27,mios_mdasm_t,
 0x003060e0,mios_mdasm28,mios_mdasm_t,MIOS1 submodule 28: cm848_miosChannel28* pass this base; SCR (+6) bit 15 = the MDA28 pin = discrete input line 126 - was MIOS_MIOS1TPCR / MIOS_MPWMSM4_*
 0x003060e8,mios_mdasm29,mios_mdasm_t,MIOS1 submodule 29: cm848_miosChannel29* pass this base; SCR (+6) bit 15 = the MDA29 pin = discrete input line 127 - was MIOS_MPWMSM5_* (mios_mpwmsm5_t)
@@ -975,7 +975,7 @@ address,name,type,comment
 0x003060f8,mios_mdasm31,mios_mdasm_t,MIOS1 submodule 31: cm848_miosChannel31* pass this base (was MIOS_MIOS1RPR / MIOS_MIOS1LVL)
 0x00306100,mios_mpiosm32,mios_mpiosm_t,MIOS1 16-bit parallel port I/O submodule (submodule 32 at 0x306000 + 8 x 32): data / data_direction (was mios1_ext_ctrl)
 0x00306816,MIOS_MCPSMSCR,word,MIOS1 counter prescaler submodule status/control register (0x306816 MCPSMSCR); the reset code writes 0x8000 = prescaler enable (was mios1_ext_816; PR #53 round 95)
-0x00306c00,mios1_isr,mios1_isr_t,
+0x00306c00,mios1_isr,mios1_interrupt_registers_t,
 0x00306c04,mios1_isr.EN,,
 0x00306c30,MIOS1LVL0,word,MIOS1 interrupt level register 0 (0x306C30 MIOS1LVL0) (was mios1_sched_ctrl; PR #53 round 95)
 0x00307080,toucan_a,toucan_module_registers_t,TouCAN A module registers (0x307080-0x3070a7; the 16 message buffers follow at 0x307100): mpc555_initCanController freezes the module (MCR 0x5000), sets CANCTRL0-2 / PRESDIV, the receive masks and CANICR, clears IMASK / IFLAG and every buffer's CODE byte, then leaves freeze; the mailbox writers take its address as their base. The register CSV and 19 rows here used to put the module at 0x307000 (no code touches 0x307000-0x30707f, raw lis scan) and message buffer 0 at this address (was toucan_a_mcr, typed as message buffer 0) (PR #53 round 25)

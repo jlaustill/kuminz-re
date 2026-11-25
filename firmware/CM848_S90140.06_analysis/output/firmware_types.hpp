@@ -1334,9 +1334,9 @@ typedef struct executive_frame_timing_t executive_frame_timing_t;
 typedef struct j1939_dm13_requester_slot_t j1939_dm13_requester_slot_t;
 typedef struct combustion_chi_maximum_fuel_points_t combustion_chi_maximum_fuel_points_t;
 typedef struct fault_entry_t fault_entry_t;
-typedef struct usiu_pit_t usiu_pit_t;
-typedef struct usiu_clock_t usiu_clock_t;
-typedef struct usiu_memc_t usiu_memc_t;
+typedef struct usiu_periodic_interrupt_timer_t usiu_periodic_interrupt_timer_t;
+typedef struct usiu_clocks_and_reset_t usiu_clocks_and_reset_t;
+typedef struct usiu_memory_controller_t usiu_memory_controller_t;
 typedef struct siu_gpio_data_register_t siu_gpio_data_register_t;
 typedef struct discrete_line_image_t discrete_line_image_t;
 typedef struct mios_port_data_register_t mios_port_data_register_t;
@@ -1345,22 +1345,22 @@ typedef struct tsc1_source_configuration_t tsc1_source_configuration_t;
 typedef struct tpu3_module_registers_t tpu3_module_registers_t;
 typedef struct mios_mpwmsm_t mios_mpwmsm_t;
 typedef struct mios_mdasm_t mios_mdasm_t;
-typedef struct qadc64_regs_t qadc64_regs_t;
-typedef struct tpu3_ch_params_t tpu3_ch_params_t;
-typedef struct tpua_ch1_params_t tpua_ch1_params_t;
-typedef struct tpua_ch9_params_t tpua_ch9_params_t;
-typedef struct tpua_ch12_params_t tpua_ch12_params_t;
-typedef struct tpua_ch14_params_t tpua_ch14_params_t;
-typedef struct tpub_ch0_params_t tpub_ch0_params_t;
-typedef struct tpub_ch11_params_t tpub_ch11_params_t;
-typedef struct tpub_ch14_params_t tpub_ch14_params_t;
-typedef struct mios_mmcsm_b_t mios_mmcsm_b_t;
+typedef struct qadc64_registers_t qadc64_registers_t;
+typedef struct tpu3_channel_parameters_t tpu3_channel_parameters_t;
+typedef struct tpu_a_channel_1_parameters_t tpu_a_channel_1_parameters_t;
+typedef struct tpu_a_channel_9_parameters_t tpu_a_channel_9_parameters_t;
+typedef struct tpu_a_channel_12_parameters_t tpu_a_channel_12_parameters_t;
+typedef struct tpu_a_channel_14_parameters_t tpu_a_channel_14_parameters_t;
+typedef struct tpu_b_channel_0_parameters_t tpu_b_channel_0_parameters_t;
+typedef struct tpu_b_channel_11_parameters_t tpu_b_channel_11_parameters_t;
+typedef struct tpu_b_channel_14_parameters_t tpu_b_channel_14_parameters_t;
+typedef struct mios_mmcsm_t mios_mmcsm_t;
 typedef struct toucan_module_registers_t toucan_module_registers_t;
 typedef struct toucan_message_buffer_t toucan_message_buffer_t;
-typedef struct qsmcm_sci1_regs_t qsmcm_sci1_regs_t;
-typedef struct qsmcm_qspi_ctrl_t qsmcm_qspi_ctrl_t;
-typedef struct qsmcm_recram_t qsmcm_recram_t;
-typedef struct qsmcm_txram_t qsmcm_txram_t;
+typedef struct qsmcm_sci1_registers_t qsmcm_sci1_registers_t;
+typedef struct qsmcm_qspi_control_registers_t qsmcm_qspi_control_registers_t;
+typedef struct qsmcm_receive_ram_t qsmcm_receive_ram_t;
+typedef struct qsmcm_transmit_ram_t qsmcm_transmit_ram_t;
 typedef struct keyon_flags_t keyon_flags_t;
 typedef struct boot_can_transmit_frame_t boot_can_transmit_frame_t;
 typedef struct can_ring_state_t can_ring_state_t;
@@ -1368,13 +1368,13 @@ typedef struct diag_write_request_state_t diag_write_request_state_t;
 typedef struct can_slot_range_t can_slot_range_t;
 typedef struct can_rx_channel_t can_rx_channel_t;
 typedef struct system_initialization_flags_t system_initialization_flags_t;
-typedef struct eeprom_xfer_state_t eeprom_xfer_state_t;
+typedef struct eeprom_transfer_state_t eeprom_transfer_state_t;
 typedef struct eeprom_block_tracking_t eeprom_block_tracking_t;
 typedef struct download_block_range_t download_block_range_t;
 typedef struct j1939_transport_transmit_session_t j1939_transport_transmit_session_t;
 typedef struct boot_state_t boot_state_t;
 typedef struct mios_mpiosm_t mios_mpiosm_t;
-typedef struct mios1_isr_t mios1_isr_t;
+typedef struct mios1_interrupt_registers_t mios1_interrupt_registers_t;
 typedef struct diag_clear_flags_t diag_clear_flags_t;
 typedef struct j1939_ccss_tx_payload_t j1939_ccss_tx_payload_t;
 typedef struct pci_message_descriptor_t pci_message_descriptor_t;
@@ -2659,7 +2659,7 @@ struct fault_entry_t {
     uint16_t status_flags;  /* Fault entry status/severity flags (bit 0 = newly active) */
 };
 
-struct usiu_pit_t {
+struct usiu_periodic_interrupt_timer_t {
     uint16_t PISCR;  /* PIT Status and Control Register (firmware writes 0x101 to enable PIE+PS) */
     uint16_t _pad_piscr;  /* Padding after PISCR (16-bit register in 32-bit slot) */
     uint16_t PITC;  /* PIT Count Register (firmware writes 4999 for 5000-count period) */
@@ -2667,7 +2667,7 @@ struct usiu_pit_t {
     uint16_t PITR;  /* PIT Register (read-only current count value) */
 };
 
-struct usiu_clock_t {
+struct usiu_clocks_and_reset_t {
     uint32_t SCCR;  /* System Clock Control Register (firmware writes 0x2010000/0xe010000) */
     uint32_t PLPRCR;  /* PLL Low Power and Reset Control Register (firmware writes 0x1304001) */
     uint16_t RSR;  /* Reset Status Register (read at startup then cleared with 0xFFFF) */
@@ -2677,7 +2677,7 @@ struct usiu_clock_t {
     uint16_t VSRMCR;  /* VDD Sense Mode Control Register (firmware writes 0x400) */
 };
 
-struct usiu_memc_t {
+struct usiu_memory_controller_t {
     uint32_t BR0;  /* Base Register 0 (Flash2 chip select) */
     uint32_t OR0;  /* Option Register 0 */
     uint32_t BR1;  /* Base Register 1 (RAM chip select) */
@@ -2819,7 +2819,7 @@ struct mios_mdasm_t {
     uint16_t SCR;  /* Status/Control Register (mode bits: 0x9 = output PWM / 1 = input; bit 15 = the pin state) (was SCRD; MPC555UM: SCRD is the +4 duplicate; PR #53 round 95) */
 };
 
-struct qadc64_regs_t {
+struct qadc64_registers_t {
     uint16_t MCR;  /* Module Configuration Register (bit15=QSTOP) */
     uint16_t TEST;  /* Test Register (reserved/debug) */
     uint16_t INTC;  /* Interrupt Configure Register */
@@ -2831,7 +2831,7 @@ struct qadc64_regs_t {
     uint16_t QASR0;  /* QADC64 Status Register 0: the CF1 / PF1 / CF2 / PF2 queue flags / trigger overruns / queue status and the command word pointer (MPC555UM 13.12; was LJURR: the CCW table is at +0x200 and the result registers at +0x280 / +0x300 / +0x380; PR #53 round 95) */
 };
 
-struct tpu3_ch_params_t {
+struct tpu3_channel_parameters_t {
     uint16_t PARAM0;  /* Channel parameter 0 (SCR/function config) */
     uint16_t PARAM1;  /* Channel parameter 1 */
     uint16_t PARAM2;  /* Channel parameter 2 */
@@ -2842,7 +2842,7 @@ struct tpu3_ch_params_t {
     uint16_t PARAM7;  /* Channel parameter 7 */
 };
 
-struct tpua_ch1_params_t {
+struct tpu_a_channel_1_parameters_t {
     uint16_t PARAM0;  /* Channel 1 parameter 0 */
     uint16_t PARAM1;  /* Channel 1 parameter 1 */
     uint16_t PARAM2;  /* Channel 1 parameter 2 */
@@ -2853,7 +2853,7 @@ struct tpua_ch1_params_t {
     uint16_t PARAM7;  /* Channel 1 parameter 7 */
 };
 
-struct tpua_ch9_params_t {
+struct tpu_a_channel_9_parameters_t {
     uint16_t PARAM0;  /* Channel 9 parameter 0 */
     uint16_t PARAM1;  /* Channel 9 parameter 1 */
     uint16_t PARAM2;  /* Channel 9 parameter 2 */
@@ -2864,7 +2864,7 @@ struct tpua_ch9_params_t {
     uint16_t PARAM7;  /* Channel 9 parameter 7 */
 };
 
-struct tpua_ch12_params_t {
+struct tpu_a_channel_12_parameters_t {
     uint16_t PARAM0;  /* Channel 12 parameter 0 */
     uint16_t PARAM1;  /* Channel 12 parameter 1 */
     uint16_t PARAM2;  /* Channel 12 parameter 2 */
@@ -2875,7 +2875,7 @@ struct tpua_ch12_params_t {
     uint16_t PARAM7;  /* Channel 12 parameter 7 */
 };
 
-struct tpua_ch14_params_t {
+struct tpu_a_channel_14_parameters_t {
     uint16_t PARAM0;  /* Channel 14 parameter 0 */
     uint16_t PARAM1;  /* Channel 14 parameter 1 */
     uint16_t PARAM2;  /* Channel 14 parameter 2 */
@@ -2886,7 +2886,7 @@ struct tpua_ch14_params_t {
     uint16_t PARAM7;  /* Channel 14 parameter 7 */
 };
 
-struct tpub_ch0_params_t {
+struct tpu_b_channel_0_parameters_t {
     uint16_t PARAM0;  /* TPUB Channel 0 parameter 0 */
     uint16_t PARAM1;  /* TPUB Channel 0 parameter 1 */
     uint16_t PARAM2;  /* TPUB Channel 0 parameter 2 */
@@ -2897,7 +2897,7 @@ struct tpub_ch0_params_t {
     uint16_t PARAM7;  /* TPUB Channel 0 parameter 7 */
 };
 
-struct tpub_ch11_params_t {
+struct tpu_b_channel_11_parameters_t {
     uint16_t PARAM0;  /* TPUB Channel 11 parameter 0 */
     uint16_t PARAM1;  /* TPUB Channel 11 parameter 1 */
     uint16_t PARAM2;  /* TPUB Channel 11 parameter 2 */
@@ -2908,7 +2908,7 @@ struct tpub_ch11_params_t {
     uint16_t PARAM7;  /* TPUB Channel 11 parameter 7 */
 };
 
-struct tpub_ch14_params_t {
+struct tpu_b_channel_14_parameters_t {
     uint16_t PARAM0;  /* TPUB Channel 14 parameter 0 */
     uint16_t PARAM1;  /* TPUB Channel 14 parameter 1 */
     uint16_t PARAM2;  /* TPUB Channel 14 parameter 2 */
@@ -2919,7 +2919,7 @@ struct tpub_ch14_params_t {
     uint16_t PARAM7;  /* TPUB Channel 14 parameter 7 */
 };
 
-struct mios_mmcsm_b_t {
+struct mios_mmcsm_t {
     uint16_t CNT;  /* Up-Counter Register */
     uint16_t ML;  /* Modulus Latch Register (period/reload value) */
     uint16_t SCRD;  /* Status/Control Register Duplicated: the same register as SCR (MPC555UM 15.10.1.3); not accessed here (was _pad; PR #53 round 95) */
@@ -2958,14 +2958,14 @@ struct toucan_message_buffer_t {
     uint16_t RESERVED;  /* Reserved */
 };
 
-struct qsmcm_sci1_regs_t {
+struct qsmcm_sci1_registers_t {
     uint16_t SCC1R0;  /* SCI1 Control Register 0 (baud/config) */
     uint16_t SCC1R1;  /* SCI1 Control Register 1 (interrupt enables) */
     uint16_t SC1SR;  /* SCI1 Status Register (TDRE/RDRF/OR/FE/NF/PF) */
     uint16_t SC1DR;  /* SCI1 Data Register (read=RX data write=TX data) */
 };
 
-struct qsmcm_qspi_ctrl_t {
+struct qsmcm_qspi_control_registers_t {
     uint16_t SPCR0;  /* QSPI control 0: MSTR / bit size / CPOL / CPHA / baud (sth) */
     uint16_t SPCR1;  /* QSPI control 1: bit 15 = SPE (start) / DSCKL / DTL delays (sth) */
     uint16_t SPCR2;  /* QSPI queue pointers (ENDQP bits 12-8 / NEWQP bits 4-0) */
@@ -2973,7 +2973,7 @@ struct qsmcm_qspi_ctrl_t {
     uint8_t SPSR;  /* QSPI status: bit 0x80 = SPIF (queue finished; cleared by cm848_onQspiFinished) */
 };
 
-struct qsmcm_recram_t {
+struct qsmcm_receive_ram_t {
     uint16_t RX0;  /* QSPI Receive RAM entry 0 */
     uint16_t RX1;  /* QSPI Receive RAM entry 1 */
     uint16_t RX2;  /* QSPI Receive RAM entry 2 */
@@ -2982,7 +2982,7 @@ struct qsmcm_recram_t {
     uint16_t RX5;  /* QSPI Receive RAM entry 5 */
 };
 
-struct qsmcm_txram_t {
+struct qsmcm_transmit_ram_t {
     uint16_t TX0;  /* QSPI Transmit RAM entry 0 (SPI opcode byte) */
     uint16_t TX1;  /* QSPI Transmit RAM entry 1 (SPI write command byte) */
     uint16_t TX2;  /* QSPI Transmit RAM entry 2 (EEPROM address / SPI data) */
@@ -3036,7 +3036,7 @@ struct system_initialization_flags_t {
     uint16_t initialization_counter;  /* 0, stored by mpc555_systemInitialization; no reader in the .cpp (was init_counter) | earlier note: System initialization counter (zeroed at startup) */
 };
 
-struct eeprom_xfer_state_t {
+struct eeprom_transfer_state_t {
     uint32_t bytes_transferred;  /* Current byte offset progress in EEPROM transfer block */
     uint32_t block_length;  /* Total bytes in current EEPROM transfer block */
     uint16_t _pad8;  /* Reserved */
@@ -3083,7 +3083,7 @@ struct mios_mpiosm_t {
     uint16_t data_direction;  /* Port data direction register: bit n set = pin n is an output (0x2000 at startup / 0x200 / 0x8200 before driving pins 9 and 15) */
 };
 
-struct mios1_isr_t {
+struct mios1_interrupt_registers_t {
     uint16_t FLG;  /* MIOS1 interrupt flag register (bits cleared on service) */
     uint16_t _pad2;  /* Reserved */
     uint16_t EN;  /* MIOS1 interrupt enable register (channel mask) */

@@ -1245,36 +1245,36 @@ fault_entry_t,,status_flags,word,2,Fault entry status/severity flags (bit 0 = ne
 # Reference: RTEMS MPC555 BSP usiu_ struct; confirmed by firmware access patterns
 # Total size: 10 bytes (0x002FC240-0x002FC249)
 # =============================================================================
-usiu_pit_t,0x002fc240,PISCR,word,2,PIT Status and Control Register (firmware writes 0x101 to enable PIE+PS),,verified
-usiu_pit_t,0x002fc240,_pad_piscr,word,2,Padding after PISCR (16-bit register in 32-bit slot),,verified
-usiu_pit_t,0x002fc240,PITC,word,2,PIT Count Register (firmware writes 4999 for 5000-count period),,verified
-usiu_pit_t,0x002fc240,_pad_pitc,word,2,Padding after PITC,,verified
-usiu_pit_t,0x002fc240,PITR,word,2,PIT Register (read-only current count value),,verified
+usiu_periodic_interrupt_timer_t,0x002fc240,PISCR,word,2,PIT Status and Control Register (firmware writes 0x101 to enable PIE+PS),,verified
+usiu_periodic_interrupt_timer_t,0x002fc240,_pad_piscr,word,2,Padding after PISCR (16-bit register in 32-bit slot),,verified
+usiu_periodic_interrupt_timer_t,0x002fc240,PITC,word,2,PIT Count Register (firmware writes 4999 for 5000-count period),,verified
+usiu_periodic_interrupt_timer_t,0x002fc240,_pad_pitc,word,2,Padding after PITC,,verified
+usiu_periodic_interrupt_timer_t,0x002fc240,PITR,word,2,PIT Register (read-only current count value),,verified
 # =============================================================================
 # USIU Clock/Reset Sub-structure - System clock and reset registers at 0x002FC280
 # Reference: RTEMS MPC555 BSP usiu_ struct; SCCR/RSR/COLIR confirmed by firmware behavior
 # Total size: 18 bytes (0x002FC280-0x002FC291)
 # =============================================================================
-usiu_clock_t,0x002fc280,SCCR,dword,4,System Clock Control Register (firmware writes 0x2010000/0xe010000),,verified
-usiu_clock_t,0x002fc280,PLPRCR,dword,4,PLL Low Power and Reset Control Register (firmware writes 0x1304001),,verified
-usiu_clock_t,0x002fc280,RSR,word,2,Reset Status Register (read at startup then cleared with 0xFFFF),,verified
-usiu_clock_t,0x002fc280,_pad_rsr,word,2,Padding after RSR (16-bit register in 32-bit slot),,verified
-usiu_clock_t,0x002fc280,COLIR,word,2,Change of Lock Interrupt Register,,verified
-usiu_clock_t,0x002fc280,_pad_colir,word,2,Padding after COLIR,,verified
-usiu_clock_t,0x002fc280,VSRMCR,word,2,VDD Sense Mode Control Register (firmware writes 0x400),,verified
+usiu_clocks_and_reset_t,0x002fc280,SCCR,dword,4,System Clock Control Register (firmware writes 0x2010000/0xe010000),,verified
+usiu_clocks_and_reset_t,0x002fc280,PLPRCR,dword,4,PLL Low Power and Reset Control Register (firmware writes 0x1304001),,verified
+usiu_clocks_and_reset_t,0x002fc280,RSR,word,2,Reset Status Register (read at startup then cleared with 0xFFFF),,verified
+usiu_clocks_and_reset_t,0x002fc280,_pad_rsr,word,2,Padding after RSR (16-bit register in 32-bit slot),,verified
+usiu_clocks_and_reset_t,0x002fc280,COLIR,word,2,Change of Lock Interrupt Register,,verified
+usiu_clocks_and_reset_t,0x002fc280,_pad_colir,word,2,Padding after COLIR,,verified
+usiu_clocks_and_reset_t,0x002fc280,VSRMCR,word,2,VDD Sense Mode Control Register (firmware writes 0x400),,verified
 # =============================================================================
 # USIU Memory Controller Sub-structure - Bank registers at 0x002FC100
 # 4 banks with BR (Base Register) and OR (Option Register) pairs
 # Total size: 32 bytes (0x002FC100-0x002FC11F)
 # =============================================================================
-usiu_memc_t,0x002fc100,BR0,dword,4,Base Register 0 (Flash2 chip select),,verified
-usiu_memc_t,0x002fc100,OR0,dword,4,Option Register 0,,verified
-usiu_memc_t,0x002fc100,BR1,dword,4,Base Register 1 (RAM chip select),,verified
-usiu_memc_t,0x002fc100,OR1,dword,4,Option Register 1,,verified
-usiu_memc_t,0x002fc100,BR2,dword,4,Base Register 2,,verified
-usiu_memc_t,0x002fc100,OR2,dword,4,Option Register 2,,verified
-usiu_memc_t,0x002fc100,BR3,dword,4,Base Register 3,,verified
-usiu_memc_t,0x002fc100,OR3,dword,4,Option Register 3,,verified
+usiu_memory_controller_t,0x002fc100,BR0,dword,4,Base Register 0 (Flash2 chip select),,verified
+usiu_memory_controller_t,0x002fc100,OR0,dword,4,Option Register 0,,verified
+usiu_memory_controller_t,0x002fc100,BR1,dword,4,Base Register 1 (RAM chip select),,verified
+usiu_memory_controller_t,0x002fc100,OR1,dword,4,Option Register 1,,verified
+usiu_memory_controller_t,0x002fc100,BR2,dword,4,Base Register 2,,verified
+usiu_memory_controller_t,0x002fc100,OR2,dword,4,Option Register 2,,verified
+usiu_memory_controller_t,0x002fc100,BR3,dword,4,Base Register 3,,verified
+usiu_memory_controller_t,0x002fc100,OR3,dword,4,Option Register 3,,verified
 # =============================================================================
 # SIU GPIO data register - one 32-bit register seen as its 4 bytes (big-endian: byte_0 = bits 31-24)
 # Type-only template, used by SIU_SGPIODT1 (0x2fc024) / SIU_SGPIODT2 (0x2fc028) in global_variables.csv and by
@@ -1441,103 +1441,103 @@ mios_mdasm_t,0x00306070,,,,MDASM14 instance - marker only (was byte-typed regist
 mios_mdasm_t,0x00306078,,,,MDASM15 instance - marker only (was mios_mdasm15_t),,verified
 mios_mdasm_t,0x003060d8,,,,MDASM27 instance - marker only (was mios_mdasm27_t) - SCR 0x405 = enable / 0x205 = mode,,verified
 # =============================================================================
-# MIOS Modulus Counter Submodule (MMCSM) - 4 x u16 = 8 bytes: type mios_mmcsm_b_t (defined further down)
+# MIOS Modulus Counter Submodule (MMCSM) - 4 x u16 = 8 bytes: type mios_mmcsm_t (defined further down)
 # MMCSM6 = mios_mmcsm6 at 0x306030 and MMCSM22 = mios_mmcsm22 at 0x3060b0 (submodule n at 0x306000 + 8 x n).
-# The old mios_mmcsm_t at 0x306020 was a fake: this firmware never accesses 0x306020-0x30602f. (PR #48)
+# An earlier type named mios_mmcsm_t, at 0x306020, was a fake: this firmware never accesses 0x306020-0x30602f (PR #48). Since PR #53 round 96 mios_mmcsm_t is the real MMCSM layout below (was mios_mmcsm_b_t).
 # =============================================================================
-# QADC64 module registers - qadc64_regs_t, one type for QADC64 A (0x304800) and B (0x304c00 marker row)
+# QADC64 module registers - qadc64_registers_t, one type for QADC64 A (0x304800) and B (0x304c00 marker row)
 # Applied at QADC64A (0x304800) and QADC64B (0x304C00) bus-interface blocks
 # Fields from the MPC555 User's Manual 13.12 (PR #53 round 95): +0xA-0x10 are QACR0-2 / QASR0, not the CCW / result tables
 # =============================================================================
 # QADC64 Module Control Registers - 18 bytes (9 x u16)
-qadc64_regs_t,0x00304800,MCR,word,2,Module Configuration Register (bit15=QSTOP),,verified
-qadc64_regs_t,0x00304800,TEST,word,2,Test Register (reserved/debug),,verified
-qadc64_regs_t,0x00304800,INTC,word,2,Interrupt Configure Register,,verified
-qadc64_regs_t,0x00304800,PORTQA_B,word,2,Port QA (high byte) and QB (low byte) Data Registers,,verified
-qadc64_regs_t,0x00304800,DDRQA_B,word,2,Port QA (high byte) and QB (low byte) Data Direction Registers,,verified
-qadc64_regs_t,0x00304800,QACR0,word,2,QADC64 Control Register 0: the QCLK prescaler fields and external multiplexing (written once at initialization) (MPC555UM 13.12; was CCW: the CCW table is at +0x200 and the result registers at +0x280 / +0x300 / +0x380; PR #53 round 95),,verified
-qadc64_regs_t,0x00304800,QACR1,word,2,QADC64 Control Register 1: queue 1's completion / pause interrupt enables and operating mode (MPC555UM 13.12; was RJURR: the CCW table is at +0x200 and the result registers at +0x280 / +0x300 / +0x380; PR #53 round 95),,verified
-qadc64_regs_t,0x00304800,QACR2,word,2,QADC64 Control Register 2: queue 2's interrupt enables / operating mode and resume pointer (MPC555UM 13.12; was LJSRR: the CCW table is at +0x200 and the result registers at +0x280 / +0x300 / +0x380; PR #53 round 95),,verified
-qadc64_regs_t,0x00304800,QASR0,word,2,QADC64 Status Register 0: the CF1 / PF1 / CF2 / PF2 queue flags / trigger overruns / queue status and the command word pointer (MPC555UM 13.12; was LJURR: the CCW table is at +0x200 and the result registers at +0x280 / +0x300 / +0x380; PR #53 round 95),,verified
-qadc64_regs_t,0x00304c00,,,,QADC64 module B registers - marker only (was the separate type qadc64b_regs_t; PR #53 round 95),,verified
+qadc64_registers_t,0x00304800,MCR,word,2,Module Configuration Register (bit15=QSTOP),,verified
+qadc64_registers_t,0x00304800,TEST,word,2,Test Register (reserved/debug),,verified
+qadc64_registers_t,0x00304800,INTC,word,2,Interrupt Configure Register,,verified
+qadc64_registers_t,0x00304800,PORTQA_B,word,2,Port QA (high byte) and QB (low byte) Data Registers,,verified
+qadc64_registers_t,0x00304800,DDRQA_B,word,2,Port QA (high byte) and QB (low byte) Data Direction Registers,,verified
+qadc64_registers_t,0x00304800,QACR0,word,2,QADC64 Control Register 0: the QCLK prescaler fields and external multiplexing (written once at initialization) (MPC555UM 13.12; was CCW: the CCW table is at +0x200 and the result registers at +0x280 / +0x300 / +0x380; PR #53 round 95),,verified
+qadc64_registers_t,0x00304800,QACR1,word,2,QADC64 Control Register 1: queue 1's completion / pause interrupt enables and operating mode (MPC555UM 13.12; was RJURR: the CCW table is at +0x200 and the result registers at +0x280 / +0x300 / +0x380; PR #53 round 95),,verified
+qadc64_registers_t,0x00304800,QACR2,word,2,QADC64 Control Register 2: queue 2's interrupt enables / operating mode and resume pointer (MPC555UM 13.12; was LJSRR: the CCW table is at +0x200 and the result registers at +0x280 / +0x300 / +0x380; PR #53 round 95),,verified
+qadc64_registers_t,0x00304800,QASR0,word,2,QADC64 Status Register 0: the CF1 / PF1 / CF2 / PF2 queue flags / trigger overruns / queue status and the command word pointer (MPC555UM 13.12; was LJURR: the CCW table is at +0x200 and the result registers at +0x280 / +0x300 / +0x380; PR #53 round 95),,verified
+qadc64_registers_t,0x00304c00,,,,QADC64 module B registers - marker only (was the separate type qadc64b_regs_t; PR #53 round 95),,verified
 # =============================================================================
 # TPU3 Channel Parameter Block - 16 bytes (8 x u16 parameters)
 # Applied at TPUA_CH0 (0x304100); same layout for all channels of TPUA/TPUB
 # Parameters encode function-specific data (SCR, compare values, period captures)
 # =============================================================================
-tpu3_ch_params_t,0x00304100,PARAM0,word,2,Channel parameter 0 (SCR/function config),,verified
-tpu3_ch_params_t,0x00304100,PARAM1,word,2,Channel parameter 1,,verified
-tpu3_ch_params_t,0x00304100,PARAM2,word,2,Channel parameter 2,,verified
-tpu3_ch_params_t,0x00304100,PARAM3,word,2,Channel parameter 3,,verified
-tpu3_ch_params_t,0x00304100,PARAM4,word,2,Channel parameter 4,,verified
-tpu3_ch_params_t,0x00304100,PARAM5,word,2,Channel parameter 5,,verified
-tpu3_ch_params_t,0x00304100,PARAM6,word,2,Channel parameter 6,,verified
-tpu3_ch_params_t,0x00304100,PARAM7,word,2,Channel parameter 7,,verified
+tpu3_channel_parameters_t,0x00304100,PARAM0,word,2,Channel parameter 0 (SCR/function config),,verified
+tpu3_channel_parameters_t,0x00304100,PARAM1,word,2,Channel parameter 1,,verified
+tpu3_channel_parameters_t,0x00304100,PARAM2,word,2,Channel parameter 2,,verified
+tpu3_channel_parameters_t,0x00304100,PARAM3,word,2,Channel parameter 3,,verified
+tpu3_channel_parameters_t,0x00304100,PARAM4,word,2,Channel parameter 4,,verified
+tpu3_channel_parameters_t,0x00304100,PARAM5,word,2,Channel parameter 5,,verified
+tpu3_channel_parameters_t,0x00304100,PARAM6,word,2,Channel parameter 6,,verified
+tpu3_channel_parameters_t,0x00304100,PARAM7,word,2,Channel parameter 7,,verified
 # =============================================================================
 # TPUA additional channel parameter blocks
 # Each channel occupies 16 bytes (8 × u16); base = TPUA_base + 0x100 + (ch × 0x10)
 # Separate type per channel required for ApplyStructures to place at each address
 # =============================================================================
-tpua_ch1_params_t,0x00304110,PARAM0,word,2,Channel 1 parameter 0,,verified
-tpua_ch1_params_t,0x00304110,PARAM1,word,2,Channel 1 parameter 1,,verified
-tpua_ch1_params_t,0x00304110,PARAM2,word,2,Channel 1 parameter 2,,verified
-tpua_ch1_params_t,0x00304110,PARAM3,word,2,Channel 1 parameter 3,,verified
-tpua_ch1_params_t,0x00304110,PARAM4,word,2,Channel 1 parameter 4,,verified
-tpua_ch1_params_t,0x00304110,PARAM5,word,2,Channel 1 parameter 5,,verified
-tpua_ch1_params_t,0x00304110,PARAM6,word,2,Channel 1 parameter 6,,verified
-tpua_ch1_params_t,0x00304110,PARAM7,word,2,Channel 1 parameter 7,,verified
-tpua_ch9_params_t,0x00304190,PARAM0,word,2,Channel 9 parameter 0,,verified
-tpua_ch9_params_t,0x00304190,PARAM1,word,2,Channel 9 parameter 1,,verified
-tpua_ch9_params_t,0x00304190,PARAM2,word,2,Channel 9 parameter 2,,verified
-tpua_ch9_params_t,0x00304190,PARAM3,word,2,Channel 9 parameter 3,,verified
-tpua_ch9_params_t,0x00304190,PARAM4,word,2,Channel 9 parameter 4,,verified
-tpua_ch9_params_t,0x00304190,PARAM5,word,2,Channel 9 parameter 5,,verified
-tpua_ch9_params_t,0x00304190,PARAM6,word,2,Channel 9 parameter 6,,verified
-tpua_ch9_params_t,0x00304190,PARAM7,word,2,Channel 9 parameter 7,,verified
-tpua_ch12_params_t,0x003041c0,PARAM0,word,2,Channel 12 parameter 0,,verified
-tpua_ch12_params_t,0x003041c0,PARAM1,word,2,Channel 12 parameter 1,,verified
-tpua_ch12_params_t,0x003041c0,PARAM2,word,2,Channel 12 parameter 2,,verified
-tpua_ch12_params_t,0x003041c0,PARAM3,word,2,Channel 12 parameter 3,,verified
-tpua_ch12_params_t,0x003041c0,PARAM4,word,2,Channel 12 parameter 4,,verified
-tpua_ch12_params_t,0x003041c0,PARAM5,word,2,Channel 12 parameter 5,,verified
-tpua_ch12_params_t,0x003041c0,PARAM6,word,2,Channel 12 parameter 6,,verified
-tpua_ch12_params_t,0x003041c0,PARAM7,word,2,Channel 12 parameter 7,,verified
-tpua_ch14_params_t,0x003041e0,PARAM0,word,2,Channel 14 parameter 0,,verified
-tpua_ch14_params_t,0x003041e0,PARAM1,word,2,Channel 14 parameter 1,,verified
-tpua_ch14_params_t,0x003041e0,PARAM2,word,2,Channel 14 parameter 2,,verified
-tpua_ch14_params_t,0x003041e0,PARAM3,word,2,Channel 14 parameter 3,,verified
-tpua_ch14_params_t,0x003041e0,PARAM4,word,2,Channel 14 parameter 4,,verified
-tpua_ch14_params_t,0x003041e0,PARAM5,word,2,Channel 14 parameter 5,,verified
-tpua_ch14_params_t,0x003041e0,PARAM6,word,2,Channel 14 parameter 6,,verified
-tpua_ch14_params_t,0x003041e0,PARAM7,word,2,Channel 14 parameter 7,,verified
+tpu_a_channel_1_parameters_t,0x00304110,PARAM0,word,2,Channel 1 parameter 0,,verified
+tpu_a_channel_1_parameters_t,0x00304110,PARAM1,word,2,Channel 1 parameter 1,,verified
+tpu_a_channel_1_parameters_t,0x00304110,PARAM2,word,2,Channel 1 parameter 2,,verified
+tpu_a_channel_1_parameters_t,0x00304110,PARAM3,word,2,Channel 1 parameter 3,,verified
+tpu_a_channel_1_parameters_t,0x00304110,PARAM4,word,2,Channel 1 parameter 4,,verified
+tpu_a_channel_1_parameters_t,0x00304110,PARAM5,word,2,Channel 1 parameter 5,,verified
+tpu_a_channel_1_parameters_t,0x00304110,PARAM6,word,2,Channel 1 parameter 6,,verified
+tpu_a_channel_1_parameters_t,0x00304110,PARAM7,word,2,Channel 1 parameter 7,,verified
+tpu_a_channel_9_parameters_t,0x00304190,PARAM0,word,2,Channel 9 parameter 0,,verified
+tpu_a_channel_9_parameters_t,0x00304190,PARAM1,word,2,Channel 9 parameter 1,,verified
+tpu_a_channel_9_parameters_t,0x00304190,PARAM2,word,2,Channel 9 parameter 2,,verified
+tpu_a_channel_9_parameters_t,0x00304190,PARAM3,word,2,Channel 9 parameter 3,,verified
+tpu_a_channel_9_parameters_t,0x00304190,PARAM4,word,2,Channel 9 parameter 4,,verified
+tpu_a_channel_9_parameters_t,0x00304190,PARAM5,word,2,Channel 9 parameter 5,,verified
+tpu_a_channel_9_parameters_t,0x00304190,PARAM6,word,2,Channel 9 parameter 6,,verified
+tpu_a_channel_9_parameters_t,0x00304190,PARAM7,word,2,Channel 9 parameter 7,,verified
+tpu_a_channel_12_parameters_t,0x003041c0,PARAM0,word,2,Channel 12 parameter 0,,verified
+tpu_a_channel_12_parameters_t,0x003041c0,PARAM1,word,2,Channel 12 parameter 1,,verified
+tpu_a_channel_12_parameters_t,0x003041c0,PARAM2,word,2,Channel 12 parameter 2,,verified
+tpu_a_channel_12_parameters_t,0x003041c0,PARAM3,word,2,Channel 12 parameter 3,,verified
+tpu_a_channel_12_parameters_t,0x003041c0,PARAM4,word,2,Channel 12 parameter 4,,verified
+tpu_a_channel_12_parameters_t,0x003041c0,PARAM5,word,2,Channel 12 parameter 5,,verified
+tpu_a_channel_12_parameters_t,0x003041c0,PARAM6,word,2,Channel 12 parameter 6,,verified
+tpu_a_channel_12_parameters_t,0x003041c0,PARAM7,word,2,Channel 12 parameter 7,,verified
+tpu_a_channel_14_parameters_t,0x003041e0,PARAM0,word,2,Channel 14 parameter 0,,verified
+tpu_a_channel_14_parameters_t,0x003041e0,PARAM1,word,2,Channel 14 parameter 1,,verified
+tpu_a_channel_14_parameters_t,0x003041e0,PARAM2,word,2,Channel 14 parameter 2,,verified
+tpu_a_channel_14_parameters_t,0x003041e0,PARAM3,word,2,Channel 14 parameter 3,,verified
+tpu_a_channel_14_parameters_t,0x003041e0,PARAM4,word,2,Channel 14 parameter 4,,verified
+tpu_a_channel_14_parameters_t,0x003041e0,PARAM5,word,2,Channel 14 parameter 5,,verified
+tpu_a_channel_14_parameters_t,0x003041e0,PARAM6,word,2,Channel 14 parameter 6,,verified
+tpu_a_channel_14_parameters_t,0x003041e0,PARAM7,word,2,Channel 14 parameter 7,,verified
 # =============================================================================
 # TPUB additional channel parameter blocks
 # Base = TPUB_base (0x304400) + 0x100 + (ch × 0x10)
 # =============================================================================
-tpub_ch0_params_t,0x00304500,PARAM0,word,2,TPUB Channel 0 parameter 0,,verified
-tpub_ch0_params_t,0x00304500,PARAM1,word,2,TPUB Channel 0 parameter 1,,verified
-tpub_ch0_params_t,0x00304500,PARAM2,word,2,TPUB Channel 0 parameter 2,,verified
-tpub_ch0_params_t,0x00304500,PARAM3,word,2,TPUB Channel 0 parameter 3,,verified
-tpub_ch0_params_t,0x00304500,PARAM4,word,2,TPUB Channel 0 parameter 4,,verified
-tpub_ch0_params_t,0x00304500,PARAM5,word,2,TPUB Channel 0 parameter 5,,verified
-tpub_ch0_params_t,0x00304500,PARAM6,word,2,TPUB Channel 0 parameter 6,,verified
-tpub_ch0_params_t,0x00304500,PARAM7,word,2,TPUB Channel 0 parameter 7,,verified
-tpub_ch11_params_t,0x003045b0,PARAM0,word,2,TPUB Channel 11 parameter 0,,verified
-tpub_ch11_params_t,0x003045b0,PARAM1,word,2,TPUB Channel 11 parameter 1,,verified
-tpub_ch11_params_t,0x003045b0,PARAM2,word,2,TPUB Channel 11 parameter 2,,verified
-tpub_ch11_params_t,0x003045b0,PARAM3,word,2,TPUB Channel 11 parameter 3,,verified
-tpub_ch11_params_t,0x003045b0,PARAM4,word,2,TPUB Channel 11 parameter 4,,verified
-tpub_ch11_params_t,0x003045b0,PARAM5,word,2,TPUB Channel 11 parameter 5,,verified
-tpub_ch11_params_t,0x003045b0,PARAM6,word,2,TPUB Channel 11 parameter 6,,verified
-tpub_ch11_params_t,0x003045b0,PARAM7,word,2,TPUB Channel 11 parameter 7,,verified
-tpub_ch14_params_t,0x003045e0,PARAM0,word,2,TPUB Channel 14 parameter 0,,verified
-tpub_ch14_params_t,0x003045e0,PARAM1,word,2,TPUB Channel 14 parameter 1,,verified
-tpub_ch14_params_t,0x003045e0,PARAM2,word,2,TPUB Channel 14 parameter 2,,verified
-tpub_ch14_params_t,0x003045e0,PARAM3,word,2,TPUB Channel 14 parameter 3,,verified
-tpub_ch14_params_t,0x003045e0,PARAM4,word,2,TPUB Channel 14 parameter 4,,verified
-tpub_ch14_params_t,0x003045e0,PARAM5,word,2,TPUB Channel 14 parameter 5,,verified
-tpub_ch14_params_t,0x003045e0,PARAM6,word,2,TPUB Channel 14 parameter 6,,verified
-tpub_ch14_params_t,0x003045e0,PARAM7,word,2,TPUB Channel 14 parameter 7,,verified
+tpu_b_channel_0_parameters_t,0x00304500,PARAM0,word,2,TPUB Channel 0 parameter 0,,verified
+tpu_b_channel_0_parameters_t,0x00304500,PARAM1,word,2,TPUB Channel 0 parameter 1,,verified
+tpu_b_channel_0_parameters_t,0x00304500,PARAM2,word,2,TPUB Channel 0 parameter 2,,verified
+tpu_b_channel_0_parameters_t,0x00304500,PARAM3,word,2,TPUB Channel 0 parameter 3,,verified
+tpu_b_channel_0_parameters_t,0x00304500,PARAM4,word,2,TPUB Channel 0 parameter 4,,verified
+tpu_b_channel_0_parameters_t,0x00304500,PARAM5,word,2,TPUB Channel 0 parameter 5,,verified
+tpu_b_channel_0_parameters_t,0x00304500,PARAM6,word,2,TPUB Channel 0 parameter 6,,verified
+tpu_b_channel_0_parameters_t,0x00304500,PARAM7,word,2,TPUB Channel 0 parameter 7,,verified
+tpu_b_channel_11_parameters_t,0x003045b0,PARAM0,word,2,TPUB Channel 11 parameter 0,,verified
+tpu_b_channel_11_parameters_t,0x003045b0,PARAM1,word,2,TPUB Channel 11 parameter 1,,verified
+tpu_b_channel_11_parameters_t,0x003045b0,PARAM2,word,2,TPUB Channel 11 parameter 2,,verified
+tpu_b_channel_11_parameters_t,0x003045b0,PARAM3,word,2,TPUB Channel 11 parameter 3,,verified
+tpu_b_channel_11_parameters_t,0x003045b0,PARAM4,word,2,TPUB Channel 11 parameter 4,,verified
+tpu_b_channel_11_parameters_t,0x003045b0,PARAM5,word,2,TPUB Channel 11 parameter 5,,verified
+tpu_b_channel_11_parameters_t,0x003045b0,PARAM6,word,2,TPUB Channel 11 parameter 6,,verified
+tpu_b_channel_11_parameters_t,0x003045b0,PARAM7,word,2,TPUB Channel 11 parameter 7,,verified
+tpu_b_channel_14_parameters_t,0x003045e0,PARAM0,word,2,TPUB Channel 14 parameter 0,,verified
+tpu_b_channel_14_parameters_t,0x003045e0,PARAM1,word,2,TPUB Channel 14 parameter 1,,verified
+tpu_b_channel_14_parameters_t,0x003045e0,PARAM2,word,2,TPUB Channel 14 parameter 2,,verified
+tpu_b_channel_14_parameters_t,0x003045e0,PARAM3,word,2,TPUB Channel 14 parameter 3,,verified
+tpu_b_channel_14_parameters_t,0x003045e0,PARAM4,word,2,TPUB Channel 14 parameter 4,,verified
+tpu_b_channel_14_parameters_t,0x003045e0,PARAM5,word,2,TPUB Channel 14 parameter 5,,verified
+tpu_b_channel_14_parameters_t,0x003045e0,PARAM6,word,2,TPUB Channel 14 parameter 6,,verified
+tpu_b_channel_14_parameters_t,0x003045e0,PARAM7,word,2,TPUB Channel 14 parameter 7,,verified
 # =============================================================================
 # MIOS additional channel submodule instances - MIOS1 submodule n sits at 0x306000 + 8 x n (PR #48)
 # MPWMSM = PWM Submodule (PERR/PULR/CNTR/SCR) - MPWMSM1-3 at +0x08/+0x10/+0x18 and MPWMSM16-19 at +0x80/+0x88/+0x90/+0x98
@@ -1547,11 +1547,11 @@ tpub_ch14_params_t,0x003045e0,PARAM7,word,2,TPUB Channel 14 parameter 7,,verifie
 # Per-channel types predate the marker-row pattern; they are kept (renamed in place) so decompiler casts stay stable
 # =============================================================================
 # MMCSM second instance (slot at 0x306030 = MIOS_base+0x30; channel number from labels)
-mios_mmcsm_b_t,0x00306030,CNT,word,2,Up-Counter Register,,verified
-mios_mmcsm_b_t,0x00306030,ML,word,2,Modulus Latch Register (period/reload value),,verified
-mios_mmcsm_b_t,0x00306030,SCRD,word,2,Status/Control Register Duplicated: the same register as SCR (MPC555UM 15.10.1.3); not accessed here (was _pad; PR #53 round 95),,verified
-mios_mmcsm_b_t,0x00306030,SCR,word,2,Status/Control Register (was SCRD; MPC555UM: SCRD is the +4 duplicate; PR #53 round 95),,verified
-mios_mmcsm_b_t,0x003060b0,,,,MMCSM22 instance - marker only,,verified
+mios_mmcsm_t,0x00306030,CNT,word,2,Up-Counter Register,,verified
+mios_mmcsm_t,0x00306030,ML,word,2,Modulus Latch Register (period/reload value),,verified
+mios_mmcsm_t,0x00306030,SCRD,word,2,Status/Control Register Duplicated: the same register as SCR (MPC555UM 15.10.1.3); not accessed here (was _pad; PR #53 round 95),,verified
+mios_mmcsm_t,0x00306030,SCR,word,2,Status/Control Register (was SCRD; MPC555UM: SCRD is the +4 duplicate; PR #53 round 95),,verified
+mios_mmcsm_t,0x003060b0,,,,MMCSM22 instance - marker only,,verified
 # =============================================================================
 # TouCAN A Message Buffer structs - 16 bytes each (8 x u16)
 # MB area starts at TouCAN_A_base + 0x80; each MB = 16 bytes (spacing confirmed)
@@ -1588,10 +1588,10 @@ toucan_message_buffer_t,,RESERVED,word,2,Reserved,,verified
 # SCC1R0/SCC1R1 = SCI1 control registers; SC1SR = status; SC1DR = data
 # Used by CM848 serial/diagnostic communication (e.g. Calterm datalink?)
 # =============================================================================
-qsmcm_sci1_regs_t,0x00305008,SCC1R0,word,2,SCI1 Control Register 0 (baud/config),,verified
-qsmcm_sci1_regs_t,0x00305008,SCC1R1,word,2,SCI1 Control Register 1 (interrupt enables),,verified
-qsmcm_sci1_regs_t,0x00305008,SC1SR,word,2,SCI1 Status Register (TDRE/RDRF/OR/FE/NF/PF),,verified
-qsmcm_sci1_regs_t,0x00305008,SC1DR,word,2,SCI1 Data Register (read=RX data write=TX data),,verified
+qsmcm_sci1_registers_t,0x00305008,SCC1R0,word,2,SCI1 Control Register 0 (baud/config),,verified
+qsmcm_sci1_registers_t,0x00305008,SCC1R1,word,2,SCI1 Control Register 1 (interrupt enables),,verified
+qsmcm_sci1_registers_t,0x00305008,SC1SR,word,2,SCI1 Status Register (TDRE/RDRF/OR/FE/NF/PF),,verified
+qsmcm_sci1_registers_t,0x00305008,SC1DR,word,2,SCI1 Data Register (read=RX data write=TX data),,verified
 # =============================================================================
 # MDASM28-31 - MIOS1 submodules 28-31 (base 0x306000 + 8 x n) - instances of mios_mdasm_t
 # cm848_miosChannel28* - cm848_miosChannel31* pass these bases to the generic MDASM driver.
@@ -1611,29 +1611,29 @@ mios_mdasm_t,0x003060f8,,,,MDASM31 instance - marker only,,verified
 # Note: SPCR0-3 in mpc555_registers.csv at 0x305010-0x305016 are MC68336 offsets;
 #       MPC555 QSMCM actually uses these registers at 0x30501a/0x30501c
 # =============================================================================
-qsmcm_qspi_ctrl_t,0x00305018,SPCR0,word,2,QSPI control 0: MSTR / bit size / CPOL / CPHA / baud (sth),,verified
-qsmcm_qspi_ctrl_t,0x00305018,SPCR1,word,2,QSPI control 1: bit 15 = SPE (start) / DSCKL / DTL delays (sth),,verified
-qsmcm_qspi_ctrl_t,0x00305018,SPCR2,word,2,QSPI queue pointers (ENDQP bits 12-8 / NEWQP bits 4-0),,verified
-qsmcm_qspi_ctrl_t,0x00305018,SPCR3,byte,1,QSPI control 3,,verified
-qsmcm_qspi_ctrl_t,0x00305018,SPSR,byte,1,QSPI status: bit 0x80 = SPIF (queue finished; cleared by cm848_onQspiFinished),,verified
+qsmcm_qspi_control_registers_t,0x00305018,SPCR0,word,2,QSPI control 0: MSTR / bit size / CPOL / CPHA / baud (sth),,verified
+qsmcm_qspi_control_registers_t,0x00305018,SPCR1,word,2,QSPI control 1: bit 15 = SPE (start) / DSCKL / DTL delays (sth),,verified
+qsmcm_qspi_control_registers_t,0x00305018,SPCR2,word,2,QSPI queue pointers (ENDQP bits 12-8 / NEWQP bits 4-0),,verified
+qsmcm_qspi_control_registers_t,0x00305018,SPCR3,byte,1,QSPI control 3,,verified
+qsmcm_qspi_control_registers_t,0x00305018,SPSR,byte,1,QSPI status: bit 0x80 = SPIF (queue finished; cleared by cm848_onQspiFinished),,verified
 # =============================================================================
 # QSMCM QSPI RAM — MPC555 places these at base+0x140/+0x180 NOT base+0x040/+0x060
 # RECRAM (receive): 0x305140 — firmware reads back SPI EEPROM response here
 # TRANRAM (transmit): 0x305180 — firmware writes SPI opcodes/address/data here
 # Used by mpc555_eepromWriteWords (up to 6 active entries per transfer)
 # =============================================================================
-qsmcm_recram_t,0x00305140,RX0,word,2,QSPI Receive RAM entry 0,,verified
-qsmcm_recram_t,0x00305140,RX1,word,2,QSPI Receive RAM entry 1,,verified
-qsmcm_recram_t,0x00305140,RX2,word,2,QSPI Receive RAM entry 2,,verified
-qsmcm_recram_t,0x00305140,RX3,word,2,QSPI Receive RAM entry 3,,verified
-qsmcm_recram_t,0x00305140,RX4,word,2,QSPI Receive RAM entry 4 (injector sequence index at bits 3-0),,verified
-qsmcm_recram_t,0x00305140,RX5,word,2,QSPI Receive RAM entry 5,,verified
-qsmcm_txram_t,0x00305180,TX0,word,2,QSPI Transmit RAM entry 0 (SPI opcode byte),,verified
-qsmcm_txram_t,0x00305180,TX1,word,2,QSPI Transmit RAM entry 1 (SPI write command byte),,verified
-qsmcm_txram_t,0x00305180,TX2,word,2,QSPI Transmit RAM entry 2 (EEPROM address / SPI data),,verified
-qsmcm_txram_t,0x00305180,TX3,word,2,QSPI Transmit RAM entry 3 (write data word),,verified
-qsmcm_txram_t,0x00305180,TX4,word,2,QSPI Transmit RAM entry 4,,verified
-qsmcm_txram_t,0x00305180,TX5,word,2,QSPI Transmit RAM entry 5,,verified
+qsmcm_receive_ram_t,0x00305140,RX0,word,2,QSPI Receive RAM entry 0,,verified
+qsmcm_receive_ram_t,0x00305140,RX1,word,2,QSPI Receive RAM entry 1,,verified
+qsmcm_receive_ram_t,0x00305140,RX2,word,2,QSPI Receive RAM entry 2,,verified
+qsmcm_receive_ram_t,0x00305140,RX3,word,2,QSPI Receive RAM entry 3,,verified
+qsmcm_receive_ram_t,0x00305140,RX4,word,2,QSPI Receive RAM entry 4 (injector sequence index at bits 3-0),,verified
+qsmcm_receive_ram_t,0x00305140,RX5,word,2,QSPI Receive RAM entry 5,,verified
+qsmcm_transmit_ram_t,0x00305180,TX0,word,2,QSPI Transmit RAM entry 0 (SPI opcode byte),,verified
+qsmcm_transmit_ram_t,0x00305180,TX1,word,2,QSPI Transmit RAM entry 1 (SPI write command byte),,verified
+qsmcm_transmit_ram_t,0x00305180,TX2,word,2,QSPI Transmit RAM entry 2 (EEPROM address / SPI data),,verified
+qsmcm_transmit_ram_t,0x00305180,TX3,word,2,QSPI Transmit RAM entry 3 (write data word),,verified
+qsmcm_transmit_ram_t,0x00305180,TX4,word,2,QSPI Transmit RAM entry 4,,verified
+qsmcm_transmit_ram_t,0x00305180,TX5,word,2,QSPI Transmit RAM entry 5,,verified
 # =============================================================================
 # TPU3-repurposed RAM state machine variables (0x302000-0x303FFF)
 # MPC555 TPU3 peripheral is disabled; this address range is used as general
@@ -1705,12 +1705,12 @@ system_initialization_flags_t,0x00302736,initialization_counter,word,2,"0, store
 # read_callback_ptr: called to read/verify calibration data from EEPROM
 # transfer_timer: timeout countdown (0x28=40 or 0x4b=75 ticks)
 # =============================================================================
-eeprom_xfer_state_t,0x00302878,bytes_transferred,dword,4,Current byte offset progress in EEPROM transfer block,,verified
-eeprom_xfer_state_t,0x00302878,block_length,dword,4,Total bytes in current EEPROM transfer block,,verified
-eeprom_xfer_state_t,0x00302878,_pad8,word,2,Reserved,,verified
-eeprom_xfer_state_t,0x00302878,eeprom_write_callback,dword,4,Writer for memory region type 5 (EEPROM) called by cm848_writeBootDiagnosticMemory (was write_callback_ptr),,verified
-eeprom_xfer_state_t,0x00302878,flash2_write_callback,dword,4,Writer for memory region type 2 (Bank-2 flash) called by cm848_writeBootDiagnosticMemory (was read_callback_ptr - it writes),,verified
-eeprom_xfer_state_t,0x00302878,transfer_timer,word,2,Transfer timeout countdown (0x28 or 0x4B ticks init),,verified
+eeprom_transfer_state_t,0x00302878,bytes_transferred,dword,4,Current byte offset progress in EEPROM transfer block,,verified
+eeprom_transfer_state_t,0x00302878,block_length,dword,4,Total bytes in current EEPROM transfer block,,verified
+eeprom_transfer_state_t,0x00302878,_pad8,word,2,Reserved,,verified
+eeprom_transfer_state_t,0x00302878,eeprom_write_callback,dword,4,Writer for memory region type 5 (EEPROM) called by cm848_writeBootDiagnosticMemory (was write_callback_ptr),,verified
+eeprom_transfer_state_t,0x00302878,flash2_write_callback,dword,4,Writer for memory region type 2 (Bank-2 flash) called by cm848_writeBootDiagnosticMemory (was read_callback_ptr - it writes),,verified
+eeprom_transfer_state_t,0x00302878,transfer_timer,word,2,Transfer timeout countdown (0x28 or 0x4B ticks init),,verified
 # =============================================================================
 # EEPROM block range tracking @ 0x3028a6
 # key_off_duration_ticks: ticks since the key was last on; the runtime counter is saved past 0x2903
@@ -1794,9 +1794,9 @@ mios_mpiosm_t,0x00306100,data_direction,word,2,Port data direction register: bit
 # FLG: mpc555_miosInterruptDispatcher reads and clears bits (0xf84f channel mask)
 # EN:  interrupt enable mask (ANDed with FLG to find active channel)
 # =============================================================================
-mios1_isr_t,0x00306c00,FLG,word,2,MIOS1 interrupt flag register (bits cleared on service),,verified
-mios1_isr_t,0x00306c00,_pad2,word,2,Reserved,,verified
-mios1_isr_t,0x00306c00,EN,word,2,MIOS1 interrupt enable register (channel mask),,verified
+mios1_interrupt_registers_t,0x00306c00,FLG,word,2,MIOS1 interrupt flag register (bits cleared on service),,verified
+mios1_interrupt_registers_t,0x00306c00,_pad2,word,2,Reserved,,verified
+mios1_interrupt_registers_t,0x00306c00,EN,word,2,MIOS1 interrupt enable register (channel mask),,verified
 # ==============================================================================
 # Diagnostic clear state flags - 4 bytes zeroed together by stw r0 in
 # cm848_clearDiagnosticState (including its tail at 0x1d11c, once split off as a separate function).
