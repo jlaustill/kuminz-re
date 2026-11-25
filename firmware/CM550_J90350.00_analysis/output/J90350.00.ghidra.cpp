@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue Nov 24 22:07:10 MST 2026
+// Generated: Tue Nov 24 22:17:09 MST 2026
 
 
 //
@@ -8179,14 +8179,15 @@ void vp44_initVp44BufferAddresses(void)
 // Function: cm550_updateDataloggerTriggers @ 0x000138b6
 //
 
-/* The datalogger's trigger task (e2m UD*; run from the scheduler slot cm550_FUN_0001b6d6 after
-   cm550_j1939TimeoutDataClearHandler). Every pass it counts the sample period counter (0x80051e) up
-   to the sample period (0x800353) and then raises the sample due flag (0x800354). With the
-   datalogger enable bit clear (0x20 of algorithm_enable_flags_18_cal, e2m 106B +0x26 UDEN 'BIT 5')
-   it clears the trigger detected / AND / OR flags (0x80baca / 0x80bac6 / 0x80bac8) and the set-up
-   flag (0x800352). Otherwise: before the set-up and with no event being logged (0x80bac4) it
-   reloads the sample period (cm550_selectDataloggerSamplePeriod) and in automatic mode (0x803dc6 =
-   1) resolves the trigger parameters (cm550_resolveDataloggerTriggerAddresses) and fault codes
+/* The datalogger's trigger task (e2m UD*; run from the scheduler slot
+   cm550_runEvery10FramesTaskSetPhase2 after cm550_j1939TimeoutDataClearHandler). Every pass it
+   counts the sample period counter (0x80051e) up to the sample period (0x800353) and then raises
+   the sample due flag (0x800354). With the datalogger enable bit clear (0x20 of
+   algorithm_enable_flags_18_cal, e2m 106B +0x26 UDEN 'BIT 5') it clears the trigger detected / AND
+   / OR flags (0x80baca / 0x80bac6 / 0x80bac8) and the set-up flag (0x800352). Otherwise: before the
+   set-up and with no event being logged (0x80bac4) it reloads the sample period
+   (cm550_selectDataloggerSamplePeriod) and in automatic mode (0x803dc6 = 1) resolves the trigger
+   parameters (cm550_resolveDataloggerTriggerAddresses) and fault codes
    (cm550_findDataloggerTriggerFaultIndexes); with the engine stopped (engine_state STOPPED) or an
    event being logged it clears the three flags; in automatic mode on a sample-due pass it evaluates
    triggers 1-3 of datalogger_triggers_cal (a disabled one counts as satisfied) and trigger 4 (a
@@ -8303,9 +8304,9 @@ uint cm550_updateDataloggerTriggers(void)
 // Function: cm550_recordDataloggerSamples @ 0x00013a5c
 //
 
-/* The datalogger's sample task (run from the scheduler slot cm550_FUN_0001b6e4 after
-   vp44_hourMeterEventLogger). While the datalogger is disabled with no trigger detected and no
-   event being logged it zeroes the 400-byte ring buffer at 0x800374 once (flag 0x800372).
+/* The datalogger's sample task (run from the scheduler slot cm550_runEvery10FramesTaskSetPhase3
+   after vp44_hourMeterEventLogger). While the datalogger is disabled with no trigger detected and
+   no event being logged it zeroes the 400-byte ring buffer at 0x800374 once (flag 0x800372).
    Otherwise: at the set-up (0x800352 = 0, no event being logged) it sets 0x800352, resolves the
    data parameters (cm550_resolveDataloggerDataParameterAddresses), counts into 0x800521 the first
    0x803dc8 (UDPRCU) records of datalogger_data_parameters_cal whose running byte total stays at or
@@ -15355,10 +15356,14 @@ undefined8 mc68k_FUN_0001b4b2(void)
 
 
 //
-// Function: cm550_ioDriverStrobeHandlerWrapper @ 0x0001b4d0
+// Function: cm550_runEveryFrameTaskSet @ 0x0001b4d0
 //
 
-void cm550_ioDriverStrobeHandlerWrapper(void)
+/* Executive frame task set: runs every frame (5 ms), as call 1 of those frames in
+   executiveFrameInterruptHandler. Calls, in order: mc68k_ioDriverStrobeHandler. (was
+   cm550_ioDriverStrobeHandlerWrapper; PR #53 round 93) */
+
+void cm550_runEveryFrameTaskSet(void)
 
 {
   mc68k_ioDriverStrobeHandler();
@@ -15368,10 +15373,16 @@ void cm550_ioDriverStrobeHandlerWrapper(void)
 
 
 //
-// Function: vp44_evenPhaseSchedulerTaskSet @ 0x0001b4d8
+// Function: cm550_runEvery2FramesTaskSetPhase0 @ 0x0001b4d8
 //
 
-void vp44_evenPhaseSchedulerTaskSet(void)
+/* Executive frame task set: runs every 2 frames (10 ms): frames 0, 2, ... of the 40-frame cycle, as
+   call 2 of those frames in executiveFrameInterruptHandler. Calls, in order: mc68k_FUN_000212b2,
+   cm550_fuelDemandLimitOrchestrator, cm550_memoryRegisterController, vp44_messageQueueDispatcher,
+   cm550_tickJ1939InputSupervision, cm550_FUN_00021070, 0x420bc (not dumped). (was
+   vp44_evenPhaseSchedulerTaskSet; PR #53 round 93) */
+
+void cm550_runEvery2FramesTaskSetPhase0(void)
 
 {
   mc68k_FUN_000212b2();
@@ -15387,10 +15398,15 @@ void vp44_evenPhaseSchedulerTaskSet(void)
 
 
 //
-// Function: cm550_oddPhaseSchedulerTaskSet @ 0x0001b504
+// Function: cm550_runEvery2FramesTaskSetPhase1 @ 0x0001b504
 //
 
-void cm550_oddPhaseSchedulerTaskSet(void)
+/* Executive frame task set: runs every 2 frames (10 ms): frames 1, 3, ... of the 40-frame cycle, as
+   call 2 of those frames in executiveFrameInterruptHandler. Calls, in order: cm550_FUN_0002142c,
+   cm550_engineRunTimeHistogramAccumulator, cm550_phase3_countdown_timer_manager. (was
+   cm550_oddPhaseSchedulerTaskSet; PR #53 round 93) */
+
+void cm550_runEvery2FramesTaskSetPhase1(void)
 
 {
   cm550_FUN_0002142c();
@@ -15402,10 +15418,18 @@ void cm550_oddPhaseSchedulerTaskSet(void)
 
 
 //
-// Function: vp44_engine_management_system @ 0x0001b518
+// Function: cm550_runEvery4FramesTaskSetPhase0 @ 0x0001b518
 //
 
-void vp44_engine_management_system(void)
+/* Executive frame task set: runs every 4 frames (20 ms): frames 0, 4, ... of the 40-frame cycle, as
+   call 3 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   vp44_communication_state_machine, 0x47850 (not dumped), 0x473b2 (not dumped), 0x48b28 (not
+   dumped), cm550_faultFlagScannerAndProcessor, cm550_calculateEngineSpeed,
+   calculateFilteredEngineAcceleration, cm550_FUN_00026e8e, 0x49f06 (not dumped), 0x4245e (not
+   dumped), cm550_FUN_0002ec50, vp44_rpmDerateCalculationController, cm550_updateEngineState,
+   cm550_FUN_000269f2. (was vp44_engine_management_system; PR #53 round 93) */
+
+void cm550_runEvery4FramesTaskSetPhase0(void)
 
 {
   vp44_communication_state_machine(0);
@@ -15428,10 +15452,20 @@ void vp44_engine_management_system(void)
 
 
 //
-// Function: vp44_periodicTaskSet_governorProtection @ 0x0001b572
+// Function: cm550_runEvery4FramesTaskSetPhase1 @ 0x0001b572
 //
 
-void vp44_periodicTaskSet_governorProtection(void)
+/* Executive frame task set: runs every 4 frames (20 ms): frames 1, 5, ... of the 40-frame cycle, as
+   call 3 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm550_acceleratorThrottleFaultDetector, cm550_engine_protection_coordinator,
+   cm550_runAllSpeedGovernor, cm550_diagnostic_parameter_handler,
+   smoothPowerTakeOffReferenceEngineSpeed, cm550_runPowerTakeOffGovernor,
+   cm550_oil_pressure_shutdown_controller, calculateAlpha, 0x44c76 (not dumped),
+   selectEngineSpeedLimit, 0x4da56 (not dumped), selectHighSpeedGovernorGainSet,
+   runHighSpeedGovernorPid, 0x42496 (not dumped), cm550_FUN_0001cc72. (was
+   vp44_periodicTaskSet_governorProtection; PR #53 round 93) */
+
+void cm550_runEvery4FramesTaskSetPhase1(void)
 
 {
   cm550_acceleratorThrottleFaultDetector();
@@ -15455,10 +15489,19 @@ void vp44_periodicTaskSet_governorProtection(void)
 
 
 //
-// Function: cm550_periodicTaskSet_fuelTiming @ 0x0001b5ce
+// Function: cm550_runEvery4FramesTaskSetPhase2 @ 0x0001b5ce
 //
 
-void cm550_periodicTaskSet_fuelTiming(void)
+/* Executive frame task set: runs every 4 frames (20 ms): frames 2, 6, ... of the 40-frame cycle, as
+   call 3 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm550_calculateEngineSpeed, cm550_runLowSpeedGovernor, cm550_epsDiagnosticModeHandler,
+   cm550_fuelTimingTransitionStateMachine, cm550_engineModeTransitionHandler,
+   cm550_rpmLoadParameterLookup, cm550_frictionalLoadTorqueTransitionHandler,
+   cm550_rpmBasedFuelLimitCalculator, fuelTimingOilPressureModeController, 0x4094c (not dumped),
+   cm550_fuelSourceMode11CountdownHandler. (was cm550_periodicTaskSet_fuelTiming; PR #53 round 93)
+    */
+
+void cm550_runEvery4FramesTaskSetPhase2(void)
 
 {
   cm550_calculateEngineSpeed();
@@ -15478,10 +15521,19 @@ void cm550_periodicTaskSet_fuelTiming(void)
 
 
 //
-// Function: periodicTaskSet_fuelDemand @ 0x0001b612
+// Function: cm550_runEvery4FramesTaskSetPhase3 @ 0x0001b612
 //
 
-void periodicTaskSet_fuelDemand(void)
+/* Executive frame task set: runs every 4 frames (20 ms): frames 3, 7, ... of the 40-frame cycle, as
+   call 3 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm550_fuelDemandTableBlendCalculator, cm550_rpmBasedFuelTimingInterpolation, vp44_FUN_00034d52,
+   cm550_diagnosticTimingIncrementController, vp44InjectionSystemStateController,
+   cm550_emptyPlaceholderFunction, 0x40988 (not dumped), cm550_fuelDemandLimitSelector11, 0x40ace
+   (not dumped), 0x488e8 (not dumped), 0x48b1a (not dumped), mc68k_sampleAndDebounceDiscreteInputs,
+   mc68k_processAnalogSensorChannels, 0x48c66 (not dumped). (was periodicTaskSet_fuelDemand; PR #53
+   round 93) */
+
+void cm550_runEvery4FramesTaskSetPhase3(void)
 
 {
   cm550_fuelDemandTableBlendCalculator();
@@ -15504,10 +15556,14 @@ void periodicTaskSet_fuelDemand(void)
 
 
 //
-// Function: cm550_FUN_0001b668 @ 0x0001b668
+// Function: cm550_runEvery8FramesTaskSetPhase0 @ 0x0001b668
 //
 
-void cm550_FUN_0001b668(void)
+/* Executive frame task set: runs every 8 frames (40 ms): frames 0, 8, ... of the 40-frame cycle, as
+   call 4 of those frames in executiveFrameInterruptHandler. Empty (a single rts): nothing is
+   scheduled in this slot. (was cm550_FUN_0001b668; PR #53 round 93) */
+
+void cm550_runEvery8FramesTaskSetPhase0(void)
 
 {
   return;
@@ -15516,10 +15572,14 @@ void cm550_FUN_0001b668(void)
 
 
 //
-// Function: cm550_FUN_0001b66a @ 0x0001b66a
+// Function: cm550_runEvery8FramesTaskSetPhase1 @ 0x0001b66a
 //
 
-void cm550_FUN_0001b66a(void)
+/* Executive frame task set: runs every 8 frames (40 ms): frames 1, 9, ... of the 40-frame cycle, as
+   call 4 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x45d60 (not dumped),
+   0x44338 (not dumped). (was cm550_FUN_0001b66a; PR #53 round 93) */
+
+void cm550_runEvery8FramesTaskSetPhase1(void)
 
 {
   func_0x00045d60();
@@ -15530,10 +15590,14 @@ void cm550_FUN_0001b66a(void)
 
 
 //
-// Function: cm550_FUN_0001b678 @ 0x0001b678
+// Function: cm550_runEvery8FramesTaskSetPhase2 @ 0x0001b678
 //
 
-void cm550_FUN_0001b678(void)
+/* Executive frame task set: runs every 8 frames (40 ms): frames 2, 10, ... of the 40-frame cycle,
+   as call 4 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x449f4 (not
+   dumped), 0x451fa (not dumped). (was cm550_FUN_0001b678; PR #53 round 93) */
+
+void cm550_runEvery8FramesTaskSetPhase2(void)
 
 {
   func_0x000449f4();
@@ -15544,10 +15608,14 @@ void cm550_FUN_0001b678(void)
 
 
 //
-// Function: cm550_FUN_0001b686 @ 0x0001b686
+// Function: cm550_runEvery8FramesTaskSetPhase3 @ 0x0001b686
 //
 
-void cm550_FUN_0001b686(void)
+/* Executive frame task set: runs every 8 frames (40 ms): frames 3, 11, ... of the 40-frame cycle,
+   as call 4 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x4dafa (not
+   dumped), 0x47496 (not dumped). (was cm550_FUN_0001b686; PR #53 round 93) */
+
+void cm550_runEvery8FramesTaskSetPhase3(void)
 
 {
   func_0x0004dafa();
@@ -15558,10 +15626,14 @@ void cm550_FUN_0001b686(void)
 
 
 //
-// Function: cm550_FUN_0001b694 @ 0x0001b694
+// Function: cm550_runEvery8FramesTaskSetPhase4 @ 0x0001b694
 //
 
-void cm550_FUN_0001b694(void)
+/* Executive frame task set: runs every 8 frames (40 ms): frames 4, 12, ... of the 40-frame cycle,
+   as call 4 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x45f88 (not
+   dumped), 0x4444a (not dumped). (was cm550_FUN_0001b694; PR #53 round 93) */
+
+void cm550_runEvery8FramesTaskSetPhase4(void)
 
 {
   func_0x00045f88();
@@ -15572,10 +15644,14 @@ void cm550_FUN_0001b694(void)
 
 
 //
-// Function: cm550_FUN_0001b6a2 @ 0x0001b6a2
+// Function: cm550_runEvery8FramesTaskSetPhase5 @ 0x0001b6a2
 //
 
-void cm550_FUN_0001b6a2(void)
+/* Executive frame task set: runs every 8 frames (40 ms): frames 5, 13, ... of the 40-frame cycle,
+   as call 4 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x43a74 (not
+   dumped). (was cm550_FUN_0001b6a2; PR #53 round 93) */
+
+void cm550_runEvery8FramesTaskSetPhase5(void)
 
 {
   func_0x00043a74();
@@ -15585,10 +15661,14 @@ void cm550_FUN_0001b6a2(void)
 
 
 //
-// Function: cm550_FUN_0001b6aa @ 0x0001b6aa
+// Function: cm550_runEvery8FramesTaskSetPhase6 @ 0x0001b6aa
 //
 
-void cm550_FUN_0001b6aa(void)
+/* Executive frame task set: runs every 8 frames (40 ms): frames 6, 14, ... of the 40-frame cycle,
+   as call 4 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x45270 (not
+   dumped). (was cm550_FUN_0001b6aa; PR #53 round 93) */
+
+void cm550_runEvery8FramesTaskSetPhase6(void)
 
 {
   func_0x00045270();
@@ -15598,10 +15678,14 @@ void cm550_FUN_0001b6aa(void)
 
 
 //
-// Function: cm550_FUN_0001b6b2 @ 0x0001b6b2
+// Function: cm550_runEvery8FramesTaskSetPhase7 @ 0x0001b6b2
 //
 
-void cm550_FUN_0001b6b2(void)
+/* Executive frame task set: runs every 8 frames (40 ms): frames 7, 15, ... of the 40-frame cycle,
+   as call 4 of those frames in executiveFrameInterruptHandler. Empty (a single rts): nothing is
+   scheduled in this slot. (was cm550_FUN_0001b6b2; PR #53 round 93) */
+
+void cm550_runEvery8FramesTaskSetPhase7(void)
 
 {
   return;
@@ -15610,10 +15694,15 @@ void cm550_FUN_0001b6b2(void)
 
 
 //
-// Function: cm550_FUN_0001b6b4 @ 0x0001b6b4
+// Function: cm550_runEvery10FramesTaskSetPhase0 @ 0x0001b6b4
 //
 
-void cm550_FUN_0001b6b4(void)
+/* Executive frame task set: runs every 10 frames (50 ms): frames 0, 10, ... of the 40-frame cycle,
+   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm550_rpm_system_state_controller, 0x44980 (not dumped),
+   cm550_highRpmEngineProtectionStateMachine. (was cm550_FUN_0001b6b4; PR #53 round 93) */
+
+void cm550_runEvery10FramesTaskSetPhase0(void)
 
 {
   cm550_rpm_system_state_controller();
@@ -15625,10 +15714,15 @@ void cm550_FUN_0001b6b4(void)
 
 
 //
-// Function: cm550_FUN_0001b6c8 @ 0x0001b6c8
+// Function: cm550_runEvery10FramesTaskSetPhase1 @ 0x0001b6c8
 //
 
-void cm550_FUN_0001b6c8(void)
+/* Executive frame task set: runs every 10 frames (50 ms): frames 1, 11, ... of the 40-frame cycle,
+   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm550_engineStateFuelLimitInterpolator, cm550_FUN_0000b3d0. (was cm550_FUN_0001b6c8; PR #53 round
+   93) */
+
+void cm550_runEvery10FramesTaskSetPhase1(void)
 
 {
   cm550_engineStateFuelLimitInterpolator();
@@ -15639,10 +15733,15 @@ void cm550_FUN_0001b6c8(void)
 
 
 //
-// Function: cm550_FUN_0001b6d6 @ 0x0001b6d6
+// Function: cm550_runEvery10FramesTaskSetPhase2 @ 0x0001b6d6
 //
 
-void cm550_FUN_0001b6d6(void)
+/* Executive frame task set: runs every 10 frames (50 ms): frames 2, 12, ... of the 40-frame cycle,
+   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm550_j1939TimeoutDataClearHandler, cm550_updateDataloggerTriggers. (was cm550_FUN_0001b6d6; PR
+   #53 round 93) */
+
+void cm550_runEvery10FramesTaskSetPhase2(void)
 
 {
   cm550_j1939TimeoutDataClearHandler();
@@ -15653,10 +15752,15 @@ void cm550_FUN_0001b6d6(void)
 
 
 //
-// Function: cm550_FUN_0001b6e4 @ 0x0001b6e4
+// Function: cm550_runEvery10FramesTaskSetPhase3 @ 0x0001b6e4
 //
 
-void cm550_FUN_0001b6e4(void)
+/* Executive frame task set: runs every 10 frames (50 ms): frames 3, 13, ... of the 40-frame cycle,
+   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   vp44_hourMeterEventLogger, cm550_recordDataloggerSamples. (was cm550_FUN_0001b6e4; PR #53 round
+   93) */
+
+void cm550_runEvery10FramesTaskSetPhase3(void)
 
 {
   vp44_hourMeterEventLogger();
@@ -15667,10 +15771,15 @@ void cm550_FUN_0001b6e4(void)
 
 
 //
-// Function: cm550_FUN_0001b6f2 @ 0x0001b6f2
+// Function: cm550_runEvery10FramesTaskSetPhase4 @ 0x0001b6f2
 //
 
-void cm550_FUN_0001b6f2(void)
+/* Executive frame task set: runs every 10 frames (50 ms): frames 4, 14, ... of the 40-frame cycle,
+   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   mc68k_monitorPwmOutputReadBackFaults, 0x42218 (not dumped), 0x42276 (not dumped), 0x4204c (not
+   dumped). (was cm550_FUN_0001b6f2; PR #53 round 93) */
+
+void cm550_runEvery10FramesTaskSetPhase4(void)
 
 {
   mc68k_monitorPwmOutputReadBackFaults();
@@ -15683,10 +15792,14 @@ void cm550_FUN_0001b6f2(void)
 
 
 //
-// Function: cm550_dzgTimingAndPressureSlowCycle10Coordinator @ 0x0001b70c
+// Function: cm550_runEvery10FramesTaskSetPhase5 @ 0x0001b70c
 //
 
-void cm550_dzgTimingAndPressureSlowCycle10Coordinator(void)
+/* Executive frame task set: runs every 10 frames (50 ms): frames 5, 15, ... of the 40-frame cycle,
+   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order: cm550_FUN_000254b6.
+   (was cm550_dzgTimingAndPressureSlowCycle10Coordinator; PR #53 round 93) */
+
+void cm550_runEvery10FramesTaskSetPhase5(void)
 
 {
   cm550_FUN_000254b6();
@@ -15696,10 +15809,14 @@ void cm550_dzgTimingAndPressureSlowCycle10Coordinator(void)
 
 
 //
-// Function: cm550_rpmBasedFuelLimiterCoordinator @ 0x0001b714
+// Function: cm550_runEvery10FramesTaskSetPhase6 @ 0x0001b714
 //
 
-void cm550_rpmBasedFuelLimiterCoordinator(void)
+/* Executive frame task set: runs every 10 frames (50 ms): frames 6, 16, ... of the 40-frame cycle,
+   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order: cm550_FUN_00024804,
+   cm550_FUN_00021146. (was cm550_rpmBasedFuelLimiterCoordinator; PR #53 round 93) */
+
+void cm550_runEvery10FramesTaskSetPhase6(void)
 
 {
   cm550_FUN_00024804();
@@ -15710,10 +15827,15 @@ void cm550_rpmBasedFuelLimiterCoordinator(void)
 
 
 //
-// Function: cm550_shutdownProtectionSlowCycle10Coordinator @ 0x0001b722
+// Function: cm550_runEvery10FramesTaskSetPhase7 @ 0x0001b722
 //
 
-void cm550_shutdownProtectionSlowCycle10Coordinator(void)
+/* Executive frame task set: runs every 10 frames (50 ms): frames 7, 17, ... of the 40-frame cycle,
+   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm550_rpmHistogramAndProtectionStatisticsAccumulator. (was
+   cm550_shutdownProtectionSlowCycle10Coordinator; PR #53 round 93) */
+
+void cm550_runEvery10FramesTaskSetPhase7(void)
 
 {
   cm550_rpmHistogramAndProtectionStatisticsAccumulator();
@@ -15723,10 +15845,15 @@ void cm550_shutdownProtectionSlowCycle10Coordinator(void)
 
 
 //
-// Function: cm550_camSyncDiagnosticProcessingSlowCycle20Coordinator @ 0x0001b72a
+// Function: cm550_runEvery10FramesTaskSetPhase8 @ 0x0001b72a
 //
 
-void cm550_camSyncDiagnosticProcessingSlowCycle20Coordinator(void)
+/* Executive frame task set: runs every 10 frames (50 ms): frames 8, 18, ... of the 40-frame cycle,
+   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   mc68k_dispatchJ1708ReceivedMessages. (was
+   cm550_camSyncDiagnosticProcessingSlowCycle20Coordinator; PR #53 round 93) */
+
+void cm550_runEvery10FramesTaskSetPhase8(void)
 
 {
   mc68k_dispatchJ1708ReceivedMessages();
@@ -15736,10 +15863,14 @@ void cm550_camSyncDiagnosticProcessingSlowCycle20Coordinator(void)
 
 
 //
-// Function: cm550_FUN_0001b732 @ 0x0001b732
+// Function: cm550_runEvery10FramesTaskSetPhase9 @ 0x0001b732
 //
 
-void cm550_FUN_0001b732(void)
+/* Executive frame task set: runs every 10 frames (50 ms): frames 9, 19, ... of the 40-frame cycle,
+   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm550_diagnosticMessageTransmissionManager. (was cm550_FUN_0001b732; PR #53 round 93) */
+
+void cm550_runEvery10FramesTaskSetPhase9(void)
 
 {
   cm550_diagnosticMessageTransmissionManager();
@@ -15749,10 +15880,15 @@ void cm550_FUN_0001b732(void)
 
 
 //
-// Function: cm550_FUN_0001b73a @ 0x0001b73a
+// Function: cm550_runEvery20FramesTaskSetPhase0 @ 0x0001b73a
 //
 
-void cm550_FUN_0001b73a(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 0, 20, ... of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm550_updateElectronicSmartPowerTau, 0x40f3c (not dumped), 0x41050 (not dumped), 0x4965a (not
+   dumped). (was cm550_FUN_0001b73a; PR #53 round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase0(void)
 
 {
   cm550_updateElectronicSmartPowerTau();
@@ -15765,10 +15901,14 @@ void cm550_FUN_0001b73a(void)
 
 
 //
-// Function: cm550_FUN_0001b754 @ 0x0001b754
+// Function: cm550_runEvery20FramesTaskSetPhase1 @ 0x0001b754
 //
 
-void cm550_FUN_0001b754(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 1, 21, ... of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: cm550_FUN_0000e998,
+   0x4115a (not dumped), 0x41256 (not dumped). (was cm550_FUN_0001b754; PR #53 round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase1(void)
 
 {
   cm550_FUN_0000e998();
@@ -15780,10 +15920,15 @@ void cm550_FUN_0001b754(void)
 
 
 //
-// Function: cm550_FUN_0001b768 @ 0x0001b768
+// Function: cm550_runEvery20FramesTaskSetPhase2 @ 0x0001b768
 //
 
-void cm550_FUN_0001b768(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 2, 22, ... of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x4cc5a (not
+   dumped), 0x4c64e (not dumped), 0x4172c (not dumped), 0x417f2 (not dumped), 0x4190c (not dumped).
+   (was cm550_FUN_0001b768; PR #53 round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase2(void)
 
 {
   func_0x0004cc5a();
@@ -15797,10 +15942,15 @@ void cm550_FUN_0001b768(void)
 
 
 //
-// Function: cm550_FUN_0001b788 @ 0x0001b788
+// Function: cm550_runEvery20FramesTaskSetPhase3 @ 0x0001b788
 //
 
-void cm550_FUN_0001b788(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 3, 23, ... of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x491b4 (not
+   dumped), cm550_FUN_0000ac3c, calculateSpeedRatioComponent, cm550_FUN_00026e2c. (was
+   cm550_FUN_0001b788; PR #53 round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase3(void)
 
 {
   func_0x000491b4();
@@ -15813,10 +15963,15 @@ void cm550_FUN_0001b788(void)
 
 
 //
-// Function: cm550_auxiliarySystemControlWrapper @ 0x0001b7a2
+// Function: cm550_runEvery20FramesTaskSetPhase4 @ 0x0001b7a2
 //
 
-void cm550_auxiliarySystemControlWrapper(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 4, 24, ... of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm550_timingOffsetCalculatorWrapper, cm550_FUN_00026616. (was
+   cm550_auxiliarySystemControlWrapper; PR #53 round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase4(void)
 
 {
   cm550_timingOffsetCalculatorWrapper();
@@ -15827,10 +15982,15 @@ void cm550_auxiliarySystemControlWrapper(void)
 
 
 //
-// Function: cm550_FUN_0001b7b0 @ 0x0001b7b0
+// Function: cm550_runEvery20FramesTaskSetPhase5 @ 0x0001b7b0
 //
 
-void cm550_FUN_0001b7b0(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 5, 25, ... of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: cm550_FUN_00031496,
+   0x472ae (not dumped), 0x41aee (not dumped), 0x41b80 (not dumped). (was cm550_FUN_0001b7b0; PR #53
+   round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase5(void)
 
 {
   cm550_FUN_00031496();
@@ -15843,10 +16003,14 @@ void cm550_FUN_0001b7b0(void)
 
 
 //
-// Function: vp44DiagnosticFaultMonitoringSlowCycle20Coordinator @ 0x0001b7ca
+// Function: cm550_runEvery20FramesTaskSetPhase6 @ 0x0001b7ca
 //
 
-void vp44DiagnosticFaultMonitoringSlowCycle20Coordinator(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 6, 26, ... of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: cm550_FUN_00026b3a.
+   (was vp44DiagnosticFaultMonitoringSlowCycle20Coordinator; PR #53 round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase6(void)
 
 {
   cm550_FUN_00026b3a();
@@ -15856,10 +16020,14 @@ void vp44DiagnosticFaultMonitoringSlowCycle20Coordinator(void)
 
 
 //
-// Function: cm550_FUN_0001b7d2 @ 0x0001b7d2
+// Function: cm550_runEvery20FramesTaskSetPhase7 @ 0x0001b7d2
 //
 
-void cm550_FUN_0001b7d2(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 7, 27, ... of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x4d238 (not
+   dumped), 0x44e48 (not dumped). (was cm550_FUN_0001b7d2; PR #53 round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase7(void)
 
 {
   func_0x0004d238();
@@ -15870,10 +16038,14 @@ void cm550_FUN_0001b7d2(void)
 
 
 //
-// Function: cm550_FUN_0001b7e0 @ 0x0001b7e0
+// Function: cm550_runEvery20FramesTaskSetPhase8 @ 0x0001b7e0
 //
 
-void cm550_FUN_0001b7e0(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 8, 28, ... of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Empty (a single rts): nothing is
+   scheduled in this slot. (was cm550_FUN_0001b7e0; PR #53 round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase8(void)
 
 {
   return;
@@ -15882,10 +16054,14 @@ void cm550_FUN_0001b7e0(void)
 
 
 //
-// Function: cm550_FUN_0001b7e2 @ 0x0001b7e2
+// Function: cm550_runEvery20FramesTaskSetPhase9 @ 0x0001b7e2
 //
 
-void cm550_FUN_0001b7e2(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 9, 29, ... of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm550_calculatePedalFaultModeFuelDemand. (was cm550_FUN_0001b7e2; PR #53 round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase9(void)
 
 {
   cm550_calculatePedalFaultModeFuelDemand();
@@ -15895,10 +16071,14 @@ void cm550_FUN_0001b7e2(void)
 
 
 //
-// Function: cm550_FUN_0001b7ea @ 0x0001b7ea
+// Function: cm550_runEvery20FramesTaskSetPhase10 @ 0x0001b7ea
 //
 
-void cm550_FUN_0001b7ea(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 10, 30, ... of the 40-frame
+   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   vp44_derateThresholdMonitorAndFaultController. (was cm550_FUN_0001b7ea; PR #53 round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase10(void)
 
 {
   vp44_derateThresholdMonitorAndFaultController();
@@ -15908,10 +16088,15 @@ void cm550_FUN_0001b7ea(void)
 
 
 //
-// Function: vp44_FUN_0001b7f2 @ 0x0001b7f2
+// Function: cm550_runEvery20FramesTaskSetPhase11 @ 0x0001b7f2
 //
 
-void vp44_FUN_0001b7f2(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 11, 31, ... of the 40-frame
+   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x46aac (not
+   dumped), vp44SensorStatusMonitor, 0x40b30 (not dumped), 0x422b4 (not dumped). (was
+   vp44_FUN_0001b7f2; PR #53 round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase11(void)
 
 {
   func_0x00046aac();
@@ -15924,10 +16109,14 @@ void vp44_FUN_0001b7f2(void)
 
 
 //
-// Function: cm550_FUN_0001b80c @ 0x0001b80c
+// Function: cm550_runEvery20FramesTaskSetPhase12 @ 0x0001b80c
 //
 
-void cm550_FUN_0001b80c(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 12, 32, ... of the 40-frame
+   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x41528 (not
+   dumped), 0x44954 (not dumped). (was cm550_FUN_0001b80c; PR #53 round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase12(void)
 
 {
   func_0x00041528();
@@ -15938,10 +16127,14 @@ void cm550_FUN_0001b80c(void)
 
 
 //
-// Function: cm550_FUN_0001b81a @ 0x0001b81a
+// Function: cm550_runEvery20FramesTaskSetPhase13 @ 0x0001b81a
 //
 
-void cm550_FUN_0001b81a(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 13, 33, ... of the 40-frame
+   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x4579e (not
+   dumped), 0x490b8 (not dumped). (was cm550_FUN_0001b81a; PR #53 round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase13(void)
 
 {
   func_0x0004579e();
@@ -15952,10 +16145,14 @@ void cm550_FUN_0001b81a(void)
 
 
 //
-// Function: cm550_FUN_0001b828 @ 0x0001b828
+// Function: cm550_runEvery20FramesTaskSetPhase14 @ 0x0001b828
 //
 
-void cm550_FUN_0001b828(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 14, 34, ... of the 40-frame
+   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm550_FUN_0001c8a0, 0x45a6c (not dumped). (was cm550_FUN_0001b828; PR #53 round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase14(void)
 
 {
   cm550_FUN_0001c8a0();
@@ -15966,10 +16163,14 @@ void cm550_FUN_0001b828(void)
 
 
 //
-// Function: cm550_FUN_0001b836 @ 0x0001b836
+// Function: cm550_runEvery20FramesTaskSetPhase15 @ 0x0001b836
 //
 
-void cm550_FUN_0001b836(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 15, 35, ... of the 40-frame
+   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x491b4 (not
+   dumped). (was cm550_FUN_0001b836; PR #53 round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase15(void)
 
 {
   func_0x000491b4();
@@ -15979,10 +16180,14 @@ void cm550_FUN_0001b836(void)
 
 
 //
-// Function: cm550_FUN_0001b83e @ 0x0001b83e
+// Function: cm550_runEvery20FramesTaskSetPhase16 @ 0x0001b83e
 //
 
-void cm550_FUN_0001b83e(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 16, 36, ... of the 40-frame
+   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x4dedc (not
+   dumped). (was cm550_FUN_0001b83e; PR #53 round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase16(void)
 
 {
   func_0x0004dedc();
@@ -15992,10 +16197,14 @@ void cm550_FUN_0001b83e(void)
 
 
 //
-// Function: cm550_FUN_0001b846 @ 0x0001b846
+// Function: cm550_runEvery20FramesTaskSetPhase17 @ 0x0001b846
 //
 
-void cm550_FUN_0001b846(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 17, 37, ... of the 40-frame
+   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x4c192 (not
+   dumped), 0x4874a (not dumped), 0x479fa (not dumped). (was cm550_FUN_0001b846; PR #53 round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase17(void)
 
 {
   func_0x0004c192();
@@ -16007,10 +16216,14 @@ void cm550_FUN_0001b846(void)
 
 
 //
-// Function: vp44DiagnosticControlSlowCycle20Coordinator @ 0x0001b85a
+// Function: cm550_runEvery20FramesTaskSetPhase18 @ 0x0001b85a
 //
 
-void vp44DiagnosticControlSlowCycle20Coordinator(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 18, 38, ... of the 40-frame
+   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x4dc52 (not
+   dumped). (was vp44DiagnosticControlSlowCycle20Coordinator; PR #53 round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase18(void)
 
 {
   func_0x0004dc52();
@@ -16020,10 +16233,14 @@ void vp44DiagnosticControlSlowCycle20Coordinator(void)
 
 
 //
-// Function: cm550_FUN_0001b862 @ 0x0001b862
+// Function: cm550_runEvery20FramesTaskSetPhase19 @ 0x0001b862
 //
 
-void cm550_FUN_0001b862(void)
+/* Executive frame task set: runs every 20 frames (100 ms): frames 19, 39, ... of the 40-frame
+   cycle, as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order: 0x4e672 (not
+   dumped), cm550_FUN_000306ca, 0x464f2 (not dumped). (was cm550_FUN_0001b862; PR #53 round 93) */
+
+void cm550_runEvery20FramesTaskSetPhase19(void)
 
 {
   func_0x0004e672();
@@ -16080,384 +16297,384 @@ undefined8 executiveFrameInterruptHandler(void)
   }
   switch(_scheduler_phase_index) {
   case 0:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    vp44_engine_management_system();
-    cm550_FUN_0001b668();
-    cm550_FUN_0001b6b4();
-    cm550_FUN_0001b73a();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase0();
+    cm550_runEvery8FramesTaskSetPhase0();
+    cm550_runEvery10FramesTaskSetPhase0();
+    cm550_runEvery20FramesTaskSetPhase0();
     cm550_FUN_00034512();
     _scheduler_timing_record_ptr = executive_frame_timings;
     _scheduler_phase_index = 1;
     break;
   case 1:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    vp44_periodicTaskSet_governorProtection();
-    cm550_FUN_0001b66a();
-    cm550_FUN_0001b6c8();
-    cm550_FUN_0001b754();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase1();
+    cm550_runEvery8FramesTaskSetPhase1();
+    cm550_runEvery10FramesTaskSetPhase1();
+    cm550_runEvery20FramesTaskSetPhase1();
     updateEngineSyncStatus();
     _scheduler_phase_index = 2;
     break;
   case 2:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    cm550_periodicTaskSet_fuelTiming();
-    cm550_FUN_0001b678();
-    cm550_FUN_0001b6d6();
-    cm550_FUN_0001b768();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase2();
+    cm550_runEvery8FramesTaskSetPhase2();
+    cm550_runEvery10FramesTaskSetPhase2();
+    cm550_runEvery20FramesTaskSetPhase2();
     mc68k_engineRpmHardwareTimerSetup();
     _scheduler_phase_index = 3;
     break;
   case 3:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    periodicTaskSet_fuelDemand();
-    cm550_FUN_0001b686();
-    cm550_FUN_0001b6e4();
-    cm550_FUN_0001b788();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase3();
+    cm550_runEvery8FramesTaskSetPhase3();
+    cm550_runEvery10FramesTaskSetPhase3();
+    cm550_runEvery20FramesTaskSetPhase3();
     cm550_FUN_000315be();
     _scheduler_phase_index = 4;
     break;
   case 4:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    vp44_engine_management_system();
-    cm550_FUN_0001b694();
-    cm550_FUN_0001b6f2();
-    cm550_auxiliarySystemControlWrapper();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase0();
+    cm550_runEvery8FramesTaskSetPhase4();
+    cm550_runEvery10FramesTaskSetPhase4();
+    cm550_runEvery20FramesTaskSetPhase4();
     _scheduler_phase_index = 5;
     break;
   case 5:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    vp44_periodicTaskSet_governorProtection();
-    cm550_FUN_0001b6a2();
-    cm550_dzgTimingAndPressureSlowCycle10Coordinator();
-    cm550_FUN_0001b7b0();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase1();
+    cm550_runEvery8FramesTaskSetPhase5();
+    cm550_runEvery10FramesTaskSetPhase5();
+    cm550_runEvery20FramesTaskSetPhase5();
     cm550_FUN_000133fc();
     _scheduler_phase_index = 6;
     break;
   case 6:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    cm550_periodicTaskSet_fuelTiming();
-    cm550_FUN_0001b6aa();
-    cm550_rpmBasedFuelLimiterCoordinator();
-    vp44DiagnosticFaultMonitoringSlowCycle20Coordinator();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase2();
+    cm550_runEvery8FramesTaskSetPhase6();
+    cm550_runEvery10FramesTaskSetPhase6();
+    cm550_runEvery20FramesTaskSetPhase6();
     _scheduler_phase_index = 7;
     break;
   case 7:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    periodicTaskSet_fuelDemand();
-    cm550_FUN_0001b6b2();
-    cm550_shutdownProtectionSlowCycle10Coordinator();
-    cm550_FUN_0001b7d2();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase3();
+    cm550_runEvery8FramesTaskSetPhase7();
+    cm550_runEvery10FramesTaskSetPhase7();
+    cm550_runEvery20FramesTaskSetPhase7();
     vp44_liftPumpFuelDeliveryController();
     _scheduler_phase_index = 8;
     break;
   case 8:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    vp44_engine_management_system();
-    cm550_FUN_0001b668();
-    cm550_camSyncDiagnosticProcessingSlowCycle20Coordinator();
-    cm550_FUN_0001b7e0();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase0();
+    cm550_runEvery8FramesTaskSetPhase0();
+    cm550_runEvery10FramesTaskSetPhase8();
+    cm550_runEvery20FramesTaskSetPhase8();
     cm550_coldStartFuelControlSlowCycle40Coordinator();
     vp44FaultRegisterBit2Monitor();
     _scheduler_phase_index = 9;
     break;
   case 9:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    vp44_periodicTaskSet_governorProtection();
-    cm550_FUN_0001b66a();
-    cm550_FUN_0001b732();
-    cm550_FUN_0001b7e2();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase1();
+    cm550_runEvery8FramesTaskSetPhase1();
+    cm550_runEvery10FramesTaskSetPhase9();
+    cm550_runEvery20FramesTaskSetPhase9();
     _scheduler_phase_index = 10;
     break;
   case 10:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    cm550_periodicTaskSet_fuelTiming();
-    cm550_FUN_0001b678();
-    cm550_FUN_0001b6b4();
-    cm550_FUN_0001b7ea();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase2();
+    cm550_runEvery8FramesTaskSetPhase2();
+    cm550_runEvery10FramesTaskSetPhase0();
+    cm550_runEvery20FramesTaskSetPhase10();
     hpcr_injectorPulseWidthCalc();
     _scheduler_phase_index = 0xb;
     break;
   case 0xb:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    periodicTaskSet_fuelDemand();
-    cm550_FUN_0001b686();
-    cm550_FUN_0001b6c8();
-    vp44_FUN_0001b7f2();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase3();
+    cm550_runEvery8FramesTaskSetPhase3();
+    cm550_runEvery10FramesTaskSetPhase1();
+    cm550_runEvery20FramesTaskSetPhase11();
     cm550_ioOutputFlagMappingSlowCycle40Coordinator();
     _scheduler_phase_index = 0xc;
     break;
   case 0xc:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    vp44_engine_management_system();
-    cm550_FUN_0001b694();
-    cm550_FUN_0001b6d6();
-    cm550_FUN_0001b80c();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase0();
+    cm550_runEvery8FramesTaskSetPhase4();
+    cm550_runEvery10FramesTaskSetPhase2();
+    cm550_runEvery20FramesTaskSetPhase12();
     cm550_frictionalLoadTorqueManagementSlowCycle40Coordinator();
     _scheduler_phase_index = 0xd;
     break;
   case 0xd:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    vp44_periodicTaskSet_governorProtection();
-    cm550_FUN_0001b6a2();
-    cm550_FUN_0001b6e4();
-    cm550_FUN_0001b81a();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase1();
+    cm550_runEvery8FramesTaskSetPhase5();
+    cm550_runEvery10FramesTaskSetPhase3();
+    cm550_runEvery20FramesTaskSetPhase13();
     cm550_engineOperatingModeStateTrackingSlowCycle40Coordinator();
     _scheduler_phase_index = 0xe;
     break;
   case 0xe:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    cm550_periodicTaskSet_fuelTiming();
-    cm550_FUN_0001b6aa();
-    cm550_FUN_0001b6f2();
-    cm550_FUN_0001b828();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase2();
+    cm550_runEvery8FramesTaskSetPhase6();
+    cm550_runEvery10FramesTaskSetPhase4();
+    cm550_runEvery20FramesTaskSetPhase14();
     fuelDemandProportionalCalculationSlowCycle40Coordinator();
     _scheduler_phase_index = 0xf;
     break;
   case 0xf:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    periodicTaskSet_fuelDemand();
-    cm550_FUN_0001b6b2();
-    cm550_dzgTimingAndPressureSlowCycle10Coordinator();
-    cm550_FUN_0001b836();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase3();
+    cm550_runEvery8FramesTaskSetPhase7();
+    cm550_runEvery10FramesTaskSetPhase5();
+    cm550_runEvery20FramesTaskSetPhase15();
     cm550_epsTimingCalculationSlowCycle40Coordinator();
     vp44_FUN_0001cad6();
     cm550_engineProtectionMultiStateSlowCycle40Coordinator();
     _scheduler_phase_index = 0x10;
     break;
   case 0x10:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    vp44_engine_management_system();
-    cm550_FUN_0001b668();
-    cm550_rpmBasedFuelLimiterCoordinator();
-    cm550_FUN_0001b83e();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase0();
+    cm550_runEvery8FramesTaskSetPhase0();
+    cm550_runEvery10FramesTaskSetPhase6();
+    cm550_runEvery20FramesTaskSetPhase16();
     func_0x000487fe();
     _scheduler_phase_index = 0x11;
     break;
   case 0x11:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    vp44_periodicTaskSet_governorProtection();
-    cm550_FUN_0001b66a();
-    cm550_shutdownProtectionSlowCycle10Coordinator();
-    cm550_FUN_0001b846();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase1();
+    cm550_runEvery8FramesTaskSetPhase1();
+    cm550_runEvery10FramesTaskSetPhase7();
+    cm550_runEvery20FramesTaskSetPhase17();
     _scheduler_phase_index = 0x12;
     break;
   case 0x12:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    cm550_periodicTaskSet_fuelTiming();
-    cm550_FUN_0001b678();
-    cm550_camSyncDiagnosticProcessingSlowCycle20Coordinator();
-    vp44DiagnosticControlSlowCycle20Coordinator();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase2();
+    cm550_runEvery8FramesTaskSetPhase2();
+    cm550_runEvery10FramesTaskSetPhase8();
+    cm550_runEvery20FramesTaskSetPhase18();
     func_0x0004a322();
     _scheduler_phase_index = 0x13;
     break;
   case 0x13:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    periodicTaskSet_fuelDemand();
-    cm550_FUN_0001b686();
-    cm550_FUN_0001b732();
-    cm550_FUN_0001b862();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase3();
+    cm550_runEvery8FramesTaskSetPhase3();
+    cm550_runEvery10FramesTaskSetPhase9();
+    cm550_runEvery20FramesTaskSetPhase19();
     _scheduler_phase_index = 0x14;
     break;
   case 0x14:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    vp44_engine_management_system();
-    cm550_FUN_0001b694();
-    cm550_FUN_0001b6b4();
-    cm550_FUN_0001b73a();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase0();
+    cm550_runEvery8FramesTaskSetPhase4();
+    cm550_runEvery10FramesTaskSetPhase0();
+    cm550_runEvery20FramesTaskSetPhase0();
     _scheduler_phase_index = 0x15;
     break;
   case 0x15:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    vp44_periodicTaskSet_governorProtection();
-    cm550_FUN_0001b6a2();
-    cm550_FUN_0001b6c8();
-    cm550_FUN_0001b754();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase1();
+    cm550_runEvery8FramesTaskSetPhase5();
+    cm550_runEvery10FramesTaskSetPhase1();
+    cm550_runEvery20FramesTaskSetPhase1();
     _scheduler_phase_index = 0x16;
     break;
   case 0x16:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    cm550_periodicTaskSet_fuelTiming();
-    cm550_FUN_0001b6aa();
-    cm550_FUN_0001b6d6();
-    cm550_FUN_0001b768();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase2();
+    cm550_runEvery8FramesTaskSetPhase6();
+    cm550_runEvery10FramesTaskSetPhase2();
+    cm550_runEvery20FramesTaskSetPhase2();
     _scheduler_phase_index = 0x17;
     break;
   case 0x17:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    periodicTaskSet_fuelDemand();
-    cm550_FUN_0001b6b2();
-    cm550_FUN_0001b6e4();
-    cm550_FUN_0001b788();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase3();
+    cm550_runEvery8FramesTaskSetPhase7();
+    cm550_runEvery10FramesTaskSetPhase3();
+    cm550_runEvery20FramesTaskSetPhase3();
     _scheduler_phase_index = 0x18;
     break;
   case 0x18:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    vp44_engine_management_system();
-    cm550_FUN_0001b668();
-    cm550_FUN_0001b6f2();
-    cm550_auxiliarySystemControlWrapper();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase0();
+    cm550_runEvery8FramesTaskSetPhase0();
+    cm550_runEvery10FramesTaskSetPhase4();
+    cm550_runEvery20FramesTaskSetPhase4();
     _scheduler_phase_index = 0x19;
     break;
   case 0x19:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    vp44_periodicTaskSet_governorProtection();
-    cm550_FUN_0001b66a();
-    cm550_dzgTimingAndPressureSlowCycle10Coordinator();
-    cm550_FUN_0001b7b0();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase1();
+    cm550_runEvery8FramesTaskSetPhase1();
+    cm550_runEvery10FramesTaskSetPhase5();
+    cm550_runEvery20FramesTaskSetPhase5();
     _scheduler_phase_index = 0x1a;
     break;
   case 0x1a:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    cm550_periodicTaskSet_fuelTiming();
-    cm550_FUN_0001b678();
-    cm550_rpmBasedFuelLimiterCoordinator();
-    vp44DiagnosticFaultMonitoringSlowCycle20Coordinator();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase2();
+    cm550_runEvery8FramesTaskSetPhase2();
+    cm550_runEvery10FramesTaskSetPhase6();
+    cm550_runEvery20FramesTaskSetPhase6();
     _scheduler_phase_index = 0x1b;
     break;
   case 0x1b:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    periodicTaskSet_fuelDemand();
-    cm550_FUN_0001b686();
-    cm550_shutdownProtectionSlowCycle10Coordinator();
-    cm550_FUN_0001b7d2();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase3();
+    cm550_runEvery8FramesTaskSetPhase3();
+    cm550_runEvery10FramesTaskSetPhase7();
+    cm550_runEvery20FramesTaskSetPhase7();
     _scheduler_phase_index = 0x1c;
     break;
   case 0x1c:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    vp44_engine_management_system();
-    cm550_FUN_0001b694();
-    cm550_camSyncDiagnosticProcessingSlowCycle20Coordinator();
-    cm550_FUN_0001b7e0();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase0();
+    cm550_runEvery8FramesTaskSetPhase4();
+    cm550_runEvery10FramesTaskSetPhase8();
+    cm550_runEvery20FramesTaskSetPhase8();
     _scheduler_phase_index = 0x1d;
     break;
   case 0x1d:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    vp44_periodicTaskSet_governorProtection();
-    cm550_FUN_0001b6a2();
-    cm550_FUN_0001b732();
-    cm550_FUN_0001b7e2();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase1();
+    cm550_runEvery8FramesTaskSetPhase5();
+    cm550_runEvery10FramesTaskSetPhase9();
+    cm550_runEvery20FramesTaskSetPhase9();
     _scheduler_phase_index = 0x1e;
     break;
   case 0x1e:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    cm550_periodicTaskSet_fuelTiming();
-    cm550_FUN_0001b6aa();
-    cm550_FUN_0001b6b4();
-    cm550_FUN_0001b7ea();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase2();
+    cm550_runEvery8FramesTaskSetPhase6();
+    cm550_runEvery10FramesTaskSetPhase0();
+    cm550_runEvery20FramesTaskSetPhase10();
     _scheduler_phase_index = 0x1f;
     break;
   case 0x1f:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    periodicTaskSet_fuelDemand();
-    cm550_FUN_0001b6b2();
-    cm550_FUN_0001b6c8();
-    vp44_FUN_0001b7f2();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase3();
+    cm550_runEvery8FramesTaskSetPhase7();
+    cm550_runEvery10FramesTaskSetPhase1();
+    cm550_runEvery20FramesTaskSetPhase11();
     cm550_refreshRamCalibration();
     _scheduler_phase_index = 0x20;
     break;
   case 0x20:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    vp44_engine_management_system();
-    cm550_FUN_0001b668();
-    cm550_FUN_0001b6d6();
-    cm550_FUN_0001b80c();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase0();
+    cm550_runEvery8FramesTaskSetPhase0();
+    cm550_runEvery10FramesTaskSetPhase2();
+    cm550_runEvery20FramesTaskSetPhase12();
     _scheduler_phase_index = 0x21;
     break;
   case 0x21:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    vp44_periodicTaskSet_governorProtection();
-    cm550_FUN_0001b66a();
-    cm550_FUN_0001b6e4();
-    cm550_FUN_0001b81a();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase1();
+    cm550_runEvery8FramesTaskSetPhase1();
+    cm550_runEvery10FramesTaskSetPhase3();
+    cm550_runEvery20FramesTaskSetPhase13();
     _scheduler_phase_index = 0x22;
     break;
   case 0x22:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    cm550_periodicTaskSet_fuelTiming();
-    cm550_FUN_0001b678();
-    cm550_FUN_0001b6f2();
-    cm550_FUN_0001b828();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase2();
+    cm550_runEvery8FramesTaskSetPhase2();
+    cm550_runEvery10FramesTaskSetPhase4();
+    cm550_runEvery20FramesTaskSetPhase14();
     _scheduler_phase_index = 0x23;
     break;
   case 0x23:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    periodicTaskSet_fuelDemand();
-    cm550_FUN_0001b686();
-    cm550_dzgTimingAndPressureSlowCycle10Coordinator();
-    cm550_FUN_0001b836();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase3();
+    cm550_runEvery8FramesTaskSetPhase3();
+    cm550_runEvery10FramesTaskSetPhase5();
+    cm550_runEvery20FramesTaskSetPhase15();
     _scheduler_phase_index = 0x24;
     break;
   case 0x24:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    vp44_engine_management_system();
-    cm550_FUN_0001b694();
-    cm550_rpmBasedFuelLimiterCoordinator();
-    cm550_FUN_0001b83e();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase0();
+    cm550_runEvery8FramesTaskSetPhase4();
+    cm550_runEvery10FramesTaskSetPhase6();
+    cm550_runEvery20FramesTaskSetPhase16();
     _scheduler_phase_index = 0x25;
     break;
   case 0x25:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    vp44_periodicTaskSet_governorProtection();
-    cm550_FUN_0001b6a2();
-    cm550_shutdownProtectionSlowCycle10Coordinator();
-    cm550_FUN_0001b846();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase1();
+    cm550_runEvery8FramesTaskSetPhase5();
+    cm550_runEvery10FramesTaskSetPhase7();
+    cm550_runEvery20FramesTaskSetPhase17();
     _scheduler_phase_index = 0x26;
     break;
   case 0x26:
-    cm550_ioDriverStrobeHandlerWrapper();
-    vp44_evenPhaseSchedulerTaskSet();
-    cm550_periodicTaskSet_fuelTiming();
-    cm550_FUN_0001b6aa();
-    cm550_camSyncDiagnosticProcessingSlowCycle20Coordinator();
-    vp44DiagnosticControlSlowCycle20Coordinator();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase0();
+    cm550_runEvery4FramesTaskSetPhase2();
+    cm550_runEvery8FramesTaskSetPhase6();
+    cm550_runEvery10FramesTaskSetPhase8();
+    cm550_runEvery20FramesTaskSetPhase18();
     vp44_FUN_000127c2();
     _scheduler_phase_index = 0x27;
     break;
   case 0x27:
-    cm550_ioDriverStrobeHandlerWrapper();
-    cm550_oddPhaseSchedulerTaskSet();
-    periodicTaskSet_fuelDemand();
-    cm550_FUN_0001b6b2();
-    cm550_FUN_0001b732();
-    cm550_FUN_0001b862();
+    cm550_runEveryFrameTaskSet();
+    cm550_runEvery2FramesTaskSetPhase1();
+    cm550_runEvery4FramesTaskSetPhase3();
+    cm550_runEvery8FramesTaskSetPhase7();
+    cm550_runEvery10FramesTaskSetPhase9();
+    cm550_runEvery20FramesTaskSetPhase19();
     _scheduler_phase_index = 0;
     break;
   default:
@@ -22375,7 +22592,7 @@ void receivePgn65265CruiseControlVehicleSpeedMessage(int param_1)
 //
 
 /* Counts each nonzero word of j1939_input_signal_timeouts down by 1 - all 25 words (the bound
-   0x804264 is inclusive as in CM848). Runs from the task set vp44_evenPhaseSchedulerTaskSet
+   0x804264 is inclusive as in CM848). Runs from the task set cm550_runEvery2FramesTaskSetPhase0
    (0x1b4d8; every second executive frame) with no gate. The counterpart of
    cm848_tickJ1939InputSupervision (0x50bca0): CM848 ends with the same loop but first needs the
    J1939 multiplex enable bit, counts j1939_input_fault_start_delay and the start-up timer / inhibit
