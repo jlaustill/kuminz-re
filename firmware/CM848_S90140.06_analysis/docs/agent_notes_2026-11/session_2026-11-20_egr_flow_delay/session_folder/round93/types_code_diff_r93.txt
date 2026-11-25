@@ -1,0 +1,2216 @@
+DIFFERENT 0x0ac3c cm550_FUN_0000ac3c: 150 -> 150 lines
+     @@ -6,2 +6,2 @@
+     -    if (_duty_cycle_monitor_long_term_map_total_time_0_0_100000_0 == 0) {
+     -      _duty_cycle_mon_approximate_long_term_map_start_0_0_50000_0 = engine_hour_meter;
+     +    if (duty_cycle_monitor_long_term_map_total_time_0_0_100000_0 == 0) {
+     +      duty_cycle_mon_approximate_long_term_map_start_0_0_50000_0 = engine_hour_meter;
+     @@ -16 +16 @@
+     -      _duty_cycle_mon_approxiamte_short_term_map_2_start_0_0_50000_0 = engine_hour_meter;
+     +      duty_cycle_mon_approxiamte_short_term_map_2_start_0_0_50000_0 = engine_hour_meter;
+     @@ -45 +45 @@
+     -      _rpm_rate_limit_countdown = (uint)_frictional_load_torque_init;
+     +      _rpm_rate_limit_countdown = (uint)frictional_load_torque_init;
+     @@ -53 +53 @@
+DIFFERENT 0x0af70 cm550_FUN_0000af70: 53 -> 53 lines
+     @@ -17,3 +17,3 @@
+     -  _rpm_control_timer_2 = (uint)_duty_cycle_short_term_log_time_period_1_0_1000_0 * 36000;
+     -  _rpm_control_timer_delta = _duty_cycle_short_term_log_time_period_1_0_1000_0 * 0x3c;
+     -  if (_duty_cycle_monitor_short_term_map_1_total_time_0_0_500_0 < _rpm_control_timer_delta) {
+     +  _rpm_control_timer_2 = (uint)duty_cycle_short_term_log_time_period_1_0_1000_0 * 36000;
+     +  _rpm_control_timer_delta = duty_cycle_short_term_log_time_period_1_0_1000_0 * 0x3c;
+     +  if (duty_cycle_monitor_short_term_map_1_total_time_0_0_500_0 < _rpm_control_timer_delta) {
+     @@ -21 +21 @@
+     -         ((uint)_duty_cycle_monitor_short_term_map_1_total_time_0_0_500_0 * 36000) / 0x3c;
+     +         ((uint)duty_cycle_monitor_short_term_map_1_total_time_0_0_500_0 * 36000) / 0x3c;
+     @@ -26 +26 @@
+     -  if (_duty_cycle_monitor_short_term_map_2_total_time_0_0_500_0 < _rpm_control_timer_delta) {
+DIFFERENT 0x0b130 cm550_writeHourMeterConversionData: 35 -> 35 lines
+     @@ -4,2 +4,2 @@
+     -    _duty_cycle_monitor_short_term_map_1_total_time_0_0_500_0 =
+     -         (undefined2)((_short_term_map_1_processing_total_0_500_0 * 0x3c + 18000) / 36000);
+     +    duty_cycle_monitor_short_term_map_1_total_time_0_0_500_0 =
+     +         (word)((_short_term_map_1_processing_total_0_500_0 * 0x3c + 18000) / 36000);
+     @@ -8 +8 @@
+     -    _duty_cycle_monitor_short_term_map_1_total_time_0_0_500_0 = _rpm_control_timer_delta;
+     +    duty_cycle_monitor_short_term_map_1_total_time_0_0_500_0 = _rpm_control_timer_delta;
+     @@ -11,2 +11,2 @@
+     -    _duty_cycle_monitor_short_term_map_2_total_time_0_0_500_0 =
+     -         (undefined2)((_short_term_map_2_processing_total_0_500_0 * 0x3c + 18000) / 36000);
+     +    duty_cycle_monitor_short_term_map_2_total_time_0_0_500_0 =
+DIFFERENT 0x0b210 calculateFilteredEngineAcceleration: 28 -> 28 lines
+     @@ -23 +23 @@
+     -  _engine_acceleration_after_second_stage_low_pass_filtering_2560_2540 =
+     +  engine_acceleration_after_second_stage_low_pass_filtering_2560_2540 =
+DIFFERENT 0x0b2aa cm550_rpm_system_state_controller: 59 -> 59 lines
+     @@ -5 +5 @@
+     -    if (_engine_acceleration_below_which_anc_may_limit_fueling_2560_2540 <
+     +    if (engine_acceleration_below_which_anc_may_limit_fueling_2560_2540 <
+     @@ -7 +7 @@
+     -      _anc_fueling_limit_disable_due_to_bare_engine_accel_active_inactive = 1;
+     +      anc_fueling_limit_disable_due_to_bare_engine_accel_active_inactive = 1;
+     @@ -11 +11 @@
+     -      _anc_fueling_limit_disable_due_to_bare_engine_accel_active_inactive = 0;
+     +      anc_fueling_limit_disable_due_to_bare_engine_accel_active_inactive = 0;
+     @@ -16,8 +16,8 @@
+     -    if ((((_application_specific_anc_enable_disable_flag_set_to_false_to_dis_0_1 == 0) ||
+     -         (_anc_fueling_limit_disable_due_to_bare_engine_accel_active_inactive != 0)) ||
+DIFFERENT 0x0b3d0 cm550_FUN_0000b3d0: 65 -> 65 lines
+     @@ -5 +5 @@
+     -    if (_engine_acceleration_below_which_anc_may_limit_timing_2560_2540 <
+     +    if (engine_acceleration_below_which_anc_may_limit_timing_2560_2540 <
+     @@ -8 +8 @@
+     -      _DAT_00800040 = _duration_anc_timing_limit_will_be_disabled_after_a_bare_engine_0_20;
+     +      _DAT_00800040 = duration_anc_timing_limit_will_be_disabled_after_a_bare_engine_0_20;
+     @@ -17 +17 @@
+     -    if ((((_application_specific_anc_enable_disable_flag_set_to_false_to_dis_0_1 == 0) ||
+     +    if ((((application_specific_anc_enable_disable_flag_set_to_false_to_dis_0_1 == 0) ||
+     @@ -21 +21 @@
+     -        _calibratible_coolant_temperature_above_which_maximum_timing_m_20_255)) ||
+     +        calibratible_coolant_temperature_above_which_maximum_timing_m_20_255)) ||
+DIFFERENT 0x0b4ce cm550_fuelDemandLimitMinimumUpdater: 9 -> 9 lines
+     @@ -3 +3 @@
+     -  _timing_advance_limit_as_just_before_modification_by_anc_timing_0_120 = fuel_timing_advance_value;
+     +  timing_advance_limit_as_just_before_modification_by_anc_timing_0_120 = fuel_timing_advance_value;
+DIFFERENT 0x0b4f2 cm550_engineStateFuelLimitInterpolator: 64 -> 64 lines
+     @@ -5 +5 @@
+     -    if (_engine_acceleration_below_which_anc_may_limit_engine_spee_2560_2540 <
+     +    if (engine_acceleration_below_which_anc_may_limit_engine_spee_2560_2540 <
+     @@ -8 +8 @@
+     -      _DAT_0080003c = _duration_anc_speed_limit_will_be_disabled_after_a_bare_engine_a_0_20;
+     +      _DAT_0080003c = duration_anc_speed_limit_will_be_disabled_after_a_bare_engine_a_0_20;
+     @@ -17 +17 @@
+     -    if ((((_application_specific_anc_enable_disable_flag_set_to_false_to_dis_0_1 == 0) ||
+     +    if ((((application_specific_anc_enable_disable_flag_set_to_false_to_dis_0_1 == 0) ||
+     @@ -20,8 +20,8 @@
+     -        _engine_speed_above_which_anc_may_limit_engine_speed_1000_3000 < current_engine_rpm_filtered
+     -        )) || ((T0 = _engine_acceleration_after_first_stage_low_pass_filtering_2560_2540,
+DIFFERENT 0x0b666 cm550_initFuelSystemOutputDriver: 6 -> 6 lines
+     @@ -3,2 +3,2 @@
+     -  _application_specific_anc_enable_disable_flag_set_to_false_to_dis_0_1 = 1;
+     -  _anc_speed_limit_ramp_value = _maximum_rated_engine_speed_0_5000;
+     +  application_specific_anc_enable_disable_flag_set_to_false_to_dis_0_1 = 1;
+     +  _anc_speed_limit_ramp_value = maximum_rated_engine_speed_0_5000;
+DIFFERENT 0x0b6e8 cm550_diagnosticMessageQueueWrite: 50 -> 50 lines
+     @@ -10,3 +10,3 @@
+     -    _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     -         _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     -    _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
+     +    status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     +         status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     +    fault_first_occurrence_flags_word_7 = fault_first_occurrence_flags_word_7 | 4;
+DIFFERENT 0x0c180 cm550_fuelTimingTransitionStateMachine: 33 -> 33 lines
+     @@ -5 +5 @@
+     -    _diagnostic_table_pointer_2 = boost_pressure_sensor_state.filtered_value;
+     +    diagnostic_table_pointer_2 = boost_pressure_sensor_state.filtered_value;
+     @@ -13 +13 @@
+     -       || (((_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 2) != 0 &&
+     +       || (((status_32_word_bit_mapped_system_error_status_word_2_0_1 & 2) != 0 &&
+     @@ -15 +15 @@
+     -       ) || (((_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 1) != 0 &&
+     +       ) || (((status_32_word_bit_mapped_system_error_status_word_2_0_1 & 1) != 0 &&
+     @@ -18 +18 @@
+     -     (((_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 0x10) != 0 &&
+     +     (((status_32_word_bit_mapped_system_error_status_word_2_0_1 & 0x10) != 0 &&
+DIFFERENT 0x0c2be cm550_diagnosticTimingIncrementController: 13 -> 13 lines
+     @@ -6 +6 @@
+     -    _semaphore_used_to_latch_afc_events_that_occur_betwe_0_false_1_true = 1;
+     +    semaphore_used_to_latch_afc_events_that_occur_betwe_0_false_1_true = 1;
+DIFFERENT 0x0c326 calculateAlpha: 46 -> 46 lines
+     @@ -7 +7 @@
+     -         _time_that_must_expire_without_lsg_commanding_fuel_before_alpha_0_900;
+     +         time_that_must_expire_without_lsg_commanding_fuel_before_alpha_0_900;
+     @@ -9,2 +9,2 @@
+     -    _afc_exit_countdown_timer =
+     -         _time_that_must_elapse_without_afc_limiting_before_alpha_may_be_0_900;
+     +    _afc_exit_countdown_timer = time_that_must_elapse_without_afc_limiting_before_alpha_may_be_0_900
+     +    ;
+     @@ -21 +21 @@
+     -         (_indicator_from_engine_protection_that_fuel_derate_1_active_0_inact != 1)) {
+     +         (indicator_from_engine_protection_that_fuel_derate_1_active_0_inact != 1)) {
+DIFFERENT 0x0c404 calculateAlphaFuelRateResult: 18 -> 18 lines
+     @@ -4 +4 @@
+     -  if ((_semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true == 1) &&
+     +  if ((semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true == 1) &&
+DIFFERENT 0x0c4b2 calculateAlphaLowSpeedGovernorResult: 21 -> 21 lines
+     @@ -5 +5 @@
+     -     (_semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true == 1)) {
+     +     (semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true == 1)) {
+     @@ -7 +7 @@
+     -         _time_that_must_expire_without_lsg_commanding_fuel_before_alpha_0_900;
+     +         time_that_must_expire_without_lsg_commanding_fuel_before_alpha_0_900;
+DIFFERENT 0x0c504 calculateAlphaAirFuelControlResult: 19 -> 19 lines
+     @@ -4,4 +4,4 @@
+     -  if ((_semaphore_used_to_latch_afc_events_that_occur_betwe_0_false_1_true == 1) ||
+     -     (_semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true == 1)) {
+     -    _afc_exit_countdown_timer =
+     -         _time_that_must_elapse_without_afc_limiting_before_alpha_may_be_0_900;
+     +  if ((semaphore_used_to_latch_afc_events_that_occur_betwe_0_false_1_true == 1) ||
+     +     (semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true == 1)) {
+     +    _afc_exit_countdown_timer = time_that_must_elapse_without_afc_limiting_before_alpha_may_be_0_900
+     +    ;
+DIFFERENT 0x0c582 calculateAlphaBase: 54 -> 54 lines
+     @@ -49,2 +49,2 @@
+     -  _semaphore_used_to_latch_afc_events_that_occur_betwe_0_false_1_true = 0;
+     -  _semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true = 0;
+     +  semaphore_used_to_latch_afc_events_that_occur_betwe_0_false_1_true = 0;
+     +  semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true = 0;
+DIFFERENT 0x0c658 cm550_phase2_slot_5_handler: 6 -> 6 lines
+     @@ -3,2 +3,2 @@
+     -  _semaphore_used_to_latch_afc_events_that_occur_betwe_0_false_1_true = 0;
+     -  _semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true = 0;
+     +  semaphore_used_to_latch_afc_events_that_occur_betwe_0_false_1_true = 0;
+     +  semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true = 0;
+DIFFERENT 0x0c66a cm550_rpmHistogramAndProtectionStatisticsAccumulator: 24 -> 24 lines
+     @@ -19 +19 @@
+     -         _default_fueling_to_be_used_by_altitude_derate_if_ambient_air_p_0_100;
+     +         default_fueling_to_be_used_by_altitude_derate_if_ambient_air_p_0_100;
+DIFFERENT 0x0c760 mc68k_configureCanCs5MessageObjects: 27 -> 27 lines
+     @@ -4 +4 @@
+     -  _can_1_chip_s_last_message_object_used_0_15 = 6;
+     +  can_1_chip_s_last_message_object_used_0_15 = 6;
+DIFFERENT 0x0c8a0 cm550_dzgTimingAndPressureControlStateMachine: 38 -> 38 lines
+     @@ -10 +10 @@
+     -       _asg_reference_speed_working - _io_control_fuel_table_1_lookup_arg;
+     +       asg_reference_speed_working - _io_control_fuel_table_1_lookup_arg;
+     @@ -24 +24 @@
+     -    _fuel_blend_table_4_base =
+     +    fuel_blend_table_4_base =
+     @@ -28 +28 @@
+     -    _fuel_blend_table_4_base =
+     +    fuel_blend_table_4_base =
+     @@ -35,2 +35,2 @@
+     -                    (uint)_asg_reference_speed_working * (0x4000 - (uint)_fuel_blend_table_5_ptr))
+     -              >> 0xe);
+DIFFERENT 0x0c962 cm550_runAllSpeedGovernor: 289 -> 289 lines
+     @@ -9,4 +9,4 @@
+     -      T4 = _asg_state_x1_2000_2000;
+     -    }
+     -    else {
+     -      T1 = (uint)_asg_droop_gain_2_0_2 *
+     +      T4 = asg_state_x1_2000_2000;
+     +    }
+     +    else {
+     +      T1 = (uint)asg_droop_gain_2_0_2 *
+     @@ -20,2 +20,2 @@
+     -                      (0x400 - (uint)_qpid_adjusted_asg_droop_compensated_error_integral_2000_2000)
+     -                     * 0x80) / T1;
+DIFFERENT 0x0d0e2 cm550_diagnosticDataCopyHandler: 25 -> 25 lines
+     @@ -3 +3 @@
+     -  if ((_asg_application_specific_reference_override_mode_true_false != 0) &&
+     +  if ((asg_application_specific_reference_override_mode_true_false != 0) &&
+     @@ -6,4 +6,4 @@
+     -    _asg_reference_speed_working = _asg_application_specific_reference_speed_0_4500;
+     -    _qpid_adjusted_asg_droop_compensated_error_integral_2000_2000 =
+     -         _asg_application_specific_droop_gain_1_0_2;
+     -    _asg_droop_gain_2_0_2 = _asg_application_specific_droop_gain_2_0_2;
+     +    asg_reference_speed_working = asg_application_specific_reference_speed_0_4500;
+     +    qpid_adjusted_asg_droop_compensated_error_integral_2000_2000 =
+     +         asg_application_specific_droop_gain_1_0_2;
+     +    asg_droop_gain_2_0_2 = asg_application_specific_droop_gain_2_0_2;
+DIFFERENT 0x0d1a4 cm550_diagnosticStatus2Initializer: 20 -> 20 lines
+     @@ -8 +8 @@
+     -         _jcomm_speed_governor_mode_indicator_of_which_speed_mode_characte_0_3;
+     +         jcomm_speed_governor_mode_indicator_of_which_speed_mode_characte_0_3;
+     @@ -10,5 +10,5 @@
+     -      _asg_external_reset_flag_true_false = 0;
+     -      _qpid_adjusted_asg_droop_compensated_error_integral_2000_2000 = 0x400;
+     -      _asg_droop_gain_2_0_2 = 0x400;
+     -      _asg_fueling_lower_limit_0_50 = governor_fuel_demand_tracking_floor_j1939;
+     -      _asg_fueling_high_limit_0_100 = governor_fuel_demand_tracking_limit_j1939;
+     +      asg_external_reset_flag_true_false = 0;
+     +      qpid_adjusted_asg_droop_compensated_error_integral_2000_2000 = 0x400;
+     +      asg_droop_gain_2_0_2 = 0x400;
+DIFFERENT 0x0d218 cm550_diagnosticState2Initializer: 8 -> 8 lines
+     @@ -5 +5 @@
+     -    _asg_reference_speed_working = _datalink_commanded_speed_reference;
+     +    asg_reference_speed_working = datalink_commanded_speed_reference;
+DIFFERENT 0x0d23c cm550_dualTableLookupSum: 11 -> 11 lines
+     @@ -3 +3 @@
+     -  _DAT_0080011e = _asg_reference_speed_working;
+     +  _DAT_0080011e = asg_reference_speed_working;
+DIFFERENT 0x0d2be cm550_acceleratorThrottleFaultDetector: 37 -> 37 lines
+     @@ -3 +3 @@
+     -  if (((_default_throttle_source_selector < 2) &&
+     +  if (((default_throttle_source_selector < 2) &&
+     @@ -8 +8 @@
+     -      if (_default_throttle_source_selector == 0) {
+     +      if (default_throttle_source_selector == 0) {
+     @@ -16 +16 @@
+     -      _asg_throttle_source_selector = _default_throttle_source_selector;
+     +      _asg_throttle_source_selector = default_throttle_source_selector;
+DIFFERENT 0x0d3b2 cm550_FUN_0000d3b2: 9 -> 9 lines
+     @@ -7 +7 @@
+     -  _asg_throttle_source_selector = _default_throttle_source_selector;
+     +  _asg_throttle_source_selector = default_throttle_source_selector;
+DIFFERENT 0x0d3e6 cm550_diagnosticMode10FuelController: 28 -> 27 lines
+     @@ -4 +4 @@
+     -    _derate_target_snapshot = _asg_reference_speed_working;
+     +    derate_target_snapshot = asg_reference_speed_working;
+     @@ -9 +9 @@
+     -    _throttle_buffer_decreasing_value = _asg_reference_speed_working;
+     +    throttle_buffer_decreasing_value = asg_reference_speed_working;
+     @@ -22,4 +22,3 @@
+     -  _asg_throttle_droop_gain_2_0_5_1 =
+     -       (undefined2)((int)(_asg_throttle_droop_gain_1_0_1 + 0x400) >> 1);
+     -  _qpid_adjusted_asg_droop_compensated_error_integral_2000_2000 = _asg_throttle_droop_gain_1_0_1;
+     -  _asg_droop_gain_2_0_2 = _asg_throttle_droop_gain_2_0_5_1;
+     +  _asg_throttle_droop_gain_2_0_5_1 = (word)((int)(_asg_throttle_droop_gain_1_0_1 + 0x400) >> 1);
+DIFFERENT 0x0d4ae cm550_FUN_0000d4ae: 33 -> 33 lines
+     @@ -24,3 +24,3 @@
+     -      _asg_external_reset_flag_true_false = 0;
+     -      _asg_fueling_lower_limit_0_50 = governor_fuel_demand_tracking_floor_throttle_mode;
+     -      _asg_fueling_high_limit_0_100 = governor_fuel_demand_tracking_limit_throttle_mode;
+     +      asg_external_reset_flag_true_false = 0;
+     +      asg_fueling_lower_limit_0_50 = governor_fuel_demand_tracking_floor_throttle_mode;
+     +      asg_fueling_high_limit_0_100 = governor_fuel_demand_tracking_limit_throttle_mode;
+DIFFERENT 0x0d584 cm550_diagnosticState7Setter: 9 -> 9 lines
+     @@ -4 +4 @@
+     -    _asg_reference_speed_working =
+     +    asg_reference_speed_working =
+DIFFERENT 0x0d5e6 cm550_initBoostProtectionSystem: 10 -> 10 lines
+     @@ -6 +6 @@
+     -  _filtered_transmission_gear_ratio_0_1_15_999 = 0;
+     +  filtered_transmission_gear_ratio_0_1_15_999 = 0;
+     @@ -8 +8 @@
+     -  engine_speed_limit_source_2 = _maximum_rated_engine_speed_0_5000;
+     +  engine_speed_limit_source_2 = maximum_rated_engine_speed_0_5000;
+DIFFERENT 0x0d610 updateEngineSyncStatus: 678 -> 678 lines
+     @@ -15 +15 @@
+     -           ((_fault_first_occurrence_flags_word_8 & 0x200) == 0)) {
+     +           ((fault_first_occurrence_flags_word_8 & 0x200) == 0)) {
+     @@ -28 +28 @@
+     -              ((_fault_first_occurrence_flags_word_8 & 0x400) == 0)) {
+     +              ((fault_first_occurrence_flags_word_8 & 0x400) == 0)) {
+     @@ -46 +46 @@
+     -           ((_fault_first_occurrence_flags_word_8 & 0x400) == 0)) {
+     +           ((fault_first_occurrence_flags_word_8 & 0x400) == 0)) {
+     @@ -66 +66 @@
+     -          _fault_first_occurrence_flags_word_8 = _fault_first_occurrence_flags_word_8 | 0x200;
+     +          fault_first_occurrence_flags_word_8 = fault_first_occurrence_flags_word_8 | 0x200;
+DIFFERENT 0x0e780 cm550_clearKickdownControlState: 49 -> 49 lines
+     @@ -41,2 +41,2 @@
+     -  _status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+     -       _status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xf800;
+     +  status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+     +       status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xf800;
+     @@ -47 +47 @@
+     -  _request_to_strobe_set_0_then_set_1_ether_start_driver_0_1 = 0;
+     +  request_to_strobe_set_0_then_set_1_ether_start_driver_0_1 = 0;
+DIFFERENT 0x0e998 cm550_FUN_0000e998: 78 -> 78 lines
+     @@ -22 +22 @@
+     -           (T2 = (uint)_offset_added_to_lsg_ref_spd_resulting_in_rpm_limit_for_birh_tes_0_5000 +
+     +           (T2 = (uint)offset_added_to_lsg_ref_spd_resulting_in_rpm_limit_for_birh_tes_0_5000 +
+     @@ -33 +33 @@
+     -              if (_boost_threshold_for_bir_high_error_0_100 <
+     +              if (boost_threshold_for_bir_high_error_0_100 <
+     @@ -48 +48 @@
+     -              _fault_first_occurrence_flags_word_1 = _fault_first_occurrence_flags_word_1 | 0x2000;
+     +              fault_first_occurrence_flags_word_1 = fault_first_occurrence_flags_word_1 | 0x2000;
+     @@ -58 +58 @@
+     -            T2 = CONCAT22((short)(T2 >> 0x10),_fault_first_occurrence_flags_word_1) &
+     +            T2 = CONCAT22((short)(T2 >> 0x10),fault_first_occurrence_flags_word_1) &
+DIFFERENT 0x0ec1e cm550_activeParamReadFunction: 54 -> 54 lines
+     @@ -12,3 +12,3 @@
+     -      _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     -           _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     -      _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
+     +      status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     +           status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     +      fault_first_occurrence_flags_word_7 = fault_first_occurrence_flags_word_7 | 4;
+     @@ -33,3 +33,3 @@
+     -      _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     -           _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     -      _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
+     +      status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+DIFFERENT 0x0ed64 insiteCommandByteDispatcher: 578 -> 578 lines
+     @@ -67 +67 @@
+     -          T15._1_1_ = (byte)(((uint)_alternate_throttle_command * 0xfa) / 400);
+     +          T15._1_1_ = (byte)(((uint)alternate_throttle_command * 0xfa) / 400);
+     @@ -198 +198 @@
+     -        if (_closed_loop_governor_active_flag != 0) {
+     +        if (closed_loop_governor_active_flag != 0) {
+DIFFERENT 0x0f796 cm550_paramSystemModeController: 64 -> 64 lines
+     @@ -24 +24 @@
+     -           _cold_start_fuel_demand_snapshot;
+     +           cold_start_fuel_demand_snapshot;
+     @@ -34 +34 @@
+     -             _pto_fuel_demand_snapshot;
+     +             pto_fuel_demand_snapshot;
+     @@ -42 +42 @@
+     -  _cold_start_fuel_demand_snapshot =
+     +  cold_start_fuel_demand_snapshot =
+     @@ -44 +44 @@
+     -  if ((short)(_determined_peak_engine_fueling_0_100 -
+     +  if ((short)(determined_peak_engine_fueling_0_100 -
+DIFFERENT 0x0f8c6 cm550_param_lookup_1: 21 -> 21 lines
+     @@ -3 +3 @@
+     -  if ((short)(_determined_peak_engine_fueling_0_100 -
+     +  if ((short)(determined_peak_engine_fueling_0_100 -
+     @@ -15 +15 @@
+     -                  0x6400,_determined_peak_engine_fueling_0_100 -
+     +                  0x6400,determined_peak_engine_fueling_0_100 -
+DIFFERENT 0x0f99c cm550_FUN_0000f99c: 23 -> 23 lines
+     @@ -8 +8 @@
+     -  if ((short)(_determined_peak_engine_fueling_0_100 -
+     +  if ((short)(determined_peak_engine_fueling_0_100 -
+     @@ -17 +17 @@
+     -                  _determined_peak_engine_fueling_0_100 -
+     +                  determined_peak_engine_fueling_0_100 -
+DIFFERENT 0x0fa06 vp44State2TransitionHandler: 20 -> 20 lines
+     @@ -16 +16 @@
+     -  _torque_curve_fueling_at_idle_speed_breakpoint_0_100 =
+     +  torque_curve_fueling_at_idle_speed_breakpoint_0_100 =
+DIFFERENT 0x0fa68 vp44_FUN_0000fa68: 16 -> 16 lines
+     @@ -9 +9 @@
+     -         _torque_curve_fueling_at_idle_speed_breakpoint_0_100;
+     +         torque_curve_fueling_at_idle_speed_breakpoint_0_100;
+     @@ -14 +14 @@
+     -       _jcomm_fueling_value_at_pt_3_in_engine_config_message_when_to_0_100;
+     +       jcomm_fueling_value_at_pt_3_in_engine_config_message_when_to_0_100;
+DIFFERENT 0x0faa6 cm550_calculateGovernorDroopSpeed: 30 -> 30 lines
+     @@ -3,2 +3,2 @@
+     -  if (_slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13 == 0) {
+     -    _torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000 = _hsg_reference_speed_for_droop;
+     +  if (slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13 == 0) {
+     +    _torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000 = hsg_reference_speed_for_droop;
+     @@ -8 +8 @@
+     -            (((uint)(ushort)((_full_fueling_value_at_hsg_bef_droop_speed_0_100 - breakpoint_fueling)
+     +            (((uint)(ushort)((full_fueling_value_at_hsg_bef_droop_speed_0_100 - breakpoint_fueling)
+     @@ -10 +10 @@
+     -             (uint)_slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13) / 0x8888 &
+     +             (uint)slope_of_line_defining_droop_for_the_hsg_ref_currently_activ_0_55_13) / 0x8888 &
+DIFFERENT 0x0fb26 vp44_fuelLimitExceedanceStatisticsAccumulator: 209 -> 209 lines
+     @@ -8 +8 @@
+     -  if (((int)(uint)_lsg_base_reference_speed_calibration <
+     +  if (((int)(uint)lsg_base_reference_speed_calibration <
+     @@ -10,3 +10,3 @@
+     -            (uint)_difference_between_the_lsg_breakpoint_and_the_lsg_reference_s_0_5000)) ||
+     -     ((uint)_difference_between_the_lsg_breakpoint_and_the_lsg_reference_s_0_5000 +
+     -      (uint)_lsg_breakpoint_speed < (uint)_lsg_base_reference_speed_calibration)) {
+     +            (uint)difference_between_the_lsg_breakpoint_and_the_lsg_reference_s_0_5000)) ||
+     +     ((uint)difference_between_the_lsg_breakpoint_and_the_lsg_reference_s_0_5000 +
+     +      (uint)_lsg_breakpoint_speed < (uint)lsg_base_reference_speed_calibration)) {
+     @@ -37 +37 @@
+     -    _hsg_reference_speed_for_droop = _reference_speed_before_droop_calculation_1400_4500;
+DIFFERENT 0x0ff48 cm550_FUN_0000ff48: 9 -> 9 lines
+     @@ -4 +4 @@
+     -    _determined_peak_engine_fueling_0_100 =
+     +    determined_peak_engine_fueling_0_100 =
+     @@ -6 +6 @@
+     -    _DAT_0080da34 = _jcomm_reference_engine_torque_reference_engine_torque_that_c_0_64255;
+     +    _DAT_0080da34 = jcomm_reference_engine_torque_reference_engine_torque_that_c_0_64255;
+DIFFERENT 0x0ff6c cm550_ioControlBasedFuelCalculator: 79 -> 79 lines
+     @@ -6 +6 @@
+     -         _indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6;
+     +         indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6;
+     @@ -10 +10 @@
+     -         _indicates_of_cyl_brakes_driven_by_eb_driver_2_for_j1939_ret_ma_0_6 +
+     +         indicates_of_cyl_brakes_driven_by_eb_driver_2_for_j1939_ret_ma_0_6 +
+     @@ -15 +15 @@
+     -         _indicates_of_cyl_brakes_driven_by_eb_driver_3_for_j1939_ret_ma_0_6 +
+     +         indicates_of_cyl_brakes_driven_by_eb_driver_3_for_j1939_ret_ma_0_6 +
+     @@ -20 +20 @@
+     -         _indicates_of_cyl_brakes_driven_by_eb_driver_4_for_j1939_ret_ma_0_6 +
+     +         indicates_of_cyl_brakes_driven_by_eb_driver_4_for_j1939_ret_ma_0_6 +
+DIFFERENT 0x100da cm550_throttleTablePointerSetup: 10 -> 10 lines
+     @@ -8 +8 @@
+     -  _anc_altitude_table_1_ptr = 0x60566;
+     +  anc_altitude_table_1_ptr = 0x60566;
+DIFFERENT 0x1011c cm550_bufferDecreasingPatternCheck: 36 -> 36 lines
+     @@ -23 +23 @@
+     -       (T0 = T3[0] + _time_constant_compared_with_prior_pulse_slope_in_final_cold_0_4000,
+     +       (T0 = T3[0] + time_constant_compared_with_prior_pulse_slope_in_final_cold_0_4000,
+     @@ -25 +25 @@
+     -      (T0 = (uint)_time_constant_compared_with_prior_pulse_time_in_final_cold_sy_400_0,
+     +      (T0 = (uint)(short)time_constant_compared_with_prior_pulse_time_in_final_cold_sy_400_0,
+DIFFERENT 0x101b8 cm550_bufferThresholdValidator: 32 -> 32 lines
+     @@ -16 +16 @@
+     -      _temp_below_which_cold_crank_can_run_50_293_7c10) {
+     +      temp_below_which_cold_crank_can_run_50_293_7c10) {
+     @@ -22 +22 @@
+     -  T0 = T1 * _value_used_to_detect_sync_pulse_0_100_7c20 >> 8;
+     +  T0 = T1 * value_used_to_detect_sync_pulse_0_100_7c20 >> 8;
+DIFFERENT 0x1025c cm550_detectEngineSpeedSensorSyncPulse: 75 -> 75 lines
+     @@ -25 +25 @@
+     -      if (_next_table_position_backup_pointer_to_next_spot_in_ba_800000_83ffff ==
+     +      if ((undefined *)next_table_position_backup_pointer_to_next_spot_in_ba_800000_83ffff ==
+     @@ -31 +31 @@
+     -             _next_table_position_backup_pointer_to_next_spot_in_ba_800000_83ffff + -4;
+     +             (undefined *)(next_table_position_backup_pointer_to_next_spot_in_ba_800000_83ffff - 4);
+     @@ -36 +36 @@
+     -      T1 = _anc_altitude_table_2_ptr;
+     +      T1 = anc_altitude_table_2_ptr;
+     @@ -52 +52 @@
+     -             _engine_speed_limit_below_which_the_cold_crank_sync_determina_0_8000)) {
+     +             engine_speed_limit_below_which_the_cold_crank_sync_determina_0_8000)) {
+DIFFERENT 0x10394 cm550_canBusTimingInit: 8 -> 7 lines
+     @@ -5,2 +5 @@
+     -  _anc_altitude_table_2_ptr = _DAT_008001a8 * (uint)_value_used_to_detect_sync_pulse_0_100_7c1e >> 8
+     -  ;
+     +  anc_altitude_table_2_ptr = _DAT_008001a8 * (uint)_value_used_to_detect_sync_pulse_0_100_7c1e >> 8;
+DIFFERENT 0x10568 vp44_rpmDerateCalculationController: 121 -> 121 lines
+     @@ -10 +10 @@
+     -      _vp44_block_size = _requested_throttle_after_being_lin_and_fil_via_freq_thr_algo_0_100;
+     +      _vp44_block_size = requested_throttle_after_being_lin_and_fil_via_freq_thr_algo_0_100;
+     @@ -37 +37 @@
+     -            (((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 0x20) == 0 ||
+     +            (((status_32_word_bit_mapped_system_error_status_word_4_0_1 & 0x20) == 0 ||
+     @@ -40 +40 @@
+     -           ((((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 8) == 0 ||
+     +           ((((status_32_word_bit_mapped_system_error_status_word_4_0_1 & 8) == 0 ||
+     @@ -50 +50 @@
+     -        _state_of_selected_alternate_throttle_priority_0_9 = 0;
+     +        state_of_selected_alternate_throttle_priority_0_9 = 0;
+DIFFERENT 0x10822 vp44_derateThresholdMonitorAndFaultController: 251 -> 251 lines
+     @@ -14 +14 @@
+     -      _vp44_block_size = _requested_throttle_after_being_lin_and_fil_via_freq_thr_algo_0_100;
+     +      _vp44_block_size = requested_throttle_after_being_lin_and_fil_via_freq_thr_algo_0_100;
+     @@ -18,2 +18,2 @@
+     -    _vp44_buffer_total_size = _engine_fault_timer_init + (_DAT_00804f9e - _DAT_00807cf0);
+     -    _vp44_buffer_count = _DAT_00807ce0 + (_DAT_00804f9e - _DAT_00807cf0);
+     +    vp44_buffer_total_size = _engine_fault_timer_init + (_DAT_00804f9e - _DAT_00807cf0);
+     +    vp44_buffer_count = _DAT_00807ce0 + (_DAT_00804f9e - _DAT_00807cf0);
+     @@ -25 +25 @@
+     -        if (_vp44_buffer_total_size < _vp44_block_size) {
+     +        if (vp44_buffer_total_size < _vp44_block_size) {
+     @@ -28 +28 @@
+DIFFERENT 0x11e5e cm550_coldStartFuelControlSlowCycle40Coordinator: 347 -> 346 lines
+     @@ -7 +7 @@
+     -       _alpha_blend_factor < _minimum_value_of_alpha_required_to_calculate_cylinder_maintenanc_0_1))
+     +       _alpha_blend_factor < minimum_value_of_alpha_required_to_calculate_cylinder_maintenanc_0_1))
+     @@ -9 +9 @@
+     -         final_fueling < _minimum_allowable_fueling_for_this_algorithm_to_operate_0_100)) ||
+     +         final_fueling < minimum_allowable_fueling_for_this_algorithm_to_operate_0_100)) ||
+     @@ -11,10 +11,10 @@
+     -      _engine_rpm_primary <= _minimum_allowable_engine_speed_for_this_algorithm_to_operate_0_4500 ||
+     -      (_maximum_allowable_engine_speed_for_this_algorithm_to_operate_0_4500 <= _engine_rpm_primary))
+     -     )) {
+     -    _cylinder_pressure_maintenance_status = 0;
+     -    _increment_timing_value_output_by_cylinder_pressure_maintenanc_20_20 = 0;
+DIFFERENT 0x12484 cm550_FUN_00012484: 20 -> 20 lines
+     @@ -4 +4 @@
+     -  if ((short)(_increment_timing_value_output_by_cylinder_pressure_maintenanc_20_20 +
+     +  if ((short)(increment_timing_value_output_by_cylinder_pressure_maintenanc_20_20 +
+     @@ -8 +8 @@
+     -  else if ((short)(_increment_timing_value_output_by_cylinder_pressure_maintenanc_20_20 +
+     +  else if ((short)(increment_timing_value_output_by_cylinder_pressure_maintenanc_20_20 +
+     @@ -11 +11 @@
+     -         _increment_timing_value_output_by_cylinder_pressure_maintenanc_20_20 +
+     +         increment_timing_value_output_by_cylinder_pressure_maintenanc_20_20 +
+     @@ -18 +18 @@
+     -       _cylinder_pressure_maintenance_status | timing_control_status_flags & 0xfff7;
+     +       cylinder_pressure_maintenance_status | timing_control_status_flags & 0xfff7;
+DIFFERENT 0x124d2 cm550_initLoadTrendingSystem: 26 -> 26 lines
+     @@ -3,2 +3,2 @@
+     -  _engine_rpm_histogram_threshold_select = _engine_rpm_primary;
+     -  _hour_meter_table_3_ptr = 0x60596;
+     +  engine_rpm_histogram_threshold_select = _engine_rpm_primary;
+     +  hour_meter_table_3_ptr = 0x60596;
+     @@ -7 +7 @@
+     -  _manifold_temp_table_1_type = _engine_rpm_primary;
+     +  manifold_temp_table_1_type = _engine_rpm_primary;
+     @@ -10 +10 @@
+     -  _manifold_temp_table_1_y_type = _manifold_temp_table_3_type;
+     +  manifold_temp_table_1_y_type = manifold_temp_table_3_type;
+     @@ -14 +14 @@
+DIFFERENT 0x1266e mc68k_FUN_0001266e: 70 -> 70 lines
+     @@ -12 +12 @@
+     -        _load_trending_table_2_base = 0;
+     +        load_trending_table_2_base = 0;
+     @@ -16,2 +16,2 @@
+     -      _load_trending_table_2_base = _load_trending_table_2_base + 1;
+     -      if (_load_trending_table_2_base == 4) {
+     +      load_trending_table_2_base = load_trending_table_2_base + 1;
+     +      if (load_trending_table_2_base == 4) {
+     @@ -55 +55 @@
+     -        _load_trending_table_2_base = 0;
+     +        load_trending_table_2_base = 0;
+DIFFERENT 0x127c2 vp44_FUN_000127c2: 460 -> 461 lines
+     @@ -5,3 +5,3 @@
+     -      _oil_pressure_mode_init_flag = 1;
+     -      T6 = 0;
+     -      T9 = &cylinder_balance_speed_buffer_2;
+     +      oil_pressure_mode_init_flag = 1;
+     +      T6 = 0;
+     +      T12 = &cylinder_balance_speed_buffer_2;
+     @@ -9,5 +9,5 @@
+     -      T18 = &cylinder_balance_acceleration_buffer_1;
+     -      do {
+     -        *T18 = *T11 - *T9;
+     -        T6 = T6 + 1;
+DIFFERENT 0x133fe vp44_FUN_000133fe: 61 -> 61 lines
+     @@ -3 +3 @@
+     -  _load_trending_table_2_size = 0;
+     +  load_trending_table_2_size = 0;
+     @@ -27 +27 @@
+     -  _vp44_third_array_2 = &rpm_breakpoint_table;
+     +  vp44_third_array_2 = (dword)&rpm_breakpoint_table;
+     @@ -31,2 +31,2 @@
+     -  _speed_difference_interpolation_result = 2;
+     -  _fault_scanner_loop_timestamp = 0x807352;
+     +  speed_difference_interpolation_result = 2;
+     +  fault_scanner_loop_timestamp = 0x807352;
+     @@ -41 +41 @@
+DIFFERENT 0x13616 vp44_communication_state_machine: 138 -> 138 lines
+     @@ -45,2 +45,2 @@
+     -              if (2 < _data_collector_capture_mode) {
+     -                _data_collector_capture_mode = 0;
+     +              if (2 < data_collector_capture_mode) {
+     +                data_collector_capture_mode = 0;
+     @@ -48,2 +48,2 @@
+     -              T4 = (uint)_data_collector_capture_mode;
+     -              if (_data_collector_capture_mode == 0) {
+     +              T4 = (uint)data_collector_capture_mode;
+     +              if (data_collector_capture_mode == 0) {
+     @@ -53 +53 @@
+     -              else if (_data_collector_capture_mode == 1) {
+DIFFERENT 0x142d4 cm550_FUN_000142d4: 13 -> 13 lines
+     @@ -9 +9 @@
+     -             _jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100 -
+     +             jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100 -
+DIFFERENT 0x14348 cm550_FUN_00014348: 19 -> 19 lines
+     @@ -3,2 +3,2 @@
+     -  _no_load_fueling_curve_rpm_input = _lsg_breakpoint_speed;
+     -  _frictional_load_interpolated_from_the_no_load_curve_at_lsg_ref_s_0_100 =
+     +  no_load_fueling_curve_rpm_input = _lsg_breakpoint_speed;
+     +  frictional_load_interpolated_from_the_no_load_curve_at_lsg_ref_s_0_100 =
+     @@ -6,2 +6,2 @@
+     -  _no_load_fueling_curve_rpm_input = _shutdown_protection_step_1;
+     -  _frictional_load_torque_in_fueling_at_breakpoint_3_engine_rpm_0_100_bc86 =
+     +  no_load_fueling_curve_rpm_input = shutdown_protection_step_1;
+     +  frictional_load_torque_in_fueling_at_breakpoint_3_engine_rpm_0_100_bc86 =
+     @@ -9 +9 @@
+     -  _no_load_fueling_curve_rpm_input = _engine_running_timer_threshold;
+DIFFERENT 0x143b6 cm550_multiSpeedParameterInterpolation: 22 -> 22 lines
+     @@ -6 +6 @@
+     -  _jcomm_percent_peak_torque_at_idle_speed_percent_peak_torque_128_127 =
+     +  jcomm_percent_peak_torque_at_idle_speed_percent_peak_torque_128_127 =
+     @@ -8,9 +8,9 @@
+     -                          _frictional_load_interpolated_from_the_no_load_curve_at_lsg_ref_s_0_100);
+     -  _jcomm_percent_peak_torque_at_rated_speed_percent_peak_torqu_128_127 =
+     -       cm550_FUN_000142d4(_shutdown_protection_step_2,
+     -                          _frictional_load_torque_in_fueling_at_rated_engine_rpm_0_100_bc84);
+     -  _jcomm_percent_peak_torque_at_breakpoint_3_percent_peak_torq_128_127 =
+     -       cm550_FUN_000142d4(_shutdown_protection_step_1,
+     -                          _frictional_load_torque_in_fueling_at_breakpoint_3_engine_rpm_0_100_bc86);
+     -  _jcomm_percent_peak_torque_at_breakpoint_4_percent_peak_torq_128_127 =
+DIFFERENT 0x1444e cm550_fuelDemandPercentageCalculator: 15 -> 15 lines
+     @@ -5 +5 @@
+     -  _no_load_fueling_curve_rpm_input = _engine_running_timer_threshold;
+     +  no_load_fueling_curve_rpm_input = engine_running_timer_threshold;
+     @@ -8 +8 @@
+     -  _jcomm_percent_peak_torque_based_on_current_engine_speed_and_128_127 =
+     +  jcomm_percent_peak_torque_based_on_current_engine_speed_and_128_127 =
+     @@ -12 +12 @@
+     -                  0x6400,_jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100 -
+     +                  0x6400,jcomm_peak_fueling_tau_0_max_fueling_on_100_throttle_curve_fo_0_100 -
+DIFFERENT 0x144bc cm550_countDownPreviouslyActiveFault: 49 -> 49 lines
+     @@ -30 +30 @@
+     -          _inactive_fault_j1587_reportable_count = _inactive_fault_j1587_reportable_count + -1;
+     +          inactive_fault_j1587_reportable_count = inactive_fault_j1587_reportable_count - 1;
+     @@ -36,3 +36,3 @@
+     -             previously_active_dtc_list[_inactive_fault_list_count];
+     -        T0 = (int)_inactive_fault_list_count;
+     -        _inactive_fault_list_count = _inactive_fault_list_count + -1;
+     +             previously_active_dtc_list[inactive_fault_list_count];
+     +        T0 = (int)inactive_fault_list_count;
+     +        inactive_fault_list_count = inactive_fault_list_count + -1;
+DIFFERENT 0x14812 cm550_FUN_00014812: 17 -> 17 lines
+     @@ -10,2 +10,2 @@
+     -    _inactive_fault_list_count = 0;
+     -    _inactive_fault_j1587_reportable_count = 0;
+     +    inactive_fault_list_count = 0;
+     +    inactive_fault_j1587_reportable_count = 0;
+DIFFERENT 0x14872 cm550_processFaultScanGroup: 165 -> 164 lines
+     @@ -43 +43 @@
+     -                _active_j1922_reportable_fault_count = _active_j1922_reportable_fault_count + -1;
+     +                active_j1922_reportable_fault_count = active_j1922_reportable_fault_count - 1;
+     @@ -48,3 +48,3 @@
+     -            active_dtc_list[(short)(ushort)T6] = active_dtc_list[_active_fault_list_count];
+     -            T1 = (int)_active_fault_list_count;
+     -            _active_fault_list_count = _active_fault_list_count + -1;
+     +            active_dtc_list[(short)(ushort)T6] = active_dtc_list[active_fault_list_count];
+     +            T1 = (int)active_fault_list_count;
+     +            active_fault_list_count = active_fault_list_count + -1;
+     @@ -59,2 +59,2 @@
+     -          _inactive_fault_list_count = _inactive_fault_list_count + 1;
+DIFFERENT 0x14fca mc68k_sampleAndDebounceDiscreteInputs: 466 -> 466 lines
+     @@ -22,2 +22,2 @@
+     -  *(uint *)(&DAT_00800572 + (short)(ushort)discrete_input_sample_index * 4) =
+     -       _protection_state_config_table ^ T3;
+     +  *(dword *)(&DAT_00800572 + (short)(ushort)discrete_input_sample_index * 4) =
+     +       protection_state_config_table ^ T3;
+     @@ -143 +143 @@
+     -      _pto_engage_debounce_counter = 0;
+     +      pto_engage_debounce_counter = 0;
+     @@ -146 +146 @@
+     -      _pto_engage_debounce_counter = 1;
+     +      pto_engage_debounce_counter = 1;
+     @@ -160 +160 @@
+DIFFERENT 0x159ee mc68k_ioDriverStrobeHandler: 173 -> 173 lines
+     @@ -22 +22 @@
+     -  if (request_to_strobe_set_0_then_set_1_engine_braker_driver_0_1 != '\0') {
+     +  if (request_to_strobe_set_0_then_set_1_engine_braker_driver_0_1 != 0) {
+     @@ -36 +36 @@
+     -      request_to_strobe_set_0_then_set_1_engine_braker_driver_0_1 = '\0';
+     +      request_to_strobe_set_0_then_set_1_engine_braker_driver_0_1 = 0;
+     @@ -39 +39 @@
+     -  if (request_to_strobe_set_0_then_set_1_cold_start_aid_1_driver_0_1 != '\0') {
+     +  if (request_to_strobe_set_0_then_set_1_cold_start_aid_1_driver_0_1 != 0) {
+     @@ -53 +53 @@
+     -      request_to_strobe_set_0_then_set_1_cold_start_aid_1_driver_0_1 = '\0';
+     +      request_to_strobe_set_0_then_set_1_cold_start_aid_1_driver_0_1 = 0;
+DIFFERENT 0x1666c cm550_multiPacketTransmitHandler: 99 -> 99 lines
+     @@ -76,3 +76,3 @@
+     -        _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     -             _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     -        _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
+     +        status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     +             status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     +        fault_first_occurrence_flags_word_7 = fault_first_occurrence_flags_word_7 | 4;
+DIFFERENT 0x16c3c cm550_parameterCircularBufferWrite: 22 -> 22 lines
+     @@ -6,4 +6,4 @@
+     -  _circular_buffer_last_address_offset = (short)(dest_address - 0x803b08) + -2;
+     -  T0 = CONCAT22((short)(dest_address - 0x803b08 >> 0x10),_circular_buffer_last_address_offset);
+     -  *(short *)((uint)eeprom_circular_buffer_write_index * 2 + 0x80bda8) =
+     -       _circular_buffer_last_address_offset;
+     +  circular_buffer_last_address_offset = (short)(dest_address - 0x803b08) - 2;
+     +  T0 = CONCAT22((short)(dest_address - 0x803b08 >> 0x10),circular_buffer_last_address_offset);
+     +  *(word *)((uint)eeprom_circular_buffer_write_index * 2 + 0x80bda8) =
+     +       circular_buffer_last_address_offset;
+DIFFERENT 0x16dd4 cm550_highRpmEngineProtectionStateMachine: 118 -> 118 lines
+     @@ -16 +16 @@
+     -      _timer_counting_against_oil_pressure_threshold_time_0_60 = 0;
+     +      timer_counting_against_oil_pressure_threshold_time_0_60 = 0;
+     @@ -21 +21 @@
+     -      if (_DAT_0080ccbe < _time_for_oil_to_drain_back_to_sump_with_engine_off_0_54) {
+     +      if (_DAT_0080ccbe < time_for_oil_to_drain_back_to_sump_with_engine_off_0_54) {
+     @@ -44 +44 @@
+     -      if (_DAT_0080ccba < _maximum_time_engine_warmup_algorithm_will_run_0_100) {
+     +      if (_DAT_0080ccba < maximum_time_engine_warmup_algorithm_will_run_0_100) {
+     @@ -47 +47 @@
+     -      if ((((((_status_32_word_bit_mapped_system_error_status_word_3_0_1 & 4) != 0) &&
+     +      if ((((((status_32_word_bit_mapped_system_error_status_word_3_0_1 & 4) != 0) &&
+DIFFERENT 0x171be cm550_calculateEngineSpeed: 228 -> 226 lines
+     @@ -3 +3 @@
+     -  if (_main_lost_counter_timeout_counter_for_primary_speed_sensor_0_10000 == 0) {
+     +  if (main_lost_counter_timeout_counter_for_primary_speed_sensor_0_10000 == 0) {
+     @@ -10,2 +10,2 @@
+     -    _main_lost_counter_timeout_counter_for_primary_speed_sensor_0_10000 =
+     -         _main_lost_counter_timeout_counter_for_primary_speed_sensor_0_10000 + -1;
+     +    main_lost_counter_timeout_counter_for_primary_speed_sensor_0_10000 =
+     +         main_lost_counter_timeout_counter_for_primary_speed_sensor_0_10000 - 1;
+     @@ -13 +13 @@
+     -         (word)(_engine_speed_constant_1_conversion_factor_from_tcnts_to_rpm_0_2_29 /
+     +         (word)(engine_speed_constant_1_conversion_factor_from_tcnts_to_rpm_0_2_29 /
+     @@ -16 +16 @@
+DIFFERENT 0x176de cm550_initializeEngineSpeedCalculation: 10 -> 10 lines
+     @@ -5,2 +5,2 @@
+     -  _governor_rpm_target_adjusted =
+     -       _maximum_pulse_period_timeout_max_reset_value_for_main_lost_co_0_140;
+     +  governor_rpm_target_adjusted = maximum_pulse_period_timeout_max_reset_value_for_main_lost_co_0_140
+     +  ;
+DIFFERENT 0x177c2 cm550_rpmBasedFuelLimitCalculator: 32 -> 32 lines
+     @@ -8,2 +8,2 @@
+     -    if (_crank_low_coolant_temperature_rpm_0_1000 < _crank_adjusted_initial_rpm_0_1000) {
+     -      _crank_adjusted_initial_rpm_0_1000 = _crank_low_coolant_temperature_rpm_0_1000;
+     +    if (crank_low_coolant_temperature_rpm_0_1000 < _crank_adjusted_initial_rpm_0_1000) {
+     +      _crank_adjusted_initial_rpm_0_1000 = crank_low_coolant_temperature_rpm_0_1000;
+     @@ -13,2 +13,2 @@
+     -    if (_crank_low_coolant_temperature_fueling_0_100 < _crank_adjusted_initial_fuel_0_100) {
+     -      _crank_adjusted_initial_fuel_0_100 = _crank_low_coolant_temperature_fueling_0_100;
+     +    if (crank_low_coolant_temperature_fueling_0_100 < _crank_adjusted_initial_fuel_0_100) {
+     +      _crank_adjusted_initial_fuel_0_100 = crank_low_coolant_temperature_fueling_0_100;
+DIFFERENT 0x178b0 cm550_governorFuelModeBlendCalculator: 41 -> 41 lines
+     @@ -28 +28 @@
+     -    _wet_stack_timing_outputed_by_crank_0_120 = _wet_stack_timing_base_value_0_120;
+     +    wet_stack_timing_outputed_by_crank_0_120 = _wet_stack_timing_base_value_0_120;
+     @@ -31 +31 @@
+     -    _wet_stack_timing_outputed_by_crank_0_120 = 0;
+     +    wet_stack_timing_outputed_by_crank_0_120 = 0;
+     @@ -33,2 +33,2 @@
+     -  if (_wet_stack_timing_outputed_by_crank_0_120 < _four_d_timing_output_by_crank_0_120) {
+     -    _crank_exit_advance_0_120 = _four_d_timing_output_by_crank_0_120;
+     +  if (wet_stack_timing_outputed_by_crank_0_120 < _four_d_timing_output_by_crank_0_120) {
+     +    crank_exit_advance_0_120 = _four_d_timing_output_by_crank_0_120;
+     @@ -37 +37 @@
+DIFFERENT 0x17a06 cm550_rpmBasedFuelTimingInterpolation: 19 -> 19 lines
+     @@ -13 +13 @@
+     -           (short)(((int)(short)(_crank_exit_advance_0_120 - _crank_initial_timing_advance_0_120) *
+     +           (short)(((int)(short)(crank_exit_advance_0_120 - _crank_initial_timing_advance_0_120) *
+DIFFERENT 0x17a8e cm550_frictionalLoadTorqueInterpolator: 42 -> 42 lines
+     @@ -4 +4 @@
+     -  if (((((_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 1) != 0) &&
+     +  if (((((status_32_word_bit_mapped_system_error_status_word_2_0_1 & 1) != 0) &&
+     @@ -8,2 +8,2 @@
+     -                         _status_32_word_bit_mapped_system_error_status_word_2_0_1) & 0xffff0002,
+     -       (_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 2) != 0 &&
+     +                         status_32_word_bit_mapped_system_error_status_word_2_0_1) & 0xffff0002,
+     +       (status_32_word_bit_mapped_system_error_status_word_2_0_1 & 2) != 0 &&
+     @@ -13,2 +13,2 @@
+     -    _DAT_0080d0a6 = _crank_low_coolant_temperature_fueling_0_100;
+     -    _crank_initial_fuel_break_speed_0_1000 = _crank_low_coolant_temperature_rpm_0_1000;
+     +    _DAT_0080d0a6 = crank_low_coolant_temperature_fueling_0_100;
+DIFFERENT 0x17baa cm550_FUN_00017baa: 45 -> 45 lines
+     @@ -14,2 +14,2 @@
+     -    _crank_initial_timing_advance_0_120 = _crank_low_intake_manifold_temperature_tvc_0_120;
+     -    _crank_initial_advace_break_speed_0_1000 = _crank_low_intake_manifold_temperature_rpm_0_1000;
+     +    _crank_initial_timing_advance_0_120 = crank_low_intake_manifold_temperature_tvc_0_120;
+     +    _crank_initial_advace_break_speed_0_1000 = crank_low_intake_manifold_temperature_rpm_0_1000;
+     @@ -19,2 +19,2 @@
+     -    _crank_initial_timing_advance_0_120 = _crank_high_intake_manifold_temperature_timing_0_120;
+     -    _crank_initial_advace_break_speed_0_1000 = _crank_high_intake_manifold_temperature_rpm_0_1000;
+     +    _crank_initial_timing_advance_0_120 = crank_high_intake_manifold_temperature_timing_0_120;
+     +    _crank_initial_advace_break_speed_0_1000 = crank_high_intake_manifold_temperature_rpm_0_1000;
+     @@ -27 +27 @@
+     -               (uint)_crank_low_intake_manifold_temperature_tvc_0_120) / (uint)T0) +
+DIFFERENT 0x17ca6 cm550_peakTorqueFuelCorrection: 13 -> 12 lines
+     @@ -3,3 +3,2 @@
+     -  if ((_crank_exit_time_0_13107 < _crank_exit_timer_0_13107) && (_DAT_008005b2 == 0)) {
+     -    crank_reentry_speed =
+     -         _crank_reentry_speed_offset_1000_1000 + _crank_initial_reentry_speed_0_1000;
+     +  if ((crank_exit_time_0_13107 < _crank_exit_timer_0_13107) && (_DAT_008005b2 == 0)) {
+     +    crank_reentry_speed = crank_reentry_speed_offset_1000_1000 + crank_initial_reentry_speed_0_1000;
+     @@ -9 +8 @@
+     -    crank_reentry_speed = _crank_initial_reentry_speed_0_1000;
+     +    crank_reentry_speed = crank_initial_reentry_speed_0_1000;
+DIFFERENT 0x17cf0 cm550_engineModeTransitionStateUpdater: 11 -> 11 lines
+     @@ -5 +5 @@
+     -    _timing_command_before_cranking_is_envoked_0_120 = fuel_timing_advance_value;
+     +    timing_command_before_cranking_is_envoked_0_120 = fuel_timing_advance_value;
+DIFFERENT 0x17d6a cm550_ioOutputFlagMappingSlowCycle40Coordinator: 32 -> 32 lines
+     @@ -5 +5 @@
+     -    if ((int)(uint)_crank_jumpstart_tvo_ramp_rate_0_100 <
+     +    if ((int)(uint)crank_jumpstart_tvo_ramp_rate_0_100 <
+     @@ -9 +9 @@
+     -           _crank_jumpstart_tvo_ramp_rate_0_100 +
+     +           crank_jumpstart_tvo_ramp_rate_0_100 +
+     @@ -15,2 +15,2 @@
+     -    if ((int)(uint)_crank_jumpstart_rpm_ramp_rate_0_1000 <
+     -        (int)((uint)_maximum_rated_engine_speed_0_5000 -
+     +    if ((int)(uint)crank_jumpstart_rpm_ramp_rate_0_1000 <
+     +        (int)((uint)maximum_rated_engine_speed_0_5000 -
+     @@ -19 +19 @@
+DIFFERENT 0x17e06 cm550_frictionalLoadTorqueManagementSlowCycle40Coordinator: 15 -> 15 lines
+     @@ -4 +4 @@
+     -      (_crank_exit_fuel_ramp_rpm_0_1000 < _engine_rpm_primary)) &&
+     +      (crank_exit_fuel_ramp_rpm_0_1000 < _engine_rpm_primary)) &&
+     @@ -6 +6 @@
+     -           _crank_exit_fuel_ramp_rate_0_100 + _crank_exit_fuel_adjustment_0_100,
+     +           crank_exit_fuel_ramp_rate_0_100 + _crank_exit_fuel_adjustment_0_100,
+DIFFERENT 0x17eba cm550_frictionalLoadTorqueTransitionHandler: 12 -> 12 lines
+     @@ -4 +4 @@
+     -     (_crank_exit_time_0_13107 < _crank_exit_timer_0_13107)) {
+     +     (crank_exit_time_0_13107 < _crank_exit_timer_0_13107)) {
+     @@ -6 +6 @@
+     -         _crank_exited_initial_fueling_offset_100_100;
+     +         crank_exited_initial_fueling_offset_100_100;
+     @@ -8 +8 @@
+     -         _crank_exited_initial_rpm_offset_1000_1000;
+     +         crank_exited_initial_rpm_offset_1000_1000;
+DIFFERENT 0x17f7c cm550_updateEngineState: 164 -> 164 lines
+     @@ -12,3 +12,3 @@
+     -        _status_32_word_bit_mapped_system_error_status_word_2_0_1 =
+     -             _status_32_word_bit_mapped_system_error_status_word_2_0_1 | 0x8000;
+     -        _fault_first_occurrence_flags_word_2 = _fault_first_occurrence_flags_word_2 | 0x8000;
+     +        status_32_word_bit_mapped_system_error_status_word_2_0_1 =
+     +             status_32_word_bit_mapped_system_error_status_word_2_0_1 | 0x8000;
+     +        fault_first_occurrence_flags_word_2 = fault_first_occurrence_flags_word_2 | 0x8000;
+     @@ -33,2 +33,2 @@
+     -    _status_32_word_bit_mapped_system_error_status_word_2_0_1 =
+     -         _status_32_word_bit_mapped_system_error_status_word_2_0_1 & 0x7fff;
+     +    status_32_word_bit_mapped_system_error_status_word_2_0_1 =
+     +         status_32_word_bit_mapped_system_error_status_word_2_0_1 & 0x7fff;
+DIFFERENT 0x1839a cm550_canRpmModeConfigInit: 16 -> 16 lines
+     @@ -3 +3 @@
+     -  if (_determines_how_engine_position_is_sync_d_to_cam_0 == 1) {
+     +  if (determines_how_engine_position_is_sync_d_to_cam_0 == 1) {
+     @@ -7 +7 @@
+     -  if (_determines_how_engine_position_is_sync_d_to_cam_0 == 2) {
+     +  if (determines_how_engine_position_is_sync_d_to_cam_0 == 2) {
+     @@ -11 +11 @@
+     -  if (_determines_how_engine_position_is_sync_d_to_cam_0 == 0) {
+     +  if (determines_how_engine_position_is_sync_d_to_cam_0 == 0) {
+DIFFERENT 0x183cc cm550_FUN_000183cc: 51 -> 51 lines
+     @@ -9 +9 @@
+     -  _epf_fuel_limit_table_x_input = _torque_curve_speed_at_breakpoint_4_0_5000;
+     +  _epf_fuel_limit_table_x_input = torque_curve_speed_at_breakpoint_4_0_5000;
+     @@ -17,3 +17,3 @@
+     -       (T5 = ~_epf_source_bitmask & _state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff,
+     -       T5 <= _epf_source_bitmask)) {
+     -      _torque_curve_fueling_at_idle_speed_breakpoint_0_100 = T0;
+     +       (T5 = ~epf_source_bitmask & _state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff,
+     +       T5 <= epf_source_bitmask)) {
+     +      torque_curve_fueling_at_idle_speed_breakpoint_0_100 = T0;
+     @@ -22 +22 @@
+     -      _torque_curve_fueling_at_point_4_speed_breakpoint_0_100 = T3;
+DIFFERENT 0x184c6 cm550_FUN_000184c6: 51 -> 51 lines
+     @@ -3 +3 @@
+     -  if (_indicator_from_engine_protection_that_fuel_derate_1_active_0_inact != 1) {
+     +  if (indicator_from_engine_protection_that_fuel_derate_1_active_0_inact != 1) {
+     @@ -5 +5 @@
+     -         ~_epf_source_bitmask & _state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff;
+     +         ~epf_source_bitmask & _state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff;
+     @@ -9,3 +9,3 @@
+     -       _epf_source_bitmask | _state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff;
+     -  if ((~_epf_source_bitmask & _state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff) <=
+     -      _epf_source_bitmask) {
+     +       epf_source_bitmask | _state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff;
+     +  if ((~epf_source_bitmask & _state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff) <=
+DIFFERENT 0x185f0 cm550_FUN_000185f0: 8 -> 8 lines
+     @@ -3 +3 @@
+     -  _epf_source_bitmask = 1 << (_DAT_00807f4a & 0x3f);
+     +  epf_source_bitmask = 1 << (_DAT_00807f4a & 0x3f);
+DIFFERENT 0x18620 cm550_engineProtectionMultiStateSlowCycle40Coordinator: 38 -> 38 lines
+     @@ -5 +5 @@
+     -    engine_speed_limit_fault_derate = _maximum_rated_engine_speed_0_5000;
+     +    engine_speed_limit_fault_derate = maximum_rated_engine_speed_0_5000;
+     @@ -7,2 +7,2 @@
+     -    _indicator_from_engine_protection_that_fuel_derate_1_active_0_inact = 0;
+     -    _engine_protection_derate_approaching_flag = 0;
+     +    indicator_from_engine_protection_that_fuel_derate_1_active_0_inact = 0;
+     +    engine_protection_derate_approaching_flag = 0;
+DIFFERENT 0x18ac4 cm550_diagnosticProtectionEvaluator: 54 -> 54 lines
+     @@ -12 +12 @@
+     -     (T3 = (uint)_engine_protection_consecutive_shutdown_count,
+     +     (T3 = (uint)engine_protection_consecutive_shutdown_count,
+     @@ -14 +14 @@
+     -     _engine_protection_consecutive_shutdown_count)) {
+     +     engine_protection_consecutive_shutdown_count)) {
+DIFFERENT 0x18e0c cm550_calculateFaultDerateEngineSpeedLimit: 49 -> 49 lines
+     @@ -40 +40 @@
+     -                 (_maximum_rated_engine_speed_0_5000 -
+     +                 (maximum_rated_engine_speed_0_5000 -
+DIFFERENT 0x18f4c initializeFaultDerateEngineSpeedLimit: 11 -> 10 lines
+     @@ -4 +4 @@
+     -       (uint)_maximum_rated_engine_speed_0_5000 << 0x10;
+     +       (uint)maximum_rated_engine_speed_0_5000 << 0x10;
+     @@ -7,3 +7,2 @@
+     -  engine_speed_limit_fault_derate = _maximum_rated_engine_speed_0_5000;
+     -  _DAT_0080d290 = _maximum_rated_engine_speed_0_5000 - engine_speed_limit_fault_derate_full_severity
+     -  ;
+     +  engine_speed_limit_fault_derate = maximum_rated_engine_speed_0_5000;
+     +  _DAT_0080d290 = maximum_rated_engine_speed_0_5000 - engine_speed_limit_fault_derate_full_severity;
+DIFFERENT 0x18fcc processDiagnosticLimitStatus: 153 -> 153 lines
+     @@ -11 +11 @@
+     -    _engine_protection_derate_approaching_flag = 0;
+     +    engine_protection_derate_approaching_flag = 0;
+     @@ -23 +23 @@
+     -    _engine_protection_derate_approaching_flag = 0;
+     +    engine_protection_derate_approaching_flag = 0;
+     @@ -28 +28 @@
+     -    if ((_general_counter_1 == 0) && (_engine_rpm_primary != 0)) {
+     +    if ((general_counter_1 == 0) && (_engine_rpm_primary != 0)) {
+     @@ -48 +48 @@
+     -          _engine_protection_consecutive_shutdown_count = 0;
+     +          engine_protection_consecutive_shutdown_count = 0;
+DIFFERENT 0x19702 cm550_FUN_00019702: 108 -> 108 lines
+     @@ -52 +52 @@
+     -      _oil_pressure_fault_inhibit_timer = 0;
+     +      oil_pressure_fault_inhibit_timer = 0;
+     @@ -54,3 +54,3 @@
+     -    else if (_oil_pressure_fault_inhibit_timer <
+     -             _period_of_time_after_powerup_during_which_no_oil_pres_faults_0_255) {
+     -      _oil_pressure_fault_inhibit_timer = _oil_pressure_fault_inhibit_timer + 1;
+     +    else if (oil_pressure_fault_inhibit_timer <
+     +             period_of_time_after_powerup_during_which_no_oil_pres_faults_0_255) {
+     +      oil_pressure_fault_inhibit_timer = oil_pressure_fault_inhibit_timer + 1;
+     @@ -58,2 +58,2 @@
+     -    if (_oil_pressure_fault_inhibit_timer <
+DIFFERENT 0x19960 cm550_initShutdownLimitVariables: 11 -> 11 lines
+     @@ -3,2 +3,2 @@
+     -  _oil_pressure_fault_inhibit_timer = 0;
+     -  _engine_protection_fueling_severity_filtered = 0;
+     +  oil_pressure_fault_inhibit_timer = 0;
+     +  engine_protection_fueling_severity_filtered = 0;
+     @@ -9 +9 @@
+     -  _indicator_from_engine_protection_that_fuel_derate_1_active_0_inact = 0;
+     +  indicator_from_engine_protection_that_fuel_derate_1_active_0_inact = 0;
+DIFFERENT 0x1999c mc68k_initializeTpuChannel10PrimarySpeedInputDivided: 61 -> 61 lines
+     @@ -26 +26 @@
+     -  _pulse_period_sum_primary =
+     +  pulse_period_sum_primary =
+     @@ -32 +32 @@
+     -  _rpm_timer_isr_function_pointer = mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0;
+     +  rpm_timer_isr_function_pointer = (dword)mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0;
+DIFFERENT 0x19acc mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0: 95 -> 94 lines
+     @@ -5 +5 @@
+     -  _pulse_period_sum_primary =
+     +  pulse_period_sum_primary =
+     @@ -7 +7 @@
+     -       (_pulse_period_sum_primary -
+     +       (pulse_period_sum_primary -
+     @@ -22,2 +22,2 @@
+     -     _io_control_bit4_state != -1)) {
+     -    _io_control_bit4_state = _io_control_bit4_state + 1;
+     +     io_control_bit4_state != 0xffff)) {
+     +    io_control_bit4_state = io_control_bit4_state + 1;
+     @@ -25,5 +25,5 @@
+DIFFERENT 0x19caa mc68k_FUN_00019caa: 61 -> 61 lines
+     @@ -26 +26 @@
+     -  _pulse_period_sum_primary =
+     +  pulse_period_sum_primary =
+     @@ -32 +32 @@
+     -  _rpm_timer_isr_function_pointer = mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1;
+     +  rpm_timer_isr_function_pointer = (dword)mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1;
+DIFFERENT 0x19e90 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1: 56 -> 55 lines
+     @@ -5 +5 @@
+     -  _pulse_period_sum_primary =
+     +  pulse_period_sum_primary =
+     @@ -7 +7 @@
+     -       (_pulse_period_sum_primary -
+     +       (pulse_period_sum_primary -
+     @@ -22,2 +22,2 @@
+     -     _io_control_bit4_state != -1)) {
+     -    _io_control_bit4_state = _io_control_bit4_state + 1;
+     +     io_control_bit4_state != 0xffff)) {
+     +    io_control_bit4_state = io_control_bit4_state + 1;
+     @@ -25,5 +25,5 @@
+DIFFERENT 0x1a1e0 cm550_rpmTimingDeltaComparatorWithReturn: 47 -> 47 lines
+     @@ -4 +4 @@
+     -    if (_backup_lost_counter_timeout_counter_for_secondary_speed_inp_0_10000 == 0) {
+     +    if (backup_lost_counter_timeout_counter_for_secondary_speed_inp_0_10000 == 0) {
+     @@ -9,5 +9,5 @@
+     -        _eps_pulse_number_backup_eps_backup_tooth_counter_0_24) {
+     -      _eps_main_backup_time_delta =
+     -           _backup_signal_edge_time_stamp_0_65535 - _main_signal_edge_time_stamp_0_65535;
+     -      if (_eps_positive_out_of_phase_threshold_flag_thres_for_dif_32768_32767 <
+     -          _eps_main_backup_time_delta) {
+     +        eps_pulse_number_backup_eps_backup_tooth_counter_0_24) {
+     +      eps_main_backup_time_delta =
+     +           backup_signal_edge_time_stamp_0_65535 - main_signal_edge_time_stamp_0_65535;
+DIFFERENT 0x1a298 cm550_FUN_0001a298: 47 -> 47 lines
+     @@ -4 +4 @@
+     -    if (_main_lost_counter_timeout_counter_for_primary_speed_sensor_0_10000 == 0) {
+     +    if (main_lost_counter_timeout_counter_for_primary_speed_sensor_0_10000 == 0) {
+     @@ -9,5 +9,5 @@
+     -        _eps_pulse_number_backup_eps_backup_tooth_counter_0_24) {
+     -      _eps_main_backup_time_delta =
+     -           _backup_signal_edge_time_stamp_0_65535 - _main_signal_edge_time_stamp_0_65535;
+     -      if (_eps_positive_out_of_phase_threshold_flag_thres_for_dif_32768_32767 <
+     -          _eps_main_backup_time_delta) {
+     +        eps_pulse_number_backup_eps_backup_tooth_counter_0_24) {
+     +      eps_main_backup_time_delta =
+     +           backup_signal_edge_time_stamp_0_65535 - main_signal_edge_time_stamp_0_65535;
+DIFFERENT 0x1a350 mc68k_FUN_0001a350: 62 -> 62 lines
+     @@ -26 +26 @@
+     -  _pulse_period_sum_primary =
+     +  pulse_period_sum_primary =
+     @@ -32 +32 @@
+     -  _rpm_timer_isr_function_pointer = mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2;
+     +  rpm_timer_isr_function_pointer = (dword)mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2;
+DIFFERENT 0x1a52c mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2: 95 -> 94 lines
+     @@ -5 +5 @@
+     -  _pulse_period_sum_primary =
+     +  pulse_period_sum_primary =
+     @@ -7 +7 @@
+     -       (_pulse_period_sum_primary -
+     +       (pulse_period_sum_primary -
+     @@ -22,2 +22,2 @@
+     -     _io_control_bit4_state != -1)) {
+     -    _io_control_bit4_state = _io_control_bit4_state + 1;
+     +     io_control_bit4_state != 0xffff)) {
+     +    io_control_bit4_state = io_control_bit4_state + 1;
+     @@ -25,5 +25,5 @@
+DIFFERENT 0x1a746 mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled: 74 -> 74 lines
+     @@ -29 +29 @@
+     -    _pulse_period_sum_primary =
+     +    pulse_period_sum_primary =
+     @@ -40 +40 @@
+     -    _rpm_timer_isr_function_pointer = mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3;
+     +    rpm_timer_isr_function_pointer = (dword)mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3;
+DIFFERENT 0x1a8a4 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3: 36 -> 36 lines
+     @@ -27,2 +27,2 @@
+     -  _unsigned_roll_over_counter_of_ess_main_isr_occurances_0_65535 =
+     -       _unsigned_roll_over_counter_of_ess_main_isr_occurances_0_65535 + 1;
+     +  unsigned_roll_over_counter_of_ess_main_isr_occurances_0_65535 =
+     +       unsigned_roll_over_counter_of_ess_main_isr_occurances_0_65535 + 1;
+DIFFERENT 0x1a95a cm550_processPrimarySpeedPulsePeriodWithSyncPulse: 105 -> 104 lines
+     @@ -4 +4 @@
+     -  _main_signal_edge_time_stamp_0_65535 = edge_time_stamp;
+     +  main_signal_edge_time_stamp_0_65535 = edge_time_stamp;
+     @@ -15,2 +15,2 @@
+     -         (_crank_sync_error_counter < _DAT_00807f2a)) {
+     -        _crank_sync_error_counter = _crank_sync_error_counter + 1;
+     +         (crank_sync_error_counter < _DAT_00807f2a)) {
+     +        crank_sync_error_counter = crank_sync_error_counter + 1;
+     @@ -20,3 +20,3 @@
+     -        _status_32_word_bit_mapped_system_error_status_word_2_0_1 =
+     -             _status_32_word_bit_mapped_system_error_status_word_2_0_1 | 0x800;
+     -        _fault_first_occurrence_flags_word_2 = _fault_first_occurrence_flags_word_2 | 0x800;
+DIFFERENT 0x1abb2 cm550_updateElectronicSmartPowerTau: 109 -> 109 lines
+     @@ -11,5 +11,5 @@
+     -                (uint)_a_tolerance_for_throttle_100_fueling_0_10))))) {
+     -        if (_track_the_time_when_throttle_is_less_than_a_threshold_0_30 <
+     -            _the_duration_throttle_is_below_a_value_and_remain_at_a_high_hor_0_30) {
+     -          _track_the_time_when_throttle_is_less_than_a_threshold_0_30 =
+     -               _track_the_time_when_throttle_is_less_than_a_threshold_0_30 + 1;
+     +                (uint)a_tolerance_for_throttle_100_fueling_0_10))))) {
+     +        if (track_the_time_when_throttle_is_less_than_a_threshold_0_30 <
+     +            the_duration_throttle_is_below_a_value_and_remain_at_a_high_hor_0_30) {
+     +          track_the_time_when_throttle_is_less_than_a_threshold_0_30 =
+     +               track_the_time_when_throttle_is_less_than_a_threshold_0_30 + 1;
+     @@ -19 +19 @@
+DIFFERENT 0x1ade8 cm550_initializeElectronicSmartPower: 12 -> 12 lines
+     @@ -3,3 +3,3 @@
+     -  _flag_shows_posibility_of_esp_transitioning_between_normal_false_true = 0;
+     -  _can_transmit_length = 0;
+     -  _track_the_time_when_throttle_is_less_than_a_threshold_0_30 = 0;
+     +  flag_shows_posibility_of_esp_transitioning_between_normal_false_true = 0;
+     +  can_transmit_length = 0;
+     +  track_the_time_when_throttle_is_less_than_a_threshold_0_30 = 0;
+DIFFERENT 0x1ae22 mc68k_initializeTpuChannel1BackupSpeedInput: 59 -> 59 lines
+     @@ -20,3 +20,3 @@
+     -  if (_teeth_per_cam_rev_backup_number_of_teeth_seen_by_backup_input_1_512 < 2) {
+     -    _next_table_position_backup_pointer_to_next_spot_in_ba_800000_83ffff =
+     -         &pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
+     +  if (teeth_per_cam_rev_backup_number_of_teeth_seen_by_backup_input_1_512 < 2) {
+     +    next_table_position_backup_pointer_to_next_spot_in_ba_800000_83ffff =
+     +         (dword)&pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
+     @@ -25,3 +25,3 @@
+     -    _next_table_position_backup_pointer_to_next_spot_in_ba_800000_83ffff =
+     -         &pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32 +
+     -         (uint)period_meas_per_average_backup_num_of_backup_speed_pulse_perio_0_255 * 4;
+     +    next_table_position_backup_pointer_to_next_spot_in_ba_800000_83ffff =
+DIFFERENT 0x1af32 mc68k_dutyCycleMonitorIsrHandler: 132 -> 132 lines
+     @@ -7 +7 @@
+     -      _wide_ci_count_expected_eps_teeth_during_wide_ci_pulse_0_24) {
+     +      wide_ci_count_expected_eps_teeth_during_wide_ci_pulse_0_24) {
+     @@ -23,4 +23,4 @@
+     -      if (((_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 0x800) != 0) &&
+     -         ((_fault_first_occurrence_flags_word_2 & 0x800) == 0)) {
+     -        _status_32_word_bit_mapped_system_error_status_word_2_0_1 =
+     -             _status_32_word_bit_mapped_system_error_status_word_2_0_1 & 0xf7ff;
+     +      if (((status_32_word_bit_mapped_system_error_status_word_2_0_1 & 0x800) != 0) &&
+     +         ((fault_first_occurrence_flags_word_2 & 0x800) == 0)) {
+     +        status_32_word_bit_mapped_system_error_status_word_2_0_1 =
+     +             status_32_word_bit_mapped_system_error_status_word_2_0_1 & 0xf7ff;
+DIFFERENT 0x1b1ea mc68k_FUN_0001b1ea: 65 -> 65 lines
+     @@ -18,3 +18,3 @@
+     -  if (_teeth_per_cam_rev_backup_number_of_teeth_seen_by_backup_input_1_512 < 2) {
+     -    _next_table_position_backup_pointer_to_next_spot_in_ba_800000_83ffff =
+     -         &pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
+     +  if (teeth_per_cam_rev_backup_number_of_teeth_seen_by_backup_input_1_512 < 2) {
+     +    next_table_position_backup_pointer_to_next_spot_in_ba_800000_83ffff =
+     +         (dword)&pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
+     @@ -23,3 +23,3 @@
+     -    _next_table_position_backup_pointer_to_next_spot_in_ba_800000_83ffff =
+     -         &pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32 +
+     -         (uint)period_meas_per_average_backup_num_of_backup_speed_pulse_perio_0_255 * 4;
+     +    next_table_position_backup_pointer_to_next_spot_in_ba_800000_83ffff =
+DIFFERENT 0x1b30a mc68k_FUN_0001b30a: 30 -> 30 lines
+     @@ -7,3 +7,3 @@
+     -    _backup_lost_counter_timeout_counter_for_secondary_speed_inp_0_10000 =
+     -         _pulse_period_timeout_backup;
+     -    _average_pulse_period_backup_time_period_over_1_cyl_of_secondary_2_32 = Ram00ffff18;
+     +    backup_lost_counter_timeout_counter_for_secondary_speed_inp_0_10000 =
+     +         pulse_period_timeout_backup;
+     +    average_pulse_period_backup_time_period_over_1_cyl_of_secondary_2_32 = Ram00ffff18;
+     @@ -12,4 +12,4 @@
+     -    if (((_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 0x800) != 0) &&
+     -       ((_fault_first_occurrence_flags_word_2 & 0x800) == 0)) {
+     -      _status_32_word_bit_mapped_system_error_status_word_2_0_1 =
+     -           _status_32_word_bit_mapped_system_error_status_word_2_0_1 & 0xf7ff;
+DIFFERENT 0x1b39a mc68k_dutyCycleMonitorBufferInit: 61 -> 61 lines
+     @@ -12,3 +12,3 @@
+     -  if (_teeth_per_cam_rev_backup_number_of_teeth_seen_by_backup_input_1_512 < 2) {
+     -    _next_table_position_backup_pointer_to_next_spot_in_ba_800000_83ffff =
+     -         &pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
+     +  if (teeth_per_cam_rev_backup_number_of_teeth_seen_by_backup_input_1_512 < 2) {
+     +    next_table_position_backup_pointer_to_next_spot_in_ba_800000_83ffff =
+     +         (dword)&pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
+     @@ -17,3 +17,3 @@
+     -    _next_table_position_backup_pointer_to_next_spot_in_ba_800000_83ffff =
+     -         &pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32 +
+     -         (uint)period_meas_per_average_backup_num_of_backup_speed_pulse_perio_0_255 * 4;
+     +    next_table_position_backup_pointer_to_next_spot_in_ba_800000_83ffff =
+DIFFERENT 0x1b876 executiveFrameInterruptHandler: 445 -> 445 lines
+     @@ -24 +24 @@
+     -      _number_of_times_which_frame_overflow_has_occured_in_executive_0_65535 = 0;
+     +      number_of_times_which_frame_overflow_has_occured_in_executive_0_65535 = 0;
+     @@ -417,3 +417,3 @@
+     -    _scheduler_phase_elapsed_ticks = T0 - _DAT_0080068e;
+     -    if (*(ushort *)(_scheduler_timing_record_ptr + 8) < _scheduler_phase_elapsed_ticks) {
+     -      *(ushort *)(_scheduler_timing_record_ptr + 8) = _scheduler_phase_elapsed_ticks;
+     +    scheduler_phase_elapsed_ticks = T0 - _DAT_0080068e;
+     +    if (*(ushort *)(_scheduler_timing_record_ptr + 8) < scheduler_phase_elapsed_ticks) {
+     +      *(word *)(_scheduler_timing_record_ptr + 8) = scheduler_phase_elapsed_ticks;
+     @@ -421,2 +421,2 @@
+     -    if (_scheduler_phase_elapsed_ticks < *(ushort *)(_scheduler_timing_record_ptr + 6)) {
+DIFFERENT 0x1bf54 mc68k_scheduler_init: 14 -> 14 lines
+     @@ -8 +8 @@
+     -  _number_of_loop_delays_cal_0_65535 = 0;
+     +  number_of_loop_delays_cal_0_65535 = 0;
+DIFFERENT 0x1c152 fuelTimingOilPressureModeController: 88 -> 88 lines
+     @@ -84 +84 @@
+     -    _semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true = 1;
+     +    semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true = 1;
+DIFFERENT 0x1c824 cm550_FUN_0001c824: 23 -> 23 lines
+     @@ -18 +18 @@
+     -    _torque_curve_speed_at_breakpoint_4_0_5000 = _DAT_00808016;
+     +    torque_curve_speed_at_breakpoint_4_0_5000 = _DAT_00808016;
+DIFFERENT 0x1c8a0 cm550_FUN_0001c8a0: 68 -> 68 lines
+     @@ -5 +5 @@
+     -         1 << (_bitmap_indicating_which_algorithms_wish_to_set_rpms_0_15 & 0x3f);
+     +         1 << (bitmap_indicating_which_algorithms_wish_to_set_rpms_0_15 & 0x3f);
+     @@ -17 +17 @@
+     -    T3 = cm550_calculateBlendedTableValue(_torque_curve_speed_at_breakpoint_4_0_5000,400);
+     +    T3 = cm550_calculateBlendedTableValue(torque_curve_speed_at_breakpoint_4_0_5000,400);
+     @@ -20 +20 @@
+     -            _bitmap_indicating_when_a_feature_should_clamp_a_fueling_point_0_ffff;
+     +            bitmap_indicating_when_a_feature_should_clamp_a_fueling_point_0_ffff;
+     @@ -23 +23 @@
+     -              _bitmap_indicating_when_a_feature_should_clamp_a_fueling_point_0_ffff;
+     +              bitmap_indicating_when_a_feature_should_clamp_a_fueling_point_0_ffff;
+DIFFERENT 0x1c9d2 fuelDemandProportionalCalculationSlowCycle40Coordinator: 21 -> 21 lines
+     @@ -12 +12 @@
+     -                             _constant_used_to_convert_fuel_delivery_rate_from_rpm_fuel_to_l_50_5000
+     +                             constant_used_to_convert_fuel_delivery_rate_from_rpm_fuel_to_l_50_5000
+DIFFERENT 0x1cad6 vp44_FUN_0001cad6: 23 -> 23 lines
+     @@ -9,2 +9,2 @@
+     -    if (_dzg_pressure_max_limit == 0) {
+     -      if ((_status_32_word_bit_mapped_system_error_status_word_18_0_1 & 0x80) == 0) {
+     +    if (dzg_pressure_max_limit == 0) {
+     +      if ((status_32_word_bit_mapped_system_error_status_word_18_0_1 & 0x80) == 0) {
+     @@ -16 +16 @@
+     -      return _status_32_word_bit_mapped_system_error_status_word_18_0_1 & 0xffff0080;
+     +      return status_32_word_bit_mapped_system_error_status_word_18_0_1 & 0xffff0080;
+DIFFERENT 0x1cc72 cm550_FUN_0001cc72: 61 -> 61 lines
+     @@ -5 +5 @@
+     -         (((_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 2) != 0 &&
+     +         (((status_32_word_bit_mapped_system_error_status_word_2_0_1 & 2) != 0 &&
+     @@ -7 +7 @@
+     -        (((_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 1) != 0 &&
+     +        (((status_32_word_bit_mapped_system_error_status_word_2_0_1 & 1) != 0 &&
+     @@ -9 +9 @@
+     -       (((_status_32_word_bit_mapped_system_error_status_word_2_0_1 & 0x10) != 0 &&
+     +       (((status_32_word_bit_mapped_system_error_status_word_2_0_1 & 0x10) != 0 &&
+     @@ -22,3 +22,3 @@
+     -    _full_fueling_value_at_hsg_bef_droop_speed_0_100 = T0 + T1;
+     -    if (_full_fueling_value_at_hsg_bef_droop_speed_0_100 < _minimum_fueling_value_0_100) {
+DIFFERENT 0x1ce7c runHighSpeedGovernorPid: 155 -> 155 lines
+     @@ -17,3 +17,2 @@
+     -  if ((short)_hsg_maximum_filtered_engine_speed_error_0_1000 <
+     -      (short)_hsg_filtered_engine_speed_error) {
+     -    _hsg_filtered_engine_speed_error = _hsg_maximum_filtered_engine_speed_error_0_1000;
+     +  if (hsg_maximum_filtered_engine_speed_error_0_1000 < (short)_hsg_filtered_engine_speed_error) {
+     +    _hsg_filtered_engine_speed_error = hsg_maximum_filtered_engine_speed_error_0_1000;
+     @@ -21 +20 @@
+     -         (short)_hsg_maximum_filtered_engine_speed_error_0_1000 * 0x10000 + 0x80000000;
+     +         hsg_maximum_filtered_engine_speed_error_0_1000 * 0x10000 + 0x80000000;
+     @@ -23,3 +22,3 @@
+     -  else if ((short)_hsg_filtered_engine_speed_error <
+     -           (short)_hsg_minimum_filtered_engine_speed_error_1000_0) {
+DIFFERENT 0x1d252 presetHighSpeedGovernorIntegrator: 32 -> 32 lines
+     @@ -13 +13 @@
+     -          _hsg_integrator_reset_value_used_to_adjust_integrator_under_def_0_100_8066) {
+     +          hsg_integrator_reset_value_used_to_adjust_integrator_under_def_0_100_8066) {
+     @@ -17 +17 @@
+     -        T0 = _hsg_integrator_reset_value_used_to_adjust_integrator_under_def_0_100_8066;
+     +        T0 = hsg_integrator_reset_value_used_to_adjust_integrator_under_def_0_100_8066;
+     @@ -27 +27 @@
+     -    _hsg_pid_fuel_output_previous = _DAT_00800718;
+     +    hsg_pid_fuel_output_previous = _DAT_00800718;
+DIFFERENT 0x1d2e4 initializeHighSpeedGovernorGainSet: 21 -> 21 lines
+     @@ -3 +3 @@
+     -  _hsg_proportional_gain_base = _DAT_00808036;
+     +  hsg_proportional_gain_base = _DAT_00808036;
+     @@ -8 +8 @@
+     -  _hsg_pid_fuel_output_previous = _hsg_maximum_integrator_fuel_output_0_100;
+     +  hsg_pid_fuel_output_previous = hsg_maximum_integrator_fuel_output_0_100;
+DIFFERENT 0x1d392 selectHighSpeedGovernorGainSet: 93 -> 93 lines
+     @@ -8 +8 @@
+     -       (T2 = (uint)_engine_acceleration_after_second_stage_low_pass_filtering_2560_2540,
+     +       (T2 = (uint)engine_acceleration_after_second_stage_low_pass_filtering_2560_2540,
+     @@ -12,4 +12,4 @@
+     -      if (_hsg_acceleration_reference_time_for_transient_conditions_0_10 < _DAT_0080074a) {
+     -        _DAT_0080074a = _hsg_acceleration_reference_time_for_transient_conditions_0_10;
+     -        if (_reference_speed_before_droop_sent_hsg_ref_hsg_gain_sched_1400_3000 <
+     -            _hsg_speed_threshold_for_low_reference_speed_region_1400_5000) {
+     +      if (hsg_acceleration_reference_time_for_transient_conditions_0_10 < _DAT_0080074a) {
+     +        _DAT_0080074a = hsg_acceleration_reference_time_for_transient_conditions_0_10;
+     +        if (reference_speed_before_droop_sent_hsg_ref_hsg_gain_sched_1400_3000 <
+     +            hsg_speed_threshold_for_low_reference_speed_region_1400_5000) {
+DIFFERENT 0x1d5a0 selectEngineSpeedLimit: 179 -> 176 lines
+     @@ -7 +7 @@
+     -    _hsg_droop_active_flag = 0;
+     +    hsg_droop_active_flag = 0;
+     @@ -10 +10 @@
+     -    _hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000 = *_DAT_0080d666;
+     +    hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000 = *_DAT_0080d666;
+     @@ -15 +15 @@
+     -    if (_hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000 <
+     +    if (hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000 <
+     @@ -19 +19 @@
+     -           _hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000;
+     +           hsg_base_reference_speed_currently_in_use_esp_may_select_1500_5000;
+DIFFERENT 0x1d94e initializeEngineSpeedLimitDefaults: 16 -> 16 lines
+     @@ -8,5 +8,5 @@
+     -  _point_at_which_the_hsg_droop_slope_line_intersects_the_no_1500_4500 = _DAT_00803f46;
+     -  _reference_speed_before_droop_calculation_1400_4500 = _maximum_rated_engine_speed_0_5000;
+     -  _rpm_derate_supplied_by_application_group_0_8000 = _maximum_rated_engine_speed_0_5000;
+     -  engine_speed_limit_source_10 = _maximum_rated_engine_speed_0_5000;
+     -  _vss_tamper_derate_rpm_0_3000 = _maximum_rated_engine_speed_0_5000;
+     +  point_at_which_the_hsg_droop_slope_line_intersects_the_no_1500_4500 = _DAT_00803f46;
+     +  _reference_speed_before_droop_calculation_1400_4500 = maximum_rated_engine_speed_0_5000;
+     +  rpm_derate_supplied_by_application_group_0_8000 = maximum_rated_engine_speed_0_5000;
+     +  engine_speed_limit_source_10 = maximum_rated_engine_speed_0_5000;
+     +  vss_tamper_derate_rpm_0_3000 = maximum_rated_engine_speed_0_5000;
+DIFFERENT 0x1d9b4 vp44SensorStatusMonitor: 111 -> 111 lines
+     @@ -17 +17 @@
+     -        _vp44_sensor_secondary_fault = 0;
+     +        vp44_sensor_secondary_fault = 0;
+     @@ -22 +22 @@
+     -        if (_vp44_sensor_monitor_reset_request == 0) {
+     +        if (vp44_sensor_monitor_reset_request == 0) {
+     @@ -30,3 +30,3 @@
+     -        _vp44_sensor_failure_counter = 0;
+     -        _vp44_sensor_wait_timer = 600;
+     -        if (_vp44_sensor_monitor_reset_request == 1) {
+     +        vp44_sensor_failure_counter = 0;
+     +        vp44_sensor_wait_timer = 600;
+DIFFERENT 0x1db8a vp44_FUN_0001db8a: 16 -> 16 lines
+     @@ -7,3 +7,3 @@
+     -  _vp44_sensor_shutdown_lamp_request = 0;
+     -  _vp44_sensor_monitor_reset_request = 1;
+     -  _vp44_sensor_secondary_fault = 0;
+     +  vp44_sensor_shutdown_lamp_request = 0;
+     +  vp44_sensor_monitor_reset_request = 1;
+     +  vp44_sensor_secondary_fault = 0;
+DIFFERENT 0x1dbd8 cm550_FUN_0001dbd8: 6 -> 6 lines
+     @@ -3,2 +3,2 @@
+     -  _DAT_0080d686 = _maximum_rated_engine_speed_0_5000;
+     -  _DAT_0080def0 = _maximum_rated_engine_speed_0_5000;
+     +  _DAT_0080d686 = maximum_rated_engine_speed_0_5000;
+     +  _DAT_0080def0 = maximum_rated_engine_speed_0_5000;
+DIFFERENT 0x1dcfc cm550_initializeAlpha: 11 -> 11 lines
+     @@ -9 +9 @@
+     -  _semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true = 0;
+     +  semaphore_used_to_latch_lsg_events_that_occur_betwe_0_false_1_true = 0;
+DIFFERENT 0x1de58 cm550_FUN_0001de58: 91 -> 91 lines
+     @@ -75,2 +75,2 @@
+     -  if (_maximum_user_fueling_allowed_0_100 < T3) {
+     -    T3 = _maximum_user_fueling_allowed_0_100;
+     +  if (maximum_user_fueling_allowed_0_100 < T3) {
+     +    T3 = maximum_user_fueling_allowed_0_100;
+     @@ -78 +78 @@
+     -  _maximum_user_fueling_allowed_0_100 = 0x1700;
+     +  maximum_user_fueling_allowed_0_100 = 0x1700;
+DIFFERENT 0x1e288 mc68k_j1708SciInterruptHandler: 142 -> 142 lines
+     @@ -111,6 +111,6 @@
+     -        if (((((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 4) != 0) &&
+     -             ((_fault_first_occurrence_word_7 & 4) != 0)) &&
+     -            ((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 4) != 0)) &&
+     -           ((_fault_first_occurrence_flags_word_7 & 4) == 0)) {
+     -          _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     -               _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xfffb;
+     +        if (((((status_32_word_bit_mapped_system_error_status_word_7_0_1 & 4) != 0) &&
+     +             ((fault_first_occurrence_word_7 & 4) != 0)) &&
+     +            ((status_32_word_bit_mapped_system_error_status_word_7_0_1 & 4) != 0)) &&
+     +           ((fault_first_occurrence_flags_word_7 & 4) == 0)) {
+     +          status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+DIFFERENT 0x1e52e mc68k_canCs4TransmitNextFrame: 34 -> 34 lines
+     @@ -6 +6 @@
+     -  if ((_DAT_0080d9ae == _can_transmit_buffer_write_pointer) && (DAT_0080d9be != '\x01')) {
+     +  if ((_DAT_0080d9ae == can_transmit_buffer_write_pointer) && (DAT_0080d9be != '\x01')) {
+     @@ -12,2 +12,2 @@
+     -    T0 = _can_transmit_buffer_write_pointer + 0xe;
+     -    _can_transmit_buffer_write_pointer = T0;
+     +    T0 = can_transmit_buffer_write_pointer + 0xe;
+     +    can_transmit_buffer_write_pointer = T0;
+     @@ -15 +15 @@
+     -      _can_transmit_buffer_write_pointer = 0x80d896;
+     +      can_transmit_buffer_write_pointer = 0x80d896;
+     @@ -18 +18 @@
+DIFFERENT 0x1e79a cm550_insiteMultiFrameResponseBuilder: 48 -> 48 lines
+     @@ -41,3 +41,3 @@
+     -  _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     -       _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     -  _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
+     +  status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     +       status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     +  fault_first_occurrence_flags_word_7 = fault_first_occurrence_flags_word_7 | 4;
+DIFFERENT 0x1eb88 cm550_responseBufferSpaceCheck: 19 -> 19 lines
+     @@ -6,3 +6,3 @@
+     -    _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     -         _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     -    _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
+     +    status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     +         status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     +    fault_first_occurrence_flags_word_7 = fault_first_occurrence_flags_word_7 | 4;
+DIFFERENT 0x1edae cm550_diagnosticMemoryReadHandler: 178 -> 178 lines
+     @@ -149,3 +149,3 @@
+     -    _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     -         _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     -    _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
+     +    status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     +         status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     +    fault_first_occurrence_flags_word_7 = fault_first_occurrence_flags_word_7 | 4;
+DIFFERENT 0x1f0de cm550_diagnosticMessage45Builder: 100 -> 100 lines
+     @@ -17,3 +17,3 @@
+     -    _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     -         _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     -    _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
+     +    status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     +         status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     +    fault_first_occurrence_flags_word_7 = fault_first_occurrence_flags_word_7 | 4;
+     @@ -28,2 +28,2 @@
+     -  *T4 = (char)((ushort)_jcomm_percent_peak_torque_based_on_current_engine_speed_and_128_127 >>
+     -                   8);
+     +  *T4 = (char)((ushort)jcomm_percent_peak_torque_based_on_current_engine_speed_and_128_127 >> 8
+     +                   );
+DIFFERENT 0x1f2d0 cm550_diagnosticMessage46Builder: 107 -> 107 lines
+     @@ -11,3 +11,3 @@
+     -    _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     -         _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     -    _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
+     +    status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     +         status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     +    fault_first_occurrence_flags_word_7 = fault_first_occurrence_flags_word_7 | 4;
+     @@ -30,2 +30,2 @@
+     -    *T6 = (char)((ushort)_jcomm_percent_peak_torque_at_idle_speed_percent_peak_torque_128_127
+     -                     >> 8);
+     +    *T6 = (char)((ushort)jcomm_percent_peak_torque_at_idle_speed_percent_peak_torque_128_127 >>
+     +                     8);
+DIFFERENT 0x1f4e8 cm550_FUN_0001f4e8: 176 -> 173 lines
+     @@ -4,8 +4,8 @@
+     -  T12._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dcaa;
+     -  T4 = (char)T12;
+     -  T12._0_3_ = (undefined3)(j1708_receive_buffer_pointer_2_32_dcaa >> 8);
+     -  T12 = (byte *)CONCAT31(T12._0_3_,(char)T12 + '\x02');
+     -  T3 = *T12 & 3;
+     -  T6 = cm550_diagnosticMessageValidator(0,0x4a,T3);
+     -  if (T6 != 0) {
+     -    return (tsc1_source_configuration_t *)(uint)T6;
+     +  T11._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dcaa;
+     +  T4 = (char)T11;
+     +  T11._0_3_ = (undefined3)(j1708_receive_buffer_pointer_2_32_dcaa >> 8);
+DIFFERENT 0x1f8bc cm550_engineFluidLevelDataBuilder: 153 -> 152 lines
+     @@ -5,10 +5,10 @@
+     -  T9._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dcaa;
+     -  T2 = (char)T9;
+     -  T9._0_3_ = (undefined3)(j1708_receive_buffer_pointer_2_32_dcaa >> 8);
+     -  T9 = (byte *)CONCAT31(T9._0_3_,(char)T9 + '\x02');
+     -  T5 = (tsc1_source_configuration_t *)(*T9 & 4);
+     -  if ((*T9 & 4) == 0) {
+     -    override_control_mode = *T9 & 3;
+     -    T4 = cm550_diagnosticMessageValidator(0,0x4f,override_control_mode);
+     -    T5 = (tsc1_source_configuration_t *)(uint)T4;
+     -    if (T4 == 0) {
+     +  T8._3_1_ = (char)j1708_receive_buffer_pointer_2_32_dcaa;
+DIFFERENT 0x1fbf4 cm550_diagnosticMessage53Builder: 37 -> 37 lines
+     @@ -10,3 +10,3 @@
+     -    _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     -         _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     -    _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
+     +    status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     +         status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     +    fault_first_occurrence_flags_word_7 = fault_first_occurrence_flags_word_7 | 4;
+DIFFERENT 0x1fc9c cm550_diagnosticMessage54Builder: 40 -> 40 lines
+     @@ -10,3 +10,3 @@
+     -    _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     -         _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     -    _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
+     +    status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     +         status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     +    fault_first_occurrence_flags_word_7 = fault_first_occurrence_flags_word_7 | 4;
+DIFFERENT 0x1fd6c cm550_j1939TimeoutDataClearHandler: 18 -> 18 lines
+     @@ -5,4 +5,4 @@
+     -     (T0 = _j1922_clear_occurrence_time_time_from_last_j1922_control_befo_0_2_29 +
+     -              _j1939_last_message_hour_meter, T0 < key_on_hour_meter)) {
+     -    _j1939_message_total_timeout_count = 0;
+     -    _j1939_last_message_hour_meter = 0;
+     +     (T0 = j1922_clear_occurrence_time_time_from_last_j1922_control_befo_0_2_29 +
+     +              j1939_last_message_hour_meter, T0 < key_on_hour_meter)) {
+     +    j1939_message_total_timeout_count = 0;
+     +    j1939_last_message_hour_meter = 0;
+DIFFERENT 0x1fdc0 cm550_j1939MessageTypeCounter: 31 -> 31 lines
+     @@ -6 +6 @@
+     -      _j1939_message_total_timeout_count = _j1939_message_total_timeout_count + 1;
+     +      j1939_message_total_timeout_count = j1939_message_total_timeout_count + 1;
+     @@ -9 +9 @@
+     -      _j1939_last_message_hour_meter = key_on_hour_meter;
+     +      j1939_last_message_hour_meter = key_on_hour_meter;
+     @@ -13 +13 @@
+     -      _j1939_message_total_timeout_count = _j1939_message_total_timeout_count + 1;
+     +      j1939_message_total_timeout_count = j1939_message_total_timeout_count + 1;
+     @@ -16 +16 @@
+     -      _j1939_last_message_hour_meter = key_on_hour_meter;
+     +      j1939_last_message_hour_meter = key_on_hour_meter;
+DIFFERENT 0x206a8 cm550_FUN_000206a8: 31 -> 31 lines
+     @@ -10 +10 @@
+     -      *(undefined1 *)(input_state + 0x80bd4a) = j1939_switch_override_source_address;
+     +      *(byte *)(input_state + 0x80bd4a) = j1939_switch_override_source_address;
+DIFFERENT 0x20784 cm550_FUN_00020784: 42 -> 42 lines
+     @@ -11 +11 @@
+     -     _priority_of_client_overriding_final_remote_throttle_0_ff <=
+     +     priority_of_client_overriding_final_remote_throttle_0_ff <=
+DIFFERENT 0x20890 cm550_FUN_00020890: 125 -> 124 lines
+     @@ -17,2 +17 @@
+     -      *(undefined1 *)
+     -       (j1939_input_signal_descriptor_table[(short)input_index].logical_switch + 0x80bd4a) =
+     +      *(byte *)(j1939_input_signal_descriptor_table[(short)input_index].logical_switch + 0x80bd4a) =
+DIFFERENT 0x20c98 cm550_FUN_00020c98: 63 -> 63 lines
+     @@ -19 +19 @@
+     -      if (ivs_parameter_not_properly_configured_not_logged_as_a_faul_true_false != '\0') {
+     +      if (ivs_parameter_not_properly_configured_not_logged_as_a_faul_true_false != 0) {
+DIFFERENT 0x212b2 mc68k_FUN_000212b2: 72 -> 72 lines
+     @@ -14 +14 @@
+     -      T0 = *(char *)(_can_receive_buffer_read_pointer + 2);
+     +      T0 = *(byte *)(_can_receive_buffer_read_pointer + 2);
+     @@ -18 +18 @@
+     -            (T0 == j1939_retarder_node_source_address)) || (T0 == -1)) {
+     +            (T0 == j1939_retarder_node_source_address)) || (T0 == 0xff)) {
+     @@ -22 +22 @@
+     -      else if ((T6 < 0xf0) && ((T0 == j1939_engine_node_source_address || (T0 == -1)))) {
+     +      else if ((T6 < 0xf0) && ((T0 == j1939_engine_node_source_address || (T0 == 0xff)))) {
+DIFFERENT 0x2142c cm550_FUN_0002142c: 19 -> 18 lines
+     @@ -5,7 +5,6 @@
+     -       (_retarder_control_mode == 2)) &&
+     -      (_source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6 == 1)) &&
+     -     (((_datalink_speed_control_mode == 1 &&
+     -       (_source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e == 1)) &&
+     -      (T0 = _fuel_demand_selected,
+     -      _limit_to_which_user_fueling_is_compared_to_determine_if_engine_0_100 <= _fuel_demand_selected
+     -      )))) {
+     +       (_retarder_control_mode == 2)) && (source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6 == 1)
+     +      ) && (((_datalink_speed_control_mode == 1 &&
+     +             (_source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e == 1)) &&
+     +            (T0 = _fuel_demand_selected,
+DIFFERENT 0x21fac cm550_diagnosticGroupSnapshotCapture: 33 -> 33 lines
+     @@ -20 +20 @@
+     -  _DAT_00804230 = _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6;
+     +  _DAT_00804230 = source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6;
+     @@ -23 +23 @@
+     -  _DAT_00804214 = _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6;
+     +  _DAT_00804214 = source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6;
+DIFFERENT 0x22726 sendJ1939MultiFrame: 110 -> 110 lines
+     @@ -14 +14 @@
+     -      multiframe_tx_total_packets = (char)((int)(_DAT_008012a2 - 1) / 7) + '\x01';
+     +      multiframe_tx_total_packets = (char)((int)(_DAT_008012a2 - 1) / 7) + 1;
+     @@ -19 +19 @@
+     -      _multiframe_tx_timeout_counter = 0x37;
+     +      multiframe_tx_timeout_counter = 0x37;
+DIFFERENT 0x22956 cm550_diagnosticParamRequestHandler: 24 -> 24 lines
+     @@ -10 +10 @@
+     -      _multiframe_tx_timeout_counter = 0x37;
+     +      multiframe_tx_timeout_counter = 0x37;
+DIFFERENT 0x22fae cm550_diagnosticMessageProcessor: 61 -> 61 lines
+     @@ -6 +6 @@
+     -    if (_multiframe_tx_timeout_counter == 0) {
+     +    if (multiframe_tx_timeout_counter == 0) {
+     @@ -11 +11 @@
+     -    _multiframe_tx_timeout_counter = _multiframe_tx_timeout_counter + -1;
+     +    multiframe_tx_timeout_counter = multiframe_tx_timeout_counter - 1;
+     @@ -15,2 +15,2 @@
+     -    multiframe_tx_packets_remaining = '\0';
+     -    _multiframe_tx_timeout_counter = 0x70;
+     +    multiframe_tx_packets_remaining = 0;
+     +    multiframe_tx_timeout_counter = 0x70;
+DIFFERENT 0x231da cm550_fuelArbitratorResetHandler: 13 -> 13 lines
+     @@ -8 +8 @@
+     -  _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 0;
+     +  jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 0;
+     @@ -10 +10 @@
+     -  _datalink_command_timeout_counter = 0;
+     +  datalink_command_timeout_counter = 0;
+DIFFERENT 0x23216 cm550_FUN_00023216: 11 -> 11 lines
+     @@ -4,4 +4,4 @@
+     -  _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6 = 0;
+     -  _retarder_torque_percent = 0x7d;
+     -  _retarder_command_timeout_counter = 0;
+     -  _retarder_command_inactivity_timer = 0;
+     +  source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6 = 0;
+     +  retarder_torque_percent = 0x7d;
+     +  retarder_command_timeout_counter = 0;
+     +  retarder_command_inactivity_timer = 0;
+DIFFERENT 0x23244 cm550_fuelDemandLimitOrchestrator: 279 -> 279 lines
+     @@ -7,2 +7,2 @@
+     -    _high_idle_overspeed_timeout_timer =
+     -         _jcomm_engine_overspeed_tl_time_limit_for_jcomm_high_idle_ove_0_25000 + 1;
+     +    high_idle_overspeed_timeout_timer =
+     +         jcomm_engine_overspeed_tl_time_limit_for_jcomm_high_idle_ove_0_25000 + 1;
+     @@ -20,6 +20,6 @@
+     -    _high_idle_overspeed_timeout_timer = 0;
+     -  }
+     -  if (_high_idle_overspeed_timeout_timer != 0) {
+     -    _high_idle_overspeed_timeout_timer = _high_idle_overspeed_timeout_timer + -1;
+     -  }
+     -  if (_high_idle_overspeed_timeout_timer == 1) {
+DIFFERENT 0x23820 cm550_diagnosticMessageValidator: 19 -> 19 lines
+     @@ -15 +15 @@
+     -  T1[3] = _jcomm_recovery_time_time_that_time_limited_node_must_be_silen_0_1000;
+     +  T1[3] = jcomm_recovery_time_time_that_time_limited_node_must_be_silen_0_1000;
+DIFFERENT 0x23870 cm550_ioControlTimeoutTableLookup: 18 -> 17 lines
+     @@ -13,2 +13 @@
+     -  *(undefined2 *)(T1 + 2) =
+     -       _jcomm_recovery_time_time_that_time_limited_node_must_be_silen_0_1000;
+     +  *(word *)(T1 + 2) = jcomm_recovery_time_time_that_time_limited_node_must_be_silen_0_1000;
+DIFFERENT 0x238ac cm550_ioControlEntryAdd: 14 -> 14 lines
+     @@ -9,2 +9,2 @@
+     -    *(undefined2 *)(&diagnostic_security_access_mode + T0) =
+     -         _jcomm_recovery_time_time_that_time_limited_node_must_be_silen_0_1000;
+     +    *(word *)(&diagnostic_security_access_mode + T0) =
+     +         jcomm_recovery_time_time_that_time_limited_node_must_be_silen_0_1000;
+DIFFERENT 0x238ec cm550_ioControlTimeoutEntryAdd: 12 -> 12 lines
+     @@ -7,2 +7,2 @@
+     -    *(undefined2 *)(&DAT_008019be + T0 * 4) =
+     -         _jcomm_recovery_time_time_that_time_limited_node_must_be_silen_0_1000;
+     +    *(word *)(&DAT_008019be + T0 * 4) =
+     +         jcomm_recovery_time_time_that_time_limited_node_must_be_silen_0_1000;
+DIFFERENT 0x23be8 diagnosticMainStateProcessor: 431 -> 431 lines
+     @@ -10 +10 @@
+     -           ((_fault_first_occurrence_flags_word_8 & 0x80) == 0)) {
+     +           ((fault_first_occurrence_flags_word_8 & 0x80) == 0)) {
+     @@ -22 +22 @@
+     -              ((_fault_first_occurrence_flags_word_8 & 0x40) == 0)) {
+     +              ((fault_first_occurrence_flags_word_8 & 0x40) == 0)) {
+     @@ -36 +36 @@
+     -         ((_fault_first_occurrence_flags_word_8 & 0x80) == 0)) {
+     +         ((fault_first_occurrence_flags_word_8 & 0x80) == 0)) {
+     @@ -46 +46 @@
+     -        _fault_first_occurrence_flags_word_8 = _fault_first_occurrence_flags_word_8 | 0x40;
+     +        fault_first_occurrence_flags_word_8 = fault_first_occurrence_flags_word_8 | 0x40;
+DIFFERENT 0x24858 cm550_ioControlMaskStateMachine: 63 -> 63 lines
+     @@ -16 +16 @@
+     -    _io_control_mask_timer_threshold = 0x28;
+     +    io_control_mask_timer_threshold = 0x28;
+     @@ -21,2 +21,2 @@
+     -  T0 = _io_control_mask_timer_threshold;
+     -  if (_DAT_008019f0 == _io_control_mask_timer_threshold) {
+     +  T0 = io_control_mask_timer_threshold;
+     +  if (_DAT_008019f0 == io_control_mask_timer_threshold) {
+     @@ -35,2 +35,2 @@
+     -       (T0 = _io_control_mask_timer_threshold + 10,
+     -       (ushort *)0x611c6 < _io_control_mask_table_ptr)) {
+     +       (T0 = io_control_mask_timer_threshold + 10, (ushort *)0x611c6 < _io_control_mask_table_ptr
+DIFFERENT 0x249ee vp44_ioControlLampStateMachine: 84 -> 84 lines
+     @@ -29 +29 @@
+     -  if (_engine_protection_derate_approaching_flag == 0) {
+     +  if (engine_protection_derate_approaching_flag == 0) {
+     @@ -54 +54 @@
+     -  if ((_vp44_sensor_shutdown_lamp_request == 1) && (DAT_008019e2 == '\0')) {
+     +  if ((vp44_sensor_shutdown_lamp_request == 1) && (DAT_008019e2 == '\0')) {
+     @@ -80 +80 @@
+     -    _vp44_sensor_shutdown_lamp_request = 0;
+     +    vp44_sensor_shutdown_lamp_request = 0;
+DIFFERENT 0x24c5a cm550_FUN_00024c5a: 22 -> 22 lines
+     @@ -8 +8 @@
+     -         _active_fault_list_count < fault_list_navigation_index)) {
+     +         (ushort)active_fault_list_count < (ushort)fault_list_navigation_index)) {
+DIFFERENT 0x24cd2 cm550_FUN_00024cd2: 22 -> 22 lines
+     @@ -9 +9 @@
+     -        fault_list_navigation_index = (byte)_active_fault_list_count;
+     +        fault_list_navigation_index = (byte)active_fault_list_count;
+DIFFERENT 0x24f30 cm550_activeFaultLampStateMachine: 137 -> 137 lines
+     @@ -9,3 +9,3 @@
+     -  _passes_diagnostic_output_for_stop_lamp_to_j1939_73_true_false = 0;
+     -  _passes_diagnostic_output_for_warning_lamp_to_j1939_73_true_false = 0;
+     -  _passes_diagnostic_output_for_fluids_lamp_to_j1939_73_true_false = 0;
+     +  passes_diagnostic_output_for_stop_lamp_to_j1939_73_true_false = 0;
+     +  passes_diagnostic_output_for_warning_lamp_to_j1939_73_true_false = 0;
+     +  passes_diagnostic_output_for_fluids_lamp_to_j1939_73_true_false = 0;
+     @@ -31 +31 @@
+     -          _passes_diagnostic_output_for_fluids_lamp_to_j1939_73_true_false = 1;
+     +          passes_diagnostic_output_for_fluids_lamp_to_j1939_73_true_false = 1;
+     @@ -42 +42 @@
+     -        _passes_diagnostic_output_for_warning_lamp_to_j1939_73_true_false = 1;
+DIFFERENT 0x25594 cm550_clearSystemErrorStatus: 36 -> 36 lines
+     @@ -19,2 +19,2 @@
+     -  _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     -       _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x23ff;
+     +  status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     +       status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x23ff;
+DIFFERENT 0x25806 cm550_FUN_00025806: 25 -> 25 lines
+     @@ -5 +5 @@
+     -      if ((((((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 2) != 0) &&
+     +      if ((((((status_32_word_bit_mapped_system_error_status_word_4_0_1 & 2) != 0) &&
+     @@ -7 +7 @@
+     -           (((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 4) != 0 &&
+     +           (((status_32_word_bit_mapped_system_error_status_word_4_0_1 & 4) != 0 &&
+     @@ -9 +9 @@
+     -          (((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 0x20) != 0 &&
+     +          (((status_32_word_bit_mapped_system_error_status_word_4_0_1 & 0x20) != 0 &&
+DIFFERENT 0x25a34 vp44_FUN_00025a34: 33 -> 33 lines
+     @@ -6 +6 @@
+     -       _added_to_4d_fueling_at_lsg_adj_ref_speed_to_determine_lsg_integ_5_5_823a;
+     +       added_to_4d_fueling_at_lsg_adj_ref_speed_to_determine_lsg_integ_5_5_823a;
+     @@ -27,2 +27,2 @@
+     -  _lsg_derivative_filter_output = 0;
+     -  _vp44_fuel_demand_previous = _engine_rpm_primary;
+     +  lsg_derivative_filter_output = 0;
+     +  vp44_fuel_demand_previous = _engine_rpm_primary;
+     @@ -30 +30 @@
+     -  _non_idle_time_counter = _lsg_proportional_gain_2_calibration_2_to_2;
+     +  non_idle_time_counter = _lsg_proportional_gain_2_calibration_2_to_2;
+DIFFERENT 0x25b1c cm550_runLowSpeedGovernor: 199 -> 199 lines
+     @@ -11 +11 @@
+     -    if (_the_upper_limit_clamp_for_possible_lsg_reference_speed_300_2000 <
+     +    if ((ushort)the_upper_limit_clamp_for_possible_lsg_reference_speed_300_2000 <
+     @@ -14 +14 @@
+     -           _the_upper_limit_clamp_for_possible_lsg_reference_speed_300_2000;
+     +           the_upper_limit_clamp_for_possible_lsg_reference_speed_300_2000;
+     @@ -23 +23 @@
+     -     ((_lsg_active_flag != 0 &&
+     +     ((lsg_active_flag != 0 &&
+     @@ -41 +41 @@
+     -    if (_lsg_active_flag == 0) {
+     +    if (lsg_active_flag == 0) {
+DIFFERENT 0x25ff2 cm550_presetLowSpeedGovernorSpeedError: 20 -> 20 lines
+     @@ -17 +17 @@
+     -  _vp44_fuel_demand_previous = _engine_rpm_primary;
+     +  vp44_fuel_demand_previous = _engine_rpm_primary;
+DIFFERENT 0x26078 cm550_initializeLowSpeedGovernor: 9 -> 9 lines
+     @@ -7 +7 @@
+     -  _lsg_fueling_clamp_max_0_100 = 0x1700;
+     +  lsg_fueling_clamp_max_0_100 = 0x1700;
+DIFFERENT 0x2609c cm550_epsAccelerationMonitor: 100 -> 100 lines
+     @@ -10 +10 @@
+     -  if ((int)(uint)_maximum_absolute_error_that_should_occur_in_lslgtztm_to_switc_0_3000 < (int)T1)
+     +  if ((int)(uint)maximum_absolute_error_that_should_occur_in_lslgtztm_to_switc_0_3000 < (int)T1)
+     @@ -12 +12 @@
+     -    _high_speed_idle_cooldown_timer = 0;
+     +    high_speed_idle_cooldown_timer = 0;
+     @@ -16,2 +16,2 @@
+     -    if (_high_speed_idle_cooldown_timer < _DAT_0080821e) {
+     -      _high_speed_idle_cooldown_timer = _high_speed_idle_cooldown_timer + 1;
+     +    if (high_speed_idle_cooldown_timer < _DAT_0080821e) {
+     +      high_speed_idle_cooldown_timer = high_speed_idle_cooldown_timer + 1;
+     @@ -39 +39 @@
+DIFFERENT 0x26252 cm550_epsRpmTrackingInit: 7 -> 7 lines
+     @@ -3,2 +3,2 @@
+     -  _high_load_idle_cooldown_timer = _engine_rpm_primary;
+     -  _high_speed_idle_cooldown_timer = 0;
+     +  high_load_idle_cooldown_timer = _engine_rpm_primary;
+     +  high_speed_idle_cooldown_timer = 0;
+DIFFERENT 0x26340 cm550_epsDiagnosticModeHandler: 44 -> 44 lines
+     @@ -5,2 +5,2 @@
+     -    if ((_gear_gains_not_used_if_lsfter_this_value_0_3000 < _lsg_filtered_speed_error) ||
+     -       ((_lsg_filtered_speed_error < _gear_gains_not_used_if_lsfter_this_value_1000_0 ||
+     +    if ((gear_gains_not_used_if_lsfter_this_value_0_3000 < _lsg_filtered_speed_error) ||
+     +       ((_lsg_filtered_speed_error < gear_gains_not_used_if_lsfter_this_value_1000_0 ||
+     @@ -13 +13 @@
+     -          _time_gear_gain_conditions_must_exist_before_using_gear_gains_0_65535) {
+     +          time_gear_gain_conditions_must_exist_before_using_gear_gains_0_65535) {
+     @@ -16 +16 @@
+     -      T0 = (short)((uint)_filtered_transmission_gear_ratio_0_1_15_999 * (uint)_DAT_0080a9f8 >>
+     +      T0 = (short)((uint)filtered_transmission_gear_ratio_0_1_15_999 * (uint)_DAT_0080a9f8 >>
+     @@ -23 +23 @@
+DIFFERENT 0x26474 cm550_engineModeTimingAdjuster: 38 -> 38 lines
+     @@ -4,2 +4,2 @@
+     -     (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 2) != 0 &&
+     -      ((_fault_first_occurrence_word_7 & 2) != 0)))) {
+     +     (((status_32_word_bit_mapped_system_error_status_word_7_0_1 & 2) != 0 &&
+     +      ((fault_first_occurrence_word_7 & 2) != 0)))) {
+     @@ -8 +8 @@
+     -  else if ((rpm_averaging_accumulator_2 == '\0') &&
+     +  else if ((rpm_averaging_accumulator_2 == 0) &&
+     @@ -12,2 +12,2 @@
+     -    if ((int)((uint)_lsg_operator_adjust_maximum_speed - (uint)_lsg_base_reference_speed_calibration
+     -             ) < (int)_rpm_averaging_accumulator_1) {
+     +    if ((int)((uint)lsg_operator_adjust_maximum_speed - (uint)lsg_base_reference_speed_calibration)
+DIFFERENT 0x2658c cm550_fuelDemandLimitSource2Selector: 15 -> 15 lines
+     @@ -7,2 +7,2 @@
+     -  if (_lsg_operator_adjust_minimum_speed < _datalink_commanded_lsg_breakpoint_speed) {
+     -    _lsg_operator_adjust_minimum_speed = _datalink_commanded_lsg_breakpoint_speed;
+     +  if (lsg_operator_adjust_minimum_speed < _datalink_commanded_lsg_breakpoint_speed) {
+     +    lsg_operator_adjust_minimum_speed = _datalink_commanded_lsg_breakpoint_speed;
+     @@ -10,2 +10,2 @@
+     -  if (_DAT_00808344 < _lsg_operator_adjust_maximum_speed) {
+     -    _lsg_operator_adjust_maximum_speed = _DAT_00808344;
+     +  if (_DAT_00808344 < lsg_operator_adjust_maximum_speed) {
+     +    lsg_operator_adjust_maximum_speed = _DAT_00808344;
+DIFFERENT 0x26616 cm550_FUN_00026616: 44 -> 44 lines
+     @@ -17 +17 @@
+     -      _cold_idle_speed_adder_0_1000 = _cold_idle_speed_300_1000;
+     +      _cold_idle_speed_adder_0_1000 = cold_idle_speed_300_1000;
+     @@ -24 +24 @@
+     -    if ((T1) && (_rpm_histogram_sample_divider < _cold_idle_time_0_65535)) {
+     +    if ((T1) && (_rpm_histogram_sample_divider < cold_idle_time_0_65535)) {
+     @@ -28,3 +28,3 @@
+     -       ((_cold_idle_time_0_65535 <= _rpm_histogram_sample_divider || (!T1)))) {
+     -      if (_lsg_idle_ramp_rate_0_1000 < _cold_idle_speed_adder_0_1000) {
+     -        _cold_idle_speed_adder_0_1000 = _cold_idle_speed_adder_0_1000 - _lsg_idle_ramp_rate_0_1000;
+     +       ((cold_idle_time_0_65535 <= _rpm_histogram_sample_divider || (!T1)))) {
+     +      if (lsg_idle_ramp_rate_0_1000 < _cold_idle_speed_adder_0_1000) {
+DIFFERENT 0x266da mc68k_runSerialEepromWriteQueue: 78 -> 78 lines
+     @@ -10 +10 @@
+     -          _diagnostic_can_response_header = _circular_buffer_last_address_offset;
+     +          _diagnostic_can_response_header = circular_buffer_last_address_offset;
+     @@ -13 +13 @@
+     -          QSM_TR3 = _circular_buffer_last_address_offset;
+     +          QSM_TR3 = circular_buffer_last_address_offset;
+DIFFERENT 0x26b3a cm550_FUN_00026b3a: 11 -> 11 lines
+     @@ -3 +3 @@
+     -  _no_load_fueling_curve_rpm_input = _engine_rpm_primary;
+     +  no_load_fueling_curve_rpm_input = _engine_rpm_primary;
+DIFFERENT 0x26cc8 calculateSpeedRatioComponent: 66 -> 66 lines
+     @@ -9 +9 @@
+     -      _engine_load_percent_normalized = (undefined2)T0;
+     +      engine_load_percent_normalized = (word)T0;
+     @@ -12 +12 @@
+     -      _engine_load_percent_normalized = 0x7f80;
+     +      engine_load_percent_normalized = 0x7f80;
+     @@ -16 +16 @@
+     -    _engine_load_percent_normalized = 0;
+     +    engine_load_percent_normalized = 0;
+     @@ -20 +20 @@
+     -       && (_hsg_droop_active_flag != 0)) {
+     +       && (hsg_droop_active_flag != 0)) {
+DIFFERENT 0x26e8e cm550_FUN_00026e8e: 21 -> 21 lines
+     @@ -3 +3 @@
+     -  T0 = (uint)_intercept_of_rpm_vs_phase_lag_line_defining_time_offset_for_syn_0_16 +
+     +  T0 = (uint)intercept_of_rpm_vs_phase_lag_line_defining_time_offset_for_syn_0_16 +
+     @@ -5 +5 @@
+     -           (uint)_slope_of_rpm_vs_phase_lag_line_defining_time_offset_for_s_0_0_031136 >> 4);
+     +           (uint)slope_of_rpm_vs_phase_lag_line_defining_time_offset_for_s_0_0_031136 >> 4);
+     @@ -10 +10 @@
+     -  _phase_lag_calculation_based_on_the_pulse_0_phase_lag_slope_and_0_40 = (short)(T1 >> 4);
+     +  phase_lag_calculation_based_on_the_pulse_0_phase_lag_slope_and_0_40 = (word)(T1 >> 4);
+     @@ -12 +12 @@
+     -          ((uint)_fuel_demand_blend_mode_select * (uint)_final_fuel_command_max >> 4);
+     +          ((uint)_fuel_demand_blend_mode_select * (uint)final_fuel_command_max >> 4);
+DIFFERENT 0x26eec cm550_insiteActiveFaultListBuilder: 53 -> 53 lines
+     @@ -7 +7 @@
+     -    T0 = (char)_insite_active_fault_count;
+     +    T0 = (char)insite_active_fault_count;
+DIFFERENT 0x26fea cm550_insiteFaultDetailBuilder: 266 -> 266 lines
+     @@ -9 +9 @@
+     -           (insite_fault_change_queue_count + (char)_active_j1922_reportable_fault_count) * '\x02';
+     +           (insite_fault_change_queue_count + (char)active_j1922_reportable_fault_count) * '\x02';
+     @@ -15,3 +15,3 @@
+     -      T6 = 1;
+     -      while ((T3 <= active_dtc_list[0] && (T2 < _active_j1922_reportable_fault_count))) {
+     -        T1 = ((ushort)active_dtc_list[(short)T6] * 2 + (ushort)active_dtc_list[(short)T6])
+     +      T7 = 1;
+     +      while ((T3 <= active_dtc_list[0] && (T2 < active_j1922_reportable_fault_count))) {
+     +        T1 = ((ushort)active_dtc_list[(short)T7] * 2 + (ushort)active_dtc_list[(short)T7])
+     @@ -36,3 +36,3 @@
+     -        T6 = (ushort)(byte)((char)T6 + 1);
+DIFFERENT 0x284e8 mc68k_applicationMain: 443 -> 443 lines
+     @@ -82,2 +82,2 @@
+     -    _status_32_word_bit_mapped_system_error_status_word_10_0_1 =
+     -         _status_32_word_bit_mapped_system_error_status_word_10_0_1 & 0xffbf;
+     +    status_32_word_bit_mapped_system_error_status_word_10_0_1 =
+     +         status_32_word_bit_mapped_system_error_status_word_10_0_1 & 0xffbf;
+     @@ -86,2 +86,2 @@
+     -    _status_32_word_bit_mapped_system_error_status_word_10_0_1 =
+     -         _status_32_word_bit_mapped_system_error_status_word_10_0_1 | 0x40;
+     +    status_32_word_bit_mapped_system_error_status_word_10_0_1 =
+     +         status_32_word_bit_mapped_system_error_status_word_10_0_1 | 0x40;
+     @@ -384 +384 @@
+     -  _lsg_breakpoint_speed = _lsg_base_reference_speed_calibration;
+DIFFERENT 0x28978 cm550_restartApplicationWithoutReset: 17 -> 17 lines
+     @@ -12,3 +12,3 @@
+     -    for (_loop_counter_for_idle_loop_0_65535 = 0;
+     -        _loop_counter_for_idle_loop_0_65535 < _number_of_loop_delays_cal_0_65535;
+     -        _loop_counter_for_idle_loop_0_65535 = _loop_counter_for_idle_loop_0_65535 + 1) {
+     +    for (loop_counter_for_idle_loop_0_65535 = 0;
+     +        loop_counter_for_idle_loop_0_65535 < number_of_loop_delays_cal_0_65535;
+     +        loop_counter_for_idle_loop_0_65535 = loop_counter_for_idle_loop_0_65535 + 1) {
+DIFFERENT 0x28a04 mc68k_dualCanControllerInit: 64 -> 64 lines
+     @@ -13,2 +13,2 @@
+     -  Ram00ffd806 = _can_global_mask_0_65535;
+     -  CAN_CS4_MESSAGE_15_MASK = _mask_used_for_can_msg_object_15_0_ffffffff_84b0;
+     +  Ram00ffd806 = can_global_mask_0_65535;
+     +  CAN_CS4_MESSAGE_15_MASK = mask_used_for_can_msg_object_15_0_ffffffff_84b0;
+     @@ -41 +41 @@
+     -  CAN_CS5_GLOBAL_MASK_STANDARD = _the_can_1_standard_mask_0_65535;
+     +  CAN_CS5_GLOBAL_MASK_STANDARD = the_can_1_standard_mask_0_65535;
+DIFFERENT 0x28b80 mc68k_initializeJ1939Datalink: 161 -> 161 lines
+     @@ -3 +3 @@
+     -  _can_transmit_buffer_write_pointer = 0x80d896;
+     +  can_transmit_buffer_write_pointer = 0x80d896;
+     @@ -95 +95 @@
+     -  for (T4 = 0; T4 < _can_number_of_engine_destination_non_specific_rx_objects_0_14;
+     +  for (T4 = 0; T4 < can_number_of_engine_destination_non_specific_rx_objects_0_14;
+     @@ -111 +111 @@
+     -  for (T4 = 0; T4 < _can_number_of_retarder_destination_specific_rx_objects_0_14;
+     +  for (T4 = 0; T4 < can_number_of_retarder_destination_specific_rx_objects_0_14;
+     @@ -125 +125 @@
+     -  for (T4 = 0; T4 < _can_number_of_retarder_destination_non_specific_rx_objects_0_14;
+     +  for (T4 = 0; T4 < can_number_of_retarder_destination_non_specific_rx_objects_0_14;
+DIFFERENT 0x2ce64 cm550_updateBootBlockFromImage: 41 -> 41 lines
+     @@ -7 +7 @@
+     -     (((_this_key_must_be_set_to_bad1_before_boot_block_is_programmed_none == -0x452f &&
+     +     (((this_key_must_be_set_to_bad1_before_boot_block_is_programmed_none == 0xbad1 &&
+     @@ -9 +9 @@
+     -      ((_this_key_must_be_set_to_bad1_before_boot_block_is_programmed_none == 0x1d1d &&
+     +      ((this_key_must_be_set_to_bad1_before_boot_block_is_programmed_none == 0x1d1d &&
+DIFFERENT 0x2d09e cm550_systemControl64: 60 -> 60 lines
+     @@ -47,3 +47,3 @@
+     -      _status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     -           _status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     -      _fault_first_occurrence_flags_word_7 = _fault_first_occurrence_flags_word_7 | 4;
+     +      status_32_word_bit_mapped_system_error_status_word_7_0_1 =
+     +           status_32_word_bit_mapped_system_error_status_word_7_0_1 | 4;
+     +      fault_first_occurrence_flags_word_7 = fault_first_occurrence_flags_word_7 | 4;
+DIFFERENT 0x2d3c6 cm550_runPowerTakeOffGovernor: 183 -> 182 lines
+     @@ -3 +3 @@
+     -  if (_closed_loop_governor_active_flag == 1) {
+     +  if (closed_loop_governor_active_flag == 1) {
+     @@ -7,5 +7,5 @@
+     -    T7 = _pid_combined_correction_term;
+     -    T0 = _closed_loop_filtered_speed_error;
+     -    T2 = (uint)_closed_loop_rpm_snapshot - (uint)_engine_rpm_primary;
+     -    if ((int)(short)_max_allowed_error_term_0_1000 < (int)T2) {
+     -      T2 = (uint)_max_allowed_error_term_0_1000;
+     +    T1 = pid_combined_correction_term;
+     +    T0 = closed_loop_filtered_speed_error;
+     +    T3 = (uint)_closed_loop_rpm_snapshot - (uint)_engine_rpm_primary;
+DIFFERENT 0x2d9a8 cm550_FUN_0002d9a8: 8 -> 8 lines
+     @@ -3 +3 @@
+     -  if ((_closed_loop_governor_active_flag == 1) && (_DAT_0080400e < _torque_demand_fuel_limit)) {
+     +  if ((closed_loop_governor_active_flag == 1) && (_DAT_0080400e < _torque_demand_fuel_limit)) {
+DIFFERENT 0x2d9d2 cm550_presetPowerTakeOffGovernorOnEngagement: 42 -> 42 lines
+     @@ -3 +3 @@
+     -  _pid_combined_correction_term = 0;
+     +  pid_combined_correction_term = 0;
+     @@ -6 +6 @@
+     -  _closed_loop_filtered_speed_error = 0;
+     +  closed_loop_filtered_speed_error = 0;
+DIFFERENT 0x2dbde smoothPowerTakeOffReferenceEngineSpeed: 38 -> 38 lines
+     @@ -4 +4 @@
+     -  if (_closed_loop_governor_active_flag == 1) {
+     +  if (closed_loop_governor_active_flag == 1) {
+DIFFERENT 0x2dcb0 cm550_oil_pressure_shutdown_controller: 57 -> 57 lines
+     @@ -8 +8 @@
+     -    _pto_fuel_demand_snapshot = _fuel_demand_selected;
+     +    pto_fuel_demand_snapshot = _fuel_demand_selected;
+     @@ -11 +11 @@
+     -         _maximum_rated_engine_speed_0_5000;
+     +         maximum_rated_engine_speed_0_5000;
+     @@ -13 +13 @@
+     -  if (_closed_loop_governor_active_flag == 1) {
+     +  if (closed_loop_governor_active_flag == 1) {
+     @@ -22 +22 @@
+     -            _pto_fuel_demand_snapshot = _fuel_demand_selected;
+     +            pto_fuel_demand_snapshot = _fuel_demand_selected;
+DIFFERENT 0x2ddbc cm550_FUN_0002ddbc: 7 -> 7 lines
+     @@ -5 +5 @@
+     -       _maximum_rated_engine_speed_0_5000;
+     +       maximum_rated_engine_speed_0_5000;
+DIFFERENT 0x2dde8 mc68k_monitorPwmOutputReadBackFaults: 262 -> 262 lines
+     @@ -3,2 +3,2 @@
+     -  if (_pwm_diagnostic_init_counter < 6) {
+     -    _pwm_diagnostic_init_counter = _pwm_diagnostic_init_counter + 1;
+     +  if (pwm_diagnostic_init_counter < 6) {
+     +    pwm_diagnostic_init_counter = pwm_diagnostic_init_counter + 1;
+     @@ -14,4 +14,4 @@
+     -          T1 = _status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffff0010;
+     -          if (((_status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x10) != 0) &&
+     -             (T1 = _fault_first_occurrence_flags_word_7 & 0xffff0010,
+     -             (_fault_first_occurrence_flags_word_7 & 0x10) == 0)) {
+     +          T1 = status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xffff0010;
+     +          if (((status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0x10) != 0) &&
+DIFFERENT 0x2e2f4 mc68k_stepPwm3AndPwm4OutputStartUpTest: 100 -> 100 lines
+     @@ -4 +4 @@
+     -  if (_pwm_diagnostic_init_counter == 1) {
+     +  if (pwm_diagnostic_init_counter == 1) {
+     @@ -28 +28 @@
+     -  if (_pwm_diagnostic_init_counter != 3) {
+     +  if (pwm_diagnostic_init_counter != 3) {
+     @@ -30,2 +30,2 @@
+     -    if (_pwm_diagnostic_init_counter != 5) {
+     -      return CONCAT44((uint)_pwm_diagnostic_init_counter,5);
+     +    if (pwm_diagnostic_init_counter != 5) {
+     +      return CONCAT44((uint)pwm_diagnostic_init_counter,5);
+     @@ -41,3 +41,3 @@
+DIFFERENT 0x2e5c0 mc68k_pwmFuelDemandOutputCalculator: 92 -> 92 lines
+     @@ -32 +32 @@
+     -            (uint)_value_which_designates_the_duty_cycle_requested_of_pwm2_0_100) / 0x6400 & 0xffff;
+     +            (uint)value_which_designates_the_duty_cycle_requested_of_pwm2_0_100) / 0x6400 & 0xffff;
+     @@ -36 +36 @@
+     -  if (5 < _pwm_diagnostic_init_counter) {
+     +  if (5 < pwm_diagnostic_init_counter) {
+     @@ -44 +44 @@
+     -              (uint)_value_which_designates_the_duty_cycle_requested_for_pwm3_0_100) / 0x6400 &
+     +              (uint)value_which_designates_the_duty_cycle_requested_for_pwm3_0_100) / 0x6400 &
+     @@ -50 +50 @@
+     -  if (5 < _pwm_diagnostic_init_counter) {
+     +  if (5 < pwm_diagnostic_init_counter) {
+DIFFERENT 0x2ec50 cm550_FUN_0002ec50: 60 -> 60 lines
+     @@ -7 +7 @@
+     -      _alternate_throttle_command = 0;
+     +      alternate_throttle_command = 0;
+     @@ -23 +23 @@
+     -      _alternate_throttle_command = remote_throttle_sensor_state.filtered_value;
+     +      alternate_throttle_command = remote_throttle_sensor_state.filtered_value;
+     @@ -28 +28 @@
+     -    if (((_status_32_word_bit_mapped_system_error_status_word_3_0_1 & 0x800) == 0) ||
+     +    if (((status_32_word_bit_mapped_system_error_status_word_3_0_1 & 0x800) == 0) ||
+     @@ -33 +33 @@
+     -        _remote_throttle_active_flag = 1;
+     +        remote_throttle_active_flag = 1;
+DIFFERENT 0x2ed62 cm550_FUN_0002ed62: 5 -> 5 lines
+     @@ -3 +3 @@
+     -  _remote_throttle_active_flag = 0;
+     +  remote_throttle_active_flag = 0;
+DIFFERENT 0x2edb2 cm550_parameterLookupForInsite: 42 -> 42 lines
+     @@ -10,2 +10,2 @@
+     -    return CONCAT11((char)((ushort)_insite_active_fault_count >> 8),
+     -                    (char)_insite_active_fault_count + '\x02');
+     +    return CONCAT11((char)(insite_active_fault_count >> 8),(char)insite_active_fault_count + '\x02')
+     +    ;
+     @@ -15,2 +15,2 @@
+     -      return CONCAT11((char)((ushort)_active_j1922_reportable_fault_count >> 8),
+     -                      (insite_fault_change_queue_count + (char)_active_j1922_reportable_fault_count)
+     +      return CONCAT11((char)(active_j1922_reportable_fault_count >> 8),
+     +                      (insite_fault_change_queue_count + (char)active_j1922_reportable_fault_count)
+     @@ -19 +19 @@
+     -    T0 = (_inactive_fault_j1587_reportable_count + _active_j1922_reportable_fault_count) * 3;
+DIFFERENT 0x2efd0 cm550_diagnosticServiceDispatcherByPgn: 48 -> 48 lines
+     @@ -1 +1 @@
+     -ushort cm550_diagnosticServiceDispatcherByPgn(int param_1)
+     +word cm550_diagnosticServiceDispatcherByPgn(int param_1)
+     @@ -13 +13 @@
+     -               _jcomm_engine_overspeed_to_time_out_for_jcomm_high_idle_overri_0_1000 + 1;
+     +               jcomm_engine_overspeed_to_time_out_for_jcomm_high_idle_overri_0_1000 + 1;
+     @@ -19 +19 @@
+     -        _high_idle_overspeed_timeout_timer = 0;
+     +        high_idle_overspeed_timeout_timer = 0;
+     @@ -24 +24 @@
+     -           _jcomm_recovery_time_time_that_time_limited_node_must_be_silen_0_1000 + 1;
+     +           jcomm_recovery_time_time_that_time_limited_node_must_be_silen_0_1000 + 1;
+DIFFERENT 0x2f128 processEngineTsc1Request: 152 -> 152 lines
+     @@ -12 +12 @@
+     -    T0 = *(char *)(param_1 + 3);
+     +    T0 = *(byte *)(param_1 + 3);
+     @@ -78 +78 @@
+     -      _datalink_command_timeout_counter = 0;
+     +      datalink_command_timeout_counter = 0;
+     @@ -81 +81 @@
+     -      _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 0;
+     +      jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 0;
+     @@ -84 +84 @@
+     -      _datalink_command_timeout_counter =
+     +      datalink_command_timeout_counter =
+DIFFERENT 0x2f4be cm550_FUN_0002f4be: 20 -> 20 lines
+     @@ -4 +4 @@
+     -  if ((*(char *)((int)&rx_msg->id + 2) == j1939_engine_node_source_address) ||
+     +  if ((*(byte *)((int)&rx_msg->id + 2) == j1939_engine_node_source_address) ||
+DIFFERENT 0x2f632 j1939FormatMultiFrameResponse: 82 -> 82 lines
+     @@ -3 +3 @@
+     -  if (_jcomm_req_torque_braking_override_or_limit_value_0_125 == 0) {
+     +  if (jcomm_req_torque_braking_override_or_limit_value_0_125 == 0) {
+     @@ -7,2 +7,2 @@
+     -  if ((_retarder_control_mode == 3) &&
+     -     (99 < _jcomm_req_torque_braking_override_or_limit_value_0_125)) {
+     +  if ((_retarder_control_mode == 3) && (99 < jcomm_req_torque_braking_override_or_limit_value_0_125)
+     +     ) {
+     @@ -19,2 +19,2 @@
+     -       (ushort)(((uint)_jcomm_req_torque_braking_override_or_limit_value_0_125 * (uint)_DAT_00801e2c
+     -                ) / 100);
+     +       (ushort)(((uint)jcomm_req_torque_braking_override_or_limit_value_0_125 * (uint)_DAT_00801e2c)
+DIFFERENT 0x2f7e6 cm550_retarderControlModeHandler: 134 -> 134 lines
+     @@ -58 +58 @@
+     -          _retarder_command_timeout_counter = 0;
+     +          retarder_command_timeout_counter = 0;
+     @@ -60,2 +60,2 @@
+     -          _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6 = 0;
+     -          _retarder_torque_percent = 0x7d;
+     +          source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6 = 0;
+     +          retarder_torque_percent = 0x7d;
+     @@ -66 +66 @@
+     -          _jcomm_req_torque_braking_override_or_limit_value_0_125 = T5;
+     +          jcomm_req_torque_braking_override_or_limit_value_0_125 = T5;
+     @@ -68 +68 @@
+DIFFERENT 0x2faa4 cm550_FUN_0002faa4: 29 -> 29 lines
+     @@ -3 +3 @@
+     -  _retarder_torque_percent = 0x7d;
+     +  retarder_torque_percent = 0x7d;
+     @@ -5 +5 @@
+     -  _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6 = 0;
+     +  source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6 = 0;
+     @@ -7,6 +7,6 @@
+     -       _indicates_of_cyl_brakes_driven_by_eb_driver_6_for_j1939_ret_ma_0_6 +
+     -       _indicates_of_cyl_brakes_driven_by_eb_driver_5_for_j1939_ret_ma_0_6 +
+     -       _indicates_of_cyl_brakes_driven_by_eb_driver_4_for_j1939_ret_ma_0_6 +
+     -       _indicates_of_cyl_brakes_driven_by_eb_driver_3_for_j1939_ret_ma_0_6 +
+     -       _indicates_of_cyl_brakes_driven_by_eb_driver_2_for_j1939_ret_ma_0_6 +
+DIFFERENT 0x2fb70 cm550_torqueControlAddressDispatcher: 12 -> 12 lines
+     @@ -3,2 +3,2 @@
+     -  T0 = *(char *)(param_1 + 2);
+     -  if ((T0 == j1939_engine_node_source_address) || (T0 == -1)) {
+     +  T0 = *(byte *)(param_1 + 2);
+     +  if ((T0 == j1939_engine_node_source_address) || (T0 == 0xff)) {
+     @@ -7 +7 @@
+     -  if ((T0 == j1939_retarder_node_source_address) || (T0 == -1)) {
+     +  if ((T0 == j1939_retarder_node_source_address) || (T0 == 0xff)) {
+DIFFERENT 0x304f4 cm550_rpmHistogramAndAveragingStatistics: 86 -> 86 lines
+     @@ -7 +7 @@
+     -    if ((current_engine_rpm_filtered < _DAT_00804022) || (_rpm_histogram_bin_size == 0)) {
+     +    if ((current_engine_rpm_filtered < _DAT_00804022) || (rpm_histogram_bin_size == 0)) {
+     @@ -12 +12 @@
+     -                     (int)(uint)_rpm_histogram_bin_size) + 1;
+     +                     (int)(uint)rpm_histogram_bin_size) + 1;
+     @@ -23,2 +23,2 @@
+     -      if (_trip_rpm_average_sample_count != -1) {
+     -        _trip_rpm_average_sample_count = _trip_rpm_average_sample_count + 1;
+     +      if (trip_rpm_average_sample_count != -1) {
+     +        trip_rpm_average_sample_count = trip_rpm_average_sample_count + 1;
+     @@ -26,3 +26,3 @@
+DIFFERENT 0x306ca cm550_FUN_000306ca: 158 -> 158 lines
+     @@ -23 +23 @@
+     -      _fuel_statistics_overflow_flags = 0;
+     +      fuel_statistics_overflow_flags = 0;
+     @@ -30 +30 @@
+     -      _trip_rpm_average_sample_count = 0;
+     +      trip_rpm_average_sample_count = 0;
+     @@ -32 +32 @@
+     -      _hot_shutdown_event_counter = 0;
+     +      hot_shutdown_event_counter = 0;
+     @@ -39 +39 @@
+     -    else if (_closed_loop_governor_active_flag == 1) {
+     +    else if (closed_loop_governor_active_flag == 1) {
+DIFFERENT 0x30a5e cm550_FUN_00030a5e: 20 -> 20 lines
+     @@ -6 +6 @@
+     -      _fuel_statistics_overflow_flags = _fuel_statistics_overflow_flags | 0x82;
+     +      fuel_statistics_overflow_flags = fuel_statistics_overflow_flags | 0x82;
+     @@ -10 +10 @@
+     -      _fuel_statistics_overflow_flags = _fuel_statistics_overflow_flags | 0x208;
+     +      fuel_statistics_overflow_flags = fuel_statistics_overflow_flags | 0x208;
+     @@ -15 +15 @@
+     -      _fuel_statistics_overflow_flags = _fuel_statistics_overflow_flags | 0x3000;
+     +      fuel_statistics_overflow_flags = fuel_statistics_overflow_flags | 0x3000;
+DIFFERENT 0x30ade cm550_FUN_00030ade: 8 -> 8 lines
+     @@ -5,2 +5,2 @@
+     -  _lifetime_rpm_running_average = _DAT_00806186;
+     -  _trip_rpm_running_average = _DAT_00806188;
+     +  lifetime_rpm_running_average = _DAT_00806186;
+     +  trip_rpm_running_average = _DAT_00806188;
+DIFFERENT 0x30b62 vp44InjectionSystemStateController: 37 -> 37 lines
+     @@ -6 +6 @@
+     -    selected_timing_advance_output_0_120 = _diagnostic_fuel_arbitration_state_10_value;
+     +    selected_timing_advance_output_0_120 = diagnostic_fuel_arbitration_state_10_value;
+     @@ -11 +11 @@
+     -    selected_timing_advance_output_0_120 = _diagnostic_fuel_arbitration_state_9_value;
+     +    selected_timing_advance_output_0_120 = diagnostic_fuel_arbitration_state_9_value;
+DIFFERENT 0x31496 cm550_FUN_00031496: 57 -> 57 lines
+     @@ -5 +5 @@
+     -      (engine_state != ENGINE_STATE_STOPPED)) && (_trending_data_capture_active == 1)) {
+     +      (engine_state != ENGINE_STATE_STOPPED)) && (trending_data_capture_active == 1)) {
+     @@ -7 +7 @@
+     -       (current_engine_rpm_filtered <= _rpm_divisor_value)) {
+     +       (current_engine_rpm_filtered <= rpm_divisor_value)) {
+     @@ -13 +13 @@
+     -    if ((_upper_limit_at_which_loading_trigger_is_satisfied_in_trendin_0_127_5 <
+     +    if ((upper_limit_at_which_loading_trigger_is_satisfied_in_trendin_0_127_5 <
+     @@ -16 +16 @@
+     -        _lower_limit_at_which_loading_trigger_is_satisfied_in_trendin_0_127_5)) {
+     +        lower_limit_at_which_loading_trigger_is_satisfied_in_trendin_0_127_5)) {
+DIFFERENT 0x315be cm550_FUN_000315be: 162 -> 159 lines
+     @@ -7 +7 @@
+     -    if (_trending_presample_interval_counter == 0) {
+     +    if (trending_presample_interval_counter == 0) {
+     @@ -10 +10 @@
+     -    if (_trending_total_sample_count < 3) {
+     +    if (trending_total_sample_count < 3) {
+     @@ -16,3 +16,3 @@
+     -    if (_trending_sample_phase_counter == 0) {
+     -      _trending_presample_interval_counter = _trending_presample_interval_counter + 1;
+     -      if (T3 == _trending_presample_interval_counter) {
+     +    if (trending_sample_phase_counter == 0) {
+     +      trending_presample_interval_counter = trending_presample_interval_counter + 1;
+DIFFERENT 0x31a68 cm550_FUN_00031a68: 18 -> 18 lines
+     @@ -4,5 +4,5 @@
+     -    _trending_presample_interval_counter = 0;
+     -    _trending_sample_phase_counter = 0;
+     -    _trending_trigger_hold_timer = 0;
+     -    _trending_trigger_satisfied_flag = 0;
+     -    _trending_data_capture_active = 0;
+     +    trending_presample_interval_counter = 0;
+     +    trending_sample_phase_counter = 0;
+     +    trending_trigger_hold_timer = 0;
+     +    trending_trigger_satisfied_flag = 0;
+     +    trending_data_capture_active = 0;
+     @@ -10 +10 @@
+DIFFERENT 0x32c76 sendPgn61444ElectronicEngineController1Message: 98 -> 98 lines
+     @@ -12 +12 @@
+     -      if (_state_of_selected_alternate_throttle_priority_0_9 ==
+     +      if (state_of_selected_alternate_throttle_priority_0_9 ==
+DIFFERENT 0x32e4c j1939HandlePgn61443Eec2: 85 -> 85 lines
+     @@ -3 +3 @@
+     -  if (((((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 0x20) == 0) ||
+     +  if (((((status_32_word_bit_mapped_system_error_status_word_4_0_1 & 0x20) == 0) ||
+     @@ -5 +5 @@
+     -      (((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 8) == 0 ||
+     +      (((status_32_word_bit_mapped_system_error_status_word_4_0_1 & 8) == 0 ||
+     @@ -7 +7 @@
+     -     ((((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 2) == 0 ||
+     +     ((((status_32_word_bit_mapped_system_error_status_word_4_0_1 & 2) == 0 ||
+     @@ -9 +9 @@
+     -      (((_status_32_word_bit_mapped_system_error_status_word_4_0_1 & 4) == 0 ||
+     +      (((status_32_word_bit_mapped_system_error_status_word_4_0_1 & 4) == 0 ||
+DIFFERENT 0x3320e buildPgn65251EngineConfiguration1Payload: 101 -> 96 lines
+     @@ -5 +5 @@
+     -  T12._1_1_ = (undefined1)_jcomm_determined_rpm_at_engine_configuration_idle_speed_0_8031_875;
+     +  T12._1_1_ = (undefined1)jcomm_determined_rpm_at_engine_configuration_idle_speed_0_8031_875;
+     @@ -7,2 +7 @@
+     -       (undefined1)
+     -       ((ushort)_jcomm_determined_rpm_at_engine_configuration_idle_speed_0_8031_875 >> 8);
+     +       (undefined1)(jcomm_determined_rpm_at_engine_configuration_idle_speed_0_8031_875 >> 8);
+     @@ -12 +11 @@
+     -                                           _jcomm_ind_torque_at_idle_available_torque_that_engine_can_prov_0_125
+     +                                           jcomm_ind_torque_at_idle_available_torque_that_engine_can_prov_0_125
+     @@ -19 +18 @@
+     -  T12._1_1_ = (undefined1)_jcomm_determine_rpm_at_engine_configuration_point_3_0_8031_875_da2e;
+DIFFERENT 0x33c6c cm550_ioControlDataBuilder: 11 -> 11 lines
+     @@ -7 +7 @@
+     -  _protection_state_enable_flags = byteSwap32(&T0);
+     +  protection_state_enable_flags = byteSwap32(&T0);
+DIFFERENT 0x3407a vp44CanMessage100ResponseBuilder: 71 -> 67 lines
+     @@ -12 +12 @@
+     -    if (_indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6 == 0) {
+     +    if (indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6 == 0) {
+     @@ -15 +15 @@
+     -    else if (_indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6 == 1) {
+     +    else if (indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6 == 1) {
+     @@ -18 +18 @@
+     -    else if (_indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6 == 2) {
+     +    else if (indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6 == 2) {
+     @@ -21 +21 @@
+     -    else if (_indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6 == 3) {
+     +    else if (indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6 == 3) {
+DIFFERENT 0x342f0 cm550_retarderDataBuilder: 8 -> 8 lines
+     @@ -4 +4 @@
+     -  _loop_termination_flag = byteSwap16(&T0);
+     +  loop_termination_flag = byteSwap16(&T0);
+DIFFERENT 0x34540 cm550_setDiagnosticSourceFromFuelArbitrator: 8 -> 8 lines
+     @@ -5 +5 @@
+     -    _fuel_demand_selected = _datalink_torque_demand_fueling;
+     +    _fuel_demand_selected = datalink_torque_demand_fueling;
+DIFFERENT 0x3480e mc68k_setUpTpuChannel3AnglePulseOutput: 64 -> 64 lines
+     @@ -5,2 +5,2 @@
+     -          _dzg_angle_after_cyl_tdc_angle_after_cyl_tdc_to_put_dzg_first_60_60 +
+     -          _engine_position_offset_distance_between_tooth_0_and_tdc_1_100_100 +
+     +          dzg_angle_after_cyl_tdc_angle_after_cyl_tdc_to_put_dzg_first_60_60 +
+     +          engine_position_offset_distance_between_tooth_0_and_tdc_1_100_100 +
+DIFFERENT 0x3494a mc68k_updateTpuChannel3AnglePulseOutput: 62 -> 62 lines
+     @@ -4,2 +4,2 @@
+     -          _dzg_angle_after_cyl_tdc_angle_after_cyl_tdc_to_put_dzg_first_60_60 +
+     -          _engine_position_offset_distance_between_tooth_0_and_tdc_1_100_100 +
+     +          dzg_angle_after_cyl_tdc_angle_after_cyl_tdc_to_put_dzg_first_60_60 +
+     +          engine_position_offset_distance_between_tooth_0_and_tdc_1_100_100 +
+DIFFERENT 0x34c36 vp44FaultRegisterBit2Monitor: 32 -> 32 lines
+     @@ -5,2 +5,2 @@
+     -    _status_32_word_bit_mapped_system_error_status_word_4_0_1 =
+     -         _status_32_word_bit_mapped_system_error_status_word_4_0_1 & 0xdfff;
+     +    status_32_word_bit_mapped_system_error_status_word_4_0_1 =
+     +         status_32_word_bit_mapped_system_error_status_word_4_0_1 & 0xdfff;
+     @@ -12,3 +12,3 @@
+     -      _status_32_word_bit_mapped_system_error_status_word_4_0_1 =
+     -           _status_32_word_bit_mapped_system_error_status_word_4_0_1 | 0x2000;
+     -      _fault_first_occurrence_flags_word_4 = _fault_first_occurrence_flags_word_4 | 0x2000;
+     +      status_32_word_bit_mapped_system_error_status_word_4_0_1 =
+     +           status_32_word_bit_mapped_system_error_status_word_4_0_1 | 0x2000;
+     +      fault_first_occurrence_flags_word_4 = fault_first_occurrence_flags_word_4 | 0x2000;
+DIFFERENT 0x34d52 vp44_FUN_00034d52: 18 -> 18 lines
+     @@ -6 +6 @@
+     -         (short)((int)((uint)_vp44_fault_counter_threshold_2 *
+     +         (short)((int)((uint)vp44_fault_counter_threshold_2 *
+DIFFERENT 0x34dba cm550_FUN_00034dba: 9 -> 9 lines
+     @@ -3 +3 @@
+     -  _timing_command_just_before_wet_stack_modification_0_120 = fuel_timing_advance_value;
+     +  timing_command_just_before_wet_stack_modification_0_120 = fuel_timing_advance_value;
+0 functions differ only in temporaries; 232 differ in code

@@ -1,0 +1,34 @@
+cm550: round 93 - remove 30 more function rows that sit in the middle of a function
+
+The same defect as the executive frame task sets (a417e39e), across the rest of the ROM: a function_renames.csv row
+on an address that code runs into from the instruction before it and that nothing calls. Each one made Ghidra cut a
+function in two and print the tail a second time under an unrelated name. Three of them sat 4 bytes after a real
+entry, right behind its 'link a6' - the whole function printed twice, the second time without its stack frame:
+vp44Message300FaultFlagProcessor was sendPgn61444ElectronicEngineController1Message (96 lines again),
+vp44FaultThresholdTablesInit was cm550_processPrimarySpeedPulsePeriodWithSyncPulse, and
+vp44_diagnosticServiceByteHandler was vp44_diagnosticErrorHandler.
+
+- The 30 rows are removed and recorded in deleted_functions.csv, each with the function that holds it, the offset
+  and the instruction before it.
+- 13 comments named one of them; they now name the holding function (8 of those read "X / X" after the refresh and
+  are rewritten to name it once).
+
+Proof:
+- From the ROM, per row (apply_r93_midbody2.py refuses otherwise): no aligned 4-byte occurrence of the address
+  (jsr / jmp operands, pointers), no bsr / bra / Bcc displacement onto it; a linear disassembly from the row before
+  it lands on the address; the instruction before it does not leave (not rts / rte / rtd / jmp / bra).
+- A second scan (pc_relative_refs_r93.py), for this commit and the 21 rows of a417e39e: no jsr / jmp / lea / pea
+  with a PC-relative operand and no short absolute jsr / jmp reaches any of the 51.
+- Control flow (midbody2_flow_check_r93.py): following both ways of every branch and every switch table from the
+  holding function's entry reaches the instruction before each of the 30, so each is inside that function. (One is
+  inside a switch case: 0x1717a in cm550_canControllerConfigInit.)
+- CM550 verify DETERMINISTIC. By address: 735 functions before, 705 after; the 30 left; none arrived; no remaining
+  function changed its name or its code. The .cpp is 1426 lines shorter than before the two removals. No new
+  build warning (the deletion entries find no function once the rows are gone: "already absent").
+- Test suites pass; headers 0 g++ errors; _cal HARD 0.
+
+Left for the next round: 0x171aa cm550_can1PwmTimerInit is case 3 of the switch in cm550_canControllerConfigInit
+(the only function row on a switch case of the 36 tables), and 15 rows after a return that nothing in the dump calls
+(entries for the undumped ROM above 0x40000, or dead code).
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

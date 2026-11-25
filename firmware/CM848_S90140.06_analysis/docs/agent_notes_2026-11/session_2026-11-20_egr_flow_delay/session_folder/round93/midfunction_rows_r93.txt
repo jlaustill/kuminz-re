@@ -1,0 +1,51 @@
+AFTER-LEAVE  0x03792 cm550_huffmanDecompress                              after 0x03640 cm550_huffmanTreeBuilder                 | before it: rts
+AFTER-LEAVE  0x03836 cm550_huffmanDecompressMain                          after 0x03792 cm550_huffmanDecompress                  | before it: rts
+AFTER-LEAVE  0x03870 cm550_busyWaitDelayLoop                              after 0x03836 cm550_huffmanDecompressMain              | before it: rts
+AFTER-LEAVE  0x0388a mc68k_portPinTestSequence2                           after 0x03870 cm550_busyWaitDelayLoop                  | before it: rts
+AFTER-LEAVE  0x0395a mc68k_waitForChipSelect2InputBit0High                after 0x0388a mc68k_portPinTestSequence2               | before it: rts
+AFTER-LEAVE  0x039a8 mc68k_checkSerialEepromSignature                     after 0x0395a mc68k_waitForChipSelect2InputBit0High    | before it: rts
+AFTER-LEAVE  0x03a94 mc68k_hardwareInitAndStartup                         after 0x039a8 mc68k_checkSerialEepromSignature         | before it: rts
+AFTER-LEAVE  0x03c20 cm550_ramClearWithWatchdog                           after 0x03abe mc68k_restartBootRomWithoutReset         | before it: rts
+MID-BODY     0x0c24c cm550_diagnosticDataBufferSetup                      after 0x0c246 cm550_fuelTimingModeInit                 | before it: movea.l #0x8000c0,a1
+MID-BODY     0x0d0fc cm550_fuelDeliverySystemInit                         after 0x0d0e2 cm550_diagnosticDataCopyHandler          | before it: move.w #0x1e,(a0)
+MID-BODY     0x0d286 cm550_initAcControlSystem                            after 0x0d280 cm550_interpolationTableSetup            | before it: movea.l #0x800126,a1
+MID-BODY     0x0d3bc cm550_fuelArbitratorInit                             after 0x0d3b2 cm550_FUN_0000d3b2                       | before it: move.l #0x803bbc,(0x80a9ac).l
+MID-BODY     0x0d3c6 cm550_initDerateSystemPointers                       after 0x0d3bc cm550_fuelArbitratorInit                 | before it: move.l #0x803bbe,(0x80a9b0).l
+MID-BODY     0x0e97e vp44ControlVariablesReset                            after 0x0e780 cm550_clearKickdownControlState          | before it: clr.b (0x8091e0).l
+MID-BODY     0x0fbe4 vp44_fuelSourceOilPressureConditionChecker           after 0x0fb26 vp44_fuelLimitExceedanceStatisticsAccumu | before it: beq.s 0xfc02
+MID-BODY     0x0ff56 cm550_initFuelArbitratorThreshold5                   after 0x0ff48 cm550_FUN_0000ff48                       | before it: bne.s 0xff6a
+AFTER-LEAVE  0x16628 cm550_limitedDivisionCalculator                      after 0x165f2 cm550_param_address_calc                 | before it: rts
+MID-BODY     0x1717a cm550_derateProtectionSlowCycle20Coordinator         after 0x17150 cm550_canControllerConfigInit            | before it: jsr (0x19dd0).l
+AFTER-LEAVE  0x171aa cm550_can1PwmTimerInit                               after 0x1717a cm550_derateProtectionSlowCycle20Coordin | before it: rts
+MID-BODY     0x199fa mc68k_phase2_slot_0_handler                          after 0x1999c mc68k_initializeTpuChannel10PrimarySpeed | before it: bls.s 0x19a0a
+AFTER-LEAVE  0x1a298 cm550_FUN_0001a298                                   after 0x1a1e0 cm550_rpmTimingDeltaComparatorWithReturn | before it: rts
+MID-BODY     0x1a95e vp44FaultThresholdTablesInit                         after 0x1a95a cm550_processPrimarySpeedPulsePeriodWith | before it: link a6,#0
+MID-BODY     0x1b40c mc68k_phase2_slot_1_handler                          after 0x1b39a mc68k_dutyCycleMonitorBufferInit         | before it: move.l d0,(0x80d074).l
+MID-BODY     0x1b4c2 mc68k_phase2_slot_8_handler                          after 0x1b4b2 mc68k_FUN_0001b4b2                       | before it: jsr (0xc87e).l
+AFTER-LEAVE  0x1c31a mc68k_flashEraseBlock                                after 0x1c308 cm550_FUN_0001c308                       | before it: rts
+AFTER-LEAVE  0x1c4ba cm550_flashProgramAndVerifyWords                     after 0x1c484 cm550_flashEraseFromRam                  | before it: rts
+MID-BODY     0x1ca5c vp44_canPinVp44StatusController                      after 0x1ca54 cm550_fuelDemandLimitSelector11          | before it: movea.l #0x80bd1a,a2
+MID-BODY     0x1db9a vp44_fuelArbitratorVariablesReset                    after 0x1db8a vp44_FUN_0001db8a                        | before it: move.w (0x803c02).l,(0x80d676).l
+MID-BODY     0x1fd8e cm550_crankStateVariablesReset                       after 0x1fd6c cm550_j1939TimeoutDataClearHandler       | before it: bcc.s 0x1fdbe
+AFTER-LEAVE  0x211f4 cm550_FUN_000211f4                                   after 0x21146 cm550_FUN_00021146                       | before it: rts
+MID-BODY     0x22de6 vp44_diagnosticServiceByteHandler                    after 0x22de2 vp44_diagnosticErrorHandler              | before it: link a6,#-4
+MID-BODY     0x2322a cm550_statisticsTrackingFlagsReset                   after 0x23216 cm550_FUN_00023216                       | before it: move.w #0x7d,(0x80d9ee).l
+MID-BODY     0x2481e cm550_initIoControlRegister                          after 0x24812 cm550_iahDisableWaitToStartLamp          | before it: clr.b (a0)
+MID-BODY     0x25a30 cm550_fuel_delivery_controller                       after 0x2595a cm550_governorFuelPidController          | before it: movem.l (-0x18,a6),d2/a2/a3/a4/a5
+AFTER-LEAVE  0x25ff2 cm550_presetLowSpeedGovernorSpeedError               after 0x25b1c cm550_runLowSpeedGovernor                | before it: rts
+MID-BODY     0x26484 vp44_rpm_derate_monitor                              after 0x26474 cm550_engineModeTimingAdjuster           | before it: movea.l #0x80bcce,a3
+MID-BODY     0x2659a vp44_initVP44StatusFlags                             after 0x2658c cm550_fuelDemandLimitSource2Selector     | before it: movea.l #0x808342,a1
+MID-BODY     0x26b00 vp44OperatingConditionChecker                        after 0x26af0 cm550_FUN_00026af0                       | before it: movea.l #0x80d34a,a3
+AFTER-LEAVE  0x2cf52 cm550_FUN_0002cf52                                   after 0x2ce64 cm550_updateBootBlockFromImage           | before it: rts
+MID-BODY     0x2ddd6 mc68k_initDiagnosticModeSystem                       after 0x2ddce mc68k_hardwareTimerFlagsInit             | before it: move.w #0x1,(0xfff450).l
+MID-BODY     0x2faba cm550_initOilPressureProtectionPointers              after 0x2faa4 cm550_FUN_0002faa4                       | before it: movea.l #0x801e5a,a1
+MID-BODY     0x303c8 cm550_emptyStubFunction9                             after 0x30342 mc68k_initializeTpuChannel12             | before it: asr.l #8,d0
+MID-BODY     0x3061a cm550_fuelLimitRestoreFromCapture                    after 0x304f4 cm550_rpmHistogramAndAveragingStatistics | before it: beq.s 0x30668
+MID-BODY     0x30a64 cm550_protectionFlagAccumulator                      after 0x30a5e cm550_FUN_00030a5e                       | before it: movea.l #0x806abc,a0
+AFTER-LEAVE  0x30b04 cm550_protectionLimitValueInit                       after 0x30ade cm550_FUN_00030ade                       | before it: rts
+MID-BODY     0x32c7a vp44Message300FaultFlagProcessor                     after 0x32c76 sendPgn61444ElectronicEngineController1M | before it: link a6,#-4
+AFTER-LEAVE  0x334ec cm550_FUN_000334ec                                   after 0x33460 cm550_FUN_00033460                       | before it: rts
+MID-BODY     0x34534 cm550_initLoopCounter                                after 0x3452a cm550_FUN_0003452a                       | before it: move.l (0x803b3e).l,(0x80bda4).l
+AFTER-LEAVE  0x34f00 cm550_secondOrderFilter                              after 0x34e9a cm550_signedFirstOrderFilter             | before it: rts
+AFTER-LEAVE  0x34fe0 cm550_secondOrderFilterUnsigned                      after 0x34f8a cm550_exponentialMovingAverage           | before it: rts
+{'AFTER-LEAVE': 20, 'MID-BODY': 30}

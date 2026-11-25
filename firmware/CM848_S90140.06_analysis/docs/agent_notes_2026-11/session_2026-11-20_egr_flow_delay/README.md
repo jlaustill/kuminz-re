@@ -799,3 +799,25 @@ Hand work on the round 7 lead.
   two previous-pass rows and their access widths), `apply_r92a_word20.py`, `mask_exact_r92.py` (the proof that each
   mask test became the field of that bit), `bitfield_notes_r92.txt`, `scratch/` (the agents' own scripts).
 - **Closing:** `apply_r92_claude_md.py`, `apply_r92_closing.py`, `update_large_tar_r92.sh`.
+
+## Round 93: CM550 structure fixes, freeze frames, task sets, typing (`session_folder/round93/`)
+
+- **The round 91 plate comment fix:** `fix_r91_plate_comments_r93.py`.
+- **Mid-function rows:** `call_sites_r93.py` (how the ROM reaches each function row), `apply_r93_midbody.py` (the 21
+  task set rows), `midfunction_rows_r93.py` / `midbody2_survey_r93.py` / `apply_r93_midbody2.py` (the 30 others),
+  `midbody2_flow_check_r93.py` (control flow from the holding function), `pc_relative_refs_r93.py`,
+  `switch_case_rows_r93.py` / `apply_r93_switchcase.py`, `midbody_proof_r93.py` (the by-address proof),
+  `fix_tail_mentions_r93.py`, `cm848_entry_scan_r93.py` (CM848 has none).
+- **Freeze frames:** `apply_r93_freeze_frame.py`, `apply_r93_freeze_frame_cm848.py`, `width_census_r93.py`,
+  `pointer_table_r93.py`, `fix_dm4_comment_r93.py`.
+- **Position inputs:** `apply_r93_position_inputs.py`.
+- **Task sets:** `frame_schedule_r93.py` (+ `.tsv`: the 40-phase schedule), `apply_r93_task_sets.py`.
+- **Typing:** `untyped_width_scan_r93.py`, `untyped_cpp_check_r93.py`, `apply_r93_types.py`, `signedness_r93.py`,
+  `apply_r93_types_signed.py`, `e2m_width_sign_r93.py`, `apply_r93_types_signed_e2m.py` (pass 1);
+  `e2m_type_candidates_r93.py`, `apply_r93_types_e2m.py`, `pointer_rows_r93.py` (pass 2); `types_proof_r93.py`,
+  `line_count_diff_r93.py`, `underscore_census_r93.py`.
+- **The naming workflow (not applied yet):** `function_candidates_r93.py`, `families_r93.py`,
+  `batch_tables_r93.py`, `make_retry_workflow_r93.py`, `make_sturdy_workflow_r93.py` (+ the `.js`),
+  `apply_r93.py` with `test_apply_r93.sh` and `patch_apply_guard_r93.py`, `dump_batches_r93.py`, `run_r93.sh`.
+- **Shared:** `refresh_r93.sh`, `review_refresh_r93.py`, `round_counts_r93.py`, the `map_r93*.csv` rename maps,
+  the commit messages. **Closing:** `apply_r93_closing.py`, `update_large_tar_r93.sh`.

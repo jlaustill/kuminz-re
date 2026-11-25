@@ -1,0 +1,874 @@
+removed 0: 
+added 0: 
+changed 96
+  0x0000ac3c cm550_FUN_0000ac3c: 81 lines
+      -  uint uVar3;
+      -  byte bVar4;
+      -  char cVar5;
+      +  dword dVar3;
+      +  uint uVar4;
+      +  byte bVar5;
+      -  ushort *puVar7;
+      -  uVar3 = CONCAT22((short)((uint)in_D0 >> 0x10),algorithm_enable_flags_18_cal) & 0xffff0008;
+      +  char cVar7;
+      +  ushort *puVar8;
+      +  dVar3 = CONCAT22((short)((uint)in_D0 >> 0x10),algorithm_enable_flags_18_cal) & 0xffff0008;
+      -      cVar6 = '\b';
+      -      cVar5 = '\x06';
+      +      cVar7 = '\b';
+      +      cVar6 = '\x06';
+      -      bVar4 = 1;
+      -      puVar7 = (ushort *)&rpm_timer_interrupt_threshold_7d20;
+      -      while ((bVar4 < 9 && (!bVar2))) {
+      -        if (engine_rpm_primary <= *puVar7) {
+      +      bVar5 = 1;
+      +      puVar8 = (ushort *)&rpm_timer_interrupt_threshold_7d20;
+      +      while ((bVar5 < 9 && (!bVar2))) {
+      +        if (engine_rpm_primary <= *puVar8) {
+      -          if (bVar4 == 1) {
+  0x0000b210 calculateFilteredEngineAcceleration: 14 lines
+      -  if ((short)engine_acceleration_after_first_stage_low_pass_filtering_2560_2540 <
+      -      (short)lower_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540) {
+      +  if (engine_acceleration_after_first_stage_low_pass_filtering_2560_2540 <
+      +      lower_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540) {
+      -         (short)lower_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540 * 0x10000 +
+      -         0x80000000;
+      +         lower_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540 * 0x10000 + 0x80000000;
+      -  else if ((short)upper_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540 <
+      -           (short)engine_acceleration_after_first_stage_low_pass_filtering_2560_2540) {
+      +  else if (upper_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540 <
+      +           engine_acceleration_after_first_stage_low_pass_filtering_2560_2540) {
+      -         (short)upper_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540 * 0x10000 +
+      -         0x80000000;
+      +         upper_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540 * 0x10000 + 0x80000000;
+  0x0000b2aa cm550_rpm_system_state_controller: 4 lines
+      -ushort cm550_rpm_system_state_controller(void)
+      +word cm550_rpm_system_state_controller(void)
+      -          _anc_fuel_limit_active_timer = _anc_fuel_limit_active_timer + -1;
+      +          _anc_fuel_limit_active_timer = _anc_fuel_limit_active_timer - 1;
+  0x0000b3d0 cm550_FUN_0000b3d0: 6 lines
+      -ushort cm550_FUN_0000b3d0(void)
+      +word cm550_FUN_0000b3d0(void)
+      -        (short)engine_acceleration_after_first_stage_low_pass_filtering_2560_2540) {
+      +        engine_acceleration_after_first_stage_low_pass_filtering_2560_2540) {
+      -        (short)engine_acceleration_after_first_stage_low_pass_filtering_2560_2540 ||
+      +        engine_acceleration_after_first_stage_low_pass_filtering_2560_2540 ||
+  0x0000b4f2 cm550_engineStateFuelLimitInterpolator: 4 lines
+      -        (short)engine_acceleration_after_first_stage_low_pass_filtering_2560_2540) {
+      +        engine_acceleration_after_first_stage_low_pass_filtering_2560_2540) {
+      -              (short)engine_acceleration_after_first_stage_low_pass_filtering_2560_2540 ||
+      +              engine_acceleration_after_first_stage_low_pass_filtering_2560_2540 ||
+  0x0000c2a0 cm550_shutdownMinimumSelector16: 3 lines
+      -    smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100 =
+      -         afc_derate_fuel_adjustment;
+      +    smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100 = afc_derate_fuel_adjustment;
+  0x0000c326 calculateAlpha: 3 lines
+      -    afc_exit_countdown_timer = time_that_must_elapse_without_afc_limiting_before_alpha_may_be_0_900
+      -    ;
+      +    afc_exit_countdown_timer = time_that_must_elapse_without_afc_limiting_before_alpha_may_be_0_900;
+  0x0000c4b2 calculateAlphaLowSpeedGovernorResult: 2 lines
+      -         trace_the_time_since_fueling_state_has_left_lsg_state_0_900 + -1;
+      +         trace_the_time_since_fueling_state_has_left_lsg_state_0_900 - 1;
+  0x0000c504 calculateAlphaAirFuelControlResult: 5 lines
+      -    afc_exit_countdown_timer = time_that_must_elapse_without_afc_limiting_before_alpha_may_be_0_900
+      -    ;
+      +    afc_exit_countdown_timer = time_that_must_elapse_without_afc_limiting_before_alpha_may_be_0_900;
+      -    afc_exit_countdown_timer = afc_exit_countdown_timer + -1;
+      +    afc_exit_countdown_timer = afc_exit_countdown_timer - 1;
+  0x0000c582 calculateAlphaBase: 4 lines
+      -      alpha_base = rate_at_which_alpha_increases_while_alpha_is_below_the_alpha_thr_0_1 +
+      -                   alpha_base;
+      +      alpha_base = rate_at_which_alpha_increases_while_alpha_is_below_the_alpha_thr_0_1 + alpha_base
+      +      ;
+  0x0000c66a cm550_rpmHistogramAndProtectionStatisticsAccumulator: 2 lines
+      -ushort cm550_rpmHistogramAndProtectionStatisticsAccumulator(void)
+      +word cm550_rpmHistogramAndProtectionStatisticsAccumulator(void)
+  0x0000c8a0 cm550_dzgTimingAndPressureControlStateMachine: 6 lines
+      -       (short)((int)((uint)asg_filtered_reference_speed_0_4500 * (uint)_fuel_blend_table_5_ptr +
+      -                    (uint)asg_reference_speed_working * (0x4000 - (uint)_fuel_blend_table_5_ptr)) >>
+      -              0xe);
+      +       (word)((int)((uint)asg_filtered_reference_speed_0_4500 * (uint)_fuel_blend_table_5_ptr +
+      +                   (uint)asg_reference_speed_working * (0x4000 - (uint)_fuel_blend_table_5_ptr)) >>
+      +             0xe);
+  0x0000c962 cm550_runAllSpeedGovernor: 8 lines
+      -            asg_filtered_reference_speed_0_4500 = (ushort)puVar3;
+      +            asg_filtered_reference_speed_0_4500 = (word)puVar3;
+      -          asg_derivative_deadband_output = (short)-(int)all_speed_governor_derivative_limit;
+      +          asg_derivative_deadband_output = (sword)-(int)all_speed_governor_derivative_limit;
+      -               (short)((int)((uint)asg_droop_gain_2_0_2 * (int)asg_derivative_deadband_output) >>
+      -                      10);
+      +               (short)((int)((uint)asg_droop_gain_2_0_2 * (int)asg_derivative_deadband_output) >> 10
+      +                      );
+  0x0000ed64 insiteCommandByteDispatcher: 3 lines
+      -          if ((vp44_sensor_countdown_timer != 0) && (vp44_sensor_countdown_timer < _DAT_00803c02))
+      -          {
+      +          if ((vp44_sensor_countdown_timer != 0) && (vp44_sensor_countdown_timer < _DAT_00803c02)) {
+  0x0000f796 cm550_paramSystemModeController: 8 lines
+      -    four_d_fueling_value_used_to_determine_jcomm_drivers_demand_ind_tor_0_100 =
+      -         cm550_FUN_0000f716();
+      +    four_d_fueling_value_used_to_determine_jcomm_drivers_demand_ind_tor_0_100 = cm550_FUN_0000f716()
+      +    ;
+      -               (int)(short)power_take_off_or_user_fueling_state ||
+      -              (cruise_control_active_flag == 0)))))) {
+      +               (int)(short)power_take_off_or_user_fueling_state || (cruise_control_active_flag == 0)
+      +              ))))) {
+  0x0000f930 cm550_param_lookup_3: 4 lines
+      -                 (((uint)final_fueling -
+      -                  (uint)maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400,
+      +                 (((uint)final_fueling - (uint)maximum_fueling_value_that_does_not_inject_fuel_0_100
+      +                  ) * 0x6400,
+  0x0000fa06 vp44State2TransitionHandler: 2 lines
+      -    if (torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000 < 0) {
+      +    if ((short)torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000 < 0) {
+  0x0000fb26 vp44_fuelLimitExceedanceStatisticsAccumulator: 16 lines
+      -                  (uint)maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400,divisor_03,
+      -                  0);
+      +                  (uint)maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400,divisor_03,0
+      +                 );
+      -                  (uint)maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400,divisor_02,
+      -                  0);
+      +                  (uint)maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400,divisor_02,0
+      +                 );
+      -                  (uint)maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400,divisor_01,
+      -                  0);
+      +                  (uint)maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400,divisor_01,0
+      +                 );
+      -                  (uint)maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400,divisor_00,
+      -                  0);
+      +                  (uint)maximum_fueling_value_that_does_not_inject_fuel_0_100) * 0x6400,divisor_00,0
+      +                 );
+  0x0000ff6c cm550_ioControlBasedFuelCalculator: 2 lines
+      -       (ushort)((uint)(sVar1 * 0x6400) / (uint)(int)sVar2);
+      +       (word)((uint)(sVar1 * 0x6400) / (uint)(int)sVar2);
+  0x00010394 cm550_canBusTimingInit: 4 lines
+      -  _anc_altitude_table_3_size =
+      -       _DAT_008001a8 * (uint)value_used_to_detect_sync_pulse_0_100_7c1e >> 8;
+      +  _anc_altitude_table_3_size = _DAT_008001a8 * (uint)value_used_to_detect_sync_pulse_0_100_7c1e >> 8
+      +  ;
+  0x00010568 vp44_rpmDerateCalculationController: 6 lines
+      -      intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100 = (ushort)uVar1;
+      +      intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100 = (word)uVar1;
+      -          intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100 = (ushort)uVar1;
+      +          intermediate_calculated_value_of_commanded_throttle_based_on_s_0_100 = (word)uVar1;
+      -        throttle_above_idle_flag = (ushort)(_DAT_00807cee < _vp44_block_size);
+      +        throttle_above_idle_flag = (word)(_DAT_00807cee < _vp44_block_size);
+  0x00010822 vp44_derateThresholdMonitorAndFaultController: 9 lines
+      -    if (((throttle_validation_diagnostic_state == 1) ||
+      -        (throttle_validation_diagnostic_state == 3)) ||
+      -       (throttle_validation_diagnostic_state == 5)) {
+      +    if (((throttle_validation_diagnostic_state == 1) || (throttle_validation_diagnostic_state == 3))
+      +       || (throttle_validation_diagnostic_state == 5)) {
+      -      if ((throttle_validation_diagnostic_state == 6) ||
+      -         (throttle_validation_diagnostic_state == 5)) {
+      +      if ((throttle_validation_diagnostic_state == 6) || (throttle_validation_diagnostic_state == 5)
+      +         ) {
+  0x00011e5e cm550_coldStartFuelControlSlowCycle40Coordinator: 55 lines
+      -  ushort uVar8;
+      -  int iVar9;
+      +  int iVar8;
+      -      (maximum_allowable_engine_speed_for_this_algorithm_to_operate_0_4500 <= engine_rpm_primary)))
+      -     ) {
+      +      (maximum_allowable_engine_speed_for_this_algorithm_to_operate_0_4500 <= engine_rpm_primary))))
+      +  {
+      -          calculated_cylinder_pressure_1500_3000 = (ushort)uVar3;
+      +          calculated_cylinder_pressure_1500_3000 = (word)uVar3;
+      -        uVar5 = calculated_cylinder_pressure_1500_3000;
+      +        wVar7 = calculated_cylinder_pressure_1500_3000;
+      -          calculated_cylinder_pressure_1500_3000 = (ushort)uVar3;
+      +          calculated_cylinder_pressure_1500_3000 = (word)uVar3;
+      -          iVar9 = 0x7fffffff;
+      -          uVar8 = uVar6 - calculated_cylinder_pressure_1500_3000;
+      -        }
+      -        else {
+      -          uVar8 = calculated_cylinder_pressure_1500_3000 - uVar6;
+      -          iVar9 = -0x80000000;
+      -        }
+      -        if (min_diff_between_desired_cylinder_pressure_and_calculated_cy_0_200 < uVar8) {
+      -          if ((uVar5 != 0) && (uVar4 != 0)) {
+      -            iVar9 = cm550_scaleByRatioSigned
+      +          iVar8 = 0x7fffffff;
+  0x0001266e mc68k_FUN_0001266e: 2 lines
+      -      if (flag_indicating_crank_rev_1_or_2_of_cam_rev_0_1 == '\x01') {
+      +      if (flag_indicating_crank_rev_1_or_2_of_cam_rev_0_1 == 1) {
+  0x000127c2 vp44_FUN_000127c2: 14 lines
+      -  char *pcVar14;
+      +  byte *pbVar14;
+      -    pcVar14 = &flag_to_enable_or_disable_fueling_for_cyl_1_0_to_ff;
+      -    do {
+      -      if (*pcVar14 == '\0') {
+      +    pbVar14 = &flag_to_enable_or_disable_fueling_for_cyl_1_0_to_ff;
+      +    do {
+      +      if (*pbVar14 == 0) {
+      -      pcVar14 = pcVar14 + 1;
+      -    } while (uVar7 < 6);
+      -    if (((((_DAT_008072de == 1) && (_DAT_0080922e == 0)) && (cam_sync_status == '\x01')) &&
+      +      pbVar14 = pbVar14 + 1;
+      +    } while (uVar7 < 6);
+      +    if (((((_DAT_008072de == 1) && (_DAT_0080922e == 0)) && (cam_sync_status == 1)) &&
+  0x0001444e cm550_fuelDemandPercentageCalculator: 5 lines
+      -  jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100 = frictional_no_load_fueling
+      -  ;
+      +  jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100 = frictional_no_load_fueling;
+      -                  (int)jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100) *
+      +                  (int)(short)jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100) *
+  0x000159ee mc68k_ioDriverStrobeHandler: 12 lines
+      -  if (request_to_strobe_set_0_then_set_1_fso_driver_0_1 != '\0') {
+      +  if (request_to_strobe_set_0_then_set_1_fso_driver_0_1 != 0) {
+      -      request_to_strobe_set_0_then_set_1_fso_driver_0_1 = '\0';
+      +      request_to_strobe_set_0_then_set_1_fso_driver_0_1 = 0;
+      -      if (engine_brake_driver_strobe_state == '\0') {
+      -        engine_brake_driver_strobe_state = '\0';
+      +      if (engine_brake_driver_strobe_state == 0) {
+      +        engine_brake_driver_strobe_state = 0;
+      -      if (engine_brake_driver_strobe_state == '\0') {
+      -        engine_brake_driver_strobe_state = '\0';
+      +      if (engine_brake_driver_strobe_state == 0) {
+      +        engine_brake_driver_strobe_state = 0;
+  0x00015df0 mc68k_initializeDiscreteOutputDrivers: 8 lines
+      -  if (priority_of_client_currently_overriding_wait_to_start_lamp_00_ff == '\0') {
+      -    priority_of_client_currently_overriding_wait_to_start_lamp_00_ff = '\0';
+      +  if (priority_of_client_currently_overriding_wait_to_start_lamp_00_ff == 0) {
+      +    priority_of_client_currently_overriding_wait_to_start_lamp_00_ff = 0;
+      -  if (engine_brake_driver_strobe_state == '\0') {
+      -    engine_brake_driver_strobe_state = '\0';
+      +  if (engine_brake_driver_strobe_state == 0) {
+      +    engine_brake_driver_strobe_state = 0;
+  0x00016dd4 cm550_highRpmEngineProtectionStateMachine: 2 lines
+      -      high_rpm_fuel_limit_value = (undefined2)uVar2;
+      +      high_rpm_fuel_limit_value = (word)uVar2;
+  0x000171be cm550_calculateEngineSpeed: 6 lines
+      -  if (((cam_sync_status == '\x01') &&
+      +  if (((cam_sync_status == 1) &&
+      -  if ((cam_sync_status == '\0') &&
+      +  if ((cam_sync_status == 0) &&
+      -  else if ((cam_sync_status == '\0') &&
+      +  else if ((cam_sync_status == 0) &&
+  0x000178b0 cm550_governorFuelModeBlendCalculator: 2 lines
+      -         (ushort)((uint)uVar1 * (0x4000 - (uint)alpha_blend_factor) >> 0xe);
+      +         (word)((uint)uVar1 * (0x4000 - (uint)alpha_blend_factor) >> 0xe);
+  0x00017baa cm550_FUN_00017baa: 12 lines
+      -      crank_low_intake_manifold_temperature_50_to_293)) {
+      +      (ushort)crank_low_intake_manifold_temperature_50_to_293)) {
+      -  if (crank_high_intake_manifold_temperature_50_to_293 <
+      +  if ((ushort)crank_high_intake_manifold_temperature_50_to_293 <
+      -       (short)((((uint)crank_high_intake_manifold_temperature_50_to_293 -
+      +       (short)((((uint)(ushort)crank_high_intake_manifold_temperature_50_to_293 -
+      -                (uint)crank_low_intake_manifold_temperature_50_to_293) *
+      +                (uint)(ushort)crank_low_intake_manifold_temperature_50_to_293) *
+      -  uVar2 = (((uint)crank_high_intake_manifold_temperature_50_to_293 -
+      +  uVar2 = (((uint)(ushort)crank_high_intake_manifold_temperature_50_to_293 -
+      -                (uint)crank_low_intake_manifold_temperature_50_to_293) *
+      +                (uint)(ushort)crank_low_intake_manifold_temperature_50_to_293) *
+  0x000184c6 cm550_FUN_000184c6: 4 lines
+      -      if (torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000 < 0) {
+      +      if ((short)torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000 < 0) {
+      -        torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000 = (undefined2)uVar1;
+      +        torque_curve_speed_at_breakpoint_2_hsg_breakpoint_0_5000 = (word)uVar1;
+  0x0001873e vp44_engineProtectionSystemInit: 43 lines
+      -  pointer_to_coolant_level_fuel_fault_log_data_0_2_32 = coolant_level_engine_protection_fault_log;
+      +  pointer_to_coolant_level_fuel_fault_log_data_0_2_32 =
+      +       (dword)coolant_level_engine_protection_fault_log;
+      -       &minimum_temperature_threshold_for_coolant_temperature_fuel_50_to_293;
+      +       (dword)&minimum_temperature_threshold_for_coolant_temperature_fuel_50_to_293;
+      -       &maximum_temperature_threshold_for_coolant_temperature_fuel_50_to_293;
+      +       (dword)&maximum_temperature_threshold_for_coolant_temperature_fuel_50_to_293;
+      -       &minimum_threshold_for_coolant_temperature_rpm_limiting_0_4500;
+      +       (dword)&minimum_threshold_for_coolant_temperature_rpm_limiting_0_4500;
+      -       coolant_temperature_engine_protection_fault_log;
+      +       (dword)coolant_temperature_engine_protection_fault_log;
+      -       coolant_temperature_engine_protection_fault_log;
+      +       (dword)coolant_temperature_engine_protection_fault_log;
+      -       &minimum_temperature_threshold_for_imt_fuel_limiting_50_to_293;
+      +       (dword)&minimum_temperature_threshold_for_imt_fuel_limiting_50_to_293;
+      -       &maximum_temperature_threshold_for_imt_tvo_limiting_50_to_293;
+      +       (dword)&maximum_temperature_threshold_for_imt_tvo_limiting_50_to_293;
+      -       &minimum_threshold_for_intake_temperature_rpm_limiting_50_293;
+      +       (dword)&minimum_threshold_for_intake_temperature_rpm_limiting_50_293;
+      -       &min_threshold_for_water_in_fuel_rpm_limiting_0_65535;
+      +       (dword)&min_threshold_for_water_in_fuel_rpm_limiting_0_65535;
+      -       &min_threshold_for_boost_pressure_fuel_limiting_0_100;
+      +       (dword)&min_threshold_for_boost_pressure_fuel_limiting_0_100;
+      -       &max_threshold_for_boost_pressure_fuel_limiting_0_100;
+  0x00018ac4 cm550_diagnosticProtectionEvaluator: 13 lines
+      -      ((engine_protection_active_fault_index != 0xff &&
+      -       (engine_protection_active_fault_index != 3)))) &&
+      -     (uVar4 = (uint)engine_protection_consecutive_shutdown_count,
+      -     max_number_of_shutdowns_before_restart_is_not_allowed_0_255 <=
+      -     engine_protection_consecutive_shutdown_count)) {
+      +      ((engine_protection_active_fault_index != 0xff && (engine_protection_active_fault_index != 3))
+      +      )) && (uVar4 = (uint)engine_protection_consecutive_shutdown_count,
+      +            max_number_of_shutdowns_before_restart_is_not_allowed_0_255 <=
+      +            engine_protection_consecutive_shutdown_count)) {
+      -                 engine_protection_active_fault_index * 0x24);
+      -    iVar2 = engine_protection_active_fault_index * 0x2e;
+      +                 (short)engine_protection_active_fault_index * 0x24);
+      +    iVar2 = (short)engine_protection_active_fault_index * 0x2e;
+  0x00018cb6 cm550_protectionState1DiagnosticValidator: 2 lines
+      -      if ((((int)engine_protection_active_fault_index == uVar3) &&
+      +      if ((((int)(short)engine_protection_active_fault_index == uVar3) &&
+  0x00018fcc processDiagnosticLimitStatus: 45 lines
+      -  ushort uVar4;
+      -  uint uVar5;
+      -  short sVar6;
+      +  word wVar4;
+      +  ushort uVar5;
+      +  uint uVar6;
+      +  short sVar7;
+      -  undefined *puVar7;
+      +  undefined *puVar8;
+      -    uVar4 = 0;
+      -    puVar7 = &protection_system_sensor_data_ptr;
+      +    uVar5 = 0;
+      +    puVar8 = &protection_system_sensor_data_ptr;
+      -      *(undefined2 *)(puVar7 + 0x1a) = 0;
+      -      *(undefined2 *)(puVar7 + 0x1c) = 0;
+      +      *(undefined2 *)(puVar8 + 0x1a) = 0;
+      +      *(undefined2 *)(puVar8 + 0x1c) = 0;
+      -      puVar7 = puVar7 + 0x2e;
+      -      uVar4 = uVar4 + 1;
+      -    } while (uVar4 < 9);
+      +      puVar8 = puVar8 + 0x2e;
+      +      uVar5 = uVar5 + 1;
+      +    } while (uVar5 < 9);
+      -    uVar5 = 0x72;
+  0x00019702 cm550_FUN_00019702: 34 lines
+      -  short sVar2;
+      -  ushort uVar3;
+      +  ushort uVar2;
+      +  short sVar3;
+      -      sVar2 = (short)((int)uVar4 >> 4);
+      +      sVar3 = (short)((int)uVar4 >> 4);
+      -           0) && (((uint)(&algorithm_enable_flags_0_cal)[sVar2] & 1 << (uVar4 & 0xf)) == 0)) {
+      -        uVar3 = 0;
+      +           0) && (((uint)(&algorithm_enable_flags_0_cal)[sVar3] & 1 << (uVar4 & 0xf)) == 0)) {
+      +        uVar2 = 0;
+      -            uVar3 = cm550_protectionPercentageCalculator
+      +            uVar2 = cm550_protectionPercentageCalculator
+      -            uVar3 = 0;
+      +            uVar2 = 0;
+      -          uVar3 = cm550_protectionThresholdCalculationHelper
+      +          uVar2 = cm550_protectionThresholdCalculationHelper
+      -        if ((uVar3 < severity_indexes[2]) &&
+      -           (((uint)(&algorithm_enable_flags_0_cal)[sVar2] & 1 << (uVar4 & 0xf)) == 0)) {
+      -          uVar3 = severity_indexes[2];
+      +        if ((uVar2 < severity_indexes[2]) &&
+      +           (((uint)(&algorithm_enable_flags_0_cal)[sVar3] & 1 << (uVar4 & 0xf)) == 0)) {
+      +          uVar2 = severity_indexes[2];
+      -      *severity_indexes = uVar3;
+      -      if ((uVar6 < uVar3) &&
+  0x0001999c mc68k_initializeTpuChannel10PrimarySpeedInputDivided: 16 lines
+      -  int *piVar2;
+      +  dword *pdVar2;
+      -       (int *)(&sample_crank_degrees_backup_crank_degrees_between_vss_inter_0_36000 +
+      -              (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 * 4);
+      -  for (piVar2 = (int *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+      -      piVar2 <= _eps_control_mode_param_1; piVar2 = piVar2 + 1) {
+      -    *piVar2 = initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
+      +       (dword *)(&sample_crank_degrees_backup_crank_degrees_between_vss_inter_0_36000 +
+      +                (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 * 4);
+      +  for (pdVar2 = (dword *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+      +      pdVar2 <= _eps_control_mode_param_1; pdVar2 = pdVar2 + 1) {
+      +    *pdVar2 = initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
+      -       (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255;
+      +       period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255;
+      -       (uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
+      +       period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
+  0x00019caa mc68k_FUN_00019caa: 16 lines
+      -  int *piVar2;
+      +  dword *pdVar2;
+      -       (int *)(&sample_crank_degrees_backup_crank_degrees_between_vss_inter_0_36000 +
+      -              (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 * 4);
+      -  for (piVar2 = (int *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+      -      piVar2 <= _eps_control_mode_param_1; piVar2 = piVar2 + 1) {
+      -    *piVar2 = initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
+      +       (dword *)(&sample_crank_degrees_backup_crank_degrees_between_vss_inter_0_36000 +
+      +                (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 * 4);
+      +  for (pdVar2 = (dword *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+      +      pdVar2 <= _eps_control_mode_param_1; pdVar2 = pdVar2 + 1) {
+      +    *pdVar2 = initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
+      -       (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255;
+      +       period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255;
+      -       (uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
+      +       period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
+  0x0001a350 mc68k_FUN_0001a350: 16 lines
+      -  int *piVar2;
+      +  dword *pdVar2;
+      -       (int *)(&sample_crank_degrees_backup_crank_degrees_between_vss_inter_0_36000 +
+      -              (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 * 4);
+      -  for (piVar2 = (int *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+      -      piVar2 <= _eps_control_mode_param_1; piVar2 = piVar2 + 1) {
+      -    *piVar2 = initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
+      +       (dword *)(&sample_crank_degrees_backup_crank_degrees_between_vss_inter_0_36000 +
+      +                (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 * 4);
+      +  for (pdVar2 = (dword *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+      +      pdVar2 <= _eps_control_mode_param_1; pdVar2 = pdVar2 + 1) {
+      +    *pdVar2 = initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
+      -       (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255;
+      +       period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255;
+      -       (uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
+      +       period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
+  0x0001a6e8 mc68k_crankFuelAndTimingBufferStore: 4 lines
+      -  pmm_error_type_signifies_the_type_of_sync_error_found_by_pmma_0_ff = (char)(wVar1 >> 8);
+      +  pmm_error_type_signifies_the_type_of_sync_error_found_by_pmma_0_ff = (byte)(wVar1 >> 8);
+      -  if (pmm_error_type_signifies_the_type_of_sync_error_found_by_pmma_0_ff == -0x40) {
+      +  if (pmm_error_type_signifies_the_type_of_sync_error_found_by_pmma_0_ff == 0xc0) {
+  0x0001a746 mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled: 28 lines
+      -uint mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled(void)
+      +dword mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled(void)
+      -  uint uVar2;
+      -  int *piVar3;
+      -  uVar2 = CONCAT22((short)((uint)in_D0 >> 0x10),engine_speed_sensor_enable_flags) & 0xffff0001;
+      +  dword dVar2;
+      +  dword *pdVar3;
+      +  dVar2 = CONCAT22((short)((uint)in_D0 >> 0x10),engine_speed_sensor_enable_flags) & 0xffff0001;
+      -         (int *)(&sample_crank_degrees_backup_crank_degrees_between_vss_inter_0_36000 +
+      -                (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 * 4);
+      -    for (piVar3 = (int *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+      -        piVar3 <= _eps_control_mode_param_1; piVar3 = piVar3 + 1) {
+      -      *piVar3 = initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
+      +         (dword *)(&sample_crank_degrees_backup_crank_degrees_between_vss_inter_0_36000 +
+      +                  (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 * 4);
+      +    for (pdVar3 = (dword *)&pulse_period_table_table_containing_main_speed_pulse_per_1000_65535;
+      +        pdVar3 <= _eps_control_mode_param_1; pdVar3 = pdVar3 + 1) {
+      +      *pdVar3 = initialization_pulse_period_initial_value_for_pulse_period_table_2_32;
+      -         (uint)period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255;
+      -    uVar2 = initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
+      -            (uint)period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
+      +         period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255;
+      +    dVar2 = initialization_pulse_period_initial_value_for_pulse_period_table_2_32 *
+      +            period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255;
+  0x0001abb2 cm550_updateElectronicSmartPowerTau: 2 lines
+      -      uVar1 = (uint)high_horsepower_mode_state;
+      +      uVar1 = (uint)(short)high_horsepower_mode_state;
+  0x0001ae22 mc68k_initializeTpuChannel1BackupSpeedInput: 16 lines
+      -  int *piVar2;
+      +  dword *pdVar2;
+      -       (int *)((uint)period_meas_per_cam_backup_number_of_backup_speed_pulse_perio_0_255 * 4 +
+      -              0x80ceaa);
+      -  for (piVar2 = (int *)&pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
+      -      piVar2 <= _eps_control_mode_param_3; piVar2 = piVar2 + 1) {
+      -    *piVar2 = initialization_pulse_period_backup_initial_value_for_pulse_perio_2_32;
+      +       (dword *)((uint)period_meas_per_cam_backup_number_of_backup_speed_pulse_perio_0_255 * 4 +
+      +                0x80ceaa);
+      +  for (pdVar2 = (dword *)&pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
+      +      pdVar2 <= _eps_control_mode_param_3; pdVar2 = pdVar2 + 1) {
+      +    *pdVar2 = initialization_pulse_period_backup_initial_value_for_pulse_perio_2_32;
+      -       (uint)period_meas_per_cam_backup_number_of_backup_speed_pulse_perio_0_255;
+      +       period_meas_per_cam_backup_number_of_backup_speed_pulse_perio_0_255;
+      -       (uint)period_meas_per_average_backup_num_of_backup_speed_pulse_perio_0_255;
+      +       period_meas_per_average_backup_num_of_backup_speed_pulse_perio_0_255;
+  0x0001b1ea mc68k_FUN_0001b1ea: 20 lines
+      -  int *piVar2;
+      +  dword *pdVar2;
+      -       (int *)((uint)period_meas_per_cam_backup_number_of_backup_speed_pulse_perio_0_255 * 4 +
+      -              0x80ceaa);
+      -  for (piVar2 = (int *)&pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
+      -      piVar2 <= _eps_control_mode_param_3; piVar2 = piVar2 + 1) {
+      -    *piVar2 = initialization_pulse_period_backup_initial_value_for_pulse_perio_2_32;
+      +       (dword *)((uint)period_meas_per_cam_backup_number_of_backup_speed_pulse_perio_0_255 * 4 +
+      +                0x80ceaa);
+      +  for (pdVar2 = (dword *)&pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
+      +      pdVar2 <= _eps_control_mode_param_3; pdVar2 = pdVar2 + 1) {
+      +    *pdVar2 = initialization_pulse_period_backup_initial_value_for_pulse_perio_2_32;
+      -       (uint)period_meas_per_cam_backup_number_of_backup_speed_pulse_perio_0_255;
+      +       period_meas_per_cam_backup_number_of_backup_speed_pulse_perio_0_255;
+      -       (uint)period_meas_per_average_backup_num_of_backup_speed_pulse_perio_0_255;
+      +       period_meas_per_average_backup_num_of_backup_speed_pulse_perio_0_255;
+      -                          (uint)period_meas_per_average_backup_num_of_backup_speed_pulse_perio_0_255
+      -                         >> 0x10),engine_speed_sensor_enable_flags) & 0xffff0008;
+      +                          period_meas_per_average_backup_num_of_backup_speed_pulse_perio_0_255 >>
+      +                         0x10),engine_speed_sensor_enable_flags) & 0xffff0008;
+  0x0001b39a mc68k_dutyCycleMonitorBufferInit: 16 lines
+      -  int *piVar2;
+      +  dword *pdVar2;
+      -       (int *)((uint)period_meas_per_cam_backup_number_of_backup_speed_pulse_perio_0_255 * 4 +
+      -              0x80ceaa);
+      -  for (piVar2 = (int *)&pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
+      -      piVar2 <= _eps_control_mode_param_3; piVar2 = piVar2 + 1) {
+      -    *piVar2 = initialization_pulse_period_backup_initial_value_for_pulse_perio_2_32;
+      +       (dword *)((uint)period_meas_per_cam_backup_number_of_backup_speed_pulse_perio_0_255 * 4 +
+      +                0x80ceaa);
+      +  for (pdVar2 = (dword *)&pulse_period_table_backup_table_containing_main_speed_pulse_peri_2_32;
+      +      pdVar2 <= _eps_control_mode_param_3; pdVar2 = pdVar2 + 1) {
+      +    *pdVar2 = initialization_pulse_period_backup_initial_value_for_pulse_perio_2_32;
+      -       (uint)period_meas_per_cam_backup_number_of_backup_speed_pulse_perio_0_255;
+      +       period_meas_per_cam_backup_number_of_backup_speed_pulse_perio_0_255;
+      -       (uint)period_meas_per_average_backup_num_of_backup_speed_pulse_perio_0_255;
+      +       period_meas_per_average_backup_num_of_backup_speed_pulse_perio_0_255;
+  0x0001c152 fuelTimingOilPressureModeController: 8 lines
+      -    desired_engine_fueling_after_derate_without_air_handl_derate_0_100 =
+      -         fuel_limit_shutdown_minimum;
+      +    desired_engine_fueling_after_derate_without_air_handl_derate_0_100 = fuel_limit_shutdown_minimum
+      +    ;
+      -    fuel_limit_shutdown_minimum =
+      -         smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100;
+      +    fuel_limit_shutdown_minimum = smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100
+      +    ;
+  0x0001c65e cm550_fuelDemandTableBlendCalculator: 4 lines
+      -      timing_4DTBTA =
+      -           (short)((uint)alpha_blend_factor * (uint)uVar3 >> 0xe) + (short)(uVar1 >> 0xe);
+      +      timing_4DTBTA = (short)((uint)alpha_blend_factor * (uint)uVar3 >> 0xe) + (short)(uVar1 >> 0xe)
+      +      ;
+  0x0001c824 cm550_FUN_0001c824: 6 lines
+      -  if ((~_torque_curve_feature_bitmask & state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff)
+      -      <= _torque_curve_feature_bitmask) {
+      +  if ((~_torque_curve_feature_bitmask & state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff) <=
+      +      _torque_curve_feature_bitmask) {
+      -      torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000 = (undefined2)iVar1;
+      +      torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000 = (word)iVar1;
+  0x0001cb76 cm550_calculateBlendedTableValue: 20 lines
+      -short cm550_calculateBlendedTableValue(word fuel_table_x_input,word throttle_input)
+      +word cm550_calculateBlendedTableValue(word fuel_table_x_input,word throttle_input)
+      -  short sVar3;
+      +  word wVar3;
+      -    sVar3 = _DAT_00803f3a + local_8;
+      +    wVar3 = _DAT_00803f3a + local_8;
+      -    sVar3 = _DAT_00803f3a + local_6;
+      +    wVar3 = _DAT_00803f3a + local_6;
+      -    sVar3 = _DAT_00803f3a + (short)(iVar2 >> 0xe) + (short)(iVar1 >> 0xe);
+      +    wVar3 = _DAT_00803f3a + (short)(iVar2 >> 0xe) + (short)(iVar1 >> 0xe);
+      -  if (sVar3 < minimum_fueling_value_0_100) {
+      -    sVar3 = minimum_fueling_value_0_100;
+      +  if ((short)wVar3 < (short)minimum_fueling_value_0_100) {
+      +    wVar3 = minimum_fueling_value_0_100;
+      -  else if (0x1700 < sVar3) {
+      -    sVar3 = 0x1700;
+      +  else if (0x1700 < (short)wVar3) {
+      +    wVar3 = 0x1700;
+      -  return sVar3;
+      +  return wVar3;
+  0x0001cc72 cm550_FUN_0001cc72: 6 lines
+      -    fueling_value_at_100_throttle_0_100 = cm550_calculateBlendedTableValue(engine_rpm_primary,400)
+      -    ;
+      +    fueling_value_at_100_throttle_0_100 = cm550_calculateBlendedTableValue(engine_rpm_primary,400);
+      -    if (_max_fueling_without_programmable_power_for_esp_tau_0_0_100 < minimum_fueling_value_0_100)
+      -    {
+      +    if (_max_fueling_without_programmable_power_for_esp_tau_0_0_100 < minimum_fueling_value_0_100) {
+  0x0001ce7c runHighSpeedGovernorPid: 29 lines
+      -                    ((uint)hsg_reference_speed_after_droop - (uint)_DAT_0080d60a,(int)_DAT_0080803e
+      -                     ,0x200);
+      +                    ((uint)hsg_reference_speed_after_droop - (uint)_DAT_0080d60a,(int)_DAT_0080803e,
+      +                     0x200);
+      -  if (hsg_maximum_filtered_engine_speed_error_0_1000 < (short)hsg_filtered_engine_speed_error) {
+      +  if (hsg_maximum_filtered_engine_speed_error_0_1000 < hsg_filtered_engine_speed_error) {
+      -  else if ((short)hsg_filtered_engine_speed_error < hsg_minimum_filtered_engine_speed_error_1000_0)
+      -  {
+      +  else if (hsg_filtered_engine_speed_error < hsg_minimum_filtered_engine_speed_error_1000_0) {
+      -      (lsg_governor_fuel_demand < engine_fueling_below_which_the_hsg_integrator_may_be_reset_0_100)
+      -      ) && (adjusted_user_fueling_state == FUELING_STATE_HIGH_SPEED_GOVERNOR)) {
+      +      (lsg_governor_fuel_demand < engine_fueling_below_which_the_hsg_integrator_may_be_reset_0_100))
+      +     && (adjusted_user_fueling_state == FUELING_STATE_HIGH_SPEED_GOVERNOR)) {
+      -    if ((short)hsg_filtered_engine_speed_error < 0) {
+      +    if (hsg_filtered_engine_speed_error < 0) {
+      -    if ((short)hsg_filtered_engine_speed_error < 0) {
+      +    if (hsg_filtered_engine_speed_error < 0) {
+      -      hsg_adjusted_proportional_gain_0_7_5000 = (ushort)uVar2;
+      +      hsg_adjusted_proportional_gain_0_7_5000 = (word)uVar2;
+      -    if ((short)hsg_filtered_engine_speed_error < 0) {
+      +    if (hsg_filtered_engine_speed_error < 0) {
+      -                    ((int)(short)hsg_filtered_engine_speed_error,
+      +                    ((int)hsg_filtered_engine_speed_error,
+      -                    ((int)(short)hsg_filtered_engine_speed_error - (int)_DAT_0080071c,
+  0x0001d5a0 selectEngineSpeedLimit: 3 lines
+      -  engine_speed_limit_limiting_source_number_snapshot = hsg_reference_speed_winning_source_indicator
+      -  ;
+      +  engine_speed_limit_limiting_source_number_snapshot = hsg_reference_speed_winning_source_indicator;
+  0x0001d9b4 vp44SensorStatusMonitor: 10 lines
+      -  short sVar1;
+      +  word wVar1;
+      -  sVar1 = vp44_sensor_monitor_state;
+      +  wVar1 = vp44_sensor_monitor_state;
+      -    uVar2 = (uint)vp44_sensor_monitor_state;
+      +    uVar2 = (uint)(short)vp44_sensor_monitor_state;
+      -      uVar2 = CONCAT22(vp44_sensor_monitor_state >> 0xf,
+      +      uVar2 = CONCAT22((short)vp44_sensor_monitor_state >> 0xf,
+      -    _DAT_00800752 = sVar1;
+      +    _DAT_00800752 = wVar1;
+  0x0001de58 cm550_FUN_0001de58: 55 lines
+      -  ushort uVar1;
+      -  short sVar2;
+      -  int iVar3;
+      -  short sVar4;
+      -  word wVar5;
+      +  short sVar1;
+      +  int iVar2;
+      +  word wVar3;
+      +  word wVar4;
+      -  uVar1 = timing_alpha_blend_factor;
+      +  wVar3 = timing_alpha_blend_factor;
+      -    wVar5 = validated_percent_throttle_commanded_by_driver_0_100;
+      +    wVar4 = validated_percent_throttle_commanded_by_driver_0_100;
+      -    wVar5 = _DAT_000608a0;
+      +    wVar4 = _DAT_000608a0;
+      -  sVar2 = 0;
+      -  if (wVar5 == 0) {
+      -    sVar4 = minimum_fueling_value_0_100;
+      +  sVar1 = 0;
+      +  if (wVar4 == 0) {
+      +    wVar3 = minimum_fueling_value_0_100;
+      -      _fuel_table_primary_throttle_input = wVar5;
+      +      _fuel_table_primary_throttle_input = wVar4;
+      -    if (uVar1 < 0x4000) {
+  0x0001f4e8 cm550_FUN_0001f4e8: 4 lines
+      -  byte_indicating_engine_commands_as_received_over_datalink_0_255 = (ushort)*local_8;
+      +  byte_indicating_engine_commands_as_received_over_datalink_0_255 = (word)*local_8;
+      -    if (jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100 < 0) {
+      +    if ((short)jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100 < 0) {
+  0x0001f8bc cm550_engineFluidLevelDataBuilder: 4 lines
+      -      byte_indicating_engine_commands_as_received_over_datalink_0_255 = (ushort)*local_8;
+      +      byte_indicating_engine_commands_as_received_over_datalink_0_255 = (word)*local_8;
+      -        if (jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100 < 0) {
+      +        if ((short)jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100 < 0) {
+  0x00020380 cm550_FUN_00020380: 2 lines
+      -      user_value_for_engine_brake_0_100 = (short)uVar1;
+      +      user_value_for_engine_brake_0_100 = (word)uVar1;
+  0x0002041c cm550_FUN_0002041c: 2 lines
+      -      user_value_for_manual_fan_level_requested_fan_speed_0_100 = (short)uVar1;
+      +      user_value_for_manual_fan_level_requested_fan_speed_0_100 = (word)uVar1;
+  0x00020c98 cm550_FUN_00020c98: 2 lines
+      -      throttle_above_idle_flag = (ushort)(j1939_received_accelerator_pedal_position_1 != 0);
+      +      throttle_above_idle_flag = (word)(j1939_received_accelerator_pedal_position_1 != 0);
+  0x00020e14 cm550_FUN_00020e14: 2 lines
+      -    if (pgn_timeout_error_flag_for_aps_ivs_remote_throttle_not_log_true_false == '\0') {
+      +    if (pgn_timeout_error_flag_for_aps_ivs_remote_throttle_not_log_true_false == 0) {
+  0x0002142c cm550_FUN_0002142c: 12 lines
+      -       (retarder_control_mode == 2)) && (source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6 == 1)
+      -      ) && (((datalink_speed_control_mode == 1 &&
+      -             (source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e == 1)) &&
+      -            (uVar1 = fuel_demand_selected,
+      -            limit_to_which_user_fueling_is_compared_to_determine_if_engine_0_100 <=
+      -            fuel_demand_selected)))) {
+      +       (retarder_control_mode == 2)) && (source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6 == 1))
+      +     && (((datalink_speed_control_mode == 1 &&
+      +          (source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e == 1)) &&
+      +         (uVar1 = fuel_demand_selected,
+      +         limit_to_which_user_fueling_is_compared_to_determine_if_engine_0_100 <=
+      +         fuel_demand_selected)))) {
+  0x00022070 cm550_memoryRegisterController: 4 lines
+      -              *(short *)(&DAT_008041fe + uVar1 * 2) = datalink_speed_control_mode;
+      +              *(word *)(&DAT_008041fe + uVar1 * 2) = datalink_speed_control_mode;
+      -            *(ushort *)(&DAT_00804218 + uVar1 * 2) = retarder_control_mode;
+      +            *(word *)(&DAT_00804218 + uVar1 * 2) = retarder_control_mode;
+  0x00023a90 processProtectionFlagConditions: 16 lines
+      -    if (priority_of_client_currently_overriding_stop_engine_lamp_00_ff == '\0') {
+      -      priority_of_client_currently_overriding_stop_engine_lamp_00_ff = '\0';
+      +    if (priority_of_client_currently_overriding_stop_engine_lamp_00_ff == 0) {
+      +      priority_of_client_currently_overriding_stop_engine_lamp_00_ff = 0;
+      -  else if (priority_of_client_currently_overriding_stop_engine_lamp_00_ff == '\0') {
+      -    priority_of_client_currently_overriding_stop_engine_lamp_00_ff = '\0';
+      +  else if (priority_of_client_currently_overriding_stop_engine_lamp_00_ff == 0) {
+      +    priority_of_client_currently_overriding_stop_engine_lamp_00_ff = 0;
+      -    if (priority_of_client_currently_overriding_wait_to_start_lamp_00_ff == '\0') {
+      -      priority_of_client_currently_overriding_wait_to_start_lamp_00_ff = '\0';
+      +    if (priority_of_client_currently_overriding_wait_to_start_lamp_00_ff == 0) {
+      +      priority_of_client_currently_overriding_wait_to_start_lamp_00_ff = 0;
+      -  else if (priority_of_client_currently_overriding_wait_to_start_lamp_00_ff == '\0') {
+      -    priority_of_client_currently_overriding_wait_to_start_lamp_00_ff = '\0';
+      +  else if (priority_of_client_currently_overriding_wait_to_start_lamp_00_ff == 0) {
+      +    priority_of_client_currently_overriding_wait_to_start_lamp_00_ff = 0;
+  0x00024812 cm550_iahDisableWaitToStartLamp: 4 lines
+      -  if (priority_of_client_currently_overriding_wait_to_start_lamp_00_ff == '\0') {
+      -    priority_of_client_currently_overriding_wait_to_start_lamp_00_ff = '\0';
+      +  if (priority_of_client_currently_overriding_wait_to_start_lamp_00_ff == 0) {
+      +    priority_of_client_currently_overriding_wait_to_start_lamp_00_ff = 0;
+  0x00024858 cm550_ioControlMaskStateMachine: 12 lines
+      -      if ((byte)(&priority_of_client_currently_overriding_wait_to_start_lamp_00_ff)[(short)*puVar2]
+      -          < 0x81) {
+      +      if ((&priority_of_client_currently_overriding_wait_to_start_lamp_00_ff)[(short)*puVar2] < 0x81
+      +         ) {
+      -    if ((byte)(&priority_of_client_currently_overriding_wait_to_start_lamp_00_ff)
+      -              [(short)*_io_control_mask_table_ptr] < 0x81) {
+      +    if ((&priority_of_client_currently_overriding_wait_to_start_lamp_00_ff)
+      +        [(short)*_io_control_mask_table_ptr] < 0x81) {
+      -        if ((byte)(&priority_of_client_currently_overriding_wait_to_start_lamp_00_ff)
+      -                  [(short)*_io_control_mask_table_ptr] < 0x81) {
+      +        if ((&priority_of_client_currently_overriding_wait_to_start_lamp_00_ff)
+      +            [(short)*_io_control_mask_table_ptr] < 0x81) {
+  0x000254b6 cm550_FUN_000254b6: 4 lines
+      -  if (((_DAT_00803c42 != 0) && (set_when_leading_threshold_has_expired_time_to_change_oil_1_0 != 0)
+      -      ) && (engine_state == ENGINE_STATE_RUNNING)) {
+      +  if (((_DAT_00803c42 != 0) && (set_when_leading_threshold_has_expired_time_to_change_oil_1_0 != 0))
+      +     && (engine_state == ENGINE_STATE_RUNNING)) {
+  0x00025806 cm550_FUN_00025806: 4 lines
+      -    else if ((pgn_timeout_error_flag_for_aps_ivs_remote_throttle_not_log_true_false != '\0' ||
+      -              aps_error_flag_for_throttle_indicating_bad_data_not_logged_true_false != '\0') &&
+      +    else if ((pgn_timeout_error_flag_for_aps_ivs_remote_throttle_not_log_true_false != 0 ||
+      +              aps_error_flag_for_throttle_indicating_bad_data_not_logged_true_false != 0) &&
+  0x00025a34 vp44_FUN_00025a34: 6 lines
+      -  iVar1 = (int)((int)lsg_proportional_gain_2_calibration_2_to_2 * (uint)engine_rpm_primary) /
+      -          0x8b2 + ((uint)final_fueling -
+      -                  ((int)lsg_filtered_speed_error * (int)_lsg_proportional_gain_active) / 0x3c0);
+      +  iVar1 = (int)((int)lsg_proportional_gain_2_calibration_2_to_2 * (uint)engine_rpm_primary) / 0x8b2
+      +          + ((uint)final_fueling -
+      +            ((int)lsg_filtered_speed_error * (int)_lsg_proportional_gain_active) / 0x3c0);
+  0x00025b1c cm550_runLowSpeedGovernor: 27 lines
+      -  word wVar5;
+      +  sword sVar5;
+      -  wVar5 = lsg_filtered_speed_error;
+      +  sVar5 = lsg_filtered_speed_error;
+      -    if ((short)lsg_filtered_speed_error_upper_limit < (short)lsg_filtered_speed_error) {
+      +    if (lsg_filtered_speed_error_upper_limit < lsg_filtered_speed_error) {
+      -           (short)lsg_filtered_speed_error_upper_limit * 0x10000 + 0x80000000;
+      +           lsg_filtered_speed_error_upper_limit * 0x10000 + 0x80000000;
+      -    else if ((short)lsg_filtered_speed_error < (short)lsg_filtered_speed_error_lower_limit) {
+      +    else if (lsg_filtered_speed_error < lsg_filtered_speed_error_lower_limit) {
+      -           (short)lsg_filtered_speed_error_lower_limit * 0x10000 + 0x80000000;
+      +           lsg_filtered_speed_error_lower_limit * 0x10000 + 0x80000000;
+      -      wVar5 = lsg_filtered_speed_error;
+      +      sVar5 = lsg_filtered_speed_error;
+      -      iVar1 = ((int)(short)lsg_filtered_speed_error * (int)_lsg_proportional_gain_active) / 0x3c0;
+      +      iVar1 = ((int)lsg_filtered_speed_error * (int)_lsg_proportional_gain_active) / 0x3c0;
+      -      iVar2 = ((int)_DAT_0080dac8 * ((int)(short)lsg_filtered_speed_error - (int)(short)wVar5)) /
+      -              0xf0;
+      +      iVar2 = ((int)_DAT_0080dac8 * ((int)lsg_filtered_speed_error - (int)sVar5)) / 0xf0;
+      -              ((int)lsg_proportional_gain_2_calibration_2_to_2 - (int)non_idle_time_counter) *
+      -              0x8b2 + (int)(short)lsg_filtered_speed_error * (int)_DAT_0080dac6 * 4 +
+      -                      (int)(short)lsg_filtered_speed_error *
+      -                      ((int)_lsg_proportional_gain_active - (int)_DAT_00801a72) * -0x44 +
+      +              ((int)lsg_proportional_gain_2_calibration_2_to_2 - (int)non_idle_time_counter) * 0x8b2
+  0x00025ff2 cm550_presetLowSpeedGovernorSpeedError: 2 lines
+      -    lsg_filtered_speed_error = (short)iVar1;
+      +    lsg_filtered_speed_error = (sword)iVar1;
+  0x0002609c cm550_epsAccelerationMonitor: 4 lines
+      -                     (uint)engine_rpm_primary,
+      -            (int)uVar2 < (int)(uint)high_load_idle_cooldown_timer)))) {
+      +                     (uint)engine_rpm_primary, (int)uVar2 < (int)(uint)high_load_idle_cooldown_timer
+      +            )))) {
+  0x00026616 cm550_FUN_00026616: 7 lines
+      -  bVar2 = coolant_temperature_sensor_state.filtered_value < cold_idle_coolant_temperature_50_to_293
+      -  ;
+      +  bVar2 = coolant_temperature_sensor_state.filtered_value < cold_idle_coolant_temperature_50_to_293;
+      -  if ((operator_adjusted_lsg_breakpoint_speed_300_1000 < cold_idle_speed_adder_0_1000) && (!bVar1)
+      -     ) {
+      +  if ((operator_adjusted_lsg_breakpoint_speed_300_1000 < cold_idle_speed_adder_0_1000) && (!bVar1))
+      +  {
+  0x00026ab8 cm550_rpmLoadParameterLookup: 12 lines
+      -undefined2 cm550_rpmLoadParameterLookup(void)
+      +sword cm550_rpmLoadParameterLookup(void)
+      -  undefined2 uVar1;
+      -  uVar1 = 0;
+      +  sword sVar1;
+      +  sVar1 = 0;
+      -    uVar1 = cm550_tableLookup2D((word *)&DAT_00801aaa);
+      -    output_of_the_misfire_timing_limit_table_60_to_60 = uVar1;
+      +    sVar1 = cm550_tableLookup2D((word *)&DAT_00801aaa);
+      +    output_of_the_misfire_timing_limit_table_60_to_60 = sVar1;
+      -  return uVar1;
+      +  return sVar1;
+  0x00026af0 cm550_FUN_00026af0: 2 lines
+      -    if (fuel_timing_advance_value < output_of_the_misfire_timing_limit_table_60_to_60) {
+      +    if (fuel_timing_advance_value < (ushort)output_of_the_misfire_timing_limit_table_60_to_60) {
+  0x00026c7e mc68k_pwmOutputInit: 5 lines
+      -                          (uint)
+      -                          engine_speed_above_which_the_overspeed_algorithm_disables_fue_0_4000)) &
+      -                  0xfff;
+      +                          (uint)engine_speed_above_which_the_overspeed_algorithm_disables_fue_0_4000
+      +                          )) & 0xfff;
+  0x00026e2c cm550_FUN_00026e2c: 6 lines
+      -         (short)(((uint)(ushort)(final_fueling - frictional_no_load_fueling) * 0x6400) /
+      -                (uint)(ushort)(_fueling_provided_if_engine_were_using_low_hp_curve_0_100 -
+      -                              frictional_no_load_fueling));
+      +         (word)(((uint)(ushort)(final_fueling - frictional_no_load_fueling) * 0x6400) /
+      +               (uint)(ushort)(_fueling_provided_if_engine_were_using_low_hp_curve_0_100 -
+      +                             frictional_no_load_fueling));
+  0x0002d3c6 cm550_runPowerTakeOffGovernor: 4 lines
+      -                               fss_adjustment_to_compensate_for_delta_between_injected_and_co_0_100
+      -                               ,0x8000,8);
+      +                               fss_adjustment_to_compensate_for_delta_between_injected_and_co_0_100,
+      +                               0x8000,8);
+  0x0002e5c0 mc68k_pwmFuelDemandOutputCalculator: 4 lines
+      -                       (uint)value_which_designates_the_duty_cycle_requested_of_pwm5_0_100) /
+      -                       0x6400 & 0xffff) * 8000) / 1000 & 0xffff) | 0x7fff0000;
+      +                       (uint)value_which_designates_the_duty_cycle_requested_of_pwm5_0_100) / 0x6400
+      +                      & 0xffff) * 8000) / 1000 & 0xffff) | 0x7fff0000;
+  0x0002f128 processEngineTsc1Request: 12 lines
+      -         (ushort)torque_control_message_byte_0;
+      +         (word)torque_control_message_byte_0;
+      -                   ((int)jcomm_peak_fueling_ref_fuel_for_all_indicated_percent_peak_tor_0_100 -
+      -                   (int)maximum_fueling_value_that_does_not_inject_fuel_0_100)) / 0x6400);
+      +                   ((int)(short)jcomm_peak_fueling_ref_fuel_for_all_indicated_percent_peak_tor_0_100
+      +                   - (int)(short)maximum_fueling_value_that_does_not_inject_fuel_0_100)) / 0x6400);
+      -                   ((int)jcomm_peak_fueling_ref_fuel_for_all_indicated_percent_peak_tor_0_100 -
+      -                   (int)maximum_fueling_value_that_does_not_inject_fuel_0_100)) / 0x6400);
+      -      if (jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100 < 0) {
+      +                   ((int)(short)jcomm_peak_fueling_ref_fuel_for_all_indicated_percent_peak_tor_0_100
+      +                   - (int)(short)maximum_fueling_value_that_does_not_inject_fuel_0_100)) / 0x6400);
+      +      if ((short)jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100 < 0) {
+  0x0002f632 j1939FormatMultiFrameResponse: 4 lines
+      -  if ((retarder_control_mode == 3) && (99 < jcomm_req_torque_braking_override_or_limit_value_0_125)
+      -     ) {
+      +  if ((retarder_control_mode == 3) && (99 < jcomm_req_torque_braking_override_or_limit_value_0_125))
+      +  {
+  0x0002f7e6 cm550_retarderControlModeHandler: 2 lines
+      -        byte_indicating_retarder_commands_as_received_over_datalink_0_255 = (ushort)DAT_00801e1e;
+      +        byte_indicating_retarder_commands_as_received_over_datalink_0_255 = (word)DAT_00801e1e;
+  0x00030290 mc68k_engineRpmHardwareTimerSetup: 13 lines
+      +  word wVar2;
+      -    uVar1 = rpm_value_for_tach_if_normal_input_is_overridden_0_4500;
+      +    wVar2 = rpm_value_for_tach_if_normal_input_is_overridden_0_4500;
+      -    uVar1 = engine_rpm_primary;
+      +    wVar2 = engine_rpm_primary;
+      -  if ((uVar1 != 0) && (uVar1 < _tach_output_minimum_rpm)) {
+      -    uVar1 = _tach_output_minimum_rpm;
+      +  if ((wVar2 != 0) && (wVar2 < _tach_output_minimum_rpm)) {
+      +    wVar2 = _tach_output_minimum_rpm;
+      -  if ((uVar1 == 0) || (0x10c5 < _DAT_00808a3e)) {
+      +  if ((wVar2 == 0) || (0x10c5 < _DAT_00808a3e)) {
+      -    DWORD_0080de40 = ((uint)_DAT_00808a3e * 1000000) / (uint)uVar1;
+      +    DWORD_0080de40 = ((uint)_DAT_00808a3e * 1000000) / (uint)wVar2;
+  0x00032c76 sendPgn61444ElectronicEngineController1Message: 2 lines
+      -  local_6 = (undefined1)((ushort)engine_rpm_primary >> 8);
+      +  local_6 = (undefined1)(engine_rpm_primary >> 8);
+  0x00032e4c j1939HandlePgn61443Eec2: 3 lines
+      -       (undefined1)
+      -       ((ushort)jcomm_ind_percent_load_ratio_of_actual_engine_torque_to_max_to_0_125 >> 8);
+      +       (undefined1)(jcomm_ind_percent_load_ratio_of_actual_engine_torque_to_max_to_0_125 >> 8);
+  0x000330c4 vp44_configParamCanBuilder: 3 lines
+      -       (char)((ushort)jcomm_ind_friction_torque_amount_of_torque_required_by_base_en_0_125 >> 8) +
+      -       '}';
+      +       (char)(jcomm_ind_friction_torque_amount_of_torque_required_by_base_en_0_125 >> 8) + '}';
+  0x0003320e buildPgn65251EngineConfiguration1Payload: 8 lines
+      -  local_16 = CONCAT31(CONCAT21(uVar1,(char)((ushort)
+      -                                            jcomm_ind_torque_at_point_5_available_torque_that_engine_can_0_125
+      +  local_16 = CONCAT31(CONCAT21(uVar1,(char)(
+      +                                           jcomm_ind_torque_at_point_5_available_torque_that_engine_can_0_125
+      -      puVar5 < (ushort *)0x80da27; puVar5 = puVar5 + 1) {
+      +      puVar5 < (ushort *)
+      +               ((int)&jcomm_ind_torque_at_point_5_available_torque_that_engine_can_0_125 + 1);
+      +      puVar5 = puVar5 + 1) {
+  0x000338ea cm550_dutyCycleMonitorAltIsrHandler: 3 lines
+      -    DAT_0080356b = '}' - (char)((ushort)
+      -                                jcomm_ind_retarder_torque_amount_of_torque_provided_by_retarde_0_125
+      +    DAT_0080356b = '}' - (char)(jcomm_ind_retarder_torque_amount_of_torque_provided_by_retarde_0_125
+  0x0003407a vp44CanMessage100ResponseBuilder: 2 lines
+      -              ((ushort)jcomm_reference_retarder_torque_reference_ret_torque_that_co_0_64255 >> 8);
+      +              (jcomm_reference_retarder_torque_reference_ret_torque_that_co_0_64255 >> 8);
+  0x00034674 mc68k_initializeSpeedMeasurementMode0: 2 lines
+      -  current_cylinder_index = index_of_first_tdc_after_missed_pulse_1_6 + -1;
+      +  current_cylinder_index = index_of_first_tdc_after_missed_pulse_1_6 - 1;
+  0x0003480e mc68k_setUpTpuChannel3AnglePulseOutput: 5 lines
+      -  current_cylinder_index = index_of_first_tdc_after_missed_pulse_1_6 - 1U;
+      +  current_cylinder_index = index_of_first_tdc_after_missed_pulse_1_6 - 1;
+      -                  (short)(ushort)(byte)(index_of_first_tdc_after_missed_pulse_1_6 - 1U) * 4) + 0x100
+      -  ;
+      +                  (short)(ushort)(byte)(index_of_first_tdc_after_missed_pulse_1_6 - 1) * 4) + 0x100;
+  0x00034a82 mc68k_configureTpuChannelsForSpeedMeasurementMode: 2 lines
+      -  if ((pmm_error_type_signifies_the_type_of_sync_error_found_by_pmma_0_ff != '\0') &&
+      +  if ((pmm_error_type_signifies_the_type_of_sync_error_found_by_pmma_0_ff != 0) &&
+  0x00034b20 mc68k_alignCylinderIndexToCrankRevolution: 6 lines
+      -      if (flag_indicating_crank_rev_1_or_2_of_cam_rev_0_1 == '\0') {
+      +      if (flag_indicating_crank_rev_1_or_2_of_cam_rev_0_1 == 0) {
+      -      if (flag_indicating_crank_rev_1_or_2_of_cam_rev_0_1 != '\0') {
+      +      if (flag_indicating_crank_rev_1_or_2_of_cam_rev_0_1 != 0) {
+      -       '\x01';
+      +       1;
+  0x00034cc4 vp44_liftPumpFuelDeliveryController: 4 lines
+      -  wet_stack_timing_base_value_0_120 =
+      -       lookupTableInterpolation((table_interp_args_t *)&DAT_008036d4);
+      +  wet_stack_timing_base_value_0_120 = lookupTableInterpolation((table_interp_args_t *)&DAT_008036d4)
+      +  ;
+  0x00034d52 vp44_FUN_00034d52: 4 lines
+      -                      (uint)fueling_value_above_which_wet_stack_timing_is_set_to_zero_0_100)) / 100
+      -                );
+      +                      (uint)fueling_value_above_which_wet_stack_timing_is_set_to_zero_0_100)) / 100)
+      +    ;

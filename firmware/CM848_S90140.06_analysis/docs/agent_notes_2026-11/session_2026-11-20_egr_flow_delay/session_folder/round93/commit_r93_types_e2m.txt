@@ -1,0 +1,27 @@
+cm550: round 93 - type 1329 more global rows from their Calterm records
+
+The second typing pass, for rows still 'undefined' after 31f911b4: the ROM does not address them directly (the code
+reaches them through a base register), or only through address loads, so the first pass could not prove a width.
+Their witness is the Calterm file (e2m_type_candidates_r93.py):
+- the row's plain-value (N) records give one length (1 / 2 / 4 bytes) and one sign; no bit or table record sits on the
+  address; the next row starts after it; no decoded ROM access has another width or touches the bytes inside;
+- the decompiler does not disagree before the change: a wide row never printed plain, a byte row never with an
+  underscore. (For the 419 first-pass rows that had both witnesses, the record length equalled the ROM-proven width
+  for 418.)
+1330 rows qualified: 952 word, 77 i16, 168 byte, 133 dword (the sign is the record's). 48 rows are left out because
+the code prints them at another width than their record says, 22 for an overlapping next row, 28 for other
+conflicts (a bit / table record on the address, an access inside the width, a ROM access of another width, records
+that disagree). One typed dword turned out to be a pointer (next_table_position_pointer...: the code dereferences
+it) and went back to 'undefined': a pointer's type should name its pointee. 1329 rows are typed.
+280 of the typed rows are read by the dumped code (2059 renders); the others are Calterm parameters nothing in the
+dump reads, typed for the headers.
+
+Proof:
+- CM550 verify DETERMINISTIC; 0 functions removed / added. After the build none of the typed rows prints with an
+  underscore or as a piece, so the decompiler agrees with every record length it can see. Beyond the underscores,
+  72 functions have type renders only (casts, temporaries' types, char literals as numbers); 5 functions differ by
+  one temporary declaration. Caller artifacts unchanged (unaff_ 22, extraout_ 27, in_ 31, uStack 19, CONCAT 143).
+  No new build warning (unmapped types 3848 -> 2519).
+- Test suites pass; headers 0 g++ errors; _cal HARD 0.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

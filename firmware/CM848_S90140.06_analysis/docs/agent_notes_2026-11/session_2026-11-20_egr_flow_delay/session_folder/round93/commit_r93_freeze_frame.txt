@@ -1,0 +1,44 @@
+cm550 + cm848: round 93 - the fault freeze frame records as a struct array; parallel names for the six / four functions
+
+CM550 keeps 40 fault freeze frames of 48 bytes at 0x80426a: records 0-19 hold a fault's first capture, records 20-39
+(the shadow) its latest. It is the counterpart of CM848's fault_freeze_frame_entries_cal (fault_entry_t[16], 8 + 8),
+but the table had one row (diagnostic_fault_code_table, on record 0's fault code) and every access printed as
+0x8042xx / 0x8046xx + 48 x slot.
+
+CM550
+- struct cm550_fault_entry_t (22 fields, 48 bytes) and fault_freeze_frame_entries : cm550_fault_entry_t[40]. Fields
+  take CM848's names where they hold the same record; CM550's own are a word fault code index (125 = free), the
+  engine hour meter at +26 and three words of the VP44 RAM image where CM848 has its common rail words.
+- Rows inside the array removed: diagnostic_fault_code_table and flash_program_block_1_buffer / _2_buffer (0x804882 /
+  0x80488e, which nothing in the ROM references).
+- Sources named by their Calterm records: vp44_engine_speed / vp44_fuel_temperature / vp44_pump_status (e2m 801A, new
+  rows); system_switch_status / _2 / _3 (1092 +0 / +2 / +4), engine_load_at_current_speed_percent (10BF +0),
+  engine_hour_meter (11BC +0) and final_fueling (1051 +0; was current_fuel_demand) - CM848's names for the same
+  records. Three more are only typed word (they printed with an underscore).
+- Functions: cm550_captureFaultFreezeFrame, cm550_assignFaultFreezeFrameEntry,
+  cm550_findOldestFreezeFrameEntryByFaultStatus, cm550_releaseFaultFreezeFrameEntry,
+  cm550_j1939HandlePgn65229Dm4FreezeFrame (was evaluateTemperatureDiagnosticState: it builds and sends the DM4
+  message from the records) and cm550_initializePgn65229Dm4Handler (was ..._Builder: it sets up the descriptor and
+  registers the handler).
+CM848
+- The four functions with the same roles take parallel names (counterparts: 8 + 8 records, another layout):
+  cm848_captureFaultFreezeFrame (was hpcr_setFaultActiveStatus - it sets no fault status),
+  cm848_assignFaultFreezeFrameEntry (was cm848_registerFaultInActiveList), cm848_findOldestFreezeFrameEntryByFaultStatus
+  (was cm848_faultCodeLookup) and cm848_findOldestFreezeFrameEntryByFaultStatusWithoutFlags (was
+  cm848_findFaultByTypeAndSeverity - its second argument masks the entry's status_flags). Each gets a plate comment.
+
+Proof:
+- The layout from the machine code of the capture function 0x2fe38: one store per field at 0x80462a + 48 x entry and
+  again at 0x80426a + 48 x entry, move.w except the two move.l (+0 and +26); the DM4 handler reads both halves as one
+  array (entry + 20 x 48). Access widths of every retyped source from all its absolute references
+  (width_census_r93.py: word only, or long only for 0x80ccee).
+- CM550: verify DETERMINISTIC; 0 functions removed / added; 57 changed, all by the 13 renames, the field renders
+  (fault_freeze_frame_entries[0x14].vp44_pump_status = vp44_pump_status ...) and the typed sources losing their
+  underscore; in the capture function every field store pairs with the source its name says. One address constant
+  is left (a field pointer passed to byteSwap16). Caller artifacts unchanged (unaff_ 13, extraout_ 23, in_ 16,
+  CONCAT 93); no local row moved; no new build warning.
+- CM848: verify DETERMINISTIC; label-only (0 functions removed / added / changed beyond the four names, 27 renders);
+  no new build warning.
+- Test suites pass; headers 0 g++ errors; _cal HARD 0.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

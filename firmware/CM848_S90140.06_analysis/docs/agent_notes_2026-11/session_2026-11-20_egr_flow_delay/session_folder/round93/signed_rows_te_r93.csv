@@ -1,0 +1,8 @@
+address,name,type,new_type,signed_cast_renders,renders
+0x008058ce,engine_protection_active_fault_index,word,short,4,14
+0x0080800a,minimum_fueling_value_0_100,word,short,2,21
+0x0080815e,jcomm_peak_fueling_ref_fuel_for_all_indicated_percent_peak_tor_0_100,word,short,2,3
+0x0080bc74,jcomm_no_load_torque_estimated_frictional_no_load_fueling_val_0_100,word,short,1,6
+0x0080da38,torque_curve_speed_at_breakpoint_1_lsg_reference_0_5000,word,short,2,20
+0x0080da62,jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100,word,short,3,11
+0x0080dee4,wet_stack_adjusted_timing_floor_0_120,word,short,1,6

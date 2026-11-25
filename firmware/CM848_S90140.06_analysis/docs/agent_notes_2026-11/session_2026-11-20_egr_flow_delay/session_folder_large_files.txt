@@ -212,6 +212,7 @@
    901671 round90_census_v64t6_r90.tsv
    895462 round92_audit_cm550_r92.csv
    120177 round92_pilot_build.log
+   325575 round93_untyped_width_scan_r93.tsv
        59 semantic_matcher_round53.log
   3544401 stage2.cpp
    402904 verify.log
@@ -407,3 +408,15 @@
    240686 verify_round92a_cm550.log
    401953 verify_round92a_cm848.log
    240665 verify_round92b_cm550.log
+   240568 verify_round93_ff_cm550.log
+   401953 verify_round93_ff_cm848.log
+   401947 verify_round93_fix_cm848.log
+   240517 verify_round93_mid2_cm550.log
+   240519 verify_round93_mid_cm550.log
+   240545 verify_round93_sw_cm550.log
+   240551 verify_round93_te2_cm550.log
+   240552 verify_round93_te_cm550.log
+   240545 verify_round93_ts_cm550.log
+   240551 verify_round93_ty2_cm550.log
+   240551 verify_round93_ty3_cm550.log
+   240551 verify_round93_ty_cm550.log

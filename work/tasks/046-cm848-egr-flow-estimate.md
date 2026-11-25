@@ -4175,8 +4175,8 @@ workflow's batches (`batch_W1..W4.json`: each proposal with its skeptic verdicts
 - **firmware/CLAUDE.md:** one sentence in the bitfield bullet: CM550's Ghidra 12.2 renders bitfield names too.
 - **Leads (round 93):**
   - Function names the bitfield agents found wrong (`bitfield_notes_r92.txt` and the field comments):
-    - `vp44SensorStatusMonitor` (0x1d9ca) is the idle shutdown state machine;
-    - `cm550_engineRunTimeHistogramAccumulator` (0x1ff4e) is the J1939 periodic transmit schedule;
+    - `vp44SensorStatusMonitor` (0x1d9b4; its first enable test is at 0x1d9ca) is the idle shutdown state machine;
+    - `cm550_engineRunTimeHistogramAccumulator` (0x1ff38; the test is at 0x1ff4e) is the J1939 periodic transmit schedule;
     - `mc68k_FUN_000212b2` is the J1939 receive dispatch;
     - `vp44_communication_state_machine` (0x13616) is the data collector sampler;
     - `cm550_j1939MessageTypeCounter` / `cm550_memoryRegisterController` record the J1922 / J1939 control session
@@ -4190,6 +4190,60 @@ workflow's batches (`batch_W1..W4.json`: each proposal with its skeptic verdicts
     builders; `linearization_table_ch15_x_axis`; 0x803f40 `_cal`; ESCMES / ENGRPM; the DIAG enum members 0x42 / 0x52 /
     0x54; the descriptor rows 0x801ab6-0x801b0d; `cm550_peakTorqueFuelCorrection`; `cm550_j1939TorqueControlMode*`;
     `cm848_mathMultiplyDivide32`'s fall-through; 0x80ddd3; the A/D array-end bound render.
+
+## Done, round 93 (2026-11-24, same PR): CM550 structure fixes, freeze frames, task sets, two typing passes
+
+Peer relays started and continued the round (21:19, 21:50, 22:20). Scripts and proofs are in
+`session_folder/round93/`. Eight commits; every build verify DETERMINISTIC; no firmware/CLAUDE.md change.
+- **1f9043ef, a round 91 defect fixed:** seven CM848 plate comments (the J1939 receive twins) had been replaced by the
+  literal text "APPEND to the current comment: ..." from a proposal. Restored from the commit before round 91. The
+  round 93 apply script refuses a comment that reads like an instruction.
+- **a417e39e + 392a66f9 + 96ffcfa8, 52 function rows that were not functions:** rows on an address in the middle of a
+  function (21 inside the executive frame task sets, 30 elsewhere, 1 on a switch case). Each made Ghidra cut a
+  function and print its tail a second time under an unrelated name; two functions shared one name
+  (`vp44_evenPhaseSchedulerTaskSet`).
+  - **Proof per row, from the ROM:** no jsr / jmp operand, branch displacement, pointer or PC-relative reference
+    reaches it; a linear disassembly lands on it; the instruction before it does not leave; control flow from the
+    holding function's entry reaches it. (The switch case row follows an rts: only its jump table reaches it.)
+  - **Result:** 756 -> 704 functions by address, no remaining function changed its code; 1426 lines of repeated
+    code are gone.
+  - CM848 has no such row (`cm848_entry_scan_r93.py`: its 213 unreferenced rows all start after a blr).
+- **96ffcfa8:** `cm550_initializeEnginePositionSignalInputs` (was cm550_canControllerConfigInit) and
+  `engine_position_signal_configuration` (e2m 11CA +3 EPCMTY; was speed_measurement_mode).
+- **32ce65c3, the fault freeze frames:** CM550 `cm550_fault_entry_t` (48 bytes) and
+  `fault_freeze_frame_entries[40]` at 0x80426a (20 first captures + 20 latest), the counterpart of CM848's
+  `fault_entry_t[16]`. Sources named by their Calterm records (`system_switch_status` / `_2` / `_3`,
+  `engine_load_at_current_speed_percent`, `engine_hour_meter`, `final_fueling`, three VP44 RAM image words). Six
+  CM550 functions and their four CM848 counterparts take parallel names (`..._captureFaultFreezeFrame`,
+  `..._assignFaultFreezeFrameEntry`, `..._findOldestFreezeFrameEntryByFaultStatus`; CM550's DM4 handler was
+  `evaluateTemperatureDiagnosticState`).
+- **7cf52470, the executive frame schedule:** the 45 task sets are `cm550_runEveryFrameTaskSet` and
+  `cm550_runEvery<N>FramesTaskSetPhase<P>` (N = 2 / 4 / 8 / 10 / 20), read from the handler's 40-case switch. A frame
+  is 5 ms (the hour meters step once per 40 frames and count 0.2 s).
+- **31f911b4 + bf0c580d, typing:** 1943 global rows leave 'undefined' (4475 -> 2519).
+  - Pass 1 (614 rows): every ROM access has one width, the decompiler printed the row only at that width, and the
+    Calterm length agrees (418 of 419).
+  - Pass 2 (1329 rows): the Calterm record's length and sign, with no ROM access or decompiler render against it.
+  - Signed rows are i16 / i32 (by the code's casts in pass 1, by the Calterm sign flag in both).
+  - Underscore renders (a read wider than the row's type) fall from 6373 to 1651.
+- **The naming workflow** (an investigator, an independent describer and a judge per call-graph family: J1939
+  multiplexed inputs, J1939 dispatch / session history, idle shutdown and diagnostics, the fuel limit chain and the
+  unidentified fueling states) lost seven agents to 'API Error: 529 Overloaded'. It was relaunched in a form that
+  restarts a dead agent from its notes (`make_sturdy_workflow_r93.py`). Its batches are not applied yet.
+- **Leads (round 94):**
+  - Apply the workflow's judged batches (`apply_r93.py`; the agents read copies frozen before this round's renames, so
+    refresh all round 93 maps afterwards; their names for the three task sets 0x1b754 / 0x1b788 / 0x1b7f2 are dropped).
+    159 placeholder function names remain.
+  - Families not started: trending / trip information / the data collector; the fuel limit stages and programmable
+    power; governors and throttle (with a `commanded_throttle_state` struct: e2m 1047, 13 words; CM848 has it).
+  - `hpcr_injectorPulseWidthCalc` (0x26b88) is the only hpcr_ name in CM550 and computes no pulse width.
+  - `vp44_messageQueueDispatcher` (0x230ee) sits in the J1939 task set where CM848 runs
+    cm848_serviceJ1939TransportSessions.
+  - 15 function rows after a return that nothing in the dump calls.
+  - Typing left: 235 rows still print with an underscore (array bases such as the system error status words); four
+    pointer rows need a pointee type; 0x80a992 has a 4-byte Calterm record but only word accesses.
+  - Carried from round 92: the six unidentified fueling states (in the workflow), enable words 10 / 21 / 24 / 29-31 /
+    34, the `(ushort)word & mask` renders, and the older carried leads.
 
 ## Leads (not in this PR)
 

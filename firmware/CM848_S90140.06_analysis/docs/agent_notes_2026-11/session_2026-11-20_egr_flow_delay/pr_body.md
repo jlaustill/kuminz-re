@@ -8,7 +8,7 @@ fresh air flow records; the e2m never spells it out, so no name guesses an expan
 - **Round 2:** at the user's request the rest of the family is renamed too, on this PR (stages 3 / 4). The scope rule:
   a symbol is in if its e2m record is `CHP_` / `C_CHP_`, or if it is an input that a family function would otherwise
   misname.
-- **Beyond CM848 (rounds 72-92):** the J1939 memory write service and the development mode code are shared:
+- **Beyond CM848 (rounds 72-93):** the J1939 memory write service and the development mode code are shared:
   eleven CM550 functions are CM848 twins and share their names. Round 74 also dismantles a misapplied CM550
   struct, round 75 types CM550's InSite parameter schedule and names its J1708 SCI, and round 76 names CM550's
   MC68336 registers, so CM550's CSVs, the root README and `firmware/feature_comparison.csv` change too.
@@ -993,6 +993,15 @@ state enum, the flag bytes.**
   workflow: `algorithm_enable_flags_<n>_cal`, 4 types shared with CM848, 14 `cm550_` types, 11 plain words; four
   CM848 reserved bits named from its own e2m.
 
+**Round 93.**
+- **Structure (a417e39e, 392a66f9, 96ffcfa8):** 52 CM550 function rows sat in the middle of a function (or on a
+  switch case) and are removed; two functions had shared one name.
+- **Freeze frames (32ce65c3):** CM550's `cm550_fault_entry_t[40]`, the counterpart of CM848's `fault_entry_t[16]`,
+  with parallel function names in both firmwares.
+- **Schedule (7cf52470):** the 45 executive frame task sets named by their slot (`cm550_runEvery<N>FramesTaskSetPhase<P>`).
+- **Typing (31f911b4, bf0c580d):** 1943 CM550 global rows typed from the ROM, the decompiler and Calterm.
+- **Fix (1f9043ef):** seven CM848 plate comments that round 91 had overwritten.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -1084,6 +1093,11 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 93: typing: CM550 verify DETERMINISTIC twice (614 + 1329 rows; no typed row prints with an underscore or as a piece; 0 functions removed / added; statement counts equal but for one temporary in 5 functions each pass; caller artifacts unchanged).
+- [x] Round 93: task sets: CM550 verify DETERMINISTIC (45 names, 0 other token changes); schedule read from the ROM's 40-case switch.
+- [x] Round 93: freeze frames: CM550 verify DETERMINISTIC (57 functions changed by names and field renders; every field store pairs with its source); CM848 verify DETERMINISTIC, label-only.
+- [x] Round 93: structure: CM550 verify DETERMINISTIC three times (756 -> 704 functions by address; no remaining function changed its code); each removed row proven unreachable from the ROM.
+- [x] Round 93: fix: CM848 verify DETERMINISTIC (comments only).
 - [x] Round 92: A: CM550 verify DETERMINISTIC (0 functions removed / added; 90 changed; 132 of 132 mask tests became the field of that exact bit on the same word; no piece render; caller artifacts unchanged); CM848 verify DETERMINISTIC, label-only; test suites pass; headers 0 g++ errors; _cal HARD 0.
 - [x] Round 92: B: CM550 verify DETERMINISTIC (43 functions changed by 4 renames and 166 enum member renders; no OR render; caller artifacts unchanged); headers 0 g++ errors; _cal HARD 0.
 - [x] Round 91: CM550 verify DETERMINISTIC (the 0x1452e split removed and the 2 receive handlers added on purpose; 42 functions changed; caller artifacts unchanged); CM848 verify DETERMINISTIC, label-only; test suites pass (a new refresh test fails on the old 120-character window); headers 0 g++ errors; _cal HARD 0.

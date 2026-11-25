@@ -1,0 +1,20 @@
+cm550: round 93 - the engine position signal input dispatcher: its name, its configuration byte, a row on a switch case
+
+- 0x171aa cm550_can1PwmTimerInit was case 3 of the switch in the function at 0x17150, not a function: the row is
+  removed (deleted_functions.csv). It is the only function row on a case of the ROM's 36 switch tables.
+- 0x17150 cm550_canControllerConfigInit -> cm550_initializeEnginePositionSignalInputs: a four-way switch on the byte
+  0x807e9d that calls the TPU set-up of that wheel configuration (three calls per case). Called at start-up and by
+  cm550_calculateEngineSpeed after the primary speed sensor timeout. No CAN register is involved.
+- 0x807e9d speed_measurement_mode -> engine_position_signal_configuration (byte): e2m 11CA +3 EPCMTY
+  'ENGINE_POSITION_SIGNAL_CONFIG: defines currently configure(d) wheel'.
+
+Proof:
+- The switch from the ROM: move.w (0x17166,pc,d0.l*2) / jmp (0x17166,pc,d0.w) after a bound of 3; the table's four word
+  offsets give the cases 0x17182 / 0x1716e / 0x17196 / 0x171aa. Nothing else reaches 0x171aa (no absolute, relative
+  or PC-relative reference). 0x807e9d: byte accesses only (7 direct).
+- CM550 verify DETERMINISTIC. By address: 705 functions before, 704 after; 0x171aa left; none arrived. Token changes
+  beyond the two names: seven char literals that print as numbers now that the byte is typed ('\0' -> 0) in six
+  functions. No new build warning.
+- Test suites pass; headers 0 g++ errors; _cal HARD 0.
+
+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>

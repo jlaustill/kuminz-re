@@ -1,0 +1,764 @@
+0x03640 cm550_huffmanTreeBuilder                                   abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x03792 cm550_huffmanDecompress                                    abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x03836 cm550_huffmanDecompressMain                                abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x03870 cm550_busyWaitDelayLoop                                    abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x0388a mc68k_portPinTestSequence2                                 abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x0395a mc68k_waitForChipSelect2InputBit0High                      abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x039a8 mc68k_checkSerialEepromSignature                           abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x03a94 mc68k_hardwareInitAndStartup                               abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x03abe mc68k_restartBootRomWithoutReset                           abs  0 rel  0 ptr  2 ptr@0x8 ptr@0x291fc
+0x03c20 cm550_ramClearWithWatchdog                                 abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x0ac3c cm550_FUN_0000ac3c                                         abs  1 rel  0 ptr  0 jsr@0x1b78e
+0x0af70 cm550_FUN_0000af70                                         abs  1 rel  0 ptr  0 jsr@0x28822
+0x0b130 cm550_writeHourMeterConversionData                         abs  1 rel  0 ptr  0 jsr@0x289f4
+0x0b210 calculateFilteredEngineAcceleration                        abs  1 rel  0 ptr  0 jsr@0x1b540
+0x0b2aa cm550_rpm_system_state_controller                          abs  1 rel  0 ptr  0 jsr@0x1b6b4
+0x0b3b2 cm550_shutdownMinimumSelector21                            abs  1 rel  0 ptr  0 jsr@0x30c48
+0x0b3d0 cm550_FUN_0000b3d0                                         abs  1 rel  0 ptr  0 jsr@0x1b6ce
+0x0b4ce cm550_fuelDemandLimitMinimumUpdater                        abs  1 rel  0 ptr  0 jsr@0x30b4c
+0x0b4f2 cm550_engineStateFuelLimitInterpolator                     abs  1 rel  0 ptr  0 jsr@0x1b6c8
+0x0b5e4 initializeEngineAccelerationFilters                        abs  1 rel  0 ptr  0 jsr@0x2872c
+0x0b614 cm550_rpmParameterPointerSetup                             abs  1 rel  0 ptr  0 jsr@0x30c84
+0x0b63e cm550_dmaDescriptorSetup2                                  abs  1 rel  0 ptr  0 jsr@0x2871a
+0x0b666 cm550_initFuelSystemOutputDriver                           abs  1 rel  0 ptr  0 jsr@0x28714
+0x0b688 getJ1939DiagnosticResponseEchoLength                       abs  1 rel  0 ptr  0 jsr@0x3217e
+0x0b6e8 cm550_diagnosticMessageQueueWrite                          abs 39 rel  0 ptr  0 jsr@0x11a10 jsr@0x15fb6 jsr@0x1603a jsr@0x16140
+0x0b7bc mc68k_processAnalogSensorChannels                          abs  2 rel  0 ptr  0 jsr@0xc03a jsr@0x1b65a
+0x0bcf0 cm550_initializeAnalogSensorChannels                       abs  1 rel  0 ptr  0 jsr@0x28702
+0x0c180 cm550_fuelTimingTransitionStateMachine                     abs  1 rel  0 ptr  0 jsr@0x1b5e0
+0x0c246 cm550_fuelTimingModeInit                                   abs  1 rel  0 ptr  0 jsr@0x30c7e
+0x0c24c cm550_diagnosticDataBufferSetup                            abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x0c2a0 cm550_shutdownMinimumSelector16                            abs  1 rel  0 ptr  0 jsr@0x30c4e
+0x0c2be cm550_diagnosticTimingIncrementController                  abs  1 rel  0 ptr  0 jsr@0x1b624
+0x0c2ee cm550_FUN_0000c2ee                                         abs  1 rel  0 ptr  0 jsr@0x30b3a
+0x0c326 calculateAlpha                                             abs  1 rel  0 ptr  0 jsr@0x1b59c
+0x0c404 calculateAlphaFuelRateResult                               abs  0 rel  1 ptr  0 bsr.w@0xc5d8
+0x0c496 calculateAlphaOnGovernorResult                             abs  0 rel  1 ptr  0 bsr.w@0xc5f0
+0x0c4b2 calculateAlphaLowSpeedGovernorResult                       abs  0 rel  1 ptr  0 bsr.w@0xc5ac
+0x0c504 calculateAlphaAirFuelControlResult                         abs  0 rel  1 ptr  0 bsr.w@0xc5c0
+0x0c556 calculateAlphaLowAmbientAirPressureResult                  abs  0 rel  1 ptr  0 bsr.w@0xc608
+0x0c582 calculateAlphaBase                                         abs  1 rel  0 ptr  0 jsr@0xc388
+0x0c658 cm550_phase2_slot_5_handler                                abs  0 rel  1 ptr  0 bcc.b@0xc652
+0x0c66a cm550_rpmHistogramAndProtectionStatisticsAccumulator       abs  1 rel  0 ptr  0 jsr@0x1b722
+0x0c714 cm550_fuelParameterPointerSetup                            abs  1 rel  0 ptr  0 jsr@0x30c78
+0x0c742 cm550_shutdownMinimumSelector15                            abs  1 rel  0 ptr  0 jsr@0x30c54
+0x0c760 mc68k_configureCanCs5MessageObjects                        abs  1 rel  0 ptr  0 jsr@0x28b6a
+0x0c80c ignoreCanTransmitInterrupt                                 abs  2 rel  0 ptr  0 jsr@0x1e07a jsr@0x1e1b4
+0x0c80e vp44_dispatchReceivedPumpMessage                           abs  1 rel  0 ptr  0 jsr@0x1e1c6
+0x0c87c cm550_FUN_0000c87c                                         abs  4 rel  0 ptr  0 jsr@0x19c5c jsr@0x19f56 jsr@0x1a6bc jsr@0x1a90c
+0x0c87e cm550_FUN_0000c87e                                         abs  3 rel  0 ptr  0 jsr@0x1b1d6 jsr@0x1b386 jsr@0x1b4bc
+0x0c880 cm550_FUN_0000c880                                         abs  1 rel  0 ptr  0 jsr@0x28870
+0x0c8a0 cm550_dzgTimingAndPressureControlStateMachine              abs  0 rel  1 ptr  0 bsr.w@0xcb02
+0x0c962 cm550_runAllSpeedGovernor                                  abs  1 rel  0 ptr  0 jsr@0x1b57e
+0x0d0e2 cm550_diagnosticDataCopyHandler                            abs  1 rel  0 ptr  0 jsr@0xd39a
+0x0d0fc cm550_fuelDeliverySystemInit                               abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x0d18a cm550_diagnosticStatus30Setter                             abs  1 rel  0 ptr  0 jsr@0x3459a
+0x0d1a4 cm550_diagnosticStatus2Initializer                         abs  1 rel  0 ptr  0 jsr@0x345a4
+0x0d218 cm550_diagnosticState2Initializer                          abs  1 rel  0 ptr  0 jsr@0xd3a0
+0x0d23c cm550_dualTableLookupSum                                   abs  1 rel  0 ptr  0 jsr@0xc972
+0x0d280 cm550_interpolationTableSetup                              abs  1 rel  0 ptr  0 jsr@0x28876
+0x0d286 cm550_initAcControlSystem                                  abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x0d2be cm550_acceleratorThrottleFaultDetector                     abs  1 rel  0 ptr  0 jsr@0x1b572
+0x0d3b2 cm550_FUN_0000d3b2                                         abs  1 rel  0 ptr  0 jsr@0x28720
+0x0d3bc cm550_fuelArbitratorInit                                   abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x0d3c6 cm550_initDerateSystemPointers                             abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x0d3e6 cm550_diagnosticMode10FuelController                       abs  0 rel  1 ptr  0 bsr.w@0xd540
+0x0d4ae cm550_FUN_0000d4ae                                         abs  1 rel  0 ptr  0 jsr@0x345b6
+0x0d584 cm550_diagnosticState7Setter                               abs  1 rel  0 ptr  0 jsr@0xd3a6
+0x0d59e cm550_fuelBlendTablePointerSetup                           abs  1 rel  0 ptr  0 jsr@0x345c8
+0x0d5e6 cm550_initBoostProtectionSystem                            abs  1 rel  0 ptr  0 jsr@0x28786
+0x0d610 updateEngineSyncStatus                                     abs  1 rel  0 ptr  0 jsr@0x1b9a2
+0x0e780 cm550_clearKickdownControlState                            abs  1 rel  0 ptr  0 jsr@0x2897e
+0x0e97e vp44ControlVariablesReset                                  abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x0e998 cm550_FUN_0000e998                                         abs  1 rel  0 ptr  0 jsr@0x1b754
+0x0eaec vp44_insiteParameterTableIterator                          abs  1 rel  0 ptr  0 jsr@0xec0a
+0x0eba4 cm550_diagnosticMessageTransmissionManager                 abs  1 rel  0 ptr  0 jsr@0x1b732
+0x0ec1e cm550_activeParamReadFunction                              abs  4 rel  0 ptr  0 jsr@0xeb7e jsr@0x1ea26 jsr@0x1ea8e jsr@0x1eb54
+0x0ed34 cm550_diagnosticCodeTableSearch                            abs  0 rel  9 ptr  0 bsr.w@0xedf0 bsr.w@0xee04 bsr.w@0xee18 bsr.w@0xee3c
+0x0ed64 insiteCommandByteDispatcher                                abs  2 rel  0 ptr  0 jsr@0xec92 jsr@0xed0a
+0x0f716 cm550_FUN_0000f716                                         abs  0 rel  1 ptr  0 bsr.w@0xf7bc
+0x0f796 cm550_paramSystemModeController                            abs  1 rel  0 ptr  0 jsr@0x32d9e
+0x0f8c6 cm550_param_lookup_1                                       abs  1 rel  0 ptr  0 jsr@0x32db6
+0x0f930 cm550_param_lookup_3                                       abs  1 rel  0 ptr  0 jsr@0x32fa6
+0x0f99a cm550_FUN_0000f99a                                         abs  1 rel  0 ptr  0 jsr@0x330a8
+0x0f99c cm550_FUN_0000f99c                                         abs  1 rel  0 ptr  0 jsr@0x330d8
+0x0fa06 vp44State2TransitionHandler                                abs  0 rel  3 ptr  0 bsr.b@0xfa7e bsr.w@0xfc52 bsr.w@0xfcac
+0x0fa68 vp44_FUN_0000fa68                                          abs  0 rel  2 ptr  0 bsr.w@0xfd54 bsr.w@0xfd9c
+0x0faa6 cm550_calculateGovernorDroopSpeed                          abs  0 rel  4 ptr  0 bsr.w@0xfcc8 bsr.w@0xfcd8 bsr.w@0xfdb8 bsr.w@0xfdc8
+0x0fb26 vp44_fuelLimitExceedanceStatisticsAccumulator              abs  1 rel  0 ptr  0 jsr@0x33228
+0x0fbe4 vp44_fuelSourceOilPressureConditionChecker                 abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x0ff48 cm550_FUN_0000ff48                                         abs  1 rel  0 ptr  0 jsr@0x3370a
+0x0ff56 cm550_initFuelArbitratorThreshold5                         abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x0ff6c cm550_ioControlBasedFuelCalculator                         abs  1 rel  0 ptr  0 jsr@0x33984
+0x100da cm550_throttleTablePointerSetup                            abs  1 rel  0 ptr  0 jsr@0x339de
+0x1011c cm550_bufferDecreasingPatternCheck                         abs  0 rel  1 ptr  0 bsr.w@0x10346
+0x101b8 cm550_bufferThresholdValidator                             abs  0 rel  1 ptr  0 bsr.w@0x10326
+0x1025c cm550_detectEngineSpeedSensorSyncPulse                     abs  1 rel  0 ptr  0 jsr@0x1a988
+0x10394 cm550_canBusTimingInit                                     abs  1 rel  0 ptr  0 jsr@0x28750
+0x103ba cm550_sendCanSingleFrame                                   abs  9 rel  0 ptr  0 jsr@0x10504 jsr@0x2235c jsr@0x22808 jsr@0x2291e
+0x104e8 cm550_sendCanMessage                                       abs 35 rel  0 ptr  0 jsr@0x224e0 jsr@0x31b88 jsr@0x31c0e jsr@0x31ec2
+0x10512 cm550_sendJ1939MultiFrameWrapper                           abs  0 rel  1 ptr  0 bcc.b@0x104f4
+0x10520 cm550_arrayRangeSum                                        abs  4 rel  0 ptr  0 jsr@0x10e92 jsr@0x10f46 jsr@0x1114c jsr@0x113c6
+0x10536 cm550_memoryPatchCountDecrement                            abs  3 rel  0 ptr  0 jsr@0x16058 jsr@0x2d1ce jsr@0x2d1ec
+0x10568 vp44_rpmDerateCalculationController                        abs  1 rel  0 ptr  0 jsr@0x1b55e
+0x10822 vp44_derateThresholdMonitorAndFaultController              abs  1 rel  0 ptr  0 jsr@0x1b7ea
+0x10e06 cm550_FUN_00010e06                                         abs  1 rel  0 ptr  0 jsr@0x28780
+0x10e16 cm550_lookupParameterIdAddress                             abs  9 rel  0 ptr  0 jsr@0x13de4 jsr@0x13e2e jsr@0x166d8 jsr@0x16a84
+0x10e80 cm550_loadParameterBlock1FromFlash                         abs  4 rel  0 ptr  0 jsr@0x1150a jsr@0x11562 jsr@0x1157e jsr@0x1158a
+0x10f32 cm550_loadParameterBlock2FromFlash                         abs  3 rel  0 ptr  0 jsr@0x1156c jsr@0x11574 jsr@0x11596
+0x10fe0 cm550_saveParameterBlock1ToFlash                           abs  2 rel  0 ptr  0 jsr@0x27d0a jsr@0x27e4c
+0x1125a cm550_saveParameterBlock2ToFlash                           abs  2 rel  0 ptr  0 jsr@0x27d78 jsr@0x27de0
+0x114d4 cm550_loadParameterBlockAndUpdatePowerDownCounts           abs  1 rel  0 ptr  0 jsr@0x2868a
+0x117ec copyCalibrationFromRomToRam                                abs  1 rel  0 ptr  0 jsr@0x28622
+0x1183e cm550_requestClearInactiveFaults                           abs  1 rel  0 ptr  1 jsr@0x161b0 ptr@0x11b40
+0x1188c exitDevelopmentMode                                        abs  1 rel  0 ptr  1 jsr@0x161de ptr@0x11b4c
+0x118b2 enterDevelopmentMode                                       abs  1 rel  0 ptr  1 jsr@0x160e2 ptr@0x11b58
+0x118cc forceExitDevelopmentMode                                   abs  1 rel  0 ptr  1 jsr@0x160ec ptr@0x11b64
+0x118fc commandEngineShutdown                                      abs  1 rel  0 ptr  1 jsr@0x160f6 ptr@0x11b70
+0x11908 handleJ1939RestartService                                  abs  0 rel  0 ptr  1 ptr@0x11b7c
+0x1191a cm550_restartThroughBootRomAfterJ1708Request               abs  1 rel  0 ptr  0 jsr@0x16100
+0x1192a restartThroughBootRom                                      abs  2 rel  0 ptr  0 jsr@0x11910 jsr@0x11920
+0x11a68 inhibitKeyOffShutdown                                      abs  1 rel  0 ptr  1 jsr@0x16118 ptr@0x11b88
+0x11a74 cm550_commitEepromMirrorToEeprom                           abs  1 rel  0 ptr  1 jsr@0x16126 ptr@0x11b94
+0x11b36 registerJ1939DiagnosticHandlers                            abs  1 rel  0 ptr  0 jsr@0x28e50
+0x11da6 cm550_crc16Calculate                                       abs  2 rel  0 ptr  0 jsr@0x162b6 jsr@0x1f070
+0x11df8 cm550_memoryPatchCrcCalculate                              abs  1 rel  0 ptr  0 jsr@0x2d2c4
+0x11e5e cm550_coldStartFuelControlSlowCycle40Coordinator           abs  1 rel  0 ptr  0 jsr@0x1ba92
+0x12484 cm550_FUN_00012484                                         abs  1 rel  0 ptr  0 jsr@0x30b40
+0x124d2 cm550_initLoadTrendingSystem                               abs  1 rel  0 ptr  0 jsr@0x2878c
+0x1266e mc68k_FUN_0001266e                                         abs  4 rel  0 ptr  0 jsr@0x19c62 jsr@0x19f5c jsr@0x1a6c2 jsr@0x1a912
+0x1277c cm550_fuelSourceMode11CountdownHandler                     abs  1 rel  0 ptr  1 jsr@0x1b60a ptr@0x170e8
+0x127c2 vp44_FUN_000127c2                                          abs  1 rel  0 ptr  0 jsr@0x1be60
+0x133fc cm550_FUN_000133fc                                         abs  1 rel  0 ptr  4 jsr@0x1ba2c ptr@0x139c8 ptr@0x16d92 ptr@0x1f648
+0x133fe vp44_FUN_000133fe                                          abs  1 rel  0 ptr  0 jsr@0x28964
+0x1355e cm550_circularBufferWriteWithStatus                        abs  0 rel  7 ptr  0 bsr.w@0x13744 bsr.w@0x137a4 bsr.w@0x137b6 bsr.w@0x137c6
+0x13616 vp44_communication_state_machine                           abs  5 rel  0 ptr  0 jsr@0x19c6c jsr@0x19f66 jsr@0x1a6cc jsr@0x1a91c
+0x138a0 vp44_initVp44BufferAddresses                               abs  1 rel  0 ptr  0 jsr@0x28798
+0x138b6 cm550_updateDataloggerTriggers                             abs  1 rel  0 ptr  0 jsr@0x1b6dc
+0x13a5c cm550_recordDataloggerSamples                              abs  1 rel  0 ptr  0 jsr@0x1b6ea
+0x13cc8 cm550_initializeDatalogger                                 abs  1 rel  0 ptr  0 jsr@0x28792
+0x13d42 cm550_selectDataloggerSamplePeriod                         abs  1 rel  0 ptr  0 jsr@0x13912
+0x13dbe cm550_resolveDataloggerTriggerAddresses                    abs  1 rel  0 ptr  0 jsr@0x13928
+0x13e12 cm550_resolveDataloggerDataParameterAddresses              abs  1 rel  0 ptr  0 jsr@0x13aa4
+0x13e64 cm550_findDataloggerTriggerFaultIndexes                    abs  1 rel  0 ptr  0 jsr@0x1392e
+0x13ed8 cm550_evaluateDataloggerTrigger                            abs  2 rel  0 ptr  0 jsr@0x1397c jsr@0x139a6
+0x14292 cm550_copyDataloggerSampleBuffer                           abs  1 rel  0 ptr  0 jsr@0x13c86
+0x142a8 cm550_canBusConfigTypeSelector                             abs  5 rel  0 ptr  0 jsr@0x2f300 jsr@0x2f370 jsr@0x2f3fe jsr@0x2fa04
+0x142d4 cm550_FUN_000142d4                                         abs  0 rel  0 ptr  1 ptr@0x143bc
+0x14348 cm550_FUN_00014348                                         abs  1 rel  1 ptr  0 jsr@0x1de4c bsr.w@0x143dc
+0x143b6 cm550_multiSpeedParameterInterpolation                     abs  1 rel  0 ptr  0 jsr@0x1f352
+0x1444e cm550_fuelDemandPercentageCalculator                       abs  1 rel  0 ptr  0 jsr@0x1f0fa
+0x144bc cm550_countDownPreviouslyActiveFault                       abs  0 rel  1 ptr  0 bsr.w@0x14690
+0x14670 cm550_countDownPreviouslyActiveFaults                      abs  1 rel  0 ptr  0 jsr@0x14f30
+0x146b4 cm550_oldestDiagnosticTimestampSearch                      abs  0 rel  2 ptr  0 bsr.w@0x14788 bsr.w@0x147ce
+0x14720 cm550_diagnosticCodeRegistrar                              abs  1 rel  0 ptr  0 jsr@0x14948
+0x14812 cm550_FUN_00014812                                         abs  1 rel  0 ptr  0 jsr@0x14e3e
+0x14872 cm550_processFaultScanGroup                                abs  1 rel  0 ptr  0 jsr@0x14e22
+0x14dc6 cm550_faultFlagScannerAndProcessor                         abs  1 rel  0 ptr  0 jsr@0x1b534
+0x14f42 cm550_insitePidDtcHandler                                  abs  1 rel  0 ptr  0 jsr@0x1eb3c
+0x14fae cm550_initHourMeterSystem                                  abs  1 rel  0 ptr  0 jsr@0x2879e
+0x14fca mc68k_sampleAndDebounceDiscreteInputs                      abs  8 rel  0 ptr  0 jsr@0x11216 jsr@0x11490 jsr@0x15dde jsr@0x1b654
+0x159ee mc68k_ioDriverStrobeHandler                                abs  9 rel  0 ptr  0 jsr@0x11a3c jsr@0x15f80 jsr@0x1b4d0 jsr@0x28034
+0x15dd0 cm550_initializeDiscreteInputs                             abs  2 rel  0 ptr  0 jsr@0x27b1c jsr@0x286fc
+0x15df0 mc68k_initializeDiscreteOutputDrivers                      abs  1 rel  0 ptr  0 jsr@0x28708
+0x15f8c cm550_emptyStubFunction4                                   abs  1 rel  0 ptr  0 jsr@0x1598a
+0x15f8e mc68k_dispatchJ1708ReceivedMessages                        abs  1 rel  0 ptr  0 jsr@0x1b72a
+0x1645e cm550_safeDivideWithClamp                                  abs  2 rel  0 ptr  0 jsr@0x14336 jsr@0x144a6
+0x1651e cm550_clampedDivisionCalculator                            abs  6 rel  0 ptr  0 jsr@0xfe18 jsr@0xfe4a jsr@0xfe80 jsr@0xfeb6
+0x165f2 cm550_param_address_calc                                   abs  4 rel  0 ptr  0 jsr@0xf8ac jsr@0xf916 jsr@0xf980 jsr@0xf9ec
+0x16628 cm550_limitedDivisionCalculator                            abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x1666c cm550_multiPacketTransmitHandler                           abs  1 rel  0 ptr  0 jsr@0x16368
+0x1686e cm550_multiPacketReceiveHandler                            abs  1 rel  0 ptr  0 jsr@0x16372
+0x16c2c cm550_circularBufferEmptyCheck                             abs  4 rel  0 ptr  0 jsr@0x1195e jsr@0x15fa4 jsr@0x27cb0 jsr@0x28014
+0x16c3c cm550_parameterCircularBufferWrite                         abs 15 rel  0 ptr  2 jsr@0x11656 jsr@0x11696 jsr@0x1171a jsr@0x1175a
+0x16cd8 cm550_circularBufferWrite                                  abs  3 rel  0 ptr  0 jsr@0x11aba jsr@0x21600 jsr@0x2d32c
+0x16d4c cm550_emptyPlaceholderFunction                             abs 11 rel  0 ptr  4 jsr@0x11ad8 jsr@0x1b630 jsr@0x27b52 jsr@0x27ba0
+0x16d4e mc68k_startJ1708Transmission                               abs 10 rel  0 ptr  0 jsr@0xb790 jsr@0x16806 jsr@0x1e8d6 jsr@0x1ec30
+0x16dd4 cm550_highRpmEngineProtectionStateMachine                  abs  1 rel  0 ptr  0 jsr@0x1b6c0
+0x1709e cm550_fuelTemperatureLimitingSecondary                     abs  1 rel  0 ptr  0 jsr@0x28810
+0x17120 cm550_FUN_00017120                                         abs  1 rel  0 ptr  0 jsr@0x30c64
+0x17150 cm550_canControllerConfigInit                              abs  2 rel  0 ptr  0 jsr@0x1720e jsr@0x2875c
+0x1717a cm550_derateProtectionSlowCycle20Coordinator               abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x171aa cm550_can1PwmTimerInit                                     abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x171be cm550_calculateEngineSpeed                                 abs  2 rel  0 ptr  0 jsr@0x1b53a jsr@0x1b5ce
+0x176de cm550_initializeEngineSpeedCalculation                     abs  1 rel  0 ptr  0 jsr@0x2874a
+0x177c2 cm550_rpmBasedFuelLimitCalculator                          abs  1 rel  0 ptr  0 jsr@0x1b5f8
+0x178b0 cm550_governorFuelModeBlendCalculator                      abs  0 rel  1 ptr  0 bsr.w@0x17a34
+0x17a06 cm550_rpmBasedFuelTimingInterpolation                      abs  1 rel  0 ptr  0 jsr@0x1b618
+0x17a8e cm550_frictionalLoadTorqueInterpolator                     abs  0 rel  1 ptr  0 bsr.w@0x17d52
+0x17b8a cm550_rpmSourceSelectorForFrictionalLoad                   abs  0 rel  1 ptr  0 bsr.w@0x17d5a
+0x17baa cm550_FUN_00017baa                                         abs  0 rel  1 ptr  0 bsr.w@0x17d56
+0x17ca6 cm550_peakTorqueFuelCorrection                             abs  0 rel  1 ptr  0 bsr.w@0x17d5e
+0x17cf0 cm550_engineModeTransitionStateUpdater                     abs  1 rel  0 ptr  0 jsr@0x30b54
+0x17d2a cm550_engineModeTransitionHandler                          abs  1 rel  0 ptr  0 jsr@0x1b5e6
+0x17d6a cm550_ioOutputFlagMappingSlowCycle40Coordinator            abs  1 rel  0 ptr  0 jsr@0x1bafe
+0x17e06 cm550_frictionalLoadTorqueManagementSlowCycle40Coordinator abs  1 rel  0 ptr  0 jsr@0x1bb22
+0x17e62 cm550_engineOperatingModeStateTrackingSlowCycle40Coordinator abs  1 rel  0 ptr  0 jsr@0x1bb46
+0x17eba cm550_frictionalLoadTorqueTransitionHandler                abs  1 rel  0 ptr  0 jsr@0x1b5f2
+0x17ef8 vp44_fuelLimitParameterPointerSetup                        abs  1 rel  0 ptr  0 jsr@0x287a4
+0x17f7c cm550_updateEngineState                                    abs  1 rel  0 ptr  0 jsr@0x1b564
+0x18384 initializeEngineState                                      abs  1 rel  0 ptr  0 jsr@0x28768
+0x1839a cm550_canRpmModeConfigInit                                 abs  2 rel  0 ptr  0 jsr@0x17254 jsr@0x28762
+0x183cc cm550_FUN_000183cc                                         abs  0 rel  1 ptr  0 bsr.w@0x185d6
+0x184c6 cm550_FUN_000184c6                                         abs  1 rel  0 ptr  0 jsr@0x33222
+0x185f0 cm550_FUN_000185f0                                         abs  1 rel  0 ptr  0 jsr@0x33704
+0x18620 cm550_engineProtectionMultiStateSlowCycle40Coordinator     abs  1 rel  0 ptr  0 jsr@0x1bb9a
+0x186ae cm550_protectionThresholdCalculationHelper                 abs  2 rel  0 ptr  0 jsr@0x18e94 jsr@0x19790
+0x18708 cm550_protectionPercentageCalculator                       abs  2 rel  0 ptr  0 jsr@0x18c74 jsr@0x197b8
+0x1873e vp44_engineProtectionSystemInit                            abs  1 rel  0 ptr  0 jsr@0x28732
+0x18968 cm550_protectionConditionEvaluator                         abs  6 rel  2 ptr  0 jsr@0x18bd4 jsr@0x18bfe jsr@0x18c3e jsr@0x18c92
+0x18a26 protectionState0FaultDurationCounter                       abs  1 rel  0 ptr  0 jsr@0x18650
+0x18ac4 cm550_diagnosticProtectionEvaluator                        abs  1 rel  0 ptr  0 jsr@0x28738
+0x18c1c cm550_diagnosticProtectionProcessor                        abs  0 rel  1 ptr  0 bsr.w@0x18d74
+0x18cb6 cm550_protectionState1DiagnosticValidator                  abs  1 rel  0 ptr  0 jsr@0x18658
+0x18dae cm550_protectionUpdateHandler                              abs  1 rel  0 ptr  0 jsr@0x18d7e
+0x18e0c cm550_calculateFaultDerateEngineSpeedLimit                 abs  1 rel  0 ptr  0 jsr@0x18668
+0x18f4c initializeFaultDerateEngineSpeedLimit                      abs  1 rel  0 ptr  0 jsr@0x1894a
+0x18f86 incrementDiagnosticCounters                                abs  0 rel  4 ptr  0 bsr.w@0x190e6 bsr.w@0x19118 bsr.w@0x19192 bsr.w@0x191c8
+0x18fcc processDiagnosticLimitStatus                               abs  1 rel  0 ptr  0 jsr@0x18676
+0x192e0 cm550_FUN_000192e0                                         abs  1 rel  0 ptr  0 jsr@0x18956
+0x192f2 cm550_protectionCalculationHelper                          abs  2 rel  0 ptr  0 jsr@0x19410 jsr@0x1969a
+0x19332 protectionStateProcessor                                   abs  3 rel  0 ptr  0 jsr@0x19628 jsr@0x1964a jsr@0x1966c
+0x19436 protectionStateValidator                                   abs  5 rel  0 ptr  0 jsr@0x19634 jsr@0x19656 jsr@0x1967a jsr@0x196ba
+0x1952c cm550_protectionState3bRpmMonitor                          abs  1 rel  0 ptr  0 jsr@0x1866e
+0x196e4 cm550_shutdownMinimumSelector29                            abs  1 rel  0 ptr  0 jsr@0x30c5a
+0x19702 cm550_FUN_00019702                                         abs  1 rel  0 ptr  0 jsr@0x18660
+0x19960 cm550_initShutdownLimitVariables                           abs  1 rel  0 ptr  0 jsr@0x18950
+0x1999c mc68k_initializeTpuChannel10PrimarySpeedInputDivided       abs  1 rel  0 ptr  0 jsr@0x17182
+0x199fa mc68k_phase2_slot_0_handler                                abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x19ac2 cm550_delayWithWatchdogServiceWrapper2                     abs  1 rel  0 ptr  0 jsr@0x17188
+0x19aca cm550_emptyStubFunction7                                   abs  1 rel  0 ptr  0 jsr@0x1718e
+0x19acc mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0        abs  0 rel  0 ptr  1 ptr@0x19a36
+0x19caa mc68k_FUN_00019caa                                         abs  1 rel  0 ptr  0 jsr@0x1716e
+0x19dd0 mc68k_initializeTpuChannel0MissingToothInput               abs  1 rel  0 ptr  0 jsr@0x17174
+0x19e8e cm550_FUN_00019e8e                                         abs  1 rel  0 ptr  0 jsr@0x1717a
+0x19e90 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1        abs  0 rel  0 ptr  1 ptr@0x19d44
+0x1a1e0 cm550_rpmTimingDeltaComparatorWithReturn                   abs  4 rel  0 ptr  0 jsr@0x19c56 jsr@0x19f50 jsr@0x1a6b6 jsr@0x1a906
+0x1a298 cm550_FUN_0001a298                                         abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x1a350 mc68k_FUN_0001a350                                         abs  1 rel  0 ptr  0 jsr@0x17196
+0x1a47c mc68k_FUN_0001a47c                                         abs  1 rel  0 ptr  0 jsr@0x1719c
+0x1a52a cm550_FUN_0001a52a                                         abs  1 rel  0 ptr  0 jsr@0x171a2
+0x1a52c mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2        abs  0 rel  0 ptr  1 ptr@0x1a3ea
+0x1a6e8 mc68k_crankFuelAndTimingBufferStore                        abs  0 rel  0 ptr  1 ptr@0x1a512
+0x1a746 mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled     abs  1 rel  0 ptr  0 jsr@0x171aa
+0x1a89a cm550_FUN_0001a89a                                         abs  1 rel  0 ptr  0 jsr@0x171b0
+0x1a8a2 cm550_FUN_0001a8a2                                         abs  1 rel  0 ptr  0 jsr@0x171b6
+0x1a8a4 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3        abs  0 rel  0 ptr  1 ptr@0x1a80c
+0x1a95a cm550_processPrimarySpeedPulsePeriodWithSyncPulse          abs  1 rel  0 ptr  0 jsr@0x1a8be
+0x1a95e vp44FaultThresholdTablesInit                               abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1abb2 cm550_updateElectronicSmartPowerTau                        abs  1 rel  0 ptr  0 jsr@0x1b73a
+0x1ade8 cm550_initializeElectronicSmartPower                       abs  1 rel  0 ptr  0 jsr@0x287aa
+0x1ae22 mc68k_initializeTpuChannel1BackupSpeedInput                abs  1 rel  0 ptr  0 jsr@0x183b4
+0x1af32 mc68k_dutyCycleMonitorIsrHandler                           abs  0 rel  0 ptr  1 ptr@0x1aec8
+0x1b1ea mc68k_FUN_0001b1ea                                         abs  1 rel  0 ptr  0 jsr@0x183c4
+0x1b30a mc68k_FUN_0001b30a                                         abs  0 rel  0 ptr  1 ptr@0x1b290
+0x1b39a mc68k_dutyCycleMonitorBufferInit                           abs  1 rel  0 ptr  0 jsr@0x183bc
+0x1b40c mc68k_phase2_slot_1_handler                                abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b4b2 mc68k_FUN_0001b4b2                                         abs  0 rel  0 ptr  1 ptr@0x1b490
+0x1b4c2 mc68k_phase2_slot_8_handler                                abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b4d0 cm550_ioDriverStrobeHandlerWrapper                         abs  0 rel  0 ptr  1 ptr@0x1b882
+0x1b4d8 vp44_evenPhaseSchedulerTaskSet                             abs  0 rel 20 ptr  0 bsr.w@0x1b960 bsr.w@0x1b9b2 bsr.w@0x1b9fa bsr.w@0x1ba3c
+0x1b4ea cm550_diagnosticMonitoringCoordinator                      abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b4f6 cm550_boostPressureControlInit                             abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b504 cm550_oddPhaseSchedulerTaskSet                             abs  0 rel 20 ptr  0 bsr.w@0x1b98e bsr.w@0x1b9d6 bsr.w@0x1ba18 bsr.w@0x1ba5a
+0x1b518 vp44_engine_management_system                              abs  0 rel 10 ptr  0 bsr.w@0x1b964 bsr.w@0x1b9fe bsr.w@0x1ba82 bsr.w@0x1bb12
+0x1b558 vp44ControlSystemCoordinator                               abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b56a cm550_slowCycle10Coordinator                               abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b572 vp44_periodicTaskSet_governorProtection                    abs  0 rel 10 ptr  0 bsr.w@0x1b992 bsr.w@0x1ba1c bsr.w@0x1baac bsr.w@0x1bb36
+0x1b57e vp44_engine_control_cycle                                  abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b5b4 cm550_slowCycle20ExtendedCoordinator                       abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b5ba vp44ExtendedFaultDetectionCoordinator                      abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b5ce cm550_periodicTaskSet_fuelTiming                           abs  0 rel 10 ptr  0 bsr.w@0x1b9b6 bsr.w@0x1ba40 bsr.w@0x1baca bsr.w@0x1bb5a
+0x1b604 cm550_fuelTimingCoordinator                                abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b60a cm550_diagnosticDataTransmissionSlowCycle10Coordinator     abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b612 periodicTaskSet_fuelDemand                                 abs  0 rel 10 ptr  0 bsr.w@0x1b9da bsr.w@0x1ba5e bsr.w@0x1baee bsr.w@0x1bb7e
+0x1b62a vp44_evenPhaseSchedulerTaskSet                             abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b668 cm550_FUN_0001b668                                         abs  0 rel  5 ptr  0 bsr.w@0x1b968 bsr.w@0x1ba86 bsr.w@0x1bbb2 bsr.w@0x1bcae
+0x1b66a cm550_FUN_0001b66a                                         abs  0 rel  5 ptr  0 bsr.w@0x1b996 bsr.w@0x1bab0 bsr.w@0x1bbd6 bsr.w@0x1bccc
+0x1b678 cm550_FUN_0001b678                                         abs  0 rel  5 ptr  0 bsr.w@0x1b9ba bsr.w@0x1bace bsr.w@0x1bbf4 bsr.w@0x1bcea
+0x1b686 cm550_FUN_0001b686                                         abs  0 rel  5 ptr  0 bsr.w@0x1b9de bsr.w@0x1baf2 bsr.w@0x1bc18 bsr.w@0x1bd08
+0x1b694 cm550_FUN_0001b694                                         abs  0 rel  5 ptr  0 bsr.w@0x1ba02 bsr.w@0x1bb16 bsr.w@0x1bc36 bsr.w@0x1bd26
+0x1b6a2 cm550_FUN_0001b6a2                                         abs  0 rel  5 ptr  0 bsr.w@0x1ba20 bsr.w@0x1bb3a bsr.w@0x1bc54 bsr.w@0x1bd44
+0x1b6aa cm550_FUN_0001b6aa                                         abs  0 rel  5 ptr  0 bsr.w@0x1ba44 bsr.w@0x1bb5e bsr.w@0x1bc72 bsr.w@0x1bd62
+0x1b6b2 cm550_FUN_0001b6b2                                         abs  0 rel  5 ptr  0 bsr.w@0x1ba62 bsr.w@0x1bb82 bsr.w@0x1bc90 bsr.w@0x1bd80
+0x1b6b4 cm550_FUN_0001b6b4                                         abs  0 rel  4 ptr  0 bsr.w@0x1b96c bsr.w@0x1bad2 bsr.w@0x1bc3a bsr.w@0x1bd66
+0x1b6ba cm550_rpm_control_system                                   abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b6c6 cm550_emptySlowCycle8PlaceholderCase7                      abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b6c8 cm550_FUN_0001b6c8                                         abs  0 rel  4 ptr  0 bsr.w@0x1b99a bsr.w@0x1baf6 bsr.w@0x1bc58 bsr.w@0x1bd84
+0x1b6ce cm550_slowCycle20Coordinator                               abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b6d4 cm550_empty_debug_hook                                     abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b6d6 cm550_FUN_0001b6d6                                         abs  0 rel  4 ptr  0 bsr.w@0x1b9be bsr.w@0x1bb1a bsr.w@0x1bc76 bsr.w@0x1bda8
+0x1b6e4 cm550_FUN_0001b6e4                                         abs  0 rel  4 ptr  0 bsr.w@0x1b9e2 bsr.w@0x1bb3e bsr.w@0x1bc94 bsr.w@0x1bdc6
+0x1b6f2 cm550_FUN_0001b6f2                                         abs  0 rel  4 ptr  0 bsr.w@0x1ba06 bsr.w@0x1bb62 bsr.w@0x1bcb2 bsr.w@0x1bde4
+0x1b6f8 vp44ProtectionSlowCycle20Coordinator                       abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b6fe cm550_engineModeBasedOutputControlSlowCycle20Coordinator   abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b70a cm550_emptySlowCycle20PlaceholderCase15                    abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b70c cm550_dzgTimingAndPressureSlowCycle10Coordinator           abs  0 rel  4 ptr  0 bsr.w@0x1ba24 bsr.w@0x1bb86 bsr.w@0x1bcd0 bsr.w@0x1be02
+0x1b714 cm550_rpmBasedFuelLimiterCoordinator                       abs  0 rel  4 ptr  0 bsr.w@0x1ba48 bsr.w@0x1bbb6 bsr.w@0x1bcee bsr.w@0x1be20
+0x1b71a cm550_sensorStatusHistorySlowCycle20Coordinator            abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b722 cm550_shutdownProtectionSlowCycle10Coordinator             abs  0 rel  4 ptr  0 bsr.w@0x1ba66 bsr.w@0x1bbda bsr.w@0x1bd0c bsr.w@0x1be3c
+0x1b72a cm550_camSyncDiagnosticProcessingSlowCycle20Coordinator    abs  0 rel  4 ptr  0 bsr.w@0x1ba8a bsr.w@0x1bbf8 bsr.w@0x1bd2a bsr.w@0x1be58
+0x1b732 cm550_FUN_0001b732                                         abs  0 rel  4 ptr  0 bsr.w@0x1bab4 bsr.w@0x1bc1c bsr.w@0x1bd48 bsr.w@0x1be7a
+0x1b73a cm550_FUN_0001b73a                                         abs  0 rel  2 ptr  0 bsr.w@0x1b970 bsr.w@0x1bc3e
+0x1b754 cm550_FUN_0001b754                                         abs  0 rel  2 ptr  0 bsr.w@0x1b99e bsr.w@0x1bc5c
+0x1b768 cm550_FUN_0001b768                                         abs  0 rel  2 ptr  0 bsr.w@0x1b9c2 bsr.w@0x1bc7a
+0x1b788 cm550_FUN_0001b788                                         abs  0 rel  2 ptr  0 bsr.w@0x1b9e6 bsr.w@0x1bc98
+0x1b78e cm550_slowCycle8Coordinator                                abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b794 cm550_engineParameterAndBoostControlWrapper                abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b7a2 cm550_auxiliarySystemControlWrapper                        abs  0 rel  2 ptr  0 bsr.w@0x1ba0a bsr.w@0x1bcb6
+0x1b7b0 cm550_FUN_0001b7b0                                         abs  0 rel  2 ptr  0 bsr.w@0x1ba28 bsr.w@0x1bcd4
+0x1b7ca vp44DiagnosticFaultMonitoringSlowCycle20Coordinator        abs  0 rel  2 ptr  0 bsr.w@0x1ba4c bsr.w@0x1bcf2
+0x1b7d2 cm550_FUN_0001b7d2                                         abs  0 rel  2 ptr  0 bsr.w@0x1ba6a bsr.w@0x1bd10
+0x1b7d8 vp44FsoFaultMonitoringSlowCycle20Coordinator               abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1b7e0 cm550_FUN_0001b7e0                                         abs  0 rel  2 ptr  0 bsr.w@0x1ba8e bsr.w@0x1bd2e
+0x1b7e2 cm550_FUN_0001b7e2                                         abs  0 rel  2 ptr  0 bsr.w@0x1bab8 bsr.w@0x1bd4c
+0x1b7ea cm550_FUN_0001b7ea                                         abs  0 rel  2 ptr  0 bsr.w@0x1bad6 bsr.w@0x1bd6a
+0x1b7f2 vp44_FUN_0001b7f2                                          abs  0 rel  2 ptr  0 bsr.w@0x1bafa bsr.w@0x1bd88
+0x1b80c cm550_FUN_0001b80c                                         abs  0 rel  2 ptr  0 bsr.w@0x1bb1e bsr.w@0x1bdac
+0x1b81a cm550_FUN_0001b81a                                         abs  0 rel  2 ptr  0 bsr.w@0x1bb42 bsr.w@0x1bdca
+0x1b828 cm550_FUN_0001b828                                         abs  0 rel  2 ptr  0 bsr.w@0x1bb66 bsr.w@0x1bde8
+0x1b836 cm550_FUN_0001b836                                         abs  0 rel  2 ptr  0 bsr.w@0x1bb8a bsr.w@0x1be06
+0x1b83e cm550_FUN_0001b83e                                         abs  0 rel  2 ptr  0 bsr.w@0x1bbba bsr.w@0x1be24
+0x1b846 cm550_FUN_0001b846                                         abs  0 rel  2 ptr  0 bsr.w@0x1bbde bsr.w@0x1be40
+0x1b85a vp44DiagnosticControlSlowCycle20Coordinator                abs  0 rel  2 ptr  0 bsr.w@0x1bbfc bsr.w@0x1be5c
+0x1b862 cm550_FUN_0001b862                                         abs  0 rel  2 ptr  0 bsr.w@0x1bc20 bsr.w@0x1be7e
+0x1b876 executiveFrameInterruptHandler                             abs  0 rel  0 ptr  1 ptr@0x1bf90
+0x1bf54 mc68k_scheduler_init                                       abs  1 rel  0 ptr  0 jsr@0x2876e
+0x1bfa2 cm550_circularBufferPush                                   abs  2 rel  0 ptr  0 jsr@0x14ad8 jsr@0x14c44
+0x1bfde cm550_circularBufferPop                                    abs  1 rel  0 ptr  0 jsr@0x27ad8
+0x1c016 cm550_circularBufferInit                                   abs  1 rel  0 ptr  0 jsr@0x14fbe
+0x1c03c cm550_diagnosticFuelLimitInterpolator                      abs  0 rel  1 ptr  0 bsr.w@0x1c270
+0x1c0d4 cm550_FUN_0001c0d4                                         abs  0 rel  1 ptr  0 bsr.w@0x1c190
+0x1c152 fuelTimingOilPressureModeController                        abs  1 rel  0 ptr  0 jsr@0x1b5fe
+0x1c308 cm550_FUN_0001c308                                         abs  1 rel  0 ptr  0 jsr@0x28970
+0x1c31a mc68k_flashEraseBlock                                      abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x1c484 cm550_flashEraseFromRam                                    abs  3 rel  0 ptr  0 jsr@0x11072 jsr@0x112ec jsr@0x2ced0
+0x1c4ba cm550_flashProgramAndVerifyWords                           abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x1c5e8 cm550_flashProgramFromRam                                  abs  5 rel  0 ptr  0 jsr@0x110ba jsr@0x1110a jsr@0x11334 jsr@0x11384
+0x1c630 cm550_diagnosticStatusDefaultSetter                        abs  1 rel  0 ptr  0 jsr@0x345be
+0x1c640 cm550_diagnostic_parameter_handler                         abs  1 rel  0 ptr  0 jsr@0x1b584
+0x1c65e cm550_fuelDemandTableBlendCalculator                       abs  1 rel  0 ptr  0 jsr@0x1b612
+0x1c7a8 cm550_FUN_0001c7a8                                         abs  1 rel  0 ptr  0 jsr@0x287b0
+0x1c824 cm550_FUN_0001c824                                         abs  0 rel  1 ptr  0 bsr.w@0x1c8ec
+0x1c8a0 cm550_FUN_0001c8a0                                         abs  1 rel  0 ptr  0 jsr@0x1b828
+0x1c9d2 fuelDemandProportionalCalculationSlowCycle40Coordinator    abs  1 rel  0 ptr  0 jsr@0x1bb6a
+0x1ca54 cm550_fuelDemandLimitSelector11                            abs  1 rel  0 ptr  0 jsr@0x1b63c
+0x1ca5c vp44_canPinVp44StatusController                            abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1cad6 vp44_FUN_0001cad6                                          abs  1 rel  0 ptr  0 jsr@0x1bb94
+0x1cb3c vp44_FUN_0001cb3c                                          abs  1 rel  0 ptr  0 jsr@0x28900
+0x1cb48 cm550_FUN_0001cb48                                         abs  1 rel  0 ptr  0 jsr@0x1cb26
+0x1cb76 cm550_calculateBlendedTableValue                           abs  1 rel  3 ptr  1 jsr@0x1d7b0 bsr.w@0x1cd1e bsr.w@0x1cd32 bsr.w@0x1cde2
+0x1cc72 cm550_FUN_0001cc72                                         abs  1 rel  0 ptr  0 jsr@0x1b5c6
+0x1cdf8 cm550_FUN_0001cdf8                                         abs  1 rel  0 ptr  0 jsr@0x30c8a
+0x1ce58 cm550_FUN_0001ce58                                         abs  1 rel  0 ptr  0 jsr@0x30c3c
+0x1ce7c runHighSpeedGovernorPid                                    abs  1 rel  0 ptr  0 jsr@0x1b5ba
+0x1d252 presetHighSpeedGovernorIntegrator                          abs  1 rel  0 ptr  0 jsr@0x1cf3a
+0x1d2e4 initializeHighSpeedGovernorGainSet                         abs  1 rel  0 ptr  0 jsr@0x2873e
+0x1d392 selectHighSpeedGovernorGainSet                             abs  1 rel  0 ptr  0 jsr@0x1b5b4
+0x1d5a0 selectEngineSpeedLimit                                     abs  1 rel  0 ptr  0 jsr@0x1b5a8
+0x1d94e initializeEngineSpeedLimitDefaults                         abs  1 rel  0 ptr  0 jsr@0x28744
+0x1d9b4 vp44SensorStatusMonitor                                    abs  1 rel  0 ptr  0 jsr@0x1b7f8
+0x1db8a vp44_FUN_0001db8a                                          abs  1 rel  0 ptr  0 jsr@0x287bc
+0x1db9a vp44_fuelArbitratorVariablesReset                          abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1dbd8 cm550_FUN_0001dbd8                                         abs  1 rel  0 ptr  0 jsr@0x287b6
+0x1dbee mc68k_main                                                 abs  0 rel  0 ptr  1 ptr@0x8062
+0x1dcfc cm550_initializeAlpha                                      abs  1 rel  0 ptr  0 jsr@0x287fe
+0x1dd2c cm550_diagnosticBufferPointerInit                          abs  1 rel  0 ptr  0 jsr@0x2916a
+0x1ddb4 cm550_FUN_0001ddb4                                         abs  1 rel  0 ptr  0 jsr@0x2886a
+0x1de58 cm550_FUN_0001de58                                         abs  1 rel  0 ptr  0 jsr@0x1c64a
+0x1e02a cm550_subtractAndClampValue                                abs  7 rel  0 ptr  1 jsr@0x142fe jsr@0x1cbba jsr@0x1cbe0 jsr@0x1cd6c
+0x1e04c cm550_FUN_0001e04c                                         abs  1 rel  0 ptr  0 jsr@0x2881c
+0x1e056 handleJ1939CanTransmitInterrupt                            abs  0 rel  1 ptr  0 bsr.w@0x1e134
+0x1e086 cm550_handleJ1939CanReceiveInterrupt                       abs  0 rel  2 ptr  0 bsr.w@0x1e144 bsr.w@0x1e15a
+0x1e0bc cm550_canFrameDataCopy                                     abs  2 rel  0 ptr  0 jsr@0x1045c jsr@0x1e574
+0x1e0fa mc68k_canCs4InterruptHandler                               abs  0 rel  0 ptr  1 ptr@0x1e1a2
+0x1e1a0 cm550_canMessageInterruptHandlerSetup                      abs  1 rel  0 ptr  0 jsr@0x28852
+0x1e1ac vp44_handleCanCs5TransmitInterrupt                         abs  0 rel  1 ptr  0 bsr.b@0x1e208
+0x1e1be vp44_handleCanCs5ReceiveInterrupt                          abs  0 rel  1 ptr  0 bsr.b@0x1e216
+0x1e1d0 mc68k_canCs5InterruptHandler                               abs  0 rel  0 ptr  1 ptr@0x1e25c
+0x1e25a cm550_serialCommunicationIsrRegister                       abs  1 rel  0 ptr  0 jsr@0x2884c
+0x1e266 mc68k_armJ1708BusTimer                                     abs  7 rel  0 ptr  0 jsr@0x1e324 jsr@0x1e336 jsr@0x1e3ac jsr@0x1e3c0
+0x1e288 mc68k_j1708SciInterruptHandler                             abs  0 rel  0 ptr  1 ptr@0x1e524
+0x1e522 cm550_tpuChannelIsrRegister                                abs  1 rel  0 ptr  0 jsr@0x28834
+0x1e52e mc68k_canCs4TransmitNextFrame                              abs  1 rel  0 ptr  0 jsr@0x1e06c
+0x1e5f0 mc68k_queueCanCs4ReceiveMessage                            abs  1 rel  0 ptr  0 jsr@0x1e0b0
+0x1e734 cm550_interruptCounter1Increment                           abs  0 rel  0 ptr  1 ptr@0x1e74e
+0x1e76a cm550_interruptCounter2Increment                           abs  0 rel  0 ptr  1 ptr@0x1e78e
+0x1e77a cm550_initVectorTable                                      abs  1 rel  0 ptr  0 jsr@0x28642
+0x1e79a cm550_insiteMultiFrameResponseBuilder                      abs  6 rel  0 ptr  0 jsr@0x26f76 jsr@0x272f2 jsr@0x27472 jsr@0x27650
+0x1e89e cm550_insiteMultiFrameContinuation                         abs  6 rel  0 ptr  0 jsr@0x26fbe jsr@0x27434 jsr@0x27552 jsr@0x276d2
+0x1e956 buildPgn65228Dm3ClearInitMessage                           abs  1 rel  0 ptr  0 jsr@0x163a2
+0x1eb88 cm550_responseBufferSpaceCheck                             abs  3 rel  0 ptr  0 jsr@0xec56 jsr@0xecb6 jsr@0x1e9aa
+0x1ec08 cm550_responseBufferFinalize                               abs  9 rel  0 ptr  0 jsr@0xeb98 jsr@0xeca6 jsr@0x1eb7c jsr@0x26fc6
+0x1ec3c cm550_diagnosticMemoryWriteHandler                         abs  2 rel  0 ptr  0 jsr@0x1633c jsr@0x1635c
+0x1edae cm550_diagnosticMemoryReadHandler                          abs  3 rel  0 ptr  0 jsr@0x1631c jsr@0x1632c jsr@0x1634c
+0x1f0de cm550_diagnosticMessage45Builder                           abs  1 rel  0 ptr  0 jsr@0xebc0
+0x1f2d0 cm550_diagnosticMessage46Builder                           abs  2 rel  0 ptr  0 jsr@0x1f880 jsr@0x1fbd4
+0x1f4e8 cm550_FUN_0001f4e8                                         abs  1 rel  0 ptr  0 jsr@0x163f8
+0x1f84e cm550_fuelDemandScaleFactorCalculator                      abs  1 rel  0 ptr  0 jsr@0x16408
+0x1f8bc cm550_engineFluidLevelDataBuilder                          abs  1 rel  0 ptr  0 jsr@0x16400
+0x1fbb0 cm550_extendedDiagnosticService51                          abs  1 rel  0 ptr  0 jsr@0x16410
+0x1fbf4 cm550_diagnosticMessage53Builder                           abs  1 rel  0 ptr  0 jsr@0xebda
+0x1fc9c cm550_diagnosticMessage54Builder                           abs  2 rel  0 ptr  0 jsr@0x1f894 jsr@0x1fbe8
+0x1fd6c cm550_j1939TimeoutDataClearHandler                         abs  1 rel  0 ptr  0 jsr@0x1b6d6
+0x1fd8e cm550_crankStateVariablesReset                             abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x1fdc0 cm550_j1939MessageTypeCounter                              abs  2 rel  0 ptr  0 jsr@0x231fc jsr@0x234c2
+0x1fe40 cm550_canMessageFilterInit                                 abs  1 rel  0 ptr  0 jsr@0x28828
+0x1ff38 cm550_engineRunTimeHistogramAccumulator                    abs  1 rel  0 ptr  0 jsr@0x1b50a
+0x1ffd0 cm550_emptyPlaceholderInit                                 abs  1 rel  0 ptr  0 jsr@0x28864
+0x1ffd6 cm550_j1939TorqueControlModeParser                         abs  0 rel  2 ptr  0 bsr.w@0x200ac bsr.w@0x200be
+0x200a4 cm550_j1939TorqueControlModeClear                          abs  0 rel  0 ptr  1 ptr@0x200e8
+0x200b4 cm550_j1939TorqueControlModeSet                            abs  0 rel  0 ptr  1 ptr@0x200f4
+0x200c6 cm550_systemFunction6xParameterized                        abs  1 rel  0 ptr  0 jsr@0x28e56
+0x201d6 cm550_FUN_000201d6                                         abs  4 rel  3 ptr  0 jsr@0x207a4 jsr@0x208c6 jsr@0x20e2e jsr@0x20fc6
+0x20210 cm550_FUN_00020210                                         abs  2 rel  1 ptr  0 jsr@0x207b8 jsr@0x20e42 bsr.w@0x204e0
+0x2024a cm550_FUN_0002024a                                         abs  4 rel  3 ptr  0 jsr@0x207ae jsr@0x208bc jsr@0x20e38 jsr@0x20fd0
+0x20284 cm550_FUN_00020284                                         abs  2 rel  0 ptr  0 jsr@0x210ce jsr@0x2116c
+0x202a0 cm550_FUN_000202a0                                         abs  1 rel  0 ptr  0 jsr@0x211dc
+0x202bc cm550_FUN_000202bc                                         abs  2 rel  0 ptr  0 jsr@0x21106 jsr@0x211a4
+0x202d8 setBitInArray                                              abs  5 rel  3 ptr  0 jsr@0x20854 jsr@0x20a46 jsr@0x20e04 jsr@0x20f9e
+0x20310 cm550_FUN_00020310                                         abs  2 rel  1 ptr  0 jsr@0x20808 jsr@0x20cfe bsr.w@0x2052c
+0x20348 cm550_FUN_00020348                                         abs  4 rel  3 ptr  0 jsr@0x207fe jsr@0x20986 jsr@0x20cf4 jsr@0x2100a
+0x20380 cm550_FUN_00020380                                         abs  1 rel  0 ptr  0 jsr@0x21094
+0x2041c cm550_FUN_0002041c                                         abs  1 rel  0 ptr  0 jsr@0x2108e
+0x204b0 cm550_outputControlState1Handler                           abs  1 rel  0 ptr  0 jsr@0x2114e
+0x205c4 cm550_FUN_000205c4                                         abs  1 rel  0 ptr  0 jsr@0x20d0c
+0x206a8 cm550_FUN_000206a8                                         abs  0 rel  0 ptr  1 ptr@0x21076
+0x20784 cm550_FUN_00020784                                         abs  1 rel  0 ptr  0 jsr@0x21166
+0x20890 cm550_FUN_00020890                                         abs  1 rel  0 ptr  0 jsr@0x2107e
+0x20c98 cm550_FUN_00020c98                                         abs  1 rel  0 ptr  0 jsr@0x21160
+0x20e14 cm550_FUN_00020e14                                         abs  1 rel  0 ptr  0 jsr@0x2115a
+0x20fac cm550_FUN_00020fac                                         abs  1 rel  0 ptr  0 jsr@0x21154
+0x21070 cm550_FUN_00021070                                         abs  1 rel  0 ptr  0 jsr@0x1b4f6
+0x21146 cm550_FUN_00021146                                         abs  1 rel  0 ptr  0 jsr@0x1b71a
+0x211f4 cm550_FUN_000211f4                                         abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x21272 registerJ1939ReceiveHandler                                abs  7 rel  0 ptr  1 jsr@0x231bc jsr@0x231cc jsr@0x2ef12 jsr@0x2efc6
+0x212b2 mc68k_FUN_000212b2                                         abs  1 rel  0 ptr  0 jsr@0x1b4d8
+0x2142c cm550_FUN_0002142c                                         abs  1 rel  0 ptr  0 jsr@0x1b504
+0x2148a writeJ1939DiagnosticMemory                                 abs  0 rel  3 ptr  0 bsr.w@0x21672 bsr.w@0x2181a bsr.w@0x21866
+0x21642 cm550_j1939MemoryDataCopyResolver                          abs  0 rel  4 ptr  0 bsr.b@0x216bc bsr.w@0x21708 bsr.w@0x2176c bsr.w@0x217d2
+0x2167e cm550_j1939DataCopyWrapper2Byte                            abs  0 rel  0 ptr  1 ptr@0x2187c
+0x216c6 cm550_FUN_000216c6                                         abs  0 rel  0 ptr  1 ptr@0x21888
+0x21714 cm550_j1939DataCopyWrapperExtended                         abs  0 rel  0 ptr  1 ptr@0x218ac
+0x21778 cm550_FUN_00021778                                         abs  0 rel  0 ptr  1 ptr@0x218b8
+0x217de handleJ1939WriteMemoryService                              abs  0 rel  0 ptr  1 ptr@0x21894
+0x21826 handleJ1939WriteMemoryLongLengthService                    abs  0 rel  0 ptr  1 ptr@0x218a0
+0x21872 cm550_FUN_00021872                                         abs  1 rel  0 ptr  0 jsr@0x28e4a
+0x218ca byteSwap32                                                 abs  8 rel  0 ptr  0 jsr@0x33738 jsr@0x33a9c jsr@0x33ac8 jsr@0x33c9a
+0x218fe byteSwap16                                                 abs  8 rel  0 ptr  0 jsr@0x32228 jsr@0x32684 jsr@0x3272c jsr@0x32a8a
+0x21920 cm550_FUN_00021920                                         abs  2 rel  0 ptr  0 jsr@0x322f2 jsr@0x3243c
+0x21964 getJ1939MemoryServiceHeaderLength                          abs  3 rel  0 ptr  0 jsr@0x214bc jsr@0x223be jsr@0x2244e
+0x21982 cm550_diagnosticServiceSecurityValidator                   abs  1 rel  0 ptr  0 jsr@0x2eec8
+0x21a8c receivePgn61441ElectronicBrakeController1Message           abs  0 rel  0 ptr  1 ptr@0x21f0c
+0x21b88 receivePgn61443ElectronicEngineController2Message          abs  0 rel  0 ptr  1 ptr@0x21f18
+0x21c74 receivePgn65264PowerTakeoffInformationMessage              abs  0 rel  0 ptr  1 ptr@0x21f30
+0x21d44 receivePgn65265CruiseControlVehicleSpeedMessage            abs  0 rel  0 ptr  1 ptr@0x21f3c
+0x21edc cm550_tickJ1939InputSupervision                            abs  1 rel  0 ptr  0 jsr@0x1b4f0
+0x21ef6 cm550_registerJ1939InputMessageHandlers                    abs  1 rel  0 ptr  0 jsr@0x28e38
+0x21f4e cm550_diagnosticGroupPositionBufferStore                   abs  0 rel  5 ptr  0 bsr.w@0x220ee bsr.w@0x2216a bsr.w@0x22194 bsr.w@0x22206
+0x21fac cm550_diagnosticGroupSnapshotCapture                       abs  0 rel  4 ptr  0 bsr.w@0x22170 bsr.w@0x2217a bsr.w@0x22288 bsr.w@0x22294
+0x22070 cm550_memoryRegisterController                             abs  1 rel  0 ptr  0 jsr@0x1b4e4
+0x222b4 cm550_canDiagnosticResponseSender                          abs  0 rel  0 ptr  1 ptr@0x22372
+0x22370 cm550_systemFunction1xCaller                               abs  1 rel  0 ptr  0 jsr@0x28e44
+0x2238e cm550_diagMemoryReadResponseBuilder                        abs  0 rel  3 ptr  0 bsr.w@0x22524 bsr.w@0x22682 bsr.w@0x226ce
+0x22530 cm550_FUN_00022530                                         abs  0 rel  0 ptr  1 ptr@0x226e4
+0x2257c cm550_FUN_0002257c                                         abs  0 rel  0 ptr  2 ptr@0x22708 ptr@0x2dbce
+0x225e0 cm550_FUN_000225e0                                         abs  0 rel  0 ptr  1 ptr@0x22714
+0x22646 cm550_FUN_00022646                                         abs  0 rel  0 ptr  1 ptr@0x226f0
+0x2268e cm550_FUN_0002268e                                         abs  0 rel  0 ptr  1 ptr@0x226fc
+0x226da cm550_FUN_000226da                                         abs  1 rel  0 ptr  0 jsr@0x28e3e
+0x22726 sendJ1939MultiFrame                                        abs  1 rel  0 ptr  0 jsr@0x10514
+0x22956 cm550_diagnosticParamRequestHandler                        abs  0 rel  1 ptr  0 bsr.w@0x22e98
+0x229ea cm550_messageErrorHandler                                  abs  0 rel  4 ptr  0 bsr.w@0x22bac bsr.w@0x22c12 bsr.w@0x22c8a bsr.w@0x22d70
+0x22a58 vp44CanFrameBuilder                                        abs  0 rel  1 ptr  0 bsr.w@0x22cf8
+0x22ad8 vp44MessageTransmitter                                     abs  0 rel  3 ptr  0 bsr.w@0x22c02 bsr.w@0x22c78 bsr.w@0x22d60
+0x22b50 vp44FuelTempHandler                                        abs  0 rel  1 ptr  0 bsr.w@0x22ea6
+0x22c26 vp44MultiFrameResponseHandler                              abs  0 rel  0 ptr  1 ptr@0x231c4
+0x22d8e cm550_diagnosticStatusRequestHandler                       abs  0 rel  1 ptr  0 bsr.w@0x22eb4
+0x22de2 vp44_diagnosticErrorHandler                                abs  0 rel  1 ptr  0 bsr.w@0x22ec2
+0x22de6 vp44_diagnosticServiceByteHandler                          abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x22e5e vp44CanMessageDispatcher                                   abs  0 rel  0 ptr  1 ptr@0x231b4
+0x22e96 cm550_diagnosticParamRequestHandlerWrapper                 abs  0 rel  1 ptr  0 bcc.b@0x22e7c
+0x22ea4 vp44FuelTempHandlerWrapper                                 abs  0 rel  1 ptr  0 bcc.b@0x22e82
+0x22eb2 cm550_diagnosticStatusRequestHandlerWrapper                abs  0 rel  1 ptr  0 bcc.b@0x22e88
+0x22ec0 cm550_diagnosticErrorHandlerWrapper                        abs  0 rel  1 ptr  0 bcc.b@0x22e8e
+0x22ece cm550_unknownMessageHandler                                abs  0 rel  2 ptr  0 bsr.w@0x230fa bsr.w@0x2310e
+0x22fae cm550_diagnosticMessageProcessor                           abs  0 rel  1 ptr  0 bsr.w@0x2311e
+0x230d6 vp44ResponseTimeoutHandler                                 abs  0 rel  1 ptr  0 bsr.b@0x2312c
+0x230ee vp44_messageQueueDispatcher                                abs  1 rel  0 ptr  0 jsr@0x1b4ea
+0x23130 cm550_multiPacketBufferAllocator                           abs  2 rel  0 ptr  0 jsr@0x22464 jsr@0x321a8
+0x23186 vp44DiagnosticBufferPointersInit                           abs  1 rel  0 ptr  0 jsr@0x28bba
+0x231da cm550_fuelArbitratorResetHandler                           abs  5 rel  0 ptr  0 jsr@0x2350c jsr@0x23532 jsr@0x23544 jsr@0x23572
+0x23216 cm550_FUN_00023216                                         abs  3 rel  0 ptr  0 jsr@0x2366e jsr@0x23692 jsr@0x236aa
+0x2322a cm550_statisticsTrackingFlagsReset                         abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x23244 cm550_fuelDemandLimitOrchestrator                          abs  1 rel  0 ptr  0 jsr@0x1b4de
+0x23820 cm550_diagnosticMessageValidator                           abs  3 rel  0 ptr  0 jsr@0x1f522 jsr@0x1f904 jsr@0x2f1ac
+0x23870 cm550_ioControlTimeoutTableLookup                          abs  1 rel  0 ptr  0 jsr@0x2f886
+0x238ac cm550_ioControlEntryAdd                                    abs  2 rel  0 ptr  0 jsr@0x2352a jsr@0x2356a
+0x238ec cm550_ioControlTimeoutEntryAdd                             abs  1 rel  0 ptr  0 jsr@0x2368a
+0x23920 cm550_phase3_countdown_timer_manager                       abs  1 rel  0 ptr  0 jsr@0x1b510
+0x239d2 cm550_diagnosticStateInitializer                           abs  7 rel  0 ptr  0 jsr@0x1f62e jsr@0x1f686 jsr@0x1f71c jsr@0x1f9fc
+0x23a3c cm550_ioControlEntryRemove                                 abs  1 rel  0 ptr  0 jsr@0x2f878
+0x23a90 processProtectionFlagConditions                            abs  1 rel  0 ptr  0 jsr@0x24804
+0x23be8 diagnosticMainStateProcessor                               abs  1 rel  0 ptr  0 jsr@0x2480a
+0x24804 cm550_FUN_00024804                                         abs  1 rel  0 ptr  0 jsr@0x1b714
+0x24812 cm550_iahDisableWaitToStartLamp                            abs  2 rel  0 ptr  0 jsr@0x287c8 jsr@0x28990
+0x2481e cm550_initIoControlRegister                                abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x2482e cm550_ioControlMaskInit                                    abs  2 rel  0 ptr  0 jsr@0x287c2 jsr@0x2898a
+0x24858 cm550_ioControlMaskStateMachine                            abs  1 rel  0 ptr  0 jsr@0x254ce
+0x249b6 cm550_ioControlToggleCycle                                 abs  3 rel  0 ptr  0 jsr@0x24bda jsr@0x24bfe jsr@0x24c22
+0x249ee vp44_ioControlLampStateMachine                             abs  1 rel  0 ptr  0 jsr@0x254e4
+0x24b4e cm550_ioControlDigitDisplaySequencer                       abs  1 rel  0 ptr  0 jsr@0x24ef8
+0x24c5a cm550_FUN_00024c5a                                         abs  3 rel  0 ptr  0 jsr@0x24da0 jsr@0x24df8 jsr@0x24eaa
+0x24cd2 cm550_FUN_00024cd2                                         abs  1 rel  0 ptr  0 jsr@0x24e4c
+0x24d40 cm550_faultCodeDisplayController                           abs  1 rel  0 ptr  0 jsr@0x254da
+0x24f30 cm550_activeFaultLampStateMachine                          abs  1 rel  0 ptr  0 jsr@0x254f6
+0x25316 cm550_faultLampBlinkPatternGenerator                       abs  1 rel  0 ptr  0 jsr@0x25514
+0x253b0 cm550_FUN_000253b0                                         abs  1 rel  0 ptr  0 jsr@0x2552a
+0x25448 cm550_periodicLampFlashController                          abs  1 rel  0 ptr  0 jsr@0x25546
+0x254b6 cm550_FUN_000254b6                                         abs  1 rel  0 ptr  0 jsr@0x1b70c
+0x25594 cm550_clearSystemErrorStatus                               abs  1 rel  0 ptr  0 jsr@0x28984
+0x2571e cm550_calculatePedalFaultModeFuelDemand                    abs  1 rel  0 ptr  0 jsr@0x1b7e2
+0x25806 cm550_FUN_00025806                                         abs  1 rel  0 ptr  0 jsr@0x345ae
+0x258b0 presetPedalFaultModeFuelDemand                             abs  2 rel  0 ptr  0 jsr@0x25852 jsr@0x258a4
+0x258d6 initializePedalFaultModeEngineSpeedFilter                  abs  1 rel  0 ptr  0 jsr@0x345ce
+0x258e8 cm550_epsTimingCalculationSlowCycle40Coordinator           abs  1 rel  0 ptr  0 jsr@0x1bb8e
+0x25926 cm550_initLookupTablePointers1                             abs  1 rel  0 ptr  0 jsr@0x287ce
+0x2595a cm550_governorFuelPidController                            abs  0 rel  2 ptr  0 bsr.w@0x25a50 bsr.w@0x25e32
+0x25a30 cm550_fuel_delivery_controller                             abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x25a34 vp44_FUN_00025a34                                          abs  0 rel  1 ptr  0 bsr.w@0x25cb8
+0x25b1c cm550_runLowSpeedGovernor                                  abs  1 rel  0 ptr  0 jsr@0x1b5d4
+0x25ff2 cm550_presetLowSpeedGovernorSpeedError                     abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x26078 cm550_initializeLowSpeedGovernor                           abs  1 rel  0 ptr  0 jsr@0x2880a
+0x2609c cm550_epsAccelerationMonitor                               abs  1 rel  0 ptr  0 jsr@0x262ae
+0x26252 cm550_epsRpmTrackingInit                                   abs  1 rel  0 ptr  0 jsr@0x262fa
+0x2626a cm550_epsControlModeReset                                  abs  1 rel  0 ptr  0 jsr@0x26318
+0x26272 cm550_epsOverrideChecker                                   abs  0 rel  1 ptr  0 bsr.b@0x262be
+0x2629e cm550_epsControlModeSelector                               abs  1 rel  0 ptr  0 jsr@0x25c9e
+0x262fa cm550_epsInitializationWrapper                             abs  1 rel  0 ptr  0 jsr@0x26066
+0x26308 cm550_epsControlModeInit                                   abs  1 rel  0 ptr  0 jsr@0x2608c
+0x26340 cm550_epsDiagnosticModeHandler                             abs  1 rel  0 ptr  0 jsr@0x1b5da
+0x26462 cm550_initOilPressureMonitoring                            abs  1 rel  0 ptr  0 jsr@0x26300
+0x26474 cm550_engineModeTimingAdjuster                             abs  1 rel  0 ptr  0 jsr@0x266d2
+0x26484 vp44_rpm_derate_monitor                                    abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x2658c cm550_fuelDemandLimitSource2Selector                       abs  1 rel  0 ptr  0 jsr@0x287d4
+0x2659a vp44_initVP44StatusFlags                                   abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x265e6 cm550_epsRpmTargetModeChecker                              abs  1 rel  0 ptr  0 jsr@0x262b4
+0x26616 cm550_FUN_00026616                                         abs  1 rel  0 ptr  1 jsr@0x1b7a8 ptr@0x23846
+0x266d2 cm550_timingOffsetCalculatorWrapper                        abs  1 rel  0 ptr  0 jsr@0x1b7a2
+0x266da mc68k_runSerialEepromWriteQueue                            abs  0 rel  2 ptr  0 bsr.w@0x26840 bsr.w@0x2698e
+0x26834 mc68k_FUN_00026834                                         abs  0 rel  0 ptr  1 ptr@0x26862
+0x26852 cm550_FUN_00026852                                         abs  0 rel  1 ptr  0 bsr.b@0x2685e
+0x26854 mc68k_FUN_00026854                                         abs  1 rel  0 ptr  0 jsr@0x28674
+0x269f2 cm550_FUN_000269f2                                         abs  1 rel  0 ptr  0 jsr@0x1b56a
+0x26a2e cm550_FUN_00026a2e                                         abs  1 rel  0 ptr  0 jsr@0x2896a
+0x26a64 cm550_memcpy                                               abs 21 rel  0 ptr  1 jsr@0x21698 jsr@0x216e0 jsr@0x216f6 jsr@0x2172e
+0x26a7e cm550_fuelDemandTablePointersInit                          abs  1 rel  0 ptr  0 jsr@0x28912
+0x26ab8 cm550_rpmLoadParameterLookup                               abs  1 rel  0 ptr  0 jsr@0x1b5ec
+0x26af0 cm550_FUN_00026af0                                         abs  1 rel  0 ptr  0 jsr@0x30b34
+0x26b00 vp44OperatingConditionChecker                              abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x26b3a cm550_FUN_00026b3a                                         abs  1 rel  0 ptr  0 jsr@0x1b7ca
+0x26b82 cm550_FUN_00026b82                                         abs  1 rel  0 ptr  0 jsr@0x287da
+0x26b88 hpcr_injectorPulseWidthCalc                                abs  1 rel  0 ptr  0 jsr@0x1bada
+0x26c7e mc68k_pwmOutputInit                                        abs  1 rel  0 ptr  0 jsr@0x28846
+0x26cc8 calculateSpeedRatioComponent                               abs  1 rel  0 ptr  0 jsr@0x1b794
+0x26e2c cm550_FUN_00026e2c                                         abs  1 rel  0 ptr  0 jsr@0x1b79a
+0x26e86 cm550_FUN_00026e86                                         abs  1 rel  0 ptr  0 jsr@0x28756
+0x26e8e cm550_FUN_00026e8e                                         abs  2 rel  0 ptr  0 jsr@0x1b546 jsr@0x26e86
+0x26eec cm550_insiteActiveFaultListBuilder                         abs  1 rel  0 ptr  0 jsr@0xf486
+0x26fea cm550_insiteFaultDetailBuilder                             abs  1 rel  0 ptr  0 jsr@0xf490
+0x2758e cm550_insiteVersionInfoBuilder                             abs  1 rel  0 ptr  0 jsr@0xf576
+0x27706 cm550_insiteCapacityResponseBuilder                        abs  1 rel  0 ptr  0 jsr@0xf616
+0x277e6 cm550_FUN_000277e6                                         abs  1 rel  0 ptr  0 jsr@0xf620
+0x27998 vp44_hourMeterEventLogger                                  abs  1 rel  0 ptr  0 jsr@0x1b6e4
+0x27af0 restartOnKeyOnDuringPowerDown                              abs  6 rel  0 ptr  0 jsr@0x27ca4 jsr@0x27e92 jsr@0x27f8c jsr@0x2836c
+0x27c20 vp44_FUN_00027c20                                          abs  1 rel  0 ptr  0 jsr@0x2801e
+0x27cd0 cm550_savePowerDownDataToFlashBank                         abs  4 rel  0 ptr  0 jsr@0x280aa jsr@0x280b8 jsr@0x280c6 jsr@0x280d0
+0x27f9c mc68k_runPowerDownSequence                                 abs  1 rel  0 ptr  0 jsr@0x289fa
+0x284e8 mc68k_applicationMain                                      abs  1 rel  0 ptr  0 jsr@0x1dcf4
+0x28978 cm550_restartApplicationWithoutReset                       abs  0 rel  0 ptr  1 ptr@0x27c10
+0x28a04 mc68k_dualCanControllerInit                                abs  1 rel  0 ptr  0 jsr@0x28858
+0x28b80 mc68k_initializeJ1939Datalink                              abs  1 rel  0 ptr  0 jsr@0x28b70
+0x29130 mc68k_initializeJ1708Datalink                              abs  1 rel  0 ptr  0 jsr@0x2885e
+0x2ce64 cm550_updateBootBlockFromImage                             abs  1 rel  0 ptr  2 jsr@0x2827e ptr@0x2ceee ptr@0x2cf26
+0x2cf52 cm550_FUN_0002cf52                                         abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x2cf7e cm550_FUN_0002cf7e                                         abs  1 rel  0 ptr  0 jsr@0x1ed88
+0x2d09e cm550_systemControl64                                      abs  1 rel  0 ptr  0 jsr@0x161a6
+0x2d1c2 cm550_systemControl74                                      abs  1 rel  0 ptr  0 jsr@0x16234
+0x2d1e0 cm550_systemControl75                                      abs  1 rel  0 ptr  0 jsr@0x1623e
+0x2d1fe cm550_memoryPatchBufferInit                                abs  0 rel  0 ptr  1 ptr@0x2d21c
+0x2d216 cm550_memoryPatchingSystem                                 abs  1 rel  0 ptr  0 jsr@0x1610e
+0x2d3c6 cm550_runPowerTakeOffGovernor                              abs  1 rel  0 ptr  0 jsr@0x1b590
+0x2d9a8 cm550_FUN_0002d9a8                                         abs  1 rel  0 ptr  0 jsr@0x30c42
+0x2d9d2 cm550_presetPowerTakeOffGovernorOnEngagement               abs  1 rel  0 ptr  0 jsr@0x2d3f6
+0x2db2a initializePowerTakeOffGovernorFiltersAndGains              abs  1 rel  0 ptr  0 jsr@0x345d4
+0x2dbde smoothPowerTakeOffReferenceEngineSpeed                     abs  1 rel  0 ptr  0 jsr@0x1b58a
+0x2dc8c presetPowerTakeOffSmoothedReferenceEngineSpeed             abs  1 rel  0 ptr  0 jsr@0x2d9f2
+0x2dc9e initializePowerTakeOffReferenceFilter                      abs  1 rel  0 ptr  0 jsr@0x2db5a
+0x2dcb0 cm550_oil_pressure_shutdown_controller                     abs  1 rel  0 ptr  0 jsr@0x1b596
+0x2ddbc cm550_FUN_0002ddbc                                         abs  1 rel  0 ptr  0 jsr@0x287ec
+0x2ddce mc68k_hardwareTimerFlagsInit                               abs  1 rel  0 ptr  0 jsr@0x28804
+0x2ddd6 mc68k_initDiagnosticModeSystem                             abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x2dde8 mc68k_monitorPwmOutputReadBackFaults                       abs  1 rel  0 ptr  0 jsr@0x1b6f2
+0x2e2f4 mc68k_stepPwm3AndPwm4OutputStartUpTest                     abs  1 rel  0 ptr  0 jsr@0x2de14
+0x2e5c0 mc68k_pwmFuelDemandOutputCalculator                        abs  2 rel  0 ptr  0 jsr@0x2867a jsr@0x28978
+0x2e95e initQadcModule                                             abs  1 rel  0 ptr  0 jsr@0x28656
+0x2e9ac clearWorkingRam                                            abs  1 rel  0 ptr  0 jsr@0x2861c
+0x2e9f8 cm550_initializeRamRefresh                                 abs  3 rel  0 ptr  0 jsr@0x11248 jsr@0x114c2 jsr@0x2eaf0
+0x2eadc cm550_refreshRamCalibration                                abs  1 rel  0 ptr  0 jsr@0x1bd8c
+0x2ec50 cm550_FUN_0002ec50                                         abs  1 rel  0 ptr  0 jsr@0x1b558
+0x2ed62 cm550_FUN_0002ed62                                         abs  1 rel  0 ptr  0 jsr@0x2882e
+0x2ed6a cm550_insiteParameterParser                                abs  1 rel  0 ptr  0 jsr@0x1e9ca
+0x2edb2 cm550_parameterLookupForInsite                             abs  4 rel  0 ptr  0 jsr@0xec80 jsr@0x1e9e2 jsr@0x1ea4a jsr@0x1eb48
+0x2ee62 registerJ1939DiagnosticService                             abs  1 rel  0 ptr  4 jsr@0x2237a ptr@0x11b3a ptr@0x200cc ptr@0x21876
+0x2eea2 cm550_diagnosticServiceDispatcher                          abs  1 rel  0 ptr  1 jsr@0x22d0e ptr@0x2ef0a
+0x2ef08 cm550_systemControlFunction1                               abs  1 rel  0 ptr  0 jsr@0x28e1a
+0x2ef1c cm550_diagnosticResponseHandler2                           abs  0 rel  0 ptr  1 ptr@0x2ef38
+0x2ef36 cm550_canTransmissionTrigger                               abs  1 rel  0 ptr  0 jsr@0x2f5ea
+0x2ef4a cm550_FUN_0002ef4a                                         abs  0 rel  0 ptr  1 ptr@0x2efbe
+0x2efbc cm550_systemControlFunction2                               abs  1 rel  0 ptr  0 jsr@0x28e32
+0x2efd0 cm550_diagnosticServiceDispatcherByPgn                     abs  0 rel  0 ptr  1 ptr@0x2f116
+0x2f114 cm550_systemControlFunction3                               abs  1 rel  0 ptr  0 jsr@0x28e26
+0x2f128 processEngineTsc1Request                                   abs  1 rel  0 ptr  0 jsr@0x2fb8c
+0x2f4be cm550_FUN_0002f4be                                         abs  0 rel  0 ptr  1 ptr@0x2f542
+0x2f538 cm550_diagnosticDataDump                                   abs  1 rel  0 ptr  0 jsr@0x28e2c
+0x2f606 cm550_FUN_0002f606                                         abs  0 rel  2 ptr  0 bsr.w@0x2f980 bsr.w@0x2fa5a
+0x2f632 j1939FormatMultiFrameResponse                              abs  0 rel  2 ptr  0 bsr.w@0x2f98e bsr.w@0x2fa90
+0x2f7e6 cm550_retarderControlModeHandler                           abs  1 rel  0 ptr  0 jsr@0x2fba4
+0x2faa4 cm550_FUN_0002faa4                                         abs  1 rel  0 ptr  0 jsr@0x28c1e
+0x2faba cm550_initOilPressureProtectionPointers                    abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x2fb70 cm550_torqueControlAddressDispatcher                       abs  0 rel  0 ptr  1 ptr@0x2fbb4
+0x2fbb2 cm550_FUN_0002fbb2                                         abs  1 rel  0 ptr  0 jsr@0x28e20
+0x2fbd8 unscrambleSecurityKey                                      abs  0 rel  1 ptr  0 bsr.w@0x2fd0e
+0x2fcdc validateSecurityKey                                        abs  4 rel  0 ptr  0 jsr@0x1608a jsr@0x2156a jsr@0x215d4 jsr@0x21a02
+0x2fd90 cm550_FUN_0002fd90                                         abs  0 rel  1 ptr  0 bsr.w@0x2fe22
+0x2fddc cm550_resetFaultStatus                                     abs  2 rel  0 ptr  0 jsr@0x145ec jsr@0x14838
+0x2fe38 cm550_diagnosticTableSnapshotCapture                       abs  0 rel  0 ptr  1 ptr@0x1472a
+0x300d4 mc68k_j1708BusTimerInterruptHandler                        abs  0 rel  0 ptr  1 ptr@0x30276
+0x30274 mc68k_engineSpeedIsrRegister                               abs  1 rel  0 ptr  0 jsr@0x2883a
+0x30290 mc68k_engineRpmHardwareTimerSetup                          abs  1 rel  0 ptr  0 jsr@0x1b9c6
+0x30342 mc68k_initializeTpuChannel12                               abs  1 rel  0 ptr  0 jsr@0x28840
+0x303c8 cm550_emptyStubFunction9                                   abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x303d2 cm550_emptyInitPlaceholder                                 abs  0 rel  1 ptr  0 bcc.b@0x303ce
+0x303d4 cm550_accumulatorWithOverflowCarry                         abs  0 rel  7 ptr  0 bsr.b@0x3043e bsr.b@0x3044c bsr.w@0x3047e bsr.w@0x3048e
+0x30414 cm550_runTimeCountersUpdate                                abs  0 rel  1 ptr  0 bsr.w@0x30a32
+0x30454 cm550_runTimeCountersUpdateAlt                             abs  0 rel  1 ptr  0 bsr.w@0x30a38
+0x30498 cm550_FUN_00030498                                         abs  0 rel  1 ptr  0 bsr.w@0x30a3c
+0x304f4 cm550_rpmHistogramAndAveragingStatistics                   abs  0 rel  1 ptr  0 bsr.w@0x30a54
+0x3061a cm550_fuelLimitRestoreFromCapture                          abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x306ca cm550_FUN_000306ca                                         abs  1 rel  0 ptr  0 jsr@0x1b868
+0x30a5e cm550_FUN_00030a5e                                         abs  1 rel  0 ptr  0 jsr@0x27fb0
+0x30a64 cm550_protectionFlagAccumulator                            abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x30ade cm550_FUN_00030ade                                         abs  1 rel  0 ptr  0 jsr@0x287f2
+0x30b04 cm550_protectionLimitValueInit                             abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x30b0e cm550_FUN_00030b0e                                         abs  1 rel  0 ptr  0 jsr@0x28774
+0x30b10 cm550_fuelDemandLimitSelector4                             abs  0 rel  1 ptr  0 bsr.b@0x30b52
+0x30b34 cm550_FUN_00030b34                                         abs  0 rel  1 ptr  0 bsr.b@0x30b7e
+0x30b62 vp44InjectionSystemStateController                         abs  1 rel  0 ptr  0 jsr@0x1b62a
+0x30bf6 cm550_shutdownMinimumSelector28                            abs  0 rel  1 ptr  0 bsr.b@0x30c62
+0x30c14 cm550_shutdownMinimumSelector20                            abs  0 rel  1 ptr  0 bsr.b@0x30c60
+0x30c3c cm550_FUN_00030c3c                                         abs  1 rel  0 ptr  0 jsr@0x1c18a
+0x30c78 cm550_masterSubsystemInit                                  abs  1 rel  0 ptr  0 jsr@0x28816
+0x31428 mc68k_loadTpuMicrocode                                     abs  1 rel  0 ptr  0 jsr@0x28616
+0x31496 cm550_FUN_00031496                                         abs  1 rel  0 ptr  0 jsr@0x1b7b0
+0x315be cm550_FUN_000315be                                         abs  1 rel  0 ptr  0 jsr@0x1b9ea
+0x31a68 cm550_FUN_00031a68                                         abs  1 rel  0 ptr  0 jsr@0x287f8
+0x31ace findTsc1SourceConfiguration                                abs  9 rel  0 ptr  0 jsr@0x1f58c jsr@0x1f5b4 jsr@0x1f95a jsr@0x1f982
+0x31b22 cm550_diagnosticCanResponseSender                          abs  3 rel  0 ptr  0 jsr@0x2ef2c jsr@0x2efae jsr@0x2f52a
+0x31b96 cm550_canBufferSetup1                                      abs  1 rel  0 ptr  0 jsr@0x28bdc
+0x31bce cm550_FUN_00031bce                                         abs  0 rel  0 ptr  2 ptr@0x28d76 ptr@0x2f5b8
+0x31c1a cm550_j1939MessageSetup_PGN_65265                          abs  1 rel  0 ptr  0 jsr@0x28c24
+0x31c84 j1939HandlePgn65265CruiseVehicleSpeed                      abs  0 rel  0 ptr  2 ptr@0x28c5c ptr@0x31f1e
+0x31ed2 cm550_FUN_00031ed2                                         abs  1 rel  0 ptr  0 jsr@0x28be2
+0x31f30 j1939HandlePgn65261CruiseControlSetup                      abs  0 rel  0 ptr  1 ptr@0x2f594
+0x31fee initPgn65261CruiseControlSetupStruct                       abs  1 rel  0 ptr  0 jsr@0x2f550
+0x32052 cm550_FUN_00032052                                         abs  0 rel  0 ptr 27 ptr@0xb774 ptr@0x1e8fc ptr@0x1e926 ptr@0x1f16c
+0x320f6 cm550_engineSerialNumberPGN_65259_Builder                  abs  1 rel  0 ptr  0 jsr@0x2f556
+0x3216a cm550_diagnosticMultiPacketResponseBuilder                 abs  3 rel  0 ptr  0 jsr@0x119fe jsr@0x2eefa jsr@0x32160
+0x32244 cm550_diagnosticDM11PGN_65234_Builder                      abs  1 rel  0 ptr  0 jsr@0x2f5fc
+0x322ae j1939HandlePgn65226Dm1ActiveDtc                            abs  1 rel  0 ptr  1 jsr@0x322a4 ptr@0x3240a
+0x323be cm550_engineCoolantPGN_65226_Builder                       abs  2 rel  0 ptr  0 jsr@0x28c4e jsr@0x2f5de
+0x3241c cm550_previousDtcListBuilder                               abs  0 rel  0 ptr  1 ptr@0x32578
+0x3252c cm550_diagnosticDM2PGN_65227_Builder                       abs  1 rel  0 ptr  0 jsr@0x2f5e4
+0x3258a evaluateTemperatureDiagnosticState                         abs  0 rel  0 ptr  1 ptr@0x32a2e
+0x329d2 cm550_diagnosticDM4PGN_65229_Builder                       abs  1 rel  0 ptr  0 jsr@0x2f5f0
+0x32a42 vp44_diagnosticDM5DataBuilder                              abs  0 rel  0 ptr  1 ptr@0x32b26
+0x32ae2 cm550_diagnosticDM5PGN_65230_Builder                       abs  1 rel  0 ptr  0 jsr@0x2f5f6
+0x32b38 vp44_diagnosticByteResponseSender                          abs  2 rel  0 ptr  0 jsr@0x2ef76 jsr@0x2ef9a
+0x32b64 vp44_diagnosticDM8PGN_65232_Builder                        abs  1 rel  0 ptr  0 jsr@0x28c54
+0x32c22 vp44_FUN_00032c22                                          abs  1 rel  0 ptr  0 jsr@0x28be8
+0x32c76 sendPgn61444ElectronicEngineController1Message             abs  0 rel  0 ptr  1 ptr@0x28c72
+0x32c7a vp44Message300FaultFlagProcessor                           abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x32e08 vp44Command0x100Builder                                    abs  1 rel  0 ptr  0 jsr@0x28bee
+0x32e4c j1939HandlePgn61443Eec2                                    abs  0 rel  0 ptr  2 ptr@0x28c86 ptr@0x330b0
+0x33064 vp44_cumminsProprietaryDM_983_Builder                      abs  1 rel  0 ptr  0 jsr@0x28bf4
+0x330c4 vp44_configParamCanBuilder                                 abs  0 rel  0 ptr  1 ptr@0x28ca0
+0x33120 vp44_secondaryParamPGN_65247_Builder                       abs  1 rel  0 ptr  0 jsr@0x28bfa
+0x33164 vp44_FUN_00033164                                          abs  0 rel  0 ptr  2 ptr@0x28d46 ptr@0x2f5a0
+0x331ae vp44_engineFluidLevelPGN_65263_Builder                     abs  1 rel  0 ptr  0 jsr@0x28c2a
+0x3320e buildPgn65251EngineConfiguration1Payload                   abs  0 rel  2 ptr  0 bsr.w@0x33528 bsr.w@0x3367c
+0x333d6 cm550_FUN_000333d6                                         abs  0 rel  0 ptr  1 ptr@0x33504
+0x33460 cm550_FUN_00033460                                         abs  0 rel  0 ptr  1 ptr@0x334fe
+0x334ec cm550_FUN_000334ec                                         abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x3366a cm550_FUN_0003366a                                         abs  1 rel  0 ptr  1 jsr@0x3365e ptr@0x28cb6
+0x33692 initializePgn65251EngineConfiguration1Buffer               abs  1 rel  0 ptr  0 jsr@0x28c00
+0x33716 cm550_FUN_00033716                                         abs  0 rel  0 ptr  1 ptr@0x337b2
+0x33754 cm550_FUN_00033754                                         abs  1 rel  0 ptr  0 jsr@0x2f55c
+0x337c4 cm550_FUN_000337c4                                         abs  0 rel  0 ptr  2 ptr@0x28d16 ptr@0x338d8
+0x33880 cm550_engineTemperaturePGN_65262_Builder                   abs  1 rel  0 ptr  0 jsr@0x2f562
+0x338ea cm550_dutyCycleMonitorAltIsrHandler                        abs  0 rel  0 ptr  1 ptr@0x28ccc
+0x339b0 cm550_cumminsProprietaryTSC_PGN_15728640_Builder           abs  1 rel  0 ptr  0 jsr@0x28c06
+0x33a1e cm550_FUN_00033a1e                                         abs  1 rel  0 ptr  0 jsr@0x28c0c
+0x33a62 cm550_FUN_00033a62                                         abs  0 rel  0 ptr  1 ptr@0x33b2e
+0x33aea cm550_retarderConfigPGN_65249_Builder                      abs  1 rel  0 ptr  0 jsr@0x2f568
+0x33b40 cm550_fuelEconomyDataBuilder                               abs  0 rel  0 ptr  1 ptr@0x28ce8
+0x33c28 cm550_fuelEconomyPGN_65266_Builder                         abs  1 rel  0 ptr  0 jsr@0x28c12
+0x33c6c cm550_ioControlDataBuilder                                 abs  0 rel  0 ptr  1 ptr@0x33d26
+0x33ce2 vp44_ioControlPGN_65244_Builder                            abs  1 rel  0 ptr  0 jsr@0x2f56e
+0x33dfa vp44_engineHoursPGN_65252_Builder                          abs  1 rel  0 ptr  0 jsr@0x28c30
+0x33e58 cm550_FUN_00033e58                                         abs  0 rel  0 ptr  2 ptr@0x28d8c ptr@0x2f5c4
+0x33eee cm550_intakeManifoldPGN_65526_Builder                      abs  1 rel  0 ptr  0 jsr@0x28c36
+0x33f5a cm550_FUN_00033f5a                                         abs  0 rel  0 ptr  2 ptr@0x28d5c ptr@0x2f5ac
+0x3401a cm550_cruiseControlPGN_65264_Builder                       abs  1 rel  0 ptr  0 jsr@0x28c3c
+0x3407a vp44CanMessage100ResponseBuilder                           abs  0 rel  0 ptr  1 ptr@0x28cfe
+0x341e6 cm550_FUN_000341e6                                         abs  1 rel  0 ptr  0 jsr@0x28c18
+0x34232 cm550_FUN_00034232                                         abs  0 rel  0 ptr  1 ptr@0x342de
+0x3429a cm550_vehicleDistancePGN_65248_Builder                     abs  1 rel  0 ptr  0 jsr@0x2f574
+0x342f0 cm550_retarderDataBuilder                                  abs  0 rel  0 ptr  2 ptr@0x28da2 ptr@0x2f5d0
+0x34334 cm550_electronicBrakePGN_65527_Builder                     abs  1 rel  0 ptr  0 jsr@0x28c42
+0x34394 cm550_FUN_00034394                                         abs  0 rel  0 ptr  1 ptr@0x3441e
+0x343d2 vp44_vehicleHoursPGN_65255_Builder                         abs  1 rel  0 ptr  0 jsr@0x2f57a
+0x34440 cm550_FUN_00034440                                         abs  1 rel  0 ptr  0 jsr@0x2f580
+0x344ce vp44_FUN_000344ce                                          abs  1 rel  0 ptr  0 jsr@0x28c48
+0x34512 cm550_FUN_00034512                                         abs  1 rel  0 ptr  0 jsr@0x1b974
+0x3452a cm550_FUN_0003452a                                         abs  1 rel  0 ptr  0 jsr@0x2870e
+0x34534 cm550_initLoopCounter                                      abs  0 rel  0 ptr  0   <== NO ENTRY (the code before it falls through into it)
+0x34540 cm550_setDiagnosticSourceFromFuelArbitrator                abs  0 rel  1 ptr  0 bsr.b@0x345a0
+0x34564 cm550_setDiagnosticSourceFromEngineFlags                   abs  0 rel  1 ptr  0 bsr.b@0x345aa
+0x3458c cm550_engine_protection_coordinator                        abs  1 rel  0 ptr  0 jsr@0x1b578
+0x345c8 cm550_initMultiSystemParameters                            abs  1 rel  0 ptr  0 jsr@0x28726
+0x3460e lookupApplicationMemoryRegionType                          abs  7 rel  0 ptr  0 jsr@0x16780 jsr@0x16986 jsr@0x16b04 jsr@0x1ed16
+0x34674 mc68k_initializeSpeedMeasurementMode0                      abs  4 rel  0 ptr  0 jsr@0x19ac2 jsr@0x19e86 jsr@0x1a522 jsr@0x1a89a
+0x34696 mc68k_timerCaptureHardwareInit                             abs  0 rel  1 ptr  0 bcc.b@0x34686
+0x3478c mc68k_resetSpeedMeasurementMode0                           abs  3 rel  0 ptr  0 jsr@0x1b1d0 jsr@0x1b380 jsr@0x1b4b6
+0x3480e mc68k_setUpTpuChannel3AnglePulseOutput                     abs  0 rel  1 ptr  0 bsr.w@0x34b18
+0x3494a mc68k_updateTpuChannel3AnglePulseOutput                    abs  1 rel  1 ptr  0 jsr@0x34780 bsr.w@0x34ba8
+0x34a82 mc68k_configureTpuChannelsForSpeedMeasurementMode          abs  4 rel  0 ptr  0 jsr@0x19c8c jsr@0x1a1c2 jsr@0x1a728 jsr@0x1a93c
+0x34b20 mc68k_alignCylinderIndexToCrankRevolution                  abs  0 rel  0 ptr  1 ptr@0x34a6c
+0x34bba mc68k_delayTimeBaseTicksWithWatchdogService                abs  6 rel  0 ptr  3 jsr@0x11ae2 jsr@0x27b5c jsr@0x27c80 jsr@0x27f70
+0x34bf8 mc68k_delayTimeBaseTicksWithWatchdogService2               abs  0 rel  0 ptr  1 ptr@0x11938
+0x34c36 vp44FaultRegisterBit2Monitor                               abs  1 rel  0 ptr  0 jsr@0x1ba98
+0x34cc4 vp44_liftPumpFuelDeliveryController                        abs  1 rel  0 ptr  0 jsr@0x1ba6e
+0x34d52 vp44_FUN_00034d52                                          abs  1 rel  0 ptr  0 jsr@0x1b61e
+0x34dba cm550_FUN_00034dba                                         abs  1 rel  0 ptr  0 jsr@0x30b46
+0x34de0 lookupTableInterpolation                                   abs 42 rel  0 ptr  2 jsr@0xb386 jsr@0xb4a0 jsr@0xbbb4 jsr@0xc92c
+0x34e9a cm550_signedFirstOrderFilter                               abs  6 rel  0 ptr  0 jsr@0xb250 jsr@0xb294 jsr@0x1ac9e jsr@0x1cee6
+0x34f00 cm550_secondOrderFilter                                    abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x34f8a cm550_exponentialMovingAverage                             abs 11 rel  0 ptr  0 jsr@0xbc52 jsr@0xbca4 jsr@0xc456 jsr@0xcadc
+0x34fe0 cm550_secondOrderFilterUnsigned                            abs  0 rel  0 ptr  0   <== NO ENTRY (after a return)
+0x35064 cm550_scaleByRatio                                         abs 25 rel  0 ptr  2 jsr@0xf660 jsr@0xf67e jsr@0x12018 jsr@0x1205c
+0x35076 cm550_scaleByRatioSigned                                   abs 14 rel  0 ptr  1 jsr@0xcc2e jsr@0xcc8c jsr@0x120d4 jsr@0x12238
+0x35088 cm550_tableLookup2D                                        abs 25 rel  0 ptr  2 jsr@0xad22 jsr@0xad42 jsr@0xad58 jsr@0xad6a
+0x21a5c receivePgn57344CabMessage1                                 abs  0 rel  0 ptr  1 ptr@0x21f00
+0x21c3c receivePgn65252ShutdownMessage                             abs  0 rel  0 ptr  1 ptr@0x21f24
+763 rows; 72 with no entry

@@ -1,0 +1,4 @@
+address,name,old_label,kind,dims
+0x000171aa,cm550_initializeEnginePositionSignalInputs,cm550_can1PwmTimerInit,symbol,1
+0x00017150,cm550_initializeEnginePositionSignalInputs,cm550_canControllerConfigInit,symbol,1
+0x00807e9d,engine_position_signal_configuration,speed_measurement_mode,symbol,1
