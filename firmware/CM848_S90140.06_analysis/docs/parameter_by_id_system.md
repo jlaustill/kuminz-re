@@ -18,7 +18,7 @@ The rest of this page predates these findings. Where it disagrees, these hold:
   - The read starts at the resolved address.
   - A read under 256 bytes answers with 0x44 and copies byte 6 (the length's low byte) into the 1-byte length slot.
   - The services with an offset are 0x46 (2-byte offset, 1-byte length) and 0x48 (4-byte offset, 4-byte length).
-- **Service 0x46 is registered** by the application (`cm848_registerJ1939MemoryReadServices`). The boot kernel does
+- **Service 0x46 is registered** by the application (`registerJ1939MemoryReadServices`). The boot kernel does
   not register it.
 - **0x10 and 0x15 are not stubs of one kind.** 0x0F / 0x10 are accepted no-ops (they return 0). 0x15 commits the
   EEPROM mirror (`cm848_commitEepromMirrorToEeprom`: round 73 shared the name `commitEepromMirrorToEeprom` with CM550,
@@ -104,33 +104,33 @@ typedef struct {
 
 ### Table Contents (20 entries)
 
-| Param ID | Address | Region | Variable/Purpose |
-|----------|---------|--------|------------------|
-| 0x0000 | 0x01000036 | EEPROM | |
-| 0x0002 | 0x0000010C | ROM | Build date/version |
-| 0x0003 | 0x01000080 | EEPROM | |
-| 0x0004 | 0x00302012 | MPC555 | qadc_a_portqb (ADC port) |
-| 0x0005 | 0x01000002 | EEPROM | |
-| 0x000B | 0x01000000 | EEPROM | Calibration status indicator |
-| 0x000C | 0x0030252E | MPC555 | |
-| 0x000D | 0x00302738 | MPC555 | |
-| 0x000E | 0x00302002 | MPC555 | qadc_a_mcr (ADC control reg) |
-| 0x0010 | 0x00302736 | MPC555 | |
-| 0x0012 | 0x01000090 | EEPROM | Tool compatibility version |
-| 0x0013 | 0x00302894 | MPC555 | |
-| 0x0015 | 0x00302898 | MPC555 | |
-| 0x0018 | 0x0030287C | MPC555 | qadc_a_result_ch4 |
-| 0x0019 | 0x0100003A | EEPROM | |
-| 0x0045 | 0x00000112 | ROM | |
-| 0x0048 | 0x0100003A | EEPROM | (same as 0x0019) |
-| 0x1000 | 0x0100008E | EEPROM | Calibration parameter |
-| 0x12A3 | 0x00000116 | ROM | |
-| 0x12A9 | 0x00000108 | ROM | |
+| Param ID | Address | Region | Variable | Purpose |
+|----------|---------|--------|----------|---------|
+| 0x0000 | 0x01000036 | EEPROM | `ecm_hardware_type_identifier_cal` |  |
+| 0x0002 | 0x0000010C | ROM |  | Build date/version |
+| 0x0003 | 0x01000080 | EEPROM |  |  |
+| 0x0004 | 0x00302012 | DPTRAM | `ecu_power_state_flags.runtime_counter` |  |
+| 0x0005 | 0x01000002 | EEPROM | `security_master_password_cal` |  |
+| 0x000B | 0x01000000 | EEPROM | `eeprom_mirror` | Calibration status indicator |
+| 0x000C | 0x0030252E | DPTRAM |  |  |
+| 0x000D | 0x00302738 | DPTRAM | `system_initialization_flags.initialization_counter` |  |
+| 0x000E | 0x00302002 | DPTRAM | `ecu_power_state_flags` |  |
+| 0x0010 | 0x00302736 | DPTRAM | `system_initialization_flags` |  |
+| 0x0012 | 0x01000090 | EEPROM |  | Tool compatibility version |
+| 0x0013 | 0x00302894 | DPTRAM |  |  |
+| 0x0015 | 0x00302898 | DPTRAM |  |  |
+| 0x0018 | 0x0030287C | DPTRAM |  |  |
+| 0x0019 | 0x0100003A | EEPROM |  |  |
+| 0x0045 | 0x00000112 | ROM |  |  |
+| 0x0048 | 0x0100003A | EEPROM |  | (same as 0x0019) |
+| 0x1000 | 0x0100008E | EEPROM | `calibration_download_security_key_cal` | Calibration parameter |
+| 0x12A3 | 0x00000116 | ROM |  |  |
+| 0x12A9 | 0x00000108 | ROM |  |  |
 
 ### Address Distribution
-- **EEPROM** (0x01xxxxxx): 8 entries - non-volatile configuration
-- **MPC555 Registers** (0x003xxxxx): 7 entries - ADC/hardware status
-- **ROM** (0x000xxxxx): 5 entries - build info and constants
+- **EEPROM** (0x01xxxxxx): 8 entries - non-volatile configuration (variable names through the RAM mirror 0x3fd482 + offset)
+- **DPTRAM** (0x00302000-0x003037FF, the MPC555 dual-port TPU RAM array): 8 entries - application RAM variables, not registers (QADC_A is at 0x304800; PR #53 round 96 corrected the earlier 'qadc_a_*' register names)
+- **ROM** (0x000xxxxx): 4 entries - build info and constants
 
 ## Service Protocol
 

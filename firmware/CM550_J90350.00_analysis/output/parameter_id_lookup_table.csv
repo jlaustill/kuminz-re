@@ -43,7 +43,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4102,0x1006,397728,0x000611A0,ROM,,LCLPONTM
 4104,0x1008,8445654,0x0080DED6,RAM,,VSPSPD
 4107,0x100B,8421032,0x00807EA8,RAM,engine_speed_filter_coefficient,ESESFTTC
-4108,0x100C,8441074,0x0080CCF2,RAM,fuel_demand_blend_mode_select,ESAVES
+4108,0x100C,8441074,0x0080CCF2,RAM,average_engine_speed,ESAVES
 4110,0x100E,8443528,0x0080D688,RAM,,
 4112,0x1010,8445042,0x0080DC72,RAM,,SAMRDSPD / VSSARDSP
 4113,0x1011,8417032,0x00806F08,RAM,sampled_throttle_linearization_values,ADSATHYA
@@ -306,7 +306,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4471,0x1177,16777350,0x01000086,EEPROM,,SSFHPBST
 4472,0x1178,8409862,0x00805306,RAM,,DCADTB
 4477,0x117D,8432068,0x0080A9C4,RAM,cruise_control_active_flag,CRSS
-4478,0x117E,8420342,0x00807BF6,RAM,,CRMNRUVS
+4478,0x117E,8420342,0x00807BF6,RAM,cruise_speed_low_limit,CRMNRUVS
 4479,0x117F,8408992,0x00804FA0,RAM,total_fuel_consumed,TIGAT2
 4480,0x1180,16777776,0x01000230,EEPROM,,AUTO_ADJ
 4481,0x1181,8432172,0x0080AA2C,RAM,,CREBSS
@@ -339,8 +339,8 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4518,0x11A6,8420504,0x00807C98,RAM,CRGNADYA,CRGNADYA
 4519,0x11A7,8420366,0x00807C0E,RAM,temp_below_which_cold_crank_can_run_50_293_7c0e,CSCDCKTP
 4520,0x11A8,8442060,0x0080D0CC,RAM,cam_sync_state,CMSYSS
-4521,0x11A9,8422518,0x00808476,RAM,final_fuel_command_min,ESPGIN
-4522,0x11AA,8444772,0x0080DB64,RAM,,ESPG
+4521,0x11A9,8422518,0x00808476,RAM,engine_position_normal_phase_lag_intercept,ESPGIN
+4522,0x11AA,8444772,0x0080DB64,RAM,engine_position_normal_phase_lag,ESPG
 4523,0x11AB,8422544,0x00808490,RAM,the_can_1_cpu_interface_register_0_255,SSC1IFRG
 4524,0x11AC,8442048,0x0080D0C0,RAM,crank_fuel_divisor,EWLSLO
 4525,0x11AD,8421156,0x00807F24,RAM,software_padding_0_7f24,SWPAD007
@@ -403,7 +403,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4643,0x1223,8424082,0x00808A92,RAM,,VSBRCU
 4644,0x1224,8445664,0x0080DEE0,RAM,,VSCOEN / VSSCEN / VSSNEN
 4645,0x1225,8413788,0x0080625C,RAM,boost_pressure_stats_accumulator_625c,VSFUST
-4647,0x1227,8444430,0x0080DA0E,RAM,,JCGPSS
+4647,0x1227,8444430,0x0080DA0E,RAM,intake_air_heater_monitor_result,JCGPSS
 4648,0x1228,397216,0x00060FA0,ROM,,JCFUSIID
 4650,0x122A,8422528,0x00808480,RAM,consecutive_incomplete_power_down_limit,SDDLERLM
 4651,0x122B,20470,0x00004FF6,ROM,,JCPFPIDF
@@ -450,7 +450,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4704,0x1260,16777794,0x01000242,EEPROM,,APUOAP
 4705,0x1261,16777810,0x01000252,EEPROM,,CSEN
 4706,0x1262,16778294,0x01000436,EEPROM,maximum_rated_engine_speed_0_5000,EPNTDQRP
-4709,0x1265,8444972,0x0080DC2C,RAM,max_engine_speed_while_throttle_fueling_overrides_pto_fueling_0_4500,PTTHDQRP
+4709,0x1265,8444972,0x0080DC2C,RAM,power_take_off_throttle_override_engine_speed_limit,PTTHDQRP
 4710,0x1266,16778494,0x010004FE,EEPROM,,PTTHTRSZ
 4711,0x1267,16778436,0x010004C4,EEPROM,,OEM_PSWD
 4712,0x1268,16778498,0x01000502,EEPROM,,PTTRSZ
@@ -560,7 +560,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4866,0x1302,16778622,0x0100057E,EEPROM,,EDFTRMSZ
 4894,0x131E,16778430,0x010004BE,EEPROM,,LSGADJSZ
 4897,0x1321,8417840,0x00807230,RAM,all_speed_governor_friction_fuel_axis,ASNLFLXA
-4898,0x1322,8425950,0x008091DE,RAM,rpm_control_override_flag,ASNLFL
+4898,0x1322,8425950,0x008091DE,RAM,all_speed_governor_no_load_fuel,ASNLFL
 4899,0x1323,8417858,0x00807242,RAM,all_speed_governor_friction_fuel_values,ASNLFLYA
 4900,0x1324,8417876,0x00807254,RAM,all_speed_governor_coolant_fuel_adjustment_axis,ASCLNLXA
 4901,0x1325,8417896,0x00807268,RAM,all_speed_governor_coolant_fuel_adjustment_values,ASCLNLYA

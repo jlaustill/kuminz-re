@@ -1,21 +1,21 @@
 enum_name,value,member_name,comment,size
 # J1939 PGN Numbers (lower 16 bits) - transferred from CM550 analysis
 J1939_PGN_LOWER,0xfef1,PGN_65265_CRUISE_VEHICLE_SPEED,Cruise Control/Vehicle Speed (CCVS),2
-J1939_PGN_LOWER,0xfecc,PGN_65228_DM3_CLEAR_DIAG,Diagnostic Message 3 - Clear Diagnostics,2
+J1939_PGN_LOWER,0xfecc,PGN_65228_DM3_CLEAR_PREVIOUSLY_ACTIVE_TROUBLE_CODES,Diagnostic Message 3 - Diagnostic Data Clear/Reset for Previously Active DTCs (was PGN_65228_DM3_CLEAR_DIAG; PR #53 round 96),2
 J1939_PGN_LOWER,0xfeca,PGN_65226_DM1_ACTIVE_DTC,Diagnostic Message 1 - Active DTCs,2
 J1939_PGN_LOWER,0xfecb,PGN_65227_DM2_PREVIOUS_DTC,Diagnostic Message 2 - Previous DTCs,2
 J1939_PGN_LOWER,0xfecd,PGN_65229_DM4_FREEZE_FRAME,Diagnostic Message 4 - Freeze Frame,2
 J1939_PGN_LOWER,0xfece,PGN_65230_DM5_READINESS,Diagnostic Message 5 - Readiness,2
-J1939_PGN_LOWER,0xfed2,PGN_65234_DM11_CLEAR_ACTIVE,Diagnostic Message 11 - Clear Active,2
+J1939_PGN_LOWER,0xfed2,PGN_65234_DM10_TEST_IDENTIFIERS_SUPPORT,PGN 65234 is DM10 Non-Continuously Monitored Systems Test Identifiers Support (DM11 is 65235) (was PGN_65234_DM10_TEST_IDENTIFIERS_SUPPORT; PR #53 round 96),2
 J1939_PGN_LOWER,0xfeed,PGN_65261_CRUISE_CONTROL_SETUP,Cruise Control/Vehicle Speed Setup (CCSS),2
 J1939_PGN_LOWER,0xfeef,PGN_65263_FLUID_LEVEL_PRESSURE,Engine Fluid Level/Pressure,2
-J1939_PGN_LOWER,0xfef0,PGN_65264_PTO,Power Takeoff Information,2
+J1939_PGN_LOWER,0xfef0,PGN_65264_POWER_TAKE_OFF_INFORMATION,Power Takeoff Information (PTO spelled out per the naming rules) (was PGN_65264_POWER_TAKE_OFF_INFORMATION; PR #53 round 96),2
 J1939_PGN_LOWER,0xfef5,PGN_65269_AMBIENT_CONDITIONS,Ambient Conditions,2
 J1939_PGN_LOWER,0xfef6,PGN_65270_INLET_EXHAUST_CONDITIONS,Inlet/Exhaust Conditions 1 (IC1),2
-J1939_PGN_LOWER,0xfef7,PGN_65271_VEHICLE_ELECTRICAL,Vehicle Electrical Power,2
-J1939_PGN_LOWER,0xffe0,PGN_65504_PROPRIETARY_A,Proprietary A Message,2
+J1939_PGN_LOWER,0xfef7,PGN_65271_VEHICLE_ELECTRICAL_POWER_1,Vehicle Electrical Power 1 (VEP1) (was PGN_65271_VEHICLE_ELECTRICAL; PR #53 round 96),2
+J1939_PGN_LOWER,0xffe0,PGN_65504_PROPRIETARY_B,0xffe0 is in the Proprietary B range (65280-65535); Proprietary A is 61184 (was PGN_65504_PROPRIETARY_B; PR #53 round 96),2
 J1939_PGN_LOWER,0xfeeb,PGN_65259_COMPONENT_ID,Component Identification,2
-J1939_PGN_LOWER,0xfeee,PGN_65262_ENGINE_TEMP,Engine Temperature,2
+J1939_PGN_LOWER,0xfeee,PGN_65262_ENGINE_TEMPERATURE_1,Engine Temperature 1 (ET1) (was PGN_65262_ENGINE_TEMP; PR #53 round 96),2
 J1939_PGN_LOWER,0xfeda,PGN_65242_SOFTWARE_ID,Software Identification,2
 J1939_PGN_LOWER,0xfee0,PGN_65248_VEHICLE_DISTANCE,Vehicle Distance,2
 J1939_PGN_LOWER,0xfeec,PGN_65260_VEHICLE_ID,Vehicle Identification,2
@@ -66,7 +66,7 @@ FUELING_STATE,1,FUELING_STATE_TSC1_TORQUE_CONTROL,cm848_setEngineOperatingMode1:
 FUELING_STATE,2,FUELING_STATE_TSC1_SPEED_CONTROL,cm848_selectTsc1SpeedControlMode: J1939 TSC1 override control mode 1 (speed); the all-speed governor PID runs on tsc1_requested_speed_capped with the ROM coefficient record - e2m label JCOMSPED (CHR_CC_11.45.01.07 0x02),2
 FUELING_STATE,4,FUELING_STATE_POWER_TAKE_OFF,operating_mode_governor_output.mode_code only (cm848_selectPowerTakeOffOrUserFueling): power_take_off_governor_fuel_demand replaces the user fueling while power_take_off_governor_active_flag is 1 and algorithm_enable_flags_3_cal bit 0x10 is set (modes 5 / 6 always; 7 / 8 / 30 unless the user fuel is larger and algorithm_enable_flags_2_cal bit 0x2000 lets the throttle override). Code-proven: the governor's state goes out as J1939 SPN 976 (CCVS1) and OBD-II PID 0x1E - e2m label PTO (CHR_CC_11.45.01.07 0x04),2
 FUELING_STATE,5,FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND,cm848_selectUserCommandedFueling: bit 0 of algorithm_enable_flags_4_cal (0 in every dump) makes the governor output a calibrated fuel demand; the feature behind it is not identified - e2m label USERCOMD (CHR_CC_11.45.01.07 0x05),2
-FUELING_STATE,6,FUELING_STATE_ACCELERATOR_PEDAL_FAULT,cm848_transitionEngineOperatingMode: accelerator pedal input fault conditions; cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit ramps the fuel only while the mode is 6 - e2m label LIMPHOME (CHR_CC_11.45.01.07 0x06),2
+FUELING_STATE,6,FUELING_STATE_ACCELERATOR_PEDAL_FAULT,cm848_selectPedalFaultMode: accelerator pedal input fault conditions; cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit ramps the fuel only while the mode is 6 - e2m label LIMPHOME (CHR_CC_11.45.01.07 0x06),2
 FUELING_STATE,7,FUELING_STATE_VARIABLE_SPEED_GOVERNOR,cm848_selectVariableSpeedGovernorMode: variable_speed_governor_selected_flag = 1; the pedal sets a speed request and the all-speed governor PID runs (dump: 7) - e2m label ASGTHROT (CHR_CC_11.45.01.07 0x07),2
 FUELING_STATE,8,FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE,cm848_initEngineOperatingState: left when no other selector claimed the pass; the governor output comes from cm848_calculateDualAxisFuelLimit (engine speed x tracked fuel demand tables) - e2m label FOUR_D (CHR_CC_11.45.01.07 0x08),2
 FUELING_STATE,9,FUELING_STATE_CRUISE_CONTROL,governor_fuel_demand_working_mode only (cm848_selectCruiseOrUserFueling): cruise control is engaged and the cruise PID fuel cruise_control_fueling replaces the user fueling; cm848_selectCruiseGovernorGainSet and cm848_presetCruiseAndRoadSpeedGovernor run their cruise branches (cruise_control_state set / resume / accelerate / decelerate) in 9 - e2m label CRUISE (CHR_CC_11.45.01.07 0x09),2
@@ -511,16 +511,16 @@ J1939_DIAGNOSTIC_SERVICE,0x15,J1939_DIAGNOSTIC_SERVICE_COMMIT_EEPROM_MIRROR,cm84
 J1939_DIAGNOSTIC_SERVICE,0x16,J1939_DIAGNOSTIC_SERVICE_FORCE_EXIT_DEVELOPMENT_MODE,forceExitDevelopmentMode (was SYSTEM_SERVICE_16),1
 J1939_DIAGNOSTIC_SERVICE,0x18,J1939_DIAGNOSTIC_SERVICE_INHIBIT_KEY_OFF_SHUTDOWN,inhibitKeyOffShutdown (was SYSTEM_SERVICE_18),1
 J1939_DIAGNOSTIC_SERVICE,0x41,J1939_DIAGNOSTIC_SERVICE_GET_ADDRESS_BY_PARAMETER_ID,cm848_handleJ1939GetAddressByParameterIdService: the ID (2 bytes); answered with 0x42 - the ID and its 4-byte address (was DIAG_ADDR_RESOLVER),1
-J1939_DIAGNOSTIC_SERVICE,0x43,J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_LENGTH,cm848_handleJ1939ReadByParameterIdLongLengthService: the ID (2 bytes) and a length (4) read from the ID's address (was MEM_READ_2B_PARAM_4B_OFFSET),1
+J1939_DIAGNOSTIC_SERVICE,0x43,J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_LENGTH,handleJ1939ReadByParameterIdLongLengthService: the ID (2 bytes) and a length (4) read from the ID's address (was MEM_READ_2B_PARAM_4B_OFFSET),1
 J1939_DIAGNOSTIC_SERVICE,0x44,J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID,handleJ1939WriteByParameterIdService: the ID (2 bytes) and a length (1) then the data (was SERVICE_44),1
 J1939_DIAGNOSTIC_SERVICE,0x45,J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_LENGTH,handleJ1939WriteByParameterIdLongLengthService: the ID (2 bytes) and a length (4) then the data (was SERVICE_45),1
-J1939_DIAGNOSTIC_SERVICE,0x46,J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_SHORT_OFFSET,cm848_handleJ1939ReadByParameterIdShortOffsetService: the ID (2 bytes) / an offset (2) / a length (1) (was MEM_READ_2B_PARAM_ONLY),1
+J1939_DIAGNOSTIC_SERVICE,0x46,J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_SHORT_OFFSET,handleJ1939ReadByParameterIdShortOffsetService: the ID (2 bytes) / an offset (2) / a length (1) (was MEM_READ_2B_PARAM_ONLY),1
 J1939_DIAGNOSTIC_SERVICE,0x47,J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_SHORT_OFFSET,handleJ1939WriteByParameterIdShortOffsetService: the ID (2 bytes) / an offset (2) / a length (1) then the data (was SERVICE_47),1
-J1939_DIAGNOSTIC_SERVICE,0x48,J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_OFFSET,cm848_handleJ1939ReadByParameterIdLongOffsetService: the ID (2 bytes) / an offset (4) / a length (4) (was SERVICE_48),1
+J1939_DIAGNOSTIC_SERVICE,0x48,J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_OFFSET,handleJ1939ReadByParameterIdLongOffsetService: the ID (2 bytes) / an offset (4) / a length (4) (was SERVICE_48),1
 J1939_DIAGNOSTIC_SERVICE,0x49,J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_OFFSET,handleJ1939WriteByParameterIdLongOffsetService: the ID (2 bytes) / an offset (4) / a length (4) then the data (was J1939_DATA_COPY),1
-J1939_DIAGNOSTIC_SERVICE,0x4a,J1939_DIAGNOSTIC_SERVICE_READ_MEMORY,cm848_handleJ1939ReadMemoryService: an address (4 bytes) and a length (1) (was MEM_READ_4B_ADDR_1B_LEN),1
+J1939_DIAGNOSTIC_SERVICE,0x4a,J1939_DIAGNOSTIC_SERVICE_READ_MEMORY,handleJ1939ReadMemoryService: an address (4 bytes) and a length (1) (was MEM_READ_4B_ADDR_1B_LEN),1
 J1939_DIAGNOSTIC_SERVICE,0x4b,J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY,handleJ1939WriteMemoryService: an address (4 bytes) and a length (1) then the data (was SERVICE_4B),1
-J1939_DIAGNOSTIC_SERVICE,0x4c,J1939_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH,cm848_handleJ1939ReadMemoryLongLengthService: an address (4 bytes) and a length (4) (was MEM_READ_4B_ADDR_4B_LEN),1
+J1939_DIAGNOSTIC_SERVICE,0x4c,J1939_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH,handleJ1939ReadMemoryLongLengthService: an address (4 bytes) and a length (4) (was MEM_READ_4B_ADDR_4B_LEN),1
 J1939_DIAGNOSTIC_SERVICE,0x4d,J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH,handleJ1939WriteMemoryLongLengthService: an address (4 bytes) and a length (4) then the data (was SERVICE_4D),1
 # BOOT_DIAGNOSTIC_SERVICE - the PGN 61184 service byte as the boot kernel reads it (PR #53 round 63): the services it registers with cm848_registerDiagnosticService (diagnostic_service_dispatch_table) and the two responses cm848_sendDiagServiceResponse sends. Its 7 downloads a calibration where the application's 7 exits development mode - so it is its own enum (the application's is J1939_DIAGNOSTIC_SERVICE)
 # The memory services keep the application's layouts and reply pairs (0x43 -> 0x45 or 0x44 under 256 bytes / 0x4a -> 0x4b / 0x4c -> 0x4d through the table at boot_kernel_rom_end); the writes run from the reflash kernel's RAM copy

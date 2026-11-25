@@ -37,21 +37,21 @@ typedef int32_t   bool32;
 
 typedef enum {
     PGN_65265_CRUISE_VEHICLE_SPEED = 0xfef1,  /* Cruise Control/Vehicle Speed (CCVS) */
-    PGN_65228_DM3_CLEAR_DIAG = 0xfecc,  /* Diagnostic Message 3 - Clear Diagnostics */
+    PGN_65228_DM3_CLEAR_PREVIOUSLY_ACTIVE_TROUBLE_CODES = 0xfecc,  /* Diagnostic Message 3 - Diagnostic Data Clear/Reset for Previously Active DTCs (was PGN_65228_DM3_CLEAR_DIAG; PR #53 round 96) */
     PGN_65226_DM1_ACTIVE_DTC = 0xfeca,  /* Diagnostic Message 1 - Active DTCs */
     PGN_65227_DM2_PREVIOUS_DTC = 0xfecb,  /* Diagnostic Message 2 - Previous DTCs */
     PGN_65229_DM4_FREEZE_FRAME = 0xfecd,  /* Diagnostic Message 4 - Freeze Frame */
     PGN_65230_DM5_READINESS = 0xfece,  /* Diagnostic Message 5 - Readiness */
-    PGN_65234_DM11_CLEAR_ACTIVE = 0xfed2,  /* Diagnostic Message 11 - Clear Active */
+    PGN_65234_DM10_TEST_IDENTIFIERS_SUPPORT = 0xfed2,  /* PGN 65234 is DM10 Non-Continuously Monitored Systems Test Identifiers Support (DM11 is 65235) (was PGN_65234_DM10_TEST_IDENTIFIERS_SUPPORT; PR #53 round 96) */
     PGN_65261_CRUISE_CONTROL_SETUP = 0xfeed,  /* Cruise Control/Vehicle Speed Setup (CCSS) */
     PGN_65263_FLUID_LEVEL_PRESSURE = 0xfeef,  /* Engine Fluid Level/Pressure */
-    PGN_65264_PTO = 0xfef0,  /* Power Takeoff Information */
+    PGN_65264_POWER_TAKE_OFF_INFORMATION = 0xfef0,  /* Power Takeoff Information (PTO spelled out per the naming rules) (was PGN_65264_POWER_TAKE_OFF_INFORMATION; PR #53 round 96) */
     PGN_65269_AMBIENT_CONDITIONS = 0xfef5,  /* Ambient Conditions */
     PGN_65270_INLET_EXHAUST_CONDITIONS = 0xfef6,  /* Inlet/Exhaust Conditions 1 (IC1) */
-    PGN_65271_VEHICLE_ELECTRICAL = 0xfef7,  /* Vehicle Electrical Power */
-    PGN_65504_PROPRIETARY_A = 0xffe0,  /* Proprietary A Message */
+    PGN_65271_VEHICLE_ELECTRICAL_POWER_1 = 0xfef7,  /* Vehicle Electrical Power 1 (VEP1) (was PGN_65271_VEHICLE_ELECTRICAL; PR #53 round 96) */
+    PGN_65504_PROPRIETARY_B = 0xffe0,  /* 0xffe0 is in the Proprietary B range (65280-65535); Proprietary A is 61184 (was PGN_65504_PROPRIETARY_B; PR #53 round 96) */
     PGN_65259_COMPONENT_ID = 0xfeeb,  /* Component Identification */
-    PGN_65262_ENGINE_TEMP = 0xfeee,  /* Engine Temperature */
+    PGN_65262_ENGINE_TEMPERATURE_1 = 0xfeee,  /* Engine Temperature 1 (ET1) (was PGN_65262_ENGINE_TEMP; PR #53 round 96) */
     PGN_65242_SOFTWARE_ID = 0xfeda,  /* Software Identification */
     PGN_65248_VEHICLE_DISTANCE = 0xfee0,  /* Vehicle Distance */
     PGN_65260_VEHICLE_ID = 0xfeec,  /* Vehicle Identification */
@@ -118,7 +118,7 @@ typedef enum {
     FUELING_STATE_TSC1_SPEED_CONTROL = 2,  /* cm848_selectTsc1SpeedControlMode: J1939 TSC1 override control mode 1 (speed); the all-speed governor PID runs on tsc1_requested_speed_capped with the ROM coefficient record - e2m label JCOMSPED (CHR_CC_11.45.01.07 0x02) */
     FUELING_STATE_POWER_TAKE_OFF = 4,  /* operating_mode_governor_output.mode_code only (cm848_selectPowerTakeOffOrUserFueling): power_take_off_governor_fuel_demand replaces the user fueling while power_take_off_governor_active_flag is 1 and algorithm_enable_flags_3_cal bit 0x10 is set (modes 5 / 6 always; 7 / 8 / 30 unless the user fuel is larger and algorithm_enable_flags_2_cal bit 0x2000 lets the throttle override). Code-proven: the governor's state goes out as J1939 SPN 976 (CCVS1) and OBD-II PID 0x1E - e2m label PTO (CHR_CC_11.45.01.07 0x04) */
     FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND = 5,  /* cm848_selectUserCommandedFueling: bit 0 of algorithm_enable_flags_4_cal (0 in every dump) makes the governor output a calibrated fuel demand; the feature behind it is not identified - e2m label USERCOMD (CHR_CC_11.45.01.07 0x05) */
-    FUELING_STATE_ACCELERATOR_PEDAL_FAULT = 6,  /* cm848_transitionEngineOperatingMode: accelerator pedal input fault conditions; cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit ramps the fuel only while the mode is 6 - e2m label LIMPHOME (CHR_CC_11.45.01.07 0x06) */
+    FUELING_STATE_ACCELERATOR_PEDAL_FAULT = 6,  /* cm848_selectPedalFaultMode: accelerator pedal input fault conditions; cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit ramps the fuel only while the mode is 6 - e2m label LIMPHOME (CHR_CC_11.45.01.07 0x06) */
     FUELING_STATE_VARIABLE_SPEED_GOVERNOR = 7,  /* cm848_selectVariableSpeedGovernorMode: variable_speed_governor_selected_flag = 1; the pedal sets a speed request and the all-speed governor PID runs (dump: 7) - e2m label ASGTHROT (CHR_CC_11.45.01.07 0x07) */
     FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE = 8,  /* cm848_initEngineOperatingState: left when no other selector claimed the pass; the governor output comes from cm848_calculateDualAxisFuelLimit (engine speed x tracked fuel demand tables) - e2m label FOUR_D (CHR_CC_11.45.01.07 0x08) */
     FUELING_STATE_CRUISE_CONTROL = 9,  /* governor_fuel_demand_working_mode only (cm848_selectCruiseOrUserFueling): cruise control is engaged and the cruise PID fuel cruise_control_fueling replaces the user fueling; cm848_selectCruiseGovernorGainSet and cm848_presetCruiseAndRoadSpeedGovernor run their cruise branches (cruise_control_state set / resume / accelerate / decelerate) in 9 - e2m label CRUISE (CHR_CC_11.45.01.07 0x09) */
@@ -577,16 +577,16 @@ typedef enum {
     J1939_DIAGNOSTIC_SERVICE_FORCE_EXIT_DEVELOPMENT_MODE = 0x16,  /* forceExitDevelopmentMode (was SYSTEM_SERVICE_16) */
     J1939_DIAGNOSTIC_SERVICE_INHIBIT_KEY_OFF_SHUTDOWN = 0x18,  /* inhibitKeyOffShutdown (was SYSTEM_SERVICE_18) */
     J1939_DIAGNOSTIC_SERVICE_GET_ADDRESS_BY_PARAMETER_ID = 0x41,  /* cm848_handleJ1939GetAddressByParameterIdService: the ID (2 bytes); answered with 0x42 - the ID and its 4-byte address (was DIAG_ADDR_RESOLVER) */
-    J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_LENGTH = 0x43,  /* cm848_handleJ1939ReadByParameterIdLongLengthService: the ID (2 bytes) and a length (4) read from the ID's address (was MEM_READ_2B_PARAM_4B_OFFSET) */
+    J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_LENGTH = 0x43,  /* handleJ1939ReadByParameterIdLongLengthService: the ID (2 bytes) and a length (4) read from the ID's address (was MEM_READ_2B_PARAM_4B_OFFSET) */
     J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID = 0x44,  /* handleJ1939WriteByParameterIdService: the ID (2 bytes) and a length (1) then the data (was SERVICE_44) */
     J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_LENGTH = 0x45,  /* handleJ1939WriteByParameterIdLongLengthService: the ID (2 bytes) and a length (4) then the data (was SERVICE_45) */
-    J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_SHORT_OFFSET = 0x46,  /* cm848_handleJ1939ReadByParameterIdShortOffsetService: the ID (2 bytes) / an offset (2) / a length (1) (was MEM_READ_2B_PARAM_ONLY) */
+    J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_SHORT_OFFSET = 0x46,  /* handleJ1939ReadByParameterIdShortOffsetService: the ID (2 bytes) / an offset (2) / a length (1) (was MEM_READ_2B_PARAM_ONLY) */
     J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_SHORT_OFFSET = 0x47,  /* handleJ1939WriteByParameterIdShortOffsetService: the ID (2 bytes) / an offset (2) / a length (1) then the data (was SERVICE_47) */
-    J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_OFFSET = 0x48,  /* cm848_handleJ1939ReadByParameterIdLongOffsetService: the ID (2 bytes) / an offset (4) / a length (4) (was SERVICE_48) */
+    J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_OFFSET = 0x48,  /* handleJ1939ReadByParameterIdLongOffsetService: the ID (2 bytes) / an offset (4) / a length (4) (was SERVICE_48) */
     J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_OFFSET = 0x49,  /* handleJ1939WriteByParameterIdLongOffsetService: the ID (2 bytes) / an offset (4) / a length (4) then the data (was J1939_DATA_COPY) */
-    J1939_DIAGNOSTIC_SERVICE_READ_MEMORY = 0x4a,  /* cm848_handleJ1939ReadMemoryService: an address (4 bytes) and a length (1) (was MEM_READ_4B_ADDR_1B_LEN) */
+    J1939_DIAGNOSTIC_SERVICE_READ_MEMORY = 0x4a,  /* handleJ1939ReadMemoryService: an address (4 bytes) and a length (1) (was MEM_READ_4B_ADDR_1B_LEN) */
     J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY = 0x4b,  /* handleJ1939WriteMemoryService: an address (4 bytes) and a length (1) then the data (was SERVICE_4B) */
-    J1939_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH = 0x4c,  /* cm848_handleJ1939ReadMemoryLongLengthService: an address (4 bytes) and a length (4) (was MEM_READ_4B_ADDR_4B_LEN) */
+    J1939_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH = 0x4c,  /* handleJ1939ReadMemoryLongLengthService: an address (4 bytes) and a length (4) (was MEM_READ_4B_ADDR_4B_LEN) */
     J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH = 0x4d  /* handleJ1939WriteMemoryLongLengthService: an address (4 bytes) and a length (4) then the data (was SERVICE_4D) */
 } J1939_DIAGNOSTIC_SERVICE;
 
@@ -1456,6 +1456,7 @@ typedef struct fault_status_record_t fault_status_record_t;
 typedef struct discrete_output_override_t discrete_output_override_t;
 typedef struct sci_command_dispatch_entry_t sci_command_dispatch_entry_t;
 typedef struct j1939_pgn65232_payload_t j1939_pgn65232_payload_t;
+typedef struct j1939_pgn65230_payload_t j1939_pgn65230_payload_t;
 
 struct j1939_received_message_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -2744,7 +2745,7 @@ struct j1939_powertrain_control_state_t {
     uint16_t j1939_blocked_message_bits;  /* e2m 10E8 +24 J1939_Block_Message (HEX): 'Bit 0 TSC1 destination engine; Bit 1 TSC1 Destination retarder; Bit 2 ETC1'. The J1939 messages blocked after a time limit: bit 0 = TSC1 to the engine (the sender went into the ignored request list), bit 1 = TSC1 to the engine retarder, bit 2 = the ETC1 high idle override (in recovery: e2m Jcomm_Recovery_Time). processEngineTsc1Request clears bit 0 on override disabled; ETC1 SPN 606 = 00 and the high idle timeout clear bit 2. A word, not a bitfield: the code clears and sets the bits with masks, which Ghidra renders as a raw piece on a bitfield (was time_limited_node_status_bits, before that speed_control_target) */
     uint8_t etc1_spn574_shift_in_process;  /* e2m 10E8 +26 Jcomm_Shift_In_Process (UNITLESS): 'J1939 ETC1 Shift in process status bits state. 0=F;1=T'. 1=coast/brake mode from ETC1 byte0 bits 0x30==0x10 */
     TRANSMISSION_SELECTED_GEAR etc2_transmission_selected_gear;  /* e2m 10E8 +27 J1939_Selected_Gear (UNITLESS): 'J1939 ETC2 Selected Gear'. J1939 ETC2 (PGN 61445) byte 1 = SPN 524 transmission selected gear - stored by the ETC2 handler at 0x22c5c when DLC is 8; 0xFF at init or when etc2_selected_gear_timeout (ETC2 timeout) expires; 0xFB or 0x7D sets transmission_park_or_neutral_flag; RAM dump 0xFF (was etc1_address_filter) */
-    int16_t engine_net_output_torque;  /* e2m 10E8 +28 Jcomm_Engine_Output_Net_Torque (FT*LB): 'Jcomm Net ouput torque = Actual - friction'. the engine's net output torque in ft lb (e2m: actual - friction, signed); read by cm848_j1939HandlePgn65504ProprietaryB, cm848_checkAirHandlingSystemProtectionHighLoad and cm848_calculateFrictionTorquePercentAndNetOutputTorque (was proprietary_offset_value) */
+    int16_t engine_net_output_torque;  /* e2m 10E8 +28 Jcomm_Engine_Output_Net_Torque (FT*LB): 'Jcomm Net ouput torque = Actual - friction'. the engine's net output torque in ft lb (e2m: actual - friction, signed); read by cm848_buildPgn65504ProprietaryBMessage, cm848_checkAirHandlingSystemProtectionHighLoad and cm848_calculateFrictionTorquePercentAndNetOutputTorque (was proprietary_offset_value) */
     uint16_t tsc1_request_timed_out_flag;  /* e2m 10E8 +2A TSC_Lost_Flag (UNITLESS): 'Flag indicated J1939 TSC1 message has timed out used as signal for PTP mode.'. 1 when tsc1_request_timeout_count is below 2 (the accepted engine TSC1 request timed out); cm848_runTsc1LostManagement then ramps the limits (was etc1_speed_error_timeout_flag) */
     uint16_t tsc1_request_time_limit_timer;  /* the time limit of a speed / torque control request: the sender's tsc1_source_configuration_t speed_control_time_limit / torque_control_time_limit + 1 when the request starts or changes; at 1 the sender goes into the ignored request list (bit 0 of j1939_blocked_message_bits) and cm848_runTsc1LostManagement runs (was etc1_activation_confirm_timer) */
     uint16_t tsc1_request_timeout_count;  /* the accepted engine TSC1 request's message timeout: the sender's request timeout for the mode (+4 / +8 / +0xc of its configuration entry) + 1 on each accepted message, counted down each pass (was etc1_speed_error_timeout) */
@@ -3331,7 +3332,7 @@ struct algorithm_enable_flags_12_t {
     uint16_t electronic_smart_power_enable : 1;  /* bit 4: e2m ESP_Enable (SPAGEN; ESP = Electronic Smart Power per e2m Group_ESP_8). hpcr_calculateFuelTrimOutput (lhz at 0xe71c) and cm848_calculateThrottle100Fuelings (lhz at 0x1f290): while set the four_dimensional_fueling_interpolation_factor is zeroed around cm848_calculateMaximumFuelCurve. A reader exists but its behaviour is not tied to the e2m label. Clear in this calibration (0x2e06). */
     uint16_t reverse_electronic_smart_power_enable : 1;  /* bit 5: e2m Reverse_ESP_Enable (SPRVEN, Electronic Smart Power launch application). No reader in either bank (sweep of both banks). Clear in this calibration (0x2e06). (was reserved_bit_5; named from its e2m record in PR #53 round 20, as in algorithm_enable_flags_3_t) */
     uint16_t low_speed_governor_droop_enable : 1;  /* bit 6: e2m LSG_Droop_Enable (LSDPEN). cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling (lhz at 0x20b90) and cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints (lhz at 0x507a70): while set the governor integrator output is reduced by governor_integrator_correction_term times ROM 0x5c352 divided by 167 (a droop). Code agrees. Clear in this calibration (0x2e06). */
-    uint16_t accelerator_interlock_enable : 1;  /* bit 7: e2m Accelerator_Interlock_Enable (ANEN). cm848_claimAcceleratorInterlockThrottleOverride (lhz at 0x403e8: with switch 26 set it forces the fuel demand override to its minimum) and cm848_j1939BuildEngineControlByte (lhz 24(r5) at 0x25788). Code agrees. Clear in this calibration (0x2e06). */
+    uint16_t accelerator_interlock_enable : 1;  /* bit 7: e2m Accelerator_Interlock_Enable (ANEN). cm848_claimAcceleratorInterlockThrottleOverride (lhz at 0x403e8: with switch 26 set it forces the fuel demand override to its minimum) and cm848_buildPgn61441ElectronicBrakeController1Message (lhz 24(r5) at 0x25788). Code agrees. Clear in this calibration (0x2e06). */
     uint16_t vehicle_speed_sensor_signal_loss_enable : 1;  /* bit 8: e2m VSS_Moving_Enable (VSMVEN): the sensor drops to 0 while the filtered speed is still above 10 mph. Named after the detector it gates. cm848_detectVehicleSpeedSensorSignalLoss (lhz at 0x526950, P0500 path 1) and cm848_clearHealedVehicleSpeedSensorFault (lhz at 0x526be8). Code agrees. Clear in this calibration (0x2e06). */
     uint16_t vehicle_speed_sensor_zero_under_load_enable : 1;  /* bit 9: e2m VSS_Stopped_Enable (VSSTEN): the sensor reads stopped (0) while the engine is under load. Named after the detector it gates. cm848_detectVehicleSpeedSensorZeroUnderLoad (lhz at 0x5269fc, P0500 path 2) and cm848_clearHealedVehicleSpeedSensorFault (lhz at 0x526bd8). Code agrees: the sensor reads 0 while the engine is under load. Set in this calibration (0x2e06). */
     uint16_t obd_fault_handler_enable : 1;  /* bit 10: e2m OBD_Fault_Handler_Enable (DGOBFUHN). 11 fault framework functions test it (cm848_assignFaultFreezeFrameEntry at 0x1cf1c, cm848_clearDiagnosticState, cm848_processFaultScanGroup, diagnosticMainStateProcessor, cm848_updateFaultEntryCounters, cm848_resetFaultStatus, cm848_captureFaultFreezeFrame, cm848_requestClearInactiveFaults, cm848_j1939HandlePgn65228Dm3ClearInactiveFaults, cm848_completeBoostPressureMonitorReport, cm848_monitorEgrOrificeTemperatureSensorRationality); the names agree, the bodies were not read. Set in this calibration (0x2e06). */
@@ -3352,10 +3353,10 @@ struct algorithm_enable_flags_18_t {
     uint16_t smart_air_compressor_enable : 1;  /* bit 6: e2m AC_Smart_Enable (ACEN, smart air compressor). No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). (was reserved_bit_6; named from its e2m record in PR #53 round 20, as in algorithm_enable_flags_3_t) */
     uint16_t executive_timing_enable : 1;  /* bit 7: e2m Executive_Timing_Enable (SSECTMEA, executive timing data gatherer). executiveFrameInterruptHandler (lhz 36(r29) at 0xc0c0, 0xc140, 0xc7b8); the reader agrees by name. Clear in this calibration (0x0008). */
     uint16_t high_speed_governor_gear_ratio_gain_enable : 1;  /* bit 8: e2m HSG_Gear_Ratio_Gain_Enable (HSGRGSEN). cm848_loadHighSpeedGovernorWorkingGainSet (lhz at 0x4248c); the reader agrees by name. Clear in this calibration (0x0008). */
-    uint16_t programmable_power_enable : 1;  /* bit 9: e2m Programmable_Power_Enable (PPEN). 6 fuel limit, protection and cruise functions: cm848_calculateDualAxisFuelLimit (0x1ec88, 0x1ed88, 0x1ee74), cm848_calculateThrottle100Fuelings (0x1f194), cm848_initializeJ1939ReferenceEngineFuelingAndTorque (0x212e0), cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings (0x21d1c), cm848_updateCruiseAndRoadSpeedGovernorDroops (0x524bdc), cm848_presetCruiseAndRoadSpeedGovernor (0x52544c); the names agree, the bodies were not read. Clear in this calibration (0x0008). */
+    uint16_t programmable_power_enable : 1;  /* bit 9: e2m Programmable_Power_Enable (PPEN). 6 fuel limit, protection and cruise functions: cm848_calculateDualAxisFuelLimit (0x1ec88, 0x1ed88, 0x1ee74), cm848_calculateThrottle100Fuelings (0x1f194), initializeJ1939ReferenceEngineFuelingAndTorque (0x212e0), cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings (0x21d1c), cm848_updateCruiseAndRoadSpeedGovernorDroops (0x524bdc), cm848_presetCruiseAndRoadSpeedGovernor (0x52544c); the names agree, the bodies were not read. Clear in this calibration (0x0008). */
     uint16_t reserved_bit_10 : 1;  /* bit 10: no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). */
     uint16_t cruise_control_auto_resume_enable : 1;  /* bit 11: e2m Cruise_Control_AR_Enable (AREN, cruise control auto resume). No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). (was reserved_bit_11; named from its e2m record in PR #53 round 20, as in algorithm_enable_flags_3_t) */
-    uint16_t remote_throttle_enable : 1;  /* bit 12: e2m Remote_Throttle_Enable (CTRMTHEN). cm848_j1939BuildEngineControlByte (0x256ac), cm848_buildPgn61443ElectronicEngineController2Message (0x25cbc), cm848_claimRemoteThrottleOverride (0x50e62c), cm848_clearEngineProtectionFaultsConditional (0x50e784); the names agree, the bodies were not read. Clear in this calibration (0x0008). */
+    uint16_t remote_throttle_enable : 1;  /* bit 12: e2m Remote_Throttle_Enable (CTRMTHEN). cm848_buildPgn61441ElectronicBrakeController1Message (0x256ac), cm848_buildPgn61443ElectronicEngineController2Message (0x25cbc), cm848_claimRemoteThrottleOverride (0x50e62c), cm848_clearEngineProtectionFaultsConditional (0x50e784); the names agree, the bodies were not read. Clear in this calibration (0x0008). */
     uint16_t remote_throttle_transition_verification_enable : 1;  /* bit 13: remote throttle transition verification enable - e2m Remote_Throttle_Transition_Verification_Enable (CTRTTZEN). cm848_claimRemoteThrottleOverride (lhz at 0x50e6e4); the name agrees, the body was not read. Clear in this calibration (0x0008). (was reserved_bit_13: a guess until PR #53 round 20 proved the e2m 106B block alignment) */
     uint16_t engine_retarder_service_brake_activate_enable : 1;  /* bit 14: e2m EB_Service_Brake_Activate_Enable (EBBREN, EB = engine brake). Proven in PR #53 round 17: its only reader, cm848_updateEngineRetarderAllowedState (lhz at 0x41610), lets the driver conditions pass while it is set only after a service brake tap (service_brake_recently_applied_flag) or with a cruise non-override command (was reserved_bit_14). Clear in this calibration (0x0008). */
     uint16_t engine_retarder_rate_limit_enable : 1;  /* bit 15: e2m EB_Rate_Limit_Enable (EBRTLMEA, engine brake level rate limit). No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). (was reserved_bit_15; named from its e2m record in PR #53 round 20, as in algorithm_enable_flags_3_t) */
@@ -3423,7 +3424,7 @@ struct algorithm_enable_flags_1_t {
     uint16_t user_override_fueling_enable : 1;  /* bit 1: e2m User_Override_Fueling_Enable (0x2): '[FSUOFLEN] Bit 1 Word 1. Enable indicator for engineering fuel override command'; read by cm848_selectFinalFueling; clear on this truck */
     uint16_t test_cell_throttle_switch_override_enable : 1;  /* bit 2: e2m Test_Cell_Throttle_Switch_Override_Enable (0x4): '[CTTHSWOD] BIT 2 OF 0-15. (WORD 1:B2) TEST CELL USE - ENABLE OVERRIDES UNDEFINED SWITCH F'; read by cm848_fuelDemandBaseCalculation, cm848_fuelDemandCoordinator; clear on this truck */
     uint16_t user_override_timing_enable : 1;  /* bit 3: e2m User_Override_Timing_Enable (0x8): '[TSUOTAEN] Bit 3 Word 1. Indicator of which algorithm is in control of the o'ride tmg ena'; no reader in this build; clear on this truck */
-    uint16_t torque_derate_override_enable : 1;  /* bit 4: e2m Torque_Derate_Override_Enable (0x10): '[FSTQUOEN] Bit 4 Word 1. Enable indicator for torque derate fuel override'; read by cm848_arbitrateRequestedFueling, cm848_j1939BuildEngineControlByte; clear on this truck */
+    uint16_t torque_derate_override_enable : 1;  /* bit 4: e2m Torque_Derate_Override_Enable (0x10): '[FSTQUOEN] Bit 4 Word 1. Enable indicator for torque derate fuel override'; read by cm848_arbitrateRequestedFueling, cm848_buildPgn61441ElectronicBrakeController1Message; clear on this truck */
     uint16_t altitude_derate_enable : 1;  /* bit 5: e2m Altitude_Derate_Enable (0x20): '[ATAGEN] Bit 5 of 0-15. Calibration trim used to enable the altitude derate algorithm'; read by cm848_calculateAltitudeDerateFuelLimit; set on this truck */
     uint16_t reserved_bit_6 : 1;  /* bit 6: no e2m record (0x40); no reader in this build; clear on this truck */
     uint16_t reserved_bit_7 : 1;  /* bit 7: no e2m record (0x80); no reader in this build; clear on this truck */
@@ -3495,7 +3496,7 @@ struct algorithm_enable_flags_6_t {
 };
 
 struct algorithm_enable_flags_13_t {
-    uint16_t engine_retarder_switch_level_override : 1;  /* bit 0: e2m EB_Switch_Level_Override (0x1): '[ADEBLVOD] A/D override for Engine Brake switch level.'; read by cm848_j1939BuildEngineControlByte, cm848_calculateEngineRetarderSelectionPercent, cm848_processJ1939EngineRetarderSelection; clear on this truck */
+    uint16_t engine_retarder_switch_level_override : 1;  /* bit 0: e2m EB_Switch_Level_Override (0x1): '[ADEBLVOD] A/D override for Engine Brake switch level.'; read by cm848_buildPgn61441ElectronicBrakeController1Message, cm848_calculateEngineRetarderSelectionPercent, cm848_processJ1939EngineRetarderSelection; clear on this truck */
     uint16_t driver_demand_torque_active_during_j1939_control : 1;  /* bit 1: e2m Active_Driver_Demand_With_Jcomm (0x2): 'Makes driver demand torque active durring JCOMM CONTROL mode msgs.'; no reader in this build; clear on this truck */
     uint16_t net_torque_derate_enable : 1;  /* bit 2: e2m Net_Torque_Derate_Enable (0x4): 'Enable for Net Torque Derate algorihm'; read by cm848_calculateNetTorqueFuelLimit, cm848_applyNetTorqueFuelLimit; set on this truck */
     uint16_t reserved_bit_3 : 1;  /* bit 3: no e2m record (0x8); no reader in this build; clear on this truck */
@@ -4174,4 +4175,13 @@ struct j1939_pgn65232_payload_t {
     uint16_t test_value;  /* SPN 1226 test value (bytes 3-4): the monitor result byte-swapped to J1939 little-endian order by cm848_reverseByteOrder16 */
     uint16_t test_limit_maximum;  /* SPN 1227 test limit maximum (bytes 5-6): 0xffff (not available) */
     uint16_t test_limit_minimum;  /* SPN 1228 test limit minimum (bytes 7-8): 0xffff (not available) */
+};
+
+struct j1939_pgn65230_payload_t {
+    uint8_t active_trouble_code_count;  /* DM5 byte 1: the number of active diagnostic trouble codes (SPN 1218) */
+    uint8_t previously_active_trouble_code_count;  /* DM5 byte 2: the number of previously active codes (SPN 1219) */
+    uint8_t obd_compliance;  /* DM5 byte 3: OBD compliance (SPN 1220) */
+    uint8_t continuously_monitored_systems_support;  /* DM5 byte 4: continuously monitored systems support / status (SPN 1221) */
+    uint16_t non_continuously_monitored_systems_support;  /* DM5 bytes 5-6: non-continuously monitored systems support (SPN 1222) */
+    uint16_t non_continuously_monitored_systems_status;  /* DM5 bytes 7-8: non-continuously monitored systems status (SPN 1223) */
 };

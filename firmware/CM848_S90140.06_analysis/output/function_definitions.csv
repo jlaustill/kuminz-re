@@ -84,7 +84,6 @@ function_address,function_name,param_index,name,type,comment
 
 # TSC1 (Torque/Speed Control) Message Handlers - PGN 0 (TSC1)
 0x00022d60,processEngineTsc1Request,0,rx_msg,j1939_received_message_t*,Pointer to received TSC1 message
-0x00023b38,cm848_dispatchTsc1ByDestinationAddress,0,rx_msg,j1939_received_message_t*,Pointer to received J1939 message for address filtering
 0x00022870,cm848_j1939ProcessPgn61442Etc1,0,rx_msg,j1939_received_message_t*,Pointer to received TSC1 message (secondary handler)
 
 # -----------------------------------------------------------------------------
@@ -114,8 +113,8 @@ function_address,function_name,param_index,name,type,comment
 # Core message routing for all J1939 PGN requests
 # -----------------------------------------------------------------------------
 
-0x00023188,cm848_j1939RegisterPgnHandler,0,pgn,uint,Packed 16-bit PGN: low byte=pgn_byte_0 high byte=pgn_byte_1 stored in dispatch table
-0x00023188,cm848_j1939RegisterPgnHandler,1,handler_func,void*,Function pointer called when PGN matches incoming message
+0x00023188,registerJ1939PgnRequestHandler,0,pgn,uint,Packed 16-bit PGN: low byte=pgn_byte_0 high byte=pgn_byte_1 stored in dispatch table
+0x00023188,registerJ1939PgnRequestHandler,1,handler_func,void*,Function pointer called when PGN matches incoming message
 
 0x00022d60,processEngineTsc1Request,0,rx_msg,j1939_received_message_t*,Pointer to received J1939 message
 
@@ -221,8 +220,6 @@ function_address,function_name,param_index,name,type,comment
 0x00002c94,cm848_registerDiagnosticService,0,service_id,BOOT_DIAGNOSTIC_SERVICE,Diagnostic service ID (0x43/0x4A/0x4C)
 0x00002c94,cm848_registerDiagnosticService,1,handler_ptr,void*,Function pointer for service handler
 
-0x00002cd8,cm848_registerPgnEf00Handler,0,sub_id,byte,Sub-identifier for PGN 0xEF00 filtering
-0x00002cd8,cm848_registerPgnEf00Handler,1,handler_func,void*,Function pointer for handler callback
 
 # -----------------------------------------------------------------------------
 # J1939 Diagnostic Handler Return Types
@@ -240,8 +237,8 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 0x00022d60,processEngineTsc1Request,0,msg,j1939_received_message_t*,Incoming J1939 RX message descriptor from CAN ring buffer
 0x000236f0,cm848_processEngineRetarderTsc1Request,0,msg,j1939_received_message_t*,Incoming J1939 RX message descriptor from CAN ring buffer
-0x000231cc,cm848_j1939DispatchPgnHandler,0,msg,j1939_received_message_t*,Incoming J1939 RX message descriptor from CAN ring buffer
-0x00023b38,cm848_dispatchTsc1ByDestinationAddress,0,msg,j1939_received_message_t*,Incoming J1939 RX message descriptor from CAN ring buffer
+0x000231cc,cm848_dispatchJ1939PgnRequest,0,msg,j1939_received_message_t*,Incoming J1939 RX message descriptor from CAN ring buffer
+0x00023b38,dispatchTsc1ByDestinationAddress,0,msg,j1939_received_message_t*,Incoming J1939 RX message descriptor from CAN ring buffer
 
 # -----------------------------------------------------------------------------
 # J1939 Send Dispatcher
@@ -401,8 +398,8 @@ function_address,function_name,param_index,name,type,comment
 0x00010110,cm848_selectVariableSpeedGovernorMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the tuning set is reloaded when it is not 7
 0x00503074,cm848_selectTsc1SpeedControlMode,return,,void,
 0x00503074,cm848_selectTsc1SpeedControlMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the tuning set is reloaded when it is not 2
-0x0050daac,cm848_transitionEngineOperatingMode,return,,void,
-0x0050daac,cm848_transitionEngineOperatingMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the pedal fault snapshot is saved when it is not 6
+0x0050daac,cm848_selectPedalFaultMode,return,,void,
+0x0050daac,cm848_selectPedalFaultMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the pedal fault snapshot is saved when it is not 6
 0x00014508,cm848_selectChiSourceCode,return,,COMBUSTION_CHI_SOURCE,1 when the air density chi is not smaller than the coolant temperature chi - else 3
 0x00014508,cm848_selectChiSourceCode,0,air_density_chi_hundredths,int32_t,
 0x00014508,cm848_selectChiSourceCode,1,coolant_temperature_chi_hundredths,int32_t,
@@ -519,16 +516,16 @@ function_address,function_name,param_index,name,type,comment
 0x00509d0c,cm848_handleJ1939EnableBroadcastService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x000218dc,handleJ1939RestartService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x0050c318,cm848_handleJ1939GetAddressByParameterIdService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050c640,cm848_handleJ1939ReadByParameterIdLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
+0x0050c640,handleJ1939ReadByParameterIdLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x0050b228,handleJ1939WriteByParameterIdService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x0050b298,handleJ1939WriteByParameterIdLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050c6a8,cm848_handleJ1939ReadByParameterIdShortOffsetService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
+0x0050c6a8,handleJ1939ReadByParameterIdShortOffsetService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x0050b300,handleJ1939WriteByParameterIdShortOffsetService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050c734,cm848_handleJ1939ReadByParameterIdLongOffsetService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
+0x0050c734,handleJ1939ReadByParameterIdLongOffsetService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x0050b38c,handleJ1939WriteByParameterIdLongOffsetService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050c7b0,cm848_handleJ1939ReadMemoryService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
+0x0050c7b0,handleJ1939ReadMemoryService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x0050b408,handleJ1939WriteMemoryService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050c81c,cm848_handleJ1939ReadMemoryLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
+0x0050c81c,handleJ1939ReadMemoryLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x0050b474,handleJ1939WriteMemoryLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x00509be8,cm848_updateJ1939BroadcastEnableMask,0,request,j1939_received_message_t*,The service 4 / 5 request: byte 1 the item and byte 2 the target (PR #53 round 63)
 0x00509be8,cm848_updateJ1939BroadcastEnableMask,1,enable,uint,1 sets the selected bits of datalink_broadcast_enable_flags - anything else clears them (PR #53 round 63)
@@ -636,4 +633,4 @@ function_address,function_name,param_index,name,type,comment
 0x00538c8c,scheduleJ1939PeriodicMessage,2,interval_milliseconds,int,The transmit interval in ms (r5): divw by 10 into the entry's +2 (a full 32-bit divide) (PR #53 round 95)
 0x00538c8c,scheduleJ1939PeriodicMessage,3,first_send_offset_milliseconds,int,The delay of the first send in ms (r6): divw by 10 plus the queue's current tick into the entry's +4 (PR #53 round 95)
 0x00538c8c,scheduleJ1939PeriodicMessage,4,builder,void*,The message builder (r7) stored with stw at the entry's +6: the periodic transmit code calls it when its tick comes (PR #53 round 95)
-0x000221f0,cm848_initJ1939DiagnosticServiceHandler,return,,void,explicit void(void): the body only registers the PGN 61184 receive handler and reads no register - clears the phantom argument the last scheduleJ1939PeriodicMessage call's byte return passed it (PR #53 round 95)
+0x000221f0,registerJ1939DiagnosticServiceDispatcher,return,,void,explicit void(void): the body only registers the PGN 61184 receive handler and reads no register - clears the phantom argument the last scheduleJ1939PeriodicMessage call's byte return passed it (PR #53 round 95)

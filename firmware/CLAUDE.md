@@ -1020,7 +1020,7 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   - **e2m names it:** block 10E8 ("Jcomm", 0x40adf4-0x40ae1f) and 10E6 (0x40ad5a) are Cummins' own layout of
     `j1939_powertrain_control_state` (was `j1939_tsc1_override_state` / `etc1_governor_state_t`), and 10E7 holds
     the Jcomm timeouts. Check a TSC1 / ETC1 name against them first.
-  - **The handlers:** PGN 0 is routed by destination address (`cm848_dispatchTsc1ByDestinationAddress`). The
+  - **The handlers:** PGN 0 is routed by destination address (`dispatchTsc1ByDestinationAddress`). The
     engine's TSC1 goes to `processEngineTsc1Request` (was `torqueControlModeHandler`, shared with CM550 0x2f128), the
     retarder's to `cm848_processEngineRetarderTsc1Request`. The SA whitelist is `tsc1_source_configuration_table`
     (0x5c3b4 in ROM, 10 entries: data link, source address, per-mode request timeouts / time limits). Read

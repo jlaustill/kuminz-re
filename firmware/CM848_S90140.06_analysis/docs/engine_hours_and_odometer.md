@@ -136,7 +136,7 @@ and the CSV should be corrected; if not, the bench address was approximate.
 ## J1939 PGN inventory (what this ECU actually speaks)
 
 From `cm848_rom.ghidra.cpp` lines 95932–95951 — the periodic TX registration
-table inside `cm848_initJ1939ProtocolHandlers` (0x232B4) calling
+table inside `cm848_registerJ1939PgnRequestHandlers` (0x232B4) calling
 `cm848_enqueueDataRecord(queue, tag, period_ms, offset, handler)`:
 
 | Tag    | Period | Handler              | J1939 PGN this produces |
@@ -174,7 +174,7 @@ hard-codes the transmitted CAN ID:
 _DAT_003faec8 = CONCAT13(((byte)PTR_DAT_003fd86a._0_2_ & 7) << 2, 0xfee000);
 // ...
 _DAT_003faec8 = CONCAT31(_DAT_003faec8, (char)j1939_source_address);
-cm848_j1939RegisterPgnHandler(0xe0, 0xb0, param_3);
+registerJ1939PgnRequestHandler(0xe0, 0xb0, param_3);
 ```
 
 The constructed ID puts PGN = **0xFEE0** (Vehicle Distance) with a priority
@@ -198,7 +198,7 @@ Four checks, all negative:
    `cm848_rom.ghidra.cpp` → **0 hits**. No code constructs the PGN.
 2. **TX registration:** FEE5 is absent from the `cm848_enqueueDataRecord`
    list (lines 95932–95951). Nothing schedules it for periodic broadcast.
-3. **RX registration:** FEE5 is absent from every `cm848_j1939RegisterPgnHandler`
+3. **RX registration:** FEE5 is absent from every `registerJ1939PgnRequestHandler`
    call site (greppable list in `cm848_rom.ghidra.cpp` — only 0xCA, 0xCB,
    0xCC, 0xCD, 0xCE, 0xD2, 0xDA, 0xE0, 0xEB, 0xEC, 0xED, 0xEE, 0xEF, 0xF0,
    0xF1, 0xF5, 0xF6, 0xF7, and 0x03 are registered). A `18EAFF00#E5FE00`
@@ -652,6 +652,6 @@ Add results to the [Bench Results](#bench-results-2026-04-08) section
 - `firmware/CM848_S90140.06_analysis/docs/service_0x4a_protocol.md`
 - `firmware/CM848_S90140.06_analysis/output/e2m_parameters.csv`
 - `firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp` — see
-  `cm848_initJ1939ProtocolHandlers` @ 0x232B4, TX enqueue list inside it,
+  `cm848_registerJ1939PgnRequestHandlers` @ 0x232B4, TX enqueue list inside it,
   and `cm848_initPgn65248VehicleDistanceHandler` @ 0x26C6C.
 - `work/docs/clip-protocol-spec.md` — CLIP service reference.

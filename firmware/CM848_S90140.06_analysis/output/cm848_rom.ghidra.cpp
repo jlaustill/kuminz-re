@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 13:05:42 MST 2026
+// Generated: Wed Nov 25 13:45:33 MST 2026
 
 
 //
@@ -7909,8 +7909,7 @@ void cm848_runEvery20FramesTaskSetPhase19(void)
 
 /* The periodic interrupt timer's dispatched callback (the twin of CM550 0x1b876; the SIU interrupt
    dispatcher calls it from table entry 15): it acknowledges the PIT itself (PISCR) and runs one
-   frame of the 40-phase executive. It is not a loop (was main_loop; PR #53 round 87; the twin of
-   CM550 0x1b876: one shared name) */
+   frame of the 40-phase executive. It is not a loop (was main_loop; PR #53 round 87) */
 
 void executiveFrameInterruptHandler(void)
 
@@ -9849,10 +9848,17 @@ void cm848_initTemperatureTrimTableSizes(void)
 
 
 //
-// Function: cm848_initTemperatureTrimCoeff @ 0x0000e8cc
+// Function: cm848_initializeSpeedRequestBlendWeightLookupCache @ 0x0000e8cc
 //
 
-void cm848_initTemperatureTrimCoeff(void)
+/* Start-up step (one call from cm848_applicationMain): sets
+   speed_request_blend_weight_by_speed_difference_cached_axis_offset to 2, the lookup cache of the
+   speed request blend weight table (speed_request_blend_weight_by_speed_difference_axis / _values)
+   that cm848_calculateGovernorReferenceSpeedBlend reads. Counterpart of CM550 0xc880
+   cm550_initializeSpeedRequestBlendWeightLookup, which also sets the table pointers of its lookup
+   record. (was cm848_initTemperatureTrimCoeff; PR #53 round 96) */
+
+void cm848_initializeSpeedRequestBlendWeightLookupCache(void)
 
 {
   speed_request_blend_weight_by_speed_difference_cached_axis_offset = 2;
@@ -19367,7 +19373,7 @@ void initializePgn65251EngineConfiguration1Buffer(void)
   j1939_pgn65251_payload.requested_torque_control_range_lower_limit = 0x7d;
   j1939_pgn65251_payload_previous.requested_torque_control_range_lower_limit = 0x7d;
   cm848_initializeFaultDerateJ1939TorqueCurvePriority();
-  cm848_initializeJ1939ReferenceEngineFuelingAndTorque();
+  initializeJ1939ReferenceEngineFuelingAndTorque();
   return;
 }
 
@@ -22495,8 +22501,8 @@ undefined1 getJ1939DiagnosticResponseEchoLength(int param_1)
    10000 turns it into N*m, so the net full load fuel is scaled by the reference engine torque (e2m
    1102 +1E, 850 N*m) over that torque. RAM dump (key on, engine stopped): (1030 - 397) x 10000 /
    ((290 x 13558) / 850) = 1368 = j1939_reference_engine_fueling, against 1501 = j1939_peak_fueling
-   (ROM, e2m 1104 +0) that cm848_initializeJ1939ReferenceEngineFuelingAndTorque (0x212dc) loads.
-   Called from cm848_runEvery4FramesTaskSetPhase1. (was cm848_calculateProtectionActivationDelay) */
+   (ROM, e2m 1104 +0) that initializeJ1939ReferenceEngineFuelingAndTorque (0x212dc) loads. Called
+   from cm848_runEvery4FramesTaskSetPhase1. (was cm848_calculateProtectionActivationDelay) */
 
 void cm848_calculateJ1939ReferenceEngineFueling(void)
 
@@ -22773,13 +22779,14 @@ void cm848_calculateEnginePercentLoadAtCurrentSpeed(void)
 
 
 //
-// Function: cm848_emptyStubFunction7 @ 0x00020aec
+// Function: emptyPgn61443ElectronicEngineController2InitializationStep @ 0x00020aec
 //
 
 /* Empty function: returns immediately (a single blr). Called once, from
-   cm848_initPgn61443Eec2Handler. (was emptyStubFunction3) */
+   cm848_initPgn61443Eec2Handler. (was emptyStubFunction3) | the twin of CM550 0x0000f99a: one
+   shared name (was cm848_emptyStubFunction7; PR #53 round 96) */
 
-void cm848_emptyStubFunction7(void)
+void emptyPgn61443ElectronicEngineController2InitializationStep(void)
 
 {
   return;
@@ -22833,7 +22840,7 @@ void cm848_calculateNominalFrictionPercentTorque(void)
    j1939_derated_fueling_at_idle (1104 +A Jcomm_Derated_Fueling_at_Idle);
    governor_integrator_correction_term is only ever cleared, so the droop never applies in this
    build. Called by cm848_updateJ1939EngineConfigurationTorqueCurve (cases 2 and 3) and by
-   cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling (was cm848_updateProtectionParameters). (was
+   setJ1939TorqueCurvePoints1And3AtDeratedFueling (was cm848_updateProtectionParameters). (was
    cm848_updateProtectionParameters; PR #53 round 94) */
 
 void cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling(void)
@@ -22856,7 +22863,7 @@ void cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling(void)
 
 
 //
-// Function: cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling @ 0x00020bfc
+// Function: setJ1939TorqueCurvePoints1And3AtDeratedFueling @ 0x00020bfc
 //
 
 /* Runs cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling, then sets point 3 of the J1939 engine
@@ -22866,9 +22873,10 @@ void cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling(void)
    j1939_derated_fueling_at_point_3 (1104 +C). Called by
    cm848_updateJ1939EngineConfigurationTorqueCurve in its cases 6 and 7: a derate while the low
    speed governor reference is outside its band (was cm848_updateProtectionInputs). (was
-   cm848_updateProtectionInputs; PR #53 round 94) */
+   cm848_updateProtectionInputs; PR #53 round 94) | the twin of CM550 0x0000fa68: one shared name
+   (was cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling; PR #53 round 96) */
 
-void cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling(void)
+void setJ1939TorqueCurvePoints1And3AtDeratedFueling(void)
 
 {
   cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling();
@@ -22951,7 +22959,7 @@ void cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling(j1939_received_messa
    Jcomm_Derated_Fueling_at_Idle-Point_5 and the tau 0 / tau 1 derated point 2, chosen by
    four_dimensional_fueling_interpolation_factor) with
    cm848_setJ1939TorqueCurvePoint1AtDeratedIdleFueling (0x20b84),
-   cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling (0x20bfc) and
+   setJ1939TorqueCurvePoints1And3AtDeratedFueling (0x20bfc) and
    cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling (0x20c64). Each percent torque is (fueling
    at the point - zero_torque_fueling) x 0x6400 / (reference fueling at the point - zero) clamped to
    plus or minus 32000, with the reference fuelings
@@ -23054,7 +23062,7 @@ LAB_00020fc0:
     }
     break;
   case 6:
-    cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling();
+    setJ1939TorqueCurvePoints1And3AtDeratedFueling();
     if (unaff_r30 == 0) {
       j1939_torque_curve_speed_at_point_2 = j1939_low_power_derated_engine_speed_at_point_2;
       j1939_torque_curve_fueling_at_point_2 = j1939_low_power_derated_fueling_at_point_2;
@@ -23070,7 +23078,7 @@ LAB_0002105c:
     j1939_torque_curve_speed_at_point_5 = j1939_engine_speed_at_point_5;
     break;
   case 7:
-    cm848_setJ1939TorqueCurvePoints1And3AtDeratedFueling();
+    setJ1939TorqueCurvePoints1And3AtDeratedFueling();
     if ((int)uVar1 < (int)(uint)j1939_low_power_point_5_intersection_engine_speed) {
       cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling
                 ((j1939_received_message_t *)(uint)j1939_derated_fueling_at_point_4);
@@ -23129,7 +23137,7 @@ LAB_000210c8:
 
 
 //
-// Function: cm848_initializeJ1939ReferenceEngineFuelingAndTorque @ 0x000212dc
+// Function: initializeJ1939ReferenceEngineFuelingAndTorque @ 0x000212dc
 //
 
 /* Initializes the J1939 (Jcomm) reference values of the engine configuration message from the ROM:
@@ -23140,9 +23148,11 @@ LAB_000210c8:
    reference_engine_torque_working (1102 +1E). Called by
    initializePgn65251EngineConfiguration1Buffer (0x1b900), the PGN 65251 initialization;
    cm848_calculateJ1939ReferenceEngineFueling (0x20500) recomputes the fueling afterwards when
-   torque normalization is on. (was cm848_initProtectionDelayDefaults) */
+   torque normalization is on. (was cm848_initProtectionDelayDefaults) | the twin of CM550
+   0x0000ff48: one shared name (was cm848_initializeJ1939ReferenceEngineFuelingAndTorque; PR #53
+   round 96) */
 
-void cm848_initializeJ1939ReferenceEngineFuelingAndTorque(void)
+void initializeJ1939ReferenceEngineFuelingAndTorque(void)
 
 {
   if (algorithm_enable_flags_18_cal.programmable_power_enable == 0) {
@@ -23626,8 +23636,7 @@ J1939_DIAGNOSTIC_RESULT cm848_commitEepromMirrorToEeprom(void)
    11, 24, 21) through the twin helper, in the same order and at the same place in the J1939
    start-up. Two of the registered handlers (services 1 and 21) are counterparts; the twin claim
    rests on the registrar's own code. One shared unprefixed name. (was
-   cm848_registerJ1939DiagnosticHandlers; PR #53 round 88; the twin of CM550 0x11b36: one shared
-   name) */
+   cm848_registerJ1939DiagnosticHandlers; PR #53 round 88) */
 
 void registerJ1939DiagnosticHandlers(void)
 
@@ -24001,7 +24010,7 @@ bool registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *ha
 /* receives J1939 PGN 61184 Proprietary A via the Bank-2 receive table 0x3fd414
    (cm848_dispatchJ1939ReceivedMessages) - sub-dispatches diagnostic service ids through
    j1939_diagnostic_service_table (0x3fa8b2) and is also fed by transport reassembly - registered by
-   cm848_initJ1939DiagnosticServiceHandler */
+   registerJ1939DiagnosticServiceDispatcher */
 
 void cm848_j1939DiagnosticServiceHandler(j1939_received_message_t *rx_msg)
 
@@ -24046,10 +24055,13 @@ void cm848_j1939DiagnosticServiceHandler(j1939_received_message_t *rx_msg)
 
 
 //
-// Function: cm848_initJ1939DiagnosticServiceHandler @ 0x000221f0
+// Function: registerJ1939DiagnosticServiceDispatcher @ 0x000221f0
 //
 
-void cm848_initJ1939DiagnosticServiceHandler(void)
+/* the twin of CM550 0x0002ef08: one shared name (was cm848_initJ1939DiagnosticServiceHandler; PR
+   #53 round 96) */
+
+void registerJ1939DiagnosticServiceDispatcher(void)
 
 {
   registerJ1939ReceiveHandler(0xef00,cm848_j1939DiagnosticServiceHandler);
@@ -24293,12 +24305,12 @@ void cm848_processJ1939Dm13StopStartBroadcast(j1939_received_message_t *message)
 //
 
 /* DM3 (PGN 65228 - clear previously active codes) requested through PGN 59904
-   (j1939_pgn_dispatch_table / cm848_j1939DispatchPgnHandler): the gate and the CLEAR_INACTIVE bit
+   (j1939_pgn_dispatch_table / cm848_dispatchJ1939PgnRequest): the gate and the CLEAR_INACTIVE bit
    of cm848_requestClearInactiveFaults (PGN 61184 service 1) then an ACK or a NACK - through
    cm848_sendJ1939NegativeAcknowledgement when j1939_dm1_active_flag is set (which it then clears) -
    else cm848_sendJ1939AcknowledgeMessage (was cm848_j1939HandlePgn65228Dm3ClearDiag; PR #53 round
    63) | earlier note: handles the J1939 request for PGN 65228 DM3 clear previously active via
-   j1939_pgn_dispatch_table (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call
+   j1939_pgn_dispatch_table (cm848_dispatchJ1939PgnRequest on a PGN 59904 request) - greps as 1 call
    but reached only through the table */
 
 void cm848_j1939HandlePgn65228Dm3ClearInactiveFaults(j1939_received_message_t *param_1)
@@ -24344,13 +24356,16 @@ LAB_0002275c:
 
 
 //
-// Function: cm848_initPgn65228Dm3Handler @ 0x00022770
+// Function: registerJ1939Dm3RequestHandler @ 0x00022770
 //
 
-void cm848_initPgn65228Dm3Handler(void)
+/* the twin of CM550 0x0002ef36: one shared name (was cm848_initPgn65228Dm3Handler; PR #53 round 96)
+    */
+
+void registerJ1939Dm3RequestHandler(void)
 
 {
-  cm848_j1939RegisterPgnHandler(0xfecc,cm848_j1939HandlePgn65228Dm3ClearInactiveFaults);
+  registerJ1939PgnRequestHandler(0xfecc,cm848_j1939HandlePgn65228Dm3ClearInactiveFaults);
   return;
 }
 
@@ -24362,9 +24377,8 @@ void cm848_initPgn65228Dm3Handler(void)
 
 /* receives J1939 PGN 58112 DM7 command via the Bank-2 receive table 0x3fd414
    (cm848_dispatchJ1939ReceivedMessages) - reads a mode byte and sends a PGN 65232 DM8 response via
-   cm848_sendPgn65232NonContinuousMonitorTestResultMessage - registered by
-   cm848_registerJ1939Dm7Handler (was cm848_j1939HandleDm1RequestMessage) | registration-table-sweep
-   reviewed 2026-11-13 */
+   cm848_sendPgn65232NonContinuousMonitorTestResultMessage - registered by registerJ1939Dm7Handler
+   (was cm848_j1939HandleDm1RequestMessage) | registration-table-sweep reviewed 2026-11-13 */
 
 void cm848_j1939HandlePgn58112Dm7(j1939_received_message_t *request_msg)
 
@@ -24386,14 +24400,15 @@ void cm848_j1939HandlePgn58112Dm7(j1939_received_message_t *request_msg)
 
 
 //
-// Function: cm848_registerJ1939Dm7Handler @ 0x00022840
+// Function: registerJ1939Dm7Handler @ 0x00022840
 //
 
 /* From cm848_j1939_system_init: registers cm848_j1939HandlePgn58112Dm7 for PGN 58112 (DM7 - command
    a non-continuously monitored test). Nothing about DM1 (was cm848_initJ1939Dm1RequestHandler; PR
-   #53 round 62) */
+   #53 round 62) | the twin of CM550 0x0002efbc: one shared name (was cm848_registerJ1939Dm7Handler;
+   PR #53 round 96) */
 
-void cm848_registerJ1939Dm7Handler(void)
+void registerJ1939Dm7Handler(void)
 
 {
   registerJ1939ReceiveHandler(0xe300,cm848_j1939HandlePgn58112Dm7);
@@ -24599,19 +24614,19 @@ void cm848_initEtc2Handler(void)
 // Function: processEngineTsc1Request @ 0x00022d60
 //
 
-/* Processes a TSC1 (PGN 0) for the engine (from cm848_dispatchTsc1ByDestinationAddress). Byte 1
-   bits 1-2 are the override control mode (SPN 695), bits 3-4 the requested speed control conditions
-   (SPN 696) and bits 5-6 the override control mode priority (SPN 897); bytes 2-3 are the requested
-   speed (SPN 898) and byte 4 the requested torque (SPN 518). It rejects a sender that is in the
-   ignored request list or has no tsc1_source_configuration_table entry. With no override active any
-   sender with an entry is accepted. While a J1939 request is active the controlling sender is
-   always accepted; another sender needs a higher priority (a lower value), or at the same priority
-   an active mode 3 request and either a request that is not mode 3 or a lower torque limit (the
-   same torque with a lower speed limit). While a J1922 request is active a J1939 sender needs an
-   entry at the same or an earlier position. On accept: mode 1 = speed control (the requested speed
-   capped at 24000 = 3000 rpm), mode 2 = torque control (the requested percent torque as fueling),
-   mode 3 = speed / torque limit control; each loads its request timeout from the sender's entry.
-   CM550's 0x2f128 is the same handler (was torqueControlModeHandler) */
+/* Processes a TSC1 (PGN 0) for the engine (from dispatchTsc1ByDestinationAddress). Byte 1 bits 1-2
+   are the override control mode (SPN 695), bits 3-4 the requested speed control conditions (SPN
+   696) and bits 5-6 the override control mode priority (SPN 897); bytes 2-3 are the requested speed
+   (SPN 898) and byte 4 the requested torque (SPN 518). It rejects a sender that is in the ignored
+   request list or has no tsc1_source_configuration_table entry. With no override active any sender
+   with an entry is accepted. While a J1939 request is active the controlling sender is always
+   accepted; another sender needs a higher priority (a lower value), or at the same priority an
+   active mode 3 request and either a request that is not mode 3 or a lower torque limit (the same
+   torque with a lower speed limit). While a J1922 request is active a J1939 sender needs an entry
+   at the same or an earlier position. On accept: mode 1 = speed control (the requested speed capped
+   at 24000 = 3000 rpm), mode 2 = torque control (the requested percent torque as fueling), mode 3 =
+   speed / torque limit control; each loads its request timeout from the sender's entry. CM550's
+   0x2f128 is the same handler (was torqueControlModeHandler) */
 
 void processEngineTsc1Request(j1939_received_message_t *msg)
 
@@ -24770,10 +24785,13 @@ accept_tsc1_command:
 
 
 //
-// Function: cm848_j1939RegisterPgnHandler @ 0x00023188
+// Function: registerJ1939PgnRequestHandler @ 0x00023188
 //
 
-bool cm848_j1939RegisterPgnHandler(dword pgn,void *handler_func)
+/* the twin of CM550 0x0002f47e: one shared name (was cm848_j1939RegisterPgnHandler; PR #53 round
+   96) */
+
+bool registerJ1939PgnRequestHandler(dword pgn,void *handler_func)
 
 {
   uint uVar1;
@@ -24781,9 +24799,9 @@ bool cm848_j1939RegisterPgnHandler(dword pgn,void *handler_func)
   uVar1 = (uint)j1939_pgn_handler_count;
   if (uVar1 != 0x20) {
     j1939_pgn_handler_count = j1939_pgn_handler_count + 1;
-    (&j1939_pgn_dispatch_table)[uVar1].pgn_byte_1 = (char)((ushort)(short)pgn >> 8);
-    (&j1939_pgn_dispatch_table)[uVar1].pgn_byte_0 = (char)(short)pgn;
-    (&j1939_pgn_dispatch_table)[uVar1].handler_func = (dword)handler_func;
+    j1939_pgn_dispatch_table[uVar1].pgn_byte_1 = (char)((ushort)(short)pgn >> 8);
+    j1939_pgn_dispatch_table[uVar1].pgn_byte_0 = (char)(short)pgn;
+    j1939_pgn_dispatch_table[uVar1].handler_func = (dword)handler_func;
   }
   return uVar1 == 0x20;
 }
@@ -24791,18 +24809,26 @@ bool cm848_j1939RegisterPgnHandler(dword pgn,void *handler_func)
 
 
 //
-// Function: cm848_j1939DispatchPgnHandler @ 0x000231cc
+// Function: cm848_dispatchJ1939PgnRequest @ 0x000231cc
 //
 
-/* jlaustill reviewed 2026-5-25 - mostly readable, hopefully accurate */
+/* The PGN 59904 Request receive handler, registered for 0xea00 by
+   cm848_registerJ1939PgnRequestHandlers. For a request addressed to j1939_source_address or global,
+   it scans j1939_pgn_dispatch_table up to j1939_pgn_handler_count for the entry matching request
+   data bytes 0-1. It sets j1939_dm1_active_flag and calls that handler with the request. With no
+   match and a request that was not global, it sends cm848_sendJ1939NegativeAcknowledgement
+   (J1939_NACK). Counterpart of CM550 cm550_dispatchJ1939PgnRequest, which has no flag store. It is
+   renamed for the CM550 pair; it dispatches requests, not handlers. | earlier note: jlaustill
+   reviewed 2026-5-25 - mostly readable, hopefully accurate (was cm848_j1939DispatchPgnHandler; PR
+   #53 round 96) */
 
-void cm848_j1939DispatchPgnHandler(j1939_received_message_t *msg)
+void cm848_dispatchJ1939PgnRequest(j1939_received_message_t *msg)
 
 {
   byte search_idx;
   j1939_pgn_handler_entry_t *entry;
   
-  entry = &j1939_pgn_dispatch_table;
+  entry = j1939_pgn_dispatch_table;
   if (((j1939_source_address & 0xff) == (ushort)msg->dest_address) || (msg->dest_address == 0xff)) {
     search_idx = 0;
     if (j1939_pgn_handler_count != 0) {
@@ -24827,29 +24853,37 @@ void cm848_j1939DispatchPgnHandler(j1939_received_message_t *msg)
 
 
 //
-// Function: cm848_initJ1939ProtocolHandlers @ 0x000232b4
+// Function: cm848_registerJ1939PgnRequestHandlers @ 0x000232b4
 //
 
-void cm848_initJ1939ProtocolHandlers(void)
+/* Start-up step of cm848_j1939_system_init. It registers cm848_dispatchJ1939PgnRequest for PGN
+   59904 and calls initPgn65261CruiseControlSetupStruct. It calls the set-ups of 65259 / 65262 /
+   65242 / 65248 / 65260, which register their handlers. It registers 65261 / 65263 / 65264 / 65269
+   / 65270 / 65271 / 65504 directly, then calls the DM1 / DM2 / DM3 / DM4 / DM5 / DM10 set-ups.
+   Counterpart of CM550 cm550_registerJ1939PgnRequestHandlers, which registers another message set.
+   The old name said init and protocol handlers. (was cm848_initJ1939ProtocolHandlers; PR #53 round
+   96) */
+
+void cm848_registerJ1939PgnRequestHandlers(void)
 
 {
-  registerJ1939ReceiveHandler(0xea00,cm848_j1939DispatchPgnHandler);
+  registerJ1939ReceiveHandler(0xea00,cm848_dispatchJ1939PgnRequest);
   initPgn65261CruiseControlSetupStruct();
   cm848_initPgn65259ComponentIdHandler();
   cm848_initPgn65262EngineTempHandler();
   cm848_initPgn65242SoftwareIdHandler();
   cm848_initPgn65248VehicleDistanceHandler();
   cm848_initPgn65260VehicleIdHandler();
-  cm848_j1939RegisterPgnHandler(0xfeed,j1939HandlePgn65261CruiseControlSetup);
-  cm848_j1939RegisterPgnHandler(0xfeef,cm848_buildPgn65263EngineFluidLevelPressure1Message);
-  cm848_j1939RegisterPgnHandler(0xfef0,cm848_buildPgn65264PowerTakeOffInformationMessage);
-  cm848_j1939RegisterPgnHandler(0xfef5,cm848_buildPgn65269AmbientConditionsMessage);
-  cm848_j1939RegisterPgnHandler(0xfef6,cm848_buildPgn65270InletExhaustConditions1Message);
-  cm848_j1939RegisterPgnHandler(0xfef7,cm848_j1939HandlePgn65271VehicleElectrical);
-  cm848_j1939RegisterPgnHandler(0xffe0,cm848_j1939HandlePgn65504ProprietaryB);
+  registerJ1939PgnRequestHandler(0xfeed,cm848_buildPgn65261CruiseControlVehicleSpeedSetupMessage);
+  registerJ1939PgnRequestHandler(0xfeef,cm848_buildPgn65263EngineFluidLevelPressure1Message);
+  registerJ1939PgnRequestHandler(0xfef0,cm848_buildPgn65264PowerTakeOffInformationMessage);
+  registerJ1939PgnRequestHandler(0xfef5,cm848_buildPgn65269AmbientConditionsMessage);
+  registerJ1939PgnRequestHandler(0xfef6,cm848_buildPgn65270InletExhaustConditions1Message);
+  registerJ1939PgnRequestHandler(0xfef7,buildPgn65271VehicleElectricalPower1Message);
+  registerJ1939PgnRequestHandler(0xffe0,cm848_buildPgn65504ProprietaryBMessage);
   cm848_initPgn65226Dm1Handler();
   cm848_initPgn65227Dm2Handler();
-  cm848_initPgn65228Dm3Handler();
+  registerJ1939Dm3RequestHandler();
   cm848_initPgn65229Dm4Handler();
   cm848_initPgn65230Dm5Handler();
   cm848_initializePgn65234Dm10Handler();
@@ -24904,16 +24938,18 @@ void cm848_initJ1939ProprietaryHandler(void)
 
 
 //
-// Function: cm848_decodeRetarderTorqueRequestPercent @ 0x0002346c
+// Function: decodeRetarderTorqueRequestPercent @ 0x0002346c
 //
 
 /* Decodes the TSC1 requested torque byte (SPN 518, 1 percent per bit, offset -125 percent) into a
    retarding magnitude of 0 to 100 percent: 100 for raw values below 25, 125 minus the raw value up
    to raw 124, otherwise 0 (zero or positive torque). Called by
    cm848_processEngineRetarderTsc1Request with TSC1 byte 4; the result becomes
-   engine_retarder_requested_torque_percent (was cm848_j1939SetupMultiFrameTransfer). */
+   engine_retarder_requested_torque_percent (was cm848_j1939SetupMultiFrameTransfer). | the twin of
+   CM550 0x0002f606: one shared name (was cm848_decodeRetarderTorqueRequestPercent; PR #53 round 96)
+    */
 
-short cm848_decodeRetarderTorqueRequestPercent(byte param_1)
+short decodeRetarderTorqueRequestPercent(byte param_1)
 
 {
   short sVar1;
@@ -24933,7 +24969,7 @@ short cm848_decodeRetarderTorqueRequestPercent(byte param_1)
 
 
 //
-// Function: cm848_selectEngineRetarderStagePercent @ 0x000234a4
+// Function: selectEngineRetarderStagePercent @ 0x000234a4
 //
 
 /* Quantizes a TSC1 engine retarder torque request (0 to 100 percent, decoded from TSC1 byte 4) into
@@ -24943,9 +24979,10 @@ short cm848_decodeRetarderTorqueRequestPercent(byte param_1)
    current rpm covers it sets the stage. Torque control (engine_retarder_override_control_mode 2)
    rounds up to the next stage, torque limit control (3) down one stage; called by
    cm848_processEngineRetarderTsc1Request for TSC1 addressed to the retarder source address (was
-   j1939FormatMultiFrameResponse). */
+   j1939FormatMultiFrameResponse). | the twin of CM550 0x0002f632: one shared name (was
+   cm848_selectEngineRetarderStagePercent; PR #53 round 96) */
 
-void cm848_selectEngineRetarderStagePercent(void)
+void selectEngineRetarderStagePercent(void)
 
 {
   uint uVar1;
@@ -25043,15 +25080,14 @@ LAB_000235d0:
 //
 
 /* Handles TSC1 (PGN 0) frames addressed to the engine retarder source address
-   j1939_engine_retarder_source_address (routed by cm848_dispatchTsc1ByDestinationAddress); it
-   ignores them when engine_retarder_output_driver_count is 0, for a data length other than 8 and
-   for speed control requests (SPN 695 = 1), applies the per-sender request list and the override
-   priority bits (byte 1 mask 0x30) and records the winning sender in
+   j1939_engine_retarder_source_address (routed by dispatchTsc1ByDestinationAddress); it ignores
+   them when engine_retarder_output_driver_count is 0, for a data length other than 8 and for speed
+   control requests (SPN 695 = 1), applies the per-sender request list and the override priority
+   bits (byte 1 mask 0x30) and records the winning sender in
    engine_retarder_controlling_source_address / engine_retarder_control_device_indicator. For torque
    control (SPN 695 = 2) and torque limit control (3) it decodes the requested torque with
-   cm848_decodeRetarderTorqueRequestPercent, quantizes it with
-   cm848_selectEngineRetarderStagePercent and stores it as the torque request
-   (engine_retarder_torque_request_percent) or the torque limit
+   decodeRetarderTorqueRequestPercent, quantizes it with selectEngineRetarderStagePercent and stores
+   it as the torque request (engine_retarder_torque_request_percent) or the torque limit
    (engine_retarder_torque_limit_percent, 125 = none) that cm848_applyEngineRetarderTsc1Request
    arbitrates; override control mode 0 clears the request (was cm848_j1939ProcessGovernorRequest).
     */
@@ -25139,9 +25175,9 @@ LAB_00023878:
   }
   engine_retarder_controlling_override_priority_bits = bVar5;
   if (bVar2 == 2) {
-    wVar4 = cm848_decodeRetarderTorqueRequestPercent(engine_retarder_received_tsc1_torque_byte);
+    wVar4 = decodeRetarderTorqueRequestPercent(engine_retarder_received_tsc1_torque_byte);
     engine_retarder_requested_torque_percent = wVar4;
-    cm848_selectEngineRetarderStagePercent();
+    selectEngineRetarderStagePercent();
     engine_retarder_torque_request_percent = engine_retarder_stage_percent;
     if ((((bVar1 == j1939_transmission_source_address) &&
          (j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_SPEED_CONTROL)) &&
@@ -25177,7 +25213,7 @@ LAB_00023878:
     engine_retarder_override_control_mode = TSC1_SPEED_TORQUE_LIMIT;
     engine_retarder_control_device_indicator = lookupJ1939ControlDevice((uint)msg->source_address);
     engine_retarder_requested_torque_percent =
-         cm848_decodeRetarderTorqueRequestPercent(engine_retarder_received_tsc1_torque_byte);
+         decodeRetarderTorqueRequestPercent(engine_retarder_received_tsc1_torque_byte);
     j1939_powertrain_control_state.retarder_tsc1_request_timeout_count =
          (j1939_powertrain_control_state.retarder_tsc1_source_configuration_pointer)->
          retarder_speed_torque_limit_control_request_timeout + 1;
@@ -25187,7 +25223,7 @@ LAB_00023878:
       j1939_powertrain_control_state.retarder_tsc1_zero_torque_request_timer = 0;
     }
     j1939_powertrain_control_state.retarder_tsc1_speed_control_flag = 0;
-    cm848_selectEngineRetarderStagePercent();
+    selectEngineRetarderStagePercent();
     engine_retarder_torque_limit_percent = engine_retarder_stage_percent;
     return;
   }
@@ -25206,8 +25242,8 @@ LAB_00023878:
    TSC1_OVERRIDE_OFF, engine_retarder_control_device_indicator = J1939_CONTROL_DEVICE_NONE (e2m 10E6
    +2) and engine_retarder_stage_count = the sum of engine_retarder_driver_1..6_cylinder_count (e2m
    13D8; 1 here). It sets the five stage table lookup caches
-   engine_retarder_torque_stage_1..5_cached_axis_offset of cm848_selectEngineRetarderStagePercent to
-   2. Called by cm848_j1939_system_init after the ERC1 and retarder configuration buffers are set up
+   engine_retarder_torque_stage_1..5_cached_axis_offset of selectEngineRetarderStagePercent to 2.
+   Called by cm848_j1939_system_init after the ERC1 and retarder configuration buffers are set up
    (was cm848_initGovernorProtectionState). (was cm848_initGovernorProtectionState; PR #53 round 94)
     */
 
@@ -25232,7 +25268,7 @@ void cm848_initializeEngineRetarderTsc1RequestState(void)
 
 
 //
-// Function: cm848_dispatchTsc1ByDestinationAddress @ 0x00023b38
+// Function: dispatchTsc1ByDestinationAddress @ 0x00023b38
 //
 
 /* Routes a received TSC1 (PGN 0) by its destination address: to processEngineTsc1Request when it is
@@ -25241,9 +25277,10 @@ void cm848_initializeEngineRetarderTsc1RequestState(void)
    | earlier note: receives J1939 PGN 0 TSC1 via the Bank-2 receive table 0x3fd414
    (cm848_dispatchJ1939ReceivedMessages) - routes to processEngineTsc1Request and
    cm848_processEngineRetarderTsc1Request by ECM source address - registered under key 0 by
-   cm848_initJ1939AddressDispatcher */
+   registerTsc1DestinationAddressDispatcher | the twin of CM550 0x0002fb70: one shared name (was
+   cm848_dispatchTsc1ByDestinationAddress; PR #53 round 96) */
 
-void cm848_dispatchTsc1ByDestinationAddress(j1939_received_message_t *msg)
+void dispatchTsc1ByDestinationAddress(j1939_received_message_t *msg)
 
 {
   ushort uVar1;
@@ -25261,13 +25298,16 @@ void cm848_dispatchTsc1ByDestinationAddress(j1939_received_message_t *msg)
 
 
 //
-// Function: cm848_initJ1939AddressDispatcher @ 0x00023bb4
+// Function: registerTsc1DestinationAddressDispatcher @ 0x00023bb4
 //
 
-void cm848_initJ1939AddressDispatcher(void)
+/* the twin of CM550 0x0002fbb2: one shared name (was cm848_initJ1939AddressDispatcher; PR #53 round
+   96) */
+
+void registerTsc1DestinationAddressDispatcher(void)
 
 {
-  registerJ1939ReceiveHandler(0,cm848_dispatchTsc1ByDestinationAddress);
+  registerJ1939ReceiveHandler(0,dispatchTsc1ByDestinationAddress);
   return;
 }
 
@@ -25762,21 +25802,24 @@ void cm848_initPgn65265CruiseSpeedHandler(void)
   j1939_pgn65265_tx_message.status_pointer = &j1939_pgn65265_transmit_status;
   j1939_ccvs1_two_speed_axle_byte = 0xf3;
   ccvs1_cruise_control_state = 7;
-  cm848_j1939RegisterPgnHandler(0xfef1,cm848_buildPgn65265CruiseControlVehicleSpeedMessage);
+  registerJ1939PgnRequestHandler(0xfef1,cm848_buildPgn65265CruiseControlVehicleSpeedMessage);
   return;
 }
 
 
 
 //
-// Function: j1939HandlePgn65261CruiseControlSetup @ 0x000246fc
+// Function: cm848_buildPgn65261CruiseControlVehicleSpeedSetupMessage @ 0x000246fc
 //
 
-/* handles the J1939 request for PGN 65261 cruise control / setup via j1939_pgn_dispatch_table
-   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call but reached only through
-   the table */
+/* The PGN 65261 (CCSS) request handler, registered by cm848_registerJ1939PgnRequestHandlers. Byte 1
+   is maximum_road_speed in km/h (0xff with the road speed governor off or above 158 MPH). Bytes 2-3
+   are cruise_maximum_road_speed_cal and cruise_speed_low_limit in km/h (0xff with cruise control
+   off or above 158 MPH). It then sends j1939_pgn65261_tx_message. Counterpart of CM550
+   cm550_buildPgn65261CruiseControlVehicleSpeedSetupMessage, which has no enable gates. (was
+   j1939HandlePgn65261CruiseControlSetup; PR #53 round 96) */
 
-void j1939HandlePgn65261CruiseControlSetup(void)
+void cm848_buildPgn65261CruiseControlVehicleSpeedSetupMessage(void)
 
 {
   if ((algorithm_enable_flags_3_cal.road_speed_governor_enable == 0) ||
@@ -25841,7 +25884,7 @@ void initPgn65261CruiseControlSetupStruct(void)
 //
 
 /* handles the J1939 request for PGN 65259 component ID via j1939_pgn_dispatch_table
-   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call but reached only through
+   (cm848_dispatchJ1939PgnRequest on a PGN 59904 request) - greps as 1 call but reached only through
    the table */
 
 void cm848_j1939HandlePgn65259ComponentId(void)
@@ -25898,7 +25941,7 @@ void cm848_initPgn65259ComponentIdHandler(void)
   j1939_pgn65259_tx_message.status_pointer = &j1939_pgn65259_transmit_status;
   j1939_pgn65259_tx_message.header.can_id =
        CONCAT31(j1939_pgn65259_tx_message.header.can_id._0_3_,(char)j1939_source_address);
-  cm848_j1939RegisterPgnHandler(0xfeeb,cm848_j1939HandlePgn65259ComponentId);
+  registerJ1939PgnRequestHandler(0xfeeb,cm848_j1939HandlePgn65259ComponentId);
   return;
 }
 
@@ -25985,15 +26028,16 @@ void cm848_sendJ1939ExtendedResponse(j1939_received_message_t *param_1,word para
 
 
 //
-// Function: cm848_j1939HandlePgn65234Dm10 @ 0x00024b28
+// Function: buildPgn65234Dm10TestIdentifiersSupportMessage @ 0x00024b28
 //
 
 /* handles the J1939 request for PGN 65234 DM10 (non-continuously monitored test ID support) via
-   j1939_pgn_dispatch_table (cm848_j1939DispatchPgnHandler) - sends
+   j1939_pgn_dispatch_table (cm848_dispatchJ1939PgnRequest) - sends
    j1939_dm10_tx_message.header.can_id and does NOT clear DTCs (was
-   cm848_j1939HandlePgn65234Dm11ClearActive) | registration-table-sweep reviewed 2026-11-13 */
+   cm848_j1939HandlePgn65234Dm11ClearActive) | registration-table-sweep reviewed 2026-11-13 | the
+   twin of CM550 0x00032222: one shared name (was cm848_j1939HandlePgn65234Dm10; PR #53 round 96) */
 
-void cm848_j1939HandlePgn65234Dm10(void)
+void buildPgn65234Dm10TestIdentifiersSupportMessage(void)
 
 {
   j1939_dm10_payload = cm848_reverseByteOrder16(&supported_non_continuous_monitors_bits);
@@ -26020,21 +26064,28 @@ void cm848_initializePgn65234Dm10Handler(void)
   j1939_dm10_tx_message.status_pointer = &j1939_dm10_transmit_status;
   j1939_dm10_tx_message.header.can_id =
        CONCAT31(j1939_dm10_tx_message.header.can_id._0_3_,(char)j1939_source_address);
-  cm848_j1939RegisterPgnHandler(0xfed2,cm848_j1939HandlePgn65234Dm10);
+  registerJ1939PgnRequestHandler(0xfed2,buildPgn65234Dm10TestIdentifiersSupportMessage);
   return;
 }
 
 
 
 //
-// Function: j1939HandlePgn65226Dm1ActiveDtc @ 0x00024be8
+// Function: cm848_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage @ 0x00024be8
 //
 
-/* handles the J1939 request for PGN 65226 DM1 active DTCs via j1939_pgn_dispatch_table
-   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - registered twice at table entries 2 and
-   15 so the first wins - periodic DM1 broadcast uses cm848_processDm1FaultBroadcast */
+/* Builds and sends DM1 (PGN 65226) while j1939_dm1_transmit_status is idle. With no active fault it
+   sends lamp byte 0 and 0xffffffff (6 bytes). Otherwise it sends the lamp byte of
+   cm848_buildJ1939LampStatusByte and one DTC per active_dtc_list_cal slot (at most 20) whose fault
+   definition lacks flag 0x4000: the SPN bits of its fault_111_j1939_data table word with the first
+   two bytes swapped, the FMI, the count byte of its fault state record (at most 127) and bit 0x80.
+   It is the 65226 request handler (registered twice) and is called by 0x24d78
+   (cm848_broadcastPgn65226Dm1UntilFaultsClear, renamed cm848_broadcastPgn65226Dm1UntilFaultsClear
+   by batch Q1). Counterpart of CM550 cm550_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage,
+   which has no 20-slot cap and no byte swap. (was j1939HandlePgn65226Dm1ActiveDtc; PR #53 round 96)
+    */
 
-void j1939HandlePgn65226Dm1ActiveDtc(void)
+void cm848_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage(void)
 
 {
   uint uVar1;
@@ -26085,20 +26136,28 @@ void j1939HandlePgn65226Dm1ActiveDtc(void)
 
 
 //
-// Function: cm848_processDm1FaultBroadcast @ 0x00024d78
+// Function: cm848_broadcastPgn65226Dm1UntilFaultsClear @ 0x00024d78
 //
 
-void cm848_processDm1FaultBroadcast(void)
+/* The periodic DM1 task (PGN 65226; queue 0 every 1000 ms from 500 ms). While
+   active_dtc_list_cal.count is not 0 it sends DM1 with
+   cm550_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage and sets
+   j1939_dm1_broadcast_pending_flag. When the list is empty it sends one more DM1 (with no codes)
+   only if the flag was set, then clears the flag. Counterpart of CM550 0x3229a, which stops sending
+   as soon as no fault is active (was cm848_processDm1FaultBroadcast). (was
+   cm848_processDm1FaultBroadcast; PR #53 round 96) */
+
+void cm848_broadcastPgn65226Dm1UntilFaultsClear(void)
 
 {
   if (active_dtc_list_cal.count == 0) {
     if (j1939_dm1_broadcast_pending_flag != 0) {
-      j1939HandlePgn65226Dm1ActiveDtc();
+      cm848_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage();
     }
     j1939_dm1_broadcast_pending_flag = 0;
   }
   else {
-    j1939HandlePgn65226Dm1ActiveDtc();
+    cm848_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage();
     j1939_dm1_broadcast_pending_flag = 1;
   }
   return;
@@ -26122,7 +26181,7 @@ void cm848_initPgn65226Dm1Handler(void)
   j1939_dm1_flash_lamp_status = 0xff;
   j1939_dm1_dtc_mask_working._3_1_ = (byte)j1939_dm1_dtc_mask_working & 0x7f | 0x80;
   j1939_dm1_broadcast_pending_flag = 0;
-  cm848_j1939RegisterPgnHandler(0xfeca,j1939HandlePgn65226Dm1ActiveDtc);
+  registerJ1939PgnRequestHandler(0xfeca,cm848_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage);
   return;
 }
 
@@ -26133,7 +26192,7 @@ void cm848_initPgn65226Dm1Handler(void)
 //
 
 /* handles the J1939 request for PGN 65227 DM2 previously active DTCs via j1939_pgn_dispatch_table
-   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call but reached only through
+   (cm848_dispatchJ1939PgnRequest on a PGN 59904 request) - greps as 1 call but reached only through
    the table */
 
 void cm848_j1939HandlePgn65227Dm2PreviousDtc(void)
@@ -26200,7 +26259,7 @@ void cm848_initPgn65227Dm2Handler(void)
        CONCAT31(j1939_dm2_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   DAT_003fabdb = 0xff;
   j1939_dm2_dtc_mask_working._3_1_ = (byte)j1939_dm2_dtc_mask_working & 0x7f | 0x80;
-  cm848_j1939RegisterPgnHandler(0xfecb,cm848_j1939HandlePgn65227Dm2PreviousDtc);
+  registerJ1939PgnRequestHandler(0xfecb,cm848_j1939HandlePgn65227Dm2PreviousDtc);
   return;
 }
 
@@ -26219,7 +26278,7 @@ void cm848_initPgn65229Dm4Handler(void)
   j1939_pgn65229_tx_message.status_pointer = &j1939_pgn65229_transmit_status;
   j1939_pgn65229_tx_message.header.can_id =
        CONCAT31(j1939_pgn65229_tx_message.header.can_id._0_3_,(char)j1939_source_address);
-  cm848_j1939RegisterPgnHandler(0xfecd,cm848_j1939HandlePgn65229Dm4FreezeFrame);
+  registerJ1939PgnRequestHandler(0xfecd,cm848_j1939HandlePgn65229Dm4FreezeFrame);
   return;
 }
 
@@ -26326,7 +26385,7 @@ void cm848_j1939BuildDm4FreezeFrame(int param_1)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* handles the J1939 request for PGN 65229 DM4 freeze frame via j1939_pgn_dispatch_table
-   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call but reached only through
+   (cm848_dispatchJ1939PgnRequest on a PGN 59904 request) - greps as 1 call but reached only through
    the table */
 
 void cm848_j1939HandlePgn65229Dm4FreezeFrame(void)
@@ -26359,24 +26418,28 @@ void cm848_j1939HandlePgn65229Dm4FreezeFrame(void)
 
 
 //
-// Function: cm848_j1939HandlePgn65230Dm5Readiness @ 0x00025458
+// Function: buildPgn65230Dm5DiagnosticReadiness1Message @ 0x00025458
 //
 
 /* handles the J1939 request for PGN 65230 DM5 readiness via j1939_pgn_dispatch_table
-   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call but reached only through
-   the table */
+   (cm848_dispatchJ1939PgnRequest on a PGN 59904 request) - greps as 1 call but reached only through
+   the table | the twin of CM550 0x00032a42: one shared name (was
+   cm848_j1939HandlePgn65230Dm5Readiness; PR #53 round 96) */
 
-void cm848_j1939HandlePgn65230Dm5Readiness(void)
+void buildPgn65230Dm5DiagnosticReadiness1Message(void)
 
 {
   ushort local_10 [4];
   
   local_10[0] = 0;
-  DAT_003fad56 = active_dtc_list_cal.count;
-  DAT_003fad57 = previously_active_dtc_list_cal.count;
-  DAT_003fad58 = (undefined1)obd_compliance_code;
-  DAT_003fad59 = (undefined1)supported_continuous_monitors_bits;
-  j1939_feature_config_tx_word = cm848_reverseByteOrder16(&supported_non_continuous_monitors_bits);
+  j1939_pgn65230_payload.active_trouble_code_count = active_dtc_list_cal.count;
+  j1939_pgn65230_payload.previously_active_trouble_code_count = previously_active_dtc_list_cal.count
+  ;
+  j1939_pgn65230_payload.obd_compliance = (byte)obd_compliance_code;
+  j1939_pgn65230_payload.continuously_monitored_systems_support =
+       (byte)supported_continuous_monitors_bits;
+  j1939_pgn65230_payload.non_continuously_monitored_systems_support =
+       cm848_reverseByteOrder16(&supported_non_continuous_monitors_bits);
   if (intake_air_heater_monitor_result == 1) {
     local_10[0] = 0x1000;
   }
@@ -26387,7 +26450,8 @@ void cm848_j1939HandlePgn65230Dm5Readiness(void)
           ((supported_non_continuous_monitors_bits & 0x100) != 0)) {
     local_10[0] = local_10[0] & 0xfeff;
   }
-  j1939_dm1_active_faults_tx_word = cm848_reverseByteOrder16(local_10);
+  j1939_pgn65230_payload.non_continuously_monitored_systems_status =
+       cm848_reverseByteOrder16(local_10);
   cm848_sendJ1939Message(&j1939_pgn65230_tx_message);
   return;
 }
@@ -26404,11 +26468,11 @@ void cm848_initPgn65230Dm5Handler(void)
   j1939_pgn65230_tx_message.header.can_id =
        CONCAT13(((byte)j1939_pgn65230_priority_cal & 7) << 2,0xfece00);
   j1939_pgn65230_tx_message.header.data_length = 8;
-  j1939_pgn65230_tx_message.data_pointer = &DAT_003fad56;
+  j1939_pgn65230_tx_message.data_pointer = &j1939_pgn65230_payload.active_trouble_code_count;
   j1939_pgn65230_tx_message.status_pointer = &j1939_pgn65230_transmit_status;
   j1939_pgn65230_tx_message.header.can_id =
        CONCAT31(j1939_pgn65230_tx_message.header.can_id._0_3_,(char)j1939_source_address);
-  cm848_j1939RegisterPgnHandler(0xfece,cm848_j1939HandlePgn65230Dm5Readiness);
+  registerJ1939PgnRequestHandler(0xfece,buildPgn65230Dm5DiagnosticReadiness1Message);
   return;
 }
 
@@ -26469,10 +26533,23 @@ void cm848_initializePgn65232Dm8Buffer(void)
 
 
 //
-// Function: cm848_j1939BuildEngineControlByte @ 0x0002567c
+// Function: cm848_buildPgn61441ElectronicBrakeController1Message @ 0x0002567c
 //
 
-void cm848_j1939BuildEngineControlByte(void)
+/* Builds and sends the ECM's EBC1 broadcast (PGN 61441 Electronic Brake Controller 1, 5 bytes at
+   0x3fad78; queue 0 every 100 ms from 20 ms). Byte 4 holds four 2-bit switch fields (0 off / 1 on /
+   3 not available). Bits 7-8 are the remote accelerator enable switch (SPN 969) from switch 31, 3
+   when switch 31 is datalink-sourced or algorithm_enable_flags_18_cal.remote_throttle_enable is
+   clear. Bits 5-6 are the engine auxiliary shutdown switch (SPN 970) from switch 31. Bits 3-4 are
+   the engine derate switch (SPN 971) from switch 31 while torque_derate_override_enable is set.
+   Bits 1-2 are the accelerator interlock switch (SPN 972) from throttle_interlock_switch (switch
+   26) while accelerator_interlock_enable is set. Byte 5 is the engine retarder selection (SPN 973,
+   0.4 percent per bit) = engine_retarder_selection_percent x 5 >> 1, 0xff when
+   engine_retarder_switch_level_override is set or bit 3 of datalink_broadcast_enable_flags is
+   clear. Counterpart of CM550 0x32bbc (was cm848_j1939BuildEngineControlByte). (was
+   cm848_j1939BuildEngineControlByte; PR #53 round 96) */
+
+void cm848_buildPgn61441ElectronicBrakeController1Message(void)
 
 {
   byte bVar1;
@@ -26480,14 +26557,14 @@ void cm848_j1939BuildEngineControlByte(void)
   if (((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) &&
      (algorithm_enable_flags_18_cal.remote_throttle_enable != 0)) {
     if (switch_input_state_bits.unwired_switch == 0) {
-      j1939_status_byte_a = 0;
+      j1939_pgn61441_accelerator_and_engine_switches_byte = 0;
     }
     else {
-      j1939_status_byte_a = 0x40;
+      j1939_pgn61441_accelerator_and_engine_switches_byte = 0x40;
     }
   }
   else {
-    j1939_status_byte_a = 0xc0;
+    j1939_pgn61441_accelerator_and_engine_switches_byte = 0xc0;
   }
   if ((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) {
     if (switch_input_state_bits.unwired_switch != 0) {
@@ -26498,7 +26575,8 @@ void cm848_j1939BuildEngineControlByte(void)
   else {
     bVar1 = 0x30;
 LAB_00025724:
-    j1939_status_byte_a = j1939_status_byte_a | bVar1;
+    j1939_pgn61441_accelerator_and_engine_switches_byte =
+         j1939_pgn61441_accelerator_and_engine_switches_byte | bVar1;
   }
   if (((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) &&
      (algorithm_enable_flags_1_cal.torque_derate_override_enable != 0)) {
@@ -26510,7 +26588,8 @@ LAB_00025724:
   else {
     bVar1 = 0xc;
 LAB_0002576c:
-    j1939_status_byte_a = j1939_status_byte_a | bVar1;
+    j1939_pgn61441_accelerator_and_engine_switches_byte =
+         j1939_pgn61441_accelerator_and_engine_switches_byte | bVar1;
   }
   if (((switch_input_datalink_source_bits_cal[3] & 4) == 0) &&
      (algorithm_enable_flags_12_cal.accelerator_interlock_enable != 0)) {
@@ -26520,14 +26599,16 @@ LAB_0002576c:
   else {
     bVar1 = 3;
   }
-  j1939_status_byte_a = j1939_status_byte_a | bVar1;
+  j1939_pgn61441_accelerator_and_engine_switches_byte =
+       j1939_pgn61441_accelerator_and_engine_switches_byte | bVar1;
 LAB_000257c4:
   if ((algorithm_enable_flags_13_cal.engine_retarder_switch_level_override == 0) &&
      ((datalink_broadcast_enable_flags & 8) != 0)) {
-    DAT_003fad7c = (undefined1)((int)((uint)engine_retarder_selection_percent * 5) >> 1);
+    j1939_pgn61441_engine_retarder_selection =
+         (byte)((int)((uint)engine_retarder_selection_percent * 5) >> 1);
   }
   else {
-    DAT_003fad7c = 0xff;
+    j1939_pgn61441_engine_retarder_selection = 0xff;
   }
   cm848_sendJ1939Message(&j1939_pgn61441_tx_message);
   return;
@@ -26550,10 +26631,10 @@ void cm848_initializePgn61441ElectronicBrakeController1Buffer(void)
   j1939_pgn61441_tx_message.header.can_id =
        CONCAT31(j1939_pgn61441_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   j1939_pgn61441_tx_message.header.data_length = 5;
-  DAT_003fad78 = 0xff;
-  DAT_003fad7a = 0xff;
-  DAT_003fad79 = 0xff;
-  j1939_pgn61441_tx_message.data_pointer = &DAT_003fad78;
+  j1939_pgn61441_payload_byte_1 = 0xff;
+  j1939_pgn61441_payload_byte_3 = 0xff;
+  j1939_pgn61441_brake_pedal_position = 0xff;
+  j1939_pgn61441_tx_message.data_pointer = &j1939_pgn61441_payload_byte_1;
   j1939_pgn61441_tx_message.status_pointer = &j1939_pgn61441_transmit_status;
   return;
 }
@@ -26591,23 +26672,23 @@ void sendPgn61444ElectronicEngineController1Message(void)
         (final_fueling_state == FUELING_STATE_TSC1_TORQUE_CONTROL)) ||
        (final_fueling_state == FUELING_STATE_TSC1_TORQUE_LIMIT)) {
       if (engine_control_device_indicator == J1939_CONTROL_DEVICE_TRANSMISSION) {
-        j1939_engine_status_byte = 0xf6;
+        j1939_eec1_engine_torque_mode_byte = 0xf6;
         goto LAB_00025a28;
       }
       if (engine_control_device_indicator == J1939_CONTROL_DEVICE_ANTI_LOCK_BRAKES) {
-        j1939_engine_status_byte = 0xf7;
+        j1939_eec1_engine_torque_mode_byte = 0xf7;
         goto LAB_00025a28;
       }
       if (engine_control_device_indicator == J1939_CONTROL_DEVICE_ANTI_SLIP_REGULATION) {
-        j1939_engine_status_byte = 0xf5;
+        j1939_eec1_engine_torque_mode_byte = 0xf5;
         goto LAB_00025a28;
       }
     }
-    j1939_engine_status_byte = 0xfe;
+    j1939_eec1_engine_torque_mode_byte = 0xfe;
     goto LAB_00025a28;
   }
   if ((int)(short)torque_derate_fuel_source_code == (int)(short)final_fueling_state) {
-    j1939_engine_status_byte = 0xf8;
+    j1939_eec1_engine_torque_mode_byte = 0xf8;
     goto LAB_00025a28;
   }
   switch((int)(short)final_fueling_state) {
@@ -26620,7 +26701,7 @@ void sendPgn61444ElectronicEngineController1Message(void)
   case 3:
     goto LAB_000259f4;
   case 4:
-    j1939_engine_status_byte = 0xf3;
+    j1939_eec1_engine_torque_mode_byte = 0xf3;
     goto LAB_00025a28;
   case 5:
     break;
@@ -26631,16 +26712,16 @@ void sendPgn61444ElectronicEngineController1Message(void)
   case 8:
     goto LAB_000259f4;
   case 9:
-    j1939_engine_status_byte = 0xf2;
+    j1939_eec1_engine_torque_mode_byte = 0xf2;
     goto LAB_00025a28;
   case 10:
-    j1939_engine_status_byte = 0xf4;
+    j1939_eec1_engine_torque_mode_byte = 0xf4;
     goto LAB_00025a28;
   case 0xb:
-    j1939_engine_status_byte = 0xf0;
+    j1939_eec1_engine_torque_mode_byte = 0xf0;
     goto LAB_00025a28;
   case 0xc:
-    j1939_engine_status_byte = 0xf9;
+    j1939_eec1_engine_torque_mode_byte = 0xf9;
     goto LAB_00025a28;
   case 0xd:
     break;
@@ -26665,7 +26746,7 @@ void sendPgn61444ElectronicEngineController1Message(void)
   case 0x17:
     break;
   case 0x18:
-    j1939_engine_status_byte = 0xfa;
+    j1939_eec1_engine_torque_mode_byte = 0xfa;
     goto LAB_00025a28;
   case 0x19:
     break;
@@ -26693,10 +26774,10 @@ void sendPgn61444ElectronicEngineController1Message(void)
     break;
   case 0x25:
 LAB_000259f4:
-    j1939_engine_status_byte = 0xf1;
+    j1939_eec1_engine_torque_mode_byte = 0xf1;
     goto LAB_00025a28;
   }
-  j1939_engine_status_byte = 0xfe;
+  j1939_eec1_engine_torque_mode_byte = 0xfe;
 LAB_00025a28:
   cm848_calculateDriverDemandPercentTorque();
   j1939_eec1_driver_demand_torque_byte =
@@ -26729,7 +26810,7 @@ void cm848_initEec1TxDescriptor(void)
   j1939_pgn61444_tx_message.header.can_id =
        CONCAT31(j1939_pgn61444_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   j1939_pgn61444_tx_message.header.data_length = 5;
-  j1939_pgn61444_tx_message.data_pointer = &j1939_engine_status_byte;
+  j1939_pgn61444_tx_message.data_pointer = &j1939_eec1_engine_torque_mode_byte;
   j1939_pgn61444_tx_message.status_pointer = &j1939_pgn61444_transmit_status;
   return;
 }
@@ -26788,16 +26869,16 @@ LAB_00025c0c:
      (((fault_detected_cal.faults_0_to_15 & 0x400) == 0 &&
       ((fault_detected_cal.faults_0_to_15 & 0x800) == 0)))) {
     if ((sensor_channel_held_value_enable_bits_cal[0] & 0x2000) == 0) {
-      j1939_eec2_accel_pedal_byte =
+      j1939_eec2_accelerator_pedal_position_1_byte =
            (char)((int)(uint)all_speed_governor_equivalent_throttle >> 1) +
            (char)((int)(uint)all_speed_governor_equivalent_throttle >> 3);
     }
     else {
-      j1939_eec2_accel_pedal_byte = 0xff;
+      j1939_eec2_accelerator_pedal_position_1_byte = 0xff;
     }
   }
   else {
-    j1939_eec2_accel_pedal_byte = 0xfe;
+    j1939_eec2_accelerator_pedal_position_1_byte = 0xfe;
   }
   cm848_calculateEnginePercentLoadAtCurrentSpeed();
   j1939_eec2_percent_load_byte = (byte)(j1939_engine_percent_load_at_current_speed_times_256 >> 8);
@@ -26817,10 +26898,10 @@ LAB_00025c0c:
   else {
     j1939_eec2_remote_accelerator_pedal_byte = 0xfe;
   }
-  DAT_003fadac = 0xff;
-  DAT_003fadad = 0xff;
-  DAT_003fadae = 0xff;
-  DAT_003fadaf = 0xff;
+  j1939_eec2_accelerator_pedal_position_2_byte = 0xff;
+  j1939_eec2_payload_byte_6 = 0xff;
+  j1939_eec2_payload_byte_7 = 0xff;
+  j1939_eec2_payload_byte_8 = 0xff;
   cm848_sendJ1939Message(&j1939_pgn61443_tx_message);
   return;
 }
@@ -26841,15 +26922,15 @@ void cm848_initPgn61443Eec2Handler(void)
   j1939_pgn61443_tx_message.header.data_length = 5;
   j1939_pgn61443_tx_message.data_pointer = &j1939_eec2_low_idle_and_kickdown_byte;
   j1939_pgn61443_tx_message.status_pointer = &j1939_pgn61443_transmit_status;
-  cm848_emptyStubFunction7();
-  cm848_j1939RegisterPgnHandler(0xf003,cm848_buildPgn61443ElectronicEngineController2Message);
+  emptyPgn61443ElectronicEngineController2InitializationStep();
+  registerJ1939PgnRequestHandler(0xf003,cm848_buildPgn61443ElectronicEngineController2Message);
   return;
 }
 
 
 
 //
-// Function: cm848_buildPgn65247ElectronicEngineController3Message @ 0x00025de8
+// Function: buildPgn65247ElectronicEngineController3Message @ 0x00025de8
 //
 
 /* Builds and sends the ECM's EEC3 broadcast (PGN 65247): byte 1 nominal friction percent torque
@@ -26857,9 +26938,10 @@ void cm848_initPgn61443Eec2Handler(void)
    desired operating speed (SPN 515 from the ROM word at 0x5c382) / byte 4 desired operating speed
    asymmetry adjustment (SPN 519 from the ROM word at 0x5c384) (was cm848_j1939SendOilPressureStatus
    - nothing in it is oil pressure) | review-function-readability reviewed 2026-11-12 - Readability
-   Medium Accuracy Confidence High */
+   Medium Accuracy Confidence High | the twin of CM550 0x000330c4: one shared name (was
+   cm848_buildPgn65247ElectronicEngineController3Message; PR #53 round 96) */
 
-void cm848_buildPgn65247ElectronicEngineController3Message(void)
+void buildPgn65247ElectronicEngineController3Message(void)
 
 {
   byte local_8;
@@ -27036,7 +27118,7 @@ void cm848_initPgn65262EngineTempHandler(void)
   j1939_pgn65262_field1_init_word = 0xffff;
   DAT_003fae04 = 0xff;
   DAT_003fae05 = 0xff;
-  cm848_j1939RegisterPgnHandler(0xfeee,cm848_buildPgn65262EngineTemperature1Message);
+  registerJ1939PgnRequestHandler(0xfeee,cm848_buildPgn65262EngineTemperature1Message);
   return;
 }
 
@@ -27388,7 +27470,7 @@ void cm848_initializePgn65249RetarderConfigurationBuffer(void)
 //
 
 /* handles the J1939 request for PGN 65242 software ID via j1939_pgn_dispatch_table
-   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call but reached only through
+   (cm848_dispatchJ1939PgnRequest on a PGN 59904 request) - greps as 1 call but reached only through
    the table */
 
 void cm848_j1939HandlePgn65242SoftwareId(void)
@@ -27452,22 +27534,28 @@ void cm848_initPgn65242SoftwareIdHandler(void)
   bStack_f = (byte)application_identifier_cal;
   j1939_pgn65242_payload.application_identifier[1] = bStack_f;
   j1939_pgn65242_payload.application_identifier_delimiter = 0x2a;
-  cm848_j1939RegisterPgnHandler(0xfeda,cm848_j1939HandlePgn65242SoftwareId);
+  registerJ1939PgnRequestHandler(0xfeda,cm848_j1939HandlePgn65242SoftwareId);
   return;
 }
 
 
 
 //
-// Function: cm848_j1939HandlePgn65504ProprietaryB @ 0x000269f4
+// Function: cm848_buildPgn65504ProprietaryBMessage @ 0x000269f4
 //
 
-/* handles the J1939 request for PGN 65504 Proprietary B (PDU2 range 65280-65535 - Proprietary A is
-   61184) via j1939_pgn_dispatch_table (cm848_j1939DispatchPgnHandler) - also broadcasts every 200
-   ms via scheduleJ1939PeriodicMessage (was cm848_j1939HandlePgn65504ProprietaryA) |
-   registration-table-sweep reviewed 2026-11-13 */
+/* Builds and sends the ECM's Proprietary B broadcast PGN 65504 (j1939_pgn65504_payload, 8 bytes;
+   queue 0 every 200 ms from 250 ms, and the PGN 59904 request responder through
+   j1939_pgn_dispatch_table). With the engine stopped all fields are 0. Otherwise it stores the
+   filtered engine speed and j1939_powertrain_control_state.engine_net_output_torque + 0x7d7f in
+   J1939 byte order, a scramble key from the time base (TBLr >> 7), and the injection timing
+   ((main_injection_timing + injection_timing_top_dead_center_offset) x 120 >> 10 + 125) XOR the
+   key, spread over three bytes with time base noise in the other bits. Then
+   cm848_sendJ1939Message(&j1939_pgn65504_tx_message); CM550 has no such message (was
+   cm848_j1939HandlePgn65504ProprietaryB). (was cm848_j1939HandlePgn65504ProprietaryB; PR #53 round
+   96) */
 
-void cm848_j1939HandlePgn65504ProprietaryB(void)
+void cm848_buildPgn65504ProprietaryBMessage(void)
 
 {
   uint uVar1;
@@ -27538,7 +27626,7 @@ void cm848_initJ1939ProprietaryPgn65504Buffer(void)
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
 /* handles the J1939 request for PGN 65248 vehicle distance via j1939_pgn_dispatch_table
-   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call but reached only through
+   (cm848_dispatchJ1939PgnRequest on a PGN 59904 request) - greps as 1 call but reached only through
    the table */
 
 void cm848_j1939HandlePgn65248VehicleDistance(void)
@@ -27574,27 +27662,28 @@ void cm848_initPgn65248VehicleDistanceHandler(void)
   j1939_pgn65248_tx_message.status_pointer = &j1939_pgn65248_transmit_status;
   j1939_pgn65248_tx_message.header.can_id =
        CONCAT31(j1939_pgn65248_tx_message.header.can_id._0_3_,(char)j1939_source_address);
-  cm848_j1939RegisterPgnHandler(0xfee0,cm848_j1939HandlePgn65248VehicleDistance);
+  registerJ1939PgnRequestHandler(0xfee0,cm848_j1939HandlePgn65248VehicleDistance);
   return;
 }
 
 
 
 //
-// Function: cm848_j1939HandlePgn65271VehicleElectrical @ 0x00026cf0
+// Function: buildPgn65271VehicleElectricalPower1Message @ 0x00026cf0
 //
 
 /* handles the J1939 request for PGN 65271 vehicle electrical power via j1939_pgn_dispatch_table
-   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - also a periodic broadcast builder via
-   scheduleJ1939PeriodicMessage every 1000 ms */
+   (cm848_dispatchJ1939PgnRequest on a PGN 59904 request) - also a periodic broadcast builder via
+   scheduleJ1939PeriodicMessage every 1000 ms | the twin of CM550 0x000342f0: one shared name (was
+   cm848_j1939HandlePgn65271VehicleElectrical; PR #53 round 96) */
 
-void cm848_j1939HandlePgn65271VehicleElectrical(void)
+void buildPgn65271VehicleElectricalPower1Message(void)
 
 {
   undefined2 local_8 [4];
   
   local_8[0] = (undefined2)((uint)battery_voltage_sensor_filtered * 0x14 >> 3);
-  j1939_pgn65271_voltage_tx_word = cm848_reverseByteOrder16(local_8);
+  j1939_pgn65271_battery_potential = cm848_reverseByteOrder16(local_8);
   cm848_sendJ1939Message(&j1939_pgn65271_tx_message);
   return;
 }
@@ -27611,28 +27700,29 @@ void cm848_initJ1939VehicleElectricalBuffer(void)
   j1939_pgn65271_tx_message.header.can_id =
        CONCAT13(((byte)j1939_pgn65271_priority_cal & 7) << 2,0xfef700);
   j1939_pgn65271_tx_message.header.data_length = 8;
-  j1939_pgn65271_tx_message.data_pointer = &DAT_003faeee;
+  j1939_pgn65271_tx_message.data_pointer = &j1939_pgn65271_net_battery_current;
   j1939_pgn65271_tx_message.status_pointer = &j1939_pgn65271_transmit_status;
   j1939_pgn65271_tx_message.header.can_id =
        CONCAT31(j1939_pgn65271_tx_message.header.can_id._0_3_,(char)j1939_source_address);
-  DAT_003faeee = 0xff;
-  DAT_003faeef = 0xff;
-  j1939_pgn65271_field1_init_word = 0xffff;
-  j1939_pgn65271_field2_init_word = 0xffff;
+  j1939_pgn65271_net_battery_current = 0xff;
+  j1939_pgn65271_alternator_current = 0xff;
+  j1939_pgn65271_charging_system_potential = 0xffff;
+  j1939_pgn65271_keyswitch_battery_potential = 0xffff;
   return;
 }
 
 
 
 //
-// Function: cm848_j1939HandlePgn65260VehicleId @ 0x00026db4
+// Function: sendPgn65260VehicleIdentificationMessage @ 0x00026db4
 //
 
 /* handles the J1939 request for PGN 65260 vehicle ID via j1939_pgn_dispatch_table
-   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call but reached only through
-   the table */
+   (cm848_dispatchJ1939PgnRequest on a PGN 59904 request) - greps as 1 call but reached only through
+   the table | the twin of CM550 0x00034430: one shared name (was
+   cm848_j1939HandlePgn65260VehicleId; PR #53 round 96) */
 
-void cm848_j1939HandlePgn65260VehicleId(void)
+void sendPgn65260VehicleIdentificationMessage(void)
 
 {
   cm848_sendJ1939Message(&j1939_pgn65260_tx_message);
@@ -27663,7 +27753,7 @@ void cm848_initPgn65260VehicleIdHandler(void)
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 0x14);
   DAT_003faf1b = 0x2a;
-  cm848_j1939RegisterPgnHandler(0xfeec,cm848_j1939HandlePgn65260VehicleId);
+  registerJ1939PgnRequestHandler(0xfeec,sendPgn65260VehicleIdentificationMessage);
   return;
 }
 
@@ -30913,15 +31003,16 @@ void cm848_selectPowerTakeOffOrUserFueling(void)
 
 
 //
-// Function: cm848_initializePowerTakeOffThrottleOverride @ 0x0002bd38
+// Function: initializePowerTakeOffThrottleOverride @ 0x0002bd38
 //
 
 /* At boot: power_take_off_throttle_override_flag = 0 and
    power_take_off_throttle_override_engine_speed_limit = engine_speed_limit_default_cal - the stores
    cm848_selectPowerTakeOffOrUserFueling makes whenever the throttle is not overriding (was
-   cm848_resetProtectionBypass) */
+   cm848_resetProtectionBypass) | the twin of CM550 0x0002ddbc: one shared name (was
+   cm848_initializePowerTakeOffThrottleOverride; PR #53 round 96) */
 
-void cm848_initializePowerTakeOffThrottleOverride(void)
+void initializePowerTakeOffThrottleOverride(void)
 
 {
   power_take_off_throttle_override_flag = 0;
@@ -30938,7 +31029,7 @@ void cm848_initializePowerTakeOffThrottleOverride(void)
 /* Builds and sends PGN 65264 (power take-off information, 8 bytes): bytes 4-5 =
    power_take_off_requested_engine_speed (byte-swapped) when algorithm_enable_flags_3_cal bit 0x10
    is set, else 0xFFFF; bytes 6 / 7 = 2-bit switch fields (switches 19 + 3, switch 31). The PGN
-   65264 request responder (cm848_initJ1939ProtocolHandlers) and a 100 ms broadcast
+   65264 request responder (cm848_registerJ1939PgnRequestHandlers) and a 100 ms broadcast
    (cm848_j1939_system_init) (was cm848_j1939HandlePgn65264Pto) */
 
 void cm848_buildPgn65264PowerTakeOffInformationMessage(void)
@@ -39816,8 +39907,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  ushort receive_interval;
   byte all_transmits_overdue;
+  ushort receive_interval;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
@@ -46023,8 +46114,9 @@ LAB_000418e0:
    low_speed_governor_extended_idle_active_flag is set and algorithm_enable_flags_41_cal bit 0 is
    set. engine_retarder_selection_percent_fault_masked is the same value forced to 0 while fault bit
    41 or 42 (P0478 / P0477) is detected and algorithm_enable_flags_40_cal bit 0x4000 is set; the
-   ERC1 builder uses it for the brake assist bits, and cm848_j1939BuildEngineControlByte sends the
-   percent as EBC1 SPN 973 (was cm848_processProtectionSystemBit4) */
+   ERC1 builder uses it for the brake assist bits, and
+   cm848_buildPgn61441ElectronicBrakeController1Message sends the percent as EBC1 SPN 973 (was
+   cm848_processProtectionSystemBit4) */
 
 void cm848_calculateEngineRetarderSelectionPercent(void)
 
@@ -46901,7 +46993,7 @@ void cm848_resetEngineOperatingMode(void)
   cm848_setEngineOperatingMode1();
   cm848_selectTsc1SpeedControlMode(previous_engine_operating_mode);
   cm848_selectUserCommandedFueling();
-  cm848_transitionEngineOperatingMode(previous_engine_operating_mode);
+  cm848_selectPedalFaultMode(previous_engine_operating_mode);
   cm848_selectVariableSpeedGovernorMode(previous_engine_operating_mode);
   cm848_initEngineOperatingState();
   return;
@@ -52485,7 +52577,7 @@ LAB_0004bcd0:
 
 /* Copies the ROM calibration image (ROM 0x64aea) into its RAM copy 0x3feed0-0x40a046 dword by dword
    - once at start-up right after clearWorkingRam (the twin of CM550 0x117ec) (was
-   cm848_copyRomToRamBuffer; PR #53 round 87; the twin of CM550 0x117ec: one shared name) */
+   cm848_copyRomToRamBuffer; PR #53 round 87) */
 
 void copyCalibrationFromRomToRam(void)
 
@@ -58751,8 +58843,7 @@ J1939_CONTROL_DEVICE lookupJ1939ControlDevice(dword source_address)
    lhz the transmit index 0x40ad68, cmpw with r3 (the mailbox number), equal -> bl
    mpc555_processJ1939TxBufferSend, else bl ignoreCanTransmitInterrupt with r3 unchanged; the only
    caller is mpc555_canTransmitInterruptHandler (bl at 0x53bf0). (was
-   cm848_handleCanMailboxTransmitComplete; PR #53 round 88; the twin of CM550 0x1e056: one shared
-   name) */
+   cm848_handleCanMailboxTransmitComplete; PR #53 round 88) */
 
 void handleJ1939CanTransmitInterrupt(uint param_1)
 
@@ -59514,7 +59605,7 @@ void cm848_applicationMain(void)
   cm848_selectColdStartFactor();
   cm848_initializeFourDimensionalInjectionTimingLookupCaches();
   cm848_initializePowerTakeOffGovernorState();
-  cm848_initializePowerTakeOffThrottleOverride();
+  initializePowerTakeOffThrottleOverride();
   cm848_initializeLowSpeedGovernorParameters();
   cm848_initFuelDemandTracking();
   cm848_initializeTachometerOutputs();
@@ -59570,7 +59661,7 @@ void cm848_applicationMain(void)
   cm848_initializeFuelDemandAndLimitInterpolationStates();
   initializeEngineAccelerationFilters();
   cm848_initializeCruiseGovernorFilters();
-  cm848_initTemperatureTrimCoeff();
+  cm848_initializeSpeedRequestBlendWeightLookupCache();
   cm848_initializeAirConditioningPressureChannel();
   cm848_initializeLowSpeedGovernorReferenceSpeed();
   cm848_initGovernorLookupDimensions();
@@ -71469,18 +71560,19 @@ cm848_readJ1939DiagnosticMemoryByParameterId
 
 
 //
-// Function: cm848_handleJ1939ReadByParameterIdLongLengthService @ 0x0050c640
+// Function: handleJ1939ReadByParameterIdLongLengthService @ 0x0050c640
 //
 
 /* PGN 61184 service 0x43: request bytes 1-2 the parameter ID and 3-6 the length - read from the
    ID's address (offset 0) through cm848_readJ1939DiagnosticMemoryByParameterId. Registered by
-   cm848_registerJ1939MemoryReadServices. The reply is 0x45 (0x44 under 256 bytes) (was
+   registerJ1939MemoryReadServices. The reply is 0x45 (0x44 under 256 bytes) (was
    j1939_diagService67_memoryReadByParameterId; PR #53 round 63) | earlier note: Application CLIP
    diagnostic service handler registered with registerJ1939DiagnosticService: service 0x43 - read by
    parameter ID (cm848_readJ1939DiagnosticMemoryByParameterId) | review-function-readability
-   reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
+   reviewed 2026-11-12 - Readability Low Accuracy Confidence High | the twin of CM550 0x00022530:
+   one shared name (was cm848_handleJ1939ReadByParameterIdLongLengthService; PR #53 round 96) */
 
-undefined1 cm848_handleJ1939ReadByParameterIdLongLengthService(j1939_received_message_t *request)
+undefined1 handleJ1939ReadByParameterIdLongLengthService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -71496,17 +71588,18 @@ undefined1 cm848_handleJ1939ReadByParameterIdLongLengthService(j1939_received_me
 
 
 //
-// Function: cm848_handleJ1939ReadByParameterIdShortOffsetService @ 0x0050c6a8
+// Function: handleJ1939ReadByParameterIdShortOffsetService @ 0x0050c6a8
 //
 
 /* PGN 61184 service 0x46: request bytes 1-2 the parameter ID / 3-4 the offset / 5 the length - read
    from the ID's address + offset through cm848_readJ1939DiagnosticMemoryByParameterId. Registered
-   by cm848_registerJ1939MemoryReadServices. The reply is 0x47 (was j1939_diagService70Handler; PR
-   #53 round 63) | earlier note: Application CLIP diagnostic service handler registered with
+   by registerJ1939MemoryReadServices. The reply is 0x47 (was j1939_diagService70Handler; PR #53
+   round 63) | earlier note: Application CLIP diagnostic service handler registered with
    registerJ1939DiagnosticService: service 0x46 | review-function-readability reviewed 2026-11-12 -
-   Readability Low Accuracy Confidence Low */
+   Readability Low Accuracy Confidence Low | the twin of CM550 0x0002257c: one shared name (was
+   cm848_handleJ1939ReadByParameterIdShortOffsetService; PR #53 round 96) */
 
-undefined1 cm848_handleJ1939ReadByParameterIdShortOffsetService(j1939_received_message_t *request)
+undefined1 handleJ1939ReadByParameterIdShortOffsetService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -71524,18 +71617,19 @@ undefined1 cm848_handleJ1939ReadByParameterIdShortOffsetService(j1939_received_m
 
 
 //
-// Function: cm848_handleJ1939ReadByParameterIdLongOffsetService @ 0x0050c734
+// Function: handleJ1939ReadByParameterIdLongOffsetService @ 0x0050c734
 //
 
 /* PGN 61184 service 0x48: request bytes 1-2 the parameter ID / 3-6 the offset / 7-10 the length -
    read from the ID's address + offset through cm848_readJ1939DiagnosticMemoryByParameterId.
-   Registered by cm848_registerJ1939MemoryReadServices. The reply is 0x49 (was
+   Registered by registerJ1939MemoryReadServices. The reply is 0x49 (was
    j1939_diagService72_memoryReadByParameterId; PR #53 round 63) | earlier note: Application CLIP
    diagnostic service handler registered with registerJ1939DiagnosticService: service 0x48 - read by
    parameter ID | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
-   Confidence Medium */
+   Confidence Medium | the twin of CM550 0x000225e0: one shared name (was
+   cm848_handleJ1939ReadByParameterIdLongOffsetService; PR #53 round 96) */
 
-undefined1 cm848_handleJ1939ReadByParameterIdLongOffsetService(j1939_received_message_t *request)
+undefined1 handleJ1939ReadByParameterIdLongOffsetService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -71553,18 +71647,19 @@ undefined1 cm848_handleJ1939ReadByParameterIdLongOffsetService(j1939_received_me
 
 
 //
-// Function: cm848_handleJ1939ReadMemoryService @ 0x0050c7b0
+// Function: handleJ1939ReadMemoryService @ 0x0050c7b0
 //
 
 /* PGN 61184 service 0x4a: request bytes 1-4 the address and 5 the length - read through
    cm848_readJ1939DiagnosticMemoryAndRespond. The reply is 0x4b. Registered by
-   cm848_registerJ1939MemoryReadServices (was j1939_diagService74_memoryRead; PR #53 round 63) |
-   earlier note: Application CLIP diagnostic service handler registered with
-   registerJ1939DiagnosticService: service 0x4A - read by address
-   (cm848_readJ1939DiagnosticMemoryAndRespond) | review-function-readability reviewed 2026-11-12 -
-   Readability Low Accuracy Confidence High */
+   registerJ1939MemoryReadServices (was j1939_diagService74_memoryRead; PR #53 round 63) | earlier
+   note: Application CLIP diagnostic service handler registered with registerJ1939DiagnosticService:
+   service 0x4A - read by address (cm848_readJ1939DiagnosticMemoryAndRespond) |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High | the
+   twin of CM550 0x00022646: one shared name (was cm848_handleJ1939ReadMemoryService; PR #53 round
+   96) */
 
-undefined1 cm848_handleJ1939ReadMemoryService(j1939_received_message_t *request)
+undefined1 handleJ1939ReadMemoryService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -71580,17 +71675,19 @@ undefined1 cm848_handleJ1939ReadMemoryService(j1939_received_message_t *request)
 
 
 //
-// Function: cm848_handleJ1939ReadMemoryLongLengthService @ 0x0050c81c
+// Function: handleJ1939ReadMemoryLongLengthService @ 0x0050c81c
 //
 
 /* PGN 61184 service 0x4c: request bytes 1-4 the address and 5-8 the length - read through
    cm848_readJ1939DiagnosticMemoryAndRespond. The reply is 0x4d. Registered by
-   cm848_registerJ1939MemoryReadServices (was j1939_diagService76_memoryReadExt; PR #53 round 63) |
+   registerJ1939MemoryReadServices (was j1939_diagService76_memoryReadExt; PR #53 round 63) |
    earlier note: Application CLIP diagnostic service handler registered with
    registerJ1939DiagnosticService: service 0x4C - read by address with a long length |
-   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High | the
+   twin of CM550 0x0002268e: one shared name (was cm848_handleJ1939ReadMemoryLongLengthService; PR
+   #53 round 96) */
 
-undefined1 cm848_handleJ1939ReadMemoryLongLengthService(j1939_received_message_t *request)
+undefined1 handleJ1939ReadMemoryLongLengthService(j1939_received_message_t *request)
 
 {
   undefined1 uVar1;
@@ -71606,30 +71703,30 @@ undefined1 cm848_handleJ1939ReadMemoryLongLengthService(j1939_received_message_t
 
 
 //
-// Function: cm848_registerJ1939MemoryReadServices @ 0x0050c880
+// Function: registerJ1939MemoryReadServices @ 0x0050c880
 //
 
 /* From cm848_j1939_system_init: registers the PGN 61184 memory read services 0x43 / 0x4a / 0x4c /
    0x46 / 0x48 (the cm848_handleJ1939Read*Service handlers) in j1939_diagnostic_service_table (was
-   j1939_diag_request_batch_43to48; PR #53 round 62) */
+   j1939_diag_request_batch_43to48; PR #53 round 62) | the twin of CM550 0x000226da: one shared name
+   (was cm848_registerJ1939MemoryReadServices; PR #53 round 96) */
 
-void cm848_registerJ1939MemoryReadServices(void)
+void registerJ1939MemoryReadServices(void)
 
 {
   registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_LENGTH,
-             cm848_handleJ1939ReadByParameterIdLongLengthService);
+             handleJ1939ReadByParameterIdLongLengthService);
+  registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE_READ_MEMORY,handleJ1939ReadMemoryService);
   registerJ1939DiagnosticService
-            (J1939_DIAGNOSTIC_SERVICE_READ_MEMORY,cm848_handleJ1939ReadMemoryService);
-  registerJ1939DiagnosticService
-            (J1939_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH,
-             cm848_handleJ1939ReadMemoryLongLengthService);
+            (J1939_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH,handleJ1939ReadMemoryLongLengthService
+            );
   registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_SHORT_OFFSET,
-             cm848_handleJ1939ReadByParameterIdShortOffsetService);
+             handleJ1939ReadByParameterIdShortOffsetService);
   registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_OFFSET,
-             cm848_handleJ1939ReadByParameterIdLongOffsetService);
+             handleJ1939ReadByParameterIdLongOffsetService);
   return;
 }
 
@@ -72536,8 +72633,8 @@ MEMORY_REGION_TYPE lookupApplicationMemoryRegionType(dword range_start,dword ran
 //
 
 /* Runs while engine_operating_mode is 6, the accelerator pedal fault mode
-   (cm848_transitionEngineOperatingMode enters it from mode 0 on accelerator_pedal_input_fault_flag
-   when the dual channel pedal is enabled, or on P2123 / P2122 (fault bits 10 / 11 of
+   (cm848_selectPedalFaultMode enters it from mode 0 on accelerator_pedal_input_fault_flag when the
+   dual channel pedal is enabled, or on P2123 / P2122 (fault bits 10 / 11 of
    fault_detected_cal.faults_0_to_15) when it is not, or when the J1939 pedal input times out or
    falls back). Ramps the fuel demand engine_operating_mode_fuel_demand:
    pedal_fault_mode_fuel_demand_ramp is 0 while accelerator_off_idle is not 1, starts at
@@ -72618,12 +72715,11 @@ void cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit(void)
 // Function: presetPedalFaultModeFuelDemand @ 0x0050da7c
 //
 
-/* From cm848_transitionEngineOperatingMode: presets the pedal fault mode -
-   pedal_fault_mode_fuel_demand_ramp and pedal_fault_mode_fuel_demand_limit_previous take
-   final_fueling and pedal_fault_mode_engine_speed_filter_state's accumulator takes the current
-   engine speed (was fuel_demand_periodSnapshot_save; PR #53 round 62) | (was
-   cm848_presetPedalFaultModeFuelDemand; PR #53 round 89; the twin of CM550 0x258b0: one shared
-   name) */
+/* From cm848_selectPedalFaultMode: presets the pedal fault mode - pedal_fault_mode_fuel_demand_ramp
+   and pedal_fault_mode_fuel_demand_limit_previous take final_fueling and
+   pedal_fault_mode_engine_speed_filter_state's accumulator takes the current engine speed (was
+   fuel_demand_periodSnapshot_save; PR #53 round 62) | (was cm848_presetPedalFaultModeFuelDemand; PR
+   #53 round 89; the twin of CM550 0x258b0: one shared name) */
 
 void presetPedalFaultModeFuelDemand(void)
 
@@ -72638,10 +72734,21 @@ void presetPedalFaultModeFuelDemand(void)
 
 
 //
-// Function: cm848_transitionEngineOperatingMode @ 0x0050daac
+// Function: cm848_selectPedalFaultMode @ 0x0050daac
 //
 
-void cm848_transitionEngineOperatingMode(int previous_engine_operating_mode)
+/* Pedal fault mode selection, called by cm848_resetEngineOperatingMode with the previous operating
+   mode. When pedal_fault_mode_enable_flag (e2m 10CE +C) is set and engine_operating_mode is
+   FUELING_STATE_NOT_SELECTED, it selects FUELING_STATE_ACCELERATOR_PEDAL_FAULT. With the J1939
+   pedal (sensor_channel_held_value_enable_bits_cal[0] bit 0x2000) the trigger is
+   j1939_accelerator_position_error_fallback_flag or j1939_pedal_input_timeout_active_flag.
+   Otherwise the trigger is accelerator_pedal_input_fault_flag while
+   accelerator_pedal_dual_channel_enable_flag is set, else fault_detected_cal.faults_0_to_15 bit
+   0x400 or 0x800. Entering from another mode it calls presetPedalFaultModeFuelDemand. Counterpart
+   of CM550 cm550_selectPedalFaultMode (0x25806). (was cm848_transitionEngineOperatingMode; PR #53
+   round 96) */
+
+void cm848_selectPedalFaultMode(int previous_engine_operating_mode)
 
 {
   ushort uVar1;
@@ -72683,8 +72790,7 @@ LAB_0050db64:
 /* The twin of CM550 0x258d6: the identical two stores (pedal_fault_mode_engine_speed_filter_state
    accumulator 0, coefficient pedal_fault_mode_engine_speed_filter_coefficient) and the same
    position in the three-call parent. The shared name also fixes the old one (no droop, no 'init').
-   (was cm848_initDroopModeStateVariables; PR #53 round 89; the twin of CM550 0x258d6: one shared
-   name) */
+   (was cm848_initDroopModeStateVariables; PR #53 round 89) */
 
 void initializePedalFaultModeEngineSpeedFilter(void)
 
@@ -100624,7 +100730,7 @@ void cm848_j1939_system_init(void)
              cm848_buildPgn61443ElectronicEngineController2Message);
   scheduleJ1939PeriodicMessage
             (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfedf,0x32,0x1e,
-             cm848_buildPgn65247ElectronicEngineController3Message);
+             buildPgn65247ElectronicEngineController3Message);
   scheduleJ1939PeriodicMessage
             (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfee3,5000,0x6e,
              sendPgn65251EngineConfiguration1Message);
@@ -100654,32 +100760,33 @@ void cm848_j1939_system_init(void)
              cm848_buildPgn65270InletExhaustConditions1Message);
   scheduleJ1939PeriodicMessage
             (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfef7,1000,0xd2,
-             cm848_j1939HandlePgn65271VehicleElectrical);
+             buildPgn65271VehicleElectricalPower1Message);
   scheduleJ1939PeriodicMessage
             (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xffe0,200,0xfa,
-             cm848_j1939HandlePgn65504ProprietaryB);
+             cm848_buildPgn65504ProprietaryBMessage);
   scheduleJ1939PeriodicMessage
-            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfeca,1000,500,cm848_processDm1FaultBroadcast);
+            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfeca,1000,500,
+             cm848_broadcastPgn65226Dm1UntilFaultsClear);
   scheduleJ1939PeriodicMessage
             (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfebd,1000,0x32,
              cm848_buildPgn65213FanDrive1Message);
   scheduleJ1939PeriodicMessage
-            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xf001,100,0x14,cm848_j1939BuildEngineControlByte)
-  ;
+            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xf001,100,0x14,
+             cm848_buildPgn61441ElectronicBrakeController1Message);
   scheduleJ1939PeriodicMessage
             (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfeff,10000,0x28,
              cm848_sendPgn65279WaterInFuelIndicatorMessage);
-  cm848_initJ1939DiagnosticServiceHandler();
-  cm848_initJ1939AddressDispatcher();
+  registerJ1939DiagnosticServiceDispatcher();
+  registerTsc1DestinationAddressDispatcher();
   cm848_initJ1939Pgn61442Etc1Handler();
   cm848_initEtc2Handler();
-  cm848_initJ1939ProtocolHandlers();
+  cm848_registerJ1939PgnRequestHandlers();
   cm848_initJ1939ProprietaryHandler();
   cm848_initJ1939Dm13Handler();
-  cm848_registerJ1939Dm7Handler();
+  registerJ1939Dm7Handler();
   cm848_registerJ1939InputMessageHandlers();
   cm848_initJ1939DiagnosticCallback();
-  cm848_registerJ1939MemoryReadServices();
+  registerJ1939MemoryReadServices();
   cm848_registerJ1939GetAddressByParameterIdService();
   registerJ1939MemoryWriteServices();
   registerJ1939DiagnosticHandlers();
