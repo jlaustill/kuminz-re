@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue Nov 24 17:06:12 MST 2026
+// Generated: Tue Nov 24 20:47:47 MST 2026
 
 
 //
@@ -45183,7 +45183,7 @@ void cm848_calculateRoadSpeedGovernorFueling(void)
     road_speed_governor_fueling = 0x1700;
     return;
   }
-  if ((algorithm_enable_flags_3_cal.road_speed_governor_without_droops_below_top_gear == 0) ||
+  if ((algorithm_enable_flags_3_cal.gear_down_protection_enable == 0) ||
      (drivetrain_gear_range == DRIVETRAIN_GEAR_RANGE_TOP_GEAR)) {
     uVar1 = (uint)vehicle_speed_rise_limited;
     uVar2 = (uint)road_speed_governor_reference_speed;
@@ -87338,7 +87338,7 @@ void cm848_selectCruiseGovernorGainSet(int param_1)
   if (((cruise_droops_allowed_flag == 0) &&
       (adjusted_user_fueling_state == FUELING_STATE_CRUISE_CONTROL)) ||
      ((adjusted_user_fueling_state == FUELING_STATE_ROAD_SPEED_GOVERNOR &&
-      ((algorithm_enable_flags_3_cal.road_speed_governor_without_droops_below_top_gear != 0 &&
+      ((algorithm_enable_flags_3_cal.gear_down_protection_enable != 0 &&
        (drivetrain_gear_range != DRIVETRAIN_GEAR_RANGE_TOP_GEAR)))))) {
 LAB_00524934:
     cruise_droop_speed_error_delta = 0;

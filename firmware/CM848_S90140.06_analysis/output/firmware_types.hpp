@@ -3365,7 +3365,7 @@ struct end_of_line_test_settings_t {
 
 struct algorithm_enable_flags_12_t {
     uint16_t idle_speed_save_enable : 1;  /* bit 0: e2m Idle_Speed_Save_Enable (LSISSVEN, saves the last idle speed at shutdown). No reader in either bank (sweep of both banks). Clear in this calibration (0x2e06). (was reserved_bit_0; named from its e2m record in PR #53 round 20, as in algorithm_enable_flags_3_t) */
-    uint16_t reserved_bit_1 : 1;  /* bit 1: e2m Overspeed_FSO_Override (EPOSFSO, fuel shut-off valve on overspeed). No reader in either bank (sweep of both banks). Set in this calibration (0x2e06). */
+    uint16_t overspeed_fuel_shutoff_enable : 1;  /* bit 1: e2m Overspeed_FSO_Override (EPOSFSO, fuel shut-off valve on overspeed). No reader in either bank (sweep of both banks). Set in this calibration (0x2e06). (was reserved_bit_1; PR #53 round 92) */
     uint16_t water_in_fuel_enable : 1;  /* bit 2: e2m Water_In_Fuel_Enable (WFAGEN). cm848_sendPgn65279WaterInFuelIndicatorMessage (lhz at 0x26ea0: the PGN 65279 byte stays 0xff while clear) and cm848_monitorWaterInFuel (lhz at 0x5103b8: clears fault 56 bit 0x100 while clear). Code agrees with the e2m label. Set in this calibration (0x2e06). */
     uint16_t air_fuel_control_override_enable : 1;  /* bit 3: e2m AFC_Override_Enable (AFENMAN). cm848_calculateAirFuelControlFuelLimit (lhz 24(r26) at 0xdcf4): while clear it computes the limit from air_fuel_control_fuel_limit_grid, so set overrides it. Code agrees. Clear in this calibration (0x2e06). */
     uint16_t electronic_smart_power_enable : 1;  /* bit 4: e2m ESP_Enable (SPAGEN; ESP = Electronic Smart Power per e2m Group_ESP_8). hpcr_calculateFuelTrimOutput (lhz at 0xe71c) and cm848_calculateThrottle100Fuelings (lhz at 0x1f290): while set the four_dimensional_fueling_interpolation_factor is zeroed around cm848_calculateMaximumFuelCurve. A reader exists but its behaviour is not tied to the e2m label. Clear in this calibration (0x2e06). */
@@ -3410,13 +3410,13 @@ struct algorithm_enable_flags_3_t {
     uint16_t reserved_bit_5 : 1;  /* bit 5: no e2m record; no reader */
     uint16_t cruise_control_enable : 1;  /* bit 6: e2m Cruise_Control_Enable (0x40): cruise standby / denied status, PGN 65261 / 65265; set on this truck */
     uint16_t road_speed_governor_enable : 1;  /* bit 7: e2m Road_Speed_Governor_Enable (0x80): cm848_calculateRoadSpeedGovernorFueling gives no limit (0x1700) while it is clear; PGN 65261; set on this truck */
-    uint16_t road_speed_governor_without_droops_below_top_gear : 1;  /* bit 8: No e2m record (0x100): while it is set and the drivetrain is not in top gear, cm848_calculateRoadSpeedGovernorFueling cuts to 0 / no limit at the reference speed and cm848_selectCruiseGovernorGainSet zeroes the droop delta; clear on this truck */
+    uint16_t gear_down_protection_enable : 1;  /* bit 8: No e2m record (0x100): while it is set and the drivetrain is not in top gear, cm848_calculateRoadSpeedGovernorFueling cuts to 0 / no limit at the reference speed and cm848_selectCruiseGovernorGainSet zeroes the droop delta; clear on this truck (was road_speed_governor_without_droops_below_top_gear; PR #53 round 92) */
     uint16_t reserved_bit_9 : 1;  /* bit 9: no e2m record; no reader */
     uint16_t cruise_governor_droop_enable : 1;  /* bit 10: e2m Cruise_RSG_Droop_Enable (0x400); no reader in this build */
     uint16_t reserved_bit_11 : 1;  /* bit 11: no e2m record; no reader */
-    uint16_t reserved_bit_12 : 1;  /* bit 12: e2m ANC_Fuel_Algorithm_Enable (0x1000); no reader (the ANC stage is compiled out) */
-    uint16_t reserved_bit_13 : 1;  /* bit 13: e2m ANC_Timing_Algorithm_Enable (0x2000); no reader (the ANC stage is compiled out) */
-    uint16_t reserved_bit_14 : 1;  /* bit 14: e2m ANC_Speed_Algorithm_Enable (0x4000); no reader (the ANC stage is compiled out) */
+    uint16_t acceleration_noise_control_fuel_limit_enable : 1;  /* bit 12: e2m ANC_Fuel_Algorithm_Enable (0x1000); no reader (the ANC stage is compiled out) (was reserved_bit_12; PR #53 round 92) */
+    uint16_t acceleration_noise_control_timing_limit_enable : 1;  /* bit 13: e2m ANC_Timing_Algorithm_Enable (0x2000); no reader (the ANC stage is compiled out) (was reserved_bit_13; PR #53 round 92) */
+    uint16_t acceleration_noise_control_engine_speed_limit_enable : 1;  /* bit 14: e2m ANC_Speed_Algorithm_Enable (0x4000); no reader (the ANC stage is compiled out) (was reserved_bit_14; PR #53 round 92) */
     uint16_t cruise_save_set_speed_at_power_down_enable : 1;  /* bit 15: e2m Cruise_Save_Set_Speed_On_Poweroff_Enable (0x8000): cm848_saveCruiseSetSpeedForPowerDown saves 0 while it is clear; clear on this truck */
 };
 
