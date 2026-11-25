@@ -1591,7 +1591,7 @@ struct parameter_id_table_entry_t {
 struct fault_count_record_t {
     uint32_t status_change_time;  /* +0: key_on_hour_meter (0.2 s counts) when the fault last became active (status 3) or inactive (status 2) - cm550_processFaultScanGroup stores it (move.l at 0x14972 / 0x14bd0). The first countdown step waits until key_on_hour_meter minus it reaches the mode's elapsed time before countdown (e2m DGnnELTM at 0x80654c + 8 x mode); cm550_findOldestFreezeFrameEntryByFaultStatus picks the snapshot slot whose fault has the smallest one (cmp.l at 0x146fa); cm550_resetFaultStatus zeroes it. Unsigned (sub.l then cmp.l / bls) */
     uint32_t last_countdown_time;  /* +4: key_on_hour_meter at the last countdown step (move.l at 0x145bc); 0 until the first step - the activation (clr.l at 0x14988) and cm550_resetFaultStatus (clr.l at 0x2fe0e) zero it. While it is not 0 each step waits until key_on_hour_meter minus it reaches the mode's count down rate (e2m DGnnCUDN at 0x806550 + 8 x mode). Unsigned (sub.l then cmp.l / bhi) */
-    uint8_t status;  /* +8: bit 0 = active / bit 1 = given a snapshot slot in fault_freeze_frame_entries[0].fault_code_index. cm550_processFaultScanGroup writes 3 on activation (after cm550_assignFaultFreezeFrameEntry assigns the slot) and 2 on deactivation (whatever bit 1 was - in the RAM dump fault 70 is 2 and holds no slot); the registrar writes 0 (from 2) or 1 (from 3) to the oldest fault whose slot it hands to a new fault; cm550_resetFaultStatus releases the slot when the status is 2 and writes 0. Readers test bit 0 (btst #0 in the countdown) or group 1 / 3 against 0 / 2 (cm550_FUN_000315be / cm550_evaluateDataloggerTrigger) */
+    uint8_t status;  /* +8: bit 0 = active / bit 1 = given a snapshot slot in fault_freeze_frame_entries_cal[0].fault_code_index. cm550_processFaultScanGroup writes 3 on activation (after cm550_assignFaultFreezeFrameEntry assigns the slot) and 2 on deactivation (whatever bit 1 was - in the RAM dump fault 70 is 2 and holds no slot); the registrar writes 0 (from 2) or 1 (from 3) to the oldest fault whose slot it hands to a new fault; cm550_resetFaultStatus releases the slot when the status is 2 and writes 0. Readers test bit 0 (btst #0 in the countdown) or group 1 / 3 against 0 / 2 (cm550_FUN_000315be / cm550_evaluateDataloggerTrigger) */
     uint8_t occurrence_count;  /* +9: times the fault became active: +1 on each new fault bit mapped to it up to 255 (cmpi.b #0xff / bcc at 0x1491e) and -1 per countdown step (subq.b at 0x145d4); at 0 the record is cleared and the fault leaves previously_active_dtc_list. DM1 / DM2 send it capped at 127 (cmpi.b #0x7f / bls) and the InSite fault list (J1587 PID 194 layout) sends it whole; cm550_insitePidDtcHandler skips a fault whose count is 0. Unsigned */
 };
 
@@ -1638,7 +1638,7 @@ struct j1939_receive_handler_entry_t {
 
 struct j1939_input_signal_descriptor_t {
     byte* signal_value;  /* The received signal byte (a j1939_received_* switch byte) */
-    uint8_t timeout_slot;  /* Index into j1939_input_signal_timeouts */
+    uint8_t timeout_slot;  /* Index into j1939_input_signal_timeouts_cal */
     uint8_t reserved_5;  /* Always 0 (no reader) */
     uint32_t logical_switch;  /* The logical switch this input drives: cm550_processJ1939SwitchInput indexes the e2m 12A8 input priority bytes (0x80bd4a) and the switch bitmaps with it and tests enable bit switch + 0xd0 of the calibration feature words (it reads the low word at +8 for that) */
 };

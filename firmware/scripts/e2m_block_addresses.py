@@ -80,15 +80,16 @@ def parse_cm550_table(rom):
 
 
 CM550_EEPROM_MIRROR, CM550_MIRROR_LENGTH = 0x803B0A, 0x64C   # 0x64C: the part the bulk commit (service 21) writes back
-CM550_EEPROM_LENGTH = 0x1000                                 # the EEPROM address space the memory services image in RAM
+CM550_EEPROM_LENGTH = 0x148A                                 # the EEPROM image: the start-up load (0x26854)
 
 
 def cm550_ram_address(address):
-    """CM550 images its whole EEPROM address space in RAM: RAM = 0x803B0A + EEPROM offset for offsets 0x0-0xFFF. The
+    """CM550 images its EEPROM in RAM: RAM = 0x803B0A + EEPROM offset for offsets 0x0-0x1489, the start-up load of
+    mc68k_initializeSerialEepromDriverAndLoadMirror (0x26854: 0x148a bytes, then a refresh of 0x0-0x64B). The
     memory services translate any EEPROM address with no upper bound (0x224b6; the tool write path 0x2d30a), and the
     code uses the RAM images of the parameter ID table's entries above 0x64C (e2m 107F DGFUSITB at EEPROM 0x760 =
     RAM 0x80426a, the fault freeze frames). Only 0x0-0x64B is written back by the bulk commit
-    (cm550_commitEepromMirrorToEeprom); the _cal window of audit_cal_suffixes.py is a separate question (PR #53
+    (cm550_commitEepromMirrorToEeprom); the _cal window of audit_cal_suffixes.py is the whole image (PR #53
     rounds 73 / 94)."""
     if EEPROM_BASE <= address < EEPROM_BASE + CM550_EEPROM_LENGTH:
         return CM550_EEPROM_MIRROR + (address - EEPROM_BASE)
@@ -99,7 +100,7 @@ def cm550_region(address):
     """ROM below the RAM base (the chip's flash runs past the dumped 256 KB: entries point at 0x611a0 ...)."""
     if address < 0x800000:
         return "ROM"
-    if EEPROM_BASE <= address < EEPROM_BASE + 0x1000:
+    if EEPROM_BASE <= address < EEPROM_BASE + CM550_EEPROM_LENGTH:
         return "EEPROM"
     return "RAM"
 

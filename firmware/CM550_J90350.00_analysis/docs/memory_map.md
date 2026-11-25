@@ -11,7 +11,7 @@ The CM550 ECU uses a Motorola MC68336 microcontroller with external memory expan
 | **ROM** | 0x000000-0x03FFFF | 256KB | Extracted | Firmware code, lookup tables |
 | **RAM** | 0x800000-0x8091C1 | 37KB | Extracted | Working variables, buffers |
 | **EXT_RAM** | 0x8091C2-0x80FFFF | 28KB | Extracted (0x80 bytes short, see EXT_RAM below) | Scheduler, J1708, diagnostics |
-| **EEPROM** | 0x1000000-0x1000FFF | 4KB | Extracted | Module ID, calibration config |
+| **EEPROM** | 0x1000000-0x1001489 | 0x148A (5 KB) | 0x1000000-0x1000FFF extracted | Module ID, calibration config; loaded into RAM 0x803B0A-0x804F93 at start-up |
 
 **Total Extracted:** 325KB (100% of data memory)
 
@@ -73,8 +73,8 @@ These are memory-mapped hardware registers, not data storage. Reading them retur
            |   (unmapped)    |
            |                 |
 0x01000000 +-----------------+
-           |     EEPROM      | 4KB (Configuration)
-0x01000FFF +-----------------+
+           |     EEPROM      | 0x148A bytes (Configuration)
+0x01001489 +-----------------+
 ```
 
 ## Firmware Files

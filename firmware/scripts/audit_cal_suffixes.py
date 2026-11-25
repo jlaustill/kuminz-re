@@ -4,7 +4,8 @@
 The project rule (firmware/CLAUDE.md, investigate-firmware-symbol skill):
     `_cal` = EEPROM-backed (Calterm-tunable WITHOUT a reflash) ONLY.
     ROM / Bank2 flash / the ROM->RAM copy window / computed working RAM are NOT `_cal`.
-    On CM550 the EEPROM RAM mirror is 0x803B0A-0x804155 (RAM = 0x803B0A + EEPROM offset; PR #53 round 73).
+    On CM550 the EEPROM RAM image is 0x803B0A-0x804F93 (RAM = 0x803B0A + EEPROM offset; the start-up load is 0x148a
+    bytes; PR #53 rounds 73 / 94).
     On CM848 the application loads a RAM mirror of the serial EEPROM at 0x3FD482-0x3FEEC1 (RAM = 0x3FD482 + EEPROM offset; cm848_initEepromDriverAndLoadMirror, verified 2026-11-11).
 
 This script does the MECHANICAL half: classify each address by region and report names
@@ -39,11 +40,13 @@ CM848_REGIONS = [
 ]
 
 CM550_REGIONS = [
-    ("EEPROM",        0x01000000,   0x01001000,   True,    "eeprom"),
-    # RAM mirror of EEPROM 0x0-0x64b (RAM = 0x803B0A + EEPROM offset): the memory services translate by - 0x7FC4F6
-    # and 0x11a74 stores it back in 16-byte chunks (the counterpart of cm848_commitEepromMirrorToEeprom in CM848); PR #53 round 73.
+    ("EEPROM",        0x01000000,   0x0100148A,   True,    "eeprom"),
+    # RAM image of EEPROM 0x0-0x1489 (RAM = 0x803B0A + EEPROM offset): mc68k_initializeSerialEepromDriverAndLoadMirror
+    # (0x26854) loads 0x148a bytes at start-up, then refreshes 0x0-0x64b; the memory services translate by - 0x7FC4F6
+    # and 0x11a74 stores 0x0-0x64b back in 16-byte chunks (the counterpart of cm848_commitEepromMirrorToEeprom in
+    # CM848); PR #53 rounds 73 / 94 (the window was 0x803B0A-0x804155, the refresh, until PR #53 round 94).
     # Listed before RAM: the first matching region wins.
-    ("EEPROM_SHADOW", 0x00803B0A,   0x00804156,   True,    "eeprom"),
+    ("EEPROM_SHADOW", 0x00803B0A,   0x00804F94,   True,    "eeprom"),
     ("ROM",           0x00000000,   0x00040000,   False,   "rom"),
     ("RAM",           0x00800000,   0x00809200,   False,   "ram"),
     ("EXT_RAM",       0x008091C2,   0x00810000,   False,   "ram"),

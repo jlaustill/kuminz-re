@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 07:42:42 MST 2026
+// Generated: Wed Nov 25 08:57:14 MST 2026
 
 
 //
@@ -68936,8 +68936,8 @@ void setJ1939PedalInputTimeoutBit(uint param_1)
 // Function: setJ1939InputTimeoutBit @ 0x00509f90
 //
 
-/* Sets bit N: J1939 input N's message timed out (its j1939_input_signal_timeouts slot reached 0)
-   (was fault_reason_set_bitmap) | review-function-readability reviewed 2026-11-12 - Readability
+/* Sets bit N: J1939 input N's message timed out (its j1939_input_signal_timeouts_cal slot reached
+   0) (was fault_reason_set_bitmap) | review-function-readability reviewed 2026-11-12 - Readability
    Medium Accuracy Confidence High | the twin of CM550 0x00020348: one shared name (was
    cm848_setJ1939InputTimeoutBit; PR #53 round 94) */
 
@@ -68977,7 +68977,7 @@ void cm848_processJ1939EngineRetarderSelection(void)
     return;
   }
   if (j1939_dm13_fault_log_inhibit_flag == 0) {
-    if (j1939_input_signal_timeouts[5] == 0) {
+    if (j1939_input_signal_timeouts_cal[5] == 0) {
       if (j1939_input_monitor_inhibit_flag == 0) {
         setJ1939InputTimeoutBit(5);
       }
@@ -69028,7 +69028,7 @@ void cm848_processJ1939EngineFanRequestedSpeed(void)
   if (((algorithm_enable_flags_25_cal.manual_fan_level_override != 0) &&
       (j1939_engine_fan_request_source_priority <= j1939_input_source_priority)) &&
      (wVar1 = j1939_engine_fan_requested_speed_default, j1939_dm13_fault_log_inhibit_flag == 0)) {
-    if (j1939_input_signal_timeouts[0] == 0) {
+    if (j1939_input_signal_timeouts_cal[0] == 0) {
       wVar1 = j1939_engine_fan_requested_speed_default;
       if (j1939_input_monitor_inhibit_flag == 0) {
         setJ1939InputTimeoutBit(0);
@@ -69085,7 +69085,7 @@ void cm848_processJ1939AcceleratorLowIdleSwitch(void)
   if ((ushort)switch_input_source_priority[7] < (j1939_input_source_priority & 0xff)) {
     switch_input_source_priority[7] = (byte)j1939_input_source_priority;
   }
-  if (j1939_input_signal_timeouts[6] == 0) {
+  if (j1939_input_signal_timeouts_cal[6] == 0) {
     if (j1939_input_monitor_inhibit_flag != 0) {
       return;
     }
@@ -69269,7 +69269,7 @@ void cm848_evaluateJ1939InputSignalFault(int param_1)
     switch_input_source_priority[uVar7] = (byte)j1939_input_source_priority;
   }
   if (j1939_dm13_fault_log_inhibit_flag == 0) {
-    if (j1939_input_signal_timeouts[iVar6] == 0) {
+    if (j1939_input_signal_timeouts_cal[iVar6] == 0) {
       if (j1939_input_monitor_inhibit_flag == 0) {
         setJ1939InputTimeoutBit(iVar6);
       }
@@ -69337,7 +69337,7 @@ void cm848_processJ1939AcceleratorPedalPosition(void)
         accelerator_pedal_sensor_channel_state.held_value_source_priority = bVar3;
         return;
       }
-      if (j1939_input_signal_timeouts[7] == 0) {
+      if (j1939_input_signal_timeouts_cal[7] == 0) {
         if (j1939_input_monitor_inhibit_flag == 0) {
           setJ1939InputTimeoutBit(7);
           setJ1939PedalInputTimeoutBit(7);
@@ -70152,7 +70152,7 @@ void receivePgn57344CabMessage1(j1939_rx_msg_t *message)
 {
   if ((j1939_input_source_address_filter_cal[0] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0] == 0xff)) {
-    j1939_input_signal_timeouts[0] = 500;
+    j1939_input_signal_timeouts_cal[0] = 500;
     j1939_received_engine_fan_requested_percent_speed = *message->data_pointer;
   }
   return;
@@ -70178,27 +70178,27 @@ void receivePgn61441ElectronicBrakeController1Message(j1939_rx_msg_t *message)
 {
   if ((j1939_input_source_address_filter_cal[1] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[1] == 0xff)) {
-    j1939_input_signal_timeouts[1] = 0x32;
+    j1939_input_signal_timeouts_cal[1] = 0x32;
     j1939_received_remote_accelerator_enable_switch = message->data_pointer[3] >> 6;
   }
   if ((j1939_input_source_address_filter_cal[2] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[2] == 0xff)) {
-    j1939_input_signal_timeouts[2] = 0x32;
+    j1939_input_signal_timeouts_cal[2] = 0x32;
     j1939_received_engine_auxiliary_shutdown_switch = message->data_pointer[3] >> 4 & 3;
   }
   if ((j1939_input_source_address_filter_cal[3] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[3] == 0xff)) {
-    j1939_input_signal_timeouts[3] = 0x32;
+    j1939_input_signal_timeouts_cal[3] = 0x32;
     j1939_received_engine_derate_switch = message->data_pointer[3] >> 2 & 3;
   }
   if ((j1939_input_source_address_filter_cal[4] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[4] == 0xff)) {
-    j1939_input_signal_timeouts[4] = 0x32;
+    j1939_input_signal_timeouts_cal[4] = 0x32;
     j1939_received_accelerator_interlock_switch = message->data_pointer[3] & 3;
   }
   if ((j1939_input_source_address_filter_cal[5] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[5] == 0xff)) {
-    j1939_input_signal_timeouts[5] = 0x32;
+    j1939_input_signal_timeouts_cal[5] = 0x32;
     j1939_received_engine_retarder_selection = message->data_pointer[4];
   }
   return;
@@ -70224,22 +70224,22 @@ void receivePgn61443ElectronicEngineController2Message(j1939_rx_msg_t *message)
 {
   if ((j1939_input_source_address_filter_cal[6] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[6] == 0xff)) {
-    j1939_input_signal_timeouts[6] = 0x19;
+    j1939_input_signal_timeouts_cal[6] = 0x19;
     j1939_received_accelerator_pedal_1_low_idle_switch = *message->data_pointer & 3;
   }
   if ((j1939_input_source_address_filter_cal[7] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[7] == 0xff)) {
-    j1939_input_signal_timeouts[7] = 0x19;
+    j1939_input_signal_timeouts_cal[7] = 0x19;
     j1939_received_accelerator_pedal_position_1 = message->data_pointer[1];
   }
   if ((j1939_input_source_address_filter_cal[8] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[8] == 0xff)) {
-    j1939_input_signal_timeouts[8] = 0x19;
+    j1939_input_signal_timeouts_cal[8] = 0x19;
     j1939_received_remote_accelerator_pedal_position = message->data_pointer[3];
   }
   if ((j1939_input_source_address_filter_cal[9] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[9] == 0xff)) {
-    j1939_input_signal_timeouts[9] = 0x19;
+    j1939_input_signal_timeouts_cal[9] = 0x19;
     j1939_received_wet_tank_pressure = message->data_pointer[4];
   }
   return;
@@ -70266,7 +70266,7 @@ void receivePgn65252ShutdownMessage(j1939_rx_msg_t *message)
 {
   if ((j1939_input_source_address_filter_cal[10] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[10] == 0xff)) {
-    j1939_input_signal_timeouts[10] = 500;
+    j1939_input_signal_timeouts_cal[10] = 500;
     j1939_received_air_conditioner_high_pressure_fan_switch = message->data_pointer[2] & 3;
   }
   return;
@@ -70292,22 +70292,22 @@ void receivePgn65264PowerTakeoffInformationMessage(j1939_rx_msg_t *message)
 {
   if ((j1939_input_source_address_filter_cal[0xb] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0xb] == 0xff)) {
-    j1939_input_signal_timeouts[0xb] = 0x32;
+    j1939_input_signal_timeouts_cal[0xb] = 0x32;
     j1939_received_remote_power_take_off_switch = message->data_pointer[5] >> 2 & 3;
   }
   if ((j1939_input_source_address_filter_cal[0xc] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0xc] == 0xff)) {
-    j1939_input_signal_timeouts[0xc] = 0x32;
+    j1939_input_signal_timeouts_cal[0xc] = 0x32;
     j1939_received_power_take_off_on_switch = message->data_pointer[5] & 3;
   }
   if ((j1939_input_source_address_filter_cal[0xd] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0xd] == 0xff)) {
-    j1939_input_signal_timeouts[0xd] = 0x32;
+    j1939_input_signal_timeouts_cal[0xd] = 0x32;
     j1939_received_power_take_off_resume_switch = message->data_pointer[6] >> 4 & 3;
   }
   if ((j1939_input_source_address_filter_cal[0xe] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0xe] == 0xff)) {
-    j1939_input_signal_timeouts[0xe] = 0x32;
+    j1939_input_signal_timeouts_cal[0xe] = 0x32;
     j1939_received_power_take_off_set_switch = message->data_pointer[6] & 3;
   }
   return;
@@ -70333,42 +70333,42 @@ void receivePgn65265CruiseControlVehicleSpeedMessage(j1939_rx_msg_t *message)
 {
   if ((j1939_input_source_address_filter_cal[0xf] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0xf] == 0xff)) {
-    j1939_input_signal_timeouts[0xf] = 0x32;
+    j1939_input_signal_timeouts_cal[0xf] = 0x32;
     j1939_received_clutch_switch = message->data_pointer[3] >> 6;
   }
   if ((j1939_input_source_address_filter_cal[0x10] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0x10] == 0xff)) {
-    j1939_input_signal_timeouts[0x10] = 0x32;
+    j1939_input_signal_timeouts_cal[0x10] = 0x32;
     j1939_received_brake_switch = message->data_pointer[3] >> 4 & 3;
   }
   if ((j1939_input_source_address_filter_cal[0x11] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0x11] == 0xff)) {
-    j1939_input_signal_timeouts[0x11] = 0x32;
+    j1939_input_signal_timeouts_cal[0x11] = 0x32;
     j1939_received_cruise_control_enable_switch = message->data_pointer[3] >> 2 & 3;
   }
   if ((j1939_input_source_address_filter_cal[0x12] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0x12] == 0xff)) {
-    j1939_input_signal_timeouts[0x12] = 0x32;
+    j1939_input_signal_timeouts_cal[0x12] = 0x32;
     j1939_received_cruise_control_resume_switch = message->data_pointer[4] >> 4 & 3;
   }
   if ((j1939_input_source_address_filter_cal[0x13] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0x13] == 0xff)) {
-    j1939_input_signal_timeouts[0x13] = 0x32;
+    j1939_input_signal_timeouts_cal[0x13] = 0x32;
     j1939_received_cruise_control_set_switch = message->data_pointer[4] & 3;
   }
   if ((j1939_input_source_address_filter_cal[0x14] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0x14] == 0xff)) {
-    j1939_input_signal_timeouts[0x14] = 0x32;
+    j1939_input_signal_timeouts_cal[0x14] = 0x32;
     j1939_received_engine_idle_increment_switch = message->data_pointer[7] & 3;
   }
   if ((j1939_input_source_address_filter_cal[0x15] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0x15] == 0xff)) {
-    j1939_input_signal_timeouts[0x15] = 0x32;
+    j1939_input_signal_timeouts_cal[0x15] = 0x32;
     j1939_received_engine_idle_decrement_switch = message->data_pointer[7] >> 2 & 3;
   }
   if ((j1939_input_source_address_filter_cal[0x16] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[0x16] == 0xff)) {
-    j1939_input_signal_timeouts[0x16] = 0x32;
+    j1939_input_signal_timeouts_cal[0x16] = 0x32;
     j1939_received_engine_diagnostic_test_mode_switch = message->data_pointer[7] >> 4 & 3;
   }
   return;
@@ -70382,8 +70382,8 @@ void receivePgn65265CruiseControlVehicleSpeedMessage(j1939_rx_msg_t *message)
 
 /* Ticks the J1939 input supervision: start-up delay (j1939_input_monitor_startup_timer /
    j1939_input_monitor_inhibit_flag after the cold-start phases) then counts every
-   j1939_input_signal_timeouts slot down unless j1939_dm13_fault_log_inhibit_flag is set (suspected
-   DM13 suspend - unverified); also decrements j1939_input_fault_start_delay (was
+   j1939_input_signal_timeouts_cal slot down unless j1939_dm13_fault_log_inhibit_flag is set
+   (suspected DM13 suspend - unverified); also decrements j1939_input_fault_start_delay (was
    phase_group_a_updateStartupTimer) | review-function-readability reviewed 2026-11-12 - Readability
    Medium Accuracy Confidence Medium */
 
@@ -70416,13 +70416,13 @@ void cm848_tickJ1939InputSupervision(void)
       j1939_input_monitor_inhibit_flag = 1;
     }
     if (j1939_dm13_fault_log_inhibit_flag == 0) {
-      pwVar1 = j1939_input_signal_timeouts;
+      pwVar1 = j1939_input_signal_timeouts_cal;
       do {
         if (*pwVar1 != 0) {
           *pwVar1 = *pwVar1 - 1;
         }
         pwVar1 = pwVar1 + 1;
-      } while (pwVar1 < (word *)((int)j1939_input_signal_timeouts + 0x31));
+      } while (pwVar1 < (word *)((int)j1939_input_signal_timeouts_cal + 0x31));
     }
   }
   return;
@@ -70465,11 +70465,11 @@ void cm848_registerJ1939InputMessageHandlers(void)
    J1939_Active_Retarder). Its 12 words are copied into the history entry number
    j1939_control_session_history_next_entry_cal (e2m 1100 +8 J1939_History_Table_Next_Entry), and
    that index is incremented and wraps from 4 to 0. The destination is written as
-   j1939_input_signal_timeouts + index x 12 + 24 words: word 24 of that 25-word array is the history
-   table's length word at 0x3fead4, and the first store lands one word later at the entry. Called by
-   trackJ1939ControlSessions (0x50bff4) when a control session ends or its source changes. (was
-   governor_calibSnapshot_rollingBuffer_update) | the twin of CM550 0x00021f4e: one shared name (was
-   cm848_storeJ1939ControlSessionInHistoryTable; PR #53 round 94) */
+   j1939_input_signal_timeouts_cal + index x 12 + 24 words: word 24 of that 25-word array is the
+   history table's length word at 0x3fead4, and the first store lands one word later at the entry.
+   Called by trackJ1939ControlSessions (0x50bff4) when a control session ends or its source changes.
+   (was governor_calibSnapshot_rollingBuffer_update) | the twin of CM550 0x00021f4e: one shared name
+   (was cm848_storeJ1939ControlSessionInHistoryTable; PR #53 round 94) */
 
 void storeJ1939ControlSessionInHistoryTable(int session_kind)
 
@@ -70493,7 +70493,7 @@ void storeJ1939ControlSessionInHistoryTable(int session_kind)
   }
   copied_word_count = 0;
   source_word = (word *)((int)&session_record[-1].duration + 2);
-  history_word = j1939_input_signal_timeouts + history_entry * 0xc + 0x18;
+  history_word = j1939_input_signal_timeouts_cal + history_entry * 0xc + 0x18;
   do {
     source_word = source_word + 1;
     history_word = history_word + 1;

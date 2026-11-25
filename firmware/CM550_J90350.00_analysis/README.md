@@ -43,7 +43,7 @@ Counted from the CSVs for PR #53 round 93 (2026-11-24):
 | `firmware/J90350.00.rom.bin` | 256KB | ROM/Flash memory dump |
 | `firmware/J90350.00.ram.bin` | 37KB | RAM snapshot at extraction time |
 | `firmware/J90350.00.extended_ram.bin` | 28KB | Extended RAM (scheduler data, J1708 buffers) |
-| `firmware/J90350.00.eeprom.bin` | 4KB | EEPROM calibration data |
+| `firmware/J90350.00.eeprom.bin` | 4KB | EEPROM calibration data: the first 4 KB of the 0x148A-byte EEPROM image (the RAM dump holds the rest at 0x804B0A-0x804F93) |
 
 ### Analysis Output
 
@@ -131,7 +131,7 @@ See [docs/memory_map.md](docs/memory_map.md) for full details including peripher
 | ROM | 0x000000-0x03FFFF | 256KB | rx | Extracted |
 | RAM | 0x800000-0x8091C1 | 37KB | rwx | Extracted |
 | EXT_RAM | 0x8091C2-0x80FFFF | 28KB | rwx | Extracted, 0x80 bytes short (below) |
-| EEPROM | 0x1000000-0x1000FFF | 4KB | rw- | Extracted |
+| EEPROM | 0x1000000-0x1001489 | 0x148A (5 KB) | rw- | 0x1000000-0x1000FFF extracted |
 | MC68336 Peripherals | 0xFFD000-0xFFFFFF | 12KB | - | Hardware registers (not extractable) |
 
 **The extended RAM dump is 0x80 bytes short.** `J90350.00.extended_ram.bin` (0x6DBE bytes) was read in 128-byte chunks from 0x8091C2 (kuminz-cli asks for 0x8091C2-0x80FFFF, 0x6E3E bytes), and the dump tool skipped one failed chunk - the first (0x8091C2) or the second (0x809242) - without padding. So from 0x8092C2 on, each value sits at file offset address - 0x809242 (address - 0x80 from the region start): of 100 init-time constant stores, 40 match the dump only at address - 0x80 and none only at the address (PR #53 round 87). 0x8091C2-0x8092C1 is uncertain. clip-core's `ECUReader` pads a failed chunk with 0xFF and lists it in `<dump>.gaps.txt` since PR #53 round 88, so new dumps stay aligned. `SetupMemoryMap.java` loads the file's bytes from offset 0x80 at 0x8092C2 and leaves 0x8091C2-0x8092C1 0 (`ScriptUtils.imageFromDumpWithGaps`, PR #53 round 88; it used to load the file at 0x8091C2, 0x80 too high).

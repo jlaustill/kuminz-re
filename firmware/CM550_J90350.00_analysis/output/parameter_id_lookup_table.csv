@@ -138,7 +138,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4220,0x107C,8431980,0x0080A96C,RAM,asg_derivative_deadband_output,ASDV
 4221,0x107D,8420030,0x00807ABE,RAM,all_speed_governor_derivative_deadband_limit,ASDVDELM
 4222,0x107E,44082,0x0000AC32,ROM,,SSPH
-4223,0x107F,16779104,0x01000760,EEPROM,fault_freeze_frame_entries,DGFUSITB
+4223,0x107F,16779104,0x01000760,EEPROM,fault_freeze_frame_entries_cal,DGFUSITB
 4224,0x1080,8445560,0x0080DE78,RAM,fault_to_erase_none,FLT2ERAS
 4225,0x1081,8444764,0x0080DB5C,RAM,bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none,DRAUEN / LCFDLPEN / LCPRLPEN / LCSLPEN / LCWNLPEN / DRFLSHDR
 4226,0x1082,395194,0x000607BA,ROM,,DPMNBSRC
@@ -250,8 +250,8 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4349,0x10FD,16778866,0x01000672,EEPROM,,JCHSTB
 4350,0x10FE,16778988,0x010006EC,EEPROM,,JCAEEG
 4351,0x10FF,16779014,0x01000706,EEPROM,,JCAERD
-4352,0x1100,16779040,0x01000720,EEPROM,j1939_engine_control_active_flag,JCEGCOSS
-4353,0x1101,16778842,0x0100065A,EEPROM,j1922_control_count,JC22CU
+4352,0x1100,16779040,0x01000720,EEPROM,j1939_engine_control_active_flag_cal,JCEGCOSS
+4353,0x1101,16778842,0x0100065A,EEPROM,j1922_control_count_cal,JC22CU
 4354,0x1102,8444438,0x0080DA16,RAM,,JCEGIDTQ
 4355,0x1103,8432148,0x0080AA14,RAM,jcomm_ind_retarder_torque_amount_of_torque_provided_by_retarde_0_125,JCINRDTQ
 4356,0x1104,8421726,0x0080815E,RAM,jcomm_peak_fueling_ref_fuel_for_all_indicated_percent_peak_tor_0_100,JCINPKFL
@@ -357,8 +357,8 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4539,0x11BB,8444762,0x0080DB5A,RAM,,GROGFLOD
 4540,0x11BC,8441070,0x0080CCEE,RAM,engine_hour_meter,CMEGTR
 4543,0x11BF,8409032,0x00804FC8,RAM,ivs_switch_status_when_throttle_validation_process_error_true_false,CTIVSWSS
-4544,0x11C0,16779098,0x0100075A,EEPROM,j1939_input_signal_timeouts[24],J39PDBLK
-4545,0x11C1,16779100,0x0100075C,EEPROM,j1708_link_timeout_counter,JC17TMCU
+4544,0x11C0,16779098,0x0100075A,EEPROM,j1939_input_signal_timeouts_cal[24],J39PDBLK
+4545,0x11C1,16779100,0x0100075C,EEPROM,j1708_link_timeout_counter_cal,JC17TMCU
 4548,0x11C4,8421198,0x00807F4E,RAM,pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255,ESNOTTCU
 4549,0x11C5,8442514,0x0080D292,RAM,tooth_count_at_which_error_was_found_by_pmm_0_255,CKSYERTT
 4552,0x11C8,8421268,0x00807F94,RAM,eps_count_at_wide_ci_expected_eps_tooth_count_at_wide_ci_fallin_0_24,EGPSCU01
@@ -456,7 +456,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4712,0x1268,16778498,0x01000502,EEPROM,,PTTRSZ
 4716,0x126C,8424058,0x00808A7A,RAM,user_specified_number_of_engine_data_samples_taken_by_trending_f_0_100,TRNOSARQ
 4717,0x126D,16781024,0x01000EE0,EEPROM,,TRRBOC
-4718,0x126E,16781072,0x01000F10,EEPROM,histogram_stored_ticks,TRSATB
+4718,0x126E,16781072,0x01000F10,EEPROM,histogram_stored_ticks_cal,TRSATB
 4721,0x1271,8413376,0x008060C0,RAM,,TIESTM
 4722,0x1272,8413810,0x00806272,RAM,,TIRZTM
 4724,0x1274,8432150,0x0080AA16,RAM,,
@@ -546,7 +546,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4840,0x12E8,16778380,0x0100048C,EEPROM,,MXMOS1
 4842,0x12EA,16778298,0x0100043A,EEPROM,,HSGADJSZ
 4847,0x12EF,8424080,0x00808A90,RAM,,RTTMST
-4854,0x12F6,16779050,0x0100072A,EEPROM,j1939_input_signal_timeouts,MXMNFMTR
+4854,0x12F6,16779050,0x0100072A,EEPROM,j1939_input_signal_timeouts_cal,MXMNFMTR
 4855,0x12F7,8443660,0x0080D70C,RAM,j1939_accelerator_position_error_fallback_flag,MXACDXER
 4856,0x12F8,16778698,0x010005CA,EEPROM,,FC11SGTB
 4857,0x12F9,16778704,0x010005D0,EEPROM,,FC12SGTB
@@ -720,5 +720,5 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 33341,0x823D,8425960,0x008091E8,RAM,,CBDFFL
 33342,0x823E,8429214,0x00809E9E,RAM,,CBDDCT
 33343,0x823F,8429246,0x00809EBE,RAM,,CBDI2DCT
-33345,0x8241,16778830,0x0100064E,EEPROM,cyl_balance_trim_array,CBDDFTO1
+33345,0x8241,16778830,0x0100064E,EEPROM,cyl_balance_trim_array_cal,CBDDFTO1
 33381,0x8265,60442,0x0000EC1A,ROM,,EXE_DATE

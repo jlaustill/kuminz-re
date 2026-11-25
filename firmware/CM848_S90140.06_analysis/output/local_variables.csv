@@ -145,7 +145,7 @@ function_address,function_name,old_name,new_name,type,comment
 0x0050be6c,storeJ1939ControlSessionInHistoryTable,pjVar1,session_record,j1939_control_session_t *,the open session record (engine or retarder); the copy starts one word before it (session_record[-1].duration + 2)
 0x0050be6c,storeJ1939ControlSessionInHistoryTable,uVar3,history_entry,uint,j1939_control_session_history_next_entry_cal before the increment
 0x0050be6c,storeJ1939ControlSessionInHistoryTable,pwVar2,source_word,word *,the record word cursor (starts one word before the record)
-0x0050be6c,storeJ1939ControlSessionInHistoryTable,pwVar4,history_word,word *,the history entry word cursor (j1939_input_signal_timeouts + entry x 12 + 24 words: the table behind that array)
+0x0050be6c,storeJ1939ControlSessionInHistoryTable,pwVar4,history_word,word *,the history entry word cursor (j1939_input_signal_timeouts_cal + entry x 12 + 24 words: the table behind that array)
 0x0050be6c,storeJ1939ControlSessionInHistoryTable,bVar5,copied_word_count,byte,12 words per record
 0x0051cf74,cm848_sciLookupEepromSettingAddress,pfVar1,setting_pointer,byte *,The EEPROM setting address it returns (base + index). Typed byte * so the struct type of feature_selection_bits_cal (one of the settings) does not spread to every setting (PR #53 round 40)
 0x00021314,cm848_calculateEngineRetarderTorque,in_r6,selected_stage_torque_values,word *,The engine_retarder_torque_stage_N_values table for engine_retarder_cylinders_on_count N (1 to 6); a count above 6 selects none and the lookup then reads whatever r6 held (PR #53 round 42)

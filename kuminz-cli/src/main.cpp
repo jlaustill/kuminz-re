@@ -40,7 +40,7 @@ void printUsage(const char* progname)
     std::cerr << "Memory Dump Commands (CM550 - default):\n";
     std::cerr << "  --dump-ram [file]           Dump main RAM (37KB) to file\n";
     std::cerr << "  --dump-extended-ram [file]  Dump extended RAM (28KB) to file\n";
-    std::cerr << "  --dump-eeprom [file]        Dump EEPROM (4KB) to file\n";
+    std::cerr << "  --dump-eeprom [file]        Dump the EEPROM image (0x148A bytes) to file\n";
     std::cerr << "  --dump-rom [file]           Dump ROM/Flash (256KB) to file\n";
     std::cerr << "  --dump-all [dir]            Dump all regions to directory\n\n";
     std::cerr << "Memory Dump Commands (CM848 - 2003-2006 Dodge Ram 5.9L):\n";

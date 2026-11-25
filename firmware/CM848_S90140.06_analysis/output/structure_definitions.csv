@@ -1945,7 +1945,7 @@ block_data_structure_t,0x00008112,block_length,dword,16,"0x38000 / 0x2fc64 / 0x3
 
 # --- j1939_input_signal_descriptor_t: J1939 input supervision table (10 bytes x 17 @ Bank 2 0x53a278) ---
 j1939_input_signal_descriptor_t,0x0053a278,signal_value,byte*,4,Received signal byte (j1939_received_*),,verified
-j1939_input_signal_descriptor_t,0x0053a278,timeout_slot,byte,1,Index into j1939_input_signal_timeouts (also the fault bitmap index),,verified
+j1939_input_signal_descriptor_t,0x0053a278,timeout_slot,byte,1,Index into j1939_input_signal_timeouts_cal (also the fault bitmap index),,verified
 j1939_input_signal_descriptor_t,0x0053a278,reserved_5,byte,1,Always 0,,verified
 j1939_input_signal_descriptor_t,0x0053a278,logical_switch,dword,4,The logical switch (0-31) this input drives: cm848_evaluateJ1939InputSignalFault indexes switch_input_datalink_source_bits_cal / switch_input_source_priority / j1939_switch_input_default_state_bits with it and sets / clears its switch_input_datalink_state_bits bit through cm848_setDatalinkSwitchStateIfPriority / cm848_clearDatalinkSwitchStateIfPriority (received 1 sets / 0 clears; 2 / 3 or a timeout apply the default bit). Table values: brake switch 11 / clutch switch 15 / PTO on 3 / remote PTO 19 / accelerator interlock 26 / the other 12 inputs 31 (the unwired switch) (was fault_bit_index, PR #53 round 27) | earlier note: Bit index into the fault-enable bitmask and the fault confirmation arrays (0x1f for most entries),,verified
 j1939_input_signal_descriptor_t,0x0053a282,,,,descriptor 1 - marker,,verified
