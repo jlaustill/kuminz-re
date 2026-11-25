@@ -17,7 +17,7 @@
 #   This tool reads the ECM's ENGINE-RUN hour meter and prints that command.
 #
 # THE TWO HOUR METERS (firmware-traced, PR #48, 2026-11-15):
-#   cm848_advanceHourMeters (flash2 0x506780) runs in phase 0 of the 40-phase
+#   advanceHourMeters (flash2 0x506780) runs in phase 0 of the 40-phase
 #   main loop, i.e. once every 40 PIT ticks. Each tick is 5 ms (PITC = 4999, a
 #   5000-count PIT period at 1 MHz), so ONE COUNT = 0.200 s (hours = counts / 18000).
 #   - EEPROM 0x01000042 (u32 BE) = engine_hour_meter_cal - ENGINE-RUNNING time.

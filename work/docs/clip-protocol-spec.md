@@ -613,6 +613,10 @@ The CM550 firmware has TWO separate dispatch tables for handling incoming diagno
 | 0x008019B8 | `diag_service_pgn_dispatch_ptr` | PGN-based service routing | `can_transmission_active_count` |
 | 0x008018D8 | `diagnostic_service_dispatch_ptr` | Service byte routing | `diagnostic_service_state_counter` |
 
+> **Correction (PR #53 round 94):** 0x801994-0x8019bb is `engine_tsc1_ignored_request_entries` (five 8-byte `engine_tsc1_ignored_request_t` records: data link / source address / control mode / countdown), not a dispatch table. 0x8019B8 (`diag_service_pgn_dispatch_ptr` here) is the control mode of entry 4, and 0x801998 (`diagnostic_service_state_counter`) is the control mode of entry 0: the TSC1 code indexes both as entry fields. The dispatch loops below are an older reading of the decompilation.
+
+> **Correction (PR #53 round 94):** 0x801994-0x8019bb is `engine_tsc1_ignored_request_entries` (five 8-byte `engine_tsc1_ignored_request_t` records: data link / source address / control mode / countdown), not a dispatch table. 0x8019B8 (`diag_service_pgn_dispatch_ptr` here) is the control mode of entry 4, and 0x801998 (`diagnostic_service_state_counter`) is the control mode of entry 0: the TSC1 code indexes both as entry fields. The dispatch loops below are an older reading of the decompilation.
+
 Each entry in these tables is 6 bytes:
 - Bytes 0-1: Service ID / match bytes
 - Bytes 2-5: Function pointer (4 bytes)

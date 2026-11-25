@@ -248,8 +248,8 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 0x000539fc,cm848_sendJ1939Message,0,msg,j1939_tx_msg_t*,TX message descriptor; dispatches to single-frame (<9 bytes) or multi-frame transport protocol
 
-0x00053a4c,cm848_lookupJ1939ControlDevice,return,,J1939_CONTROL_DEVICE,the control device of the source address (1 transmission / 2 ABS / 3 ASR / 4 other)
-0x00053a4c,cm848_lookupJ1939ControlDevice,0,source_address,uint,the J1939 source address to classify
+0x00053a4c,lookupJ1939ControlDevice,return,,J1939_CONTROL_DEVICE,the control device of the source address (1 transmission / 2 ABS / 3 ASR / 4 other)
+0x00053a4c,lookupJ1939ControlDevice,0,source_address,uint,the J1939 source address to classify
 
 # -----------------------------------------------------------------------------
 # Math Division Runtime Helpers - 64-bit dividend (hi:lo) / 64-bit divisor (hi:lo)
@@ -424,10 +424,10 @@ function_address,function_name,param_index,name,type,comment
 0x00012724,cm848_calculateDownstreamEgrFlowSource,return,,word,0 PRIMARY / 1 BACKUP (clrlwi r3,r4,16 @ 0x12770)
 0x00012778,cm848_calculateUpstreamEgrFlowSource,return,,word,0 PRIMARY / 1 BACKUP (clrlwi r3,r4,16)
 0x00013294,cm848_estimateChargePressure,return,,void,Takes no parameters: r4 and r3 are written before any read (lhz r4 @ 0x132b4, lis r3 @ 0x132b8); the old boost_input / rpm rows were stale
-0x0050be6c,cm848_storeJ1939ControlSessionInHistoryTable,return,,void,returns nothing
-0x0050be6c,cm848_storeJ1939ControlSessionInHistoryTable,0,session_kind,int32_t,"0 = the engine control session record, else the retarder's"
-0x0050beec,cm848_startJ1939ControlSession,return,,void,returns nothing
-0x0050beec,cm848_startJ1939ControlSession,0,session_kind,int32_t,"0 = open the engine control session record, else the retarder's"
+0x0050be6c,storeJ1939ControlSessionInHistoryTable,return,,void,returns nothing
+0x0050be6c,storeJ1939ControlSessionInHistoryTable,0,session_kind,int32_t,"0 = the engine control session record, else the retarder's"
+0x0050beec,startJ1939ControlSession,return,,void,returns nothing
+0x0050beec,startJ1939ControlSession,0,session_kind,int32_t,"0 = open the engine control session record, else the retarder's"
 0x0051e624,cm848_stepSciOutputTest,return,,void,No result
 0x0051e624,cm848_stepSciOutputTest,0,timer,word *,The test's timer in sci_output_test_timers (phases left; lhz: unsigned)
 0x0051e624,cm848_stepSciOutputTest,1,logical_output,dword,The logical output the test drives (priority 5)
@@ -520,12 +520,12 @@ function_address,function_name,param_index,name,type,comment
 0x000218dc,handleJ1939RestartService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x0050c318,cm848_handleJ1939GetAddressByParameterIdService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x0050c640,cm848_handleJ1939ReadByParameterIdLongLengthService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050b228,cm848_handleJ1939WriteByParameterIdService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050b298,cm848_handleJ1939WriteByParameterIdLongLengthService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
+0x0050b228,handleJ1939WriteByParameterIdService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
+0x0050b298,handleJ1939WriteByParameterIdLongLengthService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x0050c6a8,cm848_handleJ1939ReadByParameterIdShortOffsetService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050b300,cm848_handleJ1939WriteByParameterIdShortOffsetService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
+0x0050b300,handleJ1939WriteByParameterIdShortOffsetService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x0050c734,cm848_handleJ1939ReadByParameterIdLongOffsetService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050b38c,cm848_handleJ1939WriteByParameterIdLongOffsetService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
+0x0050b38c,handleJ1939WriteByParameterIdLongOffsetService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x0050c7b0,cm848_handleJ1939ReadMemoryService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x0050b408,handleJ1939WriteMemoryService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x0050c81c,cm848_handleJ1939ReadMemoryLongLengthService,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
@@ -536,10 +536,10 @@ function_address,function_name,param_index,name,type,comment
 0x0050c5d0,cm848_readJ1939DiagnosticMemoryByParameterId,1,parameter_id,undefined4,The e2m block ID that cm848_lookupParameterIdAddress resolves - a full register (its hash divides all 32 bits) so a halfword type made the lookup call a CONCAT22 (PR #53 round 63)
 0x0050c5d0,cm848_readJ1939DiagnosticMemoryByParameterId,2,offset,uint,Added to the ID's address (PR #53 round 63)
 0x0050c5d0,cm848_readJ1939DiagnosticMemoryByParameterId,3,length,uint,Bytes to read (PR #53 round 63)
-0x0050b1b8,cm848_writeJ1939DiagnosticMemoryByParameterId,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050b1b8,cm848_writeJ1939DiagnosticMemoryByParameterId,1,parameter_id,undefined4,The e2m block ID that cm848_lookupParameterIdAddress resolves - a full register (its hash divides all 32 bits) so a halfword type made the lookup call a CONCAT22 (PR #53 round 63)
-0x0050b1b8,cm848_writeJ1939DiagnosticMemoryByParameterId,2,offset,uint,Added to the ID's address (PR #53 round 63)
-0x0050b1b8,cm848_writeJ1939DiagnosticMemoryByParameterId,3,length,uint,Bytes to write (PR #53 round 63)
+0x0050b1b8,writeJ1939DiagnosticMemoryByParameterId,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
+0x0050b1b8,writeJ1939DiagnosticMemoryByParameterId,1,parameter_id,undefined4,The e2m block ID that cm848_lookupParameterIdAddress resolves - a full register (its hash divides all 32 bits) so a halfword type made the lookup call a CONCAT22 (PR #53 round 63)
+0x0050b1b8,writeJ1939DiagnosticMemoryByParameterId,2,offset,uint,Added to the ID's address (PR #53 round 63)
+0x0050b1b8,writeJ1939DiagnosticMemoryByParameterId,3,length,uint,Bytes to write (PR #53 round 63)
 0x0050c42c,cm848_readJ1939DiagnosticMemoryAndRespond,0,request,j1939_rx_msg_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
 0x0050c42c,cm848_readJ1939DiagnosticMemoryAndRespond,1,address,uint,The first byte to read (PR #53 round 63)
 0x0050c42c,cm848_readJ1939DiagnosticMemoryAndRespond,2,length,uint,Bytes to read - at most 1764 (PR #53 round 63)

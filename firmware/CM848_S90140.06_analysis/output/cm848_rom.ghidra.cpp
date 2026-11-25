@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue Nov 24 22:02:39 MST 2026
+// Generated: Wed Nov 25 07:42:42 MST 2026
 
 
 //
@@ -4382,12 +4382,12 @@ byte cm848_writeBootDiagnosticMemory(j1939_rx_msg_t *request,dword address,dword
 /* Boot reflash kernel: writes by parameter ID for services 0x44 / 0x45 -
    cm848_lookupBootParameterIdAddress (8 when unknown) then cm848_writeBootDiagnosticMemory(request
    / the ID's address + offset / length) with addressing mode 0. Twin of the application's
-   cm848_writeJ1939DiagnosticMemoryByParameterId (was cm848_memoryWriteByParameterId; PR #53 round
-   63) | earlier note: Boot reflash kernel (runs only from its RAM copy; never called by the
-   application): resolves a 2-byte parameter ID via cm848_lookupBootParameterIdAddress (returns 8
-   when unknown) then hands address + offset + length to the shared memory-write worker at 0x5400
-   with addressing mode 0 (parameter ID) | review-function-readability reviewed 2026-11-11 -
-   Readability Medium Accuracy Confidence Medium */
+   writeJ1939DiagnosticMemoryByParameterId (was cm848_memoryWriteByParameterId; PR #53 round 63) |
+   earlier note: Boot reflash kernel (runs only from its RAM copy; never called by the application):
+   resolves a 2-byte parameter ID via cm848_lookupBootParameterIdAddress (returns 8 when unknown)
+   then hands address + offset + length to the shared memory-write worker at 0x5400 with addressing
+   mode 0 (parameter ID) | review-function-readability reviewed 2026-11-11 - Readability Medium
+   Accuracy Confidence Medium */
 
 byte cm848_writeBootDiagnosticMemoryByParameterId
                (j1939_rx_msg_t *request,word parameter_id,dword offset,dword length)
@@ -6798,11 +6798,11 @@ void cm848_phase_group_a_processing(void)
 {
   cm848_dispatchJ1939ReceivedMessages();
   cm848_runJ1939PowertrainControlTimeouts();
-  cm848_trackJ1939ControlSessions();
+  trackJ1939ControlSessions();
   cm848_serviceJ1939TransportSessions();
   cm848_tickJ1939InputSupervision();
   cm848_processJ1939SwitchAndRequestInputs();
-  cm848_endRetarderShiftAssistAboveFuelDemandLimit();
+  endRetarderShiftAssistAboveFuelDemandLimit();
   cm848_runJ1939PeriodicTransmitQueues();
   cm848_calculateTransmissionRatioFromOutputShaft();
   cm848_processBoostPressureAbsoluteChannel();
@@ -7610,7 +7610,7 @@ void executiveFrameInterruptHandler(void)
     cm848_periodicTaskSet_canTx();
     cm848_periodicTaskGroup12_calibration1();
     hpcr_periodicTaskGroup25_calibration7();
-    cm848_advanceHourMeters();
+    advanceHourMeters();
     executive_frame_timing_pointer = executive_frame_timings;
     executive_frame_phase = 1;
     break;
@@ -9022,13 +9022,15 @@ void cm848_initFuelTableSizes(void)
 
 
 //
-// Function: cm848_applyAirFuelControlFuelLimit @ 0x0000e0c4
+// Function: applyAirFuelControlFuelLimit @ 0x0000e0c4
 //
 
 /* Takes air_fuel_control_fuel_limit into fuel_demand_minimum_tracked with
-   FUELING_STATE_AIR_FUEL_CONTROL_DERATE when it is lower (was cm848_trackMinimumFuelDemand) */
+   FUELING_STATE_AIR_FUEL_CONTROL_DERATE when it is lower (was cm848_trackMinimumFuelDemand) | the
+   twin of CM550 0x0000c2a0: one shared name (was cm848_applyAirFuelControlFuelLimit; PR #53 round
+   94) */
 
-void cm848_applyAirFuelControlFuelLimit(void)
+void applyAirFuelControlFuelLimit(void)
 
 {
   if (air_fuel_control_fuel_limit < fuel_demand_minimum_tracked) {
@@ -9611,7 +9613,7 @@ void cm848_runOperatingModeSpeedGovernor(void)
   if ((((engine_operating_mode != FUELING_STATE_VARIABLE_SPEED_GOVERNOR) &&
        (engine_operating_mode != FUELING_STATE_TSC1_SPEED_CONTROL)) &&
       (engine_operating_mode != FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION)) &&
-     (engine_operating_mode != FUELING_STATE_UNIDENTIFIED_37)) {
+     (engine_operating_mode != FUELING_STATE_TOP2_TRANSMISSION_SPEED_CONTROL)) {
     engine_operating_mode_previous_pass = engine_operating_mode;
     return;
   }
@@ -21384,14 +21386,16 @@ void cm848_initFuelDemandTableDimensions(void)
 
 
 //
-// Function: cm848_initializeFuelLimitChains @ 0x0001f318
+// Function: initializeFuelLimitChains @ 0x0001f318
 //
 
 /* Starts both running minimums at throttle_100_fueling (the maximum fuel curve):
    torque_derate_fuel_quantity with state 19 (FUELING_STATE_MAXIMUM_THROTTLE) and
-   fuel_demand_minimum_tracked with state 40 (was cm848_initProtectionStateWithFuelDemand) */
+   fuel_demand_minimum_tracked with state 40 (was cm848_initProtectionStateWithFuelDemand) | the
+   twin of CM550 0x0001ce58: one shared name (was cm848_initializeFuelLimitChains; PR #53 round 94)
+    */
 
-void cm848_initializeFuelLimitChains(void)
+void initializeFuelLimitChains(void)
 
 {
   torque_derate_fuel_quantity = throttle_100_fueling;
@@ -22307,8 +22311,9 @@ void cm848_calculateDriverDemandPercentTorque(void)
                    operating_mode_governor_output.mode_code != FUELING_STATE_TSC1_TORQUE_CONTROL))))
                  )) &&
       (operating_mode_governor_output.mode_code != FUELING_STATE_TSC1_SPEED_CONTROL)) &&
-     ((operating_mode_governor_output.mode_code != FUELING_STATE_UNIDENTIFIED_37 &&
-      (operating_mode_governor_output.mode_code != FUELING_STATE_UNIDENTIFIED_38)))) {
+     ((operating_mode_governor_output.mode_code != FUELING_STATE_TOP2_TRANSMISSION_SPEED_CONTROL &&
+      (operating_mode_governor_output.mode_code != FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL)))
+     ) {
     if ((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR) ||
        ((adjusted_user_fueling_state == FUELING_STATE_HIGH_SPEED_GOVERNOR &&
         ((adjusted_user_fueling < operating_mode_governor_output.fuel_demand ||
@@ -24234,12 +24239,12 @@ void processEngineTsc1Request(j1939_rx_msg_t *msg)
   j1939_powertrain_messages_received.tsc1_requested_torque = msg->data_pointer[3];
   sender_source_address = msg->source_address;
   if (control_mode == 0) {
-    cm848_removeEngineTsc1IgnoredRequestEntry(1,sender_source_address);
+    removeEngineTsc1IgnoredRequestEntry(1,sender_source_address);
     j1939_powertrain_control_state.j1939_blocked_message_bits =
          j1939_powertrain_control_state.j1939_blocked_message_bits & 6;
   }
   else {
-    sVar1 = cm848_refreshEngineTsc1IgnoredRequestEntry(1,sender_source_address,control_mode);
+    sVar1 = refreshEngineTsc1IgnoredRequestEntry(1,sender_source_address,control_mode);
     if (sVar1 != 0) {
       return;
     }
@@ -24309,7 +24314,7 @@ accept_tsc1_command:
          (j1939_powertrain_control_state.tsc1_source_configuration_pointer)->
          speed_control_request_timeout + 1;
     j1939_powertrain_control_state.tsc1_override_control_mode = TSC1_SPEED_CONTROL;
-    engine_control_device_indicator = cm848_lookupJ1939ControlDevice((uint)msg->source_address);
+    engine_control_device_indicator = lookupJ1939ControlDevice((uint)msg->source_address);
     j1939_powertrain_control_state.tsc1_speed_control_flag = 1;
     j1939_powertrain_messages_received.tsc1_accepted_requested_speed =
          j1939_powertrain_messages_received.tsc1_requested_speed;
@@ -24327,7 +24332,7 @@ accept_tsc1_command:
          (j1939_powertrain_control_state.tsc1_source_configuration_pointer)->
          torque_control_request_timeout + 1;
     j1939_powertrain_control_state.tsc1_override_control_mode = TSC1_TORQUE_CONTROL;
-    engine_control_device_indicator = cm848_lookupJ1939ControlDevice((uint)msg->source_address);
+    engine_control_device_indicator = lookupJ1939ControlDevice((uint)msg->source_address);
     j1939_powertrain_control_state.tsc1_speed_control_flag = 0;
     j1939_powertrain_messages_received.tsc1_accepted_requested_torque =
          j1939_powertrain_messages_received.tsc1_requested_torque;
@@ -24346,7 +24351,7 @@ accept_tsc1_command:
          (j1939_powertrain_control_state.tsc1_source_configuration_pointer)->
          speed_torque_limit_control_request_timeout + 1;
     j1939_powertrain_control_state.tsc1_override_control_mode = TSC1_SPEED_TORQUE_LIMIT;
-    engine_control_device_indicator = cm848_lookupJ1939ControlDevice((uint)msg->source_address);
+    engine_control_device_indicator = lookupJ1939ControlDevice((uint)msg->source_address);
     j1939_powertrain_control_state.tsc1_speed_control_flag = 0;
     j1939_powertrain_messages_received.tsc1_accepted_requested_speed =
          j1939_powertrain_messages_received.tsc1_requested_speed;
@@ -24758,8 +24763,8 @@ LAB_00023878:
            (j1939_powertrain_control_state.retarder_tsc1_source_configuration_pointer)->
            retarder_torque_control_request_timeout + 1;
       engine_retarder_override_control_mode = TSC1_TORQUE_CONTROL;
-      engine_retarder_control_device_indicator =
-           cm848_lookupJ1939ControlDevice((uint)msg->source_address);
+      engine_retarder_control_device_indicator = lookupJ1939ControlDevice((uint)msg->source_address)
+      ;
       if (engine_retarder_torque_request_percent == 0) {
         engine_retarder_torque_limit_percent = 0x7d;
         j1939_powertrain_control_state.retarder_tsc1_zero_torque_request_timer =
@@ -24776,8 +24781,7 @@ LAB_00023878:
   }
   if (bVar2 == 3) {
     engine_retarder_override_control_mode = TSC1_SPEED_TORQUE_LIMIT;
-    engine_retarder_control_device_indicator =
-         cm848_lookupJ1939ControlDevice((uint)msg->source_address);
+    engine_retarder_control_device_indicator = lookupJ1939ControlDevice((uint)msg->source_address);
     engine_retarder_requested_torque_percent =
          cm848_decodeRetarderTorqueRequestPercent(engine_retarder_received_tsc1_torque_byte);
     j1939_powertrain_control_state.retarder_tsc1_request_timeout_count =
@@ -27425,14 +27429,15 @@ void cm848_runTsc1LostManagement(void)
 
 
 //
-// Function: cm848_resetEngineRetarderTsc1Request @ 0x00027118
+// Function: resetEngineRetarderTsc1Request @ 0x00027118
 //
 
 /* Ends the engine retarder TSC1 request: override control mode off, control device none, the torque
    limit 125 (no limit), and the retarder request timeout, time limit, zero torque timer and speed
-   control flag cleared (was cm848_resetGovernorState) */
+   control flag cleared (was cm848_resetGovernorState) | the twin of CM550 0x00023216: one shared
+   name (was cm848_resetEngineRetarderTsc1Request; PR #53 round 94) */
 
-void cm848_resetEngineRetarderTsc1Request(void)
+void resetEngineRetarderTsc1Request(void)
 
 {
   engine_retarder_override_control_mode = TSC1_OVERRIDE_OFF;
@@ -27733,7 +27738,7 @@ LAB_00027848:
     if (engine_retarder_override_control_mode == TSC1_TORQUE_CONTROL) {
       if (j1939_powertrain_control_state.retarder_tsc1_request_timeout_count == 1) {
 LAB_000279e8:
-        cm848_resetEngineRetarderTsc1Request();
+        resetEngineRetarderTsc1Request();
         bVar7 = true;
       }
       else if (j1939_powertrain_control_state.retarder_tsc1_request_time_limit_timer == 1) {
@@ -27741,7 +27746,7 @@ LAB_000279e8:
                   (engine_retarder_controlling_source_address & 0xff,2);
         j1939_powertrain_control_state.j1939_blocked_message_bits =
              j1939_powertrain_control_state.j1939_blocked_message_bits | 2;
-        cm848_resetEngineRetarderTsc1Request();
+        resetEngineRetarderTsc1Request();
       }
     }
     else if ((engine_retarder_override_control_mode == TSC1_SPEED_TORQUE_LIMIT) &&
@@ -29656,14 +29661,15 @@ void cm848_runPowerTakeOffGovernorPid(void)
 
 
 //
-// Function: cm848_applyPowerTakeOffTorqueLimit @ 0x0002a918
+// Function: applyPowerTakeOffTorqueLimit @ 0x0002a918
 //
 
 /* While power_take_off_governor_active_flag is 1 lowers torque_derate_torque_limit to
    power_take_off_maximum_torque_cal with FUELING_STATE_POWER_TAKE_OFF_DERATE (was
-   cm848_checkProtectionParamLimit) */
+   cm848_checkProtectionParamLimit) | the twin of CM550 0x0002d9a8: one shared name (was
+   cm848_applyPowerTakeOffTorqueLimit; PR #53 round 94) */
 
-void cm848_applyPowerTakeOffTorqueLimit(void)
+void applyPowerTakeOffTorqueLimit(void)
 
 {
   if ((power_take_off_governor_active_flag == 1) &&
@@ -30394,8 +30400,8 @@ void cm848_selectPowerTakeOffOrUserFueling(void)
 {
   if ((((engine_operating_mode == FUELING_STATE_TSC1_TORQUE_CONTROL) ||
        (engine_operating_mode == FUELING_STATE_TSC1_SPEED_CONTROL)) ||
-      (engine_operating_mode == FUELING_STATE_UNIDENTIFIED_37)) ||
-     (engine_operating_mode == FUELING_STATE_UNIDENTIFIED_38)) {
+      (engine_operating_mode == FUELING_STATE_TOP2_TRANSMISSION_SPEED_CONTROL)) ||
+     (engine_operating_mode == FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL)) {
     operating_mode_governor_output.mode_code = engine_operating_mode;
     operating_mode_governor_output.fuel_demand = engine_operating_mode_fuel_demand;
   }
@@ -44778,8 +44784,9 @@ LAB_000406b0:
   if ((((adjusted_user_fueling < cruise_fuel_ramp_down_working) &&
        (operating_mode_governor_output.mode_code != FUELING_STATE_TSC1_SPEED_CONTROL)) &&
       (operating_mode_governor_output.mode_code != FUELING_STATE_TSC1_TORQUE_CONTROL)) &&
-     ((operating_mode_governor_output.mode_code != FUELING_STATE_UNIDENTIFIED_37 &&
-      (operating_mode_governor_output.mode_code != FUELING_STATE_UNIDENTIFIED_38)))) {
+     ((operating_mode_governor_output.mode_code != FUELING_STATE_TOP2_TRANSMISSION_SPEED_CONTROL &&
+      (operating_mode_governor_output.mode_code != FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL)))
+     ) {
     adjusted_user_fueling = cruise_fuel_ramp_down_working;
   }
   cruise_control_engaged_flag_previous_arbitration = cruise_control_engaged_flag;
@@ -45318,9 +45325,10 @@ void cm848_selectCruiseOrUserFueling(void)
           (cruise_control_fueling != road_speed_governor_fueling)))) ||
         ((operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_SPEED_CONTROL ||
          (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_TORQUE_CONTROL)))))) ||
-      (operating_mode_governor_output.mode_code == FUELING_STATE_UNIDENTIFIED_37)) ||
-     ((operating_mode_governor_output.mode_code == FUELING_STATE_UNIDENTIFIED_38 ||
-      (operating_mode_governor_output.mode_code == FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND)))) {
+      (operating_mode_governor_output.mode_code == FUELING_STATE_TOP2_TRANSMISSION_SPEED_CONTROL))
+     || ((operating_mode_governor_output.mode_code == FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL
+         || (operating_mode_governor_output.mode_code == FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND)
+         ))) {
     governor_fuel_demand_working_mode = operating_mode_governor_output.mode_code;
     governor_fuel_demand_working = operating_mode_governor_output.fuel_demand;
   }
@@ -46219,17 +46227,18 @@ void cm848_copyMainInjectionTiming(void)
 
 
 //
-// Function: cm848_applyFuelPressureFaultFuelLimit @ 0x0004279c
+// Function: applyFuelSystemDerateFuelLimit @ 0x0004279c
 //
 
 /* Folds the rail pressure fault fuel limit fuel_pressure_fault_fuel_limit_working (set by
    cm848_applyFuelLimitsForFuelPressureFaults; 5888 = none) into the running minimum fuel limit
    torque_derate_fuel_quantity and records source code 28 in torque_derate_fuel_source_code when it
    is the lower one. One of the fuel limit steps run by cm848_processProtectionLimits; its sibling
-   cm848_applyFaultDerateFuelLimit does the same for the fault derate fuel limit with code 29. (was
-   cm848_applyProtectionTorqueLimit) */
+   applyFaultDerateFuelLimit does the same for the fault derate fuel limit with code 29. (was
+   cm848_applyProtectionTorqueLimit) | the twin of CM550 0x00030bf6: one shared name (was
+   cm848_applyFuelPressureFaultFuelLimit; PR #53 round 94) */
 
-void cm848_applyFuelPressureFaultFuelLimit(void)
+void applyFuelSystemDerateFuelLimit(void)
 
 {
   if (fuel_pressure_fault_fuel_limit_working < torque_derate_fuel_quantity) {
@@ -46242,15 +46251,16 @@ void cm848_applyFuelPressureFaultFuelLimit(void)
 
 
 //
-// Function: cm848_applyTsc1TorqueLimit @ 0x000427cc
+// Function: applyTsc1TorqueLimit @ 0x000427cc
 //
 
 /* J1939 TSC1 override control mode 3: takes
    j1939_powertrain_control_state.tsc1_torque_limit_fueling as the derate limit
    (FUELING_STATE_TSC1_TORQUE_LIMIT) when it is below torque_derate_fuel_quantity (was
-   cm848_applySpeedControlProtectionLimit) */
+   cm848_applySpeedControlProtectionLimit) | the twin of CM550 0x00030c14: one shared name (was
+   cm848_applyTsc1TorqueLimit; PR #53 round 94) */
 
-void cm848_applyTsc1TorqueLimit(void)
+void applyTsc1TorqueLimit(void)
 
 {
   if ((j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_SPEED_TORQUE_LIMIT) &&
@@ -46270,13 +46280,13 @@ void cm848_applyTsc1TorqueLimit(void)
 void cm848_processProtectionLimits(void)
 
 {
-  cm848_initializeFuelLimitChains();
-  cm848_applyPowerTakeOffTorqueLimit();
-  cm848_applyAirFuelControlFuelLimit();
-  cm848_applyAltitudeDerateFuelLimit();
-  cm848_applyFaultDerateFuelLimit();
-  cm848_applyTsc1TorqueLimit();
-  cm848_applyFuelPressureFaultFuelLimit();
+  initializeFuelLimitChains();
+  applyPowerTakeOffTorqueLimit();
+  applyAirFuelControlFuelLimit();
+  applyAltitudeDerateFuelLimit();
+  applyFaultDerateFuelLimit();
+  applyTsc1TorqueLimit();
+  applyFuelSystemDerateFuelLimit();
   cm848_applyCoolantOverheatFuelDerate();
   cm848_applyTorqueManagementFuelLimit();
   cm848_applyFuelLimitByRpmAndDemand();
@@ -58162,16 +58172,17 @@ void cm848_sendJ1939Message(j1939_tx_msg_t *msg)
 
 
 //
-// Function: cm848_lookupJ1939ControlDevice @ 0x00053a4c
+// Function: lookupJ1939ControlDevice @ 0x00053a4c
 //
 
 /* Returns the J1939 control device of a source address, the e2m
    Jcomm_Engine_Control_Device_Indicator / Jcomm_Retarder_Control_Device_Indicator code: 1 when it
    is j1939_transmission_source_address, 2 for j1939_anti_lock_brake_source_address, 3 for
    j1939_anti_slip_regulation_source_address, else 4 (0 = none is the reset value) (was
-   cm848_lookupJ1939SourceAddressIndex) */
+   cm848_lookupJ1939SourceAddressIndex) | the twin of CM550 0x000142a8: one shared name (was
+   cm848_lookupJ1939ControlDevice; PR #53 round 94) */
 
-J1939_CONTROL_DEVICE cm848_lookupJ1939ControlDevice(dword source_address)
+J1939_CONTROL_DEVICE lookupJ1939ControlDevice(dword source_address)
 
 {
   J1939_CONTROL_DEVICE control_device;
@@ -58347,7 +58358,7 @@ void cm848_emptyStub4(void)
 
 
 //
-// Function: cm848_refreshEngineTsc1IgnoredRequestEntry @ 0x00053c68
+// Function: refreshEngineTsc1IgnoredRequestEntry @ 0x00053c68
 //
 
 /* Searches the engine TSC1 ignored request list engine_tsc1_ignored_request_entries (8-byte
@@ -58355,9 +58366,10 @@ void cm848_emptyStub4(void)
    param_1, source address param_2 and mode param_3; when found it reloads the entry countdown from
    j1939_time_limited_node_recovery_time and returns 1, otherwise 0. processEngineTsc1Request calls
    it for engine TSC1 requests that are not override mode 0 and drops the request when it returns
-   nonzero (was cm848_findJ1939MessageEntry). */
+   nonzero (was cm848_findJ1939MessageEntry). | the twin of CM550 0x00023820: one shared name (was
+   cm848_refreshEngineTsc1IgnoredRequestEntry; PR #53 round 94) */
 
-undefined4 cm848_refreshEngineTsc1IgnoredRequestEntry(int param_1,uint param_2,int param_3)
+undefined4 refreshEngineTsc1IgnoredRequestEntry(int param_1,uint param_2,int param_3)
 
 {
   byte bVar1;
@@ -58562,15 +58574,17 @@ void cm848_processTsc1IgnoredRequestTimeouts(void)
 
 
 //
-// Function: cm848_removeEngineTsc1IgnoredRequestEntry @ 0x00053fa8
+// Function: removeEngineTsc1IgnoredRequestEntry @ 0x00053fa8
 //
 
 /* Removes the engine TSC1 ignored request list entries with type word param_1 and source address
    param_2 (the last entry moves into the gap). Called by processEngineTsc1Request when that sender
    sends override control mode 0, and by cm848_updateParkNeutralFlagAndTsc1Activity for the three
-   authorized sources when TSC1 activity returns (was cm848_removeCoolantCalEntryByParams). */
+   authorized sources when TSC1 activity returns (was cm848_removeCoolantCalEntryByParams). | the
+   twin of CM550 0x000239d2: one shared name (was cm848_removeEngineTsc1IgnoredRequestEntry; PR #53
+   round 94) */
 
-void cm848_removeEngineTsc1IgnoredRequestEntry(int param_1,uint param_2)
+void removeEngineTsc1IgnoredRequestEntry(int param_1,uint param_2)
 
 {
   word *pwVar1;
@@ -62948,13 +62962,14 @@ void cm848_calculateAltitudeDerateFuelLimit(void)
 
 
 //
-// Function: cm848_applyAltitudeDerateFuelLimit @ 0x00502af4
+// Function: applyAltitudeDerateFuelLimit @ 0x00502af4
 //
 
 /* Takes altitude_derate_fuel_limit as the derate limit (FUELING_STATE_ALTITUDE_DERATE) when it is
-   below torque_derate_fuel_quantity (was cm848_protection_limits) */
+   below torque_derate_fuel_quantity (was cm848_protection_limits) | the twin of CM550 0x0000c742:
+   one shared name (was cm848_applyAltitudeDerateFuelLimit; PR #53 round 94) */
 
-void cm848_applyAltitudeDerateFuelLimit(void)
+void applyAltitudeDerateFuelLimit(void)
 
 {
   if (altitude_derate_fuel_limit < torque_derate_fuel_quantity) {
@@ -65859,14 +65874,15 @@ void cm848_updateDutyCycleMonitorLoadHistogram(void)
 
 
 //
-// Function: cm848_advanceHourMeters @ 0x00506780
+// Function: advanceHourMeters @ 0x00506780
 //
 
 /* Main-loop phase 0 task (once per 40-phase cycle = 40 PIT ticks of 5 ms = 0.2 s): +1 to
    key_on_hour_meter always and to engine_hour_meter unless engine_state is 1 (engine stopped /
-   cranking). Was cm848_mainLoop_step_4 */
+   cranking). Was cm848_mainLoop_step_4 | the twin of CM550 0x00034512: one shared name (was
+   cm848_advanceHourMeters; PR #53 round 94) */
 
-void cm848_advanceHourMeters(void)
+void advanceHourMeters(void)
 
 {
   if (engine_state != ENGINE_STATE_STOPPED) {
@@ -68251,13 +68267,14 @@ LAB_0050946c:
 
 
 //
-// Function: cm848_applyFaultDerateFuelLimit @ 0x00509510
+// Function: applyFaultDerateFuelLimit @ 0x00509510
 //
 
 /* Takes fault_derate_fuel_limit as the derate limit (FUELING_STATE_FAULT_DERATE) when it is below
-   torque_derate_fuel_quantity (was cm848_enforceFuelLimitProtection) */
+   torque_derate_fuel_quantity (was cm848_enforceFuelLimitProtection) | the twin of CM550
+   0x000196e4: one shared name (was cm848_applyFaultDerateFuelLimit; PR #53 round 94) */
 
-void cm848_applyFaultDerateFuelLimit(void)
+void applyFaultDerateFuelLimit(void)
 
 {
   if (fault_derate_fuel_limit < torque_derate_fuel_quantity) {
@@ -68762,13 +68779,15 @@ void cm848_registerJ1939BroadcastAndNoOperationServices(void)
 
 
 //
-// Function: cm848_clearJ1939InputDataErrorBit @ 0x00509d98
+// Function: clearJ1939InputDataErrorBit @ 0x00509d98
 //
 
 /* Clears bit N (J1939 input N) of j1939_input_data_error_bitmap (was fault_flag_clear_bitmap) |
-   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High |
+   the twin of CM550 0x000201d6: one shared name (was cm848_clearJ1939InputDataErrorBit; PR #53
+   round 94) */
 
-void cm848_clearJ1939InputDataErrorBit(uint param_1)
+void clearJ1939InputDataErrorBit(uint param_1)
 
 {
   (&j1939_input_data_error_bitmap)[(int)param_1 >> 5 & 0xffff] =
@@ -68781,13 +68800,15 @@ void cm848_clearJ1939InputDataErrorBit(uint param_1)
 
 
 //
-// Function: cm848_clearJ1939PedalInputTimeoutBit @ 0x00509dd8
+// Function: clearJ1939PedalInputTimeoutBit @ 0x00509dd8
 //
 
 /* Clears bit N (J1939 input N) of j1939_pedal_input_timeout_bitmap (was fault_count_clear_bitmap) |
-   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High |
+   the twin of CM550 0x00020210: one shared name (was cm848_clearJ1939PedalInputTimeoutBit; PR #53
+   round 94) */
 
-void cm848_clearJ1939PedalInputTimeoutBit(uint param_1)
+void clearJ1939PedalInputTimeoutBit(uint param_1)
 
 {
   (&j1939_pedal_input_timeout_bitmap)[(int)param_1 >> 5 & 0xffff] =
@@ -68800,13 +68821,15 @@ void cm848_clearJ1939PedalInputTimeoutBit(uint param_1)
 
 
 //
-// Function: cm848_clearJ1939InputTimeoutBit @ 0x00509e18
+// Function: clearJ1939InputTimeoutBit @ 0x00509e18
 //
 
 /* Clears bit N (J1939 input N) of j1939_input_timeout_bitmap (was fault_reason_clear_bitmap) |
-   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High |
+   the twin of CM550 0x0002024a: one shared name (was cm848_clearJ1939InputTimeoutBit; PR #53 round
+   94) */
 
-void cm848_clearJ1939InputTimeoutBit(uint param_1)
+void clearJ1939InputTimeoutBit(uint param_1)
 
 {
   (&j1939_input_timeout_bitmap)[(int)param_1 >> 5 & 0xffff] =
@@ -68818,14 +68841,15 @@ void cm848_clearJ1939InputTimeoutBit(uint param_1)
 
 
 //
-// Function: cm848_anyJ1939InputDataErrorActive @ 0x00509e58
+// Function: isAnyJ1939InputDataErrorActive @ 0x00509e58
 //
 
 /* Returns 1 while any j1939_input_data_error_bitmap bit is set (was governor_tableA_nonzero_check)
-   | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
-    */
+   | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High |
+   the twin of CM550 0x00020284: one shared name (was cm848_anyJ1939InputDataErrorActive; PR #53
+   round 94) */
 
-bool cm848_anyJ1939InputDataErrorActive(void)
+bool isAnyJ1939InputDataErrorActive(void)
 
 {
   return j1939_input_data_error_bitmap != 0;
@@ -68834,14 +68858,15 @@ bool cm848_anyJ1939InputDataErrorActive(void)
 
 
 //
-// Function: cm848_anyJ1939PedalInputTimeoutActive @ 0x00509e98
+// Function: isAnyJ1939PedalInputTimeoutActive @ 0x00509e98
 //
 
 /* Returns 1 while any j1939_pedal_input_timeout_bitmap bit is set (was
    governor_tableB_nonzero_check) | review-function-readability reviewed 2026-11-12 - Readability
-   Medium Accuracy Confidence High */
+   Medium Accuracy Confidence High | the twin of CM550 0x000202a0: one shared name (was
+   cm848_anyJ1939PedalInputTimeoutActive; PR #53 round 94) */
 
-bool cm848_anyJ1939PedalInputTimeoutActive(void)
+bool isAnyJ1939PedalInputTimeoutActive(void)
 
 {
   return j1939_pedal_input_timeout_bitmap != 0;
@@ -68850,13 +68875,15 @@ bool cm848_anyJ1939PedalInputTimeoutActive(void)
 
 
 //
-// Function: cm848_anyJ1939InputTimeoutActive @ 0x00509ed8
+// Function: isAnyJ1939InputTimeoutActive @ 0x00509ed8
 //
 
 /* Returns 1 while any j1939_input_timeout_bitmap bit is set (was governor_tableC_nonzero_check) |
-   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High |
+   the twin of CM550 0x000202bc: one shared name (was cm848_anyJ1939InputTimeoutActive; PR #53 round
+   94) */
 
-bool cm848_anyJ1939InputTimeoutActive(void)
+bool isAnyJ1939InputTimeoutActive(void)
 
 {
   return j1939_input_timeout_bitmap != 0;
@@ -68865,14 +68892,15 @@ bool cm848_anyJ1939InputTimeoutActive(void)
 
 
 //
-// Function: cm848_setJ1939InputDataErrorBit @ 0x00509f18
+// Function: setJ1939InputDataErrorBit @ 0x00509f18
 //
 
 /* Sets bit N: J1939 input N received a not-available or out-of-range value (was
    fault_flag_set_bitmap) | review-function-readability reviewed 2026-11-12 - Readability Medium
-   Accuracy Confidence High */
+   Accuracy Confidence High | the twin of CM550 0x000202d8: one shared name (was
+   cm848_setJ1939InputDataErrorBit; PR #53 round 94) */
 
-void cm848_setJ1939InputDataErrorBit(uint param_1)
+void setJ1939InputDataErrorBit(uint param_1)
 
 {
   (&j1939_input_data_error_bitmap)[(int)param_1 >> 5 & 0xffff] =
@@ -68884,13 +68912,15 @@ void cm848_setJ1939InputDataErrorBit(uint param_1)
 
 
 //
-// Function: cm848_setJ1939PedalInputTimeoutBit @ 0x00509f54
+// Function: setJ1939PedalInputTimeoutBit @ 0x00509f54
 //
 
 /* Sets bit N: accelerator J1939 input N (6 or 7) lost its message (was fault_count_set_bitmap) |
-   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High |
+   the twin of CM550 0x00020310: one shared name (was cm848_setJ1939PedalInputTimeoutBit; PR #53
+   round 94) */
 
-void cm848_setJ1939PedalInputTimeoutBit(uint param_1)
+void setJ1939PedalInputTimeoutBit(uint param_1)
 
 {
   (&j1939_pedal_input_timeout_bitmap)[(int)param_1 >> 5 & 0xffff] =
@@ -68903,14 +68933,15 @@ void cm848_setJ1939PedalInputTimeoutBit(uint param_1)
 
 
 //
-// Function: cm848_setJ1939InputTimeoutBit @ 0x00509f90
+// Function: setJ1939InputTimeoutBit @ 0x00509f90
 //
 
 /* Sets bit N: J1939 input N's message timed out (its j1939_input_signal_timeouts slot reached 0)
    (was fault_reason_set_bitmap) | review-function-readability reviewed 2026-11-12 - Readability
-   Medium Accuracy Confidence High */
+   Medium Accuracy Confidence High | the twin of CM550 0x00020348: one shared name (was
+   cm848_setJ1939InputTimeoutBit; PR #53 round 94) */
 
-void cm848_setJ1939InputTimeoutBit(uint param_1)
+void setJ1939InputTimeoutBit(uint param_1)
 
 {
   (&j1939_input_timeout_bitmap)[(int)param_1 >> 5 & 0xffff] =
@@ -68937,8 +68968,8 @@ void cm848_processJ1939EngineRetarderSelection(void)
 {
   uint uVar1;
   
-  cm848_clearJ1939InputDataErrorBit(5);
-  cm848_clearJ1939InputTimeoutBit(5);
+  clearJ1939InputDataErrorBit(5);
+  clearJ1939InputTimeoutBit(5);
   if (algorithm_enable_flags_13_cal.engine_retarder_switch_level_override == 0) {
     return;
   }
@@ -68948,7 +68979,7 @@ void cm848_processJ1939EngineRetarderSelection(void)
   if (j1939_dm13_fault_log_inhibit_flag == 0) {
     if (j1939_input_signal_timeouts[5] == 0) {
       if (j1939_input_monitor_inhibit_flag == 0) {
-        cm848_setJ1939InputTimeoutBit(5);
+        setJ1939InputTimeoutBit(5);
       }
     }
     else {
@@ -68963,7 +68994,7 @@ void cm848_processJ1939EngineRetarderSelection(void)
           j1939_engine_retarder_selection_percent = j1939_engine_retarder_selection_default_percent;
           return;
         }
-        cm848_setJ1939InputDataErrorBit(5);
+        setJ1939InputDataErrorBit(5);
         return;
       }
     }
@@ -68991,8 +69022,8 @@ void cm848_processJ1939EngineFanRequestedSpeed(void)
   word wVar1;
   uint uVar2;
   
-  cm848_clearJ1939InputDataErrorBit(0);
-  cm848_clearJ1939InputTimeoutBit(0);
+  clearJ1939InputDataErrorBit(0);
+  clearJ1939InputTimeoutBit(0);
   wVar1 = j1939_engine_fan_requested_speed;
   if (((algorithm_enable_flags_25_cal.manual_fan_level_override != 0) &&
       (j1939_engine_fan_request_source_priority <= j1939_input_source_priority)) &&
@@ -69000,7 +69031,7 @@ void cm848_processJ1939EngineFanRequestedSpeed(void)
     if (j1939_input_signal_timeouts[0] == 0) {
       wVar1 = j1939_engine_fan_requested_speed_default;
       if (j1939_input_monitor_inhibit_flag == 0) {
-        cm848_setJ1939InputTimeoutBit(0);
+        setJ1939InputTimeoutBit(0);
         wVar1 = j1939_engine_fan_requested_speed_default;
       }
     }
@@ -69014,7 +69045,7 @@ void cm848_processJ1939EngineFanRequestedSpeed(void)
         if ((uVar2 != 0xfe) &&
            (wVar1 = j1939_engine_fan_requested_speed_default, j1939_input_monitor_inhibit_flag == 0)
            ) {
-          cm848_setJ1939InputDataErrorBit(0);
+          setJ1939InputDataErrorBit(0);
           wVar1 = j1939_engine_fan_requested_speed_default;
         }
       }
@@ -69042,9 +69073,9 @@ void cm848_processJ1939AcceleratorLowIdleSwitch(void)
 {
   byte bVar1;
   
-  cm848_clearJ1939InputDataErrorBit(6);
-  cm848_clearJ1939InputTimeoutBit(6);
-  cm848_clearJ1939PedalInputTimeoutBit(6);
+  clearJ1939InputDataErrorBit(6);
+  clearJ1939InputTimeoutBit(6);
+  clearJ1939PedalInputTimeoutBit(6);
   if ((switch_input_datalink_source_bits_cal[0] & 0x80) == 0) {
     return;
   }
@@ -69058,13 +69089,13 @@ void cm848_processJ1939AcceleratorLowIdleSwitch(void)
     if (j1939_input_monitor_inhibit_flag != 0) {
       return;
     }
-    cm848_setJ1939InputTimeoutBit(6);
-    cm848_setJ1939PedalInputTimeoutBit(6);
+    setJ1939InputTimeoutBit(6);
+    setJ1939PedalInputTimeoutBit(6);
     return;
   }
   if (j1939_received_accelerator_pedal_1_low_idle_switch == 3) {
     if (j1939_input_monitor_inhibit_flag == 0) {
-      cm848_setJ1939InputDataErrorBit(6);
+      setJ1939InputDataErrorBit(6);
     }
   }
   else {
@@ -69222,8 +69253,8 @@ void cm848_evaluateJ1939InputSignalFault(int param_1)
   iVar2 = param_1 * 10;
   pjVar3 = &j1939_input_signal_descriptor_table + param_1;
   iVar6 = (int)(char)(&j1939_input_signal_descriptor_table)[param_1].timeout_slot;
-  cm848_clearJ1939InputTimeoutBit(iVar6);
-  cm848_clearJ1939InputDataErrorBit(iVar6);
+  clearJ1939InputTimeoutBit(iVar6);
+  clearJ1939InputDataErrorBit(iVar6);
   uVar7 = pjVar3->logical_switch;
   iVar4 = ((int)uVar7 >> 3) + (uint)((int)uVar7 < 0 && (uVar7 & 7) != 0);
   if (((uint)switch_input_datalink_source_bits_cal[iVar4] &
@@ -69240,14 +69271,14 @@ void cm848_evaluateJ1939InputSignalFault(int param_1)
   if (j1939_dm13_fault_log_inhibit_flag == 0) {
     if (j1939_input_signal_timeouts[iVar6] == 0) {
       if (j1939_input_monitor_inhibit_flag == 0) {
-        cm848_setJ1939InputTimeoutBit(iVar6);
+        setJ1939InputTimeoutBit(iVar6);
       }
     }
     else {
       cVar1 = **(char **)((int)&pjVar5->signal_value + iVar2);
       if (cVar1 == '\x03') {
         if (j1939_input_monitor_inhibit_flag == 0) {
-          cm848_setJ1939InputDataErrorBit(iVar6);
+          setJ1939InputDataErrorBit(iVar6);
         }
       }
       else if (cVar1 != '\x02') {
@@ -69308,8 +69339,8 @@ void cm848_processJ1939AcceleratorPedalPosition(void)
       }
       if (j1939_input_signal_timeouts[7] == 0) {
         if (j1939_input_monitor_inhibit_flag == 0) {
-          cm848_setJ1939InputTimeoutBit(7);
-          cm848_setJ1939PedalInputTimeoutBit(7);
+          setJ1939InputTimeoutBit(7);
+          setJ1939PedalInputTimeoutBit(7);
         }
         if ((int)uVar1 <= (int)(uVar2 & 0xff)) {
           accelerator_pedal_sensor_channel_state.held_value_source_priority = (byte)uVar2;
@@ -69370,7 +69401,7 @@ void cm848_processJ1939AcceleratorPedalPosition(void)
           }
         }
         else if (j1939_input_monitor_inhibit_flag == 0) {
-          cm848_setJ1939InputDataErrorBit(7);
+          setJ1939InputDataErrorBit(7);
         }
       }
       commanded_throttle_state.accelerator_off_idle = 0;
@@ -69397,9 +69428,9 @@ void cm848_processJ1939AcceleratorPedalPosition(void)
 void cm848_processJ1939AcceleratorIdleSwitchPair(void)
 
 {
-  cm848_clearJ1939InputDataErrorBit(7);
-  cm848_clearJ1939InputTimeoutBit(7);
-  cm848_clearJ1939PedalInputTimeoutBit(7);
+  clearJ1939InputDataErrorBit(7);
+  clearJ1939InputTimeoutBit(7);
+  clearJ1939PedalInputTimeoutBit(7);
   if (((sensor_channel_held_value_enable_bits_cal[0] & 0x2000) != 0) &&
      ((switch_input_datalink_source_bits_cal[0] & 0x80) != 0)) {
     if ((switch_input_source_priority[7] <= j1939_input_source_priority) &&
@@ -69442,7 +69473,7 @@ void cm848_processJ1939AcceleratorIdleSwitchPair(void)
           else {
             j1939_accelerator_low_idle_switch_unavailable_flag = 1;
             if (j1939_input_monitor_inhibit_flag == 0) {
-              cm848_setJ1939InputDataErrorBit(7);
+              setJ1939InputDataErrorBit(7);
             }
           }
         }
@@ -69485,7 +69516,7 @@ void cm848_processJ1939SwitchAndRequestInputs(void)
     cm848_copyStatusBitToDatalinkSwitch(0x1f,0);
     cm848_copyStatusBitToDatalinkSwitch(4,4);
     cm848_copyStatusBitToDatalinkSwitch(0x1f,5);
-    sVar1 = cm848_anyJ1939InputDataErrorActive();
+    sVar1 = isAnyJ1939InputDataErrorActive();
     if ((sVar1 == 0) || (j1939_input_fault_start_delay != 0)) {
       fault_detected_cal._16_2_ = fault_detected_cal._16_2_ & 0xfffb;
       fault_registered_cal._16_2_ = fault_registered_cal._16_2_ & 0xfffb;
@@ -69493,7 +69524,7 @@ void cm848_processJ1939SwitchAndRequestInputs(void)
     else {
       fault_detected_cal._16_2_ = fault_detected_cal._16_2_ | 4;
     }
-    sVar1 = cm848_anyJ1939InputTimeoutActive();
+    sVar1 = isAnyJ1939InputTimeoutActive();
     if ((sVar1 == 0) || (j1939_input_fault_start_delay != 0)) {
       fault_detected_cal._16_2_ = fault_detected_cal._16_2_ & 0xfffe;
       fault_registered_cal._16_2_ = fault_registered_cal._16_2_ & 0xfffe;
@@ -69526,7 +69557,7 @@ void cm848_processJ1939AcceleratorInputs(void)
     cm848_processJ1939AcceleratorLowIdleSwitch();
     cm848_processJ1939AcceleratorIdleSwitchPair();
     cm848_processJ1939AcceleratorPedalPosition();
-    sVar1 = cm848_anyJ1939InputDataErrorActive();
+    sVar1 = isAnyJ1939InputDataErrorActive();
     if ((sVar1 == 0) || (j1939_input_fault_start_delay != 0)) {
       fault_detected_cal._16_2_ = fault_detected_cal._16_2_ & 0xfffb;
       fault_registered_cal._16_2_ = fault_registered_cal._16_2_ & 0xfffb;
@@ -69534,7 +69565,7 @@ void cm848_processJ1939AcceleratorInputs(void)
     else {
       fault_detected_cal._16_2_ = fault_detected_cal._16_2_ | 4;
     }
-    sVar1 = cm848_anyJ1939InputTimeoutActive();
+    sVar1 = isAnyJ1939InputTimeoutActive();
     if ((sVar1 == 0) || (j1939_input_fault_start_delay != 0)) {
       fault_detected_cal._16_2_ = fault_detected_cal._16_2_ & 0xfffe;
       fault_registered_cal._16_2_ = fault_registered_cal._16_2_ & 0xfffe;
@@ -69542,7 +69573,7 @@ void cm848_processJ1939AcceleratorInputs(void)
     else {
       fault_detected_cal._16_2_ = fault_detected_cal._16_2_ | 1;
     }
-    sVar1 = cm848_anyJ1939PedalInputTimeoutActive();
+    sVar1 = isAnyJ1939PedalInputTimeoutActive();
     j1939_pedal_input_timeout_active_flag = sVar1 != 0;
   }
   return;
@@ -69575,16 +69606,17 @@ void cm848_initJ1939InputProcessing(void)
 
 
 //
-// Function: cm848_endRetarderShiftAssistAboveFuelDemandLimit @ 0x0050aec0
+// Function: endRetarderShiftAssistAboveFuelDemandLimit @ 0x0050aec0
 //
 
 /* When algorithm_enable_flags_2_cal bit 0x1000 is set, the transmission holds both an engine
    retarder torque control request and an engine speed control request, and
    engine_operating_mode_fuel_demand has reached engine_retarder_shift_assist_fuel_demand_limit, it
    ends the retarder request (mode off, torque limit 125, the zero torque timer and the speed
-   control flag cleared) (was governor_resetModeStateOnCondition) */
+   control flag cleared) (was governor_resetModeStateOnCondition) | the twin of CM550 0x0002142c:
+   one shared name (was cm848_endRetarderShiftAssistAboveFuelDemandLimit; PR #53 round 94) */
 
-void cm848_endRetarderShiftAssistAboveFuelDemandLimit(void)
+void endRetarderShiftAssistAboveFuelDemandLimit(void)
 
 {
   if ((((algorithm_enable_flags_2_cal.j1939_retarder_shift_assist_enable != 0) &&
@@ -69700,7 +69732,7 @@ byte writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dword leng
 
 
 //
-// Function: cm848_writeJ1939DiagnosticMemoryByParameterId @ 0x0050b1b8
+// Function: writeJ1939DiagnosticMemoryByParameterId @ 0x0050b1b8
 //
 
 /* Writes by parameter ID for the PGN 61184 services 0x44 / 0x45 / 0x47 / 0x49: resolves the ID with
@@ -69711,9 +69743,10 @@ byte writeJ1939DiagnosticMemory(j1939_rx_msg_t *request,byte *address,dword leng
    stack (PGN 61184): services 0x44 / 0x45 / 0x47 / 0x49 (via undefined stubs): resolves the
    parameter ID (0x539768; 8 = unknown) then writeJ1939DiagnosticMemory at base + offset; twin of
    boot cm848_writeBootDiagnosticMemoryByParameterId | review-function-readability reviewed
-   2026-11-11 - Readability Medium Accuracy Confidence High */
+   2026-11-11 - Readability Medium Accuracy Confidence High | the twin of CM550 0x00021642: one
+   shared name (was cm848_writeJ1939DiagnosticMemoryByParameterId; PR #53 round 94) */
 
-byte cm848_writeJ1939DiagnosticMemoryByParameterId
+byte writeJ1939DiagnosticMemoryByParameterId
                (j1939_rx_msg_t *request,undefined4 parameter_id,dword offset,dword length)
 
 {
@@ -69734,18 +69767,19 @@ byte cm848_writeJ1939DiagnosticMemoryByParameterId
 
 
 //
-// Function: cm848_handleJ1939WriteByParameterIdService @ 0x0050b228
+// Function: handleJ1939WriteByParameterIdService @ 0x0050b228
 //
 
 /* PGN 61184 service 0x44: request bytes 1-2 the parameter ID and 3 the length then the data -
-   written at the ID's address (offset 0) through cm848_writeJ1939DiagnosticMemoryByParameterId.
-   Registered by cm848_registerJ1939MemoryWriteServices (was
-   j1939_diagService68_memoryWriteByParameterId; PR #53 round 63) | earlier note: Application CLIP
-   diagnostic service handler registered with registerJ1939DiagnosticService: service 0x44 - write
-   by parameter ID (cm848_writeJ1939DiagnosticMemoryByParameterId) | review-function-readability
-   reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
+   written at the ID's address (offset 0) through writeJ1939DiagnosticMemoryByParameterId.
+   Registered by registerJ1939MemoryWriteServices (was j1939_diagService68_memoryWriteByParameterId;
+   PR #53 round 63) | earlier note: Application CLIP diagnostic service handler registered with
+   registerJ1939DiagnosticService: service 0x44 - write by parameter ID
+   (writeJ1939DiagnosticMemoryByParameterId) | review-function-readability reviewed 2026-11-12 -
+   Readability Low Accuracy Confidence High | the twin of CM550 0x0002167e: one shared name (was
+   cm848_handleJ1939WriteByParameterIdService; PR #53 round 94) */
 
-undefined1 cm848_handleJ1939WriteByParameterIdService(j1939_rx_msg_t *request)
+undefined1 handleJ1939WriteByParameterIdService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
@@ -69754,25 +69788,26 @@ undefined1 cm848_handleJ1939WriteByParameterIdService(j1939_rx_msg_t *request)
   
   cm848_memcpyBytes(local_10,request->data_pointer + 1,2);
   local_c = (uint)request->data_pointer[3];
-  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(request,(uint)local_10[0],0,local_c);
+  uVar1 = writeJ1939DiagnosticMemoryByParameterId(request,(uint)local_10[0],0,local_c);
   return uVar1;
 }
 
 
 
 //
-// Function: cm848_handleJ1939WriteByParameterIdLongLengthService @ 0x0050b298
+// Function: handleJ1939WriteByParameterIdLongLengthService @ 0x0050b298
 //
 
 /* PGN 61184 service 0x45: request bytes 1-2 the parameter ID and 3-6 the length then the data -
-   written at the ID's address (offset 0) through cm848_writeJ1939DiagnosticMemoryByParameterId.
-   Registered by cm848_registerJ1939MemoryWriteServices (was
+   written at the ID's address (offset 0) through writeJ1939DiagnosticMemoryByParameterId.
+   Registered by registerJ1939MemoryWriteServices (was
    j1939_diagService69_memoryWriteByParameterIdExt; PR #53 round 63) | earlier note: Application
    CLIP diagnostic service handler registered with registerJ1939DiagnosticService: service 0x45 -
    write by parameter ID with a long length | review-function-readability reviewed 2026-11-12 -
-   Readability Low Accuracy Confidence High */
+   Readability Low Accuracy Confidence High | the twin of CM550 0x000216c6: one shared name (was
+   cm848_handleJ1939WriteByParameterIdLongLengthService; PR #53 round 94) */
 
-undefined1 cm848_handleJ1939WriteByParameterIdLongLengthService(j1939_rx_msg_t *request)
+undefined1 handleJ1939WriteByParameterIdLongLengthService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
@@ -69781,25 +69816,25 @@ undefined1 cm848_handleJ1939WriteByParameterIdLongLengthService(j1939_rx_msg_t *
   
   cm848_memcpyBytes(local_10,request->data_pointer + 1,2);
   cm848_memcpyBytes(local_c,request->data_pointer + 3,4);
-  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(request,(uint)local_10[0],0,local_c[0]);
+  uVar1 = writeJ1939DiagnosticMemoryByParameterId(request,(uint)local_10[0],0,local_c[0]);
   return uVar1;
 }
 
 
 
 //
-// Function: cm848_handleJ1939WriteByParameterIdShortOffsetService @ 0x0050b300
+// Function: handleJ1939WriteByParameterIdShortOffsetService @ 0x0050b300
 //
 
 /* PGN 61184 service 0x47: request bytes 1-2 the parameter ID / 3-4 the offset / 5 the length then
-   the data - written at the ID's address + offset through
-   cm848_writeJ1939DiagnosticMemoryByParameterId. Registered by
-   cm848_registerJ1939MemoryWriteServices (was j1939_diagService71Handler; PR #53 round 63) |
-   earlier note: Application CLIP diagnostic service handler registered with
+   the data - written at the ID's address + offset through writeJ1939DiagnosticMemoryByParameterId.
+   Registered by registerJ1939MemoryWriteServices (was j1939_diagService71Handler; PR #53 round 63)
+   | earlier note: Application CLIP diagnostic service handler registered with
    registerJ1939DiagnosticService: service 0x47 (header length 6) | review-function-readability
-   reviewed 2026-11-12 - Readability Low Accuracy Confidence Low */
+   reviewed 2026-11-12 - Readability Low Accuracy Confidence Low | the twin of CM550 0x00021714: one
+   shared name (was cm848_handleJ1939WriteByParameterIdShortOffsetService; PR #53 round 94) */
 
-undefined1 cm848_handleJ1939WriteByParameterIdShortOffsetService(j1939_rx_msg_t *request)
+undefined1 handleJ1939WriteByParameterIdShortOffsetService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
@@ -69810,25 +69845,26 @@ undefined1 cm848_handleJ1939WriteByParameterIdShortOffsetService(j1939_rx_msg_t 
   cm848_memcpyBytes(local_10,request->data_pointer + 1,2);
   local_c = (uint)CONCAT11(request->data_pointer[3],request->data_pointer[4]);
   local_8 = (uint)request->data_pointer[5];
-  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(request,(uint)local_10[0],local_c,local_8);
+  uVar1 = writeJ1939DiagnosticMemoryByParameterId(request,(uint)local_10[0],local_c,local_8);
   return uVar1;
 }
 
 
 
 //
-// Function: cm848_handleJ1939WriteByParameterIdLongOffsetService @ 0x0050b38c
+// Function: handleJ1939WriteByParameterIdLongOffsetService @ 0x0050b38c
 //
 
 /* PGN 61184 service 0x49: request bytes 1-2 the parameter ID / 3-6 the offset / 7-10 the length
    then the data - written at the ID's address + offset through
-   cm848_writeJ1939DiagnosticMemoryByParameterId. Registered by
-   cm848_registerJ1939MemoryWriteServices (was j1939_diagService73_memoryWriteByParameterId; PR #53
-   round 63) | earlier note: Application CLIP diagnostic service handler registered with
-   registerJ1939DiagnosticService: service 0x49 (header length 11) - write by parameter ID |
-   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
+   writeJ1939DiagnosticMemoryByParameterId. Registered by registerJ1939MemoryWriteServices (was
+   j1939_diagService73_memoryWriteByParameterId; PR #53 round 63) | earlier note: Application CLIP
+   diagnostic service handler registered with registerJ1939DiagnosticService: service 0x49 (header
+   length 11) - write by parameter ID | review-function-readability reviewed 2026-11-12 -
+   Readability Low Accuracy Confidence Medium | the twin of CM550 0x00021778: one shared name (was
+   cm848_handleJ1939WriteByParameterIdLongOffsetService; PR #53 round 94) */
 
-undefined1 cm848_handleJ1939WriteByParameterIdLongOffsetService(j1939_rx_msg_t *request)
+undefined1 handleJ1939WriteByParameterIdLongOffsetService(j1939_rx_msg_t *request)
 
 {
   undefined1 uVar1;
@@ -69839,7 +69875,7 @@ undefined1 cm848_handleJ1939WriteByParameterIdLongOffsetService(j1939_rx_msg_t *
   cm848_memcpyBytes(local_10,request->data_pointer + 1,2);
   cm848_memcpyBytes(&local_c,request->data_pointer + 3,4);
   cm848_memcpyBytes(&local_8,request->data_pointer + 7,4);
-  uVar1 = cm848_writeJ1939DiagnosticMemoryByParameterId(request,(uint)local_10[0],local_c,local_8);
+  uVar1 = writeJ1939DiagnosticMemoryByParameterId(request,(uint)local_10[0],local_c,local_8);
   return uVar1;
 }
 
@@ -69851,11 +69887,11 @@ undefined1 cm848_handleJ1939WriteByParameterIdLongOffsetService(j1939_rx_msg_t *
 
 /* The same function as CM550 0x217de (shared name; was cm848_handleJ1939WriteMemoryService; PR #53
    round 72). PGN 61184 service 0x4b: request bytes 1-4 the address and 5 the length then the data -
-   written through writeJ1939DiagnosticMemory. Registered by cm848_registerJ1939MemoryWriteServices
-   (was j1939_diagService75_memoryWrite; PR #53 round 63) | earlier note: Application CLIP
-   diagnostic service handler registered with registerJ1939DiagnosticService: service 0x4B - write
-   by address (writeJ1939DiagnosticMemory) | review-function-readability reviewed 2026-11-12 -
-   Readability Low Accuracy Confidence High */
+   written through writeJ1939DiagnosticMemory. Registered by registerJ1939MemoryWriteServices (was
+   j1939_diagService75_memoryWrite; PR #53 round 63) | earlier note: Application CLIP diagnostic
+   service handler registered with registerJ1939DiagnosticService: service 0x4B - write by address
+   (writeJ1939DiagnosticMemory) | review-function-readability reviewed 2026-11-12 - Readability Low
+   Accuracy Confidence High */
 
 byte handleJ1939WriteMemoryService(j1939_rx_msg_t *request)
 
@@ -69879,7 +69915,7 @@ byte handleJ1939WriteMemoryService(j1939_rx_msg_t *request)
 /* The same function as CM550 0x21826 (shared name; was
    cm848_handleJ1939WriteMemoryLongLengthService; PR #53 round 72). PGN 61184 service 0x4d: request
    bytes 1-4 the address and 5-8 the length then the data - written through
-   writeJ1939DiagnosticMemory. Registered by cm848_registerJ1939MemoryWriteServices (was
+   writeJ1939DiagnosticMemory. Registered by registerJ1939MemoryWriteServices (was
    j1939_diagService77_memoryWriteExt; PR #53 round 63) | earlier note: Application CLIP diagnostic
    service handler registered with registerJ1939DiagnosticService: service 0x4D - write by address
    with a long length | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
@@ -69901,22 +69937,23 @@ byte handleJ1939WriteMemoryLongLengthService(j1939_rx_msg_t *request)
 
 
 //
-// Function: cm848_registerJ1939MemoryWriteServices @ 0x0050b4d8
+// Function: registerJ1939MemoryWriteServices @ 0x0050b4d8
 //
 
 /* From cm848_j1939_system_init: registers the PGN 61184 memory write services 0x44 / 0x45 / 0x4b /
    0x4d / 0x47 / 0x49 (the cm848_handleJ1939Write*Service handlers) in
-   j1939_diagnostic_service_table (was j1939_diag_request_batch_44to49; PR #53 round 62) */
+   j1939_diagnostic_service_table (was j1939_diag_request_batch_44to49; PR #53 round 62) | the twin
+   of CM550 0x00021872: one shared name (was cm848_registerJ1939MemoryWriteServices; PR #53 round
+   94) */
 
-void cm848_registerJ1939MemoryWriteServices(void)
+void registerJ1939MemoryWriteServices(void)
 
 {
   registerJ1939DiagnosticService
-            (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID,
-             cm848_handleJ1939WriteByParameterIdService);
+            (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID,handleJ1939WriteByParameterIdService);
   registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_LENGTH,
-             cm848_handleJ1939WriteByParameterIdLongLengthService);
+             handleJ1939WriteByParameterIdLongLengthService);
   registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY,handleJ1939WriteMemoryService);
   registerJ1939DiagnosticService
@@ -69924,10 +69961,10 @@ void cm848_registerJ1939MemoryWriteServices(void)
              handleJ1939WriteMemoryLongLengthService);
   registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_SHORT_OFFSET,
-             cm848_handleJ1939WriteByParameterIdShortOffsetService);
+             handleJ1939WriteByParameterIdShortOffsetService);
   registerJ1939DiagnosticService
             (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_OFFSET,
-             cm848_handleJ1939WriteByParameterIdLongOffsetService);
+             handleJ1939WriteByParameterIdLongOffsetService);
   return;
 }
 
@@ -70418,7 +70455,7 @@ void cm848_registerJ1939InputMessageHandlers(void)
 
 
 //
-// Function: cm848_storeJ1939ControlSessionInHistoryTable @ 0x0050be6c
+// Function: storeJ1939ControlSessionInHistoryTable @ 0x0050be6c
 //
 
 /* Files a finished J1939 control session in the J1939 history table (e2m 10FD J1939_History_Table:
@@ -70430,10 +70467,11 @@ void cm848_registerJ1939InputMessageHandlers(void)
    that index is incremented and wraps from 4 to 0. The destination is written as
    j1939_input_signal_timeouts + index x 12 + 24 words: word 24 of that 25-word array is the history
    table's length word at 0x3fead4, and the first store lands one word later at the entry. Called by
-   cm848_trackJ1939ControlSessions (0x50bff4) when a control session ends or its source changes.
-   (was governor_calibSnapshot_rollingBuffer_update) */
+   trackJ1939ControlSessions (0x50bff4) when a control session ends or its source changes. (was
+   governor_calibSnapshot_rollingBuffer_update) | the twin of CM550 0x00021f4e: one shared name (was
+   cm848_storeJ1939ControlSessionInHistoryTable; PR #53 round 94) */
 
-void cm848_storeJ1939ControlSessionInHistoryTable(int session_kind)
+void storeJ1939ControlSessionInHistoryTable(int session_kind)
 
 {
   j1939_control_session_t *session_record;
@@ -70468,7 +70506,7 @@ void cm848_storeJ1939ControlSessionInHistoryTable(int session_kind)
 
 
 //
-// Function: cm848_startJ1939ControlSession @ 0x0050beec
+// Function: startJ1939ControlSession @ 0x0050beec
 //
 
 /* Opens a J1939 control session record. session_kind = 0 starts an engine control (TSC1) session:
@@ -70484,9 +70522,10 @@ void cm848_storeJ1939ControlSessionInHistoryTable(int session_kind)
    J1939_Active_Retarder, kind 1; engine_retarder_controlling_source_address,
    engine_retarder_control_device_indicator, engine_retarder_override_control_mode,
    j1939_retarder_control_active_flag_cal, j1939_retarder_control_source_cal). Called by
-   cm848_trackJ1939ControlSessions (0x50bff4). (was governor_sourceData_init) */
+   trackJ1939ControlSessions (0x50bff4). (was governor_sourceData_init) | the twin of CM550
+   0x00021fac: one shared name (was cm848_startJ1939ControlSession; PR #53 round 94) */
 
-void cm848_startJ1939ControlSession(int session_kind)
+void startJ1939ControlSession(int session_kind)
 
 {
   if (session_kind == 0) {
@@ -70530,7 +70569,7 @@ void cm848_startJ1939ControlSession(int session_kind)
 
 
 //
-// Function: cm848_trackJ1939ControlSessions @ 0x0050bff4
+// Function: trackJ1939ControlSessions @ 0x0050bff4
 //
 
 /* J1939 monitor (enabled by bit 0x800 of algorithm_enable_flags_2_cal, e2m 106B +6
@@ -70541,16 +70580,17 @@ void cm848_startJ1939ControlSession(int session_kind)
    engine_retarder_override_control_mode / engine_retarder_controlling_source_address with the
    values kept in the j1939_monitor_engine_*_previous words
    (j1939_monitor_engine_override_control_mode_previous and so on). When a control starts it opens a
-   session record (cm848_startJ1939ControlSession at 0x50beec; e2m 10FE J1939_Active_Engine at
-   0x3feb50 and 10FF J1939_Active_Retarder at 0x3feb6a). While the same source keeps controlling it
-   appends each new mode to the record's mode history of five entries (shifting it when full). When
-   the control ends, or the controlling source changes, it stores the session duration
+   session record (startJ1939ControlSession at 0x50beec; e2m 10FE J1939_Active_Engine at 0x3feb50
+   and 10FF J1939_Active_Retarder at 0x3feb6a). While the same source keeps controlling it appends
+   each new mode to the record's mode history of five entries (shifting it when full). When the
+   control ends, or the controlling source changes, it stores the session duration
    (key_on_hour_meter minus the start time) in the record, clears the control active flag (e2m 1100
    +0 / +2 J1939_Engine_Control_Status / J1939_Retarder_Control_Status) and files the record in the
-   J1939 history table with cm848_storeJ1939ControlSessionInHistoryTable (0x50be6c). Called by
-   cm848_phase_group_a_processing (0xb7b4). (was phase_group_a_setupETC1Controller) */
+   J1939 history table with storeJ1939ControlSessionInHistoryTable (0x50be6c). Called by
+   cm848_phase_group_a_processing (0xb7b4). (was phase_group_a_setupETC1Controller) | the twin of
+   CM550 0x00022070: one shared name (was cm848_trackJ1939ControlSessions; PR #53 round 94) */
 
-void cm848_trackJ1939ControlSessions(void)
+void trackJ1939ControlSessions(void)
 
 {
   CONTROL_NETWORK *pCVar1;
@@ -70584,7 +70624,7 @@ void cm848_trackJ1939ControlSessions(void)
              key_on_hour_meter - j1939_active_engine_control_session_cal.start_time;
 LAB_0050c1a0:
         j1939_engine_control_active_flag_cal = 0;
-        cm848_storeJ1939ControlSessionInHistoryTable(0);
+        storeJ1939ControlSessionInHistoryTable(0);
         pCVar4 = pCVar1;
       }
     }
@@ -70612,9 +70652,9 @@ LAB_0050c1a0:
         }
         j1939_active_engine_control_session_cal.duration =
              key_on_hour_meter - j1939_active_engine_control_session_cal.start_time;
-        cm848_storeJ1939ControlSessionInHistoryTable(0);
+        storeJ1939ControlSessionInHistoryTable(0);
       }
-      cm848_startJ1939ControlSession(0);
+      startJ1939ControlSession(0);
       pCVar4 = pCVar1;
     }
     else if (j1939_monitor_engine_control_data_link_previous == CONTROL_NETWORK_J1939)
@@ -70639,7 +70679,7 @@ LAB_0050c1a8:
         j1939_retarder_control_active_flag_cal = 0;
         j1939_active_retarder_control_session_cal.duration =
              key_on_hour_meter - j1939_active_retarder_control_session_cal.start_time;
-        cm848_storeJ1939ControlSessionInHistoryTable(1);
+        storeJ1939ControlSessionInHistoryTable(1);
         pwVar3 = pwVar8;
         pbVar5 = pbVar7;
       }
@@ -70668,9 +70708,9 @@ LAB_0050c1a8:
         }
         j1939_active_retarder_control_session_cal.duration =
              key_on_hour_meter - j1939_active_retarder_control_session_cal.start_time;
-        cm848_storeJ1939ControlSessionInHistoryTable(1);
+        storeJ1939ControlSessionInHistoryTable(1);
       }
-      cm848_startJ1939ControlSession(1);
+      startJ1939ControlSession(1);
       pwVar3 = pwVar8;
       pbVar5 = pbVar7;
     }
@@ -74879,9 +74919,9 @@ LAB_00511cac:
     tsc1_lost_management_active_flag = 0;
     fault_detected_cal.j1939_tsc1_lost_fault = 0;
     fault_registered_cal.j1939_tsc1_lost_fault = 0;
-    cm848_removeEngineTsc1IgnoredRequestEntry(1,j1939_transmission_source_address & 0xff);
-    cm848_removeEngineTsc1IgnoredRequestEntry(1,j1939_anti_slip_regulation_source_address & 0xff);
-    cm848_removeEngineTsc1IgnoredRequestEntry(1,j1939_anti_lock_brake_source_address & 0xff);
+    removeEngineTsc1IgnoredRequestEntry(1,j1939_transmission_source_address & 0xff);
+    removeEngineTsc1IgnoredRequestEntry(1,j1939_anti_slip_regulation_source_address & 0xff);
+    removeEngineTsc1IgnoredRequestEntry(1,j1939_anti_lock_brake_source_address & 0xff);
     uVar1 = datalink_broadcast_enable_default_cal;
     if (algorithm_enable_flags_42_cal.j1939_lost_tsc1_no_broadcast_enable == 0) {
       return;
@@ -87911,9 +87951,9 @@ LAB_0052540c:
   else {
     if (((cruise_governor_fueling_state_previous == FUELING_STATE_TSC1_SPEED_CONTROL) ||
         (cruise_governor_fueling_state_previous == FUELING_STATE_TSC1_TORQUE_CONTROL)) ||
-       ((cruise_governor_fueling_state_previous == FUELING_STATE_UNIDENTIFIED_37 ||
-        (cruise_governor_fueling_state_previous == FUELING_STATE_UNIDENTIFIED_38))))
-    goto LAB_0052540c;
+       ((cruise_governor_fueling_state_previous == FUELING_STATE_TOP2_TRANSMISSION_SPEED_CONTROL ||
+        (cruise_governor_fueling_state_previous == FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL)))
+       ) goto LAB_0052540c;
     cruise_governor_sump_fuel = 0;
     cruise_pid_integrator_q16.integer_part = final_fueling - local_10._2_2_;
   }
@@ -88000,9 +88040,10 @@ void cm848_runCruiseAndRoadSpeedGovernor(void)
   }
   if (((((operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_SPEED_CONTROL) ||
         (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_TORQUE_CONTROL)) ||
-       (operating_mode_governor_output.mode_code == FUELING_STATE_UNIDENTIFIED_37)) ||
-      ((operating_mode_governor_output.mode_code == FUELING_STATE_UNIDENTIFIED_38 ||
-       ((short)cruise_governor_preset_fueling_acceleration_threshold < iVar9)))) ||
+       (operating_mode_governor_output.mode_code == FUELING_STATE_TOP2_TRANSMISSION_SPEED_CONTROL))
+      || ((operating_mode_governor_output.mode_code ==
+           FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL ||
+          ((short)cruise_governor_preset_fueling_acceleration_threshold < iVar9)))) ||
      (iVar9 < -(int)(short)cruise_governor_preset_fueling_acceleration_threshold)) {
 LAB_00525668:
     cruise_governor_preset_fueling_countdown = cruise_governor_preset_fueling_time;
@@ -99904,10 +99945,10 @@ LAB_0053900c:
       }
 LAB_00539014:
       j1939_received_source_address = can_receive_queue_read_pointer[3];
-      pbVar8 = j1939_receive_source_address_whitelist;
+      pbVar8 = j1939_source_address_blocking_table;
       bVar2 = false;
       do {
-        if ((*pbVar8 == 0xfe) || (j1939_receive_source_address_whitelist + 3 < pbVar8))
+        if ((*pbVar8 == 0xfe) || (j1939_source_address_blocking_table + 3 < pbVar8))
         goto LAB_00539060;
         bVar9 = *pbVar8;
         pbVar8 = pbVar8 + 1;
@@ -99974,7 +100015,7 @@ void cm848_j1939_system_init(void)
   DAT_0040ad54 = 4;
   uVar5 = 0;
   do {
-    j1939_receive_source_address_whitelist[uVar5] = 0xfe;
+    j1939_source_address_blocking_table[uVar5] = 0xfe;
     uVar5 = uVar5 + 1 & 0xff;
   } while (uVar5 < 4);
   can_transmit_completed_flag = 0;
@@ -100047,7 +100088,7 @@ void cm848_j1939_system_init(void)
   cm848_initJ1939DiagnosticCallback();
   cm848_registerJ1939MemoryReadServices();
   cm848_registerJ1939GetAddressByParameterIdService();
-  cm848_registerJ1939MemoryWriteServices();
+  registerJ1939MemoryWriteServices();
   registerJ1939DiagnosticHandlers();
   cm848_registerJ1939BroadcastAndNoOperationServices();
   wVar1 = j1939_engine_destination_specific_receive_message_object_count;

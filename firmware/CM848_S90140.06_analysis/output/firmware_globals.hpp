@@ -7291,7 +7291,7 @@ extern word altitude_derate_ambient_temperature_band_upper;  // 0x0040a190
 extern int16_t air_handling_system_protection_compressor_outlet_temperature_limit;  // 0x0040a5a4
 extern word air_handling_system_protection_high_load_flag;  // 0x0040a5ac
 extern word engine_speed_limit_fault_derate_span;  // 0x0040a788
-extern byte j1939_receive_source_address_whitelist[4];  // 0x0040ad56
+extern byte j1939_source_address_blocking_table[4];  // 0x0040ad56
 extern word turbocharger_speed_in_range_state;  // 0x0040afe2
 extern word turbocharger_speed_default_value;  // 0x0040bdc6
 extern word sensor_reference_voltage_b_value;  // 0x0040bdc0

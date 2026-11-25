@@ -109,7 +109,7 @@ Bank 2 contains utility functions called from Bank 1 (sensor processing, math ro
 - **Kernel structure (PR #46):** the boot loop enters `cm848_runBootKernelLoop` (0x6ca4) when a reflash mode is set (`eeprom_service_mode_flags` 0x81 = CAN / 0x82 = serial) and the EEPROM magic is 0x1d0a. Each pass: `cm848_runFlashProgramStateMachine` (0x4720) + serial service-0x34 download handlers (`mpc555_sciHandleDownloadStart` / `...DataBlock`) + `cm848_serviceSupervisorWatchdog` + `mpc555_runPeriodicInterruptTimerTick` (CAN dispatcher + J1939 transport: `mpc555_dispatchJ1939TransportConnectionManagement`, request-to-send / clear-to-send / data packets / end-of-message acknowledge / abort - inbound accepts only PGN 61184, up to 1040 bytes).
 - **Supervisor chip (external, QSPI) — question/answer watchdog:** `cm848_initSupervisorWatchdog` (0x7b08, first call after the kernel copy) + `cm848_serviceSupervisorWatchdog` (0x7974, answers from four 16-entry tables at ROM 0x3c9c-0x3ccc) + `cm848_forceSupervisorWatchdogReset` (0x7dc4, wrong answers on purpose before every software reset). The same chip (QSPI PCS1, command byte 0x5D) is the application's **supervisor chip**: `cm848_initSupervisorChip` (0x37334, was initPeriodicTimerSystem) sets up 7 `qspi_job_t` jobs (watchdog / configuration write 0x94-0xA4 / output write 0x92 / register reads 0x24 0x2E 0xA2 / status read 0x4E 0x5A 0x5C) scheduled by `cm848_runSupervisorChipSchedule`; the application watchdog is `cm848_startSupervisorWatchdog` / `cm848_runSupervisorWatchdogCycle` / `cm848_answerSupervisorWatchdog` (answer tables at ROM 0x576e4 identical to the kernel's). The whole 0x367a4-0x37580 family was J1939-named; its reply globals are now named by register (2026-11-13): `supervisor_register_36_bit_1_low_flag` / `_low_held_flag` (register 0x24 bit 1), `supervisor_register_162_status` (0xA2), `supervisor_register_146_output_value` (0x92 output write) and `supervisor_input_lines_130_to_135_state` / `_136_to_143_state` / `_144_to_151_state` — what each register bit means electrically is still open (bench: log them while cranking / at key-off). A **serial output driver** on QSPI PCS2 (SPI mode 3, 8-bit; `serial_output_driver_job`) carries output lines 152-159: `mpc555_driveOutputLineHigh/Low` for lines 152-159 and `cm848_refreshOutputPortsAndReadback` (0x529b8, was the misnamed injectorTimingCalculation) queue it; its reply is `serial_output_driver_status_byte`. QSPI chip-select map: PCS0 = SPI EEPROM, PCS1 = supervisor chip, PCS2 = serial output driver, PCS3 = J1850 PCI controller.
 - **Runtime counter = `ecu_power_state_flags.runtime_counter` (RAM 0x302012):** loaded from EEPROM 0x1000030 at boot (`mpc555_loadRuntimeCounterFromEepromShadow`), +1 every 41 PIT ticks in `mpc555_tickTransferTimeoutAndRuntimeCounter` (~0.205 s/count if the PIT runs at 1 MHz), saved back at key-off by `mpc555_keyOnStateMachine`; also the auth-token freshness clock. This is the boot ROM's copy.
-  - **The application keeps two hour meters (2026-11-15, PR #48):** `cm848_advanceHourMeters` runs once per 40-phase main-loop cycle, i.e. 40 PIT ticks of 5 ms = **0.200 s per count**.
+  - **The application keeps two hour meters (2026-11-15, PR #48):** `advanceHourMeters` runs once per 40-phase main-loop cycle, i.e. 40 PIT ticks of 5 ms = **0.200 s per count**.
     - `key_on_hour_meter` (RAM 0x40a64c, EEPROM 0x30): +1 every cycle.
     - `engine_hour_meter` (RAM 0x40a794, EEPROM 0x42): +1 unless `engine_state` is 1, which makes it **engine-running hours**. During the HP Tuners flash sessions (key on, engine off) it did not move while the key-on meter did.
     - Neither is wiped by HP Tuners. EEPROM 0x42 / 18000 = engine hours (9,819.5 h in the last dump). `tools/read_engine_hours.sh` reads both; see `docs/engine_hours_and_odometer.md`.
@@ -183,7 +183,7 @@ The ECU carries its own map from e2m records to addresses, so e2m names no longe
   - The code itself bounds the table at 0x53ea6c and 0x75e = 1886 records.
   - Callers: the PCI diagnostic request handler, `cm848_evaluateCalibratedMonitorDisableConditions` and the PGN 61184
     services that name a parameter ID: `cm848_readJ1939DiagnosticMemoryByParameterId`,
-    `cm848_writeJ1939DiagnosticMemoryByParameterId` and the 0x41 handler
+    `writeJ1939DiagnosticMemoryByParameterId` and the 0x41 handler
     `cm848_handleJ1939GetAddressByParameterIdService`.
 - **How to resolve a record.** The block id is column 3 of an e2m record (`Crank_Exit_Speed,RPM,105E,0012,...`), so
   the record's address is table[block] + column 4.
@@ -797,8 +797,8 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
       `cm848_selectCruiseOrUserFueling`;
     - limiting governors: `cm848_calculateRoadSpeedGovernorFueling` (on `vehicle_speed_rise_limited`),
       `cm848_runLowSpeedGovernor` / `cm848_limitLowSpeedGovernorFueling`, and `cm848_arbitrateGovernedFueling`;
-    - derate chain: `cm848_initializeFuelLimitChains`,
-      `cm848_calculateMaximumFuelCurve` (was `cm848_processActiveFaultList`), `cm848_applyTsc1TorqueLimit`, `cm848_applyFaultDerateFuelLimit` and
+    - derate chain: `initializeFuelLimitChains`,
+      `cm848_calculateMaximumFuelCurve` (was `cm848_processActiveFaultList`), `applyTsc1TorqueLimit`, `applyFaultDerateFuelLimit` and
       `cm848_applyFuelPressureGovernorFaultBlend`, then `cm848_arbitrateRequestedFueling`;
     - final: `cm848_selectFinalFueling`.
 

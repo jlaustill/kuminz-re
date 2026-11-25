@@ -145,7 +145,7 @@ address,reason
 0x00053890,mid-function split inside mpc555_sendJ1939SingleFrame +0x38 (was mpc555_enqueueCanTransmitFrame)
 0x00053a34,mid-function split inside cm848_sendJ1939Message +0x38 (was cm848_validateDiagnosticResponseWrapper)
 0x00053d74,mid-function split inside cm848_addEngineTsc1IgnoredRequestEntry +0x38 (was cm848_setDefaultCalibrationValue)
-0x00053fe0,mid-function split inside cm848_removeEngineTsc1IgnoredRequestEntry +0x38 (was cm848_removeCalibrationListEntry)
+0x00053fe0,mid-function split inside removeEngineTsc1IgnoredRequestEntry +0x38 (was cm848_removeCalibrationListEntry)
 0x00054a9c,mid-function split inside hpcr_exceptionHandler +0x5d8 (was cm848_initializationContinuation)
 0x0005576c,mid-function split inside validateSecurityKey +0x30 (was cm848_validateSecurityCode)
 0x00055ed0,mid-function split inside cm848_calculateCrc16Simple +0x30 (was cm848_calculateCrc16)

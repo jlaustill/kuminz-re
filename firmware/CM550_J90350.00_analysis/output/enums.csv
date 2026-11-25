@@ -666,16 +666,16 @@ J1939_DIAGNOSTIC_SERVICE,0x18,J1939_DIAGNOSTIC_SERVICE_INHIBIT_KEY_OFF_SHUTDOWN,
 # --- UNSECURED SERVICES (ID > 0x19) - bypass authentication ---
 J1939_DIAGNOSTIC_SERVICE,0x41,DIAG_ADDR_RESOLVER,canDiagnosticResponseSender - dispatch @ 0x000222B4 - UNSECURED - RESPONDS! in dispatch table,1
 J1939_DIAGNOSTIC_SERVICE,0x43,MEM_READ_2B_PARAM_4B_OFFSET,Memory read - dispatch @ 0x00022530 - UNSECURED - RESPONDS! Format: [43][Param:2][Offset:4],1
-J1939_DIAGNOSTIC_SERVICE,0x44,SERVICE_44,Service 44 - dispatch @ 0x0002167E - UNSECURED - in dispatch table,1
-J1939_DIAGNOSTIC_SERVICE,0x45,SERVICE_45,Service 45 - dispatch @ 0x000216C6 - UNSECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x44,J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID,Service 0x44 (CM848's member name): handleJ1939WriteByParameterIdService (0x2167e) - the ID (2 bytes) and a length (1) then the data (was J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID; PR #53 round 94),1
+J1939_DIAGNOSTIC_SERVICE,0x45,J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_LENGTH,Service 0x45 (CM848's member name): handleJ1939WriteByParameterIdLongLengthService (0x216c6) - the ID (2 bytes) and a length (4) then the data (was J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_LENGTH; PR #53 round 94),1
 J1939_DIAGNOSTIC_SERVICE,0x46,MEM_READ_2B_PARAM_ONLY,Memory read - dispatch @ 0x0002257C - UNSECURED - RESPONDS! Format: [46][Param:2],1
-J1939_DIAGNOSTIC_SERVICE,0x47,SERVICE_47,Service 47 - dispatch @ 0x00021714 - UNSECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x47,J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_SHORT_OFFSET,Service 0x47 (CM848's member name): handleJ1939WriteByParameterIdShortOffsetService (0x21714) - the ID (2 bytes) / an offset (2) / a length (1) then the data (was J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_SHORT_OFFSET; PR #53 round 94),1
 J1939_DIAGNOSTIC_SERVICE,0x48,SERVICE_48,Service 48 - dispatch @ 0x000225E0 - UNSECURED - in dispatch table,1
-J1939_DIAGNOSTIC_SERVICE,0x49,SERVICE_49,Service 49 - dispatch @ 0x00021778 - UNSECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x49,J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_OFFSET,Service 0x49 (CM848's member name): handleJ1939WriteByParameterIdLongOffsetService (0x21778) - the ID (2 bytes) / an offset (4) / a length (4) then the data (was J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_OFFSET; PR #53 round 94),1
 J1939_DIAGNOSTIC_SERVICE,0x4A,MEM_READ_4B_ADDR_1B_LEN,Memory read - dispatch @ 0x00022646 - UNSECURED - WORKING! Format: [4A][Addr:4][Len:1],1
-J1939_DIAGNOSTIC_SERVICE,0x4B,SERVICE_4B,Service 4B - dispatch @ 0x000217DE - UNSECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x4B,J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY,Service 0x4b (CM848's member name): handleJ1939WriteMemoryService (0x217de) - an address (4 bytes) and a length (1) then the data (was J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY; PR #53 round 94),1
 J1939_DIAGNOSTIC_SERVICE,0x4C,MEM_READ_4B_ADDR_4B_LEN,Memory read - dispatch @ 0x0002268E - UNSECURED - Format: [4C][Addr:4][Len:4] multi-frame,1
-J1939_DIAGNOSTIC_SERVICE,0x4D,SERVICE_4D,Service 4D - dispatch @ 0x00021826 - UNSECURED - in dispatch table,1
+J1939_DIAGNOSTIC_SERVICE,0x4D,J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH,Service 0x4d (CM848's member name): handleJ1939WriteMemoryLongLengthService (0x21826) - an address (4 bytes) and a length (4) then the data (was J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH; PR #53 round 94),1
 # (VALID_MEMORY_RANGE - J90280.05's table bounds held as an enum - removed in PR #53 round 72: J90350's table is application_memory_region_table @ ROM 0x345dc, typed as memory_region_t[5])
 # Detailed Error Code Sources - traceable through firmware analysis
 # Error code flows: handler → diagnosticMultiPacketResponseBuilder → [0x0D][error_code][service_id]...
@@ -871,8 +871,8 @@ FUELING_STATE,13,FUELING_STATE_TORQUE_DERATE_OVERRIDE,Calterm FSFNFLST D=TRQDROV
 FUELING_STATE,14,FUELING_STATE_LOW_GEAR,Calterm FSFNFLST E=LOWGEAR (no CM848 member),2
 FUELING_STATE,15,FUELING_STATE_ALTITUDE_DERATE,Calterm FSFNFLST F=ALTDERAT (CM848's member of the same label),2
 FUELING_STATE,16,FUELING_STATE_AIR_FUEL_CONTROL_DERATE,Calterm FSFNFLST 10=AFCDERAT (CM848's member of the same label),2
-FUELING_STATE,17,FUELING_STATE_UNIDENTIFIED_17,Calterm FSFNFLST 11=ANCDERAT (no CM848 member; the label's meaning is not proved),2
-FUELING_STATE,18,FUELING_STATE_UNIDENTIFIED_18,Calterm FSFNFLST 12=EPF (no CM848 member; the label's meaning is not proved),2
+FUELING_STATE,17,FUELING_STATE_ACCELERATION_NOISE_CONTROL_DERATE,torque_derate_fuel_source_code (cm550_applyAccelerationNoiseControlFuelLimit 0xb3b2): acceleration_noise_control_fuel_limit (e2m 10A4 +0 NZFLLM 'fueling limit as determined by the ANC feature') is below the running derate minimum - Calterm FSFNFLST 11=ANCDERAT (no CM848 member: CM848 has no such limiter) (was FUELING_STATE_ACCELERATION_NOISE_CONTROL_DERATE; PR #53 round 94),2
+FUELING_STATE,18,FUELING_STATE_ENGINE_PROTECTION,"only compared - never stored in the dumped ROM: cm550_rpmHistogramAndAveragingStatistics counts the trip record 1216 +6C TIT3DQTM 'TIME THE FUELING HAS BEEN UNDER CONTROL OF ENGINE PROTECTION SINCE LAS(T ...)' (the text is cut; dword 0x806192 - 0 in the RAM dump) while final_fueling_state is 18. The engine protection fuel derate itself stamps 29 (FUELING_STATE_FAULT_DERATE - Calterm EPFDERAT), so with the dumped code that counter cannot advance; 18 is another code of the same feature family - Calterm FSFNFLST 12=EPF (no CM848 member) (was FUELING_STATE_ENGINE_PROTECTION; PR #53 round 94)",2
 FUELING_STATE,19,FUELING_STATE_MAXIMUM_THROTTLE,Calterm FSFNFLST 13=MAXTHROT (CM848's member of the same label),2
 FUELING_STATE,20,FUELING_STATE_TSC1_TORQUE_LIMIT,Calterm FSFNFLST 14=JCTRQDER (CM848's member of the same label),2
 FUELING_STATE,21,FUELING_STATE_OUT_OF_GEAR,Calterm FSFNFLST 15=OUTOGEAR (no CM848 member),2
@@ -887,12 +887,38 @@ FUELING_STATE,29,FUELING_STATE_FAULT_DERATE,Calterm FSFNFLST 1D=EPFDERAT (CM848'
 FUELING_STATE,30,FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION,Calterm FSFNFLST 1E=ASG_APPL (CM848's member of the same label),2
 FUELING_STATE,31,FUELING_STATE_ALTERNATE_TORQUE,Calterm FSFNFLST 1F=ALT_TORQ (no CM848 member),2
 FUELING_STATE,32,FUELING_STATE_MASTER_SLAVE_OVERRIDE,Calterm FSFNFLST 20=MSOVRIDE (CM848's member of the same label),2
-FUELING_STATE,33,FUELING_STATE_UNIDENTIFIED_33,Calterm FSFNFLST 21=ESUOILLM (no CM848 member; the label's meaning is not proved),2
+FUELING_STATE,33,FUELING_STATE_ENGINE_WARMUP_PROTECTION,torque_derate_fuel_source_code (cm550_applyEngineWarmupProtectionFuelLimit 0x17120): with engine_state RUNNING and engine_warmup_protection_fuel_limiting_flag (e2m 11EA +0 WPLMFG) set - engine_warmup_protection_fuel_limit (11EA +14 WPTQLM) is below the running derate minimum. The warmup protection limits the fuel after a start until the oil pressure has been up long enough - Calterm FSFNFLST 21=ESUOILLM (no CM848 member) (was FUELING_STATE_ENGINE_WARMUP_PROTECTION; PR #53 round 94),2
 FUELING_STATE,34,FUELING_STATE_POWER_TAKE_OFF_DERATE,Calterm FSFNFLST 22=PTODERAT (CM848's member of the same label),2
 FUELING_STATE,35,FUELING_STATE_TORQUE_CONTROL,Calterm FSFNFLST 23=TORQCTRL (no CM848 member),2
 FUELING_STATE,36,FUELING_STATE_UNIDENTIFIED_36,Calterm FSFNFLST 24=PTPDERAT (no CM848 member; the label's meaning is not proved),2
-FUELING_STATE,37,FUELING_STATE_UNIDENTIFIED_37,Calterm FSFNFLST 25=T2SPD (CM848's member of the same label),2
-FUELING_STATE,38,FUELING_STATE_UNIDENTIFIED_38,Calterm FSFNFLST 26=T2TORQ (CM848's member of the same label),2
+FUELING_STATE,37,FUELING_STATE_TOP2_TRANSMISSION_SPEED_CONTROL,"only compared - never stored in either firmware. A speed control state of the Top2 transmission feature: CM848's all-speed governor runs while engine_operating_mode is 7 / 2 / 30 / 37, and 37 is tested with 38 beside the TSC1 states 1 / 2 in the power take-off - cruise - governed fueling and driver demand selection; both EEC1 torque mode tables put 37 with the accelerator pedal states. e2m group TOP208 'TOP2 CALIBRATIONS AND DATA' holds the T2* records (T2HGSXDR 'TOP2 SPICER TRANSMISSION HIGH GEAR DRIVER SOLENOID') - Calterm FSFNFLST 25=T2SPD (was FUELING_STATE_TOP2_TRANSMISSION_SPEED_CONTROL) (was FUELING_STATE_TOP2_TRANSMISSION_SPEED_CONTROL; PR #53 round 94)",2
+FUELING_STATE,38,FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL,"only compared - never stored in either firmware. The torque control state of the Top2 transmission feature: CM848 tests it with 37 beside the TSC1 states 1 / 2 (power take-off - cruise - governed fueling - driver demand selection) but its all-speed governor does not run in 38 - as it does not in TSC1 torque control (1). CM550 has it only in the EEC1 torque mode table, in the torque limiting group - Calterm FSFNFLST 26=T2TORQ (was FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL) (was FUELING_STATE_TOP2_TRANSMISSION_TORQUE_CONTROL; PR #53 round 94)",2
 FUELING_STATE,39,FUELING_STATE_UNIDENTIFIED_39,Calterm FSFNFLST 27=T2DERAT (no CM848 member; the label's meaning is not proved),2
 FUELING_STATE,40,FUELING_STATE_NO_DERATE,Calterm FSFNFLST 28=NODERAT (CM848's member of the same label),2
 FUELING_STATE,41,FUELING_STATE_IMMOBILIZER_FUEL_DISABLE,Calterm FSFNFLST 29=ATDERAT (CM848's member of the same label),2
+
+# J1939_CONTROL_DEVICE: CM848's enum copied as a twin - CM550's Calterm labels for its records are the same (PR #53 round 94)
+J1939_CONTROL_DEVICE,0,J1939_CONTROL_DEVICE_NONE,e2m Jcomm_Engine_Control_Device_Indicator 0 = NONE,2
+J1939_CONTROL_DEVICE,1,J1939_CONTROL_DEVICE_TRANSMISSION,1 = TRANS: the sender is j1939_transmission_source_address,2
+J1939_CONTROL_DEVICE,2,J1939_CONTROL_DEVICE_ANTI_LOCK_BRAKES,2 = ABS: j1939_anti_lock_brake_source_address,2
+J1939_CONTROL_DEVICE,3,J1939_CONTROL_DEVICE_ANTI_SLIP_REGULATION,3 = ASR: j1939_anti_slip_regulation_source_address,2
+J1939_CONTROL_DEVICE,4,J1939_CONTROL_DEVICE_UNKNOWN,4 = UNKNOWN: any other source address,2
+
+# TSC1_OVERRIDE_MODE: CM848's enum copied as a twin - CM550's Calterm labels for its records are the same (PR #53 round 94)
+TSC1_OVERRIDE_MODE,0,TSC1_OVERRIDE_OFF,SPN 695 00 = override disabled (e2m Jcomm_Engine_Control_Mode / Jcomm_Retarder_Control_Mode 0 = disable),2
+TSC1_OVERRIDE_MODE,1,TSC1_SPEED_CONTROL,SPN 695 01 = speed control: the engine governs to the requested speed (e2m 1 = speed),2
+TSC1_OVERRIDE_MODE,2,TSC1_TORQUE_CONTROL,SPN 695 10 = torque control (e2m 2 = torque),2
+TSC1_OVERRIDE_MODE,3,TSC1_SPEED_TORQUE_LIMIT,SPN 695 11 = speed and torque limit control (e2m 3 = limit),2
+
+# IDLE_SHUTDOWN_STATE: a new enum of batch D1 (PR #53 round 94)
+IDLE_SHUTDOWN_STATE,0,IDLE_SHUTDOWN_STATE_RESET,"Not counting: the timer is held at the idle shutdown period, the warning lamp request and the overridden / override successful flags are cleared and output 30 is switched off (unless a client overrides it); leaves to COUNT when idle_shutdown_reset_flag is 0. PGN 65252 byte 1 = 0x00. (new enum, size 2, type of idle_shutdown_state) (PR #53 round 94)",2
+IDLE_SHUTDOWN_STATE,1,IDLE_SHUTDOWN_STATE_COUNT,"The idle shutdown timer counts down (0.1 s per pass): to RESET on the reset flag, to DELAY when the temperature option and the override successful flag are set, to WARNING when the timer is at or below the warning period. PGN 65252 byte 1 = 0x40 (SPN 590 idle shutdown timer state active). (PR #53 round 94)",2
+IDLE_SHUTDOWN_STATE,2,IDLE_SHUTDOWN_STATE_WARNING,"Shutdown approaching: sets the warning lamp request ISWRRQ and counts passes; to OVERRIDE when the override is enabled and successful, to RESET on the reset from warning flag, to SHUTDOWN after the warning period. PGN 65252 byte 1 = 0x44 (timer state active + SPN 594 driver alert mode active). (PR #53 round 94)",2
+IDLE_SHUTDOWN_STATE,3,IDLE_SHUTDOWN_STATE_DELAY,"A 600-pass (60 s) delay before the override, entered from COUNT with the temperature option: to RESET on the reset flag, to OVERRIDE when the delay timer reaches 0. PGN 65252 byte 1 is left unchanged. No J90350.00 e2m text names this state; the name is the code's delay timer, and the later CHR_B2 e2m labels value 3 DELAY. (PR #53 round 94)",2
+IDLE_SHUTDOWN_STATE,4,IDLE_SHUTDOWN_STATE_OVERRIDE,"Idle shutdown overridden: the timer is reloaded, the warning request cleared, ISOD (overridden until the vehicle moves) and the override lamp request ISODRQ set; to RESET on the reset from override flag. PGN 65252 byte 1 = 0x10 (SPN 592 idle shutdown timer override active). (PR #53 round 94)",2
+IDLE_SHUTDOWN_STATE,5,IDLE_SHUTDOWN_STATE_SHUTDOWN,"The idle shutdown has shut the engine down: on entry the warning request is cleared, the engine shutdown command SHSS set and output 30 switched on; to RESET when engine_state is CRANKING. PGN 65252 byte 1 = 0x01 (SPN 593 idle shutdown has shut down engine). (PR #53 round 94)",2
+
+# EEPROM_BYTE_WRITE_STATE: a new enum of batch D1 (PR #53 round 94)
+EEPROM_BYTE_WRITE_STATE,0,EEPROM_BYTE_WRITE_STATE_IDLE,"No write in progress: the driver step stores the words read into the EEPROM mirror and queues the next read; a queued write takes it to SEND_WRITE. (new enum, size 4, type of eeprom_byte_write_state) (PR #53 round 94)",4
+EEPROM_BYTE_WRITE_STATE,1,EEPROM_BYTE_WRITE_STATE_SEND_WRITE,Send the next queued byte write: write enable (command 6) and write (command 2) with the queue entry's address and data byte; then WAIT_FOR_COMPLETION. (PR #53 round 94),4
+EEPROM_BYTE_WRITE_STATE,2,EEPROM_BYTE_WRITE_STATE_WAIT_FOR_COMPLETION,"A write was sent: read the status register (command 5) each pass until the write-in-progress bit is clear, then SEND_WRITE when more is queued, else IDLE with a READ at the saved offset. (PR #53 round 94)",4

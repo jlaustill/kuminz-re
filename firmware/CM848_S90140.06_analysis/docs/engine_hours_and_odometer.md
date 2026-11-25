@@ -30,7 +30,7 @@ be re-verified on the bench before being trusted — see
 | **PGN 0xFEE5 (Engine Hours/Revs)**     | **Does not exist in firmware** | —                                 | Ruled out        |
 
 > **Update 2026-11-15 (PR #48): the two hour meters, their scale, and real engine hours.**
-> - **The task:** `cm848_advanceHourMeters` (flash2 0x506780, was `cm848_mainLoop_step_4`) runs in phase 0 of the
+> - **The task:** `advanceHourMeters` (flash2 0x506780, was `cm848_advanceHourMeters` / `cm848_mainLoop_step_4`) runs in phase 0 of the
 >   40-phase `executiveFrameInterruptHandler`. `executiveFrameInterruptHandler` runs one phase per PIT tick: it clears the PIT status flag on every pass, and
 >   `PITC` = 4999 gives a 5000-count period, which is 5 ms at the usual 1 MHz PIT clock (4 MHz crystal / 4). So each meter
 >   gains **1 count per 40 × 5 ms = 0.200 s**, and hours = counts / 18000.
