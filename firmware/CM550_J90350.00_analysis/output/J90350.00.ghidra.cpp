@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue Nov 24 22:01:07 MST 2026
+// Generated: Tue Nov 24 22:07:10 MST 2026
 
 
 //
@@ -11360,13 +11360,22 @@ void cm550_FUN_00017120(void)
 
 
 //
-// Function: cm550_canControllerConfigInit @ 0x00017150
+// Function: cm550_initializeEnginePositionSignalInputs @ 0x00017150
 //
 
-void cm550_canControllerConfigInit(void)
+/* Sets up the engine position signal inputs for the configured wheel: a switch on
+   engine_position_signal_configuration (0-3; any other value does nothing) - 0:
+   mc68k_initializeTpuChannel10PrimarySpeedInputDivided and the functions at 0x19ac2 / 0x19aca; 1:
+   0x19caa, mc68k_initializeTpuChannel0MissingToothInput and 0x19e8e; 2: 0x1a350, 0x1a47c and
+   0x1a52a; 3: mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled, 0x1a89a and 0x1a8a2. Called
+   by mc68k_applicationMain at start-up and by cm550_calculateEngineSpeed after the primary speed
+   sensor timeout has run out with the word 0x80cd06 set (it clears that word first). No CAN
+   register is involved (was cm550_canControllerConfigInit; PR #53 round 93) */
+
+void cm550_initializeEnginePositionSignalInputs(void)
 
 {
-  switch(speed_measurement_mode) {
+  switch(engine_position_signal_configuration) {
   case 0:
     mc68k_initializeTpuChannel10PrimarySpeedInputDivided();
     cm550_delayWithWatchdogServiceWrapper2();
@@ -11393,21 +11402,6 @@ void cm550_canControllerConfigInit(void)
 
 
 //
-// Function: cm550_can1PwmTimerInit @ 0x000171aa
-//
-
-void cm550_can1PwmTimerInit(void)
-
-{
-  mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled();
-  cm550_FUN_0001a89a();
-  cm550_FUN_0001a8a2();
-  return;
-}
-
-
-
-//
 // Function: cm550_calculateEngineSpeed @ 0x000171be
 //
 
@@ -11425,7 +11419,7 @@ uint cm550_calculateEngineSpeed(void)
   if (_main_lost_counter_timeout_counter_for_primary_speed_sensor_0_10000 == 0) {
     if (_DAT_0080cd06 != 0) {
       _DAT_0080cd06 = 0;
-      cm550_canControllerConfigInit();
+      cm550_initializeEnginePositionSignalInputs();
     }
   }
   else {
@@ -13755,7 +13749,7 @@ word mc68k_initializeTpuChannel10PrimarySpeedInputDivided(void)
   TPU_CPR0 = wVar1 & 0xffcf;
   wVar1 = TPU_CPR0;
   TPU_CPR0 = wVar1 | 0x20;
-  if (speed_measurement_mode == '\0') {
+  if (engine_position_signal_configuration == 0) {
     _speed_measurement_function_pointer = 0x17f74;
   }
   return (ushort)primary_speed_sensor_teeth_per_period_measurement << 8;
@@ -13793,12 +13787,12 @@ void cm550_emptyStubFunction7(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* The TPU channel 10 (primary engine speed sensor) interrupt handler for speed_measurement_mode 0
-   (saves d0-d1 / a0-a5 and ends in RTE): it reads the 32-bit pulse period from channel 10
-   parameters 4-5 and clears parameter 4 - updates the pulse period ring with its per-cam and
-   per-cylinder sums - the tooth counter and the lost-sensor timeout - checks the cylinder
-   identification pulse - then runs the main / backup phase comparator and clears TPU_CISR bit 10
-   (was vp44_rpmTimerInterruptHandler2; PR #53 round 85) */
+/* The TPU channel 10 (primary engine speed sensor) interrupt handler for
+   engine_position_signal_configuration 0 (saves d0-d1 / a0-a5 and ends in RTE): it reads the 32-bit
+   pulse period from channel 10 parameters 4-5 and clears parameter 4 - updates the pulse period
+   ring with its per-cam and per-cylinder sums - the tooth counter and the lost-sensor timeout -
+   checks the cylinder identification pulse - then runs the main / backup phase comparator and
+   clears TPU_CISR bit 10 (was vp44_rpmTimerInterruptHandler2; PR #53 round 85) */
 
 undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0(void)
 
@@ -13964,7 +13958,7 @@ word mc68k_FUN_00019caa(void)
   TPU_CPR0 = wVar1 & 0xffcf;
   wVar1 = TPU_CPR0;
   TPU_CPR0 = wVar1 | 0x20;
-  if (speed_measurement_mode == '\0') {
+  if (engine_position_signal_configuration == 0) {
     _speed_measurement_function_pointer = 0x17f74;
   }
   return (ushort)primary_speed_sensor_teeth_per_period_measurement << 8;
@@ -14044,11 +14038,11 @@ void cm550_FUN_00019e8e(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* The TPU channel 10 primary speed interrupt handler for speed_measurement_mode 1 (set up with
-   mc68k_initializeTpuChannel0MissingToothInput): the mode 0 period read / ring / sums / lost-sensor
-   timeout without the tooth counter and the cylinder identification check - then the same phase
-   comparator and TPU_CISR bit 10 tail. It is the handler the dumped ECU runs (RAM 0x808F04 =
-   0x19E90) (was vp44_FUN_00019e90; PR #53 round 85) */
+/* The TPU channel 10 primary speed interrupt handler for engine_position_signal_configuration 1
+   (set up with mc68k_initializeTpuChannel0MissingToothInput): the mode 0 period read / ring / sums
+   / lost-sensor timeout without the tooth counter and the cylinder identification check - then the
+   same phase comparator and TPU_CISR bit 10 tail. It is the handler the dumped ECU runs (RAM
+   0x808F04 = 0x19E90) (was vp44_FUN_00019e90; PR #53 round 85) */
 
 undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode1(void)
 
@@ -14290,7 +14284,7 @@ void mc68k_FUN_0001a350(void)
   TPU_CPR0 = wVar1 & 0xffcf;
   wVar1 = TPU_CPR0;
   TPU_CPR0 = wVar1 | 0x20;
-  if (speed_measurement_mode == '\0') {
+  if (engine_position_signal_configuration == 0) {
     _speed_measurement_function_pointer = 0x17f74;
   }
   return;
@@ -14363,9 +14357,9 @@ void cm550_FUN_0001a52a(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* The TPU channel 10 primary speed interrupt handler for speed_measurement_mode 2: ROM
-   0x1A52C-0x1A6E7 is the same 444 bytes as the mode 0 handler (0x19ACC-0x19C87); only its set-up
-   differs (channel 10 parameter 1 from the per-cam pulse count, paired with the channel 0
+/* The TPU channel 10 primary speed interrupt handler for engine_position_signal_configuration 2:
+   ROM 0x1A52C-0x1A6E7 is the same 444 bytes as the mode 0 handler (0x19ACC-0x19C87); only its
+   set-up differs (channel 10 parameter 1 from the per-cam pulse count, paired with the channel 0
    missing-tooth set-up) (was vp44_FUN_0001a52c; PR #53 round 85) */
 
 undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2(void)
@@ -14580,7 +14574,7 @@ uint mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled(void)
     _DAT_0080d090 = 0x1ab6a;
     _average_pulse_period_time_period_over_1_cyl_of_primary_s_1000_65535 = uVar2;
   }
-  if (speed_measurement_mode == '\0') {
+  if (engine_position_signal_configuration == 0) {
     _speed_measurement_function_pointer = 0x17f74;
   }
   return uVar2;
@@ -14618,11 +14612,11 @@ void cm550_FUN_0001a8a2(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* The TPU channel 10 primary speed interrupt handler for speed_measurement_mode 3 (saves d0-d3 /
-   a0-a1 and ends in RTE): it reads the period and the edge time TPU_CH10_PARAM2 - clears parameter
-   4 - passes them to cm550_processPrimarySpeedPulsePeriodWithSyncPulse (in fact the mode 3 period
-   ring / sync gap processor) - re-arms channel 10 (parameter 0 and HSR 2) - then runs the same
-   phase comparator tail (was vp44_FUN_0001a8a4; PR #53 round 85) */
+/* The TPU channel 10 primary speed interrupt handler for engine_position_signal_configuration 3
+   (saves d0-d3 / a0-a1 and ends in RTE): it reads the period and the edge time TPU_CH10_PARAM2 -
+   clears parameter 4 - passes them to cm550_processPrimarySpeedPulsePeriodWithSyncPulse (in fact
+   the mode 3 period ring / sync gap processor) - re-arms channel 10 (parameter 0 and HSR 2) - then
+   runs the same phase comparator tail (was vp44_FUN_0001a8a4; PR #53 round 85) */
 
 undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3(void)
 
@@ -14670,11 +14664,11 @@ undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* This is the primary speed sensor period processor for speed_measurement_mode 3, the wheel with a
-   sync pulse. It is the only work function of mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3.
-   It stores the TPU channel 10 period and edge time (0x80d04a / 0x80d052), then asks
-   cm550_detectEngineSpeedSensorSyncPulse(0) whether the period ended on the sync pulse. (was
-   cm550_throttleTimeAccumulatorProcessor; PR #53 round 87) */
+/* This is the primary speed sensor period processor for engine_position_signal_configuration 3, the
+   wheel with a sync pulse. It is the only work function of
+   mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3. It stores the TPU channel 10 period and edge
+   time (0x80d04a / 0x80d052), then asks cm550_detectEngineSpeedSensorSyncPulse(0) whether the
+   period ended on the sync pulse. (was cm550_throttleTimeAccumulatorProcessor; PR #53 round 87) */
 
 dword cm550_processPrimarySpeedPulsePeriodWithSyncPulse(dword pulse_period,word edge_time_stamp)
 
@@ -28628,7 +28622,7 @@ void mc68k_applicationMain(void)
   cm550_FUN_00026e86();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8762;
-  cm550_canControllerConfigInit();
+  cm550_initializeEnginePositionSignalInputs();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8768;
   cm550_canRpmModeConfigInit();
@@ -35767,9 +35761,10 @@ MEMORY_REGION_TYPE lookupApplicationMemoryRegionType(dword range_start,word rang
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* When speed_measurement_mode is 0: sets TPU channel 0 to function 0xc (CFSR3 bits 3-0) - parameter
-   2 = _DAT_00807ec8 / 6 - parameter 1 = 0xe - and the handler pointer _DAT_00808edc = 0x19c88. No
-   PWM module is involved (was mc68k_pwmTimerMode0Init; PR #53 round 83) */
+/* When engine_position_signal_configuration is 0: sets TPU channel 0 to function 0xc (CFSR3 bits
+   3-0) - parameter 2 = _DAT_00807ec8 / 6 - parameter 1 = 0xe - and the handler pointer
+   _DAT_00808edc = 0x19c88. No PWM module is involved (was mc68k_pwmTimerMode0Init; PR #53 round 83)
+    */
 
 uint mc68k_initializeSpeedMeasurementMode0(void)
 
@@ -35780,7 +35775,7 @@ uint mc68k_initializeSpeedMeasurementMode0(void)
   int iVar4;
   int *piVar5;
   
-  if (speed_measurement_mode == 0) {
+  if (engine_position_signal_configuration == 0) {
     wVar1 = TPU_CPR1;
     TPU_CPR1 = wVar1 & 0xfffc;
     wVar1 = TPU_CIER;
@@ -35813,8 +35808,8 @@ uint mc68k_initializeSpeedMeasurementMode0(void)
     TPU_CISR = wVar1 & 0xfffe;
     return _DAT_00807ec8 / 6;
   }
-  if (speed_measurement_mode != 1) {
-    return (uint)speed_measurement_mode;
+  if (engine_position_signal_configuration != 1) {
+    return (uint)engine_position_signal_configuration;
   }
   current_cylinder_index = index_of_first_tdc_after_missed_pulse_1_6 + -1;
   iVar3 = 0;
@@ -35884,15 +35879,16 @@ uint mc68k_timerCaptureHardwareInit(void)
 // Function: mc68k_resetSpeedMeasurementMode0 @ 0x0003478c
 //
 
-/* Resets TPU channel 0's speed measurement mode 0 parameters (0-2) by speed_measurement_mode. No
-   PWM module is involved (was mc68k_pwmTimerMode0Reset; PR #53 round 83) */
+/* Resets TPU channel 0's speed measurement mode 0 parameters (0-2) by
+   engine_position_signal_configuration. No PWM module is involved (was mc68k_pwmTimerMode0Reset; PR
+   #53 round 83) */
 
 void mc68k_resetSpeedMeasurementMode0(void)
 
 {
   word wVar1;
   
-  if (speed_measurement_mode == '\0') {
+  if (engine_position_signal_configuration == 0) {
     wVar1 = TPU_CPR1;
     TPU_CPR1 = wVar1 & 0xfffc;
     wVar1 = TPU_CIER;
@@ -36090,17 +36086,17 @@ uint mc68k_updateTpuChannel3AnglePulseOutput(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Reprograms TPU channels 0 and 3 for speed_measurement_mode: in mode 0 channel 0 parameter 2 =
-   _DAT_00807ec8 / 6 and channel 3 takes function 0xa (CFSR3 bits 15-12) - mode 1 uses the angle
-   pulse output (function 8). No PWM module is involved (was mc68k_pwmTimerModeDispatcher; PR #53
-   round 83) */
+/* Reprograms TPU channels 0 and 3 for engine_position_signal_configuration: in mode 0 channel 0
+   parameter 2 = _DAT_00807ec8 / 6 and channel 3 takes function 0xa (CFSR3 bits 15-12) - mode 1 uses
+   the angle pulse output (function 8). No PWM module is involved (was mc68k_pwmTimerModeDispatcher;
+   PR #53 round 83) */
 
 void mc68k_configureTpuChannelsForSpeedMeasurementMode(void)
 
 {
   word wVar1;
   
-  if (speed_measurement_mode == '\0') {
+  if (engine_position_signal_configuration == 0) {
     TPU_CH0_PARAM2 = _DAT_00807ec8 / 6;
     wVar1 = TPU_CPR1;
     TPU_CPR1 = wVar1 & 0xff3f;
@@ -36127,7 +36123,7 @@ void mc68k_configureTpuChannelsForSpeedMeasurementMode(void)
     TPU_CPR1 = wVar1 | 0x40;
   }
   if ((pmm_error_type_signifies_the_type_of_sync_error_found_by_pmma_0_ff != '\0') &&
-     (speed_measurement_mode == '\x01')) {
+     (engine_position_signal_configuration == 1)) {
     mc68k_setUpTpuChannel3AnglePulseOutput();
   }
   return;
@@ -36733,4 +36729,4 @@ LAB_00035162:
 
 
 
-// Export complete - 705 functions processed
+// Export complete - 704 functions processed

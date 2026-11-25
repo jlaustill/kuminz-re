@@ -2839,7 +2839,7 @@ address,name,type,comment
 0x00807e9a,main_consec_error_thresh_threshold_count_at_which_ess_is_lost_0_255,undefined,
 0x00807e9b,backup_consec_error_thresh_threshold_count_at_which_eps_is_los_0_255,undefined,
 0x00807e9c,external_consec_error_thresh_threshold_count_at_which_external_0_255,undefined,
-0x00807e9d,speed_measurement_mode,undefined,
+0x00807e9d,engine_position_signal_configuration,byte,e2m 11CA +3 EPCMTY 'ENGINE_POSITION_SIGNAL_CONFIG: defines currently configure(d) wheel' (the e2m range says 0 - 1; the code handles 0-3): cm550_initializeEnginePositionSignalInputs switches on it to set up the TPU inputs of that wheel configuration. Byte accesses only (7 direct) (was speed_measurement_mode; PR #53 round 93)
 0x00807e9e,engine_position_offset_distance_between_tooth_0_and_tdc_1_100_100,undefined,
 0x00807ea2,base_number_of_speed_pulses_per_cam_1_254,undefined,
 0x00807ea3,software_padding_0_7ea3,undefined,

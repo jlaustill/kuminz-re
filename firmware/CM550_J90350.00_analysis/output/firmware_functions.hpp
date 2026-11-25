@@ -172,8 +172,7 @@ void mc68k_startJ1708Transmission(void);  // @ 0x00016d4e
 uint cm550_highRpmEngineProtectionStateMachine(void);  // @ 0x00016dd4
 ushort cm550_fuelTemperatureLimitingSecondary(void);  // @ 0x0001709e
 void cm550_FUN_00017120(void);  // @ 0x00017120
-void cm550_canControllerConfigInit(void);  // @ 0x00017150
-void cm550_can1PwmTimerInit(void);  // @ 0x000171aa
+void cm550_initializeEnginePositionSignalInputs(void);  // @ 0x00017150
 uint cm550_calculateEngineSpeed(void);  // @ 0x000171be
 void cm550_initializeEngineSpeedCalculation(void);  // @ 0x000176de
 void cm550_rpmBasedFuelLimitCalculator(void);  // @ 0x000177c2

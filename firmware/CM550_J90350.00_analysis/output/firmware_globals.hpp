@@ -2769,7 +2769,7 @@ extern undefined EBSWLVTB;  // 0x00807e7a
 extern undefined main_consec_error_thresh_threshold_count_at_which_ess_is_lost_0_255;  // 0x00807e9a
 extern undefined backup_consec_error_thresh_threshold_count_at_which_eps_is_los_0_255;  // 0x00807e9b
 extern undefined external_consec_error_thresh_threshold_count_at_which_external_0_255;  // 0x00807e9c
-extern undefined speed_measurement_mode;  // 0x00807e9d
+extern byte engine_position_signal_configuration;  // 0x00807e9d
 extern undefined engine_position_offset_distance_between_tooth_0_and_tdc_1_100_100;  // 0x00807e9e
 extern undefined base_number_of_speed_pulses_per_cam_1_254;  // 0x00807ea2
 extern undefined software_padding_0_7ea3;  // 0x00807ea3
