@@ -385,8 +385,8 @@ void mpc555_initFuelFlowRateVariables(void);  // @ 0x00017e54
 void cm848_calculateEngineOutputTorque(void);  // @ 0x00017eb8
 void cm848_calculateEgrDeltaPressures(void);  // @ 0x00017f50
 void cm848_emptyStubFunction3(void);  // @ 0x0001806c
-int cm848_calculateJ1939PercentPeakTorqueAtSpeed(word param_1,short param_2);  // @ 0x00018070
-void cm848_calculateJ1939FrictionLoadFuelingAtBreakpoints(void);  // @ 0x0001811c
+int calculateJ1939PercentPeakTorqueAtSpeed(word param_1,short param_2);  // @ 0x00018070
+void calculateJ1939FrictionLoadFuelingAtBreakpoints(void);  // @ 0x0001811c
 void cm848_calculateJ1939PercentPeakTorquePoints(void);  // @ 0x0001820c
 void cm848_calculateJ1939PercentPeakTorque(void);  // @ 0x000182e8
 void cm848_updateEgrDeltaPressureAutozeroConditions(void);  // @ 0x00018384
@@ -441,7 +441,7 @@ void cm848_initializeCrankTimingOutputs(void);  // @ 0x0001bb30
 void cm848_calculateColdStartRpmAdjust(void);  // @ 0x0001bb48
 void cm848_calculateColdStartTempTable(void);  // @ 0x0001bc30
 void cm848_selectColdStartRpmLimit(void);  // @ 0x0001bd44
-void cm848_calculateIntakeAirAdjustment(void);  // @ 0x0001bd74
+void cm848_calculateCrankInitialAdvanceByIntakeManifoldTemperature(void);  // @ 0x0001bd74
 void cm848_checkColdStartConditions(void);  // @ 0x0001be64
 void cm848_processColdStartAdjustment(void);  // @ 0x0001bf44
 void cm848_initColdStartTablePointers(void);  // @ 0x0001bfc8
@@ -474,10 +474,10 @@ void cm848_initEngineOperatingState(void);  // @ 0x0001e810
 void cm848_updateFourDimensionalFueling(void);  // @ 0x0001e830
 void cm848_calculateFourDimensionalInjectionTiming(void);  // @ 0x0001e870
 void cm848_initializeFourDimensionalInjectionTimingLookupCaches(void);  // @ 0x0001ea6c
-void cm848_initFaultSeverityTables(void);  // @ 0x0001ea94
+void initializeFourDimensionalFuelingAndFrictionFuelLookups(void);  // @ 0x0001ea94
 void cm848_filterCommandedThrottle(void);  // @ 0x0001eae8
 void cm848_clampFuelDemandToValidRange(short *param_1);  // @ 0x0001ec48
-uint cm848_calculateDualAxisFuelLimit(void);  // @ 0x0001ec70
+uint cm848_calculateFourDimensionalFueling(void);  // @ 0x0001ec70
 void cm848_initFuelDemandTracking(void);  // @ 0x0001ef30
 void fuelDemandProportionalCalculationSlowCycle40Coordinator(void);  // @ 0x0001ef88
 uint cm848_calculateMaximumFuelCurve(word param_1,word param_2);  // @ 0x0001f03c
@@ -1406,7 +1406,7 @@ void cm848_updateEmissionLevelCapReference(void);  // @ 0x005077fc
 void hpcr_initializeTimerRegisters(void);  // @ 0x00507820
 void cm848_applyFaultDerateToJ1939TorqueCurveFuelings(void);  // @ 0x00507858
 void cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints(void);  // @ 0x00507a20
-void cm848_initializeFaultDerateJ1939TorqueCurvePriority(void);  // @ 0x00507c1c
+void initializeFaultDerateJ1939TorqueCurvePriority(void);  // @ 0x00507c1c
 void cm848_runFaultDerateScheduler(void);  // @ 0x00507c44
 word cm848_rampEngineProtectionSeverityIndex (engine_protection_channel_configuration_t *configuration, engine_protection_channel_state_t *state,engine_protection_channel_history_t *history ,dword is_engine_speed);  // @ 0x00507d50
 undefined2 cm848_interpolateEngineProtectionSeverity(int param_1,int param_2,short param_3);  // @ 0x00507dc0

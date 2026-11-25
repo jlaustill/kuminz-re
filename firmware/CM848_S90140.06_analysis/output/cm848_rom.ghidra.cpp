@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 13:45:33 MST 2026
+// Generated: Wed Nov 25 13:58:47 MST 2026
 
 
 //
@@ -16635,7 +16635,7 @@ void cm848_emptyStubFunction3(void)
 
 
 //
-// Function: cm848_calculateJ1939PercentPeakTorqueAtSpeed @ 0x00018070
+// Function: calculateJ1939PercentPeakTorqueAtSpeed @ 0x00018070
 //
 
 /* Percent peak torque x 256 (0x6400 = 100 percent) available at one engine speed, for the J1939
@@ -16650,9 +16650,11 @@ void cm848_emptyStubFunction3(void)
    j1939_friction_load_fueling_at_breakpoint_4 (10E2 +14) with cm848_signedDivisionWithSaturation.
    Returns the value that cm848_calculateJ1939PercentPeakTorquePoints (0x1820c) stores in the
    Jcomm_Prc_Pk_Trq_* words (10E2 +4 .. +C). No bl and no 32-bit pointer to that caller was found in
-   either bank, and those words read 0 in the RAM dump. (was cm848_throttlePositionProcessing) */
+   either bank, and those words read 0 in the RAM dump. (was cm848_throttlePositionProcessing) | the
+   twin of CM550 0x000142d4: one shared name (was cm848_calculateJ1939PercentPeakTorqueAtSpeed; PR
+   #53 round 96) */
 
-int cm848_calculateJ1939PercentPeakTorqueAtSpeed(word param_1,short param_2)
+int calculateJ1939PercentPeakTorqueAtSpeed(word param_1,short param_2)
 
 {
   short sVar1;
@@ -16675,7 +16677,7 @@ int cm848_calculateJ1939PercentPeakTorqueAtSpeed(word param_1,short param_2)
 
 
 //
-// Function: cm848_calculateJ1939FrictionLoadFuelingAtBreakpoints @ 0x0001811c
+// Function: calculateJ1939FrictionLoadFuelingAtBreakpoints @ 0x0001811c
 //
 
 /* Looks up the friction (no load) fueling friction_fuel_by_engine_speed_values at five engine
@@ -16687,12 +16689,14 @@ int cm848_calculateJ1939PercentPeakTorqueAtSpeed(word param_1,short param_2)
    breakpoints 3 / 4 / 5 (j1939_speed_breakpoint_3_tau_0 / _4_ / _5_, e2m 10DF +A / +C / +E) into
    j1939_friction_load_fueling_at_breakpoint_3 (+12), j1939_friction_load_fueling_at_breakpoint_4
    (+14) and j1939_friction_load_fueling_at_breakpoint_5 (+16). Called by
-   cm848_initFaultSeverityTables (0x1ea94) at start-up and by
+   initializeFourDimensionalFuelingAndFrictionFuelLookups (0x1ea94) at start-up and by
    cm848_calculateJ1939PercentPeakTorquePoints (0x1820c). RAM dump (key on, engine stopped): 340 at
    the rated speed and 97 / 263 / 311 at breakpoints 3 / 4 / 5, which the ROM table gives at those
-   speeds; 397 at idle, the first table value. (was cm848_faultSeverityEvaluation) */
+   speeds; 397 at idle, the first table value. (was cm848_faultSeverityEvaluation) | the twin of
+   CM550 0x00014348: one shared name (was cm848_calculateJ1939FrictionLoadFuelingAtBreakpoints; PR
+   #53 round 96) */
 
-void cm848_calculateJ1939FrictionLoadFuelingAtBreakpoints(void)
+void calculateJ1939FrictionLoadFuelingAtBreakpoints(void)
 
 {
   j1939_friction_load_fueling_at_low_idle =
@@ -16729,12 +16733,12 @@ void cm848_calculateJ1939FrictionLoadFuelingAtBreakpoints(void)
    first stores the coolant temperature friction correction
    (friction_fuel_correction_by_coolant_temperature_values at coolant_temperature_sensor_filtered)
    in throttle_demand_offset_cal_working, refreshes the five friction fuels with
-   cm848_calculateJ1939FrictionLoadFuelingAtBreakpoints (0x1811c) and then runs
-   cm848_calculateJ1939PercentPeakTorqueAtSpeed (0x18070) for each speed with its friction fuel: the
-   idle reference speed into j1939_percent_peak_torque_at_idle_times_256 (+A
-   Jcomm_Prc_Pk_Trq_at_Idle), the rated speed j1939_rated_speed_tau_0 into
-   j1939_percent_peak_torque_at_rated_speed_times_256 (+C Jcomm_Prc_Pk_Trq_at_Rated_RPM) and the
-   speed breakpoints 3 / 4 / 5 into j1939_percent_peak_torque_at_breakpoint_3_times_256 /
+   calculateJ1939FrictionLoadFuelingAtBreakpoints (0x1811c) and then runs
+   calculateJ1939PercentPeakTorqueAtSpeed (0x18070) for each speed with its friction fuel: the idle
+   reference speed into j1939_percent_peak_torque_at_idle_times_256 (+A Jcomm_Prc_Pk_Trq_at_Idle),
+   the rated speed j1939_rated_speed_tau_0 into j1939_percent_peak_torque_at_rated_speed_times_256
+   (+C Jcomm_Prc_Pk_Trq_at_Rated_RPM) and the speed breakpoints 3 / 4 / 5 into
+   j1939_percent_peak_torque_at_breakpoint_3_times_256 /
    j1939_percent_peak_torque_at_breakpoint_4_times_256 /
    j1939_percent_peak_torque_at_breakpoint_5_times_256 (+4 / +6 / +8). No caller was found (no bl
    and no 32-bit pointer to it in either bank) and the six percent words read 0 in the RAM dump.
@@ -16748,24 +16752,24 @@ void cm848_calculateJ1939PercentPeakTorquePoints(void)
                  (coolant_temperature_cached_axis_offsets,coolant_temperature_sensor_filtered,
                   friction_fuel_correction_by_coolant_temperature_axis,
                   friction_fuel_correction_by_coolant_temperature_values,1);
-  cm848_calculateJ1939FrictionLoadFuelingAtBreakpoints();
+  calculateJ1939FrictionLoadFuelingAtBreakpoints();
   j1939_percent_peak_torque_at_idle_times_256 =
-       cm848_calculateJ1939PercentPeakTorqueAtSpeed
+       calculateJ1939PercentPeakTorqueAtSpeed
                  (low_speed_governor_reference.reference_speed,
                   (int)(short)j1939_friction_load_fueling_at_low_idle);
   j1939_percent_peak_torque_at_rated_speed_times_256 =
-       cm848_calculateJ1939PercentPeakTorqueAtSpeed
+       calculateJ1939PercentPeakTorqueAtSpeed
                  (j1939_rated_speed_tau_0,(int)(short)j1939_friction_load_fueling_at_rated_speed);
   j1939_percent_peak_torque_at_breakpoint_3_times_256 =
-       cm848_calculateJ1939PercentPeakTorqueAtSpeed
+       calculateJ1939PercentPeakTorqueAtSpeed
                  (j1939_speed_breakpoint_3_tau_0,
                   (int)(short)j1939_friction_load_fueling_at_breakpoint_3);
   j1939_percent_peak_torque_at_breakpoint_4_times_256 =
-       cm848_calculateJ1939PercentPeakTorqueAtSpeed
+       calculateJ1939PercentPeakTorqueAtSpeed
                  (j1939_speed_breakpoint_4_tau_0,
                   (int)(short)j1939_friction_load_fueling_at_breakpoint_4);
   j1939_percent_peak_torque_at_breakpoint_5_times_256 =
-       cm848_calculateJ1939PercentPeakTorqueAtSpeed
+       calculateJ1939PercentPeakTorqueAtSpeed
                  (j1939_speed_breakpoint_5_tau_0,
                   (int)(short)j1939_friction_load_fueling_at_breakpoint_5);
   return;
@@ -19372,7 +19376,7 @@ void initializePgn65251EngineConfiguration1Buffer(void)
   j1939_pgn65251_payload_previous.endspeed_governor_gain = 0xffff;
   j1939_pgn65251_payload.requested_torque_control_range_lower_limit = 0x7d;
   j1939_pgn65251_payload_previous.requested_torque_control_range_lower_limit = 0x7d;
-  cm848_initializeFaultDerateJ1939TorqueCurvePriority();
+  initializeFaultDerateJ1939TorqueCurvePriority();
   initializeJ1939ReferenceEngineFuelingAndTorque();
   return;
 }
@@ -19549,10 +19553,20 @@ void cm848_selectColdStartRpmLimit(void)
 
 
 //
-// Function: cm848_calculateIntakeAirAdjustment @ 0x0001bd74
+// Function: cm848_calculateCrankInitialAdvanceByIntakeManifoldTemperature @ 0x0001bd74
 //
 
-void cm848_calculateIntakeAirAdjustment(void)
+/* Crank initial timing on entry to CRANKING or REENTRY (called by
+   cm848_processColdStartAdjustment): crank_initial_advance (e2m 105E +E) and
+   crank_initial_advance_break_speed (105E +1A) interpolated by
+   intake_manifold_temperature_sensor_filtered between crank_low_manifold_temperature and
+   crank_high_manifold_temperature (105F +8 / +6) from their timings and speeds; with an intake
+   manifold temperature high or low error, or at or below the low point, the low values; at or above
+   the high point the high ones. Counterpart of CM550
+   cm550_calculateCrankInitialAdvanceByIntakeManifoldTemperature. (was
+   cm848_calculateIntakeAirAdjustment; PR #53 round 96) */
+
+void cm848_calculateCrankInitialAdvanceByIntakeManifoldTemperature(void)
 
 {
   int iVar1;
@@ -19618,7 +19632,7 @@ void cm848_processColdStartAdjustment(void)
       ) || ((engine_state_prev_adjust == ENGINE_STATE_RUNNING &&
             (engine_state == ENGINE_STATE_REENTRY)))) {
     cm848_calculateColdStartTempTable();
-    cm848_calculateIntakeAirAdjustment();
+    cm848_calculateCrankInitialAdvanceByIntakeManifoldTemperature();
     cm848_selectColdStartRpmLimit();
   }
   cm848_checkColdStartConditions();
@@ -21190,7 +21204,7 @@ void cm848_initEngineOperatingState(void)
 
 /* User fueling state FOUR_D: while engine_operating_mode is
    FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE (e2m label FOUR_D, code 8) it stores the result of
-   cm848_calculateDualAxisFuelLimit in four_dimensional_fueling (e2m 1053 +0 Four_D_Fueling,
+   cm848_calculateFourDimensionalFueling in four_dimensional_fueling (e2m 1053 +0 Four_D_Fueling,
    '[_5DFL] fueling value calculated from the 4D fueling tables') and copies it to
    engine_operating_mode_fuel_demand (e2m 1050 +0 User_Fueling). Does nothing in the other modes.
    Caller cm848_runEvery4FramesTaskSetPhase1. (was cm848_updateEngineTimingCompensation) */
@@ -21199,7 +21213,7 @@ void cm848_updateFourDimensionalFueling(void)
 
 {
   if (engine_operating_mode == FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE) {
-    four_dimensional_fueling = cm848_calculateDualAxisFuelLimit();
+    four_dimensional_fueling = cm848_calculateFourDimensionalFueling();
     engine_operating_mode_fuel_demand = four_dimensional_fueling;
   }
   return;
@@ -21324,10 +21338,13 @@ void cm848_initializeFourDimensionalInjectionTimingLookupCaches(void)
 
 
 //
-// Function: cm848_initFaultSeverityTables @ 0x0001ea94
+// Function: initializeFourDimensionalFuelingAndFrictionFuelLookups @ 0x0001ea94
 //
 
-void cm848_initFaultSeverityTables(void)
+/* the twin of CM550 0x0001ddb4: one shared name (was cm848_initFaultSeverityTables; PR #53 round
+   96) */
+
+void initializeFourDimensionalFuelingAndFrictionFuelLookups(void)
 
 {
   four_dimensional_fueling_steady_state_cached_axis_offsets[0] = 2;
@@ -21336,7 +21353,7 @@ void cm848_initFaultSeverityTables(void)
   four_dimensional_fueling_transient_cached_axis_offsets[1] = 2;
   friction_fuel_by_engine_speed_cached_axis_offset = 2;
   coolant_temperature_cached_axis_offsets[0] = 2;
-  cm848_calculateJ1939FrictionLoadFuelingAtBreakpoints();
+  calculateJ1939FrictionLoadFuelingAtBreakpoints();
   return;
 }
 
@@ -21424,8 +21441,8 @@ LAB_0001ebf8:
 
 /* Clamps the signed 16-bit value at param_1 to the governor fuel demand range 0..5888: negative
    values become 0 and values above 5888 become 5888. Called after most dual-axis table
-   interpolations in the fuel demand code (cm848_calculateJ1939PercentPeakTorqueAtSpeed,
-   cm848_calculateDualAxisFuelLimit and others). (was cm848_processFaultIncrement) */
+   interpolations in the fuel demand code (calculateJ1939PercentPeakTorqueAtSpeed,
+   cm848_calculateFourDimensionalFueling and others). (was cm848_processFaultIncrement) */
 
 void cm848_clampFuelDemandToValidRange(short *param_1)
 
@@ -21448,10 +21465,20 @@ void cm848_clampFuelDemandToValidRange(short *param_1)
 
 
 //
-// Function: cm848_calculateDualAxisFuelLimit @ 0x0001ec70
+// Function: cm848_calculateFourDimensionalFueling @ 0x0001ec70
 //
 
-uint cm848_calculateDualAxisFuelLimit(void)
+/* The 4D fueling of FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE (its caller
+   cm848_updateFourDimensionalFueling stores the result in four_dimensional_fueling, e2m 1053 +0):
+   the steady state and transient 4D fueling grids at the filtered engine speed and
+   commanded_throttle_filtered (limited to y axis point 3 with programmable power), each kept
+   between its 0 and 100 percent throttle curves without programmable power, blended by
+   four_dimensional_fueling_interpolation_factor (Q14), at least fuel_demand_minimum and at most
+   four_dimensional_fueling_user_maximum, which it reloads with 5888. Counterpart of CM550
+   cm550_calculateFourDimensionalFueling (which also adds an increment). (was
+   cm848_calculateDualAxisFuelLimit; PR #53 round 96) */
+
+uint cm848_calculateFourDimensionalFueling(void)
 
 {
   word wVar1;
@@ -59610,7 +59637,7 @@ void cm848_applicationMain(void)
   cm848_initFuelDemandTracking();
   cm848_initializeTachometerOutputs();
   cm848_exceptionHandler();
-  cm848_initFaultSeverityTables();
+  initializeFourDimensionalFuelingAndFrictionFuelLookups();
   cm848_initFuelTimingTableSizes();
   cm848_initializeAllSpeedGovernorVariables();
   cm848_initializeMaximumTorqueAtCurrentEngineSpeed();
@@ -67606,15 +67633,16 @@ void cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints(void)
 
 
 //
-// Function: cm848_initializeFaultDerateJ1939TorqueCurvePriority @ 0x00507c1c
+// Function: initializeFaultDerateJ1939TorqueCurvePriority @ 0x00507c1c
 //
 
 /* Sets fault_derate_torque_curve_priority_bit from fault_derate_curve_priority_bit_position (e2m
    EPF_Torque_Curve_Priority) and presets
    fault_derate_fuel_limit_by_engine_speed_cached_axis_offset_2 to 2 (was
-   fault_initBitwiseTimerMask) */
+   fault_initBitwiseTimerMask) | the twin of CM550 0x000185f0: one shared name (was
+   cm848_initializeFaultDerateJ1939TorqueCurvePriority; PR #53 round 96) */
 
-void cm848_initializeFaultDerateJ1939TorqueCurvePriority(void)
+void initializeFaultDerateJ1939TorqueCurvePriority(void)
 
 {
   fault_derate_torque_curve_priority_bit =

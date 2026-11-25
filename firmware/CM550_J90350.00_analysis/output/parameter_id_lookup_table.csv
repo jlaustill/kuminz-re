@@ -98,7 +98,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4176,0x1050,8445650,0x0080DED2,RAM,fuel_demand_selected,FSDSFL
 4177,0x1051,8442670,0x0080D32E,RAM,final_fueling,FSFNFL
 4178,0x1052,8421380,0x00808004,RAM,fuel_demand_maximum,FSMXFL
-4179,0x1053,8442686,0x0080D33E,RAM,,5DFL
+4179,0x1053,8442686,0x0080D33E,RAM,four_dimensional_fueling,5DFL
 4180,0x1054,395418,0x0006089A,ROM,,5DFL01YA
 4181,0x1055,395374,0x0006086E,ROM,,5DFL01XA
 4182,0x1056,395428,0x000608A4,ROM,,5DFL01ZA
@@ -139,7 +139,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4221,0x107D,8420030,0x00807ABE,RAM,all_speed_governor_derivative_deadband_limit,ASDVDELM
 4222,0x107E,44082,0x0000AC32,ROM,,SSPH
 4223,0x107F,16779104,0x01000760,EEPROM,fault_freeze_frame_entries_cal,DGFUSITB
-4224,0x1080,8445560,0x0080DE78,RAM,fault_to_erase_none,FLT2ERAS
+4224,0x1080,8445560,0x0080DE78,RAM,diagnostic_fault_to_erase,FLT2ERAS
 4225,0x1081,8444764,0x0080DB5C,RAM,bit_13_of_0_15_cpu_output_port_1_bit_5_warning_lamp_yellow_none,DRAUEN / LCFDLPEN / LCPRLPEN / LCSLPEN / LCWNLPEN / DRFLSHDR
 4226,0x1082,395194,0x000607BA,ROM,,DPMNBSRC
 4227,0x1083,8437150,0x0080BD9E,RAM,manifold_temp_lookup_result_2,DPSS
@@ -203,7 +203,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4287,0x10BF,8444766,0x0080DB5E,RAM,engine_load_at_current_speed_percent,JCPCLD
 4290,0x10C2,8442716,0x0080D35C,RAM,,
 4291,0x10C3,8421714,0x00808152,RAM,calibrated_engine_speed_limit_used_when_there_is_an_inj_f_1400_2100,ZICNMXES
-4292,0x10C4,8443526,0x0080D686,RAM,,ZILMES
+4292,0x10C4,8443526,0x0080D686,RAM,injector_fault_engine_speed_limit,ZILMES
 4293,0x10C5,8424134,0x00808AC6,RAM,,ZVBKES
 4294,0x10C6,8445674,0x0080DEEA,RAM,,ZVTR
 4295,0x10C7,8445036,0x0080DC6C,RAM,ram_refresh_enable,RREN
@@ -500,9 +500,9 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 4789,0x12B5,8422534,0x00808486,RAM,load_descriminator_to_determine_lugback_0_100_8486,TCHIPCLD
 4790,0x12B6,16778736,0x010005F0,EEPROM,,TCADSZ
 4791,0x12B7,16778740,0x010005F4,EEPROM,,TCTMSZ
-4794,0x12BA,8421182,0x00807F3E,RAM,intercept_fueling_between_lsg_ref_and_the_epf_curve_0_100,EPLSINFL
-4795,0x12BB,8442074,0x0080D0DA,RAM,state_flag_to_use_epf_s_rpm_breakpoints_for_j1939_0_ffff,EPAERPST
-4797,0x12BD,8421392,0x00808010,RAM,,JCLSRFOF
+4794,0x12BA,8421182,0x00807F3E,RAM,fault_derate_curve_low_speed_governor_intercept_fueling,EPLSINFL
+4795,0x12BB,8442074,0x0080D0DA,RAM,j1939_pgn65251_speed_points_request_flags,EPAERPST
+4797,0x12BD,8421392,0x00808010,RAM,j1939_pgn65251_speed_at_point_1_low_speed_governor_offset,JCLSRFOF
 4800,0x12C0,8419932,0x00807A5C,RAM,,APRSRTTB
 4801,0x12C1,8419966,0x00807A7E,RAM,,APTHRTTB
 4802,0x12C2,16778746,0x010005FA,EEPROM,,TCGRRAAX
@@ -694,7 +694,7 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 33266,0x81F2,8425958,0x008091E6,RAM,coolant_level_low_switch_used_as_an_input_source_by_t_1_true_0_false,EPCVSWLO
 33267,0x81F3,8417916,0x0080727C,RAM,battery_voltage_low_threshold_during_crank_in_count_0_1023,DGBTCKLL
 33273,0x81F9,8419400,0x00807848,RAM,default_value_for_vp44_fuel_temperature_when_sensor_is_fail_40_to_300,EPFLTPDF
-33274,0x81FA,8430164,0x0080A254,RAM,vp44_fuel_temperature_value,EPFLTP
+33274,0x81FA,8430164,0x0080A254,RAM,engine_protection_fuel_temperature,EPFLTP
 33316,0x8224,8425952,0x008091E0,RAM,request_to_strobe_set_0_then_set_1_fso_driver_0_1,DRFSRSRQ
 33318,0x8226,8418036,0x008072F4,RAM,cylinder_balance_engine_speed_axis,CBDTT1
 33319,0x8227,8418070,0x00807316,RAM,cylinder_balance_threshold_values,CBDTT2
@@ -717,8 +717,8 @@ param_id,param_id_hex,address,address_hex,region,firmware_variable,e2m_parameter
 33338,0x823A,8418300,0x008073FC,RAM,,CBDSBV
 33339,0x823B,8418310,0x00807406,RAM,,CBDSBT
 33340,0x823C,8417932,0x0080728C,RAM,,CBDFFCN
-33341,0x823D,8425960,0x008091E8,RAM,,CBDFFL
+33341,0x823D,8425960,0x008091E8,RAM,cylinder_balance_filtered_fueling,CBDFFL
 33342,0x823E,8429214,0x00809E9E,RAM,cylinder_balance_real_2_dynamics_compensation_values,CBDDCT
 33343,0x823F,8429246,0x00809EBE,RAM,cylinder_balance_imaginary_2_dynamics_compensation_values,CBDI2DCT
-33345,0x8241,16778830,0x0100064E,EEPROM,cyl_balance_trim_array_cal,CBDDFTO1
+33345,0x8241,16778830,0x0100064E,EEPROM,cylinder_balance_saved_fueling_trims_cal,CBDDFTO1
 33381,0x8265,60442,0x0000EC1A,ROM,,EXE_DATE
