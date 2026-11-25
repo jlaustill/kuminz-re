@@ -65,12 +65,12 @@ function_address,function_name,old_name,new_name,type,comment
 0x000023b8,mpc555_areBootModeStrapPinsHigh,uVar3,qadc_a_pqa2_sample,ushort,QADC-A port word read for its bit 10 = PQA2 (the fourth sample - bit 11 = PQA3 - is read straight from qadc_a_port in the return)
 0x000023b8,mpc555_areBootModeStrapPinsHigh,wVar4,direction_register_value,word,DDRQA value read and written straight back (no bits change). wVar4 is one r11 temp for both the QADC-B (0x23d0) and QADC-A (0x2430) read-backs; the committed name lands on the QADC-A one and the decompiler splits the QADC-B one off as wVar1 - this CSV is applied once per build against the original names so that half cannot be named here
 0x000023b8,mpc555_areBootModeStrapPinsHigh,uVar5,port_output_zero,ushort,Register holding the 0 written to the port data registers
-0x000023b8,mpc555_areBootModeStrapPinsHigh,pwVar6,qadc_b_port,word *,Register-held address of QADC64B_MCR.PORTQA_B (0x304c06)
-0x000023b8,mpc555_areBootModeStrapPinsHigh,pwVar7,qadc_a_port,word *,Register-held address of QADC64A_MCR.PORTQA_B (0x304806)
-0x000023b8,mpc555_areBootModeStrapPinsHigh,pwVar8,qadc_b_direction,word *,Register-held address of QADC64B_MCR.DDRQA_B (0x304c08)
+0x000023b8,mpc555_areBootModeStrapPinsHigh,pwVar6,qadc_b_port,word *,Register-held address of qadc64_b.PORTQA_B (0x304c06)
+0x000023b8,mpc555_areBootModeStrapPinsHigh,pwVar7,qadc_a_port,word *,Register-held address of qadc64_a.PORTQA_B (0x304806)
+0x000023b8,mpc555_areBootModeStrapPinsHigh,pwVar8,qadc_b_direction,word *,Register-held address of qadc64_b.DDRQA_B (0x304c08)
 # cm848_waitForStableIgnitionKeyOn @ 0x000024a0 - waits for 5 consecutive key-on samples of the MDA30 pin
 0x000024a0,cm848_waitForStableIgnitionKeyOn,uVar2,key_on_sample_count,undefined4,Consecutive samples that read the key line as on (byte counter: clrlwi r7 r12 24) - any key-off sample resets it to 0; undefined4 keeps the inferred uint
-0x000024a0,cm848_waitForStableIgnitionKeyOn,pwVar1,key_line_status_register,word *,Register-held address of mios_mdasm30.SCRD (0x3060f6) - bit 15 is the MDA30 pin = the ignition key line
+0x000024a0,cm848_waitForStableIgnitionKeyOn,pwVar1,key_line_status_register,word *,Register-held address of mios_mdasm30.SCR (0x3060f6) - bit 15 is the MDA30 pin = the ignition key line
 # MIOS output drivers (todo 033, PR #48)
 0x00054ec4,mpc555_miosSetChannelPwmDuty,wVar1,modulus_start_value,word,MMCSM22 modulus latch read for the edge offset (ML & 0x7fff)
 0x00054ec4,mpc555_miosSetChannelPwmDuty,wVar2,modulus_period_value,word,MMCSM22 modulus latch read for the period length (0xffff - ML)

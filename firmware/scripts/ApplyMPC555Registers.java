@@ -81,6 +81,7 @@ public class ApplyMPC555Registers extends GhidraScript {
         ApplyResult result = applyRegisterNames(registers);
         println("  Applied: " + result.applied);
         println("  Skipped (already named): " + result.skipped);
+        println("  Skipped (inside typed data): " + result.covered);
         println("  Failed: " + result.failed);
         println("");
 
@@ -124,6 +125,21 @@ public class ApplyMPC555Registers extends GhidraScript {
 
         if (existingBlock != null) {
             println("  " + name + " region already exists: " + existingBlock.getName());
+            return;
+        }
+
+        // The memory map stage can cover part of the range (CM848: MBAR_PERIPH 0x302000-0x307FFF since 2026-05-23).
+        // Creating the whole range then threw MemoryConflictException, which ended this script before any register
+        // was applied (PR #53 round 95 found that every one-shot build had skipped this stage).
+        Address end = addr.add(size - 1);
+        if (memory.intersects(addr, end)) {
+            StringBuilder covering = new StringBuilder();
+            for (MemoryBlock block : memory.getBlocks()) {
+                if (block.getEnd().compareTo(addr) >= 0 && block.getStart().compareTo(end) <= 0) {
+                    covering.append(covering.length() > 0 ? ", " : "").append(block.getName());
+                }
+            }
+            println("  " + name + " region is partly mapped already (" + covering + "): not created");
             return;
         }
 
@@ -240,10 +256,26 @@ public class ApplyMPC555Registers extends GhidraScript {
                     }
                 }
 
+                // Never split typed data. A register inside a struct, union or array is left to that data: a struct
+                // instance covers a whole register block (mios_mdasm30 = MDASM30's AR / BR / SCRD / SCR), and
+                // clearing the code units under one register would destroy the instance. At the start of a defined
+                // primitive the register name is added and the type kept.
+                Data containing = listing.getDataContaining(addr);
+                boolean keepData = false;
+                if (containing != null && containing.isDefined()) {
+                    DataType containingType = containing.getDataType();
+                    boolean composite = containingType instanceof Composite || containingType instanceof Array;
+                    if (composite || !containing.getAddress().equals(addr)) {
+                        result.covered++;
+                        continue;
+                    }
+                    keepData = true;
+                }
+
                 try {
                     symbolTable.createLabel(addr, reg.name, SourceType.USER_DEFINED);
 
-                    DataType dt = getDataType(reg.type);
+                    DataType dt = keepData ? null : getDataType(reg.type);
                     if (dt != null) {
                         try {
                             listing.clearCodeUnits(addr, addr.add(dt.getLength() - 1), false);
@@ -316,6 +348,7 @@ public class ApplyMPC555Registers extends GhidraScript {
     private static class ApplyResult {
         int applied = 0;
         int skipped = 0;
+        int covered = 0;
         int failed = 0;
     }
 }

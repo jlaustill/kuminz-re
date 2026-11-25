@@ -961,7 +961,7 @@ typedef enum {
     ENGINE_STATE_OVERSPEED = 5,  /* e2m OVERSPED: while engine_overspeed_active_flag is 1 (P0219) - the fuel is the ROM word 0x5c30a (FUELING_STATE_OVERSPEED) */
     ENGINE_STATE_JUMP_START = 6,  /* e2m JUMPSTRT: from CRANK after the crank pass count passes its limit; the consumers treat it like CRANK */
     ENGINE_STATE_REENTRY = 7,  /* e2m REENTRY: from RUN when engine speed drops to crank_reentry_speed - the crank fuel is a floor (FUELING_STATE_CRANKING) */
-    ENGINE_STATE_SHUTDOWN = 8  /* e2m SHUTDOWN: the key line (mios_mdasm30.SCRD bit 15) is off without key_off_shutdown_inhibit_flag - or engine_shutdown_command_flag is 1; ecm_power_down_timer runs - the fuel is fuel_demand_minimum (FUELING_STATE_SHUTDOWN) */
+    ENGINE_STATE_SHUTDOWN = 8  /* e2m SHUTDOWN: the key line (mios_mdasm30.SCR bit 15) is off without key_off_shutdown_inhibit_flag - or engine_shutdown_command_flag is 1; ecm_power_down_timer runs - the fuel is fuel_demand_minimum (FUELING_STATE_SHUTDOWN) */
 } ENGINE_STATE;
 
 typedef enum {
@@ -1337,13 +1337,11 @@ typedef struct discrete_line_image_t discrete_line_image_t;
 typedef struct mios_port_data_register_t mios_port_data_register_t;
 typedef struct j1939_powertrain_control_state_t j1939_powertrain_control_state_t;
 typedef struct tsc1_source_configuration_t tsc1_source_configuration_t;
-typedef struct tpua_module_regs_t tpua_module_regs_t;
-typedef struct tpub_module_regs_t tpub_module_regs_t;
+typedef struct tpu3_module_registers_t tpu3_module_registers_t;
 typedef struct mios_mpwmsm_t mios_mpwmsm_t;
 typedef struct mios_mdasm_t mios_mdasm_t;
 typedef struct qadc64_regs_t qadc64_regs_t;
 typedef struct tpu3_ch_params_t tpu3_ch_params_t;
-typedef struct qadc64b_regs_t qadc64b_regs_t;
 typedef struct tpua_ch1_params_t tpua_ch1_params_t;
 typedef struct tpua_ch9_params_t tpua_ch9_params_t;
 typedef struct tpua_ch12_params_t tpua_ch12_params_t;
@@ -2778,12 +2776,12 @@ struct tsc1_source_configuration_t {
     uint16_t retarder_speed_torque_limit_control_request_timeout;  /* the engine retarder TSC1 speed / torque limit control (mode 3) request timeout (was multiframe_timeout_mode3) */
 };
 
-struct tpua_module_regs_t {
-    uint16_t TPUMCR;  /* Module Configuration Register (0x8000=STOP 0x4460=run w/prescaler) */
-    uint16_t _pad1;  /* Reserved (TPU3 offset +0x02) */
-    uint16_t _pad2;  /* Reserved (TPU3 offset +0x04) */
-    uint16_t _pad3;  /* Reserved (TPU3 offset +0x06) */
-    uint16_t TICR;  /* Timer Interrupt Configuration Register (written 0x100 at init) */
+struct tpu3_module_registers_t {
+    uint16_t TPUMCR;  /* TPU3 Module Configuration Register (0x8000 = STOP; initialization writes 0x4460 on TPU-A and 0x4430 on TPU-B) */
+    uint16_t TCR;  /* Test Configuration Register (test mode only) (MPC555UM Table A-7; was _pad1; PR #53 round 95) */
+    uint16_t DSCR;  /* Development Support Control Register (MPC555UM Table A-7; was _pad2; PR #53 round 95) */
+    uint16_t DSSR;  /* Development Support Status Register (MPC555UM Table A-7; was _pad3; PR #53 round 95) */
+    uint16_t TICR;  /* TPU3 Interrupt Configuration Register (initialization writes 0x100 on TPU-A and 0x200 on TPU-B) */
     uint16_t CIER;  /* Channel Interrupt Enable Register */
     uint16_t CFSR0;  /* Channel Function Select Register 0 (ch 0-3) */
     uint16_t CFSR1;  /* Channel Function Select Register 1 (ch 4-7) */
@@ -2796,36 +2794,11 @@ struct tpua_module_regs_t {
     uint16_t CPR0;  /* Channel Priority Register 0 (ch 0-7) */
     uint16_t CPR1;  /* Channel Priority Register 1 (ch 8-15) */
     uint16_t CISR;  /* Channel Interrupt Status Register */
-    uint16_t _pad4;  /* Reserved (TPU3 offset +0x22) */
-    uint16_t _pad5;  /* Reserved (TPU3 offset +0x24) */
-    uint16_t _pad6;  /* Reserved (TPU3 offset +0x26) */
-    uint16_t R028;  /* Unknown register at +0x28 (written 0x80/0x20 at init) */
-    uint16_t R02A;  /* Unknown register at +0x2A (written 0x00 at init) */
-};
-
-struct tpub_module_regs_t {
-    uint16_t TPUMCR;  /* Module Configuration Register (0x8000=STOP 0x4430=run w/prescaler) */
-    uint16_t _pad1;  /* Reserved (TPU3 offset +0x02) */
-    uint16_t _pad2;  /* Reserved (TPU3 offset +0x04) */
-    uint16_t _pad3;  /* Reserved (TPU3 offset +0x06) */
-    uint16_t TICR;  /* Timer Interrupt Configuration Register (written 0x200 at init) */
-    uint16_t CIER;  /* Channel Interrupt Enable Register */
-    uint16_t CFSR0;  /* Channel Function Select Register 0 (ch 0-3) */
-    uint16_t CFSR1;  /* Channel Function Select Register 1 (ch 4-7) */
-    uint16_t CFSR2;  /* Channel Function Select Register 2 (ch 8-11) */
-    uint16_t CFSR3;  /* Channel Function Select Register 3 (ch 12-15) */
-    uint16_t HSQR0;  /* Host Sequence Register 0 (ch 0-7) */
-    uint16_t HSQR1;  /* Host Sequence Register 1 (ch 8-15) */
-    uint16_t HSRR0;  /* Host Service Request Register 0 (ch 0-7) */
-    uint16_t HSRR1;  /* Host Service Request Register 1 (ch 8-15) */
-    uint16_t CPR0;  /* Channel Priority Register 0 (ch 0-7) */
-    uint16_t CPR1;  /* Channel Priority Register 1 (ch 8-15) */
-    uint16_t CISR;  /* Channel Interrupt Status Register */
-    uint16_t _pad4;  /* Reserved (TPU3 offset +0x22) */
-    uint16_t _pad5;  /* Reserved (TPU3 offset +0x24) */
-    uint16_t _pad6;  /* Reserved (TPU3 offset +0x26) */
-    uint16_t R028;  /* Unknown register at +0x28 (written 0x80/0x20 at init) */
-    uint16_t R02A;  /* Unknown register at +0x2A (written 0x1E at init) */
+    uint16_t LR;  /* Link Register (test) (MPC555UM Table A-7; was _pad4; PR #53 round 95) */
+    uint16_t SGLR;  /* Service Grant Latch Register (test) (MPC555UM Table A-7; was _pad5; PR #53 round 95) */
+    uint16_t DCNR;  /* Decoded Channel Number Register (test) (MPC555UM Table A-7; was _pad6; PR #53 round 95) */
+    uint16_t TPUMCR2;  /* TPU Module Configuration Register 2 (initialization writes 0x80 / 0x20 / 0) (MPC555UM Table A-7; was R028; PR #53 round 95) */
+    uint16_t TPUMCR3;  /* TPU Module Configuration Register 3 (initialization writes 0 on TPU-A / 0x1E on TPU-B) (MPC555UM Table A-7; was R02A; PR #53 round 95) */
 };
 
 struct mios_mpwmsm_t {
@@ -2837,8 +2810,8 @@ struct mios_mpwmsm_t {
 
 struct mios_mdasm_t {
     uint32_t AR_BR;  /* A and B registers as one 32-bit pair (AR = high half / BR = low half): the drivers read and write them with one access - edge captures in input mode / the PWM compare pair in output mode */
-    uint16_t XR;  /* X Register (extended capture/status value) */
-    uint16_t SCRD;  /* Status/Control Register D (0x9=enable output) */
+    uint16_t SCRD;  /* Status/Control Register Duplicated: the same register as SCR at a second address (MPC555UM 15.11.1.3; the manual says not to write it); no code here accesses it (was XR; PR #53 round 95) */
+    uint16_t SCR;  /* Status/Control Register (mode bits: 0x9 = output PWM / 1 = input; bit 15 = the pin state) (was SCRD; MPC555UM: SCRD is the +4 duplicate; PR #53 round 95) */
 };
 
 struct qadc64_regs_t {
@@ -2847,10 +2820,10 @@ struct qadc64_regs_t {
     uint16_t INTC;  /* Interrupt Configure Register */
     uint16_t PORTQA_B;  /* Port QA (high byte) and QB (low byte) Data Registers */
     uint16_t DDRQA_B;  /* Port QA (high byte) and QB (low byte) Data Direction Registers */
-    uint16_t CCW;  /* Current Command Word pointer (queue head) */
-    uint16_t RJURR;  /* Right-Justified Unsigned Result Register */
-    uint16_t LJSRR;  /* Left-Justified Signed Result Register */
-    uint16_t LJURR;  /* Left-Justified Unsigned Result Register */
+    uint16_t QACR0;  /* QADC64 Control Register 0: the QCLK prescaler fields and external multiplexing (written once at initialization) (MPC555UM 13.12; was CCW: the CCW table is at +0x200 and the result registers at +0x280 / +0x300 / +0x380; PR #53 round 95) */
+    uint16_t QACR1;  /* QADC64 Control Register 1: queue 1's completion / pause interrupt enables and operating mode (MPC555UM 13.12; was RJURR: the CCW table is at +0x200 and the result registers at +0x280 / +0x300 / +0x380; PR #53 round 95) */
+    uint16_t QACR2;  /* QADC64 Control Register 2: queue 2's interrupt enables / operating mode and resume pointer (MPC555UM 13.12; was LJSRR: the CCW table is at +0x200 and the result registers at +0x280 / +0x300 / +0x380; PR #53 round 95) */
+    uint16_t QASR0;  /* QADC64 Status Register 0: the CF1 / PF1 / CF2 / PF2 queue flags / trigger overruns / queue status and the command word pointer (MPC555UM 13.12; was LJURR: the CCW table is at +0x200 and the result registers at +0x280 / +0x300 / +0x380; PR #53 round 95) */
 };
 
 struct tpu3_ch_params_t {
@@ -2862,18 +2835,6 @@ struct tpu3_ch_params_t {
     uint16_t PARAM5;  /* Channel parameter 5 */
     uint16_t PARAM6;  /* Channel parameter 6 */
     uint16_t PARAM7;  /* Channel parameter 7 */
-};
-
-struct qadc64b_regs_t {
-    uint16_t MCR;  /* Module Configuration Register (bit15=QSTOP) */
-    uint16_t TEST;  /* Test Register (reserved/debug) */
-    uint16_t INTC;  /* Interrupt Configure Register */
-    uint16_t PORTQA_B;  /* Port QA (high byte) and QB (low byte) Data Registers */
-    uint16_t DDRQA_B;  /* Port QA (high byte) and QB (low byte) Data Direction Registers */
-    uint16_t CCW;  /* Current Command Word pointer (queue head) */
-    uint16_t RJURR;  /* Right-Justified Unsigned Result Register */
-    uint16_t LJSRR;  /* Left-Justified Signed Result Register */
-    uint16_t LJURR;  /* Left-Justified Unsigned Result Register */
 };
 
 struct tpua_ch1_params_t {
@@ -2956,8 +2917,8 @@ struct tpub_ch14_params_t {
 struct mios_mmcsm_b_t {
     uint16_t CNT;  /* Up-Counter Register */
     uint16_t ML;  /* Modulus Latch Register (period/reload value) */
-    uint16_t _pad;  /* Reserved/unused padding */
-    uint16_t SCRD;  /* Status/Control Register D */
+    uint16_t SCRD;  /* Status/Control Register Duplicated: the same register as SCR (MPC555UM 15.10.1.3); not accessed here (was _pad; PR #53 round 95) */
+    uint16_t SCR;  /* Status/Control Register (was SCRD; MPC555UM: SCRD is the +4 duplicate; PR #53 round 95) */
 };
 
 struct toucan_module_registers_t {
@@ -3080,7 +3041,7 @@ struct eeprom_xfer_state_t {
 };
 
 struct eeprom_block_tracking_t {
-    uint16_t key_off_duration_ticks;  /* Counted with the runtime counter by mpc555_tickTransferTimeoutAndRuntimeCounter (every 41 calls) - mpc555_keyOnStateMachine zeroes it while SCRD bit 15 (key on - PR #48) is set and saves the runtime counter once it passes 0x2903 (was watchdog_counter 'Transfer watchdog counter (reset each block)'; PR #53 round 67) */
+    uint16_t key_off_duration_ticks;  /* Counted with the runtime counter by mpc555_tickTransferTimeoutAndRuntimeCounter (every 41 calls) - mpc555_keyOnStateMachine zeroes it while SCR bit 15 (key on - PR #48) is set and saves the runtime counter once it passes 0x2903 (was watchdog_counter 'Transfer watchdog counter (reset each block)'; PR #53 round 67) */
     uint8_t failed_write_authorization_count;  /* cm848_validateBootSecurityKey's count of failed write authorizations: at 0x11 every check fails / a matching token resets it / a mismatch adds 1 (was _pad2; PR #53 round 35) */
     uint32_t last_write_addr;  /* Previous block write address for continuity validation */
     uint32_t block_start_addr;  /* Start address of current EEPROM transfer range */

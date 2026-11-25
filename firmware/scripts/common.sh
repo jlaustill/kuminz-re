@@ -140,7 +140,12 @@ run_script() {
     local script_name="$1"
     shift
     local script_args=("$@")
+    local script_log
+    script_log="$(mktemp)"
 
+    # analyzeHeadless exits 0 when a script throws, so a stage that dies early still looks complete. Fail the build
+    # on "SCRIPT ERROR" instead: ApplyMPC555Registers.java had thrown in every CM848 build since 2026-05-23 while the
+    # build printed "Hardware register naming complete" (PR #53 round 95).
     "$GHIDRA_HEADLESS" \
         "$PROJECT_LOCATION" \
         "$PROJECT_NAME" \
@@ -148,7 +153,15 @@ run_script() {
         -noanalysis \
         -max-cpu 1 \
         -scriptPath "$SHARED_SCRIPTS_DIR" \
-        -postScript "$script_name" "${script_args[@]}"
+        -postScript "$script_name" "${script_args[@]}" 2>&1 | tee "$script_log"
+    local headless_status=${PIPESTATUS[0]}
+    if grep -q "SCRIPT ERROR" "$script_log"; then
+        rm -f "$script_log"
+        print_error "$script_name threw an exception (SCRIPT ERROR above): the stage did not complete"
+        exit 1
+    fi
+    rm -f "$script_log"
+    return "$headless_status"
 }
 
 # Apply function_definitions.csv. A firmware whose compiler packs stack arguments in slots other than the cspec's

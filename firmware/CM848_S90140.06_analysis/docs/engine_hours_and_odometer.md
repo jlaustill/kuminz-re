@@ -264,7 +264,7 @@ S90140.06. Add a `tools/read_odometer.sh` that only does the read.
 
 `mpc555_keyOnStateMachine` @ 0x184 saves to EEPROM in two scenarios:
 1. **Periodic save:** `key_off_duration_ticks > 0x2903` (10,499 ticks)
-2. **Key-off save:** `mios_mdasm30.SCRD` bit 15 set AND
+2. **Key-off save:** `mios_mdasm30.SCR` bit 15 set AND
    `eeprom_shadow_header.ecm_status == ECM_STATUS_CALIBRATION_VALID` (0x600d; was `eeprom_version_marker.magic`)
    *(2026-11-13, PR #48: bit 15 = 1 means key ON — the reset code waits for it — so this branch is really the key-back-on save before the watchdog reset / restart, and scenario 1 runs while bit 15 reads 0 = key off.)*
 

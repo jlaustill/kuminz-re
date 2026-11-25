@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 10:04:07 MST 2026
+// Generated: Wed Nov 25 11:11:25 MST 2026
 
 
 //
@@ -15,30 +15,30 @@ void mpc555_reset_vector(void)
   dword dVar1;
   dword dVar2;
   
-  dVar1 = USIU_SCCR.PLPRCR;
-  if (((dVar1 & 0x20000) != 0) || (dVar1 = USIU_SCCR.SCCR, (dVar1 & 0x80000) != 0)) {
-    dVar1 = USIU_SCCR.SCCR;
-    dVar2 = USIU_SCCR.PLPRCR;
-    USIU_SCCR.PLPRCR = dVar2 | 0x20000;
-    USIU_SCCR.SCCR = dVar1 & 0xff7fffff;
+  dVar1 = usiu_clocks_and_reset.PLPRCR;
+  if (((dVar1 & 0x20000) != 0) || (dVar1 = usiu_clocks_and_reset.SCCR, (dVar1 & 0x80000) != 0)) {
+    dVar1 = usiu_clocks_and_reset.SCCR;
+    dVar2 = usiu_clocks_and_reset.PLPRCR;
+    usiu_clocks_and_reset.PLPRCR = dVar2 | 0x20000;
+    usiu_clocks_and_reset.SCCR = dVar1 & 0xff7fffff;
   }
-  USIU_SCCR.PLPRCR = 0x1304001;
-  USIU_SCCR.SCCR = 0x2010000;
-  USIU_EMCR = 3;
-  USIU_INITCFG = 0x2004;
+  usiu_clocks_and_reset.PLPRCR = 0x1304001;
+  usiu_clocks_and_reset.SCCR = 0x2010000;
+  USIU_PDMCR = 3;
+  USIU_SGPIOCR = 0x2004;
   USIU_SYPCR = 0xb;
   Ram002fc300 = 0x55ccaa33;
   USIU_TBSCR = 1;
-  USIU_PISCR.PISCR = 0x101;
-  USIU_PISCR.PITC = 4999;
+  usiu_periodic_interrupt_timer.PISCR = 0x101;
+  usiu_periodic_interrupt_timer.PITC = 4999;
   Ram00307f80 = 0;
-  USIU_SCCR.VSRMCR = 0x400;
-  mios1_ext_816 = 0x8000;
-  mios_mmcsm_cnt.SCRD = 0x60f;
-  mios_mmcsm_cnt.CNT = 0;
-  mios_mmcsm_cnt.ML = 0;
+  usiu_clocks_and_reset.VSRMCR = 0x400;
+  MIOS_MCPSMSCR = 0x8000;
+  mios_mmcsm6.SCR = 0x60f;
+  mios_mmcsm6.CNT = 0;
+  mios_mmcsm6.ML = 0;
   _DPTRAM_RAMBAR = 0xffa0;
-  mios_mdasm30.SCRD = 3;
+  mios_mdasm30.SCR = 3;
   cm848_waitForStableIgnitionKeyOn();
   mpc555_hardwareInitialization();
   return;
@@ -58,7 +58,7 @@ void mpc555_keyOnStateMachine(void)
   
   dVar1 = ecu_power_state_flags.state;
   if (dVar1 == 0) {
-    wVar2 = mios_mdasm30.SCRD;
+    wVar2 = mios_mdasm30.SCR;
     if ((wVar2 & 0x8000) == 0) {
       ecu_power_state_flags.state = 1;
     }
@@ -67,7 +67,7 @@ void mpc555_keyOnStateMachine(void)
     }
   }
   else if (dVar1 == 1) {
-    wVar2 = mios_mdasm30.SCRD;
+    wVar2 = mios_mdasm30.SCR;
     if ((wVar2 & 0x8000) == 0) {
       wVar2 = eeprom_block_tracking.key_off_duration_ticks;
       if (0x2903 < wVar2) {
@@ -210,7 +210,7 @@ undefined4 cm848_bootDiagnosticServiceAcknowledgeNoOperation(void)
    count / start addresses / lengths; PR #53 round 69) - a mismatch answers DOWNLOAD_INVALID (the
    serial channel then resets); a match writes CALIBRATION_VALID (the serial channel also sets bit 3
    and clears bit 1 of serial_reflash_status_flags_cal and counts serial_reflash_success_count_cal)
-   / the runtime counter to eeprom_key_on_hour_meter_cal / answers 0 / resets when MIOS MDASM30 SCRD
+   / the runtime counter to eeprom_key_on_hour_meter_cal / answers 0 / resets when MIOS MDASM30 SCR
    bit 15 is set. Any other status answers DOWNLOAD_INVALID. Clears bit 7 of
    eeprom_service_mode_flags first Here intake_air_heater_saved_values_cal.redundant_preheat_request
    and engine_off_time_saved_values_cal.previous_trip_value are the boot kernel's copies of EEPROM
@@ -391,7 +391,7 @@ void mpc555_verifyDownloadedCalibration(j1939_rx_msg_t *request,BOOT_REQUEST_CHA
           uVar7 = uVar7 + 1;
         } while (uVar7 < 0x32);
       }
-      wVar4 = mios_mdasm30.SCRD;
+      wVar4 = mios_mdasm30.SCR;
       if ((wVar4 & 0x8000) != 0) {
         cm848_forceSupervisorWatchdogReset();
         mpc555_reset_vector();
@@ -540,7 +540,7 @@ uint cm848_computeCrcCcitt(undefined4 *param_1,uint param_2)
 // Function: mpc555_updatePowerStateOutputs @ 0x00000b44
 //
 
-/* Boot ROM (from mpc555_bootStateMachine): copies the ignition key line (mios_mdasm30.SCRD bit 15)
+/* Boot ROM (from mpc555_bootStateMachine): copies the ignition key line (mios_mdasm30.SCR bit 15)
    into ecu_power_state_flags.capability_flags bit 0 then drives SIU_SGPIODT1 bit 0x400 from flag
    bit 1 and the MIOS port bit 0x2000 from flag bit 4 (likely power-hold style outputs; exact pins
    unconfirmed) - was mpc555_updateCapabilityFlags | review-function-readability reviewed 2026-11-11
@@ -555,7 +555,7 @@ void mpc555_updatePowerStateOutputs(void)
   uint uVar4;
   siu_gpio_data_register_t sVar5;
   
-  wVar2 = mios_mdasm30.SCRD;
+  wVar2 = mios_mdasm30.SCR;
   if ((wVar2 & 0x8000) == 0) {
     dVar1 = ecu_power_state_flags.capability_flags;
     uVar4 = dVar1 & 0xfffffffe;
@@ -773,12 +773,12 @@ void mpc555_bootStateMachine(void)
 {
   word wVar1;
   
-  wVar1 = USIU_PISCR.PISCR;
+  wVar1 = usiu_periodic_interrupt_timer.PISCR;
   if ((wVar1 & 0x80) == 0) {
     return;
   }
-  wVar1 = USIU_PISCR.PISCR;
-  USIU_PISCR.PISCR = wVar1 | 0x80;
+  wVar1 = usiu_periodic_interrupt_timer.PISCR;
+  usiu_periodic_interrupt_timer.PISCR = wVar1 | 0x80;
   mpc555_tickTransferTimeoutAndRuntimeCounter();
   mpc555_updatePowerStateOutputs();
   wVar1 = boot_state_machine.boot_phase;
@@ -1087,30 +1087,30 @@ void mpc555_initSystemRegisters(void)
   dword dVar1;
   dword dVar2;
   
-  dVar1 = USIU_SCCR.PLPRCR;
-  if (((dVar1 & 0x20000) != 0) || (dVar1 = USIU_SCCR.SCCR, (dVar1 & 0x80000) != 0)) {
-    dVar1 = USIU_SCCR.SCCR;
-    dVar2 = USIU_SCCR.PLPRCR;
-    USIU_SCCR.PLPRCR = dVar2 | 0x20000;
-    USIU_SCCR.SCCR = dVar1 & 0xff7fffff;
+  dVar1 = usiu_clocks_and_reset.PLPRCR;
+  if (((dVar1 & 0x20000) != 0) || (dVar1 = usiu_clocks_and_reset.SCCR, (dVar1 & 0x80000) != 0)) {
+    dVar1 = usiu_clocks_and_reset.SCCR;
+    dVar2 = usiu_clocks_and_reset.PLPRCR;
+    usiu_clocks_and_reset.PLPRCR = dVar2 | 0x20000;
+    usiu_clocks_and_reset.SCCR = dVar1 & 0xff7fffff;
   }
-  USIU_SCCR.PLPRCR = 0x1304001;
-  USIU_SCCR.SCCR = 0x2010000;
-  USIU_EMCR = 3;
-  USIU_INITCFG = 0x2004;
+  usiu_clocks_and_reset.PLPRCR = 0x1304001;
+  usiu_clocks_and_reset.SCCR = 0x2010000;
+  USIU_PDMCR = 3;
+  USIU_SGPIOCR = 0x2004;
   USIU_SYPCR = 0xb;
   Ram002fc300 = 0x55ccaa33;
   USIU_TBSCR = 1;
-  USIU_PISCR.PISCR = 0x101;
-  USIU_PISCR.PITC = 4999;
+  usiu_periodic_interrupt_timer.PISCR = 0x101;
+  usiu_periodic_interrupt_timer.PITC = 4999;
   Ram00307f80 = 0;
-  USIU_SCCR.VSRMCR = 0x400;
-  mios1_ext_816 = 0x8000;
-  mios_mmcsm_cnt.SCRD = 0x60f;
-  mios_mmcsm_cnt.CNT = 0;
-  mios_mmcsm_cnt.ML = 0;
+  usiu_clocks_and_reset.VSRMCR = 0x400;
+  MIOS_MCPSMSCR = 0x8000;
+  mios_mmcsm6.SCR = 0x60f;
+  mios_mmcsm6.CNT = 0;
+  mios_mmcsm6.ML = 0;
   _DPTRAM_RAMBAR = 0xffa0;
-  mios_mdasm30.SCRD = 3;
+  mios_mdasm30.SCR = 3;
   cm848_waitForStableIgnitionKeyOn();
   mpc555_hardwareInitialization();
   return;
@@ -1131,30 +1131,30 @@ void cm848_initClockAndTimers(void)
   dword dVar1;
   dword dVar2;
   
-  dVar1 = USIU_SCCR.PLPRCR;
-  if (((dVar1 & 0x20000) != 0) || (dVar1 = USIU_SCCR.SCCR, (dVar1 & 0x80000) != 0)) {
-    dVar1 = USIU_SCCR.SCCR;
-    dVar2 = USIU_SCCR.PLPRCR;
-    USIU_SCCR.PLPRCR = dVar2 | 0x20000;
-    USIU_SCCR.SCCR = dVar1 & 0xff7fffff;
+  dVar1 = usiu_clocks_and_reset.PLPRCR;
+  if (((dVar1 & 0x20000) != 0) || (dVar1 = usiu_clocks_and_reset.SCCR, (dVar1 & 0x80000) != 0)) {
+    dVar1 = usiu_clocks_and_reset.SCCR;
+    dVar2 = usiu_clocks_and_reset.PLPRCR;
+    usiu_clocks_and_reset.PLPRCR = dVar2 | 0x20000;
+    usiu_clocks_and_reset.SCCR = dVar1 & 0xff7fffff;
   }
-  USIU_SCCR.PLPRCR = 0x1304001;
-  USIU_SCCR.SCCR = 0x2010000;
-  USIU_EMCR = 3;
-  USIU_INITCFG = 0x2004;
+  usiu_clocks_and_reset.PLPRCR = 0x1304001;
+  usiu_clocks_and_reset.SCCR = 0x2010000;
+  USIU_PDMCR = 3;
+  USIU_SGPIOCR = 0x2004;
   USIU_SYPCR = 0xb;
   Ram002fc300 = 0x55ccaa33;
   USIU_TBSCR = 1;
-  USIU_PISCR.PISCR = 0x101;
-  USIU_PISCR.PITC = 4999;
+  usiu_periodic_interrupt_timer.PISCR = 0x101;
+  usiu_periodic_interrupt_timer.PITC = 4999;
   Ram00307f80 = 0;
-  USIU_SCCR.VSRMCR = 0x400;
-  mios1_ext_816 = 0x8000;
-  mios_mmcsm_cnt.SCRD = 0x60f;
-  mios_mmcsm_cnt.CNT = 0;
-  mios_mmcsm_cnt.ML = 0;
+  usiu_clocks_and_reset.VSRMCR = 0x400;
+  MIOS_MCPSMSCR = 0x8000;
+  mios_mmcsm6.SCR = 0x60f;
+  mios_mmcsm6.CNT = 0;
+  mios_mmcsm6.ML = 0;
   _DPTRAM_RAMBAR = 0xffa0;
-  mios_mdasm30.SCRD = 3;
+  mios_mdasm30.SCR = 3;
   cm848_waitForStableIgnitionKeyOn();
   mpc555_hardwareInitialization();
   return;
@@ -1205,13 +1205,13 @@ BOOT_DIAGNOSTIC_RESULT cm848_handleBootExecuteAtAddressService(j1939_rx_msg_t *r
     BVar6 = (BOOT_DIAGNOSTIC_RESULT)MVar7;
     if (MVar7 != MEMORY_REGION_TYPE_UNMAPPED) {
       cm848_sendDiagServiceResponse(request,0);
-      wVar4 = mios_mmcsm_cnt.CNT;
+      wVar4 = mios_mmcsm6.CNT;
       bVar3 = boot_can_ring_state.transmit_ring_full_flag;
       do {
         pbVar1 = boot_can_ring_state.transmit_write_pointer;
         pbVar2 = boot_can_ring_state.transmit_read_pointer;
         do {
-          wVar5 = mios_mmcsm_cnt.CNT;
+          wVar5 = mios_mmcsm6.CNT;
           if (0x40c < (int)((uint)wVar5 - (uint)wVar4)) goto LAB_000018f4;
         } while (pbVar1 != pbVar2);
       } while (bVar3 == 1);
@@ -1760,7 +1760,7 @@ void mpc555_initDiagnosticSession(void)
 {
   word local_8 [4];
   
-  local_8[0] = qsmcm_sccr1.SC1SR;
+  local_8[0] = qsmcm_sci1.SC1SR;
   boot_sci_failed_key_count = 0;
   boot_sci_key_retry_delay = 0;
   if (boot_serial_reflash_unlock_request == 0) {
@@ -1771,8 +1771,8 @@ void mpc555_initDiagnosticSession(void)
     diag_serial_transfer_phase = 0;
     boot_sci_session_state.response_write_index = 0;
     boot_sci_session_state.response_cursor_pointer = diag_serial_buffer;
-    qsmcm_sccr1.SCC1R0 = 0xa0;
-    qsmcm_sccr1.SCC1R1 = 0x102c;
+    qsmcm_sci1.SCC1R0 = 0xa0;
+    qsmcm_sci1.SCC1R1 = 0x102c;
   }
   else {
     local_8[0] = 0;
@@ -1783,8 +1783,8 @@ void mpc555_initDiagnosticSession(void)
     cm848_initDiagnosticCallback();
     boot_sci_session_state.response_write_index = 0;
     boot_sci_session_state.response_cursor_pointer = diag_serial_buffer;
-    qsmcm_sccr1.SCC1R0 = 0x14;
-    qsmcm_sccr1.SCC1R1 = 0x102c;
+    qsmcm_sci1.SCC1R0 = 0x14;
+    qsmcm_sci1.SCC1R1 = 0x102c;
     cm848_setDataTransferMode();
   }
   return;
@@ -1895,22 +1895,22 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word qadc_a_pqa2_sample;
   word direction_register_value;
   
-  qadc_b_direction = &QADC64B_MCR.DDRQA_B;
-  wVar1 = QADC64B_MCR.DDRQA_B;
-  QADC64B_MCR.DDRQA_B = wVar1;
-  qadc_b_port = &QADC64B_MCR.PORTQA_B;
+  qadc_b_direction = &qadc64_b.DDRQA_B;
+  wVar1 = qadc64_b.DDRQA_B;
+  qadc64_b.DDRQA_B = wVar1;
+  qadc_b_port = &qadc64_b.PORTQA_B;
   port_output_zero = 0;
-  QADC64B_MCR.PORTQA_B = 0;
+  qadc64_b.PORTQA_B = 0;
   cm848_busyWaitDelay(1);
   qadc_b_pqb0_sample = *qadc_b_port;
   *qadc_b_direction = *qadc_b_direction;
   *qadc_b_port = port_output_zero;
   cm848_busyWaitDelay(1);
   qadc_b_pqa4_sample = *qadc_b_port;
-  direction_register_value = QADC64A_MCR.DDRQA_B;
-  QADC64A_MCR.DDRQA_B = direction_register_value;
-  qadc_a_port = &QADC64A_MCR.PORTQA_B;
-  QADC64A_MCR.PORTQA_B = port_output_zero;
+  direction_register_value = qadc64_a.DDRQA_B;
+  qadc64_a.DDRQA_B = direction_register_value;
+  qadc_a_port = &qadc64_a.PORTQA_B;
+  qadc64_a.PORTQA_B = port_output_zero;
   cm848_busyWaitDelay(1);
   qadc_a_pqa2_sample = *qadc_a_port;
   *qadc_b_direction = *qadc_b_direction;
@@ -1926,7 +1926,7 @@ bool mpc555_areBootModeStrapPinsHigh(void)
 // Function: cm848_waitForStableIgnitionKeyOn @ 0x000024a0
 //
 
-/* Reset-time wait for the ignition key: samples mios_mdasm30.SCRD bit 15 (the MDA30 pin = the
+/* Reset-time wait for the ignition key: samples mios_mdasm30.SCR bit 15 (the MDA30 pin = the
    ignition key line - 1 = key on; the same bit cm848_readDiscreteInputLine reads as line 128 and
    mpc555_keyOnStateMachine tests) every 2 cm848_busyWaitDelay passes and returns once 5 consecutive
    samples read 1; any 0 restarts the count - so it never returns while the key is off. Called by
@@ -1942,7 +1942,7 @@ void cm848_waitForStableIgnitionKeyOn(void)
   uint key_on_sample_count;
   
   key_on_sample_count = 0;
-  key_line_status_register = &mios_mdasm30.SCRD;
+  key_line_status_register = &mios_mdasm30.SCR;
   do {
                     /* Constant: MDASM_PIN_STATE_BIT = 0x8000 */
     if ((*key_line_status_register & 0x8000) == 0) {
@@ -2030,19 +2030,19 @@ void mpc555_hardwareInitialization(void)
   ushort uVar4;
   uint uVar5;
   
-  USIU_BR0.BR0 = 0x50080b;
-  USIU_BR0.OR0 = 0xfff00062;
-  USIU_BR0.BR1 = 0;
-  USIU_BR0.OR1 = 0;
-  USIU_BR0.BR2 = 0;
-  USIU_BR0.OR2 = 0;
-  USIU_BR0.BR3 = 0;
-  USIU_BR0.OR3 = 0;
+  usiu_memory_controller.BR0 = 0x50080b;
+  usiu_memory_controller.OR0 = 0xfff00062;
+  usiu_memory_controller.BR1 = 0;
+  usiu_memory_controller.OR1 = 0;
+  usiu_memory_controller.BR2 = 0;
+  usiu_memory_controller.OR2 = 0;
+  usiu_memory_controller.BR3 = 0;
+  usiu_memory_controller.OR3 = 0;
   USIU_SIUMCR = 0x402000;
-  mios1_ext_816 = 0x8000;
-  mios_mmcsm_cnt.SCRD = 0x60f;
-  mios_mmcsm_cnt.CNT = 0;
-  mios_mmcsm_cnt.ML = 0;
+  MIOS_MCPSMSCR = 0x8000;
+  mios_mmcsm6.SCR = 0x60f;
+  mios_mmcsm6.CNT = 0;
+  mios_mmcsm6.ML = 0;
   bVar3 = qsmcm_qspi.SPSR;
   qsmcm_qspi.SPSR = bVar3 & 0x7f;
   wVar2 = qsmcm_qspi.SPCR1;
@@ -2053,32 +2053,32 @@ void mpc555_hardwareInitialization(void)
   qsmcm_qspi.SPCR2 = wVar2 & 0xfff0;
   wVar2 = qsmcm_qspi.SPCR2;
   qsmcm_qspi.SPCR2 = wVar2;
-  qsmcm_sccr0 = 0;
-  qsmcm_sccr1.SCC1R1 = 0;
-  tpu_a_mcr.TPUMCR = 0x8000;
-  tpu_b_mcr.TPUMCR = 0x8000;
-  tpu_a_mcr.R028 = 0x80;
-  tpu_b_mcr.R028 = 0x80;
-  QADC64A_MCR.MCR = 0;
-  QADC64A_MCR.INTC = 0;
-  QADC64A_MCR.PORTQA_B = 0;
-  QADC64A_MCR.DDRQA_B = 0;
-  QADC64A_MCR.CCW = 0;
-  QADC64A_MCR.RJURR = 0;
-  QADC64A_MCR.LJSRR = 0;
-  QADC64A_MCR.LJURR = 0;
-  QADC64B_MCR.MCR = 0;
-  QADC64B_MCR.INTC = 0;
-  QADC64B_MCR.PORTQA_B = 0;
-  QADC64B_MCR.DDRQA_B = 0;
-  QADC64B_MCR.CCW = 0;
-  QADC64B_MCR.RJURR = 0;
-  QADC64B_MCR.LJSRR = 0;
-  QADC64B_MCR.LJURR = 0;
-  tpu_a_mcr.R028 = 0;
-  tpu_b_mcr.R028 = 0;
-  tpu_a_mcr.CIER = 0;
-  tpu_b_mcr.CIER = 0;
+  QSMCM_QDSCI_IL = 0;
+  qsmcm_sci1.SCC1R1 = 0;
+  tpu_a.TPUMCR = 0x8000;
+  tpu_b.TPUMCR = 0x8000;
+  tpu_a.TPUMCR2 = 0x80;
+  tpu_b.TPUMCR2 = 0x80;
+  qadc64_a.MCR = 0;
+  qadc64_a.INTC = 0;
+  qadc64_a.PORTQA_B = 0;
+  qadc64_a.DDRQA_B = 0;
+  qadc64_a.QACR0 = 0;
+  qadc64_a.QACR1 = 0;
+  qadc64_a.QACR2 = 0;
+  qadc64_a.QASR0 = 0;
+  qadc64_b.MCR = 0;
+  qadc64_b.INTC = 0;
+  qadc64_b.PORTQA_B = 0;
+  qadc64_b.DDRQA_B = 0;
+  qadc64_b.QACR0 = 0;
+  qadc64_b.QACR1 = 0;
+  qadc64_b.QACR2 = 0;
+  qadc64_b.QASR0 = 0;
+  tpu_a.TPUMCR2 = 0;
+  tpu_b.TPUMCR2 = 0;
+  tpu_a.CIER = 0;
+  tpu_b.CIER = 0;
   cm848_clearRamRegions();
   mpc555_initQspiRegisters();
   mpc555_eepromReadWords(0x1000000,0x3fee0a,2);
@@ -2094,16 +2094,16 @@ void mpc555_hardwareInitialization(void)
       if (flash2_command_register._2_2_ == 0x2281) goto LAB_0000291c;
       goto LAB_00002900;
     }
-    dVar1 = USIU_BR0.OR0;
+    dVar1 = usiu_memory_controller.OR0;
     uVar5 = dVar1 & 0xffefffff;
   }
   else {
 LAB_00002900:
     flash2_writes_enabled = 0;
-    USIU_BR0.BR0 = 0;
+    usiu_memory_controller.BR0 = 0;
     uVar5 = 0;
   }
-  USIU_BR0.OR0 = uVar5;
+  usiu_memory_controller.OR0 = uVar5;
 LAB_0000291c:
   uVar4 = mpc555_areBootModeStrapPinsHigh();
   boot_mode_strap_pins_high = uVar4 & 0xff;
@@ -2439,8 +2439,8 @@ void mpc555_sciBeginUnchecksummedResponseTransmit(void)
   
   boot_sci_session_state.response_write_index = boot_sci_session_state.response_write_index - 1;
   boot_sci_session_state.response_cursor_pointer = diag_serial_buffer;
-  wVar1 = qsmcm_sccr1.SC1SR;
-  qsmcm_sccr1.SC1DR = (ushort)diag_serial_buffer[0];
+  wVar1 = qsmcm_sci1.SC1SR;
+  qsmcm_sci1.SC1DR = (ushort)diag_serial_buffer[0];
   mpc555_sciEnableTransmitInterrupt();
   return;
 }
@@ -2456,18 +2456,18 @@ void mpc555_sciReceiveRequestByte(void)
 {
   word wVar1;
   
-  wVar1 = qsmcm_sccr1.SC1SR;
+  wVar1 = qsmcm_sci1.SC1SR;
   if ((wVar1 & 0x40) != 0) {
     if ((((wVar1 & 4) == 0) && ((wVar1 & 8) == 0)) && ((wVar1 & 2) == 0)) {
-      wVar1 = qsmcm_sccr1.SC1DR;
+      wVar1 = qsmcm_sci1.SC1DR;
       diag_serial_buffer[boot_sci_session_state.response_write_index] = (byte)wVar1;
       boot_sci_session_state.response_write_index = boot_sci_session_state.response_write_index + 1;
       diag_request_pending_flag = 1;
-      wVar1 = qsmcm_sccr1.SCC1R1;
-      qsmcm_sccr1.SCC1R1 = wVar1 & 0xffdf;
+      wVar1 = qsmcm_sci1.SCC1R1;
+      qsmcm_sci1.SCC1R1 = wVar1 & 0xffdf;
     }
     else {
-      wVar1 = qsmcm_sccr1.SC1DR;
+      wVar1 = qsmcm_sci1.SC1DR;
     }
   }
   return;
@@ -2484,7 +2484,7 @@ void mpc555_sciTransmitResponseByte(void)
 {
   word wVar1;
   
-  wVar1 = qsmcm_sccr1.SC1SR;
+  wVar1 = qsmcm_sci1.SC1SR;
   if ((wVar1 & 0x80) != 0) {
     if (boot_sci_session_state.response_write_index == 0) {
       if ((boot_sci_session_state.session_flags & 2) == 0) {
@@ -2493,7 +2493,7 @@ void mpc555_sciTransmitResponseByte(void)
       else {
         wVar1 = 0x14;
       }
-      qsmcm_sccr1.SCC1R0 = wVar1;
+      qsmcm_sci1.SCC1R0 = wVar1;
       if ((boot_sci_session_state.session_flags & 1) != 0) {
         cm848_setDataTransferMode();
       }
@@ -2503,7 +2503,7 @@ void mpc555_sciTransmitResponseByte(void)
       boot_sci_session_state.response_write_index = boot_sci_session_state.response_write_index - 1;
       boot_sci_session_state.response_cursor_pointer =
            boot_sci_session_state.response_cursor_pointer + 1;
-      qsmcm_sccr1.SC1DR = (ushort)(byte)*boot_sci_session_state.response_cursor_pointer;
+      qsmcm_sci1.SC1DR = (ushort)(byte)*boot_sci_session_state.response_cursor_pointer;
     }
   }
   return;
@@ -2521,24 +2521,24 @@ void mpc555_sciDispatchByTransferPhase(void)
   word wVar1;
   
   if (diag_serial_transfer_phase == 0) {
-    wVar1 = qsmcm_sccr1.SCC1R1;
+    wVar1 = qsmcm_sci1.SCC1R1;
     if ((wVar1 & 0x20) != 0) {
       mpc555_sciReceiveRequestByte();
     }
   }
   else if (diag_serial_transfer_phase == 1) {
-    wVar1 = qsmcm_sccr1.SCC1R1;
+    wVar1 = qsmcm_sci1.SCC1R1;
     if ((wVar1 & 0x40) != 0) {
       mpc555_sciTransmitResponseByte();
     }
   }
   else if (diag_serial_transfer_phase == 2) {
-    wVar1 = qsmcm_sccr1.SCC1R1;
+    wVar1 = qsmcm_sci1.SCC1R1;
     if ((wVar1 & 0x20) != 0) {
       mpc555_sciReceiveDataByte();
     }
   }
-  else if ((diag_serial_transfer_phase == 3) && (wVar1 = qsmcm_sccr1.SCC1R1, (wVar1 & 0x40) != 0)) {
+  else if ((diag_serial_transfer_phase == 3) && (wVar1 = qsmcm_sci1.SCC1R1, (wVar1 & 0x40) != 0)) {
     mpc555_sciTransmitChecksummedByte();
   }
   return;
@@ -2572,10 +2572,10 @@ void mpc555_sciResetToReceiveRequest(void)
   diag_serial_transfer_phase = 0;
   cm848_resetEepromStatusPointer();
   diag_request_pending_flag = 0;
-  wVar1 = qsmcm_sccr1.SCC1R1;
-  qsmcm_sccr1.SCC1R1 = wVar1 & 0xffbf;
-  wVar1 = qsmcm_sccr1.SCC1R1;
-  qsmcm_sccr1.SCC1R1 = wVar1 | 0x20;
+  wVar1 = qsmcm_sci1.SCC1R1;
+  qsmcm_sci1.SCC1R1 = wVar1 & 0xffbf;
+  wVar1 = qsmcm_sci1.SCC1R1;
+  qsmcm_sci1.SCC1R1 = wVar1 | 0x20;
   return;
 }
 
@@ -2591,8 +2591,8 @@ void mpc555_sciEnableTransmitInterrupt(void)
   word wVar1;
   
   diag_serial_transfer_phase = 1;
-  wVar1 = qsmcm_sccr1.SCC1R1;
-  qsmcm_sccr1.SCC1R1 = wVar1 | 0x40;
+  wVar1 = qsmcm_sci1.SCC1R1;
+  qsmcm_sci1.SCC1R1 = wVar1 | 0x40;
   return;
 }
 
@@ -4185,8 +4185,8 @@ void mpc555_dispatchCanMessageHandlers(void)
   ushort uVar9;
   short local_28;
   
-  wVar6 = mios_mmcsm_cnt.CNT;
-  wVar4 = mios_mmcsm_cnt.CNT;
+  wVar6 = mios_mmcsm6.CNT;
+  wVar4 = mios_mmcsm6.CNT;
   iVar7 = (uint)wVar4 - (uint)wVar6;
   do {
     if (4 < iVar7) {
@@ -4239,7 +4239,7 @@ void mpc555_dispatchCanMessageHandlers(void)
         } while (uVar9 < wVar4);
       }
     }
-    wVar4 = mios_mmcsm_cnt.CNT;
+    wVar4 = mios_mmcsm6.CNT;
     iVar7 = (uint)wVar4 - (uint)wVar6;
   } while( true );
 }
@@ -5488,8 +5488,8 @@ void mpc555_sciReceiveDataByte(void)
   word wVar1;
   word wVar2;
   
-  wVar1 = qsmcm_sccr1.SC1SR;
-  wVar2 = qsmcm_sccr1.SC1DR;
+  wVar1 = qsmcm_sci1.SC1SR;
+  wVar2 = qsmcm_sci1.SC1DR;
   if ((wVar1 & 0x40) != 0) {
     if (((wVar1 & 0xe) == 0) && (boot_sci_session_state.response_write_index < 0xfe)) {
       diag_serial_buffer[boot_sci_session_state.response_write_index + 0x20] = (byte)wVar2;
@@ -5520,10 +5520,10 @@ void mpc555_sciResetToReceiveData(void)
   cm848_resetSerialReceiveBuffer();
   diag_serial_transfer_phase = 2;
   diag_clear_flags_t_003fedfc.diag_response_write_count = 0;
-  wVar1 = qsmcm_sccr1.SCC1R1;
-  qsmcm_sccr1.SCC1R1 = wVar1 & 0xffbf;
-  wVar1 = qsmcm_sccr1.SCC1R1;
-  qsmcm_sccr1.SCC1R1 = wVar1 | 0x20;
+  wVar1 = qsmcm_sci1.SCC1R1;
+  qsmcm_sci1.SCC1R1 = wVar1 & 0xffbf;
+  wVar1 = qsmcm_sci1.SCC1R1;
+  qsmcm_sci1.SCC1R1 = wVar1 | 0x20;
   return;
 }
 
@@ -5538,15 +5538,15 @@ void mpc555_sciTransmitChecksummedByte(void)
 {
   word wVar1;
   
-  wVar1 = qsmcm_sccr1.SC1SR;
+  wVar1 = qsmcm_sci1.SC1SR;
   if ((wVar1 & 0x80) != 0) {
     output_speed_to_vehicle_speed_ratio_learned_flag_cal =
          output_speed_to_vehicle_speed_ratio_learned_flag_cal +
          *boot_sci_session_state.response_cursor_pointer;
     if (boot_sci_session_state.response_write_index == 0) {
-      wVar1 = qsmcm_sccr1.SCC1R1;
-      qsmcm_sccr1.SCC1R1 = wVar1 & 0xffbf;
-      qsmcm_sccr1.SC1DR = ~(ushort)output_speed_to_vehicle_speed_ratio_learned_flag_cal & 0x1ff;
+      wVar1 = qsmcm_sci1.SCC1R1;
+      qsmcm_sci1.SCC1R1 = wVar1 & 0xffbf;
+      qsmcm_sci1.SC1DR = ~(ushort)output_speed_to_vehicle_speed_ratio_learned_flag_cal & 0x1ff;
       output_speed_to_vehicle_speed_ratio_learned_flag_cal = 0;
       mpc555_sciResetToReceiveData();
     }
@@ -5554,7 +5554,7 @@ void mpc555_sciTransmitChecksummedByte(void)
       boot_sci_session_state.response_write_index = boot_sci_session_state.response_write_index - 1;
       boot_sci_session_state.response_cursor_pointer =
            boot_sci_session_state.response_cursor_pointer + 1;
-      qsmcm_sccr1.SC1DR = (ushort)(byte)*boot_sci_session_state.response_cursor_pointer;
+      qsmcm_sci1.SC1DR = (ushort)(byte)*boot_sci_session_state.response_cursor_pointer;
     }
   }
   return;
@@ -5573,10 +5573,10 @@ void mpc555_sciEnableChecksummedTransmit(void)
   
   diag_serial_transfer_phase = 3;
   output_speed_to_vehicle_speed_ratio_learned_flag_cal = 0;
-  wVar1 = qsmcm_sccr1.SCC1R1;
-  qsmcm_sccr1.SCC1R1 = wVar1 & 0xffdf;
-  wVar1 = qsmcm_sccr1.SCC1R1;
-  qsmcm_sccr1.SCC1R1 = wVar1 | 0x40;
+  wVar1 = qsmcm_sci1.SCC1R1;
+  qsmcm_sci1.SCC1R1 = wVar1 & 0xffdf;
+  wVar1 = qsmcm_sci1.SCC1R1;
+  qsmcm_sci1.SCC1R1 = wVar1 | 0x40;
   return;
 }
 
@@ -5598,8 +5598,8 @@ void mpc555_sciValidateChecksum(void)
     if ((byte)(diag_clear_flags_t_003fedfc.diag_response_write_count -
               diag_serial_buffer[boot_sci_session_state.response_write_index + 0x1f]) ==
         (byte)~diag_serial_buffer[boot_sci_session_state.response_write_index + 0x1f]) {
-      wVar1 = qsmcm_sccr1.SCC1R1;
-      qsmcm_sccr1.SCC1R1 = wVar1 & 0xffdf;
+      wVar1 = qsmcm_sci1.SCC1R1;
+      qsmcm_sci1.SCC1R1 = wVar1 & 0xffdf;
       diag_request_pending_flag = 1;
       diag_clear_flags_t_003fedfc.diag_response_write_count = 0;
     }
@@ -5623,8 +5623,8 @@ void mpc555_sciStartResponseTransmit(void)
   
   boot_sci_session_state.response_write_index = boot_sci_session_state.response_write_index - 1;
   boot_sci_session_state.response_cursor_pointer = diag_serial_buffer;
-  wVar1 = qsmcm_sccr1.SC1SR;
-  qsmcm_sccr1.SC1DR = (ushort)diag_serial_buffer[0];
+  wVar1 = qsmcm_sci1.SC1SR;
+  qsmcm_sci1.SC1DR = (ushort)diag_serial_buffer[0];
   mpc555_sciEnableChecksummedTransmit();
   return;
 }
@@ -5641,12 +5641,12 @@ void mpc555_sciPollDuringEepromWrite(void)
   word wVar1;
   
   if (diag_serial_transfer_phase == 2) {
-    wVar1 = qsmcm_sccr1.SCC1R1;
+    wVar1 = qsmcm_sci1.SCC1R1;
     if ((wVar1 & 0x20) != 0) {
       mpc555_sciReceiveDataByte();
     }
   }
-  else if ((diag_serial_transfer_phase == 3) && (wVar1 = qsmcm_sccr1.SCC1R1, (wVar1 & 0x40) != 0)) {
+  else if ((diag_serial_transfer_phase == 3) && (wVar1 = qsmcm_sci1.SCC1R1, (wVar1 & 0x40) != 0)) {
     mpc555_sciTransmitChecksummedByte();
   }
   return;
@@ -5672,13 +5672,13 @@ undefined4 mpc555_runPacedSerialService(void)
   uint uVar4;
   
   uVar3 = 0;
-  wVar1 = mios_mmcsm_cnt.CNT;
+  wVar1 = mios_mmcsm6.CNT;
   uVar4 = (uint)wVar1;
   uVar2 = (uint)mios_cnt_snapshot;
   if ((0x66 < (int)(uVar4 - uVar2)) || ((uVar4 < uVar2 && (0x66 < (int)((0xffff - uVar2) + uVar4))))
      ) {
     mpc555_diagnosticSubcommandDispatcher((byte)mios_cnt_snapshot,(byte *)0x0);
-    mios_cnt_snapshot = mios_mmcsm_cnt.CNT;
+    mios_cnt_snapshot = mios_mmcsm6.CNT;
     uVar3 = 1;
   }
   return uVar3;
@@ -5733,12 +5733,12 @@ void mpc555_runPeriodicInterruptTimerTick(void)
   word wVar1;
   undefined5 uVar3;
   
-  wVar1 = USIU_PISCR.PISCR;
+  wVar1 = usiu_periodic_interrupt_timer.PISCR;
   if ((wVar1 & 0x80) == 0) {
     return;
   }
-  wVar1 = USIU_PISCR.PISCR;
-  USIU_PISCR.PISCR = wVar1 | 0x80;
+  wVar1 = usiu_periodic_interrupt_timer.PISCR;
+  usiu_periodic_interrupt_timer.PISCR = wVar1 | 0x80;
   uVar3 = mpc555_tickTransferTimeoutAndRuntimeCounter();
   wVar1 = boot_state_machine.boot_phase;
   if (wVar1 == 0) {
@@ -6552,7 +6552,7 @@ void cm848_serviceSupervisorWatchdog(void)
   word wVar1;
   byte bVar2;
   
-  wVar1 = mios_mmcsm_cnt.CNT;
+  wVar1 = mios_mmcsm6.CNT;
   if (0x222 < (ushort)(wVar1 - kernel_watchdog_last_service_time)) {
     qsmcm_qspi.SPCR2 = 0x500;
     qsmcm_tranram.TX0 = supervisor_watchdog_kernel_answer_0_table[kernel_watchdog_question] | 0xe000
@@ -6586,7 +6586,7 @@ void cm848_serviceSupervisorWatchdog(void)
       kernel_watchdog_status_at_peak = qsmcm_recram.RX5;
       kernel_watchdog_error_count_peak = kernel_watchdog_error_count;
     }
-    kernel_watchdog_last_service_time = mios_mmcsm_cnt.CNT;
+    kernel_watchdog_last_service_time = mios_mmcsm6.CNT;
   }
   return;
 }
@@ -6618,7 +6618,7 @@ void cm848_initSupervisorWatchdog(void)
   qsmcm_portqs_low = 0x7b;
   pwVar6 = &qsmcm_qspi.SPCR2;
   qsmcm_qspi.SPCR2 = 0x400;
-  wVar4 = mios_mmcsm_cnt.CNT;
+  wVar4 = mios_mmcsm6.CNT;
   do {
     qsmcm_tranram.TX0 = 0x1400;
     qsmcm_comdram_0 = 0x5d;
@@ -6637,22 +6637,22 @@ void cm848_initSupervisorWatchdog(void)
     } while ((bVar5 & 0x80) == 0);
     bVar5 = qsmcm_qspi.SPSR;
     qsmcm_qspi.SPSR = bVar5 & 0x7f;
-    wVar3 = mios_mmcsm_cnt.CNT;
+    wVar3 = mios_mmcsm6.CNT;
   } while ((wVar3 <= (ushort)(wVar4 + 0xa89)) && (wVar3 = qsmcm_recram.RX4, (wVar3 & 0xff) != 0x14))
   ;
   wVar4 = qsmcm_recram.RX4;
   if ((wVar4 & 0xff) == 0x14) {
-    kernel_watchdog_last_service_time = mios_mmcsm_cnt.CNT;
+    kernel_watchdog_last_service_time = mios_mmcsm6.CNT;
     uVar1 = kernel_watchdog_last_service_time + 0x7990;
     wVar4 = qsmcm_recram.RX2;
     kernel_watchdog_question = wVar4 & 0xf;
     wVar4 = qsmcm_recram.RX2;
     kernel_watchdog_error_count = wVar4 >> 4 & 7;
     if (kernel_watchdog_error_count != 0) {
-      wVar4 = mios_mmcsm_cnt.CNT;
+      wVar4 = mios_mmcsm6.CNT;
       while ((wVar4 <= uVar1 &&
              (cm848_serviceSupervisorWatchdog(), kernel_watchdog_error_count != 0))) {
-        wVar4 = mios_mmcsm_cnt.CNT;
+        wVar4 = mios_mmcsm6.CNT;
       }
     }
     kernel_watchdog_error_count_peak = 0;
@@ -6678,7 +6678,7 @@ void cm848_initSupervisorWatchdog(void)
     qsmcm_qspi.SPSR = bVar5 & 0x7f;
     wVar4 = qsmcm_recram.RX1;
     kernel_watchdog_question = wVar4 & 0xf;
-    kernel_watchdog_last_service_time = mios_mmcsm_cnt.CNT;
+    kernel_watchdog_last_service_time = mios_mmcsm6.CNT;
   }
   qsmcm_qspi.SPCR0 = wVar2;
   qsmcm_portqs_low = 0x7b;
@@ -7922,8 +7922,8 @@ void executiveFrameInterruptHandler(void)
   executive_frame_start_ticks = TBLr;
   executive_timing_enabled_previous_flag =
        (word)(algorithm_enable_flags_18_cal.executive_timing_enable != 0);
-  wVar4 = USIU_PISCR.PISCR;
-  USIU_PISCR.PISCR = wVar4;
+  wVar4 = usiu_periodic_interrupt_timer.PISCR;
+  usiu_periodic_interrupt_timer.PISCR = wVar4;
   switch(executive_frame_phase) {
   case 0:
     cm848_runEveryFrameTaskSet();
@@ -19807,7 +19807,7 @@ LAB_0001c480:
       }
     }
     else {
-      wVar2 = mios_mdasm30.SCRD;
+      wVar2 = mios_mdasm30.SCR;
       if ((((wVar2 & 0x8000) == 0) && (key_off_shutdown_inhibit_flag == 0)) ||
          (engine_shutdown_command_flag == 1)) {
         engine_state = ENGINE_STATE_SHUTDOWN;
@@ -19843,7 +19843,7 @@ LAB_0001c5e0:
       engine_state = ENGINE_STATE_REENTRY;
       goto LAB_0001c8b8;
     }
-    if ((((key_off_shutdown_mode != 0) || (wVar2 = mios_mdasm30.SCRD, (wVar2 & 0x8000) != 0)) ||
+    if ((((key_off_shutdown_mode != 0) || (wVar2 = mios_mdasm30.SCR, (wVar2 & 0x8000) != 0)) ||
         (key_off_shutdown_inhibit_flag != 0)) &&
        ((key_off_shutdown_mode != 1 && (engine_shutdown_command_flag != 1)))) {
       if (engine_overspeed_active_flag == 1) {
@@ -19872,14 +19872,14 @@ LAB_0001c714:
     break;
   case ENGINE_STATE_SHUTDOWN:
     if ((((engine_shutdown_command_flag == 1) && (engine_speed_state.filtered_engine_speed == 0)) ||
-        ((engine_shutdown_command_flag == 0 && (wVar2 = mios_mdasm30.SCRD, (wVar2 & 0x8000) != 0))))
+        ((engine_shutdown_command_flag == 0 && (wVar2 = mios_mdasm30.SCR, (wVar2 & 0x8000) != 0))))
        && (((key_off_shutdown_mode != 1 &&
             (engine_state = ENGINE_STATE_STOPPED, engine_speed_state.filtered_engine_speed == 0)) &&
            (engine_shutdown_command_flag == 1)))) {
       engine_shutdown_command_flag = 0;
     }
     if (((engine_speed_state.filtered_engine_speed == 0) &&
-        (wVar2 = mios_mdasm30.SCRD, (wVar2 & 0x8000) == 0)) &&
+        (wVar2 = mios_mdasm30.SCR, (wVar2 & 0x8000) == 0)) &&
        ((key_off_shutdown_inhibit_flag == 0 && (key_off_shutdown_mode != 1)))) {
       ecm_power_down_timer = ecm_power_down_timer + 1;
     }
@@ -19897,14 +19897,14 @@ LAB_0001c714:
     }
     goto LAB_0001c8b8;
   }
-  wVar2 = mios_mdasm30.SCRD;
+  wVar2 = mios_mdasm30.SCR;
   if ((((wVar2 & 0x8000) == 0) && (key_off_shutdown_inhibit_flag == 0)) ||
      (engine_shutdown_command_flag == 1)) {
 LAB_0001c754:
     engine_state = ENGINE_STATE_SHUTDOWN;
   }
 LAB_0001c8b8:
-  wVar2 = mios_mdasm30.SCRD;
+  wVar2 = mios_mdasm30.SCR;
   if (((wVar2 & 0x8000) != 0) && (engine_state_key_on_previous_flag == 0)) {
     key_off_shutdown_inhibit_flag = 0;
   }
@@ -19920,7 +19920,7 @@ LAB_0001c8b8:
   else {
     engine_is_starting_flag = 0;
   }
-  wVar2 = mios_mdasm30.SCRD;
+  wVar2 = mios_mdasm30.SCR;
   engine_state_key_on_previous_flag = 1 - ((wVar2 & 0x8000) == 0);
   return;
 }
@@ -23462,8 +23462,8 @@ undefined4 restartThroughBootRom(j1939_rx_msg_t *param_1,int param_2)
       cm848_sciTransmitSingleByteOne();
     }
     cm848_delayMicroseconds2(0x7a1);
-    USIU_BR0.BR0 = 0x500803;
-    USIU_BR0.OR0 = 0xfff00030;
+    usiu_memory_controller.BR0 = 0x500803;
+    usiu_memory_controller.OR0 = 0xfff00030;
     USIU_SIUMCR = 0x402000;
     (*pcRam00000104)();
     uVar2 = 0xff;
@@ -39722,8 +39722,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  byte all_transmits_overdue;
   ushort receive_interval;
+  byte all_transmits_overdue;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
@@ -42298,7 +42298,7 @@ void cm848_buildPciTransmitMessage11DistanceAndFuelUsed(void)
     if ((vehicle_speed_pulse_timeout == 0) && (pci_transmit_message_11_pulse_timeout_previous != 0))
     {
       pci_transmit_message_11_distance_pulses =
-           (&tpu_b_ch0_param0)[vehicle_speed_sensor_tpu_channel].PARAM1 & 0xff;
+           (&tpu_b_channel_0_parameters)[vehicle_speed_sensor_tpu_channel].PARAM1 & 0xff;
     }
     else if (vehicle_speed_sensor_pulse_total < pci_transmit_message_11_pulse_total_previous) {
       pci_transmit_message_11_distance_pulses =
@@ -44721,7 +44721,7 @@ void cm848_initTransmissionOutputSpeedFilters(void)
    review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium |
    TPU-B channel 14 interrupt handler - reached via tpu_b_channel_interrupt_handler_table
    (mpc555_tpuBInterruptDispatcher 0x55d2c) - no direct caller in the decompile - reads
-   TPUB_CH14_PARAM0 offset 8 (PARAM4:PARAM5 tick count) into
+   tpu_b_channel_14_parameters offset 8 (PARAM4:PARAM5 tick count) into
    transmission_output_speed_period_microseconds */
 
 void mpc555_updateOutputSpeedSensorPeriod(void)
@@ -44730,8 +44730,8 @@ void mpc555_updateOutputSpeedSensorPeriod(void)
   uint uVar1;
   
   transmission_output_speed_pulse_timeout_counter = transmission_output_speed_pulse_timeout_reload;
-  uVar1 = TPUB_CH14_PARAM0._8_4_;
-  TPUB_CH14_PARAM0.PARAM4 = 0;
+  uVar1 = tpu_b_channel_14_parameters._8_4_;
+  tpu_b_channel_14_parameters.PARAM4 = 0;
   transmission_output_speed_period_microseconds =
        (dword)(CONCAT44((int)((ulonglong)uVar1 * 1000000 >> 0x20),uVar1 * 1000000) / 0x4c4b4);
   return;
@@ -44748,25 +44748,25 @@ void mpc555_initTpuBConfiguration(void)
 {
   word wVar1;
   
-  wVar1 = tpu_b_mcr.CPR0;
-  tpu_b_mcr.CPR0 = wVar1 & 0xcfff;
-  wVar1 = tpu_b_mcr.CIER;
-  tpu_b_mcr.CIER = wVar1 & 0xbfff;
-  wVar1 = tpu_b_mcr.CISR;
-  tpu_b_mcr.CISR = wVar1 & 0xbfff;
-  wVar1 = tpu_b_mcr.CFSR0;
-  tpu_b_mcr.CFSR0 = wVar1 & 0xf0ff | 0xd00;
-  TPUB_CH14_PARAM0.PARAM1 = (ushort)output_speed_sensor_periods_accumulated << 8;
-  TPUB_CH14_PARAM0.PARAM3 = 0;
-  TPUB_CH14_PARAM0._8_4_ = 0;
-  TPUB_CH14_PARAM0.PARAM0 = 0xb;
-  wVar1 = tpu_b_mcr.HSQR0;
-  tpu_b_mcr.HSQR0 = wVar1 & 0xcfff | 0x3000;
-  tpu_b_mcr.HSRR0 = 0x3000;
-  wVar1 = tpu_b_mcr.CPR0;
-  tpu_b_mcr.CPR0 = wVar1 & 0xcfff | 0x2000;
-  wVar1 = tpu_b_mcr.CIER;
-  tpu_b_mcr.CIER = wVar1 | 0x4000;
+  wVar1 = tpu_b.CPR0;
+  tpu_b.CPR0 = wVar1 & 0xcfff;
+  wVar1 = tpu_b.CIER;
+  tpu_b.CIER = wVar1 & 0xbfff;
+  wVar1 = tpu_b.CISR;
+  tpu_b.CISR = wVar1 & 0xbfff;
+  wVar1 = tpu_b.CFSR0;
+  tpu_b.CFSR0 = wVar1 & 0xf0ff | 0xd00;
+  tpu_b_channel_14_parameters.PARAM1 = (ushort)output_speed_sensor_periods_accumulated << 8;
+  tpu_b_channel_14_parameters.PARAM3 = 0;
+  tpu_b_channel_14_parameters._8_4_ = 0;
+  tpu_b_channel_14_parameters.PARAM0 = 0xb;
+  wVar1 = tpu_b.HSQR0;
+  tpu_b.HSQR0 = wVar1 & 0xcfff | 0x3000;
+  tpu_b.HSRR0 = 0x3000;
+  wVar1 = tpu_b.CPR0;
+  tpu_b.CPR0 = wVar1 & 0xcfff | 0x2000;
+  wVar1 = tpu_b.CIER;
+  tpu_b.CIER = wVar1 | 0x4000;
   return;
 }
 
@@ -46955,19 +46955,20 @@ void hpcr_cbdFillAccelerationBuffers(void)
       if (misfire_monitor_speed_buffer_enable_flag == 1) {
         bVar1 = misfire_monitor_speed_buffer_start_tooth;
       }
-      wVar2 = tpu_a_ch0_param0.PARAM4;
+      wVar2 = tpu_a_channel_0_parameters.PARAM4;
       if (((wVar2 & 0xff) == (ushort)bVar1) && (cylinder_event_seq_counter == 0xff)) {
-        wVar2 = TPUA_CH12_PARAM0.PARAM7;
+        wVar2 = tpu_a_channel_12_parameters.PARAM7;
         DAT_003fb57c = (byte)wVar2;
-        cylinder_timing_tpu_capture_snapshot = TPUA_CH14_PARAM0._6_4_;
+        cylinder_timing_tpu_capture_snapshot = tpu_a_channel_14_parameters._6_4_;
         cylinder_event_seq_counter = 0;
       }
       else if (((uint)cylinder_event_seq_counter < (uint)cylinder_event_count_max) &&
-              (wVar2 = TPUA_CH12_PARAM0.PARAM7, (wVar2 & 0xff) == (ushort)DAT_003fb57c)) {
-        iVar3 = TPUA_CH14_PARAM0._6_4_;
+              (wVar2 = tpu_a_channel_12_parameters.PARAM7, (wVar2 & 0xff) == (ushort)DAT_003fb57c))
+      {
+        iVar3 = tpu_a_channel_14_parameters._6_4_;
         (&cylinder_balance_acceleration_buffer_1)[cylinder_event_seq_counter] =
              (sword)(iVar3 - cylinder_timing_tpu_capture_snapshot >> 2);
-        cylinder_timing_tpu_capture_snapshot = TPUA_CH14_PARAM0._6_4_;
+        cylinder_timing_tpu_capture_snapshot = tpu_a_channel_14_parameters._6_4_;
         cylinder_event_seq_counter = cylinder_event_seq_counter + 1;
       }
     }
@@ -47635,54 +47636,55 @@ void mpc555_resetEngineTimingAccumulators(void)
     uVar2 = uVar2 + 1 & 0xff;
   } while (uVar2 < 4);
   backup_period_capture_index = 0;
-  wVar1 = tpu_a_mcr.CPR1;
-  tpu_a_mcr.CPR1 = wVar1 & 0xfffc;
-  wVar1 = tpu_a_mcr.CFSR3;
-  tpu_a_mcr.CFSR3 = wVar1 & 0xfff0 | 0xc;
-  wVar1 = tpu_a_mcr.HSQR1;
-  tpu_a_mcr.HSQR1 = wVar1 & 0xfffc | 3;
-  tpu_a_mcr.HSRR1 = 3;
-  wVar1 = tpu_a_mcr.CIER;
-  tpu_a_mcr.CIER = wVar1 | 1;
-  tpu_a_ch0_param0.PARAM0 = crank_signal_capture_edge_type | 0xb1;
-  tpu_a_ch0_param0.PARAM7 =
+  wVar1 = tpu_a.CPR1;
+  tpu_a.CPR1 = wVar1 & 0xfffc;
+  wVar1 = tpu_a.CFSR3;
+  tpu_a.CFSR3 = wVar1 & 0xfff0 | 0xc;
+  wVar1 = tpu_a.HSQR1;
+  tpu_a.HSQR1 = wVar1 & 0xfffc | 3;
+  tpu_a.HSRR1 = 3;
+  wVar1 = tpu_a.CIER;
+  tpu_a.CIER = wVar1 | 1;
+  tpu_a_channel_0_parameters.PARAM0 = crank_signal_capture_edge_type | 0xb1;
+  tpu_a_channel_0_parameters.PARAM7 =
        CONCAT11(crank_signal_low_speed_early_window_fraction,
                 crank_signal_low_speed_late_window_fraction);
-  tpu_a_ch0_param0.PARAM6 =
+  tpu_a_channel_0_parameters.PARAM6 =
        CONCAT11(crank_signal_tooth_count,crank_signal_low_speed_good_window_fraction);
-  wVar1 = tpu_a_mcr.CPR1;
-  tpu_a_mcr.CPR1 = wVar1 & 0xfffc | 2;
+  wVar1 = tpu_a.CPR1;
+  tpu_a.CPR1 = wVar1 & 0xfffc | 2;
   crank_low_speed_filtering_flag = 1;
   cam_tooth_good_window_fraction_cached_axis_offset = 2;
   cam_tooth_good_window_fraction = 0;
   next_cylinder_by_crank_tooth_cached_axis_offset = 2;
   next_cylinder_by_cam_tooth_cached_axis_offset = 2;
   crank_preliminary_sync_count_cached_axis_offset = 2;
-  wVar1 = tpu_a_mcr.CPR1;
-  tpu_a_mcr.CPR1 = wVar1 & 0xfff3;
-  wVar1 = tpu_a_mcr.CFSR3;
-  tpu_a_mcr.CFSR3 = wVar1 & 0xff0f | 0xc0;
-  wVar1 = tpu_a_mcr.HSQR1;
-  tpu_a_mcr.HSQR1 = wVar1 & 0xfff3 | 4;
-  tpu_a_mcr.HSRR1 = 0xc;
-  wVar1 = tpu_a_mcr.CIER;
-  tpu_a_mcr.CIER = wVar1 | 2;
-  tpu_a_ch1_param2.PARAM0 = cam_signal_capture_edge_type | 0x10;
-  tpu_a_ch1_param2.PARAM7 = (ushort)cam_signal_low_speed_special_window_fraction << 8 | 0x40;
-  tpu_a_ch1_param2.PARAM6 = (ushort)cam_signal_tooth_count << 8 | 0x40;
-  wVar1 = tpu_a_mcr.CPR1;
-  tpu_a_mcr.CPR1 = wVar1 & 0xfff3 | 8;
-  wVar1 = tpu_a_mcr.CPR0;
-  tpu_a_mcr.CPR0 = wVar1 & 0xff3f;
-  wVar1 = tpu_a_mcr.CFSR1;
-  tpu_a_mcr.CFSR1 = wVar1 & 0xfff | 0x8000;
-  wVar1 = tpu_a_mcr.HSQR0;
-  tpu_a_mcr.HSQR0 = wVar1 & 0xff3f;
-  tpu_a_mcr.HSRR0 = 0xc0;
-  wVar1 = tpu_a_mcr.CIER;
-  tpu_a_mcr.CIER = wVar1 | 0x800;
-  TPUA_CH12_PARAM0.PARAM6 = (ushort)crank_periods_per_speed_interrupt * 0x100 - 0x100;
-  TPUA_CH12_PARAM0.PARAM7 = engine_speed_interrupts_per_cylinder * 0x100 - 0x100;
+  wVar1 = tpu_a.CPR1;
+  tpu_a.CPR1 = wVar1 & 0xfff3;
+  wVar1 = tpu_a.CFSR3;
+  tpu_a.CFSR3 = wVar1 & 0xff0f | 0xc0;
+  wVar1 = tpu_a.HSQR1;
+  tpu_a.HSQR1 = wVar1 & 0xfff3 | 4;
+  tpu_a.HSRR1 = 0xc;
+  wVar1 = tpu_a.CIER;
+  tpu_a.CIER = wVar1 | 2;
+  tpu_a_channel_1_parameters.PARAM0 = cam_signal_capture_edge_type | 0x10;
+  tpu_a_channel_1_parameters.PARAM7 =
+       (ushort)cam_signal_low_speed_special_window_fraction << 8 | 0x40;
+  tpu_a_channel_1_parameters.PARAM6 = (ushort)cam_signal_tooth_count << 8 | 0x40;
+  wVar1 = tpu_a.CPR1;
+  tpu_a.CPR1 = wVar1 & 0xfff3 | 8;
+  wVar1 = tpu_a.CPR0;
+  tpu_a.CPR0 = wVar1 & 0xff3f;
+  wVar1 = tpu_a.CFSR1;
+  tpu_a.CFSR1 = wVar1 & 0xfff | 0x8000;
+  wVar1 = tpu_a.HSQR0;
+  tpu_a.HSQR0 = wVar1 & 0xff3f;
+  tpu_a.HSRR0 = 0xc0;
+  wVar1 = tpu_a.CIER;
+  tpu_a.CIER = wVar1 | 0x800;
+  tpu_a_channel_12_parameters.PARAM6 = (ushort)crank_periods_per_speed_interrupt * 0x100 - 0x100;
+  tpu_a_channel_12_parameters.PARAM7 = engine_speed_interrupts_per_cylinder * 0x100 - 0x100;
   uVar2 = (uint)crank_periods_per_speed_interrupt * 20000000;
   TPUA_CH11_PARAM0 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
   TPUA_CH11_PARAM1 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
@@ -47692,16 +47694,16 @@ void mpc555_resetEngineTimingAccumulators(void)
   TPUA_CH11_PARAM5 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
   TPUA_CH11_PARAM6 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
   TPUA_CH11_PARAM7 = (word)(uVar2 / tooth_period_buffer_initial_engine_speed);
-  TPUA_CH12_PARAM0.PARAM2 =
+  tpu_a_channel_12_parameters.PARAM2 =
        (ushort)(uVar2 / tooth_period_buffer_initial_engine_speed >> 8) & 0xff00 |
        (ushort)(uVar2 / tooth_period_buffer_initial_engine_speed >> 0x10);
-  TPUA_CH12_PARAM0.PARAM3 =
+  tpu_a_channel_12_parameters.PARAM3 =
        (ushort)(uVar2 / tooth_period_buffer_initial_engine_speed >> 8) & 0xff00 |
        (ushort)(uVar2 / tooth_period_buffer_initial_engine_speed >> 0x10);
-  TPUA_CH12_PARAM0.PARAM4 =
+  tpu_a_channel_12_parameters.PARAM4 =
        (ushort)(uVar2 / tooth_period_buffer_initial_engine_speed >> 8) & 0xff00 |
        (ushort)(uVar2 / tooth_period_buffer_initial_engine_speed >> 0x10);
-  TPUA_CH12_PARAM0.PARAM5 =
+  tpu_a_channel_12_parameters.PARAM5 =
        (ushort)(uVar2 / tooth_period_buffer_initial_engine_speed >> 8) & 0xff00 |
        (ushort)(uVar2 / tooth_period_buffer_initial_engine_speed >> 0x10);
   TPUA_CH13_PARAM3 = (word)(20000000 / tooth_period_buffer_initial_engine_speed);
@@ -47709,17 +47711,17 @@ void mpc555_resetEngineTimingAccumulators(void)
   TPUA_CH13_PARAM5 = (word)(20000000 / tooth_period_buffer_initial_engine_speed);
   TPUA_CH13_PARAM6 = (word)(20000000 / tooth_period_buffer_initial_engine_speed);
   TPUA_CH13_PARAM7 = (word)(20000000 / tooth_period_buffer_initial_engine_speed);
-  TPUA_CH14_PARAM0.PARAM5 =
+  tpu_a_channel_14_parameters.PARAM5 =
        (ushort)(20000000 / tooth_period_buffer_initial_engine_speed >> 8) & 0xff00 |
        (ushort)(20000000 / tooth_period_buffer_initial_engine_speed >> 0x10);
-  TPUA_CH14_PARAM0.PARAM6 =
+  tpu_a_channel_14_parameters.PARAM6 =
        (ushort)(20000000 / tooth_period_buffer_initial_engine_speed >> 8) & 0xff00 |
        (ushort)(20000000 / tooth_period_buffer_initial_engine_speed >> 0x10);
-  TPUA_CH14_PARAM0.PARAM7 =
+  tpu_a_channel_14_parameters.PARAM7 =
        (ushort)(20000000 / tooth_period_buffer_initial_engine_speed >> 8) & 0xff00 |
        (ushort)crank_sync_tooth;
-  wVar1 = tpu_a_mcr.CPR0;
-  tpu_a_mcr.CPR0 = wVar1 & 0xff3f | 0x80;
+  wVar1 = tpu_a.CPR0;
+  tpu_a.CPR0 = wVar1 & 0xff3f | 0x80;
   if (fuel_pressure_start_undershoot == 0) {
     fuel_pressure_start_undershoot = 0xfff;
   }
@@ -47873,42 +47875,45 @@ LAB_00044854:
                  (&cam_tooth_good_window_fraction_cached_axis_offset,average_engine_speed,
                   cam_tooth_good_window_fraction_axis,cam_tooth_good_window_fraction_values,0);
   if (average_engine_speed < low_speed_filtering_threshold) {
-    tpu_a_ch0_param0.PARAM7 =
+    tpu_a_channel_0_parameters.PARAM7 =
          CONCAT11(crank_signal_low_speed_early_window_fraction,
                   crank_signal_low_speed_late_window_fraction);
-    wVar1 = tpu_a_ch0_param0.PARAM6;
-    tpu_a_ch0_param0.PARAM6 = wVar1 & 0xff00 | (ushort)crank_signal_low_speed_good_window_fraction;
-    wVar1 = tpu_a_mcr.HSQR1;
-    tpu_a_mcr.HSQR1 = wVar1 & 0xfffc | 3;
-    tpu_a_ch1_param2.PARAM7 =
+    wVar1 = tpu_a_channel_0_parameters.PARAM6;
+    tpu_a_channel_0_parameters.PARAM6 =
+         wVar1 & 0xff00 | (ushort)crank_signal_low_speed_good_window_fraction;
+    wVar1 = tpu_a.HSQR1;
+    tpu_a.HSQR1 = wVar1 & 0xfffc | 3;
+    tpu_a_channel_1_parameters.PARAM7 =
          (ushort)cam_signal_low_speed_special_window_fraction << 8 |
          (cam_tooth_good_window_fraction >> 1) + 0x40 & 0xff;
-    wVar1 = tpu_a_ch1_param2.PARAM6;
-    tpu_a_ch1_param2.PARAM6 = wVar1 & 0xff00 | 0x40 - (cam_tooth_good_window_fraction >> 1) & 0xff;
-    wVar1 = tpu_a_mcr.HSQR1;
-    tpu_a_mcr.HSQR1 = wVar1 & 0xfff3 | 4;
+    wVar1 = tpu_a_channel_1_parameters.PARAM6;
+    tpu_a_channel_1_parameters.PARAM6 =
+         wVar1 & 0xff00 | 0x40 - (cam_tooth_good_window_fraction >> 1) & 0xff;
+    wVar1 = tpu_a.HSQR1;
+    tpu_a.HSQR1 = wVar1 & 0xfff3 | 4;
     crank_low_speed_filtering_flag = 1;
   }
   if (low_speed_filtering_threshold < average_engine_speed) {
-    tpu_a_ch0_param0.PARAM7 =
+    tpu_a_channel_0_parameters.PARAM7 =
          CONCAT11(crank_signal_early_window_fraction,crank_signal_late_window_fraction);
-    wVar1 = tpu_a_ch0_param0.PARAM6;
-    tpu_a_ch0_param0.PARAM6 = wVar1 & 0xff00 | (ushort)crank_signal_good_window_fraction;
-    wVar1 = tpu_a_mcr.HSQR1;
-    tpu_a_mcr.HSQR1 = wVar1 & 0xfffc | 2;
-    tpu_a_ch1_param2.PARAM7 =
+    wVar1 = tpu_a_channel_0_parameters.PARAM6;
+    tpu_a_channel_0_parameters.PARAM6 = wVar1 & 0xff00 | (ushort)crank_signal_good_window_fraction;
+    wVar1 = tpu_a.HSQR1;
+    tpu_a.HSQR1 = wVar1 & 0xfffc | 2;
+    tpu_a_channel_1_parameters.PARAM7 =
          (ushort)cam_signal_special_window_fraction << 8 |
          (cam_tooth_good_window_fraction >> 1) + 0x40 & 0xff;
-    wVar1 = tpu_a_ch1_param2.PARAM6;
-    tpu_a_ch1_param2.PARAM6 = wVar1 & 0xff00 | 0x40 - (cam_tooth_good_window_fraction >> 1) & 0xff;
-    wVar1 = tpu_a_mcr.HSQR1;
-    tpu_a_mcr.HSQR1 = wVar1 & 0xfff3;
+    wVar1 = tpu_a_channel_1_parameters.PARAM6;
+    tpu_a_channel_1_parameters.PARAM6 =
+         wVar1 & 0xff00 | 0x40 - (cam_tooth_good_window_fraction >> 1) & 0xff;
+    wVar1 = tpu_a.HSQR1;
+    tpu_a.HSQR1 = wVar1 & 0xfff3;
     crank_low_speed_filtering_flag = 0;
   }
   if ((average_engine_speed == 0) && (engine_rpm_measured_snapshot != 0)) {
-    wVar1 = tpu_a_ch0_param0.PARAM0;
-    wVar1 = tpu_a_ch0_param0.PARAM4;
-    wVar1 = tpu_a_ch0_param0.PARAM4;
+    wVar1 = tpu_a_channel_0_parameters.PARAM0;
+    wVar1 = tpu_a_channel_0_parameters.PARAM4;
+    wVar1 = tpu_a_channel_0_parameters.PARAM4;
     mpc555_resetEngineTimingAccumulators();
     cm848_initializeInjectionAngleScheduler();
   }
@@ -47955,11 +47960,11 @@ void cm848_exitSpeedLimpHome(void)
 {
   word wVar1;
   
-  wVar1 = tpu_a_ch1_param2.PARAM0;
-  tpu_a_ch1_param2.PARAM0 = wVar1 & 0xfffe;
-  wVar1 = tpu_a_ch0_param0.PARAM0;
-  tpu_a_ch0_param0.PARAM0 = wVar1 | 1;
-  tpu_a_mcr.HSRR1 = 2;
+  wVar1 = tpu_a_channel_1_parameters.PARAM0;
+  tpu_a_channel_1_parameters.PARAM0 = wVar1 & 0xfffe;
+  wVar1 = tpu_a_channel_0_parameters.PARAM0;
+  tpu_a_channel_0_parameters.PARAM0 = wVar1 | 1;
+  tpu_a.HSRR1 = 2;
   engine_speed_limp_home_active_flag = 0;
   fault_detected_cal._40_2_ = fault_detected_cal._40_2_ & 0x7fff;
   fault_registered_cal._40_2_ = fault_registered_cal._40_2_ & 0x7fff;
@@ -47983,11 +47988,11 @@ void cm848_enterSpeedLimpHome(void)
 {
   word wVar1;
   
-  wVar1 = tpu_a_ch0_param0.PARAM0;
-  tpu_a_ch0_param0.PARAM0 = wVar1 & 0xfffe;
-  wVar1 = tpu_a_ch1_param2.PARAM0;
-  tpu_a_ch1_param2.PARAM0 = wVar1 | 1;
-  tpu_a_mcr.HSRR1 = 8;
+  wVar1 = tpu_a_channel_0_parameters.PARAM0;
+  tpu_a_channel_0_parameters.PARAM0 = wVar1 & 0xfffe;
+  wVar1 = tpu_a_channel_1_parameters.PARAM0;
+  tpu_a_channel_1_parameters.PARAM0 = wVar1 | 1;
+  tpu_a.HSRR1 = 8;
   engine_speed_limp_home_active_flag = 1;
   if (speed_limp_home_debounce_counter < speed_limp_home_debounce_count_maximum) {
     speed_limp_home_debounce_counter = speed_limp_home_debounce_counter + 1;
@@ -48020,9 +48025,9 @@ void cm848_dispatchCrankSynchronousInjection(void)
   
   if (engine_speed_limp_home_active_flag == 0) {
     do {
-      wVar1 = tpu_a_mcr.HSRR1;
+      wVar1 = tpu_a.HSRR1;
     } while ((wVar1 & 3) != 0);
-    wVar1 = tpu_a_ch0_param0.PARAM4;
+    wVar1 = tpu_a_channel_0_parameters.PARAM4;
     cylinder_event_index =
          lookupTableInterpolation
                    (&next_cylinder_by_crank_tooth_cached_axis_offset,wVar1 & 0xff,
@@ -48030,7 +48035,7 @@ void cm848_dispatchCrankSynchronousInjection(void)
     cm848_scheduleInjectionAnglesOnPrimarySpeedInput();
   }
   else if (engine_speed_limp_home_active_flag == 1) {
-    wVar1 = tpu_a_ch1_param2.PARAM4;
+    wVar1 = tpu_a_channel_1_parameters.PARAM4;
     cylinder_event_index =
          lookupTableInterpolation
                    (&next_cylinder_by_cam_tooth_cached_axis_offset,wVar1 & 0xff,
@@ -48259,24 +48264,24 @@ void hpcr_processEngineSyncPulses(void)
   if (first_speed_interrupt_time_ticks == 0) {
     first_speed_interrupt_time_ticks = TBLr;
   }
-  average_pulse_period = TPUA_CH14_PARAM0._6_4_;
-  wVar2 = TPUA_CH12_PARAM0.PARAM7;
+  average_pulse_period = tpu_a_channel_14_parameters._6_4_;
+  wVar2 = tpu_a_channel_12_parameters.PARAM7;
   uVar6 = wVar2 & 0xff;
   if (uVar6 < 5) {
     if (uVar6 == 4) {
-      wVar3 = TPUA_CH12_PARAM0.PARAM4;
+      wVar3 = tpu_a_channel_12_parameters.PARAM4;
       wVar2 = TPUA_CH11_PARAM4;
       crank_accumulated_period = (wVar3 & 0xff00) << 8 | (uint)wVar2;
       goto LAB_00045154;
     }
     if ((wVar2 & 0xff) == 0) {
-      wVar3 = TPUA_CH12_PARAM0.PARAM2;
+      wVar3 = tpu_a_channel_12_parameters.PARAM2;
       wVar2 = TPUA_CH11_PARAM0;
       crank_accumulated_period = (wVar3 & 0xff00) << 8 | (uint)wVar2;
       goto LAB_00045154;
     }
     if (uVar6 == 1) {
-      wVar3 = TPUA_CH12_PARAM0.PARAM2;
+      wVar3 = tpu_a_channel_12_parameters.PARAM2;
       wVar2 = TPUA_CH11_PARAM1;
       crank_accumulated_period = (wVar3 & 0xff) << 0x10 | (uint)wVar2;
       goto LAB_00045154;
@@ -48284,39 +48289,39 @@ void hpcr_processEngineSyncPulses(void)
     if (uVar6 != 2) {
       if (uVar6 != 3) goto LAB_00045154;
 LAB_000450fc:
-      wVar3 = TPUA_CH12_PARAM0.PARAM3;
+      wVar3 = tpu_a_channel_12_parameters.PARAM3;
       wVar2 = TPUA_CH11_PARAM3;
       crank_accumulated_period = (wVar3 & 0xff) << 0x10 | (uint)wVar2;
       goto LAB_00045154;
     }
 LAB_000450e0:
-    wVar3 = TPUA_CH12_PARAM0.PARAM3;
+    wVar3 = tpu_a_channel_12_parameters.PARAM3;
     wVar2 = TPUA_CH11_PARAM2;
     crank_accumulated_period = (wVar3 & 0xff00) << 8 | (uint)wVar2;
   }
   else {
     if (uVar6 != 5) {
       if (uVar6 == 6) {
-        wVar3 = TPUA_CH12_PARAM0.PARAM5;
+        wVar3 = tpu_a_channel_12_parameters.PARAM5;
         wVar2 = TPUA_CH11_PARAM6;
         crank_accumulated_period = (wVar3 & 0xff00) << 8 | (uint)wVar2;
         goto LAB_00045154;
       }
       if (uVar6 != 0xff) goto LAB_00045154;
-      wVar2 = TPUA_CH12_PARAM0.PARAM7;
+      wVar2 = tpu_a_channel_12_parameters.PARAM7;
       uVar6 = wVar2 >> 8;
       if (uVar6 == 3) goto LAB_000450e0;
       if (uVar6 == 4) goto LAB_000450fc;
       if (uVar6 != 6) {
         if (uVar6 == 8) {
-          wVar3 = TPUA_CH12_PARAM0.PARAM5;
+          wVar3 = tpu_a_channel_12_parameters.PARAM5;
           wVar2 = TPUA_CH11_PARAM7;
           crank_accumulated_period = (wVar3 & 0xff) << 0x10 | (uint)wVar2;
         }
         goto LAB_00045154;
       }
     }
-    wVar3 = TPUA_CH12_PARAM0.PARAM4;
+    wVar3 = tpu_a_channel_12_parameters.PARAM4;
     wVar2 = TPUA_CH11_PARAM5;
     crank_accumulated_period = (wVar3 & 0xff) << 0x10 | (uint)wVar2;
   }
@@ -48331,10 +48336,10 @@ LAB_00045154:
   wVar2 = crank_speed_count;
   if ((cam_crank_sync_state.crank_sync_state == 2) &&
      (wVar3 = crank_speed_count + 1, wVar2 = wVar3, wVar3 == crank_tooth_position_target)) {
-    wVar2 = tpu_a_ch0_param0.PARAM0;
+    wVar2 = tpu_a_channel_0_parameters.PARAM0;
     uVar6 = -((short)wVar2 >> 0xf);
     DAT_003fb5b8 = (byte)(wVar2 >> 0xf);
-    wVar5 = tpu_a_ch0_param0.PARAM4;
+    wVar5 = tpu_a_channel_0_parameters.PARAM4;
     if (uVar6 != 0) {
       wVar5 = wVar5 - crank_signal_tooth_count;
     }
@@ -48345,7 +48350,7 @@ LAB_00045154:
       crank_speed_count = wVar3;
       if ((uVar4 == cam_pulse_count_with_added_tooth) || (crank_tooth_counter_zero_flag != 0)) {
         if (crank_signal_window_with_added_tooth != uVar6) {
-          tpu_a_mcr.HSRR1 = 1;
+          tpu_a.HSRR1 = 1;
           iVar1 = TBLr;
           crank_resync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
           crank_resync_count = crank_resync_count + 1;
@@ -48361,7 +48366,7 @@ LAB_00045154:
         wVar2 = wVar3;
         if (cam_pulse_count_with_added_tooth - 1 == uVar4) {
           if (crank_signal_window_with_added_tooth == uVar6) {
-            tpu_a_mcr.HSRR1 = 1;
+            tpu_a.HSRR1 = 1;
             iVar1 = TBLr;
             crank_resync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
             crank_resync_count = crank_resync_count + 1;
@@ -48417,7 +48422,7 @@ LAB_00045154:
    mpc555_updateEngineRunState) | earlier note: TPU-A channel 0 interrupt handler - reached via
    tpu_a_channel_interrupt_handler_table (mpc555_tpuAInterruptDispatcher 0x55de4) - no direct caller
    in the decompile - runs the crank run-state machine cam_crank_sync_state_t.crank_sync_state 0-4
-   from tpu_a_ch0_param0 */
+   from tpu_a_channel_0_parameters */
 
 void mpc555_updateCrankSyncState(void)
 
@@ -48426,11 +48431,11 @@ void mpc555_updateCrankSyncState(void)
   ushort uVar2;
   word wVar3;
   
-  wVar3 = tpu_a_ch0_param0.PARAM0;
+  wVar3 = tpu_a_channel_0_parameters.PARAM0;
   DAT_003fb5b8 = (byte)(wVar3 >> 0xf);
-  wVar3 = tpu_a_ch0_param0.PARAM4;
+  wVar3 = tpu_a_channel_0_parameters.PARAM4;
   uVar2 = wVar3 >> 8;
-  wVar3 = tpu_a_ch0_param0.PARAM4;
+  wVar3 = tpu_a_channel_0_parameters.PARAM4;
   if (((uVar2 == 0) || ((uVar2 & 0x40) != 0)) || (cam_crank_sync_state.crank_sync_state == 0)) {
     if (((uVar2 & 0x40) == 0) || (cam_crank_sync_state.crank_sync_state == 0)) {
       if ((cam_crank_sync_state.crank_sync_error_count != 0) && (uVar2 == 0)) {
@@ -48442,10 +48447,10 @@ void mpc555_updateCrankSyncState(void)
         cam_crank_sync_state.cam_sync_error_count = cam_crank_sync_state.cam_sync_error_count + 1;
       }
       if (cam_crank_sync_state.crank_sync_state == 0) {
-        wVar3 = TPUA_CH14_PARAM0.PARAM7;
-        TPUA_CH14_PARAM0.PARAM7 = wVar3 & 0xff00 | (ushort)crank_sync_tooth;
-        wVar3 = tpu_a_ch0_param0.PARAM4;
-        tpu_a_ch0_param0.PARAM4 = wVar3 & 0xff;
+        wVar3 = tpu_a_channel_14_parameters.PARAM7;
+        tpu_a_channel_14_parameters.PARAM7 = wVar3 & 0xff00 | (ushort)crank_sync_tooth;
+        wVar3 = tpu_a_channel_0_parameters.PARAM4;
+        tpu_a_channel_0_parameters.PARAM4 = wVar3 & 0xff;
         cam_crank_plausibility_count_1 = 0;
         cam_crank_plausibility_count_2 = 0;
         cam_crank_sync_state.crank_sync_state = 2;
@@ -48484,7 +48489,7 @@ void mpc555_updateCrankSyncState(void)
             }
           }
           if (firing_detection_count == 0) {
-            tpu_a_mcr.HSRR1 = 1;
+            tpu_a.HSRR1 = 1;
             iVar1 = TBLr;
             crank_resync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
             crank_resync_count = crank_resync_count + 1;
@@ -48506,8 +48511,8 @@ void mpc555_updateCrankSyncState(void)
     }
     if ((cam_crank_sync_state.crank_sync_state == 2) && (cam_crank_sync_state.cam_sync_state != 4))
     {
-      wVar3 = tpu_a_ch0_param0.PARAM4;
-      tpu_a_ch0_param0.PARAM4 = wVar3 & 0xff;
+      wVar3 = tpu_a_channel_0_parameters.PARAM4;
+      tpu_a_channel_0_parameters.PARAM4 = wVar3 & 0xff;
     }
     else {
       cm848_enterCrankSyncLost();
@@ -48526,16 +48531,17 @@ void mpc555_updateCrankSyncState(void)
 /* TPU-A channel 1 interrupt handler - reached via tpu_a_channel_interrupt_handler_table
    (mpc555_tpuAInterruptDispatcher 0x55de4) - no direct caller in the decompile. Channel 1 is the
    cam signal input (the TPU PMA function: e2m 8194 +56 PMA_Edge_Type 'Capture edge for cam signal'
-   is cam_signal_capture_edge_type, which goes into tpu_a_ch1_param2.PARAM0), so this is the backup
-   engine speed path, not the crank. Per cam pulse it reloads backup_pulse_period_countdown (e2m
-   819B +A Backup_Lost_Counter) from crank_sync_timing_scale_working; with a nonzero tooth count it
-   stores the 24-bit period of tpu_a_ch1_param2 into the ring pulse_period_table_backup (819B +4E
+   is cam_signal_capture_edge_type, which goes into tpu_a_channel_1_parameters.PARAM0), so this is
+   the backup engine speed path, not the crank. Per cam pulse it reloads
+   backup_pulse_period_countdown (e2m 819B +A Backup_Lost_Counter) from
+   crank_sync_timing_scale_working; with a nonzero tooth count it stores the 24-bit period of
+   tpu_a_channel_1_parameters into the ring pulse_period_table_backup (819B +4E
    Pulse_Period_Table_Backup, index backup_period_capture_index = +3E Next_Table_Position_Backup)
    and sums it into average_pulse_period_backup (+6 Average_Pulse_Period_Backup) and
    engine_speed_state_t.backup_speed_period_sum_between_vss_pulses / _sample_count (the backup
    accumulator +24 and counter +2A). It runs the cam sync state
    cam_crank_sync_state_t.cam_sync_state (e2m 819C +2 Cam_Sync_State; here 0 NO / 1 LOST / 4 HAVE,
-   driven by the channel status byte), the pattern machine from tpu_a_ch1_param2:
+   driven by the channel status byte), the pattern machine from tpu_a_channel_1_parameters:
    cam_sync_error_count (819C +0 Cam_Sync_Error_Count) rises while LOST above
    engine_position_sensor_error_detection_minimum_engine_speed and falls while HAVE, and
    cam_have_sync_time_ticks (819B +72 Cam_Have_Sync_Time) is stored once at HAVE. It compares the
@@ -48543,7 +48549,7 @@ void mpc555_updateCrankSyncState(void)
    Cam_2_Crank_Tooth_Number) with crank_tooth_pattern_table (Cam_2_Crank_Position_Array, 2 x
    cam_wheel_pulse_count entries), counts matches in cam_crank_plausibility_count_1 /
    cam_crank_plausibility_count_2 and mismatches in cam_crank_mismatch_count (819B +10
-   Cam_Crank_Mismatch_Count), and requests a TPU host service (tpu_a_mcr.HSRR1 = 1) with
+   Cam_Crank_Mismatch_Count), and requests a TPU host service (tpu_a.HSRR1 = 1) with
    crank_resync_time_ticks / crank_resync_count when the crank bank is out of phase, then dispatches
    the run state handlers and the injection timing (cm848_dispatchCrankSynchronousInjection,
    cm848_enterSpeedLimpHome). (was mpc555_updateEngineCrankState) */
@@ -48562,10 +48568,10 @@ void mpc555_handleCamSignalInterrupt(void)
   uint uVar9;
   uint uVar10;
   
-  uVar5 = tpu_a_ch1_param2._2_4_;
-  wVar3 = tpu_a_ch1_param2.PARAM4;
+  uVar5 = tpu_a_channel_1_parameters._2_4_;
+  wVar3 = tpu_a_channel_1_parameters.PARAM4;
   uVar2 = wVar3 >> 8;
-  wVar3 = tpu_a_ch1_param2.PARAM4;
+  wVar3 = tpu_a_channel_1_parameters.PARAM4;
   uVar9 = wVar3 & 0xff;
   wVar4 = TPUA_CH3_PARAM2;
   uVar10 = wVar4 & 0xff;
@@ -48649,10 +48655,10 @@ LAB_00045970:
              ((cam_crank_sync_state.crank_sync_state == 1 &&
               (crank_lost_resync_cam_tooth_threshold < cam_crank_plausibility_count_2)))))) &&
            (firing_detection_count == 0)) {
-          wVar3 = tpu_a_ch0_param0.PARAM0;
+          wVar3 = tpu_a_channel_0_parameters.PARAM0;
           DAT_003fb5b8 = (byte)(wVar3 >> 0xf);
           if (wVar3 >> 0xf != (ushort)crank_signal_window_with_added_tooth) {
-            tpu_a_mcr.HSRR1 = 1;
+            tpu_a.HSRR1 = 1;
             iVar1 = TBLr;
             crank_resync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
             crank_resync_count = crank_resync_count + 1;
@@ -48691,7 +48697,7 @@ LAB_00045970:
       else if (((&crank_tooth_pattern_table)[cam_wheel_pulse_count + uVar9] == uVar5) ||
               ((uint)(&crank_tooth_pattern_table)[cam_wheel_pulse_count + uVar9] == uVar5 - 1)) {
         cam_crank_plausibility_count_2 = cam_crank_plausibility_count_2 + 1;
-        tpu_a_mcr.HSRR1 = 1;
+        tpu_a.HSRR1 = 1;
         iVar1 = TBLr;
         crank_resync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
         crank_resync_count = crank_resync_count + 1;
@@ -48737,7 +48743,7 @@ LAB_00045c84:
   else {
     if (((&crank_tooth_pattern_table)[cam_wheel_pulse_count + uVar9] == uVar5) ||
        ((uint)(&crank_tooth_pattern_table)[cam_wheel_pulse_count + uVar9] == uVar5 - 1)) {
-      tpu_a_mcr.HSRR1 = 1;
+      tpu_a.HSRR1 = 1;
       iVar1 = TBLr;
       crank_resync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
       crank_resync_count = crank_resync_count + 1;
@@ -51343,8 +51349,8 @@ void cm848_initializeFuelPressureDiagnosticState(void)
    cm848_calculateFuelMeteringCommand): period = 5000000 / a table lookup (args at
    fuel_metering_pwm_frequency_cached_axis_offset) and on-time = period x
    fuel_pressure_governor_state.fuel_metering_command / 4095, written as one dword to TPU-B channel
-   11 (TPUB_CH11_PARAM0 = on-time / PARAM1 = period) - the fuel metering output bypasses the output
-   channel driver table's set-duty slot. Was mpc555_calculateTpuTimingPeriod */
+   11 (tpu_b_channel_11_parameters = on-time / PARAM1 = period) - the fuel metering output bypasses
+   the output channel driver table's set-duty slot. Was mpc555_calculateTpuTimingPeriod */
 
 void cm848_setFuelMeteringPwm(void)
 
@@ -51356,7 +51362,7 @@ void cm848_setFuelMeteringPwm(void)
                     (&fuel_metering_pwm_frequency_cached_axis_offset,average_engine_speed,
                      fuel_metering_pwm_frequency_axis,fuel_metering_pwm_frequency_values,0);
   uVar1 = 5000000 / wVar2 & 0xffff;
-  TPUB_CH11_PARAM0._0_4_ =
+  tpu_b_channel_11_parameters._0_4_ =
        (uVar1 * (int)(short)fuel_pressure_governor_state.fuel_metering_command) / 0xfff << 0x10 |
        uVar1;
   return;
@@ -51382,16 +51388,16 @@ void mpc555_initTpuTimingInterrupts(void)
     (**(code **)(&output_channel_driver_table_enable + (uint)fuel_metering_output_channel_cal * 0x10
                 ))();
   }
-  wVar1 = tpu_b_mcr.CPR0;
-  tpu_b_mcr.CPR0 = wVar1 & 0xff3f;
-  wVar1 = tpu_b_mcr.CFSR1;
-  tpu_b_mcr.CFSR1 = wVar1 & 0xfff | 0x7000;
-  wVar1 = tpu_b_mcr.HSQR0;
-  tpu_b_mcr.HSQR0 = wVar1 & 0xff3f | 0x40;
-  tpu_b_mcr.HSRR0 = 0xc0;
-  TPUB_CH11_PARAM0._0_4_ = 5000000 / wVar2 & 0xffff;
-  wVar2 = tpu_b_mcr.CPR0;
-  tpu_b_mcr.CPR0 = wVar2 & 0xff3f | 0x80;
+  wVar1 = tpu_b.CPR0;
+  tpu_b.CPR0 = wVar1 & 0xff3f;
+  wVar1 = tpu_b.CFSR1;
+  tpu_b.CFSR1 = wVar1 & 0xfff | 0x7000;
+  wVar1 = tpu_b.HSQR0;
+  tpu_b.HSQR0 = wVar1 & 0xff3f | 0x40;
+  tpu_b.HSRR0 = 0xc0;
+  tpu_b_channel_11_parameters._0_4_ = 5000000 / wVar2 & 0xffff;
+  wVar2 = tpu_b.CPR0;
+  tpu_b.CPR0 = wVar2 & 0xff3f | 0x80;
   return;
 }
 
@@ -51751,7 +51757,7 @@ void cm848_evaluateInjectorDiagnostics(void)
   ushort uVar3;
   ushort uVar4;
   
-  wVar1 = mios_mdasm30.SCRD;
+  wVar1 = mios_mdasm30.SCR;
   if ((((wVar1 & 0x8000) != 0) &&
       (logical_output_request_bits_48_to_55.driver_asic_shutoff_request == 0)) &&
      (supervisor_register_36_bit_1_low_held_flag == 0)) {
@@ -54887,14 +54893,14 @@ void cm848_tpuBReadBackChannel10SetPwmDuty(word param_1)
 //
 
 /* Output channel driver table record 12 (0x53ad06) slot +0 (enable) for TPU-B channel 11 with
-   MDASM29 read-back: clears MDASM29 AR:BR / sets its SCRD to 0x801 (mode 1 input) then starts the
+   MDASM29 read-back: clears MDASM29 AR:BR / sets its SCR to 0x801 (mode 1 input) then starts the
    TPU-B PWM (was mpc555_resetMiosTpuChannel29_11) */
 
 void cm848_tpuBReadBackChannel11EnablePwm(void)
 
 {
   mios_mdasm29.AR_BR = 0;
-  mios_mdasm29.SCRD = 0x801;
+  mios_mdasm29.SCR = 0x801;
   mpc555_tpuBEnablePwmChannel(0xb);
   return;
 }
@@ -54910,7 +54916,7 @@ void cm848_tpuBReadBackChannel11EnablePwm(void)
    is fuel_pressure_governor_state.fuel_metering_command (0-4095 at 0x40b882): while 0 < command <
    fuel_metering_read_back_minimum_command it skips the check and returns
    fuel_metering_read_back_last_verdict; otherwise it compares MDASM29's captured edges (AR:BR) and
-   pin (SCRD bit 15) with the command the way mpc555_miosCheckChannelFeedback does (0 agree / 1 high
+   pin (SCR bit 15) with the command the way mpc555_miosCheckChannelFeedback does (0 agree / 1 high
    or toggling where it should be low / 2 low or toggling where it should be high; 4095 and above =
    fully on) then clears AR:BR and stores the verdict in fuel_metering_read_back_last_verdict.
    Ghidra had not made a function here - it starts right after the blr that ends
@@ -54931,19 +54937,19 @@ word cm848_tpuBReadBackChannel11ReadFeedback(void)
   }
   if (iVar3 == 0) {
     dVar1 = mios_mdasm29.AR_BR;
-    if ((dVar1 == 0) && (wVar2 = mios_mdasm29.SCRD, (wVar2 & 0x8000) == 0)) goto LAB_0004e0a4;
+    if ((dVar1 == 0) && (wVar2 = mios_mdasm29.SCR, (wVar2 & 0x8000) == 0)) goto LAB_0004e0a4;
   }
   else {
     if (0xffe < iVar3) {
       dVar1 = mios_mdasm29.AR_BR;
-      if ((dVar1 != 0) || (wVar2 = mios_mdasm29.SCRD, (wVar2 & 0x8000) == 0)) {
+      if ((dVar1 != 0) || (wVar2 = mios_mdasm29.SCR, (wVar2 & 0x8000) == 0)) {
         wVar4 = 2;
       }
       goto LAB_0004e0a4;
     }
     dVar1 = mios_mdasm29.AR_BR;
     if (dVar1 != 0) goto LAB_0004e0a4;
-    wVar4 = mios_mdasm29.SCRD;
+    wVar4 = mios_mdasm29.SCR;
     if ((wVar4 & 0x8000) == 0) {
       wVar4 = 2;
       goto LAB_0004e0a4;
@@ -56015,7 +56021,7 @@ byte cm848_readSwitchHardwareInput(uint param_1)
    switch_input_datalink_state_bits / hardware switches read their line from input_line_image XOR
    switch_input_polarity_bits_cal / switches with no line keep their software-set state; 4-sample
    debounce (all 4 set -> set / all 4 clear -> clear / else hold) into switch_input_state_bits; also
-   counts falling edges of the ignition key line (mios_mdasm30.SCRD bit 15) into
+   counts falling edges of the ignition key line (mios_mdasm30.SCR bit 15) into
    ignition_key_off_count_cal (was mpc555_updateEngineCycleOutputs) | review-function-readability
    reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
 
@@ -56090,7 +56096,7 @@ void cm848_scanAndDebounceSwitchInputs(void)
   if (3 < switch_input_debounce_sample_index) {
     switch_input_debounce_sample_index = 0;
   }
-  wVar3 = mios_mdasm30.SCRD;
+  wVar3 = mios_mdasm30.SCR;
   uVar6 = (uint)((wVar3 & 0x8000) != 0);
   if ((ignition_key_line_previous_state != 0) && (uVar6 == 0)) {
     ignition_key_off_count_cal = ignition_key_off_count_cal + 1;
@@ -56444,7 +56450,7 @@ LAB_0004f450:
      ((int)param_1 < 0x78)) goto LAB_0004f6ac;
   switch(param_1) {
   case 0x78:
-    wVar2 = mios_mdasm11.SCRD;
+    wVar2 = mios_mdasm11.SCR;
     if ((wVar2 & 0x8000) == 0) {
       param_4 = 0xfe;
       break;
@@ -56454,7 +56460,7 @@ LAB_0004f5b4:
     input_line_image.lines_120_to_127 = (byte)param_4 | input_line_image.lines_120_to_127;
     goto LAB_0004f6ac;
   case 0x79:
-    wVar2 = mios_mdasm12.SCRD;
+    wVar2 = mios_mdasm12.SCR;
     if ((wVar2 & 0x8000) != 0) {
       param_4 = 2;
       goto LAB_0004f5b4;
@@ -56487,7 +56493,7 @@ LAB_0004f6a0:
   case 0x7b:
     goto switchD_0004f4a8_default;
   case 0x7c:
-    wVar2 = mios_mdasm15.SCRD;
+    wVar2 = mios_mdasm15.SCR;
     if ((wVar2 & 0x8000) != 0) {
       param_4 = 0x10;
       goto LAB_0004f5b4;
@@ -56495,7 +56501,7 @@ LAB_0004f6a0:
     param_4 = 0xef;
     break;
   case 0x7d:
-    wVar2 = mios_mdasm27.SCRD;
+    wVar2 = mios_mdasm27.SCR;
     if ((wVar2 & 0x8000) != 0) {
       param_4 = 0x20;
       goto LAB_0004f5b4;
@@ -56503,7 +56509,7 @@ LAB_0004f6a0:
     param_4 = 0xdf;
     break;
   case 0x7e:
-    wVar2 = mios_mdasm28.SCRD;
+    wVar2 = mios_mdasm28.SCR;
     if ((wVar2 & 0x8000) != 0) {
       param_4 = 0x40;
       goto LAB_0004f5b4;
@@ -56511,7 +56517,7 @@ LAB_0004f6a0:
     param_4 = 0xbf;
     break;
   case 0x7f:
-    wVar2 = mios_mdasm29.SCRD;
+    wVar2 = mios_mdasm29.SCR;
     if ((wVar2 & 0x8000) != 0) {
       param_4 = 0x80;
       goto LAB_0004f5b4;
@@ -56519,7 +56525,7 @@ LAB_0004f6a0:
     param_4 = 0x7f;
     break;
   case 0x80:
-    wVar2 = mios_mdasm30.SCRD;
+    wVar2 = mios_mdasm30.SCR;
     if ((wVar2 & 0x8000) == 0) {
       param_4 = 0xfe;
       input_line_image.lines_128_to_135 = input_line_image.lines_128_to_135 & 0xfe;
@@ -56703,378 +56709,378 @@ LAB_0004f990:
   switch(param_1) {
   case 0x58:
     output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 | 1;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xfffc;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xfffe;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xfffe;
-    wVar2 = tpu_b_mcr.CFSR3;
-    tpu_b_mcr.CFSR3 = wVar2 & 0xfff0 | 0xf;
-    tpu_b_ch0_param0.PARAM0 = 0x113;
-    tpu_b_mcr.HSRR1 = 1;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xfffc | 1;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xfffc;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xfffe;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xfffe;
+    wVar2 = tpu_b.CFSR3;
+    tpu_b.CFSR3 = wVar2 & 0xfff0 | 0xf;
+    tpu_b_channel_0_parameters.PARAM0 = 0x113;
+    tpu_b.HSRR1 = 1;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xfffc | 1;
     break;
   case 0x59:
     output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 | 2;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xfff3;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xfffd;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xfffd;
-    wVar2 = tpu_b_mcr.CFSR3;
-    tpu_b_mcr.CFSR3 = wVar2 & 0xff0f | 0xf0;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xfff3;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xfffd;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xfffd;
+    wVar2 = tpu_b.CFSR3;
+    tpu_b.CFSR3 = wVar2 & 0xff0f | 0xf0;
     TPUB_CH1_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR1 = 4;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xfff3 | 4;
+    tpu_b.HSRR1 = 4;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xfff3 | 4;
     break;
   case 0x5a:
     output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 | 4;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xffcf;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xfffb;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xfffb;
-    wVar2 = tpu_b_mcr.CFSR3;
-    tpu_b_mcr.CFSR3 = wVar2 & 0xf0ff | 0xf00;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xffcf;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xfffb;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xfffb;
+    wVar2 = tpu_b.CFSR3;
+    tpu_b.CFSR3 = wVar2 & 0xf0ff | 0xf00;
     TPUB_CH2_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR1 = 0x10;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xffcf | 0x10;
+    tpu_b.HSRR1 = 0x10;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xffcf | 0x10;
     break;
   case 0x5b:
     output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 | 8;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xff3f;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xfff7;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xfff7;
-    wVar2 = tpu_b_mcr.CFSR3;
-    tpu_b_mcr.CFSR3 = wVar2 & 0xfff | 0xf000;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xff3f;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xfff7;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xfff7;
+    wVar2 = tpu_b.CFSR3;
+    tpu_b.CFSR3 = wVar2 & 0xfff | 0xf000;
     TPUB_CH3_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR1 = 0x40;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xff3f | 0x40;
+    tpu_b.HSRR1 = 0x40;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xff3f | 0x40;
     break;
   case 0x5c:
     output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 | 0x10;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xfcff;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xffef;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xffef;
-    wVar2 = tpu_b_mcr.CFSR2;
-    tpu_b_mcr.CFSR2 = wVar2 & 0xfff0 | 0xf;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xfcff;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xffef;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xffef;
+    wVar2 = tpu_b.CFSR2;
+    tpu_b.CFSR2 = wVar2 & 0xfff0 | 0xf;
     TPUB_CH4_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR1 = 0x100;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xfcff | 0x100;
+    tpu_b.HSRR1 = 0x100;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xfcff | 0x100;
     break;
   case 0x5d:
     output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 | 0x20;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xf3ff;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xffdf;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xffdf;
-    wVar2 = tpu_b_mcr.CFSR2;
-    tpu_b_mcr.CFSR2 = wVar2 & 0xff0f | 0xf0;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xf3ff;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xffdf;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xffdf;
+    wVar2 = tpu_b.CFSR2;
+    tpu_b.CFSR2 = wVar2 & 0xff0f | 0xf0;
     TPUB_CH5_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR1 = 0x400;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xf3ff | 0x400;
+    tpu_b.HSRR1 = 0x400;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xf3ff | 0x400;
     break;
   case 0x5e:
     output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 | 0x40;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xcfff;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xffbf;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xffbf;
-    wVar2 = tpu_b_mcr.CFSR2;
-    tpu_b_mcr.CFSR2 = wVar2 & 0xf0ff | 0xf00;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xcfff;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xffbf;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xffbf;
+    wVar2 = tpu_b.CFSR2;
+    tpu_b.CFSR2 = wVar2 & 0xf0ff | 0xf00;
     TPUB_CH6_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR1 = 0x1000;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xcfff | 0x1000;
+    tpu_b.HSRR1 = 0x1000;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xcfff | 0x1000;
     break;
   case 0x5f:
     output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 | 0x80;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0x3fff;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xff7f;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xff7f;
-    wVar2 = tpu_b_mcr.CFSR2;
-    tpu_b_mcr.CFSR2 = wVar2 & 0xfff | 0xf000;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0x3fff;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xff7f;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xff7f;
+    wVar2 = tpu_b.CFSR2;
+    tpu_b.CFSR2 = wVar2 & 0xfff | 0xf000;
     TPUB_CH7_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR1 = 0x4000;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0x3fff | 0x4000;
+    tpu_b.HSRR1 = 0x4000;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0x3fff | 0x4000;
     break;
   case 0x60:
     output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 | 1;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xfffc;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xfeff;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xfeff;
-    wVar2 = tpu_b_mcr.CFSR1;
-    tpu_b_mcr.CFSR1 = wVar2 & 0xfff0 | 0xf;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xfffc;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xfeff;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xfeff;
+    wVar2 = tpu_b.CFSR1;
+    tpu_b.CFSR1 = wVar2 & 0xfff0 | 0xf;
     TPUB_CH8_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR0 = 1;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xfffc | 1;
+    tpu_b.HSRR0 = 1;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xfffc | 1;
     break;
   case 0x61:
     output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 | 2;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xfff3;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xfdff;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xfdff;
-    wVar2 = tpu_b_mcr.CFSR1;
-    tpu_b_mcr.CFSR1 = wVar2 & 0xff0f | 0xf0;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xfff3;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xfdff;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xfdff;
+    wVar2 = tpu_b.CFSR1;
+    tpu_b.CFSR1 = wVar2 & 0xff0f | 0xf0;
     TPUB_CH9_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR0 = 4;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xfff3 | 4;
+    tpu_b.HSRR0 = 4;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xfff3 | 4;
     break;
   case 0x62:
     output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 | 4;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xffcf;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xfbff;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xfbff;
-    wVar2 = tpu_b_mcr.CFSR1;
-    tpu_b_mcr.CFSR1 = wVar2 & 0xf0ff | 0xf00;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xffcf;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xfbff;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xfbff;
+    wVar2 = tpu_b.CFSR1;
+    tpu_b.CFSR1 = wVar2 & 0xf0ff | 0xf00;
     TPUB_CH10_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR0 = 0x10;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xffcf | 0x10;
+    tpu_b.HSRR0 = 0x10;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xffcf | 0x10;
     break;
   case 99:
     output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 | 8;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xff3f;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xf7ff;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xf7ff;
-    wVar2 = tpu_b_mcr.CFSR1;
-    tpu_b_mcr.CFSR1 = wVar2 & 0xfff | 0xf000;
-    TPUB_CH11_PARAM0.PARAM0 = 0x113;
-    tpu_b_mcr.HSRR0 = 0x40;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xff3f | 0x40;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xff3f;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xf7ff;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xf7ff;
+    wVar2 = tpu_b.CFSR1;
+    tpu_b.CFSR1 = wVar2 & 0xfff | 0xf000;
+    tpu_b_channel_11_parameters.PARAM0 = 0x113;
+    tpu_b.HSRR0 = 0x40;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xff3f | 0x40;
     break;
   case 100:
     output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 | 0x10;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xfcff;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xefff;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xefff;
-    wVar2 = tpu_b_mcr.CFSR0;
-    tpu_b_mcr.CFSR0 = wVar2 & 0xfff0 | 0xf;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xfcff;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xefff;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xefff;
+    wVar2 = tpu_b.CFSR0;
+    tpu_b.CFSR0 = wVar2 & 0xfff0 | 0xf;
     TPUB_CH12_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR0 = 0x100;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xfcff | 0x100;
+    tpu_b.HSRR0 = 0x100;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xfcff | 0x100;
     break;
   case 0x65:
     output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 | 0x20;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xf3ff;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xdfff;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xdfff;
-    wVar2 = tpu_b_mcr.CFSR0;
-    tpu_b_mcr.CFSR0 = wVar2 & 0xff0f | 0xf0;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xf3ff;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xdfff;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xdfff;
+    wVar2 = tpu_b.CFSR0;
+    tpu_b.CFSR0 = wVar2 & 0xff0f | 0xf0;
     TPUB_CH13_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR0 = 0x400;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xf3ff | 0x400;
+    tpu_b.HSRR0 = 0x400;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xf3ff | 0x400;
     break;
   case 0x66:
     output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 | 0x40;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xcfff;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xbfff;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xbfff;
-    wVar2 = tpu_b_mcr.CFSR0;
-    tpu_b_mcr.CFSR0 = wVar2 & 0xf0ff | 0xf00;
-    TPUB_CH14_PARAM0.PARAM0 = 0x113;
-    tpu_b_mcr.HSRR0 = 0x1000;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xcfff | 0x1000;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xcfff;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xbfff;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xbfff;
+    wVar2 = tpu_b.CFSR0;
+    tpu_b.CFSR0 = wVar2 & 0xf0ff | 0xf00;
+    tpu_b_channel_14_parameters.PARAM0 = 0x113;
+    tpu_b.HSRR0 = 0x1000;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xcfff | 0x1000;
     break;
   case 0x67:
     output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 | 0x80;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0x3fff;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0x7fff;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0x7fff;
-    wVar2 = tpu_b_mcr.CFSR0;
-    tpu_b_mcr.CFSR0 = wVar2 & 0xfff | 0xf000;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0x3fff;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0x7fff;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0x7fff;
+    wVar2 = tpu_b.CFSR0;
+    tpu_b.CFSR0 = wVar2 & 0xfff | 0xf000;
     TPUB_CH15_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR0 = 0x4000;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0x3fff | 0x4000;
+    tpu_b.HSRR0 = 0x4000;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0x3fff | 0x4000;
     break;
   case 0x68:
     output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 | 1;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xfffc;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xfffe;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xfffe;
-    wVar2 = tpu_a_mcr.CFSR3;
-    tpu_a_mcr.CFSR3 = wVar2 & 0xfff0 | 0xf;
-    tpu_a_ch0_param0.PARAM0 = 0x113;
-    tpu_a_mcr.HSRR1 = 1;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xfffc | 1;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xfffc;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xfffe;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xfffe;
+    wVar2 = tpu_a.CFSR3;
+    tpu_a.CFSR3 = wVar2 & 0xfff0 | 0xf;
+    tpu_a_channel_0_parameters.PARAM0 = 0x113;
+    tpu_a.HSRR1 = 1;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xfffc | 1;
     break;
   case 0x69:
     output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 | 2;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xfff3;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xfffd;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xfffd;
-    wVar2 = tpu_a_mcr.CFSR3;
-    tpu_a_mcr.CFSR3 = wVar2 & 0xff0f | 0xf0;
-    tpu_a_ch1_param2.PARAM0 = 0x113;
-    tpu_a_mcr.HSRR1 = 4;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xfff3 | 4;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xfff3;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xfffd;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xfffd;
+    wVar2 = tpu_a.CFSR3;
+    tpu_a.CFSR3 = wVar2 & 0xff0f | 0xf0;
+    tpu_a_channel_1_parameters.PARAM0 = 0x113;
+    tpu_a.HSRR1 = 4;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xfff3 | 4;
     break;
   case 0x6a:
     output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 | 4;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xffcf;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xfffb;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xfffb;
-    wVar2 = tpu_a_mcr.CFSR3;
-    tpu_a_mcr.CFSR3 = wVar2 & 0xf0ff | 0xf00;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xffcf;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xfffb;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xfffb;
+    wVar2 = tpu_a.CFSR3;
+    tpu_a.CFSR3 = wVar2 & 0xf0ff | 0xf00;
     TPUA_CH2_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR1 = 0x10;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xffcf | 0x10;
+    tpu_a.HSRR1 = 0x10;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xffcf | 0x10;
     break;
   case 0x6b:
     output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 | 8;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xff3f;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xfff7;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xfff7;
-    wVar2 = tpu_a_mcr.CFSR3;
-    tpu_a_mcr.CFSR3 = wVar2 & 0xfff | 0xf000;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xff3f;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xfff7;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xfff7;
+    wVar2 = tpu_a.CFSR3;
+    tpu_a.CFSR3 = wVar2 & 0xfff | 0xf000;
     TPUA_CH3_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR1 = 0x40;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xff3f | 0x40;
+    tpu_a.HSRR1 = 0x40;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xff3f | 0x40;
     break;
   case 0x6c:
     output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 | 0x10;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xfcff;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xffef;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xffef;
-    wVar2 = tpu_a_mcr.CFSR2;
-    tpu_a_mcr.CFSR2 = wVar2 & 0xfff0 | 0xf;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xfcff;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xffef;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xffef;
+    wVar2 = tpu_a.CFSR2;
+    tpu_a.CFSR2 = wVar2 & 0xfff0 | 0xf;
     TPUA_CH4_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR1 = 0x100;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xfcff | 0x100;
+    tpu_a.HSRR1 = 0x100;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xfcff | 0x100;
     break;
   case 0x6d:
     output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 | 0x20;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xf3ff;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xffdf;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xffdf;
-    wVar2 = tpu_a_mcr.CFSR2;
-    tpu_a_mcr.CFSR2 = wVar2 & 0xff0f | 0xf0;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xf3ff;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xffdf;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xffdf;
+    wVar2 = tpu_a.CFSR2;
+    tpu_a.CFSR2 = wVar2 & 0xff0f | 0xf0;
     TPUA_CH5_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR1 = 0x400;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xf3ff | 0x400;
+    tpu_a.HSRR1 = 0x400;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xf3ff | 0x400;
     break;
   case 0x6e:
     output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 | 0x40;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xcfff;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xffbf;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xffbf;
-    wVar2 = tpu_a_mcr.CFSR2;
-    tpu_a_mcr.CFSR2 = wVar2 & 0xf0ff | 0xf00;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xcfff;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xffbf;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xffbf;
+    wVar2 = tpu_a.CFSR2;
+    tpu_a.CFSR2 = wVar2 & 0xf0ff | 0xf00;
     TPUA_CH6_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR1 = 0x1000;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xcfff | 0x1000;
+    tpu_a.HSRR1 = 0x1000;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xcfff | 0x1000;
     break;
   case 0x6f:
     output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 | 0x80;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0x3fff;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xff7f;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xff7f;
-    wVar2 = tpu_a_mcr.CFSR2;
-    tpu_a_mcr.CFSR2 = wVar2 & 0xfff | 0xf000;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0x3fff;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xff7f;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xff7f;
+    wVar2 = tpu_a.CFSR2;
+    tpu_a.CFSR2 = wVar2 & 0xfff | 0xf000;
     TPUA_CH7_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR1 = 0x4000;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0x3fff | 0x4000;
+    tpu_a.HSRR1 = 0x4000;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0x3fff | 0x4000;
     break;
   case 0x70:
     output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 | 1;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xfffc;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xfeff;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xfeff;
-    wVar2 = tpu_a_mcr.CFSR1;
-    tpu_a_mcr.CFSR1 = wVar2 & 0xfff0 | 0xf;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xfffc;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xfeff;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xfeff;
+    wVar2 = tpu_a.CFSR1;
+    tpu_a.CFSR1 = wVar2 & 0xfff0 | 0xf;
     TPUA_CH8_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR0 = 1;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xfffc | 1;
+    tpu_a.HSRR0 = 1;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xfffc | 1;
     break;
   case 0x71:
     bVar7 = 2;
@@ -57083,93 +57089,93 @@ LAB_0004f990:
     bVar7 = 4;
 LAB_00050a2c:
     output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 | bVar7;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xfff3;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xfdff;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xfdff;
-    wVar2 = tpu_a_mcr.CFSR1;
-    tpu_a_mcr.CFSR1 = wVar2 & 0xff0f | 0xf0;
-    tpu_channel_control.PARAM0 = 0x113;
-    tpu_a_mcr.HSRR0 = 4;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xfff3 | 4;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xfff3;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xfdff;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xfdff;
+    wVar2 = tpu_a.CFSR1;
+    tpu_a.CFSR1 = wVar2 & 0xff0f | 0xf0;
+    tpu_a_channel_9_parameters.PARAM0 = 0x113;
+    tpu_a.HSRR0 = 4;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xfff3 | 4;
     break;
   case 0x73:
     output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 | 8;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xff3f;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xf7ff;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xf7ff;
-    wVar2 = tpu_a_mcr.CFSR1;
-    tpu_a_mcr.CFSR1 = wVar2 & 0xfff | 0xf000;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xff3f;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xf7ff;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xf7ff;
+    wVar2 = tpu_a.CFSR1;
+    tpu_a.CFSR1 = wVar2 & 0xfff | 0xf000;
     TPUA_CH11_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR0 = 0x40;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xff3f | 0x40;
+    tpu_a.HSRR0 = 0x40;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xff3f | 0x40;
     break;
   case 0x74:
     output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 | 0x10;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xfcff;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xefff;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xefff;
-    wVar2 = tpu_a_mcr.CFSR0;
-    tpu_a_mcr.CFSR0 = wVar2 & 0xfff0 | 0xf;
-    TPUA_CH12_PARAM0.PARAM0 = 0x113;
-    tpu_a_mcr.HSRR0 = 0x100;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xfcff | 0x100;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xfcff;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xefff;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xefff;
+    wVar2 = tpu_a.CFSR0;
+    tpu_a.CFSR0 = wVar2 & 0xfff0 | 0xf;
+    tpu_a_channel_12_parameters.PARAM0 = 0x113;
+    tpu_a.HSRR0 = 0x100;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xfcff | 0x100;
     break;
   case 0x75:
     output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 | 0x20;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xf3ff;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xdfff;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xdfff;
-    wVar2 = tpu_a_mcr.CFSR0;
-    tpu_a_mcr.CFSR0 = wVar2 & 0xff0f | 0xf0;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xf3ff;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xdfff;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xdfff;
+    wVar2 = tpu_a.CFSR0;
+    tpu_a.CFSR0 = wVar2 & 0xff0f | 0xf0;
     TPUA_CH13_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR0 = 0x400;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xf3ff | 0x400;
+    tpu_a.HSRR0 = 0x400;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xf3ff | 0x400;
     break;
   case 0x76:
     output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 | 0x40;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xcfff;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xbfff;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xbfff;
-    wVar2 = tpu_a_mcr.CFSR0;
-    tpu_a_mcr.CFSR0 = wVar2 & 0xf0ff | 0xf00;
-    TPUA_CH14_PARAM0.PARAM0 = 0x113;
-    tpu_a_mcr.HSRR0 = 0x1000;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xcfff | 0x1000;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xcfff;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xbfff;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xbfff;
+    wVar2 = tpu_a.CFSR0;
+    tpu_a.CFSR0 = wVar2 & 0xf0ff | 0xf00;
+    tpu_a_channel_14_parameters.PARAM0 = 0x113;
+    tpu_a.HSRR0 = 0x1000;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xcfff | 0x1000;
     break;
   case 0x77:
     output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 | 0x80;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0x3fff;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0x7fff;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0x7fff;
-    wVar2 = tpu_a_mcr.CFSR0;
-    tpu_a_mcr.CFSR0 = wVar2 & 0xfff | 0xf000;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0x3fff;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0x7fff;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0x7fff;
+    wVar2 = tpu_a.CFSR0;
+    tpu_a.CFSR0 = wVar2 & 0xfff | 0xf000;
     TPUA_CH15_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR0 = 0x4000;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0x3fff | 0x4000;
+    tpu_a.HSRR0 = 0x4000;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0x3fff | 0x4000;
     break;
   case 0x78:
   default:
@@ -57197,11 +57203,11 @@ switchD_0004fae0_default:
     goto switchD_0004fae0_default;
   case 0x7c:
     output_line_state.lines_120_to_127 = output_line_state.lines_120_to_127 | 0x10;
-    mios_mdasm15.SCRD = 0x405;
+    mios_mdasm15.SCR = 0x405;
     break;
   case 0x7d:
     output_line_state.lines_120_to_127 = output_line_state.lines_120_to_127 | 0x20;
-    mios_mdasm27.SCRD = 0x405;
+    mios_mdasm27.SCR = 0x405;
     break;
   case 0x7e:
     goto switchD_0004fae0_default;
@@ -57416,378 +57422,378 @@ LAB_000512ec:
   switch(param_1) {
   case 0x58:
     output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 & 0xfe;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xfffc;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xfffe;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xfffe;
-    wVar2 = tpu_b_mcr.CFSR3;
-    tpu_b_mcr.CFSR3 = wVar2 & 0xfff0 | 0xf;
-    tpu_b_ch0_param0.PARAM0 = 0x113;
-    tpu_b_mcr.HSRR1 = 2;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xfffc | 1;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xfffc;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xfffe;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xfffe;
+    wVar2 = tpu_b.CFSR3;
+    tpu_b.CFSR3 = wVar2 & 0xfff0 | 0xf;
+    tpu_b_channel_0_parameters.PARAM0 = 0x113;
+    tpu_b.HSRR1 = 2;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xfffc | 1;
     break;
   case 0x59:
     output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 & 0xfd;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xfff3;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xfffd;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xfffd;
-    wVar2 = tpu_b_mcr.CFSR3;
-    tpu_b_mcr.CFSR3 = wVar2 & 0xff0f | 0xf0;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xfff3;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xfffd;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xfffd;
+    wVar2 = tpu_b.CFSR3;
+    tpu_b.CFSR3 = wVar2 & 0xff0f | 0xf0;
     TPUB_CH1_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR1 = 8;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xfff3 | 4;
+    tpu_b.HSRR1 = 8;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xfff3 | 4;
     break;
   case 0x5a:
     output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 & 0xfb;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xffcf;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xfffb;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xfffb;
-    wVar2 = tpu_b_mcr.CFSR3;
-    tpu_b_mcr.CFSR3 = wVar2 & 0xf0ff | 0xf00;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xffcf;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xfffb;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xfffb;
+    wVar2 = tpu_b.CFSR3;
+    tpu_b.CFSR3 = wVar2 & 0xf0ff | 0xf00;
     TPUB_CH2_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR1 = 0x20;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xffcf | 0x10;
+    tpu_b.HSRR1 = 0x20;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xffcf | 0x10;
     break;
   case 0x5b:
     output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 & 0xf7;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xff3f;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xfff7;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xfff7;
-    wVar2 = tpu_b_mcr.CFSR3;
-    tpu_b_mcr.CFSR3 = wVar2 & 0xfff | 0xf000;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xff3f;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xfff7;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xfff7;
+    wVar2 = tpu_b.CFSR3;
+    tpu_b.CFSR3 = wVar2 & 0xfff | 0xf000;
     TPUB_CH3_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR1 = 0x80;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xff3f | 0x40;
+    tpu_b.HSRR1 = 0x80;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xff3f | 0x40;
     break;
   case 0x5c:
     output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 & 0xef;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xfcff;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xffef;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xffef;
-    wVar2 = tpu_b_mcr.CFSR2;
-    tpu_b_mcr.CFSR2 = wVar2 & 0xfff0 | 0xf;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xfcff;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xffef;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xffef;
+    wVar2 = tpu_b.CFSR2;
+    tpu_b.CFSR2 = wVar2 & 0xfff0 | 0xf;
     TPUB_CH4_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR1 = 0x200;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xfcff | 0x100;
+    tpu_b.HSRR1 = 0x200;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xfcff | 0x100;
     break;
   case 0x5d:
     output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 & 0xdf;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xf3ff;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xffdf;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xffdf;
-    wVar2 = tpu_b_mcr.CFSR2;
-    tpu_b_mcr.CFSR2 = wVar2 & 0xff0f | 0xf0;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xf3ff;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xffdf;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xffdf;
+    wVar2 = tpu_b.CFSR2;
+    tpu_b.CFSR2 = wVar2 & 0xff0f | 0xf0;
     TPUB_CH5_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR1 = 0x800;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xf3ff | 0x400;
+    tpu_b.HSRR1 = 0x800;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xf3ff | 0x400;
     break;
   case 0x5e:
     output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 & 0xbf;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xcfff;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xffbf;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xffbf;
-    wVar2 = tpu_b_mcr.CFSR2;
-    tpu_b_mcr.CFSR2 = wVar2 & 0xf0ff | 0xf00;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xcfff;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xffbf;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xffbf;
+    wVar2 = tpu_b.CFSR2;
+    tpu_b.CFSR2 = wVar2 & 0xf0ff | 0xf00;
     TPUB_CH6_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR1 = 0x2000;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0xcfff | 0x1000;
+    tpu_b.HSRR1 = 0x2000;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0xcfff | 0x1000;
     break;
   case 0x5f:
     output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 & 0x7f;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0x3fff;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xff7f;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xff7f;
-    wVar2 = tpu_b_mcr.CFSR2;
-    tpu_b_mcr.CFSR2 = wVar2 & 0xfff | 0xf000;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0x3fff;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xff7f;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xff7f;
+    wVar2 = tpu_b.CFSR2;
+    tpu_b.CFSR2 = wVar2 & 0xfff | 0xf000;
     TPUB_CH7_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR1 = 0x8000;
-    wVar2 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar2 & 0x3fff | 0x4000;
+    tpu_b.HSRR1 = 0x8000;
+    wVar2 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar2 & 0x3fff | 0x4000;
     break;
   case 0x60:
     output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 & 0xfe;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xfffc;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xfeff;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xfeff;
-    wVar2 = tpu_b_mcr.CFSR1;
-    tpu_b_mcr.CFSR1 = wVar2 & 0xfff0 | 0xf;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xfffc;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xfeff;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xfeff;
+    wVar2 = tpu_b.CFSR1;
+    tpu_b.CFSR1 = wVar2 & 0xfff0 | 0xf;
     TPUB_CH8_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR0 = 2;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xfffc | 1;
+    tpu_b.HSRR0 = 2;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xfffc | 1;
     break;
   case 0x61:
     output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 & 0xfd;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xfff3;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xfdff;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xfdff;
-    wVar2 = tpu_b_mcr.CFSR1;
-    tpu_b_mcr.CFSR1 = wVar2 & 0xff0f | 0xf0;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xfff3;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xfdff;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xfdff;
+    wVar2 = tpu_b.CFSR1;
+    tpu_b.CFSR1 = wVar2 & 0xff0f | 0xf0;
     TPUB_CH9_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR0 = 8;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xfff3 | 4;
+    tpu_b.HSRR0 = 8;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xfff3 | 4;
     break;
   case 0x62:
     output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 & 0xfb;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xffcf;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xfbff;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xfbff;
-    wVar2 = tpu_b_mcr.CFSR1;
-    tpu_b_mcr.CFSR1 = wVar2 & 0xf0ff | 0xf00;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xffcf;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xfbff;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xfbff;
+    wVar2 = tpu_b.CFSR1;
+    tpu_b.CFSR1 = wVar2 & 0xf0ff | 0xf00;
     TPUB_CH10_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR0 = 0x20;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xffcf | 0x10;
+    tpu_b.HSRR0 = 0x20;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xffcf | 0x10;
     break;
   case 99:
     output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 & 0xf7;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xff3f;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xf7ff;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xf7ff;
-    wVar2 = tpu_b_mcr.CFSR1;
-    tpu_b_mcr.CFSR1 = wVar2 & 0xfff | 0xf000;
-    TPUB_CH11_PARAM0.PARAM0 = 0x113;
-    tpu_b_mcr.HSRR0 = 0x80;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xff3f | 0x40;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xff3f;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xf7ff;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xf7ff;
+    wVar2 = tpu_b.CFSR1;
+    tpu_b.CFSR1 = wVar2 & 0xfff | 0xf000;
+    tpu_b_channel_11_parameters.PARAM0 = 0x113;
+    tpu_b.HSRR0 = 0x80;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xff3f | 0x40;
     break;
   case 100:
     output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 & 0xef;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xfcff;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xefff;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xefff;
-    wVar2 = tpu_b_mcr.CFSR0;
-    tpu_b_mcr.CFSR0 = wVar2 & 0xfff0 | 0xf;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xfcff;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xefff;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xefff;
+    wVar2 = tpu_b.CFSR0;
+    tpu_b.CFSR0 = wVar2 & 0xfff0 | 0xf;
     TPUB_CH12_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR0 = 0x200;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xfcff | 0x100;
+    tpu_b.HSRR0 = 0x200;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xfcff | 0x100;
     break;
   case 0x65:
     output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 & 0xdf;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xf3ff;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xdfff;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xdfff;
-    wVar2 = tpu_b_mcr.CFSR0;
-    tpu_b_mcr.CFSR0 = wVar2 & 0xff0f | 0xf0;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xf3ff;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xdfff;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xdfff;
+    wVar2 = tpu_b.CFSR0;
+    tpu_b.CFSR0 = wVar2 & 0xff0f | 0xf0;
     TPUB_CH13_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR0 = 0x800;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xf3ff | 0x400;
+    tpu_b.HSRR0 = 0x800;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xf3ff | 0x400;
     break;
   case 0x66:
     output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 & 0xbf;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xcfff;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xbfff;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xbfff;
-    wVar2 = tpu_b_mcr.CFSR0;
-    tpu_b_mcr.CFSR0 = wVar2 & 0xf0ff | 0xf00;
-    TPUB_CH14_PARAM0.PARAM0 = 0x113;
-    tpu_b_mcr.HSRR0 = 0x2000;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xcfff | 0x1000;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xcfff;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xbfff;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xbfff;
+    wVar2 = tpu_b.CFSR0;
+    tpu_b.CFSR0 = wVar2 & 0xf0ff | 0xf00;
+    tpu_b_channel_14_parameters.PARAM0 = 0x113;
+    tpu_b.HSRR0 = 0x2000;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xcfff | 0x1000;
     break;
   case 0x67:
     output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 & 0x7f;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0x3fff;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0x7fff;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0x7fff;
-    wVar2 = tpu_b_mcr.CFSR0;
-    tpu_b_mcr.CFSR0 = wVar2 & 0xfff | 0xf000;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0x3fff;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0x7fff;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0x7fff;
+    wVar2 = tpu_b.CFSR0;
+    tpu_b.CFSR0 = wVar2 & 0xfff | 0xf000;
     TPUB_CH15_PARAM0 = 0x113;
-    tpu_b_mcr.HSRR0 = 0x8000;
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0x3fff | 0x4000;
+    tpu_b.HSRR0 = 0x8000;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0x3fff | 0x4000;
     break;
   case 0x68:
     output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 & 0xfe;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xfffc;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xfffe;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xfffe;
-    wVar2 = tpu_a_mcr.CFSR3;
-    tpu_a_mcr.CFSR3 = wVar2 & 0xfff0 | 0xf;
-    tpu_a_ch0_param0.PARAM0 = 0x113;
-    tpu_a_mcr.HSRR1 = 2;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xfffc | 1;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xfffc;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xfffe;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xfffe;
+    wVar2 = tpu_a.CFSR3;
+    tpu_a.CFSR3 = wVar2 & 0xfff0 | 0xf;
+    tpu_a_channel_0_parameters.PARAM0 = 0x113;
+    tpu_a.HSRR1 = 2;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xfffc | 1;
     break;
   case 0x69:
     output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 & 0xfd;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xfff3;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xfffd;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xfffd;
-    wVar2 = tpu_a_mcr.CFSR3;
-    tpu_a_mcr.CFSR3 = wVar2 & 0xff0f | 0xf0;
-    tpu_a_ch1_param2.PARAM0 = 0x113;
-    tpu_a_mcr.HSRR1 = 8;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xfff3 | 4;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xfff3;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xfffd;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xfffd;
+    wVar2 = tpu_a.CFSR3;
+    tpu_a.CFSR3 = wVar2 & 0xff0f | 0xf0;
+    tpu_a_channel_1_parameters.PARAM0 = 0x113;
+    tpu_a.HSRR1 = 8;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xfff3 | 4;
     break;
   case 0x6a:
     output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 & 0xfb;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xffcf;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xfffb;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xfffb;
-    wVar2 = tpu_a_mcr.CFSR3;
-    tpu_a_mcr.CFSR3 = wVar2 & 0xf0ff | 0xf00;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xffcf;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xfffb;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xfffb;
+    wVar2 = tpu_a.CFSR3;
+    tpu_a.CFSR3 = wVar2 & 0xf0ff | 0xf00;
     TPUA_CH2_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR1 = 0x20;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xffcf | 0x10;
+    tpu_a.HSRR1 = 0x20;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xffcf | 0x10;
     break;
   case 0x6b:
     output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 & 0xf7;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xff3f;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xfff7;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xfff7;
-    wVar2 = tpu_a_mcr.CFSR3;
-    tpu_a_mcr.CFSR3 = wVar2 & 0xfff | 0xf000;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xff3f;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xfff7;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xfff7;
+    wVar2 = tpu_a.CFSR3;
+    tpu_a.CFSR3 = wVar2 & 0xfff | 0xf000;
     TPUA_CH3_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR1 = 0x80;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xff3f | 0x40;
+    tpu_a.HSRR1 = 0x80;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xff3f | 0x40;
     break;
   case 0x6c:
     output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 & 0xef;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xfcff;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xffef;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xffef;
-    wVar2 = tpu_a_mcr.CFSR2;
-    tpu_a_mcr.CFSR2 = wVar2 & 0xfff0 | 0xf;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xfcff;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xffef;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xffef;
+    wVar2 = tpu_a.CFSR2;
+    tpu_a.CFSR2 = wVar2 & 0xfff0 | 0xf;
     TPUA_CH4_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR1 = 0x200;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xfcff | 0x100;
+    tpu_a.HSRR1 = 0x200;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xfcff | 0x100;
     break;
   case 0x6d:
     output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 & 0xdf;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xf3ff;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xffdf;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xffdf;
-    wVar2 = tpu_a_mcr.CFSR2;
-    tpu_a_mcr.CFSR2 = wVar2 & 0xff0f | 0xf0;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xf3ff;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xffdf;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xffdf;
+    wVar2 = tpu_a.CFSR2;
+    tpu_a.CFSR2 = wVar2 & 0xff0f | 0xf0;
     TPUA_CH5_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR1 = 0x800;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xf3ff | 0x400;
+    tpu_a.HSRR1 = 0x800;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xf3ff | 0x400;
     break;
   case 0x6e:
     output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 & 0xbf;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xcfff;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xffbf;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xffbf;
-    wVar2 = tpu_a_mcr.CFSR2;
-    tpu_a_mcr.CFSR2 = wVar2 & 0xf0ff | 0xf00;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xcfff;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xffbf;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xffbf;
+    wVar2 = tpu_a.CFSR2;
+    tpu_a.CFSR2 = wVar2 & 0xf0ff | 0xf00;
     TPUA_CH6_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR1 = 0x2000;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0xcfff | 0x1000;
+    tpu_a.HSRR1 = 0x2000;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0xcfff | 0x1000;
     break;
   case 0x6f:
     output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 & 0x7f;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0x3fff;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xff7f;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xff7f;
-    wVar2 = tpu_a_mcr.CFSR2;
-    tpu_a_mcr.CFSR2 = wVar2 & 0xfff | 0xf000;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0x3fff;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xff7f;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xff7f;
+    wVar2 = tpu_a.CFSR2;
+    tpu_a.CFSR2 = wVar2 & 0xfff | 0xf000;
     TPUA_CH7_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR1 = 0x8000;
-    wVar2 = tpu_a_mcr.CPR1;
-    tpu_a_mcr.CPR1 = wVar2 & 0x3fff | 0x4000;
+    tpu_a.HSRR1 = 0x8000;
+    wVar2 = tpu_a.CPR1;
+    tpu_a.CPR1 = wVar2 & 0x3fff | 0x4000;
     break;
   case 0x70:
     output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 & 0xfe;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xfffc;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xfeff;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xfeff;
-    wVar2 = tpu_a_mcr.CFSR1;
-    tpu_a_mcr.CFSR1 = wVar2 & 0xfff0 | 0xf;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xfffc;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xfeff;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xfeff;
+    wVar2 = tpu_a.CFSR1;
+    tpu_a.CFSR1 = wVar2 & 0xfff0 | 0xf;
     TPUA_CH8_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR0 = 2;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xfffc | 1;
+    tpu_a.HSRR0 = 2;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xfffc | 1;
     break;
   case 0x71:
     bVar7 = 0xfd;
@@ -57796,93 +57802,93 @@ LAB_000512ec:
     bVar7 = 0xfb;
 LAB_000523a0:
     output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 & bVar7;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xfff3;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xfdff;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xfdff;
-    wVar2 = tpu_a_mcr.CFSR1;
-    tpu_a_mcr.CFSR1 = wVar2 & 0xff0f | 0xf0;
-    tpu_channel_control.PARAM0 = 0x113;
-    tpu_a_mcr.HSRR0 = 8;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xfff3 | 4;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xfff3;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xfdff;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xfdff;
+    wVar2 = tpu_a.CFSR1;
+    tpu_a.CFSR1 = wVar2 & 0xff0f | 0xf0;
+    tpu_a_channel_9_parameters.PARAM0 = 0x113;
+    tpu_a.HSRR0 = 8;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xfff3 | 4;
     break;
   case 0x73:
     output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 & 0xf7;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xff3f;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xf7ff;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xf7ff;
-    wVar2 = tpu_a_mcr.CFSR1;
-    tpu_a_mcr.CFSR1 = wVar2 & 0xfff | 0xf000;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xff3f;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xf7ff;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xf7ff;
+    wVar2 = tpu_a.CFSR1;
+    tpu_a.CFSR1 = wVar2 & 0xfff | 0xf000;
     TPUA_CH11_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR0 = 0x80;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xff3f | 0x40;
+    tpu_a.HSRR0 = 0x80;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xff3f | 0x40;
     break;
   case 0x74:
     output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 & 0xef;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xfcff;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xefff;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xefff;
-    wVar2 = tpu_a_mcr.CFSR0;
-    tpu_a_mcr.CFSR0 = wVar2 & 0xfff0 | 0xf;
-    TPUA_CH12_PARAM0.PARAM0 = 0x113;
-    tpu_a_mcr.HSRR0 = 0x200;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xfcff | 0x100;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xfcff;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xefff;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xefff;
+    wVar2 = tpu_a.CFSR0;
+    tpu_a.CFSR0 = wVar2 & 0xfff0 | 0xf;
+    tpu_a_channel_12_parameters.PARAM0 = 0x113;
+    tpu_a.HSRR0 = 0x200;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xfcff | 0x100;
     break;
   case 0x75:
     output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 & 0xdf;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xf3ff;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xdfff;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xdfff;
-    wVar2 = tpu_a_mcr.CFSR0;
-    tpu_a_mcr.CFSR0 = wVar2 & 0xff0f | 0xf0;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xf3ff;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xdfff;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xdfff;
+    wVar2 = tpu_a.CFSR0;
+    tpu_a.CFSR0 = wVar2 & 0xff0f | 0xf0;
     TPUA_CH13_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR0 = 0x800;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xf3ff | 0x400;
+    tpu_a.HSRR0 = 0x800;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xf3ff | 0x400;
     break;
   case 0x76:
     output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 & 0xbf;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xcfff;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0xbfff;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0xbfff;
-    wVar2 = tpu_a_mcr.CFSR0;
-    tpu_a_mcr.CFSR0 = wVar2 & 0xf0ff | 0xf00;
-    TPUA_CH14_PARAM0.PARAM0 = 0x113;
-    tpu_a_mcr.HSRR0 = 0x2000;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0xcfff | 0x1000;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xcfff;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0xbfff;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0xbfff;
+    wVar2 = tpu_a.CFSR0;
+    tpu_a.CFSR0 = wVar2 & 0xf0ff | 0xf00;
+    tpu_a_channel_14_parameters.PARAM0 = 0x113;
+    tpu_a.HSRR0 = 0x2000;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0xcfff | 0x1000;
     break;
   case 0x77:
     output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 & 0x7f;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0x3fff;
-    wVar2 = tpu_a_mcr.CIER;
-    tpu_a_mcr.CIER = wVar2 & 0x7fff;
-    wVar2 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar2 & 0x7fff;
-    wVar2 = tpu_a_mcr.CFSR0;
-    tpu_a_mcr.CFSR0 = wVar2 & 0xfff | 0xf000;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0x3fff;
+    wVar2 = tpu_a.CIER;
+    tpu_a.CIER = wVar2 & 0x7fff;
+    wVar2 = tpu_a.CISR;
+    tpu_a.CISR = wVar2 & 0x7fff;
+    wVar2 = tpu_a.CFSR0;
+    tpu_a.CFSR0 = wVar2 & 0xfff | 0xf000;
     TPUA_CH15_PARAM0 = 0x113;
-    tpu_a_mcr.HSRR0 = 0x8000;
-    wVar2 = tpu_a_mcr.CPR0;
-    tpu_a_mcr.CPR0 = wVar2 & 0x3fff | 0x4000;
+    tpu_a.HSRR0 = 0x8000;
+    wVar2 = tpu_a.CPR0;
+    tpu_a.CPR0 = wVar2 & 0x3fff | 0x4000;
     break;
   case 0x78:
   default:
@@ -57910,11 +57916,11 @@ switchD_00051448_default:
     goto switchD_00051448_default;
   case 0x7c:
     output_line_state.lines_120_to_127 = output_line_state.lines_120_to_127 & 0xef;
-    mios_mdasm15.SCRD = 0x205;
+    mios_mdasm15.SCR = 0x205;
     break;
   case 0x7d:
     output_line_state.lines_120_to_127 = output_line_state.lines_120_to_127 & 0xdf;
-    mios_mdasm27.SCRD = 0x205;
+    mios_mdasm27.SCR = 0x205;
     break;
   case 0x7e:
     goto switchD_00051448_default;
@@ -58049,14 +58055,14 @@ void cm848_refreshOutputPortsAndReadback(void)
   output_line_read_back.lines_144_to_151 = supervisor_register_146_output_value;
   supervisor_register_146_output_value = output_line_state.lines_144_to_151;
   cm848_queueSupervisorOutputWrite();
-  wVar9 = mios_mdasm15.SCRD;
+  wVar9 = mios_mdasm15.SCR;
   if ((wVar9 & 0x8000) == 0) {
     bVar7 = output_line_read_back.lines_120_to_127 & 0xef;
   }
   else {
     bVar7 = output_line_read_back.lines_120_to_127 | 0x10;
   }
-  wVar9 = mios_mdasm27.SCRD;
+  wVar9 = mios_mdasm27.SCR;
   if ((wVar9 & 0x8000) == 0) {
     output_line_read_back.lines_120_to_127 = bVar7 & 0xdf;
   }
@@ -58125,14 +58131,14 @@ void cm848_refreshOutputPortsAndReadback(void)
   else {
     wVar9 = 0x405;
   }
-  mios_mdasm15.SCRD = wVar9;
+  mios_mdasm15.SCR = wVar9;
   if ((output_line_state.lines_120_to_127 & 0x20) == 0) {
     wVar9 = 0x205;
   }
   else {
     wVar9 = 0x405;
   }
-  mios_mdasm27.SCRD = wVar9;
+  mios_mdasm27.SCR = wVar9;
   if ((output_line_state.lines_128_to_135 & 4) == 0) {
     wVar9 = mios_mpwmsm0.SCR;
     uVar12 = wVar9 & 0xf7ff;
@@ -58213,7 +58219,7 @@ void cm848_refreshOutputPortsAndReadback(void)
       uVar3 = uVar11 & 0xffff;
       iVar5 = (int)uVar3 >> 3;
       iVar15 = uVar3 + iVar5 * -8;
-      puVar14 = (ushort *)((int)&tpu_b_mcr + iVar5 * -2 + 0x1e);
+      puVar14 = (ushort *)((int)&tpu_b + iVar5 * -2 + 0x1e);
       uVar1 = iVar15 * 2;
       iVar10 = (int)(uint)uVar12 >> 3;
       iVar6 = (int)uVar3 >> 2;
@@ -58222,32 +58228,32 @@ void cm848_refreshOutputPortsAndReadback(void)
         iVar10 = uVar3 + iVar5 * -8;
         *puVar14 = *puVar14 & ~(ushort)(3 << (iVar15 * 2 & 0x3fU)) |
                    (ushort)(0 << (iVar10 * 2 & 0x3fU));
-        wVar9 = tpu_b_mcr.CIER;
-        tpu_b_mcr.CIER = wVar9 & ~(ushort)(1 << (uVar11 & 0x3f));
-        wVar9 = tpu_b_mcr.CISR;
-        tpu_b_mcr.CISR = wVar9 & ~(ushort)(1 << (uVar11 & 0x3f));
+        wVar9 = tpu_b.CIER;
+        tpu_b.CIER = wVar9 & ~(ushort)(1 << (uVar11 & 0x3f));
+        wVar9 = tpu_b.CISR;
+        tpu_b.CISR = wVar9 & ~(ushort)(1 << (uVar11 & 0x3f));
         iVar15 = uVar3 + iVar6 * -4;
-        puVar16 = (ushort *)((int)&tpu_b_mcr + iVar6 * -2 + 0x12);
+        puVar16 = (ushort *)((int)&tpu_b + iVar6 * -2 + 0x12);
         *puVar16 = *puVar16 & ~(ushort)(0xf << (iVar15 * 4 & 0x3cU)) |
                    (ushort)(0xf << (iVar15 * 4 & 0x3cU));
-        (&tpu_b_ch0_param0)[uVar3].PARAM0 = 0x113;
+        (&tpu_b_channel_0_parameters)[uVar3].PARAM0 = 0x113;
         uVar17 = (undefined2)(2 << (iVar10 * 2 & 0x3fU));
       }
       else {
         iVar15 = uVar3 + iVar5 * -8;
         *puVar14 = *puVar14 & ~(ushort)(3 << (uVar1 & 0x3f)) | (ushort)(0 << (iVar15 * 2 & 0x3fU));
-        wVar9 = tpu_b_mcr.CIER;
-        tpu_b_mcr.CIER = wVar9 & ~(ushort)(1 << (uVar11 & 0x3f));
-        wVar9 = tpu_b_mcr.CISR;
-        tpu_b_mcr.CISR = wVar9 & ~(ushort)(1 << (uVar11 & 0x3f));
+        wVar9 = tpu_b.CIER;
+        tpu_b.CIER = wVar9 & ~(ushort)(1 << (uVar11 & 0x3f));
+        wVar9 = tpu_b.CISR;
+        tpu_b.CISR = wVar9 & ~(ushort)(1 << (uVar11 & 0x3f));
         iVar10 = uVar3 + iVar6 * -4;
-        puVar16 = (ushort *)((int)&tpu_b_mcr + iVar6 * -2 + 0x12);
+        puVar16 = (ushort *)((int)&tpu_b + iVar6 * -2 + 0x12);
         *puVar16 = *puVar16 & ~(ushort)(0xf << (iVar10 * 4 & 0x3cU)) |
                    (ushort)(0xf << (iVar10 * 4 & 0x3cU));
-        (&tpu_b_ch0_param0)[uVar3].PARAM0 = 0x113;
+        (&tpu_b_channel_0_parameters)[uVar3].PARAM0 = 0x113;
         uVar17 = (undefined2)(1 << (iVar15 * 2 & 0x3fU));
       }
-      *(undefined2 *)((int)&tpu_b_mcr + iVar5 * -2 + 0x1a) = uVar17;
+      *(undefined2 *)((int)&tpu_b + iVar5 * -2 + 0x1a) = uVar17;
       *puVar14 = *puVar14 & ~(ushort)(3 << (uVar1 & 0x3f)) |
                  (ushort)(1 << ((uVar3 + iVar5 * -8) * 2 & 0x3f));
     }
@@ -58256,7 +58262,7 @@ void cm848_refreshOutputPortsAndReadback(void)
       uVar3 = uVar11 & 0xffff;
       iVar5 = (int)uVar3 >> 3;
       iVar15 = uVar3 + iVar5 * -8;
-      puVar14 = (ushort *)((int)&tpu_a_mcr + iVar5 * -2 + 0x1e);
+      puVar14 = (ushort *)((int)&tpu_a + iVar5 * -2 + 0x1e);
       uVar1 = iVar15 * 2;
       iVar10 = (int)(uint)uVar12 >> 3;
       iVar6 = (int)uVar3 >> 2;
@@ -58265,32 +58271,32 @@ void cm848_refreshOutputPortsAndReadback(void)
         iVar13 = uVar3 + iVar5 * -8;
         *puVar14 = *puVar14 & ~(ushort)(3 << (iVar15 * 2 & 0x3fU)) |
                    (ushort)(0 << (iVar13 * 2 & 0x3fU));
-        wVar9 = tpu_a_mcr.CIER;
-        tpu_a_mcr.CIER = wVar9 & ~(ushort)(1 << (uVar11 & 0x3f));
-        wVar9 = tpu_a_mcr.CISR;
-        tpu_a_mcr.CISR = wVar9 & ~(ushort)(1 << (uVar11 & 0x3f));
+        wVar9 = tpu_a.CIER;
+        tpu_a.CIER = wVar9 & ~(ushort)(1 << (uVar11 & 0x3f));
+        wVar9 = tpu_a.CISR;
+        tpu_a.CISR = wVar9 & ~(ushort)(1 << (uVar11 & 0x3f));
         iVar10 = uVar3 + iVar6 * -4;
-        puVar16 = (ushort *)((int)&tpu_a_mcr + iVar6 * -2 + 0x12);
+        puVar16 = (ushort *)((int)&tpu_a + iVar6 * -2 + 0x12);
         *puVar16 = *puVar16 & ~(ushort)(0xf << (iVar10 * 4 & 0x3cU)) |
                    (ushort)(0xf << (iVar10 * 4 & 0x3cU));
-        (&tpu_a_ch0_param0)[uVar3].PARAM0 = 0x113;
+        (&tpu_a_channel_0_parameters)[uVar3].PARAM0 = 0x113;
         uVar17 = (undefined2)(2 << (iVar13 * 2 & 0x3fU));
       }
       else {
         iVar10 = uVar3 + iVar5 * -8;
         *puVar14 = *puVar14 & ~(ushort)(3 << (uVar1 & 0x3f)) | (ushort)(0 << (iVar10 * 2 & 0x3fU));
-        wVar9 = tpu_a_mcr.CIER;
-        tpu_a_mcr.CIER = wVar9 & ~(ushort)(1 << (uVar11 & 0x3f));
-        wVar9 = tpu_a_mcr.CISR;
-        tpu_a_mcr.CISR = wVar9 & ~(ushort)(1 << (uVar11 & 0x3f));
+        wVar9 = tpu_a.CIER;
+        tpu_a.CIER = wVar9 & ~(ushort)(1 << (uVar11 & 0x3f));
+        wVar9 = tpu_a.CISR;
+        tpu_a.CISR = wVar9 & ~(ushort)(1 << (uVar11 & 0x3f));
         iVar15 = uVar3 + iVar6 * -4;
-        puVar16 = (ushort *)((int)&tpu_a_mcr + iVar6 * -2 + 0x12);
+        puVar16 = (ushort *)((int)&tpu_a + iVar6 * -2 + 0x12);
         *puVar16 = *puVar16 & ~(ushort)(0xf << (iVar15 * 4 & 0x3cU)) |
                    (ushort)(0xf << (iVar15 * 4 & 0x3cU));
-        (&tpu_a_ch0_param0)[uVar3].PARAM0 = 0x113;
+        (&tpu_a_channel_0_parameters)[uVar3].PARAM0 = 0x113;
         uVar17 = (undefined2)(1 << (iVar10 * 2 & 0x3fU));
       }
-      *(undefined2 *)((int)&tpu_a_mcr + iVar5 * -2 + 0x1a) = uVar17;
+      *(undefined2 *)((int)&tpu_a + iVar5 * -2 + 0x1a) = uVar17;
       *puVar14 = *puVar14 & ~(ushort)(3 << (uVar1 & 0x3f)) |
                  (ushort)(1 << ((uVar3 + iVar5 * -8) * 2 & 0x3f));
     }
@@ -58334,49 +58340,49 @@ void cm848_refreshInputLineImage(void)
   input_line_image.lines_8_to_15 = mios_port_copy.byte_1;
   mios_port_copy.byte_0 = (byte)(wVar2 >> 8);
   input_line_image.lines_16_to_23 = mios_port_copy.byte_0;
-  wVar2 = mios_mdasm11.SCRD;
+  wVar2 = mios_mdasm11.SCR;
   if ((wVar2 & 0x8000) == 0) {
     bVar3 = input_line_image.lines_120_to_127 & 0xfe;
   }
   else {
     bVar3 = input_line_image.lines_120_to_127 | 1;
   }
-  wVar2 = mios_mdasm12.SCRD;
+  wVar2 = mios_mdasm12.SCR;
   if ((wVar2 & 0x8000) == 0) {
     bVar3 = bVar3 & 0xfd;
   }
   else {
     bVar3 = bVar3 | 2;
   }
-  wVar2 = mios_mdasm15.SCRD;
+  wVar2 = mios_mdasm15.SCR;
   if ((wVar2 & 0x8000) == 0) {
     bVar3 = bVar3 & 0xef;
   }
   else {
     bVar3 = bVar3 | 0x10;
   }
-  wVar2 = mios_mdasm27.SCRD;
+  wVar2 = mios_mdasm27.SCR;
   if ((wVar2 & 0x8000) == 0) {
     bVar3 = bVar3 & 0xdf;
   }
   else {
     bVar3 = bVar3 | 0x20;
   }
-  wVar2 = mios_mdasm28.SCRD;
+  wVar2 = mios_mdasm28.SCR;
   if ((wVar2 & 0x8000) == 0) {
     bVar3 = bVar3 & 0xbf;
   }
   else {
     bVar3 = bVar3 | 0x40;
   }
-  wVar2 = mios_mdasm29.SCRD;
+  wVar2 = mios_mdasm29.SCR;
   if ((wVar2 & 0x8000) == 0) {
     input_line_image.lines_120_to_127 = bVar3 & 0x7f;
   }
   else {
     input_line_image.lines_120_to_127 = bVar3 | 0x80;
   }
-  wVar2 = mios_mdasm30.SCRD;
+  wVar2 = mios_mdasm30.SCR;
   if ((wVar2 & 0x8000) == 0) {
     bVar3 = input_line_image.lines_128_to_135 & 0xfe;
   }
@@ -59160,8 +59166,8 @@ void mpc555_enableSchedulerMiosOutput(void)
   ushort uVar1;
   word wVar2;
   
-  wVar2 = mios1_sched_ctrl;
-  mios1_sched_ctrl = wVar2 | 0x600;
+  wVar2 = MIOS1LVL0;
+  MIOS1LVL0 = wVar2 | 0x600;
   uVar1 = USIU_SIMASK._0_2_;
   USIU_SIMASK._0_2_ = uVar1 | 4;
   return;
@@ -59228,23 +59234,23 @@ void mpc555_systemStartupInitialization(word param_1)
   uint in_BAR;
   
   USIU_SIUMCR = 0x402000;
-  USIU_BR0.OR1 = 0xfffc0000;
-  dVar1 = USIU_BR0.OR1;
-  USIU_BR0.OR1 = dVar1 | 0x20;
-  USIU_BR0.BR1 = 0x400821;
+  usiu_memory_controller.OR1 = 0xfffc0000;
+  dVar1 = usiu_memory_controller.OR1;
+  usiu_memory_controller.OR1 = dVar1 | 0x20;
+  usiu_memory_controller.BR1 = 0x400821;
   mios_mpiosm32.data_direction = 0x2000;
-  USIU_INITCFG = 0x2026;
+  USIU_SGPIOCR = 0x2026;
   USIU_SYPCR = 0xb;
-  USIU_PISCR.PISCR = 0x105;
-  USIU_PISCR.PITC = 4999;
+  usiu_periodic_interrupt_timer.PISCR = 0x105;
+  usiu_periodic_interrupt_timer.PITC = 4999;
   Ram00307f80 = 0;
-  USIU_SCCR.PLPRCR = 0x1304001;
-  USIU_SCCR.SCCR = 0xe010000;
-  USIU_SCCR.VSRMCR = 0x400;
-  mios1_ext_816 = 0x8000;
-  mios_mmcsm_cnt.SCRD = 0x6f6;
-  mios_mmcsm_cnt.CNT = 0;
-  mios_mmcsm_cnt.ML = 0;
+  usiu_clocks_and_reset.PLPRCR = 0x1304001;
+  usiu_clocks_and_reset.SCCR = 0xe010000;
+  usiu_clocks_and_reset.VSRMCR = 0x400;
+  MIOS_MCPSMSCR = 0x8000;
+  mios_mmcsm6.SCR = 0x6f6;
+  mios_mmcsm6.CNT = 0;
+  mios_mmcsm6.ML = 0;
   USIU_TBSCR = 1;
   TBLw = 0;
   TBUw = 0;
@@ -59282,13 +59288,13 @@ void cm848_applicationMain(void)
   dword in_SPRG2;
   word local_20 [2];
   
-  qsmcm_sccr0 = 0;
+  QSMCM_QDSCI_IL = 0;
   QSMCM_IDSPI_1 = 0;
-  qsmcm_sccr1.SCC1R1 = 0;
+  qsmcm_sci1.SCC1R1 = 0;
   mpc555_initTpuConfiguration();
   clearWorkingRam();
-  exception_reset_status = USIU_SCCR.RSR;
-  USIU_SCCR.RSR = 0xffff;
+  exception_reset_status = usiu_clocks_and_reset.RSR;
+  usiu_clocks_and_reset.RSR = 0xffff;
   exception_srr0 = in_SPRG0;
   exception_vector = in_SPRG1;
   exception_link_register = in_SPRG2;
@@ -59297,7 +59303,7 @@ void cm848_applicationMain(void)
   copyCalibrationFromRomToRam();
   run_location = RUN_LOCATION_NORMAL;
   initQadcModule();
-  qsmcm_sccr0 = 5;
+  QSMCM_QDSCI_IL = 5;
   QSMCM_IDSPI_1 = 3;
   mpc555_initQsmcmQspiModule();
   cm848_initEepromDriverAndLoadMirror();
@@ -59721,7 +59727,7 @@ void cm848_restartApplicationWithoutReset(void)
 //
 
 /* Output feedback check on an MDASM channel in input mode (mpc555_miosSetChannelInputMode):
-   compares the captured edges (AR:BR non-zero) and the pin state (SCRD bit 15) with the commanded
+   compares the captured edges (AR:BR non-zero) and the pin state (SCR bit 15) with the commanded
    duty (1/256 % per count; 25600 = 100 %) and returns 0 when they agree / 1 when the pin is high or
    toggling where it should be low / 2 when it is low or toggling where it should be high; then
    clears AR:BR. Its only callers are the read-feedback slots cm848_tpuBReadBackChannel4 / 6 / 7 /
@@ -59737,18 +59743,18 @@ word mpc555_miosCheckChannelFeedback(mios_mdasm_t *channel_registers,int command
   
   feedback_result = 0;
   if (commanded_duty == 0) {
-    if ((channel_registers->AR_BR == 0) && ((channel_registers->SCRD & 0x8000) == 0))
+    if ((channel_registers->AR_BR == 0) && ((channel_registers->SCR & 0x8000) == 0))
     goto LAB_00054e9c;
   }
   else {
     if (0x63ff < commanded_duty) {
-      if ((channel_registers->AR_BR != 0) || ((channel_registers->SCRD & 0x8000) == 0)) {
+      if ((channel_registers->AR_BR != 0) || ((channel_registers->SCR & 0x8000) == 0)) {
         feedback_result = 2;
       }
       goto LAB_00054e9c;
     }
     if (channel_registers->AR_BR != 0) goto LAB_00054e9c;
-    if ((channel_registers->SCRD & 0x8000) == 0) {
+    if ((channel_registers->SCR & 0x8000) == 0) {
       feedback_result = 2;
       goto LAB_00054e9c;
     }
@@ -59765,7 +59771,7 @@ LAB_00054e9c:
 // Function: mpc555_miosSetChannelInputMode @ 0x00054eac
 //
 
-/* Writes mode 1 to an MDASM channel's status/control register (SCRD) - an input mode (the MPC555
+/* Writes mode 1 to an MDASM channel's status/control register (SCR) - an input mode (the MPC555
    manual's input pulse-width measurement) so pin edges latch into AR / BR for
    mpc555_miosCheckChannelFeedback. Called by the read-back enables cm848_tpuBReadBackChannel4 / 6 /
    7 / 10EnablePwm right before they start their TPU-B channel. Was cm848_miosChannelDisable |
@@ -59775,7 +59781,7 @@ LAB_00054e9c:
 void mpc555_miosSetChannelInputMode(mios_mdasm_t *channel_registers)
 
 {
-  channel_registers->SCRD = 1;
+  channel_registers->SCR = 1;
   return;
 }
 
@@ -59785,7 +59791,7 @@ void mpc555_miosSetChannelInputMode(mios_mdasm_t *channel_registers)
 // Function: mpc555_miosEnableChannelPwm @ 0x00054eb8
 //
 
-/* Writes mode 9 to an MDASM channel's status/control register (SCRD) - output PWM (the MPC555
+/* Writes mode 9 to an MDASM channel's status/control register (SCR) - output PWM (the MPC555
    manual's OPWM; the same channels' duty and period slots program AR / BR and the MMCSM22 period).
    Output channel driver table slot +0 for MDASM11-15 / 27-31 (cm848_miosChannel{N}EnablePwm). Was
    cm848_miosChannelEnable | review-function-readability reviewed 2026-11-13 - Readability Medium
@@ -59794,7 +59800,7 @@ void mpc555_miosSetChannelInputMode(mios_mdasm_t *channel_registers)
 void mpc555_miosEnableChannelPwm(mios_mdasm_t *channel_registers)
 
 {
-  channel_registers->SCRD = 9;
+  channel_registers->SCR = 9;
   return;
 }
 
@@ -59815,8 +59821,8 @@ void mpc555_miosSetChannelPwmDuty(mios_mdasm_t *channel_registers,word duty)
 
 {
   undefined4 compare_register_pair;
-  word modulus_start_value;
   word modulus_period_value;
+  word modulus_start_value;
   
   if (duty < 0x6400) {
     if (duty == 0) {
@@ -59978,20 +59984,20 @@ void mpc555_tpuBEnablePwmChannel(uint channel)
   iVar3 = (int)channel >> 3;
   iVar6 = channel + (iVar3 + (uint)((int)channel < 0 && (channel & 7) != 0)) * -8;
   uVar1 = iVar6 * 2;
-  puVar5 = (ushort *)((int)&tpu_b_mcr + iVar3 * -2 + 0x1e);
+  puVar5 = (ushort *)((int)&tpu_b + iVar3 * -2 + 0x1e);
   *puVar5 = *puVar5 & ~(ushort)(3 << (uVar1 & 0x3f)) | (ushort)(0 << (iVar6 * 2 & 0x3fU));
-  wVar2 = tpu_b_mcr.CIER;
-  tpu_b_mcr.CIER = wVar2 & ~(ushort)(1 << (channel & 0x3f));
-  wVar2 = tpu_b_mcr.CISR;
-  tpu_b_mcr.CISR = wVar2 & ~(ushort)(1 << (channel & 0x3f));
+  wVar2 = tpu_b.CIER;
+  tpu_b.CIER = wVar2 & ~(ushort)(1 << (channel & 0x3f));
+  wVar2 = tpu_b.CISR;
+  tpu_b.CISR = wVar2 & ~(ushort)(1 << (channel & 0x3f));
   iVar4 = channel + (((int)channel >> 2) + (uint)((int)channel < 0 && (channel & 3) != 0)) * -4;
-  puVar7 = (ushort *)((int)&tpu_b_mcr + ((int)channel >> 2) * -2 + 0x12);
+  puVar7 = (ushort *)((int)&tpu_b + ((int)channel >> 2) * -2 + 0x12);
   *puVar7 = *puVar7 & ~(ushort)(0xf << (iVar4 * 4 & 0x3cU)) | (ushort)(7 << (iVar4 * 4 & 0x3cU));
-  (&tpu_b_ch0_param0)[channel].PARAM0 = 0;
-  (&tpu_b_ch0_param0)[channel].PARAM1 = 0x8000;
-  puVar7 = (ushort *)((int)&tpu_b_mcr + iVar3 * -2 + 0x16);
+  (&tpu_b_channel_0_parameters)[channel].PARAM0 = 0;
+  (&tpu_b_channel_0_parameters)[channel].PARAM1 = 0x8000;
+  puVar7 = (ushort *)((int)&tpu_b + iVar3 * -2 + 0x16);
   *puVar7 = *puVar7 & ~(ushort)(3 << (uVar1 & 0x3f)) | (ushort)(0 << (iVar6 * 2 & 0x3fU));
-  *(short *)((int)&tpu_b_mcr + iVar3 * -2 + 0x1a) = (short)(3 << (iVar6 * 2 & 0x3fU));
+  *(short *)((int)&tpu_b + iVar3 * -2 + 0x1a) = (short)(3 << (iVar6 * 2 & 0x3fU));
   *puVar5 = *puVar5 & ~(ushort)(3 << (uVar1 & 0x3f)) | (ushort)(1 << (iVar6 * 2 & 0x3fU));
   return;
 }
@@ -60015,8 +60021,8 @@ void mpc555_tpuBSetPwmDuty(int channel,word duty)
   uint uVar2;
   undefined4 local_8;
   
-  uVar2._0_2_ = (&tpu_b_ch0_param0)[channel].PARAM0;
-  uVar2._2_2_ = (&tpu_b_ch0_param0)[channel].PARAM1;
+  uVar2._0_2_ = (&tpu_b_channel_0_parameters)[channel].PARAM0;
+  uVar2._2_2_ = (&tpu_b_channel_0_parameters)[channel].PARAM1;
   uVar1 = uVar2._2_2_;
   if (duty < 0x6400) {
     if (duty == 0) {
@@ -60026,8 +60032,8 @@ void mpc555_tpuBSetPwmDuty(int channel,word duty)
       uVar1 = (short)(((uVar2 & 0xffff) * (uint)duty) / 0x6400);
     }
   }
-  (&tpu_b_ch0_param0)[channel].PARAM0 = uVar1;
-  (&tpu_b_ch0_param0)[channel].PARAM1 = uVar2._2_2_;
+  (&tpu_b_channel_0_parameters)[channel].PARAM0 = uVar1;
+  (&tpu_b_channel_0_parameters)[channel].PARAM1 = uVar2._2_2_;
   return;
 }
 
@@ -60052,8 +60058,8 @@ void mpc555_tpuBSetPwmPeriodMicroseconds(int channel,uint period_microseconds)
   uint uVar3;
   undefined4 local_8;
   
-  uVar3._0_2_ = (&tpu_b_ch0_param0)[channel].PARAM0;
-  uVar3._2_2_ = (&tpu_b_ch0_param0)[channel].PARAM1;
+  uVar3._0_2_ = (&tpu_b_channel_0_parameters)[channel].PARAM0;
+  uVar3._2_2_ = (&tpu_b_channel_0_parameters)[channel].PARAM1;
   uVar3 = ((uVar3 >> 0x10) * 0x6400) / (uVar3 & 0xffff);
   if (period_microseconds < 0x19997) {
     uVar1 = (period_microseconds * 0xa001) / 0x20004;
@@ -60070,8 +60076,8 @@ void mpc555_tpuBSetPwmPeriodMicroseconds(int channel,uint period_microseconds)
       uVar2 = (short)((uVar1 * (uVar3 & 0xffff)) / 0x6400);
     }
   }
-  (&tpu_b_ch0_param0)[channel].PARAM0 = uVar2;
-  (&tpu_b_ch0_param0)[channel].PARAM1 = (short)uVar1;
+  (&tpu_b_channel_0_parameters)[channel].PARAM0 = uVar2;
+  (&tpu_b_channel_0_parameters)[channel].PARAM1 = (short)uVar1;
   return;
 }
 
@@ -60101,20 +60107,20 @@ void mpc555_tpuAEnablePwmChannel(uint channel)
   iVar3 = (int)channel >> 3;
   iVar6 = channel + (iVar3 + (uint)((int)channel < 0 && (channel & 7) != 0)) * -8;
   uVar1 = iVar6 * 2;
-  puVar5 = (ushort *)((int)&tpu_a_mcr + iVar3 * -2 + 0x1e);
+  puVar5 = (ushort *)((int)&tpu_a + iVar3 * -2 + 0x1e);
   *puVar5 = *puVar5 & ~(ushort)(3 << (uVar1 & 0x3f)) | (ushort)(0 << (iVar6 * 2 & 0x3fU));
-  wVar2 = tpu_a_mcr.CIER;
-  tpu_a_mcr.CIER = wVar2 & ~(ushort)(1 << (channel & 0x3f));
-  wVar2 = tpu_a_mcr.CISR;
-  tpu_a_mcr.CISR = wVar2 & ~(ushort)(1 << (channel & 0x3f));
+  wVar2 = tpu_a.CIER;
+  tpu_a.CIER = wVar2 & ~(ushort)(1 << (channel & 0x3f));
+  wVar2 = tpu_a.CISR;
+  tpu_a.CISR = wVar2 & ~(ushort)(1 << (channel & 0x3f));
   iVar4 = channel + (((int)channel >> 2) + (uint)((int)channel < 0 && (channel & 3) != 0)) * -4;
-  puVar7 = (ushort *)((int)&tpu_a_mcr + ((int)channel >> 2) * -2 + 0x12);
+  puVar7 = (ushort *)((int)&tpu_a + ((int)channel >> 2) * -2 + 0x12);
   *puVar7 = *puVar7 & ~(ushort)(0xf << (iVar4 * 4 & 0x3cU)) | (ushort)(7 << (iVar4 * 4 & 0x3cU));
-  (&tpu_a_ch0_param0)[channel].PARAM0 = 0;
-  (&tpu_a_ch0_param0)[channel].PARAM1 = 0x8000;
-  puVar7 = (ushort *)((int)&tpu_a_mcr + iVar3 * -2 + 0x16);
+  (&tpu_a_channel_0_parameters)[channel].PARAM0 = 0;
+  (&tpu_a_channel_0_parameters)[channel].PARAM1 = 0x8000;
+  puVar7 = (ushort *)((int)&tpu_a + iVar3 * -2 + 0x16);
   *puVar7 = *puVar7 & ~(ushort)(3 << (uVar1 & 0x3f)) | (ushort)(0 << (iVar6 * 2 & 0x3fU));
-  *(short *)((int)&tpu_a_mcr + iVar3 * -2 + 0x1a) = (short)(3 << (iVar6 * 2 & 0x3fU));
+  *(short *)((int)&tpu_a + iVar3 * -2 + 0x1a) = (short)(3 << (iVar6 * 2 & 0x3fU));
   *puVar5 = *puVar5 & ~(ushort)(3 << (uVar1 & 0x3f)) | (ushort)(1 << (iVar6 * 2 & 0x3fU));
   return;
 }
@@ -60138,8 +60144,8 @@ void mpc555_tpuASetPwmDuty(int channel,word duty)
   uint uVar2;
   undefined4 local_8;
   
-  uVar2._0_2_ = (&tpu_a_ch0_param0)[channel].PARAM0;
-  uVar2._2_2_ = (&tpu_a_ch0_param0)[channel].PARAM1;
+  uVar2._0_2_ = (&tpu_a_channel_0_parameters)[channel].PARAM0;
+  uVar2._2_2_ = (&tpu_a_channel_0_parameters)[channel].PARAM1;
   uVar1 = uVar2._2_2_;
   if (duty < 0x6400) {
     if (duty == 0) {
@@ -60149,8 +60155,8 @@ void mpc555_tpuASetPwmDuty(int channel,word duty)
       uVar1 = (short)(((uVar2 & 0xffff) * (uint)duty) / 0x6400);
     }
   }
-  (&tpu_a_ch0_param0)[channel].PARAM0 = uVar1;
-  (&tpu_a_ch0_param0)[channel].PARAM1 = uVar2._2_2_;
+  (&tpu_a_channel_0_parameters)[channel].PARAM0 = uVar1;
+  (&tpu_a_channel_0_parameters)[channel].PARAM1 = uVar2._2_2_;
   return;
 }
 
@@ -60176,8 +60182,8 @@ void mpc555_tpuASetPwmPeriodMicroseconds(int channel,uint period_microseconds)
   uint uVar3;
   undefined4 local_8;
   
-  uVar3._0_2_ = (&tpu_a_ch0_param0)[channel].PARAM0;
-  uVar3._2_2_ = (&tpu_a_ch0_param0)[channel].PARAM1;
+  uVar3._0_2_ = (&tpu_a_channel_0_parameters)[channel].PARAM0;
+  uVar3._2_2_ = (&tpu_a_channel_0_parameters)[channel].PARAM1;
   uVar3 = ((uVar3 >> 0x10) * 0x6400) / (uVar3 & 0xffff);
   if (period_microseconds < 0x3333) {
     uVar1 = (period_microseconds * 0x5000a) / 0x20004;
@@ -60194,8 +60200,8 @@ void mpc555_tpuASetPwmPeriodMicroseconds(int channel,uint period_microseconds)
       uVar2 = (short)((uVar1 * (uVar3 & 0xffff)) / 0x6400);
     }
   }
-  (&tpu_a_ch0_param0)[channel].PARAM0 = uVar2;
-  (&tpu_a_ch0_param0)[channel].PARAM1 = (short)uVar1;
+  (&tpu_a_channel_0_parameters)[channel].PARAM0 = uVar2;
+  (&tpu_a_channel_0_parameters)[channel].PARAM1 = (short)uVar1;
   return;
 }
 
@@ -60211,16 +60217,16 @@ void initQadcModule(void)
   ushort *puVar1;
   uint uVar2;
   
-  QADC64A_MCR.MCR = 0;
-  QADC64A_MCR.PORTQA_B = 0;
-  QADC64A_MCR.CCW = 0x1f7;
-  QADC64B_MCR.MCR = 0;
-  QADC64B_MCR.PORTQA_B = 0;
-  QADC64B_MCR.CCW = 0x81f7;
-  QADC64A_MCR.RJURR = 0;
-  QADC64A_MCR.LJSRR = 0x1100;
-  QADC64B_MCR.RJURR = 0;
-  QADC64B_MCR.LJSRR = 0x1100;
+  qadc64_a.MCR = 0;
+  qadc64_a.PORTQA_B = 0;
+  qadc64_a.QACR0 = 0x1f7;
+  qadc64_b.MCR = 0;
+  qadc64_b.PORTQA_B = 0;
+  qadc64_b.QACR0 = 0x81f7;
+  qadc64_a.QACR1 = 0;
+  qadc64_a.QACR2 = 0x1100;
+  qadc64_b.QACR1 = 0;
+  qadc64_b.QACR2 = 0x1100;
   uVar2 = 0;
   puVar1 = (ushort *)&UNK_003049fe;
   do {
@@ -60545,7 +60551,7 @@ void mpc555_initTpuConfiguration(void)
   word *pwVar4;
   ushort uVar5;
   
-  wVar1 = tpu_b_mcr.TPUMCR;
+  wVar1 = tpu_b.TPUMCR;
   if ((wVar1 & 0x400) != 0x400) {
     pwVar4 = dual_port_tpu_ram_load_table;
     do {
@@ -60563,18 +60569,18 @@ void mpc555_initTpuConfiguration(void)
       }
       pwVar4 = pwVar4 + 2;
     } while (pwVar4 < &first_checksum_region_end_marker);
-    tpu_b_mcr.TPUMCR = 0x4430;
-    tpu_b_mcr.R028 = 0x20;
-    tpu_b_mcr.R02A = 0x1e;
-    tpu_b_mcr.CIER = 0;
-    tpu_b_mcr.TICR = 0x200;
+    tpu_b.TPUMCR = 0x4430;
+    tpu_b.TPUMCR2 = 0x20;
+    tpu_b.TPUMCR3 = 0x1e;
+    tpu_b.CIER = 0;
+    tpu_b.TICR = 0x200;
     uVar5 = USIU_SIMASK._0_2_;
     USIU_SIMASK._0_2_ = uVar5 | 0x400;
-    tpu_a_mcr.TPUMCR = 0x4460;
-    tpu_a_mcr.R028 = 0x20;
-    tpu_a_mcr.R02A = 0;
-    tpu_a_mcr.CIER = 0;
-    tpu_a_mcr.TICR = 0x100;
+    tpu_a.TPUMCR = 0x4460;
+    tpu_a.TPUMCR2 = 0x20;
+    tpu_a.TPUMCR3 = 0;
+    tpu_a.CIER = 0;
+    tpu_a.TICR = 0x100;
     uVar5 = USIU_SIMASK._0_2_;
     USIU_SIMASK._0_2_ = uVar5 | 0x1000;
   }
@@ -60595,19 +60601,19 @@ void mpc555_tpuBInterruptDispatcher(void)
   uint uVar3;
   
   uVar3 = 0;
-  wVar2 = tpu_b_mcr.CISR;
-  wVar1 = tpu_b_mcr.CIER;
+  wVar2 = tpu_b.CISR;
+  wVar1 = tpu_b.CIER;
   if ((wVar2 & wVar1 & 1) == 0) {
     do {
       uVar3 = uVar3 + 1;
-      wVar2 = tpu_b_mcr.CISR;
-      wVar1 = tpu_b_mcr.CIER;
+      wVar2 = tpu_b.CISR;
+      wVar1 = tpu_b.CIER;
       if (((int)(uint)(wVar2 & wVar1) >> (uVar3 & 0x3f) & 1U) != 0) break;
     } while ((uVar3 & 0xff) < 0x10);
   }
   if ((uVar3 & 0xff) < 0x10) {
-    wVar1 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar1 & ~(ushort)(1 << (uVar3 & 0x3f));
+    wVar1 = tpu_b.CISR;
+    tpu_b.CISR = wVar1 & ~(ushort)(1 << (uVar3 & 0x3f));
     (*(code *)tpu_b_channel_interrupt_handler_table[uVar3 & 0xff])();
   }
   return;
@@ -60627,19 +60633,19 @@ void mpc555_tpuAInterruptDispatcher(void)
   uint uVar3;
   
   uVar3 = 0;
-  wVar2 = tpu_a_mcr.CISR;
-  wVar1 = tpu_a_mcr.CIER;
+  wVar2 = tpu_a.CISR;
+  wVar1 = tpu_a.CIER;
   if ((wVar2 & wVar1 & 1) == 0) {
     do {
       uVar3 = uVar3 + 1;
-      wVar2 = tpu_a_mcr.CISR;
-      wVar1 = tpu_a_mcr.CIER;
+      wVar2 = tpu_a.CISR;
+      wVar1 = tpu_a.CIER;
       if (((int)(uint)(wVar2 & wVar1) >> (uVar3 & 0x3f) & 1U) != 0) break;
     } while ((uVar3 & 0xff) < 0x10);
   }
   if ((uVar3 & 0xff) < 0x10) {
-    wVar1 = tpu_a_mcr.CISR;
-    tpu_a_mcr.CISR = wVar1 & ~(ushort)(1 << (uVar3 & 0x3f));
+    wVar1 = tpu_a.CISR;
+    tpu_a.CISR = wVar1 & ~(ushort)(1 << (uVar3 & 0x3f));
     (*(code *)tpu_a_channel_interrupt_handler_table[uVar3 & 0xff])();
   }
   return;
@@ -73794,8 +73800,8 @@ void cm848_turbochargerSpeedSensorInterruptHandler(void)
   
   turbocharger_speed_sensor_pulse_period_working = DAT_00304518;
   DAT_00304518 = 0;
-  wVar1 = tpu_b_mcr.CISR;
-  tpu_b_mcr.CISR = wVar1 & 0xfffd;
+  wVar1 = tpu_b.CISR;
+  tpu_b.CISR = wVar1 & 0xfffd;
   turbocharger_speed_sensor_timeout_timer = turbocharger_speed_sensor_timeout;
   return;
 }
@@ -73818,25 +73824,25 @@ void cm848_initializeTurbochargerSpeedSensorChannel(void)
 {
   word wVar1;
   
-  wVar1 = tpu_b_mcr.CPR1;
-  tpu_b_mcr.CPR1 = wVar1 & 0xfff3;
-  wVar1 = tpu_b_mcr.CIER;
-  tpu_b_mcr.CIER = wVar1 & 0xfffd;
-  wVar1 = tpu_b_mcr.CISR;
-  tpu_b_mcr.CISR = wVar1 & 0xfffd;
-  wVar1 = tpu_b_mcr.CFSR3;
-  tpu_b_mcr.CFSR3 = wVar1 & 0xff0f | 0xd0;
+  wVar1 = tpu_b.CPR1;
+  tpu_b.CPR1 = wVar1 & 0xfff3;
+  wVar1 = tpu_b.CIER;
+  tpu_b.CIER = wVar1 & 0xfffd;
+  wVar1 = tpu_b.CISR;
+  tpu_b.CISR = wVar1 & 0xfffd;
+  wVar1 = tpu_b.CFSR3;
+  tpu_b.CFSR3 = wVar1 & 0xff0f | 0xd0;
   DAT_00304512 = turbocharger_speed_sensor_pulses_per_interrupt << 8;
   DAT_00304516 = 0;
   DAT_00304518 = 0;
   TPUB_CH1_PARAM0 = 7;
-  wVar1 = tpu_b_mcr.HSQR1;
-  tpu_b_mcr.HSQR1 = wVar1 & 0xfff3 | 8;
-  tpu_b_mcr.HSRR1 = 0xc;
-  wVar1 = tpu_b_mcr.CPR1;
-  tpu_b_mcr.CPR1 = wVar1 & 0xfff3 | 8;
-  wVar1 = tpu_b_mcr.CIER;
-  tpu_b_mcr.CIER = wVar1 | 2;
+  wVar1 = tpu_b.HSQR1;
+  tpu_b.HSQR1 = wVar1 & 0xfff3 | 8;
+  tpu_b.HSRR1 = 0xc;
+  wVar1 = tpu_b.CPR1;
+  tpu_b.CPR1 = wVar1 & 0xfff3 | 8;
+  wVar1 = tpu_b.CIER;
+  tpu_b.CIER = wVar1 | 2;
   if (turbocharger_speed_sensor_configuration == 0) {
     output_line_state.lines_48_to_55 = output_line_state.lines_48_to_55 & 0xfd;
   }
@@ -78012,27 +78018,27 @@ void cm848_measureRadiatorFanSpeed(void)
                                   1000000 >> 0x20),
                             (uint)radiator_fan_pulses_per_measurement_end_of_line * 60000000) /
                   (ulonglong)radiator_fan_pulses_per_revolution);
-      wVar1 = tpu_b_mcr.CIER;
-      tpu_b_mcr.CIER = wVar1 & 0xfdff;
-      wVar1 = tpu_b_mcr.CPR0;
-      tpu_b_mcr.CPR0 = wVar1 & 0xfff3;
-      wVar1 = tpu_b_mcr.CIER;
-      tpu_b_mcr.CIER = wVar1 & 0xfdff;
-      wVar1 = tpu_b_mcr.CISR;
-      tpu_b_mcr.CISR = wVar1 & 0xfdff;
-      wVar1 = tpu_b_mcr.CFSR1;
-      tpu_b_mcr.CFSR1 = wVar1 & 0xff0f | 0xd0;
+      wVar1 = tpu_b.CIER;
+      tpu_b.CIER = wVar1 & 0xfdff;
+      wVar1 = tpu_b.CPR0;
+      tpu_b.CPR0 = wVar1 & 0xfff3;
+      wVar1 = tpu_b.CIER;
+      tpu_b.CIER = wVar1 & 0xfdff;
+      wVar1 = tpu_b.CISR;
+      tpu_b.CISR = wVar1 & 0xfdff;
+      wVar1 = tpu_b.CFSR1;
+      tpu_b.CFSR1 = wVar1 & 0xff0f | 0xd0;
       DAT_00304592 = radiator_fan_pulses_per_measurement_end_of_line << 8;
       DAT_00304596 = 0;
       DAT_00304598 = 0;
       TPUB_CH9_PARAM0 = 0xb;
-      wVar1 = tpu_b_mcr.HSQR0;
-      tpu_b_mcr.HSQR0 = wVar1 & 0xfff3 | 0xc;
-      tpu_b_mcr.HSRR0 = 0xc;
-      wVar1 = tpu_b_mcr.CPR0;
-      tpu_b_mcr.CPR0 = wVar1 & 0xfff3 | 8;
-      wVar1 = tpu_b_mcr.CIER;
-      tpu_b_mcr.CIER = wVar1 | 0x200;
+      wVar1 = tpu_b.HSQR0;
+      tpu_b.HSQR0 = wVar1 & 0xfff3 | 0xc;
+      tpu_b.HSRR0 = 0xc;
+      wVar1 = tpu_b.CPR0;
+      tpu_b.CPR0 = wVar1 & 0xfff3 | 8;
+      wVar1 = tpu_b.CIER;
+      tpu_b.CIER = wVar1 | 0x200;
       radiator_fan_input_configured_for_type_5100_flag = 1;
     }
     radiator_fan_input_was_type_5100_flag = 1;
@@ -78043,27 +78049,27 @@ void cm848_measureRadiatorFanSpeed(void)
       radiator_fan_speed_numerator =
            (dword)(CONCAT44((int)((ulonglong)(uVar3 * 0x3c) * 1000000 >> 0x20),uVar3 * 60000000) /
                   (ulonglong)radiator_fan_pulses_per_revolution);
-      wVar1 = tpu_b_mcr.CIER;
-      tpu_b_mcr.CIER = wVar1 & 0xfdff;
-      wVar1 = tpu_b_mcr.CPR0;
-      tpu_b_mcr.CPR0 = wVar1 & 0xfff3;
-      wVar1 = tpu_b_mcr.CIER;
-      tpu_b_mcr.CIER = wVar1 & 0xfdff;
-      wVar1 = tpu_b_mcr.CISR;
-      tpu_b_mcr.CISR = wVar1 & 0xfdff;
-      wVar1 = tpu_b_mcr.CFSR1;
-      tpu_b_mcr.CFSR1 = wVar1 & 0xff0f | 0xd0;
+      wVar1 = tpu_b.CIER;
+      tpu_b.CIER = wVar1 & 0xfdff;
+      wVar1 = tpu_b.CPR0;
+      tpu_b.CPR0 = wVar1 & 0xfff3;
+      wVar1 = tpu_b.CIER;
+      tpu_b.CIER = wVar1 & 0xfdff;
+      wVar1 = tpu_b.CISR;
+      tpu_b.CISR = wVar1 & 0xfdff;
+      wVar1 = tpu_b.CFSR1;
+      tpu_b.CFSR1 = wVar1 & 0xff0f | 0xd0;
       DAT_00304592 = (ushort)radiator_fan_pulses_per_measurement << 8;
       DAT_00304596 = 0;
       DAT_00304598 = 0;
       TPUB_CH9_PARAM0 = 0xb;
-      wVar1 = tpu_b_mcr.HSQR0;
-      tpu_b_mcr.HSQR0 = wVar1 & 0xfff3 | 0xc;
-      tpu_b_mcr.HSRR0 = 0xc;
-      wVar1 = tpu_b_mcr.CPR0;
-      tpu_b_mcr.CPR0 = wVar1 & 0xfff3 | 8;
-      wVar1 = tpu_b_mcr.CIER;
-      tpu_b_mcr.CIER = wVar1 | 0x200;
+      wVar1 = tpu_b.HSQR0;
+      tpu_b.HSQR0 = wVar1 & 0xfff3 | 0xc;
+      tpu_b.HSRR0 = 0xc;
+      wVar1 = tpu_b.CPR0;
+      tpu_b.CPR0 = wVar1 & 0xfff3 | 8;
+      wVar1 = tpu_b.CIER;
+      tpu_b.CIER = wVar1 | 0x200;
       radiator_fan_input_was_type_5100_flag = 0;
     }
     radiator_fan_input_configured_for_type_5100_flag = 0;
@@ -78178,38 +78184,38 @@ void cm848_configureRadiatorFanSpeedInput(void)
   word wVar2;
   
   if (end_of_line_test_settings_cal.field_mode_register == 0x13ec) {
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xfff3;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xfdff;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xfdff;
-    wVar2 = tpu_b_mcr.CFSR1;
-    tpu_b_mcr.CFSR1 = wVar2 & 0xff0f | 0xd0;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xfff3;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xfdff;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xfdff;
+    wVar2 = tpu_b.CFSR1;
+    tpu_b.CFSR1 = wVar2 & 0xff0f | 0xd0;
     sVar1 = radiator_fan_pulses_per_measurement_end_of_line << 8;
   }
   else {
-    wVar2 = tpu_b_mcr.CPR0;
-    tpu_b_mcr.CPR0 = wVar2 & 0xfff3;
-    wVar2 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar2 & 0xfdff;
-    wVar2 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar2 & 0xfdff;
-    wVar2 = tpu_b_mcr.CFSR1;
-    tpu_b_mcr.CFSR1 = wVar2 & 0xff0f | 0xd0;
+    wVar2 = tpu_b.CPR0;
+    tpu_b.CPR0 = wVar2 & 0xfff3;
+    wVar2 = tpu_b.CIER;
+    tpu_b.CIER = wVar2 & 0xfdff;
+    wVar2 = tpu_b.CISR;
+    tpu_b.CISR = wVar2 & 0xfdff;
+    wVar2 = tpu_b.CFSR1;
+    tpu_b.CFSR1 = wVar2 & 0xff0f | 0xd0;
     sVar1 = (ushort)radiator_fan_pulses_per_measurement << 8;
   }
   DAT_00304592 = sVar1;
   DAT_00304596 = 0;
   DAT_00304598 = 0;
   TPUB_CH9_PARAM0 = 0xb;
-  wVar2 = tpu_b_mcr.HSQR0;
-  tpu_b_mcr.HSQR0 = wVar2 & 0xfff3 | 0xc;
-  tpu_b_mcr.HSRR0 = 0xc;
-  wVar2 = tpu_b_mcr.CPR0;
-  tpu_b_mcr.CPR0 = wVar2 & 0xfff3 | 8;
-  wVar2 = tpu_b_mcr.CIER;
-  tpu_b_mcr.CIER = wVar2 | 0x200;
+  wVar2 = tpu_b.HSQR0;
+  tpu_b.HSQR0 = wVar2 & 0xfff3 | 0xc;
+  tpu_b.HSRR0 = 0xc;
+  wVar2 = tpu_b.CPR0;
+  tpu_b.CPR0 = wVar2 & 0xfff3 | 8;
+  wVar2 = tpu_b.CIER;
+  tpu_b.CIER = wVar2 | 0x200;
   return;
 }
 
@@ -82902,8 +82908,8 @@ void cm848_sciStartTransmit(void)
   
   sci_transmit_byte_count = sci_transmit_byte_count - 1;
   sci_buffer_cursor = (dword)sci_buffer;
-  wVar1 = qsmcm_sccr1.SC1SR;
-  qsmcm_sccr1.SC1DR = (ushort)sci_buffer[0];
+  wVar1 = qsmcm_sci1.SC1SR;
+  qsmcm_sci1.SC1DR = (ushort)sci_buffer[0];
   cm848_sciEnableSerialMode();
   return;
 }
@@ -82923,25 +82929,25 @@ void cm848_sciReceiveHandler(void)
 {
   word wVar1;
   
-  wVar1 = qsmcm_sccr1.SC1SR;
+  wVar1 = qsmcm_sci1.SC1SR;
   if ((wVar1 & 4) == 0) {
     if (((wVar1 & 8) == 0) && ((wVar1 & 2) == 0)) {
-      wVar1 = qsmcm_sccr1.SC1DR;
+      wVar1 = qsmcm_sci1.SC1DR;
       sci_buffer[sci_transmit_byte_count] = (byte)wVar1;
-      wVar1 = qsmcm_sccr1.SCC1R1;
-      qsmcm_sccr1.SCC1R1 = wVar1 & 0xffdf;
+      wVar1 = qsmcm_sci1.SCC1R1;
+      qsmcm_sci1.SCC1R1 = wVar1 & 0xffdf;
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
       sci_byte_pending = 1;
       return;
     }
     sci_mode_flags = sci_mode_flags & 0xfd;
-    qsmcm_sccr1.SCC1R0 = 0xa0;
+    qsmcm_sci1.SCC1R0 = 0xa0;
     sci_next_byte_handler = cm848_dispatchSciCommand;
   }
   else if (sci_receive_error_count != 0xff) {
     sci_receive_error_count = sci_receive_error_count + 1;
   }
-  wVar1 = qsmcm_sccr1.SC1DR;
+  wVar1 = qsmcm_sci1.SC1DR;
   return;
 }
 
@@ -82961,7 +82967,7 @@ void cm848_sciTransmitHandler(void)
 {
   word wVar1;
   
-  wVar1 = qsmcm_sccr1.SC1SR;
+  wVar1 = qsmcm_sci1.SC1SR;
   if (sci_transmit_byte_count == 0) {
     if ((sci_mode_flags & 2) == 0) {
       wVar1 = 0xa0;
@@ -82969,14 +82975,14 @@ void cm848_sciTransmitHandler(void)
     else {
       wVar1 = 0x14;
     }
-    qsmcm_sccr1.SCC1R0 = wVar1;
+    qsmcm_sci1.SCC1R0 = wVar1;
     cm848_sciEndTransfer();
     cm848_sciEndTransfer();
   }
   else {
     sci_transmit_byte_count = sci_transmit_byte_count - 1;
     sci_buffer_cursor = sci_buffer_cursor + 1;
-    qsmcm_sccr1.SC1DR = (ushort)*(byte *)sci_buffer_cursor;
+    qsmcm_sci1.SC1DR = (ushort)*(byte *)sci_buffer_cursor;
   }
   return;
 }
@@ -83017,10 +83023,10 @@ void cm848_sciEndTransfer(void)
   sci_transfer_direction = 0;
   cm848_sciResetBuffer();
   sci_byte_pending = 0;
-  wVar1 = qsmcm_sccr1.SCC1R1;
-  qsmcm_sccr1.SCC1R1 = wVar1 & 0xffbf;
-  wVar1 = qsmcm_sccr1.SCC1R1;
-  qsmcm_sccr1.SCC1R1 = wVar1 | 0x20;
+  wVar1 = qsmcm_sci1.SCC1R1;
+  qsmcm_sci1.SCC1R1 = wVar1 & 0xffbf;
+  wVar1 = qsmcm_sci1.SCC1R1;
+  qsmcm_sci1.SCC1R1 = wVar1 | 0x20;
   return;
 }
 
@@ -83040,8 +83046,8 @@ void cm848_sciEnableSerialMode(void)
   word wVar1;
   
   sci_transfer_direction = 1;
-  wVar1 = qsmcm_sccr1.SCC1R1;
-  qsmcm_sccr1.SCC1R1 = wVar1 | 0x40;
+  wVar1 = qsmcm_sci1.SCC1R1;
+  qsmcm_sci1.SCC1R1 = wVar1 | 0x40;
   return;
 }
 
@@ -83061,9 +83067,9 @@ void cm848_sciInitPort1(void)
   ushort uVar1;
   word wVar2;
   
-  qsmcm_sccr1.SCC1R0 = 0xa0;
-  wVar2 = qsmcm_sccr1.SC1SR;
-  qsmcm_sccr1.SCC1R1 = 0x102c;
+  qsmcm_sci1.SCC1R0 = 0xa0;
+  wVar2 = qsmcm_sci1.SC1SR;
+  qsmcm_sci1.SCC1R1 = 0x102c;
   uVar1 = USIU_SIMASK._0_2_;
   USIU_SIMASK._0_2_ = uVar1 | 0x10;
   return;
@@ -87071,7 +87077,7 @@ void cm848_updateTripAndLifetimeCounters(void)
       if ((vehicle_speed != 0) && (uVar2 != 0)) {
         if ((vehicle_speed_pulse_timeout == 0) && (trip_counter_pulse_timeout_previous != 0)) {
           trip_counter_pulse_delta_raw =
-               (&tpu_b_ch0_param0)[vehicle_speed_sensor_tpu_channel].PARAM1 & 0xff;
+               (&tpu_b_channel_0_parameters)[vehicle_speed_sensor_tpu_channel].PARAM1 & 0xff;
         }
         else if (vehicle_speed_sensor_pulse_total < trip_counter_pulse_total_previous) {
           trip_counter_pulse_delta_raw =
@@ -87614,7 +87620,7 @@ void cm848_runImmobilizerTask(void)
   }
   *pwVar4 = wVar2;
   if (immobilizer_present_flag != 0) {
-    wVar2 = mios_mdasm30.SCRD;
+    wVar2 = mios_mdasm30.SCR;
     if ((wVar2 & 0x8000) == 0) {
       cm848_resetImmobilizerHandshake();
       immobilizer_handshake_status_flags = immobilizer_handshake_status_flags & 0xf0;
@@ -89455,49 +89461,51 @@ void cm848_vehicleSpeedSensorInterruptHandler(void)
     DAT_003fd078 = DAT_003fd078 + 1;
     if (1 < DAT_003fd078) {
       uVar5 = (uint)vehicle_speed_sensor_tpu_channel;
-      vehicle_speed_sensor_tachograph_pulse_width._0_2_ = (&tpu_b_ch0_param0)[uVar5].PARAM4;
-      vehicle_speed_sensor_tachograph_pulse_width._2_2_ = (&tpu_b_ch0_param0)[uVar5].PARAM5;
+      vehicle_speed_sensor_tachograph_pulse_width._0_2_ =
+           (&tpu_b_channel_0_parameters)[uVar5].PARAM4;
+      vehicle_speed_sensor_tachograph_pulse_width._2_2_ =
+           (&tpu_b_channel_0_parameters)[uVar5].PARAM5;
       vehicle_speed_sensor_tachograph_pulse_width_valid_flag = 1;
       iVar2 = uVar5 + ((int)uVar5 >> 3) * -8;
-      puVar4 = (ushort *)((int)&tpu_b_mcr + ((int)uVar5 >> 3) * -2 + 0x1e);
+      puVar4 = (ushort *)((int)&tpu_b + ((int)uVar5 >> 3) * -2 + 0x1e);
       *puVar4 = *puVar4 & ~(ushort)(3 << (iVar2 * 2 & 0x3fU)) | (ushort)(0 << (iVar2 * 2 & 0x3fU));
-      wVar1 = tpu_b_mcr.CIER;
-      tpu_b_mcr.CIER = wVar1 & ~(ushort)(1 << (uVar5 & 0x3f));
-      wVar1 = tpu_b_mcr.CISR;
-      tpu_b_mcr.CISR = wVar1 & ~(ushort)(1 << (vehicle_speed_sensor_tpu_channel & 0x3f));
+      wVar1 = tpu_b.CIER;
+      tpu_b.CIER = wVar1 & ~(ushort)(1 << (uVar5 & 0x3f));
+      wVar1 = tpu_b.CISR;
+      tpu_b.CISR = wVar1 & ~(ushort)(1 << (vehicle_speed_sensor_tpu_channel & 0x3f));
       uVar5 = (uint)vehicle_speed_sensor_tpu_channel;
       iVar2 = uVar5 + ((int)uVar5 >> 2) * -4;
-      puVar4 = (ushort *)((int)&tpu_b_mcr + ((int)uVar5 >> 2) * -2 + 0x12);
+      puVar4 = (ushort *)((int)&tpu_b + ((int)uVar5 >> 2) * -2 + 0x12);
       *puVar4 = *puVar4 & ~(ushort)(0xf << (iVar2 * 4 & 0x3cU)) |
                 (ushort)(0xd << (iVar2 * 4 & 0x3cU));
-      (&tpu_b_ch0_param0)[uVar5].PARAM1 = 0x100;
-      (&tpu_b_ch0_param0)[uVar5].PARAM3 = 0;
-      (&tpu_b_ch0_param0)[uVar5].PARAM4 = 0;
-      (&tpu_b_ch0_param0)[uVar5].PARAM5 = 0;
-      (&tpu_b_ch0_param0)[uVar5].PARAM0 = 0xb;
+      (&tpu_b_channel_0_parameters)[uVar5].PARAM1 = 0x100;
+      (&tpu_b_channel_0_parameters)[uVar5].PARAM3 = 0;
+      (&tpu_b_channel_0_parameters)[uVar5].PARAM4 = 0;
+      (&tpu_b_channel_0_parameters)[uVar5].PARAM5 = 0;
+      (&tpu_b_channel_0_parameters)[uVar5].PARAM0 = 0xb;
       iVar2 = (int)uVar5 >> 3;
       iVar3 = uVar5 + iVar2 * -8;
-      puVar4 = (ushort *)((int)&tpu_b_mcr + iVar2 * -2 + 0x16);
+      puVar4 = (ushort *)((int)&tpu_b + iVar2 * -2 + 0x16);
       *puVar4 = *puVar4 & ~(ushort)(3 << (iVar3 * 2 & 0x3fU)) | (ushort)(3 << (iVar3 * 2 & 0x3fU));
-      *(short *)((int)&tpu_b_mcr + iVar2 * -2 + 0x1a) = (short)(3 << (iVar3 * 2 & 0x3fU));
-      puVar4 = (ushort *)((int)&tpu_b_mcr + iVar2 * -2 + 0x1e);
+      *(short *)((int)&tpu_b + iVar2 * -2 + 0x1a) = (short)(3 << (iVar3 * 2 & 0x3fU));
+      puVar4 = (ushort *)((int)&tpu_b + iVar2 * -2 + 0x1e);
       *puVar4 = *puVar4 & ~(ushort)(3 << (iVar3 * 2 & 0x3fU)) | (ushort)(2 << (iVar3 * 2 & 0x3fU));
-      wVar1 = tpu_b_mcr.CIER;
-      tpu_b_mcr.CIER = wVar1 | (ushort)(1 << (vehicle_speed_sensor_tpu_channel & 0x3f));
+      wVar1 = tpu_b.CIER;
+      tpu_b.CIER = wVar1 | (ushort)(1 << (vehicle_speed_sensor_tpu_channel & 0x3f));
     }
   }
   else if (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_TACHOGRAPH) {
-    vehicle_speed_sensor_period._0_2_ = (&tpu_b_ch0_param0)[vehicle_speed_sensor_tpu_channel].PARAM4
-    ;
-    vehicle_speed_sensor_period._2_2_ = (&tpu_b_ch0_param0)[vehicle_speed_sensor_tpu_channel].PARAM5
-    ;
+    vehicle_speed_sensor_period._0_2_ =
+         (&tpu_b_channel_0_parameters)[vehicle_speed_sensor_tpu_channel].PARAM4;
+    vehicle_speed_sensor_period._2_2_ =
+         (&tpu_b_channel_0_parameters)[vehicle_speed_sensor_tpu_channel].PARAM5;
   }
   else {
-    vehicle_speed_sensor_period._0_2_ = (&tpu_b_ch0_param0)[vehicle_speed_sensor_tpu_channel].PARAM4
-    ;
-    vehicle_speed_sensor_period._2_2_ = (&tpu_b_ch0_param0)[vehicle_speed_sensor_tpu_channel].PARAM5
-    ;
-    (&tpu_b_ch0_param0)[vehicle_speed_sensor_tpu_channel].PARAM4 = 0;
+    vehicle_speed_sensor_period._0_2_ =
+         (&tpu_b_channel_0_parameters)[vehicle_speed_sensor_tpu_channel].PARAM4;
+    vehicle_speed_sensor_period._2_2_ =
+         (&tpu_b_channel_0_parameters)[vehicle_speed_sensor_tpu_channel].PARAM5;
+    (&tpu_b_channel_0_parameters)[vehicle_speed_sensor_tpu_channel].PARAM4 = 0;
     vehicle_speed_sensor_pulse_total = vehicle_speed_sensor_pulse_total + DAT_003fd07a;
   }
   if ((engine_speed_from_backup_sensor_flag == 0) &&
@@ -89546,46 +89554,46 @@ void cm848_initVehicleSpeedSensorChannel(void)
     DAT_003fd078 = 0;
     vehicle_speed_sensor_tachograph_pulse_width = 0;
     vehicle_speed_sensor_tachograph_pulse_width_valid_flag = 0;
-    wVar1 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar1 & 0xffcf;
-    wVar1 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar1 & 0xfffb;
-    wVar1 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar1 & 0xfffb;
-    wVar1 = tpu_b_mcr.CFSR3;
-    tpu_b_mcr.CFSR3 = wVar1 & 0xf0ff | 0xd00;
+    wVar1 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar1 & 0xffcf;
+    wVar1 = tpu_b.CIER;
+    tpu_b.CIER = wVar1 & 0xfffb;
+    wVar1 = tpu_b.CISR;
+    tpu_b.CISR = wVar1 & 0xfffb;
+    wVar1 = tpu_b.CFSR3;
+    tpu_b.CFSR3 = wVar1 & 0xf0ff | 0xd00;
     DAT_00304522 = 0x100;
     DAT_00304526 = 0;
     DAT_00304528 = 0;
     TPUB_CH2_PARAM0 = 0xf;
-    wVar1 = tpu_b_mcr.HSQR1;
-    tpu_b_mcr.HSQR1 = wVar1 & 0xffcf;
-    tpu_b_mcr.HSRR1 = 0x30;
-    wVar1 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar1 & 0xffcf | 0x20;
-    wVar1 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar1 | 4;
+    wVar1 = tpu_b.HSQR1;
+    tpu_b.HSQR1 = wVar1 & 0xffcf;
+    tpu_b.HSRR1 = 0x30;
+    wVar1 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar1 & 0xffcf | 0x20;
+    wVar1 = tpu_b.CIER;
+    tpu_b.CIER = wVar1 | 4;
   }
   else {
-    wVar1 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar1 & 0xffcf;
-    wVar1 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar1 & 0xfffb;
-    wVar1 = tpu_b_mcr.CISR;
-    tpu_b_mcr.CISR = wVar1 & 0xfffb;
-    wVar1 = tpu_b_mcr.CFSR3;
-    tpu_b_mcr.CFSR3 = wVar1 & 0xf0ff | 0xd00;
+    wVar1 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar1 & 0xffcf;
+    wVar1 = tpu_b.CIER;
+    tpu_b.CIER = wVar1 & 0xfffb;
+    wVar1 = tpu_b.CISR;
+    tpu_b.CISR = wVar1 & 0xfffb;
+    wVar1 = tpu_b.CFSR3;
+    tpu_b.CFSR3 = wVar1 & 0xf0ff | 0xd00;
     DAT_00304522 = 0x100;
     DAT_00304526 = 0;
     DAT_00304528 = 0;
     TPUB_CH2_PARAM0 = 0xb;
-    wVar1 = tpu_b_mcr.HSQR1;
-    tpu_b_mcr.HSQR1 = wVar1 & 0xffcf | 0x30;
-    tpu_b_mcr.HSRR1 = 0x30;
-    wVar1 = tpu_b_mcr.CPR1;
-    tpu_b_mcr.CPR1 = wVar1 & 0xffcf | 0x20;
-    wVar1 = tpu_b_mcr.CIER;
-    tpu_b_mcr.CIER = wVar1 | 4;
+    wVar1 = tpu_b.HSQR1;
+    tpu_b.HSQR1 = wVar1 & 0xffcf | 0x30;
+    tpu_b.HSRR1 = 0x30;
+    wVar1 = tpu_b.CPR1;
+    tpu_b.CPR1 = wVar1 & 0xffcf | 0x20;
+    wVar1 = tpu_b.CIER;
+    tpu_b.CIER = wVar1 | 4;
     uVar2 = DAT_00304522;
     DAT_003fd07a = (undefined1)((ushort)uVar2 >> 8);
   }
@@ -89673,8 +89681,8 @@ void cm848_updateCylinderCutoutAndInjectionDemand(void)
         else {
           wVar1 = TPUA_CH4_PARAM0;
           TPUA_CH4_PARAM0 = wVar1 & 0x7fff;
-          wVar1 = tpu_channel_control.PARAM0;
-          tpu_channel_control.PARAM0 = wVar1 & 0x7fff;
+          wVar1 = tpu_a_channel_9_parameters.PARAM0;
+          tpu_a_channel_9_parameters.PARAM0 = wVar1 & 0x7fff;
         }
         if (cylinder_cutout_expiry_limit != 0) {
           cylinder_cutout_expiry_count = cylinder_cutout_expiry_count + 1;
@@ -90255,7 +90263,7 @@ LAB_00528338:
   TPUA_CH10_PARAM0 = uVar2 << 0xc | (ushort)injection_tpu_period_parameter_address;
   DAT_003041a2 = (ushort)((uVar5 & 0xff) << 8) | uVar7 & 0xff;
   DAT_003041a6 = 0;
-  tpu_a_mcr.HSRR0 = 0x30;
+  tpu_a.HSRR0 = 0x30;
   return;
 }
 
@@ -90307,18 +90315,18 @@ void cm848_tpu_configuration_setup(void)
   word wVar1;
   
   injection_end_limit_base_cached_axis_offset = 2;
-  wVar1 = tpu_a_mcr.CPR0;
-  tpu_a_mcr.CPR0 = wVar1 & 0xffcf;
-  wVar1 = tpu_a_mcr.CFSR1;
-  tpu_a_mcr.CFSR1 = wVar1 & 0xf0ff | 0x900;
-  wVar1 = tpu_a_mcr.HSQR0;
-  tpu_a_mcr.HSQR0 = wVar1 & 0xffcf;
-  tpu_a_mcr.HSRR0 = 0x30;
-  wVar1 = tpu_a_mcr.CIER;
-  tpu_a_mcr.CIER = wVar1 | 0x400;
+  wVar1 = tpu_a.CPR0;
+  tpu_a.CPR0 = wVar1 & 0xffcf;
+  wVar1 = tpu_a.CFSR1;
+  tpu_a.CFSR1 = wVar1 & 0xf0ff | 0x900;
+  wVar1 = tpu_a.HSQR0;
+  tpu_a.HSQR0 = wVar1 & 0xffcf;
+  tpu_a.HSRR0 = 0x30;
+  wVar1 = tpu_a.CIER;
+  tpu_a.CIER = wVar1 | 0x400;
   TPUA_CH10_PARAM0 = injection_tpu_period_parameter_address | 0xa000;
-  wVar1 = tpu_a_mcr.CPR0;
-  tpu_a_mcr.CPR0 = wVar1 & 0xffcf | 0x10;
+  wVar1 = tpu_a.CPR0;
+  tpu_a.CPR0 = wVar1 & 0xffcf | 0x10;
   return;
 }
 
@@ -90471,16 +90479,16 @@ void cm848_selectCylinderInjector(int param_1)
         (((int)(uint)injector_diagnostic_bits_fast_decay >> (uVar4 & 0x3f) & 1U) != 0)))) {
       uVar3 = (uint)injection_cylinder_fault_index_offset;
     }
-    wVar1 = tpu_channel_control.PARAM0;
+    wVar1 = tpu_a_channel_9_parameters.PARAM0;
     iVar5 = param_1 + (uVar3 & 0xff);
-    tpu_channel_control.PARAM0 =
+    tpu_a_channel_9_parameters.PARAM0 =
          wVar1 & 0x8000 | (ushort)(&injection_injector_by_cylinder)[param_1] << 2 |
          (ushort)(&recharge_injector_by_cylinder)[iVar5 - (iVar5 / (int)uVar2) * uVar2];
     wVar1 = TPUA_CH7_PARAM4;
     TPUA_CH7_PARAM4 = wVar1 & 0x8000 | (ushort)injection_tpu_period_parameter_address;
     wVar1 = 0xc000;
   }
-  tpu_a_mcr.HSRR1 = wVar1;
+  tpu_a.HSRR1 = wVar1;
   return;
 }
 
@@ -90554,7 +90562,7 @@ void cm848_loadInjectorDriverCalibration(void)
                     (&tpu_a_channel_14_scale_by_battery_voltage_cached_axis_offset,
                      battery_voltage_sensor_filtered,tpu_a_channel_14_scale_by_battery_voltage_axis,
                      tpu_a_channel_14_scale_by_battery_voltage_values,0);
-  TPUA_CH14_PARAM0._0_4_ =
+  tpu_a_channel_14_parameters._0_4_ =
        ((uint)injector_driver_recharge_current_period_microseconds * (uint)wVar2) / 0xfff << 0x10 |
        (uint)injector_driver_recharge_current_period_microseconds;
   return;
@@ -90591,87 +90599,87 @@ void cm848_initializeInjectionHardware(void)
   cm848_loadInjectorDriverCalibration();
   cm848_clearLogicalOutputAndDriveLine(0x2f);
   cm848_clearLogicalOutputAndDriveLine(0x30);
-  wVar1 = tpu_a_mcr.CPR1;
-  tpu_a_mcr.CPR1 = wVar1 & 0xf3ff;
-  wVar1 = tpu_a_mcr.CFSR2;
-  tpu_a_mcr.CFSR2 = wVar1 & 0xff0f | 0x90;
-  wVar1 = tpu_a_mcr.HSQR1;
-  tpu_a_mcr.HSQR1 = wVar1 & 0xf3ff;
-  tpu_a_mcr.HSRR1 = 0xc00;
+  wVar1 = tpu_a.CPR1;
+  tpu_a.CPR1 = wVar1 & 0xf3ff;
+  wVar1 = tpu_a.CFSR2;
+  tpu_a.CFSR2 = wVar1 & 0xff0f | 0x90;
+  wVar1 = tpu_a.HSQR1;
+  tpu_a.HSQR1 = wVar1 & 0xf3ff;
+  tpu_a.HSRR1 = 0xc00;
   TPUA_CH5_PARAM0 = 0x5002;
-  wVar1 = tpu_a_mcr.CPR1;
-  tpu_a_mcr.CPR1 = wVar1 & 0xf3ff | 0xc00;
+  wVar1 = tpu_a.CPR1;
+  tpu_a.CPR1 = wVar1 & 0xf3ff | 0xc00;
   do {
-    wVar1 = tpu_a_mcr.HSRR1;
+    wVar1 = tpu_a.HSRR1;
   } while ((wVar1 & 0xc00) != 0);
-  wVar1 = tpu_a_mcr.CPR1;
-  tpu_a_mcr.CPR1 = wVar1 & 0xf3ff;
-  wVar1 = tpu_a_mcr.CPR1;
-  tpu_a_mcr.CPR1 = wVar1 & 0xffcf;
-  wVar1 = tpu_a_mcr.CFSR3;
-  tpu_a_mcr.CFSR3 = wVar1 & 0xf0ff | 0xb00;
-  wVar1 = tpu_a_mcr.HSQR1;
-  tpu_a_mcr.HSQR1 = wVar1 & 0xffcf | 0x10;
-  wVar1 = tpu_a_mcr.CIER;
-  tpu_a_mcr.CIER = wVar1 | 4;
+  wVar1 = tpu_a.CPR1;
+  tpu_a.CPR1 = wVar1 & 0xf3ff;
+  wVar1 = tpu_a.CPR1;
+  tpu_a.CPR1 = wVar1 & 0xffcf;
+  wVar1 = tpu_a.CFSR3;
+  tpu_a.CFSR3 = wVar1 & 0xf0ff | 0xb00;
+  wVar1 = tpu_a.HSQR1;
+  tpu_a.HSQR1 = wVar1 & 0xffcf | 0x10;
+  wVar1 = tpu_a.CIER;
+  tpu_a.CIER = wVar1 | 4;
   TPUA_CH2_PARAM3 = 0x28;
   wVar1 = TPUA_CH2_PARAM4;
   TPUA_CH2_PARAM4 = wVar1 & 0x7fff;
-  wVar1 = tpu_a_mcr.CPR1;
-  tpu_a_mcr.CPR1 = wVar1 & 0xffcf | 0x20;
-  wVar1 = tpu_a_mcr.CPR1;
-  tpu_a_mcr.CPR1 = wVar1 & 0xff3f;
-  wVar1 = tpu_a_mcr.CFSR3;
-  tpu_a_mcr.CFSR3 = wVar1 & 0xfff | 0xa000;
-  wVar1 = tpu_a_mcr.HSQR1;
-  tpu_a_mcr.HSQR1 = wVar1 & 0xff3f | 0x40;
-  tpu_a_mcr.HSRR1 = 0xc0;
-  wVar1 = tpu_a_mcr.CPR1;
-  tpu_a_mcr.CPR1 = wVar1 & 0xff3f | 0xc0;
+  wVar1 = tpu_a.CPR1;
+  tpu_a.CPR1 = wVar1 & 0xffcf | 0x20;
+  wVar1 = tpu_a.CPR1;
+  tpu_a.CPR1 = wVar1 & 0xff3f;
+  wVar1 = tpu_a.CFSR3;
+  tpu_a.CFSR3 = wVar1 & 0xfff | 0xa000;
+  wVar1 = tpu_a.HSQR1;
+  tpu_a.HSQR1 = wVar1 & 0xff3f | 0x40;
+  tpu_a.HSRR1 = 0xc0;
+  wVar1 = tpu_a.CPR1;
+  tpu_a.CPR1 = wVar1 & 0xff3f | 0xc0;
   wVar1 = TPUA_CH4_PARAM0;
   TPUA_CH4_PARAM0 = wVar1 & 0x7ffc | 0x8000;
-  wVar1 = tpu_a_mcr.CPR1;
-  tpu_a_mcr.CPR1 = wVar1 & 0xfcff;
-  wVar1 = tpu_a_mcr.CFSR2;
-  tpu_a_mcr.CFSR2 = wVar1 & 0xfff0 | 10;
-  wVar1 = tpu_a_mcr.HSQR1;
-  tpu_a_mcr.HSQR1 = wVar1 & 0xfcff;
-  tpu_a_mcr.HSRR1 = 0x300;
-  wVar1 = tpu_a_mcr.CPR1;
-  tpu_a_mcr.CPR1 = wVar1 & 0xfcff | 0x300;
-  wVar1 = tpu_a_mcr.CPR1;
-  tpu_a_mcr.CPR1 = wVar1 & 0x3fff;
-  wVar1 = tpu_a_mcr.CFSR2;
-  tpu_a_mcr.CFSR2 = wVar1 & 0xfff | 0xb000;
-  wVar1 = tpu_a_mcr.HSQR1;
-  tpu_a_mcr.HSQR1 = wVar1 & 0x3fff | 0x4000;
-  wVar1 = tpu_a_mcr.CIER;
-  tpu_a_mcr.CIER = wVar1 | 0x80;
+  wVar1 = tpu_a.CPR1;
+  tpu_a.CPR1 = wVar1 & 0xfcff;
+  wVar1 = tpu_a.CFSR2;
+  tpu_a.CFSR2 = wVar1 & 0xfff0 | 10;
+  wVar1 = tpu_a.HSQR1;
+  tpu_a.HSQR1 = wVar1 & 0xfcff;
+  tpu_a.HSRR1 = 0x300;
+  wVar1 = tpu_a.CPR1;
+  tpu_a.CPR1 = wVar1 & 0xfcff | 0x300;
+  wVar1 = tpu_a.CPR1;
+  tpu_a.CPR1 = wVar1 & 0x3fff;
+  wVar1 = tpu_a.CFSR2;
+  tpu_a.CFSR2 = wVar1 & 0xfff | 0xb000;
+  wVar1 = tpu_a.HSQR1;
+  tpu_a.HSQR1 = wVar1 & 0x3fff | 0x4000;
+  wVar1 = tpu_a.CIER;
+  tpu_a.CIER = wVar1 | 0x80;
   TPUA_CH7_PARAM3 = 0x28;
   wVar1 = TPUA_CH7_PARAM4;
   TPUA_CH7_PARAM4 = wVar1 & 0x7fff;
-  wVar1 = tpu_a_mcr.CPR1;
-  tpu_a_mcr.CPR1 = wVar1 & 0x3fff | 0x8000;
-  wVar1 = tpu_a_mcr.CPR0;
-  tpu_a_mcr.CPR0 = wVar1 & 0xfffc;
-  wVar1 = tpu_a_mcr.CFSR1;
-  tpu_a_mcr.CFSR1 = wVar1 & 0xfff0 | 10;
-  wVar1 = tpu_a_mcr.HSQR0;
-  tpu_a_mcr.HSQR0 = wVar1 & 0xfffc | 1;
-  tpu_a_mcr.HSRR0 = 3;
-  wVar1 = tpu_a_mcr.CPR0;
-  tpu_a_mcr.CPR0 = wVar1 & 0xfffc | 3;
-  wVar1 = tpu_channel_control.PARAM0;
-  tpu_channel_control.PARAM0 = wVar1 & 0x7ffc | 0x8000;
-  wVar1 = tpu_a_mcr.CPR0;
-  tpu_a_mcr.CPR0 = wVar1 & 0xfff3;
-  wVar1 = tpu_a_mcr.CFSR1;
-  tpu_a_mcr.CFSR1 = wVar1 & 0xff0f | 0xa0;
-  wVar1 = tpu_a_mcr.HSQR0;
-  tpu_a_mcr.HSQR0 = wVar1 & 0xfff3;
-  tpu_a_mcr.HSRR0 = 0xc;
-  wVar1 = tpu_a_mcr.CPR0;
-  tpu_a_mcr.CPR0 = wVar1 & 0xfff3 | 0xc;
+  wVar1 = tpu_a.CPR1;
+  tpu_a.CPR1 = wVar1 & 0x3fff | 0x8000;
+  wVar1 = tpu_a.CPR0;
+  tpu_a.CPR0 = wVar1 & 0xfffc;
+  wVar1 = tpu_a.CFSR1;
+  tpu_a.CFSR1 = wVar1 & 0xfff0 | 10;
+  wVar1 = tpu_a.HSQR0;
+  tpu_a.HSQR0 = wVar1 & 0xfffc | 1;
+  tpu_a.HSRR0 = 3;
+  wVar1 = tpu_a.CPR0;
+  tpu_a.CPR0 = wVar1 & 0xfffc | 3;
+  wVar1 = tpu_a_channel_9_parameters.PARAM0;
+  tpu_a_channel_9_parameters.PARAM0 = wVar1 & 0x7ffc | 0x8000;
+  wVar1 = tpu_a.CPR0;
+  tpu_a.CPR0 = wVar1 & 0xfff3;
+  wVar1 = tpu_a.CFSR1;
+  tpu_a.CFSR1 = wVar1 & 0xff0f | 0xa0;
+  wVar1 = tpu_a.HSQR0;
+  tpu_a.HSQR0 = wVar1 & 0xfff3;
+  tpu_a.HSRR0 = 0xc;
+  wVar1 = tpu_a.CPR0;
+  tpu_a.CPR0 = wVar1 & 0xfff3 | 0xc;
   TPUA_CH5_PARAM0 = 0;
   DAT_00304152 = 0;
   DAT_00304154 = 0;
@@ -90680,16 +90688,16 @@ void cm848_initializeInjectionHardware(void)
   DAT_0030415a = 0;
   DAT_0030415c = 0;
   DAT_0030415e = 0;
-  wVar1 = tpu_a_mcr.CPR0;
-  tpu_a_mcr.CPR0 = wVar1 & 0xcfff;
-  wVar1 = tpu_a_mcr.CFSR0;
-  tpu_a_mcr.CFSR0 = wVar1 & 0xf0ff | 0x700;
-  wVar1 = tpu_a_mcr.HSQR0;
-  tpu_a_mcr.HSQR0 = wVar1 & 0xcfff;
-  tpu_a_mcr.HSRR0 = 0x3000;
-  TPUA_CH14_PARAM0._0_4_ = (uint)injector_driver_recharge_current_period_microseconds;
-  wVar1 = tpu_a_mcr.CPR0;
-  tpu_a_mcr.CPR0 = wVar1 & 0xcfff | 0x1000;
+  wVar1 = tpu_a.CPR0;
+  tpu_a.CPR0 = wVar1 & 0xcfff;
+  wVar1 = tpu_a.CFSR0;
+  tpu_a.CFSR0 = wVar1 & 0xf0ff | 0x700;
+  wVar1 = tpu_a.HSQR0;
+  tpu_a.HSQR0 = wVar1 & 0xcfff;
+  tpu_a.HSRR0 = 0x3000;
+  tpu_a_channel_14_parameters._0_4_ = (uint)injector_driver_recharge_current_period_microseconds;
+  wVar1 = tpu_a.CPR0;
+  tpu_a.CPR0 = wVar1 & 0xcfff | 0x1000;
   cm848_miosPwm16Enable();
   cm848_miosPwm16SetPeriodMicroseconds(injector_driver_booster_voltage_pwm_period_microseconds);
   cm848_miosPwm16SetDuty(injector_driver_booster_voltage_level);
@@ -90759,8 +90767,8 @@ void cm848_monitorFuelSystemHardwareShutdown(void)
      (injector_driver_booster_recharge_off_delay != 0xffff)) {
     wVar3 = TPUA_CH4_PARAM0;
     TPUA_CH4_PARAM0 = wVar3 & 0x7fff;
-    wVar3 = tpu_channel_control.PARAM0;
-    tpu_channel_control.PARAM0 = wVar3 & 0x7fff;
+    wVar3 = tpu_a_channel_9_parameters.PARAM0;
+    tpu_a_channel_9_parameters.PARAM0 = wVar3 & 0x7fff;
     fuel_system_hardware_shutdown_check_enable_flag = 0;
   }
   if (engine_state == ENGINE_STATE_STOPPED) {
@@ -90775,8 +90783,8 @@ void cm848_monitorFuelSystemHardwareShutdown(void)
     if (injector_driver_booster_recharge_off_delay_counter != 0xffff) {
       wVar3 = TPUA_CH4_PARAM0;
       TPUA_CH4_PARAM0 = wVar3 | 0x8000;
-      wVar3 = tpu_channel_control.PARAM0;
-      tpu_channel_control.PARAM0 = wVar3 | 0x8000;
+      wVar3 = tpu_a_channel_9_parameters.PARAM0;
+      tpu_a_channel_9_parameters.PARAM0 = wVar3 | 0x8000;
     }
     injector_driver_booster_recharge_off_delay_counter = 0xffff;
     if (engine_state == ENGINE_STATE_SHUTDOWN) {
@@ -90942,7 +90950,7 @@ LAB_005295d8:
   TPUA_CH6_PARAM0 = injection_tpu_period_parameter_address | 0x6000;
   DAT_00304162 = CONCAT11(injection_timing_tooth_b,injection_timing_tooth_b_phase);
   DAT_00304166 = 0;
-  tpu_a_mcr.HSRR1 = 0x3000;
+  tpu_a.HSRR1 = 0x3000;
   injection_angle_sequence_state_prev = injection_angle_sequence_state;
   injection_angle_sequence_state = 2;
   return;
@@ -91149,7 +91157,7 @@ void cm848_scheduleInjectionAnglesInSpeedLimpHome(void)
       TPUA_CH6_PARAM0 = injection_tpu_period_parameter_address | 0x6000;
       DAT_00304162 = CONCAT11(injection_timing_tooth_b,injection_timing_tooth_b_phase);
       DAT_00304166 = 0;
-      tpu_a_mcr.HSRR1 = 0x3000;
+      tpu_a.HSRR1 = 0x3000;
       injection_angle_sequence_state_prev = injection_angle_sequence_state;
       injection_angle_sequence_state = 4;
     }
@@ -91195,7 +91203,7 @@ void cm848_scheduleInjectionAnglesInSpeedLimpHome(void)
     TPUA_CH6_PARAM0 = injection_tpu_period_parameter_address | 0x6000;
     DAT_00304162 = CONCAT11(injection_timing_tooth,injection_timing_tooth_phase);
     DAT_00304166 = 0;
-    tpu_a_mcr.HSRR1 = 0x3000;
+    tpu_a.HSRR1 = 0x3000;
     injection_angle_sequence_state_prev = injection_angle_sequence_state;
     injection_angle_sequence_state = 4;
   }
@@ -91262,7 +91270,7 @@ LAB_00529e34:
   TPUA_CH6_PARAM0 = 0x6002;
   DAT_00304162 = CONCAT11(injection_timing_tooth,injection_timing_tooth_phase);
   DAT_00304166 = 0;
-  tpu_a_mcr.HSRR1 = 0x3000;
+  tpu_a.HSRR1 = 0x3000;
   injection_angle_sequence_state_prev = injection_angle_sequence_state;
   injection_angle_sequence_state = 1;
   return;
@@ -91293,18 +91301,18 @@ void cm848_initializeInjectionAngleScheduler(void)
   
   injection_angle_sequence_state = 1;
   injection_tpu_period_parameter_address = 2;
-  wVar1 = tpu_a_mcr.CPR1;
-  tpu_a_mcr.CPR1 = wVar1 & 0xcfff;
-  wVar1 = tpu_a_mcr.CFSR2;
-  tpu_a_mcr.CFSR2 = wVar1 & 0xf0ff | 0x900;
-  wVar1 = tpu_a_mcr.HSQR1;
-  tpu_a_mcr.HSQR1 = wVar1 & 0xcfff;
-  tpu_a_mcr.HSRR1 = 0x3000;
-  wVar1 = tpu_a_mcr.CIER;
-  tpu_a_mcr.CIER = wVar1 | 0x40;
+  wVar1 = tpu_a.CPR1;
+  tpu_a.CPR1 = wVar1 & 0xcfff;
+  wVar1 = tpu_a.CFSR2;
+  tpu_a.CFSR2 = wVar1 & 0xf0ff | 0x900;
+  wVar1 = tpu_a.HSQR1;
+  tpu_a.HSQR1 = wVar1 & 0xcfff;
+  tpu_a.HSRR1 = 0x3000;
+  wVar1 = tpu_a.CIER;
+  tpu_a.CIER = wVar1 | 0x40;
   TPUA_CH6_PARAM0 = 0x6002;
-  wVar1 = tpu_a_mcr.CPR1;
-  tpu_a_mcr.CPR1 = wVar1 & 0xcfff | 0x1000;
+  wVar1 = tpu_a.CPR1;
+  tpu_a.CPR1 = wVar1 & 0xcfff | 0x1000;
   injection_timing_tooth_separation_per_cylinder =
        injection_timing_tooth_count / cylinder_event_count_max;
   return;
@@ -99876,7 +99884,7 @@ void cm848_monitorDiscreteOutputReadBack(void)
   
   if ((ignition_key_off_count_previous < ignition_key_off_count_cal) ||
      (supervisor_register_36_bit_1_low_held_flag != 0)) {
-    wVar1 = mios_mdasm30.SCRD;
+    wVar1 = mios_mdasm30.SCR;
     if (((wVar1 & 0x8000) != 0) && (supervisor_register_36_bit_1_low_flag == 0)) {
       if (logical_output_request_bits_40_to_47.intake_air_heater_1_request != 0) {
         cm848_clearLogicalOutputAndDriveLine(0x2b);
@@ -100782,7 +100790,7 @@ void cm848_saveEepromForPowerDown(void)
   sVar7 = cm848_isEepromMirrorSaveIdle();
   while (sVar7 == 0) {
     cm848_delayMicroseconds(0x13);
-    wVar6 = mios_mdasm30.SCRD;
+    wVar6 = mios_mdasm30.SCR;
     if ((wVar6 & 0x8000) == 0) {
       uVar8 = 0;
     }
@@ -100970,7 +100978,7 @@ void cm848_runPowerDownSequence(void)
     uVar6 = TBLr;
     for (uVar6 = (uVar6 >> 7 & 0xffff) - uVar5; (uVar6 & 0xffff) < 0x13;
         uVar6 = (uVar6 >> 7 & 0xffff) - uVar5) {
-      wVar4 = mios_mdasm30.SCRD;
+      wVar4 = mios_mdasm30.SCR;
       if ((wVar4 & 0x8000) != 0) {
         cm848_setLogicalOutputAndDriveLine(0x1b);
         restartOnKeyOnDuringPowerDown();
@@ -100985,7 +100993,7 @@ void cm848_runPowerDownSequence(void)
     bVar9 = bVar9 + 1;
     cm848_delayMicroseconds(0x186);
   } while (bVar9 < 4);
-  wVar4 = mios_mdasm30.SCRD;
+  wVar4 = mios_mdasm30.SCR;
   if ((wVar4 & 0x8000) != 0) {
     restartOnKeyOnDuringPowerDown();
   }
@@ -101009,7 +101017,7 @@ void cm848_runPowerDownSequence(void)
     uVar8 = uVar8 + 1;
   } while (uVar8 < 1000);
   do {
-    wVar4 = mios_mdasm30.SCRD;
+    wVar4 = mios_mdasm30.SCR;
   } while ((wVar4 & 0x8000) == 0);
   restartOnKeyOnDuringPowerDown();
   return;

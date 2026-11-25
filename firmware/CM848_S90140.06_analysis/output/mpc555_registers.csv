@@ -15,14 +15,11 @@ address,name,type,comment
 0x002fc018,USIU_SIEL,u32,SIU Interrupt Edge/Level Register
 0x002fc01c,USIU_SIVEC,u32,SIU Interrupt Vector Register
 0x002fc020,USIU_TESR,u32,Transfer Error Status Register
-0x002fc024,USIU_PADCFG_A,u32,Pad/peripheral configuration A (bit 10 controlled by ECU capability)
-0x002fc028,USIU_PADCFG_B,u32,Pad/peripheral configuration B
-0x002fc02c,USIU_INITCFG,u32,System initialization config (written 0x2004 at boot)
-0x002fc030,USIU_SGPIODT1,u32,SIU GPIO Data Register 1
-0x002fc034,USIU_SGPIODT2,u32,SIU GPIO Data Register 2
-0x002fc038,USIU_SGPIOCR,u32,SIU GPIO Control Register
-0x002fc03c,USIU_EMCR,u32,External Master Control Register
-0x002fc044,USIU_PDMCR,u32,Pad Module Configuration Register
+0x002fc024,USIU_SGPIODT1,u32,SGPIO data register 1 (MPC555UM Appendix A; was USIU_PADCFG_A; PR #53 round 95)
+0x002fc028,USIU_SGPIODT2,u32,SGPIO data register 2 (MPC555UM Appendix A; was USIU_PADCFG_B; PR #53 round 95)
+0x002fc02c,USIU_SGPIOCR,u32,SGPIO control register (MPC555UM Appendix A; was USIU_INITCFG; PR #53 round 95)
+0x002fc030,USIU_EMCR,u32,External master mode control register (MPC555UM Appendix A; was USIU_SGPIODT1; PR #53 round 95)
+0x002fc03c,USIU_PDMCR,u32,Pads module configuration register (MPC555UM Appendix A; was USIU_EMCR; PR #53 round 95)
 
 # Memory Controller Registers
 0x002fc100,USIU_BR0,u32,Base Register 0
@@ -42,8 +39,8 @@ address,name,type,comment
 # NOTE: Previous layout placed status registers at 0x300 - those are KEY registers.
 # Corrected per RTEMS MPC555 BSP usiu_ struct and confirmed by firmware access patterns.
 0x002fc200,USIU_TBSCR,u16,Timebase Status and Control Register (firmware writes 1 to enable TBE)
-0x002fc204,USIU_TBREFF0,u32,Timebase Reference Register 0
-0x002fc208,USIU_TBREFF1,u32,Timebase Reference Register 1
+0x002fc204,USIU_TBREF0,u32,Time base reference register 0 (MPC555UM Appendix A; was USIU_TBREFF0; PR #53 round 95)
+0x002fc208,USIU_TBREF1,u32,Time base reference register 1 (MPC555UM Appendix A; was USIU_TBREFF1; PR #53 round 95)
 
 # Real Time Clock (0x220 range)
 0x002fc220,USIU_RTCSC,u16,RTC Status and Control Register
@@ -65,17 +62,17 @@ address,name,type,comment
 
 # Key Registers (0x300 range) - write 0x55CCAA33 to unlock corresponding status register
 0x002fc300,USIU_TBSCRK,u32,Timebase Status and Control Register Key
-0x002fc304,USIU_TBREFF0K,u32,Timebase Reference Register 0 Key
-0x002fc308,USIU_TBREFF1K,u32,Timebase Reference Register 1 Key
+0x002fc304,USIU_TBREF0K,u32,Time base reference register 0 key (MPC555UM Appendix A; was USIU_TBREFF0K; PR #53 round 95)
+0x002fc308,USIU_TBREF1K,u32,Time base reference register 1 key (MPC555UM Appendix A; was USIU_TBREFF1K; PR #53 round 95)
 0x002fc30c,USIU_TBK,u32,Timebase Key
-0x002fc320,USIU_RTCSK,u32,RTC Status and Control Register Key
+0x002fc320,USIU_RTCSCK,u32,Real-time clock status and control register key (MPC555UM Appendix A; was USIU_RTCSK; PR #53 round 95)
 0x002fc324,USIU_RTCK,u32,RTC Register Key
 0x002fc328,USIU_RTSECK,u32,RTC Seconds Register Key
 0x002fc32c,USIU_RTCALK,u32,RTC Alarm Register Key
-0x002fc340,USIU_PISCRK,u32,PIT Status and Control Register Key
+0x002fc340,USIU_PISCRIK,u32,Periodic interrupt status and control register key (MPC555UM Appendix A; was USIU_PISCRK; PR #53 round 95)
 0x002fc344,USIU_PITCK,u32,PIT Count Register Key
 0x002fc380,USIU_SCCRK,u32,System Clock Control Register Key
-0x002fc384,USIU_PLPRCK,u32,PLL Low Power and Reset Control Register Key
+0x002fc384,USIU_PLPRCRK,u32,PLL, low-power and reset control register key (MPC555UM Appendix A; was USIU_PLPRCK; PR #53 round 95)
 0x002fc388,USIU_RSRK,u32,Reset Status Register Key
 
 # =============================================================================
@@ -104,8 +101,8 @@ address,name,type,comment
 0x0030401c,TPUA_CPR0,u16,TPU-A Channel Priority Register 0 (ch 0-7)
 0x0030401e,TPUA_CPR1,u16,TPU-A Channel Priority Register 1 (ch 8-15)
 0x00304020,TPUA_CISR,u16,TPU-A Channel Interrupt Status Register
-0x00304028,TPUA_R028,u16,TPU-A Register 0x28 (function unknown; written 0x80/0x20 at init)
-0x0030402a,TPUA_R02A,u16,TPU-A Register 0x2A (function unknown; written 0x00 at init)
+0x00304028,TPUA_TPUMCR2,u16,TPU-A module configuration register 2 (MPC555UM Appendix A; was TPUA_R028; PR #53 round 95)
+0x0030402a,TPUA_TPUMCR3,u16,TPU-A module configuration register 3 (MPC555UM Appendix A; was TPUA_R02A; PR #53 round 95)
 
 # TPUA Channel Parameter RAM (0x304100 - 0x3041FF)
 # Each channel occupies 0x10 bytes (8 x u16 parameters, PARAM0-PARAM7)
@@ -180,8 +177,8 @@ address,name,type,comment
 0x0030441c,TPUB_CPR0,u16,TPU-B Channel Priority Register 0 (ch 0-7)
 0x0030441e,TPUB_CPR1,u16,TPU-B Channel Priority Register 1 (ch 8-15)
 0x00304420,TPUB_CISR,u16,TPU-B Channel Interrupt Status Register
-0x00304428,TPUB_R028,u16,TPU-B Register 0x28 (function unknown; written 0x80/0x20 at init)
-0x0030442a,TPUB_R02A,u16,TPU-B Register 0x2A (function unknown; written 0x1E at init)
+0x00304428,TPUB_TPUMCR2,u16,TPU-B module configuration register 2 (MPC555UM Appendix A; was TPUB_R028; PR #53 round 95)
+0x0030442a,TPUB_TPUMCR3,u16,TPU-B module configuration register 3 (MPC555UM Appendix A; was TPUB_R02A; PR #53 round 95)
 
 # TPUB Channel Parameter RAM (0x304500 - 0x3045FF)
 # Each channel occupies 0x10 bytes (8 x u16 parameters, PARAM0-PARAM7)
@@ -213,26 +210,26 @@ address,name,type,comment
 0x00304807,QADC64A_PORTQB,u8,QADC64A Port QB Data Register
 0x00304808,QADC64A_DDRQA,u8,QADC64A Port QA Data Direction
 0x00304809,QADC64A_DDRQB,u8,QADC64A Port QB Data Direction
-0x0030480a,QADC64A_CCW,u16,QADC64A Control Word Table
-0x0030480c,QADC64A_RJURR,u16,QADC64A Right Justified Unsigned Result
-0x0030480e,QADC64A_LJSRR,u16,QADC64A Left Justified Signed Result
-0x00304810,QADC64A_LJURR,u16,QADC64A Left Justified Unsigned Result
-0x00304812,QADC64A_SR,u16,QADC64A Status Register
+0x0030480a,QADC64A_QACR0,u16,QADC64 A control register 0 (MPC555UM Appendix A; was QADC64A_CCW; PR #53 round 95)
+0x0030480c,QADC64A_QACR1,u16,QADC64 A control register 1 (MPC555UM Appendix A; was QADC64A_RJURR; PR #53 round 95)
+0x0030480e,QADC64A_QACR2,u16,QADC64 A control register 2 (MPC555UM Appendix A; was QADC64A_LJSRR; PR #53 round 95)
+0x00304810,QADC64A_QASR0,u16,QADC64 A status register 0 (MPC555UM Appendix A; was QADC64A_LJURR; PR #53 round 95)
+0x00304812,QADC64A_QASR1,u16,QADC64 A status register 1 (MPC555UM Appendix A; was QADC64A_SR; PR #53 round 95)
 0x00304814,QADC64A_CCW_TBL,u16,QADC64A CCW Table Base (64 entries)
 
 # QADC64A Result Registers (right-justified unsigned, 64 results)
-0x00304a00,QADC64A_RESULT0,u16,QADC64A Result 0
-0x00304a02,QADC64A_RESULT1,u16,QADC64A Result 1
-0x00304a04,QADC64A_RESULT2,u16,QADC64A Result 2
-0x00304a06,QADC64A_RESULT3,u16,QADC64A Result 3
-0x00304a08,QADC64A_RESULT4,u16,QADC64A Result 4
-0x00304a0a,QADC64A_RESULT5,u16,QADC64A Result 5
-0x00304a0c,QADC64A_RESULT6,u16,QADC64A Result 6
-0x00304a0e,QADC64A_RESULT7,u16,QADC64A Result 7
-0x00304a10,QADC64A_RESULT8,u16,QADC64A Result 8
-0x00304a12,QADC64A_RESULT9,u16,QADC64A Result 9
-0x00304a14,QADC64A_RESULT10,u16,QADC64A Result 10
-0x00304a16,QADC64A_RESULT11,u16,QADC64A Result 11
+0x00304a00,QADC64A_CCW0,u16,QADC64 A conversion command word 0 (MPC555UM Appendix A; was QADC64A_RESULT0; PR #53 round 95)
+0x00304a02,QADC64A_CCW1,u16,QADC64 A conversion command word 1 (MPC555UM Appendix A; was QADC64A_RESULT1; PR #53 round 95)
+0x00304a04,QADC64A_CCW2,u16,QADC64 A conversion command word 2 (MPC555UM Appendix A; was QADC64A_RESULT2; PR #53 round 95)
+0x00304a06,QADC64A_CCW3,u16,QADC64 A conversion command word 3 (MPC555UM Appendix A; was QADC64A_RESULT3; PR #53 round 95)
+0x00304a08,QADC64A_CCW4,u16,QADC64 A conversion command word 4 (MPC555UM Appendix A; was QADC64A_RESULT4; PR #53 round 95)
+0x00304a0a,QADC64A_CCW5,u16,QADC64 A conversion command word 5 (MPC555UM Appendix A; was QADC64A_RESULT5; PR #53 round 95)
+0x00304a0c,QADC64A_CCW6,u16,QADC64 A conversion command word 6 (MPC555UM Appendix A; was QADC64A_RESULT6; PR #53 round 95)
+0x00304a0e,QADC64A_CCW7,u16,QADC64 A conversion command word 7 (MPC555UM Appendix A; was QADC64A_RESULT7; PR #53 round 95)
+0x00304a10,QADC64A_CCW8,u16,QADC64 A conversion command word 8 (MPC555UM Appendix A; was QADC64A_RESULT8; PR #53 round 95)
+0x00304a12,QADC64A_CCW9,u16,QADC64 A conversion command word 9 (MPC555UM Appendix A; was QADC64A_RESULT9; PR #53 round 95)
+0x00304a14,QADC64A_CCW10,u16,QADC64 A conversion command word 10 (MPC555UM Appendix A; was QADC64A_RESULT10; PR #53 round 95)
+0x00304a16,QADC64A_CCW11,u16,QADC64 A conversion command word 11 (MPC555UM Appendix A; was QADC64A_RESULT11; PR #53 round 95)
 
 # =============================================================================
 # QADC64B - Queued ADC Module B (0x304C00 - 0x304FFF)
@@ -244,26 +241,26 @@ address,name,type,comment
 0x00304c07,QADC64B_PORTQB,u8,QADC64B Port QB Data Register
 0x00304c08,QADC64B_DDRQA,u8,QADC64B Port QA Data Direction
 0x00304c09,QADC64B_DDRQB,u8,QADC64B Port QB Data Direction
-0x00304c0a,QADC64B_CCW,u16,QADC64B Control Word Table
-0x00304c0c,QADC64B_RJURR,u16,QADC64B Right Justified Unsigned Result
-0x00304c0e,QADC64B_LJSRR,u16,QADC64B Left Justified Signed Result
-0x00304c10,QADC64B_LJURR,u16,QADC64B Left Justified Unsigned Result
-0x00304c12,QADC64B_SR,u16,QADC64B Status Register
+0x00304c0a,QADC64B_QACR0,u16,QADC64 B control register 0 (MPC555UM Appendix A; was QADC64B_CCW; PR #53 round 95)
+0x00304c0c,QADC64B_QACR1,u16,QADC64 B control register 1 (MPC555UM Appendix A; was QADC64B_RJURR; PR #53 round 95)
+0x00304c0e,QADC64B_QACR2,u16,QADC64 B control register 2 (MPC555UM Appendix A; was QADC64B_LJSRR; PR #53 round 95)
+0x00304c10,QADC64B_QASR0,u16,QADC64 B status register 0 (MPC555UM Appendix A; was QADC64B_LJURR; PR #53 round 95)
+0x00304c12,QADC64B_QASR1,u16,QADC64 B status register 1 (MPC555UM Appendix A; was QADC64B_SR; PR #53 round 95)
 0x00304c14,QADC64B_CCW_TBL,u16,QADC64B CCW Table Base (64 entries)
 
 # QADC64B Result Registers
-0x00304e00,QADC64B_RESULT0,u16,QADC64B Result 0
-0x00304e02,QADC64B_RESULT1,u16,QADC64B Result 1
-0x00304e04,QADC64B_RESULT2,u16,QADC64B Result 2
-0x00304e06,QADC64B_RESULT3,u16,QADC64B Result 3
+0x00304e00,QADC64B_CCW0,u16,QADC64 B conversion command word 0 (MPC555UM Appendix A; was QADC64B_RESULT0; PR #53 round 95)
+0x00304e02,QADC64B_CCW1,u16,QADC64 B conversion command word 1 (MPC555UM Appendix A; was QADC64B_RESULT1; PR #53 round 95)
+0x00304e04,QADC64B_CCW2,u16,QADC64 B conversion command word 2 (MPC555UM Appendix A; was QADC64B_RESULT2; PR #53 round 95)
+0x00304e06,QADC64B_CCW3,u16,QADC64 B conversion command word 3 (MPC555UM Appendix A; was QADC64B_RESULT3; PR #53 round 95)
 
 # =============================================================================
 # QSMCM - Queued Serial Module (0x305000 - 0x305FFF)
 # =============================================================================
 0x00305000,QSMCM_MCR,u16,QSMCM Module Configuration Register
-0x00305002,QSMCM_TEST,u16,QSMCM Test Register
-0x00305004,QSMCM_IDSCI,u16,QSMCM Interrupt Definition SCI
-0x00305006,QSMCM_IDSPI,u16,QSMCM Interrupt Definition SPI
+0x00305002,QSMCM_QTEST,u16,QSMCM test register (MPC555UM Appendix A; was QSMCM_TEST; PR #53 round 95)
+0x00305004,QSMCM_QDSCI_IL,u16,QSMCM dual SCI interrupt level register (MPC555UM Appendix A; was QSMCM_IDSCI; PR #53 round 95)
+0x00305006,QSMCM_QSPI_IL,u16,QSPI interrupt level register (MPC555UM Appendix A; was QSMCM_IDSPI; PR #53 round 95)
 
 # SCI (Serial Communication Interface)
 0x00305008,QSMCM_SCC1R0,u16,SCI Control Register 0
@@ -318,27 +315,27 @@ address,name,type,comment
 # (these rows sat at 0x306020 before - an address this firmware never accesses)
 0x00306030,MIOS_MMCSM6_CNT,u16,MMCSM6 Up-Counter Register
 0x00306032,MIOS_MMCSM6_ML,u16,MMCSM6 Modulus Latch Register
-0x00306036,MIOS_MMCSM6_SCRD,u16,MMCSM6 Status/Control Register
+0x00306036,MIOS_MMCSM6_SCR,u16,MMCSM6 Status/Control Register (MPC555UM 15.10-15.11: SCR at +6; was MIOS_MMCSM6_SCRD; PR #53 round 95)
 0x003060b0,MIOS_MMCSM22_CNT,u16,MMCSM22 Up-Counter Register
 0x003060b2,MIOS_MMCSM22_ML,u16,MMCSM22 Modulus Latch Register (shared PWM period)
-0x003060b6,MIOS_MMCSM22_SCRD,u16,MMCSM22 Status/Control Register
+0x003060b6,MIOS_MMCSM22_SCR,u16,MMCSM22 Status/Control Register (MPC555UM 15.10-15.11: SCR at +6; was MIOS_MMCSM22_SCRD; PR #53 round 95)
 
 # MIOS MDASM (Double Action Submodules) - Input Capture/PWM
 0x00306058,MIOS_MDASM11_AR,u16,MDASM11 A Register
 0x0030605a,MIOS_MDASM11_BR,u16,MDASM11 B Register
-0x0030605e,MIOS_MDASM11_SCRD,u16,MDASM11 Status/Control Register
+0x0030605e,MIOS_MDASM11_SCR,u16,MDASM11 Status/Control Register (MPC555UM 15.10-15.11: SCR at +6; was MIOS_MDASM11_SCRD; PR #53 round 95)
 0x00306060,MIOS_MDASM12_AR,u16,MDASM12 A Register
 0x00306062,MIOS_MDASM12_BR,u16,MDASM12 B Register
-0x00306066,MIOS_MDASM12_SCRD,u16,MDASM12 Status/Control Register
+0x00306066,MIOS_MDASM12_SCR,u16,MDASM12 Status/Control Register (MPC555UM 15.10-15.11: SCR at +6; was MIOS_MDASM12_SCRD; PR #53 round 95)
 0x00306068,MIOS_MDASM13_AR,u16,MDASM13 A Register
 0x0030606a,MIOS_MDASM13_BR,u16,MDASM13 B Register
-0x0030606e,MIOS_MDASM13_SCRD,u16,MDASM13 Status/Control Register
+0x0030606e,MIOS_MDASM13_SCR,u16,MDASM13 Status/Control Register (MPC555UM 15.10-15.11: SCR at +6; was MIOS_MDASM13_SCRD; PR #53 round 95)
 0x00306070,MIOS_MDASM14_AR,u16,MDASM14 A Register
 0x00306072,MIOS_MDASM14_BR,u16,MDASM14 B Register
-0x00306076,MIOS_MDASM14_SCRD,u16,MDASM14 Status/Control Register
+0x00306076,MIOS_MDASM14_SCR,u16,MDASM14 Status/Control Register (MPC555UM 15.10-15.11: SCR at +6; was MIOS_MDASM14_SCRD; PR #53 round 95)
 0x00306078,MIOS_MDASM15_AR,u16,MDASM15 A Register
 0x0030607a,MIOS_MDASM15_BR,u16,MDASM15 B Register
-0x0030607e,MIOS_MDASM15_SCRD,u16,MDASM15 Status/Control Register
+0x0030607e,MIOS_MDASM15_SCR,u16,MDASM15 Status/Control Register (MPC555UM 15.10-15.11: SCR at +6; was MIOS_MDASM15_SCRD; PR #53 round 95)
 
 # MIOS MPWMSM16-19 (PWM submodules 16-19 - were mislabeled MDASM0-3; cm848_miosPwm16-19* drive them like MPWMSM0-3)
 0x00306080,MIOS_MPWMSM16_PERR,u16,MPWMSM16 Period Register
@@ -359,18 +356,18 @@ address,name,type,comment
 # MIOS MDASM28-29 (submodules 28 and 29 - were mislabeled MPWMSM4 / MPWMSM5 under a "Bus Interface" header)
 0x003060e0,MIOS_MDASM28_AR,u16,MDASM28 A Register
 0x003060e2,MIOS_MDASM28_BR,u16,MDASM28 B Register
-0x003060e4,MIOS_MDASM28_XR,u16,MDASM28 X Register
-0x003060e6,MIOS_MDASM28_SCRD,u16,MDASM28 Status/Control Register (bit 15 = MDA28 pin = discrete input line 126)
+0x003060e4,MIOS_MDASM28_SCRD,u16,MDASM28 status/control register duplicated: the same register as SCR (MPC555UM 15.11.1.3; was MIOS_MDASM28_XR; PR #53 round 95)
+0x003060e6,MIOS_MDASM28_SCR,u16,MDASM28 Status/Control Register (bit 15 = MDA28 pin = discrete input line 126) (MPC555UM 15.10-15.11: SCR at +6; was MIOS_MDASM28_SCRD; PR #53 round 95)
 0x003060e8,MIOS_MDASM29_AR,u16,MDASM29 A Register
 0x003060ea,MIOS_MDASM29_BR,u16,MDASM29 B Register
-0x003060ec,MIOS_MDASM29_XR,u16,MDASM29 X Register
-0x003060ee,MIOS_MDASM29_SCRD,u16,MDASM29 Status/Control Register (bit 15 = MDA29 pin = discrete input line 127)
+0x003060ec,MIOS_MDASM29_SCRD,u16,MDASM29 status/control register duplicated: the same register as SCR (MPC555UM 15.11.1.3; was MIOS_MDASM29_XR; PR #53 round 95)
+0x003060ee,MIOS_MDASM29_SCR,u16,MDASM29 Status/Control Register (bit 15 = MDA29 pin = discrete input line 127) (MPC555UM 15.10-15.11: SCR at +6; was MIOS_MDASM29_SCRD; PR #53 round 95)
 0x003060f0,MIOS_MDASM30_AR,u16,MDASM30 A Register (was mislabeled MIOS_MCPSMSCR - the real MCPSMSCR is 0x306816)
 0x003060f2,MIOS_MDASM30_BR,u16,MDASM30 B Register
-0x003060f4,MIOS_MDASM30_XR,u16,MDASM30 X Register
-0x003060f6,MIOS_MDASM30_SCRD,u16,MDASM30 Status/Control Register (bit 15 = MDA30 pin = ignition key line)
+0x003060f4,MIOS_MDASM30_SCRD,u16,MDASM30 status/control register duplicated: the same register as SCR (MPC555UM 15.11.1.3; was MIOS_MDASM30_XR; PR #53 round 95)
+0x003060f6,MIOS_MDASM30_SCR,u16,MDASM30 Status/Control Register (bit 15 = MDA30 pin = ignition key line) (MPC555UM 15.10-15.11: SCR at +6; was MIOS_MDASM30_SCRD; PR #53 round 95)
 0x003060f8,MIOS_MDASM31_AR,u16,MDASM31 A Register
-0x003060fc,MIOS_MDASM31_XR,u16,MDASM31 X Register
+0x003060fc,MIOS_MDASM31_SCRD,u16,MDASM31 status/control register duplicated: the same register as SCR (MPC555UM 15.11.1.3; was MIOS_MDASM31_XR; PR #53 round 95)
 
 # =============================================================================
 # TouCAN A - CAN Controller A (0x307000 - 0x30707F)

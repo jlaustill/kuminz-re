@@ -345,7 +345,7 @@ function_address,function_name,param_index,name,type,comment
 # get no rows - committed wrapper parameters made callers cast their word arguments.
 # -----------------------------------------------------------------------------
 0x00054e10,mpc555_miosCheckChannelFeedback,return,,ushort,0 = pin agrees with the command / 1 = high or toggling where it should be low / 2 = low or toggling where it should be high (16-bit: clrlwi r3 r5 16)
-0x00054e10,mpc555_miosCheckChannelFeedback,0,channel_registers,mios_mdasm_t *,MDASM register block (AR:BR read as one word / SCRD at +6)
+0x00054e10,mpc555_miosCheckChannelFeedback,0,channel_registers,mios_mdasm_t *,MDASM register block (AR:BR read as one word / SCR at +6)
 0x00054e10,mpc555_miosCheckChannelFeedback,1,commanded_duty,undefined4,Duty the output was commanded to (1/256 % per count; 25600 = 100 %) - 4 bytes: the compares use all of r4 (cmpwi r4 0 / cmpwi r4 25600) so a 2-byte type shows CONCAT22 artifacts
 0x00054eac,mpc555_miosSetChannelInputMode,return,,void,No return value
 0x00054eac,mpc555_miosSetChannelInputMode,0,channel_registers,mios_mdasm_t *,MDASM register block base

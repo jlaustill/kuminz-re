@@ -853,7 +853,7 @@ ENGINE_STATE,4,ENGINE_STATE_ENGINE_BRAKE,e2m ENGBRAKE: from RUN while engine_ret
 ENGINE_STATE,5,ENGINE_STATE_OVERSPEED,e2m OVERSPED: while engine_overspeed_active_flag is 1 (P0219) - the fuel is the ROM word 0x5c30a (FUELING_STATE_OVERSPEED),2
 ENGINE_STATE,6,ENGINE_STATE_JUMP_START,e2m JUMPSTRT: from CRANK after the crank pass count passes its limit; the consumers treat it like CRANK,2
 ENGINE_STATE,7,ENGINE_STATE_REENTRY,e2m REENTRY: from RUN when engine speed drops to crank_reentry_speed - the crank fuel is a floor (FUELING_STATE_CRANKING),2
-ENGINE_STATE,8,ENGINE_STATE_SHUTDOWN,e2m SHUTDOWN: the key line (mios_mdasm30.SCRD bit 15) is off without key_off_shutdown_inhibit_flag - or engine_shutdown_command_flag is 1; ecm_power_down_timer runs - the fuel is fuel_demand_minimum (FUELING_STATE_SHUTDOWN),2
+ENGINE_STATE,8,ENGINE_STATE_SHUTDOWN,e2m SHUTDOWN: the key line (mios_mdasm30.SCR bit 15) is off without key_off_shutdown_inhibit_flag - or engine_shutdown_command_flag is 1; ecm_power_down_timer runs - the fuel is fuel_demand_minimum (FUELING_STATE_SHUTDOWN),2
 
 # J1939-21 ACKM control byte (PGN 0xE800 byte 1)
 # Used as j1939_acknowledgement_payload_t.control_byte and as ack_type parameter in sendAcknowledgeMessage/sendNegativeAck

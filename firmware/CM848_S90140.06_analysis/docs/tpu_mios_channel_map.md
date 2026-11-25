@@ -6,7 +6,7 @@ param registers reveal its **logical owner**. The physical device on each output
 determinable from the binary alone — see "Still blocked" below.
 
 ## How this was determined
-- **CFSR function number** per channel: from `tpu_a_mcr.CFSRn` writes. CFSR0 covers ch0-3, CFSR1
+- **CFSR function number** per channel: from `tpu_a.CFSRn` writes. CFSR0 covers ch0-3, CFSR1
   ch4-7, CFSR2 ch8-11, CFSR3 ch12-15 — 4 bits per channel. Main configurator is
   `cm848_initializeInjectionHardware` (was `cm848_tpu_interrupt_flag_init`) @0x5283xx (assigns ch2/4/5/8/9/11/14/15); `clearModuleSyncFlag`
   sets every channel to 0xf (reset/disable); `mpc555_resetEngineTimingAccumulators` sets ch7/12/13.
@@ -25,7 +25,7 @@ determinable from the binary alone — see "Still blocked" below.
 | 6  | 9 | output | **INJECTION TIMING** — all three `cm848_loadInjectionStartAnglesOnTpuChannel6` / `cm848_scheduleInjectionAnglesInSpeedLimpHome` / `cm848_scheduleInjectionAnglesOnPrimarySpeedInput` (were `engine_injectionAngle_{computeLoadCh6,schedule_crankValid,schedule_crankInvalid}`) load the angle (tooth+phase) into CH6 PARAM 0x304162 | **CONFIRMED** |
 | 7  | 8 | — | engine status timing (pair with CH2) | inferred |
 | 8  | 0xa | output | output (CFSR-assigned only) | unknown |
-| 9  | 9 | output | injection-related — fn 9 like CH6; `tpu_channel_control` (`tpua_ch9_params_t` @0x304190) toggled with CH4. Possibly a 2nd injection event/pulse | inferred output |
+| 9  | 9 | output | injection-related — fn 9 like CH6; `tpu_a_channel_9_parameters` (`tpua_ch9_params_t` @0x304190; was `tpu_channel_control`) toggled with CH4. Possibly a 2nd injection event/pulse | inferred output |
 | 10 | 9 | output | configured by `cm848_tpu_configuration_setup` (CH10_PARAM0) + `cm848_sensor_diagnostic_flag_update` (CFSR2) | unknown |
 | 11 | 0xb | — | HPCR engine sync/timing — `hpcr_processEngineSyncPulses`, `mpc555_resetEngineTimingAccumulators` | inferred |
 | 12 | 0xc | — | HPCR engine timing accumulate — same hpcr/reset owners | inferred |
