@@ -1160,7 +1160,7 @@ parameter_id_entry_t,,address,dword,4,"The resolved address: EEPROM 0x01000000 +
 j1939_diagnostic_service_entry_t,,service_id,J1939_DIAGNOSTIC_SERVICE,1,The PGN 61184 diagnostic service byte (the request's first data byte; typed J1939_DIAGNOSTIC_SERVICE - was EF00_SERVICE_ID in this comment; PR #53 round 63),,verified
 j1939_diagnostic_service_entry_t,,pad,byte,1,Never written: the registrar stores only the service byte and the handler,,verified
 j1939_diagnostic_service_entry_t,,handler,pointer,4,The service handler: called with the received j1939_rx_msg_t once cm848_validateJ1939DiagnosticRequest accepts the request,,verified
-# J1939 receive handler entry (6 bytes): j1939_receive_handler_table (RAM 0x3fd414 - 17 slots) - cm848_registerJ1939ReceiveHandler appends {PGN key - handler} and cm848_dispatchJ1939ReceivedMessages calls the handler whose key matches a received frame (PR #53 round 65)
+# J1939 receive handler entry (6 bytes): j1939_receive_handler_table (RAM 0x3fd414 - 17 slots) - registerJ1939ReceiveHandler appends {PGN key - handler} and cm848_dispatchJ1939ReceivedMessages calls the handler whose key matches a received frame (PR #53 round 65)
 j1939_receive_handler_entry_t,,pgn_key,word,2,The PGN's PDU format and PDU specific bytes as one word - specific 0 for a destination-specific PGN (0xef00 = PGN 61184 / 0xfef1 = PGN 65265 / 0 = TSC1),,verified
 j1939_receive_handler_entry_t,,handler,pointer,4,The receive handler: called with the received j1939_rx_msg_t,,verified
 
@@ -1359,13 +1359,13 @@ j1939_powertrain_control_state_t,0x0040adf8,etc1_torque_converter_lockup_timer,w
 j1939_powertrain_control_state_t,0x0040adf8,etc1_output_shaft_speed_run_state_count,word,2,"counts the passes the engine runs (RUNNING / ENGINE_BRAKE / OVERSPEED) with the J1939 speed source with gear ratio, for etc1_output_shaft_speed_fault_hold_off_flag (was governor_mode_transition_counter)",,verified
 j1939_powertrain_control_state_t,0x0040adf8,_pad,byte,1,Alignment padding,,verified
 j1939_powertrain_control_state_t,0x0040adf8,tsc1_controlling_source_address,byte,1,"the source address of the accepted engine TSC1 request (the sender in control). Not SPN 1482, which is ETC1's source address of the device controlling the transmission (was etc1_spn1482_source_address)",,verified
-j1939_powertrain_control_state_t,0x0040adf8,tsc1_matched_source_configuration_ptr,tsc1_source_configuration_t*,4,the tsc1_source_configuration_table entry cm848_findTsc1SourceConfiguration matched for the last sender (was etc1_config_entry_ptr),,verified
-j1939_powertrain_control_state_t,0x0040adf8,tsc1_source_configuration_ptr,tsc1_source_configuration_t*,4,the configuration entry of the accepted engine TSC1 sender (its request timeouts and time limits); while a J1922 request is active a J1939 sender takes over only with an entry at the same or an earlier position (was etc1_active_config_ptr),,verified
-j1939_powertrain_control_state_t,0x0040adf8,retarder_tsc1_source_configuration_ptr,tsc1_source_configuration_t*,4,the configuration entry of the accepted engine retarder TSC1 sender (+0xe / +0x10 / +0x12 read) (was etc1_secondary_config_ptr),,verified
+j1939_powertrain_control_state_t,0x0040adf8,tsc1_matched_source_configuration_pointer,tsc1_source_configuration_t*,4,the tsc1_source_configuration_table entry findTsc1SourceConfiguration matched for the last sender (was etc1_config_entry_ptr) (was tsc1_matched_source_configuration_ptr; PR #53 round 91),,verified
+j1939_powertrain_control_state_t,0x0040adf8,tsc1_source_configuration_pointer,tsc1_source_configuration_t*,4,the configuration entry of the accepted engine TSC1 sender (its request timeouts and time limits); while a J1922 request is active a J1939 sender takes over only with an entry at the same or an earlier position (was etc1_active_config_ptr) (was tsc1_source_configuration_ptr; PR #53 round 91),,verified
+j1939_powertrain_control_state_t,0x0040adf8,retarder_tsc1_source_configuration_pointer,tsc1_source_configuration_t*,4,the configuration entry of the accepted engine retarder TSC1 sender (+0xe / +0x10 / +0x12 read) (was etc1_secondary_config_ptr) (was retarder_tsc1_source_configuration_ptr; PR #53 round 91),,verified
 j1939_powertrain_control_state_t,0x0040adf8,high_idle_override_recovery_flag,word,2,1 after the high idle override hit its time limit: the transmission must stop asking for it for j1939_time_limited_node_recovery_time (e2m Jcomm_Recovery_Time) before it is granted again; cleared by ETC1 SPN 606 = 00 or when high_idle_override_timeout_timer runs out (was etc1_torque_limit_active),,verified
 j1939_powertrain_control_state_t,0x0040adf8,etc1_message_timeout,word,2,Countdown: fires if no ETC1 message received within window,,verified
 # TSC1 source configuration entry (tsc1_source_configuration_table at 0x5c3b4 in ROM: 10 entries x 20 bytes;
-#   round 6: was etc1_config_entry_t). cm848_findTsc1SourceConfiguration selects the sender's entry by
+#   round 6: was etc1_config_entry_t). findTsc1SourceConfiguration selects the sender's entry by
 #   data_link + source_address_filter, 20 bytes per entry
 # The time limits: speed_control_time_limit (+6, mode 1) and torque_control_time_limit (+0xa, mode 2);
 #   mode 3 has none

@@ -7391,7 +7391,7 @@ extern byte j1939_received_engine_fan_requested_percent_speed;  // 0x0040aab6
 extern byte j1939_received_power_take_off_on_switch;  // 0x0040aab7
 extern byte j1939_received_power_take_off_resume_switch;  // 0x0040aab8
 extern byte j1939_received_power_take_off_set_switch;  // 0x0040aab9
-extern byte j1939_received_accelerator_pedal_position_2;  // 0x0040aaba
+extern byte j1939_received_wet_tank_pressure;  // 0x0040aaba
 extern byte j1939_received_remote_power_take_off_switch;  // 0x0040aabb
 extern byte j1939_received_remote_accelerator_pedal_position;  // 0x0040aabc
 extern byte j1939_received_remote_accelerator_enable_switch;  // 0x0040aabd

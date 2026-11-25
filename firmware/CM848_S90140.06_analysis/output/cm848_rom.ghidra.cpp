@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue Nov 24 14:28:47 MST 2026
+// Generated: Tue Nov 24 17:06:12 MST 2026
 
 
 //
@@ -19624,10 +19624,23 @@ void initializeEngineState(void)
 
 
 //
-// Function: cm848_faultTimeoutHandler @ 0x0001c9a0
+// Function: cm848_countDownPreviouslyActiveFault @ 0x0001c9a0
 //
 
-void cm848_faultTimeoutHandler(byte param_1)
+/* Counts down one previously active fault (param_1) - the e2m fault countdown. It acts while
+   fault_state_records_cal[param_1].status bit 0 is clear and both the fault's countdown mode
+   (fault_definition_table[].aging_flags & 3) and .timer are not 0. .timer is the occurrence count:
+   cm848_processFaultScanGroup adds 1 per activation up to 255 and DM1 / DM2 cap it at 127. The
+   first step comes when key_on_hour_meter - .timestamp exceeds the mode's
+   Fault_Countdown_Elapsed_Time (fault_countdown_elapsed_time_mode_0 + 8 x mode). Step n + 1 comes
+   when that difference exceeds the elapsed time + n x the mode's Count_Down_Rate (n =
+   .debounce_count - the steps taken; the activation zeroes it). A step adds 1 to .debounce_count
+   and takes 1 off .timer. At 0 it resets the fault (cm848_resetFaultStatus) and removes it from
+   previously_active_dtc_list_cal. Counterpart of CM550 cm550_countDownPreviouslyActiveFault
+   (0x144bc: a second time stamp in place of the step count) (was cm848_faultTimeoutHandler; PR #53
+   round 91) (was cm848_faultTimeoutHandler; PR #53 round 91) */
+
+void cm848_countDownPreviouslyActiveFault(byte param_1)
 
 {
   uint uVar1;
@@ -19737,10 +19750,17 @@ void cm848_clearFaultFromActiveList(byte param_1)
 
 
 //
-// Function: cm848_activeFaultScanProcessor @ 0x0001cd1c
+// Function: cm848_countDownPreviouslyActiveFaults @ 0x0001cd1c
 //
 
-void cm848_activeFaultScanProcessor(void)
+/* Runs cm848_countDownPreviouslyActiveFault on each fault of previously_active_dtc_list_cal
+   (active_fault_scan_counter is the cursor) whose fault_definition_table entry has entry_flags bit
+   0 clear or aging_flags bit 7 set. The old name read it as an active fault scan, but it walks the
+   previously active list. Counterpart of CM550 cm550_countDownPreviouslyActiveFaults (0x14670) (was
+   cm848_activeFaultScanProcessor; PR #53 round 91) (was cm848_activeFaultScanProcessor; PR #53
+   round 91) */
+
+void cm848_countDownPreviouslyActiveFaults(void)
 
 {
   uint uVar1;
@@ -19751,7 +19771,7 @@ void cm848_activeFaultScanProcessor(void)
       uVar1 = (uint)previously_active_dtc_list_cal.slots[active_fault_scan_counter - 1];
       if (((fault_definition_table[uVar1].entry_flags & 1) == 0) ||
          ((fault_definition_table[uVar1].aging_flags & 0x80) != 0)) {
-        cm848_faultTimeoutHandler(uVar1);
+        cm848_countDownPreviouslyActiveFault(uVar1);
       }
       active_fault_scan_counter = active_fault_scan_counter + 1;
     } while (active_fault_scan_counter <= previously_active_dtc_list_cal.count);
@@ -20312,7 +20332,7 @@ void diagnosticMainStateProcessor(void)
     system_switch_status_2 = uVar1 | 0x1000;
   }
   if (0x18 < key_on_hour_meter - fault_event_timing_prev) {
-    cm848_activeFaultScanProcessor();
+    cm848_countDownPreviouslyActiveFaults();
     fault_event_timing_prev = key_on_hour_meter;
   }
   return;
@@ -23459,11 +23479,10 @@ void cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings(void)
    set and no status reply pending it records the addresses for the PGN 56320 Anti-theft Status
    reply / unpacks the command state / desired exit mode / encryption indicator and the password
    bytes / sets j1939_anti_theft_status_transmit_state 2. Registered with
-   cm848_registerJ1939ReceiveHandler (was j1939_receivePgn56576Handler; PR #53 round 65) | earlier
-   note: J1939 receive handler registered with cm848_registerJ1939ReceiveHandler for PGN 56576:
-   unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not
-   yet named) | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
-   Confidence Low */
+   registerJ1939ReceiveHandler (was j1939_receivePgn56576Handler; PR #53 round 65) | earlier note:
+   J1939 receive handler registered with registerJ1939ReceiveHandler for PGN 56576: unpacks the
+   message into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named)
+   | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Low */
 
 void cm848_receivePgn56576AntiTheftRequestMessage(j1939_rx_msg_t *message)
 
@@ -23512,7 +23531,7 @@ void cm848_receivePgn56576AntiTheftRequestMessage(j1939_rx_msg_t *message)
 void cm848_initJ1939DiagnosticCallback(void)
 
 {
-  cm848_registerJ1939ReceiveHandler(0xdd00,cm848_receivePgn56576AntiTheftRequestMessage);
+  registerJ1939ReceiveHandler(0xdd00,cm848_receivePgn56576AntiTheftRequestMessage);
   return;
 }
 
@@ -23602,7 +23621,7 @@ void cm848_j1939DiagnosticServiceHandler(j1939_rx_msg_t *rx_msg)
 void cm848_initJ1939DiagnosticServiceHandler(void)
 
 {
-  cm848_registerJ1939ReceiveHandler(0xef00,cm848_j1939DiagnosticServiceHandler);
+  registerJ1939ReceiveHandler(0xef00,cm848_j1939DiagnosticServiceHandler);
   return;
 }
 
@@ -23686,7 +23705,7 @@ void cm848_initJ1939Dm13Handler(void)
   j1939_dm13_requester_slots[1].broadcast_enable_flags = 0xffff;
   j1939_dm13_requester_slots[2].broadcast_enable_flags = 0xffff;
   j1939_dm13_broadcast_enable_flags = 0xffff;
-  cm848_registerJ1939ReceiveHandler(0xdf00,cm848_processJ1939Dm13StopStartBroadcast);
+  registerJ1939ReceiveHandler(0xdf00,cm848_processJ1939Dm13StopStartBroadcast);
   return;
 }
 
@@ -23946,7 +23965,7 @@ void cm848_j1939HandlePgn58112Dm7(j1939_rx_msg_t *request_msg)
 void cm848_registerJ1939Dm7Handler(void)
 
 {
-  cm848_registerJ1939ReceiveHandler(0xe300,cm848_j1939HandlePgn58112Dm7);
+  registerJ1939ReceiveHandler(0xe300,cm848_j1939HandlePgn58112Dm7);
   return;
 }
 
@@ -24078,7 +24097,7 @@ void cm848_initJ1939Pgn61442Etc1Handler(void)
     fault_detected_cal._2_2_ = fault_detected_cal._2_2_ & 0xdfff;
     fault_registered_cal._2_2_ = fault_registered_cal._2_2_ & 0xdfff;
   }
-  cm848_registerJ1939ReceiveHandler(0xf002,cm848_j1939ProcessPgn61442Etc1);
+  registerJ1939ReceiveHandler(0xf002,cm848_j1939ProcessPgn61442Etc1);
   return;
 }
 
@@ -24139,7 +24158,7 @@ void cm848_initEtc2Handler(void)
   j1939_powertrain_messages_received.etc2_actual_gear_ratio_previous = 0;
   j1939_powertrain_control_state.etc2_transmission_selected_gear =
        TRANSMISSION_SELECTED_GEAR_NOT_AVAILABLE;
-  cm848_registerJ1939ReceiveHandler(0xf005,cm848_j1939ProcessPgn61445Etc2);
+  registerJ1939ReceiveHandler(0xf005,cm848_j1939ProcessPgn61445Etc2);
   return;
 }
 
@@ -24194,7 +24213,7 @@ void processEngineTsc1Request(j1939_rx_msg_t *msg)
     }
   }
   if (j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_OVERRIDE_OFF) {
-    sVar1 = cm848_findTsc1SourceConfiguration(1,sender_source_address);
+    sVar1 = findTsc1SourceConfiguration(1,sender_source_address);
     if (sVar1 != 0) {
       return;
     }
@@ -24205,7 +24224,7 @@ void processEngineTsc1Request(j1939_rx_msg_t *msg)
     if (control_mode == 0) {
       return;
     }
-    result = cm848_findTsc1SourceConfiguration(1,sender_source_address);
+    result = findTsc1SourceConfiguration(1,sender_source_address);
     if (result != 0) {
       return;
     }
@@ -24231,17 +24250,17 @@ void processEngineTsc1Request(j1939_rx_msg_t *msg)
     }
   }
   else {
-    sVar1 = cm848_findTsc1SourceConfiguration(1,sender_source_address);
+    sVar1 = findTsc1SourceConfiguration(1,sender_source_address);
     if (sVar1 != 0) {
       return;
     }
-    if (j1939_powertrain_control_state.tsc1_source_configuration_ptr <
-        j1939_powertrain_control_state.tsc1_matched_source_configuration_ptr) {
+    if (j1939_powertrain_control_state.tsc1_source_configuration_pointer <
+        j1939_powertrain_control_state.tsc1_matched_source_configuration_pointer) {
       return;
     }
   }
-  j1939_powertrain_control_state.tsc1_source_configuration_ptr =
-       j1939_powertrain_control_state.tsc1_matched_source_configuration_ptr;
+  j1939_powertrain_control_state.tsc1_source_configuration_pointer =
+       j1939_powertrain_control_state.tsc1_matched_source_configuration_pointer;
 accept_tsc1_command:
   tsc1_accepted_control_byte = (word)j1939_powertrain_messages_received.tsc1_control_byte;
   j1939_powertrain_control_state.tsc1_controlling_data_link = CONTROL_NETWORK_J1939;
@@ -24255,7 +24274,7 @@ accept_tsc1_command:
   }
   else if (control_mode == 1) {
     j1939_powertrain_control_state.tsc1_request_timeout_count =
-         (j1939_powertrain_control_state.tsc1_source_configuration_ptr)->
+         (j1939_powertrain_control_state.tsc1_source_configuration_pointer)->
          speed_control_request_timeout + 1;
     j1939_powertrain_control_state.tsc1_override_control_mode = TSC1_SPEED_CONTROL;
     engine_control_device_indicator = cm848_lookupJ1939ControlDevice((uint)msg->source_address);
@@ -24273,7 +24292,7 @@ accept_tsc1_command:
   }
   else if (control_mode == 2) {
     j1939_powertrain_control_state.tsc1_request_timeout_count =
-         (j1939_powertrain_control_state.tsc1_source_configuration_ptr)->
+         (j1939_powertrain_control_state.tsc1_source_configuration_pointer)->
          torque_control_request_timeout + 1;
     j1939_powertrain_control_state.tsc1_override_control_mode = TSC1_TORQUE_CONTROL;
     engine_control_device_indicator = cm848_lookupJ1939ControlDevice((uint)msg->source_address);
@@ -24292,7 +24311,7 @@ accept_tsc1_command:
   }
   else if (control_mode == 3) {
     j1939_powertrain_control_state.tsc1_request_timeout_count =
-         (j1939_powertrain_control_state.tsc1_source_configuration_ptr)->
+         (j1939_powertrain_control_state.tsc1_source_configuration_pointer)->
          speed_torque_limit_control_request_timeout + 1;
     j1939_powertrain_control_state.tsc1_override_control_mode = TSC1_SPEED_TORQUE_LIMIT;
     engine_control_device_indicator = cm848_lookupJ1939ControlDevice((uint)msg->source_address);
@@ -24383,7 +24402,7 @@ void cm848_j1939DispatchPgnHandler(j1939_rx_msg_t *msg)
 void cm848_initJ1939ProtocolHandlers(void)
 
 {
-  cm848_registerJ1939ReceiveHandler(0xea00,cm848_j1939DispatchPgnHandler);
+  registerJ1939ReceiveHandler(0xea00,cm848_j1939DispatchPgnHandler);
   initPgn65261CruiseControlSetupStruct();
   cm848_initPgn65259ComponentIdHandler();
   cm848_initPgn65262EngineTempHandler();
@@ -24447,7 +24466,7 @@ void cm848_j1939HandlePgn56832Reset(j1939_rx_msg_t *message)
 void cm848_initJ1939ProprietaryHandler(void)
 
 {
-  cm848_registerJ1939ReceiveHandler(0xde00,cm848_j1939HandlePgn56832Reset);
+  registerJ1939ReceiveHandler(0xde00,cm848_j1939HandlePgn56832Reset);
   return;
 }
 
@@ -24645,7 +24664,7 @@ void cm848_processEngineRetarderTsc1Request(j1939_rx_msg_t *msg)
     }
   }
   if (engine_retarder_override_control_mode == TSC1_OVERRIDE_OFF) {
-    sVar3 = cm848_findTsc1SourceConfiguration(1,bVar1);
+    sVar3 = findTsc1SourceConfiguration(1,bVar1);
     if (sVar3 != 0) {
       return;
     }
@@ -24655,7 +24674,7 @@ void cm848_processEngineRetarderTsc1Request(j1939_rx_msg_t *msg)
     if (bVar2 == 0) {
       return;
     }
-    sVar3 = cm848_findTsc1SourceConfiguration(1,bVar1);
+    sVar3 = findTsc1SourceConfiguration(1,bVar1);
     if (sVar3 != 0) {
       return;
     }
@@ -24673,8 +24692,8 @@ void cm848_processEngineRetarderTsc1Request(j1939_rx_msg_t *msg)
       }
     }
   }
-  j1939_powertrain_control_state.retarder_tsc1_source_configuration_ptr =
-       j1939_powertrain_control_state.tsc1_matched_source_configuration_ptr;
+  j1939_powertrain_control_state.retarder_tsc1_source_configuration_pointer =
+       j1939_powertrain_control_state.tsc1_matched_source_configuration_pointer;
 LAB_00023878:
   engine_retarder_controlling_tsc1_torque_byte = engine_retarder_received_tsc1_torque_byte;
   engine_retarder_controlling_source_address = (word)bVar1;
@@ -24704,7 +24723,7 @@ LAB_00023878:
     }
     else {
       j1939_powertrain_control_state.retarder_tsc1_request_timeout_count =
-           (j1939_powertrain_control_state.retarder_tsc1_source_configuration_ptr)->
+           (j1939_powertrain_control_state.retarder_tsc1_source_configuration_pointer)->
            retarder_torque_control_request_timeout + 1;
       engine_retarder_override_control_mode = TSC1_TORQUE_CONTROL;
       engine_retarder_control_device_indicator =
@@ -24712,7 +24731,7 @@ LAB_00023878:
       if (engine_retarder_torque_request_percent == 0) {
         engine_retarder_torque_limit_percent = 0x7d;
         j1939_powertrain_control_state.retarder_tsc1_zero_torque_request_timer =
-             (j1939_powertrain_control_state.retarder_tsc1_source_configuration_ptr)->
+             (j1939_powertrain_control_state.retarder_tsc1_source_configuration_pointer)->
              retarder_torque_control_request_timeout + 1;
         j1939_powertrain_control_state.retarder_tsc1_speed_control_flag = 0;
         return;
@@ -24730,7 +24749,7 @@ LAB_00023878:
     engine_retarder_requested_torque_percent =
          cm848_decodeRetarderTorqueRequestPercent(engine_retarder_received_tsc1_torque_byte);
     j1939_powertrain_control_state.retarder_tsc1_request_timeout_count =
-         (j1939_powertrain_control_state.retarder_tsc1_source_configuration_ptr)->
+         (j1939_powertrain_control_state.retarder_tsc1_source_configuration_pointer)->
          retarder_speed_torque_limit_control_request_timeout + 1;
     j1939_powertrain_control_state.retarder_tsc1_zero_torque_request_timer =
          j1939_powertrain_control_state.retarder_tsc1_request_timeout_count;
@@ -24807,7 +24826,7 @@ void cm848_dispatchTsc1ByDestinationAddress(j1939_rx_msg_t *msg)
 void cm848_initJ1939AddressDispatcher(void)
 
 {
-  cm848_registerJ1939ReceiveHandler(0,cm848_dispatchTsc1ByDestinationAddress);
+  registerJ1939ReceiveHandler(0,cm848_dispatchTsc1ByDestinationAddress);
   return;
 }
 
@@ -27638,8 +27657,8 @@ LAB_00027800:
       iVar10 = 10;
     }
     j1939_powertrain_control_state.tsc1_request_time_limit_timer =
-         *(short *)((int)&(j1939_powertrain_control_state.tsc1_source_configuration_ptr)->data_link
-                   + iVar10) + 1;
+         *(short *)((int)&(j1939_powertrain_control_state.tsc1_source_configuration_pointer)->
+                          data_link + iVar10) + 1;
     bVar5 = true;
   }
 LAB_00027848:
@@ -27700,7 +27719,7 @@ LAB_000279e8:
   else {
     if (engine_retarder_override_control_mode == TSC1_TORQUE_CONTROL) {
       j1939_powertrain_control_state.retarder_tsc1_request_time_limit_timer =
-           (j1939_powertrain_control_state.retarder_tsc1_source_configuration_ptr)->
+           (j1939_powertrain_control_state.retarder_tsc1_source_configuration_pointer)->
            retarder_torque_control_time_limit + 1;
     }
     else {
@@ -27829,16 +27848,19 @@ void cm848_formatNumberAsDecimalText(byte *number,byte *text,int digit_count)
 
 
 //
-// Function: cm848_findTsc1SourceConfiguration @ 0x00027cc4
+// Function: findTsc1SourceConfiguration @ 0x00027cc4
 //
 
 /* Looks up the tsc1_source_configuration_table entry for (data link, source address); on J1939
    (data link 1) an entry with source address 0xff matches any sender. Stores the match in
-   j1939_powertrain_control_state.tsc1_matched_source_configuration_ptr and returns 0, or returns 1
-   when none of the ten entries matches (the caller then rejects the request) (was
-   cm848_governorSpeedControl) */
+   j1939_powertrain_control_state.tsc1_matched_source_configuration_pointer and returns 0, or
+   returns 1 when none of the ten entries matches (the caller then rejects the request). Its callers
+   (processEngineTsc1Request, cm848_processEngineRetarderTsc1Request) pass data link 1 and
+   zero-extend the result (clrlwi r3,r3,16) (was cm848_governorSpeedControl) | (was
+   cm848_findTsc1SourceConfiguration; PR #53 round 91; the twin of CM550 0x31ace: one shared name -
+   CM550's table has five entries) (was cm848_findTsc1SourceConfiguration; PR #53 round 91) */
 
-undefined4 cm848_findTsc1SourceConfiguration(int param_1,uint param_2)
+undefined4 findTsc1SourceConfiguration(int param_1,uint param_2)
 
 {
   tsc1_source_configuration_t *ptVar1;
@@ -27857,7 +27879,7 @@ undefined4 cm848_findTsc1SourceConfiguration(int param_1,uint param_2)
       return 1;
     }
   }
-  j1939_powertrain_control_state.tsc1_matched_source_configuration_ptr = ptVar1;
+  j1939_powertrain_control_state.tsc1_matched_source_configuration_pointer = ptVar1;
   return 0;
 }
 
@@ -70044,19 +70066,13 @@ J1939_DIAGNOSTIC_RESULT cm848_validateJ1939DiagnosticRequest(j1939_rx_msg_t *rx_
 
 
 //
-// Function: cm848_receivePgn57344CabMessage1 @ 0x0050b734
+// Function: receivePgn57344CabMessage1 @ 0x0050b734
 //
 
-/* J1939 PGN 57344 Cab Message 1 (CM1): byte 1 (the requested percent fan speed) into
-   j1939_received_engine_fan_requested_percent_speed when the source passes
-   j1939_input_source_address_filter_cal slot 0 (signal timeout 500). Registered with
-   cm848_registerJ1939ReceiveHandler (was j1939_receivePgn57344Handler; PR #53 round 65) | earlier
-   note: J1939 receive handler registered with cm848_registerJ1939ReceiveHandler for PGN 57344:
-   unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not
-   yet named) | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
-   Confidence Low */
+/* APPEND to the current comment: | (was cm848_receivePgn57344CabMessage1; PR #53 round 91; the twin
+   of CM550 0x21a5c: one shared name) (was cm848_receivePgn57344CabMessage1; PR #53 round 91) */
 
-void cm848_receivePgn57344CabMessage1(j1939_rx_msg_t *message)
+void receivePgn57344CabMessage1(j1939_rx_msg_t *message)
 
 {
   if ((j1939_input_source_address_filter_cal[0] == j1939_received_source_address) ||
@@ -70070,17 +70086,14 @@ void cm848_receivePgn57344CabMessage1(j1939_rx_msg_t *message)
 
 
 //
-// Function: cm848_receivePgn61441ElectronicBrakeController1Message @ 0x0050b77c
+// Function: receivePgn61441ElectronicBrakeController1Message @ 0x0050b77c
 //
 
-/* J1939 PGN 61441 Electronic Brake Controller 1 (EBC1): unpacks its signals for the sources that
-   pass j1939_input_source_address_filter_cal. Registered with cm848_registerJ1939ReceiveHandler
-   (was j1939_receivePgn61441Handler; PR #53 round 65) | earlier note: J1939 receive handler
-   registered with cm848_registerJ1939ReceiveHandler for PGN 61441 (EBC1): unpacks the message into
-   working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named) |
-   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
+/* APPEND to the current comment: | (was cm848_receivePgn61441ElectronicBrakeController1Message; PR
+   #53 round 91; the twin of CM550 0x21a8c: one shared name) (was
+   cm848_receivePgn61441ElectronicBrakeController1Message; PR #53 round 91) */
 
-void cm848_receivePgn61441ElectronicBrakeController1Message(j1939_rx_msg_t *message)
+void receivePgn61441ElectronicBrakeController1Message(j1939_rx_msg_t *message)
 
 {
   if ((j1939_input_source_address_filter_cal[1] == j1939_received_source_address) ||
@@ -70114,17 +70127,14 @@ void cm848_receivePgn61441ElectronicBrakeController1Message(j1939_rx_msg_t *mess
 
 
 //
-// Function: cm848_receivePgn61443ElectronicEngineController2Message @ 0x0050b8a4
+// Function: receivePgn61443ElectronicEngineController2Message @ 0x0050b8a4
 //
 
-/* J1939 PGN 61443 Electronic Engine Controller 2 (EEC2): unpacks its signals for the sources that
-   pass j1939_input_source_address_filter_cal. Registered with cm848_registerJ1939ReceiveHandler
-   (was j1939_receivePgn61443Handler; PR #53 round 65) | earlier note: J1939 receive handler
-   registered with cm848_registerJ1939ReceiveHandler for PGN 61443 (EEC2): unpacks the message into
-   working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not yet named) |
-   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
+/* APPEND to the current comment: | (was cm848_receivePgn61443ElectronicEngineController2Message; PR
+   #53 round 91; the twin of CM550 0x21b88: one shared name) (was
+   cm848_receivePgn61443ElectronicEngineController2Message; PR #53 round 91) */
 
-void cm848_receivePgn61443ElectronicEngineController2Message(j1939_rx_msg_t *message)
+void receivePgn61443ElectronicEngineController2Message(j1939_rx_msg_t *message)
 
 {
   if ((j1939_input_source_address_filter_cal[6] == j1939_received_source_address) ||
@@ -70145,7 +70155,7 @@ void cm848_receivePgn61443ElectronicEngineController2Message(j1939_rx_msg_t *mes
   if ((j1939_input_source_address_filter_cal[9] == j1939_received_source_address) ||
      (j1939_input_source_address_filter_cal[9] == 0xff)) {
     j1939_input_signal_timeouts[9] = 0x19;
-    j1939_received_accelerator_pedal_position_2 = message->data_pointer[4];
+    j1939_received_wet_tank_pressure = message->data_pointer[4];
   }
   return;
 }
@@ -70153,19 +70163,14 @@ void cm848_receivePgn61443ElectronicEngineController2Message(j1939_rx_msg_t *mes
 
 
 //
-// Function: cm848_receivePgn65252ShutdownMessage @ 0x0050b98c
+// Function: receivePgn65252ShutdownMessage @ 0x0050b98c
 //
 
-/* J1939 PGN 65252 Shutdown (SHUTDN): byte 3 bits 1-2 (the A/C high pressure fan switch) into
-   j1939_received_air_conditioner_high_pressure_fan_switch when the source passes
-   j1939_input_source_address_filter_cal slot 10 (signal timeout 500). Registered with
-   cm848_registerJ1939ReceiveHandler (was j1939_receivePgn65252Handler; PR #53 round 65) | earlier
-   note: J1939 receive handler registered with cm848_registerJ1939ReceiveHandler for PGN 65252:
-   unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aabf / 0x3feaa6-0x3fead0 not
-   yet named) | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
-   Confidence Low */
+/* APPEND to the current comment: | (was cm848_receivePgn65252ShutdownMessage; PR #53 round 91; the
+   twin of CM550 0x21c3c: one shared name) (was cm848_receivePgn65252ShutdownMessage; PR #53 round
+   91) */
 
-void cm848_receivePgn65252ShutdownMessage(j1939_rx_msg_t *message)
+void receivePgn65252ShutdownMessage(j1939_rx_msg_t *message)
 
 {
   if ((j1939_input_source_address_filter_cal[10] == j1939_received_source_address) ||
@@ -70179,18 +70184,14 @@ void cm848_receivePgn65252ShutdownMessage(j1939_rx_msg_t *message)
 
 
 //
-// Function: cm848_receivePgn65264PowerTakeoffInformationMessage @ 0x0050b9d8
+// Function: receivePgn65264PowerTakeoffInformationMessage @ 0x0050b9d8
 //
 
-/* J1939 PGN 65264 Power Takeoff Information (PTO): the remote PTO / PTO on / resume / set switches
-   for the sources that pass j1939_input_source_address_filter_cal slots 11-14 (signal timeout 50).
-   Registered with cm848_registerJ1939ReceiveHandler (was j1939_receivePgn65264Handler; PR #53 round
-   65) | earlier note: J1939 receive handler registered with cm848_registerJ1939ReceiveHandler for
-   PGN 65264 (PTO): unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aabf /
-   0x3feaa6-0x3fead0 not yet named) | review-function-readability reviewed 2026-11-12 - Readability
-   Low Accuracy Confidence Medium */
+/* APPEND to the current comment: | (was cm848_receivePgn65264PowerTakeoffInformationMessage; PR #53
+   round 91; the twin of CM550 0x21c74: one shared name) (was
+   cm848_receivePgn65264PowerTakeoffInformationMessage; PR #53 round 91) */
 
-void cm848_receivePgn65264PowerTakeoffInformationMessage(j1939_rx_msg_t *message)
+void receivePgn65264PowerTakeoffInformationMessage(j1939_rx_msg_t *message)
 
 {
   if ((j1939_input_source_address_filter_cal[0xb] == j1939_received_source_address) ||
@@ -70219,18 +70220,14 @@ void cm848_receivePgn65264PowerTakeoffInformationMessage(j1939_rx_msg_t *message
 
 
 //
-// Function: cm848_receivePgn65265CruiseControlVehicleSpeedMessage @ 0x0050bacc
+// Function: receivePgn65265CruiseControlVehicleSpeedMessage @ 0x0050bacc
 //
 
-/* J1939 PGN 65265 Cruise Control/Vehicle Speed 1 (CCVS1): unpacks its signals for the sources that
-   pass j1939_input_source_address_filter_cal. Registered with cm848_registerJ1939ReceiveHandler
-   (was j1939_receivePgn65265Handler; PR #53 round 65) | earlier note: J1939 receive handler
-   registered with cm848_registerJ1939ReceiveHandler for PGN 65265 (CCVS - cruise control / vehicle
-   speed): unpacks the message into working RAM (signal globals at 0x40aaa9-0x40aabf /
-   0x3feaa6-0x3fead0 not yet named) | review-function-readability reviewed 2026-11-12 - Readability
-   Low Accuracy Confidence Medium */
+/* APPEND to the current comment: | (was cm848_receivePgn65265CruiseControlVehicleSpeedMessage; PR
+   #53 round 91; the twin of CM550 0x21d44: one shared name) (was
+   cm848_receivePgn65265CruiseControlVehicleSpeedMessage; PR #53 round 91) */
 
-void cm848_receivePgn65265CruiseControlVehicleSpeedMessage(j1939_rx_msg_t *message)
+void receivePgn65265CruiseControlVehicleSpeedMessage(j1939_rx_msg_t *message)
 
 {
   if ((j1939_input_source_address_filter_cal[0xf] == j1939_received_source_address) ||
@@ -70344,12 +70341,12 @@ void cm848_tickJ1939InputSupervision(void)
 void cm848_registerJ1939InputMessageHandlers(void)
 
 {
-  cm848_registerJ1939ReceiveHandler(0xe000,cm848_receivePgn57344CabMessage1);
-  cm848_registerJ1939ReceiveHandler(0xf001,cm848_receivePgn61441ElectronicBrakeController1Message);
-  cm848_registerJ1939ReceiveHandler(0xf003,cm848_receivePgn61443ElectronicEngineController2Message);
-  cm848_registerJ1939ReceiveHandler(0xfee4,cm848_receivePgn65252ShutdownMessage);
-  cm848_registerJ1939ReceiveHandler(0xfef0,cm848_receivePgn65264PowerTakeoffInformationMessage);
-  cm848_registerJ1939ReceiveHandler(0xfef1,cm848_receivePgn65265CruiseControlVehicleSpeedMessage);
+  registerJ1939ReceiveHandler(0xe000,receivePgn57344CabMessage1);
+  registerJ1939ReceiveHandler(0xf001,receivePgn61441ElectronicBrakeController1Message);
+  registerJ1939ReceiveHandler(0xf003,receivePgn61443ElectronicEngineController2Message);
+  registerJ1939ReceiveHandler(0xfee4,receivePgn65252ShutdownMessage);
+  registerJ1939ReceiveHandler(0xfef0,receivePgn65264PowerTakeoffInformationMessage);
+  registerJ1939ReceiveHandler(0xfef1,receivePgn65265CruiseControlVehicleSpeedMessage);
   j1939_input_fault_start_delay = 1000;
   return;
 }
@@ -71833,8 +71830,8 @@ void cm848_initializeJ1939Transport(void)
        j1939_broadcast_transmit_frame_buffer_1;
   j1939_transport_transmit_session.transmit_frame_pointer = j1939_transport_transmit_frame_buffer;
   j1939_transport_receive_session.receive_buffer_pointer = &j1939_transport_receive_buffer;
-  cm848_registerJ1939ReceiveHandler(0xec00,cm848_dispatchJ1939TransportConnectionManagement);
-  cm848_registerJ1939ReceiveHandler(0xeb00,cm848_handleJ1939TransportDataPacket);
+  registerJ1939ReceiveHandler(0xec00,cm848_dispatchJ1939TransportConnectionManagement);
+  registerJ1939ReceiveHandler(0xeb00,cm848_handleJ1939TransportDataPacket);
   return;
 }
 
@@ -99765,15 +99762,14 @@ void cm848_exceptionHandler(void)
 
 
 //
-// Function: cm848_registerJ1939ReceiveHandler @ 0x00538eb0
+// Function: registerJ1939ReceiveHandler @ 0x00538eb0
 //
 
-/* Appends a PGN and its handler to the J1939 receive handler table at 0x3fd414 (6-byte entries - at
-   most 17; the count is j1939_receive_handler_count) that cm848_dispatchJ1939ReceivedMessages
-   searches. Returns true when full. The receive side twin of registerJ1939DiagnosticService (was
-   j1939_handlerInitializer; PR #53 round 65) */
+/* APPEND to the current comment: | (was cm848_registerJ1939ReceiveHandler; PR #53 round 91; the
+   twin of CM550 0x21272, whose table holds 16: one shared name) (was
+   cm848_registerJ1939ReceiveHandler; PR #53 round 91) */
 
-bool cm848_registerJ1939ReceiveHandler(word pgn_key,void *handler)
+bool registerJ1939ReceiveHandler(word pgn_key,void *handler)
 
 {
   uint uVar1;

@@ -201,7 +201,7 @@ Both ECU generations use the **same 40-phase cooperative scheduler**:
 | Aspect | CM550 (J90350.00) | CM848D (S90140.06) |
 |--------|-------------------|---------------------|
 | Phase count | 40 (0x00-0x27) | 40 (0x00-0x27) |
-| Phase index variable | `_main_loop_phase_index` | `main_loop_phase_index` |
+| Phase index variable | `scheduler_phase_index` (0x80068c) | `executive_frame_phase` (0x3fa008) |
 | Wrap behavior | 0x27 → 0 | 0x27 → 0 |
 | Tasks per phase | 5-7 | 6-7 |
 | Even/odd alternation | Yes | Yes |

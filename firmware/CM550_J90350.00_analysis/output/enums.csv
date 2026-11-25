@@ -72,7 +72,7 @@ J1939_THROTTLE_ENABLE,2,JC39ENFG,J1939 message enable flags table
 J1939_THROTTLE_ENABLE,3,J1939_THROTTLE_ENABLE_AS01CF,ASG throttle mode compensation filter coef. 1
 J1939_THROTTLE_ENABLE,4,J1939_THROTTLE_ENABLE_AS02CF,ASG throttle mode compensation filter coef. 2
 J1939_THROTTLE_ENABLE,5,J1939_THROTTLE_ENABLE_AS03CF,ASG throttle mode compensation filter coef. 3
-# Main Loop Phase Index - main_loop_phase_index in scheduler switch (40 phases 0x00-0x27)
+# Main Loop Phase Index - scheduler_phase_index in the scheduler switch (40 phases 0x00-0x27; the comment named main_loop_phase_index, a stale row at 0x800358 - PR #53 round 91)
 # Even phases (0,2,4...): ioControl + evenPhase + [vp44_engine or engineDiagnostic] + specific tasks
 # Odd phases (1,3,5...): ioControl + oddPhase + [engine_control or slowCycle4] + specific tasks
 MAIN_LOOP_PHASE,0,PHASE_0_VP44_RPM,Even: VP44 engine management + RPM control,2

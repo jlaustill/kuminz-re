@@ -138,27 +138,26 @@ void vp44_FUN_000133fe(void);  // @ 0x000133fe
 void cm550_circularBufferWriteWithStatus(void);  // @ 0x0001355e
 uint vp44_communication_state_machine(word scheduler_call);  // @ 0x00013616
 void vp44_initVp44BufferAddresses(void);  // @ 0x000138a0
-uint cm550_FUN_000138b6(void);  // @ 0x000138b6
-undefined * cm550_FUN_00013a5c(void);  // @ 0x00013a5c
-void cm550_FUN_00013cc8(void);  // @ 0x00013cc8
-undefined4 cm550_FUN_00013d42(void);  // @ 0x00013d42
-void cm550_FUN_00013dbe(void);  // @ 0x00013dbe
-void cm550_FUN_00013e12(void);  // @ 0x00013e12
-void cm550_FUN_00013e64(void);  // @ 0x00013e64
-byte cm550_FUN_00013ed8(word condition_record_index);  // @ 0x00013ed8
-void cm550_FUN_00014292(undefined1 *param_1,undefined1 *param_2);  // @ 0x00014292
+uint cm550_updateDataloggerTriggers(void);  // @ 0x000138b6
+byte * cm550_recordDataloggerSamples(void);  // @ 0x00013a5c
+void cm550_initializeDatalogger(void);  // @ 0x00013cc8
+undefined4 cm550_selectDataloggerSamplePeriod(void);  // @ 0x00013d42
+void cm550_resolveDataloggerTriggerAddresses(void);  // @ 0x00013dbe
+void cm550_resolveDataloggerDataParameterAddresses(void);  // @ 0x00013e12
+void cm550_findDataloggerTriggerFaultIndexes(void);  // @ 0x00013e64
+byte cm550_evaluateDataloggerTrigger(word condition_record_index);  // @ 0x00013ed8
+void cm550_copyDataloggerSampleBuffer(undefined1 *param_1,undefined1 *param_2);  // @ 0x00014292
 undefined4 cm550_canBusConfigTypeSelector(word config_type);  // @ 0x000142a8
 void cm550_FUN_000142d4(word fuel_table_x_input,word lookup_result_offset);  // @ 0x000142d4
 void cm550_FUN_00014348(void);  // @ 0x00014348
 void cm550_multiSpeedParameterInterpolation(void);  // @ 0x000143b6
 void cm550_fuelDemandPercentageCalculator(void);  // @ 0x0001444e
-void cm550_diagnosticCodeDebounceHandler(word code_index);  // @ 0x000144bc
-void cm550_phase2_sensor_data_processor(void);  // @ 0x0001452e
-void cm550_FUN_00014670(void);  // @ 0x00014670
+void cm550_countDownPreviouslyActiveFault(word code_index);  // @ 0x000144bc
+void cm550_countDownPreviouslyActiveFaults(void);  // @ 0x00014670
 word cm550_oldestDiagnosticTimestampSearch(word fault_status);  // @ 0x000146b4
 void cm550_diagnosticCodeRegistrar(word code_index);  // @ 0x00014720
 void cm550_FUN_00014812(void);  // @ 0x00014812
-void cm550_FUN_00014872(void);  // @ 0x00014872
+void cm550_processFaultScanGroup(void);  // @ 0x00014872
 void cm550_faultFlagScannerAndProcessor(void);  // @ 0x00014dc6
 void cm550_insitePidDtcHandler(word spn_byte);  // @ 0x00014f42
 void cm550_initHourMeterSystem(void);  // @ 0x00014fae
@@ -396,9 +395,9 @@ void cm550_diagnosticMemoryWriteHandler(word service_id);  // @ 0x0001ec3c
 void cm550_diagnosticMemoryReadHandler(word service_id);  // @ 0x0001edae
 void cm550_diagnosticMessage45Builder(void);  // @ 0x0001f0de
 void cm550_diagnosticMessage46Builder(void);  // @ 0x0001f2d0
-uint cm550_FUN_0001f4e8(void);  // @ 0x0001f4e8
+tsc1_source_configuration_t * cm550_FUN_0001f4e8(void);  // @ 0x0001f4e8
 void cm550_fuelDemandScaleFactorCalculator(void);  // @ 0x0001f84e
-uint cm550_engineFluidLevelDataBuilder(void);  // @ 0x0001f8bc
+tsc1_source_configuration_t * cm550_engineFluidLevelDataBuilder(void);  // @ 0x0001f8bc
 void cm550_extendedDiagnosticService51(void);  // @ 0x0001fbb0
 void cm550_diagnosticMessage53Builder(void);  // @ 0x0001fbf4
 void cm550_diagnosticMessage54Builder(void);  // @ 0x0001fc9c
@@ -449,12 +448,14 @@ undefined2 byteSwap16(undefined2 *param_1);  // @ 0x000218fe
 byte cm550_FUN_00021920(void);  // @ 0x00021920
 byte getJ1939MemoryServiceHeaderLength(word service_id);  // @ 0x00021964
 undefined4 cm550_diagnosticServiceSecurityValidator(dword msg_ptr);  // @ 0x00021982
-void cm550_FUN_00021a8c(int param_1);  // @ 0x00021a8c
-void cm550_FUN_00021b88(int param_1);  // @ 0x00021b88
-void cm550_FUN_00021c74(int param_1);  // @ 0x00021c74
-void cm550_FUN_00021d44(int param_1);  // @ 0x00021d44
-void cm550_FUN_00021edc(void);  // @ 0x00021edc
-void cm550_FUN_00021ef6(void);  // @ 0x00021ef6
+void receivePgn57344CabMessage1(int param_1);  // @ 0x00021a5c
+void receivePgn61441ElectronicBrakeController1Message(int param_1);  // @ 0x00021a8c
+void receivePgn61443ElectronicEngineController2Message(int param_1);  // @ 0x00021b88
+void receivePgn65252ShutdownMessage(int param_1);  // @ 0x00021c3c
+void receivePgn65264PowerTakeoffInformationMessage(int param_1);  // @ 0x00021c74
+void receivePgn65265CruiseControlVehicleSpeedMessage(int param_1);  // @ 0x00021d44
+void cm550_tickJ1939InputSupervision(void);  // @ 0x00021edc
+void cm550_registerJ1939InputMessageHandlers(void);  // @ 0x00021ef6
 void cm550_diagnosticGroupPositionBufferStore(byte session_kind);  // @ 0x00021f4e
 void cm550_diagnosticGroupSnapshotCapture(byte command_record_index);  // @ 0x00021fac
 uint cm550_memoryRegisterController(void);  // @ 0x00022070
@@ -631,7 +632,7 @@ void cm550_FUN_0002fbb2(void);  // @ 0x0002fbb2
 void unscrambleSecurityKey(byte *input_buffer,byte *output_buffer);  // @ 0x0002fbd8
 byte validateSecurityKey(byte *auth_payload_ptr);  // @ 0x0002fcdc
 void cm550_FUN_0002fd90(word code_index);  // @ 0x0002fd90
-void cm550_diagnosticTableEntryClear(word code_index);  // @ 0x0002fddc
+void cm550_resetFaultStatus(word code_index);  // @ 0x0002fddc
 void cm550_diagnosticTableSnapshotCapture(word snapshot_slot,word code_index);  // @ 0x0002fe38
 undefined8 mc68k_j1708BusTimerInterruptHandler(void);  // @ 0x000300d4
 void mc68k_engineSpeedIsrRegister(void);  // @ 0x00030274
@@ -662,7 +663,7 @@ void mc68k_loadTpuMicrocode(void);  // @ 0x00031428
 ushort cm550_FUN_00031496(void);  // @ 0x00031496
 void cm550_FUN_000315be(void);  // @ 0x000315be
 ushort cm550_FUN_00031a68(void);  // @ 0x00031a68
-word cm550_diagnosticSessionValidator(word data_link,word source_address);  // @ 0x00031ace
+word findTsc1SourceConfiguration(word data_link,word source_address);  // @ 0x00031ace
 void cm550_diagnosticCanResponseSender(can_std_rx_desc_t *request,word acknowledgement_type);  // @ 0x00031b22
 void cm550_canBufferSetup1(void);  // @ 0x00031b96
 void cm550_FUN_00031bce(void);  // @ 0x00031bce

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue Nov 24 15:18:09 MST 2026
+// Generated: Tue Nov 24 17:04:42 MST 2026
 
 
 //
@@ -2399,7 +2399,8 @@ void cm550_runAllSpeedGovernor(void)
     }
     else {
       iVar2 = (uint)_asg_droop_gain_2_0_2 *
-              ((int)_asg_governor_gains_ptr[3] + (int)_asg_governor_gains_ptr[2]);
+              ((int)all_speed_governor_gain_set_pointer->integral_gain_2 +
+              (int)all_speed_governor_gain_set_pointer->integral_gain_1);
       if (iVar2 == 0) {
         _asg_filtered_reference_speed_0_4500 = _engine_rpm_primary;
       }
@@ -2488,7 +2489,8 @@ void cm550_runAllSpeedGovernor(void)
     }
     else {
       _DAT_0080a974 = 1;
-      if (_asg_governor_gains_ptr[6] == _asg_governor_gains_ptr[7]) {
+      if (all_speed_governor_gain_set_pointer->compensation_filter_coefficient_1 ==
+          all_speed_governor_gain_set_pointer->compensation_filter_coefficient_2) {
         _fuel_blend_table_1_limit = 0;
         sVar4 = 0;
       }
@@ -2496,8 +2498,12 @@ void cm550_runAllSpeedGovernor(void)
         puVar3 = (undefined *)
                  cm550_scaleByRatioSigned
                            ((uint)_current_fuel_demand - (uint)_rpm_control_override_flag,
-                            0x100 - (int)_asg_governor_gains_ptr[8],
-                            (int)_asg_governor_gains_ptr[6] - (int)_asg_governor_gains_ptr[7]);
+                            0x100 - (int)all_speed_governor_gain_set_pointer->
+                                         compensation_filter_coefficient_3,
+                            (int)all_speed_governor_gain_set_pointer->
+                                 compensation_filter_coefficient_1 -
+                            (int)all_speed_governor_gain_set_pointer->
+                                 compensation_filter_coefficient_2);
         if (0x1700 < (int)puVar3) {
           puVar3 = &DAT_00001700;
         }
@@ -2508,8 +2514,12 @@ void cm550_runAllSpeedGovernor(void)
         puVar3 = (undefined *)
                  cm550_scaleByRatioSigned
                            ((uint)_rpm_control_override_flag - (uint)_current_fuel_demand,
-                            0x100 - (int)_asg_governor_gains_ptr[8],
-                            (int)_asg_governor_gains_ptr[6] - (int)_asg_governor_gains_ptr[7]);
+                            0x100 - (int)all_speed_governor_gain_set_pointer->
+                                         compensation_filter_coefficient_3,
+                            (int)all_speed_governor_gain_set_pointer->
+                                 compensation_filter_coefficient_1 -
+                            (int)all_speed_governor_gain_set_pointer->
+                                 compensation_filter_coefficient_2);
         if (0x1700 < (int)puVar3) {
           puVar3 = &DAT_00001700;
         }
@@ -2545,10 +2555,14 @@ void cm550_runAllSpeedGovernor(void)
       _asg_error_difference_2000_2000 = 32000;
     }
     _fuel_blend_table_2_ptr =
-         ((int)sVar5 * ((int)_asg_governor_gains_ptr[3] + (int)_asg_governor_gains_ptr[2]) +
+         ((int)sVar5 *
+          ((int)all_speed_governor_gain_set_pointer->integral_gain_2 +
+          (int)all_speed_governor_gain_set_pointer->integral_gain_1) +
          (int)_asg_error_difference_2000_2000 *
-         ((int)_asg_governor_gains_ptr[2] + (int)*_asg_governor_gains_ptr)) -
-         (int)_asg_feedback_difference_term_1000_1000 * (int)_asg_governor_gains_ptr[1] >> 9;
+         ((int)all_speed_governor_gain_set_pointer->integral_gain_1 +
+         (int)all_speed_governor_gain_set_pointer->proportional_gain_1)) -
+         (int)_asg_feedback_difference_term_1000_1000 *
+         (int)all_speed_governor_gain_set_pointer->proportional_gain_2 >> 9;
     if (_fuel_blend_table_2_ptr < 0xe6000) {
       if (_fuel_blend_table_2_ptr < -0xe5fff) {
         _fuel_blend_table_2_ptr = -0xe6000;
@@ -2557,9 +2571,10 @@ void cm550_runAllSpeedGovernor(void)
     else {
       _fuel_blend_table_2_ptr = 0xe6000;
     }
-    sStack_6 = (short)((int)_asg_error_difference_2000_2000 * (int)_asg_governor_gains_ptr[4] -
+    sStack_6 = (short)((int)_asg_error_difference_2000_2000 *
+                       (int)all_speed_governor_gain_set_pointer->derivative_gain_1 -
                        (int)_asg_feedback_difference_term_1000_1000 *
-                       (int)_asg_governor_gains_ptr[5] >> 0xd);
+                       (int)all_speed_governor_gain_set_pointer->derivative_gain_2 >> 0xd);
     if (sStack_6 < all_speed_governor_derivative_deadband_limit) {
       if (-(int)all_speed_governor_derivative_deadband_limit < (int)sStack_6) {
         _asg_derivative_deadband_output = 0;
@@ -2613,9 +2628,12 @@ void cm550_runAllSpeedGovernor(void)
     else if (0x1700 < _asg_state_x5_100_100) {
       _asg_state_x5_100_100 = 0x1700;
     }
-    iVar2 = (int)_asg_state_x6_100_100 * (int)_asg_governor_gains_ptr[8] +
-            ((int)_asg_state_x5_100_100 * (int)_asg_governor_gains_ptr[6] -
-            (int)sVar4 * (int)_asg_governor_gains_ptr[7]);
+    iVar2 = (int)_asg_state_x6_100_100 *
+            (int)all_speed_governor_gain_set_pointer->compensation_filter_coefficient_3 +
+            ((int)_asg_state_x5_100_100 *
+             (int)all_speed_governor_gain_set_pointer->compensation_filter_coefficient_1 -
+            (int)sVar4 * (int)all_speed_governor_gain_set_pointer->compensation_filter_coefficient_2
+            );
     iVar1 = iVar2 >> 8;
     if (iVar1 < -0x16ff) {
       _asg_state_x6_100_100 = -0x1700;
@@ -2670,7 +2688,7 @@ void cm550_diagnosticDataCopyHandler(void)
     _qpid_adjusted_asg_droop_compensated_error_integral_2000_2000 =
          _asg_application_specific_droop_gain_1_0_2;
     _asg_droop_gain_2_0_2 = _asg_application_specific_droop_gain_2_0_2;
-    _asg_governor_gains_ptr = &asg_application_specific_proportional_gain_1_0_0_135;
+    all_speed_governor_gain_set_pointer = &all_speed_governor_application_gain_set;
     all_speed_governor_reference_filter_state.coefficient =
          &all_speed_governor_application_reference_filter_coefficient;
     _asg_reset_state_x1_2000_2000 = _asg_application_specific_state_x1_reset_value_2000_2000;
@@ -2702,7 +2720,7 @@ void cm550_fuelDeliverySystemInit(void)
   _qpid_adjusted_asg_droop_compensated_error_integral_2000_2000 =
        _asg_application_specific_droop_gain_1_0_2;
   _asg_droop_gain_2_0_2 = _asg_application_specific_droop_gain_2_0_2;
-  _asg_governor_gains_ptr = &asg_application_specific_proportional_gain_1_0_0_135;
+  all_speed_governor_gain_set_pointer = &all_speed_governor_application_gain_set;
   all_speed_governor_reference_filter_state.coefficient =
        &all_speed_governor_application_reference_filter_coefficient;
   _asg_reset_state_x1_2000_2000 = _asg_application_specific_state_x1_reset_value_2000_2000;
@@ -2748,9 +2766,9 @@ void cm550_diagnosticStatus2Initializer(word previous_user_fueling_state)
 {
   if ((user_fueling_state == 0) && (_asg_quadratic_integral_adjustment_500_500 == 2)) {
     user_fueling_state = 2;
-    _asg_governor_gains_ptr =
+    all_speed_governor_gain_set_pointer =
          j1939_tsc1_speed_control_condition_gain_sets +
-         (uint)_jcomm_speed_governor_mode_indicator_of_which_speed_mode_characte_0_3 * 9;
+         _jcomm_speed_governor_mode_indicator_of_which_speed_mode_characte_0_3;
     if (previous_user_fueling_state != 2) {
       _asg_external_reset_flag_true_false = 0;
       _qpid_adjusted_asg_droop_compensated_error_integral_2000_2000 = 0x400;
@@ -2968,8 +2986,8 @@ void cm550_diagnosticMode10FuelController(void)
     _throttle_buffer_decreasing_value = _asg_reference_speed_working;
     _asg_selected_droop_slope_0_30 = lookupTableInterpolation((table_interp_args_t *)&DAT_00800136);
   }
-  uVar1 = (uint)(ushort)(_asg_integral_gain_2_calibration_0_6_75 +
-                        _asg_integral_gain_1_calibration_0_6_75) *
+  uVar1 = (uint)(ushort)(all_speed_governor_throttle_mode_gain_set.integral_gain_2 +
+                        all_speed_governor_throttle_mode_gain_set.integral_gain_1) *
           (uint)_asg_selected_droop_slope_0_30;
   if (uVar1 < 0x2655879) {
     _asg_throttle_droop_gain_1_0_1 =
@@ -3019,7 +3037,7 @@ uint cm550_FUN_0000d4ae(word previous_user_fueling_state)
     user_fueling_state = 7;
     uVar1 = cm550_diagnosticMode10FuelController();
     if ((previous_user_fueling_state != 7) && (previous_user_fueling_state != 3)) {
-      _asg_governor_gains_ptr = &asg_proportional_gain_1_calibration_0_0_135;
+      all_speed_governor_gain_set_pointer = &all_speed_governor_throttle_mode_gain_set;
       _asg_external_reset_flag_true_false = 0;
       _asg_fueling_lower_limit_0_50 = governor_fuel_demand_tracking_floor_throttle_mode;
       _asg_fueling_high_limit_0_100 = governor_fuel_demand_tracking_limit_throttle_mode;
@@ -8482,12 +8500,28 @@ void vp44_initVp44BufferAddresses(void)
 
 
 //
-// Function: cm550_FUN_000138b6 @ 0x000138b6
+// Function: cm550_updateDataloggerTriggers @ 0x000138b6
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The datalogger's trigger task (e2m UD*; run from the scheduler slot cm550_FUN_0001b6d6 after
+   cm550_j1939TimeoutDataClearHandler). Every pass it counts the sample period counter (0x80051e) up
+   to the sample period (0x800353) and then raises the sample due flag (0x800354). With the
+   datalogger enable bit clear (0x20 of feature_enable_flags_word, e2m 106B +0x26 UDEN 'BIT 5') it
+   clears the trigger detected / AND / OR flags (0x80baca / 0x80bac6 / 0x80bac8) and the set-up flag
+   (0x800352). Otherwise: before the set-up and with no event being logged (0x80bac4) it reloads the
+   sample period (cm550_selectDataloggerSamplePeriod) and in automatic mode (0x803dc6 = 1) resolves
+   the trigger parameters (cm550_resolveDataloggerTriggerAddresses) and fault codes
+   (cm550_findDataloggerTriggerFaultIndexes); with the engine stopped (engine_state STOPPED) or an
+   event being logged it clears the three flags; in automatic mode on a sample-due pass it evaluates
+   triggers 1-3 of datalogger_triggers_cal (a disabled one counts as satisfied) and trigger 4 (a
+   disabled one does not) with cm550_evaluateDataloggerTrigger into the result bytes at 0x80036a:
+   triggers 1-3 all satisfied set the trigger detected flag and the AND flag, trigger 4 sets the
+   trigger detected flag and the OR flag. In any other mode a rising edge of bit 6 of the byte at
+   0x80bcd0 (latch 0x800520) sets the trigger detected flag. No caller reads D0. (was
+   cm550_FUN_000138b6; PR #53 round 91) (was cm550_FUN_000138b6; PR #53 round 91) */
 
-uint cm550_FUN_000138b6(void)
+uint cm550_updateDataloggerTriggers(void)
 
 {
   uint uVar1;
@@ -8496,47 +8530,47 @@ uint cm550_FUN_000138b6(void)
   short sVar4;
   byte *pbVar5;
   
-  _trending_sample_counter = _trending_sample_counter + 1;
-  if (trending_sample_rate_divisor <= _trending_sample_counter) {
-    scheduler_phase_execution_time = '\x01';
-    _trending_sample_counter = 0;
+  datalogger_sample_period_counter = datalogger_sample_period_counter + 1;
+  if (datalogger_sample_period_passes <= datalogger_sample_period_counter) {
+    datalogger_sample_due_flag = 1;
+    datalogger_sample_period_counter = 0;
   }
   uVar1 = (uint)(_feature_enable_flags_word & 0x20);
   if ((_feature_enable_flags_word & 0x20) == 0) {
-    _trending_trigger_detected_flag = 0;
-    _DAT_0080bac6 = 0;
-    _DAT_0080bac8 = 0;
-    DAT_00800352 = '\0';
+    datalogger_trigger_detected_flag = 0;
+    datalogger_and_inputs_trigger_flag = 0;
+    datalogger_or_input_trigger_flag = 0;
+    datalogger_setup_complete_flag = 0;
   }
   else {
-    if ((DAT_00800352 == '\0') && (_snapshot_capture_active_flag == 0)) {
-      uVar1 = cm550_FUN_00013d42();
-      trending_sample_rate_divisor = (byte)uVar1;
-      if (_DAT_00803dc6 == 1) {
-        cm550_FUN_00013dbe();
-        uVar1 = cm550_FUN_00013e64();
+    if ((datalogger_setup_complete_flag == 0) && (datalogger_event_logging_active_flag == 0)) {
+      uVar1 = cm550_selectDataloggerSamplePeriod();
+      datalogger_sample_period_passes = (byte)uVar1;
+      if (datalogger_trigger_mode_cal == 1) {
+        cm550_resolveDataloggerTriggerAddresses();
+        uVar1 = cm550_findDataloggerTriggerFaultIndexes();
       }
     }
     if (engine_state == ENGINE_STATE_STOPPED) {
-      _trending_trigger_detected_flag = 0;
-      _DAT_0080bac6 = 0;
-      _DAT_0080bac8 = 0;
+      datalogger_trigger_detected_flag = 0;
+      datalogger_and_inputs_trigger_flag = 0;
+      datalogger_or_input_trigger_flag = 0;
       return uVar1;
     }
-    if (_snapshot_capture_active_flag != 0) {
-      _trending_trigger_detected_flag = 0;
-      _DAT_0080bac6 = 0;
-      _DAT_0080bac8 = 0;
+    if (datalogger_event_logging_active_flag != 0) {
+      datalogger_trigger_detected_flag = 0;
+      datalogger_and_inputs_trigger_flag = 0;
+      datalogger_or_input_trigger_flag = 0;
       return uVar1;
     }
-    if (_DAT_00803dc6 == 1) {
-      if (scheduler_phase_execution_time != '\0') {
+    if (datalogger_trigger_mode_cal == 1) {
+      if (datalogger_sample_due_flag != 0) {
         bVar3 = 0;
-        pbVar5 = (byte *)&flash_write_end_address;
+        pbVar5 = datalogger_trigger_satisfied_flags;
         sVar4 = 0;
         do {
-          if ((&datalogger_trigger_1_disable_cal)[sVar4] == 0) {
-            bVar2 = cm550_FUN_00013ed8((word)CONCAT31((int3)(uVar1 >> 8),bVar3));
+          if ((&datalogger_triggers_cal[0].disable_flag)[sVar4] == 0) {
+            bVar2 = cm550_evaluateDataloggerTrigger((word)CONCAT31((int3)(uVar1 >> 8),bVar3));
             *pbVar5 = bVar2;
           }
           else {
@@ -8547,26 +8581,27 @@ uint cm550_FUN_000138b6(void)
           pbVar5 = pbVar5 + 1;
           bVar3 = bVar3 + 1;
         } while (bVar3 < 3);
-        if (datalogger_trigger_4_disable_cal == 0) {
-          DAT_0080036d = cm550_FUN_00013ed8(3);
-          uVar1 = (uint)DAT_0080036d;
+        if (datalogger_triggers_cal[3].disable_flag == 0) {
+          datalogger_trigger_satisfied_flags[3] = cm550_evaluateDataloggerTrigger(3);
+          uVar1 = (uint)datalogger_trigger_satisfied_flags[3];
         }
         else {
-          DAT_0080036d = 0;
+          datalogger_trigger_satisfied_flags[3] = 0;
         }
-        if (((flash_write_end_address == '\0') || (DAT_0080036b == '\0')) || (DAT_0080036c == '\0'))
-        {
-          if (DAT_0080036d != 0) {
-            _trending_trigger_detected_flag = 1;
-            _DAT_0080bac8 = 1;
+        if (((datalogger_trigger_satisfied_flags[0] == 0) ||
+            (datalogger_trigger_satisfied_flags[1] == 0)) ||
+           (datalogger_trigger_satisfied_flags[2] == 0)) {
+          if (datalogger_trigger_satisfied_flags[3] != 0) {
+            datalogger_trigger_detected_flag = 1;
+            datalogger_or_input_trigger_flag = 1;
             return uVar1;
           }
         }
         else {
-          _trending_trigger_detected_flag = 1;
-          _DAT_0080bac6 = 1;
-          if (DAT_0080036d != 0) {
-            _DAT_0080bac8 = 1;
+          datalogger_trigger_detected_flag = 1;
+          datalogger_and_inputs_trigger_flag = 1;
+          if (datalogger_trigger_satisfied_flags[3] != 0) {
+            datalogger_or_input_trigger_flag = 1;
             return uVar1;
           }
         }
@@ -8574,12 +8609,12 @@ uint cm550_FUN_000138b6(void)
     }
     else {
       if ((debounced_value_for_rear_axle_ratio_switch_on_off & 0x40) == 0) {
-        DAT_00800520 = 0;
+        datalogger_manual_trigger_switch_latch = 0;
         return uVar1;
       }
-      if (DAT_00800520 == '\0') {
-        _trending_trigger_detected_flag = 1;
-        DAT_00800520 = 1;
+      if (datalogger_manual_trigger_switch_latch == 0) {
+        datalogger_trigger_detected_flag = 1;
+        datalogger_manual_trigger_switch_latch = 1;
         return uVar1;
       }
     }
@@ -8590,220 +8625,274 @@ uint cm550_FUN_000138b6(void)
 
 
 //
-// Function: cm550_FUN_00013a5c @ 0x00013a5c
+// Function: cm550_recordDataloggerSamples @ 0x00013a5c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The datalogger's sample task (run from the scheduler slot cm550_FUN_0001b6e4 after
+   vp44_hourMeterEventLogger). While the datalogger is disabled with no trigger detected and no
+   event being logged it zeroes the 400-byte ring buffer at 0x800374 once (flag 0x800372).
+   Otherwise: at the set-up (0x800352 = 0, no event being logged) it sets 0x800352, resolves the
+   data parameters (cm550_resolveDataloggerDataParameterAddresses), counts into 0x800521 the first
+   0x803dc8 (UDPRCU) records of datalogger_data_parameters_cal whose running byte total stays at or
+   below 10 and points the write pointer (0x800504) at the ring. On each sample-due pass (0x800354,
+   cleared here): a detected trigger (0x80baca) starts an event - logging active (0x80bac4 = 1), the
+   trigger information at 0x800522 (ring offset of the write pointer / key_on_hour_meter / the low
+   bytes of the AND and OR flags) and the post-trigger byte count (0x80051c) = 0; then value_length
+   bytes of each counted parameter are copied from its resolved address (0x800508 + 4 x n) into the
+   ring, wrapping at 0x800504. While logging, the 200th byte after the trigger ends the sample and
+   sets 0x80052a; the event is then saved: the trigger information and a copy of the ring
+   (cm550_copyDataloggerSampleBuffer) go to event 1 (0x8052ea / 0x804fca; e2m UDTRMK / UDDXTB) while
+   UDEV01 (0x8052fa) is 0 and to event 2 (0x8052f2 / 0x80515a) otherwise, UDEV01 / UDEV02 (0x8052fc)
+   are set and logging stops - an event holds the 200 bytes before and the 200 after its trigger. No
+   caller reads D0. (was cm550_FUN_00013a5c; PR #53 round 91) (was cm550_FUN_00013a5c; PR #53 round
+   91) */
 
-undefined * cm550_FUN_00013a5c(void)
+byte * cm550_recordDataloggerSamples(void)
 
 {
-  undefined *puVar1;
-  undefined *puVar2;
-  char cVar3;
+  byte *pbVar1;
+  char cVar2;
+  byte bVar4;
+  ushort uVar3;
   byte bVar5;
-  ushort uVar4;
-  byte bVar6;
-  short sVar7;
-  undefined4 uVar8;
-  undefined1 *puVar9;
+  short sVar6;
+  byte *pbVar7;
   
-  puVar1 = (undefined *)(_feature_enable_flags_word & 0x20);
-  if ((((_feature_enable_flags_word & 0x20) == 0) && (_trending_trigger_detected_flag != 1)) &&
-     (_snapshot_capture_active_flag != 1)) {
-    if (DAT_00800372 == '\0') {
-      uVar4 = 0;
-      puVar9 = &fuel_demand_blend_input;
+  pbVar7 = (byte *)(_feature_enable_flags_word & 0x20);
+  if ((((_feature_enable_flags_word & 0x20) == 0) && (datalogger_trigger_detected_flag != 1)) &&
+     (datalogger_event_logging_active_flag != 1)) {
+    if (datalogger_ring_buffer_cleared_flag == 0) {
+      uVar3 = 0;
+      pbVar1 = datalogger_sample_ring_buffer;
       do {
-        *puVar9 = 0;
-        uVar4 = uVar4 + 1;
-        puVar9 = puVar9 + 1;
-      } while (uVar4 < 400);
-      _data_record_buffer_write_ptr = &fuel_demand_blend_input;
-      DAT_00800372 = '\x01';
+        *pbVar1 = 0;
+        uVar3 = uVar3 + 1;
+        pbVar1 = pbVar1 + 1;
+      } while (uVar3 < 400);
+      datalogger_ring_buffer_write_pointer = datalogger_sample_ring_buffer;
+      datalogger_ring_buffer_cleared_flag = 1;
     }
   }
   else {
-    if ((DAT_00800352 == '\0') && (_snapshot_capture_active_flag == 0)) {
-      DAT_00800352 = '\x01';
-      cm550_FUN_00013e12();
-      bVar6 = 0;
-      trending_valid_channel_count = 0;
-      sVar7 = 0;
-      for (bVar5 = 0; puVar1 = (undefined *)(uint)bVar5, puVar1 < (undefined *)(uint)_DAT_00803dc8;
-          bVar5 = bVar5 + 1) {
-        bVar6 = (char)*(undefined2 *)((int)&datalogger_data_1_length_cal + (int)sVar7) + bVar6;
-        if (bVar6 < 0xb) {
-          trending_valid_channel_count = trending_valid_channel_count + 1;
+    if ((datalogger_setup_complete_flag == 0) && (datalogger_event_logging_active_flag == 0)) {
+      datalogger_setup_complete_flag = 1;
+      cm550_resolveDataloggerDataParameterAddresses();
+      bVar5 = 0;
+      datalogger_logged_parameter_count = 0;
+      sVar6 = 0;
+      for (bVar4 = 0; pbVar7 = (byte *)(uint)bVar4,
+          pbVar7 < (byte *)(uint)datalogger_data_parameter_count_cal; bVar4 = bVar4 + 1) {
+        bVar5 = (char)*(undefined2 *)
+                       ((int)&datalogger_data_parameters_cal[0].value_length + (int)sVar6) + bVar5;
+        if (bVar5 < 0xb) {
+          datalogger_logged_parameter_count = datalogger_logged_parameter_count + 1;
         }
-        sVar7 = sVar7 + 6;
+        sVar6 = sVar6 + 6;
       }
-      _data_record_buffer_write_ptr = &fuel_demand_blend_input;
+      datalogger_ring_buffer_write_pointer = datalogger_sample_ring_buffer;
     }
-    if (scheduler_phase_execution_time != '\0') {
-      scheduler_phase_execution_time = '\0';
-      if (_trending_trigger_detected_flag != 0) {
-        _snapshot_capture_active_flag = 1;
-        puVar1 = _data_record_buffer_write_ptr + -0x800374;
-        _DAT_00800522 = SUB42(puVar1,0);
-        _DAT_00800524 = key_on_hour_meter;
-        DAT_00800528 = DAT_0080bac7;
-        DAT_00800529 = DAT_0080bac9;
-        data_record_byte_counter = '\0';
+    if (datalogger_sample_due_flag != 0) {
+      datalogger_sample_due_flag = 0;
+      if (datalogger_trigger_detected_flag != 0) {
+        datalogger_event_logging_active_flag = 1;
+        pbVar7 = datalogger_ring_buffer_write_pointer + -0x800374;
+        datalogger_pending_trigger_information.ring_buffer_trigger_offset = (word)pbVar7;
+        datalogger_pending_trigger_information.trigger_key_on_hour_meter = key_on_hour_meter;
+        datalogger_pending_trigger_information.and_inputs_trigger_flag =
+             (byte)datalogger_and_inputs_trigger_flag;
+        datalogger_pending_trigger_information.or_input_trigger_flag =
+             (byte)datalogger_or_input_trigger_flag;
+        datalogger_post_trigger_byte_count = 0;
       }
-      uVar4 = 0;
-      while (bVar6 = (byte)uVar4, bVar6 < trending_valid_channel_count) {
-        puVar2 = (undefined *)0x0;
+      uVar3 = 0;
+      while (bVar5 = (byte)uVar3, bVar5 < datalogger_logged_parameter_count) {
+        pbVar1 = (byte *)0x0;
         while( true ) {
-          puVar1 = (undefined *)
-                   (uint)*(ushort *)((int)&datalogger_data_1_length_cal + (int)(short)(uVar4 * 6));
-          cVar3 = (char)puVar2;
-          if (puVar1 <= puVar2) break;
-          *_data_record_buffer_write_ptr = puVar2[*(int *)(&DAT_00800508 + (short)(uVar4 << 2))];
-          _data_record_buffer_write_ptr = _data_record_buffer_write_ptr + 1;
-          if (_data_record_buffer_write_ptr == &data_record_buffer_write_ptr) {
-            _data_record_buffer_write_ptr = &fuel_demand_blend_input;
+          pbVar7 = (byte *)(uint)*(ushort *)
+                                  ((int)&datalogger_data_parameters_cal[0].value_length +
+                                  (int)(short)(uVar3 * 6));
+          cVar2 = (char)pbVar1;
+          if (pbVar7 <= pbVar1) break;
+          *datalogger_ring_buffer_write_pointer =
+               pbVar1[*(int *)((int)datalogger_data_parameter_addresses + (int)(short)(uVar3 << 2))]
+          ;
+          datalogger_ring_buffer_write_pointer = datalogger_ring_buffer_write_pointer + 1;
+          if ((byte **)datalogger_ring_buffer_write_pointer == &datalogger_ring_buffer_write_pointer
+             ) {
+            datalogger_ring_buffer_write_pointer = datalogger_sample_ring_buffer;
           }
-          if ((_snapshot_capture_active_flag == 1) &&
-             (data_record_byte_counter = data_record_byte_counter + '\x01',
-             data_record_byte_counter == -0x38)) {
-            cVar3 = (char)*(undefined2 *)
-                           ((int)&datalogger_data_1_length_cal + (int)(short)(uVar4 * 6));
-            DAT_0080052a = '\x01';
+          if ((datalogger_event_logging_active_flag == 1) &&
+             (datalogger_post_trigger_byte_count = datalogger_post_trigger_byte_count + 1,
+             datalogger_post_trigger_byte_count == 200)) {
+            cVar2 = (char)*(undefined2 *)
+                           ((int)&datalogger_data_parameters_cal[0].value_length +
+                           (int)(short)(uVar3 * 6));
+            datalogger_event_capture_complete_flag = 1;
           }
-          puVar2 = (undefined *)(uint)(byte)(cVar3 + 1);
+          pbVar1 = (byte *)(uint)(byte)(cVar2 + 1);
         }
-        if ((_snapshot_capture_active_flag == 1) && (data_record_byte_counter == -0x38)) {
-          bVar6 = trending_valid_channel_count;
+        if ((datalogger_event_logging_active_flag == 1) &&
+           (datalogger_post_trigger_byte_count == 200)) {
+          bVar5 = datalogger_logged_parameter_count;
         }
-        uVar4 = (ushort)(byte)(bVar6 + 1);
+        uVar3 = (ushort)(byte)(bVar5 + 1);
       }
-      DAT_00800372 = '\0';
-      if ((_snapshot_capture_active_flag == 1) && (DAT_0080052a != '\0')) {
-        if (_DAT_008052fa == 0) {
-          uVar8 = 0x804fca;
-          _DAT_008052ea = _DAT_00800522;
-          _DAT_008052ec = _DAT_00800524;
-          DAT_008052f0 = DAT_00800528;
-          DAT_008052f1 = DAT_00800529;
-          _DAT_008052fa = 1;
+      datalogger_ring_buffer_cleared_flag = 0;
+      if ((datalogger_event_logging_active_flag == 1) &&
+         (datalogger_event_capture_complete_flag != 0)) {
+        if (datalogger_event_1_logged_flag == 0) {
+          pbVar7 = datalogger_event_sample_buffers;
+          datalogger_event_trigger_information[0].ring_buffer_trigger_offset =
+               datalogger_pending_trigger_information.ring_buffer_trigger_offset;
+          datalogger_event_trigger_information[0].trigger_key_on_hour_meter =
+               datalogger_pending_trigger_information.trigger_key_on_hour_meter;
+          datalogger_event_trigger_information[0].and_inputs_trigger_flag =
+               datalogger_pending_trigger_information.and_inputs_trigger_flag;
+          datalogger_event_trigger_information[0].or_input_trigger_flag =
+               datalogger_pending_trigger_information.or_input_trigger_flag;
+          datalogger_event_1_logged_flag = 1;
         }
         else {
-          uVar8 = 0x80515a;
-          _DAT_008052f2 = _DAT_00800522;
-          _DAT_008052f4 = _DAT_00800524;
-          DAT_008052f8 = DAT_00800528;
-          DAT_008052f9 = DAT_00800529;
-          _DAT_008052fc = 1;
+          pbVar7 = datalogger_event_sample_buffers + 400;
+          datalogger_event_trigger_information[1].ring_buffer_trigger_offset =
+               datalogger_pending_trigger_information.ring_buffer_trigger_offset;
+          datalogger_event_trigger_information[1].trigger_key_on_hour_meter =
+               datalogger_pending_trigger_information.trigger_key_on_hour_meter;
+          datalogger_event_trigger_information[1].and_inputs_trigger_flag =
+               datalogger_pending_trigger_information.and_inputs_trigger_flag;
+          datalogger_event_trigger_information[1].or_input_trigger_flag =
+               datalogger_pending_trigger_information.or_input_trigger_flag;
+          datalogger_event_2_logged_flag = 1;
         }
-        puVar1 = (undefined *)cm550_FUN_00014292(&fuel_demand_blend_input,uVar8);
-        _snapshot_capture_active_flag = 0;
-        DAT_0080052a = '\0';
+        pbVar7 = (byte *)cm550_copyDataloggerSampleBuffer(datalogger_sample_ring_buffer,pbVar7);
+        datalogger_event_logging_active_flag = 0;
+        datalogger_event_capture_complete_flag = 0;
       }
     }
   }
-  return puVar1;
+  return pbVar7;
 }
 
 
 
 //
-// Function: cm550_FUN_00013cc8 @ 0x00013cc8
+// Function: cm550_initializeDatalogger @ 0x00013cc8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up set-up of the datalogger (called once by mc68k_applicationMain after
+   cm550_initLoadTrendingSystem). It clears the sample period counter (0x80051e) and the sample due
+   flag (0x800354); for each record of datalogger_triggers_cal with fault_code_flag 1 it copies the
+   fault count table status (0x805a24 + 10 x the trigger's fault index byte at 0x800366 + n) into
+   its previous fault status byte (0x80036e + n); then it zeroes the 400-byte ring buffer
+   (0x800374), points the write pointer (0x800504) at it and sets the buffer cleared flag
+   (0x800372). (was cm550_FUN_00013cc8; PR #53 round 91) (was cm550_FUN_00013cc8; PR #53 round 91)
+    */
 
-void cm550_FUN_00013cc8(void)
+void cm550_initializeDatalogger(void)
 
 {
   ushort uVar1;
   short sVar2;
   byte *pbVar3;
-  undefined1 *puVar4;
-  undefined *puVar5;
+  byte *pbVar4;
   
-  _trending_sample_counter = 0;
-  scheduler_phase_execution_time = 0;
+  datalogger_sample_period_counter = 0;
+  datalogger_sample_due_flag = 0;
   uVar1 = 0;
-  pbVar3 = &flash_write_data_pointer;
-  puVar5 = &fuel_demand_rating_table_size;
+  pbVar3 = datalogger_trigger_fault_indexes;
+  pbVar4 = datalogger_trigger_previous_fault_status;
   sVar2 = 0;
   do {
-    if (*(short *)((int)&datalogger_trigger_1_fault_code_flag_cal + (int)sVar2) == 1) {
-      *puVar5 = (&diagnostic_fault_status_table)[(short)((ushort)*pbVar3 + (ushort)*pbVar3 * 4) * 2]
-      ;
+    if (*(short *)((int)&datalogger_triggers_cal[0].fault_code_flag + (int)sVar2) == 1) {
+      *pbVar4 = (&fault_count_table[0].status)[(short)((ushort)*pbVar3 + (ushort)*pbVar3 * 4) * 2];
     }
     sVar2 = sVar2 + 0x10;
-    puVar5 = puVar5 + 1;
+    pbVar4 = pbVar4 + 1;
     pbVar3 = pbVar3 + 1;
     uVar1 = uVar1 + 1;
   } while (uVar1 < 4);
   uVar1 = 0;
-  puVar4 = &fuel_demand_blend_input;
+  pbVar3 = datalogger_sample_ring_buffer;
   do {
-    *puVar4 = 0;
+    *pbVar3 = 0;
     uVar1 = uVar1 + 1;
-    puVar4 = puVar4 + 1;
+    pbVar3 = pbVar3 + 1;
   } while (uVar1 < 400);
-  _data_record_buffer_write_ptr = &fuel_demand_blend_input;
-  DAT_00800372 = 1;
+  datalogger_ring_buffer_write_pointer = datalogger_sample_ring_buffer;
+  datalogger_ring_buffer_cleared_flag = 1;
   return;
 }
 
 
 
 //
-// Function: cm550_FUN_00013d42 @ 0x00013d42
+// Function: cm550_selectDataloggerSamplePeriod @ 0x00013d42
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Turns the sample rate code (0x803dc4, e2m 1284 +2 UDSART 0-5) into the datalogger's sample period
+   in trigger-task passes: 0 / 1 / 2 / 3 / 4 / 5 -> 5 / 10 / 20 / 40 / 80 / 160 (jump table at
+   0x13d7a; any other code -> 5), stored at 0x800353 and returned in D0's low byte. In automatic
+   trigger mode (0x803dc6 = 1) a code of 3 or more is first rewritten as 2 in the EEPROM mirror. It
+   also clears the sample due flag (0x800354) and the period counter (0x80051e). Called by
+   cm550_updateDataloggerTriggers at the set-up. (was cm550_FUN_00013d42; PR #53 round 91) (was
+   cm550_FUN_00013d42; PR #53 round 91) */
 
-undefined4 cm550_FUN_00013d42(void)
+undefined4 cm550_selectDataloggerSamplePeriod(void)
 
 {
   uint uVar1;
   
-  if ((_DAT_00803dc6 == 1) && (2 < _DAT_00803dc4)) {
-    _DAT_00803dc4 = 2;
+  if ((datalogger_trigger_mode_cal == 1) && (2 < (short)datalogger_sample_rate_code_cal)) {
+    datalogger_sample_rate_code_cal = 2;
   }
-  uVar1 = (uint)_DAT_00803dc4;
+  uVar1 = (uint)(short)datalogger_sample_rate_code_cal;
   if (uVar1 < 6) {
-    uVar1 = CONCAT22(_DAT_00803dc4 >> 0xf,(&switchD_00013d76::switchdataD_00013d7a)[uVar1]);
-    switch(_DAT_00803dc4) {
+    uVar1 = CONCAT22((short)datalogger_sample_rate_code_cal >> 0xf,
+                     (&switchD_00013d76::switchdataD_00013d7a)[uVar1]);
+    switch(datalogger_sample_rate_code_cal) {
     case 0:
-      trending_sample_rate_divisor = 5;
+      datalogger_sample_period_passes = 5;
       break;
     case 1:
-      trending_sample_rate_divisor = 10;
+      datalogger_sample_period_passes = 10;
       break;
     case 2:
-      trending_sample_rate_divisor = 0x14;
+      datalogger_sample_period_passes = 0x14;
       break;
     case 3:
-      trending_sample_rate_divisor = 0x28;
+      datalogger_sample_period_passes = 0x28;
       break;
     case 4:
-      trending_sample_rate_divisor = 0x50;
+      datalogger_sample_period_passes = 0x50;
       break;
     case 5:
-      trending_sample_rate_divisor = 0xa0;
+      datalogger_sample_period_passes = 0xa0;
     }
   }
   else {
-    trending_sample_rate_divisor = 5;
+    datalogger_sample_period_passes = 5;
   }
-  scheduler_phase_execution_time = 0;
-  _trending_sample_counter = 0;
-  return CONCAT31((int3)(uVar1 >> 8),trending_sample_rate_divisor);
+  datalogger_sample_due_flag = 0;
+  datalogger_sample_period_counter = 0;
+  return CONCAT31((int3)(uVar1 >> 8),datalogger_sample_period_passes);
 }
 
 
 
 //
-// Function: cm550_FUN_00013dbe @ 0x00013dbe
+// Function: cm550_resolveDataloggerTriggerAddresses @ 0x00013dbe
 //
 
-void cm550_FUN_00013dbe(void)
+/* For each of the four records of datalogger_triggers_cal whose fault_code_flag is 0 it resolves
+   parameter_id_or_fault_code with cm550_lookupParameterIdAddress into the trigger's address dword
+   (0x800356 + 4 x n) and adds parameter_offset (zero-extended). Called by
+   cm550_updateDataloggerTriggers at the set-up in automatic mode. Dump: 0x80ccf4 / 0x80a320 /
+   0x80d32e / 0x80aa82 = the parameter ID table addresses of 0x100c / 0x1004 / 0x1051 / 0x1047 plus
+   2 / 0x76 / 0 / 0. (was cm550_FUN_00013dbe; PR #53 round 91) (was cm550_FUN_00013dbe; PR #53 round
+   91) */
+
+void cm550_resolveDataloggerTriggerAddresses(void)
 
 {
   short sVar1;
@@ -8811,14 +8900,16 @@ void cm550_FUN_00013dbe(void)
   dword *resolved_address;
   
   bVar2 = 0;
-  resolved_address = (dword *)&scheduler_reserved_padding;
+  resolved_address = datalogger_trigger_parameter_addresses;
   sVar1 = 0;
   do {
-    if (*(short *)((int)&datalogger_trigger_1_fault_code_flag_cal + (int)sVar1) == 0) {
+    if (*(short *)((int)&datalogger_triggers_cal[0].fault_code_flag + (int)sVar1) == 0) {
       cm550_lookupParameterIdAddress
-                (*(word *)((int)&datalogger_trigger_1_parameter_id_or_fault_code_cal + (int)sVar1),
-                 resolved_address);
-      *resolved_address = (uint)*(ushort *)(&DAT_00803d6c + sVar1) + *resolved_address;
+                (*(word *)((int)&datalogger_triggers_cal[0].parameter_id_or_fault_code + (int)sVar1)
+                 ,resolved_address);
+      *resolved_address =
+           (uint)*(ushort *)((int)&datalogger_triggers_cal[0].parameter_offset + (int)sVar1) +
+           *resolved_address;
     }
     sVar1 = sVar1 + 0x10;
     resolved_address = resolved_address + 1;
@@ -8830,24 +8921,32 @@ void cm550_FUN_00013dbe(void)
 
 
 //
-// Function: cm550_FUN_00013e12 @ 0x00013e12
+// Function: cm550_resolveDataloggerDataParameterAddresses @ 0x00013e12
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* For the first 0x803dc8 (UDPRCU) records of datalogger_data_parameters_cal it resolves
+   parameter_id with cm550_lookupParameterIdAddress into the dword at 0x800508 + 4 x n and adds
+   parameter_offset (zero-extended); cm550_recordDataloggerSamples samples from these addresses.
+   Dump: 0x80ccf4 / 0x80a320 / 0x80d32e / 0x80aa82 / 0x80a336 (engine speed / boost pressure / final
+   fueling / throttle / coolant temperature). Called by cm550_recordDataloggerSamples at the set-up.
+   (was cm550_FUN_00013e12; PR #53 round 91) (was cm550_FUN_00013e12; PR #53 round 91) */
 
-void cm550_FUN_00013e12(void)
+void cm550_resolveDataloggerDataParameterAddresses(void)
 
 {
   short sVar1;
   byte bVar2;
   dword *resolved_address;
   
-  resolved_address = (dword *)&DAT_00800508;
+  resolved_address = datalogger_data_parameter_addresses;
   sVar1 = 0;
-  for (bVar2 = 0; bVar2 < _DAT_00803dc8; bVar2 = bVar2 + 1) {
+  for (bVar2 = 0; bVar2 < datalogger_data_parameter_count_cal; bVar2 = bVar2 + 1) {
     cm550_lookupParameterIdAddress
-              (*(word *)((int)&datalogger_data_1_parameter_id_cal + (int)sVar1),resolved_address);
-    *resolved_address = (uint)*(ushort *)(&DAT_00803da8 + sVar1) + *resolved_address;
+              (*(word *)((int)&datalogger_data_parameters_cal[0].parameter_id + (int)sVar1),
+               resolved_address);
+    *resolved_address =
+         (uint)*(ushort *)((int)&datalogger_data_parameters_cal[0].parameter_offset + (int)sVar1) +
+         *resolved_address;
     sVar1 = sVar1 + 6;
     resolved_address = resolved_address + 1;
   }
@@ -8857,40 +8956,47 @@ void cm550_FUN_00013e12(void)
 
 
 //
-// Function: cm550_FUN_00013e64 @ 0x00013e64
+// Function: cm550_findDataloggerTriggerFaultIndexes @ 0x00013e64
 //
 
-void cm550_FUN_00013e64(void)
+/* For each record of datalogger_triggers_cal whose fault_code_flag is 1 it scans the 125 six-byte
+   fault definitions at 0x8067c4 for the code word equal to parameter_id_or_fault_code; at each
+   match (the loop does not stop, so the last match wins) it stores the definition index in the
+   trigger's fault index byte (0x800366 + n) and that fault's current status (fault count table byte
+   0x805a24 + 10 x index) in its previous fault status byte (0x80036e + n). Called by
+   cm550_updateDataloggerTriggers at the set-up in automatic mode. (was cm550_FUN_00013e64; PR #53
+   round 91) (was cm550_FUN_00013e64; PR #53 round 91) */
+
+void cm550_findDataloggerTriggerFaultIndexes(void)
 
 {
   byte bVar1;
   byte bVar2;
   short sVar3;
   uint uVar4;
-  undefined *puVar5;
+  byte *pbVar5;
   short *psVar6;
   
   uVar4 = 0;
-  puVar5 = &fuel_demand_rating_table_size;
+  pbVar5 = datalogger_trigger_previous_fault_status;
   sVar3 = 0;
   do {
-    if (*(short *)((int)&datalogger_trigger_1_fault_code_flag_cal + (int)sVar3) == 1) {
+    if (*(short *)((int)&datalogger_triggers_cal[0].fault_code_flag + (int)sVar3) == 1) {
       bVar2 = 0;
       psVar6 = (short *)&DAT_008067c4;
       do {
-        if (*(short *)((int)&datalogger_trigger_1_parameter_id_or_fault_code_cal + (int)sVar3) ==
+        if (*(short *)((int)&datalogger_triggers_cal[0].parameter_id_or_fault_code + (int)sVar3) ==
             *psVar6) {
-          (&flash_write_data_pointer)[uVar4] = bVar2;
-          bVar1 = (&flash_write_data_pointer)[uVar4];
-          *puVar5 = (&diagnostic_fault_status_table)[(short)((ushort)bVar1 + (ushort)bVar1 * 4) * 2]
-          ;
+          datalogger_trigger_fault_indexes[uVar4] = bVar2;
+          bVar1 = datalogger_trigger_fault_indexes[uVar4];
+          *pbVar5 = (&fault_count_table[0].status)[(short)((ushort)bVar1 + (ushort)bVar1 * 4) * 2];
         }
         psVar6 = psVar6 + 3;
         bVar2 = bVar2 + 1;
       } while (bVar2 < 0x7d);
     }
     sVar3 = sVar3 + 0x10;
-    puVar5 = puVar5 + 1;
+    pbVar5 = pbVar5 + 1;
     bVar2 = (char)uVar4 + 1;
     uVar4 = (uint)bVar2;
   } while (bVar2 < 4);
@@ -8900,179 +9006,199 @@ void cm550_FUN_00013e64(void)
 
 
 //
-// Function: cm550_FUN_00013ed8 @ 0x00013ed8
+// Function: cm550_evaluateDataloggerTrigger @ 0x00013ed8
 //
 
-byte cm550_FUN_00013ed8(word condition_record_index)
+/* Returns 1 when datalogger trigger trigger_index (0-3) of datalogger_triggers_cal is satisfied,
+   else 0. Parameter trigger (fault_code_flag 0): it reads value_length bytes (1 = byte / 2 = word /
+   any other value = dword) at the trigger's resolved address (dword 0x800356 + 4 x index) and
+   compares them with threshold (its low byte / low word / the whole dword), unsigned or signed by
+   signed_value_flag, strictly above (above_threshold_or_fault_active_flag nonzero) or below (0).
+   Fault trigger (fault_code_flag nonzero): the fault count table status byte (0x805a24 + 10 x the
+   fault index at 0x800366 + index) against the status it saw last (0x80036e + index): a nonzero
+   flag fires when the status went from inactive (0 / 2) to active (1 / 3), 0 when it went from
+   active to inactive; it then saves the status. Status bit 0 = active: cm550_processFaultScanGroup
+   stores 3 when a fault turns active and 2 when it turns inactive, cm550_diagnosticCodeRegistrar
+   stores 0 / 1 when it gives an inactive / active fault's snapshot slot to another fault and
+   cm550_resetFaultStatus stores 0. Called by cm550_updateDataloggerTriggers with 0-2 and 3. (was
+   cm550_FUN_00013ed8; PR #53 round 91) (was cm550_FUN_00013ed8; PR #53 round 91) */
+
+byte cm550_evaluateDataloggerTrigger(word condition_record_index)
 
 {
-  char cVar1;
-  short sVar2;
+  short sVar1;
+  byte bVar2;
   byte bVar3;
-  byte bVar4;
   
-  bVar4 = (byte)condition_record_index;
-  sVar2 = (condition_record_index & 0xff) << 4;
-  if (*(short *)((int)&datalogger_trigger_1_fault_code_flag_cal + (int)sVar2) == 0) {
-    if (*(short *)(sVar2 + 0x803d68) == 0) {
-      if (*(short *)(sVar2 + 0x803d72) == 0) {
-        cVar1 = *(char *)((short)((condition_record_index & 0xff) * 2) * 8 + 0x803d64);
-        if (cVar1 == '\x01') {
-          if ((uint)**(byte **)(&scheduler_reserved_padding + (uint)bVar4 * 4) <
-              (*(uint *)(sVar2 + 0x803d6e) & 0xff)) {
-            bVar3 = 1;
+  bVar3 = (byte)condition_record_index;
+  sVar1 = (condition_record_index & 0xff) << 4;
+  if (*(short *)((int)&datalogger_triggers_cal[0].fault_code_flag + (int)sVar1) == 0) {
+    if (*(short *)((int)&datalogger_triggers_cal[0].above_threshold_or_fault_active_flag +
+                  (int)sVar1) == 0) {
+      if (*(short *)((int)&datalogger_triggers_cal[0].signed_value_flag + (int)sVar1) == 0) {
+        if ((&datalogger_triggers_cal[0].value_length)
+            [(short)((condition_record_index & 0xff) * 2) * 8] == 1) {
+          if ((uint)*(byte *)datalogger_trigger_parameter_addresses[bVar3] <
+              (*(uint *)((int)&datalogger_triggers_cal[0].threshold + (int)sVar1) & 0xff)) {
+            bVar2 = 1;
           }
           else {
-            bVar3 = 0;
+            bVar2 = 0;
           }
         }
-        else if (cVar1 == '\x02') {
-          if (**(ushort **)(&scheduler_reserved_padding + (uint)bVar4 * 4) <
-              (ushort)*(undefined4 *)(sVar2 + 0x803d6e)) {
-            bVar3 = 1;
+        else if ((&datalogger_triggers_cal[0].value_length)
+                 [(short)((condition_record_index & 0xff) * 2) * 8] == 2) {
+          if (*(ushort *)datalogger_trigger_parameter_addresses[bVar3] <
+              (ushort)*(undefined4 *)((int)&datalogger_triggers_cal[0].threshold + (int)sVar1)) {
+            bVar2 = 1;
           }
           else {
-            bVar3 = 0;
+            bVar2 = 0;
           }
         }
-        else if (**(uint **)(&scheduler_reserved_padding + (uint)bVar4 * 4) <
-                 *(uint *)(sVar2 + 0x803d6e)) {
-          bVar3 = 1;
+        else if (*(uint *)datalogger_trigger_parameter_addresses[bVar3] <
+                 *(uint *)((int)&datalogger_triggers_cal[0].threshold + (int)sVar1)) {
+          bVar2 = 1;
         }
         else {
-          bVar3 = 0;
+          bVar2 = 0;
         }
       }
-      else {
-        cVar1 = *(char *)((short)((condition_record_index & 0xff) * 2) * 8 + 0x803d64);
-        if (cVar1 == '\x01') {
-          if ((int)**(char **)(&scheduler_reserved_padding + (uint)bVar4 * 4) <
-              (int)(*(uint *)(sVar2 + 0x803d6e) & 0xff)) {
-            bVar3 = 1;
-          }
-          else {
-            bVar3 = 0;
-          }
-        }
-        else if (cVar1 == '\x02') {
-          if (**(short **)(&scheduler_reserved_padding + (uint)bVar4 * 4) <
-              (short)*(undefined4 *)(sVar2 + 0x803d6e)) {
-            bVar3 = 1;
-          }
-          else {
-            bVar3 = 0;
-          }
-        }
-        else if (**(int **)(&scheduler_reserved_padding + (uint)bVar4 * 4) <
-                 *(int *)(sVar2 + 0x803d6e)) {
-          bVar3 = 1;
+      else if ((&datalogger_triggers_cal[0].value_length)
+               [(short)((condition_record_index & 0xff) * 2) * 8] == 1) {
+        if ((int)*(char *)datalogger_trigger_parameter_addresses[bVar3] <
+            (int)(*(uint *)((int)&datalogger_triggers_cal[0].threshold + (int)sVar1) & 0xff)) {
+          bVar2 = 1;
         }
         else {
-          bVar3 = 0;
+          bVar2 = 0;
         }
+      }
+      else if ((&datalogger_triggers_cal[0].value_length)
+               [(short)((condition_record_index & 0xff) * 2) * 8] == 2) {
+        if (*(short *)datalogger_trigger_parameter_addresses[bVar3] <
+            (short)*(undefined4 *)((int)&datalogger_triggers_cal[0].threshold + (int)sVar1)) {
+          bVar2 = 1;
+        }
+        else {
+          bVar2 = 0;
+        }
+      }
+      else if (*(int *)datalogger_trigger_parameter_addresses[bVar3] <
+               *(int *)((int)&datalogger_triggers_cal[0].threshold + (int)sVar1)) {
+        bVar2 = 1;
+      }
+      else {
+        bVar2 = 0;
       }
     }
-    else if (*(short *)(sVar2 + 0x803d72) == 0) {
-      cVar1 = *(char *)((short)((condition_record_index & 0xff) * 2) * 8 + 0x803d64);
-      if (cVar1 == '\x01') {
-        if ((*(uint *)(sVar2 + 0x803d6e) & 0xff) <
-            (uint)**(byte **)(&scheduler_reserved_padding + (uint)bVar4 * 4)) {
-          bVar3 = 1;
+    else if (*(short *)((int)&datalogger_triggers_cal[0].signed_value_flag + (int)sVar1) == 0) {
+      if ((&datalogger_triggers_cal[0].value_length)
+          [(short)((condition_record_index & 0xff) * 2) * 8] == 1) {
+        if ((*(uint *)((int)&datalogger_triggers_cal[0].threshold + (int)sVar1) & 0xff) <
+            (uint)*(byte *)datalogger_trigger_parameter_addresses[bVar3]) {
+          bVar2 = 1;
         }
         else {
-          bVar3 = 0;
+          bVar2 = 0;
         }
       }
-      else if (cVar1 == '\x02') {
-        if ((ushort)*(undefined4 *)(sVar2 + 0x803d6e) <
-            **(ushort **)(&scheduler_reserved_padding + (uint)bVar4 * 4)) {
-          bVar3 = 1;
+      else if ((&datalogger_triggers_cal[0].value_length)
+               [(short)((condition_record_index & 0xff) * 2) * 8] == 2) {
+        if ((ushort)*(undefined4 *)((int)&datalogger_triggers_cal[0].threshold + (int)sVar1) <
+            *(ushort *)datalogger_trigger_parameter_addresses[bVar3]) {
+          bVar2 = 1;
         }
         else {
-          bVar3 = 0;
+          bVar2 = 0;
         }
       }
-      else if (*(uint *)(sVar2 + 0x803d6e) <
-               **(uint **)(&scheduler_reserved_padding + (uint)bVar4 * 4)) {
-        bVar3 = 1;
+      else if (*(uint *)((int)&datalogger_triggers_cal[0].threshold + (int)sVar1) <
+               *(uint *)datalogger_trigger_parameter_addresses[bVar3]) {
+        bVar2 = 1;
       }
       else {
-        bVar3 = 0;
+        bVar2 = 0;
       }
+    }
+    else if ((&datalogger_triggers_cal[0].value_length)
+             [(short)((condition_record_index & 0xff) * 2) * 8] == 1) {
+      if ((int)(*(uint *)((int)&datalogger_triggers_cal[0].threshold + (int)sVar1) & 0xff) <
+          (int)*(char *)datalogger_trigger_parameter_addresses[bVar3]) {
+        bVar2 = 1;
+      }
+      else {
+        bVar2 = 0;
+      }
+    }
+    else if ((&datalogger_triggers_cal[0].value_length)
+             [(short)((condition_record_index & 0xff) * 2) * 8] == 2) {
+      if ((short)*(undefined4 *)((int)&datalogger_triggers_cal[0].threshold + (int)sVar1) <
+          *(short *)datalogger_trigger_parameter_addresses[bVar3]) {
+        bVar2 = 1;
+      }
+      else {
+        bVar2 = 0;
+      }
+    }
+    else if (*(int *)((int)&datalogger_triggers_cal[0].threshold + (int)sVar1) <
+             *(int *)datalogger_trigger_parameter_addresses[bVar3]) {
+      bVar2 = 1;
     }
     else {
-      cVar1 = *(char *)((short)((condition_record_index & 0xff) * 2) * 8 + 0x803d64);
-      if (cVar1 == '\x01') {
-        if ((int)(*(uint *)(sVar2 + 0x803d6e) & 0xff) <
-            (int)**(char **)(&scheduler_reserved_padding + (uint)bVar4 * 4)) {
-          bVar3 = 1;
-        }
-        else {
-          bVar3 = 0;
-        }
-      }
-      else if (cVar1 == '\x02') {
-        if ((short)*(undefined4 *)(sVar2 + 0x803d6e) <
-            **(short **)(&scheduler_reserved_padding + (uint)bVar4 * 4)) {
-          bVar3 = 1;
-        }
-        else {
-          bVar3 = 0;
-        }
-      }
-      else if (*(int *)(sVar2 + 0x803d6e) <
-               **(int **)(&scheduler_reserved_padding + (uint)bVar4 * 4)) {
-        bVar3 = 1;
-      }
-      else {
-        bVar3 = 0;
-      }
+      bVar2 = 0;
     }
   }
   else {
-    if (*(short *)(sVar2 + 0x803d68) == 0) {
-      if ((((&diagnostic_fault_status_table)
-            [(short)((ushort)(byte)(&flash_write_data_pointer)[bVar4] +
-                    (ushort)(byte)(&flash_write_data_pointer)[bVar4] * 4) * 2] == '\0') ||
-          ((&diagnostic_fault_status_table)
-           [(short)((ushort)(byte)(&flash_write_data_pointer)[bVar4] +
-                   (ushort)(byte)(&flash_write_data_pointer)[bVar4] * 4) * 2] == '\x02')) &&
-         (((&fuel_demand_rating_table_size)[bVar4] == '\x01' ||
-          ((&fuel_demand_rating_table_size)[bVar4] == '\x03')))) {
-        bVar3 = 1;
+    if (*(short *)((int)&datalogger_triggers_cal[0].above_threshold_or_fault_active_flag +
+                  (int)sVar1) == 0) {
+      if ((((&fault_count_table[0].status)
+            [(short)((ushort)datalogger_trigger_fault_indexes[bVar3] +
+                    (ushort)datalogger_trigger_fault_indexes[bVar3] * 4) * 2] == 0) ||
+          ((&fault_count_table[0].status)
+           [(short)((ushort)datalogger_trigger_fault_indexes[bVar3] +
+                   (ushort)datalogger_trigger_fault_indexes[bVar3] * 4) * 2] == 2)) &&
+         ((datalogger_trigger_previous_fault_status[bVar3] == 1 ||
+          (datalogger_trigger_previous_fault_status[bVar3] == 3)))) {
+        bVar2 = 1;
       }
       else {
-        bVar3 = 0;
+        bVar2 = 0;
       }
     }
-    else if ((((&diagnostic_fault_status_table)
-               [(short)((ushort)(byte)(&flash_write_data_pointer)[bVar4] +
-                       (ushort)(byte)(&flash_write_data_pointer)[bVar4] * 4) * 2] == '\x01') ||
-             ((&diagnostic_fault_status_table)
-              [(short)((ushort)(byte)(&flash_write_data_pointer)[bVar4] +
-                      (ushort)(byte)(&flash_write_data_pointer)[bVar4] * 4) * 2] == '\x03')) &&
-            (((&fuel_demand_rating_table_size)[bVar4] == '\0' ||
-             ((&fuel_demand_rating_table_size)[bVar4] == '\x02')))) {
-      bVar3 = 1;
+    else if ((((&fault_count_table[0].status)
+               [(short)((ushort)datalogger_trigger_fault_indexes[bVar3] +
+                       (ushort)datalogger_trigger_fault_indexes[bVar3] * 4) * 2] == 1) ||
+             ((&fault_count_table[0].status)
+              [(short)((ushort)datalogger_trigger_fault_indexes[bVar3] +
+                      (ushort)datalogger_trigger_fault_indexes[bVar3] * 4) * 2] == 3)) &&
+            ((datalogger_trigger_previous_fault_status[bVar3] == 0 ||
+             (datalogger_trigger_previous_fault_status[bVar3] == 2)))) {
+      bVar2 = 1;
     }
     else {
-      bVar3 = 0;
+      bVar2 = 0;
     }
-    (&fuel_demand_rating_table_size)[bVar4] =
-         (&diagnostic_fault_status_table)
-         [(short)((ushort)(byte)(&flash_write_data_pointer)[bVar4] +
-                 (ushort)(byte)(&flash_write_data_pointer)[bVar4] * 4) * 2];
+    datalogger_trigger_previous_fault_status[bVar3] =
+         (&fault_count_table[0].status)
+         [(short)((ushort)datalogger_trigger_fault_indexes[bVar3] +
+                 (ushort)datalogger_trigger_fault_indexes[bVar3] * 4) * 2];
   }
-  return bVar3;
+  return bVar2;
 }
 
 
 
 //
-// Function: cm550_FUN_00014292 @ 0x00014292
+// Function: cm550_copyDataloggerSampleBuffer @ 0x00014292
 //
 
-void cm550_FUN_00014292(undefined1 *param_1,undefined1 *param_2)
+/* Copies the 400 bytes at source (the long at +4: the ring buffer 0x800374) to destination (the
+   long at +8: event 1's buffer 0x804fca or event 2's 0x80515a). Only caller:
+   cm550_recordDataloggerSamples when it saves an event. (was cm550_FUN_00014292; PR #53 round 91)
+   (was cm550_FUN_00014292; PR #53 round 91) */
+
+void cm550_copyDataloggerSampleBuffer(undefined1 *param_1,undefined1 *param_2)
 
 {
   ushort uVar1;
@@ -9224,12 +9350,25 @@ void cm550_fuelDemandPercentageCalculator(void)
 
 
 //
-// Function: cm550_diagnosticCodeDebounceHandler @ 0x000144bc
+// Function: cm550_countDownPreviouslyActiveFault @ 0x000144bc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Counts down one previously active fault (code_index) - the e2m fault countdown. It acts only
+   while fault_count_table[code_index].status bit 0 is clear (btst #0) and both the fault's
+   countdown mode (byte +5 of its 6-byte fault data record at 0x8067c4 - e2m DG0000FU) and its
+   occurrence_count are not 0. The first step waits until key_on_hour_meter - status_change_time
+   reaches the mode's elapsed time before countdown (e2m DGnnELTM at 0x80654c + 8 x mode: 11 h for
+   mode 1 in this dump). Each later step waits until key_on_hour_meter - last_countdown_time reaches
+   the mode's count down rate (DGnnCUDN at 0x806550 + 8 x mode: 4 h). A step stores
+   key_on_hour_meter in last_countdown_time and takes 1 off occurrence_count. At 0 it clears the
+   record (cm550_resetFaultStatus) and moves the last previously_active_dtc_list entry into the
+   fault's place (with its J1587 count). Nothing in it debounces. Counterpart of CM848
+   cm848_countDownPreviouslyActiveFault (0x1c9a0): the same e2m settings with a step count in place
+   of the second time (was cm550_diagnosticCodeDebounceHandler; PR #53 round 91) (was
+   cm550_diagnosticCodeDebounceHandler; PR #53 round 91) */
 
-void cm550_diagnosticCodeDebounceHandler(word code_index)
+void cm550_countDownPreviouslyActiveFault(word code_index)
 
 {
   int iVar1;
@@ -9237,25 +9376,30 @@ void cm550_diagnosticCodeDebounceHandler(word code_index)
   byte bVar3;
   
   bVar3 = (byte)code_index;
-  if (((((&diagnostic_fault_status_table)[(short)((code_index & 0xff) * 5) * 2] & 1) == 0) &&
+  if (((((&fault_count_table[0].status)[(short)((code_index & 0xff) * 5) * 2] & 1) == 0) &&
       (*(char *)((uint)bVar3 * 6 + 0x8067c9) != '\0')) &&
-     ((&diagnostic_fault_occurrence_count)[(short)((code_index & 0xff) * 5) * 2] != '\0')) {
+     ((&fault_count_table[0].occurrence_count)[(short)((code_index & 0xff) * 5) * 2] != 0)) {
     iVar1 = (int)(short)((ushort)*(byte *)((uint)bVar3 * 6 + 0x8067c9) << 3);
-    if (((*(int *)((short)((code_index & 0xff) * 5) * 2 + 0x805a20) == 0) &&
+    if (((*(int *)((int)&fault_count_table[0].last_countdown_time +
+                  (short)((code_index & 0xff) * 5) * 2) == 0) &&
         (*(uint *)(iVar1 + 0x80654c) <=
          key_on_hour_meter -
-         *(int *)((int)&diagnostic_fault_status_change_time + (short)((code_index & 0xff) * 5) * 2))
-        ) || ((*(int *)((short)((code_index & 0xff) * 5) * 2 + 0x805a20) != 0 &&
-              (*(uint *)(iVar1 + 0x806550) <=
-               key_on_hour_meter - *(int *)((short)((code_index & 0xff) * 5) * 2 + 0x805a20))))) {
+         *(int *)((int)&fault_count_table[0].status_change_time +
+                 (short)((code_index & 0xff) * 5) * 2))) ||
+       ((*(int *)((int)&fault_count_table[0].last_countdown_time +
+                 (short)((code_index & 0xff) * 5) * 2) != 0 &&
+        (*(uint *)(iVar1 + 0x806550) <=
+         key_on_hour_meter -
+         *(int *)((int)&fault_count_table[0].last_countdown_time +
+                 (short)((code_index & 0xff) * 5) * 2))))) {
       sVar2 = (code_index & 0xff) * 10;
-      *(dword *)(sVar2 + 0x805a20) = key_on_hour_meter;
-      if ((&diagnostic_fault_occurrence_count)[sVar2] != '\0') {
-        (&diagnostic_fault_occurrence_count)[sVar2] =
-             (&diagnostic_fault_occurrence_count)[sVar2] + -1;
+      *(dword *)((int)&fault_count_table[0].last_countdown_time + (int)sVar2) = key_on_hour_meter;
+      if ((&fault_count_table[0].occurrence_count)[sVar2] != 0) {
+        (&fault_count_table[0].occurrence_count)[sVar2] =
+             (&fault_count_table[0].occurrence_count)[sVar2] - 1;
       }
-      if ((&diagnostic_fault_occurrence_count)[sVar2] == '\0') {
-        cm550_diagnosticTableEntryClear(code_index & 0xff);
+      if ((&fault_count_table[0].occurrence_count)[sVar2] == 0) {
+        cm550_resetFaultStatus(code_index & 0xff);
         if (((&fault_definition_spn_byte)[(uint)bVar3 * 6] != '\0') &&
            ((*(ushort *)(&fault_definition_flags_word + (uint)bVar3 * 6) & 0x2000) == 0)) {
           _inactive_fault_j1587_reportable_count = _inactive_fault_j1587_reportable_count + -1;
@@ -9279,73 +9423,24 @@ void cm550_diagnosticCodeDebounceHandler(word code_index)
 
 
 //
-// Function: cm550_phase2_sensor_data_processor @ 0x0001452e
+// Function: cm550_countDownPreviouslyActiveFaults @ 0x00014670
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Runs cm550_countDownPreviouslyActiveFault on each entry of previously_active_dtc_list (1 to the
+   count in entry 0), with _inactive_fault_debounce_scan_index as the cursor. The callee moves the
+   last entry into a cleared fault's place and steps the cursor back.
+   cm550_faultFlagScannerAndProcessor calls it when key_on_hour_meter has moved more than 24 counts
+   (about 5 s) since _DAT_0080052e. Counterpart of CM848 cm848_countDownPreviouslyActiveFaults
+   (0x1cd1c) (was cm550_FUN_00014670; PR #53 round 91) (was cm550_FUN_00014670; PR #53 round 91) */
 
-void cm550_phase2_sensor_data_processor(void)
-
-{
-  int iVar1;
-  short in_D0w;
-  short sVar2;
-  byte unaff_D2b;
-  int unaff_A3;
-  short *unaff_A4;
-  int *unaff_A5;
-  
-  if (((*(int *)((short)((ushort)unaff_D2b + (ushort)unaff_D2b * 4) * 2 + 0x805a20) == 0) &&
-      (*(uint *)(in_D0w + 0x80654c) <=
-       (uint)(*unaff_A5 -
-             *(int *)((int)&diagnostic_fault_status_change_time +
-                     (short)((ushort)unaff_D2b + (ushort)unaff_D2b * 4) * 2)))) ||
-     ((*(int *)((short)((ushort)unaff_D2b + (ushort)unaff_D2b * 4) * 2 + 0x805a20) != 0 &&
-      (*(uint *)(in_D0w + 0x806550) <=
-       (uint)(*unaff_A5 -
-             *(int *)((short)((ushort)unaff_D2b + (ushort)unaff_D2b * 4) * 2 + 0x805a20)))))) {
-    sVar2 = (ushort)unaff_D2b * 10;
-    *(int *)(sVar2 + 0x805a20) = *unaff_A5;
-    if ((&diagnostic_fault_occurrence_count)[sVar2] != '\0') {
-      (&diagnostic_fault_occurrence_count)[sVar2] = (&diagnostic_fault_occurrence_count)[sVar2] + -1
-      ;
-    }
-    if ((&diagnostic_fault_occurrence_count)[sVar2] == '\0') {
-      cm550_diagnosticTableEntryClear((ushort)unaff_D2b);
-      if ((*(char *)(unaff_A3 + 4 + (uint)unaff_D2b * 6) != '\0') &&
-         ((*(ushort *)(unaff_A3 + 2 + (uint)unaff_D2b * 6) & 0x2000) == 0)) {
-        _inactive_fault_j1587_reportable_count = _inactive_fault_j1587_reportable_count + -1;
-      }
-      previously_active_dtc_list[0] = previously_active_dtc_list[0] - 1;
-      previously_active_dtc_cummins_fault_codes[0] =
-           previously_active_dtc_cummins_fault_codes[0] - 1;
-      previously_active_dtc_list[*unaff_A4] = previously_active_dtc_list[_inactive_fault_list_count]
-      ;
-      iVar1 = (int)_inactive_fault_list_count;
-      _inactive_fault_list_count = _inactive_fault_list_count + -1;
-      previously_active_dtc_cummins_fault_codes[*unaff_A4] =
-           previously_active_dtc_cummins_fault_codes[iVar1];
-      *unaff_A4 = *unaff_A4 + -1;
-    }
-  }
-  return;
-}
-
-
-
-//
-// Function: cm550_FUN_00014670 @ 0x00014670
-//
-
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
-void cm550_FUN_00014670(void)
+void cm550_countDownPreviouslyActiveFaults(void)
 
 {
   for (_inactive_fault_debounce_scan_index = 1;
       _inactive_fault_debounce_scan_index <= previously_active_dtc_list[0];
       _inactive_fault_debounce_scan_index = _inactive_fault_debounce_scan_index + 1) {
-    cm550_diagnosticCodeDebounceHandler
+    cm550_countDownPreviouslyActiveFault
               (CONCAT11((char)(_inactive_fault_debounce_scan_index >> 8),
                         previously_active_dtc_list[(short)_inactive_fault_debounce_scan_index]));
   }
@@ -9373,9 +9468,9 @@ word cm550_oldestDiagnosticTimestampSearch(word fault_status)
   sVar3 = 0;
   do {
     sVar1 = *(short *)(&diagnostic_fault_code_table + sVar3) * 10;
-    if (((byte)(&diagnostic_fault_status_table)[sVar1] == fault_status) &&
-       (*(uint *)((int)&diagnostic_fault_status_change_time + (int)sVar1) < uVar4)) {
-      uVar4 = *(uint *)((int)&diagnostic_fault_status_change_time + (int)sVar1);
+    if (((&fault_count_table[0].status)[sVar1] == fault_status) &&
+       (*(uint *)((int)&fault_count_table[0].status_change_time + (int)sVar1) < uVar4)) {
+      uVar4 = *(uint *)((int)&fault_count_table[0].status_change_time + (int)sVar1);
       wVar5 = wVar2;
     }
     sVar3 = sVar3 + 0x30;
@@ -9420,14 +9515,14 @@ void cm550_diagnosticCodeRegistrar(word code_index)
   if (wVar1 < 0x14) {
     sVar2 = *(short *)(&diagnostic_fault_code_table + (short)(wVar1 * 6) * 8);
     cm550_diagnosticTableSnapshotCapture(wVar1,code_index);
-    (&diagnostic_fault_status_table)[(short)(sVar2 * 5) * 2] = 0;
+    (&fault_count_table[0].status)[(short)(sVar2 * 5) * 2] = 0;
     return;
   }
   wVar1 = cm550_oldestDiagnosticTimestampSearch(3);
   if (wVar1 < 0x14) {
     sVar2 = *(short *)(&diagnostic_fault_code_table + (short)(wVar1 * 6) * 8);
     cm550_diagnosticTableSnapshotCapture(wVar1,code_index);
-    (&diagnostic_fault_status_table)[(short)(sVar2 * 5) * 2] = 1;
+    (&fault_count_table[0].status)[(short)(sVar2 * 5) * 2] = 1;
   }
   return;
 }
@@ -9448,7 +9543,7 @@ void cm550_FUN_00014812(void)
   if (not_safe_to_program_flag == 2) {
     for (uVar1 = 1; (byte)uVar1 <= previously_active_dtc_list[0];
         uVar1 = (ushort)(byte)((byte)uVar1 + 1)) {
-      cm550_diagnosticTableEntryClear((ushort)previously_active_dtc_list[(short)uVar1]);
+      cm550_resetFaultStatus((ushort)previously_active_dtc_list[(short)uVar1]);
     }
     previously_active_dtc_list[0] = 0;
     previously_active_dtc_cummins_fault_codes[0] = 0;
@@ -9463,12 +9558,26 @@ void cm550_FUN_00014812(void)
 
 
 //
-// Function: cm550_FUN_00014872 @ 0x00014872
+// Function: cm550_processFaultScanGroup @ 0x00014872
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Processes one 16-fault status word per call (_fault_status_word_scan_index;
+   cm550_faultFlagScannerAndProcessor picks the next word with a bit to process). Each bit of status
+   word | first-occurrence word (the latter is then cleared) is compared with the previous pass's
+   word (0x806080 + 2 x word) and gated by fault_confirm_status_word (0x806abc + 2 x word). The
+   fault code assignment table (e2m DGFUCATB at 0x80656c) maps the bit to a fault code index (125 =
+   none). A new bit, while active_dtc_list is not full, adds 1 to
+   fault_count_table[index].occurrence_count (up to 255). If the fault's active-bit count at
+   0x80599e + index was 0, the fault also gets a snapshot slot (cm550_diagnosticCodeRegistrar),
+   status 3, status_change_time = key_on_hour_meter and last_countdown_time = 0, and it moves from
+   previously_active_dtc_list to active_dtc_list with its J1587 / InSite counts. A cleared bit takes
+   1 off the active-bit count. At 0 the fault gets status 2 and a new status_change_time and moves
+   to previously_active_dtc_list (at most 31 entries). The function ends by storing the combined
+   word as the next previous word. Counterpart of CM848 cm848_processFaultScanGroup (0x1d224) (was
+   cm550_FUN_00014872; PR #53 round 91) (was cm550_FUN_00014872; PR #53 round 91) */
 
-void cm550_FUN_00014872(void)
+void cm550_processFaultScanGroup(void)
 
 {
   int iVar1;
@@ -9500,8 +9609,8 @@ void cm550_FUN_00014872(void)
          ((*(char *)((short)uVar5 + 0x80599e) != '\0' &&
           (*(char *)((short)uVar5 + 0x80599e) = *(char *)((short)uVar5 + 0x80599e) + -1,
           *(char *)((short)uVar5 + 0x80599e) == '\0')))) {
-        (&diagnostic_fault_status_table)[(short)(uVar5 * 5) * 2] = 2;
-        *(dword *)((int)&diagnostic_fault_status_change_time + (short)(uVar5 * 5) * 2) =
+        (&fault_count_table[0].status)[(short)(uVar5 * 5) * 2] = 2;
+        *(dword *)((int)&fault_count_table[0].status_change_time + (short)(uVar5 * 5) * 2) =
              key_on_hour_meter;
         bVar6 = false;
         bVar7 = 0;
@@ -9564,16 +9673,17 @@ void cm550_FUN_00014872(void)
          ((active_dtc_list[0] != 0x1f &&
           ((uVar8 & *(ushort *)(&fault_confirm_status_word_0 + _fault_status_word_scan_index * 2))
            != 0)))) {
-        if ((&diagnostic_fault_occurrence_count)[(short)(uVar5 * 5) * 2] != -1) {
-          (&diagnostic_fault_occurrence_count)[(short)(uVar5 * 5) * 2] =
-               (&diagnostic_fault_occurrence_count)[(short)(uVar5 * 5) * 2] + '\x01';
+        if ((&fault_count_table[0].occurrence_count)[(short)(uVar5 * 5) * 2] != 0xff) {
+          (&fault_count_table[0].occurrence_count)[(short)(uVar5 * 5) * 2] =
+               (&fault_count_table[0].occurrence_count)[(short)(uVar5 * 5) * 2] + 1;
         }
         if (*(char *)((short)uVar5 + 0x80599e) == '\0') {
           cm550_diagnosticCodeRegistrar(uVar5);
-          (&diagnostic_fault_status_table)[(short)(uVar5 * 5) * 2] = 3;
-          *(dword *)((int)&diagnostic_fault_status_change_time + (short)(uVar5 * 5) * 2) =
+          (&fault_count_table[0].status)[(short)(uVar5 * 5) * 2] = 3;
+          *(dword *)((int)&fault_count_table[0].status_change_time + (short)(uVar5 * 5) * 2) =
                key_on_hour_meter;
-          *(undefined4 *)((short)(uVar5 * 5) * 2 + 0x805a20) = 0;
+          *(undefined4 *)((int)&fault_count_table[0].last_countdown_time + (short)(uVar5 * 5) * 2) =
+               0;
           bVar6 = false;
           bVar7 = 0;
           iVar1 = (uint)uVar5 * 6;
@@ -9663,7 +9773,7 @@ void cm550_faultFlagScannerAndProcessor(void)
     }
   }
   if (iVar2 < 0x20) {
-    cm550_FUN_00014872();
+    cm550_processFaultScanGroup();
     _fault_status_word_scan_index = _fault_status_word_scan_index + 1;
     if (0x1f < _fault_status_word_scan_index) {
       _fault_status_word_scan_index = 0;
@@ -9724,7 +9834,7 @@ void cm550_faultFlagScannerAndProcessor(void)
     uVar3 = uVar3 + 1;
   } while (uVar3 < 0x10);
   if (0x18 < key_on_hour_meter - _DAT_0080052e) {
-    cm550_FUN_00014670();
+    cm550_countDownPreviouslyActiveFaults();
     _DAT_0080052e = key_on_hour_meter;
   }
   return;
@@ -9751,7 +9861,7 @@ void cm550_insitePidDtcHandler(word spn_byte)
   for (bVar3 = 0; (!bVar1 && (bVar3 < 0x7d)); bVar3 = bVar3 + 1) {
     if (((char)spn_byte == *(char *)(pwVar4 + 2)) &&
        (((WORD_0080de74 & 0x3f) == ((int)(uint)pwVar4[1] >> 7 & 0x3fU) &&
-        ((&diagnostic_fault_occurrence_count)[sVar2] != '\0')))) {
+        ((&fault_count_table[0].occurrence_count)[sVar2] != 0)))) {
       insite_matched_dtc_fault_code = *pwVar4;
       bVar1 = true;
     }
@@ -15854,7 +15964,7 @@ void vp44_evenPhaseSchedulerTaskSet(void)
   cm550_fuelDemandLimitOrchestrator();
   cm550_memoryRegisterController();
   vp44_messageQueueDispatcher();
-  cm550_FUN_00021edc();
+  cm550_tickJ1939InputSupervision();
   cm550_FUN_00021070();
   func_0x000420bc();
   return;
@@ -15870,7 +15980,7 @@ void cm550_diagnosticMonitoringCoordinator(void)
 
 {
   vp44_messageQueueDispatcher();
-  cm550_FUN_00021edc();
+  cm550_tickJ1939InputSupervision();
   cm550_FUN_00021070();
   func_0x000420bc();
   return;
@@ -16337,7 +16447,7 @@ void cm550_FUN_0001b6d6(void)
 
 {
   cm550_j1939TimeoutDataClearHandler();
-  cm550_FUN_000138b6();
+  cm550_updateDataloggerTriggers();
   return;
 }
 
@@ -16351,7 +16461,7 @@ void cm550_FUN_0001b6e4(void)
 
 {
   vp44_hourMeterEventLogger();
-  cm550_FUN_00013a5c();
+  cm550_recordDataloggerSamples();
   return;
 }
 
@@ -20784,7 +20894,7 @@ void cm550_diagnosticMessage46Builder(void)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-uint cm550_FUN_0001f4e8(void)
+tsc1_source_configuration_t * cm550_FUN_0001f4e8(void)
 
 {
   char cVar1;
@@ -20794,7 +20904,7 @@ uint cm550_FUN_0001f4e8(void)
   char cVar5;
   short sVar6;
   word wVar8;
-  uint uVar7;
+  tsc1_source_configuration_t *ptVar7;
   short unaff_D3w;
   bool bVar9;
   undefined2 local_c;
@@ -20809,45 +20919,46 @@ uint cm550_FUN_0001f4e8(void)
   uVar4 = *local_8 & 3;
   wVar8 = cm550_diagnosticMessageValidator(0,0x4a,uVar4);
   if (wVar8 != 0) {
-    return (uint)wVar8;
+    return (tsc1_source_configuration_t *)(uint)wVar8;
   }
   if (3 < (uint)(int)(short)uVar4) goto LAB_0001f570;
-  uVar7 = (uint)(&switchD_0001f53e::switchdataD_0001f542)[(short)uVar4];
+  ptVar7 = (tsc1_source_configuration_t *)
+           (uint)(&switchD_0001f53e::switchdataD_0001f542)[(short)uVar4];
   switch(uVar4) {
   case 0:
     if (cVar1 != '\x03') {
-      return uVar7;
+      return ptVar7;
     }
     goto LAB_0001f570;
   case 1:
     break;
   case 2:
     if (cVar1 != '\x04') {
-      return uVar7;
+      return ptVar7;
     }
     goto LAB_0001f570;
   case 3:
   }
   if (cVar1 != '\x05') {
-    return uVar7;
+    return ptVar7;
   }
 LAB_0001f570:
   if (_datalink_speed_control_mode == 0) {
-    wVar8 = cm550_diagnosticSessionValidator(0,0x4a);
+    wVar8 = findTsc1SourceConfiguration(0,0x4a);
     if (wVar8 != 0) {
-      return (uint)wVar8;
+      return (tsc1_source_configuration_t *)(uint)wVar8;
     }
-    _datalink_active_session_pointer = _datalink_session_config_pointer;
+    tsc1_source_configuration_pointer = tsc1_matched_source_configuration_pointer;
   }
   else if ((engine_control_network_type != 0) || (datalink_command_source_id != 'J')) {
-    wVar8 = cm550_diagnosticSessionValidator(0,0x4a);
+    wVar8 = findTsc1SourceConfiguration(0,0x4a);
     if (wVar8 != 0) {
-      return (uint)wVar8;
+      return (tsc1_source_configuration_t *)(uint)wVar8;
     }
-    if (_datalink_active_session_pointer < _datalink_session_config_pointer) {
-      return _datalink_session_config_pointer;
+    if (tsc1_source_configuration_pointer < tsc1_matched_source_configuration_pointer) {
+      return tsc1_matched_source_configuration_pointer;
     }
-    _datalink_active_session_pointer = _datalink_session_config_pointer;
+    tsc1_source_configuration_pointer = tsc1_matched_source_configuration_pointer;
   }
   _byte_indicating_engine_commands_as_received_over_datalink_0_255 = (ushort)*local_8;
   _jcomm_speed_governor_mode_indicator_of_which_speed_mode_characte_0_3 = 0;
@@ -20864,7 +20975,8 @@ LAB_0001f570:
     break;
   case 1:
     cm550_diagnosticStateInitializer(0,0x4a);
-    _datalink_command_timeout_counter = *(short *)(_datalink_active_session_pointer + 4) + 1;
+    _datalink_command_timeout_counter =
+         tsc1_source_configuration_pointer->speed_control_request_timeout + 1;
     _datalink_speed_control_mode = 1;
     _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = 1;
     _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 1;
@@ -20877,7 +20989,8 @@ LAB_0001f570:
     break;
   case 2:
     cm550_diagnosticStateInitializer(0,0x4a);
-    _datalink_command_timeout_counter = *(short *)(_datalink_active_session_pointer + 8) + 1;
+    _datalink_command_timeout_counter =
+         tsc1_source_configuration_pointer->torque_control_request_timeout + 1;
     _datalink_speed_control_mode = 2;
     _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = 1;
     _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 0;
@@ -20900,7 +21013,8 @@ LAB_0001f570:
     break;
   case 3:
     cm550_diagnosticStateInitializer(0,0x4a);
-    _datalink_command_timeout_counter = *(short *)(_datalink_active_session_pointer + 0xc) + 1;
+    _datalink_command_timeout_counter =
+         tsc1_source_configuration_pointer->speed_torque_limit_control_request_timeout + 1;
     _datalink_speed_control_mode = 3;
     _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = 1;
     _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 0;
@@ -20956,7 +21070,7 @@ LAB_0001f570:
     _driveline_disengage_timeout_timer = 0;
   }
   _driveline_disengaged_flag = (ushort)(uVar4 == 0);
-  return (uint)uVar4;
+  return (tsc1_source_configuration_t *)(uint)uVar4;
 }
 
 
@@ -21003,7 +21117,7 @@ void cm550_fuelDemandScaleFactorCalculator(void)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-uint cm550_engineFluidLevelDataBuilder(void)
+tsc1_source_configuration_t * cm550_engineFluidLevelDataBuilder(void)
 
 {
   char cVar1;
@@ -21012,7 +21126,7 @@ uint cm550_engineFluidLevelDataBuilder(void)
   char cVar3;
   short sVar4;
   word wVar6;
-  uint uVar5;
+  tsc1_source_configuration_t *ptVar5;
   short unaff_D3w;
   undefined2 local_c;
   ushort local_a;
@@ -21023,41 +21137,43 @@ uint cm550_engineFluidLevelDataBuilder(void)
   cVar3 = (char)local_8;
   local_8._0_3_ = (undefined3)(j1708_receive_buffer_pointer_2_32_dcaa >> 8);
   local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x02');
-  uVar5 = *local_8 & 4;
+  ptVar5 = (tsc1_source_configuration_t *)(*local_8 & 4);
   if ((*local_8 & 4) == 0) {
     override_control_mode = *local_8 & 3;
     wVar6 = cm550_diagnosticMessageValidator(0,0x4f,override_control_mode);
-    uVar5 = (uint)wVar6;
+    ptVar5 = (tsc1_source_configuration_t *)(uint)wVar6;
     if (wVar6 == 0) {
       if ((uint)(int)(short)override_control_mode < 4) {
         switch(override_control_mode) {
         case 0:
           if (cVar1 != '\x02') {
-            return (uint)(&switchD_0001f920::switchdataD_0001f924)[(short)override_control_mode];
+            return (tsc1_source_configuration_t *)
+                   (uint)(&switchD_0001f920::switchdataD_0001f924)[(short)override_control_mode];
           }
           break;
         default:
           if (cVar1 != '\x03') {
-            return (uint)(&switchD_0001f920::switchdataD_0001f924)[(short)override_control_mode];
+            return (tsc1_source_configuration_t *)
+                   (uint)(&switchD_0001f920::switchdataD_0001f924)[(short)override_control_mode];
           }
         }
       }
       if (_datalink_speed_control_mode == 0) {
-        wVar6 = cm550_diagnosticSessionValidator(0,0x4f);
+        wVar6 = findTsc1SourceConfiguration(0,0x4f);
         if (wVar6 != 0) {
-          return (uint)wVar6;
+          return (tsc1_source_configuration_t *)(uint)wVar6;
         }
-        _datalink_active_session_pointer = _datalink_session_config_pointer;
+        tsc1_source_configuration_pointer = tsc1_matched_source_configuration_pointer;
       }
       else if ((engine_control_network_type != 0) || (datalink_command_source_id != 'O')) {
-        wVar6 = cm550_diagnosticSessionValidator(0,0x4f);
+        wVar6 = findTsc1SourceConfiguration(0,0x4f);
         if (wVar6 != 0) {
-          return (uint)wVar6;
+          return (tsc1_source_configuration_t *)(uint)wVar6;
         }
-        if (_datalink_active_session_pointer < _datalink_session_config_pointer) {
-          return _datalink_session_config_pointer;
+        if (tsc1_source_configuration_pointer < tsc1_matched_source_configuration_pointer) {
+          return tsc1_matched_source_configuration_pointer;
         }
-        _datalink_active_session_pointer = _datalink_session_config_pointer;
+        tsc1_source_configuration_pointer = tsc1_matched_source_configuration_pointer;
       }
       _byte_indicating_engine_commands_as_received_over_datalink_0_255 = (ushort)*local_8;
       _jcomm_speed_governor_mode_indicator_of_which_speed_mode_characte_0_3 = 0;
@@ -21074,7 +21190,8 @@ uint cm550_engineFluidLevelDataBuilder(void)
         break;
       case 1:
         cm550_diagnosticStateInitializer(0,0x4f);
-        _datalink_command_timeout_counter = *(short *)(_datalink_active_session_pointer + 4) + 1;
+        _datalink_command_timeout_counter =
+             tsc1_source_configuration_pointer->speed_control_request_timeout + 1;
         _datalink_speed_control_mode = 1;
         _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = 2;
         _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 1;
@@ -21085,7 +21202,8 @@ uint cm550_engineFluidLevelDataBuilder(void)
         break;
       case 2:
         cm550_diagnosticStateInitializer(0,0x4f);
-        _datalink_command_timeout_counter = *(short *)(_datalink_active_session_pointer + 8) + 1;
+        _datalink_command_timeout_counter =
+             tsc1_source_configuration_pointer->torque_control_request_timeout + 1;
         _datalink_speed_control_mode = 2;
         _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = 2;
         _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 0;
@@ -21109,7 +21227,8 @@ uint cm550_engineFluidLevelDataBuilder(void)
         break;
       case 3:
         cm550_diagnosticStateInitializer(0,0x4f);
-        _datalink_command_timeout_counter = *(short *)(_datalink_active_session_pointer + 0xc) + 1;
+        _datalink_command_timeout_counter =
+             tsc1_source_configuration_pointer->speed_torque_limit_control_request_timeout + 1;
         _datalink_speed_control_mode = 3;
         _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e = 2;
         _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 0;
@@ -21138,7 +21257,8 @@ uint cm550_engineFluidLevelDataBuilder(void)
         }
       }
       _retarder_disengage_hold_timer = sVar4;
-      uVar5 = _byte_indicating_engine_commands_as_received_over_datalink_0_255 & 0xffff0010;
+      ptVar5 = (tsc1_source_configuration_t *)
+               (_byte_indicating_engine_commands_as_received_over_datalink_0_255 & 0xffff0010);
       if ((_byte_indicating_engine_commands_as_received_over_datalink_0_255 & 0x10) == 0) {
         _retarder_torque_percent = 0x7d;
         _retarder_control_mode = 0;
@@ -21150,7 +21270,7 @@ uint cm550_engineFluidLevelDataBuilder(void)
       }
     }
   }
-  return uVar5;
+  return ptVar5;
 }
 
 
@@ -21756,17 +21876,17 @@ uint cm550_FUN_00020380(void)
   if (((_DAT_00803cd6 & 0x10) != 0) &&
      (uVar1 = (uint)_j1939_source_address_of_commanding_device,
      priority_of_client_which_is_currently_overriding_engine_brake_swi_0_ff <= uVar1)) {
-    if (_DAT_0080423e == 0) {
+    if (j1939_input_signal_timeouts[5] == 0) {
       uVar1 = cm550_FUN_00020348(5);
       _user_value_for_engine_brake_0_100 = _global_default_for_engine_brake_0_100;
       return uVar1;
     }
-    if (muxed_value_for_the_amount_of_engine_brake_requested_0_100 < 0xfb) {
-      uVar1 = ((uint)muxed_value_for_the_amount_of_engine_brake_requested_0_100 << 2) / 10;
+    if (j1939_received_engine_retarder_selection < 0xfb) {
+      uVar1 = ((uint)j1939_received_engine_retarder_selection << 2) / 10;
       _user_value_for_engine_brake_0_100 = (short)uVar1;
       return uVar1;
     }
-    if (muxed_value_for_the_amount_of_engine_brake_requested_0_100 == 0xfe) {
+    if (j1939_received_engine_retarder_selection == 0xfe) {
       _user_value_for_engine_brake_0_100 = _global_default_for_engine_brake_0_100;
       return uVar1;
     }
@@ -21796,18 +21916,18 @@ uint cm550_FUN_0002041c(void)
   if (((_DAT_00803cc6 & 0x8000) != 0) &&
      (uVar1 = (uint)_j1939_source_address_of_commanding_device,
      a_d_priority_for_manual_fan_level_requested_fan_speed_0_ff <= uVar1)) {
-    if (_DAT_00804234 == 0) {
+    if (j1939_input_signal_timeouts[0] == 0) {
       uVar1 = cm550_FUN_00020348(0);
       _user_value_for_manual_fan_level_requested_fan_speed_0_100 =
            _global_default_for_manual_fan_level_requested_fan_speed_0_100;
       return uVar1;
     }
-    if (multiplexed_value_for_requested_fan_speed_0_100 < 0xfb) {
-      uVar1 = ((uint)multiplexed_value_for_requested_fan_speed_0_100 << 4) / 10;
+    if (j1939_received_engine_fan_requested_percent_speed < 0xfb) {
+      uVar1 = ((uint)j1939_received_engine_fan_requested_percent_speed << 4) / 10;
       _user_value_for_manual_fan_level_requested_fan_speed_0_100 = (short)uVar1;
       return uVar1;
     }
-    if (multiplexed_value_for_requested_fan_speed_0_100 == 0xfe) {
+    if (j1939_received_engine_fan_requested_percent_speed == 0xfe) {
       _user_value_for_manual_fan_level_requested_fan_speed_0_100 =
            _global_default_for_manual_fan_level_requested_fan_speed_0_100;
       return uVar1;
@@ -21845,12 +21965,12 @@ uint cm550_outputControlState1Handler(void)
       priority_of_client_which_is_currently_overriding_switch_8_0_ff =
            j1939_switch_override_source_address;
     }
-    if (_DAT_00804240 == 0) {
+    if (j1939_input_signal_timeouts[6] == 0) {
       cm550_FUN_00020348(6);
       uVar1 = cm550_FUN_00020310(6);
       return uVar1;
     }
-    if (multiplex_value_for_idle_switch_on_off == '\x03') {
+    if (j1939_received_accelerator_pedal_1_low_idle_switch == 3) {
       uVar1 = setBitInArray(6);
       if (priority_of_client_which_is_currently_overriding_switch_8_0_ff == 0) {
         priority_of_client_which_is_currently_overriding_switch_8_0_ff = 0;
@@ -21864,7 +21984,7 @@ uint cm550_outputControlState1Handler(void)
         return _default_initialization_value_for_switch_31_on_off;
       }
     }
-    else if (multiplex_value_for_idle_switch_on_off == '\x02') {
+    else if (j1939_received_accelerator_pedal_1_low_idle_switch == 2) {
       if (priority_of_client_which_is_currently_overriding_switch_8_0_ff == 0) {
         priority_of_client_which_is_currently_overriding_switch_8_0_ff = 0;
         if ((_default_initialization_value_for_switch_31_on_off & 0x80) == 0) {
@@ -21879,7 +21999,7 @@ uint cm550_outputControlState1Handler(void)
     }
     else if (priority_of_client_which_is_currently_overriding_switch_8_0_ff == 0) {
       priority_of_client_which_is_currently_overriding_switch_8_0_ff = 0;
-      if (multiplex_value_for_idle_switch_on_off != '\0') {
+      if (j1939_received_accelerator_pedal_1_low_idle_switch != 0) {
         user_supplied_value_for_ptp_switched_input_input_on_off =
              user_supplied_value_for_ptp_switched_input_input_on_off | 0x80;
         return uVar1;
@@ -22017,30 +22137,30 @@ uint cm550_FUN_00020784(void)
      (uVar1 = (uint)_j1939_source_address_of_commanding_device,
      _priority_of_client_overriding_final_remote_throttle_0_ff <=
      _j1939_source_address_of_commanding_device)) {
-    if (_DAT_00804236 == 0) {
+    if (j1939_input_signal_timeouts[1] == 0) {
       analog_sensor_override_values[0xb] = remote_throttle_sensor_config.default_value;
       cm550_FUN_00020348(1);
       uVar1 = cm550_FUN_00020310(1);
       return uVar1;
     }
-    if (multiplexed_value_for_remote_accelerator_0_100 == 0xfe) {
+    if (j1939_received_remote_accelerator_pedal_position == 0xfe) {
       analog_sensor_override_values[0xb] = remote_throttle_sensor_config.default_value;
       _status_32_word_bit_mapped_system_error_status_word_0_0_1 =
            _status_32_word_bit_mapped_system_error_status_word_0_0_1 | 1;
       _fault_first_occurrence_flags_word_0 = _fault_first_occurrence_flags_word_0 | 1;
       return uVar1;
     }
-    if ((multiplexed_value_for_remote_accelerator_0_100 == 0xff) ||
-       ((0xfa < multiplexed_value_for_remote_accelerator_0_100 &&
-        (multiplexed_value_for_remote_accelerator_0_100 < 0xfe)))) {
+    if ((j1939_received_remote_accelerator_pedal_position == 0xff) ||
+       ((0xfa < j1939_received_remote_accelerator_pedal_position &&
+        (j1939_received_remote_accelerator_pedal_position < 0xfe)))) {
       uVar1 = setBitInArray(1);
       analog_sensor_override_values[0xb] = remote_throttle_sensor_config.default_value;
       return uVar1;
     }
-    if (multiplexed_value_for_remote_accelerator_0_100 < 0xfb) {
+    if (j1939_received_remote_accelerator_pedal_position < 0xfb) {
       _status_32_word_bit_mapped_system_error_status_word_0_0_1 =
            _status_32_word_bit_mapped_system_error_status_word_0_0_1 & 0xfffe;
-      uVar1 = ((uint)multiplexed_value_for_remote_accelerator_0_100 << 4) / 10;
+      uVar1 = ((uint)j1939_received_remote_accelerator_pedal_position << 4) / 10;
       analog_sensor_override_values[0xb] = (word)uVar1;
     }
   }
@@ -22058,111 +22178,124 @@ uint cm550_FUN_00020784(void)
 uint cm550_FUN_00020890(word input_index)
 
 {
-  int iVar1;
-  char *pcVar2;
-  ushort uVar3;
+  byte *pbVar1;
+  uint uVar2;
+  int iVar3;
   undefined4 uVar4;
   uint uVar5;
   
-  iVar1 = (short)input_index * 10;
-  uVar4 = cm550_FUN_0002024a((word)CONCAT31((int3)((uint)((short)input_index * 5) >> 8),
-                                            (&DAT_0002010c)[iVar1]));
-  cm550_FUN_000201d6((word)CONCAT31((int3)((uint)uVar4 >> 8),(&DAT_0002010c)[iVar1]));
+  iVar3 = (int)(short)input_index;
+  uVar4 = cm550_FUN_0002024a((word)CONCAT31((int3)((uint)(iVar3 * 5) >> 8),
+                                            j1939_input_signal_descriptor_table[iVar3].timeout_slot)
+                            );
+  cm550_FUN_000201d6((word)CONCAT31((int3)((uint)uVar4 >> 8),
+                                    j1939_input_signal_descriptor_table[iVar3].timeout_slot));
+  uVar2 = (ushort)j1939_input_signal_descriptor_table[iVar3].logical_switch + 0xd0;
   uVar5 = 0;
-  if ((((uint)*(ushort *)
-               (&calibration_feature_enable_flags_word_0 +
-               (short)((int)(*(ushort *)(&DAT_00020110 + iVar1) + 0xd0) >> 4) * 2) &
-       1 << (*(ushort *)(&DAT_00020110 + iVar1) + 0xd0) % 0x10) != 0) &&
-     (uVar5 = (uint)*(byte *)(*(int *)(&DAT_0002010e + (short)input_index * 10) + 0x80bd4a),
-     uVar5 <= _j1939_source_address_of_commanding_device)) {
-    if (*(byte *)(*(int *)(&DAT_0002010e + (short)input_index * 10) + 0x80bd4a) <=
-        _j1939_source_address_of_commanding_device) {
-      *(undefined1 *)(*(int *)(&DAT_0002010e + (short)input_index * 10) + 0x80bd4a) =
+  if ((((uint)*(ushort *)(&calibration_feature_enable_flags_word_0 + (short)((int)uVar2 >> 4) * 2) &
+       1 << uVar2 % 0x10) != 0) &&
+     (uVar5 = (uint)*(byte *)(j1939_input_signal_descriptor_table[(short)input_index].logical_switch
+                             + 0x80bd4a), uVar5 <= _j1939_source_address_of_commanding_device)) {
+    if (*(byte *)(j1939_input_signal_descriptor_table[(short)input_index].logical_switch + 0x80bd4a)
+        <= _j1939_source_address_of_commanding_device) {
+      *(undefined1 *)
+       (j1939_input_signal_descriptor_table[(short)input_index].logical_switch + 0x80bd4a) =
            j1939_switch_override_source_address;
     }
-    pcVar2 = &DAT_0002010c + (short)input_index * 10;
-    if (*(short *)(&DAT_00804234 + (short)*pcVar2 * 2) == 0) {
-      cm550_FUN_00020348(CONCAT11(*pcVar2 >> 7,*pcVar2));
-      uVar5 = *(uint *)(&DAT_0002010e + (short)input_index * 10);
+    pbVar1 = &j1939_input_signal_descriptor_table[(short)input_index].timeout_slot;
+    if (j1939_input_signal_timeouts[(short)(char)*pbVar1] == 0) {
+      cm550_FUN_00020348(CONCAT11((char)*pbVar1 >> 7,*pbVar1));
+      uVar5 = j1939_input_signal_descriptor_table[(short)input_index].logical_switch;
       if (*(char *)(uVar5 + 0x80bd4a) == '\0') {
-        iVar1 = (short)input_index * 10;
-        uVar5 = *(uint *)(&DAT_0002010e + iVar1);
+        iVar3 = (int)(short)input_index;
+        uVar5 = j1939_input_signal_descriptor_table[iVar3].logical_switch;
         *(undefined1 *)(uVar5 + 0x80bd4a) = 0;
         if ((*(uint *)(&default_initialization_value_for_switch_31_on_off +
                       (short)((int)(uVar5 & 0xffff) >> 5) * 4) &
-            1 << (*(uint *)(&DAT_0002010e + iVar1) & 0x1f)) == 0) {
-          uVar3 = *(ushort *)(&DAT_00020110 + iVar1);
-          (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)((int)(uint)uVar3 >> 3)]
-               = ~('\x01' << ((&DAT_00020111)[iVar1] & 7)) &
-                 (&user_supplied_value_for_ptp_switched_input_input_on_off)
-                 [(short)((int)(uint)uVar3 >> 3)];
-          return (int)(uint)uVar3 >> 3;
-        }
-        uVar3 = *(ushort *)(&DAT_00020110 + iVar1);
-        (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)((int)(uint)uVar3 >> 3)] =
-             '\x01' << ((&DAT_00020111)[iVar1] & 7) |
-             (&user_supplied_value_for_ptp_switched_input_input_on_off)
-             [(short)((int)(uint)uVar3 >> 3)];
-        return (int)(uint)uVar3 >> 3;
-      }
-    }
-    else if (**(char **)(&DAT_00020108 + (short)input_index * 10) == '\x03') {
-      setBitInArray((word)CONCAT31((int3)((uint)((short)input_index * 5) >> 8),*pcVar2));
-      uVar5 = *(uint *)(&DAT_0002010e + (short)input_index * 10);
-      if (*(char *)(uVar5 + 0x80bd4a) == '\0') {
-        uVar5 = *(uint *)(&DAT_0002010e + (short)input_index * 10);
-        *(undefined1 *)(uVar5 + 0x80bd4a) = 0;
-        uVar5 = uVar5 & 0xffff;
-        if ((*(uint *)(&default_initialization_value_for_switch_31_on_off +
-                      (short)((int)uVar5 >> 5) * 4) & 1 << uVar5 % 0x20) == 0) {
-          uVar5 = (int)(*(uint *)(&DAT_0002010e + (short)input_index * 10) & 0xffff) >> 3;
+            1 << (j1939_input_signal_descriptor_table[iVar3].logical_switch & 0x1f)) == 0) {
+          uVar5 = (int)(uint)(ushort)j1939_input_signal_descriptor_table[iVar3].logical_switch >> 3;
           (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar5] =
-               ~('\x01' << ((byte)*(undefined4 *)(&DAT_0002010e + (short)input_index * 10) & 7)) &
+               ~('\x01' << ((byte)j1939_input_signal_descriptor_table[iVar3].logical_switch & 7)) &
                (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar5];
           return uVar5;
         }
-        uVar5 = (int)(*(uint *)(&DAT_0002010e + (short)input_index * 10) & 0xffff) >> 3;
+        uVar5 = (int)(uint)(ushort)j1939_input_signal_descriptor_table[iVar3].logical_switch >> 3;
         (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar5] =
-             '\x01' << ((byte)*(undefined4 *)(&DAT_0002010e + (short)input_index * 10) & 7) |
+             '\x01' << ((byte)j1939_input_signal_descriptor_table[iVar3].logical_switch & 7) |
              (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar5];
         return uVar5;
       }
     }
-    else if (**(char **)(&DAT_00020108 + (short)input_index * 10) == '\x02') {
-      uVar5 = *(uint *)(&DAT_0002010e + (short)input_index * 10);
+    else if (*j1939_input_signal_descriptor_table[(short)input_index].signal_value == 3) {
+      setBitInArray((word)CONCAT31((int3)((uint)((short)input_index * 5) >> 8),*pbVar1));
+      uVar5 = j1939_input_signal_descriptor_table[(short)input_index].logical_switch;
       if (*(char *)(uVar5 + 0x80bd4a) == '\0') {
-        uVar5 = *(uint *)(&DAT_0002010e + (short)input_index * 10);
+        uVar5 = j1939_input_signal_descriptor_table[(short)input_index].logical_switch;
         *(undefined1 *)(uVar5 + 0x80bd4a) = 0;
         uVar5 = uVar5 & 0xffff;
         if ((*(uint *)(&default_initialization_value_for_switch_31_on_off +
                       (short)((int)uVar5 >> 5) * 4) & 1 << uVar5 % 0x20) == 0) {
-          uVar5 = (int)(*(uint *)(&DAT_0002010e + (short)input_index * 10) & 0xffff) >> 3;
+          uVar5 = (int)(j1939_input_signal_descriptor_table[(short)input_index].logical_switch &
+                       0xffff) >> 3;
           (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar5] =
-               ~('\x01' << ((byte)*(undefined4 *)(&DAT_0002010e + (short)input_index * 10) & 7)) &
-               (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar5];
+               ~('\x01' <<
+                ((byte)j1939_input_signal_descriptor_table[(short)input_index].logical_switch & 7))
+               & (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar5];
           return uVar5;
         }
-        uVar5 = (int)(*(uint *)(&DAT_0002010e + (short)input_index * 10) & 0xffff) >> 3;
+        uVar5 = (int)(j1939_input_signal_descriptor_table[(short)input_index].logical_switch &
+                     0xffff) >> 3;
         (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar5] =
-             '\x01' << ((byte)*(undefined4 *)(&DAT_0002010e + (short)input_index * 10) & 7) |
+             '\x01' << ((byte)j1939_input_signal_descriptor_table[(short)input_index].logical_switch
+                       & 7) |
+             (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar5];
+        return uVar5;
+      }
+    }
+    else if (*j1939_input_signal_descriptor_table[(short)input_index].signal_value == 2) {
+      uVar5 = j1939_input_signal_descriptor_table[(short)input_index].logical_switch;
+      if (*(char *)(uVar5 + 0x80bd4a) == '\0') {
+        uVar5 = j1939_input_signal_descriptor_table[(short)input_index].logical_switch;
+        *(undefined1 *)(uVar5 + 0x80bd4a) = 0;
+        uVar5 = uVar5 & 0xffff;
+        if ((*(uint *)(&default_initialization_value_for_switch_31_on_off +
+                      (short)((int)uVar5 >> 5) * 4) & 1 << uVar5 % 0x20) == 0) {
+          uVar5 = (int)(j1939_input_signal_descriptor_table[(short)input_index].logical_switch &
+                       0xffff) >> 3;
+          (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar5] =
+               ~('\x01' <<
+                ((byte)j1939_input_signal_descriptor_table[(short)input_index].logical_switch & 7))
+               & (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar5];
+          return uVar5;
+        }
+        uVar5 = (int)(j1939_input_signal_descriptor_table[(short)input_index].logical_switch &
+                     0xffff) >> 3;
+        (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar5] =
+             '\x01' << ((byte)j1939_input_signal_descriptor_table[(short)input_index].logical_switch
+                       & 7) |
              (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar5];
         return uVar5;
       }
     }
     else {
-      uVar5 = *(uint *)(&DAT_0002010e + (short)input_index * 10);
+      uVar5 = j1939_input_signal_descriptor_table[(short)input_index].logical_switch;
       if (*(char *)(uVar5 + 0x80bd4a) == '\0') {
-        *(undefined1 *)(*(int *)(&DAT_0002010e + (short)input_index * 10) + 0x80bd4a) = 0;
-        if (**(char **)(&DAT_00020108 + (short)input_index * 10) != '\0') {
-          uVar5 = (int)(*(uint *)(&DAT_0002010e + (short)input_index * 10) & 0xffff) >> 3;
+        *(undefined1 *)
+         (j1939_input_signal_descriptor_table[(short)input_index].logical_switch + 0x80bd4a) = 0;
+        if (*j1939_input_signal_descriptor_table[(short)input_index].signal_value != 0) {
+          uVar5 = (int)(j1939_input_signal_descriptor_table[(short)input_index].logical_switch &
+                       0xffff) >> 3;
           (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar5] =
-               '\x01' << ((byte)*(undefined4 *)(&DAT_0002010e + (short)input_index * 10) & 7) |
+               '\x01' << ((byte)j1939_input_signal_descriptor_table[(short)input_index].
+                                logical_switch & 7) |
                (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar5];
           return uVar5;
         }
-        uVar5 = (int)(*(uint *)(&DAT_0002010e + (short)input_index * 10) & 0xffff) >> 3;
+        uVar5 = (int)(j1939_input_signal_descriptor_table[(short)input_index].logical_switch &
+                     0xffff) >> 3;
         (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar5] =
-             ~('\x01' << ((byte)*(undefined4 *)(&DAT_0002010e + (short)input_index * 10) & 7)) &
+             ~('\x01' <<
+              ((byte)j1939_input_signal_descriptor_table[(short)input_index].logical_switch & 7)) &
              (&user_supplied_value_for_ptp_switched_input_input_on_off)[(short)uVar5];
       }
     }
@@ -22191,14 +22324,14 @@ uint cm550_FUN_00020c98(void)
         _j1939_source_address_of_commanding_device)) {
     _priority_of_client_overriding_final_sampled_throttle_0_ff =
          _j1939_source_address_of_commanding_device;
-    if (_DAT_00804242 == 0) {
+    if (j1939_input_signal_timeouts[7] == 0) {
       cm550_FUN_00020348(7);
       cm550_FUN_00020310(7);
       analog_sensor_override_values[10] = sampled_throttle_sensor_config.default_value;
       uVar1 = cm550_FUN_000205c4();
       return uVar1;
     }
-    if (multiplexed_accelerator_pedal_position < 0xfb) {
+    if (j1939_received_accelerator_pedal_position_1 < 0xfb) {
       if (ivs_parameter_not_properly_configured_not_logged_as_a_faul_true_false != '\0') {
         aps_error_flag_for_throttle_indicating_bad_data_not_logged_true_false = 0;
         analog_sensor_override_values[10] = sampled_throttle_sensor_config.default_value;
@@ -22206,11 +22339,11 @@ uint cm550_FUN_00020c98(void)
         return uVar1;
       }
       analog_sensor_override_values[10] =
-           (word)(((uint)multiplexed_accelerator_pedal_position << 4) / 10);
-      _throttle_above_idle_flag = (ushort)(multiplexed_accelerator_pedal_position != 0);
+           (word)(((uint)j1939_received_accelerator_pedal_position_1 << 4) / 10);
+      _throttle_above_idle_flag = (ushort)(j1939_received_accelerator_pedal_position_1 != 0);
       uVar1 = _status_32_word_bit_mapped_system_error_status_word_0_0_1 & 0xffff0001;
       if (((_status_32_word_bit_mapped_system_error_status_word_0_0_1 & 1) != 0) &&
-         (multiplex_value_for_idle_switch_on_off != 2)) {
+         (j1939_received_accelerator_pedal_1_low_idle_switch != 2)) {
         aps_error_flag_for_throttle_indicating_bad_data_not_logged_true_false = 0;
         _status_32_word_bit_mapped_system_error_status_word_0_0_1 =
              _status_32_word_bit_mapped_system_error_status_word_0_0_1 & 0xfffe;
@@ -22220,16 +22353,16 @@ uint cm550_FUN_00020c98(void)
     else {
       aps_error_flag_for_throttle_indicating_bad_data_not_logged_true_false = 0;
       analog_sensor_override_values[10] = sampled_throttle_sensor_config.default_value;
-      if (multiplexed_accelerator_pedal_position == 0xfe) {
+      if (j1939_received_accelerator_pedal_position_1 == 0xfe) {
         _status_32_word_bit_mapped_system_error_status_word_0_0_1 =
              _status_32_word_bit_mapped_system_error_status_word_0_0_1 | 1;
         _fault_first_occurrence_flags_word_0 = _fault_first_occurrence_flags_word_0 | 1;
-        if (1 < multiplex_value_for_idle_switch_on_off) {
+        if (1 < j1939_received_accelerator_pedal_1_low_idle_switch) {
           _throttle_above_idle_flag = 0;
           return uVar1;
         }
         aps_error_flag_for_throttle_indicating_bad_data_not_logged_true_false = 1;
-        if (multiplex_value_for_idle_switch_on_off == 1) {
+        if (j1939_received_accelerator_pedal_1_low_idle_switch == 1) {
           _throttle_above_idle_flag = 0;
           return uVar1;
         }
@@ -22277,10 +22410,10 @@ uint cm550_FUN_00020e14(void)
            j1939_switch_override_source_address;
     }
     if (pgn_timeout_error_flag_for_aps_ivs_remote_throttle_not_log_true_false == '\0') {
-      if (multiplex_value_for_idle_switch_on_off < 2) {
+      if (j1939_received_accelerator_pedal_1_low_idle_switch < 2) {
         if (priority_of_client_which_is_currently_overriding_switch_8_0_ff == 0) {
           priority_of_client_which_is_currently_overriding_switch_8_0_ff = 0;
-          if (multiplex_value_for_idle_switch_on_off == 0) {
+          if (j1939_received_accelerator_pedal_1_low_idle_switch == 0) {
             user_supplied_value_for_ptp_switched_input_input_on_off =
                  user_supplied_value_for_ptp_switched_input_input_on_off & 0x7f;
           }
@@ -22291,8 +22424,8 @@ uint cm550_FUN_00020e14(void)
         }
         if (priority_of_client_which_is_currently_overriding_switch_9_0_ff == 0) {
           priority_of_client_which_is_currently_overriding_switch_9_0_ff = 0;
-          uVar1 = ~(uint)multiplex_value_for_idle_switch_on_off;
-          if ((~(uint)multiplex_value_for_idle_switch_on_off & 1) == 0) {
+          uVar1 = ~(uint)j1939_received_accelerator_pedal_1_low_idle_switch;
+          if ((~(uint)j1939_received_accelerator_pedal_1_low_idle_switch & 1) == 0) {
             switch_9_to_16_override_values = switch_9_to_16_override_values & 0xfe;
             return uVar1;
           }
@@ -22325,7 +22458,7 @@ uint cm550_FUN_00020e14(void)
             uVar1 = _default_initialization_value_for_switch_31_on_off;
           }
         }
-        if (multiplex_value_for_idle_switch_on_off == 2) {
+        if (j1939_received_accelerator_pedal_1_low_idle_switch == 2) {
           _status_32_word_bit_mapped_system_error_status_word_0_0_1 =
                _status_32_word_bit_mapped_system_error_status_word_0_0_1 | 1;
           _fault_first_occurrence_flags_word_0 = _fault_first_occurrence_flags_word_0 | 1;
@@ -22363,18 +22496,17 @@ uint cm550_FUN_00020fac(void)
      _j1939_source_address_of_commanding_device)) {
     _priority_of_client_overriding_raw_intake_manifold_temperature_0_ff =
          _j1939_source_address_of_commanding_device;
-    if (_DAT_00804246 == 0) {
+    if (j1939_input_signal_timeouts[9] == 0) {
       uVar1 = cm550_FUN_00020348(9);
       analog_sensor_raw_override_values[0] = _DAT_00806d3c;
       return uVar1;
     }
-    if (muxed_value_for_the_pneumatic_control_pressure_wet_tank_pressur_0_250 < 0xfb) {
-      uVar1 = ((uint)muxed_value_for_the_pneumatic_control_pressure_wet_tank_pressur_0_250 * 0x2442)
-              / 100;
+    if (j1939_received_wet_tank_pressure < 0xfb) {
+      uVar1 = ((uint)j1939_received_wet_tank_pressure * 0x2442) / 100;
       analog_sensor_raw_override_values[0] = (word)uVar1;
       return uVar1;
     }
-    if (muxed_value_for_the_pneumatic_control_pressure_wet_tank_pressur_0_250 == 0xfe) {
+    if (j1939_received_wet_tank_pressure == 0xfe) {
       analog_sensor_raw_override_values[0] = _DAT_00806d3c;
       return uVar1;
     }
@@ -22515,10 +22647,10 @@ uint mc68k_FUN_000212b2(void)
   undefined4 in_D0;
   uint uVar5;
   byte bVar6;
-  char *pcVar7;
-  short *psVar8;
+  byte *pbVar7;
+  j1939_receive_handler_entry_t *pjVar8;
   undefined *puVar9;
-  short local_6;
+  word local_6;
   
   wVar2 = CTM4_BIUTBR;
   uVar5 = CONCAT22((short)((uint)in_D0 >> 0x10),_diagnostic_subsystem_enable_flags) & 0xffff0008;
@@ -22532,7 +22664,7 @@ uint mc68k_FUN_000212b2(void)
       break;
       bVar6 = *(byte *)(_can_receive_buffer_read_pointer + 1);
       cVar1 = *(char *)(_can_receive_buffer_read_pointer + 2);
-      local_6 = *(short *)(_can_receive_buffer_read_pointer + 1);
+      local_6 = *(word *)(_can_receive_buffer_read_pointer + 1);
       if (bVar6 == 0) {
         if (((cVar1 == j1939_engine_node_source_address) ||
             (cVar1 == j1939_retarder_node_source_address)) || (cVar1 == -1)) {
@@ -22542,24 +22674,24 @@ uint mc68k_FUN_000212b2(void)
       else if ((bVar6 < 0xf0) && ((cVar1 == j1939_engine_node_source_address || (cVar1 == -1)))) {
         local_6 = (ushort)bVar6 << 8;
       }
-      can_received_source_address = *(char *)(_can_receive_buffer_read_pointer + 3);
+      j1939_received_source_address = *(byte *)(_can_receive_buffer_read_pointer + 3);
       bVar4 = false;
-      pcVar7 = &DAT_0080d9e0;
+      pbVar7 = &DAT_0080d9e0;
       do {
-        if ((*pcVar7 == -2) || ((char *)0x80d9e3 < pcVar7)) goto LAB_0002136c;
-        cVar1 = *pcVar7;
-        pcVar7 = pcVar7 + 1;
-      } while (can_received_source_address != cVar1);
+        if ((*pbVar7 == 0xfe) || ((byte *)0x80d9e3 < pbVar7)) goto LAB_0002136c;
+        bVar6 = *pbVar7;
+        pbVar7 = pbVar7 + 1;
+      } while (j1939_received_source_address != bVar6);
       bVar4 = true;
 LAB_0002136c:
       if (!bVar4) {
-        psVar8 = (short *)&DAT_00800ab0;
-        for (bVar6 = 0; bVar6 < DAT_00800b10; bVar6 = bVar6 + 1) {
-          if (*psVar8 == local_6) {
-            (**(code **)(psVar8 + 1))(_can_receive_buffer_read_pointer);
+        pjVar8 = j1939_receive_handler_table;
+        for (bVar6 = 0; bVar6 < j1939_receive_handler_count; bVar6 = bVar6 + 1) {
+          if (pjVar8->pgn_key == local_6) {
+            (*(code *)pjVar8->handler)(_can_receive_buffer_read_pointer);
             break;
           }
-          psVar8 = psVar8 + 3;
+          pjVar8 = pjVar8 + 1;
         }
       }
       _can_receive_buffer_read_pointer = _can_receive_buffer_read_pointer + 0x12;
@@ -22965,44 +23097,78 @@ undefined4 cm550_diagnosticServiceSecurityValidator(dword msg_ptr)
 
 
 //
-// Function: cm550_FUN_00021a8c @ 0x00021a8c
+// Function: receivePgn57344CabMessage1 @ 0x00021a5c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* J1939 PGN 57344 Cab Message 1 (CM1) receive handler: when
+   j1939_engine_fan_requested_percent_speed_source_address_filter_cal (slot 0) equals
+   j1939_received_source_address or is 0xFF it sets j1939_input_signal_timeouts[0] = 500 and stores
+   data byte 1 in j1939_received_engine_fan_requested_percent_speed. Registered for PGN 57344 by
+   cm550_registerJ1939InputMessageHandlers; the receive dispatcher 0x212b2 calls it with the
+   received frame. The same steps and constants as CM848 0x50b734 (new function; PR #53 round 91;
+   the twin of CM848 0x50b734: one shared name) (was no row; PR #53 round 91) */
 
-void cm550_FUN_00021a8c(int param_1)
+void receivePgn57344CabMessage1(int param_1)
+
+{
+  if ((j1939_engine_fan_requested_percent_speed_source_address_filter_cal ==
+       j1939_received_source_address) ||
+     (j1939_engine_fan_requested_percent_speed_source_address_filter_cal == 0xff)) {
+    j1939_input_signal_timeouts[0] = 500;
+    j1939_received_engine_fan_requested_percent_speed = **(byte **)(param_1 + 6);
+  }
+  return;
+}
+
+
+
+//
+// Function: receivePgn61441ElectronicBrakeController1Message @ 0x00021a8c
+//
+
+/* J1939 PGN 61441 Electronic Brake Controller 1 (EBC1) receive handler: signal slots 1-5, each
+   taken only when its source address filter byte equals j1939_received_source_address or is 0xFF,
+   and each reloads its j1939_input_signal_timeouts slot with 50: byte 4 bits 7-8
+   j1939_received_remote_accelerator_enable_switch, bits 5-6
+   j1939_received_engine_auxiliary_shutdown_switch, bits 3-4 j1939_received_engine_derate_switch,
+   bits 1-2 j1939_received_accelerator_interlock_switch, byte 5
+   j1939_received_engine_retarder_selection. Registered for PGN 61441 by
+   cm550_registerJ1939InputMessageHandlers. The same steps and constants as CM848 0x50b77c (was
+   cm550_FUN_00021a8c; PR #53 round 91; the twin of CM848 0x50b77c: one shared name) (was
+   cm550_FUN_00021a8c; PR #53 round 91) */
+
+void receivePgn61441ElectronicBrakeController1Message(int param_1)
 
 {
   if ((j1939_remote_accelerator_enable_switch_source_address_filter_cal ==
-       can_received_source_address) ||
+       j1939_received_source_address) ||
      (j1939_remote_accelerator_enable_switch_source_address_filter_cal == 0xff)) {
-    _DAT_00804236 = 0x32;
-    multiplex_value_for_remote_throttle_switch_on_off =
-         (undefined1)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0xc0) >> 6);
+    j1939_input_signal_timeouts[1] = 0x32;
+    j1939_received_remote_accelerator_enable_switch =
+         (byte)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0xc0) >> 6);
   }
   if ((j1939_engine_auxiliary_shutdown_switch_source_address_filter_cal ==
-       can_received_source_address) ||
+       j1939_received_source_address) ||
      (j1939_engine_auxiliary_shutdown_switch_source_address_filter_cal == 0xff)) {
-    _DAT_00804238 = 0x32;
-    multiplex_value_for_auxiliary_shutdown_switch_on_off =
-         (undefined1)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0x30) >> 4);
+    j1939_input_signal_timeouts[2] = 0x32;
+    j1939_received_engine_auxiliary_shutdown_switch =
+         (byte)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0x30) >> 4);
   }
-  if ((j1939_engine_derate_switch_source_address_filter_cal == can_received_source_address) ||
+  if ((j1939_engine_derate_switch_source_address_filter_cal == j1939_received_source_address) ||
      (j1939_engine_derate_switch_source_address_filter_cal == 0xff)) {
-    _DAT_0080423a = 0x32;
-    multiplex_value_for_torque_derate_switch_on_off =
-         (undefined1)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0xc) >> 2);
+    j1939_input_signal_timeouts[3] = 0x32;
+    j1939_received_engine_derate_switch =
+         (byte)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0xc) >> 2);
   }
-  if ((j1939_accelerator_interlock_switch_source_address_filter_cal == can_received_source_address)
-     || (j1939_accelerator_interlock_switch_source_address_filter_cal == 0xff)) {
-    _DAT_0080423c = 0x32;
-    multiplex_value_for_throttle_interlock_switch_on_off = *(byte *)(*(int *)(param_1 + 6) + 3) & 3;
+  if ((j1939_accelerator_interlock_switch_source_address_filter_cal == j1939_received_source_address
+      ) || (j1939_accelerator_interlock_switch_source_address_filter_cal == 0xff)) {
+    j1939_input_signal_timeouts[4] = 0x32;
+    j1939_received_accelerator_interlock_switch = *(byte *)(*(int *)(param_1 + 6) + 3) & 3;
   }
-  if ((j1939_engine_retarder_selection_source_address_filter_cal == can_received_source_address) ||
-     (j1939_engine_retarder_selection_source_address_filter_cal == 0xff)) {
-    _DAT_0080423e = 0x32;
-    muxed_value_for_the_amount_of_engine_brake_requested_0_100 =
-         *(undefined1 *)(*(int *)(param_1 + 6) + 4);
+  if ((j1939_engine_retarder_selection_source_address_filter_cal == j1939_received_source_address)
+     || (j1939_engine_retarder_selection_source_address_filter_cal == 0xff)) {
+    j1939_input_signal_timeouts[5] = 0x32;
+    j1939_received_engine_retarder_selection = *(byte *)(*(int *)(param_1 + 6) + 4);
   }
   return;
 }
@@ -23010,36 +23176,41 @@ void cm550_FUN_00021a8c(int param_1)
 
 
 //
-// Function: cm550_FUN_00021b88 @ 0x00021b88
+// Function: receivePgn61443ElectronicEngineController2Message @ 0x00021b88
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* J1939 PGN 61443 Electronic Engine Controller 2 (EEC2) receive handler: signal slots 6-9 (timeout
+   25 each): byte 1 bits 1-2 j1939_received_accelerator_pedal_1_low_idle_switch, byte 2
+   j1939_received_accelerator_pedal_position_1, byte 4
+   j1939_received_remote_accelerator_pedal_position, byte 5 j1939_received_wet_tank_pressure.
+   Registered for PGN 61443 by cm550_registerJ1939InputMessageHandlers. The same steps and constants
+   as CM848 0x50b8a4 (was cm550_FUN_00021b88; PR #53 round 91; the twin of CM848 0x50b8a4: one
+   shared name) (was cm550_FUN_00021b88; PR #53 round 91) */
 
-void cm550_FUN_00021b88(int param_1)
+void receivePgn61443ElectronicEngineController2Message(int param_1)
 
 {
   if ((j1939_accelerator_pedal_1_low_idle_switch_source_address_filter_cal ==
-       can_received_source_address) ||
+       j1939_received_source_address) ||
      (j1939_accelerator_pedal_1_low_idle_switch_source_address_filter_cal == 0xff)) {
-    _DAT_00804240 = 0x19;
-    multiplex_value_for_idle_switch_on_off = **(byte **)(param_1 + 6) & 3;
+    j1939_input_signal_timeouts[6] = 0x19;
+    j1939_received_accelerator_pedal_1_low_idle_switch = **(byte **)(param_1 + 6) & 3;
   }
-  if ((j1939_accelerator_pedal_position_1_source_address_filter_cal == can_received_source_address)
-     || (j1939_accelerator_pedal_position_1_source_address_filter_cal == 0xff)) {
-    _DAT_00804242 = 0x19;
-    multiplexed_accelerator_pedal_position = *(byte *)(*(int *)(param_1 + 6) + 1);
+  if ((j1939_accelerator_pedal_position_1_source_address_filter_cal == j1939_received_source_address
+      ) || (j1939_accelerator_pedal_position_1_source_address_filter_cal == 0xff)) {
+    j1939_input_signal_timeouts[7] = 0x19;
+    j1939_received_accelerator_pedal_position_1 = *(byte *)(*(int *)(param_1 + 6) + 1);
   }
   if ((j1939_remote_accelerator_pedal_position_source_address_filter_cal ==
-       can_received_source_address) ||
+       j1939_received_source_address) ||
      (j1939_remote_accelerator_pedal_position_source_address_filter_cal == 0xff)) {
-    _DAT_00804244 = 0x19;
-    multiplexed_value_for_remote_accelerator_0_100 = *(undefined1 *)(*(int *)(param_1 + 6) + 3);
+    j1939_input_signal_timeouts[8] = 0x19;
+    j1939_received_remote_accelerator_pedal_position = *(byte *)(*(int *)(param_1 + 6) + 3);
   }
-  if ((j1939_wet_tank_pressure_source_address_filter_cal == can_received_source_address) ||
+  if ((j1939_wet_tank_pressure_source_address_filter_cal == j1939_received_source_address) ||
      (j1939_wet_tank_pressure_source_address_filter_cal == 0xff)) {
-    _DAT_00804246 = 0x19;
-    muxed_value_for_the_pneumatic_control_pressure_wet_tank_pressur_0_250 =
-         *(undefined1 *)(*(int *)(param_1 + 6) + 4);
+    j1939_input_signal_timeouts[9] = 0x19;
+    j1939_received_wet_tank_pressure = *(byte *)(*(int *)(param_1 + 6) + 4);
   }
   return;
 }
@@ -23047,35 +23218,68 @@ void cm550_FUN_00021b88(int param_1)
 
 
 //
-// Function: cm550_FUN_00021c74 @ 0x00021c74
+// Function: receivePgn65252ShutdownMessage @ 0x00021c3c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* J1939 PGN 65252 Shutdown (SHUTDN) receive handler: when
+   j1939_air_conditioner_high_pressure_fan_switch_source_address_filter_cal (slot 10) equals
+   j1939_received_source_address or is 0xFF it sets j1939_input_signal_timeouts[10] = 500 and stores
+   byte 3 bits 1-2 in j1939_received_air_conditioner_high_pressure_fan_switch. Registered for PGN
+   65252 by cm550_registerJ1939InputMessageHandlers. The same steps and constants as CM848 0x50b98c
+   (new function; PR #53 round 91; the twin of CM848 0x50b98c: one shared name) (was no row; PR #53
+   round 91) */
 
-void cm550_FUN_00021c74(int param_1)
+void receivePgn65252ShutdownMessage(int param_1)
 
 {
-  if ((j1939_remote_power_take_off_switch_source_address_filter_cal == can_received_source_address)
-     || (j1939_remote_power_take_off_switch_source_address_filter_cal == 0xff)) {
-    _DAT_0080424a = 0x32;
-    multiplex_value_for_remote_pto_switch_on_off =
-         (undefined1)((int)(*(byte *)(*(int *)(param_1 + 6) + 5) & 0xc) >> 2);
+  if ((j1939_air_conditioner_high_pressure_fan_switch_source_address_filter_cal ==
+       j1939_received_source_address) ||
+     (j1939_air_conditioner_high_pressure_fan_switch_source_address_filter_cal == 0xff)) {
+    j1939_input_signal_timeouts[10] = 500;
+    j1939_received_air_conditioner_high_pressure_fan_switch =
+         *(byte *)(*(int *)(param_1 + 6) + 2) & 3;
   }
-  if ((j1939_power_take_off_on_switch_source_address_filter_cal == can_received_source_address) ||
+  return;
+}
+
+
+
+//
+// Function: receivePgn65264PowerTakeoffInformationMessage @ 0x00021c74
+//
+
+/* J1939 PGN 65264 Power Takeoff Information (PTO) receive handler: signal slots 11-14 (timeout 50
+   each): byte 6 bits 3-4 j1939_received_remote_power_take_off_switch, bits 1-2
+   j1939_received_power_take_off_on_switch, byte 7 bits 5-6
+   j1939_received_power_take_off_resume_switch, bits 1-2 j1939_received_power_take_off_set_switch.
+   Registered for PGN 65264 by cm550_registerJ1939InputMessageHandlers. The same steps and constants
+   as CM848 0x50b9d8 (was cm550_FUN_00021c74; PR #53 round 91; the twin of CM848 0x50b9d8: one
+   shared name) (was cm550_FUN_00021c74; PR #53 round 91) */
+
+void receivePgn65264PowerTakeoffInformationMessage(int param_1)
+
+{
+  if ((j1939_remote_power_take_off_switch_source_address_filter_cal == j1939_received_source_address
+      ) || (j1939_remote_power_take_off_switch_source_address_filter_cal == 0xff)) {
+    j1939_input_signal_timeouts[0xb] = 0x32;
+    j1939_received_remote_power_take_off_switch =
+         (byte)((int)(*(byte *)(*(int *)(param_1 + 6) + 5) & 0xc) >> 2);
+  }
+  if ((j1939_power_take_off_on_switch_source_address_filter_cal == j1939_received_source_address) ||
      (j1939_power_take_off_on_switch_source_address_filter_cal == 0xff)) {
-    _DAT_0080424c = 0x32;
-    multiplex_value_for_pto_on_switch_on_off = *(byte *)(*(int *)(param_1 + 6) + 5) & 3;
+    j1939_input_signal_timeouts[0xc] = 0x32;
+    j1939_received_power_take_off_on_switch = *(byte *)(*(int *)(param_1 + 6) + 5) & 3;
   }
-  if ((j1939_power_take_off_resume_switch_source_address_filter_cal == can_received_source_address)
-     || (j1939_power_take_off_resume_switch_source_address_filter_cal == 0xff)) {
-    _DAT_0080424e = 0x32;
-    multiplex_value_for_pto_resume_switch_on_off =
-         (undefined1)((int)(*(byte *)(*(int *)(param_1 + 6) + 6) & 0x30) >> 4);
+  if ((j1939_power_take_off_resume_switch_source_address_filter_cal == j1939_received_source_address
+      ) || (j1939_power_take_off_resume_switch_source_address_filter_cal == 0xff)) {
+    j1939_input_signal_timeouts[0xd] = 0x32;
+    j1939_received_power_take_off_resume_switch =
+         (byte)((int)(*(byte *)(*(int *)(param_1 + 6) + 6) & 0x30) >> 4);
   }
-  if ((j1939_power_take_off_set_switch_source_address_filter_cal == can_received_source_address) ||
-     (j1939_power_take_off_set_switch_source_address_filter_cal == 0xff)) {
-    _DAT_00804250 = 0x32;
-    multiplex_value_for_pto_set_switch_on_off = *(byte *)(*(int *)(param_1 + 6) + 6) & 3;
+  if ((j1939_power_take_off_set_switch_source_address_filter_cal == j1939_received_source_address)
+     || (j1939_power_take_off_set_switch_source_address_filter_cal == 0xff)) {
+    j1939_input_signal_timeouts[0xe] = 0x32;
+    j1939_received_power_take_off_set_switch = *(byte *)(*(int *)(param_1 + 6) + 6) & 3;
   }
   return;
 }
@@ -23083,60 +23287,64 @@ void cm550_FUN_00021c74(int param_1)
 
 
 //
-// Function: cm550_FUN_00021d44 @ 0x00021d44
+// Function: receivePgn65265CruiseControlVehicleSpeedMessage @ 0x00021d44
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* J1939 PGN 65265 Cruise Control/Vehicle Speed 1 (CCVS1) receive handler: signal slots 15-22
+   (timeout 50 each): byte 4 bits 7-8 clutch, 5-6 brake and 3-4 cruise control enable switch; byte 5
+   bits 5-6 cruise control resume and 1-2 set switch; byte 8 bits 1-2 engine idle increment, 3-4
+   decrement and 5-6 engine diagnostic test mode switch (the j1939_received_* bytes). Registered for
+   PGN 65265 by cm550_registerJ1939InputMessageHandlers. The same steps and constants as CM848
+   0x50bacc (was cm550_FUN_00021d44; PR #53 round 91; the twin of CM848 0x50bacc: one shared name)
+   (was cm550_FUN_00021d44; PR #53 round 91) */
 
-void cm550_FUN_00021d44(int param_1)
+void receivePgn65265CruiseControlVehicleSpeedMessage(int param_1)
 
 {
-  if ((j1939_clutch_switch_source_address_filter_cal == can_received_source_address) ||
+  if ((j1939_clutch_switch_source_address_filter_cal == j1939_received_source_address) ||
      (j1939_clutch_switch_source_address_filter_cal == 0xff)) {
-    _DAT_00804252 = 0x32;
-    multiplex_value_for_clutch_switch_on_off =
-         (undefined1)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0xc0) >> 6);
+    j1939_input_signal_timeouts[0xf] = 0x32;
+    j1939_received_clutch_switch = (byte)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0xc0) >> 6);
   }
-  if ((j1939_brake_switch_source_address_filter_cal == can_received_source_address) ||
+  if ((j1939_brake_switch_source_address_filter_cal == j1939_received_source_address) ||
      (j1939_brake_switch_source_address_filter_cal == 0xff)) {
-    _DAT_00804254 = 0x32;
-    multiplex_value_for_brake_switch_on_off =
-         (undefined1)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0x30) >> 4);
+    j1939_input_signal_timeouts[0x10] = 0x32;
+    j1939_received_brake_switch = (byte)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0x30) >> 4);
   }
-  if ((j1939_cruise_control_enable_switch_source_address_filter_cal == can_received_source_address)
-     || (j1939_cruise_control_enable_switch_source_address_filter_cal == 0xff)) {
-    _DAT_00804256 = 0x32;
-    multiplex_value_for_cruise_enable_switch_switch_on_off =
-         (undefined1)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0xc) >> 2);
+  if ((j1939_cruise_control_enable_switch_source_address_filter_cal == j1939_received_source_address
+      ) || (j1939_cruise_control_enable_switch_source_address_filter_cal == 0xff)) {
+    j1939_input_signal_timeouts[0x11] = 0x32;
+    j1939_received_cruise_control_enable_switch =
+         (byte)((int)(*(byte *)(*(int *)(param_1 + 6) + 3) & 0xc) >> 2);
   }
-  if ((j1939_cruise_control_resume_switch_source_address_filter_cal == can_received_source_address)
-     || (j1939_cruise_control_resume_switch_source_address_filter_cal == 0xff)) {
-    _DAT_00804258 = 0x32;
-    multiplex_value_for_cruise_resume_switch_on_off =
-         (undefined1)((int)(*(byte *)(*(int *)(param_1 + 6) + 4) & 0x30) >> 4);
+  if ((j1939_cruise_control_resume_switch_source_address_filter_cal == j1939_received_source_address
+      ) || (j1939_cruise_control_resume_switch_source_address_filter_cal == 0xff)) {
+    j1939_input_signal_timeouts[0x12] = 0x32;
+    j1939_received_cruise_control_resume_switch =
+         (byte)((int)(*(byte *)(*(int *)(param_1 + 6) + 4) & 0x30) >> 4);
   }
-  if ((j1939_cruise_control_set_switch_source_address_filter_cal == can_received_source_address) ||
-     (j1939_cruise_control_set_switch_source_address_filter_cal == 0xff)) {
-    _DAT_0080425a = 0x32;
-    multiplex_value_for_cruise_set_switch_on_off = *(byte *)(*(int *)(param_1 + 6) + 4) & 3;
+  if ((j1939_cruise_control_set_switch_source_address_filter_cal == j1939_received_source_address)
+     || (j1939_cruise_control_set_switch_source_address_filter_cal == 0xff)) {
+    j1939_input_signal_timeouts[0x13] = 0x32;
+    j1939_received_cruise_control_set_switch = *(byte *)(*(int *)(param_1 + 6) + 4) & 3;
   }
-  if ((j1939_engine_idle_increment_switch_source_address_filter_cal == can_received_source_address)
-     || (j1939_engine_idle_increment_switch_source_address_filter_cal == 0xff)) {
-    _DAT_0080425c = 0x32;
-    multiplex_value_for_increment_switch_on_off = *(byte *)(*(int *)(param_1 + 6) + 7) & 3;
+  if ((j1939_engine_idle_increment_switch_source_address_filter_cal == j1939_received_source_address
+      ) || (j1939_engine_idle_increment_switch_source_address_filter_cal == 0xff)) {
+    j1939_input_signal_timeouts[0x14] = 0x32;
+    j1939_received_engine_idle_increment_switch = *(byte *)(*(int *)(param_1 + 6) + 7) & 3;
   }
-  if ((j1939_engine_idle_decrement_switch_source_address_filter_cal == can_received_source_address)
-     || (j1939_engine_idle_decrement_switch_source_address_filter_cal == 0xff)) {
-    _DAT_0080425e = 0x32;
-    multiplex_value_for_decrement_switch_on_off =
-         (undefined1)((int)(*(byte *)(*(int *)(param_1 + 6) + 7) & 0xc) >> 2);
+  if ((j1939_engine_idle_decrement_switch_source_address_filter_cal == j1939_received_source_address
+      ) || (j1939_engine_idle_decrement_switch_source_address_filter_cal == 0xff)) {
+    j1939_input_signal_timeouts[0x15] = 0x32;
+    j1939_received_engine_idle_decrement_switch =
+         (byte)((int)(*(byte *)(*(int *)(param_1 + 6) + 7) & 0xc) >> 2);
   }
   if ((j1939_engine_diagnostic_test_mode_switch_source_address_filter_cal ==
-       can_received_source_address) ||
+       j1939_received_source_address) ||
      (j1939_engine_diagnostic_test_mode_switch_source_address_filter_cal == 0xff)) {
-    _DAT_00804260 = 0x32;
-    multiplex_value_for_test_switch_on_off =
-         (undefined1)((int)(*(byte *)(*(int *)(param_1 + 6) + 7) & 0x30) >> 4);
+    j1939_input_signal_timeouts[0x16] = 0x32;
+    j1939_received_engine_diagnostic_test_mode_switch =
+         (byte)((int)(*(byte *)(*(int *)(param_1 + 6) + 7) & 0x30) >> 4);
   }
   return;
 }
@@ -23144,17 +23352,26 @@ void cm550_FUN_00021d44(int param_1)
 
 
 //
-// Function: cm550_FUN_00021edc @ 0x00021edc
+// Function: cm550_tickJ1939InputSupervision @ 0x00021edc
 //
 
-void cm550_FUN_00021edc(void)
+/* Counts each nonzero word of j1939_input_signal_timeouts down by 1 - all 25 words (the bound
+   0x804264 is inclusive as in CM848). Runs from vp44_evenPhaseSchedulerTaskSet and
+   cm550_diagnosticMonitoringCoordinator with no gate. The counterpart of
+   cm848_tickJ1939InputSupervision (0x50bca0): CM848 ends with the same loop but first needs the
+   J1939 multiplex enable bit, counts j1939_input_fault_start_delay and the start-up timer / inhibit
+   flag, and skips the loop while DM13 holds; CM550 has none of those steps (was cm550_FUN_00021edc;
+   PR #53 round 91) (was cm550_FUN_00021edc; PR #53 round 91) */
+
+void cm550_tickJ1939InputSupervision(void)
 
 {
-  short *psVar1;
+  word *pwVar1;
   
-  for (psVar1 = (short *)&DAT_00804234; psVar1 < (short *)0x804265; psVar1 = psVar1 + 1) {
-    if (*psVar1 != 0) {
-      *psVar1 = *psVar1 + -1;
+  for (pwVar1 = j1939_input_signal_timeouts;
+      pwVar1 < (word *)((int)j1939_input_signal_timeouts + 0x31); pwVar1 = pwVar1 + 1) {
+    if (*pwVar1 != 0) {
+      *pwVar1 = *pwVar1 - 1;
     }
   }
   return;
@@ -23163,18 +23380,25 @@ void cm550_FUN_00021edc(void)
 
 
 //
-// Function: cm550_FUN_00021ef6 @ 0x00021ef6
+// Function: cm550_registerJ1939InputMessageHandlers @ 0x00021ef6
 //
 
-void cm550_FUN_00021ef6(void)
+/* From mc68k_initializeJ1939Datalink: registers the J1939 input layer's six receive handlers with
+   registerJ1939ReceiveHandler in CM848's order: PGN 57344 receivePgn57344CabMessage1 / 61441 EBC1 /
+   61443 EEC2 / 65252 SHUTDN / 65264 PTO / 65265 CCVS1. The counterpart of
+   cm848_registerJ1939InputMessageHandlers (0x50bdcc), which then also starts
+   j1939_input_fault_start_delay at 1000; CM550 has no such store (was cm550_FUN_00021ef6; PR #53
+   round 91) (was cm550_FUN_00021ef6; PR #53 round 91) */
+
+void cm550_registerJ1939InputMessageHandlers(void)
 
 {
-  cm550_canTransmissionController();
-  cm550_canTransmissionController();
-  cm550_canTransmissionController();
-  cm550_canTransmissionController();
-  cm550_canTransmissionController();
-  cm550_canTransmissionController();
+  registerJ1939ReceiveHandler();
+  registerJ1939ReceiveHandler();
+  registerJ1939ReceiveHandler();
+  registerJ1939ReceiveHandler();
+  registerJ1939ReceiveHandler();
+  registerJ1939ReceiveHandler();
   return;
 }
 
@@ -24403,8 +24627,8 @@ void vp44DiagnosticBufferPointersInit(void)
   _DAT_00801282 = 0x801292;
   _multiframe_tx_buffer_ptr = 0x8012bc;
   _DAT_008012d2 = 0x8012de;
-  cm550_canTransmissionController();
-  cm550_canTransmissionController();
+  registerJ1939ReceiveHandler();
+  registerJ1939ReceiveHandler();
   return;
 }
 
@@ -24616,11 +24840,11 @@ uint cm550_fuelDemandLimitOrchestrator(void)
       _DAT_0080da7e = 0;
       break;
     case 1:
-      _DAT_0080da7e = *(short *)(_datalink_active_session_pointer + 6) + 1;
+      _DAT_0080da7e = tsc1_source_configuration_pointer->speed_control_time_limit + 1;
       bVar1 = true;
       break;
     case 2:
-      _DAT_0080da7e = *(short *)(_datalink_active_session_pointer + 10) + 1;
+      _DAT_0080da7e = tsc1_source_configuration_pointer->torque_control_time_limit + 1;
       bVar1 = true;
       break;
     case 3:
@@ -24678,7 +24902,8 @@ uint cm550_fuelDemandLimitOrchestrator(void)
     }
   }
   else if (_retarder_control_mode == 2) {
-    _retarder_command_inactivity_timer = *(short *)(_retarder_session_config_pointer + 0x10) + 1;
+    _retarder_command_inactivity_timer =
+         retarder_tsc1_source_configuration_pointer->retarder_torque_control_time_limit + 1;
     uVar5 = (uint)_retarder_command_inactivity_timer;
     datalink_j1939_timeout_flag = '\x01';
   }
@@ -28330,8 +28555,9 @@ void cm550_insiteFaultDetailBuilder(void)
           insite_response_write_pointer =
                CONCAT31(insite_response_write_pointer._0_3_,
                         (char)insite_response_write_pointer + '\x01');
-          *(undefined *)insite_response_write_pointer =
-               (&diagnostic_fault_occurrence_count)[(short)((ushort)bVar1 + (ushort)bVar1 * 4) * 2];
+          *(byte *)insite_response_write_pointer =
+               (&fault_count_table[0].occurrence_count)
+               [(short)((ushort)bVar1 + (ushort)bVar1 * 4) * 2];
           insite_response_write_pointer =
                CONCAT31(insite_response_write_pointer._0_3_,
                         (char)insite_response_write_pointer + '\x01');
@@ -28359,8 +28585,9 @@ void cm550_insiteFaultDetailBuilder(void)
           insite_response_write_pointer =
                CONCAT31(insite_response_write_pointer._0_3_,
                         (char)insite_response_write_pointer + '\x01');
-          *(undefined *)insite_response_write_pointer =
-               (&diagnostic_fault_occurrence_count)[(short)((ushort)bVar1 + (ushort)bVar1 * 4) * 2];
+          *(byte *)insite_response_write_pointer =
+               (&fault_count_table[0].occurrence_count)
+               [(short)((ushort)bVar1 + (ushort)bVar1 * 4) * 2];
           insite_response_write_pointer =
                CONCAT31(insite_response_write_pointer._0_3_,
                         (char)insite_response_write_pointer + '\x01');
@@ -28476,8 +28703,8 @@ void cm550_insiteFaultDetailBuilder(void)
             insite_response_write_pointer =
                  CONCAT31(insite_response_write_pointer._0_3_,
                           (char)insite_response_write_pointer + '\x01');
-            *(undefined *)insite_response_write_pointer =
-                 (&diagnostic_fault_occurrence_count)
+            *(byte *)insite_response_write_pointer =
+                 (&fault_count_table[0].occurrence_count)
                  [(short)((ushort)bVar5 + (ushort)bVar5 * 4) * 2];
             insite_response_write_pointer =
                  CONCAT31(insite_response_write_pointer._0_3_,
@@ -29581,7 +29808,7 @@ void mc68k_applicationMain(void)
   cm550_initLoadTrendingSystem();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8798;
-  cm550_FUN_00013cc8();
+  cm550_initializeDatalogger();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x879e;
   vp44_initVp44BufferAddresses();
@@ -30034,7 +30261,7 @@ void mc68k_initializeJ1939Datalink(void)
   cm550_systemControlFunction3();
   cm550_diagnosticDataDump();
   cm550_systemControlFunction2();
-  cm550_FUN_00021ef6();
+  cm550_registerJ1939InputMessageHandlers();
   cm550_FUN_000226da();
   cm550_systemFunction1xCaller();
   cm550_FUN_00021872();
@@ -31967,7 +32194,7 @@ LAB_0002eeee:
 void cm550_systemControlFunction1(void)
 
 {
-  cm550_canTransmissionController();
+  registerJ1939ReceiveHandler();
   return;
 }
 
@@ -32031,7 +32258,7 @@ void cm550_FUN_0002ef4a(dword msg_ptr)
 void cm550_systemControlFunction2(void)
 
 {
-  cm550_canTransmissionController();
+  registerJ1939ReceiveHandler();
   return;
 }
 
@@ -32103,7 +32330,7 @@ ushort cm550_diagnosticServiceDispatcherByPgn(int param_1)
 void cm550_systemControlFunction3(void)
 
 {
-  cm550_canTransmissionController();
+  registerJ1939ReceiveHandler();
   return;
 }
 
@@ -32117,7 +32344,7 @@ void cm550_systemControlFunction3(void)
 /* Processes a TSC1 (PGN 0) for the engine: the twin of CM848's processEngineTsc1Request (0x22d60).
    Byte 1 & 3 is the override control mode (SPN 695) and & 0x30 the priority (SPN 897); bytes 2-3
    are the requested speed and byte 4 the requested torque. Rejects senders through
-   cm550_diagnosticMessageValidator / cm550_diagnosticSessionValidator (the twins of CM848's ignored
+   cm550_diagnosticMessageValidator / findTsc1SourceConfiguration (the twins of CM848's ignored
    request and source configuration lookups) (was torqueControlModeHandler) */
 
 void processEngineTsc1Request(int param_1)
@@ -32154,18 +32381,18 @@ void processEngineTsc1Request(int param_1)
     }
     uVar4 = (undefined3)(uVar5 >> 8);
     if (_datalink_speed_control_mode == 0) {
-      wVar6 = cm550_diagnosticSessionValidator(1,(word)CONCAT31(uVar4,cVar1));
+      wVar6 = findTsc1SourceConfiguration(1,(word)CONCAT31(uVar4,cVar1));
       if (wVar6 != 0) {
         return;
       }
-      _datalink_active_session_pointer = _datalink_session_config_pointer;
+      tsc1_source_configuration_pointer = tsc1_matched_source_configuration_pointer;
     }
     else if (engine_control_network_type == 1) {
       if (cVar1 != datalink_command_source_id) {
         if (bVar3 == 0) {
           return;
         }
-        wVar6 = cm550_diagnosticSessionValidator(1,(word)CONCAT31(uVar4,cVar1));
+        wVar6 = findTsc1SourceConfiguration(1,(word)CONCAT31(uVar4,cVar1));
         if (wVar6 != 0) {
           return;
         }
@@ -32186,18 +32413,18 @@ void processEngineTsc1Request(int param_1)
             }
           }
         }
-        _datalink_active_session_pointer = _datalink_session_config_pointer;
+        tsc1_source_configuration_pointer = tsc1_matched_source_configuration_pointer;
       }
     }
     else {
-      wVar6 = cm550_diagnosticSessionValidator(1,(word)CONCAT31(uVar4,cVar1));
+      wVar6 = findTsc1SourceConfiguration(1,(word)CONCAT31(uVar4,cVar1));
       if (wVar6 != 0) {
         return;
       }
-      if (_datalink_active_session_pointer < _datalink_session_config_pointer) {
+      if (tsc1_source_configuration_pointer < tsc1_matched_source_configuration_pointer) {
         return;
       }
-      _datalink_active_session_pointer = _datalink_session_config_pointer;
+      tsc1_source_configuration_pointer = tsc1_matched_source_configuration_pointer;
     }
     _byte_indicating_engine_commands_as_received_over_datalink_0_255 =
          (ushort)torque_control_message_byte_0;
@@ -32212,7 +32439,8 @@ void processEngineTsc1Request(int param_1)
       _jcomm_speed_control_status_1_speed_control_mode_0_n_true_false = 0;
       return;
     case 1:
-      _datalink_command_timeout_counter = *(short *)(_datalink_active_session_pointer + 4) + 1;
+      _datalink_command_timeout_counter =
+           tsc1_source_configuration_pointer->speed_control_request_timeout + 1;
       _datalink_speed_control_mode = 1;
       _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e =
            cm550_canBusConfigTypeSelector
@@ -32228,7 +32456,8 @@ void processEngineTsc1Request(int param_1)
            (short)((int)(torque_control_message_byte_0 & 0xc) >> 2);
       return;
     case 2:
-      _datalink_command_timeout_counter = *(short *)(_datalink_active_session_pointer + 8) + 1;
+      _datalink_command_timeout_counter =
+           tsc1_source_configuration_pointer->torque_control_request_timeout + 1;
       _datalink_speed_control_mode = 2;
       _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e =
            cm550_canBusConfigTypeSelector
@@ -32248,7 +32477,8 @@ void processEngineTsc1Request(int param_1)
       }
       return;
     case 3:
-      _datalink_command_timeout_counter = *(short *)(_datalink_active_session_pointer + 0xc) + 1;
+      _datalink_command_timeout_counter =
+           tsc1_source_configuration_pointer->speed_torque_limit_control_request_timeout + 1;
       _datalink_speed_control_mode = 3;
       _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_da4e =
            cm550_canBusConfigTypeSelector
@@ -32310,7 +32540,7 @@ void cm550_FUN_0002f4be(can_std_rx_desc_t *rx_msg)
 void cm550_diagnosticDataDump(void)
 
 {
-  cm550_canTransmissionController();
+  registerJ1939ReceiveHandler();
   initPgn65261CruiseControlSetupStruct();
   cm550_engineSerialNumberPGN_65259_Builder();
   cm550_FUN_00033754();
@@ -32488,17 +32718,17 @@ void cm550_retarderControlModeHandler(int param_1)
           }
         }
         if (_retarder_control_mode == 0) {
-          wVar7 = cm550_diagnosticSessionValidator(1,(word)CONCAT31((int3)(uVar5 >> 8),bVar1));
+          wVar7 = findTsc1SourceConfiguration(1,(word)CONCAT31((int3)(uVar5 >> 8),bVar1));
           if (wVar7 != 0) {
             return;
           }
-          _retarder_session_config_pointer = _datalink_session_config_pointer;
+          retarder_tsc1_source_configuration_pointer = tsc1_matched_source_configuration_pointer;
         }
         else if (bVar1 != _retarder_command_source_address) {
           if (bVar3 == 0) {
             return;
           }
-          wVar7 = cm550_diagnosticSessionValidator(1,(ushort)bVar1);
+          wVar7 = findTsc1SourceConfiguration(1,(ushort)bVar1);
           if (wVar7 != 0) {
             return;
           }
@@ -32513,7 +32743,7 @@ void cm550_retarderControlModeHandler(int param_1)
               return;
             }
           }
-          _retarder_session_config_pointer = _datalink_session_config_pointer;
+          retarder_tsc1_source_configuration_pointer = tsc1_matched_source_configuration_pointer;
         }
         DAT_00801e1c = bVar2;
         DAT_00801e1d = DAT_00801e21;
@@ -32543,7 +32773,8 @@ void cm550_retarderControlModeHandler(int param_1)
           }
           else {
             _retarder_command_timeout_counter =
-                 *(short *)(_retarder_session_config_pointer + 0xe) + 1;
+                 retarder_tsc1_source_configuration_pointer->retarder_torque_control_request_timeout
+                 + 1;
             _retarder_control_mode = 2;
             _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6 =
                  cm550_canBusConfigTypeSelector
@@ -32551,7 +32782,8 @@ void cm550_retarderControlModeHandler(int param_1)
                                      *(undefined1 *)(param_1 + 3)));
             if (_retarder_torque_torque_limit_command_in_percent_of_peak_retard_0_255 == 0) {
               _retarder_disengage_hold_timer =
-                   *(short *)(_retarder_session_config_pointer + 0xe) + 1;
+                   retarder_tsc1_source_configuration_pointer->
+                   retarder_torque_control_request_timeout + 1;
             }
             else {
               _retarder_disengage_hold_timer = 0;
@@ -32569,9 +32801,13 @@ void cm550_retarderControlModeHandler(int param_1)
         _source_0_none_1_trans_2_abs_3_asr_4_unknown_0_4_d9e6 = (undefined2)uVar6;
         _jcomm_req_torque_braking_override_or_limit_value_0_125 =
              cm550_FUN_0002f606((word)CONCAT31((int3)((uint)uVar6 >> 8),DAT_00801e21));
-        _retarder_command_timeout_counter = *(short *)(_retarder_session_config_pointer + 0x12) + 1;
+        _retarder_command_timeout_counter =
+             retarder_tsc1_source_configuration_pointer->
+             retarder_speed_torque_limit_control_request_timeout + 1;
         if (_retarder_torque_percent == 0) {
-          _retarder_disengage_hold_timer = *(short *)(_retarder_session_config_pointer + 0x12) + 1;
+          _retarder_disengage_hold_timer =
+               retarder_tsc1_source_configuration_pointer->
+               retarder_speed_torque_limit_control_request_timeout + 1;
         }
         else {
           _retarder_disengage_hold_timer = 0;
@@ -32697,7 +32933,7 @@ void cm550_torqueControlAddressDispatcher(int param_1)
 void cm550_FUN_0002fbb2(void)
 
 {
-  cm550_canTransmissionController();
+  registerJ1939ReceiveHandler();
   return;
 }
 
@@ -32908,22 +33144,30 @@ void cm550_FUN_0002fd90(word code_index)
 
 
 //
-// Function: cm550_diagnosticTableEntryClear @ 0x0002fddc
+// Function: cm550_resetFaultStatus @ 0x0002fddc
 //
 
-void cm550_diagnosticTableEntryClear(word code_index)
+/* Clears fault_count_table[code_index]: occurrence_count, status_change_time and
+   last_countdown_time = 0. When the status is 2 it then releases the fault's snapshot slot
+   (cm550_FUN_0002fd90 writes 125 to the slot's code words at 0x80426e / 0x80462e + 48 x slot).
+   Last, status = 0. Called by cm550_countDownPreviouslyActiveFault when the count reaches 0 and by
+   cm550_FUN_00014812 for every previously active fault on a clear request. Counterpart of CM848
+   cm848_resetFaultStatus (0x1dee0) (was cm550_diagnosticTableEntryClear; PR #53 round 91) (was
+   cm550_diagnosticTableEntryClear; PR #53 round 91) */
+
+void cm550_resetFaultStatus(word code_index)
 
 {
   short sVar1;
   
   sVar1 = code_index * 10;
-  (&diagnostic_fault_occurrence_count)[sVar1] = 0;
-  *(undefined4 *)((int)&diagnostic_fault_status_change_time + (int)sVar1) = 0;
-  *(undefined4 *)(sVar1 + 0x805a20) = 0;
-  if ((&diagnostic_fault_status_table)[sVar1] == '\x02') {
+  (&fault_count_table[0].occurrence_count)[sVar1] = 0;
+  *(undefined4 *)((int)&fault_count_table[0].status_change_time + (int)sVar1) = 0;
+  *(undefined4 *)((int)&fault_count_table[0].last_countdown_time + (int)sVar1) = 0;
+  if ((&fault_count_table[0].status)[sVar1] == 2) {
     cm550_FUN_0002fd90(code_index);
   }
-  (&diagnostic_fault_status_table)[sVar1] = 0;
+  (&fault_count_table[0].status)[sVar1] = 0;
   return;
 }
 
@@ -34110,8 +34354,8 @@ void cm550_FUN_000315be(void)
     bVar3 = 0;
     sVar2 = 0;
     do {
-      if (((&diagnostic_fault_status_table)[sVar2] == '\x01') ||
-         ((&diagnostic_fault_status_table)[sVar2] == '\x03')) {
+      if (((&fault_count_table[0].status)[sVar2] == 1) ||
+         ((&fault_count_table[0].status)[sVar2] == 3)) {
         bVar1 = true;
       }
       sVar2 = sVar2 + 10;
@@ -34262,28 +34506,40 @@ ushort cm550_FUN_00031a68(void)
 
 
 //
-// Function: cm550_diagnosticSessionValidator @ 0x00031ace
+// Function: findTsc1SourceConfiguration @ 0x00031ace
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Looks up tsc1_source_configuration_table (five 20-byte tsc1_source_configuration_t entries at
+   0x808196) for (data link, source address): an entry matches when its data_link equals the data
+   link and its source address byte (+3) equals the source address, or, on J1939 (data link 1), when
+   the entry is data link 1 with source address 0xff (any sender). Stores the matched entry in
+   tsc1_matched_source_configuration_pointer and returns 0, or returns 1 when none of the five
+   entries matches. Callers: processEngineTsc1Request and cm550_retarderControlModeHandler (data
+   link 1, the sender's source address) and the J1922 command handlers cm550_FUN_0001f4e8 /
+   cm550_engineFluidLevelDataBuilder (data link 0, sources 0x4a / 0x4f) (was
+   cm550_diagnosticSessionValidator; PR #53 round 91; the twin of CM848 0x27cc4: one shared name -
+   the same compares, wildcard and 20-byte stride; CM848's table has ten entries in ROM) (was
+   cm550_diagnosticSessionValidator; PR #53 round 91) */
 
-word cm550_diagnosticSessionValidator(word data_link,word source_address)
+word findTsc1SourceConfiguration(word data_link,word source_address)
 
 {
   byte bVar1;
-  word *pwVar2;
+  tsc1_source_configuration_t *ptVar2;
   
-  pwVar2 = &tsc1_source_configuration_1_data_link;
+  ptVar2 = tsc1_source_configuration_table;
   bVar1 = 0;
-  while (((data_link != *pwVar2 || ((char)source_address != *(char *)((int)pwVar2 + 3))) &&
-         ((data_link != 1 || ((*pwVar2 != 1 || (*(char *)((int)pwVar2 + 3) != -1))))))) {
-    pwVar2 = pwVar2 + 10;
+  while (((data_link != ptVar2->data_link ||
+          ((char)source_address != (char)ptVar2->source_address_filter)) &&
+         ((data_link != 1 ||
+          ((ptVar2->data_link != 1 || ((char)ptVar2->source_address_filter != -1))))))) {
+    ptVar2 = ptVar2 + 1;
     bVar1 = bVar1 + 1;
     if (4 < bVar1) {
       return 1;
     }
   }
-  _datalink_session_config_pointer = pwVar2;
+  tsc1_matched_source_configuration_pointer = ptVar2;
   return 0;
 }
 
@@ -34735,8 +34991,8 @@ uint j1939HandlePgn65226Dm1ActiveDtc(void)
         if ((*(ushort *)
               (&fault_definition_flags_word + (short)((ushort)bVar1 * 2 + (ushort)bVar1) * 2) &
             0x4000) == 0) {
-          if ((byte)(&diagnostic_fault_occurrence_count)[(short)((ushort)bVar1 * 10)] < 0x80) {
-            bVar3 = (&diagnostic_fault_occurrence_count)[(short)((ushort)bVar1 * 10)];
+          if ((&fault_count_table[0].occurrence_count)[(short)((ushort)bVar1 * 10)] < 0x80) {
+            bVar3 = (&fault_count_table[0].occurrence_count)[(short)((ushort)bVar1 * 10)];
           }
           else {
             bVar3 = 0x7f;
@@ -34813,8 +35069,8 @@ uint cm550_previousDtcListBuilder(void)
               (short)((ushort)previously_active_dtc_list[(short)uVar3] * 2 +
                      (ushort)previously_active_dtc_list[(short)uVar3]) * 2) & 0x4000) == 0) {
           bVar1 = previously_active_dtc_list[(short)uVar3];
-          if ((byte)(&diagnostic_fault_occurrence_count)[(short)((ushort)bVar1 * 10)] < 0x80) {
-            bVar4 = (&diagnostic_fault_occurrence_count)[(short)((ushort)bVar1 * 10)];
+          if ((&fault_count_table[0].occurrence_count)[(short)((ushort)bVar1 * 10)] < 0x80) {
+            bVar4 = (&fault_count_table[0].occurrence_count)[(short)((ushort)bVar1 * 10)];
           }
           else {
             bVar4 = 0x7f;
@@ -37807,4 +38063,4 @@ LAB_00035162:
 
 
 
-// Export complete - 755 functions processed
+// Export complete - 756 functions processed

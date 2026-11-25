@@ -451,9 +451,9 @@ void cm848_coldStartFuelFactorLookup(void);  // @ 0x0001c1a4
 void cm848_selectColdStartFactor(void);  // @ 0x0001c23c
 void cm848_updateEngineState(void);  // @ 0x0001c28c
 void initializeEngineState(void);  // @ 0x0001c978
-void cm848_faultTimeoutHandler(byte param_1);  // @ 0x0001c9a0
+void cm848_countDownPreviouslyActiveFault(byte param_1);  // @ 0x0001c9a0
 void cm848_clearFaultFromActiveList(byte param_1);  // @ 0x0001cb94
-void cm848_activeFaultScanProcessor(void);  // @ 0x0001cd1c
+void cm848_countDownPreviouslyActiveFaults(void);  // @ 0x0001cd1c
 uint cm848_faultCodeLookup(uint param_1);  // @ 0x0001cdc0
 uint cm848_findFaultByTypeAndSeverity(uint param_1,ushort param_2);  // @ 0x0001ce28
 void cm848_registerFaultInActiveList(uint param_1);  // @ 0x0001cea4
@@ -619,7 +619,7 @@ void cm848_runTsc1LostManagement(void);  // @ 0x00026f80
 void cm848_resetEngineRetarderTsc1Request(void);  // @ 0x00027118
 void cm848_runJ1939PowertrainControlTimeouts(void);  // @ 0x0002715c
 void cm848_formatNumberAsDecimalText(byte *number,byte *text,int digit_count);  // @ 0x00027bc4
-undefined4 cm848_findTsc1SourceConfiguration(int param_1,uint param_2);  // @ 0x00027cc4
+undefined4 findTsc1SourceConfiguration(int param_1,uint param_2);  // @ 0x00027cc4
 void cm848_calculateLowSpeedGovernorReferenceMaximumFuelQuantity(void);  // @ 0x00027d38
 void cm848_presetLowSpeedGovernorIntegrator(int param_1);  // @ 0x00027e4c
 void cm848_runLowSpeedGovernor(void);  // @ 0x00027ff8
@@ -1477,12 +1477,12 @@ undefined2 cm848_reverseByteOrder16(undefined2 *param_1);  // @ 0x0050b58c
 uint cm848_buildJ1939LampStatusByte(void);  // @ 0x0050b5b4
 byte getJ1939MemoryServiceHeaderLength(int param_1);  // @ 0x0050b610
 J1939_DIAGNOSTIC_RESULT cm848_validateJ1939DiagnosticRequest(j1939_rx_msg_t *rx_msg);  // @ 0x0050b634
-void cm848_receivePgn57344CabMessage1(j1939_rx_msg_t *message);  // @ 0x0050b734
-void cm848_receivePgn61441ElectronicBrakeController1Message(j1939_rx_msg_t *message);  // @ 0x0050b77c
-void cm848_receivePgn61443ElectronicEngineController2Message(j1939_rx_msg_t *message);  // @ 0x0050b8a4
-void cm848_receivePgn65252ShutdownMessage(j1939_rx_msg_t *message);  // @ 0x0050b98c
-void cm848_receivePgn65264PowerTakeoffInformationMessage(j1939_rx_msg_t *message);  // @ 0x0050b9d8
-void cm848_receivePgn65265CruiseControlVehicleSpeedMessage(j1939_rx_msg_t *message);  // @ 0x0050bacc
+void receivePgn57344CabMessage1(j1939_rx_msg_t *message);  // @ 0x0050b734
+void receivePgn61441ElectronicBrakeController1Message(j1939_rx_msg_t *message);  // @ 0x0050b77c
+void receivePgn61443ElectronicEngineController2Message(j1939_rx_msg_t *message);  // @ 0x0050b8a4
+void receivePgn65252ShutdownMessage(j1939_rx_msg_t *message);  // @ 0x0050b98c
+void receivePgn65264PowerTakeoffInformationMessage(j1939_rx_msg_t *message);  // @ 0x0050b9d8
+void receivePgn65265CruiseControlVehicleSpeedMessage(j1939_rx_msg_t *message);  // @ 0x0050bacc
 void cm848_tickJ1939InputSupervision(void);  // @ 0x0050bca0
 void cm848_registerJ1939InputMessageHandlers(void);  // @ 0x0050bdcc
 void cm848_storeJ1939ControlSessionInHistoryTable(int session_kind);  // @ 0x0050be6c
@@ -1958,7 +1958,7 @@ void cm848_refreshRamCalibration(void);  // @ 0x00538a84
 undefined4 cm848_scheduleJ1939PeriodicMessage (int param_1,undefined2 param_2,int param_3,int param_4,undefined4 param_5);  // @ 0x00538c8c
 void cm848_runJ1939PeriodicTransmitQueues(void);  // @ 0x00538d3c
 void cm848_exceptionHandler(void);  // @ 0x00538eac
-bool cm848_registerJ1939ReceiveHandler(word pgn_key,void *handler);  // @ 0x00538eb0
+bool registerJ1939ReceiveHandler(word pgn_key,void *handler);  // @ 0x00538eb0
 void cm848_dispatchJ1939ReceivedMessages(void);  // @ 0x00538ef4
 void cm848_j1939_system_init(void);  // @ 0x00539190
 undefined4 cm848_lookupParameterIdAddress(uint param_1,uint *param_2);  // @ 0x00539768
