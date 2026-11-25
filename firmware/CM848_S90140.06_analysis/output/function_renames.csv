@@ -1,3 +1,4 @@
+address,name
 # ROM-to-RAM Mapping
 # cm848_copyBootKernelToRam (0x340) copies ROM 0x3C30-0x7F60 (17KB) to RAM 0x3F9800-0x3FDB30 at boot.
 # Formula: ROM_addr = 0x3C30 + (RAM_addr - 0x3F9800)
@@ -318,7 +319,6 @@
 # Data table - Ghidra reports bad instruction
 # Data table - Ghidra reports bad instruction
 # Data table - Ghidra reports bad instruction (end of Bank 2 code)
-address,name
 0x00000100,mpc555_reset_vector
 0x00000184,mpc555_keyOnStateMachine
 0x00000340,cm848_copyBootKernelToRam,Boot ROM: copies the boot reflash kernel (ROM 0x3c30-0x7f60) to RAM 0x3f9800-0x3fdb30 so it can run while flash is programmed

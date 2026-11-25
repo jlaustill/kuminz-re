@@ -92,6 +92,7 @@ uint cm550_bufferDecreasingPatternCheck(void);  // @ 0x0001011c
 uint cm550_bufferThresholdValidator(void);  // @ 0x000101b8
 word cm550_detectEngineSpeedSensorSyncPulse(word backup_sensor_flag);  // @ 0x0001025c
 void cm550_canBusTimingInit(void);  // @ 0x00010394
+void cm550_sendCanSingleFrame(dword can_identifier,word data_length,byte *data,byte *status);  // @ 0x000103ba
 void cm550_sendCanMessage(j1939_transmit_message_t *msg);  // @ 0x000104e8
 void cm550_sendJ1939MultiFrameWrapper(void);  // @ 0x00010512
 short cm550_arrayRangeSum(word *start_ptr,word *end_ptr);  // @ 0x00010520
@@ -165,8 +166,9 @@ word cm550_param_address_calc(dword dividend,word divisor);  // @ 0x000165f2
 uint cm550_limitedDivisionCalculator(dword dividend,division_operand_t divisor,word limit_value);  // @ 0x00016628
 void cm550_multiPacketTransmitHandler(void);  // @ 0x0001666c
 void cm550_multiPacketReceiveHandler(void);  // @ 0x0001686e
-uint cm550_circularBufferEmptyCheck(void);  // @ 0x00016c2c
-uint cm550_parameterCircularBufferWrite(dword dest_address,byte *source_ptr,word byte_count);  // @ 0x00016c3c
+byte cm550_isEepromWriteQueueEmpty(void);  // @ 0x00016c2c
+byte cm550_queueEepromMirrorByteWrites(dword mirror_address,byte *source,word byte_count);  // @ 0x00016c3c
+byte cm550_queueEepromByteWrites(word eeprom_address,byte *source,word byte_count);  // @ 0x00016cd8
 void cm550_emptyPlaceholderFunction(void);  // @ 0x00016d4c
 void mc68k_startJ1708Transmission(void);  // @ 0x00016d4e
 ushort cm550_runEngineWarmupProtection(void);  // @ 0x00016dd4
@@ -204,6 +206,7 @@ void protectionState0FaultDurationCounter(void);  // @ 0x00018a26
 uint cm550_diagnosticProtectionEvaluator(void);  // @ 0x00018ac4
 short cm550_diagnosticProtectionProcessor(word *config_ptr,dword state_offset,dword threshold_value);  // @ 0x00018c1c
 ushort cm550_protectionState1DiagnosticValidator(void);  // @ 0x00018cb6
+void cm550_updateEngineProtectionRestartLimitationCommands (word channel_index,void *channel_state_record,void *channel_settings_record);  // @ 0x00018dae
 void cm550_calculateFaultDerateEngineSpeedLimit(void);  // @ 0x00018e0c
 void initializeFaultDerateEngineSpeedLimit(void);  // @ 0x00018f4c
 void incrementDiagnosticCounters(dword source_ptr,dword dest_ptr,word condition_flag);  // @ 0x00018f86
@@ -335,6 +338,7 @@ void cm550_subtractAndClampValue(word *fuel_value_ptr);  // @ 0x0001e02a
 void cm550_initializeFourDimensionalFuelingInterpolationFactor(void);  // @ 0x0001e04c
 void handleJ1939CanTransmitInterrupt(word message_object_number);  // @ 0x0001e056
 void cm550_handleJ1939CanReceiveInterrupt(word message_object_number);  // @ 0x0001e086
+void cm550_transmitCanFrameOnMessageObject (dword controller_base,byte message_object_number,byte *frame);  // @ 0x0001e0bc
 undefined8 mc68k_canCs4InterruptHandler(void);  // @ 0x0001e0fa
 void cm550_canMessageInterruptHandlerSetup(void);  // @ 0x0001e1a0
 void vp44_handleCanCs5TransmitInterrupt(word message_object);  // @ 0x0001e1ac
@@ -396,13 +400,15 @@ uint cm550_processJ1939WetTankPressure(void);  // @ 0x00020fac
 void cm550_processJ1939SwitchAndRequestInputs(void);  // @ 0x00021070
 void cm550_processJ1939AcceleratorInputs(void);  // @ 0x00021146
 void cm550_initializeJ1939InputProcessing(void);  // @ 0x000211f4
+byte registerJ1939ReceiveHandler(word pgn_key,void *handler);  // @ 0x00021272
 uint mc68k_dispatchJ1939ReceivedMessages(void);  // @ 0x000212b2
 ushort endRetarderShiftAssistAboveFuelDemandLimit(void);  // @ 0x0002142c
 byte writeJ1939DiagnosticMemory(dword request,dword address,dword length);  // @ 0x0002148a
-void handleJ1939WriteByParameterIdService(int param_1);  // @ 0x0002167e
-void handleJ1939WriteByParameterIdLongLengthService(int param_1);  // @ 0x000216c6
-void handleJ1939WriteByParameterIdShortOffsetService(int param_1);  // @ 0x00021714
-void handleJ1939WriteByParameterIdLongOffsetService(int param_1);  // @ 0x00021778
+byte writeJ1939DiagnosticMemoryByParameterId (dword request,word parameter_id,dword offset,dword length);  // @ 0x00021642
+void handleJ1939WriteByParameterIdService(dword param_1);  // @ 0x0002167e
+void handleJ1939WriteByParameterIdLongLengthService(dword param_1);  // @ 0x000216c6
+void handleJ1939WriteByParameterIdShortOffsetService(dword param_1);  // @ 0x00021714
+void handleJ1939WriteByParameterIdLongOffsetService(dword param_1);  // @ 0x00021778
 void handleJ1939WriteMemoryService(dword request);  // @ 0x000217de
 void handleJ1939WriteMemoryLongLengthService(dword request);  // @ 0x00021826
 void registerJ1939MemoryWriteServices(void);  // @ 0x00021872
@@ -566,6 +572,7 @@ void cm550_claimRemoteThrottleOverride(void);  // @ 0x0002ec50
 void cm550_initializeRemoteThrottle(void);  // @ 0x0002ed62
 char cm550_insiteParameterParser(void);  // @ 0x0002ed6a
 undefined2 cm550_parameterLookupForInsite(void);  // @ 0x0002edb2
+byte registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *handler);  // @ 0x0002ee62
 void cm550_diagnosticServiceDispatcher(dword msg_ptr);  // @ 0x0002eea2
 void registerJ1939DiagnosticServiceDispatcher(void);  // @ 0x0002ef08
 void cm550_j1939HandlePgn65228Dm3ClearInactiveFaults(can_std_rx_desc_t *request_message);  // @ 0x0002ef1c

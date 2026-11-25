@@ -37,7 +37,7 @@ function_address,function_name,old_ghidra_name,new_variable_name,type,comment
 0x00021982,cm550_diagnosticServiceSecurityValidator,cVar3,auth_result,char,Result from validateSecurityKey
 
 # j1708DiagnosticCommandDispatcher @ 0x15f8e - J1708 diagnostic command processor
-0x00015f8e,mc68k_dispatchJ1708ReceivedMessages,wVar4,currentTimerCount,word,Timer count at function entry for timeout calculation (the auto-name moved from wVar3 when the J1708 pointer record was typed: PR #53 round 95)
+0x00015f8e,mc68k_dispatchJ1708ReceivedMessages,wVar3,currentTimerCount,word,Timer count at function entry for timeout calculation (the auto-name moved from wVar3 when the J1708 pointer record was typed: PR #53 round 95) | the auto-name moved back to wVar3 when the EEPROM write queue functions got byte returns (PR #53 round 96)
 
 # writeJ1939DiagnosticMemory @ 0x2148a - Routes memory read/write operations
 # Service 0x4B handler - processes memory write requests with authentication

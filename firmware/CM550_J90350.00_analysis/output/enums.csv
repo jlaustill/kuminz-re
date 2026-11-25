@@ -40,8 +40,8 @@ VP44_DATA_FIELDS,3,RESERVED_ZERO_1,Reserved/zero byte 3
 VP44_DATA_FIELDS,4,RESERVED_ZERO_2,Reserved/zero byte 4
 VP44_DATA_FIELDS,5,TIMING_BYTE1,Injection timing advance (byte 5)
 VP44_DATA_FIELDS,6,TIMING_BYTE2,Injection timing advance (byte 6)
-VP44_DATA_FIELDS,7,RPM_LOW_BYTE,Engine RPM×4 low byte (current_engine_rpm & 0xFF)
-VP44_DATA_FIELDS,8,RPM_HIGH_BYTE,Engine RPM×4 high byte (current_engine_rpm >> 8)
+VP44_DATA_FIELDS,7,RPM_LOW_BYTE,Engine RPM×4 low byte (low byte)
+VP44_DATA_FIELDS,8,RPM_HIGH_BYTE,Engine RPM×4 high byte (high byte)
 DUAL_CAN_CONTROLLERS,0,CAN_CONTROLLER_MAIN,Primary CAN controller (SSCNLTOB)
 DUAL_CAN_CONTROLLERS,1,CAN_CONTROLLER_1,Secondary CAN controller 1 (SSC1LTOB)
 DUAL_CAN_J1939_SOURCE_ADDR,1,J1939_SOURCE_ADDR_1,J1939 source address 1 (JCSA1)
@@ -369,8 +369,8 @@ VP44_CMD_BYTE,2,FUEL_LOW,Fuel amount low byte (param_table_main>>8 + 125)
 VP44_CMD_BYTE,3,TIMING_3,Timing advance data byte 3
 VP44_CMD_BYTE,4,TIMING_4,Timing advance data byte 4
 VP44_CMD_BYTE,5,TIMING_5,Timing advance data byte 5
-VP44_CMD_BYTE,6,RPM_LOW,Engine RPM low byte (current_engine_rpm & 0xFF)
-VP44_CMD_BYTE,7,RPM_HIGH,Engine RPM high byte (current_engine_rpm >> 8)
+VP44_CMD_BYTE,6,RPM_LOW,Engine RPM low byte (low byte)
+VP44_CMD_BYTE,7,RPM_HIGH,Engine RPM high byte (high byte)
 # VP44 Response Message (0x112 from pump) - vp44FuelTempHandler
 VP44_RESP_BYTE,1,FUEL_TEMP_LOW,Fuel temperature low byte
 VP44_RESP_BYTE,2,FUEL_TEMP_HIGH,Fuel temperature high byte
@@ -434,7 +434,7 @@ DIAGNOSTIC_SOURCE_CODE,5,ENGINE_FLAGS,Engine control flags triggered,2
 DIAGNOSTIC_SOURCE_CODE,6,EPS_FAULT,Electronic Position Sensor fault,2
 DIAGNOSTIC_SOURCE_CODE,7,DIAG_STATUS_7,Diagnostic status 7 condition,2
 DIAGNOSTIC_SOURCE_CODE,30,DIAG_STATUS_30,Diagnostic status 30 condition,2
-# VP44 Engine State - assigned to vp44_engine_state, maps engine operating modes to VP44 command status
+# VP44 Engine State - maps engine operating modes to VP44 command status (its carrier row vp44_engine_state sat inside the serial EEPROM write queue's rings and went in PR #53 round 96)
 VP44_ENGINE_STATE,0x16,LOW_RPM_OR_TRANSITIONAL,Low RPM running or transitional fuel mode,2
 VP44_ENGINE_STATE,0x17,MANUAL_OVERRIDE,Manual override fuel command mode,2
 VP44_ENGINE_STATE,0x18,VP44_ACTIVE_MODE,VP44 injection system active,2
@@ -482,7 +482,7 @@ SHUTDOWN_SELECTOR_SOURCE,28,SHUTDOWN_MINIMUM_INIT,Shutdown minimum init value (s
 SHUTDOWN_SELECTOR_SOURCE,29,PROTECTION_SHUTDOWN_LIMIT,Protection shutdown fuel limit (shutdownMinimumSelector29),2
 SHUTDOWN_SELECTOR_SOURCE,34,OIL_PRESSURE_PROTECTION,Oil pressure protection limit (oilPressureProtection),2
 # Fuel Demand Source ID - identifies which calculation/limiter is providing fuel demand
-# Tracked in fuel_demand_source_id, set by various fuelDemandLimit* and selector functions
+# Set by various fuelDemandLimit* and selector functions (its carrier row fuel_demand_source_id sat inside the serial EEPROM write queue's rings and went in PR #53 round 96)
 FUEL_DEMAND_SOURCE,0,TABLE_BLEND_CALC,Table interpolation blend calculation result,2
 FUEL_DEMAND_SOURCE,1,RPM_BASED_LIMIT,RPM-based fuel demand limit (fuelDemandLimitMinimumUpdater),2
 FUEL_DEMAND_SOURCE,2,BLEND_PARAM_FALLBACK,Blend parameter 2 fallback value,2
@@ -541,13 +541,13 @@ PWM_TIMER_CYCLE_STATE,5,CYCLE_PHASE_5,Timing cycle phase 5,1
 DERATE_EVENT_STATE,0,NO_DERATE,No derate condition active,2
 DERATE_EVENT_STATE,1,TIMING_ACTIVE,Derate timing accumulator active,2
 DERATE_EVENT_STATE,2,EVENT_COUNTED,Event counted - counter incremented,2
-# I/O Control State - per-bit state machine for io_control_source_register bits
+# I/O Control State - a per-bit state machine (its carrier row io_control_source_register sat inside the serial EEPROM write queue's rings and went in PR #53 round 96)
 # Tracked in io_control_bitX_state, controls output pin state transitions
 IO_CONTROL_STATE,0,OFF_INACTIVE,Output off/inactive - waiting for condition,1
 IO_CONTROL_STATE,1,TRANSITIONING,Transition state - checking conditions,1
 IO_CONTROL_STATE,2,ON_ACTIVE,Output on/active - condition met,1
 # RPM Timer Capture State - RPM measurement state machine
-# Tracked in rpm_timer_capture_state, controls crank/cam pulse processing
+# Controls crank/cam pulse processing (its carrier row rpm_timer_capture_state sat inside the serial EEPROM write queue's rings and went in PR #53 round 96)
 RPM_CAPTURE_STATE,0,INITIALIZING,Initial state - buffers being configured,1
 RPM_CAPTURE_STATE,1,CAPTURING,Actively capturing timer pulses,1
 RPM_CAPTURE_STATE,2,RPM_FAULT_DETECTED,Fault detected in capture sequence,1

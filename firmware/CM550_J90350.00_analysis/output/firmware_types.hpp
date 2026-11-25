@@ -97,8 +97,8 @@ typedef enum {
     RESERVED_ZERO_2 = 4,  /* Reserved/zero byte 4 */
     TIMING_BYTE1 = 5,  /* Injection timing advance (byte 5) */
     TIMING_BYTE2 = 6,  /* Injection timing advance (byte 6) */
-    RPM_LOW_BYTE = 7,  /* Engine RPM×4 low byte (current_engine_rpm & 0xFF) */
-    RPM_HIGH_BYTE = 8  /* Engine RPM×4 high byte (current_engine_rpm >> 8) */
+    RPM_LOW_BYTE = 7,  /* Engine RPM×4 low byte (low byte) */
+    RPM_HIGH_BYTE = 8  /* Engine RPM×4 high byte (high byte) */
 } VP44_DATA_FIELDS;
 
 typedef enum {
@@ -554,8 +554,8 @@ typedef enum {
     TIMING_3 = 3,  /* Timing advance data byte 3 */
     TIMING_4 = 4,  /* Timing advance data byte 4 */
     TIMING_5 = 5,  /* Timing advance data byte 5 */
-    RPM_LOW = 6,  /* Engine RPM low byte (current_engine_rpm & 0xFF) */
-    RPM_HIGH = 7  /* Engine RPM high byte (current_engine_rpm >> 8) */
+    RPM_LOW = 6,  /* Engine RPM low byte (low byte) */
+    RPM_HIGH = 7  /* Engine RPM high byte (high byte) */
 } VP44_CMD_BYTE;
 
 typedef enum {

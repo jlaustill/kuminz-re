@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Wed Nov 25 13:54:48 MST 2026
+// Generated: Wed Nov 25 14:28:36 MST 2026
 
 
 //
@@ -5589,6 +5589,93 @@ void cm550_canBusTimingInit(void)
 
 
 //
+// Function: cm550_sendCanSingleFrame @ 0x000103ba
+//
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Sends one CAN frame of up to 8 bytes. status = 1 when data_length is 0, and 4 while the transmit
+   ring is full (0x80d9be = 1). Otherwise it builds the 14-byte frame record on its stack: the
+   identifier << 3 at +0..+3 (the 82527's extended arbitration layout), the configuration byte 0x8c
+   at +4 (8 data bytes, transmit, extended identifier) and the data padded with 0xff at +5..+12.
+   When bit 7 of the byte at *(0x80d9c2) is clear it hands the record to
+   cm550_transmitCanFrameOnMessageObject (controller 0xffd800, message object 0x80d9f5); otherwise
+   it appends the record to the transmit ring 0x80d896-0x80d9a0 (write pointer 0x80d9ae, read
+   pointer 0x80d9b2). A ring that becomes full sets 0x80d9be and, while 0x80da0c is 1, bit 9 of the
+   words 0x80600a / 0x80604a. status = 0 then. Callers: cm550_sendCanMessage,
+   cm550_canDiagnosticResponseSender and sendJ1939MultiFrame. The prototype lets the decompiler
+   export the body (PR #53 round 96) */
+
+void cm550_sendCanSingleFrame(dword can_identifier,word data_length,byte *data,byte *status)
+
+{
+  int iVar1;
+  byte bVar2;
+  byte *pbVar3;
+  undefined2 *puVar4;
+  undefined2 local_16 [2];
+  undefined1 local_12;
+  byte abStack_11 [9];
+  undefined4 local_8;
+  
+  if (data_length == 0) {
+    *status = 1;
+  }
+  else if (DAT_0080d9be == '\x01') {
+    *status = 4;
+  }
+  else {
+    iVar1 = can_identifier << 3;
+    local_8 = iVar1;
+    iVar1 = local_8;
+    local_8._0_2_ = (undefined2)((uint)iVar1 >> 0x10);
+    local_16[0] = local_8._0_2_;
+    local_8._2_2_ = (undefined2)iVar1;
+    local_16[1] = local_8._2_2_;
+    local_12 = 0x8c;
+    pbVar3 = abStack_11;
+    local_8 = iVar1;
+    for (bVar2 = 0; bVar2 < data_length; bVar2 = bVar2 + 1) {
+      *pbVar3 = *data;
+      pbVar3 = pbVar3 + 1;
+      data = data + 1;
+    }
+    for (bVar2 = (byte)data_length; bVar2 < 8; bVar2 = bVar2 + 1) {
+      *pbVar3 = 0xff;
+      pbVar3 = pbVar3 + 1;
+    }
+    if ((*_can_control_register_pointer & 0x80) == 0) {
+      cm550_transmitCanFrameOnMessageObject
+                (0xffd800,(byte)j1939_transmit_message_object_number,(byte *)local_16);
+    }
+    else {
+      bVar2 = 0;
+      pbVar3 = (byte *)local_16;
+      puVar4 = _DAT_0080d9ae;
+      do {
+        *puVar4 = *(undefined2 *)pbVar3;
+        bVar2 = bVar2 + 1;
+        pbVar3 = pbVar3 + 2;
+        puVar4 = puVar4 + 1;
+      } while (bVar2 < 7);
+      _DAT_0080d9ae = _DAT_0080d9ae + 7;
+      if ((undefined2 *)0x80d9a0 < _DAT_0080d9ae) {
+        _DAT_0080d9ae = (undefined2 *)0x80d896;
+      }
+      if ((_DAT_0080d9ae == (undefined2 *)can_transmit_buffer_write_pointer) &&
+         (DAT_0080d9be = '\x01', _DAT_0080da0c == 1)) {
+        status_32_word_bit_mapped_system_error_status_word_5_0_1 =
+             status_32_word_bit_mapped_system_error_status_word_5_0_1 | 0x200;
+        fault_first_occurrence_flags_word_5 = fault_first_occurrence_flags_word_5 | 0x200;
+      }
+    }
+    *status = 0;
+  }
+  return;
+}
+
+
+
+//
 // Function: cm550_sendCanMessage @ 0x000104e8
 //
 
@@ -5596,7 +5683,9 @@ void cm550_sendCanMessage(j1939_transmit_message_t *msg)
 
 {
   if ((msg->header).data_length < 9) {
-    cm550_sendCanSingleFrame((msg->header).can_id);
+    cm550_sendCanSingleFrame
+              ((msg->header).can_id,(msg->header).data_length,msg->data_pointer,msg->status_pointer)
+    ;
     return;
   }
   sendJ1939MultiFrame(msg);
@@ -6243,7 +6332,7 @@ int cm550_saveParameterBlock1ToFlash(void)
   else {
     local_6 = parameter_block_1_save_start_count_cal + 2;
   }
-  cm550_parameterCircularBufferWrite(0x803fd6,(byte *)&local_6,2);
+  cm550_queueEepromMirrorByteWrites(0x803fd6,(byte *)&local_6,2);
   uVar4 = 0;
   while ((uVar4 < 5000 && (parameter_block_1_save_start_count_cal != local_6))) {
     cm550_emptyPlaceholderFunction();
@@ -6273,14 +6362,14 @@ int cm550_saveParameterBlock1ToFlash(void)
         SIM_SWSR = 0xaa;
         CS2_WATCHDOG_SERVICE = 0x55;
         CS2_WATCHDOG_SERVICE = 0xaa;
-        cm550_parameterCircularBufferWrite(0x803b12,(byte *)&local_6,2);
+        cm550_queueEepromMirrorByteWrites(0x803b12,(byte *)&local_6,2);
         uVar4 = 0;
         while ((uVar4 < 5000 && (parameter_block_1_checksum_cal != local_6))) {
           cm550_emptyPlaceholderFunction();
           mc68k_delayTimeBaseTicksWithWatchdogService(500);
           uVar4 = uVar4 + 1;
         }
-        cm550_parameterCircularBufferWrite
+        cm550_queueEepromMirrorByteWrites
                   (0x803fd8,(byte *)&parameter_block_1_save_start_count_cal,2);
         uVar4 = 0;
         while ((uVar4 < 5000 &&
@@ -6353,7 +6442,7 @@ int cm550_saveParameterBlock2ToFlash(void)
   else {
     local_6 = parameter_block_2_save_start_count_cal + 1;
   }
-  cm550_parameterCircularBufferWrite(0x803fde,(byte *)&local_6,2);
+  cm550_queueEepromMirrorByteWrites(0x803fde,(byte *)&local_6,2);
   uVar4 = 0;
   while ((uVar4 < 5000 && (parameter_block_2_save_start_count_cal != local_6))) {
     cm550_emptyPlaceholderFunction();
@@ -6383,14 +6472,14 @@ int cm550_saveParameterBlock2ToFlash(void)
         SIM_SWSR = 0xaa;
         CS2_WATCHDOG_SERVICE = 0x55;
         CS2_WATCHDOG_SERVICE = 0xaa;
-        cm550_parameterCircularBufferWrite(0x803b14,(byte *)&local_6,2);
+        cm550_queueEepromMirrorByteWrites(0x803b14,(byte *)&local_6,2);
         uVar4 = 0;
         while ((uVar4 < 5000 && (parameter_block_2_checksum_cal != local_6))) {
           cm550_emptyPlaceholderFunction();
           mc68k_delayTimeBaseTicksWithWatchdogService(500);
           uVar4 = uVar4 + 1;
         }
-        cm550_parameterCircularBufferWrite
+        cm550_queueEepromMirrorByteWrites
                   (0x803fe0,(byte *)&parameter_block_2_save_start_count_cal,2);
         uVar4 = 0;
         while ((uVar4 < 5000 &&
@@ -6505,7 +6594,7 @@ LAB_000115ca:
   }
   if (power_cycle_sequence_number_cal == completed_power_down_sequence_number_cal) {
     power_down_count_eeprom_write_value = 0;
-    cm550_parameterCircularBufferWrite(0x803fe6,(byte *)&power_down_count_eeprom_write_value,2);
+    cm550_queueEepromMirrorByteWrites(0x803fe6,(byte *)&power_down_count_eeprom_write_value,2);
     uVar2 = 0;
     while ((uVar2 < 5000 &&
            (consecutive_incomplete_power_down_count_cal != power_down_count_eeprom_write_value))) {
@@ -6514,7 +6603,7 @@ LAB_000115ca:
       uVar2 = uVar2 + 1;
     }
     power_down_count_eeprom_write_value = completed_power_down_count_cal + 1;
-    cm550_parameterCircularBufferWrite(0x803fec,(byte *)&power_down_count_eeprom_write_value,2);
+    cm550_queueEepromMirrorByteWrites(0x803fec,(byte *)&power_down_count_eeprom_write_value,2);
     uVar2 = 0;
     while ((uVar2 < 5000 && (completed_power_down_count_cal != power_down_count_eeprom_write_value))
           ) {
@@ -6527,7 +6616,7 @@ LAB_000115ca:
   }
   else {
     power_down_count_eeprom_write_value = consecutive_incomplete_power_down_count_cal + 1;
-    cm550_parameterCircularBufferWrite(0x803fe6,(byte *)&power_down_count_eeprom_write_value,2);
+    cm550_queueEepromMirrorByteWrites(0x803fe6,(byte *)&power_down_count_eeprom_write_value,2);
     uVar2 = 0;
     while ((uVar2 < 5000 &&
            (consecutive_incomplete_power_down_count_cal != power_down_count_eeprom_write_value))) {
@@ -6536,7 +6625,7 @@ LAB_000115ca:
       uVar2 = uVar2 + 1;
     }
     power_down_count_eeprom_write_value = incomplete_power_down_count_cal + 1;
-    cm550_parameterCircularBufferWrite(0x803fea,(byte *)&power_down_count_eeprom_write_value,2);
+    cm550_queueEepromMirrorByteWrites(0x803fea,(byte *)&power_down_count_eeprom_write_value,2);
     uVar2 = 0;
     while ((uVar2 < 5000 && (incomplete_power_down_count_cal != power_down_count_eeprom_write_value)
            )) {
@@ -6556,7 +6645,7 @@ LAB_000115ca:
   }
   power_down_count_eeprom_write_value =
        incomplete_power_down_count_cal + completed_power_down_count_cal;
-  cm550_parameterCircularBufferWrite(0x803fe2,(byte *)&power_down_count_eeprom_write_value,2);
+  cm550_queueEepromMirrorByteWrites(0x803fe2,(byte *)&power_down_count_eeprom_write_value,2);
   uVar2 = 0;
   while ((uVar2 < 5000 && (power_cycle_sequence_number_cal != power_down_count_eeprom_write_value)))
   {
@@ -6782,17 +6871,16 @@ void cm550_restartThroughBootRomAfterJ1708Request(void)
 byte restartThroughBootRom(dword request,word acknowledge_datalink)
 
 {
-  char cVar1;
-  byte bVar2;
+  byte bVar1;
   dword local_8;
   
   if (engine_state == ENGINE_STATE_STOPPED) {
-    while (cVar1 = cm550_circularBufferEmptyCheck(), cVar1 == '\0') {
+    while (bVar1 = cm550_isEepromWriteQueueEmpty(), bVar1 == 0) {
       cm550_emptyPlaceholderFunction();
       mc68k_delayTimeBaseTicksWithWatchdogService2(500);
     }
     local_8 = key_on_hour_meter;
-    cm550_parameterCircularBufferWrite(0x803b3e,(byte *)&local_8,4);
+    cm550_queueEepromMirrorByteWrites(0x803b3e,(byte *)&local_8,4);
     if (ram_refresh_enable == RAM_REFRESH_DISABLED) {
       mc68k_delayTimeBaseTicksWithWatchdogService2(0xfa);
     }
@@ -6803,7 +6891,7 @@ byte restartThroughBootRom(dword request,word acknowledge_datalink)
       }
     }
     local_8 = engine_hour_meter;
-    cm550_parameterCircularBufferWrite(0x803b50,(byte *)&local_8,4);
+    cm550_queueEepromMirrorByteWrites(0x803b50,(byte *)&local_8,4);
     if (ram_refresh_enable == RAM_REFRESH_DISABLED) {
       mc68k_delayTimeBaseTicksWithWatchdogService2(0xfa);
     }
@@ -6827,12 +6915,12 @@ byte restartThroughBootRom(dword request,word acknowledge_datalink)
     mc68k_ioDriverStrobeHandler();
     _DAT_00810ffc = 0x11a56;
     (*DAT_00000008)();
-    bVar2 = 0xff;
+    bVar1 = 0xff;
   }
   else {
-    bVar2 = 7;
+    bVar1 = 7;
   }
-  return bVar2;
+  return bVar1;
 }
 
 
@@ -6861,7 +6949,7 @@ undefined1 inhibitKeyOffShutdown(void)
 
 /* Writes the EEPROM mirror 0x803b0a-0x804155 back to the EEPROM (J1939 diagnostic service 21; J1708
    command 84): 7 while not_safe_to_program_flag is 1; otherwise 16-byte chunks through
-   cm550_circularBufferWrite (the EEPROM byte write queue) with up to 16000 waits each, and two
+   cm550_queueEepromByteWrites (the EEPROM byte write queue) with up to 16000 waits each, and two
    failed queue writes end it (11, clearing 0x80ddd3). On success it clears
    power_down_refresh_enable, arms a deferred J1708 reply (0x80dde4 = 1) and returns 0xff, so the
    J1939 dispatcher sends no response frame. Counterpart, not a twin, of CM848's
@@ -6871,39 +6959,42 @@ undefined1 inhibitKeyOffShutdown(void)
 byte cm550_commitEepromMirrorToEeprom(void)
 
 {
-  char cVar1;
+  byte bVar1;
   ushort uVar2;
+  word eeprom_address;
   ushort uVar3;
-  undefined *puVar4;
+  byte *source;
   
   if (not_safe_to_program_flag == 1) {
     return 7;
   }
   uVar3 = 0;
-  puVar4 = &ecu_identity_marker_1;
-  while ((puVar4 < (undefined *)0x804156 && (uVar3 < 2))) {
-    if (puVar4 + 0x10 < (undefined *)0x804157) {
+  eeprom_address = 0;
+  source = &ecu_identity_marker_1;
+  while ((source < (byte *)0x804156 && (uVar3 < 2))) {
+    if (source + 0x10 < (byte *)0x804157) {
       uVar2 = 0x10;
     }
     else {
-      uVar2 = 0x4156 - (short)puVar4;
+      uVar2 = 0x4156 - (short)source;
     }
-    cVar1 = cm550_circularBufferWrite((short)((uint)puVar4 >> 0x10),uVar2);
-    if (cVar1 == '\0') {
-      puVar4 = puVar4 + uVar2;
+    bVar1 = cm550_queueEepromByteWrites(eeprom_address,source,uVar2);
+    if (bVar1 == 0) {
+      eeprom_address = uVar2 + eeprom_address;
+      source = source + uVar2;
       uVar3 = 0;
     }
     else {
       uVar3 = uVar3 + 1;
     }
     uVar2 = 0;
-    while ((uVar2 < 16000 && (circular_buffer_byte_count != 0))) {
+    while ((uVar2 < 16000 && (eeprom_write_queue_count != 0))) {
       cm550_emptyPlaceholderFunction();
       mc68k_delayTimeBaseTicksWithWatchdogService(500);
       uVar2 = uVar2 + 1;
     }
   }
-  if (puVar4 == (undefined *)0x804156) {
+  if (source == (byte *)0x804156) {
     eeprom_mirror_commit_j1708_reply_pending_flag = 1;
     power_down_refresh_enable = 0;
     return 0xff;
@@ -6927,14 +7018,22 @@ byte cm550_commitEepromMirrorToEeprom(void)
 void registerJ1939DiagnosticHandlers(void)
 
 {
-  registerJ1939DiagnosticService();
-  registerJ1939DiagnosticService();
-  registerJ1939DiagnosticService();
-  registerJ1939DiagnosticService();
-  registerJ1939DiagnosticService();
-  registerJ1939DiagnosticService();
-  registerJ1939DiagnosticService();
-  registerJ1939DiagnosticService();
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_CLEAR_INACTIVE_FAULTS,cm550_requestClearInactiveFaults);
+  registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE,exitDevelopmentMode)
+  ;
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_ENTER_DEVELOPMENT_MODE,enterDevelopmentMode);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_FORCE_EXIT_DEVELOPMENT_MODE,forceExitDevelopmentMode);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_COMMAND_ENGINE_SHUTDOWN,commandEngineShutdown);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM,handleJ1939RestartService);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_INHIBIT_KEY_OFF_SHUTDOWN,inhibitKeyOffShutdown);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_COMMIT_EEPROM_MIRROR,cm550_commitEepromMirrorToEeprom);
   return;
 }
 
@@ -10705,12 +10804,12 @@ void cm550_emptyStubFunction4(void)
 void mc68k_dispatchJ1708ReceivedMessages(void)
 
 {
-  byte bVar1;
-  undefined1 uVar2;
-  char cVar3;
+  undefined1 uVar1;
+  char cVar2;
+  byte bVar4;
   char cVar5;
   byte bVar6;
-  word wVar4;
+  word wVar3;
   byte *pbVar7;
   undefined2 local_18;
   byte abStack_16 [10];
@@ -10720,18 +10819,18 @@ void mc68k_dispatchJ1708ReceivedMessages(void)
   
   currentTimerCount = CTM4_BIUTBR;
   if ((eeprom_mirror_commit_j1708_reply_pending_flag != 0) &&
-     (cVar5 = cm550_circularBufferEmptyCheck(), cVar5 != '\0')) {
+     (bVar4 = cm550_isEepromWriteQueueEmpty(), bVar4 != 0)) {
     eeprom_mirror_commit_j1708_reply_pending_flag = 0;
     cm550_diagnosticMessageQueueWrite(0);
   }
   do {
-    wVar4 = CTM4_BIUTBR;
-    if ((499 < (int)((uint)wVar4 - (uint)currentTimerCount)) ||
+    wVar3 = CTM4_BIUTBR;
+    if ((499 < (int)((uint)wVar3 - (uint)currentTimerCount)) ||
        ((j1708_receive_buffer_write_pointer == j1708_receive_buffer_read_pointer &&
         (j1708_receive_buffer_full_flag_1_true_0_false != 1)))) {
       return;
     }
-    bVar1 = *j1708_receive_buffer_read_pointer;
+    bVar4 = *j1708_receive_buffer_read_pointer;
     local_8._3_1_ = (char)j1708_receive_buffer_read_pointer;
     cVar5 = (char)local_8;
     local_8._0_3_ = (undefined3)((uint)j1708_receive_buffer_read_pointer >> 8);
@@ -10834,17 +10933,17 @@ void mc68k_dispatchJ1708ReceivedMessages(void)
         case 5:
           local_8 = (byte *)CONCAT31(local_8._0_3_,cVar5 + '\x02');
           if (((*local_8 & 0xf) == 0) && ((*local_8 & 0xf0) != 0xf0)) {
-            cVar3 = (bVar1 - 1) + cVar5;
-            local_c = (undefined1 *)CONCAT31(local_8._0_3_,cVar3);
-            uVar2 = *local_c;
-            local_c = (undefined1 *)CONCAT31(local_8._0_3_,cVar3 + '\x01');
-            local_18 = CONCAT11(*local_c,uVar2);
+            cVar2 = (bVar4 - 1) + cVar5;
+            local_c = (undefined1 *)CONCAT31(local_8._0_3_,cVar2);
+            uVar1 = *local_c;
+            local_c = (undefined1 *)CONCAT31(local_8._0_3_,cVar2 + '\x01');
+            local_18 = CONCAT11(*local_c,uVar1);
             local_c = (undefined1 *)CONCAT31(local_8._0_3_,cVar5 + '\x03');
-            wVar4 = cm550_crc16Calculate
+            wVar3 = cm550_crc16Calculate
                               ((byte *)CONCAT22((short)((uint)j1708_receive_buffer_read_pointer >>
                                                        0x10),(short)local_c),
-                               (ushort)(byte)(bVar1 - 4));
-            if (wVar4 != local_18) {
+                               (ushort)(byte)(bVar4 - 4));
+            if (wVar3 != local_18) {
               cm550_diagnosticMessageQueueWrite(0x14);
               break;
             }
@@ -10912,10 +11011,10 @@ void mc68k_dispatchJ1708ReceivedMessages(void)
     }
     j1708_receive_buffer_read_pointer =
          (byte *)CONCAT31(j1708_receive_buffer_read_pointer._0_3_,
-                          bVar1 + 1 + (char)j1708_receive_buffer_read_pointer);
+                          bVar4 + 1 + (char)j1708_receive_buffer_read_pointer);
     j1708_receive_buffer_full_flag_1_true_0_false = 0;
-    wVar4 = QSM_SCCR1;
-    QSM_SCCR1 = wVar4 | 0x20;
+    wVar3 = QSM_SCCR1;
+    QSM_SCCR1 = wVar3 | 0x20;
   } while( true );
 }
 
@@ -11368,49 +11467,83 @@ void cm550_multiPacketReceiveHandler(void)
 
 
 //
-// Function: cm550_circularBufferEmptyCheck @ 0x00016c2c
+// Function: cm550_isEepromWriteQueueEmpty @ 0x00016c2c
 //
 
-uint cm550_circularBufferEmptyCheck(void)
+/* Returns 1 when the serial EEPROM write queue is empty (eeprom_write_queue_count is 0), else 0
+   (moveq #1 / clr.b d0). (was cm550_circularBufferEmptyCheck; PR #53 round 96) */
+
+byte cm550_isEepromWriteQueueEmpty(void)
 
 {
-  uint in_D0;
-  
-  if (circular_buffer_byte_count == 0) {
+  if (eeprom_write_queue_count == 0) {
     return 1;
   }
-  return in_D0 & 0xffffff00;
+  return 0;
 }
 
 
 
 //
-// Function: cm550_parameterCircularBufferWrite @ 0x00016c3c
+// Function: cm550_queueEepromMirrorByteWrites @ 0x00016c3c
 //
 
-uint cm550_parameterCircularBufferWrite(dword dest_address,byte *source_ptr,word byte_count)
+/* cm550_queueEepromByteWrites for an address in the EEPROM mirror: returns 1 and queues nothing
+   when eeprom_write_queue_count + byte_count would pass 1280; otherwise it stores the first byte's
+   EEPROM offset (mirror_address - 0x803b0a) in eeprom_write_queue_last_request_offset and queues
+   each byte with its EEPROM address (the mirror address - 0x803b0a); returns 0. (was
+   cm550_parameterCircularBufferWrite; PR #53 round 96) */
+
+byte cm550_queueEepromMirrorByteWrites(dword mirror_address,byte *source,word byte_count)
 
 {
-  uint uVar1;
-  
-  if (0x500 < (uint)byte_count + (uint)circular_buffer_byte_count) {
+  if (0x500 < (uint)byte_count + (uint)eeprom_write_queue_count) {
     return 1;
   }
-  circular_buffer_last_address_offset = (short)(dest_address - 0x803b08) - 2;
-  uVar1 = CONCAT22((short)(dest_address - 0x803b08 >> 0x10),circular_buffer_last_address_offset);
-  *(word *)((uint)eeprom_circular_buffer_write_index * 2 + 0x80bda8) =
-       circular_buffer_last_address_offset;
+  eeprom_write_queue_last_request_offset = (short)mirror_address + 0xc4f6;
+  eeprom_write_queue_addresses[eeprom_write_queue_write_index] =
+       eeprom_write_queue_last_request_offset;
   for (; byte_count != 0; byte_count = byte_count - 1) {
-    *(byte *)((short)eeprom_circular_buffer_write_index + 0x80c7a8) = *source_ptr;
-    *(short *)((uint)eeprom_circular_buffer_write_index * 2 + 0x80bda8) =
-         (short)dest_address + -0x3b0a;
-    eeprom_circular_buffer_write_index = (ushort)(eeprom_circular_buffer_write_index + 1) % 0x500;
-    uVar1 = 0;
-    circular_buffer_byte_count = circular_buffer_byte_count + 1;
-    dest_address = dest_address + 1;
-    source_ptr = source_ptr + 1;
+    eeprom_write_queue_data_bytes[(short)eeprom_write_queue_write_index] = *source;
+    eeprom_write_queue_addresses[eeprom_write_queue_write_index] = (short)mirror_address + 0xc4f6;
+    eeprom_write_queue_write_index = (ushort)(eeprom_write_queue_write_index + 1) % 0x500;
+    eeprom_write_queue_count = eeprom_write_queue_count + 1;
+    mirror_address = mirror_address + 1;
+    source = source + 1;
   }
-  return uVar1 & 0xffffff00;
+  return 0;
+}
+
+
+
+//
+// Function: cm550_queueEepromByteWrites @ 0x00016cd8
+//
+
+/* Queues bytes for the serial EEPROM writer. It returns 1 and queues nothing when the pending count
+   eeprom_write_queue_count + byte_count would pass 1280 (0x500). Otherwise, for each byte, it
+   stores the data byte at 0x80c7a8[eeprom_write_queue_write_index] and the byte's EEPROM address
+   (eeprom_address + n) in the word ring 0x80bda8[index], advances the index modulo 1280 and counts
+   the entry; then it returns 0. Callers: cm550_commitEepromMirrorToEeprom (16-byte chunks of the
+   mirror 0x803b0a-0x804155 with their EEPROM offset), writeJ1939DiagnosticMemory and
+   cm550_memoryPatchingSystem (both while 0x80dc6c is 1). (was cm550_circularBufferWrite; the
+   prototype lets the decompiler export the body) (PR #53 round 96) */
+
+byte cm550_queueEepromByteWrites(word eeprom_address,byte *source,word byte_count)
+
+{
+  if (0x500 < (uint)byte_count + (uint)eeprom_write_queue_count) {
+    return 1;
+  }
+  for (; byte_count != 0; byte_count = byte_count - 1) {
+    eeprom_write_queue_data_bytes[(short)eeprom_write_queue_write_index] = *source;
+    eeprom_write_queue_addresses[(short)eeprom_write_queue_write_index] = eeprom_address;
+    eeprom_write_queue_write_index = (ushort)(eeprom_write_queue_write_index + 1) % 0x500;
+    eeprom_write_queue_count = eeprom_write_queue_count + 1;
+    source = source + 1;
+    eeprom_address = eeprom_address + 1;
+  }
+  return 0;
 }
 
 
@@ -13302,14 +13435,14 @@ ushort cm550_protectionState1DiagnosticValidator(void)
   uint uVar3;
   undefined *threshold_value;
   word *config_ptr;
-  undefined *state_offset;
+  undefined *channel_state_record;
   
   uVar1 = algorithm_enable_flags_2_cal.engine_protection_shutdown_enable;
   if (((algorithm_enable_flags_2_cal.engine_protection_shutdown_enable != 0) &&
       (uVar1 = (ushort)algorithm_enable_flags_2_cal & 0x20,
       algorithm_enable_flags_2_cal.engine_protection_restart_enable != 0)) &&
      (engine_protection_active_fault_index != 0xff)) {
-    state_offset = &protection_system_sensor_data_ptr;
+    channel_state_record = &protection_system_sensor_data_ptr;
     threshold_value = &coolant_level_fueling_severity_index_0_0_1_0;
     uVar2 = 0x70;
     uVar3 = 0;
@@ -13320,21 +13453,61 @@ ushort cm550_protectionState1DiagnosticValidator(void)
            1 << (uVar2 + 2) % 0x10) != 0)) &&
          (((uint)(&algorithm_enable_flags_0_cal)[(short)((int)(uVar2 + 3) >> 4)] &
           1 << (uVar2 + 3) % 0x10) != 0)) {
-        cm550_diagnosticProtectionProcessor(config_ptr,(dword)state_offset,(dword)threshold_value);
-        cm550_protectionUpdateHandler();
+        cm550_diagnosticProtectionProcessor
+                  (config_ptr,(dword)channel_state_record,(dword)threshold_value);
+        cm550_updateEngineProtectionRestartLimitationCommands
+                  ((word)uVar3,channel_state_record,config_ptr);
       }
       else {
         *(undefined2 *)(threshold_value + 4) = 0;
         *(undefined2 *)(threshold_value + 6) = 0;
       }
-      state_offset = state_offset + 0x2e;
+      channel_state_record = channel_state_record + 0x2e;
       uVar1 = 0x1e;
       threshold_value = threshold_value + 0x1e;
       uVar2 = (uint)(ushort)((short)uVar2 + 4);
-      uVar3 = (uint)(ushort)((short)uVar3 + 1);
+      uVar3 = (uint)(ushort)((word)uVar3 + 1);
     }
   }
   return uVar1;
+}
+
+
+
+//
+// Function: cm550_updateEngineProtectionRestartLimitationCommands @ 0x00018dae
+//
+
+/* The engine protection restart limitation, for protection channel 3 only. Once
+   engine_protection_consecutive_shutdown_count has reached
+   max_number_of_shutdowns_before_restart_is_not_allowed_0_255 and the channel state record's word
+   +0x16 is not 0, it sets epf_shutdown_approaching_command_from_restart_limitat_1_true_0_false
+   (0x80d27c) to (state word +6 != 0) and
+   epf_shutdown_engine_command_from_restart_limitation_a_1_true_0_false (0x80d27a) to (settings word
+   +0x1e < state word +6, unsigned). Otherwise both keep their values.
+   cm550_protectionState1DiagnosticValidator calls it once per channel (0x18d7e) with the channel's
+   state record (from 0x80d0dc) and settings record (from 0x807032). (was
+   cm550_protectionUpdateHandler; the prototype lets the decompiler export the body) (PR #53 round
+   96) */
+
+void cm550_updateEngineProtectionRestartLimitationCommands
+               (word channel_index,void *channel_state_record,void *channel_settings_record)
+
+{
+  if (((channel_index == 3) &&
+      (max_number_of_shutdowns_before_restart_is_not_allowed_0_255 <=
+       engine_protection_consecutive_shutdown_count)) &&
+     (*(short *)((int)channel_state_record + 0x16) != 0)) {
+    epf_shutdown_approaching_command_from_restart_limitat_1_true_0_false =
+         (word)(*(short *)((int)channel_state_record + 6) != 0);
+    if (*(ushort *)((int)channel_settings_record + 0x1e) <
+        *(ushort *)((int)channel_state_record + 6)) {
+      epf_shutdown_engine_command_from_restart_limitation_a_1_true_0_false = 1;
+      return;
+    }
+    epf_shutdown_engine_command_from_restart_limitation_a_1_true_0_false = 0;
+  }
+  return;
 }
 
 
@@ -19408,6 +19581,50 @@ void cm550_handleJ1939CanReceiveInterrupt(word message_object_number)
 
 
 //
+// Function: cm550_transmitCanFrameOnMessageObject @ 0x0001e0bc
+//
+
+/* Loads a 13-byte frame record (arbitration +0..+3, configuration +4, 8 data bytes) into message
+   object message_object_number of the CAN controller at controller_base (object = controller_base +
+   16 x number; both callers pass 0xffd800) and requests its transmission. In the 82527's set /
+   reset bit pairs it writes control 0 / 1 = 0x7f / 0xfb (MsgVal reset, CPUUpd set), copies the
+   record to the object's +2, then writes 0xbf / 0xe6 (MsgVal set; CPUUpd reset; NewDat and TxRqst
+   set). Callers: cm550_sendCanSingleFrame (a free transmit object) and
+   mc68k_canCs4TransmitNextFrame (the next queued frame). (was cm550_canFrameDataCopy; the prototype
+   lets the decompiler export the body) (PR #53 round 96) */
+
+void cm550_transmitCanFrameOnMessageObject
+               (dword controller_base,byte message_object_number,byte *frame)
+
+{
+  undefined1 *puVar1;
+  byte bVar2;
+  byte *pbVar3;
+  byte *pbVar5;
+  byte *pbVar4;
+  
+  puVar1 = (undefined1 *)(controller_base + (uint)message_object_number * 0x10);
+  *puVar1 = 0x7f;
+  puVar1[1] = 0xfb;
+  bVar2 = 0;
+  pbVar5 = puVar1 + 2;
+  do {
+    pbVar3 = frame + 2;
+    pbVar4 = pbVar5 + 2;
+    *(undefined2 *)pbVar5 = *(undefined2 *)frame;
+    bVar2 = bVar2 + 1;
+    frame = pbVar3;
+    pbVar5 = pbVar4;
+  } while (bVar2 < 6);
+  *pbVar4 = *pbVar3;
+  *puVar1 = 0xbf;
+  puVar1[1] = 0xe6;
+  return;
+}
+
+
+
+//
 // Function: mc68k_canCs4InterruptHandler @ 0x0001e0fa
 //
 
@@ -19784,8 +20001,9 @@ void cm550_tpuChannelIsrRegister(void)
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Sends the next frame on the 82527 CAN controller on chip select 4: writes a message object's
    control register through _can_control_register_pointer - copies the next 14-byte entry of the CAN
-   transmit ring (0x80D896-0x80D9A0) with cm550_canFrameDataCopy(&CAN_CS4_CONTROL) and advances the
-   ring pointer. No serial port is involved (was serialTransmitHandler; PR #53 round 81) */
+   transmit ring (0x80D896-0x80D9A0) with cm550_transmitCanFrameOnMessageObject(&CAN_CS4_CONTROL)
+   and advances the ring pointer. No serial port is involved (was serialTransmitHandler; PR #53
+   round 81) */
 
 uint mc68k_canCs4TransmitNextFrame(void)
 
@@ -19799,7 +20017,9 @@ uint mc68k_canCs4TransmitNextFrame(void)
     *_can_control_register_pointer = 0x7f;
   }
   else {
-    cm550_canFrameDataCopy(&CAN_CS4_CONTROL);
+    cm550_transmitCanFrameOnMessageObject
+              (0xffd800,(byte)j1939_transmit_message_object_number,
+               (byte *)can_transmit_buffer_write_pointer);
     DAT_0080d9be = '\0';
     uVar1 = can_transmit_buffer_write_pointer + 0xe;
     can_transmit_buffer_write_pointer = uVar1;
@@ -21576,17 +21796,12 @@ void cm550_j1939TorqueControlModeSet(can_std_rx_desc_t *param_1)
 void cm550_systemFunction6xParameterized(void)
 
 {
-  undefined2 uVar1;
-  undefined2 uVar2;
-  undefined2 uVar3;
-  
-  uVar3 = 0xffd2;
-  registerJ1939DiagnosticService(1);
-  uVar2 = 0xffd2;
-  uVar1 = 0x10;
-  registerJ1939DiagnosticService(1,uVar3);
-  registerJ1939DiagnosticService(2,uVar1,uVar2);
-  registerJ1939DiagnosticService();
+  registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_15,&LAB_0001ffd2);
+  registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_16,&LAB_0001ffd2);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_DISABLE_BROADCAST,cm550_j1939TorqueControlModeClear);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_ENABLE_BROADCAST,cm550_j1939TorqueControlModeSet);
   return;
 }
 
@@ -22673,6 +22888,36 @@ void cm550_initializeJ1939InputProcessing(void)
 
 
 //
+// Function: registerJ1939ReceiveHandler @ 0x00021272
+//
+
+/* Appends a PGN key word and its handler to j1939_receive_handler_table (6-byte entries: the key at
+   +0 and the handler at +2) at index j1939_receive_handler_count (the byte right after the table)
+   and adds 1 to the count; it returns 1 and stores nothing when the count is already 16 (the
+   table's size), else 0. The receive dispatcher 0x212b2 scans count entries for the frame's key and
+   calls the handler. 13 registrations at start-up (13 in the RAM dump). The same steps as CM848
+   0x538eb0, whose table holds 17 (was cm550_canTransmissionController: it transmits nothing; PR #53
+   round 91; the twin of CM848 0x538eb0: one shared name) (was cm550_canTransmissionController; PR
+   #53 round 91) */
+
+byte registerJ1939ReceiveHandler(word pgn_key,void *handler)
+
+{
+  uint uVar1;
+  
+  if (j1939_receive_handler_count == 0x10) {
+    return 1;
+  }
+  uVar1 = (uint)j1939_receive_handler_count;
+  j1939_receive_handler_count = j1939_receive_handler_count + 1;
+  j1939_receive_handler_table[uVar1].pgn_key = pgn_key;
+  j1939_receive_handler_table[uVar1].handler = handler;
+  return 0;
+}
+
+
+
+//
 // Function: mc68k_dispatchJ1939ReceivedMessages @ 0x000212b2
 //
 
@@ -22804,7 +23049,7 @@ ushort endRetarderShiftAssistAboveFuelDemandLimit(void)
    optional 10-byte key after the data / the region from lookupApplicationMemoryRegionType - 0
    copied / 3 copied after validateSecurityKey (3 when the key is missing or refused) / 4 refused
    (10) / 5 EEPROM: 7 while not safe to program with RAM refresh on then the key (0x1a missing / 3
-   refused) then cm550_circularBufferWrite (0x0b when full) and the mirror copy / the other codes
+   refused) then cm550_queueEepromByteWrites (0x0b when full) and the mirror copy / the other codes
    passed back. The same function as CM848 0x50af58 (shared name - CM848 returns 0x1a for a type 3
    write without the key / refuses (10) type 3 writes into its calibration RAM while RAM refresh is
    on / has Bank 2; was cm550_memoryOperationDispatcher; PR #53 round 72). */
@@ -22863,8 +23108,7 @@ byte writeJ1939DiagnosticMemory(dword request,dword address,dword length)
       }
     }
     if ((ram_refresh_enable == RAM_REFRESH_ENABLED) &&
-       (cVar4 = cm550_circularBufferWrite((short)((uint)source >> 0x10),range_length),
-       cVar4 == '\x01')) {
+       (bVar2 = cm550_queueEepromByteWrites((word)address,source,range_length), bVar2 == 1)) {
       return 0xb;
     }
     cm550_memcpy((byte *)(address - 0x7fc4f6),source,range_length);
@@ -22886,6 +23130,35 @@ byte writeJ1939DiagnosticMemory(dword request,dword address,dword length)
 
 
 //
+// Function: writeJ1939DiagnosticMemoryByParameterId @ 0x00021642
+//
+
+/* Writes by parameter ID for the PGN 61184 services 0x44 / 0x45 / 0x47 / 0x49: resolves the ID with
+   cm550_lookupParameterIdAddress (8 = unknown ID), then writeJ1939DiagnosticMemory(request / the
+   ID's address + offset / length). Parameters: the request / the ID / the offset / the length. Twin
+   of CM848 0x50b1b8. (was cm550_j1939MemoryDataCopyResolver; PR #53 round 94) */
+
+byte writeJ1939DiagnosticMemoryByParameterId
+               (dword request,word parameter_id,dword offset,dword length)
+
+{
+  char cVar1;
+  byte bVar2;
+  dword local_8;
+  
+  cVar1 = cm550_lookupParameterIdAddress(parameter_id,&local_8);
+  if (cVar1 == '\0') {
+    bVar2 = writeJ1939DiagnosticMemory(request,offset + local_8,length);
+  }
+  else {
+    bVar2 = 8;
+  }
+  return bVar2;
+}
+
+
+
+//
 // Function: handleJ1939WriteByParameterIdService @ 0x0002167e
 //
 
@@ -22894,13 +23167,15 @@ byte writeJ1939DiagnosticMemory(dword request,dword address,dword length)
    writeJ1939DiagnosticMemoryByParameterId. Twin of CM848 0x50b228. (was
    cm550_j1939DataCopyWrapper2Byte; PR #53 round 94) */
 
-void handleJ1939WriteByParameterIdService(int param_1)
+void handleJ1939WriteByParameterIdService(dword param_1)
 
 {
-  byte local_6 [2];
+  uint local_a;
+  word local_6;
   
-  cm550_memcpy(local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
-  writeJ1939DiagnosticMemoryByParameterId(param_1);
+  cm550_memcpy((byte *)&local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
+  local_a = (uint)*(byte *)(*(int *)(param_1 + 6) + 3);
+  writeJ1939DiagnosticMemoryByParameterId(param_1,local_6,0,local_a);
   return;
 }
 
@@ -22915,15 +23190,15 @@ void handleJ1939WriteByParameterIdService(int param_1)
    writeJ1939DiagnosticMemoryByParameterId. Twin of CM848 0x50b298. (was cm550_FUN_000216c6; PR #53
    round 94) */
 
-void handleJ1939WriteByParameterIdLongLengthService(int param_1)
+void handleJ1939WriteByParameterIdLongLengthService(dword param_1)
 
 {
-  byte local_a [4];
-  byte local_6 [2];
+  dword local_a;
+  word local_6;
   
-  cm550_memcpy(local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
-  cm550_memcpy(local_a,(byte *)(*(int *)(param_1 + 6) + 3),4);
-  writeJ1939DiagnosticMemoryByParameterId(param_1);
+  cm550_memcpy((byte *)&local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
+  cm550_memcpy((byte *)&local_a,(byte *)(*(int *)(param_1 + 6) + 3),4);
+  writeJ1939DiagnosticMemoryByParameterId(param_1,local_6,0,local_a);
   return;
 }
 
@@ -22938,13 +23213,18 @@ void handleJ1939WriteByParameterIdLongLengthService(int param_1)
    offset through writeJ1939DiagnosticMemoryByParameterId. Twin of CM848 0x50b300. (was
    cm550_j1939DataCopyWrapperExtended; PR #53 round 94) */
 
-void handleJ1939WriteByParameterIdShortOffsetService(int param_1)
+void handleJ1939WriteByParameterIdShortOffsetService(dword param_1)
 
 {
-  byte local_6 [2];
+  uint local_e;
+  uint local_a;
+  word local_6;
   
-  cm550_memcpy(local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
-  writeJ1939DiagnosticMemoryByParameterId(param_1);
+  cm550_memcpy((byte *)&local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
+  local_a = (uint)CONCAT11(*(undefined1 *)(*(int *)(param_1 + 6) + 3),
+                           *(undefined1 *)(*(int *)(param_1 + 6) + 4));
+  local_e = (uint)*(byte *)(*(int *)(param_1 + 6) + 5);
+  writeJ1939DiagnosticMemoryByParameterId(param_1,local_6,local_a,local_e);
   return;
 }
 
@@ -22959,17 +23239,17 @@ void handleJ1939WriteByParameterIdShortOffsetService(int param_1)
    offset through writeJ1939DiagnosticMemoryByParameterId. Twin of CM848 0x50b38c. (was
    cm550_FUN_00021778; PR #53 round 94) */
 
-void handleJ1939WriteByParameterIdLongOffsetService(int param_1)
+void handleJ1939WriteByParameterIdLongOffsetService(dword param_1)
 
 {
-  byte local_e [4];
-  byte local_a [4];
-  byte local_6 [2];
+  dword local_e;
+  dword local_a;
+  word local_6;
   
-  cm550_memcpy(local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
-  cm550_memcpy(local_a,(byte *)(*(int *)(param_1 + 6) + 3),4);
-  cm550_memcpy(local_e,(byte *)(*(int *)(param_1 + 6) + 7),4);
-  writeJ1939DiagnosticMemoryByParameterId(param_1);
+  cm550_memcpy((byte *)&local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
+  cm550_memcpy((byte *)&local_a,(byte *)(*(int *)(param_1 + 6) + 3),4);
+  cm550_memcpy((byte *)&local_e,(byte *)(*(int *)(param_1 + 6) + 7),4);
+  writeJ1939DiagnosticMemoryByParameterId(param_1,local_6,local_a,local_e);
   return;
 }
 
@@ -23031,12 +23311,22 @@ void handleJ1939WriteMemoryLongLengthService(dword request)
 void registerJ1939MemoryWriteServices(void)
 
 {
-  registerJ1939DiagnosticService();
-  registerJ1939DiagnosticService();
-  registerJ1939DiagnosticService();
-  registerJ1939DiagnosticService();
-  registerJ1939DiagnosticService();
-  registerJ1939DiagnosticService();
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID,handleJ1939WriteByParameterIdService);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_LENGTH,
+             handleJ1939WriteByParameterIdLongLengthService);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY,handleJ1939WriteMemoryService);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_WRITE_MEMORY_LONG_LENGTH,
+             handleJ1939WriteMemoryLongLengthService);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_SHORT_OFFSET,
+             handleJ1939WriteByParameterIdShortOffsetService);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_WRITE_BY_PARAMETER_ID_LONG_OFFSET,
+             handleJ1939WriteByParameterIdLongOffsetService);
   return;
 }
 
@@ -23478,12 +23768,12 @@ void cm550_tickJ1939InputSupervision(void)
 void cm550_registerJ1939InputMessageHandlers(void)
 
 {
-  registerJ1939ReceiveHandler();
-  registerJ1939ReceiveHandler();
-  registerJ1939ReceiveHandler();
-  registerJ1939ReceiveHandler();
-  registerJ1939ReceiveHandler();
-  registerJ1939ReceiveHandler();
+  registerJ1939ReceiveHandler(0xe000,receivePgn57344CabMessage1);
+  registerJ1939ReceiveHandler(0xf001,receivePgn61441ElectronicBrakeController1Message);
+  registerJ1939ReceiveHandler(0xf003,receivePgn61443ElectronicEngineController2Message);
+  registerJ1939ReceiveHandler(0xfee4,receivePgn65252ShutdownMessage);
+  registerJ1939ReceiveHandler(0xfef0,receivePgn65264PowerTakeoffInformationMessage);
+  registerJ1939ReceiveHandler(0xfef1,receivePgn65265CruiseControlVehicleSpeedMessage);
   return;
 }
 
@@ -23731,16 +24021,17 @@ undefined4 cm550_canDiagnosticResponseSender(byte *param_1)
   undefined1 local_1d;
   undefined1 local_1c;
   undefined1 local_1b;
-  undefined1 local_1a;
+  byte local_1a;
   undefined1 local_19;
   undefined1 local_18;
   undefined1 local_17;
   undefined1 local_16;
   undefined1 local_15;
   undefined1 local_14;
+  byte bStack_13;
   undefined4 local_12;
   undefined2 local_e;
-  undefined1 *local_c;
+  byte *local_c;
   
   uVar1 = *(undefined1 *)(*(int *)(param_1 + 6) + 1);
   uVar2 = *(undefined1 *)(*(int *)(param_1 + 6) + 2);
@@ -23758,7 +24049,7 @@ undefined4 cm550_canDiagnosticResponseSender(byte *param_1)
     local_19 = uVar1;
     local_18 = uVar2;
     local_c = &local_1a;
-    cm550_sendCanSingleFrame(local_12,(short)((uint)&local_1a >> 0x10));
+    cm550_sendCanSingleFrame(local_12,7,&local_1a,&bStack_13);
     uVar3 = 0xff;
   }
   else {
@@ -23776,7 +24067,7 @@ undefined4 cm550_canDiagnosticResponseSender(byte *param_1)
 void cm550_systemFunction1xCaller(void)
 
 {
-  registerJ1939DiagnosticService();
+  registerJ1939DiagnosticService(DIAG_ADDR_RESOLVER,cm550_canDiagnosticResponseSender);
   return;
 }
 
@@ -23976,11 +24267,13 @@ void handleJ1939ReadMemoryLongLengthService(byte *param_1)
 void registerJ1939MemoryReadServices(void)
 
 {
-  registerJ1939DiagnosticService();
-  registerJ1939DiagnosticService();
-  registerJ1939DiagnosticService();
-  registerJ1939DiagnosticService();
-  registerJ1939DiagnosticService();
+  registerJ1939DiagnosticService
+            (MEM_READ_2B_PARAM_4B_OFFSET,handleJ1939ReadByParameterIdLongLengthService);
+  registerJ1939DiagnosticService(MEM_READ_4B_ADDR_1B_LEN,handleJ1939ReadMemoryService);
+  registerJ1939DiagnosticService(MEM_READ_4B_ADDR_4B_LEN,handleJ1939ReadMemoryLongLengthService);
+  registerJ1939DiagnosticService
+            (MEM_READ_2B_PARAM_ONLY,handleJ1939ReadByParameterIdShortOffsetService);
+  registerJ1939DiagnosticService(SERVICE_48,handleJ1939ReadByParameterIdLongOffsetService);
   return;
 }
 
@@ -23997,26 +24290,26 @@ void sendJ1939MultiFrame(j1939_transmit_message_t *msg)
 {
   undefined1 *puVar1;
   undefined2 uVar2;
-  byte *pbVar3;
+  byte bVar3;
   byte bVar4;
-  byte bVar5;
-  ushort uVar6;
-  undefined1 *puVar7;
+  ushort uVar5;
+  byte *pbVar6;
+  byte *pbVar7;
   char *pcVar8;
-  undefined1 local_8;
-  undefined1 uStack_7;
+  byte local_8;
+  byte bStack_7;
   char cStack_5;
   
-  puVar1 = _multiframe_tx_buffer_ptr;
-  pbVar3 = (byte *)((int)&(msg->header).can_id + 1);
-  bVar4 = *pbVar3;
-  bVar5 = (byte)(msg->header).can_id;
-  cStack_5 = (char)*(undefined2 *)pbVar3;
-  if ((bVar4 < 0xf0) && (cStack_5 != -1)) {
+  pbVar6 = _multiframe_tx_buffer_ptr;
+  pbVar7 = (byte *)((int)&(msg->header).can_id + 1);
+  bVar3 = *pbVar7;
+  bVar4 = (byte)(msg->header).can_id;
+  cStack_5 = (char)*(undefined2 *)pbVar7;
+  if ((bVar3 < 0xf0) && (cStack_5 != -1)) {
     if (j1939_multiframe_tx_active == '\0') {
       j1939_multiframe_tx_active = '\x01';
       multiframe_tx_destination_address = cStack_5;
-      _multiframe_tx_pgn_high_byte = (ushort)bVar4 << 8;
+      _multiframe_tx_pgn_high_byte = (ushort)bVar3 << 8;
       _DAT_008012a2 = (msg->header).data_length;
       multiframe_tx_total_packets = (char)((int)(_DAT_008012a2 - 1) / 7) + 1;
       multiframe_tx_packets_remaining = 0;
@@ -24025,19 +24318,20 @@ void sendJ1939MultiFrame(j1939_transmit_message_t *msg)
       _DAT_008012b2 = 8;
       multiframe_tx_timeout_counter = 0x37;
       _multiframe_tx_status_ptr = msg->status_pointer;
-      puVar7 = _multiframe_tx_buffer_ptr + 1;
+      pbVar7 = _multiframe_tx_buffer_ptr + 1;
       *_multiframe_tx_buffer_ptr = 0x10;
-      uVar6 = _DAT_008012a2;
-      uStack_7 = (undefined1)_DAT_008012a2;
-      *puVar7 = uStack_7;
-      local_8 = (undefined1)(uVar6 >> 8);
-      puVar1[2] = local_8;
-      puVar1[3] = multiframe_tx_total_packets;
-      puVar1[4] = 0xff;
-      puVar1[5] = 0;
-      puVar1[6] = bVar4;
-      puVar1[7] = 0;
-      cm550_sendCanSingleFrame(_DAT_008012ae);
+      uVar5 = _DAT_008012a2;
+      bStack_7 = (byte)_DAT_008012a2;
+      *pbVar7 = bStack_7;
+      local_8 = (byte)(uVar5 >> 8);
+      pbVar6[2] = local_8;
+      pbVar6[3] = multiframe_tx_total_packets;
+      pbVar6[4] = 0xff;
+      pbVar6[5] = 0;
+      pbVar6[6] = bVar3;
+      pbVar6[7] = 0;
+      cm550_sendCanSingleFrame
+                (_DAT_008012ae,_DAT_008012b2,_multiframe_tx_buffer_ptr,(byte *)&DAT_008012a1);
       if (DAT_008012a1 == '\0') {
         *_multiframe_tx_status_ptr = '\x12';
         _DAT_008012ae = (msg->header).can_id & 0xff00ffff | 0xeb0000;
@@ -24052,11 +24346,11 @@ void sendJ1939MultiFrame(j1939_transmit_message_t *msg)
     }
   }
   else {
-    if (bVar5 == _j1939_network_address_for_ecm_as_engine_node_0_255) {
+    if (bVar4 == _j1939_network_address_for_ecm_as_engine_node_0_255) {
       pcVar8 = &DAT_0080124a;
     }
     else {
-      if (bVar5 != _j1939_network_address_for_ecm_as_engine_retarder_node_0_255) {
+      if (bVar4 != _j1939_network_address_for_ecm_as_engine_retarder_node_0_255) {
         *msg->status_pointer = 3;
         return;
       }
@@ -24082,16 +24376,18 @@ void sendJ1939MultiFrame(j1939_transmit_message_t *msg)
       puVar1 = *(undefined1 **)(pcVar8 + 0x18);
       *puVar1 = 0x20;
       uVar2 = *(undefined2 *)(pcVar8 + 2);
-      uStack_7 = (undefined1)uVar2;
-      puVar1[1] = uStack_7;
-      local_8 = (undefined1)((ushort)uVar2 >> 8);
+      bStack_7 = (byte)uVar2;
+      puVar1[1] = bStack_7;
+      local_8 = (byte)((ushort)uVar2 >> 8);
       puVar1[2] = local_8;
       puVar1[3] = pcVar8[1];
       puVar1[4] = 0xff;
       puVar1[5] = cStack_5;
-      puVar1[6] = bVar4;
+      puVar1[6] = bVar3;
       puVar1[7] = 0;
-      cm550_sendCanSingleFrame(*(undefined4 *)(pcVar8 + 0x12));
+      cm550_sendCanSingleFrame
+                (*(dword *)(pcVar8 + 0x12),*(word *)(pcVar8 + 0x16),*(byte **)(pcVar8 + 0x18),
+                 (byte *)(pcVar8 + 7));
       if (pcVar8[7] == '\0') {
         **(char **)(pcVar8 + 0xc) = '\x10';
         *(dword *)(pcVar8 + 0x12) = (msg->header).can_id & 0xff0000ff | 0xebff00;
@@ -24153,17 +24449,18 @@ void cm550_messageErrorHandler(byte destination_address,word pgn)
   byte bVar2;
   undefined1 *puVar3;
   undefined1 local_1e;
-  undefined1 uStack_1c;
-  undefined1 auStack_1b [9];
+  byte bStack_1c;
+  undefined1 auStack_1b [8];
+  byte bStack_13;
   undefined4 local_12;
-  undefined2 local_e;
-  undefined1 *local_c;
+  word local_e;
+  byte *local_c;
   
   local_12 = CONCAT22(0x18ec,(ushort)destination_address << 8);
   local_12 = CONCAT31(local_12._0_3_,j1939_engine_node_source_address);
   local_e = 8;
-  local_c = &uStack_1c;
-  uStack_1c = 0xff;
+  local_c = &bStack_1c;
+  bStack_1c = 0xff;
   bVar2 = 0;
   puVar1 = auStack_1b;
   do {
@@ -24176,7 +24473,7 @@ void cm550_messageErrorHandler(byte destination_address,word pgn)
   local_1e = (undefined1)(pgn >> 8);
   puVar3[2] = local_1e;
   puVar3[3] = 0;
-  cm550_sendCanSingleFrame(local_12);
+  cm550_sendCanSingleFrame(local_12,local_e,local_c,&bStack_13);
   return;
 }
 
@@ -24194,7 +24491,7 @@ void vp44CanFrameBuilder(byte destination_address,word pgn)
   undefined1 local_20;
   undefined1 uStack_1f;
   undefined1 local_1e;
-  undefined1 uStack_1c;
+  byte bStack_1c;
   undefined1 uStack_1b;
   undefined1 uStack_1a;
   undefined1 uStack_19;
@@ -24202,15 +24499,16 @@ void vp44CanFrameBuilder(byte destination_address,word pgn)
   undefined1 uStack_17;
   undefined1 uStack_16;
   undefined1 local_15;
+  byte bStack_13;
   undefined4 local_12;
   undefined2 local_e;
-  undefined1 *local_c;
+  byte *local_c;
   
   local_12 = CONCAT22(0x18ec,(ushort)destination_address << 8);
   local_12 = CONCAT31(local_12._0_3_,j1939_engine_node_source_address);
   local_e = 8;
-  local_c = &uStack_1c;
-  uStack_1c = 0x13;
+  local_c = &bStack_1c;
+  bStack_1c = 0x13;
   uStack_1f = (undefined1)_DAT_008012d0;
   uStack_1b = uStack_1f;
   local_20 = (undefined1)((ushort)_DAT_008012d0 >> 8);
@@ -24221,7 +24519,7 @@ void vp44CanFrameBuilder(byte destination_address,word pgn)
   local_1e = (undefined1)(pgn >> 8);
   uStack_16 = local_1e;
   local_15 = 0;
-  cm550_sendCanSingleFrame(local_12);
+  cm550_sendCanSingleFrame(local_12,8,local_c,&bStack_13);
   return;
 }
 
@@ -24236,7 +24534,7 @@ byte vp44MessageTransmitter
 
 {
   undefined1 local_1e;
-  undefined1 uStack_1c;
+  byte bStack_1c;
   byte bStack_1b;
   byte bStack_1a;
   undefined1 uStack_19;
@@ -24247,13 +24545,13 @@ byte vp44MessageTransmitter
   byte local_13;
   undefined4 local_12;
   undefined2 local_e;
-  undefined1 *local_c;
+  byte *local_c;
   
   local_12 = CONCAT22(0x18ec,(ushort)destination_address << 8);
   local_12 = CONCAT31(local_12._0_3_,j1939_engine_node_source_address);
   local_e = 8;
-  local_c = &uStack_1c;
-  uStack_1c = 0x11;
+  local_c = &bStack_1c;
+  bStack_1c = 0x11;
   bStack_1b = packet_count;
   bStack_1a = next_packet_number;
   uStack_19 = 0xff;
@@ -24262,7 +24560,7 @@ byte vp44MessageTransmitter
   local_1e = (undefined1)(pgn >> 8);
   uStack_16 = local_1e;
   local_15 = 0;
-  cm550_sendCanSingleFrame(local_12);
+  cm550_sendCanSingleFrame(local_12,8,local_c,&local_13);
   return local_13;
 }
 
@@ -24582,7 +24880,9 @@ void cm550_unknownMessageHandler(uint param_1)
     *(int *)(&DAT_00801252 + iVar3) = *(int *)(&DAT_00801252 + iVar3) + 1;
     *puVar7 = *puVar1;
   }
-  cm550_sendCanSingleFrame(*(undefined4 *)(&DAT_0080125c + iVar3));
+  cm550_sendCanSingleFrame
+            (*(dword *)(&DAT_0080125c + iVar3),*(word *)(&DAT_00801260 + iVar3),
+             *(byte **)(&DAT_00801262 + iVar3),&DAT_00801251 + iVar3);
   if ((&DAT_00801251)[iVar3] != '\0') {
     **(undefined1 **)(&DAT_00801256 + iVar3) = (&DAT_00801251)[iVar3];
     *pcVar6 = '\0';
@@ -24646,7 +24946,7 @@ void cm550_diagnosticMessageProcessor(void)
     }
     if (bVar3 == multiframe_tx_total_packets) {
       bVar2 = (DAT_008012a3 - cVar4) + 1;
-      _DAT_008012b2 = (ushort)bVar2;
+      _DAT_008012b2 = (word)bVar2;
     }
     else {
       bVar2 = 8;
@@ -24657,7 +24957,8 @@ void cm550_diagnosticMessageProcessor(void)
       *pbVar7 = *pbVar8;
       pbVar8 = pbVar8 + 1;
     }
-    cm550_sendCanSingleFrame(_DAT_008012ae);
+    cm550_sendCanSingleFrame
+              (_DAT_008012ae,_DAT_008012b2,_multiframe_tx_buffer_ptr,(byte *)&DAT_008012a1);
     if (DAT_008012a1 != '\0') break;
     *_multiframe_tx_status_ptr = 0x13;
     bVar5 = bVar5 + 1;
@@ -24750,8 +25051,8 @@ void vp44DiagnosticBufferPointersInit(void)
   _DAT_00801282 = 0x801292;
   _multiframe_tx_buffer_ptr = 0x8012bc;
   _DAT_008012d2 = 0x8012de;
-  registerJ1939ReceiveHandler();
-  registerJ1939ReceiveHandler();
+  registerJ1939ReceiveHandler(0xec00,vp44CanMessageDispatcher);
+  registerJ1939ReceiveHandler(0xeb00,vp44MultiFrameResponseHandler);
   return;
 }
 
@@ -27973,12 +28274,12 @@ uint mc68k_runSerialEepromDriverStep(void)
     if (wVar2 == 5) {
       wVar2 = QSM_RR3;
       if ((wVar2 & 1) == 0) {
-        if (circular_buffer_byte_count == 0) {
+        if (eeprom_write_queue_count == 0) {
           eeprom_byte_write_state = EEPROM_BYTE_WRITE_STATE_IDLE;
-          eeprom_mirror_load_offset = circular_buffer_last_address_offset;
+          eeprom_mirror_load_offset = eeprom_write_queue_last_request_offset;
           QSM_TR2 = 3;
           QSM_CR2 = 0xbd;
-          QSM_TR3 = circular_buffer_last_address_offset;
+          QSM_TR3 = eeprom_write_queue_last_request_offset;
           QSM_CR3 = 0xfd;
         }
         else {
@@ -28013,7 +28314,7 @@ uint mc68k_runSerialEepromDriverStep(void)
       pwVar5 = pwVar5 + 1;
       bVar4 = bVar4 + 1;
     } while (bVar4 < 0x10);
-    if (circular_buffer_byte_count == 0) {
+    if (eeprom_write_queue_count == 0) {
       QSM_TR3 = eeprom_mirror_load_offset;
       QSM_CR3 = 0xfd;
     }
@@ -28027,14 +28328,14 @@ uint mc68k_runSerialEepromDriverStep(void)
     QSM_CR2 = 0x3d;
     QSM_TR3 = 2;
     QSM_CR3 = 0xbd;
-    QSM_TR4 = *(word *)((short)eeprom_circular_buffer_read_index * 2 + 0x80bda8);
+    QSM_TR4 = eeprom_write_queue_addresses[(short)eeprom_write_queue_read_index];
     QSM_CR4 = 0xfd;
-    QSM_TR5 = (ushort)*(byte *)((short)eeprom_circular_buffer_read_index + 0x80c7a8);
+    QSM_TR5 = (ushort)eeprom_write_queue_data_bytes[(short)eeprom_write_queue_read_index];
     QSM_CR5 = 0x3d;
     eeprom_byte_write_state = EEPROM_BYTE_WRITE_STATE_WAIT_FOR_COMPLETION;
-    uVar1 = eeprom_circular_buffer_read_index + 1;
-    circular_buffer_byte_count = circular_buffer_byte_count - 1;
-    eeprom_circular_buffer_read_index = uVar1 % 0x500;
+    uVar1 = eeprom_write_queue_read_index + 1;
+    eeprom_write_queue_count = eeprom_write_queue_count - 1;
+    eeprom_write_queue_read_index = uVar1 % 0x500;
     uVar3 = uVar1 / 0x500;
   }
   return uVar3;
@@ -29385,7 +29686,7 @@ void restartOnKeyOnDuringPowerDown(void)
   CS2_WATCHDOG_SERVICE = 0xaa;
   cm550_initializeDiscreteInputs();
   local_6 = completed_power_down_count_cal + 1;
-  cm550_parameterCircularBufferWrite(0x803fec,(byte *)&local_6,2);
+  cm550_queueEepromMirrorByteWrites(0x803fec,(byte *)&local_6,2);
   uVar2 = 0;
   while ((uVar2 < 1000 && (completed_power_down_count_cal != local_6))) {
     cm550_emptyPlaceholderFunction();
@@ -29393,7 +29694,7 @@ void restartOnKeyOnDuringPowerDown(void)
     uVar2 = uVar2 + 1;
   }
   local_6 = incomplete_power_down_count_cal + completed_power_down_count_cal;
-  cm550_parameterCircularBufferWrite(0x803fe2,(byte *)&local_6,2);
+  cm550_queueEepromMirrorByteWrites(0x803fe2,(byte *)&local_6,2);
   uVar2 = 0;
   while ((uVar2 < 1000 && (power_cycle_sequence_number_cal != local_6))) {
     cm550_emptyPlaceholderFunction();
@@ -29422,13 +29723,13 @@ void restartOnKeyOnDuringPowerDown(void)
 //
 
 /* Power-down EEPROM save, called by mc68k_runPowerDownSequence right after its 1000-pass queue
-   drain. From 0x804156 it queues 16-byte chunks through cm550_parameterCircularBufferWrite. The
-   last partial chunk gets (0x804f92 - pointer) / 2 bytes, so 6 bytes go from 0x804f86 and
+   drain. From 0x804156 it queues 16-byte chunks through cm550_queueEepromMirrorByteWrites. The last
+   partial chunk gets (0x804f92 - pointer) / 2 bytes, so 6 bytes go from 0x804f86 and
    0x804f8c-0x804f91 are never queued. A refused chunk is retried and two refusals in a row end the
    save. The refusal count (d4) is never cleared on entry: it is the caller's drain pass count, so
    after a drain of 2 or more passes the loop test fails at once and nothing is queued. After each
    chunk it waits up to 16000 x 500 ticks (mc68k_delayTimeBaseTicksWithWatchdogService) for
-   cm550_circularBufferEmptyCheck. If bit 0 of the chip select 2 device input 0xffd000 stays set for
+   cm550_isEepromWriteQueueEmpty. If bit 0 of the chip select 2 device input 0xffd000 stays set for
    more than 80 consecutive waits it calls restartOnKeyOnDuringPowerDown. Counterpart of CM848
    cm848_saveEepromForPowerDown: the same place in the sequence and the same 80-sample key test, but
    CM848 uses a mirror save state machine and adds checksum and sequence writes. (was
@@ -29437,53 +29738,52 @@ void restartOnKeyOnDuringPowerDown(void)
 void mc68k_saveEepromForPowerDown(void)
 
 {
-  byte bVar1;
-  uint uVar2;
-  char cVar3;
+  uint uVar1;
+  byte bVar2;
   word byte_count;
+  ushort uVar3;
   ushort uVar4;
-  ushort uVar5;
   ushort unaff_D4w;
-  uint source_ptr;
+  uint source;
   
-  uVar5 = 0;
-  source_ptr = 0x804156;
+  uVar4 = 0;
+  source = 0x804156;
   do {
-    if ((0x804f91 < source_ptr) || (1 < unaff_D4w)) {
+    if ((0x804f91 < source) || (1 < unaff_D4w)) {
       return;
     }
-    if (source_ptr + 0x10 < 0x804f93) {
+    if (source + 0x10 < 0x804f93) {
       byte_count = 0x10;
     }
     else {
-      uVar2 = source_ptr;
-      if ((int)source_ptr < 0) {
-        uVar2 = source_ptr + 1;
+      uVar1 = source;
+      if ((int)source < 0) {
+        uVar1 = source + 1;
       }
-      byte_count = 0x27c9 - (short)((int)uVar2 >> 1);
+      byte_count = 0x27c9 - (short)((int)uVar1 >> 1);
     }
-    cVar3 = cm550_parameterCircularBufferWrite(source_ptr,(byte *)source_ptr,byte_count);
-    if (cVar3 == '\0') {
-      source_ptr = source_ptr + 0x10;
+    bVar2 = cm550_queueEepromMirrorByteWrites(source,(byte *)source,byte_count);
+    if (bVar2 == 0) {
+      source = source + 0x10;
       unaff_D4w = 0;
     }
     else {
       unaff_D4w = unaff_D4w + 1;
     }
-    uVar4 = 0;
-    while (uVar4 < 16000) {
-      cVar3 = cm550_circularBufferEmptyCheck();
-      if (cVar3 != '\0') break;
+    uVar3 = 0;
+    while (uVar3 < 16000) {
+      bVar2 = cm550_isEepromWriteQueueEmpty();
+      if (bVar2 != 0) break;
       cm550_emptyPlaceholderFunction();
       mc68k_delayTimeBaseTicksWithWatchdogService(500);
-      uVar4 = uVar4 + 1;
-      bVar1 = DAT_00ffd000;
-      if ((bVar1 & 1) == 0) {
-        uVar5 = 0;
+      uVar3 = uVar3 + 1;
+      bVar2 = DAT_00ffd000;
+      if ((bVar2 & 1) == 0) {
+        uVar4 = 0;
       }
       else {
-        uVar5 = uVar5 + 1;
-        if (0x50 < uVar5) {
+        uVar4 = uVar4 + 1;
+        if (0x50 < uVar4) {
           restartOnKeyOnDuringPowerDown();
         }
       }
@@ -29601,7 +29901,7 @@ void cm550_savePowerDownDataToFlashBank(byte flash_bank_number)
     restartOnKeyOnDuringPowerDown();
   }
   if (power_cycle_sequence_number_cal != completed_power_down_sequence_number_cal) {
-    cm550_parameterCircularBufferWrite(0x803fe4,(byte *)&power_cycle_sequence_number_cal,2);
+    cm550_queueEepromMirrorByteWrites(0x803fe4,(byte *)&power_cycle_sequence_number_cal,2);
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
     CS2_WATCHDOG_SERVICE = 0x55;
@@ -29653,7 +29953,7 @@ void mc68k_runPowerDownSequence(void)
 {
   word wVar1;
   word wVar2;
-  char cVar3;
+  byte bVar3;
   ushort uVar4;
   ushort uVar5;
   undefined2 *puVar6;
@@ -29661,9 +29961,9 @@ void mc68k_runPowerDownSequence(void)
   char cVar8;
   char cVar9;
   char cVar10;
-  byte bVar11;
+  char cVar11;
   dword *pdVar12;
-  dword *source_ptr;
+  dword *source;
   dword local_a;
   word local_6;
   
@@ -29676,7 +29976,7 @@ void mc68k_runPowerDownSequence(void)
   ram_refresh_enable = RAM_REFRESH_ENABLED;
   run_location = RUN_LOCATION_NORMAL;
   uVar5 = 0;
-  while ((uVar5 < 1000 && (cVar3 = cm550_circularBufferEmptyCheck(), cVar3 == '\0'))) {
+  while ((uVar5 < 1000 && (bVar3 = cm550_isEepromWriteQueueEmpty(), bVar3 == 0))) {
     cm550_emptyPlaceholderFunction();
     mc68k_delayTimeBaseTicksWithWatchdogService(500);
     uVar5 = uVar5 + 1;
@@ -29704,21 +30004,21 @@ void mc68k_runPowerDownSequence(void)
   SIM_SWSR = 0xaa;
   CS2_WATCHDOG_SERVICE = 0x55;
   CS2_WATCHDOG_SERVICE = 0xaa;
-  cVar3 = parameter_block_uploaded == 0;
+  cVar11 = parameter_block_uploaded == 0;
   if (parameter_block_uploaded == 1) {
     cVar8 = '\0';
     cVar9 = '\0';
     cVar10 = '\0';
-    bVar11 = 0;
+    bVar3 = 0;
     cm550_savePowerDownDataToFlashBank(2);
   }
   else {
-    cVar3 = parameter_block_uploaded < 2;
+    cVar11 = parameter_block_uploaded < 2;
     if (parameter_block_uploaded == 2) {
       cVar8 = '\0';
       cVar9 = '\0';
       cVar10 = '\0';
-      bVar11 = 0;
+      bVar3 = 0;
       cm550_savePowerDownDataToFlashBank(1);
     }
     else {
@@ -29726,22 +30026,22 @@ void mc68k_runPowerDownSequence(void)
       cVar8 = '\0';
       cVar9 = '\0';
       cVar10 = '\0';
-      bVar11 = 0;
+      bVar3 = 0;
       cm550_savePowerDownDataToFlashBank(2);
     }
   }
-  bVar11 = cVar3 << 4 | cVar8 << 3 | cVar9 << 2 | cVar10 << 1 | bVar11;
+  bVar3 = cVar11 << 4 | cVar8 << 3 | cVar9 << 2 | cVar10 << 1 | bVar3;
   local_a = key_on_hour_meter;
-  source_ptr = &local_a;
+  source = &local_a;
   pdVar12 = &key_on_hour_meter_cal;
-  cm550_parameterCircularBufferWrite(0x803b3e,(byte *)source_ptr,4);
+  cm550_queueEepromMirrorByteWrites(0x803b3e,(byte *)source,4);
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
   CS2_WATCHDOG_SERVICE = 0x55;
   CS2_WATCHDOG_SERVICE = 0xaa;
   uVar5 = 0;
   while ((uVar5 < 1000 && (key_on_hour_meter_cal != local_a))) {
-    cm550_emptyPlaceholderFunction(pdVar12,(short)source_ptr,bVar11);
+    cm550_emptyPlaceholderFunction(pdVar12,(short)source,bVar3);
     uVar4 = 0;
     do {
       SIM_SWSR = 0x55;
@@ -29753,7 +30053,7 @@ void mc68k_runPowerDownSequence(void)
     uVar5 = uVar5 + 1;
   }
   local_a = engine_hour_meter;
-  cm550_parameterCircularBufferWrite(0x803b50,(byte *)&local_a,4);
+  cm550_queueEepromMirrorByteWrites(0x803b50,(byte *)&local_a,4);
   SIM_SWSR = 0x55;
   SIM_SWSR = 0xaa;
   CS2_WATCHDOG_SERVICE = 0x55;
@@ -29772,7 +30072,7 @@ void mc68k_runPowerDownSequence(void)
     uVar5 = uVar5 + 1;
   }
   local_6 = 0;
-  cm550_parameterCircularBufferWrite(0x803fda,(byte *)&local_6,2);
+  cm550_queueEepromMirrorByteWrites(0x803fda,(byte *)&local_6,2);
   uVar5 = 0;
   while ((uVar5 < 1000 && (power_down_left_ecm_powered_flag_cal != local_6))) {
     cm550_emptyPlaceholderFunction();
@@ -29849,21 +30149,21 @@ void mc68k_runPowerDownSequence(void)
   SIM_SWSR = 0xaa;
   CS2_WATCHDOG_SERVICE = 0x55;
   CS2_WATCHDOG_SERVICE = 0xaa;
-  bVar11 = 0;
-  while (bVar11 < 4) {
+  bVar3 = 0;
+  while (bVar3 < 4) {
     SIM_SWSR = 0x55;
     SIM_SWSR = 0xaa;
     CS2_WATCHDOG_SERVICE = 0x55;
     CS2_WATCHDOG_SERVICE = 0xaa;
     mc68k_sampleAndDebounceDiscreteInputs();
     mc68k_delayTimeBaseTicksWithWatchdogService(10000);
-    bVar11 = bVar11 + 1;
+    bVar3 = bVar3 + 1;
   }
   if ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) != 0) {
     restartOnKeyOnDuringPowerDown();
   }
   local_6 = 1;
-  cm550_parameterCircularBufferWrite(0x803fda,(byte *)&local_6,2);
+  cm550_queueEepromMirrorByteWrites(0x803fda,(byte *)&local_6,2);
   uVar5 = 0;
   while ((uVar5 < 1000 && (power_down_left_ecm_powered_flag_cal != local_6))) {
     cm550_emptyPlaceholderFunction();
@@ -31006,37 +31306,36 @@ void cm550_memoryPatchBufferInit(void)
 uint cm550_memoryPatchingSystem(void)
 
 {
-  undefined1 uVar1;
-  byte *pbVar2;
-  byte bVar3;
-  char cVar4;
+  byte bVar1;
+  byte bVar2;
+  char cVar3;
   uint in_D0;
-  word wVar6;
+  word wVar5;
+  byte bVar6;
+  uint uVar4;
   char cVar7;
-  uint uVar5;
   byte bVar8;
-  byte bVar9;
-  undefined1 *puVar10;
+  byte *pbVar9;
+  uint *puVar10;
   uint *puVar11;
-  uint *puVar12;
   
   if (number_of_entries_in_the_scratch_pad_0_10 == 0) {
     return in_D0 & 0xffffff00;
   }
   if ((not_safe_to_program_flag == 1) && (ram_refresh_enable != RAM_REFRESH_DISABLED)) {
-    puVar12 = (uint *)(&scratch_pad_directory_table +
+    puVar11 = (uint *)(&scratch_pad_directory_table +
                       (short)(((number_of_entries_in_the_scratch_pad_0_10 & 0xff) * 2 +
                               (number_of_entries_in_the_scratch_pad_0_10 & 0xff)) * 2));
     cVar7 = (char)number_of_entries_in_the_scratch_pad_0_10;
     while( true ) {
-      puVar11 = (uint *)((int)puVar12 + -6);
-      cVar4 = cVar7 + -1;
+      puVar10 = (uint *)((int)puVar11 + -6);
+      cVar3 = cVar7 + -1;
       if (cVar7 == '\0') break;
-      uVar5 = *puVar11;
-      pbVar2 = (byte *)((int)puVar12 + -1);
-      if (((0xffffff < uVar5) || ((0x806543 < uVar5 && (uVar5 < 0x806547)))) ||
-         ((puVar12 = puVar11, cVar7 = cVar4, 0x806543 < uVar5 + *pbVar2 &&
-          (uVar5 + *pbVar2 < 0x806547)))) {
+      uVar4 = *puVar10;
+      pbVar9 = (byte *)((int)puVar11 + -1);
+      if (((0xffffff < uVar4) || ((0x806543 < uVar4 && (uVar4 < 0x806547)))) ||
+         ((puVar11 = puVar10, cVar7 = cVar3, 0x806543 < uVar4 + *pbVar9 &&
+          (uVar4 + *pbVar9 < 0x806547)))) {
         cm550_memoryPatchBufferInit();
         return 7;
       }
@@ -31044,7 +31343,7 @@ uint cm550_memoryPatchingSystem(void)
   }
   if ((development_mode == DEVELOPMENT_MODE_OFF) &&
      ((flag_indicating_tool_has_updated_scratch_pad_crc_0_false_1_tru == 0 ||
-      (wVar6 = cm550_memoryPatchCrcCalculate(), wVar6 != WORD_0080de36)))) {
+      (wVar5 = cm550_memoryPatchCrcCalculate(), wVar5 != WORD_0080de36)))) {
     cm550_memoryPatchBufferInit();
     return 0x14;
   }
@@ -31053,44 +31352,44 @@ uint cm550_memoryPatchingSystem(void)
     return 4;
   }
   _scratch_pad_write_pointer = &scratch_pad_data_buffer;
-  bVar9 = 0;
-  puVar12 = (uint *)&scratch_pad_directory_table;
+  bVar8 = 0;
+  puVar11 = (uint *)&scratch_pad_directory_table;
   do {
-    if (number_of_entries_in_the_scratch_pad_0_10 <= bVar9) {
-      uVar5 = cm550_memoryPatchBufferInit();
-      return uVar5 & 0xffffff00;
+    if (number_of_entries_in_the_scratch_pad_0_10 <= bVar8) {
+      uVar4 = cm550_memoryPatchBufferInit();
+      return uVar4 & 0xffffff00;
     }
-    puVar10 = (undefined1 *)*puVar12;
-    bVar3 = *(byte *)((int)puVar12 + 5);
-    if (puVar10 < (undefined1 *)0x1000000) {
-      for (bVar8 = 0; bVar8 < bVar3; bVar8 = bVar8 + 1) {
-        if ((((undefined1 *)0x806543 < puVar10) && (puVar10 < (undefined1 *)0x806547)) &&
+    pbVar9 = (byte *)*puVar11;
+    bVar2 = *(byte *)((int)puVar11 + 5);
+    if (pbVar9 < (byte *)0x1000000) {
+      for (bVar6 = 0; bVar6 < bVar2; bVar6 = bVar6 + 1) {
+        if ((((byte *)0x806543 < pbVar9) && (pbVar9 < (byte *)0x806547)) &&
            (development_mode == DEVELOPMENT_MODE_OFF)) {
           power_down_refresh_enable = 0;
         }
-        uVar1 = *_scratch_pad_write_pointer;
+        bVar1 = *_scratch_pad_write_pointer;
         _scratch_pad_write_pointer = _scratch_pad_write_pointer + 1;
-        *puVar10 = uVar1;
-        puVar10 = puVar10 + 1;
+        *pbVar9 = bVar1;
+        pbVar9 = pbVar9 + 1;
       }
     }
     else {
       if ((ram_refresh_enable == RAM_REFRESH_ENABLED) &&
-         (cVar7 = cm550_circularBufferWrite((short)((uint)_scratch_pad_write_pointer >> 0x10),bVar3)
-         , cVar7 == '\x01')) {
+         (bVar6 = cm550_queueEepromByteWrites((word)pbVar9,_scratch_pad_write_pointer,(ushort)bVar2)
+         , bVar6 == 1)) {
         cm550_memoryPatchBufferInit();
         return 4;
       }
-      puVar10 = puVar10 + -0x7fc4f6;
-      for (bVar8 = 0; bVar8 < bVar3; bVar8 = bVar8 + 1) {
-        uVar1 = *_scratch_pad_write_pointer;
+      pbVar9 = pbVar9 + -0x7fc4f6;
+      for (bVar6 = 0; bVar6 < bVar2; bVar6 = bVar6 + 1) {
+        bVar1 = *_scratch_pad_write_pointer;
         _scratch_pad_write_pointer = _scratch_pad_write_pointer + 1;
-        *puVar10 = uVar1;
-        puVar10 = puVar10 + 1;
+        *pbVar9 = bVar1;
+        pbVar9 = pbVar9 + 1;
       }
     }
-    puVar12 = (uint *)((int)puVar12 + 6);
-    bVar9 = bVar9 + 1;
+    puVar11 = (uint *)((int)puVar11 + 6);
+    bVar8 = bVar8 + 1;
   } while( true );
 }
 
@@ -32487,6 +32786,32 @@ undefined2 cm550_parameterLookupForInsite(void)
 
 
 //
+// Function: registerJ1939DiagnosticService @ 0x0002ee62
+//
+
+/* Twin of CM848 0x220e4 registerJ1939DiagnosticService (one shared name; the CM848 row follows).
+   The same steps: it returns 1 when the count byte is 32; otherwise entry = table + count * 6,
+   count + 1, entry byte 0 = the service, entry + 2 = the handler (long), and it returns 0. (was
+   cm550_coreSystemFunction; PR #53 round 88; the twin of CM848 0x220e4: one shared name) */
+
+byte registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *handler)
+
+{
+  uint uVar1;
+  
+  if (j1939_diagnostic_handler_count == 0x20) {
+    return 1;
+  }
+  uVar1 = (uint)j1939_diagnostic_handler_count;
+  j1939_diagnostic_handler_count = j1939_diagnostic_handler_count + 1;
+  j1939_diagnostic_service_table[uVar1].service_id = service_id;
+  j1939_diagnostic_service_table[uVar1].handler = handler;
+  return 0;
+}
+
+
+
+//
 // Function: cm550_diagnosticServiceDispatcher @ 0x0002eea2
 //
 
@@ -32539,7 +32864,7 @@ LAB_0002eeee:
 void registerJ1939DiagnosticServiceDispatcher(void)
 
 {
-  registerJ1939ReceiveHandler();
+  registerJ1939ReceiveHandler(0xef00,cm550_diagnosticServiceDispatcher);
   return;
 }
 
@@ -32631,7 +32956,8 @@ void cm550_receivePgn58112Dm7CommandNonContinuouslyMonitoredTestMessage
 void registerJ1939Dm7Handler(void)
 
 {
-  registerJ1939ReceiveHandler();
+  registerJ1939ReceiveHandler
+            (0xe300,cm550_receivePgn58112Dm7CommandNonContinuouslyMonitoredTestMessage);
   return;
 }
 
@@ -32712,7 +33038,7 @@ word cm550_receivePgn61442ElectronicTransmissionController1Message(int param_1)
 void cm550_registerJ1939ElectronicTransmissionController1Handler(void)
 
 {
-  registerJ1939ReceiveHandler();
+  registerJ1939ReceiveHandler(0xf002,cm550_receivePgn61442ElectronicTransmissionController1Message);
   return;
 }
 
@@ -32991,7 +33317,7 @@ void cm550_dispatchJ1939PgnRequest(can_std_rx_desc_t *rx_msg)
 void cm550_registerJ1939PgnRequestHandlers(void)
 
 {
-  registerJ1939ReceiveHandler();
+  registerJ1939ReceiveHandler(0xea00,cm550_dispatchJ1939PgnRequest);
   initPgn65261CruiseControlSetupStruct();
   cm550_engineSerialNumberPGN_65259_Builder();
   cm550_initializePgn65253EngineHoursRevolutionsHandler();
@@ -33403,7 +33729,7 @@ void dispatchTsc1ByDestinationAddress(can_std_rx_desc_t *message)
 void registerTsc1DestinationAddressDispatcher(void)
 
 {
-  registerJ1939ReceiveHandler();
+  registerJ1939ReceiveHandler(0,dispatchTsc1ByDestinationAddress);
   return;
 }
 
@@ -33536,8 +33862,8 @@ byte validateSecurityKey(byte *auth_payload_ptr)
   dword extracted_hour_meter;
   byte extracted_key [6];
   byte hour_meter_bytes [4];
-  dword *hour_meter_copy_destination;
   bool all_keys_match;
+  dword *hour_meter_copy_destination;
   
   if (calibration_download_security_key_cal == 0xff) {
     validation_result = 0;
@@ -39091,4 +39417,4 @@ LAB_00035162:
 
 
 
-// Export complete - 713 functions processed
+// Export complete - 720 functions processed

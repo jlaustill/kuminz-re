@@ -76,9 +76,11 @@ function_address,function_name,param_index,name,type,comment
 0x0001bfa2,cm550_circularBufferPush,1,data_byte,byte,Byte value to push onto buffer
 0x0001bfde,cm550_circularBufferPop,0,buffer_ctrl,uint*,Pointer to circular buffer control structure
 0x0001bfde,cm550_circularBufferPop,1,data_out,byte*,Pointer to store popped byte value
-0x00016c3c,cm550_parameterCircularBufferWrite,0,dest_address,int,Destination EEPROM/RAM address
-0x00016c3c,cm550_parameterCircularBufferWrite,1,source_ptr,byte*,Pointer to source data
-0x00016c3c,cm550_parameterCircularBufferWrite,2,byte_count,ushort,Number of bytes to write
+0x00016c2c,cm550_isEepromWriteQueueEmpty,return,,byte,1 = the queue is empty / 0 = entries pending (moveq #1 / clr.b d0; takes no arguments) (PR #53 round 96)
+0x00016c3c,cm550_queueEepromMirrorByteWrites,return,,byte,1 = the queue cannot take byte_count more entries (nothing queued) / 0 = queued (moveq #1 / clr.b d0) (PR #53 round 96)
+0x00016c3c,cm550_queueEepromMirrorByteWrites,0,mirror_address,dword,The EEPROM mirror address of the first byte (0x803b0a = EEPROM 0): the long at +4 (was dest_address int; PR #53 round 96)
+0x00016c3c,cm550_queueEepromMirrorByteWrites,1,source,byte*,The data bytes: the long at +8 (was source_ptr; PR #53 round 96)
+0x00016c3c,cm550_queueEepromMirrorByteWrites,2,byte_count,ushort,The number of bytes: the word at +12 (PR #53 round 96)
 
 # -----------------------------------------------------------------------------
 # Flash Programming Functions
@@ -357,3 +359,32 @@ function_address,function_name,param_index,name,type,comment
 0x0001fe84,scheduleJ1939PeriodicMessage,2,interval_milliseconds,ushort,The transmit interval in ms (the word at +10): divs.l #10 into the entry's +2 as 10 ms ticks (PR #53 round 95)
 0x0001fe84,scheduleJ1939PeriodicMessage,3,first_send_offset_milliseconds,ushort,The delay of the first send in ms (the word at +12): divs.l #10 plus the queue's current tick into the entry's +4 (PR #53 round 95)
 0x0001fe84,scheduleJ1939PeriodicMessage,4,builder,void*,The message builder (the long at +14) stored at the entry's +6: cm550_runJ1939PeriodicTransmitQueues calls it when its tick comes (PR #53 round 95)
+# PR #53 round 96: seven functions whose decompile failed ('Cannot properly adjust input varnodes') until they had rows
+0x000103ba,cm550_sendCanSingleFrame,return,,void,Returns nothing: the result goes to *status (PR #53 round 96)
+0x000103ba,cm550_sendCanSingleFrame,0,can_identifier,dword,The 29-bit identifier: the long at +4 (move.l (0x8;a6) after link a6); shifted << 3 into the arbitration bytes (PR #53 round 96)
+0x000103ba,cm550_sendCanSingleFrame,1,data_length,ushort,The data byte count: the word at +8 (move.w (0xc;a6)); 0 gives status 1 (PR #53 round 96)
+0x000103ba,cm550_sendCanSingleFrame,2,data,byte*,The data bytes: the long at +10 (movea.l (0xe;a6)) (PR #53 round 96)
+0x000103ba,cm550_sendCanSingleFrame,3,status,byte*,Receives 0 sent or queued / 1 no data / 4 the transmit ring is full: the long at +14 (movea.l (0x12;a6)) (PR #53 round 96)
+0x00016cd8,cm550_queueEepromByteWrites,return,,byte,1 = the queue cannot take byte_count more entries (nothing queued) / 0 = queued (moveq #1 / clr.b d0) (PR #53 round 96)
+0x00016cd8,cm550_queueEepromByteWrites,0,eeprom_address,ushort,The EEPROM address of the first byte: the word at +4 (move.w (0x14;a7) after saving 4 registers); +1 per byte (PR #53 round 96)
+0x00016cd8,cm550_queueEepromByteWrites,1,source,byte*,The data bytes: the long at +6 (movea.l (0x16;a7)) (PR #53 round 96)
+0x00016cd8,cm550_queueEepromByteWrites,2,byte_count,ushort,The number of bytes: the word at +10 (move.w (0x1a;a7)) (PR #53 round 96)
+0x00018dae,cm550_updateEngineProtectionRestartLimitationCommands,return,,void,Returns nothing (PR #53 round 96)
+0x00018dae,cm550_updateEngineProtectionRestartLimitationCommands,0,channel_index,ushort,The engine protection channel: the word at +4 (cmpi.w #3;(0xc;a7) after saving 2 registers); only channel 3 acts (PR #53 round 96)
+0x00018dae,cm550_updateEngineProtectionRestartLimitationCommands,1,channel_state_record,void*,The channel's state record (from 0x80d0dc): the long at +6 (movea.l (0xe;a7)); words +6 and +0x16 are read (PR #53 round 96)
+0x00018dae,cm550_updateEngineProtectionRestartLimitationCommands,2,channel_settings_record,void*,The channel's settings record (from 0x807032): the long at +10 (movea.l (0x12;a7)); word +0x1e is read (PR #53 round 96)
+0x0001e0bc,cm550_transmitCanFrameOnMessageObject,return,,void,Returns nothing (PR #53 round 96)
+0x0001e0bc,cm550_transmitCanFrameOnMessageObject,0,controller_base,dword,The CAN controller's base address (0xffd800 from both callers): the long at +4 (add.l (0x8;a7) after the a2 push) (PR #53 round 96)
+0x0001e0bc,cm550_transmitCanFrameOnMessageObject,1,message_object_number,byte,The message object: the byte at +5 (move.b (0xd;a7): the low byte of the word slot at +4); x 16 from controller_base (PR #53 round 96)
+0x0001e0bc,cm550_transmitCanFrameOnMessageObject,2,frame,byte*,The 13-byte frame record (arbitration / configuration / data): the long at +6 (movea.l (0xe;a7)) (PR #53 round 96)
+0x00021272,registerJ1939ReceiveHandler,return,,byte,1 = the 16-entry table is full (moveq #1;d0) / 0 = appended (clr.b d0) (PR #53 round 96)
+0x00021272,registerJ1939ReceiveHandler,0,pgn_key,ushort,The PGN key word stored at the entry's +0: the word at +4 (move.w (0x8;a7) after the a2 push); CM848's twin names it pgn_key (PR #53 round 96)
+0x00021272,registerJ1939ReceiveHandler,1,handler,void*,The receive handler stored at the entry's +2: the long at +6 (move.l (0xa;a7)) (PR #53 round 96)
+0x00021642,writeJ1939DiagnosticMemoryByParameterId,return,,char,8 = the parameter ID is unknown (cm550_lookupParameterIdAddress failed); otherwise writeJ1939DiagnosticMemory's result (PR #53 round 96)
+0x00021642,writeJ1939DiagnosticMemoryByParameterId,0,request,int,The PGN 61184 request that goes on to writeJ1939DiagnosticMemory: the long at +4 (move.l (0x8;a6) after link a6) (PR #53 round 96)
+0x00021642,writeJ1939DiagnosticMemoryByParameterId,1,parameter_id,ushort,The e2m block ID: the word at +8 (move.w (0xc;a6)) - resolved by cm550_lookupParameterIdAddress (PR #53 round 96)
+0x00021642,writeJ1939DiagnosticMemoryByParameterId,2,offset,dword,Added to the ID's address: the long at +10 (adda.l (0xe;a6)) (PR #53 round 96)
+0x00021642,writeJ1939DiagnosticMemoryByParameterId,3,length,dword,The bytes to write: the long at +14 (move.l (0x12;a6)) (PR #53 round 96)
+0x0002ee62,registerJ1939DiagnosticService,return,,byte,1 = the 32-entry table is full / 0 = registered (clr.b d0) (PR #53 round 96)
+0x0002ee62,registerJ1939DiagnosticService,0,service_id,J1939_DIAGNOSTIC_SERVICE,The PGN 61184 service byte: the byte at +5 (move.b (0x9;a7) after the a2 push: the low byte of the word slot at +4; callers push it with move.w) (PR #53 round 96)
+0x0002ee62,registerJ1939DiagnosticService,1,handler,void*,The service handler stored at the entry's +2: the long at +6 (move.l (0xa;a7)) (PR #53 round 96)
