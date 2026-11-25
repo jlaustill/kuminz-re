@@ -158,7 +158,7 @@ typedef enum {
     FUELING_STATE_COMBUSTION_OXYGEN_LIMIT = 58,  /* injection_quantity_combustion_reference_source_code (cm848_calculateCombustionFuelReference): injection_quantity_oxygen_limit - e2m label OFCDERAT (CHR_CC_11.45.01.07 0x3A) */
     FUELING_STATE_NET_TORQUE = 59,  /* fuel_demand_minimum_tracked_state (cm848_applyNetTorqueFuelLimit): net_torque_fuel_limit - a rate-limited engine speed fuel curve from the alpha / chi map blend of net_torque_fuel_limit_grid (cm848_calculateNetTorqueFuelLimit) while algorithm_enable_flags_13_cal bit 2 is set - e2m label NETTORQ (CHR_CC_11.45.01.07 0x3B) */
     FUELING_STATE_RAIL_PRESSURE_SHORTFALL_LIMIT = 61,  /* torque_derate_fuel_source_code (cm848_limitFuelQuantityOnRailPressureShortfall) - e2m label LOFPRDER (CHR_CC_11.45.01.07 0x3D) */
-    FUELING_STATE_FUEL_PRESSURE_GOVERNOR_FAULT_BLEND = 62  /* torque_derate_fuel_source_code (cm848_applyFuelPressureGovernorFaultBlend while safety_fuel_blend_enable is set): injection_quantity_combustion_chi_maximum - blended toward an engine speed table limit while fault 57 / 58 / 60 (P1221 / P1222 / P1223 - the fuel pressure governor plausibility checks) or 59 is set. RAM dump: 62 */
+    FUELING_STATE_FUEL_PRESSURE_GOVERNOR_FAULT_BLEND = 62  /* torque_derate_fuel_source_code (cm848_applyFuelPressureGovernorFaultBlend while fuel_pressure_governor_fault_blend_enable is set): injection_quantity_combustion_chi_maximum - blended toward an engine speed table limit while fault 57 / 58 / 60 (P1221 / P1222 / P1223 - the fuel pressure governor plausibility checks) or 59 is set. RAM dump: 62 */
 } FUELING_STATE;
 
 typedef enum {
@@ -1277,6 +1277,11 @@ typedef enum {
     ALTERNATOR_FIELD_LOAD_RESPONSE_HOLD = 1,  /* e2m 1=HOLD (PR #53 round 52) */
     ALTERNATOR_FIELD_LOAD_RESPONSE_RECOVERY = 2  /* e2m 2=RECOVERY (PR #53 round 52) */
 } ALTERNATOR_FIELD_LOAD_RESPONSE_STAGE;
+
+typedef enum {
+    J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE = 0,  /* Queue 0, the engine node's periodic broadcasts: 20 entries of j1939_periodic_transmit_entry_t (CM550 j1939_periodic_queue0_entries 0x80096e / CM848 0x3fd2e2), run while datalink_broadcast_enable_flags bit 2 (e2m JCEGBCEA, J1939-71 engine broadcast) is set (CM848 also needs j1939_dm13_broadcast_enable_flags bit 2). 17 of the 19 start-up calls of scheduleJ1939PeriodicMessage in each firmware use it (PGN 65265 / 61444 / 61443 ...). The type of its queue_index parameter (4 bytes). (PR #53 round 95) (PR #53 round 95) */
+    J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER = 1  /* Queue 1: the retarder node's periodic broadcasts (CM550 j1939_periodic_queue1_entries 0x800a36 / CM848 0x3fd3aa; 10 entries), sent while the retarder broadcast enable bit (e2m JCRDBCEA) is set: PGN 61440 ERC1 and 65249 retarder configuration. (PR #53 round 95) */
+} J1939_PERIODIC_TRANSMIT_QUEUE;
 
 /* ---- Structures ---- */
 

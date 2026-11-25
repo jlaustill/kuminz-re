@@ -628,3 +628,12 @@ function_address,function_name,param_index,name,type,comment
 0x0050d784,lookupApplicationMemoryRegionType,1,range_length,int,Its length in bytes - not 'length': the callers' own length made Ghidra name their temps length_00 (PR #53 round 71)
 0x00005400,cm848_writeBootDiagnosticMemory,return,,byte,The result - including the region type when it is above EEPROM (the asm returns it at 0x5710); a byte so the region codes do not name the result (PR #53 round 71)
 0x0050af58,writeJ1939DiagnosticMemory,return,,char,The result - including the region type for Bank 2 / UNMAPPED / REFUSED; a char so the region codes do not name the result (PR #53 round 71)
+
+# scheduleJ1939PeriodicMessage (PR #53 round 95)
+0x00538c8c,scheduleJ1939PeriodicMessage,return,,byte,1 when the queue is full (li r3 1) / else 0; no caller reads it (PR #53 round 95)
+0x00538c8c,scheduleJ1939PeriodicMessage,0,queue_index,J1939_PERIODIC_TRANSMIT_QUEUE,The queue (r3; cmpwi r3 0): J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE = queue 0 (the engine node's 20 entries) / J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER = queue 1 (the retarder node's 10 entries); any value other than 0 picks queue 1 (PR #53 round 95)
+0x00538c8c,scheduleJ1939PeriodicMessage,1,pgn_key,ushort,The PGN key (r4) stored with sth at the entry's +0 (PR #53 round 95)
+0x00538c8c,scheduleJ1939PeriodicMessage,2,interval_milliseconds,int,The transmit interval in ms (r5): divw by 10 into the entry's +2 (a full 32-bit divide) (PR #53 round 95)
+0x00538c8c,scheduleJ1939PeriodicMessage,3,first_send_offset_milliseconds,int,The delay of the first send in ms (r6): divw by 10 plus the queue's current tick into the entry's +4 (PR #53 round 95)
+0x00538c8c,scheduleJ1939PeriodicMessage,4,builder,void*,The message builder (r7) stored with stw at the entry's +6: the periodic transmit code calls it when its tick comes (PR #53 round 95)
+0x000221f0,cm848_initJ1939DiagnosticServiceHandler,return,,void,explicit void(void): the body only registers the PGN 61184 receive handler and reads no register - clears the phantom argument the last scheduleJ1939PeriodicMessage call's byte return passed it (PR #53 round 95)

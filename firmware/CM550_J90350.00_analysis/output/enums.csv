@@ -909,3 +909,13 @@ IDLE_SHUTDOWN_STATE,5,IDLE_SHUTDOWN_STATE_SHUTDOWN,"The idle shutdown has shut t
 EEPROM_BYTE_WRITE_STATE,0,EEPROM_BYTE_WRITE_STATE_IDLE,"No write in progress: the driver step stores the words read into the EEPROM mirror and queues the next read; a queued write takes it to SEND_WRITE. (new enum, size 4, type of eeprom_byte_write_state) (PR #53 round 94)",4
 EEPROM_BYTE_WRITE_STATE,1,EEPROM_BYTE_WRITE_STATE_SEND_WRITE,Send the next queued byte write: write enable (command 6) and write (command 2) with the queue entry's address and data byte; then WAIT_FOR_COMPLETION. (PR #53 round 94),4
 EEPROM_BYTE_WRITE_STATE,2,EEPROM_BYTE_WRITE_STATE_WAIT_FOR_COMPLETION,"A write was sent: read the status register (command 5) each pass until the write-in-progress bit is clear, then SEND_WRITE when more is queued, else IDLE with a READ at the saved offset. (PR #53 round 94)",4
+
+# TRIP_INFORMATION_ENGINE_STATE: a new enum of batch N1 (PR #53 round 95)
+TRIP_INFORMATION_ENGINE_STATE,0,TRIP_INFORMATION_ENGINE_STATE_ENGINE_OFF,Engine speed 0: no trip accumulation (Calterm TIEGST text ENG_OFF) (PR #53 round 95),2
+TRIP_INFORMATION_ENGINE_STATE,1,TRIP_INFORMATION_ENGINE_STATE_IDLE,"Idle: vehicle speed 0 with a valid speed sensor, or the low speed governor without one; counts idle time and idle fuel (TIEGST text IDL...) (PR #53 round 95)",2
+TRIP_INFORMATION_ENGINE_STATE,2,TRIP_INFORMATION_ENGINE_STATE_POWER_TAKE_OFF,The power take-off governor is active; counts power take-off time and fuel (PR #53 round 95),2
+TRIP_INFORMATION_ENGINE_STATE,3,TRIP_INFORMATION_ENGINE_STATE_DRIVING,"Engine running, not at idle and no power take-off: counts the drive fuel (TIT3VSFU) (PR #53 round 95)",2
+
+# J1939_PERIODIC_TRANSMIT_QUEUE: a new enum of batch N3 (PR #53 round 95)
+J1939_PERIODIC_TRANSMIT_QUEUE,0,J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,"Queue 0, the engine node's periodic broadcasts: 20 entries of j1939_periodic_transmit_entry_t (CM550 j1939_periodic_queue0_entries 0x80096e / CM848 0x3fd2e2), run while datalink_broadcast_enable_flags bit 2 (e2m JCEGBCEA, J1939-71 engine broadcast) is set (CM848 also needs j1939_dm13_broadcast_enable_flags bit 2). 17 of the 19 start-up calls of scheduleJ1939PeriodicMessage in each firmware use it (PGN 65265 / 61444 / 61443 ...). The type of its queue_index parameter (4 bytes). (PR #53 round 95) (PR #53 round 95)",4
+J1939_PERIODIC_TRANSMIT_QUEUE,1,J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER,"Queue 1: the retarder node's periodic broadcasts (CM550 j1939_periodic_queue1_entries 0x800a36 / CM848 0x3fd3aa; 10 entries), sent while the retarder broadcast enable bit (e2m JCRDBCEA) is set: PGN 61440 ERC1 and 65249 retarder configuration. (PR #53 round 95)",4

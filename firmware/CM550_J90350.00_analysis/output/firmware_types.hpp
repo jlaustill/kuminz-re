@@ -1118,6 +1118,18 @@ typedef enum {
     EEPROM_BYTE_WRITE_STATE_WAIT_FOR_COMPLETION = 2  /* A write was sent: read the status register (command 5) each pass until the write-in-progress bit is clear, then SEND_WRITE when more is queued, else IDLE with a READ at the saved offset. (PR #53 round 94) */
 } EEPROM_BYTE_WRITE_STATE;
 
+typedef enum {
+    TRIP_INFORMATION_ENGINE_STATE_ENGINE_OFF = 0,  /* Engine speed 0: no trip accumulation (Calterm TIEGST text ENG_OFF) (PR #53 round 95) */
+    TRIP_INFORMATION_ENGINE_STATE_IDLE = 1,  /* Idle: vehicle speed 0 with a valid speed sensor, or the low speed governor without one; counts idle time and idle fuel (TIEGST text IDL...) (PR #53 round 95) */
+    TRIP_INFORMATION_ENGINE_STATE_POWER_TAKE_OFF = 2,  /* The power take-off governor is active; counts power take-off time and fuel (PR #53 round 95) */
+    TRIP_INFORMATION_ENGINE_STATE_DRIVING = 3  /* Engine running, not at idle and no power take-off: counts the drive fuel (TIT3VSFU) (PR #53 round 95) */
+} TRIP_INFORMATION_ENGINE_STATE;
+
+typedef enum {
+    J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE = 0,  /* Queue 0, the engine node's periodic broadcasts: 20 entries of j1939_periodic_transmit_entry_t (CM550 j1939_periodic_queue0_entries 0x80096e / CM848 0x3fd2e2), run while datalink_broadcast_enable_flags bit 2 (e2m JCEGBCEA, J1939-71 engine broadcast) is set (CM848 also needs j1939_dm13_broadcast_enable_flags bit 2). 17 of the 19 start-up calls of scheduleJ1939PeriodicMessage in each firmware use it (PGN 65265 / 61444 / 61443 ...). The type of its queue_index parameter (4 bytes). (PR #53 round 95) (PR #53 round 95) */
+    J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER = 1  /* Queue 1: the retarder node's periodic broadcasts (CM550 j1939_periodic_queue1_entries 0x800a36 / CM848 0x3fd3aa; 10 entries), sent while the retarder broadcast enable bit (e2m JCRDBCEA) is set: PGN 61440 ERC1 and 65249 retarder configuration. (PR #53 round 95) */
+} J1939_PERIODIC_TRANSMIT_QUEUE;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_msg_hdr_t j1939_msg_hdr_t;
@@ -1126,7 +1138,6 @@ typedef struct engine_overspeed_event_t engine_overspeed_event_t;
 typedef struct j1939_diagnostic_service_entry_t j1939_diagnostic_service_entry_t;
 typedef struct can_std_rx_desc_t can_std_rx_desc_t;
 typedef struct param_lookup_args_t param_lookup_args_t;
-typedef struct table_interp_args_t table_interp_args_t;
 typedef struct dma_descriptor_t dma_descriptor_t;
 typedef struct memory_operation_request_t memory_operation_request_t;
 typedef struct q16_fixed_point_t q16_fixed_point_t;
@@ -1197,6 +1208,9 @@ typedef struct j1939_periodic_transmit_entry_t j1939_periodic_transmit_entry_t;
 typedef struct engine_tsc1_ignored_request_t engine_tsc1_ignored_request_t;
 typedef struct cm550_retarder_tsc1_ignored_request_t cm550_retarder_tsc1_ignored_request_t;
 typedef struct table_lookup_2d_arguments_t table_lookup_2d_arguments_t;
+typedef struct table_lookup_1d_arguments_t table_lookup_1d_arguments_t;
+typedef struct cm550_j1939_powertrain_messages_received_t cm550_j1939_powertrain_messages_received_t;
+typedef struct trending_sample_record_t trending_sample_record_t;
 
 struct j1939_msg_hdr_t {
     uint32_t can_id;  /* The CAN identifier: priority / PGN / source address (was j1939_header_t.id; CM848's type name; PR #53 round 88) */
@@ -1231,13 +1245,6 @@ struct param_lookup_args_t {
     uint32_t calculated_block;  /* Block x 256 x 4 calculation result */
     uint16_t offset;  /* Parameter offset within block */
     uint16_t result_value;  /* Retrieved parameter value (capped at 32000) */
-};
-
-struct table_interp_args_t {
-    uint16_t current_index;  /* Current interpolation index into table */
-    uint32_t x_axis_ptr;  /* Pointer to X-axis table (input values) */
-    uint16_t input_value;  /* Input value for table lookup */
-    uint32_t y_axis_ptr;  /* Pointer to Y-axis table (output values) */
 };
 
 struct dma_descriptor_t {
@@ -1575,7 +1582,7 @@ struct parameter_id_table_entry_t {
 struct fault_count_record_t {
     uint32_t status_change_time;  /* +0: key_on_hour_meter (0.2 s counts) when the fault last became active (status 3) or inactive (status 2) - cm550_processFaultScanGroup stores it (move.l at 0x14972 / 0x14bd0). The first countdown step waits until key_on_hour_meter minus it reaches the mode's elapsed time before countdown (e2m DGnnELTM at 0x80654c + 8 x mode); cm550_findOldestFreezeFrameEntryByFaultStatus picks the snapshot slot whose fault has the smallest one (cmp.l at 0x146fa); cm550_resetFaultStatus zeroes it. Unsigned (sub.l then cmp.l / bls) */
     uint32_t last_countdown_time;  /* +4: key_on_hour_meter at the last countdown step (move.l at 0x145bc); 0 until the first step - the activation (clr.l at 0x14988) and cm550_resetFaultStatus (clr.l at 0x2fe0e) zero it. While it is not 0 each step waits until key_on_hour_meter minus it reaches the mode's count down rate (e2m DGnnCUDN at 0x806550 + 8 x mode). Unsigned (sub.l then cmp.l / bhi) */
-    uint8_t status;  /* +8: bit 0 = active / bit 1 = given a snapshot slot in fault_freeze_frame_entries_cal[0].fault_code_index. cm550_processFaultScanGroup writes 3 on activation (after cm550_assignFaultFreezeFrameEntry assigns the slot) and 2 on deactivation (whatever bit 1 was - in the RAM dump fault 70 is 2 and holds no slot); the registrar writes 0 (from 2) or 1 (from 3) to the oldest fault whose slot it hands to a new fault; cm550_resetFaultStatus releases the slot when the status is 2 and writes 0. Readers test bit 0 (btst #0 in the countdown) or group 1 / 3 against 0 / 2 (cm550_FUN_000315be / cm550_evaluateDataloggerTrigger) */
+    uint8_t status;  /* +8: bit 0 = active / bit 1 = given a snapshot slot in fault_freeze_frame_entries_cal[0].fault_code_index. cm550_processFaultScanGroup writes 3 on activation (after cm550_assignFaultFreezeFrameEntry assigns the slot) and 2 on deactivation (whatever bit 1 was - in the RAM dump fault 70 is 2 and holds no slot); the registrar writes 0 (from 2) or 1 (from 3) to the oldest fault whose slot it hands to a new fault; cm550_resetFaultStatus releases the slot when the status is 2 and writes 0. Readers test bit 0 (btst #0 in the countdown) or group 1 / 3 against 0 / 2 (cm550_runTrendingIntervalAndStoreSamples / cm550_evaluateDataloggerTrigger) */
     uint8_t occurrence_count;  /* +9: times the fault became active: +1 on each new fault bit mapped to it up to 255 (cmpi.b #0xff / bcc at 0x1491e) and -1 per countdown step (subq.b at 0x145d4); at 0 the record is cleared and the fault leaves previously_active_dtc_list. DM1 / DM2 send it capped at 127 (cmpi.b #0x7f / bls) and the InSite fault list (J1587 PID 194 layout) sends it whole; cm550_insitePidDtcHandler skips a fault whose count is 0. Unsigned */
 };
 
@@ -1688,7 +1695,7 @@ struct cm550_algorithm_enable_flags_3_t {
     uint16_t cruise_control_enable : 1;  /* bit 6: CRAGEN 'BIT 6 OF 0-15. STATUS INDICATOR WHICH ENABLES/DISABL(ES CRUISE CONTROL)'; no reader in the dumped ROM; set */
     uint16_t road_speed_governor_enable : 1;  /* bit 7: RSAGEN 'ENABLE/DISABLE ROAD SPEED GOVERNOR FOR ENGINEERING USE' (bit 7); no reader in the dumped ROM; set */
     uint16_t gear_down_protection_enable : 1;  /* bit 8: GRGDPNEN 'GEAR DOWN PROTECTION ENABLE' (bit 8 of 0-15; another e2m: Gear_Down_Protection_Enable S mask 0x100); no reader in the dumped ROM; CM848 reads this bit below top gear (no road speed governor droops there) and its field takes the same name in this change; clear */
-    uint16_t trip_information_enable : 1;  /* bit 9: TIEN 'BIT 9 OF 0-15 IN WORD 3. TRIP INFO SYSTEM ENABLED = 1' (another e2m: Fuel_Log_Enable S mask 0x200); andi 0x200 at 0x306e0 (cm550_FUN_000306ca resets the trip records) / 0x30a64 (fuel statistics flags); CM848 reserved_bit_9; set */
+    uint16_t trip_information_enable : 1;  /* bit 9: TIEN 'BIT 9 OF 0-15 IN WORD 3. TRIP INFO SYSTEM ENABLED = 1' (another e2m: Fuel_Log_Enable S mask 0x200); andi 0x200 at 0x306e0 (cm550_updateTripInformation resets the trip records) / 0x30a64 (fuel statistics flags); CM848 reserved_bit_9; set */
     uint16_t cruise_governor_droop_enable : 1;  /* bit 10: CRDPEN 'BIT 10 OF 0-15. BIT 10 IS CRUISE_RSG_DROOP_ENABLE'; no reader in the dumped ROM; set */
     uint16_t cylinder_pressure_maintenance_enable : 1;  /* bit 11: CPAGEN 'BIT 11 OF 0-15. ENABLES AND DISABLES THE CYLINDER PRESSURE MAINTENANC(E)'; andi.l 0x800 at 0x11e74: cm550_coldStartFuelControlSlowCycle40Coordinator zeroes _cylinder_pressure_maintenance_status and its timing increment while clear; CM848 reserved_bit_11; clear */
     uint16_t acceleration_noise_control_fuel_limit_enable : 1;  /* bit 12: NZFLAGEN 'ENABLE FOR FUEL LIMITING OF THE ACCELERATION NOISE C(ONTROL)' (no bit in the CM550 text; CM848 e2m ANC_Fuel_Algorithm_Enable S mask 0x1000); andi 0x1000 at 0xb2c6: cm550_rpm_system_state_controller computes _anc_fuel_limit_value; clear */
@@ -1873,7 +1880,7 @@ struct cm550_algorithm_enable_flags_18_t {
     uint16_t engine_warmup_protection_enable : 1;  /* bit 1: e2m WPEAFG (N) 'ENABLE ENGINE WARMUP PROTECTION ALGORITHM WORD 12 BIT 1' (EWP_HDR). Code: cm550_runEngineWarmupProtection (0x16df0 0x16e32; the oil drain-back time and maximum warmup time state machine) and cm550_initializeEngineWarmupProtection (0x170c0). CM848 leaves it reserved_bit_1 (no CHR record). Set in the dump */
     uint16_t driver_reward_enable : 1;  /* bit 2: e2m DREN (N) 'WORD 12H BIT 2 OF 0 TO 15 DRIVER REWARD ENABLE' (DRVRWD07); CM848 same name and bit. No reference in the dumped 256 KB ROM (none in CM848 either). Clear */
     uint16_t duty_cycle_monitor_enable : 1;  /* bit 3: e2m DCMNEN (N) 'DUTY CYCLE MONITOR ENABLE BIT 3 OF 0-15' and DMAGEN 0x08 (DCMN); CM848 same name and bit. Code: cm550_updateDutyCycleMonitorLoadHistogram andi.w #0x0008 at 0xac52 (the duty cycle monitor long and short term maps). Set in the dump */
-    uint16_t trending_enable : 1;  /* bit 4: e2m TRAGEN 0x10 'ENABLE FLAG FOR TRENDING ALGORITHM' (TRENDING group). Code: cm550_FUN_00031496 (0x314b2) cm550_FUN_000315be (0x315e6) and cm550_FUN_00031a68 (0x31a68) - the trending capture (_trending_data_capture_active / _trending_total_sample_count). CM848 leaves it reserved_bit_4 (no CHR record). Set in the dump */
+    uint16_t trending_enable : 1;  /* bit 4: e2m TRAGEN 0x10 'ENABLE FLAG FOR TRENDING ALGORITHM' (TRENDING group). Code: cm550_evaluateTrendingTriggers (0x314b2) cm550_runTrendingIntervalAndStoreSamples (0x315e6) and cm550_restartTrendingAfterEngineRebuild (0x31a68) - the trending capture (_trending_data_capture_active / _trending_total_sample_count). CM848 leaves it reserved_bit_4 (no CHR record). Set in the dump */
     uint16_t datalogger_enable : 1;  /* bit 5: e2m UDEN (N) 'TRIM FOR ENABLING THE DATALOGGER. BIT 5 OF 0-15.' (USERDATA). Code: cm550_updateDataloggerTriggers (0x138f4; clear = triggers and set-up cleared) and cm550_recordDataloggerSamples (0x13a70). CM848 leaves it reserved_bit_5 (no CHR record). Set in the dump */
     uint16_t smart_air_compressor_enable : 1;  /* bit 6: e2m ACEN (N) 'WORD 12H BIT 6 OF 0 TO 15 - SMART AIR COMPRESSOR ENABLE' (AIRCOMP7); CM848 same name and bit. No reference in the dumped ROM (none in CM848 either). Clear */
     uint16_t reserved_bit_7 : 1;  /* bit 7: No CM550 e2m record and no reference in the dumped ROM. Guess: CM848 names this bit executive_timing_enable (CHR Executive_Timing_Enable SSECTMEA; read by its executive frame interrupt handler). Clear */
@@ -2063,4 +2070,37 @@ struct table_lookup_2d_arguments_t {
     uint16_t y_input;  /* the y input value */
     word* z_values_pointer;  /* the grid of z values, one row of x points per y point */
     uint16_t no_interpolation_flag;  /* nonzero: the lookup returns the grid value without interpolating */
+};
+
+struct table_lookup_1d_arguments_t {
+    uint16_t x_axis_offset;  /* the byte offset of the x axis point the previous lookup found (2 = the first point); the search starts there and cm550_lookupTableInterpolation writes it back (the only field it writes) */
+    word* x_axis_pointer;  /* the x axis table: its first word is the byte count of the points that follow (compared unsigned) */
+    uint16_t x_input;  /* the x input value (compared unsigned) */
+    word* y_values_pointer;  /* the y values: the value of the x point at byte offset n is read at y_values_pointer + n, so the word at +0 is never read (in a Calterm Y table it is the byte count) */
+    uint16_t no_interpolation_flag;  /* nonzero: the lookup returns the value of the point at or below the input without interpolating (no code writes it; 0 in every record of the dump) */
+};
+
+struct cm550_j1939_powertrain_messages_received_t {
+    uint8_t etc1_status_byte_1;  /* ETC1 (PGN 61442) data byte 1, stored by the ETC1 handler 0x2efd0 */
+    uint8_t etc1_bytes_2_to_4[3];  /* never written (CM550 keeps no ETC1 output shaft speed) */
+    uint8_t etc1_status_byte_5;  /* ETC1 data byte 5 */
+    uint8_t etc1_bytes_6_to_8[3];  /* never written */
+    uint8_t tsc1_control_byte;  /* TSC1 (PGN 0) data byte 1: the override control mode and priority bits */
+    uint8_t tsc1_requested_speed[2];  /* TSC1 bytes 2-3 stored high byte first (data[2] at +0 and data[1] at +1) */
+    uint8_t tsc1_requested_torque;  /* TSC1 data byte 4 */
+    uint8_t tsc1_bytes_5_to_8[4];  /* never written */
+    uint8_t tsc1_accepted_priority;  /* the priority of the accepted TSC1 request */
+    uint8_t padding_1;  /* no access (aligns the next word) */
+    uint16_t tsc1_accepted_requested_speed;  /* the accepted TSC1 requested speed */
+    uint8_t tsc1_accepted_requested_torque;  /* the accepted TSC1 requested torque */
+    uint8_t padding_2;  /* no access */
+};
+
+struct trending_sample_record_t {
+    uint16_t oil_pressure;  /* the oil pressure at the sample (sensor 4 filtered) */
+    uint16_t boost_pressure;  /* the boost pressure at the sample (sensor 5) */
+    uint16_t coolant_temperature;  /* the coolant temperature at the sample (sensor 6) */
+    uint16_t average_fuel_consumption;  /* the interval's average fuel consumption (e2m TRAVFLCN) */
+    uint16_t average_load;  /* the interval's average load (e2m TRLDINAV) */
+    uint32_t time_stamp;  /* engine_hour_meter with its low byte replaced by throttle_100_fueling >> 8 */
 };

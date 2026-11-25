@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 11:11:25 MST 2026
+// Generated: Wed Nov 25 11:35:19 MST 2026
 
 
 //
@@ -6299,9 +6299,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
+  word counter_value;
   byte prescaler_count;
   dword runtime_value;
-  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -6997,24 +6997,24 @@ void cm848_runEvery4FramesTaskSetPhase0(void)
 
 /* Executive frame task set: runs every 4 frames (20 ms), at frames 1, 5, 9, 13, 17, 21, 25, 29, 33,
    37 of the 40-frame cycle, as call 3 of those frames in executiveFrameInterruptHandler. Calls, in
-   order: cm848_calculateFuelDemandFilter, cm848_calculateJ1939ReferenceEngineFueling,
-   cm848_calculateResidualGasMass, cm848_calculateFrictionNoLoadAndNetMachineTorque,
-   cm848_resetEngineOperatingMode, cm848_runOperatingModeSpeedGovernor,
-   cm848_temperatureBasedFuelTrim, cm848_updateFourDimensionalFueling,
-   smoothPowerTakeOffReferenceEngineSpeed, cm848_runPowerTakeOffGovernor,
-   cm848_selectPowerTakeOffOrUserFueling, cm848_updateLowSpeedGovernorReferenceSpeed,
-   cm848_calculateLowSpeedGovernorNoLoadFuel, cm848_updateLowSpeedGovernorAggressiveGainLogic,
-   cm848_selectLowSpeedGovernorGearGainSet, cm848_runLowSpeedGovernor,
-   cm848_processEngineRetarderRequest, cm848_calculateLowSpeedGovernorErrorTerms,
-   cm848_driveTachometerOutputs, cm848_requestPowerDownDelayWhileVehicleMoving,
-   cm848_selectSensorValuesInUse, diagnosticMainStateProcessor,
-   cm848_calculateDrivetrainRatioFromVehicleSpeed, cm848_monitorWatchdogFueling. (was
-   cm848_periodicTaskSet_sensorProcessing; PR #53 round 95) */
+   order: cm848_calculateMaximumTorqueAtCurrentEngineSpeed,
+   cm848_calculateJ1939ReferenceEngineFueling, cm848_calculateResidualGasMass,
+   cm848_calculateFrictionNoLoadAndNetMachineTorque, cm848_resetEngineOperatingMode,
+   cm848_runOperatingModeSpeedGovernor, cm848_temperatureBasedFuelTrim,
+   cm848_updateFourDimensionalFueling, smoothPowerTakeOffReferenceEngineSpeed,
+   cm848_runPowerTakeOffGovernor, cm848_selectPowerTakeOffOrUserFueling,
+   cm848_updateLowSpeedGovernorReferenceSpeed, cm848_calculateLowSpeedGovernorNoLoadFuel,
+   cm848_updateLowSpeedGovernorAggressiveGainLogic, cm848_selectLowSpeedGovernorGearGainSet,
+   cm848_runLowSpeedGovernor, cm848_processEngineRetarderRequest,
+   cm848_calculateLowSpeedGovernorErrorTerms, cm848_driveTachometerOutputs,
+   cm848_requestPowerDownDelayWhileVehicleMoving, cm848_selectSensorValuesInUse,
+   diagnosticMainStateProcessor, cm848_calculateDrivetrainRatioFromVehicleSpeed,
+   cm848_monitorWatchdogFueling. (was cm848_periodicTaskSet_sensorProcessing; PR #53 round 95) */
 
 void cm848_runEvery4FramesTaskSetPhase1(void)
 
 {
-  cm848_calculateFuelDemandFilter();
+  cm848_calculateMaximumTorqueAtCurrentEngineSpeed();
   cm848_calculateJ1939ReferenceEngineFueling();
   cm848_calculateResidualGasMass();
   cm848_calculateFrictionNoLoadAndNetMachineTorque();
@@ -10609,13 +10609,13 @@ void cm848_calculateAllSpeedGovernorNoLoadFuel(void)
                      coolant_temperature_sensor_filtered,
                      all_speed_governor_coolant_fuel_adjustment_axis,
                      all_speed_governor_coolant_fuel_adjustment_values,1);
-  if (governor_tuning_set_blend_weight == 0) {
+  if (all_speed_governor_tuning_set_blend_weight == 0) {
     wVar2 = lookupTableInterpolation
                       (&all_speed_governor_friction_fuel_blend_0_cached_axis_offset,wVar2,
                        all_speed_governor_friction_fuel_blend_0_axis,
                        all_speed_governor_friction_fuel_blend_0_values,0);
   }
-  else if (governor_tuning_set_blend_weight == 0x80) {
+  else if (all_speed_governor_tuning_set_blend_weight == 0x80) {
     wVar2 = lookupTableInterpolation
                       (&all_speed_governor_friction_fuel_blend_128_cached_axis_offset,wVar2,
                        all_speed_governor_friction_fuel_blend_128_axis,
@@ -10630,8 +10630,8 @@ void cm848_calculateAllSpeedGovernorNoLoadFuel(void)
                       (&all_speed_governor_friction_fuel_blend_0_cached_axis_offset,wVar2,
                        all_speed_governor_friction_fuel_blend_0_axis,
                        all_speed_governor_friction_fuel_blend_0_values,0);
-    wVar2 = (short)((uint)governor_tuning_set_blend_weight * (uint)wVar3 >> 7) +
-            (short)((0x80 - (uint)governor_tuning_set_blend_weight) * (uint)wVar2 >> 7);
+    wVar2 = (short)((uint)all_speed_governor_tuning_set_blend_weight * (uint)wVar3 >> 7) +
+            (short)((0x80 - (uint)all_speed_governor_tuning_set_blend_weight) * (uint)wVar2 >> 7);
   }
   all_speed_governor_no_load_fuel = wVar1 + wVar2;
   return;
@@ -10715,20 +10715,20 @@ void cm848_calculateGovernorCompensatorCoefficients(void)
   word unaff_r30;
   
   wVar1 = all_speed_governor_droop;
-  if (governor_tuning_set_blend_weight < 0x81) {
-    if (governor_tuning_set_blend_weight != 0) {
+  if (all_speed_governor_tuning_set_blend_weight < 0x81) {
+    if (all_speed_governor_tuning_set_blend_weight != 0) {
       unaff_r30 = lookupTableInterpolation
                             (&all_speed_governor_droop_blend_128_cached_axis_offset,
                              speed_request_base,all_speed_governor_droop_blend_128_axis,
                              all_speed_governor_droop_blend_128_values,0);
     }
     wVar1 = unaff_r30;
-    if (governor_tuning_set_blend_weight != 0x80) {
+    if (all_speed_governor_tuning_set_blend_weight != 0x80) {
       wVar1 = lookupTableInterpolation
                         (&all_speed_governor_droop_blend_0_cached_axis_offset,speed_request_base,
                          all_speed_governor_droop_blend_0_axis,
                          all_speed_governor_droop_blend_0_values,0);
-      uVar3 = (uint)governor_tuning_set_blend_weight;
+      uVar3 = (uint)all_speed_governor_tuning_set_blend_weight;
       if (uVar3 != 0) {
         wVar1 = (short)(uVar3 * unaff_r30 >> 7) + (short)((0x80 - uVar3) * (uint)wVar1 >> 7);
       }
@@ -19045,10 +19045,10 @@ void cm848_runEgrValveFaultAndPositionControl(void)
    j1939_pgn61442_engine_overspeed_enable_time_limit / 10 (SPN 534), the speed control range limits
    low_speed_governor_minimum_idle_speed / 80 and engine_speed_limit_maximum / 80 (10 rpm per bit,
    SPN 535 / 536) and the torque control range, 0 percent and the largest point torque (SPN 537 /
-   538). It sends nothing: cm848_sendPgn65251EngineConfiguration1Message (0x1b730, registered for
-   PGN 65251 in the periodic transmit queue) and cm848_sendPgn65251EngineConfiguration1OnChange
-   (0x1b778, which resends when a value changed) call it and send the descriptor. Shared name with
-   CM550 0x3320e (the same function). (was faultTimerHandler) */
+   538). It sends nothing: sendPgn65251EngineConfiguration1Message (0x1b730, registered for PGN
+   65251 in the periodic transmit queue) and sendPgn65251EngineConfiguration1OnChange (0x1b778,
+   which resends when a value changed) call it and send the descriptor. Shared name with CM550
+   0x3320e (the same function). (was faultTimerHandler) */
 
 void buildPgn65251EngineConfiguration1Payload(undefined4 *param_1)
 
@@ -19207,13 +19207,14 @@ undefined4 cm848_hasByteChangedByTenPercent(byte param_1,byte param_2)
 
 
 //
-// Function: cm848_sendPgn65251EngineConfiguration1Message @ 0x0001b730
+// Function: sendPgn65251EngineConfiguration1Message @ 0x0001b730
 //
 
 /* Builds the EC1 payload (buildPgn65251EngineConfiguration1Payload) and sends PGN 65251 when the
-   transmit slot is free (was cm848_sendFaultTimerMessage) */
+   transmit slot is free (was cm848_sendFaultTimerMessage) | the twin of CM550 0x0003366a: one
+   shared name (was cm848_sendPgn65251EngineConfiguration1Message; PR #53 round 95) */
 
-void cm848_sendPgn65251EngineConfiguration1Message(void)
+void sendPgn65251EngineConfiguration1Message(void)
 
 {
   if ((j1939_pgn65251_transmit_status & 0xf0) == 0) {
@@ -19226,15 +19227,16 @@ void cm848_sendPgn65251EngineConfiguration1Message(void)
 
 
 //
-// Function: cm848_sendPgn65251EngineConfiguration1OnChange @ 0x0001b778
+// Function: sendPgn65251EngineConfiguration1OnChange @ 0x0001b778
 //
 
 /* The EC1 send-on-change test (J1939-71): copies the payload to j1939_pgn65251_payload_previous,
    rebuilds it and compares each speed (cm848_hasWordChangedByTenPercent) and percent torque
    (cm848_hasByteChangedByTenPercent) with its previous value; a change of 10 % or more sends the
-   message (was cm848_processFaultMessageTiming) */
+   message (was cm848_processFaultMessageTiming) | the twin of CM550 0x000334ec: one shared name
+   (was cm848_sendPgn65251EngineConfiguration1OnChange; PR #53 round 95) */
 
-void cm848_sendPgn65251EngineConfiguration1OnChange(void)
+void sendPgn65251EngineConfiguration1OnChange(void)
 
 {
   char cVar1;
@@ -19319,7 +19321,7 @@ void cm848_sendPgn65251EngineConfiguration1OnChange(void)
       }
     }
   }
-  cm848_sendPgn65251EngineConfiguration1Message();
+  sendPgn65251EngineConfiguration1Message();
   return;
 }
 
@@ -22472,12 +22474,12 @@ undefined1 getJ1939DiagnosticResponseEchoLength(int param_1)
    calibration): (injection_quantity_combustion_chi_maximum - friction_fueling) x 10000 /
    ((maximum_torque_at_current_engine_speed x 13558) / reference_engine_torque_working).
    maximum_torque_at_current_engine_speed is the maximum torque in lb-ft at the current engine speed
-   (e2m MT_Max_Torque_Map, cm848_calculateFuelDemandFilter at 0x29c98); x 13558 / 10000 turns it
-   into N*m, so the net full load fuel is scaled by the reference engine torque (e2m 1102 +1E, 850
-   N*m) over that torque. RAM dump (key on, engine stopped): (1030 - 397) x 10000 / ((290 x 13558) /
-   850) = 1368 = j1939_reference_engine_fueling, against 1501 = j1939_peak_fueling (ROM, e2m 1104
-   +0) that cm848_initializeJ1939ReferenceEngineFuelingAndTorque (0x212dc) loads. Called from
-   cm848_runEvery4FramesTaskSetPhase1. (was cm848_calculateProtectionActivationDelay) */
+   (e2m MT_Max_Torque_Map, cm848_calculateMaximumTorqueAtCurrentEngineSpeed at 0x29c98); x 13558 /
+   10000 turns it into N*m, so the net full load fuel is scaled by the reference engine torque (e2m
+   1102 +1E, 850 N*m) over that torque. RAM dump (key on, engine stopped): (1030 - 397) x 10000 /
+   ((290 x 13558) / 850) = 1368 = j1939_reference_engine_fueling, against 1501 = j1939_peak_fueling
+   (ROM, e2m 1104 +0) that cm848_initializeJ1939ReferenceEngineFuelingAndTorque (0x212dc) loads.
+   Called from cm848_runEvery4FramesTaskSetPhase1. (was cm848_calculateProtectionActivationDelay) */
 
 void cm848_calculateJ1939ReferenceEngineFueling(void)
 
@@ -23647,8 +23649,8 @@ void registerJ1939DiagnosticHandlers(void)
    combustion_chi_upper_map_number (x 0x4000) and blends them with cm848_interpolateAlphaChiValue
    (0x14528) by the chi and alpha of combustion_reference_state, as
    cm848_lookupChiMaximumFuelAtSpeed (0x164e4) does for the maximum fuel.
-   cm848_calculateFuelDemandFilter (0x29c98) does the same at the current engine speed into
-   maximum_torque_at_current_engine_speed. Called by
+   cm848_calculateMaximumTorqueAtCurrentEngineSpeed (0x29c98) does the same at the current engine
+   speed into maximum_torque_at_current_engine_speed. Called by
    cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings (0x21cd4) with the five torque curve
    speeds. (was cm848_initUdsServiceHandlers) */
 
@@ -27166,16 +27168,17 @@ void cm848_buildPgn65213FanDrive1Message(void)
 
 
 //
-// Function: cm848_initializePgn65213FanDrive1Buffer @ 0x00026480
+// Function: initializePgn65213FanDrive1Buffer @ 0x00026480
 //
 
 /* Initialises the FD1 transmit descriptor (PGN 65213 at 0x3fae28): CAN identifier from the priority
    word j1939_pgn65213_priority_cal, 0xFEBD and the engine source address j1939_source_address, data
    length 2 (word at 0x3fae2c), data pointer to the FD1 byte 1 / byte 2 buffer at 0x3fae20 and
    status pointer j1939_pgn65213_transmit_status (0x3fae36) (was
-   cm848_initJ1939BrakeRetarderBuffer). */
+   cm848_initJ1939BrakeRetarderBuffer). | the twin of CM550 0x00033a1e: one shared name (was
+   cm848_initializePgn65213FanDrive1Buffer; PR #53 round 95) */
 
-void cm848_initializePgn65213FanDrive1Buffer(void)
+void initializePgn65213FanDrive1Buffer(void)
 
 {
   j1939_pgn65213_tx_message.header.can_id =
@@ -29583,10 +29586,20 @@ void cm848_initGovernorLookupDimensions(void)
 
 
 //
-// Function: cm848_calculateFuelDemandFilter @ 0x00029c98
+// Function: cm848_calculateMaximumTorqueAtCurrentEngineSpeed @ 0x00029c98
 //
 
-void cm848_calculateFuelDemandFilter(void)
+/* Computes the maximum engine torque at the current engine speed (CHR e2m 1461 +0
+   MT_Max_Torque_At_RPM_Ftlb, lb-ft) into maximum_torque_at_current_engine_speed. It looks up
+   maximum_torque_map_grid (e2m MT_Max_Torque_Map over MT_RPM_Axis and MT_Alpha_Axis) at
+   engine_speed_state.filtered_engine_speed in the alpha 0 row and in the rows of
+   combustion_chi_lower_map_number and combustion_chi_upper_map_number (x 0x4000). It blends them by
+   combustion_reference_state.chi_hundredths and alpha_percent with cm848_interpolateAlphaChiValue
+   and replaces 0 by 1 (the value is a divisor). Called by cm848_periodicTaskSet_sensorProcessing.
+   CM550's counterpart cm550_calculateMaximumTorqueAtCurrentEngineSpeed makes one lookup over engine
+   speed and alpha. (was cm848_calculateFuelDemandFilter; PR #53 round 95) */
+
+void cm848_calculateMaximumTorqueAtCurrentEngineSpeed(void)
 
 {
   word wVar1;
@@ -29628,10 +29641,18 @@ void cm848_calculateFuelDemandFilter(void)
 
 
 //
-// Function: cm848_initFuelDemandFilterDimensions @ 0x00029de0
+// Function: cm848_initializeMaximumTorqueAtCurrentEngineSpeed @ 0x00029de0
 //
 
-void cm848_initFuelDemandFilterDimensions(void)
+/* Start-up initialization of cm848_calculateMaximumTorqueAtCurrentEngineSpeed. It sets
+   maximum_torque_at_current_engine_speed to 1 and both words of
+   maximum_torque_map_alpha_0_cached_axis_offsets, maximum_torque_map_chi_lower_cached_axis_offsets
+   and maximum_torque_map_chi_upper_cached_axis_offsets to 2 (the first axis point). Called once
+   from cm848_applicationMain. CM550's counterpart is
+   cm550_initializeMaximumTorqueAtCurrentEngineSpeed. (was cm848_initFuelDemandFilterDimensions; PR
+   #53 round 95) */
+
+void cm848_initializeMaximumTorqueAtCurrentEngineSpeed(void)
 
 {
   maximum_torque_at_current_engine_speed = 1;
@@ -29694,6 +29715,43 @@ void cm848_calculateInjectionTimingMainMisfireLimit(void)
                     engine_speed_state.filtered_engine_speed,
                     injection_timing_main_misfire_limit_y_axis,
                     injection_timing_main_misfire_limit_grid,4);
+  }
+  return;
+}
+
+
+
+//
+// Function: cm848_applyInjectionTimingMainMisfireLimit @ 0x00029ecc
+//
+
+/* Dead code: nothing calls it (no branch, address word or lis+addi / lis+ori pair in the ROM or the
+   flash2 image reaches 0x29ecc). It is the third function of the misfire timing limit module after
+   cm848_initializeInjectionTimingMainMisfireLimit (0x29e24) and
+   cm848_calculateInjectionTimingMainMisfireLimit (0x29e50). While
+   algorithm_enable_flags_40_cal.misfire_timing_limit_enable (bit 8, e2m
+   Misfire_Timing_Limit_Enable) is set and injection_timing_intermediate_source_code is 0 (the 4D
+   maps), it copies main_injection_timing_copy into main_injection_timing_before_misfire_limit (e2m
+   8A3D +2 SOI_Before_MST). When injection_timing_main_misfire_limit is larger (signed) it raises
+   main_injection_timing_copy to it, clears bit 0 of injection_timing_increment_flags and sets the
+   intermediate source code to 11 (e2m 103B label 0B MISFIRE). CM550's counterpart
+   cm550_applyMisfireTimingLimit (0x26af0) runs the same steps with an unsigned compare as step 1 of
+   its timing chain; in CM848 the live misfire limit is the injection_timing_demand step of
+   cm848_calculateMainInjectionTiming. (new row; PR #53 round 95) (was cm848_FUN_00029ecc; PR #53
+   round 95) */
+
+void cm848_applyInjectionTimingMainMisfireLimit(void)
+
+{
+  if ((algorithm_enable_flags_40_cal.misfire_timing_limit_enable != 0) &&
+     (injection_timing_intermediate_source_code ==
+      INJECTION_TIMING_INTERMEDIATE_SOURCE_FOUR_DIMENSIONAL_TIMING)) {
+    main_injection_timing_before_misfire_limit = main_injection_timing_copy;
+    if (main_injection_timing_copy < injection_timing_main_misfire_limit) {
+      main_injection_timing_copy = injection_timing_main_misfire_limit;
+      injection_timing_increment_flags = injection_timing_increment_flags & 0xfffe;
+      injection_timing_intermediate_source_code = 0xb;
+    }
   }
   return;
 }
@@ -30981,20 +31039,21 @@ void cm848_updateNotSafeToProgramFlag(void)
 
 /* Blends the all-speed governor's 0 % / 100 % throttle reference speeds (e2m ASG_Minimum /
    ASG_Maximum, sets 1 and 2) into all_speed_governor_minimum_reference_speed /
-   _maximum_reference_speed. The weight governor_tuning_set_blend_weight (0 = set 1, 128 = set 2)
-   comes from drivetrain_ratio through the six-entry tables at ROM 0x5a9c4 / 0x5a9d2 (all 128 in
-   this ROM), or from governor_tuning_set_default_blend_weight_cal (e2m 1387 +8 ASG_Droop_Flag_Trim
-   'select droop source') when algorithm_enable_flags_27_cal bit 0x08 is set. It runs only when the
-   computed fuel demand is 0 and the final fueling is below the friction fuel plus a deadband, or at
-   the high idle override reset (was cm848_blendGovernorTuningSets) | earlier note: Selects
-   governor_tuning_set_blend_weight (0 = the governor_speed_error_*_working set, 128 = the _b set)
-   from drivetrain_ratio through the six-entry tables at ROM 0x5a9c4 (ratio x 2048 breakpoints 1843
-   / 2458 / 3482 / 6144 / 10240 / 40960) and 0x5a9d2 (weights, all 128 in this ROM), or uses
-   governor_tuning_set_default_blend_weight_cal when algorithm_enable_flags_27_cal mask 0x08 is set,
-   then writes all_speed_governor_minimum_reference_speed / _low as the weighted blend of the two
-   sets ((w x b + (128 - w) x working) >> 7). It runs only when its entry conditions hold (computed
-   fuel demand below friction_fuel_adjustment_for_coolant_temperature plus a deadband, or the high
-   idle override reset) (was cm848_calculateRpmLimitsFromProtection). */
+   _maximum_reference_speed. The weight all_speed_governor_tuning_set_blend_weight (0 = set 1, 128 =
+   set 2) comes from drivetrain_ratio through the six-entry tables at ROM 0x5a9c4 / 0x5a9d2 (all 128
+   in this ROM), or from all_speed_governor_tuning_set_default_blend_weight_cal (e2m 1387 +8
+   ASG_Droop_Flag_Trim 'select droop source') when algorithm_enable_flags_27_cal bit 0x08 is set. It
+   runs only when the computed fuel demand is 0 and the final fueling is below the friction fuel
+   plus a deadband, or at the high idle override reset (was cm848_blendGovernorTuningSets) | earlier
+   note: Selects all_speed_governor_tuning_set_blend_weight (0 = the governor_speed_error_*_working
+   set, 128 = the _b set) from drivetrain_ratio through the six-entry tables at ROM 0x5a9c4 (ratio x
+   2048 breakpoints 1843 / 2458 / 3482 / 6144 / 10240 / 40960) and 0x5a9d2 (weights, all 128 in this
+   ROM), or uses all_speed_governor_tuning_set_default_blend_weight_cal when
+   algorithm_enable_flags_27_cal mask 0x08 is set, then writes
+   all_speed_governor_minimum_reference_speed / _low as the weighted blend of the two sets ((w x b +
+   (128 - w) x working) >> 7). It runs only when its entry conditions hold (computed fuel demand
+   below friction_fuel_adjustment_for_coolant_temperature plus a deadband, or the high idle override
+   reset) (was cm848_calculateRpmLimitsFromProtection). */
 
 void cm848_blendAllSpeedGovernorReferenceSpeeds(void)
 
@@ -31006,23 +31065,24 @@ void cm848_blendAllSpeedGovernorReferenceSpeeds(void)
        ((uint)final_fueling <
         (uint)friction_fuel_adjustment_for_coolant_temperature +
         (uint)all_speed_governor_switch_droop_fueling_offset)) &&
-      (governor_tuning_set_default_blend_weight_cal < 0x100)) ||
+      (all_speed_governor_tuning_set_default_blend_weight_cal < 0x100)) ||
      ((high_idle_override_reset_enable != 0 && (high_idle_override_flag._0_2_ != 0)))) {
     high_idle_override_flag._0_2_ = 0;
-    wVar1 = governor_tuning_set_default_blend_weight_cal;
+    wVar1 = all_speed_governor_tuning_set_default_blend_weight_cal;
     if (algorithm_enable_flags_27_cal.switched_throttle_control_governor_select == 0) {
       uVar2 = 1;
       do {
-        if (drivetrain_ratio < governor_tuning_set_blend_weight_by_drivetrain_ratio_axis[uVar2]) {
-          wVar1 = governor_tuning_set_blend_weight_by_drivetrain_ratio_values[uVar2];
+        if (drivetrain_ratio <
+            all_speed_governor_tuning_set_blend_weight_by_drivetrain_ratio_axis[uVar2]) {
+          wVar1 = all_speed_governor_tuning_set_blend_weight_by_drivetrain_ratio_values[uVar2];
           break;
         }
         uVar2 = uVar2 + 1 & 0xffff;
-        wVar1 = governor_tuning_set_blend_weight;
+        wVar1 = all_speed_governor_tuning_set_blend_weight;
       } while (uVar2 < 7);
     }
-    governor_tuning_set_blend_weight = wVar1;
-    uVar2 = (uint)governor_tuning_set_blend_weight;
+    all_speed_governor_tuning_set_blend_weight = wVar1;
+    uVar2 = (uint)all_speed_governor_tuning_set_blend_weight;
     if (uVar2 == 0) {
       all_speed_governor_minimum_reference_speed = all_speed_governor_minimum_reference_speed_1_cal;
       all_speed_governor_maximum_reference_speed = all_speed_governor_maximum_reference_speed_1_cal;
@@ -31061,16 +31121,18 @@ void cm848_emptyStubFunction6(void)
 // Function: cm848_initializeAllSpeedGovernorTuningSetBlendWeight @ 0x0002c100
 //
 
-/* Copies governor_tuning_set_default_blend_weight_cal (EEPROM 0xa4, e2m 1387 +8 ASG_Droop_Flag_Trim
-   'select droop source') into governor_tuning_set_blend_weight. That word is the 0..128 weight
-   between the all-speed governor's two tuning sets; cm848_blendAllSpeedGovernorReferenceSpeeds
-   later picks it from drivetrain_ratio. Called once from cm848_applicationMain (was
-   cm848_initProtectionLimitVariables). (was cm848_initProtectionLimitVariables; PR #53 round 94) */
+/* Copies all_speed_governor_tuning_set_default_blend_weight_cal (EEPROM 0xa4, e2m 1387 +8
+   ASG_Droop_Flag_Trim 'select droop source') into all_speed_governor_tuning_set_blend_weight. That
+   word is the 0..128 weight between the all-speed governor's two tuning sets;
+   cm848_blendAllSpeedGovernorReferenceSpeeds later picks it from drivetrain_ratio. Called once from
+   cm848_applicationMain (was cm848_initProtectionLimitVariables). (was
+   cm848_initProtectionLimitVariables; PR #53 round 94) */
 
 void cm848_initializeAllSpeedGovernorTuningSetBlendWeight(void)
 
 {
-  governor_tuning_set_blend_weight = governor_tuning_set_default_blend_weight_cal;
+  all_speed_governor_tuning_set_blend_weight =
+       all_speed_governor_tuning_set_default_blend_weight_cal;
   return;
 }
 
@@ -39627,56 +39689,68 @@ void cm848_setEngineRpmFromCalibration(void)
 //
 
 /* WARNING: Removing unreachable block (ram,0x00038a04) */
-/* While safety_fuel_blend_enable is set: takes injection_quantity_combustion_chi_maximum as a
-   derate limit (code 62, FUELING_STATE_FUEL_PRESSURE_GOVERNOR_FAULT_BLEND) and, while fault 57 / 58
-   / 60 (P1221 / P1222 / P1223, the fuel pressure governor plausibility checks) or 59 is set, blends
-   it toward the engine speed table safety_fuel_limit_values at safety_fuel_blend_increment per pass
-   (back at safety_fuel_blend_decrement) (was cm848_processSafetyConditionProtection) */
+/* While fuel_pressure_governor_fault_blend_enable is set: takes
+   injection_quantity_combustion_chi_maximum as a derate limit (code 62,
+   FUELING_STATE_FUEL_PRESSURE_GOVERNOR_FAULT_BLEND) and, while fault 57 / 58 / 60 (P1221 / P1222 /
+   P1223, the fuel pressure governor plausibility checks) or 59 is set, blends it toward the engine
+   speed table fuel_pressure_governor_fault_fuel_limit_values at
+   fuel_pressure_governor_fault_blend_fraction_increment per pass (back at
+   fuel_pressure_governor_fault_blend_fraction_decrement) (was
+   cm848_processSafetyConditionProtection) */
 
 void cm848_applyFuelPressureGovernorFaultBlend(void)
 
 {
   uint uVar1;
   
-  if (safety_fuel_blend_enable == 0) {
+  if (fuel_pressure_governor_fault_blend_enable == 0) {
     return;
   }
   if ((((fault_detected_cal.fuel_pressure_governed_speed_check_error == 0) &&
        (fault_detected_cal.fuel_pressure_governor_demand_above_limit_error == 0)) &&
       (fault_detected_cal.fuel_pressure_decay_below_model_error == 0)) &&
      (fault_detected_cal.fuel_metering_feedback_low_error == 0)) {
-    safety_condition_active_flag = 0;
-    if (safety_fuel_blend_fraction == 0) {
+    fuel_pressure_governor_fault_active_flag = 0;
+    if (fuel_pressure_governor_fault_blend_fraction == 0) {
       uVar1 = (uint)injection_quantity_combustion_chi_maximum;
       goto LAB_00038a4c;
     }
-    safety_fuel_blend_fraction = safety_fuel_blend_fraction - safety_fuel_blend_decrement;
+    fuel_pressure_governor_fault_blend_fraction =
+         fuel_pressure_governor_fault_blend_fraction -
+         fuel_pressure_governor_fault_blend_fraction_decrement;
   }
   else {
-    safety_condition_active_flag = 1;
-    safety_fuel_limit_lookup =
+    fuel_pressure_governor_fault_active_flag = 1;
+    fuel_pressure_governor_fault_fuel_limit =
          lookupTableInterpolation
-                   (&safety_fuel_limit_cached_axis_offset,engine_speed_state.filtered_engine_speed,
-                    safety_fuel_limit_axis,safety_fuel_limit_values,0);
-    if (((safety_condition_prev_flag == 0) && (safety_condition_active_flag != 0)) &&
-       (safety_fuel_limit_lookup < final_fueling)) {
-      safety_blend_fuel_demand_prev = injection_quantity_combustion_chi_maximum;
+                   (&fuel_pressure_governor_fault_fuel_limit_cached_axis_offset,
+                    engine_speed_state.filtered_engine_speed,
+                    fuel_pressure_governor_fault_fuel_limit_axis,
+                    fuel_pressure_governor_fault_fuel_limit_values,0);
+    if (((fuel_pressure_governor_fault_active_flag_previous == 0) &&
+        (fuel_pressure_governor_fault_active_flag != 0)) &&
+       (fuel_pressure_governor_fault_fuel_limit < final_fueling)) {
+      fuel_pressure_governor_fault_blend_start_fuel = injection_quantity_combustion_chi_maximum;
     }
-    if ((safety_fuel_limit_lookup < safety_blend_fuel_demand_prev) &&
-       (safety_fuel_blend_fraction = safety_fuel_blend_fraction + safety_fuel_blend_increment,
-       0x6400 < safety_fuel_blend_fraction)) {
-      safety_fuel_blend_fraction = 0x6400;
+    if ((fuel_pressure_governor_fault_fuel_limit < fuel_pressure_governor_fault_blend_start_fuel) &&
+       (fuel_pressure_governor_fault_blend_fraction =
+             fuel_pressure_governor_fault_blend_fraction +
+             fuel_pressure_governor_fault_blend_fraction_increment,
+       0x6400 < fuel_pressure_governor_fault_blend_fraction)) {
+      fuel_pressure_governor_fault_blend_fraction = 0x6400;
     }
   }
-  uVar1 = ((uint)safety_blend_fuel_demand_prev * (0x6400 - (uint)safety_fuel_blend_fraction)) /
-          0x6400 + ((uint)safety_fuel_limit_lookup * (uint)safety_fuel_blend_fraction) / 0x6400;
+  uVar1 = ((uint)fuel_pressure_governor_fault_blend_start_fuel *
+          (0x6400 - (uint)fuel_pressure_governor_fault_blend_fraction)) / 0x6400 +
+          ((uint)fuel_pressure_governor_fault_fuel_limit *
+          (uint)fuel_pressure_governor_fault_blend_fraction) / 0x6400;
 LAB_00038a4c:
   if ((uVar1 & 0xffff) < (uint)torque_derate_fuel_quantity) {
     torque_derate_fuel_source_code = FUELING_STATE_FUEL_PRESSURE_GOVERNOR_FAULT_BLEND;
     torque_derate_fuel_quantity = (word)uVar1;
   }
-  safety_fuel_blend_output = (word)uVar1;
-  safety_condition_prev_flag = safety_condition_active_flag;
+  fuel_pressure_governor_fault_blended_fuel_limit = (word)uVar1;
+  fuel_pressure_governor_fault_active_flag_previous = fuel_pressure_governor_fault_active_flag;
   return;
 }
 
@@ -39687,18 +39761,19 @@ LAB_00038a4c:
 //
 
 /* Power-up initialization of cm848_applyFuelPressureGovernorFaultBlend (fueling state 62):
-   safety_fuel_limit_cached_axis_offset = 2, safety_fuel_blend_output and
-   safety_blend_fuel_demand_prev = 5888 (400 mm3, no limit), safety_fuel_blend_fraction = 0. Called
-   once from cm848_applicationMain (was cm848_initProtectionFilterLimits). (was
+   fuel_pressure_governor_fault_fuel_limit_cached_axis_offset = 2,
+   fuel_pressure_governor_fault_blended_fuel_limit and fuel_pressure_governor_fault_blend_start_fuel
+   = 5888 (400 mm3, no limit), fuel_pressure_governor_fault_blend_fraction = 0. Called once from
+   cm848_applicationMain (was cm848_initProtectionFilterLimits). (was
    cm848_initProtectionFilterLimits; PR #53 round 94) */
 
 void cm848_initializeFuelPressureGovernorFaultBlend(void)
 
 {
-  safety_fuel_limit_cached_axis_offset = 2;
-  safety_fuel_blend_output = 0x1700;
-  safety_blend_fuel_demand_prev = 0x1700;
-  safety_fuel_blend_fraction = 0;
+  fuel_pressure_governor_fault_fuel_limit_cached_axis_offset = 2;
+  fuel_pressure_governor_fault_blended_fuel_limit = 0x1700;
+  fuel_pressure_governor_fault_blend_start_fuel = 0x1700;
+  fuel_pressure_governor_fault_blend_fraction = 0;
   return;
 }
 
@@ -39722,8 +39797,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  ushort receive_interval;
   byte all_transmits_overdue;
+  ushort receive_interval;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
@@ -48807,7 +48882,7 @@ void cm848_calculateAllSpeedGovernorEquivalentThrottle(void)
      ((((adjusted_user_fueling_state == FUELING_STATE_HIGH_SPEED_GOVERNOR &&
         (operating_mode_governor_output.mode_code == FUELING_STATE_VARIABLE_SPEED_GOVERNOR)) &&
        (adjusted_user_fueling < operating_mode_governor_output.fuel_demand)) ||
-      (0x80 < governor_tuning_set_blend_weight)))) {
+      (0x80 < all_speed_governor_tuning_set_blend_weight)))) {
     if (algorithm_enable_flags_43_cal.vacuum_throttle_cruise_enable == 0) {
       uVar8 = (uint)commanded_throttle_state.commanded_throttle;
     }
@@ -48834,8 +48909,8 @@ void cm848_calculateAllSpeedGovernorEquivalentThrottle(void)
                       (&all_speed_governor_droop_blend_0_cached_axis_offset_2,
                        governor_speed_error_input,all_speed_governor_droop_blend_0_axis,
                        all_speed_governor_droop_blend_0_values,0);
-    uVar8 = ((uint)governor_tuning_set_blend_weight * (uint)wVar2 >> 7) +
-            ((0x80 - (uint)governor_tuning_set_blend_weight) * (uint)wVar3 >> 7) & 0xffff;
+    uVar8 = ((uint)all_speed_governor_tuning_set_blend_weight * (uint)wVar2 >> 7) +
+            ((0x80 - (uint)all_speed_governor_tuning_set_blend_weight) * (uint)wVar3 >> 7) & 0xffff;
     if (equivalent_throttle_minimum_droop_slope < uVar8) {
       wVar2 = lookupTableInterpolation
                         (&all_speed_governor_friction_fuel_blend_128_cached_axis_offset_2,
@@ -48846,7 +48921,7 @@ void cm848_calculateAllSpeedGovernorEquivalentThrottle(void)
                          governor_speed_error_input,all_speed_governor_friction_fuel_blend_0_axis,
                          all_speed_governor_friction_fuel_blend_0_values,0);
       coolant_temp_b_snapshot = coolant_temperature_sensor_filtered;
-      uVar9 = (uint)governor_tuning_set_blend_weight;
+      uVar9 = (uint)all_speed_governor_tuning_set_blend_weight;
       wVar4 = lookupTableInterpolation
                         (&all_speed_governor_coolant_fuel_adjustment_cached_axis_offset_2,
                          coolant_temperature_sensor_filtered,
@@ -59427,7 +59502,7 @@ void cm848_applicationMain(void)
   cm848_initFaultSeverityTables();
   cm848_initFuelTimingTableSizes();
   cm848_initializeAllSpeedGovernorVariables();
-  cm848_initFuelDemandFilterDimensions();
+  cm848_initializeMaximumTorqueAtCurrentEngineSpeed();
   cm848_setGovernorFilterPointer();
   cm848_resetDataCollector();
   cm848_emptyStubFunction();
@@ -59821,8 +59896,8 @@ void mpc555_miosSetChannelPwmDuty(mios_mdasm_t *channel_registers,word duty)
 
 {
   undefined4 compare_register_pair;
-  word modulus_period_value;
   word modulus_start_value;
+  word modulus_period_value;
   
   if (duty < 0x6400) {
     if (duty == 0) {
@@ -100225,19 +100300,19 @@ void cm848_refreshRamCalibration(void)
    diag_record_queue_add_entry; PR #53 round 65) | the twin of CM550 0x0001fe84: one shared name
    (was cm848_scheduleJ1939PeriodicMessage; PR #53 round 94) */
 
-undefined4
-scheduleJ1939PeriodicMessage
-          (int param_1,undefined2 param_2,int param_3,int param_4,undefined4 param_5)
+byte scheduleJ1939PeriodicMessage
+               (J1939_PERIODIC_TRANSMIT_QUEUE queue_index,word pgn_key,dword interval_milliseconds,
+               dword first_send_offset_milliseconds,void *builder)
 
 {
   word wVar1;
-  undefined2 *puVar2;
+  word *pwVar2;
   
-  if (param_1 == 0) {
+  if (queue_index == J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE) {
     if (j1939_periodic_queue0_count == 0x14) {
       return 1;
     }
-    puVar2 = (undefined2 *)((uint)j1939_periodic_queue0_count * 10 + 0x3fd2e2);
+    pwVar2 = (word *)((uint)j1939_periodic_queue0_count * 10 + 0x3fd2e2);
     j1939_periodic_queue0_count = j1939_periodic_queue0_count + 1;
     wVar1 = j1939_periodic_queue0_current_tick;
   }
@@ -100245,14 +100320,14 @@ scheduleJ1939PeriodicMessage
     if (j1939_periodic_queue1_count == 10) {
       return 1;
     }
-    puVar2 = (undefined2 *)((uint)j1939_periodic_queue1_count * 10 + 0x3fd3aa);
+    pwVar2 = (word *)((uint)j1939_periodic_queue1_count * 10 + 0x3fd3aa);
     j1939_periodic_queue1_count = j1939_periodic_queue1_count + 1;
     wVar1 = j1939_periodic_queue1_current_tick;
   }
-  *puVar2 = param_2;
-  puVar2[2] = (short)(param_4 / 10) + wVar1;
-  puVar2[1] = (short)(param_3 / 10);
-  *(undefined4 *)(puVar2 + 3) = param_5;
+  *pwVar2 = pgn_key;
+  pwVar2[2] = (short)((int)first_send_offset_milliseconds / 10) + wVar1;
+  pwVar2[1] = (word)((int)interval_milliseconds / 10);
+  *(void **)(pwVar2 + 3) = builder;
   return 0;
 }
 
@@ -100487,7 +100562,7 @@ void cm848_j1939_system_init(void)
   cm848_initPgn65247ElectronicEngineController3Buffer();
   initializePgn65251EngineConfiguration1Buffer();
   cm848_initializePgn61440ElectronicRetarderController1Buffer();
-  cm848_initializePgn65213FanDrive1Buffer();
+  initializePgn65213FanDrive1Buffer();
   cm848_initializePgn65241AuxiliaryInputOutputStatus1Buffer();
   cm848_initializePgn65249RetarderConfigurationBuffer();
   cm848_initializeEngineRetarderTsc1RequestState();
@@ -100502,30 +100577,61 @@ void cm848_j1939_system_init(void)
   cm848_initPgn65226Dm1Handler();
   cm848_initializePgn65232Dm8Buffer();
   scheduleJ1939PeriodicMessage
-            (0,0xfef1,100,0x46,cm848_buildPgn65265CruiseControlVehicleSpeedMessage);
-  scheduleJ1939PeriodicMessage(0,0xf004,0x14,0,sendPgn61444ElectronicEngineController1Message);
+            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfef1,100,0x46,
+             cm848_buildPgn65265CruiseControlVehicleSpeedMessage);
   scheduleJ1939PeriodicMessage
-            (0,0xf003,0x14,10,cm848_buildPgn61443ElectronicEngineController2Message);
+            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xf004,0x14,0,
+             sendPgn61444ElectronicEngineController1Message);
   scheduleJ1939PeriodicMessage
-            (0,0xfedf,0x32,0x1e,cm848_buildPgn65247ElectronicEngineController3Message);
-  scheduleJ1939PeriodicMessage(0,0xfee3,5000,0x6e,cm848_sendPgn65251EngineConfiguration1Message);
+            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xf003,0x14,10,
+             cm848_buildPgn61443ElectronicEngineController2Message);
   scheduleJ1939PeriodicMessage
-            (1,0xf000,100,0x32,cm848_buildPgn61440ElectronicRetarderController1Message);
-  scheduleJ1939PeriodicMessage(1,0xfee1,5000,0x12d,cm848_buildPgn65249RetarderConfigurationMessage);
-  scheduleJ1939PeriodicMessage(0,0xfeee,1000,0x1ae,cm848_buildPgn65262EngineTemperature1Message);
+            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfedf,0x32,0x1e,
+             cm848_buildPgn65247ElectronicEngineController3Message);
   scheduleJ1939PeriodicMessage
-            (0,0xfed9,0xfa,200,cm848_buildPgn65241AuxiliaryInputOutputStatus1Message);
+            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfee3,5000,0x6e,
+             sendPgn65251EngineConfiguration1Message);
   scheduleJ1939PeriodicMessage
-            (0,0xfeef,500,0x82,cm848_buildPgn65263EngineFluidLevelPressure1Message);
-  scheduleJ1939PeriodicMessage(0,0xfef0,100,0x96,cm848_buildPgn65264PowerTakeOffInformationMessage);
-  scheduleJ1939PeriodicMessage(0,0xfef5,1000,0xaa,cm848_buildPgn65269AmbientConditionsMessage);
-  scheduleJ1939PeriodicMessage(0,0xfef6,500,0xbe,cm848_buildPgn65270InletExhaustConditions1Message);
-  scheduleJ1939PeriodicMessage(0,0xfef7,1000,0xd2,cm848_j1939HandlePgn65271VehicleElectrical);
-  scheduleJ1939PeriodicMessage(0,0xffe0,200,0xfa,cm848_j1939HandlePgn65504ProprietaryB);
-  scheduleJ1939PeriodicMessage(0,0xfeca,1000,500,cm848_processDm1FaultBroadcast);
-  scheduleJ1939PeriodicMessage(0,0xfebd,1000,0x32,cm848_buildPgn65213FanDrive1Message);
-  scheduleJ1939PeriodicMessage(0,0xf001,100,0x14,cm848_j1939BuildEngineControlByte);
-  scheduleJ1939PeriodicMessage(0,0xfeff,10000,0x28,cm848_sendPgn65279WaterInFuelIndicatorMessage);
+            (J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER,0xf000,100,0x32,
+             cm848_buildPgn61440ElectronicRetarderController1Message);
+  scheduleJ1939PeriodicMessage
+            (J1939_PERIODIC_TRANSMIT_QUEUE_RETARDER,0xfee1,5000,0x12d,
+             cm848_buildPgn65249RetarderConfigurationMessage);
+  scheduleJ1939PeriodicMessage
+            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfeee,1000,0x1ae,
+             cm848_buildPgn65262EngineTemperature1Message);
+  scheduleJ1939PeriodicMessage
+            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfed9,0xfa,200,
+             cm848_buildPgn65241AuxiliaryInputOutputStatus1Message);
+  scheduleJ1939PeriodicMessage
+            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfeef,500,0x82,
+             cm848_buildPgn65263EngineFluidLevelPressure1Message);
+  scheduleJ1939PeriodicMessage
+            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfef0,100,0x96,
+             cm848_buildPgn65264PowerTakeOffInformationMessage);
+  scheduleJ1939PeriodicMessage
+            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfef5,1000,0xaa,
+             cm848_buildPgn65269AmbientConditionsMessage);
+  scheduleJ1939PeriodicMessage
+            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfef6,500,0xbe,
+             cm848_buildPgn65270InletExhaustConditions1Message);
+  scheduleJ1939PeriodicMessage
+            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfef7,1000,0xd2,
+             cm848_j1939HandlePgn65271VehicleElectrical);
+  scheduleJ1939PeriodicMessage
+            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xffe0,200,0xfa,
+             cm848_j1939HandlePgn65504ProprietaryB);
+  scheduleJ1939PeriodicMessage
+            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfeca,1000,500,cm848_processDm1FaultBroadcast);
+  scheduleJ1939PeriodicMessage
+            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfebd,1000,0x32,
+             cm848_buildPgn65213FanDrive1Message);
+  scheduleJ1939PeriodicMessage
+            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xf001,100,0x14,cm848_j1939BuildEngineControlByte)
+  ;
+  scheduleJ1939PeriodicMessage
+            (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfeff,10000,0x28,
+             cm848_sendPgn65279WaterInFuelIndicatorMessage);
   cm848_initJ1939DiagnosticServiceHandler();
   cm848_initJ1939AddressDispatcher();
   cm848_initJ1939Pgn61442Etc1Handler();
@@ -101167,4 +101273,4 @@ void cm848_updateOutputReadBackFaultBits(void)
 
 
 
-// Export complete - 1968 functions processed
+// Export complete - 1969 functions processed
