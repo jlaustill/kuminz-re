@@ -573,7 +573,7 @@ TIMING_MODE_SOURCE,3,ARBITRATION_2,Fuel timing mode arbitration 2 (protection mo
 TIMING_MODE_SOURCE,4,PARAM_OVERRIDE,Parameter override mode (fuel_timing_mode_arbitration_param_2),2
 # VP44 Operating Condition - pump condition state tracked in vp44_operating_condition_value
 # Values 1 & 2 treated as fuel control active; 3 & 4 trigger mode transitions
-VP44_OPERATING_CONDITION,0,RESET_INACTIVE,Reset/inactive state - initialized in vp44ControlVariablesReset,2
+VP44_OPERATING_CONDITION,0,RESET_INACTIVE,Reset/inactive state - initialized in cm550_clearKickdownControlState,2
 VP44_OPERATING_CONDITION,1,FUEL_CONTROL_A,Fuel control condition A - checked with value 2,2
 VP44_OPERATING_CONDITION,2,FUEL_CONTROL_B,Fuel control condition B - checked with value 1,2
 VP44_OPERATING_CONDITION,3,TRANSITION_STATE_3,Transition state 3 - triggers mode change on entry,2

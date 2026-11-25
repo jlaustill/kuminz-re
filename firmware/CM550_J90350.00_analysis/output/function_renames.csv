@@ -35,7 +35,6 @@ address,name
 0x0000bcf0,cm550_initializeAnalogSensorChannels,Start-up set-up of the A/D channel loop. It writes the 25 linearization lookup descriptors (size 2 plus axis and value pointers at 0x80a792 + 14n). (was cm550_initADCChannelConfiguration; PR #53 round 89)
 0x0000c180,cm550_fuelTimingTransitionStateMachine
 0x0000c246,cm550_fuelTimingModeInit
-0x0000c24c,cm550_diagnosticDataBufferSetup
 0x0000c2a0,cm550_shutdownMinimumSelector16
 0x0000c2be,cm550_diagnosticTimingIncrementController
 0x0000c2ee,cm550_FUN_0000c2ee
@@ -59,17 +58,13 @@ address,name
 0x0000c8a0,cm550_dzgTimingAndPressureControlStateMachine
 0x0000c962,cm550_runAllSpeedGovernor,This is the all-speed governor (ASG). It runs only while FSDSFLST (0x80ded4, the user fueling state) is 7, 3, 2 or 30. On a state change it presets the reference from the droop and sets all_speed_governor_reference_filter_state.accumulator = reference << 16. (was cm550_engine_speed_governor; PR #53 round 89)
 0x0000d0e2,cm550_diagnosticDataCopyHandler
-0x0000d0fc,cm550_fuelDeliverySystemInit
 0x0000d18a,cm550_diagnosticStatus30Setter
 0x0000d1a4,cm550_diagnosticStatus2Initializer
 0x0000d218,cm550_diagnosticState2Initializer
 0x0000d23c,cm550_dualTableLookupSum
 0x0000d280,cm550_interpolationTableSetup
-0x0000d286,cm550_initAcControlSystem
 0x0000d2be,cm550_acceleratorThrottleFaultDetector
 0x0000d3b2,cm550_FUN_0000d3b2
-0x0000d3bc,cm550_fuelArbitratorInit
-0x0000d3c6,cm550_initDerateSystemPointers
 0x0000d3e6,cm550_diagnosticMode10FuelController
 0x0000d4ae,cm550_FUN_0000d4ae
 0x0000d584,cm550_diagnosticState7Setter
@@ -77,7 +72,6 @@ address,name
 0x0000d5e6,cm550_initBoostProtectionSystem
 0x0000d610,updateEngineSyncStatus
 0x0000e780,cm550_clearKickdownControlState
-0x0000e97e,vp44ControlVariablesReset
 0x0000e998,cm550_FUN_0000e998
 0x0000eaec,vp44_insiteParameterTableIterator
 0x0000eba4,cm550_diagnosticMessageTransmissionManager
@@ -94,9 +88,7 @@ address,name
 0x0000fa68,vp44_FUN_0000fa68
 0x0000faa6,cm550_calculateGovernorDroopSpeed
 0x0000fb26,vp44_fuelLimitExceedanceStatisticsAccumulator
-0x0000fbe4,vp44_fuelSourceOilPressureConditionChecker
 0x0000ff48,cm550_FUN_0000ff48
-0x0000ff56,cm550_initFuelArbitratorThreshold5
 0x0000ff6c,cm550_ioControlBasedFuelCalculator
 0x000100da,cm550_throttleTablePointerSetup
 0x0001011c,cm550_bufferDecreasingPatternCheck
@@ -186,7 +178,6 @@ address,name
 0x0001709e,cm550_fuelTemperatureLimitingSecondary
 0x00017120,cm550_FUN_00017120
 0x00017150,cm550_canControllerConfigInit
-0x0001717a,cm550_derateProtectionSlowCycle20Coordinator
 0x000171aa,cm550_can1PwmTimerInit
 0x000171be,cm550_calculateEngineSpeed,It uses engine_speed_filter_state. It is the engine speed calculation, not a fuel limit. It counts down the main / backup / external lost-signal counters, converts the pulse periods to speeds (0x80cd06 / 0x80cd04 / 0x80cd16) and sets the speed-lost and cam / crank sync faults. (was cm550_fuel_limit_arbitrator; PR #53 round 89)
 0x000176de,cm550_initializeEngineSpeedCalculation,Start-up initializer of the engine speed calculation 0x171be, which uses all four of the values it sets. engine_speed_filter_state.accumulator = 0 and .coefficient = 0x807ea8 (100B +0 ESESFTTC 'TIME CONSTANT FOR THE FILTER USED ON THE 2^N PULSE AVERAGE'). The main pulse period timeout working value 0x80d06c (misnamed governor_rpm_target_adjusted) = ESMXTM01 (0x807eaa). (was cm550_engineRpmSourceInit; PR #53 round 89)
@@ -233,7 +224,6 @@ address,name
 0x00019702,cm550_FUN_00019702
 0x00019960,cm550_initShutdownLimitVariables
 0x0001999c,mc68k_initializeTpuChannel10PrimarySpeedInputDivided,Sets up TPU channel 10 for the primary speed sensor and fills its pulse period table (pulse_period_table_table_containing_main_speed_pulse_per_1000_65535): parameter 1 = DAT_00807ecc << 8 - parameter 0 = 0xb - HSQR0 bits 0x30 - handler mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0. The other mode is mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled. No CAN register is involved (was mc68k_can1TimerBufferInitDivided; PR #53 round 82)
-0x000199fa,mc68k_phase2_slot_0_handler
 0x00019ac2,cm550_delayWithWatchdogServiceWrapper2
 0x00019aca,cm550_emptyStubFunction7
 0x00019acc,mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0,The TPU channel 10 (primary engine speed sensor) interrupt handler for speed_measurement_mode 0 (saves d0-d1 / a0-a5 and ends in RTE): it reads the 32-bit pulse period from channel 10 parameters 4-5 and clears parameter 4 - updates the pulse period ring with its per-cam and per-cylinder sums - the tooth counter and the lost-sensor timeout - checks the cylinder identification pulse - then runs the main / backup phase comparator and clears TPU_CISR bit 10 (was vp44_rpmTimerInterruptHandler2; PR #53 round 85)
@@ -253,7 +243,6 @@ address,name
 0x0001a8a2,cm550_FUN_0001a8a2
 0x0001a8a4,mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3,The TPU channel 10 primary speed interrupt handler for speed_measurement_mode 3 (saves d0-d3 / a0-a1 and ends in RTE): it reads the period and the edge time TPU_CH10_PARAM2 - clears parameter 4 - passes them to cm550_processPrimarySpeedPulsePeriodWithSyncPulse (in fact the mode 3 period ring / sync gap processor) - re-arms channel 10 (parameter 0 and HSR 2) - then runs the same phase comparator tail (was vp44_FUN_0001a8a4; PR #53 round 85)
 0x0001a95a,cm550_processPrimarySpeedPulsePeriodWithSyncPulse,This is the primary speed sensor period processor for speed_measurement_mode 3, the wheel with a sync pulse. It is the only work function of mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3. It stores the TPU channel 10 period and edge time (0x80d04a / 0x80d052), then asks cm550_detectEngineSpeedSensorSyncPulse(0) whether the period ended on the sync pulse. (was cm550_throttleTimeAccumulatorProcessor; PR #53 round 87)
-0x0001a95e,vp44FaultThresholdTablesInit
 0x0001abb2,cm550_updateElectronicSmartPowerTau,It uses engine_deceleration_rate_filter_state. It is the Electronic Smart Power (ESP) logic and runs while algorithm_enable_flags_12_cal bit 0x10 is set. It runs the throttle timer SPTHTR01. (was cm550_FUN_0001abb2; PR #53 round 89)
 0x0001ade8,cm550_initializeElectronicSmartPower,Start-up initializer of Electronic Smart Power (ESP), e2m blocks 11DC / 11DD (bases 0x80d2b0 / 0x807f64 from the ROM parameter ID table entries 0x3627c / 0x36284). (was cm550_FUN_0001ade8; PR #53 round 89)
 0x0001ae22,mc68k_initializeTpuChannel1BackupSpeedInput,Sets up TPU channel 1 (CFSR3 bits 7-4 / CIER bit 1 / HSRR1 bits 3-2 / parameters 0-3) for the backup speed sensor and fills its pulse period table (pulse_period_table_backup_* / period_meas_per_cam_backup_* / _teeth_per_cam_rev_backup_*). No CAN register is involved (was mc68k_dutyCycleMonitorAltCanInit; PR #53 round 82)
@@ -261,9 +250,7 @@ address,name
 0x0001b1ea,mc68k_FUN_0001b1ea
 0x0001b30a,mc68k_FUN_0001b30a
 0x0001b39a,mc68k_dutyCycleMonitorBufferInit
-0x0001b40c,mc68k_phase2_slot_1_handler
 0x0001b4b2,mc68k_FUN_0001b4b2
-0x0001b4c2,mc68k_phase2_slot_8_handler
 0x0001b4d0,cm550_ioDriverStrobeHandlerWrapper
 0x0001b4d8,vp44_evenPhaseSchedulerTaskSet
 0x0001b504,cm550_oddPhaseSchedulerTaskSet
@@ -330,7 +317,6 @@ address,name
 0x0001c8a0,cm550_FUN_0001c8a0
 0x0001c9d2,fuelDemandProportionalCalculationSlowCycle40Coordinator
 0x0001ca54,cm550_fuelDemandLimitSelector11
-0x0001ca5c,vp44_canPinVp44StatusController
 0x0001cad6,vp44_FUN_0001cad6
 0x0001cb3c,vp44_FUN_0001cb3c
 0x0001cb48,cm550_FUN_0001cb48
@@ -346,7 +332,6 @@ address,name
 0x0001d94e,initializeEngineSpeedLimitDefaults,Resets the HSG reference speed arbitration, the same function as CM848 0x20410: points the base reference pointer at the calibrated reference, starts the ramped reference (the derate speed used in the droop) there, sets the winning source indicator and its HSINRFST copy to 6, the droop no-load intercept speed to its default, the lowest-wins reference and the source 7 / 10 / 4 limits to the maximum rated engine speed, and forces a droop slope recompute (was cm550_FUN_0001d94e).
 0x0001d9b4,vp44SensorStatusMonitor
 0x0001db8a,vp44_FUN_0001db8a
-0x0001db9a,vp44_fuelArbitratorVariablesReset
 0x0001dbd8,cm550_FUN_0001dbd8
 0x0001dbee,mc68k_main
 0x0001dcfc,cm550_initializeAlpha,Start-up initializer of the alpha state. It sets alpha_fuel_rate_filter_state.accumulator = 0 and .coefficient = 0x807ab0 (e2m 104B +10 APFLFTTC, the alpha fuel rate filter constant). APAPBA, the alpha base (0x80a8fa), the LSG / AFC exit timer active flags (0x80a90e / 0x80a912), 0x80a916 and FSLSSTFG (0x80a908, the semaphore that latches LSG events) are all set to 0. (was vp44ControlStructureInit; PR #53 round 89)
@@ -388,7 +373,6 @@ address,name
 0x0001fbf4,cm550_diagnosticMessage53Builder
 0x0001fc9c,cm550_diagnosticMessage54Builder
 0x0001fd6c,cm550_j1939TimeoutDataClearHandler
-0x0001fd8e,cm550_crankStateVariablesReset
 0x0001fdc0,cm550_j1939MessageTypeCounter
 0x0001fe40,cm550_canMessageFilterInit
 0x0001ff38,cm550_engineRunTimeHistogramAccumulator
@@ -463,7 +447,6 @@ address,name
 0x00022c26,vp44MultiFrameResponseHandler
 0x00022d8e,cm550_diagnosticStatusRequestHandler
 0x00022de2,vp44_diagnosticErrorHandler
-0x00022de6,vp44_diagnosticServiceByteHandler
 0x00022e5e,vp44CanMessageDispatcher
 0x00022e96,cm550_diagnosticParamRequestHandlerWrapper
 0x00022ea4,vp44FuelTempHandlerWrapper
@@ -477,7 +460,6 @@ address,name
 0x00023186,vp44DiagnosticBufferPointersInit
 0x000231da,cm550_fuelArbitratorResetHandler
 0x00023216,cm550_FUN_00023216
-0x0002322a,cm550_statisticsTrackingFlagsReset
 0x00023244,cm550_fuelDemandLimitOrchestrator
 0x00023820,cm550_diagnosticMessageValidator
 0x00023870,cm550_ioControlTimeoutTableLookup
@@ -490,7 +472,6 @@ address,name
 0x00023be8,diagnosticMainStateProcessor
 0x00024804,cm550_FUN_00024804
 0x00024812,cm550_iahDisableWaitToStartLamp
-0x0002481e,cm550_initIoControlRegister
 0x0002482e,cm550_ioControlMaskInit
 0x00024858,cm550_ioControlMaskStateMachine
 0x000249b6,cm550_ioControlToggleCycle
@@ -512,7 +493,6 @@ address,name
 0x000258e8,cm550_epsTimingCalculationSlowCycle40Coordinator
 0x00025926,cm550_initLookupTablePointers1
 0x0002595a,cm550_governorFuelPidController
-0x00025a30,cm550_fuel_delivery_controller
 0x00025a34,vp44_FUN_00025a34
 0x00025b1c,cm550_runLowSpeedGovernor,This is the whole low speed governor (LSG). It first computes the throttle deadband reference offset = cm550_exponentialMovingAverage(0x80825a x validated throttle, &low_speed_governor_throttle_reference_offset_filter_state). LSRF lsg_breakpoint_speed is the operator or the datalink breakpoint, and LSAJRFES (the reference adjusted with throttle position) is clamped. (was vp44_fuel_timing_calculation_with_fault_checking; PR #53 round 89)
 0x00025ff2,cm550_presetLowSpeedGovernorSpeedError,It uses low_speed_governor_error_filter. It presets the LSG speed error: LSER (0x80dae0) = gain 0x808240 x (LSAJRFES - ENGRPM - offset 0x808264) >> 9, clamped to LSFTMN / LSFTMX. (was vp44_fuelRpmDeviationCalculator; PR #53 round 89)
@@ -527,9 +507,7 @@ address,name
 0x00026340,cm550_epsDiagnosticModeHandler
 0x00026462,cm550_initOilPressureMonitoring
 0x00026474,cm550_engineModeTimingAdjuster
-0x00026484,vp44_rpm_derate_monitor
 0x0002658c,cm550_fuelDemandLimitSource2Selector
-0x0002659a,vp44_initVP44StatusFlags
 0x000265e6,cm550_epsRpmTargetModeChecker
 0x00026616,cm550_FUN_00026616
 0x000266d2,cm550_timingOffsetCalculatorWrapper
@@ -543,7 +521,6 @@ address,name
 0x00026a7e,cm550_fuelDemandTablePointersInit
 0x00026ab8,cm550_rpmLoadParameterLookup
 0x00026af0,cm550_FUN_00026af0
-0x00026b00,vp44OperatingConditionChecker
 0x00026b3a,cm550_FUN_00026b3a
 0x00026b82,cm550_FUN_00026b82
 0x00026b88,hpcr_injectorPulseWidthCalc
@@ -585,7 +562,6 @@ address,name
 0x0002dcb0,cm550_oil_pressure_shutdown_controller
 0x0002ddbc,cm550_FUN_0002ddbc
 0x0002ddce,mc68k_hardwareTimerFlagsInit
-0x0002ddd6,mc68k_initDiagnosticModeSystem
 0x0002dde8,mc68k_monitorPwmOutputReadBackFaults,A PWM output driver read-back fault monitor - nothing in it reads oil pressure or engine speed: for PWM1 / PWM2 / PWM5 with a non-zero period it compares the read-back pin (bit 7 of DASM10SIC / DASM9SIC / DASM4SIC) with the commanded duty - a high pin at 0 % or a low pin at 100 % counts a driver error and the right level heals it. For its first 6 passes it also steps mc68k_stepPwm3AndPwm4OutputStartUpTest (in fact the PWM 3 / 4 start-up check) (was oilPressureRpmFaultMonitor; PR #53 round 85)
 0x0002e2f4,mc68k_stepPwm3AndPwm4OutputStartUpTest,Each call runs one step of the start-up test of the PWM 3 and PWM 4 output drivers (CTM4 PWMSM7 / PWMSM8). mc68k_monitorPwmOutputReadBackFaults calls it during its first 6 passes. (was mc68k_waterInFuelDiagnosticHandler; PR #53 round 87)
 0x0002e5c0,mc68k_pwmFuelDemandOutputCalculator
@@ -613,7 +589,6 @@ address,name
 0x0002f632,j1939FormatMultiFrameResponse
 0x0002f7e6,cm550_retarderControlModeHandler
 0x0002faa4,cm550_FUN_0002faa4
-0x0002faba,cm550_initOilPressureProtectionPointers
 0x0002fb70,cm550_torqueControlAddressDispatcher
 0x0002fbb2,cm550_FUN_0002fbb2
 0x0002fbd8,unscrambleSecurityKey,Unscrambles the 10-byte security key: each bit goes to the front of the work buffer when its security_key_scramble_mask bit is 0 and to the back otherwise / each work byte is XORed with the work byte its security_key_byte_order entry names / the output is written through security_key_byte_order backwards. The same function and tables as CM848 0x555cc / 0x5839a / 0x583a4 (shared name; was cm550_FUN_0002fbd8; PR #53 round 72).
@@ -625,17 +600,14 @@ address,name
 0x00030274,mc68k_engineSpeedIsrRegister
 0x00030290,mc68k_engineRpmHardwareTimerSetup
 0x00030342,mc68k_initializeTpuChannel12,Sets up TPU channel 12: clears its priority / interrupt enable / interrupt status - function 0xb (CFSR0 bits 3-0) - parameter 0 = 0x92 - parameters 2-3 = 0xffff - host service request 2 - priority 1. Then it computes _tach_output_minimum_rpm, so the channel may be the tachometer output (not checked). No CAN register is involved (was mc68k_can1ControllerInit; PR #53 round 82)
-0x000303c8,cm550_emptyStubFunction9
 0x000303d2,cm550_emptyInitPlaceholder
 0x000303d4,cm550_accumulatorWithOverflowCarry
 0x00030414,cm550_runTimeCountersUpdate
 0x00030454,cm550_runTimeCountersUpdateAlt
 0x00030498,cm550_FUN_00030498
 0x000304f4,cm550_rpmHistogramAndAveragingStatistics
-0x0003061a,cm550_fuelLimitRestoreFromCapture
 0x000306ca,cm550_FUN_000306ca
 0x00030a5e,cm550_FUN_00030a5e
-0x00030a64,cm550_protectionFlagAccumulator
 0x00030ade,cm550_FUN_00030ade
 0x00030b04,cm550_protectionLimitValueInit
 0x00030b0e,cm550_FUN_00030b0e
@@ -675,7 +647,6 @@ address,name
 0x00032b64,vp44_diagnosticDM8PGN_65232_Builder
 0x00032c22,vp44_FUN_00032c22
 0x00032c76,sendPgn61444ElectronicEngineController1Message,Twin of CM848 0x2588c (verified stage 9b): builds EEC1 (the torque mode from the speed control mode and the fuel limit state, then the engine speed) and sends it with cm550_sendCanMessage. (was j1939GetEngineStateCode)
-0x00032c7a,vp44Message300FaultFlagProcessor
 0x00032e08,vp44Command0x100Builder
 0x00032e4c,j1939HandlePgn61443Eec2
 0x00033064,vp44_cumminsProprietaryDM_983_Builder
@@ -719,7 +690,6 @@ address,name
 0x000344ce,vp44_FUN_000344ce
 0x00034512,cm550_FUN_00034512
 0x0003452a,cm550_FUN_0003452a
-0x00034534,cm550_initLoopCounter
 0x00034540,cm550_setDiagnosticSourceFromFuelArbitrator
 0x00034564,cm550_setDiagnosticSourceFromEngineFlags
 0x0003458c,cm550_engine_protection_coordinator

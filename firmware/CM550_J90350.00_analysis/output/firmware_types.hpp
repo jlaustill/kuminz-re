@@ -809,7 +809,7 @@ typedef enum {
 } TIMING_MODE_SOURCE;
 
 typedef enum {
-    RESET_INACTIVE = 0,  /* Reset/inactive state - initialized in vp44ControlVariablesReset */
+    RESET_INACTIVE = 0,  /* Reset/inactive state - initialized in cm550_clearKickdownControlState */
     FUEL_CONTROL_A = 1,  /* Fuel control condition A - checked with value 2 */
     FUEL_CONTROL_B = 2,  /* Fuel control condition B - checked with value 1 */
     TRANSITION_STATE_3 = 3,  /* Transition state 3 - triggers mode change on entry */
@@ -1780,8 +1780,8 @@ struct algorithm_enable_flags_11_t {
 };
 
 struct cm550_algorithm_enable_flags_12_t {
-    uint16_t idle_speed_save_enable : 1;  /* bit 0: LSISSVEN 'BIT 0 OF 0 - 15 ENABLES SAVE OF LAST IDLE SPEED AT SHUT(DOWN)'; andi.w #0x1 at 0x26546 (cm550_engineModeTimingAdjuster / vp44_rpm_derate_monitor: set keeps the operator idle adjustment in rpm_added_to_lsg_reference_300_300 0x805f0a - clear zeroes it) and 0x265a0 (cm550_fuelDemandLimitSource2Selector / vp44_initVP44StatusFlags: the start-up restore of that adjustment); CM848 field name; set in the dumps (0xbb87) */
-    uint16_t overspeed_fuel_shutoff_enable : 1;  /* bit 1: EPOSFSO 'IF T FSO CLOSES WHEN OVRSPD DETECTED BY MAIN MICRO. BI(T 1 OF 0 - 15 OF WORD C)' (FSO = fuel shut off: e2m DRFSEA 'CONTROLS FUEL SHUT OFF DRIVER'); andi.l #0x2 at 0x1ca9a (cm550_fuelDemandLimitSelector11 / vp44_canPinVp44StatusController): in ENGINE_STATE_OVERSPEED the fuel shutoff driver bit 0x20 of fuel_system_output_driver_control is cleared only while set; CM848 reserved_bit_1 with the same record (rename proposed); set */
+    uint16_t idle_speed_save_enable : 1;  /* bit 0: LSISSVEN 'BIT 0 OF 0 - 15 ENABLES SAVE OF LAST IDLE SPEED AT SHUT(DOWN)'; andi.w #0x1 at 0x26546 (cm550_engineModeTimingAdjuster: set keeps the operator idle adjustment in rpm_added_to_lsg_reference_300_300 0x805f0a - clear zeroes it) and 0x265a0 (cm550_fuelDemandLimitSource2Selector: the start-up restore of that adjustment); CM848 field name; set in the dumps (0xbb87) */
+    uint16_t overspeed_fuel_shutoff_enable : 1;  /* bit 1: EPOSFSO 'IF T FSO CLOSES WHEN OVRSPD DETECTED BY MAIN MICRO. BI(T 1 OF 0 - 15 OF WORD C)' (FSO = fuel shut off: e2m DRFSEA 'CONTROLS FUEL SHUT OFF DRIVER'); andi.l #0x2 at 0x1ca9a (cm550_fuelDemandLimitSelector11): in ENGINE_STATE_OVERSPEED the fuel shutoff driver bit 0x20 of fuel_system_output_driver_control is cleared only while set; CM848 reserved_bit_1 with the same record (rename proposed); set */
     uint16_t water_in_fuel_enable : 1;  /* bit 2: WFAGEN 'BIT 2 ENABLE FLAG USED FOR WATER_IN_FUEL ALGORITHM.'; andi.w #0x4 at 0x34c3e (vp44FaultRegisterBit2Monitor): set = a wet water_in_fuel_sensor_state sets fault status word 4 bit 0x2000 and lamp driver bit 0x10 - clear = that fault bit is cleared; CM848 field name; set */
     uint16_t air_fuel_control_override_enable : 1;  /* bit 3: AFENMAN 'BIT 3 OF 0-15 IN WORD C'; andi.w #0x8 at 0xc19c (cm550_fuelTimingTransitionStateMachine): set takes the derate fuel adjustment from afc_fueling_derate_value_when_afc_override_is_enabled_0_100 instead of the engine speed x boost pressure table; CM848 field name; clear */
     uint16_t electronic_smart_power_enable : 1;  /* bit 4: SPAGEN '0 - DISBALE 1 - ENABLE ESP ALGORITHM BIT 4 OF 0 - 15.' (e2m group ESP_08 'ELECTRONIC SMART POWER GROUP'); andi #0x10 at 0x1abcc (gates cm550_updateElectronicSmartPowerTau) / 0xc3ea (calculateAlpha copies the alpha into the timing alpha only while clear) / 0x1cd96 (cm550_FUN_0001cc72: the maximum fueling without programmable power comes from the low horsepower curve while set); CM848 field name; clear */
@@ -1932,7 +1932,7 @@ struct cm550_algorithm_enable_flags_28_t {
 };
 
 struct cm550_algorithm_enable_flags_32_t {
-    uint16_t misfire_timing_limit_enable : 1;  /* bit 0: e2m BSTALMEN (mask 01) 'MISFIRE TIMING LIMIT ALGORITHM ENABLE'; read by cm550_rpmLoadParameterLookup (0x26ac0: output_of_the_misfire_timing_limit_table_60_to_60 from the boost pressure x engine speed table e2m 8191 BSTATBZA) and vp44OperatingConditionChecker (0x26b0c: raises the timing advance to that limit and sets intermediate timing state 11); SET in the bench EEPROM (0xf241) */
+    uint16_t misfire_timing_limit_enable : 1;  /* bit 0: e2m BSTALMEN (mask 01) 'MISFIRE TIMING LIMIT ALGORITHM ENABLE'; read by cm550_rpmLoadParameterLookup (0x26ac0: output_of_the_misfire_timing_limit_table_60_to_60 from the boost pressure x engine speed table e2m 8191 BSTATBZA) and cm550_FUN_00026af0 (0x26b0c: raises the timing advance to that limit and sets intermediate timing state 11); SET in the bench EEPROM (0xf241) */
     uint16_t reserved_bit_1 : 1;  /* bit 1: no record in v64t6_s and no test in the dumped ROM; guess MPCACGEN 'ENABLES CASE SYSTEM CONFIGURATION MESSAGE PROCESSING' (0x2 in 16 later ISB e2m files); CM848 bit 1 is end_of_injection_limit_enable (different build); clear */
     uint16_t reserved_bit_2 : 1;  /* bit 2: no record in any ISB e2m and no test in the dumped ROM; CM848 bit 2 is equivalent_throttle_enable (different build); clear */
     uint16_t reserved_bit_3 : 1;  /* bit 3: no record in any e2m and no test in the dumped ROM; CM848 reserved_bit_3 too; clear */
