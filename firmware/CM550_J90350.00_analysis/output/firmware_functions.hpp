@@ -17,9 +17,9 @@ uint cm550_FUN_0000ac3c(void);  // @ 0x0000ac3c
 void cm550_FUN_0000af70(void);  // @ 0x0000af70
 void cm550_writeHourMeterConversionData(void);  // @ 0x0000b130
 void calculateFilteredEngineAcceleration(void);  // @ 0x0000b210
-ushort cm550_rpm_system_state_controller(void);  // @ 0x0000b2aa
+word cm550_rpm_system_state_controller(void);  // @ 0x0000b2aa
 void cm550_shutdownMinimumSelector21(void);  // @ 0x0000b3b2
-ushort cm550_FUN_0000b3d0(void);  // @ 0x0000b3d0
+word cm550_FUN_0000b3d0(void);  // @ 0x0000b3d0
 void cm550_fuelDemandLimitMinimumUpdater(void);  // @ 0x0000b4ce
 word cm550_engineStateFuelLimitInterpolator(void);  // @ 0x0000b4f2
 void initializeEngineAccelerationFilters(void);  // @ 0x0000b5e4
@@ -43,7 +43,7 @@ int calculateAlphaAirFuelControlResult(void);  // @ 0x0000c504
 word calculateAlphaLowAmbientAirPressureResult(void);  // @ 0x0000c556
 uint calculateAlphaBase(void);  // @ 0x0000c582
 void cm550_phase2_slot_5_handler(void);  // @ 0x0000c658
-ushort cm550_rpmHistogramAndProtectionStatisticsAccumulator(void);  // @ 0x0000c66a
+word cm550_rpmHistogramAndProtectionStatisticsAccumulator(void);  // @ 0x0000c66a
 void cm550_fuelParameterPointerSetup(void);  // @ 0x0000c714
 void cm550_shutdownMinimumSelector15(void);  // @ 0x0000c742
 void mc68k_configureCanCs5MessageObjects(void);  // @ 0x0000c760
@@ -231,7 +231,7 @@ void mc68k_FUN_0001a47c(void);  // @ 0x0001a47c
 void cm550_FUN_0001a52a(void);  // @ 0x0001a52a
 undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2(void);  // @ 0x0001a52c
 undefined8 mc68k_crankFuelAndTimingBufferStore(void);  // @ 0x0001a6e8
-uint mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled(void);  // @ 0x0001a746
+dword mc68k_initializeTpuChannel10PrimarySpeedInputIfEnabled(void);  // @ 0x0001a746
 void cm550_FUN_0001a89a(void);  // @ 0x0001a89a
 void cm550_FUN_0001a8a2(void);  // @ 0x0001a8a2
 undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode3(void);  // @ 0x0001a8a4
@@ -313,7 +313,7 @@ ushort cm550_fuelDemandLimitSelector11(void);  // @ 0x0001ca54
 uint vp44_FUN_0001cad6(void);  // @ 0x0001cad6
 void vp44_FUN_0001cb3c(void);  // @ 0x0001cb3c
 void cm550_FUN_0001cb48(void);  // @ 0x0001cb48
-short cm550_calculateBlendedTableValue(word fuel_table_x_input,word throttle_input);  // @ 0x0001cb76
+word cm550_calculateBlendedTableValue(word fuel_table_x_input,word throttle_input);  // @ 0x0001cb76
 void cm550_FUN_0001cc72(void);  // @ 0x0001cc72
 void cm550_FUN_0001cdf8(void);  // @ 0x0001cdf8
 void cm550_FUN_0001ce58(void);  // @ 0x0001ce58
@@ -511,7 +511,7 @@ void cm550_FUN_000269f2(void);  // @ 0x000269f2
 void cm550_FUN_00026a2e(void);  // @ 0x00026a2e
 void cm550_memcpy(byte *destination,byte *source,word byte_count);  // @ 0x00026a64
 void cm550_fuelDemandTablePointersInit(void);  // @ 0x00026a7e
-undefined2 cm550_rpmLoadParameterLookup(void);  // @ 0x00026ab8
+sword cm550_rpmLoadParameterLookup(void);  // @ 0x00026ab8
 ushort cm550_FUN_00026af0(void);  // @ 0x00026af0
 void cm550_FUN_00026b3a(void);  // @ 0x00026b3a
 void cm550_FUN_00026b82(void);  // @ 0x00026b82
