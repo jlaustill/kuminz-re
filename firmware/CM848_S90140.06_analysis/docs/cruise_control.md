@@ -2,7 +2,7 @@
 
 This file covers what the S90140.06 firmware does for cruise control. It comes from a read-only review on 2026-11-22.
 
-**Names and addresses follow PR #53 at `b1cd09ef` (round 67).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
+**Names and addresses follow PR #53 at `88dd3c6e` (round 91).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
 
 Evidence tags:
 
@@ -163,7 +163,7 @@ Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrU
 ## J1939
 
 - **CCVS1 receive.**
-  - `cm848_receivePgn65265CruiseControlVehicleSpeedMessage` (0x50bacc) unpacks the enable, set and resume bits. [review]
+  - `receivePgn65265CruiseControlVehicleSpeedMessage` (0x50bacc) unpacks the enable, set and resume bits. [review] It has no `cm848_` prefix because the CM550's twin handler shares the name.
   - `cm848_evaluateJ1939InputSignalFault` (0x50a57c) routes each received input to the logical switch named in its `j1939_input_signal_descriptor_table` entry (Bank 2 0x53a278, field `logical_switch`). The cruise bits go to switch 31. [round 27]
   - No cruise code reads switch 31. [review]
   - The handler never reads the coast or accelerate bits, or the set-speed byte. [review]
