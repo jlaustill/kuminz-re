@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 09:38:07 MST 2026
+// Generated: Wed Nov 25 10:04:07 MST 2026
 
 
 //
@@ -6768,10 +6768,20 @@ void cm848_keyOnStatusMonitor(void)
 
 
 //
-// Function: cm848_phase_common_processing @ 0x0000b76c
+// Function: cm848_runEveryFrameTaskSet @ 0x0000b76c
 //
 
-void cm848_phase_common_processing(void)
+/* Executive frame task set: runs every frame (5 ms), as call 1 of those frames in
+   executiveFrameInterruptHandler. Calls, in order: cm848_runSupervisorChipSchedule,
+   cm848_applyLogicalOutputRequests, cm848_refreshOutputPortsAndReadback,
+   cm848_processEgrValvePositionChannel, cm848_processVariableGeometryTurbochargerPositionChannel,
+   cm848_runEgrValveFaultAndPositionControl, cm848_sciCallbackDispatcher,
+   cm848_runVariableGeometryTurbochargerPositionControlLoop,
+   cm848_sequenceVariableGeometryTurbochargerPositionAdjustment,
+   cm848_updateVariableGeometryTurbochargerPosition, cm848_updateEgrValvePosition. (was
+   cm848_phase_common_processing; PR #53 round 95) */
+
+void cm848_runEveryFrameTaskSet(void)
 
 {
   cm848_runSupervisorChipSchedule();
@@ -6791,10 +6801,30 @@ void cm848_phase_common_processing(void)
 
 
 //
-// Function: cm848_phase_group_a_processing @ 0x0000b7b4
+// Function: cm848_runEvery2FramesTaskSetPhase0 @ 0x0000b7b4
 //
 
-void cm848_phase_group_a_processing(void)
+/* Executive frame task set: runs every 2 frames (10 ms), at frames 0, 2, 4, 6, 8, 10, 12, 14, 16,
+   18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38 of the 40-frame cycle, as call 2 of those frames in
+   executiveFrameInterruptHandler. Calls, in order: cm848_dispatchJ1939ReceivedMessages,
+   cm848_runJ1939PowertrainControlTimeouts, trackJ1939ControlSessions,
+   cm848_serviceJ1939TransportSessions, cm848_tickJ1939InputSupervision,
+   cm848_processJ1939SwitchAndRequestInputs, endRetarderShiftAssistAboveFuelDemandLimit,
+   cm848_runJ1939PeriodicTransmitQueues, cm848_calculateTransmissionRatioFromOutputShaft,
+   cm848_processBoostPressureAbsoluteChannel, cm848_processLoadNormalizerSelection,
+   cm848_processIntakeManifoldTemperatureChannel, cm848_calculateChargeFlows,
+   cm848_updateEgrValveDriverOverCurrentFault, cm848_processEgrOrificeTemperatureChannel,
+   cm848_processEgrDeltaPressureChannel, cm848_processGovernorPressureChannel,
+   cm848_processExhaustPressureChannel, cm848_deriveSecondBrakeSwitchSignal,
+   cm848_learnOutputSpeedToVehicleSpeedRatio, cm848_monitorTransmissionOutputSpeedSensor,
+   cm848_calibrateGovernorPressureSensorOffset, cm848_controlGovernorPressureSolenoid,
+   cm848_processOverdriveSwitchAndShift, cm848_calculateTransmissionOutputSpeed,
+   cm848_selectBatteryVoltage, cm848_calculateEgrDeltaPressures, cm848_calculateExhaustPressure,
+   cm848_updateVariableGeometryTurbochargerDriverOverCurrentFault, cm848_estimateExhaustPressure,
+   cm848_calculateChargeFlowTurbochargerSpeedDerate, cm848_calculateChargeSystemErrors,
+   cm848_runWastegateDutyController. (was cm848_phase_group_a_processing; PR #53 round 95) */
+
+void cm848_runEvery2FramesTaskSetPhase0(void)
 
 {
   cm848_dispatchJ1939ReceivedMessages();
@@ -6836,10 +6866,31 @@ void cm848_phase_group_a_processing(void)
 
 
 //
-// Function: cm848_phase_group_b_processing @ 0x0000b854
+// Function: cm848_runEvery2FramesTaskSetPhase1 @ 0x0000b854
 //
 
-void cm848_phase_group_b_processing(void)
+/* Executive frame task set: runs every 2 frames (10 ms), at frames 1, 3, 5, 7, 9, 11, 13, 15, 17,
+   19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39 of the 40-frame cycle, as call 2 of those frames in
+   executiveFrameInterruptHandler. Calls, in order: cm848_filterFuelPressureFeedback,
+   cm848_updateFuelPressureDiagnosticCountersAndCheckFeedbackCircuit,
+   cm848_countFuelPressureSensorCodeChanges, cm848_sampleFuelPressureSensor,
+   cm848_calculateFuelMeteringCommand, cm848_diagnoseFuelPressureGovernor, cm848_setFuelMeteringPwm,
+   cm848_updateEgrValveMeanSquaredCurrent, cm848_checkPciMessageTimeouts, cm848_schedulePciTransmit,
+   cm848_processTsc1IgnoredRequestTimeouts, cm848_runMisfireMonitor,
+   cm848_processBatteryVoltageChannel, cm848_calculateChargingVoltageError,
+   cm848_updateAlternatorFieldRegulatorState, cm848_calculateAlternatorFieldDutyByRegulatorState,
+   cm848_calculateAlternatorFieldDutyByPid, cm848_applyAlternatorFieldDuty,
+   cm848_testAlternatorOutputByCuttingField, cm848_runDataCollector, cm848_updateSciServiceTimers,
+   cm848_selectTransmissionTemperatureInUse, cm848_updateTransmissionControlState,
+   cm848_runTransmissionControlWhenEnabled, cm848_controlCruiseVacuumServo,
+   cm848_filterAndSelectIntakeManifoldTemperature, cm848_phase_groupB_calculation_2,
+   cm848_updateTurbochargerSpeedSensor, cm848_updateTurbochargerSpeedSelection,
+   cm848_updateVariableGeometryTurbochargerMeanSquaredCurrent, cm848_runEgrDeltaPressureAutozero,
+   cm848_runEgrAssistController, cm848_selectChargeManagerMassChargeFlowCommand,
+   cm848_updateFuelPressureLimpHomeActiveFlag. (was cm848_phase_group_b_processing; PR #53 round 95)
+    */
+
+void cm848_runEvery2FramesTaskSetPhase1(void)
 
 {
   cm848_filterFuelPressureFeedback();
@@ -6882,10 +6933,28 @@ void cm848_phase_group_b_processing(void)
 
 
 //
-// Function: hpcr_periodicTaskSet_fuelFinal @ 0x0000b8fc
+// Function: cm848_runEvery4FramesTaskSetPhase0 @ 0x0000b8fc
 //
 
-void hpcr_periodicTaskSet_fuelFinal(void)
+/* Executive frame task set: runs every 4 frames (20 ms), at frames 0, 4, 8, 12, 16, 20, 24, 28, 32,
+   36 of the 40-frame cycle, as call 3 of those frames in executiveFrameInterruptHandler. Calls, in
+   order: cm848_processSensorReferenceVoltageAChannel, cm848_processSensorReferenceVoltageCChannel,
+   cm848_processSensorReferenceVoltageBChannel, cm848_processAcceleratorPedalChannel,
+   cm848_refreshInputLineImage, cm848_selectCompressorOutletTemperature,
+   cm848_updateEngineSpeedFromCrankSignal, cm848_setEngineRpmFromCalibration,
+   fuelDemandProportionalCalculationSlowCycle40Coordinator, cm848_runOxygenFuelLimitTask,
+   cm848_processOilPressureChannel, cm848_processFuelTemperatureChannel,
+   cm848_processBarometricPressureChannel, cm848_selectBarometricPressure,
+   cm848_calculateAmbientAndCompressorInletConditions, cm848_processBoostPressureChannel,
+   cm848_estimateTurbochargerSpeed, cm848_processAcceleratorPedalPositionSensor1Channel,
+   cm848_processAcceleratorPedalPositionSensor2Channel, cm848_scanAndDebounceSwitchInputs,
+   cm848_checkSwitch31OnTimeFault, calculateFilteredEngineAcceleration,
+   cm848_filterCommandedThrottle, cm848_updateAcceleratorPedalSensorFaultFlags,
+   cm848_checkAcceleratorPedalChannelAgreement, cm848_calculateAcceleratorPedalDemandFromChannels,
+   cm848_selectCommandedThrottle, cm848_updateVariableSpeedGovernorSelection,
+   cm848_updateEngineState. (was hpcr_periodicTaskSet_fuelFinal; PR #53 round 95) */
+
+void cm848_runEvery4FramesTaskSetPhase0(void)
 
 {
   cm848_processSensorReferenceVoltageAChannel();
@@ -6923,10 +6992,26 @@ void hpcr_periodicTaskSet_fuelFinal(void)
 
 
 //
-// Function: cm848_periodicTaskSet_sensorProcessing @ 0x0000b98c
+// Function: cm848_runEvery4FramesTaskSetPhase1 @ 0x0000b98c
 //
 
-void cm848_periodicTaskSet_sensorProcessing(void)
+/* Executive frame task set: runs every 4 frames (20 ms), at frames 1, 5, 9, 13, 17, 21, 25, 29, 33,
+   37 of the 40-frame cycle, as call 3 of those frames in executiveFrameInterruptHandler. Calls, in
+   order: cm848_calculateFuelDemandFilter, cm848_calculateJ1939ReferenceEngineFueling,
+   cm848_calculateResidualGasMass, cm848_calculateFrictionNoLoadAndNetMachineTorque,
+   cm848_resetEngineOperatingMode, cm848_runOperatingModeSpeedGovernor,
+   cm848_temperatureBasedFuelTrim, cm848_updateFourDimensionalFueling,
+   smoothPowerTakeOffReferenceEngineSpeed, cm848_runPowerTakeOffGovernor,
+   cm848_selectPowerTakeOffOrUserFueling, cm848_updateLowSpeedGovernorReferenceSpeed,
+   cm848_calculateLowSpeedGovernorNoLoadFuel, cm848_updateLowSpeedGovernorAggressiveGainLogic,
+   cm848_selectLowSpeedGovernorGearGainSet, cm848_runLowSpeedGovernor,
+   cm848_processEngineRetarderRequest, cm848_calculateLowSpeedGovernorErrorTerms,
+   cm848_driveTachometerOutputs, cm848_requestPowerDownDelayWhileVehicleMoving,
+   cm848_selectSensorValuesInUse, diagnosticMainStateProcessor,
+   cm848_calculateDrivetrainRatioFromVehicleSpeed, cm848_monitorWatchdogFueling. (was
+   cm848_periodicTaskSet_sensorProcessing; PR #53 round 95) */
+
+void cm848_runEvery4FramesTaskSetPhase1(void)
 
 {
   cm848_calculateFuelDemandFilter();
@@ -6959,10 +7044,27 @@ void cm848_periodicTaskSet_sensorProcessing(void)
 
 
 //
-// Function: cm848_periodicTaskSet_controlLoop @ 0x0000ba08
+// Function: cm848_runEvery4FramesTaskSetPhase2 @ 0x0000ba08
 //
 
-void cm848_periodicTaskSet_controlLoop(void)
+/* Executive frame task set: runs every 4 frames (20 ms), at frames 2, 6, 10, 14, 18, 22, 26, 30,
+   34, 38 of the 40-frame cycle, as call 3 of those frames in executiveFrameInterruptHandler. Calls,
+   in order: cm848_claimAcceleratorInterlockThrottleOverride,
+   cm848_processVariableGeometryTurbochargerHBridgeFaults, cm848_estimateChargePressure,
+   cm848_calculateEngineOutputTorque, cm848_calculateHighSpeedGovernorCompensatedEngineSpeed,
+   cm848_updateRockCycleEngineSpeedLimitWindow, cm848_calculateRockCycleEngineSpeedLimit,
+   selectEngineSpeedLimit, selectHighSpeedGovernorGainSet, runHighSpeedGovernorPid,
+   cm848_loadHighSpeedGovernorWorkingGainSet, cm848_arbitrateGovernedFueling,
+   cm848_calculateThrottle100Fuelings, cm848_calculateAirFuelControlFuelLimit,
+   cm848_coldStartRpmTableLookup, cm848_processColdStartAdjustment, cm848_coldStartFuelFactorLookup,
+   cm848_calculateColdStartFuelAdjust, cm848_calculateNetTorqueFuelLimit,
+   cm848_arbitrateRequestedFueling, hpcr_filterCylinderBalanceFueling,
+   cm848_calculateFuelLimitByRpmAndDemand, cm848_calculateColdDeltaFuel,
+   cm848_claimRemoteThrottleOverride, cm848_calculatePumpingTorqueAdjustment,
+   cm848_runCombustionReference, cm848_runOffNominalCompensation. (was
+   cm848_periodicTaskSet_controlLoop; PR #53 round 95) */
+
+void cm848_runEvery4FramesTaskSetPhase2(void)
 
 {
   cm848_claimAcceleratorInterlockThrottleOverride();
@@ -6998,10 +7100,27 @@ void cm848_periodicTaskSet_controlLoop(void)
 
 
 //
-// Function: cm848_periodicTaskSet_auxiliaryControl @ 0x0000ba90
+// Function: cm848_runEvery4FramesTaskSetPhase3 @ 0x0000ba90
 //
 
-void cm848_periodicTaskSet_auxiliaryControl(void)
+/* Executive frame task set: runs every 4 frames (20 ms), at frames 3, 7, 11, 15, 19, 23, 27, 31,
+   35, 39 of the 40-frame cycle, as call 3 of those frames in executiveFrameInterruptHandler. Calls,
+   in order: cm848_applySwitchSelectedEngineSpeedLimit, cm848_calculateNetCombustionTorque,
+   cm848_estimateExhaustTemperature, cm848_calculateFourDimensionalInjectionTiming,
+   cm848_calculateColdStartRpmAdjust, cm848_calculateInjectionTimingMainMisfireLimit,
+   cm848_runCombustionLimits, cm848_selectFinalFueling, cm848_calculateFuelPressureSetpoint,
+   cm848_selectMainInjectionTiming, cm848_calculateAuxiliaryInjectionTiming,
+   cm848_copyMainInjectionTiming, cm848_calculateAuxiliaryInjectionQuantityLimit,
+   cm848_calculateMainInjectionEndTiming, cm848_calculatePilotInjectionQuantity,
+   cm848_calculatePilotInjectionTiming, cm848_captureInjectionQuantityAndTimingSnapshots,
+   cm848_auxiliaryControlTask, cm848_checkRpmOverspeedProtection, cm848_selectTwoSpeedRearAxleRatio,
+   cm848_calculateAllSpeedGovernorEquivalentThrottle, cm848_updateNotSafeToProgramFlag,
+   cm848_detectEngineProtectionShutdownOverrideRequest, cm848_calculateTemperatureHeadroomFuelCap,
+   cm848_estimateChargeTemperature, cm848_passCompensatedTimingToCombustionLimits,
+   cm848_applyWastegateSolenoidDuty. (was cm848_periodicTaskSet_auxiliaryControl; PR #53 round 95)
+    */
+
+void cm848_runEvery4FramesTaskSetPhase3(void)
 
 {
   cm848_applySwitchSelectedEngineSpeedLimit();
@@ -7037,10 +7156,15 @@ void cm848_periodicTaskSet_auxiliaryControl(void)
 
 
 //
-// Function: cm848_periodicTaskSet_canTx @ 0x0000bb18
+// Function: cm848_runEvery8FramesTaskSetPhase0 @ 0x0000bb18
 //
 
-void cm848_periodicTaskSet_canTx(void)
+/* Executive frame task set: runs every 8 frames (40 ms), at frames 0, 8, 16, 24, 32 of the 40-frame
+   cycle, as call 4 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_calculateRiseLimitedVehicleSpeed, cm848_processAirConditioningPressureChannel,
+   cm848_calculateVehicleSpeed. (was cm848_periodicTaskSet_canTx; PR #53 round 95) */
+
+void cm848_runEvery8FramesTaskSetPhase0(void)
 
 {
   cm848_calculateRiseLimitedVehicleSpeed();
@@ -7052,17 +7176,21 @@ void cm848_periodicTaskSet_canTx(void)
 
 
 //
-// Function: cm848_periodicTaskSet_sensors2 @ 0x0000bb40
+// Function: cm848_runEvery8FramesTaskSetPhase1 @ 0x0000bb40
 //
 
-/* review-function-readability reviewed 2026-06-12 - Readability High Accuracy Confidence High -
-   periodic sensor-channel acquisition slot (NOT diagnostics; the real diagnostics bundle is
-   periodicTaskSet_diagnostics2). Runs every scheduler sweep (mainLoopIteration phases
+/* Executive frame task set: runs every 8 frames (40 ms), at frames 1, 9, 17, 25, 33 of the 40-frame
+   cycle, as call 4 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_processAmbientAirTemperatureChannel, cm848_processCruiseSwitchChannel,
+   cm848_processBatteryTemperatureChannel. (was cm848_periodicTaskSet_sensors2; PR #53 round 95) |
+   earlier note: review-function-readability reviewed 2026-06-12 - Readability High Accuracy
+   Confidence High - periodic sensor-channel acquisition slot (NOT diagnostics; the real diagnostics
+   bundle is periodicTaskSet_diagnostics2). Runs every scheduler sweep (mainLoopIteration phases
    1/9/0x11/0x19/0x21); samples sensorChannel1 (ADC 0x14) + cruise switch (ADC 0x2f/47) +
    sensorChannel69 (ADC 0x45). NOTE: the configInit-family wrappers it calls run PERIODICALLY; their
    update-family siblings run once at boot in the cm848_applicationMain reset path */
 
-void cm848_periodicTaskSet_sensors2(void)
+void cm848_runEvery8FramesTaskSetPhase1(void)
 
 {
   cm848_processAmbientAirTemperatureChannel();
@@ -7096,10 +7224,15 @@ void cm848_runEvery8FramesTaskSetPhase2(void)
 
 
 //
-// Function: cm848_periodicTaskSet_timing @ 0x0000bb90
+// Function: cm848_runEvery8FramesTaskSetPhase3 @ 0x0000bb90
 //
 
-void cm848_periodicTaskSet_timing(void)
+/* Executive frame task set: runs every 8 frames (40 ms), at frames 3, 11, 19, 27, 35 of the
+   40-frame cycle, as call 4 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_calculateMaximumRoadSpeeds, cm848_processSensorTemperatureData,
+   cm848_cruiseSpeedCommandStateMachine. (was cm848_periodicTaskSet_timing; PR #53 round 95) */
+
+void cm848_runEvery8FramesTaskSetPhase3(void)
 
 {
   cm848_calculateMaximumRoadSpeeds();
@@ -7111,10 +7244,16 @@ void cm848_periodicTaskSet_timing(void)
 
 
 //
-// Function: cm848_periodicTaskSet_outputs @ 0x0000bbb8
+// Function: cm848_runEvery8FramesTaskSetPhase4 @ 0x0000bbb8
 //
 
-void cm848_periodicTaskSet_outputs(void)
+/* Executive frame task set: runs every 8 frames (40 ms), at frames 4, 12, 20, 28, 36 of the
+   40-frame cycle, as call 4 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_updateDrivetrainRatio, cm848_runCruiseAndRoadSpeedGovernor,
+   cm848_processInjectorDriverBoosterCapacitor1VoltageChannel. (was cm848_periodicTaskSet_outputs;
+   PR #53 round 95) */
+
+void cm848_runEvery8FramesTaskSetPhase4(void)
 
 {
   cm848_updateDrivetrainRatio();
@@ -7126,10 +7265,16 @@ void cm848_periodicTaskSet_outputs(void)
 
 
 //
-// Function: cm848_periodicTaskSet_sensors @ 0x0000bbe0
+// Function: cm848_runEvery8FramesTaskSetPhase5 @ 0x0000bbe0
 //
 
-void cm848_periodicTaskSet_sensors(void)
+/* Executive frame task set: runs every 8 frames (40 ms), at frames 5, 13, 21, 29, 37 of the
+   40-frame cycle, as call 4 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_processCoolantTemperatureChannel, cm848_processRemoteAcceleratorPedalChannel,
+   cm848_monitorConverterSlipAndEngineSpeedLimit. (was cm848_periodicTaskSet_sensors; PR #53 round
+   95) */
+
+void cm848_runEvery8FramesTaskSetPhase5(void)
 
 {
   cm848_processCoolantTemperatureChannel();
@@ -7141,10 +7286,17 @@ void cm848_periodicTaskSet_sensors(void)
 
 
 //
-// Function: cm848_periodicTaskSet_monitoring @ 0x0000bc08
+// Function: cm848_runEvery8FramesTaskSetPhase6 @ 0x0000bc08
 //
 
-void cm848_periodicTaskSet_monitoring(void)
+/* Executive frame task set: runs every 8 frames (40 ms), at frames 6, 14, 22, 30, 38 of the
+   40-frame cycle, as call 4 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_processWaterInFuelChannel, cm848_calculateVehicleSpeedFromOutputShaft,
+   cm848_buildPciTransmitMessage0EngineSpeedAndVehicleSpeed,
+   cm848_processInjectorDriverBoosterCapacitor2VoltageChannel. (was
+   cm848_periodicTaskSet_monitoring; PR #53 round 95) */
+
+void cm848_runEvery8FramesTaskSetPhase6(void)
 
 {
   cm848_processWaterInFuelChannel();
@@ -7157,10 +7309,16 @@ void cm848_periodicTaskSet_monitoring(void)
 
 
 //
-// Function: cm848_periodicTaskSet_communication @ 0x0000bc34
+// Function: cm848_runEvery8FramesTaskSetPhase7 @ 0x0000bc34
 //
 
-void cm848_periodicTaskSet_communication(void)
+/* Executive frame task set: runs every 8 frames (40 ms), at frames 7, 15, 23, 31, 39 of the
+   40-frame cycle, as call 4 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_processSensorDeviationOnKeyoff, cm848_processPciDiagnosticRequest,
+   cm848_selectCompressorInletTemperature. (was cm848_periodicTaskSet_communication; PR #53 round
+   95) */
+
+void cm848_runEvery8FramesTaskSetPhase7(void)
 
 {
   cm848_processSensorDeviationOnKeyoff();
@@ -7172,10 +7330,15 @@ void cm848_periodicTaskSet_communication(void)
 
 
 //
-// Function: cm848_periodicTaskGroup12_calibration1 @ 0x0000bc5c
+// Function: cm848_runEvery10FramesTaskSetPhase0 @ 0x0000bc5c
 //
 
-void cm848_periodicTaskGroup12_calibration1(void)
+/* Executive frame task set: runs every 10 frames (50 ms), at frames 0, 10, 20, 30 of the 40-frame
+   cycle, as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_processPciObdRequest, cm848_measureRadiatorFanSpeed. (was
+   cm848_periodicTaskGroup12_calibration1; PR #53 round 95) */
+
+void cm848_runEvery10FramesTaskSetPhase0(void)
 
 {
   cm848_processPciObdRequest();
@@ -7186,10 +7349,15 @@ void cm848_periodicTaskGroup12_calibration1(void)
 
 
 //
-// Function: cm848_periodicTaskGroup13_calibration2 @ 0x0000bc80
+// Function: cm848_runEvery10FramesTaskSetPhase1 @ 0x0000bc80
 //
 
-void cm848_periodicTaskGroup13_calibration2(void)
+/* Executive frame task set: runs every 10 frames (50 ms), at frames 1, 11, 21, 31 of the 40-frame
+   cycle, as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_runCoolingFanControl, cm848_checkRadiatorFanSpeedRationality. (was
+   cm848_periodicTaskGroup13_calibration2; PR #53 round 95) */
+
+void cm848_runEvery10FramesTaskSetPhase1(void)
 
 {
   cm848_runCoolingFanControl();
@@ -7200,10 +7368,15 @@ void cm848_periodicTaskGroup13_calibration2(void)
 
 
 //
-// Function: cm848_periodicTaskGroup14_calibration3 @ 0x0000bca4
+// Function: cm848_runEvery10FramesTaskSetPhase2 @ 0x0000bca4
 //
 
-void cm848_periodicTaskGroup14_calibration3(void)
+/* Executive frame task set: runs every 10 frames (50 ms), at frames 2, 12, 22, 32 of the 40-frame
+   cycle, as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_loadInjectorDriverCalibration, cm848_updateOutputReadBackFaultBits. (was
+   cm848_periodicTaskGroup14_calibration3; PR #53 round 95) */
+
+void cm848_runEvery10FramesTaskSetPhase2(void)
 
 {
   cm848_loadInjectorDriverCalibration();
@@ -7214,10 +7387,15 @@ void cm848_periodicTaskGroup14_calibration3(void)
 
 
 //
-// Function: cm848_periodicTaskGroup15_calibration4 @ 0x0000bcc8
+// Function: cm848_runEvery10FramesTaskSetPhase3 @ 0x0000bcc8
 //
 
-void cm848_periodicTaskGroup15_calibration4(void)
+/* Executive frame task set: runs every 10 frames (50 ms), at frames 3, 13, 23, 33 of the 40-frame
+   cycle, as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_updateTurbochargerOverspeedImmediateDerate. (was cm848_periodicTaskGroup15_calibration4; PR
+   #53 round 95) */
+
+void cm848_runEvery10FramesTaskSetPhase3(void)
 
 {
   cm848_updateTurbochargerOverspeedImmediateDerate();
@@ -7246,10 +7424,15 @@ void cm848_runEvery10FramesTaskSetPhase4(void)
 
 
 //
-// Function: cm848_periodicTaskGroup17_calibration5 @ 0x0000bd08
+// Function: cm848_runEvery10FramesTaskSetPhase5 @ 0x0000bd08
 //
 
-void cm848_periodicTaskGroup17_calibration5(void)
+/* Executive frame task set: runs every 10 frames (50 ms), at frames 5, 15, 25, 35 of the 40-frame
+   cycle, as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_calculateAltitudeDerateFuelLimit. (was cm848_periodicTaskGroup17_calibration5; PR #53 round
+   95) */
+
+void cm848_runEvery10FramesTaskSetPhase5(void)
 
 {
   cm848_calculateAltitudeDerateFuelLimit();
@@ -7259,10 +7442,15 @@ void cm848_periodicTaskGroup17_calibration5(void)
 
 
 //
-// Function: cm848_periodicTaskGroup18_calibration6 @ 0x0000bd28
+// Function: cm848_runEvery10FramesTaskSetPhase6 @ 0x0000bd28
 //
 
-void cm848_periodicTaskGroup18_calibration6(void)
+/* Executive frame task set: runs every 10 frames (50 ms), at frames 6, 16, 26, 36 of the 40-frame
+   cycle, as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_processJ1939AcceleratorInputs. (was cm848_periodicTaskGroup18_calibration6; PR #53 round
+   95) */
+
+void cm848_runEvery10FramesTaskSetPhase6(void)
 
 {
   cm848_processJ1939AcceleratorInputs();
@@ -7272,10 +7460,16 @@ void cm848_periodicTaskGroup18_calibration6(void)
 
 
 //
-// Function: hpcr_periodicTaskGroup25_calibration7 @ 0x0000bd54
+// Function: cm848_runEvery20FramesTaskSetPhase0 @ 0x0000bd54
 //
 
-void hpcr_periodicTaskGroup25_calibration7(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 0, 20 of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_controlAirConditioningClutch, cm848_updateMonitorEnablingConditionInputs,
+   cm848_runEndOfLineTestSequence, cm848_updateTransmissionLimpHomeFlags. (was
+   hpcr_periodicTaskGroup25_calibration7; PR #53 round 95) */
+
+void cm848_runEvery20FramesTaskSetPhase0(void)
 
 {
   cm848_controlAirConditioningClutch();
@@ -7288,10 +7482,17 @@ void hpcr_periodicTaskGroup25_calibration7(void)
 
 
 //
-// Function: cm848_periodicTaskGroup26_calibration8 @ 0x0000bd80
+// Function: cm848_runEvery20FramesTaskSetPhase1 @ 0x0000bd80
 //
 
-void cm848_periodicTaskGroup26_calibration8(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 1, 21 of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_monitorOverboostAndHighLoadBoostBand, cm848_monitorFourWheelDriveSwitch,
+   cm848_checkTransmissionTemperatureSensorPerformance,
+   cm848_runFuelPressureSensorPlausibilityMonitor. (was cm848_periodicTaskGroup26_calibration8; PR
+   #53 round 95) */
+
+void cm848_runEvery20FramesTaskSetPhase1(void)
 
 {
   cm848_monitorOverboostAndHighLoadBoostBand();
@@ -7304,10 +7505,16 @@ void cm848_periodicTaskGroup26_calibration8(void)
 
 
 //
-// Function: cm848_periodicTaskGroup27_calibration9 @ 0x0000bdac
+// Function: cm848_runEvery20FramesTaskSetPhase2 @ 0x0000bdac
 //
 
-void cm848_periodicTaskGroup27_calibration9(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 2, 22 of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_calculateEngineRetarderSelectionPercent, cm848_updateMonitorEnablingConditions,
+   cm848_runImmobilizerTask, cm848_updateVariableGeometryTurbochargerPositionControlErrorFault. (was
+   cm848_periodicTaskGroup27_calibration9; PR #53 round 95) */
+
+void cm848_runEvery20FramesTaskSetPhase2(void)
 
 {
   cm848_calculateEngineRetarderSelectionPercent();
@@ -7320,10 +7527,16 @@ void cm848_periodicTaskGroup27_calibration9(void)
 
 
 //
-// Function: cm848_periodicTaskGroup28_calibration10 @ 0x0000bdd8
+// Function: cm848_runEvery20FramesTaskSetPhase3 @ 0x0000bdd8
 //
 
-void cm848_periodicTaskGroup28_calibration10(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 3, 23 of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_calculateEngineLoadPercentages, cm848_calculateEngineLoadLowHorsepowerCurvePercent,
+   cm848_monitorGovernorPressureSensorOffset, cm848_runFuelPressureGovernorMonitors. (was
+   cm848_periodicTaskGroup28_calibration10; PR #53 round 95) */
+
+void cm848_runEvery20FramesTaskSetPhase3(void)
 
 {
   cm848_calculateEngineLoadPercentages();
@@ -7336,10 +7549,16 @@ void cm848_periodicTaskGroup28_calibration10(void)
 
 
 //
-// Function: cm848_periodicTaskGroup29_calibration11 @ 0x0000be04
+// Function: cm848_runEvery20FramesTaskSetPhase4 @ 0x0000be04
 //
 
-void cm848_periodicTaskGroup29_calibration11(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 4, 24 of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_controlLiftPump, cm848_checkCoolantTemperatureSensorPerformance,
+   cm848_runEgrValvePositionControlDiagnostic, cm848_monitorGovernorPressureTracking. (was
+   cm848_periodicTaskGroup29_calibration11; PR #53 round 95) */
+
+void cm848_runEvery20FramesTaskSetPhase4(void)
 
 {
   cm848_controlLiftPump();
@@ -7352,10 +7571,16 @@ void cm848_periodicTaskGroup29_calibration11(void)
 
 
 //
-// Function: cm848_periodicTaskGroup30_calibration12 @ 0x0000be30
+// Function: cm848_runEvery20FramesTaskSetPhase5 @ 0x0000be30
 //
 
-void cm848_periodicTaskGroup30_calibration12(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 5, 25 of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_processEngineSpeedSensorSupplyVoltageChannel, cm848_runVehicleSpeedSensorMonitors,
+   cm848_learnAcceleratorPedalIdlePositions, cm848_monitorParkNeutralSwitch. (was
+   cm848_periodicTaskGroup30_calibration12; PR #53 round 95) */
+
+void cm848_runEvery20FramesTaskSetPhase5(void)
 
 {
   cm848_processEngineSpeedSensorSupplyVoltageChannel();
@@ -7368,10 +7593,16 @@ void cm848_periodicTaskGroup30_calibration12(void)
 
 
 //
-// Function: cm848_periodicTaskGroup31_calibration13 @ 0x0000be5c
+// Function: cm848_runEvery20FramesTaskSetPhase6 @ 0x0000be5c
 //
 
-void cm848_periodicTaskGroup31_calibration13(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 6, 26 of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_calculateNoLoadFuel, cm848_runPciMessageHandlers,
+   cm848_monitorFuelPressureSetpointNotReached, cm848_calculateChargeFlowDerates. (was
+   cm848_periodicTaskGroup31_calibration13; PR #53 round 95) */
+
+void cm848_runEvery20FramesTaskSetPhase6(void)
 
 {
   cm848_calculateNoLoadFuel();
@@ -7384,10 +7615,16 @@ void cm848_periodicTaskGroup31_calibration13(void)
 
 
 //
-// Function: cm848_periodicTaskGroup32_calibration14 @ 0x0000be88
+// Function: cm848_runEvery20FramesTaskSetPhase7 @ 0x0000be88
 //
 
-void cm848_periodicTaskGroup32_calibration14(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 7, 27 of the 40-frame cycle,
+   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_runPowerTakeOffGovernorStateMachine, cm848_calculateDrivetrainRatioFromGearRatio,
+   cm848_applyJ1939OutOfGearToDrivetrainRatio, cm848_detectTransferCaseLowRange. (was
+   cm848_periodicTaskGroup32_calibration14; PR #53 round 95) */
+
+void cm848_runEvery20FramesTaskSetPhase7(void)
 
 {
   cm848_runPowerTakeOffGovernorStateMachine();
@@ -7423,10 +7660,15 @@ void cm848_runEvery20FramesTaskSetPhase8(void)
 
 
 //
-// Function: cm848_periodicTaskSet_auxiliary @ 0x0000bee0
+// Function: cm848_runEvery20FramesTaskSetPhase9 @ 0x0000bee0
 //
 
-void cm848_periodicTaskSet_auxiliary(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 9, 29 of the 40-frame cycle,
+   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit, cm848_runThermostatMonitor,
+   cm848_updateEgrSystemHealthFlags. (was cm848_periodicTaskSet_auxiliary; PR #53 round 95) */
+
+void cm848_runEvery20FramesTaskSetPhase9(void)
 
 {
   cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit();
@@ -7438,10 +7680,15 @@ void cm848_periodicTaskSet_auxiliary(void)
 
 
 //
-// Function: periodicTaskSet_fuelDemand @ 0x0000bf08
+// Function: cm848_runEvery20FramesTaskSetPhase10 @ 0x0000bf08
 //
 
-void periodicTaskSet_fuelDemand(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 10, 30 of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_runThrottleValidation, cm848_updateTripAndLifetimeCounters, cm848_fuelDemand_periodic,
+   cm848_monitorWastegateBoostPressure. (was periodicTaskSet_fuelDemand; PR #53 round 95) */
+
+void cm848_runEvery20FramesTaskSetPhase10(void)
 
 {
   cm848_runThrottleValidation();
@@ -7454,10 +7701,16 @@ void periodicTaskSet_fuelDemand(void)
 
 
 //
-// Function: hpcr_periodicTaskGroup36_calibration15 @ 0x0000bf34
+// Function: cm848_runEvery20FramesTaskSetPhase11 @ 0x0000bf34
 //
 
-void hpcr_periodicTaskGroup36_calibration15(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 11, 31 of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_monitorFuelPressureTrackingError, cm848_monitorWaterInFuelDistance,
+   cm848_detectBarometricPressureSensorAboveMaximum, hpcr_checkRailPressureSensorBeforeStart. (was
+   hpcr_periodicTaskGroup36_calibration15; PR #53 round 95) */
+
+void cm848_runEvery20FramesTaskSetPhase11(void)
 
 {
   cm848_monitorFuelPressureTrackingError();
@@ -7470,10 +7723,16 @@ void hpcr_periodicTaskGroup36_calibration15(void)
 
 
 //
-// Function: cm848_periodicTaskGroup37_calibration16 @ 0x0000bf60
+// Function: cm848_runEvery20FramesTaskSetPhase12 @ 0x0000bf60
 //
 
-void cm848_periodicTaskGroup37_calibration16(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 12, 32 of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_checkFuelTemperatureSensorAfterColdSoak, hpcr_injectPressureDiagnostic,
+   cm848_verifyCalibrationAndCodeCrc. (was cm848_periodicTaskGroup37_calibration16; PR #53 round 95)
+    */
+
+void cm848_runEvery20FramesTaskSetPhase12(void)
 
 {
   cm848_checkFuelTemperatureSensorAfterColdSoak();
@@ -7485,10 +7744,16 @@ void cm848_periodicTaskGroup37_calibration16(void)
 
 
 //
-// Function: cm848_periodicTaskGroup38_calibration17 @ 0x0000bf88
+// Function: cm848_runEvery20FramesTaskSetPhase13 @ 0x0000bf88
 //
 
-void cm848_periodicTaskGroup38_calibration17(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 13, 33 of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_updateParkNeutralFlagAndTsc1Activity, cm848_runCoolantOverheatFuelDerate,
+   cm848_applyDiscreteOutputOverrides. (was cm848_periodicTaskGroup38_calibration17; PR #53 round
+   95) */
+
+void cm848_runEvery20FramesTaskSetPhase13(void)
 
 {
   cm848_updateParkNeutralFlagAndTsc1Activity();
@@ -7500,10 +7765,15 @@ void cm848_periodicTaskGroup38_calibration17(void)
 
 
 //
-// Function: cm848_periodicTaskSet_diagnostics2 @ 0x0000bfb0
+// Function: cm848_runEvery20FramesTaskSetPhase14 @ 0x0000bfb0
 //
 
-void cm848_periodicTaskSet_diagnostics2(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 14, 34 of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings, cm848_tickJ1939Dm13Timers,
+   cm848_processEgrValveHBridgeFaults. (was cm848_periodicTaskSet_diagnostics2; PR #53 round 95) */
+
+void cm848_runEvery20FramesTaskSetPhase14(void)
 
 {
   cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings();
@@ -7515,10 +7785,16 @@ void cm848_periodicTaskSet_diagnostics2(void)
 
 
 //
-// Function: hpcr_periodicTaskGroup20_calibration @ 0x0000bfd8
+// Function: cm848_runEvery20FramesTaskSetPhase15 @ 0x0000bfd8
 //
 
-void hpcr_periodicTaskGroup20_calibration(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 15, 35 of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_monitorIntakeAirHeaterPerformance, cm848_processTransmissionTemperatureChannel,
+   hpcr_periodicTaskGroup20_empty_stub. (was hpcr_periodicTaskGroup20_calibration; PR #53 round 95)
+    */
+
+void cm848_runEvery20FramesTaskSetPhase15(void)
 
 {
   cm848_monitorIntakeAirHeaterPerformance();
@@ -7530,10 +7806,16 @@ void hpcr_periodicTaskGroup20_calibration(void)
 
 
 //
-// Function: cm848_periodicTaskGroup21_calibration @ 0x0000c000
+// Function: cm848_runEvery20FramesTaskSetPhase16 @ 0x0000c000
 //
 
-void cm848_periodicTaskGroup21_calibration(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 16, 36 of the 40-frame cycle,
+   as call 6 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_processEngineOilPressure, cm848_monitorBoostPressureSensorAndUnderboost,
+   cm848_monitorEgrOrificeTemperatureSensorRationality. (was cm848_periodicTaskGroup21_calibration;
+   PR #53 round 95) */
+
+void cm848_runEvery20FramesTaskSetPhase16(void)
 
 {
   cm848_processEngineOilPressure();
@@ -7545,10 +7827,16 @@ void cm848_periodicTaskGroup21_calibration(void)
 
 
 //
-// Function: cm848_periodicTaskGroup22_calibration @ 0x0000c028
+// Function: cm848_runEvery20FramesTaskSetPhase17 @ 0x0000c028
 //
 
-void cm848_periodicTaskGroup22_calibration(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 17, 37 of the 40-frame cycle,
+   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_updateIntakeAirHeaterAmbientTemperature, cm848_updateIntakeAirHeaterControl,
+   cm848_checkEgrDeltaPressureSensorPerformance. (was cm848_periodicTaskGroup22_calibration; PR #53
+   round 95) */
+
+void cm848_runEvery20FramesTaskSetPhase17(void)
 
 {
   cm848_updateIntakeAirHeaterAmbientTemperature();
@@ -7582,10 +7870,16 @@ void cm848_runEvery20FramesTaskSetPhase18(void)
 
 
 //
-// Function: cm848_periodicTaskSet_outputs2 @ 0x0000c078
+// Function: cm848_runEvery20FramesTaskSetPhase19 @ 0x0000c078
 //
 
-void cm848_periodicTaskSet_outputs2(void)
+/* Executive frame task set: runs every 20 frames (100 ms), at frames 19, 39 of the 40-frame cycle,
+   as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
+   cm848_monitorBrakeSwitchPairAgreement, cm848_updateDutyCycleMonitorLoadHistogram,
+   cm848_monitorConverterClutchAndOverdrivePerformance. (was cm848_periodicTaskSet_outputs2; PR #53
+   round 95) */
+
+void cm848_runEvery20FramesTaskSetPhase19(void)
 
 {
   cm848_monitorBrakeSwitchPairAgreement();
@@ -7632,388 +7926,388 @@ void executiveFrameInterruptHandler(void)
   USIU_PISCR.PISCR = wVar4;
   switch(executive_frame_phase) {
   case 0:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    hpcr_periodicTaskSet_fuelFinal();
-    cm848_periodicTaskSet_canTx();
-    cm848_periodicTaskGroup12_calibration1();
-    hpcr_periodicTaskGroup25_calibration7();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase0();
+    cm848_runEvery8FramesTaskSetPhase0();
+    cm848_runEvery10FramesTaskSetPhase0();
+    cm848_runEvery20FramesTaskSetPhase0();
     advanceHourMeters();
     executive_frame_timing_pointer = executive_frame_timings;
     executive_frame_phase = 1;
     break;
   case 1:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_sensorProcessing();
-    cm848_periodicTaskSet_sensors2();
-    cm848_periodicTaskGroup13_calibration2();
-    cm848_periodicTaskGroup26_calibration8();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase1();
+    cm848_runEvery8FramesTaskSetPhase1();
+    cm848_runEvery10FramesTaskSetPhase1();
+    cm848_runEvery20FramesTaskSetPhase1();
     cm848_monitorDiscreteOutputReadBack();
     executive_frame_phase = 2;
     break;
   case 2:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    cm848_periodicTaskSet_controlLoop();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase2();
     cm848_runEvery8FramesTaskSetPhase2();
-    cm848_periodicTaskGroup14_calibration3();
-    cm848_periodicTaskGroup27_calibration9();
+    cm848_runEvery10FramesTaskSetPhase2();
+    cm848_runEvery20FramesTaskSetPhase2();
     cm848_updateOilChangeMonitor();
     executive_frame_phase = 3;
     break;
   case 3:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_auxiliaryControl();
-    cm848_periodicTaskSet_timing();
-    cm848_periodicTaskGroup15_calibration4();
-    cm848_periodicTaskGroup28_calibration10();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase3();
+    cm848_runEvery8FramesTaskSetPhase3();
+    cm848_runEvery10FramesTaskSetPhase3();
+    cm848_runEvery20FramesTaskSetPhase3();
     hpcr_cbdCalculateCylinderTrims();
     cm848_runCylinderContributionTest();
     executive_frame_phase = 4;
     break;
   case 4:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    hpcr_periodicTaskSet_fuelFinal();
-    cm848_periodicTaskSet_outputs();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase0();
+    cm848_runEvery8FramesTaskSetPhase4();
     cm848_runEvery10FramesTaskSetPhase4();
-    cm848_periodicTaskGroup29_calibration11();
+    cm848_runEvery20FramesTaskSetPhase4();
     calculateAlpha();
     executive_frame_phase = 5;
     break;
   case 5:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_sensorProcessing();
-    cm848_periodicTaskSet_sensors();
-    cm848_periodicTaskGroup17_calibration5();
-    cm848_periodicTaskGroup30_calibration12();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase1();
+    cm848_runEvery8FramesTaskSetPhase5();
+    cm848_runEvery10FramesTaskSetPhase5();
+    cm848_runEvery20FramesTaskSetPhase5();
     cm848_updateEngineWarningFlags();
     executive_frame_phase = 6;
     break;
   case 6:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    cm848_periodicTaskSet_controlLoop();
-    cm848_periodicTaskSet_monitoring();
-    cm848_periodicTaskGroup18_calibration6();
-    cm848_periodicTaskGroup31_calibration13();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase2();
+    cm848_runEvery8FramesTaskSetPhase6();
+    cm848_runEvery10FramesTaskSetPhase6();
+    cm848_runEvery20FramesTaskSetPhase6();
     cm848_monitorFuelLevelLowDistance();
     executive_frame_phase = 7;
     break;
   case 7:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_auxiliaryControl();
-    cm848_periodicTaskSet_communication();
-    cm848_periodicTaskGroup32_calibration14();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase3();
+    cm848_runEvery8FramesTaskSetPhase7();
+    cm848_runEvery20FramesTaskSetPhase7();
     cm848_countEgrValveClosings();
     executive_frame_phase = 8;
     break;
   case 8:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    hpcr_periodicTaskSet_fuelFinal();
-    cm848_periodicTaskSet_canTx();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase0();
+    cm848_runEvery8FramesTaskSetPhase0();
     cm848_runEvery20FramesTaskSetPhase8();
     cm848_monitorWaterInFuel();
     executive_frame_phase = 9;
     break;
   case 9:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_sensorProcessing();
-    cm848_periodicTaskSet_sensors2();
-    cm848_periodicTaskSet_auxiliary();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase1();
+    cm848_runEvery8FramesTaskSetPhase1();
+    cm848_runEvery20FramesTaskSetPhase9();
     cm848_expireSciCommand37Tests();
     executive_frame_phase = 10;
     break;
   case 10:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    cm848_periodicTaskSet_controlLoop();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase2();
     cm848_runEvery8FramesTaskSetPhase2();
-    cm848_periodicTaskGroup12_calibration1();
-    periodicTaskSet_fuelDemand();
+    cm848_runEvery10FramesTaskSetPhase0();
+    cm848_runEvery20FramesTaskSetPhase10();
     cm848_debounceOutputReadBackFaults();
     executive_frame_phase = 0xb;
     break;
   case 0xb:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_auxiliaryControl();
-    cm848_periodicTaskSet_timing();
-    cm848_periodicTaskGroup13_calibration2();
-    hpcr_periodicTaskGroup36_calibration15();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase3();
+    cm848_runEvery8FramesTaskSetPhase3();
+    cm848_runEvery10FramesTaskSetPhase1();
+    cm848_runEvery20FramesTaskSetPhase11();
     cm848_initColdStartTablePointers();
     executive_frame_phase = 0xc;
     break;
   case 0xc:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    hpcr_periodicTaskSet_fuelFinal();
-    cm848_periodicTaskSet_outputs();
-    cm848_periodicTaskGroup14_calibration3();
-    cm848_periodicTaskGroup37_calibration16();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase0();
+    cm848_runEvery8FramesTaskSetPhase4();
+    cm848_runEvery10FramesTaskSetPhase2();
+    cm848_runEvery20FramesTaskSetPhase12();
     cm848_processColdStartStateMachine();
     executive_frame_phase = 0xd;
     break;
   case 0xd:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_sensorProcessing();
-    cm848_periodicTaskSet_sensors();
-    cm848_periodicTaskGroup15_calibration4();
-    cm848_periodicTaskGroup38_calibration17();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase1();
+    cm848_runEvery8FramesTaskSetPhase5();
+    cm848_runEvery10FramesTaskSetPhase3();
+    cm848_runEvery20FramesTaskSetPhase13();
     cm848_recordLifetimeDistanceEvery8Miles();
     executive_frame_phase = 0xe;
     break;
   case 0xe:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    cm848_periodicTaskSet_controlLoop();
-    cm848_periodicTaskSet_monitoring();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase2();
+    cm848_runEvery8FramesTaskSetPhase6();
     cm848_runEvery10FramesTaskSetPhase4();
-    cm848_periodicTaskSet_diagnostics2();
+    cm848_runEvery20FramesTaskSetPhase14();
     cm848_mainLoopDispatcher();
     executive_frame_phase = 0xf;
     break;
   case 0xf:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_auxiliaryControl();
-    cm848_periodicTaskSet_communication();
-    cm848_periodicTaskGroup17_calibration5();
-    hpcr_periodicTaskGroup20_calibration();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase3();
+    cm848_runEvery8FramesTaskSetPhase7();
+    cm848_runEvery10FramesTaskSetPhase5();
+    cm848_runEvery20FramesTaskSetPhase15();
     cm848_updateStackHighWaterMark();
     executive_frame_phase = 0x10;
     break;
   case 0x10:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    hpcr_periodicTaskSet_fuelFinal();
-    cm848_periodicTaskSet_canTx();
-    cm848_periodicTaskGroup18_calibration6();
-    cm848_periodicTaskGroup21_calibration();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase0();
+    cm848_runEvery8FramesTaskSetPhase0();
+    cm848_runEvery10FramesTaskSetPhase6();
+    cm848_runEvery20FramesTaskSetPhase16();
     cm848_runFaultDerateScheduler();
     executive_frame_phase = 0x11;
     break;
   case 0x11:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_sensorProcessing();
-    cm848_periodicTaskSet_sensors2();
-    cm848_periodicTaskGroup22_calibration();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase1();
+    cm848_runEvery8FramesTaskSetPhase1();
+    cm848_runEvery20FramesTaskSetPhase17();
     cm848_processFuelLevelChannel();
     cm848_updateFuelLevel();
     cm848_checkWorkingRamEndMarker();
     executive_frame_phase = 0x12;
     break;
   case 0x12:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    cm848_periodicTaskSet_controlLoop();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase2();
     cm848_runEvery8FramesTaskSetPhase2();
     cm848_runEvery20FramesTaskSetPhase18();
     cm848_updateMilOnRequest();
     executive_frame_phase = 0x13;
     break;
   case 0x13:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_auxiliaryControl();
-    cm848_periodicTaskSet_timing();
-    cm848_periodicTaskSet_outputs2();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase3();
+    cm848_runEvery8FramesTaskSetPhase3();
+    cm848_runEvery20FramesTaskSetPhase19();
     cm848_calculateChiMaximumFuelAtSpeedPoints();
     executive_frame_phase = 0x14;
     break;
   case 0x14:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    hpcr_periodicTaskSet_fuelFinal();
-    cm848_periodicTaskSet_outputs();
-    cm848_periodicTaskGroup12_calibration1();
-    hpcr_periodicTaskGroup25_calibration7();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase0();
+    cm848_runEvery8FramesTaskSetPhase4();
+    cm848_runEvery10FramesTaskSetPhase0();
+    cm848_runEvery20FramesTaskSetPhase0();
     cm848_updateTurbochargerSpeedLimiter();
     executive_frame_phase = 0x15;
     break;
   case 0x15:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_sensorProcessing();
-    cm848_periodicTaskSet_sensors();
-    cm848_periodicTaskGroup13_calibration2();
-    cm848_periodicTaskGroup26_calibration8();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase1();
+    cm848_runEvery8FramesTaskSetPhase5();
+    cm848_runEvery10FramesTaskSetPhase1();
+    cm848_runEvery20FramesTaskSetPhase1();
     cm848_runEmissionManager();
     executive_frame_phase = 0x16;
     break;
   case 0x16:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    cm848_periodicTaskSet_controlLoop();
-    cm848_periodicTaskSet_monitoring();
-    cm848_periodicTaskGroup14_calibration3();
-    cm848_periodicTaskGroup27_calibration9();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase2();
+    cm848_runEvery8FramesTaskSetPhase6();
+    cm848_runEvery10FramesTaskSetPhase2();
+    cm848_runEvery20FramesTaskSetPhase2();
     cm848_selectCoolantTemperature();
     executive_frame_phase = 0x17;
     break;
   case 0x17:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_auxiliaryControl();
-    cm848_periodicTaskSet_communication();
-    cm848_periodicTaskGroup15_calibration4();
-    cm848_periodicTaskGroup28_calibration10();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase3();
+    cm848_runEvery8FramesTaskSetPhase7();
+    cm848_runEvery10FramesTaskSetPhase3();
+    cm848_runEvery20FramesTaskSetPhase3();
     cm848_updateEmissionLevelCapReference();
     executive_frame_phase = 0x18;
     break;
   case 0x18:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    hpcr_periodicTaskSet_fuelFinal();
-    cm848_periodicTaskSet_canTx();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase0();
+    cm848_runEvery8FramesTaskSetPhase0();
     cm848_runEvery10FramesTaskSetPhase4();
-    cm848_periodicTaskGroup29_calibration11();
+    cm848_runEvery20FramesTaskSetPhase4();
     cm848_updateGeneralEngineProtection();
     executive_frame_phase = 0x19;
     break;
   case 0x19:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_sensorProcessing();
-    cm848_periodicTaskSet_sensors2();
-    cm848_periodicTaskGroup17_calibration5();
-    cm848_periodicTaskGroup30_calibration12();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase1();
+    cm848_runEvery8FramesTaskSetPhase1();
+    cm848_runEvery10FramesTaskSetPhase5();
+    cm848_runEvery20FramesTaskSetPhase5();
     cm848_processExhaustThrottlePositionChannel();
     executive_frame_phase = 0x1a;
     break;
   case 0x1a:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    cm848_periodicTaskSet_controlLoop();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase2();
     cm848_runEvery8FramesTaskSetPhase2();
-    cm848_periodicTaskGroup18_calibration6();
-    cm848_periodicTaskGroup31_calibration13();
+    cm848_runEvery10FramesTaskSetPhase6();
+    cm848_runEvery20FramesTaskSetPhase6();
     cm848_calculateWaterVaporAndSaturationTemperatures();
     executive_frame_phase = 0x1b;
     break;
   case 0x1b:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_auxiliaryControl();
-    cm848_periodicTaskSet_timing();
-    cm848_periodicTaskGroup32_calibration14();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase3();
+    cm848_runEvery8FramesTaskSetPhase3();
+    cm848_runEvery20FramesTaskSetPhase7();
     cm848_updateVariableGeometryTurbochargerMotorTemperature();
     executive_frame_phase = 0x1c;
     break;
   case 0x1c:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    hpcr_periodicTaskSet_fuelFinal();
-    cm848_periodicTaskSet_outputs();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase0();
+    cm848_runEvery8FramesTaskSetPhase4();
     cm848_runEvery20FramesTaskSetPhase8();
     cm848_processEcmInternalTemperatureChannel();
     executive_frame_phase = 0x1d;
     break;
   case 0x1d:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_sensorProcessing();
-    cm848_periodicTaskSet_sensors();
-    cm848_periodicTaskSet_auxiliary();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase1();
+    cm848_runEvery8FramesTaskSetPhase5();
+    cm848_runEvery20FramesTaskSetPhase9();
     executive_frame_phase = 0x1e;
     break;
   case 0x1e:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    cm848_periodicTaskSet_controlLoop();
-    cm848_periodicTaskSet_monitoring();
-    cm848_periodicTaskGroup12_calibration1();
-    periodicTaskSet_fuelDemand();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase2();
+    cm848_runEvery8FramesTaskSetPhase6();
+    cm848_runEvery10FramesTaskSetPhase0();
+    cm848_runEvery20FramesTaskSetPhase10();
     cm848_calculateCompressorInletDensity();
     executive_frame_phase = 0x1f;
     break;
   case 0x1f:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_auxiliaryControl();
-    cm848_periodicTaskSet_communication();
-    cm848_periodicTaskGroup13_calibration2();
-    hpcr_periodicTaskGroup36_calibration15();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase3();
+    cm848_runEvery8FramesTaskSetPhase7();
+    cm848_runEvery10FramesTaskSetPhase1();
+    cm848_runEvery20FramesTaskSetPhase11();
     cm848_updateEgrValveMotorTemperature();
     executive_frame_phase = 0x20;
     break;
   case 0x20:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    hpcr_periodicTaskSet_fuelFinal();
-    cm848_periodicTaskSet_canTx();
-    cm848_periodicTaskGroup14_calibration3();
-    cm848_periodicTaskGroup37_calibration16();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase0();
+    cm848_runEvery8FramesTaskSetPhase0();
+    cm848_runEvery10FramesTaskSetPhase2();
+    cm848_runEvery20FramesTaskSetPhase12();
     executive_frame_phase = 0x21;
     break;
   case 0x21:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_sensorProcessing();
-    cm848_periodicTaskSet_sensors2();
-    cm848_periodicTaskGroup15_calibration4();
-    cm848_periodicTaskGroup38_calibration17();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase1();
+    cm848_runEvery8FramesTaskSetPhase1();
+    cm848_runEvery10FramesTaskSetPhase3();
+    cm848_runEvery20FramesTaskSetPhase13();
     executive_frame_phase = 0x22;
     break;
   case 0x22:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    cm848_periodicTaskSet_controlLoop();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase2();
     cm848_runEvery8FramesTaskSetPhase2();
     cm848_runEvery10FramesTaskSetPhase4();
-    cm848_periodicTaskSet_diagnostics2();
+    cm848_runEvery20FramesTaskSetPhase14();
     executive_frame_phase = 0x23;
     break;
   case 0x23:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_auxiliaryControl();
-    cm848_periodicTaskSet_timing();
-    cm848_periodicTaskGroup17_calibration5();
-    hpcr_periodicTaskGroup20_calibration();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase3();
+    cm848_runEvery8FramesTaskSetPhase3();
+    cm848_runEvery10FramesTaskSetPhase5();
+    cm848_runEvery20FramesTaskSetPhase15();
     executive_frame_phase = 0x24;
     break;
   case 0x24:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    hpcr_periodicTaskSet_fuelFinal();
-    cm848_periodicTaskSet_outputs();
-    cm848_periodicTaskGroup18_calibration6();
-    cm848_periodicTaskGroup21_calibration();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase0();
+    cm848_runEvery8FramesTaskSetPhase4();
+    cm848_runEvery10FramesTaskSetPhase6();
+    cm848_runEvery20FramesTaskSetPhase16();
     cm848_calculatePredictedIntakeManifoldTemperature();
     executive_frame_phase = 0x25;
     break;
   case 0x25:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_sensorProcessing();
-    cm848_periodicTaskSet_sensors();
-    cm848_periodicTaskGroup22_calibration();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase1();
+    cm848_runEvery8FramesTaskSetPhase5();
+    cm848_runEvery20FramesTaskSetPhase17();
     executive_frame_phase = 0x26;
     break;
   case 0x26:
-    cm848_phase_common_processing();
-    cm848_phase_group_a_processing();
-    cm848_periodicTaskSet_controlLoop();
-    cm848_periodicTaskSet_monitoring();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase0();
+    cm848_runEvery4FramesTaskSetPhase2();
+    cm848_runEvery8FramesTaskSetPhase6();
     cm848_runEvery20FramesTaskSetPhase18();
     cm848_mainLoopServiceMonitor();
     executive_frame_phase = 0x27;
     break;
   case 0x27:
-    cm848_phase_common_processing();
-    cm848_phase_group_b_processing();
-    cm848_periodicTaskSet_auxiliaryControl();
-    cm848_periodicTaskSet_communication();
-    cm848_periodicTaskSet_outputs2();
+    cm848_runEveryFrameTaskSet();
+    cm848_runEvery2FramesTaskSetPhase1();
+    cm848_runEvery4FramesTaskSetPhase3();
+    cm848_runEvery8FramesTaskSetPhase7();
+    cm848_runEvery20FramesTaskSetPhase19();
     executive_frame_phase = 0;
     break;
   default:
@@ -11927,8 +12221,8 @@ void cm848_calculateWastegateDutyRequest(void)
 //
 
 /* Phase group A call slot of the wastegate duty controller (called from
-   cm848_phase_group_a_processing): calls cm848_calculateWastegateDutyRequest and does nothing else.
-   (was cm848_turboCompensationWrapper) */
+   cm848_runEvery2FramesTaskSetPhase0): calls cm848_calculateWastegateDutyRequest and does nothing
+   else. (was cm848_turboCompensationWrapper) */
 
 void cm848_runWastegateDutyController(void)
 
@@ -12300,8 +12594,8 @@ void cm848_calculateEgrMassFlowBeforeDelay(void)
    and fresh air flow records and is never spelled out; e2m 177F, resolved by the ECU's parameter ID
    table): it carries the EGR mass flow and the exhaust oxygen fraction from where they are computed
    to the intake valve, then forms the EGR fraction. Runs every 10 ms (called by
-   cm848_calculateChargeFlows, which cm848_phase_group_a_processing runs in the 20 even phases of
-   the 40-phase main loop). (1) cm848_calculateEgrMassFlowBeforeDelay sets
+   cm848_calculateChargeFlows, which cm848_runEvery2FramesTaskSetPhase0 runs in the 20 even phases
+   of the 40-phase main loop). (1) cm848_calculateEgrMassFlowBeforeDelay sets
    egr_flow_estimate_terms.egr_mass_flow_before_delay (+4 CHP_EGR_Flow_Before_Delay). (2)
    oxygen_flow_delay_milliseconds (+14 CHP_O2_Flow_Delay, 0.001 s per count) =
    oxygen_flow_delay_volume_fraction (e2m 177E +6 C_CHP_Volume_Fraction) x 120 x 1000 /
@@ -12607,11 +12901,11 @@ void cm848_initializeChargeMassFlowFilter(void)
 // Function: cm848_calculateChargeFlows @ 0x00012e60
 //
 
-/* The CHP charge flow model's 10 ms task (cm848_phase_group_a_processing, every even phase of the
-   40-phase main loop): cm848_calculateChargeFlowEstimate (the speed-density charge mass flow, e2m
-   177C / 177D), cm848_calculateDelayedEgrFlowAndFraction (the EGR mass flow, its transport delay
-   and the EGR fraction, 177E / 177F) and cm848_calculateFreshAirMassFlow (charge minus EGR, 177B).
-   CHP is the e2m prefix of all these records; the e2m never spells it out. (was
+/* The CHP charge flow model's 10 ms task (cm848_runEvery2FramesTaskSetPhase0, every even phase of
+   the 40-phase main loop): cm848_calculateChargeFlowEstimate (the speed-density charge mass flow,
+   e2m 177C / 177D), cm848_calculateDelayedEgrFlowAndFraction (the EGR mass flow, its transport
+   delay and the EGR fraction, 177E / 177F) and cm848_calculateFreshAirMassFlow (charge minus EGR,
+   177B). CHP is the e2m prefix of all these records; the e2m never spells it out. (was
    cm848_fuelControlMainCalculation) */
 
 void cm848_calculateChargeFlows(void)
@@ -12816,7 +13110,7 @@ void cm848_initializePredictedIntakeManifoldTemperature(void)
    _Max), is pumping_torque_adjustment (+2 CHP_Pumping_Torque_Adj), the term between net and gross
    torque. It reads engine speed and the globals directly: the two parameters in
    function_definitions.csv are never read (r3 and r4 are overwritten first). Caller
-   cm848_periodicTaskSet_controlLoop. (was cm848_calculateBoostPressureOffset) */
+   cm848_runEvery4FramesTaskSetPhase2. (was cm848_calculateBoostPressureOffset) */
 
 void cm848_calculatePumpingTorqueAdjustment(void)
 
@@ -12898,7 +13192,7 @@ void cm848_initializePumpingTorqueLookupCache(void)
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
 /* Charge pressure estimate (e2m 1A23; constants 1A22, tables 1A24-1A29), from
-   cm848_periodicTaskSet_controlLoop. It looks up charge_pressure_estimate_offset /
+   cm848_runEvery4FramesTaskSetPhase2. It looks up charge_pressure_estimate_offset /
    charge_pressure_estimate_tolerance / compressor_pressure_ratio_estimate against
    compressor_map_corrected_turbocharger_speed and compressor_pressure_ratio_scale against engine
    speed. charge_pressure_estimate_unclamped = compressor_inlet_pressure x pressure ratio x scale /
@@ -13431,8 +13725,8 @@ LAB_00013db8:
    value, 1 backup = charge_temperature_estimate (e2m 1A1B +0 Charge_Tmptr_Est), 2 default =
    intake_manifold_temperature_sensor_default_value (e2m 1966 +1E Charge_Tmptr_Default; only when a
    sensor fault is set and the estimate is unusable). The selected value is
-   intake_manifold_temperature_filtered (Charge_Tmptr). Caller cm848_phase_group_b_processing. (was
-   cm848_calculatePressureSensorFiltered) */
+   intake_manifold_temperature_filtered (Charge_Tmptr). Caller cm848_runEvery2FramesTaskSetPhase1.
+   (was cm848_calculatePressureSensorFiltered) */
 
 void cm848_filterAndSelectIntakeManifoldTemperature(void)
 
@@ -16065,7 +16359,7 @@ void cm848_initializeCommandedThrottleState(void)
    reference injection_timing_compensated_reference (1711 +8 CBO_SOI_Ref) into
    injection_timing_combustion_limits_input (10A4 +14 ANC_SOI) and its copy, and sets the
    intermediate source to COMBUSTION_REFERENCE (25, e2m label 19 CBR_SOI). Task of
-   cm848_periodicTaskSet_auxiliaryControl (was cm848_storeFuelDemandPreviousValues) */
+   cm848_runEvery4FramesTaskSetPhase3 (was cm848_storeFuelDemandPreviousValues) */
 
 void cm848_passCompensatedTimingToCombustionLimits(void)
 
@@ -16264,7 +16558,7 @@ LAB_00017f34:
    the exhaust and charge pressure sources (exhaust_pressure_source, charge_pressure_source) are
    both 2, 0 when both are 0, else 1. Then engine_delta_pressure = -egr_valve_delta_pressure (+8
    Engine_Delta_Press) and egr_valve_delta_pressure_source (+6 EGR_Valve_Delta_Press_Source) = the
-   engine delta pressure source. Caller cm848_phase_group_a_processing. (was
+   engine delta pressure source. Caller cm848_runEvery2FramesTaskSetPhase0. (was
    cm848_calculateFuelFlowWithMode) */
 
 void cm848_calculateEgrDeltaPressures(void)
@@ -17215,7 +17509,7 @@ LAB_000190cc:
 
 /* Per-pass current update of the EGR valve motor: runs the current estimate, then filters the
    square of the current (current x current >> 13) into egr_valve_motor_mean_squared_current; called
-   from cm848_phase_group_b_processing. (was cm848_updateBoostFuelCorrectionSquaredAverage) */
+   from cm848_runEvery2FramesTaskSetPhase1. (was cm848_updateBoostFuelCorrectionSquaredAverage) */
 
 void cm848_updateEgrValveMeanSquaredCurrent(void)
 
@@ -19439,8 +19733,8 @@ void cm848_selectColdStartFactor(void)
 // Function: cm848_updateEngineState @ 0x0001c28c
 //
 
-/* Called as the last task of hpcr_periodicTaskSet_fuelFinal (every 4th main loop phase, 20 ms if a
-   phase is 5 ms). Two jobs. (1) The engine overspeed monitor: the speed
+/* Called as the last task of cm848_runEvery4FramesTaskSetPhase0 (every 4th main loop phase, 20 ms
+   if a phase is 5 ms). Two jobs. (1) The engine overspeed monitor: the speed
    engine_speed_state_t.filtered_engine_speed (1/8 rpm) at or above
    engine_overspeed_set_rpm_threshold (33600 = 4200 rpm) for more than
    engine_overspeed_debounce_limit (3) passes in a row latches engine_overspeed_active_flag, sets
@@ -20874,7 +21168,7 @@ void cm848_initEngineOperatingState(void)
    cm848_calculateDualAxisFuelLimit in four_dimensional_fueling (e2m 1053 +0 Four_D_Fueling,
    '[_5DFL] fueling value calculated from the 4D fueling tables') and copies it to
    engine_operating_mode_fuel_demand (e2m 1050 +0 User_Fueling). Does nothing in the other modes.
-   Caller cm848_periodicTaskSet_sensorProcessing. (was cm848_updateEngineTimingCompensation) */
+   Caller cm848_runEvery4FramesTaskSetPhase1. (was cm848_updateEngineTimingCompensation) */
 
 void cm848_updateFourDimensionalFueling(void)
 
@@ -20902,7 +21196,7 @@ void cm848_updateFourDimensionalFueling(void)
    copies the result to main_injection_timing_copy (103B +2 SOI), which
    cm848_copyMainInjectionTiming overwrites with main_injection_timing before its only reader
    cm848_calculateMainInjectionEndTiming runs. Both maps are flat 171 counts (20 degrees) in the
-   dump. Task of cm848_periodicTaskSet_auxiliaryControl (was cm848_calculateInjectionTimingOffset) |
+   dump. Task of cm848_runEvery4FramesTaskSetPhase3 (was cm848_calculateInjectionTimingOffset) |
    earlier note: Calculates the injection timing offset (timing counts of 0.1171875 degree) into
    four_dimensional_injection_timing: two engine speed x final_fueling maps
    (injection_timing_offset_map_a and injection_timing_offset_map_b) blended by the combustion alpha
@@ -20913,7 +21207,7 @@ void cm848_updateFourDimensionalFueling(void)
    copies the result to main_injection_timing_copy, which cm848_copyMainInjectionTiming overwrites
    with main_injection_timing before its only reader cm848_calculateMainInjectionEndTiming runs.
    Both maps are flat 171 counts (20 degrees) in the dump. Task of
-   cm848_periodicTaskSet_auxiliaryControl (was cm848_processTorqueLimitState). */
+   cm848_runEvery4FramesTaskSetPhase3 (was cm848_processTorqueLimitState). */
 
 void cm848_calculateFourDimensionalInjectionTiming(void)
 
@@ -21042,7 +21336,7 @@ void cm848_initFaultSeverityTables(void)
    lower one. cm848_exponentialMovingAverage (state commanded_throttle_filter_state, whose
    coefficient is that word) then filters the commanded throttle into commanded_throttle_filtered
    (+8 Filtered_Commanded_Throttle), the throttle input of the 4-D fueling tables. Caller
-   hpcr_periodicTaskSet_fuelFinal. (was cm848_calculateFuelDemandChangeRate) */
+   cm848_runEvery4FramesTaskSetPhase0. (was cm848_calculateFuelDemandChangeRate) */
 
 void cm848_filterCommandedThrottle(void)
 
@@ -21365,8 +21659,8 @@ uint cm848_calculateMaximumFuelCurve(word param_1,word param_2)
    throttle_100_fueling_without_programmable_power (+8 Throttle_100_Fueling_No_PP) is always
    calculated like throttle_100_fueling, with four_dimensional_fueling_interpolation_factor (the
    alpha, e2m 1053 +2 Fuel_Interp_Factor) forced to 0 while bit 0x10 of
-   algorithm_enable_flags_12_cal (ESP enable) is set. Caller cm848_periodicTaskSet_controlLoop. (was
-   cm848_calculateFuelDemandWithTrim) */
+   algorithm_enable_flags_12_cal (ESP enable) is set. Caller cm848_runEvery4FramesTaskSetPhase2.
+   (was cm848_calculateFuelDemandWithTrim) */
 
 void cm848_calculateThrottle100Fuelings(void)
 
@@ -22183,7 +22477,7 @@ undefined1 getJ1939DiagnosticResponseEchoLength(int param_1)
    N*m) over that torque. RAM dump (key on, engine stopped): (1030 - 397) x 10000 / ((290 x 13558) /
    850) = 1368 = j1939_reference_engine_fueling, against 1501 = j1939_peak_fueling (ROM, e2m 1104
    +0) that cm848_initializeJ1939ReferenceEngineFuelingAndTorque (0x212dc) loads. Called from
-   cm848_periodicTaskSet_sensorProcessing. (was cm848_calculateProtectionActivationDelay) */
+   cm848_runEvery4FramesTaskSetPhase1. (was cm848_calculateProtectionActivationDelay) */
 
 void cm848_calculateJ1939ReferenceEngineFueling(void)
 
@@ -23489,7 +23783,7 @@ void cm848_setThrottle100J1939TorqueCurveSpeedPoints(void)
    is in throttle_100_fueling_point_clamp_bitmap (e2m 12BD +8 Throttle_100_Min_Config),
    j1939_torque_curve_fueling_at_point_1 (point 1) and j1939_torque_curve_fueling_at_point_2 .. 5
    (e2m 1102 +2C .. +34) are only lowered to the maximum fuel; otherwise they are replaced by it,
-   unless a higher priority request bit is set. Called by cm848_periodicTaskSet_diagnostics2. (was
+   unless a higher priority request bit is set. Called by cm848_runEvery20FramesTaskSetPhase14. (was
    cm848_updateProtectionDiagnostics) */
 
 void cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings(void)
@@ -29191,7 +29485,7 @@ LAB_000299e8:
 // Function: cm848_updateLowSpeedGovernorReferenceSpeed @ 0x00029afc
 //
 
-/* The LSG reference speed task (cm848_periodicTaskSet_sensorProcessing): sets
+/* The LSG reference speed task (cm848_runEvery4FramesTaskSetPhase1): sets
    low_speed_governor_shift_in_process_hold_passes, then runs
    cm848_calculateLowSpeedGovernorCoolantTemperatureSpeed,
    cm848_selectLowSpeedGovernorDesiredReferenceSpeed and cm848_slewLowSpeedGovernorReferenceSpeed
@@ -30665,7 +30959,7 @@ void cm848_initializePgn65264PowerTakeOffInformationBuffer(void)
 
 /* Updates not_safe_to_program_flag (e2m 000D +0 SAFE2PRG / Safe_To_Program: 'Indicator to tools (0
    = safe for program, 1 = not safe)'): 1 while engine_state is not ENGINE_STATE_STOPPED, else 0.
-   Runs every pass of cm848_periodicTaskSet_auxiliaryControl. Input: engine_state. Output:
+   Runs every pass of cm848_runEvery4FramesTaskSetPhase3. Input: engine_state. Output:
    not_safe_to_program_flag. While it is 1 the force-activate diagnostic service answers
    J1939_DIAGNOSTIC_RESULT_NOT_SAFE, cm848_commitEepromMirrorToEeprom refuses, the diagnostic EEPROM
    writes (writeJ1939DiagnosticMemory, the PCI write service) answer 7 unless ram_refresh_enable is
@@ -30791,7 +31085,7 @@ void cm848_initializeAllSpeedGovernorTuningSetBlendWeight(void)
    rpm in the dump), or to engine_speed_limit_droop_cap_alternate_cal while a switch input
    (switch_input_state_bits[3] bit 0x80) is on, engine_speed_limit_droop_type_select_cal is above 1
    and engine_speed_limit_droop_select_port_type is 0, and records source code 1 in
-   engine_speed_limit_droop_cap_source_code. First task of cm848_periodicTaskSet_auxiliaryControl;
+   engine_speed_limit_droop_cap_source_code. First task of cm848_runEvery4FramesTaskSetPhase3;
    engine_speed_limit_droop_type_select_cal is 1 in the dump, so only the first limit is ever used.
    (was cm848_updateTorqueLimitFromProtection) */
 
@@ -31905,7 +32199,7 @@ void cm848_driveVariableGeometryTurbochargerMotor(void)
 //
 
 /* Per-pass runner of the valve position control loop, called once per pass by
-   cm848_phase_common_processing: when variable_geometry_turbocharger_enable_flag is set (1 in the
+   cm848_runEveryFrameTaskSet: when variable_geometry_turbocharger_enable_flag is set (1 in the
    dump) it runs cm848_updateVariableGeometryTurbochargerPositionCommandAndControlState,
    cm848_calculateVariableGeometryTurbochargerPidDuty and
    cm848_driveVariableGeometryTurbochargerMotor in that order. (was cm848_runActuatorEControlLoop,
@@ -32239,7 +32533,7 @@ bool cm848_updateVariableGeometryTurbochargerHBridgeInrushFaultCounter(int param
 // Function: cm848_processVariableGeometryTurbochargerHBridgeFaults @ 0x0002dc40
 //
 
-/* Valve driver (H-bridge) fault handler, run each pass of cm848_periodicTaskSet_controlLoop when
+/* Valve driver (H-bridge) fault handler, run each pass of cm848_runEvery4FramesTaskSetPhase2 when
    variable_geometry_turbocharger_enable_flag is set: reads and clears bits 0x20 / 0x80 / 0x100 of
    supervisor_register_162_status (the over-current input comes from bit 1 of
    switch_input_state_bits[2] instead when bit 0 of algorithm_enable_flags_43_cal is set), runs the
@@ -43056,7 +43350,7 @@ void cm848_initializeTransmissionOutputSpeedSensorMonitor(void)
 
 /* P0720 transmission output speed sensor monitor (fault 320 = fault_detected_cal.faults_320_to_335
    bit 0; ROM 0x5985a[320] = slot 125 -> P0720), run every second main-loop phase from
-   cm848_phase_group_a_processing while bit 28 of monitor_enabling_conditions_met is set. Out of
+   cm848_runEvery2FramesTaskSetPhase0 while bit 28 of monitor_enabling_conditions_met is set. Out of
    park / neutral (switch 20), at the governor setpoint, with vehicle_speed_copy above 3840 (15
    mph): 300 passes with transmission_output_speed_sensor_filtered below 480 (60 rpm) set P0720 and
    bit 5 (0x20) of transmission_control_flags_t.limp_home_flags_4 (e2m RE_OSS_Limp) (the output
@@ -43213,8 +43507,8 @@ void cm848_calculateVehicleSpeed(void)
    speed sensor or the J1939 output shaft speed) is nonzero, and never clears it.
    cm848_updateEngineState starts the delayed power-down in SHUTDOWN only while the flag is 0 and
    clears it at the end of every SHUTDOWN pass. Runs every pass of
-   cm848_periodicTaskSet_sensorProcessing. On this truck the speed reads 0 (no speed sensor wired),
-   so the flag is never set (0 in the dump). (was cm848_setFuelDemandActiveFlag) */
+   cm848_runEvery4FramesTaskSetPhase1. On this truck the speed reads 0 (no speed sensor wired), so
+   the flag is never set (0 in the dump). (was cm848_setFuelDemandActiveFlag) */
 
 void cm848_requestPowerDownDelayWhileVehicleMoving(void)
 
@@ -46289,7 +46583,7 @@ void cm848_inhibitLowSpeedGovernorAggressiveGains(void)
    two_speed_axle_switch_present_cal is nonzero; with it 0 the word keeps the start-up value that
    0x42770 loads from the HIGH record, whereas cm848_calculateVehicleSpeedFromOutputShaft and
    cm848_calculateDrivetrainRatioFromVehicleSpeed use the LOW record in that single-speed case.
-   Called every pass of cm848_periodicTaskSet_auxiliaryControl. Inputs:
+   Called every pass of cm848_runEvery4FramesTaskSetPhase3. Inputs:
    two_speed_axle_switch_present_cal, switch 31, the two ratio records. Output: rear_axle_ratio
    (read by cm848_selectLowSpeedGovernorGearGainSet, cm848_calculateRiseLimitedVehicleSpeed and
    cm848_calculateCruiseGovernorSpeedErrorGain). 453 = 3.54 in the dump for all three words;
@@ -46335,8 +46629,8 @@ void cm848_initializeRearAxleRatio(void)
 
 /* Copies main_injection_timing into main_injection_timing_copy, the base of
    cm848_calculateMainInjectionEndTiming. Runs after cm848_selectMainInjectionTiming and
-   cm848_calculateAuxiliaryInjectionTiming in cm848_periodicTaskSet_auxiliaryControl and overwrites
-   the 4D timing copy stored there earlier by cm848_calculateFourDimensionalInjectionTiming. (was
+   cm848_calculateAuxiliaryInjectionTiming in cm848_runEvery4FramesTaskSetPhase3 and overwrites the
+   4D timing copy stored there earlier by cm848_calculateFourDimensionalInjectionTiming. (was
    cm848_copyProtectionAccumulator) */
 
 void cm848_copyMainInjectionTiming(void)
@@ -46543,9 +46837,9 @@ void cm848_dispatchModeHandlers(void)
 /* Sensor channel 54 (injector driver booster capacitor 1 voltage): calls
    cm848_processUnsignedSensorChannel every pass, from a periodic task; the old _init / _process
    suffixes were inverted (was cm848_updateInjectorDriverBoosterCapacitor1VoltageChannel) | earlier
-   note: Sensor channel 54 wrapper run every pass from cm848_periodicTaskSet_outputs: the injector
-   driver booster capacitor 1 voltage (faults 328 / 329; P2146) (was cm848_initProtectionParameter1)
-    */
+   note: Sensor channel 54 wrapper run every pass from cm848_runEvery8FramesTaskSetPhase4: the
+   injector driver booster capacitor 1 voltage (faults 328 / 329; P2146) (was
+   cm848_initProtectionParameter1) */
 
 void cm848_processInjectorDriverBoosterCapacitor1VoltageChannel(void)
 
@@ -46597,9 +46891,9 @@ void cm848_initializeInjectorDriverBoosterCapacitor1VoltageChannel(void)
 /* Sensor channel 55 (injector driver booster capacitor 2 voltage): calls
    cm848_processUnsignedSensorChannel every pass, from a periodic task; the old _init / _process
    suffixes were inverted (was cm848_updateInjectorDriverBoosterCapacitor2VoltageChannel) | earlier
-   note: Sensor channel 55 wrapper run every pass from cm848_periodicTaskSet_outputs: the injector
-   driver booster capacitor 2 voltage (faults 330 / 331; P2149) (was cm848_initProtectionParameter2)
-    */
+   note: Sensor channel 55 wrapper run every pass from cm848_runEvery8FramesTaskSetPhase4: the
+   injector driver booster capacitor 2 voltage (faults 330 / 331; P2149) (was
+   cm848_initProtectionParameter2) */
 
 void cm848_processInjectorDriverBoosterCapacitor2VoltageChannel(void)
 
@@ -46697,7 +46991,7 @@ void hpcr_cbdFillAccelerationBuffers(void)
    (previous filtered - final_fueling) x cylinder_balance_fueling_filter_coefficient / 8192, clamped
    to 0..5888 (0x1700). That word is the fueling axis of the cylinder balance tables and the
    zero-fuel test of hpcr_cbdCalculateCylinderTrims. Runs every pass of
-   cm848_periodicTaskSet_controlLoop. There is no throttle or load input. (was
+   cm848_runEvery4FramesTaskSetPhase2. There is no throttle or load input. (was
    hpcr_processLoadThrottle) */
 
 void hpcr_filterCylinderBalanceFueling(void)
@@ -47443,7 +47737,7 @@ void mpc555_resetEngineTimingAccumulators(void)
    bits), converts the crank period and tooth period into main_engine_speed / backup_engine_speed,
    selects one as average_engine_speed, filters it into engine_speed_state.engine_speed /
    filtered_engine_speed, and reprograms the TPU-A channel 0 / 1 crank timing parameters from the
-   rpm thresholds. Called from hpcr_periodicTaskSet_fuelFinal. (was
+   rpm thresholds. Called from cm848_runEvery4FramesTaskSetPhase0. (was
    mpc555_updateSensorDiagnosticFlags) */
 
 void cm848_updateEngineSpeedFromCrankSignal(void)
@@ -49631,10 +49925,10 @@ LAB_00047b98:
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Fuel metering command controller (cm848_phase_group_b_processing; output channel assignment table
-   entry 20 - P0251 fuel metering - this calibration: TPU-B 11 with MDASM29 read-back). It is the
-   fuel (rail) pressure governor (the DRB SCI table labels its output FUEL PRESS REG OUTPUT and its
-   inputs FUEL PRESS SETPOINT / FUEL PRESSURE SENSOR), a cascade of two loops: (1) an override
+/* Fuel metering command controller (cm848_runEvery2FramesTaskSetPhase1; output channel assignment
+   table entry 20 - P0251 fuel metering - this calibration: TPU-B 11 with MDASM29 read-back). It is
+   the fuel (rail) pressure governor (the DRB SCI table labels its output FUEL PRESS REG OUTPUT and
+   its inputs FUEL PRESS SETPOINT / FUEL PRESSURE SENSOR), a cascade of two loops: (1) an override
    (fuel_metering_command_override_enable) and the service tool's fuel control test
    (fuel_control_actuator_test_active_flag: fuel_metering_tool_override_command) return early;
    otherwise the governor mode in fuel_pressure_governor_state.fuel_pressure_governor_mode picks
@@ -50536,7 +50830,7 @@ void cm848_filterEngineSensorValue(void)
 // Function: cm848_diagnoseFuelPressureGovernor @ 0x00049264
 //
 
-/* Rail pressure diagnostics, run in cm848_phase_group_b_processing right after
+/* Rail pressure diagnostics, run in cm848_runEvery2FramesTaskSetPhase1 right after
    cm848_calculateFuelMeteringCommand while engine_state is ENGINE_STATE_RUNNING and the pressure
    sensor has no confirmed fault: it sets up to seven bits of fuel_pressure_diagnostic_flags
    (pressure above the too-high threshold for 150 passes, above a second range limit, below the rpm
@@ -51045,7 +51339,7 @@ void cm848_initializeFuelPressureDiagnosticState(void)
 // Function: cm848_setFuelMeteringPwm @ 0x0004a2f8
 //
 
-/* Fuel metering PWM (cm848_phase_group_b_processing, right after
+/* Fuel metering PWM (cm848_runEvery2FramesTaskSetPhase1, right after
    cm848_calculateFuelMeteringCommand): period = 5000000 / a table lookup (args at
    fuel_metering_pwm_frequency_cached_axis_offset) and on-time = period x
    fuel_pressure_governor_state.fuel_metering_command / 4095, written as one dword to TPU-B channel
@@ -51775,11 +52069,11 @@ LAB_0004b524:
 // Function: cm848_selectMainInjectionTiming @ 0x0004b5b8
 //
 
-/* Once per pass of cm848_periodicTaskSet_auxiliaryControl: packs the winning-source codes of the
-   pilot timing, pilot quantity, rail pressure setpoint and main timing into
-   combined_emissions_state, rebuilds bits 1 / 2 / 4 of injection_timing_adjustment_flags, then
-   produces main_injection_timing by main_injection_timing_selection (e2m 8085 +0
-   Main_SOI_Selection_Switch): 2 = user_commanded_injection_timing_cal (source code 7), 1 and 3 =
+/* Once per pass of cm848_runEvery4FramesTaskSetPhase3: packs the winning-source codes of the pilot
+   timing, pilot quantity, rail pressure setpoint and main timing into combined_emissions_state,
+   rebuilds bits 1 / 2 / 4 of injection_timing_adjustment_flags, then produces main_injection_timing
+   by main_injection_timing_selection (e2m 8085 +0 Main_SOI_Selection_Switch): 2 =
+   user_commanded_injection_timing_cal (source code 7), 1 and 3 =
    cm848_calculateMainInjectionTiming, 0 = no change (was
    cm848_updateMainInjectionTimingByDeliveryMode) */
 
@@ -58022,7 +58316,7 @@ void cm848_refreshOutputPortsAndReadback(void)
 /* Snapshots every discrete input port into input_line_image in one pass: the MIOS port data (lines
    8-23) / SIU_SGPIODT1-2 (24-87) / the MDASM11-15 and 27-30 pin bits (120-128) / the supervisor
    chip lines 130-151 / the serial output driver status byte (152-159); run by
-   hpcr_periodicTaskSet_fuelFinal and cm848_initializeSwitchInputStates -
+   cm848_runEvery4FramesTaskSetPhase0 and cm848_initializeSwitchInputStates -
    cm848_readDiscreteInputLine refreshes a single line. Not injector timing (was
    hpcr_injectorPulseWidthCalc) */
 
@@ -62226,7 +62520,7 @@ LAB_0050119c:
 /* Sensor channel 101 (variable geometry turbocharger position): calls
    cm848_processSignedSensorChannel every pass, from a periodic task; the old _init / _process
    suffixes were inverted (was cm848_readVariableGeometryTurbochargerPositionSensor) | earlier note:
-   Periodic read of sensor channel 101 (called once per pass from cm848_phase_common_processing):
+   Periodic read of sensor channel 101 (called once per pass from cm848_runEveryFrameTaskSet):
    linearises the ADC value through the channel table, debounces the high / low faults 682 / 683 and
    filters it into variable_geometry_turbocharger_position_sensor_value, with
    variable_geometry_turbocharger_position_sensor_default_value and
@@ -63189,7 +63483,7 @@ void cm848_initializeBarometricFuelLimitInterpolationStates(void)
    barometric_altitude_source (+12 Altitude_Source). Then barometric_altitude_feet (+0 Altitude)
    from barometric_pressure_reference (limited to 0x75e) through the altitude table and
    ambient_relative_humidity (+14 Ambient_Relative_Humidity) from a grid of engine speed and
-   injection_quantity_combustion_reference. Caller hpcr_periodicTaskSet_fuelFinal. (was
+   injection_quantity_combustion_reference. Caller cm848_runEvery4FramesTaskSetPhase0. (was
    hpcr_fuelFinal_exponentialAverage) */
 
 void cm848_calculateAmbientAndCompressorInletConditions(void)
@@ -65711,8 +66005,8 @@ void cm848_sendDataCollectorBuffer(void)
    unless the collector is enabled (algorithm_enable_flags_0_cal bit 0x100, e2m 106B +2
    Collector_Enable, 'EEPROM indicator set by tools to enable data collector operation'; clear in
    this calibration, 39954 = 0x9c12 in the RAM dump), and it runs only for the call selected by
-   data_collector_schedule_cal (e2m 002F Collector_Schedule: 0 = cm848_phase_group_b_processing, 1 =
-   hpcr_processEngineSyncPulses; param_1 is the call number). Every data_collector_multiple_cal
+   data_collector_schedule_cal (e2m 002F Collector_Schedule: 0 = cm848_runEvery2FramesTaskSetPhase1,
+   1 = hpcr_processEngineSyncPulses; param_1 is the call number). Every data_collector_multiple_cal
    passes (e2m 003A Collector_Multiple, a multiple of 20 ms) it reads the trigger input line
    data_collector_trigger_input_line_cal (e2m Data_Collector_Trigger_Map) with
    cm848_readDiscreteInputLine: an active line sets data_collector_trigger_active_cal (e2m 0039
@@ -65866,8 +66160,8 @@ LAB_00506360:
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
 /* Duty cycle monitor load histogram (e2m group DC_Mon; enable 106B +26 DC_Mon_Enable = bit 3 of
-   algorithm_enable_flags_18_cal), one sample per call of cm848_periodicTaskSet_outputs2 (1 count =
-   0.1 s in the e2m). While the monitor is enabled and the engine is not stopped: when
+   algorithm_enable_flags_18_cal), one sample per call of cm848_runEvery20FramesTaskSetPhase19 (1
+   count = 0.1 s in the e2m). While the monitor is enabled and the engine is not stopped: when
    load_histogram_total_sample_count_cal is 0 it first stores engine_hour_meter in
    load_histogram_start_engine_hours_cal; fuel_demand_histogram_load_ratio = (final_fueling -
    no_load_fuel_quantity) x 10000 / (the maximum fueling at the engine speed, from
@@ -66226,7 +66520,7 @@ void cm848_initializeEgrValvePosition(void)
 
 /* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
 /* Exhaust pressure estimate (e2m 1772 +A Exhaust_Press_Est: the TPE model with the e2m 198C
-   constants), every 10 ms from cm848_phase_group_a_processing: engine speed x
+   constants), every 10 ms from cm848_runEvery2FramesTaskSetPhase0: engine speed x
    exhaust_pressure_estimate_engine_speed_constant / 1024 + egr_valve_position x
    exhaust_pressure_estimate_egr_valve_position_constant / 4096 + charge_pressure x
    exhaust_pressure_estimate_charge_pressure_constant / 4096 + exhaust_pressure_estimate_constant,
@@ -66375,7 +66669,7 @@ void cm848_calculateCombustionTemperatureRise(void)
    charge flow, charge pressure and intake manifold temperature sources
    (charge_flow_estimate_terms.reserved_0a, charge_pressure_source,
    intake_manifold_temperature_filtered_source) are all 0 and the model is valid, else 1 (backup).
-   Caller cm848_periodicTaskSet_auxiliaryControl. (was cm848_auxiliaryControl_exponentialAverage) */
+   Caller cm848_runEvery4FramesTaskSetPhase3. (was cm848_auxiliaryControl_exponentialAverage) */
 
 void cm848_estimateExhaustTemperature(void)
 
@@ -68065,7 +68359,7 @@ void cm848_resetEngineProtectionShutdownState(void)
    engine_protection_override_switch_previous_state) it sets
    engine_protection_shutdown_override_pending_flag. The previous switch state is saved on every
    call. cm848_latchEngineProtectionShutdownOverride (0x508ee0) turns the pending request into the
-   override latch. It receives no J1939 message. Called from cm848_periodicTaskSet_auxiliaryControl.
+   override latch. It receives no J1939 message. Called from cm848_runEvery4FramesTaskSetPhase3.
    (was cm848_updateJ1939ReceptionControlFlag) */
 
 void cm848_detectEngineProtectionShutdownOverrideRequest(void)
@@ -68565,7 +68859,7 @@ void cm848_resetFaultDerateFuelLimit(void)
 // Function: cm848_calculateExhaustPressure @ 0x00509848
 //
 
-/* Exhaust pressure post-processing (e2m 1A5D), every 10 ms from cm848_phase_group_a_processing.
+/* Exhaust pressure post-processing (e2m 1A5D), every 10 ms from cm848_runEvery2FramesTaskSetPhase0.
    With egr_flow_cold_side_algorithm_select set (e2m 177E +8, the cold side EGR flow algorithm) the
    measurement is sensor channel 109 and exhaust_pressure_state = exhaust_pressure_estimate_state |
    exhaust_pressure_sensor_fault_status; otherwise the measurement is charge_pressure +
@@ -69635,11 +69929,11 @@ void cm848_processJ1939AcceleratorIdleSwitchPair(void)
 // Function: cm848_processJ1939SwitchAndRequestInputs @ 0x0050aba8
 //
 
-/* J1939 input task (from cm848_phase_group_a_processing): when algorithm_enable_flags_28_cal bit 10
-   is set runs cm848_evaluateJ1939InputSignalFault for the 17 table entries / the fan request (input
-   0) and retarder selection (input 5) processors / five status-bit copies (switch 31 from status
-   bits 1 35 0 5 and switch 4 from bit 4); then sets system_status_flags reserved_10 bit 2 while any
-   data-error bit is set and bit 0 while any timeout bit is set (was
+/* J1939 input task (from cm848_runEvery2FramesTaskSetPhase0): when algorithm_enable_flags_28_cal
+   bit 10 is set runs cm848_evaluateJ1939InputSignalFault for the 17 table entries / the fan request
+   (input 0) and retarder selection (input 5) processors / five status-bit copies (switch 31 from
+   status bits 1 35 0 5 and switch 4 from bit 4); then sets system_status_flags reserved_10 bit 2
+   while any data-error bit is set and bit 0 while any timeout bit is set (was
    phase_group_a_adjustCalibrationParameters) | review-function-readability reviewed 2026-11-12 -
    Readability Medium Accuracy Confidence High */
 
@@ -69688,7 +69982,7 @@ void cm848_processJ1939SwitchAndRequestInputs(void)
 // Function: cm848_processJ1939AcceleratorInputs @ 0x0050ad1c
 //
 
-/* J1939 accelerator input task (from cm848_periodicTaskGroup18_calibration6): when
+/* J1939 accelerator input task (from cm848_runEvery10FramesTaskSetPhase6): when
    algorithm_enable_flags_28_cal bit 10 is set runs the low idle switch (input 6) / idle switch pair
    and pedal position (input 7) processors then the same reserved_10 bit 2 / bit 0 summary and
    j1939_pedal_input_timeout_active_flag (was phase_group_a_performCalibrationUpdate) |
@@ -70733,8 +71027,8 @@ void startJ1939ControlSession(int session_kind)
    (key_on_hour_meter minus the start time) in the record, clears the control active flag (e2m 1100
    +0 / +2 J1939_Engine_Control_Status / J1939_Retarder_Control_Status) and files the record in the
    J1939 history table with storeJ1939ControlSessionInHistoryTable (0x50be6c). Called by
-   cm848_phase_group_a_processing (0xb7b4). (was phase_group_a_setupETC1Controller) | the twin of
-   CM550 0x00022070: one shared name (was cm848_trackJ1939ControlSessions; PR #53 round 94) */
+   cm848_runEvery2FramesTaskSetPhase0 (0xb7b4). (was phase_group_a_setupETC1Controller) | the twin
+   of CM550 0x00022070: one shared name (was cm848_trackJ1939ControlSessions; PR #53 round 94) */
 
 void trackJ1939ControlSessions(void)
 
@@ -72305,8 +72599,8 @@ void initializePedalFaultModeEngineSpeedFilter(void)
    fault_detected_cal.faults_368_to_383 0x8 / 0x10 are clear),
    friction_fuel_adjustment_for_radiator_fan (+A Fan_Fuel_Adjustment, grid of radiator_fan_speed and
    engine speed) and friction_fueling (+6 Friction_Fueling, table of engine speed).
-   no_load_fuel_quantity is the sum of the four. Caller cm848_periodicTaskGroup31_calibration13.
-   (was governor_computeSpeedTargetWithThermalCorrection) */
+   no_load_fuel_quantity is the sum of the four. Caller cm848_runEvery20FramesTaskSetPhase6. (was
+   governor_computeSpeedTargetWithThermalCorrection) */
 
 void cm848_calculateNoLoadFuel(void)
 
@@ -72548,7 +72842,7 @@ void cm848_calculateEngineLoadPercentages(void)
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
 /* Percent load on the low horsepower torque curve (e2m 10BF +4 Tau_0_Percent_Load [SPT0PCLD], 1/256
-   percent), every 100 ms from cm848_periodicTaskGroup28_calibration10, right after
+   percent), every 100 ms from cm848_runEvery20FramesTaskSetPhase3, right after
    cm848_calculateEngineLoadPercentages. When final_fueling (1051 +0) and
    throttle_100_fueling_low_horsepower_curve (105A +2 FST0MXFL) are both above no_load_fuel_quantity
    (109C +0) it stores (final_fueling - no_load) x 25600 / (the low horsepower curve fueling -
@@ -72969,7 +73263,7 @@ void cm848_initBoostControlInterpolationState(void)
    friction_fuel_adjustment_for_air_conditioning_clutch + friction_fuel_adjustment_for_radiator_fan
    + low_speed_governor_alternator_load_fuel (not below 0), the torque left after the A/C, fan and
    alternator loads. The fuels are the e2m 109C words written by cm848_calculateNoLoadFuel. Caller
-   cm848_periodicTaskSet_sensorProcessing. (was cm848_applyProtectionRpmCorrectionFilter) */
+   cm848_runEvery4FramesTaskSetPhase1. (was cm848_applyProtectionRpmCorrectionFilter) */
 
 void cm848_calculateFrictionNoLoadAndNetMachineTorque(void)
 
@@ -75158,7 +75452,7 @@ void cm848_initializeRockCycleAndTsc1LostManagement(void)
    idle pass) latches second_brake_switch_trigger_confirmed_flag at the limit and releases it at 0,
    and when switch 2 has no hardware line (switch_input_2_hardware_line_cal = 0) that flag is
    written into mask 0x4 of switch_input_state_bits[0]. Called every other main loop phase (10 ms)
-   from cm848_phase_group_a_processing (was protection_j1939_control_logic) */
+   from cm848_runEvery2FramesTaskSetPhase0 (was protection_j1939_control_logic) */
 
 void cm848_deriveSecondBrakeSwitchSignal(void)
 
@@ -76748,11 +77042,11 @@ void cm848_applyDiscreteOutputOverride(int param_1,int param_2,int param_3,int p
 // Function: cm848_applyDiscreteOutputOverrides @ 0x00514108
 //
 
-/* Periodic (cm848_periodicTaskGroup38_calibration17): applies the 11 discrete output overrides of
-   e2m 8B5B / 8C29 through cm848_applyDiscreteOutputOverride - engine brake 1 (logical output 11) /
-   air conditioning (38) / intake air heaters 1 and 2 (43 / 44) / lift pump (53) / cruise servo
-   supply / vacuum / vent (21 / 20 / 19) / transmission overdrive (17) / torque converter clutch
-   (18) / transmission relay (16) - then copies each .enable into its _enable_previous word (was
+/* Periodic (cm848_runEvery20FramesTaskSetPhase13): applies the 11 discrete output overrides of e2m
+   8B5B / 8C29 through cm848_applyDiscreteOutputOverride - engine brake 1 (logical output 11) / air
+   conditioning (38) / intake air heaters 1 and 2 (43 / 44) / lift pump (53) / cruise servo supply /
+   vacuum / vent (21 / 20 / 19) / transmission overdrive (17) / torque converter clutch (18) /
+   transmission relay (16) - then copies each .enable into its _enable_previous word (was
    protection_fault_snapshot_update; PR #53 round 56) */
 
 void cm848_applyDiscreteOutputOverrides(void)
@@ -77618,9 +77912,9 @@ void cm848_applyCoolingFanDuty(void)
 // Function: cm848_runCoolingFanControl @ 0x00515bac
 //
 
-/* One cooling fan pass from cm848_periodicTaskGroup13_calibration2:
-   cm848_selectCoolingFanSpeedTarget / cm848_selectCoolingFanDutySource / cm848_applyCoolingFanDuty
-   - nothing J1939 in it (was j1939_periodic_processing; PR #53 round 65) */
+/* One cooling fan pass from cm848_runEvery10FramesTaskSetPhase1: cm848_selectCoolingFanSpeedTarget
+   / cm848_selectCoolingFanDutySource / cm848_applyCoolingFanDuty - nothing J1939 in it (was
+   j1939_periodic_processing; PR #53 round 65) */
 
 void cm848_runCoolingFanControl(void)
 
@@ -82577,7 +82871,7 @@ void cm848_sciInitCommandCallback(void)
 // Function: cm848_updateSciServiceTimers @ 0x0051d840
 //
 
-/* From cm848_phase_group_b_processing: the SCI service timers - cm848_updateSciOutputTests /
+/* From cm848_runEvery2FramesTaskSetPhase1: the SCI service timers - cm848_updateSciOutputTests /
    cm848_countDownSciClearDiagnosticsDelay / cm848_expireSciSetEngineSpeedRequest /
    cm848_sciDecrementKeyRetryDelay (was phaseGroupB_ControlDispatchers; PR #53 round 65) */
 
@@ -86163,7 +86457,7 @@ void cm848_initializeStackHighWaterMark(void)
 // Function: cm848_monitorFourWheelDriveSwitch @ 0x005227ac
 //
 
-/* Four wheel drive switch input task, run from cm848_periodicTaskGroup26_calibration8 (main-loop
+/* Four wheel drive switch input task, run from cm848_runEvery20FramesTaskSetPhase1 (main-loop
    phases 1 and 21 of 40): the switch is a resistor ladder on ADC index 76, learned once the raw
    reading has been inside 54-563 counts after 600 warm-up passes (EEPROM-backed
    four_wheel_drive_switch_learned_flag_cal; until then the position code is forced to 1 and no
@@ -86365,7 +86659,7 @@ void cm848_completeTransmissionTemperatureMonitorReport(void)
 
 /* P0711 transmission fluid temperature sensor performance check (fault 298 =
    fault_detected_cal.faults_288_to_303 bit 10 -> slot 127 -> P0711), run from
-   cm848_periodicTaskGroup26_calibration8 (main-loop phases 1 and 21 of 40) when
+   cm848_runEvery20FramesTaskSetPhase1 (main-loop phases 1 and 21 of 40) when
    algorithm_enable_flags_43_cal bit 2 is set (EEPROM 0x170 = 0x11dc, set here). State 0 takes a
    start snapshot of the transmission, coolant and battery temperatures 40 passes after the engine
    reaches the governor setpoint, qualifies a cold soak (coolant under 9 deg F above the battery
@@ -87372,7 +87666,7 @@ void cm848_runImmobilizerTask(void)
 //
 
 /* Background checksum of the calibration and the code, one 100-byte chunk (rom_crc_bytes_per_pass)
-   per call, called from cm848_periodicTaskGroup37_calibration16 twice per 200 ms main loop cycle
+   per call, called from cm848_runEvery20FramesTaskSetPhase12 twice per 200 ms main loop cycle
    (about 11 minutes for everything after power-up). rom_crc_calc_phase 0 / 1 runs a CRC16
    (cm848_calculateCrc16Simple: table-driven, table at ROM 0x5842e, seed 0, no final xor) over the
    EEPROM-mirror calibration block 0x3fd59a-0x3fd5f3 (EEPROM 0x118-0x171) into
@@ -88144,14 +88438,14 @@ LAB_005254b0:
 // Function: cm848_runCruiseAndRoadSpeedGovernor @ 0x00525504
 //
 
-/* The cruise control / road speed governor PID, every pass from cm848_periodicTaskSet_outputs: the
-   droop and preset fueling filters, the preset fueling window, the rate-limited reference, the
+/* The cruise control / road speed governor PID, every pass from cm848_runEvery8FramesTaskSetPhase4:
+   the droop and preset fueling filters, the preset fueling window, the rate-limited reference, the
    speed error and its engine speed form, the proportional / integral (Q16) / derivative terms, the
    sump, and cruise_governor_fueling into adjusted_user_fueling; presets the governor on an external
    reset or an ACCELERATE / COAST release (was cm848_runCruiseAndVehicleSpeedLimitGovernor) |
    earlier note: The cruise control / vehicle speed limit (road speed governor) PID, run every pass
-   from cm848_periodicTaskSet_outputs: the reference and ramp target speeds, the speed error and its
-   rate term, the proportional and integral (Q16) terms, the fuel demand delta into
+   from cm848_runEvery8FramesTaskSetPhase4: the reference and ramp target speeds, the speed error
+   and its rate term, the proportional and integral (Q16) terms, the fuel demand delta into
    adjusted_user_fueling, the stable-speed and rate-correction timers; it presets the governor
    (cm848_presetCruiseAndRoadSpeedGovernor) when needed (was protectionOutputActuatorControl) */
 
@@ -88493,7 +88787,7 @@ void cm848_initializeCruiseGovernorFilters(void)
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
-/* Drivetrain ratio update, one pass of cm848_periodicTaskSet_outputs (skipped while
+/* Drivetrain ratio update, one pass of cm848_runEvery8FramesTaskSetPhase4 (skipped while
    vehicle_speed_sensor_type_cal is VEHICLE_SPEED_SENSOR_NONE). The ratio is engine speed over
    vehicle (or output shaft) speed x 2048. While vehicle_speed is below vehicle_speed_minimum or the
    engine is stopped it reseeds drivetrain_ratio_raw, drivetrain_ratio,
@@ -89088,10 +89382,10 @@ void cm848_clearHealedVehicleSpeedSensorFault(void)
 // Function: cm848_runVehicleSpeedSensorMonitors @ 0x00526c80
 //
 
-/* The vehicle speed sensor (P0500) monitor task called from
-   cm848_periodicTaskGroup30_calibration12: cm848_detectVehicleSpeedSensorSignalLoss (path 1) /
-   cm848_detectVehicleSpeedSensorZeroUnderLoad (path 2) / cm848_clearHealedVehicleSpeedSensorFault -
-   then it keeps this pass's accelerator_off_idle for the next pass's off-idle entry test (was
+/* The vehicle speed sensor (P0500) monitor task called from cm848_runEvery20FramesTaskSetPhase5:
+   cm848_detectVehicleSpeedSensorSignalLoss (path 1) / cm848_detectVehicleSpeedSensorZeroUnderLoad
+   (path 2) / cm848_clearHealedVehicleSpeedSensorFault - then it keeps this pass's
+   accelerator_off_idle for the next pass's off-idle entry test (was
    cm848_calibration_group30_execute) | review-function-readability reviewed 2026-11-17 -
    Readability Medium Accuracy Confidence High */
 
@@ -91858,7 +92152,7 @@ LAB_0052b918:
    cm848_checkFuelPressureGovernorDemandAtGovernedSpeed (disabled here),
    cm848_checkFuelPressureWithoutInjection and
    cm848_monitorFuelMeteringFeedbackAgainstGovernorDemand. Called from
-   cm848_periodicTaskGroup28_calibration10. (was cm848_calibration_group28_load) */
+   cm848_runEvery20FramesTaskSetPhase3. (was cm848_calibration_group28_load) */
 
 void cm848_runFuelPressureGovernorMonitors(void)
 
@@ -94692,7 +94986,7 @@ void cm848_initializeRadiatorFanSpeedRationalityCheck(void)
    only while engine_state = ENGINE_STATE_RUNNING; a radiator_fan_speed outside
    radiator_fan_speed_rationality_minimum / _maximum (75 / 4000 rpm in the RAM dump) counts
    radiator_fan_speed_out_of_range_count up to radiator_fan_speed_out_of_range_limit and sets P0483;
-   in range it clears the count and the DTC. Called from cm848_periodicTaskGroup13_calibration2. Was
+   in range it clears the count and the DTC. Called from cm848_runEvery10FramesTaskSetPhase1. Was
    cm848_calibration_group13_load */
 
 void cm848_checkRadiatorFanSpeedRationality(void)
@@ -95275,8 +95569,8 @@ LAB_00531098:
 //
 
 /* Monitor wrapper for the rail pressure sensor plausibility check, called from
-   cm848_periodicTaskGroup26_calibration8: when bit 5 of algorithm_enable_flags_13_cal is set and
-   the check is not aborted (state 4) it runs cm848_abortFuelPressureSensorPlausibilityOnFaults and
+   cm848_runEvery20FramesTaskSetPhase1: when bit 5 of algorithm_enable_flags_13_cal is set and the
+   check is not aborted (state 4) it runs cm848_abortFuelPressureSensorPlausibilityOnFaults and
    cm848_checkFuelPressureSensorPlausibilityByFuelDemand, and once a result (state 2 or 3) agrees
    with the previous pass's fault 7 bit it sets bit 19 of diagnostic_monitor_complete_bits and
    clears the monitor's pending bit 19 in monitor_readiness_code_cal (a fail clears
@@ -95450,7 +95744,7 @@ void cm848_initialization_group26_state(void)
    (0x64308-0x6430a, 8.0-16.5 V), and sets fault_detected_cal.faults_496_to_511 bits 0x4000 (below
    10.5 V) and 0x2000 (below 8.0 V), clearing them and the registered copy when the voltage
    recovers. (3) Sets obd_engine_running_flag while engine_state is 3, 4, 5 or 7. Called from
-   hpcr_periodicTaskGroup25_calibration7. (was hpcr_calibration_group25_load_cont) */
+   cm848_runEvery20FramesTaskSetPhase0. (was hpcr_calibration_group25_load_cont) */
 
 void cm848_updateMonitorEnablingConditionInputs(void)
 
@@ -95546,7 +95840,7 @@ void cm848_initializeBatteryVoltageInRangeFlags(void)
    (inverted fault 510 state AND ROM mask 0x6434e[n]) equals ROM expected 0x643ce[n] (bits 0 / 1 / 2
    / 6 / 24 while fault 510 = OBD low battery voltage error is set, bits 27-31 while it is clear);
    only cm848_clearMonitorEnablingConditions clears it. Called from
-   cm848_periodicTaskGroup27_calibration9 (was cm848_calibration_group27_load). */
+   cm848_runEvery20FramesTaskSetPhase2 (was cm848_calibration_group27_load). */
 
 void cm848_updateMonitorEnablingConditions(void)
 
@@ -96448,9 +96742,9 @@ LAB_00532f3c:
 // Function: cm848_runMisfireMonitor @ 0x00532fac
 //
 
-/* The engine misfire monitor (e2m Misfire_* block), run from cm848_phase_group_b_processing every
-   second main loop phase (10 ms if a phase is one 5 ms PIT tick): with the engine at a warm steady
-   idle it overfuels one cylinder at a time in firing-order slots 1-5-3-6-2-4 (test fueling =
+/* The engine misfire monitor (e2m Misfire_* block), run from cm848_runEvery2FramesTaskSetPhase1
+   every second main loop phase (10 ms if a phase is one 5 ms PIT tick): with the engine at a warm
+   steady idle it overfuels one cylinder at a time in firing-order slots 1-5-3-6-2-4 (test fueling =
    cylinder_balance_fueling_trim_cal + (total_injection_quantity + that trim) x
    misfire_monitor_fuel_multiplier_percent / 100, 20 percent + 20 percent per attempt), lets
    cm848_evaluateMisfireMonitorCylinderResponse compare the cylinder's response with
@@ -99115,11 +99409,11 @@ void cm848_monitorOverboostAndHighLoadBoostBand(void)
 // Function: cm848_monitorWastegateBoostPressure @ 0x00537584
 //
 
-/* Wastegate (CWG) boost-pressure monitor, called from periodicTaskSet_fuelDemand; it runs only when
-   algorithm_enable_flags_19_cal mask 0x8, monitor_enabling_conditions_met mask 0x1000000 and the
-   start battery temperature test (wastegate_monitor_armed_flag) allow it, and it clears its counts
-   and exits while sensor faults or the wastegate solenoid fault (403) are active. It looks up three
-   boost limits by barometric_pressure_reference and sets fault 332
+/* Wastegate (CWG) boost-pressure monitor, called from cm848_runEvery20FramesTaskSetPhase10; it runs
+   only when algorithm_enable_flags_19_cal mask 0x8, monitor_enabling_conditions_met mask 0x1000000
+   and the start battery temperature test (wastegate_monitor_armed_flag) allow it, and it clears its
+   counts and exits while sensor faults or the wastegate solenoid fault (403) are active. It looks
+   up three boost limits by barometric_pressure_reference and sets fault 332
    (fault_detected_cal.faults_320_to_335 mask 0x1000, high boost) after
    wastegate_monitor_debounce_count_limit passes with boost at or above
    wastegate_monitor_fail_high_boost_pressure_threshold, engine speed at or above
@@ -99960,7 +100254,7 @@ scheduleJ1939PeriodicMessage
 // Function: cm848_runJ1939PeriodicTransmitQueues @ 0x00538d3c
 //
 
-/* 10 ms J1939 periodic transmit scheduler (from cm848_phase_group_a_processing): when J1939 is
+/* 10 ms J1939 periodic transmit scheduler (from cm848_runEvery2FramesTaskSetPhase0): when J1939 is
    enabled (0x3fd5b2 bit 3) runs queue 0 (20 entries at 0x3fd2e2) while the broadcast enable and
    DM13 bit 2 are set and queue 1 (10 at 0x3fd3aa) on bit 3 calling each due builder (was
    cm848_phaseAProcessing) | review-function-readability reviewed 2026-11-13 - Readability Medium
@@ -100788,15 +101082,15 @@ undefined4 cm848_outputChannelReadFeedbackNone(void)
 //
 
 /* Output read-back fault monitor (4 times per 40-phase main-loop cycle -
-   cm848_periodicTaskGroup14_calibration3 in phases 2 / 12 / 22 / 32): walks the 48-word output
-   channel assignment table in the EEPROM mirror (0x3fdc94-0x3fdcf3 = EEPROM 0x812-0x871 - entry N
-   holds the output channel driver table record for output function N: 1 cooling fan / 10 governor
-   pressure solenoid / 11 wastegate solenoid / 20 fuel metering / 25 and 26 actuators c and d / 27
-   alternator field / 39 actuator g / 43 actuator e). For each entry holding a record 1-50 it calls
-   that record's read-feedback slot (+4): 0 clears bit N of output_read_back_fault_bits and 1 / 2
-   (pin high or low against the command) set it; 0xFFFF would leave the bit alone but no slot in
-   this build returns it (the 46 records without a read-back return 0). Entry 1 is checked on every
-   2nd pass only (cooling_fan_read_back_check_divider). The pointer starts one word before the table
+   cm848_runEvery10FramesTaskSetPhase2 in phases 2 / 12 / 22 / 32): walks the 48-word output channel
+   assignment table in the EEPROM mirror (0x3fdc94-0x3fdcf3 = EEPROM 0x812-0x871 - entry N holds the
+   output channel driver table record for output function N: 1 cooling fan / 10 governor pressure
+   solenoid / 11 wastegate solenoid / 20 fuel metering / 25 and 26 actuators c and d / 27 alternator
+   field / 39 actuator g / 43 actuator e). For each entry holding a record 1-50 it calls that
+   record's read-feedback slot (+4): 0 clears bit N of output_read_back_fault_bits and 1 / 2 (pin
+   high or low against the command) set it; 0xFFFF would leave the bit alone but no slot in this
+   build returns it (the 46 records without a read-back return 0). Entry 1 is checked on every 2nd
+   pass only (cooling_fan_read_back_check_divider). The pointer starts one word before the table
    (EEPROM 0x810 = completed_power_down_count_cal - outside the table) because lhzu pre-increments.
    cm848_debounceOutputReadBackFaults turns five of the bits into DTCs. Was
    hpcr_protectionTimerMonitor */

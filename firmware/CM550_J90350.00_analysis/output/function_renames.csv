@@ -1,7 +1,7 @@
 # Hardware/state functions
 # Scheduler common task - called every phase (40 phases per cycle)
-# CM848 equivalent: phase_common_processing
-# Periodic task sets - CM848 equivalent: periodicTaskGroup*
+# CM848 equivalent: cm848_runEveryFrameTaskSet
+# Periodic task sets - CM848 equivalent: the cm848_ task set of the same slot (cm848_runEvery<N>FramesTaskSetPhase<P>)
 # Utility functions - matched with CM848 naming
 # Math utility functions
 # CM848 equivalent: mathMultiplyDivide32

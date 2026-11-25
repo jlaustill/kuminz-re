@@ -52,7 +52,7 @@ Separately, the ISR loop calls the broadcast dispatcher every tick:
 
 ```
 executiveFrameInterruptHandler @ ROM[0xC0A0]  — 8-phase MIOS ISR
-  └─ cm848_phase_group_b_processing @ ROM[0xB854]
+  └─ cm848_runEvery2FramesTaskSetPhase1 @ ROM[0xB854] (was cm848_phase_group_b_processing)
        └─ cm848_processJ1939DiagnosticMessages()   ← receives incoming J1939
           cm848_processJ1939ReceivedMessages()
           cm848_processProtectionParameterData(0)  ← EEPROM scatter engine (NOT J1939 TX)
