@@ -114,7 +114,7 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 
 0x00023188,registerJ1939PgnRequestHandler,0,pgn,uint,Packed 16-bit PGN: low byte=pgn_byte_0 high byte=pgn_byte_1 stored in dispatch table
-0x00023188,registerJ1939PgnRequestHandler,1,handler,void*,Function pointer called when PGN matches incoming message
+0x00023188,registerJ1939PgnRequestHandler,1,handler,j1939_pgn_request_handler_function_t*,Function pointer called when PGN matches incoming message
 
 0x00022d60,processEngineTsc1Request,0,received_message,j1939_received_message_t*,Pointer to received J1939 message
 
@@ -215,10 +215,10 @@ function_address,function_name,param_index,name,type,comment
 # Two dispatch tables: ef00_service_dispatch_table (0x3FA8B2) and diag_service_dispatch_table (0x3FDB30)
 # -----------------------------------------------------------------------------
 0x000220e4,registerJ1939DiagnosticService,0,service_id,J1939_DIAGNOSTIC_SERVICE,The PGN 61184 service byte to register (was EF00 service ID to register - EF00 is the PGN in hex; PR #53 round 63)
-0x000220e4,registerJ1939DiagnosticService,1,handler_pointer,void*,Function pointer for service handler
+0x000220e4,registerJ1939DiagnosticService,1,handler,j1939_diagnostic_service_handler_function_t*,Function pointer for service handler
 
 0x00002c94,cm848_registerDiagnosticService,0,service_id,BOOT_DIAGNOSTIC_SERVICE,Diagnostic service ID (0x43/0x4A/0x4C)
-0x00002c94,cm848_registerDiagnosticService,1,handler_pointer,void*,Function pointer for service handler
+0x00002c94,cm848_registerDiagnosticService,1,handler,void*,Function pointer for service handler
 
 
 # -----------------------------------------------------------------------------
@@ -498,11 +498,14 @@ function_address,function_name,param_index,name,type,comment
 0x00022128,cm848_dispatchJ1939DiagnosticServiceRequest,0,received_message,j1939_received_message_t*,the received PGN 61184 request (a single frame / or the transport receive session's message view from its request_to_send_can_id)
 0x0050b634,cm848_validateJ1939DiagnosticRequest,0,received_message,j1939_received_message_t*,the received request
 0x0050b634,cm848_validateJ1939DiagnosticRequest,return,,J1939_DIAGNOSTIC_RESULT,0xff when the request may go to its handler - else J1939_DIAGNOSTIC_RESULT_WRONG_LENGTH / _KEY_MISSING / _KEY_REFUSED (PR #53 round 64)
-0x000249c4,cm848_sendJ1939ResponseFrame,0,request,j1939_received_message_t*,the request being answered (its addresses swap into the reply)
-0x000249c4,cm848_sendJ1939ResponseFrame,1,result_code,dword,the service result: 0 success / 0xfe an extended response / else an error code (dword: the body reuses it as a 32-bit variable)
+0x000249c4,sendJ1939DiagnosticServiceResponse,0,request,j1939_received_message_t*,the request being answered (its addresses swap into the reply)
+0x000249c4,sendJ1939DiagnosticServiceResponse,1,result_code,dword,the service result: 0 success / 0xfe an extended response / else an error code (dword: the body reuses it as a 32-bit variable)
+0x00024afc,sendJ1939DiagnosticResponsePending,return,,void,
+0x00024afc,sendJ1939DiagnosticResponsePending,0,request,j1939_received_message_t*,The PGN 61184 request to answer (r3; passed on unchanged) (PR #53 round 98)
+0x00024afc,sendJ1939DiagnosticResponsePending,1,wait_time,ushort,The wait time (r4; sth r4 to 0x3fab50 at 0x24b0c) (PR #53 round 98)
 0x00003f20,cm848_transmitCanMessage,0,message,j1939_transmit_message_t*,the response record from cm848_allocateDiagnosticResponseBuffer (header / data pointer / status pointer)
 0x00005adc,mpc555_sendJ1939TransportRequestToSend,0,message,j1939_transmit_message_t*,the response record of a reply longer than 8 bytes
-# The boot kernel's diagnostic response sender (PR #53 round 36): the twin of cm848_sendJ1939ResponseFrame
+# The boot kernel's diagnostic response sender (PR #53 round 36): the twin of sendJ1939DiagnosticServiceResponse
 0x000074a0,cm848_sendDiagnosticServiceResponse,0,request,j1939_received_message_t*,the request being answered (its addresses swap into the reply; its service byte is echoed)
 0x000074a0,cm848_sendDiagnosticServiceResponse,1,result_code,dword,the service result: 0 positive (0x0C) / 0xfe pending (0x0E + the wait time) / else 0x0D + the code (dword: the body reuses it as a 32-bit variable)
 # The trip information power-down step takes no parameters (PR #53 round 51)
@@ -570,7 +573,7 @@ function_address,function_name,param_index,name,type,comment
 0x00006508,cm848_allocateDiagnosticResponseBuffer,return,,j1939_transmit_message_t*,diagnostic_single_frame_response_message or diagnostic_transport_response_message - 0 while the transport record is busy (PR #53 round 64)
 0x00006508,cm848_allocateDiagnosticResponseBuffer,0,length,int32_t,The reply's data bytes: up to 8 takes the single frame record (PR #53 round 64)
 0x00538eb0,registerJ1939ReceiveHandler,0,pgn_key,ushort,The PGN key of the frames to hand over (see j1939_receive_handler_entry_t) (PR #53 round 65)
-0x00538eb0,registerJ1939ReceiveHandler,1,handler,void*,The handler: called with each matching j1939_received_message_t (PR #53 round 65)
+0x00538eb0,registerJ1939ReceiveHandler,1,handler,j1939_receive_handler_function_t*,The handler: called with each matching j1939_received_message_t (PR #53 round 65)
 0x000223f4,cm848_processJ1939Dm13StopStartBroadcast,0,message,j1939_received_message_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
 0x00022c5c,cm848_j1939ProcessPgn61445Etc2,0,message,j1939_received_message_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
 0x000233a0,cm848_j1939HandlePgn56832Reset,0,message,j1939_received_message_t*,The received frame from cm848_dispatchJ1939ReceivedMessages (PR #53 round 65)
@@ -634,3 +637,226 @@ function_address,function_name,param_index,name,type,comment
 0x00538c8c,scheduleJ1939PeriodicMessage,3,first_send_offset_milliseconds,int,The delay of the first send in ms (r6): divw by 10 plus the queue's current tick into the entry's +4 (PR #53 round 95)
 0x00538c8c,scheduleJ1939PeriodicMessage,4,builder,void*,The message builder (r7) stored with stw at the entry's +6: the periodic transmit code calls it when its tick comes (PR #53 round 95)
 0x000221f0,registerJ1939DiagnosticServiceDispatcher,return,,void,explicit void(void): the body only registers the PGN 61184 receive handler and reads no register - clears the phantom argument the last scheduleJ1939PeriodicMessage call's byte return passed it (PR #53 round 95)
+# PR #53 round 98: the output channel driver table's set period / set duty wrappers (their parameter was param_1)
+0x0004cec4,cm848_miosChannel11SetPwmDuty,return,,void,
+0x0004cec4,cm848_miosChannel11SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm11; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004cef0,cm848_miosChannel11SetPwmPeriod,return,,void,
+0x0004cef0,cm848_miosChannel11SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm11; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004cf44,cm848_miosChannel12SetPwmDuty,return,,void,
+0x0004cf44,cm848_miosChannel12SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm12; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004cf70,cm848_miosChannel12SetPwmPeriod,return,,void,
+0x0004cf70,cm848_miosChannel12SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm12; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004cfc4,cm848_miosChannel13SetPwmDuty,return,,void,
+0x0004cfc4,cm848_miosChannel13SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm13; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004cff0,cm848_miosChannel13SetPwmPeriod,return,,void,
+0x0004cff0,cm848_miosChannel13SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm13; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d044,cm848_miosChannel14SetPwmDuty,return,,void,
+0x0004d044,cm848_miosChannel14SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm14; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d070,cm848_miosChannel14SetPwmPeriod,return,,void,
+0x0004d070,cm848_miosChannel14SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm14; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d0c4,cm848_miosChannel15SetPwmDuty,return,,void,
+0x0004d0c4,cm848_miosChannel15SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm15; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d0f0,cm848_miosChannel15SetPwmPeriod,return,,void,
+0x0004d0f0,cm848_miosChannel15SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm15; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d144,cm848_miosChannel27SetPwmDuty,return,,void,
+0x0004d144,cm848_miosChannel27SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm27; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d170,cm848_miosChannel27SetPwmPeriod,return,,void,
+0x0004d170,cm848_miosChannel27SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm27; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d1c4,cm848_miosChannel28SetPwmDuty,return,,void,
+0x0004d1c4,cm848_miosChannel28SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm28; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d1f0,cm848_miosChannel28SetPwmPeriod,return,,void,
+0x0004d1f0,cm848_miosChannel28SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm28; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d244,cm848_miosChannel29SetPwmDuty,return,,void,
+0x0004d244,cm848_miosChannel29SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm29; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d270,cm848_miosChannel29SetPwmPeriod,return,,void,
+0x0004d270,cm848_miosChannel29SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm29; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d2c4,cm848_miosChannel30SetPwmDuty,return,,void,
+0x0004d2c4,cm848_miosChannel30SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm30; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d2f0,cm848_miosChannel30SetPwmPeriod,return,,void,
+0x0004d2f0,cm848_miosChannel30SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm30; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d344,cm848_miosChannel31SetPwmDuty,return,,void,
+0x0004d344,cm848_miosChannel31SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetChannelPwmDuty(&mios_mdasm31; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d370,cm848_miosChannel31SetPwmPeriod,return,,void,
+0x0004d370,cm848_miosChannel31SetPwmPeriod,0,period_setting,uint,The period setting: passed on to mpc555_miosSetChannelPwmPeriod(&mios_mdasm31; period_setting) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d3c4,cm848_miosPwm0SetDuty,return,,void,
+0x0004d3c4,cm848_miosPwm0SetDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm0; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d3f0,cm848_miosPwm0SetPeriodMicroseconds,return,,void,
+0x0004d3f0,cm848_miosPwm0SetPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm0; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d444,cm848_miosPwm1SetDuty,return,,void,
+0x0004d444,cm848_miosPwm1SetDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm1; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d470,cm848_miosPwm1SetPeriodMicroseconds,return,,void,
+0x0004d470,cm848_miosPwm1SetPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm1; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d4c4,cm848_miosPwm2SetDuty,return,,void,
+0x0004d4c4,cm848_miosPwm2SetDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm2; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d4f0,cm848_miosPwm2SetPeriodMicroseconds,return,,void,
+0x0004d4f0,cm848_miosPwm2SetPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm2; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d544,cm848_miosPwm3SetDuty,return,,void,
+0x0004d544,cm848_miosPwm3SetDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm3; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d570,cm848_miosPwm3SetPeriodMicroseconds,return,,void,
+0x0004d570,cm848_miosPwm3SetPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm3; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d5c4,cm848_miosPwm16SetDuty,return,,void,
+0x0004d5c4,cm848_miosPwm16SetDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm16; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d5f0,cm848_miosPwm16SetPeriodMicroseconds,return,,void,
+0x0004d5f0,cm848_miosPwm16SetPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm16; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d644,cm848_miosPwm17SetDuty,return,,void,
+0x0004d644,cm848_miosPwm17SetDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm17; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d670,cm848_miosPwm17SetPeriodMicroseconds,return,,void,
+0x0004d670,cm848_miosPwm17SetPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm17; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d6c4,cm848_miosPwm18SetDuty,return,,void,
+0x0004d6c4,cm848_miosPwm18SetDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm18; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d6f0,cm848_miosPwm18SetPeriodMicroseconds,return,,void,
+0x0004d6f0,cm848_miosPwm18SetPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm18; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d744,cm848_miosPwm19SetDuty,return,,void,
+0x0004d744,cm848_miosPwm19SetDuty,0,duty,ushort,The PWM duty: passed on to mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm19; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d770,cm848_miosPwm19SetPeriodMicroseconds,return,,void,
+0x0004d770,cm848_miosPwm19SetPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm19; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d7c0,cm848_tpuBChannel0SetPwmDuty,return,,void,
+0x0004d7c0,cm848_tpuBChannel0SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(0; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d7e8,cm848_tpuBChannel0SetPwmPeriodMicroseconds,return,,void,
+0x0004d7e8,cm848_tpuBChannel0SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(0; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d834,cm848_tpuBChannel1SetPwmDuty,return,,void,
+0x0004d834,cm848_tpuBChannel1SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(1; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d85c,cm848_tpuBChannel1SetPwmPeriodMicroseconds,return,,void,
+0x0004d85c,cm848_tpuBChannel1SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(1; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d8a8,cm848_tpuBChannel2SetPwmDuty,return,,void,
+0x0004d8a8,cm848_tpuBChannel2SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(2; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d8d0,cm848_tpuBChannel2SetPwmPeriodMicroseconds,return,,void,
+0x0004d8d0,cm848_tpuBChannel2SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(2; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d91c,cm848_tpuBChannel3SetPwmDuty,return,,void,
+0x0004d91c,cm848_tpuBChannel3SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(3; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d944,cm848_tpuBChannel3SetPwmPeriodMicroseconds,return,,void,
+0x0004d944,cm848_tpuBChannel3SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(3; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d990,cm848_tpuBChannel4SetPwmDuty,return,,void,
+0x0004d990,cm848_tpuBChannel4SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(4; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004d9b8,cm848_tpuBChannel4SetPwmPeriodMicroseconds,return,,void,
+0x0004d9b8,cm848_tpuBChannel4SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(4; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004da04,cm848_tpuBChannel5SetPwmDuty,return,,void,
+0x0004da04,cm848_tpuBChannel5SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(5; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004da2c,cm848_tpuBChannel5SetPwmPeriodMicroseconds,return,,void,
+0x0004da2c,cm848_tpuBChannel5SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(5; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004da78,cm848_tpuBChannel6SetPwmDuty,return,,void,
+0x0004da78,cm848_tpuBChannel6SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(6; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004daa0,cm848_tpuBChannel6SetPwmPeriodMicroseconds,return,,void,
+0x0004daa0,cm848_tpuBChannel6SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(6; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004daec,cm848_tpuBChannel7SetPwmDuty,return,,void,
+0x0004daec,cm848_tpuBChannel7SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(7; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004db14,cm848_tpuBChannel7SetPwmPeriodMicroseconds,return,,void,
+0x0004db14,cm848_tpuBChannel7SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(7; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004db60,cm848_tpuBChannel8SetPwmDuty,return,,void,
+0x0004db60,cm848_tpuBChannel8SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(8; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004db88,cm848_tpuBChannel8SetPwmPeriodMicroseconds,return,,void,
+0x0004db88,cm848_tpuBChannel8SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(8; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004dbd4,cm848_tpuBChannel9SetPwmDuty,return,,void,
+0x0004dbd4,cm848_tpuBChannel9SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(9; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004dbfc,cm848_tpuBChannel9SetPwmPeriodMicroseconds,return,,void,
+0x0004dbfc,cm848_tpuBChannel9SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(9; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004dc48,cm848_tpuBChannel10SetPwmDuty,return,,void,
+0x0004dc48,cm848_tpuBChannel10SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(10; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004dc70,cm848_tpuBChannel10SetPwmPeriodMicroseconds,return,,void,
+0x0004dc70,cm848_tpuBChannel10SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(10; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004dcbc,cm848_tpuBChannel11SetPwmDuty,return,,void,
+0x0004dcbc,cm848_tpuBChannel11SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(0xb; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004dce4,cm848_tpuBChannel11SetPwmPeriodMicroseconds,return,,void,
+0x0004dce4,cm848_tpuBChannel11SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(0xb; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004dd30,cm848_tpuBChannel12SetPwmDuty,return,,void,
+0x0004dd30,cm848_tpuBChannel12SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(0xc; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004dd58,cm848_tpuBChannel12SetPwmPeriodMicroseconds,return,,void,
+0x0004dd58,cm848_tpuBChannel12SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(0xc; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004dda4,cm848_tpuBChannel13SetPwmDuty,return,,void,
+0x0004dda4,cm848_tpuBChannel13SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(0xd; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004ddcc,cm848_tpuBChannel13SetPwmPeriodMicroseconds,return,,void,
+0x0004ddcc,cm848_tpuBChannel13SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(0xd; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004de18,cm848_tpuBChannel14SetPwmDuty,return,,void,
+0x0004de18,cm848_tpuBChannel14SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(0xe; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004de40,cm848_tpuBChannel14SetPwmPeriodMicroseconds,return,,void,
+0x0004de40,cm848_tpuBChannel14SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(0xe; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004de8c,cm848_tpuBChannel15SetPwmDuty,return,,void,
+0x0004de8c,cm848_tpuBChannel15SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(0xf; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004deb4,cm848_tpuBChannel15SetPwmPeriodMicroseconds,return,,void,
+0x0004deb4,cm848_tpuBChannel15SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(0xf; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004df40,cm848_tpuBReadBackChannel10SetPwmPeriodMicroseconds,return,,void,
+0x0004df40,cm848_tpuBReadBackChannel10SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(10; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004df68,cm848_tpuBReadBackChannel10SetPwmDuty,return,,void,
+0x0004df68,cm848_tpuBReadBackChannel10SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(10; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e124,cm848_tpuBReadBackChannel4SetPwmPeriodMicroseconds,return,,void,
+0x0004e124,cm848_tpuBReadBackChannel4SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(4; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e14c,cm848_tpuBReadBackChannel4SetPwmDuty,return,,void,
+0x0004e14c,cm848_tpuBReadBackChannel4SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(4; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e1e4,cm848_tpuBReadBackChannel6SetPwmPeriodMicroseconds,return,,void,
+0x0004e1e4,cm848_tpuBReadBackChannel6SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(6; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e20c,cm848_tpuBReadBackChannel6SetPwmDuty,return,,void,
+0x0004e20c,cm848_tpuBReadBackChannel6SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(6; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e2a4,cm848_tpuBReadBackChannel7SetPwmPeriodMicroseconds,return,,void,
+0x0004e2a4,cm848_tpuBReadBackChannel7SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuBSetPwmPeriodMicroseconds(7; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e2cc,cm848_tpuBReadBackChannel7SetPwmDuty,return,,void,
+0x0004e2cc,cm848_tpuBReadBackChannel7SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuBSetPwmDuty(7; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e324,cm848_tpuAChannel0SetPwmDuty,return,,void,
+0x0004e324,cm848_tpuAChannel0SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(0; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e34c,cm848_tpuAChannel0SetPwmPeriodMicroseconds,return,,void,
+0x0004e34c,cm848_tpuAChannel0SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(0; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e398,cm848_tpuAChannel1SetPwmDuty,return,,void,
+0x0004e398,cm848_tpuAChannel1SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(1; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e3c0,cm848_tpuAChannel1SetPwmPeriodMicroseconds,return,,void,
+0x0004e3c0,cm848_tpuAChannel1SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(1; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e40c,cm848_tpuAChannel2SetPwmDuty,return,,void,
+0x0004e40c,cm848_tpuAChannel2SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(2; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e434,cm848_tpuAChannel2SetPwmPeriodMicroseconds,return,,void,
+0x0004e434,cm848_tpuAChannel2SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(2; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e480,cm848_tpuAChannel3SetPwmDuty,return,,void,
+0x0004e480,cm848_tpuAChannel3SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(3; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e4a8,cm848_tpuAChannel3SetPwmPeriodMicroseconds,return,,void,
+0x0004e4a8,cm848_tpuAChannel3SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(3; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e4f4,cm848_tpuAChannel4SetPwmDuty,return,,void,
+0x0004e4f4,cm848_tpuAChannel4SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(4; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e51c,cm848_tpuAChannel4SetPwmPeriodMicroseconds,return,,void,
+0x0004e51c,cm848_tpuAChannel4SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(4; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e568,cm848_tpuAChannel5SetPwmDuty,return,,void,
+0x0004e568,cm848_tpuAChannel5SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(5; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e590,cm848_tpuAChannel5SetPwmPeriodMicroseconds,return,,void,
+0x0004e590,cm848_tpuAChannel5SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(5; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e5dc,cm848_tpuAChannel6SetPwmDuty,return,,void,
+0x0004e5dc,cm848_tpuAChannel6SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(6; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e604,cm848_tpuAChannel6SetPwmPeriodMicroseconds,return,,void,
+0x0004e604,cm848_tpuAChannel6SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(6; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e650,cm848_tpuAChannel7SetPwmDuty,return,,void,
+0x0004e650,cm848_tpuAChannel7SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(7; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e678,cm848_tpuAChannel7SetPwmPeriodMicroseconds,return,,void,
+0x0004e678,cm848_tpuAChannel7SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(7; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e6c4,cm848_tpuAChannel8SetPwmDuty,return,,void,
+0x0004e6c4,cm848_tpuAChannel8SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(8; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e6ec,cm848_tpuAChannel8SetPwmPeriodMicroseconds,return,,void,
+0x0004e6ec,cm848_tpuAChannel8SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(8; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e738,cm848_tpuAChannel9SetPwmDuty,return,,void,
+0x0004e738,cm848_tpuAChannel9SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(9; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e760,cm848_tpuAChannel9SetPwmPeriodMicroseconds,return,,void,
+0x0004e760,cm848_tpuAChannel9SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(9; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e7ac,cm848_tpuAChannel10SetPwmDuty,return,,void,
+0x0004e7ac,cm848_tpuAChannel10SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(10; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e7d4,cm848_tpuAChannel10SetPwmPeriodMicroseconds,return,,void,
+0x0004e7d4,cm848_tpuAChannel10SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(10; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e820,cm848_tpuAChannel11SetPwmDuty,return,,void,
+0x0004e820,cm848_tpuAChannel11SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(0xb; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e848,cm848_tpuAChannel11SetPwmPeriodMicroseconds,return,,void,
+0x0004e848,cm848_tpuAChannel11SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(0xb; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e894,cm848_tpuAChannel12SetPwmDuty,return,,void,
+0x0004e894,cm848_tpuAChannel12SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(0xc; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e8bc,cm848_tpuAChannel12SetPwmPeriodMicroseconds,return,,void,
+0x0004e8bc,cm848_tpuAChannel12SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(0xc; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e908,cm848_tpuAChannel13SetPwmDuty,return,,void,
+0x0004e908,cm848_tpuAChannel13SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(0xd; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e930,cm848_tpuAChannel13SetPwmPeriodMicroseconds,return,,void,
+0x0004e930,cm848_tpuAChannel13SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(0xd; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e97c,cm848_tpuAChannel14SetPwmDuty,return,,void,
+0x0004e97c,cm848_tpuAChannel14SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(0xe; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e9a4,cm848_tpuAChannel14SetPwmPeriodMicroseconds,return,,void,
+0x0004e9a4,cm848_tpuAChannel14SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(0xe; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x0004e9f0,cm848_tpuAChannel15SetPwmDuty,return,,void,
+0x0004e9f0,cm848_tpuAChannel15SetPwmDuty,0,duty,ushort,The PWM duty: passed on to mpc555_tpuASetPwmDuty(0xf; duty) - an output channel driver table wrapper (PR #53 round 98)
+0x0004ea18,cm848_tpuAChannel15SetPwmPeriodMicroseconds,return,,void,
+0x0004ea18,cm848_tpuAChannel15SetPwmPeriodMicroseconds,0,period_microseconds,uint,The PWM period in microseconds: passed on to mpc555_tpuASetPwmPeriodMicroseconds(0xf; period_microseconds) - an output channel driver table wrapper (PR #53 round 98)
+0x00010274,mpc555_dispatchExternalInterrupt,return,,void,An exception handler: no argument and no result - it saves and restores r3 / r4 like every volatile register (PR #53 round 98)
+0x0001041c,mpc555_handleDecrementerException,return,,void,An exception handler: no argument and no result - it saves and restores r3 / r4 like every volatile register (PR #53 round 98)
+0x00038338,cm848_evaluateAlternatorFieldRegulatorIdleState,return,,ALTERNATOR_FIELD_REGULATOR_STATE,The next state (li r3 0 or 1): stored in alternator_field_regulator_state by the caller (PR #53 round 98)
+0x00038384,cm848_evaluateAlternatorFieldRegulatorStartRampState,return,,ALTERNATOR_FIELD_REGULATOR_STATE,The next state (li r3 0 / 1 / 2): stored in alternator_field_regulator_state by the caller (PR #53 round 98)
+0x000383f0,cm848_evaluateAlternatorFieldRegulatorRegulationState,return,,ALTERNATOR_FIELD_REGULATOR_STATE,The next state (li r3 0 / 2 / 3): stored in alternator_field_regulator_state by the caller (PR #53 round 98)
+0x0003844c,cm848_evaluateAlternatorFieldRegulatorLoadResponseState,return,,ALTERNATOR_FIELD_REGULATOR_STATE,The next state (li r3 0 / 2 / 3): stored in alternator_field_regulator_state by the caller (PR #53 round 98)

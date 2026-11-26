@@ -569,8 +569,8 @@ typedef enum {
     J1939_DIAGNOSTIC_SERVICE_EXIT_DEVELOPMENT_MODE = 0x07,  /* exitDevelopmentMode (was SYSTEM_SERVICE_07) */
     J1939_DIAGNOSTIC_SERVICE_ENTER_DEVELOPMENT_MODE = 0x0a,  /* enterDevelopmentMode (was SYSTEM_SERVICE_0A) */
     J1939_DIAGNOSTIC_SERVICE_RESTART_THROUGH_BOOT_ROM = 0x0b,  /* handleJ1939RestartService: restartThroughBootRom (was SYSTEM_SERVICE_0B) */
-    J1939_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE = 0x0c,  /* Sent by cm848_sendJ1939ResponseFrame for result 0 - then the request's first bytes (getJ1939DiagnosticResponseEchoLength); cm848_dispatchJ1939DiagnosticServiceRequest ignores a received one */
-    J1939_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE = 0x0d,  /* Sent by cm848_sendJ1939ResponseFrame for a nonzero result other than 0xfe (that sends 0x0e) - then the result code and the request's first bytes; cm848_dispatchJ1939DiagnosticServiceRequest ignores a received one */
+    J1939_DIAGNOSTIC_SERVICE_POSITIVE_RESPONSE = 0x0c,  /* Sent by sendJ1939DiagnosticServiceResponse for result 0 - then the request's first bytes (getJ1939DiagnosticResponseEchoLength); cm848_dispatchJ1939DiagnosticServiceRequest ignores a received one */
+    J1939_DIAGNOSTIC_SERVICE_NEGATIVE_RESPONSE = 0x0d,  /* Sent by sendJ1939DiagnosticServiceResponse for a nonzero result other than 0xfe (that sends 0x0e) - then the result code and the request's first bytes; cm848_dispatchJ1939DiagnosticServiceRequest ignores a received one */
     J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_15 = 0x0f,  /* handleJ1939NoOperationService: accepted and does nothing (was GET_PARAMETERS_BY_ID_ALT) */
     J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_16 = 0x10,  /* handleJ1939NoOperationService: accepted and does nothing (was SERVICE_GET_PARAMETERS_BY_ID) */
     J1939_DIAGNOSTIC_SERVICE_COMMIT_EEPROM_MIRROR = 0x15,  /* cm848_commitEepromMirrorToEeprom (was GET_ADDRESS_BY_PARAM_ID) */
@@ -906,7 +906,7 @@ typedef enum {
 } RUN_LOCATION;
 
 typedef enum {
-    J1939_DIAGNOSTIC_RESULT_ACCEPTED = 0x00,  /* Done - cm848_sendJ1939ResponseFrame answers with 0x0c (was DIAG_ACK / SUCCESS) */
+    J1939_DIAGNOSTIC_RESULT_ACCEPTED = 0x00,  /* Done - sendJ1939DiagnosticServiceResponse answers with 0x0c (was DIAG_ACK / SUCCESS) */
     J1939_DIAGNOSTIC_RESULT_WRONG_LENGTH = 0x02,  /* The request length is none of 8 / its header and data / that + 10 for the key - or a memory length over 1764 (was DIAG_INVALID_LENGTH) */
     J1939_DIAGNOSTIC_RESULT_KEY_REFUSED = 0x03,  /* validateSecurityKey refused the request's key (was SECURITY_FAILED) */
     J1939_DIAGNOSTIC_RESULT_CANNOT_COMPLY = 0x04,  /* Not now or not this: development mode is not on (exitDevelopmentMode) / no transmit record is free (the read worker) / an unknown broadcast item (updateJ1939BroadcastEnableMask) (was DIAG_NACK_NOT_READY / BUFFER_OVERFLOW) */
@@ -1465,6 +1465,23 @@ typedef struct discrete_output_override_t discrete_output_override_t;
 typedef struct sci_command_dispatch_entry_t sci_command_dispatch_entry_t;
 typedef struct j1939_pgn65232_payload_t j1939_pgn65232_payload_t;
 typedef struct j1939_pgn65230_payload_t j1939_pgn65230_payload_t;
+typedef struct output_channel_driver_t output_channel_driver_t;
+
+/* ---- Function types (a field or a parameter holds a pointer to one) ---- */
+
+typedef J1939_DIAGNOSTIC_RESULT j1939_diagnostic_service_handler_function_t(j1939_received_message_t* request);  /* A PGN 61184 service handler: the request in, the result out (0xff = the handler answered; else cm848_dispatchJ1939DiagnosticServiceRequest answers with this code) (PR #53 round 98) */
+typedef void j1939_pgn_request_handler_function_t(j1939_received_message_t* message);  /* A PGN 59904 request responder: cm848_dispatchJ1939PgnRequest calls it with the request (PR #53 round 98) */
+typedef void j1939_receive_handler_function_t(j1939_received_message_t* message);  /* A J1939 receive handler: cm848_dispatchJ1939ReceivedMessages calls it with the receive ring's record (PR #53 round 98) */
+typedef BOOT_DIAGNOSTIC_RESULT boot_diagnostic_service_handler_function_t(j1939_received_message_t* request);  /* A boot kernel PGN 61184 service handler: the request in, the result out (PR #53 round 98) */
+typedef void qspi_completion_callback_function_t(void);  /* A QSPI job's completion callback: cm848_completeQspiJob calls it with no argument (PR #53 round 98) */
+typedef void sci_command_handler_function_t(void);  /* An SCI command's handler: cm848_dispatchSciCommand calls it with no argument (PR #53 round 98) */
+typedef void interrupt_handler_function_t(void);  /* An interrupt handler: its dispatcher calls it with no argument (PR #53 round 98) */
+typedef void sci_next_byte_handler_function_t(void);  /* The handler of the next received SCI byte: cm848_sciCallbackDispatcher calls it with no argument (PR #53 round 98) */
+typedef void output_channel_enable_function_t(void);  /* An output channel's enable function (PR #53 round 98) */
+typedef uint16_t output_channel_read_feedback_function_t(void);  /* An output channel's read feedback function: 0 = the read-back agrees / 0xffff = no verdict this pass / else a mismatch (cm848_updateOutputReadBackFaultBits keeps the low word) (PR #53 round 98) */
+typedef void output_channel_set_period_function_t(uint32_t period);  /* An output channel's set period function (PR #53 round 98) */
+typedef void output_channel_set_duty_function_t(uint16_t duty);  /* An output channel's set duty function (PR #53 round 98) */
+typedef ALTERNATOR_FIELD_REGULATOR_STATE alternator_field_regulator_state_handler_function_t(void);  /* A state handler of the alternator field regulator: no argument; it returns the next state (PR #53 round 98) */
 
 struct j1939_received_message_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -2559,7 +2576,7 @@ struct q16_fixed_point_t {
 struct j1939_pgn_handler_entry_t {
     uint8_t pgn_byte_1;  /* First PGN byte for matching (compared against msg+6+1) */
     uint8_t pgn_byte_0;  /* Second PGN byte for matching (compared against msg+6+0) */
-    uint32_t handler;  /* Function pointer to PGN handler callback */
+    j1939_pgn_request_handler_function_t* handler;  /* Function pointer to PGN handler callback */
 };
 
 struct j1939_transmit_message_t {
@@ -2607,17 +2624,17 @@ struct parameter_id_entry_t {
 struct j1939_diagnostic_service_entry_t {
     J1939_DIAGNOSTIC_SERVICE service_id;  /* The PGN 61184 diagnostic service byte (the request's first data byte; typed J1939_DIAGNOSTIC_SERVICE - was EF00_SERVICE_ID in this comment; PR #53 round 63) */
     uint8_t pad;  /* Never written: the registrar stores only the service byte and the handler */
-    void * handler;  /* The service handler: called with the received j1939_received_message_t once cm848_validateJ1939DiagnosticRequest accepts the request */
+    j1939_diagnostic_service_handler_function_t* handler;  /* The service handler: called with the received j1939_received_message_t once cm848_validateJ1939DiagnosticRequest accepts the request */
 };
 
 struct j1939_receive_handler_entry_t {
     uint16_t pgn_key;  /* The PGN's PDU format and PDU specific bytes as one word - specific 0 for a destination-specific PGN (0xef00 = PGN 61184 / 0xfef1 = PGN 65265 / 0 = TSC1) */
-    void * handler;  /* The receive handler: called with the received j1939_received_message_t */
+    j1939_receive_handler_function_t* handler;  /* The receive handler: called with the received j1939_received_message_t */
 };
 
 struct boot_diagnostic_service_entry_t {
     BOOT_DIAGNOSTIC_SERVICE service_id;  /* The boot diagnostic service byte: the kernel's constant-ID cm848_registerDiagnosticService calls register 0x0b / 0x10 / 0x18 (acknowledge - no operation) / 0x19 (execute function) / 0x41 (service 65) / 0x43 / 0x4a / 0x4c (memory reads) */
-    void * handler;  /* The service handler at offset 1 (unaligned): cm848_dispatchDiagnosticService calls it */
+    boot_diagnostic_service_handler_function_t* handler;  /* The service handler at offset 1 (unaligned): cm848_dispatchDiagnosticService calls it */
 };
 
 struct executive_frame_timing_t {
@@ -3147,7 +3164,7 @@ struct qspi_job_t {
     word* transmit_words;  /* Words copied into QSPI transmit RAM (must be non-null) */
     byte* command_bytes;  /* Bytes copied into QSPI command RAM (must be non-null) */
     word* receive_words;  /* Where the received QSPI words are stored */
-    void * completion_callback;  /* Function called when the transfer completes */
+    qspi_completion_callback_function_t* completion_callback;  /* Function called when the transfer completes */
 };
 
 struct qspi_device_slot_t {
@@ -4174,7 +4191,7 @@ struct discrete_output_override_t {
 struct sci_command_dispatch_entry_t {
     uint8_t command;  /* The SCI command number (18 / 19 / 20 / 23 / 25 ... 53 / 40 / 43 / 44 / 49 in table order) */
     uint8_t pad;  /* 0 in every record */
-    void * handler;  /* The command's cm848_sciCommand<N> function */
+    sci_command_handler_function_t* handler;  /* The command's cm848_sciCommand<N> function */
 };
 
 struct j1939_pgn65232_payload_t {
@@ -4192,4 +4209,11 @@ struct j1939_pgn65230_payload_t {
     uint8_t continuously_monitored_systems_support;  /* DM5 byte 4: continuously monitored systems support / status (SPN 1221) */
     uint16_t non_continuously_monitored_systems_support;  /* DM5 bytes 5-6: non-continuously monitored systems support (SPN 1222) */
     uint16_t non_continuously_monitored_systems_status;  /* DM5 bytes 7-8: non-continuously monitored systems status (SPN 1223) */
+};
+
+struct output_channel_driver_t {
+    output_channel_enable_function_t* enable;  /* Slot +0: starts the channel's PWM output (record 0: an empty stub) */
+    output_channel_read_feedback_function_t* read_feedback;  /* Slot +4: the read-back verdict of the output - the shared return-0 stub unless the channel has a read-back pin (TPU-B 4 / 6 / 7 / 10 / 11) */
+    output_channel_set_period_function_t* set_period;  /* Slot +8: sets the PWM period - most consumers pass 1000000 / frequency = microseconds */
+    output_channel_set_duty_function_t* set_duty;  /* Slot +12: sets the PWM duty - 1/256 % per count (25600 = 100 %) */
 };

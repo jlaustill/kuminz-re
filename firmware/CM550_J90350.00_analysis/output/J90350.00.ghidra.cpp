@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Wed Nov 25 17:05:09 MST 2026
+// Generated: Wed Nov 25 19:36:12 MST 2026
 
 
 //
@@ -6880,10 +6880,10 @@ byte commandEngineShutdown(void)
 byte handleJ1939RestartService(can_standard_receive_descriptor_t *request)
 
 {
-  byte bVar1;
+  byte service_result;
   
-  bVar1 = restartThroughBootRom(request,0);
-  return bVar1;
+  service_result = restartThroughBootRom(request,0);
+  return service_result;
 }
 
 
@@ -6957,7 +6957,7 @@ byte restartThroughBootRom(can_standard_receive_descriptor_t *request,word ackno
       }
     }
     if ((char)acknowledge_datalink == '\0') {
-      cm550_diagnosticMultiPacketResponseBuilder(request,0);
+      sendJ1939DiagnosticServiceResponse(request,0);
     }
     else if ((char)acknowledge_datalink == '\x01') {
       cm550_diagnosticMessageQueueWrite(0);
@@ -21817,7 +21817,7 @@ void cm550_initializeCanMessageFilter(void)
 
 byte scheduleJ1939PeriodicMessage
                (J1939_PERIODIC_TRANSMIT_QUEUE queue_index,word pgn_key,word interval_milliseconds,
-               word first_send_offset_milliseconds,void *builder)
+               word first_send_offset_milliseconds,j1939_message_builder_function_t *builder)
 
 {
   word unaff_D2w;
@@ -21876,7 +21876,7 @@ uint cm550_runJ1939PeriodicTransmitQueues(void)
       for (bVar3 = 0; bVar3 < j1939_periodic_queue0_count; bVar3 = bVar3 + 1) {
         if (pjVar4->next_tick == j1939_periodic_queue0_current_tick) {
           pjVar4->next_tick = pjVar4->interval_ticks + pjVar4->next_tick;
-          (*(code *)pjVar4->builder)();
+          (*pjVar4->builder)();
         }
         uVar1 = 0;
         pjVar4 = pjVar4 + 1;
@@ -21889,7 +21889,7 @@ uint cm550_runJ1939PeriodicTransmitQueues(void)
       for (bVar3 = 0; bVar3 < j1939_periodic_queue1_count; bVar3 = bVar3 + 1) {
         if (pjVar4->next_tick == j1939_periodic_queue1_current_tick) {
           pjVar4->next_tick = pjVar4->interval_ticks + pjVar4->next_tick;
-          (*(code *)pjVar4->builder)();
+          (*pjVar4->builder)();
         }
         uVar2 = 10;
         pjVar4 = pjVar4 + 1;
@@ -22017,10 +22017,10 @@ byte updateJ1939BroadcastEnableMask(can_standard_receive_descriptor_t *request,b
 byte handleJ1939DisableBroadcastService(can_standard_receive_descriptor_t *request)
 
 {
-  byte bVar1;
+  byte service_result;
   
-  bVar1 = updateJ1939BroadcastEnableMask(request,0);
-  return bVar1;
+  service_result = updateJ1939BroadcastEnableMask(request,0);
+  return service_result;
 }
 
 
@@ -22037,10 +22037,10 @@ byte handleJ1939DisableBroadcastService(can_standard_receive_descriptor_t *reque
 byte handleJ1939EnableBroadcastService(can_standard_receive_descriptor_t *request)
 
 {
-  byte bVar1;
+  byte service_result;
   
-  bVar1 = updateJ1939BroadcastEnableMask(request,1);
-  return bVar1;
+  service_result = updateJ1939BroadcastEnableMask(request,1);
+  return service_result;
 }
 
 
@@ -23408,18 +23408,18 @@ byte writeJ1939DiagnosticMemoryByParameterId
                dword length)
 
 {
-  char cVar1;
-  byte bVar2;
-  dword local_8;
+  byte lookup_result;
+  byte service_result;
+  dword parameter_address;
   
-  cVar1 = cm550_lookupParameterIdAddress(parameter_id,&local_8);
-  if (cVar1 == '\0') {
-    bVar2 = writeJ1939DiagnosticMemory(request,offset + local_8,length);
+  lookup_result = cm550_lookupParameterIdAddress(parameter_id,&parameter_address);
+  if (lookup_result == 0) {
+    service_result = writeJ1939DiagnosticMemory(request,offset + parameter_address,length);
   }
   else {
-    bVar2 = 8;
+    service_result = 8;
   }
-  return bVar2;
+  return service_result;
 }
 
 
@@ -23436,14 +23436,14 @@ byte writeJ1939DiagnosticMemoryByParameterId
 byte handleJ1939WriteByParameterIdService(can_standard_receive_descriptor_t *request)
 
 {
-  byte bVar1;
-  uint local_a;
-  word local_6;
+  byte service_result;
+  dword length;
+  word parameter_id;
   
-  cm550_memcpy((byte *)&local_6,request->data_pointer + 1,2);
-  local_a = (uint)(byte)request->data_pointer[3];
-  bVar1 = writeJ1939DiagnosticMemoryByParameterId(request,local_6,0,local_a);
-  return bVar1;
+  cm550_memcpy((byte *)&parameter_id,request->data_pointer + 1,2);
+  length = (dword)(byte)request->data_pointer[3];
+  service_result = writeJ1939DiagnosticMemoryByParameterId(request,parameter_id,0,length);
+  return service_result;
 }
 
 
@@ -23460,14 +23460,14 @@ byte handleJ1939WriteByParameterIdService(can_standard_receive_descriptor_t *req
 byte handleJ1939WriteByParameterIdLongLengthService(can_standard_receive_descriptor_t *request)
 
 {
-  byte bVar1;
-  dword local_a;
-  word local_6;
+  byte service_result;
+  dword length;
+  word parameter_id;
   
-  cm550_memcpy((byte *)&local_6,request->data_pointer + 1,2);
-  cm550_memcpy((byte *)&local_a,request->data_pointer + 3,4);
-  bVar1 = writeJ1939DiagnosticMemoryByParameterId(request,local_6,0,local_a);
-  return bVar1;
+  cm550_memcpy((byte *)&parameter_id,request->data_pointer + 1,2);
+  cm550_memcpy((byte *)&length,request->data_pointer + 3,4);
+  service_result = writeJ1939DiagnosticMemoryByParameterId(request,parameter_id,0,length);
+  return service_result;
 }
 
 
@@ -23484,16 +23484,16 @@ byte handleJ1939WriteByParameterIdLongLengthService(can_standard_receive_descrip
 byte handleJ1939WriteByParameterIdShortOffsetService(can_standard_receive_descriptor_t *request)
 
 {
-  byte bVar1;
-  uint local_e;
-  uint local_a;
-  word local_6;
+  byte service_result;
+  dword length;
+  dword offset;
+  word parameter_id;
   
-  cm550_memcpy((byte *)&local_6,request->data_pointer + 1,2);
-  local_a = (uint)CONCAT11(request->data_pointer[3],request->data_pointer[4]);
-  local_e = (uint)(byte)request->data_pointer[5];
-  bVar1 = writeJ1939DiagnosticMemoryByParameterId(request,local_6,local_a,local_e);
-  return bVar1;
+  cm550_memcpy((byte *)&parameter_id,request->data_pointer + 1,2);
+  offset = (dword)CONCAT11(request->data_pointer[3],request->data_pointer[4]);
+  length = (dword)(byte)request->data_pointer[5];
+  service_result = writeJ1939DiagnosticMemoryByParameterId(request,parameter_id,offset,length);
+  return service_result;
 }
 
 
@@ -23510,16 +23510,16 @@ byte handleJ1939WriteByParameterIdShortOffsetService(can_standard_receive_descri
 byte handleJ1939WriteByParameterIdLongOffsetService(can_standard_receive_descriptor_t *request)
 
 {
-  byte bVar1;
-  dword local_e;
-  dword local_a;
-  word local_6;
+  byte service_result;
+  dword length;
+  dword offset;
+  word parameter_id;
   
-  cm550_memcpy((byte *)&local_6,request->data_pointer + 1,2);
-  cm550_memcpy((byte *)&local_a,request->data_pointer + 3,4);
-  cm550_memcpy((byte *)&local_e,request->data_pointer + 7,4);
-  bVar1 = writeJ1939DiagnosticMemoryByParameterId(request,local_6,local_a,local_e);
-  return bVar1;
+  cm550_memcpy((byte *)&parameter_id,request->data_pointer + 1,2);
+  cm550_memcpy((byte *)&offset,request->data_pointer + 3,4);
+  cm550_memcpy((byte *)&length,request->data_pointer + 7,4);
+  service_result = writeJ1939DiagnosticMemoryByParameterId(request,parameter_id,offset,length);
+  return service_result;
 }
 
 
@@ -23535,14 +23535,14 @@ byte handleJ1939WriteByParameterIdLongOffsetService(can_standard_receive_descrip
 byte handleJ1939WriteMemoryService(can_standard_receive_descriptor_t *request)
 
 {
-  byte bVar1;
+  byte service_result;
   dword length;
   dword address;
   
   cm550_memcpy((byte *)&address,request->data_pointer + 1,4);
   length = (dword)(byte)request->data_pointer[5];
-  bVar1 = writeJ1939DiagnosticMemory(request,address,length);
-  return bVar1;
+  service_result = writeJ1939DiagnosticMemory(request,address,length);
+  return service_result;
 }
 
 
@@ -23558,14 +23558,14 @@ byte handleJ1939WriteMemoryService(can_standard_receive_descriptor_t *request)
 byte handleJ1939WriteMemoryLongLengthService(can_standard_receive_descriptor_t *request)
 
 {
-  byte bVar1;
+  byte service_result;
   dword length;
   dword address;
   
   cm550_memcpy((byte *)&address,request->data_pointer + 1,4);
   cm550_memcpy((byte *)&length,request->data_pointer + 5,4);
-  bVar1 = writeJ1939DiagnosticMemory(request,address,length);
-  return bVar1;
+  service_result = writeJ1939DiagnosticMemory(request,address,length);
+  return service_result;
 }
 
 
@@ -24474,18 +24474,18 @@ byte readJ1939DiagnosticMemoryByParameterId
                dword length)
 
 {
-  char cVar1;
-  byte bVar2;
-  dword local_8;
+  byte lookup_result;
+  byte service_result;
+  dword parameter_address;
   
-  cVar1 = cm550_lookupParameterIdAddress(parameter_id,&local_8);
-  if (cVar1 == '\0') {
-    bVar2 = readJ1939DiagnosticMemoryAndRespond(request,offset + local_8,length);
+  lookup_result = cm550_lookupParameterIdAddress(parameter_id,&parameter_address);
+  if (lookup_result == 0) {
+    service_result = readJ1939DiagnosticMemoryAndRespond(request,offset + parameter_address,length);
   }
   else {
-    bVar2 = 8;
+    service_result = 8;
   }
-  return bVar2;
+  return service_result;
 }
 
 
@@ -24502,14 +24502,14 @@ byte readJ1939DiagnosticMemoryByParameterId
 byte handleJ1939ReadByParameterIdLongLengthService(can_standard_receive_descriptor_t *request)
 
 {
-  byte bVar1;
-  dword local_a;
-  word local_6;
+  byte service_result;
+  dword length;
+  word parameter_id;
   
-  cm550_memcpy((byte *)&local_6,request->data_pointer + 1,2);
-  cm550_memcpy((byte *)&local_a,request->data_pointer + 3,4);
-  bVar1 = readJ1939DiagnosticMemoryByParameterId(request,local_6,0,local_a);
-  return bVar1;
+  cm550_memcpy((byte *)&parameter_id,request->data_pointer + 1,2);
+  cm550_memcpy((byte *)&length,request->data_pointer + 3,4);
+  service_result = readJ1939DiagnosticMemoryByParameterId(request,parameter_id,0,length);
+  return service_result;
 }
 
 
@@ -24525,16 +24525,16 @@ byte handleJ1939ReadByParameterIdLongLengthService(can_standard_receive_descript
 byte handleJ1939ReadByParameterIdShortOffsetService(can_standard_receive_descriptor_t *request)
 
 {
-  byte bVar1;
-  uint local_e;
-  uint local_a;
-  word local_6;
+  byte service_result;
+  dword length;
+  dword offset;
+  word parameter_id;
   
-  cm550_memcpy((byte *)&local_6,request->data_pointer + 1,2);
-  local_a = (uint)CONCAT11(request->data_pointer[3],request->data_pointer[4]);
-  local_e = (uint)(byte)request->data_pointer[5];
-  bVar1 = readJ1939DiagnosticMemoryByParameterId(request,local_6,local_a,local_e);
-  return bVar1;
+  cm550_memcpy((byte *)&parameter_id,request->data_pointer + 1,2);
+  offset = (dword)CONCAT11(request->data_pointer[3],request->data_pointer[4]);
+  length = (dword)(byte)request->data_pointer[5];
+  service_result = readJ1939DiagnosticMemoryByParameterId(request,parameter_id,offset,length);
+  return service_result;
 }
 
 
@@ -24550,16 +24550,16 @@ byte handleJ1939ReadByParameterIdShortOffsetService(can_standard_receive_descrip
 byte handleJ1939ReadByParameterIdLongOffsetService(can_standard_receive_descriptor_t *request)
 
 {
-  byte bVar1;
-  dword local_e;
-  dword local_a;
-  word local_6;
+  byte service_result;
+  dword length;
+  dword offset;
+  word parameter_id;
   
-  cm550_memcpy((byte *)&local_6,request->data_pointer + 1,2);
-  cm550_memcpy((byte *)&local_a,request->data_pointer + 3,4);
-  cm550_memcpy((byte *)&local_e,request->data_pointer + 7,4);
-  bVar1 = readJ1939DiagnosticMemoryByParameterId(request,local_6,local_a,local_e);
-  return bVar1;
+  cm550_memcpy((byte *)&parameter_id,request->data_pointer + 1,2);
+  cm550_memcpy((byte *)&offset,request->data_pointer + 3,4);
+  cm550_memcpy((byte *)&length,request->data_pointer + 7,4);
+  service_result = readJ1939DiagnosticMemoryByParameterId(request,parameter_id,offset,length);
+  return service_result;
 }
 
 
@@ -24575,14 +24575,14 @@ byte handleJ1939ReadByParameterIdLongOffsetService(can_standard_receive_descript
 byte handleJ1939ReadMemoryService(can_standard_receive_descriptor_t *request)
 
 {
-  byte bVar1;
-  uint local_c;
-  dword local_8;
+  byte service_result;
+  dword length;
+  dword address;
   
-  cm550_memcpy((byte *)&local_8,request->data_pointer + 1,4);
-  local_c = (uint)(byte)request->data_pointer[5];
-  bVar1 = readJ1939DiagnosticMemoryAndRespond(request,local_8,local_c);
-  return bVar1;
+  cm550_memcpy((byte *)&address,request->data_pointer + 1,4);
+  length = (dword)(byte)request->data_pointer[5];
+  service_result = readJ1939DiagnosticMemoryAndRespond(request,address,length);
+  return service_result;
 }
 
 
@@ -24598,14 +24598,14 @@ byte handleJ1939ReadMemoryService(can_standard_receive_descriptor_t *request)
 byte handleJ1939ReadMemoryLongLengthService(can_standard_receive_descriptor_t *request)
 
 {
-  byte bVar1;
-  dword local_c;
-  dword local_8;
+  byte service_result;
+  dword length;
+  dword address;
   
-  cm550_memcpy((byte *)&local_8,request->data_pointer + 1,4);
-  cm550_memcpy((byte *)&local_c,request->data_pointer + 5,4);
-  bVar1 = readJ1939DiagnosticMemoryAndRespond(request,local_8,local_c);
-  return bVar1;
+  cm550_memcpy((byte *)&address,request->data_pointer + 1,4);
+  cm550_memcpy((byte *)&length,request->data_pointer + 5,4);
+  service_result = readJ1939DiagnosticMemoryAndRespond(request,address,length);
+  return service_result;
 }
 
 
@@ -33314,7 +33314,9 @@ byte cm550_getJ1587ReplyParameterLength(void)
    count + 1, entry byte 0 = the service, entry + 2 = the handler (long), and it returns 0. (was
    cm550_coreSystemFunction; PR #53 round 88; the twin of CM848 0x220e4: one shared name) */
 
-byte registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *handler)
+byte registerJ1939DiagnosticService
+               (J1939_DIAGNOSTIC_SERVICE service_id,
+               j1939_diagnostic_service_handler_function_t *handler)
 
 {
   uint uVar1;
@@ -33340,44 +33342,38 @@ byte registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *ha
    looks request data byte 0 up in j1939_diagnostic_service_table (j1939_diagnostic_handler_count
    6-byte entries). On a match it runs cm550_validateJ1939DiagnosticRequest and, when that returns
    0xff, calls the entry's handler with the request. Unless the result is 0xff it answers with
-   cm550_diagnosticMultiPacketResponseBuilder(request, result), with 0x18 (unknown service) when no
-   entry matches. Counterpart of cm848_dispatchJ1939DiagnosticServiceRequest (CM848 0x22128), which
-   first drops the response services 0x0c / 0x0d without a reply (was
-   cm550_diagnosticServiceDispatcher; PR #53 round 97). */
+   sendJ1939DiagnosticServiceResponse(request, result), with 0x18 (unknown service) when no entry
+   matches. Counterpart of cm848_dispatchJ1939DiagnosticServiceRequest (CM848 0x22128), which first
+   drops the response services 0x0c / 0x0d without a reply (was cm550_diagnosticServiceDispatcher;
+   PR #53 round 97). */
 
 void cm550_dispatchJ1939DiagnosticServiceRequest(can_standard_receive_descriptor_t *request)
 
 {
-  undefined1 extraout_var;
-  undefined2 in_D0w;
-  byte bVar1;
-  byte bVar2;
-  j1939_diagnostic_service_entry_t *pjVar3;
+  byte result_code;
+  byte entry_index;
+  j1939_diagnostic_service_entry_t *entry;
   
-  pjVar3 = j1939_diagnostic_service_table;
-  bVar1 = 0x18;
-  bVar2 = 0;
+  entry = j1939_diagnostic_service_table;
+  result_code = 0x18;
+  entry_index = 0;
   do {
-    if (j1939_diagnostic_handler_count <= bVar2) {
+    if (j1939_diagnostic_handler_count <= entry_index) {
 LAB_0002eeee:
-      if (bVar1 != 0xff) {
-        cm550_diagnosticMultiPacketResponseBuilder
-                  (request,CONCAT11((char)((ushort)in_D0w >> 8),bVar1));
+      if (result_code != 0xff) {
+        sendJ1939DiagnosticServiceResponse(request,result_code);
       }
       return;
     }
-    in_D0w = CONCAT11((char)((ushort)in_D0w >> 8),pjVar3->service_id);
-    if (pjVar3->service_id == *request->data_pointer) {
-      bVar1 = cm550_validateJ1939DiagnosticRequest(request);
-      in_D0w = CONCAT11(extraout_var,bVar1);
-      if (bVar1 == 0xff) {
-        in_D0w = (*(code *)pjVar3->handler)((short)request);
-        bVar1 = (byte)in_D0w;
+    if (entry->service_id == *request->data_pointer) {
+      result_code = cm550_validateJ1939DiagnosticRequest(request);
+      if (result_code == 0xff) {
+        result_code = (*entry->handler)(request);
       }
       goto LAB_0002eeee;
     }
-    pjVar3 = pjVar3 + 1;
-    bVar2 = bVar2 + 1;
+    entry = entry + 1;
+    entry_index = entry_index + 1;
   } while( true );
 }
 
@@ -33775,7 +33771,7 @@ void processEngineTsc1Request(int param_1)
    cm550_registerJ1939PgnRequestHandlers. Twin of CM848 0x23188 (was cm848_j1939RegisterPgnHandler):
    one shared name. (was cm550_FUN_0002f47e; PR #53 round 96) */
 
-byte registerJ1939PgnRequestHandler(word pgn,void *handler)
+byte registerJ1939PgnRequestHandler(word pgn,j1939_pgn_request_handler_function_t *handler)
 
 {
   uint uVar1;
@@ -33787,7 +33783,7 @@ byte registerJ1939PgnRequestHandler(word pgn,void *handler)
   j1939_pgn_handler_count = j1939_pgn_handler_count + 1;
   j1939_pgn_dispatch_table[uVar1].pgn_byte_1 = pgn._0_1_;
   j1939_pgn_dispatch_table[uVar1].pgn_byte_0 = (undefined1)pgn;
-  j1939_pgn_dispatch_table[uVar1].handler = (dword)handler;
+  j1939_pgn_dispatch_table[uVar1].handler = handler;
   return 0;
 }
 
@@ -33810,21 +33806,22 @@ byte registerJ1939PgnRequestHandler(word pgn,void *handler)
 void cm550_dispatchJ1939PgnRequest(can_standard_receive_descriptor_t *received_message)
 
 {
-  byte bVar1;
-  j1939_pgn_handler_entry_t *pjVar2;
+  byte entry_index;
+  j1939_pgn_handler_entry_t *entry;
   
-  pjVar2 = j1939_pgn_dispatch_table;
+  entry = j1939_pgn_dispatch_table;
   if ((*(byte *)((int)&received_message->id + 2) == j1939_engine_node_source_address) ||
      (*(char *)((int)&received_message->id + 2) == -1)) {
-    for (bVar1 = 0; bVar1 < j1939_pgn_handler_count; bVar1 = bVar1 + 1) {
-      if ((pjVar2->pgn_byte_0 == *received_message->data_pointer) &&
-         (received_message->data_pointer[1] == pjVar2->pgn_byte_1)) {
-        (*(code *)pjVar2->handler)((short)received_message);
+    for (entry_index = 0; entry_index < j1939_pgn_handler_count; entry_index = entry_index + 1) {
+      if ((entry->pgn_byte_0 == *received_message->data_pointer) &&
+         (received_message->data_pointer[1] == entry->pgn_byte_1)) {
+        (*entry->handler)(received_message);
         break;
       }
-      pjVar2 = pjVar2 + 1;
+      entry = entry + 1;
     }
-    if ((bVar1 == j1939_pgn_handler_count) && (*(char *)((int)&received_message->id + 2) != -1)) {
+    if ((entry_index == j1939_pgn_handler_count) &&
+       (*(char *)((int)&received_message->id + 2) != -1)) {
       cm550_sendPgn59392AcknowledgementMessage(received_message,1);
     }
   }
@@ -34394,8 +34391,8 @@ byte validateSecurityKey(byte *authentication_payload_pointer)
   dword extracted_hour_meter;
   byte extracted_key [6];
   byte hour_meter_bytes [4];
-  dword *hour_meter_copy_destination;
   bool all_keys_match;
+  dword *hour_meter_copy_destination;
   
   if (calibration_download_security_key_cal == 0xff) {
     validation_result = 0;
@@ -36361,70 +36358,95 @@ void cm550_engineSerialNumberPGN_65259_Builder(void)
 
 
 //
-// Function: cm550_diagnosticMultiPacketResponseBuilder @ 0x0003216a
+// Function: sendJ1939DiagnosticResponsePending @ 0x0003214c
 //
 
-undefined4
-cm550_diagnosticMultiPacketResponseBuilder
-          (can_standard_receive_descriptor_t *request,word result_code)
+/* Stores the wait time (its word argument) in j1939_diagnostic_response_pending_wait_time and sends
+   the 0x0e response-pending for the request (sendJ1939DiagnosticServiceResponse with result 0xfe).
+   Nothing in the dumped ROM reaches it (no absolute, relative or table reference to 0x3214c), and
+   its CM848 twin has no caller either; the boot kernel's cm848_sendDiagnosticResponsePending is the
+   same pair. The twin of CM848 0x00024afc: one shared name (new row; PR #53 round 98) */
+
+void sendJ1939DiagnosticResponsePending(can_standard_receive_descriptor_t *request,word wait_time)
+
+{
+  j1939_diagnostic_response_pending_wait_time = wait_time;
+  sendJ1939DiagnosticServiceResponse(request,0xfe);
+  return;
+}
+
+
+
+//
+// Function: sendJ1939DiagnosticServiceResponse @ 0x0003216a
+//
+
+/* Sends the PGN 61184 response to a diagnostic service request: the response byte 0x0c for result
+   0, 0x0e plus the two bytes of j1939_diagnostic_response_pending_wait_time for result 0xfe
+   (response pending), else 0x0d plus the result code; then the request's first bytes
+   (getJ1939DiagnosticResponseEchoLength of its service byte). The reply takes the request's
+   priority and goes back to its source address (identifier 0xef0000 with the two address bytes
+   swapped). It takes its transmit record from cm550_multiPacketBufferAllocator (none: nothing is
+   sent) and sends it with cm550_sendCanMessage. Called by
+   cm550_dispatchJ1939DiagnosticServiceRequest, restartThroughBootRom and
+   sendJ1939DiagnosticResponsePending. The twin of CM848 0x000249c4: one shared name (was
+   cm550_diagnosticMultiPacketResponseBuilder; PR #53 round 98) */
+
+void sendJ1939DiagnosticServiceResponse(can_standard_receive_descriptor_t *request,byte result_code)
 
 {
   undefined4 in_D0;
-  byte bVar2;
+  byte bVar1;
   j1939_transmit_message_t *message;
-  undefined4 uVar1;
-  char cVar3;
-  byte bVar4;
+  byte bVar2;
   word data_length;
-  undefined1 *puVar5;
-  undefined1 *puVar6;
+  undefined1 *puVar3;
+  undefined1 *puVar4;
   
-  bVar2 = getJ1939DiagnosticResponseEchoLength
+  bVar1 = getJ1939DiagnosticResponseEchoLength
                     ((word)CONCAT31((int3)((uint)in_D0 >> 8),*request->data_pointer));
-  cVar3 = (char)result_code;
-  if (cVar3 == '\0') {
-    data_length = bVar2 + 1;
+  if (result_code == 0) {
+    data_length = bVar1 + 1;
   }
-  else if (cVar3 == -2) {
-    data_length = bVar2 + 3;
+  else if (result_code == 0xfe) {
+    data_length = bVar1 + 3;
   }
   else {
-    data_length = bVar2 + 2;
+    data_length = bVar1 + 2;
   }
   message = cm550_multiPacketBufferAllocator(data_length);
-  uVar1 = 0;
   if (message != (j1939_transmit_message_t *)0x0) {
     (message->header).can_id = 0xef0000;
-    bVar4 = *(byte *)&request->id;
+    bVar2 = *(byte *)&request->id;
     *(byte *)&(message->header).can_id = *(byte *)&(message->header).can_id & 0xe3;
-    *(byte *)&(message->header).can_id = bVar4 & 0x1c | *(byte *)&(message->header).can_id;
+    *(byte *)&(message->header).can_id = bVar2 & 0x1c | *(byte *)&(message->header).can_id;
     *(char *)((int)&(message->header).can_id + 2) = (char)request->id;
     *(undefined1 *)((int)&(message->header).can_id + 3) = *(undefined1 *)((int)&request->id + 2);
-    puVar6 = message->data_pointer;
-    if (cVar3 == '\0') {
-      puVar5 = puVar6 + 1;
-      *puVar6 = 0xc;
+    puVar4 = message->data_pointer;
+    if (result_code == 0) {
+      puVar3 = puVar4 + 1;
+      *puVar4 = 0xc;
     }
-    else if (cVar3 == -2) {
-      *puVar6 = 0xe;
-      puVar6[1] = DAT_00801f3c;
-      puVar5 = puVar6 + 3;
-      puVar6[2] = DAT_00801f3d;
+    else if (result_code == 0xfe) {
+      *puVar4 = 0xe;
+      puVar4[1] = j1939_diagnostic_response_pending_wait_time._0_1_;
+      puVar3 = puVar4 + 3;
+      puVar4[2] = (undefined1)j1939_diagnostic_response_pending_wait_time;
     }
     else {
-      *puVar6 = 0xd;
-      puVar5 = puVar6 + 2;
-      puVar6[1] = cVar3;
+      *puVar4 = 0xd;
+      puVar3 = puVar4 + 2;
+      puVar4[1] = result_code;
     }
-    puVar6 = request->data_pointer;
-    for (bVar4 = 0; bVar4 < bVar2; bVar4 = bVar4 + 1) {
-      *puVar5 = *puVar6;
-      puVar5 = puVar5 + 1;
-      puVar6 = puVar6 + 1;
+    puVar4 = request->data_pointer;
+    for (bVar2 = 0; bVar2 < bVar1; bVar2 = bVar2 + 1) {
+      *puVar3 = *puVar4;
+      puVar3 = puVar3 + 1;
+      puVar4 = puVar4 + 1;
     }
-    uVar1 = cm550_sendCanMessage(message);
+    cm550_sendCanMessage(message);
   }
-  return uVar1;
+  return;
 }
 
 
@@ -40067,4 +40089,4 @@ LAB_00035162:
 
 
 
-// Export complete - 722 functions processed
+// Export complete - 723 functions processed

@@ -371,7 +371,7 @@ void cm550_diagnosticMessage54Builder(void);  // @ 0x0001fc9c
 uint cm550_clearExpiredJ1922ControlOccurrences(void);  // @ 0x0001fd6c
 dword cm550_recordJ1922ControlOccurrence(word control_mode);  // @ 0x0001fdc0
 void cm550_initializeCanMessageFilter(void);  // @ 0x0001fe40
-byte scheduleJ1939PeriodicMessage (J1939_PERIODIC_TRANSMIT_QUEUE queue_index,word pgn_key,word interval_milliseconds, word first_send_offset_milliseconds,void *builder);  // @ 0x0001fe84
+byte scheduleJ1939PeriodicMessage (J1939_PERIODIC_TRANSMIT_QUEUE queue_index,word pgn_key,word interval_milliseconds, word first_send_offset_milliseconds,j1939_message_builder_function_t *builder);  // @ 0x0001fe84
 uint cm550_runJ1939PeriodicTransmitQueues(void);  // @ 0x0001ff38
 void cm550_emptyPlaceholderInitialization(void);  // @ 0x0001ffd0
 byte handleJ1939NoOperationService(void);  // @ 0x0001ffd2
@@ -574,7 +574,7 @@ void cm550_claimRemoteThrottleOverride(void);  // @ 0x0002ec50
 void cm550_initializeRemoteThrottle(void);  // @ 0x0002ed62
 byte cm550_getJ1587ReceivedParameterLength(void);  // @ 0x0002ed6a
 byte cm550_getJ1587ReplyParameterLength(void);  // @ 0x0002edb2
-byte registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *handler);  // @ 0x0002ee62
+byte registerJ1939DiagnosticService (J1939_DIAGNOSTIC_SERVICE service_id, j1939_diagnostic_service_handler_function_t *handler);  // @ 0x0002ee62
 void cm550_dispatchJ1939DiagnosticServiceRequest(can_standard_receive_descriptor_t *request);  // @ 0x0002eea2
 void registerJ1939DiagnosticServiceDispatcher(void);  // @ 0x0002ef08
 void cm550_j1939HandlePgn65228Dm3ClearInactiveFaults (can_standard_receive_descriptor_t *request_message);  // @ 0x0002ef1c
@@ -584,7 +584,7 @@ void registerJ1939Dm7Handler(void);  // @ 0x0002efbc
 word cm550_receivePgn61442ElectronicTransmissionController1Message(int param_1);  // @ 0x0002efd0
 void cm550_registerJ1939ElectronicTransmissionController1Handler(void);  // @ 0x0002f114
 void processEngineTsc1Request(int param_1);  // @ 0x0002f128
-byte registerJ1939PgnRequestHandler(word pgn,void *handler);  // @ 0x0002f47e
+byte registerJ1939PgnRequestHandler(word pgn,j1939_pgn_request_handler_function_t *handler);  // @ 0x0002f47e
 void cm550_dispatchJ1939PgnRequest(can_standard_receive_descriptor_t *received_message);  // @ 0x0002f4be
 void cm550_registerJ1939PgnRequestHandlers(void);  // @ 0x0002f538
 word decodeRetarderTorqueRequestPercent(word requested_torque);  // @ 0x0002f606
@@ -635,7 +635,8 @@ void cm550_buildPgn65261CruiseControlVehicleSpeedSetupMessage(void);  // @ 0x000
 void initializePgn65261CruiseControlSetupStruct(void);  // @ 0x00031fee
 void cm550_buildPgn65259ComponentIdentificationMessage(void);  // @ 0x00032052
 void cm550_engineSerialNumberPGN_65259_Builder(void);  // @ 0x000320f6
-undefined4 cm550_diagnosticMultiPacketResponseBuilder (can_standard_receive_descriptor_t *request,word result_code);  // @ 0x0003216a
+void sendJ1939DiagnosticResponsePending(can_standard_receive_descriptor_t *request,word wait_time);  // @ 0x0003214c
+void sendJ1939DiagnosticServiceResponse(can_standard_receive_descriptor_t *request,byte result_code);  // @ 0x0003216a
 void buildPgn65234Dm10TestIdentifiersSupportMessage(void);  // @ 0x00032222
 void initializePgn65234Dm10Handler(void);  // @ 0x00032244
 void cm550_broadcastPgn65226Dm1WhileFaultsActive(void);  // @ 0x0003229a

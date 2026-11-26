@@ -60,7 +60,7 @@ void mpc555_initializeCanController(void);  // @ 0x00002970
 void mpc555_initializeDiagnosticSubsystem(void);  // @ 0x00002a40
 void cm848_clearRamRegions(void);  // @ 0x00002b7c
 void cm848_softReset(void);  // @ 0x00002bc8
-bool cm848_registerDiagnosticService(BOOT_DIAGNOSTIC_SERVICE service_id,void *handler_pointer);  // @ 0x00002c94
+bool cm848_registerDiagnosticService(BOOT_DIAGNOSTIC_SERVICE service_id,void *handler);  // @ 0x00002c94
 void cm848_registerPgnEf00Handler(byte sub_id,void *handler);  // @ 0x00002cd8
 byte * cm848_lookupEepromParameterAddress(byte parameter);  // @ 0x00002d08
 void cm848_pumpDiagnosticCallback(void);  // @ 0x00002de4
@@ -274,7 +274,9 @@ void cm848_calculateGovernorCompensatorCoefficients(void);  // @ 0x0000ff04
 void cm848_selectVariableSpeedGovernorMode(int previous_engine_operating_mode);  // @ 0x00010110
 void cm848_initializeLookupTableParameters(void);  // @ 0x00010248
 void cm848_stubFunction3(void);  // @ 0x00010270
-undefined8 mpc555_timerInterruptHandler(undefined4 param_1,undefined4 param_2);  // @ 0x00010274
+void mpc555_dispatchExternalInterrupt(undefined4 param_1,undefined4 param_2);  // @ 0x00010274
+void mpc555_handleDecrementerException(undefined4 param_1,undefined4 param_2);  // @ 0x0001041c
+void mpc555_haltOnUnhandledException(void);  // @ 0x0001063c
 void mpc555_fatalErrorHalt(void);  // @ 0x00010694
 void cm848_selectBatteryVoltage(void);  // @ 0x000107ec
 void cm848_updateBatteryVoltageSource(void);  // @ 0x0001083c
@@ -522,7 +524,7 @@ void cm848_setThrottle100J1939TorqueCurveSpeedPoints(void);  // @ 0x00021c3c
 void cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings(void);  // @ 0x00021cd4
 void cm848_receivePgn56576AntiTheftRequestMessage(j1939_received_message_t *message);  // @ 0x00021fc4
 void cm848_initializeJ1939DiagnosticCallback(void);  // @ 0x000220b4
-bool registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *handler_pointer);  // @ 0x000220e4
+bool registerJ1939DiagnosticService (J1939_DIAGNOSTIC_SERVICE service_id, j1939_diagnostic_service_handler_function_t *handler);  // @ 0x000220e4
 void cm848_dispatchJ1939DiagnosticServiceRequest(j1939_received_message_t *received_message);  // @ 0x00022128
 void registerJ1939DiagnosticServiceDispatcher(void);  // @ 0x000221f0
 void cm848_tickJ1939Dm13Timers(void);  // @ 0x00022220
@@ -539,7 +541,7 @@ void cm848_initializeJ1939Pgn61442Etc1Handler(void);  // @ 0x00022bc4
 void cm848_j1939ProcessPgn61445Etc2(j1939_received_message_t *message);  // @ 0x00022c5c
 void cm848_initializeEtc2Handler(void);  // @ 0x00022d18
 void processEngineTsc1Request(j1939_received_message_t *message);  // @ 0x00022d60
-bool registerJ1939PgnRequestHandler(dword pgn,void *handler);  // @ 0x00023188
+bool registerJ1939PgnRequestHandler(dword pgn,j1939_pgn_request_handler_function_t *handler);  // @ 0x00023188
 void cm848_dispatchJ1939PgnRequest(j1939_received_message_t *message);  // @ 0x000231cc
 void cm848_registerJ1939PgnRequestHandlers(void);  // @ 0x000232b4
 void cm848_j1939HandlePgn56832Reset(j1939_received_message_t *message);  // @ 0x000233a0
@@ -565,8 +567,8 @@ void cm848_buildPgn65261CruiseControlVehicleSpeedSetupMessage(void);  // @ 0x000
 void initializePgn65261CruiseControlSetupStruct(void);  // @ 0x00024800
 void cm848_j1939HandlePgn65259ComponentId(void);  // @ 0x00024870
 void cm848_initializePgn65259ComponentIdHandler(void);  // @ 0x00024940
-void cm848_sendJ1939ResponseFrame(j1939_received_message_t *request,dword result_code);  // @ 0x000249c4
-void cm848_sendJ1939ExtendedResponse(j1939_received_message_t *param_1,word param_2);  // @ 0x00024afc
+void sendJ1939DiagnosticServiceResponse(j1939_received_message_t *request,dword result_code);  // @ 0x000249c4
+void sendJ1939DiagnosticResponsePending(j1939_received_message_t *request,word wait_time);  // @ 0x00024afc
 void buildPgn65234Dm10TestIdentifiersSupportMessage(void);  // @ 0x00024b28
 void initializePgn65234Dm10Handler(void);  // @ 0x00024b64
 void cm848_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage(void);  // @ 0x00024be8
@@ -810,10 +812,10 @@ void cm848_calculateAlternatorFieldDutyByPid(void);  // @ 0x00037a40
 void cm848_applyAlternatorFieldDuty(void);  // @ 0x00037c74
 void cm848_monitorChargingSystemVoltageHighAndLow(void);  // @ 0x00037f28
 void cm848_testAlternatorOutputByCuttingField(void);  // @ 0x00038120
-undefined4 cm848_evaluateAlternatorFieldRegulatorIdleState(void);  // @ 0x00038338
-undefined4 cm848_evaluateAlternatorFieldRegulatorStartRampState(void);  // @ 0x00038384
-undefined4 cm848_evaluateAlternatorFieldRegulatorRegulationState(void);  // @ 0x000383f0
-undefined4 cm848_evaluateAlternatorFieldRegulatorLoadResponseState(void);  // @ 0x0003844c
+ALTERNATOR_FIELD_REGULATOR_STATE cm848_evaluateAlternatorFieldRegulatorIdleState(void);  // @ 0x00038338
+ALTERNATOR_FIELD_REGULATOR_STATE cm848_evaluateAlternatorFieldRegulatorStartRampState(void);  // @ 0x00038384
+ALTERNATOR_FIELD_REGULATOR_STATE cm848_evaluateAlternatorFieldRegulatorRegulationState(void);  // @ 0x000383f0
+ALTERNATOR_FIELD_REGULATOR_STATE cm848_evaluateAlternatorFieldRegulatorLoadResponseState(void);  // @ 0x0003844c
 void cm848_initializeAlternatorFieldControl(void);  // @ 0x000384d0
 void cm848_calculateMainInjectionEndTiming(void);  // @ 0x0003866c
 void calculateFilteredEngineAcceleration(void);  // @ 0x00038760
@@ -1048,173 +1050,173 @@ void cm848_initializeEepromDriverAndLoadMirror(void);  // @ 0x0004cb64
 int cm848_readInjectorDiagnosticWord(void);  // @ 0x0004cd50
 void cm848_initializeSensorRetryCounters(void);  // @ 0x0004ce78
 void cm848_miosChannel11EnablePwm(void);  // @ 0x0004ce9c
-void cm848_miosChannel11SetPwmDuty(word param_1);  // @ 0x0004cec4
-void cm848_miosChannel11SetPwmPeriod(undefined4 param_1);  // @ 0x0004cef0
+void cm848_miosChannel11SetPwmDuty(word duty);  // @ 0x0004cec4
+void cm848_miosChannel11SetPwmPeriod(dword period_setting);  // @ 0x0004cef0
 void cm848_miosChannel12EnablePwm(void);  // @ 0x0004cf1c
-void cm848_miosChannel12SetPwmDuty(word param_1);  // @ 0x0004cf44
-void cm848_miosChannel12SetPwmPeriod(undefined4 param_1);  // @ 0x0004cf70
+void cm848_miosChannel12SetPwmDuty(word duty);  // @ 0x0004cf44
+void cm848_miosChannel12SetPwmPeriod(dword period_setting);  // @ 0x0004cf70
 void cm848_miosChannel13EnablePwm(void);  // @ 0x0004cf9c
-void cm848_miosChannel13SetPwmDuty(word param_1);  // @ 0x0004cfc4
-void cm848_miosChannel13SetPwmPeriod(undefined4 param_1);  // @ 0x0004cff0
+void cm848_miosChannel13SetPwmDuty(word duty);  // @ 0x0004cfc4
+void cm848_miosChannel13SetPwmPeriod(dword period_setting);  // @ 0x0004cff0
 void cm848_miosChannel14EnablePwm(void);  // @ 0x0004d01c
-void cm848_miosChannel14SetPwmDuty(word param_1);  // @ 0x0004d044
-void cm848_miosChannel14SetPwmPeriod(undefined4 param_1);  // @ 0x0004d070
+void cm848_miosChannel14SetPwmDuty(word duty);  // @ 0x0004d044
+void cm848_miosChannel14SetPwmPeriod(dword period_setting);  // @ 0x0004d070
 void cm848_miosChannel15EnablePwm(void);  // @ 0x0004d09c
-void cm848_miosChannel15SetPwmDuty(word param_1);  // @ 0x0004d0c4
-void cm848_miosChannel15SetPwmPeriod(undefined4 param_1);  // @ 0x0004d0f0
+void cm848_miosChannel15SetPwmDuty(word duty);  // @ 0x0004d0c4
+void cm848_miosChannel15SetPwmPeriod(dword period_setting);  // @ 0x0004d0f0
 void cm848_miosChannel27EnablePwm(void);  // @ 0x0004d11c
-void cm848_miosChannel27SetPwmDuty(word param_1);  // @ 0x0004d144
-void cm848_miosChannel27SetPwmPeriod(undefined4 param_1);  // @ 0x0004d170
+void cm848_miosChannel27SetPwmDuty(word duty);  // @ 0x0004d144
+void cm848_miosChannel27SetPwmPeriod(dword period_setting);  // @ 0x0004d170
 void cm848_miosChannel28EnablePwm(void);  // @ 0x0004d19c
-void cm848_miosChannel28SetPwmDuty(word param_1);  // @ 0x0004d1c4
-void cm848_miosChannel28SetPwmPeriod(undefined4 param_1);  // @ 0x0004d1f0
+void cm848_miosChannel28SetPwmDuty(word duty);  // @ 0x0004d1c4
+void cm848_miosChannel28SetPwmPeriod(dword period_setting);  // @ 0x0004d1f0
 void cm848_miosChannel29EnablePwm(void);  // @ 0x0004d21c
-void cm848_miosChannel29SetPwmDuty(word param_1);  // @ 0x0004d244
-void cm848_miosChannel29SetPwmPeriod(undefined4 param_1);  // @ 0x0004d270
+void cm848_miosChannel29SetPwmDuty(word duty);  // @ 0x0004d244
+void cm848_miosChannel29SetPwmPeriod(dword period_setting);  // @ 0x0004d270
 void cm848_miosChannel30EnablePwm(void);  // @ 0x0004d29c
-void cm848_miosChannel30SetPwmDuty(word param_1);  // @ 0x0004d2c4
-void cm848_miosChannel30SetPwmPeriod(undefined4 param_1);  // @ 0x0004d2f0
+void cm848_miosChannel30SetPwmDuty(word duty);  // @ 0x0004d2c4
+void cm848_miosChannel30SetPwmPeriod(dword period_setting);  // @ 0x0004d2f0
 void cm848_miosChannel31EnablePwm(void);  // @ 0x0004d31c
-void cm848_miosChannel31SetPwmDuty(word param_1);  // @ 0x0004d344
-void cm848_miosChannel31SetPwmPeriod(undefined4 param_1);  // @ 0x0004d370
+void cm848_miosChannel31SetPwmDuty(word duty);  // @ 0x0004d344
+void cm848_miosChannel31SetPwmPeriod(dword period_setting);  // @ 0x0004d370
 void cm848_miosPwm0Enable(void);  // @ 0x0004d39c
-void cm848_miosPwm0SetDuty(word param_1);  // @ 0x0004d3c4
-void cm848_miosPwm0SetPeriodMicroseconds(undefined4 param_1);  // @ 0x0004d3f0
+void cm848_miosPwm0SetDuty(word duty);  // @ 0x0004d3c4
+void cm848_miosPwm0SetPeriodMicroseconds(dword period_microseconds);  // @ 0x0004d3f0
 void cm848_miosPwm1Enable(void);  // @ 0x0004d41c
-void cm848_miosPwm1SetDuty(word param_1);  // @ 0x0004d444
-void cm848_miosPwm1SetPeriodMicroseconds(undefined4 param_1);  // @ 0x0004d470
+void cm848_miosPwm1SetDuty(word duty);  // @ 0x0004d444
+void cm848_miosPwm1SetPeriodMicroseconds(dword period_microseconds);  // @ 0x0004d470
 void cm848_miosPwm2Enable(void);  // @ 0x0004d49c
-void cm848_miosPwm2SetDuty(word param_1);  // @ 0x0004d4c4
-void cm848_miosPwm2SetPeriodMicroseconds(undefined4 param_1);  // @ 0x0004d4f0
+void cm848_miosPwm2SetDuty(word duty);  // @ 0x0004d4c4
+void cm848_miosPwm2SetPeriodMicroseconds(dword period_microseconds);  // @ 0x0004d4f0
 void cm848_miosPwm3Enable(void);  // @ 0x0004d51c
-void cm848_miosPwm3SetDuty(word param_1);  // @ 0x0004d544
-void cm848_miosPwm3SetPeriodMicroseconds(undefined4 param_1);  // @ 0x0004d570
+void cm848_miosPwm3SetDuty(word duty);  // @ 0x0004d544
+void cm848_miosPwm3SetPeriodMicroseconds(dword period_microseconds);  // @ 0x0004d570
 void cm848_miosPwm16Enable(void);  // @ 0x0004d59c
-void cm848_miosPwm16SetDuty(word param_1);  // @ 0x0004d5c4
-void cm848_miosPwm16SetPeriodMicroseconds(undefined4 param_1);  // @ 0x0004d5f0
+void cm848_miosPwm16SetDuty(word duty);  // @ 0x0004d5c4
+void cm848_miosPwm16SetPeriodMicroseconds(dword period_microseconds);  // @ 0x0004d5f0
 void cm848_miosPwm17Enable(void);  // @ 0x0004d61c
-void cm848_miosPwm17SetDuty(word param_1);  // @ 0x0004d644
-void cm848_miosPwm17SetPeriodMicroseconds(undefined4 param_1);  // @ 0x0004d670
+void cm848_miosPwm17SetDuty(word duty);  // @ 0x0004d644
+void cm848_miosPwm17SetPeriodMicroseconds(dword period_microseconds);  // @ 0x0004d670
 void cm848_miosPwm18Enable(void);  // @ 0x0004d69c
-void cm848_miosPwm18SetDuty(word param_1);  // @ 0x0004d6c4
-void cm848_miosPwm18SetPeriodMicroseconds(undefined4 param_1);  // @ 0x0004d6f0
+void cm848_miosPwm18SetDuty(word duty);  // @ 0x0004d6c4
+void cm848_miosPwm18SetPeriodMicroseconds(dword period_microseconds);  // @ 0x0004d6f0
 void cm848_miosPwm19Enable(void);  // @ 0x0004d71c
-void cm848_miosPwm19SetDuty(word param_1);  // @ 0x0004d744
-void cm848_miosPwm19SetPeriodMicroseconds(undefined4 param_1);  // @ 0x0004d770
+void cm848_miosPwm19SetDuty(word duty);  // @ 0x0004d744
+void cm848_miosPwm19SetPeriodMicroseconds(dword period_microseconds);  // @ 0x0004d770
 void cm848_tpuBChannel0EnablePwm(void);  // @ 0x0004d79c
-void cm848_tpuBChannel0SetPwmDuty(word param_1);  // @ 0x0004d7c0
-void cm848_tpuBChannel0SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004d7e8
+void cm848_tpuBChannel0SetPwmDuty(word duty);  // @ 0x0004d7c0
+void cm848_tpuBChannel0SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004d7e8
 void cm848_tpuBChannel1EnablePwm(void);  // @ 0x0004d810
-void cm848_tpuBChannel1SetPwmDuty(word param_1);  // @ 0x0004d834
-void cm848_tpuBChannel1SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004d85c
+void cm848_tpuBChannel1SetPwmDuty(word duty);  // @ 0x0004d834
+void cm848_tpuBChannel1SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004d85c
 void cm848_tpuBChannel2EnablePwm(void);  // @ 0x0004d884
-void cm848_tpuBChannel2SetPwmDuty(word param_1);  // @ 0x0004d8a8
-void cm848_tpuBChannel2SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004d8d0
+void cm848_tpuBChannel2SetPwmDuty(word duty);  // @ 0x0004d8a8
+void cm848_tpuBChannel2SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004d8d0
 void cm848_tpuBChannel3EnablePwm(void);  // @ 0x0004d8f8
-void cm848_tpuBChannel3SetPwmDuty(word param_1);  // @ 0x0004d91c
-void cm848_tpuBChannel3SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004d944
+void cm848_tpuBChannel3SetPwmDuty(word duty);  // @ 0x0004d91c
+void cm848_tpuBChannel3SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004d944
 void cm848_tpuBChannel4EnablePwm(void);  // @ 0x0004d96c
-void cm848_tpuBChannel4SetPwmDuty(word param_1);  // @ 0x0004d990
-void cm848_tpuBChannel4SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004d9b8
+void cm848_tpuBChannel4SetPwmDuty(word duty);  // @ 0x0004d990
+void cm848_tpuBChannel4SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004d9b8
 void cm848_tpuBChannel5EnablePwm(void);  // @ 0x0004d9e0
-void cm848_tpuBChannel5SetPwmDuty(word param_1);  // @ 0x0004da04
-void cm848_tpuBChannel5SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004da2c
+void cm848_tpuBChannel5SetPwmDuty(word duty);  // @ 0x0004da04
+void cm848_tpuBChannel5SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004da2c
 void cm848_tpuBChannel6EnablePwm(void);  // @ 0x0004da54
-void cm848_tpuBChannel6SetPwmDuty(word param_1);  // @ 0x0004da78
-void cm848_tpuBChannel6SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004daa0
+void cm848_tpuBChannel6SetPwmDuty(word duty);  // @ 0x0004da78
+void cm848_tpuBChannel6SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004daa0
 void cm848_tpuBChannel7EnablePwm(void);  // @ 0x0004dac8
-void cm848_tpuBChannel7SetPwmDuty(word param_1);  // @ 0x0004daec
-void cm848_tpuBChannel7SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004db14
+void cm848_tpuBChannel7SetPwmDuty(word duty);  // @ 0x0004daec
+void cm848_tpuBChannel7SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004db14
 void cm848_tpuBChannel8EnablePwm(void);  // @ 0x0004db3c
-void cm848_tpuBChannel8SetPwmDuty(word param_1);  // @ 0x0004db60
-void cm848_tpuBChannel8SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004db88
+void cm848_tpuBChannel8SetPwmDuty(word duty);  // @ 0x0004db60
+void cm848_tpuBChannel8SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004db88
 void cm848_tpuBChannel9EnablePwm(void);  // @ 0x0004dbb0
-void cm848_tpuBChannel9SetPwmDuty(word param_1);  // @ 0x0004dbd4
-void cm848_tpuBChannel9SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004dbfc
+void cm848_tpuBChannel9SetPwmDuty(word duty);  // @ 0x0004dbd4
+void cm848_tpuBChannel9SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004dbfc
 void cm848_tpuBChannel10EnablePwm(void);  // @ 0x0004dc24
-void cm848_tpuBChannel10SetPwmDuty(word param_1);  // @ 0x0004dc48
-void cm848_tpuBChannel10SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004dc70
+void cm848_tpuBChannel10SetPwmDuty(word duty);  // @ 0x0004dc48
+void cm848_tpuBChannel10SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004dc70
 void cm848_tpuBChannel11EnablePwm(void);  // @ 0x0004dc98
-void cm848_tpuBChannel11SetPwmDuty(word param_1);  // @ 0x0004dcbc
-void cm848_tpuBChannel11SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004dce4
+void cm848_tpuBChannel11SetPwmDuty(word duty);  // @ 0x0004dcbc
+void cm848_tpuBChannel11SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004dce4
 void cm848_tpuBChannel12EnablePwm(void);  // @ 0x0004dd0c
-void cm848_tpuBChannel12SetPwmDuty(word param_1);  // @ 0x0004dd30
-void cm848_tpuBChannel12SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004dd58
+void cm848_tpuBChannel12SetPwmDuty(word duty);  // @ 0x0004dd30
+void cm848_tpuBChannel12SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004dd58
 void cm848_tpuBChannel13EnablePwm(void);  // @ 0x0004dd80
-void cm848_tpuBChannel13SetPwmDuty(word param_1);  // @ 0x0004dda4
-void cm848_tpuBChannel13SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004ddcc
+void cm848_tpuBChannel13SetPwmDuty(word duty);  // @ 0x0004dda4
+void cm848_tpuBChannel13SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004ddcc
 void cm848_tpuBChannel14EnablePwm(void);  // @ 0x0004ddf4
-void cm848_tpuBChannel14SetPwmDuty(word param_1);  // @ 0x0004de18
-void cm848_tpuBChannel14SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004de40
+void cm848_tpuBChannel14SetPwmDuty(word duty);  // @ 0x0004de18
+void cm848_tpuBChannel14SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004de40
 void cm848_tpuBChannel15EnablePwm(void);  // @ 0x0004de68
-void cm848_tpuBChannel15SetPwmDuty(word param_1);  // @ 0x0004de8c
-void cm848_tpuBChannel15SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004deb4
+void cm848_tpuBChannel15SetPwmDuty(word duty);  // @ 0x0004de8c
+void cm848_tpuBChannel15SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004deb4
 void cm848_tpuBReadBackChannel10EnablePwm(void);  // @ 0x0004dedc
 word cm848_tpuBReadBackChannel10ReadFeedback(void);  // @ 0x0004df0c
-void cm848_tpuBReadBackChannel10SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004df40
-void cm848_tpuBReadBackChannel10SetPwmDuty(word param_1);  // @ 0x0004df68
+void cm848_tpuBReadBackChannel10SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004df40
+void cm848_tpuBReadBackChannel10SetPwmDuty(word duty);  // @ 0x0004df68
 void cm848_tpuBReadBackChannel11EnablePwm(void);  // @ 0x0004df98
 word cm848_tpuBReadBackChannel11ReadFeedback(void);  // @ 0x0004dfd4
 void cm848_tpuBReadBackChannel4EnablePwm(void);  // @ 0x0004e0c0
 word cm848_tpuBReadBackChannel4ReadFeedback(void);  // @ 0x0004e0f0
-void cm848_tpuBReadBackChannel4SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004e124
-void cm848_tpuBReadBackChannel4SetPwmDuty(word param_1);  // @ 0x0004e14c
+void cm848_tpuBReadBackChannel4SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004e124
+void cm848_tpuBReadBackChannel4SetPwmDuty(word duty);  // @ 0x0004e14c
 void cm848_tpuBReadBackChannel6EnablePwm(void);  // @ 0x0004e180
 word cm848_tpuBReadBackChannel6ReadFeedback(void);  // @ 0x0004e1b0
-void cm848_tpuBReadBackChannel6SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004e1e4
-void cm848_tpuBReadBackChannel6SetPwmDuty(word param_1);  // @ 0x0004e20c
+void cm848_tpuBReadBackChannel6SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004e1e4
+void cm848_tpuBReadBackChannel6SetPwmDuty(word duty);  // @ 0x0004e20c
 void cm848_tpuBReadBackChannel7EnablePwm(void);  // @ 0x0004e240
 word cm848_tpuBReadBackChannel7ReadFeedback(void);  // @ 0x0004e270
-void cm848_tpuBReadBackChannel7SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004e2a4
-void cm848_tpuBReadBackChannel7SetPwmDuty(word param_1);  // @ 0x0004e2cc
+void cm848_tpuBReadBackChannel7SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004e2a4
+void cm848_tpuBReadBackChannel7SetPwmDuty(word duty);  // @ 0x0004e2cc
 void cm848_tpuAChannel0EnablePwm(void);  // @ 0x0004e300
-void cm848_tpuAChannel0SetPwmDuty(word param_1);  // @ 0x0004e324
-void cm848_tpuAChannel0SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004e34c
+void cm848_tpuAChannel0SetPwmDuty(word duty);  // @ 0x0004e324
+void cm848_tpuAChannel0SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004e34c
 void cm848_tpuAChannel1EnablePwm(void);  // @ 0x0004e374
-void cm848_tpuAChannel1SetPwmDuty(word param_1);  // @ 0x0004e398
-void cm848_tpuAChannel1SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004e3c0
+void cm848_tpuAChannel1SetPwmDuty(word duty);  // @ 0x0004e398
+void cm848_tpuAChannel1SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004e3c0
 void cm848_tpuAChannel2EnablePwm(void);  // @ 0x0004e3e8
-void cm848_tpuAChannel2SetPwmDuty(word param_1);  // @ 0x0004e40c
-void cm848_tpuAChannel2SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004e434
+void cm848_tpuAChannel2SetPwmDuty(word duty);  // @ 0x0004e40c
+void cm848_tpuAChannel2SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004e434
 void cm848_tpuAChannel3EnablePwm(void);  // @ 0x0004e45c
-void cm848_tpuAChannel3SetPwmDuty(word param_1);  // @ 0x0004e480
-void cm848_tpuAChannel3SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004e4a8
+void cm848_tpuAChannel3SetPwmDuty(word duty);  // @ 0x0004e480
+void cm848_tpuAChannel3SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004e4a8
 void cm848_tpuAChannel4EnablePwm(void);  // @ 0x0004e4d0
-void cm848_tpuAChannel4SetPwmDuty(word param_1);  // @ 0x0004e4f4
-void cm848_tpuAChannel4SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004e51c
+void cm848_tpuAChannel4SetPwmDuty(word duty);  // @ 0x0004e4f4
+void cm848_tpuAChannel4SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004e51c
 void cm848_tpuAChannel5EnablePwm(void);  // @ 0x0004e544
-void cm848_tpuAChannel5SetPwmDuty(word param_1);  // @ 0x0004e568
-void cm848_tpuAChannel5SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004e590
+void cm848_tpuAChannel5SetPwmDuty(word duty);  // @ 0x0004e568
+void cm848_tpuAChannel5SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004e590
 void cm848_tpuAChannel6EnablePwm(void);  // @ 0x0004e5b8
-void cm848_tpuAChannel6SetPwmDuty(word param_1);  // @ 0x0004e5dc
-void cm848_tpuAChannel6SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004e604
+void cm848_tpuAChannel6SetPwmDuty(word duty);  // @ 0x0004e5dc
+void cm848_tpuAChannel6SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004e604
 void cm848_tpuAChannel7EnablePwm(void);  // @ 0x0004e62c
-void cm848_tpuAChannel7SetPwmDuty(word param_1);  // @ 0x0004e650
-void cm848_tpuAChannel7SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004e678
+void cm848_tpuAChannel7SetPwmDuty(word duty);  // @ 0x0004e650
+void cm848_tpuAChannel7SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004e678
 void cm848_tpuAChannel8EnablePwm(void);  // @ 0x0004e6a0
-void cm848_tpuAChannel8SetPwmDuty(word param_1);  // @ 0x0004e6c4
-void cm848_tpuAChannel8SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004e6ec
+void cm848_tpuAChannel8SetPwmDuty(word duty);  // @ 0x0004e6c4
+void cm848_tpuAChannel8SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004e6ec
 void cm848_tpuAChannel9EnablePwm(void);  // @ 0x0004e714
-void cm848_tpuAChannel9SetPwmDuty(word param_1);  // @ 0x0004e738
-void cm848_tpuAChannel9SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004e760
+void cm848_tpuAChannel9SetPwmDuty(word duty);  // @ 0x0004e738
+void cm848_tpuAChannel9SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004e760
 void cm848_tpuAChannel10EnablePwm(void);  // @ 0x0004e788
-void cm848_tpuAChannel10SetPwmDuty(word param_1);  // @ 0x0004e7ac
-void cm848_tpuAChannel10SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004e7d4
+void cm848_tpuAChannel10SetPwmDuty(word duty);  // @ 0x0004e7ac
+void cm848_tpuAChannel10SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004e7d4
 void cm848_tpuAChannel11EnablePwm(void);  // @ 0x0004e7fc
-void cm848_tpuAChannel11SetPwmDuty(word param_1);  // @ 0x0004e820
-void cm848_tpuAChannel11SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004e848
+void cm848_tpuAChannel11SetPwmDuty(word duty);  // @ 0x0004e820
+void cm848_tpuAChannel11SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004e848
 void cm848_tpuAChannel12EnablePwm(void);  // @ 0x0004e870
-void cm848_tpuAChannel12SetPwmDuty(word param_1);  // @ 0x0004e894
-void cm848_tpuAChannel12SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004e8bc
+void cm848_tpuAChannel12SetPwmDuty(word duty);  // @ 0x0004e894
+void cm848_tpuAChannel12SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004e8bc
 void cm848_tpuAChannel13EnablePwm(void);  // @ 0x0004e8e4
-void cm848_tpuAChannel13SetPwmDuty(word param_1);  // @ 0x0004e908
-void cm848_tpuAChannel13SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004e930
+void cm848_tpuAChannel13SetPwmDuty(word duty);  // @ 0x0004e908
+void cm848_tpuAChannel13SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004e930
 void cm848_tpuAChannel14EnablePwm(void);  // @ 0x0004e958
-void cm848_tpuAChannel14SetPwmDuty(word param_1);  // @ 0x0004e97c
-void cm848_tpuAChannel14SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004e9a4
+void cm848_tpuAChannel14SetPwmDuty(word duty);  // @ 0x0004e97c
+void cm848_tpuAChannel14SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004e9a4
 void cm848_tpuAChannel15EnablePwm(void);  // @ 0x0004e9cc
-void cm848_tpuAChannel15SetPwmDuty(word param_1);  // @ 0x0004e9f0
-void cm848_tpuAChannel15SetPwmPeriodMicroseconds(undefined4 param_1);  // @ 0x0004ea18
+void cm848_tpuAChannel15SetPwmDuty(word duty);  // @ 0x0004e9f0
+void cm848_tpuAChannel15SetPwmPeriodMicroseconds(dword period_microseconds);  // @ 0x0004ea18
 void cm848_setDatalinkSwitchStateIfPriority(uint param_1,int param_2);  // @ 0x0004ea40
 void cm848_clearDatalinkSwitchStateIfPriority(uint param_1,int param_2);  // @ 0x0004ea84
 byte cm848_readSwitchHardwareInput(uint param_1);  // @ 0x0004eac8
@@ -1959,7 +1961,7 @@ void cm848_refreshRamCalibration(void);  // @ 0x00538a84
 byte scheduleJ1939PeriodicMessage (J1939_PERIODIC_TRANSMIT_QUEUE queue_index,word pgn_key,dword interval_milliseconds, dword first_send_offset_milliseconds,void *builder);  // @ 0x00538c8c
 void cm848_runJ1939PeriodicTransmitQueues(void);  // @ 0x00538d3c
 void cm848_exceptionHandler(void);  // @ 0x00538eac
-bool registerJ1939ReceiveHandler(word pgn_key,void *handler);  // @ 0x00538eb0
+bool registerJ1939ReceiveHandler(word pgn_key,j1939_receive_handler_function_t *handler);  // @ 0x00538eb0
 void cm848_dispatchJ1939ReceivedMessages(void);  // @ 0x00538ef4
 void cm848_j1939_system_init(void);  // @ 0x00539190
 undefined4 cm848_lookupParameterIdAddress(uint param_1,uint *param_2);  // @ 0x00539768

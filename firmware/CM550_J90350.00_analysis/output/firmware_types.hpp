@@ -1235,6 +1235,12 @@ typedef struct engine_protection_channel_configuration_t engine_protection_chann
 typedef struct cm550_engine_protection_channel_state_t cm550_engine_protection_channel_state_t;
 typedef struct engine_protection_channel_history_t engine_protection_channel_history_t;
 
+/* ---- Function types (a field or a parameter holds a pointer to one) ---- */
+
+typedef uint8_t j1939_diagnostic_service_handler_function_t(can_standard_receive_descriptor_t* request);  /* A PGN 61184 service handler: the request in, the result out (0xff = the handler answered; else cm550_dispatchJ1939DiagnosticServiceRequest answers with this code) (PR #53 round 98) */
+typedef void j1939_pgn_request_handler_function_t(can_standard_receive_descriptor_t* request);  /* A PGN 59904 request responder: cm550_dispatchJ1939PgnRequest calls it with the request and ignores d0 (PR #53 round 98) */
+typedef void j1939_message_builder_function_t(void);  /* A periodic J1939 message builder: cm550_runJ1939PeriodicTransmitQueues calls it with no argument (PR #53 round 98) */
+
 struct j1939_message_header_t {
     uint32_t can_id;  /* The CAN identifier: priority / PGN / source address (was j1939_header_t.id; CM848's type name; PR #53 round 88) */
     uint16_t data_length;  /* The payload length in bytes: above 8 goes out as a transport session (was j1939_header_t.length; PR #53 round 88) */
@@ -1255,7 +1261,7 @@ struct engine_overspeed_event_t {
 struct j1939_diagnostic_service_entry_t {
     J1939_DIAGNOSTIC_SERVICE service_id;  /* The PGN 61184 service byte */
     uint8_t pad;  /* Unused */
-    void * handler;  /* The service handler registerJ1939DiagnosticService stored (PR #53 round 88) */
+    j1939_diagnostic_service_handler_function_t* handler;  /* The service handler registerJ1939DiagnosticService stored (PR #53 round 88) */
 };
 
 struct can_standard_receive_descriptor_t {
@@ -2067,7 +2073,7 @@ struct j1939_periodic_transmit_entry_t {
     uint16_t pgn_key;  /* the PGN key of the periodic message (J2: the queue entry's +0) */
     uint16_t interval_ticks;  /* the transmit interval in 10 ms ticks */
     uint16_t next_tick;  /* the tick of the next transmission */
-    void * builder;  /* the address of the message's builder function */
+    j1939_message_builder_function_t* builder;  /* the address of the message's builder function */
 };
 
 struct engine_tsc1_ignored_request_t {
@@ -2153,7 +2159,7 @@ struct j1939_pgn65249_payload_t {
 struct j1939_pgn_handler_entry_t {
     uint8_t pgn_byte_1;  /* First PGN byte for matching (compared against msg+6+1) */
     uint8_t pgn_byte_0;  /* Second PGN byte for matching (compared against msg+6+0) */
-    uint32_t handler;  /* Function pointer to PGN handler callback */
+    j1939_pgn_request_handler_function_t* handler;  /* Function pointer to PGN handler callback */
 };
 
 struct j1939_pgn65261_payload_t {

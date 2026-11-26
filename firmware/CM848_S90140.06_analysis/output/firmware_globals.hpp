@@ -19,11 +19,12 @@ extern undefined cm848_initPgn65227Dm2ResponseHandler;  // 0x00025050
 extern undefined cm848_j1939SendPgn61443_F003_AcceleratorPedalEec2;  // 0x00025d88
 extern undefined cm848_initPgn65263FluidLevelPressureHandler;  // 0x00025fd8
 extern undefined cm848_initPgn65270InletExhaustHandler;  // 0x0002661c
-extern void * mpc555_interrupt_task_mask_table;  // 0x000575bc
-extern void * mpc555_interrupt_dispatch_table;  // 0x000575de
+extern word mpc555_interrupt_nesting_mask_table[16];  // 0x000575bc
+extern interrupt_handler_function_t * mpc555_interrupt_dispatch_table[16];  // 0x000575de
 extern injector_driver_booster_capacitor_monitor_record_t injector_driver_booster_capacitor_monitor_records[2];  // 0x0005762c
 extern injector_driver_booster_capacitor_cylinder_record_t injector_driver_booster_capacitor_cylinder_records[8];  // 0x00057694
 extern byte supervisor_qspi_command_bytes;  // 0x00057724
+extern alternator_field_regulator_state_handler_function_t * alternator_field_regulator_state_handler_table[4];  // 0x00057730
 extern pci_message_descriptor_t pci_receive_message_table[15];  // 0x0005774b
 extern pci_message_descriptor_t pci_transmit_message_table[25];  // 0x000578ef
 extern word pci_receive_message_count;  // 0x00057bab
@@ -33,8 +34,11 @@ extern byte pci_diagnostic_power_up_announcement[8];  // 0x00057bb6
 extern word pci_security_key_table[16];  // 0x00057bbe
 extern byte calibration_table_ptr_3;  // 0x00057d76
 extern qadc_channel_dispatch_entry_t qadc_channel_dispatch_table[129];  // 0x00057dd2
+extern interrupt_handler_function_t * mios_interrupt_handler_table[16];  // 0x000582da
 extern byte security_key_scramble_mask[10];  // 0x0005839a
 extern byte security_key_byte_order[10];  // 0x000583a4
+extern interrupt_handler_function_t * tpu_b_channel_interrupt_handler_table[16];  // 0x000583ae
+extern interrupt_handler_function_t * tpu_a_channel_interrupt_handler_table[16];  // 0x000583ee
 extern word dual_port_tpu_ram_load_table[1508];  // 0x0005862e
 extern word first_checksum_region_end_marker;  // 0x000591f6
 extern sensor_channel_configuration_t barometric_pressure_sensor_config;  // 0x000592a2
@@ -982,8 +986,12 @@ extern word all_speed_governor_droop_blend_0_cached_axis_offset;  // 0x003fa110
 extern word all_speed_governor_droop_blend_128_cached_axis_offset;  // 0x003fa112
 extern word unused_lookup_cached_axis_offset_1;  // 0x003fa114
 extern word unused_lookup_cached_axis_offset_2;  // 0x003fa116
-extern dword interrupt_tick_accum_high;  // 0x003fa124
-extern dword interrupt_tick_accum_low;  // 0x003fa128
+extern word unhandled_exception_count;  // 0x003fa118
+extern dword decrementer_exception_time_ticks_high;  // 0x003fa11c
+extern dword decrementer_exception_time_ticks_low;  // 0x003fa120
+extern dword external_interrupt_time_ticks_high;  // 0x003fa124
+extern dword external_interrupt_time_ticks_low;  // 0x003fa128
+extern word throughput_window_decrementer_count;  // 0x003fa12c
 extern word egr_fraction_command_above_on_threshold_flag;  // 0x003fa12e
 extern ema_filter_state_t charge_flow_turbocharger_speed_derate_offset_filter;  // 0x003fa138
 extern ema_filter_state_t charge_flow_compressor_outlet_temperature_derate_offset_filter;  // 0x003fa140
@@ -1252,7 +1260,7 @@ extern byte j1939_ccvs1_pto_and_cruise_state_byte;  // 0x003faaf8
 extern byte j1939_ccvs1_idle_switches_byte;  // 0x003faaf9
 extern j1939_transmit_message_t j1939_pgn65261_tx_message;  // 0x003faafc
 extern j1939_transmit_message_t j1939_pgn65259_tx_message;  // 0x003fab14
-extern word j1939_response_param_working;  // 0x003fab50
+extern word j1939_diagnostic_response_pending_wait_time;  // 0x003fab50
 extern j1939_transmit_message_t j1939_dm10_tx_message;  // 0x003fab52
 extern word j1939_dm10_payload;  // 0x003fab60
 extern j1939_transmit_message_t j1939_dm1_tx_message;  // 0x003fab6a
@@ -4145,6 +4153,8 @@ extern word key_off_shutdown_mode;  // 0x0040a334
 extern word j1939_torque_and_load_not_available_flag;  // 0x0040a336
 extern word total_fueling;  // 0x0040a33a
 extern RUN_LOCATION run_location;  // 0x0040a346
+extern word throughput_percent_idle;  // 0x0040a348
+extern word throughput_percent_busy;  // 0x0040a34a
 extern word battery_voltage_selected;  // 0x0040a34c
 extern SENSOR_VALUE_SOURCE battery_voltage_source;  // 0x0040a34e
 extern word sensor_channel4_fault_snapshot;  // 0x0040a350
@@ -4540,13 +4550,12 @@ extern DEVELOPMENT_MODE_STATE development_mode;  // 0x0040aa9a
 extern word engine_retarder_torque_percent_times_256;  // 0x0040aaa2
 extern word j1939_engine_retarder_selection_percent;  // 0x0040aac2
 extern word j1939_input_monitor_inhibit_flag;  // 0x0040aaca
-extern byte can_receive_queue_buffer;  // 0x0040aacc
-extern byte can_receive_queue_last_entry;  // 0x0040ac22
+extern j1939_received_message_t can_receive_queue_buffer[20];  // 0x0040aacc
 extern byte can_transmit_queue_buffer;  // 0x0040ac34
 extern void * can_transmit_queue_enqueue_pointer;  // 0x0040ad24
 extern dword can_transmit_queue_dequeue_pointer;  // 0x0040ad28
-extern void * can_receive_queue_write_pointer;  // 0x0040ad2c
-extern void * can_receive_queue_read_pointer;  // 0x0040ad30
+extern j1939_received_message_t* can_receive_queue_write_pointer;  // 0x0040ad2c
+extern j1939_received_message_t* can_receive_queue_read_pointer;  // 0x0040ad30
 extern byte can_transmit_queue_full_flag;  // 0x0040ad34
 extern byte can_receive_queue_full_flag;  // 0x0040ad35
 extern void * can_transmit_mailbox_pointer;  // 0x0040ad38
@@ -5163,7 +5172,7 @@ extern word road_speed_governor_reference_speed;  // 0x0040b5bc
 extern word road_speed_governor_reference_speed_copy;  // 0x0040b5be
 extern DRIVETRAIN_GEAR_RANGE drivetrain_gear_range;  // 0x0040b5c2
 extern word fault_vehicle_speed_limit;  // 0x0040b5c4
-extern void * sci_next_byte_handler;  // 0x0040b5c6
+extern sci_next_byte_handler_function_t* sci_next_byte_handler;  // 0x0040b5c6
 extern dword sci_transfer_direction;  // 0x0040b5ca
 extern byte sci_transmit_byte_count;  // 0x0040b5cf
 extern dword sci_buffer_cursor;  // 0x0040b5d0
@@ -5172,7 +5181,7 @@ extern dword sci_security_seed;  // 0x0040b5da
 extern byte sci_security_key_matched_flag;  // 0x0040b5de
 extern byte sci_buffer[32];  // 0x0040b5e2
 extern word sci_receive_flag;  // 0x0040b602
-extern void * sci_default_command_handler;  // 0x0040b604
+extern sci_next_byte_handler_function_t* sci_default_command_handler;  // 0x0040b604
 extern word stack_headroom_factor_tenths;  // 0x0040b60c
 extern word engine_speed_limit_converter_slip;  // 0x0040b60e
 extern word transmission_output_speed_engine_equivalent;  // 0x0040b610
@@ -5595,10 +5604,7 @@ extern byte j1939_memory_service_header_lengths[14];  // 0x0053a322
 extern byte j1939_memory_read_reply_services[10];  // 0x0053a330
 extern memory_region_t application_memory_region_table[7];  // 0x0053a33a
 extern sci_command_dispatch_entry_t sci_command_dispatch_table[19];  // 0x0053a9a0
-extern byte output_channel_driver_table_enable;  // 0x0053ac46
-extern void * output_channel_driver_table_read_feedback;  // 0x0053ac4a
-extern byte output_channel_driver_table_set_period;  // 0x0053ac4e
-extern byte output_channel_driver_table_set_duty;  // 0x0053ac52
+extern output_channel_driver_t output_channel_driver_table[51];  // 0x0053ac46
 extern word parameter_id_table_bucket_start[1889];  // 0x0053af76
 extern parameter_id_entry_t parameter_id_table[1441];  // 0x0053be38
 extern word bank2_image_last_word;  // 0x0053ea6c

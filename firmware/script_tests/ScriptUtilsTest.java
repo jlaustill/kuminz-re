@@ -350,6 +350,62 @@ class ScriptUtilsTest {
         assertNull(ScriptUtils.parseArrayType("word[99999999999]"));
     }
 
+    // ── parseFunctionType ─────────────────────────────────────────────────────
+    // A handler table's "handler" field was a plain pointer, so the decompiler guessed the callee's
+    // arguments at the indirect call (CM550: "(*(code *)entry->handler)((short)request)").
+
+    @Test void parseFunctionType_oneStructPointerParameter() {
+        ScriptUtils.FunctionTypeSpec spec =
+                ScriptUtils.parseFunctionType("function:byte(can_standard_receive_descriptor_t* request)");
+        assertNotNull(spec);
+        assertEquals("byte", spec.returnType);
+        assertEquals(1, spec.parameters.size());
+        assertArrayEquals(new String[] {"can_standard_receive_descriptor_t*", "request"}, spec.parameters.get(0));
+    }
+
+    @Test void parseFunctionType_noParameters() {
+        ScriptUtils.FunctionTypeSpec empty = ScriptUtils.parseFunctionType("function:void()");
+        assertNotNull(empty);
+        assertEquals("void", empty.returnType);
+        assertTrue(empty.parameters.isEmpty());
+        assertTrue(ScriptUtils.parseFunctionType("function:void(void)").parameters.isEmpty());
+        assertTrue(ScriptUtils.parseFunctionType("function:byte( )").parameters.isEmpty());
+    }
+
+    @Test void parseFunctionType_severalParametersAndSpacing() {
+        // ';' separates parameters (the CSV splits on ','); a '*' next to the name belongs to the type
+        ScriptUtils.FunctionTypeSpec spec = ScriptUtils.parseFunctionType(
+                " function: J1939_DIAGNOSTIC_RESULT ( word pgn ; j1939_received_message_t *message;byte * * out ) ");
+        assertNotNull(spec);
+        assertEquals("J1939_DIAGNOSTIC_RESULT", spec.returnType);
+        assertEquals(3, spec.parameters.size());
+        assertArrayEquals(new String[] {"word", "pgn"}, spec.parameters.get(0));
+        assertArrayEquals(new String[] {"j1939_received_message_t*", "message"}, spec.parameters.get(1));
+        assertArrayEquals(new String[] {"byte**", "out"}, spec.parameters.get(2));
+        assertEquals("byte*", ScriptUtils.parseFunctionType("function:byte *()").returnType);
+    }
+
+    @Test void parseFunctionType_otherTypesAreNotFunctionTypes() {
+        assertNull(ScriptUtils.parseFunctionType(null));
+        assertNull(ScriptUtils.parseFunctionType(""));
+        assertNull(ScriptUtils.parseFunctionType("byte"));
+        assertNull(ScriptUtils.parseFunctionType("pointer"));
+        assertNull(ScriptUtils.parseFunctionType("bitfield:1@3"));
+        assertNull(ScriptUtils.parseFunctionType("my_handler_function_t*"));
+    }
+
+    @Test void parseFunctionType_rejectsMalformedSignatures() {
+        assertNull(ScriptUtils.parseFunctionType("function:"));
+        assertNull(ScriptUtils.parseFunctionType("function:byte"));
+        assertNull(ScriptUtils.parseFunctionType("function:byte("));
+        assertNull(ScriptUtils.parseFunctionType("function:(word pgn)"));          // no return type
+        assertNull(ScriptUtils.parseFunctionType("function:byte(request)"));       // a parameter needs a type
+        assertNull(ScriptUtils.parseFunctionType("function:byte(word)"));          // ... and a name
+        assertNull(ScriptUtils.parseFunctionType("function:byte(word a,word b)")); // ',' is not a separator
+        assertNull(ScriptUtils.parseFunctionType("function:byte(word a;)"));       // an empty parameter
+        assertNull(ScriptUtils.parseFunctionType("function:byte(word 9a)"));
+    }
+
     // ── isIgnoredGlobalType ───────────────────────────────────────────────────
 
     @Test void isIgnoredGlobalType_blankAndUndefinedAreIgnored() {

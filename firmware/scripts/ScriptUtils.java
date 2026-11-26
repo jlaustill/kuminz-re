@@ -252,6 +252,50 @@ public class ScriptUtils {
         return new ArrayTypeSpec(m.group(1), count);
     }
 
+    // ── Function type syntax ─────────────────────────────────────────────────
+
+    /** The return type and the parameters ({type, name} each) of a structure_definitions.csv function type row. */
+    public static final class FunctionTypeSpec {
+        public final String returnType;
+        public final List<String[]> parameters;
+
+        FunctionTypeSpec(String returnType, List<String[]> parameters) {
+            this.returnType = returnType;
+            this.parameters = parameters;
+        }
+    }
+
+    private static final java.util.regex.Pattern FUNCTION_TYPE = java.util.regex.Pattern.compile(
+            "^\\s*function:\\s*([A-Za-z_][A-Za-z0-9_]*)((?:\\s*\\*)*)\\s*\\((.*)\\)\\s*$");
+    // "<type> <name>": the type and the name are apart by white space or by the type's '*'
+    private static final java.util.regex.Pattern FUNCTION_PARAMETER = java.util.regex.Pattern.compile(
+            "^\\s*([A-Za-z_][A-Za-z0-9_]*)(?:((?:\\s*\\*)+)\\s*|\\s+)([A-Za-z_][A-Za-z0-9_]*)\\s*$");
+
+    /**
+     * Parses a function type {@code function:<return>(<type> <name>;<type> <name>)} - the type column of a
+     * structure_definitions.csv row that defines a function type named like the row, which a field or a prototype
+     * parameter then holds as {@code <name>*}. Parameters are separated by ';' (the CSV splits on ','), each needs
+     * a type and a name, and {@code ()} or {@code (void)} means none. A '*' belongs to the type wherever it is
+     * written. Returns null when the string is not a function type or is malformed, so the caller can warn.
+     */
+    public static FunctionTypeSpec parseFunctionType(String typeStr) {
+        if (typeStr == null) return null;
+        java.util.regex.Matcher m = FUNCTION_TYPE.matcher(typeStr);
+        if (!m.matches()) return null;
+        String returnType = m.group(1) + m.group(2).replaceAll("\\s+", "");
+        List<String[]> parameters = new ArrayList<>();
+        String list = m.group(3).trim();
+        if (!list.isEmpty() && !list.equals("void")) {
+            for (String part : list.split(";", -1)) {
+                java.util.regex.Matcher p = FUNCTION_PARAMETER.matcher(part);
+                if (!p.matches()) return null;
+                String stars = p.group(2) == null ? "" : p.group(2).replaceAll("\\s+", "");
+                parameters.add(new String[] { p.group(1) + stars, p.group(3) });
+            }
+        }
+        return new FunctionTypeSpec(returnType, parameters);
+    }
+
     // ── Stack parameter layout ───────────────────────────────────────────────
 
     /** A firmware's stack parameter layout (output/stack_parameter_layout.csv). */

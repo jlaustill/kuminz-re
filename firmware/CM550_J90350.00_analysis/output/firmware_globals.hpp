@@ -692,6 +692,7 @@ extern byte j1939_pgn65261_transmit_status;  // 0x00801f02
 extern j1939_transmit_message_t j1939_pgn65259_tx_message;  // 0x00801f04
 extern byte j1939_pgn65259_payload[40];  // 0x00801f12
 extern byte j1939_pgn65259_transmit_status;  // 0x00801f3a
+extern word j1939_diagnostic_response_pending_wait_time;  // 0x00801f3c
 extern j1939_transmit_message_t j1939_dm10_tx_message;  // 0x00801f3e
 extern word j1939_dm10_payload;  // 0x00801f4c
 extern byte j1939_dm10_transmit_status;  // 0x00801f54

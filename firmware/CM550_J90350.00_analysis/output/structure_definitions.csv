@@ -20,7 +20,7 @@ engine_overspeed_event_t,,engine_speed_at_detection,word,2,filtered_engine_speed
 engine_overspeed_event_t,,duration,word,2,The passes the overspeed lasted (PR #53 round 88),,verified
 j1939_diagnostic_service_entry_t,,service_id,J1939_DIAGNOSTIC_SERVICE,1,The PGN 61184 service byte,,verified
 j1939_diagnostic_service_entry_t,,pad,byte,1,Unused,,verified
-j1939_diagnostic_service_entry_t,,handler,pointer,4,The service handler registerJ1939DiagnosticService stored (PR #53 round 88),,verified
+j1939_diagnostic_service_entry_t,,handler,j1939_diagnostic_service_handler_function_t*,4,The service handler registerJ1939DiagnosticService stored (PR #53 round 88),,verified
 
 # Standard CAN RX Descriptor
 can_standard_receive_descriptor_t,,id,uint32_t,4,11-bit CAN ID stored in 32-bit (ABI),,verified
@@ -901,7 +901,7 @@ j1939_control_session_t,,duration,dword,4,"key_on_hour_meter - start_time, store
 j1939_periodic_transmit_entry_t,,pgn_key,word,2,the PGN key of the periodic message (J2: the queue entry's +0),,verified
 j1939_periodic_transmit_entry_t,,interval_ticks,word,2,the transmit interval in 10 ms ticks,,verified
 j1939_periodic_transmit_entry_t,,next_tick,word,2,the tick of the next transmission,,verified
-j1939_periodic_transmit_entry_t,,builder,pointer,4,the address of the message's builder function,,verified
+j1939_periodic_transmit_entry_t,,builder,j1939_message_builder_function_t*,4,the address of the message's builder function,,verified
 
 # engine_tsc1_ignored_request_t (8 bytes; PR #53 round 94)
 engine_tsc1_ignored_request_t,,data_link,word,2,the network the request came on (the data link compared by findTsc1SourceConfiguration),,verified
@@ -979,7 +979,7 @@ j1939_pgn65249_payload_t,,percent_torque_at_peak_torque_point_5,byte,1,SPN 555; 
 # j1939_pgn_handler_entry_t (6 bytes; PR #53 round 96)
 j1939_pgn_handler_entry_t,,pgn_byte_1,byte,1,First PGN byte for matching (compared against msg+6+1),,verified
 j1939_pgn_handler_entry_t,,pgn_byte_0,byte,1,Second PGN byte for matching (compared against msg+6+0),,verified
-j1939_pgn_handler_entry_t,,handler,dword,4,Function pointer to PGN handler callback,,verified
+j1939_pgn_handler_entry_t,,handler,j1939_pgn_request_handler_function_t*,4,Function pointer to PGN handler callback,,verified
 
 # j1939_pgn65261_payload_t (8 bytes; PR #53 round 96)
 j1939_pgn65261_payload_t,,max_vehicle_speed_limit,byte,1,SPN 74 Maximum Vehicle Speed Limit (km/h); from maximum_road_speed; gate algorithm_enable_flags_3_cal&0x80,,verified
@@ -1067,3 +1067,8 @@ engine_protection_channel_history_t,,fueling_fault_log_flag,word,2,"+0x16 EP??FL
 engine_protection_channel_history_t,,fueling_fault_log_index,word,2,"+0x18 EP??FLIN 'INDEX INTO EPF FAULT LOG FOR <input> FUELING' (0-4): the current entry (move.w (0x18,a0) at 0x1934c; advanced modulo 5 at 0x19518-0x19524)",,verified
 engine_protection_channel_history_t,,engine_speed_fault_log_flag,word,2,+0x1a EP??RPFG: 1 while the engine speed log entry is open (history + 26 at 0x19386 / 0x19482),,verified
 engine_protection_channel_history_t,,engine_speed_fault_log_index,word,2,"+0x1c EP??RPIN 'INDEX INTO EPF FAULT LOG FOR <input> RPM' (0-4): move.w (0x1c,a0) at 0x1936c; the close helper takes history + 28 (0x19468) and advances it modulo 5 at 0x19518-0x19524",,verified
+
+# Function types (PR #53 round 98): a row typed function:<return>(<type> <name>;...) defines a function type; a field or a prototype parameter holds <name>*; so an indirect call through it shows its arguments
+j1939_diagnostic_service_handler_function_t,,,function:byte(can_standard_receive_descriptor_t* request),0,"A PGN 61184 service handler: the request in, the result out (0xff = the handler answered; else cm550_dispatchJ1939DiagnosticServiceRequest answers with this code) (PR #53 round 98)",,verified
+j1939_pgn_request_handler_function_t,,,function:void(can_standard_receive_descriptor_t* request),0,A PGN 59904 request responder: cm550_dispatchJ1939PgnRequest calls it with the request and ignores d0 (PR #53 round 98),,verified
+j1939_message_builder_function_t,,,function:void(),0,A periodic J1939 message builder: cm550_runJ1939PeriodicTransmitQueues calls it with no argument (PR #53 round 98),,verified

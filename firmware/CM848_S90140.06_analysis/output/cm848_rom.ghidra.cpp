@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 25 17:09:10 MST 2026
+// Generated: Wed Nov 25 20:52:55 MST 2026
 
 
 //
@@ -2289,7 +2289,7 @@ void cm848_softReset(void)
 /* fills diagnostic_service_dispatch_table (entry = byte service_id + void* handler - max 20);
    returns true when full */
 
-bool cm848_registerDiagnosticService(BOOT_DIAGNOSTIC_SERVICE service_id,void *handler_pointer)
+bool cm848_registerDiagnosticService(BOOT_DIAGNOSTIC_SERVICE service_id,void *handler)
 
 {
   uint uVar1;
@@ -2298,7 +2298,7 @@ bool cm848_registerDiagnosticService(BOOT_DIAGNOSTIC_SERVICE service_id,void *ha
   if (uVar1 != 0x14) {
     boot_diagnostic_service_count = boot_diagnostic_service_count + 1;
     diagnostic_service_dispatch_table[uVar1].service_id = service_id;
-    diagnostic_service_dispatch_table[uVar1].handler = handler_pointer;
+    diagnostic_service_dispatch_table[uVar1].handler = handler;
   }
   return uVar1 == 0x14;
 }
@@ -5879,8 +5879,9 @@ void cm848_dispatchDiagnosticService(j1939_received_message_t *request)
           result_code = BVar1 & 0xff;
           if (result_code == 0xff) {
             bVar2 = eeprom_service_mode_flags;
-            if (((bVar2 & 0xf) == 0) || ((undefined *)0x6fffe < entry->handler)) {
-              BVar1 = (*(code *)entry->handler)(request);
+            if (((bVar2 & 0xf) == 0) ||
+               ((boot_diagnostic_service_handler_function_t *)0x6fffe < entry->handler)) {
+              BVar1 = (*entry->handler)(request);
               result_code = BVar1 & 0xff;
             }
             else {
@@ -10909,10 +10910,20 @@ void cm848_stubFunction3(void)
 
 
 //
-// Function: mpc555_timerInterruptHandler @ 0x00010274
+// Function: mpc555_dispatchExternalInterrupt @ 0x00010274
 //
 
-undefined8 mpc555_timerInterruptHandler(undefined4 param_1,undefined4 param_2)
+/* The external interrupt exception handler: the application's exception table at ROM 0x8000 (8-byte
+   slots; slot n = vector n x 0x100) branches here from slot 5 (vector 0x500). It saves the volatile
+   registers and the time base, reads the interrupt code from SIVEC (0x2fc01c), narrows SIMASK
+   (0x2fc014) with mpc555_interrupt_nesting_mask_table[code / 4], enables interrupts (mtspr EIE) and
+   calls mpc555_interrupt_dispatch_table[code / 4]; then it disables interrupts (mtspr EID),
+   restores SIMASK, adds the time it took to external_interrupt_time_ticks_high / _low when SIMASK
+   bit 0 was set (every word of the mask table clears that bit; so only an outermost interrupt adds
+   its time: a nested one is inside it) and returns with rfi (was mpc555_timerInterruptHandler:
+   every SIU interrupt source comes through it, not only a timer; PR #53 round 98) */
+
+void mpc555_dispatchExternalInterrupt(undefined4 param_1,undefined4 param_2)
 
 {
   uint uVar1;
@@ -10935,9 +10946,8 @@ undefined8 mpc555_timerInterruptHandler(undefined4 param_1,undefined4 param_2)
   bVar8 = USIU_SIVEC._0_1_;
   uVar6 = USIU_SIMASK._0_2_;
   uVar7 = USIU_SIMASK._0_2_;
-  USIU_SIMASK._0_2_ =
-       uVar7 & *(ushort *)((int)&mpc555_interrupt_task_mask_table + (uint)(bVar8 >> 2) * 2);
-  (*(code *)(&mpc555_interrupt_dispatch_table)[bVar8 >> 2])();
+  USIU_SIMASK._0_2_ = uVar7 & mpc555_interrupt_nesting_mask_table[bVar8 >> 2];
+  (*mpc555_interrupt_dispatch_table[bVar8 >> 2])();
   USIU_SIMASK._0_2_ = uVar6;
   if ((uVar6 & 1) != 0) {
     do {
@@ -10945,13 +10955,112 @@ undefined8 mpc555_timerInterruptHandler(undefined4 param_1,undefined4 param_2)
       uVar2 = TBLr;
       iVar5 = TBUr;
     } while (iVar4 != iVar5);
-    bVar9 = CARRY4(interrupt_tick_accum_low,uVar2 - uVar1);
-    interrupt_tick_accum_low = interrupt_tick_accum_low + (uVar2 - uVar1);
-    interrupt_tick_accum_high =
-         interrupt_tick_accum_high + (iVar4 - (iVar3 + (uint)(uVar2 < uVar1))) + (uint)bVar9;
+    bVar9 = CARRY4(external_interrupt_time_ticks_low,uVar2 - uVar1);
+    external_interrupt_time_ticks_low = external_interrupt_time_ticks_low + (uVar2 - uVar1);
+    external_interrupt_time_ticks_high =
+         external_interrupt_time_ticks_high + (iVar4 - (iVar3 + (uint)(uVar2 < uVar1))) +
+         (uint)bVar9;
   }
   returnFromInterrupt(in_MSR,in_SRR1);
-  return CONCAT44(param_2,param_1);
+  return;
+}
+
+
+
+//
+// Function: mpc555_handleDecrementerException @ 0x0001041c
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* The decrementer exception handler: the application's exception table at ROM 0x8000 branches here
+   from slot 9 (vector 0x900). It reloads DEC (mtdec at 0x10500 - the decompiled body does not show
+   it) with 125000 time base counts = 50 ms (one count is 0.4 us: the e2m scale of
+   First_Speed_ISR_Time) - or with 12500 = 5 ms while power_down_start_flag is set; then it also
+   clears SIMASK; enables interrupts; calls cm848_paceSupervisorWatchdogCycle and puts SIMASK back.
+   It counts its runs in throughput_window_decrementer_count and on the 20th (1 s at 50 ms) writes
+   throughput_percent_busy = (decrementer_exception_time_ticks_low +
+   external_interrupt_time_ticks_low) x 25600 / 2500000 and throughput_percent_idle = 25600 - busy;
+   then clears both time sums and the count. Last it adds its own run time (time base at exit - at
+   entry) to decrementer_exception_time_ticks_high / _low and returns with rfi. In the dump: busy
+   17648 (68.9 %) and idle 7952 (31.1 %); 15 runs into the next window (new row: the code had no
+   function; PR #53 round 98) */
+
+void mpc555_handleDecrementerException(undefined4 param_1,undefined4 param_2)
+
+{
+  uint uVar1;
+  uint uVar2;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+  undefined2 uVar6;
+  undefined4 in_MSR;
+  undefined4 in_SRR1;
+  
+  do {
+    iVar3 = TBUr;
+    uVar1 = TBLr;
+    iVar4 = TBUr;
+  } while (iVar3 != iVar4);
+  throughput_window_decrementer_count = throughput_window_decrementer_count + 1;
+  if (power_down_start_flag != 0) {
+    uVar6 = USIU_SIMASK._0_2_;
+    USIU_SIMASK._0_2_ = 0;
+    cm848_paceSupervisorWatchdogCycle();
+    USIU_SIMASK._0_2_ = uVar6;
+  }
+  if (0x13 < throughput_window_decrementer_count) {
+    throughput_percent_busy =
+         (word)(CONCAT44((int)((ulonglong)
+                               (decrementer_exception_time_ticks_low +
+                               external_interrupt_time_ticks_low) * 0x6400 >> 0x20),
+                         (decrementer_exception_time_ticks_low + external_interrupt_time_ticks_low)
+                         * 0x6400) / 2500000);
+    throughput_percent_idle = 0x6400 - throughput_percent_busy;
+    decrementer_exception_time_ticks_high = 0;
+    decrementer_exception_time_ticks_low = 0;
+    external_interrupt_time_ticks_high = 0;
+    external_interrupt_time_ticks_low = 0;
+    throughput_window_decrementer_count = 0;
+  }
+  do {
+    iVar4 = TBUr;
+    uVar2 = TBLr;
+    iVar5 = TBUr;
+  } while (iVar4 != iVar5);
+  decrementer_exception_time_ticks_high =
+       decrementer_exception_time_ticks_high + (iVar4 - (iVar3 + (uint)(uVar2 < uVar1))) +
+       (uint)CARRY4(decrementer_exception_time_ticks_low,uVar2 - uVar1);
+  decrementer_exception_time_ticks_low = decrementer_exception_time_ticks_low + (uVar2 - uVar1);
+  returnFromInterrupt(in_MSR,in_SRR1);
+  return;
+}
+
+
+
+//
+// Function: mpc555_haltOnUnhandledException @ 0x0001063c
+//
+
+/* The handler of every exception the application does not use: of the 32 slots of the exception
+   table at ROM 0x8000 all but 1 (system reset: 0x54394) / 5 (mpc555_dispatchExternalInterrupt) / 9
+   (mpc555_handleDecrementerException) branch here; as does the unused second word of every slot. It
+   keeps the evidence in the special purpose registers - SRR0 (the interrupted address) in SPRG0;
+   the SIVEC interrupt code byte in SPRG1; the link register in SPRG2 - adds 1 to
+   unhandled_exception_count (lhz / addi 1 / sth at 0x10670; the decompiled body does not show this
+   store: the function has no return where a global is still live) and loops forever (b . at
+   0x1067c: the epilogue after it is never reached) (new row: the code had no function; PR #53 round
+   98) */
+
+void mpc555_haltOnUnhandledException(void)
+
+{
+  undefined1 uVar1;
+  
+  uVar1 = USIU_SIVEC._0_1_;
+  do {
+                    /* WARNING: Do nothing block with infinite loop */
+  } while( true );
 }
 
 
@@ -18307,8 +18416,7 @@ LAB_0001a0a0:
     if ((egr_valve_motor_pwm_output_channel_cal != 0) &&
        (egr_valve_motor_pwm_output_channel_cal < 0x33)) {
       egr_valve_motor_pwm_duty_command = egr_valve_drive_duty_magnitude;
-      (**(code **)(&output_channel_driver_table_set_duty +
-                  (uint)egr_valve_motor_pwm_output_channel_cal * 0x10))
+      (*output_channel_driver_table[egr_valve_motor_pwm_output_channel_cal].set_duty)
                 (egr_valve_drive_duty_magnitude);
       sVar3 = egr_valve_drive_duty_clamped;
     }
@@ -18317,8 +18425,7 @@ LAB_0001a0a0:
     if ((egr_valve_motor_pwm_output_channel_cal != 0) &&
        (egr_valve_motor_pwm_output_channel_cal < 0x33)) {
       egr_valve_motor_pwm_duty_command = 0;
-      (**(code **)(&output_channel_driver_table_set_duty +
-                  (uint)egr_valve_motor_pwm_output_channel_cal * 0x10))(0);
+      (*output_channel_driver_table[egr_valve_motor_pwm_output_channel_cal].set_duty)(0);
     }
     sVar3 = 0;
   }
@@ -18391,20 +18498,18 @@ void cm848_initializeEgrValvePositionControlLoop(void)
   egr_valve_derivative_filter_state.coefficient = &egr_valve_derivative_filter_coefficient;
   if ((egr_valve_motor_pwm_output_channel_cal != 0) &&
      (egr_valve_motor_pwm_output_channel_cal < 0x33)) {
-    (**(code **)(&output_channel_driver_table_enable +
-                (uint)egr_valve_motor_pwm_output_channel_cal * 0x10))();
+    (*output_channel_driver_table[egr_valve_motor_pwm_output_channel_cal].enable)();
   }
   if ((egr_valve_motor_pwm_output_channel_cal != 0) &&
      (egr_valve_motor_pwm_output_channel_cal < 0x33)) {
     egr_valve_motor_pwm_duty_command = 0;
-    (**(code **)(&output_channel_driver_table_set_duty +
-                (uint)egr_valve_motor_pwm_output_channel_cal * 0x10))(0);
+    (*output_channel_driver_table[egr_valve_motor_pwm_output_channel_cal].set_duty)(0);
   }
   if ((egr_valve_motor_pwm_output_channel_cal != 0) &&
      (egr_valve_motor_pwm_output_channel_cal < 0x33)) {
     egr_valve_motor_pwm_period_command = (dword)egr_valve_motor_pwm_period;
-    (**(code **)(&output_channel_driver_table_set_period +
-                (uint)egr_valve_motor_pwm_output_channel_cal * 0x10))();
+    (*output_channel_driver_table[egr_valve_motor_pwm_output_channel_cal].set_period)
+              (egr_valve_motor_pwm_period_command);
   }
   return;
 }
@@ -22558,10 +22663,10 @@ void initializeEngineSpeedLimitDefaults(void)
 //
 
 /* How many request bytes a PGN 61184 response repeats after its response byte
-   (cm848_sendJ1939ResponseFrame): the service byte and its target but never the length field. 3 for
-   services 4 / 5 - 5 for 0x19 - the byte at 0x575dd + service for 0x41-0x4e (at 0x5761e: 3 for the
-   ID services without an offset / 5 with a 2-byte offset or a 4-byte address / 7 with a 4-byte
-   offset) - else 1 (was cm848_getLimitCategoryCode; PR #53 round 63) | (was
+   (sendJ1939DiagnosticServiceResponse): the service byte and its target but never the length field.
+   3 for services 4 / 5 - 5 for 0x19 - the byte at 0x575dd + service for 0x41-0x4e (at 0x5761e: 3
+   for the ID services without an offset / 5 with a 2-byte offset or a 4-byte address / 7 with a
+   4-byte offset) - else 1 (was cm848_getLimitCategoryCode; PR #53 round 63) | (was
    cm848_getJ1939DiagnosticResponseEchoLength; PR #53 round 87; the twin of CM550 0xb688: one shared
    name) */
 
@@ -23584,7 +23689,7 @@ undefined4 restartThroughBootRom(j1939_received_message_t *param_1,int param_2)
       } while (engine_hour_meter_cal != local_18[0]);
     }
     if (param_2 == 0) {
-      cm848_sendJ1939ResponseFrame(param_1,0);
+      sendJ1939DiagnosticServiceResponse(param_1,0);
     }
     else if ((param_2 != 1) && (param_2 == 2)) {
       cm848_sciTransmitSingleByteOne();
@@ -24089,7 +24194,9 @@ void cm848_initializeJ1939DiagnosticCallback(void)
    cm848_j1939RegisterDiagnosticService; PR #53 round 88; the twin of CM550 0x2ee62: one shared
    name) */
 
-bool registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *handler_pointer)
+bool registerJ1939DiagnosticService
+               (J1939_DIAGNOSTIC_SERVICE service_id,
+               j1939_diagnostic_service_handler_function_t *handler)
 
 {
   uint uVar1;
@@ -24098,7 +24205,7 @@ bool registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *ha
   if (uVar1 != 0x20) {
     j1939_diagnostic_handler_count = j1939_diagnostic_handler_count + 1;
     j1939_diagnostic_service_table[uVar1].service_id = service_id;
-    j1939_diagnostic_service_table[uVar1].handler = handler_pointer;
+    j1939_diagnostic_service_table[uVar1].handler = handler;
   }
   return uVar1 == 0x20;
 }
@@ -24113,9 +24220,9 @@ bool registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *ha
    fed by the transport reassembly. A received 0x0c / 0x0d (a response) gets no handler and no
    reply. Otherwise it looks data byte 0 up in j1939_diagnostic_service_table, runs
    cm848_validateJ1939DiagnosticRequest and, when that returns 0xff, the entry's handler, then
-   answers with cm848_sendJ1939ResponseFrame unless the result is 0xff (0x18 when no entry matches).
-   Counterpart of CM550's cm550_dispatchJ1939DiagnosticServiceRequest, which has no response-service
-   filter (was cm848_j1939DiagnosticServiceHandler; PR #53 round 97). */
+   answers with sendJ1939DiagnosticServiceResponse unless the result is 0xff (0x18 when no entry
+   matches). Counterpart of CM550's cm550_dispatchJ1939DiagnosticServiceRequest, which has no
+   response-service filter (was cm848_j1939DiagnosticServiceHandler; PR #53 round 97). */
 
 void cm848_dispatchJ1939DiagnosticServiceRequest(j1939_received_message_t *received_message)
 
@@ -24141,7 +24248,7 @@ void cm848_dispatchJ1939DiagnosticServiceRequest(j1939_received_message_t *recei
           JVar1 = cm848_validateJ1939DiagnosticRequest(received_message);
           result_code = JVar1 & 0xff;
           if (result_code == 0xff) {
-            JVar1 = (*(code *)entry->handler)(received_message);
+            JVar1 = (*entry->handler)(received_message);
             result_code = JVar1 & 0xff;
           }
           break;
@@ -24152,7 +24259,7 @@ void cm848_dispatchJ1939DiagnosticServiceRequest(j1939_received_message_t *recei
     }
   }
   if (result_code != 0xff) {
-    cm848_sendJ1939ResponseFrame(received_message,result_code);
+    sendJ1939DiagnosticServiceResponse(received_message,result_code);
   }
   return;
 }
@@ -24900,7 +25007,7 @@ accept_tsc1_command:
 /* the twin of CM550 0x0002f47e: one shared name (was cm848_j1939RegisterPgnHandler; PR #53 round
    96) */
 
-bool registerJ1939PgnRequestHandler(dword pgn,void *handler)
+bool registerJ1939PgnRequestHandler(dword pgn,j1939_pgn_request_handler_function_t *handler)
 
 {
   uint uVar1;
@@ -24910,7 +25017,7 @@ bool registerJ1939PgnRequestHandler(dword pgn,void *handler)
     j1939_pgn_handler_count = j1939_pgn_handler_count + 1;
     j1939_pgn_dispatch_table[uVar1].pgn_byte_1 = (char)((ushort)(short)pgn >> 8);
     j1939_pgn_dispatch_table[uVar1].pgn_byte_0 = (char)(short)pgn;
-    j1939_pgn_dispatch_table[uVar1].handler = (dword)handler;
+    j1939_pgn_dispatch_table[uVar1].handler = handler;
   }
   return uVar1 == 0x20;
 }
@@ -24946,7 +25053,7 @@ void cm848_dispatchJ1939PgnRequest(j1939_received_message_t *message)
         if ((entry->pgn_byte_0 == *message->data_pointer) &&
            (entry->pgn_byte_1 == message->data_pointer[1])) {
           j1939_dm1_active_flag = 1;
-          (*(code *)entry->handler)(message);
+          (*entry->handler)(message);
           break;
         }
         entry = entry + 1;
@@ -26084,10 +26191,22 @@ void cm848_initializePgn65259ComponentIdHandler(void)
 
 
 //
-// Function: cm848_sendJ1939ResponseFrame @ 0x000249c4
+// Function: sendJ1939DiagnosticServiceResponse @ 0x000249c4
 //
 
-void cm848_sendJ1939ResponseFrame(j1939_received_message_t *request,dword result_code)
+/* Sends the PGN 61184 response to a diagnostic service request: the response byte 0x0c for result
+   0, 0x0e plus the two bytes of j1939_diagnostic_response_pending_wait_time for result 0xfe
+   (response pending), else 0x0d plus the result code; then the request's first bytes
+   (getJ1939DiagnosticResponseEchoLength of its service byte). The reply takes the request's
+   priority and goes back to its source address (identifier 0xef0000 with the two address bytes
+   swapped). It takes its transmit record from cm848_selectJ1939TransmitBuffer (none: nothing is
+   sent) and sends it with cm848_sendJ1939Message. Called by
+   cm848_dispatchJ1939DiagnosticServiceRequest, restartThroughBootRom and
+   sendJ1939DiagnosticResponsePending. The boot kernel's copy is
+   cm848_sendDiagnosticServiceResponse. The twin of CM550 0x0003216a: one shared name (was
+   cm848_sendJ1939ResponseFrame; PR #53 round 98) */
+
+void sendJ1939DiagnosticServiceResponse(j1939_received_message_t *request,dword result_code)
 
 {
   byte bVar1;
@@ -26123,9 +26242,9 @@ LAB_00024a1c:
     }
     else if (result_code == 0xfe) {
       *pbVar3 = 0xe;
-      pbVar3[1] = j1939_response_param_working._0_1_;
+      pbVar3[1] = j1939_diagnostic_response_pending_wait_time._0_1_;
       pbVar3 = pbVar3 + 2;
-      result_code = (dword)(byte)j1939_response_param_working;
+      result_code = (dword)(byte)j1939_diagnostic_response_pending_wait_time;
     }
     else {
       *pbVar3 = 0xd;
@@ -26150,14 +26269,20 @@ LAB_00024a1c:
 
 
 //
-// Function: cm848_sendJ1939ExtendedResponse @ 0x00024afc
+// Function: sendJ1939DiagnosticResponsePending @ 0x00024afc
 //
 
-void cm848_sendJ1939ExtendedResponse(j1939_received_message_t *param_1,word param_2)
+/* Stores the wait time (its word argument) in j1939_diagnostic_response_pending_wait_time and sends
+   the 0x0e response-pending for the request (sendJ1939DiagnosticServiceResponse with result 0xfe).
+   No caller in either bank (no bl and no pointer to 0x24afc); the boot kernel's copy
+   cm848_sendDiagnosticResponsePending is called with a wait time of 10 or 150. The twin of CM550
+   0x0003214c: one shared name (was cm848_sendJ1939ExtendedResponse; PR #53 round 98) */
+
+void sendJ1939DiagnosticResponsePending(j1939_received_message_t *request,word wait_time)
 
 {
-  j1939_response_param_working = param_2;
-  cm848_sendJ1939ResponseFrame(param_1,0xfe);
+  j1939_diagnostic_response_pending_wait_time = wait_time;
+  sendJ1939DiagnosticServiceResponse(request,0xfe);
   return;
 }
 
@@ -32528,9 +32653,8 @@ void cm848_outputVariableGeometryTurbochargerDirectionAndDuty(void)
      (variable_geometry_turbocharger_motor_pwm_output_channel_cal < 0x33)) {
     variable_geometry_turbocharger_motor_pwm_duty_command =
          variable_geometry_turbocharger_motor_pwm_duty_scaled;
-    (**(code **)(&output_channel_driver_table_set_duty +
-                (uint)variable_geometry_turbocharger_motor_pwm_output_channel_cal * 0x10))
-              (variable_geometry_turbocharger_motor_pwm_duty_scaled);
+    (*output_channel_driver_table[variable_geometry_turbocharger_motor_pwm_output_channel_cal].
+      set_duty)(variable_geometry_turbocharger_motor_pwm_duty_scaled);
   }
   return;
 }
@@ -32612,24 +32736,22 @@ void cm848_initializeVariableGeometryTurbochargerPositionControlLoop(void)
   variable_geometry_turbocharger_motor_pwm_duty_scaled = 0;
   if ((variable_geometry_turbocharger_motor_pwm_output_channel_cal != 0) &&
      (variable_geometry_turbocharger_motor_pwm_output_channel_cal < 0x33)) {
-    (**(code **)(&output_channel_driver_table_enable +
-                (uint)variable_geometry_turbocharger_motor_pwm_output_channel_cal * 0x10))();
+    (*output_channel_driver_table[variable_geometry_turbocharger_motor_pwm_output_channel_cal].
+      enable)();
   }
   if ((variable_geometry_turbocharger_motor_pwm_output_channel_cal != 0) &&
      (variable_geometry_turbocharger_motor_pwm_output_channel_cal < 0x33)) {
     variable_geometry_turbocharger_motor_pwm_duty_command =
          variable_geometry_turbocharger_motor_pwm_duty_scaled;
-    (**(code **)(&output_channel_driver_table_set_duty +
-                (uint)variable_geometry_turbocharger_motor_pwm_output_channel_cal * 0x10))
-              (variable_geometry_turbocharger_motor_pwm_duty_scaled);
+    (*output_channel_driver_table[variable_geometry_turbocharger_motor_pwm_output_channel_cal].
+      set_duty)(variable_geometry_turbocharger_motor_pwm_duty_scaled);
   }
   if ((variable_geometry_turbocharger_motor_pwm_output_channel_cal != 0) &&
      (variable_geometry_turbocharger_motor_pwm_output_channel_cal < 0x33)) {
     variable_geometry_turbocharger_motor_pwm_period_command =
          (dword)variable_geometry_turbocharger_motor_pwm_period;
-    (**(code **)(&output_channel_driver_table_set_period +
-                (uint)variable_geometry_turbocharger_motor_pwm_output_channel_cal * 0x10))
-              (variable_geometry_turbocharger_motor_pwm_period_command);
+    (*output_channel_driver_table[variable_geometry_turbocharger_motor_pwm_output_channel_cal].
+      set_period)(variable_geometry_turbocharger_motor_pwm_period_command);
   }
   return;
 }
@@ -38744,7 +38866,7 @@ void cm848_configureSupervisorChip(void)
     j1939_can_frame_word_d = uVar1 | 0xc400;
     j1939_pgn_source_byte._0_2_ = uVar1 | 0xc800;
     local_28.word_count = 5;
-    local_28.completion_callback = (undefined *)0x0;
+    local_28.completion_callback = (qspi_completion_callback_function_t *)0x0;
     cm848_queueQspiJob(&local_28,1);
     do {
     } while (local_28.busy_state != 0);
@@ -38760,7 +38882,7 @@ void cm848_configureSupervisorChip(void)
        (supervisor_chip_overspeed_consecutive_occurrence_count & 7) << 4 |
        (supervisor_chip_overspeed_non_latching_flag & 1) << 7 | 0xd600;
   local_28.word_count = 4;
-  local_28.completion_callback = (undefined *)0x0;
+  local_28.completion_callback = (qspi_completion_callback_function_t *)0x0;
   cm848_queueQspiJob(&local_28,1);
   do {
   } while (local_28.busy_state != 0);
@@ -38796,7 +38918,7 @@ void cm848_startSupervisorWatchdog(void)
   supervisor_watchdog_job.transmit_words = supervisor_watchdog_transmit_words;
   supervisor_watchdog_job.command_bytes = &supervisor_qspi_command_bytes;
   supervisor_watchdog_job.receive_words = (word *)&DAT_003fb2c7;
-  supervisor_watchdog_job.completion_callback = (undefined *)0x0;
+  supervisor_watchdog_job.completion_callback = (qspi_completion_callback_function_t *)0x0;
   supervisor_watchdog_transmit_words[0] = 0x1400;
   supervisor_watchdog_transmit_words[1] = 0x1801;
   supervisor_watchdog_transmit_words[2] = 0xf200;
@@ -38914,7 +39036,7 @@ void cm848_initializeSupervisorOutputWriteJob(void)
   supervisor_output_write_job.transmit_words = &supervisor_output_write_transmit_word;
   supervisor_output_write_job.command_bytes = &supervisor_qspi_command_bytes;
   supervisor_output_write_job.receive_words = (word *)0x0;
-  supervisor_output_write_job.completion_callback = (undefined *)0x0;
+  supervisor_output_write_job.completion_callback = (qspi_completion_callback_function_t *)0x0;
   return;
 }
 
@@ -38985,7 +39107,8 @@ void cm848_initializeSupervisorConfigurationWriteJob(void)
   supervisor_configuration_write_job.transmit_words = supervisor_configuration_transmit_words;
   supervisor_configuration_write_job.command_bytes = &supervisor_qspi_command_bytes;
   supervisor_configuration_write_job.receive_words = (word *)0x0;
-  supervisor_configuration_write_job.completion_callback = (undefined *)0x0;
+  supervisor_configuration_write_job.completion_callback =
+       (qspi_completion_callback_function_t *)0x0;
   cm848_writeSupervisorConfiguration();
   do {
   } while (supervisor_configuration_write_job.busy_state != 0);
@@ -39212,10 +39335,11 @@ void cm848_calculateChargingVoltageError(void)
 //
 
 /* Steps the 4-state charging (alternator field) regulator when algorithm_enable_flags_40_cal bit 0
-   is set: saves the state in alternator_field_regulator_previous_state, then takes the next state
-   from the 4-entry handler table at ROM 0x57730 (0 idle or fault, 1 start ramp, 2 regulation, 3
-   load response; the handlers at ROM 0x38338 / 0x38384 / 0x383f0 / 0x3844c are not decompiled as
-   functions). (was cm848_dispatchProtectionOutputMode) */
+   is set: saves the state in alternator_field_regulator_previous_state, then calls
+   alternator_field_regulator_state_handler_table[state] (ROM 0x57730: 0
+   cm848_evaluateAlternatorFieldRegulatorIdleState / 1 ...StartRampState / 2 ...RegulationState / 3
+   ...LoadResponseState) and takes the state it returns (the table is typed since PR #53 round 98).
+   (was cm848_dispatchProtectionOutputMode) */
 
 void cm848_updateAlternatorFieldRegulatorState(void)
 
@@ -39223,8 +39347,7 @@ void cm848_updateAlternatorFieldRegulatorState(void)
   if (algorithm_enable_flags_40_cal.electronic_voltage_regulator_enable != 0) {
     alternator_field_regulator_previous_state = alternator_field_regulator_state;
     alternator_field_regulator_state =
-         (*(code *)(&PTR_cm848_evaluateAlternatorFieldRegulatorIdleState_00057730)
-                   [alternator_field_regulator_state])();
+         (*alternator_field_regulator_state_handler_table[alternator_field_regulator_state])();
   }
   return;
 }
@@ -39442,8 +39565,8 @@ void cm848_calculateAlternatorFieldDutyByPid(void)
 void cm848_applyAlternatorFieldDuty(void)
 
 {
-  word wVar2;
-  dword dVar1;
+  word duty;
+  dword period;
   
   if (algorithm_enable_flags_40_cal.electronic_voltage_regulator_enable != 0) {
     if (fault_detected_cal.battery_voltage_low_error != 0) {
@@ -39455,33 +39578,33 @@ void cm848_applyAlternatorFieldDuty(void)
     if (alternator_field_target_override_enable != 0) {
       alternator_field_duty_target = alternator_field_target_override;
     }
-    wVar2 = alternator_field_duty_target;
+    duty = alternator_field_duty_target;
     if (alternator_field_duty_not_inverted_flag == 0) {
-      wVar2 = 0x6400 - alternator_field_duty_target;
+      duty = 0x6400 - alternator_field_duty_target;
     }
     if ((alternator_field_actuator_test_active_flag != 0) &&
        ((engine_state == ENGINE_STATE_STOPPED ||
         (alternator_field_actuator_test_while_running_enable == 1)))) {
-      wVar2 = alternator_field_actuator_test_duty;
+      duty = alternator_field_actuator_test_duty;
     }
     if (end_of_line_alternator_test_field_cut_flag == 1) {
-      wVar2 = alternator_field_end_of_line_test_duty;
+      duty = alternator_field_end_of_line_test_duty;
     }
-    if (alternator_field_duty_full_on_threshold < wVar2) {
-      wVar2 = alternator_field_duty_full_on;
+    if (alternator_field_duty_full_on_threshold < duty) {
+      duty = alternator_field_duty_full_on;
     }
-    if (wVar2 < alternator_field_duty_full_off_threshold) {
-      wVar2 = alternator_field_duty_full_off;
+    if (duty < alternator_field_duty_full_off_threshold) {
+      duty = alternator_field_duty_full_off;
     }
     if (alternator_field_read_back_retest_active_flag != 0) {
       alternator_field_retest_pass_count = alternator_field_retest_pass_count + 1;
       if ((uint)alternator_field_retest_pass_count < (uint)alternator_field_retest_off_passes) {
-        wVar2 = 0;
+        duty = 0;
       }
       else if ((uint)alternator_field_retest_pass_count <
                (uint)alternator_field_retest_off_passes +
                (uint)alternator_field_retest_fault_confirm_passes * 2) {
-        wVar2 = 0x6400;
+        duty = 0x6400;
       }
       else {
         alternator_field_retest_pass_count = 0;
@@ -39501,21 +39624,19 @@ void cm848_applyAlternatorFieldDuty(void)
     }
     if ((alternator_field_output_channel_cal != 0) && (alternator_field_output_channel_cal < 0x33))
     {
-      alternator_field_duty_command = wVar2;
-      (**(code **)(&output_channel_driver_table_set_duty +
-                  (uint)alternator_field_output_channel_cal * 0x10))();
+      alternator_field_duty_command = duty;
+      (*output_channel_driver_table[alternator_field_output_channel_cal].set_duty)(duty);
     }
     if (alternator_field_pwm_frequency_hz == 0) {
-      dVar1 = 0xffffffff;
+      period = 0xffffffff;
     }
     else {
-      dVar1 = 1000000 / alternator_field_pwm_frequency_hz;
+      period = 1000000 / alternator_field_pwm_frequency_hz;
     }
     if ((alternator_field_output_channel_cal != 0) && (alternator_field_output_channel_cal < 0x33))
     {
-      alternator_field_period_microseconds = dVar1;
-      (**(code **)(&output_channel_driver_table_set_period +
-                  (uint)alternator_field_output_channel_cal * 0x10))();
+      alternator_field_period_microseconds = period;
+      (*output_channel_driver_table[alternator_field_output_channel_cal].set_period)(period);
     }
   }
   return;
@@ -39693,20 +39814,20 @@ void cm848_testAlternatorOutputByCuttingField(void)
    alternator_field_regulator_start_engine_speed_threshold (3200 = 400 rpm) or engine_state is 3,
    and fault 368 (P2502) is clear, otherwise 0. (was LAB_00038338, not a function) */
 
-undefined4 cm848_evaluateAlternatorFieldRegulatorIdleState(void)
+ALTERNATOR_FIELD_REGULATOR_STATE cm848_evaluateAlternatorFieldRegulatorIdleState(void)
 
 {
-  undefined4 uVar1;
+  ALTERNATOR_FIELD_REGULATOR_STATE AVar1;
   
   if (((engine_speed_state.filtered_engine_speed <
         alternator_field_regulator_start_engine_speed_threshold) &&
       (engine_state != ENGINE_STATE_RUNNING)) || (fault_detected_cal.alternator_error != 0)) {
-    uVar1 = 0;
+    AVar1 = ALTERNATOR_FIELD_REGULATOR_INACTIVE;
   }
   else {
-    uVar1 = 1;
+    AVar1 = ALTERNATOR_FIELD_REGULATOR_STARTUP;
   }
-  return uVar1;
+  return AVar1;
 }
 
 
@@ -39722,24 +39843,24 @@ undefined4 cm848_evaluateAlternatorFieldRegulatorIdleState(void)
    alternator_field_regulation_error_threshold (1 = 1/16 V), otherwise 1. (was LAB_00038384, not a
    function) */
 
-undefined4 cm848_evaluateAlternatorFieldRegulatorStartRampState(void)
+ALTERNATOR_FIELD_REGULATOR_STATE cm848_evaluateAlternatorFieldRegulatorStartRampState(void)
 
 {
-  undefined4 uVar1;
+  ALTERNATOR_FIELD_REGULATOR_STATE AVar1;
   
   if ((engine_speed_state.filtered_engine_speed <
        alternator_field_regulator_stop_engine_speed_threshold) ||
      (fault_detected_cal.alternator_error != 0)) {
-    uVar1 = 0;
+    AVar1 = ALTERNATOR_FIELD_REGULATOR_INACTIVE;
   }
   else if ((alternator_field_duty_target == 0x6400) ||
           ((short)charging_voltage_error <= alternator_field_regulation_error_threshold)) {
-    uVar1 = 2;
+    AVar1 = ALTERNATOR_FIELD_REGULATOR_STEADY_STATE;
   }
   else {
-    uVar1 = 1;
+    AVar1 = ALTERNATOR_FIELD_REGULATOR_STARTUP;
   }
-  return uVar1;
+  return AVar1;
 }
 
 
@@ -39755,24 +39876,24 @@ undefined4 cm848_evaluateAlternatorFieldRegulatorStartRampState(void)
    alternator_field_load_response_fast_error_threshold (192 in the dump, so never), otherwise 2.
    (was LAB_000383f0, not a function) */
 
-undefined4 cm848_evaluateAlternatorFieldRegulatorRegulationState(void)
+ALTERNATOR_FIELD_REGULATOR_STATE cm848_evaluateAlternatorFieldRegulatorRegulationState(void)
 
 {
-  undefined4 uVar1;
+  ALTERNATOR_FIELD_REGULATOR_STATE AVar1;
   
   if ((engine_speed_state.filtered_engine_speed <
        alternator_field_regulator_stop_engine_speed_threshold) ||
      (fault_detected_cal.alternator_error != 0)) {
-    uVar1 = 0;
+    AVar1 = ALTERNATOR_FIELD_REGULATOR_INACTIVE;
   }
   else if (alternator_field_load_response_fast_error_threshold <
            (short)charging_voltage_error_fast_component) {
-    uVar1 = 3;
+    AVar1 = ALTERNATOR_FIELD_REGULATOR_LOAD_RESPONSE;
   }
   else {
-    uVar1 = 2;
+    AVar1 = ALTERNATOR_FIELD_REGULATOR_STEADY_STATE;
   }
-  return uVar1;
+  return AVar1;
 }
 
 
@@ -39789,26 +39910,26 @@ undefined4 cm848_evaluateAlternatorFieldRegulatorRegulationState(void)
    most alternator_field_regulation_error_threshold, otherwise 3. (was LAB_0003844c, not a function)
     */
 
-undefined4 cm848_evaluateAlternatorFieldRegulatorLoadResponseState(void)
+ALTERNATOR_FIELD_REGULATOR_STATE cm848_evaluateAlternatorFieldRegulatorLoadResponseState(void)
 
 {
-  undefined4 uVar1;
+  ALTERNATOR_FIELD_REGULATOR_STATE AVar1;
   
   if ((engine_speed_state.filtered_engine_speed <
        alternator_field_regulator_stop_engine_speed_threshold) ||
      (fault_detected_cal.alternator_error != 0)) {
-    uVar1 = 0;
+    AVar1 = ALTERNATOR_FIELD_REGULATOR_INACTIVE;
   }
   else if (((alternator_field_duty_target == 0x6400) &&
            (alternator_field_load_response_full_duty_passes_limit <
             alternator_field_load_response_elapsed_passes)) ||
           ((short)charging_voltage_error <= alternator_field_regulation_error_threshold)) {
-    uVar1 = 2;
+    AVar1 = ALTERNATOR_FIELD_REGULATOR_STEADY_STATE;
   }
   else {
-    uVar1 = 3;
+    AVar1 = ALTERNATOR_FIELD_REGULATOR_LOAD_RESPONSE;
   }
-  return uVar1;
+  return AVar1;
 }
 
 
@@ -39856,8 +39977,7 @@ void cm848_initializeAlternatorFieldControl(void)
   alternator_field_cut_test_sequence_elapsed_passes = 0;
   alternator_field_cut_test_hold_elapsed_passes = 0;
   if ((alternator_field_output_channel_cal != 0) && (alternator_field_output_channel_cal < 0x33)) {
-    (**(code **)(&output_channel_driver_table_enable +
-                (uint)alternator_field_output_channel_cal * 0x10))();
+    (*output_channel_driver_table[alternator_field_output_channel_cal].enable)();
   }
   return;
 }
@@ -40164,7 +40284,7 @@ void cm848_checkPciMessageTimeouts(void)
 //
 
 /* SIU vector 6 interrupt handler for the J1850 PCI controller - dispatch table[6] ROM 0x575f6 via
-   mpc555_timerInterruptHandler - acks USIU_SIPEND 0x200 then queues pci_controller_receive_job
+   mpc555_dispatchExternalInterrupt - acks USIU_SIPEND 0x200 then queues pci_controller_receive_job
    (gate algorithm_enable_flags_40_cal 0x40) - not dead (was mpc555_triggerJ1939TransmitMessage) |
    registration-table-sweep reviewed 2026-11-13 */
 
@@ -41542,7 +41662,7 @@ void cm848_initializeJ1939CommunicationSystem(void)
 void cm848_continuePciControllerInitialization(void)
 
 {
-  pci_controller_command_job.completion_callback = (undefined *)0x0;
+  pci_controller_command_job.completion_callback = (qspi_completion_callback_function_t *)0x0;
   pci_controller_transmit_word = 0xa18;
   pci_controller_init_queue_result =
        cm848_queueQspiJob(&pci_controller_command_job,(uint)pci_qspi_queue_priority);
@@ -43654,8 +43774,8 @@ void cm848_completeQspiJob(void)
     }
   }
   pqVar4->busy_state = 0;
-  if ((code *)pqVar4->completion_callback != (code *)0x0) {
-    (*(code *)pqVar4->completion_callback)();
+  if (pqVar4->completion_callback != (qspi_completion_callback_function_t *)0x0) {
+    (*pqVar4->completion_callback)();
   }
   qspi_job_queues[qspi_active_queue_index].pending_count =
        qspi_job_queues[qspi_active_queue_index].pending_count - 1;
@@ -43681,7 +43801,7 @@ void cm848_completeQspiJob(void)
 
 /* QSPI-finished handler: clears SPIF (qsmcm_qspi.SPSR bit 0x80) then runs cm848_completeQspiJob |
    SIU vector 7 handler (mpc555_interrupt_dispatch_table[7] ROM 0x575fa) run by
-   mpc555_timerInterruptHandler on the QSPI SPIF interrupt - clears SPSR SPIF then runs
+   mpc555_dispatchExternalInterrupt on the QSPI SPIF interrupt - clears SPSR SPIF then runs
    cm848_completeQspiJob which calls each job completion_callback - the dispatcher for every QSPI
    callback */
 
@@ -45370,30 +45490,30 @@ void cm848_applyWastegateSolenoidDuty(void)
 
 {
   ushort uVar1;
-  word wVar2;
+  word duty;
   
   if (algorithm_enable_flags_43_cal.wastegate_solenoid_driver_enable != 0) {
     uVar1 = wastegate_solenoid_fixed_duty;
     if (wastegate_solenoid_fixed_duty_enable == 0) {
       uVar1 = wastegate_duty_controller_state.request_half_duty_counts * 2;
     }
-    wVar2 = wastegate_solenoid_duty_maximum;
+    duty = wastegate_solenoid_duty_maximum;
     if ((uVar1 <= wastegate_solenoid_duty_maximum) &&
-       (wVar2 = uVar1, uVar1 < wastegate_solenoid_duty_minimum)) {
-      wVar2 = wastegate_solenoid_duty_minimum;
+       (duty = uVar1, uVar1 < wastegate_solenoid_duty_minimum)) {
+      duty = wastegate_solenoid_duty_minimum;
     }
     if (wastegate_solenoid_duty_invert_flag != 0) {
-      wVar2 = 0x6400 - wVar2;
+      duty = 0x6400 - duty;
     }
     if (wastegate_solenoid_read_back_retest_active_flag != 0) {
       wastegate_solenoid_retest_pass_count = wastegate_solenoid_retest_pass_count + 1;
       if ((uint)wastegate_solenoid_retest_pass_count < (uint)wastegate_solenoid_retest_off_passes) {
-        wVar2 = 0;
+        duty = 0;
       }
       else if ((uint)wastegate_solenoid_retest_pass_count <
                (uint)wastegate_solenoid_retest_off_passes +
                (uint)wastegate_solenoid_retest_fault_confirm_passes * 2) {
-        wVar2 = 0x6400;
+        duty = 0x6400;
       }
       else {
         wastegate_solenoid_retest_pass_count = 0;
@@ -45415,15 +45535,13 @@ void cm848_applyWastegateSolenoidDuty(void)
     if ((wastegate_solenoid_output_channel_cal != 0) &&
        (wastegate_solenoid_output_channel_cal < 0x33)) {
       wastegate_solenoid_period_microseconds = 1000000 / wastegate_solenoid_pwm_frequency_hz;
-      (**(code **)(&output_channel_driver_table_set_period +
-                  (uint)wastegate_solenoid_output_channel_cal * 0x10))
+      (*output_channel_driver_table[wastegate_solenoid_output_channel_cal].set_period)
                 (wastegate_solenoid_period_microseconds);
     }
     if ((wastegate_solenoid_output_channel_cal != 0) &&
        (wastegate_solenoid_output_channel_cal < 0x33)) {
-      wastegate_solenoid_duty_command = wVar2;
-      (**(code **)(&output_channel_driver_table_set_duty +
-                  (uint)wastegate_solenoid_output_channel_cal * 0x10))(wVar2);
+      wastegate_solenoid_duty_command = duty;
+      (*output_channel_driver_table[wastegate_solenoid_output_channel_cal].set_duty)(duty);
     }
   }
   return;
@@ -45442,20 +45560,17 @@ void cm848_dispatchCalibrationBlockHandlers(void)
 {
   if ((wastegate_solenoid_output_channel_cal != 0) && (wastegate_solenoid_output_channel_cal < 0x33)
      ) {
-    (**(code **)(&output_channel_driver_table_enable +
-                (uint)wastegate_solenoid_output_channel_cal * 0x10))();
+    (*output_channel_driver_table[wastegate_solenoid_output_channel_cal].enable)();
   }
   if ((wastegate_solenoid_output_channel_cal != 0) && (wastegate_solenoid_output_channel_cal < 0x33)
      ) {
     wastegate_solenoid_duty_command = 0;
-    (**(code **)(&output_channel_driver_table_set_duty +
-                (uint)wastegate_solenoid_output_channel_cal * 0x10))(0);
+    (*output_channel_driver_table[wastegate_solenoid_output_channel_cal].set_duty)(0);
   }
   if ((wastegate_solenoid_output_channel_cal != 0) && (wastegate_solenoid_output_channel_cal < 0x33)
      ) {
     wastegate_solenoid_period_microseconds = 1000000 / wastegate_solenoid_pwm_frequency_hz;
-    (**(code **)(&output_channel_driver_table_set_period +
-                (uint)wastegate_solenoid_output_channel_cal * 0x10))
+    (*output_channel_driver_table[wastegate_solenoid_output_channel_cal].set_period)
               (wastegate_solenoid_period_microseconds);
   }
   return;
@@ -51834,8 +51949,7 @@ void mpc555_initializeTpuTimingInterrupts(void)
                     (&fuel_metering_pwm_frequency_cached_axis_offset,average_engine_speed,
                      fuel_metering_pwm_frequency_axis,fuel_metering_pwm_frequency_values,0);
   if ((fuel_metering_output_channel_cal != 0) && (fuel_metering_output_channel_cal < 0x33)) {
-    (**(code **)(&output_channel_driver_table_enable + (uint)fuel_metering_output_channel_cal * 0x10
-                ))();
+    (*output_channel_driver_table[fuel_metering_output_channel_cal].enable)();
   }
   wVar1 = tpu_b.CPR0;
   tpu_b.CPR0 = wVar1 & 0xff3f;
@@ -53661,10 +53775,10 @@ void cm848_miosChannel11EnablePwm(void)
 /* Output channel driver table (flash2) record 0x53ae56 slot +12 (set duty) for MDASM11 - forwards
    to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel11ReadStatus) */
 
-void cm848_miosChannel11SetPwmDuty(word param_1)
+void cm848_miosChannel11SetPwmDuty(word duty)
 
 {
-  mpc555_miosSetChannelPwmDuty(&mios_mdasm11,param_1);
+  mpc555_miosSetChannelPwmDuty(&mios_mdasm11,duty);
   return;
 }
 
@@ -53677,10 +53791,10 @@ void cm848_miosChannel11SetPwmDuty(word param_1)
 /* Output channel driver table (flash2) record 0x53ae56 slot +8 (set period) for MDASM11 - forwards
    to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel11SetPwm) */
 
-void cm848_miosChannel11SetPwmPeriod(undefined4 param_1)
+void cm848_miosChannel11SetPwmPeriod(dword period_setting)
 
 {
-  mpc555_miosSetChannelPwmPeriod(&mios_mdasm11,param_1);
+  mpc555_miosSetChannelPwmPeriod(&mios_mdasm11,period_setting);
   return;
 }
 
@@ -53709,10 +53823,10 @@ void cm848_miosChannel12EnablePwm(void)
 /* Output channel driver table (flash2) record 0x53ae66 slot +12 (set duty) for MDASM12 - forwards
    to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel12ReadStatus) */
 
-void cm848_miosChannel12SetPwmDuty(word param_1)
+void cm848_miosChannel12SetPwmDuty(word duty)
 
 {
-  mpc555_miosSetChannelPwmDuty(&mios_mdasm12,param_1);
+  mpc555_miosSetChannelPwmDuty(&mios_mdasm12,duty);
   return;
 }
 
@@ -53725,10 +53839,10 @@ void cm848_miosChannel12SetPwmDuty(word param_1)
 /* Output channel driver table (flash2) record 0x53ae66 slot +8 (set period) for MDASM12 - forwards
    to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel12SetPwm) */
 
-void cm848_miosChannel12SetPwmPeriod(undefined4 param_1)
+void cm848_miosChannel12SetPwmPeriod(dword period_setting)
 
 {
-  mpc555_miosSetChannelPwmPeriod(&mios_mdasm12,param_1);
+  mpc555_miosSetChannelPwmPeriod(&mios_mdasm12,period_setting);
   return;
 }
 
@@ -53757,10 +53871,10 @@ void cm848_miosChannel13EnablePwm(void)
 /* Output channel driver table (flash2) record 0x53ae76 slot +12 (set duty) for MDASM13 - forwards
    to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel13ReadStatus) */
 
-void cm848_miosChannel13SetPwmDuty(word param_1)
+void cm848_miosChannel13SetPwmDuty(word duty)
 
 {
-  mpc555_miosSetChannelPwmDuty(&mios_mdasm13,param_1);
+  mpc555_miosSetChannelPwmDuty(&mios_mdasm13,duty);
   return;
 }
 
@@ -53773,10 +53887,10 @@ void cm848_miosChannel13SetPwmDuty(word param_1)
 /* Output channel driver table (flash2) record 0x53ae76 slot +8 (set period) for MDASM13 - forwards
    to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel13SetPwm) */
 
-void cm848_miosChannel13SetPwmPeriod(undefined4 param_1)
+void cm848_miosChannel13SetPwmPeriod(dword period_setting)
 
 {
-  mpc555_miosSetChannelPwmPeriod(&mios_mdasm13,param_1);
+  mpc555_miosSetChannelPwmPeriod(&mios_mdasm13,period_setting);
   return;
 }
 
@@ -53805,10 +53919,10 @@ void cm848_miosChannel14EnablePwm(void)
 /* Output channel driver table (flash2) record 0x53ae86 slot +12 (set duty) for MDASM14 - forwards
    to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel14ReadStatus) */
 
-void cm848_miosChannel14SetPwmDuty(word param_1)
+void cm848_miosChannel14SetPwmDuty(word duty)
 
 {
-  mpc555_miosSetChannelPwmDuty(&mios_mdasm14,param_1);
+  mpc555_miosSetChannelPwmDuty(&mios_mdasm14,duty);
   return;
 }
 
@@ -53821,10 +53935,10 @@ void cm848_miosChannel14SetPwmDuty(word param_1)
 /* Output channel driver table (flash2) record 0x53ae86 slot +8 (set period) for MDASM14 - forwards
    to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel14SetPwm) */
 
-void cm848_miosChannel14SetPwmPeriod(undefined4 param_1)
+void cm848_miosChannel14SetPwmPeriod(dword period_setting)
 
 {
-  mpc555_miosSetChannelPwmPeriod(&mios_mdasm14,param_1);
+  mpc555_miosSetChannelPwmPeriod(&mios_mdasm14,period_setting);
   return;
 }
 
@@ -53853,10 +53967,10 @@ void cm848_miosChannel15EnablePwm(void)
 /* Output channel driver table (flash2) record 0x53ae96 slot +12 (set duty) for MDASM15 - forwards
    to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel15ReadStatus) */
 
-void cm848_miosChannel15SetPwmDuty(word param_1)
+void cm848_miosChannel15SetPwmDuty(word duty)
 
 {
-  mpc555_miosSetChannelPwmDuty(&mios_mdasm15,param_1);
+  mpc555_miosSetChannelPwmDuty(&mios_mdasm15,duty);
   return;
 }
 
@@ -53869,10 +53983,10 @@ void cm848_miosChannel15SetPwmDuty(word param_1)
 /* Output channel driver table (flash2) record 0x53ae96 slot +8 (set period) for MDASM15 - forwards
    to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel15SetPwm) */
 
-void cm848_miosChannel15SetPwmPeriod(undefined4 param_1)
+void cm848_miosChannel15SetPwmPeriod(dword period_setting)
 
 {
-  mpc555_miosSetChannelPwmPeriod(&mios_mdasm15,param_1);
+  mpc555_miosSetChannelPwmPeriod(&mios_mdasm15,period_setting);
   return;
 }
 
@@ -53901,10 +54015,10 @@ void cm848_miosChannel27EnablePwm(void)
 /* Output channel driver table (flash2) record 0x53aea6 slot +12 (set duty) for MDASM27 - forwards
    to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel27ReadStatus) */
 
-void cm848_miosChannel27SetPwmDuty(word param_1)
+void cm848_miosChannel27SetPwmDuty(word duty)
 
 {
-  mpc555_miosSetChannelPwmDuty(&mios_mdasm27,param_1);
+  mpc555_miosSetChannelPwmDuty(&mios_mdasm27,duty);
   return;
 }
 
@@ -53917,10 +54031,10 @@ void cm848_miosChannel27SetPwmDuty(word param_1)
 /* Output channel driver table (flash2) record 0x53aea6 slot +8 (set period) for MDASM27 - forwards
    to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel27SetPwm) */
 
-void cm848_miosChannel27SetPwmPeriod(undefined4 param_1)
+void cm848_miosChannel27SetPwmPeriod(dword period_setting)
 
 {
-  mpc555_miosSetChannelPwmPeriod(&mios_mdasm27,param_1);
+  mpc555_miosSetChannelPwmPeriod(&mios_mdasm27,period_setting);
   return;
 }
 
@@ -53949,10 +54063,10 @@ void cm848_miosChannel28EnablePwm(void)
 /* Output channel driver table (flash2) record 0x53aeb6 slot +12 (set duty) for MDASM28 - forwards
    to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel28ReadStatus) */
 
-void cm848_miosChannel28SetPwmDuty(word param_1)
+void cm848_miosChannel28SetPwmDuty(word duty)
 
 {
-  mpc555_miosSetChannelPwmDuty(&mios_mdasm28,param_1);
+  mpc555_miosSetChannelPwmDuty(&mios_mdasm28,duty);
   return;
 }
 
@@ -53965,10 +54079,10 @@ void cm848_miosChannel28SetPwmDuty(word param_1)
 /* Output channel driver table (flash2) record 0x53aeb6 slot +8 (set period) for MDASM28 - forwards
    to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel28SetPwm) */
 
-void cm848_miosChannel28SetPwmPeriod(undefined4 param_1)
+void cm848_miosChannel28SetPwmPeriod(dword period_setting)
 
 {
-  mpc555_miosSetChannelPwmPeriod(&mios_mdasm28,param_1);
+  mpc555_miosSetChannelPwmPeriod(&mios_mdasm28,period_setting);
   return;
 }
 
@@ -53997,10 +54111,10 @@ void cm848_miosChannel29EnablePwm(void)
 /* Output channel driver table (flash2) record 0x53aec6 slot +12 (set duty) for MDASM29 - forwards
    to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel29ReadStatus) */
 
-void cm848_miosChannel29SetPwmDuty(word param_1)
+void cm848_miosChannel29SetPwmDuty(word duty)
 
 {
-  mpc555_miosSetChannelPwmDuty(&mios_mdasm29,param_1);
+  mpc555_miosSetChannelPwmDuty(&mios_mdasm29,duty);
   return;
 }
 
@@ -54013,10 +54127,10 @@ void cm848_miosChannel29SetPwmDuty(word param_1)
 /* Output channel driver table (flash2) record 0x53aec6 slot +8 (set period) for MDASM29 - forwards
    to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel29SetPwm) */
 
-void cm848_miosChannel29SetPwmPeriod(undefined4 param_1)
+void cm848_miosChannel29SetPwmPeriod(dword period_setting)
 
 {
-  mpc555_miosSetChannelPwmPeriod(&mios_mdasm29,param_1);
+  mpc555_miosSetChannelPwmPeriod(&mios_mdasm29,period_setting);
   return;
 }
 
@@ -54045,10 +54159,10 @@ void cm848_miosChannel30EnablePwm(void)
 /* Output channel driver table (flash2) record 0x53aed6 slot +12 (set duty) for MDASM30 - forwards
    to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel30ReadStatus) */
 
-void cm848_miosChannel30SetPwmDuty(word param_1)
+void cm848_miosChannel30SetPwmDuty(word duty)
 
 {
-  mpc555_miosSetChannelPwmDuty(&mios_mdasm30,param_1);
+  mpc555_miosSetChannelPwmDuty(&mios_mdasm30,duty);
   return;
 }
 
@@ -54061,10 +54175,10 @@ void cm848_miosChannel30SetPwmDuty(word param_1)
 /* Output channel driver table (flash2) record 0x53aed6 slot +8 (set period) for MDASM30 - forwards
    to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel30SetPwm) */
 
-void cm848_miosChannel30SetPwmPeriod(undefined4 param_1)
+void cm848_miosChannel30SetPwmPeriod(dword period_setting)
 
 {
-  mpc555_miosSetChannelPwmPeriod(&mios_mdasm30,param_1);
+  mpc555_miosSetChannelPwmPeriod(&mios_mdasm30,period_setting);
   return;
 }
 
@@ -54093,10 +54207,10 @@ void cm848_miosChannel31EnablePwm(void)
 /* Output channel driver table (flash2) record 0x53aee6 slot +12 (set duty) for MDASM31 - forwards
    to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel31ReadStatus) */
 
-void cm848_miosChannel31SetPwmDuty(word param_1)
+void cm848_miosChannel31SetPwmDuty(word duty)
 
 {
-  mpc555_miosSetChannelPwmDuty(&mios_mdasm31,param_1);
+  mpc555_miosSetChannelPwmDuty(&mios_mdasm31,duty);
   return;
 }
 
@@ -54109,10 +54223,10 @@ void cm848_miosChannel31SetPwmDuty(word param_1)
 /* Output channel driver table (flash2) record 0x53aee6 slot +8 (set period) for MDASM31 - forwards
    to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel31SetPwm) */
 
-void cm848_miosChannel31SetPwmPeriod(undefined4 param_1)
+void cm848_miosChannel31SetPwmPeriod(dword period_setting)
 
 {
-  mpc555_miosSetChannelPwmPeriod(&mios_mdasm31,param_1);
+  mpc555_miosSetChannelPwmPeriod(&mios_mdasm31,period_setting);
   return;
 }
 
@@ -54141,10 +54255,10 @@ void cm848_miosPwm0Enable(void)
 /* Output channel driver table (flash2) record 0x53aef6 slot +12 (set duty) for PWM submodule 0 -
    forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer0ScaleByPercent) */
 
-void cm848_miosPwm0SetDuty(word param_1)
+void cm848_miosPwm0SetDuty(word duty)
 
 {
-  mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm0,param_1);
+  mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm0,duty);
   return;
 }
 
@@ -54157,10 +54271,10 @@ void cm848_miosPwm0SetDuty(word param_1)
 /* Output channel driver table (flash2) record 0x53aef6 slot +8 (set period) for PWM submodule 0 -
    forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer0SetValue) */
 
-void cm848_miosPwm0SetPeriodMicroseconds(undefined4 param_1)
+void cm848_miosPwm0SetPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm0,param_1);
+  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm0,period_microseconds);
   return;
 }
 
@@ -54189,10 +54303,10 @@ void cm848_miosPwm1Enable(void)
 /* Output channel driver table (flash2) record 0x53af06 slot +12 (set duty) for PWM submodule 1 -
    forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer1ScaleByPercent) */
 
-void cm848_miosPwm1SetDuty(word param_1)
+void cm848_miosPwm1SetDuty(word duty)
 
 {
-  mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm1,param_1);
+  mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm1,duty);
   return;
 }
 
@@ -54205,10 +54319,10 @@ void cm848_miosPwm1SetDuty(word param_1)
 /* Output channel driver table (flash2) record 0x53af06 slot +8 (set period) for PWM submodule 1 -
    forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer1SetValue) */
 
-void cm848_miosPwm1SetPeriodMicroseconds(undefined4 param_1)
+void cm848_miosPwm1SetPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm1,param_1);
+  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm1,period_microseconds);
   return;
 }
 
@@ -54237,10 +54351,10 @@ void cm848_miosPwm2Enable(void)
 /* Output channel driver table (flash2) record 0x53af16 slot +12 (set duty) for PWM submodule 2 -
    forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer2ScaleByPercent) */
 
-void cm848_miosPwm2SetDuty(word param_1)
+void cm848_miosPwm2SetDuty(word duty)
 
 {
-  mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm2,param_1);
+  mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm2,duty);
   return;
 }
 
@@ -54253,10 +54367,10 @@ void cm848_miosPwm2SetDuty(word param_1)
 /* Output channel driver table (flash2) record 0x53af16 slot +8 (set period) for PWM submodule 2 -
    forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer2SetValue) */
 
-void cm848_miosPwm2SetPeriodMicroseconds(undefined4 param_1)
+void cm848_miosPwm2SetPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm2,param_1);
+  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm2,period_microseconds);
   return;
 }
 
@@ -54285,10 +54399,10 @@ void cm848_miosPwm3Enable(void)
 /* Output channel driver table (flash2) record 0x53af26 slot +12 (set duty) for PWM submodule 3 -
    forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer3ScaleByPercent) */
 
-void cm848_miosPwm3SetDuty(word param_1)
+void cm848_miosPwm3SetDuty(word duty)
 
 {
-  mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm3,param_1);
+  mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm3,duty);
   return;
 }
 
@@ -54301,10 +54415,10 @@ void cm848_miosPwm3SetDuty(word param_1)
 /* Output channel driver table (flash2) record 0x53af26 slot +8 (set period) for PWM submodule 3 -
    forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer3SetValue) */
 
-void cm848_miosPwm3SetPeriodMicroseconds(undefined4 param_1)
+void cm848_miosPwm3SetPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm3,param_1);
+  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm3,period_microseconds);
   return;
 }
 
@@ -54333,10 +54447,10 @@ void cm848_miosPwm16Enable(void)
 /* Output channel driver table (flash2) record 0x53af36 slot +12 (set duty) for PWM submodule 16 -
    forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer16ScaleByPercent) */
 
-void cm848_miosPwm16SetDuty(word param_1)
+void cm848_miosPwm16SetDuty(word duty)
 
 {
-  mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm16,param_1);
+  mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm16,duty);
   return;
 }
 
@@ -54349,10 +54463,10 @@ void cm848_miosPwm16SetDuty(word param_1)
 /* Output channel driver table (flash2) record 0x53af36 slot +8 (set period) for PWM submodule 16 -
    forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer16SetValue) */
 
-void cm848_miosPwm16SetPeriodMicroseconds(undefined4 param_1)
+void cm848_miosPwm16SetPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm16,param_1);
+  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm16,period_microseconds);
   return;
 }
 
@@ -54381,10 +54495,10 @@ void cm848_miosPwm17Enable(void)
 /* Output channel driver table (flash2) record 0x53af46 slot +12 (set duty) for PWM submodule 17 -
    forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer17ScaleByPercent) */
 
-void cm848_miosPwm17SetDuty(word param_1)
+void cm848_miosPwm17SetDuty(word duty)
 
 {
-  mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm17,param_1);
+  mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm17,duty);
   return;
 }
 
@@ -54397,10 +54511,10 @@ void cm848_miosPwm17SetDuty(word param_1)
 /* Output channel driver table (flash2) record 0x53af46 slot +8 (set period) for PWM submodule 17 -
    forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer17SetValue) */
 
-void cm848_miosPwm17SetPeriodMicroseconds(undefined4 param_1)
+void cm848_miosPwm17SetPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm17,param_1);
+  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm17,period_microseconds);
   return;
 }
 
@@ -54429,10 +54543,10 @@ void cm848_miosPwm18Enable(void)
 /* Output channel driver table (flash2) record 0x53af56 slot +12 (set duty) for PWM submodule 18 -
    forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer18ScaleByPercent) */
 
-void cm848_miosPwm18SetDuty(word param_1)
+void cm848_miosPwm18SetDuty(word duty)
 
 {
-  mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm18,param_1);
+  mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm18,duty);
   return;
 }
 
@@ -54445,10 +54559,10 @@ void cm848_miosPwm18SetDuty(word param_1)
 /* Output channel driver table (flash2) record 0x53af56 slot +8 (set period) for PWM submodule 18 -
    forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer18SetValue) */
 
-void cm848_miosPwm18SetPeriodMicroseconds(undefined4 param_1)
+void cm848_miosPwm18SetPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm18,param_1);
+  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm18,period_microseconds);
   return;
 }
 
@@ -54477,10 +54591,10 @@ void cm848_miosPwm19Enable(void)
 /* Output channel driver table (flash2) record 0x53af66 slot +12 (set duty) for PWM submodule 19 -
    forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer19ScaleByPercent) */
 
-void cm848_miosPwm19SetDuty(word param_1)
+void cm848_miosPwm19SetDuty(word duty)
 
 {
-  mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm19,param_1);
+  mpc555_miosSetPwmSubmoduleDuty(&mios_mpwmsm19,duty);
   return;
 }
 
@@ -54493,10 +54607,10 @@ void cm848_miosPwm19SetDuty(word param_1)
 /* Output channel driver table (flash2) record 0x53af66 slot +8 (set period) for PWM submodule 19 -
    forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer19SetValue) */
 
-void cm848_miosPwm19SetPeriodMicroseconds(undefined4 param_1)
+void cm848_miosPwm19SetPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm19,param_1);
+  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&mios_mpwmsm19,period_microseconds);
   return;
 }
 
@@ -54525,10 +54639,10 @@ void cm848_tpuBChannel0EnablePwm(void)
 /* Output channel driver table record 1 (0x53ac56) slot +12 (set duty) for TPU-B channel 0 -
    forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel0SetDuty) */
 
-void cm848_tpuBChannel0SetPwmDuty(word param_1)
+void cm848_tpuBChannel0SetPwmDuty(word duty)
 
 {
-  mpc555_tpuBSetPwmDuty(0,param_1);
+  mpc555_tpuBSetPwmDuty(0,duty);
   return;
 }
 
@@ -54541,10 +54655,10 @@ void cm848_tpuBChannel0SetPwmDuty(word param_1)
 /* Output channel driver table record 1 (0x53ac56) slot +8 (set period) for TPU-B channel 0 -
    forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel0Configure) */
 
-void cm848_tpuBChannel0SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBChannel0SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(0,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(0,period_microseconds);
   return;
 }
 
@@ -54573,10 +54687,10 @@ void cm848_tpuBChannel1EnablePwm(void)
 /* Output channel driver table record 2 (0x53ac66) slot +12 (set duty) for TPU-B channel 1 -
    forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel1SetDuty) */
 
-void cm848_tpuBChannel1SetPwmDuty(word param_1)
+void cm848_tpuBChannel1SetPwmDuty(word duty)
 
 {
-  mpc555_tpuBSetPwmDuty(1,param_1);
+  mpc555_tpuBSetPwmDuty(1,duty);
   return;
 }
 
@@ -54589,10 +54703,10 @@ void cm848_tpuBChannel1SetPwmDuty(word param_1)
 /* Output channel driver table record 2 (0x53ac66) slot +8 (set period) for TPU-B channel 1 -
    forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel1Configure) */
 
-void cm848_tpuBChannel1SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBChannel1SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(1,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(1,period_microseconds);
   return;
 }
 
@@ -54621,10 +54735,10 @@ void cm848_tpuBChannel2EnablePwm(void)
 /* Output channel driver table record 3 (0x53ac76) slot +12 (set duty) for TPU-B channel 2 -
    forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel2SetDuty) */
 
-void cm848_tpuBChannel2SetPwmDuty(word param_1)
+void cm848_tpuBChannel2SetPwmDuty(word duty)
 
 {
-  mpc555_tpuBSetPwmDuty(2,param_1);
+  mpc555_tpuBSetPwmDuty(2,duty);
   return;
 }
 
@@ -54637,10 +54751,10 @@ void cm848_tpuBChannel2SetPwmDuty(word param_1)
 /* Output channel driver table record 3 (0x53ac76) slot +8 (set period) for TPU-B channel 2 -
    forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel2Configure) */
 
-void cm848_tpuBChannel2SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBChannel2SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(2,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(2,period_microseconds);
   return;
 }
 
@@ -54669,10 +54783,10 @@ void cm848_tpuBChannel3EnablePwm(void)
 /* Output channel driver table record 4 (0x53ac86) slot +12 (set duty) for TPU-B channel 3 -
    forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel3SetDuty) */
 
-void cm848_tpuBChannel3SetPwmDuty(word param_1)
+void cm848_tpuBChannel3SetPwmDuty(word duty)
 
 {
-  mpc555_tpuBSetPwmDuty(3,param_1);
+  mpc555_tpuBSetPwmDuty(3,duty);
   return;
 }
 
@@ -54685,10 +54799,10 @@ void cm848_tpuBChannel3SetPwmDuty(word param_1)
 /* Output channel driver table record 4 (0x53ac86) slot +8 (set period) for TPU-B channel 3 -
    forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel3Configure) */
 
-void cm848_tpuBChannel3SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBChannel3SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(3,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(3,period_microseconds);
   return;
 }
 
@@ -54717,10 +54831,10 @@ void cm848_tpuBChannel4EnablePwm(void)
 /* TPU-B channel 4 set duty wrapper - no referrer found: table record 5 uses the read-back variant
    cm848_tpuBReadBackChannel4* for this slot (was cm848_tpuChannel4SetDuty) */
 
-void cm848_tpuBChannel4SetPwmDuty(word param_1)
+void cm848_tpuBChannel4SetPwmDuty(word duty)
 
 {
-  mpc555_tpuBSetPwmDuty(4,param_1);
+  mpc555_tpuBSetPwmDuty(4,duty);
   return;
 }
 
@@ -54733,10 +54847,10 @@ void cm848_tpuBChannel4SetPwmDuty(word param_1)
 /* TPU-B channel 4 set period wrapper - no referrer found: table record 5 uses the read-back variant
    cm848_tpuBReadBackChannel4* for this slot (was cm848_tpuChannel4Configure) */
 
-void cm848_tpuBChannel4SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBChannel4SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(4,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(4,period_microseconds);
   return;
 }
 
@@ -54765,10 +54879,10 @@ void cm848_tpuBChannel5EnablePwm(void)
 /* Output channel driver table record 6 (0x53aca6) slot +12 (set duty) for TPU-B channel 5 -
    forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel5SetDuty) */
 
-void cm848_tpuBChannel5SetPwmDuty(word param_1)
+void cm848_tpuBChannel5SetPwmDuty(word duty)
 
 {
-  mpc555_tpuBSetPwmDuty(5,param_1);
+  mpc555_tpuBSetPwmDuty(5,duty);
   return;
 }
 
@@ -54781,10 +54895,10 @@ void cm848_tpuBChannel5SetPwmDuty(word param_1)
 /* Output channel driver table record 6 (0x53aca6) slot +8 (set period) for TPU-B channel 5 -
    forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel5Configure) */
 
-void cm848_tpuBChannel5SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBChannel5SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(5,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(5,period_microseconds);
   return;
 }
 
@@ -54813,10 +54927,10 @@ void cm848_tpuBChannel6EnablePwm(void)
 /* TPU-B channel 6 set duty wrapper - no referrer found: table record 7 uses the read-back variant
    cm848_tpuBReadBackChannel6* for this slot (was cm848_tpuChannel6SetDuty) */
 
-void cm848_tpuBChannel6SetPwmDuty(word param_1)
+void cm848_tpuBChannel6SetPwmDuty(word duty)
 
 {
-  mpc555_tpuBSetPwmDuty(6,param_1);
+  mpc555_tpuBSetPwmDuty(6,duty);
   return;
 }
 
@@ -54829,10 +54943,10 @@ void cm848_tpuBChannel6SetPwmDuty(word param_1)
 /* TPU-B channel 6 set period wrapper - no referrer found: table record 7 uses the read-back variant
    cm848_tpuBReadBackChannel6* for this slot (was cm848_tpuChannel6Configure) */
 
-void cm848_tpuBChannel6SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBChannel6SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(6,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(6,period_microseconds);
   return;
 }
 
@@ -54861,10 +54975,10 @@ void cm848_tpuBChannel7EnablePwm(void)
 /* TPU-B channel 7 set duty wrapper - no referrer found: table record 8 uses the read-back variant
    cm848_tpuBReadBackChannel7* for this slot (was cm848_tpuChannel7SetDuty) */
 
-void cm848_tpuBChannel7SetPwmDuty(word param_1)
+void cm848_tpuBChannel7SetPwmDuty(word duty)
 
 {
-  mpc555_tpuBSetPwmDuty(7,param_1);
+  mpc555_tpuBSetPwmDuty(7,duty);
   return;
 }
 
@@ -54877,10 +54991,10 @@ void cm848_tpuBChannel7SetPwmDuty(word param_1)
 /* TPU-B channel 7 set period wrapper - no referrer found: table record 8 uses the read-back variant
    cm848_tpuBReadBackChannel7* for this slot (was cm848_tpuChannel7Configure) */
 
-void cm848_tpuBChannel7SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBChannel7SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(7,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(7,period_microseconds);
   return;
 }
 
@@ -54909,10 +55023,10 @@ void cm848_tpuBChannel8EnablePwm(void)
 /* Output channel driver table record 9 (0x53acd6) slot +12 (set duty) for TPU-B channel 8 -
    forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel8SetDuty) */
 
-void cm848_tpuBChannel8SetPwmDuty(word param_1)
+void cm848_tpuBChannel8SetPwmDuty(word duty)
 
 {
-  mpc555_tpuBSetPwmDuty(8,param_1);
+  mpc555_tpuBSetPwmDuty(8,duty);
   return;
 }
 
@@ -54925,10 +55039,10 @@ void cm848_tpuBChannel8SetPwmDuty(word param_1)
 /* Output channel driver table record 9 (0x53acd6) slot +8 (set period) for TPU-B channel 8 -
    forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel8Configure) */
 
-void cm848_tpuBChannel8SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBChannel8SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(8,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(8,period_microseconds);
   return;
 }
 
@@ -54957,10 +55071,10 @@ void cm848_tpuBChannel9EnablePwm(void)
 /* Output channel driver table record 10 (0x53ace6) slot +12 (set duty) for TPU-B channel 9 -
    forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel9SetDuty) */
 
-void cm848_tpuBChannel9SetPwmDuty(word param_1)
+void cm848_tpuBChannel9SetPwmDuty(word duty)
 
 {
-  mpc555_tpuBSetPwmDuty(9,param_1);
+  mpc555_tpuBSetPwmDuty(9,duty);
   return;
 }
 
@@ -54973,10 +55087,10 @@ void cm848_tpuBChannel9SetPwmDuty(word param_1)
 /* Output channel driver table record 10 (0x53ace6) slot +8 (set period) for TPU-B channel 9 -
    forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel9Configure) */
 
-void cm848_tpuBChannel9SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBChannel9SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(9,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(9,period_microseconds);
   return;
 }
 
@@ -55005,10 +55119,10 @@ void cm848_tpuBChannel10EnablePwm(void)
 /* TPU-B channel 10 set duty wrapper - no referrer found: table record 11 uses the read-back variant
    cm848_tpuBReadBackChannel10* for this slot (was cm848_tpuChannel10SetDuty) */
 
-void cm848_tpuBChannel10SetPwmDuty(word param_1)
+void cm848_tpuBChannel10SetPwmDuty(word duty)
 
 {
-  mpc555_tpuBSetPwmDuty(10,param_1);
+  mpc555_tpuBSetPwmDuty(10,duty);
   return;
 }
 
@@ -55021,10 +55135,10 @@ void cm848_tpuBChannel10SetPwmDuty(word param_1)
 /* TPU-B channel 10 set period wrapper - no referrer found: table record 11 uses the read-back
    variant cm848_tpuBReadBackChannel10* for this slot (was cm848_tpuChannel10Configure) */
 
-void cm848_tpuBChannel10SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBChannel10SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(10,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(10,period_microseconds);
   return;
 }
 
@@ -55053,10 +55167,10 @@ void cm848_tpuBChannel11EnablePwm(void)
 /* Output channel driver table record 12 (0x53ad06) slot +12 (set duty) for TPU-B channel 11 -
    forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel11SetDuty) */
 
-void cm848_tpuBChannel11SetPwmDuty(word param_1)
+void cm848_tpuBChannel11SetPwmDuty(word duty)
 
 {
-  mpc555_tpuBSetPwmDuty(0xb,param_1);
+  mpc555_tpuBSetPwmDuty(0xb,duty);
   return;
 }
 
@@ -55069,10 +55183,10 @@ void cm848_tpuBChannel11SetPwmDuty(word param_1)
 /* Output channel driver table record 12 (0x53ad06) slot +8 (set period) for TPU-B channel 11 -
    forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel11Configure) */
 
-void cm848_tpuBChannel11SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBChannel11SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(0xb,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(0xb,period_microseconds);
   return;
 }
 
@@ -55101,10 +55215,10 @@ void cm848_tpuBChannel12EnablePwm(void)
 /* Output channel driver table record 13 (0x53ad16) slot +12 (set duty) for TPU-B channel 12 -
    forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel12SetDuty) */
 
-void cm848_tpuBChannel12SetPwmDuty(word param_1)
+void cm848_tpuBChannel12SetPwmDuty(word duty)
 
 {
-  mpc555_tpuBSetPwmDuty(0xc,param_1);
+  mpc555_tpuBSetPwmDuty(0xc,duty);
   return;
 }
 
@@ -55117,10 +55231,10 @@ void cm848_tpuBChannel12SetPwmDuty(word param_1)
 /* Output channel driver table record 13 (0x53ad16) slot +8 (set period) for TPU-B channel 12 -
    forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel12Configure) */
 
-void cm848_tpuBChannel12SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBChannel12SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(0xc,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(0xc,period_microseconds);
   return;
 }
 
@@ -55149,10 +55263,10 @@ void cm848_tpuBChannel13EnablePwm(void)
 /* Output channel driver table record 14 (0x53ad26) slot +12 (set duty) for TPU-B channel 13 -
    forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel13SetDuty) */
 
-void cm848_tpuBChannel13SetPwmDuty(word param_1)
+void cm848_tpuBChannel13SetPwmDuty(word duty)
 
 {
-  mpc555_tpuBSetPwmDuty(0xd,param_1);
+  mpc555_tpuBSetPwmDuty(0xd,duty);
   return;
 }
 
@@ -55165,10 +55279,10 @@ void cm848_tpuBChannel13SetPwmDuty(word param_1)
 /* Output channel driver table record 14 (0x53ad26) slot +8 (set period) for TPU-B channel 13 -
    forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel13Configure) */
 
-void cm848_tpuBChannel13SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBChannel13SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(0xd,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(0xd,period_microseconds);
   return;
 }
 
@@ -55197,10 +55311,10 @@ void cm848_tpuBChannel14EnablePwm(void)
 /* Output channel driver table record 15 (0x53ad36) slot +12 (set duty) for TPU-B channel 14 -
    forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel14SetDuty) */
 
-void cm848_tpuBChannel14SetPwmDuty(word param_1)
+void cm848_tpuBChannel14SetPwmDuty(word duty)
 
 {
-  mpc555_tpuBSetPwmDuty(0xe,param_1);
+  mpc555_tpuBSetPwmDuty(0xe,duty);
   return;
 }
 
@@ -55213,10 +55327,10 @@ void cm848_tpuBChannel14SetPwmDuty(word param_1)
 /* Output channel driver table record 15 (0x53ad36) slot +8 (set period) for TPU-B channel 14 -
    forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel14Configure) */
 
-void cm848_tpuBChannel14SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBChannel14SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(0xe,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(0xe,period_microseconds);
   return;
 }
 
@@ -55245,10 +55359,10 @@ void cm848_tpuBChannel15EnablePwm(void)
 /* Output channel driver table record 16 (0x53ad46) slot +12 (set duty) for TPU-B channel 15 -
    forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel15SetDuty) */
 
-void cm848_tpuBChannel15SetPwmDuty(word param_1)
+void cm848_tpuBChannel15SetPwmDuty(word duty)
 
 {
-  mpc555_tpuBSetPwmDuty(0xf,param_1);
+  mpc555_tpuBSetPwmDuty(0xf,duty);
   return;
 }
 
@@ -55261,10 +55375,10 @@ void cm848_tpuBChannel15SetPwmDuty(word param_1)
 /* Output channel driver table record 16 (0x53ad46) slot +8 (set period) for TPU-B channel 15 -
    forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel15Configure) */
 
-void cm848_tpuBChannel15SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBChannel15SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(0xf,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(0xf,period_microseconds);
   return;
 }
 
@@ -55315,10 +55429,10 @@ word cm848_tpuBReadBackChannel10ReadFeedback(void)
 /* Output channel driver table record 11 (0x53acf6) slot +8 (set period) for TPU-B channel 10 with
    MDASM14 read-back: same body as the plain period wrapper (was cm848_configureTpuChannel10Alt) */
 
-void cm848_tpuBReadBackChannel10SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBReadBackChannel10SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(10,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(10,period_microseconds);
   return;
 }
 
@@ -55332,11 +55446,11 @@ void cm848_tpuBReadBackChannel10SetPwmPeriodMicroseconds(undefined4 param_1)
    MDASM14 read-back: records tpu_b_channel_10_read_back_expected_duty (stores the duty itself) then
    sets the duty (was cm848_setTpuDutyWithTrack10) */
 
-void cm848_tpuBReadBackChannel10SetPwmDuty(word param_1)
+void cm848_tpuBReadBackChannel10SetPwmDuty(word duty)
 
 {
-  tpu_b_channel_10_read_back_expected_duty = param_1;
-  mpc555_tpuBSetPwmDuty(10,param_1);
+  tpu_b_channel_10_read_back_expected_duty = duty;
+  mpc555_tpuBSetPwmDuty(10,duty);
   return;
 }
 
@@ -55463,10 +55577,10 @@ word cm848_tpuBReadBackChannel4ReadFeedback(void)
 /* Output channel driver table record 5 (0x53ac96) slot +8 (set period) for TPU-B channel 4 with
    MDASM11 read-back: same body as the plain period wrapper (was cm848_configureTpuChannel4Alt) */
 
-void cm848_tpuBReadBackChannel4SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBReadBackChannel4SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(4,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(4,period_microseconds);
   return;
 }
 
@@ -55480,11 +55594,11 @@ void cm848_tpuBReadBackChannel4SetPwmPeriodMicroseconds(undefined4 param_1)
    MDASM11 read-back: records tpu_b_channel_4_read_back_expected_duty (stores 25600 - duty) then
    sets the duty (was cm848_setTpuDutyWithTrack4) */
 
-void cm848_tpuBReadBackChannel4SetPwmDuty(word param_1)
+void cm848_tpuBReadBackChannel4SetPwmDuty(word duty)
 
 {
-  tpu_b_channel_4_read_back_expected_duty = 0x6400 - param_1;
-  mpc555_tpuBSetPwmDuty(4,param_1);
+  tpu_b_channel_4_read_back_expected_duty = 0x6400 - duty;
+  mpc555_tpuBSetPwmDuty(4,duty);
   return;
 }
 
@@ -55535,10 +55649,10 @@ word cm848_tpuBReadBackChannel6ReadFeedback(void)
 /* Output channel driver table record 7 (0x53acb6) slot +8 (set period) for TPU-B channel 6 with
    MDASM13 read-back: same body as the plain period wrapper (was cm848_configureTpuChannel6Alt) */
 
-void cm848_tpuBReadBackChannel6SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBReadBackChannel6SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(6,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(6,period_microseconds);
   return;
 }
 
@@ -55552,11 +55666,11 @@ void cm848_tpuBReadBackChannel6SetPwmPeriodMicroseconds(undefined4 param_1)
    MDASM13 read-back: records tpu_b_channel_6_read_back_expected_duty (stores 25600 - duty) then
    sets the duty (was cm848_setTpuDutyWithTrack6) */
 
-void cm848_tpuBReadBackChannel6SetPwmDuty(word param_1)
+void cm848_tpuBReadBackChannel6SetPwmDuty(word duty)
 
 {
-  tpu_b_channel_6_read_back_expected_duty = 0x6400 - param_1;
-  mpc555_tpuBSetPwmDuty(6,param_1);
+  tpu_b_channel_6_read_back_expected_duty = 0x6400 - duty;
+  mpc555_tpuBSetPwmDuty(6,duty);
   return;
 }
 
@@ -55607,10 +55721,10 @@ word cm848_tpuBReadBackChannel7ReadFeedback(void)
 /* Output channel driver table record 8 (0x53acc6) slot +8 (set period) for TPU-B channel 7 with
    MDASM12 read-back: same body as the plain period wrapper (was cm848_configureTpuChannel7Alt) */
 
-void cm848_tpuBReadBackChannel7SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuBReadBackChannel7SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuBSetPwmPeriodMicroseconds(7,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(7,period_microseconds);
   return;
 }
 
@@ -55624,11 +55738,11 @@ void cm848_tpuBReadBackChannel7SetPwmPeriodMicroseconds(undefined4 param_1)
    MDASM12 read-back: records tpu_b_channel_7_read_back_expected_duty (stores 25600 - duty) then
    sets the duty (was cm848_setTpuDutyWithTrack7) */
 
-void cm848_tpuBReadBackChannel7SetPwmDuty(word param_1)
+void cm848_tpuBReadBackChannel7SetPwmDuty(word duty)
 
 {
-  tpu_b_channel_7_read_back_expected_duty = 0x6400 - param_1;
-  mpc555_tpuBSetPwmDuty(7,param_1);
+  tpu_b_channel_7_read_back_expected_duty = 0x6400 - duty;
+  mpc555_tpuBSetPwmDuty(7,duty);
   return;
 }
 
@@ -55657,10 +55771,10 @@ void cm848_tpuAChannel0EnablePwm(void)
 /* Output channel driver table record 17 (0x53ad56) slot +12 (set duty) for TPU-A channel 0 -
    forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput0Disable) */
 
-void cm848_tpuAChannel0SetPwmDuty(word param_1)
+void cm848_tpuAChannel0SetPwmDuty(word duty)
 
 {
-  mpc555_tpuASetPwmDuty(0,param_1);
+  mpc555_tpuASetPwmDuty(0,duty);
   return;
 }
 
@@ -55673,10 +55787,10 @@ void cm848_tpuAChannel0SetPwmDuty(word param_1)
 /* Output channel driver table record 17 (0x53ad56) slot +8 (set period) for TPU-A channel 0 -
    forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput0SetPeriod) */
 
-void cm848_tpuAChannel0SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuAChannel0SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuASetPwmPeriodMicroseconds(0,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(0,period_microseconds);
   return;
 }
 
@@ -55705,10 +55819,10 @@ void cm848_tpuAChannel1EnablePwm(void)
 /* Output channel driver table record 18 (0x53ad66) slot +12 (set duty) for TPU-A channel 1 -
    forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput1Disable) */
 
-void cm848_tpuAChannel1SetPwmDuty(word param_1)
+void cm848_tpuAChannel1SetPwmDuty(word duty)
 
 {
-  mpc555_tpuASetPwmDuty(1,param_1);
+  mpc555_tpuASetPwmDuty(1,duty);
   return;
 }
 
@@ -55721,10 +55835,10 @@ void cm848_tpuAChannel1SetPwmDuty(word param_1)
 /* Output channel driver table record 18 (0x53ad66) slot +8 (set period) for TPU-A channel 1 -
    forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput1SetPeriod) */
 
-void cm848_tpuAChannel1SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuAChannel1SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuASetPwmPeriodMicroseconds(1,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(1,period_microseconds);
   return;
 }
 
@@ -55753,10 +55867,10 @@ void cm848_tpuAChannel2EnablePwm(void)
 /* Output channel driver table record 19 (0x53ad76) slot +12 (set duty) for TPU-A channel 2 -
    forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput2Disable) */
 
-void cm848_tpuAChannel2SetPwmDuty(word param_1)
+void cm848_tpuAChannel2SetPwmDuty(word duty)
 
 {
-  mpc555_tpuASetPwmDuty(2,param_1);
+  mpc555_tpuASetPwmDuty(2,duty);
   return;
 }
 
@@ -55769,10 +55883,10 @@ void cm848_tpuAChannel2SetPwmDuty(word param_1)
 /* Output channel driver table record 19 (0x53ad76) slot +8 (set period) for TPU-A channel 2 -
    forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput2SetPeriod) */
 
-void cm848_tpuAChannel2SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuAChannel2SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuASetPwmPeriodMicroseconds(2,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(2,period_microseconds);
   return;
 }
 
@@ -55801,10 +55915,10 @@ void cm848_tpuAChannel3EnablePwm(void)
 /* Output channel driver table record 20 (0x53ad86) slot +12 (set duty) for TPU-A channel 3 -
    forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput3Disable) */
 
-void cm848_tpuAChannel3SetPwmDuty(word param_1)
+void cm848_tpuAChannel3SetPwmDuty(word duty)
 
 {
-  mpc555_tpuASetPwmDuty(3,param_1);
+  mpc555_tpuASetPwmDuty(3,duty);
   return;
 }
 
@@ -55817,10 +55931,10 @@ void cm848_tpuAChannel3SetPwmDuty(word param_1)
 /* Output channel driver table record 20 (0x53ad86) slot +8 (set period) for TPU-A channel 3 -
    forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput3SetPeriod) */
 
-void cm848_tpuAChannel3SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuAChannel3SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuASetPwmPeriodMicroseconds(3,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(3,period_microseconds);
   return;
 }
 
@@ -55849,10 +55963,10 @@ void cm848_tpuAChannel4EnablePwm(void)
 /* Output channel driver table record 21 (0x53ad96) slot +12 (set duty) for TPU-A channel 4 -
    forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput4Disable) */
 
-void cm848_tpuAChannel4SetPwmDuty(word param_1)
+void cm848_tpuAChannel4SetPwmDuty(word duty)
 
 {
-  mpc555_tpuASetPwmDuty(4,param_1);
+  mpc555_tpuASetPwmDuty(4,duty);
   return;
 }
 
@@ -55865,10 +55979,10 @@ void cm848_tpuAChannel4SetPwmDuty(word param_1)
 /* Output channel driver table record 21 (0x53ad96) slot +8 (set period) for TPU-A channel 4 -
    forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput4SetPeriod) */
 
-void cm848_tpuAChannel4SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuAChannel4SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuASetPwmPeriodMicroseconds(4,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(4,period_microseconds);
   return;
 }
 
@@ -55897,10 +56011,10 @@ void cm848_tpuAChannel5EnablePwm(void)
 /* Output channel driver table record 22 (0x53ada6) slot +12 (set duty) for TPU-A channel 5 -
    forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput5Disable) */
 
-void cm848_tpuAChannel5SetPwmDuty(word param_1)
+void cm848_tpuAChannel5SetPwmDuty(word duty)
 
 {
-  mpc555_tpuASetPwmDuty(5,param_1);
+  mpc555_tpuASetPwmDuty(5,duty);
   return;
 }
 
@@ -55913,10 +56027,10 @@ void cm848_tpuAChannel5SetPwmDuty(word param_1)
 /* Output channel driver table record 22 (0x53ada6) slot +8 (set period) for TPU-A channel 5 -
    forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput5SetPeriod) */
 
-void cm848_tpuAChannel5SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuAChannel5SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuASetPwmPeriodMicroseconds(5,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(5,period_microseconds);
   return;
 }
 
@@ -55945,10 +56059,10 @@ void cm848_tpuAChannel6EnablePwm(void)
 /* Output channel driver table record 23 (0x53adb6) slot +12 (set duty) for TPU-A channel 6 -
    forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput6Disable) */
 
-void cm848_tpuAChannel6SetPwmDuty(word param_1)
+void cm848_tpuAChannel6SetPwmDuty(word duty)
 
 {
-  mpc555_tpuASetPwmDuty(6,param_1);
+  mpc555_tpuASetPwmDuty(6,duty);
   return;
 }
 
@@ -55961,10 +56075,10 @@ void cm848_tpuAChannel6SetPwmDuty(word param_1)
 /* Output channel driver table record 23 (0x53adb6) slot +8 (set period) for TPU-A channel 6 -
    forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput6SetPeriod) */
 
-void cm848_tpuAChannel6SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuAChannel6SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuASetPwmPeriodMicroseconds(6,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(6,period_microseconds);
   return;
 }
 
@@ -55993,10 +56107,10 @@ void cm848_tpuAChannel7EnablePwm(void)
 /* Output channel driver table record 24 (0x53adc6) slot +12 (set duty) for TPU-A channel 7 -
    forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput7Disable) */
 
-void cm848_tpuAChannel7SetPwmDuty(word param_1)
+void cm848_tpuAChannel7SetPwmDuty(word duty)
 
 {
-  mpc555_tpuASetPwmDuty(7,param_1);
+  mpc555_tpuASetPwmDuty(7,duty);
   return;
 }
 
@@ -56009,10 +56123,10 @@ void cm848_tpuAChannel7SetPwmDuty(word param_1)
 /* Output channel driver table record 24 (0x53adc6) slot +8 (set period) for TPU-A channel 7 -
    forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput7SetPeriod) */
 
-void cm848_tpuAChannel7SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuAChannel7SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuASetPwmPeriodMicroseconds(7,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(7,period_microseconds);
   return;
 }
 
@@ -56041,10 +56155,10 @@ void cm848_tpuAChannel8EnablePwm(void)
 /* Output channel driver table record 25 (0x53add6) slot +12 (set duty) for TPU-A channel 8 -
    forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput8Disable) */
 
-void cm848_tpuAChannel8SetPwmDuty(word param_1)
+void cm848_tpuAChannel8SetPwmDuty(word duty)
 
 {
-  mpc555_tpuASetPwmDuty(8,param_1);
+  mpc555_tpuASetPwmDuty(8,duty);
   return;
 }
 
@@ -56057,10 +56171,10 @@ void cm848_tpuAChannel8SetPwmDuty(word param_1)
 /* Output channel driver table record 25 (0x53add6) slot +8 (set period) for TPU-A channel 8 -
    forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput8SetPeriod) */
 
-void cm848_tpuAChannel8SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuAChannel8SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuASetPwmPeriodMicroseconds(8,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(8,period_microseconds);
   return;
 }
 
@@ -56089,10 +56203,10 @@ void cm848_tpuAChannel9EnablePwm(void)
 /* Output channel driver table record 26 (0x53ade6) slot +12 (set duty) for TPU-A channel 9 -
    forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput9Disable) */
 
-void cm848_tpuAChannel9SetPwmDuty(word param_1)
+void cm848_tpuAChannel9SetPwmDuty(word duty)
 
 {
-  mpc555_tpuASetPwmDuty(9,param_1);
+  mpc555_tpuASetPwmDuty(9,duty);
   return;
 }
 
@@ -56105,10 +56219,10 @@ void cm848_tpuAChannel9SetPwmDuty(word param_1)
 /* Output channel driver table record 26 (0x53ade6) slot +8 (set period) for TPU-A channel 9 -
    forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput9SetPeriod) */
 
-void cm848_tpuAChannel9SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuAChannel9SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuASetPwmPeriodMicroseconds(9,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(9,period_microseconds);
   return;
 }
 
@@ -56137,10 +56251,10 @@ void cm848_tpuAChannel10EnablePwm(void)
 /* Output channel driver table record 27 (0x53adf6) slot +12 (set duty) for TPU-A channel 10 -
    forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput10Disable) */
 
-void cm848_tpuAChannel10SetPwmDuty(word param_1)
+void cm848_tpuAChannel10SetPwmDuty(word duty)
 
 {
-  mpc555_tpuASetPwmDuty(10,param_1);
+  mpc555_tpuASetPwmDuty(10,duty);
   return;
 }
 
@@ -56153,10 +56267,10 @@ void cm848_tpuAChannel10SetPwmDuty(word param_1)
 /* Output channel driver table record 27 (0x53adf6) slot +8 (set period) for TPU-A channel 10 -
    forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput10SetPeriod) */
 
-void cm848_tpuAChannel10SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuAChannel10SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuASetPwmPeriodMicroseconds(10,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(10,period_microseconds);
   return;
 }
 
@@ -56185,10 +56299,10 @@ void cm848_tpuAChannel11EnablePwm(void)
 /* Output channel driver table record 28 (0x53ae06) slot +12 (set duty) for TPU-A channel 11 -
    forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput11Disable) */
 
-void cm848_tpuAChannel11SetPwmDuty(word param_1)
+void cm848_tpuAChannel11SetPwmDuty(word duty)
 
 {
-  mpc555_tpuASetPwmDuty(0xb,param_1);
+  mpc555_tpuASetPwmDuty(0xb,duty);
   return;
 }
 
@@ -56201,10 +56315,10 @@ void cm848_tpuAChannel11SetPwmDuty(word param_1)
 /* Output channel driver table record 28 (0x53ae06) slot +8 (set period) for TPU-A channel 11 -
    forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput11SetPeriod) */
 
-void cm848_tpuAChannel11SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuAChannel11SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuASetPwmPeriodMicroseconds(0xb,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(0xb,period_microseconds);
   return;
 }
 
@@ -56233,10 +56347,10 @@ void cm848_tpuAChannel12EnablePwm(void)
 /* Output channel driver table record 29 (0x53ae16) slot +12 (set duty) for TPU-A channel 12 -
    forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput12Disable) */
 
-void cm848_tpuAChannel12SetPwmDuty(word param_1)
+void cm848_tpuAChannel12SetPwmDuty(word duty)
 
 {
-  mpc555_tpuASetPwmDuty(0xc,param_1);
+  mpc555_tpuASetPwmDuty(0xc,duty);
   return;
 }
 
@@ -56249,10 +56363,10 @@ void cm848_tpuAChannel12SetPwmDuty(word param_1)
 /* Output channel driver table record 29 (0x53ae16) slot +8 (set period) for TPU-A channel 12 -
    forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput12SetPeriod) */
 
-void cm848_tpuAChannel12SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuAChannel12SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuASetPwmPeriodMicroseconds(0xc,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(0xc,period_microseconds);
   return;
 }
 
@@ -56281,10 +56395,10 @@ void cm848_tpuAChannel13EnablePwm(void)
 /* Output channel driver table record 30 (0x53ae26) slot +12 (set duty) for TPU-A channel 13 -
    forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput13Disable) */
 
-void cm848_tpuAChannel13SetPwmDuty(word param_1)
+void cm848_tpuAChannel13SetPwmDuty(word duty)
 
 {
-  mpc555_tpuASetPwmDuty(0xd,param_1);
+  mpc555_tpuASetPwmDuty(0xd,duty);
   return;
 }
 
@@ -56297,10 +56411,10 @@ void cm848_tpuAChannel13SetPwmDuty(word param_1)
 /* Output channel driver table record 30 (0x53ae26) slot +8 (set period) for TPU-A channel 13 -
    forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput13SetPeriod) */
 
-void cm848_tpuAChannel13SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuAChannel13SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuASetPwmPeriodMicroseconds(0xd,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(0xd,period_microseconds);
   return;
 }
 
@@ -56329,10 +56443,10 @@ void cm848_tpuAChannel14EnablePwm(void)
 /* Output channel driver table record 31 (0x53ae36) slot +12 (set duty) for TPU-A channel 14 -
    forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput14Disable) */
 
-void cm848_tpuAChannel14SetPwmDuty(word param_1)
+void cm848_tpuAChannel14SetPwmDuty(word duty)
 
 {
-  mpc555_tpuASetPwmDuty(0xe,param_1);
+  mpc555_tpuASetPwmDuty(0xe,duty);
   return;
 }
 
@@ -56345,10 +56459,10 @@ void cm848_tpuAChannel14SetPwmDuty(word param_1)
 /* Output channel driver table record 31 (0x53ae36) slot +8 (set period) for TPU-A channel 14 -
    forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput14SetPeriod) */
 
-void cm848_tpuAChannel14SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuAChannel14SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuASetPwmPeriodMicroseconds(0xe,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(0xe,period_microseconds);
   return;
 }
 
@@ -56377,10 +56491,10 @@ void cm848_tpuAChannel15EnablePwm(void)
 /* Output channel driver table record 32 (0x53ae46) slot +12 (set duty) for TPU-A channel 15 -
    forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput15Disable) */
 
-void cm848_tpuAChannel15SetPwmDuty(word param_1)
+void cm848_tpuAChannel15SetPwmDuty(word duty)
 
 {
-  mpc555_tpuASetPwmDuty(0xf,param_1);
+  mpc555_tpuASetPwmDuty(0xf,duty);
   return;
 }
 
@@ -56393,10 +56507,10 @@ void cm848_tpuAChannel15SetPwmDuty(word param_1)
 /* Output channel driver table record 32 (0x53ae46) slot +8 (set period) for TPU-A channel 15 -
    forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput15SetPeriod) */
 
-void cm848_tpuAChannel15SetPwmPeriodMicroseconds(undefined4 param_1)
+void cm848_tpuAChannel15SetPwmPeriodMicroseconds(dword period_microseconds)
 
 {
-  mpc555_tpuASetPwmPeriodMicroseconds(0xf,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(0xf,period_microseconds);
   return;
 }
 
@@ -58916,48 +59030,51 @@ void mpc555_queueCanReceiveMessage(int param_1)
 
 {
   word wVar1;
-  undefined *puVar2;
-  uint uVar3;
-  int iVar4;
-  undefined *puVar5;
-  undefined1 *puVar6;
+  j1939_received_message_t *pjVar2;
+  int iVar3;
+  undefined *puVar4;
+  undefined1 *puVar5;
+  uint uVar6;
   ushort uVar7;
   
-  puVar2 = can_receive_queue_write_pointer;
+  pjVar2 = can_receive_queue_write_pointer;
   if (can_receive_queue_full_flag == 0) {
     param_1 = param_1 * 0x10;
-    *(uint *)can_receive_queue_write_pointer =
-         (*(uint *)(&DAT_003070f2 + param_1) & 0xffe00000) >> 3 |
-         *(uint *)(&DAT_003070f2 + param_1) >> 1 & 0x3ffff;
-    *(ushort *)(puVar2 + 4) = (byte)(&DAT_003070f1)[param_1] & 0xf;
-    *(undefined **)(puVar2 + 6) = puVar2 + 10;
+    uVar6 = (*(uint *)(&DAT_003070f2 + param_1) & 0xffe00000) >> 3 |
+            *(uint *)(&DAT_003070f2 + param_1) >> 1 & 0x3ffff;
+    pjVar2->priority_dp_flags = (char)(uVar6 >> 0x18);
+    pjVar2->pgn_pf = (char)(uVar6 >> 0x10);
+    pjVar2->destination_address = (char)(uVar6 >> 8);
+    pjVar2->source_address = (char)uVar6;
+    pjVar2->data_length = (byte)(&DAT_003070f1)[param_1] & 0xf;
+    pjVar2->data_pointer = pjVar2->inline_data;
     uVar7 = 0;
-    puVar5 = &UNK_003070f5 + param_1;
-    puVar6 = puVar2 + 9;
+    puVar4 = &UNK_003070f5 + param_1;
+    puVar5 = (undefined1 *)((int)&pjVar2->data_pointer + 3);
     do {
+      puVar4 = puVar4 + 1;
       puVar5 = puVar5 + 1;
-      puVar6 = puVar6 + 1;
-      *puVar6 = *puVar5;
+      *puVar5 = *puVar4;
       uVar7 = uVar7 + 1;
     } while (uVar7 < 8);
     wVar1 = toucan_a.TIMER;
   }
-  can_receive_queue_write_pointer = can_receive_queue_write_pointer + 0x12;
-  if (&can_receive_queue_last_entry < can_receive_queue_write_pointer) {
-    can_receive_queue_write_pointer = &can_receive_queue_buffer;
+  can_receive_queue_write_pointer = can_receive_queue_write_pointer + 1;
+  if (can_receive_queue_buffer + 0x13 < can_receive_queue_write_pointer) {
+    can_receive_queue_write_pointer = can_receive_queue_buffer;
   }
   if (can_receive_queue_write_pointer == can_receive_queue_read_pointer) {
     can_receive_queue_full_flag = 1;
-    iVar4 = 1 << (j1939_transmit_message_object_number + 1 & 0x3f);
-    uVar3 = 0;
+    iVar3 = 1 << (j1939_transmit_message_object_number + 1 & 0x3f);
+    uVar6 = 0;
     if (0 < (int)((uint)j1939_last_receive_message_object_number -
                  (uint)j1939_transmit_message_object_number)) {
       do {
         wVar1 = toucan_a.IMASK;
-        toucan_a.IMASK = wVar1 & ~(ushort)iVar4;
-        iVar4 = iVar4 * 2;
-        uVar3 = uVar3 + 1 & 0xffff;
-      } while ((int)uVar3 <
+        toucan_a.IMASK = wVar1 & ~(ushort)iVar3;
+        iVar3 = iVar3 * 2;
+        uVar6 = uVar6 + 1 & 0xffff;
+      } while ((int)uVar6 <
                (int)((uint)j1939_last_receive_message_object_number -
                     (uint)j1939_transmit_message_object_number));
     }
@@ -59590,7 +59707,7 @@ void mpc555_miosInterruptDispatcher(void)
   if (uVar4 < 0x10) {
     wVar1 = mios1_isr.FLG;
     mios1_isr.FLG = wVar1 & ~uVar3;
-    (*(code *)mios_interrupt_handler_table[uVar4])();
+    (*mios_interrupt_handler_table[uVar4])();
   }
   return;
 }
@@ -60728,7 +60845,7 @@ void unscrambleSecurityKey(int param_1,int param_2)
 {
   byte bVar1;
   uint uVar2;
-  undefined **ppuVar3;
+  interrupt_handler_function_t **ppiVar3;
   int iVar4;
   int iVar5;
   uint uVar6;
@@ -60797,12 +60914,12 @@ void unscrambleSecurityKey(int param_1,int param_2)
     iVar12 = iVar12 + 1;
   } while (iVar12 < 10);
   iVar12 = 0;
-  ppuVar3 = tpu_b_channel_interrupt_handler_table;
+  ppiVar3 = tpu_b_channel_interrupt_handler_table;
   puVar11 = &uStack_19;
   do {
-    ppuVar3 = (undefined **)((int)ppuVar3 + -1);
+    ppiVar3 = (interrupt_handler_function_t **)((int)ppiVar3 + -1);
     puVar11 = puVar11 + 1;
-    *(undefined1 *)(param_2 + (uint)*(byte *)ppuVar3) = *puVar11;
+    *(undefined1 *)(param_2 + (uint)*(byte *)ppiVar3) = *puVar11;
     iVar12 = iVar12 + 1;
   } while (iVar12 < 10);
   return;
@@ -60893,48 +61010,46 @@ void cm848_driveTachometerOutputs(void)
 
 {
   ushort uVar1;
-  word wVar2;
-  uint uVar3;
+  word duty;
+  uint uVar2;
   
   uVar1 = engine_speed_state.filtered_engine_speed;
   if (tachometer_override_mode == 1) {
     uVar1 = tachometer_override_engine_speed;
   }
-  uVar3 = (uint)uVar1;
+  uVar2 = (uint)uVar1;
   if ((uVar1 != 0) && ((uint)uVar1 < (uint)tachometer_minimum_engine_speed)) {
-    uVar3 = (uint)tachometer_minimum_engine_speed;
+    uVar2 = (uint)tachometer_minimum_engine_speed;
   }
-  if ((uVar3 == 0) || (0x10c5 < tachometer_base_period)) {
+  if ((uVar2 == 0) || (0x10c5 < tachometer_base_period)) {
     tachometer_signal_period = 0xffffffff;
-    wVar2 = 0;
+    duty = 0;
   }
   else {
-    tachometer_signal_period = ((uint)tachometer_base_period * 1000000) / uVar3;
-    wVar2 = 0x3200;
+    tachometer_signal_period = ((uint)tachometer_base_period * 1000000) / uVar2;
+    duty = 0x3200;
   }
   if ((tachometer_highside_driver_output_channel_cal != 0) &&
      (tachometer_highside_driver_output_channel_cal < 0x33)) {
     tachometer_highside_driver_period_command = tachometer_signal_period;
-    (**(code **)(&output_channel_driver_table_set_period +
-                (uint)tachometer_highside_driver_output_channel_cal * 0x10))();
+    (*output_channel_driver_table[tachometer_highside_driver_output_channel_cal].set_period)
+              (tachometer_signal_period);
   }
   if ((tachometer_highside_driver_output_channel_cal != 0) &&
      (tachometer_highside_driver_output_channel_cal < 0x33)) {
-    tachometer_highside_driver_duty_command = wVar2;
-    (**(code **)(&output_channel_driver_table_set_duty +
-                (uint)tachometer_highside_driver_output_channel_cal * 0x10))(wVar2);
+    tachometer_highside_driver_duty_command = duty;
+    (*output_channel_driver_table[tachometer_highside_driver_output_channel_cal].set_duty)(duty);
   }
   if ((tachometer_lowside_driver_output_channel_cal != 0) &&
      (tachometer_lowside_driver_output_channel_cal < 0x33)) {
     tachometer_lowside_driver_period_command = tachometer_signal_period;
-    (**(code **)(&output_channel_driver_table_set_period +
-                (uint)tachometer_lowside_driver_output_channel_cal * 0x10))();
+    (*output_channel_driver_table[tachometer_lowside_driver_output_channel_cal].set_period)
+              (tachometer_signal_period);
   }
   if ((tachometer_lowside_driver_output_channel_cal != 0) &&
      (tachometer_lowside_driver_output_channel_cal < 0x33)) {
-    tachometer_lowside_driver_duty_command = wVar2;
-    (**(code **)(&output_channel_driver_table_set_duty +
-                (uint)tachometer_lowside_driver_output_channel_cal * 0x10))(wVar2);
+    tachometer_lowside_driver_duty_command = duty;
+    (*output_channel_driver_table[tachometer_lowside_driver_output_channel_cal].set_duty)(duty);
   }
   return;
 }
@@ -60961,37 +61076,33 @@ void cm848_initializeTachometerOutputs(void)
   }
   if ((tachometer_highside_driver_output_channel_cal != 0) &&
      (tachometer_highside_driver_output_channel_cal < 0x33)) {
-    (**(code **)(&output_channel_driver_table_enable +
-                (uint)tachometer_highside_driver_output_channel_cal * 0x10))();
+    (*output_channel_driver_table[tachometer_highside_driver_output_channel_cal].enable)();
   }
   if ((tachometer_highside_driver_output_channel_cal != 0) &&
      (tachometer_highside_driver_output_channel_cal < 0x33)) {
     tachometer_highside_driver_period_command = 0xffffffff;
-    (**(code **)(&output_channel_driver_table_set_period +
-                (uint)tachometer_highside_driver_output_channel_cal * 0x10))(0xffffffff);
+    (*output_channel_driver_table[tachometer_highside_driver_output_channel_cal].set_period)
+              (0xffffffff);
   }
   if ((tachometer_highside_driver_output_channel_cal != 0) &&
      (tachometer_highside_driver_output_channel_cal < 0x33)) {
     tachometer_highside_driver_duty_command = 0;
-    (**(code **)(&output_channel_driver_table_set_duty +
-                (uint)tachometer_highside_driver_output_channel_cal * 0x10))(0);
+    (*output_channel_driver_table[tachometer_highside_driver_output_channel_cal].set_duty)(0);
   }
   if ((tachometer_lowside_driver_output_channel_cal != 0) &&
      (tachometer_lowside_driver_output_channel_cal < 0x33)) {
-    (**(code **)(&output_channel_driver_table_enable +
-                (uint)tachometer_lowside_driver_output_channel_cal * 0x10))();
+    (*output_channel_driver_table[tachometer_lowside_driver_output_channel_cal].enable)();
   }
   if ((tachometer_lowside_driver_output_channel_cal != 0) &&
      (tachometer_lowside_driver_output_channel_cal < 0x33)) {
     tachometer_lowside_driver_period_command = 0xffffffff;
-    (**(code **)(&output_channel_driver_table_set_period +
-                (uint)tachometer_lowside_driver_output_channel_cal * 0x10))(0xffffffff);
+    (*output_channel_driver_table[tachometer_lowside_driver_output_channel_cal].set_period)
+              (0xffffffff);
   }
   if ((tachometer_lowside_driver_output_channel_cal != 0) &&
      (tachometer_lowside_driver_output_channel_cal < 0x33)) {
     tachometer_lowside_driver_duty_command = 0;
-    (**(code **)(&output_channel_driver_table_set_duty +
-                (uint)tachometer_lowside_driver_output_channel_cal * 0x10))(0);
+    (*output_channel_driver_table[tachometer_lowside_driver_output_channel_cal].set_duty)(0);
   }
   return;
 }
@@ -61080,7 +61191,7 @@ void mpc555_tpuBInterruptDispatcher(void)
   if ((uVar3 & 0xff) < 0x10) {
     wVar1 = tpu_b.CISR;
     tpu_b.CISR = wVar1 & ~(ushort)(1 << (uVar3 & 0x3f));
-    (*(code *)tpu_b_channel_interrupt_handler_table[uVar3 & 0xff])();
+    (*tpu_b_channel_interrupt_handler_table[uVar3 & 0xff])();
   }
   return;
 }
@@ -61112,7 +61223,7 @@ void mpc555_tpuAInterruptDispatcher(void)
   if ((uVar3 & 0xff) < 0x10) {
     wVar1 = tpu_a.CISR;
     tpu_a.CISR = wVar1 & ~(ushort)(1 << (uVar3 & 0x3f));
-    (*(code *)tpu_a_channel_interrupt_handler_table[uVar3 & 0xff])();
+    (*tpu_a_channel_interrupt_handler_table[uVar3 & 0xff])();
   }
   return;
 }
@@ -72848,8 +72959,9 @@ void cm848_serviceJ1939TransportSessions(void)
    bytes the single-frame record at 0x3fcbc4 (data at 0x3fcbd3 / status byte at 0x3fcbd2) - else the
    transport record at 0x3fc4ad (data at 0x3fc4bc / status byte at 0x3fc4bb) when that status byte's
    high nibble is 0 - else 0. It sets the record's data length / data pointer / status pointer. Used
-   by the PGN 61184 replies (cm848_sendJ1939ResponseFrame / readJ1939DiagnosticMemoryAndRespond) and
-   cm848_sendDataCollectorBuffer (was j1939_selectResponseBuffer; PR #53 round 63) */
+   by the PGN 61184 replies (sendJ1939DiagnosticServiceResponse /
+   readJ1939DiagnosticMemoryAndRespond) and cm848_sendDataCollectorBuffer (was
+   j1939_selectResponseBuffer; PR #53 round 63) */
 
 j1939_transmit_message_t * cm848_selectJ1939TransmitBuffer(int length)
 
@@ -78430,13 +78542,12 @@ void cm848_applyCoolingFanDuty(void)
   }
   if ((cooling_fan_output_channel_cal != 0) && (cooling_fan_output_channel_cal < 0x33)) {
     cooling_fan_duty_command = cooling_fan_duty;
-    (**(code **)(&output_channel_driver_table_set_duty + (uint)cooling_fan_output_channel_cal * 0x10
-                ))(cooling_fan_duty);
+    (*output_channel_driver_table[cooling_fan_output_channel_cal].set_duty)(cooling_fan_duty);
   }
   if ((cooling_fan_output_channel_cal != 0) && (cooling_fan_output_channel_cal < 0x33)) {
     cooling_fan_period_microseconds = 1000000 / cooling_fan_pwm_frequency_hz;
-    (**(code **)(&output_channel_driver_table_set_period +
-                (uint)cooling_fan_output_channel_cal * 0x10))(cooling_fan_period_microseconds);
+    (*output_channel_driver_table[cooling_fan_output_channel_cal].set_period)
+              (cooling_fan_period_microseconds);
   }
   return;
 }
@@ -78511,8 +78622,7 @@ void cm848_initializeCoolingFanControl(void)
   cooling_fan_intake_temperature_filter.coefficient =
        &cooling_fan_intake_temperature_filter_coefficient;
   if ((cooling_fan_output_channel_cal != 0) && (cooling_fan_output_channel_cal < 0x33)) {
-    (**(code **)(&output_channel_driver_table_enable + (uint)cooling_fan_output_channel_cal * 0x10))
-              ();
+    (*output_channel_driver_table[cooling_fan_output_channel_cal].enable)();
   }
   return;
 }
@@ -82277,7 +82387,7 @@ void cm848_initializeConverterClutchRationalityMonitor(void)
 void cm848_learnGovernorPressureSensorOffset(void)
 
 {
-  word wVar1;
+  word duty;
   
   governor_pressure_sensor_zero_offset = governor_pressure_sensor_offset_maximum;
   if ((governor_pressure_sensor_offset_maximum < governor_pressure_sensor_filtered) ||
@@ -82290,15 +82400,14 @@ void cm848_learnGovernorPressureSensorOffset(void)
     governor_pressure_sensor_calibration_flags =
          governor_pressure_sensor_calibration_flags & 0xfd | 1;
   }
-  wVar1 = governor_pressure_controller_output;
+  duty = governor_pressure_controller_output;
   if (governor_pressure_solenoid_duty_inversion == 1) {
-    wVar1 = 0x6400 - governor_pressure_controller_output;
+    duty = 0x6400 - governor_pressure_controller_output;
   }
   if ((governor_pressure_solenoid_output_channel_cal != 0) &&
      (governor_pressure_solenoid_output_channel_cal < 0x33)) {
-    governor_pressure_solenoid_duty_command = wVar1;
-    (**(code **)(&output_channel_driver_table_set_duty +
-                (uint)governor_pressure_solenoid_output_channel_cal * 0x10))(wVar1);
+    governor_pressure_solenoid_duty_command = duty;
+    (*output_channel_driver_table[governor_pressure_solenoid_output_channel_cal].set_duty)(duty);
   }
   return;
 }
@@ -82378,15 +82487,13 @@ void cm848_calibrateGovernorPressureSensorOffset(void)
       if ((governor_pressure_solenoid_output_channel_cal != 0) &&
          (governor_pressure_solenoid_output_channel_cal < 0x33)) {
         governor_pressure_solenoid_duty_command = 0;
-        (**(code **)(&output_channel_driver_table_set_duty +
-                    (uint)governor_pressure_solenoid_output_channel_cal * 0x10))(0);
+        (*output_channel_driver_table[governor_pressure_solenoid_output_channel_cal].set_duty)(0);
       }
       if ((governor_pressure_solenoid_output_channel_cal != 0) &&
          (governor_pressure_solenoid_output_channel_cal < 0x33)) {
         governor_pressure_solenoid_period_microseconds =
              1000000 / governor_pressure_solenoid_frequency;
-        (**(code **)(&output_channel_driver_table_set_period +
-                    (uint)governor_pressure_solenoid_output_channel_cal * 0x10))
+        (*output_channel_driver_table[governor_pressure_solenoid_output_channel_cal].set_period)
                   (governor_pressure_solenoid_period_microseconds);
       }
     }
@@ -82697,15 +82804,13 @@ void cm848_controlGovernorPressureSolenoid(void)
     if ((governor_pressure_solenoid_output_channel_cal != 0) &&
        (governor_pressure_solenoid_output_channel_cal < 0x33)) {
       governor_pressure_solenoid_duty_command = wVar2;
-      (**(code **)(&output_channel_driver_table_set_duty +
-                  (uint)governor_pressure_solenoid_output_channel_cal * 0x10))(wVar2);
+      (*output_channel_driver_table[governor_pressure_solenoid_output_channel_cal].set_duty)(wVar2);
     }
     if ((governor_pressure_solenoid_output_channel_cal != 0) &&
        (governor_pressure_solenoid_output_channel_cal < 0x33)) {
       governor_pressure_solenoid_period_microseconds =
            1000000 / governor_pressure_solenoid_frequency;
-      (**(code **)(&output_channel_driver_table_set_period +
-                  (uint)governor_pressure_solenoid_output_channel_cal * 0x10))
+      (*output_channel_driver_table[governor_pressure_solenoid_output_channel_cal].set_period)
                 (governor_pressure_solenoid_period_microseconds);
     }
   }
@@ -82729,8 +82834,7 @@ void cm848_initializeGovernorPressureControl(void)
   governor_pressure_temperature_gain_percent_cached_axis_offset = 2;
   if ((governor_pressure_solenoid_output_channel_cal != 0) &&
      (governor_pressure_solenoid_output_channel_cal < 0x33)) {
-    (**(code **)(&output_channel_driver_table_enable +
-                (uint)governor_pressure_solenoid_output_channel_cal * 0x10))();
+    (*output_channel_driver_table[governor_pressure_solenoid_output_channel_cal].enable)();
   }
   governor_pressure_integral_period_counter = governor_pressure_integral_period;
   governor_pressure_controller_output = governor_pressure_controller_initial_output;
@@ -83346,7 +83450,7 @@ void cm848_sciCallbackDispatcher(void)
   if ((sci_byte_pending == 1) && ((sci_mode_flags & 1) == 0)) {
     sci_byte_pending = 0;
     cm848_sciStartCallbackTimeout();
-    (*(code *)sci_next_byte_handler)();
+    (*sci_next_byte_handler)();
   }
   else {
     cm848_sciCallbackTimeout();
@@ -83374,7 +83478,7 @@ void cm848_dispatchSciCommand(void)
   uVar2 = 0;
   do {
     if (*(byte *)sci_buffer_cursor == sci_command_dispatch_table[uVar2].command) {
-      (*(code *)sci_command_dispatch_table[uVar2].handler)();
+      (*sci_command_dispatch_table[uVar2].handler)();
       bVar1 = true;
     }
     uVar2 = uVar2 + 1 & 0xff;
@@ -85796,8 +85900,7 @@ void cm848_sciCommand37Callback(void)
   uint uVar3;
   uint uVar4;
   
-  (&sci_command_37_test_number)[sci_command_37_received_byte_count] =
-       *(undefined1 *)sci_buffer_cursor;
+  (&sci_command_37_test_number)[sci_command_37_received_byte_count] = *(byte *)sci_buffer_cursor;
   bVar2 = sci_command_37_requested_state;
   bVar1 = sci_command_37_test_number;
   uVar4 = sci_command_37_received_byte_count + 1;
@@ -85828,8 +85931,8 @@ void cm848_sciCommand37Callback(void)
       if ((governor_pressure_solenoid_output_channel_cal != 0) &&
          (governor_pressure_solenoid_output_channel_cal < 0x33)) {
         governor_pressure_solenoid_duty_command = governor_pressure_solenoid_actuator_test_duty;
-        (**(code **)(&output_channel_driver_table_set_duty +
-                    (uint)governor_pressure_solenoid_output_channel_cal * 0x10))();
+        (*output_channel_driver_table[governor_pressure_solenoid_output_channel_cal].set_duty)
+                  (governor_pressure_solenoid_actuator_test_duty);
       }
     }
     else {
@@ -85846,8 +85949,8 @@ void cm848_sciCommand37Callback(void)
       if ((governor_pressure_solenoid_output_channel_cal != 0) &&
          (governor_pressure_solenoid_output_channel_cal < 0x33)) {
         governor_pressure_solenoid_duty_command = governor_pressure_solenoid_duty_minimum;
-        (**(code **)(&output_channel_driver_table_set_duty +
-                    (uint)governor_pressure_solenoid_output_channel_cal * 0x10))();
+        (*output_channel_driver_table[governor_pressure_solenoid_output_channel_cal].set_duty)
+                  (governor_pressure_solenoid_duty_minimum);
       }
     }
     governor_pressure_solenoid_actuator_test_timeout_count = 0x19;
@@ -85880,8 +85983,7 @@ void cm848_sciCommand37Callback(void)
     if ((governor_pressure_solenoid_output_channel_cal != 0) &&
        (governor_pressure_solenoid_output_channel_cal < 0x33)) {
       governor_pressure_solenoid_duty_command = governor_pressure_solenoid_duty_minimum;
-      (**(code **)(&output_channel_driver_table_set_duty +
-                  (uint)governor_pressure_solenoid_output_channel_cal * 0x10))
+      (*output_channel_driver_table[governor_pressure_solenoid_output_channel_cal].set_duty)
                 (governor_pressure_solenoid_duty_minimum);
     }
     converter_clutch_solenoid_actuator_test_timeout_count = 10;
@@ -85914,8 +86016,8 @@ void cm848_sciCommand37Callback(void)
     if ((governor_pressure_solenoid_output_channel_cal != 0) &&
        (governor_pressure_solenoid_output_channel_cal < 0x33)) {
       governor_pressure_solenoid_duty_command = governor_pressure_solenoid_duty_minimum;
-      (**(code **)(&output_channel_driver_table_set_duty +
-                  (uint)governor_pressure_solenoid_output_channel_cal * 0x10))();
+      (*output_channel_driver_table[governor_pressure_solenoid_output_channel_cal].set_duty)
+                (governor_pressure_solenoid_duty_minimum);
     }
     overdrive_solenoid_actuator_test_timeout_count = 10;
   }
@@ -91093,13 +91195,16 @@ void cm848_loadInjectorDriverCalibration(void)
   tpu_a_channel_4_parameters.PARAM7 = injector_driver_delay_duration;
   tpu_a_channel_2_parameters.PARAM7 = injector_driver_delay_duration;
   tpu_a_channel_7_parameters.PARAM7 = injector_driver_delay_duration;
-  cm848_miosPwm16SetPeriodMicroseconds(injector_driver_booster_voltage_pwm_period_microseconds);
+  cm848_miosPwm16SetPeriodMicroseconds
+            ((uint)injector_driver_booster_voltage_pwm_period_microseconds);
   cm848_miosPwm16SetDuty(injector_driver_booster_voltage_level);
-  cm848_miosPwm17SetPeriodMicroseconds(injector_driver_recharge_voltage_pwm_period_microseconds);
+  cm848_miosPwm17SetPeriodMicroseconds
+            ((uint)injector_driver_recharge_voltage_pwm_period_microseconds);
   cm848_miosPwm17SetDuty(injector_driver_recharge_voltage_level);
-  cm848_miosPwm18SetPeriodMicroseconds(injector_driver_hold_current_pwm_period_microseconds);
+  cm848_miosPwm18SetPeriodMicroseconds((uint)injector_driver_hold_current_pwm_period_microseconds);
   cm848_miosPwm18SetDuty(injector_driver_hold_current_level);
-  cm848_miosPwm19SetPeriodMicroseconds(injector_driver_pull_in_current_pwm_period_microseconds);
+  cm848_miosPwm19SetPeriodMicroseconds
+            ((uint)injector_driver_pull_in_current_pwm_period_microseconds);
   cm848_miosPwm19SetDuty(injector_driver_pull_in_current_level);
   wVar2 = lookupTableInterpolation
                     (&tpu_a_channel_14_scale_by_battery_voltage_cached_axis_offset,
@@ -91242,16 +91347,19 @@ void cm848_initializeInjectionHardware(void)
   wVar1 = tpu_a.CPR0;
   tpu_a.CPR0 = wVar1 & 0xcfff | 0x1000;
   cm848_miosPwm16Enable();
-  cm848_miosPwm16SetPeriodMicroseconds(injector_driver_booster_voltage_pwm_period_microseconds);
+  cm848_miosPwm16SetPeriodMicroseconds
+            ((uint)injector_driver_booster_voltage_pwm_period_microseconds);
   cm848_miosPwm16SetDuty(injector_driver_booster_voltage_level);
   cm848_miosPwm17Enable();
-  cm848_miosPwm17SetPeriodMicroseconds(injector_driver_recharge_voltage_pwm_period_microseconds);
+  cm848_miosPwm17SetPeriodMicroseconds
+            ((uint)injector_driver_recharge_voltage_pwm_period_microseconds);
   cm848_miosPwm17SetDuty(injector_driver_recharge_voltage_level);
   cm848_miosPwm18Enable();
-  cm848_miosPwm18SetPeriodMicroseconds(injector_driver_hold_current_pwm_period_microseconds);
+  cm848_miosPwm18SetPeriodMicroseconds((uint)injector_driver_hold_current_pwm_period_microseconds);
   cm848_miosPwm18SetDuty(injector_driver_hold_current_level);
   cm848_miosPwm19Enable();
-  cm848_miosPwm19SetPeriodMicroseconds(injector_driver_pull_in_current_pwm_period_microseconds);
+  cm848_miosPwm19SetPeriodMicroseconds
+            ((uint)injector_driver_pull_in_current_pwm_period_microseconds);
   cm848_miosPwm19SetDuty(injector_driver_pull_in_current_level);
   injection_angle_offset_cached_axis_offsets[0] = 2;
   injection_angle_offset_cached_axis_offsets[1] = 2;
@@ -100890,7 +100998,7 @@ void cm848_exceptionHandler(void)
    j1939_handlerInitializer; PR #53 round 65) | the twin of CM550 0x21272, whose table holds 16: one
    shared name (was cm848_registerJ1939ReceiveHandler; PR #53 round 91) */
 
-bool registerJ1939ReceiveHandler(word pgn_key,void *handler)
+bool registerJ1939ReceiveHandler(word pgn_key,j1939_receive_handler_function_t *handler)
 
 {
   uint uVar1;
@@ -100927,7 +101035,7 @@ void cm848_dispatchJ1939ReceivedMessages(void)
   j1939_receive_handler_entry_t *pjVar7;
   byte *pbVar8;
   byte bVar9;
-  undefined2 local_20;
+  word pgn_key;
   
   uVar4 = TBLr;
   uVar4 = uVar4 >> 7 & 0xffff;
@@ -100937,27 +101045,29 @@ void cm848_dispatchJ1939ReceivedMessages(void)
     while ((iVar5 < 9 &&
            ((can_receive_queue_write_pointer != can_receive_queue_read_pointer ||
             (can_receive_queue_full_flag == 1))))) {
-      bVar9 = can_receive_queue_read_pointer[1];
-      local_20 = *(ushort *)(can_receive_queue_read_pointer + 1);
+      bVar9 = can_receive_queue_read_pointer->pgn_pf;
+      pgn_key._0_1_ = can_receive_queue_read_pointer->pgn_pf;
+      pgn_key._1_1_ = can_receive_queue_read_pointer->destination_address;
       if (bVar9 == 0) {
-        if (((j1939_source_address & 0xff) != (ushort)(byte)can_receive_queue_read_pointer[2]) &&
+        if (((j1939_source_address & 0xff) !=
+             (ushort)can_receive_queue_read_pointer->destination_address) &&
            ((j1939_engine_retarder_source_address & 0xff) !=
-            (ushort)(byte)can_receive_queue_read_pointer[2])) {
+            (ushort)can_receive_queue_read_pointer->destination_address)) {
 LAB_00539000:
-          if ((char)local_20 != -1) goto LAB_00539014;
+          if ((undefined1)pgn_key != -1) goto LAB_00539014;
         }
 LAB_0053900c:
-        local_20 = (ushort)bVar9 << 8;
+        pgn_key = (ushort)bVar9 << 8;
       }
       else if (bVar9 < 0xf0) {
         if ((bVar9 == 0xdf) && (algorithm_enable_flags_29_cal.dm13_enable != 0)) {
           cm848_onJ1939Dm13SeenOnBus();
         }
-        if ((local_20 & 0xff) != (j1939_source_address & 0xff)) goto LAB_00539000;
+        if ((pgn_key & 0xff) != (j1939_source_address & 0xff)) goto LAB_00539000;
         goto LAB_0053900c;
       }
 LAB_00539014:
-      j1939_received_source_address = can_receive_queue_read_pointer[3];
+      j1939_received_source_address = can_receive_queue_read_pointer->source_address;
       pbVar8 = j1939_source_address_blocking_table;
       bVar2 = false;
       do {
@@ -100973,8 +101083,8 @@ LAB_00539060:
         bVar9 = 0;
         if (j1939_receive_handler_count != 0) {
           do {
-            if (pjVar7->pgn_key == local_20) {
-              (*(code *)pjVar7->handler)(can_receive_queue_read_pointer);
+            if (pjVar7->pgn_key == pgn_key) {
+              (*pjVar7->handler)(can_receive_queue_read_pointer);
               break;
             }
             pjVar7 = pjVar7 + 1;
@@ -100982,9 +101092,9 @@ LAB_00539060:
           } while (bVar9 < j1939_receive_handler_count);
         }
       }
-      can_receive_queue_read_pointer = can_receive_queue_read_pointer + 0x12;
-      if (&can_receive_queue_last_entry < can_receive_queue_read_pointer) {
-        can_receive_queue_read_pointer = &can_receive_queue_buffer;
+      can_receive_queue_read_pointer = can_receive_queue_read_pointer + 1;
+      if (can_receive_queue_buffer + 0x13 < can_receive_queue_read_pointer) {
+        can_receive_queue_read_pointer = can_receive_queue_buffer;
       }
       if (can_receive_queue_full_flag == 1) {
         can_receive_queue_full_flag = 0;
@@ -101022,8 +101132,8 @@ void cm848_j1939_system_init(void)
   datalink_broadcast_enable_flags = datalink_broadcast_enable_default_cal;
   can_transmit_queue_dequeue_pointer = (dword)&can_transmit_queue_buffer;
   can_transmit_queue_enqueue_pointer = &can_transmit_queue_buffer;
-  can_receive_queue_read_pointer = &can_receive_queue_buffer;
-  can_receive_queue_write_pointer = &can_receive_queue_buffer;
+  can_receive_queue_read_pointer = can_receive_queue_buffer;
+  can_receive_queue_write_pointer = can_receive_queue_buffer;
   cm848_initializeJ1939Transport();
   DAT_0040ad54 = 4;
   uVar5 = 0;
@@ -101717,9 +101827,7 @@ void cm848_updateOutputReadBackFaultBits(void)
         }
       }
       if ((bool)check_this_pass) {
-        read_back_verdict =
-             (*(code *)(&output_channel_driver_table_read_feedback)[(uint)*output_channel_entry * 4]
-             )();
+        read_back_verdict = (*output_channel_driver_table[*output_channel_entry].read_feedback)();
         if (read_back_verdict != 0xffff) {
           fault_word_index = (int)output_index >> 4;
           if (read_back_verdict == 0) {
@@ -101756,4 +101864,4 @@ void cm848_updateOutputReadBackFaultBits(void)
 
 
 
-// Export complete - 1969 functions processed
+// Export complete - 1971 functions processed
