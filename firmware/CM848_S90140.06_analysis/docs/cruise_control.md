@@ -2,7 +2,7 @@
 
 This file covers what the S90140.06 firmware does for cruise control. It comes from a read-only review on 2026-11-22.
 
-**Names and addresses follow PR #53 at `bdf1fdf8` (round 95).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
+**Names and addresses follow PR #53 at `5f9483fe` (round 97).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
 
 Evidence tags:
 
@@ -118,7 +118,7 @@ Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrU
 **The disabled latch: `vacuum_throttle_actuator_disabled_flag`.** [code]
 - It latches on a pedal fault.
 - It also latches when the error stays above `vacuum_throttle_disabled_error_threshold` with the brake off. That needs `vacuum_throttle_disabled_counter` to reach `vacuum_throttle_maximum_error_time`.
-- Only boot init (`cm848_initCruiseServoControl`, 0x3fba4) clears it. [review]
+- Only the boot-time initialization (`cm848_initializeCruiseServoControl`, 0x3fba4) clears it. [review]
 - With `vacuum_throttle_cruise_actuator_disable_mode` = 1, the latch denies cruise (status 4). [round 26]
 
 **Who reads the enable bit.** Three functions, all by field name. None of them gates cruise engagement. [code]
