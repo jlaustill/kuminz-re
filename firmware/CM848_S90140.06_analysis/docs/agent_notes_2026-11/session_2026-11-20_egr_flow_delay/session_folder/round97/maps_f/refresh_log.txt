@@ -1,0 +1,35 @@
+-- cm550 own
+global_variables.csv: 50 references refreshed
+function_renames.csv: 29 references refreshed
+deleted_functions.csv: 2 references refreshed
+-- cm550 map into cm848
+global_variables.csv: 5 references refreshed
+function_renames.csv: 3 references refreshed
+-- cm848 own (+ firmware/CLAUDE.md, test_disasm_tools.py)
+global_variables.csv: 95 references refreshed
+function_renames.csv: 50 references refreshed
+deleted_functions.csv: 1 references refreshed
+arrays.csv: 2 references refreshed
+firmware/CLAUDE.md: 3 references refreshed
+-- cm848 map into cm550
+global_variables.csv: 3 references refreshed
+function_renames.csv: 1 references refreshed
+-- other csvs
+cm550 function_definitions.csv: 11 references refreshed
+cm550 enums.csv: 22 references refreshed
+cm550 structure_definitions.csv: 24 references refreshed
+cm848 function_definitions.csv: 19 references refreshed
+cm848 enums.csv: 12 references refreshed
+cm848 structure_definitions.csv: 8 references refreshed
+-- sweeps
+HISTORY REWRITTEN? firmware/CM550_J90350.00_analysis/output/function_definitions.csv:385 (was updateJ1939BroadcastEnableMask). Return: clr.b d0 / moveq #4. (PR #53 round 97)
+0x000
+firmware/CM848_S90140.06_analysis/docs/cbd_enable_experiment.md:47: cbd_enable_flag -> cylinder_balance_enable_flag | - `cbd_enable_flag` (0x00408ef6) = **0x01 (ENABLED!)**
+firmware/CM848_S90140.06_analysis/docs/engine_hours_and_odometer.md:205: cm848_sendJ1939NegativeAcknowledgement -> cm848_sendJ1939AcknowledgementOfRequestedPgn | request walks the 32-entry table, falls through, and `cm848_sendJ1939NegativeA
+firmware/CM848_S90140.06_analysis/docs/injector_feedback_system.md:389: cbd_enable_flag -> cylinder_balance_enable_flag | | `cbd_enable_flag` | 0x00408ef6 | CBD master enable |
+firmware/CM848_S90140.06_analysis/docs/j1939-broadcasting.md:257: cm848_j1939DiagnosticServiceHandler -> cm848_dispatchJ1939DiagnosticServiceRequest | From `cm848_j1939DiagnosticServiceHandler @ ROM[0x00022128]`:
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/README.md:140: cbd_enable_flag -> cylinder_balance_enable_flag | | CBD_Enable | 0x0181AE14(25259540) | 0x00408EF6(4231926) | cbd_enable_flag |
+firmware/CM848_S90140.06_analysis/docs/parameter_by_id_system.md:13: cm848_j1939DiagnosticServiceHandler -> cm848_dispatchJ1939DiagnosticServiceRequest | - The application dispatcher `cm848_j1939DiagnosticServiceHandler` (0x22128) never rea
+firmware/CM848_S90140.06_analysis/docs/parameter_by_id_system.md:14: cm848_handleJ1939GetAddressByParameterIdService -> handleJ1939GetAddressByParameterIdService | - Its service 0x41 is `cm848_handleJ1939GetAddressByParameterIdService` (0x5
+firmware/CM848_S90140.06_analysis/docs/service_0x4a_protocol.md:148: cbd_enable_flag -> cylinder_balance_enable_flag | | 0x00408EF6 | `cbd_enable_flag` | 1 byte, 0=disabled, 1=enabled |
+525 old labels; 85 files; 0 hits

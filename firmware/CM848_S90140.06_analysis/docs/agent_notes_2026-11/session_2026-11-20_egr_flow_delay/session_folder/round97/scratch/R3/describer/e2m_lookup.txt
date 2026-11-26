@@ -1,0 +1,139 @@
+== 0x80003c
+== 0x80003e
+== 0x00800042
+== 0x00800046
+== 0x00800168
+== 0x00800170
+== 0x00800172
+== 0x008001a0
+== 0x008001a4
+== 0x008001a6
+== 0x008001ac
+== 0x0080053e
+== 0x00800544
+== 0x00800546
+== 0x00803d42
+1180 +0008 CRSEACSW [NONE] -> 0x803d42 pto_switch_polarity_select word; TRUE = SET/ACCEL AND RESUME/COAST  FALSE = SET/COAST AND R~TRUE, FALSE
+== 0x00807a00
+818A +0002 ACVSACCO [MPHS] -> 0x807a00 accel_threshold_to_disable_a_c_1200_1200 i16; ACCEL THRESHOLD TO DISABLE A/C~-1200 - 1200
+== 0x00807a02
+818A +0004 ACACDBCU [SEC] -> 0x807a02 alg_executions_to_suspend_ac_after_shutoff_from_accel_0_3600 word; ALG EXECUTIONS TO SUSPEND AC AFTER SHUTOFF FROM ACCEL~0 - 3600
+== 0x00807a1c
+818C +0000 VAACFTTC [FC] -> 0x807a1c first_order_filter_coeff_for_limited_veh_accel_0_1 word; 1ST ORDER FILTER COEFF FOR LIMITED VEH ACCEL~0 - 1
+== 0x00807a1e
+818C +0002 VAACMXLM [MPHS] -> 0x807a1e limit_on_max_unfiltered_veh_accel_1200_1200 i16; LIMIT ON MAX UNFILTERED VEH ACCEL~-1200  +1200
+== 0x00807a20
+818C +0004 VAACMNLM [MPHS] -> 0x807a20 limit_on_min_unfiltered_veh_accel_1200_1200 i16; LIMIT ON MIN UNFILTERED VEH ACCEL~-1200  +1200
+== 0x00807a22
+10A5 +0000 NZFLDYTM [SEC] -> 0x807a22 minimum_amount_of_time_which_the_anc_fuel_limit_will_be_active_0_20 word; MINIMUM AMOUNT OF TIME WHICH THE ANC FUEL LIMIT WILL BE ACTIVE~0 - 20
+== 0x00807a24
+10A5 +0002 NZFLRMRT [FU/S] -> 0x807a24 fuel_increment_added_to_anc_fueling_to_ramp_out_the_fueling_de_0_100 word; FUEL INCREMENT ADDED TO ANC_FUELING TO RAMP OUT THE FUELING DE~0 - 100
+== 0x00807a26
+10A5 +0004 NZFLACTR [R/S] -> 0x807a26 engine_acceleration_below_which_anc_may_limit_fueling_2560_2540 i16; ENGINE ACCELERATION BELOW WHICH ANC MAY LIMIT FUELING~-2560 - 2540
+== 0x00807a28
+10A5 +0006 NZFLFTTR [R/S] -> 0x807a28 filtered_engine_acceleration_above_which_anc_may_limit_fu_2560_2540 i16; FILTERED ENGINE ACCELERATION ABOVE WHICH ANC MAY LIMIT FU~-2560 - 2540
+== 0x00807a2a
+10A5 +0008 NZFLTRES [RPM] -> 0x807a2a engine_speed_above_which_anc_may_limit_fueling_1000_3000 word; ENGINE SPEED ABOVE WHICH ANC MAY LIMIT FUELING~1000 - 3000
+== 0x00807a2c
+10A5 +000A NZCNESLM [RPM] -> 0x807a2c calibratible_engine_speed_constant_used_to_set_anc_engine_1000_3000 word; CALIBRATIBLE ENGINE SPEED CONSTANT USED TO SET ANC ENGINE ~1000 - 3000
+== 0x00807a2e
+10A5 +000C NZESDYTM [SEC] -> 0x807a2e minimum_amount_of_time_which_the_anc_speed_limit_will_be_active_0_20 word; MINIMUM AMOUNT OF TIME WHICH THE ANC SPEED LIMIT WILL BE ACTIVE~0 - 20
+== 0x00807a30
+10A5 +000E NZESRMRT [R/S] -> 0x807a30 engine_speed_increment_added_to_anc_speed_to_ramp_out_the_eng_0_3000 word; ENGINE SPEED INCREMENT ADDED TO ANC_SPEED TO RAMP OUT THE ENG~0 - 3000
+== 0x00807a32
+10A5 +0010 NZESFTTR [R/S] -> 0x807a32 filtered_engine_acceleration_above_which_anc_may_limit_en_2560_2540 i16; FILTERED ENGINE ACCELERATION ABOVE WHICH ANC MAY LIMIT EN~-2560 - 2540
+== 0x00807a34
+10A5 +0012 NZESTRES [RPM] -> 0x807a34 engine_speed_above_which_anc_may_limit_engine_speed_1000_3000 word; ENGINE SPEED ABOVE WHICH ANC MAY LIMIT ENGINE SPEED~1000 - 3000
+== 0x00807a36
+10A5 +0014 NZESACTR [R/S] -> 0x807a36 engine_acceleration_below_which_anc_may_limit_engine_spee_2560_2540 i16; ENGINE ACCELERATION BELOW WHICH ANC MAY LIMIT ENGINE SPEE~-2560 - 2540
+== 0x00807a3a
+10A5 +0018 NZTADYTM [SEC] -> 0x807a3a minimum_amount_of_time_which_the_anc_timing_limit_will_be_activ_0_20 word; MINIMUM AMOUNT OF TIME WHICH THE ANC TIMING LIMIT WILL BE ACTIV~0 - 20
+== 0x00807a3c
+10A5 +001A NZTARMRT [D/S] -> 0x807a3c timing_increment_added_to_anc_timing_to_ramp_out_the_timing_de_0_720 word; TIMING INCREMENT ADDED TO ANC_TIMING TO RAMP OUT THE TIMING DE~0 - 720
+== 0x00807a3e
+10A5 +001C NZTAFTTR [R/S] -> 0x807a3e filtered_engine_acceleration_above_which_anc_may_limit_ti_2560_2540 i16; FILTERED ENGINE ACCELERATION ABOVE WHICH ANC MAY LIMIT TI~-2560 - 2540
+== 0x00807a40
+10A5 +001E NZTAACLM [R/S] -> 0x807a40 unfiltered_acceleration_limit_used_to_determine_anc_timi_2560_2540 i16; UNFILTERED ACCELERATION LIMIT USED TO DETERMINE ANC TIMI~-2560 - +2540
+== 0x00807a46
+10A5 +0024 ESFT01MX [R/S] -> 0x807a46 upper_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540 i16; UPPER ACCELERATION BOUND FOR ENG ACCEL FIRST STAGE FILTER~-2560 - 2540
+== 0x00807a48
+10A5 +0026 ESFT01MN [R/S] -> 0x807a48 lower_acceleration_bound_for_eng_accel_first_stage_filter_2560_2540 i16; LOWER ACCELERATION BOUND FOR ENG ACCEL FIRST STAGE FILTER~-2560 - 2540
+== 0x00807a4a
+10A5 +0028 NZESIHTM [SEC] -> 0x807a4a duration_anc_speed_limit_will_be_disabled_after_a_bare_engine_a_0_20 i16; DURATION ANC SPEED LIMIT WILL BE DISABLED AFTER A BARE ENGINE A~0 - 20
+== 0x00807a4c
+10A5 +002A NZFLIHTM [SEC] -> 0x807a4c duration_anc_fueling_limit_will_be_disabled_after_a_bare_engine_0_20 undefined; DURATION ANC FUELING LIMIT WILL BE DISABLED AFTER A BARE ENGINE~0 - 20
+== 0x00807a4e
+10A5 +002C NZTAIHTM [SEC] -> 0x807a4e duration_anc_timing_limit_will_be_disabled_after_a_bare_engine_0_20 i16; DURATION ANC TIMING LIMIT WILL BE DISABLED AFTER A BARE ENGINE ~0 - 20
+== 0x00807a50
+10A5 +002E NZTAACTR [R/S] -> 0x807a50 engine_acceleration_below_which_anc_may_limit_timing_2560_2540 i16; ENGINE ACCELERATION BELOW WHICH ANC MAY LIMIT TIMING~-2560 - 2540
+== 0x00807a5a
+11D5 +0000 AFFLMAN [%FU] -> 0x807a5a afc_fueling_derate_value_when_afc_override_is_enabled_0_100 word; AFC FUELING DERATE VALUE WHEN AFC OVERRIDE IS ENABLED~0 - 100
+== 0x00807aa6
+104B +0006 APAFTRTM [SEC] -> 0x807aa6 time_that_must_elapse_without_afc_limiting_before_alpha_may_be_0_900 word; TIME THAT MUST ELAPSE WITHOUT AFC LIMITING BEFORE ALPHA MAY BE~0 - 900
+== 0x00807c78
+1186 +0016 CRDPRFVS [MPH] -> 0x807c78 reference_speed_used_when_calculating_cc_and_rsg_upper_droops_on_0_255 word; REFERENCE SPEED USED WHEN CALCULATING CC AND RSG UPPER DROOPS ON~0-255
+== 0x00807c7a
+1186 +0018 CRERDCHL [MPH] -> 0x807c7a high_limit_for_cruise_rsg_error_delta_0_255 word; HIGH LIMIT FOR CRUISE_RSG_ERROR_DELTA~0-255
+== 0x00807c7c
+1186 +001A CRERDCLL [MPH] -> 0x807c7c low_limit_for_cruise_rsg_error_delta_255_0 i16; LOW LIMIT FOR CRUISE_RSG_ERROR_DELTA~-255-0
+== 0x00807f6a
+11DD +0006 SPDIRTTD [R/S] -> 0x807f6a threshold_for_engine_deceleration_rate_to_activate_decel_timer_0_100 word; THRESHOLD FOR ENGINE DECELERATION RATE TO ACTIVATE DECEL TIMER~0 - 100
+== 0x0080802e
+106D +000C GROGESOD [SEC] -> 0x80802e time_delay_forced_for_rsg_override_for_mismatch_of_veh_and_en_0_100 word; TIME DELAY FORCED FOR RSG OVERRIDE FOR MISMATCH OF VEH. AND EN~0 - 100
+== 0x008087f0
+== 0x008087f2
+== 0x008087fa
+== 0x008087fc
+== 0x00808984
+109D +0000 PTMXEGES [RPM] -> 0x808984 max_engine_speed_for_pto_engagement_600_2500 i16; MAX ENGINE SPEED FOR PTO ENGAGEMENT~600 - 2500
+== 0x00808986
+109D +0002 PTMNEGES [RPM] -> 0x808986 min_engine_speed_for_pto_engagement_500_2500 word; MIN ENGINE SPEED FOR PTO ENGAGEMENT~500 - 2500
+== 0x0080898c
+109D +0008 PTROSWTM [SEC] -> 0x80898c amount_of_time_before_remote_pto_switch_is_considered_stationary_0_10 word; AMOUNT OF TIME BEFORE REMOTE PTO SWITCH IS CONSIDERED STATIONARY.~0-10
+== 0x0080a280
+818B +0002 ACHIAC [1-ON] -> 0x80a280 rapid_vehicle_accel_flag_on_off word; RAPID VEHICLE ACCEL FLAG~ON/OFF
+== 0x0080a290
+10A4 +0004 NZESLM [RPM] -> 0x80a290 anc_speed_limit_ramp_value word; ENGINE SPEED LIMIT DICTATED BY ANC~1400 - 4500
+== 0x0080a29e
+10A4 +0012 TSBENZTA [DADV] -> 0x80a29e timing_advance_limit_as_just_before_modification_by_anc_timing_0_120 word; TIMING ADVANCE LIMIT AS JUST BEFORE MODIFICATION BY ANC TIMING~0 - 120
+== 0x0080a2a0
+10A4 +0014 NZESLMIH [T/F] -> 0x80a2a0 anc_speed_limit_disable_due_to_bare_engine_accel_active_inactive word; ANC SPEED LIMIT DISABLE DUE TO BARE ENGINE ACCEL~ACTIVE / INACTIVE
+== 0x0080a2a2
+10A4 +0016 NZFLLMIH [T/F] -> 0x80a2a2 anc_fueling_limit_disable_due_to_bare_engine_accel_active_inactive word; ANC FUELING LIMIT DISABLE DUE TO BARE ENGINE ACCEL~ACTIVE / INACTIVE
+== 0x0080a2a4
+10A4 +0018 NZTALMIH [T/F] -> 0x80a2a4 anc_timing_limit_disable_due_to_bare_engine_accel_active_inactive word; ANC TIMING LIMIT DISABLE DUE TO BARE ENGINE ACCEL~ACTIVE / INACTIVE
+== 0x0080a2a6
+10A4 +001A ASANODFG [NONE] -> 0x80a2a6 application_specific_anc_override_flag_1_engage_anc_0_1 word; APPLICATION SPECIFIC ANC OVERRIDE FLAG(1 = ENGAGE ANC)~0 - 1
+== 0x0080a2a8
+10A4 +001C ASANENF [NONE] -> 0x80a2a8 application_specific_anc_enable_disable_flag_set_to_false_to_dis_0_1 word; APPLICATION SPECIFIC ANC ENABLE/DISABLE FLAG(SET TO FALSE TO DIS~0 - 1
+== 0x0080a906
+104A +000E FLAFSTFG [NONE] -> 0x80a906 semaphore_used_to_latch_afc_events_that_occur_betwe_0_false_1_true word; SEMAPHORE USED TO LATCH AFC EVENTS THAT OCCUR BETWE~0 = FALSE/1 = TRUE
+== 0x0080a912
+== 0x0080a914
+104A +001C APAFTR [SEC] -> 0x80a914 afc_exit_countdown_timer word; TRACE THE TIME SINCE FUELING STATE IS NOT AFC OR LSG.~0 - 900
+== 0x0080aa3e
+1187 +0006 CRBODJCL [M/F] -> 0x80aa3e slope_of_the_bottom_droop_line_calculated_in_cc_rsg_droop_0_0_35 word; SLOPE OF THE BOTTOM DROOP LINE CALCULATED IN CC/RSG DROOP~0 - 0.35
+== 0x0080aa52
+1187 +001A CRTODJCL [M/%F] -> 0x80aa52 slope_of_the_top_droop_line_computed_in_cc_rsg_droop_algorith_0_0_35 word; SLOPE OF THE TOP DROOP LINE COMPUTED IN CC/RSG DROOP ALGORITH~0 - 0.35
+== 0x0080aa58
+1187 +0020 RSBODJCL [M/%F] -> 0x80aa58 slope_of_the_bottom_droop_line_computed_in_the_cc_rsg_droop_a_0_0_35 word; SLOPE OF THE BOTTOM DROOP LINE COMPUTED IN THE CC/RSG DROOP A~0 - 0.35
+== 0x0080aa5e
+1187 +0026 RSTODJCL [M/%F] -> 0x80aa5e slope_of_the_top_droop_line_computed_in_the_cc_rsg_droop_algo_0_0_35 word; SLOPE OF THE TOP DROOP LINE COMPUTED IN THE CC/RSG DROOP ALGO~0 - 0.35
+== 0x0080aa60
+1187 +0028 CRTODPOF [%FU] -> 0x80aa60 offset_of_the_cc_rsg_top_droop_0_100 word; OFFSET OF THE CC/RSG TOP DROOP~0-100
+== 0x0080bcdf
+000E +0011 DSAUSHUC [HX] -> 0x80bcdf user_supplied_value_for_the_pto_set_switch_on_off byte; USER SUPPLIED VALUE FOR THE AUXILIARY SHUTDOWN SWITCH~ON/OFF
+000E +0011 DSAUSHUC [HX] -> 0x80bcdf user_supplied_value_for_the_pto_set_switch_on_off byte; USER SUPPLIED VALUE FOR THE AUXILIARY SHUTDOWN SWITCH~ON/OFF
+000E +0011 DSPTONUC [HX] -> 0x80bcdf user_supplied_value_for_the_pto_set_switch_on_off byte; USER SUPPLIED VALUE FOR THE PTO ENABLE SWITCH~ON/OFF
+000E +0011 DSPTONUC [HX] -> 0x80bcdf user_supplied_value_for_the_pto_set_switch_on_off byte; USER SUPPLIED VALUE FOR THE PTO ENABLE SWITCH~ON/OFF
+000E +0011 DSPTRUUC [HX] -> 0x80bcdf user_supplied_value_for_the_pto_set_switch_on_off byte; USER SUPPLIED VALUE FOR THE PTO RESUME SWITCH~ON/OFF
+== 0x0080d3a4
+106C +0006 GROGESTR [SEC] -> 0x80d3a4 timer_used_to_disable_rsg_when_veh_and_eng_speeds_disagree_0_100 word; TIMER USED TO DISABLE RSG WHEN VEH AND ENG SPEEDS DISAGREE~0 - 100
+== 0x0080d3a6
+106C +0008 GROGGRTR [SEC] -> 0x80d3a6 timer_used_to_disable_rsg_when_gear_ratio_changes_0_100 word; TIMER USED TO DISABLE RSG WHEN GEAR RATIO CHANGES~0 - 100
+== 0x0080dc30
+1265 +0004 PTSLFL [%FU] -> 0x80dc30 pto_fuel_demand_snapshot word; THE FUELING VALUE SELECTED BETWEEN USER FUELING AND PTO FUELING~0-100
+== 0x0080dc82
+1197 +0000 CRMXVSRF [MPH] -> 0x80dc82 maximum_allowable_vehicle_speed_selected_as_the_rsg_refer_2_255_9961 word; MAXIMUM ALLOWABLE VEHICLE SPEED SELECTED AS THE RSG REFER~2 - 255.9961
+== 0x0080de68
+105B +0000 AFCNICTA [DADV] -> 0x80de68 timing_advance_added_to_base_timing_anytime_afc_is_limiting_fu_0_120 word; TIMING ADVANCE ADDED TO BASE TIMING ANYTIME AFC IS LIMITING FU~0 - 120

@@ -1,0 +1,528 @@
+diff --git a/firmware/CLAUDE.md b/firmware/CLAUDE.md
+index f0ae01fb..ac190fbd 100644
+--- a/firmware/CLAUDE.md
++++ b/firmware/CLAUDE.md
+@@ -223 +223 @@ The ECM speaks J1939/CAN **plus CCD (C1 pins 4/5), SCI (C2 pins 16/19 → PCM +
+-  - The 2026-11-12 "has no reader" conclusion came from a name search. The channel reads the value through `state_ptr` + 6, which never names the address.
++  - The 2026-11-12 "has no reader" conclusion came from a name search. The channel reads the value through `state_pointer` + 6, which never names the address.
+@@ -475 +475 @@ Use Python CSV module to batch-categorize and clean (see session history for scr
+-  `(sensor_channel_config_t *config_ptr, sensor_channel_state_t *state_ptr, word *cached_axis_offset, word *x_axis, word *y_data, int flags, ema_filter_state_t *filter_state_ptr, uint channel_index, uint high_fault_bit, uint low_fault_bit, word *value_output_ptr, word *default_value_output_ptr, word *fault_status_output_ptr)`.
++  `(sensor_channel_config_t *configuration_pointer, sensor_channel_state_t *state_pointer, word *cached_axis_offset, word *x_axis, word *y_data, int flags, ema_filter_state_t *filter_state_pointer, uint channel_index, uint high_fault_bit, uint low_fault_bit, word *value_output_pointer, word *default_value_output_pointer, word *fault_status_output_pointer)`.
+@@ -481 +481 @@ Use Python CSV module to batch-categorize and clean (see session history for scr
+-- **Outputs (renamed 2026-11-16):** `value_output_ptr` receives `sensor_channel_filtered_output[channel]`, the filtered engineering value, into the `<channel>_value` globals (were `*_raw`: `sensor_channelN_value`, `boost_pressure_sensor_value` 0x40bd8e = channel 1 intake manifold pressure, `fuel_timing_sensor_value`). `default_value_output_ptr` receives the config default into the `<channel>_default_value` globals (were `*_filtered`; e.g. `charge_pressure` falls back to `boost_pressure_sensor_default_value`). Verified in the disassembly: the last stores are `lhzx` of the filtered output and `lhz 2(config)`. The status is 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled.
++- **Outputs (renamed 2026-11-16):** `value_output_pointer` receives `sensor_channel_filtered_output[channel]`, the filtered engineering value, into the `<channel>_value` globals (were `*_raw`: `sensor_channelN_value`, `boost_pressure_sensor_value` 0x40bd8e = channel 1 intake manifold pressure, `fuel_timing_sensor_value`). `default_value_output_pointer` receives the config default into the `<channel>_default_value` globals (were `*_filtered`; e.g. `charge_pressure` falls back to `boost_pressure_sensor_default_value`). Verified in the disassembly: the last stores are `lhzx` of the filtered output and `lhz 2(config)`. The status is 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled.
+@@ -502 +502 @@ Use Python CSV module to batch-categorize and clean (see session history for scr
+-- **Type B sensor channels (2026-11-15):** `cm848_processUnsignedSensorChannel` / `_update` pass their parameters 2-5 straight to `lookupTableInterpolation(cached_axis_offset, state_ptr[5], x_axis, y_data, flags)`. The old prototype called them `table_interp_args_t *` / "unused" table / axes / mode pointers; the struct (ported from CM550) is gone.
++- **Type B sensor channels (2026-11-15):** `cm848_processUnsignedSensorChannel` / `_update` pass their parameters 2-5 straight to `lookupTableInterpolation(cached_axis_offset, state_pointer[5], x_axis, y_data, flags)`. The old prototype called them `table_interp_args_t *` / "unused" table / axes / mode pointers; the struct (ported from CM550) is gone.
+diff --git a/firmware/CM550_J90350.00_analysis/output/function_definitions.csv b/firmware/CM550_J90350.00_analysis/output/function_definitions.csv
+index 02d1464e..50ff712c 100644
+--- a/firmware/CM550_J90350.00_analysis/output/function_definitions.csv
++++ b/firmware/CM550_J90350.00_analysis/output/function_definitions.csv
+@@ -12,7 +12,7 @@ function_address,function_name,param_index,name,type,comment
+-0x000104e8,cm550_sendCanMessage,0,msg,j1939_transmit_message_t*,The transmit descriptor: header / data pointer / status pointer (PR #53 round 88)
+-0x00022726,sendJ1939MultiFrame,0,msg,j1939_transmit_message_t*,The transmit descriptor - the long at +4 ((8;a6) after link a6) (PR #53 round 88)
+-0x00022e5e,vp44CanMessageDispatcher,0,rx_msg,can_std_rx_desc_t*,Pointer to received CAN message descriptor
+-0x00022b50,vp44FuelTempHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to VP44 fuel temp CAN message
+-0x00022956,cm550_diagnosticParamRequestHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to diagnostic parameter request message
+-0x00022d8e,cm550_diagnosticStatusRequestHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to diagnostic status request message
+-0x00022de2,vp44_diagnosticErrorHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to diagnostic error message
++0x000104e8,cm550_sendCanMessage,0,message,j1939_transmit_message_t*,The transmit descriptor: header / data pointer / status pointer (PR #53 round 88)
++0x00022726,sendJ1939MultiFrame,0,message,j1939_transmit_message_t*,The transmit descriptor - the long at +4 ((8;a6) after link a6) (PR #53 round 88)
++0x00022e5e,vp44CanMessageDispatcher,0,received_message,can_std_rx_desc_t*,Pointer to received CAN message descriptor
++0x00022b50,vp44FuelTempHandler,0,received_message,can_std_rx_desc_t*,Pointer to VP44 fuel temp CAN message
++0x00022956,cm550_diagnosticParamRequestHandler,0,received_message,can_std_rx_desc_t*,Pointer to diagnostic parameter request message
++0x00022d8e,cm550_diagnosticStatusRequestHandler,0,received_message,can_std_rx_desc_t*,Pointer to diagnostic status request message
++0x00022de2,vp44_diagnosticErrorHandler,0,received_message,can_std_rx_desc_t*,Pointer to diagnostic error message
+@@ -72 +72 @@ function_address,function_name,param_index,name,type,comment
+-0x0001c016,cm550_circularBufferInit,0,buffer_ctrl,uint*,Pointer to circular buffer control structure
++0x0001c016,cm550_circularBufferInit,0,buffer_control,uint*,Pointer to circular buffer control structure
+@@ -75 +75 @@ function_address,function_name,param_index,name,type,comment
+-0x0001bfa2,cm550_circularBufferPush,0,buffer_ctrl,uint*,Pointer to circular buffer control structure
++0x0001bfa2,cm550_circularBufferPush,0,buffer_control,uint*,Pointer to circular buffer control structure
+@@ -77 +77 @@ function_address,function_name,param_index,name,type,comment
+-0x0001bfde,cm550_circularBufferPop,0,buffer_ctrl,uint*,Pointer to circular buffer control structure
++0x0001bfde,cm550_circularBufferPop,0,buffer_control,uint*,Pointer to circular buffer control structure
+@@ -92,2 +92,2 @@ function_address,function_name,param_index,name,type,comment
+-0x0001c5e8,cm550_flashProgramFromRam,0,dest_address,int,Flash destination address
+-0x0001c5e8,cm550_flashProgramFromRam,1,source_ptr,uint,Source data pointer
++0x0001c5e8,cm550_flashProgramFromRam,0,destination_address,int,Flash destination address
++0x0001c5e8,cm550_flashProgramFromRam,1,source_pointer,uint,Source data pointer
+@@ -101 +101 @@ function_address,function_name,param_index,name,type,comment
+-0x00010e16,cm550_lookupParameterIdAddress,0,param_id,ushort,Parameter ID to resolve address for - the word at +4 (move.w (8;sp))
++0x00010e16,cm550_lookupParameterIdAddress,0,parameter_id,ushort,Parameter ID to resolve address for - the word at +4 (move.w (8;sp))
+@@ -107 +107 @@ function_address,function_name,param_index,name,type,comment
+-0x0002238e,cm550_diagMemoryReadResponseBuilder,0,request_ptr,byte*,Pointer to read request structure
++0x0002238e,cm550_diagMemoryReadResponseBuilder,0,request_pointer,byte*,Pointer to read request structure
+@@ -110 +110 @@ function_address,function_name,param_index,name,type,comment
+-0x0002f4be,cm550_dispatchJ1939PgnRequest,0,rx_msg,can_std_rx_desc_t*,The received message - the long at +4 (movea.l (24;sp)); the body reads ID byte 2 (the destination address) and data_ptr (+6); a callback registered with 0x21272 whose dispatchers push one long (was byte cmd_index; PR #53 round 86)
++0x0002f4be,cm550_dispatchJ1939PgnRequest,0,received_message,can_std_rx_desc_t*,The received message - the long at +4 (movea.l (24;sp)); the body reads ID byte 2 (the destination address) and data_pointer (+6); a callback registered with 0x21272 whose dispatchers push one long (was byte cmd_index; PR #53 round 86)
+@@ -120,2 +120,2 @@ function_address,function_name,param_index,name,type,comment
+-0x00018f86,incrementDiagnosticCounters,0,source_ptr,int,Pointer to source protection state data
+-0x00018f86,incrementDiagnosticCounters,1,dest_ptr,int,Pointer to destination statistics structure
++0x00018f86,incrementDiagnosticCounters,0,source_pointer,int,Pointer to source protection state data
++0x00018f86,incrementDiagnosticCounters,1,destination_pointer,int,Pointer to destination statistics structure
+@@ -123,3 +123,3 @@ function_address,function_name,param_index,name,type,comment
+-0x00018968,cm550_protectionConditionEvaluator,0,threshold_ptr,ushort*,Pointer to threshold configuration
+-0x00018968,cm550_protectionConditionEvaluator,1,state_ptr,uint*,Pointer to protection state data
+-0x00018968,cm550_protectionConditionEvaluator,2,threshold_set_select,ushort,The word at +12 (tst.w (32;sp)): 0 reads state_ptr + 10 / threshold_ptr[8] / [0x10] - otherwise state_ptr + 0x12 / [9] (new; PR #53 round 86)
++0x00018968,cm550_protectionConditionEvaluator,0,threshold_pointer,ushort*,Pointer to threshold configuration
++0x00018968,cm550_protectionConditionEvaluator,1,state_pointer,uint*,Pointer to protection state data
++0x00018968,cm550_protectionConditionEvaluator,2,threshold_set_select,ushort,The word at +12 (tst.w (32;sp)): 0 reads state_pointer + 10 / threshold_pointer[8] / [0x10] - otherwise state_pointer + 0x12 / [9] (new; PR #53 round 86)
+@@ -127 +127 @@ function_address,function_name,param_index,name,type,comment
+-0x00018c1c,cm550_diagnosticProtectionProcessor,0,config_ptr,ushort*,Pointer to protection configuration
++0x00018c1c,cm550_diagnosticProtectionProcessor,0,configuration_pointer,ushort*,Pointer to protection configuration
+@@ -134 +134 @@ function_address,function_name,param_index,name,type,comment
+-0x0001e02a,cm550_subtractAndClampValue,0,fuel_value_ptr,short*,Pointer to fueling value to clamp (0-5888)
++0x0001e02a,cm550_subtractAndClampValue,0,fuel_value_pointer,short*,Pointer to fueling value to clamp (0-5888)
+@@ -163,2 +163,2 @@ function_address,function_name,param_index,name,type,comment
+-0x00010520,cm550_arrayRangeSum,0,start_ptr,short*,Pointer to start of array
+-0x00010520,cm550_arrayRangeSum,1,end_ptr,short*,Pointer to end of array
++0x00010520,cm550_arrayRangeSum,0,start_pointer,short*,Pointer to start of array
++0x00010520,cm550_arrayRangeSum,1,end_pointer,short*,Pointer to end of array
+@@ -200 +200 @@ function_address,function_name,param_index,name,type,comment
+-0x000142a8,lookupJ1939ControlDevice,0,config_type,ushort,CAN bus configuration type - the word at +4 (move.w (4;sp)); the 5 callers push a word (was byte; PR #53 round 86)
++0x000142a8,lookupJ1939ControlDevice,0,configuration_type,ushort,CAN bus configuration type - the word at +4 (move.w (4;sp)); the 5 callers push a word (was byte; PR #53 round 86)
+@@ -216 +216 @@ function_address,function_name,param_index,name,type,comment
+-0x0002fcdc,validateSecurityKey,0,auth_payload_ptr,byte*,Pointer to 10-byte authentication payload from request
++0x0002fcdc,validateSecurityKey,0,authentication_payload_pointer,byte*,Pointer to 10-byte authentication payload from request
+@@ -220 +220 @@ function_address,function_name,param_index,name,type,comment
+-0x00021982,cm550_diagnosticServiceSecurityValidator,0,msg_ptr,int,Pointer to diagnostic message structure with service request
++0x00021982,cm550_diagnosticServiceSecurityValidator,0,message,int,Pointer to diagnostic message structure with service request
+@@ -223 +223 @@ function_address,function_name,param_index,name,type,comment
+-0x0002eea2,cm550_diagnosticServiceDispatcher,0,msg_ptr,int,Pointer to diagnostic message structure
++0x0002eea2,cm550_diagnosticServiceDispatcher,0,message,int,Pointer to diagnostic message structure
+@@ -262 +262 @@ function_address,function_name,param_index,name,type,comment
+-0x000186ae,cm550_protectionThresholdCalculationHelper,0,protection_config,ushort*,The engine protection channel's calibration record (engine_protection_config_table_base 0x807032 + 36 * channel) - the long at +4 (movea.l (16;sp);a2 after a 12-byte movem of d2-d3/a2); reads word 1 or 2 (the delay before the fueling or rpm derate starts - 0x807034 / 0x807036) and word 3 or 4 (the derate step - 0x807038 / 0x80703a time_to_reach_full_derate...); both callers push move.l a3 (new; PR #53 round 86) (PR #53 round 86)
++0x000186ae,cm550_protectionThresholdCalculationHelper,0,protection_configuration,ushort*,The engine protection channel's calibration record (engine_protection_config_table_base 0x807032 + 36 * channel) - the long at +4 (movea.l (16;sp);a2 after a 12-byte movem of d2-d3/a2); reads word 1 or 2 (the delay before the fueling or rpm derate starts - 0x807034 / 0x807036) and word 3 or 4 (the derate step - 0x807038 / 0x80703a time_to_reach_full_derate...); both callers push move.l a3 (new; PR #53 round 86) (PR #53 round 86)
+@@ -273 +273 @@ function_address,function_name,param_index,name,type,comment
+-0x000192f2,cm550_protectionCalculationHelper,2,config_flags,ushort,The word at +8 (move.w (16;sp);d2) - bit 2 (andi.w #4) returns 1 when the value is above the recorded one (cmp.w / bls) and bit 3 (andi.w #8) when it is below (cmp.w / bcc); both callers push the protection config record's word 0 (movea.l (a5);a0 / move.w (a0) and move.w d4) (new; PR #53 round 86) (PR #53 round 86)
++0x000192f2,cm550_protectionCalculationHelper,2,configuration_flags,ushort,The word at +8 (move.w (16;sp);d2) - bit 2 (andi.w #4) returns 1 when the value is above the recorded one (cmp.w / bls) and bit 3 (andi.w #8) when it is below (cmp.w / bcc); both callers push the protection config record's word 0 (movea.l (a5);a0 / move.w (a0) and move.w d4) (new; PR #53 round 86) (PR #53 round 86)
+@@ -284 +284 @@ function_address,function_name,param_index,name,type,comment
+-0x0001ffd6,cm550_j1939TorqueControlModeParser,0,request,can_std_rx_desc_t*,The PGN 61184 service 4 / 5 request - the long at +4 (movea.l (16;sp) after the 12-byte movem); the body reads its data_ptr (movea.l (6;a2)) then data byte 1 (the broadcast item) and byte 2 (the target 0x01 / 0xfd - 0xfe 0xfe = all); the Clear (0x200a4) and Set (0x200b4) wrappers forward their own +4 long (move.l a0;-(sp)) - the message cm550_diagnosticServiceDispatcher (registered for PGN 61184 through 0x21272 - move.w #61184) hands its handlers; the request of the CM848 twin cm848_updateJ1939BroadcastEnableMask (PR #53 round 86) (amended by the skeptic; PR #53 round 86)
++0x0001ffd6,cm550_j1939TorqueControlModeParser,0,request,can_std_rx_desc_t*,The PGN 61184 service 4 / 5 request - the long at +4 (movea.l (16;sp) after the 12-byte movem); the body reads its data_pointer (movea.l (6;a2)) then data byte 1 (the broadcast item) and byte 2 (the target 0x01 / 0xfd - 0xfe 0xfe = all); the Clear (0x200a4) and Set (0x200b4) wrappers forward their own +4 long (move.l a0;-(sp)) - the message cm550_diagnosticServiceDispatcher (registered for PGN 61184 through 0x21272 - move.w #61184) hands its handlers; the request of the CM848 twin cm848_updateJ1939BroadcastEnableMask (PR #53 round 86) (amended by the skeptic; PR #53 round 86)
+@@ -342 +342 @@ function_address,function_name,param_index,name,type,comment
+-0x00031b22,cm550_diagnosticCanResponseSender,0,request,can_std_rx_desc_t*,The received message being acknowledged - the long at +4 (movea.l (12;sp) after a movem of 2 registers): its ID bytes 2 / 3 swap into the PGN 59392 header 0xe8ff00 at 0x801ea4 and the first 3 bytes at data_ptr (+6) go to data bytes 6-8 (the PGN field); the PGN 59904 dispatcher cm550_dispatchJ1939PgnRequest passes its rx_msg and cm550_j1939HandlePgn65228Dm3ClearInactiveFaults (the PGN 65228 handler it calls from the table at 0x801d5a) the same request - for these two the 3 bytes are the requested PGN - while cm550_receivePgn58112Dm7CommandNonContinuouslyMonitoredTestMessage (registered through 0x21272 for PGN 58112 = DM7) passes the DM7 command whose first data byte is the test identifier (not a PGN) - CM848's twin cm848_sendJ1939AcknowledgeMessage (new; PR #53 round 86) (amended by the skeptic; PR #53 round 86)
++0x00031b22,cm550_diagnosticCanResponseSender,0,request,can_std_rx_desc_t*,The received message being acknowledged - the long at +4 (movea.l (12;sp) after a movem of 2 registers): its ID bytes 2 / 3 swap into the PGN 59392 header 0xe8ff00 at 0x801ea4 and the first 3 bytes at data_pointer (+6) go to data bytes 6-8 (the PGN field); the PGN 59904 dispatcher cm550_dispatchJ1939PgnRequest passes its received_message and cm550_j1939HandlePgn65228Dm3ClearInactiveFaults (the PGN 65228 handler it calls from the table at 0x801d5a) the same request - for these two the 3 bytes are the requested PGN - while cm550_receivePgn58112Dm7CommandNonContinuouslyMonitoredTestMessage (registered through 0x21272 for PGN 58112 = DM7) passes the DM7 command whose first data byte is the test identifier (not a PGN) - CM848's twin cm848_sendJ1939AcknowledgeMessage (new; PR #53 round 86) (amended by the skeptic; PR #53 round 86)
+@@ -344 +344 @@ function_address,function_name,param_index,name,type,comment
+-0x0003216a,cm550_diagnosticMultiPacketResponseBuilder,0,request,can_std_rx_desc_t*,The PGN 61184 request being answered - the long at +4 (movea.l (28;sp) after a movem of 6 registers): ID byte 0's priority bits and bytes 2 / 3 (swapped) go into the 0xef0000 reply header and data_ptr (+6) gives the service byte (pushed to getJ1939DiagnosticResponseEchoLength for the echo length) and the bytes echoed; cm550_diagnosticServiceDispatcher passes its request (a3) and restartThroughBootRom its own (move.l (8;a6)) - CM848's twin cm848_sendDiagServiceResponse (new; PR #53 round 86) (amended by the skeptic; PR #53 round 86)
++0x0003216a,cm550_diagnosticMultiPacketResponseBuilder,0,request,can_std_rx_desc_t*,The PGN 61184 request being answered - the long at +4 (movea.l (28;sp) after a movem of 6 registers): ID byte 0's priority bits and bytes 2 / 3 (swapped) go into the 0xef0000 reply header and data_pointer (+6) gives the service byte (pushed to getJ1939DiagnosticResponseEchoLength for the echo length) and the bytes echoed; cm550_diagnosticServiceDispatcher passes its request (a3) and restartThroughBootRom its own (move.l (8;a6)) - CM848's twin cm848_sendDiagServiceResponse (new; PR #53 round 86) (amended by the skeptic; PR #53 round 86)
+diff --git a/firmware/CM550_J90350.00_analysis/output/global_variables.csv b/firmware/CM550_J90350.00_analysis/output/global_variables.csv
+index 3576182e..fb648e44 100644
+--- a/firmware/CM550_J90350.00_analysis/output/global_variables.csv
++++ b/firmware/CM550_J90350.00_analysis/output/global_variables.csv
+@@ -544 +544 @@ address,name,type,comment
+-0x00801730,qadc_circular_buffer_dest_ptr,dword,(typed dword from the removed qadc_circular_buffer_t.dest_ptr - was qadc_circular_buffer_t; PR #53 round 78)
++0x00801730,qadc_circular_buffer_dest_ptr,dword,(typed dword from the removed qadc_circular_buffer_t.destination_pointer - was qadc_circular_buffer_t; PR #53 round 78)
+@@ -667 +667 @@ address,name,type,comment
+-0x00801a8e,eeprom_mirror_base_pointer,pointer,Base address of the EEPROM's RAM mirror (0x803b0a = ecu_identity_marker_1): the driver stores each word read at base + eeprom_mirror_load_offset. The twin of CM848's eeprom_mirror_base_pointer (0x3fb816). (was can_buffer_setup1_size.data_ptr; PR #53 round 94)
++0x00801a8e,eeprom_mirror_base_pointer,pointer,Base address of the EEPROM's RAM mirror (0x803b0a = ecu_identity_marker_1): the driver stores each word read at base + eeprom_mirror_load_offset. The twin of CM848's eeprom_mirror_base_pointer (0x3fb816). (was can_buffer_setup1_size.data_pointer; PR #53 round 94)
+@@ -5009 +5009 @@ address,name,type,comment
+-0x0080dec8,torque_derate_fuel_quantity,word,e2m 105D +0 FSLMFL 'smallest derate fueling value produced by the derate algorithms' - the running minimum of the fuel limit chain: initializeFuelLimitChains starts it at throttle_100_fueling and each limiter lowers it with its state in torque_derate_fuel_source_code; cm550_selectFinalFueling takes the smaller of it and adjusted_user_fueling as requested_fueling. The same record and name as CM848 0x40afac (was fuel_limit_shutdown_minimum) (was fuel_limit_shutdown_minimum; PR #53 round 94) | earlier note: Running minimum of the fuel limits (each limiter stores its value here when it is smaller). Was hidden behind a duplicate trailing base_ptr field of j1708_multipacket_msg_t
++0x0080dec8,torque_derate_fuel_quantity,word,e2m 105D +0 FSLMFL 'smallest derate fueling value produced by the derate algorithms' - the running minimum of the fuel limit chain: initializeFuelLimitChains starts it at throttle_100_fueling and each limiter lowers it with its state in torque_derate_fuel_source_code; cm550_selectFinalFueling takes the smaller of it and adjusted_user_fueling as requested_fueling. The same record and name as CM848 0x40afac (was fuel_limit_shutdown_minimum) (was fuel_limit_shutdown_minimum; PR #53 round 94) | earlier note: Running minimum of the fuel limits (each limiter stores its value here when it is smaller). Was hidden behind a duplicate trailing base_pointer field of j1708_multipacket_msg_t
+diff --git a/firmware/CM550_J90350.00_analysis/output/local_variables.csv b/firmware/CM550_J90350.00_analysis/output/local_variables.csv
+index 2932af25..8d7445a6 100644
+--- a/firmware/CM550_J90350.00_analysis/output/local_variables.csv
++++ b/firmware/CM550_J90350.00_analysis/output/local_variables.csv
+@@ -19 +19 @@ function_address,function_name,old_ghidra_name,new_variable_name,type,comment
+-0x0000b7bc,mc68k_processAnalogSensorChannels,psVar7,channel_config,sensor_config_t*,The A/D channel config record this pass reads (0x806ae2 + 24 x channel; stepped with channel_record) (PR #53 round 89)
++0x0000b7bc,mc68k_processAnalogSensorChannels,psVar7,channel_configuration,sensor_config_t*,The A/D channel config record this pass reads (0x806ae2 + 24 x channel; stepped with channel_record) (PR #53 round 89)
+@@ -35,3 +35,3 @@ function_address,function_name,old_ghidra_name,new_variable_name,type,comment
+-0x00021982,cm550_diagnosticServiceSecurityValidator,uVar1,msg_length,short,Message length from param_1+4 (Ghidra 12.2 auto-name before renames; was sVar1 on the 12.0 DEV build)
+-0x00021982,cm550_diagnosticServiceSecurityValidator,iVar4,required_param_len,int32_t,Required param length 1/3/5 by service (Ghidra 12.2 auto-name before renames - the 4th local; was uVar4 ushort on the 12.0 DEV build - 12.2 infers int and a ushort type splits the variable)
+-0x00021982,cm550_diagnosticServiceSecurityValidator,cVar3,auth_result,char,Result from validateSecurityKey
++0x00021982,cm550_diagnosticServiceSecurityValidator,uVar1,message_length,short,Message length from param_1+4 (Ghidra 12.2 auto-name before renames; was sVar1 on the 12.0 DEV build)
++0x00021982,cm550_diagnosticServiceSecurityValidator,iVar4,required_parameter_length,int32_t,Required param length 1/3/5 by service (Ghidra 12.2 auto-name before renames - the 4th local; was uVar4 ushort on the 12.0 DEV build - 12.2 infers int and a ushort type splits the variable)
++0x00021982,cm550_diagnosticServiceSecurityValidator,cVar3,authentication_result,char,Result from validateSecurityKey
+diff --git a/firmware/CM550_J90350.00_analysis/output/structure_definitions.csv b/firmware/CM550_J90350.00_analysis/output/structure_definitions.csv
+index 2d6f976a..dd05343f 100644
+--- a/firmware/CM550_J90350.00_analysis/output/structure_definitions.csv
++++ b/firmware/CM550_J90350.00_analysis/output/structure_definitions.csv
+@@ -28 +28 @@ can_std_rx_desc_t,,length,uint16_t,2,DLC,,verified
+-can_std_rx_desc_t,,data_ptr,ptr:uint8_t,4,Pointer to payload bytes,,verified
++can_std_rx_desc_t,,data_pointer,ptr:uint8_t,4,Pointer to payload bytes,,verified
+@@ -37 +37 @@ dma_descriptor_t,,source_address,dword,4,DMA transfer source memory address,,ver
+-dma_descriptor_t,,dest_address,dword,4,DMA transfer destination memory address,,verified
++dma_descriptor_t,,destination_address,dword,4,DMA transfer destination memory address,,verified
+@@ -43,2 +43,2 @@ dma_descriptor_t,,next_descriptor,dword,4,Pointer to next descriptor in chain,,v
+-memory_operation_request_t,,source_data_ptr,dword,4,Pointer to source data for memory operation,,verified
+-memory_operation_request_t,,target_data_ptr,dword,4,Pointer to destination memory location,,verified
++memory_operation_request_t,,source_data_pointer,dword,4,Pointer to source data for memory operation,,verified
++memory_operation_request_t,,target_data_pointer,dword,4,Pointer to destination memory location,,verified
+@@ -176 +176 @@ diag_service_request_t,,data_payload,byte,16,Variable-length request data payloa
+-diag_tp_state_t,,diag_state,byte,1,State flag: 0=idle 1=active,,verified
++diag_tp_state_t,,diagnostic_state,byte,1,State flag: 0=idle 1=active,,verified
+@@ -180,2 +180,2 @@ diag_tp_state_t,,total_packets,byte,1,((total_bytes-1)/7)+1,,verified
+-diag_tp_state_t,,req_start,byte,1,Current sequence index (1-based),,verified
+-diag_tp_state_t,,req_count,byte,1,Remaining packets to send,,verified
++diag_tp_state_t,,request_start,byte,1,Current sequence index (1-based),,verified
++diag_tp_state_t,,request_count,byte,1,Remaining packets to send,,verified
+@@ -184,2 +184,2 @@ diag_tp_state_t,,total_bytes,word,2,Total payload length,,verified
+-diag_tp_state_t,,src_data_ptr,ptr:uint8_t,4,Pointer to source payload,,verified
+-diag_tp_state_t,,resp_byte_ptr,ptr:uint8_t,4,Pointer to 1-byte response/status,,verified
++diag_tp_state_t,,source_data_pointer,ptr:uint8_t,4,Pointer to source payload,,verified
++diag_tp_state_t,,response_byte_pointer,ptr:uint8_t,4,Pointer to 1-byte response/status,,verified
+@@ -188,3 +188,3 @@ diag_tp_state_t,,reserved_0x47,byte,1,Padding,,verified
+-diag_tp_state_t,,tx_header_id,uint32_t,4,Composed CAN ID for TP.CM/TP.DT,,verified
+-diag_tp_state_t,,tx_length,uint16_t,2,DLC for frame (8 or tail),,verified
+-diag_tp_state_t,,tx_cm_buf,ptr:uint8_t,4,Scratch 8-byte CM/DT buffer,,verified
++diag_tp_state_t,,transmit_header_id,uint32_t,4,Composed CAN ID for TP.CM/TP.DT,,verified
++diag_tp_state_t,,transmit_length,uint16_t,2,DLC for frame (8 or tail),,verified
++diag_tp_state_t,,transmit_connection_management_buffer,ptr:uint8_t,4,Scratch 8-byte CM/DT buffer,,verified
+@@ -197,2 +197,2 @@ diag_transfer_state_t,,byte_count,word,2,Total byte count for operation,,verifie
+-diag_transfer_state_t,,tx_active_flag,byte,1,Transmit operation active (0/1),,verified
+-diag_transfer_state_t,,rx_active_flag,byte,1,Receive operation active (0/1),,verified
++diag_transfer_state_t,,transmit_active_flag,byte,1,Transmit operation active (0/1),,verified
++diag_transfer_state_t,,receive_active_flag,byte,1,Receive operation active (0/1),,verified
+@@ -205,2 +205,2 @@ diag_transfer_state_t,,rx_active_flag,byte,1,Receive operation active (0/1),,ver
+-fuel_governor_state_t,,out_cmd,short,2,Final clamped output (governor/fueling command),,verified
+-fuel_governor_state_t,,cmd_raw,short,2,Current raw command (signed),,verified
++fuel_governor_state_t,,output_command,short,2,Final clamped output (governor/fueling command),,verified
++fuel_governor_state_t,,raw_command,short,2,Current raw command (signed),,verified
+@@ -209,3 +209,3 @@ fuel_governor_state_t,,term_rate,short,2,Rate/derivative term (signed saturating
+-fuel_governor_state_t,,accum_lo,ushort,2,Q16.16 accumulator low 16 bits (fractional part),,verified
+-fuel_governor_state_t,,accum_hi,ushort,2,Q16.16 accumulator high 16 bits (integer part),,verified
+-fuel_governor_state_t,,limit_hi,short,2,Accumulator integer ceiling (upper clamp),,verified
++fuel_governor_state_t,,accumulator_low,ushort,2,Q16.16 accumulator low 16 bits (fractional part),,verified
++fuel_governor_state_t,,accumulator_high,ushort,2,Q16.16 accumulator high 16 bits (integer part),,verified
++fuel_governor_state_t,,limit_high,short,2,Accumulator integer ceiling (upper clamp),,verified
+@@ -278 +278 @@ rpm_fuel_protection_t,,rpm_rate_limited_value,word,2,RPM rate limited value,,ver
+-rpm_fuel_protection_t,,rpm_rate_secondary_calc,word,2,Secondary RPM rate calculation,,verified
++rpm_fuel_protection_t,,rpm_rate_secondary_calculation,word,2,Secondary RPM rate calculation,,verified
+@@ -387,4 +387,4 @@ address_range_entry_t,,normal_mode_flag,byte,1,Access flag in normal operation,,
+-circular_buffer_control_t,,read_ptr,dword,4,Current read position pointer,,verified
+-circular_buffer_control_t,,write_ptr,dword,4,Current write position pointer,,verified
+-circular_buffer_control_t,,base_ptr,dword,4,Start address of buffer data,,verified
+-circular_buffer_control_t,,end_ptr,dword,4,End address of buffer data,,verified
++circular_buffer_control_t,,read_pointer,dword,4,Current read position pointer,,verified
++circular_buffer_control_t,,write_pointer,dword,4,Current write position pointer,,verified
++circular_buffer_control_t,,base_pointer,dword,4,Start address of buffer data,,verified
++circular_buffer_control_t,,end_pointer,dword,4,End address of buffer data,,verified
+@@ -982 +982 @@ j1939_pgn_handler_entry_t,,pgn_byte_0,byte,1,Second PGN byte for matching (compa
+-j1939_pgn_handler_entry_t,,handler_func,dword,4,Function pointer to PGN handler callback,,verified
++j1939_pgn_handler_entry_t,,handler,dword,4,Function pointer to PGN handler callback,,verified
+diff --git a/firmware/CM848_S90140.06_analysis/docs/parameter_by_id_system.md b/firmware/CM848_S90140.06_analysis/docs/parameter_by_id_system.md
+index 167cd971..c83e6e88 100644
+--- a/firmware/CM848_S90140.06_analysis/docs/parameter_by_id_system.md
++++ b/firmware/CM848_S90140.06_analysis/docs/parameter_by_id_system.md
+@@ -76 +76 @@ EF00 Service Request (0x41 or 0x43)
+-uint32_t lookupTableEntryByKey(uint16_t param_id) {
++uint32_t lookupTableEntryByKey(uint16_t parameter_id) {
+@@ -80 +80 @@ uint32_t lookupTableEntryByKey(uint16_t param_id) {
+-    while (*entry < param_id && entry < (uint16_t *)0x003F9924) {
++    while (*entry < parameter_id && entry < (uint16_t *)0x003F9924) {
+@@ -84 +84 @@ uint32_t lookupTableEntryByKey(uint16_t param_id) {
+-    if (*entry == param_id) {
++    if (*entry == parameter_id) {
+@@ -100 +100 @@ typedef struct {
+-    uint16_t param_id;   // Parameter ID (0x0000-0x12A9)
++    uint16_t parameter_id;   // Parameter ID (0x0000-0x12A9)
+diff --git a/firmware/CM848_S90140.06_analysis/output/enums.csv b/firmware/CM848_S90140.06_analysis/output/enums.csv
+index 138964fd..2ade91ae 100644
+--- a/firmware/CM848_S90140.06_analysis/output/enums.csv
++++ b/firmware/CM848_S90140.06_analysis/output/enums.csv
+@@ -859 +859 @@ ENGINE_STATE,8,ENGINE_STATE_SHUTDOWN,e2m SHUTDOWN: the key line (mios_mdasm30.SC
+-# Used as j1939_acknowledgement_payload_t.control_byte and as ack_type parameter in sendAcknowledgeMessage/sendNegativeAck
++# Used as j1939_acknowledgement_payload_t.control_byte and as acknowledgement_type parameter in sendAcknowledgeMessage/sendNegativeAck
+diff --git a/firmware/CM848_S90140.06_analysis/output/function_definitions.csv b/firmware/CM848_S90140.06_analysis/output/function_definitions.csv
+index 6d98d038..e3a07d2e 100644
+--- a/firmware/CM848_S90140.06_analysis/output/function_definitions.csv
++++ b/firmware/CM848_S90140.06_analysis/output/function_definitions.csv
+@@ -53,2 +53,2 @@ function_address,function_name,param_index,name,type,comment
+-0x00000bec,mpc555_eepromWriteWords,0,dest_address,uint,EEPROM destination address
+-0x00000bec,mpc555_eepromWriteWords,1,src_ptr,word*,Pointer to source data words
++0x00000bec,mpc555_eepromWriteWords,0,destination_address,uint,EEPROM destination address
++0x00000bec,mpc555_eepromWriteWords,1,source_pointer,word*,Pointer to source data words
+@@ -74 +74 @@ function_address,function_name,param_index,name,type,comment
+-0x00020c64,cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling,0,rx_msg,j1939_received_message_t*,Pointer to received CAN message descriptor
++0x00020c64,cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling,0,received_message,j1939_received_message_t*,Pointer to received CAN message descriptor
+@@ -76 +76 @@ function_address,function_name,param_index,name,type,comment
+-0x0000628c,mpc555_dispatchJ1939TransportConnectionManagement,0,rx_msg,j1939_received_message_t*,Pointer to received diagnostic message
++0x0000628c,mpc555_dispatchJ1939TransportConnectionManagement,0,received_message,j1939_received_message_t*,Pointer to received diagnostic message
+@@ -82,2 +82,2 @@ function_address,function_name,param_index,name,type,comment
+-0x00005ecc,mpc555_handleJ1939TransportRequestToSend,0,rx_msg,j1939_received_message_t*,Pointer to data request message
+-0x00006180,mpc555_handleJ1939TransportEndOfMessageAcknowledge,0,rx_msg,j1939_received_message_t*,Pointer to abort request message
++0x00005ecc,mpc555_handleJ1939TransportRequestToSend,0,received_message,j1939_received_message_t*,Pointer to data request message
++0x00006180,mpc555_handleJ1939TransportEndOfMessageAcknowledge,0,received_message,j1939_received_message_t*,Pointer to abort request message
+@@ -86,2 +86,2 @@ function_address,function_name,param_index,name,type,comment
+-0x00022d60,processEngineTsc1Request,0,rx_msg,j1939_received_message_t*,Pointer to received TSC1 message
+-0x00022870,cm848_j1939ProcessPgn61442Etc1,0,rx_msg,j1939_received_message_t*,Pointer to received TSC1 message (secondary handler)
++0x00022d60,processEngineTsc1Request,0,received_message,j1939_received_message_t*,Pointer to received TSC1 message
++0x00022870,cm848_j1939ProcessPgn61442Etc1,0,received_message,j1939_received_message_t*,Pointer to received TSC1 message (secondary handler)
+@@ -92 +92 @@ function_address,function_name,param_index,name,type,comment
+-0x00006d24,cm848_dispatchDiagnosticService,0,request,j1939_received_message_t*,the received request (the boot transport receive session's message view at request_to_send_can_id: its data packet handler passes record + 8 in r3 and sets no r4 / r5 - the old rows service_code byte / data_ptr / data_length printed its low byte 0x2d as a service code; PR #53 round 36)
++0x00006d24,cm848_dispatchDiagnosticService,0,request,j1939_received_message_t*,the received request (the boot transport receive session's message view at request_to_send_can_id: its data packet handler passes record + 8 in r3 and sets no r4 / r5 - the old rows service_code byte / data_pointer / data_length printed its low byte 0x2d as a service code; PR #53 round 36)
+@@ -95 +95 @@ function_address,function_name,param_index,name,type,comment
+-0x0000662c,mpc555_diagnosticSubcommandDispatcher,1,data_ptr,byte*,Pointer to subcommand data
++0x0000662c,mpc555_diagnosticSubcommandDispatcher,1,data_pointer,byte*,Pointer to subcommand data
+@@ -106 +106 @@ function_address,function_name,param_index,name,type,comment
+-0x00001948,cm848_registerPgnResponseHandler,1,handler_func,void*,Function pointer for handler callback
++0x00001948,cm848_registerPgnResponseHandler,1,handler,void*,Function pointer for handler callback
+@@ -109 +109 @@ function_address,function_name,param_index,name,type,comment
+-0x00002cd8,cm848_registerPgnEf00Handler,1,handler_func,void*,Function pointer for handler callback
++0x00002cd8,cm848_registerPgnEf00Handler,1,handler,void*,Function pointer for handler callback
+@@ -117 +117 @@ function_address,function_name,param_index,name,type,comment
+-0x00023188,registerJ1939PgnRequestHandler,1,handler_func,void*,Function pointer called when PGN matches incoming message
++0x00023188,registerJ1939PgnRequestHandler,1,handler,void*,Function pointer called when PGN matches incoming message
+@@ -119 +119 @@ function_address,function_name,param_index,name,type,comment
+-0x00022d60,processEngineTsc1Request,0,rx_msg,j1939_received_message_t*,Pointer to received J1939 message
++0x00022d60,processEngineTsc1Request,0,received_message,j1939_received_message_t*,Pointer to received J1939 message
+@@ -121,2 +121,2 @@ function_address,function_name,param_index,name,type,comment
+-0x00023d3c,cm848_sendJ1939AcknowledgeMessage,0,request_msg,j1939_received_message_t*,Original request to acknowledge
+-0x00023d3c,cm848_sendJ1939AcknowledgeMessage,1,ack_type,J1939_ACK_TYPE,J1939-21 ACKM control byte value
++0x00023d3c,cm848_sendJ1939AcknowledgeMessage,0,request_message,j1939_received_message_t*,Original request to acknowledge
++0x00023d3c,cm848_sendJ1939AcknowledgeMessage,1,acknowledgement_type,J1939_ACK_TYPE,J1939-21 ACKM control byte value
+@@ -124,2 +124,2 @@ function_address,function_name,param_index,name,type,comment
+-0x00023dbc,cm848_sendJ1939NegativeAcknowledgement,0,msg,j1939_received_message_t*,Received message to NACK (accesses dest_address at +2 and data_ptr at +6)
+-0x00023dbc,cm848_sendJ1939NegativeAcknowledgement,1,ack_type,J1939_ACK_TYPE,J1939-21 ACKM control byte value
++0x00023dbc,cm848_sendJ1939NegativeAcknowledgement,0,message,j1939_received_message_t*,Received message to NACK (accesses destination_address at +2 and data_pointer at +6)
++0x00023dbc,cm848_sendJ1939NegativeAcknowledgement,1,acknowledgement_type,J1939_ACK_TYPE,J1939-21 ACKM control byte value
+@@ -128 +128 @@ function_address,function_name,param_index,name,type,comment
+-0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,1,transported_pgn,ushort,the received message's PGN word (its high byte goes into the PGN bytes of the TP.CM 0x13 frame; the old rows data_ptr / data_length made the caller cast it to a pointer and pass a leftover third argument; PR #53 round 36)
++0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,1,transported_pgn,ushort,the received message's PGN word (its high byte goes into the PGN bytes of the TP.CM 0x13 frame; the old rows data_pointer / data_length made the caller cast it to a pointer and pass a leftover third argument; PR #53 round 36)
+@@ -134 +134 @@ function_address,function_name,param_index,name,type,comment
+-0x000227a0,cm848_j1939HandlePgn58112Dm7,0,request_msg,j1939_received_message_t*,The received DM7 (PGN 58112) request
++0x000227a0,cm848_j1939HandlePgn58112Dm7,0,request_message,j1939_received_message_t*,The received DM7 (PGN 58112) request
+@@ -139 +139 @@ function_address,function_name,param_index,name,type,comment
+-0x0002641c,cm848_buildPgn65213FanDrive1Message,return,,void,explicit void(void) - r3 / r4 are written before they are read (lis r3 @ 0x26428 / lis r4 @ 0x26444) - the transmit queue calls it with no arguments - replaces the invented dest_address / status_type rows
++0x0002641c,cm848_buildPgn65213FanDrive1Message,return,,void,explicit void(void) - r3 / r4 are written before they are read (lis r3 @ 0x26428 / lis r4 @ 0x26444) - the transmit queue calls it with no arguments - replaces the invented destination_address / status_type rows
+@@ -145 +145 @@ function_address,function_name,param_index,name,type,comment
+-0x00005fe4,mpc555_handleJ1939TransportDataPacket,0,rx_msg,j1939_received_message_t*,TP.DT data transfer message
++0x00005fe4,mpc555_handleJ1939TransportDataPacket,0,received_message,j1939_received_message_t*,TP.DT data transfer message
+@@ -157,2 +157,2 @@ function_address,function_name,param_index,name,type,comment
+-0x00500234,cm848_processSignedSensorChannel,0,config_ptr,sensor_channel_config_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
+-0x00500234,cm848_processSignedSensorChannel,1,state_ptr,sensor_channel_state_t *,The channel's RAM state
++0x00500234,cm848_processSignedSensorChannel,0,configuration_pointer,sensor_channel_config_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
++0x00500234,cm848_processSignedSensorChannel,1,state_pointer,sensor_channel_state_t *,The channel's RAM state
+@@ -160 +160 @@ function_address,function_name,param_index,name,type,comment
+-0x00500234,cm848_processSignedSensorChannel,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_ptr->lookup_input
++0x00500234,cm848_processSignedSensorChannel,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_pointer->lookup_input
+@@ -163 +163 @@ function_address,function_name,param_index,name,type,comment
+-0x00500234,cm848_processSignedSensorChannel,6,filter_state_ptr,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at config_ptr->filter_coefficient and seeds the accumulator
++0x00500234,cm848_processSignedSensorChannel,6,filter_state_pointer,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at configuration_pointer->filter_coefficient and seeds the accumulator
+@@ -167,3 +167,3 @@ function_address,function_name,param_index,name,type,comment
+-0x00500234,cm848_processSignedSensorChannel,10,value_output_ptr,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
+-0x00500234,cm848_processSignedSensorChannel,11,default_value_output_ptr,word *,Receives config_ptr->default_value (was filtered_output_ptr)
+-0x00500234,cm848_processSignedSensorChannel,12,fault_status_output_ptr,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
++0x00500234,cm848_processSignedSensorChannel,10,value_output_pointer,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
++0x00500234,cm848_processSignedSensorChannel,11,default_value_output_pointer,word *,Receives configuration_pointer->default_value (was filtered_output_ptr)
++0x00500234,cm848_processSignedSensorChannel,12,fault_status_output_pointer,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
+@@ -172,2 +172,2 @@ function_address,function_name,param_index,name,type,comment
+-0x00500a4c,cm848_initializeSignedSensorChannel,0,config_ptr,sensor_channel_config_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
+-0x00500a4c,cm848_initializeSignedSensorChannel,1,state_ptr,sensor_channel_state_t *,The channel's RAM state
++0x00500a4c,cm848_initializeSignedSensorChannel,0,configuration_pointer,sensor_channel_config_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
++0x00500a4c,cm848_initializeSignedSensorChannel,1,state_pointer,sensor_channel_state_t *,The channel's RAM state
+@@ -175 +175 @@ function_address,function_name,param_index,name,type,comment
+-0x00500a4c,cm848_initializeSignedSensorChannel,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_ptr->lookup_input
++0x00500a4c,cm848_initializeSignedSensorChannel,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_pointer->lookup_input
+@@ -178 +178 @@ function_address,function_name,param_index,name,type,comment
+-0x00500a4c,cm848_initializeSignedSensorChannel,6,filter_state_ptr,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at config_ptr->filter_coefficient and seeds the accumulator
++0x00500a4c,cm848_initializeSignedSensorChannel,6,filter_state_pointer,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at configuration_pointer->filter_coefficient and seeds the accumulator
+@@ -182,3 +182,3 @@ function_address,function_name,param_index,name,type,comment
+-0x00500a4c,cm848_initializeSignedSensorChannel,10,value_output_ptr,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
+-0x00500a4c,cm848_initializeSignedSensorChannel,11,default_value_output_ptr,word *,Receives config_ptr->default_value (was filtered_output_ptr)
+-0x00500a4c,cm848_initializeSignedSensorChannel,12,fault_status_output_ptr,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
++0x00500a4c,cm848_initializeSignedSensorChannel,10,value_output_pointer,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
++0x00500a4c,cm848_initializeSignedSensorChannel,11,default_value_output_pointer,word *,Receives configuration_pointer->default_value (was filtered_output_ptr)
++0x00500a4c,cm848_initializeSignedSensorChannel,12,fault_status_output_pointer,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
+@@ -206 +206 @@ function_address,function_name,param_index,name,type,comment
+-0x00003f70,cm848_lookupBootParameterIdAddress,0,param_id,ushort,16-bit parameter ID to resolve
++0x00003f70,cm848_lookupBootParameterIdAddress,0,parameter_id,ushort,16-bit parameter ID to resolve
+@@ -218 +218 @@ function_address,function_name,param_index,name,type,comment
+-0x000220e4,registerJ1939DiagnosticService,1,handler_ptr,void*,Function pointer for service handler
++0x000220e4,registerJ1939DiagnosticService,1,handler_pointer,void*,Function pointer for service handler
+@@ -221 +221 @@ function_address,function_name,param_index,name,type,comment
+-0x00002c94,cm848_registerDiagnosticService,1,handler_ptr,void*,Function pointer for service handler
++0x00002c94,cm848_registerDiagnosticService,1,handler_pointer,void*,Function pointer for service handler
+@@ -238,4 +238,4 @@ function_address,function_name,param_index,name,type,comment
+-0x00022d60,processEngineTsc1Request,0,msg,j1939_received_message_t*,Incoming J1939 RX message descriptor from CAN ring buffer
+-0x000236f0,cm848_processEngineRetarderTsc1Request,0,msg,j1939_received_message_t*,Incoming J1939 RX message descriptor from CAN ring buffer
+-0x000231cc,cm848_dispatchJ1939PgnRequest,0,msg,j1939_received_message_t*,Incoming J1939 RX message descriptor from CAN ring buffer
+-0x00023b38,dispatchTsc1ByDestinationAddress,0,msg,j1939_received_message_t*,Incoming J1939 RX message descriptor from CAN ring buffer
++0x00022d60,processEngineTsc1Request,0,message,j1939_received_message_t*,Incoming J1939 RX message descriptor from CAN ring buffer
++0x000236f0,cm848_processEngineRetarderTsc1Request,0,message,j1939_received_message_t*,Incoming J1939 RX message descriptor from CAN ring buffer
++0x000231cc,cm848_dispatchJ1939PgnRequest,0,message,j1939_received_message_t*,Incoming J1939 RX message descriptor from CAN ring buffer
++0x00023b38,dispatchTsc1ByDestinationAddress,0,message,j1939_received_message_t*,Incoming J1939 RX message descriptor from CAN ring buffer
+@@ -246 +246 @@ function_address,function_name,param_index,name,type,comment
+-0x000539fc,cm848_sendJ1939Message,0,msg,j1939_transmit_message_t*,TX message descriptor; dispatches to single-frame (<9 bytes) or multi-frame transport protocol
++0x000539fc,cm848_sendJ1939Message,0,message,j1939_transmit_message_t*,TX message descriptor; dispatches to single-frame (<9 bytes) or multi-frame transport protocol
+@@ -257,4 +257,4 @@ function_address,function_name,param_index,name,type,comment
+-0x000571b0,cm848_unsignedDivision32,0,dividend_hi,uint,High 32 bits of 64-bit dividend
+-0x000571b0,cm848_unsignedDivision32,1,dividend_lo,uint,Low 32 bits of 64-bit dividend
+-0x000571b0,cm848_unsignedDivision32,2,divisor_hi,uint,High 32 bits of divisor (usually 0)
+-0x000571b0,cm848_unsignedDivision32,3,divisor_lo,uint,Low 32 bits of divisor
++0x000571b0,cm848_unsignedDivision32,0,dividend_high,uint,High 32 bits of 64-bit dividend
++0x000571b0,cm848_unsignedDivision32,1,dividend_low,uint,Low 32 bits of 64-bit dividend
++0x000571b0,cm848_unsignedDivision32,2,divisor_high,uint,High 32 bits of divisor (usually 0)
++0x000571b0,cm848_unsignedDivision32,3,divisor_low,uint,Low 32 bits of divisor
+@@ -262,4 +262,4 @@ function_address,function_name,param_index,name,type,comment
+-0x000570f0,cm848_signedDivision32,0,dividend_hi,int,High 32 bits of 64-bit dividend
+-0x000570f0,cm848_signedDivision32,1,dividend_lo,uint,Low 32 bits of 64-bit dividend
+-0x000570f0,cm848_signedDivision32,2,divisor_hi,int,High 32 bits of divisor (usually sign-extension)
+-0x000570f0,cm848_signedDivision32,3,divisor_lo,int,Low 32 bits of divisor
++0x000570f0,cm848_signedDivision32,0,dividend_high,int,High 32 bits of 64-bit dividend
++0x000570f0,cm848_signedDivision32,1,dividend_low,uint,Low 32 bits of 64-bit dividend
++0x000570f0,cm848_signedDivision32,2,divisor_high,int,High 32 bits of divisor (usually sign-extension)
++0x000570f0,cm848_signedDivision32,3,divisor_low,int,Low 32 bits of divisor
+@@ -267,4 +267,4 @@ function_address,function_name,param_index,name,type,comment
+-0x00056e90,cm848_unsignedDivision64by32,0,dividend_hi,uint,High 32 bits of 64-bit dividend
+-0x00056e90,cm848_unsignedDivision64by32,1,dividend_lo,uint,Low 32 bits of 64-bit dividend
+-0x00056e90,cm848_unsignedDivision64by32,2,divisor_hi,uint,High 32 bits of divisor (usually 0)
+-0x00056e90,cm848_unsignedDivision64by32,3,divisor_lo,uint,Low 32 bits of divisor
++0x00056e90,cm848_unsignedDivision64by32,0,dividend_high,uint,High 32 bits of 64-bit dividend
++0x00056e90,cm848_unsignedDivision64by32,1,dividend_low,uint,Low 32 bits of 64-bit dividend
++0x00056e90,cm848_unsignedDivision64by32,2,divisor_high,uint,High 32 bits of divisor (usually 0)
++0x00056e90,cm848_unsignedDivision64by32,3,divisor_low,uint,Low 32 bits of divisor
+@@ -276,4 +276,4 @@ function_address,function_name,param_index,name,type,comment
+-0x00057498,cm848_conditionalMultiplyDivide,0,dividend_hi,uint,High 32 bits of 64-bit dividend
+-0x00057498,cm848_conditionalMultiplyDivide,1,dividend_lo,uint,Low 32 bits of 64-bit dividend
+-0x00057498,cm848_conditionalMultiplyDivide,2,divisor_hi,uint,High 32 bits of divisor (usually 0)
+-0x00057498,cm848_conditionalMultiplyDivide,3,divisor_lo,uint,Low 32 bits of divisor
++0x00057498,cm848_conditionalMultiplyDivide,0,dividend_high,uint,High 32 bits of 64-bit dividend
++0x00057498,cm848_conditionalMultiplyDivide,1,dividend_low,uint,Low 32 bits of 64-bit dividend
++0x00057498,cm848_conditionalMultiplyDivide,2,divisor_high,uint,High 32 bits of divisor (usually 0)
++0x00057498,cm848_conditionalMultiplyDivide,3,divisor_low,uint,Low 32 bits of divisor
+@@ -297,2 +297,2 @@ function_address,function_name,param_index,name,type,comment
+-0x005012dc,cm848_processUnsignedSensorChannel,0,config_ptr,sensor_channel_config_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
+-0x005012dc,cm848_processUnsignedSensorChannel,1,state_ptr,sensor_channel_state_t *,The channel's RAM state
++0x005012dc,cm848_processUnsignedSensorChannel,0,configuration_pointer,sensor_channel_config_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
++0x005012dc,cm848_processUnsignedSensorChannel,1,state_pointer,sensor_channel_state_t *,The channel's RAM state
+@@ -300 +300 @@ function_address,function_name,param_index,name,type,comment
+-0x005012dc,cm848_processUnsignedSensorChannel,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_ptr->lookup_input
++0x005012dc,cm848_processUnsignedSensorChannel,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_pointer->lookup_input
+@@ -303 +303 @@ function_address,function_name,param_index,name,type,comment
+-0x005012dc,cm848_processUnsignedSensorChannel,6,filter_state_ptr,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at config_ptr->filter_coefficient and seeds the accumulator
++0x005012dc,cm848_processUnsignedSensorChannel,6,filter_state_pointer,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at configuration_pointer->filter_coefficient and seeds the accumulator
+@@ -307,3 +307,3 @@ function_address,function_name,param_index,name,type,comment
+-0x005012dc,cm848_processUnsignedSensorChannel,10,value_output_ptr,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
+-0x005012dc,cm848_processUnsignedSensorChannel,11,default_value_output_ptr,word *,Receives config_ptr->default_value (was filtered_output_ptr)
+-0x005012dc,cm848_processUnsignedSensorChannel,12,fault_status_output_ptr,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
++0x005012dc,cm848_processUnsignedSensorChannel,10,value_output_pointer,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
++0x005012dc,cm848_processUnsignedSensorChannel,11,default_value_output_pointer,word *,Receives configuration_pointer->default_value (was filtered_output_ptr)
++0x005012dc,cm848_processUnsignedSensorChannel,12,fault_status_output_pointer,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
+@@ -311,2 +311,2 @@ function_address,function_name,param_index,name,type,comment
+-0x00501b4c,cm848_initializeUnsignedSensorChannel,0,config_ptr,sensor_channel_config_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
+-0x00501b4c,cm848_initializeUnsignedSensorChannel,1,state_ptr,sensor_channel_state_t *,The channel's RAM state
++0x00501b4c,cm848_initializeUnsignedSensorChannel,0,configuration_pointer,sensor_channel_config_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
++0x00501b4c,cm848_initializeUnsignedSensorChannel,1,state_pointer,sensor_channel_state_t *,The channel's RAM state
+@@ -314 +314 @@ function_address,function_name,param_index,name,type,comment
+-0x00501b4c,cm848_initializeUnsignedSensorChannel,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_ptr->lookup_input
++0x00501b4c,cm848_initializeUnsignedSensorChannel,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_pointer->lookup_input
+@@ -317 +317 @@ function_address,function_name,param_index,name,type,comment
+-0x00501b4c,cm848_initializeUnsignedSensorChannel,6,filter_state_ptr,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at config_ptr->filter_coefficient and seeds the accumulator
++0x00501b4c,cm848_initializeUnsignedSensorChannel,6,filter_state_pointer,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at configuration_pointer->filter_coefficient and seeds the accumulator
+@@ -321,3 +321,3 @@ function_address,function_name,param_index,name,type,comment
+-0x00501b4c,cm848_initializeUnsignedSensorChannel,10,value_output_ptr,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
+-0x00501b4c,cm848_initializeUnsignedSensorChannel,11,default_value_output_ptr,word *,Receives config_ptr->default_value (was filtered_output_ptr)
+-0x00501b4c,cm848_initializeUnsignedSensorChannel,12,fault_status_output_ptr,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
++0x00501b4c,cm848_initializeUnsignedSensorChannel,10,value_output_pointer,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
++0x00501b4c,cm848_initializeUnsignedSensorChannel,11,default_value_output_pointer,word *,Receives configuration_pointer->default_value (was filtered_output_ptr)
++0x00501b4c,cm848_initializeUnsignedSensorChannel,12,fault_status_output_pointer,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
+@@ -488 +488 @@ function_address,function_name,param_index,name,type,comment
+-0x0050c8ec,cm848_startJ1939TransportSession,0,msg,j1939_transmit_message_t*,the transmit descriptor of a message longer than 8 bytes (from cm848_sendJ1939Message)
++0x0050c8ec,cm848_startJ1939TransportSession,0,message,j1939_transmit_message_t*,the transmit descriptor of a message longer than 8 bytes (from cm848_sendJ1939Message)
+@@ -498,2 +498,2 @@ function_address,function_name,param_index,name,type,comment
+-0x00022128,cm848_j1939DiagnosticServiceHandler,0,rx_msg,j1939_received_message_t*,the received PGN 61184 request (a single frame / or the transport receive session's message view from its request_to_send_can_id)
+-0x0050b634,cm848_validateJ1939DiagnosticRequest,0,rx_msg,j1939_received_message_t*,the received request
++0x00022128,cm848_j1939DiagnosticServiceHandler,0,received_message,j1939_received_message_t*,the received PGN 61184 request (a single frame / or the transport receive session's message view from its request_to_send_can_id)
++0x0050b634,cm848_validateJ1939DiagnosticRequest,0,received_message,j1939_received_message_t*,the received request
+diff --git a/firmware/CM848_S90140.06_analysis/output/function_renames.csv b/firmware/CM848_S90140.06_analysis/output/function_renames.csv
+index da2aa3c0..3714972c 100644
+--- a/firmware/CM848_S90140.06_analysis/output/function_renames.csv
++++ b/firmware/CM848_S90140.06_analysis/output/function_renames.csv
+@@ -839 +839 @@ address,name
+-0x00020c64,cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling,Sets points 2 and 5 of the J1939 (Jcomm) torque curve of the engine configuration message from one fueling on the engine speed limit droop line. The fueling arrives in r3 (decompiled as the pointer parameter rx_msg) and a flag in r4. The speed is the droop line speed at that fueling: engine_speed_limit_arbitrated + engine_speed_limit_droop_slope x (((engine_speed_limit_ramped_maximum_fuel_quantity - fueling) x 8) & 0xfff8) / 0x8888, capped at 40000 (5000 rpm), or torque_limit_working_reference when engine_speed_limit_droop_slope is 0. It stores that speed in j1939_torque_curve_speed_at_point_2 (e2m 1102 +24 Jcomm_RPM_At_Point_2, the high speed governor breakpoint) and in j1939_torque_curve_speed_at_point_5 (+2A; with r4 = 0 point 5 gets the ROM speed j1939_engine_speed_at_point_5 instead, e2m 1104 +8 Jcomm_Engine_Speed_at_Point_5) and the fueling in j1939_torque_curve_fueling_at_point_2 (+2E) and j1939_torque_curve_fueling_at_point_5 (+34). Its only caller cm848_updateJ1939EngineConfigurationTorqueCurve (0x20d10) passes j1939_derated_fueling_at_point_4 with r4 = 1 when ROM 0x5c35e (e2m 1104 +16 Jcomm_Tau_0_Point_5_Intersection_Speed) is above the speed limit, otherwise j1939_derated_fueling_at_point_5 with r4 = 0. It receives no J1939 message. (was cm848_processJ1939RxMessage)
++0x00020c64,cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling,Sets points 2 and 5 of the J1939 (Jcomm) torque curve of the engine configuration message from one fueling on the engine speed limit droop line. The fueling arrives in r3 (decompiled as the pointer parameter received_message) and a flag in r4. The speed is the droop line speed at that fueling: engine_speed_limit_arbitrated + engine_speed_limit_droop_slope x (((engine_speed_limit_ramped_maximum_fuel_quantity - fueling) x 8) & 0xfff8) / 0x8888, capped at 40000 (5000 rpm), or torque_limit_working_reference when engine_speed_limit_droop_slope is 0. It stores that speed in j1939_torque_curve_speed_at_point_2 (e2m 1102 +24 Jcomm_RPM_At_Point_2, the high speed governor breakpoint) and in j1939_torque_curve_speed_at_point_5 (+2A; with r4 = 0 point 5 gets the ROM speed j1939_engine_speed_at_point_5 instead, e2m 1104 +8 Jcomm_Engine_Speed_at_Point_5) and the fueling in j1939_torque_curve_fueling_at_point_2 (+2E) and j1939_torque_curve_fueling_at_point_5 (+34). Its only caller cm848_updateJ1939EngineConfigurationTorqueCurve (0x20d10) passes j1939_derated_fueling_at_point_4 with r4 = 1 when ROM 0x5c35e (e2m 1104 +16 Jcomm_Tau_0_Point_5_Intersection_Speed) is above the speed limit, otherwise j1939_derated_fueling_at_point_5 with r4 = 0. It receives no J1939 message. (was cm848_processJ1939RxMessage)
+@@ -928 +928 @@ address,name
+-0x000255c0,cm848_sendPgn65232NonContinuousMonitorTestResultMessage,Sends one test result of the non-continuously monitored systems, PGN 65232 (Test Results for Non-continuously Monitored Systems; transmit descriptor j1939_pgn65232_tx_message, 8 bytes, set by cm848_initializePgn65232Dm8Buffer at 0x2560c). test_identifier is SPN 1224 (byte 1: 0 = the intake air heater monitor, 1 = the misfire monitor) and test_value the 16-bit SPN 1226 test value (byte swapped with cm848_reverseByteOrder16 into bytes 3-4 of j1939_pgn65232_payload). The test type byte and the limit words keep their 0xff / 0xffff initial values (not available) (PR #53 round 90: the parameters were dest_address / fault_count). The only caller is cm848_j1939HandlePgn58112Dm7 (0x227a0), the handler of the command for these tests (PGN 58112), which passes intake_air_heater_monitor_result for test 0 and misfire_monitor_result for test 1. (was cm848_j1939SendDm1ResponseMessage)
++0x000255c0,cm848_sendPgn65232NonContinuousMonitorTestResultMessage,Sends one test result of the non-continuously monitored systems, PGN 65232 (Test Results for Non-continuously Monitored Systems; transmit descriptor j1939_pgn65232_tx_message, 8 bytes, set by cm848_initializePgn65232Dm8Buffer at 0x2560c). test_identifier is SPN 1224 (byte 1: 0 = the intake air heater monitor, 1 = the misfire monitor) and test_value the 16-bit SPN 1226 test value (byte swapped with cm848_reverseByteOrder16 into bytes 3-4 of j1939_pgn65232_payload). The test type byte and the limit words keep their 0xff / 0xffff initial values (not available) (PR #53 round 90: the parameters were destination_address / fault_count). The only caller is cm848_j1939HandlePgn58112Dm7 (0x227a0), the handler of the command for these tests (PGN 58112), which passes intake_air_heater_monitor_result for test 0 and misfire_monitor_result for test 1. (was cm848_j1939SendDm1ResponseMessage)
+@@ -944 +944 @@ address,name
+-0x0002641c,cm848_buildPgn65213FanDrive1Message,Builds and sends the ECM's FD1 broadcast (PGN 65213, every 1000 ms on queue 0, 2 data bytes): byte 1 = engine fan 1 estimated percent speed (SPN 975, 0.4 percent per bit = fan_drive_estimated_speed_percent_times_256 x 5 >> 9, so 25600 gives 250 = 100 percent), byte 2 = fan drive state (SPN 977) in the low nibble with the reserved nibble set, 0xFE when fan_drive_state_code is above 15. Neither input is written anywhere in this firmware, so the frame always reports 0 percent and state 0 (fan off). It takes no arguments: r3 / r4 are written before they are read (lis r3 @ 0x26428 / lis r4 @ 0x26444), so its invented dest_address / status_type parameters were removed 2026-11-17 (was cm848_j1939SendDiagnosticStatusMessage).
++0x0002641c,cm848_buildPgn65213FanDrive1Message,Builds and sends the ECM's FD1 broadcast (PGN 65213, every 1000 ms on queue 0, 2 data bytes): byte 1 = engine fan 1 estimated percent speed (SPN 975, 0.4 percent per bit = fan_drive_estimated_speed_percent_times_256 x 5 >> 9, so 25600 gives 250 = 100 percent), byte 2 = fan drive state (SPN 977) in the low nibble with the reserved nibble set, 0xFE when fan_drive_state_code is above 15. Neither input is written anywhere in this firmware, so the frame always reports 0 percent and state 0 (fan off). It takes no arguments: r3 / r4 are written before they are read (lis r3 @ 0x26428 / lis r4 @ 0x26444), so its invented destination_address / status_type parameters were removed 2026-11-17 (was cm848_j1939SendDiagnosticStatusMessage).
+@@ -1663,2 +1663,2 @@ address,name
+-0x005012dc,cm848_processUnsignedSensorChannel,The periodic pass of the unsigned sensor channels (lookup flags 0, cm848_exponentialMovingAverage; lhz loads). Unlike the signed twin it skips the threshold faults of channel 47 (cruise switch) until cruise_control_switches_learned_flag_cal, of channel 71 (A/C pressure) until its learned flag, and of channel 10 (oil pressure) while oil_pressure_switch_only_cal is set (was sensorChannelTypeB_configInit) | earlier note: review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible converging-epilogue gotos + 3 split-remnant scratch temps Ghidra will not let CSV name) Accuracy Confidence High. config_ptr typed as sensor_channel_config_t* (7 default/threshold/debounce fields render); DAT_003fd8e8 -> governor_temp_protection_disable (now oil_pressure_switch_only_cal); 11 locals named; 2 array globals renamed. 13-param PowerPC prototype; params 4-6 passed but unused.
+-0x00501b4c,cm848_initializeUnsignedSensorChannel,The boot pass of the unsigned sensor channels (the unsigned twin of cm848_initializeSignedSensorChannel) (was sensorChannelTypeB_update) | earlier note: review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible converging-epilogue gotos + split-remnant scratch temps) Accuracy Confidence High. Boot-time twin of configInit; same config_ptr struct typing, named global, and named locals; 13-param prototype.
++0x005012dc,cm848_processUnsignedSensorChannel,The periodic pass of the unsigned sensor channels (lookup flags 0, cm848_exponentialMovingAverage; lhz loads). Unlike the signed twin it skips the threshold faults of channel 47 (cruise switch) until cruise_control_switches_learned_flag_cal, of channel 71 (A/C pressure) until its learned flag, and of channel 10 (oil pressure) while oil_pressure_switch_only_cal is set (was sensorChannelTypeB_configInit) | earlier note: review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible converging-epilogue gotos + 3 split-remnant scratch temps Ghidra will not let CSV name) Accuracy Confidence High. configuration_pointer typed as sensor_channel_config_t* (7 default/threshold/debounce fields render); DAT_003fd8e8 -> governor_temp_protection_disable (now oil_pressure_switch_only_cal); 11 locals named; 2 array globals renamed. 13-param PowerPC prototype; params 4-6 passed but unused.
++0x00501b4c,cm848_initializeUnsignedSensorChannel,The boot pass of the unsigned sensor channels (the unsigned twin of cm848_initializeSignedSensorChannel) (was sensorChannelTypeB_update) | earlier note: review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible converging-epilogue gotos + split-remnant scratch temps) Accuracy Confidence High. Boot-time twin of configInit; same configuration_pointer struct typing, named global, and named locals; 13-param prototype.
+@@ -1807 +1807 @@ address,name
+-0x0050a700,cm848_processJ1939AcceleratorPedalPosition,J1939 input 7: EEC2 (PGN 61443) byte 2 Accelerator Pedal Position 1 (SPN 91 - 0.4 %/bit) -> accelerator_pedal_sensor_channel_state.held_value (raw x 16 / 10 = 0.25 %/bit - the local pedal scale; was j1939_accelerator_pedal_position) with its priority in .held_value_source_priority and commanded_throttle_state_t.accelerator_off_idle; 0xFE (error) sets emission_faults bit 15 and falls back to the low idle switch; message lost runs cm848_updateIdleSwitchesFromLocalInputs; runs only when sensor_channel_held_value_enable_bits_cal bit 13 (J1939 pedal) is set and switch 7 is datalink-sourced; with the same bit 13 set the accelerator pedal channel (13) outputs held_value in place of its sensor (the sensor-channel functions read it through state_ptr) - so the J1939 pedal DOES reach sensor_channel_filtered_output[13]; it was read as having no reader because nothing names the address (was fuel_demandFeature_emission_update) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
++0x0050a700,cm848_processJ1939AcceleratorPedalPosition,J1939 input 7: EEC2 (PGN 61443) byte 2 Accelerator Pedal Position 1 (SPN 91 - 0.4 %/bit) -> accelerator_pedal_sensor_channel_state.held_value (raw x 16 / 10 = 0.25 %/bit - the local pedal scale; was j1939_accelerator_pedal_position) with its priority in .held_value_source_priority and commanded_throttle_state_t.accelerator_off_idle; 0xFE (error) sets emission_faults bit 15 and falls back to the low idle switch; message lost runs cm848_updateIdleSwitchesFromLocalInputs; runs only when sensor_channel_held_value_enable_bits_cal bit 13 (J1939 pedal) is set and switch 7 is datalink-sourced; with the same bit 13 set the accelerator pedal channel (13) outputs held_value in place of its sensor (the sensor-channel functions read it through state_pointer) - so the J1939 pedal DOES reach sensor_channel_filtered_output[13]; it was read as having no reader because nothing names the address (was fuel_demandFeature_emission_update) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+diff --git a/firmware/CM848_S90140.06_analysis/output/global_variables.csv b/firmware/CM848_S90140.06_analysis/output/global_variables.csv
+index 2662eb4e..c2c11b34 100644
+--- a/firmware/CM848_S90140.06_analysis/output/global_variables.csv
++++ b/firmware/CM848_S90140.06_analysis/output/global_variables.csv
+@@ -804,2 +804,2 @@ address,name,type,comment
+-0x003028a9,eeprom_block_tracking.last_write_addr,,(was keyon_duration_counter.last_write_addr: a stale flat row inside the struct; PR #53 round 67)
+-0x003028ad,eeprom_block_tracking.block_start_addr,,(was qadc_a_result_ch28: a stale flat row inside the struct; PR #53 round 67)
++0x003028a9,eeprom_block_tracking.last_write_address,,(was keyon_duration_counter.last_write_address: a stale flat row inside the struct; PR #53 round 67)
++0x003028ad,eeprom_block_tracking.block_start_address,,(was qadc_a_result_ch28: a stale flat row inside the struct; PR #53 round 67)
+@@ -2487 +2487 @@ address,name,type,comment
+-0x003fedfd,diag_clear_flags_t_003fedfc.diag_eeprom_work_byte,,
++0x003fedfd,diag_clear_flags_t_003fedfc.diagnostic_eeprom_work_byte,,
+@@ -5317 +5317 @@ address,name,type,comment
+-0x0040b351,pci_link_state.init_complete_marker,,
++0x0040b351,pci_link_state.initialization_complete_marker,,
+diff --git a/firmware/CM848_S90140.06_analysis/output/local_variables.csv b/firmware/CM848_S90140.06_analysis/output/local_variables.csv
+index c4da6a8d..89476f05 100644
+--- a/firmware/CM848_S90140.06_analysis/output/local_variables.csv
++++ b/firmware/CM848_S90140.06_analysis/output/local_variables.csv
+@@ -31 +31 @@ function_address,function_name,old_name,new_name,type,comment
+-0x000231cc,cm848_dispatchJ1939PgnRequest,bVar1,search_idx,byte,Index of current entry being tested; equals j1939_pgn_handler_count on exit if no handler matched
++0x000231cc,cm848_dispatchJ1939PgnRequest,bVar1,entry_index,byte,Index of current entry being tested; equals j1939_pgn_handler_count on exit if no handler matched
+@@ -37 +37 @@ function_address,function_name,old_name,new_name,type,comment
+-0x00001fa4,mpc555_processDiagnosticAndEepromRequests,bVar2,diag_response_code,byte,Diagnostic response code to send (0x11=invalid service 0x12=invalid state)
++0x00001fa4,mpc555_processDiagnosticAndEepromRequests,bVar2,diagnostic_response_code,byte,Diagnostic response code to send (0x11=invalid service 0x12=invalid state)
+@@ -112 +112 @@ function_address,function_name,old_name,new_name,type,comment
+-0x005012dc,cm848_processUnsignedSensorChannel,uVar2,recovery_decrement,ushort,config_ptr->recovery_decrement copy
++0x005012dc,cm848_processUnsignedSensorChannel,uVar2,recovery_decrement,ushort,configuration_pointer->recovery_decrement copy
+diff --git a/firmware/CM848_S90140.06_analysis/output/structure_definitions.csv b/firmware/CM848_S90140.06_analysis/output/structure_definitions.csv
+index 22fe3cb0..597eeb7b 100644
+--- a/firmware/CM848_S90140.06_analysis/output/structure_definitions.csv
++++ b/firmware/CM848_S90140.06_analysis/output/structure_definitions.csv
+@@ -6 +6 @@ struct_name,address,field_name,type,size,comment,dependency,Status
+-# data_ptr always points to this struct's own inline_data field (self-referential)
++# data_pointer always points to this struct's own inline_data field (self-referential)
+@@ -9 +9 @@ j1939_received_message_t,0x00302016,pgn_pf,byte,1,PDU Format - high byte of PGN
+-j1939_received_message_t,0x00302016,dest_address,byte,1,Destination address (PDU1) or PGN low byte (PDU2); compared against j1939_source_address to filter incoming messages,,verified
++j1939_received_message_t,0x00302016,destination_address,byte,1,Destination address (PDU1) or PGN low byte (PDU2); compared against j1939_source_address to filter incoming messages,,verified
+@@ -142 +142 @@ pci_link_state_t,0x0040b34e,receive_byte_count,byte,1,Bytes stored in pci_receiv
+-pci_link_state_t,0x0040b34e,init_complete_marker,byte,1,Set to 1 at the end of cm848_initJ1939CommunicationSystem; no reader found,,verified
++pci_link_state_t,0x0040b34e,initialization_complete_marker,byte,1,Set to 1 at the end of cm848_initJ1939CommunicationSystem; no reader found,,verified
+@@ -1054 +1054 @@ sensor_channel_config_t,,filter_coefficient,word,2,EMA coefficient: the weight o
+-sensor_channel_config_t,,default_value,word,2,Nominal/fault fallback value (written to filtered output and state_ptr[1]),,verified
++sensor_channel_config_t,,default_value,word,2,Nominal/fault fallback value (written to filtered output and state_pointer[1]),,verified
+@@ -1107 +1107 @@ j1939_pgn_handler_entry_t,0x003fa9a2,pgn_byte_0,byte,1,Second PGN byte for match
+-j1939_pgn_handler_entry_t,0x003fa9a2,handler_func,dword,4,Function pointer to PGN handler callback,,verified
++j1939_pgn_handler_entry_t,0x003fa9a2,handler,dword,4,Function pointer to PGN handler callback,,verified
+@@ -1126 +1126 @@ j1939_acknowledgement_payload_t,,pgn_mid,byte,1,Acknowledged PGN mid byte (= pgn
+-j1939_acknowledgement_payload_t,,pgn_high,byte,1,Acknowledged PGN high byte (= dest_address of request),,verified
++j1939_acknowledgement_payload_t,,pgn_high,byte,1,Acknowledged PGN high byte (= destination_address of request),,verified
+@@ -1725,2 +1725,2 @@ eeprom_transfer_state_t,0x00302878,transfer_timer,word,2,Transfer timeout countd
+-# last_write_addr: previous block write address for sequential continuity check
+-# block_start_addr: start address of current transfer address range
++# last_write_address: previous block write address for sequential continuity check
++# block_start_address: start address of current transfer address range
+@@ -1728 +1728 @@ eeprom_transfer_state_t,0x00302878,transfer_timer,word,2,Transfer timeout countd
+-# Note: last_write_addr and block_start_addr are UNALIGNED dwords (packed struct)
++# Note: last_write_address and block_start_address are UNALIGNED dwords (packed struct)
+@@ -1732,2 +1732,2 @@ eeprom_block_tracking_t,0x003028a6,failed_write_authorization_count,byte,1,cm848
+-eeprom_block_tracking_t,0x003028a6,last_write_addr,dword,4,Previous block write address for continuity validation,,verified
+-eeprom_block_tracking_t,0x003028a6,block_start_addr,dword,4,Start address of current EEPROM transfer range,,verified
++eeprom_block_tracking_t,0x003028a6,last_write_address,dword,4,Previous block write address for continuity validation,,verified
++eeprom_block_tracking_t,0x003028a6,block_start_address,dword,4,Start address of current EEPROM transfer range,,verified
+@@ -1736 +1736 @@ eeprom_block_tracking_t,0x003028a6,block_count,word,2,Finished download blocks i
+-download_block_range_t,,start_address,dword,4,The block's first address (eeprom_block_tracking.block_start_addr),,verified
++download_block_range_t,,start_address,dword,4,The block's first address (eeprom_block_tracking.block_start_address),,verified
+@@ -1744 +1744 @@ download_block_range_t,,end_address,dword,4,The block's last data byte: start +
+-# state_ptr: pointer to session status byte (updated with J1939 TP state codes)
++# state_pointer: pointer to session status byte (updated with J1939 TP state codes)
+@@ -1779 +1779 @@ j1939_transport_transmit_session_t,0x003fbdc7,,,,the application transport's ins
+-# boot_param: parameter value set during mpc555_runPeriodicInterruptTimerTick
++# boot_parameter: parameter value set during mpc555_runPeriodicInterruptTimerTick
+@@ -1782 +1782 @@ j1939_transport_transmit_session_t,0x003fbdc7,,,,the application transport's ins
+-boot_state_t,0x003034a0,boot_param,word,2,Boot state machine initialization parameter,,verified
++boot_state_t,0x003034a0,boot_parameter,word,2,Boot state machine initialization parameter,,verified
+@@ -1814,2 +1814,2 @@ mios1_interrupt_registers_t,0x00306c00,EN,word,2,MIOS1 interrupt enable register
+-diag_clear_flags_t,0x003fedfc,diag_response_write_count,byte,1,Diagnostic response write count pending,,best_guess
+-diag_clear_flags_t,0x003fedfc,diag_eeprom_work_byte,byte,1,EEPROM channel scratch byte,,best_guess
++diag_clear_flags_t,0x003fedfc,diagnostic_response_write_count,byte,1,Diagnostic response write count pending,,best_guess
++diag_clear_flags_t,0x003fedfc,diagnostic_eeprom_work_byte,byte,1,EEPROM channel scratch byte,,best_guess

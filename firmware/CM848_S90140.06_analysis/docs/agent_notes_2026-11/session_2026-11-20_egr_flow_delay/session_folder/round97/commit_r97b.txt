@@ -1,0 +1,23 @@
+both firmwares: round 97 stage B - enum type and member names spell their words out (51 types, 198 members)
+
+The naming rule applied to the enums: 33 CM550 and 18 CM848 enum types and 126 / 72 members, e.g. DIAG_SERVICE_ID ->
+DIAGNOSTIC_SERVICE_ID, DIAG_EXTENDED_SVC -> DIAGNOSTIC_EXTENDED_SERVICE, DIAG_CONTROL_SUBFUNC ->
+DIAGNOSTIC_CONTROL_SUBFUNCTION, VP44_CMD_STATUS -> VP44_COMMAND_STATUS, INSITE_PARAM_CODE -> INSITE_PARAMETER_CODE,
+EEPROM_DIAG_STATE -> EEPROM_DIAGNOSTIC_STATE, MULTI_PKT_RECEIVE -> MULTIPLE_PACKET_RECEIVE, PTO_MIN_RPM ->
+POWER_TAKE_OFF_MINIMUM_RPM, SPN_91_ACCEL_PEDAL -> SPN_91_ACCELERATOR_PEDAL. Enums that both firmwares define by the
+same name change the same way in both.
+- Three members take their enum's prefix where the plain spelling would repeat another member's name:
+  DIAG_SERVICE_5_MODE's MULTI_PKT_RX / _TX (DIAG_MEMORY_OP holds the same codes 0xb0 / 0xf0) and VP44_COMM_STATE's
+  VP44_COMM_IDLE (VP44_COMM_MODE already has VP44_COMMUNICATION_IDLE).
+- Kept: ACK / NACK (standard J1939 terms), the byte-count words B / 2B / 4B, ADV and FSO (their meaning is not
+  settled), and J1939_DIAGNOSTIC_SERVICE (the round 97 workflow's batch R7 judges its members).
+- Almost all of these enums are documentation: no row uses them as a type and no member renders. The ones that render
+  are CM848's EEPROM_DIAGNOSTIC_STATE and CM550's THROTTLE_PARAMETERS members; a CM848 global row's type follows.
+
+Proof: CM848 and CM550 built twice each, deterministic, in a copy of the firmware folder (base = HEAD of stage A); no
+import failure, no SCRIPT ERROR. Label-only in both: with the renames mapped, no function changes; statement counts,
+pieces and unaff_ / extraout_ / in_ / CONCAT counts are equal; no old name is left in the code. The 85 / 159 names that
+do not render did not render before either. Headers regenerated (g++ 0 errors in both, so no member name repeats
+across enums); the _cal audit is 0 hard / 0 soft; the five Python suites and the 109 JUnit tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

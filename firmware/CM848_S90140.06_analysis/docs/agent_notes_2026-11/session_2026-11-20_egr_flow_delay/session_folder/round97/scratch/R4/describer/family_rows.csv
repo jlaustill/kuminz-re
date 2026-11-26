@@ -1,0 +1,114 @@
+0x008016b0,eps_diagnostic_table_ptr,undefined,
+0x008016b4,eps_diagnostic_rpm_snapshot,undefined,
+0x008016ba,dzg_pressure_lookup_table_arg,undefined,
+0x008016bc,eps_timing_table_1_ptr,undefined,
+0x008016c0,eps_timing_rpm_input_1,undefined,
+0x008016c2,eps_timing_table_2_ptr,undefined,
+0x008016c6,eps_main_lookup_table_arg,undefined,
+0x008016c8,eps_timing_table_3_ptr,undefined,
+0x008016cc,eps_timing_rpm_input_2,undefined,
+0x008016ce,eps_timing_table_4_ptr,undefined,
+0x008016d2,eps_governor_table_ptr_2,undefined,
+0x008016da,eps_governor_table_ptr_1,undefined,
+0x00801710,eps_rpm_tracking_state,undefined,
+0x00801712,eps_previous_engine_rpm,word,(typed word from the removed eps_rpm_snapshot_t.eps_previous_engine_rpm - was eps_rpm_snapshot_t; PR #53 round 78)
+0x00801714,eps_acceleration_timer_1,,
+0x00801716,eps_acceleration_timer_2,,
+0x00801718,eps_diagnostic_mode_counter,word,(typed word from the removed eps_rpm_snapshot_t.eps_diagnostic_mode_counter - was eps_rpm_snapshot_t; PR #53 round 78)
+0x00803410,dzg_pressure_state_saved,undefined,
+0x00803416,dzg_timing_accumulator_value,undefined,
+0x00803418,dzg_timing_state_variable,undefined,
+0x0080341a,dzg_timing_state_machine_value,undefined,
+0x0080341c,dzg_timing_state_index,undefined,
+0x0080341e,dzg_state_transition_counter,undefined,
+0x00803420,dzg_pressure_ramp_rate,undefined,
+0x00803422,dzg_pressure_target_value,undefined,
+0x00803424,dzg_pressure_state_index,undefined,
+0x0080373c,eps_signal_quality_threshold,undefined,
+0x00807839,current_cylinder_counter_resets_to_this_when_eps_ref_pulse_occu_0_16,byte,typed byte: 1 byte access in the ROM and no other (PR #53 round 93)
+0x0080783a,dzg_angle_after_cyl_tdc_angle_after_cyl_tdc_to_put_dzg_first_60_60,i32,typed i32 (its Calterm record FLTAPSOF is signed): 2 long accesses in the ROM and no other (PR #53 round 93)
+0x0080783e,dzg_angular_duration_angular_high_duration_of_dzg_pulse_at_tpu_0_60,undefined,
+0x00807840,dzg_timing_control_params,undefined,
+0x00807d90,dzg_threshold_level_2,word,typed word: Calterm record EDCVTY is 2 bytes unsigned (PR #53 round 93)
+0x00807e9a,main_consec_error_thresh_threshold_count_at_which_ess_is_lost_0_255,byte,typed byte: Calterm record ESTDCU01 is 1 byte unsigned (PR #53 round 93)
+0x00807e9b,backup_consec_error_thresh_threshold_count_at_which_eps_is_los_0_255,byte,typed byte: Calterm record ESTDCU02 is 1 byte unsigned (PR #53 round 93)
+0x00807ea6,eps_backup_ratio_threshold_for_detection_of_missing_ext_0_1_9921875,word,typed word: Calterm record ESESBKRA is 2 bytes unsigned (PR #53 round 93)
+0x00807ec0,period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255,byte,typed byte: Calterm record ESPECM01 is 1 byte unsigned (PR #53 round 93)
+0x00807ec1,period_meas_per_cam_backup_number_of_backup_speed_pulse_perio_0_255,byte,typed byte: 6 byte accesses in the ROM and no other (PR #53 round 93)
+0x00807ec2,period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255,byte,typed byte: Calterm record ESPECY01 is 1 byte unsigned (PR #53 round 93)
+0x00807ec3,period_meas_per_average_backup_num_of_backup_speed_pulse_perio_0_255,byte,typed byte: Calterm record ESPECY02 is 1 byte unsigned (PR #53 round 93)
+0x00807ec4,crank_deg_per_period_meas_crank_degrees_between_primary_speed_0_720,word,typed word: 8 word accesses in the ROM and no other (PR #53 round 93)
+0x00807ec6,crank_deg_per_period_meas_backup_crank_degrees_between_backup_0_720,word,typed word: Calterm record ESPECK02 is 2 bytes unsigned (PR #53 round 93)
+0x00807eda,eps_error_detection_performed_when_rpm_this_value_0_4500,word,typed word: 5 word accesses in the ROM and no other (PR #53 round 93)
+0x00807ee0,max_eps_main_lost_duration_0_20,word,typed word: 1 word access in the ROM and no other (PR #53 round 93)
+0x00807ee2,max_eps_backup_lost_duration_0_20,word,typed word: 1 word access in the ROM and no other (PR #53 round 93)
+0x00807ee4,max_eps_external_lost_duration_0_20,word,typed word: 1 word access in the ROM and no other (PR #53 round 93)
+0x00807f4e,pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255,byte,typed byte: Calterm record ESNOTTCU is 1 byte unsigned (PR #53 round 93)
+0x00807f4f,pmm_ratio_tooth_spacing_at_which_missing_tooth_is_found_0_1_9921875,byte,typed byte: 2 byte accesses in the ROM and no other (PR #53 round 93)
+0x00807f51,ess_pulse_count_reset_reset_val_at_missed_tooth_for_period_mea_0_255,byte,typed byte: Calterm record ESPSCURS is 1 byte unsigned (PR #53 round 93)
+0x00807f52,eps_missing_teeth_width_of_missing_tooth_gap_in_teeth_1_2,word,typed word: Calterm record ESNMTTMS is 2 bytes unsigned (PR #53 round 93)
+0x00807f58,eps_positive_out_of_phase_threshold_flag_thres_for_dif_32768_32767,i16,typed i16 (the code reads it signed): 2 word accesses in the ROM and no other (PR #53 round 93)
+0x00807f5a,eps_negative_out_of_phase_threshold_flag_thres_for_dif_32768_32767,i16,typed i16 (the code reads it signed): 2 word accesses in the ROM and no other (PR #53 round 93)
+0x00807f5c,eps_out_of_phase_persistence_cnts_input_is_bad_before_a_flag_0_65535,word,typed word: 4 word accesses in the ROM and no other (PR #53 round 93)
+0x00807f94,eps_count_at_wide_ci_expected_eps_tooth_count_at_wide_ci_fallin_0_24,word,typed word: Calterm record EGPSCU01 is 2 bytes unsigned (PR #53 round 93)
+0x00807f96,eps_count_at_narrow_ci_expected_eps_tooth_count_at_narrow_erp_f_0_24,word,typed word: 2 word accesses in the ROM and no other (PR #53 round 93)
+0x00807f98,wide_ci_count_expected_eps_teeth_during_wide_ci_pulse_0_24,word,typed word: 1 word access in the ROM and no other (PR #53 round 93)
+0x00807f9a,narrow_ci_count_expected_eps_teeth_during_narrow_ci_pulse_0_24,word,typed word: 1 word access in the ROM and no other (PR #53 round 93)
+0x00807faa,eps_sync_count_threshold_to_determine_cam_phase_0_7,byte,typed byte: Calterm record CSCMCYCU is 1 byte unsigned (PR #53 round 93)
+0x00807fab,expected_number_of_ess_teeth_between_eps_addtnl_0_255,byte,typed byte: Calterm record CSCKTTCM is 1 byte unsigned (PR #53 round 93)
+0x00808794,eps_diagnostic_mode_checker_param,undefined,
+0x008087c2,eps_backup_duration_init,undefined,
+0x008087ec,eps_acceleration_timer_threshold,undefined,
+0x008087f6,eps_duration_lower_limit,undefined,
+0x008087f8,eps_duration_upper_limit,undefined,
+0x00808804,eps_control_mode_duration_value_8804,undefined,
+0x00808806,eps_control_mode_duration_value_8806,undefined,
+0x00808808,eps_control_mode_selector_state_8808,undefined,
+0x0080880a,eps_fuel_demand_upper,undefined,
+0x0080880c,eps_fuel_demand_threshold,undefined,
+0x0080880e,eps_diagnostic_lower_limit,undefined,
+0x00808810,eps_diagnostic_upper_limit,undefined,
+0x00808812,eps_diagnostic_counter_limit,undefined,
+0x00808814,eps_fuel_demand_delta,undefined,
+0x00809b02,dzg_pressure_control_state,undefined,
+0x00809b08,dzg_timing_pressure_state_2,undefined,
+0x00809b0a,dzg_timing_pressure_state_1,undefined,
+0x0080a9f4,unsigned_roll_over_counter_of_ess_main_isr_occurances_0_65535,word,typed word: 4 word accesses in the ROM and no other (PR #53 round 93)
+0x0080a9f6,unsigned_roll_over_counter_of_ess_backup_isr_occurances_0_65535,word,typed word: Calterm record ESBUISCT is 2 bytes unsigned (PR #53 round 93)
+0x0080ccea,eps_pulse_number_eps_tooth_counter_0_24,word,typed word: Calterm record EGPITTCU is 2 bytes unsigned (PR #53 round 93)
+0x0080ccec,eps_pulse_number_backup_eps_backup_tooth_counter_0_24,word,typed word: 2 word accesses in the ROM and no other (PR #53 round 93)
+0x0080d042,accumulated_backup_eps_period_between_vss_interrupts_0_65535,,
+0x0080d048,number_of_backup_eps_interrupts_between_vss_interrupts_0_65535,word,typed word: Calterm record ESCTBKGR is 2 bytes unsigned (PR #53 round 93)
+0x0080d04e,eps_period_backup_time_between_the_two_most_recent_eps_200_16777216,undefined,
+0x0080d058,dzg_pressure_threshold_high,word,typed word: 4 word accesses in the ROM and no other (PR #53 round 93)
+0x0080d05a,eps_main_lost_duration_0_20,word,typed word: 3 word accesses in the ROM and no other (PR #53 round 93)
+0x0080d05e,eps_external_lost_duration_0_20,word,typed word: 3 word accesses in the ROM and no other (PR #53 round 93)
+0x0080d064,eps_raw_period_backup_raw_time_between_teeth_not_norm_d_to_1_200000,dword,typed dword: Calterm record ESRWPEBK is 4 bytes unsigned (PR #53 round 93)
+0x0080d076,eps_acceleration_active_flag,undefined,
+0x0080d078,eps_control_mode_param_1,undefined,
+0x0080d07a,eps_control_mode_param_2,undefined,
+0x0080d07c,eps_control_mode_param_3,undefined,
+0x0080d07e,eps_acceleration_monitor_value,undefined,
+0x0080d080,eps_override_output_state,undefined,
+0x0080d082,eps_override_checker_state,undefined,
+0x0080d084,eps_control_mode_init_value_2,undefined,
+0x0080d086,eps_control_mode_init_value_1,undefined,
+0x0080d088,eps_control_mode_init_state,undefined,
+0x0080d08a,eps_acceleration_monitor_state,undefined,
+0x0080d08e,eps_control_mode_selector_state_d08e,undefined,
+0x0080d0be,eng_spd_val_to_be_added_to_crk_init_fuel_brk_spd_0_1000,word,typed word: Calterm record CKINRPAJ is 2 bytes unsigned (PR #53 round 93)
+0x0080d292,tooth_count_at_which_error_was_found_by_pmm_0_255,byte,typed byte: Calterm record CKSYERTT is 1 byte unsigned (PR #53 round 93)
+0x0080d293,pmm_error_type_signifies_the_type_of_sync_error_found_by_pmma_0_ff,byte,typed byte: Calterm record CKSYERTY is 1 byte unsigned (PR #53 round 93)
+0x0080d296,eps_main_in_phase_if_flase_eps_main_lags_backup_true_false,byte,typed byte: Calterm record ESMNIPER is 1 byte unsigned (PR #53 round 93)
+0x0080d297,eps_backup_in_phase_if_flase_eps_backup_lags_main_true_false,byte,typed byte: Calterm record ESBUIPER is 1 byte unsigned (PR #53 round 93)
+0x0080d298,eps_main_backup_time_delta,i16,typed i16 (the code reads it signed): 4 word accesses in the ROM and no other (PR #53 round 93)
+0x0080d29a,eps_positive_out_of_phase_count_teeth_phase_shift_thresho_0_65535,word,typed word: Calterm record ESPLPHCU is 2 bytes unsigned (PR #53 round 93)
+0x0080d29c,eps_negative_out_of_phase_count_teeth_phase_shift_thresho_0_65535,word,typed word: Calterm record ESNGPHCU is 2 bytes unsigned (PR #53 round 93)
+0x0080d2be,ci_tooth_count_number_of_eps_teeth_during_ci_pulse_0_24,byte,typed byte: Calterm record CMSNTTCU is 1 byte unsigned (PR #53 round 93)
+0x0080d2bf,crank_tooth_count_error_incremented_when_eps_tooth_count_wro_0_65535,byte,typed byte: Calterm record CKTTCUER is 1 byte unsigned (PR #53 round 93)
+0x0080d2c8,flag_indicates_ess_sensor_is_not_being_used_0_1,byte,typed byte: Calterm record ESCKSNOF is 1 byte unsigned (PR #53 round 93)
+0x0080d2c9,flag_indicating_eps_sensor_not_used_0_1,byte,typed byte: Calterm record ESCMSNOF is 1 byte unsigned (PR #53 round 93)
+0x0080d2ca,enables_input_of_eps_period_data_to_pptb_0_1,byte,typed byte: Calterm record ESBUUPEN is 1 byte unsigned (PR #53 round 93)
+0x0080d2cb,count_of_eps_pulses_since_ess_missing_tooth_0_255,byte,typed byte: Calterm record CSCMPSCU is 1 byte unsigned (PR #53 round 93)
+0x0080d2cc,eps_pulse_count_since_addtnl_eps_pulse_0_255,byte,typed byte: 1 byte access in the ROM and no other (PR #53 round 93)
+0x0080deda,eps_period_between_vss_interrupts_0_4294967295,dword,typed dword: Calterm record ESVSAVPE is 4 bytes unsigned (PR #53 round 93)

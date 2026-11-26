@@ -1,0 +1,171 @@
+=== 0x008016b0
+=== 0x008016b4
+=== 0x008016ba
+=== 0x008016bc
+=== 0x008016c0
+=== 0x008016c2
+=== 0x008016c6
+=== 0x008016c8
+=== 0x008016cc
+=== 0x008016ce
+=== 0x008016d2
+=== 0x008016da
+=== 0x00801710
+=== 0x00801712
+=== 0x00801714
+=== 0x00801716
+=== 0x00801718
+=== 0x00803410
+=== 0x00803416
+=== 0x00803418
+=== 0x0080341a
+=== 0x0080341c
+=== 0x0080341e
+=== 0x00803420
+=== 0x00803422
+=== 0x00803424
+=== 0x0080373c
+=== 0x00807839
+11FE +0001 FLCYCUPZ [CYL#] -> 0x807839 current_cylinder_counter_resets_to_this_when_eps_ref_pulse_occu_0_16 byte; CURRENT CYLINDER COUNTER RESETS TO THIS WHEN EPS REF PULSE OCCU~0 - 16
+=== 0x0080783a
+11FE +0002 FLTAPSOF [DEG] -> 0x80783a dzg_angle_after_cyl_tdc_angle_after_cyl_tdc_to_put_dzg_first_60_60 i32; DZG_ANGLE_AFTER_CYL_TDC:ANGLE AFTER CYL TDC TO PUT DZG FIRST ~-60 - 60
+=== 0x0080783e
+11FE +0006 FLTAPSTT [DEG] -> 0x80783e dzg_angular_duration_angular_high_duration_of_dzg_pulse_at_tpu_0_60 undefined; DZG_ANGULAR_DURATION:ANGULAR HIGH DURATION OF DZG PULSE (AT TPU~0 - 60
+=== 0x00807840
+=== 0x00807d90
+1300 +0012 EDCVTY [TYPE] -> 0x807d90 dzg_threshold_level_2 word; DEFINES THE INPUT SIGNAL TYPE 0 = DISCRETE, 1 = ANALOG, 2 = NONE~0,1,2
+=== 0x00807e9a
+11CA +0000 ESTDCU01 [CNT] -> 0x807e9a main_consec_error_thresh_threshold_count_at_which_ess_is_lost_0_255 byte; MAIN_CONSEC_ERROR_THRESH:THRESHOLD COUNT AT WHICH ESS IS LOST.~0 - 255
+=== 0x00807e9b
+11CA +0001 ESTDCU02 [NONE] -> 0x807e9b backup_consec_error_thresh_threshold_count_at_which_eps_is_los_0_255 byte; BACKUP_CONSEC_ERROR_THRESH:THRESHOLD COUNT AT WHICH EPS IS LOS~0 - 255
+=== 0x00807ea6
+11CA +000C ESESBKRA [TTH] -> 0x807ea6 eps_backup_ratio_threshold_for_detection_of_missing_ext_0_1_9921875 word; EPS_BACKUP_RATIO: THRESHOLD FOR DETECTION OF MISSING/EXT~0 - 1.9921875
+=== 0x00807ec0
+100B +0018 ESPECM01 [  ] -> 0x807ec0 period_meas_per_cam_number_of_primary_speed_pulse_periods_mea_0_255 byte; PERIOD_MEAS_PER_CAM: NUMBER OF PRIMARY SPEED PULSE PERIODS MEA~0 - 255
+=== 0x00807ec1
+100B +0019 ESPECM02 [  ] -> 0x807ec1 period_meas_per_cam_backup_number_of_backup_speed_pulse_perio_0_255 byte; PERIOD_MEAS_PER_CAM_BACKUP: NUMBER OF BACKUP SPEED PULSE PERIO~0 - 255
+=== 0x00807ec2
+100B +001A ESPECY01 [  ] -> 0x807ec2 period_meas_per_average_num_of_primary_speed_pulse_periods_mea_0_255 byte; PERIOD_MEAS_PER_AVERAGE:NUM OF PRIMARY SPEED PULSE PERIODS MEA~0 - 255
+=== 0x00807ec3
+100B +001B ESPECY02 [  ] -> 0x807ec3 period_meas_per_average_backup_num_of_backup_speed_pulse_perio_0_255 byte; PERIOD_MEAS_PER_AVERAGE_BACKUP:NUM OF BACKUP SPEED PULSE PERIO~0 - 255
+=== 0x00807ec4
+100B +001C ESPECK01 [DEG] -> 0x807ec4 crank_deg_per_period_meas_crank_degrees_between_primary_speed_0_720 word; CRANK_DEG_PER_PERIOD_MEAS: CRANK DEGREES BETWEEN PRIMARY SPEED~0 - 720
+=== 0x00807ec6
+100B +001E ESPECK02 [DEG] -> 0x807ec6 crank_deg_per_period_meas_backup_crank_degrees_between_backup_0_720 word; CRANK_DEG_PER_PERIOD_MEAS_BACKUP: CRANK DEGREES BETWEEN BACKUP~0 - 720
+=== 0x00807eda
+100B +0032 ESFXSNTD [RPM] -> 0x807eda eps_error_detection_performed_when_rpm_this_value_0_4500 word; EPS ERROR DETECTION PERFORMED WHEN RPM > THIS VALUE~0 - 4500
+=== 0x00807ee0
+100B +0038 MNLSMXEL [SEC] -> 0x807ee0 max_eps_main_lost_duration_0_20 word; MAX_EPS_MAIN_LOST_DURATION~0 - 20
+=== 0x00807ee2
+100B +003A BKLSMXEL [SEC] -> 0x807ee2 max_eps_backup_lost_duration_0_20 word; MAX_EPS_BACKUP_LOST_DURATION~0 - 20
+=== 0x00807ee4
+100B +003C EXLSMXEL [SEC] -> 0x807ee4 max_eps_external_lost_duration_0_20 word; MAX_EPS_EXTERNAL_LOST_DURATION~0 - 20
+=== 0x00807f4e
+11C4 +0000 ESNOTTCU [TTH] -> 0x807f4e pmm_num_of_teeth_correct_tooth_count_at_missing_tooth_0_255 byte; PMM_NUM_OF_TEETH:CORRECT TOOTH COUNT AT MISSING TOOTH~0 - 255
+=== 0x00807f4f
+11C4 +0001 ESNOTTRA [TTH] -> 0x807f4f pmm_ratio_tooth_spacing_at_which_missing_tooth_is_found_0_1_9921875 byte; PMM_RATIO:TOOTH SPACING AT WHICH MISSING TOOTH IS FOUND~0 - 1.9921875
+=== 0x00807f51
+11C4 +0003 ESPSCURS [  ] -> 0x807f51 ess_pulse_count_reset_reset_val_at_missed_tooth_for_period_mea_0_255 byte; ESS_PULSE_COUNT_RESET:RESET VAL AT MISSED TOOTH FOR PERIOD MEA~0 - 255
+=== 0x00807f52
+11C4 +0004 ESNMTTMS [  ] -> 0x807f52 eps_missing_teeth_width_of_missing_tooth_gap_in_teeth_1_2 word; EPS_MISSING_TEETH: WIDTH OF MISSING TOOTH GAP IN TEETH~1 - 2
+=== 0x00807f58
+12A1 +0004 ESPLPHTD [TCNT] -> 0x807f58 eps_positive_out_of_phase_threshold_flag_thres_for_dif_32768_32767 i16; EPS_POSITIVE_OUT_OF_PHASE_THRESHOLD: FLAG THRES FOR DIF~-32768 - 32767
+=== 0x00807f5a
+12A1 +0006 ESNGPHTD [TCNT] -> 0x807f5a eps_negative_out_of_phase_threshold_flag_thres_for_dif_32768_32767 i16; EPS_NEGATIVE_OUT_OF_PHASE_THRESHOLD: FLAG THRES FOR DIF~-32768 - 32767
+=== 0x00807f5c
+12A1 +0008 ESMXPHCU [TETH] -> 0x807f5c eps_out_of_phase_persistence_cnts_input_is_bad_before_a_flag_0_65535 word; EPS_OUT_OF_PHASE_PERSISTENCE: CNTS INPUT IS BAD BEFORE A FLAG ~0-65535
+=== 0x00807f94
+11C8 +0000 EGPSCU01 [CNT] -> 0x807f94 eps_count_at_wide_ci_expected_eps_tooth_count_at_wide_ci_fallin_0_24 word; EPS_COUNT_AT_WIDE_CI:EXPECTED EPS TOOTH COUNT AT WIDE CI FALLIN~0 - 24
+=== 0x00807f96
+11C8 +0002 EGPICU02 [CNT] -> 0x807f96 eps_count_at_narrow_ci_expected_eps_tooth_count_at_narrow_erp_f_0_24 word; EPS_COUNT_AT_NARROW_CI:EXPECTED EPS TOOTH COUNT AT NARROW ERP F~0 - 24
+=== 0x00807f98
+11C8 +0004 CMSNCU01 [CNT] -> 0x807f98 wide_ci_count_expected_eps_teeth_during_wide_ci_pulse_0_24 word; WIDE_CI_COUNT:EXPECTED EPS TEETH DURING WIDE CI PULSE~0 - 24
+=== 0x00807f9a
+11C8 +0006 CMSNCU02 [CNT] -> 0x807f9a narrow_ci_count_expected_eps_teeth_during_narrow_ci_pulse_0_24 word; NARROW_CI_COUNT:EXPECTED EPS TEETH DURING NARROW CI PULSE~0 - 24
+=== 0x00807faa
+121D +0008 CSCMCYCU [CNT] -> 0x807faa eps_sync_count_threshold_to_determine_cam_phase_0_7 byte; EPS_SYNC_COUNT THRESHOLD TO DETERMINE CAM PHASE~0 - 7
+=== 0x00807fab
+121D +0009 CSCKTTCM [TTH] -> 0x807fab expected_number_of_ess_teeth_between_eps_addtnl_0_255 byte; EXPECTED NUMBER OF ESS TEETH BETWEEN EPS ADDTNL~0 - 255
+=== 0x00808794
+=== 0x008087c2
+=== 0x008087ec
+=== 0x008087f6
+=== 0x008087f8
+=== 0x00808804
+=== 0x00808806
+=== 0x00808808
+=== 0x0080880a
+=== 0x0080880c
+=== 0x0080880e
+=== 0x00808810
+=== 0x00808812
+=== 0x00808814
+=== 0x00809b02
+=== 0x00809b08
+=== 0x00809b0a
+=== 0x0080a9f4
+117D +0030 ESMNISCT [CNT] -> 0x80a9f4 unsigned_roll_over_counter_of_ess_main_isr_occurances_0_65535 word; UNSIGNED ROLL-OVER COUNTER OF ESS MAIN ISR OCCURANCES.~0 - 65535
+=== 0x0080a9f6
+117D +0032 ESBUISCT [CNT] -> 0x80a9f6 unsigned_roll_over_counter_of_ess_backup_isr_occurances_0_65535 word; UNSIGNED ROLL-OVER COUNTER OF ESS BACKUP ISR OCCURANCES.~0 - 65535
+=== 0x0080ccea
+11CB +0000 EGPITTCU [CNT] -> 0x80ccea eps_pulse_number_eps_tooth_counter_0_24 word; EPS_PULSE_NUMBER:EPS TOOTH COUNTER~0 - 24
+=== 0x0080ccec
+11CB +0002 EGPIBKCU [CNT] -> 0x80ccec eps_pulse_number_backup_eps_backup_tooth_counter_0_24 word; EPS_PULSE_NUMBER_BACKUP: EPS BACKUP TOOTH COUNTER~0 - 24
+=== 0x0080d042
+100C +0350 ESACBKGR [TCNT] -> 0x80d042 accumulated_backup_eps_period_between_vss_interrupts_0_65535 (no row); ACCUMULATED BACKUP EPS PERIOD BETWEEN VSS INTERRUPTS~0 - 65535
+=== 0x0080d048
+100C +0356 ESCTBKGR [CNT] -> 0x80d048 number_of_backup_eps_interrupts_between_vss_interrupts_0_65535 word; NUMBER OF BACKUP EPS INTERRUPTS BETWEEN VSS INTERRUPTS~0 - 65535
+=== 0x0080d04e
+100C +035C ESIPBKPE [CNTS] -> 0x80d04e eps_period_backup_time_between_the_two_most_recent_eps_200_16777216 undefined; EPS_PERIOD_BACKUP: TIME BETWEEN THE TWO MOST RECENT EPS~200 - 16777216
+=== 0x0080d058
+100C +0366 CRLSEL [SEC] -> 0x80d058 dzg_pressure_threshold_high word; CRANK_SYNC_LOST_DURATION~0 - 20
+=== 0x0080d05a
+100C +0368 ESMNLSEL [SEC] -> 0x80d05a eps_main_lost_duration_0_20 word; EPS_MAIN_LOST_DURATION~0 - 20
+=== 0x0080d05e
+100C +036C ESEXLSEL [SEC] -> 0x80d05e eps_external_lost_duration_0_20 word; EPS_EXTERNAL_LOST_DURATION~0 - 20
+=== 0x0080d064
+100C +0372 ESRWPEBK [HEX] -> 0x80d064 eps_raw_period_backup_raw_time_between_teeth_not_norm_d_to_1_200000 dword; EPS_RAW_PERIOD_BACKUP: RAW TIME BETWEEN TEETH NOT NORM'D TO~1 - 200000
+=== 0x0080d076
+=== 0x0080d078
+=== 0x0080d07a
+=== 0x0080d07c
+=== 0x0080d07e
+=== 0x0080d080
+=== 0x0080d082
+=== 0x0080d084
+=== 0x0080d086
+=== 0x0080d088
+=== 0x0080d08a
+=== 0x0080d08e
+=== 0x0080d0be
+105E +0026 CKINRPAJ [RPM] -> 0x80d0be eng_spd_val_to_be_added_to_crk_init_fuel_brk_spd_0_1000 word; ENG. SPD. VAL. TO BE ADDED TO CRK INIT FUEL BRK SPD.~0-1000
+=== 0x0080d292
+11C5 +0000 CKSYERTT [  ] -> 0x80d292 tooth_count_at_which_error_was_found_by_pmm_0_255 byte; TOOTH COUNT AT WHICH ERROR WAS FOUND BY PMM~0 - 255
+=== 0x0080d293
+11C5 +0001 CKSYERTY [HEX] -> 0x80d293 pmm_error_type_signifies_the_type_of_sync_error_found_by_pmma_0_ff byte; PMM_ERROR_TYPE:SIGNIFIES THE TYPE OF SYNC ERROR FOUND BY PMMA~0 - FF
+=== 0x0080d296
+12A2 +0000 ESMNIPER [NONE] -> 0x80d296 eps_main_in_phase_if_flase_eps_main_lags_backup_true_false byte; EPS_MAIN_IN_PHASE: IF FLASE EPS MAIN LAGS BACKUP~TRUE / FALSE
+=== 0x0080d297
+12A2 +0001 ESBUIPER [NONE] -> 0x80d297 eps_backup_in_phase_if_flase_eps_backup_lags_main_true_false byte; EPS_BACKUP_IN_PHASE: IF FLASE EPS BACKUP LAGS MAIN~TRUE / FALSE
+=== 0x0080d298
+12A2 +0002 ESPHDF [CNTS] -> 0x80d298 eps_main_backup_time_delta i16; EPS_PHASE_DIFFERENCE: EPS_BACKUP_EDGE_TIME - EPS_MAIN_E~-32767 - 32767
+=== 0x0080d29a
+12A2 +0004 ESPLPHCU [TETH] -> 0x80d29a eps_positive_out_of_phase_count_teeth_phase_shift_thresho_0_65535 word; EPS_POSITIVE_OUT_OF_PHASE_COUNT:TEETH PHASE SHIFT > +THRESHO~0 - 65535
+=== 0x0080d29c
+12A2 +0006 ESNGPHCU [TETH] -> 0x80d29c eps_negative_out_of_phase_count_teeth_phase_shift_thresho_0_65535 word; EPS_NEGATIVE_OUT_OF_PHASE_COUNT:TEETH PHASE SHIFT > -THRESHO~0 - 65535
+=== 0x0080d2be
+11C9 +0000 CMSNTTCU [CNT] -> 0x80d2be ci_tooth_count_number_of_eps_teeth_during_ci_pulse_0_24 byte; CI_TOOTH_COUNT:NUMBER OF EPS TEETH DURING CI PULSE~0 - 24
+=== 0x0080d2bf
+11C9 +0001 CKTTCUER [CNT] -> 0x80d2bf crank_tooth_count_error_incremented_when_eps_tooth_count_wro_0_65535 byte; CRANK_TOOTH_COUNT_ERROR:INCREMENTED WHEN EPS TOOTH COUNT WRO~0 - 65535
+=== 0x0080d2c8
+121E +0004 ESCKSNOF [1-T] -> 0x80d2c8 flag_indicates_ess_sensor_is_not_being_used_0_1 byte; FLAG INDICATES ESS SENSOR IS NOT BEING USED~0 - 1
+=== 0x0080d2c9
+121E +0005 ESCMSNOF [1-T] -> 0x80d2c9 flag_indicating_eps_sensor_not_used_0_1 byte; FLAG INDICATING EPS SENSOR NOT USED~0 - 1
+=== 0x0080d2ca
+121E +0006 ESBUUPEN [1-T] -> 0x80d2ca enables_input_of_eps_period_data_to_pptb_0_1 byte; ENABLES INPUT OF EPS PERIOD DATA TO PPTB~0 - 1
+=== 0x0080d2cb
+121E +0007 CSCMPSCU [CNT] -> 0x80d2cb count_of_eps_pulses_since_ess_missing_tooth_0_255 byte; COUNT OF EPS PULSES SINCE ESS MISSING TOOTH~0 - 255
+=== 0x0080d2cc
+121E +0008 CSCMSYCU [CNT] -> 0x80d2cc eps_pulse_count_since_addtnl_eps_pulse_0_255 byte; EPS PULSE COUNT SINCE ADDTNL EPS PULSE~0 - 255
+=== 0x0080deda
+1008 +0004 ESVSAVPE [TICK] -> 0x80deda eps_period_between_vss_interrupts_0_4294967295 dword; EPS PERIOD BETWEEN VSS INTERRUPTS~0 - 4294967295

@@ -1,0 +1,91 @@
+10EA +0000 LSG_Gear_Breakpoint1 [UNITLESS] -> 0x408ec6 low_speed_governor_gear_breakpoint_1 i16; BREAKPOINT BETWEEN MID_GEAR AND DEFAULT GAINS.(BASED ON OVERALL GEAR RATIO)
+10EA +0002 LSG_Gear_Breakpoint2 [UNITLESS] -> 0x408ec8 low_speed_governor_gear_breakpoint_2 i16; BREAKPOINT BETWEEN MID_GEAR AND HIGH_GEAR GAINS.(BASED ON OVERALL GR RATIO)
+10EA +0004 LSG_Error_Gear_Max [RPM] -> 0x408eca low_speed_governor_gear_gain_speed_error_maximum i16; Gear gains not used if LSFTER > this value
+10EA +0006 LSG_Error_Gear_Min [RPM] -> 0x408ecc low_speed_governor_gear_gain_speed_error_minimum i16; Gear gains not used if LSFTER < this value
+10EA +0008 LSG_Gear_Gain_Transition_Time [SEC] -> 0x408ece low_speed_governor_gear_gain_transition_time word; Time gear gain conditions must exist before using gear gains
+10EA +000A LSG_Gear_Hysteresis [UNITLESS] -> 0x408ed0 low_speed_governor_gear_hysteresis i16; Hysteresis on breakpoints of gear gain sets in lsg
+10EA +000C LSG_High_Gear_Proportional_Gain [MM3S/RPM] -> 0x408ed2 low_speed_governor_high_gear_gain_set low_speed_governor_gain_set_t; Low speed governor proportional gain when in high gears
+10EA +000E LSG_High_Gear_Integral_Gain [MM3S/RPM/SEC] -> 0x408ed4 (no name) (no row); Low speed governor integral gain when in high gears
+10EA +0010 LSG_High_Gear_Derivative_Gain [MM3S*SEC/RPM] -> 0x408ed6 (no name) (no row); Low speed governor derivative gain when in high gears
+10EA +0012 LSG_High_Gear_Jerk_Gain [MM3S*SEC/RPM] -> 0x408ed8 (no name) (no row); Low speed governor jerk gain when in high gears
+10EA +0014 LSG_Mid_Gear_Proportional_Gain [MM3S/RPM] -> 0x408eda low_speed_governor_middle_gear_gain_set low_speed_governor_gain_set_t; Low speed governor proportional gain used when in middle gears for in gear stab
+10EA +0016 LSG_Mid_Gear_Integral_Gain [MM3S/RPM/SEC] -> 0x408edc (no name) (no row); Low speed governor integral gain when in middle gears for in gear stability.
+10EA +0018 LSG_Mid_Gear_Derivative_Gain [MM3S*SEC/RPM] -> 0x408ede (no name) (no row); Low speed governor derivative gain when in middle gears used for in gear stabil
+10EA +001A LSG_Mid_Gear_Jerk_Gain [MM3S*SEC/RPM] -> 0x408ee0 (no name) (no row); Low speed governor jerk gain when in mid-gears
+10EC +0000 LSG_Default_Proportional_Gain [MM3S/RPM] -> 0x4070e6 low_speed_governor_default_gain_set low_speed_governor_gain_set_t; [LSDFPPGN] Low speed governor default proportional gain.
+10EC +0002 LSG_Default_Integral_Gain [MM3S/RPM/SEC] -> 0x4070e8 (no name) (no row); [LSDFITGN] Low speed governor default integral gain
+10EC +0004 LSG_Default_Derivative_Gain [MM3S*SEC/RPM] -> 0x4070ea (no name) (no row); [LSDFDVGN] Low speed governor default derivative gain
+10EC +0006 LSG_Default_Jerk_Gain [MM3S*SEC/RPM] -> 0x4070ec (no name) (no row); [LSDFJKGN] Low speed governor default jerk gain
+10EE +0000 LSG_Gain_Logic_Transition_Time [SEC] -> 0x407098 low_speed_governor_gain_logic_transition_time word; [LSLGTZTM] Time RPM must be near lsrf before lsgnlgst can change states
+10EE +0002 LSG_Delta_RPM_Threshold [RPM] -> 0x40709a low_speed_governor_engine_speed_delta_threshold i16; [LSDCTDES] delta rpm threshold for aggressive gains activation/deactivation
+10EE +0004 LSG_Maximum_Idle_Error [RPM] -> 0x40709c low_speed_governor_maximum_idle_speed_error word; [LSMXERES] maximum absolute error that should occur in lslgtztm to switch lsgnlgst
+10EE +0006 LSG_High_MPH [MPH] -> 0x40709e low_speed_governor_aggressive_gain_high_vehicle_speed word; [LSHIVS] MPH > this, change lsgnlgst changes from INITIAL to NOT_AGGRESSIVE
+10EE +0008 LSG_Low_MPH [MPH] -> 0x4070a0 low_speed_governor_aggressive_gain_low_vehicle_speed word; [LSLOVS] MPH < this value, change lsgnlgst to INITIAL
+10EE +000A LSG_RPM_Offset1 [RPM] -> 0x4070a2 low_speed_governor_aggressive_gain_speed_offset_1 i16; [LSOF01ES] offset below lsrf for conditional switch to aggressive gain set(if decel fast)
+10EE +000C LSG_RPM_Offset2 [RPM] -> 0x4070a4 low_speed_governor_aggressive_gain_speed_offset_2 i16; [LSOF02ES] offset below lsrf for unconditional switch to aggressive gain set
+10EE +000E LSG_RPM_Offset3 [RPM] -> 0x4070a6 low_speed_governor_aggressive_gain_speed_offset_3 i16; [LSOF03ES] offset above lsrf to change lschst to AFTER_FIRST_CE from DURING_FIRST_CE
+10EE +0010 LSG_RPM_Hysteresis [RPM] -> 0x4070a8 low_speed_governor_aggressive_gain_speed_hysteresis i16; [LSHYES] hysteresis when deactivating aggressive gains; RPM > (lsrf - lsof01es + lseshy)
+10EE +0012 LSG_Aggressive_Proportional_Gain [MM3S/RPM] -> 0x4070aa low_speed_governor_aggressive_gain_set low_speed_governor_gain_set_t; [LSAGPPGN] Low speed governor aggressive proportional gain.
+10EE +0014 LSG_Aggressive_Integral_Gain [MM3S/RPM/SEC] -> 0x4070ac (no name) (no row); [LSAGITGN] Low speed governor aggressive integral gain
+10EE +0016 LSG_Aggressive_Derivative_Gain [MM3S*SEC/RPM] -> 0x4070ae (no name) (no row); [LSAGDVGN] Low speed governor aggressive derivative gain
+10EE +0018 LSG_Aggressive_Jerk_Gain [MM3S*SEC/RPM] -> 0x4070b0 (no name) (no row); [LSAGJKGN] LSG J gain from aggressive gain set
+10EE +001A LSG_Aggressive_Inhibit_Coolant_Time [SEC] -> 0x4070b2 low_speed_governor_aggressive_gain_minimum_run_time word; If engine has been running for this long after start, will allow LSG agg gains
+10EE +001C LSG_Aggressive_Inhibit_Coolant_Temp [DEG_F] -> 0x4070b4 low_speed_governor_aggressive_gain_minimum_coolant_temperature i16; If coolant temp > this cal, will allow LSG aggressive gains
+10EF +0000 LSG_Gain_Logic_Flag [UNITLESS] -> 0x40ae74 low_speed_governor_aggressive_gain_inhibit_flag word; [LSGNLGFG] ALLOW_AGGRESSIVE_LOGIC = 0; INHIBIT_AGGRESSIVE_LOGIC = 1.
+1496 +0000 LSG_Adjusted_Ref_Before_Droop [RPM]: not in the dumped table
+1496 +0002 Desired_Low_Idle_Ref_Speed [RPM]: not in the dumped table
+1496 +0004 LSG_AC_Speed [RPM]: not in the dumped table
+1496 +0006 LSG_Coolant_Temp_Speed [RPM]: not in the dumped table
+1496 +0008 LSG_Extended_Speed [RPM]: not in the dumped table
+1496 +000A LSG_Extended_Idle_Status [UNITLESS]: not in the dumped table
+1496 +000C LSG_J1850_Speed [RPM]: not in the dumped table
+1496 +000E LSG_PN_Speed [RPM]: not in the dumped table
+1496 +0010 LSG_Reference_Speed [RPM]: not in the dumped table
+1496 +0012 No_Load_Fuel_At_LSG_Ref [MM3S]: not in the dumped table
+1496 +0014 LSG_Reference_Speed_State [UNITLESS]: not in the dumped table
+1496 +0016 LSG_Altitude_Speed [RPM]: not in the dumped table
+1496 +001A SCI_Cmd19_Status [UNITLESS]: not in the dumped table
+1496 +001C LSG_Tool_Speed [RPM]: not in the dumped table
+1496 +001E SCI_LSG_Speed [RPM]: not in the dumped table
+1496 +0020 LSG_Moving_Speed [RPM]: not in the dumped table
+14EE +0000 Cold_Idle_Coolant_Temperature [DEG_F]: not in the dumped table
+14EE +0002 Cold_Idle_Time [SEC]: not in the dumped table
+14EE +0004 Hot_Idle_Coolant_Temperature [DEG_F]: not in the dumped table
+14EE +0006 Hot_Idle_Inhibit_Time [SEC]: not in the dumped table
+14EE +0008 Hot_Idle_Time [SEC]: not in the dumped table
+14EE +000A LSG_AC_Idle_Speed [RPM]: not in the dumped table
+14EE +000C LSG_Drive_Speed [RPM]: not in the dumped table
+14EE +000E LSG_Extended_Idle_Coolant_Temp [DEG_F]: not in the dumped table
+14EE +0010 LSG_Extended_Idle_IMT [DEG_F]: not in the dumped table
+14EE +0012 LSG_Extended_Idle_Road_Speed [MPH]: not in the dumped table
+14EE +0014 LSG_Extended_Idle_Speed [RPM]: not in the dumped table
+14EE +0016 LSG_Extended_Idle_Time [SEC]: not in the dumped table
+14EE +0018 LSG_Idle_Decrement_Rate [RPM/SEC]: not in the dumped table
+14EE +001A LSG_Idle_Increment_Rate [RPM/SEC]: not in the dumped table
+14EE +001C LSG_Max_Idle_Speed [RPM]: not in the dumped table
+14EE +001E LSG_Min_Idle_Speed [RPM]: not in the dumped table
+14EE +0020 LSG_Park_Speed [RPM]: not in the dumped table
+14EE +0022 LSG_J1850_Enable [UNITLESS]: not in the dumped table
+14EE +0024 LSG_Coolant_PN_Enable [UNITLESS]: not in the dumped table
+14EE +0026 LSG_Jcomm_Enable [UNITLESS]: not in the dumped table
+14EE +0028 LSG_Altitude_Slew_Rate [RPM/SEC]: not in the dumped table
+14EE +002C LSG_Altitude_PN_Enable [UNITLESS]: not in the dumped table
+14EE +002E LSG_Altitude_Hyst [IN_HG]: not in the dumped table
+14EE +0030 LSG_Coolant_Temp_Hyst [DEG_F]: not in the dumped table
+14EE +0032 LSG_Ref_Road_Speed [MPH]: not in the dumped table
+14EE +0034 LSG_Extended_Idle_Battery_Temp [DEG_F]: not in the dumped table
+14EE +0036 LSG_Slew_PN_Enable [UNITLESS]: not in the dumped table
+14EE +0038 LSG_Max_Tool_Idle_Speed [RPM]: not in the dumped table
+14EE +003A LSG_Extended_Idle_Coolant_State_Enable [UNITLESS]: not in the dumped table
+14EE +003C LSG_Moving_Extra_Decrement_Rate [RPM/SEC]: not in the dumped table
+14EE +003E LSG_Moving_Extra_Increment_Rate [RPM/SEC]: not in the dumped table
+14EE +0040 RE_EB_LSG_Enable [UNITLESS]: not in the dumped table
+14EE +0042 RE_EB_OSS_Factor [MSEC]: not in the dumped table
+14EF +0000 LSG_Error_Filter_Constant [UNITLESS]: not in the dumped table
+14EF +0002 LSG_Error_Filter_Gain [UNITLESS]: not in the dumped table
+14EF +0004 LSG_Filter_Clamp_Max [RPM]: not in the dumped table
+14EF +0006 LSG_Filter_Clamp_Min [RPM]: not in the dumped table
+14F0 +0000 LSG_Filtered_Error_Term [RPM]: not in the dumped table
+14F0 +0002 LSG_Adjusted_Reference_Speed [RPM]: not in the dumped table
+14F0 +0004 LSG_Derivative_Error_Term [RPM/SEC]: not in the dumped table
+14F0 +0006 LSG_Jerk_Error_Term [RPM/SEC/SEC]: not in the dumped table

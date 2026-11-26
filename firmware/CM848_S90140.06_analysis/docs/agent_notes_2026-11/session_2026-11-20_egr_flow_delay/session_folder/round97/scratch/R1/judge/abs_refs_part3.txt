@@ -1,0 +1,66 @@
+== 0x808314
+  0x262d0: prev words da ca 66 08 26 bc | ?
+  0x2630e: prev words 48 e7 00 30 24 7c | ?
+  0x26326: prev words 00 80 da ca 33 f9 | move.w (abs).l,<dst> (source) @0x26324; move.w <src>,(abs).l (destination) @0x26324
+  0x35afc: prev words 83 34 00 80 83 34 | ?
+  0x35b00: prev words 83 34 00 80 83 14 | ?
+== 0x808316
+== 0x808318
+== 0x808230
+  0x2623a: prev words 00 80 1a 76 23 fc | move.l <src>,(abs).l (destination) @0x26238
+== 0x808232
+== 0x808234
+== 0x808326
+  0x26450: prev words 34 bc 00 03 23 fc | move.l <src>,(abs).l (destination) @0x2644e
+== 0x808328
+== 0x80832a
+== 0x80832c
+  0x26426: prev words 34 bc 00 02 23 fc | move.l <src>,(abs).l (destination) @0x26424
+== 0x80832e
+== 0x808330
+== 0x80dad6
+  0x2623e: prev words 23 fc 00 80 82 30 | ?
+  0x262d8: prev words 83 14 60 06 26 b9 | move.l (abs).l,<dst> (source) @0x262d6
+  0x2642a: prev words 23 fc 00 80 83 2c | ?
+  0x26454: prev words 23 fc 00 80 83 26 | ?
+== 0x80dac6
+  0x25e8a: prev words da ea 36 12 c7 f9 | ?
+  0x262e8: prev words da c4 33 ea 00 02 | ?
+== 0x80dac8
+  0x25d42: prev words 48 c1 90 81 32 39 | move.w (abs).l,<dst> (source) @0x25d40
+  0x262f0: prev words da c6 33 ea 00 04 | ?
+== 0x80dace
+  0x26274: prev words 1a 76 4e 75 20 7c | ?
+== 0x80dae2
+  0x25d32: prev words 60 02 30 02 33 c0 | move.w <src>,(abs).l (destination) @0x25d30
+  0x25f44: prev words 00 80 da e6 34 39 | move.w (abs).l,<dst> (source) @0x25f42
+== 0x80dae6
+  0x25f3e: prev words 33 f9 00 80 1a 6a | move.w (abs).l,(abs).l (destination) @0x25f38
+  0x25f6a: prev words 48 c0 94 80 30 39 | move.w (abs).l,<dst> (source) @0x25f68
+== 0x808240
+  0x25bd2: prev words 32 14 90 81 32 39 | move.w (abs).l,<dst> (source) @0x25bd0
+  0x26028: prev words 48 c1 90 81 32 39 | move.w (abs).l,<dst> (source) @0x26026
+== 0x808248
+  0x25efa: prev words 90 81 d1 95 30 39 | move.w (abs).l,<dst> (source) @0x25ef8
+  0x25f0a: prev words b0 95 6f 0e 30 39 | move.w (abs).l,<dst> (source) @0x25f08
+== 0x80824a
+  0x25ce2: prev words 82 4e 64 20 33 f9 | move.w (abs).l,<dst> (source) @0x25ce0; move.w <src>,(abs).l (destination) @0x25ce0
+== 0x807a54
+  0x1d712: prev words db 02 72 00 32 39 | move.w (abs).l,<dst> (source) @0x1d710
+  0x1d728: prev words 00 80 db 02 d0 79 | ?
+  0x25bae: prev words 30 13 72 00 32 39 | move.w (abs).l,<dst> (source) @0x25bac
+  0x355cc: prev words a8 f0 00 80 a8 f0 | ?
+  0x355d0: prev words a8 f0 00 80 7a 54 | ?
+== 0x807bf4
+== 0x808344
+  0x26590: prev words 4e 75 2f 0a 24 7c | ?
+== 0x80825a
+  0x25b3a: prev words 00 80 1a 6a 34 39 | move.w (abs).l,<dst> (source) @0x25b38
+== 0x808264
+  0x25bc0: prev words 6d 00 04 1a 30 39 | move.w (abs).l,<dst> (source) @0x25bbe
+  0x2601e: prev words 32 15 90 81 32 39 | move.w (abs).l,<dst> (source) @0x2601c
+== 0x80dac2
+  0x260ae: prev words 00 80 da ca 22 7c | ?
+  0x2636c: prev words 00 f2 0c 79 00 01 | cmpi.w #0x1,(abs).l @0x26368
+  0x35b14: prev words 82 1e 00 80 82 1e | ?
+  0x35b18: prev words 82 1e 00 80 da c2 | ?

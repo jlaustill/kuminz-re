@@ -1,0 +1,679 @@
+=== updateEngineSyncStatus
+void updateEngineSyncStatus(void)
+{
+  current_derate_flag = current_derate_flag + 1;
+  if (4 < current_derate_flag) {
+    current_derate_flag = 0;
+  }
+  if ((current_derate_flag == 1) &&
+     ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) != 0)) {
+    if (((status_of_the_water_in_fuel_lamp_output_on_off & 0x80) != 0) ==
+        ((DAT_0080bd0d & 0x20) != 0)) {
+      current_derate_reserved = 0;
+      aux_driver_fso_low_side_error_count = 0;
+      if ((DAT_0080bd0d & 0x20) == 0) {
+        if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x200) != 0) &&
+           ((fault_first_occurrence_flags_word_8 & 0x200) == 0)) {
+          if (aux_driver_fso_low_side_recovery_count <
+              enhanced_diag_number_good_samples_before_recovery_of_aux_drive_1_10) {
+            aux_driver_fso_low_side_recovery_count = aux_driver_fso_low_side_recovery_count + 1;
+          }
+          else {
+            _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+                 _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xfdff;
+            aux_driver_fso_low_side_recovery_count = 0;
+          }
+        }
+      }
+      else if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x400) != 0) &&
+              ((fault_first_occurrence_flags_word_8 & 0x400) == 0)) {
+        if (aux_driver_fso_high_side_recovery_count <
+            enhanced_diag_number_good_samples_before_recovery_of_aux_drive_1_10) {
+          aux_driver_fso_high_side_recovery_count = aux_driver_fso_high_side_recovery_count + 1;
+        }
+        else {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xfbff;
+          aux_driver_fso_high_side_recovery_count = 0;
+        }
+      }
+    }
+    else {
+      aux_driver_fso_high_side_recovery_count = 0;
+      aux_driver_fso_low_side_recovery_count = 0;
+      if ((status_of_the_water_in_fuel_lamp_output_on_off & 0x80) == 0) {
+        current_derate_reserved = 0;
+        if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x400) != 0) &&
+           ((fault_first_occurrence_flags_word_8 & 0x400) == 0)) {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xfbff;
+        }
+        if (aux_driver_fso_low_side_error_count <
+            number_of_aux_driver_errors_that_must_be_seen_before_fault_is_1_10) {
+          aux_driver_fso_low_side_error_count = aux_driver_fso_low_side_error_count + 1;
+          if ((((aux_driver_fso_low_side_error_count == 1) ||
+               (aux_driver_fso_low_side_error_count == 2)) &&
+              (engine_state != ENGINE_STATE_OVERSPEED)) && (engine_state != ENGINE_STATE_SHUTDOWN))
+          {
+            request_to_strobe_set_0_then_set_1_fso_driver_0_1 = 1;
+          }
+          else {
+            request_to_strobe_set_0_then_set_1_fso_driver_0_1 = 0;
+          }
+        }
+        else {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 | 0x200;
+          fault_first_occurrence_flags_word_8 = fault_first_occurrence_flags_word_8 | 0x200;
+        }
+      }
+      else {
+        aux_driver_fso_low_side_error_count = 0;
+        if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x200) != 0) &&
+           ((fault_first_occurrence_flags_word_8 & 0x200) == 0)) {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xfdff;
+        }
+        if (current_derate_reserved <
+            number_of_aux_driver_errors_that_must_be_seen_before_fault_is_1_10) {
+          current_derate_reserved = current_derate_reserved + 1;
+        }
+        else {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 | 0x400;
+          fault_first_occurrence_flags_word_8 = fault_first_occurrence_flags_word_8 | 0x400;
+        }
+      }
+    }
+    if (((auxiliary_driver_feedback_bits & 1) != 0) == ((io_driver_port_2_feedback & 1) != 0)) {
+      aux_driver_engine_brake_high_side_error_count = 0;
+      aux_driver_engine_brake_low_side_error_count = 0;
+      if ((io_driver_port_2_feedback & 1) == 0) {
+        if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x1000) != 0) &&
+           ((fault_first_occurrence_flags_word_8 & 0x1000) == 0)) {
+          if (aux_driver_engine_brake_low_recovery_count <
+              enhanced_diag_number_good_samples_before_recovery_of_aux_drive_1_10) {
+            aux_driver_engine_brake_low_recovery_count =
+                 aux_driver_engine_brake_low_recovery_count + 1;
+          }
+          else {
+            _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+                 _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xefff;
+            aux_driver_engine_brake_low_recovery_count = 0;
+          }
+        }
+      }
+      else if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x800) != 0) &&
+              ((fault_first_occurrence_flags_word_8 & 0x800) == 0)) {
+        if (kickdown_throttle_input <
+            enhanced_diag_number_good_samples_before_recovery_of_aux_drive_1_10) {
+          kickdown_throttle_input = kickdown_throttle_input + 1;
+        }
+        else {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xf7ff;
+          kickdown_throttle_input = 0;
+        }
+      }
+    }
+    else {
+      aux_driver_engine_brake_low_recovery_count = 0;
+      kickdown_throttle_input = 0;
+      if ((auxiliary_driver_feedback_bits & 1) == 0) {
+        aux_driver_engine_brake_high_side_error_count = 0;
+        if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x1000) != 0) &&
+           ((fault_first_occurrence_flags_word_8 & 0x1000) == 0)) {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xefff;
+        }
+        if (aux_driver_engine_brake_low_side_error_count <
+            number_of_aux_driver_errors_that_must_be_seen_before_fault_is_1_10) {
+          aux_driver_engine_brake_low_side_error_count =
+               aux_driver_engine_brake_low_side_error_count + 1;
+          if ((((aux_driver_engine_brake_low_side_error_count == 1) ||
+               (aux_driver_engine_brake_low_side_error_count == 2)) &&
+              (engine_state != ENGINE_STATE_OVERSPEED)) && (engine_state != ENGINE_STATE_SHUTDOWN))
+          {
+            request_to_strobe_set_0_then_set_1_engine_braker_driver_0_1 = 1;
+          }
+          else {
+            request_to_strobe_set_0_then_set_1_engine_braker_driver_0_1 = 0;
+          }
+        }
+        else {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 | 0x800;
+          fault_first_occurrence_flags_word_8 = fault_first_occurrence_flags_word_8 | 0x800;
+        }
+      }
+      else {
+        aux_driver_engine_brake_low_side_error_count = 0;
+        if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x800) != 0) &&
+           ((fault_first_occurrence_flags_word_8 & 0x800) == 0)) {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xf7ff;
+        }
+        if (aux_driver_engine_brake_high_side_error_count <
+            number_of_aux_driver_errors_that_must_be_seen_before_fault_is_1_10) {
+          aux_driver_engine_brake_high_side_error_count =
+               aux_driver_engine_brake_high_side_error_count + 1;
+        }
+        else {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 | 0x1000;
+          fault_first_occurrence_flags_word_8 = fault_first_occurrence_flags_word_8 | 0x1000;
+        }
+      }
+    }
+    if (((auxiliary_driver_feedback_bits & 2) != 0) == ((io_driver_port_2_feedback & 2) != 0)) {
+      aux_driver_cold_start_aid1_high_side_error_count = 0;
+      aux_driver_cold_start_aid1_low_side_error_count = 0;
+      if ((io_driver_port_2_feedback & 2) == 0) {
+        if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x4000) != 0) &&
+           ((fault_first_occurrence_flags_word_8 & 0x4000) == 0)) {
+          if (aux_driver_cold_start1_low_recovery_count <
+              enhanced_diag_number_good_samples_before_recovery_of_aux_drive_1_10) {
+            aux_driver_cold_start1_low_recovery_count =
+                 aux_driver_cold_start1_low_recovery_count + 1;
+          }
+          else {
+            _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+                 _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xbfff;
+            aux_driver_cold_start1_low_recovery_count = 0;
+          }
+        }
+      }
+      else if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x2000) != 0) &&
+              ((fault_first_occurrence_flags_word_8 & 0x2000) == 0)) {
+        if (ac_control_accel_threshold_ptr <
+            enhanced_diag_number_good_samples_before_recovery_of_aux_drive_1_10) {
+          ac_control_accel_threshold_ptr = ac_control_accel_threshold_ptr + 1;
+        }
+        else {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xdfff;
+          ac_control_accel_threshold_ptr = 0;
+        }
+      }
+    }
+    else {
+      aux_driver_cold_start1_low_recovery_count = 0;
+      ac_control_accel_threshold_ptr = 0;
+      if ((auxiliary_driver_feedback_bits & 2) == 0) {
+        aux_driver_cold_start_aid1_high_side_error_count = 0;
+        if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x4000) != 0) &&
+           ((fault_first_occurrence_flags_word_8 & 0x4000) == 0)) {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xbfff;
+        }
+        if (aux_driver_cold_start_aid1_low_side_error_count <
+            number_of_aux_driver_errors_that_must_be_seen_before_fault_is_1_10) {
+          aux_driver_cold_start_aid1_low_side_error_count =
+               aux_driver_cold_start_aid1_low_side_error_count + 1;
+          if ((((aux_driver_cold_start_aid1_low_side_error_count == 1) ||
+               (aux_driver_cold_start_aid1_low_side_error_count == 2)) &&
+              (engine_state != ENGINE_STATE_OVERSPEED)) && (engine_state != ENGINE_STATE_SHUTDOWN))
+          {
+            request_to_strobe_set_0_then_set_1_cold_start_aid_1_driver_0_1 = 1;
+          }
+          else {
+            request_to_strobe_set_0_then_set_1_cold_start_aid_1_driver_0_1 = 0;
+          }
+        }
+        else {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 | 0x2000;
+          fault_first_occurrence_flags_word_8 = fault_first_occurrence_flags_word_8 | 0x2000;
+        }
+      }
+      else {
+        aux_driver_cold_start_aid1_low_side_error_count = 0;
+        if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x2000) != 0) &&
+           ((fault_first_occurrence_flags_word_8 & 0x2000) == 0)) {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0xdfff;
+        }
+        if (aux_driver_cold_start_aid1_high_side_error_count <
+            number_of_aux_driver_errors_that_must_be_seen_before_fault_is_1_10) {
+          aux_driver_cold_start_aid1_high_side_error_count =
+               aux_driver_cold_start_aid1_high_side_error_count + 1;
+        }
+        else {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 | 0x4000;
+          fault_first_occurrence_flags_word_8 = fault_first_occurrence_flags_word_8 | 0x4000;
+        }
+      }
+    }
+    if (((auxiliary_driver_feedback_bits & 4) != 0) == ((io_driver_port_2_feedback & 4) != 0)) {
+      aux_driver_cold_start_aid2_high_side_error_count = 0;
+      aux_driver_cold_start_aid2_low_side_error_count = 0;
+      if ((io_driver_port_2_feedback & 4) == 0) {
+        if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 1) != 0) &&
+           ((latched_system_error_status_word_9 & 1) == 0)) {
+          if (aux_driver_cold_start2_low_recovery_count <
+              enhanced_diag_number_good_samples_before_recovery_of_aux_drive_1_10) {
+            aux_driver_cold_start2_low_recovery_count =
+                 aux_driver_cold_start2_low_recovery_count + 1;
+          }
+          else {
+            status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+                 status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xfffe;
+            aux_driver_cold_start2_low_recovery_count = 0;
+          }
+        }
+      }
+      else if (((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x8000) != 0) &&
+              ((fault_first_occurrence_flags_word_8 & 0x8000) == 0)) {
+        if (aux_driver_cold_start2_high_recovery_count <
+            enhanced_diag_number_good_samples_before_recovery_of_aux_drive_1_10) {
+          aux_driver_cold_start2_high_recovery_count =
+               aux_driver_cold_start2_high_recovery_count + 1;
+        }
+        else {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x7fff;
+          aux_driver_cold_start2_high_recovery_count = 0;
+        }
+      }
+    }
+    else {
+      aux_driver_cold_start2_low_recovery_count = 0;
+      aux_driver_cold_start2_high_recovery_count = 0;
+      if ((auxiliary_driver_feedback_bits & 4) == 0) {
+        aux_driver_cold_start_aid2_high_side_error_count = 0;
+        if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 1) != 0) &&
+           ((latched_system_error_status_word_9 & 1) == 0)) {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xfffe;
+        }
+        if (aux_driver_cold_start_aid2_low_side_error_count <
+            number_of_aux_driver_errors_that_must_be_seen_before_fault_is_1_10) {
+          aux_driver_cold_start_aid2_low_side_error_count =
+               aux_driver_cold_start_aid2_low_side_error_count + 1;
+          if ((((aux_driver_cold_start_aid2_low_side_error_count == 1) ||
+               (aux_driver_cold_start_aid2_low_side_error_count == 2)) &&
+              (engine_state != ENGINE_STATE_OVERSPEED)) && (engine_state != ENGINE_STATE_SHUTDOWN))
+          {
+            request_to_strobe_set_0_then_set_1_cold_start_aid_2_driver_0_1 = 1;
+          }
+          else {
+            request_to_strobe_set_0_then_set_1_cold_start_aid_2_driver_0_1 = 0;
+          }
+        }
+        else {
+          _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+               _status_32_word_bit_mapped_system_error_status_word_8_0_1 | 0x8000;
+          fault_first_occurrence_flags_word_8 = fault_first_occurrence_flags_word_8 | 0x8000;
+        }
+      }
+      else {
+        aux_driver_cold_start_aid2_low_side_error_count = 0;
+        if ((_status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x8000) != 0) {
+          if ((fault_first_occurrence_flags_word_8 & 0x8000) == 0) {
+            _status_32_word_bit_mapped_system_error_status_word_8_0_1 =
+                 _status_32_word_bit_mapped_system_error_status_word_8_0_1 & 0x7fff;
+          }
+        }
+        if (aux_driver_cold_start_aid2_high_side_error_count <
+            number_of_aux_driver_errors_that_must_be_seen_before_fault_is_1_10) {
+          aux_driver_cold_start_aid2_high_side_error_count =
+               aux_driver_cold_start_aid2_high_side_error_count + 1;
+        }
+        else {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 | 1;
+          latched_system_error_status_word_9 = latched_system_error_status_word_9 | 1;
+        }
+      }
+    }
+    if (((auxiliary_driver_feedback_bits & 0x20) != 0) == ((io_driver_port_2_feedback & 0x20) != 0))
+    {
+      aux_driver_ether_start_high_side_error_count = 0;
+      aux_driver_ether_start_low_side_error_count = 0;
+      if ((io_driver_port_2_feedback & 0x20) == 0) {
+        if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 4) != 0) &&
+           ((latched_system_error_status_word_9 & 4) == 0)) {
+          if (aux_driver_ether_start_low_recovery_count <
+              enhanced_diag_number_good_samples_before_recovery_of_aux_drive_1_10) {
+            aux_driver_ether_start_low_recovery_count =
+                 aux_driver_ether_start_low_recovery_count + 1;
+          }
+          else {
+            status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+                 status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xfffb;
+            aux_driver_ether_start_low_recovery_count = 0;
+          }
+        }
+      }
+      else if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 2) != 0) &&
+              ((latched_system_error_status_word_9 & 2) == 0)) {
+        if (timing_accumulator_flag_mask <
+            enhanced_diag_number_good_samples_before_recovery_of_aux_drive_1_10) {
+          timing_accumulator_flag_mask = timing_accumulator_flag_mask + 1;
+        }
+        else {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xfffd;
+          timing_accumulator_flag_mask = 0;
+        }
+      }
+    }
+    else {
+      aux_driver_ether_start_low_recovery_count = 0;
+      timing_accumulator_flag_mask = 0;
+      if ((auxiliary_driver_feedback_bits & 0x20) == 0) {
+        aux_driver_ether_start_high_side_error_count = 0;
+        if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 4) != 0) &&
+           ((latched_system_error_status_word_9 & 4) == 0)) {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xfffb;
+        }
+        if (aux_driver_ether_start_low_side_error_count <
+            number_of_aux_driver_errors_that_must_be_seen_before_fault_is_1_10) {
+          aux_driver_ether_start_low_side_error_count =
+               aux_driver_ether_start_low_side_error_count + 1;
+          if ((((aux_driver_ether_start_low_side_error_count == 1) ||
+               (aux_driver_ether_start_low_side_error_count == 2)) &&
+              (engine_state != ENGINE_STATE_OVERSPEED)) && (engine_state != ENGINE_STATE_SHUTDOWN))
+          {
+            request_to_strobe_set_0_then_set_1_ether_start_driver_0_1 = 1;
+          }
+          else {
+            request_to_strobe_set_0_then_set_1_ether_start_driver_0_1 = 0;
+          }
+        }
+        else {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 | 2;
+          latched_system_error_status_word_9 = latched_system_error_status_word_9 | 2;
+        }
+      }
+      else {
+        aux_driver_ether_start_low_side_error_count = 0;
+        if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 2) != 0) &&
+           ((latched_system_error_status_word_9 & 2) == 0)) {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xfffd;
+        }
+        if (aux_driver_ether_start_high_side_error_count <
+            number_of_aux_driver_errors_that_must_be_seen_before_fault_is_1_10) {
+          aux_driver_ether_start_high_side_error_count =
+               aux_driver_ether_start_high_side_error_count + 1;
+        }
+        else {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 | 4;
+          latched_system_error_status_word_9 = latched_system_error_status_word_9 | 4;
+        }
+      }
+    }
+    if (((auxiliary_driver_feedback_bits & 0x10) != 0) == ((io_driver_port_2_feedback & 0x10) != 0))
+    {
+      DAT_0080015d = 0;
+      DAT_0080015e = 0;
+      if ((io_driver_port_2_feedback & 0x10) == 0) {
+        if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0x10) != 0) &&
+           ((latched_system_error_status_word_9 & 0x10) == 0)) {
+          if (aux_driver5_low_recovery_count <
+              enhanced_diag_number_good_samples_before_recovery_of_aux_drive_1_10) {
+            aux_driver5_low_recovery_count = aux_driver5_low_recovery_count + 1;
+          }
+          else {
+            status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+                 status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xffef;
+            aux_driver5_low_recovery_count = 0;
+          }
+        }
+      }
+      else if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 8) != 0) &&
+              ((latched_system_error_status_word_9 & 8) == 0)) {
+        if (redundant_sensor_validation_index <
+            enhanced_diag_number_good_samples_before_recovery_of_aux_drive_1_10) {
+          redundant_sensor_validation_index = redundant_sensor_validation_index + 1;
+        }
+        else {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xfff7;
+          redundant_sensor_validation_index = 0;
+        }
+      }
+    }
+    else {
+      aux_driver5_low_recovery_count = 0;
+      redundant_sensor_validation_index = 0;
+      if ((auxiliary_driver_feedback_bits & 0x10) == 0) {
+        DAT_0080015d = 0;
+        if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0x10) != 0) &&
+           ((latched_system_error_status_word_9 & 0x10) == 0)) {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xffef;
+        }
+        if (DAT_0080015e < number_of_aux_driver_errors_that_must_be_seen_before_fault_is_1_10) {
+          DAT_0080015e = DAT_0080015e + 1;
+        }
+        else {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 | 8;
+          latched_system_error_status_word_9 = latched_system_error_status_word_9 | 8;
+        }
+      }
+      else {
+        DAT_0080015e = 0;
+        if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 8) != 0) &&
+           ((latched_system_error_status_word_9 & 8) == 0)) {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xfff7;
+        }
+        if (DAT_0080015d < number_of_aux_driver_errors_that_must_be_seen_before_fault_is_1_10) {
+          DAT_0080015d = DAT_0080015d + 1;
+        }
+        else {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 | 0x10;
+          latched_system_error_status_word_9 = latched_system_error_status_word_9 | 0x10;
+        }
+      }
+    }
+    if (((auxiliary_driver_feedback_bits & 0x40) != 0) == ((io_driver_port_2_feedback & 0x40) != 0))
+    {
+      DAT_0080015f = 0;
+      ac_control_table_size = 0;
+      if ((io_driver_port_2_feedback & 0x40) == 0) {
+        if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0x40) != 0) &&
+           ((latched_system_error_status_word_9 & 0x40) == 0)) {
+          if (aux_driver6_low_recovery_count <
+              enhanced_diag_number_good_samples_before_recovery_of_aux_drive_1_10) {
+            aux_driver6_low_recovery_count = aux_driver6_low_recovery_count + 1;
+          }
+          else {
+            status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+                 status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xffbf;
+            aux_driver6_low_recovery_count = 0;
+          }
+        }
+      }
+      else if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0x20) != 0) &&
+              ((latched_system_error_status_word_9 & 0x20) == 0)) {
+        if (anc_speed_limit_table_1_size <
+            enhanced_diag_number_good_samples_before_recovery_of_aux_drive_1_10) {
+          anc_speed_limit_table_1_size = anc_speed_limit_table_1_size + 1;
+        }
+        else {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xffdf;
+          anc_speed_limit_table_1_size = 0;
+        }
+      }
+    }
+    else {
+      aux_driver6_low_recovery_count = 0;
+      anc_speed_limit_table_1_size = 0;
+      if ((auxiliary_driver_feedback_bits & 0x40) == 0) {
+        DAT_0080015f = 0;
+        if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0x40) != 0) &&
+           ((latched_system_error_status_word_9 & 0x40) == 0)) {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xffbf;
+        }
+        if (ac_control_table_size <
+            number_of_aux_driver_errors_that_must_be_seen_before_fault_is_1_10) {
+          ac_control_table_size = ac_control_table_size + 1;
+        }
+        else {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 | 0x20;
+          latched_system_error_status_word_9 = latched_system_error_status_word_9 | 0x20;
+        }
+      }
+      else {
+        ac_control_table_size = 0;
+        if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0x20) != 0) &&
+           ((latched_system_error_status_word_9 & 0x20) == 0)) {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xffdf;
+        }
+        if (DAT_0080015f < number_of_aux_driver_errors_that_must_be_seen_before_fault_is_1_10) {
+          DAT_0080015f = DAT_0080015f + 1;
+        }
+        else {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 | 0x40;
+          latched_system_error_status_word_9 = latched_system_error_status_word_9 | 0x40;
+        }
+      }
+    }
+    if (((auxiliary_driver_feedback_bits & 8) != 0) == ((io_driver_port_2_feedback & 8) != 0)) {
+      DAT_00800161 = 0;
+      ac_control_kickdown_ptr = 0;
+      if ((io_driver_port_2_feedback & 8) == 0) {
+        if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0x100) != 0) &&
+           ((latched_system_error_status_word_9 & 0x100) == 0)) {
+          if (aux_driver7_low_recovery_count <
+              enhanced_diag_number_good_samples_before_recovery_of_aux_drive_1_10) {
+            aux_driver7_low_recovery_count = aux_driver7_low_recovery_count + 1;
+          }
+          else {
+            status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+                 status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xfeff;
+            aux_driver7_low_recovery_count = 0;
+          }
+        }
+      }
+      else if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0x80) != 0) &&
+              ((latched_system_error_status_word_9 & 0x80) == 0)) {
+        if (anc_speed_limit_table_1_ptr <
+            enhanced_diag_number_good_samples_before_recovery_of_aux_drive_1_10) {
+          anc_speed_limit_table_1_ptr = anc_speed_limit_table_1_ptr + 1;
+        }
+        else {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xff7f;
+          anc_speed_limit_table_1_ptr = 0;
+        }
+      }
+    }
+    else {
+      aux_driver7_low_recovery_count = 0;
+      anc_speed_limit_table_1_ptr = 0;
+      if ((auxiliary_driver_feedback_bits & 8) == 0) {
+        DAT_00800161 = 0;
+        if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0x100) != 0) &&
+           ((latched_system_error_status_word_9 & 0x100) == 0)) {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xfeff;
+        }
+        if (ac_control_kickdown_ptr <
+            number_of_aux_driver_errors_that_must_be_seen_before_fault_is_1_10) {
+          ac_control_kickdown_ptr = ac_control_kickdown_ptr + 1;
+        }
+        else {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 | 0x80;
+          latched_system_error_status_word_9 = latched_system_error_status_word_9 | 0x80;
+        }
+      }
+      else {
+        ac_control_kickdown_ptr = 0;
+        if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0x80) != 0) &&
+           ((latched_system_error_status_word_9 & 0x80) == 0)) {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xff7f;
+        }
+        if (DAT_00800161 < number_of_aux_driver_errors_that_must_be_seen_before_fault_is_1_10) {
+          DAT_00800161 = DAT_00800161 + 1;
+        }
+        else {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 | 0x100;
+          latched_system_error_status_word_9 = latched_system_error_status_word_9 | 0x100;
+        }
+      }
+    }
+    if (((auxiliary_driver_feedback_bits & 0x80) != 0) != ((io_driver_port_2_feedback & 0x80) != 0))
+    {
+      aux_driver8_low_recovery_count = 0;
+      cold_start_rpm_snapshot_1 = 0;
+      if ((auxiliary_driver_feedback_bits & 0x80) != 0) {
+        aux_driver8_low_error_count = 0;
+        if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0x200) != 0) &&
+           ((latched_system_error_status_word_9 & 0x200) == 0)) {
+          status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+               status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xfdff;
+        }
+        if (aux_driver8_high_error_count <
+            number_of_aux_driver_errors_that_must_be_seen_before_fault_is_1_10) {
+          aux_driver8_high_error_count = aux_driver8_high_error_count + 1;
+          return;
+        }
+        status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+             status_32_word_bit_mapped_system_error_status_word_9_0_1 | 0x400;
+        latched_system_error_status_word_9 = latched_system_error_status_word_9 | 0x400;
+        return;
+      }
+      aux_driver8_high_error_count = 0;
+      if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0x400) != 0) &&
+         ((latched_system_error_status_word_9 & 0x400) == 0)) {
+        status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+             status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xfbff;
+      }
+      if (aux_driver8_low_error_count <
+          number_of_aux_driver_errors_that_must_be_seen_before_fault_is_1_10) {
+        aux_driver8_low_error_count = aux_driver8_low_error_count + 1;
+        return;
+      }
+      status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+           status_32_word_bit_mapped_system_error_status_word_9_0_1 | 0x200;
+      latched_system_error_status_word_9 = latched_system_error_status_word_9 | 0x200;
+      return;
+    }
+    aux_driver8_high_error_count = 0;
+    aux_driver8_low_error_count = 0;
+    if ((io_driver_port_2_feedback & 0x80) == 0) {
+      if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0x400) != 0) &&
+         ((latched_system_error_status_word_9 & 0x400) == 0)) {
+        if (aux_driver8_low_recovery_count <
+            enhanced_diag_number_good_samples_before_recovery_of_aux_drive_1_10) {
+          aux_driver8_low_recovery_count = aux_driver8_low_recovery_count + 1;
+          return;
+        }
+        status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+             status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xfbff;
+        aux_driver8_low_recovery_count = 0;
+      }
+    }
+    else if (((status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0x200) != 0) &&
+            ((latched_system_error_status_word_9 & 0x200) == 0)) {
+      if (cold_start_rpm_snapshot_1 <
+          enhanced_diag_number_good_samples_before_recovery_of_aux_drive_1_10) {
+        cold_start_rpm_snapshot_1 = cold_start_rpm_snapshot_1 + 1;
+        return;
+      }
+      status_32_word_bit_mapped_system_error_status_word_9_0_1 =
+           status_32_word_bit_mapped_system_error_status_word_9_0_1 & 0xfdff;
+      cold_start_rpm_snapshot_1 = 0;
+      return;
+    }
+  }
+  return;
+}

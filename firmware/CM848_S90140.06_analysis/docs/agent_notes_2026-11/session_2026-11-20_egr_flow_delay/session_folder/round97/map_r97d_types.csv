@@ -1,0 +1,12 @@
+address,name,old_label,kind,dims
+0x00000000,can_standard_receive_descriptor_t,can_std_rx_desc_t,type,1
+0x00000000,diagnostic_service_request_t,diag_service_request_t,type,1
+0x00000000,diagnostic_transport_protocol_state_t,diag_tp_state_t,type,1
+0x00000000,diagnostic_transfer_state_t,diag_transfer_state_t,type,1
+0x00000000,j1939_transmit_message_buffer_t,j1939_tx_msg_buffer_t,type,1
+0x00000000,j1939_vp44_message_t,j1939_vp44_msg_t,type,1
+0x00000000,parameter_lookup_arguments_t,param_lookup_args_t,type,1
+0x00000000,sensor_configuration_t,sensor_config_t,type,1
+0x00000000,diagnostic_clear_flags_t,diag_clear_flags_t,type,1
+0x00000000,diagnostic_write_request_state_t,diag_write_request_state_t,type,1
+0x00000000,sensor_channel_configuration_t,sensor_channel_config_t,type,1

@@ -463,3 +463,17 @@
    399835 verify_round96_h2_cm848.log
    241019 verify_round96_h3_cm550.log
    241347 verify_round96_h_cm550.log
+   241499 verify_round97_a_cm550.log
+   399836 verify_round97_a_cm848.log
+   241625 verify_round97_b_cm550.log
+   399881 verify_round97_b_cm848.log
+   241728 verify_round97_c_cm550.log
+   400217 verify_round97_c_cm848.log
+   241903 verify_round97_d_cm550.log
+   400217 verify_round97_d_cm848.log
+   241893 verify_round97_e_cm550.log
+   400217 verify_round97_e_cm848.log
+   245953 verify_round97_f2_cm550.log
+   400007 verify_round97_f2_cm848.log
+   246394 verify_round97_f_cm550.log
+   400020 verify_round97_f_cm848.log

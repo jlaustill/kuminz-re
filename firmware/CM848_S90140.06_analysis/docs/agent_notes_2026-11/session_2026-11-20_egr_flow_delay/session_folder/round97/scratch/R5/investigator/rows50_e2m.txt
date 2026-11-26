@@ -1,0 +1,50 @@
+10B2 +0002 EPCVRPIX [  ] -> 0x8057c2 severity_index_for_epf_coolant_level_fault_0_0_1_0 undefined; SEVERITY INDEX FOR EPF COOLANT LEVEL FAULT.~0.0 - 1.0
+10B2 +0018 EPCVFLIN [  ] -> 0x8057d8 index_into_epf_fault_log_for_coolant_level_fueling_0_4 word; INDEX INTO EPF FAULT LOG FOR COOLANT LEVEL FUELING~0 - 4
+10B2 +001C EPCVRPIN [  ] -> 0x8057dc index_into_epf_fault_log_for_coolant_level_rpm_0_4 word; INDEX INTO EPF FAULT LOG FOR COOLANT LEVEL RPM~0 - 4
+1140 +0002 EPCQRPIX [  ] -> 0x8057e0 severity_index_for_epf_coolant_temperature_fault_0_0_1_0 word; SEVERITY INDEX FOR EPF COOLANT TEMPERATURE FAULT.~0.0 - 1.0
+1140 +0018 EPCQFLIN [  ] -> 0x8057f6 index_into_epf_fault_log_for_coolant_temp_fueling_0_4 word; INDEX INTO EPF FAULT LOG FOR COOLANT TEMP FUELING~0 - 4
+1140 +001C EPCQRPIN [  ] -> 0x8057fa index_into_epf_fault_log_for_coolant_temp_rpm_0_4 word; INDEX INTO EPF FAULT LOG FOR COOLANT TEMP RPM~0 - 4
+1141 +0018 EPIMFLIN [  ] -> 0x805814 index_into_epf_fault_log_for_intake_temp_fueling_0_4 word; INDEX INTO EPF FAULT LOG FOR INTAKE TEMP FUELING~0 - 4
+1141 +001C EPIMRPIN [  ] -> 0x805818 index_into_epf_fault_log_for_intake_temp_rpm_0_4 word; INDEX INTO EPF FAULT LOG FOR INTAKE TEMP RPM~0 - 4
+1142 +0002 EPO2RPIX [  ] -> 0x80581c severity_index_for_epf_oil_pressure_fault_0_0_1_0 word; SEVERITY INDEX FOR EPF OIL PRESSURE FAULT.~0.0 - 1.0
+1142 +0018 EPO2FLIN [  ] -> 0x805832 index_into_epf_fault_log_for_oil_pressure_fueling_0_4 word; INDEX INTO EPF FAULT LOG FOR OIL PRESSURE FUELING~0 - 4
+1142 +001C EPO2RPIN [  ] -> 0x805836 index_into_epf_fault_log_for_oil_pressure_rpm_0_4 word; INDEX INTO EPF FAULT LOG FOR OIL PRESSURE RPM~0 - 4
+1143 +0002 EPWFRPIX [  ] -> 0x80583a severity_index_for_epf_water_in_fuel_fault_0_0_0_1 word; SEVERITY INDEX FOR EPF WATER IN FUEL FAULT~0.0-0.1
+1143 +0018 EPWFFLIN [  ] -> 0x805850 index_into_epf_fault_log_for_water_in_fuel_fueling_0_4 word; INDEX INTO EPF FAULT LOG FOR WATER IN FUEL FUELING~0-4
+1143 +001C EPWFRPIN [  ] -> 0x805854 index_into_epf_fault_log_for_water_in_fuel_0_4 word; INDEX INTO EPF FAULT LOG FOR WATER IN FUEL~0-4
+1144 +0002 EPBSRPIX [  ] -> 0x805858 severity_index_for_epf_boost_pressure_fault_0_0_0_1 word; SEVERITY INDEX FOR EPF BOOST PRESSURE FAULT~0.0-0.1
+1144 +0018 EPBSFLIN [  ] -> 0x80586e index_into_epf_fault_log_for_boost_pressure_fueling_0_4 word; INDEX INTO EPF FAULT LOG FOR BOOST PRESSURE FUELING~0-4
+1144 +001C EPBSRPIN [  ] -> 0x805872 index_into_epf_fault_log_for_boost_pressure_0_4 word; INDEX INTO EPF FAULT LOG FOR BOOST PRESSURE~0-4
+1145 +0002 EPFPRPIX [  ] -> 0x805876 severity_index_for_epf_engine_sync_fuel_pressure_fault_0_0_0_1 word; SEVERITY INDEX FOR EPF ENGINE SYNC FUEL PRESSURE FAULT~0.0-0.1
+1145 +0018 EPFPFLIN [  ] -> 0x80588c index_into_epf_fault_log_for_engine_sync_fuel_pressure_fueling_0_4 word; INDEX INTO EPF FAULT LOG FOR ENGINE SYNC FUEL PRESSURE FUELING~0-4
+1145 +001C EPFPRPIN [  ] -> 0x805890 index_into_epf_fault_log_for_engine_sync_fuel_pressure_0_4 word; INDEX INTO EPF FAULT LOG FOR ENGINE SYNC FUEL PRESSURE~0-4
+1146 +0018 EPFTFLIN [NONE] -> 0x8058aa index_into_epf_fault_log_for_fuel_temperature_fueling_0_4 word; INDEX INTO EPF FAULT LOG FOR FUEL TEMPERATURE FUELING~0 - 4
+1146 +001C EPFTRPIN [NONE] -> 0x8058ae index_into_epf_fault_log_for_fuel_temperature_rpm_errors_0_4 word; INDEX INTO EPF FAULT LOG FOR FUEL TEMPERATURE RPM ERRORS~0 - 4
+1147 +0002 EPAARPIX [  ] -> 0x8058b2 severity_index_for_epf_ambient_air_pressure_fault_0_0_0_1 word; SEVERITY INDEX FOR EPF AMBIENT AIR PRESSURE FAULT~0.0-0.1
+1147 +0018 EPAAFLIN [  ] -> 0x8058c8 index_into_epf_fault_log_for_ambient_air_pressure_fueling_0_4 word; INDEX INTO EPF FAULT LOG FOR AMBIENT AIR PRESSURE FUELING~0-4
+1147 +001C EPAARPIN [  ] -> 0x8058cc index_into_epf_fault_log_for_ambient_air_pressure_0_4 word; INDEX INTO EPF FAULT LOG FOR AMBIENT AIR PRESSURE~0-4
+10B7 +001A EPCVFLFU [HEX] -> 0x80704c fault_index_indicating_epf_coolant_level_fuel_error_found_0_ffff word; FAULT INDEX INDICATING EPF COOLANT LEVEL FUEL ERROR FOUND~0-FFFF
+10B7 +001C EPCVRPFU [HEX] -> 0x80704e fault_index_indicating_epf_coolant_level_rpm_error_found_0_ffff word; FAULT INDEX INDICATING EPF COOLANT LEVEL RPM ERROR FOUND~0-FFFF
+112B +001A EPCQFLFU [HEX] -> 0x807070 fault_index_indicating_epf_coolant_temp_fuel_error_found_0_ffff word; FAULT INDEX INDICATING EPF COOLANT TEMP FUEL ERROR FOUND~0-FFFF
+112B +001C EPCQRPFU [HEX] -> 0x807072 fault_index_indicating_epf_coolant_temp_rpm_error_found_0_ffff word; FAULT INDEX INDICATING EPF COOLANT TEMP RPM ERROR FOUND~0-FFFF
+112C +001A EPIMFLFU [HEX] -> 0x807094 fault_index_indicating_epf_imt_fuel_error_found_0_ffff word; FAULT INDEX INDICATING EPF IMT FUEL ERROR FOUND~0-FFFF
+112C +001C EPIMRPFU [HEX] -> 0x807096 fault_index_indicating_epf_imt_rpm_error_found_0_ffff word; FAULT INDEX INDICATING EPF IMT RPM ERROR FOUND~0-FFFF
+112D +0006 EPO2FLIC [SEC] -> 0x8070a4 time_to_reach_full_derate_during_oil_pressure_engine_prot_0_0039_256_70a4 word; TIME TO REACH FULL DERATE DURING OIL PRESSURE ENGINE PROT~0.0039 - 256
+112D +0008 EPO2RPIC [SEC] -> 0x8070a6 time_to_reach_full_derate_during_oil_pressure_engine_prot_0_0039_256_70a6 word; TIME TO REACH FULL DERATE DURING OIL PRESSURE ENGINE PROT~0.0039 - 256
+112D +001A EPO2FLFU [HEX] -> 0x8070b8 fault_index_indicating_epf_oil_pressure_fuel_error_found_0_ffff word; FAULT INDEX INDICATING EPF OIL PRESSURE FUEL ERROR FOUND~0-FFFF
+112D +001C EPO2RPFU [HEX] -> 0x8070ba fault_index_indicating_epf_oil_pressure_rpm_error_found_0_ffff word; FAULT INDEX INDICATING EPF OIL PRESSURE RPM ERROR FOUND~0-FFFF
+112E +001A EPWFFLFU [NONE] -> 0x8070dc fault_when_epf_water_in_fuel_fuel_error_found_0_65535 word; FAULT WHEN EPF WATER IN FUEL FUEL ERROR FOUND~0-65535
+112E +001C EPWFRPFU [HEX] -> 0x8070de fault_when_epf_water_in_fuel_rpm_error_found_0_65535 word; FAULT WHEN EPF WATER IN FUEL RPM ERROR FOUND~0-65535
+112F +001A EPBSFLFU [NONE] -> 0x807100 fault_when_epf_boost_pressure_fuel_error_found_0_65535 word; FAULT WHEN EPF BOOST PRESSURE FUEL ERROR FOUND~0-65535
+112F +001C EPBSRPFU [HEX] -> 0x807102 fault_when_epf_engine_boost_pressure_rpm_error_found_0_65535 word; FAULT WHEN EPF ENGINE BOOST PRESSURE RPM ERROR FOUND~0-65535
+1130 +001A EPFPFLFU [NONE] -> 0x807124 fault_when_epf_engine_sync_fuel_pressure_fuel_error_found_0_65535 word; FAULT WHEN EPF ENGINE SYNC FUEL PRESSURE FUEL ERROR FOUND~0-65535
+1130 +001C EPFPRPFU [HEX] -> 0x807126 fault_when_epf_engine_sync_fuel_pressure_rpm_error_found_0_65535 word; FAULT WHEN EPF ENGINE SYNC FUEL PRESSURE RPM ERROR FOUND~0-65535
+1131 +0006 EPFTFLIC [SEC] -> 0x807134 time_to_reach_full_derate_w_fuel_temperature_engine_prot_0_0039_256_7134 word; TIME TO REACH FULL DERATE W/ FUEL TEMPERATURE ENGINE PROT~0.0039 - 256
+1131 +0008 EPFTRPIC [SEC] -> 0x807136 time_to_reach_full_derate_w_fuel_temperature_engine_prot_0_0039_256_7136 word; TIME TO REACH FULL DERATE W/ FUEL TEMPERATURE ENGINE PROT~0.0039 - 256
+1132 +001A EPAAFLFU [NONE] -> 0x80716c fault_when_epf_ambient_air_pressure_fuel_error_found_0_65535 word; FAULT WHEN EPF AMBIENT AIR PRESSURE FUEL ERROR FOUND~0-65535
+1132 +001C EPAARPFU [HEX] -> 0x80716e fault_when_epf_ambient_air_pressure_rpm_error_found_0_65535 word; FAULT WHEN EPF AMBIENT AIR PRESSURE RPM ERROR FOUND~0-65535
+81E3 +0000 EPIMEBTM [SEC] -> 0x807410 time_period_to_disable_imt_epf_due_to_exh_brake_0_65535 word; TIME PERIOD TO DISABLE IMT EPF DUE TO EXH. BRAKE~0-65535
+81E2 +0000 EPIMTPFT [DEGF] -> 0x80a26a pre_processed_imt_for_epf_due_to_exhaust_brake_on_50_to_293 undefined; PRE-PROCESSED IMT FOR EPF DUE TO EXHAUST BRAKE ON~-50 TO 293
+81E2 +0002 EPIMEBTR [SEC] -> 0x80a26c timer_used_to_disable_imt_epf_when_exhaust_brake_on_0_65535 word; TIMER USED TO DISABLE IMT EPF WHEN EXHAUST BRAKE ON~0-65535
+10B1 +0000 EPRYO2SO [  ] -> 0x80d27a epf_shutdown_engine_command_from_restart_limitation_a_1_true_0_false word; EPF SHUTDOWN ENGINE COMMAND FROM RESTART LIMITATION A~1=TRUE / 0=FALSE
+10B1 +0002 EPRYO2SQ [  ] -> 0x80d27c epf_shutdown_approaching_command_from_restart_limitat_1_true_0_false word; EPF SHUTDOWN APPROACHING COMMAND FROM RESTART LIMITAT~1=TRUE / 0=FALSE

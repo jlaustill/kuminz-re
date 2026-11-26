@@ -1,0 +1,30 @@
+both firmwares: round 97 stage C - 162 function names spell their words out (init -> initialize, diag, tx, temp, param, eps ...)
+
+The naming rule (spell words out; new names say initialize, never init) applied to the function names that still
+held abbreviations: 116 CM848 and 46 CM550 functions.
+- 'init' as the first word becomes the verb (cm848_initClockAndTimers -> cm848_initializeClockAndTimers); as the last
+  word it moves to the front (cm550_fuelTimingModeInit -> cm550_initializeFuelTimingMode); in the middle it becomes
+  Initialization (mc68k_hardwareInitAndStartup -> mc68k_hardwareInitializationAndStartup).
+- diag / tx / rx / temp / param(s) / calc / ack / config / aux / info / eps are spelled out
+  (mpc555_initDiagResponseHandlers -> mpc555_initializeDiagnosticResponseHandlers, cm848_writeCanControllerTxMailbox ->
+  cm848_writeCanControllerTransmitMailbox, cm550_epsControlModeSelector -> cm550_enginePositionSensorControlModeSelector).
+- Read by hand where the mechanical form misreads: cm848_diagSendResponseCode -> cm848_sendDiagnosticResponseCode, the
+  three SCI set-ups cm848_sciInit* -> cm848_initializeSci*, cm848_continuePciControllerInit ->
+  cm848_continuePciControllerInitialization, cm550_emptyPlaceholderInit -> cm550_emptyPlaceholderInitialization.
+  Kept: buildPgn65228Dm3ClearInitMessage (nothing says what its Init is), names with number-letter parts
+  (cm550_systemFunction6xParameterized, cm848_unsignedDivision64by32), the hpcr_cbd* functions and every function the
+  round 97 workflow's batches name.
+- Two unprefixed twin names change in both firmwares: initializeQadcModule and initializePgn65261CruiseControlSetupStruct.
+- Each renamed row's plate records the old name ('(was <old>; PR #53 round 97)'); prototypes follow by address; comments,
+  the current CM848 docs (engine hours / odometer, ROM-to-RAM thunking), firmware/CLAUDE.md (six lines),
+  test_disasm_tools.py and audit_cal_suffixes.py's docstring cite the new names. History notes keep the old ones.
+  Two skill files (.claude/skills/investigate-firmware-symbol) still cite cm848_initEepromDriverAndLoadMirror and
+  initPgn65261CruiseControlSetupStruct: skills are the user's to edit.
+
+Proof: CM848 and CM550 built twice each, deterministic, in a copy of the firmware folder (base = HEAD 32b7f149); no
+import failure, no SCRIPT ERROR. Label-only in both: with the 116 / 46 renames mapped there are no other token changes,
+statement counts and pieces are equal, every new name renders and no old name is left in the code; unaff_ / extraout_
+/ in_ / CONCAT counts are equal. Headers regenerated (g++ 0 errors in both); the _cal audit is 0 hard / 0 soft; the
+five Python suites and the 109 JUnit tests pass; no new overlapping rows.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

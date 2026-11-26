@@ -1,0 +1,93 @@
+=== CM848 block 100B
+=== CM848 block 100C
+=== CM848 block 11CA
+=== CM848 block 11C4
+=== CM848 block 12A1
+=== CM848 block 11C8
+=== CM848 block 121D
+=== CM848 block 117D
+117D +0000 Cruise_Control_Status [UNITLESS] -> 0x40a268 cruise_control_engaged_flag word; [CRSS] Status of the Cruise Control as dictated by the switches
+117D +0002 Cruise_Control_Reference_Speed [MPH] -> 0x40a26a cruise_speed_command word; [CRRF] Cruise Control reference speed input
+117D +0004 E_Brake_Status [UNITLESS] -> 0x40a26c engine_retarder_active_flag word; [EBSS] Status of whether operating conditions indicate desire for brake activation
+117D +0006 EB_Switch_Status [UNITLESS] -> 0x40a26e engine_retarder_selection_percent_fault_masked word; [EBSWSS] indicator of desired engine retarder driver control
+117D +000A Road_Speed [MPH] -> 0x40a272 vehicle_speed word; [VSFTAVVS] Sampled road speed after it has been filtered
+117D +000C Filtered_Gear_Ratio [UNITLESS] -> 0x40a274 drivetrain_ratio word; [GRFTGRRA] FILTERED TRANSMISSION GEAR RATIO
+117D +000E Out_Of_Gear [UNITLESS] -> 0x40a276 drivetrain_ratio_unsettled_flag word; [GROGSS] Indicator set when an out of gear condition is detected
+117D +0010 Zero_Vss_Derate_RPM [RPM] -> 0x40a278 engine_speed_limit_source_2 word; [ZVLMES] Output engine speed limit going to HSG Reference Speed algorithm
+117D +0012 Vss_Tamper_Derate_RPM [RPM] -> 0x40a27a engine_speed_limit_source_4 word; [VSBKRVRT] VSS tamper derate RPM
+117D +0016 Max_Road_Speed [MPH] -> 0x40a27e maximum_road_speed word; [RSMXRZ] MAX. VEHICLE SPEED IN TG (ANY GEAR w/o GD) after Driver Reward adjustment
+117D +0018 PP_Active_Selection [UNITLESS] -> 0x40a280 programmable_power_active_selection word; [PPAESE] Current torque curve as specified by the Programmable Power feature
+117D +001A All_HP_Peak_Fueling [MM3S] -> 0x40a282 (no name) (no row); [FSPKFLMX] Maximum Fueling Of All The Fueling Curves In the ECM
+117D +001C All_HP_Peak_Fueling_Speed [RPM] -> 0x40a284 (no name) (no row); [FSPKESMX] Speed assoc. w. Maximum Fueling Of All The Fueling Curves In the ECM
+117D +001E High_HP_Peak_Fueling [MM3S] -> 0x40a286 (no name) (no row); [FSPKFLHI] Maximum Fueling Of All The Tau 1 Fueling Curves In the ECM
+117D +0020 High_HP_Peak_Fueling_Speed [RPM] -> 0x40a288 (no name) (no row); [FSPKESHI] Speed assoc. w. Maximum Fueling Of All The Tau 1 Fueling Curves In the ECM
+117D +0022 Low_HP_Peak_Fueling [MM3S] -> 0x40a28a (no name) (no row); [FSPKFLLO] Maximum Fueling Of All The Tau 0 Fueling Curves In the ECM
+117D +0024 Low_HP_Peak_Fueling_Speed [RPM] -> 0x40a28c (no name) (no row); [FSPKESLO] Speed assoc. w. Maximum Fueling Of All The Tau 0 Fueling Curves In the ECM
+117D +0026 VSS_Valid_Flag [UNITLESS] -> 0x40a28e vehicle_speed_sensor_ok_flag word; [VSSVF] TRUE when no VSS_Signal_Lost_Error and VSS sensor exists, else FALSE
+117D +0028 EB_Switch_Level [%] -> 0x40a290 engine_retarder_selection_percent word; [EBSWLV] Commanded brake level from operator switches.
+117D +002C ESS_Main_ISR_Count [CNTS] -> 0x40a294 (no name) (no row); [ESMNISCT] Unsigned roll-over counter of ESS main isr occurances.
+117D +002E ESS_Backup_ISR_Count [CNTS] -> 0x40a296 (no name) (no row); [ESBUISCT] Unsigned roll-over counter of ESS backup isr occurances.
+117D +0030 Rear_Axle_Ratio [UNITLESS] -> 0x40a298 rear_axle_ratio word; [VSRRAXRA] RATIO OF TRANS TO AXLE REVS - (can vary for 2 spd apps)
+117D +0032 Engine_Is_Driving_A_Machine [UNITLESS] -> 0x40a29a (no name) (no row); [TIEGDRFG] Bit 3 of 0-15 Indicator of engine usage 1 means driving 0 means not driving
+117D +0034 Accelerator_Pedal_State [HEX] -> 0x40a29c (no name) (no row); [TICTST] State of the accelerator
+117D +0036 Fuel_System_Fail [UNITLESS] -> 0x40a29e (no name) (no row); [TIFSFX] The latched state of the FSS set fuel sensor fail
+117D +0037 Fuel_System_Fail_State [UNITLESS] -> 0x40a29f (no name) (no row); [TIFSFXST] The current state of the fuel system as determined by the fuel system
+117D +0038 Instantaneous_Fuel_Economy [MPG] -> 0x40a2a0 (no name) (no row); [TIFE] Instantaneous fuel economy in miles/lbsm or mpg
+117D +003C ES_Host_State [UNITLESS] -> 0x40a2a4 (no name) (no row); Indicates which state the requesting algorithm is presently in.
+117D +003E ES_AT_Override [HEX] -> 0x40a2a6 (no name) (no row); [ESATOD] Overrides anti-theft fueling lockout during auto-start operation.
+117D +0040 Estimated_Percent_Fan_Speed [%] -> 0x40a2a8 fan_drive_estimated_speed_percent_times_256 word; [FCEMPCFS] Fan Speed as a ratio of current speed to the maximum fan speed
+117D +0042 J1939_Gear_Ratio [UNITLESS] -> 0x40a2aa etc2_actual_gear_ratio word; [JCGRRA] Gear ratio from J1939 ETC2 message
+117D +0044 J1939_Gear_Ratio_Valid_Flag [UNITLESS] -> 0x40a2ac etc2_gear_ratio_valid_flag word; [JCGRVDFG] Indicates valid j1939 gear ratio, 0=FALSE, 1=TRUE
+117D +0046 J1939_Tailshaft_Speed [RPM] -> 0x40a2ae output_shaft_speed_current word; [JCTSSP] Output shaft speed from J1939 ETC1 message
+117D +0048 PTO_Disable_Flag [HEX] -> 0x40a2b0 power_take_off_disable_flag word; [PTDSFG] Disables PTO when requested by another algorithm.
+117D +004A EB_Driver_Level [%] -> 0x40a2b2 engine_retarder_output_level_percent word; [EBDRLV] Rate limited, commanded level of engine braking
+117D +004C Powerdown_Delay_Request [HEX] -> 0x40a2b4 ecm_power_down_delay_request_flag word; [SDDYFG] The ECM will not powerdown until this is inactive
+117D +004E OCM_Miles_Since_Last_Reset_Dummy [MI] -> 0x40a2b6 (no name) (no row); ACTUAL NUMBER OF VEHICLE MILES SINCE THE LAST OCM RESET.
+117D +0052 OCM_Miles_Threshold_Dummy [MI] -> 0x40a2ba (no name) (no row); THE NUMBER OF MILES THAT WILL TRIGGER AN OCM RESET IN AUTOMATIC MODE.
+117D +005C ESP_Tau [UNITLESS] -> 0x40a2c4 electronic_smart_power_tau word; [SPTU] VALUE WHICH DETERMINES ALTERNATE HP RATINGS
+117D +005E ESP_Tau_State [UNITLESS] -> 0x40a2c6 electronic_smart_power_tau_state word; [SPTUST] Indicates the source of the current ESP_Tau value.
+117D +0060 Cruise_Resume_Status [UNITLESS] -> 0x40a2c8 cruise_resume_active_flag word; Status of the Cruise Control Resume
+117D +0008 E_Brake_Command_Source [UNITLESS] -> 0x40a270 engine_retarder_command_source ENGINE_RETARDER_COMMAND_SOURCE; [EBCOAG] eb cmd src. 0=NOT_COMM,1=J_COMM,2=CRUISE,3=SWITCH,4=JC_LIM,5=NOT_SET,6=NO_OVRD
+117D +0014 Engine_Brake_Jcomm_Device_Indicator [UNITLESS] -> 0x40a27c engine_retarder_j1939_control_device J1939_CONTROL_DEVICE; [EB39CNID] J1939 device controlling Engine Brakes: 0=NONE,1=TRANS,2=ABS,3=ASR,4=UNKNOWN
+117D +002A Fan_Drive_State [UNITLESS] -> 0x40a292 fan_drive_state_code dword; [FCST] J1939 Defined States: Indicates which device is controlling the Fan
+117D +002A Fan_Drive_State [UNITLESS] -> 0x40a292 fan_drive_state_code dword; [FCST] J1939 Defined States: Indicates which device is controlling the Fan
+117D +002A Fan_Drive_State [UNITLESS] -> 0x40a292 fan_drive_state_code dword; [FCST] J1939 Defined States: Indicates which device is controlling the Fan
+117D +0054 J1939_Cruise_Command_Mode [UNITLESS] -> 0x40a2bc ccvs1_cruise_control_state word; The cruise control state to be broadcast
+117D +0056 Fan_Clutch_Status_1 [UNITLESS] -> 0x40a2be (no name) (no row); [FCSS] fan clutch status
+117D +0058 Fan_Clutch_Status_2 [UNITLESS] -> 0x40a2c0 (no name) (no row); [FCSS02] fan clutch status for fan 2
+117D +005A Jcomm_AT_Transaction [UNITLESS] -> 0x40a2c2 j1939_anti_theft_status_transmit_state word; [JCATAETX] Indicates which protocol has an active Anti-Theft transaction
+=== CM848 block 11CB
+=== CM848 block 105E
+105E +0000 Crank_Exit_Timer [SEC] -> 0x40a798 crank_exit_timer word; [CKEXTM] CRANK EXIT TIMER
+105E +0002 Crank_Advance [CRANK_DEG_BTDC] -> 0x40a79a crank_advance word; [CKTA] Final timing advance under cranking conditions
+105E +0004 Crank_4D_Timing [CRANK_DEG_BTDC] -> 0x40a79c crank_four_dimensional_timing word; [CK4DTA] 4D TIMING OUTPUT BY CRANK
+105E +0006 Crank_Adjusted_Initial_Fuel [MM3S] -> 0x40a79e crank_adjusted_initial_fuel word; [CKAJIIFL] CRANK ADJUSTED INITIAL FUEL
+105E +0008 Crank_Adjusted_Initial_RPM [RPM] -> 0x40a7a0 crank_adjusted_initial_rpm word; [CKAJIIES] CRANK ADJUSTED INITIAL RPM
+105E +000A Crank_Wet_Stack_Timing [CRANK_DEG_BTDC] -> 0x40a7a2 (no name) (no row); [CKWSTA] WET STACK TIMING OUTPUTED BY CRANK
+105E +000C Crank_Coolant_Exit_Fuel [MM3S] -> 0x40a7a4 crank_coolant_exit_fuel word; CRANK EXIT FUEL BASED ON COOLANT TEMPERATURE
+105E +000E Crank_Initial_Advance [CRANK_DEG_BTDC] -> 0x40a7a6 crank_initial_advance i16; [CKIITA] CRANK INITIAL ADVANCE
+105E +0010 Crank_Exit_Fuel_Adjustment [MM3S] -> 0x40a7a8 crank_exit_fuel_adjustment word; [CKEXFLAJ] CRANK EXIT FUEL ADJUSTMENT
+105E +0012 Crank_Exit_Speed [RPM] -> 0x40a7aa crank_exit_speed word; [CKEXES] Exit RPM for crank routine
+105E +0014 Crank_Fuel [MM3S] -> 0x40a7ac crank_fuel word; [CKFL] FINAL FUEL OUTPUTED BY CRANK
+105E +0016 Crank_Initial_Fuel [MM3S] -> 0x40a7ae crank_initial_fuel word; [CKIIFL] CRANK INITIAL FUEL
+105E +0018 Crank_Initial_Fuel_Adjustment [MM3S] -> 0x40a7b0 crank_initial_fuel_adjustment word; [CKINFRAJ] Fueling val. to be added to Crank Initial Fuel val.
+105E +001A Crank_Initial_Advance_Break_Speed [RPM] -> 0x40a7b2 crank_initial_advance_break_speed word; [CKIITAES] CRANK INITIAL ADVACE BREAK SPEED
+105E +001C Crank_Initial_Fuel_Break_Speed [RPM] -> 0x40a7b4 crank_initial_fuel_break_speed word; [CKIIFLES] CRANK INITIAL FUEL BREAK SPEED
+105E +001E Crank_Exit_Advance [CRANK_DEG_BTDC] -> 0x40a7b6 crank_exit_advance i16; [CKEXTA] CRANK EXIT ADVANCE
+105E +0020 SOI_Before_Startup [CRANK_DEG_BTDC] -> 0x40a7b8 (no name) (no row); [TSBECKTA] Timing Command before cranking is envoked
+105E +0022 Crank_Initial_RPM_Adjustment [RPM] -> 0x40a7ba crank_initial_rpm_adjustment word; [CKINRPAJ] Eng. spd. val. to be added to Crk init fuel brk spd.
+105E +0024 Crank_Jumpstart_Timer [SEC] -> 0x40a7bc crank_jump_start_timer word; [CKJSTM] timer used to dictate a jumpstart condition
+105E +0026 Crank_Reentry_Speed [RPM] -> 0x40a7be crank_reentry_speed word; [CKREES] re-entry RPM for crank routine
+=== CM848 block 11C5
+=== CM848 block 12A2
+=== CM848 block 11C9
+=== CM848 block 121E
+=== CM848 block 1008
+1008 +0000 VSS_Period [CNTS] -> 0x40b70e vehicle_speed_sensor_period dword; Time that has elapsed between previous and current processor interrupts
+1008 +0004 Average_EPS_Sample_Period [CNTS] -> 0x40b712 drivetrain_ratio_engine_period_average dword; EPS period between VSS interrupts
+1008 +0008 Road_Speed_Timer [SEC] -> 0x40b716 vehicle_speed_pulse_timeout word; When this parameter is zero vehicle speed is set to zero.
+1008 +000A Tachograph_Pulse_Width [CNTS] -> 0x40b718 vehicle_speed_sensor_tachograph_pulse_width dword; TPU clock ticks accumulated while Tachograph pulse was high.
+1008 +000E Tachograph_Valid_Pulse_Width_Flag [HEX] -> 0x40b71c vehicle_speed_sensor_tachograph_pulse_width_valid_flag word; Indicates interrupt algorithm has extracted pulse width info;0=FALSE,1=TRUE
+1008 +0010 Accumulated_TPU_Pulses [CNTS] -> 0x40b71e vehicle_speed_sensor_pulse_total word; Running total of VSS pulses accumulated due to TPU interrupts
+=== CM848 block 11FE
+=== CM848 block 1300

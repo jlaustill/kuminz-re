@@ -1,0 +1,71 @@
+both firmwares: round 97 stage F - workflow batches R5-R7: CM550's engine protection tables, the J1939 request chain prototypes, the cylinder balance projections
+
+The judges' CONFIRMED / AMENDED verdicts of batches R5 (engine protection), R6 (the J1939 set-ups, senders and the
+PGN 61184 request chain) and R7 (the round 96 Q3 / Q4 leads and the numbered empty stubs). Nothing was refuted.
+58 CM550 and 37 CM848 functions, 66 CM550 and 3 CM848 globals, 11 enum members, 49 CM550 prototypes (with the review
+fixes and the two machine-code findings below).
+
+- R5, engine protection: four new CM550 struct types (engine_protection_channel_configuration_t 36 bytes,
+  cm550_engine_protection_channel_state_t 46, engine_protection_channel_history_t 30, engine_protection_fault_log_entry_t
+  8; the field names follow CM848's types for the same e2m records). The nine-channel tables are typed (configuration
+  0x807032, state 0x80d0dc, history 0x8057c0) and the fault logs are engine_protection_fault_log_entry_t[5]. 407 flat
+  rows inside the tables and 4 junk rows inside the new pointer globals are removed: each removed name maps to its
+  table[i].field path in the comment refresh, apart from 16 junk rows at no member's start (and 13 rows named only by
+  their e2m mnemonic: comments that cite a mnemonic cite the e2m record, so they stay). The unused enum PROTECTION_STATE
+  is now ENGINE_PROTECTION_TASK (the scheduler's five tasks). Six twins share one name with CM848.
+- R6, the request chain: the PGN 61184 dispatcher, its validator, the ten memory service handlers and their workers take
+  can_standard_receive_descriptor_t*, so the bodies read request->data_pointer / request->length instead of
+  *(int *)(param_1 + 6). The handlers return their worker's result. 0x224f4 (readJ1939DiagnosticMemoryByParameterId) now
+  exports a body, so handleJ1939ReadByParameterIdShortOffsetService shows its four arguments (it showed one).
+  0x1ffd2 (handleJ1939NoOperationService) is created from the label the two no-operation services registered. The DM8 /
+  DM10 / EEC2 / IC1 set-ups and senders and the PGN 59392 acknowledgement sender are named, and CM550 gets the enum
+  ENGINE_RETARDER_COMMAND_SOURCE (e2m 117D +8 EBCOAG). Fourteen twins share one name with CM848.
+- R7: the cylinder balance reference projections are one i32[6] (its seven rows inside go); the numbered empty stubs
+  are named by their call sites; six J1939_DIAGNOSTIC_SERVICE members (0x41 / 0x43 / 0x46 / 0x48 / 0x4a / 0x4c) take
+  CM848's names; CM848's cylinder balancing functions drop the cbd abbreviation; four twins.
+- By hand:
+  - The apply kept five judged types (the four fault logs, word[20] -> engine_protection_fault_log_entry_t[5], and
+    0x8002ac dword -> i32[6]), so they are forced. CM848 0x1bd44 gets the plate its judge checked.
+  - CM550's J1939_DIAGNOSTIC_SERVICE header no longer calls the members unreviewed.
+  - 47 doubled round tags are removed.
+  - 382 rows that held the same '(was X; PR #53 round N)' note twice (rounds 58 / 91 / 94 / 97: the applies appended
+    the note to judged comments that already ended with it) keep one copy; 59 of them are plates.
+  - The refresh rewrote one history note that had no round tag (0x1ffd6), and it is restored.
+  - Seven CM848 reference docs and three firmware/CLAUDE.md lines cite the new names.
+- Review fixes (a five-checker workflow compared every changed statement count with the machine code, two skeptics per
+  finding):
+  - cm550_sendPgn59392AcknowledgementMessage had lost its second parameter row: its judge said to keep it, and the
+    hand-written prototype step dropped it. All three callers had lost their ACK / NACK argument, and the body read an
+    undeclared stack slot. The row is back.
+  - processDiagnosticLimitStatus (engine protection task 4) returns void: its one call never reads d0, and it takes no
+    stack argument.
+- Settled from both firmwares' machine code:
+  - CM550 0x18f86 (was incrementDiagnosticCounters) is the twin of CM848 0x508834. Both take the shared name
+    countEngineProtectionShutdownTime, and the CM550 row gets the full prototype. The steps are the same: the
+    saturating count at state +0x1a / +0x1c by the flag word, then, while the engine start flag is set, the shutdown
+    delay copied to +0x1e / +0x20.
+  - CM550 0x800620 is engine_protection_engine_start_flag (new row) and 0x80061a (was general_counter_1) is
+    engine_protection_previous_engine_speed, CM848's names for the same two words.
+
+Proof: CM848 and CM550 built twice each, deterministic, in a copy of the firmware folder (base = HEAD 7c65a16f); no
+import failure, no SCRIPT ERROR, the same build warnings as stage E.
+- CM848: 4 functions change, all by the mapped renames, plus one array index (`cylinder_balance_power_up_fueling_trims[i]`,
+  was `(&...)[i]`).
+- CM550: 78 functions change; the two new bodies are the only additions; pieces 510 -> 510; CONCAT 520 -> 513; in_ lines
+  835 -> 807; no old label left in the code; the 3 names that do not render did not render before either.
+- The first build of this stage had 29 changed statement counts. Each was checked against the machine code by a
+  five-checker workflow with two skeptics per finding.
+  - Each was equivalent apart from two. 0x31b22 is fixed here: its three callers pass (request, 0 / 1) again, as before
+    the stage.
+  - The final build has 28. 0x31b22 is gone from the list, and processDiagnosticLimitStatus goes 74 -> 68: its void row
+    removes the d0 tracking. A normalized diff of the two builds shows only that, the cast-free calls and the start
+    flag's name.
+  - 0x127c2's render drops six pass-1 stores to cylinder_balance_reference_projections, before and after this stage.
+    The decompiler does not see the argmax loop's pointer read them, so this is a lead.
+  - Also older than this stage: the interrupt masks (move.w sr / ori.w #0x700,sr) render nowhere, and the PGN 61184
+    dispatcher's handler call passes (short)request through the untyped handler pointer.
+- The two new extraout_var are d0's untouched high byte after the validator, which now returns a byte.
+- Headers regenerated (g++ 0 errors in both); the _cal audit is 0 hard / 0 soft; CM550's parameter ID table is
+  regenerated; the five Python suites and the 109 JUnit tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

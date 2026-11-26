@@ -1,0 +1,192 @@
+=== /home/linux/.claude/jobs/374b0424/tmp/w15/r97/base_r97e_cm550.cpp
+//
+uint cm550_enginePositionSensorAccelerationMonitor(void)
+{
+  undefined2 uVar1;
+  uint uVar2;
+  short sVar3;
+  
+  if (lsg_filtered_speed_error < 0) {
+    sVar3 = -lsg_filtered_speed_error;
+  }
+  else {
+    sVar3 = lsg_filtered_speed_error;
+  }
+  uVar2 = (uint)sVar3;
+  if ((int)(uint)maximum_absolute_error_that_should_occur_in_lslgtztm_to_switc_0_3000 < (int)uVar2)
+  {
+    high_speed_idle_cooldown_timer = 0;
+    _high_temp_idle_cooldown_timer = 0;
+  }
+  else {
+    if (high_speed_idle_cooldown_timer < _DAT_0080821e) {
+      high_speed_idle_cooldown_timer = high_speed_idle_cooldown_timer + 1;
+    }
+    uVar2 = CONCAT22(sVar3 >> 0xf,sampled_road_speed_after_it_has_been_filtered_0_255_9961);
+    if (sampled_road_speed_after_it_has_been_filtered_0_255_9961 < _DAT_00808226) {
+      uVar2 = CONCAT22(sVar3 >> 0xf,_high_temp_idle_cooldown_timer);
+      if (_high_temp_idle_cooldown_timer < _DAT_0080821e) {
+        _high_temp_idle_cooldown_timer = _high_temp_idle_cooldown_timer + 1;
+      }
+    }
+    else {
+      _high_temp_idle_cooldown_timer = 0;
+    }
+  }
+  if (allow_aggressive_logic_0_inhibit_aggressive_logic_1_0_1 != 0) {
+    uVar2 = CONCAT22((short)(uVar2 >> 0x10),_high_temp_idle_cooldown_timer);
+    if (_high_temp_idle_cooldown_timer == _DAT_0080821e) {
+      allow_aggressive_logic_0_inhibit_aggressive_logic_1_0_1 = 0;
+      _DAT_00801a76 = 0;
+    }
+    goto LAB_0002617e;
+  }
+  if (_DAT_00801a76 == 1) {
+    uVar2 = (int)offset_above_lsrf_to_change_lschst_to_after_first_ce_from_dur_0_3000 +
+            (int)lsg_filtered_speed_error;
+    if ((-1 < (int)uVar2) ||
+       (uVar2 = debounced_switch_value_for_switch_16_on_off & 4,
+       (debounced_switch_value_for_switch_16_on_off & 4) != 0)) {
+      uVar1 = (undefined2)(uVar2 >> 0x10);
+      uVar2 = CONCAT22(uVar1,sampled_road_speed_after_it_has_been_filtered_0_255_9961);
+      if ((sampled_road_speed_after_it_has_been_filtered_0_255_9961 < _DAT_00808226) ||
+         (uVar2 = CONCAT22(uVar1,high_speed_idle_cooldown_timer),
+         high_speed_idle_cooldown_timer != _DAT_0080821e)) goto LAB_00026158;
+    }
+  }
+  else {
+LAB_00026158:
+    uVar2 = CONCAT22((short)(uVar2 >> 0x10),sampled_road_speed_after_it_has_been_filtered_0_255_9961
+                    );
+    if (sampled_road_speed_after_it_has_been_filtered_0_255_9961 <= _DAT_00808224)
+    goto LAB_0002617e;
+  }
+  allow_aggressive_logic_0_inhibit_aggressive_logic_1_0_1 = 1;
+LAB_0002617e:
+  if (allow_aggressive_logic_0_inhibit_aggressive_logic_1_0_1 == 0) {
+    if (identifies_the_current_lsg_pid_gain_set_0_7 == 0) {
+      uVar2 = CONCAT22((short)(uVar2 >> 0x10),algorithm_enable_flags_1_cal) & 0xffff1000;
+      if (algorithm_enable_flags_1_cal.low_speed_governor_aggressive_gain_set_enable != 0) {
+        uVar1 = (undefined2)(uVar2 >> 0x10);
+        uVar2 = CONCAT22(uVar1,lsg_filtered_speed_error);
+        if ((_DAT_0080822a < lsg_filtered_speed_error) ||
+           ((uVar2 = CONCAT22(uVar1,lsg_filtered_speed_error),
+            _DAT_00808228 < lsg_filtered_speed_error &&
+            (uVar2 = (int)delta_rpm_threshold_for_aggressive_gains_activation_deactivat_0_3000 +
+                     (uint)engine_rpm_primary, (int)uVar2 < (int)(uint)high_load_idle_cooldown_timer
+            )))) {
+          identifies_the_current_lsg_pid_gain_set_0_7 = 1;
+        }
+      }
+    }
+    else if ((identifies_the_current_lsg_pid_gain_set_0_7 == 1) &&
+            ((uVar2 = (int)_DAT_00808228 - (int)_DAT_0080822e,
+             (int)lsg_filtered_speed_error < (int)uVar2 ||
+             ((uVar2 = CONCAT22((short)(uVar2 >> 0x10),lsg_filtered_speed_error),
+              lsg_filtered_speed_error < _DAT_0080822a &&
+              (uVar2 = (int)delta_rpm_threshold_for_aggressive_gains_activation_deactivat_0_3000 +
+                       (uint)high_load_idle_cooldown_timer,
+              (int)uVar2 < (int)(uint)engine_rpm_primary)))))) {
+      identifies_the_current_lsg_pid_gain_set_0_7 = 0;
+    }
+  }
+  else if ((allow_aggressive_logic_0_inhibit_aggressive_logic_1_0_1 == 1) &&
+          (identifies_the_current_lsg_pid_gain_set_0_7 == 1)) {
+    identifies_the_current_lsg_pid_gain_set_0_7 = 0;
+  }
+  if (identifies_the_current_lsg_pid_gain_set_0_7 == 1) {
+    _DAT_00801a76 = 1;
+    _DAT_0080dad6 = 0x808230;
+  }
+  high_load_idle_cooldown_timer = engine_rpm_primary;
+  return uVar2;
+}
+//
+=== /tmp/kuminz-fwbuild-374b0424/firmware/CM550_J90350.00_analysis/output/J90350.00.ghidra.cpp
+//
+void cm550_updateLowSpeedGovernorAggressiveGainLogic(void)
+{
+  short sVar1;
+  
+  if (low_speed_governor_filtered_speed_error < 0) {
+    sVar1 = -low_speed_governor_filtered_speed_error;
+  }
+  else {
+    sVar1 = low_speed_governor_filtered_speed_error;
+  }
+  if ((int)(uint)low_speed_governor_maximum_idle_speed_error < (int)sVar1) {
+    low_speed_governor_idle_error_settled_count = 0;
+    low_speed_governor_stopped_vehicle_settled_count = 0;
+  }
+  else {
+    if (low_speed_governor_idle_error_settled_count < low_speed_governor_gain_logic_transition_time)
+    {
+      low_speed_governor_idle_error_settled_count = low_speed_governor_idle_error_settled_count + 1;
+    }
+    if (sampled_road_speed_after_it_has_been_filtered_0_255_9961 <
+        low_speed_governor_aggressive_gain_low_vehicle_speed) {
+      if (low_speed_governor_stopped_vehicle_settled_count <
+          low_speed_governor_gain_logic_transition_time) {
+        low_speed_governor_stopped_vehicle_settled_count =
+             low_speed_governor_stopped_vehicle_settled_count + 1;
+      }
+    }
+    else {
+      low_speed_governor_stopped_vehicle_settled_count = 0;
+    }
+  }
+  if (low_speed_governor_aggressive_gain_inhibit_flag == 0) {
+    if (((low_speed_governor_aggressive_gains_used_flag == 1) &&
+        ((((int)low_speed_governor_aggressive_gain_speed_offset_3 +
+           (int)low_speed_governor_filtered_speed_error < 0 &&
+          ((debounced_switch_value_for_switch_16_on_off & 4) == 0)) ||
+         ((low_speed_governor_aggressive_gain_low_vehicle_speed <=
+           sampled_road_speed_after_it_has_been_filtered_0_255_9961 &&
+          (low_speed_governor_idle_error_settled_count ==
+           low_speed_governor_gain_logic_transition_time)))))) ||
+       (low_speed_governor_aggressive_gain_high_vehicle_speed <
+        sampled_road_speed_after_it_has_been_filtered_0_255_9961)) {
+      low_speed_governor_aggressive_gain_inhibit_flag = 1;
+    }
+  }
+  else if (low_speed_governor_stopped_vehicle_settled_count ==
+           low_speed_governor_gain_logic_transition_time) {
+    low_speed_governor_aggressive_gain_inhibit_flag = 0;
+    low_speed_governor_aggressive_gains_used_flag = 0;
+  }
+  if (low_speed_governor_aggressive_gain_inhibit_flag == 0) {
+    if (low_speed_governor_user_gain_state == LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT) {
+      if ((algorithm_enable_flags_1_cal.low_speed_governor_aggressive_gain_set_enable != 0) &&
+         ((low_speed_governor_aggressive_gain_speed_offset_2 <
+           low_speed_governor_filtered_speed_error ||
+          ((low_speed_governor_aggressive_gain_speed_offset_1 <
+            low_speed_governor_filtered_speed_error &&
+           ((int)((int)low_speed_governor_engine_speed_delta_threshold + (uint)filtered_engine_speed
+                 ) < (int)(uint)low_speed_governor_aggressive_gain_previous_engine_speed)))))) {
+        low_speed_governor_user_gain_state = LOW_SPEED_GOVERNOR_GAIN_STATE_AGGRESSIVE;
+      }
+    }
+    else if ((low_speed_governor_user_gain_state == LOW_SPEED_GOVERNOR_GAIN_STATE_AGGRESSIVE) &&
+            (((int)low_speed_governor_filtered_speed_error <
+              (int)low_speed_governor_aggressive_gain_speed_offset_1 -
+              (int)low_speed_governor_aggressive_gain_speed_hysteresis ||
+             ((low_speed_governor_filtered_speed_error <
+               low_speed_governor_aggressive_gain_speed_offset_2 &&
+              ((int)((int)low_speed_governor_engine_speed_delta_threshold +
+                    (uint)low_speed_governor_aggressive_gain_previous_engine_speed) <
+               (int)(uint)filtered_engine_speed)))))) {
+      low_speed_governor_user_gain_state = LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT;
+    }
+  }
+  else if ((low_speed_governor_aggressive_gain_inhibit_flag == 1) &&
+          (low_speed_governor_user_gain_state == LOW_SPEED_GOVERNOR_GAIN_STATE_AGGRESSIVE)) {
+    low_speed_governor_user_gain_state = LOW_SPEED_GOVERNOR_GAIN_STATE_DEFAULT;
+  }
+  if (low_speed_governor_user_gain_state == LOW_SPEED_GOVERNOR_GAIN_STATE_AGGRESSIVE) {
+    low_speed_governor_aggressive_gains_used_flag = 1;
+    low_speed_governor_requested_gain_set_pointer = &low_speed_governor_aggressive_gain_set;
+  }
+  low_speed_governor_aggressive_gain_previous_engine_speed = filtered_engine_speed;
+  return;
+}
+//

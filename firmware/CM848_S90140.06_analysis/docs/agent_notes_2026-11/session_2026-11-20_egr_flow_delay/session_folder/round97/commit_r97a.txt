@@ -1,0 +1,27 @@
+both firmwares: round 97 stage A - parameter, local and struct field names spell their words out (139 names)
+
+The naming rule (no invented abbreviations) applied to the names round 96 counted: 100 parameter names
+(function_definitions.csv), 6 locals (local_variables.csv) and 33 struct fields (structure_definitions.csv) in both
+firmwares, e.g. rx_msg -> received_message, msg / msg_ptr -> message, config_ptr -> configuration_pointer,
+state_ptr / filter_state_ptr / value_output_ptr -> *_pointer, handler_func -> handler, dividend_hi / _lo ->
+dividend_high / _low, dest_address -> destination_address, search_idx -> entry_index, tx_cm_buf ->
+transmit_connection_management_buffer, out_cmd / cmd_raw -> output_command / raw_command. Register mnemonics from the
+manuals (PARAM0, RX0, CNT, FLG ...) and the allowed industry abbreviations stay. The struct type names wait for the
+round 97 workflow's apply (its proposals cite the current type names).
+- Dotted documentation rows follow their renamed fields (eeprom_block_tracking.last_write_address ...), and comments,
+  plates and current-state docs that cite a renamed parameter follow it: the sensor channel prototype in
+  firmware/CLAUDE.md (four lines), docs/parameter_by_id_system.md's code sketch, an enums.csv note and six CM848 plates.
+  History notes keep the old names: a first pass also rewrote some ('removed qadc_circular_buffer_t.dest_ptr',
+  'the parameters were dest_address / fault_count' ...); a scan of every history span in the diff for a new name found
+  them and they are restored. The same pass had renamed the param_id column header of both parameter ID tables and a
+  historical snapshot (CM550 local_variables_actual.csv); both are reverted.
+
+Proof: CM848 and CM550 built twice each, deterministic, in a copy of the firmware folder (base = HEAD f3d1cb10); no
+import failure, no SCRIPT ERROR. Label-only in both: with the 28 / 46 renames mapped, no token changes anywhere else;
+statement counts are equal; pieces are equal (CM848: boot_state_machine.boot_param's two pieces are now .boot_parameter
+pieces); no old name is left in the code; unaff_ / extraout_ / in_ / CONCAT counts are equal. The 21 CM550 names that
+do not render did not render before either (fields of structs nothing types). Headers regenerated (g++ 0 errors in
+both); the _cal audit is 0 hard / 0 soft; the five Python suites and the 109 JUnit tests pass; the overlap check's four
+'new' rows are the renamed documentation rows at their old addresses.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
