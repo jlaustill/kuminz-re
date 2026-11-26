@@ -104,7 +104,7 @@ The partial commands (`init` / `analyze` / `memmap` / `import` / `export` / ...)
 ./ghidra/analyze.sh decompile 0x22e5e
 
 # By function name
-./ghidra/analyze.sh decompile vp44CanMessageDispatcher
+./ghidra/analyze.sh decompile dispatchJ1939TransportConnectionManagement
 ```
 
 ### Binary Comparison Tools

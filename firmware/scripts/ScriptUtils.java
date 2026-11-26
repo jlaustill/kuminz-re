@@ -169,6 +169,27 @@ public class ScriptUtils {
                                              : ParamReconciliation.WARN_MISMATCH;
     }
 
+    /**
+     * The param_index literal of a function_definitions.csv row that declares an EMPTY parameter list.
+     *
+     * A return-only row keeps the parameters the decompiler recovers (PRESERVE_DETECTED), which is right for a
+     * function nobody has studied. It is wrong for a function that is known to take none but reads its argument
+     * registers anyway: an exception handler saves r3 / r4 like every volatile register, and the decompiler shows
+     * that as two parameters. The 'none' row commits the empty list.
+     */
+    public static final String NO_PARAMETERS_ROW = "none";
+
+    /**
+     * A 'none' row and positional rows contradict each other. Returns the problem text for the build log, or null
+     * when the rows of one function agree ({@code definedCount} = highest positional index + 1; 0 without any).
+     */
+    public static String noParametersRowProblem(boolean hasNoParametersRow, int definedCount) {
+        if (hasNoParametersRow && definedCount > 0) {
+            return "a '" + NO_PARAMETERS_ROW + "' row (no parameters) next to " + definedCount + " parameter row(s)";
+        }
+        return null;
+    }
+
     // ── CSV row parsers ──────────────────────────────────────────────────────
 
     /**

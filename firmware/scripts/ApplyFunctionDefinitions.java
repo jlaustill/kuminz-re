@@ -2,6 +2,7 @@
 // Reads function_definitions.csv and applies typed parameter names and return types to functions
 // param_index = "return" sets the function return type
 // param_index = 0, 1, 2... sets the named parameter at that index
+// param_index = "none" commits an EMPTY parameter list (a return-only row keeps the recovered parameters)
 // @author J90350.00_analysis
 // @category Analysis
 // @keybinding
@@ -112,7 +113,8 @@ public class ApplyFunctionDefinitions extends GhidraScript {
         int shown = 0;
         for (ParamDef param : params) {
             if (param.wasApplied && shown < 10) {
-                String indexLabel = param.isReturnType ? "return" : String.valueOf(param.paramIndex);
+                String indexLabel = param.isReturnType ? "return"
+                        : param.isNoParameters ? ScriptUtils.NO_PARAMETERS_ROW : String.valueOf(param.paramIndex);
                 println(String.format("  %s[%s]: %s %s",
                     param.functionName, indexLabel, param.type, param.name));
                 shown++;
@@ -173,6 +175,10 @@ public class ApplyFunctionDefinitions extends GhidraScript {
                     if (indexStr.equals("return")) {
                         param.isReturnType = true;
                         param.paramIndex   = -1;
+                    } else if (indexStr.equals(ScriptUtils.NO_PARAMETERS_ROW)) {
+                        param.isReturnType   = false;
+                        param.isNoParameters = true;
+                        param.paramIndex     = -1;
                     } else {
                         param.isReturnType = false;
                         param.paramIndex   = Integer.parseInt(indexStr);
@@ -236,11 +242,14 @@ public class ApplyFunctionDefinitions extends GhidraScript {
 
                 // Separate return type entry from positional params
                 ParamDef returnDef = null;
+                ParamDef noParametersDef = null;
                 int maxIndex = -1;
                 List<ParamDef> positional = new ArrayList<>();
                 for (ParamDef p : entry.getValue()) {
                     if (p.isReturnType) {
                         returnDef = p;
+                    } else if (p.isNoParameters) {
+                        noParametersDef = p;
                     } else {
                         positional.add(p);
                         if (p.paramIndex > maxIndex) maxIndex = p.paramIndex;
@@ -256,7 +265,14 @@ public class ApplyFunctionDefinitions extends GhidraScript {
                     ScriptUtils.ParamReconciliation decision =
                             ScriptUtils.reconcileParams(definedCount, detectedCount);
 
-                    if (stackLayout != null) {
+                    String contradiction = ScriptUtils.noParametersRowProblem(noParametersDef != null, definedCount);
+                    if (contradiction != null) {
+                        println("  Error: " + firstName + ": " + contradiction + " - prototype not applied");
+                        result.failed += entry.getValue().size();
+                        continue;
+                    }
+
+                    if (stackLayout != null && noParametersDef == null) {
                         // The layout places every parameter from its declared length, so a missing or unknown
                         // row would move every later one. Skip the WHOLE function then (its return row too: a
                         // locked return with no parameters would strip the call arguments).
@@ -283,6 +299,21 @@ public class ApplyFunctionDefinitions extends GhidraScript {
                             result.applied++;
                             returnDef.wasApplied = true;
                         }
+                    }
+
+                    if (noParametersDef != null) {
+                        // The function is known to take no parameter: commit the empty list, whatever register
+                        // inputs the decompiler recovers (an exception handler saves r3 / r4 and so reads them).
+                        if (detectedCount > 0) {
+                            println("  Note: " + firstName + " is declared with no parameters; the " +
+                                    detectedCount + " recovered register input(s) are not parameters");
+                        }
+                        function.updateFunction("__stdcall", null, new ArrayList<Parameter>(),
+                                Function.FunctionUpdateType.DYNAMIC_STORAGE_ALL_PARAMS,
+                                true, SourceType.USER_DEFINED);
+                        result.applied++;
+                        noParametersDef.wasApplied = true;
+                        continue;
                     }
 
                     switch (decision) {
@@ -519,6 +550,7 @@ public class ApplyFunctionDefinitions extends GhidraScript {
         long functionAddress;
         String functionName;
         boolean isReturnType;
+        boolean isNoParameters;
         int paramIndex;
         String name;
         String type;

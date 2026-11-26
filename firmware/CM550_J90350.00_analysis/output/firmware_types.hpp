@@ -57,7 +57,7 @@ typedef enum {
 } CAN_MESSAGE_TYPE;
 
 typedef enum {
-    VP44_COMMAND_BUILDER = 1,  /* vp44Command0x100Builder function (0x2a418) */
+    VP44_COMMAND_BUILDER = 1,  /* initializePgn61444ElectronicEngineController1Buffer function (0x2a418) */
     CONFIGURATION_BUILDER = 2  /* configParamCanBuilder function (0x2a57e) */
 } CAN_PARAMETER_BUILDERS;
 
@@ -575,7 +575,7 @@ typedef enum {
 } VP44_RESPONSE_BYTE;
 
 typedef enum {
-    FUEL_TEMPERATURE_MESSAGE = 0x10,  /* VP44 fuel temperature response (calls vp44FuelTemperatureHandler) */
+    FUEL_TEMPERATURE_MESSAGE = 0x10,  /* VP44 fuel temperature response (calls handleJ1939TransportRequestToSend) */
     PARAMETER_REQUEST_MESSAGE = 0x11,  /* Diagnostic parameter request (calls diagnosticParamRequestHandler) */
     STATUS_REQUEST_MESSAGE = 0x13,  /* Diagnostic status request (calls diagnosticStatusRequestHandler) */
     ERROR_MESSAGE = 0xFF  /* Error message (calls diagnosticErrorHandler) */
@@ -603,7 +603,7 @@ typedef enum {
     ENGINE_PROTECTION_TASK_RESTART_SEVERITY = 1,  /* Task 1: updateEngineProtectionRestartSeverity. (was ENGINE_PROTECTION_TASK_RESTART_SEVERITY; PR #53 round 97) */
     ENGINE_PROTECTION_TASK_FAULT_DERATE_FUEL_LIMIT = 2,  /* Task 2: cm550_calculateFaultDerateFuelLimit. (was ENGINE_PROTECTION_TASK_FAULT_DERATE_FUEL_LIMIT; PR #53 round 97) */
     ENGINE_PROTECTION_TASK_ENGINE_SPEED_LIMIT_AND_FAULT_LOGS = 3,  /* Task 3: cm550_calculateFaultDerateEngineSpeedLimit, then logEngineProtectionChannelFaults. (was ENGINE_PROTECTION_TASK_ENGINE_SPEED_LIMIT_AND_FAULT_LOGS; PR #53 round 97) */
-    ENGINE_PROTECTION_TASK_SHUTDOWN = 4  /* Task 4: processDiagnosticLimitStatus, the engine protection shutdown. The index wraps to 0 after this task. (was ENGINE_PROTECTION_TASK_SHUTDOWN; PR #53 round 97) */
+    ENGINE_PROTECTION_TASK_SHUTDOWN = 4  /* Task 4: cm550_updateEngineProtectionShutdown, the engine protection shutdown. The index wraps to 0 after this task. (was ENGINE_PROTECTION_TASK_SHUTDOWN; PR #53 round 97) */
 } ENGINE_PROTECTION_TASK;
 
 typedef enum {
@@ -1143,6 +1143,19 @@ typedef enum {
     ENGINE_RETARDER_COMMAND_SOURCE_J1939_LIMIT = 4  /* A J1939 limit (e2m 4=JC_LIM): mapped like 1 (the J1939 control device decides the SPN 900 mode). (PR #53 round 97) */
 } ENGINE_RETARDER_COMMAND_SOURCE;
 
+typedef enum {
+    ENGINE_PROTECTION_CHANNEL_COOLANT_LEVEL = 0,  /* Channel 0 of the three engine protection tables (configuration 0x807032 = e2m 10B7 EPCV.., state 0x80d0dc = 10B0, history 0x8057c0 = 10B2): the coolant level low switch word 0x8091e6 with mask 1. EPSOAE 'C. LEV. = 0'. Enum size 2 (the type of EPSOAE 0x8058ce). (PR #53 round 98) */
+    ENGINE_PROTECTION_CHANNEL_COOLANT_TEMPERATURE = 1,  /* Channel 1 (configuration 0x807056 = e2m 112B EPCQ.., state 114F, history 1140): input coolant_temperature_sensor_state.filtered_value. EPSOAE 'C. TEMP. = 1'. (PR #53 round 98) */
+    ENGINE_PROTECTION_CHANNEL_INTAKE_MANIFOLD_TEMPERATURE = 2,  /* Channel 2 (configuration 0x80707a = e2m 112C EPIM.., state 1150, history 1141): input engine_protection_intake_manifold_temperature (0x80a26a). EPSOAE 'IMT = 2'. (PR #53 round 98) */
+    ENGINE_PROTECTION_CHANNEL_OIL_PRESSURE = 3,  /* Channel 3 (configuration 0x80709e = e2m 112D EPO2.., state 1151, history 1142): input oil_pressure_sensor_state.filtered_value against the speed dependent limits 0x80dabe / 0x80dac0. EPSOAE 'OIL PRESS. = 3'. The one channel the code names by number: cm550_examineEngineProtectionBeforeCranking skips it (cmpi.w #3 at 0x18b0a) and cm550_updateEngineProtectionRestartLimitationCommands acts on it alone (cmpi.w #3 at 0x18dc2); the start-up derate writes its history record (0x80581a). (PR #53 round 98) */
+    ENGINE_PROTECTION_CHANNEL_WATER_IN_FUEL = 4,  /* Channel 4 (configuration 0x8070c2 = e2m 112E EPWF.., state 1152, history 1143): input water_in_fuel_sensor_state.filtered_value. CM848's EPSOAE text has 'OIL TEMP. = 4'; this build's table has water in fuel here. (PR #53 round 98) */
+    ENGINE_PROTECTION_CHANNEL_BOOST_PRESSURE = 5,  /* Channel 5 (configuration 0x8070e6 = e2m 112F EPBS.., state 1153, history 1144): input boost_pressure_sensor_state.filtered_value. (PR #53 round 98) */
+    ENGINE_PROTECTION_CHANNEL_ENGINE_SYNC_FUEL_PRESSURE = 6,  /* Channel 6 (configuration 0x80710a = e2m 1130 EPFP.. 'ENGINE SYNC FUEL PRESSURE', state 1154, history 1145): input fuel_pressure_sensor_state.filtered_value. (PR #53 round 98) */
+    ENGINE_PROTECTION_CHANNEL_FUEL_TEMPERATURE = 7,  /* Channel 7 (configuration 0x80712e = e2m 1131 EPFT.., state 1155, history 1146): input engine_protection_fuel_temperature (0x80a254). (PR #53 round 98) */
+    ENGINE_PROTECTION_CHANNEL_AMBIENT_AIR_PRESSURE = 8,  /* Channel 8 (configuration 0x807152 = e2m 1132 EPAA.., state 1156, history 1147): input ambient_air_pressure_sensor_state.filtered_value. The last record: the loops end at 0x807176. (PR #53 round 98) */
+    ENGINE_PROTECTION_CHANNEL_NONE = 255  /* EPSOAE 'NO = 255': no channel has shut the engine down. Compared at 0x18afe (cm550_examineEngineProtectionBeforeCranking) and 0x18cda (updateEngineProtectionRestartSeverity); stored at 0x190ac by cm550_updateEngineProtectionShutdown when the recorded channel's severity indexes are 0. (PR #53 round 98) */
+} ENGINE_PROTECTION_CHANNEL;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_message_header_t j1939_message_header_t;
@@ -1234,12 +1247,18 @@ typedef struct engine_protection_fault_log_entry_t engine_protection_fault_log_e
 typedef struct engine_protection_channel_configuration_t engine_protection_channel_configuration_t;
 typedef struct cm550_engine_protection_channel_state_t cm550_engine_protection_channel_state_t;
 typedef struct engine_protection_channel_history_t engine_protection_channel_history_t;
+typedef struct cm550_algorithm_enable_flags_9_t cm550_algorithm_enable_flags_9_t;
+typedef struct cm550_algorithm_enable_flags_26_t cm550_algorithm_enable_flags_26_t;
+typedef struct j1939_broadcast_transmit_session_t j1939_broadcast_transmit_session_t;
+typedef struct j1939_transport_transmit_session_t j1939_transport_transmit_session_t;
+typedef struct j1939_transport_receive_session_t j1939_transport_receive_session_t;
 
 /* ---- Function types (a field or a parameter holds a pointer to one) ---- */
 
 typedef uint8_t j1939_diagnostic_service_handler_function_t(can_standard_receive_descriptor_t* request);  /* A PGN 61184 service handler: the request in, the result out (0xff = the handler answered; else cm550_dispatchJ1939DiagnosticServiceRequest answers with this code) (PR #53 round 98) */
 typedef void j1939_pgn_request_handler_function_t(can_standard_receive_descriptor_t* request);  /* A PGN 59904 request responder: cm550_dispatchJ1939PgnRequest calls it with the request and ignores d0 (PR #53 round 98) */
 typedef void j1939_message_builder_function_t(void);  /* A periodic J1939 message builder: cm550_runJ1939PeriodicTransmitQueues calls it with no argument (PR #53 round 98) */
+typedef void interrupt_handler_function_t(void);  /* An interrupt handler: the processor calls it through its exception vector with no argument (PR #53 round 98) */
 
 struct j1939_message_header_t {
     uint32_t can_id;  /* The CAN identifier: priority / PGN / source address (was j1939_header_t.id; CM848's type name; PR #53 round 88) */
@@ -1696,7 +1715,7 @@ struct algorithm_enable_flags_1_t {
 };
 
 struct cm550_algorithm_enable_flags_2_t {
-    uint16_t engine_protection_shutdown_enable : 1;  /* bit 0: EPSOEN 'BIT 0 OF 0-15. ENABLE SHUTDOWN ALGORITHM'; andi 0x1 at 0x18ade / 0x18cba / 0x18fe6 (cm550_examineEngineProtectionBeforeCranking / updateEngineProtectionRestartSeverity / processDiagnosticLimitStatus); clear in the dumps */
+    uint16_t engine_protection_shutdown_enable : 1;  /* bit 0: EPSOEN 'BIT 0 OF 0-15. ENABLE SHUTDOWN ALGORITHM'; andi 0x1 at 0x18ade / 0x18cba / 0x18fe6 (cm550_examineEngineProtectionBeforeCranking / updateEngineProtectionRestartSeverity / cm550_updateEngineProtectionShutdown); clear in the dumps */
     uint16_t reserved_bit_1 : 1;  /* bit 1: no record belongs here: JC22CCSW's text says 'BIT 1 OF BITS 0:15' but the code tests that flag at 0x100 (bit 8); no reader in the dumped ROM; clear */
     uint16_t reserved_bit_2 : 1;  /* bit 2: no e2m record; no reader in the dumped ROM; clear */
     uint16_t idle_shutdown_during_power_take_off_enable : 1;  /* bit 3: ISRPEN S mask 0x8 'BIT 3 WORD2. 1 - PTO WILL NOT OVERRIDE SHUTDOWN' (0 = power take-off overrides the idle shutdown; another e2m: Idle_Shutdown_PTO_Enable 0x8); no reader in the dumped ROM; CM848 has no record (reserved_bit_3); clear */
@@ -1709,7 +1728,7 @@ struct cm550_algorithm_enable_flags_2_t {
     uint16_t reserved_bit_10 : 1;  /* bit 10: no e2m record; no reader in the dumped ROM; clear */
     uint16_t j1939_monitor_enable : 1;  /* bit 11: JC39MREA 'J1939 MONITOR ENABLE' (no bit in the text; CM848 S mask 0x800); andi.w 0x800 at 0x22080: trackJ1939ControlSessions records the J1939 speed control session history; set */
     uint16_t j1939_retarder_shift_assist_enable : 1;  /* bit 12: JCRDTXEA 'ENABLE FOR SPEED CONTROL / ENGINE BRAKING INTERACTION' (CM848 S mask 0x1000); andi 0x1000 at 0x21432 (endRetarderShiftAssistAboveFuelDemandLimit ends retarder mode 2 at or above the user fueling limit) / 0x2f850 (cm550_processEngineRetarderTsc1Request) / 0x33900 (cm550_buildPgn61440ElectronicRetarderController1Message status 0x40); set */
-    uint16_t power_take_off_throttle_override_enable : 1;  /* bit 13: PTTHOVEN 'BIT 13 OF 0-15. CALIBRATION INDICATOR AS TO WHETHER (THROTTLE DEPRESSION DISABLES PTO)'; andi.l 0x2000 at 0x2dd34: cm550_oil_pressure_shutdown_controller lets throttle fueling override power take-off fueling; clear */
+    uint16_t power_take_off_throttle_override_enable : 1;  /* bit 13: PTTHOVEN 'BIT 13 OF 0-15. CALIBRATION INDICATOR AS TO WHETHER (THROTTLE DEPRESSION DISABLES PTO)'; andi.l 0x2000 at 0x2dd34: cm550_selectPowerTakeOffOrUserFueling lets throttle fueling override power take-off fueling; clear */
     uint16_t user_commanded_timing_increment_enable : 1;  /* bit 14: TSUCICEN 'BIT 14 WORD 2. PARAMETER USED TO ENABLE THE USER TIMING (INCREMENT)'; andi 0x4000 at 0x1c770: cm550_fuelDemandTableBlendCalculator adds 0x803f3c to the 4D timing; clear */
     uint16_t zero_vehicle_speed_power_take_off_limit_enable : 1;  /* bit 15: ZVPTLMEN 'BIT 15 WORD 2 - ENABLE ENGINE SPEED TO BE LIMITED (WHEN IN PTO MODE)'; no reader in the dumped ROM; clear */
 };
@@ -1719,7 +1738,7 @@ struct cm550_algorithm_enable_flags_3_t {
     uint16_t idle_shutdown_enable : 1;  /* bit 1: ISAGEN S mask 0x2 '1 - IDLE SHUTDOWN ENABLED' (word 3 bit 1); andi 0x2 at 0x1d9ca (cm550_runIdleShutdownStateMachine = the idle shutdown state machine) / 0xefbe (J1587 PID 71 status bit 0x08) / 0x33d80 (PGN 65252 payload byte 0x8035f7 = 0x7f or 0x3f); CM848 reserved_bit_1; clear */
     uint16_t idle_shutdown_override_enable : 1;  /* bit 2: ISODEN S mask 0x4 '1 - ISOD IS ABLE TO BE SET' (ISOD = idle shutdown overridden until the vehicle moves); andi.l 0x4 at 0x1dab0 (cm550_runIdleShutdownStateMachine) / 0xefd6 (J1587 PID 71 status bit 0x04); CM848 reserved_bit_2; clear */
     uint16_t idle_speed_adjust_enable : 1;  /* bit 3: LSISAJEN 'BIT 3 OF 0-15. ENABLE ALLOWS OPERATOR TO ADJUST SPEED'; andi.l 0x8 at 0x26490: the idle increment / decrement switches move the low speed governor reference only while set; set */
-    uint16_t power_take_off_enable : 1;  /* bit 4: PTAGEN S mask 0x10 'BIT 4 OF 0-15. PARAMETER USED TO ENABLE/DISABLE PTO'; andi.l 0x10 at 0x2dd0a: cm550_oil_pressure_shutdown_controller (the power take-off / user fueling selection) uses the closed-loop PTO fueling only while set; clear */
+    uint16_t power_take_off_enable : 1;  /* bit 4: PTAGEN S mask 0x10 'BIT 4 OF 0-15. PARAMETER USED TO ENABLE/DISABLE PTO'; andi.l 0x10 at 0x2dd0a: cm550_selectPowerTakeOffOrUserFueling (the power take-off / user fueling selection) uses the closed-loop PTO fueling only while set; clear */
     uint16_t remote_power_take_off_enable : 1;  /* bit 5: PTRXEN 'BIT 5 OF 0-15. CALIBRATION INDICATOR AS TO WHETHER REMOTE PTO IS ALLO(WED)' (full text and S mask 0x20 from other e2m files); no reader in the dumped ROM; CM848 reserved_bit_5; set */
     uint16_t cruise_control_enable : 1;  /* bit 6: CRAGEN 'BIT 6 OF 0-15. STATUS INDICATOR WHICH ENABLES/DISABL(ES CRUISE CONTROL)'; no reader in the dumped ROM; set */
     uint16_t road_speed_governor_enable : 1;  /* bit 7: RSAGEN 'ENABLE/DISABLE ROAD SPEED GOVERNOR FOR ENGINEERING USE' (bit 7); no reader in the dumped ROM; set */
@@ -1727,14 +1746,14 @@ struct cm550_algorithm_enable_flags_3_t {
     uint16_t trip_information_enable : 1;  /* bit 9: TIEN 'BIT 9 OF 0-15 IN WORD 3. TRIP INFO SYSTEM ENABLED = 1' (another e2m: Fuel_Log_Enable S mask 0x200); andi 0x200 at 0x306e0 (cm550_updateTripInformation resets the trip records) / 0x30a64 (fuel statistics flags); CM848 reserved_bit_9; set */
     uint16_t cruise_governor_droop_enable : 1;  /* bit 10: CRDPEN 'BIT 10 OF 0-15. BIT 10 IS CRUISE_RSG_DROOP_ENABLE'; no reader in the dumped ROM; set */
     uint16_t cylinder_pressure_maintenance_enable : 1;  /* bit 11: CPAGEN 'BIT 11 OF 0-15. ENABLES AND DISABLES THE CYLINDER PRESSURE MAINTENANC(E)'; andi.l 0x800 at 0x11e74: cm550_coldStartFuelControlSlowCycle40Coordinator zeroes _cylinder_pressure_maintenance_status and its timing increment while clear; CM848 reserved_bit_11; clear */
-    uint16_t acceleration_noise_control_fuel_limit_enable : 1;  /* bit 12: NZFLAGEN 'ENABLE FOR FUEL LIMITING OF THE ACCELERATION NOISE C(ONTROL)' (no bit in the CM550 text; CM848 e2m ANC_Fuel_Algorithm_Enable S mask 0x1000); andi 0x1000 at 0xb2c6: cm550_rpm_system_state_controller computes _anc_fuel_limit_value; clear */
+    uint16_t acceleration_noise_control_fuel_limit_enable : 1;  /* bit 12: NZFLAGEN 'ENABLE FOR FUEL LIMITING OF THE ACCELERATION NOISE C(ONTROL)' (no bit in the CM550 text; CM848 e2m ANC_Fuel_Algorithm_Enable S mask 0x1000); andi 0x1000 at 0xb2c6: cm550_calculateAccelerationNoiseControlFuelLimit computes _anc_fuel_limit_value; clear */
     uint16_t acceleration_noise_control_timing_limit_enable : 1;  /* bit 13: NZTAAGEN 'ENABLE FOR TIMING ADVANCE OF THE ACCELERATION NOISE (CONTROL)' (CM848 e2m ANC_Timing_Algorithm_Enable S mask 0x2000); andi 0x2000 at 0xb3ec: cm550_calculateAccelerationNoiseControlTimingLimit = the ANC timing limit; clear */
-    uint16_t acceleration_noise_control_engine_speed_limit_enable : 1;  /* bit 14: NZESAGEN 'ENABLE FOR SPEED LIMITING OF THE ACCELERATION NOISE (CONTROL)' (CM848 e2m ANC_Speed_Algorithm_Enable S mask 0x4000); andi 0x4000 at 0xb50e: cm550_engineStateFuelLimitInterpolator = the ANC engine speed limit; clear */
+    uint16_t acceleration_noise_control_engine_speed_limit_enable : 1;  /* bit 14: NZESAGEN 'ENABLE FOR SPEED LIMITING OF THE ACCELERATION NOISE (CONTROL)' (CM848 e2m ANC_Speed_Algorithm_Enable S mask 0x4000); andi 0x4000 at 0xb50e: cm550_calculateAccelerationNoiseControlEngineSpeedLimit = the ANC engine speed limit; clear */
     uint16_t cruise_save_set_speed_at_power_down_enable : 1;  /* bit 15: CRSVPWEN 'ENABLES/DISABLES SAVING CRUISE SET SP(EED)' (bit 15 of 0-15); no reader in the dumped ROM; set */
 };
 
 struct algorithm_enable_flags_4_t {
-    uint16_t user_commanded_fueling_enable : 1;  /* bit 0: FSUCFLEN 'BIT 0 WORD 4. ENABLES THE USE OF USER_COMMANDED_FUELING'; andi.l 0x1 at 0x3456e: cm550_setDiagnosticSourceFromEngineFlags sets user_fueling_state 5 with the fuel demand from 0x80404a; clear in the dumps */
+    uint16_t user_commanded_fueling_enable : 1;  /* bit 0: FSUCFLEN 'BIT 0 WORD 4. ENABLES THE USE OF USER_COMMANDED_FUELING'; andi.l 0x1 at 0x3456e: selectUserCommandedFueling sets user_fueling_state 5 with the fuel demand from 0x80404a; clear in the dumps */
     uint16_t reserved_bit_1 : 1;  /* bit 1: no e2m record; no reader in the dumped ROM; clear */
     uint16_t reserved_bit_2 : 1;  /* bit 2: no e2m record; no reader in the dumped ROM; clear */
     uint16_t reserved_bit_3 : 1;  /* bit 3: no e2m record; no reader in the dumped ROM; clear */
@@ -1774,38 +1793,38 @@ struct cm550_algorithm_enable_flags_5_t {
 struct cm550_algorithm_enable_flags_7_t {
     uint16_t coolant_level_fueling_limiting_enable : 1;  /* bit 0: EPCVFLEN 'BIT 0 OF 0-15. ENABLE PARAMETER FOR FUEL LIMITIN(G DUE TO COOLANT LEVEL)'; table bit 112 = 0x70 + 4 x 0 + 0 (channel 0): read by the fuel limit loop cm550_calculateFaultDerateFuelLimit; set in the dumps */
     uint16_t coolant_level_rpm_limiting_enable : 1;  /* bit 1: EPCVRPEN 'BIT 1 OF 0-15. ENABLE PARAMETER FOR RPM LIMITING (DUE TO COOLANT LEVEL)'; table bit 113 = 0x70 + 4 x 0 + 1 (channel 0): read by cm550_calculateFaultDerateEngineSpeedLimit; set in the dumps */
-    uint16_t coolant_level_shutdown_enable : 1;  /* bit 2: EPCVSOEN 'BIT 2 OF 0-15. ENABLE SHUTDOWN ON COOLANT LEVEL (ERRORS)'; table bit 114 = 0x70 + 4 x 0 + 2 (channel 0): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; set in the dumps */
+    uint16_t coolant_level_shutdown_enable : 1;  /* bit 2: EPCVSOEN 'BIT 2 OF 0-15. ENABLE SHUTDOWN ON COOLANT LEVEL (ERRORS)'; table bit 114 = 0x70 + 4 x 0 + 2 (channel 0): read by the shutdown loop cm550_updateEngineProtectionShutdown and by the restart checks; set in the dumps */
     uint16_t coolant_level_restart_enable : 1;  /* bit 3: EPCVRYEN 'B3. PREVENTS RESTART AT POWERUP WHEN SHUTDN CNT > (MAX SHUTDN CNT DUE TO CLT LEV)'; table bit 115 = 0x70 + 4 x 0 + 3 (channel 0): read by the restart checks cm550_examineEngineProtectionBeforeCranking / updateEngineProtectionRestartSeverity; set in the dumps */
     uint16_t coolant_temperature_fueling_limiting_enable : 1;  /* bit 4: EPCQFLEN 'BIT 4 OF 0-15. ENABLE PARAMETER FOR FUEL LIMITIN(G DUE TO COOLANT TEMPERATURE)'; table bit 116 = 0x70 + 4 x 1 + 0 (channel 1): read by the fuel limit loop cm550_calculateFaultDerateFuelLimit; set in the dumps */
     uint16_t coolant_temperature_rpm_limiting_enable : 1;  /* bit 5: EPCQRPEN 'BIT 5 OF 5-15. EPF COOLANT TEMPERATURE RPM LIMIT(ING ENABLE)'; table bit 117 = 0x70 + 4 x 1 + 1 (channel 1): read by cm550_calculateFaultDerateEngineSpeedLimit; set in the dumps */
-    uint16_t coolant_temperature_shutdown_enable : 1;  /* bit 6: EPCQSOEN 'BIT 6 OF 0-15. ENABLE SHUTDOWN ON COOLANT TEMPER(ATURE ERRORS)'; table bit 118 = 0x70 + 4 x 1 + 2 (channel 1): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; set in the dumps */
+    uint16_t coolant_temperature_shutdown_enable : 1;  /* bit 6: EPCQSOEN 'BIT 6 OF 0-15. ENABLE SHUTDOWN ON COOLANT TEMPER(ATURE ERRORS)'; table bit 118 = 0x70 + 4 x 1 + 2 (channel 1): read by the shutdown loop cm550_updateEngineProtectionShutdown and by the restart checks; set in the dumps */
     uint16_t coolant_temperature_restart_enable : 1;  /* bit 7: EPCQRYEN 'BIT 7 OF 0-15. PREVENTS RESTART AT POWERUP WHEN S(HUTDN CNT > MAX SHUTDN CNT)'; table bit 119 = 0x70 + 4 x 1 + 3 (channel 1): read by the restart checks cm550_examineEngineProtectionBeforeCranking / updateEngineProtectionRestartSeverity; set in the dumps */
     uint16_t intake_manifold_temperature_fueling_limiting_enable : 1;  /* bit 8: EPIMFLEN 'BIT 8 OF 0-15 ENABLE FOR TVO LIMITING DUE TO INTA(KE MANIFOLD TEMP)'; table bit 120 = 0x70 + 4 x 2 + 0 (channel 2): read by the fuel limit loop cm550_calculateFaultDerateFuelLimit; set in the dumps */
     uint16_t intake_manifold_temperature_rpm_limiting_enable : 1;  /* bit 9: EPIMRPEN 'BIT 9 OF 0-15. ENABLE PARAMETER FOR RPM LIMITING (DUE TO IMT)'; table bit 121 = 0x70 + 4 x 2 + 1 (channel 2): read by cm550_calculateFaultDerateEngineSpeedLimit; set in the dumps */
-    uint16_t intake_manifold_temperature_shutdown_enable : 1;  /* bit 10: EPIMSOEN 'BIT 10 OF 0-15. ENABLE SHUTDOWN ON INTAKE MANIFO(LD TEMPERATURE ERRORS)'; table bit 122 = 0x70 + 4 x 2 + 2 (channel 2): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; set in the dumps */
+    uint16_t intake_manifold_temperature_shutdown_enable : 1;  /* bit 10: EPIMSOEN 'BIT 10 OF 0-15. ENABLE SHUTDOWN ON INTAKE MANIFO(LD TEMPERATURE ERRORS)'; table bit 122 = 0x70 + 4 x 2 + 2 (channel 2): read by the shutdown loop cm550_updateEngineProtectionShutdown and by the restart checks; set in the dumps */
     uint16_t intake_manifold_temperature_restart_enable : 1;  /* bit 11: EPIMRYEN 'BIT 11 OF 0-15. PREVENTS RESTART AT POWERUP WHEN (SHUTDN CNT > MAX SHUTDN CNT)'; table bit 123 = 0x70 + 4 x 2 + 3 (channel 2): read by the restart checks cm550_examineEngineProtectionBeforeCranking / updateEngineProtectionRestartSeverity; set in the dumps */
-    uint16_t oil_pressure_fueling_limiting_enable : 1;  /* bit 12: EPO2FLEN 'BIT 12 OF 0-15. ENABLE PARAMETER FOR FUEL LIMITI(NG DUE TO OIL PRESSURE)'; table bit 124 = 0x70 + 4 x 3 + 0 (channel 3): read by the fuel limit loop cm550_calculateFaultDerateFuelLimit; also tested directly: andi.w #0x1000 at 0x1983e (cm550_calculateFaultDerateFuelLimit) - while set and oil_pressure_fault_inhibit_timer is below the power-up period 0x807f34 the oil pressure fueling severity index and the loop maximum are forced to 0x100 (the full derate); set in the dumps */
+    uint16_t oil_pressure_fueling_limiting_enable : 1;  /* bit 12: EPO2FLEN 'BIT 12 OF 0-15. ENABLE PARAMETER FOR FUEL LIMITI(NG DUE TO OIL PRESSURE)'; table bit 124 = 0x70 + 4 x 3 + 0 (channel 3): read by the fuel limit loop cm550_calculateFaultDerateFuelLimit; also tested directly: andi.w #0x1000 at 0x1983e (cm550_calculateFaultDerateFuelLimit) - while set and engine_protection_fueling_startup_derate_timer is below the power-up period 0x807f34 the oil pressure fueling severity index and the loop maximum are forced to 0x100 (the full derate); set in the dumps */
     uint16_t oil_pressure_rpm_limiting_enable : 1;  /* bit 13: EPO2RPEN 'BIT 13 OF 0-15. EPF OIL PRESSURE FAULT ENABLE PA(RAMETER)' (CM848 label Oil_Pressure_RPM_Limiting_Enable); table bit 125 = 0x70 + 4 x 3 + 1 (channel 3): read by cm550_calculateFaultDerateEngineSpeedLimit; set in the dumps */
-    uint16_t oil_pressure_shutdown_enable : 1;  /* bit 14: EPO2SOEN 'BIT 14 OF 0-15. ENABLE SHUTDOWN ON OIL PRESSURE (ERRORS)'; table bit 126 = 0x70 + 4 x 3 + 2 (channel 3): read by the shutdown loop processDiagnosticLimitStatus and by the restart check updateEngineProtectionRestartSeverity (cm550_examineEngineProtectionBeforeCranking skips channel 3); set in the dumps */
+    uint16_t oil_pressure_shutdown_enable : 1;  /* bit 14: EPO2SOEN 'BIT 14 OF 0-15. ENABLE SHUTDOWN ON OIL PRESSURE (ERRORS)'; table bit 126 = 0x70 + 4 x 3 + 2 (channel 3): read by the shutdown loop cm550_updateEngineProtectionShutdown and by the restart check updateEngineProtectionRestartSeverity (cm550_examineEngineProtectionBeforeCranking skips channel 3); set in the dumps */
     uint16_t oil_pressure_restart_enable : 1;  /* bit 15: EPO2RYEN 'BIT 15 OF 0-15. PREVENTS RESTART AT POWERUP WHEN (SHUTDN CNT > MAX SHUTDN CNT)'; table bit 127 = 0x70 + 4 x 3 + 3 (channel 3): read by the restart checks cm550_examineEngineProtectionBeforeCranking / updateEngineProtectionRestartSeverity; cm550_examineEngineProtectionBeforeCranking skips channel 3 so only updateEngineProtectionRestartSeverity reads this one; set in the dumps */
 };
 
 struct cm550_algorithm_enable_flags_8_t {
     uint16_t water_in_fuel_fueling_limiting_enable : 1;  /* bit 0: EPWFFLEN S mask 0x1 'ENABLE PARAMETER FOR FAULT LIMITING DUE TO WATER IN( FUEL)'; table bit 128 = 0x70 + 4 x 4 + 0 (channel 4): read by the fuel limit loop cm550_calculateFaultDerateFuelLimit; clear in the dumps */
     uint16_t water_in_fuel_rpm_limiting_enable : 1;  /* bit 1: EPWFRPEN S mask 0x2 'ENABLE PARAMETER FOR FAULT RPM LIMITING DUE TO WATE(R IN FUEL)'; table bit 129 = 0x70 + 4 x 4 + 1 (channel 4): read by cm550_calculateFaultDerateEngineSpeedLimit; clear in the dumps */
-    uint16_t water_in_fuel_shutdown_enable : 1;  /* bit 2: EPWFSOEN S mask 0x4 'ENABLE SHUTDOWN ON WATER IN FUEL ERRORS'; table bit 130 = 0x70 + 4 x 4 + 2 (channel 4): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; clear in the dumps */
+    uint16_t water_in_fuel_shutdown_enable : 1;  /* bit 2: EPWFSOEN S mask 0x4 'ENABLE SHUTDOWN ON WATER IN FUEL ERRORS'; table bit 130 = 0x70 + 4 x 4 + 2 (channel 4): read by the shutdown loop cm550_updateEngineProtectionShutdown and by the restart checks; clear in the dumps */
     uint16_t water_in_fuel_restart_enable : 1;  /* bit 3: EPWFRYEN S mask 0x8 'PREVENTS RESTRT AT PWR UP WHEN SHUTDN CNT>MAX SHUTD(N CNT)'; table bit 131 = 0x70 + 4 x 4 + 3 (channel 4): read by the restart checks cm550_examineEngineProtectionBeforeCranking / updateEngineProtectionRestartSeverity; clear in the dumps */
     uint16_t boost_pressure_fueling_limiting_enable : 1;  /* bit 4: EPBSFLEN S mask 0x10 'ENABLE PARAMETER FOR FAULT LIMITING DUE TO ENG SYNC' (the text is the engine sync record's; the mnemonic and its three siblings say boost pressure); table bit 132 = 0x70 + 4 x 5 + 0 (channel 5): read by the fuel limit loop cm550_calculateFaultDerateFuelLimit; clear in the dumps */
     uint16_t boost_pressure_rpm_limiting_enable : 1;  /* bit 5: EPBSRPEN S mask 0x20 'ENABLE PARAMETER FOR FAULT RPM LIMITING DUE TO BOOS(T PRESSURE)'; table bit 133 = 0x70 + 4 x 5 + 1 (channel 5): read by cm550_calculateFaultDerateEngineSpeedLimit; clear in the dumps */
-    uint16_t boost_pressure_shutdown_enable : 1;  /* bit 6: EPBSSOEN S mask 0x40 'ENABLE SHUTDOWN ON BOOST PRESSURE ERRORS'; table bit 134 = 0x70 + 4 x 5 + 2 (channel 5): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; clear in the dumps */
+    uint16_t boost_pressure_shutdown_enable : 1;  /* bit 6: EPBSSOEN S mask 0x40 'ENABLE SHUTDOWN ON BOOST PRESSURE ERRORS'; table bit 134 = 0x70 + 4 x 5 + 2 (channel 5): read by the shutdown loop cm550_updateEngineProtectionShutdown and by the restart checks; clear in the dumps */
     uint16_t boost_pressure_restart_enable : 1;  /* bit 7: EPBSRYEN S mask 0x80 'PREVENTS RESTRT AT PWR UP WHEN SHUTDN CNT>MAX SHUTD(N CNT)'; table bit 135 = 0x70 + 4 x 5 + 3 (channel 5): read by the restart checks cm550_examineEngineProtectionBeforeCranking / updateEngineProtectionRestartSeverity; clear in the dumps */
     uint16_t engine_sync_fuel_pressure_fueling_limiting_enable : 1;  /* bit 8: EPFPFLEN S mask 0x100 'ENABLE PARAMETER FOR FAULT LIMITING DUE TO ENG SYNC( FUEL PRESSURE)'; table bit 136 = 0x70 + 4 x 6 + 0 (channel 6): read by the fuel limit loop cm550_calculateFaultDerateFuelLimit; clear in the dumps */
     uint16_t engine_sync_fuel_pressure_rpm_limiting_enable : 1;  /* bit 9: EPFPRPEN S mask 0x200 'ENABLE PARAMETER FOR FAULT RPM LIMITING DUE TO ENG (SYNC FUEL PRESSURE)'; table bit 137 = 0x70 + 4 x 6 + 1 (channel 6): read by cm550_calculateFaultDerateEngineSpeedLimit; clear in the dumps */
-    uint16_t engine_sync_fuel_pressure_shutdown_enable : 1;  /* bit 10: EPFPSOEN S mask 0x400 'ENABLE SHUTDOWN ON ENGINE SYNC FUEL PRESSURE ERRORS'; table bit 138 = 0x70 + 4 x 6 + 2 (channel 6): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; clear in the dumps */
+    uint16_t engine_sync_fuel_pressure_shutdown_enable : 1;  /* bit 10: EPFPSOEN S mask 0x400 'ENABLE SHUTDOWN ON ENGINE SYNC FUEL PRESSURE ERRORS'; table bit 138 = 0x70 + 4 x 6 + 2 (channel 6): read by the shutdown loop cm550_updateEngineProtectionShutdown and by the restart checks; clear in the dumps */
     uint16_t engine_sync_fuel_pressure_restart_enable : 1;  /* bit 11: EPFPRYEN S mask 0x800 'PREVENTS RESTRT AT PWR UP WHEN SHUTDN CNT>MAX SHUTD(N CNT)'; table bit 139 = 0x70 + 4 x 6 + 3 (channel 6): read by the restart checks cm550_examineEngineProtectionBeforeCranking / updateEngineProtectionRestartSeverity; clear in the dumps */
     uint16_t fuel_temperature_fueling_limiting_enable : 1;  /* bit 12: EPFTFLEN 'BIT 12 OF 0-15 ENABLES FUEL LIMITING DUE TO FUEL (TEMPERATURE ERRORS)'; table bit 140 = 0x70 + 4 x 7 + 0 (channel 7): read by the fuel limit loop cm550_calculateFaultDerateFuelLimit; also tested directly: andi.l #0x1000 at 0x1caec (cm550_selectEngineProtectionFuelTemperature) - with engine protection enabled (word 2 bit 4) and this bit or bit 13 set it updates the channel input engine_protection_fuel_temperature; clear in the dumps */
     uint16_t fuel_temperature_rpm_limiting_enable : 1;  /* bit 13: EPFTRPEN 'BIT 13 OF 0-15 ENABLES RPM LIMITING DUE TO FUEL T(EMPERATURE ERRORS)'; table bit 141 = 0x70 + 4 x 7 + 1 (channel 7): read by cm550_calculateFaultDerateEngineSpeedLimit; also tested directly: andi.l #0x2000 at 0x1cafa (cm550_selectEngineProtectionFuelTemperature) - the second operand of the fuel temperature input update (see bit 12); clear in the dumps */
-    uint16_t fuel_temperature_shutdown_enable : 1;  /* bit 14: EPFTSOEN 'BIT 14 OF 0-14 ENABLES SHUTDOWN ON FUEL TEMPERATU(RE ERRORS)'; table bit 142 = 0x70 + 4 x 7 + 2 (channel 7): read by the shutdown loop processDiagnosticLimitStatus and by the restart checks; clear in the dumps */
+    uint16_t fuel_temperature_shutdown_enable : 1;  /* bit 14: EPFTSOEN 'BIT 14 OF 0-14 ENABLES SHUTDOWN ON FUEL TEMPERATU(RE ERRORS)'; table bit 142 = 0x70 + 4 x 7 + 2 (channel 7): read by the shutdown loop cm550_updateEngineProtectionShutdown and by the restart checks; clear in the dumps */
     uint16_t fuel_temperature_restart_enable : 1;  /* bit 15: EPFTRYEN 'BIT 15 OF 0-15 PREVENTS RESTART AT POWERUP WHEN S(HUTDN CNT > MAX SHUTDN CNT)'; table bit 143 = 0x70 + 4 x 7 + 3 (channel 7): read by the restart checks cm550_examineEngineProtectionBeforeCranking / updateEngineProtectionRestartSeverity; clear in the dumps */
 };
 
@@ -1876,7 +1895,7 @@ struct cm550_algorithm_enable_flags_14_t {
     uint16_t user_datalogger_switch_override_enable : 1;  /* bit 6: DSUSDLUO and DSORUDSW S mask 0x40 'USER OVERRIDE ENABLE FLAG FOR USER DATALOGGER SWITCH' / DS26SWUO 'BIT 6 SWITCH 26'; logical switch 22: status DSILSSSW 'STATUS OF THE DEBOUNCED SWITCH USER_DATALOGGER_SWITCH' (cm550_updateDataloggerTriggers reads it) / priority 12A8 +16 DSPZININ (12A8 and 12FC also keep the alias PTO1); code: mask byte [3] bit 6 over status 0x80bcd0; clear in the dumps */
     uint16_t parking_brake_switch_override_enable : 1;  /* bit 7: DSPRBRUO S mask 0x80 (its text 'USER OVERRIDE ENABLE FLAG MANUAL FAN INPUT SWITCH' is the manual fan record's - the mnemonic says parking brake) / DS24SWUO 'BIT 7 SWITCH 24'; logical switch 23: value 000E +C DSPRBRUC 'USER VALUE OF THE PARKING BRAKE SWITCH' / priority 12A8 +17 DSPZPRBR 'PARKING_BRAKE_SW(ITCH)' / inversion 1234 DSPRBRIV - no reader of the status bit; code: mask byte [3] bit 7 over status 0x80bcd0; clear in the dumps */
     uint16_t coolant_level_high_switch_override_enable : 1;  /* bit 8: DSCLHIUO S mask 0x100 'USER OVERRIDE ENABLE FLAG FOR COOLANT LEVEL HIGH SWITCH' / DS25SWUO 'BIT 8 SWITCH 25'; logical switch 24: status DSCLHISW 'STATUS OF THE SWITCH (COOLANT LEVEL HIGH)' (the coolant level switch pair check reads it) / priority 12A8 +18 DSPZCLHI; code: mask byte [2] bit 0 over status 0x80bcd1; clear in the dumps */
-    uint16_t switched_throttle_control_or_all_speed_governor_droop_switch_override_enable : 1;  /* bit 9: DSSTCNUO S mask 0x200 'USER OVERRIDE ENABLE FLAG FOR STCG ASG DROOP SWITCH' (STCG = switched throttle control governor per STCGASDS - ASG = all speed governor) / DS04SWUO 'BIT 9 SWITCH 4'; logical switch 25: status SLTHCNSW 'DEBOUNCED VALUE OF THE STCG ASG DROOP SWITCH' (cm550_acceleratorThrottleFaultDetector and cm550_selectVariableSpeedGovernorMode read it with word 27 bit 3) / priority 12A8 +19 DSPZSTCN; code: mask byte [2] bit 1 over status 0x80bcd1; clear in the dumps */
+    uint16_t switched_throttle_control_or_all_speed_governor_droop_switch_override_enable : 1;  /* bit 9: DSSTCNUO S mask 0x200 'USER OVERRIDE ENABLE FLAG FOR STCG ASG DROOP SWITCH' (STCG = switched throttle control governor per STCGASDS - ASG = all speed governor) / DS04SWUO 'BIT 9 SWITCH 4'; logical switch 25: status SLTHCNSW 'DEBOUNCED VALUE OF THE STCG ASG DROOP SWITCH' (cm550_selectAllSpeedGovernorReference and cm550_selectVariableSpeedGovernorMode read it with word 27 bit 3) / priority 12A8 +19 DSPZSTCN; code: mask byte [2] bit 1 over status 0x80bcd1; clear in the dumps */
     uint16_t switch_27_override_enable : 1;  /* bit 10: DS27SWUO S mask 0x400 'BIT A SWITCH 27 USER OVERRIDE ENABLE FLAG' is the only 106B record; logical switch 26: guess an air conditioning pressure switch (12A8 +1A DSPZAKPR 'AIR CONDITIONER' / 12FC DSDFAKPR 'AIR_CONDITIONER_PRESSURE_SWITC(H)' / 1234 DSINACHP 'AC HIGH PRESSURE SWIT(CH)') - but this ROM keeps the air conditioning pressure switch at logical switch 72 (J1939 entry 0) and nothing reads the status bit; code: mask byte [2] bit 2 over status 0x80bcd1; clear in the dumps */
     uint16_t switch_28_override_enable : 1;  /* bit 11: DS28SWUO S mask 0x800 'BIT B SWITCH 28 USER OVERRIDE ENABLE FLAG' plus two function records that disagree: DSAKHIUO 'WORD 14 BIT 11 OF BITS 0-15 STATUS OF OVERRIDE FLAG T' (cut - the AC high pressure switch: 12A8 +1B DSPZACHP / 12FC DSDFACHP) and DSTHILUO 'USER OVERRIDE ENABLE FLAG FOR THE ACCELERATOR INTERLOCK' (the throttle interlock: DSTHILSS / DSPZTHIL / DSDFTHIL); logical switch 27: undecided - this ROM routes the J1939 accelerator interlock to logical switch 9 (word 13 bit 9) so the interlock alias looks stale and nothing reads the status bit; code: mask byte [2] bit 3 over status 0x80bcd1; clear in the dumps */
     uint16_t switch_23_override_enable : 1;  /* bit 12: DS23SWUO S mask 0x1000 'BIT C SWITCH 23 USER OVERRIDE ENABLE FLAG' is the only 106B record; logical switch 28: guess engine brake select 2 (12FC DSDFEBS2 'DEFAULT/INITIALIZATION VALUE FOR ENGINE_BRAKE_SELECT_2' / 12A8 +1C DSPZEBS2) - no reader of the status bit; code: mask byte [2] bit 4 over status 0x80bcd1; clear in the dumps */
@@ -1946,7 +1965,7 @@ struct cm550_algorithm_enable_flags_27_t {
     uint16_t reserved_bit_0 : 1;  /* bit 0: no record in v64t6_s and no test in the dumped ROM; guess RTEN 'ENABLES/DISABLE REAL TIME CLOCK FUNCTION' (an S record with mask 1 at +38 in 11 other e2m files; an N record with no bit in 10 more); CM848 reserved_bit_0 too; clear in the bench EEPROM (0x2010) */
     uint16_t reserved_bit_1 : 1;  /* bit 1: e2m CRMFOGEA 'IF ENABLED USES CC/RSG MIN FUEL TRANSTION RAMP DURING' (N record with no bit; mask 2 in CM848's CHR e2m and 18 later ISB files) - OOG is never spelled out; no test in the dumped ROM; CM848 keeps reserved_bit_1 for the same reason; clear */
     uint16_t engine_retarder_fuel_to_brake_delay_enable : 1;  /* bit 2: e2m EBAEDYEN 'BIT 2 TO DELAY ON E-BRAKE TRANSITION'; no test in the dumped ROM; clear; same as CM848 */
-    uint16_t switched_throttle_control_governor_select : 1;  /* bit 3: e2m STCGASDS 'SWITCHED THROTTLE CONTROL GOVERNOR SELECT (BIT 3 OF 0 - 15)'; read by cm550_acceleratorThrottleFaultDetector (0xd306: clear + throttle interlock switch bit 1 = the switch toggles the all speed governor throttle source) and cm550_selectVariableSpeedGovernorMode (0xd4e8: set + interlock switch = the switch toggles the switched throttle control governor enable); clear; same as CM848 */
+    uint16_t switched_throttle_control_governor_select : 1;  /* bit 3: e2m STCGASDS 'SWITCHED THROTTLE CONTROL GOVERNOR SELECT (BIT 3 OF 0 - 15)'; read by cm550_selectAllSpeedGovernorReference (0xd306: clear + throttle interlock switch bit 1 = the switch toggles the all speed governor throttle source) and cm550_selectVariableSpeedGovernorMode (0xd4e8: set + interlock switch = the switch toggles the switched throttle control governor enable); clear; same as CM848 */
     uint16_t boost_pressure_in_range_diagnostic_enable : 1;  /* bit 4: e2m DGBSIREN 'ENABLE FLAG FOR BOOST PRESSURE IN-RANGE DIAGNOSTIC ALGORITHM' (N record with no bit; mask 0x10 in CM848's CHR e2m); read by cm550_monitorBoostPressureSensorInRangeHighReading (andi.w #0x10 at 0xe9b4): the boost in-range high check (boost_pressure_sensor_high_reading_minimum_boost_pressure / boost_pressure_sensor_high_reading_debounce_limit) while RUNNING; SET in the bench EEPROM; same as CM848 */
     uint16_t air_handling_enable : 1;  /* bit 5: e2m AHEN 'BIT 5 ENABLE/DISABLE FOR AIR HANDELING FEATURE. BIT 11' (two bit numbers in the text; 0x20 in CM848's CHR e2m and the 7x/8x S records); no test in the dumped ROM; clear */
     uint16_t air_mass_calculation_enable : 1;  /* bit 6: e2m TBAMEN 'BIT 6 ENABLE/DISABLE FOR AIRMASS CALCULATION. BIT 12 OF 0-15' (two bit numbers; 0x40 in CM848 and the later S records); no test in the dumped ROM; clear */
@@ -2232,7 +2251,7 @@ struct cm550_engine_protection_channel_state_t {
     word* engine_speed_lower_limit_pointer;  /* +0x12 EP??RLSA 'POINTER TO <input> RPM LIMIT THRESHOLD': &configuration.engine_speed_lower_limit_threshold (0x1879a), for oil pressure 0x80dac0 (the very low oil pressure limit, 0x187fa); threshold select 0 on the engine speed side (0x189e0) */
     uint16_t errors_allowed;  /* +0x16 EP??EREN 'TRUE = <input> ERROR ALLOWED': set by logEngineProtectionChannelFaults (0x19574 / 0x195cc), cleared at 0 rpm (0x1959e); gates the duration counts (0x18a40), the shutdown (0x190c6 / 0x19170) and the restart limitation (0x18dd8) */
     uint16_t precrank_error;  /* +0x18 EP??PKER '<input> SYSTEM ERROR DETECTED BEFORE CRANKING IN RESTART': set by cm550_examineEngineProtectionBeforeCranking (move.w #1,(0x18,a2) at 0x18be2 / 0x18c0c); makes both faults active in logEngineProtectionChannelFaults (0x195e2) */
-    uint16_t fueling_shutdown_time_count;  /* +0x1a EP??FSCU 'AMOUNT OF TIME OVER <input> FUEL SHUTDOWN THRESHOLD' (SEC): counted by countEngineProtectionShutdownTime (0x18f96-0x18f9e), cleared by processDiagnosticLimitStatus (0x190f0 / 0x19216 / 0x192bc); a fueling fault while nonzero (0x195f6) */
+    uint16_t fueling_shutdown_time_count;  /* +0x1a EP??FSCU 'AMOUNT OF TIME OVER <input> FUEL SHUTDOWN THRESHOLD' (SEC): counted by countEngineProtectionShutdownTime (0x18f96-0x18f9e), cleared by cm550_updateEngineProtectionShutdown (0x190f0 / 0x19216 / 0x192bc); a fueling fault while nonzero (0x195f6) */
     uint16_t engine_speed_shutdown_time_count;  /* +0x1c EP??RSCU (SEC): the engine speed side (0x18fa4-0x18fac, 0x1919c, 0x19608) */
     uint16_t fueling_start_warning_time;  /* +0x1e EP??FSWT / EPFTFLWN 'DELAY BEFORE WARNING ABOUT SHUTDOWN FROM <input> FUEL' (SEC): = configuration.shutdown_delay in the engine start pass (0x18fbc); the shutdown approaching flag once the time count passes it (0x1912e), the shutdown command once it passes it + shutdown_warning_time (0x1913e) */
     uint16_t engine_speed_start_warning_time;  /* +0x20 EP??RSWT / EPFTRPWN: the engine speed side (0x18fc4, 0x191de, 0x191ee) */
@@ -2243,7 +2262,7 @@ struct cm550_engine_protection_channel_state_t {
 };
 
 struct engine_protection_channel_history_t {
-    uint16_t fueling_severity_index;  /* +0x0 EP??FLIX '<input> FUELING SEVERITY INDEX' (1/256): written by cm550_calculateFaultDerateFuelLimit (move.w d3,(a4) at 0x197fa; oil pressure forced to 0x100 at 0x1987c); read by the ramp (0x186c4), processDiagnosticLimitStatus (0x1909a) and logEngineProtectionChannelFaults (0x195f0) */
+    uint16_t fueling_severity_index;  /* +0x0 EP??FLIX '<input> FUELING SEVERITY INDEX' (1/256): written by cm550_calculateFaultDerateFuelLimit (move.w d3,(a4) at 0x197fa; oil pressure forced to 0x100 at 0x1987c); read by the ramp (0x186c4), cm550_updateEngineProtectionShutdown (0x1909a) and logEngineProtectionChannelFaults (0x195f0) */
     uint16_t engine_speed_severity_index;  /* +0x2 EP??RPIX 'SEVERITY INDEX FOR EPF <input> FAULT' (1/256): written by cm550_calculateFaultDerateEngineSpeedLimit (move.w d3,(0x2,a2) at 0x18ed4); read by the ramp (0x186d4), 0x190a6 and 0x19600 */
     uint16_t fueling_restart_severity_index;  /* +0x4 EP??FLRI / EPFTRYIX '<input> FUELING RESTART SEVERITY INDEX': written by updateEngineProtectionRestartSeverityIndexes (0x18c4c / 0x18c5a / 0x18c7c), zeroed by cm550_updateEngineProtectionRestartSeverity (0x18d8a); the floor of the fueling severity (0x197c6) */
     uint16_t engine_speed_restart_severity_index;  /* +0x6 EP??RPRI / EPFTRRIX: written at 0x18ca0 / 0x18caa, zeroed at 0x18d8e; the floor of the engine speed severity (0x18ea0) */
@@ -2255,4 +2274,85 @@ struct engine_protection_channel_history_t {
     uint16_t fueling_fault_log_index;  /* +0x18 EP??FLIN 'INDEX INTO EPF FAULT LOG FOR <input> FUELING' (0-4): the current entry (move.w (0x18,a0) at 0x1934c; advanced modulo 5 at 0x19518-0x19524) */
     uint16_t engine_speed_fault_log_flag;  /* +0x1a EP??RPFG: 1 while the engine speed log entry is open (history + 26 at 0x19386 / 0x19482) */
     uint16_t engine_speed_fault_log_index;  /* +0x1c EP??RPIN 'INDEX INTO EPF FAULT LOG FOR <input> RPM' (0-4): move.w (0x1c,a0) at 0x1936c; the close helper takes history + 28 (0x19468) and advances it modulo 5 at 0x19518-0x19524 */
+};
+
+struct cm550_algorithm_enable_flags_9_t {
+    uint16_t ambient_air_pressure_fueling_limiting_enable : 1;  /* bit 0: EPAAFLEN S mask 0x1 'ENABLE PARAMETER FOR FAULT LIMITING DUE TO AMBIENT (AIR PRESSURE)'; table bit 144 = 0x70 + 4 x 8 + 0 (channel 8): read by the fuel limit loop cm550_calculateFaultDerateFuelLimit (0x19734-0x19756); clear in the dumps */
+    uint16_t ambient_air_pressure_rpm_limiting_enable : 1;  /* bit 1: EPAARPEN S mask 0x2 'ENABLE PARAMETER FOR FAULT RPM LIMITING DUE TO AMBI(ENT AIR PRESSURE)'; table bit 145 = 0x70 + 4 x 8 + 1 (channel 8): read by cm550_calculateFaultDerateEngineSpeedLimit (0x18e3e-0x18e60); clear in the dumps */
+    uint16_t ambient_air_pressure_shutdown_enable : 1;  /* bit 2: EPAASOEN S mask 0x4 'ENABLE SHUTDOWN ON AMBIENT AIR PRESSURE ERRORS'; table bit 146 = 0x70 + 4 x 8 + 2 (channel 8): read by the shutdown loop cm550_updateEngineProtectionShutdown (0x1905c-0x1907e) and by the restart checks; clear in the dumps */
+    uint16_t ambient_air_pressure_restart_enable : 1;  /* bit 3: EPAARYEN S mask 0x8 'PREVENTS RESTRT AT PWR UP WHEN SHUTDN CNT>MAX SHUTD(N CNT)'; table bit 147 = 0x70 + 4 x 8 + 3 (channel 8): read by the restart checks cm550_examineEngineProtectionBeforeCranking / updateEngineProtectionRestartSeverity; clear in the dumps */
+    uint16_t reserved_bit_4 : 1;  /* bit 4: no record in v64t6_s and no reader: the protection loops end at channel 8 (table bit 147). 18 other e2m files (the 7x / 8x ISB family) put two more channels in bits 4-11 (EPOE.. OEM pressure 0x10-0x80, EPOS.. OEM switch 0x100-0x800); clear in the dumps */
+    uint16_t reserved_bit_5 : 1;  /* bit 5: no record in v64t6_s and no reader (see reserved_bit_4); clear in the dumps */
+    uint16_t reserved_bit_6 : 1;  /* bit 6: no record in v64t6_s and no reader (see reserved_bit_4); clear in the dumps */
+    uint16_t reserved_bit_7 : 1;  /* bit 7: no record in v64t6_s and no reader (see reserved_bit_4); clear in the dumps */
+    uint16_t reserved_bit_8 : 1;  /* bit 8: no record in v64t6_s and no reader (see reserved_bit_4); clear in the dumps */
+    uint16_t reserved_bit_9 : 1;  /* bit 9: no record in v64t6_s and no reader (see reserved_bit_4); clear in the dumps */
+    uint16_t reserved_bit_10 : 1;  /* bit 10: no record in v64t6_s and no reader (see reserved_bit_4); clear in the dumps */
+    uint16_t reserved_bit_11 : 1;  /* bit 11: no record in v64t6_s and no reader (see reserved_bit_4); clear in the dumps */
+    uint16_t reserved_bit_12 : 1;  /* bit 12: no record in v64t6_s and no reader (see reserved_bit_4); clear in the dumps */
+    uint16_t reserved_bit_13 : 1;  /* bit 13: no record in v64t6_s and no reader (see reserved_bit_4); clear in the dumps */
+    uint16_t reserved_bit_14 : 1;  /* bit 14: no record in v64t6_s and no reader (see reserved_bit_4); clear in the dumps */
+    uint16_t reserved_bit_15 : 1;  /* bit 15: no record in v64t6_s and no reader (see reserved_bit_4); clear in the dumps */
+};
+
+struct cm550_algorithm_enable_flags_26_t {
+    uint16_t coolant_level_history_only_enable : 1;  /* bit 0: EPCVDXEN 'BIT 0 OF 0-15. EPF COOLANT LEVEL ENABLE FOR HISTORY ONLY DATA' (CM848 label Coolant_Level_Data_Noderate_Enable); table bit 416 = 0x1a0 + 0 (channel 0): read by cm550_calculateFaultDerateFuelLimit (0x1975a) and cm550_calculateFaultDerateEngineSpeedLimit (0x18e64) - set: the severity index is kept for the history and the channel does not derate; clear in the dumps */
+    uint16_t coolant_temperature_history_only_enable : 1;  /* bit 1: EPCQDXEN 'BIT 1 OF 0-15. EPF COOLANT TEMPERATURE ENABLE FOR HISTORY ONLY'; table bit 417 (channel 1); clear in the dumps */
+    uint16_t intake_manifold_temperature_history_only_enable : 1;  /* bit 2: EPIMDXEN 'BIT 2 OF 0-15. EPF IMT ENABLE FOR HISTORY ONLY DATA'; table bit 418 (channel 2); clear in the dumps */
+    uint16_t oil_pressure_history_only_enable : 1;  /* bit 3: EPO2DXEN 'BIT 3 OF 0-15. EPF OIL PRESSURE ENABLE FOR HISTORY ONLY DATA'; table bit 419 (channel 3). v64t6_s also files MXLPANEA (mask 8) at this offset but the code reads that flag in word 25; clear in the dumps */
+    uint16_t water_in_fuel_history_only_enable : 1;  /* bit 4: table bit 420 (channel 4, water in fuel: configuration record 0x8070c2 = e2m 112E EPWFCG). The e2m record at this bit is EPO3DXEN 'BIT 4 OF 0-15. EPF OIL TEMPERATURE ENABLE FOR HISTORY ONLY DATA', a channel this build does not have (CM848's e2m has Fuel_Temperature_Data_Noderate_Enable here), so the field is named by the channel the loops index; clear in the dumps */
+    uint16_t boost_pressure_history_only_enable : 1;  /* bit 5: no e2m record; table bit 421 (channel 5, boost pressure: configuration record 0x8070e6 = e2m 112F EPBSCG); clear in the dumps */
+    uint16_t engine_sync_fuel_pressure_history_only_enable : 1;  /* bit 6: no e2m record; table bit 422 (channel 6, engine sync fuel pressure: configuration record 0x80710a = e2m 1130 EPFPCG); clear in the dumps */
+    uint16_t fuel_temperature_history_only_enable : 1;  /* bit 7: no e2m record; table bit 423 (channel 7, fuel temperature: configuration record 0x80712e = e2m 1131 EPFTCG); clear in the dumps */
+    uint16_t ambient_air_pressure_history_only_enable : 1;  /* bit 8: no e2m record; table bit 424 (channel 8, ambient air pressure: configuration record 0x807152 = e2m 1132 EPAACG); clear in the dumps */
+    uint16_t reserved_bit_9 : 1;  /* bit 9: no e2m record and no reader: the two loops end at channel 8 (table bit 424); clear in the dumps */
+    uint16_t reserved_bit_10 : 1;  /* bit 10: no e2m record and no reader: the two loops end at channel 8 (table bit 424); clear in the dumps */
+    uint16_t reserved_bit_11 : 1;  /* bit 11: no e2m record and no reader: the two loops end at channel 8 (table bit 424); clear in the dumps */
+    uint16_t reserved_bit_12 : 1;  /* bit 12: no e2m record and no reader: the two loops end at channel 8 (table bit 424); clear in the dumps */
+    uint16_t reserved_bit_13 : 1;  /* bit 13: no e2m record and no reader: the two loops end at channel 8 (table bit 424); clear in the dumps */
+    uint16_t reserved_bit_14 : 1;  /* bit 14: no e2m record and no reader: the two loops end at channel 8 (table bit 424); clear in the dumps */
+    uint16_t reserved_bit_15 : 1;  /* bit 15: no e2m record and no reader: the two loops end at channel 8 (table bit 424); clear in the dumps */
+};
+
+struct j1939_broadcast_transmit_session_t {
+    uint8_t active;  /* 1 while the session runs: cm550_startJ1939TransportSession sets it (0x22892); cm550_sendJ1939BroadcastDataPacket clears it at the last packet (0x22f0e) or when a frame cannot be queued (0x22f9c). CM848's type of the same name, field for field (32 bytes; type-only template, the instance is j1939_broadcast_transmit_sessions[2] at 0x80124a) */
+    uint8_t total_packet_count;  /* (message_size - 1) / 7 + 1 (0x2289c-0x228ac): byte 4 of the announce; the packet sender compares it with next_packet_number (0x22ef2) */
+    uint16_t message_size;  /* the message's size in bytes, the descriptor's data_length (0x22896): bytes 2-3 of the announce */
+    uint16_t next_data_byte_number;  /* the 1-based number of the next data byte: 1 at the announce (0x228b6), plus 7 per packet (0x22f20); the last packet carries message_size - this + 1 bytes (0x22ef8-0x22f00) */
+    uint8_t next_packet_number;  /* the next packet's sequence number: 1 at the announce (0x228b0), plus 1 per packet (0x22f32) */
+    uint8_t frame_queue_status;  /* the status cm550_sendCanSingleFrame writes for the last frame (pea (7,a3) at 0x2290e / 0x22f56): 0 queued / 1 zero length / 4 transmit ring full */
+    byte* message_data_pointer;  /* the next data byte: the descriptor's data pointer (0x228bc), advanced per byte (0x22f40) */
+    byte* session_status_pointer;  /* the message's status byte (the descriptor's status_pointer, 0x228e0): 0x10 announced / 0x11 sending / 5 complete / the send result on a failure */
+    uint16_t packet_delay_timer;  /* service passes until the next packet: 5 at the announce and after each packet (0x228da / 0x22f24), counted down at 0x22fa4 */
+    uint32_t frame_can_id;  /* the next frame's CAN identifier: the message's with PDU format 0xEC and destination 0xFF for the announce (0x228c2-0x228d0), then 0xEB (0x22932-0x22940) */
+    uint16_t frame_data_length;  /* data bytes of the next frame: 8 (0x228d4 / 0x22f1c) or the last packet's (0x22f0a) */
+    byte* transmit_frame_pointer;  /* the 8-byte frame assembly buffer: initializeJ1939Transport points record 0 at 0x80128a and record 1 at 0x801292 */
+    uint8_t unused[4];  /* no access in the ROM; the records are 32 bytes apart (lsl.l #5 at 0x22eda; the second record at 0x80126a); 0 in the dump */
+};
+
+struct j1939_transport_transmit_session_t {
+    uint16_t transported_pgn;  /* the transported message's PDU format byte in the high byte (0x2277e-0x22786), compared with byte 7 of each clear to send / end of message acknowledgement / abort (0x2299c, 0x22dc8, 0x22e26). CM848's type of the same name, field for field (28 bytes; type-only template, the instance is j1939_transport_transmit_session at 0x80129c, after the flat active flag 0x80129a and destination 0x80129b) */
+    uint8_t total_packet_count;  /* (message_size - 1) / 7 + 1 (0x22790-0x227a4): byte 4 of the request to send; the last packet test of the data packet sender (0x2302a) */
+    uint8_t next_packet_number;  /* the next packet number: byte 3 of the clear to send (0x229d8); the data packet sender adds 10 per full call (0x22fce) */
+    uint8_t granted_packet_count;  /* the packets left in the granted window: 0 at the request to send (0x227a6), byte 2 of the clear to send cut to what remains (0x229dc), 10 less per full call (0x22fd6) */
+    uint8_t frame_queue_status;  /* the status cm550_sendCanSingleFrame writes for the last frame (0x8012a1: pea (7,a5) at 0x227f8, move.l a5 at 0x23064): 0 queued / 1 zero length / 4 transmit ring full */
+    uint16_t message_size;  /* the message's size in bytes, the descriptor's data_length (0x2278a): bytes 2-3 of the request to send */
+    byte* message_data_pointer;  /* the message's data, the descriptor's data pointer (0x227aa); packet n is read at this + 7 x n - 7 (0x22ff4-0x23004) */
+    byte* session_status_pointer;  /* the message's status byte (0x227ce): 0x12 request to send queued / 0x13 sending / 6 timeout / 7 frame not queued / 9 complete / 10 aborted */
+    uint16_t timeout_timer;  /* counted down while no window is granted (0x230ca): 0x37 at the request to send and at a hold (0x227c8, 0x229ac), 0x70 after a window (0x22fec); at 0 the status becomes 6 */
+    uint32_t frame_can_id;  /* the next frame's CAN identifier: the message's with PDU format 0xEC for the request to send (0x227b0-0x227be), then 0xEB (0x22820-0x2282e) */
+    uint16_t frame_data_length;  /* data bytes of the next frame: 8 (0x227c2) or the last packet's (0x23040) */
+    byte* transmit_frame_pointer;  /* the 8-byte frame assembly buffer 0x8012bc (initializeJ1939Transport, 0x2319e) */
+};
+
+struct j1939_transport_receive_session_t {
+    uint8_t active;  /* 1 while a message is being received: the request to send handler sets it (0x22bb2); the last data packet, a failed clear to send, an abort and the timeout clear it (0x22cfc, 0x22c16, 0x22c90, 0x22d76, 0x22e52, 0x230e2). CM848's type of the same name with the same offsets (18 bytes; type-only template, the instance is j1939_transport_receive_session at 0x8012c4) */
+    uint8_t total_packet_count;  /* the request to send's packet count, its byte 4 (0x22bc2); echoed in the end of message acknowledgement (0x22aa8) */
+    uint16_t transported_pgn;  /* the transported PGN's PDU format byte in the high byte (0x22bbe); only 0xef00 (PGN 61184) is accepted (0x22b94) */
+    uint8_t next_packet_number;  /* the sequence number the next data packet must carry: 1 at the request to send (0x22bd4), plus 1 per stored packet (0x22cdc) */
+    uint8_t granted_packet_count;  /* the packets left in the window this ECM's clear to send granted: at most 5 (0x22bda-0x22bea, 0x22d1c-0x22d4a), minus 1 per packet (0x22ce0) */
+    uint16_t timeout_timer;  /* counted down each service pass (0x230ea): 0x70 at the request to send (0x22bce), 0x19 after a packet inside a window (0x22d82); at 0 the session is dropped */
+    uint32_t request_to_send_can_id;  /* the request to send's CAN identifier (0x22bba); its source address byte (+0xb) is matched against data packets, a second request and aborts. From here on the record is the message handed to cm550_dispatchJ1939DiagnosticServiceRequest (pea (8,a4) at 0x22d0a): identifier, length, data pointer */
+    uint16_t message_size;  /* the message size in bytes, bytes 2-3 of the request to send (0x22bc8), at most 0x6a4; echoed in the end of message acknowledgement (0x22a96) */
+    byte* receive_buffer_pointer;  /* the receive buffer 0x8012de (0x231a8, 0x22d02): packet n is stored at this + 7 x n - 7 (0x22cbe-0x22cce) */
 };

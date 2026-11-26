@@ -270,14 +270,14 @@ void cm848_selectAllSpeedGovernorApplicationMode(void);  // @ 0x0000fb28
 void cm848_calculateAllSpeedGovernorNoLoadFuel(void);  // @ 0x0000fcd0
 void cm848_initializeFuelTimingTableSizes(void);  // @ 0x0000fe3c
 void cm848_calculateAllSpeedGovernorThrottleReference(void);  // @ 0x0000fe5c
-void cm848_calculateGovernorCompensatorCoefficients(void);  // @ 0x0000ff04
+void cm848_calculateAllSpeedGovernorThrottleDroopGains(void);  // @ 0x0000ff04
 void cm848_selectVariableSpeedGovernorMode(int previous_engine_operating_mode);  // @ 0x00010110
 void cm848_initializeLookupTableParameters(void);  // @ 0x00010248
 void cm848_stubFunction3(void);  // @ 0x00010270
-void mpc555_dispatchExternalInterrupt(undefined4 param_1,undefined4 param_2);  // @ 0x00010274
-void mpc555_handleDecrementerException(undefined4 param_1,undefined4 param_2);  // @ 0x0001041c
+void mpc555_dispatchExternalInterrupt(void);  // @ 0x00010274
+void mpc555_handleDecrementerException(void);  // @ 0x0001041c
 void mpc555_haltOnUnhandledException(void);  // @ 0x0001063c
-void mpc555_fatalErrorHalt(void);  // @ 0x00010694
+void mpc555_haltOnUnhandledExternalInterrupt(void);  // @ 0x00010694
 void cm848_selectBatteryVoltage(void);  // @ 0x000107ec
 void cm848_updateBatteryVoltageSource(void);  // @ 0x0001083c
 void cm848_selectChargeManagerMassChargeFlowCommand(void);  // @ 0x00010874
@@ -441,14 +441,14 @@ void initializePgn65251EngineConfiguration1Buffer(void);  // @ 0x0001b900
 void cm848_calculateColdStartFuelAdjust(void);  // @ 0x0001b99c
 void cm848_initializeCrankTimingOutputs(void);  // @ 0x0001bb30
 void cm848_calculateColdStartRpmAdjust(void);  // @ 0x0001bb48
-void cm848_calculateColdStartTemperatureTable(void);  // @ 0x0001bc30
+void cm848_calculateCrankInitialFuelByCoolantTemperatureAndBarometricPressure(void);  // @ 0x0001bc30
 void selectCrankExitSpeed(void);  // @ 0x0001bd44
 void cm848_calculateCrankInitialAdvanceByIntakeManifoldTemperature(void);  // @ 0x0001bd74
-void cm848_checkColdStartConditions(void);  // @ 0x0001be64
-void cm848_processColdStartAdjustment(void);  // @ 0x0001bf44
+void updateCrankReentrySpeed(void);  // @ 0x0001be64
+void calculateCrankInitialValuesOnCrankEntry(void);  // @ 0x0001bf44
 void cm848_initializeColdStartTablePointers(void);  // @ 0x0001bfc8
-void cm848_processColdStartStateMachine(void);  // @ 0x0001c080
-void cm848_coldStartRpmTableLookup(void);  // @ 0x0001c114
+void rampCrankExitFuelAdjustment(void);  // @ 0x0001c080
+void updateCrankExitAndJumpStartTimers(void);  // @ 0x0001c114
 void cm848_coldStartFuelFactorLookup(void);  // @ 0x0001c1a4
 void cm848_selectColdStartFactor(void);  // @ 0x0001c23c
 void cm848_updateEngineState(void);  // @ 0x0001c28c
@@ -472,7 +472,7 @@ void cm848_selectFinalFueling(void);  // @ 0x0001e22c
 void cm848_clearFuelDemandFlag(void);  // @ 0x0001e4d8
 void cm848_convertTorqueDerateTorqueLimitToFuelLimit(void);  // @ 0x0001e4e8
 void cm848_arbitrateRequestedFueling(void);  // @ 0x0001e5a4
-void cm848_initializeEngineOperatingState(void);  // @ 0x0001e810
+void selectFourDimensionalFuelingModeByDefault(void);  // @ 0x0001e810
 void updateFourDimensionalFueling(void);  // @ 0x0001e830
 void cm848_calculateFourDimensionalInjectionTiming(void);  // @ 0x0001e870
 void cm848_initializeFourDimensionalInjectionTimingLookupCaches(void);  // @ 0x0001ea6c
@@ -502,7 +502,7 @@ void emptyPgn61443ElectronicEngineController2InitializationStep(void);  // @ 0x0
 void cm848_calculateNominalFrictionPercentTorque(void);  // @ 0x00020af0
 void setJ1939TorqueCurvePoint1AtDeratedIdleFueling(void);  // @ 0x00020b84
 void setJ1939TorqueCurvePoints1And3AtDeratedFueling(void);  // @ 0x00020bfc
-void cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling (j1939_received_message_t *received_message);  // @ 0x00020c64
+void cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling (word fueling,dword point_5_on_droop_line_flag);  // @ 0x00020c64
 void cm848_updateJ1939EngineConfigurationTorqueCurve(void);  // @ 0x00020d10
 void initializeJ1939ReferenceEngineFuelingAndTorque(void);  // @ 0x000212dc
 void cm848_calculateEngineRetarderTorque(void);  // @ 0x00021314
@@ -558,7 +558,7 @@ void cm848_sendJ1939AcknowledgeMessage (j1939_received_message_t *request_messag
 void cm848_sendJ1939AcknowledgementOfRequestedPgn (j1939_received_message_t *message,J1939_ACK_TYPE acknowledgement_type);  // @ 0x00023dbc
 void cm848_initializePgn59392AcknowledgementBuffer(void);  // @ 0x00023e40
 void cm848_buildPgn65269AmbientConditionsMessage(void);  // @ 0x00023e8c
-void cm848_initializeJ1939AmbientConditionsBuffer(void);  // @ 0x00023fb8
+void cm848_initializePgn65269AmbientConditionsBuffer(void);  // @ 0x00023fb8
 void cm848_buildPgn65241AuxiliaryInputOutputStatus1Message(void);  // @ 0x00024028
 void cm848_initializePgn65241AuxiliaryInputOutputStatus1Buffer(void);  // @ 0x00024124
 void cm848_buildPgn65265CruiseControlVehicleSpeedMessage(void);  // @ 0x00024178
@@ -575,28 +575,28 @@ void cm848_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage(void);  // @ 0x00
 void cm848_broadcastPgn65226Dm1UntilFaultsClear(void);  // @ 0x00024d78
 void cm848_initializePgn65226Dm1Handler(void);  // @ 0x00024dd8
 void cm848_j1939HandlePgn65227Dm2PreviousDtc(void);  // @ 0x00024e78
-void cm848_initializePgn65227Dm2Handler(void);  // @ 0x00025000
+void initializePgn65227Dm2Handler(void);  // @ 0x00025000
 void cm848_initializePgn65229Dm4Handler(void);  // @ 0x00025094
 void cm848_j1939BuildDm4FreezeFrame(int param_1);  // @ 0x00025110
 void cm848_j1939HandlePgn65229Dm4FreezeFrame(void);  // @ 0x00025390
 void buildPgn65230Dm5DiagnosticReadiness1Message(void);  // @ 0x00025458
-void cm848_initializePgn65230Dm5Handler(void);  // @ 0x0002553c
+void initializePgn65230Dm5Handler(void);  // @ 0x0002553c
 void sendPgn65232NonContinuousMonitorTestResultMessage(byte test_identifier,word test_value);  // @ 0x000255c0
 void initializePgn65232Dm8Buffer(void);  // @ 0x0002560c
 void cm848_buildPgn61441ElectronicBrakeController1Message(void);  // @ 0x0002567c
 void cm848_initializePgn61441ElectronicBrakeController1Buffer(void);  // @ 0x00025824
 void sendPgn61444ElectronicEngineController1Message(void);  // @ 0x0002588c
-void cm848_initializeEec1TransmitDescriptor(void);  // @ 0x00025ab8
+void initializePgn61444ElectronicEngineController1Buffer(void);  // @ 0x00025ab8
 void cm848_buildPgn61443ElectronicEngineController2Message(void);  // @ 0x00025b10
 void initializePgn61443ElectronicEngineController2Handler(void);  // @ 0x00025d60
 void buildPgn65247ElectronicEngineController3Message(void);  // @ 0x00025de8
-void cm848_initializePgn65247ElectronicEngineController3Buffer(void);  // @ 0x00025e5c
+void initializePgn65247ElectronicEngineController3Buffer(void);  // @ 0x00025e5c
 void cm848_buildPgn65263EngineFluidLevelPressure1Message(void);  // @ 0x00025eb4
-void cm848_initializeJ1939FluidLevelPressureBuffer(void);  // @ 0x00025fb4
+void cm848_initializePgn65263EngineFluidLevelPressure1Buffer(void);  // @ 0x00025fb4
 void cm848_buildPgn65262EngineTemperature1Message(void);  // @ 0x00026024
-void cm848_initializePgn65262EngineTemperatureHandler(void);  // @ 0x0002619c
+void initializePgn65262EngineTemperature1Handler(void);  // @ 0x0002619c
 void cm848_buildPgn61440ElectronicRetarderController1Message(void);  // @ 0x00026238
-void cm848_initializePgn61440ElectronicRetarderController1Buffer(void);  // @ 0x000263a4
+void initializePgn61440ElectronicRetarderController1Buffer(void);  // @ 0x000263a4
 void cm848_buildPgn65213FanDrive1Message(void);  // @ 0x0002641c
 void initializePgn65213FanDrive1Buffer(void);  // @ 0x00026480
 void cm848_buildPgn65270InletExhaustConditions1Message(void);  // @ 0x000264d8
@@ -608,9 +608,9 @@ void cm848_initializePgn65242SoftwareIdHandler(void);  // @ 0x000268ac
 void cm848_buildPgn65504ProprietaryBMessage(void);  // @ 0x000269f4
 void cm848_initializeJ1939ProprietaryPgn65504Buffer(void);  // @ 0x00026b58
 void cm848_j1939HandlePgn65248VehicleDistance(void);  // @ 0x00026bb0
-void cm848_initializePgn65248VehicleDistanceHandler(void);  // @ 0x00026c6c
+void initializePgn65248VehicleDistanceHandler(void);  // @ 0x00026c6c
 void buildPgn65271VehicleElectricalPower1Message(void);  // @ 0x00026cf0
-void cm848_initializeJ1939VehicleElectricalBuffer(void);  // @ 0x00026d40
+void initializePgn65271VehicleElectricalPower1Buffer(void);  // @ 0x00026d40
 void sendPgn65260VehicleIdentificationMessage(void);  // @ 0x00026db4
 void cm848_initializePgn65260VehicleIdHandler(void);  // @ 0x00026ddc
 void cm848_sendPgn65279WaterInFuelIndicatorMessage(void);  // @ 0x00026e90
@@ -670,7 +670,7 @@ void cm848_initializePowerTakeOffGovernorState(void);  // @ 0x0002bb24
 void cm848_selectPowerTakeOffOrUserFueling(void);  // @ 0x0002bbe8
 void initializePowerTakeOffThrottleOverride(void);  // @ 0x0002bd38
 void cm848_buildPgn65264PowerTakeOffInformationMessage(void);  // @ 0x0002bd58
-void cm848_initializePgn65264PowerTakeOffInformationBuffer(void);  // @ 0x0002bed4
+void initializePgn65264PowerTakeOffInformationBuffer(void);  // @ 0x0002bed4
 void cm848_updateNotSafeToProgramFlag(void);  // @ 0x0002bf44
 void cm848_blendAllSpeedGovernorReferenceSpeeds(void);  // @ 0x0002bf6c
 void cm848_emptyVariableSpeedGovernorSelectionStep(void);  // @ 0x0002c0fc
@@ -924,7 +924,7 @@ void mpc555_initializeTpuBConfiguration(void);  // @ 0x0003fad4
 void cm848_initializeCruiseServoControl(void);  // @ 0x0003fba4
 void cm848_controlCruiseVacuumServo(void);  // @ 0x0003fc24
 void cm848_applyWastegateSolenoidDuty(void);  // @ 0x000400b8
-void cm848_dispatchCalibrationBlockHandlers(void);  // @ 0x000402d4
+void cm848_initializeWastegateSolenoidOutput(void);  // @ 0x000402d4
 void cm848_claimAcceleratorInterlockThrottleOverride(void);  // @ 0x000403e4
 void cm848_arbitrateGovernedFueling(void);  // @ 0x0004043c
 void cm848_initializeFuelFilterCoefficients(void);  // @ 0x00040828
@@ -961,8 +961,8 @@ void applyFuelSystemDerateFuelLimit(void);  // @ 0x0004279c
 void applyTsc1TorqueLimit(void);  // @ 0x000427cc
 void cm848_runFuelLimitChains(void);  // @ 0x0004280c
 void cm848_initializeFuelDemandAndLimitInterpolationStates(void);  // @ 0x0004285c
-void cm848_setEngineOperatingMode1(void);  // @ 0x00042894
-void cm848_selectUserCommandedFueling(void);  // @ 0x000428d4
+void selectTsc1TorqueControlMode(void);  // @ 0x00042894
+void selectUserCommandedFueling(void);  // @ 0x000428d4
 void selectUserFuelingState(void);  // @ 0x00042918
 void cm848_dispatchModeHandlers(void);  // @ 0x00042978
 void cm848_processInjectorDriverBoosterCapacitor1VoltageChannel(void);  // @ 0x000429a0
@@ -1237,7 +1237,7 @@ void cm848_refreshInputLineImage(void);  // @ 0x000533e0
 void mpc555_processJ1939TransmitBufferSend(void);  // @ 0x000535e8
 void mpc555_queueCanReceiveMessage(int param_1);  // @ 0x00053720
 void mpc555_sendJ1939SingleFrame(dword can_id,word data_length,byte *data,byte *result);  // @ 0x00053858
-void cm848_sendJ1939Message(j1939_transmit_message_t *message);  // @ 0x000539fc
+void sendJ1939Message(j1939_transmit_message_t *message);  // @ 0x000539fc
 J1939_CONTROL_DEVICE lookupJ1939ControlDevice(dword source_address);  // @ 0x00053a4c
 void handleJ1939CanTransmitInterrupt(uint param_1);  // @ 0x00053aa8
 void cm848_handleJ1939CanReceiveInterrupt(int param_1);  // @ 0x00053ae0
@@ -1253,7 +1253,7 @@ void cm848_processTsc1IgnoredRequestTimeouts(void);  // @ 0x00053dc8
 void removeEngineTsc1IgnoredRequestEntry(int param_1,uint param_2);  // @ 0x00053fa8
 void cm848_removeRetarderTsc1IgnoredRequestEntry(uint param_1);  // @ 0x00054064
 void mpc555_miosInterruptDispatcher(void);  // @ 0x00054100
-void mpc555_infiniteLoopHalt(void);  // @ 0x0005419c
+void mpc555_haltOnUnhandledMiosInterrupt(void);  // @ 0x0005419c
 void mpc555_enableSchedulerMiosOutput(void);  // @ 0x000541f4
 void cm848_emptyStartupStepAfterDataCollectorReset(void);  // @ 0x00054220
 void cm848_checkRpmOverspeedProtection(void);  // @ 0x00054224
@@ -1502,21 +1502,21 @@ undefined1 handleJ1939ReadMemoryService(j1939_received_message_t *request);  // 
 undefined1 handleJ1939ReadMemoryLongLengthService(j1939_received_message_t *request);  // @ 0x0050c81c
 void registerJ1939MemoryReadServices(void);  // @ 0x0050c880
 void cm848_startJ1939TransportSession(j1939_transmit_message_t *message);  // @ 0x0050c8ec
-void cm848_handleJ1939TransportClearToSend(j1939_received_message_t *message);  // @ 0x0050cc18
-void cm848_sendJ1939TransportAbort(undefined1 param_1,undefined2 param_2);  // @ 0x0050ccbc
-void cm848_sendJ1939TransportEndOfMessageAcknowledge(undefined1 param_1,undefined2 param_2);  // @ 0x0050cd54
-byte cm848_sendJ1939TransportClearToSend (undefined1 param_1,undefined1 param_2,undefined1 param_3,undefined2 param_4);  // @ 0x0050cdfc
-void cm848_handleJ1939TransportRequestToSend(j1939_received_message_t *message);  // @ 0x0050ce90
-void cm848_handleJ1939TransportDataPacket(j1939_received_message_t *message);  // @ 0x0050cfa8
-void cm848_handleJ1939TransportEndOfMessageAcknowledge(j1939_received_message_t *message);  // @ 0x0050d144
-void cm848_handleJ1939TransportAbort(j1939_received_message_t *message);  // @ 0x0050d1ac
-void cm848_dispatchJ1939TransportConnectionManagement(j1939_received_message_t *message);  // @ 0x0050d250
-void cm848_sendJ1939BroadcastDataPacket(int param_1);  // @ 0x0050d2c0
-void cm848_sendJ1939ConnectionModeDataPackets(void);  // @ 0x0050d444
-void cm848_tickJ1939TransportReceiveTimeout(void);  // @ 0x0050d5d8
-void cm848_serviceJ1939TransportSessions(void);  // @ 0x0050d60c
-j1939_transmit_message_t * cm848_selectJ1939TransmitBuffer(int length);  // @ 0x0050d688
-void cm848_initializeJ1939Transport(void);  // @ 0x0050d700
+void handleJ1939TransportClearToSend(j1939_received_message_t *message);  // @ 0x0050cc18
+void sendJ1939TransportAbort(byte destination_address,word pgn);  // @ 0x0050ccbc
+void sendJ1939TransportEndOfMessageAcknowledge(byte destination_address,word pgn);  // @ 0x0050cd54
+byte sendJ1939TransportClearToSend (byte destination_address,byte next_packet_number,byte packet_count,word pgn);  // @ 0x0050cdfc
+void handleJ1939TransportRequestToSend(j1939_received_message_t *message);  // @ 0x0050ce90
+void handleJ1939TransportDataPacket(j1939_received_message_t *message);  // @ 0x0050cfa8
+void handleJ1939TransportEndOfMessageAcknowledge(j1939_received_message_t *message);  // @ 0x0050d144
+void handleJ1939TransportAbort(j1939_received_message_t *message);  // @ 0x0050d1ac
+void dispatchJ1939TransportConnectionManagement(j1939_received_message_t *message);  // @ 0x0050d250
+void cm848_sendJ1939BroadcastDataPacket(int session_index);  // @ 0x0050d2c0
+void sendJ1939ConnectionModeDataPackets(void);  // @ 0x0050d444
+void tickJ1939TransportReceiveTimeout(void);  // @ 0x0050d5d8
+void serviceJ1939TransportSessions(void);  // @ 0x0050d60c
+j1939_transmit_message_t * selectJ1939TransmitBuffer(int length);  // @ 0x0050d688
+void initializeJ1939Transport(void);  // @ 0x0050d700
 MEMORY_REGION_TYPE lookupApplicationMemoryRegionType(dword range_start,dword range_length);  // @ 0x0050d784
 void cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit(void);  // @ 0x0050d864
 void presetPedalFaultModeFuelDemand(void);  // @ 0x0050da7c
@@ -1958,7 +1958,7 @@ void cm848_initializeDiscreteOutputReadBackChecks(void);  // @ 0x00538748
 void clearWorkingRam(void);  // @ 0x00538974
 void cm848_initializeRamRefresh(void);  // @ 0x005389c4
 void cm848_refreshRamCalibration(void);  // @ 0x00538a84
-byte scheduleJ1939PeriodicMessage (J1939_PERIODIC_TRANSMIT_QUEUE queue_index,word pgn_key,dword interval_milliseconds, dword first_send_offset_milliseconds,void *builder);  // @ 0x00538c8c
+byte scheduleJ1939PeriodicMessage (J1939_PERIODIC_TRANSMIT_QUEUE queue_index,word pgn_key,dword interval_milliseconds, dword first_send_offset_milliseconds,j1939_message_builder_function_t *builder);  // @ 0x00538c8c
 void cm848_runJ1939PeriodicTransmitQueues(void);  // @ 0x00538d3c
 void cm848_exceptionHandler(void);  // @ 0x00538eac
 bool registerJ1939ReceiveHandler(word pgn_key,j1939_receive_handler_function_t *handler);  // @ 0x00538eb0
@@ -1972,5 +1972,5 @@ void cm848_runPowerDownSequence(void);  // @ 0x00539d18
 void cm848_outputChannelNoneEnable(void);  // @ 0x0053a0fc
 void cm848_outputChannelNoneSetPeriod(void);  // @ 0x0053a100
 void cm848_outputChannelNoneSetDuty(void);  // @ 0x0053a104
-undefined4 cm848_outputChannelReadFeedbackNone(void);  // @ 0x0053a108
+word cm848_outputChannelReadFeedbackNone(void);  // @ 0x0053a108
 void cm848_updateOutputReadBackFaultBits(void);  // @ 0x0053a110

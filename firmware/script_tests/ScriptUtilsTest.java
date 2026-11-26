@@ -481,6 +481,27 @@ class ScriptUtilsTest {
 
     // ── reconcileParams ──────────────────────────────────────────────────────
 
+    @Test void noParametersRow_alone_hasNoProblem() {
+        // 'none' + a return row: the empty list is committed
+        assertNull(ScriptUtils.noParametersRowProblem(true, 0));
+    }
+
+    @Test void noParametersRow_absent_hasNoProblem() {
+        assertNull(ScriptUtils.noParametersRowProblem(false, 0));
+        assertNull(ScriptUtils.noParametersRowProblem(false, 3));
+    }
+
+    @Test void noParametersRow_withPositionalRows_isAProblem() {
+        String problem = ScriptUtils.noParametersRowProblem(true, 2);
+        assertNotNull(problem);
+        assertTrue(problem.contains("none"));
+        assertTrue(problem.contains("2 parameter row"));
+    }
+
+    @Test void noParametersRow_literal() {
+        assertEquals("none", ScriptUtils.NO_PARAMETERS_ROW);
+    }
+
     @Test void reconcile_noParamsEitherSide_isOk() {
         // return-only row on a genuinely void function — nothing to preserve
         assertEquals(ScriptUtils.ParamReconciliation.OK,

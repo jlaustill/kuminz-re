@@ -132,7 +132,7 @@ Some features can be identified by the engine configuration:
 
 | Engine Type | Fuel System | Indicator Functions |
 |-------------|-------------|---------------------|
-| ISB (1998-2002) | VP44 Rotary Pump | `vp44CanMessageDispatcher`, `vp44TimingConditionChecker` |
+| ISB (1998-2002) | VP44 Rotary Pump | `vp44_dispatchReceivedPumpMessage` (frames from the 82527 CAN controller on chip select 5, which carries the VP44 pump link); the names of this row until PR #53 round 98 were not VP44 code |
 | ISB (2003+) | CP3 Common Rail | CP3-specific functions (different CAN IDs) |
 
 ### Feature Persistence Theory

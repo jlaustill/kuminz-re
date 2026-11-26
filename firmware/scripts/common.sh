@@ -482,7 +482,7 @@ cmd_decompile() {
         print_error "Usage: $0 decompile <address|function_name>"
         print_error "Examples:"
         print_error "  $0 decompile 0x22e5e"
-        print_error "  $0 decompile vp44CanMessageDispatcher"
+        print_error "  $0 decompile dispatchJ1939TransportConnectionManagement"
         exit 1
     fi
 

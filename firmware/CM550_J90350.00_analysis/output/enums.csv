@@ -12,7 +12,7 @@ CAN_MESSAGE_TYPE,16,VP44_FUEL_TEMPERATURE,VP44 fuel temperature message
 CAN_MESSAGE_TYPE,17,ALTERNATIVE_MESSAGE,Alternative message handler
 CAN_MESSAGE_TYPE,19,THIRD_MESSAGE,Third message handler
 CAN_MESSAGE_TYPE,255,ERROR_DEFAULT,Error/default case message
-CAN_PARAMETER_BUILDERS,1,VP44_COMMAND_BUILDER,vp44Command0x100Builder function (0x2a418)
+CAN_PARAMETER_BUILDERS,1,VP44_COMMAND_BUILDER,initializePgn61444ElectronicEngineController1Buffer function (0x2a418)
 VP44_STATUS_BITS,0x01,FSO_CIRCUIT_STATUS_BIT0,VP44 FSO circuit status bit 0 - when set indicates normal operation
 VP44_STATUS_BITS,0x02,FSO_CIRCUIT_STATUS_BIT1,VP44 FSO circuit status bit 1 - redundant FSO monitoring
 VP44_STATUS_BITS,0x04,STATUS_BIT2,VP44 status bit 2
@@ -371,13 +371,13 @@ VP44_COMMAND_BYTE,4,TIMING_4,Timing advance data byte 4
 VP44_COMMAND_BYTE,5,TIMING_5,Timing advance data byte 5
 VP44_COMMAND_BYTE,6,RPM_LOW,Engine RPM low byte (low byte)
 VP44_COMMAND_BYTE,7,RPM_HIGH,Engine RPM high byte (high byte)
-# VP44 Response Message (0x112 from pump) - vp44FuelTemperatureHandler
+# VP44 Response Message (0x112 from pump) - handleJ1939TransportRequestToSend
 VP44_RESPONSE_BYTE,1,FUEL_TEMPERATURE_LOW,Fuel temperature low byte
 VP44_RESPONSE_BYTE,2,FUEL_TEMPERATURE_HIGH,Fuel temperature high byte
 VP44_RESPONSE_BYTE,3,SEQUENCE_NUMBER,Message sequence number
 VP44_RESPONSE_BYTE,6,MESSAGE_ID_HIGH,Message ID high byte (must be 0xEF)
-# VP44 CAN Message Dispatcher Types - vp44CanMessageDispatcher
-VP44_CAN_DISPATCH,0x10,FUEL_TEMPERATURE_MESSAGE,VP44 fuel temperature response (calls vp44FuelTemperatureHandler)
+# VP44 CAN Message Dispatcher Types - dispatchJ1939TransportConnectionManagement
+VP44_CAN_DISPATCH,0x10,FUEL_TEMPERATURE_MESSAGE,VP44 fuel temperature response (calls handleJ1939TransportRequestToSend)
 VP44_CAN_DISPATCH,0x11,PARAMETER_REQUEST_MESSAGE,Diagnostic parameter request (calls diagnosticParamRequestHandler)
 VP44_CAN_DISPATCH,0x13,STATUS_REQUEST_MESSAGE,Diagnostic status request (calls diagnosticStatusRequestHandler)
 VP44_CAN_DISPATCH,0xFF,ERROR_MESSAGE,Error message (calls diagnosticErrorHandler)
@@ -397,7 +397,7 @@ ENGINE_PROTECTION_TASK,0,ENGINE_PROTECTION_TASK_OVER_LIMIT_DURATIONS,Task 0 of c
 ENGINE_PROTECTION_TASK,1,ENGINE_PROTECTION_TASK_RESTART_SEVERITY,Task 1: updateEngineProtectionRestartSeverity. (was ENGINE_PROTECTION_TASK_RESTART_SEVERITY; PR #53 round 97),2
 ENGINE_PROTECTION_TASK,2,ENGINE_PROTECTION_TASK_FAULT_DERATE_FUEL_LIMIT,Task 2: cm550_calculateFaultDerateFuelLimit. (was ENGINE_PROTECTION_TASK_FAULT_DERATE_FUEL_LIMIT; PR #53 round 97),2
 ENGINE_PROTECTION_TASK,3,ENGINE_PROTECTION_TASK_ENGINE_SPEED_LIMIT_AND_FAULT_LOGS,"Task 3: cm550_calculateFaultDerateEngineSpeedLimit, then logEngineProtectionChannelFaults. (was ENGINE_PROTECTION_TASK_ENGINE_SPEED_LIMIT_AND_FAULT_LOGS; PR #53 round 97)",2
-ENGINE_PROTECTION_TASK,4,ENGINE_PROTECTION_TASK_SHUTDOWN,"Task 4: processDiagnosticLimitStatus, the engine protection shutdown. The index wraps to 0 after this task. (was ENGINE_PROTECTION_TASK_SHUTDOWN; PR #53 round 97)",2
+ENGINE_PROTECTION_TASK,4,ENGINE_PROTECTION_TASK_SHUTDOWN,"Task 4: cm550_updateEngineProtectionShutdown, the engine protection shutdown. The index wraps to 0 after this task. (was ENGINE_PROTECTION_TASK_SHUTDOWN; PR #53 round 97)",2
 # Proprietary Diagnostic Status Byte Values - buildProprietaryLoadStatusMessage
 PROPRIETARY_DIAGNOSTIC_STATUS,0xF0,STATUS_NORMAL,Normal operation - load below threshold
 PROPRIETARY_DIAGNOSTIC_STATUS,0xF1,PROPRIETARY_DIAGNOSTIC_STATUS_F1,Status F1 - specific condition
@@ -933,3 +933,15 @@ ENGINE_RETARDER_COMMAND_SOURCE,1,ENGINE_RETARDER_COMMAND_SOURCE_J1939_OVERRIDE,A
 ENGINE_RETARDER_COMMAND_SOURCE,2,ENGINE_RETARDER_COMMAND_SOURCE_CRUISE,Cruise (e2m 2=CRUISE): ERC1 SPN 900 mode 2 (cruise control). (PR #53 round 97),2
 ENGINE_RETARDER_COMMAND_SOURCE,3,ENGINE_RETARDER_COMMAND_SOURCE_SWITCH,The operator switch (e2m 3=SWITCH): ERC1 SPN 900 mode 1 (operator selection). (PR #53 round 97),2
 ENGINE_RETARDER_COMMAND_SOURCE,4,ENGINE_RETARDER_COMMAND_SOURCE_J1939_LIMIT,A J1939 limit (e2m 4=JC_LIM): mapped like 1 (the J1939 control device decides the SPN 900 mode). (PR #53 round 97),2
+
+# ENGINE_PROTECTION_CHANNEL: a new enum of batch S1 (PR #53 round 98)
+ENGINE_PROTECTION_CHANNEL,0,ENGINE_PROTECTION_CHANNEL_COOLANT_LEVEL,"Channel 0 of the three engine protection tables (configuration 0x807032 = e2m 10B7 EPCV.., state 0x80d0dc = 10B0, history 0x8057c0 = 10B2): the coolant level low switch word 0x8091e6 with mask 1. EPSOAE 'C. LEV. = 0'. Enum size 2 (the type of EPSOAE 0x8058ce). (PR #53 round 98)",2
+ENGINE_PROTECTION_CHANNEL,1,ENGINE_PROTECTION_CHANNEL_COOLANT_TEMPERATURE,"Channel 1 (configuration 0x807056 = e2m 112B EPCQ.., state 114F, history 1140): input coolant_temperature_sensor_state.filtered_value. EPSOAE 'C. TEMP. = 1'. (PR #53 round 98)",2
+ENGINE_PROTECTION_CHANNEL,2,ENGINE_PROTECTION_CHANNEL_INTAKE_MANIFOLD_TEMPERATURE,"Channel 2 (configuration 0x80707a = e2m 112C EPIM.., state 1150, history 1141): input engine_protection_intake_manifold_temperature (0x80a26a). EPSOAE 'IMT = 2'. (PR #53 round 98)",2
+ENGINE_PROTECTION_CHANNEL,3,ENGINE_PROTECTION_CHANNEL_OIL_PRESSURE,"Channel 3 (configuration 0x80709e = e2m 112D EPO2.., state 1151, history 1142): input oil_pressure_sensor_state.filtered_value against the speed dependent limits 0x80dabe / 0x80dac0. EPSOAE 'OIL PRESS. = 3'. The one channel the code names by number: cm550_examineEngineProtectionBeforeCranking skips it (cmpi.w #3 at 0x18b0a) and cm550_updateEngineProtectionRestartLimitationCommands acts on it alone (cmpi.w #3 at 0x18dc2); the start-up derate writes its history record (0x80581a). (PR #53 round 98)",2
+ENGINE_PROTECTION_CHANNEL,4,ENGINE_PROTECTION_CHANNEL_WATER_IN_FUEL,"Channel 4 (configuration 0x8070c2 = e2m 112E EPWF.., state 1152, history 1143): input water_in_fuel_sensor_state.filtered_value. CM848's EPSOAE text has 'OIL TEMP. = 4'; this build's table has water in fuel here. (PR #53 round 98)",2
+ENGINE_PROTECTION_CHANNEL,5,ENGINE_PROTECTION_CHANNEL_BOOST_PRESSURE,"Channel 5 (configuration 0x8070e6 = e2m 112F EPBS.., state 1153, history 1144): input boost_pressure_sensor_state.filtered_value. (PR #53 round 98)",2
+ENGINE_PROTECTION_CHANNEL,6,ENGINE_PROTECTION_CHANNEL_ENGINE_SYNC_FUEL_PRESSURE,"Channel 6 (configuration 0x80710a = e2m 1130 EPFP.. 'ENGINE SYNC FUEL PRESSURE', state 1154, history 1145): input fuel_pressure_sensor_state.filtered_value. (PR #53 round 98)",2
+ENGINE_PROTECTION_CHANNEL,7,ENGINE_PROTECTION_CHANNEL_FUEL_TEMPERATURE,"Channel 7 (configuration 0x80712e = e2m 1131 EPFT.., state 1155, history 1146): input engine_protection_fuel_temperature (0x80a254). (PR #53 round 98)",2
+ENGINE_PROTECTION_CHANNEL,8,ENGINE_PROTECTION_CHANNEL_AMBIENT_AIR_PRESSURE,"Channel 8 (configuration 0x807152 = e2m 1132 EPAA.., state 1156, history 1147): input ambient_air_pressure_sensor_state.filtered_value. The last record: the loops end at 0x807176. (PR #53 round 98)",2
+ENGINE_PROTECTION_CHANNEL,255,ENGINE_PROTECTION_CHANNEL_NONE,EPSOAE 'NO = 255': no channel has shut the engine down. Compared at 0x18afe (cm550_examineEngineProtectionBeforeCranking) and 0x18cda (updateEngineProtectionRestartSeverity); stored at 0x190ac by cm550_updateEngineProtectionShutdown when the recorded channel's severity indexes are 0. (PR #53 round 98),2

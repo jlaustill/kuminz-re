@@ -137,7 +137,7 @@ The flash2 SCI table 253 (0x53a5ec) maps each DRB "FD" read to a RAM byte (FD n 
 
 | Address | Variable | Size |
 |---------|----------|------|
-| 0x0040B000 | `engine_operating_mode` | 2 bytes |
+| 0x0040B000 | `user_fueling_state` | 2 bytes |
 | 0x0040B008 | `fuel_control_mode_select` | 2 bytes |
 
 ### CBD (Cylinder Balance) Calibration

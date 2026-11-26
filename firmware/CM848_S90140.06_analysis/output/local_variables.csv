@@ -2,13 +2,13 @@ function_address,function_name,old_name,new_name,type,comment
 # Format: old_name is the decompiler's generated name (e.g., puVar1)
 # Run ./analyze.sh localvars to apply, then ./analyze.sh export to see changes
 #
-# cm848_sendJ1939Message @ 0x000539fc - Dispatches to single-frame or transport protocol by payload size
+# sendJ1939Message @ 0x000539fc - Dispatches to single-frame or transport protocol by payload size
 0x000128a0,cm848_calculateDelayedEgrFlowAndFraction,uVar1,delay_volume_term,uint,oxygen_flow_delay_volume_fraction x 120 >> 10 (0xffff above 1.0): with x 1000 / (volumetric efficiency x speed) it gives the oxygen delay in ms
 0x000128a0,cm848_calculateDelayedEgrFlowAndFraction,dVar2,filtered_oxygen_fraction,uint,cm848_exponentialMovingAverage output - stored as egr_oxygen_fraction
 0x000128a0,cm848_calculateDelayedEgrFlowAndFraction,wVar3,delayed_oxygen_fraction,word,The residual oxygen fraction from oxygen_flow_delay_milliseconds / 10 passes back (cm848_delayUnsignedSample)
 0x000128a0,cm848_calculateDelayedEgrFlowAndFraction,sVar4,delayed_egr_mass_flow,sword,The EGR mass flow before delay from egr_flow_delay_milliseconds / 10 passes back (cm848_delaySignedSample)
 0x000128a0,cm848_calculateDelayedEgrFlowAndFraction,uVar5,volumetric_efficiency_speed_product,uint,engine_volumetric_efficiency x engine speed >> 13 limited to 1600 .. 0xffff: the divisor of the oxygen delay. Committing this name splits the reused register: its later values (the two delays and the EGR fraction) render as a new uVar1 that no row can name (rows match the auto-names before the commit and uVar1 is the delay_volume_term row)
-# (cm848_sendJ1939Message's row uVar1 -> message_data_length went in PR #53 round 34: since mpc555_sendJ1939SingleFrame has a prototype the local takes its parameter's name data_length and the row matched nothing)
+# (sendJ1939Message's row uVar1 -> message_data_length went in PR #53 round 34: since mpc555_sendJ1939SingleFrame has a prototype the local takes its parameter's name data_length and the row matched nothing)
 # lookupJ1939ControlDevice @ 0x00053a4c - Returns 1-3 if SA matches a calibrated address, 4 if unknown
 0x00053a4c,lookupJ1939ControlDevice,JVar1,control_device,J1939_CONTROL_DEVICE,the control device the source address maps to (was address_index on wVar1)
 # copyCalibrationToRam @ 0x00000340 - Copies ROM calibration defaults to RAM
@@ -159,3 +159,18 @@ function_address,function_name,old_name,new_name,type,comment
 0x00007370,cm848_validateBootSecurityKey,pbVar4,timestamp_source_pointer,byte*,Source of the timestamp byte copy (PR #53 round 94)
 0x00007370,cm848_validateBootSecurityKey,pbVar5,timestamp_destination_pointer,byte*,Destination of the timestamp byte copy (PR #53 round 94)
 0x00538ef4,cm848_dispatchJ1939ReceivedMessages,local_20,pgn_key,ushort,The key the receive handler table is searched with: the record's PDU format and PDU specific bytes; for a destination-specific PGN (format below 0xf0) the format byte alone (shifted to the high byte) when the message is for this ECM or global (PR #53 round 98)
+0x00010274,mpc555_dispatchExternalInterrupt,uVar1,entry_time_base_low,uint,TBL at entry (mftb after the mftbu pair agreed) (PR #53 round 98)
+0x00010274,mpc555_dispatchExternalInterrupt,uVar2,exit_time_base_low,uint,TBL at exit: exit - entry is the handler's run time in time base counts (PR #53 round 98)
+0x00010274,mpc555_dispatchExternalInterrupt,iVar3,entry_time_base_high,int32_t,TBU at entry (PR #53 round 98)
+0x00010274,mpc555_dispatchExternalInterrupt,iVar4,entry_time_base_high_check,int32_t,The second TBU read of the entry loop: the read repeats until both TBU reads agree. The register also holds the high word at exit; naming it split that use off: it renders as an unnamed temporary (PR #53 round 98)
+0x00010274,mpc555_dispatchExternalInterrupt,iVar5,exit_time_base_high_check,int32_t,The second TBU read of the exit loop: the read repeats until both TBU reads agree (PR #53 round 98)
+0x00010274,mpc555_dispatchExternalInterrupt,uVar6,saved_interrupt_mask,ushort,SIMASK as it was at entry: put back after the handler (PR #53 round 98)
+0x00010274,mpc555_dispatchExternalInterrupt,uVar7,current_interrupt_mask,ushort,SIMASK read again: ANDed with the nesting mask of the interrupt code and written back (PR #53 round 98)
+0x00010274,mpc555_dispatchExternalInterrupt,bVar8,interrupt_code,byte,The SIVEC interrupt code byte (4 x the source number) (PR #53 round 98)
+0x00010274,mpc555_dispatchExternalInterrupt,bVar9,low_sum_carry,bool,Carry of the low word's add into the high word (PR #53 round 98)
+0x0001041c,mpc555_handleDecrementerException,uVar1,entry_time_base_low,uint,TBL at entry (mftb after the mftbu pair agreed) (PR #53 round 98)
+0x0001041c,mpc555_handleDecrementerException,uVar2,exit_time_base_low,uint,TBL at exit: exit - entry is the handler's run time in time base counts (PR #53 round 98)
+0x0001041c,mpc555_handleDecrementerException,iVar3,entry_time_base_high,int32_t,TBU at entry (PR #53 round 98)
+0x0001041c,mpc555_handleDecrementerException,iVar4,entry_time_base_high_check,int32_t,The second TBU read of the entry loop: the read repeats until both TBU reads agree. The register also holds the high word at exit; naming it split that use off: it renders as an unnamed temporary (PR #53 round 98)
+0x0001041c,mpc555_handleDecrementerException,iVar5,exit_time_base_high_check,int32_t,The second TBU read of the exit loop: the read repeats until both TBU reads agree (PR #53 round 98)
+0x0001041c,mpc555_handleDecrementerException,uVar6,saved_interrupt_mask,ushort,SIMASK as it was at entry: put back after the handler (PR #53 round 98)

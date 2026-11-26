@@ -908,7 +908,7 @@ extern byte TOUCAN_B_CANCTRL1;  // 0x00307407
 extern byte TOUCAN_B_ESR;  // 0x00307420
 extern byte TOUCAN_B_IMASK;  // 0x00307422
 extern byte TOUCAN_B_IFLAG;  // 0x00307424
-extern word toucan_can_ext_ctrl;  // 0x00307f80
+extern dword UIMB_UMCR;  // 0x00307f80
 extern undefined4 calibration_ram_start;  // 0x003f9800
 extern byte boot_security_key_scramble_mask[10];  // 0x003f981c
 extern byte boot_security_key_byte_order[10];  // 0x003f9826
@@ -966,7 +966,7 @@ extern word alpha_air_fuel_control_timer_active_flag;  // 0x003fa0dc
 extern word fuel_trim_pid_ema_snapshot;  // 0x003fa0e2
 extern dword all_speed_governor_pid_accumulator;  // 0x003fa0e4
 extern dword governor_pid_integral_state;  // 0x003fa0e8
-extern FUELING_STATE engine_operating_mode_previous_pass;  // 0x003fa0ec
+extern FUELING_STATE user_fueling_state_previous_pass;  // 0x003fa0ec
 extern word governor_fuel_demand_tracking;  // 0x003fa0ee
 extern word speed_request_blend_weight_by_speed_difference_cached_axis_offset;  // 0x003fa0f0
 extern word all_speed_governor_spare_word_1;  // 0x003fa0f2
@@ -977,7 +977,7 @@ extern word governor_fuel_demand_prev_ref;  // 0x003fa0fa
 extern word fuel_demand_decaying_peak;  // 0x003fa0fc
 extern word engine_rpm_prev_snapshot;  // 0x003fa0fe
 extern word fuel_demand_ramp_state;  // 0x003fa100
-extern dword speed_request_rate_limited_prev;  // 0x003fa102
+extern dword speed_request_rate_limited_previous;  // 0x003fa102
 extern dword speed_request_rate_limited;  // 0x003fa106
 extern word all_speed_governor_coolant_fuel_adjustment_cached_axis_offset;  // 0x003fa10a
 extern word all_speed_governor_friction_fuel_blend_128_cached_axis_offset;  // 0x003fa10c
@@ -987,6 +987,7 @@ extern word all_speed_governor_droop_blend_128_cached_axis_offset;  // 0x003fa11
 extern word unused_lookup_cached_axis_offset_1;  // 0x003fa114
 extern word unused_lookup_cached_axis_offset_2;  // 0x003fa116
 extern word unhandled_exception_count;  // 0x003fa118
+extern word unhandled_external_interrupt_count;  // 0x003fa11a
 extern dword decrementer_exception_time_ticks_high;  // 0x003fa11c
 extern dword decrementer_exception_time_ticks_low;  // 0x003fa120
 extern dword external_interrupt_time_ticks_high;  // 0x003fa124
@@ -1184,10 +1185,10 @@ extern word fault_slot_state_4;  // 0x003fa848
 extern word crank_initial_fuel_cached_axis_offsets[2];  // 0x003fa84a
 extern word crank_exit_fuel_cached_axis_offsets[2];  // 0x003fa84e
 extern word fault_slot_state_9;  // 0x003fa852
-extern ENGINE_STATE engine_state_prev_check;  // 0x003fa856
-extern ENGINE_STATE engine_state_prev_adjust;  // 0x003fa858
-extern ENGINE_STATE engine_state_prev_state_machine;  // 0x003fa85a
-extern ENGINE_STATE engine_state_prev_rpm;  // 0x003fa85c
+extern ENGINE_STATE crank_reentry_speed_previous_engine_state;  // 0x003fa856
+extern ENGINE_STATE crank_entry_previous_engine_state;  // 0x003fa858
+extern ENGINE_STATE crank_exit_fuel_ramp_previous_engine_state;  // 0x003fa85a
+extern ENGINE_STATE crank_timers_previous_engine_state;  // 0x003fa85c
 extern ENGINE_STATE engine_state_prev_fuel;  // 0x003fa85e
 extern word engine_overspeed_debounce_count;  // 0x003fa860
 extern byte engine_state_key_on_previous_flag;  // 0x003fa862
@@ -1865,7 +1866,8 @@ extern word engine_tsc1_ignored_request_entries;  // 0x003fb916
 extern byte retarder_tsc1_ignored_request_entries;  // 0x003fb966
 extern byte engine_tsc1_ignored_request_count;  // 0x003fb9a2
 extern byte retarder_tsc1_ignored_request_count;  // 0x003fb9a3
-extern word scheduler_task_flags_snapshot;  // 0x003fb9a6
+extern word unhandled_mios_interrupt_count;  // 0x003fb9a4
+extern word interrupt_mask_saved_at_run_loop_exit;  // 0x003fb9a6
 extern byte security_key_failure_count;  // 0x003fb9a8
 extern word tachometer_minimum_engine_speed;  // 0x003fb9aa
 extern word coolant_temperature_linearization_cached_axis_offset;  // 0x003fb9ac
@@ -4672,8 +4674,8 @@ extern word sci_set_engine_speed_request;  // 0x0040aed0
 extern word low_speed_governor_moving_speed_request;  // 0x0040aed2
 extern byte high_pressure_safety_valve_test_request_flag;  // 0x0040aed4
 extern SERVICE_TOOL_TEST_STATE high_pressure_safety_valve_test_state;  // 0x0040aed5
-extern word governor_integrator_correction_term;  // 0x0040aeda
-extern word governor_speed_error_reference;  // 0x0040aedc
+extern int16_t low_speed_governor_droop_selected_slope;  // 0x0040aeda
+extern int16_t low_speed_governor_droop_speed_adjustment;  // 0x0040aedc
 extern word low_speed_governor_filtered_speed_error;  // 0x0040aede
 extern word low_speed_governor_adjusted_reference_speed;  // 0x0040aee0
 extern word low_speed_governor_derivative_error_term;  // 0x0040aee2
@@ -4747,8 +4749,8 @@ extern word turbocharger_speed_estimate_sensor_snapshot;  // 0x0040afd4
 extern SENSOR_VALUE_SOURCE turbocharger_speed_source;  // 0x0040afd6
 extern word turbocharger_speed_state;  // 0x0040afd8
 extern word turbocharger_speed;  // 0x0040afe6
-extern word engine_operating_mode_fuel_demand;  // 0x0040affe
-extern FUELING_STATE engine_operating_mode;  // 0x0040b000
+extern word user_fueling;  // 0x0040affe
+extern FUELING_STATE user_fueling_state;  // 0x0040b000
 extern int16_t variable_geometry_turbocharger_drive_duty_limited;  // 0x0040b002
 extern word variable_geometry_turbocharger_position_command_final;  // 0x0040b004
 extern word variable_geometry_turbocharger_hold_open_flag;  // 0x0040b006
@@ -7188,6 +7190,8 @@ extern word trip_counters_message_11_timer_previous;  // 0x003fcfb6
 extern word end_of_line_test_output_previous_priority;  // 0x003fd1b6
 extern word end_of_line_test_output_priority;  // 0x003fd1b8
 extern word sensor_cal_ring_cycle_count;  // 0x003fd2e0
+extern j1939_periodic_transmit_entry_t j1939_periodic_queue0_entries[20];  // 0x003fd2e2
+extern j1939_periodic_transmit_entry_t j1939_periodic_queue1_entries[10];  // 0x003fd3aa
 extern byte qspi_active_device_slot;  // 0x003fb444
 extern qspi_job_t eeprom_job;  // 0x003fb8d6
 extern word egr_system_failure_validation_bit;  // 0x003fbd52
@@ -7782,6 +7786,7 @@ extern word accelerator_pedal_throttle_range;  // 0x0005c292
 extern word accelerator_pedal_autozero_time_limit;  // 0x0005c2a6
 extern word duty_cycle_monitor_engine_speed_axis[10];  // 0x0005c2c0
 extern word duty_cycle_monitor_load_axis[12];  // 0x0005c2d4
+extern word engine_protection_fueling_startup_derate_time;  // 0x0005c2ee
 extern word power_take_off_disengaged_delay_limit;  // 0x00064302
 extern word obd_battery_voltage_in_range_low_limit;  // 0x00064304
 extern word obd_battery_voltage_in_range_high_limit;  // 0x00064306
