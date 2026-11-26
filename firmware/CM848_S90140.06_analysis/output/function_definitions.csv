@@ -121,8 +121,8 @@ function_address,function_name,param_index,name,type,comment
 0x00023d3c,cm848_sendJ1939AcknowledgeMessage,0,request_message,j1939_received_message_t*,Original request to acknowledge
 0x00023d3c,cm848_sendJ1939AcknowledgeMessage,1,acknowledgement_type,J1939_ACK_TYPE,J1939-21 ACKM control byte value
 
-0x00023dbc,cm848_sendJ1939NegativeAcknowledgement,0,message,j1939_received_message_t*,Received message to NACK (accesses destination_address at +2 and data_pointer at +6)
-0x00023dbc,cm848_sendJ1939NegativeAcknowledgement,1,acknowledgement_type,J1939_ACK_TYPE,J1939-21 ACKM control byte value
+0x00023dbc,cm848_sendJ1939AcknowledgementOfRequestedPgn,0,message,j1939_received_message_t*,Received message to NACK (accesses destination_address at +2 and data_pointer at +6)
+0x00023dbc,cm848_sendJ1939AcknowledgementOfRequestedPgn,1,acknowledgement_type,J1939_ACK_TYPE,J1939-21 ACKM control byte value
 
 0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,0,destination_address,byte,the sender of the message just received
 0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,1,transported_pgn,ushort,the received message's PGN word (its high byte goes into the PGN bytes of the TP.CM 0x13 frame; the old rows data_ptr / data_length made the caller cast it to a pointer and pass a leftover third argument; PR #53 round 36)
@@ -133,8 +133,8 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 0x000227a0,cm848_j1939HandlePgn58112Dm7,0,request_message,j1939_received_message_t*,The received DM7 (PGN 58112) request
 
-0x000255c0,cm848_sendPgn65232NonContinuousMonitorTestResultMessage,0,test_identifier,byte,SPN 1224: 0 = the intake air heater monitor / 1 = the misfire monitor (was dest_address; PR #53 round 90)
-0x000255c0,cm848_sendPgn65232NonContinuousMonitorTestResultMessage,1,test_value,ushort,SPN 1226: the 16-bit monitor result (the body stores the halfword; was fault_count byte; PR #53 round 90)
+0x000255c0,sendPgn65232NonContinuousMonitorTestResultMessage,0,test_identifier,byte,SPN 1224: 0 = the intake air heater monitor / 1 = the misfire monitor (was dest_address; PR #53 round 90)
+0x000255c0,sendPgn65232NonContinuousMonitorTestResultMessage,1,test_value,ushort,SPN 1226: the 16-bit monitor result (the body stores the halfword; was fault_count byte; PR #53 round 90)
 
 0x0002641c,cm848_buildPgn65213FanDrive1Message,return,,void,explicit void(void) - r3 / r4 are written before they are read (lis r3 @ 0x26428 / lis r4 @ 0x26444) - the transmit queue calls it with no arguments - replaces the invented destination_address / status_type rows
 
@@ -441,28 +441,28 @@ function_address,function_name,param_index,name,type,comment
 0x00056608,cm848_secondOrderFilterUnsigned,return,,word,(output >> 16) & 0xffff of an output already shifted down 16 (r3): 0 in this build
 0x00056608,cm848_secondOrderFilterUnsigned,0,input,uint,The input (r3; the caller passes a 16-bit road speed)
 0x00056608,cm848_secondOrderFilterUnsigned,1,filter,second_order_filter_state_t *,The filter record (r4)
-0x00507d50,cm848_rampEngineProtectionSeverityIndex,return,,word,The new severity index: + the ramp rate (capped at 0x100) while the duration is past the derate start duration, else - the ramp rate (floored at 0)
-0x00507d50,cm848_rampEngineProtectionSeverityIndex,0,configuration,engine_protection_channel_configuration_t *,The channel's configuration (r3)
-0x00507d50,cm848_rampEngineProtectionSeverityIndex,1,state,engine_protection_channel_state_t *,The channel's state (r4)
-0x00507d50,cm848_rampEngineProtectionSeverityIndex,2,history,engine_protection_channel_history_t *,The channel's history (r5)
-0x00507d50,cm848_rampEngineProtectionSeverityIndex,3,is_engine_speed,int,0 = the fueling index, 1 = the engine speed index (r6)
+0x00507d50,rampEngineProtectionSeverityIndex,return,,word,The new severity index: + the ramp rate (capped at 0x100) while the duration is past the derate start duration, else - the ramp rate (floored at 0)
+0x00507d50,rampEngineProtectionSeverityIndex,0,configuration,engine_protection_channel_configuration_t *,The channel's configuration (r3)
+0x00507d50,rampEngineProtectionSeverityIndex,1,state,engine_protection_channel_state_t *,The channel's state (r4)
+0x00507d50,rampEngineProtectionSeverityIndex,2,history,engine_protection_channel_history_t *,The channel's history (r5)
+0x00507d50,rampEngineProtectionSeverityIndex,3,is_engine_speed,int,0 = the fueling index, 1 = the engine speed index (r6)
 0x00507ebc,cm848_isEngineProtectionInputPastThreshold,return,,sword,1 when the input is past the selected threshold (or the switch input is active)
 0x00507ebc,cm848_isEngineProtectionInputPastThreshold,0,configuration,engine_protection_channel_configuration_t *,The channel's configuration (r3)
 0x00507ebc,cm848_isEngineProtectionInputPastThreshold,1,state,engine_protection_channel_state_t *,The channel's state (r4)
 0x00507ebc,cm848_isEngineProtectionInputPastThreshold,2,is_engine_speed,int,0 = the fueling thresholds, 1 = the engine speed thresholds (r5)
 0x00507ebc,cm848_isEngineProtectionInputPastThreshold,3,threshold_select,int,0 / 1 the minimum / maximum threshold pointer, 2 the shutdown duration threshold, 3 the shutdown severity threshold (r6)
-0x0050832c,cm848_updateEngineProtectionRestartSeverityIndexes,return,,void,
-0x0050832c,cm848_updateEngineProtectionRestartSeverityIndexes,0,configuration,engine_protection_channel_configuration_t *,The channel's configuration (r3)
-0x0050832c,cm848_updateEngineProtectionRestartSeverityIndexes,1,state,engine_protection_channel_state_t *,The channel's state (r4)
-0x0050832c,cm848_updateEngineProtectionRestartSeverityIndexes,2,history,engine_protection_channel_history_t *,The channel's history (r5)
+0x0050832c,updateEngineProtectionRestartSeverityIndexes,return,,void,
+0x0050832c,updateEngineProtectionRestartSeverityIndexes,0,configuration,engine_protection_channel_configuration_t *,The channel's configuration (r3)
+0x0050832c,updateEngineProtectionRestartSeverityIndexes,1,state,engine_protection_channel_state_t *,The channel's state (r4)
+0x0050832c,updateEngineProtectionRestartSeverityIndexes,2,history,engine_protection_channel_history_t *,The channel's history (r5)
 0x00508408,cm848_checkEngineProtectionRestartLimitation,return,,void,
 0x00508408,cm848_checkEngineProtectionRestartLimitation,0,channel_index,int,The channel number (r3); only channel 4 takes the restart limitation path
 0x00508408,cm848_checkEngineProtectionRestartLimitation,1,state,engine_protection_channel_state_t *,The channel's state (r4)
 0x00508408,cm848_checkEngineProtectionRestartLimitation,2,configuration,engine_protection_channel_configuration_t *,The channel's configuration (r5)
-0x00508834,cm848_countEngineProtectionShutdownTime,return,,void,
-0x00508834,cm848_countEngineProtectionShutdownTime,0,configuration,engine_protection_channel_configuration_t *,The channel's configuration (r3)
-0x00508834,cm848_countEngineProtectionShutdownTime,1,state,engine_protection_channel_state_t *,The channel's state (r4)
-0x00508834,cm848_countEngineProtectionShutdownTime,2,is_engine_speed,int,0 = the fueling count, 1 = the engine speed count (r5)
+0x00508834,countEngineProtectionShutdownTime,return,,void,
+0x00508834,countEngineProtectionShutdownTime,0,configuration,engine_protection_channel_configuration_t *,The channel's configuration (r3)
+0x00508834,countEngineProtectionShutdownTime,1,state,engine_protection_channel_state_t *,The channel's state (r4)
+0x00508834,countEngineProtectionShutdownTime,2,is_engine_speed,int,0 = the fueling count, 1 = the engine speed count (r5)
 # CAN transmit mailbox writers (PR #53 round 28)
 0x00004f2c,cm848_writeBootKernelCanTransmitMailbox,0,can_module,undefined4,The TouCAN module registers (callers pass &toucan_a); buffer n - 1 starts at +0x70 + 16 x n (the boot kernel's copy; PR #53 round 28)
 0x00004f2c,cm848_writeBootKernelCanTransmitMailbox,1,mailbox_number,int,The message buffer number + 1 (callers pass their mailbox index & 0xff)
@@ -495,7 +495,7 @@ function_address,function_name,param_index,name,type,comment
 0x00003dac,mpc555_canTransmitQueuePush,1,data_length,dword,the data bytes (dword: the body compares the whole register; ushort printed CONCAT22 with a phantom register half)
 0x00003dac,mpc555_canTransmitQueuePush,2,data,byte*,the data
 0x00003dac,mpc555_canTransmitQueuePush,3,result,byte*,where the result goes: 0 queued / 1 no data / 4 queue full
-0x00022128,cm848_j1939DiagnosticServiceHandler,0,received_message,j1939_received_message_t*,the received PGN 61184 request (a single frame / or the transport receive session's message view from its request_to_send_can_id)
+0x00022128,cm848_dispatchJ1939DiagnosticServiceRequest,0,received_message,j1939_received_message_t*,the received PGN 61184 request (a single frame / or the transport receive session's message view from its request_to_send_can_id)
 0x0050b634,cm848_validateJ1939DiagnosticRequest,0,received_message,j1939_received_message_t*,the received request
 0x0050b634,cm848_validateJ1939DiagnosticRequest,return,,J1939_DIAGNOSTIC_RESULT,0xff when the request may go to its handler - else J1939_DIAGNOSTIC_RESULT_WRONG_LENGTH / _KEY_MISSING / _KEY_REFUSED (PR #53 round 64)
 0x000249c4,cm848_sendJ1939ResponseFrame,0,request,j1939_received_message_t*,the request being answered (its addresses swap into the reply)
@@ -512,35 +512,35 @@ function_address,function_name,param_index,name,type,comment
 0x0051291c,cm848_selectCruiseStateForSetSwitch,return,,CRUISE_CONTROL_STATE,The cruise state for this pass (r3) - no parameters
 0x00512878,cm848_selectCruiseStateForResumeSwitch,return,,CRUISE_CONTROL_STATE,The cruise state for this pass (r3) - no parameters
 0x00512f18,cm848_selectDeniedCruiseState,return,,CRUISE_CONTROL_STATE,The cruise state for this pass (r3) - no parameters
-0x00509ce4,cm848_handleJ1939DisableBroadcastService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x00509d0c,cm848_handleJ1939EnableBroadcastService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x000218dc,handleJ1939RestartService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050c318,cm848_handleJ1939GetAddressByParameterIdService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050c640,handleJ1939ReadByParameterIdLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050b228,handleJ1939WriteByParameterIdService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050b298,handleJ1939WriteByParameterIdLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050c6a8,handleJ1939ReadByParameterIdShortOffsetService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050b300,handleJ1939WriteByParameterIdShortOffsetService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050c734,handleJ1939ReadByParameterIdLongOffsetService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050b38c,handleJ1939WriteByParameterIdLongOffsetService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050c7b0,handleJ1939ReadMemoryService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050b408,handleJ1939WriteMemoryService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050c81c,handleJ1939ReadMemoryLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050b474,handleJ1939WriteMemoryLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x00509be8,cm848_updateJ1939BroadcastEnableMask,0,request,j1939_received_message_t*,The service 4 / 5 request: byte 1 the item and byte 2 the target (PR #53 round 63)
-0x00509be8,cm848_updateJ1939BroadcastEnableMask,1,enable,uint,1 sets the selected bits of datalink_broadcast_enable_flags - anything else clears them (PR #53 round 63)
-0x0050c5d0,cm848_readJ1939DiagnosticMemoryByParameterId,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050c5d0,cm848_readJ1939DiagnosticMemoryByParameterId,1,parameter_id,undefined4,The e2m block ID that cm848_lookupParameterIdAddress resolves - a full register (its hash divides all 32 bits) so a halfword type made the lookup call a CONCAT22 (PR #53 round 63)
-0x0050c5d0,cm848_readJ1939DiagnosticMemoryByParameterId,2,offset,uint,Added to the ID's address (PR #53 round 63)
-0x0050c5d0,cm848_readJ1939DiagnosticMemoryByParameterId,3,length,uint,Bytes to read (PR #53 round 63)
-0x0050b1b8,writeJ1939DiagnosticMemoryByParameterId,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
+0x00509ce4,handleJ1939DisableBroadcastService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x00509d0c,handleJ1939EnableBroadcastService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x000218dc,handleJ1939RestartService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050c318,handleJ1939GetAddressByParameterIdService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050c640,handleJ1939ReadByParameterIdLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050b228,handleJ1939WriteByParameterIdService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050b298,handleJ1939WriteByParameterIdLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050c6a8,handleJ1939ReadByParameterIdShortOffsetService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050b300,handleJ1939WriteByParameterIdShortOffsetService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050c734,handleJ1939ReadByParameterIdLongOffsetService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050b38c,handleJ1939WriteByParameterIdLongOffsetService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050c7b0,handleJ1939ReadMemoryService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050b408,handleJ1939WriteMemoryService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050c81c,handleJ1939ReadMemoryLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050b474,handleJ1939WriteMemoryLongLengthService,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x00509be8,updateJ1939BroadcastEnableMask,0,request,j1939_received_message_t*,The service 4 / 5 request: byte 1 the item and byte 2 the target (PR #53 round 63)
+0x00509be8,updateJ1939BroadcastEnableMask,1,enable,uint,1 sets the selected bits of datalink_broadcast_enable_flags - anything else clears them (PR #53 round 63)
+0x0050c5d0,readJ1939DiagnosticMemoryByParameterId,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050c5d0,readJ1939DiagnosticMemoryByParameterId,1,parameter_id,undefined4,The e2m block ID that cm848_lookupParameterIdAddress resolves - a full register (its hash divides all 32 bits) so a halfword type made the lookup call a CONCAT22 (PR #53 round 63)
+0x0050c5d0,readJ1939DiagnosticMemoryByParameterId,2,offset,uint,Added to the ID's address (PR #53 round 63)
+0x0050c5d0,readJ1939DiagnosticMemoryByParameterId,3,length,uint,Bytes to read (PR #53 round 63)
+0x0050b1b8,writeJ1939DiagnosticMemoryByParameterId,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
 0x0050b1b8,writeJ1939DiagnosticMemoryByParameterId,1,parameter_id,undefined4,The e2m block ID that cm848_lookupParameterIdAddress resolves - a full register (its hash divides all 32 bits) so a halfword type made the lookup call a CONCAT22 (PR #53 round 63)
 0x0050b1b8,writeJ1939DiagnosticMemoryByParameterId,2,offset,uint,Added to the ID's address (PR #53 round 63)
 0x0050b1b8,writeJ1939DiagnosticMemoryByParameterId,3,length,uint,Bytes to write (PR #53 round 63)
-0x0050c42c,cm848_readJ1939DiagnosticMemoryAndRespond,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
-0x0050c42c,cm848_readJ1939DiagnosticMemoryAndRespond,1,address,uint,The first byte to read (PR #53 round 63)
-0x0050c42c,cm848_readJ1939DiagnosticMemoryAndRespond,2,length,uint,Bytes to read - at most 1764 (PR #53 round 63)
-0x0050af58,writeJ1939DiagnosticMemory,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_j1939DiagnosticServiceHandler (PR #53 round 63)
+0x0050c42c,readJ1939DiagnosticMemoryAndRespond,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
+0x0050c42c,readJ1939DiagnosticMemoryAndRespond,1,address,uint,The first byte to read (PR #53 round 63)
+0x0050c42c,readJ1939DiagnosticMemoryAndRespond,2,length,uint,Bytes to read - at most 1764 (PR #53 round 63)
+0x0050af58,writeJ1939DiagnosticMemory,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchJ1939DiagnosticServiceRequest (PR #53 round 63)
 0x0050af58,writeJ1939DiagnosticMemory,1,address,byte*,The first byte to write (PR #53 round 63)
 0x0050af58,writeJ1939DiagnosticMemory,2,length,uint,Bytes to write - at most 1764 (PR #53 round 63)
 0x00001b48,cm848_readBootDiagnosticMemoryAndRespond,0,request,j1939_received_message_t*,The PGN 61184 request from cm848_dispatchDiagnosticService (PR #53 round 63)

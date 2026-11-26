@@ -1080,7 +1080,7 @@ extern word accelerator_pedal_autozero_update_count;  // 0x003fa6fe
 extern word injection_timing_combustion_limits_input_copy;  // 0x003fa700
 extern INJECTION_TIMING_INTERMEDIATE_SOURCE injection_timing_combustion_limits_input_source;  // 0x003fa702
 extern ema_filter_state_t compressor_outlet_temperature_filter_state;  // 0x003fa70a
-extern word throttle_demand_offset_cal_working;  // 0x003fa712
+extern word friction_fuel_coolant_temperature_correction;  // 0x003fa712
 extern word egr_delta_pressure_autozero_wait_counter;  // 0x003fa714
 extern ema_filter_state_t egr_delta_pressure_autozero_offset_filter_state;  // 0x003fa716
 extern word egr_delta_pressure_combined_status;  // 0x003fa71e
@@ -3645,7 +3645,7 @@ extern int16_t cylinder_balance_fueling_trim_maximum;  // 0x00408eee
 extern int16_t cylinder_balance_fueling_trim_minimum;  // 0x00408ef0
 extern word cylinder_balance_fueling_trim_gain;  // 0x00408ef2
 extern word cylinder_balance_motoring_fuel_threshold;  // 0x00408ef4
-extern byte cbd_enable_flag;  // 0x00408ef6
+extern byte cylinder_balance_enable_flag;  // 0x00408ef6
 extern byte cylinder_balance_fueling_trim_limit_mode;  // 0x00408ef7
 extern int16_t cylinder_balance_reference_1_cylinder_1_real;  // 0x00408ef8
 extern int16_t cylinder_balance_reference_1_cylinder_1_imaginary;  // 0x00408efa
@@ -7876,6 +7876,7 @@ extern word injector_driver_booster_capacitor_low_fault_debounce_counts[2];  // 
 extern word injector_driver_booster_capacitor_spare_counts[2];  // 0x003fb232
 extern word cold_delta_fuel_cached_axis_offsets[2];  // 0x003fb35c
 extern word fuel_pressure_governor_fault_fuel_limit_cached_axis_offset;  // 0x003fb3c2
+extern int16_t cylinder_balance_power_up_fueling_trims[8];  // 0x003fb580
 extern word injection_quantity_auxiliary_base_map_cached_axis_offsets[2];  // 0x003fb5ee
 extern word injection_quantity_auxiliary_ambient_factor_cached_axis_offsets[2];  // 0x003fb5f2
 extern word injection_quantity_auxiliary_ambient_limit_cached_axis_offsets[2];  // 0x003fb5f6

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Wed Nov 25 16:09:56 MST 2026
+// Generated: Wed Nov 25 17:05:09 MST 2026
 
 
 //
@@ -2171,16 +2171,30 @@ void cm550_phase2_slot_5_handler(void)
 
 
 //
-// Function: cm550_rpmHistogramAndProtectionStatisticsAccumulator @ 0x0000c66a
+// Function: cm550_calculateAltitudeDerateFuelLimit @ 0x0000c66a
 //
 
-word cm550_rpmHistogramAndProtectionStatisticsAccumulator(void)
+/* Sets altitude_derate_fuel_limit (e2m ATFLLM), which applyAltitudeDerateFuelLimit folds into the
+   fuel limit chains. It is fuel_demand_maximum (no derate) unless
+   algorithm_enable_flags_1_cal.altitude_derate_enable is set and engine_state is RUNNING. With
+   either ambient air pressure sensor fault active (faults 18 / 19, the sensor's high / low error:
+   fault word 1 bits 2 / 3 of 0x806002 with their processing enables), it is
+   default_fueling_to_be_used_by_altitude_derate_if_ambient_air_p_0_100 above
+   engine_speed_above_which_derating_will_occur_when_ambient_air_0_8000, else no derate. Otherwise
+   it is the 2D lookup altitude_derate_fuel_limit_lookup of filtered_engine_speed and
+   ambient_air_pressure_sensor_state.filtered_value. It is the only call of
+   cm550_runEvery10FramesTaskSetPhase7. CM848's counterpart blends cool and hot ambient air grids by
+   temperature and handles air handling faults (was
+   cm550_rpmHistogramAndProtectionStatisticsAccumulator). (was
+   cm550_rpmHistogramAndProtectionStatisticsAccumulator; PR #53 round 97) */
+
+void cm550_calculateAltitudeDerateFuelLimit(void)
 
 {
   if ((algorithm_enable_flags_1_cal.altitude_derate_enable == 0) ||
      (engine_state != ENGINE_STATE_RUNNING)) {
     altitude_derate_fuel_limit = fuel_demand_maximum;
-    return (ushort)algorithm_enable_flags_1_cal & 0x20;
+    return;
   }
   if ((((status_32_word_bit_mapped_system_error_status_word_1_0_1 & 4) == 0) ||
       ((fault_processing_enable_flags[1] & 4) == 0)) &&
@@ -2189,16 +2203,16 @@ word cm550_rpmHistogramAndProtectionStatisticsAccumulator(void)
     altitude_derate_fuel_limit_lookup.x_input = filtered_engine_speed;
     altitude_derate_fuel_limit_lookup.y_input = ambient_air_pressure_sensor_state.filtered_value;
     altitude_derate_fuel_limit = cm550_tableLookup2D(&altitude_derate_fuel_limit_lookup);
-    return altitude_derate_fuel_limit;
+    return;
   }
   if (engine_speed_above_which_derating_will_occur_when_ambient_air_0_8000 < filtered_engine_speed)
   {
     altitude_derate_fuel_limit =
          default_fueling_to_be_used_by_altitude_derate_if_ambient_air_p_0_100;
-    return filtered_engine_speed;
+    return;
   }
   altitude_derate_fuel_limit = fuel_demand_maximum;
-  return filtered_engine_speed;
+  return;
 }
 
 
@@ -2360,9 +2374,10 @@ void cm550_emptyPrimarySpeedInterruptStep(void)
 //
 
 /* Empty function (a single rts). The three TPU channel 1 (backup engine speed input) interrupt
-   handlers 0x1af32 (mc68k_dutyCycleMonitorIsrHandler), 0x1b30a and 0x1b4b2 call it at the same
-   step, after mc68k_resetSpeedMeasurementMode0 and before they clear TPU_CISR bit 1: a
-   per-interrupt step compiled empty in this build. (was cm550_FUN_0000c87e; PR #53 round 96) */
+   handlers 0x1af32 (mc68k_tpuChannel1CylinderIdentificationPulseInterruptHandler), 0x1b30a and
+   0x1b4b2 call it at the same step, after mc68k_resetSpeedMeasurementMode0 and before they clear
+   TPU_CISR bit 1: a per-interrupt step compiled empty in this build. (was cm550_FUN_0000c87e; PR
+   #53 round 96) */
 
 void cm550_emptyBackupSpeedInterruptStep(void)
 
@@ -3037,18 +3052,17 @@ uint cm550_selectVariableSpeedGovernorMode(word previous_user_fueling_state)
     if ((algorithm_enable_flags_27_cal.switched_throttle_control_governor_select == 0) ||
        (uVar1 = (byte)-((state_of_the_throttle_interlock_switch_on_off & 2) != 0) & 1, uVar1 != 1))
     {
-      stcg_enable_stcg_switch_xor_user_selected_throttle_control_0_1 =
-           variable_speed_governor_default_cal;
+      variable_speed_governor_selected_flag = variable_speed_governor_default_cal;
     }
     else if (variable_speed_governor_default_cal == 1) {
-      stcg_enable_stcg_switch_xor_user_selected_throttle_control_0_1 = 0;
+      variable_speed_governor_selected_flag = 0;
     }
     else if (variable_speed_governor_default_cal == 0) {
-      stcg_enable_stcg_switch_xor_user_selected_throttle_control_0_1 = 1;
+      variable_speed_governor_selected_flag = 1;
     }
   }
   if ((user_fueling_state == FUELING_STATE_NOT_SELECTED) &&
-     (stcg_enable_stcg_switch_xor_user_selected_throttle_control_0_1 == 1)) {
+     (variable_speed_governor_selected_flag == 1)) {
     user_fueling_state = FUELING_STATE_VARIABLE_SPEED_GOVERNOR;
     uVar1 = cm550_diagnosticMode10FuelController();
     if ((previous_user_fueling_state != 7) && (previous_user_fueling_state != 3)) {
@@ -3096,20 +3110,28 @@ void cm550_fuelBlendTablePointerSetup(void)
   all_speed_governor_droop_lookup.x_axis_offset = 2;
   all_speed_governor_droop_lookup.x_axis_pointer = (word *)&all_speed_governor_droop_axis;
   all_speed_governor_droop_lookup.y_values_pointer = (word *)&all_speed_governor_droop_values;
-  stcg_enable_stcg_switch_xor_user_selected_throttle_control_0_1 =
-       variable_speed_governor_default_cal;
+  variable_speed_governor_selected_flag = variable_speed_governor_default_cal;
   return;
 }
 
 
 
 //
-// Function: cm550_initBoostProtectionSystem @ 0x0000d5e6
+// Function: cm550_initializeVehicleSpeedAndCruiseState @ 0x0000d5e6
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up initializer (one call from mc68k_applicationMain at 0x28786) of the e2m block 117D
+   vehicle speed and cruise words. It clears cruise_control_active_flag (CRSS), the cruise control
+   reference speed 0x80a9c6 (CRRF), the filtered road speed (VSFTAVVS), the filtered transmission
+   gear ratio (GRFTGRRA) and the out of gear indicator 0x80a9d4 (GROGSS), and sets
+   engine_speed_limit_source_2 (ZVLMES, the zero vehicle speed engine speed limit going to the high
+   speed governor reference) to maximum_rated_engine_speed. The dumped ROM has no other absolute
+   writer of these words. CM848's counterpart cm848_initializeVehicleSpeedAndCruiseState does the
+   same with engine_speed_limit_default_cal and also clears j1939_anti_theft_status_transmit_state
+   (was cm550_initBoostProtectionSystem). (was cm550_initBoostProtectionSystem; PR #53 round 97) */
 
-void cm550_initBoostProtectionSystem(void)
+void cm550_initializeVehicleSpeedAndCruiseState(void)
 
 {
   cruise_control_active_flag = 0;
@@ -4083,7 +4105,7 @@ void cm550_activeParameterReadFunction(void)
       return;
     }
   }
-  insite_parameter_data_size = cm550_parameterLookupForInsite();
+  insite_parameter_data_size = cm550_getJ1587ReplyParameterLength();
   if (insite_parameter_data_size == 0) {
     return;
   }
@@ -4915,11 +4937,11 @@ void cm550_param_lookup_3(void)
 //
 
 /* Empty function (a single rts). Its only call is in the PGN 61443 (EEC2) transmit record
-   initializer (CM550 0x33064, CM848 cm848_initializePgn61443Eec2Handler), after the record's CAN
-   ID, length 5 and data and status pointers and before the PGN 61443 request handler registration:
-   an initialization step compiled empty. In both ROMs it sits right before the nominal friction
-   percent torque calculation. Twin of CM848 0x20aec (one shared name). (was cm550_FUN_0000f99a; PR
-   #53 round 96) */
+   initializer (CM550 0x33064, CM848 initializePgn61443ElectronicEngineController2Handler), after
+   the record's CAN ID, length 5 and data and status pointers and before the PGN 61443 request
+   handler registration: an initialization step compiled empty. In both ROMs it sits right before
+   the nominal friction percent torque calculation. Twin of CM848 0x20aec (one shared name). (was
+   cm550_FUN_0000f99a; PR #53 round 96) */
 
 void emptyPgn61443ElectronicEngineController2InitializationStep(void)
 
@@ -4968,10 +4990,21 @@ void cm550_calculateNominalFrictionPercentTorque(void)
 
 
 //
-// Function: vp44State2TransitionHandler @ 0x0000fa06
+// Function: setJ1939TorqueCurvePoint1AtDeratedIdleFueling @ 0x0000fa06
 //
 
-uint vp44State2TransitionHandler(void)
+/* Sets point 1 of the J1939 engine configuration torque curve (PGN 65251, e2m 1102) for the derate
+   cases. j1939_torque_curve_speed_at_point_1 = the low speed governor reference
+   low_speed_governor_reference_speed. When
+   algorithm_enable_flags_12_cal.low_speed_governor_droop_enable is set and
+   low_speed_governor_droop_selected_slope is nonzero, slope x the derated idle fueling / 167 is
+   subtracted from it (a negative result gives 0). j1939_torque_curve_fueling_at_point_1 = the
+   derated idle fueling (e2m 1104 +A JCDQFLIS). Called by
+   setJ1939TorqueCurvePoints1And3AtDeratedFueling and by cases 2 and 3 of
+   cm550_updateJ1939EngineConfigurationTorqueCurve. Twin of CM848 0x20b84 (one shared name). (was
+   vp44State2TransitionHandler; PR #53 round 97) */
+
+uint setJ1939TorqueCurvePoint1AtDeratedIdleFueling(void)
 
 {
   uint uVar1;
@@ -5010,7 +5043,7 @@ uint vp44State2TransitionHandler(void)
 void setJ1939TorqueCurvePoints1And3AtDeratedFueling(void)
 
 {
-  vp44State2TransitionHandler();
+  setJ1939TorqueCurvePoint1AtDeratedIdleFueling();
   if (j1939_torque_curve_speed_at_point_3 < j1939_torque_curve_speed_at_point_1) {
     j1939_torque_curve_speed_at_point_3 = j1939_torque_curve_speed_at_point_1;
     j1939_torque_curve_fueling_at_point_3 = j1939_torque_curve_fueling_at_point_1;
@@ -5061,12 +5094,25 @@ void cm550_calculateGovernorDroopSpeed(word breakpoint_fueling,byte torque_index
 
 
 //
-// Function: vp44_fuelLimitExceedanceStatisticsAccumulator @ 0x0000fb26
+// Function: cm550_updateJ1939EngineConfigurationTorqueCurve @ 0x0000fb26
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Builds the J1939 engine configuration torque curve of PGN 65251 (e2m 1102) for
+   buildPgn65251EngineConfiguration1Payload. It forms a case index: +4 when the LSG base reference
+   speed LSBPRFES is outside low_speed_governor_reference_speed plus or minus LSRFESDC; +2 when the
+   torque derate fuel source code is 15, or 16 with status word 1 bit 9 or 10 set and enabled; +1
+   when the HSG reference speed state HSRFST is 1, 2, 4 or 5, which also picks HSRFBEDP instead of
+   HSBKRFAE. Its eight cases load the point speeds and fuelings from the derated Jcomm values (e2m
+   1104) through setJ1939TorqueCurvePoint1AtDeratedIdleFueling,
+   setJ1939TorqueCurvePoints1And3AtDeratedFueling and cm550_calculateGovernorDroopSpeed, or clamp
+   later points to earlier ones. Last it computes the five indicated percent torques (point fueling
+   - CLNTFL) x 25600 / (JCRFEGFL - CLNTFL) limited to 0..32000 into 0x80da1e-0x80da26, copies the
+   point speeds to 0x80da28-0x80da30 and resets the five point fuelings to fuel_demand_maximum.
+   Counterpart of CM848 cm848_updateJ1939EngineConfigurationTorqueCurve (0x20d10). (was
+   vp44_fuelLimitExceedanceStatisticsAccumulator; PR #53 round 97) */
 
-void vp44_fuelLimitExceedanceStatisticsAccumulator(void)
+void cm550_updateJ1939EngineConfigurationTorqueCurve(void)
 
 {
   word wVar1;
@@ -5120,7 +5166,7 @@ void vp44_fuelLimitExceedanceStatisticsAccumulator(void)
     }
     break;
   case '\x02':
-    vp44State2TransitionHandler();
+    setJ1939TorqueCurvePoint1AtDeratedIdleFueling();
     if (unaff_D3b == '\0') {
       j1939_torque_curve_speed_at_point_2 =
            jcomm_rpm_low_hp_pt_2_in_engine_config_when_torque_dera_0_8031_875;
@@ -5144,7 +5190,7 @@ void vp44_fuelLimitExceedanceStatisticsAccumulator(void)
          jcomm_fueling_value_at_pt_5_in_engine_config_message_when_to_0_100;
     break;
   case '\x03':
-    vp44State2TransitionHandler();
+    setJ1939TorqueCurvePoint1AtDeratedIdleFueling();
     if (j1939_torque_curve_derate_engine_speed < _DAT_00808174) {
       cm550_calculateGovernorDroopSpeed
                 (jcomm_fueling_value_at_pt_4_in_engine_config_message_when_to_0_100,1);
@@ -5302,33 +5348,27 @@ void cm550_ioControlBasedFuelCalculator(void)
   
   engine_brake_active_cylinder_count = 0;
   if ((commanded_driver_true_on_0_1 & 1) != 0) {
-    engine_brake_active_cylinder_count =
-         indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6;
+    engine_brake_active_cylinder_count = engine_retarder_driver_1_cylinder_count;
   }
   if ((bit_4_of_master_status_byte_a_0_1 & 0x40) != 0) {
     engine_brake_active_cylinder_count =
-         indicates_of_cyl_brakes_driven_by_eb_driver_2_for_j1939_ret_ma_0_6 +
-         engine_brake_active_cylinder_count;
+         engine_retarder_driver_2_cylinder_count + engine_brake_active_cylinder_count;
   }
   if ((bit_4_of_master_status_byte_a_0_1 & 0x40) != 0) {
     engine_brake_active_cylinder_count =
-         indicates_of_cyl_brakes_driven_by_eb_driver_3_for_j1939_ret_ma_0_6 +
-         engine_brake_active_cylinder_count;
+         engine_retarder_driver_3_cylinder_count + engine_brake_active_cylinder_count;
   }
   if ((bit_4_of_master_status_byte_a_0_1 & 0x40) != 0) {
     engine_brake_active_cylinder_count =
-         indicates_of_cyl_brakes_driven_by_eb_driver_4_for_j1939_ret_ma_0_6 +
-         engine_brake_active_cylinder_count;
+         engine_retarder_driver_4_cylinder_count + engine_brake_active_cylinder_count;
   }
   if ((bit_4_of_master_status_byte_a_0_1 & 0x40) != 0) {
     engine_brake_active_cylinder_count =
-         indicates_of_cyl_brakes_driven_by_eb_driver_5_for_j1939_ret_ma_0_6 +
-         engine_brake_active_cylinder_count;
+         engine_retarder_driver_5_cylinder_count + engine_brake_active_cylinder_count;
   }
   if ((bit_4_of_master_status_byte_a_0_1 & 0x40) != 0) {
     engine_brake_active_cylinder_count =
-         indicates_of_cyl_brakes_driven_by_eb_driver_6_for_j1939_ret_ma_0_6 +
-         engine_brake_active_cylinder_count;
+         engine_retarder_driver_6_cylinder_count + engine_brake_active_cylinder_count;
   }
   if (engine_brake_active_cylinder_count == 0) {
     jcomm_ind_retarder_torque_amount_of_torque_provided_by_retarde_0_125 = 0;
@@ -5615,8 +5655,8 @@ void cm550_initializeCanBusTiming(void)
    it appends the record to the transmit ring 0x80d896-0x80d9a0 (write pointer 0x80d9ae, read
    pointer 0x80d9b2). A ring that becomes full sets 0x80d9be and, while 0x80da0c is 1, bit 9 of the
    words 0x80600a / 0x80604a. status = 0 then. Callers: cm550_sendCanMessage,
-   cm550_canDiagnosticResponseSender and sendJ1939MultiFrame. The prototype lets the decompiler
-   export the body (PR #53 round 96) */
+   handleJ1939GetAddressByParameterIdService and sendJ1939MultiFrame. The prototype lets the
+   decompiler export the body (PR #53 round 96) */
 
 void cm550_sendCanSingleFrame(dword can_identifier,word data_length,byte *data,byte *status)
 
@@ -6711,10 +6751,10 @@ void copyCalibrationFromRomToRam(void)
    1, 2 -> 3, 3 -> 3. The results are the same: 0 accepted, 7 not safe. The acceptance gate differs.
    (was cm550_FUN_0001183e; PR #53 round 88) */
 
-undefined1 cm550_requestClearInactiveFaults(void)
+byte cm550_requestClearInactiveFaults(void)
 
 {
-  undefined1 uVar1;
+  byte bVar1;
   
   if (not_safe_to_program_flag == 2) {
     switch(diagnostic_clear_request_state) {
@@ -6730,12 +6770,12 @@ undefined1 cm550_requestClearInactiveFaults(void)
     case 3:
       diagnostic_clear_request_state = 3;
     }
-    uVar1 = 0;
+    bVar1 = 0;
   }
   else {
-    uVar1 = 7;
+    bVar1 = 7;
   }
-  return uVar1;
+  return bVar1;
 }
 
 
@@ -6819,7 +6859,7 @@ byte forceExitDevelopmentMode(void)
    cm550_activateHighRpmShutdownFlag; PR #53 round 88; the twin of CM848 0x216e8: one shared name)
     */
 
-undefined1 commandEngineShutdown(void)
+byte commandEngineShutdown(void)
 
 {
   engine_shutdown_command_flag = 1;
@@ -6837,11 +6877,13 @@ undefined1 commandEngineShutdown(void)
    is. It writes no EEPROM itself. (was cm550_eepromWriteWrapper; PR #53 round 87; the twin of CM848
    0x218dc: one shared name) */
 
-void handleJ1939RestartService(dword param_1)
+byte handleJ1939RestartService(can_standard_receive_descriptor_t *request)
 
 {
-  restartThroughBootRom(param_1,0);
-  return;
+  byte bVar1;
+  
+  bVar1 = restartThroughBootRom(request,0);
+  return bVar1;
 }
 
 
@@ -6859,7 +6901,7 @@ void handleJ1939RestartService(dword param_1)
 void cm550_restartThroughBootRomAfterJ1708Request(void)
 
 {
-  restartThroughBootRom(0,1);
+  restartThroughBootRom((can_standard_receive_descriptor_t *)0x0,1);
   return;
 }
 
@@ -6881,7 +6923,7 @@ void cm550_restartThroughBootRomAfterJ1708Request(void)
    (mc68k_ioDriverStrobeHandler) and jumps through the ROM vector at 0x8 (was cm550_FUN_0001192a; PR
    #53 round 87; the twin of CM848 0x216fc: one shared name) */
 
-byte restartThroughBootRom(dword request,word acknowledge_datalink)
+byte restartThroughBootRom(can_standard_receive_descriptor_t *request,word acknowledge_datalink)
 
 {
   byte bVar1;
@@ -6915,7 +6957,7 @@ byte restartThroughBootRom(dword request,word acknowledge_datalink)
       }
     }
     if ((char)acknowledge_datalink == '\0') {
-      cm550_diagnosticMultiPacketResponseBuilder((can_standard_receive_descriptor_t *)request,0);
+      cm550_diagnosticMultiPacketResponseBuilder(request,0);
     }
     else if ((char)acknowledge_datalink == '\x01') {
       cm550_diagnosticMessageQueueWrite(0);
@@ -6947,7 +6989,7 @@ byte restartThroughBootRom(dword request,word acknowledge_datalink)
    return 0, as service 24, seventh in the same registrar. CM550 also reaches it as J1708 command
    82. (was cm550_FUN_00011a68; PR #53 round 88; the twin of CM848 0x21904: one shared name) */
 
-undefined1 inhibitKeyOffShutdown(void)
+byte inhibitKeyOffShutdown(void)
 
 {
   key_off_shutdown_inhibit_flag = 1;
@@ -7696,35 +7738,33 @@ void cm550_calculateCylinderBalanceTrims(void)
   word wVar6;
   ushort uVar7;
   undefined *puVar8;
-  dword dVar9;
-  short sVar10;
-  int *piVar11;
-  dword *pdVar12;
-  byte *pbVar13;
-  short *psVar14;
-  word *pwVar15;
-  sword *psVar16;
-  dword *pdVar17;
-  word *pwVar18;
-  short *psVar19;
-  sdword *psVar20;
+  short sVar9;
+  dword *pdVar10;
+  byte *pbVar11;
+  short *psVar12;
+  word *pwVar13;
+  sword *psVar14;
+  dword *pdVar15;
+  word *pwVar16;
+  short *psVar17;
+  sdword *psVar18;
+  word *pwVar19;
+  short *psVar20;
   word *pwVar21;
-  short *psVar22;
-  word *pwVar23;
   
   if (cylinder_balance_enable_flag == 1) {
     if (cylinder_balance_speed_buffer_ready_flag == 1) {
       cylinder_balance_speed_buffer_processed_flag = 1;
       uVar7 = 0;
-      pdVar12 = &cylinder_balance_speed_buffer_2;
-      pdVar17 = &cylinder_balance_speed_buffer_1;
-      psVar20 = &cylinder_balance_acceleration_buffer_1;
+      pdVar10 = &cylinder_balance_speed_buffer_2;
+      pdVar15 = &cylinder_balance_speed_buffer_1;
+      psVar18 = &cylinder_balance_acceleration_buffer_1;
       do {
-        *psVar20 = *pdVar17 - *pdVar12;
+        *psVar18 = *pdVar15 - *pdVar10;
         uVar7 = uVar7 + 1;
-        pdVar12 = pdVar12 + 1;
-        pdVar17 = pdVar17 + 1;
-        psVar20 = psVar20 + 1;
+        pdVar10 = pdVar10 + 1;
+        pdVar15 = pdVar15 + 1;
+        psVar18 = psVar18 + 1;
       } while (uVar7 < 6);
       iVar2 = (cylinder_balance_acceleration_buffer_5 + cylinder_balance_acceleration_buffer_1) -
               cylinder_balance_acceleration_buffer_2;
@@ -7810,10 +7850,10 @@ void cm550_calculateCylinderBalanceTrims(void)
     cylinder_balance_adjusted_imaginary_component_2 = (sword)puVar8;
     cylinder_balance_engine_speed_bin_index = 0;
     uVar7 = 1;
-    pwVar15 = cylinder_balance_engine_speed_axis;
+    pwVar13 = cylinder_balance_engine_speed_axis;
     do {
-      pwVar15 = pwVar15 + 1;
-      if (*pwVar15 <= engine_speed) {
+      pwVar13 = pwVar13 + 1;
+      if (*pwVar13 <= engine_speed) {
         cylinder_balance_engine_speed_bin_index = uVar7 - 1;
       }
       uVar7 = uVar7 + 1;
@@ -7823,19 +7863,19 @@ void cm550_calculateCylinderBalanceTrims(void)
        ((cylinder_balance_lower_speed_limit < engine_speed &&
         ((engine_speed < cylinder_balance_upper_speed_limit &&
          (engine_state == ENGINE_STATE_RUNNING)))))) {
-      sVar10 = cylinder_balance_adjusted_real_component_2 -
-               (short)((int)((uint)cylinder_balance_error_filter_coefficient *
-                            (int)cylinder_balance_adjusted_real_component_2) / 10000);
+      sVar9 = cylinder_balance_adjusted_real_component_2 -
+              (short)((int)((uint)cylinder_balance_error_filter_coefficient *
+                           (int)cylinder_balance_adjusted_real_component_2) / 10000);
       sVar1 = cylinder_balance_adjusted_imaginary_component_2 -
               (short)((int)((uint)cylinder_balance_error_filter_coefficient *
                            (int)cylinder_balance_adjusted_imaginary_component_2) / 10000);
       cylinder_balance_real_2_dynamics_compensation_values[cylinder_balance_engine_speed_bin_index]
-           = sVar10 + cylinder_balance_real_2_dynamics_compensation_previous_values
-                      [cylinder_balance_engine_speed_bin_index];
+           = sVar9 + cylinder_balance_real_2_dynamics_compensation_previous_values
+                     [cylinder_balance_engine_speed_bin_index];
       cylinder_balance_real_2_dynamics_compensation_values
       [cylinder_balance_engine_speed_bin_index + 1] =
-           sVar10 + cylinder_balance_real_2_dynamics_compensation_previous_values
-                    [cylinder_balance_engine_speed_bin_index + 1];
+           sVar9 + cylinder_balance_real_2_dynamics_compensation_previous_values
+                   [cylinder_balance_engine_speed_bin_index + 1];
       cylinder_balance_imaginary_2_dynamics_compensation_values
       [cylinder_balance_engine_speed_bin_index] =
            sVar1 + cylinder_balance_imaginary_2_dynamics_compensation_previous_values
@@ -7863,20 +7903,20 @@ void cm550_calculateCylinderBalanceTrims(void)
     }
     if (cylinder_balance_dynamic_compensation_reset_enable == 1) {
       uVar7 = 0;
-      pwVar15 = cylinder_balance_imaginary_2_dynamics_compensation_previous_values;
-      pwVar18 = cylinder_balance_real_2_dynamics_compensation_previous_values;
-      pwVar21 = cylinder_balance_imaginary_2_dynamics_compensation_values;
-      pwVar23 = cylinder_balance_real_2_dynamics_compensation_values;
+      pwVar13 = cylinder_balance_imaginary_2_dynamics_compensation_previous_values;
+      pwVar16 = cylinder_balance_real_2_dynamics_compensation_previous_values;
+      pwVar19 = cylinder_balance_imaginary_2_dynamics_compensation_values;
+      pwVar21 = cylinder_balance_real_2_dynamics_compensation_values;
       do {
-        *pwVar23 = 10000;
         *pwVar21 = 10000;
-        *pwVar18 = 10000;
-        *pwVar15 = 10000;
+        *pwVar19 = 10000;
+        *pwVar16 = 10000;
+        *pwVar13 = 10000;
         uVar7 = uVar7 + 1;
-        pwVar15 = pwVar15 + 1;
-        pwVar18 = pwVar18 + 1;
+        pwVar13 = pwVar13 + 1;
+        pwVar16 = pwVar16 + 1;
+        pwVar19 = pwVar19 + 1;
         pwVar21 = pwVar21 + 1;
-        pwVar23 = pwVar23 + 1;
       } while (uVar7 < 0x10);
     }
     cylinder_balance_component_3_adjustment_lookup.x_input = engine_speed;
@@ -7891,43 +7931,43 @@ void cm550_calculateCylinderBalanceTrims(void)
             ) / 10000;
     cylinder_balance_trim_index_1 = 0;
     uVar7 = 1;
-    piVar11 = (int *)&fuel_timing_blend_offset_input_1;
+    psVar18 = cylinder_balance_reference_projections;
     do {
-      if (iVar4 < *piVar11) {
-        iVar4 = *piVar11;
+      psVar18 = psVar18 + 1;
+      if (iVar4 < *psVar18) {
+        iVar4 = *psVar18;
         cylinder_balance_trim_index_1 = uVar7;
       }
-      piVar11 = piVar11 + 1;
       uVar7 = uVar7 + 1;
     } while (uVar7 < 6);
-    load_trending_table_2_ptr =
+    cylinder_balance_reference_projections[0] =
          ((int)cylinder_balance_reference_2_cylinder_1_imaginary *
           (int)cylinder_balance_adjusted_imaginary_component_2 +
          (int)cylinder_balance_reference_2_cylinder_1_real *
          (int)cylinder_balance_adjusted_real_component_2) / 10000;
-    _fuel_timing_blend_rpm_input_2 =
+    cylinder_balance_reference_projections[4] =
          ((int)cylinder_balance_reference_2_cylinder_5_imaginary *
           (int)cylinder_balance_adjusted_imaginary_component_2 +
          (int)cylinder_balance_reference_2_cylinder_5_real *
          (int)cylinder_balance_adjusted_real_component_2) / 10000;
-    _DAT_008002b4 =
+    cylinder_balance_reference_projections[2] =
          ((int)cylinder_balance_reference_2_cylinder_3_imaginary *
           (int)cylinder_balance_adjusted_imaginary_component_2 +
          (int)cylinder_balance_reference_2_cylinder_3_real *
          (int)cylinder_balance_adjusted_real_component_2) / 10000;
-    load_trending_table_5_ptr = -load_trending_table_2_ptr;
-    _fuel_timing_blend_offset_input_1 = -_fuel_timing_blend_rpm_input_2;
-    load_trending_table_4_ptr = -_DAT_008002b4;
+    cylinder_balance_reference_projections[5] = -cylinder_balance_reference_projections[0];
+    cylinder_balance_reference_projections[1] = -cylinder_balance_reference_projections[4];
+    cylinder_balance_reference_projections[3] = -cylinder_balance_reference_projections[2];
     cylinder_balance_trim_index_2 = 0;
     uVar7 = 1;
-    pdVar12 = (dword *)&fuel_timing_blend_offset_input_1;
-    dVar9 = load_trending_table_2_ptr;
+    psVar18 = cylinder_balance_reference_projections;
+    iVar4 = cylinder_balance_reference_projections[0];
     do {
-      if ((int)dVar9 < (int)*pdVar12) {
-        dVar9 = *pdVar12;
+      psVar18 = psVar18 + 1;
+      if (iVar4 < *psVar18) {
+        iVar4 = *psVar18;
         cylinder_balance_trim_index_2 = uVar7;
       }
-      pdVar12 = pdVar12 + 1;
       uVar7 = uVar7 + 1;
     } while (uVar7 < 6);
     if (cylinder_balance_adjusted_real_component_3 < 0) {
@@ -8048,14 +8088,14 @@ void cm550_calculateCylinderBalanceTrims(void)
       cylinder_balance_cutout_disable_timer = cylinder_balance_cutout_disable_timer - 1;
     }
     uVar7 = 0;
-    pbVar13 = &flag_to_enable_or_disable_fueling_for_cyl_1_0_to_ff;
+    pbVar11 = &flag_to_enable_or_disable_fueling_for_cyl_1_0_to_ff;
     do {
-      if (*pbVar13 == 0) {
+      if (*pbVar11 == 0) {
         cylinder_balance_cutout_disable_timer = cylinder_balance_cutout_disable_time;
         break;
       }
       uVar7 = uVar7 + 1;
-      pbVar13 = pbVar13 + 1;
+      pbVar11 = pbVar11 + 1;
     } while (uVar7 < 6);
     if (((((cylinder_balance_compensation_enable == 1) &&
           (cylinder_balance_stop_compensation_flag == 0)) && (cam_sync_status == 1)) &&
@@ -8067,36 +8107,36 @@ void cm550_calculateCylinderBalanceTrims(void)
          (cylinder_balance_intake_manifold_temperature_threshold <
           intake_manifold_temperature_sensor_state.filtered_value)))))) {
       uVar7 = 0;
-      psVar14 = (short *)(&DAT_00012626 + (short)(cylinder_balance_trim_index_3 * 0xc));
-      psVar19 = (short *)((short)(cylinder_balance_trim_index_2 * 0xc) + 0x125de);
-      psVar22 = (short *)((short)(cylinder_balance_trim_index_1 * 0xc) + 0x12596);
-      pwVar15 = &cylinder_balance_trim_adjustment_1;
+      psVar12 = (short *)(&DAT_00012626 + (short)(cylinder_balance_trim_index_3 * 0xc));
+      psVar17 = (short *)((short)(cylinder_balance_trim_index_2 * 0xc) + 0x125de);
+      psVar20 = (short *)((short)(cylinder_balance_trim_index_1 * 0xc) + 0x12596);
+      pwVar13 = &cylinder_balance_trim_adjustment_1;
       do {
-        *pwVar15 = *psVar14 * wVar3 + *psVar19 * wVar6 + *psVar22 * wVar5;
+        *pwVar13 = *psVar12 * wVar3 + *psVar17 * wVar6 + *psVar20 * wVar5;
         uVar7 = uVar7 + 1;
-        psVar14 = psVar14 + 1;
-        psVar19 = psVar19 + 1;
-        psVar22 = psVar22 + 1;
-        pwVar15 = pwVar15 + 1;
+        psVar12 = psVar12 + 1;
+        psVar17 = psVar17 + 1;
+        psVar20 = psVar20 + 1;
+        pwVar13 = pwVar13 + 1;
       } while (uVar7 < 6);
     }
     else {
       uVar7 = 0;
-      pwVar15 = &cylinder_balance_trim_adjustment_1;
+      pwVar13 = &cylinder_balance_trim_adjustment_1;
       do {
-        *pwVar15 = 0;
+        *pwVar13 = 0;
         uVar7 = uVar7 + 1;
-        pwVar15 = pwVar15 + 1;
+        pwVar13 = pwVar13 + 1;
       } while (uVar7 < 6);
     }
     uVar7 = 0;
-    pwVar15 = &cylinder_balance_trim_adjustment_1;
-    psVar16 = &cylinder_balance_fueling_trim_1;
+    pwVar13 = &cylinder_balance_trim_adjustment_1;
+    psVar14 = &cylinder_balance_fueling_trim_1;
     do {
-      *psVar16 = *pwVar15 + cylinder_balance_saved_fueling_trims_cal[(short)uVar7];
+      *psVar14 = *pwVar13 + cylinder_balance_saved_fueling_trims_cal[(short)uVar7];
       uVar7 = uVar7 + 1;
-      pwVar15 = pwVar15 + 1;
-      psVar16 = psVar16 + 1;
+      pwVar13 = pwVar13 + 1;
+      psVar14 = psVar14 + 1;
     } while (uVar7 < 6);
     uVar7 = 0;
     do {
@@ -8115,11 +8155,11 @@ void cm550_calculateCylinderBalanceTrims(void)
     if (cylinder_balance_trim_limits_exceeded_flag == 1) {
       if (cylinder_balance_fueling_trim_limit_mode == 1) {
         uVar7 = 0;
-        psVar16 = cylinder_balance_power_up_fueling_trims;
+        psVar14 = cylinder_balance_power_up_fueling_trims;
         do {
-          cylinder_balance_saved_fueling_trims_cal[(short)uVar7] = *psVar16;
+          cylinder_balance_saved_fueling_trims_cal[(short)uVar7] = *psVar14;
           uVar7 = uVar7 + 1;
-          psVar16 = psVar16 + 1;
+          psVar14 = psVar14 + 1;
         } while (uVar7 < 6);
       }
       else if (cylinder_balance_fueling_trim_limit_mode == 2) {
@@ -8130,34 +8170,34 @@ void cm550_calculateCylinderBalanceTrims(void)
         } while (uVar7 < 6);
       }
       uVar7 = 0;
-      psVar16 = &cylinder_balance_fueling_trim_1;
+      psVar14 = &cylinder_balance_fueling_trim_1;
       do {
-        *psVar16 = cylinder_balance_saved_fueling_trims_cal[(short)uVar7];
+        *psVar14 = cylinder_balance_saved_fueling_trims_cal[(short)uVar7];
         uVar7 = uVar7 + 1;
-        psVar16 = psVar16 + 1;
+        psVar14 = psVar14 + 1;
       } while (uVar7 < 6);
     }
     if (cylinder_balance_compensation_enable == 0) {
       uVar7 = 0;
-      psVar16 = &cylinder_balance_fueling_trim_1;
+      psVar14 = &cylinder_balance_fueling_trim_1;
       do {
-        *psVar16 = 0;
+        *psVar14 = 0;
         uVar7 = uVar7 + 1;
-        psVar16 = psVar16 + 1;
+        psVar14 = psVar14 + 1;
       } while (uVar7 < 6);
     }
-    sVar10 = 0;
+    sVar9 = 0;
     uVar7 = 0;
-    psVar16 = &cylinder_balance_fueling_trim_1;
+    psVar14 = &cylinder_balance_fueling_trim_1;
     do {
-      sVar10 = *psVar16 + sVar10;
+      sVar9 = *psVar14 + sVar9;
       uVar7 = uVar7 + 1;
-      psVar16 = psVar16 + 1;
+      psVar14 = psVar14 + 1;
     } while (uVar7 < 6);
     uVar7 = 0;
-    psVar16 = &cylinder_balance_fueling_trim_1;
+    psVar14 = &cylinder_balance_fueling_trim_1;
     do {
-      iVar4 = (int)*psVar16 - (int)sVar10 / 6;
+      iVar4 = (int)*psVar14 - (int)sVar9 / 6;
       if (iVar4 < 0x8000) {
         if (iVar4 < -0x8000) {
           iVar4 = -0x8000;
@@ -8166,16 +8206,16 @@ void cm550_calculateCylinderBalanceTrims(void)
       else {
         iVar4 = 0x7fff;
       }
-      *psVar16 = (short)iVar4;
+      *psVar14 = (short)iVar4;
       uVar7 = uVar7 + 1;
-      psVar16 = psVar16 + 1;
+      psVar14 = psVar14 + 1;
     } while (uVar7 < 6);
     uVar7 = 0;
-    psVar16 = &cylinder_balance_fueling_trim_1;
+    psVar14 = &cylinder_balance_fueling_trim_1;
     do {
-      cylinder_balance_saved_fueling_trims_cal[(short)uVar7] = *psVar16;
+      cylinder_balance_saved_fueling_trims_cal[(short)uVar7] = *psVar14;
       uVar7 = uVar7 + 1;
-      psVar16 = psVar16 + 1;
+      psVar14 = psVar14 + 1;
     } while (uVar7 < 6);
     if (cylinder_balance_compensation_enable == 1) {
       if (cylinder_balance_cutout_disable_timer == 0) {
@@ -8206,11 +8246,11 @@ void cm550_calculateCylinderBalanceTrims(void)
       }
       else {
         uVar7 = 0;
-        psVar16 = balanced_cylinder_fueling_offsets;
+        psVar14 = balanced_cylinder_fueling_offsets;
         do {
-          *psVar16 = 0;
+          *psVar14 = 0;
           uVar7 = uVar7 + 1;
-          psVar16 = psVar16 + 1;
+          psVar14 = psVar14 + 1;
         } while (uVar7 < 6);
       }
     }
@@ -8582,7 +8622,7 @@ void vp44_initializeVp44BufferAddresses(void)
    triggers 1-3 all satisfied set the trigger detected flag and the AND flag, trigger 4 sets the
    trigger detected flag and the OR flag. In any other mode a rising edge of bit 6 of the byte at
    0x80bcd0 (latch 0x800520) sets the trigger detected flag. No caller reads D0. (was
-   cm550_FUN_000138b6; PR #53 round 91) (was cm550_FUN_000138b6; PR #53 round 91) */
+   cm550_FUN_000138b6; PR #53 round 91) */
 
 uint cm550_updateDataloggerTriggers(void)
 
@@ -8707,8 +8747,7 @@ uint cm550_updateDataloggerTriggers(void)
    (cm550_copyDataloggerSampleBuffer) go to event 1 (0x8052ea / 0x804fca; e2m UDTRMK / UDDXTB) while
    UDEV01 (0x8052fa) is 0 and to event 2 (0x8052f2 / 0x80515a) otherwise, UDEV01 / UDEV02 (0x8052fc)
    are set and logging stops - an event holds the 200 bytes before and the 200 after its trigger. No
-   caller reads D0. (was cm550_FUN_00013a5c; PR #53 round 91) (was cm550_FUN_00013a5c; PR #53 round
-   91) */
+   caller reads D0. (was cm550_FUN_00013a5c; PR #53 round 91) */
 
 byte * cm550_recordDataloggerSamples(void)
 
@@ -8848,8 +8887,7 @@ byte * cm550_recordDataloggerSamples(void)
    copies the fault count table status (0x805a24 + 10 x the trigger's fault index byte at 0x800366 +
    n) into its previous fault status byte (0x80036e + n); then it zeroes the 400-byte ring buffer
    (0x800374), points the write pointer (0x800504) at it and sets the buffer cleared flag
-   (0x800372). (was cm550_FUN_00013cc8; PR #53 round 91) (was cm550_FUN_00013cc8; PR #53 round 91)
-    */
+   (0x800372). (was cm550_FUN_00013cc8; PR #53 round 91) */
 
 void cm550_initializeDatalogger(void)
 
@@ -8897,8 +8935,7 @@ void cm550_initializeDatalogger(void)
    0x13d7a; any other code -> 5), stored at 0x800353 and returned in D0's low byte. In automatic
    trigger mode (0x803dc6 = 1) a code of 3 or more is first rewritten as 2 in the EEPROM mirror. It
    also clears the sample due flag (0x800354) and the period counter (0x80051e). Called by
-   cm550_updateDataloggerTriggers at the set-up. (was cm550_FUN_00013d42; PR #53 round 91) (was
-   cm550_FUN_00013d42; PR #53 round 91) */
+   cm550_updateDataloggerTriggers at the set-up. (was cm550_FUN_00013d42; PR #53 round 91) */
 
 undefined4 cm550_selectDataloggerSamplePeriod(void)
 
@@ -8951,8 +8988,7 @@ undefined4 cm550_selectDataloggerSamplePeriod(void)
    (0x800356 + 4 x n) and adds parameter_offset (zero-extended). Called by
    cm550_updateDataloggerTriggers at the set-up in automatic mode. Dump: 0x80ccf4 / 0x80a320 /
    0x80d32e / 0x80aa82 = the parameter ID table addresses of 0x100c / 0x1004 / 0x1051 / 0x1047 plus
-   2 / 0x76 / 0 / 0. (was cm550_FUN_00013dbe; PR #53 round 91) (was cm550_FUN_00013dbe; PR #53 round
-   91) */
+   2 / 0x76 / 0 / 0. (was cm550_FUN_00013dbe; PR #53 round 91) */
 
 void cm550_resolveDataloggerTriggerAddresses(void)
 
@@ -8991,7 +9027,7 @@ void cm550_resolveDataloggerTriggerAddresses(void)
    parameter_offset (zero-extended); cm550_recordDataloggerSamples samples from these addresses.
    Dump: 0x80ccf4 / 0x80a320 / 0x80d32e / 0x80aa82 / 0x80a336 (engine speed / boost pressure / final
    fueling / throttle / coolant temperature). Called by cm550_recordDataloggerSamples at the set-up.
-   (was cm550_FUN_00013e12; PR #53 round 91) (was cm550_FUN_00013e12; PR #53 round 91) */
+   (was cm550_FUN_00013e12; PR #53 round 91) */
 
 void cm550_resolveDataloggerDataParameterAddresses(void)
 
@@ -9027,7 +9063,7 @@ void cm550_resolveDataloggerDataParameterAddresses(void)
    trigger's fault index byte (0x800366 + n) and that fault's current status (fault count table byte
    0x805a24 + 10 x index) in its previous fault status byte (0x80036e + n). Called by
    cm550_updateDataloggerTriggers at the set-up in automatic mode. (was cm550_FUN_00013e64; PR #53
-   round 91) (was cm550_FUN_00013e64; PR #53 round 91) */
+   round 91) */
 
 void cm550_findDataloggerTriggerFaultIndexes(void)
 
@@ -9083,8 +9119,7 @@ void cm550_findDataloggerTriggerFaultIndexes(void)
    stores 3 when a fault turns active and 2 when it turns inactive,
    cm550_assignFaultFreezeFrameEntry stores 0 / 1 when it gives an inactive / active fault's
    snapshot slot to another fault and cm550_resetFaultStatus stores 0. Called by
-   cm550_updateDataloggerTriggers with 0-2 and 3. (was cm550_FUN_00013ed8; PR #53 round 91) (was
-   cm550_FUN_00013ed8; PR #53 round 91) */
+   cm550_updateDataloggerTriggers with 0-2 and 3. (was cm550_FUN_00013ed8; PR #53 round 91) */
 
 byte cm550_evaluateDataloggerTrigger(word condition_record_index)
 
@@ -9259,7 +9294,7 @@ byte cm550_evaluateDataloggerTrigger(word condition_record_index)
 /* Copies the 400 bytes at source (the long at +4: the ring buffer 0x800374) to destination (the
    long at +8: event 1's buffer 0x804fca or event 2's 0x80515a). Only caller:
    cm550_recordDataloggerSamples when it saves an event. (was cm550_FUN_00014292; PR #53 round 91)
-   (was cm550_FUN_00014292; PR #53 round 91) */
+    */
 
 void cm550_copyDataloggerSampleBuffer(undefined1 *param_1,undefined1 *param_2)
 
@@ -9351,7 +9386,7 @@ void calculateJ1939PercentPeakTorqueAtSpeed(word fuel_table_x_input,word lookup_
    j1939_friction_load_fueling_at_breakpoint_3 / 4 / 5 (+12 / +14 / +16) and j1939_rated_speed_tau_0
    (10DF +C) into j1939_friction_load_fueling_at_rated_speed (+10). Called at start-up by
    initializeFourDimensionalFuelingAndFrictionFuelLookups and by
-   cm550_multiSpeedParameterInterpolation. The same steps as CM848 0x1811c (one shared name). The
+   calculateJ1939PercentPeakTorquePoints. The same steps as CM848 0x1811c (one shared name). The
    twin of CM848 0x0001811c: one shared name. (was cm550_FUN_00014348; PR #53 round 96) */
 
 void calculateJ1939FrictionLoadFuelingAtBreakpoints(void)
@@ -9378,10 +9413,21 @@ void calculateJ1939FrictionLoadFuelingAtBreakpoints(void)
 
 
 //
-// Function: cm550_multiSpeedParameterInterpolation @ 0x000143b6
+// Function: calculateJ1939PercentPeakTorquePoints @ 0x000143b6
 //
 
-void cm550_multiSpeedParameterInterpolation(void)
+/* Calculates the J1939 (Jcomm) percent peak torque x 256 at five engine speeds, e2m block 10E2. It
+   stores the coolant temperature friction correction
+   (friction_fuel_correction_by_coolant_temperature_lookup at the filtered coolant temperature) in
+   friction_fuel_coolant_temperature_correction and refreshes the friction fuels with
+   calculateJ1939FrictionLoadFuelingAtBreakpoints. It then runs
+   calculateJ1939PercentPeakTorqueAtSpeed for the idle speed (low_speed_governor_reference_speed),
+   the rated speed and speed breakpoints 3 / 4 / 5 into JCLSPCTQ / JCRTPCTQ / JCPCTQ03-05 (10E2 +A /
+   +C / +4 / +6 / +8). Its one caller is the J1708 message builder cm550_diagnosticMessage46Builder
+   (jsr at 0x1f352). Twin of CM848 0x1820c (one shared name), which has no caller. (was
+   cm550_multiSpeedParameterInterpolation; PR #53 round 97) */
+
+void calculateJ1939PercentPeakTorquePoints(void)
 
 {
   friction_fuel_correction_by_coolant_temperature_lookup.x_input =
@@ -9389,19 +9435,19 @@ void cm550_multiSpeedParameterInterpolation(void)
   friction_fuel_coolant_temperature_correction =
        cm550_lookupTableInterpolation(&friction_fuel_correction_by_coolant_temperature_lookup);
   calculateJ1939FrictionLoadFuelingAtBreakpoints();
-  jcomm_percent_peak_torque_at_idle_speed_percent_peak_torque_128_127 =
+  j1939_percent_peak_torque_at_idle_times_256 =
        calculateJ1939PercentPeakTorqueAtSpeed
                  (low_speed_governor_reference_speed,j1939_friction_load_fueling_at_low_idle);
-  jcomm_percent_peak_torque_at_rated_speed_percent_peak_torqu_128_127 =
+  j1939_percent_peak_torque_at_rated_speed_times_256 =
        calculateJ1939PercentPeakTorqueAtSpeed
                  (j1939_rated_speed_tau_0,j1939_friction_load_fueling_at_rated_speed);
-  jcomm_percent_peak_torque_at_breakpoint_3_percent_peak_torq_128_127 =
+  j1939_percent_peak_torque_at_breakpoint_3_times_256 =
        calculateJ1939PercentPeakTorqueAtSpeed
                  (j1939_speed_breakpoint_3_tau_0,j1939_friction_load_fueling_at_breakpoint_3);
-  jcomm_percent_peak_torque_at_breakpoint_4_percent_peak_torq_128_127 =
+  j1939_percent_peak_torque_at_breakpoint_4_times_256 =
        calculateJ1939PercentPeakTorqueAtSpeed
                  (j1939_speed_breakpoint_4_tau_0,j1939_friction_load_fueling_at_breakpoint_4);
-  jcomm_percent_peak_torque_at_breakpoint_5_percent_peak_torq_128_127 =
+  j1939_percent_peak_torque_at_breakpoint_5_times_256 =
        calculateJ1939PercentPeakTorqueAtSpeed
                  (j1939_speed_breakpoint_5_tau_0,j1939_friction_load_fueling_at_breakpoint_5);
   return;
@@ -9446,8 +9492,7 @@ void cm550_fuelDemandPercentageCalculator(void)
    record (cm550_resetFaultStatus) and moves the last previously_active_dtc_list entry into the
    fault's place (with its J1587 count). Nothing in it debounces. Counterpart of CM848
    cm848_countDownPreviouslyActiveFault (0x1c9a0): the same e2m settings with a step count in place
-   of the second time (was cm550_diagnosticCodeDebounceHandler; PR #53 round 91) (was
-   cm550_diagnosticCodeDebounceHandler; PR #53 round 91) */
+   of the second time (was cm550_diagnosticCodeDebounceHandler; PR #53 round 91) */
 
 void cm550_countDownPreviouslyActiveFault(word code_index)
 
@@ -9513,7 +9558,7 @@ void cm550_countDownPreviouslyActiveFault(word code_index)
    last entry into a cleared fault's place and steps the cursor back.
    cm550_faultFlagScannerAndProcessor calls it when key_on_hour_meter has moved more than 24 counts
    (about 5 s) since _DAT_0080052e. Counterpart of CM848 cm848_countDownPreviouslyActiveFaults
-   (0x1cd1c) (was cm550_FUN_00014670; PR #53 round 91) (was cm550_FUN_00014670; PR #53 round 91) */
+   (0x1cd1c) (was cm550_FUN_00014670; PR #53 round 91) */
 
 void cm550_countDownPreviouslyActiveFaults(void)
 
@@ -9679,7 +9724,7 @@ void cm550_clearInactiveFaultsOnRequest(void)
    1 off the active-bit count. At 0 the fault gets status 2 and a new status_change_time and moves
    to previously_active_dtc_list (at most 31 entries). The function ends by storing the combined
    word as the next previous word. Counterpart of CM848 cm848_processFaultScanGroup (0x1d224) (was
-   cm550_FUN_00014872; PR #53 round 91) (was cm550_FUN_00014872; PR #53 round 91) */
+   cm550_FUN_00014872; PR #53 round 91) */
 
 void cm550_processFaultScanGroup(void)
 
@@ -10439,7 +10484,7 @@ byte mc68k_sampleAndDebounceDiscreteInputs(void)
            status_32_word_bit_mapped_system_error_status_word_7_0_1 & 0xfffd;
     }
   }
-  cm550_emptyStubFunction4();
+  cm550_emptyDiscreteInputSamplingStep();
   if ((debounced_value_for_rear_axle_ratio_switch_on_off & 2) == 0) {
     air_conditioner_pressure_switch_state = air_conditioner_pressure_switch_state & 0xfe;
   }
@@ -10794,15 +10839,16 @@ void mc68k_initializeDiscreteOutputDrivers(void)
 
 
 //
-// Function: cm550_emptyStubFunction4 @ 0x00015f8c
+// Function: cm550_emptyDiscreteInputSamplingStep @ 0x00015f8c
 //
 
-/* Empty function (a single rts); its one call is in mc68k_sampleAndDebounceDiscreteInputs. Its old
-   name emptyStubFunction4 was shared with CM848 0x26f78, which is the CAN transmit-complete hook
-   ignoreCanTransmitInterrupt (the twin of CM550 0xc80c), not this stub (was emptyStubFunction4; PR
-   #53 round 87) */
+/* Empty function (a single rts). Its one call (jsr at 0x1598a) is a step of
+   mc68k_sampleAndDebounceDiscreteInputs. It comes after the second 50-pass switch-pair fault check
+   (status word 7 bit 1, counter 0x80054a) and before the derived switch bits and the 4-pass sample
+   ring index 0x800550: a discrete input sampling step compiled empty in this build. An empty body
+   cannot prove a role or a CM848 counterpart. (was cm550_emptyStubFunction4; PR #53 round 97) */
 
-void cm550_emptyStubFunction4(void)
+void cm550_emptyDiscreteInputSamplingStep(void)
 
 {
   return;
@@ -11867,8 +11913,8 @@ void cm550_initializeEnginePositionSignalInputs(void)
   switch(engine_position_signal_configuration) {
   case 0:
     mc68k_initializeTpuChannel10PrimarySpeedInputDivided();
-    cm550_delayWithWatchdogServiceWrapper2();
-    cm550_emptyStubFunction7();
+    cm550_initializeSpeedMeasurementForConfiguration0();
+    cm550_emptyEnginePositionSignalConfiguration0ThirdStep();
     return;
   case 1:
     mc68k_initializeTpuChannel10PrimarySpeedInputMode1();
@@ -12178,7 +12224,7 @@ void cm550_rpmBasedFuelLimitCalculator(void)
     if (crank_low_coolant_temperature_rpm_0_1000 < crank_adjusted_initial_rpm_0_1000) {
       crank_adjusted_initial_rpm_0_1000 = crank_low_coolant_temperature_rpm_0_1000;
     }
-    crank_adjusted_initial_fuel_0_100 = crank_initial_fuel_adjustment + _DAT_0080d0a6;
+    crank_adjusted_initial_fuel_0_100 = crank_initial_fuel_adjustment + crank_initial_fuel;
     if (crank_low_coolant_temperature_fueling_0_100 < crank_adjusted_initial_fuel_0_100) {
       crank_adjusted_initial_fuel_0_100 = crank_low_coolant_temperature_fueling_0_100;
     }
@@ -12288,12 +12334,22 @@ void cm550_rpmBasedFuelTimingInterpolation(void)
 
 
 //
-// Function: cm550_frictionalLoadTorqueInterpolator @ 0x00017a8e
+// Function: cm550_calculateCrankInitialFuelByCoolantTemperature @ 0x00017a8e
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Crank initial fuel on entry to CRANKING or REENTRY (first call of
+   cm550_engineModeTransitionHandler, before
+   cm550_calculateCrankInitialAdvanceByIntakeManifoldTemperature). It sets crank_initial_fuel CKIIFL
+   (0x80d0a6, e2m 105E +E) and crank_initial_fuel_break_speed_0_1000 CKIIFLES (105E +1A). They are
+   interpolated by the filtered coolant temperature between CKCDCLTP (105F +4) and CKHTCLTP (105F
+   +2), from the low / high temperature fuelings CKCDCLFL / CKHTCLFL and speeds CKCDCLES / CKHTCLES.
+   With status word 2 bit 0 or 1 set and enabled in fault_processing_enable_flags[2], or below the
+   low point, it takes the low values; above the high point it takes the high values. Counterpart of
+   CM848 cm848_calculateColdStartTemperatureTable (0x1bc30), which uses a coolant x barometric
+   pressure table with overrides and defaults instead. (was cm550_frictionalLoadTorqueInterpolator;
+   PR #53 round 97) */
 
-uint cm550_frictionalLoadTorqueInterpolator(void)
+uint cm550_calculateCrankInitialFuelByCoolantTemperature(void)
 
 {
   ushort uVar1;
@@ -12310,17 +12366,17 @@ uint cm550_frictionalLoadTorqueInterpolator(void)
        (uVar2 = CONCAT22((short)(uVar2 >> 0x10),fault_processing_enable_flags[2]) & 0xffff0002,
        (fault_processing_enable_flags[2] & 2) != 0)))) ||
      (coolant_temperature_sensor_state.filtered_value < crank_low_coolant_temperature_50_to_293)) {
-    _DAT_0080d0a6 = crank_low_coolant_temperature_fueling_0_100;
+    crank_initial_fuel = crank_low_coolant_temperature_fueling_0_100;
     crank_initial_fuel_break_speed_0_1000 = crank_low_coolant_temperature_rpm_0_1000;
     return uVar2;
   }
   if (crank_high_coolant_temperature_50_to_293 < coolant_temperature_sensor_state.filtered_value) {
-    _DAT_0080d0a6 = crank_high_coolant_temperature_fueling_0_100;
+    crank_initial_fuel = crank_high_coolant_temperature_fueling_0_100;
     crank_initial_fuel_break_speed_0_1000 = crank_high_coolant_temperature_rpm_0_1000;
     return uVar2;
   }
   uVar1 = crank_high_coolant_temperature_50_to_293 - crank_low_coolant_temperature_50_to_293;
-  _DAT_0080d0a6 =
+  crank_initial_fuel =
        (short)((((uint)crank_high_coolant_temperature_50_to_293 -
                 (uint)coolant_temperature_sensor_state.filtered_value) *
                (uint)crank_low_coolant_temperature_fueling_0_100) / (uint)uVar1) +
@@ -12341,16 +12397,20 @@ uint cm550_frictionalLoadTorqueInterpolator(void)
 
 
 //
-// Function: cm550_rpmSourceSelectorForFrictionalLoad @ 0x00017b8a
+// Function: selectCrankExitSpeed @ 0x00017b8a
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Crank exit speed on entry to CRANKING or REENTRY (third call of
+   cm550_engineModeTransitionHandler). crank_exit_speed (e2m 105E +14 CKEXES) = crank_exit_rpm (105F
+   +0 CKCNEXES) when crank_exit_speed_switch_cal (1254 +3C CKEXESSW, 1 in the dump) is 1, else the
+   low speed governor reference low_speed_governor_reference_speed. Twin of CM848 0x1bd44 (one
+   shared name). (was cm550_rpmSourceSelectorForFrictionalLoad; PR #53 round 97) */
 
-void cm550_rpmSourceSelectorForFrictionalLoad(void)
+void selectCrankExitSpeed(void)
 
 {
-  if (_DAT_00803f8a == 1) {
-    crank_exit_speed = engine_speed_at_which_the_algorithm_stops_commanding_fuel_0_1400;
+  if (crank_exit_speed_switch_cal == 1) {
+    crank_exit_speed = crank_exit_rpm;
     return;
   }
   crank_exit_speed = low_speed_governor_reference_speed;
@@ -12480,9 +12540,9 @@ void cm550_engineModeTransitionHandler(void)
 {
   if (((_DAT_008005f0 == 1) && (engine_state == ENGINE_STATE_CRANKING)) ||
      ((_DAT_008005f0 == 3 && (engine_state == ENGINE_STATE_REENTRY)))) {
-    cm550_frictionalLoadTorqueInterpolator();
+    cm550_calculateCrankInitialFuelByCoolantTemperature();
     cm550_calculateCrankInitialAdvanceByIntakeManifoldTemperature();
-    cm550_rpmSourceSelectorForFrictionalLoad();
+    selectCrankExitSpeed();
   }
   cm550_peakTorqueFuelCorrection();
   _DAT_008005f0 = engine_state;
@@ -12840,7 +12900,7 @@ void cm550_initializeCanRpmModeConfiguration(void)
     return;
   }
   if (determines_how_engine_position_is_sync_d_to_cam_0 == 2) {
-    mc68k_dutyCycleMonitorBufferInit();
+    mc68k_initializeTpuChannel1SpeedMeasurementResetInput();
     return;
   }
   if (determines_how_engine_position_is_sync_d_to_cam_0 == 0) {
@@ -13021,18 +13081,26 @@ void initializeFaultDerateJ1939TorqueCurvePriority(void)
 
 
 //
-// Function: cm550_engineProtectionMultiStateSlowCycle40Coordinator @ 0x00018620
+// Function: cm550_runEngineProtectionScheduler @ 0x00018620
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The engine protection task scheduler, run at executive frame 15 of 40 (jsr at 0x1bb9a in
+   executiveFrameInterruptHandler). With algorithm_enable_flags_2_cal.engine_protection_enable
+   (EPEN) clear it sets the outputs to no derate: engine_speed_limit_fault_derate (EPESLM) =
+   maximum_rated_engine_speed, fault_derate_fuel_limit (EPFLLM) = fuel_demand_maximum,
+   fault_derate_active_flag and engine_protection_shutdown_approaching_flag = 0. Otherwise it runs
+   one task per call by engine_protection_task_index (0-4, then 0 again):
+   countEngineProtectionOverLimitDurations, updateEngineProtectionRestartSeverity,
+   cm550_calculateFaultDerateFuelLimit, cm550_calculateFaultDerateEngineSpeedLimit with
+   logEngineProtectionChannelFaults, and processDiagnosticLimitStatus (the shutdown). CM848's
+   counterpart cm848_runFaultDerateScheduler also sets engine_protection_timer_state, runs the
+   precrank examination every pass and latches the shutdown override in task 1 (was
+   cm550_engineProtectionMultiStateSlowCycle40Coordinator). (was
+   cm550_engineProtectionMultiStateSlowCycle40Coordinator; PR #53 round 97) */
 
-uint cm550_engineProtectionMultiStateSlowCycle40Coordinator(void)
+void cm550_runEngineProtectionScheduler(void)
 
 {
-  undefined4 in_D0;
-  uint uVar1;
-  
-  uVar1 = CONCAT22((short)((uint)in_D0 >> 0x10),algorithm_enable_flags_2_cal) & 0xffff0010;
   if (algorithm_enable_flags_2_cal.engine_protection_enable == 0) {
     engine_speed_limit_fault_derate = maximum_rated_engine_speed_0_5000;
     fault_derate_fuel_limit = fuel_demand_maximum;
@@ -13040,42 +13108,52 @@ uint cm550_engineProtectionMultiStateSlowCycle40Coordinator(void)
     engine_protection_shutdown_approaching_flag = 0;
   }
   else {
-    uVar1 = (uint)_engine_protection_state_phase_index;
-    switch(uVar1) {
-    case 0:
-      uVar1 = protectionState0FaultDurationCounter();
+    switch(engine_protection_task_index) {
+    case ENGINE_PROTECTION_TASK_OVER_LIMIT_DURATIONS:
+      countEngineProtectionOverLimitDurations();
       break;
-    case 1:
-      uVar1 = cm550_protectionState1DiagnosticValidator();
+    case ENGINE_PROTECTION_TASK_RESTART_SEVERITY:
+      updateEngineProtectionRestartSeverity();
       break;
-    case 2:
-      uVar1 = cm550_calculateFaultDerateFuelLimit();
+    case ENGINE_PROTECTION_TASK_FAULT_DERATE_FUEL_LIMIT:
+      cm550_calculateFaultDerateFuelLimit();
       break;
-    case 3:
+    case ENGINE_PROTECTION_TASK_ENGINE_SPEED_LIMIT_AND_FAULT_LOGS:
       cm550_calculateFaultDerateEngineSpeedLimit();
-      uVar1 = cm550_protectionState3bRpmMonitor();
+      logEngineProtectionChannelFaults();
       break;
-    case 4:
-      uVar1 = processDiagnosticLimitStatus();
+    case ENGINE_PROTECTION_TASK_SHUTDOWN:
+      processDiagnosticLimitStatus();
     }
-    _engine_protection_state_phase_index = _engine_protection_state_phase_index + 1;
-    if (4 < _engine_protection_state_phase_index) {
-      _engine_protection_state_phase_index = 0;
-      return uVar1;
+    engine_protection_task_index =
+         engine_protection_task_index + ENGINE_PROTECTION_TASK_RESTART_SEVERITY;
+    if (ENGINE_PROTECTION_TASK_SHUTDOWN < engine_protection_task_index) {
+      engine_protection_task_index = ENGINE_PROTECTION_TASK_OVER_LIMIT_DURATIONS;
+      return;
     }
   }
-  return uVar1;
+  return;
 }
 
 
 
 //
-// Function: cm550_protectionThresholdCalculationHelper @ 0x000186ae
+// Function: rampEngineProtectionSeverityIndex @ 0x000186ae
 //
 
-word cm550_protectionThresholdCalculationHelper
-               (word *protection_configuration,word *protection_state,word *severity_indexes,
-               word derate_selector)
+/* Returns the channel's fueling (is_engine_speed 0) or engine speed (1) severity index after one
+   ramp step: the history index plus the configuration ramp rate (EP??FLIC / RPIC, +6 / +8), capped
+   at 0x100, while the state's over-limit duration (+6 / +8) is above the derate start duration
+   (EP??FLDD / RPDD, +2 / +4); otherwise the index minus the ramp rate, floored at 0. Called by
+   cm550_calculateFaultDerateFuelLimit (0) and cm550_calculateFaultDerateEngineSpeedLimit (1). The
+   twin of CM848 0x507d50: one shared name (was cm550_protectionThresholdCalculationHelper /
+   cm848_rampEngineProtectionSeverityIndex). (was cm550_protectionThresholdCalculationHelper; PR #53
+   round 97) */
+
+word rampEngineProtectionSeverityIndex
+               (engine_protection_channel_configuration_t *configuration,
+               cm550_engine_protection_channel_state_t *state,
+               engine_protection_channel_history_t *history,word is_engine_speed)
 
 {
   ushort uVar1;
@@ -13083,17 +13161,17 @@ word cm550_protectionThresholdCalculationHelper
   ushort uVar3;
   ushort uVar4;
   
-  if (derate_selector == 0) {
-    uVar3 = *severity_indexes;
-    uVar1 = protection_state[3];
-    uVar2 = protection_configuration[1];
-    uVar4 = protection_configuration[3];
+  if (is_engine_speed == 0) {
+    uVar3 = history->fueling_severity_index;
+    uVar1 = state->fueling_duration;
+    uVar2 = configuration->fueling_derate_start_duration;
+    uVar4 = configuration->fueling_ramp_rate;
   }
   else {
-    uVar3 = severity_indexes[1];
-    uVar1 = protection_state[4];
-    uVar2 = protection_configuration[2];
-    uVar4 = protection_configuration[4];
+    uVar3 = history->engine_speed_severity_index;
+    uVar1 = state->engine_speed_duration;
+    uVar2 = configuration->engine_speed_derate_start_duration;
+    uVar4 = configuration->engine_speed_ramp_rate;
   }
   if (uVar2 < uVar1) {
     uVar4 = uVar4 + uVar3;
@@ -13113,16 +13191,24 @@ word cm550_protectionThresholdCalculationHelper
 
 
 //
-// Function: cm550_protectionPercentageCalculator @ 0x00018708
+// Function: cm550_interpolateEngineProtectionSeverity @ 0x00018708
 //
 
-word cm550_protectionPercentageCalculator
-               (word sensor_value,word minimum_threshold,word maximum_threshold)
+/* Returns the input's place between a minimum and a maximum threshold as a severity: (input -
+   minimum) << 8 / (maximum - minimum) with sign-extended 16-bit differences, clamped to 0..0x100.
+   Called by updateEngineProtectionRestartSeverityIndexes and cm550_calculateFaultDerateFuelLimit
+   with the words the state's input, minimum and maximum threshold pointers point to. CM848's
+   counterpart returns 0 when the input equals the minimum and divides through
+   cm848_clampedDivisionWithBounds (was cm550_protectionPercentageCalculator). (was
+   cm550_protectionPercentageCalculator; PR #53 round 97) */
+
+word cm550_interpolateEngineProtectionSeverity
+               (word input,word minimum_threshold,word maximum_threshold)
 
 {
   word wVar1;
   
-  wVar1 = (word)(((int)(short)(sensor_value - minimum_threshold) << 8) /
+  wVar1 = (word)(((int)(short)(input - minimum_threshold) << 8) /
                 (int)(short)(maximum_threshold - minimum_threshold));
   if ((short)wVar1 < 0x101) {
     if ((short)wVar1 < 0) {
@@ -13138,139 +13224,178 @@ word cm550_protectionPercentageCalculator
 
 
 //
-// Function: vp44_engineProtectionSystemInit @ 0x0001873e
+// Function: cm550_initializeEngineProtection @ 0x0001873e
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up initializer of engine protection (one call from mc68k_applicationMain at 0x28732). It
+   fills the nine records of engine_protection_channel_state_table: the input pointers (EP??SA: the
+   coolant level switch 0x8091e6 with mask 1, the filtered_value of the coolant temperature / oil
+   pressure / water in fuel / boost pressure / fuel pressure / ambient air pressure sensor records,
+   engine_protection_intake_manifold_temperature and engine_protection_fuel_temperature), the
+   threshold pointers into each channel's configuration record (for oil pressure the speed-dependent
+   limits 0x80dabe / 0x80dac0) and the fault log pointers (e2m 10DA). It then calls
+   initializeFaultDerateEngineSpeedLimit, cm550_initializeShutdownLimitVariables and
+   cm550_initializeEngineProtectionShutdownCounting and clears engine_protection_task_index. CM848's
+   counterpart hpcr_initializeEngineProtection sets up its single fuel temperature channel and runs
+   more resets (was vp44_engineProtectionSystemInit; nothing here touches the VP44 pump). (was
+   vp44_engineProtectionSystemInit; PR #53 round 97) */
 
-void vp44_engineProtectionSystemInit(void)
+void cm550_initializeEngineProtection(void)
 
 {
-  _protection_system_sensor_data_ptr =
-       &coolant_level_low_switch_used_as_an_input_source_by_t_1_true_0_false;
-  mask_for_input_of_coolant_level_0_65535 = 1;
-  pointer_to_coolant_level_fuel_fault_log_data_0_2_32 =
-       (dword)coolant_level_engine_protection_fault_log;
-  _DAT_0080d10a = 0x80a336;
-  pointer_to_coolant_temperature_fuel_min_threshold_0_2_32 =
-       (dword)&minimum_temperature_threshold_for_coolant_temperature_fuel_50_to_293;
-  pointer_to_coolant_temperature_fuel_max_threshold_0_2_32 =
-       (dword)&maximum_temperature_threshold_for_coolant_temperature_fuel_50_to_293;
-  pointer_to_coolant_temperature_rpm_limit_threshold_0_2_32 =
-       (dword)&minimum_threshold_for_coolant_temperature_rpm_limiting_0_4500;
-  pointer_to_coolant_temperature_fuel_fault_log_data_0_2_32 =
-       (dword)coolant_temperature_engine_protection_fault_log;
-  pointer_to_coolant_temperature_rpm_fault_log_data_0_2_32 =
-       (dword)coolant_temperature_engine_protection_fault_log;
-  _DAT_0080d138 = &pre_processed_imt_for_epf_due_to_exhaust_brake_on_50_to_293;
-  pointer_to_intake_man_temp_fuel_min_threshold_0_2_32 =
-       (dword)&minimum_temperature_threshold_for_imt_fuel_limiting_50_to_293;
-  pointer_to_intake_man_temp_fuel_max_threshold_0_2_32 =
-       (dword)&maximum_temperature_threshold_for_imt_tvo_limiting_50_to_293;
-  pointer_to_intake_man_temp_rpm_limit_threshold_0_2_32 =
-       (dword)&minimum_threshold_for_intake_temperature_rpm_limiting_50_293;
-  pointer_to_intake_man_temp_fuel_fault_log_data_0_2_32 = 0x8055b2;
-  pointer_to_intake_man_temp_rpm_fault_log_data_0_2_32 = 0x8055b2;
-  _DAT_0080d166 = 0x80a30a;
-  _oil_pressure_fuel_min_threshold =
-       &low_oil_pressure_limit_as_calculated_for_present_engine_speed_0_100;
-  _oil_pressure_rpm_limit_threshold =
-       &very_low_oil_pressure_is_calculated_for_present_engine_speed_0_100;
-  _oil_pressure_fuel_fault_timer = oil_pressure_engine_protection_fueling_fault_log;
-  _oil_pressure_rpm_fault_counter = oil_pressure_engine_protection_engine_speed_fault_log;
-  _DAT_0080d194 = 0x80a46a;
-  _engine_sync_fuel_pressure_min_threshold_flag = &min_threshold_for_water_in_fuel_fuel_limiting_0_3
+  engine_protection_channel_state_table[0].input_pointer =
+       (word *)&coolant_level_low_switch_used_as_an_input_source_by_t_1_true_0_false;
+  engine_protection_channel_state_table[0].input_mask = 1;
+  engine_protection_channel_state_table[0].fueling_fault_log_pointer =
+       coolant_level_engine_protection_fault_log;
+  engine_protection_channel_state_table[1].input_pointer =
+       &coolant_temperature_sensor_state.filtered_value;
+  engine_protection_channel_state_table[1].minimum_threshold_pointer =
+       &engine_protection_channel_configuration_table[1].fueling_minimum_threshold;
+  engine_protection_channel_state_table[1].maximum_threshold_pointer =
+       &engine_protection_channel_configuration_table[1].fueling_maximum_threshold;
+  engine_protection_channel_state_table[1].engine_speed_lower_limit_pointer =
+       &engine_protection_channel_configuration_table[1].engine_speed_lower_limit_threshold;
+  engine_protection_channel_state_table[1].fueling_fault_log_pointer =
+       coolant_temperature_engine_protection_fault_log;
+  engine_protection_channel_state_table[1].engine_speed_fault_log_pointer =
+       coolant_temperature_engine_protection_fault_log;
+  engine_protection_channel_state_table[2].input_pointer =
+       &engine_protection_intake_manifold_temperature;
+  engine_protection_channel_state_table[2].minimum_threshold_pointer =
+       &engine_protection_channel_configuration_table[2].fueling_minimum_threshold;
+  engine_protection_channel_state_table[2].maximum_threshold_pointer =
+       &engine_protection_channel_configuration_table[2].fueling_maximum_threshold;
+  engine_protection_channel_state_table[2].engine_speed_lower_limit_pointer =
+       &engine_protection_channel_configuration_table[2].engine_speed_lower_limit_threshold;
+  engine_protection_channel_state_table[2].fueling_fault_log_pointer =
+       intake_manifold_temperature_engine_protection_fault_log;
+  engine_protection_channel_state_table[2].engine_speed_fault_log_pointer =
+       intake_manifold_temperature_engine_protection_fault_log;
+  engine_protection_channel_state_table[3].input_pointer = &oil_pressure_sensor_state.filtered_value
   ;
-  _points_to_water_in_fuel_fuel_maximum_threshold_0_2_32 =
-       &max_threshold_for_water_in_fuel_fuel_limiting_0_3;
-  pointer_to_water_in_fuel_rpm_limit_threshold_0_2_32 =
-       (dword)&min_threshold_for_water_in_fuel_rpm_limiting_0_65535;
-  pointer_to_water_in_fuel_fuel_fault_log_data_0_2_32 = 0x80562a;
-  pointer_to_water_in_fuel_rpm_fault_log_data_0_2_32 = 0x805656;
-  _DAT_0080d1c2 = 0x80a320;
-  engine_sync_fuel_pressure_min_threshold_flag_2 =
-       (dword)&min_threshold_for_boost_pressure_fuel_limiting_0_100;
-  points_to_boost_pressure_fuel_maximum_threshold_0_2_32 =
-       (dword)&max_threshold_for_boost_pressure_fuel_limiting_0_100;
-  pointer_to_boost_pressure_rpm_limit_threshold_0_2_32 =
-       (dword)&min_threshold_for_boost_fuel_pressure_rpm_limiting_0_65535;
-  pointer_to_boost_pressure_fuel_fault_log_data_0_2_32 = 0x80567e;
-  pointer_to_boost_pressure_rpm_fault_log_data_0_2_32 = 0x8056a6;
-  _DAT_0080d1f0 = 0x80a2f4;
-  _engine_sync_fuel_pressure_min_threshold_flag_3 =
-       &fuel_pressure_engine_protection_fueling_minimum_threshold;
-  engine_sync_fuel_pressure_max_threshold_flag =
-       (dword)&fuel_pressure_engine_protection_fueling_maximum_threshold;
-  pointer_to_engine_sync_fuel_pressure_rpm_limit_threshold_0_2_32 =
-       (dword)&min_threshold_for_engine_sync_fuel_pressure_rpm_limiting_0_65535;
-  pointer_to_fuel_pressure_fuel_fault_log_data_0_2_32 = 0x8056ce;
-  pointer_to_fuel_pressure_rpm_fault_log_data_0_2_32 = 0x8056f6;
-  _DAT_0080d21e = &engine_protection_fuel_temperature;
-  pointer_to_fuel_temperature_min_threshold_0_2_32 =
-       (dword)&minimum_temperature_threshold_for_fuel_temperature_fuel_limi_0_65535;
-  pointer_to_fuel_temperature_max_threshold_0_2_32 =
-       (dword)&maximum_threshold_for_fuel_temperature_fuel_limiting_0_65535;
-  pointer_to_fuel_temperature_rpm_limit_threshold_0_2_32 =
-       (dword)&minimum_threshold_for_fuel_temperature_rpm_limiting_0_65535;
-  pointer_to_fuel_temperature_fuel_fault_log_data_0_2_32 = 0x80571e;
-  pointer_to_fuel_temperature_rpm_fault_log_data_0_2_32 = 0x805746;
-  _DAT_0080d24c = 0x80a3ba;
-  engine_sync_fuel_pressure_min_threshold_flag_4 =
-       (dword)&min_threshold_for_ambient_air_pressure_fuel_limiting_0_15;
-  points_to_ambient_air_pressure_fuel_maximum_threshold_0_2_32 =
-       (dword)&max_threshold_for_ambient_air_pressure_fuel_limiting_0_15;
-  pointer_to_ambient_air_pressure_rpm_limit_threshold_0_2_32 =
-       (dword)&min_threshold_for_ambient_air_pressure_rpm_limiting_0_65535;
-  pointer_to_ambient_air_pressure_fuel_fault_log_data_0_2_32 = 0x80576e;
-  pointer_to_ambient_air_pressure_rpm_fault_log_data_0_2_32 = 0x805796;
+  engine_protection_channel_state_table[3].minimum_threshold_pointer =
+       (word *)&low_oil_pressure_limit_as_calculated_for_present_engine_speed_0_100;
+  engine_protection_channel_state_table[3].engine_speed_lower_limit_pointer =
+       (word *)&very_low_oil_pressure_is_calculated_for_present_engine_speed_0_100;
+  engine_protection_channel_state_table[3].fueling_fault_log_pointer =
+       oil_pressure_engine_protection_fueling_fault_log;
+  engine_protection_channel_state_table[3].engine_speed_fault_log_pointer =
+       oil_pressure_engine_protection_engine_speed_fault_log;
+  engine_protection_channel_state_table[4].input_pointer =
+       &water_in_fuel_sensor_state.filtered_value;
+  engine_protection_channel_state_table[4].minimum_threshold_pointer =
+       &engine_protection_channel_configuration_table[4].fueling_minimum_threshold;
+  engine_protection_channel_state_table[4].maximum_threshold_pointer =
+       &engine_protection_channel_configuration_table[4].fueling_maximum_threshold;
+  engine_protection_channel_state_table[4].engine_speed_lower_limit_pointer =
+       &engine_protection_channel_configuration_table[4].engine_speed_lower_limit_threshold;
+  engine_protection_channel_state_table[4].fueling_fault_log_pointer =
+       water_in_fuel_engine_protection_fueling_fault_log;
+  engine_protection_channel_state_table[4].engine_speed_fault_log_pointer =
+       water_in_fuel_engine_protection_engine_speed_fault_log;
+  engine_protection_channel_state_table[5].input_pointer =
+       &boost_pressure_sensor_state.filtered_value;
+  engine_protection_channel_state_table[5].minimum_threshold_pointer =
+       &engine_protection_channel_configuration_table[5].fueling_minimum_threshold;
+  engine_protection_channel_state_table[5].maximum_threshold_pointer =
+       &engine_protection_channel_configuration_table[5].fueling_maximum_threshold;
+  engine_protection_channel_state_table[5].engine_speed_lower_limit_pointer =
+       &engine_protection_channel_configuration_table[5].engine_speed_lower_limit_threshold;
+  engine_protection_channel_state_table[5].fueling_fault_log_pointer =
+       boost_pressure_engine_protection_fueling_fault_log;
+  engine_protection_channel_state_table[5].engine_speed_fault_log_pointer =
+       boost_pressure_engine_protection_engine_speed_fault_log;
+  engine_protection_channel_state_table[6].input_pointer =
+       &fuel_pressure_sensor_state.filtered_value;
+  engine_protection_channel_state_table[6].minimum_threshold_pointer =
+       &engine_protection_channel_configuration_table[6].fueling_minimum_threshold;
+  engine_protection_channel_state_table[6].maximum_threshold_pointer =
+       &engine_protection_channel_configuration_table[6].fueling_maximum_threshold;
+  engine_protection_channel_state_table[6].engine_speed_lower_limit_pointer =
+       &engine_protection_channel_configuration_table[6].engine_speed_lower_limit_threshold;
+  engine_protection_channel_state_table[6].fueling_fault_log_pointer =
+       engine_sync_fuel_pressure_engine_protection_fueling_fault_log;
+  engine_protection_channel_state_table[6].engine_speed_fault_log_pointer =
+       engine_sync_fuel_pressure_engine_protection_engine_speed_fault_log;
+  engine_protection_channel_state_table[7].input_pointer = &engine_protection_fuel_temperature;
+  engine_protection_channel_state_table[7].minimum_threshold_pointer =
+       &engine_protection_channel_configuration_table[7].fueling_minimum_threshold;
+  engine_protection_channel_state_table[7].maximum_threshold_pointer =
+       &engine_protection_channel_configuration_table[7].fueling_maximum_threshold;
+  engine_protection_channel_state_table[7].engine_speed_lower_limit_pointer =
+       &engine_protection_channel_configuration_table[7].engine_speed_lower_limit_threshold;
+  engine_protection_channel_state_table[7].fueling_fault_log_pointer =
+       fuel_temperature_engine_protection_fueling_fault_log;
+  engine_protection_channel_state_table[7].engine_speed_fault_log_pointer =
+       fuel_temperature_engine_protection_engine_speed_fault_log;
+  engine_protection_channel_state_table[8].input_pointer =
+       &ambient_air_pressure_sensor_state.filtered_value;
+  engine_protection_channel_state_table[8].minimum_threshold_pointer =
+       &engine_protection_channel_configuration_table[8].fueling_minimum_threshold;
+  engine_protection_channel_state_table[8].maximum_threshold_pointer =
+       &engine_protection_channel_configuration_table[8].fueling_maximum_threshold;
+  engine_protection_channel_state_table[8].engine_speed_lower_limit_pointer =
+       &engine_protection_channel_configuration_table[8].engine_speed_lower_limit_threshold;
+  engine_protection_channel_state_table[8].fueling_fault_log_pointer =
+       ambient_air_pressure_engine_protection_fueling_fault_log;
+  engine_protection_channel_state_table[8].engine_speed_fault_log_pointer =
+       ambient_air_pressure_engine_protection_engine_speed_fault_log;
   initializeFaultDerateEngineSpeedLimit();
   cm550_initializeShutdownLimitVariables();
   cm550_initializeEngineProtectionShutdownCounting();
-  _engine_protection_state_phase_index = 0;
+  engine_protection_task_index = ENGINE_PROTECTION_TASK_OVER_LIMIT_DURATIONS;
   return;
 }
 
 
 
 //
-// Function: cm550_protectionConditionEvaluator @ 0x00018968
+// Function: cm550_isEngineProtectionInputPastThreshold @ 0x00018968
 //
 
-uint cm550_protectionConditionEvaluator
-               (word *threshold_pointer,dword *state_pointer,word threshold_set_select,
-               word sensor_value)
+/* Returns 1 when the channel's input is past the threshold picked by is_engine_speed and
+   threshold_select. Select 0 is the word at the state's minimum threshold pointer (fueling) or
+   engine speed lower limit pointer, 2 the shutdown duration threshold (configuration +0x10 / +0x12)
+   and 3 the shutdown severity threshold (+0x20 / +0x22). Configuration flag 0x4 means at or above,
+   else below, with unsigned compares. A switch channel (flags 0x30) is past when ((input &
+   input_mask) != 0) equals (flag 0x10 != 0). CM848's counterpart compares signed, has select 1 (the
+   maximum threshold) and an unwired switch case (was cm550_protectionConditionEvaluator). (was
+   cm550_protectionConditionEvaluator; PR #53 round 97) */
+
+word cm550_isEngineProtectionInputPastThreshold
+               (engine_protection_channel_configuration_t *configuration,
+               cm550_engine_protection_channel_state_t *state,word is_engine_speed,
+               word threshold_select)
 
 {
   ushort uVar1;
   ushort uVar2;
-  uint in_D0;
-  uint uVar3;
   ushort unaff_D3w;
   
-  uVar1 = *threshold_pointer;
+  uVar1 = configuration->configuration_flags;
   if ((uVar1 & 0x30) == 0) {
-    uVar2 = *(ushort *)*state_pointer;
-    if (threshold_set_select == 0) {
-      if (sensor_value == 0) {
-        unaff_D3w = **(ushort **)((int)state_pointer + 10);
+    uVar2 = *state->input_pointer;
+    if (is_engine_speed == 0) {
+      if (threshold_select == 0) {
+        unaff_D3w = *state->minimum_threshold_pointer;
       }
-      else if (sensor_value == 2) {
-        unaff_D3w = threshold_pointer[8];
+      else if (threshold_select == 2) {
+        unaff_D3w = configuration->fueling_shutdown_duration_threshold;
       }
-      else if (sensor_value == 3) {
-        unaff_D3w = threshold_pointer[0x10];
+      else if (threshold_select == 3) {
+        unaff_D3w = configuration->fueling_shutdown_severity_threshold;
       }
     }
-    else if (sensor_value == 0) {
-      unaff_D3w = **(ushort **)((int)state_pointer + 0x12);
+    else if (threshold_select == 0) {
+      unaff_D3w = *state->engine_speed_lower_limit_pointer;
     }
-    else if (sensor_value == 2) {
-      unaff_D3w = threshold_pointer[9];
+    else if (threshold_select == 2) {
+      unaff_D3w = configuration->engine_speed_shutdown_duration_threshold;
     }
-    else if (sensor_value == 3) {
-      unaff_D3w = threshold_pointer[0x11];
+    else if (threshold_select == 3) {
+      unaff_D3w = configuration->engine_speed_shutdown_severity_threshold;
     }
-    uVar3 = in_D0 & 0xffff0000;
     if ((uVar1 & 4) == 0) {
       if (uVar2 < unaff_D3w) {
         return 1;
@@ -13280,59 +13405,65 @@ uint cm550_protectionConditionEvaluator
       return 1;
     }
   }
-  else {
-    uVar3 = (byte)-((*(ushort *)(state_pointer + 1) & *(ushort *)*state_pointer) != 0) & 1;
-    if (uVar3 == ((byte)-((uVar1 & 0x10) != 0) & 1)) {
-      return 1;
-    }
+  else if (((state->input_mask & *state->input_pointer) != 0) == ((uVar1 & 0x10) != 0)) {
+    return 1;
   }
-  return uVar3 & 0xffff0000;
+  return 0;
 }
 
 
 
 //
-// Function: protectionState0FaultDurationCounter @ 0x00018a26
+// Function: countEngineProtectionOverLimitDurations @ 0x00018a26
 //
 
-void protectionState0FaultDurationCounter(void)
+/* Task 0 of cm550_runEngineProtectionScheduler. For each of the nine channels while errors_allowed
+   (EP??EREN, state +0x16) is set: with configuration flags 0x101 it counts fueling_duration
+   (EP??FLTM, +6) up by one (saturating at 0xffff) while
+   cm550_isEngineProtectionInputPastThreshold(configuration, state, 0, 0) is 1, else sets it to 0;
+   with flags 0x402 it does the same for engine_speed_duration (EP??RPTM, +8) with (1, 0). While
+   errors are not allowed both durations are 0. The twin of CM848 0x50802c: one shared name (was
+   protectionState0FaultDurationCounter / cm848_countEngineProtectionOverLimitDurations). (was
+   protectionState0FaultDurationCounter; PR #53 round 97) */
+
+void countEngineProtectionOverLimitDurations(void)
 
 {
   ushort uVar1;
-  short sVar2;
-  dword *state_pointer;
-  word *threshold_pointer;
+  word wVar2;
+  cm550_engine_protection_channel_state_t *state;
+  engine_protection_channel_configuration_t *configuration;
   
-  state_pointer = (dword *)&protection_system_sensor_data_ptr;
-  for (threshold_pointer = (word *)&engine_protection_config_table_base;
-      threshold_pointer < fault_derate_fuel_limit_by_engine_speed_axis;
-      threshold_pointer = threshold_pointer + 0x12) {
-    if (*(short *)((int)state_pointer + 0x16) == 0) {
-      *(undefined2 *)((int)state_pointer + 6) = 0;
-      *(undefined2 *)(state_pointer + 2) = 0;
+  state = engine_protection_channel_state_table;
+  for (configuration = engine_protection_channel_configuration_table;
+      configuration < fault_derate_fuel_limit_by_engine_speed_axis;
+      configuration = configuration + 1) {
+    if (state->errors_allowed == 0) {
+      state->fueling_duration = 0;
+      state->engine_speed_duration = 0;
     }
     else {
-      uVar1 = *threshold_pointer;
+      uVar1 = configuration->configuration_flags;
       if ((uVar1 & 0x101) != 0) {
-        sVar2 = cm550_protectionConditionEvaluator(threshold_pointer,state_pointer,0,0);
-        if (sVar2 == 0) {
-          *(undefined2 *)((int)state_pointer + 6) = 0;
+        wVar2 = cm550_isEngineProtectionInputPastThreshold(configuration,state,0,0);
+        if (wVar2 == 0) {
+          state->fueling_duration = 0;
         }
-        else if (*(short *)((int)state_pointer + 6) != -1) {
-          *(short *)((int)state_pointer + 6) = *(short *)((int)state_pointer + 6) + 1;
+        else if (state->fueling_duration != 0xffff) {
+          state->fueling_duration = state->fueling_duration + 1;
         }
       }
       if ((uVar1 & 0x402) != 0) {
-        sVar2 = cm550_protectionConditionEvaluator(threshold_pointer,state_pointer,1,0);
-        if (sVar2 == 0) {
-          *(undefined2 *)(state_pointer + 2) = 0;
+        wVar2 = cm550_isEngineProtectionInputPastThreshold(configuration,state,1,0);
+        if (wVar2 == 0) {
+          state->engine_speed_duration = 0;
         }
-        else if (*(short *)(state_pointer + 2) != -1) {
-          *(short *)(state_pointer + 2) = *(short *)(state_pointer + 2) + 1;
+        else if (state->engine_speed_duration != 0xffff) {
+          state->engine_speed_duration = state->engine_speed_duration + 1;
         }
       }
     }
-    state_pointer = (dword *)((int)state_pointer + 0x2e);
+    state = state + 1;
   }
   return;
 }
@@ -13340,161 +13471,174 @@ void protectionState0FaultDurationCounter(void)
 
 
 //
-// Function: cm550_diagnosticProtectionEvaluator @ 0x00018ac4
+// Function: cm550_examineEngineProtectionBeforeCranking @ 0x00018ac4
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The engine protection restart examination before cranking (e2m 10B1 +10 EPPKSO 'EPF shutdown
+   engine command from restart examine before cranking'), run once at start-up (jsr at 0x28738 in
+   mc68k_applicationMain, right after cm550_initializeEngineProtection). It acts when engine
+   protection, its shutdown and its restart are enabled (EPEN / EPSOEN / EPRYEN), a shutdown channel
+   is recorded (engine_protection_active_fault_index, EPSOAE, not 255 and not 3 = oil pressure), and
+   the consecutive shutdown count (EPSOCU) is at or above
+   max_number_of_shutdowns_before_restart_is_not_allowed (EPSOMXLM). If that channel's shutdown and
+   restart bits (112 + 4n + 2 / + 3) are set and its input is still past the fueling (configuration
+   flag 0x1) or engine speed (0x2) threshold, it sets the channel's precrank_error (EP??PKER) and
+   engine_protection_precrank_shutdown_command_flag; processDiagnosticLimitStatus turns that into
+   the shutdown command. CM848's counterpart runs every scheduler pass while CRANKING and exempts
+   channel 4 (was cm550_diagnosticProtectionEvaluator). (was cm550_diagnosticProtectionEvaluator; PR
+   #53 round 97) */
 
-uint cm550_diagnosticProtectionEvaluator(void)
+void cm550_examineEngineProtectionBeforeCranking(void)
 
 {
   ushort uVar1;
   int iVar2;
-  undefined4 uVar3;
-  uint uVar4;
-  word *threshold_pointer;
+  word wVar3;
+  engine_protection_channel_configuration_t *configuration;
   
-  uVar4 = (ushort)algorithm_enable_flags_2_cal & 0x10;
   if (((((algorithm_enable_flags_2_cal.engine_protection_enable != 0) &&
-        (uVar4 = algorithm_enable_flags_2_cal.engine_protection_shutdown_enable,
-        algorithm_enable_flags_2_cal.engine_protection_shutdown_enable != 0)) &&
-       (uVar4 = (ushort)algorithm_enable_flags_2_cal & 0x20,
-       algorithm_enable_flags_2_cal.engine_protection_restart_enable != 0)) &&
+        (algorithm_enable_flags_2_cal.engine_protection_shutdown_enable != 0)) &&
+       (algorithm_enable_flags_2_cal.engine_protection_restart_enable != 0)) &&
       ((engine_protection_active_fault_index != 0xff && (engine_protection_active_fault_index != 3))
-      )) && (uVar4 = (uint)engine_protection_consecutive_shutdown_count,
-            max_number_of_shutdowns_before_restart_is_not_allowed_0_255 <=
-            engine_protection_consecutive_shutdown_count)) {
-    threshold_pointer =
-         (word *)(&engine_protection_config_table_base + engine_protection_active_fault_index * 0x24
-                 );
-    iVar2 = engine_protection_active_fault_index * 0x2e;
+      )) && (max_number_of_shutdowns_before_restart_is_not_allowed_0_255 <=
+             engine_protection_consecutive_shutdown_count)) {
+    configuration =
+         engine_protection_channel_configuration_table + engine_protection_active_fault_index;
+    iVar2 = (int)engine_protection_active_fault_index;
     uVar1 = engine_protection_active_fault_index * 4 + 0x70;
-    uVar4 = 0;
     if ((((uint)(&algorithm_enable_flags_0_cal)[(short)((int)(uVar1 + 2) >> 4)] &
          1 << (uVar1 + 2) % 0x10) != 0) &&
-       (uVar4 = 0,
-       ((uint)(&algorithm_enable_flags_0_cal)[(short)((int)(uVar1 + 3) >> 4)] &
-       1 << (uVar1 + 3) % 0x10) != 0)) {
-      uVar1 = *threshold_pointer;
-      uVar3 = 0;
+       (((uint)(&algorithm_enable_flags_0_cal)[(short)((int)(uVar1 + 3) >> 4)] &
+        1 << (uVar1 + 3) % 0x10) != 0)) {
+      uVar1 = configuration->configuration_flags;
       if ((uVar1 & 1) != 0) {
-        uVar3 = cm550_protectionConditionEvaluator
-                          (threshold_pointer,(dword *)(&protection_system_sensor_data_ptr + iVar2),0
-                           ,0);
-        if ((short)uVar3 != 0) {
-          *(undefined2 *)
-           (&coolant_level_system_error_detected_before_cranking_i_1_true_0_false + iVar2) = 1;
-          _DAT_0080d28a = 1;
+        wVar3 = cm550_isEngineProtectionInputPastThreshold
+                          (configuration,engine_protection_channel_state_table + iVar2,0,0);
+        if (wVar3 != 0) {
+          engine_protection_channel_state_table[iVar2].precrank_error = 1;
+          engine_protection_precrank_shutdown_command_flag = 1;
         }
       }
-      uVar4 = CONCAT22((short)((uint)uVar3 >> 0x10),uVar1) & 0xffff0002;
       if ((uVar1 & 2) != 0) {
-        uVar4 = cm550_protectionConditionEvaluator
-                          (threshold_pointer,(dword *)(&protection_system_sensor_data_ptr + iVar2),1
-                           ,0);
-        if ((short)uVar4 != 0) {
-          *(undefined2 *)
-           (&coolant_level_system_error_detected_before_cranking_i_1_true_0_false + iVar2) = 1;
-          _DAT_0080d28a = 1;
+        wVar3 = cm550_isEngineProtectionInputPastThreshold
+                          (configuration,engine_protection_channel_state_table + iVar2,1,0);
+        if (wVar3 != 0) {
+          engine_protection_channel_state_table[iVar2].precrank_error = 1;
+          engine_protection_precrank_shutdown_command_flag = 1;
         }
       }
     }
   }
-  return uVar4;
+  return;
 }
 
 
 
 //
-// Function: cm550_diagnosticProtectionProcessor @ 0x00018c1c
+// Function: updateEngineProtectionRestartSeverityIndexes @ 0x00018c1c
 //
 
-short cm550_diagnosticProtectionProcessor
-                (word *configuration_pointer,dword state_offset,dword threshold_value)
+/* Sets the channel's restart severity indexes in its history record. With configuration flag 0x1
+   the fueling one (EP??FLRI, +4) is 0 while the input is inside its fueling threshold, else 0x100
+   with flag 0x40, else cm550_interpolateEngineProtectionSeverity of the input between the minimum
+   and maximum thresholds. With flag 0x2 the engine speed one (EP??RPRI, +6) is 0 or 0x100. Called
+   by updateEngineProtectionRestartSeverity for the recorded shutdown channel. The twin of CM848
+   0x50832c: one shared name (was cm550_diagnosticProtectionProcessor /
+   cm848_updateEngineProtectionRestartSeverityIndexes). (was cm550_diagnosticProtectionProcessor; PR
+   #53 round 97) */
+
+void updateEngineProtectionRestartSeverityIndexes
+               (engine_protection_channel_configuration_t *configuration,
+               cm550_engine_protection_channel_state_t *state,
+               engine_protection_channel_history_t *history)
 
 {
   ushort uVar1;
-  short sVar2;
-  word wVar3;
+  word wVar2;
   
-  uVar1 = *configuration_pointer;
+  uVar1 = configuration->configuration_flags;
   if ((uVar1 & 1) != 0) {
-    sVar2 = cm550_protectionConditionEvaluator(configuration_pointer,(dword *)state_offset,0,0);
-    if (sVar2 == 0) {
-      *(undefined2 *)(threshold_value + 4) = 0;
+    wVar2 = cm550_isEngineProtectionInputPastThreshold(configuration,state,0,0);
+    if (wVar2 == 0) {
+      history->fueling_restart_severity_index = 0;
     }
     else if ((uVar1 & 0x40) == 0) {
-      wVar3 = cm550_protectionPercentageCalculator
-                        (**(word **)state_offset,**(word **)(state_offset + 10),
-                         **(word **)(state_offset + 0xe));
-      *(word *)(threshold_value + 4) = wVar3;
+      wVar2 = cm550_interpolateEngineProtectionSeverity
+                        (*state->input_pointer,*state->minimum_threshold_pointer,
+                         *state->maximum_threshold_pointer);
+      history->fueling_restart_severity_index = wVar2;
     }
     else {
-      *(undefined2 *)(threshold_value + 4) = 0x100;
+      history->fueling_restart_severity_index = 0x100;
     }
   }
-  sVar2 = 0;
   if ((uVar1 & 2) != 0) {
-    sVar2 = cm550_protectionConditionEvaluator(configuration_pointer,(dword *)state_offset,1,0);
-    if (sVar2 == 0) {
-      *(undefined2 *)(threshold_value + 6) = 0;
-      return 0;
+    wVar2 = cm550_isEngineProtectionInputPastThreshold(configuration,state,1,0);
+    if (wVar2 == 0) {
+      history->engine_speed_restart_severity_index = 0;
+      return;
     }
-    *(undefined2 *)(threshold_value + 6) = 0x100;
+    history->engine_speed_restart_severity_index = 0x100;
   }
-  return sVar2;
+  return;
 }
 
 
 
 //
-// Function: cm550_protectionState1DiagnosticValidator @ 0x00018cb6
+// Function: updateEngineProtectionRestartSeverity @ 0x00018cb6
 //
 
-ushort cm550_protectionState1DiagnosticValidator(void)
+/* Task 1 of cm550_runEngineProtectionScheduler. With the engine protection shutdown and restart
+   enabled (EPSOEN / EPRYEN) and a shutdown channel recorded (engine_protection_active_fault_index
+   not 255), it walks the nine channels (configuration, state and history records, enable bit 112 +
+   4n). The recorded channel, when its shutdown and restart bits (+2 / +3) are set, gets
+   updateEngineProtectionRestartSeverityIndexes and
+   cm550_updateEngineProtectionRestartLimitationCommands. Every other channel, and the recorded one
+   while either of those bits is clear, has both restart severity indexes (history +4 / +6) cleared.
+   The twin of CM848 0x5084b4: one shared name; only layout constants differ (CM848's enable bits
+   start at 128, its state records are 62 bytes and its table has one channel) (was
+   cm550_protectionState1DiagnosticValidator / cm848_updateEngineProtectionRestartSeverity). (was
+   cm550_protectionState1DiagnosticValidator; PR #53 round 97) */
+
+void updateEngineProtectionRestartSeverity(void)
 
 {
-  ushort uVar1;
+  uint uVar1;
   uint uVar2;
-  uint uVar3;
-  undefined *threshold_value;
-  word *configuration_pointer;
-  undefined *channel_state_record;
+  engine_protection_channel_history_t *history;
+  engine_protection_channel_configuration_t *configuration;
+  cm550_engine_protection_channel_state_t *state;
   
-  uVar1 = algorithm_enable_flags_2_cal.engine_protection_shutdown_enable;
   if (((algorithm_enable_flags_2_cal.engine_protection_shutdown_enable != 0) &&
-      (uVar1 = (ushort)algorithm_enable_flags_2_cal & 0x20,
-      algorithm_enable_flags_2_cal.engine_protection_restart_enable != 0)) &&
+      (algorithm_enable_flags_2_cal.engine_protection_restart_enable != 0)) &&
      (engine_protection_active_fault_index != 0xff)) {
-    channel_state_record = &protection_system_sensor_data_ptr;
-    threshold_value = &coolant_level_fueling_severity_index_0_0_1_0;
-    uVar2 = 0x70;
-    uVar3 = 0;
-    for (configuration_pointer = (word *)&engine_protection_config_table_base;
-        configuration_pointer < fault_derate_fuel_limit_by_engine_speed_axis;
-        configuration_pointer = configuration_pointer + 0x12) {
-      if ((((int)engine_protection_active_fault_index == uVar3) &&
-          (((uint)(&algorithm_enable_flags_0_cal)[(short)((int)(uVar2 + 2) >> 4)] &
-           1 << (uVar2 + 2) % 0x10) != 0)) &&
-         (((uint)(&algorithm_enable_flags_0_cal)[(short)((int)(uVar2 + 3) >> 4)] &
-          1 << (uVar2 + 3) % 0x10) != 0)) {
-        cm550_diagnosticProtectionProcessor
-                  (configuration_pointer,(dword)channel_state_record,(dword)threshold_value);
-        cm550_updateEngineProtectionRestartLimitationCommands
-                  ((word)uVar3,channel_state_record,configuration_pointer);
+    state = engine_protection_channel_state_table;
+    history = engine_protection_channel_history_table;
+    uVar1 = 0x70;
+    uVar2 = 0;
+    for (configuration = engine_protection_channel_configuration_table;
+        configuration < fault_derate_fuel_limit_by_engine_speed_axis;
+        configuration = configuration + 1) {
+      if ((((int)engine_protection_active_fault_index == uVar2) &&
+          (((uint)(&algorithm_enable_flags_0_cal)[(short)((int)(uVar1 + 2) >> 4)] &
+           1 << (uVar1 + 2) % 0x10) != 0)) &&
+         (((uint)(&algorithm_enable_flags_0_cal)[(short)((int)(uVar1 + 3) >> 4)] &
+          1 << (uVar1 + 3) % 0x10) != 0)) {
+        updateEngineProtectionRestartSeverityIndexes(configuration,state,history);
+        cm550_updateEngineProtectionRestartLimitationCommands((word)uVar2,state,configuration);
       }
       else {
-        *(undefined2 *)(threshold_value + 4) = 0;
-        *(undefined2 *)(threshold_value + 6) = 0;
+        history->fueling_restart_severity_index = 0;
+        history->engine_speed_restart_severity_index = 0;
       }
-      channel_state_record = channel_state_record + 0x2e;
-      uVar1 = 0x1e;
-      threshold_value = threshold_value + 0x1e;
-      uVar2 = (uint)(ushort)((short)uVar2 + 4);
-      uVar3 = (uint)(ushort)((word)uVar3 + 1);
+      state = state + 1;
+      history = history + 1;
+      uVar1 = (uint)(ushort)((short)uVar1 + 4);
+      uVar2 = (uint)(ushort)((word)uVar2 + 1);
     }
   }
-  return uVar1;
+  return;
 }
 
 
@@ -13506,31 +13650,29 @@ ushort cm550_protectionState1DiagnosticValidator(void)
 /* The engine protection restart limitation, for protection channel 3 only. Once
    engine_protection_consecutive_shutdown_count has reached
    max_number_of_shutdowns_before_restart_is_not_allowed_0_255 and the channel state record's word
-   +0x16 is not 0, it sets epf_shutdown_approaching_command_from_restart_limitat_1_true_0_false
-   (0x80d27c) to (state word +6 != 0) and
-   epf_shutdown_engine_command_from_restart_limitation_a_1_true_0_false (0x80d27a) to (settings word
-   +0x1e < state word +6, unsigned). Otherwise both keep their values.
-   cm550_protectionState1DiagnosticValidator calls it once per channel (0x18d7e) with the channel's
+   +0x16 is not 0, it sets engine_protection_restart_limitation_shutdown_approaching_flag (0x80d27c)
+   to (state word +6 != 0) and engine_protection_restart_limitation_shutdown_command_flag (0x80d27a)
+   to (settings word +0x1e < state word +6, unsigned). Otherwise both keep their values.
+   updateEngineProtectionRestartSeverity calls it once per channel (0x18d7e) with the channel's
    state record (from 0x80d0dc) and settings record (from 0x807032). (was
    cm550_protectionUpdateHandler; the prototype lets the decompiler export the body) (PR #53 round
    96) */
 
 void cm550_updateEngineProtectionRestartLimitationCommands
-               (word channel_index,void *channel_state_record,void *channel_settings_record)
+               (word channel_index,cm550_engine_protection_channel_state_t *state,
+               engine_protection_channel_configuration_t *configuration)
 
 {
   if (((channel_index == 3) &&
       (max_number_of_shutdowns_before_restart_is_not_allowed_0_255 <=
-       engine_protection_consecutive_shutdown_count)) &&
-     (*(short *)((int)channel_state_record + 0x16) != 0)) {
-    epf_shutdown_approaching_command_from_restart_limitat_1_true_0_false =
-         (word)(*(short *)((int)channel_state_record + 6) != 0);
-    if (*(ushort *)((int)channel_settings_record + 0x1e) <
-        *(ushort *)((int)channel_state_record + 6)) {
-      epf_shutdown_engine_command_from_restart_limitation_a_1_true_0_false = 1;
+       engine_protection_consecutive_shutdown_count)) && (state->errors_allowed != 0)) {
+    engine_protection_restart_limitation_shutdown_approaching_flag =
+         (word)(state->fueling_duration != 0);
+    if (configuration->shutdown_warning_time < state->fueling_duration) {
+      engine_protection_restart_limitation_shutdown_command_flag = 1;
       return;
     }
-    epf_shutdown_engine_command_from_restart_limitation_a_1_true_0_false = 0;
+    engine_protection_restart_limitation_shutdown_command_flag = 0;
   }
   return;
 }
@@ -13541,12 +13683,10 @@ void cm550_updateEngineProtectionRestartLimitationCommands
 // Function: cm550_calculateFaultDerateEngineSpeedLimit @ 0x00018e0c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* It uses engine_protection_speed_limit_filter_state. Over the 9 engine protection channels
    (configs 0x807032 + 36n, states 0x80d0dc + 46n, severity records 0x8057c0 + 30n) it takes the rpm
-   severity from cm550_protectionThresholdCalculationHelper(..., 1) for each channel whose flag bits
-   (base 0x71 and 0x1a0) are set, and keeps the largest. (was cm550_FUN_00018e0c; PR #53 round 89)
-    */
+   severity from rampEngineProtectionSeverityIndex(..., 1) for each channel whose flag bits (base
+   0x71 and 0x1a0) are set, and keeps the largest. (was cm550_FUN_00018e0c; PR #53 round 89) */
 
 void cm550_calculateFaultDerateEngineSpeedLimit(void)
 
@@ -13556,47 +13696,46 @@ void cm550_calculateFaultDerateEngineSpeedLimit(void)
   uint uVar3;
   uint uVar4;
   ushort uVar5;
-  word *severity_indexes;
-  word *protection_configuration;
-  word *protection_state;
+  engine_protection_channel_history_t *history;
+  engine_protection_channel_configuration_t *configuration;
+  cm550_engine_protection_channel_state_t *state;
   
-  protection_state = (word *)&protection_system_sensor_data_ptr;
-  severity_indexes = (word *)&coolant_level_fueling_severity_index_0_0_1_0;
+  state = engine_protection_channel_state_table;
+  history = engine_protection_channel_history_table;
   uVar4 = 0x71;
   uVar3 = 0x1a0;
   uVar5 = 0;
-  for (protection_configuration = (word *)&engine_protection_config_table_base;
-      protection_configuration < fault_derate_fuel_limit_by_engine_speed_axis;
-      protection_configuration = protection_configuration + 0x12) {
-    if ((*protection_configuration & 2) != 0) {
+  for (configuration = engine_protection_channel_configuration_table;
+      configuration < fault_derate_fuel_limit_by_engine_speed_axis;
+      configuration = configuration + 1) {
+    if ((configuration->configuration_flags & 2) != 0) {
       sVar1 = (short)((int)uVar3 >> 4);
       if ((((uint)(&algorithm_enable_flags_0_cal)[(short)((int)uVar4 >> 4)] & 1 << (uVar4 & 0xf)) ==
            0) && (((uint)(&algorithm_enable_flags_0_cal)[sVar1] & 1 << (uVar3 & 0xf)) == 0)) {
         wVar2 = 0;
       }
       else {
-        wVar2 = cm550_protectionThresholdCalculationHelper
-                          (protection_configuration,protection_state,severity_indexes,1);
-        if ((wVar2 < severity_indexes[3]) &&
+        wVar2 = rampEngineProtectionSeverityIndex(configuration,state,history,1);
+        if ((wVar2 < history->engine_speed_restart_severity_index) &&
            (((uint)(&algorithm_enable_flags_0_cal)[sVar1] & 1 << (uVar3 & 0xf)) == 0)) {
-          wVar2 = severity_indexes[3];
+          wVar2 = history->engine_speed_restart_severity_index;
         }
       }
-      severity_indexes[1] = wVar2;
+      history->engine_speed_severity_index = wVar2;
       if ((uVar5 < wVar2) &&
          (((uint)(&algorithm_enable_flags_0_cal)[sVar1] & 1 << (uVar3 & 0xf)) == 0)) {
-        uVar5 = severity_indexes[1];
+        uVar5 = history->engine_speed_severity_index;
       }
     }
-    protection_state = protection_state + 0x17;
-    severity_indexes = severity_indexes + 0xf;
+    state = state + 1;
+    history = history + 1;
     uVar4 = (uint)(ushort)((short)uVar4 + 4);
     uVar3 = (uint)(ushort)((short)uVar3 + 1);
   }
   engine_speed_limit_fault_derate =
        cm550_exponentialMovingAverage
                  (maximum_rated_engine_speed_0_5000 -
-                  (short)((uint)uVar5 * (uint)_DAT_0080d290 >> 8),
+                  (short)((uint)uVar5 * (uint)engine_speed_limit_fault_derate_span >> 8),
                   &engine_protection_speed_limit_filter_state);
   return;
 }
@@ -13607,7 +13746,6 @@ void cm550_calculateFaultDerateEngineSpeedLimit(void)
 // Function: initializeFaultDerateEngineSpeedLimit @ 0x00018f4c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Start-up initializer of the engine protection (EPF) engine speed derate. It sets
    engine_protection_speed_limit_filter_state.accumulator = the maximum rated engine speed
    (0x803f40) << 16 and .coefficient = 0x807f3a (10B5 +4 EPRPFTTC 'MAXIMUM RPM LIMIT FILTER TIME
@@ -13622,35 +13760,43 @@ void initializeFaultDerateEngineSpeedLimit(void)
   engine_protection_speed_limit_filter_state.coefficient =
        &engine_protection_speed_limit_filter_coefficient;
   engine_speed_limit_fault_derate = maximum_rated_engine_speed_0_5000;
-  _DAT_0080d290 = maximum_rated_engine_speed_0_5000 - engine_speed_limit_fault_derate_full_severity;
+  engine_speed_limit_fault_derate_span =
+       maximum_rated_engine_speed_0_5000 - engine_speed_limit_fault_derate_full_severity;
   return;
 }
 
 
 
 //
-// Function: incrementDiagnosticCounters @ 0x00018f86
+// Function: countEngineProtectionShutdownTime @ 0x00018f86
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Counts the channel's fueling (is_engine_speed 0) or engine speed shutdown time up by one
+   (state->fueling_shutdown_time_count / engine_speed_shutdown_time_count, saturating at 0xffff)
+   and, in the engine start pass (engine_protection_engine_start_flag), copies
+   configuration->shutdown_delay into the matching start warning time. processDiagnosticLimitStatus
+   (engine protection task 4) calls it for a channel past its shutdown threshold. The twin of CM848
+   0x00508834: one shared name (was incrementDiagnosticCounters; PR #53 round 97) */
 
-void incrementDiagnosticCounters(dword source_pointer,dword destination_pointer,word condition_flag)
+void countEngineProtectionShutdownTime
+               (engine_protection_channel_configuration_t *configuration,
+               cm550_engine_protection_channel_state_t *state,word is_engine_speed)
 
 {
-  if (condition_flag == 0) {
-    if (*(short *)(destination_pointer + 0x1a) != -1) {
-      *(short *)(destination_pointer + 0x1a) = *(short *)(destination_pointer + 0x1a) + 1;
+  if (is_engine_speed == 0) {
+    if (state->fueling_shutdown_time_count != 0xffff) {
+      state->fueling_shutdown_time_count = state->fueling_shutdown_time_count + 1;
     }
   }
-  else if (*(short *)(destination_pointer + 0x1c) != -1) {
-    *(short *)(destination_pointer + 0x1c) = *(short *)(destination_pointer + 0x1c) + 1;
+  else if (state->engine_speed_shutdown_time_count != 0xffff) {
+    state->engine_speed_shutdown_time_count = state->engine_speed_shutdown_time_count + 1;
   }
-  if (_DAT_00800620 != 0) {
-    if (condition_flag == 0) {
-      *(undefined2 *)(destination_pointer + 0x1e) = *(undefined2 *)(source_pointer + 0x14);
+  if (engine_protection_engine_start_flag != 0) {
+    if (is_engine_speed == 0) {
+      state->fueling_start_warning_time = configuration->shutdown_delay;
       return;
     }
-    *(undefined2 *)(destination_pointer + 0x20) = *(undefined2 *)(source_pointer + 0x14);
+    state->engine_speed_start_warning_time = configuration->shutdown_delay;
   }
   return;
 }
@@ -13661,147 +13807,144 @@ void incrementDiagnosticCounters(dword source_pointer,dword destination_pointer,
 // Function: processDiagnosticLimitStatus @ 0x00018fcc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
-ushort processDiagnosticLimitStatus(void)
+void processDiagnosticLimitStatus(void)
 
 {
-  short sVar1;
-  ushort uVar2;
-  uint uVar3;
-  short sVar4;
-  ushort uVar5;
-  uint uVar6;
-  short sVar7;
-  dword *state_pointer;
-  undefined *puVar8;
-  word *threshold_pointer;
+  word wVar1;
+  uint uVar2;
+  short sVar3;
+  ushort uVar4;
+  uint uVar5;
+  short sVar6;
+  cm550_engine_protection_channel_state_t *pcVar7;
+  engine_protection_channel_configuration_t *configuration;
   
   if (engine_state == ENGINE_STATE_STOPPED) {
     engine_shutdown_command_flag_previous = 0;
   }
-  uVar2 = algorithm_enable_flags_2_cal.engine_protection_shutdown_enable;
   if (((algorithm_enable_flags_2_cal.engine_protection_shutdown_enable == 0) ||
       (engine_state == ENGINE_STATE_SHUTDOWN)) || (engine_state == ENGINE_STATE_STOPPED)) {
     engine_protection_shutdown_approaching_flag = 0;
-    uVar5 = 0;
-    puVar8 = &protection_system_sensor_data_ptr;
+    uVar4 = 0;
+    pcVar7 = engine_protection_channel_state_table;
     do {
-      *(undefined2 *)(puVar8 + 0x1a) = 0;
-      *(undefined2 *)(puVar8 + 0x1c) = 0;
-      uVar2 = 0x2e;
-      puVar8 = puVar8 + 0x2e;
-      uVar5 = uVar5 + 1;
-    } while (uVar5 < 9);
+      pcVar7->fueling_shutdown_time_count = 0;
+      pcVar7->engine_speed_shutdown_time_count = 0;
+      pcVar7 = pcVar7 + 1;
+      uVar4 = uVar4 + 1;
+    } while (uVar4 < 9);
   }
   else if (engine_shutdown_command_flag_previous == 0) {
     engine_protection_shutdown_approaching_flag = 0;
-    threshold_pointer = (word *)&engine_protection_config_table_base;
-    state_pointer = (dword *)&protection_system_sensor_data_ptr;
-    uVar6 = 0x72;
-    uVar3 = 0;
-    if ((general_counter_1 == 0) && (filtered_engine_speed != 0)) {
-      _DAT_00800620 = 1;
+    configuration = engine_protection_channel_configuration_table;
+    pcVar7 = engine_protection_channel_state_table;
+    uVar5 = 0x72;
+    uVar2 = 0;
+    if ((engine_protection_previous_engine_speed == 0) && (filtered_engine_speed != 0)) {
+      engine_protection_engine_start_flag = 1;
     }
     else {
-      _DAT_00800620 = 0;
+      engine_protection_engine_start_flag = 0;
     }
-    sVar7 = 0;
-    for (; threshold_pointer < fault_derate_fuel_limit_by_engine_speed_axis;
-        threshold_pointer = threshold_pointer + 0x12) {
-      uVar2 = *threshold_pointer;
-      sVar4 = (short)uVar3;
-      if (((uint)(&algorithm_enable_flags_0_cal)[(short)((int)uVar6 >> 4)] & 1 << (uVar6 & 0xf)) ==
+    sVar6 = 0;
+    for (; configuration < fault_derate_fuel_limit_by_engine_speed_axis;
+        configuration = configuration + 1) {
+      uVar4 = configuration->configuration_flags;
+      sVar3 = (short)uVar2;
+      if (((uint)(&algorithm_enable_flags_0_cal)[(short)((int)uVar5 >> 4)] & 1 << (uVar5 & 0xf)) ==
           0) {
-        *(undefined2 *)((int)state_pointer + 0x1a) = 0;
-        *(undefined2 *)(state_pointer + 7) = 0;
+        pcVar7->fueling_shutdown_time_count = 0;
+        pcVar7->engine_speed_shutdown_time_count = 0;
       }
       else {
-        if ((((int)engine_protection_active_fault_index == uVar3) &&
-            (*(short *)(&coolant_level_fueling_severity_index_0_0_1_0 + sVar7) == 0)) &&
-           (*(short *)(&severity_index_for_epf_coolant_level_fault_0_0_1_0 + sVar7) == 0)) {
+        if ((((int)engine_protection_active_fault_index == uVar2) &&
+            (*(short *)((int)&engine_protection_channel_history_table[0].fueling_severity_index +
+                       (int)sVar6) == 0)) &&
+           (*(short *)((int)&engine_protection_channel_history_table[0].engine_speed_severity_index
+                      + (int)sVar6) == 0)) {
           engine_protection_active_fault_index = 0xff;
           engine_protection_consecutive_shutdown_count = 0;
         }
-        if (((uVar2 & 0x300) == 0) || (*(short *)((int)state_pointer + 0x16) == 0)) {
-          *(undefined2 *)((int)state_pointer + 0x1a) = 0;
+        if (((uVar4 & 0x300) == 0) || (pcVar7->errors_allowed == 0)) {
+          pcVar7->fueling_shutdown_time_count = 0;
         }
         else {
-          if ((uVar2 & 0x100) == 0) {
-            sVar1 = cm550_protectionConditionEvaluator(threshold_pointer,state_pointer,0,3);
-            if (sVar1 == 0) {
-              *(undefined2 *)((int)state_pointer + 0x1a) = 0;
-              *(undefined2 *)((int)state_pointer + 0x1e) = 0;
+          if ((uVar4 & 0x100) == 0) {
+            wVar1 = cm550_isEngineProtectionInputPastThreshold(configuration,pcVar7,0,3);
+            if (wVar1 == 0) {
+              pcVar7->fueling_shutdown_time_count = 0;
+              pcVar7->fueling_start_warning_time = 0;
             }
             else {
-              incrementDiagnosticCounters((dword)threshold_pointer,(dword)state_pointer,0);
+              countEngineProtectionShutdownTime(configuration,pcVar7,0);
             }
           }
-          else if (threshold_pointer[8] < *(ushort *)((int)state_pointer + 6)) {
-            incrementDiagnosticCounters((dword)threshold_pointer,(dword)state_pointer,0);
+          else if (configuration->fueling_shutdown_duration_threshold < pcVar7->fueling_duration) {
+            countEngineProtectionShutdownTime(configuration,pcVar7,0);
           }
           else {
-            *(undefined2 *)((int)state_pointer + 0x1a) = 0;
-            *(undefined2 *)((int)state_pointer + 0x1e) = 0;
+            pcVar7->fueling_shutdown_time_count = 0;
+            pcVar7->fueling_start_warning_time = 0;
           }
-          if (*(ushort *)((int)state_pointer + 0x1e) < *(ushort *)((int)state_pointer + 0x1a)) {
+          if (pcVar7->fueling_start_warning_time < pcVar7->fueling_shutdown_time_count) {
             engine_protection_shutdown_approaching_flag = 1;
           }
-          if ((uint)threshold_pointer[0xf] + (uint)*(ushort *)((int)state_pointer + 0x1e) <
-              (uint)*(ushort *)((int)state_pointer + 0x1a)) {
+          if ((uint)configuration->shutdown_warning_time + (uint)pcVar7->fueling_start_warning_time
+              < (uint)pcVar7->fueling_shutdown_time_count) {
             engine_shutdown_command_flag = 1;
-            engine_protection_active_fault_index = sVar4;
+            engine_protection_active_fault_index = sVar3;
           }
         }
-        if (((uVar2 & 0xc00) == 0) || (*(short *)((int)state_pointer + 0x16) == 0)) {
-          *(undefined2 *)(state_pointer + 7) = 0;
+        if (((uVar4 & 0xc00) == 0) || (pcVar7->errors_allowed == 0)) {
+          pcVar7->engine_speed_shutdown_time_count = 0;
         }
         else {
-          if ((uVar2 & 0x400) == 0) {
-            sVar1 = cm550_protectionConditionEvaluator(threshold_pointer,state_pointer,1,3);
-            if (sVar1 == 0) {
-              *(undefined2 *)(state_pointer + 7) = 0;
-              *(undefined2 *)(state_pointer + 8) = 0;
+          if ((uVar4 & 0x400) == 0) {
+            wVar1 = cm550_isEngineProtectionInputPastThreshold(configuration,pcVar7,1,3);
+            if (wVar1 == 0) {
+              pcVar7->engine_speed_shutdown_time_count = 0;
+              pcVar7->engine_speed_start_warning_time = 0;
             }
             else {
-              incrementDiagnosticCounters((dword)threshold_pointer,(dword)state_pointer,1);
+              countEngineProtectionShutdownTime(configuration,pcVar7,1);
             }
           }
-          else if (threshold_pointer[9] < *(ushort *)(state_pointer + 2)) {
-            incrementDiagnosticCounters((dword)threshold_pointer,(dword)state_pointer,1);
+          else if (configuration->engine_speed_shutdown_duration_threshold <
+                   pcVar7->engine_speed_duration) {
+            countEngineProtectionShutdownTime(configuration,pcVar7,1);
           }
           else {
-            *(undefined2 *)(state_pointer + 7) = 0;
-            *(undefined2 *)(state_pointer + 8) = 0;
+            pcVar7->engine_speed_shutdown_time_count = 0;
+            pcVar7->engine_speed_start_warning_time = 0;
           }
-          if (*(ushort *)(state_pointer + 8) < *(ushort *)(state_pointer + 7)) {
+          if (pcVar7->engine_speed_start_warning_time < pcVar7->engine_speed_shutdown_time_count) {
             engine_protection_shutdown_approaching_flag = 1;
           }
-          if ((uint)threshold_pointer[0xf] + (uint)*(ushort *)(state_pointer + 8) <
-              (uint)*(ushort *)(state_pointer + 7)) {
+          if ((uint)configuration->shutdown_warning_time +
+              (uint)pcVar7->engine_speed_start_warning_time <
+              (uint)pcVar7->engine_speed_shutdown_time_count) {
             engine_shutdown_command_flag = 1;
-            engine_protection_active_fault_index = sVar4;
+            engine_protection_active_fault_index = sVar3;
           }
         }
       }
-      state_pointer = (dword *)((int)state_pointer + 0x2e);
-      uVar6 = (uint)(ushort)((short)uVar6 + 4);
-      sVar7 = sVar7 + 0x1e;
-      uVar3 = (uint)(ushort)(sVar4 + 1);
+      pcVar7 = pcVar7 + 1;
+      uVar5 = (uint)(ushort)((short)uVar5 + 4);
+      sVar6 = sVar6 + 0x1e;
+      uVar2 = (uint)(ushort)(sVar3 + 1);
     }
-    if (_DAT_0080d28a != 0 ||
-        epf_shutdown_approaching_command_from_restart_limitat_1_true_0_false != 0) {
+    if (engine_protection_precrank_shutdown_command_flag != 0 ||
+        engine_protection_restart_limitation_shutdown_approaching_flag != 0) {
       engine_protection_shutdown_approaching_flag = 1;
     }
-    uVar2 = _DAT_0080d28a | epf_shutdown_engine_command_from_restart_limitation_a_1_true_0_false;
-    if (uVar2 != 0) {
+    if (engine_protection_precrank_shutdown_command_flag != 0 ||
+        engine_protection_restart_limitation_shutdown_command_flag != 0) {
       engine_shutdown_command_flag = 1;
     }
     if ((engine_shutdown_command_flag != 0) && (engine_shutdown_command_flag_previous == 0)) {
-      if (_DAT_008058d2 != 0xff) {
-        _DAT_008058d2 = _DAT_008058d2 + 1;
+      if (engine_protection_shutdown_total != 0xff) {
+        engine_protection_shutdown_total = engine_protection_shutdown_total + 1;
       }
-      uVar2 = engine_protection_active_fault_index;
       if (engine_protection_active_fault_index == engine_protection_power_up_shutdown_channel) {
         if (engine_protection_consecutive_shutdown_count != 0xff) {
           engine_protection_consecutive_shutdown_count =
@@ -13817,8 +13960,8 @@ ushort processDiagnosticLimitStatus(void)
   else {
     engine_shutdown_command_flag = 1;
   }
-  general_counter_1 = filtered_engine_speed;
-  return uVar2;
+  engine_protection_previous_engine_speed = filtered_engine_speed;
+  return;
 }
 
 
@@ -13827,7 +13970,7 @@ ushort processDiagnosticLimitStatus(void)
 // Function: cm550_initializeEngineProtectionShutdownCounting @ 0x000192e0
 //
 
-/* Start-up step of vp44_engineProtectionSystemInit (after cm550_initializeShutdownLimitVariables):
+/* Start-up step of cm550_initializeEngineProtection (after cm550_initializeShutdownLimitVariables):
    copies engine_protection_active_fault_index (e2m 10B3 +0 EPSOAE, the channel of the last
    shutdown) into engine_protection_power_up_shutdown_channel and clears
    engine_shutdown_command_flag_previous. processDiagnosticLimitStatus counts a new shutdown on the
@@ -13846,19 +13989,26 @@ void cm550_initializeEngineProtectionShutdownCounting(void)
 
 
 //
-// Function: cm550_protectionCalculationHelper @ 0x000192f2
+// Function: cm550_isEngineProtectionInputMoreExtreme @ 0x000192f2
 //
 
-word cm550_protectionCalculationHelper
-               (word sensor_value,word extremity_value,word configuration_flags)
+/* Returns 1 when the input is more extreme than the recorded value: above it with configuration
+   flag 0x4 (the maximum is tracked), below it with 0x4 clear and 0x8 set (the minimum); 0 with
+   neither. Unsigned word compares. Called by cm550_recordEngineProtectionFaultLogEntry (the fault
+   log entry's extreme) and logEngineProtectionChannelFaults (the history's input_extremity).
+   CM848's counterpart compares signed (was cm550_protectionCalculationHelper). (was
+   cm550_protectionCalculationHelper; PR #53 round 97) */
+
+word cm550_isEngineProtectionInputMoreExtreme
+               (word input,word extreme_value,word configuration_flags)
 
 {
   if ((configuration_flags & 4) == 0) {
-    if (((configuration_flags & 8) != 0) && (sensor_value < extremity_value)) {
+    if (((configuration_flags & 8) != 0) && (input < extreme_value)) {
       return 1;
     }
   }
-  else if (extremity_value < sensor_value) {
+  else if (extreme_value < input) {
     return 1;
   }
   return 0;
@@ -13867,189 +14017,203 @@ word cm550_protectionCalculationHelper
 
 
 //
-// Function: protectionStateProcessor @ 0x00019332
+// Function: cm550_recordEngineProtectionFaultLogEntry @ 0x00019332
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* For the current channel (engine_protection_current_configuration / _state / _history, stepped by
+   logEngineProtectionChannelFaults), records an active fueling (is_engine_speed 0) or engine speed
+   (1) fault. The first time (log flag EP??FLFG / RPFG clear) it opens the entry at the log index
+   (EP??FLIN / RPIN) of the channel's fault log: occurrence_time = key_on_hour_meter, duration 0,
+   and the extreme preset to 0xffff (configuration flag 0x8) or 0. Then, with interrupts masked, it
+   sets the fault bit (configuration +0x1a / +0x1c, EP??FLFU / RPFU) in 0x806000 and 0x806040, and
+   with flags 0xc it keeps the input's extreme in the entry. CM848's counterpart presets 0x7fff /
+   0x8000, sets one fault array and copies the entry into the state (was protectionStateProcessor).
+   (was protectionStateProcessor; PR #53 round 97) */
 
-ushort protectionStateProcessor(word derate_selector)
+void cm550_recordEngineProtectionFaultLogEntry(word is_engine_speed)
 
 {
-  dword *pdVar1;
+  engine_protection_fault_log_entry_t *peVar1;
   word wVar2;
-  ushort uVar3;
+  word wVar3;
   ushort uVar4;
-  ushort uVar5;
-  short *psVar6;
-  int iVar7;
+  word *pwVar5;
+  engine_protection_fault_log_entry_t *peVar6;
   
-  if (derate_selector == 0) {
-    uVar4 = *(ushort *)(_bit_pattern_index_result + 0x18);
-    uVar3 = _protection_config_table_ptr[0xd];
-    iVar7 = *(int *)((int)_protection_state_data_ptr + 0x26);
-    psVar6 = (short *)(_bit_pattern_index_result + 0x16);
+  if (is_engine_speed == 0) {
+    wVar3 = engine_protection_current_history->fueling_fault_log_index;
+    wVar2 = engine_protection_current_configuration->fueling_fault_index;
+    peVar6 = engine_protection_current_state->fueling_fault_log_pointer;
+    pwVar5 = &engine_protection_current_history->fueling_fault_log_flag;
   }
   else {
-    uVar4 = *(ushort *)(_bit_pattern_index_result + 0x1c);
-    uVar3 = _protection_config_table_ptr[0xe];
-    iVar7 = *(int *)((int)_protection_state_data_ptr + 0x2a);
-    psVar6 = (short *)(_bit_pattern_index_result + 0x1a);
+    wVar3 = engine_protection_current_history->engine_speed_fault_log_index;
+    wVar2 = engine_protection_current_configuration->engine_speed_fault_index;
+    peVar6 = engine_protection_current_state->engine_speed_fault_log_pointer;
+    pwVar5 = &engine_protection_current_history->engine_speed_fault_log_flag;
   }
-  if (*psVar6 == 0) {
-    *psVar6 = 1;
-    pdVar1 = (dword *)(iVar7 + (uint)uVar4 * 8);
-    *pdVar1 = key_on_hour_meter;
-    *(undefined2 *)((int)pdVar1 + 6) = 0;
-    if ((*_protection_config_table_ptr & 8) == 0) {
-      *(undefined2 *)(pdVar1 + 1) = 0;
+  if (*pwVar5 == 0) {
+    *pwVar5 = 1;
+    peVar1 = peVar6 + wVar3;
+    peVar1->occurrence_time = key_on_hour_meter;
+    peVar1->duration = 0;
+    if ((engine_protection_current_configuration->configuration_flags & 8) == 0) {
+      peVar1->extreme_value = 0;
     }
     else {
-      *(undefined2 *)(pdVar1 + 1) = 0xffff;
+      peVar1->extreme_value = 0xffff;
     }
   }
-  uVar5 = 1 << (uVar3 & 0xf);
+  uVar4 = 1 << (wVar2 & 0xf);
   *(ushort *)
-   (&status_32_word_bit_mapped_system_error_status_word_0_0_1 + (short)((int)(uint)uVar3 >> 4) * 2)
-       = uVar5 | *(ushort *)
+   (&status_32_word_bit_mapped_system_error_status_word_0_0_1 + (short)((int)(uint)wVar2 >> 4) * 2)
+       = uVar4 | *(ushort *)
                   (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-                  (short)((int)(uint)uVar3 >> 4) * 2);
-  *(ushort *)(&fault_first_occurrence_flags_word_0 + (short)((int)(uint)uVar3 >> 4) * 2) =
-       uVar5 | *(ushort *)
-                (&fault_first_occurrence_flags_word_0 + (short)((int)(uint)uVar3 >> 4) * 2);
-  uVar3 = *_protection_config_table_ptr & 0xc;
-  if ((*_protection_config_table_ptr & 0xc) != 0) {
-    wVar2 = cm550_protectionCalculationHelper
-                      (*(word *)*_protection_state_data_ptr,*(word *)(iVar7 + 4 + (uint)uVar4 * 8),
-                       *_protection_config_table_ptr);
-    uVar3 = 0;
+                  (short)((int)(uint)wVar2 >> 4) * 2);
+  *(ushort *)(&fault_first_occurrence_flags_word_0 + (short)((int)(uint)wVar2 >> 4) * 2) =
+       uVar4 | *(ushort *)
+                (&fault_first_occurrence_flags_word_0 + (short)((int)(uint)wVar2 >> 4) * 2);
+  if ((engine_protection_current_configuration->configuration_flags & 0xc) != 0) {
+    wVar2 = cm550_isEngineProtectionInputMoreExtreme
+                      (*engine_protection_current_state->input_pointer,peVar6[wVar3].extreme_value,
+                       engine_protection_current_configuration->configuration_flags);
     if (wVar2 != 0) {
-      uVar3 = *(ushort *)*_protection_state_data_ptr;
-      *(ushort *)(iVar7 + 4 + (uint)uVar4 * 8) = uVar3;
+      peVar6[wVar3].extreme_value = *engine_protection_current_state->input_pointer;
     }
   }
-  return uVar3;
+  return;
 }
 
 
 
 //
-// Function: protectionStateValidator @ 0x00019436
+// Function: cm550_closeEngineProtectionFaultLogEntry @ 0x00019436
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* For the current channel's fueling (is_engine_speed 0) or engine speed (1) fault: when its fault
+   bit is set in 0x806000 and clear in 0x806040, it clears the 0x806000 bit (interrupts masked). If
+   the log entry is open (log flag set), it closes it: the flag is cleared, duration =
+   key_on_hour_meter - occurrence_time (low words) and the log index advances modulo 5. CM848's
+   counterpart waits for the registered bit, clears both the detected and registered bits and copies
+   the entry into the state (was protectionStateValidator). (was protectionStateValidator; PR #53
+   round 97) */
 
-undefined8 protectionStateValidator(word derate_selector)
+void cm550_closeEngineProtectionFaultLogEntry(word is_engine_speed)
 
 {
-  ushort uVar1;
-  uint uVar2;
-  uint uVar3;
-  ushort uVar4;
-  ushort *puVar5;
-  int iVar6;
-  short *psVar7;
+  word wVar1;
+  word *pwVar2;
+  engine_protection_fault_log_entry_t *peVar3;
+  word *pwVar4;
   
-  if (derate_selector == 0) {
-    puVar5 = (ushort *)(_bit_pattern_index_result + 0x18);
-    uVar4 = *(ushort *)(_protection_config_table_ptr + 0x1a);
-    iVar6 = *(int *)(_protection_state_data_ptr + 0x26);
-    psVar7 = (short *)(_bit_pattern_index_result + 0x16);
+  if (is_engine_speed == 0) {
+    pwVar2 = &engine_protection_current_history->fueling_fault_log_index;
+    wVar1 = engine_protection_current_configuration->fueling_fault_index;
+    peVar3 = engine_protection_current_state->fueling_fault_log_pointer;
+    pwVar4 = &engine_protection_current_history->fueling_fault_log_flag;
   }
   else {
-    puVar5 = (ushort *)(_bit_pattern_index_result + 0x1c);
-    uVar4 = *(ushort *)(_protection_config_table_ptr + 0x1c);
-    iVar6 = *(int *)(_protection_state_data_ptr + 0x2a);
-    psVar7 = (short *)(_bit_pattern_index_result + 0x1a);
+    pwVar2 = &engine_protection_current_history->engine_speed_fault_log_index;
+    wVar1 = engine_protection_current_configuration->engine_speed_fault_index;
+    peVar3 = engine_protection_current_state->engine_speed_fault_log_pointer;
+    pwVar4 = &engine_protection_current_history->engine_speed_fault_log_flag;
   }
-  uVar2 = (uint)*(ushort *)
-                 (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
-                 (short)((int)(uint)uVar4 >> 4) * 2);
-  uVar3 = 0;
-  if ((uVar2 & 1 << (uVar4 & 0xf)) != 0) {
-    uVar2 = (uint)*(ushort *)
-                   (&fault_first_occurrence_flags_word_0 + (short)((int)(uint)uVar4 >> 4) * 2);
-    uVar3 = uVar2 & 1 << (uVar4 & 0xf);
-    if (uVar3 == 0) {
-      uVar1 = ~(1 << (uVar4 & 0xf));
-      uVar3 = (uint)uVar1;
-      uVar2 = (int)(uint)uVar4 >> 4;
-      *(ushort *)(&status_32_word_bit_mapped_system_error_status_word_0_0_1 + (short)uVar2 * 2) =
-           uVar1 & *(ushort *)
-                    (&status_32_word_bit_mapped_system_error_status_word_0_0_1 + (short)uVar2 * 2);
-      if (*psVar7 != 0) {
-        *psVar7 = 0;
-        *(short *)(iVar6 + 6 + (uint)*puVar5 * 8) =
-             key_on_hour_meter._2_2_ - (short)*(undefined4 *)(iVar6 + (uint)*puVar5 * 8);
-        *puVar5 = *puVar5 + 1;
-        uVar3 = (uint)*puVar5 % 5;
-        uVar2 = *puVar5 / 5;
-        *puVar5 = (ushort)uVar3;
+  if (((uint)*(ushort *)
+              (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
+              (short)((int)(uint)wVar1 >> 4) * 2) & 1 << (wVar1 & 0xf)) != 0) {
+    if (((uint)*(ushort *)
+                (&fault_first_occurrence_flags_word_0 + (short)((int)(uint)wVar1 >> 4) * 2) &
+        1 << (wVar1 & 0xf)) == 0) {
+      *(ushort *)
+       (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
+       (short)((int)(uint)wVar1 >> 4) * 2) =
+           ~(1 << (wVar1 & 0xf)) &
+           *(ushort *)
+            (&status_32_word_bit_mapped_system_error_status_word_0_0_1 +
+            (short)((int)(uint)wVar1 >> 4) * 2);
+      if (*pwVar4 != 0) {
+        *pwVar4 = 0;
+        peVar3[*pwVar2].duration = key_on_hour_meter._2_2_ - (short)peVar3[*pwVar2].occurrence_time;
+        *pwVar2 = *pwVar2 + 1;
+        *pwVar2 = *pwVar2 % 5;
       }
     }
   }
-  return CONCAT44(uVar2,uVar3);
+  return;
 }
 
 
 
 //
-// Function: cm550_protectionState3bRpmMonitor @ 0x0001952c
+// Function: logEngineProtectionChannelFaults @ 0x0001952c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Task 3 of cm550_runEngineProtectionScheduler, after cm550_calculateFaultDerateEngineSpeedLimit.
+   It steps engine_protection_current_configuration / _state / _history over the three tables. For
+   each channel it first arms errors_allowed by the start monitor engine speed and time (EP??SRRP /
+   SRTM; always allowed when both are 0; reset with the timer at 0 rpm). While errors are allowed it
+   treats the fueling and engine speed faults as active when the precrank error, the severity index
+   or the shutdown time count says so, counts the elapsed fault time (EP??FLET / RPET) and records
+   or closes the fault log entries (configuration flag 0x1000: one shared entry); with flags 0xc it
+   keeps the input's extremity and its time (EP??EX / EXTM). While errors are not allowed it closes
+   both entries. The twin of CM848 0x509278: one shared name (was cm550_protectionState3bRpmMonitor
+   / cm848_logEngineProtectionChannelFaults). (was cm550_protectionState3bRpmMonitor; PR #53 round
+   97) */
 
-void cm550_protectionState3bRpmMonitor(void)
+void logEngineProtectionChannelFaults(void)
 
 {
   ushort configuration_flags;
-  word sensor_value;
+  word input;
   bool bVar1;
   bool bVar2;
   word wVar3;
   
-  _protection_state_data_ptr = (undefined4 *)&protection_system_sensor_data_ptr;
-  _bit_pattern_index_result = (short *)&coolant_level_fueling_severity_index_0_0_1_0;
-  for (_protection_config_table_ptr = (ushort *)&engine_protection_config_table_base;
-      _protection_config_table_ptr < fault_derate_fuel_limit_by_engine_speed_axis;
-      _protection_config_table_ptr = _protection_config_table_ptr + 0x12) {
-    configuration_flags = *_protection_config_table_ptr;
-    if ((_protection_config_table_ptr[0xb] == 0) && (_protection_config_table_ptr[0xc] == 0)) {
-      *(undefined2 *)((int)_protection_state_data_ptr + 0x16) = 1;
+  engine_protection_current_state = engine_protection_channel_state_table;
+  engine_protection_current_history = engine_protection_channel_history_table;
+  for (engine_protection_current_configuration = engine_protection_channel_configuration_table;
+      engine_protection_current_configuration < fault_derate_fuel_limit_by_engine_speed_axis;
+      engine_protection_current_configuration = engine_protection_current_configuration + 1) {
+    configuration_flags = engine_protection_current_configuration->configuration_flags;
+    if ((engine_protection_current_configuration->start_monitor_engine_speed == 0) &&
+       (engine_protection_current_configuration->start_monitor_time == 0)) {
+      engine_protection_current_state->errors_allowed = 1;
     }
     else {
-      if (_protection_config_table_ptr[0xb] < filtered_engine_speed) {
-        *(undefined2 *)(_protection_state_data_ptr + 9) = 1;
+      if (engine_protection_current_configuration->start_monitor_engine_speed <
+          filtered_engine_speed) {
+        engine_protection_current_state->errors_allowed_timer_running = 1;
       }
       else if (filtered_engine_speed == 0) {
-        *(undefined2 *)((int)_protection_state_data_ptr + 0x16) = 0;
-        *(undefined2 *)((int)_protection_state_data_ptr + 0x22) = 0;
-        *(undefined2 *)(_protection_state_data_ptr + 9) = 0;
+        engine_protection_current_state->errors_allowed = 0;
+        engine_protection_current_state->errors_allowed_timer = 0;
+        engine_protection_current_state->errors_allowed_timer_running = 0;
       }
-      if (*(short *)(_protection_state_data_ptr + 9) != 0) {
-        if (*(ushort *)((int)_protection_state_data_ptr + 0x22) < _protection_config_table_ptr[0xc])
-        {
-          *(short *)((int)_protection_state_data_ptr + 0x22) =
-               *(short *)((int)_protection_state_data_ptr + 0x22) + 1;
+      if (engine_protection_current_state->errors_allowed_timer_running != 0) {
+        if (engine_protection_current_state->errors_allowed_timer <
+            engine_protection_current_configuration->start_monitor_time) {
+          engine_protection_current_state->errors_allowed_timer =
+               engine_protection_current_state->errors_allowed_timer + 1;
         }
         else {
-          *(undefined2 *)((int)_protection_state_data_ptr + 0x16) = 1;
+          engine_protection_current_state->errors_allowed = 1;
         }
       }
     }
     bVar1 = false;
     bVar2 = false;
-    if (*(short *)((int)_protection_state_data_ptr + 0x16) == 0) {
-      protectionStateValidator(0);
-      protectionStateValidator(1);
+    if (engine_protection_current_state->errors_allowed == 0) {
+      cm550_closeEngineProtectionFaultLogEntry(0);
+      cm550_closeEngineProtectionFaultLogEntry(1);
     }
     else {
-      if (*(short *)(_protection_state_data_ptr + 6) == 0) {
-        if ((*_bit_pattern_index_result != 0) ||
-           (*(short *)((int)_protection_state_data_ptr + 0x1a) != 0)) {
+      if (engine_protection_current_state->precrank_error == 0) {
+        if ((engine_protection_current_history->fueling_severity_index != 0) ||
+           (engine_protection_current_state->fueling_shutdown_time_count != 0)) {
           bVar1 = true;
         }
-        if ((_bit_pattern_index_result[1] != 0) || (*(short *)(_protection_state_data_ptr + 7) != 0)
-           ) {
+        if ((engine_protection_current_history->engine_speed_severity_index != 0) ||
+           (engine_protection_current_state->engine_speed_shutdown_time_count != 0)) {
           bVar2 = true;
         }
       }
@@ -14059,39 +14223,43 @@ void cm550_protectionState3bRpmMonitor(void)
       }
       if ((configuration_flags & 0x1000) == 0) {
         if (bVar1) {
-          *(int *)(_bit_pattern_index_result + 7) = *(int *)(_bit_pattern_index_result + 7) + 1;
-          protectionStateProcessor(0);
+          engine_protection_current_history->fueling_fault_elapsed_time =
+               engine_protection_current_history->fueling_fault_elapsed_time + 1;
+          cm550_recordEngineProtectionFaultLogEntry(0);
         }
         else {
-          protectionStateValidator(0);
+          cm550_closeEngineProtectionFaultLogEntry(0);
         }
         if (bVar2) {
-          *(int *)(_bit_pattern_index_result + 9) = *(int *)(_bit_pattern_index_result + 9) + 1;
-          protectionStateProcessor(1);
+          engine_protection_current_history->engine_speed_fault_elapsed_time =
+               engine_protection_current_history->engine_speed_fault_elapsed_time + 1;
+          cm550_recordEngineProtectionFaultLogEntry(1);
         }
         else {
-          protectionStateValidator(1);
+          cm550_closeEngineProtectionFaultLogEntry(1);
         }
       }
       else if (bVar1 || bVar2) {
-        *(int *)(_bit_pattern_index_result + 7) = *(int *)(_bit_pattern_index_result + 7) + 1;
-        protectionStateProcessor(0);
+        engine_protection_current_history->fueling_fault_elapsed_time =
+             engine_protection_current_history->fueling_fault_elapsed_time + 1;
+        cm550_recordEngineProtectionFaultLogEntry(0);
       }
       else {
-        protectionStateValidator(0);
+        cm550_closeEngineProtectionFaultLogEntry(0);
       }
       if ((configuration_flags & 0xc) != 0) {
-        sensor_value = *(word *)*_protection_state_data_ptr;
-        wVar3 = cm550_protectionCalculationHelper
-                          (sensor_value,_bit_pattern_index_result[4],configuration_flags);
+        input = *engine_protection_current_state->input_pointer;
+        wVar3 = cm550_isEngineProtectionInputMoreExtreme
+                          (input,engine_protection_current_history->input_extremity,
+                           configuration_flags);
         if (wVar3 != 0) {
-          _bit_pattern_index_result[4] = sensor_value;
-          *(dword *)(_bit_pattern_index_result + 5) = key_on_hour_meter;
+          engine_protection_current_history->input_extremity = input;
+          engine_protection_current_history->input_extremity_time = key_on_hour_meter;
         }
       }
     }
-    _protection_state_data_ptr = (undefined4 *)((int)_protection_state_data_ptr + 0x2e);
-    _bit_pattern_index_result = _bit_pattern_index_result + 0xf;
+    engine_protection_current_state = engine_protection_current_state + 1;
+    engine_protection_current_history = engine_protection_current_history + 1;
   }
   return;
 }
@@ -14124,24 +14292,24 @@ void applyFaultDerateFuelLimit(void)
 // Function: cm550_calculateFaultDerateFuelLimit @ 0x00019702
 //
 
-/* Engine protection fault derate fuel limit, task 2 of
-   cm550_engineProtectionMultiStateSlowCycle40Coordinator. Over the 9 protection channels
-   (configurations 0x807032 + 36n, states 0x80d0dc + 46n, severity records 0x8057c0 + 30n) that are
-   enabled (configuration bit 0) and have their fueling limiting enable (table bit 0x70 + 4n) or
-   their history-only bit (algorithm_enable_flags_26_cal bit n, table bit 0x1a0 + n) set, it takes
-   the fueling severity (the ramped cm550_protectionThresholdCalculationHelper when configuration
-   bit 0x40 is set, else cm550_protectionPercentageCalculator once the channel's fault time passes
-   its configuration time) and stores it in the channel's fueling severity index. A channel that is
-   not history-only gets at least its fueling restart severity index and counts toward the highest
-   severity; a history-only channel keeps its severity for the record but does not derate. While oil
-   pressure fueling limiting is enabled a power-up inhibit forces full severity (0x100) for the oil
-   pressure channel and the maximum until oil_pressure_fault_inhibit_timer (counted while the engine
-   turns, reset at 0 rpm) reaches its limit. engine_protection_fueling_severity_filtered moves
-   toward the maximum by the ramp rate and is capped at 256; fault_derate_fuel_limit is
-   fuel_demand_maximum at 0, else the fault derate curve at filtered_engine_speed plus (256 -
-   severity) x (throttle_100_fueling - curve) / 256; fault_derate_active_flag = severity above 0.
-   CM848's cm848_calculateFaultDerateFuelLimit runs in the same task slot with one channel and no
-   oil pressure inhibit. (was cm550_FUN_00019702; PR #53 round 96) */
+/* Engine protection fault derate fuel limit, task 2 of cm550_runEngineProtectionScheduler. Over the
+   9 protection channels (configurations 0x807032 + 36n, states 0x80d0dc + 46n, severity records
+   0x8057c0 + 30n) that are enabled (configuration bit 0) and have their fueling limiting enable
+   (table bit 0x70 + 4n) or their history-only bit (algorithm_enable_flags_26_cal bit n, table bit
+   0x1a0 + n) set, it takes the fueling severity (the ramped rampEngineProtectionSeverityIndex when
+   configuration bit 0x40 is set, else cm550_interpolateEngineProtectionSeverity once the channel's
+   fault time passes its configuration time) and stores it in the channel's fueling severity index.
+   A channel that is not history-only gets at least its fueling restart severity index and counts
+   toward the highest severity; a history-only channel keeps its severity for the record but does
+   not derate. While oil pressure fueling limiting is enabled a power-up inhibit forces full
+   severity (0x100) for the oil pressure channel and the maximum until
+   oil_pressure_fault_inhibit_timer (counted while the engine turns, reset at 0 rpm) reaches its
+   limit. engine_protection_fueling_severity_filtered moves toward the maximum by the ramp rate and
+   is capped at 256; fault_derate_fuel_limit is fuel_demand_maximum at 0, else the fault derate
+   curve at filtered_engine_speed plus (256 - severity) x (throttle_100_fueling - curve) / 256;
+   fault_derate_active_flag = severity above 0. CM848's cm848_calculateFaultDerateFuelLimit runs in
+   the same task slot with one channel and no oil pressure inhibit. (was cm550_FUN_00019702; PR #53
+   round 96) */
 
 void cm550_calculateFaultDerateFuelLimit(void)
 
@@ -14153,52 +14321,51 @@ void cm550_calculateFaultDerateFuelLimit(void)
   uint uVar5;
   uint uVar6;
   ushort uVar7;
-  word *protection_state;
-  word *protection_configuration;
-  word *severity_indexes;
+  cm550_engine_protection_channel_state_t *state;
+  engine_protection_channel_configuration_t *configuration;
+  engine_protection_channel_history_t *history;
   
-  protection_state = (word *)&protection_system_sensor_data_ptr;
-  severity_indexes = (word *)&coolant_level_fueling_severity_index_0_0_1_0;
+  state = engine_protection_channel_state_table;
+  history = engine_protection_channel_history_table;
   uVar6 = 0x70;
   uVar5 = 0x1a0;
   uVar7 = 0;
-  for (protection_configuration = (word *)&engine_protection_config_table_base;
-      protection_configuration < fault_derate_fuel_limit_by_engine_speed_axis;
-      protection_configuration = protection_configuration + 0x12) {
-    if ((*protection_configuration & 1) != 0) {
+  for (configuration = engine_protection_channel_configuration_table;
+      configuration < fault_derate_fuel_limit_by_engine_speed_axis;
+      configuration = configuration + 1) {
+    if ((configuration->configuration_flags & 1) != 0) {
       sVar2 = (short)((int)uVar5 >> 4);
       if ((((uint)(&algorithm_enable_flags_0_cal)[(short)((int)uVar6 >> 4)] & 1 << (uVar6 & 0xf)) ==
            0) && (((uint)(&algorithm_enable_flags_0_cal)[sVar2] & 1 << (uVar5 & 0xf)) == 0)) {
         uVar3 = 0;
       }
       else {
-        if ((*protection_configuration & 0x40) == 0) {
-          if (protection_configuration[1] < protection_state[3]) {
-            uVar3 = cm550_protectionPercentageCalculator
-                              (**(word **)protection_state,**(word **)(protection_state + 5),
-                               **(word **)(protection_state + 7));
+        if ((configuration->configuration_flags & 0x40) == 0) {
+          if (configuration->fueling_derate_start_duration < state->fueling_duration) {
+            uVar3 = cm550_interpolateEngineProtectionSeverity
+                              (*state->input_pointer,*state->minimum_threshold_pointer,
+                               *state->maximum_threshold_pointer);
           }
           else {
             uVar3 = 0;
           }
         }
         else {
-          uVar3 = cm550_protectionThresholdCalculationHelper
-                            (protection_configuration,protection_state,severity_indexes,0);
+          uVar3 = rampEngineProtectionSeverityIndex(configuration,state,history,0);
         }
-        if ((uVar3 < severity_indexes[2]) &&
+        if ((uVar3 < history->fueling_restart_severity_index) &&
            (((uint)(&algorithm_enable_flags_0_cal)[sVar2] & 1 << (uVar5 & 0xf)) == 0)) {
-          uVar3 = severity_indexes[2];
+          uVar3 = history->fueling_restart_severity_index;
         }
       }
-      *severity_indexes = uVar3;
+      history->fueling_severity_index = uVar3;
       if ((uVar7 < uVar3) &&
          (((uint)(&algorithm_enable_flags_0_cal)[sVar2] & 1 << (uVar5 & 0xf)) == 0)) {
-        uVar7 = *severity_indexes;
+        uVar7 = history->fueling_severity_index;
       }
     }
-    protection_state = protection_state + 0x17;
-    severity_indexes = severity_indexes + 0xf;
+    state = state + 1;
+    history = history + 1;
     uVar6 = (uint)(ushort)((short)uVar6 + 4);
     uVar5 = (uint)(ushort)((short)uVar5 + 1);
   }
@@ -14212,7 +14379,7 @@ void cm550_calculateFaultDerateFuelLimit(void)
     }
     if (oil_pressure_fault_inhibit_timer <
         period_of_time_after_powerup_during_which_no_oil_pres_faults_0_255) {
-      oil_pressure_fueling_severity_index_0_0_1_0 = 0x100;
+      engine_protection_channel_history_table[3].fueling_severity_index = 0x100;
       uVar7 = 0x100;
     }
   }
@@ -14357,10 +14524,18 @@ word mc68k_initializeTpuChannel10PrimarySpeedInputDivided(void)
 
 
 //
-// Function: cm550_delayWithWatchdogServiceWrapper2 @ 0x00019ac2
+// Function: cm550_initializeSpeedMeasurementForConfiguration0 @ 0x00019ac2
 //
 
-void cm550_delayWithWatchdogServiceWrapper2(void)
+/* Step 2 of engine_position_signal_configuration 0 in cm550_initializeEnginePositionSignalInputs
+   (jsr at 0x17188). It only calls mc68k_initializeSpeedMeasurementMode0 (0x34674). In configuration
+   0 that disables TPU channel 0 and sets it to function 0xc with parameter 2 = 0x807ec8 / 6,
+   parameter 1 = 0xe and parameter 0 = 0xb, plus its HSQR / HSRR / priority bits, the handler
+   0x808edc = 0x19c88 and the interrupt enable. No delay and no watchdog service. The same two
+   instructions as configuration 3's step 2 (0x1a89a). Configuration 1 is in effect in the dump.
+   (was cm550_delayWithWatchdogServiceWrapper2; PR #53 round 97) */
+
+void cm550_initializeSpeedMeasurementForConfiguration0(void)
 
 {
   mc68k_initializeSpeedMeasurementMode0();
@@ -14370,10 +14545,17 @@ void cm550_delayWithWatchdogServiceWrapper2(void)
 
 
 //
-// Function: cm550_emptyStubFunction7 @ 0x00019aca
+// Function: cm550_emptyEnginePositionSignalConfiguration0ThirdStep @ 0x00019aca
 //
 
-void cm550_emptyStubFunction7(void)
+/* Empty function (a single rts). Its one call is the third set-up step of
+   engine_position_signal_configuration 0 in cm550_initializeEnginePositionSignalInputs (jsr at
+   0x1718e, after mc68k_initializeTpuChannel10PrimarySpeedInputDivided and
+   cm550_initializeSpeedMeasurementForConfiguration0). The third step is empty in all four
+   configurations (0x19e8e, 0x1a52a, 0x1a8a2). An empty body cannot prove a role. (was
+   cm550_emptyStubFunction7; PR #53 round 97) */
+
+void cm550_emptyEnginePositionSignalConfiguration0ThirdStep(void)
 
 {
   return;
@@ -14448,7 +14630,7 @@ undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0(void)
   }
   main_lost_counter_timeout_counter_for_primary_speed_sensor_0_10000 = governor_rpm_target_adjusted;
   if (determines_how_engine_position_is_sync_d_to_cam_0 == 1) {
-    if (can_tx_message_type == 0) {
+    if (cylinder_identification_pulse_timeout_counter == 0) {
       if (ci_signal_error_incremented_when_ci_pulse_is_missing_0_255 <
           if_ci_signal_error_count_this_then_set_error_0_255) {
         ci_signal_error_incremented_when_ci_pulse_is_missing_0_255 =
@@ -14465,7 +14647,8 @@ undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode0(void)
       fault_first_occurrence_flags_word_2 = fault_first_occurrence_flags_word_2 | 0x800;
     }
     else {
-      can_tx_message_type = can_tx_message_type - 1;
+      cylinder_identification_pulse_timeout_counter =
+           cylinder_identification_pulse_timeout_counter - 1;
       if (ci_signal_error_incremented_when_ci_pulse_is_missing_0_255 == 0) {
         if (((_status_32_word_bit_mapped_system_error_status_word_0_0_1 & 1) != 0) &&
            ((_fault_first_occurrence_flags_word_0 & 1) == 0)) {
@@ -14961,7 +15144,7 @@ void mc68k_initializeTpuChannel0MissingToothInputMode2(void)
   TPU_CPR1 = wVar1 & 0xfffc;
   wVar1 = TPU_CPR1;
   TPU_CPR1 = wVar1 | 2;
-  _DAT_00808edc = mc68k_crankFuelAndTimingBufferStore;
+  _DAT_00808edc = mc68k_tpuChannel0MissingToothSyncErrorInterruptHandlerMode2;
   wVar1 = TPU_CIER;
   TPU_CIER = wVar1 | 1;
   mc68k_initializeSpeedMeasurementMode0();
@@ -15053,7 +15236,7 @@ undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2(void)
   }
   main_lost_counter_timeout_counter_for_primary_speed_sensor_0_10000 = governor_rpm_target_adjusted;
   if (determines_how_engine_position_is_sync_d_to_cam_0 == 1) {
-    if (can_tx_message_type == 0) {
+    if (cylinder_identification_pulse_timeout_counter == 0) {
       if (ci_signal_error_incremented_when_ci_pulse_is_missing_0_255 <
           if_ci_signal_error_count_this_then_set_error_0_255) {
         ci_signal_error_incremented_when_ci_pulse_is_missing_0_255 =
@@ -15070,7 +15253,8 @@ undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2(void)
       fault_first_occurrence_flags_word_2 = fault_first_occurrence_flags_word_2 | 0x800;
     }
     else {
-      can_tx_message_type = can_tx_message_type - 1;
+      cylinder_identification_pulse_timeout_counter =
+           cylinder_identification_pulse_timeout_counter - 1;
       if (ci_signal_error_incremented_when_ci_pulse_is_missing_0_255 == 0) {
         if (((_status_32_word_bit_mapped_system_error_status_word_0_0_1 & 1) != 0) &&
            ((_fault_first_occurrence_flags_word_0 & 1) == 0)) {
@@ -15098,10 +15282,20 @@ undefined8 mc68k_tpuChannel10PrimarySpeedInterruptHandlerMode2(void)
 
 
 //
-// Function: mc68k_crankFuelAndTimingBufferStore @ 0x0001a6e8
+// Function: mc68k_tpuChannel0MissingToothSyncErrorInterruptHandlerMode2 @ 0x0001a6e8
 //
 
-undefined8 mc68k_crankFuelAndTimingBufferStore(void)
+/* TPU channel 0 interrupt handler of engine_position_signal_configuration 2, installed by
+   mc68k_initializeTpuChannel0MissingToothInputMode2 (0x808edc = 0x1a6e8; it ends in RTE). It stores
+   the sync error type CKSYERTY (0x80d293, e2m 11C5 +1 'type of sync error found by PMMA') and the
+   tooth count at the error CKSYERTT (0x80d292, 11C5 +0) from the high and low bytes of
+   TPU_CH15_PARAM6. It sets the cam and crank sync states CMSYSS / CRSYSS to 0 (no sync) for error
+   type 0xc0, the value its set-up seeds, and to 2 (lost sync) for any other type. Then it calls
+   mc68k_configureTpuChannelsForSpeedMeasurementMode and clears channel 0's interrupt status bit.
+   Not in effect in the dump (configuration 1). (was mc68k_crankFuelAndTimingBufferStore; PR #53
+   round 97) */
+
+undefined8 mc68k_tpuChannel0MissingToothSyncErrorInterruptHandlerMode2(void)
 
 {
   word wVar1;
@@ -15438,9 +15632,9 @@ uint cm550_updateElectronicSmartPowerTau(void)
   uVar1 = CONCAT22((short)((uint)in_D0 >> 0x10),algorithm_enable_flags_12_cal) & 0xffff0010;
   if (algorithm_enable_flags_12_cal.electronic_smart_power_enable != 0) {
     if (_DAT_00803f28 == 0) {
-      if (((stcg_enable_stcg_switch_xor_user_selected_throttle_control_0_1 == 0) &&
+      if (((variable_speed_governor_selected_flag == 0) &&
           (commanded_throttle_state.commanded_throttle < _DAT_00807f78)) ||
-         ((stcg_enable_stcg_switch_xor_user_selected_throttle_control_0_1 != 0 &&
+         ((variable_speed_governor_selected_flag != 0 &&
           ((int)(uint)final_fueling <
            (int)((uint)throttle_100_fueling_low_horsepower_curve -
                 (uint)a_tolerance_for_throttle_100_fueling_0_10))))) {
@@ -15612,7 +15806,7 @@ void mc68k_initializeTpuChannel1BackupSpeedInput(void)
   average_pulse_period_backup_time_period_over_1_cyl_of_secondary_2_32 =
        initialization_pulse_period_backup_initial_value_for_pulse_perio_2_32 *
        backup_speed_sensor_period_measurements_per_average;
-  _DAT_00808ee0 = mc68k_dutyCycleMonitorIsrHandler;
+  _DAT_00808ee0 = mc68k_tpuChannel1CylinderIdentificationPulseInterruptHandler;
   wVar1 = TPU_CFSR3;
   TPU_CFSR3 = wVar1 & 0xff0f;
   wVar1 = TPU_CFSR3;
@@ -15639,12 +15833,24 @@ void mc68k_initializeTpuChannel1BackupSpeedInput(void)
 
 
 //
-// Function: mc68k_dutyCycleMonitorIsrHandler @ 0x0001af32
+// Function: mc68k_tpuChannel1CylinderIdentificationPulseInterruptHandler @ 0x0001af32
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* TPU channel 1 interrupt handler for cam sync type 1 (EPCMSYTY = 1), installed by
+   mc68k_initializeTpuChannel1BackupSpeedInput (it ends in RTE). It takes the number of EPS teeth
+   during the cylinder identification (CI) pulse, CMSNTTCU (e2m 11C9 +0), from the low byte of
+   channel 1 parameter 5, clears parameter 4 and reloads the CI timeout counter 0x80d2c2 from
+   CMSNTMCU. A wide pulse (CMSNCU01) or a narrow pulse (CMSNCU02) is checked against the EPS tooth
+   counter EGPITTCU (0x80ccea): at the expected position (EGPSCU01 / EGPICU02) it sets the cam and
+   crank sync states CMSYSS / CRSYSS to 1 and counts the crank tooth count error CKTTCUER down.
+   Otherwise it sets them to 2 (lost sync), resynchronizes EGPITTCU and counts CKTTCUER up to
+   CKTTERMX, which sets status word 0 bit 0 and word 2 bit 0x800. A pulse of neither width counts
+   CMSNCUER up to CMSNERMX, which sets word 0 bit 0. Last it calls mc68k_resetSpeedMeasurementMode0
+   and cm550_emptyBackupSpeedInterruptStep and clears channel 1's interrupt status bit. Not in
+   effect in the dump (EPCMSYTY = 0). (was mc68k_dutyCycleMonitorIsrHandler; PR #53 round 97) */
 
-undefined8 mc68k_dutyCycleMonitorIsrHandler(void)
+undefined8 mc68k_tpuChannel1CylinderIdentificationPulseInterruptHandler(void)
 
 {
   word wVar1;
@@ -15653,7 +15859,7 @@ undefined8 mc68k_dutyCycleMonitorIsrHandler(void)
   
   cylinder_identification_pulse_tooth_count = TPU_CH1_PARAM5_LOW_BYTE;
   TPU_CH1_PARAM4 = 0;
-  can_tx_message_type = DAT_00807f9d;
+  cylinder_identification_pulse_timeout_counter = DAT_00807f9d;
   if (cylinder_identification_pulse_tooth_count ==
       cylinder_identification_wide_pulse_expected_tooth_count) {
     if (ci_tooth_count_error_incremented_when_ci_pulse_width_is_wrong_0_255 == 0) {
@@ -15910,12 +16116,22 @@ undefined8 mc68k_tpuChannel1BackupSpeedPeriodInterruptHandler(void)
 
 
 //
-// Function: mc68k_dutyCycleMonitorBufferInit @ 0x0001b39a
+// Function: mc68k_initializeTpuChannel1SpeedMeasurementResetInput @ 0x0001b39a
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* TPU channel 1 set-up for cam sync type 2, the EPCMSYTY (0x807f26, e2m 11AD +2) = 2 branch of
+   cm550_initializeCanRpmModeConfiguration. Like the type 0 set-up
+   mc68k_initializeTpuChannel1BackupSpeedPeriodInput, it fills the backup pulse period table with
+   ESIITB02, sets its end / next pointers and the per-cam and per-cylinder sums, and sets channel 1
+   to function 0xd with parameter 1 = 0x100 and parameter 0 = 0xb, HSQR / HSRR 3, priority 2 and the
+   interrupt enable. Unlike it, there is no engine_speed_sensor_enable_flags bit 3 test, and the
+   handler is mc68k_tpuChannel1SpeedMeasurementResetInterruptHandler (0x808ee0 = 0x1b4b2). It also
+   clears CSCMSYCU (0x80d2cc, e2m 121E +8 'EPS pulse count since additional EPS pulse') and the
+   dword 0x80d2d2. Not in effect in the dump (EPCMSYTY = 0). (was mc68k_dutyCycleMonitorBufferInit;
+   PR #53 round 97) */
 
-void mc68k_dutyCycleMonitorBufferInit(void)
+void mc68k_initializeTpuChannel1SpeedMeasurementResetInput(void)
 
 {
   word wVar1;
@@ -16108,11 +16324,10 @@ void cm550_runEvery4FramesTaskSetPhase0(void)
 
 /* Executive frame task set: runs every 4 frames (20 ms): frames 1, 5, ... of the 40-frame cycle, as
    call 3 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   cm550_acceleratorThrottleFaultDetector, cm550_engine_protection_coordinator,
-   cm550_runAllSpeedGovernor, cm550_diagnostic_parameter_handler,
-   smoothPowerTakeOffReferenceEngineSpeed, cm550_runPowerTakeOffGovernor,
-   cm550_oil_pressure_shutdown_controller, calculateAlpha, 0x44c76 (not dumped),
-   selectEngineSpeedLimit, 0x4da56 (not dumped), selectHighSpeedGovernorGainSet,
+   cm550_acceleratorThrottleFaultDetector, selectUserFuelingState, cm550_runAllSpeedGovernor,
+   updateFourDimensionalFueling, smoothPowerTakeOffReferenceEngineSpeed,
+   cm550_runPowerTakeOffGovernor, cm550_oil_pressure_shutdown_controller, calculateAlpha, 0x44c76
+   (not dumped), selectEngineSpeedLimit, 0x4da56 (not dumped), selectHighSpeedGovernorGainSet,
    runHighSpeedGovernorPid, 0x42496 (not dumped), cm550_calculateThrottle100Fuelings. (was
    vp44_periodicTaskSet_governorProtection; PR #53 round 93) */
 
@@ -16120,9 +16335,9 @@ void cm550_runEvery4FramesTaskSetPhase1(void)
 
 {
   cm550_acceleratorThrottleFaultDetector();
-  cm550_engine_protection_coordinator();
+  selectUserFuelingState();
   cm550_runAllSpeedGovernor();
-  cm550_diagnostic_parameter_handler();
+  updateFourDimensionalFueling();
   smoothPowerTakeOffReferenceEngineSpeed();
   cm550_runPowerTakeOffGovernor();
   cm550_oil_pressure_shutdown_controller();
@@ -16484,13 +16699,13 @@ void cm550_runEvery10FramesTaskSetPhase6(void)
 
 /* Executive frame task set: runs every 10 frames (50 ms): frames 7, 17, ... of the 40-frame cycle,
    as call 5 of those frames in executiveFrameInterruptHandler. Calls, in order:
-   cm550_rpmHistogramAndProtectionStatisticsAccumulator. (was
-   cm550_shutdownProtectionSlowCycle10Coordinator; PR #53 round 93) */
+   cm550_calculateAltitudeDerateFuelLimit. (was cm550_shutdownProtectionSlowCycle10Coordinator; PR
+   #53 round 93) */
 
 void cm550_runEvery10FramesTaskSetPhase7(void)
 
 {
-  cm550_rpmHistogramAndProtectionStatisticsAccumulator();
+  cm550_calculateAltitudeDerateFuelLimit();
   return;
 }
 
@@ -17110,7 +17325,7 @@ undefined8 executiveFrameInterruptHandler(void)
     cm550_runEvery20FramesTaskSetPhase15();
     cm550_enginePositionSensorTimingCalculationSlowCycle40Coordinator();
     cm550_selectEngineProtectionFuelTemperature();
-    cm550_engineProtectionMultiStateSlowCycle40Coordinator();
+    cm550_runEngineProtectionScheduler();
     _scheduler_phase_index = 0x10;
     break;
   case 0x10:
@@ -17870,10 +18085,17 @@ void cm550_diagnosticStatusDefaultSetter(void)
 
 
 //
-// Function: cm550_diagnostic_parameter_handler @ 0x0001c640
+// Function: updateFourDimensionalFueling @ 0x0001c640
 //
 
-void cm550_diagnostic_parameter_handler(void)
+/* User fueling state FOUR_D: while user_fueling_state is FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE
+   (8) it stores cm550_calculateFourDimensionalFueling in four_dimensional_fueling (e2m 1053 +0
+   5DFL) and copies it to fuel_demand_selected (1050 +0 FSDSFL). It does nothing in the other
+   states. Fourth call of cm550_runEvery4FramesTaskSetPhase1 (jsr at 0x1b584), right after
+   cm550_runAllSpeedGovernor. Twin of CM848 0x1e830 (one shared name). (was
+   cm550_diagnostic_parameter_handler; PR #53 round 97) */
+
+void updateFourDimensionalFueling(void)
 
 {
   if (user_fueling_state == FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE) {
@@ -18189,11 +18411,10 @@ ushort cm550_commandFuelShutoffDriver(void)
 //
 
 /* Fuel temperature input of engine protection (executive frame 15, once per 200 ms, before
-   cm550_engineProtectionMultiStateSlowCycle40Coordinator). While engine_protection_enable and the
-   fuel temperature fueling or rpm limiting enable are set it writes
-   engine_protection_fuel_temperature (e2m 81FA +0 EPFLTP): with
-   engine_protection_fuel_temperature_source (81F9 +2 EPFTFG) 0 the VP44 pump's fuel temperature
-   converted by vp44_convertPumpFuelTemperatureToSensorScale, or
+   cm550_runEngineProtectionScheduler). While engine_protection_enable and the fuel temperature
+   fueling or rpm limiting enable are set it writes engine_protection_fuel_temperature (e2m 81FA +0
+   EPFLTP): with engine_protection_fuel_temperature_source (81F9 +2 EPFTFG) 0 the VP44 pump's fuel
+   temperature converted by vp44_convertPumpFuelTemperatureToSensorScale, or
    default_value_for_vp44_fuel_temperature_when_sensor_is_fail_40_to_300 (EPFLTPDF) while fault bit
    295 (status word 18 bit 7) is set; otherwise the ECM fuel temperature sensor's
    fuel_temperature_sensor_state.filtered_value (ADFLTPFT). Not VP44 handling itself, so cm550_.
@@ -20286,8 +20507,8 @@ void buildPgn65228Dm3ClearInitMessage(void)
 {
   byte bVar1;
   char cVar2;
-  short sVar3;
-  char cVar4;
+  char cVar3;
+  short sVar4;
   char cVar5;
   byte bVar6;
   byte bVar7;
@@ -20315,20 +20536,20 @@ LAB_0001eb76:
         insite_parameter_id = *(byte *)insite_request_read_pointer;
         insite_request_read_pointer =
              CONCAT31(insite_request_read_pointer._0_3_,(char)insite_request_read_pointer + '\x01');
-        cVar5 = cm550_insiteParameterParser();
-        if (cVar5 == '\0') goto LAB_0001eb7c;
-        bVar7 = cVar5 + bVar7;
-        cVar4 = (char)insite_request_read_pointer;
+        bVar6 = cm550_getJ1587ReceivedParameterLength();
+        if (bVar6 == 0) goto LAB_0001eb7c;
+        bVar7 = bVar6 + bVar7;
+        cVar5 = (char)insite_request_read_pointer;
         if (insite_parameter_id == 0) {
           insite_parameter_id = *(byte *)insite_request_read_pointer;
           insite_request_read_pointer =
                CONCAT31(insite_request_read_pointer._0_3_,(char)insite_request_read_pointer + '\x01'
                        );
-          insite_parameter_data_size = cm550_parameterLookupForInsite();
+          insite_parameter_data_size = cm550_getJ1587ReplyParameterLength();
           bVar6 = '\x01' << (insite_parameter_id & 7);
-          sVar3 = (short)((int)(uint)insite_parameter_id >> 3);
-          if (((bVar6 & *(byte *)(sVar3 + 0x6134a)) != 0) &&
-             ((bVar6 & (&vp44_fuel_demand_accumulator)[sVar3]) == 0)) {
+          sVar4 = (short)((int)(uint)insite_parameter_id >> 3);
+          if (((bVar6 & *(byte *)(sVar4 + 0x6134a)) != 0) &&
+             ((bVar6 & (&vp44_fuel_demand_accumulator)[sVar4]) == 0)) {
             cm550_activeParameterReadFunction();
           }
         }
@@ -20337,14 +20558,14 @@ LAB_0001eb76:
           insite_request_read_pointer =
                CONCAT31(insite_request_read_pointer._0_3_,(char)insite_request_read_pointer + '\x01'
                        );
-          cVar5 = *(char *)insite_request_read_pointer;
-          insite_request_read_pointer = CONCAT31(insite_request_read_pointer._0_3_,cVar4 + '\x02');
-          if (cVar5 == -0x80) {
-            insite_parameter_data_size = cm550_parameterLookupForInsite();
+          cVar3 = *(char *)insite_request_read_pointer;
+          insite_request_read_pointer = CONCAT31(insite_request_read_pointer._0_3_,cVar5 + '\x02');
+          if (cVar3 == -0x80) {
+            insite_parameter_data_size = cm550_getJ1587ReplyParameterLength();
             bVar6 = '\x01' << (insite_parameter_id & 7);
-            sVar3 = (short)((int)(uint)insite_parameter_id >> 3);
-            if (((bVar6 & *(byte *)(sVar3 + 0x6134a)) != 0) &&
-               ((bVar6 & (&vp44_fuel_demand_accumulator)[sVar3]) == 0)) {
+            sVar4 = (short)((int)(uint)insite_parameter_id >> 3);
+            if (((bVar6 & *(byte *)(sVar4 + 0x6134a)) != 0) &&
+               ((bVar6 & (&vp44_fuel_demand_accumulator)[sVar4]) == 0)) {
               cm550_activeParameterReadFunction();
             }
           }
@@ -20353,13 +20574,13 @@ LAB_0001eb76:
           insite_request_read_pointer =
                CONCAT31(insite_request_read_pointer._0_3_,(char)insite_request_read_pointer + '\x01'
                        );
-          cVar5 = *(char *)insite_request_read_pointer;
-          insite_request_read_pointer = CONCAT31(insite_request_read_pointer._0_3_,cVar4 + '\x02');
+          cVar3 = *(char *)insite_request_read_pointer;
+          insite_request_read_pointer = CONCAT31(insite_request_read_pointer._0_3_,cVar5 + '\x02');
           BYTE_0080de25 = *(byte *)insite_request_read_pointer;
-          insite_request_read_pointer = CONCAT31(insite_request_read_pointer._0_3_,cVar4 + '\x03');
+          insite_request_read_pointer = CONCAT31(insite_request_read_pointer._0_3_,cVar5 + '\x03');
           insite_dtc_command_action_byte = *(byte *)insite_request_read_pointer;
-          insite_request_read_pointer = CONCAT31(insite_request_read_pointer._0_3_,cVar4 + '\x04');
-          if ((cVar5 == -0x80) && ((insite_dtc_command_action_byte & 0xc0) < 0xc0)) {
+          insite_request_read_pointer = CONCAT31(insite_request_read_pointer._0_3_,cVar5 + '\x04');
+          if ((cVar3 == -0x80) && ((insite_dtc_command_action_byte & 0xc0) < 0xc0)) {
             bVar6 = 0;
             pcVar8 = &DAT_0006136c;
             while( true ) {
@@ -20378,14 +20599,14 @@ LAB_0001eb76:
               cm550_insitePidDtcHandler((ushort)BYTE_0080de25);
             }
             insite_parameter_id = 0xc4;
-            insite_parameter_data_size = cm550_parameterLookupForInsite();
+            insite_parameter_data_size = cm550_getJ1587ReplyParameterLength();
             cm550_activeParameterReadFunction();
           }
         }
         else {
           insite_request_read_pointer =
                CONCAT31(insite_request_read_pointer._0_3_,
-                        cVar5 + -1 + (char)insite_request_read_pointer);
+                        (bVar6 - 1) + (char)insite_request_read_pointer);
         }
         goto LAB_0001eb76;
       }
@@ -20882,9 +21103,8 @@ void cm550_diagnosticMessage46Builder(void)
     local_e = (undefined1)((ushort)sVar1 >> 8);
     *local_8 = local_e;
     local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\x04');
-    cm550_multiSpeedParameterInterpolation();
-    *local_8 = (char)((ushort)jcomm_percent_peak_torque_at_idle_speed_percent_peak_torque_128_127 >>
-                     8);
+    calculateJ1939PercentPeakTorquePoints();
+    *local_8 = (char)((ushort)j1939_percent_peak_torque_at_idle_times_256 >> 8);
     local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\x05');
     sVar1 = j1939_rated_speed_tau_0 * 2;
     uStack_d = (undefined1)sVar1;
@@ -20893,8 +21113,7 @@ void cm550_diagnosticMessage46Builder(void)
     local_e = (undefined1)((ushort)sVar1 >> 8);
     *local_8 = local_e;
     local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\a');
-    *local_8 = (char)((ushort)jcomm_percent_peak_torque_at_rated_speed_percent_peak_torqu_128_127 >>
-                     8);
+    *local_8 = (char)((ushort)j1939_percent_peak_torque_at_rated_speed_times_256 >> 8);
     local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\b');
     sVar1 = j1939_speed_breakpoint_3_tau_0 * 2;
     uStack_d = (undefined1)sVar1;
@@ -20903,8 +21122,7 @@ void cm550_diagnosticMessage46Builder(void)
     local_e = (undefined1)((ushort)sVar1 >> 8);
     *local_8 = local_e;
     local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\n');
-    *local_8 = (char)((ushort)jcomm_percent_peak_torque_at_breakpoint_3_percent_peak_torq_128_127 >>
-                     8);
+    *local_8 = (char)((ushort)j1939_percent_peak_torque_at_breakpoint_3_times_256 >> 8);
     local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\v');
     sVar1 = j1939_speed_breakpoint_4_tau_0 * 2;
     uStack_d = (undefined1)sVar1;
@@ -20913,8 +21131,7 @@ void cm550_diagnosticMessage46Builder(void)
     local_e = (undefined1)((ushort)sVar1 >> 8);
     *local_8 = local_e;
     local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\r');
-    *local_8 = (char)((ushort)jcomm_percent_peak_torque_at_breakpoint_4_percent_peak_torq_128_127 >>
-                     8);
+    *local_8 = (char)((ushort)j1939_percent_peak_torque_at_breakpoint_4_times_256 >> 8);
     local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\x0e');
     sVar1 = j1939_speed_breakpoint_5_tau_0 * 2;
     uStack_d = (undefined1)sVar1;
@@ -20923,8 +21140,7 @@ void cm550_diagnosticMessage46Builder(void)
     local_e = (undefined1)((ushort)sVar1 >> 8);
     *local_8 = local_e;
     local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\x10');
-    *local_8 = (char)((ushort)jcomm_percent_peak_torque_at_breakpoint_5_percent_peak_torq_128_127 >>
-                     8);
+    *local_8 = (char)((ushort)j1939_percent_peak_torque_at_breakpoint_5_times_256 >> 8);
     local_8 = (byte *)CONCAT31(local_8._0_3_,cVar4 + '\x11');
     sVar1 = peak_torque_engine_speed_tau_0 * 2;
     uStack_d = (undefined1)sVar1;
@@ -21447,7 +21663,7 @@ void cm550_diagnosticMessage54Builder(void)
     local_8 = (byte *)CONCAT31(local_8._0_3_,(char)local_8 + '\x01');
     *local_8 = 0x54;
     local_8 = (byte *)CONCAT31(local_8._0_3_,cVar2 + '\x02');
-    if (total_number_of_engine_brake_output_drivers_at_the_ecm_0_255 < 2) {
+    if (engine_retarder_output_driver_count < 2) {
       *local_8 = 4;
     }
     else {
@@ -21701,10 +21917,38 @@ void cm550_emptyPlaceholderInitialization(void)
 
 
 //
-// Function: cm550_j1939TorqueControlModeParser @ 0x0001ffd6
+// Function: handleJ1939NoOperationService @ 0x0001ffd2
 //
 
-byte cm550_j1939TorqueControlModeParser(can_standard_receive_descriptor_t *request,byte enable)
+/* PGN 61184 services 15 and 16 (J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_15 / _16), registered by
+   registerJ1939BroadcastAndNoOperationServices. It returns 0 (accepted) and does nothing (clr.b d0;
+   rts), so the requester gets the positive reply. Twin of CM848 0x509be0 (li r3,0; blr); the boot
+   kernel keeps its own cm848_bootDiagnosticServiceAcknowledgeNoOperation (one shared name; no
+   function before, was LAB_0001ffd2; PR #53 round 97). (was LAB_0001ffd2; PR #53 round 97) */
+
+byte handleJ1939NoOperationService(void)
+
+{
+  return 0;
+}
+
+
+
+//
+// Function: updateJ1939BroadcastEnableMask @ 0x0001ffd6
+//
+
+/* The body of PGN 61184 services 4 (disable broadcast) and 5 (enable broadcast). Request data byte
+   2 is the item and byte 3 the target. FE / FE selects all (0xffff). Target 1: item 1 gives 12,
+   item 2 gives 0x80, item 6 gives 1 and item 7 gives 2. Target 0xfd: item 0xfe gives 0x8c, item 1
+   gives 12 and item 2 gives 0x80. Anything else returns 4 (cannot comply). With enable 1 it ORs the
+   mask into datalink_broadcast_enable_flags (bit 0 J1587, bit 1 J1922, bits 2 / 3 the J1939 engine
+   / retarder periodic queues), otherwise it clears those bits, and it returns 0. Twin of CM848
+   0x509be8: the same item / target table and the same masks (one shared name; was
+   cm550_j1939TorqueControlModeParser; PR #53 round 97). (was cm550_j1939TorqueControlModeParser; PR
+   #53 round 97) */
+
+byte updateJ1939BroadcastEnableMask(can_standard_receive_descriptor_t *request,byte enable)
 
 {
   char cVar1;
@@ -21762,44 +22006,68 @@ byte cm550_j1939TorqueControlModeParser(can_standard_receive_descriptor_t *reque
 
 
 //
-// Function: cm550_j1939TorqueControlModeClear @ 0x000200a4
+// Function: handleJ1939DisableBroadcastService @ 0x000200a4
 //
 
-void cm550_j1939TorqueControlModeClear(can_standard_receive_descriptor_t *param_1)
+/* PGN 61184 service 4 (disable broadcast), registered by
+   registerJ1939BroadcastAndNoOperationServices. It returns updateJ1939BroadcastEnableMask(request,
+   0). Twin of CM848 0x509ce4 (one shared name; was cm550_j1939TorqueControlModeClear; PR #53 round
+   97). (was cm550_j1939TorqueControlModeClear; PR #53 round 97) */
+
+byte handleJ1939DisableBroadcastService(can_standard_receive_descriptor_t *request)
 
 {
-  cm550_j1939TorqueControlModeParser(param_1,0);
-  return;
+  byte bVar1;
+  
+  bVar1 = updateJ1939BroadcastEnableMask(request,0);
+  return bVar1;
 }
 
 
 
 //
-// Function: cm550_j1939TorqueControlModeSet @ 0x000200b4
+// Function: handleJ1939EnableBroadcastService @ 0x000200b4
 //
 
-void cm550_j1939TorqueControlModeSet(can_standard_receive_descriptor_t *param_1)
+/* PGN 61184 service 5 (enable broadcast), registered by
+   registerJ1939BroadcastAndNoOperationServices. It returns updateJ1939BroadcastEnableMask(request,
+   1). Twin of CM848 0x509d0c (one shared name; was cm550_j1939TorqueControlModeSet; PR #53 round
+   97). (was cm550_j1939TorqueControlModeSet; PR #53 round 97) */
+
+byte handleJ1939EnableBroadcastService(can_standard_receive_descriptor_t *request)
 
 {
-  cm550_j1939TorqueControlModeParser(param_1,1);
-  return;
+  byte bVar1;
+  
+  bVar1 = updateJ1939BroadcastEnableMask(request,1);
+  return bVar1;
 }
 
 
 
 //
-// Function: cm550_systemFunction6xParameterized @ 0x000200c6
+// Function: registerJ1939BroadcastAndNoOperationServices @ 0x000200c6
 //
 
-void cm550_systemFunction6xParameterized(void)
+/* Start-up step, the last registration call of mc68k_initializeJ1939Datalink (after
+   registerJ1939DiagnosticHandlers). It registers handleJ1939NoOperationService for PGN 61184
+   services 15 and 16, handleJ1939DisableBroadcastService for service 4 and
+   handleJ1939EnableBroadcastService for service 5, with registerJ1939DiagnosticService. Twin of
+   CM848 0x509d34: the same four registrations in the same order, at the same place in
+   cm848_j1939_system_init (one shared name; was cm550_systemFunction6xParameterized; PR #53 round
+   97). (was cm550_systemFunction6xParameterized; PR #53 round 97) */
+
+void registerJ1939BroadcastAndNoOperationServices(void)
 
 {
-  registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_15,&LAB_0001ffd2);
-  registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_16,&LAB_0001ffd2);
   registerJ1939DiagnosticService
-            (J1939_DIAGNOSTIC_SERVICE_DISABLE_BROADCAST,cm550_j1939TorqueControlModeClear);
+            (J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_15,handleJ1939NoOperationService);
   registerJ1939DiagnosticService
-            (J1939_DIAGNOSTIC_SERVICE_ENABLE_BROADCAST,cm550_j1939TorqueControlModeSet);
+            (J1939_DIAGNOSTIC_SERVICE_NO_OPERATION_16,handleJ1939NoOperationService);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_DISABLE_BROADCAST,handleJ1939DisableBroadcastService);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_ENABLE_BROADCAST,handleJ1939EnableBroadcastService);
   return;
 }
 
@@ -23052,7 +23320,8 @@ ushort endRetarderShiftAssistAboveFuelDemandLimit(void)
    write without the key / refuses (10) type 3 writes into its calibration RAM while RAM refresh is
    on / has Bank 2; was cm550_memoryOperationDispatcher; PR #53 round 72). */
 
-byte writeJ1939DiagnosticMemory(dword request,dword address,dword length)
+byte writeJ1939DiagnosticMemory
+               (can_standard_receive_descriptor_t *request,dword address,dword length)
 
 {
   byte *source;
@@ -23068,18 +23337,17 @@ byte writeJ1939DiagnosticMemory(dword request,dword address,dword length)
   }
   range_length = (word)length;
   bVar2 = getJ1939MemoryServiceHeaderLength
-                    ((word)CONCAT31((int3)((uint)in_D0 >> 8),**(undefined1 **)(request + 6)));
-  if ((*(short *)(request + 4) == 8) || ((word)(range_length + bVar2) == *(ushort *)(request + 4)))
-  {
+                    ((word)CONCAT31((int3)((uint)in_D0 >> 8),*request->data_pointer));
+  if ((request->length == 8) || ((word)(range_length + bVar2) == request->length)) {
     bVar1 = false;
   }
   else {
-    if ((ushort)(range_length + bVar2) + 10 != (uint)*(ushort *)(request + 4)) {
+    if ((ushort)(range_length + bVar2) + 10 != (uint)request->length) {
       return 2;
     }
     bVar1 = true;
   }
-  source = (byte *)(*(int *)(request + 6) + (uint)bVar2);
+  source = request->data_pointer + bVar2;
   MVar3 = lookupApplicationMemoryRegionType(address,range_length);
   switch(MVar3) {
   case MEMORY_REGION_TYPE_RAM:
@@ -23099,8 +23367,7 @@ byte writeJ1939DiagnosticMemory(dword request,dword address,dword length)
       if (!bVar1) {
         return 0x1a;
       }
-      cVar4 = validateSecurityKey((byte *)(*(int *)(request + 6) + (length & 0xffff) + (uint)bVar2))
-      ;
+      cVar4 = validateSecurityKey(request->data_pointer + (length & 0xffff) + (uint)bVar2);
       if (cVar4 != '\0') {
         return 3;
       }
@@ -23116,7 +23383,7 @@ byte writeJ1939DiagnosticMemory(dword request,dword address,dword length)
     if (!bVar1) {
       return 3;
     }
-    cVar4 = validateSecurityKey((byte *)(*(int *)(request + 6) + (length & 0xffff) + (uint)bVar2));
+    cVar4 = validateSecurityKey(request->data_pointer + (length & 0xffff) + (uint)bVar2);
     if (cVar4 != '\0') {
       return 3;
     }
@@ -23137,7 +23404,8 @@ byte writeJ1939DiagnosticMemory(dword request,dword address,dword length)
    of CM848 0x50b1b8. (was cm550_j1939MemoryDataCopyResolver; PR #53 round 94) */
 
 byte writeJ1939DiagnosticMemoryByParameterId
-               (dword request,word parameter_id,dword offset,dword length)
+               (can_standard_receive_descriptor_t *request,word parameter_id,dword offset,
+               dword length)
 
 {
   char cVar1;
@@ -23165,16 +23433,17 @@ byte writeJ1939DiagnosticMemoryByParameterId
    writeJ1939DiagnosticMemoryByParameterId. Twin of CM848 0x50b228. (was
    cm550_j1939DataCopyWrapper2Byte; PR #53 round 94) */
 
-void handleJ1939WriteByParameterIdService(dword param_1)
+byte handleJ1939WriteByParameterIdService(can_standard_receive_descriptor_t *request)
 
 {
+  byte bVar1;
   uint local_a;
   word local_6;
   
-  cm550_memcpy((byte *)&local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
-  local_a = (uint)*(byte *)(*(int *)(param_1 + 6) + 3);
-  writeJ1939DiagnosticMemoryByParameterId(param_1,local_6,0,local_a);
-  return;
+  cm550_memcpy((byte *)&local_6,request->data_pointer + 1,2);
+  local_a = (uint)(byte)request->data_pointer[3];
+  bVar1 = writeJ1939DiagnosticMemoryByParameterId(request,local_6,0,local_a);
+  return bVar1;
 }
 
 
@@ -23188,16 +23457,17 @@ void handleJ1939WriteByParameterIdService(dword param_1)
    writeJ1939DiagnosticMemoryByParameterId. Twin of CM848 0x50b298. (was cm550_FUN_000216c6; PR #53
    round 94) */
 
-void handleJ1939WriteByParameterIdLongLengthService(dword param_1)
+byte handleJ1939WriteByParameterIdLongLengthService(can_standard_receive_descriptor_t *request)
 
 {
+  byte bVar1;
   dword local_a;
   word local_6;
   
-  cm550_memcpy((byte *)&local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
-  cm550_memcpy((byte *)&local_a,(byte *)(*(int *)(param_1 + 6) + 3),4);
-  writeJ1939DiagnosticMemoryByParameterId(param_1,local_6,0,local_a);
-  return;
+  cm550_memcpy((byte *)&local_6,request->data_pointer + 1,2);
+  cm550_memcpy((byte *)&local_a,request->data_pointer + 3,4);
+  bVar1 = writeJ1939DiagnosticMemoryByParameterId(request,local_6,0,local_a);
+  return bVar1;
 }
 
 
@@ -23211,19 +23481,19 @@ void handleJ1939WriteByParameterIdLongLengthService(dword param_1)
    offset through writeJ1939DiagnosticMemoryByParameterId. Twin of CM848 0x50b300. (was
    cm550_j1939DataCopyWrapperExtended; PR #53 round 94) */
 
-void handleJ1939WriteByParameterIdShortOffsetService(dword param_1)
+byte handleJ1939WriteByParameterIdShortOffsetService(can_standard_receive_descriptor_t *request)
 
 {
+  byte bVar1;
   uint local_e;
   uint local_a;
   word local_6;
   
-  cm550_memcpy((byte *)&local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
-  local_a = (uint)CONCAT11(*(undefined1 *)(*(int *)(param_1 + 6) + 3),
-                           *(undefined1 *)(*(int *)(param_1 + 6) + 4));
-  local_e = (uint)*(byte *)(*(int *)(param_1 + 6) + 5);
-  writeJ1939DiagnosticMemoryByParameterId(param_1,local_6,local_a,local_e);
-  return;
+  cm550_memcpy((byte *)&local_6,request->data_pointer + 1,2);
+  local_a = (uint)CONCAT11(request->data_pointer[3],request->data_pointer[4]);
+  local_e = (uint)(byte)request->data_pointer[5];
+  bVar1 = writeJ1939DiagnosticMemoryByParameterId(request,local_6,local_a,local_e);
+  return bVar1;
 }
 
 
@@ -23237,18 +23507,19 @@ void handleJ1939WriteByParameterIdShortOffsetService(dword param_1)
    offset through writeJ1939DiagnosticMemoryByParameterId. Twin of CM848 0x50b38c. (was
    cm550_FUN_00021778; PR #53 round 94) */
 
-void handleJ1939WriteByParameterIdLongOffsetService(dword param_1)
+byte handleJ1939WriteByParameterIdLongOffsetService(can_standard_receive_descriptor_t *request)
 
 {
+  byte bVar1;
   dword local_e;
   dword local_a;
   word local_6;
   
-  cm550_memcpy((byte *)&local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
-  cm550_memcpy((byte *)&local_a,(byte *)(*(int *)(param_1 + 6) + 3),4);
-  cm550_memcpy((byte *)&local_e,(byte *)(*(int *)(param_1 + 6) + 7),4);
-  writeJ1939DiagnosticMemoryByParameterId(param_1,local_6,local_a,local_e);
-  return;
+  cm550_memcpy((byte *)&local_6,request->data_pointer + 1,2);
+  cm550_memcpy((byte *)&local_a,request->data_pointer + 3,4);
+  cm550_memcpy((byte *)&local_e,request->data_pointer + 7,4);
+  bVar1 = writeJ1939DiagnosticMemoryByParameterId(request,local_6,local_a,local_e);
+  return bVar1;
 }
 
 
@@ -23261,16 +23532,17 @@ void handleJ1939WriteByParameterIdLongOffsetService(dword param_1)
    through writeJ1939DiagnosticMemory. The same function as CM848 0x50b408 (shared name; was
    cm550_memoryOperationFromMessageExtended; PR #53 round 72). */
 
-void handleJ1939WriteMemoryService(dword request)
+byte handleJ1939WriteMemoryService(can_standard_receive_descriptor_t *request)
 
 {
+  byte bVar1;
   dword length;
   dword address;
   
-  cm550_memcpy((byte *)&address,(byte *)(*(int *)(request + 6) + 1),4);
-  length = (dword)*(byte *)(*(int *)(request + 6) + 5);
-  writeJ1939DiagnosticMemory(request,address,length);
-  return;
+  cm550_memcpy((byte *)&address,request->data_pointer + 1,4);
+  length = (dword)(byte)request->data_pointer[5];
+  bVar1 = writeJ1939DiagnosticMemory(request,address,length);
+  return bVar1;
 }
 
 
@@ -23283,16 +23555,17 @@ void handleJ1939WriteMemoryService(dword request)
    through writeJ1939DiagnosticMemory. The same function as CM848 0x50b474 (shared name; was
    cm550_FUN_00021826; PR #53 round 72). */
 
-void handleJ1939WriteMemoryLongLengthService(dword request)
+byte handleJ1939WriteMemoryLongLengthService(can_standard_receive_descriptor_t *request)
 
 {
+  byte bVar1;
   dword length;
   dword address;
   
-  cm550_memcpy((byte *)&address,(byte *)(*(int *)(request + 6) + 1),4);
-  cm550_memcpy((byte *)&length,(byte *)(*(int *)(request + 6) + 5),4);
-  writeJ1939DiagnosticMemory(request,address,length);
-  return;
+  cm550_memcpy((byte *)&address,request->data_pointer + 1,4);
+  cm550_memcpy((byte *)&length,request->data_pointer + 5,4);
+  bVar1 = writeJ1939DiagnosticMemory(request,address,length);
+  return bVar1;
 }
 
 
@@ -23425,10 +23698,19 @@ byte getJ1939MemoryServiceHeaderLength(word service_id)
 
 
 //
-// Function: cm550_diagnosticServiceSecurityValidator @ 0x00021982
+// Function: cm550_validateJ1939DiagnosticRequest @ 0x00021982
 //
 
-undefined4 cm550_diagnosticServiceSecurityValidator(dword message)
+/* Checks a PGN 61184 request before cm550_dispatchJ1939DiagnosticServiceRequest calls its handler,
+   and returns 0xff when the request may go on. Services above 25 always pass. The header length is
+   3 for services 4 / 5, 5 for 0x19 and 1 otherwise. For a service marked in the bit table 0x60f98
+   while calibration_download_security_key_cal is not 0xff, the length must be the header + 10 (else
+   2) and validateSecurityKey must accept the key after the header (else 3). Other services need a
+   length of 8 or the header + 10 (else 2). Counterpart of cm848_validateJ1939DiagnosticRequest,
+   which returns 0x1a (key missing) when a secured request has length 8 (was
+   cm550_diagnosticServiceSecurityValidator; PR #53 round 97). */
+
+byte cm550_validateJ1939DiagnosticRequest(can_standard_receive_descriptor_t *request)
 
 {
   byte authentication_result;
@@ -23436,8 +23718,8 @@ undefined4 cm550_diagnosticServiceSecurityValidator(dword message)
   byte service_id;
   word message_length;
   
-  service_id = **(byte **)(message + 6);
-  message_length = *(word *)(message + 4);
+  service_id = *request->data_pointer;
+  message_length = request->length;
   if (0x19 < service_id) {
     return 0xff;
   }
@@ -23460,8 +23742,7 @@ undefined4 cm550_diagnosticServiceSecurityValidator(dword message)
   if (required_parameter_length + 10U != (uint)message_length) {
     return 2;
   }
-  authentication_result =
-       validateSecurityKey((byte *)(*(int *)(message + 6) + required_parameter_length));
+  authentication_result = validateSecurityKey(request->data_pointer + required_parameter_length);
   if (authentication_result == 0) {
     return 0xff;
   }
@@ -23735,7 +24016,7 @@ void receivePgn65265CruiseControlVehicleSpeedMessage(int param_1)
    cm848_tickJ1939InputSupervision (0x50bca0): CM848 ends with the same loop but first needs the
    J1939 multiplex enable bit, counts j1939_input_fault_start_delay and the start-up timer / inhibit
    flag, and skips the loop while DM13 holds; CM550 has none of those steps (was cm550_FUN_00021edc;
-   PR #53 round 91) (was cm550_FUN_00021edc; PR #53 round 91) */
+   PR #53 round 91) */
 
 void cm550_tickJ1939InputSupervision(void)
 
@@ -23762,7 +24043,7 @@ void cm550_tickJ1939InputSupervision(void)
    61443 EEC2 / 65252 SHUTDN / 65264 PTO / 65265 CCVS1. The counterpart of
    cm848_registerJ1939InputMessageHandlers (0x50bdcc), which then also starts
    j1939_input_fault_start_delay at 1000; CM550 has no such store (was cm550_FUN_00021ef6; PR #53
-   round 91) (was cm550_FUN_00021ef6; PR #53 round 91) */
+   round 91) */
 
 void cm550_registerJ1939InputMessageHandlers(void)
 
@@ -24005,16 +24286,25 @@ uint trackJ1939ControlSessions(void)
 
 
 //
-// Function: cm550_canDiagnosticResponseSender @ 0x000222b4
+// Function: handleJ1939GetAddressByParameterIdService @ 0x000222b4
 //
 
-undefined4 cm550_canDiagnosticResponseSender(byte *param_1)
+/* PGN 61184 service 0x41 (get address by parameter ID), registered by
+   registerJ1939GetAddressByParameterIdService. It resolves request data bytes 2-3 (the e2m block
+   ID) with cm550_lookupParameterIdAddress and returns 8 when the ID is unknown. Otherwise it sends
+   one 7-byte frame with cm550_sendCanSingleFrame: header 0xef0000 with the request's priority bits
+   and swapped addresses; data 0x42, the ID and its 4-byte address. It then returns 0xff, so the
+   dispatcher sends no reply. Twin of CM848 0x50c318: the same steps and constants (one shared name;
+   was cm550_canDiagnosticResponseSender; PR #53 round 97). (was cm550_canDiagnosticResponseSender;
+   PR #53 round 97) */
+
+byte handleJ1939GetAddressByParameterIdService(can_standard_receive_descriptor_t *request)
 
 {
   undefined1 uVar1;
   undefined1 uVar2;
-  char cVar4;
-  undefined4 uVar3;
+  char cVar3;
+  byte bVar4;
   undefined2 local_20;
   undefined1 local_1e;
   undefined1 local_1d;
@@ -24032,13 +24322,14 @@ undefined4 cm550_canDiagnosticResponseSender(byte *param_1)
   undefined2 local_e;
   byte *local_c;
   
-  uVar1 = *(undefined1 *)(*(int *)(param_1 + 6) + 1);
-  uVar2 = *(undefined1 *)(*(int *)(param_1 + 6) + 2);
+  uVar1 = request->data_pointer[1];
+  uVar2 = request->data_pointer[2];
   local_20 = CONCAT11(uVar1,uVar2);
-  cVar4 = cm550_lookupParameterIdAddress(local_20,(dword *)&local_1e);
-  if (cVar4 == '\0') {
-    local_12 = CONCAT13(*param_1 & 0x1c,0xef0000);
-    local_12 = CONCAT31(CONCAT21(local_12._0_2_,param_1[3]),param_1[2]);
+  cVar3 = cm550_lookupParameterIdAddress(local_20,(dword *)&local_1e);
+  if (cVar3 == '\0') {
+    local_12 = CONCAT13(*(byte *)&request->id & 0x1c,0xef0000);
+    local_12 = CONCAT31(CONCAT21(local_12._0_2_,(char)request->id),
+                        *(undefined1 *)((int)&request->id + 2));
     local_e = 7;
     local_1a = 0x42;
     local_17 = local_1e;
@@ -24049,41 +24340,62 @@ undefined4 cm550_canDiagnosticResponseSender(byte *param_1)
     local_18 = uVar2;
     local_c = &local_1a;
     cm550_sendCanSingleFrame(local_12,7,&local_1a,&bStack_13);
-    uVar3 = 0xff;
+    bVar4 = 0xff;
   }
   else {
-    uVar3 = 8;
+    bVar4 = 8;
   }
-  return uVar3;
+  return bVar4;
 }
 
 
 
 //
-// Function: cm550_systemFunction1xCaller @ 0x00022370
+// Function: registerJ1939GetAddressByParameterIdService @ 0x00022370
 //
 
-void cm550_systemFunction1xCaller(void)
+/* Start-up step of mc68k_initializeJ1939Datalink, between registerJ1939MemoryReadServices and
+   registerJ1939MemoryWriteServices. It registers handleJ1939GetAddressByParameterIdService for PGN
+   61184 service 0x41 with registerJ1939DiagnosticService. Twin of CM848 0x50c400: the same single
+   registration at the same place in cm848_j1939_system_init (one shared name; was
+   cm550_systemFunction1xCaller; PR #53 round 97). (was cm550_systemFunction1xCaller; PR #53 round
+   97) */
+
+void registerJ1939GetAddressByParameterIdService(void)
 
 {
-  registerJ1939DiagnosticService(DIAG_ADDR_RESOLVER,cm550_canDiagnosticResponseSender);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_GET_ADDRESS_BY_PARAMETER_ID,
+             handleJ1939GetAddressByParameterIdService);
   return;
 }
 
 
 
 //
-// Function: cm550_diagnosticMemoryReadResponseBuilder @ 0x0002238e
+// Function: readJ1939DiagnosticMemoryAndRespond @ 0x0002238e
 //
 
-/* (was cm550_diagMemoryReadResponseBuilder; PR #53 round 97) */
+/* Reads memory for a PGN 61184 read request and sends the reply. It returns 2 (wrong length) above
+   1764 bytes or when the request length is none of 8, the service's header length
+   (getJ1939MemoryServiceHeaderLength) and that + 10 (the key), and it returns the region type when
+   lookupApplicationMemoryRegionType gives UNMAPPED or REFUSED. Otherwise it picks the reply service
+   (0x43 under 256 bytes answers 0x44 with data byte 4 = byte 7, else the table 0x22384: 0x45 / 0x47
+   / 0x49 / 0x4b / 0x4d) and takes a transmit record from cm550_multiPacketBufferAllocator (4 when
+   none is free). It builds header 0xef0000 with the request's priority bits and swapped addresses,
+   writes the reply service, the echoed header bytes and the memory (EEPROM addresses 0x01000000 + n
+   read from the mirror 0x803b0a + n), sends it and returns 0xff (no further reply). The read
+   services return its result unchanged to cm550_dispatchJ1939DiagnosticServiceRequest. Twin of
+   CM848 0x50c42c: the same steps and constants (one shared name; was
+   cm550_diagnosticMemoryReadResponseBuilder; PR #53 round 97). (was
+   cm550_diagnosticMemoryReadResponseBuilder; PR #53 round 97) */
 
-void cm550_diagnosticMemoryReadResponseBuilder
-               (byte *request_pointer,dword start_address,dword read_length)
+byte readJ1939DiagnosticMemoryAndRespond
+               (can_standard_receive_descriptor_t *request,dword address,dword length)
 
 {
   undefined *puVar1;
-  int iVar2;
+  undefined *puVar2;
   char cVar3;
   byte bVar4;
   undefined3 extraout_var;
@@ -24096,24 +24408,23 @@ void cm550_diagnosticMemoryReadResponseBuilder
   ushort range_length;
   byte *destination;
   
-  cVar3 = **(char **)(request_pointer + 6);
-  if (0x6e4 < read_length) {
-    return;
+  cVar3 = *request->data_pointer;
+  if (0x6e4 < length) {
+    return 2;
   }
   bVar6 = getJ1939MemoryServiceHeaderLength((word)CONCAT31((int3)((uint)in_D0 >> 8),cVar3));
-  if (((*(short *)(request_pointer + 4) != 8) && (*(ushort *)(request_pointer + 4) != (ushort)bVar6)
-      ) && (*(short *)(request_pointer + 4) != (ushort)(bVar6 + 10))) {
-    return;
+  if (((request->length != 8) && (request->length != (ushort)bVar6)) &&
+     (request->length != (word)(bVar6 + 10))) {
+    return 2;
   }
-  range_length = (ushort)read_length;
-  MVar7 = lookupApplicationMemoryRegionType(start_address,range_length);
+  range_length = (ushort)length;
+  MVar7 = lookupApplicationMemoryRegionType(address,range_length);
   if ((MVar7 == MEMORY_REGION_TYPE_REFUSED) || (MVar7 == MEMORY_REGION_TYPE_UNMAPPED)) {
-    return;
+    return MVar7;
   }
   if ((cVar3 == 'C') && (range_length < 0x100)) {
     uVar8 = 0x44;
-    *(undefined1 *)(*(int *)(request_pointer + 6) + 3) =
-         *(undefined1 *)(*(int *)(request_pointer + 6) + 6);
+    request->data_pointer[3] = request->data_pointer[6];
     uVar5 = extraout_var;
   }
   else {
@@ -24124,25 +24435,57 @@ void cm550_diagnosticMemoryReadResponseBuilder
   bVar6 = bVar6 - 1;
   message = cm550_multiPacketBufferAllocator(range_length + bVar6 + 1);
   if (message == (j1939_transmit_message_t *)0x0) {
-    return;
+    return 4;
   }
   puVar1 = message->data_pointer;
   (message->header).can_id = 0xef0000;
-  bVar4 = *request_pointer;
+  bVar4 = *(byte *)&request->id;
   *(byte *)&(message->header).can_id = *(byte *)&(message->header).can_id & 0xe3;
   *(byte *)&(message->header).can_id = bVar4 & 0x1c | *(byte *)&(message->header).can_id;
-  *(byte *)((int)&(message->header).can_id + 2) = request_pointer[3];
-  *(byte *)((int)&(message->header).can_id + 3) = request_pointer[2];
-  iVar2 = *(int *)(request_pointer + 6);
+  *(char *)((int)&(message->header).can_id + 2) = (char)request->id;
+  *(undefined1 *)((int)&(message->header).can_id + 3) = *(undefined1 *)((int)&request->id + 2);
+  puVar2 = request->data_pointer;
   destination = puVar1 + 1;
   *puVar1 = uVar8;
-  cm550_memcpy(destination,(byte *)(iVar2 + 1),(ushort)bVar6);
-  if (0xffffff < start_address) {
-    start_address = start_address - 0x7fc4f6;
+  cm550_memcpy(destination,puVar2 + 1,(ushort)bVar6);
+  if (0xffffff < address) {
+    address = address - 0x7fc4f6;
   }
-  cm550_memcpy(destination + bVar6,(byte *)start_address,range_length);
+  cm550_memcpy(destination + bVar6,(byte *)address,range_length);
   cm550_sendCanMessage(message);
-  return;
+  return 0xff;
+}
+
+
+
+//
+// Function: readJ1939DiagnosticMemoryByParameterId @ 0x000224f4
+//
+
+/* Reads by parameter ID for the PGN 61184 services 0x43 / 0x46 / 0x48. It resolves the e2m block ID
+   with cm550_lookupParameterIdAddress (8 = unknown ID), then returns
+   readJ1939DiagnosticMemoryAndRespond(request, the ID's address + offset, length). Parameters: the
+   request, the ID, the offset and the length. Twin of CM848 0x50c5d0, as
+   writeJ1939DiagnosticMemoryByParameterId is of 0x50b1b8 (one shared name; no row before, was
+   FUN_000224f4; PR #53 round 97). (was FUN_000224f4; PR #53 round 97) */
+
+byte readJ1939DiagnosticMemoryByParameterId
+               (can_standard_receive_descriptor_t *request,word parameter_id,dword offset,
+               dword length)
+
+{
+  char cVar1;
+  byte bVar2;
+  dword local_8;
+  
+  cVar1 = cm550_lookupParameterIdAddress(parameter_id,&local_8);
+  if (cVar1 == '\0') {
+    bVar2 = readJ1939DiagnosticMemoryAndRespond(request,offset + local_8,length);
+  }
+  else {
+    bVar2 = 8;
+  }
+  return bVar2;
 }
 
 
@@ -24153,20 +24496,20 @@ void cm550_diagnosticMemoryReadResponseBuilder
 
 /* PGN 61184 service 0x43, registered by registerJ1939MemoryReadServices: request bytes 1-2 are the
    parameter ID and 3-6 the length. It reads from the ID's address (offset 0) through 0x224f4:
-   cm550_lookupParameterIdAddress (8 for an unknown ID), then
-   cm550_diagnosticMemoryReadResponseBuilder. Twin of CM848 0x50c640 (one shared name). (was
-   cm550_FUN_00022530; PR #53 round 96) */
+   cm550_lookupParameterIdAddress (8 for an unknown ID), then readJ1939DiagnosticMemoryAndRespond.
+   Twin of CM848 0x50c640 (one shared name). (was cm550_FUN_00022530; PR #53 round 96) */
 
-void handleJ1939ReadByParameterIdLongLengthService(int param_1)
+byte handleJ1939ReadByParameterIdLongLengthService(can_standard_receive_descriptor_t *request)
 
 {
-  byte local_a [4];
-  byte local_6 [2];
+  byte bVar1;
+  dword local_a;
+  word local_6;
   
-  cm550_memcpy(local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
-  cm550_memcpy(local_a,(byte *)(*(int *)(param_1 + 6) + 3),4);
-  FUN_000224f4(param_1);
-  return;
+  cm550_memcpy((byte *)&local_6,request->data_pointer + 1,2);
+  cm550_memcpy((byte *)&local_a,request->data_pointer + 3,4);
+  bVar1 = readJ1939DiagnosticMemoryByParameterId(request,local_6,0,local_a);
+  return bVar1;
 }
 
 
@@ -24179,14 +24522,19 @@ void handleJ1939ReadByParameterIdLongLengthService(int param_1)
    parameter ID, 3-4 the offset and 5 the length. It reads from the ID's address + offset through
    0x224f4. Twin of CM848 0x50c6a8 (one shared name). (was cm550_FUN_0002257c; PR #53 round 96) */
 
-void handleJ1939ReadByParameterIdShortOffsetService(int param_1)
+byte handleJ1939ReadByParameterIdShortOffsetService(can_standard_receive_descriptor_t *request)
 
 {
-  byte local_6 [2];
+  byte bVar1;
+  uint local_e;
+  uint local_a;
+  word local_6;
   
-  cm550_memcpy(local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
-  FUN_000224f4(param_1);
-  return;
+  cm550_memcpy((byte *)&local_6,request->data_pointer + 1,2);
+  local_a = (uint)CONCAT11(request->data_pointer[3],request->data_pointer[4]);
+  local_e = (uint)(byte)request->data_pointer[5];
+  bVar1 = readJ1939DiagnosticMemoryByParameterId(request,local_6,local_a,local_e);
+  return bVar1;
 }
 
 
@@ -24199,18 +24547,19 @@ void handleJ1939ReadByParameterIdShortOffsetService(int param_1)
    parameter ID, 3-6 the offset and 7-10 the length. It reads from the ID's address + offset through
    0x224f4. Twin of CM848 0x50c734 (one shared name). (was cm550_FUN_000225e0; PR #53 round 96) */
 
-void handleJ1939ReadByParameterIdLongOffsetService(int param_1)
+byte handleJ1939ReadByParameterIdLongOffsetService(can_standard_receive_descriptor_t *request)
 
 {
-  byte local_e [4];
-  byte local_a [4];
-  byte local_6 [2];
+  byte bVar1;
+  dword local_e;
+  dword local_a;
+  word local_6;
   
-  cm550_memcpy(local_6,(byte *)(*(int *)(param_1 + 6) + 1),2);
-  cm550_memcpy(local_a,(byte *)(*(int *)(param_1 + 6) + 3),4);
-  cm550_memcpy(local_e,(byte *)(*(int *)(param_1 + 6) + 7),4);
-  FUN_000224f4(param_1);
-  return;
+  cm550_memcpy((byte *)&local_6,request->data_pointer + 1,2);
+  cm550_memcpy((byte *)&local_a,request->data_pointer + 3,4);
+  cm550_memcpy((byte *)&local_e,request->data_pointer + 7,4);
+  bVar1 = readJ1939DiagnosticMemoryByParameterId(request,local_6,local_a,local_e);
+  return bVar1;
 }
 
 
@@ -24220,19 +24569,20 @@ void handleJ1939ReadByParameterIdLongOffsetService(int param_1)
 //
 
 /* PGN 61184 service 0x4a, registered by registerJ1939MemoryReadServices: request bytes 1-4 are the
-   address and 5 the length; it reads through cm550_diagnosticMemoryReadResponseBuilder. Twin of
-   CM848 0x50c7b0 (one shared name). (was cm550_FUN_00022646; PR #53 round 96) */
+   address and 5 the length; it reads through readJ1939DiagnosticMemoryAndRespond. Twin of CM848
+   0x50c7b0 (one shared name). (was cm550_FUN_00022646; PR #53 round 96) */
 
-void handleJ1939ReadMemoryService(byte *param_1)
+byte handleJ1939ReadMemoryService(can_standard_receive_descriptor_t *request)
 
 {
+  byte bVar1;
   uint local_c;
   dword local_8;
   
-  cm550_memcpy((byte *)&local_8,(byte *)(*(int *)(param_1 + 6) + 1),4);
-  local_c = (uint)*(byte *)(*(int *)(param_1 + 6) + 5);
-  cm550_diagnosticMemoryReadResponseBuilder(param_1,local_8,local_c);
-  return;
+  cm550_memcpy((byte *)&local_8,request->data_pointer + 1,4);
+  local_c = (uint)(byte)request->data_pointer[5];
+  bVar1 = readJ1939DiagnosticMemoryAndRespond(request,local_8,local_c);
+  return bVar1;
 }
 
 
@@ -24242,19 +24592,20 @@ void handleJ1939ReadMemoryService(byte *param_1)
 //
 
 /* PGN 61184 service 0x4c, registered by registerJ1939MemoryReadServices: request bytes 1-4 are the
-   address and 5-8 the length; it reads through cm550_diagnosticMemoryReadResponseBuilder. Twin of
-   CM848 0x50c81c (one shared name). (was cm550_FUN_0002268e; PR #53 round 96) */
+   address and 5-8 the length; it reads through readJ1939DiagnosticMemoryAndRespond. Twin of CM848
+   0x50c81c (one shared name). (was cm550_FUN_0002268e; PR #53 round 96) */
 
-void handleJ1939ReadMemoryLongLengthService(byte *param_1)
+byte handleJ1939ReadMemoryLongLengthService(can_standard_receive_descriptor_t *request)
 
 {
+  byte bVar1;
   dword local_c;
   dword local_8;
   
-  cm550_memcpy((byte *)&local_8,(byte *)(*(int *)(param_1 + 6) + 1),4);
-  cm550_memcpy((byte *)&local_c,(byte *)(*(int *)(param_1 + 6) + 5),4);
-  cm550_diagnosticMemoryReadResponseBuilder(param_1,local_8,local_c);
-  return;
+  cm550_memcpy((byte *)&local_8,request->data_pointer + 1,4);
+  cm550_memcpy((byte *)&local_c,request->data_pointer + 5,4);
+  bVar1 = readJ1939DiagnosticMemoryAndRespond(request,local_8,local_c);
+  return bVar1;
 }
 
 
@@ -24272,12 +24623,18 @@ void registerJ1939MemoryReadServices(void)
 
 {
   registerJ1939DiagnosticService
-            (MEM_READ_2B_PARAM_4B_OFFSET,handleJ1939ReadByParameterIdLongLengthService);
-  registerJ1939DiagnosticService(MEM_READ_4B_ADDR_1B_LEN,handleJ1939ReadMemoryService);
-  registerJ1939DiagnosticService(MEM_READ_4B_ADDR_4B_LEN,handleJ1939ReadMemoryLongLengthService);
+            (J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_LENGTH,
+             handleJ1939ReadByParameterIdLongLengthService);
+  registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE_READ_MEMORY,handleJ1939ReadMemoryService);
   registerJ1939DiagnosticService
-            (MEM_READ_2B_PARAM_ONLY,handleJ1939ReadByParameterIdShortOffsetService);
-  registerJ1939DiagnosticService(SERVICE_48,handleJ1939ReadByParameterIdLongOffsetService);
+            (J1939_DIAGNOSTIC_SERVICE_READ_MEMORY_LONG_LENGTH,handleJ1939ReadMemoryLongLengthService
+            );
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_SHORT_OFFSET,
+             handleJ1939ReadByParameterIdShortOffsetService);
+  registerJ1939DiagnosticService
+            (J1939_DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_LONG_OFFSET,
+             handleJ1939ReadByParameterIdLongOffsetService);
   return;
 }
 
@@ -24626,7 +24983,7 @@ void vp44FuelTemperatureHandler(can_standard_receive_descriptor_t *received_mess
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void vp44MultiFrameResponseHandler(int param_1)
+void vp44MultiFrameResponseHandler(can_standard_receive_descriptor_t *message)
 
 {
   byte destination_address;
@@ -24636,10 +24993,10 @@ void vp44MultiFrameResponseHandler(int param_1)
   undefined1 *puVar4;
   undefined1 *puVar5;
   
-  if (((*(short *)(param_1 + 4) == 8) &&
-      (destination_address = *(byte *)(param_1 + 3), vp44_multiframe_rx_active == '\x01')) &&
+  if (((message->length == 8) &&
+      (destination_address = (byte)message->id, vp44_multiframe_rx_active == '\x01')) &&
      (destination_address == DAT_008012cf)) {
-    bVar1 = **(byte **)(param_1 + 6);
+    bVar1 = *message->data_pointer;
     if (bVar1 == multiframe_rx_next_sequence) {
       if (bVar1 == vp44_multiframe_total_packets) {
         bVar3 = DAT_008012d1 + bVar1 * -7 + 7;
@@ -24647,7 +25004,7 @@ void vp44MultiFrameResponseHandler(int param_1)
       else {
         bVar3 = 7;
       }
-      puVar5 = *(undefined1 **)(param_1 + 6);
+      puVar5 = message->data_pointer;
       puVar4 = (undefined1 *)(_DAT_008012d2 + (uint)bVar1 * 7 + -7);
       for (bVar2 = 0; puVar5 = puVar5 + 1, bVar2 < bVar3; bVar2 = bVar2 + 1) {
         *puVar4 = *puVar5;
@@ -24660,7 +25017,8 @@ void vp44MultiFrameResponseHandler(int param_1)
           vp44CanFrameBuilder(destination_address,_multiframe_rx_pgn);
           vp44_multiframe_rx_active = 0;
           _DAT_008012d2 = 0x8012de;
-          cm550_diagnosticServiceDispatcher(0x8012cc);
+          cm550_dispatchJ1939DiagnosticServiceRequest
+                    ((can_standard_receive_descriptor_t *)&DAT_008012cc);
           return;
         }
         if ((int)(((uint)vp44_multiframe_total_packets - (uint)multiframe_rx_next_sequence) + 1) < 6
@@ -25804,12 +26162,22 @@ ushort cm550_applyLampRequestsToOutputs(void)
 
 
 //
-// Function: diagnosticMainStateProcessor @ 0x00023be8
+// Function: cm550_checkLampDriverOutputFaults @ 0x00023be8
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Lamp driver output fault check, the second call of
+   cm550_updateLampOutputsAndCheckLampDriverFaults (50 ms). While the key switch bit (bit 0 of
+   0x80bcce, e2m 000E +0) is set, it compares each of the seven lamp driver output bits
+   (LCLP01FB-LCLP07FB in 0x80bd02, e2m 000E +34; bits 0 1 2 6 4 5 3) with io_driver_port_1_feedback
+   (0x80bd08). A mismatch while the output is off counts that output's open circuit debounce, and
+   while it is on its short circuit debounce. Each sets its fault bit in system error status word 7
+   or 8 (and its first-occurrence flag) after the count at ROM 0x611c8 (beyond the dump). A match
+   clears both debounces and, after the count at 0x611ca, clears a fault bit whose first-occurrence
+   flag is clear. CM848's cm550_checkLampDriverOutputFaults is the unrelated fault handler pass, so
+   this row takes its own name. (was diagnosticMainStateProcessor; PR #53 round 97) */
 
-void diagnosticMainStateProcessor(void)
+void cm550_checkLampDriverOutputFaults(void)
 
 {
   if ((value_used_for_monitoring_switch_data_0_1_2089_10_24 & 1) != 0) {
@@ -26250,18 +26618,18 @@ void diagnosticMainStateProcessor(void)
 
 /* 50 ms task, first call of cm550_runEvery10FramesTaskSetPhase6. It runs
    cm550_applyLampRequestsToOutputs (lamp_driver_output_bitmask into the lamp output bits while each
-   output's override priority is 0). Then it runs 0x23be8 (named diagnosticMainStateProcessor).
+   output's override priority is 0). Then it runs 0x23be8 (named cm550_checkLampDriverOutputFaults).
    While the key switch bit is set (bit 0 of 0x80bcce, e2m 000E +0 DSKYSWSS), 0x23be8 compares each
    of the seven lamp drivers' output status (e2m 000E +34 LCLP01FB to LCLP07FB) with
    io_driver_port_1_feedback. It debounces their open and short circuit fault bits in system error
-   status words 7 and 8. No CM848 counterpart: CM848's diagnosticMainStateProcessor is its fault
-   scanner. (was cm550_FUN_00024804; PR #53 round 96) */
+   status words 7 and 8. No CM848 counterpart: CM848's cm550_checkLampDriverOutputFaults is its
+   fault scanner. (was cm550_FUN_00024804; PR #53 round 96) */
 
 void cm550_updateLampOutputsAndCheckLampDriverFaults(void)
 
 {
   cm550_applyLampRequestsToOutputs();
-  diagnosticMainStateProcessor();
+  cm550_checkLampDriverOutputFaults();
   return;
 }
 
@@ -28323,10 +28691,10 @@ void cm550_calculateLowSpeedGovernorColdIdleSpeed(void)
   if (engine_state == ENGINE_STATE_STOPPED) {
     low_speed_governor_cold_idle_timer = 0;
     if (bVar2) {
-      cold_idle_speed_adder_0_1000 = low_speed_governor_cold_idle_speed;
+      low_speed_governor_cold_idle_reference_speed = low_speed_governor_cold_idle_speed;
     }
     else {
-      cold_idle_speed_adder_0_1000 = 0;
+      low_speed_governor_cold_idle_reference_speed = 0;
     }
   }
   else if (engine_state != ENGINE_STATE_CRANKING) {
@@ -28335,17 +28703,18 @@ void cm550_calculateLowSpeedGovernorColdIdleSpeed(void)
     }
     if ((engine_state == ENGINE_STATE_RUNNING) &&
        ((low_speed_governor_cold_idle_time <= low_speed_governor_cold_idle_timer || (!bVar2)))) {
-      if (low_speed_governor_cold_idle_ramp_rate < cold_idle_speed_adder_0_1000) {
-        cold_idle_speed_adder_0_1000 =
-             cold_idle_speed_adder_0_1000 - low_speed_governor_cold_idle_ramp_rate;
+      if (low_speed_governor_cold_idle_ramp_rate < low_speed_governor_cold_idle_reference_speed) {
+        low_speed_governor_cold_idle_reference_speed =
+             low_speed_governor_cold_idle_reference_speed - low_speed_governor_cold_idle_ramp_rate;
       }
       else {
-        cold_idle_speed_adder_0_1000 = 0;
+        low_speed_governor_cold_idle_reference_speed = 0;
       }
     }
   }
-  if ((low_speed_governor_desired_reference_speed < cold_idle_speed_adder_0_1000) && (!bVar1)) {
-    low_speed_governor_desired_reference_speed = cold_idle_speed_adder_0_1000;
+  if ((low_speed_governor_desired_reference_speed < low_speed_governor_cold_idle_reference_speed) &&
+     (!bVar1)) {
+    low_speed_governor_desired_reference_speed = low_speed_governor_cold_idle_reference_speed;
   }
   return;
 }
@@ -28498,15 +28867,17 @@ undefined8 mc68k_serialEepromQspiInterruptHandler(void)
 
 
 //
-// Function: cm550_emptyStubFunction10 @ 0x00026852
+// Function: cm550_emptySerialEepromDriverInitializationFirstStep @ 0x00026852
 //
 
 /* Empty function (a single rts). Its one call is the first step of
-   mc68k_initializeSerialEepromDriverAndLoadMirror (bsr.s at 0x2685e), before the QSPI interrupt
-   vector store. CM848's counterpart start-up (cm848_initializeEepromDriverAndLoadMirror) has no
-   call in that place. (was cm550_FUN_00026852; PR #53 round 94) */
+   mc68k_initializeSerialEepromDriverAndLoadMirror (bsr.s at 0x2685e). That step comes before the
+   QSPI interrupt vector store (0x808f20 = mc68k_serialEepromQspiInterruptHandler) and the QSM
+   register set-up, and this stub sits right before that function in ROM. CM848's counterpart
+   start-up (cm848_initializeEepromDriverAndLoadMirror) has no call in that place. An empty body
+   cannot prove a role. (was cm550_emptyStubFunction10; PR #53 round 97) */
 
-void cm550_emptyStubFunction10(void)
+void cm550_emptySerialEepromDriverInitializationFirstStep(void)
 
 {
   return;
@@ -28537,7 +28908,7 @@ void mc68k_initializeSerialEepromDriverAndLoadMirror(void)
   byte bVar3;
   uint uVar4;
   
-  cm550_emptyStubFunction10();
+  cm550_emptySerialEepromDriverInitializationFirstStep();
   _DAT_00808f20 = mc68k_serialEepromQspiInterruptHandler;
   QSM_PQSPAR = 0x7b;
   QSM_DDRQS = 0xfe;
@@ -28619,8 +28990,7 @@ void mc68k_initializeSerialEepromDriverAndLoadMirror(void)
    speed 0x80db1a (e2m 1461 +0 MTMPRPFL, ft-lb). Called last in cm550_runEvery4FramesTaskSetPhase0
    (every 20 ms); cm550_convertTorqueDerateTorqueLimitToFuelLimit divides the torque derate limit by
    it. CM848's counterpart is 0x29c98 (cm848_calculateMaximumTorqueAtCurrentEngineSpeed: three
-   lookups of the same map blended by chi) (was cm550_FUN_000269f2; PR #53 round 94) (was
-   cm550_FUN_000269f2; PR #53 round 94) */
+   lookups of the same map blended by chi) (was cm550_FUN_000269f2; PR #53 round 94) */
 
 void cm550_calculateMaximumTorqueAtCurrentEngineSpeed(void)
 
@@ -28645,8 +29015,7 @@ void cm550_calculateMaximumTorqueAtCurrentEngineSpeed(void)
    and y axis 0x808372 (MTTQMPYA), each with axis offset 2, and the grid 0x80837c (MTTQMPZA).
    cm550_calculateMaximumTorqueAtCurrentEngineSpeed then looks it up every 20 ms. CM848's
    counterpart is 0x29de0 (cm848_initializeMaximumTorqueAtCurrentEngineSpeed: the result 1 and three
-   lookup caches 2) (was cm550_FUN_00026a2e; PR #53 round 94) (was cm550_FUN_00026a2e; PR #53 round
-   94) */
+   lookup caches 2) (was cm550_FUN_00026a2e; PR #53 round 94) */
 
 void cm550_initializeMaximumTorqueAtCurrentEngineSpeed(void)
 
@@ -28691,8 +29060,7 @@ void cm550_memcpy(byte *destination,byte *source,word byte_count)
    injection_timing_before_misfire_limit (818E +2 BSTABELM) and the misfire timing limit 0x80a26e
    (818E +0 BSTAMNLM). CM848's counterpart is 0x29e24
    (cm848_initializeInjectionTimingMainMisfireLimit: the cache offsets 2 and the same two clears in
-   the same order) (was cm550_fuelDemandTablePointersInit; PR #53 round 94) (was
-   cm550_fuelDemandTablePointersInit; PR #53 round 94) */
+   the same order) (was cm550_fuelDemandTablePointersInit; PR #53 round 94) */
 
 void cm550_initializeInjectionTimingMisfireLimit(void)
 
@@ -28720,7 +29088,7 @@ void cm550_initializeInjectionTimingMisfireLimit(void)
    and cm550_applyMisfireTimingLimit raises the timing to it. Called in
    cm550_runEvery4FramesTaskSetPhase2 (every 20 ms). CM848's counterpart is
    cm848_calculateInjectionTimingMainMisfireLimit (0x29e50) (was cm550_rpmLoadParameterLookup; PR
-   #53 round 94) (was cm550_rpmLoadParameterLookup; PR #53 round 94) */
+   #53 round 94) */
 
 word cm550_calculateInjectionTimingMisfireLimit(void)
 
@@ -28801,17 +29169,16 @@ void cm550_calculateNoLoadFuel(void)
 
 
 //
-// Function: cm550_emptyStubFunction12 @ 0x00026b82
+// Function: cm550_emptyStartupStepAfterLowSpeedGovernorIdleAdjustment @ 0x00026b82
 //
 
-/* Empty function (a single rts). Its one call is a start-up step of mc68k_applicationMain (jsr at
-   0x287da), after cm550_initializeLowSpeedGovernorIdleAdjustment and before the undumped 0x4cf42.
-   It sits among unreferenced rts stubs (0x26b7e-0x26b86) after cm550_calculateNoLoadFuel. No CM848
-   counterpart is proven: CM848's cm848_initializeInterpolationStateCounters, placed after
-   cm848_calculateNoLoadFuel, presets lookup caches that CM550 sets up in 0x1ddb4, and the start-up
-   orders differ. (was cm550_FUN_00026b82; PR #53 round 96) */
+/* Empty function (a single rts). Its one call is start-up call 46 of mc68k_applicationMain (jsr at
+   0x287da), right after cm550_initializeLowSpeedGovernorIdleAdjustment and before the undumped
+   0x4cf42. It sits among unreferenced rts stubs (0x26b7e-0x26b86) after cm550_calculateNoLoadFuel.
+   No CM848 counterpart is proven: the start-up orders differ. (was cm550_emptyStubFunction12; PR
+   #53 round 97) */
 
-void cm550_emptyStubFunction12(void)
+void cm550_emptyStartupStepAfterLowSpeedGovernorIdleAdjustment(void)
 
 {
   return;
@@ -30464,10 +30831,10 @@ void mc68k_applicationMain(void)
   initializeEngineAccelerationFilters();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8738;
-  vp44_engineProtectionSystemInit();
+  cm550_initializeEngineProtection();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x873e;
-  cm550_diagnosticProtectionEvaluator();
+  cm550_examineEngineProtectionBeforeCranking();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8744;
   initializeHighSpeedGovernorGainSet();
@@ -30497,7 +30864,7 @@ void mc68k_applicationMain(void)
   mc68k_scheduler_init();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x877a;
-  cm550_emptyStubFunction11();
+  cm550_emptyStartupStepAfterSchedulerInitialization();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8780;
   func_0x00042ad4();
@@ -30506,7 +30873,7 @@ void mc68k_applicationMain(void)
   cm550_initializeThrottleMinimum();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x878c;
-  cm550_initBoostProtectionSystem();
+  cm550_initializeVehicleSpeedAndCruiseState();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8792;
   cm550_initializeLoadTrendingSystem();
@@ -30548,7 +30915,7 @@ void mc68k_applicationMain(void)
   cm550_initializeLowSpeedGovernorIdleAdjustment();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x87e0;
-  cm550_emptyStubFunction12();
+  cm550_emptyStartupStepAfterLowSpeedGovernorIdleAdjustment();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x87e6;
   func_0x0004cf42();
@@ -30922,11 +31289,11 @@ void mc68k_initializeJ1939Datalink(void)
     bVar4 = bVar4 + 1;
     pbVar7 = pbVar7 + 1;
   } while (bVar4 < 4);
-  cm550_canBufferSetup1();
+  cm550_initializePgn59392AcknowledgementBuffer();
   cm550_initializePgn65265CruiseControlVehicleSpeedHandler();
   cm550_initializePgn61441ElectronicBrakeController1Buffer();
   vp44Command0x100Builder();
-  vp44_cumminsProprietaryDM_983_Builder();
+  initializePgn61443ElectronicEngineController2Handler();
   vp44_secondaryParamPGN_65247_Builder();
   initializePgn65251EngineConfiguration1Buffer();
   cm550_cumminsProprietaryTSC_PGN_15728640_Builder();
@@ -30937,12 +31304,12 @@ void mc68k_initializeJ1939Datalink(void)
   cm550_j1939MessageSetup_PGN_65265();
   vp44_engineFluidLevelPGN_65263_Builder();
   cm550_initializePgn65252ShutdownBuffer();
-  cm550_intakeManifoldPGN_65526_Builder();
+  initializePgn65270InletExhaustConditions1Buffer();
   cm550_cruiseControlPGN_65264_Builder();
   cm550_electronicBrakePGN_65527_Builder();
   cm550_initializePgn65279WaterInFuelIndicatorBuffer();
-  cm550_engineCoolantPGN_65226_Builder();
-  vp44_diagnosticDM8PGN_65232_Builder();
+  cm550_initializePgn65226Dm1Handler();
+  initializePgn65232Dm8Buffer();
   scheduleJ1939PeriodicMessage
             (J1939_PERIODIC_TRANSMIT_QUEUE_ENGINE,0xfef1,100,0x46,
              cm550_buildPgn65265CruiseControlVehicleSpeedMessage);
@@ -31007,10 +31374,10 @@ void mc68k_initializeJ1939Datalink(void)
   registerJ1939Dm7Handler();
   cm550_registerJ1939InputMessageHandlers();
   registerJ1939MemoryReadServices();
-  cm550_systemFunction1xCaller();
+  registerJ1939GetAddressByParameterIdService();
   registerJ1939MemoryWriteServices();
   registerJ1939DiagnosticHandlers();
-  cm550_systemFunction6xParameterized();
+  registerJ1939BroadcastAndNoOperationServices();
   j1939_transmit_message_object_number = can_s_last_message_object_used_0_15 + 1;
   can_s_last_message_object_used_0_15 = can_s_last_message_object_used_0_15 + 0xf;
   _can_control_register_pointer =
@@ -32841,45 +33208,63 @@ void cm550_initializeRemoteThrottle(void)
 
 
 //
-// Function: cm550_insiteParameterParser @ 0x0002ed6a
+// Function: cm550_getJ1587ReceivedParameterLength @ 0x0002ed6a
 //
 
-char cm550_insiteParameterParser(void)
+/* Returns how many bytes the current J1587 parameter takes in a received J1708 request, the PID
+   byte included, from the PID range of insite_parameter_id: 2 below PID 128, 3 below 192, for PIDs
+   192-253 the count byte that insite_request_read_pointer points at (the byte after the PID) plus 2
+   (20 when the count is above 18), and 0 for PIDs 254 / 255. Its only caller is the J1708 request
+   parser 0x1e956 (named buildPgn65228Dm3ClearInitMessage), right after it reads the PID byte and
+   steps the read pointer past it: a 0 stops the parse, otherwise it is added to the bytes consumed.
+   It takes no argument and returns a byte. cm550_getJ1587ReplyParameterLength sizes the ECM's reply
+   instead. CM848 has no J1587 link (was cm550_insiteParameterParser; PR #53 round 97). */
+
+byte cm550_getJ1587ReceivedParameterLength(void)
 
 {
-  char cVar1;
+  byte bVar1;
   
   if (insite_parameter_id < 0x80) {
-    cVar1 = '\x02';
+    bVar1 = 2;
   }
   else if (insite_parameter_id < 0xc0) {
-    cVar1 = '\x03';
+    bVar1 = 3;
   }
   else if (insite_parameter_id < 0xfe) {
     if (*(byte *)insite_request_read_pointer < 0x13) {
-      cVar1 = *(byte *)insite_request_read_pointer + 2;
+      bVar1 = *(byte *)insite_request_read_pointer + 2;
     }
     else {
-      cVar1 = '\x14';
+      bVar1 = 0x14;
     }
   }
   else {
-    cVar1 = '\0';
+    bVar1 = 0;
   }
-  return cVar1;
+  return bVar1;
 }
 
 
 
 //
-// Function: cm550_parameterLookupForInsite @ 0x0002edb2
+// Function: cm550_getJ1587ReplyParameterLength @ 0x0002edb2
 //
 
-undefined2 cm550_parameterLookupForInsite(void)
+/* Returns how many bytes the ECM's reply for the requested J1587 PID (insite_parameter_id) will
+   take, the PID byte included. Values: 2 below PID 128 and 3 below 192. PID 193:
+   insite_active_fault_count + 2. PID 194: two bytes per code ((active_j1922_reportable_fault_count
+   + insite_fault_change_queue_count) x 2 + 2), or three with insite_full_detail_response_mode
+   ((active_j1922_reportable_fault_count + inactive_fault_j1587_reportable_count) x 3 + 2). PID 196:
+   4 / 2 / 7 (insite_dtc_command_action_byte & 0xc0 set / no insite_matched_dtc_fault_code /
+   otherwise). PID 234: 24, PID 237: 22, PID 243: 31, any other PID: 6. The J1708 request parser
+   0x1e956 stores the result in insite_parameter_data_size, and cm550_activeParameterReadFunction
+   checks it against the space left in the reply. It takes no argument and returns a byte (was
+   cm550_parameterLookupForInsite; PR #53 round 97). */
+
+byte cm550_getJ1587ReplyParameterLength(void)
 
 {
-  short sVar1;
-  
   if (insite_parameter_id < 0x80) {
     return 2;
   }
@@ -32887,17 +33272,15 @@ undefined2 cm550_parameterLookupForInsite(void)
     return 3;
   }
   if (insite_parameter_id == 0xc1) {
-    return CONCAT11((char)(insite_active_fault_count >> 8),(char)insite_active_fault_count + '\x02')
-    ;
+    return (char)insite_active_fault_count + 2;
   }
   if (insite_parameter_id == 0xc2) {
     if (insite_full_detail_response_mode == 0) {
-      return CONCAT11((char)(active_j1922_reportable_fault_count >> 8),
-                      (insite_fault_change_queue_count + (char)active_j1922_reportable_fault_count)
-                      * '\x02' + '\x02');
+      return (insite_fault_change_queue_count + (char)active_j1922_reportable_fault_count) * '\x02'
+             + 2;
     }
-    sVar1 = (inactive_fault_j1587_reportable_count + active_j1922_reportable_fault_count) * 3;
-    return CONCAT11((char)((ushort)sVar1 >> 8),(char)sVar1 + '\x02');
+    return ((char)inactive_fault_j1587_reportable_count + (char)active_j1922_reportable_fault_count)
+           * '\x03' + 2;
   }
   if (insite_parameter_id == 0xc4) {
     if ((insite_dtc_command_action_byte & 0xc0) != 0) {
@@ -32949,37 +33332,47 @@ byte registerJ1939DiagnosticService(J1939_DIAGNOSTIC_SERVICE service_id,void *ha
 
 
 //
-// Function: cm550_diagnosticServiceDispatcher @ 0x0002eea2
+// Function: cm550_dispatchJ1939DiagnosticServiceRequest @ 0x0002eea2
 //
 
-void cm550_diagnosticServiceDispatcher(dword message)
+/* The PGN 61184 receive handler. registerJ1939DiagnosticServiceDispatcher registers it for 0xef00,
+   and the TP.DT handler 0x22c26 also calls it with the reassembled message record 0x8012cc. It
+   looks request data byte 0 up in j1939_diagnostic_service_table (j1939_diagnostic_handler_count
+   6-byte entries). On a match it runs cm550_validateJ1939DiagnosticRequest and, when that returns
+   0xff, calls the entry's handler with the request. Unless the result is 0xff it answers with
+   cm550_diagnosticMultiPacketResponseBuilder(request, result), with 0x18 (unknown service) when no
+   entry matches. Counterpart of cm848_dispatchJ1939DiagnosticServiceRequest (CM848 0x22128), which
+   first drops the response services 0x0c / 0x0d without a reply (was
+   cm550_diagnosticServiceDispatcher; PR #53 round 97). */
+
+void cm550_dispatchJ1939DiagnosticServiceRequest(can_standard_receive_descriptor_t *request)
 
 {
+  undefined1 extraout_var;
   undefined2 in_D0w;
-  char cVar1;
+  byte bVar1;
   byte bVar2;
   j1939_diagnostic_service_entry_t *pjVar3;
   
   pjVar3 = j1939_diagnostic_service_table;
-  cVar1 = '\x18';
+  bVar1 = 0x18;
   bVar2 = 0;
   do {
     if (j1939_diagnostic_handler_count <= bVar2) {
 LAB_0002eeee:
-      if (cVar1 != -1) {
+      if (bVar1 != 0xff) {
         cm550_diagnosticMultiPacketResponseBuilder
-                  ((can_standard_receive_descriptor_t *)message,
-                   CONCAT11((char)((ushort)in_D0w >> 8),cVar1));
+                  (request,CONCAT11((char)((ushort)in_D0w >> 8),bVar1));
       }
       return;
     }
     in_D0w = CONCAT11((char)((ushort)in_D0w >> 8),pjVar3->service_id);
-    if (pjVar3->service_id == **(J1939_DIAGNOSTIC_SERVICE **)(message + 6)) {
-      in_D0w = cm550_diagnosticServiceSecurityValidator(message);
-      cVar1 = (char)in_D0w;
-      if (cVar1 == -1) {
-        in_D0w = (*(code *)pjVar3->handler)((short)message);
-        cVar1 = (char)in_D0w;
+    if (pjVar3->service_id == *request->data_pointer) {
+      bVar1 = cm550_validateJ1939DiagnosticRequest(request);
+      in_D0w = CONCAT11(extraout_var,bVar1);
+      if (bVar1 == 0xff) {
+        in_D0w = (*(code *)pjVar3->handler)((short)request);
+        bVar1 = (byte)in_D0w;
       }
       goto LAB_0002eeee;
     }
@@ -32995,14 +33388,15 @@ LAB_0002eeee:
 //
 
 /* Start-up step of the J1939 datalink set-up (the first registration call): registers
-   cm550_diagnosticServiceDispatcher (the j1939_diagnostic_service_table scanner) for PGN 61184 with
-   registerJ1939ReceiveHandler. Twin of CM848 0x221f0 (was cm848_initJ1939DiagnosticServiceHandler):
-   one shared name. (was cm550_systemControlFunction1; PR #53 round 96) */
+   cm550_dispatchJ1939DiagnosticServiceRequest (the j1939_diagnostic_service_table scanner) for PGN
+   61184 with registerJ1939ReceiveHandler. Twin of CM848 0x221f0 (was
+   cm848_initJ1939DiagnosticServiceHandler): one shared name. (was cm550_systemControlFunction1; PR
+   #53 round 96) */
 
 void registerJ1939DiagnosticServiceDispatcher(void)
 
 {
-  registerJ1939ReceiveHandler(0xef00,cm550_diagnosticServiceDispatcher);
+  registerJ1939ReceiveHandler(0xef00,cm550_dispatchJ1939DiagnosticServiceRequest);
   return;
 }
 
@@ -33015,17 +33409,17 @@ void registerJ1939DiagnosticServiceDispatcher(void)
 /* The DM3 request handler (PGN 65228 Diagnostic Data Clear/Reset of Previously Active DTCs),
    registered by registerJ1939Dm3RequestHandler. It writes 1 (CLEAR_INACTIVE) to
    diagnostic_clear_request_state (e2m 1080 +2 DGJCFUCC), which the fault clear processing acts on.
-   It then sends a positive acknowledgement (cm550_diagnosticCanResponseSender with 0, PGN 59392).
-   There is no gate and no NACK. CM848's counterpart gates on the program safety flag / key switch,
-   moves the state 0->1 / 2->3 and answers ACK or NACK. (was cm550_diagnosticResponseHandler2; PR
-   #53 round 96) */
+   It then sends a positive acknowledgement (cm550_sendPgn59392AcknowledgementMessage with 0, PGN
+   59392). There is no gate and no NACK. CM848's counterpart gates on the program safety flag / key
+   switch, moves the state 0->1 / 2->3 and answers ACK or NACK. (was
+   cm550_diagnosticResponseHandler2; PR #53 round 96) */
 
 void cm550_j1939HandlePgn65228Dm3ClearInactiveFaults
                (can_standard_receive_descriptor_t *request_message)
 
 {
   diagnostic_clear_request_state = 1;
-  cm550_diagnosticCanResponseSender(request_message,0);
+  cm550_sendPgn59392AcknowledgementMessage(request_message,0);
   return;
 }
 
@@ -33058,9 +33452,10 @@ void registerJ1939Dm3RequestHandler(void)
    the test identifier (SPN 1224), in j1939_dm7_test_identifier. For identifier 0 with bit 0x100 of
    supported_non_continuous_monitors_bits (e2m 1228 +8 JCNTCTMR) it sends a DM8 test result (PGN
    65232, 0x32b38) with test 0 and value 0x100. For identifier 1 with bit 0x200 it sends test 1 with
-   value 0x200. Any other request gets a negative acknowledgement (cm550_diagnosticCanResponseSender
-   with 1). CM848's counterpart sends the intake air heater / misfire monitor results as the values
-   and NACKs only identifiers 0 and 1. (was cm550_FUN_0002ef4a; PR #53 round 96) */
+   value 0x200. Any other request gets a negative acknowledgement
+   (cm550_sendPgn59392AcknowledgementMessage with 1). CM848's counterpart sends the intake air
+   heater / misfire monitor results as the values and NACKs only identifiers 0 and 1. (was
+   cm550_FUN_0002ef4a; PR #53 round 96) */
 
 void cm550_receivePgn58112Dm7CommandNonContinuouslyMonitoredTestMessage
                (can_standard_receive_descriptor_t *request_message)
@@ -33069,15 +33464,15 @@ void cm550_receivePgn58112Dm7CommandNonContinuouslyMonitoredTestMessage
   j1939_dm7_test_identifier = *request_message->data_pointer;
   if ((j1939_dm7_test_identifier == 0) && ((_supported_non_continuous_monitors_bits & 0x100) != 0))
   {
-    vp44_diagnosticByteResponseSender(0,0x100);
+    sendPgn65232NonContinuousMonitorTestResultMessage(0,0x100);
     return;
   }
   if ((j1939_dm7_test_identifier == 1) && ((_supported_non_continuous_monitors_bits & 0x200) != 0))
   {
-    vp44_diagnosticByteResponseSender(1,0x200);
+    sendPgn65232NonContinuousMonitorTestResultMessage(1,0x200);
     return;
   }
-  cm550_diagnosticCanResponseSender(request_message,1);
+  cm550_sendPgn59392AcknowledgementMessage(request_message,1);
   return;
 }
 
@@ -33430,7 +33825,7 @@ void cm550_dispatchJ1939PgnRequest(can_standard_receive_descriptor_t *received_m
       pjVar2 = pjVar2 + 1;
     }
     if ((bVar1 == j1939_pgn_handler_count) && (*(char *)((int)&received_message->id + 2) != -1)) {
-      cm550_diagnosticCanResponseSender(received_message,1);
+      cm550_sendPgn59392AcknowledgementMessage(received_message,1);
     }
   }
   return;
@@ -33461,10 +33856,10 @@ void cm550_registerJ1939PgnRequestHandlers(void)
   cm550_engineSerialNumberPGN_65259_Builder();
   cm550_initializePgn65253EngineHoursRevolutionsHandler();
   cm550_engineTemperaturePGN_65262_Builder();
-  cm550_retarderConfigPGN_65249_Builder();
-  vp44_ioControlPGN_65244_Builder();
+  cm550_initializePgn65257FuelConsumptionHandler();
+  cm550_initializePgn65244IdleOperationHandler();
   cm550_vehicleDistancePGN_65248_Builder();
-  vp44_vehicleHoursPGN_65255_Builder();
+  cm550_initializePgn65255VehicleHoursHandler();
   cm550_initializePgn65260VehicleIdentificationHandler();
   registerJ1939PgnRequestHandler(0xfee4,cm550_buildPgn65252ShutdownMessage);
   registerJ1939PgnRequestHandler(0xfeed,cm550_buildPgn65261CruiseControlVehicleSpeedSetupMessage);
@@ -33473,12 +33868,12 @@ void cm550_registerJ1939PgnRequestHandlers(void)
   registerJ1939PgnRequestHandler(0xfef5,cm550_buildPgn65269AmbientConditionsMessage);
   registerJ1939PgnRequestHandler(0xfef6,cm550_buildPgn65270InletExhaustConditions1Message);
   registerJ1939PgnRequestHandler(0xfef7,buildPgn65271VehicleElectricalPower1Message);
-  cm550_engineCoolantPGN_65226_Builder();
+  cm550_initializePgn65226Dm1Handler();
   cm550_diagnosticDM2PGN_65227_Builder();
   registerJ1939Dm3RequestHandler();
   cm550_initializePgn65229Dm4Handler();
   cm550_diagnosticDM5PGN_65230_Builder();
-  cm550_diagnosticDM11PGN_65234_Builder();
+  initializePgn65234Dm10Handler();
   return;
 }
 
@@ -33644,8 +34039,7 @@ void cm550_processEngineRetarderTsc1Request(int param_1)
   word wVar7;
   undefined4 uVar6;
   
-  if ((total_number_of_engine_brake_output_drivers_at_the_ecm_0_255 != 0) &&
-     (*(short *)(param_1 + 4) == 8)) {
+  if ((engine_retarder_output_driver_count != 0) && (*(short *)(param_1 + 4) == 8)) {
     DAT_00801e1e = **(byte **)(param_1 + 6);
     bVar3 = DAT_00801e1e & 3;
     if (bVar3 != 1) {
@@ -33793,12 +34187,11 @@ void cm550_initializeEngineRetarderTsc1RequestState(void)
   retarder_control_mode = 0;
   engine_retarder_control_device_indicator = 0;
   engine_retarder_stage_count =
-       indicates_of_cyl_brakes_driven_by_eb_driver_6_for_j1939_ret_ma_0_6 +
-       indicates_of_cyl_brakes_driven_by_eb_driver_5_for_j1939_ret_ma_0_6 +
-       indicates_of_cyl_brakes_driven_by_eb_driver_4_for_j1939_ret_ma_0_6 +
-       indicates_of_cyl_brakes_driven_by_eb_driver_3_for_j1939_ret_ma_0_6 +
-       indicates_of_cyl_brakes_driven_by_eb_driver_2_for_j1939_ret_ma_0_6 +
-       indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6;
+       engine_retarder_driver_6_cylinder_count +
+       engine_retarder_driver_5_cylinder_count +
+       engine_retarder_driver_4_cylinder_count +
+       engine_retarder_driver_3_cylinder_count +
+       engine_retarder_driver_2_cylinder_count + engine_retarder_driver_1_cylinder_count;
   engine_retarder_torque_stage_1_lookup.x_axis_pointer =
        (word *)&engine_retarder_torque_engine_speed_axis;
   engine_retarder_torque_stage_1_lookup.y_values_pointer =
@@ -34097,8 +34490,7 @@ void cm550_releaseFaultFreezeFrameEntry(word code_index)
    48 x slot). Last, status = 0. Called by cm550_countDownPreviouslyActiveFault when the count
    reaches 0 and by cm550_clearInactiveFaultsOnRequest for every previously active fault on a clear
    request. Counterpart of CM848 cm848_resetFaultStatus (0x1dee0) (was
-   cm550_diagnosticTableEntryClear; PR #53 round 91) (was cm550_diagnosticTableEntryClear; PR #53
-   round 91) */
+   cm550_diagnosticTableEntryClear; PR #53 round 91) */
 
 void cm550_resetFaultStatus(word code_index)
 
@@ -34921,29 +35313,33 @@ void cm550_initializeTripInformation(void)
 
 
 //
-// Function: cm550_protectionLimitValueInit @ 0x00030b04
+// Function: cm550_emptyInterruptHandler @ 0x00030b04
 //
 
-undefined8 cm550_protectionLimitValueInit(void)
+/* An empty interrupt handler: it saves d0 / d1 / a0 / a1, restores them and returns with RTE.
+   Nothing in the dumped ROM (0x0-0x3ffff) installs or calls it: there is no absolute, PC-relative
+   or table reference to 0x30b04. Four identical stubs without function rows sit at 0x19ca0,
+   0x1a1d6, 0x1a73c and 0x1a950, also unreferenced (was cm550_protectionLimitValueInit, which the
+   body does not support). (was cm550_protectionLimitValueInit; PR #53 round 97) */
+
+void cm550_emptyInterruptHandler(void)
 
 {
-  undefined4 in_D0;
-  undefined4 in_D1;
-  
-  return CONCAT44(in_D0,in_D1);
+  return;
 }
 
 
 
 //
-// Function: cm550_emptyStubFunction11 @ 0x00030b0e
+// Function: cm550_emptyStartupStepAfterSchedulerInitialization @ 0x00030b0e
 //
 
-/* Empty function (a single rts). Its one call is a start-up step of mc68k_applicationMain (jsr at
-   0x28774), after mc68k_scheduler_init and before the undumped 0x42ad4. No CM848 counterpart is
-   known; an empty body cannot prove one. (was cm550_FUN_00030b0e; PR #53 round 95) */
+/* Empty function (a single rts). Its one call is start-up call 29 of mc68k_applicationMain (jsr at
+   0x28774), right after mc68k_scheduler_init and before the undumped 0x42ad4. It sits in ROM
+   between 0x30b04 and cm550_applyMaximumTimingAdvanceLimit. No CM848 counterpart is known; an empty
+   body cannot prove one. (was cm550_emptyStubFunction11; PR #53 round 97) */
 
-void cm550_emptyStubFunction11(void)
+void cm550_emptyStartupStepAfterSchedulerInitialization(void)
 
 {
   return;
@@ -35555,22 +35951,33 @@ word findTsc1SourceConfiguration(word data_link,word source_address)
 
 
 //
-// Function: cm550_diagnosticCanResponseSender @ 0x00031b22
+// Function: cm550_sendPgn59392AcknowledgementMessage @ 0x00031b22
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Sends the J1939 Acknowledgement (PGN 59392, j1939_pgn59392_tx_message) for a received request.
+   The header is 0xe8ff00 with the priority j1939_pgn59392_priority_cal (e2m 1254 +0 JCAKPZ) & 7,
+   and it is addressed back to the requester: header byte 2 = the request's source address, byte 3 =
+   the address the request went to. Payload byte 1 is the control byte acknowledgement_type (0 =
+   ACK, 1 = NACK) and bytes 6-8 are the request's data bytes 1-3 (the requested PGN for a PGN 59904
+   request); bytes 2-5 keep the 0xff of cm550_initializePgn59392AcknowledgementBuffer. Callers:
+   cm550_j1939HandlePgn65228Dm3ClearInactiveFaults (0 after a DM3),
+   cm550_receivePgn58112Dm7CommandNonContinuouslyMonitoredTestMessage (1 for an unsupported test)
+   and cm550_dispatchJ1939PgnRequest (1 when no responder matched a request that was not global).
+   Counterpart of CM848 0x23dbc, which addresses the same payload to the global address 0xff (was
+   cm550_diagnosticCanResponseSender; PR #53 round 97). */
 
-void cm550_diagnosticCanResponseSender
+void cm550_sendPgn59392AcknowledgementMessage
                (can_standard_receive_descriptor_t *request,word acknowledgement_type)
 
 {
-  j1939_pgn59392_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f4e & 7) << 2),0xe8ff00);
+  j1939_pgn59392_tx_message.header.can_id =
+       CONCAT13((char)((j1939_pgn59392_priority_cal & 7) << 2),0xe8ff00);
   j1939_pgn59392_tx_message.header.can_id._2_2_ =
        CONCAT11((char)request->id,*(undefined1 *)((int)&request->id + 2));
-  DAT_00801eb2 = (undefined1)acknowledgement_type;
-  DAT_00801eb7 = *request->data_pointer;
-  DAT_00801eb8 = request->data_pointer[1];
-  DAT_00801eb9 = request->data_pointer[2];
+  j1939_pgn59392_payload[0] = (byte)acknowledgement_type;
+  j1939_pgn59392_payload[5] = *request->data_pointer;
+  j1939_pgn59392_payload[6] = request->data_pointer[1];
+  j1939_pgn59392_payload[7] = request->data_pointer[2];
   cm550_sendCanMessage(&j1939_pgn59392_tx_message);
   return;
 }
@@ -35578,19 +35985,27 @@ void cm550_diagnosticCanResponseSender
 
 
 //
-// Function: cm550_canBufferSetup1 @ 0x00031b96
+// Function: cm550_initializePgn59392AcknowledgementBuffer @ 0x00031b96
 //
 
-void cm550_canBufferSetup1(void)
+/* Start-up step, the first descriptor set-up of mc68k_initializeJ1939Datalink. It sets the PGN
+   59392 acknowledgement descriptor j1939_pgn59392_tx_message to data length 8, data pointer
+   j1939_pgn59392_payload (0x801eb2) and status pointer j1939_pgn59392_transmit_status, and fills
+   payload bytes 2-5 (the group function value and the reserved bytes) with 0xff. The header is
+   written per message by cm550_sendPgn59392AcknowledgementMessage. Counterpart of
+   cm848_initializePgn59392AcknowledgementBuffer (CM848 0x23e40), which also clears
+   j1939_dm1_active_flag (was cm550_canBufferSetup1; PR #53 round 97). */
+
+void cm550_initializePgn59392AcknowledgementBuffer(void)
 
 {
   j1939_pgn59392_tx_message.header.data_length = 8;
-  j1939_pgn59392_tx_message.data_pointer = &DAT_00801eb2;
+  j1939_pgn59392_tx_message.data_pointer = j1939_pgn59392_payload;
   j1939_pgn59392_tx_message.status_pointer = &j1939_pgn59392_transmit_status;
-  DAT_00801eb3 = 0xff;
-  DAT_00801eb4 = 0xff;
-  DAT_00801eb5 = 0xff;
-  DAT_00801eb6 = 0xff;
+  j1939_pgn59392_payload[1] = 0xff;
+  j1939_pgn59392_payload[2] = 0xff;
+  j1939_pgn59392_payload[3] = 0xff;
+  j1939_pgn59392_payload[4] = 0xff;
   return;
 }
 
@@ -36035,15 +36450,25 @@ void buildPgn65234Dm10TestIdentifiersSupportMessage(void)
 
 
 //
-// Function: cm550_diagnosticDM11PGN_65234_Builder @ 0x00032244
+// Function: initializePgn65234Dm10Handler @ 0x00032244
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up step, the last call of cm550_registerJ1939PgnRequestHandlers (after the DM5 set-up). It
+   builds the DM10 transmit descriptor j1939_dm10_tx_message (header 0xfed200: PGN 65234
+   Non-Continuously Monitored Systems Test Identifiers Support): the priority
+   j1939_pgn65234_priority_cal (e2m 1254 +12 JCDG10PZ) & 7, data length 2, data pointer
+   j1939_dm10_payload, status pointer j1939_dm10_transmit_status and
+   j1939_engine_node_source_address. It then registers
+   buildPgn65234Dm10TestIdentifiersSupportMessage for PGN 65234 with registerJ1939PgnRequestHandler.
+   Twin of CM848 0x24b64: the same seven steps in the same order with the same constants, and the
+   last call of both registrars (one shared name; was cm550_diagnosticDM11PGN_65234_Builder - DM11
+   is PGN 65235; PR #53 round 97). (was cm550_diagnosticDM11PGN_65234_Builder; PR #53 round 97) */
 
-void cm550_diagnosticDM11PGN_65234_Builder(void)
+void initializePgn65234Dm10Handler(void)
 
 {
-  j1939_dm10_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f60 & 7) << 2),0xfed200);
+  j1939_dm10_tx_message.header.can_id =
+       CONCAT13((char)((j1939_pgn65234_priority_cal & 7) << 2),0xfed200);
   j1939_dm10_tx_message.header.data_length = 2;
   j1939_dm10_tx_message.data_pointer = (undefined *)&j1939_dm10_payload;
   j1939_dm10_tx_message.status_pointer = &j1939_dm10_transmit_status;
@@ -36073,7 +36498,7 @@ void cm550_broadcastPgn65226Dm1WhileFaultsActive(void)
 
 {
   if (active_dtc_list[0] != 0) {
-    cm550_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage(0);
+    cm550_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage();
   }
   return;
 }
@@ -36093,18 +36518,16 @@ void cm550_broadcastPgn65226Dm1WhileFaultsActive(void)
    periodic DM1 broadcast. Counterpart of CM848's DM1 builder, which stops at 20 slots and re-orders
    the DTC bytes. (was j1939HandlePgn65226Dm1ActiveDtc; PR #53 round 96) */
 
-uint cm550_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage(void)
+void cm550_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage(void)
 
 {
   byte bVar1;
-  undefined4 in_D0;
   uint uVar2;
   byte bVar3;
   ushort uVar4;
   uint *puVar5;
   
   j1939_dm1_tx_message.status_pointer = &j1939_dm1_transmit_status;
-  uVar2 = CONCAT31((int3)((uint)in_D0 >> 8),j1939_dm1_transmit_status) & 0xfffffff0;
   if ((j1939_dm1_transmit_status & 0xf0) == 0) {
     j1939_dm1_tx_message.header.data_length = 2;
     if (active_dtc_list[0] == 0) {
@@ -36136,23 +36559,34 @@ uint cm550_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage(void)
         puVar5 = puVar5 + 1;
       }
     }
-    uVar2 = cm550_sendCanMessage(&j1939_dm1_tx_message);
+    cm550_sendCanMessage(&j1939_dm1_tx_message);
   }
-  return uVar2;
+  return;
 }
 
 
 
 //
-// Function: cm550_engineCoolantPGN_65226_Builder @ 0x000323be
+// Function: cm550_initializePgn65226Dm1Handler @ 0x000323be
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Builds the DM1 transmit descriptor j1939_dm1_tx_message (header 0xfeca00: PGN 65226 Active
+   Diagnostic Trouble Codes): the priority j1939_pgn65226_priority_cal (e2m 1254 +8 JCDG01PZ) & 7,
+   data pointer 0x801f64, status pointer j1939_dm1_transmit_status and
+   j1939_engine_node_source_address. It sets no data length (the DM1 builder sets it). It sets
+   payload byte 2 (0x801f65) to 0xff and the conversion method bit 0x80 of payload byte 6
+   (0x801f69), then registers cm550_buildPgn65226Dm1ActiveDiagnosticTroubleCodesMessage for PGN
+   65226 with registerJ1939PgnRequestHandler. mc68k_initializeJ1939Datalink (0x28c4e) and
+   cm550_registerJ1939PgnRequestHandlers (0x2f5de) both call it, so the responder is registered
+   twice, as in CM848. Counterpart of cm848_initializePgn65226Dm1Handler (CM848 0x24dd8), which also
+   clears j1939_dm1_broadcast_pending_flag (was cm550_engineCoolantPGN_65226_Builder; PR #53 round
+   97). */
 
-void cm550_engineCoolantPGN_65226_Builder(void)
+void cm550_initializePgn65226Dm1Handler(void)
 
 {
-  j1939_dm1_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f56 & 7) << 2),0xfeca00);
+  j1939_dm1_tx_message.header.can_id =
+       CONCAT13((char)((j1939_pgn65226_priority_cal & 7) << 2),0xfeca00);
   j1939_dm1_tx_message.data_pointer = &DAT_00801f64;
   j1939_dm1_tx_message.status_pointer = &j1939_dm1_transmit_status;
   j1939_dm1_tx_message.header.can_id =
@@ -36538,14 +36972,24 @@ void cm550_diagnosticDM5PGN_65230_Builder(void)
 
 
 //
-// Function: vp44_diagnosticByteResponseSender @ 0x00032b38
+// Function: sendPgn65232NonContinuousMonitorTestResultMessage @ 0x00032b38
 //
 
-void vp44_diagnosticByteResponseSender(byte first_data_byte,word response_code)
+/* Sends one DM8 test result (PGN 65232 Test Results for Non-continuously Monitored Systems,
+   j1939_pgn65232_tx_message, 8 bytes). Payload byte 1 (j1939_dm8_test_identifier, SPN 1224) is
+   test_identifier and bytes 3-4 (j1939_dm8_test_value, SPN 1226) are test_value through byteSwap16
+   (low byte first); the other bytes keep the 0xff of initializePgn65232Dm8Buffer. Its only caller
+   is the DM7 handler cm550_receivePgn58112Dm7CommandNonContinuouslyMonitoredTestMessage (test 0
+   with value 0x100, test 1 with value 0x200). Twin of CM848 0x255c0: the same three steps with the
+   same payload offsets, called from the DM7 handler (one shared name; was
+   vp44_diagnosticByteResponseSender; PR #53 round 97). (was vp44_diagnosticByteResponseSender; PR
+   #53 round 97) */
+
+void sendPgn65232NonContinuousMonitorTestResultMessage(byte test_identifier,word test_value)
 
 {
-  j1939_dm8_test_identifier = first_data_byte;
-  j1939_dm8_test_value = byteSwap16(&response_code);
+  j1939_dm8_test_identifier = test_identifier;
+  j1939_dm8_test_value = byteSwap16(&test_value);
   cm550_sendCanMessage(&j1939_pgn65232_tx_message);
   return;
 }
@@ -36553,15 +36997,26 @@ void vp44_diagnosticByteResponseSender(byte first_data_byte,word response_code)
 
 
 //
-// Function: vp44_diagnosticDM8PGN_65232_Builder @ 0x00032b64
+// Function: initializePgn65232Dm8Buffer @ 0x00032b64
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up step, the last descriptor set-up of mc68k_initializeJ1939Datalink (right after
+   cm550_initializePgn65226Dm1Handler). It builds the DM8 transmit descriptor
+   j1939_pgn65232_tx_message (header 0xfed000: PGN 65232 Test Results for Non-continuously Monitored
+   Systems): the priority j1939_pgn65232_priority_cal (e2m 1254 +10 JCDG08PZ) & 7, data length 8,
+   data pointer j1939_dm8_test_identifier (0x803470), status pointer 0x803478 and
+   j1939_engine_node_source_address. It sets the test type byte (payload byte 2) to 0xff and the
+   test limit maximum and minimum (bytes 5-6 and 7-8) to 0xffff;
+   sendPgn65232NonContinuousMonitorTestResultMessage fills the rest. Twin of CM848 0x2560c: the same
+   eight stores with the same constants, right after the DM1 set-up in both J1939 initializers (one
+   shared name; was vp44_diagnosticDM8PGN_65232_Builder; PR #53 round 97). (was
+   vp44_diagnosticDM8PGN_65232_Builder; PR #53 round 97) */
 
-void vp44_diagnosticDM8PGN_65232_Builder(void)
+void initializePgn65232Dm8Buffer(void)
 
 {
-  j1939_pgn65232_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f5e & 7) << 2),0xfed000);
+  j1939_pgn65232_tx_message.header.can_id =
+       CONCAT13((char)((j1939_pgn65232_priority_cal & 7) << 2),0xfed000);
   j1939_pgn65232_tx_message.header.data_length = 8;
   j1939_pgn65232_tx_message.data_pointer = &j1939_dm8_test_identifier;
   j1939_pgn65232_tx_message.status_pointer = &j1939_pgn65232_transmit_status;
@@ -36781,10 +37236,10 @@ void vp44Command0x100Builder(void)
 
 /* Builds and sends the ECM's EEC2 broadcast (PGN 61443 Electronic Engine Controller 2; data length
    5 of the 8-byte buffer 0x8034aa; queue 0 every 50 ms from 10 ms, and the PGN 59904 request
-   responder that the EEC2 descriptor set-up vp44_cumminsProprietaryDM_983_Builder registers). Byte
-   1 is the kickdown field (SPN 559): 0xf8 on a throttle fault (status word 0x806008 bits 0x20 / 8 /
-   2 / 4, each with its fault_processing_enable_flags[4] bit), else 0xf4 when
-   commanded_throttle_state.commanded_throttle (e2m 1047 +0) is above the kickdown threshold
+   responder that the EEC2 descriptor set-up initializePgn61443ElectronicEngineController2Handler
+   registers). Byte 1 is the kickdown field (SPN 559): 0xf8 on a throttle fault (status word
+   0x806008 bits 0x20 / 8 / 2 / 4, each with its fault_processing_enable_flags[4] bit), else 0xf4
+   when commanded_throttle_state.commanded_throttle (e2m 1047 +0) is above the kickdown threshold
    0x80818e (e2m 10E7 +10 JCTHKCTD), else 0xf0. The low idle switch field (SPN 558) is ORed in: 3
    while algorithm_enable_flags_13_cal.idle_switch_override_enable is set, 2 on an idle validation
    switch fault, 1 while accelerator_off_idle is 0. Byte 2 is the accelerator pedal position 1 =
@@ -36894,15 +37349,28 @@ void cm550_buildPgn61443ElectronicEngineController2Message(void)
 
 
 //
-// Function: vp44_cumminsProprietaryDM_983_Builder @ 0x00033064
+// Function: initializePgn61443ElectronicEngineController2Handler @ 0x00033064
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up step, the fifth descriptor set-up of mc68k_initializeJ1939Datalink (after the EEC1
+   set-up). It builds the EEC2 transmit descriptor j1939_pgn61443_tx_message (header 0xf00300: PGN
+   61443 Electronic Engine Controller 2): the priority j1939_pgn61443_priority_cal (e2m 1254 +16
+   JCEG02PZ) & 7, j1939_engine_node_source_address, data length 5, data pointer
+   j1939_pgn61443_low_idle_and_kickdown_switches_byte and status pointer
+   j1939_pgn61443_transmit_status. It then calls
+   emptyPgn61443ElectronicEngineController2InitializationStep and registers the EEC2 builder
+   cm550_buildPgn61443ElectronicEngineController2Message for PGN 61443 with
+   registerJ1939PgnRequestHandler. Twin of CM848 0x25d60: the same steps in the same order (the
+   source address before the length in both), the same constants and the same shared empty step, and
+   the fifth set-up of both J1939 initializers; each firmware registers its own EEC2 builder (one
+   shared name; was vp44_cumminsProprietaryDM_983_Builder; PR #53 round 97). (was
+   vp44_cumminsProprietaryDM_983_Builder; PR #53 round 97) */
 
-void vp44_cumminsProprietaryDM_983_Builder(void)
+void initializePgn61443ElectronicEngineController2Handler(void)
 
 {
-  j1939_pgn61443_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f64 & 7) << 2),0xf00300);
+  j1939_pgn61443_tx_message.header.can_id =
+       CONCAT13((char)((j1939_pgn61443_priority_cal & 7) << 2),0xf00300);
   j1939_pgn61443_tx_message.header.can_id =
        CONCAT31(j1939_pgn61443_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
   j1939_pgn61443_tx_message.header.data_length = 5;
@@ -37043,7 +37511,7 @@ void buildPgn65251EngineConfiguration1Payload(undefined4 *param_1)
   undefined2 local_6;
   
   cm550_calculateFaultDerateJ1939TorqueCurveSpeedPoints();
-  vp44_fuelLimitExceedanceStatisticsAccumulator();
+  cm550_updateJ1939EngineConfigurationTorqueCurve();
   local_6._1_1_ = (undefined1)jcomm_determined_rpm_at_engine_configuration_idle_speed_0_8031_875;
   local_6._0_1_ =
        (undefined1)(jcomm_determined_rpm_at_engine_configuration_idle_speed_0_8031_875 >> 8);
@@ -37531,9 +37999,9 @@ void cm550_buildPgn61440ElectronicRetarderController1Message(void)
     j1939_pgn61440_retarder_torque_mode_and_enable_switches_byte =
          j1939_pgn61440_retarder_torque_mode_and_enable_switches_byte | 0x10;
   }
-  switch(_DAT_0080a9cc) {
-  case 1:
-  case 4:
+  switch(engine_retarder_command_source) {
+  case ENGINE_RETARDER_COMMAND_SOURCE_J1939_OVERRIDE:
+  case ENGINE_RETARDER_COMMAND_SOURCE_J1939_LIMIT:
     if (engine_retarder_j1939_control_device == 1) {
       j1939_pgn61440_retarder_torque_mode_and_enable_switches_byte =
            j1939_pgn61440_retarder_torque_mode_and_enable_switches_byte | 6;
@@ -37551,15 +38019,15 @@ void cm550_buildPgn61440ElectronicRetarderController1Message(void)
            j1939_pgn61440_retarder_torque_mode_and_enable_switches_byte | 0xe;
     }
     break;
-  case 2:
+  case ENGINE_RETARDER_COMMAND_SOURCE_CRUISE:
     j1939_pgn61440_retarder_torque_mode_and_enable_switches_byte =
          j1939_pgn61440_retarder_torque_mode_and_enable_switches_byte | 2;
     break;
-  case 3:
+  case ENGINE_RETARDER_COMMAND_SOURCE_SWITCH:
     j1939_pgn61440_retarder_torque_mode_and_enable_switches_byte =
          j1939_pgn61440_retarder_torque_mode_and_enable_switches_byte | 1;
   }
-  if (total_number_of_engine_brake_output_drivers_at_the_ecm_0_255 == 0) {
+  if (engine_retarder_output_driver_count == 0) {
     j1939_pgn61440_actual_retarder_percent_torque = 0xff;
   }
   else {
@@ -37651,7 +38119,7 @@ void initializePgn65213FanDrive1Buffer(void)
 //
 
 /* The PGN 59904 request responder for PGN 65257 (LFC Fuel Consumption (Liquid)), registered by the
-   LFC descriptor set-up cm550_retarderConfigPGN_65249_Builder (0x33aea). Bytes 1-4 are
+   LFC descriptor set-up cm550_initializePgn65257FuelConsumptionHandler (0x33aea). Bytes 1-4 are
    j1939_pgn65257_trip_fuel (SPN 182, 0.5 L/bit) = trip_fuel_consumed (e2m 117F +4 TIGAT3, 0.125
    gal) x 2 / 8 x 3785411 / 1000000. Bytes 5-8 are j1939_pgn65257_total_fuel_used (SPN 250) =
    total_fuel_consumed (117F +0 TIGAT2) / 4 x 3785411 / 1000000. Both go out low byte first. It
@@ -37676,15 +38144,22 @@ void cm550_buildPgn65257FuelConsumptionMessage(void)
 
 
 //
-// Function: cm550_retarderConfigPGN_65249_Builder @ 0x00033aea
+// Function: cm550_initializePgn65257FuelConsumptionHandler @ 0x00033aea
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up step called from cm550_registerJ1939PgnRequestHandlers (0x2f568). It builds the LFC
+   transmit descriptor j1939_pgn65257_tx_message (header 0xfee900: PGN 65257 Fuel Consumption
+   (Liquid)): the priority j1939_pgn65257_priority_cal (e2m 1254 +24 JCFCPZ) & 7, data length 8,
+   data pointer j1939_pgn65257_trip_fuel, status pointer j1939_pgn65257_transmit_status and
+   j1939_engine_node_source_address. It registers cm550_buildPgn65257FuelConsumptionMessage for PGN
+   65257 with registerJ1939PgnRequestHandler. CM848 has no PGN 65257 message (was
+   cm550_retarderConfigPGN_65249_Builder; PR #53 round 97). */
 
-void cm550_retarderConfigPGN_65249_Builder(void)
+void cm550_initializePgn65257FuelConsumptionHandler(void)
 
 {
-  j1939_pgn65257_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f72 & 7) << 2),0xfee900);
+  j1939_pgn65257_tx_message.header.can_id =
+       CONCAT13((char)((j1939_pgn65257_priority_cal & 7) << 2),0xfee900);
   j1939_pgn65257_tx_message.header.data_length = 8;
   j1939_pgn65257_tx_message.data_pointer = (undefined *)&j1939_pgn65257_trip_fuel;
   j1939_pgn65257_tx_message.status_pointer = &j1939_pgn65257_transmit_status;
@@ -37795,15 +38270,22 @@ void cm550_buildPgn65244IdleOperationMessage(void)
 
 
 //
-// Function: vp44_ioControlPGN_65244_Builder @ 0x00033ce2
+// Function: cm550_initializePgn65244IdleOperationHandler @ 0x00033ce2
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up step called from cm550_registerJ1939PgnRequestHandlers (0x2f56e). It builds the IO
+   transmit descriptor j1939_pgn65244_tx_message (header 0xfedc00: PGN 65244 Idle Operation): the
+   priority j1939_pgn65244_priority_cal (e2m 1254 +28 JCISPZ) & 7, data length 8, data pointer
+   j1939_pgn65244_total_idle_fuel_used, status pointer j1939_pgn65244_transmit_status and
+   j1939_engine_node_source_address. It registers cm550_buildPgn65244IdleOperationMessage for PGN
+   65244 with registerJ1939PgnRequestHandler. Nothing in it concerns the VP44, and CM848 has no PGN
+   65244 message (was vp44_ioControlPGN_65244_Builder; PR #53 round 97). */
 
-void vp44_ioControlPGN_65244_Builder(void)
+void cm550_initializePgn65244IdleOperationHandler(void)
 
 {
-  j1939_pgn65244_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f76 & 7) << 2),0xfedc00);
+  j1939_pgn65244_tx_message.header.can_id =
+       CONCAT13((char)((j1939_pgn65244_priority_cal & 7) << 2),0xfedc00);
   j1939_pgn65244_tx_message.header.data_length = 8;
   j1939_pgn65244_tx_message.data_pointer = (undefined *)&j1939_pgn65244_total_idle_fuel_used;
   j1939_pgn65244_tx_message.status_pointer = &j1939_pgn65244_transmit_status;
@@ -37883,8 +38365,7 @@ void cm550_buildPgn65252ShutdownMessage(void)
    pointer j1939_pgn65252_transmit_status, then payload bytes 5-8 = 0xff (not available).
    mc68k_initializeJ1939Datalink calls it once, and cm550_buildPgn65252ShutdownMessage later fills
    bytes 1-4 and sends the message. Nothing in it concerns engine hours or the VP44 (was
-   vp44_engineHoursPGN_65252_Builder; PR #53 round 94) (was vp44_engineHoursPGN_65252_Builder; PR
-   #53 round 94) */
+   vp44_engineHoursPGN_65252_Builder; PR #53 round 94) */
 
 void cm550_initializePgn65252ShutdownBuffer(void)
 
@@ -37914,7 +38395,7 @@ void cm550_initializePgn65252ShutdownBuffer(void)
    102, 2 kPa/bit) = boost_pressure_sensor_state.filtered_value x 6906 / 128000 >> 1. Byte 3 is
    j1939_pgn65270_intake_manifold_temperature (SPN 105, deg C + 40, clamped to 0-250), from
    intake_manifold_temperature_sensor_state.filtered_value. The other bytes keep the 0xff that the
-   descriptor set-up cm550_intakeManifoldPGN_65526_Builder stored. It sends
+   descriptor set-up initializePgn65270InletExhaustConditions1Buffer stored. It sends
    j1939_pgn65270_tx_message. Counterpart of cm848_buildPgn65270InletExhaustConditions1Message,
    which sends 0xFE on sensor faults. (was cm550_FUN_00033e58; PR #53 round 95) */
 
@@ -37946,26 +38427,39 @@ void cm550_buildPgn65270InletExhaustConditions1Message(void)
 
 
 //
-// Function: cm550_intakeManifoldPGN_65526_Builder @ 0x00033eee
+// Function: initializePgn65270InletExhaustConditions1Buffer @ 0x00033eee
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up step of mc68k_initializeJ1939Datalink (between the shutdown and power take-off set-ups).
+   It builds the IC1 transmit descriptor j1939_pgn65270_tx_message (header 0xfef600: PGN 65270
+   Inlet/Exhaust Conditions 1): the priority word 0x803f7a (e2m 1254 +2C JCEPPZ) & 7, data length 8,
+   data pointer 0x80360e, status pointer j1939_pgn65270_transmit_status and
+   j1939_engine_node_source_address. It stores 0xff (not available) into bytes 1 (SPN 81), 4 (SPN
+   106), 5 (SPN 107), 6-7 (SPN 173 exhaust gas temperature:
+   j1939_pgn65270_exhaust_gas_temperature_low_byte / _high_byte) and 8 (SPN 112);
+   cm550_buildPgn65270InletExhaustConditions1Message fills bytes 2 and 3. Twin of CM848 0x265d8: the
+   same stores in the same order, except that CM848 writes bytes 6-7 with one 16-bit store, which
+   the CPU32 cannot do at the odd address 0x803613 (one shared name; was
+   cm550_intakeManifoldPGN_65526_Builder; PR #53 round 97). (was
+   cm550_intakeManifoldPGN_65526_Builder; PR #53 round 97) */
 
-void cm550_intakeManifoldPGN_65526_Builder(void)
+void initializePgn65270InletExhaustConditions1Buffer(void)
 
 {
   j1939_pgn65270_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f7a & 7) << 2),0xfef600);
   j1939_pgn65270_tx_message.header.data_length = 8;
-  j1939_pgn65270_tx_message.data_pointer = &DAT_0080360e;
+  j1939_pgn65270_tx_message.data_pointer = &j1939_pgn65270_diesel_particulate_filter_intake_pressure
+  ;
   j1939_pgn65270_tx_message.status_pointer = &j1939_pgn65270_transmit_status;
   j1939_pgn65270_tx_message.header.can_id =
        CONCAT31(j1939_pgn65270_tx_message.header.can_id._0_3_,j1939_engine_node_source_address);
-  DAT_0080360e = 0xff;
-  DAT_00803611 = 0xff;
-  DAT_00803612 = 0xff;
-  DAT_00803613 = 0xff;
+  j1939_pgn65270_diesel_particulate_filter_intake_pressure = 0xff;
+  j1939_pgn65270_air_intake_pressure = 0xff;
+  j1939_pgn65270_air_filter_1_differential_pressure = 0xff;
+  j1939_pgn65270_exhaust_gas_temperature_low_byte = 0xff;
   j1939_pgn65270_exhaust_gas_temperature_high_byte = 0xff;
-  DAT_00803615 = 0xff;
+  j1939_pgn65270_coolant_filter_differential_pressure = 0xff;
   return;
 }
 
@@ -38052,12 +38546,12 @@ void cm550_cruiseControlPGN_65264_Builder(void)
    the transport protocol, from the retarder source address; retarder queue 1 every 5000 ms from 301
    ms). It runs only while j1939_pgn65249_transmit_status has no 0xf0 bit set. Byte 1 (SPN 901 /
    902) is 3 (compression release at the engine) for two or more engine brake drivers
-   (total_number_of_engine_brake_output_drivers_at_the_ecm_0_255, 0x8081fe), else 0x14 (exhaust
-   brake). The compare at 0x340b6 compiles as an assignment (move.w #1,(0x8081fe)): the count is
-   overwritten with 1, a count of 0 also gives 0x14 and the 0xff branch is unreachable. Byte 2 (SPN
-   557) is the control method 0xff / 6 / 3 / 2 / 1 for 0 / 1 / 2 / 3 / 6 cylinders per driver
-   (0x808200, e2m 13D8 +2 JCDR1NCY); other counts leave it. Bytes 3-14 are the first four speed
-   points, each low byte first and followed by 125 minus the high byte of its percent torque:
+   (engine_retarder_output_driver_count, 0x8081fe), else 0x14 (exhaust brake). The compare at
+   0x340b6 compiles as an assignment (move.w #1,(0x8081fe)): the count is overwritten with 1, a
+   count of 0 also gives 0x14 and the 0xff branch is unreachable. Byte 2 (SPN 557) is the control
+   method 0xff / 6 / 3 / 2 / 1 for 0 / 1 / 2 / 3 / 6 cylinders per driver (0x808200, e2m 13D8 +2
+   JCDR1NCY); other counts leave it. Bytes 3-14 are the first four speed points, each low byte first
+   and followed by 125 minus the high byte of its percent torque:
    engine_retarder_configuration_idle_speed with 0x8089b2,
    engine_retarder_configuration_maximum_speed with 0x8089b4, point 3 0x8089ae with 0x8089b6 and
    point 4 0x8089b0 with 0x8089b8. Bytes 15-16 are the peak torque speed 0x8089ac and bytes 17-18
@@ -38067,36 +38561,33 @@ void cm550_cruiseControlPGN_65264_Builder(void)
    cm848_buildPgn65249RetarderConfigurationMessage, which compares the count with 1 (0x14, else
    0xff) and also fills byte 19. (was vp44CanMessage100ResponseBuilder; PR #53 round 96) */
 
-uint cm550_buildPgn65249RetarderConfigurationMessage(void)
+void cm550_buildPgn65249RetarderConfigurationMessage(void)
 
 {
-  undefined4 in_D0;
-  uint uVar1;
   byte local_6;
   byte bStack_5;
   
-  uVar1 = CONCAT31((int3)((uint)in_D0 >> 8),j1939_pgn65249_transmit_status) & 0xfffffff0;
   if ((j1939_pgn65249_transmit_status & 0xf0) == 0) {
-    if (total_number_of_engine_brake_output_drivers_at_the_ecm_0_255 < 2) {
-      total_number_of_engine_brake_output_drivers_at_the_ecm_0_255 = 1;
+    if (engine_retarder_output_driver_count < 2) {
+      engine_retarder_output_driver_count = 1;
       j1939_pgn65249_payload.retarder_type_and_location = 0x14;
     }
     else {
       j1939_pgn65249_payload.retarder_type_and_location = 3;
     }
-    if (indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6 == 0) {
+    if (engine_retarder_driver_1_cylinder_count == 0) {
       j1939_pgn65249_payload.retarder_control_method = 0xff;
     }
-    else if (indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6 == 1) {
+    else if (engine_retarder_driver_1_cylinder_count == 1) {
       j1939_pgn65249_payload.retarder_control_method = 6;
     }
-    else if (indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6 == 2) {
+    else if (engine_retarder_driver_1_cylinder_count == 2) {
       j1939_pgn65249_payload.retarder_control_method = 3;
     }
-    else if (indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6 == 3) {
+    else if (engine_retarder_driver_1_cylinder_count == 3) {
       j1939_pgn65249_payload.retarder_control_method = 2;
     }
-    else if (indicates_of_cyl_brakes_driven_by_eb_driver_1_for_j1939_ret_ma_0_6 == 6) {
+    else if (engine_retarder_driver_1_cylinder_count == 6) {
       j1939_pgn65249_payload.retarder_control_method = 1;
     }
     bStack_5 = (byte)engine_retarder_configuration_idle_speed;
@@ -38131,9 +38622,9 @@ uint cm550_buildPgn65249RetarderConfigurationMessage(void)
     j1939_pgn65249_payload.reference_retarder_torque_low_byte = bStack_5;
     local_6 = (byte)(jcomm_reference_retarder_torque_reference_ret_torque_that_co_0_64255 >> 8);
     j1939_pgn65249_payload.reference_retarder_torque_high_byte = local_6;
-    uVar1 = cm550_sendCanMessage(&j1939_pgn65249_tx_message);
+    cm550_sendCanMessage(&j1939_pgn65249_tx_message);
   }
-  return uVar1;
+  return;
 }
 
 
@@ -38272,7 +38763,7 @@ void cm550_electronicBrakePGN_65527_Builder(void)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* The PGN 59904 request responder for PGN 65255 (VH Vehicle Hours), registered by the VH descriptor
-   set-up vp44_vehicleHoursPGN_65255_Builder (0x343d2). Bytes 5-8 are
+   set-up cm550_initializePgn65255VehicleHoursHandler (0x343d2). Bytes 5-8 are
    j1939_pgn65255_total_power_take_off_hours (SPN 248, 0.05 h/bit, low byte first) = the accumulated
    power take-off time 0x804fbc (e2m 117F +1C TITMP2, 0.1 s counts) x 20 / 36000. Bytes 1-4 (SPN 246
    total vehicle hours) stay 0xffffffff from the set-up. It sends j1939_pgn65255_tx_message. CM848
@@ -38292,15 +38783,23 @@ void cm550_buildPgn65255VehicleHoursMessage(void)
 
 
 //
-// Function: vp44_vehicleHoursPGN_65255_Builder @ 0x000343d2
+// Function: cm550_initializePgn65255VehicleHoursHandler @ 0x000343d2
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up step called from cm550_registerJ1939PgnRequestHandlers (0x2f57a). It builds the VH
+   transmit descriptor j1939_pgn65255_tx_message (header 0xfee700: PGN 65255 Vehicle Hours): the
+   priority j1939_pgn65255_priority_cal (e2m 1254 +38 JCVHHRPZ) & 7, data length 8, data pointer
+   j1939_pgn65255_total_vehicle_hours, status pointer j1939_pgn65255_transmit_status and
+   j1939_engine_node_source_address. It sets the total vehicle hours (bytes 1-4, SPN 246) to
+   0xffffffff (not available) and registers cm550_buildPgn65255VehicleHoursMessage for PGN 65255
+   with registerJ1939PgnRequestHandler. Nothing in it concerns the VP44, and CM848 has no PGN 65255
+   message (was vp44_vehicleHoursPGN_65255_Builder; PR #53 round 97). */
 
-void vp44_vehicleHoursPGN_65255_Builder(void)
+void cm550_initializePgn65255VehicleHoursHandler(void)
 
 {
-  j1939_pgn65255_tx_message.header.can_id = CONCAT13((char)((_DAT_00803f86 & 7) << 2),0xfee700);
+  j1939_pgn65255_tx_message.header.can_id =
+       CONCAT13((char)((j1939_pgn65255_priority_cal & 7) << 2),0xfee700);
   j1939_pgn65255_tx_message.header.data_length = 8;
   j1939_pgn65255_tx_message.data_pointer = (undefined *)&j1939_pgn65255_total_vehicle_hours;
   j1939_pgn65255_tx_message.status_pointer = &j1939_pgn65255_transmit_status;
@@ -38495,10 +38994,21 @@ void cm550_setDiagnosticSourceFromEngineFlags(void)
 
 
 //
-// Function: cm550_engine_protection_coordinator @ 0x0003458c
+// Function: selectUserFuelingState @ 0x0003458c
 //
 
-void cm550_engine_protection_coordinator(void)
+/* Selects the user fueling state user_fueling_state (e2m 1050 +2 FSDSFLST, User_Fueling_State) on
+   each pass of cm550_runEvery4FramesTaskSetPhase1. It saves the previous state, sets
+   FUELING_STATE_NOT_SELECTED and lets the selectors claim it in priority order: all speed governor
+   application (0xd18a), TSC1 torque control (0x34540), TSC1 speed control (0xd1a4), the calibrated
+   fixed fuel demand (0x34564), the accelerator pedal fault (cm550_selectPedalFaultMode), the
+   variable speed governor (cm550_selectVariableSpeedGovernorMode) and the dual axis fuel demand
+   table default (0x1c630). The previous state goes to the third, fifth and sixth selector. The twin
+   of CM848 0x42918: one shared name (was cm550_engine_protection_coordinator /
+   cm848_resetEngineOperatingMode; nothing here is engine protection). (was
+   cm550_engine_protection_coordinator; PR #53 round 97) */
+
+void selectUserFuelingState(void)
 
 {
   FUELING_STATE previous_user_fueling_state;
@@ -39557,4 +40067,4 @@ LAB_00035162:
 
 
 
-// Export complete - 720 functions processed
+// Export complete - 722 functions processed

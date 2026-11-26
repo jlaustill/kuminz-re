@@ -145,7 +145,7 @@ The flash2 SCI table 253 (0x53a5ec) maps each DRB "FD" read to a RAM byte (FD n 
 | Address | Variable | Notes |
 |---------|----------|-------|
 | 0x00408EE2 | CBD calibration block base | Column3=81AE |
-| 0x00408EF6 | `cbd_enable_flag` | 1 byte, 0=disabled, 1=enabled |
+| 0x00408EF6 | `cylinder_balance_enable_flag` | 1 byte, 0=disabled, 1=enabled |
 
 ## Example: Reading RPM for Translator
 

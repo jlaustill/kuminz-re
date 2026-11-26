@@ -182,9 +182,9 @@ The ECU carries its own map from e2m records to addresses, so e2m names no longe
   - It is a hash lookup: bucket = id mod 1889, through an index at 0x53af76.
   - The code itself bounds the table at 0x53ea6c and 0x75e = 1886 records.
   - Callers: the PCI diagnostic request handler, `cm848_evaluateCalibratedMonitorDisableConditions` and the PGN 61184
-    services that name a parameter ID: `cm848_readJ1939DiagnosticMemoryByParameterId`,
+    services that name a parameter ID: `readJ1939DiagnosticMemoryByParameterId`,
     `writeJ1939DiagnosticMemoryByParameterId` and the 0x41 handler
-    `cm848_handleJ1939GetAddressByParameterIdService`.
+    `handleJ1939GetAddressByParameterIdService`.
 - **How to resolve a record.** The block id is column 3 of an e2m record (`Crank_Exit_Speed,RPM,105E,0012,...`), so
   the record's address is table[block] + column 4.
 - **EEPROM records.** The table gives EEPROM addresses as 0x01000000 + offset; the application reads them from the
@@ -1173,7 +1173,7 @@ Verified memory addresses for live ECU queries:
 |---------|----------|-------|----------|
 | 0x0040B7BA | `engine_speed_state.filtered_engine_speed` (e2m 819B +2C Filtered_Engine_Speed) | × 0.125 RPM | ✓ 2026-01-31 |
 | 0x0040BD8E | `boost_pressure_sensor_value` | × 0.0159 IN_HG | ✓ 2026-01-31 |
-| 0x00408EF6 | `cbd_enable_flag` | 1=enabled | ✓ (prior session) |
+| 0x00408EF6 | `cylinder_balance_enable_flag` | 1=enabled | ✓ (prior session) |
 
 See `CM848_S90140.06_analysis/docs/service_0x4a_protocol.md` for complete protocol documentation.
 
