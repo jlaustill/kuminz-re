@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 02:38:26 UTC 2026
+// Generated: Fri Nov 27 02:41:39 UTC 2026
 
 
 //
@@ -86765,18 +86765,18 @@ void cm848_sciCommand44SendSecurityKeyCallback(void)
         sci_buffer[sci_transmit_byte_count] = 0;
         sci_transmit_byte_count = sci_transmit_byte_count + 1;
       }
-      else if ((DAT_0040b5df < 3) && (sci_security_state != 2)) {
+      else if ((sci_security_failed_key_count < 3) && (sci_security_state != 2)) {
         if (sci_key_retry_delay == 0) {
-          DAT_0040b5d8 = CONCAT11(DAT_003fcf8f,DAT_003fcf90);
+          sci_security_received_key = CONCAT11(DAT_003fcf8f,DAT_003fcf90);
           cm848_sciValidateSecurityKey();
           if (sci_security_key_matched_flag == 0) {
-            DAT_0040b5df = DAT_0040b5df + 1;
+            sci_security_failed_key_count = sci_security_failed_key_count + 1;
             sci_key_retry_delay = 1000;
             sci_buffer[sci_transmit_byte_count] = 1;
             sci_transmit_byte_count = sci_transmit_byte_count + 1;
           }
           else {
-            DAT_0040b5df = 0;
+            sci_security_failed_key_count = 0;
             sci_key_retry_delay = 0;
             sci_security_state = 1;
             sci_buffer[sci_transmit_byte_count] = 0;
@@ -87172,11 +87172,11 @@ LAB_00522660:
 void cm848_sciValidateSecurityKey(void)
 
 {
-  if ((((sci_security_seed ^ *(ushort *)(&DAT_0053abfe + (sci_security_seed >> 0xc & 0xf) * 2) ^
-         (uint)*(ushort *)(&DAT_0053abfe + (sci_security_seed >> 8 & 0xf) * 2) ^
-         (uint)*(ushort *)(&DAT_0053abfe + (sci_security_seed >> 4 & 0xf) * 2) ^
-         (uint)*(ushort *)(&DAT_0053abfe + (sci_security_seed & 0xf) * 2) ^ 0x1911) & 0xffff) ==
-       (uint)DAT_0040b5d8) || (calibration_download_security_key_cal == 0xff)) {
+  if ((((sci_security_seed ^ sci_security_key_nibble_table[sci_security_seed >> 0xc & 0xf] ^
+         (uint)sci_security_key_nibble_table[sci_security_seed >> 8 & 0xf] ^
+         (uint)sci_security_key_nibble_table[sci_security_seed >> 4 & 0xf] ^
+         (uint)sci_security_key_nibble_table[sci_security_seed & 0xf] ^ 0x1911) & 0xffff) ==
+       (uint)sci_security_received_key) || (calibration_download_security_key_cal == 0xff)) {
     sci_security_key_matched_flag = 1;
   }
   else {
@@ -90239,8 +90239,9 @@ void cm848_vehicleSpeedSensorInterruptHandler(void)
   if (((vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_TACHOGRAPH) &&
       (vehicle_speed_sensor_tachograph_pulse_width_valid_flag == 0)) &&
      (vehicle_speed_sensor_tachograph_pulse_width == 0)) {
-    DAT_003fd078 = DAT_003fd078 + 1;
-    if (1 < DAT_003fd078) {
+    vehicle_speed_sensor_tachograph_interrupt_count =
+         vehicle_speed_sensor_tachograph_interrupt_count + 1;
+    if (1 < vehicle_speed_sensor_tachograph_interrupt_count) {
       uVar5 = (uint)vehicle_speed_sensor_tpu_channel;
       vehicle_speed_sensor_tachograph_pulse_width._0_2_ =
            (&tpu_b_channel_0_parameters)[uVar5].PARAM4;
@@ -90332,7 +90333,7 @@ void cm848_initializeVehicleSpeedSensorChannel(void)
   
   vehicle_speed_sensor_period = 0x5e7fb044;
   if (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_TACHOGRAPH) {
-    DAT_003fd078 = 0;
+    vehicle_speed_sensor_tachograph_interrupt_count = 0;
     vehicle_speed_sensor_tachograph_pulse_width = 0;
     vehicle_speed_sensor_tachograph_pulse_width_valid_flag = 0;
     wVar1 = tpu_b.CPR1;
@@ -96446,7 +96447,7 @@ void hpcr_checkRailPressureSensorBeforeStart(void)
   }
   if ((fault_detected_cal.fuel_rail_pressure_high_error != 0) ||
      (fault_detected_cal.fuel_rail_pressure_low_error != 0)) {
-    DAT_003fd1e0 = 1;
+    fuel_pressure_sensor_pre_start_check_done_flag = 1;
     fuel_pressure_sensor_pre_start_check_abort_code = 2;
     fuel_pressure_sensor_pre_start_check_state = 4;
     return;
@@ -96486,11 +96487,11 @@ void hpcr_checkRailPressureSensorBeforeStart(void)
   }
   if (cam_sync_validation_crank_tick_count < fuel_pressure_sensor_pre_start_check_minimum_run_time)
   {
-    DAT_003fd1e0 = 1;
+    fuel_pressure_sensor_pre_start_check_done_flag = 1;
     return;
   }
   if (cam_sync_validation_dwell_counter <= fuel_pressure_sensor_pre_start_check_start_delay) {
-    DAT_003fd1e0 = 1;
+    fuel_pressure_sensor_pre_start_check_done_flag = 1;
     return;
   }
   if ((fuel_pressure_sensor_pre_start_low_sample_count <
@@ -96512,7 +96513,7 @@ void hpcr_checkRailPressureSensorBeforeStart(void)
   }
   monitor_readiness_code_cal = monitor_readiness_code_cal & 0xffffffbf;
 LAB_0053166c:
-  DAT_003fd1e0 = 1;
+  fuel_pressure_sensor_pre_start_check_done_flag = 1;
   diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits | 0x40;
   return;
 }
