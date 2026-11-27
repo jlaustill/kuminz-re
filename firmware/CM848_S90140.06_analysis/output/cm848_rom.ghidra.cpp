@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 02:47:48 UTC 2026
+// Generated: Fri Nov 27 02:50:54 UTC 2026
 
 
 //
@@ -10929,14 +10929,14 @@ void mpc555_dispatchExternalInterrupt(void)
   bool low_sum_carry;
   undefined4 in_MSR;
   undefined4 in_SRR1;
+  word saved_interrupt_mask;
+  word current_interrupt_mask;
   byte interrupt_code;
   uint entry_time_base_low;
   dword exit_time_base_low;
   int entry_time_base_high;
   int entry_time_base_high_check;
   int exit_time_base_high_check;
-  word saved_interrupt_mask;
-  word current_interrupt_mask;
   
   do {
     entry_time_base_high = TBUr;
@@ -66619,9 +66619,9 @@ void cm848_resetDataCollector(void)
 {
   data_collector_status = 0;
   data_collector_trigger_active_cal = 0;
-  data_collector_buffer_start_address = &DAT_0040c28a;
-  data_collector_end_address = &DAT_0040c28a;
-  data_collector_start_address = &DAT_0040c28a;
+  data_collector_buffer_start_address = &data_collector_default_buffer;
+  data_collector_end_address = &data_collector_default_buffer;
+  data_collector_start_address = &data_collector_default_buffer;
   data_collector_table_address = (dword)data_collector_address_table_cal;
   data_collector_fill_phase = 0;
   data_collector_table_entry_count = 0;
@@ -98439,8 +98439,8 @@ void cm848_auxiliaryControlTask(void)
   if (fault_aging_triggered_flag == 0) {
     if (((engine_state == ENGINE_STATE_RUNNING) || (engine_state == ENGINE_STATE_ENGINE_BRAKE)) ||
        (engine_state == ENGINE_STATE_OVERSPEED)) {
-      if (DAT_003fd22b == 0) {
-        DAT_003fd22b = 1;
+      if (engine_start_counted_flag == 0) {
+        engine_start_counted_flag = 1;
         cm848_incrementEngineStartCountsSinceFaultLogged();
       }
       if (fault_aging_governor_dwell_count < drive_cycle_minimum_engine_run_time) {
