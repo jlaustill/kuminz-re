@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 03:51:53 UTC 2026
+// Generated: Fri Nov 27 03:55:12 UTC 2026
 
 
 //
@@ -5974,7 +5974,15 @@ void mpc555_sciHandleDownloadStart(void)
   
   if (serial_reflash_busy_flag == 0) {
     if (eeprom_shadow_header.ecm_status == ECM_STATUS_REFLASH_IN_PROGRESS) {
+                    /* Boot kernel, time-shared RAM: ram0x003fedfd is a dword at an odd address
+                       (inside the application's diag_clear_flags_t_003fedfc) that the download
+                       start zeroes; the Bank-2 flash2_write_callback gets it as its second argument
+                        */
       ram0x003fedfd = 0;
+                    /* Boot kernel, time-shared RAM: ram0x003fee01 is the download start address,
+                       the dword at bytes 2-5 of the request (read here as
+                       _eeprom_write_request_type); later blocks write at it +
+                       eeprom_xfer_state.bytes_transferred */
       ram0x003fee01 = _eeprom_write_request_type;
       eeprom_xfer_state.block_length = boot_sci_download_block_length;
       MVar2 = cm848_lookupBootMemoryRegionType(_eeprom_write_request_type,1);
@@ -22743,6 +22751,8 @@ undefined1 getJ1939DiagnosticResponseEchoLength(int param_1)
     }
   }
   else if (param_1 < 0x4f) {
+                    /* 0x575dd is the table base minus 0x41: the echo lengths of services 0x41-0x4e
+                       are the bytes at 0x5761e-0x5762b */
     return (&DAT_000575dd)[param_1];
   }
   return 1;
@@ -52351,6 +52361,8 @@ void cm848_updateInjectorDiagnosticBits(uint param_1,int param_2)
   uint uVar3;
   uint uVar4;
   
+                    /* Rows are 1-based: row n's 8-byte mask record is at 0x57d2e + 8 x n (row 1 at
+                       0x57d36); its second dword (0x57d32 + 8 x n) is the fast-decay flag mask */
   pbVar2 = &calibration_table_ptr_3 + param_2 * 10;
   uVar4 = *(uint *)(&DAT_00057d2e + param_2 * 8);
   uVar3 = param_1 & uVar4;

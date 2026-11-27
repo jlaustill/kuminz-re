@@ -53,3 +53,7 @@ address,comment
 0x0003d9ac,"The stbu pre-increments by 1 from 0x3051bf, so the loop copies the job's command bytes into qsmcm_comdram_0 onward (0x3051c0)"
 0x0003dc28,"The lhzu pre-increments by 2 from 0x30513e, so the loop reads qsmcm_recram (0x305140) into the job's receive words"
 0x000051a0,"The lbzu pre-increments from 0x3070f5 + mailbox offset; mailbox numbers are 1-based, so it reads the data bytes (offset 6) of toucan_a_message_buffers[n - 1]"
+0x00006ee8,"Boot kernel, time-shared RAM: ram0x003fedfd is a dword at an odd address (inside the application's diag_clear_flags_t_003fedfc) that the download start zeroes; the Bank-2 flash2_write_callback gets it as its second argument"
+0x00006efc,"Boot kernel, time-shared RAM: ram0x003fee01 is the download start address, the dword at bytes 2-5 of the request (read here as _eeprom_write_request_type); later blocks write at it + eeprom_xfer_state.bytes_transferred"
+0x000204ec,"0x575dd is the table base minus 0x41: the echo lengths of services 0x41-0x4e are the bytes at 0x5761e-0x5762b"
+0x0004a96c,"Rows are 1-based: row n's 8-byte mask record is at 0x57d2e + 8 x n (row 1 at 0x57d36); its second dword (0x57d32 + 8 x n) is the fast-decay flag mask"
