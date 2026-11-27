@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 02:07:54 UTC 2026
+// Generated: Fri Nov 27 02:20:12 UTC 2026
 
 
 //
@@ -899,6 +899,8 @@ short cm848_flashEraseChip(void)
     reflash_transfer_state.flash2_erase_state = 2;
     do {
                     /* WARNING: Read-only address (ram,0x00500aaa) is written */
+                    /* flash2 chip erase: unlock (0xaa / 0x55) then 0x80 then unlock again then 0x10
+                        */
                     /* WARNING: Read-only address (ram,0x00500554) is written */
                     /* WARNING: Read-only address (ram,0x00500aaa) is written */
                     /* WARNING: Read-only address (ram,0x00500aaa) is written */
@@ -932,6 +934,8 @@ undefined2 cm848_flashWriteWord(undefined2 *param_1,undefined2 *param_2)
   
   if (flash2_operation_active_flag == 0) {
                     /* WARNING: Read-only address (ram,0x00500aaa) is written */
+                    /* flash2 unlock bypass: unlock (0xaa / 0x55) then 0x20; each word is then
+                       programmed with 0xa0 to flash2_command_register */
                     /* WARNING: Read-only address (ram,0x00500554) is written */
     uRam00500554 = 0x55;
                     /* WARNING: Read-only address (ram,0x00500aaa) is written */
@@ -2101,6 +2105,9 @@ void mpc555_hardwareInitialization(void)
   mpc555_initializeQspiRegisters();
   mpc555_eepromReadWords(0x1000000,0x3fee0a,2);
                     /* WARNING: Read-only address (ram,0x00500aaa) is written */
+                    /* flash2 autoselect: unlock (0xaa / 0x55) then 0x90;
+                       flash2_command_register._0_2_ then reads the manufacturer ID and ._2_2_ the
+                       device ID */
                     /* WARNING: Read-only address (ram,0x00500554) is written */
   uRam00500554 = 0x55;
                     /* WARNING: Read-only address (ram,0x00500aaa) is written */

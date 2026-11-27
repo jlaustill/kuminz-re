@@ -37,3 +37,7 @@ address,comment
 # mpc555_cmfEraseBlocks: after CMFCTL PE and SES are set (| 6), each store of 0xffffffff is an erase interlock write to one 32 KB block; Ghidra warns because ROM is mapped read-only.
 0x00004af0,CMF_A erase interlock writes: blocks 1-7 (0x8000-0x38000); block 0 (0x0-0x7fff - the boot kernel) is not written
 0x00004b84,CMF_B erase interlock writes: blocks 0-5 (0x40000-0x68000)
+# flash2 command cycles (0xaa to 0x500aaa, 0x55 to 0x500554, command to 0x500aaa). Flash2 is mapped read-only, so the decompiler treats each first 0xaa store to 0x500aaa as dead (the command overwrites it) and does not print it; the comment lists every cycle the code really writes.
+0x00001228,flash2 chip erase: unlock (0xaa / 0x55) then 0x80 then unlock again then 0x10
+0x000012d8,flash2 unlock bypass: unlock (0xaa / 0x55) then 0x20; each word is then programmed with 0xa0 to flash2_command_register
+0x000028a0,flash2 autoselect: unlock (0xaa / 0x55) then 0x90; flash2_command_register._0_2_ then reads the manufacturer ID and ._2_2_ the device ID
