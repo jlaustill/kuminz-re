@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 13:47:44 UTC 2026
+// Generated: Fri Nov 27 13:54:17 UTC 2026
 
 
 //
@@ -37050,8 +37050,8 @@ LAB_00034278:
     }
   }
   if ((((transmission_control_flags.limp_home_flags_3 & 1) != 0) ||
-      ((transmission_control_flags.limp_home_flags_4 & 1) != 0)) ||
-     ((transmission_control_flags.limp_home_flags_4 & 4) != 0)) {
+      (transmission_control_flags.governor_sensor_offset_limp != 0)) ||
+     (transmission_control_flags.gcst_circuit_limp != 0)) {
     transmission_shift_strategy_flags.limp_home_and_temperature_flags =
          transmission_shift_strategy_flags.limp_home_and_temperature_flags | 1;
   }
@@ -37088,7 +37088,7 @@ void cm848_updateTransmissionConditionFlags(void)
   if ((((dVar3 & 0xffff) < 0x201) ||
       ((uint)(((ulonglong)transmission_output_speed_in_use << 8) / (ulonglong)(dVar3 & 0xffff)) <=
        (uint)transfer_case_low_range_ratio_threshold)) ||
-     ((transmission_control_flags.limp_home_flags_4 & 0x20) != 0)) {
+     (transmission_control_flags.output_speed_sensor_limp != 0)) {
     transmission_control_flags.mode_flags = transmission_control_flags.mode_flags & 0xfb;
   }
   else {
@@ -37313,7 +37313,7 @@ void cm848_updateTransmissionRelayRequest(void)
 {
   if (((((transmission_control_flags.limp_home_flags_2 & 1) == 0) &&
        ((transmission_control_flags.limp_home_flags_2 & 2) == 0)) &&
-      ((transmission_control_flags.limp_home_flags_4 & 0x10) == 0)) &&
+      (transmission_control_flags.lockup_converter_clutch_solenoid_circuit_limp == 0)) &&
      (((transmission_control_flags.limp_home_flags_1 & 1) == 0 &&
       (engine_state != ENGINE_STATE_STOPPED)))) {
     cm848_setLogicalOutputRequest(0x10,0);
@@ -37488,12 +37488,10 @@ void cm848_updateTransmissionLimpHomeFlags(void)
     bVar1 = transmission_control_flags.limp_home_flags_2 | 2;
   }
   if (fault_detected_cal.transmission_torque_converter_clutch_driver_low_control_error == 0) {
-    transmission_control_flags.limp_home_flags_4 =
-         transmission_control_flags.limp_home_flags_4 & 0xef;
+    transmission_control_flags.lockup_converter_clutch_solenoid_circuit_limp = 0;
   }
   else {
-    transmission_control_flags.limp_home_flags_4 =
-         transmission_control_flags.limp_home_flags_4 | 0x10;
+    transmission_control_flags.lockup_converter_clutch_solenoid_circuit_limp = 1;
   }
   if (fault_detected_cal.transmission_variable_force_solenoid_pwm_driver_error == 0) {
     transmission_control_flags.limp_home_flags_2 = bVar1 & 0xfe;
@@ -38204,7 +38202,7 @@ void cm848_learnOutputSpeedToVehicleSpeedRatio(void)
            output_speed_to_vehicle_speed_ratio_learn_delay_count) &&
          ((transmission_control_flags.axle_ratio_learning_flags & 0x20) == 0)) &&
         ((transmission_control_flags.mode_flags & 4) == 0)) &&
-       ((((transmission_control_flags.limp_home_flags_4 & 0x20) == 0 &&
+       (((transmission_control_flags.output_speed_sensor_limp == 0 &&
          (output_speed_to_vehicle_speed_ratio_learn_minimum_output_speed <
           transmission_output_speed_in_use)) &&
         (output_speed_to_vehicle_speed_ratio_learn_minimum_vehicle_speed < vehicle_speed)))) {
@@ -44062,8 +44060,7 @@ void cm848_monitorTransmissionOutputSpeedSensor(void)
         output_speed_sensor_check_fault_heal_timer = output_speed_sensor_check_fault_heal_passes;
         if (output_speed_sensor_check_fault_set_timer == 0) {
           fault_detected_cal.output_speed_sensor_rationality_error = 1;
-          transmission_control_flags.limp_home_flags_4 =
-               transmission_control_flags.limp_home_flags_4 | 0x20;
+          transmission_control_flags.output_speed_sensor_limp = 1;
           output_speed_sensor_check_state = DIAGNOSTIC_MONITOR_STATE_FAILED;
         }
         else {
@@ -44075,8 +44072,7 @@ void cm848_monitorTransmissionOutputSpeedSensor(void)
         if (output_speed_sensor_check_fault_heal_timer == 0) {
           fault_detected_cal.output_speed_sensor_rationality_error = 0;
           fault_registered_cal.output_speed_sensor_rationality_error = 0;
-          transmission_control_flags.limp_home_flags_4 =
-               transmission_control_flags.limp_home_flags_4 & 0xdf;
+          transmission_control_flags.output_speed_sensor_limp = 0;
           output_speed_sensor_check_state = DIAGNOSTIC_MONITOR_STATE_PASSED;
         }
         else {
@@ -45284,7 +45280,7 @@ void cm848_calculateTransmissionOutputSpeed(void)
   if (algorithm_enable_flags_6_cal.transmission_control_enable == 0) {
     return;
   }
-  if ((transmission_control_flags.limp_home_flags_4 & 0x20) != 0) {
+  if (transmission_control_flags.output_speed_sensor_limp != 0) {
     if (vehicle_speed == 0) {
       uVar2 = 8;
     }

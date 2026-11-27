@@ -5,7 +5,7 @@
 // read-modify-write, which it prints as a piece of the struct:
 //     fault_detected_cal._48_2_ = fault_detected_cal._48_2_ | 0x20;
 // Each rewrite below is exact; anything else is left as Ghidra printed it:
-// - `S._o_n_ = S._o_n_ | K;` becomes one `S.field = <all ones>;` line per field, when the bits of K are exactly
+// - `S._o_n_ = S._o_n_ | K;` (also wrapped after the `=`) becomes one `S.field = <all ones>;` line per field, when the bits of K are exactly
 //   whole bitfields of S's n-byte unit at byte offset o.
 // - `S._o_n_ = S._o_n_ & K;` becomes one `S.field = 0;` line per field cleared by K, under the same condition.
 // - `(S._o_n_ & K) == 0` / `!= 0` becomes `S.field == 0` / `!= 0` when K is exactly one field.
@@ -45,7 +45,7 @@ public final class BitfieldPieceRewriter {
     private static final String CONST = "(0x[0-9a-fA-F]+|\\d+)";
 
     private static final Pattern WRITE = Pattern.compile(
-        "^([ \\t]*)" + ID + "\\._(\\d+)_(\\d+)_ = \\2\\._\\3_\\4_ ([|&]) " + CONST + ";$", Pattern.MULTILINE);
+        "^([ \\t]*)" + ID + "\\._(\\d+)_(\\d+)_ =(?: |\\n[ \\t]*)\\2\\._\\3_\\4_ ([|&]) " + CONST + ";$", Pattern.MULTILINE);
     private static final Pattern PAIR_TEST = Pattern.compile(
         "\\(" + ID + "\\._(\\d+)_(\\d+)_ & " + CONST + "\\) (==|!=) \\(" + ID + "\\._\\2_\\3_ & \\4\\)");
     private static final Pattern ZERO_TEST = Pattern.compile(

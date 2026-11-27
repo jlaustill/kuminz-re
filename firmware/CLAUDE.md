@@ -747,7 +747,11 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
       - Wave 11 (before the export rewrite) reverted two bitfields for their pieces:
         `transmission_shift_strategy_flags_t.wide_open_throttle_flags` and
         `transmission_control_flags_t.limp_home_flags_4` (then `protection_status_flags_t.status_flags` /
-        `protection_condition_flags_t.fault_state_flags`). They can be revisited now.
+        `protection_condition_flags_t.fault_state_flags`).
+        - **`limp_home_flags_4` is bitfields again (PR #56):** one field per e2m RE_Limp_Flags4 bit; all 12 uses
+          print by name (`transmission_control_flags.output_speed_sensor_limp = 1`).
+        - **`wide_open_throttle_flags` stays a byte:** most of its updates go through merged temporaries
+          (`bVar3 = flags & 0xdf; ... flags = bVar3 | 0x40;`), which stay pieces, and bits 0x08 / 0x10 are unproven.
     - Check a shape change with `piece_census.py` (in the session folder), which lists each symbol whose piece count
       went up.
   - **`end_of_line_test_settings_cal`** (0x3fd938 = EEPROM 0x4b6) is the Chrysler in-plant test block. The old names

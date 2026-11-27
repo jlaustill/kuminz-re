@@ -32,6 +32,7 @@ class BitfieldPieceRewriterTest {
         assertEquals("  faults_a.bit6 = 1;\n  faults_a.bit9 = 1;",
             rewrite("  faults_a._2_2_ = faults_a._2_2_ | 0x240;"));
         assertEquals("faults_a.bit2 = 1;", rewrite("faults_a._2_2_ = faults_a._2_2_ | 4;"));
+        assertEquals("    faults_a.bit4 = 0;", rewrite("    faults_a._2_2_ =\n         faults_a._2_2_ & 0xffef;"));
     }
 
     @Test
