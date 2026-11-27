@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 02:20:12 UTC 2026
+// Generated: Fri Nov 27 02:23:52 UTC 2026
 
 
 //
@@ -6349,9 +6349,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
-  word counter_value;
   byte prescaler_count;
   dword runtime_value;
+  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -10996,12 +10996,12 @@ void mpc555_handleDecrementerException(void)
   int iVar1;
   undefined4 in_MSR;
   undefined4 in_SRR1;
-  int entry_time_base_high_check;
-  int exit_time_base_high_check;
-  word saved_interrupt_mask;
   uint entry_time_base_low;
   dword exit_time_base_low;
   int entry_time_base_high;
+  int entry_time_base_high_check;
+  int exit_time_base_high_check;
+  word saved_interrupt_mask;
   
   do {
     entry_time_base_high = TBUr;
@@ -38536,9 +38536,9 @@ LAB_0003670c:
 void cm848_queueSupervisorStatusRead(void)
 
 {
-  j1939_tx_frame_g_byte_0 = 0x4e00;
-  j1939_msg_field_word_b31b = 0x5a00;
-  j1939_msg_field_word_b31d = 0x5c00;
+  supervisor_status_read_transmit_words[0] = 0x4e00;
+  supervisor_status_read_transmit_words[1] = 0x5a00;
+  supervisor_status_read_transmit_words[2] = 0x5c00;
   cm848_queueQspiJob(&supervisor_status_read_job,1);
   return;
 }
@@ -38561,10 +38561,11 @@ void cm848_queueSupervisorStatusRead(void)
 void cm848_onSupervisorStatusRead(void)
 
 {
-  supervisor_input_lines_136_to_143_state = (byte)DAT_003fb31f;
+  supervisor_input_lines_136_to_143_state = (byte)supervisor_status_read_reply_words[0];
   supervisor_input_lines_130_to_135_state =
-       (byte)DAT_003fb321 & 7 | (byte)(DAT_003fb321 >> 2) & 0x38;
-  supervisor_input_lines_144_to_151_state = (byte)DAT_003fb323;
+       (byte)supervisor_status_read_reply_words[1] & 7 |
+       (byte)(supervisor_status_read_reply_words[1] >> 2) & 0x38;
+  supervisor_input_lines_144_to_151_state = (byte)supervisor_status_read_reply_words[2];
   return;
 }
 
@@ -38621,7 +38622,7 @@ void cm848_queueSupervisorRegister36Read(void)
 void cm848_onSupervisorRegister36Read(void)
 
 {
-  supervisor_register_36_bit_1_low_flag = DAT_003fb2e9 & 2 ^ 2;
+  supervisor_register_36_bit_1_low_flag = supervisor_register_36_reply_word & 2 ^ 2;
   if (supervisor_register_36_bit_1_low_flag == 0) {
     if ((supervisor_register_36_bit_1_release_delay_counter != 0) &&
        (supervisor_register_36_bit_1_release_delay_counter =
@@ -38747,19 +38748,19 @@ void cm848_paceSupervisorWatchdogCycle(void)
 //
 
 /* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
-   registers; command byte 0x5D): queues a 0x2E (46) access with j1939_message_word_b220 when no
-   diagnostic session is active | review-function-readability reviewed 2026-11-11 - Readability
-   Medium Accuracy Confidence Medium */
+   registers; command byte 0x5D): queues a 0x2E (46) access with supervisor_register_46_command_word
+   when no diagnostic session is active | review-function-readability reviewed 2026-11-11 -
+   Readability Medium Accuracy Confidence Medium */
 
 void cm848_queueSupervisorRegister46Read(void)
 
 {
   if (ram_refresh_enable == RAM_REFRESH_DISABLED) {
-    j1939_msg_payload_snapshot = j1939_message_word_b220;
+    supervisor_register_46_transmit_word = supervisor_register_46_command_word;
     cm848_queueQspiJob(&supervisor_register_46_read_job,1);
   }
   else {
-    j1939_message_word_b220 = 0x2e00;
+    supervisor_register_46_command_word = 0x2e00;
   }
   return;
 }
@@ -38771,16 +38772,16 @@ void cm848_queueSupervisorRegister46Read(void)
 //
 
 /* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
-   registers; command byte 0x5D): completion of the register 0x2E read: copies the reply to 0x40b222
-   | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
-   | supervisor_register_46_read_job (supervisor chip PCS1 command byte 0x5D) completion_callback -
-   invoked by cm848_completeQspiJob via cm848_onQspiFinished - set by
-   cm848_initializeSupervisorRegister46ReadJob - not a dead function */
+   registers; command byte 0x5D): completion of the register 0x2E read: copies the reply to
+   supervisor_register_46_reply | review-function-readability reviewed 2026-11-11 - Readability
+   Medium Accuracy Confidence Medium | supervisor_register_46_read_job (supervisor chip PCS1 command
+   byte 0x5D) completion_callback - invoked by cm848_completeQspiJob via cm848_onQspiFinished - set
+   by cm848_initializeSupervisorRegister46ReadJob - not a dead function */
 
 void cm848_onSupervisorRegister46Read(void)
 
 {
-  DAT_0040b222 = DAT_003fb33d;
+  supervisor_register_46_reply = supervisor_register_46_reply_word;
   return;
 }
 
@@ -38818,7 +38819,7 @@ void cm848_queueSupervisorRegister162Read(void)
 void cm848_onSupervisorRegister162Read(void)
 
 {
-  supervisor_register_162_status = DAT_003fb285 & 0xff;
+  supervisor_register_162_status = supervisor_register_162_reply_word & 0xff;
   return;
 }
 
@@ -38899,7 +38900,6 @@ void cm848_runSupervisorChipSchedule(void)
 // Function: cm848_configureSupervisorChip @ 0x00036de0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
    registers; command byte 0x5D): start-up configuration: repeats 0x8C02 / 0x0C00 / 0xC2xx / 0xC4xx
    / 0xC8xx until the chip reports state 2 then writes 0xDA / 0xDC / 0xD0 / 0xD6 (period = 30000000
@@ -38914,29 +38914,31 @@ void cm848_configureSupervisorChip(void)
   qspi_job_t local_28;
   
   local_28.device_slot = supervisor_qspi_slot;
-  local_28.transmit_words = &j1939_can_frame_word_a;
-  local_28.command_bytes = &supervisor_qspi_command_bytes;
-  local_28.receive_words = (word *)&DAT_003fb34f;
+  local_28.transmit_words = supervisor_start_up_transmit_words;
+  local_28.command_bytes = supervisor_qspi_command_bytes;
+  local_28.receive_words = supervisor_start_up_reply_words;
   do {
-    j1939_can_frame_word_a = 0x8c02;
-    j1939_can_frame_word_b = 0xc00;
+    supervisor_start_up_transmit_words[0] = 0x8c02;
+    supervisor_start_up_transmit_words[1] = 0xc00;
     uVar1 = supervisor_chip_driver_feedback_delay_microseconds & 0xff;
-    j1939_can_frame_word_c = uVar1 | 0xc200;
-    j1939_can_frame_word_d = uVar1 | 0xc400;
-    j1939_pgn_source_byte._0_2_ = uVar1 | 0xc800;
+    supervisor_start_up_transmit_words[2] = uVar1 | 0xc200;
+    supervisor_start_up_transmit_words[3] = uVar1 | 0xc400;
+    supervisor_start_up_transmit_words[4] = uVar1 | 0xc800;
     local_28.word_count = 5;
     local_28.completion_callback = (qspi_completion_callback_function_t *)0x0;
     cm848_queueQspiJob(&local_28,1);
     do {
     } while (local_28.busy_state != 0);
-  } while ((_j1939_session_state & 0xff) != 2);
-  j1939_can_frame_word_a = supervisor_chip_driver_feedback_delay_microseconds & 0xff | 0xda00;
-  j1939_can_frame_word_b = supervisor_chip_driver_feedback_delay_microseconds & 0xff | 0xdc00;
+  } while ((supervisor_start_up_reply_words[1] & 0xff) != 2);
+  supervisor_start_up_transmit_words[0] =
+       supervisor_chip_driver_feedback_delay_microseconds & 0xff | 0xda00;
+  supervisor_start_up_transmit_words[1] =
+       supervisor_chip_driver_feedback_delay_microseconds & 0xff | 0xdc00;
   uVar2 = 30000000 /
           ((uint)supervisor_chip_overspeed_limit *
           (uint)supervisor_chip_engine_speed_targets_per_revolution);
-  j1939_can_frame_word_c = (ushort)uVar2 & 0xff | 0xd000;
-  j1939_can_frame_word_d =
+  supervisor_start_up_transmit_words[2] = (ushort)uVar2 & 0xff | 0xd000;
+  supervisor_start_up_transmit_words[3] =
        (ushort)(uVar2 >> 8) & 0xf |
        (supervisor_chip_overspeed_consecutive_occurrence_count & 7) << 4 |
        (supervisor_chip_overspeed_non_latching_flag & 1) << 7 | 0xd600;
@@ -38975,7 +38977,7 @@ void cm848_startSupervisorWatchdog(void)
   bVar7 = 0;
   supervisor_watchdog_job.device_slot = supervisor_qspi_slot;
   supervisor_watchdog_job.transmit_words = supervisor_watchdog_transmit_words;
-  supervisor_watchdog_job.command_bytes = &supervisor_qspi_command_bytes;
+  supervisor_watchdog_job.command_bytes = supervisor_qspi_command_bytes;
   supervisor_watchdog_job.receive_words = (word *)&DAT_003fb2c7;
   supervisor_watchdog_job.completion_callback = (qspi_completion_callback_function_t *)0x0;
   supervisor_watchdog_transmit_words[0] = 0x1400;
@@ -39046,9 +39048,9 @@ void cm848_initializeSupervisorRegister36ReadJob(void)
 {
   supervisor_register_36_read_job.device_slot = supervisor_qspi_slot;
   supervisor_register_36_read_job.word_count = 1;
-  supervisor_register_36_read_job.transmit_words = (word *)&DAT_0005772c;
-  supervisor_register_36_read_job.command_bytes = &supervisor_qspi_command_bytes;
-  supervisor_register_36_read_job.receive_words = &DAT_003fb2e9;
+  supervisor_register_36_read_job.transmit_words = &supervisor_register_36_read_command;
+  supervisor_register_36_read_job.command_bytes = supervisor_qspi_command_bytes;
+  supervisor_register_36_read_job.receive_words = &supervisor_register_36_reply_word;
   supervisor_register_36_read_job.completion_callback = cm848_onSupervisorRegister36Read;
   return;
 }
@@ -39069,9 +39071,9 @@ void cm848_initializeSupervisorStatusReadJob(void)
 {
   supervisor_status_read_job.device_slot = supervisor_qspi_slot;
   supervisor_status_read_job.word_count = 3;
-  supervisor_status_read_job.transmit_words = &j1939_tx_frame_g_byte_0;
-  supervisor_status_read_job.receive_words = &DAT_003fb31f;
-  supervisor_status_read_job.command_bytes = &supervisor_qspi_command_bytes;
+  supervisor_status_read_job.transmit_words = supervisor_status_read_transmit_words;
+  supervisor_status_read_job.receive_words = supervisor_status_read_reply_words;
+  supervisor_status_read_job.command_bytes = supervisor_qspi_command_bytes;
   supervisor_status_read_job.completion_callback = cm848_onSupervisorStatusRead;
   return;
 }
@@ -39093,7 +39095,7 @@ void cm848_initializeSupervisorOutputWriteJob(void)
   supervisor_output_write_job.device_slot = supervisor_qspi_slot;
   supervisor_output_write_job.word_count = 1;
   supervisor_output_write_job.transmit_words = &supervisor_output_write_transmit_word;
-  supervisor_output_write_job.command_bytes = &supervisor_qspi_command_bytes;
+  supervisor_output_write_job.command_bytes = supervisor_qspi_command_bytes;
   supervisor_output_write_job.receive_words = (word *)0x0;
   supervisor_output_write_job.completion_callback = (qspi_completion_callback_function_t *)0x0;
   return;
@@ -39115,11 +39117,11 @@ void cm848_initializeSupervisorRegister46ReadJob(void)
 {
   supervisor_register_46_read_job.device_slot = supervisor_qspi_slot;
   supervisor_register_46_read_job.word_count = 1;
-  supervisor_register_46_read_job.transmit_words = &j1939_msg_payload_snapshot;
-  supervisor_register_46_read_job.command_bytes = &supervisor_qspi_command_bytes;
-  supervisor_register_46_read_job.receive_words = &DAT_003fb33d;
+  supervisor_register_46_read_job.transmit_words = &supervisor_register_46_transmit_word;
+  supervisor_register_46_read_job.command_bytes = supervisor_qspi_command_bytes;
+  supervisor_register_46_read_job.receive_words = &supervisor_register_46_reply_word;
   supervisor_register_46_read_job.completion_callback = cm848_onSupervisorRegister46Read;
-  j1939_message_word_b220 = 0x2e00;
+  supervisor_register_46_command_word = 0x2e00;
   return;
 }
 
@@ -39139,9 +39141,9 @@ void cm848_initializeSupervisorRegister162ReadJob(void)
 {
   supervisor_register_162_read_job.device_slot = supervisor_qspi_slot;
   supervisor_register_162_read_job.word_count = 1;
-  supervisor_register_162_read_job.transmit_words = (word *)&DAT_0005772a;
-  supervisor_register_162_read_job.command_bytes = &supervisor_qspi_command_bytes;
-  supervisor_register_162_read_job.receive_words = &DAT_003fb285;
+  supervisor_register_162_read_job.transmit_words = &supervisor_register_162_read_command;
+  supervisor_register_162_read_job.command_bytes = supervisor_qspi_command_bytes;
+  supervisor_register_162_read_job.receive_words = &supervisor_register_162_reply_word;
   supervisor_register_162_read_job.completion_callback = cm848_onSupervisorRegister162Read;
   return;
 }
@@ -39164,7 +39166,7 @@ void cm848_initializeSupervisorConfigurationWriteJob(void)
   supervisor_configuration_write_job.device_slot = supervisor_qspi_slot;
   supervisor_configuration_write_job.word_count = 4;
   supervisor_configuration_write_job.transmit_words = supervisor_configuration_transmit_words;
-  supervisor_configuration_write_job.command_bytes = &supervisor_qspi_command_bytes;
+  supervisor_configuration_write_job.command_bytes = supervisor_qspi_command_bytes;
   supervisor_configuration_write_job.receive_words = (word *)0x0;
   supervisor_configuration_write_job.completion_callback =
        (qspi_completion_callback_function_t *)0x0;
@@ -39295,7 +39297,7 @@ void cm848_initializeSerialOutputDriverJob(void)
   serial_output_driver_job.device_slot = cm848_registerQspiDeviceSlot(3,2000,0x352,0x28);
   serial_output_driver_job.word_count = 1;
   serial_output_driver_job.transmit_words = (word *)&serial_output_driver_transmit_word;
-  serial_output_driver_job.command_bytes = &DAT_0005772e;
+  serial_output_driver_job.command_bytes = &serial_output_driver_command_byte;
   serial_output_driver_job.receive_words = &serial_output_driver_reply;
   serial_output_driver_job.completion_callback = cm848_onSerialOutputDriverReply;
   output_line_state.lines_152_to_159 = 0xff;

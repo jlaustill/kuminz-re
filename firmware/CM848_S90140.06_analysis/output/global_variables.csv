@@ -34,7 +34,7 @@ address,name,type,comment
 0x000575de,mpc555_interrupt_dispatch_table,interrupt_handler_function_t *[16],The 16 SIU interrupt vectors: mpc555_dispatchExternalInterrupt calls the entry of the pending interrupt code / 4. In the ROM: [3] mpc555_tpuAInterruptDispatcher, [5] mpc555_tpuBInterruptDispatcher, [6] cm848_onPciControllerInterrupt, [7] cm848_onQspiFinished, [9] mpc555_canTransmitInterruptHandler, [11] cm848_dispatchSciInterrupt, [13] mpc555_miosInterruptDispatcher, [15] executiveFrameInterruptHandler; the eight others mpc555_haltOnUnhandledExternalInterrupt. The table ends at 0x5761e (typed: was one pointer; PR #53 round 98)
 0x0005762c,injector_driver_booster_capacitor_monitor_records,injector_driver_booster_capacitor_monitor_record_t[2],The booster capacitor records of cm848_monitorInjectorDriverBoosterCapacitorVoltage, one per capacitor (channels 54 / 55), decoded from the ROM. Were 12 loose rows (j1939_pgn_lookup_ptr / j1939_message_def_ptr were the fault numbers) (PR #53 round 41)
 0x00057694,injector_driver_booster_capacitor_cylinder_records,injector_driver_booster_capacitor_cylinder_record_t[8],Per cylinder event: the capacitor that drives the cylinder's injector and the four injector circuit faults; cm848_monitorInjectorDriverBoosterCapacitorVoltage skips the cylinder while any of them is set. Capacitors alternate 0 / 1 by cylinder event; records 6 / 7 hold injectors 7 / 8 and lie past cylinder_event_count_max (6) (the table ends at supervisor_watchdog_answer_3_table) (was calibration_constant_1; PR #53 round 41)
-0x00057724,supervisor_qspi_command_bytes,byte,ROM: QSPI command-RAM bytes for supervisor-chip jobs (0x5D = PCS1 chip select) (was j1939_msg_descriptor_table)
+0x00057724,supervisor_qspi_command_bytes,byte[6],ROM: QSPI command-RAM bytes for supervisor-chip jobs - six 0x5D (PCS1 chip select) - one per transmit word of the longest job (was j1939_msg_descriptor_table)
 0x00057730,alternator_field_regulator_state_handler_table,alternator_field_regulator_state_handler_function_t *[4],ROM: the four state handlers of the alternator field regulator indexed by alternator_field_regulator_state: 0x38338 cm848_evaluateAlternatorFieldRegulatorIdleState / 0x38384 ...StartRampState / 0x383f0 ...RegulationState / 0x3844c ...LoadResponseState. cm848_updateAlternatorFieldRegulatorState calls the entry of the present state and stores the state it returns (the row had a type and no name: it rendered PTR_..._00057730 with a code cast; PR #53 round 98)
 0x0005774b,pci_receive_message_table,pci_message_descriptor_t[15],15 J1850 PCI messages the ECM receives (OBD-II 68 6A request / 0x24 / 0x37 shift lever / ...); count at 0x57bab | retyped pci_message_descriptor_t -> pci_message_descriptor_t[15] 2026-11-18
 0x000578ef,pci_transmit_message_table,pci_message_descriptor_t[25],25 J1850 PCI messages the ECM transmits (0x10 engine data / 48 6B OBD-II response / D1 03 / F0 xx VIN / ...); count at 0x57bad | retyped pci_message_descriptor_t -> pci_message_descriptor_t[25] 2026-11-18
@@ -1659,17 +1659,17 @@ address,name,type,comment
 0x003fb2cb,supervisor_watchdog_start_reply,word,Watchdog status reply during start-up: question + error count (was engine_phase_and_position_bits_packed)
 0x003fb2cf,supervisor_watchdog_reply,word,Watchdog status reply: low 4 bits next question / bits 4-6 error count (was engine_sync_phase_byte)
 0x003fb317,supervisor_output_write_transmit_word,word,QSPI transmit word of supervisor_output_write_job: 0x9200 | supervisor_register_146_output_value (register 0x92 = output lines 144-151) (was j1939_lamp_status_tx_word)
-0x003fb319,j1939_tx_frame_g_byte_0,word,
-0x003fb31b,j1939_msg_field_word_b31b,word,
-0x003fb31d,j1939_msg_field_word_b31d,word,
-0x003fb33b,j1939_msg_payload_snapshot,word,
+0x003fb319,supervisor_status_read_transmit_words,word[3],Transmit words of supervisor_status_read_job: cm848_queueSupervisorStatusRead sets 0x4E00 / 0x5A00 / 0x5C00 (read registers 0x4E / 0x5A / 0x5C) (was j1939_tx_frame_g_byte_0)
+0x003fb31b,supervisor_status_read_transmit_words[1],,0x5A00 (was j1939_msg_field_word_b31b)
+0x003fb31d,supervisor_status_read_transmit_words[2],,0x5C00 (was j1939_msg_field_word_b31d)
+0x003fb33b,supervisor_register_46_transmit_word,word,Transmit word of supervisor_register_46_read_job: cm848_queueSupervisorRegister46Read copies supervisor_register_46_command_word here (was j1939_msg_payload_snapshot)
 0x003fb33f,supervisor_watchdog_error_count_previous,word,Watchdog error count from the previous cycle (was engine_phase_bits_snapshot)
-0x003fb343,j1939_can_frame_word_a,word,
-0x003fb345,j1939_can_frame_word_b,word,
-0x003fb347,j1939_can_frame_word_c,word,
-0x003fb349,j1939_can_frame_word_d,word,
-0x003fb34b,j1939_pgn_source_byte,dword,
-0x003fb351,j1939_session_state,byte,
+0x003fb343,supervisor_start_up_transmit_words,word[5],Transmit words of cm848_configureSupervisorChip's stack job: 0x8C02 / 0x0C00 / 0xC2xx / 0xC4xx / 0xC8xx until the chip reports state 2 then 0xDAxx / 0xDCxx / 0xD0xx / 0xD6xx (was j1939_can_frame_word_a)
+0x003fb345,supervisor_start_up_transmit_words[1],,(was j1939_can_frame_word_b)
+0x003fb347,supervisor_start_up_transmit_words[2],,(was j1939_can_frame_word_c)
+0x003fb349,supervisor_start_up_transmit_words[3],,(was j1939_can_frame_word_d)
+0x003fb34b,supervisor_start_up_transmit_words[4],,(was j1939_pgn_source_byte)
+0x003fb351,supervisor_start_up_reply_words[1],,low byte = the chip state; 2 = configured (was j1939_session_state)
 0x003fb376,serial_output_driver_reply,word,Raw QSPI reply from the serial output driver (was j1939_periodic_timer_state)
 0x003fb378,serial_output_driver_last_reply_time,dword,Time base (TBL) of the previous serial output driver reply (was j1939_periodic_timer_snapshot)
 0x003fb37c,alternator_field_cut_test_voltage_snapshot,word,cm848_testAlternatorOutputByCuttingField (read in full): battery voltage captured when the field is cut, compared with the later voltage. Boot-ROM check: xref_addr.py lists no user other than this function and cm848_initializeAlternatorFieldControl, and a byte scan of ROM 0x0-0x7f60 for the displacement finds none (address is in the time-shared window 0x3f9800-0x3fdb30; only a rename is proposed, no ... (was battery_voltage_fault_snapshot)
@@ -5259,7 +5259,7 @@ address,name,type,comment
 0x0040b21b,supervisor_register_36_bit_1_low_held_flag,byte,Held copy of supervisor_register_36_bit_1_low_flag: set at once and released 30 register reads (150 ms) after the bit returns; while set the injector timing / engine sync / cam timing / output circuit and several circuit monitors do not run (was governor_inhibit_flag)
 0x0040b21c,supervisor_watchdog_error_count,word,Watchdog error counter (reply bits 4-6) (was engine_position_phase_bits)
 0x0040b21e,supervisor_watchdog_error_count_peak,word,Highest watchdog error count seen; 8 after start-up until the count returns to 0 (was engine_phase_sync_count)
-0x0040b220,j1939_message_word_b220,word,
+0x0040b220,supervisor_register_46_command_word,word,Word cm848_queueSupervisorRegister46Read sends through supervisor_register_46_read_job; set to 0x2E00 (register 0x2E / 46) at init and whenever ram_refresh_enable is not RAM_REFRESH_DISABLED - nothing else in ROM writes it (was j1939_message_word_b220)
 0x0040b224,supervisor_register_162_status,word,Low byte = supervisor chip register 0xA2 (162) reply every 100 ms; bits 4 6 8 are read and cleared by cm848_processEgrValveHBridgeFaults and bits 5 7 8 by cm848_processVariableGeometryTurbochargerHBridgeFaults (bit 8 never set); meaning not identified - nothing idle related (was engine_idle_mode_flags)
 0x0040b226,supervisor_register_146_output_value,byte,Byte sent to supervisor chip register 0x92 (146) = output lines 144-151: cm848_refreshOutputPortsAndReadback copies output_lines_144_to_151_state here (old value to j1939_lamp_status_prev) and cm848_queueSupervisorOutputWrite sends 0x9200 | it; type byte (was j1939_lamp_status_cache)
 0x0040b227,supervisor_input_lines_130_to_135_state,byte,Supervisor status read reply word 1 packed to 6 bits (reply bits 0-2 and 5-7) = discrete input lines 130-135 (bit = line - 130): cm848_readDiscreteInputLine puts it in input image byte 0x40c108 bits 2-7; switches 9 / 10 / 1 read lines 130 / 131 / 132 (was j1939_protection_spn_nibble)
@@ -8459,3 +8459,12 @@ address,name,type,comment
 0x00408950,watchdog_fueling_minimum_engine_speed,word,e2m 8A70 +4 Watchdog_Speed_Threshold 'Watchdog fuel error may be set above this speed' (rpm x 8): the monitor resets its count at or below it (lhz @ 0x516d54) (PR #53 round 30)
 0x0040a734,fuel_temperature_engine_protection_state,engine_protection_channel_state_t,The fuel temperature engine protection channel's state record (engine_protection_channel_state_t, e2m 1152; PR #53 round 21: was the flat rows fuel_temperature_derate_fuel_shutdown_time_count, fuel_temperature_derate_input_pointer, fuel_temperature_derate_precrank_error_flag, fuel_temperature_derate_rpm_shutdown_time_count)
 0x0040a78b,engine_protection_shutdown_override_lamp_flag,byte,e2m 10B1 +19 EPF_Shutdown_Override_Lamp_Flag '[EPSOLPFG] True indicates starting epf shutdown override lamp sequencing': set to 1 when a shutdown override request takes effect (cm848_updateEngineProtectionShutdown, cm848_checkEngineProtectionRestartLimitation), 0 in cm848_resetEngineProtectionShutdownState; four stb, no reader in this build
+0x0005772a,supervisor_register_162_read_command,word,ROM: transmit word 0xA200 of supervisor_register_162_read_job (read register 0xA2 / 162)
+0x0005772c,supervisor_register_36_read_command,word,ROM: transmit word 0x2400 of supervisor_register_36_read_job (read register 0x24 / 36)
+0x0005772e,serial_output_driver_command_byte,byte,ROM: QSPI command-RAM byte 0x1B of serial_output_driver_job (PCS2 chip select)
+0x003fb285,supervisor_register_162_reply_word,word,Reply word of supervisor_register_162_read_job; cm848_onSupervisorRegister162Read keeps its low byte in supervisor_register_162_status
+0x003fb2e9,supervisor_register_36_reply_word,word,Reply word of supervisor_register_36_read_job; cm848_onSupervisorRegister36Read tests bit 1
+0x003fb31f,supervisor_status_read_reply_words,word[3],Reply words of supervisor_status_read_job: cm848_onSupervisorStatusRead unpacks them into supervisor_input_lines_136_to_143_state / _130_to_135_state / _144_to_151_state
+0x003fb33d,supervisor_register_46_reply_word,word,Reply word of supervisor_register_46_read_job; cm848_onSupervisorRegister46Read copies it to supervisor_register_46_reply
+0x003fb34f,supervisor_start_up_reply_words,word[5],Reply words of cm848_configureSupervisorChip's stack job: it repeats the start-up words until the low byte of reply word 1 is 2
+0x0040b222,supervisor_register_46_reply,word,Copy of supervisor_register_46_reply_word made by cm848_onSupervisorRegister46Read
