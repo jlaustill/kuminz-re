@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 27 02:44:30 UTC 2026
+// Generated: Fri Nov 27 02:47:48 UTC 2026
 
 
 //
@@ -6019,7 +6019,8 @@ void mpc555_sciHandleDownloadDataBlock(void)
     dVar2 = eeprom_xfer_state.block_length;
     if (dVar1 <= dVar2) {
       bVar5 = cm848_trackDownloadBlock
-                        (&DAT_003fecf3,register0x00000010,local_30,BOOT_REQUEST_CHANNEL_SERIAL);
+                        (&boot_sci_request_data,register0x00000010,local_30,
+                         BOOT_REQUEST_CHANNEL_SERIAL);
       serial_download_region_type =
            cm848_lookupBootMemoryRegionType(ram0x003fee01,(uint)local_30[0]);
       if (bVar5 != 0xff) {
@@ -6031,7 +6032,7 @@ void mpc555_sciHandleDownloadDataBlock(void)
         diag_request_pending_flag = 0;
         if (serial_download_region_type != MEMORY_REGION_TYPE_MAIN_FLASH) {
           pcVar3 = (code *)eeprom_xfer_state.flash2_write_callback;
-          sVar4 = (*pcVar3)(&DAT_003fecf3,ram0x003fedfd,local_30[0]);
+          sVar4 = (*pcVar3)(&boot_sci_request_data,ram0x003fedfd,local_30[0]);
           if (sVar4 == 0) {
             serial_reflash_busy_flag = 0;
             mpc555_sciSendServiceResponse(0x40,0x7f);
@@ -6046,7 +6047,7 @@ LAB_00007110:
         dVar1 = eeprom_xfer_state.bytes_transferred;
         dVar2 = eeprom_xfer_state.block_length;
         cVar6 = cm848_dataTransferBufferWrite
-                          (&DAT_003fecf3,ram0x003fedfd,local_30[0],dVar1 == dVar2,2);
+                          (&boot_sci_request_data,ram0x003fedfd,local_30[0],dVar1 == dVar2,2);
         if (cVar6 != '\x01') {
           serial_reflash_busy_flag = cVar6 == '\x02';
           goto LAB_00007110;
@@ -6062,7 +6063,7 @@ LAB_00007110:
         }
         diag_request_pending_flag = 0;
         pcVar3 = (code *)eeprom_xfer_state.eeprom_write_callback;
-        (*pcVar3)(&DAT_003fecf3,unique0x10000146 - 0x1000000,local_30[0]);
+        (*pcVar3)(&boot_sci_request_data,unique0x10000146 - 0x1000000,local_30[0]);
         serial_reflash_busy_flag = 0;
         diag_session_state_byte = 0x73;
         DAT_003fee06 = 0;
@@ -6349,9 +6350,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
+  byte prescaler_count;
   dword runtime_value;
   word counter_value;
-  byte prescaler_count;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -10928,6 +10929,7 @@ void mpc555_dispatchExternalInterrupt(void)
   bool low_sum_carry;
   undefined4 in_MSR;
   undefined4 in_SRR1;
+  byte interrupt_code;
   uint entry_time_base_low;
   dword exit_time_base_low;
   int entry_time_base_high;
@@ -10935,7 +10937,6 @@ void mpc555_dispatchExternalInterrupt(void)
   int exit_time_base_high_check;
   word saved_interrupt_mask;
   word current_interrupt_mask;
-  byte interrupt_code;
   
   do {
     entry_time_base_high = TBUr;
@@ -40289,8 +40290,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  byte all_transmits_overdue;
   ushort receive_interval;
+  byte all_transmits_overdue;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
@@ -68646,7 +68647,7 @@ void cm848_checkEngineProtectionRestartLimitation
     if ((bVar1) && (engine_protection_shutdown_override_request_flag == 1)) {
       state->fueling_duration = 0;
       engine_protection_shutdown_override_lamp_flag = 1;
-      DAT_0040a78c = 0;
+      engine_protection_shutdown_override_spare_word = 0;
     }
     engine_protection_restart_limitation_shutdown_command_flag =
          (word)(configuration->shutdown_warning_time < state->fueling_duration);
@@ -68961,7 +68962,7 @@ LAB_00508a7c:
              engine_protection_shutdown_override_request_flag != 0)) {
             state->fueling_shutdown_time_count = uVar3;
             engine_protection_shutdown_override_lamp_flag = 1;
-            DAT_0040a78c = 0;
+            engine_protection_shutdown_override_spare_word = 0;
           }
           if ((uint)uVar3 + (uint)configuration->shutdown_warning_time <
               (uint)state->fueling_shutdown_time_count) {
@@ -68993,7 +68994,7 @@ LAB_00508b78:
            engine_protection_shutdown_override_request_flag != 0)) {
           state->engine_speed_shutdown_time_count = uVar2;
           engine_protection_shutdown_override_lamp_flag = 1;
-          DAT_0040a78c = 0;
+          engine_protection_shutdown_override_spare_word = 0;
         }
         if ((uint)uVar2 + (uint)configuration->shutdown_warning_time <
             (uint)state->engine_speed_shutdown_time_count) {
@@ -69073,7 +69074,7 @@ void cm848_resetEngineProtectionShutdownState(void)
   fuel_temperature_engine_protection_state.engine_speed_shutdown_time_count = 0;
   engine_protection_shutdown_override_request_flag = 0;
   engine_protection_shutdown_override_lamp_flag = 0;
-  DAT_0040a78c = 0;
+  engine_protection_shutdown_override_spare_word = 0;
   engine_protection_timer_state = 0;
   return;
 }

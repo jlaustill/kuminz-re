@@ -8492,3 +8492,5 @@ address,name,type,comment
 0x003fcf92,sci_command_52_received_byte_count,byte,"Byte (lbz / stb): request bytes of SCI command 52 received so far (cm848_sciCommand52ReportFaultStatusByDtc clears it; the callback acts after 2)"
 0x003fcf93,sci_command_52_dtc_high_byte,byte,"Byte (lbz / stb): request byte 0 of SCI command 52 (fault status by DTC): the high byte of the DTC passed to cm848_lookupFaultIndexByDtcCode"
 0x003fcf94,sci_command_52_dtc_low_byte,byte,"Byte (lbz / stb): request byte 1 of SCI command 52: the low byte of the DTC"
+0x0040a78c,engine_protection_shutdown_override_spare_word,word,"Word after engine_protection_shutdown_override_lamp_flag that is only ever written 0 (sth in cm848_checkEngineProtectionRestartLimitation / cm848_updateEngineProtectionShutdown, with the override lamp flag set or cleared); no instruction in ROM or flash2 reads it and no e2m 10B1 parameter covers it"
+0x003fecf3,boot_sci_request_data,byte,"Boot kernel: byte 3 onward of the received serial request (diag_serial_buffer[0x23]): the data of a download data block that mpc555_sciHandleDownloadDataBlock passes to the block write / verify handlers"
