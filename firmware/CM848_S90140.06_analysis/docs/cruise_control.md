@@ -2,7 +2,7 @@
 
 This file covers what the S90140.06 firmware does for cruise control. It comes from a read-only review on 2026-11-22.
 
-**Names and addresses follow PR #53 at `5f9483fe` (round 97).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
+**Names and addresses follow `main` at `deeb3dcf`, the merge of PR #53 (through round 98).** If a later change renames something, search for the address.
 
 Evidence tags:
 
@@ -103,7 +103,7 @@ Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrU
 - **The choice.** `cm848_selectCruiseOrUserFueling` (0x411b0) sets the working demand (`governor_fuel_demand_working`) to the lower of the two, with mode `FUELING_STATE_CRUISE_CONTROL`. It never tests the servo bit. It hands control back to the operating mode governor when any of these hold:
   - cruise isn't engaged;
   - the pedal's governor asks for more fuel than cruise, with the throttle above `cruise_throttle_transition_threshold` (e2m `Cruise_Throttle_Transition_Threshold`, 0 % in this calibration, so cruise takes over again only with the pedal fully released) [round 44];
-  - a TSC1 speed or torque mode, mode 37 or 38, or a fixed fuel demand is active.
+  - a TSC1 speed or torque mode, a Top2 transmission speed or torque mode (`FUELING_STATE_TOP2_TRANSMISSION_SPEED_CONTROL` / `_TORQUE_CONTROL`, 37 / 38), or a fixed fuel demand is active.
 
 ## Vacuum throttle servo
 
@@ -203,7 +203,14 @@ Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrU
 - Which pins carry logical output 21 and raw switch 28. `ecu_pinout.md` lists circuit V32 on C2 pins 7 and 36 in the 2004 automatic wiring, but nobody has proven the mapping.
 - What the firmware does with cruise engaged: nobody has captured data yet.
 - How the working demand reaches final fueling, and how TSC1 ranks against cruise there.
-- Whether a diagnostic memory write over J1939 could reach channel 47's override (`sensor_channel_diag_override[47]`). A function comment says it needs authentication [notes].
+- Whether a service tool can supply the security key that a write to channel 47's override needs (see below).
+
+## Channel 47's diagnostic override [code]
+
+- **The override.** `cm848_checkCruiseSwitchLearnCondition` reads `cruise_switch_adc_override` (0x40bcde, element 47 of `sensor_channel_diag_override`) instead of the QADC result when `adc_forced_reading_enable_bits_cal[2]` bit 0x8000 is set. EEPROM 0x6f6 to 0x705 (the enable bits) is all zero in every dump, so the override is off.
+- **Writing it over J1939.** `writeJ1939DiagnosticMemory` (0x50af58) takes its region from `application_memory_region_table`. RAM 0x3fa000 to 0x40c26e is `MEMORY_REGION_TYPE_AUTHORIZATION_REQUIRED`, so both RAM words need the 10-byte key (`validateSecurityKey`) unless `calibration_download_security_key_cal` (EEPROM 0x8e) is 0xff. It is `0x0000` in every dump.
+- **The enable bits are also refused while RAM refresh is on.** Their RAM copy (0x3fdb7c) sits in the protected window above 0x3fd480 and below `sensor_channel_ram_start` (0x40a046), so the write answers 10 unless `ram_refresh_enable` is off (development mode). The override word (0x40bcde) is outside that window.
+
 ## Turning the servo off
 
 These steps are untested:
